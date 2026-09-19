@@ -1,3 +1,8 @@
+import {
+  astro101HasUnresolvedEphemerisSlot,
+  fillAstro101EphemerisSlots
+} from "./astro101Ephemeris";
+
 export const ASTRO_101_KEY_PREFIX = "education/astro-101/";
 
 export const ASTRO_101_KINDS = [
@@ -45,12 +50,18 @@ export function isAstro101Kind(value: unknown): value is Astro101Kind {
   return typeof value === "string" && (ASTRO_101_KINDS as readonly string[]).includes(value);
 }
 
+export type Astro101List = {
+  ordered: boolean;
+  items: string[];
+};
+
 export type Astro101Block = {
   heading?: string;
   level?: number;
   body?: string;
   group?: boolean;
   style?: string;
+  list?: Astro101List[];
 };
 
 export type Astro101RelatedLink = {
@@ -94,7 +105,8 @@ export function astro101BlocksFromSections(sections: unknown): Astro101Block[] {
       level: typeof entry.level === "number" ? entry.level : 2,
       body: typeof entry.body === "string" ? entry.body : "",
       group: entry.group === true,
-      style: typeof entry.style === "string" ? entry.style : ""
+      style: typeof entry.style === "string" ? entry.style : "",
+      list: astro101ListsFromUnknown(entry.list)
     };
   });
 }
@@ -132,7 +144,15 @@ export function astro101PageIsServable(row: {
   sections?: unknown;
   facts?: unknown;
 }) {
-  return Boolean((row.headline ?? "").trim() && astro101SlugFromFacts(row.facts) && astro101HasReaderCopy(row));
+  const filled = fillAstro101EphemerisSlots(row);
+  if (
+    astro101HasUnresolvedEphemerisSlot(filled.headline)
+    || astro101HasUnresolvedEphemerisSlot(filled.body)
+    || astro101HasUnresolvedEphemerisSlot(filled.sections)
+  ) {
+    return false;
+  }
+  return Boolean((filled.headline ?? "").trim() && astro101SlugFromFacts(filled.facts) && astro101HasReaderCopy(filled));
 }
 
 export function astro101PublicationIssue(row: {
@@ -155,6 +175,15 @@ export function astro101PublicationIssue(row: {
   if (!astro101HasReaderCopy(row)) {
     return "Write the article before publishing. Empty Astro 101 pages stay drafts.";
   }
+  const filled = fillAstro101EphemerisSlots(row);
+  if (
+    astro101HasUnresolvedEphemerisSlot(filled.headline)
+    || astro101HasUnresolvedEphemerisSlot(filled.body)
+    || astro101HasUnresolvedEphemerisSlot(filled.sections)
+    || astro101HasUnresolvedEphemerisSlot(filled.facts)
+  ) {
+    return "Resolve calculated ephemeris slots before publishing Astro 101 pages.";
+  }
   return null;
 }
 
@@ -176,6 +205,9 @@ export function astro101ReaderPath(kind: Astro101Kind, slug: string) {
   const safe = astro101Slugify(slug) || "new-page";
   if (kind === "house" && /^\d{1,2}$/u.test(safe)) return `/learn/houses/${safe}`;
   if (kind === "sign") return `/learn/signs/${safe}`;
+  if (kind === "point") return `/learn/points/${safe}`;
+  if (kind === "retrograde") return `/learn/retrogrades/${safe}`;
+  if (kind === "phase") return `/learn/moon/${safe}`;
   return `/learn/astro-101/${safe}`;
 }
 
@@ -219,7 +251,22 @@ export function astro101HasReaderCopy(row: {
 }) {
   if ((row.body ?? "").trim()) return true;
   if (astro101IntroFromSections(row.sections).trim()) return true;
-  return astro101BlocksFromSections(row.sections).some((block) => (block.body ?? "").trim());
+  return astro101BlocksFromSections(row.sections).some((block) => {
+    if ((block.body ?? "").trim()) return true;
+    return (block.list ?? []).some((list) => list.items.some((item) => item.trim()));
+  });
+}
+
+function astro101ListsFromUnknown(value: unknown): Astro101List[] | undefined {
+  if (!Array.isArray(value) || value.length === 0) return undefined;
+  const lists = value.flatMap((item) => {
+    const entry = record(item);
+    if (!entry || !Array.isArray(entry.items)) return [];
+    const items = entry.items.filter((line): line is string => typeof line === "string" && line.trim().length > 0);
+    if (!items.length) return [];
+    return [{ ordered: entry.ordered === true, items }];
+  });
+  return lists.length ? lists : undefined;
 }
 
 export function astro101RelatedFromFacts(facts: unknown): Astro101RelatedLink[] {

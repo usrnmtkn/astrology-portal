@@ -12,6 +12,7 @@ import {
   type Astro101Block,
   type Astro101RelatedLink
 } from "../content/astro101";
+import { fillAstro101EphemerisSlots } from "../content/astro101Ephemeris";
 
 export type Astro101Page = {
   id: string;
@@ -38,23 +39,24 @@ type Astro101Row = {
 };
 
 function pageFromRow(row: Astro101Row): Astro101Page | null {
-  const slug = astro101SlugFromFacts(row.facts);
-  const headline = (row.headline ?? "").trim();
-  if (!astro101PageIsServable(row)) return null;
-  const kindFromKey = row.content_key.match(/^education\/astro-101\/([^/]+)\//u)?.[1];
-  const kind = astro101KindFromSections(row.sections) || (isAstro101Kind(kindFromKey) ? kindFromKey : "article");
+  const filled = fillAstro101EphemerisSlots(row);
+  const slug = astro101SlugFromFacts(filled.facts);
+  const headline = (filled.headline ?? "").trim();
+  if (!astro101PageIsServable(filled)) return null;
+  const kindFromKey = filled.content_key.match(/^education\/astro-101\/([^/]+)\//u)?.[1];
+  const kind = astro101KindFromSections(filled.sections) || (isAstro101Kind(kindFromKey) ? kindFromKey : "article");
   return {
-    id: row.id,
-    contentKey: row.content_key,
+    id: filled.id,
+    contentKey: filled.content_key,
     headline,
-    summary: (row.summary ?? "").trim(),
-    body: (row.body ?? "").trim(),
+    summary: (filled.summary ?? "").trim(),
+    body: (filled.body ?? "").trim(),
     kind,
-    hubTitle: astro101HubTitleFromSections(row.sections, kind),
-    intro: astro101IntroFromSections(row.sections),
-    blocks: astro101BlocksFromSections(row.sections),
+    hubTitle: astro101HubTitleFromSections(filled.sections, kind),
+    intro: astro101IntroFromSections(filled.sections),
+    blocks: astro101BlocksFromSections(filled.sections),
     slug,
-    related: astro101RelatedFromFacts(row.facts)
+    related: astro101RelatedFromFacts(filled.facts)
   };
 }
 

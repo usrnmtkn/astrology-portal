@@ -673,7 +673,8 @@
     display: none;
   }
 
-  .app-shell:has(.sky-detail-page) .nav-pill {
+  .app-shell:has(.sky-detail-page) .nav-pill,
+  .app-shell:has(.learn-article-page) .nav-pill {
     margin-left: var(--mobile-article-brand-offset);
   }
 
@@ -681,7 +682,8 @@
     display: none;
   }
 
-  .app-shell .sky-detail-page .sky-detail-back {
+  .app-shell .sky-detail-page .sky-detail-back,
+  .app-shell:has(.learn-article-page) .sky-detail-back {
     top: var(--mobile-article-back-top);
     left: var(--mobile-control-inset);
     width: var(--top-icon-button-size);
@@ -689,7 +691,8 @@
     padding: 0;
   }
 
-  .app-shell .sky-detail-page .sky-detail-back span {
+  .app-shell .sky-detail-page .sky-detail-back span,
+  .app-shell:has(.learn-article-page) .sky-detail-back span {
     display: none;
   }
 

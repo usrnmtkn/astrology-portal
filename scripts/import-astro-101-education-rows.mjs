@@ -6,8 +6,8 @@
  * scripts/import-sky-placement-continuous-v2.mjs (validate-first, write only on --approve).
  *
  * Usage:
- *   node import-astro-101-education-rows.mjs --source=./astro-101-rows.json
- *   node import-astro-101-education-rows.mjs --source=./astro-101-rows.json --approve --out=/abs/path/audit.json
+ *   node --import tsx scripts/import-astro-101-education-rows.mjs --source=./astro-101-rows.json
+ *   node --import tsx scripts/import-astro-101-education-rows.mjs --source=./astro-101-rows.json --approve --live --out=/abs/path/audit.json
  *
  * Without --approve it validates and writes nothing. With --approve it upserts in
  * batches of 100 on (content_key, target_date, mode) and writes an audit file listing every key touched.
@@ -20,6 +20,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import process from "node:process";
+import { astro101HasUnresolvedEphemerisSlot, fillAstro101EphemerisSlots } from "../apps/web/src/content/astro101Ephemeris.ts";
 
 const BATCH_SIZE = 100;
 const REQUIRED = ["content_key", "surface", "mode", "block_type", "lane", "status", "headline", "body"];
@@ -44,23 +45,27 @@ function arg(name, fallback = null) {
   return process.argv.includes(`--${name}`) ? true : fallback;
 }
 
-function loadEnvLocal() {
+function loadEnvLocal(explicitPath = null) {
   const candidates = [
+    explicitPath,
     path.resolve(process.cwd(), "apps/web/.env.local"),
     path.resolve(process.cwd(), ".env.local"),
-  ];
+  ].filter(Boolean);
   for (const file of candidates) {
     if (!fs.existsSync(file)) continue;
     for (const line of fs.readFileSync(file, "utf8").split("\n")) {
       const m = line.match(/^\s*([A-Z0-9_]+)\s*=\s*(.*)\s*$/);
       if (m && !process.env[m[1]]) process.env[m[1]] = m[2].replace(/^["']|["']$/g, "");
     }
+    return;
   }
 }
 
+const HELD_BACK = /\/(ceres|pallas|juno|vesta)(?:\/|$)/u;
+
 function prepareRows(rows, { live = false } = {}) {
   return rows.map((row) => {
-    const next = { ...row };
+    const next = fillAstro101EphemerisSlots({ ...row });
     if (String(next.content_key ?? "").startsWith(KEY_PREFIX)) {
       next.surface = "education";
     }
@@ -84,6 +89,9 @@ function validate(rows) {
     if (row.content_key && !row.content_key.startsWith(KEY_PREFIX)) {
       problems.push(`${where}: content_key must start with ${KEY_PREFIX}`);
     }
+    if (row.content_key && HELD_BACK.test(row.content_key)) {
+      problems.push(`${where}: minor asteroid keys stay held back`);
+    }
     if (seen.has(row.content_key)) problems.push(`${where}: duplicate content_key`);
     seen.add(row.content_key);
     if (!ALLOWED_SURFACE.has(row.surface)) problems.push(`${where}: surface "${row.surface}" not in enum`);
@@ -97,12 +105,16 @@ function validate(rows) {
         if (rx.test(value)) problems.push(`${where}: ${field} contains ${label}`);
       }
     }
+    if (astro101HasUnresolvedEphemerisSlot(row.headline) || astro101HasUnresolvedEphemerisSlot(row.summary) || astro101HasUnresolvedEphemerisSlot(row.body) || astro101HasUnresolvedEphemerisSlot(row.sections) || astro101HasUnresolvedEphemerisSlot(row.facts)) {
+      problems.push(`${where}: unresolved ephemeris slot`);
+    }
     // blocks[] is optional: the flat variant carries structure in body only
     const blocks = row.sections?.blocks ?? [];
     blocks.forEach((b, j) => {
       if (!b.heading) problems.push(`${where}: block ${j} missing heading`);
+      const hasList = Array.isArray(b.list) && b.list.some((list) => Array.isArray(list?.items) && list.items.length);
       // a group block is a section header whose children carry the prose
-      if (!b.body && !b.group) problems.push(`${where}: block ${j} missing body`);
+      if (!b.body && !b.group && !hasList) problems.push(`${where}: block ${j} missing body`);
     });
   });
   return problems;
@@ -170,7 +182,7 @@ async function main() {
   }
   if (!out || !path.isAbsolute(out)) throw new Error("--approve requires an absolute --out= path for the audit file");
 
-  loadEnvLocal();
+  loadEnvLocal(arg("env", null));
   const url = process.env.SUPABASE_URL ?? process.env.VITE_SUPABASE_URL;
   const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
   if (!url || !key) throw new Error("set SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY");

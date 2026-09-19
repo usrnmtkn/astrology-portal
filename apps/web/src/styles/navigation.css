@@ -15,6 +15,43 @@
 .app-shell.mode-learn {
   overflow-x: clip;
   padding: 0;
+  background: var(--learn-page-bg);
+}
+
+.app-shell:has(.learn-article-page) .topbar {
+  grid-template-columns: minmax(0, 1fr) auto;
+}
+
+.app-shell:has(.learn-article-page) .nav-pill {
+  grid-column: 1;
+  justify-self: start;
+  margin-left: var(--mobile-article-brand-offset);
+  max-width: none;
+  gap: calc(var(--space-2) + var(--space-1) / 2);
+  padding: 0 calc(var(--space-5) + var(--space-1) / 2) 0 var(--space-2);
+}
+
+.app-shell:has(.learn-article-page) .topbar-actions {
+  grid-column: 2;
+}
+
+.app-shell:has(.learn-article-page) .site-nav,
+.app-shell:has(.learn-article-page) .theme-toggle {
+  display: none;
+}
+
+.app-shell:has(.learn-article-page) .sky-detail-back {
+  top: var(--top-control-top);
+  left: var(--space-7);
+  width: var(--top-icon-button-size);
+  height: var(--top-icon-button-size);
+  min-height: var(--top-icon-button-size);
+  padding: 0;
+  border-radius: var(--radius-circle);
+}
+
+.app-shell:has(.learn-article-page) .sky-detail-back span {
+  display: none;
 }
 
 .app-shell.mode-detail {

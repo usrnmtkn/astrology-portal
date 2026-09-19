@@ -631,6 +631,52 @@
   --container-calendar-content: 1080px;
   --container-narrow: 1120px;
   --container-article: 1140px;
+  --learn-page-bg: #f2f2f4;
+  --learn-ink: #1c1f26;
+  --learn-ink-secondary: #5b6270;
+  --learn-hairline: #e8eaee;
+  --learn-card-bg: var(--color-white);
+  --learn-index-card-min: 220px;
+  --learn-index-card-min-height: 240px;
+  --learn-index-house-card-min-height: 280px;
+  --learn-section-title-size: 34px;
+  --learn-section-title-leading: 1;
+  --learn-index-mark-size: 36px;
+  --learn-house-name-size: 24px;
+  --learn-house-name-leading: 1.1;
+  --learn-houses-section-gap: calc(var(--space-7) - var(--space-1));
+  --learn-house-card-gap: calc(var(--space-6) + var(--space-1));
+  --learn-house-card-padding: calc(var(--space-5) + var(--space-1) / 2) calc(var(--space-5) + var(--space-1) / 2) calc(var(--space-6) + var(--space-2));
+  --learn-house-foot-height: 100px;
+  --learn-house-foot-gap: var(--space-1);
+  --learn-house-foot-pad-end: calc(var(--space-6) + var(--space-1));
+  --learn-chevron-width: 10px;
+  --learn-chevron-height: 18px;
+  --learn-chevron-right: var(--space-6);
+  --learn-chevron-bottom: calc(var(--space-6) + var(--space-1) / 2);
+  --learn-card-hover-shift: -1px;
+  --learn-card-motion: 150ms;
+  --learn-house-card-shadow:
+    0 1px 2px rgb(20 24 32 / 4%),
+    0 6px 20px rgb(20 24 32 / 7%);
+  --learn-house-card-shadow-hover:
+    0 1px 3px rgb(20 24 32 / 5%),
+    0 10px 26px rgb(20 24 32 / 11%);
+  --learn-article-title-size: 60px;
+  --learn-article-title-leading: 1.02;
+  --learn-article-title-tracking: -0.015em;
+  --learn-lede-size: 26px;
+  --learn-lede-leading: 1.4;
+  --learn-kicker-size: 12px;
+  --learn-kicker-tracking: 0.14em;
+  --element-chip-fire-bg: color-mix(in srgb, var(--lunar-element-fire) 22%, var(--card-bg));
+  --element-chip-fire-fg: color-mix(in srgb, var(--lunar-element-fire) 38%, var(--ink));
+  --element-chip-earth-bg: color-mix(in srgb, var(--lunar-element-earth) 22%, var(--card-bg));
+  --element-chip-earth-fg: color-mix(in srgb, var(--lunar-element-earth) 38%, var(--ink));
+  --element-chip-air-bg: color-mix(in srgb, var(--lunar-element-air) 22%, var(--card-bg));
+  --element-chip-air-fg: color-mix(in srgb, var(--lunar-element-air) 42%, var(--ink));
+  --element-chip-water-bg: color-mix(in srgb, var(--lunar-element-water) 22%, var(--card-bg));
+  --element-chip-water-fg: color-mix(in srgb, var(--lunar-element-water) 42%, var(--ink));
   --container-calendar: 1160px;
   --container-wide: 1240px;
   --container-friends-detail: 1380px;
@@ -1377,4 +1423,11 @@
   --app-text: var(--ink);
   --app-muted: var(--muted);
   --app-border: var(--card-border);
+  --learn-page-bg: var(--bg);
+  --learn-ink: var(--ink);
+  --learn-ink-secondary: var(--muted);
+  --learn-hairline: var(--line);
+  --learn-card-bg: var(--surface);
+  --learn-house-card-shadow: var(--card-shadow);
+  --learn-house-card-shadow-hover: var(--shadow-article);
 }

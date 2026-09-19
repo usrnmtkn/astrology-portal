@@ -35,6 +35,12 @@ html.orb-off body {
   background-image: var(--bg-grad);
 }
 
+body:has(.app-shell.mode-learn),
+html.orb-off body:has(.app-shell.mode-learn) {
+  background-color: var(--learn-page-bg);
+  background-image: none;
+}
+
 .sunrise-orb {
   display: none;
 }

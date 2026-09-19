@@ -2,8 +2,8 @@ export const LEARN_HERO_GLYPHS = ["☉", "☽", "☿", "♀", "♂", "♃", "♄
 
 const HOUSE_SHORT_NAMES = [
   "Self",
-  "Wealth & Self-Worth",
-  "Siblings",
+  "Livelihood",
+  "Siblings & the daily round",
   "Home",
   "Pleasure",
   "Work",
@@ -60,6 +60,10 @@ const SIGN_GLYPHS: Record<string, string> = {
   pisces: "♓"
 };
 
+export function textPresentationGlyph(glyph: string) {
+  return `${glyph.replace(/[\uFE0E\uFE0F]/gu, "")}\uFE0E`;
+}
+
 export function houseNumberFromContentKey(contentKey: string) {
   const match = contentKey.match(/\/house\/(\d{1,2})$/u);
   if (!match) return 0;
@@ -89,7 +93,7 @@ export function houseCatalog(house: number) {
     ordinal: houseOrdinal(house),
     angularity: HOUSE_ANGULARITY[house - 1],
     naturalSign: sign,
-    naturalGlyph: SIGN_GLYPHS[sign.toLowerCase()] ?? ""
+    naturalGlyph: textPresentationGlyph(SIGN_GLYPHS[sign.toLowerCase()] ?? "")
   };
 }
 

@@ -21,6 +21,8 @@ export const ARTICLE_BLOCK_STYLE_LABELS: Record<ArticleBlockStyle, string> = {
 };
 
 const PLACEMENT_HEADING = /^(The )?(Sun|Moon|Mercury|Venus|Mars|Jupiter|Saturn|Chiron|Uranus|Neptune|Pluto|North Node|South Node)\b/i;
+const EMPTY_HOUSE_HEADING = /^(An|The) empty \d{1,2}(?:st|nd|rd|th) house$/i;
+const EMPTY_HOUSE_GLYPH = "○";
 
 export function isArticleBlockStyle(value: unknown): value is ArticleBlockStyle {
   return typeof value === "string" && (ARTICLE_BLOCK_STYLES as readonly string[]).includes(value);
@@ -43,7 +45,7 @@ export function inferArticleBlockStyle(block: {
   if (/^affirmation\b/i.test(heading)) return "affirmation";
   if (/^note\b/i.test(heading) || /^note:/i.test(body)) return "note";
   if (/^callout\b/i.test(heading)) return "callout";
-  if (PLACEMENT_HEADING.test(heading)) return "placement";
+  if (PLACEMENT_HEADING.test(heading) || EMPTY_HOUSE_HEADING.test(heading)) return "placement";
   if (heading) return "h2";
   return "p";
 }
@@ -51,6 +53,10 @@ export function inferArticleBlockStyle(block: {
 export function placementPlanetFromHeading(heading: string) {
   const match = heading.trim().match(PLACEMENT_HEADING);
   return match?.[2] ?? "";
+}
+
+export function placementGlyphFromHeading(heading: string) {
+  return EMPTY_HOUSE_HEADING.test(heading.trim()) ? EMPTY_HOUSE_GLYPH : "";
 }
 
 export function noteTextFromBody(body: string) {
