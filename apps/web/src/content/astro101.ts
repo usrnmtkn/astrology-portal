@@ -1,7 +1,7 @@
 import {
   astro101HasUnresolvedEphemerisSlot,
   fillAstro101EphemerisSlots
-} from "./astro101Ephemeris";
+} from "./astro101Ephemeris.ts";
 
 export const ASTRO_101_KEY_PREFIX = "education/astro-101/";
 

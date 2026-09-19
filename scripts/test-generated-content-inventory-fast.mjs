@@ -21,5 +21,6 @@ assert.doesNotMatch(generatedContent, /from ["']\.\.\/\.\.\/apps\/web/u, "genera
 assert.match(generatedContent, /await import\("\.\/generated-content-libraries\.js"\)/u, "Write and package-source paths must load content libraries lazily.");
 assert.match(generatedContent, /await loadGeneratedContentLibraries\(\)/u, "POST, PATCH, and DELETE must load content libraries before publication checks.");
 assert.match(fs.readFileSync("api/admin/generated-content-libraries.ts", "utf8"), /packagePublicationAdmissionIssue/u);
+assert.match(fs.readFileSync("apps/web/src/content/astro101.ts", "utf8"), /from "\.\/astro101Ephemeris\.ts"/u, "Astro 101 must import ephemeris with a Node-resolvable .ts specifier on Vercel.");
 
 console.log("Content Studio fast inventory API contract passed.");
