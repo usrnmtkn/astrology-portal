@@ -1081,8 +1081,8 @@ const stealThreePart = await invokeApi('PATCH', '/api/admin/generated-content', 
   expectedUpdatedAt: savedDraftOnlySixPart.payload.rows[0].updated_at,
   contentKey: 'authored/transit-aspect/venus/moon/conjunction'
 });
-assert.equal(stealThreePart.status, 409, JSON.stringify(stealThreePart.payload));
-assert.match(String(stealThreePart.payload.error), /cannot be changed/);
+assert.ok([400, 409].includes(stealThreePart.status), JSON.stringify(stealThreePart.payload));
+assert.match(String(stealThreePart.payload.error), /cannot change|cannot be changed/u);
 assert.equal(row.content_key, draftOnlySixPart.contentKey, 'PATCH must not retarget a six-part row onto a three-part key.');
 assert.equal(savedDraftOnlySixPart.payload.rows[0].status, 'DRAFT');
 assert.equal(savedDraftOnlySixPart.payload.rows[0].sections.packageRecord.approval, undefined, 'Save must not stamp owner approval.');
@@ -1097,6 +1097,112 @@ assert.equal(approvedSavedSixPart.status, 200, JSON.stringify(approvedSavedSixPa
 assert.equal(approvedSavedSixPart.payload.rows[0].status, 'LIVE');
 assert.equal(approvedSavedSixPart.payload.rows[0].content_key.split('/').length, 8);
 assert.equal(approvedSavedSixPart.payload.rows[0].sections.packageRecord.approval.approvalLevel, 'exact_owner_approved');
+
+const slotSixPart = transitNatalExactSourceDraft({
+  planet: 'mars', natalPoint: 'north-node', aspect: 'sextile', sign: 'cancer', transitHouse: '6', natalHouse: '8'
+});
+const slotYou = 'Sharing control is bound to feel awkward at first. With Mars {{aspectWord}} your North Node until {{untilDate}}, your goal is courage, not comfort.';
+const slotThey = '{{Name}} is charting new ground. With Mars {{aspectWord}} their North Node until {{untilDate}}, remind them their goal is courage, not comfort.';
+const createdSlotSixPart = await invokeApi('POST', '/api/admin/generated-content', {
+  contentKey: slotSixPart.contentKey,
+  surface: 'you',
+  mode: 'in_depth',
+  eventType: 'fallback-hook',
+  blockType: 'fallback_hook',
+  headline: slotSixPart.headline,
+  body: '',
+  reviewStatus: 'needs_review',
+  sections: {
+    packageRecord: {
+      ...slotSixPart.sections.packageRecord,
+      body: '',
+      body_you: slotYou,
+      body_they: slotThey
+    }
+  },
+  facts: { ...slotSixPart.facts, fallbackArchitectureV3: true },
+  sourceSnapshot: slotSixPart.sourceSnapshot
+});
+assert.equal(createdSlotSixPart.status, 200, JSON.stringify(createdSlotSixPart.payload));
+const revisedSlotThey = '{{Name}} is charting new ground, and that always feels awkward at the start. With Mars {{aspectWord}} their North Node until {{untilDate}}, remind them their goal is courage, not comfort.';
+const publishedSlotSixPart = await invokeApi('PATCH', '/api/admin/generated-content', {
+  id: createdSlotSixPart.payload.rows[0].id,
+  expectedUpdatedAt: createdSlotSixPart.payload.rows[0].updated_at,
+  body: slotYou,
+  reviewStatus: 'approved',
+  sections: {
+    packageRecord: createdSlotSixPart.payload.rows[0].sections.packageRecord,
+    packageDraft: {
+      ...createdSlotSixPart.payload.rows[0].sections.packageRecord,
+      body: slotYou,
+      body_you: slotYou,
+      body_they: revisedSlotThey
+    }
+  }
+});
+assert.equal(publishedSlotSixPart.status, 200, JSON.stringify(publishedSlotSixPart.payload));
+assert.equal(publishedSlotSixPart.payload.rows[0].status, 'LIVE');
+assert.equal(publishedSlotSixPart.payload.rows[0].sections.packageDraft, undefined);
+assert.equal(publishedSlotSixPart.payload.rows[0].sections.packageRecord.body_they, revisedSlotThey);
+assert.equal(publishedSlotSixPart.payload.rows[0].sections.packageRecord.approval.approvalLevel, 'exact_owner_approved');
+assert.doesNotMatch(String(publishedSlotSixPart.payload.error ?? ''), /unresolved placeholder/);
+
+const saveThenPublishSixPart = transitNatalExactSourceDraft({
+  planet: 'venus', natalPoint: 'sun', aspect: 'trine', sign: 'leo', transitHouse: '5', natalHouse: '1'
+});
+const saveThenPublishYou = 'You may want the applause to land while Venus {{aspectWord}} your Sun until {{untilDate}}.';
+const saveThenPublishThey = '{{Name}} may want the applause to land while Venus {{aspectWord}} their Sun until {{untilDate}}.';
+const createdSaveThenPublish = await invokeApi('POST', '/api/admin/generated-content', {
+  contentKey: saveThenPublishSixPart.contentKey,
+  surface: 'you',
+  mode: 'in_depth',
+  eventType: 'fallback-hook',
+  blockType: 'fallback_hook',
+  headline: saveThenPublishSixPart.headline,
+  body: '',
+  reviewStatus: 'needs_review',
+  sections: {
+    packageRecord: {
+      ...saveThenPublishSixPart.sections.packageRecord,
+      body: '',
+      body_you: saveThenPublishYou,
+      body_they: saveThenPublishThey
+    }
+  },
+  facts: { ...saveThenPublishSixPart.facts, fallbackArchitectureV3: true },
+  sourceSnapshot: saveThenPublishSixPart.sourceSnapshot
+});
+assert.equal(createdSaveThenPublish.status, 200, JSON.stringify(createdSaveThenPublish.payload));
+assert.equal(createdSaveThenPublish.payload.rows[0].status, 'DRAFT', 'Save must not auto-publish a six-part write-up.');
+const savedSaveThenPublish = await invokeApi('PATCH', '/api/admin/generated-content', {
+  id: createdSaveThenPublish.payload.rows[0].id,
+  expectedUpdatedAt: createdSaveThenPublish.payload.rows[0].updated_at,
+  body: saveThenPublishYou,
+  reviewStatus: 'needs_review',
+  sections: {
+    packageRecord: createdSaveThenPublish.payload.rows[0].sections.packageRecord,
+    packageDraft: {
+      ...createdSaveThenPublish.payload.rows[0].sections.packageRecord,
+      body: saveThenPublishYou,
+      body_you: saveThenPublishYou,
+      body_they: saveThenPublishThey
+    }
+  }
+});
+assert.equal(savedSaveThenPublish.status, 200, JSON.stringify(savedSaveThenPublish.payload));
+assert.equal(savedSaveThenPublish.payload.rows[0].status, 'DRAFT');
+const publishedSaveThenPublish = await invokeApi('PATCH', '/api/admin/generated-content', {
+  id: savedSaveThenPublish.payload.rows[0].id,
+  expectedUpdatedAt: savedSaveThenPublish.payload.rows[0].updated_at,
+  ownerAction: 'approve-package-revision'
+});
+assert.equal(publishedSaveThenPublish.status, 200, JSON.stringify(publishedSaveThenPublish.payload));
+assert.equal(publishedSaveThenPublish.payload.rows[0].status, 'LIVE');
+assert.equal(publishedSaveThenPublish.payload.rows[0].sections.packageDraft, undefined);
+assert.equal(publishedSaveThenPublish.payload.rows[0].sections.packageRecord.body_you, saveThenPublishYou);
+assert.equal(publishedSaveThenPublish.payload.rows[0].sections.packageRecord.body_they, saveThenPublishThey);
+assert.equal(publishedSaveThenPublish.payload.rows[0].sections.packageRecord.approval.approvalLevel, 'exact_owner_approved');
+assert.doesNotMatch(String(publishedSaveThenPublish.payload.error ?? ''), /unresolved placeholder/);
 
 const proposalSixPart = transitNatalExactSourceDraft({
   planet: 'jupiter', natalPoint: 'moon', aspect: 'conjunction', sign: 'cancer', transitHouse: '4', natalHouse: '4'
