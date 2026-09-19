@@ -5,10 +5,13 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import {
+  natalAspectComposedSources,
   natalAspectContentKey,
   natalAspectContentKeyPrefix,
   natalAspectDisplayTitle,
   natalAspectMatchesSelection,
+  natalAspectReaderCandidateKeys,
+  natalAspectResolverDependencyKeys,
   natalAspectSelectionOptions,
   natalAspectSourceDraft,
   natalAspectTheyNameVariable,
@@ -90,5 +93,19 @@ assert.match(fs.readFileSync(path.join(repoRoot, "apps/admin/src/NatalPlacementS
 assert.match(finderSource, />Edit source</u, "Every matching exact natal aspect must open the standard editor.");
 assert.match(finderSource, /Write \{selectedTitle\}/u, "A missing exact aspect must offer a contextual writing action.");
 assert.match(finderSource, /onCreateSource\(natalAspectSourceDraft\(\{ first, aspect, second \}\)\)/u, "The contextual action must preserve the selected exact pair.");
+assert.doesNotMatch(finderSource, /No exact passage exists/u, "The finder must not tell the owner that live composed natal aspect writing does not exist.");
+assert.match(finderSource, /composed natal aspect writing/u, "A missing exact passage must explain that You currently uses composed natal aspect writing.");
+assert.match(finderSource, /Live composed sources/u, "A missing exact passage must surface the live composed sources.");
+assert.match(dashboardSource, /natalAspectResolverDependencyKeys/u, "Natal Aspects must fetch the exact and composed keys the You page actually reads.");
+
+const sunMercuryKeys = natalAspectReaderCandidateKeys({ first: "sun", aspect: "conjunction", second: "mercury" });
+assert.ok(sunMercuryKeys.includes("fallback-hook/natal-aspect-lived/sun/conjunction/mercury"));
+assert.ok(sunMercuryKeys.includes("natal.aspect.sun.conjunction.mercury"));
+const sunMercuryComposed = natalAspectComposedSources({ first: "sun", aspect: "conjunction", second: "mercury" });
+assert.ok(sunMercuryComposed.some((source) => source.candidateKeys.includes("fallback-hook/aspect-pair/sun/mercury/conjunction")));
+assert.ok(sunMercuryComposed.some((source) => source.candidateKeys.includes("fallback-template/natal.aspect")));
+const sunSouthNodeComposed = natalAspectComposedSources({ first: "sun", aspect: "square", second: "south-node" });
+assert.ok(sunSouthNodeComposed.some((source) => source.candidateKeys.includes("fallback-hook/aspect-pair/sun/south-node/hard")));
+assert.ok(natalAspectResolverDependencyKeys({ first: "sun", aspect: "conjunction", second: "mercury" }).includes("fallback-template/natal.aspect"));
 
 console.log(`Admin Natal Aspects workspace passed: ${catalogRows.length} exact pair-specific passages are discoverable and editable.`);
