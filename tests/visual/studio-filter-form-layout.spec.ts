@@ -22,7 +22,9 @@ const fixtureRows = [
   }),
   row("fixture-mars-taurus", "sky-placement/article/mars/taurus", "Mars in Taurus fixture", "Cobalt fixture passage.", {
     packageRecord: { contentKey: "sky-placement/article/mars/taurus", headline: "Mars in Taurus fixture", placementArticle: "Cobalt fixture passage." }
-  })
+  }),
+  row("fixture-aspect-square", "fallback-hook/natal-aspect-lived/sun/square/moon", "Sun square Moon fixture", "Indigo fixture passage."),
+  row("fixture-aspect-trine", "fallback-hook/natal-aspect-lived/sun/trine/moon", "Sun trine Moon fixture", "Verdant fixture passage.")
 ];
 
 async function isolate(page: Page, theme = "light") {
@@ -171,6 +173,33 @@ test("placement filters keep the composition, keyword results, advanced filters 
   await expect(editor).toHaveCount(0);
   const query = new URLSearchParams(new URL(page.url()).hash.split("?")[1]);
   expect(Object.fromEntries(query)).toMatchObject({ view: "transits-to-natal", transit: "saturn", sign: "aries", transitHouse: "1", aspect: "square", natal: "moon", natalHouse: "4" });
+});
+
+test("Natal Aspects opens the passage the finder is showing", async ({ page }) => {
+  await isolate(page);
+  const key = (aspect: string) => `fallback-hook/natal-aspect-lived/sun/${aspect}/moon`;
+  await page.goto("/admin/content#exact-content?category=Natal+Aspects&first=sun&aspect=square&second=moon");
+  const finder = page.getByRole("region", { name: "Find natal aspect source writing" });
+  const passages = finder.getByRole("region", { name: "Matching natal aspect passages" });
+  await expect(passages.getByRole("heading", { level: 4, name: "Sun Square Moon", exact: true })).toBeVisible();
+  await expect(passages.getByText(key("square"), { exact: true })).toBeVisible();
+  await expect(passages.getByText(key("trine"), { exact: true })).toHaveCount(0);
+
+  // Edit must open the passage on screen. Opening a neighbouring pairing instead is
+  // the Sun in Virgo to Sun in Aries jump that made phrase editing unusable.
+  await passages.getByRole("button", { name: "Edit source", exact: true }).click();
+  const editor = page.getByRole("dialog", { name: "Generated content editor" });
+  await expect(editor.getByLabel("Content key", { exact: true })).toHaveValue(key("square"));
+  await editor.getByRole("button", { name: "Close", exact: true }).click();
+  await expect(editor).toHaveCount(0);
+
+  // A changed aspect must replace the row rather than leave the previous pairing
+  // on screen for the next click.
+  await finder.getByLabel("Natal aspect type", { exact: true }).selectOption("trine");
+  await expect(passages.getByRole("heading", { level: 4, name: "Sun Trine Moon", exact: true })).toBeVisible();
+  await expect(passages.getByText(key("square"), { exact: true })).toHaveCount(0);
+  await passages.getByRole("button", { name: "Edit source", exact: true }).click();
+  await expect(editor.getByLabel("Content key", { exact: true })).toHaveValue(key("trine"));
 });
 
 test("inventory loading reports progress in the sidebar without an overlay over the form", async ({ page }) => {
