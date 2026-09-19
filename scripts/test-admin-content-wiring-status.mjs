@@ -38,6 +38,14 @@ const sourceOnly = contentWiringStatus({
 assert.equal(sourceOnly.reason, "source-material");
 assert.equal(sourceOnly.label, "Source only");
 
+const learnPage = contentWiringStatus({
+  content_key: "education/astro-101/chapter/01-what-is-a-birth-chart",
+  status: "LIVE",
+  lane: "serving"
+});
+assert.equal(learnPage.reason, "connected");
+assert.equal(learnPage.label, "Used by app");
+
 const connected = contentWiringStatus({
   content_key: "sky.placement.jupiter.leo",
   status: "LIVE",

@@ -92,6 +92,21 @@ assert.equal((await request(["qa-virgo"])).statuses[0].label, "Not live");
 assert.equal((await request([`package:${key}`])).statuses[0].label, "Live");
 const safe = { id: "safe", content_key: "cms/qa/exact", status: "LIVE", lane: "serving", body: "QA reader passage.", provider: "manual-admin" };
 assert.equal(contentLiveStatuses([safe])[0].live, true);
+const astro101 = {
+  id: "astro-101",
+  content_key: "education/astro-101/chapter/01-what-is-a-birth-chart",
+  surface: "education",
+  status: "LIVE",
+  lane: "serving",
+  review_state: null,
+  headline: "What is a birth chart?",
+  body: "A birth chart is a map of the sky.",
+  facts: { slug: "/learn/astro-101/what-is-a-birth-chart" },
+  sections: { packageRecord: { content_role: "education_article", review_status: "needs_review" } }
+};
+assert.equal(contentLiveStatuses([astro101])[0].live, true, "Learn-serving Astro 101 rows stay Live even with an education packageRecord.");
+assert.equal(contentLiveStatuses([astro101], [astro101], () => false)[0].live, true, "Learn does not use the publication ledger for Astro 101.");
+assert.equal(contentLiveStatuses([{ ...astro101, status: "DRAFT" }])[0].live, false);
 for (const extra of [{ facts: { sourceStatus: "legacy" } }, { flags: ["BLOCKLIST_MATCH"], facts: { tldrStore: {} } }, { sections: { body: "Imported from approved project source material." } }, { review_state: "needs-review" }]) {
   assert.equal(contentLiveStatuses([{ ...safe, ...extra }])[0].live, false, JSON.stringify(extra));
 }

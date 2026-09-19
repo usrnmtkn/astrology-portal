@@ -179,6 +179,40 @@ export function astro101ReaderPath(kind: Astro101Kind, slug: string) {
   return `/learn/astro-101/${safe}`;
 }
 
+export function astro101ResolvedReaderPath(contentKey: string, facts: unknown) {
+  const slug = astro101SlugFromFacts(facts).trim();
+  if (slug.startsWith("/learn/")) return slug;
+  const match = contentKey.match(/^education\/astro-101\/([^/]+)\/(.+)$/u);
+  if (match && isAstro101Kind(match[1])) return astro101ReaderPath(match[1], match[2]);
+  return slug;
+}
+
+export function astro101IsLiveOnLearn(row: {
+  content_key?: string | null;
+  contentKey?: string | null;
+  surface?: string | null;
+  status?: string | null;
+  lane?: string | null;
+  review_state?: string | null;
+  headline?: string | null;
+  body?: string | null;
+  sections?: unknown;
+  facts?: unknown;
+}) {
+  const key = row.content_key ?? row.contentKey ?? "";
+  if (!isAstro101ContentKey(key) && row.surface !== "education") return false;
+  if ((row.status ?? "").toUpperCase() !== "LIVE") return false;
+  if ((row.lane ?? "serving") !== "serving") return false;
+  if (row.review_state) return false;
+  const facts = record(row.facts) ?? {};
+  return astro101PageIsServable({
+    headline: row.headline,
+    body: row.body,
+    sections: row.sections,
+    facts: { ...facts, slug: astro101ResolvedReaderPath(key, facts) }
+  });
+}
+
 export function astro101HasReaderCopy(row: {
   body?: string | null;
   sections?: unknown;

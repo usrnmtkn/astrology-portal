@@ -95,7 +95,8 @@ function isSourceMaterial(row: ContentWiringRow) {
 }
 
 function isKnownRenderedKey(contentKey: string) {
-  return contentKey.startsWith("sky.placement.")
+  return contentKey.startsWith("education/astro-101/")
+    || contentKey.startsWith("sky.placement.")
     || contentKey.startsWith("sky.aspect.")
     || contentKey.startsWith("cms/")
     || contentKey.startsWith("compatibility.")
