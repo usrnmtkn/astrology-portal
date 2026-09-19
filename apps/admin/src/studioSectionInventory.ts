@@ -194,5 +194,5 @@ export function studioInventoryRequestPath(query: StudioInventoryQuery, pageSize
   if (query.mode) params.set("mode", query.mode);
   for (const prefix of query.prefixes) params.append("contentKeyPrefix", prefix);
   if (cursor) params.set("cursor", cursor);
-  return `/api/admin/generated-content?${params}`;
+  return `/api/admin/generated-content-inventory?${params}`;
 }

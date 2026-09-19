@@ -30,7 +30,7 @@ assert.match(dashboard, /inventory_only\?: boolean/u);
 assert.match(dashboard, /studioInventoryRequestPath\(/u);
 assert.match(fs.readFileSync("apps/admin/src/studioSectionInventory.ts", "utf8"), /view: "inventory"/u);
 assert.match(dashboard, /if \(row\.inventory_only\) \{[\s\S]{0,420}hydrateGeneratedContentRow\(row\)/u);
-assert.match(dashboard, /generated-content\?id=\$\{encodeURIComponent\(row\.id\)\}/u);
+assert.match(dashboard, /generated-content-inventory\?id=\$\{encodeURIComponent\(publishedTarget\)\}/u);
 assert.match(dashboard, /if \(!hydrated \|\| hydrated\.inventory_only\)/u);
 assert.match(dashboard, /async function openDailyGlancePair\(selector: string\)[\s\S]{0,700}hydrateGeneratedContentRow\(pair\.headlineRow/u);
 
