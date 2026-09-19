@@ -14,6 +14,7 @@ type Props = {
 };
 
 const today = () => new Date().toISOString().slice(0, 10);
+const titleWord = (value: string) => value.replace(/(^|[-_])([a-z])/gu, (_match, prefix: string, char: string) => (prefix ? " " : "") + char.toUpperCase());
 
 async function contentStudioCredential() {
   const session = await loadOwnerSessionAccessToken();
@@ -32,9 +33,11 @@ export default function SkyArticleAiWriter({ planet, sign, field, currentText, d
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
   const isSunSeason = planet.toLowerCase() === 'sun';
+  const signName = titleWord(sign);
+  const planetName = titleWord(planet);
   const surfaceName = isSunSeason
-    ? `${sign} season article`
-    : `${planet.replace(/-/gu, ' ')} in ${sign} current-sky article`;
+    ? `${signName} season article`
+    : `${planetName} in ${signName} current-sky article`;
 
   useEffect(() => {
     setInstruction('');
@@ -73,32 +76,32 @@ export default function SkyArticleAiWriter({ planet, sign, field, currentText, d
 
   return <details className="admin-workspace-details">
     <AdminDisclosureSummary>AI writing</AdminDisclosureSummary>
-    <p>This generator revises the evergreen {surfaceName}. {isSunSeason ? `It writes about ${sign} season for all readers, not a natal Sun in ${sign} personality description.` : 'It writes about the current-sky transit, not a natal personality description.'} It does not put a specific year's story into the reusable source.</p>
+    <p>This generator rewrites the reusable {surfaceName}. {isSunSeason ? `It writes about ${signName} season for all readers, not a natal Sun in ${signName} personality description.` : 'It writes about the current-sky transit, not a natal personality description.'} It does not put a specific year's story into the reusable source.</p>
     <div className="admin-sky-writing-source-actions" role="group" aria-label="Choose AI article destination">
       <StudioButton type="button" disabled={disabled || busy} onClick={openDatedArticleGenerator}>Open dated authored article generator</StudioButton>
-      <small className="admin-field-hint">Use the dated article generator for a specific year such as {sign} season {referenceDate.slice(0, 4)}. That workflow saves a separate authored edition for the calculated transit window.</small>
+      <small className="admin-field-hint">Use the dated article generator for a specific year such as {signName} season {referenceDate.slice(0, 4)}. That workflow saves a separate authored edition for the calculated transit window.</small>
     </div>
     <label className="admin-field-wide">
       <span>Reference date</span>
       <StudioInput type="date" value={referenceDate} disabled={disabled || busy} onChange={event => setReferenceDate(event.target.value)} />
-      <small className="admin-field-hint">Choose a date when {planet.replace(/-/gu, ' ')} is in {sign}. The date validates the sky placement; the evergreen draft will not turn that year's dates or aspects into reusable prose.</small>
+      <small className="admin-field-hint">Choose a date when {planetName} is in {signName}. The date validates the sky placement; the draft will not turn that year's dates or aspects into the reusable article.</small>
     </label>
     <label className="admin-review-copy-editor">
-      <span>Optional direction for the evergreen draft</span>
+      <span>Optional direction for the reusable article</span>
       <StudioTextarea
         value={instruction}
         disabled={disabled || busy}
         maxLength={6000}
         rows={4}
         className="admin-ai-writing-instruction"
-        placeholder="Keep the opening, make the middle more concrete, and preserve the evergreen meaning."
+        placeholder="Keep the opening, make the middle more concrete, and keep the meaning reusable for any year."
         onChange={event => setInstruction(event.target.value)}
       />
       <small className="admin-field-hint">Leave this blank to revise from the current article, calculated sky validation, and approved writing memory.</small>
     </label>
     <div className="admin-sky-writing-source-actions" role="group" aria-label="AI article writing actions">
       <StudioButton className="admin-primary-button" type="button" disabled={disabled || busy || !referenceDate} onClick={generate}>
-        {busy ? 'Generating draft…' : currentText.trim() ? 'Generate evergreen revision' : 'Generate evergreen draft'}
+        {busy ? 'Writing a suggestion…' : currentText.trim() ? 'Rewrite the reusable article' : 'Write the reusable article'}
       </StudioButton>
       {draft && <StudioButton type="button" disabled={disabled || busy} onClick={() => { onUse(draft); setDraft(''); }}>Use this draft</StudioButton>}
       {draft && <StudioButton type="button" disabled={busy} onClick={() => { setDraft(''); setError(''); }}>Discard</StudioButton>}
@@ -108,7 +111,7 @@ export default function SkyArticleAiWriter({ planet, sign, field, currentText, d
     {draft && <label className="admin-review-copy-editor">
       <span>AI suggestion</span>
       <StudioTextarea value={draft} readOnly aria-label="AI article suggestion" />
-      <small className="admin-field-hint">Use this draft only copies the suggestion into the evergreen article editor.</small>
+      <small className="admin-field-hint">Use this draft only copies the suggestion into the reusable article editor.</small>
     </label>}
   </details>;
 }

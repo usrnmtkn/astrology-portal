@@ -42,7 +42,9 @@ try{
  assert.match(ui,/rows=\{4\}[\s\S]{0,120}className="admin-ai-writing-instruction"/u,'AI direction field must use the canonical compact textarea class.');
  assert.match(studioCss,/\.admin-ai-writing-instruction\s*\{[^}]*min-height:\s*var\(--studio-compact-textarea-height\)/u,'AI direction field compact sizing must live in Studio CSS.');
  assert.match(studioTheme,/--studio-compact-textarea-height:\s*96px/u,'AI direction field must preserve the approved 96px compact height token.');
- assert.match(ui,/className="admin-primary-button"[\s\S]{0,220}Generate evergreen revision/u,'Evergreen AI writer must expose a visible primary generate action.');
+ assert.match(ui,/className="admin-primary-button"[\s\S]{0,220}Rewrite the reusable article/u,'The reusable-article writer must expose a visible primary generate action.');
+ assert.match(ui,/currentText\.trim\(\) \? 'Rewrite the reusable article' : 'Write the reusable article'/u,'The primary action must name what it produces in both the empty and populated states.');
+ assert.doesNotMatch(ui,/evergreen/iu,'The reusable-article panel must not show the internal word evergreen to the owner.');
  assert.match(ui,/Open dated authored article generator/u,'Placement editor must expose the dated authored-article path.');
  assert.match(ui,/sky\/article-template\/\$\{planet\}\/\$\{sign\}/u,'Dated-article action must target the matching authored article template.');
  assert.match(endpoint,/occurrence-specific facts into the evergreen prose/u,'Evergreen generation must reject year-specific occurrence facts.');
