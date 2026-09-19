@@ -2,6 +2,7 @@ import { useState } from "react";
 import { StudioButton, StudioTabs } from "./StudioControls";
 import { AdminDisclosureSummary, AdminSelect } from "./AdminNativeControls";
 import ContentLiveStatusBadge from "./ContentLiveStatus";
+import { studioServingStatusRow } from "./studioServingStatus";
 import EmptyHouseReaderPreview from "./EmptyHouseReaderPreview";
 import NatalPlacementSourceEditor, { type NatalEditableRow, type NatalSourceEdits } from "./NatalPlacementSourceEditor";
 import NatalPlacementReaderPreview, { natalPlacementOverrideDraft } from "./NatalPlacementReaderPreview";
@@ -166,7 +167,9 @@ export default function NatalPlacementSourceFinder({ house, isLoading, motion, o
         <div className="admin-natal-source-card-copy">
           <div className="admin-natal-source-card-heading">
             <h4>{source.label}</h4>
-            {savedRow && <ContentLiveStatusBadge row={savedRow} />}
+            {(!isOptionalExactOverride || savedRow) && (
+              <ContentLiveStatusBadge row={studioServingStatusRow(savedRow, source.key)} />
+            )}
           </div>
           <p>{source.scope}</p>
           <p className="admin-natal-source-key"><span>Source key</span><code>{source.key}</code></p>
@@ -194,7 +197,7 @@ export default function NatalPlacementSourceFinder({ house, isLoading, motion, o
         <div className="admin-natal-source-card-copy">
           <div className="admin-natal-source-card-heading">
             <h4>{label}</h4>
-            {savedRow && <ContentLiveStatusBadge row={savedRow} />}
+            <ContentLiveStatusBadge row={studioServingStatusRow(savedRow, contentKey)} />
           </div>
           <p>{emptyHouseSourceScope(contentKey)}</p>
           <p className="admin-natal-source-key"><span>Source key</span><code>{contentKey}</code></p>

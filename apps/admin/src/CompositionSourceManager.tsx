@@ -7,6 +7,7 @@ import type { CompositionMapRow, CompositionMapTemplate } from "./compositionMap
 import { compositionSourceFamily, compositionSourcesForSurface } from "./compositionSurfaceSources";
 import { emptyHouseRulers, emptyHouseSourceKeys } from "./emptyHouseSources";
 import ContentLiveStatusBadge from "./ContentLiveStatus";
+import { studioServingStatusRow } from "./studioServingStatus";
 
 type Props = {
   surfaceId: string;
@@ -78,7 +79,7 @@ export default function CompositionSurfaceSources({ surfaceId, rows, templates, 
     </div>
     {loadError && <p role="alert">{loadError} <StudioButton type="button" onClick={() => setRetry((value) => value + 1)}>Retry source</StudioButton></p>}
     {selected ? <article className="admin-composition-source-card">
-      <ContentLiveStatusBadge row={selected} />
+      <ContentLiveStatusBadge row={studioServingStatusRow(selected, selected.content_key)} />
       {copy.map((body, index) => <p key={index} className="admin-composition-source-copy">{body}</p>)}
       {!copy.length && <p>Open this source to load its complete writing.</p>}
       <StudioButton type="button" onClick={() => onEditRow(selected)}>Edit selected source</StudioButton>

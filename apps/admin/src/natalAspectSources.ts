@@ -164,13 +164,7 @@ export function natalAspectResolverDependencyKeys(selection: NatalAspectSelectio
   ])];
 }
 
-export function natalAspectComposedStatusRow(
-  savedRow: { id?: string | null; status?: string | null; content_key?: string } | undefined,
-  contentKey: string
-) {
-  if (savedRow && (savedRow.status ?? "").toUpperCase() === "LIVE" && savedRow.id) return savedRow;
-  return { id: `package:${contentKey}` };
-}
+export { studioServingStatusRow as natalAspectComposedStatusRow } from "./studioServingStatus.ts";
 
 export function natalAspectSourceDraft(selection: NatalAspectSelection): NatalAspectSourceDraft {
   const contentKey = natalAspectContentKey(selection);

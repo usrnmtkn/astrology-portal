@@ -12,8 +12,9 @@ assert.match(client, /if \(!saveMayHaveCompleted\(error\)\) throw error/u, "Only
 assert.match(client, /if \(verified\) return verified/u, "A late successful save must resolve as saved after verification.");
 assert.doesNotMatch(client, /catch[\s\S]{0,300}method:\s*"PATCH"/u, "Timeout recovery must never retry the write itself.");
 
-assert.match(status, /editorialStatusPresentation/u, "Live-status failures must have a saved editorial-state fallback.");
-assert.match(status, /Reader serving status could not be verified\. Showing the saved editorial state\./u);
-assert.match(status, /if \(editorial\)[\s\S]*editorial\.label/u, "Known Draft/Ready/etc. rows must not degrade to Unavailable when only the live check fails.");
+assert.match(status, /editorialStatusPresentation/u, "Successful not-live checks still present the saved editorial state.");
+assert.match(status, /Reader serving status could not be verified\. Refresh to retry\./u);
+assert.doesNotMatch(status, /Showing the saved editorial state/u, "A failed serving check must not look like Draft, Ready, or Live.");
+assert.match(status, /if \(status === "unavailable"\)[\s\S]*?>Unavailable<\/StudioStatusBadge>/u, "Failed serving checks must stay Unavailable.");
 
 console.log("Content Studio timeout recovery contract passed.");

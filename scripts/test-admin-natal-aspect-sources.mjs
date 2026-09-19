@@ -99,6 +99,10 @@ assert.match(finderSource, /composed natal aspect writing/u, "A missing exact pa
 assert.match(finderSource, /Live composed sources/u, "A missing exact passage must surface the live composed sources.");
 assert.match(dashboardSource, /natalAspectResolverDependencyKeys/u, "Natal Aspects must fetch the exact and composed keys the You page actually reads.");
 assert.match(finderSource, /natalAspectComposedStatusRow/u, "Composed natal sources must badge the serving package, not a Draft CMS mirror.");
+assert.match(fs.readFileSync(path.join(repoRoot, "apps/admin/src/NatalPlacementSourceFinder.tsx"), "utf8"), /studioServingStatusRow/u, "Natal Chart source cards must badge the serving package when the CMS row is only a Draft mirror.");
+assert.match(dashboardSource, /studioServingStatusRow\(resolved\.savedRow/u, "Sky assembly source cards must badge the serving package when the CMS row is only a Draft mirror.");
+assert.match(fs.readFileSync(path.join(repoRoot, "apps/admin/src/SkyPlacementComposition.tsx"), "utf8"), /studioServingStatusRow/u);
+assert.match(fs.readFileSync(path.join(repoRoot, "apps/admin/src/CompositionSourceManager.tsx"), "utf8"), /studioServingStatusRow/u);
 assert.equal(
   natalAspectComposedStatusRow({ id: "cms-draft", status: "DRAFT", content_key: "fallback-hook/aspect-pair/sun/mercury/conjunction" }, "fallback-hook/aspect-pair/sun/mercury/conjunction").id,
   "package:fallback-hook/aspect-pair/sun/mercury/conjunction"

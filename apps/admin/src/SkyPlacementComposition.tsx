@@ -8,6 +8,7 @@ import SkyIngressComposer from "./SkyIngressComposer";
 import SkyWritingSystemDetails from "./SkyWritingSystemDetails";
 import { effectivePackageRecord } from "./skyFallbackWorkspace";
 import ContentLiveStatusBadge from "./ContentLiveStatus";
+import { studioServingStatusRow } from "./studioServingStatus";
 import { skyPlacementAssembly, skyPlacementAssemblyFields, skyRetrogradeBodies as retrogradeBodies, type SkyPlacementAssemblyField, type SkyPlacementWriting, type SkyPlacementSelection as Selection } from "./skyPlacementAssembly";
 import { openContextualReaderHref } from "./adminReaderDestinations";
 import SkyPlacementVariableKey, { SkyVariableText } from "./SkyPlacementVariableKey";
@@ -144,7 +145,7 @@ export default function SkyPlacementComposition({ rows, selection, onEditRow, on
     {availableRows.length > 0 && <>
       <div className="admin-sky-placement-sources" aria-label="Selected sources">
         {availableRows.map(row => <div key={row.content_key}>
-          <strong>{row.headline || row.content_key}</strong><ContentLiveStatusBadge row={row} />
+          <strong>{row.headline || row.content_key}</strong><ContentLiveStatusBadge row={studioServingStatusRow(row, row.content_key)} />
           <p>{scope(row)}</p>
         </div>)}
       </div>

@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import fs from "node:fs";
 import {
   natalPlacementExactKey,
   natalPlacementLabel,
@@ -172,6 +173,12 @@ assert.match(
   mercuryVirgoSixthRetrograde.body,
   /retrograde in the birth chart/u,
   "Composed natal placements must retain the calculated retrograde modifier."
+);
+
+assert.match(
+  fs.readFileSync(new URL("../apps/admin/src/NatalPlacementSourceFinder.tsx", import.meta.url), "utf8"),
+  /studioServingStatusRow/u,
+  "Natal Chart source cards must badge the serving package when the CMS row is only a Draft mirror."
 );
 
 console.log("Natal placement source finder maps motion-specific optional overrides and renders effective You/Friend reader copy with source provenance.");
