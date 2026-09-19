@@ -41,24 +41,45 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
     await expect(preview.getByText("Complete composition", { exact: true })).toBeVisible();
     await expect(preview.locator("blockquote")).toHaveText(`${intro}\n\n${sign}`);
     await expect(finder.getByText("Loading House Transit passages…", { exact: true })).toHaveCount(0);
+    // The tab panel carries the surface, and passage rows inside it are flat and
+    // divided rather than nested cards. Asserting a bordered card per row made this
+    // spec fail on every viewport after that treatment shipped.
+    const panel = page.locator('.studio-tab-panel[role="tabpanel"]').filter({ has: finder });
+    const surface = await panel.evaluate(el => {
+      const s = getComputedStyle(el);
+      return { padding: parseFloat(s.paddingLeft), background: s.backgroundColor };
+    });
+    expect(surface.padding).toBeGreaterThan(0);
+    expect(surface.background).not.toBe("rgba(0, 0, 0, 0)");
+
     const cards = finder.locator(".admin-natal-source-card");
+    expect(await cards.count()).toBeGreaterThan(1);
+    let dividedRows = 0;
     for (const card of await cards.all()) {
       const metrics = await card.evaluate(el => {
         const s = getComputedStyle(el), q = el.querySelector("blockquote")!, qs = getComputedStyle(q);
         const p = document.querySelector('.admin-natal-placement-finder-heading p:not(.admin-eyebrow)')!, ps = getComputedStyle(p);
-        return { padding: s.paddingLeft, border: s.borderTopWidth, radius: s.borderRadius, background: s.backgroundColor,
+        return { inlinePadding: parseFloat(s.paddingLeft), blockPadding: parseFloat(s.paddingTop), radius: parseFloat(s.borderRadius),
+          background: s.backgroundColor, followsRow: Boolean(el.previousElementSibling?.classList.contains("admin-natal-source-card")),
+          divider: parseFloat(s.borderTopWidth),
           margin: qs.margin, whiteSpace: qs.whiteSpace, typography: [qs.fontFamily, qs.fontSize, qs.fontWeight, qs.lineHeight, qs.letterSpacing],
           bodyTypography: [ps.fontFamily, ps.fontSize, ps.fontWeight, ps.lineHeight, ps.letterSpacing], overflow: el.scrollWidth - el.clientWidth };
       });
-      expect(parseFloat(metrics.padding)).toBeGreaterThan(0);
-      expect(parseFloat(metrics.border)).toBeGreaterThan(0);
-      expect(parseFloat(metrics.radius)).toBeGreaterThan(0);
-      expect(metrics.background).not.toBe("rgba(0, 0, 0, 0)");
+      expect(metrics.inlinePadding).toBe(0);
+      expect(metrics.radius).toBe(0);
+      expect(metrics.background).toBe("rgba(0, 0, 0, 0)");
+      expect(metrics.blockPadding).toBeGreaterThan(0);
+      if (metrics.followsRow) {
+        expect(metrics.divider).toBeGreaterThan(0);
+        dividedRows += 1;
+      }
       expect(metrics.margin).toBe("0px");
       expect(metrics.whiteSpace).toBe("pre-wrap");
       expect(metrics.typography).toEqual(metrics.bodyTypography);
       expect(metrics.overflow).toBeLessThanOrEqual(1);
     }
+    // Without a divided pair the flat treatment would pass on an unseparated list.
+    expect(dividedRows).toBeGreaterThan(0);
     await expect(preview.getByRole("heading", { level: 3 })).toHaveText("What you see");
     await expect(preview.getByRole("heading", { level: 4 })).toHaveText("Sun in Aries through your 1st house");
     expect(await preview.evaluate(el => Boolean(el.compareDocumentPosition(el.nextElementSibling!) & Node.DOCUMENT_POSITION_FOLLOWING))).toBe(true);
