@@ -1,4 +1,4 @@
-import { StudioButton } from "./StudioControls";
+import { AdminDataTable, StudioButton } from "./studio-ds/components";
 import { AdminPaginatedCollection } from "./AdminPaginatedCollection";
 
 export type PackagedHookCatalogItem = {
@@ -30,25 +30,25 @@ export function PackagedHookCatalogResults({ items, savedKeys, resetKey, onOpen 
       </header>
       <AdminPaginatedCollection items={items} label="Packaged source phrases" pageSize={24} resetKey={resetKey}>
         {(visibleItems) => (
-          <div className="admin-fallback-row-list">
+          <AdminDataTable label="Packaged source phrases" columns={["Phrase", "Source key", "Status", "Edit"]}>
             {visibleItems.map((item) => {
               const contentKey = canonicalKey(item.key);
               const saved = savedKeys.has(item.key) || savedKeys.has(contentKey);
               return (
-                <article key={item.key} className="admin-fallback-row admin-source-only-row">
-                  <div className="admin-fallback-row-main">
-                    <p className="admin-eyebrow">{item.section} / packaged source</p>
-                    <h3>{item.label}</h3>
-                    <code>{contentKey}</code>
-                  </div>
-                  <div className="admin-fallback-row-actions">
-                    <span className="admin-field-hint">{saved ? "Saved source" : "Source only"}</span>
+                <tr key={item.key}>
+                  <th scope="row">
+                    <span className="admin-content-row-title">{item.label}</span>
+                    <small className="admin-field-hint">{item.section} / packaged source</small>
+                  </th>
+                  <td><code className="admin-content-row-key">{contentKey}</code></td>
+                  <td><span className="admin-field-hint">{saved ? "Saved source" : "Source only"}</span></td>
+                  <td>
                     <StudioButton type="button" onClick={() => onOpen(item)}>{saved ? "Edit source" : "View source"}</StudioButton>
-                  </div>
-                </article>
+                  </td>
+                </tr>
               );
             })}
-          </div>
+          </AdminDataTable>
         )}
       </AdminPaginatedCollection>
     </section>

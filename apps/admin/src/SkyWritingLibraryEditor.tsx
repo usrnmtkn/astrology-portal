@@ -299,11 +299,8 @@ export default function SkyWritingLibraryEditor({ contentKey, planet, sign, sour
         disabled={disabled || (!skyWritingLibrarySourceModuleEnabled(workingComposition, initialSourceId) && workingComposition.modules.length >= 32)}
         onClick={() => onChange(toggleSkyWritingLibrarySourceModule(workingComposition, initialSourceId, initialField.label))}
       >{skyWritingLibrarySourceModuleEnabled(workingComposition, initialSourceId) ? "Remove from fallback" : "Include in fallback"}</StudioButton>}
-      <details className="admin-workspace-details">
-        <AdminDisclosureSummary>Source details</AdminDisclosureSummary>
-        <p><code>{contentKey}#ingress.sources.{initialSourceId}</code></p>
-        <StudioButton type="button" disabled={disabled} onClick={() => onAdvancedSource(initialSourceId)}>Advanced source tools</StudioButton>
-      </details>
+      <p className="admin-natal-source-key"><span>Source key</span><code>{contentKey}#ingress.sources.{initialSourceId}</code></p>
+      <StudioButton type="button" disabled={disabled} onClick={() => onAdvancedSource(initialSourceId)}>Advanced source tools</StudioButton>
     </section>
     {phraseCatalog}
     </>;
@@ -349,11 +346,7 @@ export default function SkyWritingLibraryEditor({ contentKey, planet, sign, sour
                 disabled={disabled || (!included && workingComposition.modules.length >= 32)}
                 onClick={() => onChange(toggleSkyWritingLibrarySourceModule(workingComposition, item.id, item.label))}
               >{included ? "Remove from fallback" : "Include in fallback"}</StudioButton>}
-              {!item.shared || source ? <details className="admin-workspace-details">
-                <AdminDisclosureSummary>Source details</AdminDisclosureSummary>
-                <p><code>{contentKey}#ingress.sources.{item.id}</code> · scope: {item.kind}</p>
-                <StudioButton type="button" disabled={disabled} onClick={() => onAdvancedSource(item.id)}>Advanced source tools</StudioButton>
-              </details> : null}
+              {!item.shared || source ? <StudioButton type="button" disabled={disabled} onClick={() => onAdvancedSource(item.id)}>Advanced source tools</StudioButton> : null}
             </>}
           />;
         })}

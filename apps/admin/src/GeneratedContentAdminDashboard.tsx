@@ -6697,7 +6697,6 @@ export function GeneratedContentAdminDashboard() {
             {natalChartWorkspaceActive
               ? (
                 <>
-                  <div className="admin-page-utilities"><StudioButton type="button" onClick={() => navigateAdminPage("compositionMap", new URLSearchParams({ surface: "natal-empty-house" }))}>Empty houses</StudioButton></div>
                   {renderNatalPlacementSourceFinder()}
                   {renderEditor()}
                 </>
@@ -7664,6 +7663,7 @@ export function GeneratedContentAdminDashboard() {
             else natalUnsavedSourcesRef.current.delete(key);
           }}
           onOpenSource={(contentKey, label, previewTemplate) => void openContentKeyRow(contentKey, label, previewTemplate)}
+          onOpenEmptyHouseCompositions={() => navigateAdminPage("compositionMap", new URLSearchParams({ surface: "natal-empty-house" }))}
           onSelectionChange={updateNatalPlacementSelection}
           planet={natalPlacementPlanet}
           rows={rows}

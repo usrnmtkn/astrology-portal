@@ -113,5 +113,7 @@ assert.doesNotMatch(dashboardSource, /from\s+["'][^"']*bundled-(?:deferred|sky)-
 assert.doesNotMatch(dashboardSource, /<PackagedHookCatalogResults[\s\S]{0,400}loading=\{isLoading\}/u, "A global dashboard request must not disable every packaged source action.");
 const hookCatalogSource = fs.readFileSync(path.join(repoRoot, "apps/admin/src/PackagedHookCatalogResults.tsx"), "utf8");
 assert.doesNotMatch(hookCatalogSource, /disabled=\{isLoading\}/u, "Loading the dashboard must not disable packaged source editing.");
+assert.match(hookCatalogSource, /AdminDataTable/u, "Packaged source phrases must use the shared Studio data table instead of uncontained fallback rows.");
+assert.doesNotMatch(hookCatalogSource, /admin-fallback-row/u, "Packaged source phrases must not reuse the canvas fallback-row stack.");
 
 console.log(`Admin hook catalog packaging passed: ${sourceBodies.size} bodies remain byte-identical across four deduplicated domain packages.`);

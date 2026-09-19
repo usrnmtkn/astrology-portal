@@ -5798,7 +5798,8 @@ test("Natal Empty Houses opens exact sources and supports repeated edits and ret
     {content_key:"fallback-vocab/empty-house-ruler-jurisdiction/10",headline:"Tenth house jurisdiction",role:"vocabulary"}
   ]});
   await expectAdminRouteLoads(page,"/admin/content#exact-content?category=Natal+Chart");
-  await page.getByRole("button",{name:"Empty houses",exact:true}).click();
+  await page.getByRole("tab", { name: "Empty houses", exact: true }).click();
+  await page.getByRole("button",{name:"Open composition sources",exact:true}).click();
   const manager=page.getByRole("region",{name:"Manage composition sources"});
   await expect(manager.getByLabel("Empty house",{exact:true})).toBeVisible();
   await manager.getByLabel("Empty house cusp sign").selectOption("gemini");

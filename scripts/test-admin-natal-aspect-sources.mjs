@@ -85,6 +85,8 @@ assert.ok(firstLabelIndex >= 0 && aspectLabelIndex > firstLabelIndex && secondLa
 assert.match(finderSource, /className=\{surfaceSection\}|studio-surface studio-section/u, "Natal aspect selectors and matching passages must use the shared Studio card surface.");
 assert.doesNotMatch(dashboardSource, /Personal Transit filters|House Transit filters/u, "Tab-panel transit finders must not add a nested card around heading and fields.");
 assert.doesNotMatch(fs.readFileSync(path.join(repoRoot, "apps/admin/src/NatalPlacementSourceFinder.tsx"), "utf8"), /surfaceSection/u, "Natal Chart finders sit in a tab panel and must stay flat.");
+assert.doesNotMatch(dashboardSource, /admin-page-utilities[\s\S]*Empty houses/u, "Natal Chart must not keep a duplicate Empty houses shortcut above the writing tabs.");
+assert.match(fs.readFileSync(path.join(repoRoot, "apps/admin/src/NatalPlacementSourceFinder.tsx"), "utf8"), /Open composition sources/u, "Empty house composition-map access belongs inside the Empty houses tab.");
 assert.match(finderSource, />Edit source</u, "Every matching exact natal aspect must open the standard editor.");
 assert.match(finderSource, /Write \{selectedTitle\}/u, "A missing exact aspect must offer a contextual writing action.");
 assert.match(finderSource, /onCreateSource\(natalAspectSourceDraft\(\{ first, aspect, second \}\)\)/u, "The contextual action must preserve the selected exact pair.");
