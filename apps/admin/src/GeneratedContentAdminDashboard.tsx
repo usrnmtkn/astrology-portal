@@ -3050,7 +3050,7 @@ export function GeneratedContentAdminDashboard() {
   const [categoryFilter, setCategoryFilter] = useState<AdminContentCategoryFilter>(() => {
     const category = parseAdminHash().params.get("category");
     return category && categoryFilters.some((filter) => filter.key === category)
-      ? category
+      ? (category as AdminContentCategoryFilter)
       : "all";
   });
   const [showReferenceRows, setShowReferenceRows] = useState(false);
