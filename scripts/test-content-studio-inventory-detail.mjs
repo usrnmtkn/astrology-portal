@@ -18,10 +18,11 @@ assert.doesNotMatch(inventorySelect, /^\s*"published_at",\s*$/mu, "Inventory pro
 assert.match(inventorySelect, /source_review_status:source_snapshot->>review_status/u);
 assert.match(inventorySelect, /package_content_role:sections->packageRecord->>content_role/u);
 assert.match(api, /inventory_only: true/u);
-assert.match(api, /view === "inventory" && !id && !contentKey && !contentKeyPrefix/u);
+assert.match(api, /view === "inventory" && !id && !contentKey && contentKeys\.length === 0/u);
 
 assert.match(dashboard, /inventory_only\?: boolean/u);
-assert.match(dashboard, /limit=\$\{pageSize\}&view=inventory/u);
+assert.match(dashboard, /studioInventoryRequestPath\(/u);
+assert.match(fs.readFileSync("apps/admin/src/studioSectionInventory.ts", "utf8"), /view: "inventory"/u);
 assert.match(dashboard, /if \(row\.inventory_only\) \{[\s\S]{0,420}hydrateGeneratedContentRow\(row\)/u);
 assert.match(dashboard, /generated-content\?id=\$\{encodeURIComponent\(row\.id\)\}/u);
 assert.match(dashboard, /if \(!hydrated \|\| hydrated\.inventory_only\)/u);

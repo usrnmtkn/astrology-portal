@@ -24,6 +24,12 @@ import { lunarContentIdentity } from "./lunarCalendarContent";
 import type { SkyForecastPeriod } from "./skyForecastTemplates";
 import ContentLiveStatusBadge, { ContentLiveStatusProvider, useContentLiveStatusLoader, useContentLiveStatusResults, type LiveStatus } from "./ContentLiveStatus";
 import { mergeContentInventory } from "./contentStudioState";
+import {
+  studioInventoryQuery,
+  studioInventoryQueryKey,
+  studioInventoryRequestPath,
+  type StudioInventoryQuery
+} from "./studioSectionInventory";
 import { isContentStudioReferenceSource } from "../../web/src/content/contentStudioSourceRole";
 import {
   ArrowLeft,
@@ -2790,37 +2796,40 @@ async function loadGeneratedContentPage(path: string, secret: string, signal?: A
 
 async function loadAllGeneratedContentRows(
   secret: string,
-  visibility: "editorial" | "all" = "editorial",
-  scope: "all" | "compatibility" = "all",
+  query: StudioInventoryQuery,
   onPage?: (rows: AdminGeneratedContentRow[], complete: boolean) => void,
   signal?: AbortSignal
 ) {
-  const pageSize = scope === "compatibility" ? 500 : 400;
+  const pageSize = query.scope === "compatibility" ? 500 : 400;
   const allRows: AdminGeneratedContentRow[] = [];
-  let cursor: string | null = null;
-  // Every onPage call re-derives the whole dashboard, so with ~24 pages of a
-  // 9,000-row inventory the page did that work 24 times. Emit the first page
-  // (so the table appears), then at most every 600 ms, and always the last.
+  const prefixPages: Array<string | null> = query.prefixes.length ? query.prefixes : [null];
   let lastEmitAt = 0;
 
-  for (let page = 0; page < 125; page += 1) {
-    if (signal?.aborted) throw signal.reason ?? new Error("Content inventory load was cancelled.");
-    const result = await loadGeneratedContentPage(
-      `/api/admin/generated-content?status=all&visibility=${visibility}&scope=${scope}&limit=${pageSize}&view=inventory${cursor ? `&cursor=${encodeURIComponent(cursor)}` : ""}`,
-      secret,
-      signal
-    );
-    const pageRows = assertRowsPayload(result, "/api/admin/generated-content");
-
-    allRows.push(...pageRows);
-    const complete = !result.nextCursor;
-    const now = Date.now();
-    if (complete || page === 0 || now - lastEmitAt >= 600) {
-      lastEmitAt = now;
-      onPage?.(dedupeGeneratedContentRows(allRows), complete);
+  for (let prefixIndex = 0; prefixIndex < prefixPages.length; prefixIndex += 1) {
+    const prefix = prefixPages[prefixIndex];
+    let cursor: string | null = null;
+    for (let page = 0; page < 125; page += 1) {
+      if (signal?.aborted) throw signal.reason ?? new Error("Content inventory load was cancelled.");
+      const result = await loadGeneratedContentPage(
+        studioInventoryRequestPath(
+          prefix ? { ...query, prefixes: [prefix] } : { ...query, prefixes: [] },
+          pageSize,
+          cursor
+        ),
+        secret,
+        signal
+      );
+      const pageRows = assertRowsPayload(result, "/api/admin/generated-content");
+      allRows.push(...pageRows);
+      const complete = !result.nextCursor && prefixIndex === prefixPages.length - 1;
+      const now = Date.now();
+      if (complete || page === 0 && prefixIndex === 0 || now - lastEmitAt >= 600) {
+        lastEmitAt = now;
+        onPage?.(dedupeGeneratedContentRows(allRows), complete);
+      }
+      if (!result.nextCursor) break;
+      cursor = result.nextCursor ?? null;
     }
-    if (complete) break;
-    cursor = result.nextCursor ?? null;
   }
 
   return dedupeGeneratedContentRows(allRows);
@@ -3171,6 +3180,7 @@ export function GeneratedContentAdminDashboard() {
   const skyArticleWorkspaceAutosaveSequenceRef = useRef(0);
   const dashboardLoadSequenceRef = useRef(0);
   const dashboardLoadControllerRef = useRef<AbortController | null>(null);
+  const loadedInventoryKeyRef = useRef<string | null>(null);
 
   useEffect(() => {
     if (!draft || buildVariableReferences) return;
@@ -3636,33 +3646,52 @@ export function GeneratedContentAdminDashboard() {
     };
   }, [activePage]);
 
+  const studioListQuery = useMemo(() => studioInventoryQuery({
+    page: activePage,
+    categoryFilter,
+    fallbackSectionFilter,
+    skyWriteupWorkspaceView,
+    friendsTransitAudience,
+    betweenYouTwoWorkspace: friendsBetweenYouTwoWorkspace,
+    showReferenceRows,
+    showRetiredRows
+  }), [
+    activePage,
+    categoryFilter,
+    fallbackSectionFilter,
+    friendsBetweenYouTwoWorkspace,
+    friendsTransitAudience,
+    showReferenceRows,
+    showRetiredRows,
+    skyWriteupWorkspaceView
+  ]);
+  const studioListQueryKey = studioInventoryQueryKey(studioListQuery);
+
   useEffect(() => {
-    const needsExtendedInventory = activePage === "skyWriteups"
-      || activePage === "reviewQueue"
-      || activePage === "unresolvedContent"
-      || isCompositionPage(activePage)
-      || (activePage === "content" && categoryFilter === "Natal Aspects")
-      || (activePage === "content" && categoryFilter === "Calendar Aspects")
-      || showReferenceRows
-      || showRetiredRows;
-    if (!needsExtendedInventory || allRowsLoaded || loadState !== "loaded" || !secret.trim()) return;
+    if (loadState !== "loaded" || !secret.trim()) return;
+    if (loadedInventoryKeyRef.current === studioListQueryKey) return;
     setLoadError(null);
     let cancelled = false;
     const controller = new AbortController();
+    const query = studioListQuery;
+    const queryKey = studioListQueryKey;
     void loadAllGeneratedContentRows(
       secret,
-      "all",
-      "all",
+      query,
       (loadedRows, complete) => {
         if (cancelled) return;
         setRows((current) => mergeContentInventory(current, loadedRows));
-        if (complete) setAllRowsLoaded(true);
+        if (complete) {
+          loadedInventoryKeyRef.current = queryKey;
+          setAllRowsLoaded(true);
+        }
       },
       controller.signal
     )
       .then((allRows) => {
         if (cancelled) return;
         setRows((current) => mergeContentInventory(current, allRows));
+        loadedInventoryKeyRef.current = queryKey;
         setAllRowsLoaded(true);
       })
       .catch((error) => {
@@ -3674,7 +3703,7 @@ export function GeneratedContentAdminDashboard() {
       cancelled = true;
       controller.abort();
     };
-  }, [activePage, categoryFilter, showReferenceRows, showRetiredRows, allRowsLoaded, loadState, secret]);
+  }, [loadState, secret, studioListQuery, studioListQueryKey]);
 
   useEffect(() => {
     if (loadState !== "loaded" || activePage !== "content" || categoryFilter !== "Natal Chart" || !natalPlacementPlanet || !natalPlacementSign || !secret.trim()) return;
@@ -4362,23 +4391,19 @@ export function GeneratedContentAdminDashboard() {
     setSourceDraftLoadState("loading");
     setSourceDraftError(null);
     try {
-      const needsExtendedInventory = activePage === "unresolvedContent"
-        || activePage === "reviewQueue"
-        || isCompositionPage(activePage)
-        || (activePage === "content" && categoryFilter === "Natal Aspects")
-        || (activePage === "content" && categoryFilter === "Calendar Aspects")
-        || showReferenceRows
-        || showRetiredRows;
-      const loadsCompatibilityFirst = activePage === "compatibility";
+      const inventoryQuery = studioListQuery;
+      const inventoryQueryKey = studioInventoryQueryKey(inventoryQuery);
       const [generatedResult, reviewResult, usersResult, sourceDraftResult, runtimeReviewResult] = await Promise.allSettled([
         loadAllGeneratedContentRows(
           normalizedSecret,
-          needsExtendedInventory || loadsCompatibilityFirst ? "all" : "editorial",
-          loadsCompatibilityFirst ? "compatibility" : "all",
+          inventoryQuery,
           (loadedRows, complete) => {
             if (loadSequence !== dashboardLoadSequenceRef.current || loadController.signal.aborted) return;
             setRows((current) => mergeContentInventory(current, loadedRows));
-            if (complete) setAllRowsLoaded(needsExtendedInventory);
+            if (complete) {
+              loadedInventoryKeyRef.current = inventoryQueryKey;
+              setAllRowsLoaded(true);
+            }
           },
           loadController.signal
         ),
@@ -4398,7 +4423,8 @@ export function GeneratedContentAdminDashboard() {
       const generatedRows = generatedResult.value;
       const reviewRowsPayload = review.rows ?? review.records ?? [];
       setRows((current) => mergeContentInventory(current, generatedRows, false));
-      setAllRowsLoaded(needsExtendedInventory);
+      loadedInventoryKeyRef.current = inventoryQueryKey;
+      setAllRowsLoaded(true);
       setReviewRows(reviewRowsPayload.map((record: AdminReviewRecord) => {
         const rawGlobalRow = generatedRows.find((row) => row.id === record.id || row.content_key === record.contentKey);
         return { ...record, rawGlobalRow };
@@ -4434,15 +4460,6 @@ export function GeneratedContentAdminDashboard() {
       ].filter(Boolean);
       setLoadState("loaded");
       if (partialWarnings.length) setMessage(`Partial load: ${partialWarnings.join(", ")}.`);
-      if (loadsCompatibilityFirst) {
-        void loadAllGeneratedContentRows(normalizedSecret, "editorial")
-          .then((editorialRows) => {
-            setRows((current) => dedupeGeneratedContentRows([...current, ...editorialRows]));
-          })
-          .catch(() => {
-            // Compatibility is already usable. Other workspaces can retry their inventory on navigation or reload.
-          });
-      }
       return "loaded" as const;
     } catch (error) {
       if (loadSequence !== dashboardLoadSequenceRef.current || loadController.signal.aborted) return "cancelled" as const;
