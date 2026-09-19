@@ -12,6 +12,19 @@ const savedCopy: Record<string, string> = {
   "fallback-hook/synastry-pair/sun/saturn/square": "Sun square Saturn fixture activation."
 };
 
+/** The library reads which pairings exist from saved rows, so the fixture lists them. */
+function savedRows(openings: Record<string, string>) {
+  return Object.entries(openings).map(([contentKey, body], index) => ({
+    id: `fixture-${index}`, content_key: contentKey, headline: contentKey, summary: null, body,
+    surface: "relationship", mode: "in_depth", status: "LIVE", lane: "serving", review_state: null,
+    block_type: "fallback_hook", event_type: "fallback-hook", provider: "tldrastro-fallback-architecture-v3",
+    facts: { fallbackArchitectureV3: true, content_role: "fallback_hook", review_status: "approved_reuse" },
+    source_snapshot: { sourcePackage: "tldrastro-fallback-architecture-v3", content_role: "fallback_hook", review_status: "approved_reuse" },
+    sections: { packageRecord: { contentKey, body_you: body, body_they: `${body} Friend view.` } },
+    updated_at: "2026-09-19T00:00:00.000Z", target_date: null
+  }));
+}
+
 async function isolate(page: Page, openings: Record<string, string> = savedCopy) {
   await page.addInitScript(() => {
     localStorage.setItem("tldrastro:contentAdminSecret", "friends-dropdown-fixture");
@@ -33,25 +46,68 @@ async function isolate(page: Page, openings: Record<string, string> = savedCopy)
         }
       });
     }
+    if (url.pathname.endsWith("/generated-content") && route.request().method() === "GET" && !url.searchParams.get("contentKey")) {
+      return route.fulfill({ json: { ok: true, rows: savedRows(openings), nextCursor: null } });
+    }
     await route.fulfill({ json: { ok: true, rows: [], statuses: [], records: [], nextCursor: null } });
   });
 }
 
-test("Between you two map is present before a reader title is typed", async ({ page }) => {
+test("Between you two opens on a saved pairing with dropdowns to change", async ({ page }) => {
   const errors: string[] = [];
   page.on("pageerror", error => errors.push(error.message));
   await isolate(page);
   await page.goto(workspacePath);
 
-  const finder = page.getByRole("region", { name: "Find a Friends transit card" });
-  await expect(finder.getByLabel("Find a Friends transit card", { exact: true })).toHaveValue("");
-
+  // Arriving with nothing typed used to render no map at all, so there were no
+  // dropdowns to adjust until the owner typed an exact reader title.
   const map = page.getByRole("region", { name: "Between you two composition map" });
   await expect(map.getByLabel("Transiting planet", { exact: true })).toBeVisible();
   await expect(map.getByLabel("Transit aspect", { exact: true })).toBeVisible();
-  await expect(map.getByRole("heading", { level: 3, name: "Chiron sextile your Sun" })).toBeVisible();
-  await expect(map).toContainText("Chiron sextile fixture opening.");
-  await expect(map.getByRole("heading", { level: 3, name: "Your Sun square Name's Saturn" })).toBeVisible();
+
+  // The pairing it opens on is a real row that renders its saved copy, so the map
+  // is readable on arrival rather than an empty frame around dropdowns.
+  const chosen = await map.getByLabel("Transiting planet", { exact: true }).inputValue();
+  const chosenAspect = await map.getByLabel("Transit aspect", { exact: true }).inputValue();
+  const openingKey = `fallback-hook/bond-effect-${chosenAspect}/${chosen}`;
+  expect(Object.keys(savedCopy)).toContain(openingKey);
+  await expect(map).toContainText(savedCopy[openingKey]);
+
+  // The title field describes the same selection as the map rather than sitting empty
+  // beside a populated composition.
+  const title = page.getByRole("region", { name: "Find a Friends transit card" })
+    .getByLabel("Find a Friends transit card", { exact: true });
+  await expect(title).toHaveValue(new RegExp(`^${chosen} ${chosenAspect}`, "iu"));
+  await expect(page).toHaveURL(/q=/u);
+
+  // Clearing the field leaves it clear, so it stays usable for typing a new title.
+  await title.fill("");
+  await expect(title).toHaveValue("");
+  await title.fill("Mars");
+  await expect(title).toHaveValue("Mars");
+
+  // A pairing the owner chose is never replaced by the default.
+  await map.getByLabel("Transiting planet", { exact: true }).selectOption("mars");
+  await expect(map.getByLabel("Transiting planet", { exact: true })).toHaveValue("mars");
+  await expect(map).toContainText("Mars ");
+
+  expect(errors).toEqual([]);
+  await page.screenshot({ path: "test-results/friends-between-you-two-default-pairing.png" });
+});
+
+test("A pairing in the route opens instead of the default", async ({ page }) => {
+  const errors: string[] = [];
+  page.on("pageerror", error => errors.push(error.message));
+  await isolate(page);
+  await page.goto(`${workspacePath}&q=Mars+trine+your+Sun`);
+
+  // Seeding the field must never overwrite a pairing the owner arrived with.
+  const map = page.getByRole("region", { name: "Between you two composition map" });
+  await expect(map.getByLabel("Transiting planet", { exact: true })).toHaveValue("mars");
+  await expect(map.getByLabel("Transit aspect", { exact: true })).toHaveValue("trine");
+  await expect(map).toContainText("Mars trine fixture opening.");
+  await expect(page.getByRole("region", { name: "Find a Friends transit card" })
+    .getByLabel("Find a Friends transit card", { exact: true })).toHaveValue("Mars trine your Sun");
 
   expect(errors).toEqual([]);
 });
