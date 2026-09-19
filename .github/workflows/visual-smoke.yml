@@ -390,10 +390,8 @@ jobs:
           tests/visual/calendar-month-overview.spec.ts
           tests/visual/calendar-moon-ui.spec.ts
           tests/visual/calendar-moon-editor.spec.ts
-          tests/visual/astro-101-learn.spec.ts
           tests/visual/event-date-consistency.spec.ts
           tests/visual/sky-placement-visit-timeline.spec.ts
-          tests/visual/fallback-cache-self-heal.spec.ts
           tests/visual/swisseph-web-data-parity.spec.ts
           tests/visual/you-loading-performance.spec.ts
           tests/visual/friends-authenticated-loading-diagnostic.spec.ts

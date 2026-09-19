@@ -11,6 +11,8 @@ export async function routeStudioInventoryApi(page: Page, options: {
   call: StudioApiCall;
   listRows?: (rows: any[]) => any[];
   onWrite?: (result: any) => void;
+  // Answers a fixture's own endpoints, such as reader status. Return false to take the empty reply.
+  answer?: (route: Parameters<Parameters<Page["route"]>[1]>[0], url: URL) => Promise<boolean>;
 }) {
   await page.route("**/api/**", async (route) => {
     const request = route.request();
@@ -31,6 +33,7 @@ export async function routeStudioInventoryApi(page: Page, options: {
         .map((row: any) => studioListingRow(row, studioListingFacts(row)));
       return route.fulfill({ json: { ok: true, rows, nextCursor: null } });
     }
+    if (options.answer && await options.answer(route, url)) return;
     return route.fulfill({ json: { ok: true, rows: [], statuses: [], records: [], nextCursor: null } });
   });
 }
