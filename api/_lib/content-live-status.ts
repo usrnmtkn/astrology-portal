@@ -15,6 +15,7 @@ import { contentWiringStatus } from "../../apps/admin/src/contentWiringStatus.js
 import { isGovernedReaderEligible } from "../../apps/web/src/content/fallbackArchitectureV3/resolver/readerEligibility.browser.js";
 import { fallbackArchitectureV3DashboardPackageDestination } from "../../apps/web/src/services/fallbackArchitectureV3DashboardPackaging.js";
 import { isReaderServableGeneratedContentRow, isGeneratedContentReaderBoundaryAllowed, generatedRowPackageRole } from "../../apps/web/src/content/generatedContentEligibility.js";
+import { astro101IsLiveOnLearn, isAstro101ContentKey } from "../../apps/web/src/content/astro101.ts";
 import { hasExactSkyArticleOwnerApproval, skyArticleEditionRecord } from "../../apps/web/src/content/skyArticleTemplateCompiler.js";
 import { currentSkySummaryWording, skyDailySummaryFields, skySummaryTemplateErrors } from "../../apps/web/src/content/skyDailySummaryCatalog.js";
 
@@ -173,6 +174,22 @@ export function contentLiveStatuses(rows: LiveStatusRow[], candidates: LiveStatu
     }
     const exact = exactAspectStatus(row, candidates);
     if (exact) return exact;
+    if (isAstro101ContentKey(row.content_key) || row.surface === "education") {
+      const live = astro101IsLiveOnLearn(row);
+      return {
+        id: row.id,
+        live,
+        label: live ? "Live" : "Not live",
+        source: live ? "studio" : null,
+        detail: live
+          ? "Readers can open this page on Learn."
+          : row.status === "LIVE"
+            ? "This Astro 101 page is marked live but Learn cannot serve it. It needs a title, reader path, and article copy, with no review hold."
+            : "This Astro 101 page is not published. Save the draft, then use Publish to app.",
+        updatedAt: row.updated_at ?? null,
+        servingRowId: live ? row.id : null
+      };
+    }
     let source: ContentLiveStatus["source"] = null;
     let detail = "Readers cannot currently receive this copy.";
     const packageRecord = record(row);

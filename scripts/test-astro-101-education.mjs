@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { astro101ContentKey, astro101HasReaderCopy, astro101LocationState, astro101PageIsServable, astro101PublicationIssue, astro101ReaderPath, isAstro101ContentKey, isStandaloneLearnPath } from "../apps/web/src/content/astro101.ts";
+import { astro101ContentKey, astro101HasReaderCopy, astro101IsLiveOnLearn, astro101LocationState, astro101PageIsServable, astro101PublicationIssue, astro101ReaderPath, astro101ResolvedReaderPath, isAstro101ContentKey, isStandaloneLearnPath } from "../apps/web/src/content/astro101.ts";
 import { inferArticleBlockStyle, splitIntroParagraphs } from "../apps/web/src/content/articleBlockStyle.ts";
 import { houseCatalog, houseNumberFromContentKey } from "../apps/web/src/content/learnCatalog.ts";
 import { mergeGeneratedInterpretationSections } from "../api/_lib/generated-interpretation-sections.ts";
@@ -44,6 +44,26 @@ assert.equal(astro101PublicationIssue({
   sections: { kind: "chapter" },
   facts: { slug: "/learn/astro-101/what-is-a-birth-chart" }
 }), null);
+assert.equal(astro101ResolvedReaderPath("education/astro-101/chapter/01-what-is-a-birth-chart", {}), "/learn/astro-101/01-what-is-a-birth-chart");
+assert.equal(astro101IsLiveOnLearn({
+  content_key: "education/astro-101/chapter/01-what-is-a-birth-chart",
+  surface: "education",
+  status: "LIVE",
+  lane: "serving",
+  review_state: null,
+  headline: "What is a birth chart?",
+  body: "A birth chart is a map of the sky.",
+  sections: { packageRecord: { content_role: "education_article", review_status: "needs_review" } },
+  facts: { slug: "/learn/astro-101/what-is-a-birth-chart" }
+}), true);
+assert.equal(astro101IsLiveOnLearn({
+  content_key: "education/astro-101/chapter/01-what-is-a-birth-chart",
+  status: "DRAFT",
+  lane: "serving",
+  headline: "What is a birth chart?",
+  body: "A birth chart is a map of the sky.",
+  facts: { slug: "/learn/astro-101/what-is-a-birth-chart" }
+}), false);
 assert.equal(houseCatalog(2)?.angularity, "Succedent");
 assert.deepEqual(splitIntroParagraphs("Lede paragraph.\n\nSecond paragraph.\n\nNote: Keep this as a note."), {
   lede: "Lede paragraph.",

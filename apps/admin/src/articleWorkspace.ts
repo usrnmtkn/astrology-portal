@@ -1,3 +1,5 @@
+import { astro101ResolvedReaderPath, isAstro101ContentKey } from "../../web/src/content/astro101.ts";
+
 export type ArticleWorkspaceRow = {
   block_type?: string | null;
   content_key: string;
@@ -56,6 +58,17 @@ export function articleAppDestination(row: ArticleWorkspaceRow): ArticleAppDesti
       detail: "Readers cannot currently receive this article.",
       label: "Draft",
       state: "draft"
+    };
+  }
+
+  const learnPath = isAstro101ContentRow(row)
+    ? astro101ResolvedReaderPath(row.content_key, facts) || text(facts.slug)
+    : "";
+  if (learnPath.startsWith("/learn/") || (isAstro101ContentKey(row.content_key) && learnPath)) {
+    return {
+      detail: `Readers open this page at ${learnPath}.`,
+      label: learnPath,
+      state: "connected"
     };
   }
 

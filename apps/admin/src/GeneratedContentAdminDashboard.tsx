@@ -1301,6 +1301,7 @@ function rowIsFallbackArchitectureV3(row: AdminGeneratedContentRow | AdminReview
 }
 
 function draftIsFallbackArchitectureV3(draft: AdminDraft) {
+  if (isAstro101ContentRow({ content_key: draft.contentKey, facts: draft.facts })) return false;
   return draft.sourceSnapshot?.sourcePackage === "tldrastro-fallback-architecture-v3"
     || draft.facts?.fallbackArchitectureV3 === true
     || Boolean(draftPackageRecord(draft).content_role);
@@ -1466,7 +1467,7 @@ function contentRoleForRecord(row: AdminGeneratedContentRow | AdminReviewRecord)
   const sourceContentSystem = sourceSnapshotString(sourceSnapshot, "contentSystem").toLowerCase().replace(/_/g, "-");
   const sourceRole = normalizedSourceRole(sourceSnapshot);
 
-  if (sourceContentSystem === "cms-surface-override" || contentKey.startsWith("cms/") || contentKey.startsWith("authored/sky-lunation-macro/")) {
+  if (sourceContentSystem === "cms-surface-override" || contentKey.startsWith("cms/") || contentKey.startsWith("authored/sky-lunation-macro/") || contentKey.startsWith("education/astro-101/")) {
     return "authored-content";
   }
 

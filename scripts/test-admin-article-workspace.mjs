@@ -33,12 +33,11 @@ assert.equal(isAstro101ContentRow({
 }), true);
 
 assert.deepEqual(articleAppDestination({
-  content_key: "education/astro-101/sign/aries",
-  status: "LIVE",
-  facts: { slug: "/learn/signs/aries" }
+  content_key: "education/astro-101/chapter/02-sun-moon-and-rising",
+  status: "LIVE"
 }), {
-  detail: "Readers open this page at /learn/signs/aries.",
-  label: "/learn/signs/aries",
+  detail: "Readers open this page at /learn/astro-101/02-sun-moon-and-rising.",
+  label: "/learn/astro-101/02-sun-moon-and-rising",
   state: "connected"
 });
 
