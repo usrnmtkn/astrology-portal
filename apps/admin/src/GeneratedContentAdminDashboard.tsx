@@ -7981,6 +7981,21 @@ export function GeneratedContentAdminDashboard() {
             natalHouse: ""
           });
         })}
+        {friendsTransitAudience && (
+          <Suspense fallback={<PageLoading compact message="Opening the Between you two composition…" />}>
+            <FriendsBetweenYouTwoComposition
+              query={transitNatalQuery}
+              secret={secret}
+              onOpenOpening={(contentKey) => {
+                const params = new URLSearchParams({ section: "friends", audience: "friends", workspace: "between-you-two" });
+                if (transitNatalQuery.trim()) params.set("q", transitNatalQuery.trim());
+                navigateAdminPage("knowledge", params, { keepEditorOpen: true });
+                void openContentKeyRow(contentKey, "Between you two opening", false, "body_they");
+              }}
+              onOpenSource={(sourceKey, label, field) => void openFromEditor(sourceKey, () => openContentKeyRow(sourceKey, label, false, field))}
+            />
+          </Suspense>
+        )}
 
         {!friendsTransitAudience && (
         <label className="admin-title-field">

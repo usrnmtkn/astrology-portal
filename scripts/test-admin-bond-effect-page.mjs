@@ -118,9 +118,12 @@ const preview = fs.readFileSync(new URL("../apps/admin/src/BondEffectPagePreview
 const finder = fs.readFileSync(new URL("../apps/admin/src/FriendsTransitSectionFinder.tsx", import.meta.url), "utf8");
 assert.match(dashboard, /BondEffectPagePreview/u);
 assert.match(dashboard, /This row is only the opening on the Friends Between you two page/u);
-assert.match(preview, /Between you two composition/u);
+assert.match(preview, /Between you two composition map/u);
 assert.match(preview, /What this activates/u);
 assert.match(preview, /This last line is calculated from the chart/u);
+assert.match(preview, /Saved preview/u);
+assert.match(preview, /admin-template-reader-copy/u);
+assert.match(preview, /Composition Map/u);
 assert.match(dashboard, /matchesFallbackLibrarySearch/u);
 assert.match(dashboard, /FriendsBetweenYouTwoComposition/u);
 assert.match(finder, /Friends Transits composition map/u);

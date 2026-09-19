@@ -52,7 +52,9 @@ assert.match(transitRenderer, /fallback-hook\/bond-effect-\$\{aspect\}\/\$\{tran
 assert.match(dashboard, /const friendsTransitAudience = parseAdminHash\(\)\.params\.get\("audience"\) === "friends"/u);
 assert.match(dashboard, /Friends Transits · Active for \{\{Name\}\}/u);
 assert.match(dashboard, /Friends Transits · Where it lands/u);
+assert.match(dashboard, /Friends Transits · Between you two/u);
 assert.match(dashboard, /FriendsBetweenYouTwoComposition/u, "Between you two must show the assembled write-up composition.");
+assert.match(dashboard, /query=\{transitNatalQuery\}/u, "Active for Name must also load the Between you two compiled write-up from the same search.");
 assert.match(dashboard, /\? "Between you two"/u, "The Between you two workspace must use that reader name instead of Fallback Articles.");
 assert.match(dashboard, /audienceKey = audience === "friends" \? "body_they" : "body_you"/u, "Friends previews must resolve body_they instead of silently showing You copy.");
 assert.match(dashboard, /if \(audience === "friends" && hasAudienceField\) continue;/u, "An explicitly blank Friends field must not fall back to the You body in the Studio preview.");
