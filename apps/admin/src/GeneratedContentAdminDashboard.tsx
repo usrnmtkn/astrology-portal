@@ -4429,7 +4429,9 @@ export function GeneratedContentAdminDashboard() {
         ),
         adminJsonRequest<{ ok: boolean; rows?: AdminReviewRecord[]; records?: AdminReviewRecord[]; counts?: unknown }>("/api/admin/review-records?surface=upcomingAspects&status=all", normalizedSecret, { signal: loadController.signal }),
         adminJsonRequest<{ ok: boolean; rows: AdminUserGeneratedContentRow[] }>("/api/admin/user-generated-content?status=all&limit=100", normalizedSecret, { signal: loadController.signal }),
-        loadAdminSourceDraftCatalog(normalizedSecret),
+        activePage === "sourceDrafts"
+          ? loadAdminSourceDraftCatalog(normalizedSecret)
+          : Promise.resolve([] as AdminSourceDraft[]),
         adminJsonRequest<{ ok: boolean; rows: AdminContentReviewEventRow[] }>("/api/admin/content-review-events?limit=250", normalizedSecret, { signal: loadController.signal })
       ]);
 

@@ -1561,7 +1561,7 @@ async function listGeneratedContent(req: IncomingMessage) {
   } else if (!id && contentKeys.length) {
     params.set("content_key", `in.(${contentKeys.join(",")})`);
   } else if (!id && contentKeyPrefix) {
-    params.set("content_key", `like."${contentKeyPrefix}*"`);
+    params.set("content_key", `like."${contentKeyPrefix}%"`);
   }
 
   if (!id && startDate && endDate) {

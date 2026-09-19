@@ -135,7 +135,7 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
     if (!id && mode) params.set("mode", `eq.${mode}`);
     if (!id && contentKey) params.set("content_key", `eq.${contentKey}`);
     else if (!id && contentKeys.length) params.set("content_key", `in.(${contentKeys.join(",")})`);
-    else if (!id && contentKeyPrefix) params.set("content_key", `like."${contentKeyPrefix}*"`);
+    else if (!id && contentKeyPrefix) params.set("content_key", `like."${contentKeyPrefix}%"`);
 
     const url = supabaseUrl();
     const key = serviceRoleKey();
