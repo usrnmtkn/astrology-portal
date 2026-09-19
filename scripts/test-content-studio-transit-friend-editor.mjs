@@ -47,6 +47,7 @@ const exactAction = fs.readFileSync(path.join(root, "apps/admin/src/TransitNatal
 assert.match(dashboard, /isBondEffectDraft/u);
 assert.match(dashboard, /fallback-hook\/bond-effect-/u);
 assert.match(dashboard, /BondEffectPagePreview/u);
+assert.match(dashboard, /FriendsTransitSectionFinder/u);
 assert.match(exactAction, /<PersonalTransitAiWriter/u);
 assert.match(exactAction, /youText=""/u);
 console.log("Content Studio Transit to Natal Friends editor contract passed.");

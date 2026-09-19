@@ -21,6 +21,7 @@ try {
     ["personal-transit-house", "authored/transit-house-intro/mars/1"],
     ["personal-transit-detail", "authored/transit-aspect/sun/north-node/conjunction"],
     ["friends-pair-daily", "fallback-hook/pair-daily/opener"],
+    ["friends-transits-between-you-two", "fallback-hook/bond-effect-sextile/chiron"],
     ["natal-placement-detail", "fallback-hook/natal-you-placement-sign-final/uranus/scorpio"],
     ["natal-empty-house", "fallback-hook/empty-house-explainer/base"],
     ["sky-placement-detail", "fallback-hook/sky-placement-frame/jupiter"]

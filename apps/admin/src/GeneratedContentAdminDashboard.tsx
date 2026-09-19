@@ -11,7 +11,8 @@ import { AdminContentTable, AdminDataTable, AdminFilterBar } from "./AdminBrowse
 import { PageLoading } from "../../web/src/components/PageLoading";
 import { reviewWorkBucket, skyWritingIssues } from "../../web/src/content/contentReviewReadiness";
 import { transitNatalContactFromFields, transitNatalContactReady, transitNatalContactContentKey, transitNatalExactContentKey, transitNatalExactSourceDraft, transitNatalSharedFallbackKey, transitNatalStarterCopy } from "./transitNatalSources";
-import { matchesBondEffectContactSearch, transitNatalSearchSelection, matchesTransitNatalContactSearch } from "./bondEffectPageAssembly";
+import { friendsTransitCardDestinations, matchesBondEffectContactSearch, transitNatalSearchSelection, matchesTransitNatalContactSearch } from "./bondEffectPageAssembly";
+import FriendsTransitSectionFinder from "./FriendsTransitSectionFinder";
 import { isDynamicTransitNatalExactKey } from "../../web/src/content/transitNatalIdentity";
 import { isTransitNatalFamilyKey, isTransitNatalSituationKey, packagedTransitOpenMode, transitNatalLiveServingSource } from "./transitNatalEditorScope";
 import { currentSkySummaryWording, skyDailySummaryFields, skySummaryTemplateErrors, type SkySummaryField } from "../../web/src/content/skyDailySummaryCatalog";
@@ -198,6 +199,7 @@ const TransitNatalPreviewOptions = lazy(() => import("./TransitNatalReaderPrevie
 const TransitNatalExactSourceAction = lazy(() => import("./TransitNatalReaderPreview").then(module => ({ default: module.TransitNatalExactSourceAction })));
 const PersonalTransitAiWriter = lazy(() => import("./PersonalTransitAiWriter"));
 const BondEffectPagePreview = lazy(() => import("./BondEffectPagePreview"));
+const FriendsBetweenYouTwoComposition = lazy(() => import("./FriendsBetweenYouTwoComposition"));
 const ImportedArticleHoroscopesEditor = lazy(() => import("./ImportedArticleHoroscopesEditor"));
 const StudioEditorReviewPanels = lazy(() => import('./StudioEditorReviewPanels'));
 const SkyDailySummaryStudio = lazy(() => import("./SkyDailySummaryStudio").then(module => ({ default: module.SkyDailySummaryStudio })));
@@ -2963,6 +2965,9 @@ export function GeneratedContentAdminDashboard() {
   const [natalAspectName, setNatalAspectName] = useState("");
   const [natalAspectSecond, setNatalAspectSecond] = useState("");
   const [fallbackSectionFilter, setFallbackSectionFilter] = useState<AdminFallbackHookSectionFilter>("all");
+  const friendsBetweenYouTwoWorkspace = friendsTransitAudience
+    && fallbackSectionFilter === "friends"
+    && (parseAdminHash().params.get("workspace") === "between-you-two" || query.includes("bond-effect"));
   const [fallbackRowSort, setFallbackRowSort] = useState<AdminFallbackRowSort>("type");
   const [surfaceAreaFilter, setSurfaceAreaFilter] = useState<WritingSurfaceAreaFilter>("all");
   const [surfaceStatusFilter, setSurfaceStatusFilter] = useState<WritingSurfaceStatusFilter>("all");
@@ -3378,8 +3383,9 @@ export function GeneratedContentAdminDashboard() {
   );
   const filteredFallbackRows = useMemo(() => savedFallbackRows.filter((row) => (
     (fallbackSectionFilter === "all" || fallbackSectionForKey(row.content_key, row.surface) === fallbackSectionFilter)
+      && (!friendsBetweenYouTwoWorkspace || /bond-effect-/u.test(row.content_key))
       && matchesFallbackLibrarySearch(row.content_key, fallbackHookVisibleSearchText(row), query)
-  )).sort((left, right) => compareFallbackRows(left, right, fallbackRowSort)), [savedFallbackRows, fallbackSectionFilter, fallbackRowSort, query]);
+  )).sort((left, right) => compareFallbackRows(left, right, fallbackRowSort)), [savedFallbackRows, fallbackSectionFilter, fallbackRowSort, query, friendsBetweenYouTwoWorkspace]);
   const filteredHookCatalog = useMemo(() => {
     const search = query.trim().toLowerCase();
 
@@ -3389,11 +3395,12 @@ export function GeneratedContentAdminDashboard() {
       const itemStatus: WritingSurfaceStatusFilter = saved ? "complete" : "missing";
 
       return (fallbackSectionFilter === "all" || item.section === fallbackSectionFilter)
+        && (!friendsBetweenYouTwoWorkspace || /bond-effect-/u.test(item.key))
         && (surfaceAreaFilter === "all" || itemArea === surfaceAreaFilter)
         && (surfaceStatusFilter === "all" || itemStatus === surfaceStatusFilter)
         && (!search || matchesFallbackLibrarySearch(item.key, `${item.key} ${item.label} ${item.section} ${item.type}`, search));
     });
-  }, [hookCatalogItems, savedHookKeys, fallbackSectionFilter, surfaceAreaFilter, surfaceStatusFilter, query]);
+  }, [hookCatalogItems, savedHookKeys, fallbackSectionFilter, surfaceAreaFilter, surfaceStatusFilter, query, friendsBetweenYouTwoWorkspace]);
   const filteredWritingSurfaces = useMemo(() => writingSurfaces.filter((item) => {
     const itemArea = areaForWritingSurface(item);
     const itemStatus = statusForWritingSurface(item, writingSurfaceAccess);
@@ -4122,8 +4129,47 @@ export function GeneratedContentAdminDashboard() {
       if (!closeEditor()) return;
     }
     const route = canonicalAdminRoute(page, params);
+    applyAdminRouteState(page, params ?? new URLSearchParams());
     applyAdminRouteState(route.page, route.params);
     setAdminHash(adminHashForPage(route.page, route.params));
+  }
+
+  function openTransitNatalContactFromSearch(contact: TransitNatalContact, audienceFriends: boolean) {
+    const params = new URLSearchParams({
+      view: "transits-to-natal",
+      transit: contact.planet,
+      aspect: contact.aspect,
+      natal: contact.natalPoint
+    });
+    if (audienceFriends) params.set("audience", "friends");
+    navigateAdminPage("skyWriteups", params);
+  }
+
+  function renderFriendsTransitSectionFinder(currentSection: "between-you-two" | "active-for-name" | "house-transit", variant: "page" | "embedded", search: string, onSearch: (value: string) => void) {
+    return (
+      <FriendsTransitSectionFinder
+        currentSection={currentSection}
+        onOpenActiveForName={() => {
+          const destinations = friendsTransitCardDestinations(search);
+          if (!destinations.contact) return;
+          openTransitNatalContactFromSearch(destinations.contact, true);
+        }}
+        onOpenBetweenYouTwoOpening={() => {
+          const destinations = friendsTransitCardDestinations(search);
+          if (!destinations.betweenYouTwoOpeningKey) return;
+          const params = new URLSearchParams({ section: "friends", audience: "friends", workspace: "between-you-two" });
+          if (search.trim()) params.set("q", search.trim());
+          navigateAdminPage("knowledge", params, { keepEditorOpen: true });
+          void openContentKeyRow(destinations.betweenYouTwoOpeningKey, "Between you two opening", false, "body_they");
+        }}
+        onOpenHouseTransit={() => {
+          navigateAdminPage("skyWriteups", new URLSearchParams({ view: "house-transits", audience: "friends" }));
+        }}
+        onQueryChange={onSearch}
+        query={search}
+        variant={variant}
+      />
+    );
   }
 
   function navigatePrimaryAdminItem(item: AdminNavItem) {
@@ -6083,6 +6129,8 @@ export function GeneratedContentAdminDashboard() {
       ? "Natal Aspect Write-ups"
       : calendarAspectWorkspaceActive
         ? "Calendar Aspect Cards"
+        : friendsBetweenYouTwoWorkspace
+          ? "Between you two"
         : adminPageTitle(activePage);
   const currentPageDescription = natalChartWorkspaceActive
     ? "Find the exact writing for a planet or point in its sign and house."
@@ -6090,6 +6138,8 @@ export function GeneratedContentAdminDashboard() {
       ? "Find and edit the exact writing for two natal bodies and their aspect."
       : calendarAspectWorkspaceActive
         ? "Edit composed Calendar cards and their reusable sign-specific aspect passages."
+        : friendsBetweenYouTwoWorkspace
+          ? "Edit the live Friends Transits article: opening, What this activates, Active for Name, and Where it lands."
         : adminPageDescription(activePage);
   const currentPageBreadcrumbs = natalChartWorkspaceActive
     ? [{ label: "Admin", page: "reviewQueue" as AdminDashboardPage }, { label: "Write", page: "content" as AdminDashboardPage }, { label: "Natal chart" }]
@@ -6097,6 +6147,8 @@ export function GeneratedContentAdminDashboard() {
       ? [{ label: "Admin", page: "reviewQueue" as AdminDashboardPage }, { label: "Write", page: "content" as AdminDashboardPage }, { label: "Natal aspects" }]
       : calendarAspectWorkspaceActive
         ? [{ label: "Admin", page: "reviewQueue" as AdminDashboardPage }, { label: "Write", page: "content" as AdminDashboardPage }, { label: "Calendar aspects" }]
+      : friendsBetweenYouTwoWorkspace
+        ? [{ label: "Admin", page: "reviewQueue" as AdminDashboardPage }, { label: "Write", page: "skyWriteups" as AdminDashboardPage }, { label: "Friends Transits" }, { label: "Between you two" }]
       : adminPageBreadcrumbItems(activePage);
 
   const nav = (
@@ -6182,17 +6234,17 @@ export function GeneratedContentAdminDashboard() {
                       type="button"
                       title="Friends > Transits reader-facing copy"
                       onClick={() => navigateAdminPage("skyWriteups", new URLSearchParams({ view: "transits-to-natal", audience: "friends" }))}
-                      aria-current={window.location.hash.includes("audience=friends") && activePage === "skyWriteups" ? "page" : undefined}
+                      aria-current={friendsTransitAudience ? "page" : undefined}
                     >
                       <Users size={16} aria-hidden="true" />
                       <span>Friends Transits</span>
                     </StudioButton>
-                    <div className="admin-nav-workspace-group" hidden={activePage !== "skyWriteups"} aria-label="Friends Transits sections">
+                    <div className="admin-nav-workspace-group" hidden={!(activePage === "skyWriteups" || friendsTransitAudience)} aria-label="Friends Transits sections">
                       <StudioButton
                         type="button"
                         title="Edit the bond-effect passages shown under Friends > Transits > Between you two"
-                        onClick={() => navigateAdminPage("knowledge", new URLSearchParams({ section: "friends", q: "bond-effect", audience: "friends" }))}
-                        aria-current={window.location.hash.includes("audience=friends") && activePage === "knowledge" && window.location.hash.includes("bond-effect") ? "page" : undefined}
+                        onClick={() => navigateAdminPage("knowledge", new URLSearchParams({ section: "friends", audience: "friends", workspace: "between-you-two" }))}
+                        aria-current={friendsBetweenYouTwoWorkspace ? "page" : undefined}
                       >
                         <span>Between you two</span>
                       </StudioButton>
@@ -6200,7 +6252,7 @@ export function GeneratedContentAdminDashboard() {
                         type="button"
                         title="Edit Friend View Copy for the personal transits shown as Active for the selected friend"
                         onClick={() => navigateAdminPage("skyWriteups", new URLSearchParams({ view: "transits-to-natal", audience: "friends" }))}
-                        aria-current={window.location.hash.includes("audience=friends") && activePage === "skyWriteups" && skyWriteupWorkspaceView === "transits-to-natal" ? "page" : undefined}
+                        aria-current={friendsTransitAudience && activePage === "skyWriteups" && skyWriteupWorkspaceView === "transits-to-natal" ? "page" : undefined}
                       >
                         <span>Active for {"{{Name}}"}</span>
                       </StudioButton>
@@ -6208,7 +6260,7 @@ export function GeneratedContentAdminDashboard() {
                         type="button"
                         title="Edit the house-transit passages shown under Friends > Transits > Where it lands"
                         onClick={() => navigateAdminPage("skyWriteups", new URLSearchParams({ view: "house-transits", audience: "friends" }))}
-                        aria-current={window.location.hash.includes("audience=friends") && activePage === "skyWriteups" && skyWriteupWorkspaceView === "house-transits" ? "page" : undefined}
+                        aria-current={friendsTransitAudience && activePage === "skyWriteups" && skyWriteupWorkspaceView === "house-transits" ? "page" : undefined}
                       >
                         <span>House transit</span>
                       </StudioButton>
@@ -6541,13 +6593,11 @@ export function GeneratedContentAdminDashboard() {
                       </div>
                       <div className="admin-new-actions">
                         <StudioButton type="button" onClick={() => {
-                          const params = new URLSearchParams({ view: contentLibraryTransitShortcut });
                           if (contentLibraryTransitShortcut === "transits-to-natal" && contentLibraryTransitContact) {
-                            params.set("transit", contentLibraryTransitContact.planet);
-                            params.set("aspect", contentLibraryTransitContact.aspect);
-                            params.set("natal", contentLibraryTransitContact.natalPoint);
+                            openTransitNatalContactFromSearch(contentLibraryTransitContact, friendsTransitAudience);
+                            return;
                           }
-                          navigateAdminPage("skyWriteups", params);
+                          navigateAdminPage("skyWriteups", new URLSearchParams({ view: contentLibraryTransitShortcut }));
                         }}>
                           {contentLibraryTransitContact
                             ? `Open ${transitNatalLabel(contentLibraryTransitContact)}`
@@ -6873,21 +6923,36 @@ export function GeneratedContentAdminDashboard() {
             <section className="studio-surface studio-section admin-fallback-library-controls" aria-label="Fallback library controls">
               <header className="studio-section-header">
                 <div>
-                  <p className="admin-eyebrow">Reader fallback library</p>
-                  <h2 className="sr-only">Fallback Articles &amp; Passages</h2>
-                  <p>Find complete articles, house horoscopes, aspects, and supporting fallback rows by their reader-facing astrology title.</p>
+                  <p className="admin-eyebrow">{friendsBetweenYouTwoWorkspace ? "Friends Transits" : "Reader fallback library"}</p>
+                  <h2 className="sr-only">{friendsBetweenYouTwoWorkspace ? "Between you two" : "Fallback Articles & Passages"}</h2>
+                  <p>{friendsBetweenYouTwoWorkspace
+                    ? "Type the live reader title. This composition map opens each part of the write-up: opening, What this activates, Active for Name, and Where it lands."
+                    : "Find complete articles, house horoscopes, aspects, and supporting fallback rows by their reader-facing astrology title."}</p>
                 </div>
                 <StudioButton type="button" onClick={() => navigateAdminPage("hooks")}>
                   <KeyRound size={16} aria-hidden="true" />
                   Open Surface Map
                 </StudioButton>
               </header>
-              {friendsTransitAudience && fallbackSectionFilter === "friends" && query.includes("bond-effect") && (
-                <section className="admin-editor-guidance admin-contextual-editor-guidance" aria-label="Friends Transits Between you two context">
-                  <p className="admin-eyebrow">Friends Transits · Between you two</p>
-                  <strong>These passages feed the live “Between you two” transit cards.</strong>
-                  <p>Exact aspect rows are preferred for the first matching card. Family and variant rows are shared fallback/rotation sources, so editing one of those can affect more than one friend pair.</p>
-                </section>
+              {friendsBetweenYouTwoWorkspace && (
+                <>
+                  {renderFriendsTransitSectionFinder("between-you-two", "page", query, setQuery)}
+                  <Suspense fallback={<PageLoading compact message="Opening the Between you two composition…" />}>
+                    <FriendsBetweenYouTwoComposition
+                      query={query}
+                      secret={secret}
+                      onOpenOpening={(contentKey) => {
+                        void openContentKeyRow(contentKey, "Between you two opening", false, "body_they");
+                      }}
+                      onOpenSource={(sourceKey, label, field) => void openFromEditor(sourceKey, () => openContentKeyRow(sourceKey, label, false, field))}
+                    />
+                  </Suspense>
+                  <section className="admin-editor-guidance admin-contextual-editor-guidance" aria-label="Friends Transits Between you two context">
+                    <p className="admin-eyebrow">Friends Transits · Between you two</p>
+                    <strong>These passages feed the live “Between you two” transit cards.</strong>
+                    <p>Exact aspect rows are preferred for the first matching card. Family and variant rows are shared fallback/rotation sources, so editing one of those can affect more than one friend pair.</p>
+                  </section>
+                </>
               )}
               {renderFallbackTabs()}
               {fallbackSectionFilter === "daily" && (
@@ -6897,10 +6962,12 @@ export function GeneratedContentAdminDashboard() {
               )}
               <section className="admin-content-filters" aria-label="Fallback row controls">
                 <div className="admin-fallback-library-filter-grid">
+                  {!friendsBetweenYouTwoWorkspace && (
                   <label>
                     <span>Search fallback articles and passages</span>
-                    <StudioInput aria-label="Search fallback articles and passages" value={query} onChange={(event) => setQuery(event.target.value)} placeholder={friendsTransitAudience && fallbackSectionFilter === "friends" ? "Moon sextile Mars" : "Planet, sign, aspect, house, or content key"} />
+                    <StudioInput aria-label="Search fallback articles and passages" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Planet, sign, aspect, house, or content key" />
                   </label>
+                  )}
                   <label>
                     <span>Sort rows</span>
                     <AdminSelect aria-label="Sort fallback rows" value={fallbackRowSort} onChange={(event) => setFallbackRowSort(event.target.value as AdminFallbackRowSort)}>
@@ -7768,6 +7835,21 @@ export function GeneratedContentAdminDashboard() {
           </div>
         </div>
 
+        {friendsTransitAudience && renderFriendsTransitSectionFinder("active-for-name", "embedded", transitNatalQuery, (value) => {
+          setTransitNatalQuery(value);
+          const hit = transitNatalSearchSelection(value);
+          if (!hit) return;
+          updateTransitNatalSelection({
+            planet: hit.planet,
+            aspect: hit.aspect,
+            natalPoint: hit.natalPoint,
+            sign: "",
+            transitHouse: "",
+            natalHouse: ""
+          });
+        })}
+
+        {!friendsTransitAudience && (
         <label className="admin-title-field">
           <span>Search this transit</span>
           <StudioInput
@@ -7791,6 +7873,7 @@ export function GeneratedContentAdminDashboard() {
           />
           <small className="admin-field-hint">Type the reader title, such as Mars conjunct Moon. This selects the three-part aspect. The live Friends card may use a published family write-up until an exact conjunction row is saved.</small>
         </label>
+        )}
 
         <div className="admin-natal-placement-selectors admin-filter-form admin-filter-form--three">
           <label>
@@ -8077,6 +8160,8 @@ export function GeneratedContentAdminDashboard() {
           </div>
           {selection && <code>transit/{selection.planet}-{selection.sign}/{selection.house}h/{selection.motion}</code>}
         </div>
+
+        {friendsTransitAudience && renderFriendsTransitSectionFinder("house-transit", "embedded", transitNatalQuery, setTransitNatalQuery)}
 
         <div className="admin-natal-placement-selectors admin-filter-form admin-filter-form--four">
           <label>
@@ -9617,7 +9702,7 @@ export function GeneratedContentAdminDashboard() {
         ? friendsTransitAudience ? "Friends → Transits → Active for {{Name}}" : "You → Personal Transits"
         : activePage === "skyWriteups" && skyWriteupWorkspaceView === "house-transits"
           ? friendsTransitAudience ? "Friends → Transits → Where it lands" : "You → House Transits"
-          : activePage === "knowledge" && friendsTransitAudience && fallbackSectionFilter === "friends" && query.includes("bond-effect")
+          : friendsBetweenYouTwoWorkspace
             ? "Friends → Transits → Between you two"
             : null;
     const isNewCompatibilityWorkspaceDraft = isNewDraft && isCompatibilityWorkspaceDraft;
@@ -10567,6 +10652,7 @@ export function GeneratedContentAdminDashboard() {
                 youText={packageFieldString(currentDraft, "body_you")}
                 theyText={packageFieldString(currentDraft, "body_they")}
                 secret={secret}
+                previewNatalPoint={contentLibraryTransitContact?.natalPoint}
                 onOpenSource={(sourceKey, label, field) => void openFromEditor(sourceKey, () => openContentKeyRow(sourceKey, label, false, field))}
               />
             </Suspense>

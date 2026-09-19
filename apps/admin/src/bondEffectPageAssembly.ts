@@ -22,6 +22,25 @@ export function parseBondEffectContentKey(contentKey: string): BondEffectContact
   return { aspect: match[1], planet: match[2] };
 }
 
+export function bondEffectExactContentKey(planet: string, aspect: string) {
+  return `fallback-hook/bond-effect-${aspect}/${planet}`;
+}
+
+export function friendsTransitCardDestinations(query: string) {
+  const parsed = parseAstroContactSearch(query);
+  const contact = transitNatalSearchSelection(query);
+  return {
+    parsed,
+    contact,
+    betweenYouTwoOpeningKey: parsed.transiting && parsed.aspect
+      ? bondEffectExactContentKey(parsed.transiting, parsed.aspect)
+      : null,
+    activeForNameKey: contact
+      ? `authored/transit-aspect/${contact.planet}/${contact.natalPoint}/${contact.aspect}`
+      : null
+  };
+}
+
 const contactSearchStopwords = new Set([
   "a", "an", "the", "your", "you", "natal", "compatibility", "effect", "between", "two", "aspect", "to"
 ]);

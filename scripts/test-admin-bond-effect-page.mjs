@@ -23,6 +23,12 @@ try {
     assembly.parseBondEffectContentKey("fallback-hook/bond-effect-trine/mercury"),
     { aspect: "trine", planet: "mercury" }
   );
+  assert.equal(
+    assembly.bondEffectExactContentKey("chiron", "sextile"),
+    "fallback-hook/bond-effect-sextile/chiron"
+  );
+  assert.deepEqual(assembly.friendsTransitCardDestinations("Chiron sextile your Sun").betweenYouTwoOpeningKey, "fallback-hook/bond-effect-sextile/chiron");
+  assert.equal(assembly.friendsTransitCardDestinations("Chiron sextile your Sun").activeForNameKey, "authored/transit-aspect/chiron/sun/sextile");
   const keys = assembly.synastryPairLookupOrder("ascendant", "saturn", "square").map((item) => item.contentKey);
   assert.deepEqual(keys, [
     "fallback-hook/synastry-pair/ascendant/saturn/square",
@@ -91,19 +97,36 @@ try {
   assert.equal(assembly.matchesTransitNatalContactSearch("authored/transit-aspect/mars/moon/hard", "Mars conjunct Moon"), false);
   assert.equal(assembly.matchesTransitNatalContactSearch("authored/transit-aspect/mars/moon/conjunction/cancer/2/2", "Mars conjunct Moon"), true);
   assert.equal(assembly.matchesTransitNatalContactSearch("authored/transit-aspect/moon/mars/conjunction", "Mars conjunct Moon"), false);
+  assert.deepEqual(assembly.transitNatalSearchSelection("bond-effect chiron sextile sun"), {
+    planet: "chiron",
+    aspect: "sextile",
+    natalPoint: "sun"
+  });
+  assert.deepEqual(assembly.transitNatalSearchSelection("Chiron sextile your Sun"), {
+    planet: "chiron",
+    aspect: "sextile",
+    natalPoint: "sun"
+  });
+  assert.equal(assembly.matchesTransitNatalContactSearch("authored/transit-aspect/chiron/sun/sextile", "Chiron sextile Sun"), true);
+  assert.equal(assembly.matchesTransitNatalContactSearch("authored/transit-aspect/chiron/sun/soft", "Chiron sextile Sun"), true);
 } finally {
   fs.rmSync(dir, { recursive: true, force: true });
 }
 
 const dashboard = fs.readFileSync(new URL("../apps/admin/src/GeneratedContentAdminDashboard.tsx", import.meta.url), "utf8");
 const preview = fs.readFileSync(new URL("../apps/admin/src/BondEffectPagePreview.tsx", import.meta.url), "utf8");
+const finder = fs.readFileSync(new URL("../apps/admin/src/FriendsTransitSectionFinder.tsx", import.meta.url), "utf8");
 assert.match(dashboard, /BondEffectPagePreview/u);
 assert.match(dashboard, /This row is only the opening on the Friends Between you two page/u);
-assert.match(preview, /Assembled Friends page/u);
+assert.match(preview, /Between you two composition/u);
 assert.match(preview, /What this activates/u);
 assert.match(preview, /This last line is calculated from the chart/u);
 assert.match(dashboard, /matchesFallbackLibrarySearch/u);
-assert.match(dashboard, /placeholder="Mars conjunct Moon"/u);
+assert.match(dashboard, /FriendsBetweenYouTwoComposition/u);
+assert.match(finder, /Friends Transits composition map/u);
+assert.match(dashboard, /workspace: "between-you-two"/u);
+assert.match(finder, /Find a Friends transit card/u);
+assert.match(finder, /Open the opening/u);
 assert.match(dashboard, /Edit live /u);
 assert.match(dashboard, /Live reader write-up/u);
 console.log("Content Studio bond-effect Friends page assembly passed.");

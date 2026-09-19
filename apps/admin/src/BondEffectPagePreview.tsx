@@ -36,24 +36,30 @@ export default function BondEffectPagePreview({
   youText,
   theyText,
   secret,
-  onOpenSource
+  onOpenSource,
+  previewNatalPoint
 }: {
   contentKey: string;
   youText: string;
   theyText: string;
   secret: string;
   onOpenSource: (contentKey: string, label: string, field?: string) => void;
+  previewNatalPoint?: TransitNatalPoint;
 }) {
   const contact = parseBondEffectContentKey(contentKey);
-  const [audience, setAudience] = useState<"you" | "they">("you");
+  const [audience, setAudience] = useState<"you" | "they">("they");
   const [friendName, setFriendName] = useState("Name");
-  const [natalPoint, setNatalPoint] = useState<TransitNatalPoint>("ascendant");
+  const [natalPoint, setNatalPoint] = useState<TransitNatalPoint>(previewNatalPoint ?? "ascendant");
   const [friendPoint, setFriendPoint] = useState<TransitNatalPoint>("saturn");
   const [activationAspect, setActivationAspect] = useState<TransitNatalAspect>("square");
   const [transitSign, setTransitSign] = useState<TransitNatalSign>("libra");
   const [natalSign, setNatalSign] = useState<TransitNatalSign>("gemini");
   const [transitHouse, setTransitHouse] = useState<TransitNatalHouse>("5");
   const [synastry, setSynastry] = useState<{ key: string; load?: SynastryLoad; error?: string }>({ key: "" });
+
+  useEffect(() => {
+    if (previewNatalPoint) setNatalPoint(previewNatalPoint);
+  }, [previewNatalPoint]);
 
   const lookup = synastryPairLookupOrder(natalPoint, friendPoint, activationAspect);
   const lookupKey = lookup.map((item) => item.contentKey).join("|");
@@ -123,17 +129,17 @@ export default function BondEffectPagePreview({
   const loadingSynastry = synastry.key !== lookupKey || (loadedSynastry === undefined && !synastry.error);
 
   return (
-    <section className="admin-natal-source-card" aria-label="Assembled Friends page" data-bond-page-preview="true">
+    <section className="admin-natal-source-card" aria-label="Between you two composition" data-bond-page-preview="true">
       <header className="admin-natal-source-card-heading">
         <div>
-          <p className="admin-eyebrow">Assembled Friends page</p>
+          <p className="admin-eyebrow">Between you two composition</p>
           <strong>{headline}</strong>
         </div>
       </header>
       <p>
-        This compatibility-effect row is only the opening. The live Between you two page also includes a natal synastry section and a calculated astrology line. Those are not saved on this row.
+        This compatibility-effect row is only the opening. The live Between you two write-up also includes What this activates and a calculated astrology line. Those are not saved on this row.
       </p>
-      <fieldset className="admin-metadata-fields" aria-label="Friends page example">
+      <fieldset className="admin-metadata-fields" aria-label="Between you two example">
         <legend>Example chart for this page</legend>
         <label>
           <span>Opening</span>
