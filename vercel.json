@@ -85,6 +85,9 @@
     "api/admin/generated-content-inventory.ts": {
       "includeFiles": "api/_lib/**/*.{js,ts}"
     },
+    "api/admin/package-source.ts": {
+      "includeFiles": "{api/_lib,apps/web/src/content}/**/*.{cjs,js,json,md,mjs,ts}"
+    },
     "api/admin/memory-graph.ts": {
       "includeFiles": "{AGENTS.md,config/agent-memory-sources-v1.json,{docs/{writing,content-management},data/{writing,agent-memory},skills/tldr-astro-writer,.agents/skills/satori-writer,tldr-astro-phrasebank,packages/astro-knowledge/review}/**/*.{jsonl,md}}"
     },

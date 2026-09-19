@@ -183,7 +183,7 @@ export default function SkyFallbackVariantFamilyEditor(props: Props) {
   const completeLaneCount = useMemo(() => family.lanes.filter(laneComplete).length, [family]);
 
   async function generatedContentRows() {
-    const payload = await readGeneratedContentRows(`/api/admin/generated-content?status=all&visibility=all&contentKey=${encodeURIComponent(props.contentKey)}&limit=20`, props.secret);
+    const payload = await readGeneratedContentRows(`/api/admin/generated-content-inventory?status=all&visibility=all&contentKey=${encodeURIComponent(props.contentKey)}&limit=20`, props.secret);
     const rows = payload.filter((row) => row.content_key === props.contentKey);
     if (!rows.length) throw new Error(`Could not load the stored Content Studio row for ${props.contentKey}.`);
     return rows.reduce(preferredRow);

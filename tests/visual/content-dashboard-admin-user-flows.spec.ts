@@ -740,8 +740,27 @@ async function seedAdminApi(
       return;
     }
 
-    if (pathname.endsWith("/generated-content")) {
+    if (pathname.endsWith("/package-source")) {
+      const key = url.searchParams.get("contentKey") ?? "";
+      options.onGeneratedContentRead?.(url);
+      await route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify({ ok: true, packageSource: servingPackageRecords.get(key) ?? null })
+      });
+      return;
+    }
+
+    if (pathname.endsWith("/generated-content-inventory") || pathname.endsWith("/generated-content")) {
       const method = route.request().method();
+      if (pathname.endsWith("/generated-content-inventory") && method !== "GET") {
+        await route.fulfill({
+          status: 405,
+          contentType: "application/json",
+          body: JSON.stringify({ ok: false, error: "Use GET." })
+        });
+        return;
+      }
       if (method === "GET" && url.searchParams.get("variables") === "true") {
         await route.fulfill({ json: { ok: true, variables: [] } });
         return;
@@ -2672,7 +2691,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expect(editor.getByRole("heading", { level: 2 })).not.toHaveText("Write Sun conjunction your North Node");
     await expect(editor).not.toContainText("This is a new blank draft");
     await expect(editor.locator('[data-sky-field="body_you"]')).toHaveValue(String(servingPackageRecords.get(key)!.body_you));
-    expect(reads.some(url => url.searchParams.get("contentKey") === key && url.searchParams.get("includePackageSource") === "true")).toBe(true);
+    expect(reads.some(url => url.pathname.endsWith("/package-source") && url.searchParams.get("contentKey") === key)).toBe(true);
     await editor.getByRole("button", { name: "Save draft", exact: true }).click();
     await expect.poll(() => writes.length).toBe(1);
     expect((writes[0].payload.sections as { packageDraft?: { body_you?: string } }).packageDraft?.body_you ?? writes[0].payload.body).toBe(String(servingPackageRecords.get(key)!.body_you));
@@ -2759,8 +2778,8 @@ test.describe("content dashboard admin user flow case studies", () => {
     await page.getByLabel("Transit copy variant").selectOption("2");
     await expect(preview.getByRole("alert")).toContainText("source links could not be verified");
     await expect(preview.getByRole("button")).toHaveCount(0);
-    await page.route("**/api/admin/generated-content?**", async route => {
-      if (new URL(route.request().url()).searchParams.get("includePackageSource") === "true") await route.fulfill({ json: { ok: true, rows: null } });
+    await page.route("**/api/admin/generated-content-inventory?**", async route => {
+      if (new URL(route.request().url()).searchParams.get("contentKey")) await route.fulfill({ json: { ok: true, rows: null } });
       else await route.fallback();
     });
     await page.reload();
@@ -5666,7 +5685,7 @@ test("composition map loads a package-only hook before opening its editable star
   const key = "fallback-hook/natal-you-placement-sign-final/uranus/scorpio";
   const record = servingPackageRecords.get(key)!;
   await seedAdminApi(page, { generatedRows: [], compositionCatalog: [{ content_key: key, headline: "Uranus in Scorpio", role: "fallback_hook" }] });
-  await page.route("**/api/admin/generated-content?**", async (route) => {
+  await page.route("**/api/admin/generated-content-inventory?**", async (route) => {
     if (!new URL(route.request().url()).searchParams.getAll("contentKeys").includes(key)) return route.fallback();
     await route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({ ok: true, rows: [{
       ...generatedContentRows[0], id: `package:${key}`, content_key: key, headline: "Uranus in Scorpio", body: record.body_you ?? record.body,
@@ -5963,7 +5982,7 @@ for (const pair of ["sun-chiron", "moon-chiron"]) for (const width of [390, 1440
     onGeneratedContentWrite: write => writes.push(write) });
   // Production's editorial inventory excludes reference sources, even though
   // review-records still lists them. A fresh queue must load their saved rows.
-  await page.route("**/api/admin/generated-content?**", route => new URL(route.request().url()).searchParams.get("visibility") === "editorial"
+  await page.route("**/api/admin/generated-content-inventory?**", route => new URL(route.request().url()).searchParams.get("visibility") === "editorial"
     ? route.fulfill({ json: { ok: true, rows: [] } }) : route.fallback());
   await expectAdminRouteLoads(page, "/admin/content#review-queue?view=sources");
   await page.evaluate(value => document.documentElement.dataset.theme = value, theme);
@@ -6073,7 +6092,7 @@ test("reopening a completed revision follows its published target", async ({ pag
     event_type: "collective-aspect-card", block_type: "sky_aspect",
     review_state: "owner-review-required", source_snapshot: {}, sections: {}, updated_at: now };
   await seedAdminApi(page, { generatedRows: [revision] });
-  await page.route("**/api/admin/generated-content?**", async route => {
+  await page.route("**/api/admin/generated-content-inventory?**", async route => {
     const id = new URL(route.request().url()).searchParams.get("id");
     if (id === revision.id) return route.fulfill({ json: { ok: true, rows: [{ ...revision, status: "ARCHIVED",
       review_state: "published-revision", source_snapshot: { targetRowId: "qa-published-target" } }] } });

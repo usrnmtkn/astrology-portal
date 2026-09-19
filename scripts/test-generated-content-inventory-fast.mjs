@@ -18,8 +18,19 @@ assert.match(vercel, /"api\/admin\/generated-content-inventory\.ts"/u);
 
 const generatedContent = fs.readFileSync("api/admin/generated-content.ts", "utf8");
 assert.doesNotMatch(generatedContent, /from ["']\.\.\/\.\.\/apps\/web/u, "generated-content must not statically import apps/web libraries at boot.");
-assert.match(generatedContent, /await import\("\.\/generated-content-libraries\.js"\)/u, "Write and package-source paths must load content libraries lazily.");
+assert.match(generatedContent, /await import\("\.\/generated-content-libraries\.js"\)/u, "Write paths must load content libraries lazily.");
 assert.match(generatedContent, /await loadGeneratedContentLibraries\(\)/u, "POST, PATCH, and DELETE must load content libraries before publication checks.");
+const packageLookup = generatedContent.slice(
+  generatedContent.indexOf('searchParams.get("includePackageSource")'),
+  generatedContent.indexOf("if (req.method === \"POST\")")
+);
+assert.match(packageLookup, /serving-package-records/u, "Package-source lookup must use the slim serving records module.");
+assert.doesNotMatch(packageLookup, /loadGeneratedContentLibraries/u, "Package-source GET must not boot write libraries.");
+assert.doesNotMatch(packageLookup, /content-live-status/u, "Package-source GET must not import content-live-status.");
+assert.match(fs.readFileSync("apps/admin/src/generatedContentClient.ts", "utf8"), /readStudioContentDocument/u);
+assert.match(dashboard, /readStudioContentDocument\(/u);
+assert.doesNotMatch(dashboard, /includePackageSource/u);
+assert.match(vercel, /"api\/admin\/package-source\.ts"/u);
 assert.match(fs.readFileSync("api/admin/generated-content-libraries.ts", "utf8"), /packagePublicationAdmissionIssue/u);
 assert.match(fs.readFileSync("apps/web/src/content/astro101.ts", "utf8"), /from "\.\/astro101Ephemeris\.ts"/u, "Astro 101 must import ephemeris with a Node-resolvable .ts specifier on Vercel.");
 

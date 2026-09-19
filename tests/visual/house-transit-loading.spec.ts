@@ -21,7 +21,7 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
     await page.addInitScript(theme => localStorage.setItem("tldrastro:studio-theme", theme), theme);
     let release!: () => void;
     const pending = new Promise<void>(resolve => { release = resolve; });
-    await page.route("**/api/admin/generated-content?**", async route => {
+    await page.route("**/api/admin/generated-content-inventory?**", async route => {
       const query = new URL(route.request().url()).searchParams;
       if (query.get("visibility") !== "all") return route.fulfill({ json: { ok: true, rows: [unrelated], nextCursor: null } });
       if (!query.has("cursor")) return route.fulfill({ json: { ok: true, rows: [rows[0]], nextCursor: "second" } });
@@ -91,7 +91,7 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
 test("House Transit failed inventory offers retry, then distinguishes confirmed missing copy", async ({ page }) => {
   await mock(page);
   let fail = true;
-  await page.route("**/api/admin/generated-content?**", route => {
+  await page.route("**/api/admin/generated-content-inventory?**", route => {
     const extended = new URL(route.request().url()).searchParams.get("visibility") === "all";
     return extended && fail ? route.fulfill({ status: 503, json: { error: "Fixture inventory unavailable" } })
       : route.fulfill({ json: { ok: true, rows: [unrelated], nextCursor: null } });

@@ -31,6 +31,7 @@ import {
   studioInventoryRequestPath,
   type StudioInventoryQuery
 } from "./studioSectionInventory";
+import { readStudioContentDocument, studioInventoryDocumentPath } from "./generatedContentClient";
 import { isContentStudioReferenceSource } from "../../web/src/content/contentStudioSourceRole";
 import {
   ArrowLeft,
@@ -2994,11 +2995,14 @@ export function GeneratedContentAdminDashboard() {
   const [variableCreateRequest, setVariableCreateRequest] = useState(0);
   const [secretInput, setSecretInput] = useState(secret);
   const loadCalendarPreviewRows = useCallback(async (keys: string[]) => {
-    const query = new URLSearchParams({ status: "all", visibility: "all", limit: "1000" });
+    if (keys.length > 200) {
+      throw new Error("Could not verify the full saved Calendar sources.");
+    }
+    const query = new URLSearchParams({ status: "all", visibility: "all", limit: String(Math.min(Math.max(keys.length, 1), 200)) });
     keys.forEach(key => query.append("contentKeys", key));
     const payload = await adminJsonRequest<{ rows: AdminGeneratedContentRow[] }>(
-      `/api/admin/generated-content?${query}`, secret);
-    if (!Array.isArray(payload.rows) || payload.rows.length >= 1000 || payload.rows.some(row => !keys.includes(row.content_key) || row.inventory_only)) {
+      `/api/admin/generated-content-inventory?${query}`, secret);
+    if (!Array.isArray(payload.rows) || payload.rows.length > keys.length || payload.rows.some(row => !keys.includes(row.content_key) || row.inventory_only)) {
       throw new Error("Could not verify the full saved Calendar sources.");
     }
     return payload.rows;
@@ -4593,7 +4597,7 @@ export function GeneratedContentAdminDashboard() {
       setEditorSaveError(dashboardErrorMessage(error));
       setMessage("Writing work did not complete. Your saved writing is preserved.");
       try {
-        const latest = await adminJsonRequest<{ rows: AdminGeneratedContentRow[] }>(`/api/admin/generated-content?status=all&visibility=all&contentKey=${encodeURIComponent(contentKey)}&limit=1`, secret);
+        const latest = await adminJsonRequest<{ rows: AdminGeneratedContentRow[] }>(studioInventoryDocumentPath(contentKey), secret);
         const saved = latest.rows?.[0];
         if (saved) {
           setRows(current => dedupeGeneratedContentRows([...current.filter(candidate => candidate.id !== saved.id), saved]));
@@ -5048,7 +5052,7 @@ export function GeneratedContentAdminDashboard() {
         && error instanceof AdminRequestError && [408, 409, 504].includes(error.status)) {
         try {
           const payload = await adminJsonRequest<{ rows: AdminGeneratedContentRow[] }>(
-            `/api/admin/generated-content?id=${encodeURIComponent(activeDraft.id)}&status=all&visibility=all&limit=1`, secret);
+            `/api/admin/generated-content-inventory?id=${encodeURIComponent(activeDraft.id)}&status=all&visibility=all&limit=1`, secret);
           const latest = payload.rows.find((row) => row.id === activeDraft.id);
           if (!latest || latest.inventory_only) throw new Error("Could not reload the saved version. Your edits are still here; try saving again.");
           const baseline = JSON.parse(recoveryBaseline) as AdminDraft;
@@ -5480,26 +5484,15 @@ export function GeneratedContentAdminDashboard() {
     const requestId = ++sourceOpenRequestRef.current;
     setIsLoading(true);
     try {
-      const inventoryPayload = await adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[] }>(
-        `/api/admin/generated-content-inventory?status=all&visibility=all&contentKey=${encodeURIComponent(contentKey)}&limit=1`,
-        secret
-      );
-      const inventoryRows = Array.isArray(inventoryPayload.rows) ? inventoryPayload.rows : [];
+      const inventoryPayload = await readStudioContentDocument(contentKey, secret);
+      if (requestId !== sourceOpenRequestRef.current || window.location.hash !== originatingHash) return;
+      const inventoryRows = inventoryPayload.rows as AdminGeneratedContentRow[];
       if (inventoryRows.some((candidate) => candidate.content_key !== contentKey)) throw new Error("The selected source could not be verified.");
       let row = inventoryRows.find((candidate) => candidate.content_key === contentKey);
-      let payload: { rows: AdminGeneratedContentRow[]; packageSource?: Record<string, unknown> | null } = {
+      const payload = {
         rows: inventoryRows,
-        packageSource: null
+        packageSource: inventoryPayload.packageSource
       };
-      if (!row) {
-        payload = await adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[]; packageSource?: Record<string, unknown> | null }>(
-          `/api/admin/generated-content?status=all&visibility=all&contentKey=${encodeURIComponent(contentKey)}&limit=1&includePackageSource=true`,
-          secret
-        );
-        if (!Array.isArray(payload.rows) || payload.rows.some(candidate => candidate.content_key !== contentKey)) throw new Error("The selected source could not be verified.");
-        row = payload.rows.find(candidate => candidate.content_key === contentKey);
-      }
-      if (requestId !== sourceOpenRequestRef.current || window.location.hash !== originatingHash) return;
       if (!row && payload.packageSource) {
         if (packagedTransitOpenMode(finderTransitNatalExactKey(), contentKey) === "exact") {
           await openPackagedTransitSource(payload.packageSource, contentKey, fieldPath);
@@ -5592,7 +5585,7 @@ export function GeneratedContentAdminDashboard() {
     try {
       const existing = rows.find((row) => row.content_key === contentKey);
       const row = existing ?? (await adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[] }>(
-        `/api/admin/generated-content?status=all&contentKey=${encodeURIComponent(contentKey)}&limit=1`,
+        studioInventoryDocumentPath(contentKey),
         secret
       )).rows?.find((candidate) => candidate.content_key === contentKey);
       if (!row) throw new Error(`The serving source ${contentKey} is not materialized in Content Studio.`);
@@ -5616,7 +5609,7 @@ export function GeneratedContentAdminDashboard() {
     try {
       const existing = rows.find((row) => row.content_key === contentKey);
       const row = existing ?? (await adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[] }>(
-        `/api/admin/generated-content?status=all&visibility=all&contentKey=${encodeURIComponent(contentKey)}&limit=1`,
+        studioInventoryDocumentPath(contentKey),
         secret
       )).rows?.find((candidate) => candidate.content_key === contentKey);
       if (!row) throw new Error(`The owner-approved source ${contentKey} is not materialized in Content Studio.`);
@@ -5975,7 +5968,7 @@ export function GeneratedContentAdminDashboard() {
       if (requestId !== sourceOpenRequestRef.current || window.location.hash !== originatingHash) return;
       const template = skyForecastTemplates[period];
       const payload = await adminJsonRequest<{ rows: AdminGeneratedContentRow[] }>(
-        `/api/admin/generated-content?status=all&visibility=all&contentKey=${encodeURIComponent(template.contentKey)}&limit=1`, secret);
+        studioInventoryDocumentPath(template.contentKey), secret);
       if (!Array.isArray(payload.rows) || payload.rows.some(row => row.content_key !== template.contentKey)) throw new Error("Could not verify the saved template.");
       if (requestId !== sourceOpenRequestRef.current || window.location.hash !== originatingHash) return;
       const saved = payload.rows[0];
@@ -6012,7 +6005,7 @@ export function GeneratedContentAdminDashboard() {
         ? await loadSkySummarySourceBank() : undefined;
       const candidateReceipt = suppliedBank && initialBody !== undefined ? skySummaryCandidateReceipt(field.key, initialBody, suppliedBank) : undefined;
       const result = await adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[] }>(
-        `/api/admin/generated-content?status=all&visibility=all&contentKey=${encodeURIComponent(field.key)}&limit=1`, secret);
+        studioInventoryDocumentPath(field.key), secret);
       if (!Array.isArray(result.rows)) throw new Error("Could not load the saved summary wording. Please try again.");
       const moonSource = /^cms\/sky-daily-summary\/moon\/[^/]+\/[^/]+$/u.test(field.key)
         ? (await (await import("./skyMoonSummarySources")).loadSkyMoonSummarySources()).rows.find(row => row.key === field.key) : undefined;
@@ -6022,7 +6015,7 @@ export function GeneratedContentAdminDashboard() {
         const [planet, sign] = field.label.split(" enters ");
         const sources = await Promise.all(ingressTldrSourceKeys(planet, sign).map(async key => {
           const response = await adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[] }>(
-            `/api/admin/generated-content?status=all&visibility=all&contentKey=${encodeURIComponent(key)}&limit=1`, secret);
+            studioInventoryDocumentPath(key), secret);
           if (!Array.isArray(response.rows)) throw new Error("Could not check the existing ingress TLDR. Please try again.");
           return response.rows;
         }));
@@ -7983,12 +7976,10 @@ export function GeneratedContentAdminDashboard() {
     setIsLoading(true);
     try {
       // Fetch before creating: a saved draft or publication must never be replaced by a blank starter.
-      const payload = await adminJsonRequest<{ rows: AdminGeneratedContentRow[]; packageSource?: Record<string, unknown> | null }>(
-        `/api/admin/generated-content?status=all&visibility=all&contentKey=${encodeURIComponent(key)}&limit=1&includePackageSource=true`, secret);
+      const payload = await readStudioContentDocument(key, secret);
       if (requestId !== sourceOpenRequestRef.current) return;
       if (finderTransitNatalExactKey() !== key) return;
-      if (!Array.isArray(payload.rows) || payload.rows.some(candidate => candidate.content_key !== key)) throw new Error("The exact passage could not be verified.");
-      const row = payload.rows.find(candidate => candidate.content_key === key);
+      const row = (payload.rows as AdminGeneratedContentRow[]).find(candidate => candidate.content_key === key);
       if (row) { await openRow(row); return; }
       if (payload.packageSource) {
         await openPackagedTransitSource(payload.packageSource, key, undefined, {
@@ -8001,14 +7992,10 @@ export function GeneratedContentAdminDashboard() {
       let starter = { body_you: "", body_they: "" };
       const starterKeys = [parentKey, sharedKey].filter((candidate, index, list): candidate is string => Boolean(candidate) && candidate !== key && list.indexOf(candidate) === index);
       for (const starterKey of starterKeys) {
-        const starterPayload = await adminJsonRequest<{ rows: AdminGeneratedContentRow[]; packageSource?: Record<string, unknown> | null }>(
-          `/api/admin/generated-content?status=all&visibility=all&contentKey=${encodeURIComponent(starterKey)}&limit=1&includePackageSource=true`, secret);
+        const starterPayload = await readStudioContentDocument(starterKey, secret);
         if (requestId !== sourceOpenRequestRef.current) return;
         if (finderTransitNatalExactKey() !== key) return;
-        if (!Array.isArray(starterPayload.rows) || starterPayload.rows.some(candidate => candidate.content_key !== starterKey)) {
-          throw new Error("The shared fallback passage could not be verified.");
-        }
-        const starterRow = starterPayload.rows.find(candidate => candidate.content_key === starterKey);
+        const starterRow = (starterPayload.rows as AdminGeneratedContentRow[]).find(candidate => candidate.content_key === starterKey);
         const starterRecord = objectRecord(objectRecord(starterRow?.sections)?.packageRecord);
         const rowHasCopy = Boolean(
           typeof starterRecord?.body_you === "string" && starterRecord.body_you.trim()
@@ -8313,12 +8300,11 @@ export function GeneratedContentAdminDashboard() {
       // Read full documents afresh. Inventory bodies and composed previews are not editable originals.
       const loaded = await Promise.all(sources.map(async source => {
         const key = source.candidateKeys[0];
-        const payload = await adminJsonRequest<{ rows: AdminGeneratedContentRow[]; packageSource?: Record<string, unknown> | null }>(
-          `/api/admin/generated-content?status=all&visibility=all&contentKey=${encodeURIComponent(key)}&limit=1&includePackageSource=true`, secret);
-        if (!Array.isArray(payload.rows) || payload.rows.some(row => row.content_key !== key || row.inventory_only)) {
+        const payload = await readStudioContentDocument(key, secret);
+        if (!Array.isArray(payload.rows) || payload.rows.some(row => row.content_key !== key || (row as AdminGeneratedContentRow).inventory_only)) {
           throw new Error(`Could not load the complete source for ${source.label}.`);
         }
-        let row = payload.rows[0];
+        let row = payload.rows[0] as AdminGeneratedContentRow | undefined;
         if (row?.status === "ARCHIVED" && row.review_state === "published-revision") {
           row = await hydrateGeneratedContentRow(row, true, true);
         }
@@ -8390,7 +8376,7 @@ export function GeneratedContentAdminDashboard() {
       // identical text, but never graft a newer version onto conflicting local edits.
       if (error instanceof AdminRequestError && [408, 504].includes(error.status)) {
         const payload = await adminJsonRequest<{ rows: AdminGeneratedContentRow[] }>(
-          `/api/admin/generated-content?status=all&visibility=all&contentKey=${encodeURIComponent(key)}&limit=1`, secret);
+          studioInventoryDocumentPath(key), secret);
         const saved = payload.rows?.find(row => row.content_key === key) ?? null;
         if (acknowledge(saved)) {
           setRows(current => mergeContentInventory(current, [saved!]));

@@ -2,7 +2,7 @@ import { createHash } from "node:crypto";
 import { isDynamicTransitNatalExactKey, transitAspectSituationKey } from "../../apps/web/src/content/transitNatalIdentity.js";
 import { isEligibleTransitReturn } from "../../apps/web/src/content/fallbackArchitectureV3/resolver/transitReturns.mjs";
 import { generateSkyArticleTemplateSlots } from "./content-generation.js";
-import { servingPackageRecords } from "./content-live-status.js";
+import { servingPackageRecords } from "./serving-package-records.js";
 import { AdminHttpError, adminFetchJson, adminStorageRows } from "./admin-http.js";
 import { studioStorage } from "./sky-studio-sources.js";
 import { buildSkyWritingMemory } from "./sky-writing-memory.mjs";

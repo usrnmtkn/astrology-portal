@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { PageLoading } from "../../web/src/components/PageLoading";
 import BondEffectPagePreview from "./BondEffectPagePreview";
 import { friendsActivationParam, friendsTransitCardDestinations, friendsTransitCompositionQuery, friendsTransitReaderTitle, parseFriendsActivationParam, synastryBodiesFromPayload } from "./bondEffectPageAssembly";
-import { requestStudioJson } from "./generatedContentClient";
+import { readStudioContentDocument } from "./generatedContentClient";
 import { subscribeToContentUpdates } from "../../web/src/services/contentUpdateSignal";
 import { StudioButton } from "./StudioControls";
 
@@ -48,11 +48,7 @@ export default function FriendsBetweenYouTwoComposition({
     setOpening(null);
     void (async () => {
       try {
-        const payload = await requestStudioJson(
-          `/api/admin/generated-content?status=all&visibility=all&contentKey=${encodeURIComponent(openingKey)}&limit=1&includePackageSource=true`,
-          secret,
-          { signal: controller.signal }
-        );
+        const payload = await readStudioContentDocument(openingKey, secret, { signal: controller.signal });
         if (cancelled) return;
         const bodies = synastryBodiesFromPayload(payload);
         if (!bodies) {

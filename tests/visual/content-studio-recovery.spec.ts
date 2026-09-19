@@ -13,7 +13,7 @@ async function mockStudio(page: Page, malformedStatus = false) {
   await page.route("**/api/**", async route => {
     const url = new URL(route.request().url());
     const data: any = { ok: true, rows: [], statuses: [], nextCursor: null };
-    if (url.pathname.endsWith("/generated-content")) {
+    if (url.pathname.endsWith("/generated-content") || url.pathname.endsWith("/generated-content-inventory")) {
       const cursor = Number(url.searchParams.get("cursor") ?? 0);
       const key = url.searchParams.get("contentKeys");
       data.rows = key ? inventory.filter(row => key.split(",").includes(row.content_key)) : inventory.slice(cursor, cursor + 400);
@@ -58,7 +58,7 @@ for (const initialPage of ["review-queue", "articles"]) {
   test(`invalid inventory pages retry automatically before completing from ${initialPage}`, async ({ page }) => {
     await mockStudio(page);
     let attempts = 0;
-    await page.route("**/api/admin/generated-content?**", async route => {
+    await page.route("**/api/admin/generated-content**", async route => {
       const url = new URL(route.request().url());
       if (url.searchParams.get("scope") === "all" && !url.searchParams.has("cursor") && ++attempts <= 2) {
         await route.fulfill({ json: attempts === 1 ? null : { rows: null } });
@@ -76,7 +76,7 @@ for (const initialPage of ["review-queue", "articles"]) {
     await mockStudio(page);
     let invalid = true;
     let attempts = 0;
-    await page.route("**/api/admin/generated-content?**", async route => {
+    await page.route("**/api/admin/generated-content**", async route => {
       if (invalid && new URL(route.request().url()).searchParams.get("scope") === "all") {
         attempts += 1;
         await route.fulfill({ json: null });

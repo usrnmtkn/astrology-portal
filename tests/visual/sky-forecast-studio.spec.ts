@@ -116,7 +116,7 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
 
 test("Calendar forecast source errors do not open an empty replacement", async ({ page }) => {
   await studioApi(page);
-  await page.route("**/api/admin/generated-content?**contentKey=**", route => route.fulfill({ status: 503, json: { error: "Template source unavailable" } }));
+  await page.route("**/api/admin/generated-content-inventory?**contentKey=**", route => route.fulfill({ status: 503, json: { error: "Template source unavailable" } }));
   await page.goto("/admin/content#sky-writeups?view=weekly-sky");
   await page.getByRole("button", { name: "Open weekly template" }).click();
   await expect(page.getByText("Template source unavailable", { exact: false })).toBeVisible();

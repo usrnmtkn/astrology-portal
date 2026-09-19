@@ -32,7 +32,7 @@ test.describe("Content Studio Needs attention", () => {
       });
     });
 
-    await page.route("**/api/admin/generated-content?**", async (route) => {
+    await page.route("**/api/admin/generated-content**", async (route) => {
       const url = new URL(route.request().url());
       const status = url.searchParams.get("status");
       if (status === "LIVE") {

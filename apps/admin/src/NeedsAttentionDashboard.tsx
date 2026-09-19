@@ -114,8 +114,8 @@ function buildAttentionItems(coverage: CoveragePayload, liveRows: InventoryRow[]
 
 async function loadInventory(credential: string, status: "ERROR" | "LIVE") {
   const { readGeneratedContentRows } = await import("./generatedContentClient");
-  const params = new URLSearchParams({ status, visibility: "all", view: "inventory", limit: "1000" });
-  return readGeneratedContentRows(`/api/admin/generated-content?${params}`, credential);
+  const params = new URLSearchParams({ status, visibility: "all", view: "inventory", limit: "80" });
+  return readGeneratedContentRows(`/api/admin/generated-content-inventory?${params}`, credential);
 }
 
 export default function NeedsAttentionDashboard() {

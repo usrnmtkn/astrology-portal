@@ -3,7 +3,7 @@ import { StudioButton, StudioInput } from "./StudioControls";
 import { Fragment, lazy, Suspense, useEffect, useState } from "react";
 import { renderTransitNatalPreview, transitNatalExactContentKey, type TransitNatalSelection, type TransitNatalReadingContext, type TransitPassageSource } from "./transitNatalSources";
 import { subscribeToContentUpdates } from "../../web/src/services/contentUpdateSignal";
-import { requestStudioJson } from "./generatedContentClient";
+import { readStudioContentDocument, requestStudioJson } from "./generatedContentClient";
 import { PageLoading } from "../../web/src/components/PageLoading";
 
 import ContentLiveStatusBadge from "./ContentLiveStatus";
@@ -38,7 +38,7 @@ export function TransitNatalExactSourceAction({
     let cancelled = false;
     const controller = new AbortController();
     setState({ key: contentKey });
-    void requestStudioJson(`/api/admin/generated-content?status=all&visibility=all&contentKey=${encodeURIComponent(contentKey)}&limit=1&includePackageSource=true`, secret, { signal: controller.signal })
+    void readStudioContentDocument(contentKey, secret, { signal: controller.signal })
       .then(payload => {
         const passage = transitExactPassageState(contentKey, payload);
         if (!cancelled) setState({ key: contentKey, passage });

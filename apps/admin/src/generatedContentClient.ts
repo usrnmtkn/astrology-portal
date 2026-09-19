@@ -49,6 +49,43 @@ function rowsFromPayload(payload: Record<string, unknown>): GeneratedContentEdit
   return payload.rows as GeneratedContentEditorRow[];
 }
 
+export function studioInventoryDocumentPath(contentKey: string, extras: { status?: string; limit?: number } = {}) {
+  const params = new URLSearchParams({
+    contentKey,
+    status: extras.status ?? "all",
+    visibility: "all",
+    limit: String(extras.limit ?? 1)
+  });
+  return `/api/admin/generated-content-inventory?${params}`;
+}
+
+export function studioPackageSourcePath(contentKey: string) {
+  return `/api/admin/package-source?contentKey=${encodeURIComponent(contentKey)}`;
+}
+
+export type StudioContentDocument = {
+  rows: Array<Record<string, unknown> & { content_key: string }>;
+  packageSource: Record<string, unknown> | null;
+};
+
+export async function readStudioContentDocument(
+  contentKey: string,
+  secret: string,
+  options: RequestInit = {}
+): Promise<StudioContentDocument> {
+  const payload = await request(studioInventoryDocumentPath(contentKey), secret, options);
+  if (!Array.isArray(payload.rows) || payload.rows.some((row) => !isObject(row) || row.content_key !== contentKey)) {
+    throw new Error("The selected source could not be verified.");
+  }
+  const rows = payload.rows.filter(isObject) as StudioContentDocument["rows"];
+  if (rows.length) return { rows, packageSource: null };
+  const pkg = await request(studioPackageSourcePath(contentKey), secret, options);
+  if (pkg.packageSource != null && !isObject(pkg.packageSource)) {
+    throw new Error("The packaged source could not be verified.");
+  }
+  return { rows: [], packageSource: isObject(pkg.packageSource) ? pkg.packageSource : null };
+}
+
 export async function readGeneratedContentRows(path: string, secret: string, signal?: AbortSignal) {
   const rows: GeneratedContentEditorRow[] = [];
   const cursors = new Set<string>();
@@ -78,7 +115,7 @@ function saveMayHaveCompleted(error: unknown) {
 }
 
 async function verifyTimedOutSave(row: GeneratedContentEditorRow, draftSections: Record<string, unknown>, secret: string) {
-  const path = `/api/admin/generated-content?contentKey=${encodeURIComponent(row.content_key)}&status=DRAFT&visibility=all&limit=10`;
+  const path = studioInventoryDocumentPath(row.content_key, { status: "DRAFT", limit: 10 });
   const payload = await request(path, secret);
   const submitted = submittedDraftFields(draftSections);
   return rowsFromPayload(payload)
