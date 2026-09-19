@@ -41,6 +41,7 @@ type Props = {
   onDirtyChange: (key: string, dirty: boolean) => void;
   onSaveSource: (row: NatalEditableRow, edits: NatalSourceEdits, publish: boolean) => Promise<boolean>;
   onOpenSource: (contentKey: string, label: string, previewTemplate?: boolean) => void;
+  onOpenEmptyHouseCompositions: () => void;
   motion: NatalPlacementMotion;
   onSelectionChange: (next: { house?: NatalPlacementHouse | ""; motion?: NatalPlacementMotion; planet?: NatalPlacementPlanet | ""; sign?: NatalPlacementSign | "" }) => void;
   planet: NatalPlacementPlanet | "";
@@ -99,7 +100,7 @@ function emptyHouseSourceScope(key: string) {
   return "Reusable empty-house source writing.";
 }
 
-export default function NatalPlacementSourceFinder({ house, isLoading, motion, onCreateOverride, onDirtyChange, onSaveSource, onOpenSource, onSelectionChange, planet, rows, secret, sign }: Props) {
+export default function NatalPlacementSourceFinder({ house, isLoading, motion, onCreateOverride, onDirtyChange, onSaveSource, onOpenSource, onOpenEmptyHouseCompositions, onSelectionChange, planet, rows, secret, sign }: Props) {
   const [view, setView] = useState<NatalChartWritingView>("placements");
   const [emptyHouse, setEmptyHouse] = useState(1);
   const [emptyHouseSign, setEmptyHouseSign] = useState("aries");
@@ -300,6 +301,7 @@ export default function NatalPlacementSourceFinder({ house, isLoading, motion, o
             <p className="admin-eyebrow">Empty houses</p>
             <h3>Choose the house, cusp sign, and where its ruler lands</h3>
             <p>The full reader assembly and the source list below update with the selected context.</p>
+            <StudioButton type="button" onClick={onOpenEmptyHouseCompositions}>Open composition sources</StudioButton>
           </header>
           <div className="admin-natal-placement-selectors admin-filter-form" aria-label="Empty house context">
             <label>

@@ -198,11 +198,8 @@ export default function SkyPlacementVariableKey({ facts, onInsert, onInsertPhras
                 </td>
                 <td data-label="Where it is stored">
                   <span className="admin-field-hint">{scopeLabel(item.kind)}</span>
-                  <details className="admin-workspace-details">
-                    <AdminDisclosureSummary>Source and scope</AdminDisclosureSummary>
-                    <p><code>{sourceLabel}</code></p>
-                    {!phraseInstalled && currentValue && <p>This is governed prefill text. It becomes an editable placement value when the Writing Library is saved.</p>}
-                  </details>
+                  <p className="admin-natal-source-key"><span>Source key</span><code>{sourceLabel}</code></p>
+                  {!phraseInstalled && currentValue && <p>This is governed prefill text. It becomes an editable placement value when the Writing Library is saved.</p>}
                 </td>
                 <td data-label="Edit">
                   {phraseSource?.onEdit && <StudioButton type="button" disabled={disabled || phraseLoading} onClick={() => phraseSource.onEdit?.(item.id)}>Edit {item.label.toLowerCase()}</StudioButton>}
