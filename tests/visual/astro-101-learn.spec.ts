@@ -70,24 +70,32 @@ test("House article keeps the long title and lede", async ({ page }) => {
   await expect(southNode.getByRole("heading", { name: "South Node in the 2nd house", level: 2 })).toBeVisible();
 });
 
-test("Learn article chrome uses compact article navigation", async ({ page }) => {
+test("Learn article uses the full desktop navigation", async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 1000 });
+  await page.goto("/learn/astro-101/what-is-a-birth-chart");
+  await expect(page.locator(".learn-article-page")).toBeVisible({ timeout: 60_000 });
+  const primaryNav = page.getByRole("navigation", { name: "Primary navigation" });
+  await expect(primaryNav).toBeVisible();
+  await expect(primaryNav.getByRole("button", { name: "Sky" })).toBeVisible();
+  await expect(primaryNav.getByRole("button", { name: "Learn" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Back to Astro 101" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Back to Astro 101" })).toContainText("Back");
+  await expect(page.getByRole("button", { name: "Toggle theme" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Open menu" })).toBeVisible();
+
   await page.goto("/learn/houses/2");
   await expect(page.locator(".learn-article-page")).toBeVisible({ timeout: 60_000 });
-  await expect(page.getByRole("navigation", { name: "Primary navigation" })).toBeHidden();
-  await expect(page.getByRole("button", { name: "Back to Astro 101" })).toBeVisible();
-  await expect(page.getByRole("button", { name: "TLDR Astro home" })).toBeVisible();
-  await expect(page.getByRole("button", { name: "Open menu" })).toBeVisible();
-  await expect(page.getByRole("button", { name: "Toggle theme" })).toBeHidden();
+  await expect(page.getByRole("navigation", { name: "Primary navigation" })).toBeVisible();
+});
 
+test("Learn article uses compact navigation on mobile", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/learn/astro-101/what-is-a-birth-chart");
   await expect(page.locator(".learn-article-page")).toBeVisible({ timeout: 60_000 });
   await expect(page.getByRole("navigation", { name: "Primary navigation" })).toBeHidden();
   await expect(page.getByRole("button", { name: "Back to Astro 101" })).toBeVisible();
-
-  await page.goto("/learn/signs/aries");
-  await expect(page.locator(".learn-article-page")).toBeVisible({ timeout: 60_000 });
-  await expect(page.getByRole("navigation", { name: "Primary navigation" })).toBeHidden();
+  await expect(page.getByRole("button", { name: "Toggle theme" })).toBeHidden();
+  await expect(page.getByRole("button", { name: "Open menu" })).toBeVisible();
 });
 
 test("Learn article copy stays on the prose measure", async ({ page }) => {
