@@ -280,6 +280,8 @@ const UnresolvedContentReview = lazy(async () => {
 const contentTablePageSize = 50;
 const reviewQueuePageSize = 25;
 const compositeReviewPageSize = 10;
+const compositionSourceBatchSize = 25;
+const skyRelationHydrationLimit = 60;
 
 type GeneratedContentStatus = "DRAFT" | "REVIEWED" | "LIVE" | "ARCHIVED" | "ERROR";
 type GeneratedContentSurface = "sky" | "you" | "natal" | "synastry" | "composite" | "relationship" | "modifier" | "friends" | "year_ahead" | "education";
@@ -3012,7 +3014,7 @@ export function GeneratedContentAdminDashboard() {
   const [rows, setRows] = useState<AdminGeneratedContentRow[]>([]);
   const rowsRef = useRef<AdminGeneratedContentRow[]>([]);
   rowsRef.current = rows;
-  const requestedCompositionSourceIdsRef = useRef(new Set<string>());
+  const requestedSourceDocumentIdsRef = useRef(new Set<string>());
   const [allRowsLoaded, setAllRowsLoaded] = useState(false);
   const [reviewRows, setReviewRows] = useState<AdminReviewRecord[]>([]);
   const [, setPublicationVersion] = useState(0);
@@ -4738,7 +4740,30 @@ export function GeneratedContentAdminDashboard() {
       return;
     }
     const context = { planet: facts.planet, sign: facts.sign };
-    const relationRows = relatedHousePassages(rows, context)
+    // Compiling reads each passage's copy, and the list carries only headlines, so the approved
+    // sources are loaded first. Compiling without them would publish an article missing its houses.
+    const relationCandidates = [
+      ...relatedHousePassages(rows, context).map((passage) => passage.row),
+      ...relatedAspectPassages(rows, context)
+    ].filter((row) => isApprovedSkyRelationRow(row) && row.inventory_only);
+    let sourceRows = rows;
+    if (relationCandidates.length) {
+      setIsLoading(true);
+      try {
+        const documents = await fetchSourceDocuments(relationCandidates);
+        sourceRows = mergeContentInventory(rows, documents);
+      } finally {
+        setIsLoading(false);
+      }
+      const missing = relationCandidates.filter((candidate) => (
+        sourceRows.find((row) => row.id === candidate.id)?.inventory_only !== false
+      ));
+      if (missing.length) {
+        setMessage(`Could not load ${missing.length} approved passage${missing.length === 1 ? "" : "s"} for this article. Try again in a moment.`);
+        return;
+      }
+    }
+    const relationRows = relatedHousePassages(sourceRows, context)
       .filter((passage) => isApprovedSkyRelationRow(passage.row));
     const housePassages: SkyArticleHousePassage[] = Array.from({ length: 12 }, (_, index) => index + 1)
       .flatMap((house) => {
@@ -4750,7 +4775,7 @@ export function GeneratedContentAdminDashboard() {
           body: passage.row.body.trim()
         }] : [];
       });
-    const aspectPassages = relatedAspectPassages(rows, context)
+    const aspectPassages = relatedAspectPassages(sourceRows, context)
       .filter(isApprovedSkyRelationRow)
       .map((row) => skyArticleAspectPassage(row, facts.planet))
       .filter((passage): passage is SkyArticleAspectPassage => Boolean(passage));
@@ -5375,20 +5400,63 @@ export function GeneratedContentAdminDashboard() {
     }
   }
 
-  // A composition preview reads its passages from the loaded rows, and the list arrives without
-  // documents, so a source it needs would otherwise render as that row's headline. Each row is
-  // requested once; hydration replaces it in place and the preview rebuilds.
-  const loadCompositionSourceDocuments = useCallback((rowIds: string[]) => {
-    const pending = rowIds.filter((id) => !requestedCompositionSourceIdsRef.current.has(id));
-    if (!pending.length) return;
-    for (const id of pending) requestedCompositionSourceIdsRef.current.add(id);
-    void Promise.all(pending.map((id) => {
-      const row = rowsRef.current.find((candidate) => candidate.id === id);
-      return row ? hydrateGeneratedContentRow(row).catch(() => undefined) : undefined;
-    }));
-    // hydrateGeneratedContentRow is a stable declaration inside this component.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+  // The list arrives without documents, so anything that reads a row's copy has to ask for it.
+  // Requests go out in batches by content key, and each document replaces its row in place.
+  const fetchSourceDocuments = useCallback(async (requested: AdminGeneratedContentRow[]) => {
+    const documents: AdminGeneratedContentRow[] = [];
+    for (let start = 0; start < requested.length; start += compositionSourceBatchSize) {
+      const batch = requested.slice(start, start + compositionSourceBatchSize);
+      const query = new URLSearchParams({ status: "all", visibility: "all", limit: "80" });
+      for (const row of batch) query.append("contentKeys", row.content_key);
+      try {
+        const payload = await adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[] }>(
+          `/api/admin/generated-content-inventory?${query}`,
+          secret
+        );
+        documents.push(...(payload.rows ?? []).filter((candidate) => (
+          !candidate.inventory_only && batch.some((row) => row.id === candidate.id)
+        )));
+      } catch {
+        // The row stays inventory-only; opening it still loads the document on demand.
+      }
+    }
+    if (documents.length) setRows((current) => mergeContentInventory(current, documents));
+    return documents;
   }, [secret]);
+
+  // Lists, previews, and relation summaries all read a row's saved copy, so the rows on screen ask
+  // for their documents. Each row is requested once. A package row is left to load when it opens,
+  // because its document arrives under a different id.
+  const loadSourceDocuments = useCallback((rowIds: string[]) => {
+    const requested = rowIds
+      .filter((id) => !requestedSourceDocumentIdsRef.current.has(id) && !id.startsWith("package:"))
+      .map((id) => rowsRef.current.find((candidate) => candidate.id === id))
+      .filter((row): row is AdminGeneratedContentRow => Boolean(row?.inventory_only));
+    if (!requested.length) return;
+    for (const row of requested) requestedSourceDocumentIdsRef.current.add(row.id);
+    void fetchSourceDocuments(requested);
+  }, [fetchSourceDocuments]);
+
+  // A Sky write-up reports whether its rising horoscopes and related passages have sources, and it
+  // reads that from the source documents rather than the headline, so they load with the selection.
+  useEffect(() => {
+    if (!selectedRow) return;
+    const writeup = skyWriteupContextForRow(selectedRow);
+    if (!writeup) return;
+    const lunation = skyLunationContextForRow(selectedRow);
+    const sources = lunation
+      ? relatedLunationHoroscopes(rows, lunation).flatMap((horoscope) => horoscope.sources.map((source) => source.row))
+      : [
+        ...relatedHousePassages(rows, writeup).map((passage) => passage.row),
+        ...relatedAspectPassages(rows, writeup)
+      ];
+    loadSourceDocuments([...new Set(sources.map((row) => row.id))].slice(0, skyRelationHydrationLimit));
+  }, [selectedRow, rows, loadSourceDocuments]);
+
+  // A row on screen shows its saved copy, and the list it came from carries only headlines.
+  const loadVisibleRowDocuments = useCallback((visible: readonly { id: string }[]) => {
+    loadSourceDocuments(visible.map((item) => item.id));
+  }, [loadSourceDocuments]);
 
   async function hydrateGeneratedContentRow(row: AdminGeneratedContentRow, refresh = false, followPublishedRevision = false) {
     if (!row.inventory_only && !refresh) return row;
@@ -8902,7 +8970,7 @@ export function GeneratedContentAdminDashboard() {
     ].join(":");
 
     return (
-      <AdminPaginatedCollection items={tableRows} label="Content rows" pageSize={contentTablePageSize} resetKey={resetKey}>
+      <AdminPaginatedCollection items={tableRows} label="Content rows" pageSize={contentTablePageSize} resetKey={resetKey} onVisibleItems={loadVisibleRowDocuments}>
         {(visibleTableRows) => <AdminContentTable
           showDestination={showArticleDestination}
           emptyMessage={activePage === "content" && contentStatusFilter !== "all" && statusChecking ? "Checking reader status…" : "No rows match these filters."}
@@ -8961,6 +9029,7 @@ export function GeneratedContentAdminDashboard() {
           label="Review queue"
           pageSize={reviewQueuePageSize}
           resetKey={`${reviewStatusFilter}:${contentClassFilter}:${tierFilter}:${query}:${tableRows.length}`}
+          onVisibleItems={loadVisibleRowDocuments}
         >
           {(visibleTableRows) => <div className="admin-review-queue-rows" aria-label="Review rows">
             <AdminContentTable showDestination={false} emptyMessage="No review rows match these filters." rows={visibleTableRows.map((row) => {
@@ -11728,7 +11797,7 @@ export function GeneratedContentAdminDashboard() {
               ? rows.filter((row) => natalPlacementResolverDependencyKeys(natalPlacementPlanet as NatalPlacementPlanet, natalPlacementSign as NatalPlacementSign, natalPlacementHouse, natalPlacementMotion).includes(row.content_key))
               : rows).filter(row => !isZodiacSeasonSourceKey(row.content_key)), ...seasonSourceRows]}
             onInsert={insertDraftToken}
-            onLoadSourceDocuments={loadCompositionSourceDocuments}
+            onLoadSourceDocuments={loadSourceDocuments}
             templateContentKey={currentDraft.contentKey}
             factExamples={transitFactExamples}
             templatePreviewRow={templatePreviewRow}

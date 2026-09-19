@@ -6,6 +6,7 @@ type AdminPaginatedCollectionProps<T> = {
   label: string;
   pageSize: number;
   resetKey?: string;
+  onVisibleItems?: (visibleItems: readonly T[]) => void;
   children: (visibleItems: readonly T[]) => ReactNode;
 };
 
@@ -14,6 +15,7 @@ export function AdminPaginatedCollection<T>({
   label,
   pageSize,
   resetKey = "",
+  onVisibleItems,
   children
 }: AdminPaginatedCollectionProps<T>) {
   const [requestedPage, setRequestedPage] = useState(0);
@@ -30,6 +32,11 @@ export function AdminPaginatedCollection<T>({
   useEffect(() => {
     if (requestedPage !== page) setRequestedPage(page);
   }, [page, requestedPage]);
+
+  // The page that is on screen may need more than the list it came with.
+  useEffect(() => {
+    onVisibleItems?.(visibleItems);
+  }, [visibleItems, onVisibleItems]);
 
   return (
     <>
