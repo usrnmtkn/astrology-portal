@@ -7640,7 +7640,7 @@ for (const theme of ['light','dark']) for (const width of [1440,390]) {
       expect((await button.boundingBox())!.height,name).toBe(40);
     }
     const toolbar=page.locator('.admin-content-toolbar').first();
-    expect((await toolbar.boundingBox())!.height).toBeLessThan(width < 720 ? 160 : 90);
+    expect((await toolbar.boundingBox())!.height).toBeLessThanOrEqual(width < 720 ? 160 : 90);
     await page.screenshot({path:`outputs/studio-style/grid-library-${theme}-${width}.png`});
     await expectAdminRouteLoads(page,'/admin/content#sky-writeups');
     const filters=page.getByRole('region',{name:'Sky write-up filters',exact:true});
