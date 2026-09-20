@@ -3,6 +3,10 @@ import type { SkySnapshot } from "../types";
 import type { LiveGeneratedContent } from "./generatedContent";
 import { skyAspectGeneratedContentKeys } from "./skyAspectContent";
 
+function routePartMatches(value: string, routePart: string) {
+  return value.trim().toLowerCase().replace(/\s+/g, "-") === routePart.trim().toLowerCase().replace(/\s+/g, "-");
+}
+
 /** Request writing for the same facts that the detail renders, including event-time signs. */
 export function skySnapshotAspectContentKeys(snapshot: SkySnapshot) {
   return Array.from(new Set(snapshot.aspects.flatMap(aspect => {
@@ -14,6 +18,17 @@ export function skySnapshotAspectContentKeys(snapshot: SkySnapshot) {
       firstSign, secondSign, targetDate: snapshot.generatedAt.slice(0, 10)
     });
   })));
+}
+
+/** Keys the opened aspect article must resolve. Other current-sky aspects stay optional related copy. */
+export function skyDetailRequiredAspectKeys(snapshot: SkySnapshot, from?: string, aspect?: string, to?: string) {
+  if (!from || !aspect || !to) return [];
+  const matching = snapshot.aspects.filter(item => routePartMatches(item.type, aspect) && (
+    routePartMatches(item.from, from) && routePartMatches(item.to, to)
+    || routePartMatches(item.from, to) && routePartMatches(item.to, from)
+  ));
+  if (!matching.length) return [];
+  return skySnapshotAspectContentKeys({ ...snapshot, aspects: matching });
 }
 
 export function eligibleSkyDetailContent(existing: Map<string, LiveGeneratedContent>) {
@@ -31,7 +46,7 @@ export async function loadSkyDetailContent(
   const retained = eligibleSkyDetailContent(existing);
   const missing = keys.filter(key => !retained.has(key));
   const complete = (content: Map<string, LiveGeneratedContent>) => {
-    const unresolved = keys.filter(key => {
+    const unresolved = extraKeys.filter(key => {
       const publication = contentPublication(key);
       if (publication?.state !== "live") return false;
       const row = content.get(key);

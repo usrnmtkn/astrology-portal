@@ -1,6 +1,7 @@
 import { expect, test } from '@playwright/test';
 import { skyPlacementSourceRecords } from '../../api/_lib/sky-placement-sources';
 import { makeSkyIngressComposition } from '../../apps/web/src/content/fallbackArchitectureV3/resolver/skyIngressComposition.mjs';
+import { emptyLastKnownGoodSnapshot } from '../helpers/bundled-publications';
 
 test('published V5 sentences assemble on the reader with calculated occurrence values', async ({ page }) => {
  test.setTimeout(120_000);
@@ -28,6 +29,7 @@ test('published V5 sentences assemble on the reader with calculated occurrence v
    : path.endsWith('/generated_interpretations') ? [row] : [] });
  });
  await page.route('**/api/calendar?**', route => route.fulfill({ json: { ok: true, calendar: { days: [] } } }));
+ await emptyLastKnownGoodSnapshot(page);
  await page.goto('/?date=2026-07-10#sky/placement/mercury/cancer');
  const article = page.locator('.sky-detail-article');
  await expect(article).toContainText('Fixture planetFunctionSentence for Mercury in Cancer.', { timeout: 60_000 });
@@ -75,6 +77,7 @@ test('published motion blocks receive real residency and retrograde aspect facts
   return route.fulfill({ json: data });
  });
  await page.route('**/api/calendar?**', route => route.fulfill({ json: { ok:true, calendar:{ days:[] } } }));
+ await emptyLastKnownGoodSnapshot(page);
  await page.goto('/?date=2026-07-10#sky/placement/mercury/cancer');
  const body = page.locator('.sky-detail-article');
  await expect(body).toContainText('Fixture retrograde article. 4 residency aspects. 1 cycle aspects.', { timeout: 60_000 });
@@ -121,6 +124,7 @@ for (const motionArticle of [false, true]) test(`Placement article phrases reach
    : path.endsWith('/generated_interpretations') ? [row] : [] });
  });
  await page.route('**/api/calendar?**', route => route.fulfill({ json: { ok: true, calendar: { days: [] } } }));
+ await emptyLastKnownGoodSnapshot(page);
  await page.goto('/?date=2026-07-10#sky/placement/mercury/cancer');
  const article = page.locator('.sky-detail-article');
  await expect(article).toContainText('Fixture article opening for Mercury in Cancer.', { timeout: 60_000 });

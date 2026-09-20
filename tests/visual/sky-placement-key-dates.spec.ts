@@ -1,6 +1,7 @@
 import { expect, test } from "@playwright/test";
 import { skyPlacementSourceRecords } from "../../api/_lib/sky-placement-sources";
 import { getLunarCalendarWeek } from "../../apps/web/src/services/ephemeris";
+import { emptyLastKnownGoodSnapshot } from "../helpers/bundled-publications";
 
 const timeline = [
   ["August 22, 2026", "Sun enters Virgo"],
@@ -36,6 +37,7 @@ for (const width of [390, 1440]) for (const withVariable of [false, true]) {
         : path.endsWith("/generated_interpretations") ? [row] : [] });
     });
     await page.route("**/api/calendar?**", route => route.fulfill({ json: { ok: true, calendar: { days: [] } } }));
+    await emptyLastKnownGoodSnapshot(page);
     const errors: string[] = [];
     page.on("pageerror", error => errors.push(error.message));
     await page.goto("/?date=2026-09-12#sky/placement/sun/virgo");

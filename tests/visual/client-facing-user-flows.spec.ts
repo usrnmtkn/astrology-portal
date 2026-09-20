@@ -1769,7 +1769,10 @@ test.describe("client-facing user flow case studies", () => {
     await expect(dateTrigger).toContainText("Jul 20");
 
     await page.getByRole("button", { name: "Friends", exact: true }).click();
-    await expect(page.getByLabel("Friends")).toBeVisible();
+    // The loading illustration is labelled "Loading Friends…", so wait for it to leave before
+    // reading the surface itself.
+    await expect(page.getByRole("status", { name: /^Loading Friends/u })).toHaveCount(0);
+    await expect(page.getByLabel("Friends", { exact: true })).toBeVisible();
     await expect(dateTrigger).toContainText("Jul 20");
     await dateTrigger.click();
     await expect(page.getByRole("region", { name: "Pick Date" })).toBeVisible();

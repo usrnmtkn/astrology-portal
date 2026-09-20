@@ -1,5 +1,6 @@
 import { expect, test } from "@playwright/test";
 import { skyPlacementSourceRecords } from "../../api/_lib/sky-placement-sources";
+import { emptyLastKnownGoodSnapshot } from "../helpers/bundled-publications";
 
 // Keep the browser in a different zone to prove the selected Sky location wins.
 test.use({ timezoneId: "Pacific/Honolulu" });
@@ -31,6 +32,7 @@ for (const scenario of [
       : path.endsWith("/generated_interpretations") ? [row] : [] });
   });
   await page.route("**/api/calendar?**", route => route.fulfill({ json: { ok: true, calendar: { days: [] } } }));
+  await emptyLastKnownGoodSnapshot(page);
   const errors: string[] = [];
   page.on("pageerror", error => errors.push(error.message));
   await page.goto(`/?date=${scenario.date}#sky`);

@@ -1,9 +1,16 @@
-import { approvedExactSkyAspectCopy } from "../content/skyRegistry";
 import type { AspectToneBucket, SkyDetailSection } from "../features/sky/SkyDetailArticle";
 import { isReaderFacingCopy } from "../content/readerSafety";
 import { normalizedArticleAspectToneBucket } from "../utils/articleAspects";
 import type { LiveGeneratedContent } from "./generatedContent";
 import { contentStudioExactSkyAspectKeys, resolveSkyAspectContentStudioExact } from "./skyAspectContent";
+
+/** The caller supplies the approved-copy lookup from the Sky registry it already loaded. Importing
+ * the registry here put the whole Sky knowledge payload in the startup graph. */
+export type ApprovedExactSkyAspectLookup = (
+  planet: string,
+  aspect: string,
+  otherPlanet: string
+) => { body?: string; contentId: string; sourceId: string } | null;
 
 export type SkyPlacementInSignAspectEvent = {
   id: string;
@@ -96,7 +103,8 @@ function exactAspectSection({
 
 function eventCopy(
   event: SkyPlacementInSignAspectEvent,
-  generatedContent?: Map<string, LiveGeneratedContent>
+  generatedContent?: Map<string, LiveGeneratedContent>,
+  approvedExactSkyAspectCopy?: ApprovedExactSkyAspectLookup
 ) {
   const studio = generatedContent
     ? resolveSkyAspectContentStudioExact({
@@ -116,7 +124,7 @@ function eventCopy(
     };
   }
 
-  const copy = approvedExactSkyAspectCopy(event.planet, event.aspect, event.otherPlanet);
+  const copy = approvedExactSkyAspectCopy?.(event.planet, event.aspect, event.otherPlanet);
   const body = copy?.body?.trim() ?? "";
   const copyHasSlots = /\{\{[^}]+\}\}/u.test(body);
   if (!copy || !body || copyHasSlots || !isReaderFacingCopy(body)) {
@@ -139,7 +147,8 @@ export function skyPlacementInSignAspectContentKeys(events: SkyPlacementInSignAs
 export function skyPlacementInSignAspectSections(
   events: SkyPlacementInSignAspectEvent[],
   timeZone: string,
-  generatedContent?: Map<string, LiveGeneratedContent>
+  generatedContent?: Map<string, LiveGeneratedContent>,
+  approvedExactSkyAspectCopy?: ApprovedExactSkyAspectLookup
 ): SkyPlacementInSignAspectResult {
   const ordered = [...events].sort((first, second) => first.occursAt.localeCompare(second.occursAt));
   const seen = new Set<string>();
@@ -160,7 +169,7 @@ export function skyPlacementInSignAspectSections(
     if (seen.has(event.id)) continue;
     seen.add(event.id);
 
-    const copy = eventCopy(event, generatedContent);
+    const copy = eventCopy(event, generatedContent, approvedExactSkyAspectCopy);
     const eventDateLine = dateLine(event.occursAt, timeZone);
     const heading = `${event.planet} ${titleCase(event.aspect)} ${event.otherPlanet}`;
     const resolved = Boolean(copy.body);
