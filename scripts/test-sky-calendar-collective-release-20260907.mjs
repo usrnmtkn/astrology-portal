@@ -19,6 +19,11 @@ assert.equal(refinements.authority, 'owner');
 assert.equal(refinements.decision, 'approve');
 assert.equal(refinements.memberCount, 21);
 const refinementByKey = new Map(refinements.records.map(row => [row.contentKey.replace('sky.aspect.', 'sky.'), row]));
+const laterRewrite = JSON.parse(fs.readFileSync(path.join(repoRoot, "packages/astro-knowledge/review/sky-calendar-moon-sextile-lilith-2026-09-20/owner-authorization.json"), "utf8"));
+assert.equal(laterRewrite.authority, "owner");
+assert.equal(laterRewrite.decision, "approve");
+assert.equal(laterRewrite.contentKey, "sky.aspect.moon.sextile.lilith");
+const laterRewriteByKey = new Map([[laterRewrite.legacyProjectionKey, laterRewrite.payload]]);
 const transitRoot = path.join(repoRoot, "packages/astro-knowledge/data/transits");
 
 const sha256 = (value) => crypto.createHash("sha256").update(value, "utf8").digest("hex");
@@ -65,9 +70,9 @@ for (const [legacyKey, entry] of Object.entries(projection.payloads)) {
   const runtime = JSON.parse(fs.readFileSync(path.join(repoRoot, manifestRow.runtimeFile), "utf8"));
   assert.equal(runtime.status, "LIVE", `${legacyKey}: runtime row is not LIVE.`);
   assert.equal(runtime.voiceNeutral, true, `${legacyKey}: runtime row lost collective voice metadata.`);
-  assert.equal(runtime.readerCopy.summary, refinementByKey.get(legacyKey)?.summary ?? payload.summary, `${legacyKey}: runtime summary drifted.`);
-  assert.equal(runtime.readerCopy.body, refinementByKey.get(legacyKey)?.body ?? payload.body, `${legacyKey}: runtime body drifted.`);
-  assert.match(runtime.readerCopy.approvedVia, /sky-calendar-collective-approved-2026-09-07/u, `${legacyKey}: runtime approval provenance missing.`);
+  assert.equal(runtime.readerCopy.summary, laterRewriteByKey.get(legacyKey)?.summary ?? refinementByKey.get(legacyKey)?.summary ?? payload.summary, `${legacyKey}: runtime summary drifted.`);
+  assert.equal(runtime.readerCopy.body, laterRewriteByKey.get(legacyKey)?.body ?? refinementByKey.get(legacyKey)?.body ?? payload.body, `${legacyKey}: runtime body drifted.`);
+  assert.match(runtime.readerCopy.approvedVia, /sky-calendar-collective-approved-2026-09-07|moon-sextile-lilith-owner-rewrite-2026-09-20/u, `${legacyKey}: runtime approval provenance missing.`);
 }
 assert.equal(readerAddressRows, 40, "Exactly the 40 selectively authored rows should contain direct second person.");
 

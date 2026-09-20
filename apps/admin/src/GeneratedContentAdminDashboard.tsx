@@ -177,6 +177,12 @@ import {
   type NatalAspectSourceDraft
 } from "./natalAspectSources";
 import {
+  calendarAspectMatchesSelection,
+  calendarAspectSearchMatches,
+  calendarAspectSelectionOptions,
+  type CalendarAspectSelection
+} from "./calendarAspectSources";
+import {
   contentDestinations,
   contentMotion,
   sortPlacementRows,
@@ -3108,6 +3114,9 @@ export function GeneratedContentAdminDashboard() {
   const [natalAspectFirst, setNatalAspectFirst] = useState("");
   const [natalAspectName, setNatalAspectName] = useState("");
   const [natalAspectSecond, setNatalAspectSecond] = useState("");
+  const [calendarAspectFirst, setCalendarAspectFirst] = useState("");
+  const [calendarAspectName, setCalendarAspectName] = useState("");
+  const [calendarAspectSecond, setCalendarAspectSecond] = useState("");
   const [fallbackSectionFilter, setFallbackSectionFilter] = useState<AdminFallbackHookSectionFilter>("all");
   const friendsBetweenYouTwoWorkspace = friendsTransitAudience
     && fallbackSectionFilter === "friends"
@@ -3468,8 +3477,15 @@ export function GeneratedContentAdminDashboard() {
     && (calendarAspectFilterScopeActive || contentClassFilter === "all" || contentClassForRow(row) === contentClassFilter)
     && (calendarAspectFilterScopeActive || tierFilter === "all" || tierForRow(row) === tierFilter)
     && (categoryFilter === "all" || contentCategoryForRow(row) === categoryFilter)
-    && matchesFallbackLibrarySearch(row.content_key, visibleRowSearchText(row), query.trim().toLowerCase())
-  ), [visibleRows, contentLibraryView, calendarAspectFilterScopeActive, contentClassFilter, tierFilter, categoryFilter, query]);
+    && (calendarAspectFilterScopeActive
+      ? calendarAspectSearchMatches(`${row.content_key} ${visibleRowSearchText(row)}`, query)
+        && calendarAspectMatchesSelection(row, {
+          first: calendarAspectFirst,
+          aspect: calendarAspectName,
+          second: calendarAspectSecond
+        })
+      : matchesFallbackLibrarySearch(row.content_key, visibleRowSearchText(row), query.trim().toLowerCase()))
+  ), [visibleRows, contentLibraryView, calendarAspectFilterScopeActive, calendarAspectFirst, calendarAspectName, calendarAspectSecond, contentClassFilter, tierFilter, categoryFilter, query]);
   const liveStatusResults = useContentLiveStatusResults(loadLiveStatus, statusCountRows,
     activePage === "content" && (statusFiltersOpen || contentStatusFilter !== "all"));
   const statusChecking = !liveStatusResults || liveStatusResults.pending > 0;
@@ -4187,6 +4203,9 @@ export function GeneratedContentAdminDashboard() {
     setNatalAspectFirst(page === "content" && category === "Natal Aspects" ? natalAspectFirstParam : "");
     setNatalAspectName(page === "content" && category === "Natal Aspects" ? natalAspectNameParam : "");
     setNatalAspectSecond(page === "content" && category === "Natal Aspects" ? natalAspectSecondParam : "");
+    setCalendarAspectFirst(page === "content" && category === "Calendar Aspects" ? natalAspectFirstParam : "");
+    setCalendarAspectName(page === "content" && category === "Calendar Aspects" ? natalAspectNameParam : "");
+    setCalendarAspectSecond(page === "content" && category === "Calendar Aspects" ? natalAspectSecondParam : "");
     setSkyWriteupWorkspaceView(
       page === "skyWriteups" && skyWriteupWorkspaceTabs.some(tab => tab.value === view)
         ? view as SkyWriteupWorkspaceView : "catalog"
@@ -4414,6 +4433,9 @@ export function GeneratedContentAdminDashboard() {
       setNatalAspectFirst("");
       setNatalAspectName("");
       setNatalAspectSecond("");
+      setCalendarAspectFirst("");
+      setCalendarAspectName("");
+      setCalendarAspectSecond("");
     }
     navigateAdminPage(
       item.page,
@@ -8696,16 +8718,58 @@ export function GeneratedContentAdminDashboard() {
     );
   }
 
+  function updateCalendarAspectSelection(next: Partial<CalendarAspectSelection>) {
+    const first = next.first ?? calendarAspectFirst;
+    const aspect = next.aspect ?? calendarAspectName;
+    const second = next.second ?? calendarAspectSecond;
+    setCalendarAspectFirst(first);
+    setCalendarAspectName(aspect);
+    setCalendarAspectSecond(second);
+
+    const params = new URLSearchParams({ category: "Calendar Aspects" });
+    if (query.trim()) params.set("q", query.trim());
+    if (first) params.set("first", first);
+    if (aspect) params.set("aspect", aspect);
+    if (second) params.set("second", second);
+    setAdminHash(adminHashForPage("content", params), "replace");
+  }
+
   function renderContentFilters() {
+    const calendarAspectOptions = calendarAspectSelectionOptions(rows);
     return (
       <AdminFilterBar
-        activeFilterCount={[contentStatusFilter !== "all", categoryFilter !== "all" && !calendarAspectWorkspaceActive, contentClassFilter !== "all", tierFilter !== "all", showReferenceRows && !calendarAspectWorkspaceActive, showRetiredRows].filter(Boolean).length}
+        activeFilterCount={[contentStatusFilter !== "all", categoryFilter !== "all" && !calendarAspectWorkspaceActive, contentClassFilter !== "all", tierFilter !== "all", showReferenceRows && !calendarAspectWorkspaceActive, showRetiredRows, calendarAspectWorkspaceActive && Boolean(calendarAspectFirst || calendarAspectName || calendarAspectSecond)].filter(Boolean).length}
         label="Content list filters"
         searchLabel={calendarAspectWorkspaceActive ? "Find an aspect" : "Search content"}
         query={query}
         onQueryChange={handleContentSearchChange}
         placeholder={calendarAspectWorkspaceActive ? "Mercury sextile Mars" : "Search by title, surface, kind, or content key"}
         tabs={<>
+        {calendarAspectWorkspaceActive && (
+        <div className="admin-natal-placement-selectors admin-filter-form admin-filter-form--three" role="group" aria-label="Calendar aspect filters">
+          <label>
+            <span>Planet or point</span>
+            <AdminSelect aria-label="Calendar aspect planet or point" value={calendarAspectFirst} onChange={(event) => updateCalendarAspectSelection({ first: event.target.value })}>
+              <option value="">Choose planet or point</option>
+              {calendarAspectOptions.first.map((item) => <option value={item} key={`calendar-first-${item}`}>{titleFromKey(item)}</option>)}
+            </AdminSelect>
+          </label>
+          <label>
+            <span>Aspect</span>
+            <AdminSelect aria-label="Calendar aspect type" value={calendarAspectName} onChange={(event) => updateCalendarAspectSelection({ aspect: event.target.value })}>
+              <option value="">Choose aspect</option>
+              {calendarAspectOptions.aspects.map((item) => <option value={item} key={`calendar-aspect-${item}`}>{titleFromKey(item)}</option>)}
+            </AdminSelect>
+          </label>
+          <label>
+            <span>Other planet or point</span>
+            <AdminSelect aria-label="Other calendar aspect planet or point" value={calendarAspectSecond} onChange={(event) => updateCalendarAspectSelection({ second: event.target.value })}>
+              <option value="">Choose planet or point</option>
+              {calendarAspectOptions.second.map((item) => <option value={item} key={`calendar-second-${item}`}>{titleFromKey(item)}</option>)}
+            </AdminSelect>
+          </label>
+        </div>
+        )}
         {!calendarAspectWorkspaceActive && (
         <div className="admin-filter-choices" role="group" aria-label="Content Library saved views">
           <StudioButton type="button" aria-pressed={contentLibraryView === "all"} className={contentLibraryView === "all" ? "active" : ""} onClick={() => setContentLibraryView("all")}>
@@ -8762,6 +8826,12 @@ export function GeneratedContentAdminDashboard() {
               setNatalPlacementPlanet("");
               setNatalPlacementSign("");
               setNatalPlacementHouse("");
+              setCalendarAspectFirst("");
+              setCalendarAspectName("");
+              setCalendarAspectSecond("");
+              if (calendarAspectWorkspaceActive) {
+                setAdminHash(adminHashForPage("content", new URLSearchParams({ category: "Calendar Aspects" })), "replace");
+              }
             }}
           >
             Clear filters

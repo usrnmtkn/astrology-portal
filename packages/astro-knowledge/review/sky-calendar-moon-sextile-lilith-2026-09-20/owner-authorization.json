@@ -1,0 +1,43 @@
+{
+  "type": "exact_owner_copy_replacement",
+  "authority": "owner",
+  "decision": "approve",
+  "batchId": "moon-sextile-lilith-owner-rewrite-2026-09-20",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvedFields": [
+    "summary",
+    "body"
+  ],
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-09-20",
+  "contentKey": "sky.aspect.moon.sextile.lilith",
+  "legacyProjectionKey": "sky.moon.sextile.lilith",
+  "runtimeFile": "packages/astro-knowledge/data/transits/moon-sextile-lilith.json",
+  "ownerStatement": "please replace the copy",
+  "ownerExactCopy": "We sometimes say yes because explaining what we need feels like more work than going along with the plan. The Moon's sextile to Lilith can make it easier to speak up without feeling that we're letting someone down. You can suggest a different time, ask for privacy, or say you can't take on another task. A small change now can prevent resentment later. You don't have to wait until you're angry to say that something doesn't work for you.",
+  "decisionContext": "The owner supplied the exact Calendar Aspect replacement for Moon sextile Lilith after being unable to find the card in Content Studio, then directed: please replace the copy.",
+  "source": {
+    "type": "cursor_thread",
+    "date": "2026-09-20"
+  },
+  "supersedes": {
+    "batchId": "sky-calendar-collective-approved-2026-09-07",
+    "projectionPath": "packages/astro-knowledge/review/sky-calendar-collective-approved-2026-09-07/current-owner-payloads.json",
+    "summary": "A small adjustment can prevent resentment when agreement was about to be given mainly because explaining a need felt harder.",
+    "body": "A small adjustment can prevent resentment when agreement was about to be given mainly because explaining a need felt harder. When the Moon sextiles Lilith, care and autonomy cooperate, making it easier to change the timing, ask for privacy, decline an extra task, or alter the part of a plan that does not work. The difference can stay small when it is named early. Waiting until anger has to speak usually makes the same need more expensive for everyone involved."
+  },
+  "payload": {
+    "summary": "We sometimes say yes because explaining what we need feels like more work than going along with the plan.",
+    "body": "We sometimes say yes because explaining what we need feels like more work than going along with the plan. The Moon's sextile to Lilith can make it easier to speak up without feeling that we're letting someone down. You can suggest a different time, ask for privacy, or say you can't take on another task. A small change now can prevent resentment later. You don't have to wait until you're angry to say that something doesn't work for you."
+  },
+  "summarySha256": "42908d1665ba8df89bc20264d6a7c2dca43e25b2c2ebf0e33c03841ca577e788",
+  "bodySha256": "0e5f8f3c4c66f574e4cbea4e956c3e17cfade7f289e7794543e7404f7987d2f6",
+  "payloadSha256": "03c4f120eb0e0245481f2f7439a2a08cb1058014ec8631025b7969a41689d465",
+  "bodyWordCount": 79,
+  "capabilities": [
+    "serving",
+    "content_studio_sync"
+  ]
+}

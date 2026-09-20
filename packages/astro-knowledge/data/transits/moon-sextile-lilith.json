@@ -3,7 +3,7 @@
   "transiting": "moon",
   "aspect": "sextile",
   "other": "lilith",
-  "base": "A small adjustment can prevent resentment when agreement was about to be given mainly because explaining a need felt harder.",
+  "base": "We sometimes say yes because explaining what we need feels like more work than going along with the plan.",
   "business": "A workable option is available; use the move that connects the two concerns.",
   "shadow": "The opportunity can remain unused if nobody makes the concrete move it requires.",
   "arcApplying": "The workable option becomes easier to recognize as exactness approaches.",
@@ -11,8 +11,8 @@
   "voiceNeutral": true,
   "status": "LIVE",
   "readerCopy": {
-    "summary": "A small adjustment can prevent resentment when agreement was about to be given mainly because explaining a need felt harder.",
-    "body": "A small adjustment can prevent resentment when agreement was about to be given mainly because explaining a need felt harder. When the Moon sextiles Lilith, care and autonomy cooperate, making it easier to change the timing, ask for privacy, decline an extra task, or alter the part of a plan that does not work. The difference can stay small when it is named early. Waiting until anger has to speak usually makes the same need more expensive for everyone involved.",
-    "approvedVia": "bounded owner-approved collective Calendar batch sky-calendar-collective-approved-2026-09-07; packages/astro-knowledge/review/sky-calendar-collective-approved-2026-09-07/owner-batch-authorization.json; serving and Content Studio authorized by packages/astro-knowledge/review/sky-calendar-collective-approved-2026-09-07/owner-serving-authorization.json"
+    "summary": "We sometimes say yes because explaining what we need feels like more work than going along with the plan.",
+    "body": "We sometimes say yes because explaining what we need feels like more work than going along with the plan. The Moon's sextile to Lilith can make it easier to speak up without feeling that we're letting someone down. You can suggest a different time, ask for privacy, or say you can't take on another task. A small change now can prevent resentment later. You don't have to wait until you're angry to say that something doesn't work for you.",
+    "approvedVia": "owner replacement moon-sextile-lilith-owner-rewrite-2026-09-20; packages/astro-knowledge/review/sky-calendar-moon-sextile-lilith-2026-09-20/owner-authorization.json; supersedes sky-calendar-collective-approved-2026-09-07 for this key only"
   }
 }
