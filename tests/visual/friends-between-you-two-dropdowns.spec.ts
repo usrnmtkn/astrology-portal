@@ -62,12 +62,12 @@ test("Between you two opens on a saved pairing with dropdowns to change", async 
   // Arriving with nothing typed used to render no map at all, so there were no
   // dropdowns to adjust until the owner typed an exact reader title.
   const map = page.getByRole("region", { name: "Between you two composition map" });
-  await expect(map.getByLabel("Transiting planet", { exact: true })).toBeVisible();
+  await expect(map.getByLabel("Preview transiting planet", { exact: true })).toBeVisible();
   await expect(map.getByLabel("Transit aspect", { exact: true })).toBeVisible();
 
   // The pairing it opens on is a real row that renders its saved copy, so the map
   // is readable on arrival rather than an empty frame around dropdowns.
-  const chosen = await map.getByLabel("Transiting planet", { exact: true }).inputValue();
+  const chosen = await map.getByLabel("Preview transiting planet", { exact: true }).inputValue();
   const chosenAspect = await map.getByLabel("Transit aspect", { exact: true }).inputValue();
   const openingKey = `fallback-hook/bond-effect-${chosenAspect}/${chosen}`;
   expect(Object.keys(savedCopy)).toContain(openingKey);
@@ -87,8 +87,8 @@ test("Between you two opens on a saved pairing with dropdowns to change", async 
   await expect(title).toHaveValue("Mars");
 
   // A pairing the owner chose is never replaced by the default.
-  await map.getByLabel("Transiting planet", { exact: true }).selectOption("mars");
-  await expect(map.getByLabel("Transiting planet", { exact: true })).toHaveValue("mars");
+  await map.getByLabel("Preview transiting planet", { exact: true }).selectOption("mars");
+  await expect(map.getByLabel("Preview transiting planet", { exact: true })).toHaveValue("mars");
   await expect(map).toContainText("Mars ");
 
   expect(errors).toEqual([]);
@@ -103,7 +103,7 @@ test("A pairing in the route opens instead of the default", async ({ page }) => 
 
   // Seeding the field must never overwrite a pairing the owner arrived with.
   const map = page.getByRole("region", { name: "Between you two composition map" });
-  await expect(map.getByLabel("Transiting planet", { exact: true })).toHaveValue("mars");
+  await expect(map.getByLabel("Preview transiting planet", { exact: true })).toHaveValue("mars");
   await expect(map.getByLabel("Transit aspect", { exact: true })).toHaveValue("trine");
   await expect(map).toContainText("Mars trine fixture opening.");
   await expect(page.getByRole("region", { name: "Find a Friends transit card" })
@@ -122,7 +122,7 @@ test("Between you two composition follows its own dropdowns", async ({ page }) =
   await finder.getByLabel("Find a Friends transit card", { exact: true }).fill("Chiron sextile your Sun");
 
   const map = page.getByRole("region", { name: "Between you two composition map" });
-  const planet = map.getByLabel("Transiting planet", { exact: true });
+  const planet = map.getByLabel("Preview transiting planet", { exact: true });
   const aspect = map.getByLabel("Transit aspect", { exact: true });
   await expect(map.getByRole("heading", { level: 3, name: "Chiron sextile your Sun" })).toBeVisible();
   await expect(map).toContainText("Chiron sextile fixture opening.");

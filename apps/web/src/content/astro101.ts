@@ -74,9 +74,7 @@ export function isAstro101ContentKey(contentKey: string) {
   return contentKey.startsWith(ASTRO_101_KEY_PREFIX);
 }
 
-export function isStandaloneLearnPath(pathname: string) {
-  return pathname === "/learn" || pathname.startsWith("/learn/");
-}
+export { isStandaloneLearnPath } from "./learnRoutePath.js";
 
 export function astro101LocationState(pathname: string) {
   if (pathname === "/learn" || pathname === "/learn/" || pathname === "/learn/astro-101" || pathname === "/learn/astro-101/") {

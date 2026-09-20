@@ -55,14 +55,16 @@ assert.match(returnFlow, /notice\.contentKey !== context\.childContentKey/u, "Sa
 // control can silently replace the row the owner is writing on.
 assert.match(dashboard, /async function openFromEditor\(destinationContentKey: string/u, "Content Studio must route in-editor navigation through one guarded helper.");
 assert.match(dashboard, /parentDraft\.contentKey === destinationContentKey/u, "Editing a field on the row already open must not be treated as navigation.");
-assert.match(
-  dashboard,
-  /async function openFromEditor\([\s\S]{0,1400}?rememberStudioEditorReturn\(\{ childContentKey: destinationContentKey/u,
-  "openFromEditor must register the parent editor as the destination's way back."
-);
 const openFromEditorBody = dashboard.slice(
   dashboard.indexOf("  async function openFromEditor("),
   dashboard.indexOf("\n  }\n", dashboard.indexOf("  async function openFromEditor("))
+);
+// Read from the helper's own body rather than a character window, which counted the helper's
+// growth as a missing way back.
+assert.match(
+  openFromEditorBody,
+  /rememberStudioEditorReturn\(\{ childContentKey: destinationContentKey/u,
+  "openFromEditor must register the parent editor as the destination's way back."
 );
 assert.equal(
   (dashboard.match(/rememberStudioEditorReturn\(/gu) ?? []).length,

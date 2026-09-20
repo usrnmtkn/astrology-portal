@@ -2,6 +2,7 @@ import { readFileSync } from "node:fs";
 import { expect, test, type Page } from "@playwright/test";
 import { bundledPublications } from "../helpers/bundled-publications";
 import { builtinContentRecords, contentLiveStatuses } from "../../api/_lib/content-live-status";
+import { studioListingFacts, studioListingRow } from "../../api/_lib/studio-listing-facts";
 
 const readerBaseURL = `http://127.0.0.1:${process.env.SKY_READER_TEST_PORT ?? "4294"}`;
 
@@ -14,7 +15,7 @@ async function mockStudio(page: Page, stored: any[]) {
       const ids = route.request().postDataJSON().ids ?? [];
       data.statuses = contentLiveStatuses(ids.map((id: string) => stored.find(row => row.id === id) ?? builtinContentRecords.get(id.replace(/^builtin:/, ""))).filter(Boolean), stored);
     }
-    if (url.pathname.endsWith("/generated-content")) {
+    if (url.pathname.endsWith("/generated-content") || url.pathname.endsWith("/generated-content-inventory")) {
       if (["POST", "PATCH"].includes(route.request().method())) {
         const input = route.request().postDataJSON();
         const row = { id: input.id || "summary-test-row", content_key: input.contentKey, surface: input.surface, mode: input.mode,
@@ -24,8 +25,13 @@ async function mockStudio(page: Page, stored: any[]) {
         stored.splice(0, stored.length, row);
         data.rows = [row];
       } else {
-        const key = url.searchParams.get("contentKey");
-        data.rows = [...stored, { id: "daily-heading-fixture", content_key: "fallback-hook/daily-headline/test-studio-heading", surface: "you", mode: "card", status: "DRAFT", lane: "serving", block_type: "fallback_hook", headline: "Heading style fixture", body: "Browser fixture.", source_snapshot: {}, sections: {}, facts: {} }].filter(row => !key || row.content_key === key);
+        const keys = [...url.searchParams.getAll("contentKey"), ...url.searchParams.getAll("contentKeys")];
+        const ids = url.searchParams.getAll("id");
+        const rows = [...stored, { id: "daily-heading-fixture", content_key: "fallback-hook/daily-headline/test-studio-heading", surface: "you", mode: "card", status: "DRAFT", lane: "serving", block_type: "fallback_hook", headline: "Heading style fixture", body: "Browser fixture.", source_snapshot: {}, sections: {}, facts: {} }];
+        // A request naming rows carries their copy; a list does not, the way the endpoint serves them.
+        data.rows = keys.length || ids.length
+          ? rows.filter(row => keys.includes(row.content_key) || ids.includes(row.id))
+          : rows.map(row => studioListingRow(row, studioListingFacts(row)));
       }
     }
     await route.fulfill({ status: 200, json: data });
@@ -62,7 +68,7 @@ for (const width of [390, 1440]) {
       await expect(analogousHeading).toBeVisible();
       expect(summaryHeadingStyle).toEqual(await analogousHeading.evaluate(typeStyle));
       await page.goto("/#sky-writeups?view=daily-summary");
-      await expect(page.locator(".admin-main h1, .admin-main h2, .admin-main h3")).toHaveText(["Sky Write-ups", "Sky writing workspaces", "Daily Sky Summary"]);
+      await expect(page.locator(".admin-main h1, .admin-main h2, .admin-main h3")).toHaveText(["Sky Write-ups", "Sky writing workspaces", "Daily Sky Summary", "Things may take more effort right now"]);
       const nav = page.getByLabel("Sky Write-ups sections");
       await expect(nav.locator("button")).toHaveText(["Daily Sky Summary", "Transit to Natal Charts", "House Transits"]);
       await expect(nav.getByRole("button", { name: "Daily Sky Summary", includeHidden: true })).toHaveAttribute("aria-current", "page");
@@ -135,7 +141,7 @@ test("ingress lookup finds a published TLDR outside the loaded inventory and pre
   await mockStudio(page, stored);
   const source = { id: "existing-ingress", content_key: "sky.ingress.mercury.libra", surface: "sky", mode: "card", status: "LIVE", lane: "serving", review_state: null,
     headline: "Mercury enters Libra", summary: "Existing short wording remains intact.", body: "The complete article remains separate and intact.", block_type: "essay", source_snapshot: {}, sections: {}, facts: {} };
-  await page.route("**/api/admin/generated-content?**", async route => {
+  await page.route("**/api/admin/generated-content*?**", async route => {
     const params = new URL(route.request().url()).searchParams;
     if (params.get("contentKey") === source.content_key || params.get("id") === source.id) {
       await route.fulfill({ json: { ok: true, rows: [source] } });

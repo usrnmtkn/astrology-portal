@@ -835,7 +835,7 @@ assert.match(
 );
 assert.match(
   appSource,
-  /const SkyDetailArticle = lazy\(\(\) =>\s*import\("\.\/features\/sky\/SkyDetailArticle"\)/u,
+  /const loadSkyDetailArticle = \(\) =>\s*import\("\.\/features\/sky\/SkyDetailArticle"\);[\s\S]*const SkyDetailArticle = lazy\(/u,
   "Sky detail article presentation must load only when a reader opens an article."
 );
 assert.doesNotMatch(

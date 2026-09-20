@@ -47,10 +47,21 @@ await loadSkyDetailContent(facts, stale, [], async keys => {
 const offline = await loadSkyDetailContent(facts, content, ["unavailable-row"], async () => { throw new Error("offline fixture"); });
 assert.equal(offline.get(key), content.get(key), "An offline refresh keeps the eligible approved row.");
 await assert.rejects(
-  loadSkyDetailContent(facts, stale, [], async () => { throw new Error("offline fixture"); }),
+  loadSkyDetailContent(facts, stale, [key], async () => { throw new Error("offline fixture"); }),
   /current article publication/i,
   "An unavailable authoritative row must reject a partial article, not reveal older fallback prose."
 );
+const unrelatedLive = "sky.aspect.mercury.trine.pluto";
+installContentPublications([{
+  content_key: unrelatedLive, state: "live", revision: 1, row_id: "11111111-1111-1111-1111-111111111111",
+  row_updated_at: "2026-09-07T12:00:00.000Z", updated_at: "2026-09-07T12:00:00.000Z"
+}]);
+const placementLike = { generatedAt: "2026-07-10T12:00:00.000Z", positions: [], aspects: [
+  { from: "Mercury", to: "Pluto", type: "trine", fromSign: "Cancer", toSign: "Aquarius", orb: 1 },
+  { from: "Lilith", to: "Sun", type: "square", fromSign: "Sagittarius", toSign: "Virgo", orb: 1 }
+] } as unknown as SkySnapshot;
+const relatedOnly = await loadSkyDetailContent(placementLike, content, [], async () => { throw new Error("offline fixture"); });
+assert.equal(relatedOnly.get(key), content.get(key), "A placement article still renders when an unrelated live aspect row is missing.");
 installContentPublications([{content_key:key,state:"retired",revision:999999,row_id:null,row_updated_at:null,updated_at:"2026-09-08T15:00:00Z"}]);
 const retired = await loadSkyDetailContent(facts, content, [], async () => { throw new Error("offline fixture"); });
 assert.equal(retired.has(key), false, "A missing response must not restore a retired row.");

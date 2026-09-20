@@ -54,7 +54,8 @@ export async function skyPlacementResidencyAspectSections(
     timeZone: request.timeZone
   });
 
-  const built = skyPlacementInSignAspectSections(facts.rankedEventsDuringTransit, facts.timeZone);
+  const { approvedExactSkyAspectCopy } = await import("../content/skyRegistry");
+  const built = skyPlacementInSignAspectSections(facts.rankedEventsDuringTransit, facts.timeZone, undefined, approvedExactSkyAspectCopy);
   return {
     status: "resolved",
     ...built

@@ -1,6 +1,6 @@
 import { CompositionVariableKey, compositionVariableColors } from "./CompositionVariableKey";
 import { StudioButton } from "./StudioControls";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   buildCompositionTemplate,
   compositionTemplateKey,
@@ -16,6 +16,11 @@ type Props = {
   previewOptions?: CompositionPreviewOptions;
   /** Rail mode: no explanatory header or footer, just the write-up and its key. */
   compact?: boolean;
+  /**
+   * The Studio lists rows without their documents, so a source the write-up needs may arrive
+   * with no passage to show. The parent loads those rows when this reports them.
+   */
+  onLoadSourceDocuments?: (rowIds: string[]) => void;
 };
 
 function segmentButton(
@@ -48,7 +53,7 @@ function segmentButton(
   );
 }
 
-export default function TemplateReaderDrilldown({ rows, templateRow, onOpenVariable, previewOptions, compact = false }: Props) {
+export default function TemplateReaderDrilldown({ rows, templateRow, onOpenVariable, previewOptions, compact = false, onLoadSourceDocuments }: Props) {
   const [audience, setAudience] = useState<"you" | "they">(previewOptions?.initialAudience ?? "you");
   // The parent rebuilds `templateRow` on every render, so key the memo on its
   // content rather than its identity; otherwise every keystroke in the editor
@@ -59,6 +64,13 @@ export default function TemplateReaderDrilldown({ rows, templateRow, onOpenVaria
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [previewOptions, rows, templateKey]
   );
+  const pendingSourceIds = useMemo(() => [...new Set(template.preview.fields
+    .flatMap((field) => field.paragraphs.flat())
+    .filter((segment) => segment.source?.row.inventory_only)
+    .map((segment) => segment.source!.row.id))], [template]);
+  useEffect(() => {
+    if (pendingSourceIds.length) onLoadSourceDocuments?.(pendingSourceIds);
+  }, [onLoadSourceDocuments, pendingSourceIds.join("|")]);
   const variableColors = compositionVariableColors(template.slots);
   const hasAudienceVariants = template.preview.fields.some((field) => field.audience === "you")
     && template.preview.fields.some((field) => field.audience === "they");

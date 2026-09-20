@@ -3,6 +3,7 @@ import { fork } from 'node:child_process';
 import { readFileSync, writeFileSync, mkdtempSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
+import { routeStudioInventoryApi } from '../helpers/studio-inventory-route';
 
 const key = 'authored/calendar-weekly-moon/libra/variant-2';
 const source = JSON.parse(readFileSync('apps/web/src/content/fallbackArchitectureV3/source-rows/transit-synastry-rows-v1.json', 'utf8'));
@@ -44,20 +45,13 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark'] as const)
       await page.addInitScript(value => { localStorage.setItem('tldrastro:contentAdminSecret', 'calendar-api-fixture'); localStorage.setItem('tldrastro:studio-theme', value); }, theme);
       const errors: string[] = [];
       page.on('pageerror', error => errors.push(error.message));
-      await page.route('**/api/**', async route => {
-        const request = route.request();
-        const url = new URL(request.url());
-        if (url.pathname === '/api/admin/generated-content') {
-          if (request.method() !== 'GET' || url.searchParams.has('id')) {
-            const result = await call({ method: request.method(), body: request.method() === 'GET' ? undefined : request.postDataJSON(), url: `${url.pathname}${url.search}` });
-            return route.fulfill({ status: result.status, json: result.payload });
-          }
-          // Match the production inventory: bodies hydrate only after selection.
-          const rows = (await call({ method: 'rows' })).map((row: any) => ({ ...row, body: null, sections: null, inventory_only: true }));
-          return route.fulfill({ json: { ok: true, rows, nextCursor: null } });
+      await routeStudioInventoryApi(page, {
+        call,
+        answer: async (route, url) => {
+          if (url.pathname !== '/api/admin/content-live-status') return false;
+          await route.fulfill({ json: { ok: true, statuses: await call({ method: 'statuses', body: route.request().postDataJSON() }) } });
+          return true;
         }
-        if (url.pathname === '/api/admin/content-live-status') return route.fulfill({ json: { ok: true, statuses: await call({ method: 'statuses', body: request.postDataJSON() }) } });
-        return route.fulfill({ json: { ok: true, rows: [], records: [], nextCursor: null } });
       });
       await page.goto('/admin/content#fallback-hooks?section=lunar-calendar');
       await expect(page.locator('main.admin-dashboard')).toHaveAttribute('data-studio-theme', theme);
@@ -82,9 +76,11 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark'] as const)
       await page.getByRole('tab', { name: 'Write-ups', exact: true }).click();
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
       await expect(page.locator('main.admin-dashboard')).toHaveAttribute('data-studio-theme', theme);
-      await expect(page.locator('.admin-dashboard-header h1')).toHaveText('Lunar Calendar write-ups');
+      await expect(page.locator('.admin-dashboard-header h1')).toHaveText('Calendar Write-ups');
       await expect(detail.getByRole('heading', { level: 2 })).toHaveText('Moon in Libra · Variant 2');
-      await page.getByRole('button', { name: 'Dismiss notification', exact: true }).click();
+      // A notification is not guaranteed here, and one left open would sit over the screenshot.
+      const notice = page.getByRole('button', { name: 'Dismiss notification', exact: true });
+      if (await notice.count()) await notice.first().click();
       await page.screenshot({ path: `test-results/calendar-moon-${width}-${theme}.png`, fullPage: true });
       await list.getByRole('button', { name: 'Edit Moon in Libra · Variant 2', exact: true }).click();
       const editor = page.getByRole('dialog', { name: 'Generated content editor' });

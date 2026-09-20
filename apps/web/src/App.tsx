@@ -30,7 +30,7 @@ import { skySummaryParagraphs } from "./content/skyDailySummary";
 import { PublishedSkySummary } from "./features/sky/PublishedSkySummary";
 import { SkyReadingLayout } from "./features/sky/SkyReadingLayout";
 import { SkyRoute } from "./routes/SkyRoute";
-import { isStandaloneLearnPath } from "./content/astro101";
+import { isStandaloneLearnPath } from "./content/learnRoutePath";
 import { refreshContentPublications } from "./services/contentPublications";
 import {
   ArrowDownRight,
@@ -255,7 +255,7 @@ import {
   resolveCmsSurfaceOverride
 } from "./content/cmsSurfaceOverrides";
 import { isSkyAspectRetired, resolveSkyAspectContentStudioExact, resolveSkyAspectGeneratedContent, skyAspectGeneratedContentKeys } from "./services/skyAspectContent";
-import { eligibleSkyDetailContent, loadSkyDetailContent } from "./services/skyDetailContent";
+import { eligibleSkyDetailContent, loadSkyDetailContent, skyDetailRequiredAspectKeys } from "./services/skyDetailContent";
 import {
   resolveApprovedExactSkyAspectCopy,
   selectSkyAspectCopyByPrecedence
@@ -5443,7 +5443,8 @@ function currentSkyPlacementDetailArticle({
     ? skyPlacementInSignAspectSections(
       timelineAspectEvents,
       matchingAspectFacts.timeZone,
-      generatedContent
+      generatedContent,
+      contentRegistryFor("sky")?.approvedExactSkyAspectCopy
     ).sections
     : [];
   const articleSections = (placementSection?.articleSections ?? []).map((section) => ({
@@ -11916,6 +11917,11 @@ export function App() {
     // On first load (or after a publication changes), the view stays in its
     // existing loading skeleton until *all* source planes have resolved.
     setSkyPlacementFallbackStatus(previous => previous === "ready" ? previous : "loading");
+    // The Sky registry carries the approved exact aspect copy the article's Gifts and Lessons
+    // cards render, so it loads here rather than at startup. It stays outside the source gate:
+    // its arrival bumps the registry revision and recomputes the article on its own, while
+    // waiting for it would let a publication land mid-load and fail the identity check.
+    void loadContentRegistry("sky");
     void prepareSkyPlacementSources().then(({ coreBundle, placementBundle, identity }) => {
       if (cancelled) return;
       if (identity !== skyPlacementPublicationIdentity()) throw new Error("Sky sources changed during loading. Please retry.");
@@ -12108,7 +12114,7 @@ export function App() {
       && skyDetailRoutePath !== `${skyAspectRoutePath({ from: storedCalendarEvent.event.planets[0], to: storedCalendarEvent.event.planets[1], type: storedCalendarEvent.event.aspect })}/at/${encodeURIComponent(storedCalendarEvent.event.startsAt)}`
       ? null : storedCalendarEvent;
     const [baseRoute, encodedExactAt] = skyDetailRoutePath.split(/\/(?:at|on)\//u);
-    const [routeSurface, routeType, routePlanet, routeSign] = decodeSkyRouteParts(baseRoute);
+    const [routeSurface, routeType, routePlanet, routeSign, routeOther] = decodeSkyRouteParts(baseRoute);
     const routePosition = routePlanet && skyNodeDisplayPositions(sky.positions).find(position => skyRoutePartMatches(position.planet, routePlanet));
     const placementSign = routeType === "retrograde" ? (routePosition ? routePosition.sign : undefined) : routeSign;
     const canLoadPlacementArticle = Boolean(
@@ -12188,7 +12194,8 @@ export function App() {
               : { ...detail, routePath: skyDetailRoutePath }
             : null);
         };
-        renderAspect(await loadSkyDetailContent(eventSky, availableDetailContent, [], loadLiveGeneratedContentForKeys), true);
+        renderAspect(await loadSkyDetailContent(eventSky, availableDetailContent,
+          skyDetailRequiredAspectKeys(eventSky, routePlanet, routeSign, routeOther), loadLiveGeneratedContentForKeys), true);
       }).catch(error => { if (!cancelled) { console.warn("Dated aspect calculation failed.", error); setSkyDetailReadError(skyDetailRoutePath); } });
       return () => { cancelled = true; };
     }
@@ -12221,7 +12228,9 @@ export function App() {
       : Promise.resolve(sky);
     void detailSnapshot.then(async detailSky => {
       const content = await loadSkyDetailContent(detailSky, availableDetailContent,
-        calendarEvent ? calendarTransitDetailContentKeys(calendarEvent.event) : [], loadLiveGeneratedContentForKeys);
+        calendarEvent ? calendarTransitDetailContentKeys(calendarEvent.event)
+          : routeType === "aspect" ? skyDetailRequiredAspectKeys(detailSky, routePlanet, routeSign, routeOther) : [],
+        loadLiveGeneratedContentForKeys);
       renderDetail(detailSky, content, true);
     }).catch(error => { if (!cancelled) { console.warn("Sky detail interpretation failed to load.", error); setSkyDetailReadError(skyDetailRoutePath); } });
     return () => { cancelled = true; };

@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { routeStudioInventoryApi } from '../helpers/studio-inventory-route';
 import { fork } from 'node:child_process';
 import path from 'node:path';
 for (const width of [390, 1440])
@@ -23,30 +24,25 @@ for (const width of [390, 1440])
                 const errors: string[] = [];
                 page.on('pageerror', error => errors.push(error.message));
                 const missing = 'sky.aspect.mercury.trine.pluto.virgo.aquarius';
-                await page.route('**/api/**', async (route) => {
-                    const request = route.request(), url = new URL(request.url());
-                    if (url.pathname === '/api/admin/generated-content') {
-                        if (request.method() !== 'GET') {
-                            const result = await call({ method: request.method(), url: url.pathname, body: request.postDataJSON() });
-                            return route.fulfill({ status: result.status, json: result.payload });
+                await routeStudioInventoryApi(page, {
+                    call,
+                    answer: async (route, url) => {
+                        const request = route.request();
+                        if (url.pathname === '/api/admin/sky-draft-writing') {
+                            const result = await call({ method: 'POST', url: url.pathname, body: request.postDataJSON() });
+                            await route.fulfill({ status: result.status, json: result.payload });
+                            return true;
                         }
-                        let rows = await call({ method: 'rows' });
-                        const key = url.searchParams.get('contentKey'), id = url.searchParams.get('id');
-                        if (key)
-                            rows = rows.filter((r: any) => r.content_key === key);
-                        if (id)
-                            rows = rows.filter((r: any) => r.id === id);
-                        return route.fulfill({ json: { ok: true, rows, nextCursor: null } });
+                        if (url.pathname === '/api/admin/content-live-status') {
+                            await route.fulfill({ json: { ok: true, statuses: await call({ method: 'statuses', body: request.postDataJSON() }) } });
+                            return true;
+                        }
+                        if (url.pathname === '/api/admin/sky-review-horizon') {
+                            await route.fulfill({ json: { ok: true, horizon: { startDate: '2026-09-10', endDate: '2026-12-09', snapshotCount: 91, counts: { occurrences: 1, aspectCandidates: 1, placementCandidates: 0, activeWindows: 1 }, generationPlan: { reusableCandidatesMissingDrafts: 1, writerCalls: 1, reviewerCalls: 1 }, occurrences: [{ contentKey: missing, label: 'Mercury trine Pluto', kind: 'aspect', reviewStatus: 'missing_draft', windows: [{ startDate: '2026-09-10', endDate: '2026-09-11' }], activeDates: ['2026-09-10'], facts: {} }] } } });
+                            return true;
+                        }
+                        return false;
                     }
-                    if (url.pathname === '/api/admin/sky-draft-writing') {
-                        const result = await call({ method: 'POST', url: url.pathname, body: request.postDataJSON() });
-                        return route.fulfill({ status: result.status, json: result.payload });
-                    }
-                    if (url.pathname === '/api/admin/content-live-status')
-                        return route.fulfill({ json: { ok: true, statuses: await call({ method: 'statuses', body: request.postDataJSON() }) } });
-                    if (url.pathname === '/api/admin/sky-review-horizon')
-                        return route.fulfill({ json: { ok: true, horizon: { startDate: '2026-09-10', endDate: '2026-12-09', snapshotCount: 91, counts: { occurrences: 1, aspectCandidates: 1, placementCandidates: 0, activeWindows: 1 }, generationPlan: { reusableCandidatesMissingDrafts: 1, writerCalls: 1, reviewerCalls: 1 }, occurrences: [{ contentKey: missing, label: 'Mercury trine Pluto', kind: 'aspect', reviewStatus: 'missing_draft', windows: [{ startDate: '2026-09-10', endDate: '2026-09-11' }], activeDates: ['2026-09-10'], facts: {} }] } } });
-                    return route.fulfill({ json: { ok: true, rows: [], records: [], nextCursor: null } });
                 });
                 await page.goto('/admin/content#review-queue');
                 await page.evaluate(value => document.documentElement.dataset.theme = value, theme);

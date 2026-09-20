@@ -1,6 +1,13 @@
 name: Visual smoke
 
 on:
+  # Browser QA is only a gate when it runs before a merge. Documentation and reader content are
+  # excluded so the cost stays with changes that can alter a rendered surface, and the scope job
+  # narrows further to the affected surfaces.
+  pull_request:
+    paths-ignore:
+      - "docs/**"
+      - "**/*.md"
   push:
     branches:
       - main
@@ -315,6 +322,84 @@ jobs:
         uses: actions/upload-artifact@v6
         with:
           name: sky-summary-results-${{ matrix.phase }}
+          path: test-results/
+          if-no-files-found: ignore
+
+  # These suites had no workflow running them. The Studio style, article, and variable suites
+  # serve the admin preview; the web-entry suite serves the same Studio through the web bundle.
+  studio-preview-suites:
+    needs: scope
+    if: needs.scope.outputs.studio == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        suite: [studio-style, studio-web-entry, studio-variables, sky-article]
+    env:
+      VITE_SUPABASE_URL: https://visual-smoke.supabase.test
+      VITE_SUPABASE_ANON_KEY: visual-smoke-placeholder
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build:knowledge
+      - run: npx playwright install --with-deps chromium
+      - name: Run the ${{ matrix.suite }} suite
+        run: npx playwright test -c playwright.${{ matrix.suite }}.config.ts
+      - name: Upload ${{ matrix.suite }} artifacts
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: studio-preview-suite-results-${{ matrix.suite }}
+          path: test-results/
+          if-no-files-found: ignore
+
+  # Calendar, learning, date consistency, and ephemeris parity screens had no workflow either.
+  reader-surface-suites:
+    needs: scope
+    if: needs.scope.outputs.reader == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2, 3]
+    env:
+      VITE_SUPABASE_URL: https://visual-smoke.supabase.test
+      VITE_SUPABASE_ANON_KEY: visual-smoke-placeholder
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build:knowledge
+      - run: npx playwright install --with-deps chromium
+      - name: Run Calendar, learning, and date consistency screens
+        run: >-
+          npx playwright test -c playwright.config.ts --workers=1
+          --shard=${{ matrix.shard }}/3
+          tests/visual/calendar-release.spec.ts
+          tests/visual/calendar-collective-release.spec.ts
+          tests/visual/calendar-pressure-release.spec.ts
+          tests/visual/calendar-month-overview.spec.ts
+          tests/visual/calendar-moon-ui.spec.ts
+          tests/visual/calendar-moon-editor.spec.ts
+          tests/visual/event-date-consistency.spec.ts
+          tests/visual/sky-placement-visit-timeline.spec.ts
+          tests/visual/swisseph-web-data-parity.spec.ts
+          tests/visual/you-loading-performance.spec.ts
+          tests/visual/friends-authenticated-loading-diagnostic.spec.ts
+      - name: Upload reader surface artifacts
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: reader-surface-suite-results-${{ matrix.shard }}
           path: test-results/
           if-no-files-found: ignore
 

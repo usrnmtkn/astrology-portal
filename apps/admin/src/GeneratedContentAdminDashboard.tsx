@@ -11,12 +11,12 @@ import { AdminContentTable, AdminDataTable, AdminFilterBar } from "./AdminBrowse
 import { PageLoading } from "../../web/src/components/PageLoading";
 import { reviewWorkBucket, skyWritingIssues } from "../../web/src/content/contentReviewReadiness";
 import { transitNatalContactFromFields, transitNatalContactReady, transitNatalContactContentKey, transitNatalExactContentKey, transitNatalExactSourceDraft, transitNatalSharedFallbackKey, transitNatalStarterCopy } from "./transitNatalSources";
-import { friendsTransitCardDestinations, friendsTransitCompositionQuery, matchesBondEffectContactSearch, transitNatalSearchSelection, matchesTransitNatalContactSearch } from "./bondEffectPageAssembly";
+import { aspectTechnicalVerb, friendsTransitCardDestinations, friendsTransitCompositionQuery, matchesBondEffectContactSearch, transitNatalSearchSelection, matchesTransitNatalContactSearch } from "./bondEffectPageAssembly";
 import FriendsTransitSectionFinder from "./FriendsTransitSectionFinder";
 import { isDynamicTransitNatalExactKey } from "../../web/src/content/transitNatalIdentity";
 import { isTransitNatalFamilyKey, isTransitNatalSituationKey, packagedTransitOpenMode, transitNatalLiveServingSource } from "./transitNatalEditorScope";
 import { currentSkySummaryWording, skyDailySummaryFields, skySummaryTemplateErrors, type SkySummaryField } from "../../web/src/content/skyDailySummaryCatalog";
-import { skyDebilityFields, skyDebilityTemplateErrors } from "../../web/src/content/skyDebilityCatalog";
+import { SKY_DEBILITY_KEY_PREFIX, skyDebilityFields, skyDebilityTemplateErrors } from "../../web/src/content/skyDebilityCatalog";
 import { refreshContentPublications } from "../../web/src/services/contentPublications";
 import { installContentPublications, isContentRetired, subscribeToContentPublications, validContentPublication } from "../../web/src/content/contentPublicationState";
 import { recoverContentStudioCopy } from "./contentStudioCopyRecovery";
@@ -31,7 +31,8 @@ import {
   studioInventoryRequestPath,
   type StudioInventoryQuery
 } from "./studioSectionInventory";
-import { readStudioContentDocument, studioInventoryDocumentPath } from "./generatedContentClient";
+import { readStudioContentDocument, studioInventoryDocumentPath, studioInventoryDocumentsPath } from "./generatedContentClient";
+import type { StudioListingFacts } from "../../../api/_lib/studio-listing-facts";
 import { isContentStudioReferenceSource } from "../../web/src/content/contentStudioSourceRole";
 import {
   ArrowLeft,
@@ -280,6 +281,11 @@ const UnresolvedContentReview = lazy(async () => {
 const contentTablePageSize = 50;
 const reviewQueuePageSize = 25;
 const compositeReviewPageSize = 10;
+const compositionSourceBatchSize = 25;
+const skyRelationHydrationLimit = 60;
+const reviewQueueHydrationLimit = 400;
+const dailyGlanceHydrationLimit = 120;
+const skySummaryWorkspaceHydrationLimit = 400;
 
 type GeneratedContentStatus = "DRAFT" | "REVIEWED" | "LIVE" | "ARCHIVED" | "ERROR";
 type GeneratedContentSurface = "sky" | "you" | "natal" | "synastry" | "composite" | "relationship" | "modifier" | "friends" | "year_ahead" | "education";
@@ -434,6 +440,9 @@ type AdminGeneratedContentRow = {
   updated_at?: string | null;
   created_at?: string | null;
   inventory_only?: boolean;
+  // What a list row carries in place of its documents: enough to classify and group it, never
+  // enough to edit or publish it.
+  listing_facts?: StudioListingFacts;
 };
 
 type AdminReviewRecord = {
@@ -1086,8 +1095,17 @@ function contentSystemLabel(system: Exclude<AdminContentSystemFilter, "all">) {
   return "Fallback/supporting";
 }
 
+// A list row arrives without its documents, so where it belongs is read from its listing facts
+// instead. They name the row; they never stand in for its saved writing.
 function sourceSnapshotForRow(row: AdminGeneratedContentRow | AdminReviewRecord) {
-  return "content_key" in row ? row.source_snapshot : row.sourceSnapshot;
+  if (!("content_key" in row)) return row.sourceSnapshot;
+  return row.source_snapshot ?? row.listing_facts?.source ?? null;
+}
+
+function classificationRecordForRow(row: AdminGeneratedContentRow | AdminReviewRecord) {
+  const installed = objectRecord(objectRecord(row.sections)?.packageRecord);
+  if (installed) return installed;
+  return "content_key" in row ? row.listing_facts?.packageRecord ?? {} : {};
 }
 
 function rowContentKey(row: AdminGeneratedContentRow | AdminReviewRecord) {
@@ -1113,8 +1131,9 @@ function sourceSnapshotNumber(snapshot: Record<string, unknown> | null | undefin
 }
 
 function generatedRowNeedsReviewQueue(row: AdminGeneratedContentRow) {
-  const sourceType = sourceSnapshotString(row.source_snapshot, "sourceType");
-  const packageRecord = rowPackageRecord(row);
+  const snapshot = sourceSnapshotForRow(row);
+  const sourceType = sourceSnapshotString(snapshot, "sourceType");
+  const packageRecord = classificationRecordForRow(row);
   const skyV4ReviewCategory = typeof packageRecord.studio_review_category === "string"
     ? packageRecord.studio_review_category
     : "";
@@ -1122,7 +1141,7 @@ function generatedRowNeedsReviewQueue(row: AdminGeneratedContentRow) {
     || (skyV4ReviewCategory === "owner-approved-reader-copy" && packageRecord.owner_approved === true);
 
   return !outsideSkyV4WritingReview && (
-    isContentStudioReferenceSource(row.content_key, row.source_snapshot ?? {})
+    isContentStudioReferenceSource(row.content_key, snapshot ?? {})
     || sourceType === "owner-resource-review"
     || (["DRAFT", "REVIEWED"].includes(row.status) && Boolean(row.review_state))
   );
@@ -1135,8 +1154,8 @@ const retiredReviewStates = new Set([
 ]);
 
 function isRetiredAdminRow(row: AdminGeneratedContentRow) {
-  const packageRecord = rowPackageRecord(row);
-  const packageReviewStatus = sourceSnapshotString(row.source_snapshot, "review_status")
+  const packageRecord = classificationRecordForRow(row);
+  const packageReviewStatus = sourceSnapshotString(sourceSnapshotForRow(row), "review_status")
     || (typeof packageRecord.review_status === "string" ? packageRecord.review_status : "");
   return row.status === "ARCHIVED"
     || retiredReviewStates.has(row.review_state ?? "")
@@ -1144,7 +1163,8 @@ function isRetiredAdminRow(row: AdminGeneratedContentRow) {
 }
 
 function isPassiveReferenceAdminRow(row: AdminGeneratedContentRow) {
-  const sourceType = sourceSnapshotString(row.source_snapshot, "sourceType");
+  const snapshot = sourceSnapshotForRow(row);
+  const sourceType = sourceSnapshotString(snapshot, "sourceType");
   const reviewState = (row.review_state ?? "").toLowerCase();
   const isActiveOwnerReview = sourceType === "owner-resource-review"
     || reviewState === "owner-review-required"
@@ -1153,7 +1173,7 @@ function isPassiveReferenceAdminRow(row: AdminGeneratedContentRow) {
   return !isActiveOwnerReview && (
     row.lane === "reference"
     || reviewState === "fallback-system-reference"
-    || sourceSnapshotString(row.source_snapshot, "lane") === "reference"
+    || sourceSnapshotString(snapshot, "lane") === "reference"
   );
 }
 
@@ -1306,7 +1326,8 @@ function rowIsFallbackArchitectureV3(row: AdminGeneratedContentRow | AdminReview
   const facts = "content_key" in row ? row.facts : row.facts;
   return provider === fallbackArchitectureV3Provider
     || sourceSnapshotString(sourceSnapshot, "sourcePackage") === "tldrastro-fallback-architecture-v3"
-    || objectRecord(facts)?.fallbackArchitectureV3 === true;
+    || objectRecord(facts)?.fallbackArchitectureV3 === true
+    || ("content_key" in row && row.listing_facts?.fallbackArchitectureV3 === true);
 }
 
 function draftIsFallbackArchitectureV3(draft: AdminDraft) {
@@ -1741,7 +1762,7 @@ function rowSearchTextUncached(row: AdminGeneratedContentRow) {
     row.prompt_version,
     row.provider,
     JSON.stringify(row.facts ?? {}),
-    JSON.stringify(row.source_snapshot ?? {})
+    JSON.stringify(sourceSnapshotForRow(row) ?? {})
   ].join(" ").toLowerCase();
 }
 
@@ -2128,7 +2149,7 @@ function skyArticleWorkspaceForm(row: AdminGeneratedContentRow | undefined) {
 }
 
 function isApprovedSkyRelationRow(row: AdminGeneratedContentRow) {
-  const reviewStatus = sourceSnapshotString(row.source_snapshot, "review_status");
+  const reviewStatus = sourceSnapshotString(sourceSnapshotForRow(row), "review_status");
   return row.status === "LIVE"
     && (row.lane ?? "serving") === "serving"
     && !row.review_state
@@ -2399,7 +2420,7 @@ function contentClassForRowUncached(row: AdminGeneratedContentRow | AdminReviewR
   const blockType = "content_key" in row ? row.block_type : row.blockType;
   const promptVersion = "content_key" in row ? row.prompt_version : row.promptVersion;
   const provider = "content_key" in row ? row.provider : row.provider;
-  const sourceSnapshot = "content_key" in row ? row.source_snapshot : row.sourceSnapshot;
+  const sourceSnapshot = sourceSnapshotForRow(row);
   const flags = Array.isArray(sourceSnapshot?.flags) ? sourceSnapshot.flags.join(" ") : JSON.stringify(sourceSnapshot ?? {});
   const sourceContentType = normalizedSourceContentType(sourceSnapshot);
   const sourceBucket = sourceSnapshotString(sourceSnapshot, "bucket").toLowerCase();
@@ -2410,7 +2431,7 @@ function contentClassForRowUncached(row: AdminGeneratedContentRow | AdminReviewR
   if (isContentStudioReferenceSource(contentKey, sourceSnapshot ?? {})) return "reference";
   if (provider === "manual" && sourceSnapshotString(sourceSnapshot, "sourceFile").includes("authored-library")) return "phrasebank";
   if (rowIsFallbackArchitectureV3(row)) {
-    const packageRole = sourceRole || String(rowPackageRecord(row).content_role ?? "").toLowerCase().replace(/_/g, "-");
+    const packageRole = sourceRole || String(classificationRecordForRow(row).content_role ?? "").toLowerCase().replace(/_/g, "-");
     if (packageRole === "fallback-hook" || packageRole === "template") return "fallback-hook";
     if (packageRole === "vocabulary") return "vocab";
     if (packageRole === "fallback-source" || packageRole === "source-material") return "reference";
@@ -2559,7 +2580,7 @@ function draftSourceSnapshot(draft: AdminDraft) {
 }
 
 function tierForRow(row: AdminGeneratedContentRow | AdminReviewRecord): AdminPhrasebankTier {
-  const sourceSnapshot = "content_key" in row ? row.source_snapshot : row.sourceSnapshot;
+  const sourceSnapshot = sourceSnapshotForRow(row);
   const raw = sourceSnapshot?.tier ?? sourceSnapshot?.phrasebankTier ?? sourceSnapshot?.provenanceTier ?? sourceSnapshot?.sourceTier;
   return raw === "CONFIRMED" || raw === "REVIEWED" || raw === "SESSION_APPROVED_DRAFT" ? raw : "none";
 }
@@ -3010,6 +3031,9 @@ export function GeneratedContentAdminDashboard() {
   const [activePage, setActivePage] = useState<AdminDashboardPage>(() => parseAdminHash().page);
   const friendsTransitAudience = parseAdminHash().params.get("audience") === "friends";
   const [rows, setRows] = useState<AdminGeneratedContentRow[]>([]);
+  const rowsRef = useRef<AdminGeneratedContentRow[]>([]);
+  rowsRef.current = rows;
+  const requestedSourceDocumentIdsRef = useRef(new Set<string>());
   const [allRowsLoaded, setAllRowsLoaded] = useState(false);
   const [reviewRows, setReviewRows] = useState<AdminReviewRecord[]>([]);
   const [, setPublicationVersion] = useState(0);
@@ -3159,7 +3183,7 @@ export function GeneratedContentAdminDashboard() {
   const [skyArticleEditionForm, setSkyArticleEditionForm] = useState<SkyArticleEditionForm | null>(null);
   const [skyArticleEditor, setSkyArticleEditor] = useState<SkyArticleEditorState | null>(null);
   const [draft, setDraft] = useState<AdminDraft | null>(null);
-  const customVariableLibrary = useStudioCustomVariables(secret, Boolean(secret));
+  const customVariableLibrary = useStudioCustomVariables(secret, activePage === "variables" || Boolean(draft));
   const [fallbackHookEditorGuidanceBuilder, setFallbackHookEditorGuidanceBuilder] = useState<FallbackHookEditorGuidanceBuilder | null>(null);
   const [fallbackHookDefinitions, setFallbackHookDefinitions] = useState<FallbackHookDefinition[]>([]);
   const [hookCatalogPackageVersion, setHookCatalogPackageVersion] = useState("loading");
@@ -3185,7 +3209,9 @@ export function GeneratedContentAdminDashboard() {
     transitHouse: "" as TransitNatalHouse | "",
     natalHouse: "" as TransitNatalHouse | ""
   });
-  const transitExactDismissedKeyRef = useRef<string | null>(null);
+  // One slot per key: closing a shared source used to overwrite the dismissal for the transit
+  // write-up, and the editor the owner had already closed opened itself again.
+  const transitExactDismissedKeysRef = useRef(new Set<string>());
   const pendingExactAiCopyRef = useRef<{ key: string; you?: string; friend?: string } | null>(null);
   const editorRef = useRef<HTMLElement | null>(null);
   const variableInsertionRef = useRef<{ element: HTMLTextAreaElement; start: number; end: number } | null>(null);
@@ -3272,7 +3298,7 @@ export function GeneratedContentAdminDashboard() {
   }, [rows, compositionCatalog]);
   const visibleRows = useMemo(() => rows.filter((row) => (
     (showReferenceRows
-      || (activePage === "reviewQueue" && isContentStudioReferenceSource(row.content_key, row.source_snapshot ?? {}))
+      || (activePage === "reviewQueue" && isContentStudioReferenceSource(row.content_key, sourceSnapshotForRow(row) ?? {}))
       || (activePage === "content" && categoryFilter === "Calendar Aspects")
       || (showRetiredRows && isRetiredAdminRow(row))
       || isCompositionPage(activePage)
@@ -3876,7 +3902,7 @@ export function GeneratedContentAdminDashboard() {
     if (!key) return;
     if (draft?.contentKey === key) return;
     if (houseTransitEditor || skyArticleEditor) return;
-    if (transitExactDismissedKeyRef.current === key) return;
+    if (transitExactDismissedKeysRef.current.has(key)) return;
     if (!isTransitNatalSituationKey(key) && !key.startsWith("authored/transit-return/")) return;
     void openExactTransitNatalSourceRef.current(selection);
   }, [
@@ -4264,7 +4290,7 @@ export function GeneratedContentAdminDashboard() {
     if ((hasUnsavedChanges || hasPendingArticleChanges()) && !window.confirm("Discard the unsaved changes in this editor?")) {
       return false;
     }
-    if (draft?.contentKey) transitExactDismissedKeyRef.current = draft.contentKey;
+    if (draft?.contentKey) transitExactDismissedKeysRef.current.add(draft.contentKey);
     sourceOpenRequestRef.current += 1;
     setTemplateVariableReferenceOpen(false);
     setTemplateVariableQuery("");
@@ -4733,7 +4759,30 @@ export function GeneratedContentAdminDashboard() {
       return;
     }
     const context = { planet: facts.planet, sign: facts.sign };
-    const relationRows = relatedHousePassages(rows, context)
+    // Compiling reads each passage's copy, and the list carries only headlines, so the approved
+    // sources are loaded first. Compiling without them would publish an article missing its houses.
+    const relationCandidates = [
+      ...relatedHousePassages(rows, context).map((passage) => passage.row),
+      ...relatedAspectPassages(rows, context)
+    ].filter((row) => isApprovedSkyRelationRow(row) && row.inventory_only);
+    let sourceRows = rows;
+    if (relationCandidates.length) {
+      setIsLoading(true);
+      try {
+        const documents = await fetchSourceDocuments(relationCandidates);
+        sourceRows = mergeContentInventory(rows, documents);
+      } finally {
+        setIsLoading(false);
+      }
+      const missing = relationCandidates.filter((candidate) => (
+        sourceRows.find((row) => row.id === candidate.id)?.inventory_only !== false
+      ));
+      if (missing.length) {
+        setMessage(`Could not load ${missing.length} approved passage${missing.length === 1 ? "" : "s"} for this article. Try again in a moment.`);
+        return;
+      }
+    }
+    const relationRows = relatedHousePassages(sourceRows, context)
       .filter((passage) => isApprovedSkyRelationRow(passage.row));
     const housePassages: SkyArticleHousePassage[] = Array.from({ length: 12 }, (_, index) => index + 1)
       .flatMap((house) => {
@@ -4745,7 +4794,7 @@ export function GeneratedContentAdminDashboard() {
           body: passage.row.body.trim()
         }] : [];
       });
-    const aspectPassages = relatedAspectPassages(rows, context)
+    const aspectPassages = relatedAspectPassages(sourceRows, context)
       .filter(isApprovedSkyRelationRow)
       .map((row) => skyArticleAspectPassage(row, facts.planet))
       .filter((passage): passage is SkyArticleAspectPassage => Boolean(passage));
@@ -5276,7 +5325,7 @@ export function GeneratedContentAdminDashboard() {
       return;
     }
     if (bulkStatus === "LIVE") {
-      const blocked = actionRows.filter(row => isContentStudioReferenceSource(row.content_key, row.source_snapshot ?? {})
+      const blocked = actionRows.filter(row => isContentStudioReferenceSource(row.content_key, sourceSnapshotForRow(row) ?? {})
         || row.block_type === "sky_placement" || skyWritingIssues(row).length > 0);
       if (blocked.length) { setMessage("Some selected rows need writing checks or a separate source/package review. Open those rows and complete their next action before publishing."); return; }
       const nonServingSourceRows = packageRows.filter((row) => {
@@ -5369,6 +5418,89 @@ export function GeneratedContentAdminDashboard() {
       setIsLoading(false);
     }
   }
+
+  // The list arrives without documents, so anything that reads a row's copy has to ask for it.
+  // Requests go out in batches by content key, and each document replaces its row in place.
+  const fetchSourceDocuments = useCallback(async (requested: AdminGeneratedContentRow[]) => {
+    const documents: AdminGeneratedContentRow[] = [];
+    for (let start = 0; start < requested.length; start += compositionSourceBatchSize) {
+      const batch = requested.slice(start, start + compositionSourceBatchSize);
+      try {
+        const payload = await adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[] }>(
+          studioInventoryDocumentsPath(batch.map((row) => row.content_key)),
+          secret
+        );
+        documents.push(...(payload.rows ?? []).filter((candidate) => (
+          !candidate.inventory_only && batch.some((row) => row.id === candidate.id)
+        )));
+      } catch {
+        // The row stays inventory-only; opening it still loads the document on demand.
+      }
+    }
+    if (documents.length) setRows((current) => mergeContentInventory(current, documents));
+    return documents;
+  }, [secret]);
+
+  // Lists, previews, and relation summaries all read a row's saved copy, so the rows on screen ask
+  // for their documents. Each row is requested once. A package row is left to load when it opens,
+  // because its document arrives under a different id.
+  const loadSourceDocuments = useCallback((rowIds: string[]) => {
+    const requested = rowIds
+      .filter((id) => !requestedSourceDocumentIdsRef.current.has(id) && !id.startsWith("package:"))
+      .map((id) => rowsRef.current.find((candidate) => candidate.id === id))
+      .filter((row): row is AdminGeneratedContentRow => Boolean(row?.inventory_only));
+    if (!requested.length) return;
+    for (const row of requested) requestedSourceDocumentIdsRef.current.add(row.id);
+    void fetchSourceDocuments(requested);
+  }, [fetchSourceDocuments]);
+
+  // A Sky write-up reports whether its rising horoscopes and related passages have sources, and it
+  // reads that from the source documents rather than the headline, so they load with the selection.
+  useEffect(() => {
+    if (!selectedRow) return;
+    const writeup = skyWriteupContextForRow(selectedRow);
+    if (!writeup) return;
+    const lunation = skyLunationContextForRow(selectedRow);
+    const sources = lunation
+      ? relatedLunationHoroscopes(rows, lunation).flatMap((horoscope) => horoscope.sources.map((source) => source.row))
+      : [
+        ...relatedHousePassages(rows, writeup).map((passage) => passage.row),
+        ...relatedAspectPassages(rows, writeup)
+      ];
+    loadSourceDocuments([...new Set(sources.map((row) => row.id))].slice(0, skyRelationHydrationLimit));
+  }, [selectedRow, rows, loadSourceDocuments]);
+
+  // A row on screen shows its saved copy, and the list it came from carries only headlines.
+  const loadVisibleRowDocuments = useCallback((visible: readonly { id: string }[]) => {
+    loadSourceDocuments(visible.map((item) => item.id));
+  }, [loadSourceDocuments]);
+
+  // The review queue sorts a row by whether its writing is ready to publish, which it reads from the
+  // saved document. A row still waiting for its copy would be filed as needing changes.
+  useEffect(() => {
+    if (activePage !== "reviewQueue") return;
+    loadSourceDocuments(reviewQueueRows.slice(0, reviewQueueHydrationLimit).map((row) => row.id));
+  }, [activePage, reviewQueueRows, loadSourceDocuments]);
+
+  // The Daily Sky Summary workspace reads saved wording for every field it shows: the summary
+  // clauses, the assembly template, the ingress TLDRs, and the debility copy. Without the documents
+  // a saved field reads as empty, so the workspace looks like nothing was ever written there.
+  useEffect(() => {
+    if (activePage !== "skyWriteups" || skyWriteupWorkspaceView !== "daily-summary") return;
+    loadSourceDocuments(rows
+      .filter((row) => row.content_key.startsWith("cms/sky-daily-summary/") || row.content_key.startsWith(SKY_DEBILITY_KEY_PREFIX))
+      .slice(0, skySummaryWorkspaceHydrationLimit)
+      .map((row) => row.id));
+  }, [activePage, skyWriteupWorkspaceView, rows, loadSourceDocuments]);
+
+  // The Daily At-a-Glance list previews each headline and passage and searches their wording, so the
+  // pairs it lists need their documents before the search can match anything.
+  useEffect(() => {
+    if (fallbackSectionFilter !== "daily") return;
+    loadSourceDocuments(dailyGlanceWriteups
+      .slice(0, dailyGlanceHydrationLimit)
+      .flatMap((pair) => [pair.headlineRow.id, pair.passageRow.id]));
+  }, [fallbackSectionFilter, dailyGlanceWriteups, loadSourceDocuments]);
 
   async function hydrateGeneratedContentRow(row: AdminGeneratedContentRow, refresh = false, followPublishedRevision = false) {
     if (!row.inventory_only && !refresh) return row;
@@ -5547,9 +5679,20 @@ export function GeneratedContentAdminDashboard() {
     const parentVariableName = selectedTemplateVariableName;
     const parentVariableSource = selectedTemplateVariableSourceId;
     const previousReturn = studioEditorReturnContext();
+    // Opening the row the current way back leads to is walking back, so the offer is
+    // dropped rather than renewed. Reversing a compatibility record twice otherwise
+    // left a way back to the record already on screen and no plain way to close.
+    if (previousReturn?.parentContentKey === destinationContentKey) {
+      clearStudioEditorReturn();
+      if (await open() === false) {
+        rememberStudioEditorReturn(previousReturn);
+        return false;
+      }
+      return true;
+    }
     // Registered before the row loads so the destination's first render already
     // carries the way back instead of waiting for an unrelated re-render.
-    rememberStudioEditorReturn({ childContentKey: destinationContentKey, label: parentDraft.headline || parentDraft.contentKey, saveReturns: options.saveReturns === true, returnToParent: () => {
+    rememberStudioEditorReturn({ childContentKey: destinationContentKey, parentContentKey: parentDraft.contentKey, label: parentDraft.headline || parentDraft.contentKey, saveReturns: options.saveReturns === true, returnToParent: () => {
       setDraft(parentDraft); editorBaselineRef.current = parentBaseline; editorSavedInputRef.current = parentSavedInput;
       setEditorSourceRow(parentRow); setSelectedRowId(parentSelection); setSkyWritingContext(parentContext);
       setCompositionEditorContext(parentComposition); setTemplateVariableReferenceOpen(parentVariablesOpen);
@@ -7971,7 +8114,7 @@ export function GeneratedContentAdminDashboard() {
     if (draft && draft.contentKey === key && (selectedRowId || draft.id || draft.body || draft.headline)) {
       return;
     }
-    transitExactDismissedKeyRef.current = null;
+    transitExactDismissedKeysRef.current.delete(key);
     const requestId = ++sourceOpenRequestRef.current;
     setIsLoading(true);
     try {
@@ -8871,7 +9014,7 @@ export function GeneratedContentAdminDashboard() {
     ].join(":");
 
     return (
-      <AdminPaginatedCollection items={tableRows} label="Content rows" pageSize={contentTablePageSize} resetKey={resetKey}>
+      <AdminPaginatedCollection items={tableRows} label="Content rows" pageSize={contentTablePageSize} resetKey={resetKey} onVisibleItems={loadVisibleRowDocuments}>
         {(visibleTableRows) => <AdminContentTable
           showDestination={showArticleDestination}
           emptyMessage={activePage === "content" && contentStatusFilter !== "all" && statusChecking ? "Checking reader status…" : "No rows match these filters."}
@@ -8930,6 +9073,7 @@ export function GeneratedContentAdminDashboard() {
           label="Review queue"
           pageSize={reviewQueuePageSize}
           resetKey={`${reviewStatusFilter}:${contentClassFilter}:${tierFilter}:${query}:${tableRows.length}`}
+          onVisibleItems={loadVisibleRowDocuments}
         >
           {(visibleTableRows) => <div className="admin-review-queue-rows" aria-label="Review rows">
             <AdminContentTable showDestination={false} emptyMessage="No review rows match these filters." rows={visibleTableRows.map((row) => {
@@ -9305,6 +9449,19 @@ export function GeneratedContentAdminDashboard() {
         natalPoint: transitNatalPoint || undefined
       });
     const hasTransitTemplatePreviewContext = hasTransitContactContext && Boolean(transitNatalSign);
+    // Variables describing the calculated contact read as the contact being edited. The
+    // dictionary examples name Saturn and Venus, which look like another transit's
+    // write-up while the selected one is on screen.
+    const transitFactExamples: Record<string, string> = hasTransitContactContext
+      ? {
+        transitTitle: titleFromKey(transitNatalPlanet),
+        transitRef: `transiting ${titleFromKey(transitNatalPlanet)}`,
+        natalTitle: `natal ${titleFromKey(transitNatalPoint)}`,
+        aspectName: transitNatalAspect,
+        aspectWord: aspectTechnicalVerb(transitNatalAspect),
+        ...(transitNatalSign ? { signTitle: titleFromKey(transitNatalSign), transitSign: titleFromKey(transitNatalSign) } : {})
+      }
+      : {};
     const variableReferences = buildVariableReferences?.({
       Headline: currentDraft.headline,
       Summary: currentDraft.summary,
@@ -11684,7 +11841,9 @@ export function GeneratedContentAdminDashboard() {
               ? rows.filter((row) => natalPlacementResolverDependencyKeys(natalPlacementPlanet as NatalPlacementPlanet, natalPlacementSign as NatalPlacementSign, natalPlacementHouse, natalPlacementMotion).includes(row.content_key))
               : rows).filter(row => !isZodiacSeasonSourceKey(row.content_key)), ...seasonSourceRows]}
             onInsert={insertDraftToken}
+            onLoadSourceDocuments={loadSourceDocuments}
             templateContentKey={currentDraft.contentKey}
+            factExamples={transitFactExamples}
             templatePreviewRow={templatePreviewRow}
             reviewTemplateRow={templatePreviewRow ?? {
               id: currentDraft.id ?? "draft-template",

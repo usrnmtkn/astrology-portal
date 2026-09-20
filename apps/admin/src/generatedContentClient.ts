@@ -59,6 +59,13 @@ export function studioInventoryDocumentPath(contentKey: string, extras: { status
   return `/api/admin/generated-content-inventory?${params}`;
 }
 
+// Several rows at once, for surfaces that show saved copy the inventory list does not carry.
+export function studioInventoryDocumentsPath(contentKeys: readonly string[]) {
+  const params = new URLSearchParams({ status: "all", visibility: "all", limit: "80" });
+  for (const key of contentKeys) params.append("contentKeys", key);
+  return `/api/admin/generated-content-inventory?${params}`;
+}
+
 export function studioPackageSourcePath(contentKey: string) {
   return `/api/admin/package-source?contentKey=${encodeURIComponent(contentKey)}`;
 }

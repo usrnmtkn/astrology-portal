@@ -1,6 +1,7 @@
 import { test, expect } from '@playwright/test';
 import { fork } from 'node:child_process';
 import path from 'node:path';
+import { routeStudioInventoryApi } from '../helpers/studio-inventory-route';
 
 for (const width of [390, 1440]) for (const theme of ['light', 'dark']) test(`Create, edit, tag, preview and delete custom variables at ${width} ${theme}`, async ({ page }) => {
   const child = fork(path.resolve('tests/helpers/sky-article-save-api.mts'), [], { env: { ...process.env, SKY_SAVE_LEGACY_DRAFT: '', ZODIAC_TEMPLATE_FIXTURE: '' }, execArgv: ['--import', 'tsx'], stdio: ['ignore', 'pipe', 'pipe', 'ipc'] });
@@ -12,17 +13,9 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) test(`Cr
     const errors: string[] = []; page.on('pageerror', error => errors.push(error.message));
     await page.setViewportSize({ width, height: 1000 });
     await page.addInitScript(theme => { localStorage.setItem('tldrastro:contentAdminSecret', 'calendar-api-fixture'); localStorage.setItem('tldrastro:studio-theme', theme); }, theme);
-    await page.route('**/api/**', async route => {
-      const request = route.request(), url = new URL(request.url());
-      if (url.pathname === '/api/admin/generated-content') {
-        if (request.method() !== 'GET' || ['variables', 'id', 'contentKeys'].some(key => url.searchParams.has(key))) {
-          const result = await call({ method: request.method(), body: request.method() === 'GET' ? undefined : request.postDataJSON(), url: url.pathname + url.search });
-          return route.fulfill({ status: result.status, json: result.payload });
-        }
-        const rows = (await call({ method: 'rows' })).filter((row: any) => row.event_type !== 'studio-variable').map((row: any) => ({ ...row, body: null, sections: null, inventory_only: true }));
-        return route.fulfill({ json: { ok: true, rows, nextCursor: null } });
-      }
-      return route.fulfill({ json: { ok: true, rows: [], statuses: [], records: [], nextCursor: null } });
+    await routeStudioInventoryApi(page, {
+      call,
+      listRows: rows => rows.filter((row: any) => row.event_type !== 'studio-variable')
     });
     const entry = process.env.STUDIO_PRODUCTION_ENTRY === '1' ? '/admin/content' : '/';
     await page.goto(entry + '#variables');

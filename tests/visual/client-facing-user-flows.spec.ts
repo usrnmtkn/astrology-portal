@@ -1769,7 +1769,10 @@ test.describe("client-facing user flow case studies", () => {
     await expect(dateTrigger).toContainText("Jul 20");
 
     await page.getByRole("button", { name: "Friends", exact: true }).click();
-    await expect(page.getByLabel("Friends")).toBeVisible();
+    // The loading illustration is labelled "Loading Friends…", so wait for it to leave before
+    // reading the surface itself.
+    await expect(page.getByRole("status", { name: /^Loading Friends/u })).toHaveCount(0);
+    await expect(page.getByLabel("Friends", { exact: true })).toBeVisible();
     await expect(dateTrigger).toContainText("Jul 20");
     await dateTrigger.click();
     await expect(page.getByRole("region", { name: "Pick Date" })).toBeVisible();
@@ -3985,12 +3988,14 @@ test.describe("client-facing user flow case studies", () => {
 
     const article = page.locator(".sky-detail-article");
     await expect(article).toBeVisible();
-    const sunLilith = article.locator(".article-related-aspect-row").filter({ hasText: "Sun Trine Lilith" });
-    await expect(sunLilith).toBeVisible();
+    // In-sign aspects are shown in Gifts and Lessons rather than a separate aspect list; the
+    // approved write-up must still arrive complete, not shortened to fit the section.
+    const gifts = article.getByRole("region", { name: "Gifts" });
+    await expect(gifts.getByRole("heading", { name: "Sun Trine Lilith", level: 4 })).toBeVisible();
     const lilithCopy = JSON.parse(readFileSync(path.resolve("packages/astro-knowledge/data/transits/sun-trine-lilith.json"), "utf8"));
     expect(lilithCopy.status).toBe("LIVE");
-    await expect(sunLilith).toContainText(lilithCopy.readerCopy.body);
-    await expect(sunLilith).toHaveAttribute("href", /#sky\/aspect\/sun\/trine\/lilith/);
+    await expect(gifts).toContainText(lilithCopy.readerCopy.body);
+    await expect(gifts).toContainText("Exact · September 2 and September 10, 2026");
     await assertNoClientErrors();
   });
 

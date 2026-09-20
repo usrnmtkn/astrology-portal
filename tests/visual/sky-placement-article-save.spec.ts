@@ -1,6 +1,7 @@
 import { test, expect } from '@playwright/test';
 import { fork } from 'node:child_process';
 import path from 'node:path';
+import { routeStudioInventoryApi } from '../helpers/studio-inventory-route';
 
 for (const legacyDraft of [false, true]) for (const [width, theme] of [[390, 'light'], [1440, 'dark']] as const) {
  test(`Sky article saves and publishes with ${legacyDraft ? 'legacy draft flags' : 'archived latest revision'} at ${width} ${theme}`, async ({ page }) => {
@@ -25,19 +26,7 @@ for (const legacyDraft of [false, true]) for (const [width, theme] of [[390, 'li
    page.on('pageerror', error => errors.push(error.message));
    await page.setViewportSize({ width, height: 1000 });
    await page.addInitScript(theme => { localStorage.setItem('tldrastro:contentAdminSecret', 'calendar-api-fixture'); localStorage.setItem('tldrastro:studio-theme', theme); }, theme);
-   await page.route('**/api/**', async route => {
-    const request = route.request(), url = new URL(request.url());
-    if (url.pathname === '/api/admin/generated-content') {
-     if (request.method() !== 'GET' || url.searchParams.has('id') || url.searchParams.has('contentKeys')) {
-      const result = await call({ method: request.method(), body: request.method() === 'GET' ? undefined : request.postDataJSON(), url: url.pathname + url.search });
-      if (request.method() !== 'GET') responses.push(result);
-      return route.fulfill({ status: result.status, json: result.payload });
-     }
-     const rows = (await call({ method: 'rows' })).map((row: any) => ({ ...row, body: null, sections: null, inventory_only: true }));
-     return route.fulfill({ json: { ok: true, rows, nextCursor: null } });
-    }
-    return route.fulfill({ json: { ok: true, rows: [], statuses: [], records: [], nextCursor: null } });
-   });
+   await routeStudioInventoryApi(page, { call, onWrite: ({ result }) => responses.push(result) });
    const selectSunVirgo = async () => {
     await page.getByLabel('Sky placement planet or point').selectOption('sun');
     await page.getByLabel('Sky placement zodiac sign').selectOption('virgo');

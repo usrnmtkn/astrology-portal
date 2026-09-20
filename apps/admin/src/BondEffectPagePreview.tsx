@@ -281,7 +281,7 @@ export default function BondEffectPagePreview({
         <label>
           <span>Transiting planet</span>
           <AdminSelect
-            aria-label="Transiting planet"
+            aria-label="Preview transiting planet"
             value={transitingPlanet}
             onChange={(event) => commitContact({ planet: event.target.value as TransitNatalPlanet })}
           >

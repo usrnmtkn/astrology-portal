@@ -23,6 +23,8 @@ type Props = {
   templatePreviewRow: CompositionMapRow | null;
   reviewTemplateRow: CompositionMapRow;
   previewOptions?: CompositionPreviewOptions;
+  /** Calculated-fact values for the contact on screen, keyed by variable name. */
+  factExamples?: Record<string, string>;
   selectedVariableName: string | null;
   selectedSourceId: string | null;
   onSelectVariable: (name: string | null) => void;
@@ -31,6 +33,8 @@ type Props = {
   onClose: () => void;
   onInsert?: (token: string) => void;
   onKeyDown?: (event: ReactKeyboardEvent<HTMLElement>) => void;
+  /** Loads the documents for sources the example write-up needs but the list did not carry. */
+  onLoadSourceDocuments?: (rowIds: string[]) => void;
 };
 
 type VariableKind = "fact" | "phrase" | "hook" | "copy" | "unmapped";
@@ -48,9 +52,13 @@ function variableListPreview(
   reference: TemplateVariableReference,
   kind: VariableKind,
   rows: RailRow[],
-  templateContentKey: string
+  templateContentKey: string,
+  factExamples: Record<string, string> = {}
 ) {
-  if (kind === "fact" || kind === "unmapped") return reference.example?.trim() || "";
+  // A calculated fact reads as the contact being edited where the editor knows it. The
+  // dictionary example names Saturn, which belongs to no particular transit and read as
+  // another planet's write-up while editing Lilith.
+  if (kind === "fact" || kind === "unmapped") return factExamples[reference.name]?.trim() || reference.example?.trim() || "";
   const source = templateVariableSourceCandidates(reference, rows, templateContentKey)[0];
   return source ? (readableCopy(source)[0]?.[1] ?? "").trim() : "";
 }
@@ -71,8 +79,8 @@ const kindLabels: Record<VariableKind, string> = {
  */
 export default function TemplateVariablesRail({
   references, filteredReferences, query, onQueryChange, rows, templateContentKey, templatePreviewRow,
-  reviewTemplateRow, previewOptions, selectedVariableName, selectedSourceId,
-  onSelectVariable, onSelectSource, onEditSource, onClose, onKeyDown, onInsert
+  reviewTemplateRow, previewOptions, factExamples = {}, selectedVariableName, selectedSourceId,
+  onSelectVariable, onSelectSource, onEditSource, onClose, onKeyDown, onInsert, onLoadSourceDocuments
 }: Props) {
   const selected = selectedVariableName
     ? references.find((reference) => reference.name === selectedVariableName) ?? null
@@ -150,6 +158,7 @@ export default function TemplateVariablesRail({
                     onSelectVariable(name);
                     onSelectSource(sourceId);
                   }}
+                  onLoadSourceDocuments={onLoadSourceDocuments}
                 />
               </Suspense>
             )}
@@ -171,7 +180,7 @@ export default function TemplateVariablesRail({
             <ul className="admin-variables-rail-list" aria-label="Variables used in this row">
               {filteredReferences.map((reference) => {
                 const kind = variableKind(reference, templateContentKey);
-                const preview = variableListPreview(reference, kind, rows, templateContentKey);
+                const preview = variableListPreview(reference, kind, rows, templateContentKey, factExamples);
                 return (
                   <li key={reference.name}>
                     <StudioButton

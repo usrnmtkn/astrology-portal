@@ -15,7 +15,7 @@ import { contentWiringStatus } from "../../apps/admin/src/contentWiringStatus.js
 import { isGovernedReaderEligible } from "../../apps/web/src/content/fallbackArchitectureV3/resolver/readerEligibility.browser.js";
 import { fallbackArchitectureV3DashboardPackageDestination } from "../../apps/web/src/services/fallbackArchitectureV3DashboardPackaging.js";
 import { isReaderServableGeneratedContentRow, isGeneratedContentReaderBoundaryAllowed, generatedRowPackageRole } from "../../apps/web/src/content/generatedContentEligibility.js";
-import { astro101IsLiveOnLearn, isAstro101ContentKey } from "../../apps/web/src/content/astro101.ts";
+import { astro101IsLiveOnLearn, isAstro101ContentKey } from "../../apps/web/src/content/astro101.js";
 import { hasExactSkyArticleOwnerApproval, skyArticleEditionRecord } from "../../apps/web/src/content/skyArticleTemplateCompiler.js";
 import { currentSkySummaryWording, skyDailySummaryFields, skySummaryTemplateErrors } from "../../apps/web/src/content/skyDailySummaryCatalog.js";
 
@@ -77,8 +77,11 @@ function copyHash(value: Record<string, any>) {
   const fields = ["headline", "summary", "body", "body_you", "body_they", "text", "Headline", "Summary", "Body", "fact_line", "opening", "tension", "development", "close", "era_layer", "tagline", "title", "focus", "strategy", "preview_note", "core_theme", "sign_jurisdiction", "lived_experience", "rulership_twist", "history_echo", "closing_charge", "article_sections", "rising_horoscopes"];
   return createHash("sha256").update(JSON.stringify(fields.map((field) => [field, value[field] ?? null]))).digest("hex");
 }
-function copiesMatch(requested: Record<string, any>, serving: Record<string, any>, row: LiveStatusRow) {
-  return copyHash(withReaderCopyFallbacks(requested, row, serving)) === copyHash(withReaderCopyFallbacks(serving));
+// A record keeps its headline and summary on the row rather than in the package record, so both sides
+// of the comparison read them from the row they belong to. Reading them on one side only reported a
+// row as a different version than itself.
+function copiesMatch(requested: Record<string, any>, serving: Record<string, any>, row: LiveStatusRow, servingRow?: LiveStatusRow) {
+  return copyHash(withReaderCopyFallbacks(requested, row, serving)) === copyHash(withReaderCopyFallbacks(serving, servingRow));
 }
 function skyOverlays(candidates: LiveStatusRow[]) {
   const rows = candidates.filter((row) => row.provider === "tldrastro-fallback-architecture-v3-sky-placement" && isSkyPartitionKey(row.content_key) && approved.has(record(row).review_status)
@@ -200,7 +203,7 @@ export function contentLiveStatuses(rows: LiveStatusRow[], candidates: LiveStatu
         const destination = fallbackArchitectureV3DashboardPackageDestination({ contentKey: row.content_key, role, contentType: row.source_snapshot?.contentType ?? row.source_snapshot?.content_type ?? row.facts?.contentType ?? "" });
         if ((destination === "authored" || row.content_key.startsWith("authored/compat-pair/")) && row.body?.trim()) requested = { ...packageRecord, body: row.body.trim() };
       }
-      if (serving && copiesMatch(requested, serving, row)) {
+      if (serving && copiesMatch(requested, serving, row, overlay)) {
         source = overlay ? "studio" : "package";
         detail = overlay ? "Readers can receive this saved copy." : "Readers can receive this exact copy from the installed content package.";
       } else if (proposal) detail = "This saved revision is not live. Readers may still receive the previous version.";

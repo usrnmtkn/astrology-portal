@@ -1,4 +1,5 @@
 import { test, expect } from "@playwright/test";
+import { routeStudioInventoryApi } from "../helpers/studio-inventory-route";
 import { fork } from "node:child_process";
 import path from "node:path";
 const key = "sky-card/venus/scorpio/sextile/mars/virgo";
@@ -29,24 +30,16 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"] as const)
       const errors: string[] = [];
       const writes: any[] = [];
       page.on("pageerror", error => errors.push(error.message));
-      await page.route("**/api/**", async route => {
-        const request = route.request();
-        const url = new URL(request.url());
-        if (url.pathname === "/api/admin/generated-content") {
-          if (request.method() !== "GET" || url.searchParams.has("id")) {
-            const body = request.method() === "GET" ? undefined : request.postDataJSON();
-            const result = await call({ method: request.method(), body, url: `${url.pathname}${url.search}` });
-            if (body) writes.push({ body, result });
-            return route.fulfill({ status: result.status, json: result.payload });
-          }
-          const rows = (await call({ method: "rows" })).filter((row: any) => row.content_key === key && row.status !== "ARCHIVED");
-          return route.fulfill({ json: { ok: true, rows, nextCursor: null } });
+      await routeStudioInventoryApi(page, {
+        call,
+        listRows: rows => rows.filter((row: any) => row.content_key === key && row.status !== "ARCHIVED"),
+        onWrite: write => writes.push(write),
+        answer: async (route, url) => {
+          if (url.pathname !== "/api/admin/content-live-status") return false;
+          const statuses = await call({ method: "statuses", body: route.request().postDataJSON() });
+          await route.fulfill({ json: { ok: true, statuses } });
+          return true;
         }
-        if (url.pathname === "/api/admin/content-live-status") {
-          const statuses = await call({ method: "statuses", body: request.postDataJSON() });
-          return route.fulfill({ json: { ok: true, statuses } });
-        }
-        return route.fulfill({ json: { ok: true, rows: [], records: [], nextCursor: null } });
       });
       await page.goto(`${studioPath}#review-queue`);
       await page.evaluate(value => { document.documentElement.dataset.theme = value; }, theme);

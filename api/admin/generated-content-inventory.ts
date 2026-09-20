@@ -3,10 +3,13 @@ import { URL } from "node:url";
 import { isContentAdminAuthorized } from "../_lib/admin-auth.js";
 import { AdminHttpError, adminErrorMessage, adminErrorStatus, adminFetchJson, adminStorageRows, sendAdminJson, sendAdminMethodNotAllowed } from "../_lib/admin-http.js";
 import { postgrestContentKeyPrefixAnd } from "../_lib/postgrest-content-key-prefix.js";
+import { studioListingRow, type StudioListingFacts } from "../_lib/studio-listing-facts.js";
 
 const inventoryColumns = [
   "id",
   "content_key",
+  // Listing facts: a row's group, title, and review-queue membership, without its documents.
+  "studio_facts",
   "surface",
   "mode",
   "status",
@@ -71,16 +74,13 @@ function decodeCursor(value: string) {
   return { id: parsed.id, updatedAt: parsed.updatedAt };
 }
 
+// A list row keeps the small facts the Studio classifies and groups by, and leaves the copy behind.
 function inventoryRow(row: Record<string, unknown>) {
-  return {
-    ...row,
-    body: null,
-    summary: null,
-    sections: null,
-    facts: null,
-    source_snapshot: null,
-    inventory_only: true
-  };
+  const stored = row.studio_facts;
+  const facts = stored && typeof stored === "object" && !Array.isArray(stored)
+    ? stored as StudioListingFacts
+    : {};
+  return studioListingRow(row, facts);
 }
 
 export default async function handler(req: IncomingMessage, res: ServerResponse) {
@@ -153,15 +153,25 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
     const url = supabaseUrl();
     const key = serviceRoleKey();
     if (!url || !key) throw new AdminHttpError(500, "Content storage is not configured.");
-    const response = await adminFetchJson(`${url}/rest/v1/generated_interpretations?${params}`, {
+    let response = await adminFetchJson(`${url}/rest/v1/generated_interpretations?${params}`, {
       headers: storageHeaders()
     });
+    // The listing-facts column arrives with its migration. Until then the list still has to load,
+    // so the request is repeated without it and rows carry only their columns.
+    if (!response.ok && JSON.stringify(response.payload ?? "").includes("studio_facts")) {
+      params.set("select", (inventoryView ? inventoryColumns : detailColumns).filter((column) => column !== "studio_facts").join(","));
+      response = await adminFetchJson(`${url}/rest/v1/generated_interpretations?${params}`, {
+        headers: storageHeaders()
+      });
+    }
     if (!response.ok) {
       throw new AdminHttpError(502, "Content storage could not return the inventory list.");
     }
-    const rows = adminStorageRows<Record<string, unknown>>(response.payload).map((row) => (
-      inventoryView ? inventoryRow(row) : { ...row, inventory_only: false }
-    ));
+    const rows = adminStorageRows<Record<string, unknown>>(response.payload).map((row) => {
+      if (inventoryView) return inventoryRow(row);
+      const { studio_facts: _listingFacts, ...document } = row;
+      return { ...document, inventory_only: false };
+    });
     const nextCursor = !id && rows.length === limit
       ? scope === "compatibility"
         ? String(rows.at(-1)?.id ?? "")

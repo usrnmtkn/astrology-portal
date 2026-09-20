@@ -20,6 +20,30 @@ for (const record of macros) {
   assert.equal(contentLiveStatuses([mirror], [live])[0].live, false, "An active override shadows different package copy.");
   assert.equal(contentLiveStatuses([live], [live])[0].live, true);
 }
+// A published exact natal row keeps its title and summary on the row, not in the package record. The
+// row is the copy readers receive, so it must not be reported as a different version of itself.
+const exactNatal = {
+  id: "qa-exact-natal", content_key: "fallback-hook/natal-aspect-lived/lilith/square/ascendant",
+  status: "LIVE", lane: "serving", review_state: null, provider: "tldrastro-fallback-architecture-v3",
+  surface: "you", mode: "in_depth", event_type: "fallback-hook", block_type: "fallback_hook",
+  headline: "Lilith Square Ascendant", summary: "Exact natal aspect writing.", body: "Exact You copy.",
+  updated_at: "2026-09-07T12:00:00Z",
+  facts: { fallbackArchitectureV3: true, review_status: "approved" },
+  source_snapshot: { sourcePackage: "tldrastro-fallback-architecture-v3", review_status: "approved" },
+  sections: { packageRecord: { contentKey: "fallback-hook/natal-aspect-lived/lilith/square/ascendant",
+    content_role: "full_copy", grammar_frame: "complete_sentence", body_you: "Exact You copy.",
+    body_they: "{{Name}} receives exact They copy.", reader_only: true,
+    render_policy: "reader-only-exact-lived-v1", review_status: "approved",
+    approval: { approvalLevel: "exact_owner_approved", action: "content-studio-publish",
+      recordPath: "/api/admin/generated-content?contentKey=fallback-hook%2Fnatal-aspect-lived%2Flilith%2Fsquare%2Fascendant",
+      payloadSha256: "3c8b80ad08d4c4457f76b3653e601514ee7cc894543e22c1275bbe546fd8d2f1",
+      approvedAt: "2026-09-07T12:00:00Z" } } }
+};
+assert.equal(contentLiveStatuses([exactNatal], [exactNatal])[0].label, "Live",
+  "A published exact natal row is the copy readers receive.");
+assert.equal(contentLiveStatuses([{ ...exactNatal, headline: "QA later title" }], [exactNatal])[0].live, false,
+  "A row whose title differs from the serving row is still not live.");
+
 const parked = { id: "parked", content_key: "sky.planetary.moon.house_10", status: "LIVE", lane: "serving", body: "QA parked copy." };
 assert.equal(contentLiveStatuses([parked])[0].live, false);
 assert.equal(contentLiveStatuses([{ ...parked, content_key: "article/manual/unknown", mode: "article" }])[0].live, false);
