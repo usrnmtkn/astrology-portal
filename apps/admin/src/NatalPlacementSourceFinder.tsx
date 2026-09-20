@@ -22,6 +22,9 @@ import {
   type NatalPlacementPlanet,
   type NatalPlacementSign
 } from "./natalPlacementSources";
+import { MetricCard } from "./studio-ds/patterns";
+import { Grid, Stack, Text } from "./studio-ds/primitives";
+import { metricGrid } from "./studio-ds/recipes";
 
 type PreviewRow = {
   id?: string | null;
@@ -70,6 +73,13 @@ function normalizeText(value: unknown) {
   return typeof value === "string" ? value.trim() : "";
 }
 
+function previewFromRow(row: PreviewRow | undefined, contentKey: string) {
+  if (!row) return "";
+  const preview = normalizeText(row.body) || normalizeText(row.summary) || normalizeText(row.headline);
+  const leaf = contentKey.split("/").pop() ?? "";
+  return preview && preview !== leaf ? preview : "";
+}
+
 function ordinalHouseLabel(value: number) {
   const mod100 = value % 100;
   const suffix = mod100 >= 11 && mod100 <= 13 ? "th" : value % 10 === 1 ? "st" : value % 10 === 2 ? "nd" : value % 10 === 3 ? "rd" : "th";
@@ -83,10 +93,15 @@ function emptyHouseSourceLabel(key: string, house: number, sign: string, ruler: 
   if (key.includes("/ruler-planet/")) return `${titleFromKey(ruler)} ruling the ${ordinalHouseLabel(house)}`;
   if (key.includes("/ruler-house/")) return `Ruler in the ${ordinalHouseLabel(rulerHouse)}`;
   if (key.includes("/bridge-template/")) return "House-to-ruler bridge";
-  if (key.includes("empty-house-ruler-jurisdiction")) return `${ordinalHouseLabel(rulerHouse)} life area`;
+  if (key.includes("empty-house-ruler-jurisdiction")) {
+    const fromKey = Number(key.split("/").pop());
+    return `${ordinalHouseLabel(fromKey >= 1 && fromKey <= 12 ? fromKey : rulerHouse)} life area`;
+  }
   if (key.includes("empty-house-bridge-topic-short")) return `${ordinalHouseLabel(house)} bridge topic`;
   if (key === "fallback-template/natal.empty-house-v14") return "Empty-house assembly template";
-  return titleFromKey(key.split("/").pop() ?? key);
+  const leaf = key.split("/").pop() ?? key;
+  if (/^\d+$/.test(leaf)) return `${ordinalHouseLabel(Number(leaf))} source`;
+  return titleFromKey(leaf);
 }
 
 function emptyHouseSourceScope(key: string) {
@@ -161,7 +176,7 @@ export default function NatalPlacementSourceFinder({ house, isLoading, motion, o
     }
     const savedRow = rows.find((row) => row.content_key === source.key);
     const isOptionalExactOverride = source.key.startsWith("fallback-hook/natal-you-placement-complete-final/") || source.key.startsWith("fallback-hook/natal-you-placement-sign-final/");
-    const preview = savedRow ? normalizeText(savedRow.body) || normalizeText(savedRow.summary) || normalizeText(savedRow.headline) : "";
+    const preview = previewFromRow(savedRow, source.key);
     return (
       <article className={`admin-natal-source-card${source.key.includes("placement-sign-final/") ? " admin-natal-source-complete" : ""}`} key={source.key}>
         <div className="admin-natal-source-card-copy">
@@ -171,7 +186,7 @@ export default function NatalPlacementSourceFinder({ house, isLoading, motion, o
               <ContentLiveStatusBadge row={studioServingStatusRow(savedRow, source.key)} />
             )}
           </div>
-          <p>{source.scope}</p>
+          <Text size="body" tone="secondary">{source.scope}</Text>
           <p className="admin-natal-source-key"><span>Source key</span><code>{source.key}</code></p>
           {preview && (previewTemplate || savedRow?.inventory_only) && <blockquote>{preview}</blockquote>}
           {isOptionalExactOverride && !savedRow && <p className="admin-field-hint">No exact override is saved. The reader currently receives the composed preview shown above.</p>}
@@ -191,7 +206,7 @@ export default function NatalPlacementSourceFinder({ house, isLoading, motion, o
   const renderEmptyHouseSource = (contentKey: string) => {
     const savedRow = rows.find((row) => row.content_key === contentKey);
     const label = emptyHouseSourceLabel(contentKey, emptyHouse, emptyHouseSign, emptyHouseRuler, emptyHouseRulerHouse);
-    const preview = savedRow ? normalizeText(savedRow.body) || normalizeText(savedRow.summary) || normalizeText(savedRow.headline) : "";
+    const preview = previewFromRow(savedRow, contentKey);
     return (
       <article className="admin-natal-source-card" key={contentKey}>
         <div className="admin-natal-source-card-copy">
@@ -199,9 +214,9 @@ export default function NatalPlacementSourceFinder({ house, isLoading, motion, o
             <h4>{label}</h4>
             <ContentLiveStatusBadge row={studioServingStatusRow(savedRow, contentKey)} />
           </div>
-          <p>{emptyHouseSourceScope(contentKey)}</p>
+          <Text size="body" tone="secondary">{emptyHouseSourceScope(contentKey)}</Text>
           <p className="admin-natal-source-key"><span>Source key</span><code>{contentKey}</code></p>
-          {preview ? <blockquote>{preview}</blockquote> : <p className="admin-field-hint">Open this source to load or author its writing.</p>}
+          {preview ? <blockquote>{preview}</blockquote> : <Text size="body" tone="secondary">Open this source to load or author its writing.</Text>}
         </div>
         <StudioButton type="button" disabled={isLoading} onClick={() => onOpenSource(contentKey, label, contentKey.startsWith("fallback-template/"))}>
           {savedRow?.inventory_only ? "Load and edit" : savedRow ? "Edit source" : "Load and edit"}
@@ -275,6 +290,14 @@ export default function NatalPlacementSourceFinder({ house, isLoading, motion, o
             </label>
           </div>
           {signSelectionComplete && (
+            <Grid className={metricGrid} aria-label="Selected natal placement">
+              <MetricCard label="Planet or point" value={natalPlacementPointLabel(planet as NatalPlacementPlanet)} />
+              <MetricCard label="Sign" value={titleFromKey(sign)} />
+              <MetricCard label="House" value={house || "Not selected"} />
+              <MetricCard label="Motion" value={titleFromKey(motion)} />
+            </Grid>
+          )}
+          {signSelectionComplete && (
             <NatalPlacementReaderPreview
               key={selectionKey}
               house={house}
@@ -289,21 +312,29 @@ export default function NatalPlacementSourceFinder({ house, isLoading, motion, o
           )}
           {groups.filter((group) => group.key !== "structure").map((group) => (
             <section className="admin-natal-source-group" key={`${selectionKey}/${group.key}`}>
-              <header><div><h3>{group.label}</h3><p>{group.description}</p></div></header>
+              <header>
+                <Stack gap="sm">
+                  <h3>{group.label}</h3>
+                  <Text size="body" tone="secondary">{group.description}</Text>
+                </Stack>
+              </header>
               <div className="admin-natal-source-grid">{group.sources.map((source) => renderSource(source))}</div>
             </section>
           ))}
           {groups.filter((group) => group.key === "structure").map((group) => (
             <details className="admin-workspace-details admin-natal-source-group admin-natal-source-advanced" key={`${selectionKey}/${group.key}`}>
-              <AdminDisclosureSummary>{group.label}</AdminDisclosureSummary><p>{group.description}</p>
+              <AdminDisclosureSummary>{group.label}</AdminDisclosureSummary>
+              <Text size="body" tone="secondary">{group.description}</Text>
               <div className="admin-natal-source-grid">{group.sources.map((source) => renderSource(source, true))}</div>
             </details>
           ))}
         </> : <section className="admin-empty-house-workspace" aria-label="Empty house writing">
-          <header className="admin-page-heading">
-            <p className="admin-eyebrow">Empty houses</p>
-            <h3>Choose the house, cusp sign, and where its ruler lands</h3>
-            <p>The full reader assembly and the source list below update with the selected context.</p>
+          <header>
+            <Stack gap="sm">
+              <Text size="meta" tone="secondary">Empty houses</Text>
+              <h3>Choose the house, cusp sign, and where its ruler lands</h3>
+              <Text size="body" tone="secondary">The full reader assembly and the source list below update with the selected context.</Text>
+            </Stack>
             <StudioButton type="button" onClick={onOpenEmptyHouseCompositions}>Open composition sources</StudioButton>
           </header>
           <div className="admin-natal-placement-selectors admin-filter-form" aria-label="Empty house context">
@@ -330,11 +361,12 @@ export default function NatalPlacementSourceFinder({ house, isLoading, motion, o
               </AdminSelect>
             </label>
           </div>
-          <div className="admin-empty-house-context-summary" aria-label="Selected empty house context">
-            <p className="admin-eyebrow">Selected reading</p>
-            <h4>{ordinalHouseLabel(emptyHouse)} in {titleFromKey(emptyHouseSign)}</h4>
-            <p><strong>{titleFromKey(emptyHouseRuler)}</strong> rules the cusp and lands in the <strong>{ordinalHouseLabel(emptyHouseRulerHouse)}</strong>.</p>
-          </div>
+          <Grid className={metricGrid} aria-label="Selected empty house context">
+            <MetricCard label="Empty house" value={ordinalHouseLabel(emptyHouse)} />
+            <MetricCard label="Cusp sign" value={titleFromKey(emptyHouseSign)} />
+            <MetricCard label="Ruler" value={titleFromKey(emptyHouseRuler)} />
+            <MetricCard label="Ruler's house" value={ordinalHouseLabel(emptyHouseRulerHouse)} />
+          </Grid>
           <EmptyHouseReaderPreview
             secret={secret}
             house={emptyHouse}
@@ -344,14 +376,17 @@ export default function NatalPlacementSourceFinder({ house, isLoading, motion, o
           />
           <section className="admin-natal-source-group" aria-label="Sources used by the selected empty house assembly">
             <header>
-              <div className="admin-page-heading">
+              <Stack gap="sm">
                 <h3>Edit the assembly sources</h3>
-                <p>These are the exact passages, vocabulary, and template pieces used to build the preview above.</p>
-              </div>
+                <Text size="body" tone="secondary">These are the exact passages, vocabulary, and template pieces used to build the preview above.</Text>
+              </Stack>
             </header>
             {emptyHouseGroups.map((group) => (
               <section key={`empty-house/${emptyHouse}/${emptyHouseSign}/${emptyHouseRulerHouse}/${group.id}`}>
-                <div className="admin-page-heading"><h3>{group.label}</h3><p>{group.description}</p></div>
+                <Stack gap="sm">
+                  <h3>{group.label}</h3>
+                  <Text size="body" tone="secondary">{group.description}</Text>
+                </Stack>
                 <div className="admin-natal-source-grid">{group.keys.map(renderEmptyHouseSource)}</div>
               </section>
             ))}

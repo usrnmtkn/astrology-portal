@@ -7,6 +7,8 @@ import { readStudioContentDocument, requestStudioJson } from "./generatedContent
 import { PageLoading } from "../../web/src/components/PageLoading";
 
 import ContentLiveStatusBadge from "./ContentLiveStatus";
+import { Stack, Text } from "./studio-ds/primitives";
+import { containedDisclosure } from "./studio-ds/recipes";
 import { transitNatalExactActionLabel, transitNatalLiveServingSource, transitSourceEditScope, transitExactPassageState, type TransitExactPassageState } from "./transitNatalEditorScope";
 
 const PersonalTransitAiWriter = lazy(() => import("./PersonalTransitAiWriter"));
@@ -50,11 +52,11 @@ export function TransitNatalExactSourceAction({
   if (state.error) return <p role="alert">{state.error} <StudioButton type="button" onClick={() => setRevision(value => value + 1)}>Retry this transit</StudioButton></p>;
   return <section className="admin-natal-source-group" aria-label="This transit write-up">
     <header>
-      <div>
-        <p className="admin-eyebrow">{contentKey.split("/").length === 8 ? "Six-part situation write-up" : "Three-part aspect write-up"}</p>
-        <p><code>{contentKey}</code></p>
-        <p>{state.passage?.detail}</p>
-      </div>
+      <Stack gap="sm">
+        <Text size="meta" tone="secondary">{contentKey.split("/").length === 8 ? "Six-part situation write-up" : "Three-part aspect write-up"}</Text>
+        <p className="admin-natal-source-key"><span>Source key</span><code>{contentKey}</code></p>
+        <Text size="body" tone="secondary">{state.passage?.detail}</Text>
+      </Stack>
       {state.passage?.row && <ContentLiveStatusBadge row={state.passage.row} />}
     </header>
     <StudioButton type="button" disabled={disabled} onClick={onOpen}>{transitNatalExactActionLabel(Boolean(state.passage?.exists), title, contentKey)}</StudioButton>
@@ -164,11 +166,11 @@ export default function TransitNatalReaderPreview({ selection, voice, secret, on
   return (
     <section className="admin-natal-source-group" aria-label="Effective transit to natal reader preview">
       <header>
-        <div>
-          <p className="admin-eyebrow">Effective reader preview</p>
+        <Stack gap="sm">
+          <Text size="meta" tone="secondary">Effective reader preview</Text>
           <h3>What you see</h3>
-          <p>This example uses the reader package and eligible published updates. Drafts are excluded. Use the reading preview options to match a particular transit's motion, repeat pass, variant, and timing.</p>
-        </div>
+          <Text size="body" tone="secondary">This example uses the reader package and eligible published updates. Drafts are excluded. Use the reading preview options to match a particular transit's motion, repeat pass, variant, and timing.</Text>
+        </Stack>
       </header>
       {state.loading || loadedIdentity !== identity && !state.error ? <PageLoading compact message="Loading reader preview…" /> : state.preview && loadedIdentity === identity ? (
         <article className="admin-natal-source-card">
@@ -199,7 +201,7 @@ export function TransitNatalPreviewOptions({ context, onChange }: {
   onChange: (next: Partial<TransitNatalReadingContext>) => void;
 }) {
   return (
-        <details className="admin-workspace-details">
+        <details className={`${containedDisclosure} admin-workspace-details`}>
           <AdminDisclosureSummary>Reading preview options</AdminDisclosureSummary>
           <p className="admin-field-hint">These are example inputs. Match the calculated reading when comparing its exact passage.</p>
           <div className="admin-natal-placement-selectors admin-filter-form">

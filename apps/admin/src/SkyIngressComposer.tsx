@@ -4,7 +4,7 @@ import { StudioButton, StudioInput, StudioTextarea } from "./StudioControls";
 import { AdminDisclosureSummary, AdminSelect } from "./AdminNativeControls";
 import { useEffect, useRef, useState } from "react";
 import SkyWritingLibraryEditor from "./SkyWritingLibraryEditor";
-import { surfaceSection } from "./studio-ds/recipes";
+import { containedToggle, surfaceSection } from "./studio-ds/recipes";
 import { SKY_WRITING_LIBRARY_GROUPS, installSkyWritingLibrary, loadSkyWritingLibrarySeeds, preferSkyWritingLibrary } from "./skyWritingLibrary";
 // @ts-ignore Shared deterministic implementation used by the actual reader.
 import { SKY_INGRESS_VARIABLES, makeSkyIngressComposition, renderSkyIngressComposition, skyIngressPublicationIssues, ingressTextIssues, skyIngressOccurrence, resolveIngressSource } from "../../web/src/content/fallbackArchitectureV3/resolver/skyIngressComposition.mjs";
@@ -152,7 +152,7 @@ export default function SkyIngressComposer({ source, motion, disabled = false, i
     <div className="admin-sky-writing-context">
       <strong>{words(identity[0])} in {words(identity[1])} · Placement composition</strong>
       <p>This is the assembled evergreen writing path. Complete motion-specific or shared articles still take priority. Sentence sources and their order publish together with this placement. Enabling a draft does not publish it.</p>
-      {onChange && <label><StudioInput type="checkbox" checked={composition.enabled} disabled={disabled} onChange={event => update({ enabled: event.target.checked })} /> Use composition when the complete article is empty</label>}
+      {onChange && <label className={containedToggle}><StudioInput type="checkbox" checked={composition.enabled} disabled={disabled} onChange={event => update({ enabled: event.target.checked })} /> Use composition when the complete article is empty</label>}
       <p role="status">{composition.enabled ? onChange ? "Enabled in this draft" : "Enabled in this saved source" : "Composition is not enabled"} · {result.status === "ready" ? "Preview assembled" : "Some modules need writing or occurrence facts"}</p>
     </div>
     {issues.length > 0 && <div role="alert">{issues.map(issue => <p key={issue}>{issue}</p>)}</div>}
@@ -212,8 +212,8 @@ export default function SkyIngressComposer({ source, motion, disabled = false, i
         {module && <div className="admin-sky-writing-context">
           <label>Section name<StudioInput aria-label="Ingress section name" value={module.label} disabled={disabled} onChange={event => updateModule({ label: event.target.value })} /></label>
           <div className="admin-sky-writing-source-actions">
-            <label><StudioInput type="checkbox" checked={module.enabled} disabled={disabled} onChange={event => updateModule({ enabled: event.target.checked })} /> Include section</label>
-            <label><StudioInput type="checkbox" checked={module.required} disabled={disabled} onChange={event => updateModule({ required: event.target.checked })} /> Required writing</label>
+            <label className={containedToggle}><StudioInput type="checkbox" checked={module.enabled} disabled={disabled} onChange={event => updateModule({ enabled: event.target.checked })} /> Include section</label>
+            <label className={containedToggle}><StudioInput type="checkbox" checked={module.required} disabled={disabled} onChange={event => updateModule({ required: event.target.checked })} /> Required writing</label>
           </div>
           <div className="admin-natal-placement-selectors">
             <label>Motion<AdminSelect aria-label="Ingress module motion" value={module.motion} disabled={disabled} onChange={event => updateModule({ motion: event.target.value })}>{["all", "direct", "retrograde"].map(value => <option key={value}>{value}</option>)}</AdminSelect></label>
@@ -232,7 +232,7 @@ export default function SkyIngressComposer({ source, motion, disabled = false, i
           }} />
           {ingressTextIssues(module.template, [...Object.keys(composition.sources), ...ZODIAC_SEASON_VARIABLES.map(field => field.id), ...customVariables.map((item: RecordValue) => item.name)]).map((issue: string) => <p role="alert" key={issue}>{issue}</p>)}
           <details className="admin-workspace-details"><AdminDisclosureSummary>Aspect selection</AdminDisclosureSummary>
-            <label><StudioInput type="checkbox" checked={Boolean(module.aspect)} disabled={disabled} onChange={event => updateModule({ aspect: event.target.checked ? { otherPlanet: "sun", type: "conjunction", weight: "defining" } : undefined })} /> Repeat for a calculated aspect</label>
+            <label className={containedToggle}><StudioInput type="checkbox" checked={Boolean(module.aspect)} disabled={disabled} onChange={event => updateModule({ aspect: event.target.checked ? { otherPlanet: "sun", type: "conjunction", weight: "defining" } : undefined })} /> Repeat for a calculated aspect</label>
             {module.aspect && <div className="admin-natal-placement-selectors">
               <label>Other planet<AdminSelect value={module.aspect.otherPlanet} disabled={disabled} onChange={event => updateModule({ aspect: { ...module.aspect!, otherPlanet: event.target.value } })}>{["sun", "mercury", "venus", "mars", "jupiter", "saturn", "uranus", "neptune", "pluto", "lilith"].map(value => <option key={value}>{value}</option>)}</AdminSelect></label>
               <label>Aspect<AdminSelect value={module.aspect.type} disabled={disabled} onChange={event => updateModule({ aspect: { ...module.aspect!, type: event.target.value } })}>{["conjunction", "sextile", "square", "trine", "opposition"].map(value => <option key={value}>{value}</option>)}</AdminSelect></label>

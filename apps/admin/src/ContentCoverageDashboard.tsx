@@ -3,7 +3,7 @@ import "./studio-system.css";
 import { AdminDataTable, AdminDisclosureSummary, StudioButton } from "./studio-ds/components";
 import { ListPage } from "./studio-ds/page-templates";
 import { MetricCard } from "./studio-ds/patterns";
-import { metricGrid, surfacePanel, surfaceSection, tableScroll } from "./studio-ds/recipes";
+import { containedDisclosure, metricGrid, surfacePanel, surfaceSection, tableScroll } from "./studio-ds/recipes";
 import { AlertTriangle, ArrowLeft, RefreshCw } from "lucide-react";
 import { useEffect, useState } from "react";
 import { adminCredentialHeaders, adminSecretStorageKey, normalizeAdminSecret } from "./adminSecret";
@@ -129,7 +129,7 @@ function CoverageDashboard() {
         {error && <p role="alert">{error}</p>}
         <header className="admin-dashboard-header">
           <div>
-            <a href="/admin/content" >
+            <a href="/admin/content" className="admin-page-link">
               <ArrowLeft size={15} aria-hidden="true" />
               Content Studio
             </a>
@@ -246,7 +246,7 @@ function CoverageDashboard() {
                         <td data-label="Ready">{row.ready} / {row.total} · {row.percent}%</td>
                         <td data-label="Detail">{row.detail}</td>
                         <td data-label="Authority">
-                          <details>
+                          <details className={containedDisclosure}>
                             <AdminDisclosureSummary>Authority chain</AdminDisclosureSummary>
                             <div>
                               <p><strong>Owner authority:</strong> {row.authority.ownerAuthority}</p>

@@ -1,6 +1,7 @@
 import { StudioButton, StudioInput } from "./StudioControls";
 import { AdminDataTable } from "./AdminBrowseComponents";
 import { AdminDisclosureSummary, AdminSelect } from "./AdminNativeControls";
+import { containedDisclosure } from "./studio-ds/recipes";
 import { AlertTriangle, BarChart3, RefreshCw, Search } from "lucide-react";
 import { useMemo, useState } from "react";
 
@@ -652,7 +653,7 @@ function PatternCard({
 
 function RawJson({ title, value }: { title: string; value: unknown }) {
   return (
-    <details>
+    <details className={containedDisclosure}>
       <AdminDisclosureSummary>{title}</AdminDisclosureSummary>
       <pre>{JSON.stringify(value, null, 2)}</pre>
     </details>

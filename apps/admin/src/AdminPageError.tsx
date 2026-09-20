@@ -18,7 +18,7 @@ export function AdminPageError({ detail, onRetry, recoveryHref }: {
         <a href={recoveryHref}>Open Review Queue</a>
         <StudioButton type="button" onClick={() => window.location.reload()}>Reload page</StudioButton>
       </div>
-      {detail && <details>
+      {detail && <details className="studio-contained-disclosure">
         <AdminDisclosureSummary>Error details</AdminDisclosureSummary>
         <pre>{detail}</pre>
       </details>}

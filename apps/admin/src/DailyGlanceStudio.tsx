@@ -1,5 +1,5 @@
 import { StudioButton, StudioInput, StudioTextarea } from "./StudioControls";
-import { surfaceSection } from "./studio-ds/recipes";
+import { containedDisclosure, surfaceSection } from "./studio-ds/recipes";
 import { AdminDisclosureSummary, AdminSelect } from "./AdminNativeControls";
 import { useEffect, useMemo, useState } from "react";
 import { Save, X } from "lucide-react";
@@ -311,7 +311,7 @@ export function DailyGlancePairEditor({ context, isSaving, onClose, onSave, pair
             )}
           </section>
 
-          <details className="admin-advanced admin-editor-key-details">
+          <details className={`${containedDisclosure} admin-advanced admin-editor-key-details`}>
             <AdminDisclosureSummary>Source keys</AdminDisclosureSummary>
             <code>{pair.headlineRow.content_key}</code>
             <code>{pair.passageRow.content_key}</code>

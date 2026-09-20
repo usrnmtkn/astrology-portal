@@ -10,6 +10,7 @@ assert.doesNotMatch(recipes, /<\w/, "Recipes must not contain JSX");
 assert.doesNotMatch(theme, /Inter|Manrope|JetBrains Mono/, "Studio tokens must not import Ghost fonts");
 assert.match(theme, /--workspace-canvas:\s*light-dark\(#f4f4f5,\s*#111213\)/i, "Default Studio chrome must stay black-and-white");
 assert.match(theme, /\[data-studio-palette="green"\][\s\S]*--workspace-primary:\s*light-dark\(#006b5b,\s*#59dbc1\)/i, "Green chrome must remain a selectable alternative");
+assert.match(theme, /\[data-studio-palette="green"\][\s\S]*--workspace-hover:\s*color-mix\(in srgb,\s*var\(--workspace-selected\)/i, "Green hover must stay distinct from the surface fill");
 
 const themeModule = await readFile("apps/admin/src/studioTheme.ts", "utf8");
 assert.match(themeModule, /StudioPalette = "neutral" \| "green"/, "Studio palette must be an explicit chrome choice");

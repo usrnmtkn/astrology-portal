@@ -1,4 +1,5 @@
 import { StudioButton } from "./StudioControls";
+import { Stack, Text } from "./studio-ds/primitives";
 import { PageLoading } from "../../web/src/components/PageLoading";
 import { subscribeToContentPublications } from "../../web/src/content/contentPublicationState";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -262,10 +263,10 @@ export default function NatalPlacementReaderPreview({ house, initialAudience = "
   return (
     <section className="admin-natal-reader-preview" aria-label={`Reader preview for ${label}`} aria-busy={preview.loading}>
       <header>
-        <div>
+        <Stack gap="sm">
           <h3>{audience === "they" ? "What a friend sees" : "What you see"}</h3>
-          <p className="admin-field-hint">Each section is shown as reader copy. Use the edit action under a section to open its source.</p>
-        </div>
+          <Text size="body" tone="secondary">Each section is shown as reader copy. Use the edit action under a section to open its source.</Text>
+        </Stack>
         <div className="admin-composition-preview-audience" role="group" aria-label="Natal preview audience">
           <StudioButton type="button" aria-pressed={audience === "you"} className={audience === "you" ? "active" : ""} onClick={() => setAudience("you")}>You</StudioButton>
           <StudioButton type="button" aria-pressed={audience === "they"} className={audience === "they" ? "active" : ""} onClick={() => setAudience("they")}>Friend</StudioButton>

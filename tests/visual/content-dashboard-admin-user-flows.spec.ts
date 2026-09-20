@@ -6964,7 +6964,7 @@ for (const theme of ['dark', 'light'] as const) {
       await related.screenshot({path:`outputs/studio-style/native-related-${theme}-${width}.png`});
       const status = editor.getByRole('region', {name:'Review and publication readiness'});
       await expect(status.getByRole('heading', {name:'Review and publication', exact:true})).toHaveClass('sr-only');
-      await expect(status.locator('.admin-review-status-values > div')).toHaveCount(2);
+      await expect(status.locator('.admin-review-status-values > .admin-status-card')).toHaveCount(2);
       await expect(status.getByRole('button', {name:'Verify publication status'})).toHaveCSS('font-weight','400');
       await expect(status.getByText('Live means eligible to appear.', {exact:false})).toBeHidden();
       await status.screenshot({path:`outputs/studio-style/review-rhythm-${theme}-${width}.png`});
@@ -7459,32 +7459,32 @@ for (const theme of ['dark', 'light'] as const) for (const width of [1440, 390])
     const card = grid.locator('> article').first();
     await expect(card).toBeVisible();
     expect(Math.abs((await card.boundingBox())!.width - (await grid.boundingBox())!.width)).toBeLessThan(2);
-    // The enclosing Studio surface carries the padding and fill, and passage rows
-    // inside it are flat and divided instead of a painted card each.
+    // The enclosing Studio surface carries the page fill. Passage rows inside it
+    // are canvas tiles rather than transparent divided rows.
     const host = await card.evaluate(el => {
       const own = getComputedStyle(el);
       let surface: Element | null = el.parentElement;
       while (surface && getComputedStyle(surface).backgroundColor === 'rgba(0, 0, 0, 0)') surface = surface.parentElement;
       const painted = surface ? getComputedStyle(surface) : null;
       return { padding: painted ? parseFloat(painted.paddingLeft) : 0, background: painted?.backgroundColor ?? 'rgba(0, 0, 0, 0)',
-        inlinePadding: parseFloat(own.paddingLeft), background_own: own.backgroundColor };
+        inlinePadding: parseFloat(own.paddingLeft), background_own: own.backgroundColor, radius: parseFloat(own.borderRadius) };
     });
-    expect(host.inlinePadding).toBe(0);
-    expect(host.background_own).toBe('rgba(0, 0, 0, 0)');
+    expect(host.inlinePadding).toBeGreaterThan(0);
+    expect(host.radius).toBeGreaterThan(0);
+    expect(host.background_own).not.toBe('rgba(0, 0, 0, 0)');
+    expect(host.background_own).not.toBe(host.background);
     expect(host.padding).toBeGreaterThan(0);
     expect(host.background).not.toBe('rgba(0, 0, 0, 0)');
     const passageRows = await finder.locator('.admin-natal-source-card').evaluateAll(items => items.map(item => {
       const s = getComputedStyle(item);
-      return { blockPadding: parseFloat(s.paddingTop), divider: parseFloat(s.borderTopWidth),
-        followsRow: Boolean(item.previousElementSibling?.classList.contains('admin-natal-source-card')) };
+      return { blockPadding: parseFloat(s.paddingTop), radius: parseFloat(s.borderRadius), background: s.backgroundColor };
     }));
     expect(passageRows.length).toBeGreaterThan(1);
     for (const row of passageRows) {
       expect(row.blockPadding).toBeGreaterThan(0);
-      if (row.followsRow) expect(row.divider).toBeGreaterThan(0);
+      expect(row.radius).toBeGreaterThan(0);
+      expect(row.background).not.toBe('rgba(0, 0, 0, 0)');
     }
-    // Without a divided pair the flat treatment would pass on an unseparated list.
-    expect(passageRows.filter(row => row.followsRow).length).toBeGreaterThan(0);
     await expect(card.locator('.admin-natal-source-key > span')).toHaveCSS('font-weight', '400');
     await expect(card.locator('.admin-natal-source-key > span')).toHaveCSS('text-transform', 'none');
     await expect(finder.locator('> h2')).toHaveClass('sr-only');

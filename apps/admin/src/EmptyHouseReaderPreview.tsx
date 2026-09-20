@@ -3,6 +3,7 @@ import { StudioButton } from "./StudioControls";
 import { PageLoading } from "../../web/src/components/PageLoading";
 import { subscribeToContentPublications } from "../../web/src/content/contentPublicationState";
 import { adminCredentialHeaders } from "./adminSecret";
+import { Stack, Text } from "./studio-ds/primitives";
 
 type Audience = "you" | "they";
 
@@ -89,11 +90,11 @@ export default function EmptyHouseReaderPreview({ house, onOpenSource, rulerHous
   return (
     <section className="admin-natal-reader-preview admin-empty-house-preview" aria-label={`Full empty-house assembly for ${contextLabel}`}>
       <header>
-        <div>
-          <p className="admin-eyebrow">Full assembly</p>
+        <Stack gap="sm">
+          <Text size="meta" tone="secondary">Full assembly</Text>
           <h3>{audience === "they" ? "What a friend sees" : "What you see"}</h3>
-          <p>The complete reader passage updates when you change the empty house, cusp sign, or ruler&apos;s house. Empty Houses use traditional rulership.</p>
-        </div>
+          <Text size="body" tone="secondary">The complete reader passage updates when you change the empty house, cusp sign, or ruler&apos;s house. Empty Houses use traditional rulership.</Text>
+        </Stack>
         <div className="admin-composition-preview-audience" role="group" aria-label="Empty-house preview audience">
           <StudioButton type="button" aria-pressed={audience === "you"} className={audience === "you" ? "active" : ""} onClick={() => setAudience("you")}>You</StudioButton>
           <StudioButton type="button" aria-pressed={audience === "they"} className={audience === "they" ? "active" : ""} onClick={() => setAudience("they")}>Friend</StudioButton>
