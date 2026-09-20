@@ -256,7 +256,7 @@ import { AdminPaginatedCollection } from "./AdminPaginatedCollection";
 import AdminFilterDisclosure from "./AdminFilterDisclosure";
 const StudioVariableInsert = lazy(() => import("./StudioVariableInsert"));
 const StudioVariables = lazy(() => import("./StudioVariables"));
-const ReviewQueueSkyWrite = lazy(() => import("./ReviewQueueSkyWrite"));
+import ReviewQueueSkyWrite from "./ReviewQueueSkyWrite";
 const SkyForecastTemplateStudio = lazy(() => import("./SkyForecastTemplateStudio"));
 const CalendarOverviewEditor = lazy(() => import("./CalendarOverviewEditor"));
 const TemplateVariablesRail = lazy(() => import("./TemplateVariablesRail"));
@@ -365,7 +365,12 @@ const skyWriteupWorkspaceTabs: { value: SkyWriteupWorkspaceView; label: string }
 type AdminCompatibilitySectionFilter = "all" | "content" | "fallback-hooks" | "vocabulary" | "slots";
 type AdminCompatibilitySort = "updated-desc" | "updated-asc" | "title-asc" | "status" | "source";
 type AdminCompatibilityCreateKind = "content" | "vocabulary" | "fallback-hook" | "template";
-type SkyVoiceQueueView = "ready" | "changes" | "sources" | "all" | "composite" | "upcoming" | "needs-review" | "audit" | "live-omissions" | "sky-writeups";
+type SkyVoiceQueueView = "ready" | "changes" | "sources" | "all" | "composite" | "upcoming" | "needs-review" | "audit" | "live-omissions" | "sky-write";
+const reviewQueueViews: SkyVoiceQueueView[] = ["ready", "changes", "sources", "all", "composite", "upcoming", "needs-review", "audit", "live-omissions", "sky-write"];
+function reviewQueueViewFromParam(view: string | null): SkyVoiceQueueView {
+  if (view === "sky-writeups") return "sky-write";
+  return view && reviewQueueViews.includes(view as SkyVoiceQueueView) ? view as SkyVoiceQueueView : "ready";
+}
 type ContentLibraryView = "all" | "compatibility";
 type SkyReviewHorizonOccurrence = {
   kind: "aspect" | "placement";
@@ -4165,11 +4170,7 @@ export function GeneratedContentAdminDashboard() {
     setCategoryFilter(category && categoryFilters.some((filter) => filter.key === category) ? category : "all");
     setShowReferenceRows(page === "content" && category === "Calendar Aspects");
     setContentLibraryView(page === "content" && view === "compatibility" ? "compatibility" : "all");
-    setSkyVoiceQueueView(
-      page === "reviewQueue" && ["ready", "changes", "sources", "all", "composite", "upcoming", "needs-review", "audit", "live-omissions", "sky-writeups"].includes(view ?? "")
-        ? view as SkyVoiceQueueView
-        : "ready"
-    );
+    setSkyVoiceQueueView(page === "reviewQueue" ? reviewQueueViewFromParam(view) : "ready");
     setContentClassFilter(source && contentClassFilters.some((filter) => filter.key === source) ? source : "all");
     if (openedFromUnresolved) revealUnresolvedContentRow();
     guidedReviewOpenedRef.current = "";
@@ -4326,6 +4327,15 @@ export function GeneratedContentAdminDashboard() {
     setTierFilter("all");
     setShowReferenceRows(true);
     setShowRetiredRows(true);
+  }
+
+  function setReviewQueueView(view: SkyVoiceQueueView) {
+    setSkyVoiceQueueView(view);
+    if (view === "upcoming" && !skyReviewHorizon) void loadSkyReviewHorizon();
+    const params = new URLSearchParams();
+    if (view !== "ready") params.set("view", view);
+    if (query.trim()) params.set("q", query.trim());
+    setAdminHash(adminHashForPage("reviewQueue", params), "replace");
   }
 
   function navigateAdminPage(page: AdminDashboardPage, params?: URLSearchParams, options: { keepEditorOpen?: boolean } = {}) {
@@ -6786,42 +6796,40 @@ export function GeneratedContentAdminDashboard() {
             </section>
             <nav className="admin-sky-voice-tabs admin-review-view-tabs" aria-label="Review queue views">
               {([['ready', 'Ready for review'], ['changes', 'Needs changes'], ['sources', 'Source library']] as const).map(([view, label]) => (
-                <StudioButton key={view} type="button" className={skyVoiceQueueView === view ? "active" : ""} onClick={() => setSkyVoiceQueueView(view)}>{label}</StudioButton>
+                <StudioButton key={view} type="button" className={skyVoiceQueueView === view ? "active" : ""} onClick={() => setReviewQueueView(view)}>{label}</StudioButton>
               ))}
-              <StudioButton type="button" className={skyVoiceQueueView === "sky-writeups" ? "active" : ""} onClick={() => setSkyVoiceQueueView("sky-writeups")}>
+              <StudioButton type="button" className={skyVoiceQueueView === "sky-write" ? "active" : ""} onClick={() => setReviewQueueView("sky-write")}>
                 Write Sky placement
               </StudioButton>
-              <StudioButton type="button" className={skyVoiceQueueView === "all" ? "active" : ""} onClick={() => setSkyVoiceQueueView("all")}>
+              <StudioButton type="button" className={skyVoiceQueueView === "all" ? "active" : ""} onClick={() => setReviewQueueView("all")}>
                 All review
               </StudioButton>
-              <StudioButton type="button" className={skyVoiceQueueView === "live-omissions" ? "active" : ""} onClick={() => setSkyVoiceQueueView("live-omissions")}>
+              <StudioButton type="button" className={skyVoiceQueueView === "live-omissions" ? "active" : ""} onClick={() => setReviewQueueView("live-omissions")}>
                 Live with omitted sections
                 <strong>{visibleLiveOmittedSections.length}</strong>
               </StudioButton>
-              <StudioButton type="button" className={skyVoiceQueueView === "composite" ? "active" : ""} onClick={() => setSkyVoiceQueueView("composite")}>
+              <StudioButton type="button" className={skyVoiceQueueView === "composite" ? "active" : ""} onClick={() => setReviewQueueView("composite")}>
                 Composite
                 <strong>{filteredCompositeReviewRows.length}</strong>
               </StudioButton>
-              <StudioButton type="button" className={skyVoiceQueueView === "upcoming" ? "active" : ""} onClick={() => { setSkyVoiceQueueView("upcoming"); if (!skyReviewHorizon) void loadSkyReviewHorizon(); }}>
+              <StudioButton type="button" className={skyVoiceQueueView === "upcoming" ? "active" : ""} onClick={() => setReviewQueueView("upcoming")}>
                 Missing writing / upcoming
                 {skyReviewHorizon ? <strong>{skyReviewHorizon.counts.occurrences}</strong> : null}
               </StudioButton>
-              <StudioButton type="button" className={skyVoiceQueueView === "needs-review" ? "active" : ""} onClick={() => setSkyVoiceQueueView("needs-review")}>
+              <StudioButton type="button" className={skyVoiceQueueView === "needs-review" ? "active" : ""} onClick={() => setReviewQueueView("needs-review")}>
                 Sky voice: needs review
                 <strong>{skyVoiceNeedsReviewRows.length}</strong>
               </StudioButton>
-              <StudioButton type="button" className={skyVoiceQueueView === "audit" ? "active" : ""} onClick={() => setSkyVoiceQueueView("audit")}>
+              <StudioButton type="button" className={skyVoiceQueueView === "audit" ? "active" : ""} onClick={() => setReviewQueueView("audit")}>
                 Sky voice: audit sample
                 <strong>{skyVoiceAuditRows.length}</strong>
               </StudioButton>
             </nav>
-            {skyVoiceQueueView === "sky-writeups" && (
-              <Suspense fallback={<PageLoading message="Loading Sky placement writing…" />}>
-                <ReviewQueueSkyWrite
-                  disabled={isLoading}
-                  onOpen={(contentKey, label, fieldPath, selection) => void openContentKeyRow(contentKey, label, false, fieldPath, { selection })}
-                />
-              </Suspense>
+            {skyVoiceQueueView === "sky-write" && (
+              <ReviewQueueSkyWrite
+                disabled={isLoading}
+                onOpen={(contentKey, label, fieldPath, selection) => void openContentKeyRow(contentKey, label, false, fieldPath, { selection })}
+              />
             )}
             {(["ready", "changes", "sources", "all", "composite"].includes(skyVoiceQueueView)) && (
               <AdminFilterDisclosure summary="Status, class, tier, and search">

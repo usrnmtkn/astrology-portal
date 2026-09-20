@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { Component, useMemo, useState, type ErrorInfo, type ReactNode } from "react";
 import { AdminSelect } from "./AdminNativeControls";
 import { StudioButton } from "./StudioControls";
 import { skyPlacementBodies, skyPlacementSigns } from "./skyWriteupRelations";
@@ -25,7 +25,23 @@ type Props = {
   onOpen: (contentKey: string, label: string, fieldPath: string, selection: Selection) => void;
 };
 
-export default function ReviewQueueSkyWrite({ disabled, onOpen }: Props) {
+class ReviewQueueSkyWriteBoundary extends Component<{ children: ReactNode }, { failed: boolean }> {
+  state = { failed: false };
+  static getDerivedStateFromError() { return { failed: true }; }
+  componentDidCatch(error: Error, info: ErrorInfo) {
+    console.error("Review Queue Sky placement writing failed", error, info.componentStack);
+  }
+  render() {
+    if (this.state.failed) {
+      return <section className="admin-content-filters admin-review-queue-filters" aria-label="Write Sky placement">
+        <p role="alert">Sky placement writing could not open on this queue. Use Sky Write-ups for the full library.</p>
+      </section>;
+    }
+    return this.props.children;
+  }
+}
+
+function ReviewQueueSkyWriteForm({ disabled, onOpen }: Props) {
   const [planet, setPlanet] = useState("sun");
   const [sign, setSign] = useState("virgo");
   const [field, setField] = useState("placementArticle");
@@ -68,4 +84,10 @@ export default function ReviewQueueSkyWrite({ disabled, onOpen }: Props) {
       </StudioButton>
     </div>
   </section>;
+}
+
+export default function ReviewQueueSkyWrite(props: Props) {
+  return <ReviewQueueSkyWriteBoundary>
+    <ReviewQueueSkyWriteForm {...props} />
+  </ReviewQueueSkyWriteBoundary>;
 }
