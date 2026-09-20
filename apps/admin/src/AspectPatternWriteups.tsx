@@ -451,7 +451,7 @@ export function AspectPatternWriteups({ initialKind = "natal", secret = "" }: { 
                 <Text size="body" tone="secondary">Version {draft.version} · {titlePart(selectedRow.contentLevel)} · Last updated {formatDate(selectedRow.lastUpdated)}</Text>
               </Stack>
               <Grid className={metricGrid} aria-label="Selected aspect pattern coverage">
-                <MetricCard label="Status" value={selectedRow.productionSelected ? "Live" : "Not live"} />
+                <MetricCard label="Status" value={selectedRow.productionSelected ? "Live" : "Inactive"} />
                 <MetricCard label="Review" value={selectedRow.status} />
                 <MetricCard label="Content level" value={titlePart(selectedRow.contentLevel)} />
               </Grid>
