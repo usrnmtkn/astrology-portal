@@ -9,6 +9,13 @@ import { fileURLToPath, pathToFileURL } from "node:url";
 
 const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), "../..");
 const apiRoot = resolve(repoRoot, "api");
+const vercelApiRewrites = (JSON.parse(readFileSync(resolve(repoRoot, "vercel.json"), "utf8")).rewrites ?? [])
+  .filter((rule: { source?: string; destination?: string }) => rule.source?.startsWith("/api/") && rule.destination?.startsWith("/api/"));
+
+function rewriteLocalApiPath(requestPath: string) {
+  const match = vercelApiRewrites.find((rule: { source?: string }) => rule.source === requestPath);
+  return match?.destination ?? requestPath;
+}
 
 function localApiRoutePlugin() {
   return {
@@ -27,7 +34,7 @@ function localApiRoutePlugin() {
     },
     configureServer(server) {
       const localApiMiddleware = async (req, res, next) => {
-        const requestPath = new URL(req.url ?? "/", "http://localhost").pathname;
+        const requestPath = rewriteLocalApiPath(new URL(req.url ?? "/", "http://localhost").pathname);
 
         if (!requestPath.startsWith("/api/")) {
           next();

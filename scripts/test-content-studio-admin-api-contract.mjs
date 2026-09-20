@@ -130,6 +130,12 @@ const reviewRecords = source("api/admin/review-records.ts");
 assert.match(reviewRecords, /adminFetch/u);
 assert.match(reviewRecords, /AdminHttpError\(400/u);
 assert.match(reviewRecords, /sendAdminMethodNotAllowed\(res, \["GET"\]\)/u);
+const reviewRecordsFast = source("api/admin/review-records-fast.ts");
+assert.match(reviewRecordsFast, /supplementalOnly: true/u, "Default Studio review-records must stay cheap.");
+const adminVite = source("apps/admin/vite.config.ts");
+assert.match(adminVite, /rewriteLocalApiPath/u, "Local Studio must apply Vercel API rewrites.");
+assert.match(adminVite, /vercel\.json/u, "Local Studio API rewrites must come from vercel.json.");
+assert.match(source("vercel.json"), /review-records-fast/u, "Production Studio must route default review-records through the cheap handler.");
 
 const personalTransitWriter = source("api/admin/personal-transit-writing.ts");
 assert.match(personalTransitWriter, /sendAdminMethodNotAllowed\(res, \["POST"\]\)/u);
