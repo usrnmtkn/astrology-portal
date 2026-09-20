@@ -114,7 +114,9 @@ export function packageHookRowFromRow(row: GeneratedContentRow): HookRow | null 
   const canonicalRevision = record.studio_content_type === "continuous-placement"
     && isCanonicalSkyReaderRecord({ ...record, contentKey: row.content_key })
     && record.studio_version_status === "approved-serving-revision";
-  if (!recordBody && !recordBodyYou && !recordBodyThey && !canonicalRevision) {
+  const ingressRevision = record.studio_version_status === "approved-serving-revision"
+    && isRecord(record.ingress) && record.ingress.enabled === true;
+  if (!recordBody && !recordBodyYou && !recordBodyThey && !canonicalRevision && !ingressRevision) {
     return null;
   }
 

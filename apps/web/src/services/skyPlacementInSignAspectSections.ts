@@ -72,12 +72,18 @@ function joinedExactDateLines(values: string[]) {
   return naturalDateList(unique);
 }
 
+function aspectRoutePath(first: string, aspect: string, second: string, occursAt: string) {
+  const part = (value: string) => encodeURIComponent(value.trim().toLowerCase().replace(/\s+/gu, "-"));
+  return `sky/aspect/${part(first)}/${part(aspect)}/${part(second)}/at/${encodeURIComponent(occursAt)}`;
+}
+
 function exactAspectSection({
   aspect,
   contentId,
   date,
   body,
   first,
+  firstOccursAt,
   second,
   sourceId
 }: {
@@ -86,12 +92,14 @@ function exactAspectSection({
   date: string;
   body: string;
   first: string;
+  firstOccursAt: string;
   second: string;
   sourceId: string | null;
 }): SkyDetailSection {
   return {
     heading: `${first} ${titleCase(aspect)} ${second}`,
     body: body ? `${date}\n\n${body}` : date,
+    href: aspectRoutePath(first, aspect, second, firstOccursAt),
     role: "aspect",
     aspectType: aspect,
     group: normalizedArticleAspectToneBucket(aspect) as AspectToneBucket,
@@ -220,6 +228,7 @@ export function skyPlacementInSignAspectSections(
       date: joinedExactDateLines(section.dateLines),
       body: section.body,
       first: section.first,
+      firstOccursAt: section.firstOccursAt,
       second: section.second,
       sourceId: section.sourceId
     }));

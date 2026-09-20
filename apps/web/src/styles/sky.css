@@ -460,6 +460,11 @@
   margin-bottom: var(--sp-2);
 }
 
+.article-related-aspects__copy-link {
+  color: inherit;
+  text-decoration: none;
+}
+
 .article-related-aspects__date {
   margin: 0 0 var(--sp-4);
   color: var(--muted);

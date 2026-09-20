@@ -3,6 +3,8 @@ import { skyPlacementSourceCorpus as corpus, skyPlacementSourceRecords as record
 import { createPublishedSkyReader } from "../apps/web/src/content/skyPlacementPublishedSources";
 import { installContentPublications } from "../apps/web/src/content/contentPublicationState";
 import { contentLiveStatuses } from "../api/_lib/content-live-status";
+import { makeSkyIngressComposition } from "../apps/web/src/content/fallbackArchitectureV3/resolver/skyIngressComposition.mjs";
+import { packageHookRowFromRow } from "../apps/web/src/services/fallbackArchitectureV3CorePackaging";
 const key = "sky-placement/article/saturn/aries";
 const rxKey = "sky-placement/retrograde/saturn";
 const original = JSON.stringify(corpus);
@@ -43,4 +45,59 @@ const libraryBaseline = records.get(libraryKey)?.placementArticle
 assert(libraryBaseline, "corpus must still serve Venus in Virgo");
 assert(reader({ route: "placement", planet: "venus", sign: "virgo" }).readerParts.includes(libraryBaseline));
 assert.equal(JSON.stringify(corpus), original, "approved corpus remains byte-identical");
+
+const v5Key = "sky-placement/article/mercury/cancer";
+const v5Base = records.get(v5Key)!;
+assert(v5Base, "corpus must include Mercury in Cancer");
+const ingress = makeSkyIngressComposition();
+ingress.enabled = true;
+for (const module of ingress.modules.filter((item: { id: string }) => item.id === "dignity")) module.enabled = false;
+for (const module of ingress.modules.filter((item: { required: boolean }) => item.required)) {
+  for (const [, name] of module.template.matchAll(/\{\{(\w+)\}\}/gu)) {
+    ingress.sources[name].text = `Fixture ${name} for {{planetTitle}} in {{signTitle}}.`;
+  }
+}
+ingress.sources.openingHook.text = "Fixture calculated interval {{passEntryDate}} to {{passExitDate}}.";
+ingress.modules.reverse();
+const v5Time = "2026-07-09T12:00:00.000Z";
+const v5Packaged = packageHookRowFromRow({
+  id: "v5-ingress-test",
+  content_key: v5Key,
+  surface: "sky",
+  mode: "in_depth",
+  status: "LIVE",
+  lane: "serving",
+  review_state: null,
+  target_date: null,
+  provider: "tldrastro-fallback-architecture-v3",
+  updated_at: v5Time,
+  headline: v5Base.headline,
+  body: "",
+  summary: v5Base.summary,
+  sections: { packageRecord: { ...v5Base, studio_version_status: "approved-serving-revision", placementArticle: "", placementArticleDirect: "", placementArticleRetrograde: "", ingress } },
+  facts: { fallbackArchitectureV3: true },
+  source_snapshot: { sourcePackage: v5Base.source_package, content_role: v5Base.content_role },
+  block_type: "fallback_hook",
+  event_type: "fallback-hook"
+} as any);
+assert(v5Packaged, "an enabled V5 composition must remain packaged without a body");
+installContentPublications([{
+  content_key: v5Key, state: "live", revision: 20, row_id: "v5-ingress-test",
+  row_updated_at: v5Time, updated_at: v5Time
+}]);
+sources = [v5Packaged];
+const v5Rendered = reader({
+  route: "placement",
+  planet: "mercury",
+  sign: "cancer",
+  isRetrograde: true,
+  ingressOccurrence: {
+    passes: [{ entryDate: "2026-06-29T00:00:00.000Z", exitDate: "2026-07-23T00:00:00.000Z", entryMotion: "retrograde" }],
+    asOfDate: "2026-07-10T12:00:00.000Z",
+    timeZone: "America/New_York"
+  }
+});
+assert(v5Rendered.readerParts.some((part: string) => part.includes("Fixture planetFunctionSentence for Mercury in Cancer.")),
+  `V5 overlay must assemble required sentences, received: ${JSON.stringify(v5Rendered.readerParts)}`);
+assert.equal(JSON.stringify(corpus), original, "approved corpus remains byte-identical after V5 overlay");
 console.log("PASS: current published Sky article/Rx revisions replace the baseline, repeated edits, stale/draft rejection and retirement.");

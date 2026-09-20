@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import { bundledPublications } from '../helpers/bundled-publications';
 
 for (const theme of ['light', 'dark']) for (const width of [390, 1440]) test(`Sun placement stays stable ${theme} ${width}`, async ({ page }) => {
  test.setTimeout(120_000);
@@ -16,7 +17,7 @@ for (const theme of ['light', 'dark']) for (const width of [390, 1440]) test(`Su
    if (JSON.stringify(states.at(-1)) !== JSON.stringify(state)) states.push(state);
   }).observe(document, { subtree:true, childList:true, characterData:true });
  });
- await page.route('**/rest/v1/**', route => route.fulfill({ json: [] }));
+ await bundledPublications(page);
  await page.route('**/sky-v4-canonical-content-studio-stage-v1*.json', async route => {
   await new Promise(resolve => setTimeout(resolve, 2500));
   await route.continue();
@@ -51,7 +52,7 @@ for (const theme of ['light', 'dark']) for (const width of [390, 1440]) test(`Su
 
 test('Placement reader offers retry when its canonical package fails', async ({ page }) => {
  await page.clock.setFixedTime(new Date('2026-09-10T04:20:00Z'));
- await page.route('**/rest/v1/**', route => route.fulfill({ json: [] }));
+ await bundledPublications(page);
  await page.route('**/api/calendar?**', route => route.fulfill({ json: { ok:true, calendar:{ days:[] } } }));
  let failPackage = true;
  await page.route('**/sky-v4-canonical-content-studio-stage-v1*.json', route => failPackage
