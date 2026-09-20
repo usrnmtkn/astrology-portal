@@ -208,27 +208,30 @@ export default function SkyWritingLibraryEditor({ contentKey, planet, sign, sour
     onOpenSource(contentKey, `ingress.sources.${fieldId}`);
   }
 
-  const phraseCatalog = initialSourceId ? <section className="admin-sky-writing-library-catalog" aria-label="Other writing library phrases">
-    <p>Every other phrase for {titleWord(planet)} in {titleWord(sign)}. Read the writing in the table; Edit keeps you on this placement.</p>
-    {SKY_WRITING_LIBRARY_GROUPS.map(group => (
-      <div className="admin-review-stack" key={group.id}>
-        <p><strong>{group.label}</strong></p>
-        <AdminDataTable label={`${group.label} phrases`} columns={PHRASE_TABLE_COLUMNS}>
-          {group.fields.filter(item => item.id !== initialSourceId).map(item => (
-            <PhraseTableRow
-              key={item.id}
-              item={item}
-              value={previews[item.id] ?? ""}
-              source={workingComposition.sources[item.id]}
-              planet={planet}
-              disabled={disabled}
-              onEdit={() => openLibraryField(item.id)}
-            />
-          ))}
-        </AdminDataTable>
-      </div>
-    ))}
-  </section> : null;
+  const phraseCatalog = initialSourceId ? <details className="admin-workspace-details">
+    <AdminDisclosureSummary>Other phrases on this placement</AdminDisclosureSummary>
+    <section className="admin-sky-writing-library-catalog" aria-label="Other writing library phrases">
+      <p>Every other phrase for {titleWord(planet)} in {titleWord(sign)}. Read the writing in the table; Edit keeps you on this placement.</p>
+      {SKY_WRITING_LIBRARY_GROUPS.map(group => (
+        <div className="admin-review-stack" key={group.id}>
+          <p><strong>{group.label}</strong></p>
+          <AdminDataTable label={`${group.label} phrases`} columns={PHRASE_TABLE_COLUMNS}>
+            {group.fields.filter(item => item.id !== initialSourceId).map(item => (
+              <PhraseTableRow
+                key={item.id}
+                item={item}
+                value={previews[item.id] ?? ""}
+                source={workingComposition.sources[item.id]}
+                planet={planet}
+                disabled={disabled}
+                onEdit={() => openLibraryField(item.id)}
+              />
+            ))}
+          </AdminDataTable>
+        </div>
+      ))}
+    </section>
+  </details> : null;
 
   if (initialField && initialSourceId && initialField.shared && !workingComposition.sources[initialSourceId]) {
     const sharedKey = zodiacSeasonSourceKey(initialSourceId, sign);
@@ -300,7 +303,6 @@ export default function SkyWritingLibraryEditor({ contentKey, planet, sign, sour
         onClick={() => onChange(toggleSkyWritingLibrarySourceModule(workingComposition, initialSourceId, initialField.label))}
       >{skyWritingLibrarySourceModuleEnabled(workingComposition, initialSourceId) ? "Remove from fallback" : "Include in fallback"}</StudioButton>}
       <p className="admin-natal-source-key"><span>Source key</span><code>{contentKey}#ingress.sources.{initialSourceId}</code></p>
-      <StudioButton type="button" disabled={disabled} onClick={() => onAdvancedSource(initialSourceId)}>Advanced source tools</StudioButton>
     </section>
     {phraseCatalog}
     </>;

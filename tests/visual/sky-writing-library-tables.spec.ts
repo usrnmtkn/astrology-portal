@@ -46,9 +46,9 @@ async function openSunInVirgo(page: import('@playwright/test').Page) {
       await route.fulfill({ json: { ok: true, variables: [] } });
       return;
     }
-    const requested = url.searchParams.get('contentKeys') ?? url.searchParams.get('contentKey') ?? virgoKey;
-    const rows = requested.split(',').map(key => fixtureRows[key]).filter(Boolean);
-    await route.fulfill({ json: { ok: true, rows: url.pathname.endsWith('/generated-content') ? rows : [], statuses: [], nextCursor: null } });
+    const requested = [...url.searchParams.getAll('contentKeys').flatMap(value => value.split(',')), url.searchParams.get('contentKey') ?? ''].filter(Boolean);
+    const rows = (requested.length ? requested : [virgoKey]).map(contentKey => fixtureRows[contentKey]).filter(Boolean);
+    await route.fulfill({ json: { ok: true, rows, statuses: [], nextCursor: null } });
   });
 
   await page.goto(process.env.STUDIO_PRODUCTION_ENTRY === '1' ? '/admin/content#sky-writeups' : '/#sky-writeups');
@@ -87,6 +87,8 @@ test('Editing a shared planet phrase stays on the placement that was opened', as
 
   // Every other phrase for this placement stays browsable as a table.
   const catalog = editor.getByRole('region', { name: 'Other writing library phrases' });
+  await expect(catalog).toBeHidden();
+  await editor.locator('summary').filter({ hasText: /^Other phrases on this placement$/u }).click();
   const thesisRow = catalog.locator('tbody tr').filter({ has: page.getByText('{{placementThesis}}', { exact: true }) });
   await expect(thesisRow).toContainText('Fixture Virgo thesis.');
   await thesisRow.getByRole('button', { name: 'Edit placement thesis', exact: true }).click();

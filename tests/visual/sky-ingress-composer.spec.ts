@@ -11,6 +11,18 @@ const virtual = (contentKey: string) => {
  }
  return null;
 };
+async function routeStudioSources(page: import('@playwright/test').Page, fallbackKey = key) {
+ await page.route('**/api/admin/**', async route => {
+  const url = new URL(route.request().url());
+  if (url.searchParams.get('variables') === 'true') {
+   await route.fulfill({ json: { ok: true, variables: [] } });
+   return;
+  }
+  const requested = [...url.searchParams.getAll('contentKeys').flatMap(value => value.split(',')), url.searchParams.get('contentKey') ?? ''].filter(Boolean);
+  const rows = (requested.length ? requested : [fallbackKey]).map(virtual).filter(Boolean);
+  await route.fulfill({ json: { ok: true, rows, statuses: [], nextCursor: null } });
+ });
+}
 for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
  test(`Placement composition source editing and map ${width} ${theme}`, async ({ page }) => {
   await page.setViewportSize({ width, height: 1000 });
@@ -18,15 +30,7 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
   const errors: string[] = []; page.on('pageerror', error => errors.push(error.message));
   const calculations: string[] = [];
   page.on('request', request => { if (/skyCalculation\.worker|swisseph\.(wasm|data)/u.test(request.url())) calculations.push(request.url()); });
-  await page.route('**/api/admin/**', async route => {
-   const url = new URL(route.request().url());
-   if (url.searchParams.get('variables') === 'true') {
-    await route.fulfill({ json: { ok: true, variables: [] } });
-    return;
-   }
-   const rows = (url.searchParams.get('contentKeys') ?? key).split(',').map(virtual).filter(Boolean);
-   await route.fulfill({ json: { ok: true, rows: url.pathname.endsWith('/generated-content') ? rows : [], statuses: [], nextCursor: null } });
-  });
+  await routeStudioSources(page);
   await page.goto('/#sky-writeups');
   await page.evaluate(theme => document.documentElement.setAttribute('data-theme', theme), theme);
   await page.getByLabel('Sky placement planet or point').selectOption('saturn');
@@ -130,15 +134,7 @@ test('Phrase variable from Sky write-ups stays a phrase editor', async ({ page }
   await page.setViewportSize({ width: 1440, height: 1000 });
   await page.addInitScript(() => localStorage.setItem('tldrastro:contentAdminSecret', 'ingress-test'));
   const errors: string[] = []; page.on('pageerror', error => errors.push(error.message));
-  await page.route('**/api/admin/**', async route => {
-   const url = new URL(route.request().url());
-   if (url.searchParams.get('variables') === 'true') {
-    await route.fulfill({ json: { ok: true, variables: [] } });
-    return;
-   }
-   const rows = (url.searchParams.get('contentKeys') ?? key).split(',').map(virtual).filter(Boolean);
-   await route.fulfill({ json: { ok: true, rows: url.pathname.endsWith('/generated-content') ? rows : [], statuses: [], nextCursor: null } });
-  });
+  await routeStudioSources(page);
   await page.goto('/#sky-writeups');
   await page.getByLabel('Sky placement planet or point').selectOption('saturn');
   await page.getByLabel('Sky placement zodiac sign').selectOption('aries');
@@ -152,10 +148,13 @@ test('Phrase variable from Sky write-ups stays a phrase editor', async ({ page }
   await expect(phrase.getByRole('region', { name: 'Edit Planet function', exact: true })).toBeVisible();
   await expect(phrase.getByLabel('Writing library Planet function')).toBeVisible();
   await expect(phrase.getByRole('region', { name: 'Edit Planet function', exact: true }).getByRole('heading', { name: /Planet function/ })).toHaveCount(1);
+  await expect(editor.getByRole('button', { name: 'Advanced source tools', exact: true })).toHaveCount(0);
   await expect(editor.getByRole('region', { name: 'Placement composition' })).toHaveCount(0);
   await expect(editor.getByLabel('Insert ingress source slot')).toHaveCount(0);
   await expect(editor.getByLabel('Ingress section template')).toHaveCount(0);
   const catalog = editor.getByRole('region', { name: 'Other writing library phrases' });
+  await expect(catalog).toBeHidden();
+  await editor.locator('summary').filter({ hasText: /^Other phrases on this placement$/u }).click();
   await expect(catalog).toBeVisible();
   await expect(catalog.getByText('{{planetDescriptor}}', { exact: true })).toBeVisible();
   await expect(catalog.getByText('{{signCoreDrive}}', { exact: true })).toBeVisible();
@@ -167,15 +166,7 @@ test('Shared zodiac season polar axis stays readable from Sky write-ups', async 
   await page.setViewportSize({ width: 1440, height: 1000 });
   await page.addInitScript(() => localStorage.setItem('tldrastro:contentAdminSecret', 'ingress-test'));
   const errors: string[] = []; page.on('pageerror', error => errors.push(error.message));
-  await page.route('**/api/admin/**', async route => {
-   const url = new URL(route.request().url());
-   if (url.searchParams.get('variables') === 'true') {
-    await route.fulfill({ json: { ok: true, variables: [] } });
-    return;
-   }
-   const rows = (url.searchParams.get('contentKeys') ?? key).split(',').map(virtual).filter(Boolean);
-   await route.fulfill({ json: { ok: true, rows: url.pathname.endsWith('/generated-content') ? rows : [], statuses: [], nextCursor: null } });
-  });
+  await routeStudioSources(page);
   await page.goto('/#sky-writeups');
   await page.getByLabel('Sky placement planet or point').selectOption('saturn');
   await page.getByLabel('Sky placement zodiac sign').selectOption('aries');
@@ -190,8 +181,37 @@ test('Shared zodiac season polar axis stays readable from Sky write-ups', async 
   await expect(phrase.getByRole('alert')).toHaveCount(0);
   await expect(phrase.getByText('Fixture Aries polar axis.')).toBeVisible();
   const catalog = editor.getByRole('region', { name: 'Other writing library phrases' });
+  await expect(catalog).toBeHidden();
+  await editor.locator('summary').filter({ hasText: /^Other phrases on this placement$/u }).click();
   await expect(catalog).toBeVisible();
   await expect(catalog.getByRole('button', { name: 'Edit gift' })).toBeVisible();
   await expect(catalog.getByLabel('Writing library Gift')).toHaveCount(0);
+  expect(errors).toEqual([]);
+});
+
+test('Review Queue opens one Sky article or phrase', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await page.addInitScript(() => localStorage.setItem('tldrastro:contentAdminSecret', 'ingress-test'));
+  const errors: string[] = []; page.on('pageerror', error => errors.push(error.message));
+  await routeStudioSources(page);
+  await page.goto('/#review-queue');
+  await expect(page.getByRole('navigation', { name: 'Review queue views' })).toBeVisible();
+  await page.getByRole('button', { name: 'Write Sky placement', exact: true }).click();
+  const writer = page.getByRole('region', { name: 'Write Sky placement' });
+  await writer.getByLabel('Review queue Sky planet').selectOption('saturn');
+  await writer.getByLabel('Review queue Sky sign').selectOption('aries');
+  await writer.getByRole('button', { name: 'Open writing', exact: true }).click();
+  const editor = page.getByRole('dialog');
+  await expect(editor.locator('textarea[data-sky-field="placementArticle"]')).toBeVisible();
+  await expect(editor.getByRole('region', { name: 'Placement composition' })).toHaveCount(0);
+  await expect(editor.getByLabel('Insert ingress source slot')).toHaveCount(0);
+  page.once('dialog', dialog => dialog.accept());
+  await editor.getByRole('button', { name: /Close/ }).first().click();
+  await writer.getByLabel('Review queue Sky writing').selectOption('planetFunction');
+  await writer.getByRole('button', { name: 'Open writing', exact: true }).click();
+  const phrase = editor.getByRole('region', { name: 'Phrase variable editor' });
+  await expect(phrase.getByLabel('Writing library Planet function')).toBeVisible();
+  await expect(editor.getByRole('region', { name: 'Other writing library phrases' })).toBeHidden();
+  await expect(editor.getByRole('button', { name: 'Advanced source tools', exact: true })).toHaveCount(0);
   expect(errors).toEqual([]);
 });
