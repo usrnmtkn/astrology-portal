@@ -1,4 +1,5 @@
 import { StudioButton } from "./StudioControls";
+import { Stack, Text } from "./studio-ds/primitives";
 import ContentLiveStatusBadge from "./ContentLiveStatus";
 import { useMemo } from "react";
 import type { TemplateVariableReference } from "./templateVariableReference";
@@ -110,18 +111,18 @@ export function TemplateVariableReviewPanels({
           <section className="admin-variable-source-copy" aria-label="Saved source copy">
             {copy.map(([label, value]) => (
               <article className="admin-hook-detail-section" key={label}>
-                <p className="admin-eyebrow">{label}</p>
+                <Text size="meta" tone="secondary">{label}</Text>
                 <p className="admin-variable-source-prose">{sourceCopyParts(value, reviewReferences, onSelectVariable)}</p>
               </article>
             ))}
           </section>
           {directDependencies.length > 0 && (
             <section className="admin-variable-atomic-list" aria-label={`Variables inside ${variable.label}`}>
-              <div>
-                <p className="admin-eyebrow">Continue to the atomic level</p>
+              <Stack gap="sm">
+                <Text size="meta" tone="secondary">Continue to the atomic level</Text>
                 <h3>Variables inside this saved writing</h3>
-                <p>Open a nested value to see whether it is calculated or backed by another editable source.</p>
-              </div>
+                <Text size="body">Open a nested value to see whether it is calculated or backed by another editable source.</Text>
+              </Stack>
               {directDependencies.map((dependency) => (
                 <StudioButton type="button" key={dependency.name} onClick={() => onSelectVariable(dependency.name)}>
                   <span><code>{`{{${dependency.name}}}`}</code><strong>{dependency.label}</strong></span>

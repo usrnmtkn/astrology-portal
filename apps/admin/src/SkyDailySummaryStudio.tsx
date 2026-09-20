@@ -1,5 +1,8 @@
 import { StudioButton, StudioInput } from "./StudioControls";
 import { AdminDisclosureSummary, AdminSelect } from "./AdminNativeControls";
+import { MetricCard } from "./studio-ds/patterns";
+import { Grid, Stack, Text } from "./studio-ds/primitives";
+import { containedDisclosure, metricGrid } from "./studio-ds/recipes";
 import { skySummaryOpeningKey } from "../../web/src/content/skyDailySummary";
 import { suppliedSkySummaryCandidate, loadSkySummarySourceBank, type SkySummarySourceBank } from "./skySummarySourceBank";
 import { pairedSummarySign } from "../../web/src/content/skySummaryGeometry";
@@ -59,22 +62,27 @@ export function SkyDailySummaryStudio({ rows, onEdit, busy }: {
     && `${field.label} ${field.body} ${importedSkySummary(field.key) ?? ""} ${rows.find(row => row.content_key === field.key)?.body ?? ""}`.toLowerCase().includes(query.toLowerCase()));
   return <section className="admin-daily-glance-studio" aria-label="Daily Sky Summary editor">
     <header className="admin-section-heading-row">
-      <div>
-        <p className="admin-eyebrow">Sky Write-ups</p>
+      <Stack gap="sm">
+        <Text size="meta" tone="secondary">Sky Write-ups</Text>
         <h3>Daily Sky Summary</h3>
-        <p>Edit the Sky overview and Calendar Sun summary. Signs, degrees, planet names, and timing come from the calculated sky.</p>
-        <p>Start Sun and Moon summaries with a finite verb, such as “turns” or “brings”, without a final period. If no summary is published or included in the app, Sky shows the placement alone. Save & publish makes your edits live. Save draft keeps your changes for later.</p>
-      </div>
+        <Text size="body">Edit the Sky overview and Calendar Sun summary. Signs, degrees, planet names, and timing come from the calculated sky.</Text>
+        <Text size="body">Start Sun and Moon summaries with a finite verb, such as “turns” or “brings”, without a final period. If no summary is published or included in the app, Sky shows the placement alone. Save & publish makes your edits live. Save draft keeps your changes for later.</Text>
+      </Stack>
     </header>
     <SkyWritingSystemDetails system="summary" />
     <SkySummaryAssemblyStudio rows={rows} onEdit={onEdit} busy={busy} sunSign={sunSign} moonSign={moonSign} openingSlots={slots} moonKind={moonKind} />
     <section className="admin-template-reader-drilldown admin-sky-summary-composition" aria-label="Sun and Moon composition map">
       <header className="admin-section-heading-row">
-        <div>
+        <Stack gap="sm">
           <h4>Sun and Moon together</h4>
-          <p>Choose example signs to read the app’s published summaries together. This previews the opening paragraph, with degrees omitted.</p>
-        </div>
+          <Text size="body">Choose example signs to read the app’s published summaries together. This previews the opening paragraph, with degrees omitted.</Text>
+        </Stack>
       </header>
+      <Grid className={metricGrid} aria-label="Example Sun and Moon signs">
+        <MetricCard label="Sun sign" value={sunSign} />
+        <MetricCard label="Moon sign" value={moonSign} />
+        <MetricCard label="Moon event" value={moonEventNames[moonKind]} />
+      </Grid>
       <div className="admin-daily-glance-context-form">
         <label><span>Sun sign</span><AdminSelect aria-label="Composition Sun sign" value={sunSign} onChange={event => { setSunSign(event.target.value); if (moonKind !== "regular") setMoonSign(pairedSummarySign(event.target.value, moonKind)); }}>
           {skySummarySigns.map(sign => <option key={sign}>{sign}</option>)}
@@ -138,7 +146,7 @@ export function SkyDailySummaryStudio({ rows, onEdit, busy }: {
             <p>{(saved?.body ? currentSkySummaryWording(field.key, saved.body) : undefined) ?? ingressSource?.summary ?? (field.body || importedSkySummary(field.key) || (isIngress ? "No ingress TLDR added here. Add your wording, or open an existing ingress write-up to edit its TLDR." : "No summary added. Sky shows the calculated placement."))}</p>
             {source && <p><span>Source status: {saved?.body && saved.body !== source.body ? "Owner edit" : source.status}</span>{source.sources.map(url => <span key={url}> · <a href={url} target="_blank" rel="noreferrer">Source URL</a></span>)}</p>}
             <ContentLiveStatusBadge row={saved ?? ingressSource ?? (isIngress ? {} : { id: `builtin:${field.key}` })} />
-            {candidate && candidate.body !== currentBody && <details className="admin-workspace-details">
+            {candidate && candidate.body !== currentBody && <details className={`${containedDisclosure} admin-workspace-details`}>
               <AdminDisclosureSummary>Review supplied wording</AdminDisclosureSummary>
               <p>{candidate.body}</p>
               <p>This supplied version is not published. Open it to review the complete wording, then Save draft or Save &amp; publish.</p>

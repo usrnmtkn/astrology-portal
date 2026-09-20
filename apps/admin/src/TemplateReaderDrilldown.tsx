@@ -1,5 +1,6 @@
 import { CompositionVariableKey, compositionVariableColors } from "./CompositionVariableKey";
 import { StudioButton } from "./StudioControls";
+import { Stack, Text } from "./studio-ds/primitives";
 import { useEffect, useMemo, useState } from "react";
 import {
   buildCompositionTemplate,
@@ -79,11 +80,11 @@ export default function TemplateReaderDrilldown({ rows, templateRow, onOpenVaria
   return (
     <section className={`admin-template-reader-drilldown${compact ? " is-compact" : ""}`} aria-label="Example reader write-up">
       <header>
-        <div>
-          <p className="admin-eyebrow">{compact ? "Assembled write-up" : "Start with the reader-facing result"}</p>
+        <Stack gap="sm">
+          <Text size="meta" tone="secondary">{compact ? "Assembled write-up" : "Start with the reader-facing result"}</Text>
           {!compact && <h3>Read the assembled write-up</h3>}
-          {!compact && <p>This representative passage replaces template tokens with sample chart facts and saved writing. Click any colored value to trace it to its atomic source.</p>}
-        </div>
+          {!compact && <Text size="body" tone="secondary">This representative passage replaces template tokens with sample chart facts and saved writing. Click any colored value to trace it to its atomic source.</Text>}
+        </Stack>
         <span className="ui-pill admin-status status-reviewed">Example data</span>
       </header>
 

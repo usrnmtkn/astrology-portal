@@ -74,6 +74,13 @@ assert.match(transitPreview, /containedDisclosure\} admin-workspace-details/u, "
 const skyComposition = fs.readFileSync(path.join(adminSrc, "SkyPlacementComposition.tsx"), "utf8");
 assert.match(skyComposition, /<MetricCard label="Planet or point"/u, "Sky placement composition must render context as MetricCard tiles.");
 assert.match(skyComposition, /containedDisclosure\} admin-workspace-details/u, "Sky placement reader-selection details must use the contained disclosure recipe.");
+
+const compositionMap = fs.readFileSync(path.join(adminSrc, "CompositionMapWorkspace.tsx"), "utf8");
+assert.match(compositionMap, /<MetricCard label="Editorial status"/u, "Composition Map must render selected-surface coverage as MetricCard tiles.");
+assert.match(compositionMap, /containedDisclosure\} admin-workspace-details admin-composition-browse/u, "Composition Map browse surfaces must use the contained disclosure recipe.");
+assert.match(compositionMap, /containedDisclosure\} admin-workspace-details admin-composition-technical/u, "Composition Map technical details must use the contained disclosure recipe.");
+assert.doesNotMatch(compositionMap, /studio-surface studio-section admin-composition/u, "Composition Map list and detail sit in a tab panel and must stay as dedicated cards, not nested studio-surface.");
+assert.doesNotMatch(compositionMap, /admin-eyebrow/u, "Composition Map must use Studio Text lockups instead of eyebrow chrome.");
 assert.match(natalFinder, /function previewFromRow/u, "Natal source cards must not preview a key leaf as writing.");
 assert.doesNotMatch(natalFinder, /surfaceSection/u, "Natal Chart finders sit in a tab panel and must stay flat.");
 assert.match(

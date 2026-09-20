@@ -1,5 +1,8 @@
 import { StudioButton, StudioInput, StudioTextarea } from "./StudioControls";
 import { AdminSelect } from "./AdminNativeControls";
+import { MetricCard } from "./studio-ds/patterns";
+import { Grid, Stack, Text } from "./studio-ds/primitives";
+import { metricGrid } from "./studio-ds/recipes";
 import { AlertTriangle, BookOpenText, Check, Columns2, RefreshCw, Save, Search, X } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { adminCredentialHeaders } from "./adminSecret";
@@ -333,11 +336,11 @@ export function AspectPatternWriteups({ initialKind = "natal", secret = "" }: { 
   return (
     <section className="admin-template-page aspect-writeups-page" aria-label="Aspect pattern write-ups">
       <section className="admin-panel aspect-writeups-header" aria-label="Aspect pattern write-up controls">
-        <div>
-          <p className="admin-eyebrow">Content / Aspect Patterns</p>
+        <Stack gap="sm">
+          <Text size="meta" tone="secondary">Content / Aspect Patterns</Text>
           <h2>Aspect Patterns</h2>
-          <p>Review, edit, preview, approve, and publish authored aspect-pattern write-ups through the normal content repository.</p>
-        </div>
+          <Text size="body" tone="secondary">Review, edit, preview, approve, and publish authored aspect-pattern write-ups through the normal content repository.</Text>
+        </Stack>
         <div className="admin-new-actions">
           <StudioButton className={kind === "natal" ? "admin-primary-button" : ""} type="button" onClick={() => selectKind("natal")}>Natal Write-ups</StudioButton>
           <StudioButton className={kind === "activation" ? "admin-primary-button" : ""} type="button" onClick={() => selectKind("activation")}>Active Now Write-ups</StudioButton>
@@ -442,11 +445,16 @@ export function AspectPatternWriteups({ initialKind = "natal", secret = "" }: { 
         {selectedRow && draft ? (
           <section className="admin-panel aspect-writeups-editor" aria-label="Aspect pattern write-up editor">
             <header>
-              <div>
-                <p className="admin-eyebrow">{selectedRow.patternName}{selectedRow.targetRoleLabel ? ` / ${selectedRow.targetRoleLabel}` : ""}</p>
+              <Stack gap="sm">
+                <Text size="meta" tone="secondary">{selectedRow.patternName}{selectedRow.targetRoleLabel ? ` / ${selectedRow.targetRoleLabel}` : ""}</Text>
                 <h3>{draft.id}</h3>
-                <p>Version {draft.version} · {titlePart(selectedRow.contentLevel)} · Last updated {formatDate(selectedRow.lastUpdated)}</p>
-              </div>
+                <Text size="body" tone="secondary">Version {draft.version} · {titlePart(selectedRow.contentLevel)} · Last updated {formatDate(selectedRow.lastUpdated)}</Text>
+              </Stack>
+              <Grid className={metricGrid} aria-label="Selected aspect pattern coverage">
+                <MetricCard label="Status" value={selectedRow.productionSelected ? "Live" : "Not live"} />
+                <MetricCard label="Review" value={selectedRow.status} />
+                <MetricCard label="Content level" value={titlePart(selectedRow.contentLevel)} />
+              </Grid>
               <div className="admin-new-actions">
                 <StudioButton type="button" onClick={() => void saveDraft("draft")} disabled={isLoading}>
                   <Save size={15} aria-hidden="true" />
@@ -516,10 +524,10 @@ export function AspectPatternWriteups({ initialKind = "natal", secret = "" }: { 
 
         <aside className="admin-panel aspect-writeups-preview" aria-label="Aspect pattern preview">
           <header>
-            <div>
-              <p className="admin-eyebrow">Production resolver preview</p>
+            <Stack gap="sm">
+              <Text size="meta" tone="secondary">Production resolver preview</Text>
               <h3>Preview</h3>
-            </div>
+            </Stack>
             <div className="admin-new-actions">
               <StudioButton className={previewMode === "authored" ? "admin-primary-button" : ""} type="button" onClick={() => setPreviewMode("authored")}>
                 <BookOpenText size={15} aria-hidden="true" />

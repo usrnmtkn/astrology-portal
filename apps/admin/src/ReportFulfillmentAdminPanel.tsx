@@ -1,6 +1,9 @@
 import { StudioButton, StudioInput, StudioTextarea } from "./StudioControls";
 import { AdminDataTable } from "./AdminBrowseComponents";
 import { AdminSelect } from "./AdminNativeControls";
+import { MetricCard } from "./studio-ds/patterns";
+import { Grid, Stack, Text } from "./studio-ds/primitives";
+import { metricGrid } from "./studio-ds/recipes";
 import { useEffect, useState } from "react";
 import { adminCredentialHeaders } from "./adminSecret";
 import { GeneratedReportDraftReview } from "./GeneratedReportDraftReview";
@@ -204,7 +207,7 @@ export function ReportFulfillmentAdminPanel({ secret }: { secret: string }) {
     <section className="admin-template-page">
       <GeneratedReportDraftReview secret={secret} />
       <section className="admin-content-toolbar">
-        <div><p className="admin-eyebrow">Purchased reports</p><h2>Fulfillment</h2><p>Queue health, gate outcomes, delivery time, spend, audit sampling, and terminal exceptions.</p></div>
+        <Stack gap="sm"><Text size="meta" tone="secondary">Purchased reports</Text><h2>Fulfillment</h2><Text size="body" tone="secondary">Queue health, gate outcomes, delivery time, spend, audit sampling, and terminal exceptions.</Text></Stack>
         <div className="admin-toolbar-actions">
           <StudioButton type="button" onClick={() => void action("pause_worker")} disabled={loading}>Pause worker</StudioButton>
           <StudioButton type="button" onClick={() => void action("resume_worker")} disabled={loading}>Resume worker</StudioButton>
@@ -218,7 +221,7 @@ export function ReportFulfillmentAdminPanel({ secret }: { secret: string }) {
         </div>
       )}
       <section className="admin-content-toolbar">
-        <div><p className="admin-eyebrow">{dashboard?.billingMode === "free_test" ? "Free-test shadow launch" : "Owner-only comp path"}</p><h3>Grant report</h3><p>Creates the fulfillment envelope directly, with no Stripe request, then pauses before any billed model call.</p></div>
+        <Stack gap="sm"><Text size="meta" tone="secondary">{dashboard?.billingMode === "free_test" ? "Free-test shadow launch" : "Owner-only comp path"}</Text><h3>Grant report</h3><Text size="body" tone="secondary">Creates the fulfillment envelope directly, with no Stripe request, then pauses before any billed model call.</Text></Stack>
         <div className="admin-toolbar-actions">
           <label>User
             <AdminSelect value={grant.userId} onChange={(event) => setGrant({ ...grant, userId: event.target.value })}>
@@ -243,27 +246,29 @@ export function ReportFulfillmentAdminPanel({ secret }: { secret: string }) {
         </div>
       </section>
       {metrics && (
-        <div className="admin-status-grid">
-          <article className="admin-status-card"><span>Orders</span><strong>{metrics.orders}</strong></article>
-          <article className="admin-status-card"><span>Exceptions</span><strong>{metrics.exceptionDepth}</strong></article>
-          <article className="admin-status-card"><span>Audit queue</span><strong>{metrics.auditDepth}</strong></article>
-          <article className="admin-status-card"><span>Delivery minutes</span><strong>{metrics.averageDeliveryMinutes?.toFixed(1) ?? "n/a"}</strong></article>
-          <article className="admin-status-card"><span>Judge average</span><strong>{metrics.averageJudgeScore?.toFixed(3) ?? "n/a"}</strong></article>
-          <article className="admin-status-card"><span>Validator pass</span><strong>{metrics.validatorPassRate === null ? "n/a" : `${(metrics.validatorPassRate * 100).toFixed(1)}%`}</strong></article>
-          <article className="admin-status-card"><span>Judge pass</span><strong>{metrics.judgePassRate === null ? "n/a" : `${(metrics.judgePassRate * 100).toFixed(1)}%`}</strong></article>
-          <article className="admin-status-card"><span>Accepted tokens/report</span><strong>{metrics.averageAcceptedTokenCount.toFixed(0)}</strong></article>
-          <article className="admin-status-card"><span>Total tokens/report</span><strong>{metrics.averageTotalTokenCount.toFixed(0)}</strong></article>
-          <article className="admin-status-card"><span>Estimated spend/report</span><strong>${metrics.averageEstimatedSpendUsd.toFixed(4)}</strong></article>
-          <article className="admin-status-card"><span>Attempt distribution</span><strong><code>{JSON.stringify(metrics.attemptDistribution)}</code></strong></article>
-          <article className="admin-status-card"><span>Judge distribution</span><strong><code>{JSON.stringify(metrics.judgeScoreDistribution)}</code></strong></article>
-        </div>
+        <Grid className={metricGrid} aria-label="Fulfillment metrics">
+          <MetricCard label="Orders" value={metrics.orders} />
+          <MetricCard label="Exceptions" value={metrics.exceptionDepth} />
+          <MetricCard label="Audit queue" value={metrics.auditDepth} />
+          <MetricCard label="Delivery minutes" value={metrics.averageDeliveryMinutes?.toFixed(1) ?? "n/a"} />
+          <MetricCard label="Judge average" value={metrics.averageJudgeScore?.toFixed(3) ?? "n/a"} />
+          <MetricCard label="Validator pass" value={metrics.validatorPassRate === null ? "n/a" : `${(metrics.validatorPassRate * 100).toFixed(1)}%`} />
+          <MetricCard label="Judge pass" value={metrics.judgePassRate === null ? "n/a" : `${(metrics.judgePassRate * 100).toFixed(1)}%`} />
+          <MetricCard label="Accepted tokens/report" value={metrics.averageAcceptedTokenCount.toFixed(0)} />
+          <MetricCard label="Total tokens/report" value={metrics.averageTotalTokenCount.toFixed(0)} />
+          <MetricCard label="Estimated spend/report" value={`$${metrics.averageEstimatedSpendUsd.toFixed(4)}`} />
+          <MetricCard label="Attempt distribution" value={<code>{JSON.stringify(metrics.attemptDistribution)}</code>} />
+          <MetricCard label="Judge distribution" value={<code>{JSON.stringify(metrics.judgeScoreDistribution)}</code>} />
+        </Grid>
       )}
       {inspection && (
         <section className="admin-content-toolbar" aria-label="Report reader-copy editor">
           <div className="admin-field-wide">
-            <p className="admin-eyebrow">Report reader preview and editor</p>
-            <h3>{String(inspection.report.report_domain).replaceAll("_", " ")} · {String(inspection.report.report_horizon).replaceAll("_", " ")}</h3>
-            <p>Select a section to read the exact delivered copy. Save creates a private correction draft; only Publish correction changes what the reader sees.</p>
+            <Stack gap="sm">
+              <Text size="meta" tone="secondary">Report reader preview and editor</Text>
+              <h3>{String(inspection.report.report_domain).replaceAll("_", " ")} · {String(inspection.report.report_horizon).replaceAll("_", " ")}</h3>
+              <Text size="body">Select a section to read the exact delivered copy. Save creates a private correction draft; only Publish correction changes what the reader sees.</Text>
+            </Stack>
             <label>Report section
               <AdminSelect value={selectedUnitId} onChange={(event) => {
                 const unit = inspection.units.find((candidate) => candidate.id === event.target.value);
