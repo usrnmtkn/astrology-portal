@@ -1,7 +1,9 @@
 import { StudioButton } from "./StudioControls";
 import { PageLoading } from "../../web/src/components/PageLoading";
 import { AdminSelect } from "./AdminNativeControls";
-import { surfaceSection } from "./studio-ds/recipes";
+import { MetricCard } from "./studio-ds/patterns";
+import { Grid, Stack, Text } from "./studio-ds/primitives";
+import { metricGrid, surfaceSection } from "./studio-ds/recipes";
 import ContentLiveStatusBadge from "./ContentLiveStatus";
 import {
   natalAspectComposedSources,
@@ -105,6 +107,13 @@ export default function NatalAspectSourceFinder({
             </AdminSelect>
           </label>
         </div>
+        {fullSelection && (
+          <Grid className={metricGrid} aria-label="Selected natal aspect">
+            <MetricCard label="Planet or point" value={titleCase(first)} />
+            <MetricCard label="Aspect" value={titleCase(aspect)} />
+            <MetricCard label="Other planet or point" value={titleCase(second)} />
+          </Grid>
+        )}
       </section>
 
       {isLoading && (exactRows.length === 0 || (fullSelection && matches.length === 0)) && (
@@ -142,7 +151,7 @@ export default function NatalAspectSourceFinder({
                         <h4>{source.label}</h4>
                         <ContentLiveStatusBadge row={natalAspectComposedStatusRow(savedRow, contentKey)} />
                       </div>
-                      <p>{source.scope}</p>
+                      <Text size="body" tone="secondary">{source.scope}</Text>
                       <p className="admin-natal-source-key"><span>Source key</span><code>{contentKey}</code></p>
                       {preview && <blockquote>{preview}</blockquote>}
                     </div>
@@ -167,7 +176,9 @@ export default function NatalAspectSourceFinder({
       {hasSelection && matches.length > 0 && (
         <section className={`${surfaceSection} admin-natal-source-group`} aria-label="Matching natal aspect passages">
           <header>
-            <h3>{matches.length === 1 ? "Exact reader passage" : `${matches.length} matching passages`}</h3>
+            <Stack gap="sm">
+              <h3>{matches.length === 1 ? "Exact reader passage" : `${matches.length} matching passages`}</h3>
+            </Stack>
           </header>
           <div className="admin-natal-source-grid">
             {matches.map((row) => {
@@ -181,7 +192,7 @@ export default function NatalAspectSourceFinder({
                       <h4>{title}</h4>
                       <ContentLiveStatusBadge row={row} />
                     </div>
-                    <p>Exact natal aspect writing for the reader’s birth chart.</p>
+                    <Text size="body" tone="secondary">Exact natal aspect writing for the reader’s birth chart.</Text>
                     <p className="admin-natal-source-key"><span>Source key</span><code>{row.content_key}</code></p>
                     {preview && <blockquote>{preview}</blockquote>}
                   </div>

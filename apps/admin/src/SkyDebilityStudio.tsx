@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { StudioButton, StudioTextarea } from "./StudioControls";
-import { AdminSelect } from "./AdminNativeControls";
+import { AdminDisclosureSummary, AdminSelect } from "./AdminNativeControls";
 import ContentLiveStatusBadge from "./ContentLiveStatus";
 import type { SkySummaryField } from "../../web/src/content/skyDailySummaryCatalog";
 import { skyDebilityFields, skyDebilityLegacyNames, skyDebilityTemplateErrors, skyDebilityTemplateSlots } from "../../web/src/content/skyDebilityCatalog";
@@ -132,7 +132,7 @@ export function SkyDebilityStudio({ rows, onEdit, busy }: {
     </section>}
 
     <details className="admin-workspace-details">
-      <summary>Change preview placements</summary>
+      <AdminDisclosureSummary>Change preview placements</AdminDisclosureSummary>
       <p>These are examples for checking the composition, not the sky for a particular date. Changing a sign or motion does not change saved wording.</p>
       <div className="admin-daily-glance-context-form">
         {TRADITIONAL_DIGNITY_PLANETS.map(planet => <div key={planet}>
@@ -154,8 +154,8 @@ export function SkyDebilityStudio({ rows, onEdit, busy }: {
         </div>)}
       </div>
     </details>
-    <details>
-      <summary>Placement wording · {skyDebilityPhraseSets.length} matched sets</summary>
+    <details className="admin-workspace-details">
+      <AdminDisclosureSummary>Placement wording · {skyDebilityPhraseSets.length} matched sets</AdminDisclosureSummary>
       <label htmlFor="effort-placement-editor">Planet and sign to edit</label>
       <AdminSelect id="effort-placement-editor" aria-label="Planet and sign to edit" value={placement} onChange={event => setPlacement(event.target.value)}>
         {skyDebilityPhraseSets.map(row => <option key={skyDebilityPlacementId(row.planetTitle, row.signTitle)} value={skyDebilityPlacementId(row.planetTitle, row.signTitle)}>
@@ -167,13 +167,13 @@ export function SkyDebilityStudio({ rows, onEdit, busy }: {
         {skyDebilityPhraseNames.map(name => editor(skyDebilityPhraseKey(selected.planetTitle, selected.signTitle, name), skyDebilityPhraseGuidance[name]))}
       </div>
     </details>
-    <details>
-      <summary>Card template, heading, and example order</summary>
+    <details className="admin-workspace-details">
+      <AdminDisclosureSummary>Card template, heading, and example order</AdminDisclosureSummary>
       <p>Experiences and situations are joined with “or”; responses and functions are joined with “and”. The planetList variable displays comma-separated placement links. Example order chooses up to three complete sets, not a difficulty score.</p>
       <div className="admin-daily-glance-pair-list">{templateNames.map(name => editor(`cms/sky-debility/${name}`, templateGuidance[name]))}</div>
     </details>
-    <details>
-      <summary>Legacy wording for reference</summary>
+    <details className="admin-workspace-details">
+      <AdminDisclosureSummary>Legacy wording for reference</AdminDisclosureSummary>
       <p>Preserved for recovery. These older title and body fields are not used by the new summary.</p>
       <div className="admin-daily-glance-pair-list">{skyDebilityLegacyNames.map(name => {
         const field = fieldByKey(`cms/sky-debility/${name}`);

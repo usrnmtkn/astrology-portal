@@ -207,7 +207,7 @@ export default function NeedsAttentionDashboard() {
         {error && <p role="alert">{error}</p>}
         <header className="admin-dashboard-header">
           <div>
-            <a href="/admin/content" className="admin-breadcrumb">
+            <a href="/admin/content" className="admin-page-link">
               <ArrowLeft size={15} aria-hidden="true" /> Content Studio
             </a>
             <p className="admin-eyebrow">Content operations</p>

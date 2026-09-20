@@ -85,7 +85,7 @@ export function SkySummaryAssemblyStudio({ rows, onEdit, busy, sunSign, moonSign
       <label><span>Exact aspect examples</span><StudioInput aria-label="Exact aspect examples" value={aspectExamples} onChange={event => setAspectExamples(event.target.value)} /></label>
       <label><span>Station examples</span><StudioInput aria-label="Station examples" value={stationExamples} onChange={event => setStationExamples(event.target.value)} /></label>
       <label><span>Single station motion</span><AdminSelect value={stationDirection} onChange={event => setStationDirection(event.target.value as "direct" | "retrograde")}><option value="retrograde">Retrograde</option><option value="direct">Direct</option></AdminSelect></label>
-      <label><StudioInput type="checkbox" checked={stationOccurred} onChange={event => setStationOccurred(event.target.checked)} />Station has occurred in this example</label>
+      <label className="studio-contained-toggle"><StudioInput type="checkbox" checked={stationOccurred} onChange={event => setStationOccurred(event.target.checked)} />Station has occurred in this example</label>
       <label><span>Ingress examples</span><StudioInput aria-label="Ingress examples" value={ingressExamples} onChange={event => setIngressExamples(event.target.value)} /></label>
       <label><span>Lunation example</span><AdminSelect aria-label="Lunation example" value={lunation} onChange={event => setLunation(event.target.value)}><option value="none">None</option><option value="today">New Moon today</option><option value="future">New Moon in 3 days</option></AdminSelect></label>
     </details>

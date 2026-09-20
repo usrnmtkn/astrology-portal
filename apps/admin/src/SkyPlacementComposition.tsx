@@ -11,6 +11,9 @@ import ContentLiveStatusBadge from "./ContentLiveStatus";
 import { studioServingStatusRow } from "./studioServingStatus";
 import { skyPlacementAssembly, skyPlacementAssemblyFields, skyRetrogradeBodies as retrogradeBodies, type SkyPlacementAssemblyField, type SkyPlacementWriting, type SkyPlacementSelection as Selection } from "./skyPlacementAssembly";
 import { openContextualReaderHref } from "./adminReaderDestinations";
+import { MetricCard } from "./studio-ds/patterns";
+import { Grid, Stack, Text } from "./studio-ds/primitives";
+import { containedDisclosure, metricGrid } from "./studio-ds/recipes";
 import SkyPlacementVariableKey, { SkyVariableText } from "./SkyPlacementVariableKey";
 // @ts-ignore Shared inline-variable contract, separate from composition section slots.
 import { isSkyPlacementVariableField, skyPlacementVariableFacts } from "../../web/src/content/fallbackArchitectureV3/resolver/skyPlacementVariables.mjs";
@@ -105,9 +108,18 @@ export default function SkyPlacementComposition({ rows, selection, onEditRow, on
     : row.content_key === "sky-nodes/education" ? "Shared node education." : row.content_key.startsWith("sky-nodes/axis/") ? "Shared by both ends of this node axis." : `Writing for ${title(current.planet)} in ${title(current.sign)}. Each section can be shared or specific to one motion.`;
   const views = [{ id: "preview", label: "Saved preview" }, { id: "template", label: "Main template" }, { id: "assembly", label: "Assembly" }] as const;
   return <section className="admin-composition-surface-actions admin-sky-placement-composition" aria-label="Sky placement composition map">
-    <header><div><p className="admin-eyebrow">Composition Map</p><h3>{title(current.planet)}{current.motion === "retrograde" && retrogradeBodies.has(current.planet) ? " Rx" : ""} in {title(current.sign)}</h3></div>
+    <header>
+      <Stack gap="sm">
+        <Text size="meta" tone="secondary">Composition Map</Text>
+        <h3>{title(current.planet)}{current.motion === "retrograde" && retrogradeBodies.has(current.planet) ? " Rx" : ""} in {title(current.sign)}</h3>
+      </Stack>
       <StudioButton type="button" onClick={() => openContextualReaderHref(`/#sky/placement/${current.planet}/${current.sign}`)}>Open published reader</StudioButton>
     </header>
+    <Grid className={metricGrid} aria-label="Selected sky placement">
+      <MetricCard label="Planet or point" value={title(current.planet)} />
+      <MetricCard label="Sign" value={title(current.sign)} />
+      <MetricCard label="Motion" value={current.motion === "retrograde" ? "Retrograde" : "Direct"} />
+    </Grid>
     {!selection && <div className="admin-natal-placement-selectors">
       <label>Planet or point<AdminSelect aria-label="Composition planet or point" value={context.planet} onChange={event => setContext({ ...context, planet: event.target.value })}>
         {skyPlacementBodies.map(planet => <option key={planet} value={planet}>{title(planet)}</option>)}
@@ -119,9 +131,9 @@ export default function SkyPlacementComposition({ rows, selection, onEditRow, on
         <option value="direct">Direct</option>{retrogradeBodies.has(current.planet) && <option value="retrograde">Retrograde</option>}
       </AdminSelect></label>
     </div>}
-    <p>Choose a writing path to inspect its saved sources and ordered blocks. This choice changes the preview, not what is published. Use the section buttons below or select a colored passage to edit its exact source. Imported article templates in the library below are separate records.</p>
+    <Text size="body" tone="secondary">Choose a writing path to inspect its saved sources and ordered blocks. This choice changes the preview, not what is published. Use the section buttons below or select a colored passage to edit its exact source. Imported article templates in the library below are separate records.</Text>
     {ingressRow && <>
-      <details className="admin-workspace-details admin-writing-system-details" aria-label="Placement reader selection">
+      <details className={`${containedDisclosure} admin-workspace-details admin-writing-system-details`} aria-label="Placement reader selection">
         <AdminDisclosureSummary>How the reader chooses writing</AdminDisclosureSummary>
         <p>The reader uses the first available, eligible published body for the calculated motion and occurrence:</p>
         <ol aria-label="Published placement selection order">
@@ -146,7 +158,7 @@ export default function SkyPlacementComposition({ rows, selection, onEditRow, on
       <div className="admin-sky-placement-sources" aria-label="Selected sources">
         {availableRows.map(row => <div key={row.content_key}>
           <strong>{row.headline || row.content_key}</strong><ContentLiveStatusBadge row={studioServingStatusRow(row, row.content_key)} />
-          <p>{scope(row)}</p>
+          <Text size="body" tone="secondary">{scope(row)}</Text>
         </div>)}
       </div>
       {selectedWriting !== "ingress" && <div className="admin-sky-writing-source-actions" role="group" aria-label="Open placement section editors">

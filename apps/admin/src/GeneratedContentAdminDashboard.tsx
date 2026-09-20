@@ -3,6 +3,9 @@ import { clearStudioEditorReturn, rememberStudioEditorReturn, studioEditorReturn
 import type { HouseTransitEditorSource } from "./HouseTransitWriteupEditor";
 import { ZODIAC_SEASON_SOURCE_STARTERS, isZodiacSeasonSourceKey } from "../../web/src/content/fallbackArchitectureV3/resolver/zodiacSeasonVariables.mjs";
 import "./studio-system.css";
+import { MetricCard } from "./studio-ds/patterns";
+import { Grid, Stack, Text } from "./studio-ds/primitives";
+import { containedDisclosure, metricGrid, surfaceSection } from "./studio-ds/recipes";
 import { StudioTabs, StudioButton, StudioIconButton, StudioInput, StudioTextarea } from "./StudioControls";
 import { ArticleBlockStyleFields } from "./ArticleBlockStyleFields";
 import { AdminDisclosureSummary, AdminSelect } from "./AdminNativeControls";
@@ -7478,7 +7481,7 @@ export function GeneratedContentAdminDashboard() {
                         </StudioButton>
                       ))}
                     </div>
-                    <details className="admin-surface-sources">
+                    <details className={`${containedDisclosure} admin-surface-sources`}>
                       <AdminDisclosureSummary>Content sources ({item.sources.length})</AdminDisclosureSummary>
                       <p>{item.currentRenderPath}</p>
                       <ul>
@@ -7995,7 +7998,7 @@ export function GeneratedContentAdminDashboard() {
             )}
             {source.optional && !resolved && <span className="ui-pill admin-status status-draft">Optional</span>}
           </div>
-          <p>{source.scope}</p>
+          <Text size="body" tone="secondary">{source.scope}</Text>
           <p className="admin-reader-destination-line"><strong>Where readers see this:</strong> {sourceReaderDestination}</p>
           <code>{resolved?.contentKey ?? source.candidateKeys.join(" → ")}</code>
           <blockquote className={!resolved ? "missing" : ""}>{resolved?.text ?? (source.optional ? "No optional passage is saved for this selection." : "No saved passage is available for this source path.")}</blockquote>
@@ -8220,14 +8223,14 @@ export function GeneratedContentAdminDashboard() {
     return (
       <section className="admin-natal-placement-finder admin-transit-finder" aria-label="Personal Transits source finder">
         <div className="admin-natal-placement-finder-heading">
-          <div>
-            <p className="admin-eyebrow">{friendsTransitAudience ? "Friends Transits · Active for {{Name}}" : "Personal Transits workspace"}</p>
+          <Stack gap="sm">
+            <Text size="meta" tone="secondary" className="admin-eyebrow">{friendsTransitAudience ? "Friends Transits · Active for {{Name}}" : "Personal Transits workspace"}</Text>
             <h3>{contact ? transitNatalLabel(contact) : "Find a Personal Transit write-up"}</h3>
-            <p>{friendsTransitAudience
+            <Text size="body" tone="secondary">{friendsTransitAudience
               ? "This is the editor for Friends > Transits > Active for {{Name}}. Choose transiting planet, aspect, and natal planet or chart point. Fill current sign and both houses to save a six-part situation. Leave 4-6 blank to save the three-part aspect only."
-              : "Choose transiting planet, aspect, and natal planet or chart point, including Ascendant and Midheaven. Fill current sign and both houses to save a six-part situation. Leave 4-6 blank to save the three-part aspect only. Shared fallback writing is a separate advanced edit."}</p>
-            <p><strong>Editable lifecycle:</strong> Save creates or updates a passage. Archive removes it from active use; Restore reopens it as a draft.</p>
-          </div>
+              : "Choose transiting planet, aspect, and natal planet or chart point, including Ascendant and Midheaven. Fill current sign and both houses to save a six-part situation. Leave 4-6 blank to save the three-part aspect only. Shared fallback writing is a separate advanced edit."}</Text>
+            <Text size="body" tone="secondary"><strong>Editable lifecycle:</strong> Save creates or updates a passage. Archive removes it from active use; Restore reopens it as a draft.</Text>
+          </Stack>
         </div>
 
         {friendsTransitAudience && renderFriendsTransitSectionFinder("active-for-name", "embedded", transitNatalQuery, (value) => {
@@ -8345,20 +8348,31 @@ export function GeneratedContentAdminDashboard() {
           </label>
         </div>
 
+        {contact && (
+          <Grid className={metricGrid} aria-label="Selected personal transit">
+            <MetricCard label="Transiting planet" value={titleFromKey(contact.planet)} />
+            <MetricCard label="Aspect" value={titleFromKey(contact.aspect)} />
+            <MetricCard label="Natal planet or point" value={titleFromKey(contact.natalPoint)} />
+            {transitNatalSign && <MetricCard label="Current sign" value={titleFromKey(transitNatalSign)} />}
+            {transitNatalTransitHouse && <MetricCard label="Transit house" value={transitNatalTransitHouse} />}
+            {transitNatalNatalHouse && <MetricCard label="Natal house" value={transitNatalNatalHouse} />}
+          </Grid>
+        )}
+
         {liveSourceKey && contact && (
           <section className="admin-natal-source-card" aria-label="Live reader write-up">
             <header className="admin-natal-source-card-heading">
-              <div>
-                <p className="admin-eyebrow">Live reader write-up</p>
+              <Stack gap="sm">
+                <Text size="meta" tone="secondary">Live reader write-up</Text>
                 <strong>{transitNatalLabel(contact)}</strong>
-              </div>
+              </Stack>
             </header>
-            <p>
+            <Text size="body" tone="secondary">
               {exactKey && exactKey.split("/").length === 8
                 ? "The published Friends card still uses this source. Edit live opens that packaged source. The six-part editor is a separate save and does not overwrite it."
                 : "The current Friends Active for {{Name}} card uses this published source. Edit live opens that packaged source. Saving it does not change the three-part or six-part write-up below."}
-            </p>
-            <p><code>{liveSourceKey}</code></p>
+            </Text>
+            <p className="admin-natal-source-key"><span>Source key</span><code>{liveSourceKey}</code></p>
             <StudioButton
               type="button"
               onClick={() => void openContentKeyRow(
@@ -8574,14 +8588,14 @@ export function GeneratedContentAdminDashboard() {
     return (
       <section className="admin-natal-placement-finder admin-transit-finder" aria-label="House Transits source finder">
         <div className="admin-natal-placement-finder-heading">
-          <div>
-            <p className="admin-eyebrow">{friendsTransitAudience ? "Friends Transits · Where it lands" : "House Transits workspace"}</p>
+          <Stack gap="sm">
+            <Text size="meta" tone="secondary" className="admin-eyebrow">{friendsTransitAudience ? "Friends Transits · Where it lands" : "House Transits workspace"}</Text>
             <h3>{selection ? houseTransitLabel(selection) : "Find a House Transit write-up"}</h3>
-            <p>{friendsTransitAudience
+            <Text size="body" tone="secondary">{friendsTransitAudience
               ? "This is the editor for Friends > Transits > Where it lands. The preview prefers Friends copy for the evergreen house passage, current-sign passage, and retrograde overlay when those sources have separate audience versions."
-              : "Choose a planet, sign, and house to preview the complete House Transit and edit its passages."}</p>
-            <p><strong>Editable lifecycle:</strong> Save creates or updates a passage. Archive removes it from active use; Restore reopens it as a draft.</p>
-          </div>
+              : "Choose a planet, sign, and house to preview the complete House Transit and edit its passages."}</Text>
+            <Text size="body" tone="secondary"><strong>Editable lifecycle:</strong> Save creates or updates a passage. Archive removes it from active use; Restore reopens it as a draft.</Text>
+          </Stack>
           {selection && <code>transit/{selection.planet}-{selection.sign}/{selection.house}h/{selection.motion}</code>}
         </div>
 
@@ -8618,6 +8632,14 @@ export function GeneratedContentAdminDashboard() {
           </label>
         </div>
 
+        {selection && (
+          <Grid className={metricGrid} aria-label="Selected house transit">
+            <MetricCard label="Transiting planet" value={titleFromKey(selection.planet)} />
+            <MetricCard label="Current sign" value={titleFromKey(selection.sign)} />
+            <MetricCard label="Reader's house" value={selection.house} />
+            <MetricCard label="Motion" value={titleFromKey(selection.motion)} />
+          </Grid>
+        )}
         {!selection && <p className="admin-natal-placement-prompt">Choose the planet, sign, and house to preview the reader's House Transit and open its exact source rows.</p>}
         {selection && !sourcesReady && (
           <section aria-label="House Transit content loading" aria-busy={!loadError}>
@@ -8627,11 +8649,13 @@ export function GeneratedContentAdminDashboard() {
         )}
         {selection && preview && (
           <section className="admin-natal-source-group" aria-label="Effective House Transit reader preview">
-            <header><div className="admin-page-heading">
-              <p className="admin-eyebrow">Effective reader preview</p>
-              <h3>What you see</h3>
-              <p>The dates and motion are calculated facts. The writing comes from the editable passages listed below.</p>
-            </div></header>
+            <header>
+              <Stack gap="sm">
+                <Text size="meta" tone="secondary">Effective reader preview</Text>
+                <h3>What you see</h3>
+                <Text size="body" tone="secondary">The dates and motion are calculated facts. The writing comes from the editable passages listed below.</Text>
+              </Stack>
+            </header>
             <article className="admin-natal-source-card">
               <div className="admin-natal-source-card-copy">
                 <div className="admin-natal-source-card-heading">
@@ -8649,10 +8673,11 @@ export function GeneratedContentAdminDashboard() {
 
         {compositionGroup && (
           <section className="admin-natal-source-group">
-            <header><div className="admin-page-heading">
-              <h3>{compositionGroup.label}</h3>
-              <p>{servingLegacy ? "This reader card is currently stored as one complete editable passage." : compositionGroup.description}</p>
-            </div>
+            <header>
+              <Stack gap="sm">
+                <h3>{compositionGroup.label}</h3>
+                <Text size="body" tone="secondary">{servingLegacy ? "This reader card is currently stored as one complete editable passage." : compositionGroup.description}</Text>
+              </Stack>
               <StudioButton type="button" disabled={isLoading || houseTransitOpening} onClick={() => selection && void openHouseTransitWriteup(selection, visibleCompositionSources)}>
                 Edit complete write-up
               </StudioButton>
@@ -8663,7 +8688,7 @@ export function GeneratedContentAdminDashboard() {
         {alternateGroup && advancedSources.length > 0 && (
           <details className="admin-workspace-details admin-natal-source-group admin-natal-source-advanced">
             <AdminDisclosureSummary>{alternateGroup.label}</AdminDisclosureSummary>
-            <p>{alternateGroup.description}</p>
+            <Text size="body" tone="secondary">{alternateGroup.description}</Text>
             <div className="admin-natal-source-grid">{advancedSources.map(source => renderSkyAssemblySource(source))}</div>
           </details>
         )}
@@ -10495,20 +10520,22 @@ export function GeneratedContentAdminDashboard() {
                 </div>
               )}
               {isVocabularyDraft && vocabularyUsage && (
-                <section className="admin-content-role-panel admin-vocabulary-usage" aria-label="Variable usage">
-                  <div>
-                    <p className="admin-eyebrow">Used by the app as</p>
+                <section className={`${surfaceSection} admin-content-role-panel admin-vocabulary-usage`} aria-label="Variable usage">
+                  <Stack gap="sm">
+                    <Text size="meta" tone="secondary">Used by the app as</Text>
                     <h3>{vocabularyUsage.label}</h3>
-                  </div>
-                  <p>{vocabularyUsage.description}</p>
-                  <p><strong>Reader behavior:</strong> the app combines this phrase with other approved ingredients. It is not shown as a standalone article.</p>
+                  </Stack>
+                  <Text size="body" tone="secondary">{vocabularyUsage.description}</Text>
+                  <Text size="body" tone="secondary"><strong>Reader behavior:</strong> the app combines this phrase with other approved ingredients. It is not shown as a standalone article.</Text>
                 </section>
               )}
               {fallbackEditorGuidance && !(isNewDraft && isCompatibilityWorkspaceDraft) && (
-                <section className="admin-editor-guidance admin-contextual-editor-guidance" aria-label="How this source is used">
-                  <p className="admin-eyebrow">{fallbackEditorGuidance.area}</p>
-                  <strong>{fallbackEditorGuidance.title}</strong>
-                  <p>{fallbackEditorGuidance.description}</p>
+                <section className={`${surfaceSection} admin-editor-guidance admin-contextual-editor-guidance`} aria-label="How this source is used">
+                  <Stack gap="sm">
+                    <Text size="meta" tone="secondary">{fallbackEditorGuidance.area}</Text>
+                    <strong>{fallbackEditorGuidance.title}</strong>
+                  </Stack>
+                  <Text size="body" tone="secondary">{fallbackEditorGuidance.description}</Text>
                   {fallbackEditorGuidance.example && (
                     <div className="admin-contextual-copy-example">
                       <span>Example in a reading</span>
@@ -10899,7 +10926,7 @@ export function GeneratedContentAdminDashboard() {
                     />
                   </label>
 
-                  <details className="admin-workspace-details admin-sky-related-group admin-diagnostics-details">
+                  <details className={`${containedDisclosure} admin-workspace-details admin-sky-related-group admin-diagnostics-details`}>
                     <AdminDisclosureSummary>
                       <span>House passages</span>
                       <strong>{skyArticleEditor.fields.housePassages.length}/12 complete</strong>
@@ -10919,7 +10946,7 @@ export function GeneratedContentAdminDashboard() {
                   </details>
 
                   {skyArticleEditor.fields.aspectPassages.length > 0 && (
-                    <details className="admin-workspace-details admin-sky-related-group admin-diagnostics-details">
+                    <details className={`${containedDisclosure} admin-workspace-details admin-sky-related-group admin-diagnostics-details`}>
                       <AdminDisclosureSummary>
                         <span>Natal-aspect passages</span>
                         <strong>{skyArticleEditor.fields.aspectPassages.length}</strong>
@@ -11190,12 +11217,12 @@ export function GeneratedContentAdminDashboard() {
             />
           )}
           {showNatalFriendEditor && natalPlacementPlanet && natalPlacementSign && (
-            <section className="admin-editor-guidance admin-natal-friend-editor" aria-label="Friends natal copy and sources">
-              <div>
-                <p className="admin-eyebrow">Friends view</p>
+            <section className={`${surfaceSection} admin-editor-guidance admin-natal-friend-editor`} aria-label="Friends natal copy and sources">
+              <Stack gap="sm">
+                <Text size="meta" tone="secondary">Friends view</Text>
                 <h3>Edit the copy a friend sees</h3>
-                <p>The exact copy above is You-only. Friends is composed from separate third-person passages. Open a colored section below to edit the source that actually supplies that part of the Friends write-up.</p>
-              </div>
+              </Stack>
+              <Text size="body" tone="secondary">The exact copy above is You-only. Friends is composed from separate third-person passages. Open a colored section below to edit the source that actually supplies that part of the Friends write-up.</Text>
               <Suspense fallback={<PageLoading message="Loading Friends copy…" />}>
                 <NatalPlacementReaderPreview
                   house={natalPlacementHouse}
@@ -11274,7 +11301,7 @@ export function GeneratedContentAdminDashboard() {
                 </dl>
               </header>
 
-              <details className="admin-workspace-details admin-sky-related-group admin-diagnostics-details" open={Boolean(skyFallbackEditor) && !isSkyPlacementSource}>
+              <details className={`${containedDisclosure} admin-workspace-details admin-sky-related-group admin-diagnostics-details`} open={Boolean(skyFallbackEditor) && !isSkyPlacementSource}>
                 <AdminDisclosureSummary>
                   <span>Aspect passages</span>
                   {" "}
@@ -11321,7 +11348,7 @@ export function GeneratedContentAdminDashboard() {
                   <ImportedArticleHoroscopesEditor sections={currentDraft.sections} onChange={sections => setDraft(invalidateContentStudioReview({...currentDraft, sections, status: "DRAFT", reviewState: "owner-review-required"}))} />
                 </Suspense>
               ) : skyLunationContext ? (
-                <details className="admin-workspace-details admin-sky-related-group admin-diagnostics-details" open={Boolean(skyFallbackEditor) && !isSkyPlacementSource}>
+                <details className={`${containedDisclosure} admin-workspace-details admin-sky-related-group admin-diagnostics-details`} open={Boolean(skyFallbackEditor) && !isSkyPlacementSource}>
                   <AdminDisclosureSummary>
                     <span>Rising-sign horoscopes</span>
                     {" "}
@@ -11360,7 +11387,7 @@ export function GeneratedContentAdminDashboard() {
                   </div>
                 </details>
               ) : (
-                <details className="admin-workspace-details admin-sky-related-group admin-diagnostics-details" open={Boolean(skyFallbackEditor) && !isSkyPlacementSource}>
+                <details className={`${containedDisclosure} admin-workspace-details admin-sky-related-group admin-diagnostics-details`} open={Boolean(skyFallbackEditor) && !isSkyPlacementSource}>
                   <AdminDisclosureSummary>
                     <span>House horoscopes</span>
                     {" "}
@@ -11404,26 +11431,26 @@ export function GeneratedContentAdminDashboard() {
               <span className="admin-editor-details-summary">{editorDetailsSummary}</span>
             </AdminDisclosureSummary>
             <div className="admin-editor-details-body">
-            {!fallbackEditorGuidance && !(isNewDraft && isCompatibilityWorkspaceDraft) && <section className="admin-content-role-panel" aria-label="Content role">
-              <div>
-                <p className="admin-eyebrow">Content role</p>
+            {!fallbackEditorGuidance && !(isNewDraft && isCompatibilityWorkspaceDraft) && <section className={`${surfaceSection} admin-content-role-panel`} aria-label="Content role">
+              <Stack gap="sm">
+                <Text size="meta" tone="secondary">Content role</Text>
                 <h3>{skyFallbackContentIdentity?.typeLabel ?? contentRole.label}</h3>
-              </div>
-              <p>{skyFallbackContentIdentity
+              </Stack>
+              <Text size="body" tone="secondary">{skyFallbackContentIdentity
                 ? skyFallbackContentIdentity.description
                   ?? `Reader-facing ${skyFallbackContentIdentity.groupLabel.toLowerCase()} content. Its internal fallback key remains visible for traceability.`
-                : contentRole.detail}</p>
+                : contentRole.detail}</Text>
               {contentRole.label === "Fallback source/helper" && (
-                <p><strong>Reader rule:</strong> this text can support the fallback system, but it cannot appear as a standalone authored write-up.</p>
+                <Text size="body" tone="secondary"><strong>Reader rule:</strong> this text can support the fallback system, but it cannot appear as a standalone authored write-up.</Text>
               )}
             </section>}
             {skyFallbackContentIdentity?.typeLabel === "Sky Placement fallback article section" && (
-              <section className="admin-content-role-panel" aria-label="Sky Placement fallback article structure">
-                <div>
-                  <p className="admin-eyebrow">Fallback article structure</p>
+              <section className={`${surfaceSection} admin-content-role-panel`} aria-label="Sky Placement fallback article structure">
+                <Stack gap="sm">
+                  <Text size="meta" tone="secondary">Fallback article structure</Text>
                   <h3>Four sections readers receive</h3>
-                </div>
-                <p>The labels below describe complete pieces of reader copy. They are not calculated variables.</p>
+                </Stack>
+                <Text size="body" tone="secondary">The labels below describe complete pieces of reader copy. They are not calculated variables.</Text>
                 <dl className="admin-hook-pattern-list">
                   {skyPlacementFallbackSectionOutline.map((section) => (
                     <div key={section.key}>
@@ -11467,7 +11494,7 @@ export function GeneratedContentAdminDashboard() {
               </section>
             )}
             {isPackageDraft && (isVocabularyDraft ? (
-              <section className="admin-package-edit-panel admin-vocabulary-settings" aria-label="Variable settings">
+              <section className={`${surfaceSection} admin-package-edit-panel admin-vocabulary-settings`} aria-label="Variable settings">
                 <div>
                   <span>Approval status</span>
                   <span
@@ -11494,7 +11521,7 @@ export function GeneratedContentAdminDashboard() {
                 </label>
               </section>
             ) : (
-              <section className="admin-package-edit-panel" aria-label="Package row details">
+              <section className={`${surfaceSection} admin-package-edit-panel`} aria-label="Package row details">
                 <div>
                   <span>Role</span>
                   <strong>{packageRole || "package row"}</strong>
@@ -11527,12 +11554,12 @@ export function GeneratedContentAdminDashboard() {
               </section>
             ))}
             {isSkyPlacementFrameTemplate && (
-              <section className="admin-content-role-panel admin-sky-placement-composition" aria-label="Sky Placement fallback composition">
-                <div>
-                  <p className="admin-eyebrow">Sky Placement fallback composition</p>
+              <section className={`${surfaceSection} admin-content-role-panel admin-sky-placement-composition`} aria-label="Sky Placement fallback composition">
+                <Stack gap="sm">
+                  <Text size="meta" tone="secondary">Sky Placement fallback composition</Text>
                   <h3>Educational sections</h3>
-                </div>
-                <p>These switches set the global defaults for every canonical Sky Placement fallback page. Individual articles do not override them here.</p>
+                </Stack>
+                <Text size="body" tone="secondary">These switches set the global defaults for every canonical Sky Placement fallback page. Individual articles do not override them here.</Text>
                 <label className="admin-composition-option">
                   <StudioInput
                     type="checkbox"
@@ -11559,12 +11586,12 @@ export function GeneratedContentAdminDashboard() {
               </section>
             )}
             {isSkyV4OverlaySettings && (
-              <section className="admin-content-role-panel" aria-label="SKY V4 contextual overlay settings">
-                <div>
-                  <p className="admin-eyebrow">SKY V4 preview settings</p>
+              <section className={`${surfaceSection} admin-content-role-panel`} aria-label="SKY V4 contextual overlay settings">
+                <Stack gap="sm">
+                  <Text size="meta" tone="secondary">SKY V4 preview settings</Text>
                   <h3>Contextual transit overlays</h3>
-                </div>
-                <p>These independent switches affect the canonical stage preview only. They do not change stored Hook copy and cannot enable serving.</p>
+                </Stack>
+                <Text size="body" tone="secondary">These independent switches affect the canonical stage preview only. They do not change stored Hook copy and cannot enable serving.</Text>
                 <label className="admin-composition-option">
                   <StudioInput
                     type="checkbox"
@@ -11593,14 +11620,14 @@ export function GeneratedContentAdminDashboard() {
             )}
             {!(isVocabularyDraft && isPackageDraft) && (
               <div className="admin-editor-metadata" aria-label="Row metadata">
-                <dl className="admin-editor-meta-summary">
-                  <div><dt>{isSharedSeasonSource ? "Used in" : "Surface"}</dt><dd>{isSharedSeasonSource ? seasonSourceUsage : currentDraft.surface}</dd></div>
-                  <div><dt>Mode</dt><dd>{currentDraft.mode}</dd></div>
-                  <div><dt>Lane</dt><dd>{currentDraft.lane}</dd></div>
-                  <div><dt>Block type</dt><dd>{currentDraft.blockType || "—"}</dd></div>
-                  {currentDraft.reviewState && <div><dt>Review state</dt><dd>{currentDraft.reviewState}</dd></div>}
-                </dl>
-                <details className="admin-advanced admin-editor-settings">
+                <Grid className={`${metricGrid} admin-editor-meta-summary`}>
+                  <MetricCard label={isSharedSeasonSource ? "Used in" : "Surface"} value={isSharedSeasonSource ? seasonSourceUsage : currentDraft.surface} />
+                  <MetricCard label="Mode" value={currentDraft.mode} />
+                  <MetricCard label="Lane" value={currentDraft.lane} />
+                  <MetricCard label="Block type" value={currentDraft.blockType || "—"} />
+                  {currentDraft.reviewState && <MetricCard label="Review state" value={currentDraft.reviewState} />}
+                </Grid>
+                <details className={`${containedDisclosure} admin-advanced admin-editor-settings`}>
                   <AdminDisclosureSummary>{isPackageDraft ? "Publishing settings" : "Edit metadata"}</AdminDisclosureSummary>
                   <fieldset className="admin-metadata-fields">
                   <label className="admin-metadata-field">
@@ -11670,7 +11697,7 @@ export function GeneratedContentAdminDashboard() {
                 </details>
               </div>
             )}
-            <details className="admin-advanced admin-editor-key-details">
+            <details className={`${containedDisclosure} admin-advanced admin-editor-key-details`}>
               <AdminDisclosureSummary>{isVocabularyDraft && isPackageDraft ? "Internal source details" : isVocabularyDraft ? "Internal generated key" : "Content key"}</AdminDisclosureSummary>
               <div className="admin-disclosure-content">
               <label className="admin-title-field">
@@ -11685,12 +11712,12 @@ export function GeneratedContentAdminDashboard() {
                           </div>
             </details>
             {isArticleDraft && (
-              <section className="admin-display-source-panel" aria-label="Article content system">
-                <div>
-                  <p className="admin-eyebrow">Reader behavior</p>
+              <section className={`${surfaceSection} admin-display-source-panel`} aria-label="Article content system">
+                <Stack gap="sm">
+                  <Text size="meta" tone="secondary">Reader behavior</Text>
                   <h3>Content System</h3>
-                  <p>Reader pages distinguish authored, generated, and fallback copy. On Sky aspects, approved authored and reviewed package copy always outrank generated prose.</p>
-                </div>
+                  <Text size="body" tone="secondary">Reader pages distinguish authored, generated, and fallback copy. On Sky aspects, approved authored and reviewed package copy always outrank generated prose.</Text>
+                </Stack>
                 <div className="admin-content-level-readout">
                   <span>System</span>
                   <strong className={`ui-pill admin-status ${contentSystem === "authored" ? "status-live" : contentSystem === "generated" ? "status-reviewed" : "status-draft"}`}>
@@ -11704,7 +11731,7 @@ export function GeneratedContentAdminDashboard() {
             )}
 
             {selectedRow && (
-              <details className="admin-advanced admin-review-json">
+              <details className={`${containedDisclosure} admin-advanced admin-review-json`}>
                 <AdminDisclosureSummary>Structured fields</AdminDisclosureSummary>
                 <pre>{sectionsText({
                   id: selectedRow.id,

@@ -1,5 +1,8 @@
 import { StudioButton } from "./StudioControls";
 import { AdminDisclosureSummary } from "./AdminNativeControls";
+import { MetricCard } from "./studio-ds/patterns";
+import { Grid } from "./studio-ds/primitives";
+import { containedDisclosure, metricGrid } from "./studio-ds/recipes";
 import { lazy, Suspense, useState } from "react";
 import { isContentStudioReferenceSource } from "../../web/src/content/contentStudioSourceRole";
 import { skyWritingIssues, type ReviewableContent } from "../../web/src/content/contentReviewReadiness";
@@ -31,16 +34,16 @@ export default function ReviewWorkflowPanel({ row, unsaved, busy, onCheck, onGen
     return <section className="admin-review-status" aria-label="Review and publication readiness">
     <h3 className="sr-only">{source ? "Source material" : "Review and publication"}</h3>
     <div className="admin-review-status-bar">
-      <dl className="admin-review-status-values">
-        <div><dt>Review</dt><dd>{row.status === "REVIEWED" || row.status === "LIVE" ? "Complete" : "Pending"}</dd></div>
-        <div><dt>{source ? "Use" : "Publication"}</dt><dd>{source ? "Source material" : <ContentLiveStatusBadge key={verification} row={{ ...row, requestRevision: verification }} unsaved={unsaved}/>}</dd></div>
-      </dl>
+      <Grid className={`${metricGrid} admin-review-status-values`}>
+        <MetricCard label="Review" value={row.status === "REVIEWED" || row.status === "LIVE" ? "Complete" : "Pending"} />
+        <MetricCard label={source ? "Use" : "Publication"} value={source ? "Source material" : <ContentLiveStatusBadge key={verification} row={{ ...row, requestRevision: verification }} unsaved={unsaved}/>} />
+      </Grid>
       {!source && row.status === "LIVE" && <div className="admin-review-status-actions">
         <StudioButton type="button" onClick={() => setVerification(value => value + 1)} aria-label="Verify publication status">Refresh status</StudioButton>
         {readerHref && <a href={readerHref} target="_blank" rel="noreferrer">Open reader view</a>}
       </div>}
     </div>
-    {source ? <details className="admin-workspace-details admin-review-status-help"><AdminDisclosureSummary>Source usage</AdminDisclosureSummary>
+    {source ? <details className={`${containedDisclosure} admin-workspace-details admin-review-status-help`}><AdminDisclosureSummary>Source usage</AdminDisclosureSummary>
       <p>Background for writing finished cards. Readers never receive this source directly.</p>
       <p>{row.content_key.startsWith("source/sky-aspect-pair/")
                 ? "Used by the Sky aspect writer for this planet pair. Save edits, then Mark reviewed to activate this source revision for future generation. Existing cards keep their own writing."
@@ -58,13 +61,13 @@ export default function ReviewWorkflowPanel({ row, unsaved, busy, onCheck, onGen
           <StudioMemoryFeedback key={row.content_key} contentKey={row.content_key} credential={credential} revision={row.updated_at} unsaved={unsaved} />
         </Suspense>
       </div>}
-      {(sky || row.status === "LIVE") && <details className="admin-workspace-details admin-review-status-help">
+      {(sky || row.status === "LIVE") && <details className={`${containedDisclosure} admin-workspace-details admin-review-status-help`}>
         <AdminDisclosureSummary>About this status</AdminDisclosureSummary>
         {row.status === "LIVE" && <p>Live means eligible to appear. The reader’s chart, event timing, and approved sources determine what is shown.</p>}
       </details>}
     </>}
-    {row.source_snapshot?.importSummary && <details className="admin-workspace-details"><AdminDisclosureSummary>Original import notes</AdminDisclosureSummary><p>{String(row.source_snapshot.importSummary)}</p></details>}
-    {Array.isArray(history) && history.length > 0 && <details className="admin-workspace-details"><AdminDisclosureSummary>Version history ({history.length})</AdminDisclosureSummary>
+    {row.source_snapshot?.importSummary && <details className={`${containedDisclosure} admin-workspace-details`}><AdminDisclosureSummary>Original import notes</AdminDisclosureSummary><p>{String(row.source_snapshot.importSummary)}</p></details>}
+    {Array.isArray(history) && history.length > 0 && <details className={`${containedDisclosure} admin-workspace-details`}><AdminDisclosureSummary>Version history ({history.length})</AdminDisclosureSummary>
       {history.map((version: any, index: number) => <article key={`${version.updatedAt}-${index}`}>
         <strong>{version.updatedAt} · {version.status}</strong><p>{version.body}</p>
       </article>)}
