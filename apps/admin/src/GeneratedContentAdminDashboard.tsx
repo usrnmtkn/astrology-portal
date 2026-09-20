@@ -10560,7 +10560,7 @@ export function GeneratedContentAdminDashboard() {
             </section>
           )}
           {skyFallbackEditor && (
-            <section className={`admin-fallback-diagnostic-panel${isSkyPlacementSource ? " admin-sky-placement-source-workspace" : ""}`} aria-label={skyFallbackEditor.title}>
+            <section className={`studio-surface studio-section admin-fallback-diagnostic-panel${isSkyPlacementSource ? " admin-sky-placement-source-workspace" : ""}`} aria-label={skyFallbackEditor.title}>
               <header className="admin-sky-related-heading admin-fallback-diagnostic-heading">
                 {!isSkyPlacementSource && <div>
                   <p className="admin-eyebrow">Reader source workspace</p>
@@ -10670,7 +10670,7 @@ export function GeneratedContentAdminDashboard() {
             </section>
           )}
           {isSkyArticleTemplate && selectedRow && skyArticleEditionForm && (
-            <section className="admin-sky-edition-builder admin-fallback-diagnostic-panel" aria-label="Create an article edition from this template">
+            <section className="studio-surface studio-section admin-sky-edition-builder admin-fallback-diagnostic-panel" aria-label="Create an article edition from this template">
               <header className="admin-sky-related-heading admin-fallback-diagnostic-heading">
                 <div>
                   <p className="admin-eyebrow">Executable article template</p>
@@ -10833,7 +10833,7 @@ export function GeneratedContentAdminDashboard() {
             </section>
           )}
           {compiledSkyArticleEdition && (
-            <section className="admin-sky-edition-builder admin-fallback-diagnostic-panel" aria-label="Compiled Sky article edition">
+            <section className="studio-surface studio-section admin-sky-edition-builder admin-fallback-diagnostic-panel" aria-label="Compiled Sky article edition">
               <div className="admin-fallback-diagnostic-heading">
                 <div>
                   <p className="admin-eyebrow">Compiled article edition</p>
@@ -11064,7 +11064,7 @@ export function GeneratedContentAdminDashboard() {
             </section>
           )}
           {showPackageBodyYou && !skyFallbackEditor && (
-            <label className="admin-review-copy-editor" data-reader-audience="you">
+            <label className="admin-review-copy-editor studio-surface" data-reader-audience="you">
               <span>{fallbackEditorGuidance?.bodyYouLabel ?? "You view copy"}</span>
               <StudioTextarea
                 data-sky-field="body_you"
@@ -11091,7 +11091,7 @@ export function GeneratedContentAdminDashboard() {
             ["development", "Development"],
             ["close", "Close"]
           ] as const).map(([field, label]) => (
-            <label className="admin-review-copy-editor" key={field}>
+            <label className="admin-review-copy-editor studio-surface" key={field}>
               <span>{label}</span>
               <StudioTextarea
                 aria-label={`Continuous Sky ${label}`}
@@ -11101,7 +11101,7 @@ export function GeneratedContentAdminDashboard() {
             </label>
           ))}
           {showPackageBodyThey && !skyFallbackEditor && (
-            <label className="admin-review-copy-editor" data-reader-audience="they">
+            <label className="admin-review-copy-editor studio-surface" data-reader-audience="they">
               <span>{fallbackEditorGuidance?.bodyTheyLabel ?? "Friend view copy"}</span>
               {isExactNatalAspectDraft && (
                 <small className="admin-field-hint" id="natal-aspect-they-name-hint" role="note">
@@ -11213,7 +11213,7 @@ export function GeneratedContentAdminDashboard() {
             </section>
           )}
           {isVocabularyDraft && isPackageDraft && vocabularyHasTheyVersion && !skyFallbackEditor && (
-            <label className="admin-review-copy-editor">
+            <label className="admin-review-copy-editor studio-surface">
               <span>They version</span>
               <StudioTextarea
                 aria-label="They version"
@@ -11436,7 +11436,7 @@ export function GeneratedContentAdminDashboard() {
               </section>
             )}
             {fallbackDiagnostic && !isVocabularyDraft && (
-              <section className="admin-fallback-diagnostic-panel" aria-label="Fallback composition check">
+              <section className="studio-surface studio-section admin-fallback-diagnostic-panel" aria-label="Fallback composition check">
                 <div className="admin-fallback-diagnostic-heading">
                   <div>
                     <p className="admin-eyebrow">Fallback system</p>
@@ -11719,7 +11719,7 @@ export function GeneratedContentAdminDashboard() {
           </details>
         </section>
         {editorSaveError && <div className="admin-inline-warning" role="alert">{editorSaveError}</div>}
-        {!compiledSkyArticleEdition && <div className={`admin-toolbar-actions admin-editor-savebar${isLoading ? " is-saving" : ""}`} aria-busy={isLoading}>
+        {!compiledSkyArticleEdition && <div className={`admin-toolbar-actions admin-editor-savebar studio-surface${isLoading ? " is-saving" : ""}`} aria-busy={isLoading}>
           <span className={`admin-editor-save-state ${isLoading ? "is-saving" : draftHasUnsavedChanges || isNewDraft && !unchangedSkySource || packageWillPublishOnSave ? "is-unsaved" : "is-saved"}`} aria-live="polite">
             {isLoading
               ? "Saving…"

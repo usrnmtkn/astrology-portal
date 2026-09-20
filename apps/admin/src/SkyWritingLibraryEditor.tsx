@@ -3,6 +3,7 @@ import { placementDignityForSource, migrateLegacyDignityComposition } from "../.
 import { zodiacSeasonSourceKey } from "../../web/src/content/fallbackArchitectureV3/resolver/zodiacSeasonVariables.mjs";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { StudioButton, StudioTextarea } from "./StudioControls";
+import { surfaceSection } from "./studio-ds/recipes";
 import { AdminDataTable } from "./AdminBrowseComponents";
 import { AdminDisclosureSummary } from "./AdminNativeControls";
 import {
@@ -250,7 +251,7 @@ export default function SkyWritingLibraryEditor({ contentKey, planet, sign, sour
     </>;
   }
 
-  if (!installed) return <section className="admin-sky-writing-context" aria-label="Sky writing library">
+  if (!installed) return <section className={`${surfaceSection} admin-sky-writing-editor`} aria-label="Sky writing library">
     <p className="admin-eyebrow">Editable writing library</p>
     <h4>{initialField?.label ?? "Planet · sign · placement · experiences"}</h4>
     <p>{initialField
@@ -308,7 +309,7 @@ export default function SkyWritingLibraryEditor({ contentKey, planet, sign, sour
     </>;
   }
 
-  return <section className="admin-sky-writing-editor" aria-label="Sky writing library">
+  return <section className={`${surfaceSection} admin-sky-writing-editor`} aria-label="Sky writing library">
     <div className="admin-sky-writing-context">
       <p className="admin-eyebrow">Editable writing library</p>
       <h4>Planet · sign · placement · experiences</h4>

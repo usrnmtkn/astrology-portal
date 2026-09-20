@@ -22,6 +22,7 @@ import {
   type SkyWritingLibraryComposition
 } from "./skyWritingLibrary";
 import { makeSkyArticleOutline, SKY_ARTICLE_OUTLINES, type SkyEditorialSection } from "./skyArticleOutlines";
+import { surfaceSection } from "./studio-ds/recipes";
 // @ts-ignore Shared inline-variable contract used by the reader and save API.
 import { isSkyPlacementVariableField, skyPlacementVariableFacts, skyPlacementVariableIssues } from "../../web/src/content/fallbackArchitectureV3/resolver/skyPlacementVariables.mjs";
 // @ts-ignore Shared reader/editor schema; editor labels are never rendered as prose.
@@ -170,7 +171,7 @@ export default function SkyFallbackFieldsEditor({ contentKey, kind, fields: sour
     return () => cancelAnimationFrame(frame);
   }, [initialField, initialLibrarySourceId, field?.key]);
 
-  if (placement && initialLibrarySourceId) return <section className="admin-sky-writing-editor" aria-label="Phrase variable editor">
+  if (placement && initialLibrarySourceId) return <section className={`${surfaceSection} admin-sky-writing-editor`} aria-label="Phrase variable editor">
     <div className="admin-sky-writing-context" aria-label="Phrase variable editing context">
       <p className="admin-eyebrow">Editable phrase variable</p>
       <h3>{initialLibraryField?.label ?? title(initialLibrarySourceId)} <code>{`{{${initialLibrarySourceId}}}`}</code></h3>
@@ -201,7 +202,7 @@ export default function SkyFallbackFieldsEditor({ contentKey, kind, fields: sour
       </>}
   </section>;
 
-  if (!planet) return <section className="admin-sky-edition-fields" aria-label="Editable fallback fields">
+  if (!planet) return <section className={`${surfaceSection} admin-sky-edition-fields`} aria-label="Editable fallback fields">
     <header>
       <p className="admin-eyebrow">Editable copy</p>
       <h3>{kind === "article" ? "Article paragraphs" : "Aspect audience versions"}</h3>
@@ -214,7 +215,7 @@ export default function SkyFallbackFieldsEditor({ contentKey, kind, fields: sour
     </label>)}
   </section>;
 
-  return <section className="admin-sky-writing-editor" aria-label="Writing editor">
+  return <section className={`${surfaceSection} admin-sky-writing-editor`} aria-label="Writing editor">
     {planet && <div className="admin-sky-writing-context" aria-label="Placement writing context">
       <strong>{title(planet)}{rxContext ? " Rx" : ""}{hasSign ? ` in ${title(sign)}` : " · all signs"}</strong>
       <p>{retrograde

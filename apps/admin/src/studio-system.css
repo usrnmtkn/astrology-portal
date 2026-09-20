@@ -297,7 +297,12 @@ body:has(.admin-dashboard) { margin: 0; }
 #root .admin-dashboard .admin-editor-context-line { display: flex; align-items: center; flex-wrap: wrap; gap: var(--workspace-control-inset); }
 #root .admin-dashboard .admin-post-editor { flex: 1; overflow-y: auto; min-height: 0; padding: var(--workspace-card-padding); scrollbar-gutter: stable; }
 #root .admin-dashboard .admin-post-editor > * { flex-shrink: 0; }
-#root .admin-dashboard .admin-editor-savebar { position: relative; flex-shrink: 0; padding: var(--workspace-panel-inset) var(--workspace-card-padding); border-top: var(--border-width-thin) solid var(--workspace-line); background: var(--workspace-surface); justify-content: end; gap: var(--workspace-control-inset); }
+#root .admin-dashboard .admin-editor-savebar { position: relative; flex-shrink: 0; min-width: 0; margin: 0 var(--workspace-card-padding) var(--workspace-card-padding); padding: var(--workspace-panel-inset) var(--workspace-card-padding); border: 0; border-radius: var(--workspace-radius); background: var(--workspace-surface); justify-content: end; gap: var(--workspace-control-inset); }
+#root .admin-dashboard .admin-post-editor .admin-review-copy-editor { min-width: 0; padding: var(--workspace-card-padding); border-radius: var(--workspace-radius); background: var(--workspace-surface); }
+#root .admin-dashboard .admin-editor-panel .admin-sky-writing-editor.studio-surface { min-width: 0; }
+#root .admin-dashboard .admin-editor-panel :is(.studio-surface,.admin-hook-detail-section,.admin-workspace-details,.admin-editor-guidance,.admin-guided-content-review) :is(.admin-sky-writing-context,.admin-sky-writing-editor:not(.studio-surface),.admin-review-copy-editor) { min-width: 0; padding: 0; border: 0; border-radius: 0; background: transparent; }
+#root .admin-dashboard .admin-editor-panel .studio-surface :is(.studio-surface,.admin-workspace-details,.admin-daily-glance-reader-card) { padding: var(--workspace-card-padding) 0 0; border-top: var(--border-width-thin) solid var(--workspace-line); border-radius: 0; background: transparent; }
+#root .admin-dashboard .admin-editor-panel .admin-sky-writing-editor :is(p,code,.studio-variable-value,.admin-natal-source-key) { min-width: 0; overflow-wrap: anywhere; }
 #root .admin-dashboard .admin-editor-save-state { margin-inline-end: auto; }
 #root .admin-dashboard .admin-editor-save-state::before { content: '•'; margin-inline-end: var(--space-2); color: var(--workspace-positive); }
 #root .admin-dashboard .admin-savebar-next-step { width: 100%; }
@@ -587,7 +592,7 @@ body:has(.admin-dashboard) { margin: 0; }
   #root .admin-dashboard .admin-data-table td::before { content: attr(data-label); color: var(--workspace-muted); font-size: var(--type-meta-size); line-height: var(--leading-meta); }
   #root .admin-dashboard .admin-editor-panel { border-radius: 0; width: 100%; }
   #root .admin-dashboard :is(.admin-post-editor,.admin-editor-header) { padding: var(--workspace-panel-inset); }
-  #root .admin-dashboard .admin-editor-savebar { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); padding: var(--workspace-control-inset); }
+  #root .admin-dashboard .admin-editor-savebar { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); margin: 0 var(--workspace-panel-inset) var(--workspace-panel-inset); padding: var(--workspace-control-inset); }
   #root .admin-dashboard .admin-editor-savebar > :is(.admin-editor-save-state,.admin-savebar-next-step,.admin-publish-button) { grid-column: 1 / -1; }
   #root .admin-dashboard .admin-editor-savebar button { width: 100%; justify-self: stretch; padding-inline: var(--workspace-control-inset); }
   #root .admin-dashboard .admin-editor-save-state { width: 100%; }

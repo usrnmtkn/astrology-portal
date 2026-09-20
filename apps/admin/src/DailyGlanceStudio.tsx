@@ -1,4 +1,5 @@
 import { StudioButton, StudioInput, StudioTextarea } from "./StudioControls";
+import { surfaceSection } from "./studio-ds/recipes";
 import { AdminDisclosureSummary, AdminSelect } from "./AdminNativeControls";
 import { useEffect, useMemo, useState } from "react";
 import { Save, X } from "lucide-react";
@@ -251,7 +252,7 @@ export function DailyGlancePairEditor({ context, isSaving, onClose, onSave, pair
             </div>
           )}
 
-          <section className="admin-daily-glance-audience" aria-label="You version">
+          <section className={`${surfaceSection} admin-daily-glance-audience`} aria-label="You version">
             <div><p className="admin-eyebrow">You</p><h3>Signed-in reader</h3></div>
             <label className="admin-review-copy-editor"><span>Headline · You</span><StudioTextarea value={edits.headlineYou} onChange={(event) => setEdits((value) => ({ ...value, headlineYou: event.target.value }))} /></label>
             <label className="admin-review-copy-editor"><span>Passage · You</span><StudioTextarea value={edits.passageYou} onChange={(event) => setEdits((value) => ({ ...value, passageYou: event.target.value }))} /></label>
@@ -261,7 +262,7 @@ export function DailyGlancePairEditor({ context, isSaving, onClose, onSave, pair
             </div>
           </section>
 
-          <section className="admin-daily-glance-audience" aria-label="Friend version">
+          <section className={`${surfaceSection} admin-daily-glance-audience`} aria-label="Friend version">
             <div><p className="admin-eyebrow">Friend</p><h3>Selected person</h3></div>
             <p className="admin-daily-glance-name-contract">
               Daily uses <code>{"{{personPreferredName}}"}</code> for <strong>Name</strong> so the app can use the selected person's preferred name and fall back to their display name. <code>{"{{Name}}"}</code> is not part of this renderer's variable contract.
@@ -317,7 +318,7 @@ export function DailyGlancePairEditor({ context, isSaving, onClose, onSave, pair
           </details>
         </section>
 
-        <div className="admin-toolbar-actions admin-editor-savebar">
+        <div className="admin-toolbar-actions admin-editor-savebar studio-surface">
           <span className={`admin-editor-save-state ${dirty ? "is-unsaved" : "is-saved"}`} aria-live="polite">{isSaving ? "Saving both sources…" : dirty ? "Unsaved changes" : "All changes saved"}</span>
           <StudioButton className="admin-primary-button" type="button" onClick={() => void onSave(pair, edits)} disabled={!dirty || isSaving}><Save size={16} aria-hidden="true" />Save headline and passage</StudioButton>
         </div>

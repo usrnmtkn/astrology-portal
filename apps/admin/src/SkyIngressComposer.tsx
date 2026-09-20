@@ -4,6 +4,7 @@ import { StudioButton, StudioInput, StudioTextarea } from "./StudioControls";
 import { AdminDisclosureSummary, AdminSelect } from "./AdminNativeControls";
 import { useEffect, useRef, useState } from "react";
 import SkyWritingLibraryEditor from "./SkyWritingLibraryEditor";
+import { surfaceSection } from "./studio-ds/recipes";
 import { SKY_WRITING_LIBRARY_GROUPS, installSkyWritingLibrary, loadSkyWritingLibrarySeeds, preferSkyWritingLibrary } from "./skyWritingLibrary";
 // @ts-ignore Shared deterministic implementation used by the actual reader.
 import { SKY_INGRESS_VARIABLES, makeSkyIngressComposition, renderSkyIngressComposition, skyIngressPublicationIssues, ingressTextIssues, skyIngressOccurrence, resolveIngressSource } from "../../web/src/content/fallbackArchitectureV3/resolver/skyIngressComposition.mjs";
@@ -147,7 +148,7 @@ export default function SkyIngressComposer({ source, motion, disabled = false, i
       : <StudioButton type="button" onClick={() => onOpenSource(source.contentKey, "ingress")}>Set up placement composition</StudioButton>}
   </div>;
 
-  return <section className="admin-sky-ingress-composer admin-sky-writing-editor" aria-label="Placement composition">
+  return <section className={`${surfaceSection} admin-sky-ingress-composer admin-sky-writing-editor`} aria-label="Placement composition">
     <div className="admin-sky-writing-context">
       <strong>{words(identity[0])} in {words(identity[1])} · Placement composition</strong>
       <p>This is the assembled evergreen writing path. Complete motion-specific or shared articles still take priority. Sentence sources and their order publish together with this placement. Enabling a draft does not publish it.</p>
