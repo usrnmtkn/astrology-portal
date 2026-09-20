@@ -1,5 +1,8 @@
 import { StudioButton, StudioInput, StudioTextarea } from "./StudioControls";
 import { AdminSelect } from "./AdminNativeControls";
+import { MetricCard } from "./studio-ds/patterns";
+import { Grid, Stack, Text } from "./studio-ds/primitives";
+import { metricGrid } from "./studio-ds/recipes";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { announceContentUpdate } from "../../web/src/services/contentUpdateSignal";
 import { readGeneratedContentRows, saveGeneratedContentDraft } from "./generatedContentClient";
@@ -408,15 +411,23 @@ export default function SkyV4StudioReviewPanel(props: Props) {
 
   return <>
     {isContinuousPlacement && props.showGroupedEditor !== false && <section className="admin-hook-detail-section" aria-label="SKY V4 continuous placement grouped editor">
-      <div>
-        <p className="admin-eyebrow">Continuous placement editor</p>
+      <Stack gap="sm">
+        <Text size="meta" tone="secondary">Continuous placement editor</Text>
         <h3>{identity ? `${titlePart(identity.planet)} in ${titlePart(identity.sign)}` : props.contentKey}</h3>
-        <p>The main article, current serving fallback, and new evergreen fallback family are managed together here. New variant-family work stays non-serving until exact copy and a separate release are approved.</p>
-      </div>
+        <Text size="body">The main article, current serving fallback, and new evergreen fallback family are managed together here. New variant-family work stays non-serving until exact copy and a separate release are approved.</Text>
+      </Stack>
+      {identity && (
+        <Grid className={metricGrid} aria-label="Selected continuous placement">
+          <MetricCard label="Planet or point" value={titlePart(identity.planet)} />
+          <MetricCard label="Sign" value={titlePart(identity.sign)} />
+        </Grid>
+      )}
 
       <div className="admin-editor-guidance" aria-label="Main reader copy">
-        <p className="admin-eyebrow">Main reader copy</p>
-        <h4>TLDR + placement article</h4>
+        <Stack gap="sm">
+          <Text size="meta" tone="secondary">Main reader copy</Text>
+          <h4>TLDR + placement article</h4>
+        </Stack>
         {mainReaderFields.map((field) => <label key={field.path}>
           <span><strong>{field.label}</strong></span>
           <small>{field.description}</small>
@@ -430,9 +441,11 @@ export default function SkyV4StudioReviewPanel(props: Props) {
       </div>
 
       <div className="admin-editor-guidance" aria-label="Legacy fallback copy">
-        <p className="admin-eyebrow">Legacy serving fallback</p>
-        <h4>Hook · Lived · Turn</h4>
-        <p>This is the currently governed fallback baseline. Keep it stable while the longer evergreen variant family is authored, reviewed, and separately released.</p>
+        <Stack gap="sm">
+          <Text size="meta" tone="secondary">Legacy serving fallback</Text>
+          <h4>Hook · Lived · Turn</h4>
+          <Text size="body">This is the currently governed fallback baseline. Keep it stable while the longer evergreen variant family is authored, reviewed, and separately released.</Text>
+        </Stack>
         {fallbackFields.map((field) => <label key={field.path}>
           <span><strong>{field.label}</strong> <code>{field.path}</code></span>
           <small>{field.description}</small>
@@ -463,11 +476,11 @@ export default function SkyV4StudioReviewPanel(props: Props) {
       {currentSaveMessage && <p className="admin-editor-guidance">{currentSaveMessage}</p>}
 
       {batchOpen && <section className="admin-hook-detail-section" aria-label="Continuous placement legacy fallback batch review">
-        <div>
-          <p className="admin-eyebrow">Legacy continuous placement fallbacks</p>
+        <Stack gap="sm">
+          <Text size="meta" tone="secondary">Legacy continuous placement fallbacks</Text>
           <h4>Review current Hook · Lived · Turn across all 120 placements</h4>
-          <p>These are the existing fallback fields, not the new evergreen variant families. Saving here creates a non-serving Content Studio draft and never overwrites the approved serving baseline.</p>
-        </div>
+          <Text size="body">These are the existing fallback fields, not the new evergreen variant families. Saving here creates a non-serving Content Studio draft and never overwrites the approved serving baseline.</Text>
+        </Stack>
 
         <div className="admin-review-filter-grid" aria-label="Continuous fallback filters">
           <label>
@@ -510,11 +523,11 @@ export default function SkyV4StudioReviewPanel(props: Props) {
             const rowIdentity = continuousIdentity(row.content_key)!;
             const hasUnsavedEdit = Boolean(batchEdits[row.id] && Object.keys(batchEdits[row.id]).length);
             return <article className="admin-hook-detail-section" key={row.content_key}>
-              <div>
-                <p className="admin-eyebrow">{titlePart(rowIdentity.planet)} · {titlePart(rowIdentity.sign)}</p>
+              <Stack gap="sm">
+                <Text size="meta" tone="secondary">{titlePart(rowIdentity.planet)} · {titlePart(rowIdentity.sign)}</Text>
                 <h4>{titlePart(rowIdentity.planet)} in {titlePart(rowIdentity.sign)}</h4>
-                <p><code>{row.content_key}</code> · {rowHasDraft(row) ? "Existing draft" : "Serving baseline"}{rowHasVariantFamilyDraft(row) ? " · Evergreen family draft" : ""}</p>
-              </div>
+                <Text size="body"><code>{row.content_key}</code> · {rowHasDraft(row) ? "Existing draft" : "Serving baseline"}{rowHasVariantFamilyDraft(row) ? " · Evergreen family draft" : ""}</Text>
+              </Stack>
               {fieldsForBatch.map((field) => <label key={`${row.id}-${field.path}`}>
                 <span><strong>{field.label}</strong> <code>{field.path}</code></span>
                 <StudioTextarea
@@ -541,11 +554,11 @@ export default function SkyV4StudioReviewPanel(props: Props) {
     </section>}
 
     <section className="admin-hook-detail-section" aria-label="Production-parity SKY V4 preview">
-      <div>
-        <p className="admin-eyebrow">Canonical resolver preview</p>
+      <Stack gap="sm">
+        <Text size="meta" tone="secondary">Canonical resolver preview</Text>
         <h3>Render this draft through SKY V4</h3>
-        <p>This calls the shared canonical resolver. It never promotes or serves the draft.</p>
-      </div>
+        <Text size="body">This calls the shared canonical resolver. It never promotes or serves the draft.</Text>
+      </Stack>
       <StudioButton type="button" disabled={props.disabled} onClick={() => void renderPreview()}>Render canonical preview</StudioButton>
       {error && <p role="alert">{error}</p>}
       {preview?.contentKey === props.contentKey && <div className="admin-editor-guidance" aria-label="Rendered SKY V4 reader preview">
@@ -555,7 +568,7 @@ export default function SkyV4StudioReviewPanel(props: Props) {
     </section>
 
     <section className="admin-hook-detail-section" aria-label="SKY V4 source provenance">
-      <p className="admin-eyebrow">Governed provenance</p>
+      <Text size="meta" tone="secondary">Governed provenance</Text>
       <p><strong>Approved baseline:</strong> <code>{String(props.effectiveRecord.source_baseline_sha256 ?? "Missing")}</code></p>
       <p><strong>Review:</strong> {String(provenance.reviewStatus ?? "Unknown")} via <code>{String(provenance.approvedVia ?? "Not recorded")}</code></p>
       <p><strong>Draft status:</strong> {String(props.effectiveRecord.studio_version_status ?? "draft")} · <strong>Serving:</strong> {props.effectiveRecord.serving_enabled === true ? "Enabled" : "OFF — owner review wall"}</p>

@@ -3,6 +3,9 @@ import { AdminDisclosureSummary, AdminSelect } from "./AdminNativeControls";
 import { PageLoading } from "../../web/src/components/PageLoading";
 import { subscribeToContentUpdates } from "../../web/src/services/contentUpdateSignal";
 import { StudioButton, StudioInput, StudioTabs } from "./StudioControls";
+import { MetricCard } from "./studio-ds/patterns";
+import { Grid, Stack, Text } from "./studio-ds/primitives";
+import { containedDisclosure, metricGrid } from "./studio-ds/recipes";
 import {
   aspectTechnicalVerb,
   bondActivationHeadline,
@@ -262,9 +265,16 @@ export default function BondEffectPagePreview({
 
   return (
     <section className="admin-composition-surface-actions admin-sky-placement-composition" aria-label="Between you two composition map" data-bond-page-preview="true">
-      <p>
-        This page has two compiled maps. Between you two is the transiting contact. What this activates is a separate synastry pair from the friend chart. Change either set of dropdowns to reload that map.
-      </p>
+      <Stack gap="sm">
+        <Text size="meta" tone="secondary">Between you two</Text>
+        <Text size="body">This page has two compiled maps. Between you two is the transiting contact. What this activates is a separate synastry pair from the friend chart. Change either set of dropdowns to reload that map.</Text>
+      </Stack>
+      <Grid className={metricGrid} aria-label="Selected Between you two contact">
+        <MetricCard label="Transiting planet" value={titleFromKey(transitingPlanet)} />
+        <MetricCard label="Aspect" value={transitAspect === "soft" || transitAspect === "hard" ? transitAspect : aspectTechnicalVerb(transitAspect)} />
+        <MetricCard label="Natal point" value={titleFromKey(natalPoint)} />
+        <MetricCard label="Their planet or point" value={titleFromKey(friendPoint)} />
+      </Grid>
       <fieldset className="admin-metadata-fields" aria-label="Between you two transit">
         <legend>Between you two</legend>
         <label>
@@ -373,12 +383,14 @@ export default function BondEffectPagePreview({
                 <span>Saved source preview</span>
               </div>
               <header>
-                <p className="admin-eyebrow">Composition Map</p>
-                <h3>{headline}</h3>
+                <Stack gap="sm">
+                  <Text size="meta" tone="secondary">Composition Map</Text>
+                  <h3>{headline}</h3>
+                </Stack>
               </header>
               <div className="admin-template-reader-copy">
                 <div className="admin-composition-preview-field">
-                  <span className="admin-eyebrow">Headline</span>
+                  <Text size="meta" tone="secondary">Headline</Text>
                   <p>
                     <Fact title="Transiting planet comes from the selected contact">{titleFromKey(transitingPlanet)}</Fact>
                     {" "}
@@ -388,7 +400,7 @@ export default function BondEffectPagePreview({
                   </p>
                 </div>
                 <div className="admin-composition-preview-field field-body">
-                  <span className="admin-eyebrow">Opening · They</span>
+                  <Text size="meta" tone="secondary">Opening · They</Text>
                   <p>
                     <Passage ariaLabel="Edit Friend opening" kind="copy" onClick={() => onOpenSource(openingKey, "Between you two opening", "body_they")}>
                       {openingThey || "No Friend opening saved. Select to write this section."}
@@ -396,7 +408,7 @@ export default function BondEffectPagePreview({
                   </p>
                 </div>
                 <div className="admin-composition-preview-field field-body">
-                  <span className="admin-eyebrow">Opening · You</span>
+                  <Text size="meta" tone="secondary">Opening · You</Text>
                   <p>
                     <Passage ariaLabel="Edit You opening" kind="copy" onClick={() => onOpenSource(openingKey, "Between you two opening", "body_you")}>
                       {openingYou || "No You opening saved. Select to write this section."}
@@ -404,7 +416,7 @@ export default function BondEffectPagePreview({
                   </p>
                 </div>
                 <div className="admin-composition-preview-field">
-                  <span className="admin-eyebrow">Calculated astrology</span>
+                  <Text size="meta" tone="secondary">Calculated astrology</Text>
                   <p>
                     <Fact title="This last line is calculated from the chart. It is not authored on this row.">{fact}</Fact>
                   </p>
@@ -417,12 +429,14 @@ export default function BondEffectPagePreview({
                 <span>Saved source preview</span>
               </div>
               <header>
-                <p className="admin-eyebrow">Composition Map</p>
-                <h3>{activationTitle}</h3>
+                <Stack gap="sm">
+                  <Text size="meta" tone="secondary">Composition Map</Text>
+                  <h3>{activationTitle}</h3>
+                </Stack>
               </header>
               <div className="admin-template-reader-copy">
                 <div className="admin-composition-preview-field">
-                  <span className="admin-eyebrow">Heading</span>
+                  <Text size="meta" tone="secondary">Heading</Text>
                   <p>
                     <Fact title="This heading is composed from the natal point, aspect, friend name, and their planet">{activationTitle}</Fact>
                   </p>
@@ -434,7 +448,7 @@ export default function BondEffectPagePreview({
                     : (
                       <>
                         <div className="admin-composition-preview-field field-body">
-                          <span className="admin-eyebrow">You</span>
+                          <Text size="meta" tone="secondary">You</Text>
                           <p>
                             <Passage ariaLabel="Edit You activation" kind="hook" onClick={() => openActivation("body_you")}>
                               {synastryYou || "No You activation saved for this pair."}
@@ -442,7 +456,7 @@ export default function BondEffectPagePreview({
                           </p>
                         </div>
                         <div className="admin-composition-preview-field field-body">
-                          <span className="admin-eyebrow">Friend</span>
+                          <Text size="meta" tone="secondary">Friend</Text>
                           <p>
                             <Passage ariaLabel="Edit Friend activation" kind="hook" onClick={() => openActivation("body_they")}>
                               {synastryThey || "No Friend activation saved for this pair."}
@@ -500,7 +514,7 @@ export default function BondEffectPagePreview({
               <small>Opening row for the transiting contact</small>
               <p className="admin-composition-source-copy">{openingThey || openingYou || "No writing saved for this section."}</p>
               <StudioButton type="button" onClick={() => openOpening()}>Edit opening</StudioButton>
-              <details className="admin-workspace-details">
+              <details className={`${containedDisclosure} admin-workspace-details`}>
                 <AdminDisclosureSummary>Source details</AdminDisclosureSummary>
                 <code>{openingKey}</code>
               </details>
@@ -510,7 +524,7 @@ export default function BondEffectPagePreview({
               <small>{synastryYou || synastryThey ? "Synastry pair from the friend chart" : "No saved synastry pair for this example"}</small>
               <p className="admin-composition-source-copy">{synastryThey || synastryYou || "No writing saved for this section."}</p>
               <StudioButton type="button" disabled={!synastryKey} onClick={() => openActivation()}>Edit this activation</StudioButton>
-              <details className="admin-workspace-details">
+              <details className={`${containedDisclosure} admin-workspace-details`}>
                 <AdminDisclosureSummary>Source details</AdminDisclosureSummary>
                 <code>{synastryKey || "not saved"}</code>
               </details>

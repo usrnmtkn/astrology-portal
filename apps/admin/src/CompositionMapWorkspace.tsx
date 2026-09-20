@@ -22,6 +22,9 @@ import {
   type WritingSurfaceMapItem
 } from "./writingSurfaceSourceMap";
 import { PageLoading } from "../../web/src/components/PageLoading";
+import { MetricCard } from "./studio-ds/patterns";
+import { Grid, Stack, Text } from "./studio-ds/primitives";
+import { containedDisclosure, metricGrid } from "./studio-ds/recipes";
 
 type Props = {
   editor: ReactNode;
@@ -106,9 +109,12 @@ function ReaderSurfaceWorkspace({
 
   return (
     <div className="admin-composition-map-layout admin-composition-surface-layout">
-      <aside className="studio-surface studio-section admin-composition-template-list" aria-label="App surfaces and systems">
+      <aside className="admin-composition-template-list" aria-label="App surfaces and systems">
         <header>
-          <div><p className="admin-eyebrow">Choose a surface or system</p><strong>{filtered.length} of {writingSurfaceSourceMap.length}</strong></div>
+          <Stack gap="sm">
+            <Text size="meta" tone="secondary">Choose a surface or system</Text>
+            <strong>{filtered.length} of {writingSurfaceSourceMap.length}</strong>
+          </Stack>
           <div className="admin-composition-template-tools">
             <span className="admin-composition-search-shell">
               <StudioInput aria-label="Search surfaces and systems" value={query} onChange={(event) => { setQuery(event.target.value); setBrowseOpen(true); }} placeholder="Article, calendar, report…" />
@@ -125,7 +131,7 @@ function ReaderSurfaceWorkspace({
             </AdminSelect>
           </label>
         </header>
-        <details className="admin-workspace-details admin-composition-browse" open={browseOpen} onToggle={(event) => setBrowseOpen(event.currentTarget.open)}><AdminDisclosureSummary>Browse surfaces ({filtered.length})</AdminDisclosureSummary>
+        <details className={`${containedDisclosure} admin-workspace-details admin-composition-browse`} open={browseOpen} onToggle={(event) => setBrowseOpen(event.currentTarget.open)}><AdminDisclosureSummary>Browse surfaces ({filtered.length})</AdminDisclosureSummary>
         <div className="admin-composition-template-items">
           {filtered.map((surface) => {
             const surfaceAccess = writingSurfaceAdminAccess[surface.id];
@@ -154,20 +160,30 @@ function ReaderSurfaceWorkspace({
         </details>
       </aside>
 
-      <section className="studio-surface studio-section admin-composition-detail" aria-label="Selected app surface or system">
+      <section className="admin-composition-detail" aria-label="Selected app surface or system">
         {selected && access ? (
           <>
             <header className="admin-composition-detail-header">
-              <div>
-                <h2 className="sr-only">{selected.surface}</h2>
-              </div>
+              <Stack gap="sm">
+                <Text size="meta" tone="secondary">{selected.area}</Text>
+                <h2>{selected.surface}</h2>
+                <Text size="body" tone="secondary">{access.readerLocation}</Text>
+              </Stack>
               <span className={`ui-pill admin-status ${access.editability === "editable" ? "status-live" : access.editability === "missing" ? "status-error" : "status-draft"}`}>{editorialStatus}</span>
             </header>
+            <Grid className={metricGrid} aria-label="Selected surface coverage">
+              <MetricCard label="Editorial status" value={editorialStatus} />
+              <MetricCard label="Content parts" value={selected.requiredSlots.length} />
+              <MetricCard label="Sources" value={selected.sources.length} />
+              <MetricCard label="Destinations" value={access.routes.length} />
+            </Grid>
 
             <CompositionSurfaceSources onEditField={onEditField} key={selected.id} surfaceId={selected.id} rows={rows} templates={templates} onEditRow={onEditRow} onSelectTemplate={onSelectTemplate} onLoadRow={onLoadRow} />
             <section className="admin-composition-surface-actions" aria-label="Editing destinations">
               <header>
-                <div><h3>Editing destinations</h3></div>
+                <Stack gap="sm">
+                  <h3>Editing destinations</h3>
+                </Stack>
               </header>
               <div className="admin-composition-surface-route-list">
                 {access.routes.map((route) => (
@@ -184,7 +200,7 @@ function ReaderSurfaceWorkspace({
               </div>
               {access.cmsStarters?.length ? (
                 <div className="admin-composition-cms-starters">
-                  <p className="admin-eyebrow">Create a governed surface override</p>
+                  <Text size="meta" tone="secondary">Create a governed surface override</Text>
                   {access.cmsStarters.map((starter) => (
                     <article key={starter.contentKey}>
                       <div><strong>{starter.label}</strong><code>{starter.contentKey}</code><small>Calculated slots: {starter.allowedSlots.join(", ") || "none"}</small></div>
@@ -195,37 +211,45 @@ function ReaderSurfaceWorkspace({
               ) : null}
             </section>
 
-            <details className="admin-workspace-details admin-composition-technical"><AdminDisclosureSummary>Technical details</AdminDisclosureSummary>
+            <details className={`${containedDisclosure} admin-workspace-details admin-composition-technical`}><AdminDisclosureSummary>Technical details</AdminDisclosureSummary>
             <section className="admin-composition-surface-summary" aria-label="Writing surface contract">
-              <div>
-                <p className="admin-eyebrow">Surface content</p>
+              <Stack gap="sm">
+                <Text size="meta" tone="secondary">Surface content</Text>
                 <h3>Required content parts</h3>
                 <div className="admin-composition-surface-parts">
                   {selected.requiredSlots.map((slot) => <span key={slot}>{slot}</span>)}
                 </div>
-              </div>
-              <div>
-                <p className="admin-eyebrow">How it is assembled</p>
+              </Stack>
+              <Stack gap="sm">
+                <Text size="meta" tone="secondary">How it is assembled</Text>
                 <h3>Visible precedence</h3>
                 <ol className="admin-composition-layer-order">
                   {selected.visibleLayerOrder.map((layer) => <li key={layer}>{writingLayerLabels[layer]}</li>)}
                 </ol>
-              </div>
+              </Stack>
             </section>
 
             <section className="admin-composition-surface-flow" aria-label="Runtime rendering path">
-              <p className="admin-eyebrow">Runtime rendering path</p>
-              <h3>Where the displayed copy comes from</h3>
-              <p>{selected.currentRenderPath}</p>
-              <span className="ui-pill admin-status">{writingSurfaceStatusLabels[selected.status]}</span>
+              <Stack gap="sm">
+                <Text size="meta" tone="secondary">Runtime rendering path</Text>
+                <h3>Where the displayed copy comes from</h3>
+                <Text size="body">{selected.currentRenderPath}</Text>
+                <span className="ui-pill admin-status">{writingSurfaceStatusLabels[selected.status]}</span>
+              </Stack>
             </section>
 
             <section className="admin-composition-surface-provenance" aria-label="Surface provenance">
-              <header><div><p className="admin-eyebrow">Provenance</p><h3>Code and content sources</h3></div><strong>{selected.sources.length}</strong></header>
+              <header>
+                <Stack gap="sm">
+                  <Text size="meta" tone="secondary">Provenance</Text>
+                  <h3>Code and content sources</h3>
+                </Stack>
+                <strong>{selected.sources.length}</strong>
+              </header>
               <div>
                 {selected.sources.map((source) => (
                   <article key={`${selected.id}-${source.role}-${source.path}`}>
-                    <span>{writingSurfaceSourceRoleLabels[source.role]}</span>
+                    <Text size="meta" tone="secondary">{writingSurfaceSourceRoleLabels[source.role]}</Text>
                     <strong>{source.label}</strong>
                     <code>{source.path}</code>
                   </article>
@@ -234,8 +258,14 @@ function ReaderSurfaceWorkspace({
             </section>
 
             <section className="admin-composition-surface-limit" aria-label="Known limits">
-              <div><p className="admin-eyebrow">Known limit</p><p>{selected.risk}</p></div>
-              <div><p className="admin-eyebrow">Next QA action</p><p>{selected.nextAction}</p></div>
+              <Stack gap="sm">
+                <Text size="meta" tone="secondary">Known limit</Text>
+                <Text size="body">{selected.risk}</Text>
+              </Stack>
+              <Stack gap="sm">
+                <Text size="meta" tone="secondary">Next QA action</Text>
+                <Text size="body">{selected.nextAction}</Text>
+              </Stack>
             </section>            </details>
 
           </>
@@ -374,10 +404,13 @@ export default function CompositionMapWorkspace({ editor, onEditRow, onEditField
         tabs={[{ value: "surfaces", label: <>Surfaces &amp; systems <span>{writingSurfaceSourceMap.length}</span></> },
           { value: "templates", label: <>Template internals <span>{map.length}</span></> }]}>
       {scope === "surfaces" ? <ReaderSurfaceWorkspace onEditField={onEditField} initialSurfaceId={initialSurfaceId} onStartCmsRow={onStartCmsRow} onLoadRow={onLoadRow} rows={rows} templates={map} onEditRow={onEditRow} onSelectTemplate={(key) => { clearFilters(); selectTemplate(key); setScope("templates"); }} /> : <div className="admin-composition-map-layout">
-        <aside className="studio-surface studio-section admin-composition-template-list" aria-label="Composition templates">
+        <aside className="admin-composition-template-list" aria-label="Composition templates">
           <header>
-            <div><p className="admin-eyebrow">{templateKeys ? "Choose a passage or template" : "Choose a template"}</p><strong>{filtered.length} of {map.length}</strong></div>
-            <p>Choose one to read its surface.</p>
+            <Stack gap="sm">
+              <Text size="meta" tone="secondary">{templateKeys ? "Choose a passage or template" : "Choose a template"}</Text>
+              <strong>{filtered.length} of {map.length}</strong>
+              <Text size="body" tone="secondary">Choose one to read its surface.</Text>
+            </Stack>
             <div className="admin-composition-template-tools">
               <span className="admin-composition-search-shell">
                 <StudioInput aria-label="Search the composition map" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Find a template or source" />
@@ -430,15 +463,15 @@ export default function CompositionMapWorkspace({ editor, onEditRow, onEditField
           </div>
         </aside>
 
-        <section className="studio-surface studio-section admin-composition-detail" aria-label="Selected template composition">
+        <section className="admin-composition-detail" aria-label="Selected template composition">
           {selected && !pendingRows.length && !loadError ? (
             <>
               <header className="admin-composition-detail-header">
-                <div>
-                  <p className="admin-eyebrow">{selected.destination}</p>
+                <Stack gap="sm">
+                  <Text size="meta" tone="secondary">{selected.destination}</Text>
                   <h2>{selected.label.replace(`${selected.destination} · `, "")}</h2>
-                  <p>{selected.description}</p>
-                </div>
+                  <Text size="body" tone="secondary">{selected.description}</Text>
+                </Stack>
                 <StudioButton type="button" className="admin-primary-button" onClick={() => onEditRow(selected.row)}>
                   {selected.preview.lineage === "saved-passage" ? "Edit passage" : "Edit main template"}
                 </StudioButton>
@@ -458,11 +491,11 @@ export default function CompositionMapWorkspace({ editor, onEditRow, onEditField
               {view === "preview" && (
                 <section className="admin-composition-reader-preview" aria-label="Reader surface preview">
                   <header>
-                    <div>
-                      <p className="admin-eyebrow">Representative surface preview</p>
+                    <Stack gap="sm">
+                      <Text size="meta" tone="secondary">Representative surface preview</Text>
                       <h3>{selected.preview.lineage === "saved-passage" ? "Complete passage preview" : selected.preview.lineage === "runtime-traceable" ? "Traceable reader rendering" : "Preview lineage is incomplete"}</h3>
-                      <p>{selected.preview.lineageNote} {selected.preview.lineage !== "saved-passage" && "This uses sample chart facts, not a live chart."}</p>
-                    </div>
+                      <Text size="body" tone="secondary">{selected.preview.lineageNote} {selected.preview.lineage !== "saved-passage" && "This uses sample chart facts, not a live chart."}</Text>
+                    </Stack>
                     <span className={`ui-pill admin-status ${selected.preview.lineage !== "not-traceable" ? "status-reviewed" : "status-error"}`}>
                       {selected.preview.lineage === "saved-passage" ? "Saved passage" : selected.preview.lineage === "runtime-traceable" ? "Runtime-traceable" : "Not traceable"}
                     </span>
@@ -516,7 +549,13 @@ export default function CompositionMapWorkspace({ editor, onEditRow, onEditField
 
                   <div className="admin-composition-preview-context">
                     <section aria-label="Saved copy used in preview">
-                      <header><div><p className="admin-eyebrow">Exact sources in this preview</p><h3>Open the wording behind the preview</h3></div><strong>{selected.preview.sources.length}</strong></header>
+                      <header>
+                        <Stack gap="sm">
+                          <Text size="meta" tone="secondary">Exact sources in this preview</Text>
+                          <h3>Open the wording behind the preview</h3>
+                        </Stack>
+                        <strong>{selected.preview.sources.length}</strong>
+                      </header>
                       <div className="admin-composition-preview-sources">
                         {selected.preview.sources.map((source) => (
                           <StudioButton type="button" key={source.row.id} onClick={() => onEditRow(source.row)}>
@@ -529,7 +568,13 @@ export default function CompositionMapWorkspace({ editor, onEditRow, onEditField
                     </section>
 
                     <section aria-label="Example calculated facts">
-                      <header><div><p className="admin-eyebrow">Example facts</p><h3>Values supplied by the app</h3></div><strong>{selected.preview.facts.length}</strong></header>
+                      <header>
+                        <Stack gap="sm">
+                          <Text size="meta" tone="secondary">Example facts</Text>
+                          <h3>Values supplied by the app</h3>
+                        </Stack>
+                        <strong>{selected.preview.facts.length}</strong>
+                      </header>
                       <p className="admin-field-hint">Change sample facts to find the wording for a planet, sign, house, or aspect. These inputs do not change anyone’s calculated chart.</p>
                       <dl>
                         {selected.preview.facts.map((fact) => <div key={fact.name}><dt><label htmlFor={`composition-fact-${fact.name}`}>{fact.label}</label></dt><dd><StudioInput id={`composition-fact-${fact.name}`} value={fact.value} onChange={(event) => setExampleValues((current) => ({ ...current, [fact.name]: event.target.value }))} /></dd></div>)}
@@ -543,7 +588,12 @@ export default function CompositionMapWorkspace({ editor, onEditRow, onEditField
               {view === "template" && (
                 <section className="admin-composition-template-workbench" aria-label="Main template">
                   <header>
-                    <div><p className="admin-eyebrow">Main template</p><h3>Structure and fixed wording</h3><p>This is the template the resolver fills. Tokens in braces are supplied by saved sources or calculated facts.</p><code>{selected.row.content_key}</code></div>
+                    <Stack gap="sm">
+                      <Text size="meta" tone="secondary">Main template</Text>
+                      <h3>Structure and fixed wording</h3>
+                      <Text size="body" tone="secondary">This is the template the resolver fills. Tokens in braces are supplied by saved sources or calculated facts.</Text>
+                      <code>{selected.row.content_key}</code>
+                    </Stack>
                     <StudioButton type="button" onClick={() => onEditRow(selected.row)}>Edit template</StudioButton>
                   </header>
                   <div className="admin-composition-template-fields">
@@ -564,7 +614,7 @@ export default function CompositionMapWorkspace({ editor, onEditRow, onEditField
                     ))}
                   </div>
                   <section className="admin-composition-template-tokens" aria-label="Template tokens">
-                    <p className="admin-eyebrow">Tokens used</p>
+                    <Text size="meta" tone="secondary">Tokens used</Text>
                     <div>{selected.slots.map((slot) => <StudioButton type="button" key={slot.name} data-variable-name={slot.name} data-variable-color={variableColors.get(slot.name)} onClick={() => openVariable(slot.name)}>{`{{${slot.name}}}`}<small>{slot.sourceKind === "runtime" ? "Calculated" : slot.sourceKind === "unmapped" ? "Not wired" : "Saved copy"}</small></StudioButton>)}</div>
                   </section>
                 </section>
@@ -572,13 +622,15 @@ export default function CompositionMapWorkspace({ editor, onEditRow, onEditField
 
               {view === "assembly" && <section className="admin-composition-slot-tree" aria-label="Template slots">
                 <header>
-                  <p className="admin-eyebrow">Template slots</p>
-                  <p>{selected.slots.length ? "Each slot resolves to editable saved copy or a value calculated by the app." : "This template currently contains no detectable slots."}</p>
-                  <div className="admin-composition-detail-meta" aria-label="Selected template coverage">
-                    <span><strong>{selected.slots.length}</strong> slots</span>
-                    <span><strong>{selectedEditableSources}</strong> editable source{selectedEditableSources === 1 ? "" : "s"}</span>
-                    <span><strong>{selectedRuntimeSlots}</strong> calculated</span>
-                  </div>
+                  <Stack gap="sm">
+                    <Text size="meta" tone="secondary">Template slots</Text>
+                    <Text size="body" tone="secondary">{selected.slots.length ? "Each slot resolves to editable saved copy or a value calculated by the app." : "This template currently contains no detectable slots."}</Text>
+                  </Stack>
+                  <Grid className={metricGrid} aria-label="Selected template coverage">
+                    <MetricCard label="Slots" value={selected.slots.length} />
+                    <MetricCard label={selectedEditableSources === 1 ? "Editable source" : "Editable sources"} value={selectedEditableSources} />
+                    <MetricCard label="Calculated" value={selectedRuntimeSlots} />
+                  </Grid>
                 </header>
                 {selected.slots.map((slot) => (
                   <article id={`composition-slot-${slot.name}`} tabIndex={-1} className={`admin-composition-slot ${slot.issue ? "has-issue" : ""}`} key={slot.name}>

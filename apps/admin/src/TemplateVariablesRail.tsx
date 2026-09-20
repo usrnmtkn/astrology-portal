@@ -1,5 +1,6 @@
 import { StudioButton, StudioIconButton, StudioInput } from "./StudioControls";
 import { AdminDisclosureSummary } from "./AdminNativeControls";
+import { Stack, Text } from "./studio-ds/primitives";
 import { ChevronRight, CircleHelp, Search, X } from "lucide-react";
 import { Suspense, lazy } from "react";
 import type { KeyboardEvent as ReactKeyboardEvent } from "react";
@@ -94,17 +95,17 @@ export default function TemplateVariablesRail({
       onKeyDown={onKeyDown}
     >
       <header className="admin-variables-rail-header">
-        <div>
-          <p className="admin-eyebrow">Variables</p>
+        <Stack gap="sm">
+          <Text size="meta" tone="secondary">Variables</Text>
           <h2>{selected ? <code>{`{{${selected.name}}}`}</code> : `${references.length} in this row`}</h2>
-        </div>
+        </Stack>
         <div className="admin-variables-rail-actions">
           <details className="admin-help-popover">
             <AdminDisclosureSummary showChevron={false} className="admin-disclosure-icon" aria-label="Template syntax help" title="Template syntax help">
               <CircleHelp size={16} aria-hidden="true" />
             </AdminDisclosureSummary>
             <div role="region" aria-label="Template syntax guide">
-              <p className="admin-eyebrow">Template syntax</p>
+              <Text size="meta" tone="secondary">Template syntax</Text>
               <dl className="admin-hook-pattern-list">
                 <div>
                   <dt><code>{"{{planetTitle}}"}</code></dt>

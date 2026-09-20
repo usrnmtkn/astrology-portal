@@ -1,5 +1,8 @@
 import { StudioTabs, StudioButton, StudioInput } from "./StudioControls";
 import { AdminDisclosureSummary, AdminSelect } from "./AdminNativeControls";
+import { MetricCard } from "./studio-ds/patterns";
+import { Grid, Stack, Text } from "./studio-ds/primitives";
+import { containedDisclosure, metricGrid } from "./studio-ds/recipes";
 import { lazy, Suspense, useEffect, useMemo, useState, type ReactNode } from 'react';
 import type { CompositionMapRow } from './compositionMap';
 import { lunarContentIdentity, lunarSigns } from './lunarCalendarContent';
@@ -51,7 +54,7 @@ export default function LunarCalendarWorkspace({ rows, editor, query, createRequ
   return <section className="admin-template-page" aria-label="Lunar Calendar workspace">
     <section className="admin-content-toolbar"><div><p>Choose a Moon sign, read its saved write-ups, then select Edit passage. To write an alternative, add a separate write-up.</p><p><a href="#sky-writeups?view=daily-summary">Edit Sun summary</a>{" · "}<a href="#exact-content?q=fallback-hook%2Fsky-placement-lived%2Fmoon%2F">Edit Moon placement writing</a></p></div><StudioButton type="button" onClick={() => { setNewSign(sign === 'all' ? '' : sign); setAdding(true); setView('writeups'); }}>Add Moon-in-sign write-up</StudioButton></section>
     {adding && <section className="admin-panel" aria-label="Add Moon-in-sign write-up">
-      <header className="admin-composition-detail-header"><div><h2>Add Moon-in-sign write-up</h2><p>Create a general Calendar overview for a Moon sign. New Moon and Full Moon horoscopes are separate.</p></div><StudioButton onClick={() => setAdding(false)}>Cancel</StudioButton></header>
+      <header className="admin-composition-detail-header"><Stack gap="sm"><h2>Add Moon-in-sign write-up</h2><Text size="body" tone="secondary">Create a general Calendar overview for a Moon sign. New Moon and Full Moon horoscopes are separate.</Text></Stack><StudioButton onClick={() => setAdding(false)}>Cancel</StudioButton></header>
       <div className="admin-review-filter-grid"><label><span>Moon sign for the new write-up</span><AdminSelect autoFocus aria-label="Moon sign for the new write-up" value={newSign} onChange={event => setNewSign(event.target.value)}><option value="">Choose a Moon sign</option>{lunarSigns.map(value => <option key={value} value={value}>{value[0].toUpperCase() + value.slice(1)}</option>)}</AdminSelect></label></div>
       {isLoading ? <PageLoading compact message="Loading saved write-ups…" /> : <p role="status">{!newSign ? 'Choose the sign before starting a draft.' : !availableVariant ? 'All available alternatives already exist for this sign. Edit or restore a saved write-up.' : existingForSign.length ? `${existingForSign.length} saved write-ups. This creates a separate alternative; your existing writing stays in place.` : 'No saved write-ups for this sign. Start its first draft.'}</p>}
       <div className="admin-new-actions"><StudioButton className="admin-primary-button" disabled={!newSign || !availableVariant || isLoading} onClick={() => {
@@ -74,20 +77,24 @@ export default function LunarCalendarWorkspace({ rows, editor, query, createRequ
     {view === 'composition' ? <Suspense fallback={<PageLoading message="Loading composition…" />}><CompositionMapWorkspace rows={rows} templateKeys={keys} initialKey={selected?.row.content_key} onEditRow={onEdit} onLoadRow={onLoad} editor={editor} /></Suspense> : <>
       {editor}
       <div className="admin-composition-map-layout">
-        <section className="studio-surface studio-section admin-composition-detail" aria-label="Selected lunar passage">{selected && <>
+        <section className="admin-composition-detail" aria-label="Selected lunar passage">{selected && <>
           {error && <div className="admin-error" role="alert"><p>{error}</p><StudioButton type="button" onClick={() => setRetry(value => value + 1)}>Retry passage</StudioButton></div>}
           <label><span>Selected passage</span>{filtered.length ? <AdminSelect aria-label="Selected passage" value={selected.row.content_key} onChange={event => setSelectedKey(event.target.value)}>{filtered.map(({ row, identity }) => <option key={row.id} value={row.content_key}>{identity.title}</option>)}</AdminSelect> : <p className="admin-field-hint">No passages match these filters.</p>}</label>
-          <header className="admin-composition-detail-header"><div><p className="admin-eyebrow">{selected.identity.destination}</p><h2>{selected.identity.title}</h2></div><StudioButton type="button" disabled={Boolean(error)} onClick={() => onEdit(selected.row)}>Edit passage</StudioButton></header>
+          <header className="admin-composition-detail-header"><Stack gap="sm"><Text size="meta" tone="secondary">{selected.identity.destination}</Text><h2>{selected.identity.title}</h2></Stack><StudioButton type="button" disabled={Boolean(error)} onClick={() => onEdit(selected.row)}>Edit passage</StudioButton></header>
+          <Grid className={metricGrid} aria-label="Selected lunar passage coverage">
+            <MetricCard label="Publication" value={isArchived(selected.row) ? "Archived" : selected.row.status === "LIVE" ? "Published" : selected.row.status.toLowerCase()} />
+            <MetricCard label="Kind" value={selected.identity.kind} />
+          </Grid>
           <p>{selected.identity.selection}</p>{selected.identity.excluded && <p role="note">The owner excluded this base Cancer passage. The Calendar selects another approved variant even when this stored row says Published.</p>}
           {selected.row.inventory_only ? <PageLoading compact message="Loading full passage…" /> : <div className="admin-composition-preview-field"><span>Saved passage</span>{(selected.row.body ?? '').split(/\n\n/).map((paragraph, index) => <p key={index}>{paragraph}</p>)}</div>}
           <StudioButton type="button" onClick={() => setView('composition')}>Review composition and variables</StudioButton>
-          <details className="admin-workspace-details"><AdminDisclosureSummary>Source key and editorial notes</AdminDisclosureSummary><code>{selected.row.content_key}</code><p>{selected.row.summary}</p></details>
+          <details className={`${containedDisclosure} admin-workspace-details`}><AdminDisclosureSummary>Source key and editorial notes</AdminDisclosureSummary><code>{selected.row.content_key}</code><p>{selected.row.summary}</p></details>
         </>}</section>
-        <aside className="studio-surface studio-section admin-composition-template-list" aria-label="Lunar passages">
-          <header><strong>{filtered.length} {filtered.length === 1 ? 'passage' : 'passages'}</strong></header>
+        <aside className="admin-composition-template-list" aria-label="Lunar passages">
+          <header><Stack gap="sm"><Text size="meta" tone="secondary">Lunar passages</Text><strong>{filtered.length} {filtered.length === 1 ? 'passage' : 'passages'}</strong></Stack></header>
           <div className="studio-grid">{filtered.slice(0, limit).map(({ row, identity }) => <article className="admin-template-card" key={row.id}>
             <StudioButton type="button" aria-pressed={row.id === selected?.row.id} onClick={() => setSelectedKey(row.content_key)}>{identity.title}</StudioButton>
-            <p className="admin-eyebrow">{isArchived(row) ? 'Archived' : row.status === 'LIVE' ? 'Published' : row.status.toLowerCase()} · {identity.kind}{identity.excluded ? ' · Excluded by owner' : ''}</p>
+            <Text size="meta" tone="secondary">{isArchived(row) ? 'Archived' : row.status === 'LIVE' ? 'Published' : row.status.toLowerCase()} · {identity.kind}{identity.excluded ? ' · Excluded by owner' : ''}</Text>
             <StudioButton type="button" aria-label={`Edit ${identity.title}`} onClick={() => { setSelectedKey(row.content_key); onEdit(row); }}>Edit passage</StudioButton>
           </article>)}</div>
           {filtered.length > limit && <StudioButton type="button" onClick={() => setLimit(value => value + 12)}>Show more passages</StudioButton>}
