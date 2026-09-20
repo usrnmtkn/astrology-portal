@@ -16,7 +16,7 @@ import FriendsTransitSectionFinder from "./FriendsTransitSectionFinder";
 import { isDynamicTransitNatalExactKey } from "../../web/src/content/transitNatalIdentity";
 import { isTransitNatalFamilyKey, isTransitNatalSituationKey, packagedTransitOpenMode, transitNatalLiveServingSource } from "./transitNatalEditorScope";
 import { currentSkySummaryWording, skyDailySummaryFields, skySummaryTemplateErrors, type SkySummaryField } from "../../web/src/content/skyDailySummaryCatalog";
-import { skyDebilityFields, skyDebilityTemplateErrors } from "../../web/src/content/skyDebilityCatalog";
+import { SKY_DEBILITY_KEY_PREFIX, skyDebilityFields, skyDebilityTemplateErrors } from "../../web/src/content/skyDebilityCatalog";
 import { refreshContentPublications } from "../../web/src/services/contentPublications";
 import { installContentPublications, isContentRetired, subscribeToContentPublications, validContentPublication } from "../../web/src/content/contentPublicationState";
 import { recoverContentStudioCopy } from "./contentStudioCopyRecovery";
@@ -285,6 +285,7 @@ const compositionSourceBatchSize = 25;
 const skyRelationHydrationLimit = 60;
 const reviewQueueHydrationLimit = 400;
 const dailyGlanceHydrationLimit = 120;
+const skySummaryWorkspaceHydrationLimit = 400;
 
 type GeneratedContentStatus = "DRAFT" | "REVIEWED" | "LIVE" | "ARCHIVED" | "ERROR";
 type GeneratedContentSurface = "sky" | "you" | "natal" | "synastry" | "composite" | "relationship" | "modifier" | "friends" | "year_ahead" | "education";
@@ -5480,6 +5481,17 @@ export function GeneratedContentAdminDashboard() {
     if (activePage !== "reviewQueue") return;
     loadSourceDocuments(reviewQueueRows.slice(0, reviewQueueHydrationLimit).map((row) => row.id));
   }, [activePage, reviewQueueRows, loadSourceDocuments]);
+
+  // The Daily Sky Summary workspace reads saved wording for every field it shows: the summary
+  // clauses, the assembly template, the ingress TLDRs, and the debility copy. Without the documents
+  // a saved field reads as empty, so the workspace looks like nothing was ever written there.
+  useEffect(() => {
+    if (activePage !== "skyWriteups" || skyWriteupWorkspaceView !== "daily-summary") return;
+    loadSourceDocuments(rows
+      .filter((row) => row.content_key.startsWith("cms/sky-daily-summary/") || row.content_key.startsWith(SKY_DEBILITY_KEY_PREFIX))
+      .slice(0, skySummaryWorkspaceHydrationLimit)
+      .map((row) => row.id));
+  }, [activePage, skyWriteupWorkspaceView, rows, loadSourceDocuments]);
 
   // The Daily At-a-Glance list previews each headline and passage and searches their wording, so the
   // pairs it lists need their documents before the search can match anything.

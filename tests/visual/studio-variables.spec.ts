@@ -30,7 +30,7 @@ for (const [width, theme] of [[390, 'light'], [390, 'dark'], [1440, 'light'], [1
    page.on('pageerror', error => errors.push(error.message));
    await page.setViewportSize({ width, height: 1000 });
    await page.addInitScript(theme => { localStorage.setItem('tldrastro:contentAdminSecret', 'calendar-api-fixture'); localStorage.setItem('tldrastro:studio-theme', theme); }, theme);
-   await routeStudioInventoryApi(page, { call, onWrite: result => responses.push(result) });
+   await routeStudioInventoryApi(page, { call, onWrite: ({ result }) => responses.push(result) });
    await context.grantPermissions(['clipboard-read', 'clipboard-write']);
    const entry = process.env.STUDIO_PRODUCTION_ENTRY === '1' ? '/admin/content' : '/';
    await page.goto(entry + '#variables');

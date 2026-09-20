@@ -15,7 +15,7 @@ import { contentWiringStatus } from "../../apps/admin/src/contentWiringStatus.js
 import { isGovernedReaderEligible } from "../../apps/web/src/content/fallbackArchitectureV3/resolver/readerEligibility.browser.js";
 import { fallbackArchitectureV3DashboardPackageDestination } from "../../apps/web/src/services/fallbackArchitectureV3DashboardPackaging.js";
 import { isReaderServableGeneratedContentRow, isGeneratedContentReaderBoundaryAllowed, generatedRowPackageRole } from "../../apps/web/src/content/generatedContentEligibility.js";
-import { astro101IsLiveOnLearn, isAstro101ContentKey } from "../../apps/web/src/content/astro101.ts";
+import { astro101IsLiveOnLearn, isAstro101ContentKey } from "../../apps/web/src/content/astro101.js";
 import { hasExactSkyArticleOwnerApproval, skyArticleEditionRecord } from "../../apps/web/src/content/skyArticleTemplateCompiler.js";
 import { currentSkySummaryWording, skyDailySummaryFields, skySummaryTemplateErrors } from "../../apps/web/src/content/skyDailySummaryCatalog.js";
 

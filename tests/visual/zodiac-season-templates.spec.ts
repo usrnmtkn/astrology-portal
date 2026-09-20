@@ -26,7 +26,7 @@ for (const [width, theme] of [[390, 'light'], [1440, 'dark']] as const) {
    page.on('pageerror', error => errors.push(error.message));
    await page.setViewportSize({ width, height: 1000 });
    await page.addInitScript(theme => { localStorage.setItem('tldrastro:contentAdminSecret', 'calendar-api-fixture'); localStorage.setItem('tldrastro:studio-theme', theme); }, theme);
-   await routeStudioInventoryApi(page, { call, onWrite: result => responses.push(result) });
+   await routeStudioInventoryApi(page, { call, onWrite: ({ result }) => responses.push(result) });
    await page.goto(process.env.STUDIO_PRODUCTION_ENTRY === '1' ? '/admin/content#templates' : '/#templates');
    await page.locator('.admin-content-row', {hasText: 'Fixture sign-aware template'}).getByRole('button', {name: 'Edit', exact: true}).click();
    const editor = page.getByRole('dialog');

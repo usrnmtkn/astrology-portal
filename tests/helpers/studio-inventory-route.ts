@@ -10,7 +10,7 @@ type StudioApiCall = (message: { method: string; body?: unknown; url?: string })
 export async function routeStudioInventoryApi(page: Page, options: {
   call: StudioApiCall;
   listRows?: (rows: any[]) => any[];
-  onWrite?: (result: any) => void;
+  onWrite?: (write: { body: any; result: any }) => void;
   // Answers a fixture's own endpoints, such as reader status. Return false to take the empty reply.
   answer?: (route: Parameters<Parameters<Page["route"]>[1]>[0], url: URL) => Promise<boolean>;
 }) {
@@ -20,12 +20,13 @@ export async function routeStudioInventoryApi(page: Page, options: {
     if (url.pathname === "/api/admin/generated-content" || url.pathname === "/api/admin/generated-content-inventory") {
       const namesRows = ["id", "contentKey", "contentKeys", "variables"].some((key) => url.searchParams.has(key));
       if (request.method() !== "GET" || namesRows) {
+        const body = request.method() === "GET" ? undefined : request.postDataJSON();
         const result = await options.call({
           method: request.method(),
-          body: request.method() === "GET" ? undefined : request.postDataJSON(),
+          body,
           url: `/api/admin/generated-content${url.search}`
         });
-        if (request.method() !== "GET") options.onWrite?.(result);
+        if (body) options.onWrite?.({ body, result });
         return route.fulfill({ status: result.status, json: result.payload });
       }
       const saved = await options.call({ method: "rows" });

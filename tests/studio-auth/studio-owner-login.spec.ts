@@ -16,7 +16,8 @@ async function prepare(page: Page, signedIn: boolean) {
   const state = { status: 200, credentials: [] as string[] };
   await page.route("**/api/**", async route => {
     const url = new URL(route.request().url());
-    if (url.pathname === "/api/admin/generated-content" && !url.searchParams.has("sourceDrafts")) {
+    const readsContent = url.pathname === "/api/admin/generated-content" || url.pathname === "/api/admin/generated-content-inventory";
+    if (readsContent && !url.searchParams.has("sourceDrafts")) {
       state.credentials.push(route.request().headers()["x-content-admin-session"] ?? route.request().headers()["x-content-generation-secret"] ?? "");
       await route.fulfill({ status: state.status, json: state.status === 200 ? { ok: true, rows: [], nextCursor: null } : { error: state.status === 401 ? "Unauthorized." : "Content storage did not respond within 8 seconds." } });
     } else {
