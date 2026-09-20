@@ -74,9 +74,43 @@ test('Editing a shared planet phrase stays on the placement that was opened', as
   await planetRow.getByRole('button', { name: 'Edit planet function', exact: true }).click();
   const editor = page.getByRole('dialog');
   const phrase = editor.getByRole('region', { name: 'Phrase variable editor' });
+  await expect(phrase).toHaveClass(/studio-surface/);
+  await expect(phrase).toHaveClass(/studio-section/);
   const context = phrase.getByLabel('Phrase variable editing context');
   await expect(context).toContainText('Sun in Virgo');
   await expect(context).not.toContainText('Sun in Aries');
+  const sharedNote = phrase.getByText(/shared with every Sun sign/u);
+  expect(await sharedNote.evaluate(element => Boolean(element.closest('.studio-surface')))).toBe(true);
+  expect(await phrase.evaluate(element => Boolean(element.closest('.admin-post-editor')))).toBe(true);
+  const scroller = editor.locator('.admin-post-editor');
+  const savebar = editor.locator('.admin-editor-savebar');
+  await expect(savebar).toHaveClass(/studio-surface/);
+  const scrollerBox = await scroller.boundingBox();
+  const saveBox = await savebar.boundingBox();
+  const panelBox = await editor.boundingBox();
+  expect(scrollerBox && saveBox && panelBox).toBeTruthy();
+  if (scrollerBox && saveBox && panelBox) {
+    expect(scrollerBox.y + scrollerBox.height).toBeLessThanOrEqual(saveBox.y + 1);
+    expect(saveBox.x).toBeGreaterThan(panelBox.x);
+    expect(saveBox.x + saveBox.width).toBeLessThan(panelBox.x + panelBox.width);
+    expect(saveBox.y + saveBox.height).toBeLessThan(panelBox.y + panelBox.height);
+  }
+  expect(await phrase.evaluate(element => {
+    const body = element.closest('.admin-post-editor');
+    return Boolean(body) && element.scrollWidth <= (body as HTMLElement).clientWidth + 1;
+  })).toBe(true);
+  await page.setViewportSize({ width: 390, height: 844 });
+  await expect(phrase).toHaveClass(/studio-surface/);
+  const mobileScroller = await scroller.boundingBox();
+  const mobileSave = await savebar.boundingBox();
+  expect(mobileScroller && mobileSave).toBeTruthy();
+  if (mobileScroller && mobileSave) {
+    expect(mobileScroller.y + mobileScroller.height).toBeLessThanOrEqual(mobileSave.y + 1);
+  }
+  expect(await phrase.evaluate(element => {
+    const body = element.closest('.admin-post-editor');
+    return Boolean(body) && element.scrollWidth <= (body as HTMLElement).clientWidth + 1;
+  })).toBe(true);
 
   // The shared words are readable in place, and changing them is an explicit choice.
   const field = phrase.getByRole('region', { name: 'Edit Planet function', exact: true });

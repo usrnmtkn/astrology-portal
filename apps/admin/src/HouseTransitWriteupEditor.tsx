@@ -251,7 +251,7 @@ export default function HouseTransitWriteupEditor({
           </StudioTabs>
         </div>
 
-        <footer className="admin-toolbar-actions admin-editor-savebar">
+        <footer className="admin-toolbar-actions admin-editor-savebar studio-surface">
           <span className={`admin-editor-save-state ${dirty ? "is-unsaved" : "is-saved"}`} role="status">
             {saveStatus || (dirty ? "Unsaved changes" : "No unsaved changes")}
           </span>

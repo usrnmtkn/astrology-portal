@@ -113,6 +113,7 @@ async function assertLayout(page: Page, dialog: Locator) {
   expect(['start', 'left']).toContain(metrics.heading.align);
   expect(metrics.labelsVisible).toBe(true);
   expect(metrics.overflow).toBeLessThanOrEqual(1);
+  await expect(dialog.locator('.admin-editor-savebar')).toHaveClass(/studio-surface/);
   await expect(dialog.getByRole('heading', { level: 2 })).toHaveText('Sun in Aries through your 1st house');
   const headingOrder = await page.locator('.admin-main h1,.admin-main h2,.admin-main h3').evaluateAll(nodes => nodes.slice(0, 3).map(node => node.tagName));
   expect(headingOrder).toEqual(['H1', 'H2', 'H3']);
