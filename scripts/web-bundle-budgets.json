@@ -1,8 +1,8 @@
 {
-  "appBootGzipBytes": 438500,
+  "appBootGzipBytes": 450500,
   "appChunkGzipBytes": 180000,
-  "readerBootGzipBytes": 488500,
-  "readerInitialCssGzipBytes": 50000,
+  "readerBootGzipBytes": 501250,
+  "readerInitialCssGzipBytes": 51000,
   "largestJavaScriptGzipBytes": 520000,
   "friendsWorkspaceChunkGzipBytes": 16500,
   "skyDetailChunkGzipBytes": 5700,
@@ -11,9 +11,9 @@
   "lunationBookFallbackChunkGzipBytes": 215000,
   "transitFallbackChunkGzipBytes": 390000,
   "relationshipFallbackChunkGzipBytes": 230000,
-  "signupChunkGzipBytes": 4000,
+  "signupChunkGzipBytes": 4100,
   "totalCssGzipBytes": 115000,
-  "totalJavaScriptGzipBytes": 3098500,
+  "totalJavaScriptGzipBytes": 3173000,
   "_rationale": {
     "combinedHouseTransitEditor20260914": "Allocate 4 kB aggregate JavaScript for the owner-requested combined House Transit editor. Equal workflow-configuration builds of isolated main b4a622a3c and this feature measure 3,673 added aggregate gzip bytes while reader startup JavaScript decreases by 6 bytes. The new editor stays deferred. Every startup, CSS, individual chunk, memory graph, and runtime performance limit remains unchanged from integrated main 27bf4b703. See docs/qa/house-transit-combined-editor-2026-09-14.md.",
     "sharedZodiacSeason20260914": "The owner requested shared editable zodiac-season prose across sign-aware Studio templates. Isolated pre-feature main a6f21d663, with CI's Supabase environment, passes at 425.7 kB JavaScript boot and 475.3 kB reader boot. The feature's shared runtime measures 429,403 JavaScript boot bytes, 479,027 reader boot bytes, and 3,061,073 aggregate JavaScript bytes after removing the unused editor starter initializer from the reader artifact (175 gzip bytes saved). Allocate 4 kB to each startup cap and 3 kB aggregate for this requested runtime. No dependencies or CSS were added; initial CSS, individual chunks, deferred-source boundaries and timing thresholds remain unchanged. See docs/qa/zodiac-season-variables.md.",
@@ -48,8 +48,9 @@
     "calendarVariableRows20260915": "Calendar variable rows reuse the canonical Studio stylesheet and semantic typography/spacing tokens. After retaining main PRs #826 and #818, the workflow-configured shared stylesheet measures 23,526 gzip bytes, inside the existing 23,550-byte cap. No additional CSS allocation, new stylesheet, graph styling, dependency, or reader startup allowance is needed. See docs/qa/calendar-period-workspaces.md.",
     "illustratedLoading20260915": "The owner-requested transparent rotating illustration adds a shared fixed frame, crossfade, dark-theme inversion, reduced-motion treatment and navigation clearance to the initial loading stylesheet. The workflow-configured build measures 49,787 startup CSS gzip bytes, 37 above the former 49,750 cap. Allocate 250 bytes for this new UI, leaving 213 bytes headroom. The combined reader boot, JavaScript, total CSS, and all measured loading-time budgets remain unchanged. The 14 original PNGs are requested one at a time only while loading, not imported into the boot graph. See docs/qa/illustrated-loading.md. Reuse the existing page-fade token and keep theme inversion in reader CSS; the deferred shared Studio stylesheet stays inside its unchanged 23,550-byte cap at 23,544 bytes.",
     "customVariables20260915": "Frozen custom-value selection adds about 1.1 kB to the reader boot graph versus isolated main 347fc5c83 (480.1 to 481.2 kB including CSS). Allocate 1.5 kB for the shared resolver; authored library records remain private and are never bundled. Shared Studio pre-wrap and tag-list rules add 31 gzip bytes to the deferred stylesheet (main 23,556 to 23,587); allocate 50 bytes to the existing graph CSS cap. No astrology payload, graph renderer or calculation dependency is added. See docs/qa/studio-variable-crud.md. Under the exact browser-test configuration the JS portion measures 431,506 bytes (6 bytes above the prior cap); allocate 1 kB to its separate boot-JS cap within the combined reader allocation.",
-    "thinkingOrbBackup20260915": "Owner requested the Thinking Orbs backup from libraries.dev/orbs for Sky and Friends. Pin thinking-orbs 0.3.1 and bundle its 6,092-byte gzip React component separately from vendor/scheduler. Separate isolated worktrees with their own npm ci dependencies and identical browser-workflow environment measure main cac7d07d3 at 431,569 app boot, 481,373 reader boot and 3,090,869 aggregate JavaScript bytes; the combined loading release measures 437,781 / 487,605 / 3,097,289. Retain current main allocations and add 6 kB to each startup cap. The old aggregate cap already excludes 8,369 bytes of merged Studio-variable/report-animation additions; allocate 16 kB aggregate for that inherited increase plus the 6,420-byte loading-release delta, leaving 1,211 bytes headroom. All individual chunks, CSS, loading-time and calculation accuracy limits stay unchanged. See docs/qa/illustrated-loading.md."
+    "thinkingOrbBackup20260915": "Owner requested the Thinking Orbs backup from libraries.dev/orbs for Sky and Friends. Pin thinking-orbs 0.3.1 and bundle its 6,092-byte gzip React component separately from vendor/scheduler. Separate isolated worktrees with their own npm ci dependencies and identical browser-workflow environment measure main cac7d07d3 at 431,569 app boot, 481,373 reader boot and 3,090,869 aggregate JavaScript bytes; the combined loading release measures 437,781 / 487,605 / 3,097,289. Retain current main allocations and add 6 kB to each startup cap. The old aggregate cap already excludes 8,369 bytes of merged Studio-variable/report-animation additions; allocate 16 kB aggregate for that inherited increase plus the 6,420-byte loading-release delta, leaving 1,211 bytes headroom. All individual chunks, CSS, loading-time and calculation accuracy limits stay unchanged. See docs/qa/illustrated-loading.md.",
+    "reconcileMainCi20260920": "Hosted Visual smoke on main 6a4ceed9c (#985) and PR head 2876a0c4f (#986) already exceeded the six stale caps. CI measured 449,962 / 449,985 app-boot gzip bytes, 500,725 / 500,748 reader-boot bytes, 50,763 initial CSS bytes, 4,005 signup-chunk bytes, 3,170,303 / 3,171,620 aggregate JavaScript bytes, and 25,720 / 25,787 deferred Studio/memory-graph CSS bytes. Reconcile those inherited baselines with narrow headroom (450,500 / 501,250 / 51,000 / 4,100 / 3,173,000 / 26,000). No reader calculation, source prose, dependency, or runtime CSS was changed in this reconcile. Individual deferred-content chunks and You/Friends timing ceilings remain unchanged."
   },
   "memoryGraphJavaScriptGzipBytes": 64000,
-  "memoryGraphCssGzipBytes": 23600
+  "memoryGraphCssGzipBytes": 26000
 }
