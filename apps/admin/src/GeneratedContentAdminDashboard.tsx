@@ -256,6 +256,7 @@ import { AdminPaginatedCollection } from "./AdminPaginatedCollection";
 import AdminFilterDisclosure from "./AdminFilterDisclosure";
 const StudioVariableInsert = lazy(() => import("./StudioVariableInsert"));
 const StudioVariables = lazy(() => import("./StudioVariables"));
+const ReviewQueueSkyWrite = lazy(() => import("./ReviewQueueSkyWrite"));
 const SkyForecastTemplateStudio = lazy(() => import("./SkyForecastTemplateStudio"));
 const CalendarOverviewEditor = lazy(() => import("./CalendarOverviewEditor"));
 const TemplateVariablesRail = lazy(() => import("./TemplateVariablesRail"));
@@ -364,7 +365,7 @@ const skyWriteupWorkspaceTabs: { value: SkyWriteupWorkspaceView; label: string }
 type AdminCompatibilitySectionFilter = "all" | "content" | "fallback-hooks" | "vocabulary" | "slots";
 type AdminCompatibilitySort = "updated-desc" | "updated-asc" | "title-asc" | "status" | "source";
 type AdminCompatibilityCreateKind = "content" | "vocabulary" | "fallback-hook" | "template";
-type SkyVoiceQueueView = "ready" | "changes" | "sources" | "all" | "composite" | "upcoming" | "needs-review" | "audit" | "live-omissions";
+type SkyVoiceQueueView = "ready" | "changes" | "sources" | "all" | "composite" | "upcoming" | "needs-review" | "audit" | "live-omissions" | "sky-writeups";
 type ContentLibraryView = "all" | "compatibility";
 type SkyReviewHorizonOccurrence = {
   kind: "aspect" | "placement";
@@ -4165,7 +4166,7 @@ export function GeneratedContentAdminDashboard() {
     setShowReferenceRows(page === "content" && category === "Calendar Aspects");
     setContentLibraryView(page === "content" && view === "compatibility" ? "compatibility" : "all");
     setSkyVoiceQueueView(
-      page === "reviewQueue" && ["ready", "changes", "sources", "all", "composite", "upcoming", "needs-review", "audit", "live-omissions"].includes(view ?? "")
+      page === "reviewQueue" && ["ready", "changes", "sources", "all", "composite", "upcoming", "needs-review", "audit", "live-omissions", "sky-writeups"].includes(view ?? "")
         ? view as SkyVoiceQueueView
         : "ready"
     );
@@ -5611,7 +5612,7 @@ export function GeneratedContentAdminDashboard() {
     return transitNatalLiveServingSource(payload.rendered, preferredField);
   }
 
-  async function openContentKeyRow(contentKey: string, label: string, openTemplatePreview = false, fieldPath?: string, options?: { resolvedLiveSource?: boolean }) {
+  async function openContentKeyRow(contentKey: string, label: string, openTemplatePreview = false, fieldPath?: string, options?: { resolvedLiveSource?: boolean; selection?: SkyPlacementSelection }) {
     const originatingHash = window.location.hash;
     const requestId = ++sourceOpenRequestRef.current;
     setIsLoading(true);
@@ -5648,7 +5649,7 @@ export function GeneratedContentAdminDashboard() {
         throw new Error(`${label} is not materialized in Content Studio (${contentKey}).`);
       }
       setRows((current) => [row, ...current.filter(candidate => candidate.id !== row.id)]);
-      if (!await openRow(row, null, fieldPath)) return;
+      if (!await openRow(row, null, fieldPath, options?.selection)) return;
       if (openTemplatePreview) setTemplateVariableReferenceOpen(true);
       setMessage(openTemplatePreview
         ? `Opened the assembled reader preview for ${label}. Colored sections link to their atomic sources.`
@@ -6787,6 +6788,9 @@ export function GeneratedContentAdminDashboard() {
               {([['ready', 'Ready for review'], ['changes', 'Needs changes'], ['sources', 'Source library']] as const).map(([view, label]) => (
                 <StudioButton key={view} type="button" className={skyVoiceQueueView === view ? "active" : ""} onClick={() => setSkyVoiceQueueView(view)}>{label}</StudioButton>
               ))}
+              <StudioButton type="button" className={skyVoiceQueueView === "sky-writeups" ? "active" : ""} onClick={() => setSkyVoiceQueueView("sky-writeups")}>
+                Write Sky placement
+              </StudioButton>
               <StudioButton type="button" className={skyVoiceQueueView === "all" ? "active" : ""} onClick={() => setSkyVoiceQueueView("all")}>
                 All review
               </StudioButton>
@@ -6811,6 +6815,14 @@ export function GeneratedContentAdminDashboard() {
                 <strong>{skyVoiceAuditRows.length}</strong>
               </StudioButton>
             </nav>
+            {skyVoiceQueueView === "sky-writeups" && (
+              <Suspense fallback={<PageLoading message="Loading Sky placement writing…" />}>
+                <ReviewQueueSkyWrite
+                  disabled={isLoading}
+                  onOpen={(contentKey, label, fieldPath, selection) => void openContentKeyRow(contentKey, label, false, fieldPath, { selection })}
+                />
+              </Suspense>
+            )}
             {(["ready", "changes", "sources", "all", "composite"].includes(skyVoiceQueueView)) && (
               <AdminFilterDisclosure summary="Status, class, tier, and search">
                 <section className="admin-content-filters admin-review-queue-filters" aria-label="Review queue filters">

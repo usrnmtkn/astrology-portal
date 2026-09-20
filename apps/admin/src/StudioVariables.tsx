@@ -39,7 +39,7 @@ function VariableCard({ variable, color, query, onOpenSource }: { variable: Stud
       <p>Use this token only in the listed fields or templates. Each editor keeps its own variable contract.</p>
       <AdminPaginatedCollection items={variable.usages} label={`${variable.token} usage`} pageSize={10}>{usages => <ul>{usages.map(usage => <li key={usage.key}>{usage.label}<br /><code>{usage.key}</code></li>)}</ul>}</AdminPaginatedCollection>
     </details>
-    {variable.kind === 'editable' && (variable.sources.length ? <div className="studio-variable-source">
+      {variable.kind === 'editable' && (variable.sources.length ? <div className="studio-variable-source">
       {variable.sources.length > 1 && <label className="admin-filter-search"><span>Find writing</span><StudioInput type="search" value={sourceQuery} onChange={event => { setSourceQuery(event.target.value); setSelectedSource(''); }} aria-label={`Find writing for ${variable.token}`} placeholder="Planet, sign, or source" /></label>}
       {matches.length === 1 ? <p className="admin-field-hint">{matches[0].label}</p>
         : listed.length ? <label><span>Writing</span><AdminSelect aria-label={`Source for ${variable.token}`} value={selectedSource} onChange={event => setSelectedSource(event.target.value)}>
@@ -48,7 +48,7 @@ function VariableCard({ variable, color, query, onOpenSource }: { variable: Stud
         </AdminSelect></label>
         : variable.sources.length > 1 ? <p className="admin-field-hint">{matches.length ? `${matches.length} matches. Add a planet or sign to narrow this list.` : "No writing matches that search."}</p> : null}
       <StudioButton disabled={!source} onClick={() => source && onOpenSource(source.key, `${variable.token} · ${source.label}`, source.field)}>Open writing</StudioButton>
-    </div> : <p className="admin-field-hint">Open the matching template's Variables panel to inspect its source selection.</p>)}
+    </div> : <p className="admin-field-hint">This token is copied into templates. Writing is edited from Review Queue or Sky Write-ups.</p>)}
   </article>;
 }
 
@@ -86,7 +86,7 @@ export default function StudioVariables({ onOpenSource, secret, customVariables,
   const reset = () => { setQuery(''); setTag(''); setSurface(''); };
   return <section className="admin-template-page studio-variables" aria-label="Variable directory">
     <div className="studio-surface studio-section studio-variable-controls">
-      <p>{custom ? "Create and organize your reusable writing. Your variables support a shared value and optional planet, sign, or placement overrides." : "Search for a token, then open the writing it uses. Calculated facts can be copied; phrase tokens open their source."}</p>
+      <p>{custom ? "Create and organize your reusable writing. Your variables support a shared value and optional planet, sign, or placement overrides." : "Look up a token, then open its writing. Calculated facts can be copied; phrase tokens open one field."}</p>
       <section className="admin-filter-form" aria-label="Variable filters">
         <label className="admin-filter-search"><span>Search variables</span><StudioInput type="search" value={query} onChange={event => setQuery(event.target.value)} placeholder="Token, meaning, planet, sign, or source" /></label>
         <label><span>Library</span><AdminSelect aria-label="Library" value={kind} onChange={event => setKind(event.target.value)}><option value="custom">My variables</option><option value="readonly">Calculated facts</option><option value="editable">Existing phrase variables</option></AdminSelect></label>
