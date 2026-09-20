@@ -59,6 +59,7 @@ assert.equal(new Set([...previousKeys, ...overlayKeys]).size, 379);
 
 // Historical approval remains immutable; runtime follows subsequent owner releases.
 const current = JSON.parse(fs.readFileSync(path.join(repoRoot, 'packages/astro-knowledge/review/calendar-collective-pressure-pass-2026-09-07/current-owner-payloads.json'), 'utf8'));
+const laterRewrite = JSON.parse(fs.readFileSync(path.join(repoRoot, "packages/astro-knowledge/review/sky-calendar-moon-sextile-lilith-2026-09-20/owner-authorization.json"), "utf8"));
 const counts = { conjunction: 0, sextile: 0, square: 0, opposition: 0 };
 for (const row of rows) {
   assert.equal(row.contentKey.includes("north-node"), false, `${row.contentKey}: North Node escaped final release`);
@@ -83,13 +84,15 @@ for (const row of rows) {
   assert.equal(transit.transiting, transiting);
   assert.equal(transit.aspect, aspect);
   assert.equal(transit.other, other);
-  const currentEntry = current.payloads[row.contentKey.replace('sky.aspect.', 'sky.')];
+  const currentEntry = row.contentKey === laterRewrite.contentKey
+    ? { payload: laterRewrite.payload, sha256: laterRewrite.payloadSha256 }
+    : current.payloads[row.contentKey.replace('sky.aspect.', 'sky.')];
   assert.equal(sha256(JSON.stringify(currentEntry.payload)), currentEntry.sha256);
   assert.equal(transit.readerCopy.summary, currentEntry.payload.summary, `${row.contentKey}: summary drift`);
   assert.equal(transit.readerCopy.body, currentEntry.payload.body, `${row.contentKey}: body drift`);
   assert.match(
     transit.readerCopy.approvedVia,
-    /sky-calendar-collective-approved-2026-09-07/u,
+    /sky-calendar-collective-approved-2026-09-07|moon-sextile-lilith-owner-rewrite-2026-09-20/u,
     `${row.contentKey}: approval provenance drift`,
   );
 
