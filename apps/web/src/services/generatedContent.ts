@@ -135,6 +135,14 @@ function isSkyPlacementFallbackPartitionKey(contentKey: string) {
     || contentKey.startsWith("fallback-hook/sky-planet-education/");
 }
 
+/** Live canonical article/Rx rows are overlay sources even when the ledger
+ * marker is absent. The older dashboard partition path cannot fail them closed. */
+function isSkyPlacementPublishedReaderKey(contentKey: string) {
+  return isSkyPlacementFallbackPartitionKey(contentKey)
+    || contentKey.startsWith("sky-placement/article/")
+    || contentKey.startsWith("sky-placement/retrograde/");
+}
+
 function isSkyPlacementDashboardDistributionEligible(row: GeneratedContentRow) {
   const record = packageRecord(row);
   const isContinuous = record.render_policy === "sky-placement-continuous-v2"
@@ -1415,7 +1423,8 @@ const skyPublicationCacheKey = "tldrastro:sky-publication-rows:v1";
 async function loadPublishedSkyBundle(): Promise<FallbackArchitectureV3Bundle | null> {
   const manifest = await loadFallbackArchitectureV3BundledSkyPlacementManifest();
   const keys = new Set(manifest.keys.map((key) => key.slice(key.indexOf(":") + 1)));
-  const eligible = (row: GeneratedContentRow) => Boolean(row && typeof row === "object") && keys.has(row.content_key)
+  const isPublishedReaderKey = (contentKey: string) => keys.has(contentKey) || isSkyPlacementPublishedReaderKey(contentKey);
+  const eligible = (row: GeneratedContentRow) => Boolean(row && typeof row === "object") && isPublishedReaderKey(row.content_key)
     && contentPublication(row.content_key)?.state === "live"
     && publicationAllowsContent(row.content_key, row.id, row.updated_at)
     && row.status === "LIVE" && row.lane === "serving" && !row.review_state
@@ -1432,23 +1441,32 @@ async function loadPublishedSkyBundle(): Promise<FallbackArchitectureV3Bundle | 
   const fallback = async () => packageRows(cached) ?? packageRows(await loadContentStudioLastKnownGoodRows());
   const client = await getSupabaseClient();
   if (!client || typeof navigator !== "undefined" && navigator.onLine === false) return fallback();
-  const ids = contentPublicationRecords().filter((publication) => publication.state === "live" && keys.has(publication.content_key) && publication.row_id).map((publication) => publication.row_id!);
+  const ids = contentPublicationRecords().filter((publication) => publication.state === "live" && isPublishedReaderKey(publication.content_key) && publication.row_id).map((publication) => publication.row_id!);
   const rows: GeneratedContentRow[] = [];
   for (let offset = 0; offset < ids.length; offset += 200) {
     const { data, error } = await client.from("generated_interpretations")
       .select("id,content_key,surface,mode,status,lane,review_state,event_type,target_date,facts,source_snapshot,headline,summary,body,sections,block_type,flags,provider,judge_score,judge_gate,model,updated_at")
       .in("id", ids.slice(offset, offset + 200)).abortSignal(AbortSignal.timeout(8000)).returns<GeneratedContentRow[]>();
-    if (error || !data) return fallback();
+    if (error || !Array.isArray(data)) {
+      const recovered = await fallback();
+      if (!recovered && ids.length) throw new Error("Current Sky publications did not load.");
+      return recovered;
+    }
     rows.push(...data);
   }
   const current = rows.filter(eligible);
+  if (ids.length && !current.length) {
+    const recovered = await fallback();
+    if (!recovered) throw new Error("Current Sky publications did not load.");
+    return recovered;
+  }
   try { window.localStorage.setItem(skyPublicationCacheKey, JSON.stringify(current)); } catch { /* Memory remains guarded. */ }
   return packageRows(current);
 }
 
 export async function loadFallbackArchitectureV3SkyPlacementDashboardBundle(): Promise<FallbackArchitectureV3Bundle | null> {
   await refreshContentPublications();
-  if (publicationLedgerReady() || contentPublicationRecords().some((publication) => isSkyPlacementFallbackPartitionKey(publication.content_key))) {
+  if (publicationLedgerReady() || contentPublicationRecords().some((publication) => isSkyPlacementPublishedReaderKey(publication.content_key))) {
     return loadPublishedSkyBundle();
   }
   const supabase = await getSupabaseClient();

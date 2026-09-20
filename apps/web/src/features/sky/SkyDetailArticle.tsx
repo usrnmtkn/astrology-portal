@@ -49,6 +49,7 @@ export type SkyDetailSection = {
   heading: string;
   body: ReactNode;
   dateLine?: string;
+  href?: string;
   sourceTag?: string;
   sourceKeys?: string[];
   role?: "main" | "aspect";
@@ -774,10 +775,23 @@ export function SkyDetailArticle({
                       return (
                         <section className="article-section sky-detail-section article-related-aspects__copy" key={section.key}>
                           {sectionHeading ? (
+                            section.href ? (
+                              <a
+                                className="article-related-aspects__copy-link"
+                                aria-label={`Read more about ${sectionHeading}`}
+                                href={`#${section.href}`}
+                              >
+                                <div className="article-related-aspects__copy-heading">
+                                  {glyphParts ? <AspectGlyphs from={glyphParts.from} aspect={glyphParts.aspect} to={glyphParts.to} /> : null}
+                                  <h4>{sectionHeading}</h4>
+                                </div>
+                              </a>
+                            ) : (
                             <div className="article-related-aspects__copy-heading">
                               {glyphParts ? <AspectGlyphs from={glyphParts.from} aspect={glyphParts.aspect} to={glyphParts.to} /> : null}
                               <h4>{sectionHeading}</h4>
                             </div>
+                            )
                           ) : null}
                           {exactDateLine ? <p className="article-related-aspects__date">Exact · {exactDateLine}</p> : null}
                           {sourceTag && !bodyAlreadyStartsWithTag ? <p>{sourceTag}</p> : null}

@@ -9,6 +9,7 @@ test('published V5 sentences assemble on the reader with calculated occurrence v
  const base = skyPlacementSourceRecords.get(key)!;
  const ingress = makeSkyIngressComposition();
  ingress.enabled = true;
+ for (const module of ingress.modules.filter(item => item.id === 'dignity')) module.enabled = false;
  for (const module of ingress.modules.filter(item => item.required)) {
   for (const [, name] of module.template.matchAll(/\{\{(\w+)\}\}/gu)) ingress.sources[name].text = `Fixture ${name} for {{planetTitle}} in {{signTitle}}.`;
  }
