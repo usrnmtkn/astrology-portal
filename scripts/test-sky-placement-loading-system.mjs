@@ -5,6 +5,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import {
+  skyPlacementCardsSettled,
   skyPlacementDescriptionState,
   shouldLoadSkyPlacementContent,
   skySnapshotHasTransitWindows
@@ -59,6 +60,13 @@ assert.equal(skyPlacementDescriptionState("", "loading"), "loading");
 assert.equal(skyPlacementDescriptionState("", "ready"), "empty");
 assert.equal(skyPlacementDescriptionState(null, "error"), "empty");
 
+const windowed = { transitStart: "2026-09-01T00:00:00.000Z", transitEnd: "2026-09-30T00:00:00.000Z" };
+assert.equal(skyPlacementCardsSettled([windowed, windowed], "ready", 2), true);
+assert.equal(skyPlacementCardsSettled([windowed], "ready", 2), false);
+assert.equal(skyPlacementCardsSettled([windowed, { planet: "Moon" }], "ready", 2), false);
+assert.equal(skyPlacementCardsSettled([windowed, windowed], "loading", 2), false);
+assert.equal(skyPlacementCardsSettled([], "error", 14), true);
+
 assert.match(
   app,
   /shouldLoadSkyPlacementContent\(\{[\s\S]*mode,[\s\S]*hasSky: Boolean\(sky\),[\s\S]*detailRoutePath: skyDetailRoutePath/,
@@ -68,6 +76,22 @@ assert.match(
   app,
   /contentStatus=\{skyPlacementFallbackStatus\}/,
   "The Sky placement list must receive the placement-content loading state."
+);
+assert.match(
+  app,
+  /useSkyCardsSettled\(skyPlacementCardsSettled\(/,
+  "The Sky list must report card readiness to the shared first-paint gate."
+);
+const readingLayout = read("apps/web/src/features/sky/SkyReadingLayout.tsx");
+assert.match(
+  readingLayout,
+  /!pending && summarySettled && cardsSettled/,
+  "The first Sky reading must wait for the summary and the transit cards together."
+);
+assert.match(
+  readingLayout,
+  /!failed && !ready && !revealed/,
+  "After the first ready reading, revalidation must keep the visible Sky page."
 );
 assert.match(
   placementRows,
