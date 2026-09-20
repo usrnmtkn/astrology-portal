@@ -28,7 +28,7 @@ import { calendarDayDistance } from "./services/calendarDayDistance";
 import { liveSkyReference, remainingSkyMinutes } from "./services/skyClock";
 import { skySummaryParagraphs } from "./content/skyDailySummary";
 import { PublishedSkySummary } from "./features/sky/PublishedSkySummary";
-import { SkyReadingLayout } from "./features/sky/SkyReadingLayout";
+import { SkyReadingLayout, useSkyCardsSettled } from "./features/sky/SkyReadingLayout";
 import { SkyRoute } from "./routes/SkyRoute";
 import { isStandaloneLearnPath } from "./content/learnRoutePath";
 import { refreshContentPublications } from "./services/contentPublications";
@@ -201,6 +201,7 @@ import {
 } from "./features/sky/skyHelpers";
 import {
   shouldLoadSkyPlacementContent,
+  skyPlacementCardsSettled,
   skyPlacementDescriptionState,
   skySnapshotHasTransitWindows,
   type SkyPlacementContentStatus
@@ -16497,6 +16498,11 @@ function PlacementTable({
     ),
     [displayPositions, lifeAreaFocus]
   );
+  useSkyCardsSettled(skyPlacementCardsSettled(
+    orderedPositions,
+    contentStatus,
+    skyPlacementPlanetOrder.length
+  ));
   const aspectsByPlacement = useMemo(() => {
     const nextAspects = new Map<string, SkySnapshot["aspects"]>();
 

@@ -33,3 +33,13 @@ export function skyPlacementDescriptionState(
 
   return "empty" as const;
 }
+
+export function skyPlacementCardsSettled(
+  positions: ReadonlyArray<{ transitStart?: string | null; transitEnd?: string | null }>,
+  contentStatus: SkyPlacementContentStatus,
+  expectedCount: number
+) {
+  if (contentStatus === "error") return true;
+  if (contentStatus !== "ready" || positions.length !== expectedCount) return false;
+  return positions.every((position) => Boolean(position.transitStart && position.transitEnd));
+}
