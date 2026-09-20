@@ -197,6 +197,9 @@ test('Review Queue opens one Sky article or phrase', async ({ page }) => {
   await page.goto('/#review-queue');
   await expect(page.getByRole('navigation', { name: 'Review queue views' })).toBeVisible();
   await page.getByRole('button', { name: 'Write Sky placement', exact: true }).click();
+  await expect(page).toHaveURL(/#review-queue\?view=sky-write(?:&|$)/u);
+  await expect(page.getByRole('heading', { name: 'Review Queue', exact: true })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Sky Write-ups', exact: true })).toHaveCount(0);
   const writer = page.getByRole('region', { name: 'Write Sky placement' });
   await writer.getByLabel('Review queue Sky planet').selectOption('saturn');
   await writer.getByLabel('Review queue Sky sign').selectOption('aries');
@@ -213,5 +216,18 @@ test('Review Queue opens one Sky article or phrase', async ({ page }) => {
   await expect(phrase.getByLabel('Writing library Planet function')).toBeVisible();
   await expect(editor.getByRole('region', { name: 'Other writing library phrases' })).toBeHidden();
   await expect(editor.getByRole('button', { name: 'Advanced source tools', exact: true })).toHaveCount(0);
+  expect(errors).toEqual([]);
+});
+
+test('Review Queue Sky write view stays on the queue', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await page.addInitScript(() => localStorage.setItem('tldrastro:contentAdminSecret', 'ingress-test'));
+  const errors: string[] = []; page.on('pageerror', error => errors.push(error.message));
+  await routeStudioSources(page);
+  await page.goto('/#review-queue?view=sky-write');
+  await expect(page.getByRole('heading', { name: 'Review Queue', exact: true })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Sky Write-ups', exact: true })).toHaveCount(0);
+  await expect(page.getByRole('region', { name: 'Write Sky placement' })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Write Sky placement', exact: true })).toHaveClass(/active/);
   expect(errors).toEqual([]);
 });
