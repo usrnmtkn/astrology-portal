@@ -7,6 +7,7 @@ import { calendarSeasonTransitionDetailRow, calendarSeasonTransitionPackageRecor
 import { calendarWritingStudioHref } from '../../apps/web/src/features/calendar/calendarWritingStudio';
 import { isReaderServableGeneratedContentRow } from '../../apps/web/src/content/generatedContentEligibility';
 import { routeStudioInventoryApi } from '../helpers/studio-inventory-route';
+import { studioApiStore } from '../helpers/studio-api-store';
 
 const key = 'authored/calendar-season-transition/virgo/libra/variant-4';
 const passage = calendarSeasonTransitionPackageRecords.find(record => record.contentKey === key)!;
@@ -14,11 +15,6 @@ const fixtures = calendarSeasonTransitionPackageRecords.map((record, index) => (
   ...calendarSeasonTransitionDetailRow(record), id: `season-fixture-${index}`, package_starter: false,
   updated_at: '2026-09-13T00:00:00.000Z', created_at: '2026-09-01T00:00:00.000Z', flags: []
 }));
-const headingStyle = (element: Element) => {
-  const style = getComputedStyle(element);
-  return Object.fromEntries(['fontFamily', 'fontSize', 'fontWeight', 'lineHeight', 'letterSpacing', 'marginTop', 'marginBottom', 'textTransform', 'textAlign'].map(key => [key, style[key as keyof CSSStyleDeclaration]]));
-};
-
 for (const width of [390, 1440]) for (const theme of ['light', 'dark'] as const) {
   test(`Find and edit a complete season transition at ${width} ${theme}`, async ({ page }) => {
     const directory = mkdtempSync(path.join(tmpdir(), 'calendar-seasons-'));
@@ -73,27 +69,28 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark'] as const)
       await expect(page.getByLabel('Moon sign', { exact: true })).toHaveCount(0);
       await expect(page.getByLabel('Writing job', { exact: true })).toHaveCount(0);
       const workspace = page.getByRole('region', { name: 'Calendar season transitions', exact: true });
-      const detail = page.getByRole('region', { name: 'Selected season transition', exact: true });
-      const list = page.getByRole('complementary', { name: 'Season transition passages', exact: true });
+      const table = workspace.getByRole('table', { name: 'Season transition passages', exact: true });
+      const detail = table.getByRole('row').filter({ has: page.getByRole('button', { name: 'Edit Virgo to Libra · Begins · 3', exact: true }) });
+      const list = page.getByRole('region', { name: 'Season transition passages', exact: true });
       const pair = workspace.getByLabel('Season transition', { exact: true });
       const search = workspace.getByRole('textbox', { name: 'Search season transitions', exact: true });
       await pair.selectOption('virgo');
-      await expect(list.getByRole('article')).toHaveCount(5);
+      await expect(table.locator('tbody tr')).toHaveCount(5);
       await search.fill('Ends');
-      await expect(list.getByRole('article')).toHaveCount(1);
-      await expect(detail.getByRole('heading', { level: 2 })).toHaveText('Virgo to Libra · Ends');
+      await expect(table.locator('tbody tr')).toHaveCount(1);
+      await expect(table.locator('tbody tr')).toContainText('Virgo to Libra · Ends');
       await search.fill('Libra Begins');
-      await expect(list.getByRole('article')).toHaveCount(4);
-      await workspace.getByLabel('Selected passage', { exact: true }).selectOption(key);
+      await expect(table.locator('tbody tr')).toHaveCount(4);
+      await search.fill('Virgo to Libra Begins 3');
       await expect(detail).toContainText(passage.body);
       await expect(detail).toContainText("You don't have to lower the standard to stop being the only person who decides how it's met.");
-      await expect(detail.getByRole('heading', { level: 2 })).toHaveText('Virgo to Libra · Begins · 3');
+      await expect(detail.getByRole('cell').first()).toHaveText('Virgo to Libra · Begins · 3');
       await expect(page.locator('.admin-dashboard-header h1')).toHaveText('Calendar Write-ups');
       await expect(page.getByRole('heading', { name: 'Calendar writing workspaces', exact: true })).toHaveClass('sr-only');
-      expect(await detail.evaluate(element => Boolean(element.compareDocumentPosition(document.querySelector('[aria-label="Season transition passages"]')!) & Node.DOCUMENT_POSITION_FOLLOWING))).toBe(true);
-      const baseline = await detail.getByRole('heading', { level: 2 }).evaluate(headingStyle);
+      await expect(table.getByRole('columnheader', { includeHidden: true })).toHaveText(['Transition', 'Saved passage', 'Publication', 'Edit']);
+      await expect(workspace.getByLabel('Selected passage', { exact: true })).toHaveCount(0);
       await workspace.getByRole('tab', { name: 'Composition & variables', exact: true }).click();
-      expect(await page.getByRole('region', { name: 'Selected template composition' }).getByRole('heading', { level: 2 }).evaluate(headingStyle)).toEqual(baseline);
+      await expect(page.getByRole('region', { name: 'Selected template composition' }).getByRole('heading', { level: 2 })).toHaveText('Virgo to Libra · Begins · 3');
       await workspace.getByRole('tab', { name: 'Write-ups', exact: true }).click();
       await expect(page.locator('main.admin-dashboard')).toHaveAttribute('data-studio-theme', theme);
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
@@ -115,30 +112,36 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark'] as const)
       await expect.poll(async () => (await call({ method: 'rows' })).find((row: any) => row.content_key === key)?.sections?.packageDraft?.body).toBe(revised);
       const savedDraft = (await call({ method: 'rows' })).find((row: any) => row.content_key === key);
       expect(savedDraft.status).toBe('DRAFT');
+      await expect(detail.getByRole('cell').nth(1)).toContainText(revised);
+      await expect(detail).toContainText('Draft');
       expect(savedDraft.sections.packageRecord.calendarWritingSource.originalBody).toBe(passage.body);
       expect(isReaderServableGeneratedContentRow(savedDraft)).toBe(false);
       await expect(editor.getByRole('alert')).toHaveCount(0);
       await editor.getByRole('button', { name: 'Close', exact: true }).click();
       await page.reload();
       await expect(page.getByRole('tab', { name: 'Season transitions', exact: true })).toHaveAttribute('aria-selected', 'true');
-      await search.fill('Virgo to Libra Begins 3');
-      await workspace.getByLabel('Selected passage', { exact: true }).selectOption(key);
-      await detail.getByRole('button', { name: 'Edit passage', exact: true }).click();
+      await search.fill('QA isolated save');
+      await expect(table.locator('tbody tr')).toHaveCount(1);
+      await expect(detail).toContainText(revised);
+      await detail.getByRole('button', { name: 'Edit Virgo to Libra · Begins · 3', exact: true }).click();
       await expect(field).toHaveValue(revised);
       await editor.getByRole('button', { name: 'Save & publish', exact: true }).click();
       await expect.poll(async () => (await call({ method: 'rows' })).find((row: any) => row.content_key === key)?.status).toBe('LIVE');
       await expect(editor.getByRole('alert')).toHaveCount(0);
       await editor.getByRole('button', { name: 'Close', exact: true }).click();
       await workspace.getByLabel('Publication', { exact: true }).selectOption('LIVE');
-      await expect(list.getByRole('article')).toHaveCount(1);
-      await expect(detail.locator('.admin-composition-preview-field p')).toHaveText(revised.split('\n\n'));
+      await expect(table.locator('tbody tr')).toHaveCount(1);
+      await expect(detail.getByRole('cell').nth(1)).toHaveText(revised);
+      const typography = (element: Element) => { const style = getComputedStyle(element); return [style.fontFamily, style.fontSize, style.fontWeight, style.lineHeight, style.letterSpacing]; };
+      expect(await detail.getByRole('cell').nth(1).locator('p').evaluate(typography)).toEqual(await list.getByRole('status').evaluate(typography));
+      expect(await detail.getByRole('cell').nth(1).locator('p').evaluate(element => getComputedStyle(element).whiteSpace)).toBe('pre-wrap');
       const saved = await call({ method: 'rows' });
       expect(saved.find((row: any) => row.content_key === key)?.body).toBe(revised);
       expect(isReaderServableGeneratedContentRow(saved.find((row: any) => row.content_key === key))).toBe(true);
       expect(saved.filter((row: any) => row.content_key !== key)).toEqual(fixtures.filter(row => row.content_key !== key));
       await search.fill('no-matching-season-passage');
       await expect(workspace.getByText('No season transitions match these filters.')).toBeVisible();
-      await expect(detail.getByRole('heading')).toHaveCount(0);
+      await expect(table.locator('tbody tr')).toHaveCount(0);
       await dismissNotice();
       await page.evaluate(() => window.scrollTo(0, 0));
       await page.screenshot({ path: `test-results/calendar-seasons-empty-${width}-${theme}.png`, fullPage: true });
@@ -146,9 +149,11 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark'] as const)
       await expect(pair).toHaveValue('all');
       await expect(search).toHaveValue('');
       await expect(list).toContainText('60 passages');
-      await expect(list.getByRole('article')).toHaveCount(12);
+      await expect(table.locator('tbody tr')).toHaveCount(12);
+      await table.scrollIntoViewIfNeeded();
+      await page.screenshot({ path: `test-results/calendar-season-table-${width}-${theme}.png` });
       await workspace.getByRole('button', { name: 'Show more passages', exact: true }).click();
-      await expect(list.getByRole('article')).toHaveCount(24);
+      await expect(table.locator('tbody tr')).toHaveCount(24);
       await page.goto(`/admin/content${new URL(calendarWritingStudioHref(key)).hash}`);
       await expect(editor).toBeVisible();
       await expect(field).toHaveValue(revised);
@@ -156,3 +161,43 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark'] as const)
     } finally { child.kill(); rmSync(directory, { recursive: true, force: true }); }
   });
 }
+
+test('Season table retries document reads without replacing saved edits with the bundled passage', async ({ page }) => {
+  const latest = 'QA revised opening.\n\nQA saved final sentence.';
+  const saved = { ...fixtures[0], status: 'DRAFT', sections: { ...fixtures[0].sections, packageDraft: { body: latest } } };
+  const store = await studioApiStore([saved]);
+  let fail = true;
+  let detailReads = 0;
+  let writes = 0;
+  try {
+    await page.addInitScript(() => localStorage.setItem('tldrastro:contentAdminSecret', 'calendar-api-fixture'));
+    await routeStudioInventoryApi(page, { call: store.call, onWrite: () => { writes += 1; } });
+    await page.route('**/api/admin/generated-content-inventory?**', async route => {
+      const url = new URL(route.request().url());
+      const keys = url.searchParams.getAll('contentKeys');
+      if (keys.length !== 1 || keys[0] !== saved.content_key) return route.fallback();
+      detailReads += 1;
+      if (fail) return route.fulfill({ status: 503, json: { error: 'Fixture document outage' } });
+      return route.fallback();
+    });
+    await page.goto('/admin/content#calendar-writeups?view=season-transitions');
+    const table = page.getByRole('table', { name: 'Season transition passages', exact: true });
+    const alert = page.getByRole('alert').filter({ hasText: 'Could not load the saved season passages' });
+    await expect(alert).toBeVisible();
+    await expect(alert).not.toContainText('not reported as saved');
+    await expect(table.getByRole('button', { name: 'Edit Pisces to Aries · Ends', exact: true })).toBeDisabled();
+    await expect(table).not.toContainText(fixtures[0].body);
+    expect(detailReads).toBe(1);
+    fail = false;
+    await page.getByRole('button', { name: 'Retry passages', exact: true }).click();
+    await expect(table).toContainText(latest);
+    await expect(table).not.toContainText(fixtures[0].body);
+    await expect(alert).toHaveCount(0);
+    expect(detailReads).toBe(2);
+    await page.getByRole('textbox', { name: 'Search season transitions', exact: true }).fill('saved final sentence');
+    await expect(table.locator('tbody tr')).toHaveCount(1);
+    await table.getByRole('button', { name: 'Edit Pisces to Aries · Ends', exact: true }).click();
+    await expect(page.getByRole('dialog').getByLabel('Season transition passage', { exact: true })).toHaveValue(latest);
+    expect(writes).toBe(0);
+  } finally { store.close(); }
+});

@@ -2775,11 +2775,12 @@ async function adminJsonRequest<T>(path: string, secret: string, options: Reques
     payload = await response.json().catch(() => null);
   } catch (error) {
     if (timedOut) {
-      throw new AdminRequestError(`${path} timed out. Your edit was not reported as saved.`, {
+      const details = method === "GET" ? "Loading content timed out. Try again; no changes were submitted." : "The request timed out. Reload before retrying so you do not overwrite a late response.";
+      throw new AdminRequestError(method === "GET" ? details : `${path} timed out. Your edit was not reported as saved.`, {
         status: 408,
         path,
         method,
-        details: "The request timed out. Reload before retrying so you do not overwrite a late response."
+        details
       });
     }
     throw error;
@@ -7054,7 +7055,7 @@ export function GeneratedContentAdminDashboard() {
                   <LunarCalendarWorkspace key={calendarWriteupWorkspaceView} scope={calendarWriteupWorkspaceView === "season-transitions" ? "season-transitions" : "all"} rows={rows} query={query} onQuery={setQuery} createRequest={calendarCreateRequest}
                     onCreateRequestHandled={() => setCalendarCreateRequest(0)} isLoading={isLoading || loadState !== "loaded"}
                     editor={renderEditor()} onEdit={row => openRow(row as AdminGeneratedContentRow, null, calendarWriteupWorkspaceView === "season-transitions" ? "body" : undefined)}
-                    onLoad={row => hydrateGeneratedContentRow(row as AdminGeneratedContentRow)}
+                    loadRows={loadCalendarPreviewRows} onLoad={row => hydrateGeneratedContentRow(row as AdminGeneratedContentRow)}
                     onCreate={sign => handleCreateAction("knowledge", "Draft opened. Nothing has been saved yet.", sign)} />
                 </Suspense>
               )}
