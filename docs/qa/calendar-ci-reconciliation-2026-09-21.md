@@ -54,3 +54,15 @@ controls have readable contrast. Screenshot tolerance remains unchanged.
 The exact final PR head must pass the unfiltered Content Studio API workflow
 and the complete required browser matrix before merge. Production verification
 must use the automatically deployed main merge commit.
+
+## Local validation before the final CI run
+
+- Unfiltered Content Studio API suite: passed in the isolated checkout with its
+  own dependencies and no owner environment file.
+- Startup contracts (including worker scheduling), CSS audit and web bundle:
+  passed. App boot is 454.9 kB gzip; reader boot with CSS is 507.7 kB.
+- You performance: 4 passed. Friends performance: 10 passed. Limits unchanged.
+- Unchanged light/dark cross-surface navigation test: passed.
+- Calendar Studio preview and source editing: 9 passed across mobile/desktop and
+  light/dark, including two actual calculated skies.
+- Built output privacy: passed for 298 web and 72 standalone Studio files.
