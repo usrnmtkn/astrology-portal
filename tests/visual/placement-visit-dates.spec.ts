@@ -30,7 +30,7 @@ for (const theme of ['light', 'dark']) for (const width of [390, 1440]) {
     await expect(page.locator('.sky-detail-article h1')).toHaveText(['Venus in Scorpio']);
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
     // Assert the complete source body remains identical through hydration/reopen.
-    const prose = page.locator('.article-body-inner').first().locator(':scope > p');
+    const prose = page.locator('.article-body-inner').first().locator(':scope > .sky-detail-section > p');
     const body = await prose.allTextContents();
     expect(body.join('\n\n')).toContain('When Venus reaches Scorpio, intimacy and connection stop being separable from power dynamics.');
     expect(body.join('\n\n')).toContain('Trust gets stronger when the terms can be named without turning vulnerability into leverage.');

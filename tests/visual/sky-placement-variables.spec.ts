@@ -40,7 +40,7 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
   await expect(opening.locator(".variable-fact")).toHaveCount(3);
   await expect(opening.locator(".variable-unmapped")).toHaveText("{{entryDate}}");
   const labelStyle = (el: Element) => { const s = getComputedStyle(el); return [s.fontFamily, s.fontSize, s.fontWeight, s.lineHeight, s.letterSpacing, s.textTransform]; };
-  expect(await opening.locator(".admin-eyebrow").first().evaluate(labelStyle)).toEqual(await map.locator("header .admin-eyebrow").evaluate(labelStyle));
+  expect(await opening.locator(".admin-eyebrow").first().evaluate(labelStyle)).toEqual(await map.getByText("Composition Map", { exact: true }).evaluate(labelStyle));
   await opening.screenshot({ path: `test-results/sky-variable-template-${width}-${theme}.png` });
   const structure = list.locator("li").filter({ has: page.getByRole("button", { name: "Edit structural fixture", exact: true }) });
   await structure.getByText("Section structure", { exact: true }).click();

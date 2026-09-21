@@ -161,11 +161,12 @@ test("Saturn waits for initial inventory and preserves an open editor during ext
   }
   if (url.pathname.endsWith("/generated-content") || url.pathname.endsWith("/generated-content-inventory")) {
    if (url.searchParams.has("contentKeys") || url.searchParams.has("contentKey")) data.rows = requestedKeys(url).map(virtual).filter(Boolean);
-   else if (url.searchParams.get("visibility") === "editorial") {
-    if (url.searchParams.has("cursor")) await initial;
-    else { data.rows = [{ ...virtual("sky-placement/article/saturn/aries"), id: "inventory-fixture", content_key: "fixture/other", headline: "Other inventory row" }]; data.nextCursor = "pending-inventory"; }
+   else if (url.searchParams.has("cursor")) { extendedStarted(); await extended; }
+   else {
+    await initial;
+    data.rows = [{ ...virtual("sky-placement/article/saturn/aries"), id: "inventory-fixture", content_key: "fixture/other", headline: "Other inventory row" }];
+    data.nextCursor = "pending-inventory";
    }
-   else { extendedStarted(); await extended; }
   }
   await route.fulfill({ json: data });
  });
@@ -414,6 +415,7 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
    await editor.getByRole("button", { name: "Save & publish", exact: true }).click();
    await expect.poll(() => saved.get(key)?.sections.packageRecord.Copy).toBe(revision);
    expect(saved.get(key).sections.packageRecord.ContentKey).toBe(key);
+   await page.getByRole("button", { name: "Dismiss notification", exact: true }).click();
    await editor.getByRole("button", { name: "Close", exact: true }).click();
    await actions.getByRole("button", { name: "Open seasonal context copy editor", exact: true }).click();
    await expect(copy).toHaveValue(revision);

@@ -246,7 +246,7 @@ test("Natal Aspect filters sit in a canvas card and transit finders stay flat in
   expect(await house.locator(".admin-natal-placement-selectors").evaluate(element => Boolean(element.closest(".studio-surface")))).toBe(false);
 });
 
-test("Daily Sky Summary keeps nested disclosures flat in the tab panel", async ({ page }) => {
+test("Daily Sky Summary keeps assembly flat and uses the shared canvas for nested disclosures", async ({ page }) => {
   await isolate(page);
   await page.setViewportSize({ width: 1440, height: 1100 });
   await page.goto("/admin/content#sky-writeups?view=daily-summary");
@@ -259,7 +259,8 @@ test("Daily Sky Summary keeps nested disclosures flat in the tab panel", async (
   expect(await assembly.evaluate(element => getComputedStyle(element).backgroundColor)).toBe("rgba(0, 0, 0, 0)");
   const writing = studio.locator("details").filter({ has: page.locator("summary", { hasText: "Writing system" }) });
   await expect(writing).toBeVisible();
-  expect(await writing.evaluate(element => getComputedStyle(element).backgroundColor)).toBe("rgba(0, 0, 0, 0)");
+  const canvas = await page.locator("main.admin-dashboard").evaluate(element => getComputedStyle(element).backgroundColor);
+  expect(await writing.evaluate(element => getComputedStyle(element).backgroundColor)).toBe(canvas);
 });
 
 test("Natal Chart keeps the page header and flattens empty-house sources in the tab panel", async ({ page }) => {
