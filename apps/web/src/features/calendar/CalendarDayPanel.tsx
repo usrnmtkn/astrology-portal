@@ -15,6 +15,7 @@ import { CalendarKindLabel, CalendarKindTag } from "./CalendarKindTag";
 import { CalendarSlideout } from "./CalendarSlideout";
 import { CalendarSummaryText } from "./CalendarSummaryText";
 import { calendarKindFromEvent, type CalendarEventKind } from "./calendarKinds";
+import { PageLoadError, PageLoading } from "../../components/PageLoading";
 
 export type CalendarDayEventCard = {
   event: LunarCalendarEvent;
@@ -126,6 +127,8 @@ export function CalendarDayPanel({
   embedded = false,
   showSky = true,
   showCheckIn = true,
+  contentState = "ready",
+  onRetryContent = () => undefined,
   onClose,
   onOpenEvent,
   onCheckIn
@@ -149,6 +152,8 @@ export function CalendarDayPanel({
   embedded?: boolean;
   showSky?: boolean;
   showCheckIn?: boolean;
+  contentState?: "loading" | "ready" | "error";
+  onRetryContent?: () => void;
   onClose?: () => void;
   onOpenEvent: (event: LunarCalendarEvent) => void;
   onCheckIn: () => void;
@@ -180,6 +185,9 @@ export function CalendarDayPanel({
             </div>
           </div>
           <div className="calendar-sky-card__body">
+            {contentState === "loading" ? <PageLoading compact message="Loading this day’s reading…" /> : contentState === "error" ? (
+              <PageLoadError message="This day’s reading could not load." onRetry={onRetryContent} />
+            ) : <>
             {sunSummary.length > 0 ? (
               <section aria-label="Sun in season">
                 <CalendarSummaryText date={dateKey} parts={sunSummary} sky={sky} />
@@ -199,6 +207,7 @@ export function CalendarDayPanel({
               </section>
             ) : null}
             {prompt ? <p className="calendar-sky-card__prompt">{prompt}</p> : null}
+            </>}
           </div>
         </section>
         ) : null}

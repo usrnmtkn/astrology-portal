@@ -54,7 +54,7 @@ assert.match(calendarSource, /authored\/calendar-weekly-moon\//u);
 assert.doesNotMatch(calendarSource, /fallback-hook\/sky-placement-lived\/moon\//u);
 assert.doesNotMatch(calendarSource, /selectedFullMoonKey/u);
 assert.match(calendarSource, /selectedPackagePhase\?\.headline/u);
-assert.match(calendarSource, /selectedPackagePhase\?\.tagline/u);
+assert.match(calendarSource, /moonPassages: selectedMoonWriting\.map/u);
 assert.doesNotMatch(calendarSource, /lunarCalendarLibraryResolver|content-library\.json/u);
 
 const deletedLegacyPaths = [

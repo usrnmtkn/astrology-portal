@@ -16,6 +16,18 @@ export function watchBrowserErrors(page: Page) {
     errors.push(`pageerror: ${error.message}`);
   });
 
+  // API outages are explicitly exercised by reader fixtures. Failed executable
+  // assets are different: a visible shell must not hide a broken route chunk.
+  page.on("requestfailed", request => {
+    const pathname = new URL(request.url()).pathname;
+    const failure = request.failure()?.errorText ?? "unknown failure";
+    if (/\.(?:js|css)$/u.test(pathname) && !/ERR_ABORTED/u.test(failure)) errors.push(`asset: ${pathname}: ${failure}`);
+  });
+  page.on("response", response => {
+    const pathname = new URL(response.url()).pathname;
+    if (response.status() >= 400 && /\.(?:js|css)$/u.test(pathname)) errors.push(`asset: ${pathname}: HTTP ${response.status()}`);
+  });
+
   page.on("console", (message) => {
     if (message.type() !== "error") return;
 

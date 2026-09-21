@@ -514,7 +514,7 @@ test.describe("Friends loading performance matrix", () => {
     assertSamples(repairSamples, friendsLoadingPerformanceBudgets.incompleteChartRepairReadyMs);
   });
 
-  test("repeated cold calculations show relationship loading state within budget", async ({ browser }) => {
+  test("repeated cold calculations deliver relationship content within budget", async ({ browser }) => {
     test.setTimeout(45_000);
     const loadingSamples: TimedSample[] = [];
     const contentSamples: TimedSample[] = [];
@@ -549,20 +549,17 @@ test.describe("Friends loading performance matrix", () => {
           elapsedMs: await loadingStateReady
         });
         await expect(page.locator(".compatibility-card").first()).toBeVisible({
-          // This is a harness timeout, not a performance threshold. The cold path remains
-          // measured but ungated until a threshold is established from its observed
-          // 5,224-6,197 ms range (about +/-9%).
           timeout: 15_000
         });
         contentSamples.push({
-          label: "slow-network cold relationship content (measured, ungated)",
+          label: "slow-network cold relationship content",
           elapsedMs: Math.round(performance.now() - startedAt)
         });
       });
     }
 
     assertSamples(loadingSamples, friendsLoadingPerformanceBudgets.slowNetworkRelationshipLoadingReadyMs);
-    logSamples(contentSamples, null);
+    assertSamples(contentSamples, friendsLoadingPerformanceBudgets.slowNetworkColdRelationshipReadyMs);
   });
 
   test("repeated slow relationship loads never block list or detail shell", async ({ browser }) => {

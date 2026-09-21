@@ -24,6 +24,12 @@ function errorDetail(error: unknown) {
   return "An unexpected rendering error occurred.";
 }
 
+function calendarOwnsContentFailure(error: unknown) {
+  return typeof window !== "undefined"
+    && /^#\/?calendar(?:[/?]|$)/u.test(window.location.hash)
+    && /(?:fallback-content-|fallbackArchitectureV3|sky-placement-v4)/u.test(errorDetail(error));
+}
+
 /**
  * A Vercel alias can move to a new deployment while an existing reader tab
  * still points at an older hashed chunk. One guarded reload is safe on the
@@ -34,6 +40,8 @@ function errorDetail(error: unknown) {
  */
 export function reloadReaderRouteOnce() {
   if (!readerRecoveryRoute()) return false;
+  // A calendar is also an editor: background asset recovery must never erase a draft.
+  if (document.querySelector(".calendar-slideout--checkin")) return false;
   const route = `${window.location.pathname}${window.location.hash}`;
   const now = Date.now();
   try {
@@ -109,6 +117,9 @@ export class PageLoadBoundary extends Component<PageLoadBoundaryProps, { failed:
     // navigation instead of replacing the entire application as well.
     if (event.defaultPrevented) return;
     const payload = (event as Event & { payload?: unknown }).payload;
+    // Calendar keeps its dates usable and owns the reading error/retry locally.
+    // Do not preventDefault: Vite must still reject the import to its caller.
+    if (calendarOwnsContentFailure(payload) || document.querySelector(".calendar-slideout--checkin")) return;
     const detail = payload ? errorDetail(payload) : "A page asset from an older deployment could not be loaded.";
     if (reloadReaderRouteOnce()) { event.preventDefault(); return; }
     // Suppressing this event makes Vite resolve the import as undefined. Keep

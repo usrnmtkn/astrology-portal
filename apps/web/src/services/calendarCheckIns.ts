@@ -1,4 +1,5 @@
 import { getSupabaseClient, getVerifiedAuthUser } from "./auth";
+import { withRequestDeadline } from "./requestDeadline";
 
 export type CalendarCheckInEntry = {
   mood: number | null;
@@ -113,14 +114,16 @@ function dateKeyFromRow(row: CalendarCheckInRow) {
   return String(row.date_key).slice(0, 10);
 }
 
-async function requireVerifiedUser() {
+async function requireVerifiedUser(signal?: AbortSignal, expectedUserId?: string) {
   const client = await getSupabaseClient();
   if (!client) {
     throw new CalendarCheckInAuthError("Saving check-ins is unavailable.");
   }
 
+  signal?.throwIfAborted();
   const user = await getVerifiedAuthUser(client);
-  if (!user) {
+  signal?.throwIfAborted();
+  if (!user || (expectedUserId && user.id !== expectedUserId)) {
     throw new CalendarCheckInAuthError();
   }
 
@@ -131,139 +134,182 @@ function publicStoreError(fallback: string) {
   return new Error(fallback);
 }
 
-export async function listCalendarCheckIns(): Promise<Record<string, CalendarCheckInEntry>> {
-  const { client, user } = await requireVerifiedUser();
-  const entries: Record<string, CalendarCheckInEntry> = {};
+type CheckInRequestOptions = { signal?: AbortSignal; expectedUserId?: string };
 
-  for (let from = 0; ; from += CHECK_IN_PAGE_SIZE) {
+type CheckInRange = { fromDateKey: string; toDateKey: string };
+
+function validateRange(range: CheckInRange) {
+  if (!isCalendarDateKey(range.fromDateKey) || !isCalendarDateKey(range.toDateKey) || range.fromDateKey > range.toDateKey) {
+    throw publicStoreError("Those days could not load.");
+  }
+}
+
+// Full history is for the account archive/export; calendar readers supply a range.
+export async function listCalendarCheckIns(options: CheckInRequestOptions & Partial<CheckInRange> = {}): Promise<Record<string, CalendarCheckInEntry>> {
+  if (options.fromDateKey || options.toDateKey) validateRange(options as CheckInRange);
+  return withRequestDeadline(async signal => {
+    const { client, user } = await requireVerifiedUser(signal, options.expectedUserId);
+    const entries: Record<string, CalendarCheckInEntry> = {};
+    for (let from = 0; ; from += CHECK_IN_PAGE_SIZE) {
+      signal.throwIfAborted();
+      let query = client.from("calendar_check_ins")
+        .select("user_id, date_key, mood, sleep, social, mood_note, note, tags, people")
+        .eq("user_id", user.id);
+      if (options.fromDateKey && options.toDateKey) {
+        query = query.gte("date_key", options.fromDateKey).lte("date_key", options.toDateKey);
+      }
+      const { data, error } = await query.order("date_key", { ascending: true })
+        .range(from, from + CHECK_IN_PAGE_SIZE - 1).abortSignal(signal);
+      if (error) throw publicStoreError("Your check-ins could not load.");
+      const rows = (data ?? []) as CalendarCheckInRow[];
+      for (const row of rows) {
+        const dateKey = dateKeyFromRow(row);
+        if (row.user_id !== user.id || !isCalendarDateKey(dateKey)) continue;
+        if (options.fromDateKey && dateKey < options.fromDateKey) continue;
+        if (options.toDateKey && dateKey > options.toDateKey) continue;
+        entries[dateKey] = rowToEntry(row);
+      }
+      if (rows.length < CHECK_IN_PAGE_SIZE) break;
+    }
+    return entries;
+  }, options);
+}
+
+export async function loadCalendarCheckIn(dateKey: string, options: CheckInRequestOptions = {}) {
+  const entries = await listCalendarCheckIns({ ...options, fromDateKey: dateKey, toDateKey: dateKey });
+  return entries[dateKey];
+}
+
+export type CalendarCheckInSummary = Pick<CalendarCheckInEntry, "mood">;
+
+// Month indicators never need private journal bodies, tags, or people.
+export async function listCalendarCheckInSummaries(range: CheckInRange, options: CheckInRequestOptions = {}) {
+  validateRange(range);
+  return withRequestDeadline(async signal => {
+    const { client, user } = await requireVerifiedUser(signal, options.expectedUserId);
+    const { data, error } = await client.from("calendar_check_ins")
+      .select("user_id, date_key, mood").eq("user_id", user.id)
+      .gte("date_key", range.fromDateKey).lte("date_key", range.toDateKey)
+      .order("date_key", { ascending: true }).abortSignal(signal);
+    if (error) throw publicStoreError("Your check-ins could not load.");
+    const entries: Record<string, CalendarCheckInSummary> = {};
+    for (const row of (data ?? []) as CalendarCheckInRow[]) {
+      const dateKey = dateKeyFromRow(row);
+      if (row.user_id !== user.id || dateKey < range.fromDateKey || dateKey > range.toDateKey) continue;
+      entries[dateKey] = { mood: sanitizeCheckInEntry({ mood: row.mood }).mood };
+    }
+    return entries;
+  }, options);
+}
+
+export async function upsertCalendarCheckIn(dateKey: string, entry: CalendarCheckInEntry, options: CheckInRequestOptions = {}): Promise<CalendarCheckInEntry> {
+  return withRequestDeadline(async signal => {
+    if (!isCalendarDateKey(dateKey)) {
+      throw publicStoreError("That day could not be saved.");
+    }
+
+    const { client, user } = await requireVerifiedUser(signal, options.expectedUserId);
+    const sanitized = sanitizeCheckInEntry(entry);
+    const payload: CalendarCheckInRow = {
+      user_id: user.id,
+      date_key: dateKey,
+      mood: sanitized.mood,
+      sleep: sanitized.sleep,
+      social: sanitized.social,
+      mood_note: sanitized.moodNote,
+      note: sanitized.note,
+      tags: sanitized.tags,
+      people: sanitized.people
+    };
+
     const { data, error } = await client
       .from("calendar_check_ins")
+      .upsert(payload, { onConflict: "user_id,date_key" })
       .select("user_id, date_key, mood, sleep, social, mood_note, note, tags, people")
-      .eq("user_id", user.id)
-      .order("date_key", { ascending: true })
-      .range(from, from + CHECK_IN_PAGE_SIZE - 1);
+      .abortSignal(signal).single();
+
+    if (error || !data) {
+      console.warn("Calendar check-in could not save.", { name: error?.name, code: error?.code });
+      throw publicStoreError("This check-in could not be saved. Try again.");
+    }
+
+    const row = data as CalendarCheckInRow;
+    if (row.user_id !== user.id) {
+      throw publicStoreError("This check-in could not be saved. Try again.");
+    }
+
+    return rowToEntry(row);
+  }, options);
+}
+
+export async function listCalendarCheckInLibrary(options: CheckInRequestOptions = {}): Promise<CalendarCheckInLibrary> {
+  return withRequestDeadline(async signal => {
+    const { client, user } = await requireVerifiedUser(signal, options.expectedUserId);
+    const tags = new Set<string>();
+    const people = new Set<string>();
+    for (let from = 0; ; from += CHECK_IN_PAGE_SIZE) {
+      signal.throwIfAborted();
+      const { data, error } = await client.from("calendar_check_in_library")
+        .select("user_id, kind, label").eq("user_id", user.id)
+        .order("kind", { ascending: true }).order("label", { ascending: true })
+        .range(from, from + CHECK_IN_PAGE_SIZE - 1).abortSignal(signal);
+      if (error) throw publicStoreError("Your tags and people could not load.");
+      const rows = (data ?? []) as CalendarCheckInLibraryRow[];
+      for (const row of rows) {
+        if (row.user_id !== user.id) continue;
+        const label = sanitizeLibraryLabel(row.label);
+        if (!label) continue;
+        if (row.kind === "tag") tags.add(label);
+        if (row.kind === "person") people.add(label);
+      }
+      if (rows.length < CHECK_IN_PAGE_SIZE) break;
+    }
+    return { tags: [...tags], people: [...people] };
+  }, options);
+}
+
+export async function addCalendarCheckInLibraryItem(kind: CalendarCheckInLibraryKind, label: string, options: CheckInRequestOptions = {}) {
+  return withRequestDeadline(async signal => {
+    const sanitized = sanitizeLibraryLabel(label);
+    if (!sanitized) return sanitized;
+
+    const { client, user } = await requireVerifiedUser(signal, options.expectedUserId);
+    const payload: CalendarCheckInLibraryRow = {
+      user_id: user.id,
+      kind,
+      label: sanitized
+    };
+    const { error } = await client
+      .from("calendar_check_in_library")
+      .upsert(payload, { onConflict: "user_id,kind,label" }).abortSignal(signal);
 
     if (error) {
-      console.warn("Calendar check-ins could not load.", { name: error.name, code: error.code });
-      throw publicStoreError("Your check-ins could not load.");
+      console.warn("Calendar check-in library item could not save.", { name: error.name, code: error.code });
+      throw publicStoreError("That label could not be saved.");
     }
 
-    const rows = (data ?? []) as CalendarCheckInRow[];
-    for (const row of rows) {
-      if (row.user_id !== user.id) continue;
-      const dateKey = dateKeyFromRow(row);
-      if (!isCalendarDateKey(dateKey)) continue;
-      entries[dateKey] = rowToEntry(row);
+    return sanitized;
+  }, options);
+}
+
+export async function removeCalendarCheckInLibraryItem(kind: CalendarCheckInLibraryKind, label: string, options: CheckInRequestOptions = {}) {
+  return withRequestDeadline(async signal => {
+    const sanitized = sanitizeLibraryLabel(label);
+    if (!sanitized) return;
+
+    const { client, user } = await requireVerifiedUser(signal, options.expectedUserId);
+    const { error } = await client
+      .from("calendar_check_in_library")
+      .delete()
+      .eq("user_id", user.id)
+      .eq("kind", kind)
+      .eq("label", sanitized).abortSignal(signal);
+
+    if (error) {
+      console.warn("Calendar check-in library item could not delete.", { name: error.name, code: error.code });
+      throw publicStoreError("That label could not be removed.");
     }
-
-    if (rows.length < CHECK_IN_PAGE_SIZE) break;
-  }
-
-  return entries;
-}
-
-export async function upsertCalendarCheckIn(dateKey: string, entry: CalendarCheckInEntry): Promise<CalendarCheckInEntry> {
-  if (!isCalendarDateKey(dateKey)) {
-    throw publicStoreError("That day could not be saved.");
-  }
-
-  const { client, user } = await requireVerifiedUser();
-  const sanitized = sanitizeCheckInEntry(entry);
-  const payload: CalendarCheckInRow = {
-    user_id: user.id,
-    date_key: dateKey,
-    mood: sanitized.mood,
-    sleep: sanitized.sleep,
-    social: sanitized.social,
-    mood_note: sanitized.moodNote,
-    note: sanitized.note,
-    tags: sanitized.tags,
-    people: sanitized.people
-  };
-
-  const { data, error } = await client
-    .from("calendar_check_ins")
-    .upsert(payload, { onConflict: "user_id,date_key" })
-    .select("user_id, date_key, mood, sleep, social, mood_note, note, tags, people")
-    .single();
-
-  if (error || !data) {
-    console.warn("Calendar check-in could not save.", { name: error?.name, code: error?.code });
-    throw publicStoreError("This check-in could not be saved. Try again.");
-  }
-
-  const row = data as CalendarCheckInRow;
-  if (row.user_id !== user.id) {
-    throw publicStoreError("This check-in could not be saved. Try again.");
-  }
-
-  return rowToEntry(row);
-}
-
-export async function listCalendarCheckInLibrary(): Promise<CalendarCheckInLibrary> {
-  const { client, user } = await requireVerifiedUser();
-  const { data, error } = await client
-    .from("calendar_check_in_library")
-    .select("user_id, kind, label")
-    .eq("user_id", user.id)
-    .order("label", { ascending: true });
-
-  if (error) {
-    console.warn("Calendar check-in library could not load.", { name: error.name, code: error.code });
-    throw publicStoreError("Your tags and people could not load.");
-  }
-
-  const tags: string[] = [];
-  const people: string[] = [];
-  for (const row of (data ?? []) as CalendarCheckInLibraryRow[]) {
-    if (row.user_id !== user.id) continue;
-    const label = sanitizeLibraryLabel(row.label);
-    if (!label) continue;
-    if (row.kind === "tag" && !tags.includes(label)) tags.push(label);
-    if (row.kind === "person" && !people.includes(label)) people.push(label);
-  }
-
-  return { tags, people };
-}
-
-export async function addCalendarCheckInLibraryItem(kind: CalendarCheckInLibraryKind, label: string) {
-  const sanitized = sanitizeLibraryLabel(label);
-  if (!sanitized) return sanitized;
-
-  const { client, user } = await requireVerifiedUser();
-  const payload: CalendarCheckInLibraryRow = {
-    user_id: user.id,
-    kind,
-    label: sanitized
-  };
-  const { error } = await client
-    .from("calendar_check_in_library")
-    .upsert(payload, { onConflict: "user_id,kind,label" });
-
-  if (error) {
-    console.warn("Calendar check-in library item could not save.", { name: error.name, code: error.code });
-    throw publicStoreError("That label could not be saved.");
-  }
-
-  return sanitized;
-}
-
-export async function removeCalendarCheckInLibraryItem(kind: CalendarCheckInLibraryKind, label: string) {
-  const sanitized = sanitizeLibraryLabel(label);
-  if (!sanitized) return;
-
-  const { client, user } = await requireVerifiedUser();
-  const { error } = await client
-    .from("calendar_check_in_library")
-    .delete()
-    .eq("user_id", user.id)
-    .eq("kind", kind)
-    .eq("label", sanitized);
-
-  if (error) {
-    console.warn("Calendar check-in library item could not delete.", { name: error.name, code: error.code });
-    throw publicStoreError("That label could not be removed.");
-  }
+  }, options);
 }
 
 export type CalendarCheckInExportBundle = {

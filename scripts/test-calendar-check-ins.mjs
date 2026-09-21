@@ -3,7 +3,7 @@ import { build } from "esbuild";
 
 const result = await build({
   stdin: {
-    contents: "export { addCalendarCheckInLibraryItem, removeCalendarCheckInLibraryItem, CalendarCheckInAuthError, deleteAllCalendarCheckInData, exportCalendarCheckInBundle, isCalendarDateKey, listCalendarCheckIns, sanitizeCheckInEntry, sanitizeLibraryLabel, upsertCalendarCheckIn } from './apps/web/src/services/calendarCheckIns.ts'; export { loadCalendarCheckInPeople } from './apps/web/src/features/calendar/calendarCheckInPeople.ts';",
+    contents: "export { addCalendarCheckInLibraryItem, removeCalendarCheckInLibraryItem, CalendarCheckInAuthError, deleteAllCalendarCheckInData, exportCalendarCheckInBundle, isCalendarDateKey, listCalendarCheckIns, loadCalendarCheckIn, listCalendarCheckInSummaries, listCalendarCheckInLibrary, sanitizeCheckInEntry, sanitizeLibraryLabel, upsertCalendarCheckIn } from './apps/web/src/services/calendarCheckIns.ts'; export { loadCalendarCheckInPeople } from './apps/web/src/features/calendar/calendarCheckInPeople.ts';",
     resolveDir: process.cwd()
   },
   bundle: true,
@@ -40,6 +40,9 @@ const {
   exportCalendarCheckInBundle,
   isCalendarDateKey,
   listCalendarCheckIns,
+  loadCalendarCheckIn,
+  listCalendarCheckInSummaries,
+  listCalendarCheckInLibrary,
   sanitizeCheckInEntry,
   sanitizeLibraryLabel,
   upsertCalendarCheckIn
@@ -70,16 +73,18 @@ assert.equal(isCalendarDateKey("09/20/2026"), false);
 
 function createClient(store) {
   const query = (table) => {
+    let range;
     const operation = {
-      select() { return operation; },
+      select(columns) { store.selections ??= []; store.selections.push(columns); return operation; },
+      abortSignal(signal) { store.signal = signal; signal.throwIfAborted(); return operation; },
+      gte(column, value) { store.filters.push({ table, column, value, operator: "gte" }); return operation; },
+      lte(column, value) { store.filters.push({ table, column, value, operator: "lte" }); return operation; },
       eq(column, value) {
         store.filters.push({ table, column, value });
         return operation;
       },
       order() { return operation; },
-      range() {
-        return Promise.resolve({ data: store.rows[table] ?? [], error: null });
-      },
+      range(from, to) { range = [from, to]; store.ranges ??= []; store.ranges.push(range); return operation; },
       upsert(payload) {
         store.upserts.push({ table, payload });
         store.lastPayload = payload;
@@ -93,7 +98,8 @@ function createClient(store) {
         return Promise.resolve({ data: store.lastPayload, error: null });
       },
       then(onFulfilled, onRejected) {
-        return Promise.resolve({ data: store.rows[table] ?? [], error: null }).then(onFulfilled, onRejected);
+        const rows = store.rows[table] ?? [];
+        return Promise.resolve({ data: range ? rows.slice(range[0], range[1] + 1) : rows, error: null }).then(onFulfilled, onRejected);
       }
     };
     return operation;
@@ -221,3 +227,31 @@ globalThis.calendarCheckInFixture.loadFriends = async () => {
 };
 await assert.rejects(loadCalendarCheckInPeople(), /account changed/);
 console.log("Calendar tag deletion is owner-scoped; people lookup includes owned charts and friends, handles partial failure, and discards account-switch results.");
+
+// The reader queries one date or the visible indicator range; exports retain full history.
+globalThis.calendarCheckInFixture.user = { id: "owner-a" };
+const dayEntry = await loadCalendarCheckIn("2026-09-20", { expectedUserId: "owner-a" });
+assert.equal(dayEntry.note, "kept");
+assert.equal(await loadCalendarCheckIn("2026-09-22"), undefined);
+assert.ok(store.filters.some(f => f.operator === "gte" && f.value === "2026-09-20"));
+assert.ok(store.filters.some(f => f.operator === "lte" && f.value === "2026-09-20"));
+assert.deepEqual(await listCalendarCheckInSummaries({ fromDateKey: "2026-09-20", toDateKey: "2026-09-26" }), { "2026-09-20": { mood: 2 } });
+assert.equal(store.selections.at(-1), "user_id, date_key, mood");
+assert.ok(store.signal instanceof AbortSignal);
+await assert.rejects(loadCalendarCheckIn("2026-09-20", { expectedUserId: "owner-b" }), CalendarCheckInAuthError);
+const writesBeforeSwitch = store.upserts.length;
+await assert.rejects(upsertCalendarCheckIn("2026-09-20", sanitized, { expectedUserId: "owner-b" }), CalendarCheckInAuthError);
+assert.equal(store.upserts.length, writesBeforeSwitch);
+await assert.rejects(listCalendarCheckIns({ fromDateKey: "2026-09-20" }), /days could not load/);
+const cancelled = new AbortController();
+cancelled.abort();
+const callsBeforeAbort = store.fromCalls.length;
+await assert.rejects(loadCalendarCheckIn("2026-09-20", { signal: cancelled.signal }), { name: "AbortError" });
+assert.equal(store.fromCalls.length, callsBeforeAbort);
+console.log("Calendar reads are range-scoped, cancellable, and checked against the verified account.");
+
+store.rows.calendar_check_in_library = Array.from({ length: 1001 }, (_, index) => ({ user_id: "owner-a", kind: "tag", label: `Synthetic tag ${index}` }));
+store.ranges = [];
+assert.equal((await listCalendarCheckInLibrary()).tags.length, 1001);
+assert.deepEqual(store.ranges, [[0, 999], [1000, 1999]]);
+console.log("Calendar library reads retain all labels beyond the first page.");

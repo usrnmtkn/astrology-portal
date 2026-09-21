@@ -258,6 +258,6 @@ assert.match(youPageSource, /dailyHoroscopeAssembly\?\.doItems\?\.length === 3/u
 assert.match(lunarCalendarSource, /renderCalendarPhase\(\{/u);
 assert.match(lunarCalendarSource, /renderVoidOfCourse\(\{/u);
 assert.match(lunarCalendarSource, /selectedPackagePhase\?\.headline/u);
-assert.match(lunarCalendarSource, /selectedPackagePhase\?\.tagline/u);
+assert.match(lunarCalendarSource, /moonPassages: selectedMoonWriting\.map/u);
 
 console.log("daily horoscope assembly selection checks passed");
