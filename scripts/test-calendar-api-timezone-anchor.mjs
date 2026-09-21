@@ -161,6 +161,19 @@ try {
     requestedDate,
     "The client must serialize the anchor in the selected location's timezone."
   );
+  let stalledSignal;
+  globalThis.fetch = (_url, options) => {
+    stalledSignal = options.signal;
+    // Model a transport that ignores abort and never settles.
+    return new Promise(() => {});
+  };
+  const started = performance.now();
+  await assert.rejects(() => getLunarCalendarFromApi({
+    label: "New York City", latitude: 40.7128, longitude: -74.006,
+    timeZone: "America/New_York"
+  }, "week", new Date("2026-08-24T16:00:00Z"), "basic"), { name: "TimeoutError" });
+  assert.ok(stalledSignal.aborted, "A stalled API must be aborted so local calculation can take over.");
+  assert.ok(performance.now() - started < 4_000, "An unresponsive API cannot block fallback indefinitely.");
 } finally {
   globalThis.fetch = originalFetch;
 }

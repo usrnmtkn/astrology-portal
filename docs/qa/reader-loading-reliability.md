@@ -8,8 +8,8 @@ eligibility are unchanged. No database schema changes are required.
 
 | Interaction | Required before use | Independent work | Completion/failure |
 | --- | --- | --- | --- |
-| Calendar dates | Calculated calendar facts | Authored reading bundles, check-in indicators | Controls render as soon as facts are ready |
-| Day/week reading | Facts and both authored content bundles | Journal and tags | Reading ready only after successful bundle loading; local retry on failure |
+| Calendar dates | Basic calculated date facts | Detailed events, authored reading bundles, check-in indicators | Controls render as soon as basic facts are ready |
+| Day/week reading | Full event facts and both authored content bundles | Journal and tags | Reading ready only after both dependencies succeed; local retry on failure |
 | Check-in editor | Verified account and the selected day's complete entry (or confirmed absence) | Tag/name library, month indicators | Account verification and the entry operation each have an eight-second deadline; failed load cannot expose an empty editable record |
 | Month check-in indicators | Visible date range, only date and mood columns | Private journal bodies | Optional, cancelled on range/account changes |
 | Tag/name picker | Its own library | Current journal draft | Failure exposes Retry tags/names; retry never remounts the editor |
@@ -27,8 +27,11 @@ a retryable error even if authentication or a transport does not settle. A save
 timeout retains the draft; repeating an upsert uses the same account/date key.
 Timeout does not prove a write was rejected by the server.
 
-A cold Calendar loads calculation files before optional prose and registry
-downloads compete for bandwidth. A slow prose bundle cannot hide the date grid. Until complete, the reading area
+A direct Calendar visit starts calculation asset downloads in its worker.
+Basic facts make the date grid usable; detailed calculations then
+overlap prose downloads. Only full facts enter the calendar cache or select an
+authored reading. Each calendar API attempt has a 2.5-second deadline before
+falling back to local calculation. A slow prose bundle cannot hide the date grid. Until complete, the reading area
 shows its own loading state and does not choose replacement prose. A failed asset
 stays local to Calendar. Explicit retry reloads failed module imports because
 browsers cache module failures. Background recovery cannot reload an open
@@ -66,7 +69,7 @@ Calendar reading readiness, selected check-in readiness, and library completion.
 Successful measurements end on the next animation frame after state installation.
 These begin at component/request work, not document navigation: they exclude
 HTML and initial application download. The browser benchmark above includes that
-startup cost. The controls metric may precede detailed month-event enhancement.
+startup cost. The controls metric precedes detailed event enhancement on cold visits.
 
 Five percent of non-automated production visits send at most two batches of eight
 measurements to the same-origin `/api/reader-performance` endpoint. Do Not Track

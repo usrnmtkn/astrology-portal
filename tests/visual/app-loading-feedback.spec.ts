@@ -78,17 +78,29 @@ test("Calendar Day waits for full event facts before selecting leftover Moon wri
   await expect(weekly).toBeVisible({ timeout: 15_000 });
   expect(await weekly.getAttribute("data-guidance-key")).not.toContain("sky-placement-lived");
   const leftoverKey = await weekly.getAttribute("data-guidance-key");
+  await page.evaluate(basic => {
+    for (const key of Object.keys(localStorage)) {
+      if (key.startsWith("tldr-lunar-calendar|")) localStorage.removeItem(key);
+    }
+    // Current-version entries without a full-detail marker must also be ignored.
+    localStorage.setItem("tldr-lunar-calendar|v12|week|2026-08-02|40.7128|-74.0060|America/New_York",
+      JSON.stringify({ savedAt: Date.now(), calendar: basic }));
+  }, basic);
   holdFull = true;
   try {
     await page.goto("/#calendar?view=day&date=2026-08-04");
     await expect.poll(() => waiting).toBe(true);
-    await expect(page.locator(".lunar-calendar-loading")).toBeVisible();
+    await expect(page.getByRole("region", { name: "Selected week", exact: true })).toBeVisible();
+    await expect(page.getByText("Loading this day’s reading…", { exact: true })).toBeVisible();
     await expect(dayGuidance(page)).toHaveCount(0);
+    expect(await page.evaluate(() => Object.keys(localStorage).filter(key => key.startsWith("tldr-lunar-calendar|")))).toEqual([]);
   } finally { release(); }
   const day = dayGuidance(page);
   await expect(day).toHaveAttribute("data-guidance-key", leftoverKey ?? "");
   expect(await day.getAttribute("data-guidance-key")).not.toContain("sky-placement-lived");
   await expect(day.locator("p").first()).toBeVisible();
+  expect(await page.evaluate(() => Object.keys(localStorage).filter(key => key.startsWith("tldr-lunar-calendar|"))
+    .every(key => JSON.parse(localStorage.getItem(key)!).detail === "full"))).toBe(true);
 });
 
 for (const leaveCalendar of [false, true]) test(`Calendar pending event click ${leaveCalendar ? "does not reopen after leaving" : "opens after the Sky calculation loads"}`, async ({ page }) => {
@@ -164,6 +176,11 @@ test("Calendar cold mobile and desktop deliver controls and complete reading wit
       const context = await browser.newContext({ viewport: { width, height: 900 } });
       try {
         const page = await context.newPage();
+        const calculationDownloads: string[] = [];
+        context.on("request", request => {
+          const path = new URL(request.url()).pathname;
+          if (/^\/wasm\/swisseph\.(?:wasm|data)$/.test(path)) calculationDownloads.push(path);
+        });
         // Freeze calendar dates only. Playwright's clock also replaces the
         // Performance API, which would suppress the real User Timing measures.
         await page.addInitScript(() => {
@@ -202,6 +219,7 @@ test("Calendar cold mobile and desktop deliver controls and complete reading wit
           return { controls: end("controls"), reading: end("reading") };
         });
         samples.push(completedAt);
+        expect(calculationDownloads.sort()).toEqual(["/wasm/swisseph.data", "/wasm/swisseph.wasm"]);
       } finally { await context.close(); }
     }
     console.log(JSON.stringify({ scenario: "cold Calendar with uncached local calculation", width, latencyMs: 150, bytesPerSecond: 1_000_000, samples }));

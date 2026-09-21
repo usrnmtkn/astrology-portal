@@ -181,6 +181,7 @@ const enableCalendarApi = import.meta.env.PROD
 
 type StoredCalendarPayload = {
   savedAt: number;
+  detail: "full";
   calendar: LunarCalendarMonthData;
 };
 
@@ -299,7 +300,7 @@ function readStoredCalendar(key: string): LunarCalendarMonthData | null {
 
     const parsed = JSON.parse(raw) as StoredCalendarPayload;
 
-    if (!parsed?.calendar || Date.now() - parsed.savedAt > calendarStorageTtlMs) {
+    if (!parsed?.calendar || parsed.detail !== "full" || Date.now() - parsed.savedAt > calendarStorageTtlMs) {
       window.localStorage.removeItem(key);
       return null;
     }
@@ -312,7 +313,7 @@ function readStoredCalendar(key: string): LunarCalendarMonthData | null {
 
 function writeStoredCalendar(key: string, calendar: LunarCalendarMonthData) {
   try {
-    window.localStorage.setItem(key, JSON.stringify({ savedAt: Date.now(), calendar }));
+    window.localStorage.setItem(key, JSON.stringify({ savedAt: Date.now(), detail: "full", calendar }));
   } catch {
     // Best effort cache only.
   }
@@ -2158,12 +2159,16 @@ export function LunarCalendar({
   const [seasonEvents, setSeasonEvents] = useState<LunarCalendarEvent[]>([]);
   const [status, setStatus] = useState<LunarCalendarStatus>("loading");
   const [hasCalendarFacts, setHasCalendarFacts] = useState(false);
+  const [calendarDetailState, setCalendarDetailState] = useState<"loading" | "ready" | "error">("loading");
   const [moonContentState, setMoonContentState] = useState<"loading" | "ready" | "error">(() =>
     isDeferredFallbackArchitectureV3BundleLoaded() && isSkyPlacementFallbackArchitectureV3BundleLoaded() ? "ready" : "loading");
   const [moonContentRetry, setMoonContentRetry] = useState(0);
   const moonContentAssetFailed = useRef(false);
   const readingMeasurement = useRef<ReturnType<typeof startReaderMeasurement> | null>(null);
   const moonContentReady = moonContentState === "ready";
+  const readingState: "loading" | "ready" | "error" = moonContentState === "error" || calendarDetailState === "error" ? "error"
+    : moonContentReady && calendarDetailState === "ready" ? "ready" : "loading";
+  const readingReady = readingState === "ready";
   const [selectedDateKey, setSelectedDateKey] = useState(initialDateKey);
   const [retryNonce, setRetryNonce] = useState(0);
   const [knowledgeMatrixV9, setKnowledgeMatrixV9] = useState<CalendarV9TransitResolver | null>(null);
@@ -2176,6 +2181,7 @@ export function LunarCalendar({
   const [subscribeOpen, setSubscribeOpen] = useState(false);
   const [subscribed, setSubscribed] = useState(false);
   const retryCalendarContent = () => {
+    if (calendarDetailState === "error") setRetryNonce(value => value + 1);
     // Browsers cache failed module imports. An explicit retry may need fresh HTML;
     // a request deadline can retry the still-pending import without reloading.
     if (moonContentAssetFailed.current && !checkInOpen) window.location.reload();
@@ -2223,11 +2229,11 @@ export function LunarCalendar({
   }, [moonContentRetry, hasCalendarFacts]);
 
   useEffect(() => {
-    if (status === "ready" && moonContentReady) {
+    if (status === "ready" && readingReady) {
       const frame = requestAnimationFrame(() => readingMeasurement.current?.("ready"));
       return () => cancelAnimationFrame(frame);
     }
-  }, [status, moonContentReady]);
+  }, [status, readingReady]);
 
   useEffect(() => {
     if (!hasCalendarFacts || !moonContentReady) return;
@@ -2274,9 +2280,10 @@ export function LunarCalendar({
     const storedCalendarKey = calendarStorageKey(location, viewMode, visibleAnchor);
     const storedCalendar = readStoredCalendar(storedCalendarKey);
     const finishControls = startReaderMeasurement("calendar.controls", storedCalendar ? "hit" : "miss");
-    // Day selects its Moon guidance from the same event-dependent weekly
-    // sequence as Week. Basic facts omit those events and select different copy.
-    const initialDetail = isWeekBasedView(viewMode) ? "full" : "basic";
+    // Basic facts make dates usable while prose downloads overlap the detailed
+    // calculation. Reading selection is gated separately on complete facts.
+    const initialDetail = storedCalendar ? "full" : "basic";
+    setCalendarDetailState(storedCalendar ? "ready" : "loading");
 
     if (storedCalendar) {
       setHasCalendarFacts(true);
@@ -2315,7 +2322,6 @@ export function LunarCalendar({
 
         setCalendar(nextCalendar);
         setHasCalendarFacts(true);
-        writeStoredCalendar(storedCalendarKey, nextCalendar);
         setSelectedDateKey((existingKey) => {
           if (existingKey) return existingKey;
 
@@ -2329,6 +2335,8 @@ export function LunarCalendar({
         requestAnimationFrame(() => finishControls("ready"));
 
         if (initialDetail === "full") {
+          setCalendarDetailState("ready");
+          writeStoredCalendar(storedCalendarKey, nextCalendar);
           return;
         }
 
@@ -2339,11 +2347,16 @@ export function LunarCalendar({
           .then((fullCalendar) => {
             if (!cancelled) {
               setCalendar(fullCalendar);
+              setCalendarDetailState("ready");
               writeStoredCalendar(storedCalendarKey, fullCalendar);
             }
           })
           .catch((error) => {
             console.warn("Full lunar calendar details failed to load.", error);
+            if (!cancelled) {
+              setCalendarDetailState("error");
+              readingMeasurement.current?.("error");
+            }
           });
       })
       .catch((error) => {
@@ -2351,6 +2364,7 @@ export function LunarCalendar({
         console.warn("Lunar calendar failed to load.", error);
         if (!cancelled) {
           setStatus("error");
+          readingMeasurement.current?.("error");
         }
       });
 
@@ -2476,9 +2490,10 @@ export function LunarCalendar({
   }, [calendar, location, selectedCalendar, selectedDateKey]);
 
   const selectedDay = useMemo(() => (
-    selectedCalendar?.days.find((day) => day.dateKey === selectedDateKey)
+    calendar?.days.find((day) => day.dateKey === selectedDateKey)
+    ?? selectedCalendar?.days.find((day) => day.dateKey === selectedDateKey)
     ?? null
-  ), [selectedCalendar, selectedDateKey]);
+  ), [calendar, selectedCalendar, selectedDateKey]);
 
   const zone = calendar?.timeZone ?? location.timeZone ?? "UTC";
   const currentDateKey = todayKey(zone);
@@ -2582,9 +2597,9 @@ export function LunarCalendar({
   }, [calendar, zone]);
 
   const moonResolvedByDate = useMemo(() => {
-    if (!calendar) return new Map();
+    if (!calendar || calendarDetailState !== "ready") return new Map();
     return calendarMoonResolvedByDate(calendar.days, moonCycleFacts, generatedContent);
-  }, [calendar, generatedContent, moonCycleFacts]);
+  }, [calendar, calendarDetailState, generatedContent, moonCycleFacts]);
 
   const weeklyRangeLabel = formatWeeklyRange(selectedWeekDays, calendar?.timeZone ?? location.timeZone ?? "UTC");
   const arcEvents = useMemo(() => {
@@ -2684,7 +2699,7 @@ export function LunarCalendar({
     ? calendarPhaseLabelForDay(selectedDay, calendar.days)
     : null;
   const selectedDayPhaseSign = selectedPrimaryLunation?.sign ?? readingDay?.moonSign ?? "";
-  const selectedPackageWeeklyMoon = selectedDay
+  const selectedPackageWeeklyMoon = selectedDay && calendarDetailState === "ready"
     ? packagedWeeklyMoon(
       selectedDay,
       moonCycleFacts.get(selectedDay.dateKey),
@@ -2692,7 +2707,7 @@ export function LunarCalendar({
       moonResolvedByDate
     )
     : null;
-  const selectedMoonWriting = readingDay
+  const selectedMoonWriting = readingDay && calendarDetailState === "ready" && moonContentReady
     ? moonWritingForDay(
       readingDay,
       generatedContent,
@@ -2867,7 +2882,7 @@ export function LunarCalendar({
   }, [calendar, generatedContent, viewMode, contentVersion]);
   const dayPanelProps = selectedDay ? {
     checkInEntry: checkInData.value,
-    contentState: moonContentState,
+    contentState: readingState,
     onRetryContent: retryCalendarContent,
     dateKey: selectedDay.dateKey,
     dateLine: formatSlideoutDate(selectedDay, zone),
@@ -3046,10 +3061,10 @@ export function LunarCalendar({
             zone={zone}
           />
           {seasonPill}
-          {!moonContentReady && (moonContentState === "loading"
+          {!readingReady && (readingState === "loading"
             ? <PageLoading compact message="Loading this week’s readings…" />
             : <PageLoadError message="This week’s readings could not load." onRetry={retryCalendarContent} />)}
-          {moonContentReady && <CalendarDayGroupList label={`Day-by-day astrology for ${weeklyRangeLabel}`}>
+          {readingReady && <CalendarDayGroupList label={`Day-by-day astrology for ${weeklyRangeLabel}`}>
             {calendarMoonWritingSequenceWithoutRepeat(selectedWeekDays, (day) => {
               return moonWritingForDay(
                 day,
@@ -3102,7 +3117,7 @@ export function LunarCalendar({
 
       {viewMode === "month" && (
         <div className="lunar-calendar-layout">
-          {moonContentReady && monthlyOverview && (
+          {readingReady && monthlyOverview && (
             <section className="lunar-month-overview" aria-labelledby="lunar-month-overview-heading">
               <h2 className="sr-only" id="lunar-month-overview-heading">Monthly overview</h2>
               {monthlyOverview.paragraphs.map((paragraph, index) => <p key={index}>{paragraph}</p>)}
@@ -3370,14 +3385,14 @@ export function LunarCalendar({
           onClose={() => setDaySlideoutOpen(false)}
         />
       )}
-      {readingEvent && !moonContentReady && (
+      {readingEvent && !readingReady && (
         <CalendarSlideout label="Event reading" onClose={() => setReadingEvent(null)}>
-          {moonContentState === "loading" ? <PageLoading compact message="Loading this reading…" /> : (
+          {readingState === "loading" ? <PageLoading compact message="Loading this reading…" /> : (
             <PageLoadError message="This reading could not load." onRetry={retryCalendarContent} />
           )}
         </CalendarSlideout>
       )}
-      {readingEvent && moonContentReady && (
+      {readingEvent && readingReady && (
         <CalendarEventReading
           backLabel={selectedDay ? formatCheckInDate(selectedDay, zone) : undefined}
           dateLine={`${formatEventDate(readingEvent.startsAt, zone)} · ${formatEventTime(readingEvent.startsAt, zone)}`}
