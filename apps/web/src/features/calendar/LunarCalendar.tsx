@@ -11,7 +11,7 @@ import { CalendarSummaryText } from "./CalendarSummaryText";
 import { skyDailySummaryFields } from "../../content/skyDailySummaryCatalog";
 import type { SkySnapshot } from "../../types";
 import { CardReadMore } from "../../components/CardReadMore";
-import { PageLoading } from "../../components/PageLoading";
+import { PageLoadError, PageLoading } from "../../components/PageLoading";
 import { calendarMotionTitle } from "../../content/skyMotionLabels";
 import { isDisplayRetrograde } from "../../services/astrologyDisplay";
 import { CalendarCheck, CalendarDays, CalendarPlus, ChevronDown, ChevronLeft, ChevronRight, RotateCcw } from "lucide-react";
@@ -98,6 +98,7 @@ import {
 import { CalendarDayGroup, CalendarDayGroupList, CalendarSeasonPill, type CalendarDayGroupRow } from "./CalendarDayGroup";
 import { CalendarDayPanel } from "./CalendarDayPanel";
 import { CalendarEventReading } from "./CalendarEventReading";
+import { CalendarSlideout } from "./CalendarSlideout";
 import { CalendarSubscribeSheet } from "./CalendarSubscribeSheet";
 import { ASTRO_2026_EVENTS } from "./calendarHandoff";
 import { CalendarMonthChip, eventGlyphText } from "./CalendarKindTag";
@@ -2242,6 +2243,9 @@ export function LunarCalendar({
   const [libraryTags, setLibraryTags] = useState<string[]>([]);
   const [knownPeople, setKnownPeople] = useState<string[]>([]);
   const checkInAccountIdRef = useRef<string | null>(null);
+  const checkInReadyRef = useRef(false);
+  const [checkInLoadState, setCheckInLoadState] = useState<"loading" | "ready" | "error">("loading");
+  const [checkInRetry, setCheckInRetry] = useState(0);
   const [journalPrompt, setJournalPrompt] = useState<string | null>(null);
   const [checkInTarot, setCheckInTarot] = useState(false);
 
@@ -2256,6 +2260,8 @@ export function LunarCalendar({
       setCheckIns({});
       setLibraryTags([]);
       setKnownPeople([]);
+      checkInReadyRef.current = true;
+      setCheckInLoadState("ready");
     }
 
     async function loadAccountCheckIns() {
@@ -2270,6 +2276,8 @@ export function LunarCalendar({
         if (checkInAccountIdRef.current !== user.id) {
           if (checkInAccountIdRef.current) setCheckInOpen(false);
           checkInAccountIdRef.current = user.id;
+          checkInReadyRef.current = false;
+          setCheckInLoadState("loading");
           setCheckIns({});
           setLibraryTags([]);
           setKnownPeople([]);
@@ -2284,13 +2292,18 @@ export function LunarCalendar({
           setCheckIns(entries);
           setLibraryTags(library.tags);
           setKnownPeople(library.people);
+          checkInReadyRef.current = true;
+          setCheckInLoadState("ready");
         } catch (error) {
+          if (cancelled || requestId !== loadId) return;
+          if (!checkInReadyRef.current) setCheckInLoadState("error");
           console.warn("Calendar check-ins could not load for this account.", {
             name: error instanceof Error ? error.name : "UnknownError"
           });
         }
       } catch (error) {
         if (cancelled || requestId !== loadId) return;
+        if (!checkInReadyRef.current) setCheckInLoadState("error");
         console.warn("Calendar check-in session could not be confirmed.", {
           name: error instanceof Error ? error.name : "UnknownError"
         });
@@ -2306,7 +2319,7 @@ export function LunarCalendar({
       cancelled = true;
       unsubscribe();
     };
-  }, []);
+  }, [checkInRetry]);
 
   useEffect(() => {
     let active = true;
@@ -3824,7 +3837,26 @@ export function LunarCalendar({
           title={readingJournal?.headline ?? readingEditorial?.headline ?? readingEvent.title}
         />
       )}
-      {checkInOpen && selectedDay && (
+      {checkInOpen && selectedDay && checkInLoadState !== "ready" && (
+        <CalendarSlideout label="Check-in" onClose={() => {
+          setCheckInOpen(false);
+          setJournalPrompt(null);
+          setCheckInTarot(false);
+        }} variant="checkin">
+          {checkInLoadState === "loading" ? (
+            <PageLoading compact message="Loading your check-in…" />
+          ) : (
+            <PageLoadError
+              message="Your saved check-in could not load. Try again before editing."
+              onRetry={() => {
+                setCheckInLoadState("loading");
+                setCheckInRetry(current => current + 1);
+              }}
+            />
+          )}
+        </CalendarSlideout>
+      )}
+      {checkInOpen && selectedDay && checkInLoadState === "ready" && (
         <CalendarCheckIn
           dateKey={selectedDay.dateKey}
           dateLine={formatCheckInDate(selectedDay, zone)}

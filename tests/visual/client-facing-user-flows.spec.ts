@@ -2855,6 +2855,8 @@ test.describe("client-facing user flow case studies", () => {
       let labels: Array<{ user_id: string; kind: string; label: string }> = [];
       let refuseDelete = false;
       let friendRequests = 0;
+      let checkInsGate = Promise.resolve();
+      let refuseCheckInLoad = false;
       await page.route("**/rest/v1/rpc/list_social_friends", route => route.fulfill({ json: [{
         friendship_id: "qa-calendar-friend", user_id: "qa-avery", handle: "avery_qa", display_name: "Avery",
         avatar_url: null, natal_chart: null, viewer_shares_chart: false, friend_shares_chart: false, accepted_at: fixedNow
@@ -2866,7 +2868,11 @@ test.describe("client-facing user flow case studies", () => {
           expect(row.user_id).toBe(fixtureUserId);
           entries.splice(0, entries.length, row);
           await route.fulfill({ json: row });
-        } else await route.fulfill({ json: entries, headers: { "content-range": entries.length ? "0-0/1" : "*/0" } });
+        } else {
+          await checkInsGate;
+          if (refuseCheckInLoad) return route.fulfill({ status: 500, json: { message: "Fixture refused load" } });
+          await route.fulfill({ json: entries, headers: { "content-range": entries.length ? "0-0/1" : "*/0" } });
+        }
       });
       await page.route("**/rest/v1/calendar_check_in_library?**", async route => {
         const url = new URL(route.request().url());
@@ -2896,8 +2902,8 @@ test.describe("client-facing user flow case studies", () => {
       await expect(page.locator(".lunar-milestones")).toHaveCount(0);
       await page.getByRole("tab", { name: "Day", exact: true }).click();
       const checkIn = page.getByRole("dialog", { name: "Check-in", exact: true });
-      async function openNotes() {
-        await page.locator("button.calendar-checkin-card").click();
+      async function openNotes(open = true) {
+        if (open) await page.locator("button.calendar-checkin-card").click();
         await expect(checkIn).toBeVisible();
         for (let step = 0; step < 3; step++) await checkIn.getByRole("button", { name: "Next", exact: true }).click();
       }
@@ -2945,12 +2951,30 @@ test.describe("client-facing user flow case studies", () => {
       expect(entries[0].tags).toEqual(["Train ride"]);
       expect(entries[0].people).toEqual(["Nikki", "Avery"]);
       expect(friendRequests).toBe(0);
+      let releaseCheckIns!: () => void;
+      checkInsGate = new Promise<void>(resolve => { releaseCheckIns = resolve; });
       await page.reload();
-      await openNotes();
+      await page.locator("button.calendar-checkin-card").click();
+      try {
+        await expect(checkIn.getByRole("status")).toContainText("Loading your check-in");
+        await expect(checkIn.getByRole("button", { name: "Next", exact: true })).toHaveCount(0);
+      } finally {
+        releaseCheckIns();
+      }
+      await openNotes(false);
       await expect(checkIn.locator(".calendar-checkin__people")).toContainText("Avery");
       await checkIn.getByRole("button", { name: /^Tags/ }).click();
       await expect(tagSheet.getByRole("button", { name: "Delete tag Train ride", exact: true })).toBeVisible();
       await expect(tagSheet.getByRole("button", { name: "Delete tag Weekend", exact: true })).toHaveCount(0);
+      refuseCheckInLoad = true;
+      await page.reload();
+      await page.locator("button.calendar-checkin-card").click();
+      await expect(checkIn.getByRole("alert")).toContainText("Your saved check-in could not load");
+      await expect(checkIn.getByRole("button", { name: "Next", exact: true })).toHaveCount(0);
+      refuseCheckInLoad = false;
+      await checkIn.getByRole("button", { name: "Retry", exact: true }).click();
+      await openNotes(false);
+      await expect(checkIn.locator(".calendar-checkin__people")).toContainText("Avery");
     });
   }
 
