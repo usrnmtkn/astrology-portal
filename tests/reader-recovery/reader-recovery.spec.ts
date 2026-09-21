@@ -183,7 +183,7 @@ test("Calendar honors the shared date and finishes skeletons on a stalled conten
   await expect(reading).toContainText("It is to stop pretending the preference does not exist.");
   await expect(page.locator(".lunar-milestones")).toContainText("in 2 days");
   await page.screenshot({ path: "test-results/reader-recovery/calendar-finished.png", fullPage: true });
-  await page.getByRole("button", { name: "Close" }).click();
+  await reading.getByRole("button", { name: "Close", exact: true }).click();
   await page.locator(".lunar-week-day[data-calendar-date='2026-11-28']").click();
   expect(`${page.url()}`).toMatch(/2026-11-28/);
   await expect(page.locator(".lunar-milestones")).toContainText("tomorrow");
