@@ -262,6 +262,9 @@ jobs:
       - run: npx playwright install --with-deps chromium
       - name: Verify exact placement scan parity and calculation reuse
         run: node --import tsx scripts/test-sky-placement-scan-reuse.mts
+      - name: Verify Calendar Moon ingress facts and complete reader copy
+        if: matrix.shard == 1
+        run: node scripts/test-calendar-moon-ingress-reader.mjs && node --import tsx scripts/test-calendar-surface-events.mjs && node --import tsx scripts/test-calendar-api-timezone-anchor.mjs
       - name: Verify placement reader refresh stability
         run: npx playwright test -c playwright.config.ts --workers=1 --shard=${{ matrix.shard }}/2 tests/visual/sky-placement-retrograde.spec.ts tests/visual/sky-composable-reader.spec.ts tests/visual/sky-placement-stability.spec.ts tests/visual/sky-placement-publication-hydration.spec.ts tests/visual/sky-placement-hydration-boundary.spec.ts tests/visual/article-navigation-stability.spec.ts tests/visual/sky-you-transit-parity.spec.ts tests/visual/calendar-day-summary.spec.ts tests/visual/sky-placement-dates.spec.ts tests/visual/placement-visit-dates.spec.ts tests/visual/sky-placement-key-dates.spec.ts
       - name: Upload Sky placement reader artifacts

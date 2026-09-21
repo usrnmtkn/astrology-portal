@@ -58,7 +58,7 @@ import {
 } from "../../content/readerSafety";
 import { cmsSurfaceKeys, resolveCmsSurfaceOverride } from "../../content/cmsSurfaceOverrides";
 import { slugContentPart } from "../../services/generatedContentKeys";
-import { isContentRetired } from "../../content/contentPublicationState";
+import { isContentRetired, publicationAllowsContent } from "../../content/contentPublicationState";
 import { resolveCalendarAspectPublication } from "./calendarAspectPublication";
 import { calendarAspectPublicationKeys, isSkyAspectRetired, resolveSkyAspectContentStudioExact, resolveSkyAspectGeneratedContent } from "../../services/skyAspectContent";
 import {
@@ -77,7 +77,7 @@ import { resolveCalendarMoonFallback } from "./calendarMoonFallback";
 import { calendarMoonPhaseCopy } from "./calendarMoonPhaseCopy";
 import { moonContinuationSummaryKey } from "./moonContinuationSummaries";
 import { calendarSeasonTransitionKeyForSurface, calendarSeasonTransitionKeys } from "./calendarSeasonTransitions";
-import { moonSignTransitionKey, nextZodiacSignName } from "./moonSignTransitions";
+import { moonSignTransitionForPair, moonSignTransitionKey, nextZodiacSignName } from "./moonSignTransitions";
 import type { SkyPlacementContentStatus } from "../sky/skyPlacementContentState";
 import {
   resolveCalendarV9Transit,
@@ -172,9 +172,10 @@ const viewModeOptions: Array<{ value: LunarCalendarViewMode; label: string }> = 
   { value: "month", label: "Month" }
 ];
 
-// v12 requires calculated bounding Sun ingresses, including in basic/month
+// v13 includes exact Moon ingresses in each local day, replacing noon-sign inference.
+// Also requires calculated bounding Sun ingresses, including in basic/month
 // caches. Earlier seven-day caches cannot supply a reliable season range.
-const calendarStorageVersion = "v12";
+const calendarStorageVersion = "v13";
 const calendarStorageTtlMs = 12 * 60 * 60_000;
 const enableLunarArcContent = String(import.meta.env.VITE_ENABLE_LUNAR_ARC_CONTENT ?? "true").toLowerCase() !== "false";
 const enableCalendarApi = import.meta.env.PROD
@@ -1214,6 +1215,25 @@ export function normalizeCalendarEventSurface(
   generatedContent?: Map<string, LiveGeneratedContent>,
   timeZone = "UTC"
 ): NormalizedCalendarEventSurface {
+  if (event.type === "ingress" && event.planet === "Moon") {
+    const from = event.fromSign ?? "";
+    const to = event.toSign ?? event.sign ?? "";
+    const key = moonSignTransitionKey(from, to);
+    const validPair = Boolean(to) && nextZodiacSignName(from) === to.toLowerCase().trim();
+    const live = generatedContent?.get(key) ?? (content?.contentKey === key ? content : null);
+    const body = live && (!live.status || live.status === "LIVE")
+      && publicationAllowsContent(key, live.id, live.updatedAt)
+      ? live.body
+      : publicationAllowsContent(key) ? moonSignTransitionForPair(from, to) : "";
+    // Keep the complete Calendar unit and its lifecycle identity. A source gap
+    // must not fall through to the unrelated Sky placement article.
+    return validPair && isReaderFacingCopy(body) ? {
+      surface: "calendar-event", status: "servable",
+      sections: [{ slot: "description", required: false, layer: "authored",
+        tier: "calendar-moon-transition", sourceKeys: [key], body }]
+    } : { surface: "calendar-event", status: "not-servable", sections: [] };
+  }
+
   if (event.type === "aspect" && event.planets && event.aspect && isSkyAspectRetired(event.planets[0], event.aspect, event.planets[1])) {
     return { surface: "calendar-event", status: "not-servable", sections: [] };
   }
@@ -2649,7 +2669,7 @@ export function LunarCalendar({
       excerpt: calendarEventExcerpt(event, generatedContent, editorial.eventCopy),
       meta: formatCompactEventTime(event.startsAt, zone)
     };
-  });
+  }).filter((card) => card.kind !== "moon" || Boolean(card.excerpt));
   if (selectedDay?.voidOfCourse?.startsAt) {
     selectedDayEventCards.push({
       event: {
@@ -3160,7 +3180,7 @@ export function LunarCalendar({
                 const voidTooltipLabel = formatVoidCourseTooltip(day, zone);
                 const display = monthCellDisplay(day.events);
                 const seasonStart = daySeasonStart(day);
-                const moonEnter = Boolean(moonIngressEvent(day, previousDay));
+                const moonEnter = moonIngressEvent(day, previousDay);
                 const journaled = Boolean(checkInData.summaries[day.dateKey]);
                 const lunarReturn = isLunarReturnDay(day, previousDay, natalMoonSign);
                 const eclipse = isEclipseDay(day);
@@ -3183,7 +3203,7 @@ export function LunarCalendar({
                       </span>
                       <span className="lunar-calendar-day__lunar">
                         <span className={`lunar-calendar-day__moon lunar-moon-sign-glyph${moonEnter ? " is-enter" : ""}`}>
-                          <AstroGlyph text={day.moonSignGlyph} />
+                          <AstroGlyph text={moonEnter?.toSign ? signGlyphs[moonEnter.toSign] : day.moonSignGlyph} />
                         </span>
                         <span className={`lunar-moon-emoji${eclipse ? " is-eclipse" : ""}`} aria-hidden="true">{moonPhaseEmoji(dayPhase)}</span>
                       </span>
@@ -3538,7 +3558,7 @@ function CalendarWeekStrip({
         const voidTooltipLabel = formatVoidCourseTooltip(day, zone);
         const stripDots = weekStripDots(day.events);
         const seasonStart = daySeasonStart(day);
-        const moonEnter = Boolean(moonIngressEvent(day, previousDay));
+        const moonEnter = moonIngressEvent(day, previousDay);
 
         return (
           <button
@@ -3556,7 +3576,7 @@ function CalendarWeekStrip({
             <span className={`lunar-week-day__date ${monthDiscClassName(dayPhase, isToday, Boolean(seasonStart), isExactQuarterMoonDay(day), isSelected, isEclipseDay(day))}`}>{formatDayNumber(day, zone)}</span>
             <span className={`lunar-moon-emoji${isEclipseDay(day) ? " is-eclipse" : ""}`} aria-hidden="true">{moonPhaseEmoji(dayPhase)}</span>
             <span className={`lunar-week-day__sign lunar-moon-sign-glyph${moonEnter ? " is-enter" : ""}`}>
-              <AstroGlyph text={day.moonSignGlyph} />
+              <AstroGlyph text={moonEnter?.toSign ? signGlyphs[moonEnter.toSign] : day.moonSignGlyph} />
             </span>
             {seasonStart && (
               <span className="lunar-week-day__season" aria-hidden="true">

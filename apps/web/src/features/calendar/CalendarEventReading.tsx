@@ -12,10 +12,6 @@ import {
   type LunarJournalBlock
 } from "./lunarJournal";
 
-const moonIngressFallback = (sign: string, element: string) => (
-  `The Moon spends about two and a half days in ${sign}. ${element} sign.`
-);
-
 const PROSE_BLOCK_TYPES = new Set(["para", "heading", "cycle", "notice"]);
 
 function isEclipseWitness(block: LunarJournalBlock) {
@@ -201,7 +197,6 @@ export function CalendarEventReading({
   paragraphs,
   journalBlocks,
   kind,
-  element,
   natalSun,
   timeCity,
   showJournalPrompts,
@@ -236,7 +231,6 @@ export function CalendarEventReading({
     || ((event.type === "ingress" || event.type === "station") && event.planet)
   ));
   const hasJournal = Boolean(journalBlocks?.length);
-  const showMoonFallback = !hasJournal && resolvedKind === "moon" && paragraphs.length === 0 && event.sign && element;
   const hasEventTime = Boolean(event.startsAt);
   let articleHost = "";
   try {
@@ -274,7 +268,6 @@ export function CalendarEventReading({
         <p className="calendar-reading__meta">{dateLine}</p>
       </div>
       <div className="calendar-reading__body">
-        {showMoonFallback ? <p>{moonIngressFallback(event.sign ?? "", element ?? "")}</p> : null}
         {hasJournal
           ? orderedBlocks.map((block, index) => (
             <JournalBlock

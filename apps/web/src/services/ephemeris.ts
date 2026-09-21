@@ -2823,6 +2823,10 @@ function buildLunarCalendarRange(
 
       return [
         ...findLunations(swe, eventStart, eventEnd, timeZone),
+        // Reuse the exact cycle boundaries for day/week/month event feeds.
+        ...cycleEvents.filter((event) => event.type === "ingress" && event.planet === "Moon"
+          && Date.parse(event.startsAt) >= eventStart.getTime()
+          && Date.parse(event.startsAt) < eventEnd.getTime()),
         ...findIngresses(swe, eventStart, eventEnd, timeZone),
         ...findStations(swe, eventStart, eventEnd, timeZone),
         ...findActiveRetrogrades(swe, displayStart, gridEnd, timeZone),

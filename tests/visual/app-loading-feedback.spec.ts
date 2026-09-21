@@ -83,7 +83,7 @@ test("Calendar Day waits for full event facts before selecting leftover Moon wri
       if (key.startsWith("tldr-lunar-calendar|")) localStorage.removeItem(key);
     }
     // Current-version entries without a full-detail marker must also be ignored.
-    localStorage.setItem("tldr-lunar-calendar|v12|week|2026-08-02|40.7128|-74.0060|America/New_York",
+    localStorage.setItem("tldr-lunar-calendar|v13|week|2026-08-02|40.7128|-74.0060|America/New_York",
       JSON.stringify({ savedAt: Date.now(), calendar: basic }));
   }, basic);
   holdFull = true;

@@ -37,30 +37,12 @@ function eventRank(event: LunarCalendarEvent) {
 
 export function moonIngressEvent(
   day: LunarCalendarDay,
-  previousDay?: LunarCalendarDay | null
+  _previousDay?: LunarCalendarDay | null
 ): LunarCalendarEvent | null {
-  if (!previousDay || previousDay.moonSign === day.moonSign) {
-    return null;
-  }
-
-  const ingressAt = previousDay.voidOfCourse?.until
-    && previousDay.voidOfCourse.nextSign === day.moonSign
-    ? previousDay.voidOfCourse.until
-    : day.date;
-
-  return {
-    id: `ingress-moon-${day.dateKey}`,
-    type: "ingress",
-    title: `Moon enters ${day.moonSign}`,
-    startsAt: ingressAt,
-    dateKey: day.dateKey,
-    glyph: PLANET_GLYPHS.moon,
-    primary: false,
-    planet: "Moon",
-    fromSign: previousDay.moonSign,
-    toSign: day.moonSign,
-    sign: day.moonSign
-  };
+  // Noon sign samples cannot identify an ingress day: afternoon entries can
+  // leave consecutive days with the same sampled sign. Use the computed event.
+  return day.events.find((event) => event.type === "ingress"
+    && event.planet === "Moon" && event.dateKey === day.dateKey) ?? null;
 }
 
 export function daySurfaceEvents(

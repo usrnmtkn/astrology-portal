@@ -126,3 +126,62 @@ test('Calendar and Sky preserve formatted summary lists and placement links', as
     await expect(summary.locator('p ul, p ol')).toHaveCount(0);
   }
 });
+
+for (const scenario of [
+  { width: 390, theme: 'light', zone: 'America/New_York', date: '2026-09-21', wrongDate: '2026-09-22', meta: 'Mon · Sep 21 · 1:14 PM' },
+  { width: 1440, theme: 'dark', zone: 'America/New_York', date: '2026-09-21', wrongDate: '2026-09-22', meta: 'Mon · Sep 21 · 1:14 PM' },
+  { width: 390, theme: 'dark', zone: 'Asia/Tokyo', date: '2026-09-22', wrongDate: '2026-09-21', meta: 'Tue · Sep 22 · 2:14 AM' }
+]) {
+  test(`Calendar Moon ingress complete copy and exact date ${scenario.width} ${scenario.zone}`, async ({ page }) => {
+    test.setTimeout(180_000);
+    await page.clock.setFixedTime(new Date('2026-09-21T16:00:00Z'));
+    await page.setViewportSize({ width: scenario.width, height: 1000 });
+    await page.addInitScript(({ location, scenario }) => {
+      localStorage.setItem('tldrastro:selectedLocation', JSON.stringify({ ...location, timeZone: scenario.zone }));
+      localStorage.setItem('tldrastro:theme', scenario.theme);
+    }, { location, scenario });
+    await bundledPublications(page);
+    // Calendar facts come through the real API/worker path, with a browser zone
+    // independent of the selected location. No synthetic ingress facts are used.
+    const expected = 'Once the Moon enters Aquarius, finishing the task may matter less than understanding why the same problem keeps showing up. A little distance can make the pattern easier to see.';
+    await page.goto(`/?date=${scenario.date}#calendar?view=day&date=${scenario.date}`);
+    const card = page.locator('.calendar-stoic-card').filter({ has: page.getByText('Moon enters Aquarius', { exact: true }) });
+    await expect(card).toBeVisible({ timeout: 90_000 });
+    await expect(card.locator('.calendar-stoic-card__excerpt')).toHaveText(expected);
+    expect(await card.locator('.calendar-stoic-card__excerpt').evaluate(el => ({
+      clipped: el.scrollHeight > el.clientHeight + 1, clamp: getComputedStyle(el).webkitLineClamp
+    }))).toEqual({ clipped: false, clamp: 'none' });
+    const strip = page.getByRole('region', { name: 'Selected week', exact: true });
+    await expect(strip.locator(`[data-calendar-date="${scenario.date}"] .is-enter .astro-glyph__mask`)).toHaveCSS("mask-image", /aquarius/);
+    await card.screenshot({ path: `test-results/calendar-moon-ingress-${scenario.width}-${scenario.zone.replace('/', '-')}.png` });
+    await card.click();
+    const detail = page.getByRole('dialog', { name: 'Event detail', exact: true });
+    await expect(detail.locator('.calendar-reading__body')).toHaveText(expected);
+    await expect(detail.locator('.calendar-reading__meta')).toHaveText(scenario.meta);
+    await detail.getByRole('button', { name: 'Close', exact: true }).click();
+    await page.reload();
+    await expect(card.locator('.calendar-stoic-card__excerpt')).toHaveText(expected, { timeout: 60_000 });
+    await strip.locator(`[data-calendar-date="${scenario.wrongDate}"]`).click();
+    await expect(card).toHaveCount(0);
+    await page.getByRole('tab', { name: 'Week', exact: true }).click();
+    const group = page.locator(`#calendar-day-group-${scenario.date}`);
+    await expect(group.getByRole('button', { name: /Moon enters Aquarius/ })).toBeVisible();
+    await expect(page.locator(`#calendar-day-group-${scenario.wrongDate}`).getByRole('button', { name: /Moon enters Aquarius/ })).toHaveCount(0);
+    await group.getByRole('button', { name: /Moon enters Aquarius/ }).click();
+    await expect(card.locator('.calendar-stoic-card__excerpt')).toHaveText(expected);
+    await card.click();
+    await expect(detail.locator('.calendar-reading__body')).toHaveText(expected);
+    await expect(detail.locator('.calendar-reading__meta')).toHaveText(scenario.meta);
+    await detail.getByRole('button', { name: 'Close', exact: true }).click();
+    await page.getByRole('dialog', { name: 'Day slideout', exact: true }).getByRole('button', { name: 'Close', exact: true }).click();
+    await page.getByRole('tab', { name: 'Month', exact: true }).click();
+    const monthDay = page.locator(`.lunar-calendar-day[data-calendar-date="${scenario.date}"]`);
+    await expect(monthDay.locator('.is-enter .astro-glyph__mask')).toHaveCSS("mask-image", /aquarius/, { timeout: 60_000 });
+    await monthDay.click();
+    await expect(card.locator('.calendar-stoic-card__excerpt')).toHaveText(expected);
+    await card.click();
+    await expect(detail.locator('.calendar-reading__body')).toHaveText(expected);
+    await expect(detail.locator('.calendar-reading__meta')).toHaveText(scenario.meta);
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
+  });
+}
