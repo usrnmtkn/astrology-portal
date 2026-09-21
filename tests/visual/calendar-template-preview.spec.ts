@@ -428,16 +428,16 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
 test("Daily composed Moon phrases open continuation and season sources separately", async ({ page }) => {
   const state = await fixture(page);
   const continuationKey = "authored/calendar-moon-continuation-summary/capricorn";
-  const seasonKey = "authored/calendar-season-transition/virgo/libra/variant-4";
+  const seasonKey = "authored/calendar-season-transition/virgo/libra/variant-5";
   state.rows.push(
     { id: "continuation", content_key: continuationKey, body: "Fixture continuation opening. Fixture continuation final sentence.", status: "LIVE", lane: "serving", source_snapshot: { content_role: "full_copy", review_status: "approved_reuse" } },
     { id: "transition", content_key: seasonKey, body: "Fixture season transition {{date}}. Fixture season final sentence.", status: "LIVE", lane: "serving", source_snapshot: { content_role: "full_copy", review_status: "approved_reuse" } }
   );
   await page.goto("/admin/content#calendar-writeups?view=daily-sky");
   const preview = page.getByRole("region", { name: "Calendar template preview", exact: true });
-  await preview.getByLabel("Preview date and time").fill("2026-09-21T12:00");
+  await preview.getByLabel("Preview date and time").fill("2026-09-20T12:00");
   const rendered = preview.getByLabel("Rendered Calendar template");
-  await expect(rendered).toContainText("Fixture season transition in 1 day. Fixture season final sentence.");
+  await expect(rendered).toContainText("Fixture season transition in 2 days. Fixture season final sentence.");
   const before = await rendered.textContent();
   const editor = page.getByRole("dialog", { name: "Generated content editor" });
   const body = editor.locator('textarea[data-sky-field="body"]');

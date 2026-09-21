@@ -128,13 +128,14 @@ export function calendarMoonWriteupForDay(
   const lunationRow = lunationKey
     ? calendarWorkingRow(rows.find((row) => row.content_key === lunationKey && calendarCopyEligible(row)))
     : undefined;
-  const summaryKey = moonContinuationSummaryKey(day.moonSign);
+  const startingSign = facts?.moonSign ?? day.moonSign;
+  const summaryKey = moonContinuationSummaryKey(startingSign);
   const summaryRow = calendarWorkingRow(rows.find((row) => row.content_key === summaryKey && calendarCopyEligible(row)));
   const nextSign = facts?.nextMoonSign
-    || (lunarSigns.includes(day.moonSign.toLowerCase())
-      ? lunarSigns[(lunarSigns.indexOf(day.moonSign.toLowerCase()) + 1) % lunarSigns.length]
+    || (lunarSigns.includes(startingSign.toLowerCase())
+      ? lunarSigns[(lunarSigns.indexOf(startingSign.toLowerCase()) + 1) % lunarSigns.length]
       : "");
-  const transitionKey = nextSign ? moonSignTransitionKey(day.moonSign, nextSign) : "";
+  const transitionKey = nextSign ? moonSignTransitionKey(startingSign, nextSign) : "";
   const transitionRow = transitionKey
     ? calendarWorkingRow(rows.find((row) => row.content_key === transitionKey && calendarCopyEligible(row)))
     : undefined;
