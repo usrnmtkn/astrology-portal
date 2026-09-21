@@ -16,15 +16,15 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
   const errors: string[]=[];
   page.on('pageerror', error=>errors.push(error.message));
   await page.goto('/#sky');
-  await page.getByRole('link', {name:'Read about Lilith in Capricorn',exact:true}).click();
+  await page.getByRole('button', {name:'Read more about Lilith in Capricorn',exact:true}).click();
   await expect(page.locator('#sky-detail-title')).toHaveText(/Lilith.*Capricorn/i, {timeout:60_000});
   const parentUrl=page.url();
   for (const aspect of ['Trine Sun','Opposition Mars']) {
    const link=page.getByRole('link',{name:new RegExp(`Read more about Lilith.*${aspect}`)});
    await expect(link).toBeVisible({timeout:60_000});
    const target=await link.getAttribute('href');
-   // Click the actual Read More text, not the center of a large card.
-   await link.getByText('Read More', {exact:true}).click();
+   // The current related-reading link uses its aspect title as its visible text.
+   await link.click();
    await expect(page).toHaveURL(new RegExp(target!.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+'$'));
    // Nested routes load their reading package just like the parent route above.
    await expect(page.locator('#sky-detail-title')).toHaveText(aspect==='Trine Sun' ? /Sun.*Trine.*Lilith/i : /Mars.*Opposition.*Lilith/i, {timeout:60_000});

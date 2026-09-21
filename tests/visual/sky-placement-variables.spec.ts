@@ -11,7 +11,7 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
   await page.addInitScript(theme => { localStorage.setItem("tldrastro:contentAdminSecret", "sky-variable-fixture"); localStorage.setItem("tldrastro:studio-theme", theme); }, theme);
   await page.route("**/api/admin/**", async route => {
    const url = new URL(route.request().url());
-   const rows = (url.searchParams.get("contentKeys") ?? "").split(",").flatMap(contentKey => {
+   const rows = [...url.searchParams.getAll("contentKeys").flatMap(value => value.split(",")), url.searchParams.get("contentKey") ?? ""].filter(Boolean).flatMap(contentKey => {
     // Shared sign sources use the same exact full-document lookup as placement records.
     const baseline = skyPlacementSourceRecords.get(contentKey) ?? servingPackageRecords.get(contentKey);
     if (!baseline) return [];

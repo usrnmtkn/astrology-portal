@@ -35,9 +35,9 @@ async function isolate(page: Page, theme = "light") {
   await page.route("**/api/**", async route => {
     const url = new URL(route.request().url());
     let rows: typeof fixtureRows = [];
-    if (url.pathname.endsWith("/generated-content") && route.request().method() === "GET") {
-      const keys = (url.searchParams.get("contentKeys") ?? url.searchParams.get("contentKey"))?.split(",");
-      rows = keys ? fixtureRows.filter(row => keys.includes(row.content_key)) : fixtureRows;
+    if ((url.pathname.endsWith("/generated-content") || url.pathname.endsWith("/generated-content-inventory")) && route.request().method() === "GET") {
+      const keys = [...url.searchParams.getAll("contentKeys").flatMap(value => value.split(",")), url.searchParams.get("contentKey") ?? ""].filter(Boolean);
+      rows = keys.length ? fixtureRows.filter(row => keys.includes(row.content_key)) : fixtureRows;
     }
     await route.fulfill({ json: { ok: true, rows, statuses: [], nextCursor: null } });
   });

@@ -2325,20 +2325,13 @@ test.describe("client-facing user flow case studies", () => {
 
       await captureResponsiveSurface(page, "desktop", "calendar-month");
       await page.setViewportSize({ width: 896, height: 900 });
-      const laptopMonthLayout = await page.locator(".lunar-calendar-month-primary").evaluate((layout) => {
-        const grid = layout.querySelector(".lunar-calendar-grid-panel")?.getBoundingClientRect();
-        const detail = layout.querySelector(".lunar-calendar-month-detail")?.getBoundingClientRect();
-
-        return grid && detail
-          ? {
-              sameRow: Math.abs(grid.top - detail.top) < 2,
-              detailFollowsGrid: detail.left >= grid.right
-            }
-          : null;
-      });
-      expect(laptopMonthLayout, "Month view exposes both calendar and selected-day panels").not.toBeNull();
-      expect(laptopMonthLayout?.sameRow, "Month view remains two-column at a 896px laptop viewport").toBe(true);
-      expect(laptopMonthLayout?.detailFollowsGrid, "Selected-day detail remains to the right of the month grid").toBe(true);
+      const dayDialog = page.getByRole("dialog", { name: "Day slideout", exact: true });
+      await expect(dayDialog.getByLabel("Selected lunar day")).toBeVisible();
+      const bounds = await dayDialog.boundingBox();
+      expect(bounds!.x).toBeGreaterThanOrEqual(0);
+      expect(bounds!.x + bounds!.width).toBeLessThanOrEqual(896);
+      await expectNoHorizontalOverflow(page, "Laptop Month day slideout");
+      await dayDialog.getByRole("button", { name: "Close", exact: true }).click();
       await page.setViewportSize({ width: 1440, height: 1000 });
       await page.reload();
       await expect(page.getByRole("tab", { name: "Month" })).toHaveAttribute("aria-selected", "true");
@@ -2347,12 +2340,10 @@ test.describe("client-facing user flow case studies", () => {
       }
     }
 
-    const transitCard = page.locator(".lunar-month-transit-card--button").first();
-    if (await transitCard.isVisible()) {
-      await transitCard.click();
-      await expect(page.locator(".app-shell.mode-detail")).toBeVisible();
-      await expect(page.locator(".sky-detail-body p").first()).toBeVisible();
-    }
+    await firstCalendarDay.click();
+    const dayDialog = page.getByRole("dialog", { name: "Day slideout", exact: true });
+    await expect(dayDialog).toBeVisible();
+    await dayDialog.getByRole("button", { name: "Close", exact: true }).click();
 
     await assertNoClientErrors();
   });
@@ -2391,107 +2382,48 @@ test.describe("client-facing user flow case studies", () => {
     await assertNoClientErrors();
   });
 
-  test("calendar Week view presents seven API-backed day write-ups without mobile overflow", async ({ page }) => {
+  test("calendar Week presents seven calculated days and complete writing without mobile overflow", async ({ page }) => {
     const assertNoClientErrors = await expectNoClientErrors(page);
-
     await seedClientState(page, { now: "2026-07-31T12:00:00.000Z" });
     await expectClientRouteLoads(page, "/#calendar");
-
     const weeklyTab = page.getByRole("tab", { name: "Week", exact: true });
-    await expect(weeklyTab).toBeVisible();
     await weeklyTab.click();
     await expect(weeklyTab).toHaveAttribute("aria-selected", "true");
-
     const weeklyView = page.locator(".lunar-weekly-view");
-    await expect(weeklyView).toBeVisible();
-    await expect(weeklyView.locator(".lunar-weekly-day")).toHaveCount(7);
-    await expect(weeklyView.locator(".lunar-weekly-jump button")).toHaveCount(7);
-    await expect(weeklyView.locator(".lunar-weekly-jump button")).toHaveText([
-      "Mon27",
-      "Tue28",
-      "Wed29",
-      "Thu30",
-      "Fri31",
-      "Sat1",
-      "Sun2"
+    const days = weeklyView.locator(".calendar-day-group");
+    await expect(days).toHaveCount(7);
+    await expect(days.locator(".calendar-day-group__header")).toHaveText([
+      "26Sunday", "27Monday", "28Tuesday", "29Wednesday", "30Thursday", "31Friday · Today", "1Saturday"
     ]);
-    const currentDayCard = weeklyView.locator('[data-is-today="true"]');
-    await expect(currentDayCard).toHaveCount(1);
-    await expect(currentDayCard).not.toHaveClass(/is-collapsed/);
-    await expect(currentDayCard.locator(".lunar-weekly-day__guidance")).toBeVisible();
-    await expect(weeklyView.locator(".lunar-weekly-event__body").first()).toBeVisible({ timeout: 15_000 });
-    await expect(weeklyView.locator('[data-weekly-day-role="lunation"]')).toHaveCount(1);
+    await expect(weeklyView.getByLabel("Selected week").getByRole("button")).toHaveCount(7);
+    await expect(days.filter({ has: page.getByRole("button", { name: "31 Friday · Today", exact: true }) })).toHaveClass(/is-today/);
+    const guidance = days.locator(".calendar-day-group__blurb");
+    await expect(guidance).toHaveCount(7);
+    const bodies = await guidance.allTextContents();
+    expect(bodies.every(body => body.trim().length > 40)).toBe(true);
+    expect(new Set(bodies).size, "Weekly Moon passages do not repeat").toBe(7);
+    for (const key of await guidance.evaluateAll(nodes => nodes.map(node => node.getAttribute("data-guidance-key")))) {
+      expect(key).not.toContain("sky-placement-lived");
+    }
+    await expect(days.getByRole("button", { name: /^Moon in Capricorn / })).toHaveCount(3);
+    await expect(days.getByRole("button", { name: /^Full Moon in Aquarius / })).toHaveCount(1);
     await expect(weeklyView.locator(".lunar-weekly-hero")).toHaveCount(0);
-    await expect(weeklyView.locator(".lunar-weekly-event.event-lunation")).toHaveCount(1);
-    const integrationDays = weeklyView.locator('[data-weekly-day-role="integration"]');
-    expect(await integrationDays.count()).toBeGreaterThan(0);
-    const capricornDays = weeklyView.locator(".lunar-weekly-day").filter({
-      has: page.getByRole("heading", { name: "Moon in Capricorn", exact: true })
-    });
-    await expect(capricornDays).toHaveCount(2);
-    const capricornMoonGuidance = capricornDays.locator('[data-guidance-source="moon"]');
-    await expect(capricornMoonGuidance).toHaveCount(2);
-    const capricornMoonBodies = await capricornMoonGuidance.locator("div").allTextContents();
-    expect(
-      new Set(capricornMoonBodies).size,
-      "Consecutive Capricorn days use distinct Moon-in-sign variants"
-    ).toBe(capricornMoonBodies.length);
-    const weeklyEventBodies = await weeklyView.locator(".lunar-weekly-event__body").allTextContents();
-    expect(weeklyEventBodies.some((body) => /\bToday\b/.test(body)), "Weekly events use their weekday instead of repeating Today").toBe(false);
-    const weeklyAspectEvents = weeklyView.locator(".lunar-weekly-event.event-aspect");
-    const weeklyAspectEventCount = await weeklyAspectEvents.count();
-    expect(weeklyAspectEventCount, "Weekly aspects are present in the fixture week").toBeGreaterThan(0);
-    const weeklyAspectSourceGaps = weeklyView.locator('.lunar-weekly-event.event-aspect[data-content-key^="source-gap/"]');
-    await expect(weeklyAspectSourceGaps).toHaveCount(0);
-    await expect(weeklyAspectEvents.locator(".lunar-weekly-event__body")).toHaveCount(weeklyAspectEventCount);
-    expect(
-      await weeklyAspectEvents.first().evaluate((aspect) => {
-        const content = aspect.closest(".lunar-weekly-day__content");
-        const guidance = content?.querySelector(".lunar-weekly-day__guidance");
-        const events = content?.querySelector(".lunar-weekly-day__events");
-        const children = content ? Array.from(content.children) : [];
-
-        return Boolean(guidance && events && children.indexOf(guidance) < children.indexOf(events));
-      }),
-      "Weekly aspects render below the Moon-in-sign write-up"
-    ).toBe(true);
-    const overlappingCards = await weeklyView.evaluate((weekly) => (
-      Array.from(weekly.querySelectorAll(".lunar-weekly-day"))
-        .filter((card) => {
-          const events = card.querySelector(".lunar-weekly-day__events");
-          const guidance = card.querySelector(".lunar-weekly-day__guidance");
-
-          if (!events || !guidance) {
-            return false;
-          }
-
-          const eventsRect = events.getBoundingClientRect();
-          const guidanceRect = guidance.getBoundingClientRect();
-          return guidanceRect.bottom > eventsRect.top;
-        })
-        .length
-    ));
-    expect(overlappingCards, "Weekly event write-ups and Moon guidance do not overlap").toBe(0);
-    const moonGuidanceBlocks = weeklyView.locator(".lunar-weekly-day__guidance");
-    expect(await moonGuidanceBlocks.count()).toBeGreaterThan(1);
-    const moonGuidanceLabels = await moonGuidanceBlocks.locator(":scope > p").allTextContents();
-    expect(
-      moonGuidanceLabels.every((label) => /^Moon in [A-Z][a-z]+$/.test(label)),
-      "Weekly guidance identifies the Moon sign instead of the rejected Day theme label"
-    ).toBe(true);
-    await expect(weeklyView.getByText(/Weekly Moon:/i)).toHaveCount(0);
-    const moonGuidance = await moonGuidanceBlocks.locator("div").allTextContents();
-    expect(new Set(moonGuidance).size, "Weekly guidance does not repeat").toBe(moonGuidance.length);
+    await expect(weeklyView.getByText(/Weekly Moon:|Day theme/i)).toHaveCount(0);
+    expect(await days.evaluateAll(nodes => nodes.every(day => {
+      const rows = day.querySelector(".calendar-day-group__rows")!.getBoundingClientRect();
+      const copy = day.querySelector(".calendar-day-group__blurb")!.getBoundingClientRect();
+      return rows.bottom <= copy.top;
+    })), "Event rows and Moon writing must not overlap").toBe(true);
     await captureResponsiveSurface(page, "desktop", "calendar-week");
-
     await page.setViewportSize({ width: 390, height: 844 });
-    const widths = await page.evaluate(() => ({
-      viewport: document.documentElement.clientWidth,
-      page: document.documentElement.scrollWidth
-    }));
-
-    expect(widths.page, "The Weekly does not introduce horizontal page overflow").toBe(widths.viewport);
-    await expect(weeklyView.locator(".lunar-weekly-day")).toHaveCount(7);
+    await expectNoHorizontalOverflow(page, "Mobile Week");
+    await expect(days).toHaveCount(7);
+    // Week events open the selected day, then its Event detail with complete copy.
+    await days.getByRole("button", { name: /^Venus squares Mars / }).click();
+    const dayDialog = page.getByRole("dialog", { name: "Day slideout", exact: true });
+    await dayDialog.getByRole("button", { name: "Venus squares Mars", exact: true }).click();
+    const exactBody = JSON.parse(readFileSync("packages/astro-knowledge/data/transits/venus-square-mars.json", "utf8")).readerCopy.body;
+    await expect(page.getByRole("dialog", { name: "Event detail", exact: true })).toContainText(exactBody);
     await assertNoClientErrors();
   });
 
@@ -2503,21 +2435,20 @@ test.describe("client-facing user flow case studies", () => {
 
     const weeklyView = page.locator(".lunar-weekly-view");
     await expect(weeklyView.locator(".lunar-weekly-hero")).toHaveCount(0);
-    const weeklyEvents = weeklyView.locator(".lunar-weekly-event");
+    const weeklyEvents = weeklyView.locator(".calendar-day-group__block");
     const lastQuarterTaurus = weeklyEvents.filter({
-      has: page.getByRole("heading", { name: "Last Quarter Moon in Taurus" })
+      has: page.getByRole("button", { name: /^Last Quarter Moon in Taurus / })
     });
     await expect(lastQuarterTaurus).toHaveCount(1);
-    await expect(lastQuarterTaurus.locator(".lunar-weekly-event__body")).toHaveCount(0);
-    await expect(page.locator("#lunar-weekly-2026-08-05 .lunar-weekly-day__guidance")).toBeVisible();
+    await expect(lastQuarterTaurus.locator(".calendar-day-group__excerpt")).toHaveCount(0);
+    await expect(page.locator("#calendar-day-group-2026-08-05 .calendar-day-group__blurb")).toBeVisible();
     await expect(lastQuarterTaurus).not.toContainText("The waning Moon carries things out");
-    await expect(weeklyEvents.getByRole("heading", { name: "Venus enters Libra" })).toBeVisible();
-    await expect(weeklyEvents.getByRole("heading", { name: "Sun trines Saturn" })).toBeVisible();
-    await expect(weeklyEvents.getByRole("heading", { name: "Mercury enters Leo" })).toBeVisible();
+    await expect(weeklyEvents.getByRole("button", { name: /^Venus enters Libra / })).toBeVisible();
+    await expect(weeklyEvents.getByRole("button", { name: /^Sun trines Saturn Rx / })).toBeVisible();
 
-    await expect(page.locator("#lunar-weekly-2026-08-04 .lunar-weekly-day__facts span").first()).toHaveText("Waning Gibbous");
-    await expect(page.locator("#lunar-weekly-2026-08-05 .lunar-weekly-day__facts span").first()).toHaveText("Waning Gibbous");
-    await expect(page.locator("#lunar-weekly-2026-08-06 .lunar-weekly-day__facts span").first()).toHaveText("Waning Crescent");
+    await expect(weeklyView.getByLabel("Selected week").getByRole("button", { name: /^Tuesday, August 4\. / })).toHaveAccessibleName(/Waning Gibbous/);
+    await expect(weeklyView.getByLabel("Selected week").getByRole("button", { name: /^Wednesday, August 5\. / })).toHaveAccessibleName(/Waning Gibbous/);
+    await expect(weeklyView.getByLabel("Selected week").getByRole("button", { name: /^Thursday, August 6\. / })).toHaveAccessibleName(/Waning Crescent/);
 
     await page.setViewportSize({ width: 390, height: 844 });
     await expect(weeklyView).toBeVisible();
@@ -2527,9 +2458,13 @@ test.describe("client-facing user flow case studies", () => {
     ).toBe(true);
     await captureResponsiveSurface(page, "mobile", "calendar-weekly-overview");
 
+    await expectClientRouteLoads(page, "/#calendar?view=weekly&date=2026-08-09");
+    await expect(weeklyEvents.getByRole("button", { name: /^Mercury enters Leo / })).toBeVisible();
     await page.getByRole("tab", { name: "Month" }).click();
-    const monthVoidLabels = await page.locator(".lunar-calendar-body.is-month .event-void .lunar-calendar-event-pill__label").allTextContents();
-    expect(monthVoidLabels.every((label) => label === "Void")).toBe(true);
+    await expect(page.locator(".lunar-calendar-body.is-month .calendar-month-chip__voc").first()).toBeAttached();
+    const monthVoidLabels = await page.locator(".lunar-calendar-body.is-month .calendar-month-chip__voc").allTextContents();
+    expect(monthVoidLabels.length).toBeGreaterThan(0);
+    expect(monthVoidLabels.every((label) => label === "VOC")).toBe(true);
 
     await page.getByRole("tab", { name: "Day" }).click();
     await expect.poll(() => new URL(page.url()).hash).toContain("view=day");

@@ -46,7 +46,7 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark'] as const)
       }).observe(document, { subtree: true, childList: true, characterData: true });
     });
     await page.goto(`/?date=${dateKey}#calendar?view=day&date=${dateKey}`);
-    const card = page.locator("[data-calendar-date]").first();
+    const card = page.getByLabel("Selected lunar day", { exact: true });
     const moon = card.locator("[data-guidance-key]").first();
     const sun = card.getByRole('region', { name: 'Sun in season', exact: true });
     await expect(sun.getByRole('link', { name: /Sun in Virgo at \d+°/ })).toBeVisible({ timeout: 60_000 });
@@ -61,21 +61,19 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark'] as const)
     await expect(moon.getByText(/Moon in Libra at \d+°/)).toHaveCount(0);
     await expect(card.getByRole('region', { name: 'Daily Calendar overview' })).toHaveCount(0);
     await expect(card.locator('mark')).toHaveCount(0);
-    const exact = card.getByRole('region', { name: 'Exact today', exact: true });
-    const primaryEvents = events.filter(event => event.primary).reverse();
-    if (empty) await expect(exact).toHaveCount(0);
-    else {
-      // Preserve the live aspect selection, latest-first order, and paragraph layout.
-      await expect(exact.getByRole('heading')).toHaveText('Exact today');
-      await expect(exact.getByRole('link')).toHaveCount(0);
-      await expect(exact.locator('p')).toHaveCount(primaryEvents.length);
-      for (const [i, event] of primaryEvents.entries()) {
-        const [from, to] = event.planets;
-        const copy = JSON.parse(readFileSync(`packages/astro-knowledge/data/transits/${from.toLowerCase()}-${event.aspect}-${to.toLowerCase()}.json`, 'utf8')).readerCopy;
-        await expect(exact.locator('p').nth(i)).toHaveText(copy.body);
-      }
-      const movements = card.getByLabel('Daily transits and aspects');
-      await expect(movements.getByRole('button')).toHaveCount(primaryEvents.length);
+    await expect(card.getByRole('region', { name: 'Exact today', exact: true })).toHaveCount(0);
+    const primaryEvents = events.filter(event => event.primary);
+    if (empty) await expect(card.locator('.calendar-stoic-card')).toHaveCount(day.voidOfCourse ? 1 : 0);
+    for (const event of primaryEvents) {
+      const [from, to] = event.planets;
+      const title = new RegExp(`${from}(?: Rx)? ${event.aspect}s ${to}(?: Rx)?`, 'i');
+      const trigger = card.locator('.calendar-day-events').getByRole('button', { name: title });
+      await expect(trigger).toHaveCount(1);
+      await trigger.click();
+      const reading = page.getByRole('dialog', { name: 'Event detail', exact: true });
+      const copy = JSON.parse(readFileSync(`packages/astro-knowledge/data/transits/${from.toLowerCase()}-${event.aspect}-${to.toLowerCase()}.json`, 'utf8')).readerCopy;
+      await expect(reading).toContainText(copy.body);
+      await reading.getByRole('button', { name: 'Close', exact: true }).click();
     }
     expect(await card.locator('.calendar-sky-card__body').evaluate(el => [...el.querySelectorAll('section')].map(child => child.getAttribute('aria-label') || child.getAttribute('aria-labelledby'))))
       .toEqual(expect.arrayContaining(['Sun in season']));
