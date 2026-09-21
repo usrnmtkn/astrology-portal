@@ -5,9 +5,9 @@ let componentScript: string;
 test.beforeAll(async () => {
   const result = await build({
     stdin: { contents: `import React from 'react'; import {createRoot} from 'react-dom/client'; import Panel from './apps/admin/src/SkyV4StudioReviewPanel'; window.mountEditor = props => { window.editorRoot ??= createRoot(document.getElementById('root')); window.editorRoot.render(React.createElement(Panel, props)); };`, resolveDir: process.cwd(), loader: "tsx" },
-    bundle: true, write: false, platform: "browser", format: "iife", jsx: "automatic", define: { "process.env.NODE_ENV": '"test"' }
+    bundle: true, write: false, outdir: "test-results/secondary-editor", platform: "browser", format: "iife", jsx: "automatic", define: { "process.env.NODE_ENV": '"test"' }
   });
-  componentScript = result.outputFiles[0].text;
+  componentScript = result.outputFiles.find(file => file.path.endsWith(".js"))!.text;
 });
 
 const contentKey = "sky-placement/article/saturn/aries";
@@ -73,7 +73,7 @@ test("Needs Attention stops on a repeated inventory cursor", async ({ page }) =>
   await page.addInitScript(() => window.localStorage.setItem("tldrastro:contentAdminSecret", "isolated-fixture"));
   let inventoryRequests = 0;
   await page.route("**/api/admin/content-coverage", route => route.fulfill({ json: { ok: true, summary: { complete: 0, incomplete: 0, unresolvedIssues: 0 }, coverage: [] } }));
-  await page.route("**/api/admin/generated-content?**", route => {
+  await page.route("**/api/admin/generated-content-inventory?**", route => {
     inventoryRequests++;
     return route.fulfill({ json: { ok: true, rows: [], nextCursor: "same-cursor" } });
   });

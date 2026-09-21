@@ -36,28 +36,41 @@ for (const scenario of [
   } else {
     await page.getByRole("button", { name: "Calendar", exact: true }).click();
   }
-  const arc = page.getByRole("region", { name: "Virgo season lunar arc", exact: true });
-  await expect(arc).toContainText(`${scenario.start} – ${scenario.end}`, { timeout: 60_000 });
-  await expect(arc).toContainText(scenario.fullMoon, { timeout: 60_000 });
+  const daysLeft = scenario.timeZone === "America/New_York" ? 8 : 9;
+  const season = page.getByRole("button", { name: `Virgo season · ${daysLeft}${scenario.width < 600 ? "D" : " days"} left`, exact: true });
+  await expect(season).toBeVisible({ timeout: 60_000 });
+  await season.click();
+  const reading = page.getByRole("dialog", { name: "Event detail" });
+  await expect(reading.locator(".calendar-reading__meta")).toContainText(scenario.start);
+  await reading.getByRole("button", { name: "Close", exact: true }).click();
   await page.getByRole("tab", { name: "Week", exact: true }).click();
-  await expect(page.locator(".lunar-weekly-day__events")).not.toHaveCount(0);
+  await expect(page.locator(".calendar-day-group").first()).toBeVisible();
+  await expect(season).toBeVisible();
   await page.getByRole("tab", { name: "Month", exact: true }).click();
-  await expect(page.getByRole("heading", { name: "September 2026", exact: true })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Sep 2026", exact: true })).toBeVisible();
+  if (scenario.width >= 600) await expect(season).toBeVisible();
   await page.getByRole("tab", { name: "Day", exact: true }).click();
-  await expect(arc).toContainText(`${scenario.start} – ${scenario.end}`, { timeout: 60_000 });
   await page.reload();
-  await expect(arc).toContainText(`${scenario.start} – ${scenario.end}`, { timeout: 60_000 });
-  await expect(arc).toContainText(scenario.fullMoon);
-  await arc.screenshot({ path: `test-results/season-${scenario.timeZone.replaceAll("/", "-")}.png` });
+  await expect(season).toBeVisible({ timeout: 60_000 });
+  await season.click();
+  await expect(reading.locator(".calendar-reading__meta")).toContainText(scenario.start);
+  await reading.getByRole("button", { name: "Close", exact: true }).click();
+
+  // The former season arc is now reached through dated Day event readings.
+  // Retain the independently calculated full-Moon date and exact-time check.
+  await page.goto("/?date=2026-08-28#calendar?view=day&date=2026-08-28");
+  await page.locator(".calendar-day-events").getByRole("button", { name: /Full Moon|Lunar Eclipse/i }).first().click();
+  await expect(reading.locator(".calendar-reading__meta")).toContainText(scenario.fullMoon.replace(", ", " · "));
+  await reading.screenshot({ path: `test-results/season-${scenario.timeZone.replaceAll("/", "-")}.png` });
 
   // The same exact event has a different civil date in Tokyo. Calendar's row
   // and the article opened from it must agree on both the date and the time.
   const exactDay = scenario.timeZone === "Asia/Tokyo" ? "2026-09-15" : "2026-09-14";
   await page.goto(`/?date=${exactDay}#calendar?view=day&date=${exactDay}`);
-  const movement = page.getByLabel("Daily transits and aspects").getByRole("button", { name: "Sun sextiles Mars", exact: true });
-  await expect(movement).toContainText(scenario.exactTime, { timeout: 60_000 });
+  const movement = page.getByLabel("Selected lunar day").getByRole("button", { name: "Sun sextiles Mars", exact: true });
+  await expect(movement).toContainText(scenario.exactTime.replace(" AM", "a").replace(" PM", "p"), { timeout: 60_000 });
   await movement.click();
-  await expect(page.locator(".sky-detail-id .article-duration")).toContainText(scenario.exactTime, { timeout: 60_000 });
-  await expect(page.locator(".sky-detail-id .article-duration")).toContainText(`September ${exactDay.endsWith("15") ? "15" : "14"}, 2026`);
+  await expect(page.getByRole("dialog", { name: "Event detail" }).locator(".calendar-reading__meta")).toContainText(scenario.exactTime, { timeout: 60_000 });
+  await expect(page.getByRole("dialog", { name: "Event detail" }).locator(".calendar-reading__meta")).toContainText(`Sep ${exactDay.endsWith("15") ? "15" : "14"}`);
   expect(errors).toEqual([]);
 });

@@ -21,10 +21,14 @@ test('Calendar renders all 21 approved refinements in full and after reload', as
   } }));
   await page.goto(`/#calendar?view=day&date=${dateKey}`);
   for (let load = 0; load < 2; load++) {
-    const region = page.getByRole('region', { name: /^Exact today$/i });
-    for (const [, copy] of entries) {
+    for (const [key, copy] of entries) {
+      const [, , a, aspect, b] = key.split('.');
+      const verb = { conjunction: 'conjoins', opposition: 'opposes', square: 'squares', trine: 'trines', sextile: 'sextiles' }[aspect];
+      await page.getByRole('button', { name: new RegExp(`^${a}(?: Rx)? ${verb} ${b}(?: Rx)?$`, 'i') }).click();
+      const region = page.getByRole('dialog', { name: 'Event detail' });
       // Exact full-body equality protects both opening and final sentence.
-      await expect(region.getByText(copy.body, { exact: true })).toBeVisible({ timeout: 30_000 });
+      await expect(region.locator('.calendar-reading__body')).toHaveText(copy.body, { timeout: 30_000 });
+      await region.getByRole('button', { name: 'Close', exact: true }).click();
     }
     if (load === 0) await page.reload();
   }

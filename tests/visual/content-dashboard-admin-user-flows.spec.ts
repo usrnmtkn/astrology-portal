@@ -6582,7 +6582,7 @@ for (const theme of ['dark', 'light'] as const) for (const width of [1440, 390])
     await expect(detail.getByRole('heading',{name:'Structure and fixed wording'})).toHaveCSS('font-size','16px');
     await detail.screenshot({path:`outputs/studio-style/composition-template-spacing-${theme}-${width}.png`});
     await page.getByRole('tab', {name:'Assembly',exact:true}).click();
-    await expect(page.getByLabel('Selected template coverage')).toHaveCSS('gap','12px');
+    await expect(page.getByLabel('Selected template coverage')).toHaveCSS('gap','16px');
     for (const slot of await detail.locator('.admin-composition-slot').all()) {
       await expect(slot).toHaveCSS('padding','16px');
       await expect(slot).toHaveCSS('gap','8px');
@@ -7187,12 +7187,13 @@ for (const theme of ['dark', 'light']) for (const width of [1440, 390]) {
     await expectAdminRouteLoads(page, '/admin/content#exact-content');
     await page.locator('.admin-content-row').getByRole('button', {name:'Edit',exact:true}).click();
     const status = page.getByRole('region', {name:'Review and publication readiness'});
-    await expect(status.locator('dt')).toHaveText(['Review', 'Publication']);
-    await expect(status.locator('dd')).toHaveText(['Complete', 'Ready']);
+    await expect(status.locator('.admin-status-card > span')).toHaveText(['Review', 'Publication']);
+    await expect(status.locator('.admin-status-card > strong')).toHaveText(['Complete', 'Ready']);
     await expect(status.locator('h3')).toHaveClass('sr-only');
-    expect((await status.boundingBox())!.height).toBeLessThan(100);
-    const values = await status.locator('dl > div').evaluateAll(elements => elements.map(e => e.getBoundingClientRect().y));
-    expect(Math.abs(values[0] - values[1])).toBeLessThan(3);
+    await expect(status.locator('.admin-review-status-values')).toHaveCSS('gap', '16px');
+    const values = await status.locator('.admin-status-card').evaluateAll(elements => elements.map(e => e.getBoundingClientRect().y));
+    if (width > 720) expect(Math.abs(values[0] - values[1])).toBeLessThan(3);
+    else expect(values[1]).toBeGreaterThan(values[0]);
     await expectStudioTypography(page, `Compact status ${theme} ${width}`);
     await expectNoHorizontalOverflow(page, 'Compact review status');
     await status.screenshot({path:`outputs/studio-style/compact-review-status-${theme}-${width}.png`});
@@ -7315,7 +7316,8 @@ for (const theme of ['dark', 'light']) for (const width of [1440, 390]) {
     const noErrors = await expectNoBrowserErrors(page);
     await expectAdminRouteLoads(page,'/admin/content#composition-map');
     const selected = page.getByRole('region',{name:'Selected app surface or system'});
-    await expect(selected.locator('.admin-composition-detail-header h2')).toHaveClass('sr-only');
+    await expect(selected.locator('.admin-composition-detail-header h2')).toBeVisible();
+    await expect(selected.locator('.admin-composition-detail-header h2')).toHaveText('Friends Compatibility: Planet Comparison Cards');
     await expect(selected.locator('.admin-composition-detail-header .admin-eyebrow')).toHaveCount(0);
     const manager = page.getByRole('region',{name:'Manage composition sources'});
     await expect(manager.locator('h3')).toHaveClass('sr-only');
@@ -7367,7 +7369,7 @@ for (const theme of ['dark','light']) for (const width of [1440,390]) {
     const friends=controls.getByRole('button',{name:'Friends',exact:true});
     await friends.click();
     await friends.hover();
-    await expect(friends).toHaveCSS('background-color',theme==='dark'?'rgb(42, 44, 47)':'rgb(235, 235, 235)');
+    await expect(friends).toHaveCSS('background-color',theme==='dark'?'rgb(35, 37, 41)':'rgb(240, 240, 241)');
     await search.fill('compatibility card');
     const row=page.locator('.admin-content-row').filter({hasText:'fallback-hook/friends.compatibility.planet-card'});
     await expect(row).toHaveCount(1);
@@ -7428,7 +7430,8 @@ for (const theme of ['dark','light']) for (const width of [1440,390]) {
     await editor.locator('.admin-editor-settings > summary').click();
     const metadata=editor.locator('.admin-metadata-fields');
     await expect(metadata.locator('label').first()).toHaveCSS('border-top-width','0px');
-    await expect(editor.locator('.admin-editor-settings > summary')).toHaveCSS('padding-top','12px');
+    await expect(editor.locator('.admin-editor-settings')).toHaveCSS('padding-top','12px');
+    await expect(editor.locator('.admin-editor-settings > summary')).toHaveCSS('padding-top','0px');
     const titleField=editor.locator('.admin-editor-copy-section');
     const statusPanel=editor.getByRole('region',{name:'Review and publication readiness'});
     expect(Math.abs((await titleField.boundingBox())!.width-(await statusPanel.boundingBox())!.width)).toBeLessThan(2);

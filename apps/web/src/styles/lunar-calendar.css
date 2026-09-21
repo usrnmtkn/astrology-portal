@@ -2497,8 +2497,13 @@ a.tx-card.has-article:hover .tx-more {
   }
 
   .lunar-calendar-body.is-month .lunar-calendar-day__events {
-    justify-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-content: start;
     gap: var(--lunar-space-2);
+    max-height: var(--calendar-month-events-max-compact);
+    overflow: hidden;
   }
 
   .calendar-month-chip,
@@ -2569,7 +2574,7 @@ a.tx-card.has-article:hover .tx-more {
   .lunar-calendar-segmented .segmented-control__item {
     min-width: 0;
     height: var(--calendar-segmented-item-height);
-    min-height: 0;
+    min-height: var(--calendar-segmented-touch-height);
   }
 
   .lunar-week-strip {
@@ -2917,10 +2922,6 @@ a.tx-card.has-article:hover .tx-more {
   .lunar-calendar-body.is-month .lunar-calendar-weekdays,
   .lunar-calendar-body.is-month .lunar-calendar-grid {
     column-gap: var(--lunar-space-2);
-  }
-
-  .lunar-calendar-body.is-month .lunar-calendar-day {
-    min-height: 124px;
   }
 
   .lunar-selected-card {
@@ -4740,7 +4741,7 @@ a.tx-card.has-article:hover .tx-more {
 
   .lunar-calendar-segmented .segmented-control__item {
     height: var(--calendar-segmented-item-height);
-    min-height: 0;
+    min-height: var(--calendar-segmented-touch-height);
   }
 
   .lunar-calendar-legend__panel {
@@ -5028,4 +5029,3 @@ a.tx-card.has-article:hover .tx-more {
     display: inline;
   }
 }
-

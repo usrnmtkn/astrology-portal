@@ -247,7 +247,6 @@ export function CalendarEventReading({
   return (
     <CalendarSlideout
       label="Event detail"
-      labelledBy="calendar-reading-title"
       leading={canReadArticle ? (
         <button className="calendar-reading__article-pill" onClick={onReadArticle} type="button">
           Read article

@@ -463,6 +463,7 @@
   --calendar-control-size: 40px;
   --calendar-segmented-gap: 0px;
   --calendar-segmented-item-height: calc(var(--calendar-control-size) - (var(--lunar-space-4) * 2));
+  --calendar-segmented-touch-height: var(--size-6);
   --calendar-title-size: var(--type-h1-size);
   --calendar-title-size-month: var(--type-display-size);
   --calendar-title-size-day: var(--type-h1-size);
@@ -489,6 +490,8 @@
   --calendar-month-disc: 30px;
   --calendar-month-disc-compact: 32px;
   --calendar-month-chip-compact: 20px;
+  /* Two rows of compact marks; the day button opens the complete event list. */
+  --calendar-month-events-max-compact: calc(var(--calendar-month-chip-compact) * 2 + var(--lunar-space-2));
   --calendar-control-size-compact: 36px;
   --calendar-season-pill-disc: 30px;
   --calendar-stoic-min-height: 270px;

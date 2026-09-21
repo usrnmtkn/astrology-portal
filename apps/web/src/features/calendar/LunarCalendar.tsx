@@ -2640,7 +2640,11 @@ export function LunarCalendar({
         ];
       }),
       ...(viewMode === "month" ? calendarMonthlyOverviewContentKeys(calendar) : [])
-    ].filter((contentKey) => !fallbackArchitectureV3AuthoredContentForKey(contentKey));
+    ].filter((contentKey) => (
+      // Signed-off Studio exact revisions can supersede their bundled baseline.
+      // Keep requesting these keys even when local approved prose is available.
+      contentKey.startsWith("sky.aspect.") || !fallbackArchitectureV3AuthoredContentForKey(contentKey)
+    ));
     const firstDate = visibleDays[0]?.dateKey ?? selectedDateKey;
     const lastDate = visibleDays.at(-1)?.dateKey ?? selectedDateKey;
     const locationKey = `${location.latitude.toFixed(3)},${location.longitude.toFixed(3)},${calendar.timeZone}`;

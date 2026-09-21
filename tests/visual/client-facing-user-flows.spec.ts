@@ -898,13 +898,17 @@ async function expectLunarSelectedCardEventAlignment(page: Page, label: string) 
 
     events.slice(0, 8).forEach((event, index) => {
       const rect = event.getBoundingClientRect();
-      const leftDelta = Math.abs(rect.left - referenceRect.left);
-      const rightDelta = Math.abs(rect.right - referenceRect.right);
-
-      if (leftDelta > 1 || rightDelta > 1) {
-        failures.push(`event ${index + 1} left ${leftDelta.toFixed(1)}px right ${rightDelta.toFixed(1)}px`);
+      if (rect.left < referenceRect.left - 1 || rect.right > referenceRect.right + 1) {
+        failures.push(`event ${index + 1} extends beyond the event grid`);
       }
     });
+    const grid = document.querySelector(".calendar-day-events__grid");
+    const columns = grid ? getComputedStyle(grid).gridTemplateColumns.split(" ").length : 0;
+    const firstRow = events.slice(0, columns).map(event => event.getBoundingClientRect());
+    if (firstRow.length && (Math.abs(firstRow[0].left - referenceRect.left) > 1
+      || Math.abs(firstRow.at(-1)!.right - referenceRect.right) > 1)) {
+      failures.push("event columns do not fill the selected-day content track");
+    }
 
     return { checked: events.length, failures };
   });
@@ -3155,6 +3159,7 @@ test.describe("client-facing user flow case studies", () => {
 
     await page.getByRole("tab", { name: "Month" }).click();
     await expect(page.locator(".lunar-calendar-day")).toHaveCount(42);
+    await expect(page.locator(".calendar-month-chip").first()).toBeVisible({ timeout: 60_000 });
     const mobileMonthMetrics = await page.evaluate(() => {
       const day = document.querySelector(".lunar-calendar-day")?.getBoundingClientRect();
       const tab = document.querySelector('[role="tab"][aria-selected="true"]')?.getBoundingClientRect();
@@ -4605,7 +4610,8 @@ test("Sky detail hydrates published aspects for its displayed snapshot and dated
     await route.fulfill({ json: snapshot.rows.filter((row: any) => keys.includes(row.content_key)) });
   });
   await expectClientRouteLoads(page, "/?date=2026-09-08#sky/placement/lilith/sagittarius");
-  const ids = ["chiron-trine-lilith", "neptune-square-lilith", "sun-square-lilith"];
+  // Placement cards now follow the displayed motion chapter, not the full residency.
+  const ids = ["mercury-sextile-lilith", "jupiter-trine-lilith", "sun-square-lilith"];
   for (const id of ids) {
     const row = JSON.parse(readFileSync(`packages/astro-knowledge/data/transits/${id}.json`, "utf8"));
     const article = page.locator(".sky-detail-article");
@@ -4615,9 +4621,13 @@ test("Sky detail hydrates published aspects for its displayed snapshot and dated
   const datedLink = page.locator('.article-related-aspect-row').filter({ hasText: "Lilith Square Sun" });
   const datedHref = await datedLink.getAttribute("href");
   expect(datedHref).toContain("/at/");
-  const sampledLink = page.locator('.article-related-aspect-row').filter({ hasText: "Lilith Square Neptune" });
-  expect(await sampledLink.getAttribute("href")).toContain("/on/");
-  await sampledLink.click();
+  // Preserve complete-copy coverage for sampled links outside that shorter chapter.
+  const sampleInstant = encodeURIComponent("2026-09-08T14:03:00.000Z");
+  await page.evaluate(hash => { window.location.hash = hash; }, `sky/aspect/chiron/trine/lilith/on/${sampleInstant}`);
+  const chiron = JSON.parse(readFileSync("packages/astro-knowledge/data/transits/chiron-trine-lilith.json", "utf8"));
+  await expect(page.locator('.sky-detail-article')).toContainText(chiron.readerCopy.body, { timeout: 60_000 });
+  expect(requested.has("sky.aspect.chiron.trine.lilith")).toBe(true);
+  await page.evaluate(hash => { window.location.hash = hash; }, `sky/aspect/lilith/square/neptune/on/${sampleInstant}`);
   const neptune = JSON.parse(readFileSync("packages/astro-knowledge/data/transits/neptune-square-lilith.json", "utf8"));
   await expect(page.locator('.sky-detail-article')).toContainText(neptune.readerCopy.body, { timeout: 60_000 });
   await page.reload();

@@ -100,20 +100,21 @@ for (const width of [390, 1440]) {
       await map.getByLabel("Composition Sun sign").selectOption("Virgo");
       await map.getByLabel("Composition Moon sign").selectOption("Cancer");
       await studio.getByLabel("Search summary wording").fill("Virgo");
-      await expect(studio.getByRole("article")).toHaveCount(2);
+      const fields = studio.getByLabel("Daily Sky Summary fields");
+      await expect(fields.getByRole("article")).toHaveCount(2);
       await page.screenshot({ path: `test-results/sky-studio-${width}-${theme}.png`, fullPage: true });
       await studio.getByLabel("Search summary wording").fill("unmatched-search");
       await expect(studio.getByText("No summary fields match this search.")).toBeVisible();
       await studio.getByLabel("Search summary wording").fill("");
       await studio.getByLabel("Summary section").selectOption("Timing and retrogrades");
-      await expect(studio.getByRole("article")).toHaveCount(6);
+      await expect(fields.getByRole("article")).toHaveCount(6);
       await expect(studio.getByRole("article", { name: "Full Moon explanation", exact: true })).toHaveCount(0);
       await expect(studio.getByRole("article", { name: "No retrograde planets", exact: true })).toHaveCount(0);
       await studio.getByLabel("Summary section").selectOption("Ingress TLDRs");
-      await expect(studio.getByRole("article")).toHaveCount(1);
-      await expect(studio.getByRole("article")).toContainText("No ingress TLDR added here.");
+      await expect(fields.getByRole("article")).toHaveCount(1);
+      await expect(fields.getByRole("article")).toContainText("No ingress TLDR added here.");
       await studio.getByLabel("Ingress planet or point").selectOption("North Node");
-      await expect(studio.getByRole("article")).toHaveAttribute("aria-label", "North Node enters Libra");
+      await expect(fields.getByRole("article")).toHaveAttribute("aria-label", "North Node enters Libra");
       expect(await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth)).toBeLessThanOrEqual(1);
     });
   }
@@ -563,6 +564,7 @@ for (const width of [390, 1440]) test(`owner event-first summary reaches reader 
   await reader.route("**/api/calendar?**", route => route.fulfill({ json: { ok: true, calendar: { days: [{ dateKey: "2026-09-10", events }] } } }));
   await reader.goto(`${readerBaseURL}/?date=2026-09-10#sky`);
   const summary = reader.getByLabel("Daily sky summary", { exact: true });
+  await expect(summary).not.toHaveAttribute("aria-busy", "true", { timeout: 30_000 });
   await expect(summary).toContainText(revision.body);
   await expect(summary.locator(":scope > p")).toHaveCount(3);
   await expect(summary.locator(":scope > p").first()).toContainText(`punishing. The New Moon in Virgo at 18° ${revision.body}.`);

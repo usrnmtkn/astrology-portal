@@ -108,11 +108,15 @@ for (const leaveCalendar of [false, true]) test(`Calendar pending event click ${
     await page.goto("/#calendar?view=day&date=2026-09-10");
     await page.getByRole("button", { name: "Venus enters Scorpio", exact: true }).click();
     await expect(page.locator(".sky-detail-article")).toHaveCount(0);
-    if (leaveCalendar) await page.getByRole("button", { name: "Sky", exact: true }).first().click();
+    if (leaveCalendar) {
+      await page.getByRole("dialog", { name: "Event detail" }).getByRole("button", { name: "Close", exact: true }).click();
+      await page.getByRole("button", { name: "Sky", exact: true }).first().click();
+    }
   } finally { release(); }
   if (leaveCalendar) {
     await expect(page.getByLabel("Daily sky summary")).toBeVisible({ timeout: 30_000 });
     await expect(page.locator(".sky-detail-article")).toHaveCount(0);
+    await expect(page.getByRole("dialog", { name: "Event detail" })).toHaveCount(0);
     return;
   }
   const reading = page.getByRole("dialog", { name: "Event detail" });

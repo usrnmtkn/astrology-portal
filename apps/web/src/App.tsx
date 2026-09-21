@@ -11964,8 +11964,8 @@ export function App() {
       const urlMode = portalModeFromUrl();
       const nextMode = urlMode === "member" && !userProfile ? "guest" : urlMode;
       const nextSkyDetailRoutePath = skyDetailRoutePathFromUrl();
-      const samePortal = Boolean(nextMode)
-        && nextMode === mode
+      const samePortal = nextMode === "calendar"
+        && mode === "calendar"
         && (nextSkyDetailRoutePath || null) === (skyDetailRoutePath || null);
       // Calendar day selection updates the shared date without leaving the page.
       // The portal nav motion would otherwise slide the topbar up and down.

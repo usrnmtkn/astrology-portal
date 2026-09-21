@@ -15,7 +15,7 @@ for (const width of [390, 1440]) {
       localStorage.setItem('tldrastro:theme', 'light');
     });
     await page.goto('/?date=2026-09-12#calendar?view=day&date=2026-09-12');
-    const card = page.locator("[data-calendar-date]").first();
+    const card = page.getByRole("article", { name: "Selected lunar day" });
     const sun = card.getByRole('region', { name: 'Sun in season', exact: true });
     const moon = card.locator("[data-guidance-key]").first();
     await expect(sun).toContainText(sunClause, { timeout: 90_000 });
@@ -25,8 +25,8 @@ for (const width of [390, 1440]) {
     await expect(moon).not.toContainText(placementBody.split(/\n\n/)[0]);
     await expect(moon.getByRole('link')).toHaveCount(0);
     await expect(card.getByRole('region', { name: 'Daily Calendar overview' })).toHaveCount(0);
-    const exact = card.getByRole('region', { name: 'Exact today', exact: true });
-    await expect(exact.locator('p').first()).toBeVisible();
+    const exact = card.locator('.calendar-day-events');
+    await expect(exact.locator('.calendar-stoic-card').first()).toBeVisible();
     await expect(exact.getByRole('link')).toHaveCount(0);
     const sunBox = await sun.locator('p').last().boundingBox();
     const moonBox = await moon.locator('p').first().boundingBox();
