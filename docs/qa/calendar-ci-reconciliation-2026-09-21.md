@@ -22,10 +22,29 @@ overview remain covered by browser regressions.
 - Measure first visible Friends detail in the browser, preserving the visible
   card assertion and all original timing limits. Mobile Friends setup waits for
   its menu instead of unrelated completed Sky calculations.
+- Measure mobile Friends from the actual menu-item click to the first frame
+  containing both the Friends heading and saved chart row. Under 4x CPU pressure,
+  driver preparation took 344–579 ms before input while the app painted in
+  446–753 ms. Record that preparation separately from the unchanged 1,000 ms
+  navigation budget and retain both accessible-content assertions.
 
 The worker regression executes the actual worker queue with controlled
 calculation fixtures. Existing Calendar preview tests compare two actual Swiss
 calculations and time zones; the cross-surface browser test remains unchanged.
+
+## Final browser race repairs
+
+- Capture the exact dated article href when the browser clicks it. Hydration
+  can replace the link between a driver's earlier attribute read and input.
+  Destination, article title, parent navigation and refresh stability assertions
+  remain intact; the original race reproduced locally, and all four corrected
+  mobile/desktop light/dark flows passed.
+- Focus a requested Studio source field after the editor commits, observing
+  deferred fields until they mount. Clear the request when closing the editor.
+  The existing desktop/light and mobile/dark source editing flows both pass.
+- Give article geometry assertions the same 60-second calculated-copy readiness
+  window as other placement regressions, separately from the 15-second shell
+  gate. All layout assertions and You/Friends performance ceilings are retained.
 
 ## Studio bundle measurement
 
@@ -36,7 +55,7 @@ with Node's level-9 compressor.
 | Checkout | Entry raw | Entry gzip | All JavaScript gzip |
 | --- | ---: | ---: | ---: |
 | Main `d654e8b68` | 730,352 | 212,353 | 544,332 |
-| Repaired Calendar branch | 736,617 | 214,006 | 566,468 |
+| Calendar after payload repair | 736,617 | 214,006 | 566,468 |
 
 Main already exceeded the September 15 limits. Before repair, the Calendar
 preview imported the full reader fallback runtime and the build measured about
@@ -49,6 +68,9 @@ The reconciled limits are 740,000 entry/largest raw bytes, 215,000 entry gzip
 bytes and 568,000 aggregate gzip bytes. All deferred editor/preview/graph and
 forbidden-payload checks remain. Reader boot and You/Friends timing budgets are
 unchanged.
+
+With the final editor-focus repair, the standalone Studio build is 214.2 kB
+entry gzip and 566.7 kB aggregate JavaScript gzip; it passes the same limits.
 
 ## Visual evidence
 

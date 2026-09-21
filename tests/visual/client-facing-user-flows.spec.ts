@@ -1317,6 +1317,7 @@ test.describe("client-facing user flow case studies", () => {
   for (const theme of ["light", "dark"] as const) {
     for (const width of [430, 768, 1440]) {
       test(`article sheets share the reference spacing ${theme} ${width}`, async ({ page }) => {
+        test.setTimeout(120_000);
         await page.setViewportSize({ width, height: 1000 });
         await seedClientState(page, { profile: true, profileBirthDate: "1980-02-01", profileBirthTime: "12:00 PM", preloadProfileNatalSky: true, theme, now: "2026-07-29T16:00:00.000Z" });
         for (const [name, route] of [
@@ -1325,8 +1326,10 @@ test.describe("client-facing user flow case studies", () => {
         ]) {
           await expectClientRouteLoads(page, route);
           const card = page.locator(".sky-detail-card").first();
-          // The shell can be ready before the calculated placement article.
-          await expect(card.locator("h1")).toBeVisible({ timeout: routeReadyTimeoutMs });
+          // This checks article geometry after complete calculated-copy
+          // hydration, which has a separate deadline from shell readiness.
+          // You/Friends loading budgets remain in their performance suites.
+          await expect(card.locator("h1")).toBeVisible({ timeout: 60_000 });
           const box = await card.boundingBox();
           expect(box!.x).toBeCloseTo(width * 0.025, 0);
           expect(box!.width).toBeCloseTo(width * 0.95, 0);

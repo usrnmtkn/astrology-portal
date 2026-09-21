@@ -22,9 +22,19 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
   for (const aspect of ['Trine Sun','Opposition Mars']) {
    const link=page.getByRole('link',{name:new RegExp(`Read more about Lilith.*${aspect}`)});
    await expect(link).toBeVisible({timeout:60_000});
-   const target=await link.getAttribute('href');
-   // The current related-reading link uses its aspect title as its visible text.
+   // Hydrated event facts can update the related link while Playwright waits
+   // to click. Assert the destination the user actually selected, not an href
+   // read before that update; the app must preserve that exact dated route.
+   await page.evaluate(() => {
+    (window as any).__clickedArticleTarget = null;
+    document.addEventListener('click', event => {
+     (window as any).__clickedArticleTarget = (event.target as Element)
+      ?.closest('a[href^="#sky/"]')?.getAttribute('href') ?? null;
+    }, {capture:true,once:true});
+   });
    await link.click();
+   const target=await page.evaluate(()=>(window as any).__clickedArticleTarget as string|null);
+   expect(target).toMatch(/^#sky\/aspect\/.+\/at\//);
    await expect(page).toHaveURL(new RegExp(target!.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+'$'));
    // Nested routes load their reading package just like the parent route above.
    await expect(page.locator('#sky-detail-title')).toHaveText(aspect==='Trine Sun' ? /Sun.*Trine.*Lilith/i : /Mars.*Opposition.*Lilith/i, {timeout:60_000});

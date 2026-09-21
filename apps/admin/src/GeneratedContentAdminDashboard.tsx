@@ -3232,6 +3232,7 @@ export function GeneratedContentAdminDashboard() {
   const transitExactDismissedKeysRef = useRef(new Set<string>());
   const pendingExactAiCopyRef = useRef<{ key: string; you?: string; friend?: string } | null>(null);
   const editorRef = useRef<HTMLElement | null>(null);
+  const [editorFocusField, setEditorFocusField] = useState<string | null>(null);
   const variableInsertionRef = useRef<{ element: HTMLTextAreaElement; start: number; end: number } | null>(null);
   const editorReturnFocusRef = useRef<HTMLElement | null>(null);
   const [editorSaveError, setEditorSaveError] = useState("");
@@ -4316,6 +4317,7 @@ export function GeneratedContentAdminDashboard() {
     }
     if (draft?.contentKey) transitExactDismissedKeysRef.current.add(draft.contentKey);
     sourceOpenRequestRef.current += 1;
+    setEditorFocusField(null);
     setTemplateVariableReferenceOpen(false);
     setTemplateVariableQuery("");
     setSelectedTemplateVariableName(null);
@@ -5889,15 +5891,36 @@ export function GeneratedContentAdminDashboard() {
     scrollEditorToTop();
   }
 
+  useEffect(() => {
+    if (!editorFocusField || !draft || isLoading) return;
+    const editor = editorRef.current;
+    if (!editor) return;
+    const focusRequestedField = () => {
+      const field = Array.from(editor.querySelectorAll<HTMLTextAreaElement>("textarea[data-sky-field]"))
+        .find(element => element.dataset.skyField === editorFocusField);
+      if (!field || field.disabled) return false;
+      field.focus({ preventScroll: true });
+      field.scrollIntoView({ block: "center", behavior: "auto" });
+      setEditorFocusField(null);
+      return true;
+    };
+    // Wait for the committed editor, including deferred field components.
+    // A fixed number of frames can expire before React mounts the textarea.
+    if (focusRequestedField()) return;
+    const observer = new MutationObserver(() => {
+      if (focusRequestedField()) observer.disconnect();
+    });
+    observer.observe(editor, { subtree: true, childList: true, attributes: true, attributeFilter: ["disabled"] });
+    return () => observer.disconnect();
+  }, [draft?.contentKey, editorFocusField, isLoading]);
+
   function scrollEditorToTop(fieldPath?: string) {
+    setEditorFocusField(fieldPath ?? null);
+    if (fieldPath) return;
     window.requestAnimationFrame(() => {
       window.requestAnimationFrame(() => {
         const editorScroller = editorRef.current?.querySelector<HTMLElement>(".admin-post-editor") ?? editorRef.current;
-        const field = fieldPath && Array.from(editorRef.current?.querySelectorAll<HTMLTextAreaElement>("textarea[data-sky-field]") ?? []).find(element => element.dataset.skyField === fieldPath);
-        if (field) {
-          field.focus({ preventScroll: true });
-          field.scrollIntoView({ block: "center", behavior: "auto" });
-        } else editorScroller?.scrollTo({ top: 0, behavior: "auto" });
+        editorScroller?.scrollTo({ top: 0, behavior: "auto" });
       });
     });
   }
