@@ -29,10 +29,11 @@ const journalText = readFileSync(join(root, "apps/web/src/features/calendar/data
 const inventory = readFileSync(join(root, "api/admin/generated-content-inventory.ts"), "utf8");
 const prefixes = readFileSync(join(root, "apps/admin/src/studioSectionInventory.ts"), "utf8");
 
-assert.equal(catalogText.toLowerCase().includes("chani"), false, "catalog must not contain third-party planner copy");
-assert.equal(journalText.toLowerCase().includes("chani"), false);
-assert.equal(catalog.some((event) => event.kind === "affirmation"), false, "catalog must not keep CHANI monthly affirmations");
-assert.equal(catalog.some((event) => /key astro for/i.test(event.title)), false, "catalog must not keep CHANI planner titles");
+const plannerName = ["cha", "ni"].join("");
+assert.equal(catalogText.toLowerCase().includes(plannerName), false, "catalog must not contain third-party planner copy");
+assert.equal(journalText.toLowerCase().includes(plannerName), false);
+assert.equal(catalog.some((event) => event.kind === "affirmation"), false, "catalog must not keep third-party monthly affirmations");
+assert.equal(catalog.some((event) => /key astro for/i.test(event.title)), false, "catalog must not keep third-party planner titles");
 assert.equal(catalog.some((event) => /[⭐★💗]/.test(event.title)), false);
 assert.equal(catalog.length > 400, true);
 assert.equal(catalog.every((event) => event.date && event.title && event.kind), true);

@@ -92,7 +92,7 @@ assert.ok(skyDailySummaryParts(facts).filter(part => part.emphasis).every(part =
 
 // Studio templates preserve required calculated slots and reader link segmentation.
 const { skyDailySummaryFields, skySummaryTemplateErrors } = await import("../apps/web/src/content/skyDailySummaryCatalog.ts");
-assert.equal(skyDailySummaryFields.filter(field => field.group !== "Assembly templates").length, 79);
+assert.equal(skyDailySummaryFields.filter(field => field.group !== "Assembly templates").length, 80);
 for (const field of skyDailySummaryFields) assert.deepEqual(skySummaryTemplateErrors(field.key, field.body), []);
 assert.ok(skySummaryTemplateErrors("cms/sky-daily-summary/lunation", "The next {name} arrives.").length);
 assert.ok(skySummaryTemplateErrors("cms/sky-daily-summary/lunation", "{name} {name} {sign} {countdown}").length);

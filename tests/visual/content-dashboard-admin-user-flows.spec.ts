@@ -1530,9 +1530,9 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expect(contentFilters.getByRole("tab", { name: "Editorial content" })).toHaveCount(0);
     await expect(contentFilters.getByRole("button", { name: "Hide reference", exact: true })).toHaveCount(0);
     await expect(contentFilters.getByLabel("Find an aspect")).toHaveAttribute("placeholder", "Mercury sextile Mars");
-    await expect(contentFilters.getByLabel("Calendar aspect planet or point")).toBeVisible();
-    await expect(contentFilters.getByLabel("Calendar aspect type")).toBeVisible();
-    await expect(contentFilters.getByLabel("Other calendar aspect planet or point")).toBeVisible();
+    await expect(contentFilters.getByLabel("Calendar aspect planet or point").first()).toBeVisible();
+    await expect(contentFilters.getByLabel("Calendar aspect type").first()).toBeVisible();
+    await expect(contentFilters.getByLabel("Other calendar aspect planet or point").first()).toBeVisible();
     await contentFilters.getByText("Editorial filters", { exact: true }).click();
     await expect(contentFilters.getByRole("button", { name: "All 2" })).toBeVisible();
 
@@ -1541,13 +1541,13 @@ test.describe("content dashboard admin user flow case studies", () => {
     await contentFilters.getByLabel("Find an aspect").fill("Venus squares Saturn Rx");
     await expect(contentRows).toHaveCount(2);
     await contentFilters.getByLabel("Find an aspect").fill("");
-    await contentFilters.getByLabel("Calendar aspect planet or point").selectOption("venus");
-    await contentFilters.getByLabel("Calendar aspect type").selectOption("square");
-    await contentFilters.getByLabel("Other calendar aspect planet or point").selectOption("saturn");
+    await contentFilters.getByLabel("Calendar aspect planet or point").first().selectOption("venus");
+    await contentFilters.getByLabel("Calendar aspect type").first().selectOption("square");
+    await contentFilters.getByLabel("Other calendar aspect planet or point").first().selectOption("saturn");
     await expect(contentRows).toHaveCount(2);
-    await contentFilters.getByLabel("Calendar aspect planet or point").selectOption("moon");
-    await contentFilters.getByLabel("Calendar aspect type").selectOption("sextile");
-    await contentFilters.getByLabel("Other calendar aspect planet or point").selectOption("lilith");
+    await contentFilters.getByLabel("Calendar aspect planet or point").first().selectOption("moon");
+    await contentFilters.getByLabel("Calendar aspect type").first().selectOption("sextile");
+    await contentFilters.getByLabel("Other calendar aspect planet or point").first().selectOption("lilith");
     await expect(contentRows).toHaveCount(0);
     await contentFilters.getByRole("button", { name: "Clear filters" }).click();
     await expect(contentRows).toHaveCount(2);

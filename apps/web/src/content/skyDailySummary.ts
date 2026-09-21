@@ -9,7 +9,7 @@ import { contentPublication, publicationAllowsContent } from "./contentPublicati
 import {
   calendarSeasonTransitionCountdown,
   calendarSeasonTransitionIsCurrent
-} from "../features/calendar/calendarSeasonTransitions";
+} from "../features/calendar/calendarSeasonTransitionFacts";
 
 const skySummaryLiveCopyCacheKey = "tldrastro:sky-daily-summary-live-copy:v1";
 type CachedSkySummaryCopy = { identity: string; body: string };

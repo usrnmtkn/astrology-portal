@@ -106,7 +106,7 @@ for (const width of [390, 1440]) {
       await expect(studio.getByText("No summary fields match this search.")).toBeVisible();
       await studio.getByLabel("Search summary wording").fill("");
       await studio.getByLabel("Summary section").selectOption("Timing and retrogrades");
-      await expect(studio.getByRole("article")).toHaveCount(5);
+      await expect(studio.getByRole("article")).toHaveCount(6);
       await expect(studio.getByRole("article", { name: "Full Moon explanation", exact: true })).toHaveCount(0);
       await expect(studio.getByRole("article", { name: "No retrograde planets", exact: true })).toHaveCount(0);
       await studio.getByLabel("Summary section").selectOption("Ingress TLDRs");
@@ -567,7 +567,7 @@ for (const width of [390, 1440]) test(`owner event-first summary reaches reader 
   await expect(summary.locator(":scope > p")).toHaveCount(3);
   await expect(summary.locator(":scope > p").first()).toContainText(`punishing. The New Moon in Virgo at 18° ${revision.body}.`);
   await expect(summary.locator(":scope > p").nth(1)).toContainText("Two planets change signs today: Venus enters Scorpio and Mercury enters Libra.");
-  await expect(summary.locator(":scope > p").nth(1)).toContainText("Uranus stations retrograde in Gemini today, bringing the number of retrograde planets to six:");
+  await expect(summary.locator(":scope > p").nth(1)).toContainText("Uranus stations retrograde in Gemini today, bringing the number of retrograde planets to five:");
   await expect(summary.locator(":scope > p").last()).toHaveText("Moon squares Uranus is exact today.");
   await expect(summary.getByRole("link", { name: "New Moon in Virgo at 18°", exact: true })).toHaveAttribute("href", "#sky/lunation/2026-09-11/virgo");
   await expect(summary).not.toContainText(/Also today|There are|Today brings/u);

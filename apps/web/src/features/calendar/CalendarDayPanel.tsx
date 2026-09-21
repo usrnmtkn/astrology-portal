@@ -160,7 +160,7 @@ export function CalendarDayPanel({
   });
 
   const body = (
-      <article className={`calendar-day-panel${embedded ? " is-embedded" : ""}`} data-calendar-date={dateKey}>
+      <article aria-label="Selected lunar day" className={`calendar-day-panel${embedded ? " is-embedded" : ""}`} data-calendar-date={dateKey}>
         {showSky ? (
         <section className={`calendar-sky-card${embedded ? "" : " is-flush"}`}>
           <p className="calendar-sky-card__date">

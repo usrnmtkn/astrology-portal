@@ -27,7 +27,7 @@ import { skyPlacementMotionCopy, skyPlacementMotionParts } from "./content/skyPl
 import { calendarDayDistance } from "./services/calendarDayDistance";
 import { liveSkyReference, remainingSkyMinutes } from "./services/skyClock";
 import { skySummaryParagraphs } from "./content/skyDailySummary";
-import { calendarSeasonTransitionFactsFromSun } from "./features/calendar/calendarSeasonTransitions";
+import { calendarSeasonTransitionFactsFromSun } from "./features/calendar/calendarSeasonTransitionFacts";
 import { PublishedSkySummary } from "./features/sky/PublishedSkySummary";
 import { SkyReadingLayout, useSkyCardsSettled } from "./features/sky/SkyReadingLayout";
 import { SkyRoute } from "./routes/SkyRoute";
