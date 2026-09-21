@@ -24,10 +24,12 @@ function errorDetail(error: unknown) {
   return "An unexpected rendering error occurred.";
 }
 
-function calendarOwnsContentFailure(error: unknown) {
-  return typeof window !== "undefined"
-    && /^#\/?calendar(?:[/?]|$)/u.test(window.location.hash)
-    && /(?:fallback-content-|fallbackArchitectureV3|sky-placement-v4)/u.test(errorDetail(error));
+// Called only by browser recovery handlers. An open editor always owns recovery;
+// Calendar also handles its reading downloads locally while dates remain usable.
+function calendarOwnsRecovery(detail = "") {
+  return document.querySelector(".calendar-slideout--checkin")
+    || /^#\/?calendar(?:[/?]|$)/u.test(window.location.hash)
+    && /(?:fallback-content-|fallbackArchitectureV3|sky-placement-v4)/u.test(detail);
 }
 
 /**
@@ -41,21 +43,22 @@ function calendarOwnsContentFailure(error: unknown) {
 export function reloadReaderRouteOnce() {
   if (!readerRecoveryRoute()) return false;
   // A calendar is also an editor: background asset recovery must never erase a draft.
-  if (document.querySelector(".calendar-slideout--checkin")) return false;
-  const route = `${window.location.pathname}${window.location.hash}`;
+  if (calendarOwnsRecovery()) return false;
+  const { history, location } = window;
+  const route = `${location.pathname}${location.hash}`;
   const now = Date.now();
   try {
-    const historyState = window.history.state && typeof window.history.state === "object" ? window.history.state as Record<string, unknown> : {};
+    const historyState = history.state && typeof history.state === "object" ? history.state as Record<string, unknown> : {};
     const previous = historyState[readerRecoveryHistoryKey] as { route?: unknown; at?: unknown } | undefined;
     if (previous?.route === route && typeof previous.at === "number" && now - previous.at < readerRecoveryCooldownMs) {
       return false;
     }
-    window.history.replaceState({ ...historyState, [readerRecoveryHistoryKey]: { route, at: now } }, "", window.location.href);
+    history.replaceState({ ...historyState, [readerRecoveryHistoryKey]: { route, at: now } }, "", location.href);
   } catch {
     // Without a reliable loop guard, keep recovery manual.
     return false;
   }
-  window.location.reload();
+  location.reload();
   return true;
 }
 
@@ -117,10 +120,10 @@ export class PageLoadBoundary extends Component<PageLoadBoundaryProps, { failed:
     // navigation instead of replacing the entire application as well.
     if (event.defaultPrevented) return;
     const payload = (event as Event & { payload?: unknown }).payload;
+    const detail = payload ? errorDetail(payload) : "A page asset from an older deployment could not be loaded.";
     // Calendar keeps its dates usable and owns the reading error/retry locally.
     // Do not preventDefault: Vite must still reject the import to its caller.
-    if (calendarOwnsContentFailure(payload) || document.querySelector(".calendar-slideout--checkin")) return;
-    const detail = payload ? errorDetail(payload) : "A page asset from an older deployment could not be loaded.";
+    if (calendarOwnsRecovery(detail)) return;
     if (reloadReaderRouteOnce()) { event.preventDefault(); return; }
     // Suppressing this event makes Vite resolve the import as undefined. Keep
     // the original rejection so React receives the actual asset failure.
