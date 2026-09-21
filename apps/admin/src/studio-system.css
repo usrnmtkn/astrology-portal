@@ -247,6 +247,8 @@ body:has(.admin-dashboard) { margin: 0; }
 #root .admin-dashboard .admin-col-visibility { width: var(--studio-table-status-width); }
 #root .admin-dashboard .admin-col-source { width: var(--studio-table-details-width); }
 #root .admin-dashboard .admin-col-edit { width: var(--studio-table-action-width); text-align: end; }
+#root .admin-dashboard .admin-season-transition-table th:first-child { width: var(--studio-table-details-width); }
+#root .admin-dashboard .admin-season-transition-table .admin-field-hint { display: block; margin-top: var(--workspace-field-gap); }
 #root .admin-dashboard .admin-content-expanded-row > td { padding: 0; }
 #root .admin-dashboard .admin-content-expanded-body { display: grid; gap: var(--workspace-control-inset); padding: var(--workspace-card-padding); background: var(--workspace-raised); }
 #root .admin-dashboard :is(.admin-review-queue-rows,.admin-template-card-list,.admin-sky-aspect-list) { display: grid; gap: var(--workspace-panel-inset); }
