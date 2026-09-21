@@ -2,7 +2,7 @@ import { StudioButton, StudioIconButton, StudioInput } from "./StudioControls";
 import { AdminDisclosureSummary } from "./AdminNativeControls";
 import { Stack, Text } from "./studio-ds/primitives";
 import { ChevronRight, CircleHelp, Search, X } from "lucide-react";
-import { Suspense, lazy } from "react";
+import { Suspense, lazy, useEffect, useState } from "react";
 import type { KeyboardEvent as ReactKeyboardEvent } from "react";
 import type { CompositionMapRow, CompositionPreviewOptions } from "./compositionMap";
 import type { TemplateVariableReference } from "./templateVariableReference";
@@ -36,6 +36,7 @@ type Props = {
   onKeyDown?: (event: ReactKeyboardEvent<HTMLElement>) => void;
   /** Loads the documents for sources the example write-up needs but the list did not carry. */
   onLoadSourceDocuments?: (rowIds: string[]) => void;
+  onLoadSourceInventory?: (prefixes: string[], signal: AbortSignal) => Promise<void>;
 };
 
 type VariableKind = "fact" | "phrase" | "hook" | "copy" | "unmapped";
@@ -81,8 +82,25 @@ const kindLabels: Record<VariableKind, string> = {
 export default function TemplateVariablesRail({
   references, filteredReferences, query, onQueryChange, rows, templateContentKey, templatePreviewRow,
   reviewTemplateRow, previewOptions, factExamples = {}, selectedVariableName, selectedSourceId,
-  onSelectVariable, onSelectSource, onEditSource, onClose, onKeyDown, onInsert, onLoadSourceDocuments
+  onSelectVariable, onSelectSource, onEditSource, onClose, onKeyDown, onInsert, onLoadSourceDocuments, onLoadSourceInventory
 }: Props) {
+  const sourceKey = JSON.stringify([...new Set(references.flatMap(reference =>
+    templateVariableSourceKeyPrefixes(reference, templateContentKey)))].sort());
+  const [sourceState, setSourceState] = useState("loaded");
+  const [retry, setRetry] = useState(0);
+  useEffect(() => {
+    const prefixes: string[] = JSON.parse(sourceKey);
+    if (!onLoadSourceInventory || !prefixes.length) { setSourceState("loaded"); return; }
+    const controller = new AbortController();
+    setSourceState("loading");
+    void onLoadSourceInventory(prefixes, controller.signal)
+      .then(() => { if (!controller.signal.aborted) setSourceState("loaded"); })
+      .catch(() => { if (!controller.signal.aborted) setSourceState("error"); });
+    return () => controller.abort();
+  }, [sourceKey, onLoadSourceInventory, retry]);
+  useEffect(() => {
+    if (selectedSourceId) onLoadSourceDocuments?.([selectedSourceId]);
+  }, [selectedSourceId, onLoadSourceDocuments]);
   const selected = selectedVariableName
     ? references.find((reference) => reference.name === selectedVariableName) ?? null
     : null;
@@ -129,6 +147,8 @@ export default function TemplateVariablesRail({
       </header>
 
       <div className="admin-variables-rail-body">
+        {sourceState === "loading" && <PageLoading compact message="Loading template sources…" />}
+        {sourceState === "error" && <div role="alert">Template sources could not load. <StudioButton type="button" onClick={() => setRetry(value => value + 1)}>Retry source loading</StudioButton></div>}
         {selected ? (
           <TemplateVariableReviewPanels
             references={references}

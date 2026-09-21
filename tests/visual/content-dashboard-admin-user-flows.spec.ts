@@ -576,7 +576,14 @@ async function seedAdminApi(
       .concat(url.searchParams.get("contentKey") ? [url.searchParams.get("contentKey")!] : []);
     if (requestedId) servedRows = servedRows.filter((row) => row.id === requestedId);
     if (requestedKeys.length) servedRows = servedRows.filter((row) => requestedKeys.includes(String(row.content_key)));
-    const limit = Math.max(1, Number(url.searchParams.get("limit") ?? servedRows.length));
+    if (url.pathname.endsWith("/generated-content-inventory")) {
+      const prefix = url.searchParams.get("contentKeyPrefix");
+      const mode = url.searchParams.get("mode");
+      if (prefix) servedRows = servedRows.filter(row => String(row.content_key).startsWith(prefix));
+      if (mode) servedRows = servedRows.filter(row => row.mode === mode);
+    }
+    const inventory = url.pathname.endsWith("/generated-content-inventory") && !requestedId && !requestedKeys.length;
+    const limit = Math.min(inventory ? 80 : Infinity, Math.max(1, Number(url.searchParams.get("limit") ?? servedRows.length)));
     const cursor = url.searchParams.get("cursor");
     const cursorIndex = cursor ? servedRows.findIndex((row) => row.id === cursor) : -1;
     const offset = cursor ? Math.max(0, cursorIndex + 1) : Math.max(0, Number(url.searchParams.get("offset") ?? 0));
@@ -1259,7 +1266,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expect(page.locator(".admin-content-row").first()).toBeVisible({ timeout: 3_000 });
     expect(Date.now() - startedAt, "first Compatibility page becomes usable within 3 seconds").toBeLessThan(3_000);
     expect(reads[0]?.searchParams.get("scope")).toBe("compatibility");
-    expect(reads[0]?.searchParams.get("limit")).toBe("500");
+    expect(reads[0]?.searchParams.get("limit")).toBe("80");
     expect(variableReads, "custom writing loads when opening Variables or an editor").toEqual([]);
 
     await expect(page.getByRole("region", { name: "Admin status" })).toContainText("Connected · 1,261 rows", {
@@ -1478,6 +1485,96 @@ test.describe("content dashboard admin user flow case studies", () => {
     await assertNoBrowserErrors();
   });
 
+  for (const theme of ["light", "dark"]) {
+    for (const width of [1440, 390]) {
+      test(`Calendar Aspects scoped loading, search and refresh ${theme} ${width}`, async ({ page }) => {
+        const assertNoBrowserErrors = await expectNoBrowserErrors(page);
+        await page.setViewportSize({ width, height: 900 });
+        await page.addInitScript(theme => localStorage.setItem("tldrastro:studio-theme", theme), theme);
+        const keys = ["sky.aspect.moon.sextile.lilith", "sky-card/mercury/virgo/sextile/mars/cancer",
+          "fallback-hook/sky-aspect-sign/venus/libra/square/saturn/aries"];
+        const aspects = keys.map((content_key, index) => ({ ...generatedContentRows[0],
+          id: `qa-scoped-aspect-${index}`, content_key, headline: content_key, lane: "reference", review_state: "owner-review-required" }));
+        const reads: URL[] = [];
+        await seedAdminApi(page, { generatedRows: [...aspects, ...generatedContentRows], onGeneratedContentRead: url => reads.push(url) });
+        await page.goto("/admin/content#exact-content?category=Calendar+Aspects");
+        const controls = page.getByRole("region", { name: "Content controls" });
+        const search = page.getByRole("searchbox", { name: "Find an aspect" });
+        await expect(controls).toContainText("3 aspect cards");
+        await expect(search).toHaveValue("");
+        await expect(search).toHaveAttribute("placeholder", "Search by planet, aspect, or content key");
+        await search.fill("Mercury sextile Mars");
+        await expect(controls).toContainText("1 aspect cards");
+        await expect(page.locator(".admin-content-row")).toContainText(keys[1]);
+        await page.getByRole("button", { name: "Clear filters", exact: true }).click();
+        await expect(controls).toContainText("3 aspect cards");
+        if (width === 390) await page.getByRole("button", { name: "Filters", exact: true }).click();
+        await page.getByRole("button", { name: "Show retired", exact: true }).click();
+        await page.getByRole("button", { name: "Refresh rows", exact: true }).click();
+        await expect(controls).toContainText("3 aspect cards");
+        await page.reload();
+        await expect(controls).toContainText("3 aspect cards");
+        const lists = reads.filter(url => url.searchParams.get("view") === "inventory");
+        expect(lists.length).toBeGreaterThanOrEqual(6);
+        expect(lists.every(url => ["sky-card/", "fallback-hook/sky-aspect-sign/", "sky.aspect."].includes(url.searchParams.get("contentKeyPrefix") ?? ""))).toBe(true);
+        await expectNoHorizontalOverflow(page, "Calendar Aspects");
+        await mkdir(adminScreenshotDir, { recursive: true });
+        await page.screenshot({ path: path.join(adminScreenshotDir, `calendar-aspect-loading-${theme}-${width}.png`) });
+        await assertNoBrowserErrors();
+      });
+    }
+  }
+
+  test("Studio navigation cancels an unfinished catalog before loading Calendar Aspects", async ({ page }) => {
+    const aspect = { ...generatedContentRows[0], id: "qa-navigation-aspect", content_key: "sky.aspect.moon.sextile.lilith", headline: "Moon Sextile Lilith" };
+    await seedAdminApi(page, { generatedRows: [aspect, ...generatedContentRows] });
+    let releaseCatalog!: () => void;
+    const pending = new Promise<void>(resolve => { releaseCatalog = resolve; });
+    let laterPageStarted = false;
+    await page.route("**/api/admin/generated-content-inventory?**", async route => {
+      const url = new URL(route.request().url());
+      if (url.searchParams.get("contentKeyPrefix") || url.searchParams.get("id") || url.searchParams.get("contentKey") || url.searchParams.has("contentKeys")) {
+        await route.fallback();
+        return;
+      }
+      if (url.searchParams.get("cursor")) {
+        laterPageStarted = true;
+        await pending;
+        await route.fulfill({ json: { ok: true, rows: [], nextCursor: null } }).catch(() => {});
+      } else {
+        await route.fulfill({ json: { ok: true, rows: [studioListingRow(generatedContentRows[0], studioListingFacts(generatedContentRows[0]))], nextCursor: "delayed-catalog-page" } });
+      }
+    });
+    try {
+      await page.goto("/admin/content#exact-content");
+      await expect.poll(() => laterPageStarted).toBe(true);
+      await page.getByRole("navigation", { name: "Content operations" }).getByRole("button", { name: "Calendar Aspects", exact: true }).click();
+      await expect(page.getByRole("region", { name: "Content controls" })).toContainText("1 aspect cards");
+      await expect(page.getByRole("region", { name: "Admin status" })).toContainText("Connected");
+      releaseCatalog();
+      await expect(page.locator(".admin-content-row")).toContainText("Moon Sextile Lilith");
+    } finally { releaseCatalog(); }
+  });
+
+  test("Studio section read failures stay incomplete and Refresh rows recovers", async ({ page }) => {
+    const aspect = { ...generatedContentRows[0], id: "qa-retry-aspect", content_key: "sky.aspect.moon.sextile.lilith", headline: "Moon Sextile Lilith" };
+    await seedAdminApi(page, { generatedRows: [aspect, ...generatedContentRows] });
+    await expectAdminRouteLoads(page, "/admin/content#exact-content");
+    await expect(page.getByRole("region", { name: "Admin status" })).toContainText("Connected");
+    let fail = true;
+    await page.route("**/api/admin/generated-content-inventory?**", async route => {
+      if (fail && new URL(route.request().url()).searchParams.get("contentKeyPrefix")) {
+        await route.fulfill({ status: 503, json: { ok: false, error: "Synthetic section read failure" } });
+      } else await route.fallback();
+    });
+    await page.getByRole("navigation", { name: "Content operations" }).getByRole("button", { name: "Calendar Aspects", exact: true }).click();
+    await expect(page.getByRole("region", { name: "Admin status" })).toContainText("Incomplete");
+    fail = false;
+    await page.getByRole("button", { name: "Refresh rows", exact: true }).click();
+    await expect(page.getByRole("region", { name: "Admin status" })).toContainText("Connected");
+    await expect(page.getByRole("region", { name: "Content controls" })).toContainText("1 aspect cards");
+  });
+
   test("Calendar Aspects navigation opens and edits the governed non-serving draft catalog", async ({ page }) => {
     const assertNoBrowserErrors = await expectNoBrowserErrors(page);
     let generatedContentWrite: { method: string; payload: Record<string, unknown> } | null = null;
@@ -1529,7 +1626,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expect(contentFilters.getByLabel("Category")).toHaveCount(0);
     await expect(contentFilters.getByRole("tab", { name: "Editorial content" })).toHaveCount(0);
     await expect(contentFilters.getByRole("button", { name: "Hide reference", exact: true })).toHaveCount(0);
-    await expect(contentFilters.getByLabel("Find an aspect")).toHaveAttribute("placeholder", "Mercury sextile Mars");
+    await expect(contentFilters.getByLabel("Find an aspect")).toHaveAttribute("placeholder", "Search by planet, aspect, or content key");
     await expect(contentFilters.getByLabel("Calendar aspect planet or point").first()).toBeVisible();
     await expect(contentFilters.getByLabel("Calendar aspect type").first()).toBeVisible();
     await expect(contentFilters.getByLabel("Other calendar aspect planet or point").first()).toBeVisible();
@@ -5209,6 +5306,44 @@ test.describe("content dashboard admin user flow case studies", () => {
     await assertNoBrowserErrors();
   });
 
+  test("template source inventory retries without losing the editor draft", async ({ page }) => {
+    const template = {
+      ...generatedContentRows[0], id: "qa-template-source-retry",
+      content_key: "fallback-template/natal.planet-in-sign/sun", block_type: "fallback_template",
+      provider: "tldrastro-fallback-architecture-v3", body: "{{planetBest}}",
+      sections: { body_you: "{{planetBest}}", body_they: "{{planetBest}}", packageRecord: {
+        contentKey: "fallback-template/natal.planet-in-sign/sun", content_role: "template",
+        review_status: "needs_review", requiredSlots: ["planetBest"], body_you: "{{planetBest}}", body_they: "{{planetBest}}"
+      } }
+    };
+    const source = { ...generatedContentRows[0], id: "qa-template-support-retry",
+      content_key: "fallback-hook/planet-best/sun", body: "QA supporting passage recovered.",
+      block_type: "fallback_hook", provider: "tldrastro-fallback-architecture-v3",
+      sections: { packageRecord: { contentKey: "fallback-hook/planet-best/sun", content_role: "fallback_hook",
+        review_status: "approved", body: "QA supporting passage recovered." } }
+    };
+    await seedAdminApi(page, { generatedRows: [template, source] });
+    let fail = true;
+    await page.route("**/api/admin/generated-content-inventory?*", async route => {
+      if (fail && new URL(route.request().url()).searchParams.get("contentKeyPrefix") === "fallback-hook/planet-best/") {
+        await route.fulfill({ status: 400, json: { error: "Synthetic source read failure." } });
+      } else await route.fallback();
+    });
+    await expectAdminRouteLoads(page, "/admin/content#templates");
+    await page.locator(".admin-content-row").getByRole("button", { name: "Edit" }).click();
+    const editor = page.getByRole("dialog", { name: "Generated content editor" });
+    const draftText = "{{planetBest}} QA unsaved template change.";
+    await editor.getByLabel("You view copy").fill(draftText);
+    await editor.getByRole("button", { name: /^Reader preview & variables/ }).click();
+    const rail = page.getByRole("complementary", { name: "Template variable reference" });
+    await expect(rail.getByRole("alert")).toContainText("Template sources could not load.");
+    fail = false;
+    await rail.getByRole("button", { name: "Retry source loading" }).click();
+    await expect(rail.getByRole("region", { name: "Example reader write-up" })).toContainText(source.body);
+    await expect(rail.getByRole("alert")).toHaveCount(0);
+    await expect(editor.getByLabel("You view copy")).toHaveValue(draftText);
+  });
+
   test("template editor opens a readable variable reference without losing the draft", async ({ page }) => {
     const assertNoBrowserErrors = await expectNoBrowserErrors(page);
     const bodyYou = "{{#planetIntro}}{{planetIntro}}{{/planetIntro}} {{possessive}} {{planetTitle}} is in {{signTitle}}, meaning you {{planetVerb}} {{signAdverb}}, and what you want most is {{signNeed}}.{{#placementGerundText}} Day to day, that can look like {{placementGerundText}}.{{/placementGerundText}} Pushed too far, this side of you can tip into {{planetExcess}}. {{planetBest}}{{#modifierSentences}} {{.}}{{/modifierSentences}}";
@@ -5272,7 +5407,7 @@ test.describe("content dashboard admin user flow case studies", () => {
       }
     };
     await seedAdminApi(page, { generatedRows: [templateRow, planetIntroRow, planetBestRow] });
-    await expectAdminRouteLoads(page, "/admin/content#fallback-hooks");
+    await expectAdminRouteLoads(page, "/admin/content#templates");
 
     const savedRow = page.locator(".admin-content-row", { hasText: "fallback-template/natal.planet-in-sign/sun" });
     await expect(savedRow).toHaveCount(1);

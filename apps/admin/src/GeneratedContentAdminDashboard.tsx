@@ -12,6 +12,7 @@ import { AdminDisclosureSummary, AdminSelect } from "./AdminNativeControls";
 import { getStudioPalette, getStudioTheme, saveStudioPalette, saveStudioTheme, studioShellAttributes } from "./studioTheme";
 import { AdminContentTable, AdminDataTable, AdminFilterBar } from "./AdminBrowseComponents";
 import { PageLoading } from "../../web/src/components/PageLoading";
+import { readStudioInventoryPages, STUDIO_INVENTORY_PAGE_SIZE } from "./studioInventoryPagination";
 import { reviewWorkBucket, skyWritingIssues } from "../../web/src/content/contentReviewReadiness";
 import { transitNatalContactFromFields, transitNatalContactReady, transitNatalContactContentKey, transitNatalExactContentKey, transitNatalExactSourceDraft, transitNatalSharedFallbackKey, transitNatalStarterCopy } from "./transitNatalSources";
 import { aspectTechnicalVerb, friendsTransitCardDestinations, friendsTransitCompositionQuery, matchesBondEffectContactSearch, transitNatalSearchSelection, matchesTransitNatalContactSearch } from "./bondEffectPageAssembly";
@@ -99,6 +100,7 @@ import {
   skyPlacementBodies,
   skyPlacementSigns,
   skyWriteupContextForRow,
+  skyWriteupRelatedSourcePrefixes,
   skyWriteupSubjectTypeForRow
 } from "./skyWriteupRelations";
 import {
@@ -2842,17 +2844,15 @@ async function loadAllGeneratedContentRows(
   onPage?: (rows: AdminGeneratedContentRow[], complete: boolean) => void,
   signal?: AbortSignal
 ) {
-  const pageSize = query.scope === "compatibility" ? 500 : 400;
+  const pageSize = STUDIO_INVENTORY_PAGE_SIZE;
   const allRows: AdminGeneratedContentRow[] = [];
   const prefixPages: Array<string | null> = query.prefixes.length ? query.prefixes : [null];
   let lastEmitAt = 0;
 
   for (let prefixIndex = 0; prefixIndex < prefixPages.length; prefixIndex += 1) {
     const prefix = prefixPages[prefixIndex];
-    let cursor: string | null = null;
-    for (let page = 0; page < 125; page += 1) {
-      if (signal?.aborted) throw signal.reason ?? new Error("Content inventory load was cancelled.");
-      const result = await loadGeneratedContentPage(
+    await readStudioInventoryPages<AdminGeneratedContentRow>(
+      (cursor) => loadGeneratedContentPage(
         studioInventoryRequestPath(
           prefix ? { ...query, prefixes: [prefix] } : { ...query, prefixes: [] },
           pageSize,
@@ -2860,18 +2860,18 @@ async function loadAllGeneratedContentRows(
         ),
         secret,
         signal
-      );
-      const pageRows = assertRowsPayload(result, "/api/admin/generated-content");
-      allRows.push(...pageRows);
-      const complete = !result.nextCursor && prefixIndex === prefixPages.length - 1;
-      const now = Date.now();
-      if (complete || page === 0 && prefixIndex === 0 || now - lastEmitAt >= 600) {
-        lastEmitAt = now;
-        onPage?.(dedupeGeneratedContentRows(allRows), complete);
-      }
-      if (!result.nextCursor) break;
-      cursor = result.nextCursor ?? null;
-    }
+      ),
+      (pageRows, prefixComplete) => {
+        allRows.push(...pageRows);
+        const complete = prefixComplete && prefixIndex === prefixPages.length - 1;
+        const now = Date.now();
+        if (complete || lastEmitAt === 0 || now - lastEmitAt >= 600) {
+          lastEmitAt = now;
+          onPage?.(dedupeGeneratedContentRows(allRows), complete);
+        }
+      },
+      signal
+    );
   }
 
   return dedupeGeneratedContentRows(allRows);
@@ -3195,6 +3195,10 @@ export function GeneratedContentAdminDashboard() {
   const [skyFallbackVariableTarget, setSkyFallbackVariableTarget] = useState("");
   const [skyWritingContext, setSkyWritingContext] = useState<{ fieldPath?: string; selection?: SkyPlacementSelection }>({});
   const [templateVariableReferenceOpen, setTemplateVariableReferenceOpen] = useState(false);
+  const loadTemplateSourceInventory = useCallback(async (prefixes: string[], signal: AbortSignal) => {
+    await loadAllGeneratedContentRows(secret, { prefixes, visibility: "all", scope: "all", mode: null, catalog: false },
+      loaded => setRows(current => mergeContentInventory(current, loaded)), signal);
+  }, [secret]);
   const [buildVariableReferences, setBuildVariableReferences] = useState<typeof import("./templateVariableReference").templateVariableReferences | null>(null);
   const [calendarCreateRequest, setCalendarCreateRequest] = useState(0);
   const [templateVariableQuery, setTemplateVariableQuery] = useState("");
@@ -3727,7 +3731,7 @@ export function GeneratedContentAdminDashboard() {
     };
   }, [activePage]);
 
-  const studioListQuery = useMemo(() => studioInventoryQuery({
+  const studioSectionQuery = useMemo(() => studioInventoryQuery({
     page: activePage,
     categoryFilter,
     fallbackSectionFilter,
@@ -3746,12 +3750,31 @@ export function GeneratedContentAdminDashboard() {
     showRetiredRows,
     skyWriteupWorkspaceView
   ]);
+  const relatedSourceKey = JSON.stringify(selectedRow ? skyWriteupRelatedSourcePrefixes(selectedRow) : []);
+  const studioListQuery = useMemo(() => !studioSectionQuery.prefixes.length || relatedSourceKey === "[]"
+    ? studioSectionQuery
+    : { ...studioSectionQuery, mode: null, prefixes: [...new Set([...studioSectionQuery.prefixes, ...JSON.parse(relatedSourceKey) as string[]])] },
+  [studioSectionQuery, relatedSourceKey]);
   const studioListQueryKey = studioInventoryQueryKey(studioListQuery);
+  // Authentication callbacks outlive their initial render; use the current route.
+  const studioListQueryRef = useRef(studioListQuery);
+  studioListQueryRef.current = studioListQuery;
+  const dashboardInventoryKeyRef = useRef<string | null>(null);
 
   useEffect(() => {
-    if (loadState !== "loaded" || !secret.trim()) return;
-    if (loadedInventoryKeyRef.current === studioListQueryKey) return;
+    if (!secret.trim()) return;
+    if (loadState === "loading" && dashboardInventoryKeyRef.current && dashboardInventoryKeyRef.current !== studioListQueryKey) {
+      // Do not wait for an unrelated catalog to finish before loading this section.
+      void loadDashboardData();
+      return;
+    }
+    if (loadState !== "loaded") return;
     setLoadError(null);
+    if (loadedInventoryKeyRef.current === studioListQueryKey) {
+      setAllRowsLoaded(true);
+      return;
+    }
+    setAllRowsLoaded(false);
     let cancelled = false;
     const controller = new AbortController();
     const query = studioListQuery;
@@ -4504,14 +4527,16 @@ export function GeneratedContentAdminDashboard() {
     }
 
     setLoadState("loading");
+    setAllRowsLoaded(false);
     setLoadError(null);
     setLoadDiagnostics(null);
     setMessage("");
     setSourceDraftLoadState("loading");
     setSourceDraftError(null);
     try {
-      const inventoryQuery = studioListQuery;
+      const inventoryQuery = studioListQueryRef.current;
       const inventoryQueryKey = studioInventoryQueryKey(inventoryQuery);
+      dashboardInventoryKeyRef.current = inventoryQueryKey;
       const [generatedResult, reviewResult, usersResult, sourceDraftResult, runtimeReviewResult] = await Promise.allSettled([
         loadAllGeneratedContentRows(
           normalizedSecret,
@@ -5512,6 +5537,13 @@ export function GeneratedContentAdminDashboard() {
       ];
     loadSourceDocuments([...new Set(sources.map((row) => row.id))].slice(0, skyRelationHydrationLimit));
   }, [selectedRow, rows, loadSourceDocuments]);
+
+  useEffect(() => {
+    if (activePage !== "skyWriteups" || skyWriteupWorkspaceView !== "house-transits" || !houseTransitPlanet || !houseTransitSign || !houseTransitHouse) return;
+    const keys = new Set(houseTransitSourceGroups({ planet: houseTransitPlanet, sign: houseTransitSign, house: houseTransitHouse, motion: houseTransitMotion })
+      .flatMap(group => group.sources.flatMap(source => source.candidateKeys)));
+    loadSourceDocuments(rows.filter(row => keys.has(row.content_key)).map(row => row.id));
+  }, [activePage, skyWriteupWorkspaceView, houseTransitPlanet, houseTransitSign, houseTransitHouse, houseTransitMotion, rows, loadSourceDocuments]);
 
   // A row on screen shows its saved copy, and the list it came from carries only headlines.
   const loadVisibleRowDocuments = useCallback((visible: readonly { id: string }[]) => {
@@ -6531,7 +6563,7 @@ export function GeneratedContentAdminDashboard() {
   const calendarAspectWorkspaceActive = activePage === "content" && categoryFilter === "Calendar Aspects";
   const lunarWorkspaceActive = activePage === "calendarWriteups" && calendarWriteupWorkspaceView === "daily-sky";
   const inventoryLoading = loadState === "loading"
-    || (activePage === "skyWriteups" && loadState === "loaded" && !allRowsLoaded && !loadError);
+    || (loadState === "loaded" && !allRowsLoaded && !loadError);
   const currentPageTitle = natalChartWorkspaceActive
     ? "Natal Chart Write-ups"
     : natalAspectWorkspaceActive
@@ -6705,7 +6737,7 @@ export function GeneratedContentAdminDashboard() {
         </details>
       </nav>
       <section
-        className={`admin-sidebar-status is-${inventoryLoading ? "pending" : loadState === "loaded" ? "ok" : loadState === "accessDenied" || loadState === "error" ? "error" : "pending"}`}
+        className={`admin-sidebar-status is-${inventoryLoading ? "pending" : loadError ? "error" : loadState === "loaded" ? "ok" : loadState === "accessDenied" || loadState === "error" ? "error" : "pending"}`}
         aria-label="Admin status"
         title={`Fallback package ${hookCatalogPackageVersion}`}
       >
@@ -6713,7 +6745,9 @@ export function GeneratedContentAdminDashboard() {
         <span>
           {inventoryLoading
             ? `Loading… ${rows.length.toLocaleString()} rows`
-            : loadState === "loaded"
+            : loadState === "loaded" && loadError
+              ? `Incomplete · ${rows.length.toLocaleString()} rows`
+              : loadState === "loaded"
               ? `Connected · ${rows.length.toLocaleString()} rows`
               : loadState === "accessDenied"
                 ? "Access denied"
@@ -7582,7 +7616,7 @@ export function GeneratedContentAdminDashboard() {
             </section>
             <label className="admin-field-wide studio-surface">
               <span>Search by planet, point, aspect, phrase, or source key</span>
-              <StudioInput aria-label="Search Sky aspect drafts" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Sun trine Chiron" />
+              <StudioInput aria-label="Search Sky aspect drafts" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search by planet, aspect, phrase, or source key" />
             </label>
             {sourceDraftLoadState === "loading" && <PageLoading message="Loading held source drafts…" />}
             {sourceDraftLoadState === "error" && (
@@ -8348,7 +8382,7 @@ export function GeneratedContentAdminDashboard() {
                 natalHouse: ""
               });
             }}
-            placeholder="Mars conjunct Moon"
+            placeholder="Search by transiting planet, aspect, and natal point"
           />
           <small className="admin-field-hint">Type the reader title, such as Mars conjunct Moon. This selects the three-part aspect. The live Friends card may use a published family write-up until an exact conjunction row is saved.</small>
         </label>
@@ -8772,7 +8806,7 @@ export function GeneratedContentAdminDashboard() {
         searchLabel={calendarAspectWorkspaceActive ? "Find an aspect" : "Search content"}
         query={query}
         onQueryChange={handleContentSearchChange}
-        placeholder={calendarAspectWorkspaceActive ? "Mercury sextile Mars" : "Search by title, surface, kind, or content key"}
+        placeholder={calendarAspectWorkspaceActive ? "Search by planet, aspect, or content key" : "Search by title, surface, kind, or content key"}
         tabs={<>
         {calendarAspectWorkspaceActive && (
         <div className="admin-natal-placement-selectors admin-filter-form admin-filter-form--three" role="group" aria-label="Calendar aspect filters">
@@ -11995,6 +12029,7 @@ export function GeneratedContentAdminDashboard() {
               : rows).filter(row => !isZodiacSeasonSourceKey(row.content_key)), ...seasonSourceRows]}
             onInsert={insertDraftToken}
             onLoadSourceDocuments={loadSourceDocuments}
+            onLoadSourceInventory={loadTemplateSourceInventory}
             templateContentKey={currentDraft.contentKey}
             factExamples={transitFactExamples}
             templatePreviewRow={templatePreviewRow}
