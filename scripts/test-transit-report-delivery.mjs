@@ -7,6 +7,8 @@ import { build } from 'esbuild';
 const bundle = await build({
   stdin: { contents: `export { requestYouReport, runYouReportJobs } from './api/_lib/you-report-lifecycle.ts';
     export { requestFriendReport, runFriendReportJobs } from './api/_lib/friend-report-lifecycle.ts';
+    export { default as youRequestHandler } from './api/you-report-request.ts';
+    export { default as friendRequestHandler } from './api/friend-report-request.ts';
     export { listReportLibrary, loadGeneratedReportById } from './apps/web/src/services/reportLibrary.ts';
     export { GeneratedReportArticle } from './apps/web/src/components/reports/ReportLibraryView.tsx';
     export { GENERATED_REPORT_JUDGE_CATEGORIES } from './api/_lib/transit-reading-judge-rules.ts';
@@ -19,6 +21,7 @@ const bundle = await build({
       [/supabase-report-admin\.js$/, 'admin'], [/\/auth$/, 'auth'],
       [/report-model-client\.js$/, 'transport'], [/productionPreCallGate\.cjs$/, 'gate'],
       [/transit-reading-owner-voice\.js$/, 'voice'], [/openAIResponses\.cjs$/, 'instructions'],
+      [/^@vercel\/functions$/, 'background'], [/report-http\.js$/, 'http'],
     ]) b.onResolve({ filter }, () => ({ path: name, namespace: 'fixture' }));
     b.onLoad({ filter: /.*/, namespace: 'fixture' }, ({path}) => ({ contents: {
       admin: 'export const createSupabaseReportAdmin = () => globalThis.reportDeliveryFixture.admin;',
@@ -29,6 +32,10 @@ const bundle = await build({
         export const transitReadingOwnerVoiceReceipt = () => ({version:'synthetic-only', sources:[]});
         export const transitReadingOwnerVoicePrompt = () => 'SYNTHETIC OWNER EVIDENCE ACCESS. NOT PRODUCTION PROOF.';`,
       instructions: `export const governedInstructionsForRole = () => 'Synthetic role boundary'; export const instructionsForRole = () => 'Synthetic reviewer boundary';`,
+      background: 'export const waitUntil = promise => globalThis.reportDeliveryFixture.background.push(promise);',
+      http: `export const requireReportUser = async () => ({id:globalThis.reportDeliveryFixture.client.userId});
+        export const jsonRequestBody = async req => req.body;
+        export const sendJson = (res,status,body) => {res.status=status;res.body=body;};`,
     }[path] }));
   } }],
 });
@@ -118,7 +125,7 @@ function fixture(kind, scenario) {
     },
   };
   return {
-    admin,client,rows,prompts,writes,output,youBrief,friendBrief,
+    admin,client,rows,prompts,writes,output,youBrief,friendBrief,background:[],
     get calls(){return {writer:writerCalls,judge:judgeCalls};},
     async call(input){
       const judge=input.schemaName==='tldr_generated_report_judge';
@@ -194,6 +201,81 @@ try{
     assert.equal(f.calls.judge,scenario==='first-pass'||['save-error','empty-save','completion-error'].includes(scenario)?1:2);
     if(scenario==='cleanup')assert.equal(f.calls.writer,3);
     console.log(`PASS ${kind}: ${scenario}`);cases++;
+  }
+  for (const kind of ['day','week','friends']) for (const state of ['failed','running','complete','revoked','restore-conflict','share-error','deleted-during-work']) {
+    const f=fixture(kind,'first-pass');globalThis.reportDeliveryFixture=f;
+    const friend=kind==='friends';
+    const request=()=>friend
+      ? api.requestFriendReport({userId:f.client.userId,subjectId:'synthetic-friend',targetDate:'2026-09-14',facts:{friendTransitsBrief:f.friendBrief},admin:f.admin})
+      : api.requestYouReport({userId:f.client.userId,reportWindow:kind,brief:f.youBrief,admin:f.admin});
+    const queued=await request();
+    const job=f.rows[friend?'friend_report_jobs':'you_report_jobs'][0];
+    const row=f.rows.user_generated_interpretations[0];
+    const run=friend?api.runFriendReportJobs:api.runYouReportJobs;
+    if (state==='complete') await run({workerId:'first-worker',jobId:job.id,admin:f.admin});
+    else if(state==='failed') Object.assign(job,{state:'failed',attempt:4,checkpoint_attempt:4});
+    else if(state==='running') Object.assign(job,{state:'running',attempt:1});
+    const deletedAt='2026-09-14T12:00:00.000Z';
+    const libraryState={user_id:f.client.userId,source_kind:'generated_interpretation',source_id:row.id,deleted_at:deletedAt,archived_at:deletedAt,seen_at:deletedAt,updated_at:deletedAt};
+    const unrelatedState={...libraryState,source_id:'unrelated-report'};
+    f.rows.user_report_library_state.push(libraryState,unrelatedState);
+    const share={user_id:f.client.userId,source_kind:'generated_interpretation',source_id:row.id,revoked_at:null};
+    const otherOwnerShare={...share,user_id:'another-owner'};
+    const premiumShare={...share,source_kind:'premium_report'};
+    f.rows.report_share_links.push(share,otherOwnerShare,premiumShare);
+    assert.equal((await api.listReportLibrary()).length,0);
+    const before=clone(f.calls);
+    if(state==='revoked') f.rows[friend?'friend_report_entitlements':'you_report_entitlements'][0].status='revoked';
+    const update=f.admin.update;
+    f.admin.update=async(table,params,data)=>{
+      if(state==='share-error' && table==='report_share_links')throw Error('Synthetic share revocation outage');
+      if(state==='restore-conflict' && table==='user_report_library_state'){
+        libraryState.deleted_at='2026-09-14T12:01:00.000Z';libraryState.updated_at=libraryState.deleted_at;
+      }
+      return update(table,params,data);
+    };
+    if(state==='deleted-during-work'){
+      await run({workerId:'existing-worker',jobId:job.id,admin:f.admin});
+      assert.equal(libraryState.deleted_at,deletedAt,'A background worker never restores a deleted report');
+      assert.equal((await api.listReportLibrary()).length,0);
+    }else{
+      const response={setHeader(){}};
+      const body=friend
+        ? {subjectType:'friend_transit_reading',subjectId:'synthetic-friend',targetDate:'2026-09-14',facts:{friendTransitsBrief:f.friendBrief}}
+        : {reportWindow:kind,brief:f.youBrief};
+      const originalError=console.error;
+      const expectedErrors=[];
+      if(['restore-conflict','share-error'].includes(state)) console.error=(message)=>expectedErrors.push(message);
+      try {
+        await (friend?api.friendRequestHandler:api.youRequestHandler)({method:'POST',body},response);
+      } finally { console.error=originalError; }
+      if(['restore-conflict','share-error'].includes(state)) assert.equal(expectedErrors.length,1);
+      if(['revoked','restore-conflict','share-error'].includes(state)){
+        assert.equal(response.status,state==='revoked'?409:400);
+        assert.ok(libraryState.deleted_at);assert.equal((await api.listReportLibrary()).length,0);
+        assert.equal(f.background.length,0,'A failed restore must not dispatch a billed job');
+        assert.deepEqual(f.calls,before);
+      }else{
+        assert.equal(response.status,state==='complete'?200:202,JSON.stringify(response.body));
+        assert.equal(response.body.reportId ?? response.body.saved?.[0]?.id,queued.reading.id);
+        assert.equal(libraryState.deleted_at,null);assert.equal(libraryState.archived_at,null);assert.equal(libraryState.seen_at,null);
+        assert.ok(share.revoked_at,'Re-requesting never revives an old share link');
+        assert.equal(otherOwnerShare.revoked_at,null);assert.equal(premiumShare.revoked_at,null);
+        assert.equal(unrelatedState.deleted_at,deletedAt);
+        assert.equal((await api.listReportLibrary()).length,1,'The requested record is visible again');
+        await Promise.all(f.background);
+        if(state==='running'){
+          assert.equal(job.attempt,1,'A running job is reused without a reset or duplicate call');
+          assert.deepEqual(f.calls,before);
+        }else{
+          assert.equal(job.state,'complete');assert.equal(job.result_id,row.id);
+          assert.equal((await api.loadGeneratedReportById(row.id)).body,f.output.body);
+          if(state==='complete')assert.deepEqual(f.calls,before,'A completed report is reused without billed regeneration');
+          if(state==='failed')assert.equal(job.checkpoint_attempt,5,'Retry preserves old checkpoint history');
+        }
+      }
+    }
+    console.log(`PASS ${kind}: deleted report ${state}`);cases++;
   }
   const copy={headline:'Title',summary:'Summary',body:'Body'};
   for(const rows of [[],[{...copy}],[{id:'x',...copy,body:''}],[{id:'x',...copy,body:'Changed'}],[{id:'x',...copy},{id:'y',...copy}]]) assert.throws(()=>api.assertSavedTransitReading(rows,copy));

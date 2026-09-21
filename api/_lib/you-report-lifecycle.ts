@@ -3,6 +3,7 @@ import { youTransitReadingRequestLock, type YouTransitReadingWindow } from "./yo
 import { generateYouTransitReadingForUser, type YouTransitReadingRow } from "./you-transit-reading-generation.js";
 import { isTransitReadingJudgeBlockedError } from "./transit-reading-generation.js";
 import { createSupabaseReportAdmin, type SupabaseReportAdmin } from "./supabase-report-admin.js";
+import { restoreRequestedGeneratedReport } from "./report-library-deletion.js";
 
 export type YouReportJobState = "queued" | "running" | "retry" | "complete" | "failed" | "cancelled";
 
@@ -219,11 +220,14 @@ export async function requestYouReport(input: {
 
   const completed = await findYouReading({ userId: input.userId, locked, admin });
   if (completed?.body?.trim() && (!entitlement || completed.you_report_entitlement_id === entitlement.id)) {
+    await restoreRequestedGeneratedReport(admin, input.userId, completed.id);
     return { status: "ready" as const, reading: completed, entitlement, job: null };
   }
 
   if (!entitlement) entitlement = await createFreeTestEntitlement({ admin, userId: input.userId, locked });
   const placeholder = await ensurePlaceholder({ admin, entitlement, locked });
+  if (!placeholder?.id) throw new Error("Report placeholder could not be saved.");
+  await restoreRequestedGeneratedReport(admin, input.userId, placeholder.id);
   const job = await ensureJob({ admin, entitlement, locked });
   if (job.state === "complete" && placeholder?.body?.trim()) {
     return { status: "ready" as const, reading: placeholder, entitlement, job };
