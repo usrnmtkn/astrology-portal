@@ -217,6 +217,7 @@ export function CalendarDayPanel({
 
               return (
                 <button
+                  aria-label={card.title}
                   className={`calendar-stoic-card${wide ? " is-wide" : ""}`}
                   key={card.event.id}
                   onClick={() => onOpenEvent(card.event)}

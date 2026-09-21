@@ -48,7 +48,7 @@ for (const theme of ["light", "dark"] as const) {
           }
         }
         expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1)).toBe(true);
-        const clippedControls = await page.locator(".lunar-calendar-controls button, .lunar-calendar-segmented button, .lunar-selected-card__arc small")
+        const clippedControls = await page.locator(".lunar-calendar-controls button, .lunar-calendar-segmented button, .calendar-day-panel")
           .evaluateAll((nodes) => nodes.filter((node) => {
             const box = node.getBoundingClientRect();
             return box.left < 0 || box.right > innerWidth + 1;

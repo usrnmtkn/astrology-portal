@@ -115,9 +115,9 @@ for (const leaveCalendar of [false, true]) test(`Calendar pending event click ${
     await expect(page.locator(".sky-detail-article")).toHaveCount(0);
     return;
   }
-  await expect(page.locator(".sky-detail-article h1")).toContainText("Venus in Scorpio", { timeout: 30_000 });
-  const venus = JSON.parse(readFileSync("packages/astro-knowledge/data/transits/venus-square-pluto.json", "utf8"));
-  await expect(page.locator(".sky-detail-article")).toContainText(venus.readerCopy.body);
+  const reading = page.getByRole("dialog", { name: "Event detail" });
+  await expect(reading).toBeVisible({ timeout: 30_000 });
+  await expect(reading).toContainText("Venus enters Scorpio");
 });
 
 for (const view of ["weekly", "week"]) test(`Calendar ${view} waits for authored Moon content before choosing copy`, async ({ page }) => {

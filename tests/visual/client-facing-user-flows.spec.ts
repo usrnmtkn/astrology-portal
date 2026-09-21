@@ -804,7 +804,7 @@ async function expectSharedBodyContract(page: Page, label: string, selectors: st
 
 async function expectLunarSelectedCardMinimalFonts(page: Page, label: string) {
   const result = await page.evaluate(() => {
-    const card = document.querySelector(".lunar-selected-card");
+    const card = document.querySelector(".calendar-day-panel");
     const normalizeFamily = (value: string) => value.replaceAll('"', "").split(",")[0].trim();
     const hasReadableText = (element: Element) => {
       const text = (element.textContent ?? "").replace(/\s+/g, " ").trim();
@@ -868,11 +868,11 @@ async function expectLunarSelectedCardMinimalFonts(page: Page, label: string) {
 
 async function expectLunarSelectedCardEventAlignment(page: Page, label: string) {
   const result = await page.evaluate(() => {
-    const reference = document.querySelector(".lunar-selected-card__void, .lunar-selected-card__body, .lunar-selected-card__daily-events");
-    const contentTrack = document.querySelector(".lunar-selected-card__copy");
-    const body = document.querySelector(".lunar-selected-card__body");
-    const after = document.querySelector(".lunar-selected-card__after");
-    const events = Array.from(document.querySelectorAll(".lunar-selected-card__daily-event"));
+    const reference = document.querySelector(".calendar-day-events, .calendar-sky-card");
+    const contentTrack = document.querySelector(".calendar-day-panel");
+    const body = document.querySelector(".calendar-sky-card");
+    const after = document.querySelector(".calendar-day-events");
+    const events = Array.from(document.querySelectorAll(".calendar-stoic-card"));
 
     if (!reference || events.length === 0) {
       return { checked: 0, failures: [] };
@@ -910,7 +910,7 @@ async function expectLunarSelectedCardEventAlignment(page: Page, label: string) 
   });
 
   expect(result.checked, `${label} has lunar event rows to align`).toBeGreaterThan(0);
-  expect(result.failures, `${label} aligns lunar event rows with the selected-card content track`).toEqual([]);
+  expect(result.failures, `${label} aligns lunar event cards with the selected-day content track`).toEqual([]);
 }
 
 async function expectPopoverTextNotBold(page: Page, selector: string, label: string, maxWeight = 500) {
@@ -2377,6 +2377,7 @@ test.describe("client-facing user flow case studies", () => {
         await expect(eventButton).not.toHaveAttribute("data-content-key", /^knowledge-matrix-v9\//u);
       }
       await eventButton.click();
+      await page.getByRole("dialog", { name: "Event detail" }).getByRole("button", { name: "Read article" }).click();
       await expect(page.locator(".app-shell.mode-detail")).toBeVisible();
       const detailParagraphs = page.locator(".app-shell.mode-detail article p");
 
@@ -2729,17 +2730,24 @@ test.describe("client-facing user flow case studies", () => {
     });
     await aspectDay.click();
     await expect(selectedDay.getByRole("button", { name: "Venus squares Mars" })).toBeVisible({ timeout: 15_000 });
-    await expect(selectedDay.locator(".lunar-selected-card__aspect-writeup")).toHaveText(exactBody);
-    await expect(selectedDay.locator(".lunar-selected-card__aspect-writeup")).not.toHaveText(signSpecificBody);
+    await selectedDay.getByRole("button", { name: "Venus squares Mars" }).click();
+    const reading = page.getByRole("dialog", { name: "Event detail" });
+    await expect(reading.getByText(exactBody, { exact: true })).toBeVisible();
+    await expect(reading).not.toContainText(signSpecificBody);
+    await reading.getByRole("button", { name: "Close", exact: true }).click();
 
     const monthTab = page.getByRole("tab", { name: "Month", exact: true });
     await monthTab.click();
     await expect(monthTab).toHaveAttribute("aria-selected", "true");
-    await expect(selectedDay.locator(".lunar-selected-card__aspect-writeup")).toHaveText(exactBody, {
+    await page.getByRole("button", { name: /Venus squares Mars/ }).first().click();
+    const monthDay = page.getByLabel("Selected lunar day");
+    await expect(monthDay).toBeVisible({ timeout: 15_000 });
+    await monthDay.getByRole("button", { name: "Venus squares Mars" }).click();
+    await expect(page.getByRole("dialog", { name: "Event detail" }).getByText(exactBody, { exact: true })).toBeVisible({
       timeout: 15_000
     });
-    await expect(selectedDay.locator(".lunar-selected-card__aspect-writeup")).not.toHaveText(signSpecificBody);
-    await expect(selectedDay).not.toContainText("and for the collective");
+    await expect(page.getByRole("dialog", { name: "Event detail" })).not.toContainText(signSpecificBody);
+    await expect(page.getByRole("dialog", { name: "Event detail" })).not.toContainText("and for the collective");
     await assertNoClientErrors();
   });
 
@@ -2770,6 +2778,7 @@ test.describe("client-facing user flow case studies", () => {
 
     await expect(eventButton).toBeVisible({ timeout: 15_000 });
     await eventButton.click();
+    await page.getByRole("dialog", { name: "Event detail" }).getByRole("button", { name: "Read article" }).click();
     const article = page.locator(".app-shell.mode-detail .sky-detail-article");
     await expect(article).toBeVisible();
     await expect(article).toContainText("A Full Moon in Aquarius reveals what has grown around community, belonging, future vision");
@@ -2789,6 +2798,7 @@ test.describe("client-facing user flow case studies", () => {
 
     await expect(eventButton).toBeVisible({ timeout: 15_000 });
     await eventButton.click();
+    await page.getByRole("dialog", { name: "Event detail" }).getByRole("button", { name: "Read article" }).click();
     const article = page.locator(".app-shell.mode-detail .sky-detail-article");
     await expect(article).toBeVisible();
     await expect(article).toContainText("The New Moon in Cancer invites a new beginning rooted in care");
@@ -2808,6 +2818,7 @@ test.describe("client-facing user flow case studies", () => {
 
     await expect(eventButton).toBeVisible({ timeout: 15_000 });
     await eventButton.click();
+    await page.getByRole("dialog", { name: "Event detail" }).getByRole("button", { name: "Read article" }).click();
     const article = page.locator(".app-shell.mode-detail .sky-detail-article");
     await expect(article).toBeVisible();
     await expect(article).toContainText("The Partial Solar Eclipse in Virgo is a closing ceremony and a question of new foundations.");
@@ -2825,6 +2836,7 @@ test.describe("client-facing user flow case studies", () => {
 
     await expect(eventButton).toBeVisible({ timeout: 15_000 });
     await eventButton.click();
+    await page.getByRole("dialog", { name: "Event detail" }).getByRole("button", { name: "Read article" }).click();
     const article = page.locator(".app-shell.mode-detail .sky-detail-article");
     await expect(article).toBeVisible();
     await expect(article).toContainText("The role that kept you visible may no longer feel like the person you want to keep performing.");
@@ -3102,7 +3114,7 @@ test.describe("client-facing user flow case studies", () => {
     await expectClientRouteLoads(page, "/#calendar");
 
     await expect(page.getByLabel("Lunar calendar")).toBeVisible();
-    await expect(page.locator(".lunar-selected-card")).toBeVisible();
+    await expect(page.locator(".calendar-day-panel")).toBeVisible();
     await captureResponsiveSurface(page, "mobile", "calendar-day");
 
     const layout = await page.evaluate(() => {
@@ -3112,7 +3124,7 @@ test.describe("client-facing user flow case studies", () => {
         ".lunar-calendar-body",
         ".lunar-calendar-week-view",
         ".lunar-week-strip",
-        ".lunar-selected-card",
+        ".calendar-day-panel",
         ".lunar-week-transits"
       ];
       const overflowingSurfaces = selectors.flatMap((selector) => {
@@ -3518,7 +3530,7 @@ test.describe("client-facing user flow case studies", () => {
       await expect(page.getByLabel("Selected lunar day")).toBeVisible({ timeout: 15_000 });
       await expect(page.locator(".lunar-location-picker")).toHaveCount(0);
       await expect(page.getByRole("button", { name: /New York.*Eastern/i })).toHaveCount(0);
-      await expect(page.locator(".lunar-selected-card__daily-event").first()).toBeVisible({ timeout: 15_000 });
+      await expect(page.locator(".calendar-stoic-card").first()).toBeVisible({ timeout: 15_000 });
       await expectSharedLabelContract(page, `${viewport.name} Calendar`, { requireLabels: false });
       await expectLunarSelectedCardMinimalFonts(page, `${viewport.name} Calendar`);
       await expectLunarSelectedCardEventAlignment(page, `${viewport.name} Calendar`);
@@ -4624,6 +4636,7 @@ test("Sky detail hydrates published aspects for its displayed snapshot and dated
   await page.evaluate(() => { window.location.hash = "calendar"; });
   await page.getByRole("button", { name: /^Thursday, September 10\./ }).click();
   await page.getByRole("button", { name: "Venus enters Scorpio", exact: true }).click();
+  await page.getByRole("dialog", { name: "Event detail" }).getByRole("button", { name: "Read article" }).click();
   const venus = JSON.parse(readFileSync("packages/astro-knowledge/data/transits/venus-square-pluto.json", "utf8"));
   await expect(page.locator('.sky-detail-article')).toContainText(venus.readerCopy.body, { timeout: 60_000 });
   await expect(page.locator('.sky-detail-article h1')).toContainText("Venus in Scorpio");

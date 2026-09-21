@@ -87,7 +87,7 @@ import { calendarPhaseLabelForDay } from "./calendarPhaseLabel";
 import { lunarDayGeneratedContentKeys, resolveLunarDay } from "./lunarDayResolver";
 import type { LunarDay, LunarDayArcPoint } from "./lunarDayTypes";
 import { sunIngressSeasonSign, sunIngressSeasonWindow } from "./seasonWindow";
-import { calendarMonthlyOverviewContentKeys } from "./monthlyOverview";
+import { calendarMonthlyOverviewContentKeys, resolveCalendarMonthlyOverview } from "./monthlyOverview";
 import { AstroGlyph } from "./AstroGlyph";
 import {
   CalendarCheckIn,
@@ -3323,6 +3323,10 @@ export function LunarCalendar({
   const selectedLunarDayNumber = selectedDay && calendar
     ? lunarDayFor(selectedDay, calendar.events)
     : null;
+  const monthlyOverview = useMemo(() => {
+    if (viewMode !== "month" || !calendar) return null;
+    return resolveCalendarMonthlyOverview(calendar, generatedContent);
+  }, [calendar, generatedContent, viewMode, contentVersion]);
   const dayPanelProps = selectedDay ? {
     checkInEntry: checkIns[selectedDay.dateKey],
     dateKey: selectedDay.dateKey,
@@ -3334,7 +3338,8 @@ export function LunarCalendar({
     metaLine: [
       selectedDay.illumination ? `${selectedDay.illumination}% lit` : null,
       selectedLunarDayNumber ? `Lunar day ${selectedLunarDayNumber}` : null,
-      seasonSign ? `${signGlyphs[seasonSign] ?? ""} ${seasonSign} season`.trim() : null
+      seasonSign ? `${signGlyphs[seasonSign] ?? ""} ${seasonSign} season`.trim() : null,
+      selectedPrimaryLunation ? `Exact at ${formatEventTime(selectedPrimaryLunation.startsAt, zone)}` : null
     ].filter(Boolean).join(" · "),
     onCheckIn: () => setCheckInOpen(true),
     onOpenEvent: openEventReading,
@@ -3446,7 +3451,9 @@ export function LunarCalendar({
       </header>
 
       {(status === "loading" || !moonContentReady) && (
-        <PageLoading compact message="Calculating calendar" />
+        <div className="lunar-calendar-loading">
+          <PageLoading compact message="Calculating calendar" />
+        </div>
       )}
 
       {status === "error" && (
@@ -3554,6 +3561,12 @@ export function LunarCalendar({
 
       {viewMode === "month" && (
         <div className="lunar-calendar-layout">
+          {monthlyOverview && (
+            <section className="lunar-month-overview" aria-labelledby="lunar-month-overview-heading">
+              <h2 className="sr-only" id="lunar-month-overview-heading">Monthly overview</h2>
+              {monthlyOverview.paragraphs.map((paragraph, index) => <p key={index}>{paragraph}</p>)}
+            </section>
+          )}
           <div className="lunar-calendar-month-primary">
             <section className="lunar-calendar-grid-panel" aria-label={`${formatMonthLabel(visibleMonth)} lunar grid`}>
             <div className="lunar-calendar-weekdays" aria-hidden="true">

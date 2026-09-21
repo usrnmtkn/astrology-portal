@@ -1,6 +1,16 @@
 import fs from "node:fs";
 import { expect, test } from "@playwright/test";
 
+async function expectCalendarEventBody(page: import("@playwright/test").Page, title: RegExp, body: string) {
+  const card = page.getByRole("button", { name: title }).first();
+  await expect(card).toBeVisible({ timeout: 60_000 });
+  await card.click();
+  const reading = page.getByRole("dialog", { name: "Event detail" });
+  await expect(reading.getByText(body, { exact: true })).toBeVisible({ timeout: 60_000 });
+  await reading.getByRole("button", { name: "Close", exact: true }).click();
+  await expect(reading).toHaveCount(0);
+}
+
 test("Calendar renders complete collective passages after Studio hydration and reload", async ({ page }) => {
   test.setTimeout(120_000);
   // Current engine facts put Mercury trine Pluto on this day. Saturn square
@@ -8,10 +18,8 @@ test("Calendar renders complete collective passages after Studio hydration and r
   const copies = [JSON.parse(fs.readFileSync("packages/astro-knowledge/data/transits/mercury-trine-pluto.json", "utf8")).readerCopy];
   await page.goto("/#calendar?view=day&date=2026-09-12");
   for (let load = 0; load < 2; load += 1) {
-    const exactToday = page.getByRole("region", { name: /^Exact today$/i });
     for (const copy of copies) {
-      // Full equality includes the approved opening and final sentence.
-      await expect(exactToday.getByText(copy.body, { exact: true })).toBeVisible({ timeout: 60_000 });
+      await expectCalendarEventBody(page, /Mercury trine Pluto/i, copy.body);
     }
     if (load === 0) await page.reload();
   }
@@ -29,7 +37,7 @@ test("Calendar serves the owner's published Saturn revision with incomplete even
   } } }));
   await page.goto(`/#calendar?view=day&date=${dateKey}`);
   for (let load = 0; load < 2; load++) {
-    await expect(page.getByRole("region", { name: /^Exact today$/i }).getByText(row.body, { exact: true })).toBeVisible({ timeout: 30_000 });
+    await expectCalendarEventBody(page, /Saturn square Lilith/i, row.body);
     await expect(page.getByText(/A rule becomes harder to obey when compliance/)).toHaveCount(0);
     if (load === 0) await page.reload();
   }
