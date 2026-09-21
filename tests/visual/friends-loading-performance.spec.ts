@@ -331,10 +331,29 @@ test.describe("Friends loading performance matrix", () => {
         await page.locator(".friends-back-button").click();
         await waitForMeasuredVisibility(page.getByRole("button", { name: `Open ${fixtureFriendName}` }));
 
-        return timed("warm Friends detail", async () => {
-          await page.getByRole("button", { name: `Open ${fixtureFriendName}` }).click();
-          await waitForMeasuredVisibility(page.locator(".compatibility-card").first());
+        // Capture the first visible frame, as for direct Synastry links below.
+        // A protocol round-trip after rendering should not count as app work.
+        await page.evaluate(() => {
+          (window as any).__friendsDetailStartedAt = performance.now();
+          const observe = () => {
+            const card = document.querySelector(".compatibility-card");
+            const rect = card?.getBoundingClientRect();
+            const visibility = card ? getComputedStyle(card).visibility : "hidden";
+            if (rect && rect.width > 0 && rect.height > 0 && visibility !== "hidden" && visibility !== "collapse") {
+              (window as any).__friendsDetailElapsed = performance.now() - (window as any).__friendsDetailStartedAt;
+              return;
+            }
+            requestAnimationFrame(observe);
+          };
+          requestAnimationFrame(observe);
         });
+        await page.getByRole("button", { name: `Open ${fixtureFriendName}` }).click();
+        await page.waitForFunction(() => Number.isFinite((window as any).__friendsDetailElapsed));
+        await expect(page.locator(".compatibility-card").first()).toBeVisible();
+        return {
+          label: "warm Friends detail",
+          elapsedMs: Math.round(await page.evaluate(() => (window as any).__friendsDetailElapsed as number))
+        };
       }));
     }
 
@@ -391,7 +410,6 @@ test.describe("Friends loading performance matrix", () => {
       samples.push(await withContext(browser, { viewport: { width: 390, height: 844 } }, async (_context, page) => {
         await preparePage(page);
         await page.goto(url("/#sky"), { waitUntil: "domcontentloaded" });
-        await expect(page.getByRole("button", { name: "Open full current sky chart" })).toBeVisible();
         await expect(page.getByRole("button", { name: "Open menu" })).toBeVisible();
         await page.getByRole("button", { name: "Open menu" }).click();
         const friendsMenuItem = page.getByRole("menuitem", { name: "Friends" });

@@ -33,7 +33,9 @@ type SkyCalculationResponse =
   | { id: number; ok: true; value: unknown }
   | { id: number; ok: false; error: string };
 
-let calculationQueue = Promise.resolve();
+const foregroundQueue: SkyCalculationRequest[] = [];
+const backgroundQueue: SkyCalculationRequest[] = [];
+let draining = false;
 
 async function calculate(request: SkyCalculationRequest) {
   switch (request.kind) {
@@ -59,19 +61,37 @@ async function calculate(request: SkyCalculationRequest) {
   }
 }
 
-self.addEventListener("message", (event: MessageEvent<SkyCalculationRequest>) => {
-  const request = event.data;
-
-  calculationQueue = calculationQueue.then(async () => {
+// Timing enrichment can enqueue dozens of calculations after You first paints.
+// Yield between jobs so a later Calendar/Sky navigation can enter the queue,
+// then serve visible-route facts before that optional background enrichment.
+async function drainCalculations() {
+  const request = foregroundQueue.shift() ?? backgroundQueue.shift();
+  if (!request) {
+    draining = false;
+    return;
+  }
+  try {
     const value = await calculate(request);
     const response: SkyCalculationResponse = { id: request.id, ok: true, value };
     self.postMessage(response);
-  }).catch((error: unknown) => {
+  } catch (error: unknown) {
     const response: SkyCalculationResponse = {
       id: request.id,
       ok: false,
       error: error instanceof Error ? error.message : String(error)
     };
     self.postMessage(response);
-  });
+  } finally {
+    setTimeout(drainCalculations, 0);
+  }
+}
+
+self.addEventListener("message", (event: MessageEvent<SkyCalculationRequest>) => {
+  const request = event.data;
+  const queue = request.kind === "natal-transit-timing" ? backgroundQueue : foregroundQueue;
+  queue.push(request);
+  if (!draining) {
+    draining = true;
+    setTimeout(drainCalculations, 0);
+  }
 });

@@ -110,13 +110,7 @@ export function calendarSeasonTransitionKey(fromSign: string, toSign: string, va
     : `authored/calendar-season-transition/${from}/${to}`;
 }
 
-export function calendarSeasonTransitionTitle(fromSign: string, toSign: string, variant = 1) {
-  const from = fromSign.replace(/^\w/u, (letter) => letter.toUpperCase());
-  const to = toSign.replace(/^\w/u, (letter) => letter.toUpperCase());
-  const pair = `${from} to ${to}`;
-  if (variant <= 1) return `${pair} · Ends`;
-  return variant === 2 ? `${pair} · Begins` : `${pair} · Begins · ${variant - 1}`;
-}
+export { calendarSeasonTransitionTitle } from "./calendarSeasonTransitionTitle";
 
 export function calendarSeasonTransitionKeys(fromSign: string, toSign: string) {
   return Array.from({ length: calendarSeasonTransitionVariantCount }, (_, index) => (

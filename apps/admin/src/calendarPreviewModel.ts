@@ -18,7 +18,6 @@ import { calendarMoonCycleFactsForDays, type CalendarMoonCycleFacts } from "../.
 import { resolveCalendarMoonFallback } from "../../web/src/features/calendar/calendarMoonFallback";
 import { calendarMoonPhaseCopy } from "../../web/src/features/calendar/calendarMoonPhaseCopy";
 import { calendarLunationMacroKey } from "../../web/src/features/calendar/calendarDayMoonReading";
-import { fallbackV3HookBody } from "../../web/src/content/fallbackArchitectureV3Runtime";
 import { calendarLocalDateKey } from "../../web/src/features/calendar/calendarPhaseLabel";
 import { moonContinuationSummaryKey } from "../../web/src/features/calendar/moonContinuationSummaries";
 import { calendarSeasonTransitionKeyForSurface, calendarSeasonTransitionKeys } from "../../web/src/features/calendar/calendarSeasonTransitions";
@@ -127,7 +126,7 @@ export function calendarMoonWriteupForDay(
     authoredUsedThisVisit: used.size > 0,
     authoredPhaseCopy: calendarMoonPhaseCopy(facts, (contentKey) => {
       const row = rows.find((item) => item.content_key === contentKey && calendarCopyEligible(item));
-      return row?.body || fallbackV3HookBody(contentKey);
+      return row?.body ?? "";
     }),
     seasonSummary,
     moonContinuationSummary: summaryRow?.body,

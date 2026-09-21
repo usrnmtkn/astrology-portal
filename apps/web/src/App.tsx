@@ -31,6 +31,7 @@ import { calendarSeasonTransitionFactsFromSun } from "./features/calendar/calend
 import { PublishedSkySummary } from "./features/sky/PublishedSkySummary";
 import { SkyReadingLayout, useSkyCardsSettled } from "./features/sky/SkyReadingLayout";
 import { SkyRoute } from "./routes/SkyRoute";
+import { YouRoute } from "./routes/YouRoute";
 import { isStandaloneLearnPath } from "./content/learnRoutePath";
 import { refreshContentPublications } from "./services/contentPublications";
 import {
@@ -10785,9 +10786,8 @@ const GeneratedContentAdminDashboard = lazy(() =>
 );
 
 const loadYouPage = () => import("./features/you/YouPage");
-const loadYouRoute = () => import("./routes/YouRoute");
 const preloadYouExperience = () => {
-  void Promise.all([loadYouPage(), loadYouRoute()]);
+  void loadYouPage();
 };
 
 const ReportRoute = lazy(() =>
@@ -10809,12 +10809,6 @@ const NatalAspectPatternsSection = lazy(() =>
 const NatalAspectPatternActivationsSection = lazy(() =>
   import("./features/you/NatalAspectPatternsSection").then((module) => ({
     default: module.NatalAspectPatternActivationsSection
-  }))
-);
-
-const YouRoute = lazy(() =>
-  loadYouRoute().then((module) => ({
-    default: module.YouRoute
   }))
 );
 
