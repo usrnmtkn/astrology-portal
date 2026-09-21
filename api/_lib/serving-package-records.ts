@@ -1,5 +1,7 @@
 import { createRequire } from "node:module";
 import { calendarWritingSourceStarters } from "./calendar-writing-sources.js";
+import { calendarSeasonTransitionPackageRecords } from "./calendar-season-transition-sources.js";
+import { lunarJournalPackageRecords } from "./lunar-journal-sources.js";
 import { skyPlacementSourceRecords } from "./sky-placement-sources.js";
 
 const require = createRequire(import.meta.url);
@@ -28,6 +30,8 @@ for (const partition of readerPartitions as Record<string, any>[]) {
   }
 }
 for (const record of calendarWritingSourceStarters) servingPackageRecords.set(record.contentKey, record);
+for (const record of lunarJournalPackageRecords) servingPackageRecords.set(record.contentKey, record);
+for (const record of calendarSeasonTransitionPackageRecords) servingPackageRecords.set(record.contentKey, record);
 for (const [key, record] of skyPlacementSourceRecords) servingPackageRecords.set(key, record);
 
 export function isSkyPartitionKey(key: string) {

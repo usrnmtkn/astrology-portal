@@ -25,15 +25,15 @@ for (const instant of ["2026-09-14T16:00:00.000Z", "2027-01-12T17:00:00.000Z"]) 
 }
 const week = await calculateCalendarPreview("weekly-sky", "2026-11-01T17:00:00.000Z", "America/New_York");
 assert.equal(week.days.length, 7);
-assert.equal(week.days[0].dateKey, "2026-10-26");
-assert.equal(week.days[6].dateKey, "2026-11-01");
+assert.equal(week.days[0].dateKey, "2026-11-01");
+assert.equal(week.days[6].dateKey, "2026-11-07");
 const ongoing = week.events.find(event => event.phase === "retrograde-passage")!;
 assert(ongoing, "The real week supplies ongoing retrograde state rows.");
-const station = { ...ongoing, id: "fixture-exact-station", phase: "station-direct" as const, title: "Fixture exact station", startsAt: "2026-10-27T17:45:00.000Z", dateKey: "2026-10-27" };
+const station = { ...ongoing, id: "fixture-exact-station", phase: "station-direct" as const, title: "Fixture exact station", startsAt: "2026-11-03T17:45:00.000Z", dateKey: "2026-11-03" };
 const timingValues = calendarPreviewValues({ sunSign: "Scorpio", moonSign: "Leo", rows: [], calculation: {
   ...week, events: [ongoing, station], days: week.days.map(day => ({ ...day, events: day.dateKey === station.dateKey ? [ongoing, station] : [ongoing] }))
 } });
-assert.equal(timingValues.keyDates.text, "Oct 27, 2026, 1:45 PM EDT · Fixture exact station");
+assert.equal(timingValues.keyDates.text, "Nov 3, 2026, 12:45 PM EST · Fixture exact station");
 assert.equal(timingValues.tuesdayTiming.text, timingValues.keyDates.text);
 assert.match(timingValues.mondayTiming.text, / at noon · /);
 assert(timingValues.retrogradePlanets.text.includes(ongoing.planet!), "Ongoing retrogrades remain available as current state.");
@@ -69,6 +69,7 @@ assert.equal(calendarPreviewValues({ sunSign: "Virgo", moonSign: "Cancer", rows:
 assert.equal(calendarPreviewValues({ sunSign: "Virgo", moonSign: "Cancer", rows: [{ ...seasonRow, sections: { packageDraft: { body: "Fixture complete unsaved passage." } } }] }).zodiacSeason.text, "Fixture complete unsaved passage.");
 assert.equal(calendarPreviewValues({ sunSign: "Cancer", moonSign: "Virgo", rows: [seasonRow] }).zodiacSeason, undefined);
 assert(calendarPreviewSourceKeys("monthly-sky", ["Virgo", "Libra"]).includes("fallback-hook/zodiac-season-polar-axis/libra"));
+assert(calendarPreviewSourceKeys("weekly-sky", ["Scorpio"]).includes("authored/calendar-moon-continuation-summary/scorpio"));
 assert.equal(calendarTemplateSegments("Before{{#closingSeasonSign}}After {{closingSeasonSign}}{{/closingSeasonSign}}", {}).map(part => part.text).join(""), "Before");
 assert.equal(calendarTemplateSegments("Before{{#closingSeasonSign}}After {{closingSeasonSign}}{{/closingSeasonSign}}", { closingSeasonSign: { kind: "fact", text: "Libra" } }).map(part => part.text).join(""), "BeforeAfter Libra");
 for (const [instant, zone, opening, closing] of [

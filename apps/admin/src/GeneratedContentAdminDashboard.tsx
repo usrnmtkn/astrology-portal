@@ -27,7 +27,7 @@ import { lunarContentIdentity } from "./lunarCalendarContent";
 import type { SkyForecastPeriod } from "./skyForecastTemplates";
 import ContentLiveStatusBadge, { ContentLiveStatusProvider, useContentLiveStatusLoader, useContentLiveStatusResults, type LiveStatus } from "./ContentLiveStatus";
 import { studioServingStatusRow } from "./studioServingStatus";
-import { mergeContentInventory } from "./contentStudioState";
+import { dropSupersededPackageStarters, mergeContentInventory } from "./contentStudioState";
 import {
   studioInventoryQuery,
   studioInventoryQueryKey,
@@ -2647,7 +2647,7 @@ function housePassageAvailabilityLabel(availability: "Reader-ready" | "Source ca
 
 function fallbackSectionForKey(key: string, surface?: string): Exclude<AdminFallbackHookSectionFilter, "all"> {
   if (key.startsWith("fallback-hook/daily-headline/") || key.startsWith("fallback-hook/daily-body/") || key.startsWith("fallback-hook/pair-daily/")) return "daily";
-  if (key.startsWith("authored/calendar-weekly-moon/") || key.includes("lunar") || key.startsWith("lunation/") || key.startsWith("season/") || key.startsWith("season-arc/") || key.startsWith("transit-fallback/")) return "lunar-calendar";
+  if (key.startsWith("authored/calendar-weekly-moon/") || key.startsWith("authored/calendar-moon-continuation-summary/") || key.startsWith("authored/calendar-moon-transition/") || key.startsWith("authored/calendar-season-transition/") || key.startsWith("authored/lunar-journal/") || key.startsWith("authored/sky-lunation-macro/") || key.startsWith("cms/sky-daily-summary/sun/") || key.startsWith("cms/sky-daily-summary/moon/") || key.includes("lunar") || key.startsWith("lunation/") || key.startsWith("season/") || key.startsWith("season-arc/") || key.startsWith("transit-fallback/")) return "lunar-calendar";
   if (key.includes("settings") || surface === "settings") return "settings";
   if (key.includes("friends") || key.includes("synastry") || key.includes("relationship") || key.includes("bond-effect") || surface === "friends" || surface === "relationship" || surface === "synastry" || surface === "composite") return "friends";
   if (key.includes("natal") || key.includes("you") || surface === "you" || surface === "natal") return "you";
@@ -2882,7 +2882,7 @@ function dedupeGeneratedContentRows(rows: AdminGeneratedContentRow[]) {
       byId.set(key, row);
     }
   });
-  return [...byId.values()];
+  return dropSupersededPackageStarters([...byId.values()]);
 }
 
 function assertRowsPayload<T>(payload: { rows?: T[] }, endpoint: string): T[] {
@@ -5979,7 +5979,7 @@ export function GeneratedContentAdminDashboard() {
     }
     const usedVariants = new Set(rows.filter(row => lunarContentIdentity(row.content_key)?.sign === calendarSign && row.content_key.startsWith("authored/calendar-weekly-moon/")).map(row => lunarContentIdentity(row.content_key)!.variant));
     const nextVariant = [1, 2, 3, 4].find(variant => !usedVariants.has(variant) && !(calendarSign === "cancer" && variant === 1));
-    if (calendarSign && !nextVariant) { setMessage("All four variants already exist for this sign. Edit or restore an existing passage."); return; }
+    if (calendarSign && !nextVariant) { setMessage("All leftover write-ups already exist for this sign. Edit or restore an existing passage."); return; }
     const newMoonKey = calendarSign ? `authored/calendar-weekly-moon/${calendarSign}${nextVariant === 1 ? "" : `/variant-${nextVariant}`}` : "authored/calendar-weekly-moon/new-entry";
     navigateAdminPage(page, isCalendarWriteup ? new URLSearchParams({ section: "lunar-calendar" }) : undefined, { keepEditorOpen: true });
     setIsCreateMenuOpen(false);
@@ -6755,8 +6755,8 @@ export function GeneratedContentAdminDashboard() {
             },
             {
               key: "fallback",
-              label: lunarWorkspaceActive ? "Create Calendar write-up" : "Create fallback hook",
-              description: lunarWorkspaceActive ? "Choose a Moon sign and start a separate draft" : "Saved route fallback",
+              label: lunarWorkspaceActive ? "Create leftover write-up" : "Create fallback hook",
+              description: lunarWorkspaceActive ? "Choose a Moon sign and start a leftover draft" : "Saved route fallback",
               icon: Flag,
               onSelect: () => handleCreateAction("knowledge", "Create fallback hook opened.")
             }
@@ -7024,7 +7024,7 @@ export function GeneratedContentAdminDashboard() {
                 onEditOverview={field => void openSkyForecastTemplate(calendarWriteupWorkspaceView, field)}
                 onOpen={period => void openSkyForecastTemplate(period)} editor={calendarWriteupWorkspaceView === "daily-sky" ? null : renderEditor()} /></Suspense>
               {calendarWriteupWorkspaceView === "daily-sky" && (
-                <Suspense fallback={<PageLoading message="Loading Moon-sign write-ups…" />}>
+                <Suspense fallback={<PageLoading message="Loading leftover write-ups…" />}>
                   <LunarCalendarWorkspace rows={rows} query={query} onQuery={setQuery} createRequest={calendarCreateRequest}
                     onCreateRequestHandled={() => setCalendarCreateRequest(0)} isLoading={isLoading || loadState !== "loaded"}
                     editor={renderEditor()} onEdit={row => openRow(row as AdminGeneratedContentRow)}
@@ -10194,7 +10194,7 @@ export function GeneratedContentAdminDashboard() {
       return `${wordCount} ${wordCount === 1 ? "word" : "words"} · ${value.length} ${value.length === 1 ? "character" : "characters"}`;
     };
     const unchangedSkySource = isSkyPlacementSource && selectedRow?.id.startsWith("package:") && !draftHasUnsavedChanges && !packageHasProposal;
-    const editorHeading = !currentDraft.id && currentDraft.contentKey.startsWith("authored/calendar-weekly-moon/") ? `New ${lunarIdentity?.title ?? "Moon-in-sign write-up"}` : isSkySummaryDraft || selectedRow?.id.startsWith("package:") ? `Edit ${currentDraft.headline}` : currentDraft.id
+    const editorHeading = !currentDraft.id && currentDraft.contentKey.startsWith("authored/calendar-weekly-moon/") ? `New leftover write-up · ${lunarIdentity?.title ?? "Moon-sign leftover"}` : isSkySummaryDraft || selectedRow?.id.startsWith("package:") ? `Edit ${currentDraft.headline}` : currentDraft.id
       ? isVocabularyDraft
         ? "Edit phrase"
         : compatibilityIdentity

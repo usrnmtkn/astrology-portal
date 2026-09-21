@@ -4,6 +4,7 @@ import fs from "node:fs";
 import {
   STUDIO_ASTRO_101_PREFIXES,
   STUDIO_BETWEEN_YOU_TWO_PREFIXES,
+  STUDIO_LUNAR_CALENDAR_PREFIXES,
   STUDIO_PERSONAL_TRANSIT_PREFIXES,
   STUDIO_SKY_WRITEUP_PREFIXES,
   studioInventoryQuery,
@@ -30,6 +31,15 @@ const activeForName = studioInventoryQuery({
 });
 assert.deepEqual(activeForName.prefixes, [...STUDIO_PERSONAL_TRANSIT_PREFIXES]);
 assert.ok(activeForName.prefixes.includes("authored/transit-aspect/"));
+
+const calendarWriteups = studioInventoryQuery({ page: "calendarWriteups" });
+assert.ok(calendarWriteups.prefixes.includes("authored/lunar-journal/"));
+assert.ok(calendarWriteups.prefixes.includes("cms/sky-daily-summary/sun/"));
+assert.ok(calendarWriteups.prefixes.includes("cms/sky-daily-summary/moon/"));
+assert.equal(calendarWriteups.prefixes.includes("fallback-hook/sky-placement-lived/moon/"), false);
+assert.ok(calendarWriteups.prefixes.includes("authored/sky-lunation-macro/"));
+assert.ok(STUDIO_SKY_WRITEUP_PREFIXES.includes("fallback-hook/sky-placement-lived/"));
+assert.deepEqual(calendarWriteups.prefixes, [...STUDIO_LUNAR_CALENDAR_PREFIXES]);
 
 const skyWriteups = studioInventoryQuery({ page: "skyWriteups" });
 assert.deepEqual(skyWriteups.prefixes, [...STUDIO_SKY_WRITEUP_PREFIXES]);

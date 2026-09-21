@@ -1394,7 +1394,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     const search = page.getByRole("textbox", { name: "Search Lunar Calendar" });
     const browse = page.getByRole("complementary", { name: "Lunar passages" });
     await search.fill("Cancer Variant 2");
-    await browse.getByRole("button", { name: /^Moon in Cancer · Variant 2$/ }).click();
+    await browse.getByRole("button", { name: /^Moon in Cancer · Leftover 2$/ }).click();
     const detail = page.getByRole("region", { name: "Selected lunar passage" });
     await expect(detail).toContainText(record.body);
     await detail.getByRole("button", { name: "Review composition and variables" }).click();
@@ -1404,7 +1404,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expect(composition).toContainText(record.focus);
     await composition.getByRole("button", { name: "Edit passage", exact: true }).click();
     const editor = page.getByRole("dialog", { name: "Generated content editor" });
-    await expect(editor.getByRole("heading").first()).toContainText("Moon in Cancer · Variant 2");
+    await expect(editor.getByRole("heading").first()).toContainText("Moon in Cancer · Leftover 2");
     await expect(editor.getByLabel("Source notes (not reader copy)")).toHaveValue(record.notes);
     await editor.getByLabel("Full lunar passage").fill(record.body + "\nQA revision.");
     await editor.getByRole("button", { name: "Save draft", exact: true }).click();
@@ -1423,7 +1423,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expect.poll(() => writes.length).toBe(3);
     await editor.getByRole("button", { name: "Close", exact: true }).click();
     await page.getByLabel("Publication", { exact: true }).selectOption("active");
-    await page.getByRole("button", { name: "Add Moon-in-sign write-up", exact: true }).click();
+    await page.getByRole("button", { name: "Add leftover write-up", exact: true }).click();
     await page.getByLabel("Moon sign for the new write-up", { exact: true }).selectOption("cancer");
     await page.getByRole("button", { name: "Start draft", exact: true }).click();
     await expect(editor.getByLabel("Content key", { exact: true })).toHaveValue("authored/calendar-weekly-moon/cancer/variant-3");
@@ -1453,7 +1453,7 @@ test.describe("content dashboard admin user flow case studies", () => {
         await expect(page.locator('main.admin-dashboard')).toHaveAttribute('data-studio-theme', colorScheme);
         await page.evaluate(theme => { document.documentElement.dataset.theme = theme; }, colorScheme);
         await search.fill("Cancer");
-        await expect(detail.getByRole("heading", { name: "Moon in Cancer · Variant 2" })).toBeVisible();
+        await expect(detail.getByRole("heading", { name: "Moon in Cancer · Leftover 2" })).toBeVisible();
         expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
         await expect(page.locator('.admin-dashboard-header h1')).toHaveText('Calendar Write-ups');
         await expect(page.getByRole('region', { name: 'Lunar Calendar workspace' }).getByRole('heading', { level: 2, name: 'Lunar Calendar write-ups' })).toHaveCount(0);

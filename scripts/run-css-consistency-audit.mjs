@@ -84,14 +84,19 @@ const canonicalEyebrowSelectors = [
   ".phone-auth-eyebrow",
   ".natal-pattern-card__activation-eyebrow",
   ".nl-eyebrow",
-  ".sky-lunar-pill-copy em"
+  ".sky-lunar-pill-copy em",
+  ".calendar-kind-label",
+  ".calendar-reading__card-label",
+  ".calendar-reading__article-label",
+  ".calendar-section-label"
 ];
 
 const typographyOnlyEyebrowSelectors = new Set([
   ".phone-auth-eyebrow",
   ".natal-pattern-card__activation-eyebrow",
   ".nl-eyebrow",
-  ".sky-lunar-pill-copy em"
+  ".sky-lunar-pill-copy em",
+  ".calendar-section-label"
 ]);
 
 const validEyebrowValues = {

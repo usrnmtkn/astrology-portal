@@ -29,7 +29,7 @@ export const STUDIO_HOUSE_TRANSIT_PREFIXES = [
 export const STUDIO_SKY_WRITEUP_PREFIXES = [
   "sky-placement/",
   "sky-article/",
-  "authored/sky-lunation-macro/",
+  "fallback-hook/sky-placement-lived/",
   "sky.placement."
 ] as const;
 
@@ -49,6 +49,13 @@ export const STUDIO_NATAL_CHART_PREFIXES = [
 
 export const STUDIO_LUNAR_CALENDAR_PREFIXES = [
   "authored/calendar-weekly-moon/",
+  "authored/calendar-moon-continuation-summary/",
+  "authored/calendar-moon-transition/",
+  "authored/calendar-season-transition/",
+  "authored/lunar-journal/",
+  "authored/sky-lunation-macro/",
+  "cms/sky-daily-summary/sun/",
+  "cms/sky-daily-summary/moon/",
   "lunation/",
   "season/",
   "season-arc/",

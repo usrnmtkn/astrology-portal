@@ -14,6 +14,16 @@ import {
 import { skyDailySummaryParts } from "../../web/src/content/skyDailySummary";
 import { isReaderServableGeneratedContentRow } from "../../web/src/content/generatedContentEligibility";
 import { isGovernedReaderEligible } from "../../web/src/content/fallbackArchitectureV3/resolver/readerEligibility.browser";
+import { calendarMoonCycleFactsForDays, type CalendarMoonCycleFacts } from "../../web/src/features/calendar/calendarMoonCycle";
+import { resolveCalendarMoonFallback } from "../../web/src/features/calendar/calendarMoonFallback";
+import { calendarMoonPhaseCopy } from "../../web/src/features/calendar/calendarMoonPhaseCopy";
+import { calendarLunationMacroKey } from "../../web/src/features/calendar/calendarDayMoonReading";
+import { fallbackV3HookBody } from "../../web/src/content/fallbackArchitectureV3Runtime";
+import { calendarLocalDateKey } from "../../web/src/features/calendar/calendarPhaseLabel";
+import { moonContinuationSummaryKey } from "../../web/src/features/calendar/moonContinuationSummaries";
+import { calendarSeasonTransitionKeyForSurface, calendarSeasonTransitionKeys } from "../../web/src/features/calendar/calendarSeasonTransitions";
+import { moonSignTransitionKey } from "../../web/src/features/calendar/moonSignTransitions";
+import { lunarSigns } from "./lunarCalendarContent";
 
 export type CalendarPreviewRow = SummaryCompositionRow & { id: string; facts?: Record<string, unknown> | null; sections?: unknown };
 export type CalendarPreviewValue = CalendarOverviewValue;
@@ -30,16 +40,117 @@ function calendarCopyEligible(row: CalendarPreviewRow) {
 export function calendarPreviewSourceKeys(period: SkyForecastPeriod, signs: string[]) {
   return [skyForecastTemplates[period].contentKey, ...new Set(signs.filter(Boolean).flatMap(sign => {
     const slug = sign.toLowerCase();
-    return [`fallback-hook/zodiac-season/${slug}`, `fallback-hook/zodiac-season-polar-axis/${slug}`, `cms/sky-daily-summary/sun/${slug}`, ...[1, 2, 3, 4].map(variant => `authored/calendar-weekly-moon/${slug}${variant === 1 ? "" : `/variant-${variant}`}`)];
+    return [
+      `fallback-hook/zodiac-season/${slug}`,
+      `fallback-hook/zodiac-season-polar-axis/${slug}`,
+      `cms/sky-daily-summary/sun/${slug}`,
+      `cms/sky-daily-summary/moon/${slug}/regular`,
+      `cms/sky-daily-summary/moon/${slug}/newMoon`,
+      `cms/sky-daily-summary/moon/${slug}/fullMoon`,
+      `authored/sky-lunation-macro/new-moon/${slug}`,
+      `authored/sky-lunation-macro/full-moon/${slug}`,
+      `authored/calendar-moon-continuation-summary/${slug}`,
+      "fallback-hook/moon-phase/new-moon",
+      "fallback-hook/moon-phase/waxing-crescent",
+      "fallback-hook/moon-phase/first-quarter",
+      "fallback-hook/moon-phase/waxing-gibbous",
+      "fallback-hook/moon-phase/full-moon",
+      "fallback-hook/moon-phase/disseminating",
+      "fallback-hook/moon-phase/last-quarter",
+      "fallback-hook/moon-phase/balsamic",
+      ...(lunarSigns.includes(slug) ? [
+        `authored/calendar-moon-transition/${slug}/${lunarSigns[(lunarSigns.indexOf(slug) + 1) % lunarSigns.length]}`,
+        ...calendarSeasonTransitionKeys(slug, lunarSigns[(lunarSigns.indexOf(slug) + 1) % lunarSigns.length])
+      ] : []),
+      ...[1, 2, 3, 4].map(variant => `authored/calendar-weekly-moon/${slug}${variant === 1 ? "" : `/variant-${variant}`}`)
+    ];
   }))];
 }
 
 export function calendarMoonPassages(rows: CalendarPreviewRow[], sign: string) {
   return rows.filter(row => {
     const identity = lunarContentIdentity(row.content_key);
-    return identity?.family === "Moon-sign passages" && identity.sign === sign.toLowerCase() && !identity.excluded
+    return identity?.family === "Moon-sign leftover" && identity.sign === sign.toLowerCase() && !identity.excluded
       && calendarCopyEligible(row);
   }).sort((a, b) => a.content_key.localeCompare(b.content_key));
+}
+
+function normalizedPreviewBody(value?: string | null) {
+  return value?.replace(/\s+/g, " ").trim() ?? "";
+}
+
+export function calendarMoonPassageForDay(
+  rows: CalendarPreviewRow[],
+  sign: string,
+  usedBodies: Iterable<string> = []
+) {
+  const used = new Set([...usedBodies].map((body) => normalizedPreviewBody(body)).filter(Boolean));
+  return calendarMoonPassages(rows, sign).find((row) => !used.has(normalizedPreviewBody(row.body))) ?? null;
+}
+
+export function calendarMoonWriteupForDay(
+  rows: CalendarPreviewRow[],
+  day: { date: string; dateKey: string; moonSign: string; moonPhase: string; events?: Array<{ type?: string; title: string; sign?: string; eclipseType?: string }> },
+  facts: CalendarMoonCycleFacts | undefined,
+  seasonSummary?: string,
+  usedAuthoredBodies: Iterable<string> = []
+) {
+  const used = new Set([...usedAuthoredBodies].map((body) => normalizedPreviewBody(body)).filter(Boolean));
+  const authored = calendarMoonPassages(rows, day.moonSign).find((row) => !used.has(normalizedPreviewBody(row.body))) ?? null;
+  const lunation = day.events?.find((event) => event.type === "lunation") ?? null;
+  const lunationKey = calendarLunationMacroKey(lunation, day.moonSign);
+  const lunationRow = lunationKey
+    ? rows.find((row) => row.content_key === lunationKey && calendarCopyEligible(row))
+    : undefined;
+  const summaryKey = moonContinuationSummaryKey(day.moonSign);
+  const summaryRow = rows.find((row) => row.content_key === summaryKey && calendarCopyEligible(row));
+  const nextSign = facts?.nextMoonSign
+    || (lunarSigns.includes(day.moonSign.toLowerCase())
+      ? lunarSigns[(lunarSigns.indexOf(day.moonSign.toLowerCase()) + 1) % lunarSigns.length]
+      : "");
+  const transitionKey = nextSign ? moonSignTransitionKey(day.moonSign, nextSign) : "";
+  const transitionRow = transitionKey
+    ? rows.find((row) => row.content_key === transitionKey && calendarCopyEligible(row))
+    : undefined;
+  if (!facts) {
+    return authored?.body
+      ? { body: authored.body, contentKey: authored.content_key, kind: "authored" as const, row: authored }
+      : null;
+  }
+  const resolved = resolveCalendarMoonFallback(facts, {
+    exactLunationCopy: lunationRow?.body
+      ? { body: lunationRow.body, contentKey: lunationRow.content_key }
+      : null,
+    unusedAuthored: authored?.body
+      ? { body: authored.body, contentKey: authored.content_key }
+      : null,
+    authoredUsedThisVisit: used.size > 0,
+    authoredPhaseCopy: calendarMoonPhaseCopy(facts, (contentKey) => {
+      const row = rows.find((item) => item.content_key === contentKey && calendarCopyEligible(item));
+      return row?.body || fallbackV3HookBody(contentKey);
+    }),
+    seasonSummary,
+    moonContinuationSummary: summaryRow?.body,
+    pairTransition: transitionRow?.body,
+    seasonTransition: facts.seasonName && facts.nextSunSign
+      ? rows.find((row) => (
+        row.content_key === calendarSeasonTransitionKeyForSurface(
+          facts.seasonName,
+          facts.nextSunSign,
+          "leftover",
+          facts.daysUntilSeasonEnd
+        )
+        && calendarCopyEligible(row)
+      ))?.body
+      : undefined
+  });
+  if (!resolved) return null;
+  return {
+    body: resolved.body,
+    contentKey: resolved.contentKey,
+    kind: resolved.kind,
+    row: resolved.kind === "authored" ? authored ?? undefined : resolved.kind === "exact-lunation" ? lunationRow : undefined
+  };
 }
 
 function calendarMoonFocus(row?: CalendarPreviewRow) {
@@ -68,8 +179,10 @@ export function calendarPreviewValues({ sunSign, moonSign, calculation, rows, mo
   }
   const moonPassages = calendarMoonPassages(rows, moonSign);
   const moon = moonPassages.find(row => row.content_key === moonKey) ?? moonPassages[0];
-  put("moonWriteup", moon?.body ?? undefined, "copy", moon?.content_key);
-  put("moonFocus", calendarMoonFocus(moon), "copy", moon?.content_key);
+  if (!calculation) {
+    put("moonWriteup", moon?.body ?? undefined, "copy", moon?.content_key);
+    put("moonFocus", calendarMoonFocus(moon), "copy", moon?.content_key);
+  }
   if (!calculation && moonSign) {
     put("mondayMoonSign", moonSign, "example");
     put("mondayWriteup", moon?.body ?? undefined, "copy", moon?.content_key);
@@ -160,15 +273,45 @@ export function calendarPreviewValues({ sunSign, moonSign, calculation, rows, mo
     const range = `${formatDate(days[0].date)} – ${formatDate(days[days.length - 1].date)}`;
     if (days.length !== 7) put("monthName", new Intl.DateTimeFormat("en-US", { month: "long", timeZone }).format(new Date(sky.generatedAt)), "fact");
     put(days.length === 7 ? "weekRange" : "monthRange", range, "fact");
+    const cycleFacts = calendarMoonCycleFactsForDays(days, [
+      ...(calculation.cycleEvents ?? []),
+      ...events,
+      ...(calculation.seasonIngresses ?? [])
+    ], timeZone);
+    const seasonSummary = values.openingZodiacSeason?.text?.split(/\n\n+/)[0]?.trim();
+    const usedAuthoredByVisit = new Map<string, string[]>();
+    const writeupsByDate = new Map<string, ReturnType<typeof calendarMoonWriteupForDay>>();
     for (const day of days) {
+      const facts = cycleFacts.get(day.dateKey);
+      const visitId = facts?.moonVisitId ?? `${day.moonSign}:${day.dateKey}`;
+      const used = usedAuthoredByVisit.get(visitId) ?? [];
+      const writeup = calendarMoonWriteupForDay(rows, day, facts, seasonSummary, used);
+      writeupsByDate.set(day.dateKey, writeup);
+      if (writeup?.kind === "authored") {
+        usedAuthoredByVisit.set(visitId, [...used, writeup.body]);
+      }
       const weekday = new Intl.DateTimeFormat("en-US", { weekday: "long", timeZone }).format(new Date(day.date)).toLowerCase();
       if (days.length !== 7) continue;
       put(`${weekday}Date`, formatDate(day.date), "fact");
       put(`${weekday}MoonSign`, calendarPreviewSign(day.moonSign) || day.moonSign, "fact");
       put(`${weekday}Timing`, timedEvents(day.events) || `Moon in ${day.moonSign} at noon · ${day.moonPhase}`, "fact");
-      const passage = calendarMoonPassages(rows, day.moonSign)[0];
-      put(`${weekday}Writeup`, passage?.body ?? undefined, "copy", passage?.content_key);
-      put(`${weekday}MoonFocus`, calendarMoonFocus(passage), "copy", passage?.content_key);
+      put(`${weekday}Writeup`, writeup?.body, "copy", writeup?.contentKey);
+      put(`${weekday}MoonFocus`, calendarMoonFocus(writeup?.row), "copy", writeup?.contentKey);
+    }
+    const previewDateKey = calendarLocalDateKey(sky.generatedAt, timeZone);
+    const previewDay = days.find(day => day.dateKey === previewDateKey)
+      ?? days.find(day => day.moonSign.toLowerCase() === moonSign.toLowerCase());
+    if (moonKey && moon) {
+      put("moonWriteup", moon.body ?? undefined, "copy", moon.content_key);
+      put("moonFocus", calendarMoonFocus(moon), "copy", moon.content_key);
+    } else if (previewDay) {
+      const writeup = writeupsByDate.get(previewDay.dateKey)
+        ?? calendarMoonWriteupForDay(rows, previewDay, cycleFacts.get(previewDay.dateKey), seasonSummary);
+      put("moonWriteup", writeup?.body ?? undefined, "copy", writeup?.contentKey);
+      put("moonFocus", calendarMoonFocus(writeup?.row), "copy", writeup?.contentKey);
+    } else if (moon) {
+      put("moonWriteup", moon.body ?? undefined, "copy", moon.content_key);
+      put("moonFocus", calendarMoonFocus(moon), "copy", moon.content_key);
     }
   }
   put("keyDates", timedEvents(events), "fact");

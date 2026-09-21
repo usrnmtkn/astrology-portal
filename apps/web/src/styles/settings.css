@@ -712,3 +712,71 @@ button.settings-signout-row {
     padding-inline: var(--space-4);
   }
 }
+
+.account-journal-page {
+  gap: var(--stack-gap);
+}
+
+.account-journal-toolbar {
+  display: grid;
+}
+
+.account-journal-highlights {
+  display: grid;
+  gap: var(--space-2);
+  padding: var(--space-5) var(--row-padding-x);
+}
+
+.account-journal-moods {
+  display: grid;
+  gap: var(--space-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.account-journal-mood {
+  display: grid;
+  gap: var(--space-1);
+}
+
+.account-journal-mood > span:first-child,
+.account-journal-mood__count {
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: var(--text-body);
+  font-weight: var(--weight-regular);
+  line-height: var(--leading-body);
+  letter-spacing: var(--tracking-body);
+}
+
+.account-journal-mood > span:first-child {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.account-journal-mood__track {
+  display: block;
+  overflow: hidden;
+  height: var(--space-2);
+  border-radius: var(--radius-pill);
+  background: var(--surface-2);
+}
+
+.account-journal-mood__fill {
+  display: block;
+  height: 100%;
+  border-radius: var(--radius-pill);
+}
+
+.account-journal-group-meta {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.account-journal-entry__meta {
+  display: inline-grid;
+  grid-auto-flow: column;
+  align-items: center;
+  gap: var(--space-2);
+}

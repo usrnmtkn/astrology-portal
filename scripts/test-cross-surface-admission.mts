@@ -60,4 +60,10 @@ assert.equal(packagePublicationAdmissionIssue({
   content_key: moonTaurus.contentKey,
   sections: { packageRecord: moonTaurus }
 }), null);
+assert.equal(packagePublicationAdmissionIssue({
+  status: "LIVE",
+  provider: "tldrastro-fallback-architecture-v3",
+  content_key: "authored/calendar-season-transition/virgo/libra",
+  sections: { packageRecord: { contentKey: "authored/calendar-season-transition/virgo/libra", content_role: "full_copy" } }
+}), null);
 console.log("PASS: bounded House Transit and exact synastry admission, distinct chart holders, and publication key protection.");

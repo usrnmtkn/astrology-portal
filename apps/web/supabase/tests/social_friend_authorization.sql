@@ -516,6 +516,25 @@ begin
     'member_blocked'
   );
 
+  insert into public.calendar_check_ins (
+    user_id, date_key, mood, note
+  )
+  values (
+    member_delete_test,
+    date '2026-09-20',
+    2,
+    'cascade journal'
+  );
+
+  insert into public.calendar_check_in_library (
+    user_id, kind, label
+  )
+  values (
+    member_delete_test,
+    'tag',
+    'Rest Day'
+  );
+
   delete from auth.users
   where id = member_delete_test;
 
@@ -535,6 +554,10 @@ begin
     union all
     select 1 from private.social_audit_events
       where actor_user_id = member_delete_test or subject_user_id = member_delete_test
+    union all
+    select 1 from public.calendar_check_ins where user_id = member_delete_test
+    union all
+    select 1 from public.calendar_check_in_library where user_id = member_delete_test
   ) then
     raise exception 'Account deletion left social or monitoring rows behind.';
   end if;

@@ -177,6 +177,61 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
         ? String(rows.at(-1)?.id ?? "")
         : encodeCursor(rows.at(-1) ?? {})
       : null;
+    const pageIsComplete = !nextCursor;
+    const {
+      LUNAR_JOURNAL_PREFIX,
+      isLunarJournalContentKey,
+      lunarJournalDetailRow,
+      lunarJournalInventoryRow,
+      lunarJournalPackageRecordForKey,
+      lunarJournalPackageRecords
+    } = await import("../_lib/lunar-journal-sources.js");
+    const {
+      CALENDAR_SEASON_TRANSITION_PREFIX,
+      calendarSeasonTransitionDetailRow,
+      calendarSeasonTransitionInventoryRow,
+      calendarSeasonTransitionPackageRecordForKey,
+      calendarSeasonTransitionPackageRecords,
+      isCalendarSeasonTransitionContentKey
+    } = await import("../_lib/calendar-season-transition-sources.js");
+    const prefixIsJournal = contentKeyPrefix === LUNAR_JOURNAL_PREFIX
+      || contentKeyPrefix === "authored/lunar-journal";
+    const requestedJournalKeys = [
+      ...contentKeys.filter((key) => isLunarJournalContentKey(key)),
+      ...(contentKey && isLunarJournalContentKey(contentKey) ? [contentKey] : [])
+    ];
+    if (!id && (prefixIsJournal || requestedJournalKeys.length) && pageIsComplete) {
+      const savedKeys = new Set(rows.map((row) => String(row.content_key ?? "")));
+      const records = requestedJournalKeys.length
+        ? requestedJournalKeys.flatMap((key) => {
+          const record = lunarJournalPackageRecordForKey(key);
+          return record ? [record] : [];
+        })
+        : lunarJournalPackageRecords;
+      for (const record of records) {
+        if (savedKeys.has(record.contentKey)) continue;
+        rows.push(inventoryView ? lunarJournalInventoryRow(record) : lunarJournalDetailRow(record));
+      }
+    }
+    const prefixIsSeasonTransition = contentKeyPrefix === CALENDAR_SEASON_TRANSITION_PREFIX
+      || contentKeyPrefix === "authored/calendar-season-transition";
+    const requestedSeasonKeys = [
+      ...contentKeys.filter((key) => isCalendarSeasonTransitionContentKey(key)),
+      ...(contentKey && isCalendarSeasonTransitionContentKey(contentKey) ? [contentKey] : [])
+    ];
+    if (!id && (prefixIsSeasonTransition || requestedSeasonKeys.length) && pageIsComplete) {
+      const savedKeys = new Set(rows.map((row) => String(row.content_key ?? "")));
+      const records = requestedSeasonKeys.length
+        ? requestedSeasonKeys.flatMap((key) => {
+          const record = calendarSeasonTransitionPackageRecordForKey(key);
+          return record ? [record] : [];
+        })
+        : calendarSeasonTransitionPackageRecords;
+      for (const record of records) {
+        if (savedKeys.has(record.contentKey)) continue;
+        rows.push(inventoryView ? calendarSeasonTransitionInventoryRow(record) : calendarSeasonTransitionDetailRow(record));
+      }
+    }
     sendAdminJson(res, 200, { ok: true, rows, nextCursor });
   } catch (error) {
     sendAdminJson(res, adminErrorStatus(error), {

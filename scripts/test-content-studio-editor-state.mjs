@@ -12,6 +12,23 @@ const newer = { ...inventory, updated_at: "2026-09-07T10:00:02Z" };
 assert.deepEqual(mergeContentInventory([full], [newer]), [newer], "A newer external version must remain visible, requiring rehydration.");
 assert.deepEqual(mergeContentInventory([full], []), [full], "Partial pages must retain rows not loaded yet.");
 assert.deepEqual(mergeContentInventory([full], [], false), [], "A complete reload must remove rows no longer present.");
+const starter = { id: "package:authored/calendar-season-transition/virgo/libra", content_key: "authored/calendar-season-transition/virgo/libra", package_starter: true, status: "DRAFT" };
+const saved = { id: "saved-season", content_key: starter.content_key, status: "LIVE", package_starter: false };
+assert.deepEqual(
+  mergeContentInventory([starter], [saved]).map((row) => row.id),
+  ["saved-season"],
+  "A saved live row must replace the unpublished package starter for the same key."
+);
+assert.deepEqual(
+  mergeContentInventory([], [starter, saved]).map((row) => row.id),
+  ["saved-season"],
+  "A mixed incoming page must keep the saved row and drop the starter for the same key."
+);
+assert.deepEqual(
+  mergeContentInventory([saved], [starter]).map((row) => row.id),
+  ["saved-season"],
+  "A later starter-only page must not reintroduce a draft beside the saved live row."
+);
 
 const nestedValues = (values) => Object.fromEntries(Object.entries(values).map(([name, text]) => [name, { text, kind: "fact" }]));
 const templates = { monthlyOverview: "{{monthName}} brings attention to {{seasonOverview}}.", seasonOverview: "{{openingSeasonSign}}{{#hasSeasonChange}} into {{closingSeasonSign}}{{/hasSeasonChange}}" };
@@ -196,6 +213,78 @@ const renderedWeeklyStarter = calendarTemplateSegments(weeklyStarter, {
 }).map(segment => segment.text).join("");
 assert.match(renderedWeeklyStarter, /The Moon is in Scorpio, so the emotional tone for this week is:/);
 assert.match(renderedWeeklyStarter, /Scorpio Moon complete weekly passage\./);
+
+const adjacentScorpioDays = ["11", "12", "13", "14", "15", "16", "17"].map((day) => ({
+  date: `2027-01-${day}T17:00:00.000Z`, dateKey: `2027-01-${day}`,
+  moonSign: "Scorpio", moonPhase: "Waxing", events: []
+}));
+const weeklyMoonVariant = {
+  ...weeklyMoonRow,
+  id: "moon-scorpio-2",
+  content_key: "authored/calendar-weekly-moon/scorpio/variant-2",
+  body: "Scorpio Moon second weekly passage."
+};
+const adjacentPreview = calendarPreviewValues({
+  sunSign: "Capricorn", moonSign: "Scorpio", rows: [weeklyMoonRow, weeklyMoonVariant],
+  calculation: { sky: { generatedAt: "2027-01-12T17:00:00.000Z", positions: [], moonPhase: "Waxing" }, days: adjacentScorpioDays, events: [], seasonIngresses: [], timeZone: "UTC" }
+});
+assert.equal(adjacentPreview.mondayWriteup?.text, weeklyMoonRow.body);
+assert.equal(
+  adjacentPreview.tuesdayWriteup?.text,
+  "The Moon spends another day in Scorpio. If the same issue keeps returning, there may be something underneath it that has not been said plainly yet.",
+  "After a write-up is surfaced, the next day uses the today template instead of another full passage."
+);
+assert.equal(adjacentPreview.moonWriteup?.text, adjacentPreview.tuesdayWriteup?.text, "Daily Sky uses the same visit-aware write-up as that weekday.");
+assert.equal(
+  adjacentPreview.wednesdayWriteup?.text,
+  "The Moon remains in Scorpio today. If the same issue keeps returning, there may be something underneath it that has not been said plainly yet."
+);
+assert.equal(adjacentPreview.wednesdayWriteup?.sourceKey, "generated/calendar-moon-fallback/moonContinuation/2027-01-13");
+assert.notEqual(adjacentPreview.mondayWriteup?.text, adjacentPreview.tuesdayWriteup?.text);
+const repeatedPreview = calendarPreviewValues({
+  sunSign: "Capricorn", moonSign: "Scorpio", rows: [weeklyMoonRow],
+  calculation: { sky: { generatedAt: "2027-01-12T17:00:00.000Z", positions: [], moonPhase: "Waxing" }, days: adjacentScorpioDays, events: [], seasonIngresses: [], timeZone: "UTC" }
+});
+assert.equal(repeatedPreview.mondayWriteup?.text, weeklyMoonRow.body);
+assert.equal(
+  repeatedPreview.tuesdayWriteup?.text,
+  "The Moon spends another day in Scorpio. If the same issue keeps returning, there may be something underneath it that has not been said plainly yet."
+);
+assert.equal(
+  repeatedPreview.wednesdayWriteup?.text,
+  "The Moon remains in Scorpio today. If the same issue keeps returning, there may be something underneath it that has not been said plainly yet."
+);
+
+const lunationMacroRow = {
+  id: "nm-scorpio",
+  content_key: "authored/sky-lunation-macro/new-moon/scorpio",
+  body: "New Moon article.",
+  status: "LIVE",
+  lane: "serving",
+  source_snapshot: { content_role: "full_copy", review_status: "approved_reuse" }
+};
+const lunationMondayDays = adjacentScorpioDays.map((day, index) => index === 0 ? {
+  ...day,
+  events: [{ id: "nm-scorpio-2027-01-11", type: "lunation", title: "New Moon in Scorpio", sign: "Scorpio", dateKey: day.dateKey, startsAt: day.date }]
+} : day);
+const mondayLunationPreview = calendarPreviewValues({
+  sunSign: "Capricorn", moonSign: "Scorpio",
+  rows: [weeklyMoonRow, weeklyMoonVariant, lunationMacroRow],
+  calculation: {
+    sky: { generatedAt: "2027-01-12T17:00:00.000Z", positions: [], moonPhase: "Waxing" },
+    days: lunationMondayDays,
+    events: lunationMondayDays[0].events,
+    seasonIngresses: [],
+    timeZone: "UTC"
+  }
+});
+assert.equal(mondayLunationPreview.mondayWriteup?.text, lunationMacroRow.body);
+assert.equal(mondayLunationPreview.tuesdayWriteup?.text, weeklyMoonRow.body, "Exact lunation copy does not consume a Moon-sign variant.");
+assert.equal(
+  mondayLunationPreview.wednesdayWriteup?.text,
+  "The Moon remains in Scorpio today. If the same issue keeps returning, there may be something underneath it that has not been said plainly yet. The New Moon was two days ago. Now you know more. Adjust the plan to fit the life you are actually living.",
+  "A second leftover write-up is not used once the sign passage has already been shown."
+);
 
 const renderedMonthlyStarter = calendarTemplateSegments(monthlyStarter, nestedValues({
   hasMonthlyTheme: "yes", monthName: "September", primaryMonthlyThemeFocus: "the primary theme", primaryMonthlyThemeExperience: "the plan needing revision",

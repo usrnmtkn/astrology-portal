@@ -61,6 +61,9 @@ Canonical selectors that should share this contract:
 - `.admin-eyebrow`
 - `.admin-nav-section-label`
 - `.article-eyebrow`
+- `.calendar-kind-label`
+- `.calendar-reading__card-label`
+- `.calendar-reading__article-label`
 
 ## Primary Findings
 

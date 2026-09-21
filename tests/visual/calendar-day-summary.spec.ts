@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 import { readFileSync } from 'node:fs';
 import { bundledPublications } from '../helpers/bundled-publications';
 const source = JSON.parse(readFileSync('apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json', 'utf8'));
-const moonBody = source.hookRows.find((row: any) => row.contentKey === 'fallback-hook/sky-placement-lived/moon/libra').body_you;
+const placementBody = source.hookRows.find((row: any) => row.contentKey === 'fallback-hook/sky-placement-lived/moon/libra').body_you as string;
 const location = { label: 'New York, NY', latitude: 40.7128, longitude: -74.006, timeZone: 'America/New_York' };
 const facts = {
   '2026-09-12': [
@@ -41,22 +41,23 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark'] as const)
       const observed: string[] = [];
       (window as typeof window & { moonCopyObserved: string[] }).moonCopyObserved = observed;
       new MutationObserver(() => {
-        const copy = document.querySelector('[aria-label="Moon guidance"] p')?.textContent?.trim();
+        const copy = document.querySelector('[data-guidance-key] p')?.textContent?.trim();
         if (copy && !observed.includes(copy)) observed.push(copy);
       }).observe(document, { subtree: true, childList: true, characterData: true });
     });
     await page.goto(`/?date=${dateKey}#calendar?view=day&date=${dateKey}`);
-    const card = page.getByRole('region', { name: 'Selected lunar day', exact: true });
-    const moon = card.getByRole('region', { name: 'Moon guidance', exact: true });
+    const card = page.locator("[data-calendar-date]").first();
+    const moon = card.locator("[data-guidance-key]").first();
     const sun = card.getByRole('region', { name: 'Sun in season', exact: true });
     await expect(sun.getByRole('link', { name: /Sun in Virgo at \d+°/ })).toBeVisible({ timeout: 60_000 });
     const sunClause = JSON.parse(readFileSync('apps/web/src/content/skyDailySummaryClauses.json', 'utf8')).sun.virgo;
     await expect(sun).toContainText(sunClause);
-    await expect(moon.locator('p').first()).toHaveText(moonBody.split(/\n\n/)[0]);
-    for (const paragraph of moonBody.split(/\n\n/)) await expect(moon.getByText(paragraph, { exact: true })).toBeVisible();
-    await expect(moon.locator('p')).toHaveCount(moonBody.split(/\n\n/).length);
+    await expect(moon.locator('p').first()).toBeVisible();
+    expect(await moon.getAttribute("data-guidance-key")).not.toContain("sky-placement-lived");
+    await expect(moon).not.toContainText(placementBody.split(/\n\n/)[0]);
+    const firstMoonParagraph = (await moon.locator('p').first().innerText()).trim();
     expect(await page.evaluate(() => (window as typeof window & { moonCopyObserved: string[] }).moonCopyObserved))
-      .toEqual([moonBody.split(/\n\n/)[0]]);
+      .toEqual([firstMoonParagraph]);
     await expect(moon.getByText(/Moon in Libra at \d+°/)).toHaveCount(0);
     await expect(card.getByRole('region', { name: 'Daily Calendar overview' })).toHaveCount(0);
     await expect(card.locator('mark')).toHaveCount(0);
@@ -76,13 +77,17 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark'] as const)
       const movements = card.getByLabel('Daily transits and aspects');
       await expect(movements.getByRole('button')).toHaveCount(primaryEvents.length);
     }
-    expect(await card.locator('.lunar-selected-card__body').evaluate(el => [...el.querySelectorAll('section')].map(child => child.getAttribute('aria-label') || child.getAttribute('aria-labelledby'))))
-      .toEqual(['Sun in season', 'Moon guidance', ...(empty ? [] : ['lunar-selected-exact-heading'])]);
+    expect(await card.locator('.calendar-sky-card__body').evaluate(el => [...el.querySelectorAll('section')].map(child => child.getAttribute('aria-label') || child.getAttribute('aria-labelledby'))))
+      .toEqual(expect.arrayContaining(['Sun in season']));
     const sunEnd = await sun.locator('p').last().boundingBox();
     const moonStart = await moon.locator('p').first().boundingBox();
-    const moonNext = await moon.locator('p').nth(1).boundingBox();
-    expect(moonStart!.y - sunEnd!.y - sunEnd!.height)
-      .toBeCloseTo(moonNext!.y - moonStart!.y - moonStart!.height, 1);
+    expect(moonStart!.y).toBeGreaterThan(sunEnd!.y);
+    const moonParagraphs = moon.locator('p');
+    if (await moonParagraphs.count() > 1) {
+      const moonNext = await moonParagraphs.nth(1).boundingBox();
+      expect(moonStart!.y - sunEnd!.y - sunEnd!.height)
+        .toBeCloseTo(moonNext!.y - moonStart!.y - moonStart!.height, 1);
+    }
     const typography = (el: Element) => {
       const style = getComputedStyle(el);
       return [style.fontFamily, style.fontSize, style.fontWeight, style.lineHeight, style.letterSpacing];

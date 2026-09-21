@@ -5,9 +5,14 @@ import {
   slugContentPart
 } from "../../services/generatedContentKeys";
 import { calendarAspectPublicationKeys, skyAspectGeneratedContentKeys } from "../../services/skyAspectContent";
+import { lunarJournalContentKeyForEvent } from "./lunarJournal";
 
 export function calendarEventGeneratedContentKeys(event: LunarCalendarEvent) {
   const dateKey = event.dateKey || event.startsAt.slice(0, 10);
+  const withJournal = (keys: string[]) => {
+    const journalKey = lunarJournalContentKeyForEvent(event);
+    return journalKey ? [...keys, journalKey] : keys;
+  };
 
   if (
     event.type === "aspect"
@@ -24,7 +29,7 @@ export function calendarEventGeneratedContentKeys(event: LunarCalendarEvent) {
       secondSign: event.toSign ?? "",
       targetDate: dateKey
     };
-    return [...calendarAspectPublicationKeys(identity), ...skyAspectGeneratedContentKeys(identity)];
+    return withJournal([...calendarAspectPublicationKeys(identity), ...skyAspectGeneratedContentKeys(identity)]);
   }
 
   if (event.type === "ingress" && event.planet && (event.toSign || event.sign)) {
@@ -43,9 +48,9 @@ export function calendarEventGeneratedContentKeys(event: LunarCalendarEvent) {
       `fallback-hook/sky.ingress/${planetPart}`
     ];
 
-    return event.planet === "Sun"
+    return withJournal(event.planet === "Sun"
       ? [...ingressKeys, `sky-season-${signPart}-${dateKey}`]
-      : ingressKeys;
+      : ingressKeys);
   }
 
   if (event.type === "station" && event.planet) {
@@ -71,13 +76,13 @@ export function calendarEventGeneratedContentKeys(event: LunarCalendarEvent) {
         ]
       : [];
 
-    return [
+    return withJournal([
       ...exactRetrogradeKeys,
       ...exactStationKeys
-    ];
+    ]);
   }
 
-  return [];
+  return withJournal([]);
 }
 
 export function calendarTransitDetailContentKeys(event: LunarCalendarEvent) {

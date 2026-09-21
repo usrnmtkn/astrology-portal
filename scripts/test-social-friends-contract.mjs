@@ -528,8 +528,13 @@ assert.match(
 );
 assert.match(
   accountView,
-  /exportSocialAccountBundle\(\)[\s\S]*JSON\.stringify\(exportPayload, null, 2\)/,
-  "Account must provide a downloadable account-data export."
+  /exportSocialAccountBundle\(\)[\s\S]*exportCalendarCheckInBundle\(\)[\s\S]*JSON\.stringify\(exportPayload, null, 2\)/,
+  "Account must provide a downloadable account-data export that includes calendar check-ins."
+);
+assert.match(
+  accountView,
+  /deleteAllCalendarCheckInData\(\)[\s\S]*eraseConfirmation !== "ERASE"/,
+  "Account must let a signed-in user erase mood and journal entries without deleting the account."
 );
 assert.match(
   accountView,
@@ -543,8 +548,8 @@ assert.match(
 );
 assert.match(
   authorizationTest,
-  /delete from auth\.users[\s\S]*Account deletion left social or monitoring rows behind/,
-  "The database test must prove account deletion cascades through social and monitoring data."
+  /delete from auth\.users[\s\S]*calendar_check_ins[\s\S]*Account deletion left social or monitoring rows behind/,
+  "The database test must prove account deletion cascades through social, monitoring, and calendar check-in data."
 );
 assert.match(
   chartSharingMigration,

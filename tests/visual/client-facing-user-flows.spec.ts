@@ -418,6 +418,57 @@ async function seedClientState(page: Page, options: SeedOptions = {}) {
   await page.emulateMedia({ reducedMotion: "reduce" });
 }
 
+const fixtureAuthUser = {
+  id: fixtureUserId,
+  email: "qa-flow@example.com",
+  aud: "authenticated",
+  role: "authenticated",
+  app_metadata: { provider: "email" },
+  user_metadata: { name: "Project Author" }
+};
+
+function supabaseAuthStorageKey() {
+  return `sb-${new URL(process.env.VITE_SUPABASE_URL ?? "https://visual-smoke.supabase.test").hostname.split(".")[0]}-auth-token`;
+}
+
+async function seedSignedInSession(page: Page) {
+  const user = fixtureAuthUser;
+  const storageKey = supabaseAuthStorageKey();
+  await page.addInitScript(({ user, storageKey }) => {
+    localStorage.setItem(storageKey, JSON.stringify({
+      access_token: "fixture-token",
+      refresh_token: "fixture-refresh",
+      expires_at: Math.floor(Date.now() / 1000) + 3600,
+      token_type: "bearer",
+      user
+    }));
+  }, { user, storageKey });
+  await page.route("**/auth/v1/**", route => route.fulfill({ json: user }));
+}
+
+async function routeCalendarCheckInStore(
+  page: Page,
+  rows: Array<Record<string, unknown>>
+) {
+  await page.route("**/rest/v1/calendar_check_ins*", async route => {
+    const range = rows.length > 0 ? `0-${rows.length - 1}/${rows.length}` : "*/0";
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      headers: { "content-range": range },
+      body: JSON.stringify(rows)
+    });
+  });
+  await page.route("**/rest/v1/calendar_check_in_library*", async route => {
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      headers: { "content-range": "*/0" },
+      body: "[]"
+    });
+  });
+}
+
 async function expectNoClientErrors(page: Page) {
   return watchBrowserErrors(page);
 }
@@ -933,7 +984,7 @@ async function expectFormTypography(page: Page, selector: string, label: string)
     const failures: string[] = [];
     const controls = Array.from(root.querySelectorAll("input, select, textarea"))
       .filter(isVisible);
-    const readableFormText = Array.from(root.querySelectorAll("label, legend, button, [role='option'], [role='menuitem'], .city-suggestions strong, .city-suggestions span, .lunar-location-picker strong, .lunar-location-picker span"))
+    const readableFormText = Array.from(root.querySelectorAll("label, legend, button, [role='option'], [role='menuitem'], .city-suggestions strong, .city-suggestions span"))
       .filter(isVisible)
       .filter((element) => element.tagName.toLowerCase() !== "svg");
 
@@ -2493,11 +2544,13 @@ test.describe("client-facing user flow case studies", () => {
 
     const expectedByDate = new Map<string, { body: string; contentKey: string }>();
     for (const dateKey of ["2026-08-03", "2026-08-04", "2026-08-05", "2026-08-06", "2026-08-07", "2026-08-08", "2026-08-09"]) {
-      const guidance = page.locator(`#lunar-weekly-${dateKey} .lunar-weekly-day__guidance`);
+      const guidance = page.locator(`#calendar-day-group-${dateKey} .calendar-day-group__blurb`);
       await expect(guidance).toHaveCount(1);
+      const contentKey = await guidance.getAttribute("data-guidance-key") ?? "";
+      expect(contentKey.includes("sky-placement-lived"), `${dateKey} must not serve Sky Placement Moon articles`).toBe(false);
       expectedByDate.set(dateKey, {
         body: (await guidance.innerText()).trim(),
-        contentKey: await guidance.getAttribute("data-guidance-key") ?? ""
+        contentKey
       });
     }
 
@@ -2511,14 +2564,12 @@ test.describe("client-facing user flow case studies", () => {
     }
 
     for (const dateKey of expectedByDate.keys()) {
-      await expectClientRouteLoads(page, `/#calendar?view=daily&date=${dateKey}`);
-      const dayGuidance = page.getByRole("region", { name: "Moon guidance" });
-      await expect(dayGuidance).toHaveCount(1);
-      const sign = expectedByDate.get(dateKey)!.contentKey.split("/")[2];
-      const fullMoonKey = `fallback-hook/sky-placement-lived/moon/${sign}`;
-      const fullMoon = fallbackSourceRowsV3.hookRows.find(row => row.contentKey === fullMoonKey)!;
-      await expect(dayGuidance).toHaveAttribute("data-guidance-key", fullMoonKey);
-      await expect(dayGuidance.locator("p")).toHaveText(fullMoon.body_you!.split(/\n\n/));
+      await expectClientRouteLoads(page, `/#calendar?view=day&date=${dateKey}`);
+      const dayMoon = page.locator("[data-calendar-date] [data-guidance-key]").first();
+      await expect(dayMoon).toBeVisible();
+      const key = await dayMoon.getAttribute("data-guidance-key") ?? "";
+      expect(key.includes("sky-placement-lived")).toBe(false);
+      expect(key).toBe(expectedByDate.get(dateKey)!.contentKey);
     }
 
     await assertNoClientErrors();
@@ -3437,10 +3488,8 @@ test.describe("client-facing user flow case studies", () => {
       await expectClientRouteLoads(page, "/#calendar");
       await expect(page.getByLabel("Lunar calendar")).toBeVisible();
       await expect(page.getByLabel("Selected lunar day")).toBeVisible({ timeout: 15_000 });
-      await page.getByRole("button", { name: /New York.*Eastern/i }).click();
-      await expect(page.getByPlaceholder("Search for a city")).toBeVisible();
-      await expectPopoverTextNotBold(page, ".lunar-location-picker", `${viewport.name} Calendar location picker`);
-      await page.getByRole("button", { name: /New York.*Eastern/i }).click();
+      await expect(page.locator(".lunar-location-picker")).toHaveCount(0);
+      await expect(page.getByRole("button", { name: /New York.*Eastern/i })).toHaveCount(0);
       await expect(page.locator(".lunar-selected-card__daily-event").first()).toBeVisible({ timeout: 15_000 });
       await expectSharedLabelContract(page, `${viewport.name} Calendar`, { requireLabels: false });
       await expectLunarSelectedCardMinimalFonts(page, `${viewport.name} Calendar`);
@@ -3494,6 +3543,65 @@ test.describe("client-facing user flow case studies", () => {
     await expect(page.getByLabel("Birth hour")).toBeDisabled();
     await page.getByRole("button", { name: "Close create chart" }).click();
     await expect(page.getByLabel("Profile summary")).toBeVisible();
+    await assertNoClientErrors();
+  });
+
+  test("signed-in user can open Account journal weeks that start on Monday", async ({ page }) => {
+    const assertNoClientErrors = await expectNoClientErrors(page);
+
+    await seedClientState(page, { profile: true, now: "2026-09-20T16:00:00.000Z" });
+    await seedSignedInSession(page);
+    await routeCalendarCheckInStore(page, [
+      {
+        user_id: fixtureUserId,
+        date_key: "2026-09-20",
+        mood: 3,
+        sleep: 60,
+        social: 40,
+        mood_note: "Sunday note",
+        note: "",
+        tags: ["Rest Day"],
+        people: []
+      },
+      {
+        user_id: fixtureUserId,
+        date_key: "2026-09-14",
+        mood: 2,
+        sleep: 50,
+        social: 50,
+        mood_note: "",
+        note: "Monday note",
+        tags: [],
+        people: ["Sam"]
+      }
+    ]);
+    await expectClientRouteLoads(page, "/#account");
+
+    await expect(page.getByRole("heading", { name: "account." })).toBeVisible();
+    await page.getByRole("button", { name: /Open journal/ }).click();
+
+    const journal = page.getByRole("region", { name: "Journal" });
+    await expect(journal.getByRole("heading", { name: "journal." })).toBeVisible();
+    await expect(journal.getByText("Sign in to save this check-in with your account.")).toHaveCount(0);
+    await expect(journal.getByRole("button", { name: /Good · well rested/ })).toBeVisible();
+    await expect(journal.getByRole("button", { name: /Okay · moderately rested/ })).toBeVisible();
+
+    await journal.getByRole("button", { name: "Weeks", exact: true }).click();
+    await expect(journal.getByText("Week 38")).toBeVisible();
+    await expect(journal.getByText("September 14 – 20 · 2 check-ins")).toBeVisible();
+    await expect(journal.getByRole("button", { name: /Monday, Sep 14/ })).toBeVisible();
+    await expect(journal.getByRole("button", { name: /Sunday, Sep 20/ })).toBeVisible();
+
+    await journal.getByRole("button", { name: /Sunday, Sep 20/ }).click();
+    const checkIn = page.getByRole("dialog", { name: "Check-in" });
+    await expect(checkIn).toBeVisible();
+    await expect(checkIn.getByText("Sunday, September 20, 2026")).toBeVisible();
+    await expect(checkIn.getByRole("heading", { name: "How are you feeling?" })).toBeVisible();
+    await checkIn.getByRole("button", { name: "Close" }).click();
+    await expect(checkIn).toHaveCount(0);
+    await expect(journal.getByText("September 14 – 20 · 2 check-ins")).toBeVisible();
+
+    await page.screenshot({ path: test.info().outputPath("account-journal-weeks-monday.png"), fullPage: true });
     await assertNoClientErrors();
   });
 
@@ -3700,25 +3808,19 @@ test.describe("client-facing user flow case studies", () => {
     await assertNoClientErrors();
   });
 
-  test("calendar location picker can update and cancel location", async ({ page }) => {
+  test("calendar uses the settings location and has no location picker", async ({ page }) => {
     const assertNoClientErrors = await expectNoClientErrors(page);
 
     await seedClientState(page);
     await expectClientRouteLoads(page, "/#calendar");
 
     await expect(page.getByLabel("Lunar calendar")).toBeVisible();
-    await page.getByRole("button", { name: /New York.*Eastern/i }).click();
-    await expect(page.getByPlaceholder("Search for a city")).toBeVisible();
-    await expectPopoverTextNotBold(page, ".lunar-location-picker", "Calendar location picker");
-    await expectFormTypography(page, ".lunar-location-picker", "Calendar location picker form");
-    await page.getByPlaceholder("Search for a city").fill("Seattle, WA");
-    await page.getByRole("button", { name: "Update" }).click();
-    await expect(page.getByRole("button", { name: /Seattle/i })).toBeVisible();
+    await expect(page.locator(".lunar-location-picker")).toHaveCount(0);
+    await expect(page.getByRole("button", { name: /New York.*Eastern/i })).toHaveCount(0);
+    await expect(page.getByPlaceholder("Search for a city")).toHaveCount(0);
 
-    await page.getByRole("button", { name: /Seattle/i }).click();
-    await page.getByPlaceholder("Search for a city").fill("Boston, MA");
-    await page.getByRole("button", { name: "Cancel" }).click();
-    await expect(page.getByRole("button", { name: /Seattle/i })).toBeVisible();
+    await expectClientRouteLoads(page, "/#settings");
+    await expect(page.getByText("Current location")).toBeVisible();
     await assertNoClientErrors();
   });
 

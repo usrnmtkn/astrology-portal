@@ -383,11 +383,12 @@ export const writingSurfaceSourceMap: WritingSurfaceMapItem[] = [
     status: "normalized",
     requiredSlots: ["lunar day body"],
     visibleLayerOrder: ["source-grounded", "madlib-fallback"],
-    currentRenderPath: "lunarDayResolver resolves each editorial field through normalizedLunarSlot, with source rows first, saved fallback-hook rows second, and local static lunar beats only as madlib fallback.",
+    currentRenderPath: "lunarDayResolver resolves each editorial field through normalizedLunarSlot, with source rows first, saved fallback-hook rows second, and local static lunar beats only as madlib fallback. Calendar event reading pages resolve authored/lunar-journal rows from Content Studio, then the packaged owner journal.",
     risk: "The resolver is normalized per slot, but the UI does not yet show which lunar editorial fields were omitted or came from fallback.",
     nextAction: "Expose slot-level layer/sourceKeys in the lunar calendar QA/admin view.",
     sources: [
       { label: "lunarDayResolver.ts", path: "apps/web/src/features/calendar/lunarDayResolver.ts", role: "renderer" },
+      { label: "lunarJournal.ts", path: "apps/web/src/features/calendar/lunarJournal.ts", role: "stored-source" },
       { label: "generatedContent.ts", path: "apps/web/src/services/generatedContent.ts", role: "stored-source" },
       { label: "fallback-source-rows-v3.json", path: "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json", role: "knowledge" }
     ]
@@ -399,7 +400,7 @@ export const writingSurfaceSourceMap: WritingSurfaceMapItem[] = [
     status: "normalized",
     requiredSlots: ["day body"],
     visibleLayerOrder: ["source-grounded", "madlib-fallback"],
-    currentRenderPath: "Calendar day cards resolve matching LIVE CMS Moon, phase, and continuation rows first, then use the reviewed package guidance or calculated fallback.",
+    currentRenderPath: "Calendar Day and Week cards share one Moon stack: lunation article on New Moon and Full Moon dates, otherwise one leftover Moon-sign passage per visit. Day cards still open with the Sun daily summary sentence. Lunar journal stays on event readings and season excerpts. Sky Placement Moon articles stay on Sky.",
     risk: "Dates, Moon signs, and phases stay calculated; CMS templates may edit only the prose around those facts.",
     nextAction: "Use the Moon-day starter or create a phase or continuation row, then review and publish it.",
     sources: [
@@ -642,13 +643,17 @@ export const writingSurfaceAdminAccess: Record<string, WritingSurfaceAdminAccess
     editability: "editable",
     routes: [
       { label: "Edit lunar rows", hash: "#exact-content?q=lunar", purpose: "reader-copy", note: "Opens stored lunar editorial rows." },
+      { label: "Edit lunar journal", hash: "#calendar-writeups", purpose: "reader-copy", note: "Opens owner lunar-journal passages for seasons, lunations, eclipses, and equinoxes. Package starters stay unpublished until Sign Off." },
       { label: "Edit lunar fallbacks", hash: "#fallback-hooks?section=lunar-calendar", purpose: "supporting-copy", note: "Opens fallback wording used when an exact row is unavailable." }
     ]
   },
   "sky-calendar-day-cards": {
     readerLocation: "Calendar > day cards",
     editability: "editable",
-    routes: [{ label: "Edit day-card copy", hash: "#exact-content?q=cms%2Fcalendar-day", purpose: "reader-copy", note: "Opens LIVE-first Calendar day templates." }],
+    routes: [
+      { label: "Edit Day card writing", hash: "#calendar-writeups", purpose: "reader-copy", note: "Opens leftover Moon-sign passages, lunation articles, timing sentences, Sun daily summary, and Sky daily Moon sentences used next to Calendar Day cards." },
+      { label: "Edit day-card templates", hash: "#exact-content?q=cms%2Fcalendar-day", purpose: "reader-copy", note: "Opens LIVE-first Calendar day templates." }
+    ],
     cmsStarters: [
       { label: "Start Moon-day template", contentKey: "cms/calendar-day/moon", surface: "sky", headline: "Moon in {{moonSign}}", allowedSlots: ["date", "moonSign", "phase", "role"] },
       { label: "Start phase-day template", contentKey: "cms/calendar-day/phase", surface: "sky", headline: "{{phase}}", allowedSlots: ["date", "moonSign", "phase", "role"] },

@@ -118,7 +118,7 @@ export function calendarOverviewFields(period: SkyForecastPeriod): CalendarOverv
     { name: "lunationConnection", label: "Lunation connection", help: "Optional complete prose relating the selected lunations. Leave empty when there is no supported relationship." }
   ];
   return [
-    { name: `${prefix}Overview`, label: "Weekly overview", help: "Monday is Luna's day. Start with that Moon sign and the saved weekly Moon passage as the week's emotional tone.", starter: weeklyOverviewStarter },
+    { name: `${prefix}Overview`, label: "Weekly overview", help: "Monday is Luna's day. Start with that Moon sign and the leftover Moon-sign passage as the week's emotional tone.", starter: weeklyOverviewStarter },
     { name: "seasonOverview", label: "Season transition", help: "Explain how the zodiac season shapes this period and what changes when the Sun enters the next sign." },
     { name: "lunarOverview", label: "Lunar cycle", help: "Connect the New Moon, Full Moon, or eclipse to the period’s main story." },
     { name: "transitOverview", label: "Planetary changes", help: "Describe the significance of the period’s ingresses, stations, and planetary aspects." },

@@ -27,6 +27,7 @@ import { skyPlacementMotionCopy, skyPlacementMotionParts } from "./content/skyPl
 import { calendarDayDistance } from "./services/calendarDayDistance";
 import { liveSkyReference, remainingSkyMinutes } from "./services/skyClock";
 import { skySummaryParagraphs } from "./content/skyDailySummary";
+import { calendarSeasonTransitionFactsFromSun } from "./features/calendar/calendarSeasonTransitions";
 import { PublishedSkySummary } from "./features/sky/PublishedSkySummary";
 import { SkyReadingLayout, useSkyCardsSettled } from "./features/sky/SkyReadingLayout";
 import { SkyRoute } from "./routes/SkyRoute";
@@ -11957,7 +11958,16 @@ export function App() {
         return;
       }
       pendingHashChangeUrl = event.type === "popstate" ? window.location.href : null;
-      transitionPage(syncPortalUrl);
+
+      const urlMode = portalModeFromUrl();
+      const nextMode = urlMode === "member" && !userProfile ? "guest" : urlMode;
+      const nextSkyDetailRoutePath = skyDetailRoutePathFromUrl();
+      const samePortal = Boolean(nextMode)
+        && nextMode === mode
+        && (nextSkyDetailRoutePath || null) === (skyDetailRoutePath || null);
+      // Calendar day selection updates the shared date without leaving the page.
+      // The portal nav motion would otherwise slide the topbar up and down.
+      transitionPage(syncPortalUrl, !samePortal);
     }
 
     function syncPortalUrl() {
@@ -12008,7 +12018,7 @@ export function App() {
       window.removeEventListener("popstate", handlePortalUrlChange);
       window.removeEventListener("hashchange", handlePortalUrlChange);
     };
-  }, [userProfile, transitionPage]);
+  }, [mode, skyDetailRoutePath, userProfile, transitionPage]);
 
   useEffect(() => {
     if (followsCurrentTransitDateRef.current) {
@@ -14790,14 +14800,16 @@ export function App() {
                   skyPlacementContentStatus={skyPlacementFallbackStatus}
                   contentVersion={fallbackArchitectureV3Version}
                   location={location}
-                  onLocationChange={(nextLocation) => {
-                    setLocation(nextLocation);
-                    setManualLocation(nextLocation.label);
-                    setHasLocationPreference(true);
-                  }}
                   onGeneratedContentRequest={requestCalendarContent}
                   onOpenTransit={openCalendarTransitDetail}
+                  onSignIn={() => {
+                    signInDestinationRef.current = "calendar";
+                    setAccountIntent("login");
+                    navigateToPortalMode("profile");
+                  }}
                   showJournalPrompts={journalPromptsEnabled}
+                  natalMoonSign={userProfile?.moon && userProfile.moon !== "Moon pending" ? userProfile.moon : undefined}
+                  natalSunSign={userProfile?.sun && userProfile.sun !== "Sun pending" ? userProfile.sun : undefined}
                 />
               )}
               {mode === "learn" && (
@@ -16128,7 +16140,13 @@ function SkyCards({
       sign: event.sign,
       isToday: eventIsToday,
       countdown: lunationCountdownLabel(selectedDate, eventDate, sky.location.timeZone).toLowerCase()
-    } : undefined
+    } : undefined,
+    ...calendarSeasonTransitionFactsFromSun({
+      sunSign: sun?.sign,
+      transitEnd: sun?.transitEnd,
+      asOf: sky.generatedAt,
+      timeZone
+    })
   };
 
   return (
