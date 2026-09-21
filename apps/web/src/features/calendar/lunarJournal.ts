@@ -1,18 +1,18 @@
 import type { LunarCalendarEvent } from "../../services/ephemeris";
 import type { LiveGeneratedContent } from "../../services/generatedContent";
 import lunarJournalPack from "./data/lunar-journal.entries.json" with { type: "json" };
+import { matchLunarJournalIndex, type LunarJournalType } from "./lunarJournalKeys";
 
-export const LUNAR_JOURNAL_PREFIX = "authored/lunar-journal/";
+export {
+  isLunarJournalContentKey,
+  journalInstant,
+  journalTypeForEvent,
+  LUNAR_JOURNAL_PREFIX,
+  lunarJournalContentKeyForEvent,
+  type LunarJournalType
+} from "./lunarJournalKeys";
+
 export const LUNAR_JOURNAL_REVIEW_STATUS = "needs_review";
-
-export type LunarJournalType =
-  | "season"
-  | "new"
-  | "full"
-  | "firstq"
-  | "lastq"
-  | "eclipse"
-  | "equinox";
 
 export type LunarJournalBlock =
   | { type: "para"; text: string }
@@ -53,10 +53,6 @@ export const LUNAR_JOURNAL_ENTRIES = pack.entries as LunarJournalEntry[];
 
 const CARD_ORDER = ["exact", "times", "section", "bullets", "ritual", "intent", "callin", "prompt", "tarot", "bysign"];
 const PROSE_TYPES = new Set(["para", "heading", "cycle", "notice"]);
-const SIGNS = [
-  "Aries", "Taurus", "Gemini", "Cancer", "Leo", "Virgo",
-  "Libra", "Scorpio", "Sagittarius", "Capricorn", "Aquarius", "Pisces"
-] as const;
 
 export const LUNAR_JOURNAL_SIGN_GLYPHS: Record<string, string> = {
   Aries: "♈",
@@ -72,10 +68,6 @@ export const LUNAR_JOURNAL_SIGN_GLYPHS: Record<string, string> = {
   Aquarius: "♒",
   Pisces: "♓"
 };
-
-export function isLunarJournalContentKey(key: string) {
-  return key.startsWith(LUNAR_JOURNAL_PREFIX);
-}
 
 export function lunarJournalSkyParagraphs(blocks: LunarJournalBlock[]) {
   return blocks
@@ -137,58 +129,10 @@ export function flattenLunarJournalBody(blocks: LunarJournalBlock[]) {
   return parts.join("\n\n").trim();
 }
 
-export function journalInstant(value: string) {
-  if (/^\d{8}T\d{6}Z$/u.test(value)) {
-    return Date.UTC(
-      Number(value.slice(0, 4)),
-      Number(value.slice(4, 6)) - 1,
-      Number(value.slice(6, 8)),
-      Number(value.slice(9, 11)),
-      Number(value.slice(11, 13)),
-      Number(value.slice(13, 15))
-    );
-  }
-  const parsed = Date.parse(value);
-  return Number.isFinite(parsed) ? parsed : NaN;
-}
-
-export function journalTypeForEvent(event: Pick<LunarCalendarEvent, "title" | "type" | "planet" | "eclipseType">): LunarJournalType | null {
-  const title = event.title ?? "";
-  if (event.eclipseType || /eclipse/i.test(title)) return "eclipse";
-  if (/new moon/i.test(title)) return "new";
-  if (/full moon/i.test(title)) return "full";
-  if (/first quarter/i.test(title)) return "firstq";
-  if (/last quarter|third quarter/i.test(title)) return "lastq";
-  if (/equinox|solstice/i.test(title)) return "equinox";
-  if (event.type === "ingress" && event.planet === "Sun") return "season";
-  if (/season|sun enters/i.test(title)) return "season";
-  return null;
-}
-
-function signFromTitle(title: string) {
-  return SIGNS.find((sign) => new RegExp(`\\b${sign}\\b`, "i").test(title)) ?? "";
-}
-
 export function matchLunarJournalEntry(event: LunarCalendarEvent) {
-  const type = journalTypeForEvent(event);
-  if (!type) return null;
-  const sign = (event.sign ?? event.toSign ?? signFromTitle(event.title)).trim();
-  const at = Date.parse(event.startsAt);
-  const pool = LUNAR_JOURNAL_ENTRIES.filter((entry) => entry.type === type);
-  const inWindow = pool.find((entry) => {
-    const signOk = type === "equinox" || !entry.sign || !sign || entry.sign.toLowerCase() === sign.toLowerCase();
-    const start = journalInstant(entry.start);
-    const end = journalInstant(entry.end);
-    return signOk && Number.isFinite(at) && Number.isFinite(start) && Number.isFinite(end) && at >= start && at <= end;
-  });
-  if (inWindow) return inWindow;
-  return pool.find((entry) => entry.sign && sign && entry.sign.toLowerCase() === sign.toLowerCase())
-    ?? pool.at(-1)
-    ?? null;
-}
-
-export function lunarJournalContentKeyForEvent(event: LunarCalendarEvent) {
-  return matchLunarJournalEntry(event)?.contentKey ?? null;
+  const hit = matchLunarJournalIndex(event);
+  if (!hit?.contentKey) return null;
+  return LUNAR_JOURNAL_ENTRIES.find((entry) => entry.contentKey === hit.contentKey) ?? null;
 }
 
 export function reorderLunarJournalBlocks(blocks: LunarJournalBlock[]) {

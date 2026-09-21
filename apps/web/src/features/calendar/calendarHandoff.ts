@@ -1,9 +1,8 @@
 import astro2026Catalog from "./data/astro-2026.catalog.json" with { type: "json" };
 import {
-  LUNAR_JOURNAL_ENTRIES,
-  matchLunarJournalEntry,
+  LUNAR_JOURNAL_INDEX,
   type LunarJournalType
-} from "./lunarJournal";
+} from "./lunarJournalKeys";
 
 export type HandoffEventKind =
   | "lunation"
@@ -55,14 +54,7 @@ export type LunarJournalBlockType =
   | "bysign";
 
 export const ASTRO_2026_EVENTS = astro2026Catalog as HandoffEvent[];
-export const LUNAR_JOURNAL_INDEX = LUNAR_JOURNAL_ENTRIES.map((entry) => ({
-  start: entry.start,
-  end: entry.end,
-  type: entry.type,
-  sign: entry.sign,
-  title: entry.title,
-  contentKey: entry.contentKey
-})) as HandoffJournalIndexEntry[];
+export { LUNAR_JOURNAL_INDEX };
 
 export function handoffEventsOnDate(dateKey: string) {
   return ASTRO_2026_EVENTS.filter((event) => event.date === dateKey);
@@ -105,5 +97,3 @@ export function handoffArticleForTitle(title: string) {
 export function matchJournalIndex(type: HandoffJournalType, sign: string) {
   return LUNAR_JOURNAL_INDEX.find((entry) => entry.type === type && entry.sign === sign) ?? null;
 }
-
-export { matchLunarJournalEntry };
