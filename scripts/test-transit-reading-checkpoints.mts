@@ -218,6 +218,30 @@ for (const family of ['you', 'friend'] as const) {
 }
 console.log('Durable retry feedback: latest scoped draft/findings, stable replay, no duplicate billing, and storage failure passed.');
 
+// A final writer can fail deterministic validation before it reaches a judge.
+// Older judge findings describe a different draft and must not be paired with it.
+for (const family of ['you', 'friend'] as const) {
+  const {rows,admin}=storage();
+  const column=`${family}_job_id`;
+  rows.push(
+    {id:'draft-1',[column]:'job',attempt:1,step:0,state:'complete',schema_name:'writer',response:{value:{body:'Earlier judged draft'}}},
+    {id:'judge-1',[column]:'job',attempt:1,step:1,state:'complete',schema_name:'tldr_generated_report_judge',response:{value:{findings:[{finding:'Only applies to earlier draft'}]}}},
+    {id:'draft-2',[column]:'job',attempt:1,step:2,state:'complete',schema_name:'writer',response:{value:{headline:'Fixture',tldr:'Fixture summary',body:'Latest invalid draft'}}}
+  );
+  const scope={admin,family,jobId:'job',attempt:2};
+  const feedback=await resume(scope,()=>priorFeedback(draft=>draft.body==='Latest invalid draft' ? ['Current deterministic defect'] : []));
+  assert.ok(feedback.includes('Latest invalid draft'));
+  assert.ok(feedback.includes('Current deterministic defect'));
+  assert.ok(!feedback.includes('Only applies to earlier draft'), 'Never attach a stale judgment to a newer draft.');
+  assert.equal(await resume(scope,()=>priorFeedback(()=>[])), '', 'An unjudged valid draft has no diagnosed defect to carry forward.');
+  rows.splice(1,1);
+  assert.equal(await resume(scope,()=>priorFeedback(()=>['Current deterministic defect'])),feedback,
+    'Deterministic-only failures must retain the same useful recovery context without a judge.');
+  assert.equal(await resume({...scope,jobId:'other-job'},()=>priorFeedback(()=>['Current deterministic defect'])), '',
+    'No report may inherit another job\'s rejected draft.');
+}
+console.log('Retry feedback: current validation survives without a judge; stale findings are excluded.');
+
 // A new logical attempt cannot reset the enclosing worker's remaining budget.
 {
   const { rows, admin } = storage();
