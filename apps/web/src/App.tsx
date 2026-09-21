@@ -122,8 +122,8 @@ import {
 import type { ContentBundle } from "./content/types";
 import {
   astrologyDateRangeLabel,
+  hasBackgroundRetrogradeMotion,
   isDisplayRetrograde,
-  isLunarNodePoint,
   lunarNodeTransitRangeLabel
 } from "./services/astrologyDisplay";
 import { normalizeBirthTime, twentyFourHourTimeToDisplay } from "./services/chartTime";
@@ -15313,24 +15313,16 @@ function retrogradeDetailKicker(position: PlanetPosition) {
 
 function retrogradeCollapsedName(position: PlanetPosition) {
   const name = skyDisplayPlanetName(position.planet);
-  return name === "North Node" ? name : `${name} Rx`;
+  return hasBackgroundRetrogradeMotion(name) ? name : `${name} Rx`;
 }
 
 function generatedRetrogradeSummaryMatchesPlanets(summary: string, retrogrades: PlanetPosition[]) {
   const normalizedSummary = normalizedArticleCopy(summary);
   const requiredNames = retrogrades.map(retrogradeCollapsedName).map(normalizedArticleCopy);
-  const knownNames = [
-    "Mercury Rx",
-    "Venus Rx",
-    "Mars Rx",
-    "Jupiter Rx",
-    "Saturn Rx",
-    "Uranus Rx",
-    "Neptune Rx",
-    "Pluto Rx",
-    "Chiron Rx",
-    "North Node"
-  ].map(normalizedArticleCopy);
+  const knownNames = SKY_BODY_ORDER
+    .filter((name) => !hasBackgroundRetrogradeMotion(name))
+    .map((name) => `${name} Rx`)
+    .map(normalizedArticleCopy);
   const namesMentioned = knownNames.some((name) => normalizedSummary.includes(name));
 
   if (!namesMentioned) {
@@ -16004,10 +15996,7 @@ function formatSignChapter(sign: string, signTransitEndDate?: string | null) {
 }
 
 function activeRetrogradePositions(positions: PlanetPosition[]) {
-  return positions.filter((position) => (
-    position.motion === "retrograde"
-    && !isLunarNodePoint(position.planet)
-  ));
+  return positions.filter((position) => isDisplayRetrograde(position));
 }
 
 function retrogradeRemainingCountLabel(generatedAt: string, position: PlanetPosition) {

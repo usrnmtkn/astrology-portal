@@ -1,15 +1,21 @@
+import { normalizeSkyBodyName } from "../astrologyConfig";
 import type { PlanetPosition } from "../types";
 
-const lunarNodeNames = new Set(["North Node", "South Node", "True Node"]);
+const backgroundRetrogradeBodies = new Set(["Lilith", "North Node", "South Node"]);
 
 export function isLunarNodePoint(planet: string) {
-  return lunarNodeNames.has(planet);
+  const normalized = normalizeSkyBodyName(planet);
+  return normalized === "North Node" || normalized === "South Node";
+}
+
+export function hasBackgroundRetrogradeMotion(planet: string) {
+  return backgroundRetrogradeBodies.has(normalizeSkyBodyName(planet));
 }
 
 export function isDisplayRetrograde(
   position: Pick<PlanetPosition, "motion" | "planet">
 ) {
-  return position.motion === "retrograde" && !isLunarNodePoint(position.planet);
+  return position.motion === "retrograde" && !hasBackgroundRetrogradeMotion(position.planet);
 }
 
 export function astrologyDateRangeLabel(

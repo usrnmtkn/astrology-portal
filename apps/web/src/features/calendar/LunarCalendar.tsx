@@ -5,6 +5,7 @@ import type { SkySnapshot } from "../../types";
 import { CardReadMore } from "../../components/CardReadMore";
 import { PageLoading } from "../../components/PageLoading";
 import { calendarMotionTitle } from "../../content/skyMotionLabels";
+import { isDisplayRetrograde } from "../../services/astrologyDisplay";
 import { CalendarDays, ChevronLeft, ChevronRight, MapPin, Search } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { CSSProperties, KeyboardEvent } from "react";
@@ -800,7 +801,7 @@ function monthCellEventLabel(event: LunarCalendarEvent) {
 
   if (event.type === "aspect" && event.planets && event.aspect) {
     const [firstGlyph = "", secondGlyph = ""] = Array.from(event.glyph);
-    return `${firstGlyph}${event.fromMotion === "retrograde" ? retrogradeGlyph : ""}${aspectGlyphs[event.aspect] ?? ""}${secondGlyph}${event.toMotion === "retrograde" ? retrogradeGlyph : ""}`;
+    return `${firstGlyph}${isDisplayRetrograde({ planet: event.planets[0], motion: event.fromMotion ?? "direct" }) ? retrogradeGlyph : ""}${aspectGlyphs[event.aspect] ?? ""}${secondGlyph}${isDisplayRetrograde({ planet: event.planets[1], motion: event.toMotion ?? "direct" }) ? retrogradeGlyph : ""}`;
   }
 
   return event.glyph;
@@ -836,10 +837,10 @@ function transitCardGlyphParts(event: LunarCalendarEvent) {
 
     return [
       { value: firstGlyph, className: "" },
-      { value: event.fromMotion === "retrograde" ? retrogradeGlyph : "", className: "tx-rx" },
+      { value: isDisplayRetrograde({ planet: event.planets[0], motion: event.fromMotion ?? "direct" }) ? retrogradeGlyph : "", className: "tx-rx" },
       { value: aspectGlyphs[event.aspect] ?? "", className: "tx-link" },
       { value: secondGlyph, className: "" },
-      { value: event.toMotion === "retrograde" ? retrogradeGlyph : "", className: "tx-rx" }
+      { value: isDisplayRetrograde({ planet: event.planets[1], motion: event.toMotion ?? "direct" }) ? retrogradeGlyph : "", className: "tx-rx" }
     ].filter((part) => part.value);
   }
 

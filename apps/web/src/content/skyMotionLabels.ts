@@ -1,10 +1,11 @@
+import { hasBackgroundRetrogradeMotion } from "../services/astrologyDisplay";
 import type { LunarCalendarEvent } from "../services/ephemeris";
 
 export type BodyMotion = "direct" | "retrograde";
 
 // Display facts only: missing motion stays unknown and never changes a content key.
 export function skyBodyLabel(body: string, motion?: BodyMotion | null) {
-  return motion === "retrograde" ? `${body} Rx` : body;
+  return motion === "retrograde" && !hasBackgroundRetrogradeMotion(body) ? `${body} Rx` : body;
 }
 
 /** Same planet naming as the daily sky overview: "Saturn Rx in Aries". */

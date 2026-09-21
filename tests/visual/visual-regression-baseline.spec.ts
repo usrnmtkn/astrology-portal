@@ -265,7 +265,7 @@ test.describe("visual regression baseline", () => {
       // intermediate frame. Keep the expected image and pixel tolerance intact.
       await expect(page.getByRole("button", { name: "Read more about Sun in Cancer", exact: true }))
         .toContainText("Jun 21 - Jul 22", { timeout: routeReadyTimeoutMs });
-      await expect(page.getByRole("link", { name: "Moon trines Lilith Rx", exact: true }))
+      await expect(page.getByRole("link", { name: "Moon trines Lilith", exact: true }))
         .toBeVisible({ timeout: routeReadyTimeoutMs });
     });
     await expect(page).toHaveScreenshot("client-sky-desktop-light.png", screenshotOptions);

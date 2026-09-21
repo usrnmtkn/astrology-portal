@@ -4470,10 +4470,10 @@ test("Sky detail hydrates published aspects for its displayed snapshot and dated
     await expect(article).toContainText(row.readerCopy.body, { timeout: 60_000 });
     expect(requested.has(`sky.aspect.${row.transiting}.${row.aspect}.${row.other}`)).toBe(true);
   }
-  const datedLink = page.locator('.article-related-aspect-row').filter({ hasText: "Lilith Rx Square Sun" });
+  const datedLink = page.locator('.article-related-aspect-row').filter({ hasText: "Lilith Square Sun" });
   const datedHref = await datedLink.getAttribute("href");
   expect(datedHref).toContain("/at/");
-  const sampledLink = page.locator('.article-related-aspect-row').filter({ hasText: "Lilith Rx Square Neptune" });
+  const sampledLink = page.locator('.article-related-aspect-row').filter({ hasText: "Lilith Square Neptune" });
   expect(await sampledLink.getAttribute("href")).toContain("/on/");
   await sampledLink.click();
   const neptune = JSON.parse(readFileSync("packages/astro-knowledge/data/transits/neptune-square-lilith.json", "utf8"));
