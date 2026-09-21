@@ -110,7 +110,7 @@ export function calendarSeasonTransitionKey(fromSign: string, toSign: string, va
     : `authored/calendar-season-transition/${from}/${to}`;
 }
 
-export { calendarSeasonTransitionTitle } from "./calendarSeasonTransitionTitle";
+export { calendarSeasonTransitionTitle } from "./calendarSeasonTransitionTitle.js";
 
 export function calendarSeasonTransitionKeys(fromSign: string, toSign: string) {
   return Array.from({ length: calendarSeasonTransitionVariantCount }, (_, index) => (

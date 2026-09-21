@@ -298,10 +298,6 @@ function stripArticleTitlePrefix(value: string, title: string) {
     .trim();
 }
 
-function articleTldrText(value: string, title = "") {
-  return stripArticleTitlePrefix(value, title);
-}
-
 function isArticleTldrBodyDuplicate(tldr: string, bodyCopies: Set<string>) {
   const normalizedTldr = comparableText(tldr).replace(/\b\.\.\.$/u, "").trim();
 
@@ -336,10 +332,6 @@ function isRetrogradeTimelineNode(node: ReactNode) {
   return typeof node.props.className === "string" && node.props.className.includes("retrograde-detail-line");
 }
 
-function normalizedAspectToneBucket(aspectType?: string): AspectToneBucket {
-  return normalizedArticleAspectToneBucket(aspectType);
-}
-
 function normalizeRelatedAspectRow(row: ReactNode | SkyDetailRelatedAspectRow, index: number): SkyDetailRelatedAspectRow {
   if (
     row
@@ -351,7 +343,7 @@ function normalizeRelatedAspectRow(row: ReactNode | SkyDetailRelatedAspectRow, i
     return {
       ...relatedRow,
       key: relatedRow.key || `related-aspect-${index}`,
-      group: relatedRow.group ?? normalizedAspectToneBucket(relatedRow.aspectType)
+      group: relatedRow.group ?? normalizedArticleAspectToneBucket(relatedRow.aspectType)
     };
   }
 
@@ -452,7 +444,7 @@ export function SkyDetailArticle({
       ...section,
       key: `${section.heading || "aspect"}-${index}`,
       aspectType: section.aspectType || articleAspectTypeFromText(`${section.heading} ${typeof section.body === "string" ? section.body : ""}`),
-      group: section.group ?? normalizedAspectToneBucket(section.aspectType || articleAspectTypeFromText(section.heading))
+      group: section.group ?? normalizedArticleAspectToneBucket(section.aspectType || articleAspectTypeFromText(section.heading))
     }));
   const drilldown = detail.astrologyDrilldown;
   const authoredTldr = detail.tldr ? stripArticleTitlePrefix(detail.tldr, detail.title) : "";
@@ -469,7 +461,7 @@ export function SkyDetailArticle({
       .filter(Boolean)
   );
   // TLDR is an explicit authored slot; subtitle and body are never substitutes.
-  const articleSubCandidate = detail.suppressTldr ? "" : articleTldrText(authoredTldr, detail.title);
+  const articleSubCandidate = detail.suppressTldr ? "" : stripArticleTitlePrefix(authoredTldr, detail.title);
   const articleSub = isReaderFacingCopy(articleSubCandidate) && !isArticleTldrBodyDuplicate(articleSubCandidate, articleBodyComparableCopies)
     ? articleSubCandidate
     : "";

@@ -107,6 +107,13 @@ async function startApp() {
   }
 
   const appModulePromise = import("./App");
+  // A direct You link needs the profile page immediately. Fetch it alongside
+  // App instead of adding a second module/CSS waterfall after React mounts.
+  if (/^#\/?you(?:[/?]|$)/u.test(window.location.hash)) {
+    void import("./features/you/YouPage").catch(() => {
+      // The mounted route owns import errors and recovery.
+    });
+  }
   const friendRoutePromise = prepareFriendProfileRoute(window.location.href);
   void friendRoutePromise.then(() => {
     if (!isFriendsHref(window.location.href)) return;

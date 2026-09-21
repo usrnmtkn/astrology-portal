@@ -10988,6 +10988,11 @@ export function App() {
   const skyDateRef = useRef(skyDate);
   const followsCurrentTransitDateRef = useRef(skyDate === currentLocalDate);
   const [mode, setMode] = useState<PortalMode>(() => studioReturnPath ? "profile" : getInitialPortalMode());
+  const [youPagePainted, setYouPagePainted] = useState(false);
+  const markYouPagePainted = useCallback(() => setYouPagePainted(true), []);
+  useEffect(() => {
+    if (mode !== "profile") setYouPagePainted(false);
+  }, [mode]);
   const [learnPath, setLearnPath] = useState(learnPathFromUrl);
   const [animationPreference, setAnimationPreference] = useState(readAnimationPreference);
   const transitionPage = usePageTransition(animationPreference);
@@ -11728,6 +11733,8 @@ export function App() {
       };
     }
 
+    // Render the saved profile before evaluating optional prose packages.
+    if (mode === "profile" && !youPagePainted) return;
     loadEmptyHouseFallbackArchitectureV3Bundle()
       .then((installed) => {
         if (installed && !cancelled) {
@@ -11741,7 +11748,7 @@ export function App() {
     return () => {
       cancelled = true;
     };
-  }, [friendNatalContentRequested, mode]);
+  }, [friendNatalContentRequested, mode, youPagePainted]);
 
   useEffect(() => {
     let cancelled = false;
@@ -11759,6 +11766,8 @@ export function App() {
       };
     }
 
+    // Render the saved profile before evaluating optional prose packages.
+    if (mode === "profile" && !youPagePainted) return;
     loadDeferredFallbackArchitectureV3Bundle()
       .then((installed) => {
         if (installed && !cancelled) {
@@ -11779,7 +11788,8 @@ export function App() {
     mode,
     profileNatalSky?.ascendant,
     skyDetailRoutePath,
-    userProfile?.rising
+    userProfile?.rising,
+    youPagePainted
   ]);
 
   useEffect(() => {
@@ -14822,6 +14832,7 @@ export function App() {
                     <FeatureLoadingFallback message="Loading your profile" />
                   ) : userProfile && !studioReturnPath && !signInRequested ? (
                     <ProfileView
+                      onInitialPaint={markYouPagePainted}
                       accountId={remoteAccountId}
                       accountRecovery={{
                         error: authAccountError,
@@ -17062,6 +17073,7 @@ function TransitDetail({ transit, form }: { transit: TransitItem; form: TransitF
 
 
 function ProfileView({
+  onInitialPaint,
   accountId,
   accountRecovery,
   transitionPage,
@@ -17089,6 +17101,7 @@ function ProfileView({
   onCreateChart,
   generatedContent
 }: {
+  onInitialPaint: () => void;
   accountId: string | null;
   accountRecovery: YouAccountRecovery;
   transitionPage: ReturnType<typeof usePageTransition>;
@@ -17116,6 +17129,17 @@ function ProfileView({
   onCreateChart: () => void;
   generatedContent: GeneratedContentMap;
 }) {
+  useEffect(() => {
+    let secondFrame = 0;
+    const firstFrame = window.requestAnimationFrame(() => {
+      secondFrame = window.requestAnimationFrame(onInitialPaint);
+    });
+    return () => {
+      window.cancelAnimationFrame(firstFrame);
+      window.cancelAnimationFrame(secondFrame);
+    };
+  }, [onInitialPaint]);
+
   const [transitArticle, setTransitArticle] = useState<YouTransitArticle | null>(null);
 
   useEffect(() => {
