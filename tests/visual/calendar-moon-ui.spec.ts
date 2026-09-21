@@ -57,6 +57,28 @@ for (const theme of ["light", "dark"] as const) for (const width of [320, 390, 4
         }));
         expect(clipped).toEqual([]);
       }
+      const contrast = await page.locator(".is-today-disc, .is-full-disc, .calendar-kind--season.is-inverted, .lunar-week-day__season")
+        .evaluateAll(nodes => nodes.filter(node => node.getBoundingClientRect().width > 0).map(node => {
+          const luminance = (color: string) => {
+            const channels = color.match(/[\d.]+/g)!.slice(0, 3).map(value => {
+              const channel = Number(value) / 255;
+              return channel <= 0.04045 ? channel / 12.92 : ((channel + 0.055) / 1.055) ** 2.4;
+            });
+            return channels[0] * 0.2126 + channels[1] * 0.7152 + channels[2] * 0.0722;
+          };
+          const style = getComputedStyle(node);
+          let backgroundNode = node;
+          let backgroundColor = style.backgroundColor;
+          while (backgroundColor === "rgba(0, 0, 0, 0)" && backgroundNode.parentElement) {
+            backgroundNode = backgroundNode.parentElement;
+            backgroundColor = getComputedStyle(backgroundNode).backgroundColor;
+          }
+          const foreground = luminance(style.color);
+          const background = luminance(backgroundColor);
+          return (Math.max(foreground, background) + 0.05) / (Math.min(foreground, background) + 0.05);
+        }));
+      if (view === "Month") expect(contrast.length).toBeGreaterThan(2);
+      for (const ratio of contrast) expect(ratio).toBeGreaterThanOrEqual(4.5);
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1)).toBe(true);
       await page.screenshot({ path: `${output}/mobile-${theme}-${width}-${view.toLowerCase()}.png` });
     }

@@ -486,6 +486,7 @@ body:has(.app-shell.mode-calendar),
 .lunar-calendar-day__number.is-today-disc,
 .lunar-week-day__date.is-today-disc {
   background: var(--calendar-disc-today);
+  color: var(--color-black);
   font-weight: var(--weight-semibold);
 }
 
@@ -499,6 +500,7 @@ body:has(.app-shell.mode-calendar),
 .lunar-week-day__date.is-full-disc {
   background: var(--calendar-disc-full);
   border-color: var(--calendar-disc-full);
+  color: var(--color-black);
 }
 
 .lunar-calendar-day__number.is-quarter-disc,
@@ -3935,7 +3937,7 @@ button.calendar-reading__toggle {
 
 .calendar-kind--season.is-inverted {
   background: var(--calendar-kind-season-fg);
-  color: var(--calendar-kind-return-fg);
+  color: var(--color-white);
 }
 
 .lunar-week-day__season {
@@ -3946,7 +3948,7 @@ button.calendar-reading__toggle {
   padding: 0 var(--space-1);
   border-radius: var(--lunar-space-4);
   background: var(--calendar-kind-season-fg);
-  color: var(--calendar-kind-return-fg);
+  color: var(--color-white);
 }
 
 .lunar-week-day__date {
