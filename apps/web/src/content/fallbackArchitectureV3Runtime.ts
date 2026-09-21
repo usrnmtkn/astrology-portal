@@ -537,6 +537,7 @@ let localLunationBookReaderBundle: FallbackArchitectureV3Bundle | null = null;
 let localSkyPlacementReaderBundle: FallbackArchitectureV3Bundle | null = null;
 let lastKnownGoodReaderBundle: FallbackArchitectureV3Bundle | null = null;
 let dashboardCoreReaderBundle: FallbackArchitectureV3Bundle | null = null;
+let dashboardSkyCoreReaderBundle: FallbackArchitectureV3Bundle | null = null;
 let dashboardCompatibilityReaderBundle: FallbackArchitectureV3Bundle | null = null;
 let dashboardSkyPlacementReaderBundle: FallbackArchitectureV3Bundle | null = null;
 let deferredFallbackBundlePromise: Promise<boolean> | null = null;
@@ -605,7 +606,8 @@ function recomposeReaderBundle() {
   // approved deferred rows disappear whenever the CMS snapshot did not yet
   // contain the same key (including exact natal sign + house passages).
   const dashboardCore = mergeReaderBundles(localCoreWithLunationBook, dashboardCoreReaderBundle);
-  const core = mergeReaderBundles(dashboardCore, dashboardCompatibilityReaderBundle);
+  const skyCore = mergeReaderBundles(dashboardCore, dashboardSkyCoreReaderBundle);
+  const core = mergeReaderBundles(skyCore, dashboardCompatibilityReaderBundle);
   const withLocalSky = mergeReaderBundles(core, localSkyPlacementReaderBundle);
   activateReaderBundle(mergeReaderBundles(withLocalSky, dashboardSkyPlacementReaderBundle));
 }
@@ -788,6 +790,8 @@ export function installFallbackArchitectureV3Bundle(
   bundle: FallbackArchitectureV3Bundle | null,
   packageVersion = bundle?.packageManifest?.packageVersion ?? fallbackArchitectureV3PackageVersion
 ) {
+  // A complete inventory supersedes the smaller Sky overlay.
+  dashboardSkyCoreReaderBundle = null;
   if (!bundle) {
     dashboardCoreReaderBundle = null;
     recomposeReaderBundle();
@@ -799,6 +803,12 @@ export function installFallbackArchitectureV3Bundle(
   recomposeReaderBundle();
 
   return manifest;
+}
+
+/** Keep a Sky-only response separate so navigation cannot erase other overlays. */
+export function installSkyCoreFallbackArchitectureV3Bundle(bundle: FallbackArchitectureV3Bundle | null) {
+  dashboardSkyCoreReaderBundle = bundle ? readerEligibleBundle(bundle) : null;
+  recomposeReaderBundle();
 }
 
 export function installCompatibilityFallbackArchitectureV3Bundle(

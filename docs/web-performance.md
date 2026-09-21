@@ -126,3 +126,30 @@ The next candidates are making App-level vocabulary constants route-local and
 splitting the transit slice by the route-level demand observed in production.
 Either change must pass the same eager/deferred parity and content-precedence
 requirements.
+
+## September 21 Sky source loading
+
+The candidate Sky path requests complete, exact-input Swiss Ephemeris facts from
+`/api/sky`, including the selected local day's events. The browser engine remains
+the bounded-request fallback. Its data and WASM files use a content hash in their
+URL and immutable cache headers; the successful initial API path downloads neither.
+
+The initial list fetches its shared dependencies and only the selected placement
+publications. Article-specific inventories wait for opening an article. Cached
+rows are reusable only when their publication ID and timestamp still match the
+current ledger; partial or stale responses fail the existing reader gate. Natal
+content waits for You or the relevant Friends view. Ordinary targeted-read
+failures do not start a full nightly-snapshot download.
+
+The app and reader bootstrap budgets each rise by 1,500 bytes for API validation,
+source selection and cache coordination. This is an explicit startup-code cost,
+not a boot-size reduction; other byte budgets remain unchanged. See
+[the measured comparison and release limitations](qa/sky-load-performance-2026-09-21.md).
+
+The publication ledger loads in four concurrent, disjoint key ranges; each keeps
+keyset pagination and the complete-ledger installation barrier. Sky source
+preparation rejects unversioned rows before key classification and reuses a
+publication-generation identity instead of repeatedly serializing the ledger.
+The decorative orb draws at most 30 frames per second. The Sky API shares the
+Calendar event scan and exact week boundaries while skipping the seven-day
+presentation grid; only those deterministic week events use a bounded cache.

@@ -367,7 +367,7 @@ export async function loadPlanetTopicVocabulary() {
   if (loadingVocabulary) return loadingVocabulary;
   const epoch = cacheEpoch;
   loadingVocabulary = (async () => {
-    const rows = [...(await loadLiveGeneratedContentForSurfaces(["modifier"])).values()]
+    const rows = [...(await loadLiveGeneratedContentForSurfaces(["modifier"], undefined, undefined, true)).values()]
       .filter((row) => row.contentKey.startsWith("fallback-vocab/")
         || row.contentKey.startsWith("cc/planet/")
         || row.contentKey.startsWith("cc/sign/"))

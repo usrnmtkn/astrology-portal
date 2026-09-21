@@ -63,6 +63,26 @@ for (const [key, entry] of Object.entries(ownerRewrites.payloads)) {
   assert.equal(payloadHash, entry.sha256, `${key}: approved payload hash drifted.`);
 }
 
+// The September 20 replacement supersedes one member of the historical
+// projection. Preserve that projection's integrity checks and verify the exact
+// replacement independently, as the collective-release contract already does.
+const laterRewrite = readJson(path.join(repoRoot,
+  "packages/astro-knowledge/review/sky-calendar-moon-sextile-lilith-2026-09-20/owner-authorization.json"));
+assert.equal(laterRewrite.authority, "owner");
+assert.equal(laterRewrite.decision, "approve");
+assert.equal(laterRewrite.contentKey, "sky.aspect.moon.sextile.lilith");
+assert.equal(laterRewrite.legacyProjectionKey, "sky.moon.sextile.lilith");
+assert.equal(laterRewrite.payload.body, laterRewrite.ownerExactCopy);
+assert.equal(sha256(laterRewrite.payload.summary), laterRewrite.summarySha256);
+assert.equal(sha256(laterRewrite.payload.body), laterRewrite.bodySha256);
+assert.equal(sha256(JSON.stringify(laterRewrite.payload)), laterRewrite.payloadSha256);
+if (ownerRewrites.payloads[laterRewrite.legacyProjectionKey]) {
+  assert.deepEqual(ownerRewrites.payloads[laterRewrite.legacyProjectionKey].payload, {
+    summary: laterRewrite.supersedes.summary,
+    body: laterRewrite.supersedes.body,
+  }, "The replacement must supersede this exact historical payload.");
+}
+
 await build({
   bundle: true,
   define: { "import.meta.env": "{}" },
@@ -109,7 +129,9 @@ let routedDirections = 0;
 
 for (const record of exactRecords) {
   const contentKey = `sky.${record.transiting}.${record.aspect}.${record.other}`;
-  const approvedPayload = ownerRewrites.payloads[contentKey]?.payload;
+  const approvedPayload = contentKey === laterRewrite.legacyProjectionKey
+    ? laterRewrite.payload
+    : ownerRewrites.payloads[contentKey]?.payload;
   assert.ok(approvedPayload, `${contentKey}: missing current owner-approved payload.`);
   assert.deepEqual(
     { summary: record.readerCopy.summary, body: record.readerCopy.body },

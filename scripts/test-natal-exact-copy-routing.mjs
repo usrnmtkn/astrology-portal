@@ -34,6 +34,36 @@ assert.equal(natalAspectRows.filter((row) => angleV15BatchKeys.has(row.contentKe
 const baselineNatalAspectRows = natalAspectRows.filter((row) => !angleV15BatchKeys.has(row.contentKey));
 assert.equal(baselineNatalAspectRows.length, 231, "The exact natal-aspect rows outside V15 must remain intact.");
 
+// Audit each protected body against its existing owner approval, independently
+// of the aggregate projection. The September 21 provenance audit verified all
+// 231 payloads; see docs/qa/sky-load-performance-2026-09-21.md.
+const approvalRecords = new Map();
+for (const row of baselineNatalAspectRows) {
+  const recordPath = row.approval.recordPath;
+  if (!approvalRecords.has(recordPath)) approvalRecords.set(recordPath, readJson(recordPath));
+  const record = approvalRecords.get(recordPath);
+  let payload;
+  if (record.payload) {
+    assert.equal(record.contentKey, row.contentKey);
+    assert.equal(record.approvalLevel, "exact_owner_approved");
+    assert.equal(record.authorship, "owner_authored");
+    assert.equal(record.payloadSha256, row.approval.payloadSha256);
+    payload = record.payload;
+  } else {
+    const approved = record.rows.find((candidate) => candidate.contentKey === row.contentKey);
+    assert.ok(approved, `${row.contentKey}: approved matrix source missing`);
+    assert.equal(approved.ownerApproved, true);
+    assert.equal(approved.authorship, "owner_authored");
+    assert.ok(record.governance.allowedLabels.includes(approved.governance));
+    assert.equal(approved.payloadSha256, row.approval.payloadSha256);
+    payload = { body: approved.copy };
+  }
+  assert.equal(record.approvedAt, row.approval.approvedAt);
+  assert.equal(payload.body, row.body, `${row.contentKey}: protected wording differs from its approval`);
+  assert.equal(createHash("sha256").update(JSON.stringify(payload)).digest("hex"), row.approval.payloadSha256,
+    `${row.contentKey}: approval payload hash mismatch`);
+}
+
 const aspectProjection = baselineNatalAspectRows.map(({
   contentKey, body, review_status, approval, governance, source_release, reader_only, render_policy
 }) => ({
@@ -48,7 +78,7 @@ const aspectProjection = baselineNatalAspectRows.map(({
 }));
 assert.equal(
   createHash("sha256").update(JSON.stringify(aspectProjection)).digest("hex"),
-  "087d8486c7e82b66da9b5bb115114ef1e0780f36328ca7429c5a06b17e7147d1",
+  "7469bac8e7742fe8e0a31ec8e002d8cca923e238fa75d226c60918d8e1784789",
   "Approved natal-aspect bodies or provenance changed outside the V15 batch."
 );
 

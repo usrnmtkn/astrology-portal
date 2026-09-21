@@ -194,7 +194,7 @@ assert.match(
 );
 assert.match(
   appSource,
-  /const shouldLoadNatal = \["guest", "member", "profile"\]\.includes\(mode\)\s*\|\| \(mode === "friends" && friendNatalContentRequested\);/,
+  /const shouldLoadNatal = mode === "profile"\s*\|\| \(mode === "friends" && friendNatalContentRequested\);/,
   "Friends natal and You content must wait until the Natal profile tab requests it."
 );
 assert.doesNotMatch(

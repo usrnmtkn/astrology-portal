@@ -2788,6 +2788,51 @@ function weekGridRange(anchor: Date, timeZone: string) {
   return { gridStart, gridEnd };
 }
 
+/** Shared event scan: preserve the same search boundaries and event ordering. */
+function lunarCalendarEvents(
+  swe: SwissEphInstance, gridStart: Date, gridEnd: Date, displayStart: Date,
+  timeZone: string, cycleEvents: LunarCalendarEvent[]
+): LunarCalendarEvent[] {
+  const eventStart = new Date(gridStart.getTime() - 2 * 86_400_000);
+  const eventEnd = new Date(gridEnd.getTime() + 2 * 86_400_000);
+  return [
+    ...findLunations(swe, eventStart, eventEnd, timeZone),
+    ...cycleEvents.filter((event) => event.type === "ingress" && event.planet === "Moon"
+      && Date.parse(event.startsAt) >= eventStart.getTime()
+      && Date.parse(event.startsAt) < eventEnd.getTime()),
+    ...findIngresses(swe, eventStart, eventEnd, timeZone),
+    ...findStations(swe, eventStart, eventEnd, timeZone),
+    ...findActiveRetrogrades(swe, displayStart, gridEnd, timeZone),
+    ...findSkyAspects(swe, eventStart, eventEnd, timeZone)
+  ].sort((first, second) => new Date(first.startsAt).getTime() - new Date(second.startsAt).getTime());
+}
+
+/** Sky needs the selected day's exact week-feed events, without seven days of
+ * Moon status, void-of-course, active-aspect and season-arc presentation facts. */
+const skyWeekEventsCache = new Map<string, Promise<LunarCalendarEvent[]>>();
+export async function getLunarCalendarDayEvents(location: LocationInput, anchor: Date): Promise<LunarCalendarEvent[]> {
+  const timeZone = location.timeZone || Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC";
+  const { gridStart, gridEnd } = weekGridRange(anchor, timeZone);
+  // These geocentric events depend on the exact week boundaries and zone, not
+  // the request time within that week. No placement snapshot is cached here.
+  const key = `${timeZone}|${gridStart.toISOString()}|${gridEnd.toISOString()}`;
+  let pending = skyWeekEventsCache.get(key);
+  if (!pending) {
+    pending = getSwissEph().then(swe => {
+      const moonIngresses = findMoonIngresses(swe,
+        new Date(gridStart.getTime() - 5 * 86_400_000),
+        new Date(gridEnd.getTime() + 5 * 86_400_000), timeZone);
+      return lunarCalendarEvents(swe, gridStart, gridEnd, gridStart, timeZone, moonIngresses);
+    });
+    skyWeekEventsCache.set(key, pending);
+    const request = pending;
+    void request.catch(() => { if (skyWeekEventsCache.get(key) === request) skyWeekEventsCache.delete(key); });
+    if (skyWeekEventsCache.size > 12) skyWeekEventsCache.delete(skyWeekEventsCache.keys().next().value!);
+  }
+  const dayKey = localDateKey(anchor, timeZone);
+  return (await pending).filter(event => event.dateKey === dayKey);
+}
+
 function buildLunarCalendarRange(
   swe: SwissEphInstance,
   location: LocationInput,
@@ -2814,25 +2859,9 @@ function buildLunarCalendarRange(
     ].sort((first, second) => first.startsAt.localeCompare(second.startsAt))
     : [];
   const events = detail === "full"
-    ? (() => {
-      const eventStart = new Date(gridStart.getTime() - 2 * 86_400_000);
-      const eventEnd = new Date(gridEnd.getTime() + 2 * 86_400_000);
-      const displayStart = dayCount === 7
-        ? gridStart
-        : zonedDateTimeToUtc(timeZone, monthAnchor.getFullYear(), monthAnchor.getMonth() + 1, 1);
-
-      return [
-        ...findLunations(swe, eventStart, eventEnd, timeZone),
-        // Reuse the exact cycle boundaries for day/week/month event feeds.
-        ...cycleEvents.filter((event) => event.type === "ingress" && event.planet === "Moon"
-          && Date.parse(event.startsAt) >= eventStart.getTime()
-          && Date.parse(event.startsAt) < eventEnd.getTime()),
-        ...findIngresses(swe, eventStart, eventEnd, timeZone),
-        ...findStations(swe, eventStart, eventEnd, timeZone),
-        ...findActiveRetrogrades(swe, displayStart, gridEnd, timeZone),
-        ...findSkyAspects(swe, eventStart, eventEnd, timeZone)
-      ].sort((first, second) => new Date(first.startsAt).getTime() - new Date(second.startsAt).getTime());
-    })()
+    ? lunarCalendarEvents(swe, gridStart, gridEnd,
+      dayCount === 7 ? gridStart : zonedDateTimeToUtc(timeZone, monthAnchor.getFullYear(), monthAnchor.getMonth() + 1, 1),
+      timeZone, cycleEvents)
     : [];
   const eventsByDateKey = events.reduce((groupedEvents, event) => {
     const groupedDayEvents = groupedEvents.get(event.dateKey);
