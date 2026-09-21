@@ -1,3 +1,4 @@
+import { FormattedProse, FormattedText } from "../../components/FormattedProse";
 import { CardReadMore } from "../../components/CardReadMore";
 import { ChevronRight } from "lucide-react";
 import { DurationLabelText } from "../../components/charts/PlacementRows";
@@ -97,7 +98,7 @@ function PatternPreviewCard({
       <header className="natal-pattern-card__header">
         {copy.eyebrow ? <span>{copy.eyebrow}</span> : null}
         <h3>{copy.headline}</h3>
-        <p>{copy.overview}</p>
+        <FormattedProse text={copy.overview} />
       </header>
       <div className="natal-pattern-card__actions">
         <button
@@ -187,7 +188,7 @@ function ActiveNowCallout({
             <span>{item.copy.content.headline}</span>
             {sections.map((section) => (
               <span key={`${item.patternId}-active-${section.id}-${section.body}`}>
-                {activationSectionLabel(section.id)}: {section.body}
+                {activationSectionLabel(section.id)}: <FormattedText text={section.body} />
               </span>
             ))}
           </span>

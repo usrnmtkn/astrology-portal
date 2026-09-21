@@ -1,3 +1,4 @@
+import { FormattedProse } from "../../components/FormattedProse";
 import { CardReadMore } from "../../components/CardReadMore";
 import { ReportGenerationBeam } from "../../components/reports/ReportGenerationBeam";
 import { useEffect, useState } from "react";
@@ -33,7 +34,7 @@ function FriendPersonalTransitCard({
         <span className="updates-aspect-row__meta-line" aria-label={transit.timingLabel}>
           <span>{transit.rangeLabel}</span>
         </span>
-        <p className="updates-aspect-row__description transit-card-preview">{transit.summary}</p>
+        <FormattedProse className="updates-aspect-row__description transit-card-preview" text={transit.summary} />
         <CardReadMore />
       </span>
       <span className="updates-aspect-row__meta" aria-label={`${transit.timingLabel}, ${transit.orb} orb`}>
@@ -203,8 +204,8 @@ export function FriendTransitsTab({
             <h3>{`What's going on with ${friendName} right now?`}</h3>
             {effectiveReadingStatus === "ready" && effectiveReading ? (
               <>
-                {effectiveReading.summary ? <p>{effectiveReading.summary}</p> : null}
-                {effectiveReading.body.split(/\n{2,}/u).filter(Boolean).map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
+                {effectiveReading.summary ? <FormattedProse text={effectiveReading.summary} /> : null}
+                {effectiveReading.body.split(/\n{2,}/u).filter(Boolean).map((paragraph) => <FormattedProse key={paragraph} text={paragraph} />)}
               </>
             ) : effectiveReadingStatus === "loading" ? (
               <PageLoading compact message={`Preparing ${friendName}'s reading. You can leave this page and come back later.`} />
@@ -225,7 +226,7 @@ export function FriendTransitsTab({
         {!isLoading && daily?.forecast ? (
           <section className="daily-horoscope-summary friend-daily-forecast" aria-label={`Daily forecast for ${friendName}`}>
             <h3>{daily.forecast.headline}</h3>
-            <p>{daily.forecast.body}</p>
+            <FormattedProse text={daily.forecast.body} />
             <DailyMoonContextTags context={daily.forecast.moonContext} />
           </section>
         ) : null}

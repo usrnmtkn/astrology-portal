@@ -1,3 +1,4 @@
+import { FormattedParagraph, FormattedProse, FormattedText } from "./components/FormattedProse";
 import { weeklyHoroscopeTagItems } from "./utils/weeklyFocusTags";
 import {
   loadManualChartsPanel,
@@ -5860,7 +5861,7 @@ function relatedAspectRowsForPlacement({
             {narrativeTiming.length ? <span className="aspect-row-narrative-timing">
               {narrativeTiming.map(line => <span key={line}>{line}</span>)}
             </span> : null}
-            {displaySummary ? displaySummary.split(/\n\s*\n/u).map((paragraph, index) => <p key={index}>{paragraph}</p>) : null}
+            {displaySummary ? displaySummary.split(/\n\s*\n/u).map((paragraph, index) => <FormattedProse key={index} text={paragraph} />) : null}
             {mode === "sky" || onOpenNatalAspect ? <CardReadMore /> : null}
           </span>
           <span className="aspect-row-meta" aria-label={exact ? "exact aspect" : `${wholeDegreeOrb(aspect.orb)} orb`}>
@@ -16182,8 +16183,7 @@ function SkyCards({
           factsReady={dailyEvents.key === requestKey && (!exactEventKey || eventResolved)}
           factsError={summaryFactsError === requestKey || Boolean(exactEventKey && summaryFactsError === exactEventKey)}
           onRetryFacts={() => setSummaryFactsRetry(value => value + 1)}>
-          {summaryParts => skySummaryParagraphs(summaryParts).map((paragraph, paragraphIndex) => <p key={paragraphIndex}>
-          {paragraph.map((part, index) => {
+          {summaryParts => skySummaryParagraphs(summaryParts).map((paragraph, paragraphIndex) => <FormattedParagraph key={paragraphIndex} parts={paragraph} renderPart={(part, index) => {
             if (part.action === "event") {
               const item = events.find(event => event.id === part.eventId);
               if (!item) return null;
@@ -16193,7 +16193,7 @@ function SkyCards({
               return <a key={index} className="sky-daily-summary__link" href={`#${route}`} onClick={click => {
                 if (click.metaKey || click.ctrlKey || click.shiftKey || click.altKey) return;
                 click.preventDefault(); onOpenEvent(item);
-              }}>{part.text}</a>;
+              }}><FormattedText text={part.text} /></a>;
             }
             const placement = part.action === "sun" ? verifiedEventSky?.sun ?? sun : part.action === "moon" ? moon
               : part.action === "retrograde" ? sky.positions.find(position => skyDisplayPlanetName(position.planet) === part.planet) : undefined;
@@ -16217,7 +16217,7 @@ function SkyCards({
                       positions: skyNodeDisplayPositions(sky.positions)
                     }));
                   }}>
-                  {part.text}
+                  <FormattedText text={part.text} />
                 </a>
               );
             }
@@ -16225,14 +16225,13 @@ function SkyCards({
               return (
                 <a key={index} className="sky-daily-summary__link"
                   href={`#sky/lunation/${event.occursAt.slice(0, 10)}/${normalizeContentIdPart(event.sign)}`}>
-                  {part.text}
+                  <FormattedText text={part.text} />
                 </a>
               );
             }
-            if (part.highlight) return <mark key={index} className="content-highlight">{part.text}</mark>;
-            return <span key={index}>{part.text}</span>;
-          })}
-          </p>)}
+            if (part.highlight) return <mark key={index} className="content-highlight"><FormattedText text={part.text} /></mark>;
+            return undefined;
+          }} />)}
         </PublishedSkySummary>
 
         <button className="sky-today-ledger__foot" type="button" onClick={onOpenChart} aria-label="Open full current sky chart">
@@ -17068,7 +17067,7 @@ function TransitDetail({ transit, form }: { transit: TransitItem; form: TransitF
           <span>Read it closely</span>
           <h3>{readTitle}</h3>
           {readParagraphs.map((paragraph, index) => (
-            <p key={`${transit.id}-detail-${index}`}>{paragraph}</p>
+            <FormattedProse key={`${transit.id}-detail-${index}`} text={paragraph} />
           ))}
         </article>
       ) : null}

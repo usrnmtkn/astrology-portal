@@ -167,6 +167,10 @@ assert.equal(calendarWritingStudioHref("fallback-hook/sky-placement-lived/moon/l
 assert.ok(calendarWritingStudioHref("cms/sky-daily-summary/sun/virgo").includes("#calendar-writeups?"));
 assert.ok(calendarWritingStudioHref("cms/sky-daily-summary/moon/scorpio/fullMoon").includes("#calendar-writeups?"));
 assert.ok(calendarWritingStudioHref("authored/sky-lunation-macro/full-moon/pisces").includes("#calendar-writeups?"));
+const seasonStudioLink = new URL(calendarWritingStudioHref("authored/calendar-season-transition/virgo/libra/variant-4"));
+const seasonStudioParams = new URLSearchParams(seasonStudioLink.hash.split("?")[1]);
+assert.equal(seasonStudioParams.get("view"), "season-transitions");
+assert.equal(seasonStudioParams.get("q"), "authored/calendar-season-transition/virgo/libra/variant-4");
 assert.equal(lunarWorkspaceSelectionFromQuery("Moon in Libra"), null);
 assert.equal(lunarWorkspaceSelectionFromQuery("authored/lunar-journal/season/libra/20250922t181900z")?.family, "Lunar journal");
 assert.equal(lunarWorkspaceSelectionFromQuery("authored/calendar-weekly-moon/libra")?.family, "Moon-sign leftover");

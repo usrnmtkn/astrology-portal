@@ -100,3 +100,28 @@ for (const [instant, zone, opening, closing] of [
 }
 assert.equal(calendarPreviewSeasons(week).closing, undefined, "A week inside one season has no invented transition.");
 console.log("Calendar season overview: exact complete shared sources, missing/draft safety, both monthly seasons, direct Swiss boundaries in two zones and conditional sections passed.");
+
+// The September 21 composition shown by the owner combines calculated timing
+// with two independent source passages; clicks must retain both source identities.
+const composedDay = await calculateCalendarPreview("daily-sky", "2026-09-21T16:00:00.000Z", "America/New_York");
+const continuationSource = { ...source, id: "continuation", content_key: "authored/calendar-moon-continuation-summary/capricorn", body: "Fixture continuation first sentence. Fixture continuation final sentence." };
+const seasonTransitionSource = { ...source, id: "season-transition", content_key: "authored/calendar-season-transition/virgo/libra/variant-4", body: "Fixture season transition {{date}}. Fixture season final sentence." };
+const composedValues = calendarPreviewValues({ sunSign: "Virgo", moonSign: "Capricorn", calculation: composedDay, rows: [continuationSource, seasonTransitionSource] });
+const composed = composedValues.moonWriteup;
+assert(composed.parts && composed.parts.length > 2);
+assert.equal(composed.parts.map(part => part.text).join(""), composed.text, "Adding click targets must preserve complete rendered text byte for byte.");
+assert.equal(composed.parts.find(part => part.name === "continuation")?.sourceKey, continuationSource.content_key);
+assert.equal(composed.parts.find(part => part.name === "seasonTransition")?.sourceKey, seasonTransitionSource.content_key);
+assert.equal(composed.parts.find(part => part.name === "seasonTransition")?.text, "Fixture season transition in 1 day. Fixture season final sentence.");
+assert(composed.parts.filter(part => part.kind === "fact").every(part => !part.sourceKey), "Calculated wording must not link to an unrelated content row.");
+const { calendarPreviewCopyParts } = await import("../apps/admin/src/calendarPreviewModel.ts");
+const absent = calendarPreviewCopyParts("Complete fixed wording.", [{ name: "unused", text: "Not rendered.", kind: "copy", sourceKey: "not-used" }]);
+assert.equal(absent.map(part => part.text).join(""), "Complete fixed wording.");
+assert(absent.every(part => !part.sourceKey));
+console.log("Calendar composition editing: exact continuation/season targets, rendered date filling, complete-text preservation and read-only timing passed.");
+
+const packagedSource = { ...source, id: `package:${source.content_key}`, sections: { packageRecord: { contentKey: source.content_key, content_role: "full_copy", review_status: "approved_reuse", body: source.body } } };
+const workingSource = { ...packagedSource, previewBody: "Fixture draft opening.\n\nFixture complete draft final sentence." };
+assert.equal(calendarPreviewValues({ sunSign: "Virgo", moonSign: "Cancer", rows: [workingSource] }).moonWriteup.text, workingSource.previewBody);
+assert.equal(workingSource.body, source.body, "Previewing a draft never changes its saved eligibility evidence.");
+assert.equal(calendarPreviewValues({ sunSign: "Virgo", moonSign: "Cancer", rows: [{ ...workingSource, body: "Tampered package body", status: "DRAFT" }] }).moonWriteup, undefined, "An invalid saved package cannot become eligible through a draft preview.");

@@ -1,3 +1,4 @@
+import { FormattedProse } from "../../components/FormattedProse";
 import { ArticlePills, type ArticlePillData } from "../../components/ArticlePills";
 import { TransitFacts } from "../../components/ArticleFacts";
 import { Fragment, isValidElement, useEffect, useId, useLayoutEffect, useRef, useState, type ReactNode } from "react";
@@ -442,14 +443,14 @@ function YouNatalTab({
           <section className="you-signatures-card" aria-label="Your signatures">
             <div className="you-signatures-main">
               <h3>{signatureTitle}</h3>
-              <p>{signatureBody}</p>
+              <FormattedProse text={signatureBody} />
             </div>
             <div className="elemental-balance" aria-label="Elemental balance">
               <div className="elemental-balance-head">
                 <span className="eyebrow section-label">Elemental balance</span>
                 <span>{elementalSummaryLabel}</span>
               </div>
-              <p>{elementalSummarySentence}</p>
+              <FormattedProse text={elementalSummarySentence} />
             </div>
           </section>
         </>
@@ -506,7 +507,7 @@ function YouMacroView({ headline, body }: { headline: string; body: string }) {
       <div id={bodyId} className="weekly-horoscope__macro-body">
         {(expanded ? body : preview)
           .split(/\n{2,}/)
-          .map((paragraph, index) => <p key={index}>{paragraph}</p>)}
+          .map((paragraph, index) => <FormattedProse key={index} text={paragraph} />)}
       </div>
       {hasMore ? (
         <button
@@ -613,7 +614,7 @@ function YouUpdatesTab({
       {hasSavedCurrentCity && dailyUpdateSummary && (
         <section className={`daily-horoscope-summary you-horoscope-card${dailyUpdateSummary.status === "loading" ? " is-loading" : ""}`} aria-label="Daily horoscope summary">
           {showDailyHeadline ? <h3>{dailyHeadline}</h3> : null}
-          <p>{dailyUpdateSummary.summary}</p>
+          <FormattedProse text={dailyUpdateSummary.summary} />
           {dailyUpdateSummary.secondary ? <p className="daily-horoscope-summary__secondary">{dailyUpdateSummary.secondary}</p> : null}
           {dailyUpdateSummary.status === "loading" ? (
             <PageLoading compact message="Loading daily update…" />
@@ -624,7 +625,7 @@ function YouUpdatesTab({
                 <div className="daily-horoscope-writeup__section" key={`${section.heading ?? "daily"}-${sectionIndex}`}>
                   {section.heading ? <h3>{section.heading}</h3> : null}
                   {section.body.map((paragraph, paragraphIndex) => (
-                    <p key={`${sectionIndex}-${paragraphIndex}`}>{paragraph}</p>
+                    <FormattedProse key={`${sectionIndex}-${paragraphIndex}`} text={paragraph} />
                   ))}
                 </div>
               ))}
@@ -653,7 +654,7 @@ function YouUpdatesTab({
         <section className="daily-special-section you-horoscope-card" key={section.headline}>
           <span className="eyebrow section-label">{transitDateLabel} sky</span>
           <h3>{section.headline}</h3>
-          {section.body.split(/\n{2,}/).map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
+          {section.body.split(/\n{2,}/).map((paragraph) => <FormattedProse key={paragraph} text={paragraph} />)}
         </section>
       ))}
       {weeklyTransitSection}
@@ -1041,7 +1042,7 @@ function YouTransitArticlePage({
             {articleTldr ? (
               <div className="article-tldr">
                 <span className="ui-pill ui-pill--neutral article-tldr__label">TLDR</span>
-                <p className="article-sub article-tldr__copy">{articleTldr}</p>
+                <FormattedProse className="article-sub article-tldr__copy" text={articleTldr} />
               </div>
             ) : null}
           </header>
@@ -1059,14 +1060,14 @@ function YouTransitArticlePage({
               {displayIntroParagraphs.length ? (
                 <section className={`article-section sky-detail-section ${displayArticle.plainBody ? "sky-detail-plain-section" : "sky-detail-intro-section"}`}>
                   {displayIntroParagraphs.map((paragraph, index) => (
-                    <p key={`intro-${index}`}>{paragraph}</p>
+                    <FormattedProse key={`intro-${index}`} text={paragraph} />
                   ))}
                 </section>
               ) : null}
               {displaySummary && !displayArticle.bodyBeforeSections ? (
                 <section className="article-section sky-detail-section">
                   {displaySummaryHeading ? <h2>{displaySummaryHeading}</h2> : null}
-                  <p>{displaySummary}</p>
+                  <FormattedProse text={displaySummary} />
                 </section>
               ) : null}
               {mainSections.map((section, index) => {
@@ -1076,9 +1077,9 @@ function YouTransitArticlePage({
                 <section className="article-section sky-detail-section" key={`${section.heading}-${index}`}>
                   {section.heading ? <h2>{section.heading}</h2> : null}
                   {section.sourceTag ? <p>{section.sourceTag}</p> : null}
-                  {showTldr ? <p>{section.tldr}</p> : null}
+                  {showTldr ? <FormattedProse text={section.tldr} /> : null}
                   {section.bodyParagraphs.map((paragraph, paragraphIndex) => (
-                    <p key={`${section.heading || "section"}-${index}-${paragraphIndex}`}>{paragraph}</p>
+                    <FormattedProse key={`${section.heading || "section"}-${index}-${paragraphIndex}`} text={paragraph} />
                   ))}
                 </section>
                 );
@@ -1151,9 +1152,9 @@ function YouTransitArticlePage({
                           </div>
                         ) : null}
                         {section.sourceTag ? <p>{section.sourceTag}</p> : null}
-                        {showTldr ? <p>{section.tldr}</p> : null}
+                        {showTldr ? <FormattedProse text={section.tldr} /> : null}
                         {section.bodyParagraphs.map((paragraph, paragraphIndex) => (
-                          <p key={`${section.heading || "aspect"}-${index}-${paragraphIndex}`}>{paragraph}</p>
+                          <FormattedProse key={`${section.heading || "aspect"}-${index}-${paragraphIndex}`} text={paragraph} />
                         ))}
                       </section>
                     );

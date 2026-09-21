@@ -1,3 +1,4 @@
+import { FormattedProse } from "../FormattedProse";
 import type { CareerArchetypeProfile } from "../../services/careerArchetype";
 
 type CareerArchetypeCardProps = {
@@ -35,7 +36,7 @@ export function CareerArchetypeCard({
       </div>
       {!onOpenDetail ? (
         <>
-          <p className="career-archetype-card__summary">{profile.summary}</p>
+          <FormattedProse className="career-archetype-card__summary" text={profile.summary} />
         <div className="career-archetype-card__factors" aria-label="Career factors">
           {profile.factors.map((factor) => (
             <span key={factor.label}>
@@ -52,7 +53,7 @@ export function CareerArchetypeCard({
                 <em>{section.layer === "authored" ? "Authored" : "Fallback"}</em>
               </div>
               <h3>{section.headline}</h3>
-              <p>{section.body}</p>
+              <FormattedProse text={section.body} />
               <small>{section.meta}</small>
             </article>
           ))}

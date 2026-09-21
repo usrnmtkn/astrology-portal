@@ -1,4 +1,4 @@
-import { cloneElement, forwardRef, isValidElement, useId, useState, type ComponentPropsWithoutRef, type ReactNode } from "react";
+import { cloneElement, forwardRef, lazy, Suspense, useImperativeHandle, isValidElement, useEffect, useLayoutEffect, useId, useRef, useState, type ComponentPropsWithoutRef, type ReactNode } from "react";
 import { requestStudioReturnAfterSave, returnToStudioParentEditor, studioEditorReturnContext } from "./studioEditorReturn";
 import { installStudioStatusCompatibility } from "./studioStatusCompatibility";
 
@@ -70,9 +70,40 @@ export const StudioInput = forwardRef<HTMLInputElement, ComponentPropsWithoutRef
     return <input {...props} ref={ref} data-studio-component="input" />;
   }
 );
-export const StudioTextarea = forwardRef<HTMLTextAreaElement, ComponentPropsWithoutRef<"textarea">>(
-  function StudioTextarea(props, ref) {
-    return <textarea {...props} ref={ref} data-studio-component="textarea" />;
+const StudioFormattingEditor = lazy(() => import("./StudioFormattingEditor"));
+export const StudioTextarea = forwardRef<HTMLTextAreaElement, ComponentPropsWithoutRef<"textarea"> & { formatting?: boolean }>(
+  function StudioTextarea({ formatting = true, ...props }, ref) {
+    const textarea = useRef<HTMLTextAreaElement>(null);
+    const [format, setFormat] = useState<{ value: string; label: string } | null>(null);
+    const [label, setLabel] = useState<string>();
+    useLayoutEffect(() => {
+      // Formatting controls can sit inside an existing wrapping label. Keep their
+      // names and editor contents out of the native field's accessible name.
+      const labels = Array.from(textarea.current?.labels ?? []).map(source => {
+        const copy = source.cloneNode(true) as HTMLLabelElement;
+        copy.querySelectorAll('.studio-writing-field, input, textarea, select, button, [aria-hidden="true"]').forEach(node => node.remove());
+        return copy.textContent?.replace(/\s+/gu, " ").trim() ?? "";
+      }).filter(Boolean).join(" ");
+      setLabel(labels || undefined);
+    });
+    useImperativeHandle(ref, () => textarea.current!, []);
+    const close = () => { setFormat(null); requestAnimationFrame(() => textarea.current?.focus()); };
+    return <span className="studio-writing-field">
+      <textarea {...props} aria-label={props["aria-label"] ?? (props["aria-labelledby"] ? undefined : label)} ref={textarea} hidden={Boolean(format)} data-studio-component="textarea" />
+      {format ? <Suspense fallback={<span role="status">Loading formatting…</span>}>
+        <StudioFormattingEditor value={typeof props.value === "string" ? props.value : format.value} label={format.label} maxLength={props.maxLength} onDone={close} onChange={value => {
+          const field = textarea.current;
+          if (field && value !== field.value) {
+            // Dispatch through the existing native field so every editor keeps its own save/validation path.
+            Object.getOwnPropertyDescriptor(HTMLTextAreaElement.prototype, "value")!.set!.call(field, value);
+            field.dispatchEvent(new Event("input", { bubbles: true }));
+          }
+        }} />
+      </Suspense> : formatting && !props.readOnly && !props.disabled && props.onChange ? <StudioButton className="studio-formatting-open" onClick={() => {
+        const field = textarea.current;
+        if (field) setFormat({ value: field.value, label: props["aria-label"] || field.labels?.[0]?.querySelector("span")?.textContent?.trim() || "Writing" });
+      }} aria-label="Format text" aria-description={props["aria-label"] || label || "Writing"}><span aria-hidden="true">Format text · B / I / Lists</span></StudioButton> : null}
+    </span>;
   }
 );
 
@@ -98,8 +129,15 @@ export function StudioTabs<T extends string>({ label, tabs, value, onValueChange
 }) {
   const id = useId();
   const [focused, setFocused] = useState<T | null>(null);
+  const tabList = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const list = tabList.current;
+    const selected = list?.querySelector<HTMLElement>('[aria-selected="true"]');
+    // Route changes can select an off-screen tab without focusing it. Scroll only the strip.
+    if (list && selected) list.scrollLeft += selected.getBoundingClientRect().left - list.getBoundingClientRect().left;
+  }, [value, hidden]);
   return <div className="studio-tabs">
-    {!hidden && <div role="tablist" aria-label={label}
+    {!hidden && <div ref={tabList} role="tablist" aria-label={label}
       onBlur={event => { if (!event.currentTarget.contains(event.relatedTarget)) setFocused(null); }}
       onKeyDown={event => {
         const buttons = Array.from(event.currentTarget.querySelectorAll<HTMLButtonElement>('[role="tab"]'));

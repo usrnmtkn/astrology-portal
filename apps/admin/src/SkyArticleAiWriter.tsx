@@ -88,7 +88,7 @@ export default function SkyArticleAiWriter({ planet, sign, field, currentText, d
     </label>
     <label className="admin-review-copy-editor">
       <span>Optional direction for the reusable article</span>
-      <StudioTextarea
+      <StudioTextarea formatting={false}
         value={instruction}
         disabled={disabled || busy}
         maxLength={6000}
@@ -110,7 +110,7 @@ export default function SkyArticleAiWriter({ planet, sign, field, currentText, d
     {error && <p role="alert">{error}</p>}
     {draft && <label className="admin-review-copy-editor">
       <span>AI suggestion</span>
-      <StudioTextarea value={draft} readOnly aria-label="AI article suggestion" />
+      <StudioTextarea formatting={false} value={draft} readOnly aria-label="AI article suggestion" />
       <small className="admin-field-hint">Use this draft only copies the suggestion into the reusable article editor.</small>
     </label>}
   </details>;

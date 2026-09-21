@@ -19,14 +19,36 @@ import { resolveCalendarMoonFallback } from "../../web/src/features/calendar/cal
 import { calendarMoonPhaseCopy } from "../../web/src/features/calendar/calendarMoonPhaseCopy";
 import { calendarLunationMacroKey } from "../../web/src/features/calendar/calendarDayMoonReading";
 import { calendarLocalDateKey } from "../../web/src/features/calendar/calendarPhaseLabel";
-import { moonContinuationSummaryKey } from "../../web/src/features/calendar/moonContinuationSummaries";
-import { calendarSeasonTransitionKeyForSurface, calendarSeasonTransitionKeys } from "../../web/src/features/calendar/calendarSeasonTransitions";
-import { moonSignTransitionKey } from "../../web/src/features/calendar/moonSignTransitions";
+import { moonContinuationSummaryKey, moonContinuationSummaryForSign } from "../../web/src/features/calendar/moonContinuationSummaries";
+import { calendarSeasonTransitionForSurface, calendarSeasonTransitionWhen, calendarSeasonTransitionKeyForSurface, calendarSeasonTransitionKeys } from "../../web/src/features/calendar/calendarSeasonTransitions";
+import { moonSignTransitionKey, moonSignTransitionForPair } from "../../web/src/features/calendar/moonSignTransitions";
 import { lunarSigns } from "./lunarCalendarContent";
 
-export type CalendarPreviewRow = SummaryCompositionRow & { id: string; facts?: Record<string, unknown> | null; sections?: unknown };
-export type CalendarPreviewValue = CalendarOverviewValue;
+export type CalendarPreviewRow = SummaryCompositionRow & { id: string; facts?: Record<string, unknown> | null; sections?: unknown; previewBody?: string };
+export type CalendarPreviewPart = CalendarOverviewValue & { name: string };
+export type CalendarPreviewValue = CalendarOverviewValue & { parts?: CalendarPreviewPart[] };
 export { calendarPreviewSeasons, calendarPreviewSign, calendarResolveOverviewField, calendarTemplateSegments, calendarContextualVariableNames };
+
+/** Annotate exact source spans without changing a byte of the assembled preview. */
+export function calendarPreviewCopyParts(body: string, candidates: CalendarPreviewPart[]): CalendarPreviewPart[] {
+  const spans: Array<CalendarPreviewPart & { start: number; end: number }> = [];
+  for (const candidate of [...candidates].sort((a, b) => b.text.length - a.text.length)) {
+    if (!candidate.text) continue;
+    const start = body.indexOf(candidate.text);
+    const end = start + candidate.text.length;
+    if (start < 0 || spans.some(span => start < span.end && end > span.start)) continue;
+    spans.push({ ...candidate, start, end });
+  }
+  const parts: CalendarPreviewPart[] = [];
+  let cursor = 0;
+  for (const { start, end, ...part } of spans.sort((a, b) => a.start - b.start)) {
+    if (start > cursor) parts.push({ name: `timing${parts.length}`, text: body.slice(cursor, start), kind: "fact", sourceLabel: "Calculated timing and fixed wording" });
+    parts.push(part);
+    cursor = end;
+  }
+  if (cursor < body.length) parts.push({ name: `timing${parts.length}`, text: body.slice(cursor), kind: "fact", sourceLabel: "Calculated timing and fixed wording" });
+  return parts;
+}
 
 function calendarCopyEligible(row: CalendarPreviewRow) {
   const record = (row.sections as { packageRecord?: Record<string, unknown> } | null)?.packageRecord;
@@ -34,6 +56,11 @@ function calendarCopyEligible(row: CalendarPreviewRow) {
     && isGovernedReaderEligible({ ...record, contentKey: row.content_key }) && row.body === record.body;
   return !row.inventory_only && (packaged || row.status === "LIVE" && row.lane === "serving" && !row.review_state)
     && isReaderServableGeneratedContentRow(row) && Boolean(row.body?.trim());
+}
+
+/** The private editor preview keeps the saved source intact for eligibility checks. */
+function calendarWorkingRow(row: CalendarPreviewRow | undefined) {
+  return row && row.previewBody !== undefined ? { ...row, body: row.previewBody } : row;
 }
 
 export function calendarPreviewSourceKeys(period: SkyForecastPeriod, signs: string[]) {
@@ -71,7 +98,7 @@ export function calendarMoonPassages(rows: CalendarPreviewRow[], sign: string) {
     const identity = lunarContentIdentity(row.content_key);
     return identity?.family === "Moon-sign leftover" && identity.sign === sign.toLowerCase() && !identity.excluded
       && calendarCopyEligible(row);
-  }).sort((a, b) => a.content_key.localeCompare(b.content_key));
+  }).map(row => calendarWorkingRow(row)!).sort((a, b) => a.content_key.localeCompare(b.content_key));
 }
 
 function normalizedPreviewBody(value?: string | null) {
@@ -99,23 +126,28 @@ export function calendarMoonWriteupForDay(
   const lunation = day.events?.find((event) => event.type === "lunation") ?? null;
   const lunationKey = calendarLunationMacroKey(lunation, day.moonSign);
   const lunationRow = lunationKey
-    ? rows.find((row) => row.content_key === lunationKey && calendarCopyEligible(row))
+    ? calendarWorkingRow(rows.find((row) => row.content_key === lunationKey && calendarCopyEligible(row)))
     : undefined;
   const summaryKey = moonContinuationSummaryKey(day.moonSign);
-  const summaryRow = rows.find((row) => row.content_key === summaryKey && calendarCopyEligible(row));
+  const summaryRow = calendarWorkingRow(rows.find((row) => row.content_key === summaryKey && calendarCopyEligible(row)));
   const nextSign = facts?.nextMoonSign
     || (lunarSigns.includes(day.moonSign.toLowerCase())
       ? lunarSigns[(lunarSigns.indexOf(day.moonSign.toLowerCase()) + 1) % lunarSigns.length]
       : "");
   const transitionKey = nextSign ? moonSignTransitionKey(day.moonSign, nextSign) : "";
   const transitionRow = transitionKey
-    ? rows.find((row) => row.content_key === transitionKey && calendarCopyEligible(row))
+    ? calendarWorkingRow(rows.find((row) => row.content_key === transitionKey && calendarCopyEligible(row)))
     : undefined;
+  const seasonTransitionKey = facts?.seasonName && facts.nextSunSign
+    ? calendarSeasonTransitionKeyForSurface(facts.seasonName, facts.nextSunSign, "leftover", facts.daysUntilSeasonEnd)
+    : "";
+  const seasonTransitionRow = calendarWorkingRow(rows.find(row => row.content_key === seasonTransitionKey && calendarCopyEligible(row)));
   if (!facts) {
     return authored?.body
       ? { body: authored.body, contentKey: authored.content_key, kind: "authored" as const, row: authored }
       : null;
   }
+  const phaseCopy = calendarMoonPhaseCopy(facts, (contentKey) => calendarWorkingRow(rows.find(row => row.content_key === contentKey && calendarCopyEligible(row)))?.body ?? "");
   const resolved = resolveCalendarMoonFallback(facts, {
     exactLunationCopy: lunationRow?.body
       ? { body: lunationRow.body, contentKey: lunationRow.content_key }
@@ -124,31 +156,37 @@ export function calendarMoonWriteupForDay(
       ? { body: authored.body, contentKey: authored.content_key }
       : null,
     authoredUsedThisVisit: used.size > 0,
-    authoredPhaseCopy: calendarMoonPhaseCopy(facts, (contentKey) => {
-      const row = rows.find((item) => item.content_key === contentKey && calendarCopyEligible(item));
-      return row?.body ?? "";
-    }),
+    authoredPhaseCopy: phaseCopy,
     seasonSummary,
     moonContinuationSummary: summaryRow?.body,
     pairTransition: transitionRow?.body,
-    seasonTransition: facts.seasonName && facts.nextSunSign
-      ? rows.find((row) => (
-        row.content_key === calendarSeasonTransitionKeyForSurface(
-          facts.seasonName,
-          facts.nextSunSign,
-          "leftover",
-          facts.daysUntilSeasonEnd
-        )
-        && calendarCopyEligible(row)
-      ))?.body
-      : undefined
+    seasonTransition: seasonTransitionRow?.body
   });
   if (!resolved) return null;
+  const candidates: CalendarPreviewPart[] = [];
+  const add = (name: string, text: string | undefined, sourceKey: string | undefined, sourceLabel: string) => {
+    if (text) candidates.push({ name, text, sourceKey, sourceLabel, kind: "copy" });
+  };
+  if (resolved.kind !== "authored" && resolved.kind !== "exact-lunation") {
+    const continuation = moonContinuationSummaryForSign(facts.moonSign, summaryRow?.body, { exactFirstQuarter: facts.exactFirstQuarter });
+    // Some event-specific wording is fixed in the resolver and ignores a saved
+    // override. Do not present that wording as editable through the unused row.
+    add("continuation", continuation, facts.exactFirstQuarter && continuation !== summaryRow?.body?.trim() ? undefined : summaryKey, "Moon continuation passage");
+    add("transition", moonSignTransitionForPair(facts.moonSign, nextSign, transitionRow?.body), transitionKey, "Moon sign transition passage");
+    const phaseRow = calendarWorkingRow(rows.find(row => row.content_key === phaseCopy?.contentKey && calendarCopyEligible(row)));
+    const phaseSourceBody = phaseRow?.body?.trim().replaceAll("{{signTitle}}", calendarPreviewSign(facts.moonSign));
+    add("phase", phaseCopy?.body, phaseRow && phaseSourceBody !== phaseCopy?.body ? undefined : phaseCopy?.contentKey, "Moon phase passage");
+    add("seasonTransition", calendarSeasonTransitionForSurface({ fromSign: facts.seasonName, toSign: facts.nextSunSign,
+      date: calendarSeasonTransitionWhen(facts.daysUntilSeasonEnd, facts.seasonEndDate), surface: "leftover",
+      daysUntilSeasonEnd: facts.daysUntilSeasonEnd, override: seasonTransitionRow?.body }), seasonTransitionKey, "Season transition passage");
+    add("season", seasonSummary, facts.seasonName ? `fallback-hook/zodiac-season/${facts.seasonName.toLowerCase()}` : undefined, "Zodiac season passage");
+  }
   return {
     body: resolved.body,
     contentKey: resolved.contentKey,
     kind: resolved.kind,
-    row: resolved.kind === "authored" ? authored ?? undefined : resolved.kind === "exact-lunation" ? lunationRow : undefined
+    row: resolved.kind === "authored" ? authored ?? undefined : resolved.kind === "exact-lunation" ? lunationRow : undefined,
+    parts: resolved.kind === "authored" || resolved.kind === "exact-lunation" ? undefined : calendarPreviewCopyParts(resolved.body, candidates)
   };
 }
 
@@ -168,9 +206,13 @@ export function calendarPreviewValues({ sunSign, moonSign, calculation, rows, mo
   const put = (name: string, text: string | undefined, kind: CalendarPreviewValue["kind"], sourceKey?: string) => {
     if (text) values[name] = { text, kind, sourceKey };
   };
+  const putWriteup = (name: string, writeup: ReturnType<typeof calendarMoonWriteupForDay>) => {
+    put(name, writeup?.body, "copy", writeup?.contentKey);
+    if (values[name] && writeup && "parts" in writeup && writeup.parts) values[name].parts = writeup.parts;
+  };
   put("sunSign", sunSign, calculation ? "fact" : "example");
   put("moonSign", moonSign, calculation ? "fact" : "example");
-  const content = publishedSkySummaryContent(rows);
+  const content = publishedSkySummaryContent(rows.map(row => calendarWorkingRow(row)!));
   if (sunSign) {
     const parts = calculation ? calendarSunSummary(calculation.sky, content)
       : skyDailySummaryParts({ sun: { sign: sunSign }, moonIsVoid: false }, content, { openingOnly: true });
@@ -195,7 +237,7 @@ export function calendarPreviewValues({ sunSign, moonSign, calculation, rows, mo
       const row = rows.filter(row => row.content_key === key && !row.inventory_only && ["LIVE", "DRAFT"].includes(row.status))
         .sort((a, b) => (b.updated_at ?? "").localeCompare(a.updated_at ?? ""))[0];
       const sections = row?.sections as { packageDraft?: { body?: string }; packageRecord?: { calendarWritingSource?: { title?: string } } } | undefined;
-      const body = sections?.packageDraft?.body ?? row?.body;
+      const body = row?.previewBody ?? sections?.packageDraft?.body ?? row?.body;
       if (body?.trim() && !/\{\{|\}\}/u.test(body)) {
         const variable = prefix ? `${prefix}${name[0].toUpperCase()}${name.slice(1)}` : name;
         put(variable, body, "copy", key);
@@ -302,7 +344,7 @@ export function calendarPreviewValues({ sunSign, moonSign, calculation, rows, mo
       put(`${weekday}Date`, formatDate(day.date), "fact");
       put(`${weekday}MoonSign`, calendarPreviewSign(day.moonSign) || day.moonSign, "fact");
       put(`${weekday}Timing`, timedEvents(day.events) || `Moon in ${day.moonSign} at noon · ${day.moonPhase}`, "fact");
-      put(`${weekday}Writeup`, writeup?.body, "copy", writeup?.contentKey);
+      putWriteup(`${weekday}Writeup`, writeup);
       put(`${weekday}MoonFocus`, calendarMoonFocus(writeup?.row), "copy", writeup?.contentKey);
     }
     const previewDateKey = calendarLocalDateKey(sky.generatedAt, timeZone);
@@ -314,7 +356,7 @@ export function calendarPreviewValues({ sunSign, moonSign, calculation, rows, mo
     } else if (previewDay) {
       const writeup = writeupsByDate.get(previewDay.dateKey)
         ?? calendarMoonWriteupForDay(rows, previewDay, cycleFacts.get(previewDay.dateKey), seasonSummary);
-      put("moonWriteup", writeup?.body ?? undefined, "copy", writeup?.contentKey);
+      putWriteup("moonWriteup", writeup);
       put("moonFocus", calendarMoonFocus(writeup?.row), "copy", writeup?.contentKey);
     } else if (moon) {
       put("moonWriteup", moon.body ?? undefined, "copy", moon.content_key);

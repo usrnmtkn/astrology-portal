@@ -236,7 +236,7 @@ for (const width of [390, 1440]) {
     await expect(summary).toBeVisible({ timeout: 60_000 });
     await expect(summary).toContainText(/^The Sun in Libra at \d+° puts more attention on agreements, tradeoffs, and decisions that affect more than one person. The Moon in Libra at \d+°/);
     await expect(summary.locator("strong")).toHaveCount(0);
-    expect(await summary.locator("span").first().evaluate(el => getComputedStyle(el).fontWeight)).toBe("400");
+    expect(await summary.locator("p").first().evaluate(el => getComputedStyle(el).fontWeight)).toBe("400");
     expect(await summary.getByRole("link").first().evaluate(el => getComputedStyle(el).fontWeight)).toBe("400");
     await expect(summary.getByRole("link", { name: "Read about Sun in Libra" })).toBeVisible();
     await expect(page.locator(".retrograde-section")).toHaveCount(0);

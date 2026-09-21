@@ -58,7 +58,7 @@ export function ArticleBlockStyleFields({
       {blocks.map((block, index) => {
         const tag = inferArticleBlockStyle(block);
         return (
-          <label className="admin-review-copy-editor" key={`${block.heading || "block"}-${index}`}>
+          <label className="admin-review-copy-editor" key={index}>
             <span>{block.heading || `Section ${index + 1}`}</span>
             <AdminSelect
               aria-label={`Section ${index + 1} style`}
@@ -85,10 +85,10 @@ export function ArticleBlockStyleFields({
             />
             <StudioTextarea
               aria-label={`Section ${index + 1} body`}
-              value={block.body ?? ""}
+              value={block.list?.length ? block.list.map(list => list.items.map((item, i) => `${list.ordered ? `${i + 1}.` : "-"} ${item}`).join("\n")).join("\n\n") : block.body ?? ""}
               onChange={(event) => {
                 onBlocksChange(blocks.map((entry, blockIndex) => (
-                  blockIndex === index ? { ...entry, body: event.target.value } : entry
+                  blockIndex === index ? { ...entry, body: event.target.value, list: undefined } : entry
                 )));
               }}
             />

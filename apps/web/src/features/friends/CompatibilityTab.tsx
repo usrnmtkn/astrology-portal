@@ -1,3 +1,4 @@
+import { FormattedProse } from "../../components/FormattedProse";
 import type { KeyboardEvent } from "react";
 
 import { zodiacAssetHref, zodiacSignIconFiles } from "../../components/charts/chartAssets";
@@ -182,7 +183,7 @@ export function CompatibilityTab({
         {daily ? (
           <section className="daily-horoscope-summary friend-daily-forecast" aria-label={`Today - ${daily.dateLabel}`}>
             <span className="eyebrow section-label friend-section-label">Today - {daily.dateLabel}</span>
-            <p>{daily.body}</p>
+            <FormattedProse text={daily.body} />
           </section>
         ) : null}
         <section className="compatibility-card-list" aria-label="Planet comparisons">
@@ -253,12 +254,10 @@ export function CompatibilityTab({
               </div>
               <div className="compatibility-card__body compatibility-card__reading">
                 {preview.paragraphs.map((paragraph, index) => (
-                  <p
+                  <FormattedProse
                     className={!preview.truncated && index === preview.paragraphs.length - 1 ? "compatibility-card__verdict" : undefined}
                     key={`${card.id}-preview-${index}`}
-                  >
-                    {paragraph}
-                  </p>
+                   text={paragraph} />
                 ))}
               </div>
               {card.exactAspectLabel ? (
@@ -280,7 +279,7 @@ export function CompatibilityTab({
                         <span className="aspect-row-glyphs" aria-hidden="true">{dynamic.glyphs}</span>
                         <span className="aspect-row-copy">
                           <h4>{dynamic.title}</h4>
-                          <p>{dynamic.summary}</p>
+                          <FormattedProse text={dynamic.summary} />
                           <span className="aspect-row-subtitle ui-pill ui-pill--muted compatibility-dynamic-row__tag">
                             {dynamic.meta}
                           </span>

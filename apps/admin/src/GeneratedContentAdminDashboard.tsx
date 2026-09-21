@@ -128,6 +128,7 @@ import {
   astro101BlocksFromSections,
   astro101ContentKey,
   astro101HasReaderCopy,
+  astro101IsLiveOnLearn,
   astro101HubTitleFromSections,
   astro101IntroFromSections,
   astro101KindFromSections,
@@ -359,11 +360,12 @@ type AdminWritingSurfaceMapPayload = {
 type AdminArticlePointFilter = "all" | "sun" | "moon" | "mercury" | "venus" | "mars" | "jupiter" | "saturn" | "uranus" | "neptune" | "pluto" | "other";
 type AdminSkyWriteupSubjectFilter = "all" | "planet" | "angle" | "point";
 type SkyWriteupWorkspaceView = "daily-summary" | "catalog" | "transits-to-natal" | "house-transits";
-type CalendarWriteupWorkspaceView = "daily-sky" | SkyForecastPeriod;
+type CalendarWriteupWorkspaceView = SkyForecastPeriod | "season-transitions";
 const calendarWriteupWorkspaceTabs: { value: CalendarWriteupWorkspaceView; label: string }[] = [
   { value: "daily-sky", label: "Daily Sky" },
   { value: "weekly-sky", label: "Weekly Sky" },
-  { value: "monthly-sky", label: "Monthly Sky" }
+  { value: "monthly-sky", label: "Monthly Sky" },
+  { value: "season-transitions", label: "Season transitions" }
 ];
 const skyWriteupWorkspaceTabs: { value: SkyWriteupWorkspaceView; label: string }[] = [
   { value: "daily-summary", label: "Daily Sky Summary" },
@@ -4211,7 +4213,7 @@ export function GeneratedContentAdminDashboard() {
       page === "skyWriteups" && skyWriteupWorkspaceTabs.some(tab => tab.value === view)
         ? view as SkyWriteupWorkspaceView : "catalog"
     );
-    setCalendarWriteupWorkspaceView(page === "calendarWriteups" && (view === "weekly-sky" || view === "monthly-sky") ? view : "daily-sky");
+    setCalendarWriteupWorkspaceView(page === "calendarWriteups" && (view === "weekly-sky" || view === "monthly-sky" || view === "season-transitions") ? view : "daily-sky");
     setTransitReadingContext(page === "skyWriteups" && view === "transits-to-natal" ? {
       ...(params.get("pass") ? { pass: Number(params.get("pass")) } : {}),
       ...(params.get("variant") ? { variant: Number(params.get("variant")) } : {}),
@@ -7041,16 +7043,17 @@ export function GeneratedContentAdminDashboard() {
             <StudioTabs label="Calendar Write-ups workspaces" value={calendarWriteupWorkspaceView}
               tabs={calendarWriteupWorkspaceTabs}
               onValueChange={view => navigateAdminPage("calendarWriteups", new URLSearchParams({ view }))}>
-              <Suspense fallback={<PageLoading message="Loading Calendar template…" />}><SkyForecastTemplateStudio period={calendarWriteupWorkspaceView} rows={rows} busy={isLoading}
+              {calendarWriteupWorkspaceView !== "season-transitions" && <Suspense fallback={<PageLoading message="Loading Calendar template…" />}><SkyForecastTemplateStudio period={calendarWriteupWorkspaceView} rows={rows} busy={isLoading}
                 loadRows={loadCalendarPreviewRows} draft={draft}
                 onEditSource={row => void openCalendarWritingSource(row as AdminGeneratedContentRow)}
-                onEditOverview={field => void openSkyForecastTemplate(calendarWriteupWorkspaceView, field)}
-                onOpen={period => void openSkyForecastTemplate(period)} editor={calendarWriteupWorkspaceView === "daily-sky" ? null : renderEditor()} /></Suspense>
-              {calendarWriteupWorkspaceView === "daily-sky" && (
-                <Suspense fallback={<PageLoading message="Loading leftover write-ups…" />}>
-                  <LunarCalendarWorkspace rows={rows} query={query} onQuery={setQuery} createRequest={calendarCreateRequest}
+                onEditOverview={field => void openSkyForecastTemplate(calendarWriteupWorkspaceView as SkyForecastPeriod, field)}
+                onBrowseSeasonTransitions={() => navigateAdminPage("calendarWriteups", new URLSearchParams({ view: "season-transitions" }))}
+                onOpen={period => void openSkyForecastTemplate(period)} editor={calendarWriteupWorkspaceView === "daily-sky" ? null : renderEditor()} /></Suspense>}
+              {(calendarWriteupWorkspaceView === "daily-sky" || calendarWriteupWorkspaceView === "season-transitions") && (
+                <Suspense fallback={<PageLoading message="Loading Calendar passages…" />}>
+                  <LunarCalendarWorkspace key={calendarWriteupWorkspaceView} scope={calendarWriteupWorkspaceView === "season-transitions" ? "season-transitions" : "all"} rows={rows} query={query} onQuery={setQuery} createRequest={calendarCreateRequest}
                     onCreateRequestHandled={() => setCalendarCreateRequest(0)} isLoading={isLoading || loadState !== "loaded"}
-                    editor={renderEditor()} onEdit={row => openRow(row as AdminGeneratedContentRow)}
+                    editor={renderEditor()} onEdit={row => openRow(row as AdminGeneratedContentRow, null, calendarWriteupWorkspaceView === "season-transitions" ? "body" : undefined)}
                     onLoad={row => hydrateGeneratedContentRow(row as AdminGeneratedContentRow)}
                     onCreate={sign => handleCreateAction("knowledge", "Draft opened. Nothing has been saved yet.", sign)} />
                 </Suspense>
@@ -10170,7 +10173,7 @@ export function GeneratedContentAdminDashboard() {
               : isTemplateDraft
                 ? "Template purpose (optional)"
                 : "TL;DR / summary");
-    const bodyFieldLabel = isReferenceDraft ? "Source text" : isSkySummaryDraft ? "Summary wording" : lunarIdentity ? "Full lunar passage" : isYouOnlyNatalExactDraft
+    const bodyFieldLabel = isReferenceDraft ? "Source text" : isSkySummaryDraft ? "Summary wording" : lunarIdentity?.family === "Season transitions" ? "Season transition passage" : lunarIdentity ? "Full lunar passage" : isYouOnlyNatalExactDraft
       ? "You view exact copy"
       : isVocabularyDraft && isPackageDraft
       ? vocabularyHasTheyVersion ? "You version" : "Variable value"
@@ -10250,7 +10253,7 @@ export function GeneratedContentAdminDashboard() {
               : isTemplateDraft
                 ? isCompatibilityWorkspaceDraft ? "Create compatibility template" : "Create reader-copy template"
                 : "Create saved row";
-    const editorUseLabel = isSkyPlacementSource ? (currentDraft.contentKey.includes("/retrograde/") ? "Retrograde writing" : "Shared placement writing") : lunarContentIdentity(currentDraft.contentKey)?.destination ?? aspectContext?.label
+    const editorUseLabel = isAstro101Draft ? `Astro 101 · ${ASTRO_101_KIND_LABELS[astro101KindForDraft(currentDraft)]}` : isSkyPlacementSource ? (currentDraft.contentKey.includes("/retrograde/") ? "Retrograde writing" : "Shared placement writing") : lunarContentIdentity(currentDraft.contentKey)?.destination ?? aspectContext?.label
       ?? (selectedRow
         ? contentCategoryForRow(selectedRow)
         : isArticleDraft
@@ -10292,7 +10295,7 @@ export function GeneratedContentAdminDashboard() {
               : { title: "How this row is used", hint: null };
     const isSharedSeasonSource = isZodiacSeasonSourceKey(currentDraft.contentKey);
     const seasonSourceUsage = "Calendar, Sky and other supported templates";
-    const editorDetailsSummary = [
+    const editorDetailsSummary = isAstro101Draft ? editorUseLabel : [
       isSharedSeasonSource ? "Shared zodiac season source" : currentDraft.surface,
       currentDraft.mode,
       currentDraft.lane,
@@ -10346,8 +10349,9 @@ export function GeneratedContentAdminDashboard() {
           </StudioButton>
           <div className="admin-editor-meta">
             <div className="admin-editor-context-line">
-              <ContentLiveStatusBadge label="Reader status" row={editorStatusRow} unsaved={draftHasUnsavedChanges && !(!currentDraft.id && matchesBuiltinSummary)} />
+              <ContentLiveStatusBadge label="Reader status" row={editorStatusRow} unsaved={!isAstro101Draft && draftHasUnsavedChanges && !(!currentDraft.id && matchesBuiltinSummary)} />
               <span className={aspectContext ? "admin-aspect-context-pill" : undefined} title={aspectContext?.detail}>{editorUseLabel}</span>
+              {isAstro101Draft && <span>{selectedRow && astro101IsLiveOnLearn(selectedRow) ? "Visible in app" : "Hidden from app"}</span>}
               {editorReaderDestination && editorReaderDestination !== editorUseLabel && <span className="admin-editor-reader-destination">{editorReaderDestination}</span>}
             </div>
             <div className="admin-editor-toolbar-actions">
@@ -11264,7 +11268,7 @@ export function GeneratedContentAdminDashboard() {
             onWritingAction={(action) => void runSkyDraftWriting(selectedRow.content_key, action, selectedRow)} /></Suspense>}
           {currentDraft.contentKey.startsWith("slot-template/calendar/") && <Suspense fallback={null}><CalendarOverviewEditor
             draft={currentDraft} initialField={skyWritingContext.fieldPath} onChange={next => setDraft(invalidateContentStudioReview(next))} /></Suspense>}
-          {!compiledSkyArticleEdition && showGenericBody && !skyFallbackEditor && (
+          {!compiledSkyArticleEdition && showGenericBody && !skyFallbackEditor && !(isAstro101Draft && (astro101Blocks.length || astro101Intro)) && (
             <label className="admin-review-copy-editor studio-surface">
               <span>{bodyFieldLabel} <em className="admin-required-marker">Required</em></span>
               <StudioTextarea
@@ -11350,7 +11354,7 @@ export function GeneratedContentAdminDashboard() {
               <p>A published row replaces prose on the named app surface immediately. Astrology facts remain calculated by the app and can enter this copy only through the allowed slots below.</p>
               <p><strong>Allowed slots:</strong> {cmsAllowedSlots.length > 0 ? cmsAllowedSlots.map((slot) => isSkySummaryDraft ? `{${slot}}` : `{{${slot}}}`).join(", ") : "This row has no calculated slots."}</p>
               <p>Save & publish makes your wording live in one step. Save draft keeps an unfinished revision for later.</p>
-              <p><strong>Reader status:</strong> <ContentLiveStatusBadge row={editorStatusRow} unsaved={draftHasUnsavedChanges && !(!currentDraft.id && matchesBuiltinSummary)} /></p>
+              <p><strong>Reader status:</strong> <ContentLiveStatusBadge row={editorStatusRow} unsaved={!isAstro101Draft && draftHasUnsavedChanges && !(!currentDraft.id && matchesBuiltinSummary)} /></p>
               {cmsTemplateValidation.errors.length > 0 ? (
                 <div role="alert" aria-label="CMS template errors">
                   <strong>Fix before Sign Off</strong>
@@ -11610,7 +11614,7 @@ export function GeneratedContentAdminDashboard() {
                 </label>
                 <label className="admin-package-notes-field">
                   <span>Editor notes (optional)</span>
-                  <StudioTextarea aria-label="Editor notes" value={packageEditorialNotesForDraft(currentDraft)} onChange={(event) => updatePackageEditorialNotes(event.target.value)} placeholder="Add context for another editor; readers never see these notes." />
+                  <StudioTextarea formatting={false} aria-label="Editor notes" value={packageEditorialNotesForDraft(currentDraft)} onChange={(event) => updatePackageEditorialNotes(event.target.value)} placeholder="Add context for another editor; readers never see these notes." />
                 </label>
               </section>
             ) : (
@@ -11642,7 +11646,7 @@ export function GeneratedContentAdminDashboard() {
                 </label>
                 <label className="admin-package-notes-field">
                   <span>Editorial notes</span>
-                  <StudioTextarea aria-label="Editorial notes" value={packageEditorialNotesForDraft(currentDraft)} onChange={(event) => updatePackageEditorialNotes(event.target.value)} />
+                  <StudioTextarea formatting={false} aria-label="Editorial notes" value={packageEditorialNotesForDraft(currentDraft)} onChange={(event) => updatePackageEditorialNotes(event.target.value)} />
                 </label>
               </section>
             ))}
@@ -11865,14 +11869,16 @@ export function GeneratedContentAdminDashboard() {
                 const saved = draftHasUnsavedChanges || !selectedRow ? await saveDraft() : selectedRow;
                 if (saved) await approvePackageRevision(saved);
               } else {
-                await saveDraft(isCmsSurfaceDraft ? "LIVE" : undefined);
+                await saveDraft(isCmsSurfaceDraft ? "LIVE" : isAstro101Draft && currentDraft.status !== "LIVE" ? "DRAFT" : undefined);
               }
             })()}
             disabled={isLoading || unchangedSkySource || Boolean(compiledSkyArticleEdition) || !compatibilityNewDraftReady || (isCmsSurfaceDraft && (!cmsCanSignOff || !publishReady)) || (packageWillPublishOnSave && (natalAspectMissingCopy || transitNatalMissingCopy)) || (!isNewDraft && !draftHasUnsavedChanges && !packageWillPublishOnSave && !packageCanApproveRevision && !(isCmsSurfaceDraft && currentDraft.status !== "LIVE"))}
             title={packageWillPublishOnSave && (natalAspectMissingCopy || transitNatalMissingCopy) ? "Write the passage before publishing." : !compatibilityNewDraftReady ? "Complete the Compatibility identity and copy." : undefined}
           >
             <Save size={16} aria-hidden="true" />
-            {isGuidedHeldReview
+            {isAstro101Draft
+              ? currentDraft.status === "LIVE" ? "Save changes" : "Save draft"
+              : isGuidedHeldReview
               ? "Save held draft"
               : isCmsSurfaceDraft || packageCanApproveRevision || unchangedSkySource
                 ? "Save & publish"
@@ -11921,7 +11927,7 @@ export function GeneratedContentAdminDashboard() {
               Revert to package original
             </StudioButton>
           )}
-          {currentDraft.id && !currentDraft.id.startsWith("package:") && !rows.find((row) => row.id === currentDraft.id)?.target_date && (
+          {!isAstro101Draft && currentDraft.id && !currentDraft.id.startsWith("package:") && !rows.find((row) => row.id === currentDraft.id)?.target_date && (
             <StudioButton type="button" className={isContentRetired(currentDraft.contentKey) ? "admin-secondary-button" : "admin-danger-button"} disabled={isLoading || draftHasUnsavedChanges}
               onClick={() => void retireContentEverywhere(isContentRetired(currentDraft.contentKey) ? "publish" : "retire")}
               title={isContentRetired(currentDraft.contentKey) ? "Restore this saved version for readers." : "Retire this content key across Studio, bundled writing, and synced offline copies."}>
@@ -11949,10 +11955,10 @@ export function GeneratedContentAdminDashboard() {
           )}
           {!isPackageDraft && !isCmsSurfaceDraft && !isNewDraft && (
             <>
-              <StudioButton className="admin-review-button" type="button" onClick={() => void saveDraft("REVIEWED")} disabled={isLoading || !publishReady || reviewComplete}>
+              {!isAstro101Draft && <StudioButton className="admin-review-button" type="button" onClick={() => void saveDraft("REVIEWED")} disabled={isLoading || !publishReady || reviewComplete}>
                 <Check size={16} aria-hidden="true" />
                 {reviewComplete ? "Reviewed" : "Mark reviewed"}
-              </StudioButton>
+              </StudioButton>}
               {isGovernedSkyDraft && selectedRow ? (
                 <StudioButton className="admin-publish-button" type="button" onClick={() => void approveAndScheduleSkyRow(selectedRow)} disabled={isLoading || skyDraftHasUnsavedCopy || skyWritingIssues(selectedRow).length > 0} title={skyDraftHasUnsavedCopy ? "Save and revalidate copy edits before approval." : currentDraft.blockType === "sky_placement" ? "Approve this copy for governed package import. This does not publish it." : "Approve this reusable card for calculated matching Sky configurations."}>
                   <Check size={16} aria-hidden="true" />
@@ -11960,6 +11966,10 @@ export function GeneratedContentAdminDashboard() {
                 </StudioButton>
               ) : isContentStudioReferenceSource(currentDraft.contentKey, currentDraft.sourceSnapshot ?? {}) ? (
                 <small className="admin-field-hint">Source material cannot be published.</small>
+              ) : isAstro101Draft && currentDraft.status === "LIVE" ? (
+                <StudioButton type="button" onClick={() => void saveDraft("DRAFT")} disabled={isLoading} title="Save your changes and hide this page from the app. You can publish it again later.">
+                  Move to draft
+                </StudioButton>
               ) : (
                 <StudioButton className="admin-publish-button" type="button" onClick={() => void saveDraft("LIVE")} disabled={isLoading || !cmsCanSignOff || !publishReady} title={!publishReady ? (isAstro101Draft ? "Write the article before publishing." : "Add the required main copy before publishing.") : !cmsCanSignOff ? "Fix the CMS template errors before publishing." : "Make this reviewed source eligible for its app surface."}>
                   <Check size={16} aria-hidden="true" />

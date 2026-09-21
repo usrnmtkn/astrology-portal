@@ -1,4 +1,5 @@
-import { useEffect, useMemo, useState } from "react";
+import { FormattedText, FormattedProse } from "../../web/src/components/FormattedProse";
+import { useEffect, useId, useMemo, useRef, useState } from "react";
 import { PageLoading } from "../../web/src/components/PageLoading";
 import { AdminSelect } from "./AdminNativeControls";
 import { StudioButton, StudioInput, StudioTabs } from "./StudioControls";
@@ -17,12 +18,25 @@ export type CalendarTemplatePreviewProps = {
   draft?: { contentKey: string; body: string; sections?: unknown } | null;
   onEditSource: (row: CalendarPreviewRow) => void;
   onEditOverview: (field: string) => void;
+  onBrowseSeasonTransitions?: () => void;
 };
 const dateInput = (date: Date) => `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}T${String(date.getHours()).padStart(2, "0")}:${String(date.getMinutes()).padStart(2, "0")}`;
 
-export default function CalendarTemplatePreview({ period, rows, loadRows, draft, onEditSource, onEditOverview }: CalendarTemplatePreviewProps) {
+export default function CalendarTemplatePreview({ period, rows, loadRows, draft, onEditSource, onEditOverview, onBrowseSeasonTransitions }: CalendarTemplatePreviewProps) {
   const [mode, setMode] = useState("ephemeris");
   const [view, setView] = useState("preview");
+  const [selectedVariable, setSelectedVariable] = useState("");
+  const preview = useRef<HTMLElement>(null);
+  const returnVariable = useRef<string | null>(null);
+  const editorWasOpen = useRef(false);
+  const variableDetails = useRef<HTMLDivElement>(null);
+  const variableId = useId();
+  useEffect(() => {
+    if (view !== "variables" || !selectedVariable) return;
+    const row = variableDetails.current?.querySelector<HTMLElement>(`[data-calendar-variable="${selectedVariable}"]`);
+    row?.scrollIntoView({ block: "center" });
+    row?.focus({ preventScroll: true });
+  }, [view, selectedVariable]);
   const [date, setDate] = useState(() => dateInput(new Date()));
   const [live, setLive] = useState(true);
   const [sun, setSun] = useState("");
@@ -71,7 +85,7 @@ export default function CalendarTemplatePreview({ period, rows, loadRows, draft,
     return () => { active = false; };
   }, [sourceKey, loadRows]);
   const baseValues = useMemo(() => calendarPreviewValues({ sunSign, moonSign, calculation,
-    rows: (sources ?? []).map(row => row.content_key === draft?.contentKey ? { ...row, body: draft.body, sections: draft.sections } : row), moonKey
+    rows: (sources ?? []).map(row => row.content_key === draft?.contentKey ? { ...row, previewBody: draft.body, sections: draft.sections } : row), moonKey
   }), [sunSign, moonSign, calculation, sources, moonKey, draft]);
   const template = skyForecastTemplates[period];
   const saved = sources?.find(row => row.content_key === template.contentKey);
@@ -97,12 +111,44 @@ export default function CalendarTemplatePreview({ period, rows, loadRows, draft,
   if (writing.planetaryHighlights?.trim()) values.hasPlanetaryHighlights = { text: "yes", kind: "copy", sourceKey: template.contentKey };
   if (writing.lunationConnection?.trim()) values.hasLunationConnection = { text: "yes", kind: "copy", sourceKey: template.contentKey };
   const passages = calendarMoonPassages(sources ?? [], moonSign);
-  const segments = calendarTemplateSegments(pattern, values, customTemplates);
+  const segments = calendarTemplateSegments(pattern, values, customTemplates).flatMap(segment => {
+    const parts = segment.name ? values[segment.name]?.parts : undefined;
+    if (!parts) return [segment];
+    return parts.map(part => {
+      if (!part.text.trim()) return { text: part.text, name: undefined, value: undefined };
+      const name = `${segment.name}.${part.name}`;
+      values[name] = part;
+      return { text: part.text, name, value: part };
+    });
+  });
   const missing = [...new Set([...segments.map(segment => segment.text).join("").matchAll(/\{\{\s*([\w.]+)\s*\}\}/gu)].map(match => match[1]))];
-  const availableNames = [...new Set([...calendarSeasonVariables, ...Object.keys(values), ...overviewFields.map(field => field.name)])]
-    .filter(name => !calendarContextualVariableNames.includes(name as typeof calendarContextualVariableNames[number]));
+  const availableNames = [...new Set([...calendarSeasonVariables, ...Object.keys(values), ...overviewFields.map(field => field.name), ...(selectedVariable ? [selectedVariable] : [])])]
+    .filter(name => name === selectedVariable || !calendarContextualVariableNames.includes(name as typeof calendarContextualVariableNames[number]));
   const ready = Boolean(sources) && (mode === "signs" || Boolean(calculation));
-  return <section className="admin-template-reader-drilldown studio-surface" aria-label="Calendar template preview">
+  useEffect(() => {
+    if (draft) { editorWasOpen.current = true; return; }
+    if (!editorWasOpen.current || !ready) return;
+    editorWasOpen.current = false;
+    const name = returnVariable.current;
+    returnVariable.current = null;
+    if (!name) return;
+    // Source hydration may replace the original button while the editor is open.
+    const frame = window.requestAnimationFrame(() => preview.current?.querySelector<HTMLButtonElement>(`button[data-variable-name="${name}"]`)?.focus({ preventScroll: true }));
+    return () => window.cancelAnimationFrame(frame);
+  }, [draft, ready]);
+  const variableSource = (name: string) => {
+    const sourceKey = values[name]?.sourceKey ?? calendarSeasonSourceKey(name, sunSign, values.openingSeasonSign?.text ?? "", values.closingSeasonSign?.text ?? "");
+    return sources?.find(row => row.content_key === sourceKey);
+  };
+  const canEdit = (name: string) => overviewFields.some(field => field.name === name) || Boolean(variableSource(name));
+  const openVariable = (name: string) => {
+    if (overviewFields.some(field => field.name === name)) { returnVariable.current = name; onEditOverview(name); return; }
+    const source = variableSource(name);
+    if (source) { returnVariable.current = name; onEditSource(source); return; }
+    setSelectedVariable(name);
+    setView("variables");
+  };
+  return <section ref={preview} className="admin-template-reader-drilldown studio-surface" aria-label="Calendar template preview">
     <header className="admin-section-heading-row"><div><h4>Template preview</h4><p>Choose signs or a date to preview the template. Open the template to write the overview passages and insert zodiac season variables.</p></div></header>
     <div className="admin-daily-glance-context-form">
       <label><span>Preview source</span><AdminSelect aria-label="Preview source" value={mode} onChange={event => {
@@ -114,31 +160,40 @@ export default function CalendarTemplatePreview({ period, rows, loadRows, draft,
       <label><span>Moon sign</span><AdminSelect aria-label="Preview Moon sign" value={moonSign} disabled={mode === "ephemeris"} onChange={event => { setMoon(event.target.value); setMoonKey(""); }}><option value="">Choose Moon sign</option>{lunarSigns.map(sign => <option key={sign}>{calendarPreviewSign(sign)}</option>)}</AdminSelect></label>
       {passages.length > 0 && <label><span>Moon passage for this preview</span><AdminSelect aria-label="Preview Moon passage" value={passages.some(row => row.content_key === moonKey) ? moonKey : passages[0].content_key} onChange={event => setMoonKey(event.target.value)}>{passages.map(row => <option key={row.id} value={row.content_key}>{lunarContentIdentity(row.content_key)?.title}</option>)}</AdminSelect></label>}
     </div>
-    <div className="admin-new-actions"><StudioButton onClick={() => { setMode("ephemeris"); setLive(true); setDate(dateInput(new Date())); setAttempt(value => value + 1); }}>Use current sky</StudioButton><StudioButton onClick={() => setAttempt(value => value + 1)}>Refresh preview</StudioButton></div>
+    <div className="admin-new-actions"><StudioButton onClick={() => { setMode("ephemeris"); setLive(true); setDate(dateInput(new Date())); setAttempt(value => value + 1); }}>Use current sky</StudioButton><StudioButton onClick={() => setAttempt(value => value + 1)}>Refresh preview</StudioButton>{onBrowseSeasonTransitions && <StudioButton onClick={onBrowseSeasonTransitions}>Browse season transitions</StudioButton>}</div>
     <p role="status">{mode === "signs" ? "Example signs · degrees and event timing are unavailable in this mode." : calculation ? `${live ? "Live sky" : "Selected sky"} · ${values.asOf?.text} · ${timeZone} · Swiss Ephemeris · tropical, geocentric` : calculationError ? "Calculation unavailable." : "Calculating ephemeris facts…"}</p>
     {(calculationError || sourceError) && <p role="alert">{calculationError || sourceError} Use Refresh preview to retry.</p>}
     {!sources && !sourceError && <PageLoading message="Loading the full saved template and matching passages…" />}
     <StudioTabs label="Calendar template views" value={view} onValueChange={setView} tabs={[{ value: "preview", label: "Preview" }, { value: "pattern", label: "Template pattern" }, { value: "variables", label: "Variables" }]}>
-      {view === "pattern" ? <div className="admin-composition-preview-field"><span>{draft?.contentKey === template.contentKey ? "Open editor pattern" : saved ? "Saved template pattern" : "Starter template pattern"}</span><p className="admin-calendar-template-text" aria-label="Calendar template pattern">{sources ? <CalendarVariableText text={pattern} /> : "Loading saved template…"}</p></div>
-        : view === "variables" ? <div className="admin-editor-guidance admin-calendar-variables"><p>Select Edit passage to change reusable writing, or Write passage to fill an overview field. Changes appear in the preview while you edit; Save keeps them. Dates and positions update from the ephemeris.</p>
+      {view === "pattern" ? <div className="admin-composition-preview-field"><span>{draft?.contentKey === template.contentKey ? "Open editor pattern" : saved ? "Saved template pattern" : "Starter template pattern"}</span><p className="admin-calendar-template-text" aria-label="Calendar template pattern">{sources ? <CalendarVariableText text={pattern} onSelect={openVariable} /> : "Loading saved template…"}</p></div>
+        : view === "variables" ? <div ref={variableDetails} id={variableId} className="admin-editor-guidance admin-calendar-variables"><p>Select Edit passage to change reusable writing, or Write passage to fill an overview field. Changes appear in the preview while you edit; Save keeps them. Dates and positions update from the ephemeris.</p>
           {calculation && !seasons.closing && <p role="note">No zodiac season change in this period. Closing-season variables are not needed.</p>}
           <p>Names such as signTitle, entryDate, exitDate, and eventDate follow the passage they appear in: the opening season, incoming season, New Moon, Full Moon, or eclipse.</p>
-          <table className="admin-data-table" aria-label="Calendar preview variables"><thead><tr><th scope="col">Variable</th><th scope="col">Writing or value</th><th scope="col">Edit</th></tr></thead><tbody>{availableNames.filter(name => !calculation || seasons.closing || !/^(closing|seasonChangeDate)/u.test(name)).map(name => {
+          <table className="admin-data-table" aria-label="Calendar preview variables"><thead><tr><th scope="col">Variable</th><th scope="col">Writing or value</th><th scope="col">Edit</th></tr></thead><tbody>{availableNames.filter(name => name === selectedVariable || !calculation || seasons.closing || !/^(closing|seasonChangeDate)/u.test(name)).map(name => {
           const value = values[name];
           const sourceKey = value?.sourceKey ?? calendarSeasonSourceKey(name, sunSign, values.openingSeasonSign?.text ?? "", values.closingSeasonSign?.text ?? "");
           const field = overviewFields.find(field => field.name === name);
           const source = sources?.find(row => row.content_key === sourceKey);
           const unavailable = field ? field.help : sourceKey ? "Add or edit the shared passage for this sign." : mode === "signs" ? "Choose Use ephemeris to calculate dates and season changes." : "This fact is not available for the selected period.";
-          const kind = value?.kind === "fact" ? "Read-only ephemeris" : value?.kind === "example" ? "Example sign" : value?.sourceLabel ?? (value ? "Saved writing" : field || sourceKey ? "Needs writing" : "Unavailable");
-          return <tr key={name}><th scope="row"><code className="admin-composition-variable-token" data-variable-name={name} data-variable-color={calendarVariableColor(name)}>{`{{${name}}}`}</code><span className="admin-field-hint">{kind}</span></th>
-            <td><p className="admin-calendar-template-text">{value?.text ?? unavailable}</p></td>
+          const kind = value?.sourceLabel ?? (value?.kind === "fact" ? "Read-only ephemeris" : value?.kind === "example" ? "Example sign" : (value ? "Saved writing" : field || sourceKey ? "Needs writing" : "Unavailable"));
+          return <tr key={name} tabIndex={-1} data-calendar-variable={name}><th scope="row"><code className="admin-composition-variable-token" data-variable-name={name} data-variable-color={calendarVariableColor(name)}>{`{{${name}}}`}</code><span className="admin-field-hint">{kind}</span></th>
+            <td><FormattedProse className="admin-calendar-template-text" text={value?.text ?? unavailable} /></td>
             <td>{field ? <StudioButton onClick={() => onEditOverview(field.name)} aria-label={`Edit ${name}`}>{value ? "Edit passage" : "Write passage"}</StudioButton>
               : source ? <StudioButton onClick={() => onEditSource(source)} aria-label={`Edit ${name}`}>Edit passage</StudioButton>
               : <span className="admin-field-hint">{value?.kind === "example" ? "Use sign selectors above" : sourceKey ? "Choose a sign and refresh sources" : "Calculated automatically"}</span>}</td></tr>; })}</tbody></table></div>
         : <div className="admin-template-reader-surface"><div className="admin-template-reader-copy">
           {ready ? <>
 
-            <div className="admin-composition-preview-field"><span>{saved ? "Saved template" : "Starter template"}{draft?.contentKey === template.contentKey ? " · including open editor changes" : ""}</span><p className="admin-calendar-template-text" aria-label="Rendered Calendar template">{segments.map((segment, index) => <span key={index} data-variable-name={segment.name} data-variable-color={segment.name ? calendarVariableColor(segment.name) : undefined} className={segment.value ? `admin-composition-variable variable-${segment.value.kind === "copy" ? "copy" : "fact"}` : segment.name ? "admin-composition-variable variable-unmapped" : undefined} title={segment.name ? `{{${segment.name}}} · ${segment.value?.kind === "fact" ? "Read-only ephemeris" : segment.value?.kind === "copy" ? "Saved writing" : segment.value ? "Example sign" : "Needs writing or a calculated value"}` : undefined}>{segment.text}</span>)}</p></div>
+            <p className="admin-field-hint">Select a colored phrase to edit its writing. Select a date or position to inspect its calculated value.</p>
+            <div className="admin-composition-preview-field"><span>{saved ? "Saved template" : "Starter template"}{draft?.contentKey === template.contentKey ? " · including open editor changes" : ""}</span><p className="admin-calendar-template-text" aria-label="Rendered Calendar template">{segments.map((segment, index) => {
+              if (!segment.name) return <FormattedText key={index} text={segment.text} />;
+              const name = segment.name;
+              const action = canEdit(name) ? `Edit ${name}` : `Inspect ${name}`;
+              return <StudioButton key={index} data-variable-name={name} data-variable-color={calendarVariableColor(name)}
+                className={`admin-composition-variable variable-${segment.value?.kind === "copy" ? "copy" : segment.value ? "fact" : "unmapped"}`}
+                aria-label={action} title={action} data-variable-action={`${action} →`}
+                aria-controls={canEdit(name) ? undefined : variableId} onClick={() => openVariable(name)}><FormattedText text={segment.text} /></StudioButton>;
+            })}</p></div>
             {missing.length > 0 && <p role="note">Unfilled variables: {missing.map(name => `{{${name}}}`).join(", ")}. Open the template to fill the overview passages. Missing season passages can be written in the shared Zodiac season sources.</p>}
           </> : <p>The preview will appear when its facts and saved sources are ready.</p>}
         </div></div>}

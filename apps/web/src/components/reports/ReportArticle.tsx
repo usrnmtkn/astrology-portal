@@ -1,3 +1,4 @@
+import { FormattedProse } from "../FormattedProse";
 import { ChevronLeft, X } from "lucide-react";
 import { useMemo, useState } from "react";
 import {
@@ -93,7 +94,7 @@ function ReportKeyDateSheet({
         <p className="report-key-date-sheet__date">{keyDate.date}</p>
         <h2 id={titleId}>{keyDate.title}</h2>
         {fullDetailReaderFacingParagraphs(keyDate.paragraphs).map((paragraph, index) => (
-          <p key={`${keyDate.id}-paragraph-${index}`}>{paragraph}</p>
+          <FormattedProse key={`${keyDate.id}-paragraph-${index}`} text={paragraph} />
         ))}
         {keyDate.attribution ? <AttributionLine facts={keyDate.attribution} /> : null}
       </div>
@@ -157,7 +158,7 @@ export function ReportArticle({ report, backHref = "/reports/" }: { report: Repo
                   <p className="report-label">{chapter.kicker}</p>
                   {chapter.heading ? <h2 id={headingId}>{chapter.heading}</h2> : null}
                   {paragraphs.map((paragraph, paragraphIndex) => (
-                    <p key={`${chapter.id}-paragraph-${paragraphIndex}`}>{paragraph}</p>
+                    <FormattedProse key={`${chapter.id}-paragraph-${paragraphIndex}`} text={paragraph} />
                   ))}
                   {chapter.attribution ? <AttributionLine facts={chapter.attribution} /> : null}
                   {sourceTag ? <p className="report-chapter__source">{sourceTag}</p> : null}

@@ -44,9 +44,10 @@ export function warnIfLegacyCopyFingerprint(value: string | null | undefined, co
 }
 
 export function sanitizeReaderFacingCopy(value: string | null | undefined) {
+  const preserveListIndent = /^\s*(?:[-+*]|\d+\.)\s/mu.test(value ?? "");
   return (value ?? "")
     .split(/\n/)
-    .map((line) => line.replace(debugTagPattern, "").trim())
+    .map((line) => preserveListIndent ? line.replace(debugTagPattern, "").trimEnd() : line.replace(debugTagPattern, "").trim())
     .filter((line) => !markdownDividerLinePattern.test(line))
     .join("\n")
     .trim();

@@ -1,3 +1,4 @@
+import { FormattedProse, FormattedText } from "../../components/FormattedProse";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { pointGlyph } from "../../components/charts/chartAssets";
@@ -32,6 +33,7 @@ import {
   type LearnElement
 } from "../../content/learnIndexCatalog";
 import { fullDetailReaderFacingParagraphs } from "../../content/readerSafety";
+import { subscribeToContentUpdates, subscribeToContentRevalidation } from "../../services/contentUpdateSignal";
 import { loadLiveAstro101Pages, type Astro101Page } from "../../services/astro101Content";
 
 type LearnExperienceProps = {
@@ -43,7 +45,7 @@ function Paragraphs({ text, className }: { text: string; className?: string }) {
   return (
     <>
       {fullDetailReaderFacingParagraphs([text]).map((paragraph, index) => (
-        <p className={className} key={index}>{paragraph}</p>
+        <FormattedProse className={className} key={index} text={paragraph} />
       ))}
     </>
   );
@@ -72,7 +74,7 @@ function BlockLists({ lists }: { lists: Astro101Page["blocks"][number]["list"] }
         return (
           <Tag className="learn-article-list" key={`${list.ordered ? "ol" : "ul"}-${index}`}>
             {list.items.map((item) => (
-              <li key={item.slice(0, 48)}>{item}</li>
+              <li key={item.slice(0, 48)}><FormattedText text={item} /></li>
             ))}
           </Tag>
         );
@@ -106,7 +108,7 @@ function BlockView({
     return (
       <figure className="learn-affirmation">
         {heading ? <figcaption className="learn-kicker">{heading}</figcaption> : null}
-        {body ? <blockquote><p>{body}</p></blockquote> : null}
+        {body ? <blockquote><FormattedProse text={body} /></blockquote> : null}
       </figure>
     );
   }
@@ -126,7 +128,7 @@ function BlockView({
     );
   }
   if (style === "lede") {
-    return body ? <p className="learn-lede">{body}</p> : null;
+    return body ? <FormattedProse className="learn-lede" text={body} /> : null;
   }
   return (
     <section className="article-section">
@@ -177,9 +179,9 @@ function LearnArticle({ page, onOpenPath }: { page: Astro101Page; onOpenPath: (p
         ) : null}
       </header>
       <div className="learn-article-body">
-        {intro.lede ? <p className="learn-lede">{intro.lede}</p> : null}
+        {intro.lede ? <FormattedProse className="learn-lede" text={intro.lede} /> : null}
         {intro.paragraphs.map((paragraph) => (
-          <p key={paragraph.slice(0, 48)}>{paragraph}</p>
+          <FormattedProse key={paragraph.slice(0, 48)} text={paragraph} />
         ))}
         {intro.notes.map((note) => (
           <BlockView body={note} heading="" key={note.slice(0, 48)} style="note" />
@@ -362,7 +364,7 @@ function LearnHub({ pages, onOpenPath }: { pages: Astro101Page[]; onOpenPath: (p
                 <button type="button" className="learn-chapter" onClick={() => onOpenPath(page.slug)}>
                   <span className="learn-chapter__copy">
                     <span className="learn-chapter__title">{page.headline}</span>
-                    {page.summary ? <span className="learn-chapter__blurb">{page.summary}</span> : null}
+                    {page.summary ? <span className="learn-chapter__blurb"><FormattedText text={page.summary} /></span> : null}
                   </span>
                   <ChevronRight size={20} aria-hidden="true" />
                 </button>
@@ -553,19 +555,24 @@ export function LearnExperience({ pathname, onOpenPath }: LearnExperienceProps) 
 
   useEffect(() => {
     let cancelled = false;
-    loadLiveAstro101Pages()
-      .then((loaded) => {
-        if (!cancelled) setPages(loaded);
-      })
-      .catch(() => {
-        if (!cancelled) {
-          setPages([]);
-          setFailed(true);
-        }
+    let revision = 0;
+    const reload = () => {
+      const requested = ++revision;
+      loadLiveAstro101Pages().then(loaded => {
+        if (!cancelled && requested === revision) { setPages(loaded); setFailed(false); }
+      }).catch(() => {
+        if (!cancelled && requested === revision) { setPages([]); setFailed(true); }
       });
-    return () => {
-      cancelled = true;
     };
+    const unsubscribe = subscribeToContentUpdates(notice => {
+      if (!notice.contentKey.startsWith("education/astro-101/")) return;
+      // Hide an unpublished page immediately, even while the refreshed inventory is loading.
+      if (!notice.published) setPages(current => current?.filter(page => page.contentKey !== notice.contentKey) ?? null);
+      reload();
+    });
+    const stopRevalidation = subscribeToContentRevalidation(reload);
+    reload();
+    return () => { cancelled = true; unsubscribe(); stopRevalidation(); };
   }, []);
 
   if (!pages) {

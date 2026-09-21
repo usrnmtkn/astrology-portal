@@ -339,6 +339,10 @@ export default defineConfig(({ mode }) => {
             if (id.includes("node_modules/@supermemory/memory-graph") || id.includes("node_modules/ogl/")) return "memory-graph-renderer";
             // This React consumer must not share the vendor chunk with the
             // scheduler React imports, which would create an initialization cycle.
+            // The visual writing editor is optional. Keep its React consumers out of
+            // the startup vendor/scheduler chunk to prevent a React initialization cycle.
+            if (/node_modules\/(?:@tiptap\/|prosemirror-|@floating-ui\/|orderedmap\/|rope-sequence\/|w3c-keyname\/|use-sync-external-store\/|linkifyjs\/|fast-equals\/)/u.test(id)) return "studio-rich-text";
+            if (id.includes("node_modules/marked/")) return "writing-markdown";
             if (id.includes("node_modules/thinking-orbs/")) return "thinking-orbs";
             if (id.includes("node_modules/react") || id.includes("node_modules/react-dom")) {
               return "react";
