@@ -27,7 +27,7 @@ import { lunarContentIdentity } from "./lunarCalendarContent";
 import type { SkyForecastPeriod } from "./skyForecastTemplates";
 import ContentLiveStatusBadge, { ContentLiveStatusProvider, useContentLiveStatusLoader, useContentLiveStatusResults, type LiveStatus } from "./ContentLiveStatus";
 import { studioServingStatusRow } from "./studioServingStatus";
-import { dropSupersededPackageStarters, mergeContentInventory } from "./contentStudioState";
+import { dropSupersededPackageStarters, mergeContentDocuments, mergeContentInventory } from "./contentStudioState";
 import {
   studioInventoryQuery,
   studioInventoryQueryKey,
@@ -5473,7 +5473,7 @@ export function GeneratedContentAdminDashboard() {
         // The row stays inventory-only; opening it still loads the document on demand.
       }
     }
-    if (documents.length) setRows((current) => mergeContentInventory(current, documents));
+    if (documents.length) setRows((current) => mergeContentDocuments(current, documents));
     return documents;
   }, [secret]);
 

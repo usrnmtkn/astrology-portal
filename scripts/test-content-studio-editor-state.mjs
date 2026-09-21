@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { mergeContentInventory } from "../apps/admin/src/contentStudioState.ts";
+import { mergeContentDocuments, mergeContentInventory } from "../apps/admin/src/contentStudioState.ts";
 import { calendarMonthlyCompatibilityPattern, calendarMonthlyEditorialPattern, calendarOverviewFields, calendarOverviewPattern, calendarOverviewWriting } from "../apps/admin/src/calendarOverviewTemplate.ts";
 import { calendarPreviewValues, calendarResolveOverviewField, calendarTemplateSegments } from "../apps/admin/src/calendarPreviewModel.ts";
 import { calendarTemplateDefinitionInputs, calendarTemplateDefinitions, validateCalendarTemplateDefinitions } from "../apps/admin/src/calendarTemplateDefinitions.ts";
@@ -12,6 +12,12 @@ const newer = { ...inventory, updated_at: "2026-09-07T10:00:02Z" };
 assert.deepEqual(mergeContentInventory([full], [newer]), [newer], "A newer external version must remain visible, requiring rehydration.");
 assert.deepEqual(mergeContentInventory([full], []), [full], "Partial pages must retain rows not loaded yet.");
 assert.deepEqual(mergeContentInventory([full], [], false), [], "A complete reload must remove rows no longer present.");
+const pagedInventory = Array.from({ length: 120 }, (_, index) => ({ ...inventory, id: `row-${index}` }));
+const pageTwoDocuments = pagedInventory.slice(50, 100).reverse().map(row => ({ ...row, inventory_only: false, body: `Full ${row.id}` }));
+const hydratedPageTwo = mergeContentDocuments(pagedInventory, pageTwoDocuments);
+assert.deepEqual(hydratedPageTwo.map(row => row.id), pagedInventory.map(row => row.id), "Hydrating page two must preserve the inventory order and current pagination.");
+assert.equal(hydratedPageTwo[50].body, "Full row-50", "The visible page must still receive its complete documents.");
+assert.deepEqual(mergeContentDocuments([full], [{ ...inventory, updated_at: "2026-09-07T10:00:00Z" }]), [full], "Late document hydration must retain a newer owner save.");
 const starter = { id: "package:authored/calendar-season-transition/virgo/libra", content_key: "authored/calendar-season-transition/virgo/libra", package_starter: true, status: "DRAFT" };
 const saved = { id: "saved-season", content_key: starter.content_key, status: "LIVE", package_starter: false };
 assert.deepEqual(

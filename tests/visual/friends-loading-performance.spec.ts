@@ -315,7 +315,7 @@ test.describe("Friends loading performance matrix", () => {
     for (let sample = 0; sample < FRIENDS_LOADING_SAMPLE_COUNT; sample += 1) {
       samples.push(await withContext(browser, {}, async (_context, page) => {
         const prepared = await preparePage(page);
-        await page.goto(url("/#friends?tab=charts"));
+        await page.goto(url("/#friends?tab=charts"), { waitUntil: "domcontentloaded" });
         const chartButton = page.getByRole("button", { name: `Open ${fixtureFriendName}` });
         await chartButton.hover();
         await expect.poll(
@@ -333,7 +333,7 @@ test.describe("Friends loading performance matrix", () => {
 
         return timed("warm Friends detail", async () => {
           await page.getByRole("button", { name: `Open ${fixtureFriendName}` }).click();
-          await expect(page.locator(".compatibility-card").first()).toBeVisible();
+          await waitForMeasuredVisibility(page.locator(".compatibility-card").first());
         });
       }));
     }
@@ -390,7 +390,7 @@ test.describe("Friends loading performance matrix", () => {
     for (let sample = 0; sample < FRIENDS_LOADING_SAMPLE_COUNT; sample += 1) {
       samples.push(await withContext(browser, { viewport: { width: 390, height: 844 } }, async (_context, page) => {
         await preparePage(page);
-        await page.goto(url("/#sky"));
+        await page.goto(url("/#sky"), { waitUntil: "domcontentloaded" });
         await expect(page.getByRole("button", { name: "Open full current sky chart" })).toBeVisible();
         await expect(page.getByRole("button", { name: "Open menu" })).toBeVisible();
         await page.getByRole("button", { name: "Open menu" }).click();

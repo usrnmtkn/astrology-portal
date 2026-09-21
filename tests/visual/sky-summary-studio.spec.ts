@@ -370,6 +370,7 @@ test("full template controls preview order, publish, and reload", async ({ page,
   ] }] } } }));
   await reader.goto(`${readerBaseURL}/?date=2026-09-10#sky`);
   const summary = reader.getByLabel("Daily sky summary", { exact: true });
+  await expect(summary).toHaveAttribute("aria-busy", "false", { timeout: 30_000 });
   await expect(summary).toContainText("Mercury stations retrograde in Scorpio today.");
   await expect(summary).not.toContainText("Saturn stations");
   await expect(summary).toContainText("New Moon in Virgo at 18° calls us to clear the clutter");

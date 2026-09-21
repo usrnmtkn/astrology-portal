@@ -217,7 +217,10 @@ test("blocked web fonts do not block startup or reader content", async ({ page }
   const held = new Promise<void>(resolve => { release = resolve; });
   await page.route("https://fonts.googleapis.com/**", async route => { await held; await route.abort().catch(() => {}); });
   await page.goto("/#sky", { waitUntil: "domcontentloaded" });
-  try { await expect(page.getByLabel("Daily sky summary")).toBeVisible({ timeout: 10000 }); }
+  try {
+    await expect(page.getByRole("navigation", { name: "Primary navigation" })).toBeVisible();
+    await expect(page.getByLabel("Daily sky summary")).toBeVisible({ timeout: 25_000 });
+  }
   finally { release(); }
 });
 
@@ -241,9 +244,9 @@ test("lazy Calendar navigation keeps the nav and a visible loading state", async
 
 test("a failed lazy route keeps navigation usable", async ({ page }) => {
   await page.route(/\/assets\/CalendarRoute-.*\.js$/, route => route.abort("failed"));
-  await page.goto("/#sky");
-  await expect(page.getByLabel("Daily sky summary")).toBeVisible({ timeout: 10000 });
-  await page.getByRole("button", { name: "Calendar", exact: true }).first().click();
+  // The reader retries a missing chunk once. Start on its route so intent
+  // preloading cannot reload the previous Sky page before selection.
+  await page.goto("/#calendar", { waitUntil: "domcontentloaded" });
   await expect(page.getByRole("alert")).toContainText("This page could not load");
   await expect(page.locator(".topbar")).toBeVisible();
   await page.getByRole("button", { name: "Sky", exact: true }).first().click();

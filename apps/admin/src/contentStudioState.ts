@@ -46,3 +46,13 @@ export function mergeContentInventory<T extends InventoryRecord>(current: T[], i
     ))
   ]);
 }
+
+// Hydrating visible documents must not reorder the inventory and reset its page.
+// Keep the same version and package-starter protections as inventory refreshes.
+export function mergeContentDocuments<T extends InventoryRecord>(current: T[], documents: T[]): T[] {
+  const merged = new Map(mergeContentInventory(current, documents).map((row) => [row.id, row]));
+  return current.flatMap((row) => {
+    const document = merged.get(row.id);
+    return document ? [document] : [];
+  });
+}

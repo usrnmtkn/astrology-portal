@@ -1827,7 +1827,7 @@ test.describe("client-facing user flow case studies", () => {
     // The loading illustration is labelled "Loading Friends…", so wait for it to leave before
     // reading the surface itself.
     await expect(page.getByRole("status", { name: /^Loading Friends/u })).toHaveCount(0);
-    await expect(page.getByLabel("Friends", { exact: true })).toBeVisible();
+    await expect(page.getByRole("region", { name: "Friends", exact: true })).toBeVisible();
     await expect(dateTrigger).toContainText("Jul 20");
     await dateTrigger.click();
     await expect(page.getByRole("region", { name: "Pick Date" })).toBeVisible();
@@ -2687,21 +2687,25 @@ test.describe("client-facing user flow case studies", () => {
     await assertNoClientErrors();
   });
 
-  test("calendar reserves the Full Moon title for the exact lunation day", async ({ page }) => {
-    const assertNoClientErrors = await expectNoClientErrors(page);
+  test.describe("New York lunation boundary", () => {
+    test.use({ timezoneId: "America/New_York" });
+    test("calendar reserves the Full Moon title for the exact lunation day", async ({ page }) => {
+      const assertNoClientErrors = await expectNoClientErrors(page);
 
-    await seedClientState(page, { now: "2026-07-29T03:30:00.000Z" });
-    await expectClientRouteLoads(page, "/#calendar");
+      await seedClientState(page, { now: "2026-07-29T03:30:00.000Z" });
+      await expectClientRouteLoads(page, "/#calendar");
 
-    const selectedDay = page.getByLabel("Selected lunar day");
-    await expect(selectedDay).toBeVisible({ timeout: 15_000 });
-    await expect(selectedDay.getByRole("heading", { level: 2 })).toHaveText("Waxing Gibbous Moon in Aquarius");
+      const selectedDay = page.getByLabel("Selected lunar day");
+      await expect(selectedDay).toBeVisible({ timeout: 15_000 });
+      await expect(selectedDay.getByRole("heading", { level: 2 })).toHaveText("Waxing Gibbous Moon in Aquarius");
 
-    await page.getByLabel("Selected week").getByRole("button", { name: /Full Moon\. Moon in Aquarius/ }).click();
-    await expect(selectedDay.getByRole("heading", { level: 2 })).toHaveText("Full Moon in Aquarius");
-    await selectedDay.getByRole("button", { name: "Full Moon in Aquarius", exact: true }).click();
-    await expect(page.getByRole("dialog", { name: "Event detail" }).locator(".calendar-reading__meta")).toContainText("Jul 29 · 10:35 AM");
-    await assertNoClientErrors();
+      await page.getByLabel("Selected week").getByRole("button", { name: /Full Moon\. Moon in Aquarius/ }).click();
+      await expect(selectedDay.getByRole("heading", { level: 2 })).toHaveText("Full Moon in Aquarius");
+      await selectedDay.getByRole("button", { name: "Full Moon in Aquarius", exact: true }).click();
+      await expect(page.getByRole("dialog", { name: "Event detail" }).locator(".calendar-reading__meta")).toContainText("Jul 29 · 10:35 AM");
+      await assertNoClientErrors();
+    });
+
   });
 
   test("calendar Full Moon opens the canonical SKY V4 lunation article on the real detail surface", async ({ page }) => {
