@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 import fs from "node:fs";
 import {
   STUDIO_ASTRO_101_PREFIXES,
+  STUDIO_CALENDAR_ASPECT_PREFIXES,
   STUDIO_BETWEEN_YOU_TWO_PREFIXES,
   STUDIO_LUNAR_CALENDAR_PREFIXES,
   STUDIO_PERSONAL_TRANSIT_PREFIXES,
@@ -43,6 +44,37 @@ assert.deepEqual(calendarWriteups.prefixes, [...STUDIO_LUNAR_CALENDAR_PREFIXES])
 
 const skyWriteups = studioInventoryQuery({ page: "skyWriteups" });
 assert.deepEqual(skyWriteups.prefixes, [...STUDIO_SKY_WRITEUP_PREFIXES]);
+
+// Visibility must never discard a section's identity. Calendar Aspects enables
+// reference rows on entry; retired/reference toggles occur on other sections too.
+const sectionRoutes = [
+  { page: "content", categoryFilter: "Calendar Aspects" },
+  { page: "content", categoryFilter: "Natal Chart" },
+  { page: "content", categoryFilter: "Natal Aspects" },
+  { page: "content", categoryFilter: "Personal Transits" },
+  { page: "content", categoryFilter: "House Transits" },
+  { page: "skyWriteups" },
+  { page: "skyWriteups", friendsTransitAudience: true, skyWriteupWorkspaceView: "house-transits" },
+  { page: "skyWriteups", friendsTransitAudience: true, skyWriteupWorkspaceView: "transits-to-natal" },
+  { page: "calendarWriteups" }, { page: "articles" }, { page: "astro101" },
+  { page: "compatibility" }, { page: "compositeByType" },
+  { page: "knowledge", fallbackSectionFilter: "friends" },
+  { page: "knowledge", fallbackSectionFilter: "daily" },
+  { page: "knowledge", fallbackSectionFilter: "lunar-calendar" },
+  { page: "knowledge", fallbackSectionFilter: "you" },
+  { page: "knowledge", fallbackSectionFilter: "sky" },
+  { page: "vocabulary" }, { page: "slotDictionary" }, { page: "templates" }
+];
+for (const route of sectionRoutes) {
+  const scoped = studioInventoryQuery(route);
+  for (const flags of [{ showReferenceRows: true }, { showRetiredRows: true }, { showReferenceRows: true, showRetiredRows: true }]) {
+    assert.deepEqual(studioInventoryQuery({ ...route, ...flags }), { ...scoped, visibility: "all" },
+      `${JSON.stringify(route)} must retain its section when visibility changes`);
+  }
+}
+assert.deepEqual(studioInventoryQuery({ page: "content", categoryFilter: "Calendar Aspects", showReferenceRows: true }).prefixes,
+  [...STUDIO_CALENDAR_ASPECT_PREFIXES]);
+assert.equal(studioInventoryQuery({ page: "content", showReferenceRows: true }).visibility, "all");
 
 const reviewQueue = studioInventoryQuery({ page: "reviewQueue" });
 assert.equal(reviewQueue.catalog, true);

@@ -119,10 +119,11 @@ function catalogQuery(visibility: StudioInventoryVisibility = "all"): StudioInve
 }
 
 export function studioInventoryQuery(route: StudioInventoryRoute): StudioInventoryQuery {
-  if (route.showReferenceRows || route.showRetiredRows) return catalogQuery("all");
+  // Visibility widens the rows inside a section, never the section itself.
+  const catalogVisibility = route.showReferenceRows || route.showRetiredRows ? "all" : "editorial";
   if (route.page === "reviewQueue" || route.page === "unresolvedContent") return catalogQuery("all");
   if (route.page === "content" && (!route.categoryFilter || route.categoryFilter === "all")) {
-    return catalogQuery("editorial");
+    return catalogQuery(catalogVisibility);
   }
   if (route.page === "compatibility" || route.page === "compositeByType") {
     return { visibility: "all", scope: "compatibility", prefixes: [], mode: null, catalog: false };
@@ -177,7 +178,7 @@ export function studioInventoryQuery(route: StudioInventoryRoute): StudioInvento
   if (route.page === "slotDictionary") return prefixesQuery(["slot-template/"]);
   if (route.page === "templates") return prefixesQuery(["fallback-template/", "slot-template/"]);
   if (route.page === "compositionMap" || route.page === "hooks") return catalogQuery("all");
-  return catalogQuery("editorial");
+  return catalogQuery(catalogVisibility);
 }
 
 export function studioInventoryQueryKey(query: StudioInventoryQuery) {
