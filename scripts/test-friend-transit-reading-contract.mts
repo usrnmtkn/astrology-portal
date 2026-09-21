@@ -164,6 +164,20 @@ assert.match(prompt, /synthesis only/i);
 assert.match(prompt, /Do not re-rank the evidence/i);
 assert.match(prompt, /Things between you and \${brief\.friendName}|Things between you and Alex/i);
 assert.match(prompt, /Do not use you\/your outside relationship context/i);
+assert.match(prompt, /Every sentence containing you\/your must itself name the friend/u);
+assert.match(prompt, /Return exactly four fields: headline, tldr, summary, body/u);
+assert.doesNotMatch(prompt, /(?:action|timing|sections|sceneLock|astrologyDrilldown): return/u,
+  'The writing prompt must not request fields forbidden by its provider schema.');
+
+const relationshipFollowup = validateFriendTransitReadingDraft({
+  brief, expectedHeadline: lockedRequest.headline,
+  draft: { headline: lockedRequest.headline, summary: 'Alex can respond to the current situation.',
+    body: 'Things between you and Alex need patience today. You can take your time before answering. Alex can consider the current situation.' }
+});
+const followupIssues = relationshipFollowup.issues.filter(issue => issue.code === 'second_person');
+assert.equal(followupIssues.length, 1, 'Diagnose the failing sentence once, not once per pronoun.');
+assert.match(followupIssues[0].message, /body, sentence 2/u);
+assert.match(followupIssues[0].message, /preceding relationship sentence is insufficient/u);
 assert.match(prompt, /Mars trine Moon/);
 assert.match(prompt, /SPECIFICITY WITHOUT INVENTION/u);
 assert.match(prompt, /"lifeDomains": \[\s*"partnerships"/u, "Known natal houses must expose concrete semantic domains to the writer.");

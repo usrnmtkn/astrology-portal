@@ -21,7 +21,7 @@ import { releaseReviewedReport } from "../api/_lib/report-release.ts";
 import { verifyStripeWebhookSignature } from "../api/_lib/stripe-report-billing.ts";
 import { assembleReportGenerationPayload, validateReportDraft } from "../api/_lib/report-generation.ts";
 import {
-  reportDraftMovementApplicable, reportUnitSentenceAddresses, sentenceAddressedReportUnit
+  reportDraftMovementApplicable, reportUnitSentenceAddresses, sentenceAddressedReportUnit, reportEvaluationPacket
 } from "../api/_lib/report-evaluation-packet.ts";
 import {
   assertReportOwnerVoiceEvidence,
@@ -578,6 +578,45 @@ assert.deepEqual(spliceChainSchemas, ["report_unit_draft", "report_unit_critique
 assert.equal(spliceChain.revised.body, "FIXTURE_ONLY_REPLACED. FIXTURE_ONLY_SECOND.");
 assert.equal(spliceChain.revised.summary, spliceChainDraft.summary, "The writer chain must keep unnamed text byte-identical.");
 assert.equal(spliceChain.coldCritique.result, "no_defects");
+
+// An unsupported comparison citation is a malformed critique response, not a
+// terminal report failure after a successful model-response checkpoint.
+{
+  let critiques = 0;
+  const persisted = [];
+  const evidenceId = reportEvaluationPacket(spliceChainPayload, spliceChainDraft).ownerComparisonSet[0].evidenceId;
+  const result = await runReportWriterChain({
+    payload: spliceChainPayload,
+    persistCheckpoint: async checkpoint => { persisted.push(structuredClone(checkpoint)); },
+    callModel: withReportModelResponseRetries(async input => {
+      let value;
+      if (input.schemaName === 'report_unit_draft') value = spliceChainDraft;
+      else if (input.schemaName === 'report_unit_critique') {
+        critiques++;
+        assert.ok(critiques <= 2, 'Citation recovery stays within the existing response retry budget.');
+        value = { result: 'defects', applicability: { interpretive_movement: 'not_applicable', reason: 'FIXTURE_ONLY' },
+          defects: [{...spliceChainAddressedDefects[0],category:'owner_voice_drift',evidence_ids:[critiques===1?'UNSUPPLIED_EVIDENCE':evidenceId]}] };
+        if (critiques === 1) {
+          assert.throws(()=>input.validateResponse(value),/lacks eligible comparison evidence/u,
+            'Citation validation must run inside the response-retry boundary.');
+          throw new ReportModelResponseRejectedError('Invalid comparison citation');
+        }
+        assert.match(input.prompt,/RESPONSE_REJECTION/u);
+      } else if (input.schemaName === 'report_unit_revision_spans') value = { replacements: [
+        {defect_id:'chain-body',location:'body',scope_start:0,scope_end:0,replacement:'FIXTURE_ONLY_REPLACED.'}
+      ] };
+      else {
+        assert.equal(input.schemaName,'report_unit_cold_read');
+        value = { result:'no_defects',applicability:{interpretive_movement:'not_applicable',reason:'FIXTURE_ONLY'},defects:[] };
+      }
+      input.validateResponse?.(value);
+      return {value,model:input.model,provider:input.provider,usage:{inputTokens:1,outputTokens:1,totalTokens:2}};
+    })
+  });
+  assert.equal(critiques,2);
+  assert.equal(result.revised.body,'FIXTURE_ONLY_REPLACED. FIXTURE_ONLY_SECOND.');
+  assert.ok(!JSON.stringify(persisted).includes('UNSUPPLIED_EVIDENCE'), 'Invalid citations must never become durable accepted critique state.');
+}
 
 // Production report 8b3e266e repeatedly completed domain:main's draft,
 // critique, and revision, then yielded before cold read. The durable stage

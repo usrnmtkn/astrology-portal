@@ -774,7 +774,12 @@ export async function runReportWriterChain(input: {
         reportProductionValidation(deterministicIssues)
       ),
       validateResponse: (value) => {
-        normalizeReportSentenceAddressedCritique(draft, value, movementApplicable);
+        const normalized = normalizeReportSentenceAddressedCritique(draft, value, movementApplicable);
+        // Citation failures are malformed model responses. Reject them inside
+        // the metered response-retry boundary, before a successful checkpoint
+        // can make the invalid critique an unrecoverable writing exception.
+        assertReportOwnerVoiceEvidence(normalized,
+          packet.ownerComparisonSet.map((passage) => passage.evidenceId), "context_aware_critique");
       }
     });
     calls.push({ stage: "critique", model: critiqueResult.model, provider: critiqueResult.provider, usage: critiqueResult.usage });
