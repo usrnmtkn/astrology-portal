@@ -580,6 +580,19 @@ Steps:
 
 Expected result: Signed-in journal history is readable, weeks start on Monday, and a Sunday stays in that Monday–Sunday week.
 
+## Case Study 42: Guest Calendar Check-In Login Copy
+
+Goal: A guest who tries to save a Calendar check-in lands on the login screen with journal-save copy, not the generic sky headline.
+
+Steps:
+1. Open `/#calendar` as a guest and select Check in.
+2. Choose a mood and advance to the last step.
+3. Confirm the check-in sheet does not show the old sign-in status line.
+4. Select Sign in to save.
+5. Confirm the login region heading is "Sign in to save your journal entry..." and "Return to your sky." is not shown.
+
+Expected result: Menu login still says "Return to your sky." Calendar check-in login uses the journal-save heading.
+
 ## Execution Notes
 
 Automated coverage for these case studies lives in `tests/visual/client-facing-user-flows.spec.ts`. The tests intentionally use accessible names, route hashes, and user-facing text where practical. They seed localStorage only for authenticated/profile-dependent flows so the app is exercised in a realistic client state without relying on external auth or database services.

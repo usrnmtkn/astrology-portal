@@ -38,6 +38,7 @@ type SignupViewProps = {
   hasPendingInvitation: boolean;
   initialForm: SignupForm;
   initialMode?: AuthMode;
+  loginHeadline?: string;
   onAuthenticated: (result: {
     account: AuthAccount;
     form: SignupForm;
@@ -65,6 +66,7 @@ export function SignupView({
   hasPendingInvitation,
   initialForm,
   initialMode = "create",
+  loginHeadline,
   onAuthenticated,
   onClearPendingForm,
   onClose,
@@ -436,7 +438,7 @@ export function SignupView({
           {!phoneAuthOpen && (
             <div className="signup-heading">
               <p className="auth-card__title">{isLogin ? "Log in" : "Create profile"}</p>
-              {isLogin && <h3>Return to your sky.</h3>}
+              {isLogin && <h3>{loginHeadline ?? "Return to your sky."}</h3>}
             </div>
           )}
 

@@ -11037,14 +11037,16 @@ export function App() {
   const authBootstrapGenerationRef = useRef(0);
   const remoteProfileReadyRef = useRef(false);
   const [accountIntent, setAccountIntentState] = useState<AuthMode>(getInitialAccountIntent);
+  const [loginHeadline, setLoginHeadline] = useState<string | null>(null);
   const [signInRequested, setSignInRequested] = useState(() =>
     new URL(window.location.href).searchParams.get("auth") === "login"
   );
   const signInDestinationRef = useRef<PortalMode | null>(null);
-  const setAccountIntent = useCallback((intent: AuthMode) => {
+  const setAccountIntent = useCallback((intent: AuthMode, options?: { loginHeadline?: string }) => {
     storeAccountIntent(intent);
     setAccountIntentState(intent);
     setSignInRequested(intent === "login");
+    setLoginHeadline(intent === "login" ? options?.loginHeadline ?? null : null);
   }, []);
   const pendingInvitationCapturedRef = useRef(false);
   const [pendingInvitationForSignup, setPendingInvitationForSignup] = useState(false);
@@ -14804,7 +14806,7 @@ export function App() {
                   onOpenTransit={openCalendarTransitDetail}
                   onSignIn={() => {
                     signInDestinationRef.current = "calendar";
-                    setAccountIntent("login");
+                    setAccountIntent("login", { loginHeadline: "Sign in to save your journal entry..." });
                     navigateToPortalMode("profile");
                   }}
                   showJournalPrompts={journalPromptsEnabled}
@@ -14869,6 +14871,7 @@ export function App() {
                         hasPendingInvitation={pendingInvitationForSignup}
                         initialForm={defaultSignupForm}
                         initialMode={accountIntent}
+                        loginHeadline={loginHeadline ?? undefined}
                         onAuthenticated={({ account, form, isNewAccount, provider }) => {
                           setAccountIntent("create");
                           setUserProfile((current) => !isNewAccount && current?.id === account.id

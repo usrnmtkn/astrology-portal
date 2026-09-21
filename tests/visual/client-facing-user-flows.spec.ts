@@ -2861,7 +2861,7 @@ test.describe("client-facing user flow case studies", () => {
     await page.getByRole("menuitem", { name: "Login" }).click();
 
     await expect(page.getByRole("region", { name: "Log in" })).toBeVisible();
-    await expect(page.getByText("Return to your sky.")).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Return to your sky." })).toBeVisible();
     await expect(page.getByPlaceholder("you@somewhere.com")).toBeVisible();
     await expect(page.getByPlaceholder("at least 8 characters")).toHaveAttribute("type", "password");
 
@@ -2886,6 +2886,34 @@ test.describe("client-facing user flow case studies", () => {
 
     await page.getByRole("button", { name: /Create Account/ }).click();
     await expect(page.getByText(/Add Supabase environment variables|Add an email and password/)).toBeVisible();
+    await assertNoClientErrors();
+  });
+
+  test("guest calendar check-in opens login to save a journal entry", async ({ page }) => {
+    const assertNoClientErrors = await expectNoClientErrors(page);
+
+    await page.setViewportSize({ width: 390, height: 844 });
+    await seedClientState(page, { now: "2026-09-20T16:00:00.000Z" });
+    await expectClientRouteLoads(page, "/#calendar?view=day&date=2026-09-20");
+    await expect(page.getByLabel("Lunar calendar")).toBeVisible();
+    await expect(page.getByRole("button", { name: /Check in/ })).toBeVisible({ timeout: 15_000 });
+
+    await page.getByRole("button", { name: /Check in/ }).click();
+    const checkIn = page.getByRole("dialog", { name: "Check-in" });
+    await expect(checkIn.getByRole("heading", { name: "How are you feeling?" })).toBeVisible();
+    await expect(checkIn.getByText("Sign in to save this check-in with your account.")).toHaveCount(0);
+    await checkIn.getByRole("button", { name: "Good" }).click();
+    for (let step = 0; step < 4; step += 1) {
+      await checkIn.getByRole("button", { name: "Next" }).click();
+    }
+    await expect(checkIn.getByRole("heading", { name: "Anything else?" })).toBeVisible();
+    await expect(checkIn.getByText("Sign in to save this check-in with your account.")).toHaveCount(0);
+    await checkIn.getByRole("button", { name: "Sign in to save" }).click();
+
+    await expect(page.getByRole("region", { name: "Log in" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Sign in to save your journal entry..." })).toBeVisible();
+    await expect(page.getByText("Return to your sky.")).toHaveCount(0);
+    await expect(page.getByPlaceholder("you@somewhere.com")).toBeVisible();
     await assertNoClientErrors();
   });
 

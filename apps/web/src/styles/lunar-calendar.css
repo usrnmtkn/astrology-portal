@@ -4054,15 +4054,17 @@ a.tx-card.has-article:hover .tx-more {
 }
 
 .calendar-checkin__moods {
-  display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
   gap: var(--calendar-mood-gap);
   width: 100%;
 }
 
 .calendar-checkin__moods button {
-  aspect-ratio: 1;
-  width: 100%;
+  flex: 0 0 auto;
+  width: var(--type-h1-size);
+  height: var(--type-h1-size);
   padding: 0;
   border: 0;
   background: transparent;

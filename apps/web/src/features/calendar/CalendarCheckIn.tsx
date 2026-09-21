@@ -445,9 +445,9 @@ export function CalendarCheckIn({
             </div>
           )}
         </div>
-        {(saveError || (step === 4 && !signedIn)) ? (
+        {saveError ? (
           <p className="calendar-checkin__status" role="status">
-            {saveError ?? "Sign in to save this check-in with your account."}
+            {saveError}
           </p>
         ) : null}
         <footer className="calendar-checkin__footer">
@@ -581,7 +581,7 @@ export function CalendarCheckIn({
                 />
                 <button className={draftPerson.trim() ? "is-ready" : undefined} onClick={addPerson} type="button">Add</button>
               </span>
-              <p>Names you add here are just for your notes — nobody gets tagged or notified.</p>
+              <p>Names you add here are just for your notes. Nobody gets tagged or notified.</p>
             </div>
           </div>
         </div>
