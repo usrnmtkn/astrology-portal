@@ -2283,7 +2283,6 @@ export function LunarCalendar({
     const finishControls = startReaderMeasurement("calendar.controls", storedCalendar ? "hit" : "miss");
     // Basic facts make dates usable while prose downloads overlap the detailed
     // calculation. Reading selection is gated separately on complete facts.
-    const initialDetail = storedCalendar ? "full" : "basic";
     setCalendarDetailState(storedCalendar ? "ready" : "loading");
 
     if (storedCalendar) {
@@ -2312,8 +2311,17 @@ export function LunarCalendar({
       setStatus("loading");
     }
 
-    loadCalendarData(location, viewMode, visibleAnchor, initialDetail)
-      .then((nextCalendar) => {
+    // Start both requests together so detailed facts enter the worker queue
+    // before expensive Sky enrichment. Either successful response can paint
+    // dates; a later basic response must never replace complete facts.
+    const basicRequest = storedCalendar ? null
+      : loadCalendarData(location, viewMode, visibleAnchor, "basic")
+        .then(calendar => ({ calendar, detail: "basic" as const }));
+    const fullRequest = loadCalendarData(location, viewMode, visibleAnchor, "full")
+      .then(calendar => ({ calendar, detail: "full" as const }));
+    const initialRequest = basicRequest ? Promise.any([basicRequest, fullRequest]) : fullRequest;
+    initialRequest
+      .then(({ calendar: nextCalendar, detail }) => {
         if (cancelled) return;
 
         const currentKey = todayKey(nextCalendar.timeZone);
@@ -2335,17 +2343,14 @@ export function LunarCalendar({
         setStatus("ready");
         requestAnimationFrame(() => finishControls("ready"));
 
-        if (initialDetail === "full") {
+        if (detail === "full") {
           setCalendarDetailState("ready");
           writeStoredCalendar(storedCalendarKey, nextCalendar);
           return;
         }
 
-        // The detailed calculation runs in the astronomy worker, so queue it
-        // immediately after the basic paint. This preserves a fast shell while
-        // ensuring event rows are not starved behind lower-priority season work.
-        void loadCalendarData(location, viewMode, visibleAnchor, "full")
-          .then((fullCalendar) => {
+        void fullRequest
+          .then(({ calendar: fullCalendar }) => {
             if (!cancelled) {
               setCalendar(fullCalendar);
               setCalendarDetailState("ready");

@@ -14,7 +14,7 @@ function flush() {
   sent++;
   // No URL, date, account identifier, note, chart, or content text leaves the browser.
   void fetch("/api/reader-performance", {
-    method: "POST", credentials: "omit", keepalive: true,
+    method: "POST", credentials: "omit", referrerPolicy: "no-referrer", keepalive: true,
     headers: { "Content-Type": "application/json" }, body: JSON.stringify({ events })
   }).catch(() => { /* Measurement failure must never affect the reader or retry. */ });
 }

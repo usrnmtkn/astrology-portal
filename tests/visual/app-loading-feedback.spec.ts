@@ -103,6 +103,37 @@ test("Calendar Day waits for full event facts before selecting leftover Moon wri
     .every(key => JSON.parse(localStorage.getItem(key)!).detail === "full"))).toBe(true);
 });
 
+test("Calendar full facts can arrive first without a late basic response replacing them", async ({ page }) => {
+  const { getLunarCalendarWeek } = await import("../../apps/web/src/services/ephemeris");
+  const location = { label: "New York, New York", latitude: 40.7128, longitude: -74.006, timeZone: "America/New_York" };
+  const anchor = new Date("2026-08-08T12:00:00Z");
+  const full = await getLunarCalendarWeek(location, anchor, { detail: "full" });
+  const basic = await getLunarCalendarWeek(location, anchor, { detail: "basic" });
+  let release!: () => void;
+  const held = new Promise<void>(resolve => { release = resolve; });
+  await page.addInitScript(location => localStorage.setItem("tldrastro:selectedLocation", JSON.stringify(location)), location);
+  await page.route("**/api/calendar?**", async route => {
+    const detailed = new URL(route.request().url()).searchParams.get("detail") === "full";
+    if (!detailed) await held;
+    await route.fulfill({ json: { ok: true, calendar: detailed ? full : basic } }).catch(() => {});
+  });
+  try {
+    await page.goto("/#calendar?view=day&date=2026-08-08");
+    await expect.poll(() => page.evaluate(() => Object.keys(localStorage).some(key =>
+      key.startsWith("tldr-lunar-calendar|") && JSON.parse(localStorage.getItem(key)!).detail === "full"))).toBe(true);
+    const basicResponse = page.waitForResponse(response => response.url().includes("/api/calendar?")
+      && new URL(response.url()).searchParams.get("detail") === "basic");
+    release();
+    await basicResponse;
+    await expect(dayGuidance(page)).toHaveAttribute("data-guidance-key", "authored/calendar-weekly-moon/gemini");
+    const stored = await page.evaluate(() => Object.keys(localStorage).filter(key => key.startsWith("tldr-lunar-calendar|"))
+      .map(key => JSON.parse(localStorage.getItem(key)!)));
+    expect(stored).toHaveLength(1);
+    expect(stored[0].calendar.events).toEqual(full.events);
+    expect(stored[0].detail).toBe("full");
+  } finally { release(); }
+});
+
 for (const leaveCalendar of [false, true]) test(`Calendar pending event click ${leaveCalendar ? "does not reopen after leaving" : "opens after the Sky calculation loads"}`, async ({ page }) => {
   test.setTimeout(60_000);
   const { getLunarCalendarWeek } = await import("../../apps/web/src/services/ephemeris");

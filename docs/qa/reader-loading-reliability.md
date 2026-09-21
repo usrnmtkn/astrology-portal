@@ -28,8 +28,9 @@ timeout retains the draft; repeating an upsert uses the same account/date key.
 Timeout does not prove a write was rejected by the server.
 
 A direct Calendar visit starts calculation asset downloads in its worker.
-Basic facts make the date grid usable; detailed calculations then
-overlap prose downloads. Only full facts enter the calendar cache or select an
+Basic and full fact requests start together. The first successful response makes
+dates usable, and prose downloads overlap the remaining calculations. Late basic
+responses cannot replace full facts. Only full facts enter the calendar cache or select an
 authored reading. The shared worker serves core positions and Calendar facts
 before queued transit-window enrichment, then optional natal timing; full Sky
 details are still calculated with the same inputs. Each calendar API attempt has a 2.5-second deadline before
@@ -77,7 +78,7 @@ Five percent of non-automated production visits send at most two batches of eigh
 measurements to the same-origin `/api/reader-performance` endpoint. Do Not Track
 opts out. The endpoint logs only allowlisted checkpoint/outcome, integer duration,
 small/large viewport, coarse network class, cache classification, and deployment
-revision. Requests omit credentials; no URL, selected date, account ID, text,
+revision. Requests omit credentials and the Referer header; no URL, selected date, account ID, text,
 birth data, friend details, or journal contents are collected. Failed or blocked
 telemetry never retries or changes application behavior. No new analytics vendor,
 subscription, database table, or recurring task is introduced.
