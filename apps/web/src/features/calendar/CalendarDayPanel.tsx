@@ -1,3 +1,4 @@
+import { FormattedProse } from "../../components/FormattedProse";
 import { ChevronRight } from "lucide-react";
 import type { SummaryPart } from "../../content/skyDailySummary";
 import type { LunarCalendarEvent } from "../../services/ephemeris";
@@ -199,14 +200,14 @@ export function CalendarDayPanel({
                 data-guidance-key={passage.contentKey}
                 key={passage.contentKey}
               >
-                {passage.paragraphs.map((paragraph) => <p key={paragraph.slice(0, 48)}>{paragraph}</p>)}
+                {passage.paragraphs.map((paragraph) => <FormattedProse key={paragraph.slice(0, 48)} text={paragraph} />)}
               </section>
             )) : paragraphs.length > 0 ? (
               <section aria-label="Moon guidance">
-                {paragraphs.map((paragraph) => <p key={paragraph.slice(0, 48)}>{paragraph}</p>)}
+                {paragraphs.map((paragraph) => <FormattedProse key={paragraph.slice(0, 48)} text={paragraph} />)}
               </section>
             ) : null}
-            {prompt ? <p className="calendar-sky-card__prompt">{prompt}</p> : null}
+            {prompt ? <FormattedProse className="calendar-sky-card__prompt" text={prompt} /> : null}
             </>}
           </div>
         </section>
@@ -237,7 +238,7 @@ export function CalendarDayPanel({
                     <CalendarKindLabel event={card.event} kind={kind} />
                     <strong>{card.title}</strong>
                   </span>
-                  {card.excerpt ? <p className="calendar-stoic-card__excerpt">{card.excerpt}</p> : null}
+                  {card.excerpt ? <FormattedProse className="calendar-stoic-card__excerpt" text={card.excerpt} /> : null}
                   <span className="calendar-stoic-card__cta">
                     <span>{card.meta}</span>
                     {card.isKey ? <span className="calendar-stoic-card__key">⭐ Key</span> : null}

@@ -1,3 +1,4 @@
+import { FormattedText } from "../FormattedProse";
 import { planetSignDignity, type EssentialDignity } from "../../services/planetSignDignity.mjs";
 import { CardReadMore } from "../CardReadMore";
 import { PageLoading } from "../PageLoading";
@@ -571,7 +572,7 @@ export function PlacementTableRow({
             <span>{meta}</span>
           </span>
         ) : null}
-        {description ? <span className="placement-table-row__description">{description}</span> : null}
+        {description ? <span className="placement-table-row__description"><FormattedText text={description} /></span> : null}
         {onClick ? <CardReadMore /> : null}
       </span>
     </>
@@ -712,7 +713,7 @@ export function PlanetPlacementRow({
           </span>
         )}
         {description ? (
-          <span className="planet-placement-row__description">{description}</span>
+          <span className="planet-placement-row__description"><FormattedText text={description} /></span>
         ) : descriptionLoading ? (
           <PageLoading compact message="Loading description" />
         ) : null}

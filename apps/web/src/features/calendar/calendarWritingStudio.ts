@@ -24,7 +24,7 @@ export function calendarWritingStudioHref(contentKey: string) {
     || key.startsWith("cms/sky-daily-summary/moon/")
   ) {
     hash = "calendar-writeups";
-    params.set("view", "daily-sky");
+    params.set("view", key.startsWith("authored/calendar-season-transition/") ? "season-transitions" : "daily-sky");
   } else if (key.startsWith("fallback-hook/sky-placement-lived/")) {
     hash = "sky-writeups";
   } else if (key.startsWith("cms/sky-daily-summary/")) {

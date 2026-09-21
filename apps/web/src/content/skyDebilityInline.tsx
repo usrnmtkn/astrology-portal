@@ -1,3 +1,4 @@
+import { FormattedText } from "../components/FormattedProse";
 import { Fragment, type ReactNode } from "react";
 import type { SkyDebilityDisplayPart } from "./skyDebilityPresentation";
 
@@ -10,8 +11,8 @@ export function SkyDebilityInline({ parts, renderText, linkPrefix = "", linkTarg
 }) {
   const node = (part: SkyDebilityDisplayPart, index: number) => <Fragment key={index}>{part.href
     ? <a className="sky-daily-summary__link" href={`${linkPrefix}${part.href}`} target={linkTarget}
-        rel={linkTarget ? "noreferrer" : undefined} aria-label={`Read about ${part.text}`}>{part.text}</a>
-    : renderText ? renderText(part) : part.text}</Fragment>;
+        rel={linkTarget ? "noreferrer" : undefined} aria-label={`Read about ${part.text}`}><FormattedText text={part.text} /></a>
+    : renderText ? renderText(part) : <FormattedText text={part.text} />}</Fragment>;
   const groups: { emphasized: boolean; parts: SkyDebilityDisplayPart[] }[] = [];
   for (const part of parts) {
     const emphasized = Boolean(part.emphasized);

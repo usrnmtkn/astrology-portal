@@ -1,3 +1,4 @@
+import { FormattedProse } from "../../components/FormattedProse";
 import { PageLoading } from "../../components/PageLoading";
 
 export type FriendCircleFeedCard = {
@@ -57,7 +58,7 @@ export function FriendCircleFeed({
                 <span className="friends-feed-card-body">
                   <span className="friends-feed-meta">{feedMeta}</span>
                   <h3>{card.title}</h3>
-                  <p>{card.body}</p>
+                  <FormattedProse text={card.body} />
                 </span>
                 <span className="friends-feed-avatar-stack" aria-hidden="true">
                   {cardPreviewCharts.map((chart) => (

@@ -1,3 +1,4 @@
+import { FormattedProse } from "../../web/src/components/FormattedProse";
 import { StudioTabs, StudioButton, StudioInput } from "./StudioControls";
 import { AdminDisclosureSummary, AdminSelect } from "./AdminNativeControls";
 import { MetricCard } from "./studio-ds/patterns";
@@ -13,10 +14,20 @@ type Row = CompositionMapRow & { inventory_only?: boolean; facts?: Record<string
 const isArchived = (row: Row) => row.status === 'ARCHIVED'
   || (row.source_snapshot as Record<string, unknown> | null)?.review_status === 'deprecated'
   || (row.facts as Record<string, unknown> | null)?.review_status === 'deprecated';
-type Props = { rows: Row[]; editor: ReactNode; query: string; createRequest?: number; onCreateRequestHandled?: () => void; isLoading?: boolean; onQuery: (value: string) => void; onEdit: (row: Row) => void; onLoad: (row: Row) => Promise<unknown>; onCreate: (sign: string) => void };
-export default function LunarCalendarWorkspace({ rows, editor, query, createRequest = 0, onCreateRequestHandled, isLoading = false, onQuery, onEdit, onLoad, onCreate }: Props) {
+const signName = (sign: string) => sign[0].toUpperCase() + sign.slice(1);
+const seasonPairs = lunarSigns.map((from, index) => ({
+  sign: from,
+  label: `${signName(from)} to ${signName(lunarSigns[(index + 1) % lunarSigns.length])}`
+}));
+type Props = { scope?: "all" | "season-transitions"; rows: Row[]; editor: ReactNode; query: string; createRequest?: number; onCreateRequestHandled?: () => void; isLoading?: boolean; onQuery: (value: string) => void; onEdit: (row: Row) => void; onLoad: (row: Row) => Promise<unknown>; onCreate: (sign: string) => void };
+export default function LunarCalendarWorkspace({ scope = "all", rows, editor, query, createRequest = 0, onCreateRequestHandled, isLoading = false, onQuery, onEdit, onLoad, onCreate }: Props) {
+  const seasonsOnly = scope === "season-transitions";
+  const workspaceLabel = seasonsOnly ? "Calendar season transitions" : "Lunar Calendar workspace";
+  const detailLabel = seasonsOnly ? "Selected season transition" : "Selected lunar passage";
+  const listLabel = seasonsOnly ? "Season transition passages" : "Lunar passages";
+  const searchLabel = seasonsOnly ? "Search season transitions" : "Search Lunar Calendar";
   const [job, setJob] = useState('Day and Week Moon story');
-  const [family, setFamily] = useState('Moon-sign leftover');
+  const [family, setFamily] = useState(seasonsOnly ? 'Season transitions' : 'Moon-sign leftover');
   const [sign, setSign] = useState('all');
   const [status, setStatus] = useState('active');
   const [view, setView] = useState('writeups');
@@ -27,21 +38,23 @@ export default function LunarCalendarWorkspace({ rows, editor, query, createRequ
   const [adding, setAdding] = useState(false);
   const [newSign, setNewSign] = useState('');
   const openedFromQuery = useRef('');
-  useEffect(() => { if (createRequest) { setAdding(true); setNewSign(''); setView('writeups'); onCreateRequestHandled?.(); } }, [createRequest, onCreateRequestHandled]);
+  useEffect(() => { if (!seasonsOnly && createRequest) { setAdding(true); setNewSign(''); setView('writeups'); onCreateRequestHandled?.(); } }, [createRequest, onCreateRequestHandled, seasonsOnly]);
   useEffect(() => {
     const selection = lunarWorkspaceSelectionFromQuery(query);
-    if (!selection) return;
+    if (!selection || (seasonsOnly && selection.family !== 'Season transitions')) return;
     setJob(selection.job);
     setFamily(selection.family);
     setSign(selection.sign);
     setSelectedKey(selection.key);
     setView('writeups');
-  }, [query]);
+  }, [query, seasonsOnly]);
   useEffect(() => { setLimit(12); setView('writeups'); }, [job, family, sign, status, query]);
   const entries = useMemo(() => dropSupersededPackageStarters(rows).flatMap(row => {
     const identity = lunarContentIdentity(row.content_key);
-    return identity ? [{ row, identity }] : [];
-  }), [rows]);
+    return identity && (!seasonsOnly || identity.family === 'Season transitions') ? [{ row, identity }] : [];
+  }), [rows, seasonsOnly]);
+  const seasonFamily = family === 'Season transitions';
+  const resetFilters = () => { setJob('Day and Week Moon story'); setFamily(seasonsOnly ? 'Season transitions' : 'Moon-sign leftover'); setSign('all'); setStatus('active'); onQuery(''); };
   const discoveredFamilies = [...new Set(entries.map(entry => entry.identity.family))];
   const families = [
     ...lunarWorkspaceFamilyOrder.filter(value => discoveredFamilies.includes(value) && (job === 'all' || entries.some(entry => entry.identity.family === value && entry.identity.job === job))),
@@ -74,9 +87,9 @@ export default function LunarCalendarWorkspace({ rows, editor, query, createRequ
     openedFromQuery.current = selectedRow.id;
     onEdit(selectedRow);
   }, [onEdit, query, selectedRow]);
-  const keys = useMemo(() => filtered.map(entry => entry.row.content_key), [rows, job, family, sign, status, query]);
-  return <section className="admin-template-page" aria-label="Lunar Calendar workspace">
-    <section className="admin-content-toolbar"><div><p>Choose the writing job first. Day and Week leftover is one Moon-sign passage per visit on a quiet day, after the lunation article. Timing sentences cover continuation, ingress, and season change. Lunar journal stays on event readings. Sun and Moon daily summary sentences are shared with Sky.</p><p>To write another leftover for a Moon sign, add a separate write-up. Source keys stay the same.</p></div><StudioButton type="button" onClick={() => { setNewSign(sign === 'all' ? '' : sign); setAdding(true); setView('writeups'); }}>Add leftover write-up</StudioButton></section>
+  const keys = useMemo(() => filtered.map(entry => entry.row.content_key), [rows, job, family, sign, status, query, seasonsOnly]);
+  return <section className="admin-template-page" aria-label={workspaceLabel}>
+    <section className="admin-content-toolbar"><div>{seasonsOnly ? <p>Choose a season pair, then edit its Ends or Begins passages used in Calendar Day and Week.</p> : <><p>Choose the writing job first. Day and Week leftover is one Moon-sign passage per visit on a quiet day, after the lunation article. Timing sentences cover continuation, ingress, and season change. Lunar journal stays on event readings. Sun and Moon daily summary sentences are shared with Sky.</p><p>To write another leftover for a Moon sign, add a separate write-up. Source keys stay the same.</p></>}</div>{!seasonsOnly && <StudioButton type="button" onClick={() => { setNewSign(sign === 'all' ? '' : sign); setAdding(true); setView('writeups'); }}>Add leftover write-up</StudioButton>}</section>
     {adding && <section className="admin-panel" aria-label="Add leftover write-up">
       <header className="admin-composition-detail-header"><Stack gap="sm"><h2>Add leftover write-up</h2><Text size="body" tone="secondary">Create a leftover Moon-sign passage for Calendar Day and Week. Lunation articles and event readings are separate families.</Text></Stack><StudioButton onClick={() => setAdding(false)}>Cancel</StudioButton></header>
       <div className="admin-review-filter-grid"><label><span>Moon sign for the new write-up</span><AdminSelect autoFocus aria-label="Moon sign for the new write-up" value={newSign} onChange={event => setNewSign(event.target.value)}><option value="">Choose a Moon sign</option>{lunarSigns.map(value => <option key={value} value={value}>{value[0].toUpperCase() + value.slice(1)}</option>)}</AdminSelect></label></div>
@@ -90,44 +103,44 @@ export default function LunarCalendarWorkspace({ rows, editor, query, createRequ
       <p className="admin-field-hint">Opening a draft does not save or publish it. Save draft keeps unfinished work for later; Save &amp; publish makes it available for Calendar selection.</p>
     </section>}
     <div className="admin-review-filter-grid studio-surface">
-      <label><span>Writing job</span><AdminSelect aria-label="Writing job" value={job} onChange={event => {
+      {!seasonsOnly && <label><span>Writing job</span><AdminSelect aria-label="Writing job" value={job} onChange={event => {
         const next = event.target.value;
         setJob(next);
         setFamily(next === 'Day and Week Moon story' ? 'Moon-sign leftover' : 'all');
-      }}><option value="all">All jobs</option>{lunarWorkspaceJobs.map(value => <option key={value}>{value}</option>)}</AdminSelect></label>
-      <label><span>Moon sign</span><AdminSelect aria-label="Moon sign" value={sign} onChange={event => setSign(event.target.value)}><option value="all">All signs</option>{lunarSigns.map(value => <option key={value} value={value}>{value[0].toUpperCase() + value.slice(1)}</option>)}</AdminSelect></label>
-      <label><span>Search Lunar Calendar</span><StudioInput aria-label="Search Lunar Calendar" value={query} onChange={event => onQuery(event.target.value)} placeholder="Moon in Libra, leftover, or passage name" /></label>
-      <label><span>Content family</span><AdminSelect aria-label="Content family" value={family} onChange={event => setFamily(event.target.value)}><option value="all">All families</option>{families.map(value => <option key={value}>{value}</option>)}</AdminSelect></label>
+      }}><option value="all">All jobs</option>{lunarWorkspaceJobs.map(value => <option key={value}>{value}</option>)}</AdminSelect></label>}
+      <label><span>{seasonFamily ? "Season transition" : "Moon sign"}</span><AdminSelect aria-label={seasonFamily ? "Season transition" : "Moon sign"} value={sign} onChange={event => setSign(event.target.value)}><option value="all">{seasonFamily ? "All season transitions" : "All signs"}</option>{seasonFamily ? seasonPairs.map(pair => <option key={pair.sign} value={pair.sign}>{pair.label}</option>) : lunarSigns.map(value => <option key={value} value={value}>{value[0].toUpperCase() + value.slice(1)}</option>)}</AdminSelect></label>
+      <label><span>{searchLabel}</span><StudioInput aria-label={searchLabel} value={query} onChange={event => onQuery(event.target.value)} placeholder={seasonFamily ? "Virgo to Libra, Ends, or Begins" : "Moon in Libra, leftover, or passage name"} /></label>
+      {!seasonsOnly && <label><span>Content family</span><AdminSelect aria-label="Content family" value={family} onChange={event => setFamily(event.target.value)}><option value="all">All families</option>{families.map(value => <option key={value}>{value}</option>)}</AdminSelect></label>}
       <label><span>Publication</span><AdminSelect aria-label="Publication" value={status} onChange={event => setStatus(event.target.value)}><option value="active">Active sources</option><option value="LIVE">Published</option><option value="DRAFT">Drafts</option><option value="archived">Archived</option><option value="all">All states</option></AdminSelect></label>
     </div>
-    <StudioTabs label="Lunar workspace views" value={view} onValueChange={setView}
+    <StudioTabs label={seasonsOnly ? "Season transition views" : "Lunar workspace views"} value={view} onValueChange={setView}
       tabs={[{ value: 'writeups', label: 'Write-ups' }, { value: 'composition', label: 'Composition & variables' }]}>
 
     {view === 'composition' ? <Suspense fallback={<PageLoading message="Loading composition…" />}><CompositionMapWorkspace rows={rows} templateKeys={keys} initialKey={selected?.row.content_key} onEditRow={onEdit} onLoadRow={onLoad} editor={editor} /></Suspense> : <>
       {editor}
       <div className="admin-composition-map-layout">
-        <section className="admin-composition-detail" aria-label="Selected lunar passage">{selected && <>
+        <section className="admin-composition-detail" aria-label={detailLabel}>{selected && <>
           {error && <div className="admin-error" role="alert"><p>{error}</p><StudioButton type="button" onClick={() => setRetry(value => value + 1)}>Retry passage</StudioButton></div>}
           <label><span>Selected passage</span>{filtered.length ? <AdminSelect aria-label="Selected passage" value={selected.row.content_key} onChange={event => setSelectedKey(event.target.value)}>{filtered.map(({ row, identity }) => <option key={row.id} value={row.content_key}>{identity.title}</option>)}</AdminSelect> : <p className="admin-field-hint">No passages match these filters.</p>}</label>
-          <header className="admin-composition-detail-header"><Stack gap="sm"><Text size="meta" tone="secondary">{selected.identity.job} · {selected.identity.destination}</Text><h2>{selected.identity.title}</h2></Stack><StudioButton type="button" disabled={Boolean(error)} onClick={() => onEdit(selected.row)}>Edit passage</StudioButton></header>
-          <Grid className={metricGrid} aria-label="Selected lunar passage coverage">
+          <header className="admin-composition-detail-header"><Stack gap="sm"><Text size="meta" tone="secondary">{seasonsOnly ? selected.identity.destination : `${selected.identity.job} · ${selected.identity.destination}`}</Text><h2>{selected.identity.title}</h2></Stack><StudioButton type="button" disabled={Boolean(error)} onClick={() => onEdit(selected.row)}>Edit passage</StudioButton></header>
+          <Grid className={metricGrid} aria-label={`${detailLabel} coverage`}>
             <MetricCard label="Publication" value={isArchived(selected.row) ? "Archived" : selected.row.status === "LIVE" ? "Published" : selected.row.status.toLowerCase()} />
             <MetricCard label="Kind" value={selected.identity.kind} />
           </Grid>
           <p>{selected.identity.selection}</p>{selected.identity.excluded && <p role="note">The owner excluded this base Cancer passage. The Calendar selects another approved variant even when this stored row says Published.</p>}
-          {selected.row.inventory_only ? <PageLoading compact message="Loading full passage…" /> : <div className="admin-composition-preview-field"><span>Saved passage</span>{(selected.row.body ?? '').split(/\n\n/).map((paragraph, index) => <p key={index}>{paragraph}</p>)}</div>}
+          {selected.row.inventory_only ? <PageLoading compact message="Loading full passage…" /> : <div className="admin-composition-preview-field"><span>Saved passage</span>{(selected.row.body ?? '').split(/\n\n/).map((paragraph, index) => <FormattedProse key={index} text={paragraph} />)}</div>}
           <StudioButton type="button" onClick={() => setView('composition')}>Review composition and variables</StudioButton>
           <details className={`${containedDisclosure} admin-workspace-details`}><AdminDisclosureSummary>Source key and editorial notes</AdminDisclosureSummary><code>{selected.row.content_key}</code><p>{selected.row.summary}</p></details>
         </>}</section>
-        <aside className="admin-composition-template-list" aria-label="Lunar passages">
-          <header><Stack gap="sm"><Text size="meta" tone="secondary">Lunar passages</Text><strong>{filtered.length} {filtered.length === 1 ? 'passage' : 'passages'}</strong></Stack></header>
+        <aside className="admin-composition-template-list" aria-label={listLabel}>
+          <header><Stack gap="sm"><Text size="meta" tone="secondary">{listLabel}</Text><strong>{filtered.length} {filtered.length === 1 ? 'passage' : 'passages'}</strong></Stack></header>
           <div className="studio-grid">{filtered.slice(0, limit).map(({ row, identity }) => <article className="admin-template-card" key={row.id}>
             <StudioButton type="button" aria-pressed={row.id === selected?.row.id} onClick={() => setSelectedKey(row.content_key)}>{identity.title}</StudioButton>
             <Text size="meta" tone="secondary">{isArchived(row) ? 'Archived' : row.status === 'LIVE' ? 'Published' : row.status.toLowerCase()} · {identity.kind}{identity.excluded ? ' · Excluded by owner' : ''}</Text>
             <StudioButton type="button" aria-label={`Edit ${identity.title}`} onClick={() => { setSelectedKey(row.content_key); onEdit(row); }}>Edit passage</StudioButton>
           </article>)}</div>
           {filtered.length > limit && <StudioButton type="button" onClick={() => setLimit(value => value + 12)}>Show more passages</StudioButton>}
-          {!filtered.length && <div className="admin-empty"><p>No lunar passages match these filters.</p><StudioButton type="button" onClick={() => { setJob('Day and Week Moon story'); setFamily('Moon-sign leftover'); setSign('all'); setStatus('active'); onQuery(''); }}>Reset filters</StudioButton></div>}
+          {!filtered.length && <div className="admin-empty"><p>{seasonsOnly ? "No season transitions match these filters." : "No lunar passages match these filters."}</p><StudioButton type="button" onClick={resetFilters}>Reset filters</StudioButton></div>}
         </aside>
       </div>
     </>}

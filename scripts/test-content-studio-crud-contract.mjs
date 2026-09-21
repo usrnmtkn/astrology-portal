@@ -223,3 +223,46 @@ await test('superseded compositions cannot publish through create, bulk upsert, 
     assert.deepEqual(writes, []);
   }
 });
+
+await test('Calendar composition source edits preserve adjacent phrases and reject stale saves', async () => {
+  const sourceKeys = [
+    'cms/sky-daily-summary/sun/virgo',
+    'authored/calendar-weekly-moon/cancer/variant-2',
+    'authored/calendar-moon-continuation-summary/capricorn',
+    'authored/calendar-season-transition/virgo/libra/variant-4'
+  ];
+  for (const key of sourceKeys) {
+    const source = { ...baseline, content_key: key, body: 'Fixture original opening. Fixture original final sentence.' };
+    const neighbor = { ...baseline, id: 'adjacent-source', content_key: 'cms/qa/adjacent-phrase', body: 'Fixture adjacent passage stays complete.' };
+    reset([source, neighbor]);
+    const fullBody = 'Fixture edited opening.\n\nFixture complete edited final sentence.';
+    const saved = await invoke('PATCH', { id: source.id, expectedUpdatedAt: source.updated_at, body: fullBody });
+    assert.equal(saved.status, 200, JSON.stringify(saved));
+    assert.equal(saved.rows[0].content_key, key);
+    assert.equal(saved.rows[0].body, fullBody);
+    assert.equal(saved.rows[0].status, 'DRAFT');
+    const reopened = await invoke('GET', undefined, { query: `?id=${source.id}&status=all&visibility=all` });
+    assert.equal(reopened.rows[0].body, fullBody);
+    assert.deepEqual(rows.get(neighbor.id), neighbor);
+    const stale = await invoke('PATCH', { id: source.id, expectedUpdatedAt: source.updated_at, body: 'Fixture obsolete edit.' });
+    assert.equal(stale.status, 409);
+    assert.equal(rows.get(source.id).body, fullBody);
+  }
+});
+
+await test('Astro 101 articles and chapters move live to draft and back without losing formatted copy', async () => {
+  for (const kind of ['chapter', 'article']) {
+    const sections = { kind, intro: '**QA opening**', blocks: [{ heading: 'QA section', body: '- *QA first*\n- QA final' }] };
+    reset([{ ...baseline, status: 'LIVE', surface: 'education', mode: 'all', content_key: `education/astro-101/${kind}/qa`, facts: { slug: '/learn/astro-101/qa' }, sections }]);
+    const demoted = await invoke('PATCH', { id: baseline.id, expectedUpdatedAt: baseline.updated_at, status: 'DRAFT' });
+    assert.equal(demoted.status, 200, JSON.stringify(demoted));
+    assert.equal(rows.get(baseline.id).status, 'DRAFT');
+    assert.deepEqual(rows.get(baseline.id).sections, sections);
+    const draftVersion = rows.get(baseline.id).updated_at;
+    assert.equal((await invoke('PATCH', { id: baseline.id, expectedUpdatedAt: baseline.updated_at, status: 'LIVE' })).status, 409);
+    const published = await invoke('PATCH', { id: baseline.id, expectedUpdatedAt: draftVersion, status: 'LIVE', lane: 'serving', reviewState: null });
+    assert.equal(published.status, 200, JSON.stringify(published));
+    assert.equal(rows.get(baseline.id).status, 'LIVE');
+    assert.deepEqual(rows.get(baseline.id).sections, sections);
+  }
+});

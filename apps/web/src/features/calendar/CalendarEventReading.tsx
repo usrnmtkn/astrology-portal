@@ -1,3 +1,4 @@
+import { FormattedProse } from "../../components/FormattedProse";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useState } from "react";
 import type { LunarCalendarEvent } from "../../services/ephemeris";
@@ -53,7 +54,7 @@ function JournalBlock({
   const [open, setOpen] = useState(false);
 
   if (block.type === "heading") return <h3>{block.text}</h3>;
-  if (block.type === "para") return <p>{block.text}</p>;
+  if (block.type === "para") return <FormattedProse text={block.text} />;
   if (block.type === "exact") {
     if (hasEventTime) return null;
     return <p className="calendar-reading__exact"><strong>Exact:</strong> {block.text || dateLine}</p>;
@@ -91,7 +92,7 @@ function JournalBlock({
     return (
       <section className="calendar-reading__card">
         {block.title ? <span className="calendar-reading__card-label">{block.title}</span> : null}
-        {block.text ? <p>{block.text}</p> : null}
+        {block.text ? <FormattedProse text={block.text} /> : null}
         {block.type === "cycle" && block.link && !/^https?:/i.test(block.link) ? (
           <span className="calendar-reading__toggle">Go to {block.link}</span>
         ) : null}
@@ -114,7 +115,7 @@ function JournalBlock({
     return (
       <section className="calendar-reading__card">
         {label ? <span className="calendar-reading__card-label">{label}</span> : null}
-        {items.map((item) => <p key={item.slice(0, 48)}>{item}</p>)}
+        {items.map((item) => <FormattedProse key={item.slice(0, 48)} text={item} />)}
       </section>
     );
   }
@@ -127,7 +128,7 @@ function JournalBlock({
         </ol>
         {block.notes?.length ? (
           <div className="calendar-reading__notes">
-            {block.notes.map((note) => <p key={note.slice(0, 48)}>{note}</p>)}
+            {block.notes.map((note) => <FormattedProse key={note.slice(0, 48)} text={note} />)}
           </div>
         ) : null}
       </section>
@@ -137,7 +138,7 @@ function JournalBlock({
     return (
       <section className="calendar-reading__card">
         <span className="calendar-reading__card-label">{block.label ?? (block.type === "tarot" ? "Tarot" : "Prompt")}</span>
-        {block.text ? <p>{block.text}</p> : null}
+        {block.text ? <FormattedProse text={block.text} /> : null}
         {showJournalPrompts && block.text && onJournalPrompt ? (
           <button
             className="calendar-reading__toggle"
@@ -287,7 +288,7 @@ export function CalendarEventReading({
               timeCity={timeCity}
             />
           ))
-          : paragraphs.filter(Boolean).map((text) => <p key={text.slice(0, 48)}>{text}</p>)}
+          : paragraphs.filter(Boolean).map((text) => <FormattedProse key={text.slice(0, 48)} text={text} />)}
         {canReadArticle && article ? (
           <button className="calendar-reading__article-card" onClick={onReadArticle} type="button">
             <span className="calendar-reading__article-icon" aria-hidden="true" />

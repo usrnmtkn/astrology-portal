@@ -1,3 +1,4 @@
+import { FormattedProse } from "../../components/FormattedProse";
 import { ArticlePills, type ArticlePillData } from "../../components/ArticlePills";
 import { SkyMechanics, TransitFacts } from "../../components/ArticleFacts";
 import { ChevronLeft } from "lucide-react";
@@ -549,7 +550,7 @@ export function SkyDetailArticle({
               {entry.risingSign} &amp; {entry.risingSign} Rising
             </h3>
             {fullDetailReaderFacingParagraphs([entry.body]).map((paragraph) => (
-              <p key={paragraph}>{paragraph}</p>
+              <FormattedProse key={paragraph} text={paragraph} />
             ))}
           </div>
         ))}
@@ -587,7 +588,7 @@ export function SkyDetailArticle({
             </div>
             <h1 className="article-title" id="sky-detail-title">{detail.title}</h1>
             {detail.tagline ? (
-              <p className="article-sub sky-detail-tagline">{detail.tagline}</p>
+              <FormattedProse className="article-sub sky-detail-tagline" text={detail.tagline} />
             ) : null}
             {headerDate ? (
               <p className="article-duration">{headerDate}</p>
@@ -597,7 +598,7 @@ export function SkyDetailArticle({
             {articleSub ? (
               <div className="article-tldr">
                 <span className="ui-pill ui-pill--neutral article-tldr__label">TLDR</span>
-                <p className="article-sub article-tldr__copy">{articleSub}</p>
+                <FormattedProse className="article-sub article-tldr__copy" text={articleSub} />
               </div>
             ) : null}
           </header>
@@ -609,13 +610,13 @@ export function SkyDetailArticle({
             <div className="article-body-inner">
               {detail.lensHint ? (
                 <aside className="article-lens-hint" aria-label="Placement lens">
-                  {typeof detail.lensHint === "string" ? <p>{detail.lensHint}</p> : detail.lensHint}
+                  {typeof detail.lensHint === "string" ? <FormattedProse text={detail.lensHint} /> : detail.lensHint}
                 </aside>
               ) : null}
               {detail.plainBody && fallbackParagraphs.length > 0 ? (
                 <section className="article-section sky-detail-section sky-detail-plain-section">
                   {fallbackParagraphs.map((paragraph, paragraphIndex) => (
-                    <p key={`plain-${paragraphIndex}`}>{paragraph}</p>
+                    <FormattedProse key={`plain-${paragraphIndex}`} text={paragraph} />
                   ))}
                 </section>
               ) : displaySections.length > 0 ? (
@@ -623,7 +624,7 @@ export function SkyDetailArticle({
                   {detail.bodyBeforeSections && fallbackParagraphs.length > 0 ? (
                     <section className="article-section sky-detail-section sky-detail-intro-section">
                       {fallbackParagraphs.map((paragraph, paragraphIndex) => (
-                        <p key={`intro-${paragraphIndex}`}>{paragraph}</p>
+                        <FormattedProse key={`intro-${paragraphIndex}`} text={paragraph} />
                       ))}
                     </section>
                   ) : null}
@@ -642,9 +643,9 @@ export function SkyDetailArticle({
                         {sourceTag && !bodyAlreadyStartsWithTag ? <p>{sourceTag}</p> : null}
                         {bodyParagraphs.length > 0
                           ? bodyParagraphs.map((paragraph, paragraphIndex) => (
-                            <p key={`${section.heading || "section"}-${index}-${paragraphIndex}`}>{paragraph}</p>
+                            <FormattedProse key={`${section.heading || "section"}-${index}-${paragraphIndex}`} text={paragraph} />
                           ))
-                          : <p>{typeof section.body === "string" ? stripLegacySkyArticleScaffoldPrefix(section.body) : section.body}</p>}
+                          : <FormattedProse text={typeof section.body === "string" ? stripLegacySkyArticleScaffoldPrefix(section.body) : section.body} />}
                       </section>
                     );
                   })}
@@ -653,13 +654,13 @@ export function SkyDetailArticle({
                 <>
                   {bodyLede ? (
                     <section className="article-section sky-detail-section">
-                      <p className="sky-detail-lede">{bodyLede}</p>
+                      <FormattedProse className="sky-detail-lede" text={bodyLede} />
                     </section>
                   ) : null}
                   {bodySectionParagraphs.length > 0 ? (
                     <section className="article-section sky-detail-section">
                       {bodySectionParagraphs.map((paragraph, index) => (
-                        <p key={index}>{paragraph}</p>
+                        <FormattedProse key={index} text={paragraph} />
                       ))}
                     </section>
                   ) : null}
@@ -668,7 +669,7 @@ export function SkyDetailArticle({
               {detail.keyDates?.length ? (
                 <section className="article-section sky-detail-section sky-placement-key-dates" aria-labelledby="sky-detail-key-dates-title">
                   <h2 id="sky-detail-key-dates-title">Key dates</h2>
-                  {detail.keyDatesIntro ? <p>{detail.keyDatesIntro}</p> : null}
+                  {detail.keyDatesIntro ? <FormattedProse text={detail.keyDatesIntro} /> : null}
                   <dl>
                     {detail.keyDates.map((keyDate) => (
                       <div key={`${keyDate.date}-${keyDate.label}`}>
@@ -681,12 +682,12 @@ export function SkyDetailArticle({
               ) : null}
               {detail.closingCharge ? (
                 <section className="article-section sky-detail-section sky-placement-closing-charge">
-                  <p>{detail.closingCharge}</p>
+                  <FormattedProse text={detail.closingCharge} />
                 </section>
               ) : null}
               {detail.seriesLine ? (
                 <aside className="article-section sky-detail-section sky-aspect-series" aria-label="Aspect series">
-                  <p>{detail.seriesLine}</p>
+                  <FormattedProse text={detail.seriesLine} />
                 </aside>
               ) : null}
               <SkyMechanics caption={detail.mechanicsCaption} />
@@ -694,7 +695,7 @@ export function SkyDetailArticle({
                 <details className="sky-detail-drilldown">
                   <summary>{drilldown.title || "Why this?"}</summary>
                   <div className="sky-detail-drilldown-body">
-                    {drilldown.summary ? <p>{drilldown.summary}</p> : null}
+                    {drilldown.summary ? <FormattedProse text={drilldown.summary} /> : null}
                     {drilldown.factors.length > 0 ? (
                       <dl>
                         {drilldown.factors.map((factor) => (
@@ -708,8 +709,8 @@ export function SkyDetailArticle({
                         ))}
                       </dl>
                     ) : null}
-                    {drilldown.whyThisScene ? <p>{drilldown.whyThisScene}</p> : null}
-                    {drilldown.timingNote ? <p>{drilldown.timingNote}</p> : null}
+                    {drilldown.whyThisScene ? <FormattedProse text={drilldown.whyThisScene} /> : null}
+                    {drilldown.timingNote ? <FormattedProse text={drilldown.timingNote} /> : null}
                   </div>
                 </details>
               ) : null}
@@ -718,7 +719,7 @@ export function SkyDetailArticle({
                   <h2 id="sky-detail-historical-title">{detail.historicalLookback.heading}</h2>
                   <p className="sky-detail-historical-lookback__date">{detail.historicalLookback.dateLabel}</p>
                   {detail.historicalLookback.paragraphs.map((paragraph, index) => (
-                    <p key={`historical-${index}`}>{paragraph}</p>
+                    <FormattedProse key={`historical-${index}`} text={paragraph} />
                   ))}
                 </section>
               ) : null}
@@ -791,12 +792,12 @@ export function SkyDetailArticle({
                             ? bodyParagraphs.map((paragraph, paragraphIndex) => southNodeMatch?.[0] === paragraph ? (
                               <Fragment key={`${section.key}-${paragraphIndex}`}>
                                 <div className="article-related-aspects__copy-heading article-related-aspects__copy-heading--paired"><h4>{southNodeHeading}</h4></div>
-                                <p>{southNodeMatch[2]}</p>
+                                <FormattedProse text={southNodeMatch[2]} />
                               </Fragment>
-                            ) : <p key={`${section.key}-${paragraphIndex}`}>{paragraph}</p>)
+                            ) : <FormattedProse key={`${section.key}-${paragraphIndex}`} text={paragraph} />)
                             : exactDateLine
                               ? null
-                              : <p>{typeof section.body === "string" ? stripLegacySkyArticleScaffoldPrefix(section.body) : section.body}</p>}
+                              : <FormattedProse text={typeof section.body === "string" ? stripLegacySkyArticleScaffoldPrefix(section.body) : section.body} />}
                         </section>
                       );
                         })}
@@ -832,7 +833,7 @@ export function SkyDetailArticle({
               <div className="article-body-card sky-detail-body">
                 <div className="article-body-inner">
                   <section className="article-section sky-detail-section">
-                    <p>{detail.personalizedPlacement.body}</p>
+                    <FormattedProse text={detail.personalizedPlacement.body} />
                     {detail.personalizedPlacement.natalAspects.length > 0 ? (
                       <>
                         <h3>Aspects to the natal chart</h3>
@@ -840,7 +841,7 @@ export function SkyDetailArticle({
                           <section className="sky-detail-personalized-aspect" key={aspect.key}>
                             <h4>{aspect.heading}</h4>
                             {aspect.members.flatMap((member) => member.body ? fullDetailReaderFacingParagraphs([member.body]).map((paragraph, index) => (
-                              <p key={`${member.key}-${index}`}>{paragraph}</p>
+                              <FormattedProse key={`${member.key}-${index}`} text={paragraph} />
                             )) : [])}
                           </section>
                         ))}

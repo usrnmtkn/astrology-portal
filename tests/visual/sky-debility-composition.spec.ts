@@ -1,19 +1,17 @@
 import { expect, test, type Page } from "@playwright/test";
 import { builtinContentRecords, contentLiveStatuses } from "../../api/_lib/content-live-status";
+import { routeStudioInventoryApi } from "../helpers/studio-inventory-route";
 import { linkedThreePlanetContext as approvedThreePlanetContext, linkedSingularSaturnContext as singularSaturnContext, highlightedCountStatement } from "../fixtures/sky-effort-count-first";
 
 async function mockStudio(page: Page, stored: any[]) {
   await page.addInitScript(() => localStorage.setItem("tldrastro:contentAdminSecret", "effort-test-only"));
-  await page.route("**/api/admin/**", async route => {
-    const url = new URL(route.request().url());
-    let data: any = { ok: true, rows: [], statuses: [], nextCursor: null };
-    if (url.pathname.endsWith("/content-live-status")) {
-      const ids = route.request().postDataJSON()?.ids ?? [];
-      data.statuses = contentLiveStatuses(ids.map((id: string) => stored.find(row => row.id === id) ?? builtinContentRecords.get(id.replace(/^builtin:/, ""))).filter(Boolean), stored);
-    }
-    if (url.pathname.endsWith("/generated-content")) {
-      if (["POST", "PATCH"].includes(route.request().method())) {
-        const input = route.request().postDataJSON();
+  await routeStudioInventoryApi(page, {
+    call: async ({ method, body, url: requestUrl }) => {
+      if (method === "rows") return stored;
+      const url = new URL(requestUrl ?? "/api/admin/generated-content", "https://studio.invalid");
+      const data: any = { ok: true, rows: [], nextCursor: null };
+      if (["POST", "PATCH"].includes(method)) {
+        const input = body as any;
         const row = { id: input.id || `effort-${stored.length}`, content_key: input.contentKey, surface: input.surface, mode: input.mode,
           status: input.status, headline: input.headline, summary: input.summary, body: input.body,
           lane: input.lane, review_state: input.reviewState, block_type: input.blockType, prompt_version: input.promptVersion,
@@ -23,10 +21,18 @@ async function mockStudio(page: Page, stored: any[]) {
         data.rows = [row];
       } else {
         const key = url.searchParams.get("contentKey"), id = url.searchParams.get("id");
-        data.rows = stored.filter(row => (!key || row.content_key === key) && (!id || row.id === id));
+        const keys = url.searchParams.getAll("contentKeys");
+        data.rows = stored.filter(row => (!key || row.content_key === key) && (!id || row.id === id) && (!keys.length || keys.includes(row.content_key)));
       }
-    }
-    await route.fulfill({ status: 200, json: data });
+      return { status: 200, payload: data };
+    },
+    answer: async (route, url) => {
+      if (!url.pathname.endsWith("/content-live-status")) return false;
+      const ids = route.request().postDataJSON()?.ids ?? [];
+      const statuses = contentLiveStatuses(ids.map((id: string) => stored.find(row => row.id === id) ?? builtinContentRecords.get(id.replace(/^builtin:/, ""))).filter(Boolean), stored);
+      await route.fulfill({ json: { ok: true, statuses } });
+      return true;
+    },
   });
 }
 const style = (element: HTMLElement) => {

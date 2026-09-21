@@ -146,7 +146,7 @@ export default function PersonalTransitAiWriter({
     <p>This generator writes the selected destination only: {destinationLabel({ contentKey, transiting, natal, aspect, transitHouse, natalHouse, planet, house, sign })}. Generate copies into this destination's You and Friend fields. Save keeps a draft on this key. Approve &amp; publish stays with you.</p>
     <label className="admin-review-copy-editor">
       <span>Optional direction</span>
-      <StudioTextarea
+      <StudioTextarea formatting={false}
         value={instruction}
         disabled={disabled || busy}
         maxLength={6000}
@@ -180,12 +180,12 @@ export default function PersonalTransitAiWriter({
     </ul>}
     {youDraft && <label className="admin-review-copy-editor">
       <span>AI suggestion · You</span>
-      <StudioTextarea value={youDraft} readOnly aria-label="AI You suggestion" />
+      <StudioTextarea formatting={false} value={youDraft} readOnly aria-label="AI You suggestion" />
       <small className="admin-field-hint">Use You draft copies this suggestion into the You field only.</small>
     </label>}
     {friendDraft && <label className="admin-review-copy-editor">
       <span>AI suggestion · Friend</span>
-      <StudioTextarea value={friendDraft} readOnly aria-label="AI Friend suggestion" />
+      <StudioTextarea formatting={false} value={friendDraft} readOnly aria-label="AI Friend suggestion" />
       <small className="admin-field-hint">Use Friend draft copies this suggestion into the Friend field only.</small>
     </label>}
   </details>;

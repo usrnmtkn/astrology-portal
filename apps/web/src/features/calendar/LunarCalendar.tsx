@@ -1,3 +1,4 @@
+import { FormattedProse } from "../../components/FormattedProse";
 import { useCalendarCheckIns } from "./useCalendarCheckIns";
 import { startReaderMeasurement } from "../../services/readerPerformance";
 import { withRequestDeadline } from "../../services/requestDeadline";
@@ -3120,7 +3121,7 @@ export function LunarCalendar({
           {readingReady && monthlyOverview && (
             <section className="lunar-month-overview" aria-labelledby="lunar-month-overview-heading">
               <h2 className="sr-only" id="lunar-month-overview-heading">Monthly overview</h2>
-              {monthlyOverview.paragraphs.map((paragraph, index) => <p key={index}>{paragraph}</p>)}
+              {monthlyOverview.paragraphs.map((paragraph, index) => <FormattedProse key={index} text={paragraph} />)}
             </section>
           )}
           <div className="lunar-calendar-month-primary">
@@ -3634,7 +3635,7 @@ function TransitCard({
       </div>
       {isContentLoading ? (
         <PageLoading compact message="Loading interpretation" />
-      ) : description ? <p className="tx-body">{description}</p> : null}
+      ) : description ? <FormattedProse className="tx-body" text={description} /> : null}
       {onOpenTransit && !isContentLoading ? <CardReadMore /> : null}
     </>
   );

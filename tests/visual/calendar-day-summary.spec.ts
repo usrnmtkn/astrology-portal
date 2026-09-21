@@ -97,3 +97,32 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark'] as const)
     await expect(page).toHaveURL(new RegExp(`date=${dateKey}#sky/placement/sun/virgo`));
   });
 }
+
+test('Calendar and Sky preserve formatted summary lists and placement links', async ({ page }) => {
+  test.setTimeout(90_000);
+  const dateKey = '2026-09-12';
+  const row = { id: 'format-summary', content_key: 'cms/sky-daily-summary/sun/virgo', surface: 'sky', mode: 'card',
+    status: 'LIVE', lane: 'serving', review_state: null, headline: 'QA summary',
+    body: 'QA opening.\n\n- **First QA item**\n- *Final QA item*',
+    source_snapshot: { contentType: 'mustache-template', contentSystem: 'cms-surface-override', allowedSlots: [] } };
+  await page.clock.setFixedTime(new Date(`${dateKey}T16:00:00Z`));
+  await page.addInitScript(location => localStorage.setItem('tldrastro:selectedLocation', JSON.stringify(location)), location);
+  await bundledPublications(page);
+  await page.route('**/rest/v1/generated_interpretations?**', route => route.fulfill({ json: [row] }));
+  await page.route('**/content-studio-last-known-good.json', route => route.fulfill({ json: {
+    schema: 'content-studio-last-known-good-v1', rowCount: 1, rows: [row], publications: []
+  } }));
+  await page.route('**/api/calendar?**', route => route.fulfill({ json: { ok: true, calendar: {
+    month: '2026-09', timeZone: location.timeZone, location, events: [], days: [{ date: `${dateKey}T16:00:00Z`, dateKey,
+      inMonth: true, moonSign: 'Libra', moonSignGlyph: '♎', moonPhase: 'Waxing Crescent', illumination: 4, activeAspects: [], events: [], voidOfCourse: null }]
+  } } }));
+  for (const route of [`?date=${dateKey}#calendar?view=day&date=${dateKey}`, `?date=${dateKey}#sky`]) {
+    await page.goto(`/${route}`);
+    const summary = route.includes('#calendar') ? page.getByRole('region', { name: 'Sun in season', exact: true }) : page.getByLabel('Daily sky summary', { exact: true });
+    await expect(summary).toContainText('QA opening.', { timeout: 60_000 });
+    await expect(summary.locator('ul > li strong')).toHaveText('First QA item');
+    await expect(summary.locator('ul > li em')).toHaveText('Final QA item');
+    await expect(summary.locator('a[href$="#sky/placement/sun/virgo"]')).toHaveText(/Sun in Virgo at \d+°/);
+    await expect(summary.locator('p ul, p ol')).toHaveCount(0);
+  }
+});
