@@ -603,8 +603,8 @@ assert.doesNotMatch(
 );
 assert.match(
   app,
-  /function activeRetrogradePositions\(positions: PlanetPosition\[\]\) \{[\s\S]*!isLunarNodePoint\(position\.planet\)/u,
-  "The planets-retrograde indicator must exclude the North and South Node points."
+  /function activeRetrogradePositions\(positions: PlanetPosition\[\]\) \{[\s\S]*isDisplayRetrograde\(position\)/u,
+  "The planets-retrograde indicator must exclude background-retrograde points."
 );
 assert.match(app, /const isRetrograde = isDisplayRetrograde\(position\);[\s\S]*placementTransitRangeLabel/u, "Sky placement details must suppress node retrograde presentation.");
 assert.match(app, /retrograde=\{isDisplayRetrograde\(position\)\}/u, "Natal placement rows must suppress node retrograde presentation.");

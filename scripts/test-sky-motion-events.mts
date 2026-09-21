@@ -3,11 +3,31 @@ import fs from "node:fs";
 import { createServer } from "vite";
 import { skyBodyLabel, skyPlacementLinkLabel, calendarMotionTitle } from "../apps/web/src/content/skyMotionLabels.ts";
 import { skySummaryEventFacts } from "../apps/web/src/content/skySummaryEvents.ts";
+import { hasBackgroundRetrogradeMotion, isDisplayRetrograde } from "../apps/web/src/services/astrologyDisplay.ts";
+
+assert.equal(hasBackgroundRetrogradeMotion("Lilith"), true);
+assert.equal(hasBackgroundRetrogradeMotion("Black Moon Lilith"), true);
+assert.equal(hasBackgroundRetrogradeMotion("North Node"), true);
+assert.equal(hasBackgroundRetrogradeMotion("True Node"), true);
+assert.equal(hasBackgroundRetrogradeMotion("Saturn"), false);
+assert.equal(isDisplayRetrograde({ planet: "Lilith", motion: "retrograde" }), false);
+assert.equal(isDisplayRetrograde({ planet: "North Node", motion: "retrograde" }), false);
+assert.equal(isDisplayRetrograde({ planet: "South Node", motion: "retrograde" }), false);
+assert.equal(isDisplayRetrograde({ planet: "Saturn", motion: "retrograde" }), true);
+assert.equal(isDisplayRetrograde({ planet: "Chiron", motion: "retrograde" }), true);
+assert.equal(isDisplayRetrograde({ planet: "Pluto", motion: "retrograde" }), true);
 
 assert.equal(skyBodyLabel("Neptune"), "Neptune");
 assert.equal(skyPlacementLinkLabel("Mars", "Cancer"), "Mars in Cancer");
 assert.equal(skyPlacementLinkLabel("Saturn", "Aries", "direct"), "Saturn in Aries");
 assert.equal(skyPlacementLinkLabel("Saturn", "Aries", "retrograde"), "Saturn Rx in Aries");
+assert.equal(skyBodyLabel("Lilith", "retrograde"), "Lilith");
+assert.equal(skyBodyLabel("Black Moon Lilith", "retrograde"), "Black Moon Lilith");
+assert.equal(skyBodyLabel("North Node", "retrograde"), "North Node");
+assert.equal(skyBodyLabel("South Node", "retrograde"), "South Node");
+assert.equal(skyBodyLabel("True Node", "retrograde"), "True Node");
+assert.equal(skyBodyLabel("Pluto", "retrograde"), "Pluto Rx");
+assert.equal(skyPlacementLinkLabel("Lilith", "Capricorn", "retrograde"), "Lilith in Capricorn");
 const base = { id: "aspect-neptune-sextile-pluto-2026-09-09", type: "aspect" as const,
   title: "Neptune sextile Pluto", startsAt: "2026-09-09T00:00:00Z", dateKey: "2026-09-09",
   planets: ["Neptune", "Pluto"] as [string,string], aspect: "sextile", glyph: "♆♇", primary: true };
@@ -20,6 +40,24 @@ for (const fromMotion of ["direct", "retrograde"] as const) for (const toMotion 
 }
 assert.equal(calendarMotionTitle(base), "Neptune sextiles Pluto");
 assert.equal(calendarMotionTitle({ ...base, type: "station", title: "Neptune stations direct" }), "Neptune stations direct");
+assert.equal(calendarMotionTitle({
+  ...base,
+  id: "aspect-moon-sextile-lilith",
+  title: "Moon sextile Lilith",
+  planets: ["Moon", "Lilith"],
+  aspect: "sextile",
+  fromMotion: "direct",
+  toMotion: "retrograde"
+}), "Moon sextiles Lilith");
+assert.equal(calendarMotionTitle({
+  ...base,
+  id: "aspect-moon-square-pluto",
+  title: "Moon square Pluto",
+  planets: ["Moon", "Pluto"],
+  aspect: "square",
+  fromMotion: "direct",
+  toMotion: "retrograde"
+}), "Moon squares Pluto Rx");
 const vite = await createServer({ root: `${process.cwd()}/apps/web`, appType: "custom", logLevel: "silent",
   server: { middlewareMode: true, hmr: false }, optimizeDeps: { noDiscovery: true },
   plugins: [{ name: "event-motion-test-exports", enforce: "pre", transform(code, id) {
@@ -61,6 +99,13 @@ try {
     assert.equal(timing.skyAspectMultiPassLine({ timing: { passIndex: index, exactPasses: dates.map(exactAt => ({exactAt})) } }), null);
   }
   const calendar = await ep.getLunarCalendarWeek(ep.defaultLocation, new Date("2026-09-07T16:00:00Z"), { detail: "full" });
+  const lilithWeek = await ep.getLunarCalendarWeek(ep.defaultLocation, new Date("2026-09-14T16:00:00Z"), { detail: "full" });
+  const lilithTitles = lilithWeek.days.flatMap((day: { events?: typeof calendar.days[number]["events"] }) =>
+    (day.events ?? []).filter((event) => event.type === "aspect").map((event) => calendarMotionTitle(event))
+  );
+  assert.ok(lilithTitles.some((title: string) => title === "Moon sextiles Lilith"));
+  assert.ok(lilithTitles.every((title: string) => !/\b(?:Lilith|North Node|South Node) Rx\b/u.test(title)));
+  assert.ok(lilithTitles.some((title: string) => /\bPluto Rx\b/u.test(title)), "Pluto still takes an Rx title.");
   fs.mkdirSync("test-results/sky-retrograde", { recursive: true });
   assert.ok(directNeptuneEvent, "Include an exact event after Neptune stations direct.");
   fs.writeFileSync("test-results/sky-retrograde/direct-neptune-event.json", JSON.stringify(directNeptuneEvent));
