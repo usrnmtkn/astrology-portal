@@ -483,3 +483,9 @@ export function generatedContentAliases(row: GeneratedContentAliasRow) {
 
   return Array.from(aliases);
 }
+
+export function moonSignTransitionKey(fromSign: string, toSign: string) {
+  const from = fromSign.toLowerCase().trim();
+  const to = toSign.toLowerCase().trim();
+  return from && to ? `authored/calendar-moon-transition/${from}/${to}` : "";
+}

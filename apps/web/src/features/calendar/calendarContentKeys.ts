@@ -1,5 +1,6 @@
 import type { LunarCalendarEvent } from "../../services/ephemeris";
 import {
+  moonSignTransitionKey,
   skyIngressContentKey,
   skyIngressInstanceContentKey,
   slugContentPart
@@ -34,6 +35,12 @@ export function calendarEventGeneratedContentKeys(event: LunarCalendarEvent) {
 
   if (event.type === "ingress" && event.planet && (event.toSign || event.sign)) {
     const sign = event.toSign ?? event.sign ?? "";
+    if (event.planet === "Moon") {
+      // Calendar sign-change passages have their own source; Sky articles are
+      // separate editorial units and must not fill this card.
+      const key = moonSignTransitionKey(event.fromSign ?? "", sign);
+      return key ? [key] : [];
+    }
     const planetPart = slugContentPart(event.planet);
     const signPart = slugContentPart(sign);
     const ingressKeys = [

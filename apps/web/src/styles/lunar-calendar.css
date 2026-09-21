@@ -3550,6 +3550,13 @@ button.calendar-reading__toggle {
   line-height: var(--leading-description);
 }
 
+/* Calendar Moon transitions are complete owner-authored units. */
+.calendar-stoic-card--moon .calendar-stoic-card__excerpt {
+  display: block;
+  overflow: visible;
+  -webkit-line-clamp: unset;
+}
+
 .calendar-stoic-card__key {
   padding: var(--lunar-space-2) var(--lunar-space-7);
   border-radius: var(--lunar-space-4);

@@ -124,6 +124,9 @@ for (const key of initialChunks) {
   if (file?.endsWith(".js") && fs.readFileSync(path.join(distRoot, file), "utf8").includes("Calendar preview variables")) {
     failures.push(`Calendar template preview must remain deferred: ${file}`);
   }
+  if (file?.endsWith(".js") && fs.readFileSync(path.join(distRoot, file), "utf8").includes("Find a Friends transit card")) {
+    failures.push(`Friends transit source finder must remain deferred: ${file}`);
+  }
 }
 
 const expectedDynamicEntries = [

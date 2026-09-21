@@ -101,18 +101,18 @@ for (const [instant, zone, opening, closing] of [
 assert.equal(calendarPreviewSeasons(week).closing, undefined, "A week inside one season has no invented transition.");
 console.log("Calendar season overview: exact complete shared sources, missing/draft safety, both monthly seasons, direct Swiss boundaries in two zones and conditional sections passed.");
 
-// The September 21 composition shown by the owner combines calculated timing
-// with two independent source passages; clicks must retain both source identities.
-const composedDay = await calculateCalendarPreview("daily-sky", "2026-09-21T16:00:00.000Z", "America/New_York");
+// September 20 is the last full Capricorn day before the calculated ingress.
+// Its continuation and season passages must retain both source identities.
+const composedDay = await calculateCalendarPreview("daily-sky", "2026-09-20T16:00:00.000Z", "America/New_York");
 const continuationSource = { ...source, id: "continuation", content_key: "authored/calendar-moon-continuation-summary/capricorn", body: "Fixture continuation first sentence. Fixture continuation final sentence." };
-const seasonTransitionSource = { ...source, id: "season-transition", content_key: "authored/calendar-season-transition/virgo/libra/variant-4", body: "Fixture season transition {{date}}. Fixture season final sentence." };
+const seasonTransitionSource = { ...source, id: "season-transition", content_key: "authored/calendar-season-transition/virgo/libra/variant-5", body: "Fixture season transition {{date}}. Fixture season final sentence." };
 const composedValues = calendarPreviewValues({ sunSign: "Virgo", moonSign: "Capricorn", calculation: composedDay, rows: [continuationSource, seasonTransitionSource] });
 const composed = composedValues.moonWriteup;
 assert(composed.parts && composed.parts.length > 2);
 assert.equal(composed.parts.map(part => part.text).join(""), composed.text, "Adding click targets must preserve complete rendered text byte for byte.");
 assert.equal(composed.parts.find(part => part.name === "continuation")?.sourceKey, continuationSource.content_key);
 assert.equal(composed.parts.find(part => part.name === "seasonTransition")?.sourceKey, seasonTransitionSource.content_key);
-assert.equal(composed.parts.find(part => part.name === "seasonTransition")?.text, "Fixture season transition in 1 day. Fixture season final sentence.");
+assert.equal(composed.parts.find(part => part.name === "seasonTransition")?.text, "Fixture season transition in 2 days. Fixture season final sentence.");
 assert(composed.parts.filter(part => part.kind === "fact").every(part => !part.sourceKey), "Calculated wording must not link to an unrelated content row.");
 const { calendarPreviewCopyParts } = await import("../apps/admin/src/calendarPreviewModel.ts");
 const absent = calendarPreviewCopyParts("Complete fixed wording.", [{ name: "unused", text: "Not rendered.", kind: "copy", sourceKey: "not-used" }]);
@@ -125,3 +125,14 @@ const workingSource = { ...packagedSource, previewBody: "Fixture draft opening.\
 assert.equal(calendarPreviewValues({ sunSign: "Virgo", moonSign: "Cancer", rows: [workingSource] }).moonWriteup.text, workingSource.previewBody);
 assert.equal(workingSource.body, source.body, "Previewing a draft never changes its saved eligibility evidence.");
 assert.equal(calendarPreviewValues({ sunSign: "Virgo", moonSign: "Cancer", rows: [{ ...workingSource, body: "Tampered package body", status: "DRAFT" }] }).moonWriteup, undefined, "An invalid saved package cannot become eligible through a draft preview.");
+
+// An early local ingress has already changed the noon sample. The editor must
+// still link the passage to the calculated departing/arriving pair.
+const earlyIngressDay = await calculateCalendarPreview("daily-sky", "2026-09-22T03:00:00.000Z", "Asia/Tokyo");
+const transitionSource = { ...source, id: "moon-transition", content_key: "authored/calendar-moon-transition/capricorn/aquarius",
+  body: "Fixture complete transition opening. Fixture complete transition ending." };
+const earlyValues = calendarPreviewValues({ sunSign: "Virgo", moonSign: "Aquarius", calculation: earlyIngressDay, rows: [transitionSource] });
+assert(earlyValues.moonWriteup.text.includes(transitionSource.body));
+assert.equal(earlyValues.moonWriteup.parts?.find(part => part.name === "transition")?.sourceKey, transitionSource.content_key);
+assert.equal(earlyValues.moonWriteup.parts?.map(part => part.text).join(""), earlyValues.moonWriteup.text);
+console.log("Calendar early ingress preview preserves calculated sign-pair source identity and complete copy.");

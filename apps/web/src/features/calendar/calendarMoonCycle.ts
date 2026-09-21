@@ -146,35 +146,27 @@ export function calendarMoonCycleFactsForDays(
 
   for (let index = 0; index < days.length; index += 1) {
     const day = days[index];
-    const previousDay = days[index - 1];
-    const nextDay = days[index + 1];
-    const nextLocalMidnight = nextDay?.date;
-    const signChangesToday = Boolean(previousDay && previousDay.moonSign !== day.moonSign);
-    const signChangesTomorrow = Boolean(nextDay && nextDay.moonSign !== day.moonSign);
-    const departingSign = signChangesToday ? previousDay.moonSign : day.moonSign;
-    const arrivingSign = signChangesToday ? day.moonSign : nextDay?.moonSign ?? "";
-    const entry = moonIngresses.find((event) => (
-      event.dateKey === day.dateKey
-      && (event.toSign ?? event.sign) === day.moonSign
-      && (event.fromSign ?? "") === (previousDay?.moonSign ?? event.fromSign ?? "")
-    )) ?? [...moonIngresses].reverse().find((event) => (
-      (event.toSign ?? event.sign) === day.moonSign
-      && event.startsAt < (nextLocalMidnight ?? `${day.dateKey}T23:59:59.000Z`)
+    // Ingress timestamps, not differences between noon samples, define the
+    // day's transition. This also works at either end of the visible range.
+    const todayIngress = moonIngresses.find((event) => event.dateKey === day.dateKey);
+    const signChangesToday = Boolean(todayIngress);
+    const departingSign = todayIngress?.fromSign ?? day.moonSign;
+    const entry = [...moonIngresses].reverse().find((event) => (
+      (event.toSign ?? event.sign) === departingSign
+      && event.startsAt <= day.date
     ));
-    const exit = moonIngresses.find((event) => (
-      event.dateKey === (signChangesToday ? day.dateKey : nextDay?.dateKey)
-      && (event.fromSign === departingSign || (event.toSign ?? event.sign) === arrivingSign)
-    )) ?? moonIngresses.find((event) => (
-      event.fromSign === day.moonSign
-      && event.startsAt > (entry?.startsAt ?? day.date)
+    const exit = todayIngress ?? moonIngresses.find((event) => (
+      event.fromSign === departingSign && event.startsAt > day.date
     ));
+    const arrivingSign = exit?.toSign ?? exit?.sign ?? "";
+    const signChangesTomorrow = Boolean(exit && calendarDateKeyDistance(day.dateKey, exit.dateKey) === 1);
     let inferredIndex = 1;
     let visitStartKey = day.dateKey;
     if (entry?.dateKey) {
       inferredIndex = Math.max(1, (calendarDateKeyDistance(entry.dateKey, day.dateKey) ?? 0) + 1);
       visitStartKey = entry.dateKey;
     } else {
-      for (let previous = index - 1; previous >= 0 && days[previous].moonSign === day.moonSign; previous -= 1) {
+      for (let previous = index - 1; previous >= 0 && days[previous].moonSign === departingSign; previous -= 1) {
         inferredIndex += 1;
         visitStartKey = days[previous].dateKey;
       }
@@ -210,7 +202,7 @@ export function calendarMoonCycleFactsForDays(
       dayOfWeek,
       moonSign: departingSign,
       moonPhase: day.moonPhase,
-      moonVisitId: `moon-${day.moonSign.toLowerCase()}-${visitStartKey}${entry ? "" : "-open"}`,
+      moonVisitId: `moon-${departingSign.toLowerCase()}-${visitStartKey}${entry ? "" : "-open"}`,
       moonSignDayIndex: inferredIndex,
       moonVisitDayIndex: inferredIndex,
       moonSignEntryDate: entry ? formatDate(entry.startsAt, timeZone) : "",
@@ -222,7 +214,7 @@ export function calendarMoonCycleFactsForDays(
       nextMoonSignEntryTime: exit ? formatTime(exit.startsAt, timeZone) : "",
       moonSignExitHour: exit ? localHour(exit.startsAt, timeZone) : null,
       moonChangesSignToday: signChangesToday,
-      isFirstFullDayInMoonSign: Boolean(signChangesToday === false && previousDay && calendarDateKeyDistance(previousDay.dateKey, day.dateKey) === 1 && previousDay.moonSign !== days[index - 2]?.moonSign),
+      isFirstFullDayInMoonSign: Boolean(!signChangesToday && entry && calendarDateKeyDistance(entry.dateKey, day.dateKey) === 1),
       isLastFullDayInMoonSign: signChangesTomorrow && !signChangesToday,
       isLastFullWeekendOfSeason,
       exactNewMoon: todayLunations.some((event) => lunationKind(event) === "new-moon" && !event.eclipseType),

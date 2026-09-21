@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { calendarMoonCycleFactsForDays } from "../apps/web/src/features/calendar/calendarMoonCycle.ts";
 import calendarHandler from "../api/calendar.ts";
 import { getLunarCalendarFromApi } from "../apps/web/src/services/calendarApi.ts";
 import { getAstrodienstSky } from "../apps/web/src/services/ephemeris.ts";
@@ -102,6 +103,69 @@ assert.ok(passages.length > 0, "Full-calendar regression must exercise active re
 assert.equal(new Set(passages.map((event) => `${event.planet}/${event.dateKey}`)).size, passages.length,
   "A 25-hour day must not produce an extra retrograde passage in the full event feed.");
 
+// Exact ingress events must land on their civil date, independently of the
+// noon sign. Check the API against direct ephemeris on either side of entry.
+for (const scenario of [
+  { date: "2026-09-22", zone: "America/New_York", aquariusDate: "2026-09-21", piscesDate: "2026-09-23" },
+  { date: "2026-09-22", zone: "Asia/Tokyo", aquariusDate: "2026-09-22", piscesDate: "2026-09-24" },
+  { date: "2026-03-08", zone: "America/New_York" },
+  { date: "2026-11-01", zone: "America/New_York" },
+  { date: "2026-12-31", zone: "America/New_York" }
+]) {
+  for (const mode of scenario.aquariusDate ? ["week", "month"] : ["week"]) {
+    const query = new URLSearchParams({ mode, detail: "full", date: scenario.date,
+      lat: "40.7128", lon: "-74.006", timeZone: scenario.zone });
+    const response = responseRecorder();
+    await calendarHandler({ method: "GET", url: `/api/calendar?${query}` }, response);
+    assert.equal(response.statusCode, 200);
+    const calendar = JSON.parse(response.body).calendar;
+    const ingresses = calendar.events.filter(event => event.type === "ingress" && event.planet === "Moon");
+    const cycleFacts = calendarMoonCycleFactsForDays(calendar.days, calendar.cycleEvents, scenario.zone);
+    assert.ok(ingresses.length >= 2, `${mode} must expose computed Moon ingresses.`);
+    assert.equal(new Set(ingresses.map(event => event.id)).size, ingresses.length);
+    for (const event of ingresses) {
+      const matchingDays = calendar.days.filter(day => day.events.some(item => item.id === event.id));
+      assert.equal(matchingDays.length, 1, "Each exact event belongs to one local day.");
+      assert.equal(matchingDays[0].dateKey, event.dateKey);
+      const facts = cycleFacts.get(event.dateKey);
+      assert.equal(facts.moonChangesSignToday, true, "Daily guidance must agree with the exact card date.");
+      assert.equal(facts.moonSign, event.fromSign);
+      assert.equal(facts.nextMoonSign, event.toSign);
+      assert.equal(facts.isLastFullDayInMoonSign, false, "An ingress today must never be described as tomorrow.");
+      const followingDay = calendar.days[calendar.days.indexOf(matchingDays[0]) + 1];
+      if (followingDay) {
+        assert.equal(cycleFacts.get(followingDay.dateKey).moonChangesSignToday, false);
+        assert.equal(cycleFacts.get(followingDay.dateKey).isFirstFullDayInMoonSign, true);
+      }
+      assert.equal(event.dateKey, new Intl.DateTimeFormat("en-CA", { timeZone: scenario.zone,
+        year: "numeric", month: "2-digit", day: "2-digit" }).format(new Date(event.startsAt)));
+      assert.ok(calendar.cycleEvents.some(item => item.id === event.id && item.startsAt === event.startsAt),
+        "Calendar cards and cycle readings use the same calculated entry.");
+      // Month and week overlap; verify the direct placement once per week event.
+      if (mode === "week") {
+        for (const [offset, expected] of [[-120_000, event.fromSign], [120_000, event.toSign]]) {
+          const sky = await getAstrodienstSky(calendar.location, new Date(Date.parse(event.startsAt) + offset));
+          assert.equal(sky.positions.find(position => position.planet === "Moon").sign, expected);
+        }
+      }
+    }
+    if (scenario.aquariusDate) {
+      const aquarius = ingresses.find(event => event.startsAt.startsWith("2026-09-21"));
+      const pisces = ingresses.find(event => event.startsAt.startsWith("2026-09-24"));
+      assert.equal(aquarius?.dateKey, scenario.aquariusDate);
+      assert.equal(aquarius?.toSign, "Aquarius");
+      assert.equal(pisces?.dateKey, scenario.piscesDate);
+      assert.equal(pisces?.toSign, "Pisces");
+      if (scenario.zone === "America/New_York") {
+        assert.equal(calendar.days.find(day => day.dateKey === "2026-09-21").moonSign, "Capricorn",
+          "An afternoon ingress cannot depend on the sign at noon.");
+        assert.equal(calendar.days.find(day => day.dateKey === "2026-09-22").events
+          .filter(event => event.type === "ingress" && event.planet === "Moon").length, 0);
+      }
+    }
+  }
+}
+
 const originalFetch = globalThis.fetch;
 
 try {
@@ -178,4 +242,4 @@ try {
   globalThis.fetch = originalFetch;
 }
 
-console.log("Calendar API timezone, DST date continuity, direct-ephemeris noon parity, and wrong-week contracts passed.");
+console.log("Calendar API timezone, exact Moon ingress dates, DST/year boundaries, direct-ephemeris parity, and wrong-week contracts passed.");

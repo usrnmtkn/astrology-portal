@@ -15,7 +15,6 @@ import { PageLoading } from "../../web/src/components/PageLoading";
 import { reviewWorkBucket, skyWritingIssues } from "../../web/src/content/contentReviewReadiness";
 import { transitNatalContactFromFields, transitNatalContactReady, transitNatalContactContentKey, transitNatalExactContentKey, transitNatalExactSourceDraft, transitNatalSharedFallbackKey, transitNatalStarterCopy } from "./transitNatalSources";
 import { aspectTechnicalVerb, friendsTransitCardDestinations, friendsTransitCompositionQuery, matchesBondEffectContactSearch, transitNatalSearchSelection, matchesTransitNatalContactSearch } from "./bondEffectPageAssembly";
-import FriendsTransitSectionFinder from "./FriendsTransitSectionFinder";
 import { isDynamicTransitNatalExactKey } from "../../web/src/content/transitNatalIdentity";
 import { isTransitNatalFamilyKey, isTransitNatalSituationKey, packagedTransitOpenMode, transitNatalLiveServingSource } from "./transitNatalEditorScope";
 import { currentSkySummaryWording, skyDailySummaryFields, skySummaryTemplateErrors, type SkySummaryField } from "../../web/src/content/skyDailySummaryCatalog";
@@ -236,6 +235,7 @@ const TransitNatalPreviewOptions = lazy(() => import("./TransitNatalReaderPrevie
 const TransitNatalExactSourceAction = lazy(() => import("./TransitNatalReaderPreview").then(module => ({ default: module.TransitNatalExactSourceAction })));
 const PersonalTransitAiWriter = lazy(() => import("./PersonalTransitAiWriter"));
 const BondEffectPagePreview = lazy(() => import("./BondEffectPagePreview"));
+const FriendsTransitSectionFinder = lazy(() => import("./FriendsTransitSectionFinder"));
 const FriendsBetweenYouTwoComposition = lazy(() => import("./FriendsBetweenYouTwoComposition"));
 const ImportedArticleHoroscopesEditor = lazy(() => import("./ImportedArticleHoroscopesEditor"));
 const StudioEditorReviewPanels = lazy(() => import('./StudioEditorReviewPanels'));
@@ -4398,6 +4398,7 @@ export function GeneratedContentAdminDashboard() {
     parts: "all" | "search" | "destinations" = "all"
   ) {
     return (
+      <Suspense fallback={<PageLoading compact message="Loading transit sources…" />}>
       <FriendsTransitSectionFinder
         currentSection={currentSection}
         onOpenActiveForName={() => {
@@ -4421,6 +4422,7 @@ export function GeneratedContentAdminDashboard() {
         variant={variant}
         parts={parts}
       />
+      </Suspense>
     );
   }
 

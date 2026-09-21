@@ -103,10 +103,16 @@ assert.equal(isMajorCalendarEvent(ingress), true);
 assert.equal(isMajorCalendarEvent(lunation), true);
 assert.equal(isMajorCalendarEvent(spanningRx), false);
 
+const calculatedMoonIngress = event({
+  id: "ingress-moon-2026-09-20T01:54:00.000Z", type: "ingress",
+  title: "Moon enters Capricorn", dateKey: "2026-09-20",
+  startsAt: "2026-09-20T01:54:00.000Z", planet: "Moon",
+  fromSign: "Sagittarius", toSign: "Capricorn", sign: "Capricorn", primary: false
+});
 const selected = day({
   dateKey: "2026-09-20",
   moonSign: "Capricorn",
-  events: [aspect, moonAspect, spanningRx]
+  events: [aspect, moonAspect, spanningRx, calculatedMoonIngress]
 });
 const previous = day({
   dateKey: "2026-09-19",
@@ -128,6 +134,12 @@ assert.ok(moonIngress);
 assert.equal(moonIngress.title, "Moon enters Capricorn");
 assert.equal(moonIngress.startsAt, "2026-09-20T01:54:00.000Z");
 assert.equal(surface.some((item) => item.id === moonIngress.id), true);
+assert.equal(surface.filter((item) => item.id === moonIngress.id).length, 1);
+assert.equal(moonIngressEvent(selected), calculatedMoonIngress, "The first day needs no preceding noon sample.");
+assert.equal(moonIngressEvent({ ...selected, events: [] }, previous), null,
+  "A change between noon samples must not invent an ingress on the later date.");
+assert.equal(moonIngressEvent({ ...selected, moonSign: previous.moonSign }, previous), calculatedMoonIngress,
+  "An afternoon entry still belongs to its exact date, even when noon signs match.");
 
 const busy = day({
   dateKey: "2026-09-10",
