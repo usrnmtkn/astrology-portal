@@ -42,15 +42,17 @@ Reviewed against [Tiptap's React setup](https://tiptap.dev/docs/editor/getting-s
 
 The existing publication filters were checked against the [Supabase filter reference](https://supabase.com/docs/reference/javascript/using-filters-eq) and [changelog](https://supabase.com/changelog). No client, database, auth, or RLS upgrade is needed for these controls.
 
-Measured with workflow Supabase placeholders on the base above, gzip level 9:
+Measured with workflow Supabase placeholders, gzip level 9. Admin was remeasured on `19f6d12ea`; its asset hash and exact sizes match hosted CI:
 
 | Metric | Measured bytes | Limit |
 | --- | ---: | ---: |
-| Admin entry raw | 739,915 | 740,000 |
-| Admin entry gzip | 215,256 | 215,500 |
-| Admin aggregate JavaScript gzip | 725,808 | 726,250 |
+| Admin entry raw | 740,339 | 740,500 |
+| Admin entry gzip | 215,391 | 215,500 |
+| Admin aggregate JavaScript gzip | 726,081 | 726,250 |
 | Web app boot JavaScript gzip | 457,239 | 457,500 |
 | Web reader boot including CSS gzip | 510,026 | 510,250 |
 | Web aggregate JavaScript gzip | 3,440,115 | 3,441,000 |
 
-The aggregate allocation includes the requested deferred visual editor. Web's editor chunk is approximately 128.5 kB gzip; parser and formatted-renderer chunks are also deferred. New checks reject these chunks entering reader startup and reject ProseMirror or the editor entering standalone Studio startup. Initial raw/largest admin limits, CSS limits, memory graph, existing content chunks, and timing contracts are preserved. Narrow startup and aggregate allocations are recorded in the budget files with this feature's rationale.
+The aggregate allocation includes the requested deferred visual editor. Web's editor chunk is approximately 128.5 kB gzip; parser and formatted-renderer chunks are also deferred. New checks reject these chunks entering reader startup and reject ProseMirror or the editor entering standalone Studio startup. The shared field accessibility fix requires an additional 500 bytes in the raw-entry/largest-admin-chunk allowance; gzip and aggregate limits stay unchanged. CSS limits, memory graph, existing content chunks, and timing contracts are preserved. Narrow startup and aggregate allocations are recorded in the budget files with this feature's rationale.
+
+Release verification: the production prebuild passes; field labels remain separate from formatting controls. The Calendar browser fixture now pins America/New_York for its calculated season boundary. The current inventory/detail fixture and formatting-field structure are covered by the existing save/reload regressions. The final local checks include 32 standalone Calendar cases, 284 broader editor/reader cases, and 19 focused reruns covering the corrected selectors, formatting, publication, and Calendar reader copy. The full Content Studio API contract passes locally and on PR head `19f6d12ea`. Hosted browser checks and production deployment are still pending at the time of this record.
