@@ -6,7 +6,10 @@ import { build } from "esbuild";
 const bundle = await build({
   // Bundled CommonJS dependencies need Node's require even inside a data URL.
   banner: { js: `import { createRequire } from "node:module"; const require = createRequire(${JSON.stringify(import.meta.url)});` },
-  entryPoints: ["api/_lib/transit-reading-generation.ts"],
+  stdin: { contents: `
+    export * from './api/_lib/transit-reading-generation.ts';
+    export { withTransitReadingCheckpoints } from './api/_lib/transit-reading-checkpoints.ts';
+  `, resolveDir: process.cwd(), sourcefile: 'report-correction-fixture.ts' },
   bundle: true,
   write: false,
   platform: "node",
@@ -26,7 +29,7 @@ const bundle = await build({
     }
   }]
 });
-const { generateGovernedTransitReading, isTransitReadingJudgeBlockedError } = await import(
+const { generateGovernedTransitReading, isTransitReadingJudgeBlockedError, withTransitReadingCheckpoints } = await import(
   `data:text/javascript;base64,${Buffer.from(bundle.outputFiles[0].text).toString("base64")}`
 );
 const original = { headline: "Test report", tldr: "Original summary", body: "Original report body with the diagnosed defect." };
@@ -156,6 +159,8 @@ try {
     judge: async () => ({ result: { verdict: ++carriedJudges === 1 ? "below_threshold" : "pass", overall: 0.9, scores: { owner_voice: 3 }, findings: [{ category: "owner_voice", location: "body", finding: "Current judge finding" }] }, version: "fixture", provider: "fixture", model: "fixture", threshold: 0.85 })
   });
   assert.ok(carriedPrompts[1].includes("Fixture draft 1"), "Deterministic correction must receive the failed draft, not just error messages.");
+  assert.ok(carriedPrompts[2].includes("Fixture draft 2"), "Final recovery must edit the latest rejected draft instead of starting over.");
+  assert.ok(carriedPrompts[2].includes("TARGETED REPORT REVISION TASK"));
   assert.equal(carriedPrompts.length, 4);
   assert.equal(carriedJudges, 2);
   for (const prompt of carriedPrompts.slice(2)) {
@@ -165,6 +170,45 @@ try {
   assert.ok(carriedPrompts[3].includes("Current judge finding"));
   assert.ok(carriedPrompts[3].includes("Fixture draft 3"));
   assert.ok(!JSON.stringify(carried).includes("deterministic defect"), "Run-local corrections must not enter report prose or approval evidence");
+
+  // Exercise checkpoint retrieval through the real generation entry point, so
+  // dropping the current-validator callback cannot silently lose retry context.
+  for (const family of ['you', 'friend']) {
+    const column = `${family}_job_id`;
+    const rows = [
+      { id: 'old-judge', [column]: 'fixture-job', attempt: 1, step: 1, state: 'complete', schema_name: 'tldr_generated_report_judge', response: { value: { findings: [{ finding: 'Stale judgment' }] } } },
+      { id: 'latest-writer', [column]: 'fixture-job', attempt: 1, step: 2, state: 'complete', schema_name: 'fixture', response: { value: original } }
+    ];
+    const matches = (row, params) => [...params].every(([key, value]) => ['select', 'order', 'limit'].includes(key)
+      || (value.startsWith('neq.') ? String(row[key]) !== value.slice(4) : String(row[key]) === value.slice(3)));
+    const admin = {
+      selectOne: async (_table, params) => structuredClone(rows.filter(row => matches(row, params)).sort((a, b) => b.step - a.step)[0] ?? null),
+      insert: async (_table, row) => { const saved = { id: `saved-${rows.length}`, ...row }; rows.push(saved); return [saved]; },
+      update: async (_table, query, patch) => rows.filter(row => matches(row, new URLSearchParams(query))).map(row => Object.assign(row, patch))
+    };
+    let calls = 0;
+    globalThis.reportCorrectionFixture = async ({ prompt }) => {
+      calls++;
+      assert.ok(prompt.includes(original.body));
+      assert.ok(prompt.includes('Current deterministic recovery defect'));
+      assert.ok(!prompt.includes('Stale judgment'));
+      assert.ok(prompt.includes('TARGETED REPORT REVISION TASK'));
+      return { value: corrected, model: 'fixture' };
+    };
+    const run = () => generateGovernedTransitReading({
+      brief, headline: original.headline, contentType: 'fixture', surface: family === 'you' ? 'you' : 'friends',
+      family: 'fixture', schemaName: 'fixture', toolDescription: 'fixture',
+      productionInput: { surface: family === 'you' ? 'you' : 'friends', contentKey: 'fixture', eventType: 'transit', facts: { [family === 'you' ? 'youTransitReadingBrief' : 'friendTransitsBrief']: brief }, knowledgeIds: ['fixture'], sourceSnapshot: {} },
+      promptForAttempt: (source, headline, feedback) => JSON.stringify(source) + feedback,
+      validate: draft => ({ passed: draft.body !== original.body, message: 'Current deterministic recovery defect' }),
+      compactBriefForRecovery: source => source, minSummaryLength: 1, minBodyLength: 1, recoveryLabel: 'Fixture',
+      judge: async () => ({ result: { verdict: 'pass', overall: 1, scores: {}, findings: [] }, version: 'fixture', provider: 'fixture', model: 'fixture', threshold: 0.85 })
+    });
+    const scope = { admin, family, jobId: 'fixture-job', attempt: 2 };
+    assert.equal((await withTransitReadingCheckpoints(scope, run)).draft.body, corrected.body);
+    assert.equal((await withTransitReadingCheckpoints(scope, run)).draft.body, corrected.body);
+    assert.equal(calls, 1, 'Resuming a repaired draft must reuse the saved provider response.');
+  }
 } finally {
   if (priorFixture === undefined) delete globalThis.reportCorrectionFixture;
   else globalThis.reportCorrectionFixture = priorFixture;

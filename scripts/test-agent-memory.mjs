@@ -113,6 +113,25 @@ test('cross-surface date rule and owner task provenance are retrievable in deplo
   assert.equal(note.metadata.ownerApproved, false);
 });
 
+test('report failure memory preserves diagnosis, verification limits, and source provenance without granting writing approval', () => {
+  const index = buildMemoryIndex({ root: process.cwd() });
+  const record = queryMemory(index, { query: 'You and Friends report failures', phrase: true, kind: 'note' }).records
+    .find(record => record.title === 'You and Friends report failures: preserve correction context and verify recovery');
+  assert(record, 'Repair evidence must be searchable in repository memory.');
+  const detail = memoryDetail(index, record.id);
+  for (const text of ['test-transit-reading-checkpoints.mts', 'same job', 'production recovery', 'uncertain provider outcome', 'September 7 report-specific judge floors']) {
+    assert(detail.body.includes(text), `Missing complete diagnostic context: ${text}`);
+  }
+  assert.equal(detail.bodySha256, sha256(detail.body));
+  assert.equal(detail.sourceSha256, sha256(fs.readFileSync('data/agent-memory/decisions.jsonl')));
+  assert.equal(detail.metadata.source_uri, 'thread:01a0c440-92d0-7822-bda6-af3338840786');
+  assert.equal(detail.writerPacketEligible, false);
+  assert.equal(detail.metadata.ownerApproved, false);
+  assert.equal(detail.metadata.promotionAuthorized, false);
+  const architecture = queryMemory(index, { query: 'September 21 report repair', phrase: true, kind: 'rule' }).records;
+  assert(architecture.some(record => record.path === 'docs/writing/AI_GENERATION_RELIABILITY.md'));
+});
+
 Object.assign(process.env, { NODE_ENV: 'production', CONTENT_GENERATION_SECRET: 'memory-test-secret', VITE_SUPABASE_URL: 'https://memory-test.invalid', VITE_SUPABASE_PUBLISHABLE_KEY: 'fixture', CONTENT_ADMIN_EMAILS: 'owner@example.invalid' });
 const { default: handler } = await import('../api/admin/memory-graph.ts');
 async function request(url = '', headers = {}, method = 'GET') {

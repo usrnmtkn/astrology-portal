@@ -1,11 +1,11 @@
-import { transitReadingReaderText } from "./transit-reading-reader-copy.js";
+import { transitReadingReaderCopy, transitReadingReaderText } from "./transit-reading-reader-copy.js";
 import { extractTransitAspectClaims, isOrdinaryAspectWord } from "./transit-reading-aspect-claims.js";
 type RecordLike = Record<string, unknown>;
 
 export const FRIEND_TRANSIT_READING_CONTENT_TYPE = "friend_transit_reading";
 export const FRIEND_TRANSIT_READING_EVENT_TYPE = "friend-transit-reading";
 export const FRIEND_TRANSITS_BRIEF_SCHEMA = "tldr.friend-transits-brief.v1";
-export const FRIEND_TRANSIT_READING_PROMPT_VERSION = "friend-transit-reading-v1.5";
+export const FRIEND_TRANSIT_READING_PROMPT_VERSION = "friend-transit-reading-v1.6";
 
 export type FriendTransitReadingBrief = {
   schema: typeof FRIEND_TRANSITS_BRIEF_SCHEMA;
@@ -403,12 +403,13 @@ export function friendTransitReadingMeaningPlan(brief: FriendTransitReadingBrief
 export function friendTransitReadingPrompt(input: { brief: FriendTransitReadingBrief; headline: string }) {
   const { brief } = input;
   return [
-    "TLDR ASTRO FRIEND TRANSIT SYNTHESIS V1.5",
+    "TLDR ASTRO FRIEND TRANSIT SYNTHESIS V1.6",
     "",
     "TASK",
     `Write one short answer to: ${input.headline}`,
     `Write ${brief.friendName}\'s personal astrology in third person using their name and they/them/their.`,
     `When using Between You Two relationship context, address the reader directly and prefer the bridge: "Things between you and ${brief.friendName}..." Do not use you/your outside relationship context.`,
+    "Every sentence containing you/your must itself name the friend and explicitly identify the relationship or connection. A relationship sentence does not license second person in the following sentence. When that is awkward, use the friend's name and third person instead.",
     "This is synthesis only. TLDR Astro has already calculated, selected, ordered, and content-gated the astrology.",
     "Do not calculate astrology. Do not add a transit, placement, aspect, sign, house, date, degree, orb, interpretation, example, or life event that is not present below.",
     "Do not re-rank the evidence. Preserve the supplied order inside each lane.",
@@ -436,13 +437,9 @@ export function friendTransitReadingPrompt(input: { brief: FriendTransitReadingB
     "OUTPUT",
     `headline: return exactly ${JSON.stringify(input.headline)}.`,
     "tldr: 1-2 natural sentences that answer the question directly.",
-    "summary: use the same core answer in 1-2 sentences, at least 40 characters.",
+    "summary: return exactly the same text as tldr, at least 40 characters. These are storage aliases for one visible TLDR.",
     "body: 2-3 natural paragraphs, roughly 120-220 words. Start with what matters, explain the astrology only as needed, and end with the practical consequence or useful perspective. Do not add a generic coaching closer.",
-    "action: return an empty string.",
-    "timing: return an empty string.",
-    "sections: return an empty array.",
-    "sceneLock: return null.",
-    "astrologyDrilldown: return null.",
+    "Return exactly four fields: headline, tldr, summary, body.",
     "Return JSON only.",
     "",
     "APPROVED READER TEXT",
@@ -517,9 +514,14 @@ export function validateFriendTransitReadingDraft(input: { draft: FriendTransitR
   if (input.draft.headline.trim() !== input.expectedHeadline.trim()) {
     issues.push({ code: "invalid_brief", value: input.draft.headline, message: "Friend transit reading headline changed from the locked question." });
   }
-  for (const match of text.matchAll(/\b(?:you|your|yours|yourself|yourselves)\b/giu)) {
-    if (!relationshipSecondPersonAllowed(text, match.index ?? -1, input.brief)) {
-      issues.push({ code: "second_person", value: match[0], message: "Friend transit reading used second person outside explicit relationship context." });
+  for (const [field, prose] of Object.entries(transitReadingReaderCopy(input.draft))) {
+    const reportedSentences = new Set<number>();
+    for (const match of prose.matchAll(/\b(?:you|your|yours|yourself|yourselves)\b/giu)) {
+      if (relationshipSecondPersonAllowed(prose, match.index ?? -1, input.brief)) continue;
+      const sentence = [...prose.slice(0, match.index).matchAll(/[^.!?\n]+[.!?\n]+/gu)].length + 1;
+      if (reportedSentences.has(sentence)) continue;
+      reportedSentences.add(sentence);
+      issues.push({ code: "second_person", value: match[0], message: `Friend transit reading used second person outside explicit relationship context (${field}, sentence ${sentence}). Each second-person sentence must name the friend and the relationship; otherwise use third person. A preceding relationship sentence is insufficient.` });
     }
   }
   for (const match of text.matchAll(/\b(?:score|significance|timing bonuses?|content keys?|source rows?|approval state|schema|backend)\b/giu)) {
