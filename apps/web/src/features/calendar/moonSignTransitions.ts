@@ -24,7 +24,7 @@ export const moonSignTransitions: Record<string, string> = {
   "aquarius-pisces": "The plan may make sense on paper, but Pisces can make the part you have been overriding harder to ignore. Fatigue, atmosphere, and what you have been absorbing from other people may start to matter more."
 };
 
-export { moonSignTransitionKey } from "../../services/generatedContentKeys";
+export { moonSignTransitionKey } from "../../services/generatedContentKeys.js";
 
 export function moonSignTransitionPair(fromSign: string, toSign: string) {
   return `${fromSign.toLowerCase().trim()}-${toSign.toLowerCase().trim()}`;
