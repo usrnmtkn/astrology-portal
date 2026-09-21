@@ -1,3 +1,4 @@
+import { FormattedProse } from "../../components/FormattedProse";
 import type { RelationshipCompareResponse } from "../../services/tldrastroApi";
 
 export type RelationshipCompareStatus = "idle" | "loading" | "ready" | "error";
@@ -24,7 +25,7 @@ export function RelationshipApiSummary({
     <section className="relationship-api-summary" aria-label={`${mode} relationship summary`}>
       <span className="eyebrow section-label">{mode === "synastry" ? "Relationship patterns" : "Composite pattern"}</span>
       <h3>{headline}</h3>
-      <p>{summary}</p>
+      <FormattedProse text={summary} />
       {keyFactors.length > 0 && (
         <ul>
           {keyFactors.slice(0, 4).map((factor) => (

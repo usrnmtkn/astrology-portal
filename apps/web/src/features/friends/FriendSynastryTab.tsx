@@ -1,3 +1,4 @@
+import { FormattedProse } from "../../components/FormattedProse";
 import { CardReadMore } from "../../components/CardReadMore";
 import type { AspectGiftLessonLabel } from "../../services/aspectGiftLesson";
 import type { SkySnapshot } from "../../types";
@@ -58,7 +59,7 @@ export function FriendSynastryTab({
           </span>
           <span className="relationship-explainer-card__copy">
             <span className="relationship-explainer-card__kicker">What synastry shows</span>
-            <p>{explainer}</p>
+            <FormattedProse text={explainer} />
           </span>
         </article>
         <SynastryPlacementsComparison
@@ -91,7 +92,7 @@ export function FriendSynastryTab({
                 </span>
                 <span className="aspect-row-copy">
                   <h3>{contact.title}</h3>
-                  {contact.description ? <p className="synastry-contact-description">{contact.description}</p> : null}
+                  {contact.description ? <FormattedProse className="synastry-contact-description" text={contact.description} /> : null}
                   <CardReadMore />
                 </span>
                 <span className="aspect-row-meta" aria-label={`${wholeDegreeOrb(contact.orb)} orb`}>

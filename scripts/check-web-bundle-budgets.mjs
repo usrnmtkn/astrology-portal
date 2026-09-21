@@ -144,6 +144,12 @@ const failures = Object.entries(budgets).flatMap(([metric, limit]) => {
     : [];
 });
 
+const formattingChunks = javaScriptFiles.filter(item => /\/(?:studio-rich-text|writing-markdown|FormattedWritingContent)-/u.test(item.file));
+if (formattingChunks.length !== 3) failures.push("The deferred writing editor, parser, or reader renderer is missing.");
+for (const item of formattingChunks) {
+  if (bootFiles.has(item.file)) failures.push(`Writing tools must remain deferred from reader startup: ${item.file}`);
+}
+
 if (memoryGraphItems.length !== 2 || memoryGraphCssItems.length !== 1) {
   failures.push("The deferred memory graph route, renderer or stylesheet is missing.");
 } else if ([...memoryGraphItems, ...memoryGraphCssItems].some(item => bootFiles.has(item.file) || readerStyleFiles.has(item.file))) {

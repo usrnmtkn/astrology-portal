@@ -411,6 +411,7 @@ body:has(.admin-dashboard) { margin: 0; }
 #root .admin-dashboard .admin-composition-variable { padding: var(--workspace-tag-padding); min-height: 0; border-radius: var(--workspace-control-radius); font-family: var(--font-mono); font-size: var(--type-meta-size); font-weight: var(--weight-regular); line-height: var(--leading-meta); letter-spacing: var(--tracking-body); }
 #root .admin-dashboard :is(.admin-daily-glance-studio,.admin-composition-preview-copy,.admin-template-reader-copy,.admin-sky-writing-preview,.admin-sky-placement-composition) .admin-composition-variable { display: inline; width: auto; padding: 0; border: 0; border-radius: 0; font-family: var(--font-body); font-size: var(--text-body); font-weight: var(--weight-regular); line-height: var(--leading-body); letter-spacing: var(--tracking-body); text-align: start; }
 #root .admin-dashboard :is(.admin-daily-glance-studio,.admin-composition-preview-copy,.admin-template-reader-copy) :is(button,a).admin-composition-variable { text-decoration: underline; text-underline-offset: var(--space-1); }
+#root .admin-dashboard .admin-calendar-template-text .admin-composition-variable { white-space: pre-wrap; }
 /* A variable keeps one categorical color across the key, template and result.
    Names and source types remain visible, so meaning never relies on color alone. */
 #root .admin-dashboard .admin-variable-key { display: grid; gap: var(--workspace-field-gap); }
@@ -773,3 +774,15 @@ body:has(.admin-dashboard) { margin: 0; }
   gap: var(--workspace-block-gap);
 }
 #root .admin-dashboard .studio-variable-tags { list-style: none; padding: 0; margin: 0; }
+
+/* Shared visual formatting is loaded only when an editor asks for it. */
+#root .admin-dashboard .studio-writing-field,
+#root .admin-dashboard .studio-formatting-editor { display: grid; min-width: 0; gap: var(--workspace-field-gap); }
+#root .admin-dashboard .studio-writing-field textarea[hidden] { display: none; }
+#root .admin-dashboard .studio-formatting-open { justify-self: start; }
+#root .admin-dashboard .studio-formatting-toolbar { display: flex; flex-wrap: wrap; gap: var(--workspace-field-gap); }
+#root .admin-dashboard .studio-formatted-writing { min-height: var(--studio-textarea-height); padding: var(--workspace-panel-inset); border: var(--border-width-thin) solid var(--workspace-line-strong); border-radius: var(--studio-field-radius); color: var(--workspace-ink); font-family: var(--font-body); font-size: var(--text-body); font-weight: var(--weight-regular); line-height: var(--leading-body); letter-spacing: var(--tracking-body); overflow-wrap: anywhere; }
+#root .admin-dashboard .studio-formatted-writing:focus { outline-color: var(--workspace-primary); border-color: var(--workspace-primary); }
+#root .admin-dashboard .studio-formatted-writing p { margin: 0 0 var(--space-4); font: inherit; }
+#root .admin-dashboard .studio-formatted-writing :is(ul,ol) { padding-inline-start: var(--space-6); margin-block: var(--space-4); }
+#root .admin-dashboard .studio-formatted-writing strong { font-weight: var(--weight-bold); }

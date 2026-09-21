@@ -109,6 +109,9 @@ visitInitial(Object.entries(manifest).find(([, item]) => item === entry)?.[0]);
 if (memoryGraphFiles.length !== 1) failures.push('Expected one deferred memory graph route with its renderer.');
 for (const key of initialChunks) {
   const file = manifest[key].file;
+  if (key === "src/StudioFormattingEditor.tsx" || (file?.endsWith(".js") && fs.readFileSync(path.join(distRoot, file), "utf8").includes("ProseMirror"))) {
+    failures.push(`The visual writing editor must remain deferred from Studio startup: ${file}`);
+  }
   if (memoryGraphFiles.some((item) => item.file === file)) {
     failures.push(`Memory graph must remain deferred from Content Studio startup: ${file}`);
   }
@@ -124,6 +127,7 @@ for (const key of initialChunks) {
 }
 
 const expectedDynamicEntries = [
+  "src/StudioFormattingEditor.tsx",
   "src/CompositionMapWorkspace.tsx",
   "src/SkyPlacementComposition.tsx",
   "src/SkyFallbackFieldsEditor.tsx",

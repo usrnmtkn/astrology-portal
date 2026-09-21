@@ -1,3 +1,4 @@
+import { FormattedProse } from "../../components/FormattedProse";
 import { ChevronRight } from "lucide-react";
 import type { ReactNode } from "react";
 import type { LunarCalendarEvent } from "../../services/ephemeris";
@@ -75,7 +76,7 @@ export function CalendarDayGroup({
                 <span>{row.title}</span>
                 {row.meta ? <small>{row.meta}</small> : <span />}
               </button>
-              {row.excerpt ? <p className="calendar-day-group__excerpt">{row.excerpt}</p> : null}
+              {row.excerpt ? <FormattedProse className="calendar-day-group__excerpt" text={row.excerpt} /> : null}
             </div>
           ))}
         </div>
@@ -83,9 +84,9 @@ export function CalendarDayGroup({
       {paragraphs.length > 0 || prompt ? (
         <div className="calendar-day-group__blurb" data-guidance-key={guidanceKey || undefined}>
           {paragraphs.map((paragraph) => (
-            <p key={paragraph.slice(0, 48)}>{paragraph}</p>
+            <FormattedProse key={paragraph.slice(0, 48)} text={paragraph} />
           ))}
-          {prompt ? <p className="calendar-day-group__prompt">{prompt}</p> : null}
+          {prompt ? <FormattedProse className="calendar-day-group__prompt" text={prompt} /> : null}
         </div>
       ) : null}
     </section>

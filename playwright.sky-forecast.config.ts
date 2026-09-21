@@ -3,7 +3,7 @@ const port = 4397;
 export default defineConfig({
   testDir: "./tests/visual",
   outputDir: "./test-results/sky-forecast-runs",
-  testMatch: ["calendar-template-preview.spec.ts", "sky-forecast-studio.spec.ts", "content-dashboard-admin-user-flows.spec.ts", "calendar-summary-studio.spec.ts", "sky-summary-studio.spec.ts", "sky-placement-variables.spec.ts", "house-transit-combined-editor.spec.ts"],
+  testMatch: ["calendar-template-preview.spec.ts", "calendar-season-transitions.spec.ts", "calendar-moon-editor.spec.ts", "sky-forecast-studio.spec.ts", "content-dashboard-admin-user-flows.spec.ts", "calendar-summary-studio.spec.ts", "sky-summary-studio.spec.ts", "sky-placement-variables.spec.ts", "house-transit-combined-editor.spec.ts"],
   timeout: 60_000, workers: 1, reporter: "list",
   use: { baseURL: `http://127.0.0.1:${port}`, screenshot: "only-on-failure", trace: "retain-on-failure" },
   webServer: {

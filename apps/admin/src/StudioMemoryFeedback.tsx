@@ -41,7 +41,7 @@ function Decision({ row, disabled, decide, credential }: { row: Feedback; disabl
       </AdminSelect>
     </label>
     <label>Reason {scope === 'passage' ? '(optional)' : '(required for broader guidance)'}
-      <StudioTextarea value={reason} maxLength={4000} onChange={event => setReason(event.target.value)} disabled={disabled} />
+      <StudioTextarea formatting={false} value={reason} maxLength={4000} onChange={event => setReason(event.target.value)} disabled={disabled} />
     </label>
     <StudioButton type="button" disabled={disabled || scope !== 'passage' && !reason.trim()} onClick={() => decide(row, 'active', scope, reason)}>
       {row.status === 'active' ? 'Save memory decision' : 'Use for future drafts'}

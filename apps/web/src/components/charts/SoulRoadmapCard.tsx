@@ -1,3 +1,4 @@
+import { FormattedProse, FormattedText } from "../FormattedProse";
 import { resolvePersonReference, type PersonReference, type PronounChoice } from "../../services/personReferences";
 import { fallbackV3VocabularyBody } from "../../content/fallbackArchitectureV3Runtime";
 
@@ -427,7 +428,7 @@ export function SoulRoadmapCard({
           {profile.title}
           <span className="soul-roadmap-card__source-badge">{sourceLayer}</span>
         </h3>
-        <p>{profile.tldr}</p>
+        <FormattedProse text={profile.tldr} />
       </div>
     </>
   );
@@ -448,7 +449,7 @@ export function SoulRoadmapCard({
           {profile.title}
           <span className="soul-roadmap-card__source-badge">{sourceLayer}</span>
         </h3>
-        <p>{profile.tldr}</p>
+        <FormattedProse text={profile.tldr} />
       </div>
       <div className="soul-roadmap-card__points" aria-label="Purpose factors">
         {profile.points.map((point) => (
@@ -464,7 +465,7 @@ export function SoulRoadmapCard({
             <strong>{section.heading}</strong>
             <em>{section.layer === "authored" ? "Authored" : "Fallback"}</em>
             {" "}
-            {section.body}
+            <FormattedText text={section.body} />
           </p>
         ))}
       </div>

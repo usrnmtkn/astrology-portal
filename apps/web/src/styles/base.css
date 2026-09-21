@@ -324,3 +324,7 @@ svg {
   -webkit-box-decoration-break: clone;
   box-decoration-break: clone;
 }
+
+/* Lists authored with Content Studio's shared writing toolbar. */
+.formatted-prose-list { padding-inline-start: var(--space-6); margin-block: var(--space-4); font-family: var(--font-body); font-size: var(--text-body); font-weight: var(--weight-regular); line-height: var(--leading-body); letter-spacing: var(--tracking-body); }
+.formatted-prose-list p { margin-block: var(--space-2); }

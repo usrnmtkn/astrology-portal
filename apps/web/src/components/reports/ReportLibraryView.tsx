@@ -1,3 +1,4 @@
+import { FormattedProse } from "../FormattedProse";
 import { Archive, ChevronLeft, FileText, Link2Off, MoreHorizontal, RotateCcw, Share2, Trash2 } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { SegmentedControl } from "../SegmentedControl";
@@ -498,7 +499,7 @@ export function GeneratedReportArticle({
             {report.summary ? (
               <div className="article-tldr">
                 <span className="ui-pill ui-pill--neutral article-tldr__label">TLDR</span>
-                <p className="article-sub article-tldr__copy">{report.summary}</p>
+                <FormattedProse className="article-sub article-tldr__copy" text={report.summary} />
               </div>
             ) : null}
           </header>
@@ -510,7 +511,7 @@ export function GeneratedReportArticle({
               <div className="article-body-inner">
                 <section className="article-section sky-detail-section">
                   {paragraphs.map((paragraph, index) => (
-                    <p key={`${report.id}-paragraph-${index}`}>{paragraph}</p>
+                    <FormattedProse key={`${report.id}-paragraph-${index}`} text={paragraph} />
                   ))}
                 </section>
                 <p className="saved-generated-report__created type-meta">Created {formatCreatedDate(report.createdAt)}</p>

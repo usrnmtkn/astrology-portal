@@ -1,3 +1,4 @@
+import { FormattedProse } from "../../components/FormattedProse";
 import { getVerifiedAuthUser, onAuthAccountChange } from "../../services/auth";
 import {
   addCalendarCheckInLibraryItem,
@@ -3005,7 +3006,7 @@ export function LunarCalendar({
                       data-guidance-key={selectedMoonReading?.contentKey}
                     >
                       {selectedDayBodyPresentation.main.map((paragraph) => (
-                        <p key={paragraph}>{paragraph}</p>
+                        <FormattedProse key={paragraph} text={paragraph} />
                       ))}
                     </section>
                   )}
@@ -3015,14 +3016,14 @@ export function LunarCalendar({
                 <section className="lunar-selected-card__body-section" aria-labelledby="lunar-selected-exact-heading">
                   <h3 id="lunar-selected-exact-heading">Exact today</h3>
                   {selectedDayAspectWriteups.map((writeup) => (
-                    <p className="lunar-selected-card__aspect-writeup" key={writeup}>{writeup}</p>
+                    <FormattedProse className="lunar-selected-card__aspect-writeup" key={writeup} text={writeup} />
                   ))}
                 </section>
               )}
               {selectedDayBodyPresentation.prompt && (
                 <section className="lunar-selected-card__check-in" aria-label="Check-in">
                   <span>Check-in</span>
-                  <p>{selectedDayBodyPresentation.prompt}</p>
+                  <FormattedProse text={selectedDayBodyPresentation.prompt} />
                 </section>
               )}
             </div>
@@ -3056,7 +3057,7 @@ export function LunarCalendar({
                     </>
                   )}
                 </p>
-                {selectedPackageVoid.body && <p>{selectedPackageVoid.body}</p>}
+                {selectedPackageVoid.body && <FormattedProse text={selectedPackageVoid.body} />}
               </section>
             )}
             {viewMode !== "week" && selectedDayTransits.length > 0 && (
@@ -3103,7 +3104,7 @@ export function LunarCalendar({
                   <section key={note.transitRef}>
                     <span>{note.event ? calendarMotionTitle(note.event) : note.title}</span>
                     {textParagraphs(note.body ?? "").map((paragraph) => (
-                      <p key={paragraph}>{paragraph}</p>
+                      <FormattedProse key={paragraph} text={paragraph} />
                     ))}
                   </section>
                 ))}
@@ -3538,7 +3539,7 @@ export function LunarCalendar({
           {monthlyOverview && (
             <section className="lunar-month-overview" aria-labelledby="lunar-month-overview-heading">
               <h2 className="sr-only" id="lunar-month-overview-heading">Monthly overview</h2>
-              {monthlyOverview.paragraphs.map((paragraph, index) => <p key={index}>{paragraph}</p>)}
+              {monthlyOverview.paragraphs.map((paragraph, index) => <FormattedProse key={index} text={paragraph} />)}
             </section>
           )}
           <div className="lunar-calendar-month-primary">
@@ -4043,7 +4044,7 @@ function TransitCard({
       </div>
       {isContentLoading ? (
         <PageLoading compact message="Loading interpretation" />
-      ) : description ? <p className="tx-body">{description}</p> : null}
+      ) : description ? <FormattedProse className="tx-body" text={description} /> : null}
       {onOpenTransit && !isContentLoading ? <CardReadMore /> : null}
     </>
   );
