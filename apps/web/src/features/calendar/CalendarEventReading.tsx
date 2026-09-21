@@ -134,11 +134,8 @@ function JournalBlock({
     );
   }
   if (block.type === "prompt" || block.type === "tarot") {
-    const journal = block.type === "prompt" && /journal/i.test(block.label ?? "Journal");
     return (
-      <section className={`calendar-reading__card${journal || block.type === "tarot" ? " is-lockup" : ""}`}>
-        {journal ? <span className="calendar-reading__mark is-notebook" aria-hidden="true" /> : null}
-        {block.type === "tarot" ? <span className="calendar-reading__mark is-card" aria-hidden="true" /> : null}
+      <section className="calendar-reading__card">
         <span className="calendar-reading__card-label">{block.label ?? (block.type === "tarot" ? "Tarot" : "Prompt")}</span>
         {block.text ? <p>{block.text}</p> : null}
         {showJournalPrompts && block.text && onJournalPrompt ? (

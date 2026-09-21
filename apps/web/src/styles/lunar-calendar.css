@@ -2453,10 +2453,37 @@ a.tx-card.has-article:hover .tx-more {
     overflow: hidden;
   }
 
-  .calendar-month-chip,
+  .lunar-calendar-body.is-month .calendar-month-chip,
   .lunar-calendar-body.is-month .lunar-calendar-event-more {
     height: var(--calendar-month-chip-compact);
     padding: 0 var(--lunar-space-4);
+  }
+
+  .lunar-calendar-body.is-month .calendar-month-chip {
+    flex: none;
+    justify-content: center;
+    width: 100%;
+    padding-inline: var(--lunar-space-2);
+  }
+
+  .lunar-calendar-body.is-month .calendar-month-chip .astro-glyph {
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  .lunar-calendar-body.is-month .calendar-month-chip .astro-glyph__mask,
+  .lunar-calendar-body.is-month .calendar-month-chip .astro-glyph__arrow-wrap {
+    flex-shrink: 1;
+    min-width: 0;
+  }
+
+  .lunar-calendar-body.is-month .calendar-month-chip .astro-glyph__arrow {
+    max-width: 100%;
+  }
+
+  .lunar-calendar-body.is-month .calendar-month-chip__voc {
+    font-size: var(--text-label);
+    letter-spacing: var(--tracking-body);
   }
 
   .calendar-month-chip__text,
@@ -3328,6 +3355,7 @@ a.tx-card.has-article:hover .tx-more {
 .calendar-reading__meta,
 .calendar-sky-card__meta,
 .calendar-sky-card__date {
+  margin: 0;
   color: var(--calendar-tertiary);
   font-family: var(--font-body);
   font-size: var(--text-meta-size);
@@ -3338,8 +3366,10 @@ a.tx-card.has-article:hover .tx-more {
   margin: 0;
   color: var(--calendar-copy);
   font-family: var(--font-body);
-  font-size: var(--calendar-reading-copy);
+  font-size: var(--text-body);
+  font-weight: var(--weight-regular);
   line-height: var(--leading-body);
+  letter-spacing: var(--tracking-body);
 }
 
 .calendar-day-panel.is-embedded .calendar-sky-card__body p {
@@ -3386,6 +3416,22 @@ a.tx-card.has-article:hover .tx-more {
   font-family: var(--font-body);
   font-size: var(--text-label);
   font-weight: var(--weight-semibold);
+}
+
+button.calendar-reading__toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: var(--size-6);
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-pill);
+  background: var(--calendar-chip);
+}
+
+.calendar-reading__card {
+  display: grid;
+  gap: var(--space-3);
+  min-width: 0;
 }
 
 .calendar-reading__article-card {
@@ -4625,6 +4671,41 @@ a.tx-card.has-article:hover .tx-more {
     border-radius: 0;
   }
 
+  .calendar-slideout--day .calendar-slideout__toolbar,
+  .calendar-slideout--event .calendar-slideout__toolbar {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    padding-block: var(--space-1);
+    background: var(--calendar-canvas);
+  }
+
+  .calendar-slideout--day .calendar-slideout__toolbar::before,
+  .calendar-slideout--event .calendar-slideout__toolbar::before {
+    content: "";
+    position: absolute;
+    inset-inline: 0;
+    bottom: 100%;
+    height: var(--calendar-slideout-gutter);
+    background: var(--calendar-canvas);
+    pointer-events: none;
+  }
+
+  .calendar-slideout__close,
+  .lunar-calendar-controls button,
+  .lunar-calendar-controls .lunar-calendar-controls__today {
+    width: var(--size-6);
+    height: var(--size-6);
+  }
+
+  .calendar-slideout--day .calendar-sky-card.is-flush {
+    padding-top: 0;
+  }
+
+  .calendar-reading__lockup {
+    padding-top: var(--space-3);
+  }
+
   .calendar-slideout--sheet {
     display: grid;
     align-items: end;
@@ -4688,10 +4769,12 @@ a.tx-card.has-article:hover .tx-more {
     flex: 1 1 auto;
     width: 100%;
     min-width: 0;
+    height: auto;
+    min-height: 0;
   }
 
   .lunar-calendar-segmented .segmented-control__item {
-    height: var(--calendar-segmented-item-height);
+    height: var(--calendar-segmented-touch-height);
     min-height: var(--calendar-segmented-touch-height);
   }
 
@@ -4731,7 +4814,7 @@ a.tx-card.has-article:hover .tx-more {
 
   .calendar-sky-card__lockup {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     gap: var(--lunar-space-12);
   }
 
@@ -4862,7 +4945,7 @@ a.tx-card.has-article:hover .tx-more {
 
 .calendar-reading__bysign small {
   color: var(--calendar-copy);
-  font-size: var(--calendar-reading-copy);
+  font-size: inherit;
 }
 
 .calendar-reading__steps {
@@ -4895,14 +4978,6 @@ a.tx-card.has-article:hover .tx-more {
 
 .calendar-reading__exact {
   color: var(--calendar-copy);
-}
-
-.calendar-reading__mark {
-  width: var(--calendar-article-mark-width);
-  height: var(--calendar-article-mark-height);
-  border: var(--border-width-thin) solid var(--calendar-ink);
-  border-radius: var(--lunar-space-6);
-  background: var(--calendar-card);
 }
 
 .calendar-checkin-picker__empty {
