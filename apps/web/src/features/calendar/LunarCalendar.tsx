@@ -83,7 +83,7 @@ import {
   type CalendarV9TransitResolver
 } from "./calendarV9Transit";
 import { calendarPhaseLabelForDay } from "./calendarPhaseLabel";
-import { lunarDayGeneratedContentKeys, resolveLunarDay } from "./lunarDayResolver";
+import { lunarDayGeneratedContentKeys } from "./lunarDayResolver";
 import type { LunarDay, LunarDayArcPoint } from "./lunarDayTypes";
 import { sunIngressSeasonSign, sunIngressSeasonWindow } from "./seasonWindow";
 import { calendarMonthlyOverviewContentKeys, resolveCalendarMonthlyOverview } from "./monthlyOverview";
@@ -2600,18 +2600,6 @@ export function LunarCalendar({
 
     return [...eventsById.values()];
   }, [calendar, seasonEvents, selectedCalendar]);
-  const selectedLunarDay = useMemo(() => (
-    selectedDay
-      ? resolveLunarDay({
-          day: selectedDay,
-          events: arcEvents,
-          location,
-          timeZone: zone,
-          arcEnabled: enableLunarArcContent,
-          generatedContent
-        })
-      : null
-  ), [arcEvents, generatedContent, location, selectedDay, zone]);
   const selectedSky = selectedDay ? calendarSkyForDay(sky, selectedDay.dateKey, location) : null;
   const selectedMoon = selectedSky?.positions.find(position => position.planet === "Moon");
   const readingDay = selectedDay && selectedMoon ? { ...selectedDay, moonSign: selectedMoon.sign } : selectedDay;
@@ -2713,7 +2701,6 @@ export function LunarCalendar({
         : null
     )
     : [];
-  const selectedMoonReading = selectedMoonWriting[0] ?? null;
   const selectedDayBodyPresentation = {
     main: calendarMoonWritingParagraphs(selectedMoonWriting),
     prompt: null
