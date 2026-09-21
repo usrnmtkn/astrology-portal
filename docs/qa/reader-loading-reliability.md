@@ -30,7 +30,9 @@ Timeout does not prove a write was rejected by the server.
 A direct Calendar visit starts calculation asset downloads in its worker.
 Basic facts make the date grid usable; detailed calculations then
 overlap prose downloads. Only full facts enter the calendar cache or select an
-authored reading. Each calendar API attempt has a 2.5-second deadline before
+authored reading. The shared worker serves core positions and Calendar facts
+before queued transit-window enrichment, then optional natal timing; full Sky
+details are still calculated with the same inputs. Each calendar API attempt has a 2.5-second deadline before
 falling back to local calculation. A slow prose bundle cannot hide the date grid. Until complete, the reading area
 shows its own loading state and does not choose replacement prose. A failed asset
 stays local to Calendar. Explicit retry reloads failed module imports because
