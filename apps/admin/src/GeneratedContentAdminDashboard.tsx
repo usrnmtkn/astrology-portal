@@ -12,6 +12,7 @@ import { AdminDisclosureSummary, AdminSelect } from "./AdminNativeControls";
 import { getStudioPalette, getStudioTheme, saveStudioPalette, saveStudioTheme, studioShellAttributes } from "./studioTheme";
 import { AdminContentTable, AdminDataTable, AdminFilterBar } from "./AdminBrowseComponents";
 import { PageLoading } from "../../web/src/components/PageLoading";
+import { readStudioInventoryPages, STUDIO_INVENTORY_PAGE_SIZE } from "./studioInventoryPagination";
 import { reviewWorkBucket, skyWritingIssues } from "../../web/src/content/contentReviewReadiness";
 import { transitNatalContactFromFields, transitNatalContactReady, transitNatalContactContentKey, transitNatalExactContentKey, transitNatalExactSourceDraft, transitNatalSharedFallbackKey, transitNatalStarterCopy } from "./transitNatalSources";
 import { aspectTechnicalVerb, friendsTransitCardDestinations, friendsTransitCompositionQuery, matchesBondEffectContactSearch, transitNatalSearchSelection, matchesTransitNatalContactSearch } from "./bondEffectPageAssembly";
@@ -2842,7 +2843,6 @@ async function loadAllGeneratedContentRows(
   onPage?: (rows: AdminGeneratedContentRow[], complete: boolean) => void,
   signal?: AbortSignal
 ) {
-  const { readStudioInventoryPages, STUDIO_INVENTORY_PAGE_SIZE } = await import("./studioInventoryPagination");
   const pageSize = STUDIO_INVENTORY_PAGE_SIZE;
   const allRows: AdminGeneratedContentRow[] = [];
   const prefixPages: Array<string | null> = query.prefixes.length ? query.prefixes : [null];

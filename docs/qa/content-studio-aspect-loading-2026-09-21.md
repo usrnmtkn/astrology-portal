@@ -31,8 +31,7 @@ No content mutation. Production verification remains a release gate.
   The pager follows more than 125 pages, rejects malformed/repeated cursors,
   ignores responses after cancellation, and explicitly fails if its 2,000-page
   safety bound is reached. It never reports that bounded partial list complete.
-  The helper loads with the inventory operation so the standalone entry bundle
-  remains within its existing budget; no budget limits were raised.
+  The small pager shares the existing entry bundle; no budget limits were raised.
 - Authentication callbacks use the current section query. Navigation during the
   initial load cancels that load and starts the selected section. Later section
   loads reset readiness; failed section loads display `Incomplete` and can retry.
@@ -77,9 +76,10 @@ the dashboard. Its explicit bound is unchanged.
   outside the sandbox with no warnings.
 - The standalone admin build and bundle budget passed. Repository source, built
   web assets, and built admin assets passed the protected project privacy scan.
-- After deferring the pagination helper, the same 19 browser checks passed
-  against a new standalone-admin preview. The focused actual-handler pagination
-  and CMS performance regressions also passed again.
+- The same 19 browser checks passed against a new standalone-admin preview.
+  The focused actual-handler pagination and CMS performance regressions also
+  passed again. After incorporating current main, the small pager was kept in
+  the existing entry bundle to avoid an extra chunk exceeding the total budget.
 
 The API/browser fixtures do not write production storage or authorize any reader
 copy. This is a bounded inventory/filter audit, not proof that every Studio action
