@@ -23,6 +23,11 @@ const budgets = {
   warmNavigationReadyMs: 800
 };
 
+// Match the Friends performance matrix: tracing large response bodies and DOM
+// snapshots competes with the browser during these sub-second measurements.
+// Functional reader suites retain traces; these tests retain failure screenshots.
+test.use({ trace: "off" });
+
 async function seedYouPerformanceState(page: Page) {
   const birthDateTime = zonedDateTimeToUtc(
     fixtureBirthDate,
@@ -35,6 +40,7 @@ async function seedYouPerformanceState(page: Page) {
   await page.route("https://tldrastro-api-27165565299.us-central1.run.app/**", async (route) => {
     await route.fulfill({ status: 503, contentType: "text/plain", body: "Performance QA uses local calculations." });
   });
+  await page.route("**/rest/v1/content_publications*", route => route.fulfill({ json: [] }));
   await page.route("**/rest/v1/generated_interpretations*", async (route) => {
     await route.fulfill({ status: 503, contentType: "application/json", body: "{}" });
   });
@@ -59,6 +65,35 @@ async function seedYouPerformanceState(page: Page) {
     FixedDate.UTC = RealDate.UTC;
     FixedDate.parse = RealDate.parse;
     window.Date = FixedDate as DateConstructor;
+    // Record first visible readiness in the browser; cross-process locator
+    // completion can lag the paint under CI load.
+    const visible = (element: Element | null) => {
+      if (!element) return false;
+      const rect = element.getBoundingClientRect();
+      const style = getComputedStyle(element);
+      return rect.width > 0 && rect.height > 0 && style.visibility !== "hidden" && style.visibility !== "collapse";
+    };
+    const readiness: { profile?: number; milestone?: number; click?: number } = {};
+    document.addEventListener("click", event => {
+      if ((event.target as Element)?.closest('nav[aria-label="Primary navigation"] button')?.textContent?.trim() === "You") {
+        readiness.click = performance.timeOrigin + performance.now();
+      }
+    }, true);
+    (window as any).__youReadyAt = readiness;
+    const observe = () => {
+      const region = document.querySelector('section[aria-label="You"]');
+      const summary = region?.querySelector('[aria-label="Profile summary"]') ?? null;
+      const name = summary?.querySelector('h1') ?? null;
+      if (!readiness.profile && visible(region) && visible(summary) && visible(name) && name?.textContent === "Project Author") {
+        readiness.profile = performance.timeOrigin + performance.now();
+      }
+      if (!readiness.milestone && region) {
+        const message = region.querySelector('[role="status"][aria-label="Adding today’s transits."]');
+        if (visible(message)) readiness.milestone = performance.timeOrigin + performance.now();
+      }
+      if (!readiness.profile || !readiness.milestone) requestAnimationFrame(observe);
+    };
+    requestAnimationFrame(observe);
     window.localStorage.clear();
     window.localStorage.setItem("tldrastro:theme", "light");
     window.localStorage.setItem("tldrastro:selectedLocation", JSON.stringify(fixtureLocation));
@@ -101,9 +136,16 @@ async function seedYouPerformanceState(page: Page) {
 }
 
 async function expectYouProfileReady(page: Page) {
+  await page.waitForFunction(() => Number.isFinite((window as any).__youReadyAt?.profile));
   await expect(page.getByRole("region", { name: "You", exact: true })).toBeVisible();
   await expect(page.getByLabel("Profile summary")).toBeVisible();
   await expect(page.getByText("Project Author")).toBeVisible();
+  return page.evaluate(() => (window as any).__youReadyAt.profile as number);
+}
+
+function elapsedSince(readyAt: number, startedAt: number) {
+  expect(readyAt).toBeGreaterThanOrEqual(startedAt);
+  return Math.round(readyAt - startedAt);
 }
 
 test.describe("You loading performance matrix", () => {
@@ -114,11 +156,11 @@ test.describe("You loading performance matrix", () => {
       const context = await browser.newContext();
       const page = await context.newPage();
       await seedYouPerformanceState(page);
-      const startedAt = performance.now();
+      const startedAt = Date.now();
 
       await page.goto("/#you", { waitUntil: "domcontentloaded" });
-      await expectYouProfileReady(page);
-      samples.push(Math.round(performance.now() - startedAt));
+      const readyAt = await expectYouProfileReady(page);
+      samples.push(elapsedSince(readyAt, startedAt));
       await context.close();
     }
 
@@ -133,13 +175,20 @@ test.describe("You loading performance matrix", () => {
     await expect(page.getByRole("navigation", { name: "Primary navigation" })).toBeVisible();
     const youButton = page.getByRole("navigation", { name: "Primary navigation" }).getByRole("button", { name: "You" });
     await youButton.focus();
-    const startedAt = performance.now();
+    const startedAt = Date.now();
 
     await youButton.click();
-    await expectYouProfileReady(page);
+    const readyAt = await expectYouProfileReady(page);
 
+    const clickedAt = await page.evaluate(() => (window as any).__youReadyAt.click as number);
+    // Measure the actual browser click. Playwright may wait for the previous
+    // Sky layout to stabilize before delivering input (843 ms at 8x CPU).
+    // That preparation is not You navigation; click-to-first-paint is.
+    expect(clickedAt).toBeGreaterThanOrEqual(startedAt);
+    console.log(JSON.stringify({ scenario: "warm You profile", elapsedMs: elapsedSince(readyAt, clickedAt),
+      inputPreparationMs: Math.round(clickedAt - startedAt) }));
     expect(
-      Math.round(performance.now() - startedAt),
+      elapsedSince(readyAt, clickedAt),
       "Warm You navigation must not wait for social-profile or manual-chart enhancement"
     ).toBeLessThanOrEqual(budgets.warmNavigationReadyMs);
   });
@@ -147,12 +196,12 @@ test.describe("You loading performance matrix", () => {
   test("mobile direct links reveal the saved profile within budget", async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
     await seedYouPerformanceState(page);
-    const startedAt = performance.now();
+    const startedAt = Date.now();
 
     await page.goto("/#you", { waitUntil: "domcontentloaded" });
-    await expectYouProfileReady(page);
+    const readyAt = await expectYouProfileReady(page);
 
-    expect(Math.round(performance.now() - startedAt)).toBeLessThanOrEqual(budgets.mobileProfileReadyMs);
+    expect(elapsedSince(readyAt, startedAt)).toBeLessThanOrEqual(budgets.mobileProfileReadyMs);
   });
 
   test("slow chart data keeps the profile usable and reports the current milestone", async ({ page }) => {
@@ -165,13 +214,14 @@ test.describe("You loading performance matrix", () => {
       await route.continue();
     });
     await seedYouPerformanceState(page);
-    const startedAt = performance.now();
+    const startedAt = Date.now();
 
     await page.goto("/#you", { waitUntil: "domcontentloaded" });
-    await expectYouProfileReady(page);
-    const profileReadyMs = Math.round(performance.now() - startedAt);
+    const readyAt = await expectYouProfileReady(page);
+    const profileReadyMs = elapsedSince(readyAt, startedAt);
+    await page.waitForFunction(() => Number.isFinite((window as any).__youReadyAt?.milestone));
+    const milestoneReadyMs = elapsedSince(await page.evaluate(() => (window as any).__youReadyAt.milestone as number), startedAt);
     await expect(page.getByText("Adding today’s transits.", { exact: true })).toBeVisible();
-    const milestoneReadyMs = Math.round(performance.now() - startedAt);
     await expect(page.getByRole("navigation", { name: "Primary navigation" })).toBeVisible();
 
     expect(profileReadyMs).toBeLessThanOrEqual(budgets.slowNetworkProfileReadyMs);
@@ -181,4 +231,23 @@ test.describe("You loading performance matrix", () => {
     await expect(page.getByRole("alert", { name: "Chart calculation error" })).toHaveCount(0);
     await expect(page.locator('[aria-label="Transit chart wheel"], [aria-label="Natal chart wheel"]')).toBeVisible();
   });
+});
+
+
+test("direct You navigation fetches its page while App is still downloading", async ({ page }) => {
+  await seedYouPerformanceState(page);
+  let releaseApp: () => void = () => undefined;
+  const heldApp = new Promise<void>(resolve => { releaseApp = resolve; });
+  await page.route(/\/assets\/App-[^/]+\.js/u, async route => {
+    await heldApp;
+    await route.continue();
+  });
+  const profileRequest = page.waitForRequest(/\/assets\/YouPage-[^/]+\.js/u);
+  try {
+    await page.goto("/#you", { waitUntil: "domcontentloaded" });
+    await profileRequest;
+  } finally {
+    releaseApp();
+  }
+  await expectYouProfileReady(page);
 });

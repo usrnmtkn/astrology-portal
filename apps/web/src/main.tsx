@@ -1,5 +1,6 @@
 import React from "react";
 import { createRoot } from "react-dom/client";
+import { loadYouPage } from "./features/you/youExperienceLoader";
 import { PageLoading, PageLoadBoundary } from "./components/PageLoading";
 import { shouldPreloadInitialFriendCalculationRuntime } from "./features/friends/friendCalculationReadiness";
 import { preloadFriendsExperience } from "./features/friends/friendsExperienceLoader";
@@ -107,6 +108,13 @@ async function startApp() {
   }
 
   const appModulePromise = import("./App");
+  // A direct You link needs the profile page immediately. Fetch it alongside
+  // App instead of adding a second module/CSS waterfall after React mounts.
+  if (/^#\/?you(?:[/?]|$)/u.test(window.location.hash)) {
+    void loadYouPage().catch(() => {
+      // The mounted route owns import errors and recovery.
+    });
+  }
   const friendRoutePromise = prepareFriendProfileRoute(window.location.href);
   void friendRoutePromise.then(() => {
     if (!isFriendsHref(window.location.href)) return;

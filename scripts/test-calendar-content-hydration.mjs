@@ -517,12 +517,12 @@ assert.doesNotMatch(
 );
 assert.match(
   calendarSource,
-  /<h3>Moon in \{day\.moonSign\}<\/h3>/u,
+  /title: quarter \? `\$\{phase\} in \$\{day\.moonSign\}` : `Moon in \$\{day\.moonSign\}`/u,
   "Weekly Moon guidance must label the sign driving the interpretation."
 );
 assert.match(
   calendarSource,
-  /const selectedPackageWeeklyMoon = selectedDay[\s\S]*?renderWeeklyMoon\(\{[\s\S]*?sign: slugContentPart\(selectedDay\.moonSign\),[\s\S]*?variant: weeklyMoonVariantForDate\(selectedDay\.dateKey\)/u,
+  /const selectedPackageWeeklyMoon = selectedDay[\s\S]*?packagedWeeklyMoon\(\s*selectedDay/u,
   "Day view must resolve its complete approved Moon-in-sign write-up independently."
 );
 assert.doesNotMatch(
@@ -560,14 +560,14 @@ assert.match(
   /\.lunar-moon-disc\.is-waxing\.is-crescent::after[\s\S]*?\.lunar-moon-disc\.is-waning\.is-crescent::after[\s\S]*?\.lunar-moon-disc\.is-waxing\.is-gibbous::after[\s\S]*?\.lunar-moon-disc\.is-waning\.is-gibbous::after/u,
   "Calendar Moon discs must render waxing and waning geometry on opposite sides."
 );
-assert.ok(
-  calendarSource.indexOf("{showGuidance && guidance?.body && (")
-    < calendarSource.indexOf("{visibleEvents.length > 0 && ("),
+assert.match(
+  calendarSource,
+  /paragraphs=\{copy\.paragraphs\}[\s\S]*?rows=\{buildCalendarDayGroupRows/u,
   "Weekly Moon-in-sign guidance must render before that day's aspects and movements."
 );
 assert.match(
   calendarSource,
-  /const showGuidance = Boolean\(guidance\?\.body\)/u,
+  /paragraphs=\{copy\.paragraphs\}[\s\S]*?includeSurfaceEvents: true/u,
   "Weekly guidance must remain visible when the day also has an event description."
 );
 assert.doesNotMatch(
@@ -582,12 +582,12 @@ assert.match(
 );
 assert.match(
   calendarCss,
-  /\.lunar-weekly-jump \{[\s\S]*?position: sticky;[\s\S]*?top: calc\(var\(--top-control-top\) \+ var\(--top-control-height\) \+ 8px\);/u,
+  /\.lunar-week-strip \{[\s\S]*?position: sticky;[\s\S]*?top: calc\(var\(--top-control-top\) \+ var\(--top-control-height\) \+ 8px\);/u,
   "The weekly day selector must stay below the floating navigation."
 );
 assert.match(
   calendarCss,
-  /\.lunar-weekly-day \{[\s\S]*?scroll-margin-top: calc\(var\(--top-control-top\) \+ var\(--top-control-height\) \+ 88px\);/u,
+  /\.calendar-day-group \{[\s\S]*?scroll-margin-top: calc\(var\(--top-control-top\) \+ var\(--top-control-height\) \+ 88px\);/u,
   "Jump-to-day scrolling must clear both the global navigation and sticky week selector."
 );
 assert.match(
@@ -616,19 +616,14 @@ assert.match(
   "The mobile Calendar content column must not disable its sticky week selector."
 );
 assert.match(
-  calendarCss,
-  /\.lunar-calendar-month-primary \{[\s\S]*?grid-template-columns: minmax\(0, 1\.65fr\) minmax\(300px, 0\.85fr\);/u,
-  "The Month view must preserve its calendar-and-detail desktop grid at laptop widths."
-);
-assert.match(
-  calendarCss,
-  /@media \(max-width: 820px\) \{[\s\S]*?\.lunar-calendar-month-primary \{[\s\S]*?grid-template-columns: minmax\(0, 1fr\);/u,
-  "The Month view must stack only at the narrow tablet/mobile breakpoint."
+  calendarSource,
+  /className="lunar-calendar-layout"[\s\S]*?className="lunar-calendar-month-primary"[\s\S]*?className="lunar-month-agenda"/u,
+  "The Month view must keep the lunar grid and the month agenda as separate regions."
 );
 assert.match(
   calendarSource,
-  /viewMode === "month" && window\.matchMedia\("\(max-width: 820px\)"\)\.matches/u,
-  "Month day selection must scroll to the stacked detail only at the same narrow breakpoint."
+  /const openSlideout = options\?\.openSlideout \?\? \(viewMode === "month" \|\| viewMode === "weekly"\)/u,
+  "Month and weekly day selection must open the day reading instead of a stacked side panel."
 );
 assert.match(
   calendarSource,
@@ -642,7 +637,7 @@ assert.match(
 );
 assert.match(
   calendarSource,
-  /selectedDayTransits\.map[\s\S]*?calendarEventEditorialContent\([\s\S]*?const description = editorial\.eventCopy \?\? "";[\s\S]*?data-content-key=\{editorial\.contentKey\}[\s\S]*?onOpenTransit\?\.\(event, description\)/u,
+  /selectedDayTransits\.map[\s\S]*?calendarEventEditorialContent\([\s\S]*?const description = editorial\.eventCopy \?\? "";[\s\S]*?data-content-key=\{editorial\.contentKey\}[\s\S]*?onClick=\{\(\) => openEventReading\(event\)\}/u,
   "Selected-day ingress, station, and aspect buttons must carry their approved rendered copy into detail."
 );
 assert.match(

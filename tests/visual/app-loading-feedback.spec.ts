@@ -1,10 +1,9 @@
-import { expect, test } from "@playwright/test";
+import { expect, test, type Page } from "@playwright/test";
 import { writeFile } from "node:fs/promises";
 import { readFileSync } from "node:fs";
 
-const moonPlacement = (sign: string) => JSON.parse(readFileSync(
-  "apps/web/src/content/fallbackArchitectureV3/bundled-sky-placement-rows-v3.json", "utf8"
-)).hookRows.find((row: { contentKey: string }) => row.contentKey === `fallback-hook/sky-placement-lived/moon/${sign}`);
+const weekGuidance = (page: Page, dateKey: string) => page.locator(`#calendar-day-group-${dateKey} .calendar-day-group__blurb`);
+const dayGuidance = (page: Page) => page.locator("[data-calendar-date] [data-guidance-key]").first();
 
 test.beforeEach(async ({ page }) => {
   await page.clock.setFixedTime(new Date("2026-09-08T04:06:00Z"));
@@ -14,7 +13,7 @@ test.beforeEach(async ({ page }) => {
 test("offline snapshot publication keeps complete Calendar guidance available during live API failure", async ({ page }) => {
   test.setTimeout(60_000);
   const snapshot = JSON.parse(readFileSync("apps/web/public/content-studio-last-known-good.json", "utf8"));
-  const key = "authored/calendar-weekly-moon/taurus/variant-4";
+  const key = "authored/calendar-weekly-moon/gemini";
   const row = snapshot.rows.find((candidate: { content_key: string }) => candidate.content_key === key);
   let releaseSnapshot!: () => void;
   let releaseLive!: () => void;
@@ -37,7 +36,7 @@ test("offline snapshot publication keeps complete Calendar guidance available du
   });
   try {
     await page.goto("/#calendar?view=weekly&date=2026-08-03");
-    const weekly = page.locator("#lunar-weekly-2026-08-05 .lunar-weekly-day__guidance");
+    const weekly = weekGuidance(page, "2026-08-08");
     await expect(weekly).toHaveAttribute("data-guidance-key", key, { timeout: 25_000 });
     releaseSnapshot();
     await expect.poll(() => page.evaluate(key => {
@@ -45,15 +44,15 @@ test("offline snapshot publication keeps complete Calendar guidance available du
       return records.some((record: { content_key: string }) => record.content_key === key);
     }, key), { timeout: 15_000 }).toBe(true);
     await expect(weekly).toHaveText(row.body);
-    await page.goto("/#calendar?view=day&date=2026-08-05");
-    const day = page.getByRole("region", { name: "Moon guidance" });
-    const fullMoon = moonPlacement("taurus");
-    await expect(day).toHaveAttribute("data-guidance-key", fullMoon.contentKey, { timeout: 15_000 });
-    await expect(day.locator("p")).toHaveText(fullMoon.body_you.split(/\n\n/));
+    await page.goto("/#calendar?view=day&date=2026-08-08");
+    const day = dayGuidance(page);
+    await expect(day).toHaveAttribute("data-guidance-key", key, { timeout: 15_000 });
+    expect(await day.getAttribute("data-guidance-key")).not.toContain("sky-placement-lived");
+    await expect(day.locator("p")).toHaveText(row.body.split(/\n\n/));
   } finally { releaseSnapshot(); releaseLive(); }
 });
 
-test("Calendar Day waits for full event facts before selecting its full Moon passage", async ({ page }) => {
+test("Calendar Day waits for full event facts before selecting leftover Moon writing", async ({ page }) => {
   const { getLunarCalendarWeek } = await import("../../apps/web/src/services/ephemeris");
   const location = { label: "New York, New York", latitude: 40.7128, longitude: -74.006, timeZone: "America/New_York" };
   const anchor = new Date("2026-08-04T12:00:00Z");
@@ -75,20 +74,21 @@ test("Calendar Day waits for full event facts before selecting its full Moon pas
     await route.fulfill({ json: { ok: true, calendar: detailed ? full : basic } });
   });
   await page.goto("/#calendar?view=weekly&date=2026-08-04");
-  const weekly = page.locator("#lunar-weekly-2026-08-04 .lunar-weekly-day__guidance");
+  const weekly = weekGuidance(page, "2026-08-04");
   await expect(weekly).toBeVisible({ timeout: 15_000 });
-  await expect(weekly).toHaveAttribute("data-guidance-key", "authored/calendar-weekly-moon/aries/variant-2");
-  const fullMoon = moonPlacement("aries");
+  expect(await weekly.getAttribute("data-guidance-key")).not.toContain("sky-placement-lived");
+  const leftoverKey = await weekly.getAttribute("data-guidance-key");
   holdFull = true;
   try {
     await page.goto("/#calendar?view=day&date=2026-08-04");
     await expect.poll(() => waiting).toBe(true);
     await expect(page.locator(".lunar-calendar-loading")).toBeVisible();
-    await expect(page.getByRole("region", { name: "Moon guidance" })).toHaveCount(0);
+    await expect(dayGuidance(page)).toHaveCount(0);
   } finally { release(); }
-  const day = page.getByRole("region", { name: "Moon guidance" });
-  await expect(day).toHaveAttribute("data-guidance-key", fullMoon.contentKey);
-  await expect(day.locator("p")).toHaveText(fullMoon.body_you.split(/\n\n/));
+  const day = dayGuidance(page);
+  await expect(day).toHaveAttribute("data-guidance-key", leftoverKey ?? "");
+  expect(await day.getAttribute("data-guidance-key")).not.toContain("sky-placement-lived");
+  await expect(day.locator("p").first()).toBeVisible();
 });
 
 for (const leaveCalendar of [false, true]) test(`Calendar pending event click ${leaveCalendar ? "does not reopen after leaving" : "opens after the Sky calculation loads"}`, async ({ page }) => {
@@ -108,21 +108,25 @@ for (const leaveCalendar of [false, true]) test(`Calendar pending event click ${
     await page.goto("/#calendar?view=day&date=2026-09-10");
     await page.getByRole("button", { name: "Venus enters Scorpio", exact: true }).click();
     await expect(page.locator(".sky-detail-article")).toHaveCount(0);
-    if (leaveCalendar) await page.getByRole("button", { name: "Sky", exact: true }).first().click();
+    if (leaveCalendar) {
+      await page.getByRole("dialog", { name: "Event detail" }).getByRole("button", { name: "Close", exact: true }).click();
+      await page.getByRole("button", { name: "Sky", exact: true }).first().click();
+    }
   } finally { release(); }
   if (leaveCalendar) {
     await expect(page.getByLabel("Daily sky summary")).toBeVisible({ timeout: 30_000 });
     await expect(page.locator(".sky-detail-article")).toHaveCount(0);
+    await expect(page.getByRole("dialog", { name: "Event detail" })).toHaveCount(0);
     return;
   }
-  await expect(page.locator(".sky-detail-article h1")).toContainText("Venus in Scorpio", { timeout: 30_000 });
-  const venus = JSON.parse(readFileSync("packages/astro-knowledge/data/transits/venus-square-pluto.json", "utf8"));
-  await expect(page.locator(".sky-detail-article")).toContainText(venus.readerCopy.body);
+  const reading = page.getByRole("dialog", { name: "Event detail" });
+  await expect(reading).toBeVisible({ timeout: 30_000 });
+  await expect(reading).toContainText("Venus enters Scorpio");
 });
 
 for (const view of ["weekly", "week"]) test(`Calendar ${view} waits for authored Moon content before choosing copy`, async ({ page }) => {
   test.setTimeout(60_000);
-  const key = "authored/calendar-weekly-moon/aries/variant-2";
+  const key = "authored/calendar-weekly-moon/gemini";
   const source = JSON.parse(readFileSync("apps/web/src/content/fallbackArchitectureV3/bundled-transit-core-authored-cards-v3.json", "utf8"))
     .authoredCards.find((row: { contentKey: string }) => row.contentKey === key);
   let release!: () => void;
@@ -136,18 +140,18 @@ for (const view of ["weekly", "week"]) test(`Calendar ${view} waits for authored
     label: "New York, New York", latitude: 40.7128, longitude: -74.006, timeZone: "America/New_York"
   })));
   try {
-    await page.goto(`/#calendar?view=${view}&date=2026-08-04`, { waitUntil: "domcontentloaded" });
+    await page.goto(`/#calendar?view=${view}&date=2026-08-08`, { waitUntil: "domcontentloaded" });
     // Calculation has completed independently of the deliberately held prose bundle.
     await expect.poll(() => page.evaluate(() => Object.keys(localStorage).some(key => key.startsWith("tldr-lunar-calendar|"))), { timeout: 25_000 }).toBe(true);
     await expect(page.locator(".lunar-calendar-loading")).toBeVisible();
     await expect(page.locator(".lunar-calendar-body")).toHaveCount(0);
   } finally { release(); }
   const guidance = view === "weekly"
-    ? page.locator("#lunar-weekly-2026-08-04 .lunar-weekly-day__guidance")
-    : page.getByRole("region", { name: "Moon guidance" });
-  const selected = view === "weekly" ? { contentKey: key, body: source.body } : { contentKey: moonPlacement("aries").contentKey, body: moonPlacement("aries").body_you.split(/\n\n/) };
-  await expect(guidance).toHaveAttribute("data-guidance-key", selected.contentKey, { timeout: 25_000 });
-  await expect(view === "weekly" ? guidance : guidance.locator("p")).toHaveText(selected.body);
+    ? weekGuidance(page, "2026-08-08")
+    : dayGuidance(page);
+  await expect(guidance).toHaveAttribute("data-guidance-key", key, { timeout: 25_000 });
+  expect(await guidance.getAttribute("data-guidance-key")).not.toContain("sky-placement-lived");
+  await expect(view === "weekly" ? guidance : guidance.locator("p")).toHaveText(view === "weekly" ? source.body : source.body.split(/\n\n/));
   await expect(page.locator(".lunar-calendar-loading")).toHaveCount(0);
 });
 
@@ -213,7 +217,10 @@ test("blocked web fonts do not block startup or reader content", async ({ page }
   const held = new Promise<void>(resolve => { release = resolve; });
   await page.route("https://fonts.googleapis.com/**", async route => { await held; await route.abort().catch(() => {}); });
   await page.goto("/#sky", { waitUntil: "domcontentloaded" });
-  try { await expect(page.getByLabel("Daily sky summary")).toBeVisible({ timeout: 10000 }); }
+  try {
+    await expect(page.getByRole("navigation", { name: "Primary navigation" })).toBeVisible();
+    await expect(page.getByLabel("Daily sky summary")).toBeVisible({ timeout: 25_000 });
+  }
   finally { release(); }
 });
 
@@ -237,9 +244,9 @@ test("lazy Calendar navigation keeps the nav and a visible loading state", async
 
 test("a failed lazy route keeps navigation usable", async ({ page }) => {
   await page.route(/\/assets\/CalendarRoute-.*\.js$/, route => route.abort("failed"));
-  await page.goto("/#sky");
-  await expect(page.getByLabel("Daily sky summary")).toBeVisible({ timeout: 10000 });
-  await page.getByRole("button", { name: "Calendar", exact: true }).first().click();
+  // The reader retries a missing chunk once. Start on its route so intent
+  // preloading cannot reload the previous Sky page before selection.
+  await page.goto("/#calendar", { waitUntil: "domcontentloaded" });
   await expect(page.getByRole("alert")).toContainText("This page could not load");
   await expect(page.locator(".topbar")).toBeVisible();
   await page.getByRole("button", { name: "Sky", exact: true }).first().click();

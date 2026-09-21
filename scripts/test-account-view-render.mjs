@@ -41,9 +41,14 @@ try {
   assert.match(html, /Phone ending in 0100/);
   assert.match(html, /aria-label="Birth date"/);
   assert.match(html, /value="1990-04-10"/);
+  assert.match(html, /Open journal/);
   assert.match(html, /Export account/);
+  assert.match(html, /Erase check-ins/);
   assert.match(html, /Delete account/);
+  assert.match(html, /<h1>account\.<\/h1>/);
+  assert.equal((html.match(/<h1[\s>]/g) || []).length, 1);
   assert.doesNotMatch(html, /Delete your TLDR Astro account/);
+  assert.doesNotMatch(html, /Erase your mood and journal entries/);
   assert.doesNotMatch(html, /Check your current phone/);
 } finally {
   await server.close();

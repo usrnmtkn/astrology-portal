@@ -9,6 +9,11 @@ const vercel = fs.readFileSync("vercel.json", "utf8");
 
 assert.doesNotMatch(api, /from "\.\/generated-content/u);
 assert.doesNotMatch(api, /skyArticleTemplateCompiler|astro101|skyV4ReaderCopy/u);
+assert.match(api, /lunar-journal-sources/u);
+assert.match(api, /calendar-season-transition-sources/u);
+assert.match(api, /pageIsComplete/u);
+assert.match(inventory, /authored\/lunar-journal\//u);
+assert.match(inventory, /authored\/calendar-season-transition\//u);
 // List rows are marked as documents-not-loaded by the shared listing projection.
 assert.match(api, /studioListingRow\(row, /u);
 assert.match(fs.readFileSync("api/_lib/studio-listing-facts.ts", "utf8"), /inventory_only: true/u);

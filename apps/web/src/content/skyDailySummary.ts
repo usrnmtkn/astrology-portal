@@ -6,6 +6,10 @@ import defaultTiming from "./skyDailySummaryTiming.json" with { type: "json" };
 import { currentSkySummaryWording, skyDailySummaryFields, skySummaryTemplateErrors } from "./skyDailySummaryCatalog";
 import type { CmsGeneratedContentMap } from "./cmsSurfaceOverrides";
 import { contentPublication, publicationAllowsContent } from "./contentPublicationState";
+import {
+  calendarSeasonTransitionCountdown,
+  calendarSeasonTransitionIsCurrent
+} from "../features/calendar/calendarSeasonTransitionFacts";
 
 const skySummaryLiveCopyCacheKey = "tldrastro:sky-daily-summary-live-copy:v1";
 type CachedSkySummaryCopy = { identity: string; body: string };
@@ -93,6 +97,11 @@ export type SkyDailySummaryFacts = {
   ingresses?: Array<{ id: string; label: string; tldr?: string }>;
   voidRemainingLabel?: string;
   event?: { placementsPending?: boolean; sun?: SummaryPlacement; name: string; degree?: number; sign: string; countdown: string; isToday?: boolean; eclipseType?: "solar" | "lunar" };
+  seasonName?: string;
+  nextSunSign?: string;
+  seasonEndDate?: string;
+  daysUntilSeasonEnd?: number | null;
+  isLastFullWeekendOfSeason?: boolean;
 };
 
 function fullerClause(body: "sun" | "moon", sign?: string, content?: CmsGeneratedContentMap, editorialPreview = false) {
@@ -162,6 +171,20 @@ export function skyDailySummaryParts(facts: SkyDailySummaryFacts, content?: CmsG
     });
   }
   values.openingSentence = hasSun || hasMoon ? fillSkyTemplate(opening, values) : [];
+  if (calendarSeasonTransitionIsCurrent(facts) && facts.seasonName && facts.nextSunSign) {
+    const countdown = calendarSeasonTransitionCountdown(facts.daysUntilSeasonEnd);
+    const seasonEndDate = facts.seasonEndDate?.trim() ?? "";
+    if (countdown && seasonEndDate) {
+      values.seasonName = plain(facts.seasonName);
+      values.countdown = plain(countdown);
+      values.nextSunSign = plain(facts.nextSunSign);
+      values.seasonEndDate = plain(seasonEndDate);
+      const seasonText = fillSkyTemplate(timing.seasonTransition, values).map((part) => part.text).join("");
+      values.seasonTransitionSentence = seasonText
+        ? [{ text: seasonText, sourceKey: "cms/sky-daily-summary/seasonTransition" }]
+        : [];
+    }
+  }
   const planets = [...new Set((facts.retrogradePlacements?.map(p => p.planet) ?? facts.retrogradePlanets ?? []).map(name => name.trim()).filter(Boolean))];
   if (planets.length) {
     const intro = planets.length === 1 ? timing.singleRetrograde : timing.retrograde.replace("{count}", words[planets.length] ?? String(planets.length));
@@ -235,15 +258,24 @@ export function skyDailySummaryParts(facts: SkyDailySummaryFacts, content?: CmsG
   // Blank lines in the editable template are actual paragraph boundaries.
   return assembly.layout.split(/\n\s*\n/gu).flatMap(paragraph => {
     const parts = fillSkyTemplate(paragraph, values);
-    // Normalize assembly whitespace only. Authored summaries stay byte-for-byte.
+    // Normalize assembly whitespace only. Authored summaries stay byte-for-byte
+    // except a space before punctuation the template attaches.
     for (let i = 0; i < parts.length; i++) {
-      if (parts[i].sourceKey || parts[i].action) continue;
-      parts[i].text = parts[i].text.replace(/\s+/gu, " ");
+      if (!parts[i].sourceKey && !parts[i].action) {
+        parts[i].text = parts[i].text.replace(/\s+/gu, " ");
+      }
+      parts[i].text = parts[i].text.replace(/\s+([,.])/gu, "$1");
       if (/^\s*[,.]/u.test(parts[i].text)) {
         parts[i].text = parts[i].text.trimStart();
-        for (let j = i - 1; j >= 0 && !parts[j].sourceKey && !parts[j].action; j--) {
-          parts[j].text = parts[j].text.trimEnd();
-          if (parts[j].text) break;
+        const mark = parts[i].text[0];
+        for (let j = i - 1; j >= 0; j--) {
+          parts[j].text = parts[j].text.replace(/\s+([,.])/gu, "$1").trimEnd();
+          if (parts[j].text) {
+            if (mark && parts[j].text.endsWith(mark)) {
+              parts[i].text = parts[i].text.replace(new RegExp(`^\\${mark}+`, "u"), "");
+            }
+            break;
+          }
         }
       }
       if (i && /\s$/u.test(parts[i - 1].text)) parts[i].text = parts[i].text.trimStart();

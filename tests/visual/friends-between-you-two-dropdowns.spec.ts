@@ -34,7 +34,7 @@ async function isolate(page: Page, openings: Record<string, string> = savedCopy)
     const url = new URL(route.request().url());
     const contentKey = url.searchParams.get("contentKey") ?? "";
     const body = openings[contentKey];
-    if (url.pathname.endsWith("/generated-content") && body) {
+    if (url.pathname.endsWith("/package-source") && body) {
       return route.fulfill({
         json: {
           ok: true,
@@ -46,7 +46,7 @@ async function isolate(page: Page, openings: Record<string, string> = savedCopy)
         }
       });
     }
-    if (url.pathname.endsWith("/generated-content") && route.request().method() === "GET" && !url.searchParams.get("contentKey")) {
+    if ((url.pathname.endsWith("/generated-content") || url.pathname.endsWith("/generated-content-inventory")) && route.request().method() === "GET" && !url.searchParams.get("contentKey")) {
       return route.fulfill({ json: { ok: true, rows: savedRows(openings), nextCursor: null } });
     }
     await route.fulfill({ json: { ok: true, rows: [], statuses: [], records: [], nextCursor: null } });

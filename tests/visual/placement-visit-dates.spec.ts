@@ -30,13 +30,14 @@ for (const theme of ['light', 'dark']) for (const width of [390, 1440]) {
     await expect(page.locator('.sky-detail-article h1')).toHaveText(['Venus in Scorpio']);
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
     // Assert the complete source body remains identical through hydration/reopen.
-    const body = await page.locator('.article-body-inner').first().innerText();
-    expect(body).toContain('When Venus reaches Scorpio, intimacy and connection stop being separable from power dynamics.');
-    expect(body).toContain('Trust gets stronger when the terms can be named without turning vulnerability into leverage.');
+    const prose = page.locator('.article-body-inner').first().locator(':scope > .sky-detail-section > p');
+    const body = await prose.allTextContents();
+    expect(body.join('\n\n')).toContain('When Venus reaches Scorpio, intimacy and connection stop being separable from power dynamics.');
+    expect(body.join('\n\n')).toContain('Trust gets stronger when the terms can be named without turning vulnerability into leverage.');
     await page.locator('.sky-detail-id').screenshot({ path: `test-results/venus-visit-${theme}-${width}.png` });
     await page.reload();
     await expect(dates).toHaveText(['September 10 to October 25, 2026', 'Full residency in Scorpio: September 10, 2026 to January 7, 2027'], { timeout: 60_000 });
-    await expect(page.locator('.article-body-inner').first()).toHaveText(body, { useInnerText: true });
+    await expect(prose).toHaveText(body);
     await page.getByRole('button', { name: 'Close detail', exact: true }).click();
     await expect(card.locator('.planet-placement-row__meta--timing')).toHaveText('Sep 10 - Oct 25');
     await page.goto('/?date=2026-12-10#sky/placement/venus/scorpio');

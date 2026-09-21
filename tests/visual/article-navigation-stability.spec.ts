@@ -16,15 +16,25 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
   const errors: string[]=[];
   page.on('pageerror', error=>errors.push(error.message));
   await page.goto('/#sky');
-  await page.getByRole('link', {name:'Read about Lilith in Capricorn',exact:true}).click();
+  await page.getByRole('button', {name:'Read more about Lilith in Capricorn',exact:true}).click();
   await expect(page.locator('#sky-detail-title')).toHaveText(/Lilith.*Capricorn/i, {timeout:60_000});
   const parentUrl=page.url();
   for (const aspect of ['Trine Sun','Opposition Mars']) {
    const link=page.getByRole('link',{name:new RegExp(`Read more about Lilith.*${aspect}`)});
    await expect(link).toBeVisible({timeout:60_000});
-   const target=await link.getAttribute('href');
-   // Click the actual Read More text, not the center of a large card.
-   await link.getByText('Read More', {exact:true}).click();
+   // Hydrated event facts can update the related link while Playwright waits
+   // to click. Assert the destination the user actually selected, not an href
+   // read before that update; the app must preserve that exact dated route.
+   await page.evaluate(() => {
+    (window as any).__clickedArticleTarget = null;
+    document.addEventListener('click', event => {
+     (window as any).__clickedArticleTarget = (event.target as Element)
+      ?.closest('a[href^="#sky/"]')?.getAttribute('href') ?? null;
+    }, {capture:true,once:true});
+   });
+   await link.click();
+   const target=await page.evaluate(()=>(window as any).__clickedArticleTarget as string|null);
+   expect(target).toMatch(/^#sky\/aspect\/.+\/at\//);
    await expect(page).toHaveURL(new RegExp(target!.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+'$'));
    // Nested routes load their reading package just like the parent route above.
    await expect(page.locator('#sky-detail-title')).toHaveText(aspect==='Trine Sun' ? /Sun.*Trine.*Lilith/i : /Mars.*Opposition.*Lilith/i, {timeout:60_000});

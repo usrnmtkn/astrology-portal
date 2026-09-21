@@ -315,7 +315,7 @@ test.describe("Friends loading performance matrix", () => {
     for (let sample = 0; sample < FRIENDS_LOADING_SAMPLE_COUNT; sample += 1) {
       samples.push(await withContext(browser, {}, async (_context, page) => {
         const prepared = await preparePage(page);
-        await page.goto(url("/#friends?tab=charts"));
+        await page.goto(url("/#friends?tab=charts"), { waitUntil: "domcontentloaded" });
         const chartButton = page.getByRole("button", { name: `Open ${fixtureFriendName}` });
         await chartButton.hover();
         await expect.poll(
@@ -331,10 +331,29 @@ test.describe("Friends loading performance matrix", () => {
         await page.locator(".friends-back-button").click();
         await waitForMeasuredVisibility(page.getByRole("button", { name: `Open ${fixtureFriendName}` }));
 
-        return timed("warm Friends detail", async () => {
-          await page.getByRole("button", { name: `Open ${fixtureFriendName}` }).click();
-          await expect(page.locator(".compatibility-card").first()).toBeVisible();
+        // Capture the first visible frame, as for direct Synastry links below.
+        // A protocol round-trip after rendering should not count as app work.
+        await page.evaluate(() => {
+          (window as any).__friendsDetailStartedAt = performance.now();
+          const observe = () => {
+            const card = document.querySelector(".compatibility-card");
+            const rect = card?.getBoundingClientRect();
+            const visibility = card ? getComputedStyle(card).visibility : "hidden";
+            if (rect && rect.width > 0 && rect.height > 0 && visibility !== "hidden" && visibility !== "collapse") {
+              (window as any).__friendsDetailElapsed = performance.now() - (window as any).__friendsDetailStartedAt;
+              return;
+            }
+            requestAnimationFrame(observe);
+          };
+          requestAnimationFrame(observe);
         });
+        await page.getByRole("button", { name: `Open ${fixtureFriendName}` }).click();
+        await page.waitForFunction(() => Number.isFinite((window as any).__friendsDetailElapsed));
+        await expect(page.locator(".compatibility-card").first()).toBeVisible();
+        return {
+          label: "warm Friends detail",
+          elapsedMs: Math.round(await page.evaluate(() => (window as any).__friendsDetailElapsed as number))
+        };
       }));
     }
 
@@ -390,18 +409,47 @@ test.describe("Friends loading performance matrix", () => {
     for (let sample = 0; sample < FRIENDS_LOADING_SAMPLE_COUNT; sample += 1) {
       samples.push(await withContext(browser, { viewport: { width: 390, height: 844 } }, async (_context, page) => {
         await preparePage(page);
-        await page.goto(url("/#sky"));
-        await expect(page.getByRole("button", { name: "Open full current sky chart" })).toBeVisible();
+        await page.goto(url("/#sky"), { waitUntil: "domcontentloaded" });
         await expect(page.getByRole("button", { name: "Open menu" })).toBeVisible();
         await page.getByRole("button", { name: "Open menu" }).click();
         const friendsMenuItem = page.getByRole("menuitem", { name: "Friends" });
         await expect(friendsMenuItem).toBeVisible();
 
-        return timed("mobile Friends navigation", async () => {
-          await friendsMenuItem.click();
-          await waitForMeasuredVisibility(page.getByRole("heading", { name: "friends.", exact: true }));
-          await waitForMeasuredVisibility(page.getByRole("button", { name: `Open ${fixtureFriendName}` }));
-        });
+        // Start at the browser click and stop at the first visible frame.
+        // Driver actionability waits for the preceding Sky layout are not
+        // Friends navigation, and protocol polling can lag the actual paint.
+        await page.evaluate(friendName => {
+          const timing = { clickedAt: 0, readyAt: 0 };
+          (window as any).__mobileFriendsTiming = timing;
+          document.addEventListener("click", event => {
+            if ((event.target as Element)?.closest('[role="menuitem"]')?.textContent?.trim() === "Friends") {
+              timing.clickedAt = performance.timeOrigin + performance.now();
+            }
+          }, true);
+          const visible = (node: Element | null) => {
+            if (!node) return false;
+            const rect = node.getBoundingClientRect();
+            const visibility = getComputedStyle(node).visibility;
+            return rect.width > 0 && rect.height > 0 && visibility !== "hidden" && visibility !== "collapse";
+          };
+          const observe = () => {
+            const heading = document.querySelector('.friends-page-heading h1');
+            const chart = document.querySelector(`[aria-label="Open ${friendName}"]`);
+            if (timing.clickedAt && heading?.textContent === "friends." && visible(heading) && visible(chart)) {
+              timing.readyAt = performance.timeOrigin + performance.now();
+            } else requestAnimationFrame(observe);
+          };
+          requestAnimationFrame(observe);
+        }, fixtureFriendName);
+        const startedAt = Date.now();
+        await friendsMenuItem.click();
+        await page.waitForFunction(() => (window as any).__mobileFriendsTiming.readyAt > 0);
+        await expect(page.getByRole("heading", { name: "friends.", exact: true })).toBeVisible();
+        await expect(page.getByRole("button", { name: `Open ${fixtureFriendName}` })).toBeVisible();
+        const { clickedAt, readyAt } = await page.evaluate(() => (window as any).__mobileFriendsTiming);
+        expect(clickedAt).toBeGreaterThanOrEqual(startedAt);
+        console.log(JSON.stringify({ scenario: "mobile Friends input preparation", elapsedMs: Math.round(clickedAt - startedAt) }));
+        return { label: "mobile Friends navigation", elapsedMs: Math.round(readyAt - clickedAt) };
       }));
     }
 

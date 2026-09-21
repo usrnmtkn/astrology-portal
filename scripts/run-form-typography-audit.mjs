@@ -9,9 +9,9 @@ const cssRoot = path.join(root, "apps/web/src");
 const reportDir = path.join(root, "test-results/css-audit");
 const reportPath = path.join(reportDir, "form-typography.md");
 
-const formSelectorPattern = /(?:\bform\b|input|select|textarea|\.auth-label|\.signup-field|\.signup-city-search|\.field-line|\.city-search-field|\.add-chart-field|\.add-chart-city-search|\.settings-location|\.settings-theme-control|\.lunar-location-picker|\.city-suggestions|\.admin-search|\.admin-metadata-field|\.admin-title-field|\.admin-review-tldr-editor|\.admin-review-copy-editor|\.admin-template-slot-preview|\.admin-status-select|\.admin-dashboard\s+(?:input|select|textarea|label|button))/i;
-const readableTextSelectorPattern = /(?:button|label|legend|span|strong|small|input|select|textarea|\.auth-label|\.settings-row__label|\.city-suggestions|\.lunar-location-picker)/i;
-const rawSizeSelectorPattern = /(?:button|input|select|textarea|\.auth-label|\.signup-field|\.signup-city-search|\.field-line|\.city-search-field|\.add-chart-field|\.add-chart-city-search|\.settings-location|\.settings-theme-control|\.lunar-location-picker|\.city-suggestions|\.admin-search|\.admin-metadata-field|\.admin-title-field|\.admin-review-tldr-editor|\.admin-review-copy-editor|\.admin-template-slot-preview|\.admin-status-select)/i;
+const formSelectorPattern = /(?:\bform\b|input|select|textarea|\.auth-label|\.signup-field|\.signup-city-search|\.field-line|\.city-search-field|\.add-chart-field|\.add-chart-city-search|\.settings-location|\.settings-theme-control|\.city-suggestions|\.admin-search|\.admin-metadata-field|\.admin-title-field|\.admin-review-tldr-editor|\.admin-review-copy-editor|\.admin-template-slot-preview|\.admin-status-select|\.admin-dashboard\s+(?:input|select|textarea|label|button))/i;
+const readableTextSelectorPattern = /(?:button|label|legend|span|strong|small|input|select|textarea|\.auth-label|\.settings-row__label|\.city-suggestions)/i;
+const rawSizeSelectorPattern = /(?:button|input|select|textarea|\.auth-label|\.signup-field|\.signup-city-search|\.field-line|\.city-search-field|\.add-chart-field|\.add-chart-city-search|\.settings-location|\.settings-theme-control|\.city-suggestions|\.admin-search|\.admin-metadata-field|\.admin-title-field|\.admin-review-tldr-editor|\.admin-review-copy-editor|\.admin-template-slot-preview|\.admin-status-select)/i;
 const weightPattern = /\bfont-weight\s*:\s*([^;]+)/;
 const sizePattern = /\bfont-size\s*:\s*([^;]+)/;
 const allowedRawSizes = new Set(["inherit"]);

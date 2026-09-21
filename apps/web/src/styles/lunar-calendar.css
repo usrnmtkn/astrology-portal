@@ -2,15 +2,21 @@
   overflow-x: clip;
   padding-top: var(--chart-page-top);
   scroll-padding-top: calc(var(--top-control-top) + var(--top-control-height) + 36px);
+  background: var(--calendar-canvas);
 }
 
 html:has(.app-shell.mode-calendar),
 body:has(.app-shell.mode-calendar),
 #root:has(.app-shell.mode-calendar) {
   overflow-x: clip;
+  background: var(--calendar-canvas);
 }
 
 .mode-calendar .portal-grid.full-page-layout.calendar-layout {
+  width: min(var(--container-reading), 100%);
+}
+
+.mode-calendar .portal-grid.full-page-layout.calendar-layout:has(.lunar-calendar-body.is-month) {
   width: min(var(--container-calendar), 100%);
 }
 
@@ -21,11 +27,11 @@ body:has(.app-shell.mode-calendar),
 
 .lunar-calendar-view {
   --z-lunar-tooltip: 1200;
-  --lunar-calendar-title-size: var(--text-page-title-size);
+  --lunar-calendar-title-size: var(--calendar-title-size);
   display: grid;
   grid-template-columns: minmax(0, 1fr);
   gap: var(--lunar-space-14);
-  width: min(var(--container-calendar-content), 100%);
+  width: 100%;
   margin: 0 auto;
   color: var(--ink);
   font-family: var(--font-body);
@@ -62,17 +68,32 @@ body:has(.app-shell.mode-calendar),
 }
 
 .lunar-calendar-header {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: var(--lunar-space-16);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas: "title actions";
+  align-items: center;
+  column-gap: var(--lunar-space-16);
+  row-gap: var(--lunar-space-8);
   margin-bottom: calc(var(--space-1) / 2);
 }
 
+.lunar-calendar-title-row {
+  grid-area: title;
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap;
+  min-width: 0;
+  gap: var(--lunar-space-12);
+}
+
 .lunar-calendar-header-actions {
-  display: grid;
-  justify-items: end;
+  grid-area: actions;
+  display: flex;
+  align-items: center;
+  justify-content: end;
+  flex-wrap: nowrap;
   gap: var(--lunar-space-8);
+  flex: none;
 }
 
 .lunar-calendar-legend,
@@ -90,27 +111,14 @@ body:has(.app-shell.mode-calendar),
   font-family: var(--font-label);
 }
 
-.lunar-calendar-title-block {
-  display: grid;
-  min-width: 0;
-  gap: var(--lunar-space-6);
-}
-
-.lunar-calendar-title-row {
-  display: flex;
-  align-items: center;
-  flex-wrap: nowrap;
-  gap: var(--lunar-space-16);
-}
-
 .lunar-calendar-header h1 {
-  margin: calc(var(--space-1) / 2) 0 0;
+  margin: 0;
   color: var(--ink);
   font-family: var(--font-display);
   font-size: var(--lunar-calendar-title-size);
   font-weight: var(--weight-regular);
   letter-spacing: var(--tracking-display);
-  line-height: var(--leading-display);
+  line-height: var(--calendar-title-leading);
   white-space: nowrap;
 }
 
@@ -124,178 +132,19 @@ body:has(.app-shell.mode-calendar),
   display: inline-flex;
   align-items: center;
   gap: var(--lunar-space-6);
-  min-height: 40px;
+  min-height: var(--calendar-control-size);
   color: var(--ink);
-}
-
-.lunar-calendar-location {
-  position: relative;
-  width: fit-content;
-  max-width: min(var(--container-chart-mobile), 100%);
-}
-
-.lunar-calendar-location > button {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--lunar-space-7);
-  max-width: 100%;
-  border: 0;
-  background: transparent;
-  color: var(--muted);
-  font-family: var(--font-body);
-  font-size: var(--lunar-type-body);
-  line-height: var(--leading-body);
-  text-align: left;
-}
-
-.lunar-calendar-location > button span {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.lunar-calendar-location > button:hover {
-  color: var(--ink);
-}
-
-.lunar-location-picker {
-  position: absolute;
-  top: calc(100% + 10px);
-  left: 0;
-  z-index: 20;
-  display: grid;
-  gap: var(--lunar-space-10);
-  width: min(var(--container-picker), calc(100vw - 48px));
-  padding: var(--lunar-space-12);
-  border: var(--border-width-thin) solid var(--card-border);
-  border-radius: var(--lunar-card-radius);
-  background: var(--card-bg);
-  box-shadow: var(--shadow-card);
-  font-family: var(--font-body);
-  font-weight: var(--weight-regular);
-}
-
-.lunar-location-picker label {
-  display: grid;
-  gap: var(--lunar-space-7);
-}
-
-.lunar-location-picker label > span:first-child {
-  color: var(--muted);
-  font-size: var(--lunar-type-label);
-  font-weight: var(--weight-medium);
-  letter-spacing: var(--tracking-label);
-  line-height: var(--leading-label);
-  text-transform: uppercase;
-}
-
-.lunar-location-picker__input {
-  display: flex;
-  align-items: center;
-  gap: var(--lunar-space-8);
-  min-height: 42px;
-  padding: 0 var(--lunar-space-12);
-  border: var(--border-width-thin) solid var(--line);
-  border-radius: var(--radius-pill);
-  background: color-mix(in srgb, var(--card-bg) 92%, var(--surface-2));
-  color: var(--muted);
-}
-
-.lunar-location-picker__input input {
-  min-width: 0;
-  width: 100%;
-  border: 0;
-  outline: 0;
-  background: transparent;
-  color: var(--ink);
-  font: inherit;
-  font-weight: var(--weight-regular);
-}
-
-.lunar-location-picker__results {
-  display: grid;
-  gap: var(--lunar-space-6);
-}
-
-.lunar-location-picker__results > span {
-  padding: calc(var(--space-2) + var(--space-1) / 2) var(--space-2);
-  color: var(--muted);
-  font-size: var(--lunar-type-meta);
-}
-
-.lunar-location-picker__results button {
-  display: grid;
-  gap: var(--lunar-space-3);
-  width: 100%;
-  padding: var(--lunar-space-10);
-  border: var(--border-width-thin) solid transparent;
-  border-radius: var(--lunar-control-radius);
-  background: transparent;
-  color: var(--ink);
-  text-align: left;
-}
-
-.lunar-location-picker__results button:hover,
-.lunar-location-picker__results button.is-selected {
-  border-color: var(--line);
-  background: var(--accent-bg);
-}
-
-.lunar-location-picker__results button.is-selected {
-  color: var(--ink);
-}
-
-.lunar-location-picker__results strong {
-  font-size: var(--lunar-type-body);
-  font-weight: var(--weight-regular);
-  line-height: var(--leading-title);
-}
-
-.lunar-location-picker__results button span {
-  color: var(--muted);
-  font-size: var(--lunar-type-caption);
-}
-
-.lunar-location-picker__actions {
-  display: flex;
-  justify-content: end;
-  gap: var(--lunar-space-10);
-  padding-top: var(--space-1);
-}
-
-.lunar-location-picker__actions button {
-  min-height: 38px;
-  padding: 0 var(--lunar-space-16);
-  border: var(--border-width-thin) solid var(--line);
-  border-radius: var(--radius-pill);
-  background: var(--surface-2);
-  color: var(--ink);
-  font-family: var(--font-body);
-  font-size: var(--lunar-type-meta);
-  font-weight: var(--weight-medium);
-}
-
-.lunar-location-picker__actions button[type="submit"] {
-  border-color: var(--ink);
-  background: var(--ink);
-  color: var(--bg);
-}
-
-.lunar-location-picker__actions button:disabled {
-  cursor: not-allowed;
-  opacity: 0.5;
 }
 
 .lunar-calendar-controls button {
   display: grid;
   place-items: center;
-  width: 40px;
-  height: 40px;
-  border: var(--border-width-thin) solid var(--line);
-  border-radius: var(--radius-pill);
-  background: var(--card-bg);
-  color: var(--ink);
-  box-shadow: var(--shadow-card);
+  width: var(--calendar-control-size);
+  height: var(--calendar-control-size);
+  border: 0;
+  border-radius: var(--radius-circle);
+  background: var(--calendar-card);
+  color: var(--calendar-ink);
 }
 
 .lunar-calendar-controls button:hover {
@@ -303,13 +152,45 @@ body:has(.app-shell.mode-calendar),
 }
 
 .lunar-calendar-segmented.segmented-control {
-  min-height: calc(var(--segmented-item-height) + var(--segmented-padding) * 2 + 2px);
+  display: grid;
+  grid-auto-flow: column;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--calendar-segmented-gap);
+  box-sizing: border-box;
+  width: fit-content;
+  height: var(--calendar-control-size);
+  min-height: var(--calendar-control-size);
+  padding: var(--lunar-space-4);
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: var(--calendar-card);
+  box-shadow: none;
 }
 
 .lunar-calendar-segmented .segmented-control__item {
-  min-width: 68px;
+  min-width: 0;
+  width: 100%;
+  height: var(--calendar-segmented-item-height);
+  min-height: 0;
+  padding: 0 var(--segmented-item-px);
+  border: 0;
+  border-radius: var(--radius-pill);
   font-size: var(--text-meta-size);
-  font-weight: var(--weight-semibold);
+  font-weight: var(--weight-medium);
+  line-height: var(--calendar-glyph-line);
+}
+
+.lunar-calendar-segmented .segmented-control__item.segmented-control__item--active {
+  border-color: transparent;
+  background: var(--calendar-ink);
+  color: var(--calendar-kind-return-fg);
+  font-weight: var(--weight-medium);
+  box-shadow: none;
+}
+
+.lunar-calendar-segmented .segmented-control__item.segmented-control__item--active:hover {
+  background: var(--calendar-ink);
+  color: var(--calendar-kind-return-fg);
 }
 
 .lunar-calendar-layout {
@@ -332,46 +213,73 @@ body:has(.app-shell.mode-calendar),
   position: relative;
   z-index: 1;
   overflow: visible;
-  padding: var(--lunar-space-14);
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
 }
 
 .lunar-calendar-legend {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: var(--lunar-space-10);
-  margin-bottom: var(--lunar-space-16);
-  padding: var(--space-1) 0 calc(var(--space-1) / 2);
-  color: var(--muted);
-  font-size: var(--lunar-type-label);
-  font-weight: var(--weight-semibold);
-  letter-spacing: var(--tracking-label);
+  display: grid;
+  gap: var(--lunar-space-8);
+  margin-top: var(--lunar-space-8);
+  color: var(--calendar-secondary);
+  font-family: var(--font-body);
+  font-size: var(--text-meta-size);
+  font-weight: var(--weight-medium);
+  letter-spacing: var(--tracking-body);
   line-height: var(--leading-label);
-  text-transform: uppercase;
+  text-transform: none;
 }
 
-.lunar-calendar-legend__title {
-  display: inline-flex;
-}
-
-.lunar-calendar-legend__items {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: var(--lunar-space-12);
-}
-
-.lunar-calendar-legend__items span {
+.lunar-calendar-legend__toggle {
+  justify-self: start;
   display: inline-flex;
   align-items: center;
   gap: var(--lunar-space-6);
+  height: var(--calendar-legend-control);
+  padding: 0 var(--space-2) 0 var(--space-3);
+  border: var(--border-width-thin) solid var(--line);
+  border-radius: var(--radius-pill);
+  background: transparent;
+  color: var(--calendar-secondary);
+  cursor: pointer;
+  font-family: var(--font-body);
+  font-size: var(--text-meta-size);
+  font-weight: var(--weight-medium);
 }
 
-.lunar-calendar-legend__items span span {
-  width: 8px;
-  height: 8px;
-  border-radius: var(--radius-pill);
-  background: var(--event-accent, var(--line-strong));
+.lunar-calendar-legend__toggle svg {
+  transition: transform 200ms ease;
+}
+
+.lunar-calendar-legend__toggle[aria-expanded="true"] svg {
+  transform: rotate(180deg);
+}
+
+.lunar-calendar-legend__panel {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--lunar-space-10) var(--lunar-space-12);
+  padding: var(--space-4) var(--space-4) var(--space-4) var(--space-2);
+  border-radius: var(--radius-sm);
+  background: var(--calendar-card);
+  color: var(--calendar-secondary);
+  font-size: var(--text-meta-size);
+}
+
+.lunar-calendar-legend__panel > span {
+  display: grid;
+  grid-template-columns: var(--space-8) minmax(0, 1fr);
+  align-items: center;
+  gap: var(--lunar-space-8);
+  min-width: 0;
+}
+
+.lunar-calendar-legend__panel .lunar-calendar-day__number,
+.lunar-calendar-legend__panel .calendar-month-chip {
+  justify-self: center;
 }
 
 .lunar-calendar-weekdays,
@@ -403,76 +311,130 @@ body:has(.app-shell.mode-calendar),
 }
 
 .lunar-calendar-body.is-month .lunar-calendar-grid-panel {
-  padding: var(--space-6) var(--space-5) var(--space-5);
+  padding: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
 }
 
 .lunar-calendar-body.is-month .lunar-calendar-weekdays,
 .lunar-calendar-body.is-month .lunar-calendar-grid {
-  column-gap: var(--lunar-space-8);
-  row-gap: var(--lunar-space-14);
+  column-gap: var(--lunar-space-6);
+  row-gap: var(--lunar-space-6);
 }
 
 .lunar-calendar-body.is-month .lunar-calendar-weekdays {
-  margin-bottom: var(--lunar-space-10);
+  margin-bottom: var(--lunar-space-4);
+}
+
+.lunar-calendar-body.is-month .lunar-calendar-weekdays span {
+  padding: 0 var(--lunar-space-10);
+  text-align: left;
 }
 
 .lunar-calendar-body.is-month .lunar-calendar-day {
-  grid-template-rows: 20px 64px minmax(12px, auto) minmax(36px, auto);
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  align-content: start;
+  justify-items: stretch;
+  gap: var(--lunar-space-10);
+  min-height: var(--calendar-month-cell-min);
+  padding: var(--lunar-space-10);
+  border-radius: var(--calendar-month-cell-radius);
+  background: var(--calendar-card);
+  text-align: left;
+}
+
+.lunar-calendar-body.is-month .lunar-calendar-day.is-season-start {
+  background: var(--calendar-kind-season-bg);
+}
+
+.lunar-calendar-body.is-month .lunar-calendar-day:hover {
+  border-color: var(--calendar-hairline);
+  background: var(--calendar-selected-fill);
+}
+
+.lunar-calendar-body.is-month .lunar-calendar-day.is-today:not(.is-selected) {
+  border-color: var(--calendar-disabled);
+}
+
+.lunar-calendar-body.is-month .lunar-calendar-day.is-selected,
+.lunar-calendar-body.is-month .lunar-calendar-day.is-selected:hover {
+  border-color: var(--calendar-ink);
+  background: var(--calendar-selected-fill);
+}
+
+.lunar-calendar-body.is-month .lunar-calendar-day.is-season-start:hover:not(.is-selected) {
+  background: var(--calendar-kind-season-bg);
+}
+
+.lunar-calendar-body.is-month .lunar-calendar-day.is-outside {
+  opacity: var(--calendar-outside-opacity);
+}
+
+.lunar-calendar-body.is-month .lunar-calendar-day__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   gap: var(--lunar-space-6);
-  min-height: 160px;
-  padding: calc(var(--space-2) + var(--space-1) / 2) var(--space-2) calc(var(--space-2) + var(--space-1) / 4);
-  border-radius: var(--lunar-card-radius);
 }
 
-.lunar-calendar-body.is-month .lunar-calendar-day__number {
-  font-size: var(--lunar-type-title);
-}
-
-.lunar-calendar-body.is-month .lunar-calendar-day.is-selected .lunar-calendar-day__number {
-  width: 28px;
-  height: 28px;
+.lunar-calendar-body.is-month .lunar-calendar-day__lunar {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--lunar-space-4);
 }
 
 .lunar-calendar-body.is-month .lunar-calendar-day__lunar .lunar-moon-disc {
-  width: 36px;
-  height: 36px;
+  width: var(--space-5);
+  height: var(--space-5);
 }
 
 .lunar-calendar-body.is-month .lunar-calendar-day__moon {
-  font-size: var(--lunar-type-display-xl);
+  font-size: var(--text-card-title);
 }
 
-.lunar-calendar-body.is-month .lunar-calendar-day__phase {
-  font-size: var(--lunar-type-tiny);
+.lunar-calendar-body.is-month .lunar-calendar-day__events {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  justify-items: start;
+  align-content: start;
+  gap: var(--lunar-space-3);
 }
 
-.lunar-calendar-body.is-month .lunar-calendar-event-pill,
 .lunar-calendar-body.is-month .lunar-calendar-event-more {
-  height: 18px;
-  padding: 0 var(--lunar-space-6);
-  font-size: var(--lunar-type-caption);
+  width: auto;
+  max-width: 100%;
+  height: var(--calendar-tag-height);
+  padding: 0 var(--space-2);
+  border-radius: var(--calendar-tag-radius);
+  background: var(--calendar-chip);
+  color: var(--calendar-secondary);
+  font-size: var(--text-meta-size);
+  font-weight: var(--weight-medium);
+  letter-spacing: var(--tracking-body);
 }
 
 .lunar-calendar-day {
   position: relative;
   display: grid;
-  grid-template-rows: 18px 54px minmax(14px, auto) minmax(28px, auto);
+  grid-template-rows: auto minmax(0, 1fr);
   justify-items: center;
-  gap: var(--lunar-space-3);
-  min-height: 122px;
-  padding: var(--space-2) calc(var(--space-1) + var(--space-1) / 4) calc(var(--space-2) - var(--space-1) / 4);
+  gap: var(--lunar-space-10);
+  min-height: var(--calendar-month-cell-min);
+  padding: var(--lunar-space-10);
   border: var(--border-width-thin) solid transparent;
-  border-radius: var(--lunar-card-radius);
-  background: transparent;
-  color: var(--ink);
+  border-radius: var(--calendar-month-cell-radius);
+  background: var(--calendar-card);
+  color: var(--calendar-ink);
   text-align: center;
   transition: background-color 160ms ease, border-color 160ms ease, color 160ms ease;
 }
 
 .lunar-calendar-day:hover {
   z-index: calc(var(--z-lunar-tooltip) - 1);
-  border-color: var(--line-strong);
-  background: var(--accent-bg);
+  border-color: var(--calendar-hairline);
+  background: var(--calendar-selected-fill);
 }
 
 .lunar-calendar-day:focus,
@@ -482,17 +444,17 @@ body:has(.app-shell.mode-calendar),
 }
 
 .lunar-calendar-day.is-selected {
-  border-color: var(--ink-2);
-  background: color-mix(in srgb, var(--card-bg) 88%, var(--surface-2));
-  color: var(--ink);
+  border-color: var(--calendar-ink);
+  background: var(--calendar-selected-fill);
+  color: var(--calendar-ink);
 }
 
 .lunar-calendar-day.is-outside {
-  color: var(--faint);
+  opacity: var(--calendar-outside-opacity);
 }
 
 .lunar-calendar-day.is-today:not(.is-selected) {
-  border-color: var(--line-strong);
+  border-color: var(--calendar-disabled);
 }
 
 .lunar-calendar-day__top,
@@ -507,19 +469,73 @@ body:has(.app-shell.mode-calendar),
 }
 
 .lunar-calendar-day__number {
-  font-size: var(--lunar-type-body);
-  font-weight: var(--weight-semibold);
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--calendar-month-disc);
+  height: var(--calendar-month-disc);
+  border: var(--border-width-thin) solid transparent;
+  border-radius: var(--radius-pill);
+  font-size: var(--text-label);
+  font-weight: var(--weight-regular);
   line-height: var(--leading-label);
 }
 
+.lunar-calendar-day__number.is-today-disc,
+.lunar-week-day__date.is-today-disc {
+  background: var(--calendar-disc-today);
+  font-weight: var(--weight-semibold);
+}
+
+.lunar-calendar-day__number.is-new-disc,
+.lunar-week-day__date.is-new-disc {
+  background: var(--calendar-ink);
+  color: var(--calendar-kind-return-fg);
+}
+
+.lunar-calendar-day__number.is-full-disc,
+.lunar-week-day__date.is-full-disc {
+  background: var(--calendar-disc-full);
+  border-color: var(--calendar-disc-full);
+}
+
+.lunar-calendar-day__number.is-quarter-disc,
+.lunar-week-day__date.is-quarter-disc {
+  box-sizing: border-box;
+  border: var(--border-width-fine) dashed var(--calendar-disabled);
+  background: var(--calendar-card);
+  color: var(--calendar-ink);
+  font-weight: var(--weight-semibold);
+}
+
+.lunar-calendar-day__number.is-selected-ring:not(.is-quarter-disc):not(.is-new-disc):not(.is-full-disc),
+.lunar-week-day__date.is-selected-ring:not(.is-quarter-disc):not(.is-new-disc):not(.is-full-disc) {
+  border: var(--border-width-fine) solid var(--calendar-ink);
+  font-weight: var(--weight-semibold);
+}
+
+.lunar-calendar-day__number.is-new-disc.is-selected-ring,
+.lunar-week-day__date.is-new-disc.is-selected-ring {
+  border: var(--border-width-fine) solid var(--calendar-tertiary);
+}
+
+.lunar-week-day__date.is-full-disc.is-selected-ring {
+  border: var(--border-width-fine) solid var(--calendar-ink);
+}
+
+.lunar-calendar-day__number.is-eclipse-ring,
+.lunar-week-day__date.is-eclipse-ring {
+  box-shadow: var(--calendar-eclipse-ring-shadow);
+}
+
 .lunar-calendar-day.is-selected .lunar-calendar-day__number {
-  display: grid;
-  place-items: center;
-  width: 24px;
-  height: 24px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--calendar-month-disc);
+  height: var(--calendar-month-disc);
   border-radius: var(--radius-pill);
-  background: var(--ink);
-  color: var(--bg);
 }
 
 .lunar-calendar-day__moon,
@@ -823,6 +839,28 @@ body:has(.app-shell.mode-calendar),
 
 .event-aspect {
   --event-accent: var(--aspect-hard);
+}
+
+.event-season {
+  --event-accent: var(--calendar-kind-season-fg);
+}
+
+.lunar-calendar-event-dots {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--lunar-space-5);
+}
+
+.lunar-calendar-aspect-dot {
+  width: var(--lunar-space-8);
+  height: var(--lunar-space-8);
+  border-radius: var(--radius-pill);
+  background: var(--event-accent, var(--calendar-kind-neutral-fg));
+}
+
+.lunar-calendar-week-view .calendar-day-panel {
+  gap: var(--calendar-stack-gap);
 }
 
 .lunar-calendar-detail {
@@ -1144,49 +1182,48 @@ a.tx-card.has-article:hover .tx-more {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
   gap: var(--lunar-space-14);
-}
-
-.lunar-week-strip,
-.lunar-selected-card {
-  border: var(--border-width-thin) solid var(--card-border);
-  border-radius: var(--lunar-card-radius);
-  background: var(--card-bg);
-  box-shadow: var(--shadow-card);
+  width: 100%;
+  max-width: var(--container-reading);
+  margin-inline: auto;
 }
 
 .lunar-week-strip {
+  position: sticky;
+  top: calc(var(--top-control-top) + var(--top-control-height) + 8px);
+  z-index: 3;
   display: flex;
-  gap: var(--lunar-space-8);
-  padding: calc(var(--space-3) + var(--space-1) / 2) var(--space-4);
+  gap: var(--lunar-space-6);
+  padding: var(--lunar-space-12);
+  border: 0;
+  border-radius: var(--calendar-card-radius);
+  background: var(--calendar-card);
+  box-shadow: none;
 }
 
 .lunar-week-day {
   position: relative;
   display: grid;
-  grid-template-rows: 16px 24px 40px 22px minmax(14px, auto) minmax(18px, auto) 20px;
   justify-items: center;
   align-items: center;
-  gap: var(--lunar-space-4);
+  gap: var(--lunar-space-6);
   flex: 1 1 0;
   min-width: 0;
-  min-height: 198px;
-  padding: var(--space-2) calc(var(--space-1) + var(--space-1) / 2);
-  border: var(--border-width-thin) solid transparent;
-  border-radius: var(--lunar-card-radius);
+  min-height: 0;
+  padding: var(--space-2) 0 calc(var(--space-2) + var(--space-1) / 2);
+  border: 0;
+  border-radius: var(--calendar-month-cell-radius);
   background: transparent;
   color: var(--ink);
   text-align: center;
-  transition: background-color 160ms ease, border-color 160ms ease;
+  transition: background-color 160ms ease;
 }
 
 .lunar-week-day:hover {
-  border-color: var(--line);
-  background: var(--accent-bg);
+  background: var(--calendar-chip);
 }
 
 .lunar-week-day.is-selected {
-  border-color: var(--ink-2);
-  background: color-mix(in srgb, var(--card-bg) 88%, var(--surface-2));
+  background: var(--calendar-chip);
 }
 
 .lunar-week-day__weekday,
@@ -1208,20 +1245,20 @@ a.tx-card.has-article:hover .tx-more {
 }
 
 .lunar-week-day.is-selected .lunar-week-day__date {
-  display: grid;
-  place-items: center;
-  width: 25px;
-  height: 25px;
-  border-radius: var(--radius-pill);
-  background: var(--ink);
-  color: var(--bg);
+  background: transparent;
+  color: inherit;
+}
+
+.lunar-week-day__weekday {
+  font-size: var(--calendar-week-dow-size);
+  letter-spacing: var(--calendar-week-dow-tracking);
 }
 
 .lunar-week-day__sign {
   color: var(--muted);
-  font-family: var(--font-glyph);
-  font-size: var(--lunar-type-display);
-  line-height: var(--leading-label);
+  font-family: var(--font-display);
+  font-size: var(--calendar-glyph-chip);
+  line-height: var(--calendar-glyph-line);
 }
 
 .lunar-moon-sign-glyph.is-earth {
@@ -2181,7 +2218,10 @@ a.tx-card.has-article:hover .tx-more {
 
 .lunar-weekly-view {
   display: grid;
-  gap: var(--lunar-space-16);
+  gap: var(--calendar-section-gap);
+  width: 100%;
+  max-width: var(--container-reading);
+  margin-inline: auto;
 }
 
 .lunar-weekly-day {
@@ -2372,21 +2412,9 @@ a.tx-card.has-article:hover .tx-more {
 }
 
 @media (max-width: 960px) {
-  .lunar-calendar-header,
   .lunar-calendar-layout {
+    display: grid;
     grid-template-columns: minmax(0, 1fr);
-  }
-
-  .lunar-calendar-header {
-    display: grid;
-  }
-
-  .lunar-calendar-controls {
-    justify-self: start;
-  }
-
-  .lunar-calendar-layout {
-    display: grid;
   }
 
   .lunar-calendar-detail {
@@ -2408,12 +2436,92 @@ a.tx-card.has-article:hover .tx-more {
     grid-column: auto;
     grid-row: auto;
   }
+
+  .lunar-calendar-body.is-month .lunar-calendar-weekdays {
+    margin-bottom: var(--lunar-space-8);
+  }
+
+  .lunar-calendar-body.is-month .lunar-calendar-weekdays span {
+    padding: 0;
+    font-size: var(--lunar-type-tiny);
+    text-align: center;
+  }
+
+  .lunar-calendar-body.is-month .lunar-calendar-weekdays,
+  .lunar-calendar-body.is-month .lunar-calendar-grid {
+    column-gap: var(--lunar-space-3);
+    row-gap: var(--lunar-space-6);
+  }
+
+  .lunar-calendar-body.is-month .lunar-calendar-day {
+    justify-items: center;
+    grid-template-rows: auto minmax(0, 1fr);
+    min-height: var(--calendar-month-cell-min-compact);
+    padding: var(--lunar-space-6) var(--lunar-space-1) var(--lunar-space-8);
+    border-color: transparent;
+    border-radius: var(--calendar-month-cell-radius-compact);
+    background: var(--calendar-card);
+    text-align: center;
+  }
+
+  .lunar-calendar-body.is-month .lunar-calendar-day.is-season-start {
+    background: var(--calendar-kind-season-bg);
+  }
+
+  .lunar-calendar-body.is-month .lunar-calendar-day:hover,
+  .lunar-calendar-body.is-month .lunar-calendar-day.is-selected,
+  .lunar-calendar-body.is-month .lunar-calendar-day.is-selected:hover {
+    border-color: transparent;
+    background: var(--calendar-card);
+  }
+
+  .lunar-calendar-body.is-month .lunar-calendar-day.is-season-start:hover,
+  .lunar-calendar-body.is-month .lunar-calendar-day.is-selected.is-season-start,
+  .lunar-calendar-body.is-month .lunar-calendar-day.is-selected.is-season-start:hover {
+    background: var(--calendar-kind-season-bg);
+  }
+
+  .lunar-calendar-body.is-month .lunar-calendar-day__top {
+    justify-content: center;
+  }
+
+  .lunar-calendar-body.is-month .lunar-calendar-day__lunar,
+  .lunar-calendar-body.is-month .lunar-calendar-day__moon {
+    display: none;
+  }
+
+  .lunar-calendar-body.is-month .lunar-calendar-day__number {
+    width: var(--calendar-month-disc-compact);
+    height: var(--calendar-month-disc-compact);
+    font-size: var(--text-body);
+  }
+
+  .lunar-calendar-body.is-month .lunar-calendar-day__events {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-content: start;
+    gap: var(--lunar-space-2);
+    max-height: var(--calendar-month-events-max-compact);
+    overflow: hidden;
+  }
+
+  .calendar-month-chip,
+  .lunar-calendar-body.is-month .lunar-calendar-event-more {
+    height: var(--calendar-month-chip-compact);
+    padding: 0 var(--lunar-space-4);
+  }
+
+  .calendar-month-chip__text,
+  .calendar-month-mood,
+  .lunar-calendar-day-tooltip {
+    display: none;
+  }
 }
 
 @media (max-width: 680px) {
   .lunar-calendar-view {
-    --lunar-calendar-title-size: var(--ds-lunar-calendar-lunar-calendar-title-size);
-    gap: var(--lunar-space-18);
+    gap: var(--lunar-space-14);
   }
 
   .lunar-calendar-grid-panel {
@@ -2435,17 +2543,6 @@ a.tx-card.has-article:hover .tx-more {
 
   .lunar-calendar-grid {
     gap: var(--lunar-space-4);
-  }
-
-  .lunar-calendar-day {
-    min-height: 126px;
-    padding: var(--lunar-space-8);
-  }
-
-  .lunar-calendar-body.is-month .lunar-calendar-day {
-    grid-template-rows: 18px 58px minmax(12px, auto) minmax(32px, auto);
-    min-height: 142px;
-    padding: var(--space-2) calc(var(--space-1) + var(--space-1) / 4);
   }
 
   .lunar-calendar-day__phase {
@@ -2470,20 +2567,18 @@ a.tx-card.has-article:hover .tx-more {
   }
 
   .lunar-calendar-segmented.segmented-control {
+    display: grid;
     width: 100%;
   }
 
   .lunar-calendar-segmented .segmented-control__item {
-    flex: 1;
     min-width: 0;
+    height: var(--calendar-segmented-item-height);
+    min-height: var(--calendar-segmented-touch-height);
   }
 
   .lunar-week-strip {
     padding: var(--lunar-space-12);
-  }
-
-  .lunar-week-day {
-    min-height: 198px;
   }
 
   .lunar-weekly-day {
@@ -2582,7 +2677,7 @@ a.tx-card.has-article:hover .tx-more {
   }
 
   .lunar-calendar-header {
-    gap: var(--lunar-space-12);
+    gap: var(--lunar-space-10);
   }
 
   .lunar-weekly-hero__meta {
@@ -2595,40 +2690,21 @@ a.tx-card.has-article:hover .tx-more {
     gap: var(--lunar-space-10);
   }
 
-  .lunar-calendar-controls button {
-    width: 36px;
-    height: 36px;
-  }
-
   .lunar-calendar-body.is-month .lunar-calendar-grid-panel {
-    padding: calc(var(--space-4) + var(--space-1) / 2) calc(var(--space-2) + var(--space-1) / 2) var(--space-4);
-    overflow: hidden;
+    padding: 0;
+    overflow: visible;
   }
 
   .lunar-calendar-body.is-month .lunar-calendar-weekdays,
   .lunar-calendar-body.is-month .lunar-calendar-grid {
     column-gap: var(--lunar-space-3);
-    row-gap: var(--lunar-space-10);
+    row-gap: var(--lunar-space-6);
   }
 
-  .lunar-calendar-weekdays span {
+  .lunar-calendar-body.is-month .lunar-calendar-weekdays span {
     padding-inline: 0;
     font-size: var(--lunar-type-tiny);
     letter-spacing: var(--tracking-label);
-  }
-
-  .lunar-calendar-body.is-month .lunar-calendar-day__number {
-    font-size: var(--lunar-type-action);
-  }
-
-  .lunar-calendar-body.is-month .lunar-calendar-day.is-selected .lunar-calendar-day__number {
-    width: 24px;
-    height: 24px;
-  }
-
-  .lunar-calendar-body.is-month .lunar-calendar-day__phase {
-    font-size: var(--lunar-type-micro);
-    letter-spacing: var(--tracking-normal);
   }
 
   .lunar-calendar-day__events {
@@ -2642,7 +2718,6 @@ a.tx-card.has-article:hover .tx-more {
   }
 
   .lunar-week-day {
-    min-height: 198px;
     padding: var(--space-2) calc(var(--space-1) / 2) calc(var(--space-2) + var(--space-1) / 2);
   }
 
@@ -2775,16 +2850,15 @@ a.tx-card.has-article:hover .tx-more {
   }
 
   .lunar-week-day {
-    grid-template-rows: 14px 22px 36px 21px minmax(12px, auto) minmax(15px, auto) 17px;
     gap: var(--lunar-space-3);
-    min-height: 173px;
+    min-height: 0;
     padding: var(--space-2) calc(var(--space-1) / 4) var(--space-2);
     border-radius: var(--lunar-card-radius);
   }
 
   .lunar-week-day .lunar-moon-disc {
-    width: 33px;
-    height: 33px;
+    width: var(--calendar-month-disc-compact);
+    height: var(--calendar-month-disc-compact);
   }
 
   .lunar-week-day__weekday {
@@ -2793,11 +2867,6 @@ a.tx-card.has-article:hover .tx-more {
 
   .lunar-week-day__date {
     font-size: var(--lunar-type-body);
-  }
-
-  .lunar-week-day.is-selected .lunar-week-day__date {
-    width: 23px;
-    height: 23px;
   }
 
   .lunar-week-day__sign {
@@ -2847,16 +2916,12 @@ a.tx-card.has-article:hover .tx-more {
   }
 
   .lunar-calendar-body.is-month .lunar-calendar-grid-panel {
-    padding: var(--space-4) var(--space-2) calc(var(--space-3) + var(--space-1) / 2);
+    padding: 0;
   }
 
   .lunar-calendar-body.is-month .lunar-calendar-weekdays,
   .lunar-calendar-body.is-month .lunar-calendar-grid {
     column-gap: var(--lunar-space-2);
-  }
-
-  .lunar-calendar-body.is-month .lunar-calendar-day {
-    min-height: 124px;
   }
 
   .lunar-selected-card {
@@ -2878,12 +2943,9 @@ a.tx-card.has-article:hover .tx-more {
 
 /* Calendar QA refinements: shareable navigation, progressive disclosure, and a compact month. */
 .lunar-calendar-controls .lunar-calendar-controls__today {
-  width: auto;
-  min-width: 58px;
-  padding-inline: var(--lunar-space-10);
-  font-family: var(--font-label);
-  font-size: var(--lunar-type-caption);
-  font-weight: var(--weight-semibold);
+  width: var(--calendar-control-size);
+  min-width: var(--calendar-control-size);
+  padding: 0;
 }
 
 .lunar-month-overview {
@@ -2904,7 +2966,7 @@ a.tx-card.has-article:hover .tx-more {
 
 .lunar-calendar-month-primary {
   display: grid;
-  grid-template-columns: minmax(0, 1.65fr) minmax(300px, 0.85fr);
+  grid-template-columns: minmax(0, 1fr);
   gap: var(--lunar-space-18);
   align-items: start;
 }
@@ -3030,10 +3092,6 @@ a.tx-card.has-article:hover .tx-more {
 }
 
 @media (max-width: 680px) {
-  .lunar-calendar-segmented .segmented-control__item {
-    min-height: 44px;
-  }
-
   .lunar-weekly-jump {
     gap: var(--lunar-space-3);
   }
@@ -3072,60 +3130,1902 @@ a.tx-card.has-article:hover .tx-more {
   }
 
   .lunar-calendar-controls .lunar-calendar-controls__today {
-    width: auto;
-    min-width: 60px;
-    height: 44px;
+    width: var(--calendar-control-size);
+    min-width: var(--calendar-control-size);
+    height: var(--calendar-control-size);
+  }
+}
+
+.astro-glyph {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--calendar-glyph-internal-gap);
+  color: inherit;
+  font-size: var(--calendar-glyph-chip);
+  line-height: var(--calendar-glyph-line);
+  vertical-align: middle;
+}
+
+.astro-glyph__mask {
+  display: inline-block;
+  flex: none;
+  width: 1em;
+  height: 1em;
+  background: currentColor;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+  -webkit-mask-size: contain;
+  mask-size: contain;
+}
+
+.astro-glyph__rx {
+  padding-top: var(--calendar-glyph-rx-nudge);
+  font-family: var(--font-body);
+  font-size: var(--calendar-glyph-rx-size);
+  font-weight: var(--weight-semibold);
+  letter-spacing: var(--calendar-glyph-rx-tracking);
+}
+
+.astro-glyph__text {
+  font-family: var(--font-display);
+}
+
+.astro-glyph__emoji {
+  font-size: var(--calendar-glyph-emoji-size);
+  line-height: var(--calendar-glyph-line);
+}
+
+.astro-glyph__arrow-wrap,
+.astro-glyph__arrow {
+  flex: none;
+  width: 0.7em;
+  height: 0.7em;
+}
+
+.calendar-kind {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--calendar-tag-width);
+  height: var(--calendar-tag-height);
+  border-radius: var(--calendar-tag-radius);
+  background: var(--calendar-kind-neutral-bg);
+  color: var(--calendar-kind-neutral-fg);
+}
+
+.calendar-kind--lunation,
+.calendar-kind--eclipse,
+.calendar-kind--moon {
+  background: var(--calendar-kind-lunation-bg);
+  color: var(--calendar-kind-lunation-fg);
+}
+
+.calendar-kind--station {
+  background: var(--calendar-kind-station-bg);
+  color: var(--calendar-kind-station-fg);
+}
+
+.calendar-kind--season {
+  background: var(--calendar-kind-season-bg);
+  color: var(--calendar-kind-season-fg);
+}
+
+.calendar-kind--key {
+  background: var(--calendar-kind-key-bg);
+  color: var(--calendar-kind-key-fg);
+}
+
+.calendar-kind--lunar-return {
+  background: var(--calendar-kind-return-bg);
+  color: var(--calendar-kind-return-fg);
+}
+
+.calendar-kind--aspect,
+.calendar-kind--ingress {
+  background: var(--calendar-kind-neutral-bg);
+  color: var(--calendar-kind-neutral-fg);
+}
+
+.calendar-kind--bare {
+  width: auto;
+  background: transparent;
+}
+
+.calendar-kind-label {
+  color: var(--calendar-secondary);
+  font-family: var(--label-eyebrow-font-family);
+  font-size: var(--label-eyebrow-font-size);
+  font-weight: var(--label-eyebrow-font-weight);
+  letter-spacing: var(--label-eyebrow-tracking);
+  line-height: var(--label-eyebrow-line-height);
+  text-transform: uppercase;
+}
+
+.calendar-slideout {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-modal);
+  display: grid;
+  justify-items: end;
+}
+
+.calendar-slideout--sheet {
+  justify-items: center;
+  align-items: center;
+}
+
+.calendar-slideout__scrim {
+  position: absolute;
+  inset: 0;
+  border: 0;
+  background: var(--calendar-scrim);
+}
+
+.calendar-slideout__panel {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  align-content: start;
+  gap: var(--calendar-stack-gap);
+  width: min(var(--calendar-panel-width), 100%);
+  height: 100%;
+  overflow: auto;
+  padding: var(--calendar-slideout-gutter);
+  background: var(--calendar-canvas);
+  box-shadow: var(--calendar-panel-shadow);
+}
+
+@media (min-width: 721px) {
+  .calendar-slideout:not(.calendar-slideout--sheet) .calendar-slideout__panel {
+    padding: var(--calendar-slideout-gutter-wide);
+  }
+}
+
+.calendar-slideout--sheet .calendar-slideout__panel {
+  align-self: center;
+  width: min(var(--calendar-subscribe-width), calc(100vw - var(--calendar-subscribe-inset)));
+  height: auto;
+  max-height: var(--calendar-subscribe-max-height);
+  padding: var(--calendar-subscribe-padding);
+  border-radius: var(--calendar-sheet-radius);
+  box-shadow: none;
+}
+
+.calendar-slideout--sheet .calendar-slideout__toolbar {
+  display: none;
+}
+
+.calendar-slideout--checkin .calendar-slideout__panel {
+  align-content: stretch;
+  overflow: hidden;
+  grid-template-rows: auto minmax(0, 1fr);
+}
+
+.calendar-slideout__toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--lunar-space-8);
+}
+
+.calendar-slideout__date {
+  margin-right: auto;
+  color: var(--calendar-secondary);
+  font-family: var(--font-body);
+  font-size: var(--text-meta-size);
+}
+
+.calendar-slideout__close {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: var(--calendar-slideout-control);
+  height: var(--calendar-slideout-control);
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: var(--calendar-card);
+  color: var(--calendar-ink);
+}
+
+.calendar-reading__top,
+.calendar-checkin__header,
+.calendar-checkin__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--calendar-stack-gap);
+}
+
+.calendar-reading__article-pill,
+.calendar-reading__article-card {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--lunar-space-6);
+  border: 0;
+  background: transparent;
+  color: var(--calendar-ink);
+  font-family: var(--font-body);
+  font-size: var(--text-label);
+  font-weight: var(--weight-semibold);
+}
+
+.calendar-reading__article-pill {
+  height: var(--calendar-slideout-control);
+  padding: 0 var(--lunar-space-16);
+  border-radius: var(--radius-pill);
+  background: var(--calendar-card);
+}
+
+.calendar-reading__lockup,
+.calendar-reading__body,
+.calendar-sky-card,
+.calendar-checkin,
+.calendar-day-panel,
+.calendar-stoic-card {
+  display: grid;
+  gap: var(--calendar-stack-gap);
+}
+
+.calendar-reading__lockup {
+  gap: var(--lunar-space-20);
+  padding: var(--calendar-reading-lockup) 0 var(--lunar-space-16);
+}
+
+.calendar-reading__body {
+  gap: var(--lunar-space-20);
+}
+
+.calendar-reading__overbrow {
+  display: flex;
+  align-items: center;
+  gap: var(--lunar-space-10);
+}
+
+.calendar-reading__title,
+.calendar-sky-card__title {
+  margin: 0;
+  color: var(--calendar-ink);
+  font-family: var(--font-display);
+  font-size: var(--calendar-slideout-title);
+  font-weight: var(--weight-regular);
+  letter-spacing: var(--tracking-tight);
+  line-height: var(--calendar-slideout-leading);
+  text-wrap: balance;
+}
+
+.calendar-day-panel.is-embedded .calendar-sky-card__title {
+  font-size: var(--calendar-day-title);
+  line-height: var(--calendar-slideout-leading);
+}
+
+.calendar-checkin h2,
+.calendar-checkin-picker__sheet header span {
+  margin: 0;
+  color: var(--calendar-ink);
+  font-family: var(--font-body);
+  font-size: var(--calendar-checkin-heading);
+  font-weight: var(--weight-medium);
+  letter-spacing: var(--tracking-tight);
+  line-height: var(--leading-h2);
+  text-wrap: balance;
+}
+
+.calendar-reading__back {
+  justify-self: start;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--lunar-space-6);
+  padding: var(--lunar-space-4) var(--lunar-space-4) var(--lunar-space-4) 0;
+  border: 0;
+  background: transparent;
+  color: var(--calendar-tertiary);
+  font-family: var(--font-body);
+  font-size: var(--text-meta-size);
+  font-weight: var(--weight-medium);
+}
+
+.calendar-reading__meta,
+.calendar-sky-card__meta,
+.calendar-sky-card__date {
+  color: var(--calendar-tertiary);
+  font-family: var(--font-body);
+  font-size: var(--text-meta-size);
+}
+
+.calendar-reading__body p,
+.calendar-sky-card__body p {
+  margin: 0;
+  color: var(--calendar-copy);
+  font-family: var(--font-body);
+  font-size: var(--calendar-reading-copy);
+  line-height: var(--leading-body);
+}
+
+.calendar-day-panel.is-embedded .calendar-sky-card__body p {
+  font-size: var(--calendar-day-copy);
+}
+
+.calendar-reading__body h3 {
+  margin: 0;
+  color: var(--calendar-ink);
+  font-family: var(--font-body);
+  font-size: var(--calendar-reading-heading);
+  font-weight: var(--weight-semibold);
+  letter-spacing: var(--tracking-tight);
+  line-height: var(--leading-h2);
+}
+
+.calendar-reading__card-label {
+  color: var(--calendar-secondary);
+  font-family: var(--label-eyebrow-font-family);
+  font-size: var(--label-eyebrow-font-size);
+  font-weight: var(--label-eyebrow-font-weight);
+  letter-spacing: var(--label-eyebrow-tracking);
+  line-height: var(--label-eyebrow-line-height);
+  text-transform: uppercase;
+}
+
+.calendar-reading__list {
+  display: grid;
+  gap: var(--calendar-stack-gap);
+  margin: 0;
+  padding-left: var(--lunar-space-18);
+  color: var(--calendar-copy);
+  font-family: var(--font-body);
+  font-size: var(--text-body);
+  line-height: var(--leading-body);
+}
+
+.calendar-reading__toggle {
+  justify-self: start;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--calendar-ink);
+  font-family: var(--font-body);
+  font-size: var(--text-label);
+  font-weight: var(--weight-semibold);
+}
+
+.calendar-reading__article-card {
+  display: grid;
+  grid-template-columns: var(--calendar-article-mark-width) minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--lunar-space-16);
+  width: 100%;
+  text-align: left;
+}
+
+.calendar-reading__article-icon {
+  width: var(--calendar-article-mark-width);
+  height: var(--calendar-article-mark-height);
+  border: var(--border-width-thin) solid var(--calendar-ink);
+  border-radius: var(--lunar-space-6);
+  background: var(--calendar-card);
+  box-shadow: var(--lunar-space-3) var(--lunar-space-3) 0 var(--calendar-chip-on-canvas);
+}
+
+.calendar-reading__article-card span:nth-child(2) {
+  display: grid;
+  gap: var(--lunar-space-4);
+  min-width: 0;
+}
+
+.calendar-reading__article-label {
+  color: var(--calendar-secondary);
+  font-family: var(--label-eyebrow-font-family);
+  font-size: var(--label-eyebrow-font-size);
+  font-weight: var(--label-eyebrow-font-weight);
+  letter-spacing: var(--label-eyebrow-tracking);
+  line-height: var(--label-eyebrow-line-height);
+  text-transform: uppercase;
+}
+
+.calendar-reading__article-card strong {
+  color: var(--calendar-ink);
+  font-family: var(--font-body);
+  font-size: var(--text-card-title);
+  font-weight: var(--weight-semibold);
+}
+
+.calendar-reading__article-card small {
+  color: var(--calendar-tertiary);
+  font-size: var(--text-meta-size);
+}
+
+.calendar-reading__card,
+.calendar-reading__article-card,
+.calendar-checkin-card,
+.calendar-stoic-card {
+  padding: var(--lunar-space-18) var(--lunar-space-20);
+  border-radius: var(--calendar-reading-card-radius);
+  background: var(--calendar-card);
+}
+
+.calendar-sky-card {
+  gap: var(--calendar-section-gap);
+  padding: var(--calendar-sky-card-padding) var(--calendar-sky-card-padding) var(--calendar-sky-card-padding-bottom);
+  border-radius: var(--calendar-card-radius);
+  background: var(--calendar-card);
+}
+
+.calendar-stoic-card,
+.calendar-checkin-card {
+  width: 100%;
+  border: 0;
+  text-align: left;
+}
+
+.calendar-checkin-card > svg {
+  flex: none;
+  color: var(--calendar-tertiary);
+}
+
+.calendar-stoic-card {
+  grid-template-rows: auto auto 1fr auto;
+  justify-items: center;
+  min-height: var(--calendar-stoic-min-height);
+  padding: var(--lunar-space-24) var(--lunar-space-18) var(--lunar-space-16);
+  border-radius: var(--calendar-card-radius);
+  text-align: center;
+}
+
+.calendar-stoic-card strong {
+  color: var(--calendar-ink);
+  font-family: var(--font-body);
+  font-size: var(--calendar-stoic-title);
+  font-weight: var(--calendar-stoic-title-weight);
+  letter-spacing: var(--tracking-tight);
+  line-height: var(--calendar-stoic-title-leading);
+  text-wrap: balance;
+}
+
+.calendar-stoic-card__copy {
+  display: grid;
+  gap: var(--lunar-space-6);
+  justify-items: center;
+}
+
+.calendar-stoic-card__excerpt {
+  display: -webkit-box;
+  overflow: hidden;
+  align-self: start;
+  margin: 0;
+  padding-top: var(--lunar-space-2);
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 4;
+  color: var(--calendar-copy);
+  font-family: var(--font-body);
+  font-size: var(--calendar-stoic-excerpt);
+  font-weight: var(--weight-regular);
+  line-height: var(--leading-description);
+}
+
+.calendar-stoic-card__key {
+  padding: var(--lunar-space-2) var(--lunar-space-7);
+  border-radius: var(--lunar-space-4);
+  background: var(--calendar-kind-key-bg);
+  color: var(--calendar-kind-key-fg);
+  font-size: var(--text-label);
+  font-weight: var(--weight-semibold);
+}
+
+.calendar-stoic-card__cta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding-top: var(--lunar-space-4);
+  color: var(--calendar-tertiary);
+  font-family: var(--font-body);
+  font-size: var(--calendar-row-meta);
+  font-weight: var(--weight-regular);
+}
+
+.calendar-season-transits li {
+  padding: 0;
+  background: var(--calendar-card);
+}
+
+.calendar-season-transits button,
+.calendar-season-transits__row {
+  display: grid;
+  grid-template-columns: var(--calendar-tag-width) minmax(0, 1fr) auto;
+  gap: var(--lunar-space-10);
+  align-items: center;
+  width: 100%;
+  min-width: 0;
+  padding: var(--space-3) var(--space-3) var(--space-3) var(--space-2);
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.calendar-season-transits__row {
+  cursor: default;
+}
+
+.calendar-season-transits__title {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--calendar-ink);
+  font-family: var(--font-body);
+  font-size: var(--calendar-row-title);
+  font-weight: var(--weight-medium);
+  line-height: var(--leading-label);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.calendar-season-transits li:first-child {
+  border-radius: var(--calendar-card-radius) var(--calendar-card-radius) var(--lunar-space-4) var(--lunar-space-4);
+}
+
+.calendar-season-transits li:last-child {
+  border-radius: var(--lunar-space-4) var(--lunar-space-4) var(--calendar-card-radius) var(--calendar-card-radius);
+}
+
+.calendar-season-transits li:only-child {
+  border-radius: var(--calendar-card-radius);
+}
+
+.calendar-season-transits small {
+  flex: none;
+  color: var(--calendar-tertiary);
+  font-family: var(--font-body);
+  font-size: var(--calendar-row-meta);
+  font-weight: var(--weight-regular);
+  white-space: nowrap;
+}
+
+.calendar-section-label {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--lunar-space-10);
+  padding: var(--lunar-space-10) var(--lunar-space-18) 0;
+  color: var(--calendar-secondary);
+  font-family: var(--label-eyebrow-font-family);
+  font-size: var(--label-eyebrow-font-size);
+  font-weight: var(--label-eyebrow-font-weight);
+  letter-spacing: var(--label-eyebrow-tracking);
+  line-height: var(--label-eyebrow-line-height);
+  text-transform: uppercase;
+}
+
+.calendar-section-label small {
+  color: var(--calendar-tertiary);
+  font-family: var(--font-body);
+  font-size: var(--text-meta-size);
+  font-weight: var(--weight-regular);
+  letter-spacing: var(--tracking-body);
+  text-transform: none;
+}
+
+.calendar-day-events,
+.calendar-season-transits {
+  display: grid;
+  gap: var(--calendar-stack-gap);
+  min-width: 0;
+}
+
+.calendar-day-events__grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--calendar-stack-gap);
+}
+
+.calendar-stoic-card.is-wide {
+  grid-column: 1 / -1;
+  min-height: 0;
+}
+
+.calendar-checkin-card {
+  display: flex;
+  align-items: center;
+  gap: var(--lunar-space-14);
+  width: 100%;
+  min-width: 0;
+  overflow: hidden;
+  box-sizing: border-box;
+  padding: var(--space-3) var(--space-4) var(--space-3) var(--space-3);
+  border: var(--border-width-thin) solid transparent;
+  border-radius: var(--calendar-reading-card-radius);
+  background: var(--calendar-card);
+  color: var(--calendar-ink);
+}
+
+.calendar-checkin-card.is-empty {
+  border-color: var(--calendar-disabled);
+  border-style: dashed;
+}
+
+.calendar-checkin-card__star {
+  width: var(--calendar-checkin-star);
+  height: var(--calendar-checkin-star);
+  flex: none;
+}
+
+.calendar-checkin-card__marks {
+  display: inline-flex;
+  gap: var(--lunar-space-6);
+  flex: none;
+}
+
+.calendar-checkin-card__sleep {
+  position: relative;
+  overflow: hidden;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--calendar-checkin-star);
+  height: var(--calendar-checkin-star);
+  border-radius: var(--radius-pill);
+  background: var(--calendar-chip);
+  color: var(--calendar-kind-return-fg);
+  font-size: var(--type-hint-size);
+  font-weight: var(--weight-semibold);
+}
+
+.calendar-checkin-card__sleep-fill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  background: var(--calendar-ink);
+}
+
+.calendar-checkin-card__sleep span:last-child {
+  position: relative;
+  mix-blend-mode: difference;
+}
+
+.calendar-checkin-card__copy {
+  display: grid;
+  flex: 1;
+  gap: var(--lunar-space-3);
+  min-width: 0;
+}
+
+.calendar-checkin-card strong {
+  color: var(--calendar-ink);
+  font-family: var(--font-body);
+  font-size: var(--calendar-checkin-title);
+  font-weight: var(--weight-semibold);
+  line-height: var(--leading-h2);
+}
+
+.calendar-checkin-card small,
+.calendar-checkin-card__subtitle {
+  overflow: hidden;
+  color: var(--calendar-tertiary);
+  font-family: var(--font-body);
+  font-size: var(--text-meta-size);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.calendar-checkin-card__meters {
+  display: grid;
+  gap: var(--lunar-space-8);
+  min-width: 0;
+  width: 100%;
+  padding-top: var(--lunar-space-8);
+}
+
+.calendar-checkin-card__meters > span {
+  display: grid;
+  grid-template-columns: var(--calendar-control-size) minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--lunar-space-10);
+  min-width: 0;
+  color: var(--calendar-tertiary);
+  font-size: var(--type-hint-size);
+}
+
+.calendar-checkin-card__meters > span > span:last-child {
+  overflow: hidden;
+  color: var(--calendar-copy);
+  font-weight: var(--weight-semibold);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.calendar-checkin-card__meter {
+  display: block;
+  overflow: hidden;
+  height: var(--calendar-meter-height);
+  border-radius: var(--radius-pill);
+  background: var(--calendar-meter-track);
+}
+
+.calendar-checkin-card__meter > span {
+  display: block;
+  height: 100%;
+  border-radius: var(--radius-pill);
+}
+
+.calendar-sky-card__date {
+  display: flex;
+  align-items: center;
+  gap: var(--lunar-space-10);
+}
+
+.calendar-sky-card.is-flush {
+  gap: var(--lunar-space-20);
+  padding: var(--lunar-space-28) 0 var(--lunar-space-16);
+  background: transparent;
+}
+
+.calendar-sky-card__body {
+  display: grid;
+  gap: var(--lunar-space-20);
+  padding-top: var(--lunar-space-10);
+}
+
+.calendar-sky-card__body > section {
+  display: contents;
+}
+
+.calendar-sky-card__today {
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--lunar-space-4);
+  background: var(--calendar-ink);
+  color: var(--calendar-kind-return-fg);
+  font-size: var(--text-meta-size);
+  font-weight: var(--weight-semibold);
+}
+
+.calendar-sky-card__meta {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--lunar-space-8);
+}
+
+.calendar-sky-card__element {
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--lunar-space-6);
+  background: var(--calendar-chip);
+  color: var(--calendar-copy);
+  font-size: var(--text-meta-size);
+  font-weight: var(--weight-medium);
+}
+
+.calendar-sky-card__element.is-fire {
+  background: var(--calendar-element-fire-bg);
+  color: var(--calendar-element-fire-fg);
+}
+
+.calendar-sky-card__element.is-earth {
+  background: var(--calendar-element-earth-bg);
+  color: var(--calendar-element-earth-fg);
+}
+
+.calendar-sky-card__element.is-air {
+  background: var(--calendar-element-air-bg);
+  color: var(--calendar-element-air-fg);
+}
+
+.calendar-sky-card__element.is-water {
+  background: var(--calendar-element-water-bg);
+  color: var(--calendar-element-water-fg);
+}
+
+.calendar-sky-card__prompt {
+  color: var(--calendar-ink);
+  font-family: var(--font-display);
+  font-size: var(--text-card-title);
+  font-style: italic;
+  line-height: var(--leading-h2);
+}
+
+.calendar-month-chip {
+  display: flex;
+  align-items: center;
+  gap: var(--lunar-space-6);
+  min-width: 0;
+  max-width: 100%;
+  height: var(--calendar-tag-height);
+  padding: 0 var(--space-2);
+  overflow: hidden;
+  border-radius: var(--calendar-tag-radius);
+  font-family: var(--font-body);
+  font-size: var(--text-meta-size);
+  font-weight: var(--weight-medium);
+  line-height: var(--leading-label);
+  white-space: nowrap;
+}
+
+.calendar-month-chip.calendar-kind {
+  width: auto;
+  min-width: 0;
+}
+
+.calendar-month-chip__text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.calendar-month-chip__voc {
+  font-size: var(--text-meta-size);
+  font-weight: var(--weight-semibold);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+}
+
+.calendar-kind--void {
+  border: var(--border-width-thin) dashed var(--calendar-disabled);
+  background: transparent;
+  color: var(--calendar-secondary);
+}
+
+.calendar-month-mood {
+  background: var(--calendar-card);
+  color: var(--calendar-secondary);
+  border: var(--border-width-thin) solid var(--calendar-chip-on-canvas);
+}
+
+.calendar-month-mood__mark {
+  flex: none;
+  width: var(--space-4);
+  height: var(--space-4);
+}
+
+.calendar-month-mood__star {
+  fill: var(--calendar-mood-fill);
+  stroke: var(--calendar-ink);
+}
+
+.is-empty .calendar-month-mood__star {
+  fill: var(--calendar-card);
+}
+
+.calendar-month-mood__face {
+  stroke: var(--calendar-ink);
+}
+
+.calendar-kind--season.is-inverted {
+  background: var(--calendar-kind-season-fg);
+  color: var(--calendar-kind-return-fg);
+}
+
+.lunar-week-day__season {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: var(--space-4);
+  padding: 0 var(--space-1);
+  border-radius: var(--lunar-space-4);
+  background: var(--calendar-kind-season-fg);
+  color: var(--calendar-kind-return-fg);
+}
+
+.lunar-week-day__date {
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--calendar-month-disc);
+  height: var(--calendar-month-disc);
+  border: var(--border-width-thin) solid transparent;
+  border-radius: var(--radius-pill);
+  font-size: var(--text-body);
+  font-weight: var(--weight-semibold);
+}
+
+.calendar-checkin {
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) auto;
+  min-height: 0;
+  height: 100%;
+}
+
+.calendar-checkin__stage {
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  gap: var(--lunar-space-28);
+  min-height: 0;
+  overflow: auto;
+  text-align: center;
+}
+
+.calendar-checkin__stage.is-entry {
+  align-content: start;
+  justify-items: stretch;
+  text-align: left;
+}
+
+.calendar-checkin__block {
+  display: grid;
+  gap: var(--lunar-space-28);
+  justify-items: start;
+  width: 100%;
+  max-width: 32rem;
+  text-align: left;
+}
+
+.calendar-checkin__block.is-entry {
+  gap: var(--lunar-space-16);
+}
+
+.calendar-checkin__moods {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: var(--calendar-mood-gap);
+  width: 100%;
+}
+
+.calendar-checkin__moods button {
+  flex: 0 0 auto;
+  width: var(--type-h1-size);
+  height: var(--type-h1-size);
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+
+.calendar-checkin__moods button svg {
+  width: 100%;
+  height: 100%;
+  transition: transform 0.15s ease;
+}
+
+.calendar-checkin__moods .is-selected svg {
+  transform: scale(1.08);
+}
+
+.calendar-checkin__ends {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  color: var(--calendar-disabled);
+  font-family: var(--font-body);
+  font-size: var(--text-meta-size);
+}
+
+.calendar-checkin__echo {
+  margin: 0;
+  color: var(--calendar-ink);
+  font-family: var(--font-body);
+  font-size: var(--calendar-checkin-echo);
+  letter-spacing: var(--tracking-tight);
+  line-height: var(--leading-h2);
+  text-wrap: balance;
+}
+
+.calendar-checkin__echo strong {
+  font-weight: var(--weight-bold);
+}
+
+.calendar-checkin__slider {
+  display: grid;
+  width: 100%;
+}
+
+.calendar-checkin__slider-track {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  height: var(--calendar-slider-height);
+  border-radius: var(--radius-pill);
+  background: var(--calendar-card);
+  cursor: pointer;
+}
+
+.calendar-checkin__slider-fill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  border-radius: var(--radius-pill);
+  background: var(--calendar-ink);
+}
+
+.calendar-checkin__slider-thumb {
+  position: absolute;
+  top: var(--lunar-space-4);
+  width: var(--calendar-slider-thumb);
+  height: var(--calendar-slider-thumb);
+  border-radius: var(--radius-pill);
+  background: var(--calendar-card);
+  box-shadow: var(--calendar-slider-shadow);
+}
+
+.calendar-checkin__slider input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.calendar-checkin__dots {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--lunar-space-6);
+}
+
+.calendar-checkin__dots span {
+  width: var(--lunar-space-6);
+  height: var(--lunar-space-6);
+  border-radius: var(--lunar-space-3);
+  background: var(--calendar-chip-on-canvas);
+  transition: width 0.2s ease, background 0.2s ease;
+}
+
+.calendar-checkin__dots .is-done {
+  background: var(--calendar-ink);
+}
+
+.calendar-checkin__dots .is-current {
+  width: var(--lunar-space-18);
+  background: var(--calendar-ink);
+}
+
+.calendar-checkin__pills,
+.calendar-checkin__chips,
+.calendar-checkin__people,
+.calendar-checkin__tag-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--lunar-space-4);
+}
+
+.calendar-checkin__pills button,
+.calendar-checkin__tag-list button,
+.calendar-checkin__chips button,
+.calendar-checkin__people button,
+.calendar-checkin__add-row button,
+.calendar-checkin-picker__people button {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--lunar-space-6);
+  height: var(--calendar-control-size-compact);
+  padding: 0 var(--lunar-space-12) 0 var(--lunar-space-10);
+  border: var(--border-width-thin) solid var(--calendar-hairline);
+  border-radius: var(--radius-pill);
+  background: var(--calendar-card);
+  color: var(--calendar-ink);
+  font-family: var(--font-body);
+  font-size: var(--text-meta-size);
+  font-weight: var(--weight-medium);
+}
+
+.calendar-checkin__pills span,
+.calendar-checkin__chips button span:last-child {
+  color: var(--calendar-tertiary);
+}
+
+.calendar-checkin__chips button {
+  background: var(--calendar-ink);
+  border-color: var(--calendar-ink);
+  color: var(--calendar-kind-return-fg);
+}
+
+.calendar-checkin__people button span:first-child,
+.calendar-checkin-picker__people button span:first-child {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--lunar-space-20);
+  height: var(--lunar-space-20);
+  border-radius: var(--radius-pill);
+  background: var(--calendar-ink);
+  color: var(--calendar-kind-return-fg);
+  font-size: var(--type-hint-size);
+  font-weight: var(--weight-semibold);
+}
+
+.calendar-checkin__summary {
+  margin: 0;
+  border-left: var(--calendar-quote-rule) solid var(--calendar-hairline);
+  padding-left: var(--space-3);
+  color: var(--calendar-tertiary);
+  font-family: var(--font-body);
+  font-size: var(--text-body);
+  line-height: var(--leading-description);
+}
+
+.calendar-checkin__tag-list .is-on,
+.calendar-checkin-picker__people .is-on {
+  background: var(--calendar-ink);
+  border-color: var(--calendar-ink);
+  color: var(--calendar-kind-return-fg);
+}
+
+.calendar-checkin textarea {
+  width: 100%;
+  min-height: var(--calendar-note-min-height);
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--calendar-ink);
+  font-family: var(--font-body);
+  font-size: var(--calendar-reading-copy);
+  line-height: var(--leading-body);
+  resize: none;
+  outline: none;
+}
+
+.calendar-checkin__add-row {
+  display: flex;
+  align-items: center;
+  gap: var(--lunar-space-8);
+}
+
+.calendar-checkin__add-row input {
+  flex: 1;
+  min-width: 0;
+  height: var(--calendar-control-size);
+  padding: 0 var(--lunar-space-14);
+  border: var(--border-width-thin) dashed var(--calendar-hairline);
+  border-radius: var(--calendar-month-cell-radius);
+  background: transparent;
+  color: var(--calendar-ink);
+  font-family: var(--font-body);
+  font-size: var(--text-body);
+  outline: none;
+}
+
+.calendar-checkin__add-row button {
+  height: var(--calendar-control-size);
+}
+
+.calendar-checkin__add-row .is-ready,
+.calendar-checkin__footer .is-saved {
+  background: var(--calendar-ink);
+  color: var(--calendar-kind-return-fg);
+}
+
+.calendar-checkin__footer {
+  padding-top: var(--lunar-space-12);
+  justify-content: flex-end;
+}
+
+.calendar-checkin__footer > :first-child {
+  margin-right: auto;
+}
+
+.calendar-checkin__round,
+.calendar-checkin__skip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  background: var(--calendar-card);
+  color: var(--calendar-ink);
+  font-family: var(--font-body);
+  font-size: var(--text-meta-size);
+  font-weight: var(--weight-medium);
+}
+
+.calendar-checkin__round {
+  width: var(--calendar-slideout-control);
+  height: var(--calendar-slideout-control);
+  border-radius: var(--radius-pill);
+}
+
+.calendar-checkin__footer .calendar-checkin__round,
+.calendar-checkin__footer .calendar-checkin__skip {
+  background: var(--calendar-card);
+}
+
+.calendar-checkin__footer .calendar-checkin__round.is-next,
+.calendar-checkin__footer .is-saved {
+  background: var(--calendar-ink);
+  color: var(--calendar-kind-return-fg);
+}
+
+.calendar-checkin__skip {
+  height: var(--calendar-slideout-control);
+  padding: 0 var(--lunar-space-18);
+  border-radius: var(--radius-pill);
+  color: var(--calendar-secondary);
+}
+
+.calendar-checkin__status {
+  margin: 0;
+  color: var(--calendar-secondary);
+  font-family: var(--font-body);
+  font-size: var(--text-meta-size);
+  font-weight: var(--weight-regular);
+  line-height: var(--leading-meta);
+  letter-spacing: var(--tracking-body);
+  text-align: center;
+}
+
+.calendar-checkin-picker {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: grid;
+  align-items: end;
+}
+
+.calendar-checkin-picker__scrim {
+  position: absolute;
+  inset: 0;
+  border: 0;
+  background: var(--calendar-scrim);
+}
+
+.calendar-checkin-picker__sheet {
+  position: relative;
+  display: grid;
+  gap: var(--lunar-space-16);
+  max-height: 82%;
+  padding: var(--lunar-space-16) var(--lunar-space-20) var(--lunar-space-24);
+  overflow: auto;
+  border-radius: var(--calendar-sheet-radius) var(--calendar-sheet-radius) 0 0;
+  background: var(--calendar-canvas);
+}
+
+.calendar-checkin-picker__sheet header {
+  display: grid;
+  grid-template-columns: var(--calendar-slideout-control) 1fr var(--calendar-slideout-control);
+  align-items: center;
+  text-align: center;
+}
+
+.calendar-checkin-picker__sheet header span {
+  grid-column: 2;
+}
+
+.calendar-checkin-picker__sheet header button {
+  display: grid;
+  place-items: center;
+  width: var(--calendar-slideout-control);
+  height: var(--calendar-slideout-control);
+  border: 0;
+  background: transparent;
+  color: var(--calendar-ink);
+}
+
+.calendar-checkin-picker__people {
+  display: grid;
+  gap: var(--lunar-space-6);
+}
+
+.calendar-checkin-picker__people button {
+  width: 100%;
+  height: auto;
+  padding: var(--lunar-space-10) var(--lunar-space-14) var(--lunar-space-10) var(--lunar-space-10);
+  border-radius: var(--calendar-month-cell-radius);
+  text-align: left;
+}
+
+.calendar-checkin-picker__people p {
+  margin: 0;
+  padding: 0 var(--lunar-space-4);
+  color: var(--calendar-tertiary);
+  font-size: var(--type-hint-size);
+}
+
+.calendar-season-transits ul {
+  display: grid;
+  gap: var(--calendar-transit-row-gap);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.calendar-season-transits .is-rx .calendar-kind {
+  background: var(--calendar-kind-station-bg);
+  color: var(--calendar-kind-station-list);
+}
+
+.calendar-header-season,
+.lunar-calendar-subscribe {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--lunar-space-8);
+  min-height: var(--calendar-control-size);
+  padding: 0 var(--lunar-space-12);
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: var(--calendar-card);
+  color: var(--calendar-ink);
+  font-family: var(--font-body);
+  font-size: var(--text-meta-size);
+}
+
+.calendar-header-season {
+  flex: none;
+  max-width: min(100%, 22rem);
+  min-width: 0;
+}
+
+.calendar-header-season__left,
+.calendar-header-season span:last-child {
+  color: var(--calendar-tertiary);
+  white-space: nowrap;
+}
+
+.lunar-calendar-subscribe {
+  width: var(--calendar-control-size);
+  padding: 0;
+  justify-content: center;
+  flex: none;
+}
+
+.lunar-calendar-subscribe--inline {
+  width: auto;
+  height: var(--calendar-legend-control);
+  padding: 0 var(--space-3) 0 var(--space-2);
+  border: var(--border-width-thin) solid var(--line);
+  background: transparent;
+  color: var(--calendar-secondary);
+  font-family: var(--font-body);
+  font-size: var(--text-meta-size);
+  font-weight: var(--weight-medium);
+}
+
+.lunar-calendar-subscribe--inline,
+.calendar-sky-card__visual,
+.calendar-season-pill {
+  display: none;
+}
+
+.lunar-month-agenda {
+  display: grid;
+  gap: var(--lunar-space-8);
+}
+
+.lunar-calendar-legend-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--lunar-space-8);
+}
+
+.calendar-day-groups {
+  display: grid;
+  gap: var(--lunar-space-8);
+}
+
+.calendar-day-group {
+  display: grid;
+  gap: var(--lunar-space-10);
+  padding: var(--lunar-space-12) var(--space-4) var(--lunar-space-12) var(--lunar-space-12);
+  border-radius: var(--calendar-reading-card-radius);
+  background: var(--calendar-card);
+  box-shadow: inset 0 0 0 var(--border-width-fine) transparent;
+  scroll-margin-top: calc(var(--top-control-top) + var(--top-control-height) + 88px);
+}
+
+.calendar-day-group.is-selected {
+  box-shadow: inset 0 0 0 var(--border-width-fine) var(--calendar-ink);
+}
+
+.calendar-day-group__header,
+.calendar-season-pill,
+.calendar-day-group__row {
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--calendar-ink);
+  text-align: left;
+}
+
+.calendar-day-group__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--lunar-space-10);
+}
+
+.calendar-season-pill {
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--lunar-space-10);
+}
+
+.calendar-day-group__header {
+  justify-content: flex-start;
+}
+
+.calendar-day-group__header .lunar-calendar-day__number {
+  width: var(--calendar-month-disc-compact);
+  height: var(--calendar-month-disc-compact);
+  flex: none;
+  font-size: var(--type-body-size);
+}
+
+.calendar-day-group__weekday {
+  min-width: 0;
+  flex: 1;
+  overflow: hidden;
+  color: var(--calendar-ink);
+  font-family: var(--font-body);
+  font-size: var(--calendar-row-title);
+  font-weight: var(--weight-semibold);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.calendar-day-group__weekday span {
+  font-weight: var(--weight-regular);
+  color: var(--calendar-tertiary);
+}
+
+.calendar-day-group__header svg,
+.calendar-season-pill svg,
+.calendar-day-group__row small {
+  flex: none;
+  color: var(--calendar-tertiary);
+}
+
+.calendar-day-group__rows,
+.calendar-day-group__blurb {
+  display: grid;
+  gap: var(--lunar-space-4);
+  min-width: 0;
+}
+
+.calendar-day-group__row {
+  display: grid;
+  grid-template-columns: var(--calendar-tag-width) minmax(0, 1fr) auto;
+  gap: var(--lunar-space-10);
+  align-items: center;
+  min-width: 0;
+  padding: var(--lunar-space-4) 0;
+  font-family: var(--font-body);
+  font-size: var(--calendar-row-title);
+  font-weight: var(--weight-medium);
+  line-height: var(--leading-label);
+}
+
+.calendar-day-group__row > span:nth-child(2) {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.calendar-day-group__row small {
+  font-size: var(--calendar-row-meta);
+  font-weight: var(--weight-regular);
+  white-space: nowrap;
+}
+
+.calendar-day-group__excerpt,
+.calendar-day-group__blurb p {
+  margin: 0;
+  color: var(--calendar-copy);
+  font-family: var(--font-body);
+  font-size: var(--calendar-week-blurb);
+  line-height: var(--leading-body);
+}
+
+.calendar-day-group__excerpt {
+  display: -webkit-box;
+  overflow: hidden;
+  padding: 0 0 var(--lunar-space-4);
+  color: var(--calendar-secondary);
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+}
+
+.calendar-day-group__blurb {
+  gap: var(--lunar-space-10);
+  padding-top: var(--lunar-space-6);
+}
+
+.calendar-season-pill {
+  padding: var(--lunar-space-8) var(--space-4) var(--lunar-space-8) var(--lunar-space-8);
+  border-radius: var(--radius-pill);
+  background: var(--calendar-card);
+}
+
+.calendar-season-pill > span {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--lunar-space-10);
+  min-width: 0;
+}
+
+.calendar-season-pill__glyph {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--calendar-season-pill-disc);
+  height: var(--calendar-season-pill-disc);
+  border-radius: var(--radius-pill);
+  background: var(--calendar-chip);
+}
+
+.calendar-season-pill strong {
+  font-family: var(--font-body);
+  font-size: var(--text-meta-size);
+  font-weight: var(--weight-semibold);
+  white-space: nowrap;
+}
+
+.calendar-season-pill__left {
+  color: var(--calendar-tertiary);
+  white-space: nowrap;
+}
+
+.calendar-season-pill {
+  display: none;
+}
+
+.calendar-sky-card__lockup,
+.calendar-sky-card__copy {
+  display: grid;
+  gap: var(--calendar-stack-gap);
+  min-width: 0;
+}
+
+@media (max-width: 720px) {
+  .calendar-slideout {
+    display: block;
   }
 
-  .lunar-calendar-body.is-month .lunar-calendar-day {
-    grid-template-rows: max-content max-content max-content minmax(0, 1fr);
-    gap: var(--lunar-space-2);
-    min-height: 82px;
-    padding: var(--lunar-space-2);
-    border-radius: var(--lunar-card-inner-radius);
+  .calendar-slideout__panel {
+    width: 100%;
+    height: 100%;
+    border-radius: 0;
   }
 
-  .lunar-calendar-body.is-month .lunar-calendar-day__lunar .lunar-moon-disc {
-    width: 25px;
-    height: 25px;
+  .calendar-slideout--sheet {
+    display: grid;
+    align-items: end;
   }
 
+  .calendar-slideout--sheet .calendar-slideout__panel {
+    width: 100%;
+    height: auto;
+    max-height: var(--calendar-subscribe-max-height);
+    border-radius: var(--calendar-sheet-radius) var(--calendar-sheet-radius) 0 0;
+  }
+
+  .lunar-calendar-header {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+      "title"
+      "actions";
+    row-gap: var(--lunar-space-10);
+  }
+
+  .lunar-calendar-view.is-month {
+    --lunar-calendar-title-size: var(--calendar-title-size-month);
+  }
+
+  .lunar-calendar-view.is-week,
+  .lunar-calendar-view.is-weekly {
+    --lunar-calendar-title-size: var(--calendar-title-size-day);
+  }
+
+  .lunar-calendar-title-row {
+    justify-content: space-between;
+  }
+
+  .calendar-header-season,
+  .lunar-calendar-header .lunar-calendar-subscribe,
+  .lunar-month-transits--cards,
+  .lunar-month-overview,
   .lunar-calendar-body.is-month .lunar-calendar-day__moon {
-    font-size: var(--lunar-type-meta);
-  }
-
-  .lunar-calendar-body.is-month .lunar-calendar-day__events {
-    flex-direction: row;
-    justify-content: center;
-    gap: var(--lunar-space-3);
-  }
-
-  .lunar-calendar-body.is-month .lunar-calendar-event-pill,
-  .lunar-calendar-body.is-month .lunar-calendar-event-more {
-    width: auto;
-    min-width: 0;
-    max-width: none;
-    height: 10px;
-    padding: 0;
-    border: 0;
-    background: transparent;
-    font-size: var(--lunar-type-tiny);
-  }
-
-  .lunar-calendar-body.is-month .lunar-calendar-event-pill__label {
     display: none;
   }
 
-  .lunar-calendar-body.is-month .lunar-calendar-event-pill__dot {
-    display: block;
-    width: 7px;
-    height: 7px;
-    border-radius: var(--radius-pill);
-    background: var(--event-accent, var(--line-strong));
+  .lunar-calendar-subscribe--inline,
+  .calendar-season-pill,
+  .lunar-month-agenda,
+  .calendar-sky-card__visual {
+    display: flex;
   }
 
-  .lunar-calendar-body.is-month .lunar-calendar-event-more {
-    color: var(--muted);
-    line-height: var(--lunar-event-more-leading);
+  .lunar-month-agenda {
+    display: grid;
+    gap: var(--lunar-space-8);
+  }
+
+  .lunar-calendar-header-actions {
+    width: 100%;
+  }
+
+  .lunar-calendar-segmented.segmented-control {
+    display: grid;
+    flex: 1 1 auto;
+    width: 100%;
+    min-width: 0;
+  }
+
+  .lunar-calendar-segmented .segmented-control__item {
+    height: var(--calendar-segmented-item-height);
+    min-height: var(--calendar-segmented-touch-height);
+  }
+
+  .lunar-calendar-legend__panel {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .lunar-week-strip {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: var(--lunar-space-2);
+    padding: var(--lunar-space-12) var(--lunar-space-8);
+    border: 0;
+    border-radius: var(--calendar-card-radius);
+    box-shadow: none;
+  }
+
+  .lunar-week-day {
+    min-height: 0;
+    padding: var(--lunar-space-8) 0 var(--lunar-space-10);
+    border-radius: var(--radius-sm);
+  }
+
+  .lunar-week-day__date {
+    width: var(--calendar-month-disc-compact);
+    height: var(--calendar-month-disc-compact);
+    font-size: var(--text-body);
+  }
+
+  .lunar-week-day.is-season-start {
+    background: var(--calendar-kind-season-bg);
+  }
+
+  .lunar-week-day.is-selected {
+    background: var(--calendar-chip);
+  }
+
+  .calendar-sky-card__lockup {
+    display: flex;
+    align-items: center;
+    gap: var(--lunar-space-12);
+  }
+
+  .calendar-sky-card__visual {
+    width: var(--calendar-sky-emoji);
+    height: var(--calendar-sky-emoji);
+    flex: none;
+    display: grid;
+    place-items: center;
+    font-size: var(--calendar-sky-emoji);
+    line-height: var(--calendar-glyph-line);
+  }
+
+  .calendar-checkin-card__hint.is-web {
+    display: none;
+  }
+
+  .calendar-day-panel.is-embedded .calendar-sky-card__date {
+    display: none;
+  }
+
+  .calendar-checkin-card__hint.is-mobile {
+    display: block;
+  }
+
+  .calendar-day-events__grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .calendar-stoic-card,
+  .calendar-stoic-card.is-wide {
+    min-height: 0;
+  }
+}
+
+.lunar-moon-emoji {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--calendar-phase-emoji);
+  height: var(--calendar-phase-emoji);
+  font-size: var(--calendar-phase-emoji);
+  line-height: var(--calendar-glyph-line);
+  border-radius: var(--radius-pill);
+}
+
+.lunar-moon-emoji.is-eclipse {
+  box-shadow: var(--calendar-eclipse-ring-shadow);
+}
+
+.lunar-moon-sign-glyph {
+  color: var(--calendar-disabled);
+}
+
+.lunar-moon-sign-glyph.is-enter {
+  color: var(--calendar-ink);
+}
+
+.lunar-calendar-day__number.is-season-disc {
+  background: transparent;
+  color: var(--calendar-kind-season-fg);
+  box-shadow: none;
+}
+
+.lunar-calendar-aspect-dot {
+  width: var(--calendar-dot-size);
+  height: var(--calendar-dot-size);
+  background: var(--calendar-dot-aspect);
+}
+
+.lunar-calendar-aspect-dot.is-key {
+  background: var(--calendar-dot-key);
+}
+
+.lunar-calendar-aspect-dot.is-rx {
+  background: var(--calendar-dot-rx);
+}
+
+.lunar-calendar-aspect-dot.is-season {
+  background: var(--calendar-dot-season);
+}
+
+.lunar-calendar-aspect-dot.is-ingress {
+  background: var(--calendar-dot-ingress);
+}
+
+.calendar-month-journal {
+  width: var(--calendar-journal-mark-width);
+  min-width: var(--calendar-journal-mark-width);
+  height: var(--calendar-month-chip-compact);
+  padding: 0;
+  background: var(--calendar-chip);
+}
+
+.calendar-month-journal__mark {
+  display: block;
+  width: var(--calendar-journal-mark-width);
+  height: var(--calendar-journal-mark-height);
+  border-radius: var(--radius-pill);
+  background: var(--calendar-disabled);
+}
+
+.calendar-header-season__left.is-compact,
+.calendar-checkin-card__hint.is-mobile {
+  display: none;
+}
+
+.calendar-checkin-card__hint.is-web {
+  display: block;
+}
+
+.calendar-reading__time-row,
+.calendar-reading__bysign {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: var(--lunar-space-10);
+}
+
+.calendar-reading__bysign {
+  justify-content: start;
+}
+
+.calendar-reading__bysign span {
+  display: grid;
+  gap: var(--lunar-space-4);
+}
+
+.calendar-reading__bysign small {
+  color: var(--calendar-copy);
+  font-size: var(--calendar-reading-copy);
+}
+
+.calendar-reading__steps {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: var(--lunar-space-10);
+  counter-reset: ritual;
+}
+
+.calendar-reading__steps li {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: var(--lunar-space-8);
+}
+
+.calendar-reading__steps li::before {
+  counter-increment: ritual;
+  content: counter(ritual) ".";
+  color: var(--calendar-ink);
+  font-weight: var(--weight-semibold);
+}
+
+.calendar-reading__notes {
+  margin-top: var(--lunar-space-12);
+  padding-top: var(--lunar-space-12);
+  border-top: var(--border-width-thin) solid var(--calendar-hairline);
+}
+
+.calendar-reading__exact {
+  color: var(--calendar-copy);
+}
+
+.calendar-reading__mark {
+  width: var(--calendar-article-mark-width);
+  height: var(--calendar-article-mark-height);
+  border: var(--border-width-thin) solid var(--calendar-ink);
+  border-radius: var(--lunar-space-6);
+  background: var(--calendar-card);
+}
+
+.calendar-checkin-picker__empty {
+  margin: 0;
+  color: var(--calendar-copy);
+  font-family: var(--font-body);
+  font-size: var(--text-body);
+  line-height: var(--leading-body);
+}
+
+.calendar-checkin__add.is-ready {
+  background: var(--calendar-ink);
+  color: var(--calendar-kind-return-fg);
+}
+
+.calendar-checkin__add {
+  width: 100%;
+  min-height: var(--calendar-slideout-control);
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: var(--calendar-chip-on-canvas);
+  color: var(--calendar-tertiary);
+  font-family: var(--font-body);
+  font-size: var(--text-label);
+  font-weight: var(--weight-semibold);
+}
+
+.calendar-checkin__footer .calendar-checkin__round.is-saved {
+  background: var(--calendar-checkin-saved);
+  color: var(--calendar-kind-return-fg);
+}
+
+.calendar-checkin-picker__create {
+  display: grid;
+  justify-items: center;
+  gap: var(--lunar-space-16);
+}
+
+.calendar-checkin-picker__illustration {
+  width: var(--calendar-checkin-illustration);
+  height: var(--calendar-checkin-illustration);
+  border-radius: var(--radius-pill);
+  background: var(--calendar-chip);
+}
+
+.calendar-checkin__chips button.is-card,
+.calendar-checkin__chip-wrap.is-card button {
+  background: var(--calendar-card-tag-bg);
+  color: var(--calendar-card-tag-fg);
+}
+
+.calendar-checkin__chip-wrap.is-on.is-card button,
+.calendar-checkin__chips button.is-card.is-on {
+  background: var(--calendar-card-tag-on);
+  color: var(--calendar-kind-return-fg);
+}
+
+.calendar-kind--weekly {
+  background: var(--calendar-kind-weekly-bg);
+  color: var(--calendar-kind-weekly-fg);
+}
+
+@media (max-width: 720px) {
+  .lunar-moon-emoji {
+    width: var(--calendar-phase-emoji-compact);
+    height: var(--calendar-phase-emoji-compact);
+    font-size: var(--calendar-phase-emoji-compact);
+  }
+
+  .calendar-header-season__left.is-wide {
+    display: none;
+  }
+
+  .calendar-header-season__left.is-compact {
+    display: inline;
   }
 }

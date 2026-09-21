@@ -4,14 +4,14 @@ export const skyForecastTemplates = {
     title: "Daily overview template",
     contentKey: "slot-template/calendar/daily-overview/v1",
     headline: "Calendar · Daily Overview",
-    description: "Preview the Sun summary and a complete Moon-sign passage for the selected sky.",
+    description: "Preview the Sun summary and leftover Moon-sign writing for the selected sky.",
     body: calendarOverviewPattern("daily-sky")
   },
   "weekly-sky": {
     title: "Weekly overview template",
     contentKey: "slot-template/calendar/weekly-overview/v1",
     headline: "Calendar · Weekly Overview",
-    description: "Start from Monday's Moon sign and weekly Moon passage, then write the week's seasons, lunar cycle, planetary changes, daily passages, and closing.",
+    description: "Start from Monday's Moon sign and leftover Moon-sign passage, then write the week's seasons, lunar cycle, planetary changes, daily passages, and closing.",
     body: calendarOverviewPattern("weekly-sky")
   },
   "monthly-sky": {

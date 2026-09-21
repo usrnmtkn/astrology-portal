@@ -10,5 +10,6 @@
   "voidRemaining": "The Moon is void of course for another {remaining}.",
   "voidWithoutTiming": "The Moon is void of course.",
   "lunation": "The next {name} in {sign} is {countdown}.",
+  "seasonTransition": "{seasonName} season ends {countdown}, when the Sun enters {nextSunSign} on {seasonEndDate}.",
   "fullMoonMeaning": "Full Moons mark a culmination, when something that has been building becomes easier to see."
 }

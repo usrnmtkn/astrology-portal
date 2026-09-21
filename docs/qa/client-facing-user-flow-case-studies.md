@@ -323,20 +323,17 @@ Steps:
 
 Expected result: Guest settings controls update visible state and remain usable without signed-in profile data.
 
-## Case Study 23: Calendar Location Picker
+## Case Study 23: Calendar Uses Settings Location
 
-Goal: A visitor can change the lunar calendar location and cancel a pending location edit.
+Goal: Calendar does not expose a location picker; the current city is changed in Settings.
 
 Steps:
 1. Open `/#calendar`.
-2. Open the calendar location picker.
-3. Enter a new city and update.
-4. Confirm the calendar header shows the new city.
-5. Reopen the location picker.
-6. Enter another city and cancel.
-7. Confirm the previously saved city remains selected.
+2. Confirm the calendar header has no city/time-zone control and no city search field.
+3. Open `/#settings`.
+4. Confirm Current location is available there.
 
-Expected result: Calendar location updates are explicit, and cancel does not overwrite the active location.
+Expected result: Calendar keeps using the saved location for dates and times, and location edits happen only in Settings.
 
 ## Case Study 24: Mobile Signed-In Friends Navigation
 
@@ -568,6 +565,33 @@ Steps:
 6. Capture screenshots for visual review.
 
 Expected result: Eyebrows and section labels use one shared visual system across the app, and main pages remain readable on desktop and mobile.
+
+## Case Study 41: Signed-In Account Journal Week Grouping
+
+Goal: A signed-in user can open Account journal, load saved check-ins, and see weeks that start on Monday, including a Sunday grouped with that Monday.
+
+Steps:
+1. Seed a local profile plus a real-shaped Supabase session.
+2. Serve fixture `calendar_check_ins` rows for Monday 2026-09-14 and Sunday 2026-09-20.
+3. Open Account and click Open journal.
+4. Confirm the journal loads without a sign-in error and lists both check-ins.
+5. Switch to Weeks and confirm the week starts September 14, includes September 20, and shows 2 check-ins.
+6. Open the Sunday entry and confirm the check-in slideout shows Sunday, September 20, 2026.
+
+Expected result: Signed-in journal history is readable, weeks start on Monday, and a Sunday stays in that Monday–Sunday week.
+
+## Case Study 42: Guest Calendar Check-In Login Copy
+
+Goal: A guest who tries to save a Calendar check-in lands on the login screen with journal-save copy, not the generic sky headline.
+
+Steps:
+1. Open `/#calendar` as a guest and select Check in.
+2. Choose a mood and advance to the last step.
+3. Confirm the check-in sheet does not show the old sign-in status line.
+4. Select Sign in to save.
+5. Confirm the login region heading is "Sign in to save your journal entry..." and "Return to your sky." is not shown.
+
+Expected result: Menu login still says "Return to your sky." Calendar check-in login uses the journal-save heading.
 
 ## Execution Notes
 

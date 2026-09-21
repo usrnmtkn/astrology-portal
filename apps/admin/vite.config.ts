@@ -96,6 +96,9 @@ function localApiRoutePlugin() {
 
 export default defineConfig(({ command, mode }) => {
   const webEnv = loadEnv(mode, resolve(repoRoot, "apps/web"), "");
+  for (const [key, value] of Object.entries(webEnv)) {
+    if (value && !process.env[key]) process.env[key] = value;
+  }
   const localContentSecret = command === "serve"
     ? process.env.CONTENT_GENERATION_SECRET ?? webEnv.CONTENT_GENERATION_SECRET ?? ""
     : "";

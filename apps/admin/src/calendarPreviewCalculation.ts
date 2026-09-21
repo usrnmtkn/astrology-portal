@@ -8,6 +8,7 @@ export type CalendarPreviewCalculation = {
   days: LunarCalendarDay[];
   events: LunarCalendarEvent[];
   seasonIngresses?: LunarCalendarEvent[];
+  cycleEvents?: LunarCalendarEvent[];
   timeZone: string;
 };
 
@@ -19,13 +20,20 @@ export async function calculateCalendarPreview(period: SkyForecastPeriod, instan
   const location = { label: "Geocentric reference", latitude: 0, longitude: 0, timeZone };
   const [sky, calendar] = await Promise.all([
     getAstrodienstSkyOffMainThread(location, date, { includeTransitWindows: false }),
-    period === "weekly-sky" ? getLunarCalendarWeekOffMainThread(location, date)
-      : period === "monthly-sky" ? getLunarCalendarMonthOffMainThread(location, date) : Promise.resolve(null)
+    period === "monthly-sky" ? getLunarCalendarMonthOffMainThread(location, date)
+      : getLunarCalendarWeekOffMainThread(location, date)
   ]);
   if (sky.calculationProvenance?.actualEphemeris !== "swiss" || sky.generatedAt !== date.toISOString()) {
     throw new Error("Verified ephemeris facts are unavailable for this date. Retry the calculation.");
   }
   const days = calendar?.days.filter(day => period !== "monthly-sky" || day.inMonth) ?? [];
   const dates = new Set(days.map(day => day.dateKey));
-  return { sky, days, seasonIngresses: calendar?.events.filter(event => event.planet === "Sun" && event.type === "ingress") ?? [], events: calendar?.events.filter(event => dates.has(event.dateKey)) ?? [], timeZone };
+  return {
+    sky,
+    days,
+    seasonIngresses: calendar?.events.filter(event => event.planet === "Sun" && event.type === "ingress") ?? [],
+    events: calendar?.events.filter(event => dates.has(event.dateKey)) ?? [],
+    cycleEvents: calendar?.cycleEvents ?? [],
+    timeZone
+  };
 }

@@ -27,9 +27,13 @@ import { skyPlacementMotionCopy, skyPlacementMotionParts } from "./content/skyPl
 import { calendarDayDistance } from "./services/calendarDayDistance";
 import { liveSkyReference, remainingSkyMinutes } from "./services/skyClock";
 import { skySummaryParagraphs } from "./content/skyDailySummary";
+import { calendarSeasonTransitionFactsFromSun } from "./features/calendar/calendarSeasonTransitionFacts";
 import { PublishedSkySummary } from "./features/sky/PublishedSkySummary";
 import { SkyReadingLayout, useSkyCardsSettled } from "./features/sky/SkyReadingLayout";
 import { SkyRoute } from "./routes/SkyRoute";
+import { YouRoute } from "./routes/YouRoute";
+import { loadYouPage, readYouPage } from "./features/you/youExperienceLoader";
+import type { YouPageProps } from "./features/you/YouPage";
 import { isStandaloneLearnPath } from "./content/learnRoutePath";
 import { refreshContentPublications } from "./services/contentPublications";
 import {
@@ -10783,21 +10787,18 @@ const GeneratedContentAdminDashboard = lazy(() =>
   }))
 );
 
-const loadYouPage = () => import("./features/you/YouPage");
-const loadYouRoute = () => import("./routes/YouRoute");
 const preloadYouExperience = () => {
-  void Promise.all([loadYouPage(), loadYouRoute()]);
+  void loadYouPage().catch(() => { /* The mounted route owns import errors. */ });
 };
 
 const ReportRoute = lazy(() =>
   import("./routes/ReportRoute").then((module) => ({ default: module.ReportRoute }))
 );
 
-const YouPage = lazy(() =>
-  loadYouPage().then((module) => ({
-    default: module.YouPage
-  }))
-);
+function YouPage(props: YouPageProps) {
+  const ReadyPage = readYouPage();
+  return <ReadyPage {...props} />;
+}
 
 const NatalAspectPatternsSection = lazy(() =>
   import("./features/you/NatalAspectPatternsSection").then((module) => ({
@@ -10808,12 +10809,6 @@ const NatalAspectPatternsSection = lazy(() =>
 const NatalAspectPatternActivationsSection = lazy(() =>
   import("./features/you/NatalAspectPatternsSection").then((module) => ({
     default: module.NatalAspectPatternActivationsSection
-  }))
-);
-
-const YouRoute = lazy(() =>
-  loadYouRoute().then((module) => ({
-    default: module.YouRoute
   }))
 );
 
@@ -10993,6 +10988,12 @@ export function App() {
   const skyDateRef = useRef(skyDate);
   const followsCurrentTransitDateRef = useRef(skyDate === currentLocalDate);
   const [mode, setMode] = useState<PortalMode>(() => studioReturnPath ? "profile" : getInitialPortalMode());
+  const [youPagePainted, setYouPagePainted] = useState(false);
+  const youDetailsReady = youPagePainted || Boolean(placementRouteIdFromUrl());
+  const markYouPagePainted = useCallback(() => setYouPagePainted(true), []);
+  useEffect(() => {
+    if (mode !== "profile") setYouPagePainted(false);
+  }, [mode]);
   const [learnPath, setLearnPath] = useState(learnPathFromUrl);
   const [animationPreference, setAnimationPreference] = useState(readAnimationPreference);
   const transitionPage = usePageTransition(animationPreference);
@@ -11036,14 +11037,16 @@ export function App() {
   const authBootstrapGenerationRef = useRef(0);
   const remoteProfileReadyRef = useRef(false);
   const [accountIntent, setAccountIntentState] = useState<AuthMode>(getInitialAccountIntent);
+  const [loginHeadline, setLoginHeadline] = useState<string | null>(null);
   const [signInRequested, setSignInRequested] = useState(() =>
     new URL(window.location.href).searchParams.get("auth") === "login"
   );
   const signInDestinationRef = useRef<PortalMode | null>(null);
-  const setAccountIntent = useCallback((intent: AuthMode) => {
+  const setAccountIntent = useCallback((intent: AuthMode, options?: { loginHeadline?: string }) => {
     storeAccountIntent(intent);
     setAccountIntentState(intent);
     setSignInRequested(intent === "login");
+    setLoginHeadline(intent === "login" ? options?.loginHeadline ?? null : null);
   }, []);
   const pendingInvitationCapturedRef = useRef(false);
   const [pendingInvitationForSignup, setPendingInvitationForSignup] = useState(false);
@@ -11699,6 +11702,10 @@ export function App() {
   }
 
   function navigateToPortalMode(nextMode: PortalMode, animate = true) {
+    // Capturing an animated loading screen delays the saved profile itself.
+    // Keep transitions for completed pages; leave unfinished Sky immediately.
+    const leavingSkyPlaceholder = !selectedSkyDetail && (mode === "guest" || mode === "member")
+      && (skyStatus === "loading" || skyStatus === "cached" || skyTimingStatus === "loading" || skyPlacementFallbackStatus !== "ready");
     transitionPage(() => {
       setSelectedSkyDetail(null);
       setSkyDetailRoutePath(null);
@@ -11706,7 +11713,7 @@ export function App() {
       storePortalMode(nextMode);
       setMode(nextMode);
       if (nextMode === "learn") setLearnPath(learnPathFromUrl());
-    }, animate && (nextMode !== mode || Boolean(selectedSkyDetail)) && !isSignupMode && !(nextMode === "profile" && !userProfile));
+    }, animate && (nextMode !== mode || Boolean(selectedSkyDetail)) && !isSignupMode && !(nextMode === "profile" && (!userProfile || leavingSkyPlaceholder)));
   }
 
   function navigateToLearnPath(nextPath: string) {
@@ -11731,6 +11738,8 @@ export function App() {
       };
     }
 
+    // Render the saved profile before evaluating optional prose packages.
+    if (mode === "profile" && !youPagePainted) return;
     loadEmptyHouseFallbackArchitectureV3Bundle()
       .then((installed) => {
         if (installed && !cancelled) {
@@ -11744,7 +11753,7 @@ export function App() {
     return () => {
       cancelled = true;
     };
-  }, [friendNatalContentRequested, mode]);
+  }, [friendNatalContentRequested, mode, youPagePainted]);
 
   useEffect(() => {
     let cancelled = false;
@@ -11762,6 +11771,8 @@ export function App() {
       };
     }
 
+    // Render the saved profile before evaluating optional prose packages.
+    if (mode === "profile" && !youPagePainted) return;
     loadDeferredFallbackArchitectureV3Bundle()
       .then((installed) => {
         if (installed && !cancelled) {
@@ -11782,7 +11793,8 @@ export function App() {
     mode,
     profileNatalSky?.ascendant,
     skyDetailRoutePath,
-    userProfile?.rising
+    userProfile?.rising,
+    youPagePainted
   ]);
 
   useEffect(() => {
@@ -11957,7 +11969,16 @@ export function App() {
         return;
       }
       pendingHashChangeUrl = event.type === "popstate" ? window.location.href : null;
-      transitionPage(syncPortalUrl);
+
+      const urlMode = portalModeFromUrl();
+      const nextMode = urlMode === "member" && !userProfile ? "guest" : urlMode;
+      const nextSkyDetailRoutePath = skyDetailRoutePathFromUrl();
+      const samePortal = nextMode === "calendar"
+        && mode === "calendar"
+        && (nextSkyDetailRoutePath || null) === (skyDetailRoutePath || null);
+      // Calendar day selection updates the shared date without leaving the page.
+      // The portal nav motion would otherwise slide the topbar up and down.
+      transitionPage(syncPortalUrl, !samePortal);
     }
 
     function syncPortalUrl() {
@@ -12008,7 +12029,7 @@ export function App() {
       window.removeEventListener("popstate", handlePortalUrlChange);
       window.removeEventListener("hashchange", handlePortalUrlChange);
     };
-  }, [userProfile, transitionPage]);
+  }, [mode, skyDetailRoutePath, userProfile, transitionPage]);
 
   useEffect(() => {
     if (followsCurrentTransitDateRef.current) {
@@ -14439,7 +14460,6 @@ export function App() {
                   preloadYouExperience();
                   preloadFriendsExperience();
                 }
-                preloadCalendarExperience();
                 return !isOpen;
               });
             }}
@@ -14691,7 +14711,9 @@ export function App() {
                   </section>
                   <SkyReadingLayout persistKey={`${skyDate}:${location.latitude}:${location.longitude}:${location.timeZone}`}
                     key={`${skyDate}:${location.latitude}:${location.longitude}:${location.timeZone}`}
-                    pending={isSkyLoading || skyTimingStatus === "loading" || skyPlacementFallbackStatus === "idle" || skyPlacementFallbackStatus === "loading"}
+                    // Initial cached calculations must finish refreshing before the first reading
+                    // appears; otherwise the temporary cache notice shifts all of its content.
+                    pending={isSkyLoading || skyStatus === "cached" || skyTimingStatus === "loading" || skyPlacementFallbackStatus === "idle" || skyPlacementFallbackStatus === "loading"}
                     failed={skyStatus === "error" || skyTimingStatus === "error" || skyPlacementFallbackStatus === "error"}>
                   {(skyStatus === "cached" || skyStatus === "stale") && sky?.cacheState && (
                     <div
@@ -14790,14 +14812,16 @@ export function App() {
                   skyPlacementContentStatus={skyPlacementFallbackStatus}
                   contentVersion={fallbackArchitectureV3Version}
                   location={location}
-                  onLocationChange={(nextLocation) => {
-                    setLocation(nextLocation);
-                    setManualLocation(nextLocation.label);
-                    setHasLocationPreference(true);
-                  }}
                   onGeneratedContentRequest={requestCalendarContent}
                   onOpenTransit={openCalendarTransitDetail}
+                  onSignIn={() => {
+                    signInDestinationRef.current = "calendar";
+                    setAccountIntent("login", { loginHeadline: "Sign in to save your journal entry..." });
+                    navigateToPortalMode("profile");
+                  }}
                   showJournalPrompts={journalPromptsEnabled}
+                  natalMoonSign={userProfile?.moon && userProfile.moon !== "Moon pending" ? userProfile.moon : undefined}
+                  natalSunSign={userProfile?.sun && userProfile.sun !== "Sun pending" ? userProfile.sun : undefined}
                 />
               )}
               {mode === "learn" && (
@@ -14813,6 +14837,7 @@ export function App() {
                     <FeatureLoadingFallback message="Loading your profile" />
                   ) : userProfile && !studioReturnPath && !signInRequested ? (
                     <ProfileView
+                      onInitialPaint={markYouPagePainted}
                       accountId={remoteAccountId}
                       accountRecovery={{
                         error: authAccountError,
@@ -14827,13 +14852,13 @@ export function App() {
                       profileHandle={ownSocialProfile?.handle}
                       targetDate={skyDate}
                       transitForm={transitForm}
-                      transitItems={selectedDateTransits}
-                      currentSky={selectedDateSky}
-                      currentSkyLoading={!selectedDateSky && skyStatus !== "error"}
-                      natalSky={profileNatalSky}
-                      natalCalculationStatus={profileNatalCalculationStatus}
+                      transitItems={youDetailsReady ? selectedDateTransits : []}
+                      currentSky={youDetailsReady ? selectedDateSky : null}
+                      currentSkyLoading={!youDetailsReady || !selectedDateSky && skyStatus !== "error"}
+                      natalSky={youDetailsReady ? profileNatalSky : null}
+                      natalCalculationStatus={youDetailsReady ? profileNatalCalculationStatus : "loading"}
                       natalCalculationError={profileNatalCalculationError}
-                      natalAspectPatternLoadStatus={profileNatalAspectPatternStatus}
+                      natalAspectPatternLoadStatus={youDetailsReady ? profileNatalAspectPatternStatus : "loading"}
                       personalTiming={personalTiming}
                       personalTimingGenerated={personalTimingGenerated}
                       personalTimingGeneratedStatus={personalTimingGeneratedStatus}
@@ -14857,6 +14882,7 @@ export function App() {
                         hasPendingInvitation={pendingInvitationForSignup}
                         initialForm={defaultSignupForm}
                         initialMode={accountIntent}
+                        loginHeadline={loginHeadline ?? undefined}
                         onAuthenticated={({ account, form, isNewAccount, provider }) => {
                           setAccountIntent("create");
                           setUserProfile((current) => !isNewAccount && current?.id === account.id
@@ -16128,7 +16154,13 @@ function SkyCards({
       sign: event.sign,
       isToday: eventIsToday,
       countdown: lunationCountdownLabel(selectedDate, eventDate, sky.location.timeZone).toLowerCase()
-    } : undefined
+    } : undefined,
+    ...calendarSeasonTransitionFactsFromSun({
+      sunSign: sun?.sign,
+      transitEnd: sun?.transitEnd,
+      asOf: sky.generatedAt,
+      timeZone
+    })
   };
 
   return (
@@ -17046,6 +17078,7 @@ function TransitDetail({ transit, form }: { transit: TransitItem; form: TransitF
 
 
 function ProfileView({
+  onInitialPaint,
   accountId,
   accountRecovery,
   transitionPage,
@@ -17073,6 +17106,7 @@ function ProfileView({
   onCreateChart,
   generatedContent
 }: {
+  onInitialPaint: () => void;
   accountId: string | null;
   accountRecovery: YouAccountRecovery;
   transitionPage: ReturnType<typeof usePageTransition>;
@@ -17100,6 +17134,17 @@ function ProfileView({
   onCreateChart: () => void;
   generatedContent: GeneratedContentMap;
 }) {
+  useEffect(() => {
+    let secondFrame = 0;
+    const firstFrame = window.requestAnimationFrame(() => {
+      secondFrame = window.requestAnimationFrame(onInitialPaint);
+    });
+    return () => {
+      window.cancelAnimationFrame(firstFrame);
+      window.cancelAnimationFrame(secondFrame);
+    };
+  }, [onInitialPaint]);
+
   const [transitArticle, setTransitArticle] = useState<YouTransitArticle | null>(null);
 
   useEffect(() => {

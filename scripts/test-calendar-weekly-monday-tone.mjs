@@ -62,13 +62,13 @@ for (const sign of signs) {
 
 assert.match(
   ephemerisSource,
-  /const daysSinceMonday = weekdayIndex === 0 \? 6 : Math\.max\(0, weekdayIndex - 1\);/u,
-  "The seven-day Calendar range must begin on Monday."
+  /const daysSinceSunday = Math\.max\(0, weekdayIndex\);/u,
+  "The seven-day Calendar range must begin on Sunday."
 );
 assert.match(
   calendarSource,
-  /const daysSinceMonday = weekday === 0 \? 6 : weekday - 1;/u,
-  "Calendar cache and same-week navigation must use the Monday boundary."
+  /const daysSinceSunday = weekday;/u,
+  "Calendar cache and same-week navigation must use the Sunday boundary."
 );
 
 assert.match(
@@ -88,8 +88,8 @@ assert.doesNotMatch(
 );
 assert.match(
   calendarSource,
-  /generated\/calendar-moon-continuation\/\$\{day\.dateKey\}/u,
-  "A repeated-sign day must render a factual continuation instead of an empty card."
+  /calendarMoonCycleFallbackPiece|resolveCalendarMoonFallback/u,
+  "A repeated-sign day must render cycle-context fallback copy instead of an empty card."
 );
 assert.match(
   serviceSource,
@@ -98,7 +98,7 @@ assert.match(
 );
 assert.match(
   calendarSource,
-  /<section className="lunar-weekly-days" aria-label=\{`Day-by-day astrology for \$\{weeklyRangeLabel\}`\}>/u,
+  /<CalendarDayGroupList label=\{`Day-by-day astrology for \$\{weeklyRangeLabel\}`\}>/u,
   "Week view must lead directly with the day navigation and daily astrology."
 );
 assert.match(
@@ -108,7 +108,7 @@ assert.match(
 );
 assert.match(
   calendarSource,
-  /className="lunar-calendar-event-pill__label">VoC \{voidLabel\}<\/span>/u,
+  /className="calendar-month-chip calendar-month-voc calendar-kind calendar-kind--void"[\s\S]*?\{voidLabel \? <span className="calendar-month-chip__text">\{voidLabel\}<\/span> : null\}/u,
   "Month cells must show the operative Void-of-Course time instead of an unexplained label."
 );
 assert.match(
@@ -147,7 +147,7 @@ assert.doesNotMatch(
 );
 assert.match(
   calendarSource,
-  /const selectedPackageWeeklyMoon = selectedDay[\s\S]*?renderWeeklyMoon\(\{[\s\S]*?sign: slugContentPart\(selectedDay\.moonSign\)/u,
+  /const selectedPackageWeeklyMoon = selectedDay[\s\S]*?packagedWeeklyMoon\(\s*selectedDay/u,
   "Day view must continue resolving the approved Moon-in-sign guidance after the duplicate weekly summary is removed."
 );
 assert.match(

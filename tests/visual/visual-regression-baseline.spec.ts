@@ -268,15 +268,15 @@ test.describe("visual regression baseline", () => {
       await expect(page.getByRole("link", { name: "Moon trines Lilith", exact: true }))
         .toBeVisible({ timeout: routeReadyTimeoutMs });
     });
-    await expect(page).toHaveScreenshot("client-sky-desktop-light.png", screenshotOptions);
+    await expect.soft(page).toHaveScreenshot("client-sky-desktop-light.png", screenshotOptions);
 
     await expectRouteLoadsWithin(page, "/#calendar", "client calendar desktop light", async () => {
       await expect(page.getByLabel("Selected lunar day")).toBeVisible({ timeout: routeReadyTimeoutMs });
-      await expect(page.locator(".lunar-selected-card__daily-event").first()).toBeVisible({
+      await expect(page.locator(".calendar-stoic-card").first()).toBeVisible({
         timeout: routeReadyTimeoutMs
       });
     });
-    await expect(page).toHaveScreenshot("client-calendar-desktop-light.png", screenshotOptions);
+    await expect.soft(page).toHaveScreenshot("client-calendar-desktop-light.png", screenshotOptions);
 
     await page.setViewportSize({ width: 390, height: 844 });
     await expectRouteLoadsWithin(page, "/#friends?tab=charts", "client friends mobile light", async () => {
@@ -286,7 +286,7 @@ test.describe("visual regression baseline", () => {
       await expect(page.getByLabel("Friend charts")).toBeVisible({ timeout: routeReadyTimeoutMs });
       await expect(page.getByText("Nikki")).toBeVisible({ timeout: routeReadyTimeoutMs });
     });
-    await expect(page).toHaveScreenshot("client-friends-mobile-light.png", screenshotOptions);
+    await expect.soft(page).toHaveScreenshot("client-friends-mobile-light.png", screenshotOptions);
     assertNoBrowserErrors();
   });
 
@@ -308,7 +308,7 @@ test.describe("visual regression baseline", () => {
     await expect(initialLoading).toHaveText("Loading the sky…");
     await expect(page.getByLabel("Daily sky summary")).not.toBeVisible();
     await page.screenshot({ path: test.info().outputPath("sky-single-loading-desktop-dark.png"), animations: "disabled" });
-    await expect(page).toHaveScreenshot("client-sky-desktop-dark.png", screenshotOptions);
+    await expect.soft(page).toHaveScreenshot("client-sky-desktop-dark.png", screenshotOptions);
     await page.evaluate(() => (window as any).__releaseVisualSkyLoading());
     await expect(page.getByRole("button", { name: "Read more about Sun in Cancer", exact: true })).toBeVisible({ timeout: routeReadyTimeoutMs });
     await expect(initialLoading).toHaveCount(0);
@@ -316,7 +316,18 @@ test.describe("visual regression baseline", () => {
     await expectRouteLoadsWithin(page, "/#calendar", "client calendar desktop dark", async () => {
       await expect(page.getByLabel("Selected lunar day")).toBeVisible({ timeout: routeReadyTimeoutMs });
     });
-    await expect(page).toHaveScreenshot("client-calendar-desktop-dark.png", screenshotOptions);
+    for (const selector of [".segmented-control__item--active", ".calendar-sky-card__today", ".lunar-week-day__date.is-new-disc"]) {
+      const contrast = await page.locator(selector).first().evaluate(element => {
+        const style = getComputedStyle(element);
+        const luminance = (color: string) => color.match(/[\d.]+/g)!.slice(0, 3).map(Number)
+          .map(value => value / 255).reduce((sum, value, index) => sum +
+            (value <= .04045 ? value / 12.92 : ((value + .055) / 1.055) ** 2.4) * [.2126, .7152, .0722][index], 0);
+        const [low, high] = [luminance(style.color), luminance(style.backgroundColor)].sort((a, b) => a - b);
+        return (high + .05) / (low + .05);
+      });
+      expect(contrast, `${selector} must remain readable in dark mode`).toBeGreaterThanOrEqual(4.5);
+    }
+    await expect.soft(page).toHaveScreenshot("client-calendar-desktop-dark.png", screenshotOptions);
     assertNoBrowserErrors();
   });
 

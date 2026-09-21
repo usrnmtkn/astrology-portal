@@ -5,6 +5,7 @@ import type { LunarCalendarEvent } from "../services/ephemeris";
 import type { LiveGeneratedContent } from "../services/generatedContent";
 import type { SkyPlacementContentStatus } from "../features/sky/skyPlacementContentState";
 import "../styles/lunar-calendar.css";
+import "../styles/calendar-subscribe.css";
 
 const LunarCalendar = lazy(() =>
   import("../features/calendar/LunarCalendar").then((module) => ({
@@ -20,10 +21,12 @@ type CalendarRouteProps = {
   skyPlacementContentStatus?: SkyPlacementContentStatus;
   contentVersion?: number;
   location: LocationInput;
-  onLocationChange: (location: LocationInput) => void;
   onGeneratedContentRequest?: (request: { cacheKey: string; contentKeys: string[] }) => void;
   onOpenTransit?: (event: LunarCalendarEvent, description?: string) => void;
+  onSignIn?: () => void;
   showJournalPrompts?: boolean;
+  natalSunSign?: string | null;
+  natalMoonSign?: string | null;
 };
 
 export function CalendarRoute({
@@ -34,10 +37,12 @@ export function CalendarRoute({
   skyPlacementContentStatus,
   contentVersion,
   location,
-  onLocationChange,
   onGeneratedContentRequest,
   onOpenTransit,
-  showJournalPrompts = true
+  onSignIn,
+  showJournalPrompts = true,
+  natalSunSign,
+  natalMoonSign
 }: CalendarRouteProps) {
   return (
     <Suspense fallback={fallback}>
@@ -48,10 +53,12 @@ export function CalendarRoute({
         skyPlacementContentStatus={skyPlacementContentStatus}
         contentVersion={contentVersion}
         location={location}
-        onLocationChange={onLocationChange}
         onGeneratedContentRequest={onGeneratedContentRequest}
         onOpenTransit={onOpenTransit}
+        onSignIn={onSignIn}
         showJournalPrompts={showJournalPrompts}
+        natalSunSign={natalSunSign}
+        natalMoonSign={natalMoonSign}
       />
     </Suspense>
   );

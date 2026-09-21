@@ -16,6 +16,12 @@ export function currentSkySummaryWording(key: string, body: string): string {
   // the Sun. Upgrade only the former built-in template saved by older editors.
   if (part === "assembly/openingSameSign" && body.trim() === "The {sunName} in {sunSign}{sunDegree} {sunSummary}, while the {moonName} there{moonDegree} {moonSummary}.") return assembly.openingSameSign;
   const assemblyName = part.replace(/^assembly\//u, "") as keyof typeof legacyAssembly;
+  if (part === "assembly/layout" && [
+    "{openingSentence} {voidSentence}\n\n{ingressesSentence} {stationsSentence}\n\n{exactAspectsSentence}\n\n{currentRetrogradesSentence}\n\n{lunationSentence}",
+    "{openingSentence} {voidSentence}\n\n{seasonTransitionSentence}\n\n{ingressesSentence} {stationsSentence}\n\n{exactAspectsSentence}\n\n{currentRetrogradesSentence}\n\n{lunationSentence}"
+  ].includes(body.trim())) {
+    return assembly.layout;
+  }
   if (part.startsWith("assembly/") && body.trim() === legacyAssembly[assemblyName]) return assembly[assemblyName];
   const previous = clauses.provenance.previousClauses[part as keyof typeof clauses.provenance.previousClauses];
   if (previous && body.trim() === previous) {
@@ -32,7 +38,9 @@ export const skyIngressSummaryFields: SkySummaryField[] = skyIngressBodies.flatM
 const timingLabels: Record<string, string> = {
   retrograde: "Multiple retrograde planets", singleRetrograde: "One retrograde planet", noRetrogrades: "No retrograde planets",
   voidRemaining: "Void of course with remaining time", voidWithoutTiming: "Void of course without remaining time",
-  lunation: "Next New Moon, Full Moon, or eclipse", fullMoonMeaning: "Full Moon explanation"
+  lunation: "Next New Moon, Full Moon, or eclipse",
+  seasonTransition: "Zodiac season change",
+  fullMoonMeaning: "Full Moon explanation"
 };
 export const skyAssemblyFields: SkySummaryField[] = Object.entries(assembly).map(([name, body]) => ({
   key: `cms/sky-daily-summary/assembly/${name}`,
@@ -58,7 +66,7 @@ export const skyDailySummaryFields: SkySummaryField[] = [
     key: `cms/sky-daily-summary/${key}`, label, group: "Timing and retrogrades",
     body: timing[key as keyof typeof timing] as string,
     readerEnabled: !["noRetrogrades", "fullMoonMeaning"].includes(key),
-    allowedSlots: key === "retrograde" ? ["count"] : key === "voidRemaining" ? ["remaining"] : key === "lunation" ? ["name", "sign", "countdown"] : []
+    allowedSlots: key === "retrograde" ? ["count"] : key === "voidRemaining" ? ["remaining"] : key === "lunation" ? ["name", "sign", "countdown"] : key === "seasonTransition" ? ["seasonName", "countdown", "nextSunSign", "seasonEndDate"] : []
   }))
 ];
 

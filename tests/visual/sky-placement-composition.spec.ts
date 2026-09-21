@@ -4,6 +4,7 @@ import { contentLiveStatuses, servingPackageRecords } from "../../api/_lib/conte
 import { skyPlacementAssembly, skyPlacementAssemblyFields } from "../../apps/admin/src/skyPlacementAssembly";
 import { skyFallbackWorkspace } from "../../apps/admin/src/skyFallbackWorkspace";
 import { renderSkyV4ReaderRoute, renderSkyV4ContinuousPreview } from "../../apps/web/src/content/fallbackArchitectureV3/resolver/skyPlacementV4Canonical.mjs";
+const requestedKeys = (url: URL) => [...url.searchParams.getAll("contentKeys").flatMap(value => value.split(",")), url.searchParams.get("contentKey") ?? ""].filter(Boolean);
 const virtual = (key: string) => {
  const source = skyPlacementSourceRecords.get(key) ?? servingPackageRecords.get(key);
  return source ? { id: `package:${key}`, content_key: key, surface: "sky", mode: "in_depth", status: "DRAFT", lane: "reference", provider: "tldrastro-fallback-architecture-v3", headline: source.headline, summary: source.summary, body: source.body_you, sections: { packageRecord: source }, facts: { fallbackArchitectureV3: true }, source_snapshot: { sourcePackage: source.source_package, content_role: source.content_role }, block_type: "fallback_hook", event_type: "fallback-hook", package_starter: true } : null;
@@ -20,8 +21,8 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
     const input = route.request().postDataJSON();
     data.statuses = contentLiveStatuses((input.ids ?? []).map((id: string) => virtual(id.replace(/^package:/, ""))).filter(Boolean));
    }
-   if (url.pathname.endsWith("/generated-content")) {
-    data.rows = (url.searchParams.get("contentKeys") ?? "authored/transit-aspect/saturn/ascendant/hard,authored/transit-aspect/saturn/ascendant/soft").split(",").map(virtual).filter(Boolean);
+   if (url.pathname.endsWith("/generated-content") || url.pathname.endsWith("/generated-content-inventory")) {
+    data.rows = (url.searchParams.has("contentKeys") || url.searchParams.has("contentKey") ? requestedKeys(url) : ["authored/transit-aspect/saturn/ascendant/hard", "authored/transit-aspect/saturn/ascendant/soft"]).map(virtual).filter(Boolean);
    }
    await route.fulfill({ json: data });
   });
@@ -104,12 +105,15 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
   await articleField.fill(skyPlacementSourceRecords.get("sky-placement/article/saturn/aries")!.placementArticle);
   await related.getByLabel("Find an aspect passage", { exact: true }).fill("no matching passage");
   await expect(related.getByText("No aspect passages match this search.", { exact: true })).toBeVisible();
-  // Editing the shared placement writing opened a different row, so the close
-  // control is the named way back to the retrograde source it came from.
+  // The editor names the related retrograde source directly.
   page.once("dialog", dialog => dialog.accept());
-  await page.getByRole("dialog").getByRole("button", { name: /^Back to / }).click();
+  await sourceEditor.getByRole("button", { name: "Edit retrograde writing", exact: true }).click();
   await expect(sourceEditor.getByRole("textbox", { name: "Fallback field Retrograde body", exact: true })).toBeVisible();
-  await page.getByRole("dialog").getByRole("button", { name: "Close", exact: true }).click();
+  await sourceEditor.getByRole("button", { name: "Back to Saturn in Aries", exact: true }).click();
+  await expect(sourceEditor.getByRole("heading", { level: 2 })).toHaveText("Edit Saturn in Aries");
+  page.once("dialog", dialog => dialog.accept());
+  await sourceEditor.getByRole("button", { name: "Close", exact: true }).click();
+  await expect(sourceEditor).toHaveCount(0);
   await map.getByLabel("Placement writing path").selectOption("article");
   await map.screenshot({ path: `test-results/saturn-map-${width}-${theme}.png` });
   await map.getByRole("button", { name: "Edit placement article", exact: true }).click();
@@ -140,7 +144,7 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
  });
 }
 
-test("an open Saturn editor survives initial and extended inventory loading", async ({ page }) => {
+test("Saturn waits for initial inventory and preserves an open editor during extended loading", async ({ page }) => {
  let releaseInitial!: () => void;
  let releaseExtended!: () => void;
  let extendedStarted!: () => void;
@@ -155,18 +159,21 @@ test("an open Saturn editor survives initial and extended inventory loading", as
    const input = route.request().postDataJSON();
    data.statuses = contentLiveStatuses((input.ids ?? []).map((id: string) => virtual(id.replace(/^package:/, ""))).filter(Boolean));
   }
-  if (url.pathname.endsWith("/generated-content")) {
-   if (url.searchParams.has("contentKeys")) data.rows = url.searchParams.get("contentKeys")!.split(",").map(virtual).filter(Boolean);
-   else if (url.searchParams.get("visibility") === "editorial") {
-    if (url.searchParams.has("cursor")) await initial;
-    else { data.rows = [{ ...virtual("sky-placement/article/saturn/aries"), id: "inventory-fixture", content_key: "fixture/other", headline: "Other inventory row" }]; data.nextCursor = "pending-inventory"; }
+  if (url.pathname.endsWith("/generated-content") || url.pathname.endsWith("/generated-content-inventory")) {
+   if (url.searchParams.has("contentKeys") || url.searchParams.has("contentKey")) data.rows = requestedKeys(url).map(virtual).filter(Boolean);
+   else if (url.searchParams.has("cursor")) { extendedStarted(); await extended; }
+   else {
+    await initial;
+    data.rows = [{ ...virtual("sky-placement/article/saturn/aries"), id: "inventory-fixture", content_key: "fixture/other", headline: "Other inventory row" }];
+    data.nextCursor = "pending-inventory";
    }
-   else { extendedStarted(); await extended; }
   }
   await route.fulfill({ json: data });
  });
  try {
   await page.goto("/#sky-writeups");
+  await expect(page.locator(".admin-loaded-workspace")).toBeHidden();
+  releaseInitial();
   await page.getByLabel("Sky placement planet or point").selectOption("saturn");
   await page.getByLabel("Sky placement zodiac sign").selectOption("aries");
   await page.getByLabel("Sky write-up motion").selectOption("retrograde");
@@ -177,7 +184,6 @@ test("an open Saturn editor survives initial and extended inventory loading", as
   await editor.getByRole("textbox", { name: "Fallback field Placement article", exact: true }).fill("Unsaved writing stays in this editor.");
   await expect(editor.getByRole("button", { name: "Save & publish", exact: true })).toBeEnabled();
   await expect(editor.getByRole("button", { name: "Close", exact: true })).toBeEnabled();
-  releaseInitial();
   await started;
   await expect(editor.getByRole("heading", { name: "Edit Saturn in Aries", exact: true })).toBeVisible();
   await expect(editor.getByRole("textbox", { name: "Fallback field Placement article", exact: true })).toHaveValue("Unsaved writing stays in this editor.");
@@ -220,9 +226,9 @@ test("retrograde editor saves two revisions to its own source and preserves the 
  await page.route("**/api/admin/**", async route => {
   const url = new URL(route.request().url());
   let data: any = { ok: true, rows: [], statuses: [], nextCursor: null };
-  if (url.pathname.endsWith("/generated-content")) {
+  if (url.pathname.endsWith("/generated-content") || url.pathname.endsWith("/generated-content-inventory")) {
    if (route.request().method() === "GET") data.rows = saved && url.searchParams.get("id") === saved.id
-     ? [saved] : (url.searchParams.get("contentKeys") ?? "").split(",").map(k => k === key && saved ? saved : virtual(k)).filter(Boolean);
+     ? [saved] : requestedKeys(url).map(k => k === key && saved ? saved : virtual(k)).filter(Boolean);
    else {
     const input = route.request().postDataJSON(); writes.push(input);
     if (input.ownerAction) {
@@ -270,9 +276,9 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
   await page.route("**/api/admin/**", async route => {
    const url = new URL(route.request().url());
    const data: any = { ok: true, rows: [], statuses: [], nextCursor: null };
-   if (url.pathname.endsWith("/generated-content")) {
+   if (url.pathname.endsWith("/generated-content") || url.pathname.endsWith("/generated-content-inventory")) {
     if (route.request().method() === "GET") data.rows = saved && url.searchParams.get("id") === saved.id
-     ? [saved] : (url.searchParams.get("contentKeys") ?? "").split(",").map(k => k === key && saved ? saved : virtual(k)).filter(Boolean);
+     ? [saved] : requestedKeys(url).map(k => k === key && saved ? saved : virtual(k)).filter(Boolean);
     else {
      const input = route.request().postDataJSON(); version++;
      saved = input.ownerAction
@@ -348,10 +354,10 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
   await page.route("**/api/admin/**", async route => {
    const url = new URL(route.request().url());
    const data: any = { ok: true, rows: [], statuses: [], nextCursor: null };
-   if (url.pathname.endsWith("/generated-content")) {
+   if (url.pathname.endsWith("/generated-content") || url.pathname.endsWith("/generated-content-inventory")) {
     if (route.request().method() === "GET") data.rows = url.searchParams.has("id")
       ? [...saved.values()].filter(row => row.id === url.searchParams.get("id"))
-      : (url.searchParams.get("contentKeys") ?? "").split(",").map(key => saved.get(key) ?? virtual(key)).filter(Boolean);
+      : requestedKeys(url).map(key => saved.get(key) ?? virtual(key)).filter(Boolean);
     else {
      const input = route.request().postDataJSON();
      const current = [...saved.values()].find(row => row.id === input.id);
@@ -409,6 +415,7 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
    await editor.getByRole("button", { name: "Save & publish", exact: true }).click();
    await expect.poll(() => saved.get(key)?.sections.packageRecord.Copy).toBe(revision);
    expect(saved.get(key).sections.packageRecord.ContentKey).toBe(key);
+   await page.getByRole("button", { name: "Dismiss notification", exact: true }).click();
    await editor.getByRole("button", { name: "Close", exact: true }).click();
    await actions.getByRole("button", { name: "Open seasonal context copy editor", exact: true }).click();
    await expect(copy).toHaveValue(revision);

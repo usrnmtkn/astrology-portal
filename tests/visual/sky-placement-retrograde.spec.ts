@@ -152,21 +152,26 @@ for (const [theme, width] of [["light", 1440], ["dark", 390]] as const) {
     await page.reload();
     await expect(page.locator("#sky-detail-title")).toHaveText("Moon Trine Neptune Rx", { timeout: 60_000 });
     await expect(page.locator(".sky-detail-id .article-duration")).toHaveText(/Exact · September 7, 2026/);
-    await page.goto("/?date=2026-09-12#calendar");
+    await page.goto("/?date=2026-09-12#calendar?view=day");
     await page.getByRole("button", { name: /^Saturday, September 12\./ }).click();
-    const title = page.getByRole("button", { name: "Mercury trines Pluto Rx", exact: true }).first();
+    const title = page.locator(".calendar-day-events").getByRole("button", { name: /Mercury(?: Rx)? trines Pluto(?: Rx)?/i });
     await expect(title).toBeVisible({ timeout: 60_000 });
-    await expect(title.locator(".lunar-selected-card__daily-event-glyph")).toContainText("℞");
-    const typography = await title.evaluate(el => { const s=getComputedStyle(el); return { family:s.fontFamily, size:s.fontSize, weight:s.fontWeight, line:s.lineHeight, spacing:s.letterSpacing, margin:s.margin, casing:s.textTransform }; });
-    const directTitle = page.locator(".lunar-selected-card__daily-event.event-station").first();
-    await expect(directTitle).toBeVisible();
-    expect(await directTitle.evaluate(el => { const s=getComputedStyle(el); return { family:s.fontFamily, size:s.fontSize, weight:s.fontWeight, line:s.lineHeight, spacing:s.letterSpacing, margin:s.margin, casing:s.textTransform }; })).toEqual(typography);
+    await expect(title).toContainText(/Rx|℞/);
+    const typography = await title.locator("strong").evaluate(el => { const s=getComputedStyle(el); return { family:s.fontFamily, size:s.fontSize, weight:s.fontWeight, line:s.lineHeight, spacing:s.letterSpacing, margin:s.margin, casing:s.textTransform }; });
+    // The station belongs to Thursday; Day shows only the selected day's events.
+    await page.getByRole("button", { name: /^Thursday, September 10\./ }).click();
+    const stationTitle = page.locator(".calendar-day-events").getByRole("button", { name: /stations/i }).first();
+    await expect(stationTitle).toBeVisible();
+    expect(await stationTitle.locator("strong").evaluate(el => { const s=getComputedStyle(el); return { family:s.fontFamily, size:s.fontSize, weight:s.fontWeight, line:s.lineHeight, spacing:s.letterSpacing, margin:s.margin, casing:s.textTransform }; })).toEqual(typography);
+    await page.getByRole("button", { name: /^Saturday, September 12\./ }).click();
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
     await page.screenshot({ path: `test-results/sky-retrograde/calendar-${theme}-${width}.png`, fullPage: true });
     await title.click();
-    await expect(page.locator("#sky-detail-title")).toHaveText("Mercury Trine Pluto Rx");
+    const reading = page.getByRole("dialog", { name: "Event detail" });
+    await expect(reading).toBeVisible();
+    await expect(reading).toContainText(/Mercury(?: Rx)? trines Pluto(?: Rx)?/i);
     await page.reload();
-    await expect(page.locator("#sky-detail-title")).toHaveText("Mercury Trine Pluto Rx", { timeout: 60_000 });
+    await expect(page.locator(".calendar-day-events").getByRole("button", { name: /Mercury(?: Rx)? trines Pluto(?: Rx)?/i })).toBeVisible({ timeout: 60_000 });
   });
 }
 

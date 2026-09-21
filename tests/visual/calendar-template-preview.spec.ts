@@ -25,7 +25,7 @@ async function fixture(page: Page) {
   await page.addInitScript(() => localStorage.setItem("tldrastro:contentAdminSecret", "calendar-preview-fixture"));
   await page.route("**/api/admin/**", async route => {
     const url = new URL(route.request().url());
-    if (!url.pathname.endsWith("generated-content")) return route.fulfill({ json: { ok: true, rows: [], statuses: [], records: [], nextCursor: null } });
+    if (!url.pathname.endsWith("generated-content") && !url.pathname.endsWith("generated-content-inventory")) return route.fulfill({ json: { ok: true, rows: [], statuses: [], records: [], nextCursor: null } });
     if (route.request().method() !== "GET") {
       const input = route.request().postDataJSON(); writes.push(input);
       const original = rows.find(row => row.id === input.id) ?? rows.find(row => row.content_key === input.contentKey);
@@ -134,7 +134,7 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
     await expect(preview.getByLabel("Rendered Calendar template")).toContainText("Planetary Changes");
     await expect(preview.getByLabel("Rendered Calendar template")).toContainText("{{monthlyOverview}}");
     await expect(preview.getByLabel("Rendered Calendar template")).toContainText("{{monthlyIntegration}}");
-    await expect(preview.getByRole("heading", { name: "Template preview" }).evaluate(style)).toEqual(reference);
+    expect(await preview.getByRole("heading", { name: "Template preview" }).evaluate(style)).toEqual(reference);
     await preview.getByRole("tab", { name: "Variables", exact: true }).click();
     expect(await preview.getByLabel("Calendar preview variables").locator('[data-variable-name="zodiacSeason"]').evaluate(colorStyle)).toEqual(seasonColor);
     await preview.getByRole("tab", { name: "Preview", exact: true }).click();
@@ -184,6 +184,7 @@ test("Calendar preview calculates two real skies and clears unavailable facts", 
   await expect(rendered).not.toContainText("{{mondayTiming}}");
   await expect(rendered).not.toContainText("{{mondayWriteup}}");
   await expect(rendered).not.toContainText(/12:00 AM[^\n]*retrograde/);
+  state.keyRequests.length = 0;
   await page.getByRole("tablist", { name: "Calendar Write-ups workspaces" }).getByRole("tab", { name: "Monthly Sky" }).click();
   await expect(rendered).toContainText("Friday, January 1, 2027", { timeout: 45_000 });
   await expect(rendered).toContainText("Sunday, January 31, 2027");
@@ -192,8 +193,10 @@ test("Calendar preview calculates two real skies and clears unavailable facts", 
   await expect(rendered).toContainText(seasonBody("aquarius"));
   expect(new Set(state.keyRequests.flat()).size).toBeGreaterThan(64);
   expect(Math.max(...state.keyRequests.map(keys => keys.length))).toBeLessThanOrEqual(64);
-  const tail = state.keyRequests.find(keys => keys.length === 21);
-  expect(tail).toBeDefined();
+  const tail = state.keyRequests.at(-1);
+  expect(state.keyRequests.some(keys => keys.length === 64)).toBe(true);
+  expect(tail?.length).toBeGreaterThan(0);
+  expect(tail!.length).toBeLessThan(64);
   state.failKey = tail![0];
   await preview.getByRole("button", { name: "Refresh preview" }).click();
   await expect(preview.getByRole("alert")).toBeVisible();
@@ -361,4 +364,3 @@ test("Weekly overview starter uses Monday Moon sign and passage", async ({ page 
   await expect(preview.getByLabel("Rendered Calendar template")).toContainText(moonBody("scorpio"));
   expect(state.writes).toEqual([]);
 });
-

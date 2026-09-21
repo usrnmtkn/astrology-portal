@@ -7044,12 +7044,12 @@
       "contentKey": "fallback-hook/moon-phase/waxing-crescent",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "The seed tests the soil. Take the first visible action on what you planted, however minor it looks.",
-      "body_they": "The seed tests the soil. Take the first visible action on what you planted, however minor it looks.",
+      "body_you": "Take one small step toward something you've been planning, such as sending the message or starting the draft. It doesn't have to look impressive; trying it gives you a chance to see what works and what needs adjusting.",
+      "body_they": "Take one small step toward something you've been planning, such as sending the message or starting the draft. It doesn't have to look impressive; trying it gives you a chance to see what works and what needs adjusting.",
       "title": "The First Step",
       "review_status": "approved",
-      "notes": "Calendar: lunar phase copy (replaces legacy sidebar phase copy). {{signTitle}} = the sign of the cycle's New Moon. RatM canon: plant at New Moon, harvest at Full, release with the waning Moon.",
-      "approved_via": "owner sign-off, chat 2026-07-22"
+      "notes": "Calendar: lunar phase copy (replaces legacy sidebar phase copy). Owner replacement 2026-09-20; New Moon leftover uses calendarWaxingCrescentAfterNewMoonCopy.",
+      "approved_via": "owner chat 2026-09-20, leftover waxing-crescent replacement"
     },
     {
       "contentKey": "fallback-hook/moon-phase/first-quarter",

@@ -90,11 +90,11 @@ test("House Transit failed inventory offers retry, then distinguishes confirmed 
   });
   await page.goto(housePath);
   const finder = page.getByRole("region", { name: "House Transits source finder" });
-  await expect(finder.getByRole("alert")).toContainText("Fixture inventory unavailable");
-  await expect(finder).not.toContainText(/Source passage required|Missing:|No saved passage/);
+  await expect(page.getByRole("alert")).toContainText("Fixture inventory unavailable");
+  await expect(page.locator(".admin-main")).not.toContainText(/Source passage required|Missing:|No saved passage/);
   fail = false;
-  await finder.getByRole("button", { name: "Retry", exact: true }).click();
+  await page.getByRole("button", { name: "Retry", exact: true }).click();
   await expect(finder.getByText("Source passage required", { exact: true })).toBeVisible();
   await expect(finder).toContainText("Missing: Sun through the 1st house, Sun in Aries through the 1st house");
-  await expect(finder.getByRole("alert")).toHaveCount(0);
+  await expect(page.getByRole("alert")).toHaveCount(0);
 });

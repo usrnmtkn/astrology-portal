@@ -1,5 +1,6 @@
-import { ChevronRight, Download, Trash2, X } from "lucide-react";
+import { BookOpen, ChevronRight, Download, Trash2, X } from "lucide-react";
 import { useEffect, useState, type FormEvent } from "react";
+import { AccountJournal } from "./AccountJournal";
 import type { UserProfile } from "../../App";
 import { ModalPortal } from "../../components/ModalPortal";
 import { ProfileAvatar } from "../../components/ProfileAvatar";
@@ -11,6 +12,10 @@ import {
   verifyPhoneNumberChange,
   verifyPhoneSignInCode
 } from "../../services/auth";
+import {
+  deleteAllCalendarCheckInData,
+  exportCalendarCheckInBundle
+} from "../../services/calendarCheckIns";
 import { birthTimeInputMessage, normalizeBirthTime } from "../../services/chartTime";
 import {
   formatUsPhoneInput,
@@ -74,10 +79,12 @@ export function AccountView({
   const [handleStatus, setHandleStatus] = useState<"loading" | "ready" | "saving" | "unavailable">("loading");
   const [handleEditing, setHandleEditing] = useState(false);
   const [handleMessage, setHandleMessage] = useState("");
-  const [accountActionStatus, setAccountActionStatus] = useState<"idle" | "exporting" | "deleting">("idle");
+  const [accountActionStatus, setAccountActionStatus] = useState<"idle" | "exporting" | "erasing" | "deleting">("idle");
   const [accountActionMessage, setAccountActionMessage] = useState("");
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [deleteConfirmation, setDeleteConfirmation] = useState("");
+  const [eraseDialogOpen, setEraseDialogOpen] = useState(false);
+  const [eraseConfirmation, setEraseConfirmation] = useState("");
   const [phoneChangeOpen, setPhoneChangeOpen] = useState(false);
   const [phoneChangeStep, setPhoneChangeStep] = useState<"current-code" | "new-number" | "new-code" | "success">("current-code");
   const [phoneChangeStatus, setPhoneChangeStatus] = useState<"idle" | "loading">("idle");
@@ -87,6 +94,7 @@ export function AccountView({
   const [newPhoneCode, setNewPhoneCode] = useState("");
   const [phoneChangeDestination, setPhoneChangeDestination] = useState("");
   const [phoneChangeResendSeconds, setPhoneChangeResendSeconds] = useState(0);
+  const [journalOpen, setJournalOpen] = useState(false);
 
   useEffect(() => {
     setDraftBirthDate(savedBirthDate);
@@ -215,7 +223,14 @@ export function AccountView({
     setAccountActionMessage("");
 
     try {
-      const social = await exportSocialAccountBundle();
+      const [social, calendar] = await Promise.all([
+        exportSocialAccountBundle(),
+        exportCalendarCheckInBundle().catch(() => ({
+          checkIns: [],
+          tags: [] as string[],
+          people: [] as string[]
+        }))
+      ]);
       const exportPayload = {
         exportedAt: new Date().toISOString(),
         account: {
@@ -225,7 +240,8 @@ export function AccountView({
           provider: profile.provider
         },
         profile,
-        social
+        social,
+        calendar
       };
       const blob = new Blob([JSON.stringify(exportPayload, null, 2)], {
         type: "application/json"
@@ -242,6 +258,26 @@ export function AccountView({
       setAccountActionMessage("Your account export was downloaded.");
     } catch (error) {
       setAccountActionMessage(error instanceof Error ? error.message : "Could not export your account.");
+    } finally {
+      setAccountActionStatus("idle");
+    }
+  };
+
+  const eraseCheckInData = async () => {
+    if (eraseConfirmation !== "ERASE") {
+      return;
+    }
+
+    setAccountActionStatus("erasing");
+    setAccountActionMessage("");
+
+    try {
+      await deleteAllCalendarCheckInData();
+      setEraseDialogOpen(false);
+      setEraseConfirmation("");
+      setAccountActionMessage("Your mood and journal entries were removed.");
+    } catch (error) {
+      setAccountActionMessage(error instanceof Error ? error.message : "Could not delete your check-ins.");
     } finally {
       setAccountActionStatus("idle");
     }
@@ -395,6 +431,10 @@ export function AccountView({
   const accountLoginSummary = profile.provider === "phone" && profilePhoneLastFour
     ? `Signed in with Phone ending in ${profilePhoneLastFour}`
     : profile.email || `Signed in with ${providerLabel(profile.provider)}`;
+
+  if (journalOpen) {
+    return <AccountJournal onBack={() => setJournalOpen(false)} />;
+  }
 
   return (
     <section className="account-page page-shell--narrow" aria-label="Account">
@@ -581,6 +621,27 @@ export function AccountView({
         </div>
       </section>
 
+      <section className="settings-group account-journal-group" aria-label="Journal">
+        <span className="settings-group-label">Journal</span>
+        <div className="settings-card">
+          <div className="settings-list">
+            <button
+              type="button"
+              className="settings-row settings-row-button account-data-action"
+              onClick={() => setJournalOpen(true)}
+            >
+              <span className="settings-row-copy">
+                <span className="settings-row-title">Open journal</span>
+                <small className="settings-row-description">
+                  Read and add mood and journal check-ins by day, week, or month.
+                </small>
+              </span>
+              <BookOpen size={19} aria-hidden="true" />
+            </button>
+          </div>
+        </div>
+      </section>
+
       <section className="settings-group account-data-group" aria-label="Account data">
         <span className="settings-group-label">Your data</span>
         <div className="settings-card">
@@ -594,10 +655,28 @@ export function AccountView({
               <span className="settings-row-copy">
                 <span className="settings-row-title">Export account</span>
                 <small className="settings-row-description">
-                  Download your profile, chart data, friendships, requests, and blocked accounts.
+                  Download your profile, chart data, mood and journal entries, friendships, requests, and blocked accounts.
                 </small>
               </span>
               <Download size={19} aria-hidden="true" />
+            </button>
+            <button
+              type="button"
+              className="settings-row settings-row-button account-data-action"
+              disabled={accountActionStatus !== "idle"}
+              onClick={() => {
+                setEraseConfirmation("");
+                setEraseDialogOpen(true);
+                setAccountActionMessage("");
+              }}
+            >
+              <span className="settings-row-copy">
+                <span className="settings-row-title">Erase check-ins</span>
+                <small className="settings-row-description">
+                  Permanently remove your mood and journal entries. Your account stays.
+                </small>
+              </span>
+              <Trash2 size={19} aria-hidden="true" />
             </button>
             <button
               type="button"
@@ -612,7 +691,7 @@ export function AccountView({
               <span className="settings-row-copy">
                 <span className="settings-row-title">Delete account</span>
                 <small className="settings-row-description">
-                  Permanently remove your account, profile, friendships, requests, and saved charts.
+                  Permanently remove your account, profile, mood and journal entries, friendships, requests, and saved charts.
                 </small>
               </span>
               <Trash2 size={19} aria-hidden="true" />
@@ -650,7 +729,7 @@ export function AccountView({
           <span className="eyebrow section-label">Permanent action</span>
           <h2 id="account-delete-title">Delete your TLDR Astro account?</h2>
           <p>
-            This permanently removes your profile, charts, friend connections, requests, blocks, and account login.
+            This permanently removes your profile, charts, mood and journal entries, friend connections, requests, blocks, and account login.
             This cannot be undone.
           </p>
           <label htmlFor="account-delete-confirmation">
@@ -679,6 +758,64 @@ export function AccountView({
               onClick={() => void deleteAccount()}
             >
               {accountActionStatus === "deleting" ? "Deleting…" : "Delete account"}
+            </button>
+          </div>
+        </ModalPortal>
+      )}
+
+      {eraseDialogOpen && (
+        <ModalPortal
+          closeOnBackdrop={accountActionStatus !== "erasing"}
+          onClose={() => {
+            if (accountActionStatus !== "erasing") {
+              setEraseDialogOpen(false);
+            }
+          }}
+          panelClassName="account-delete-modal"
+          titleId="account-erase-title"
+          width="min(500px, calc(100vw - 32px))"
+        >
+          <button
+            className="modal-close"
+            type="button"
+            aria-label="Close erase check-ins dialog"
+            disabled={accountActionStatus === "erasing"}
+            onClick={() => setEraseDialogOpen(false)}
+          >
+            <X size={20} aria-hidden="true" />
+          </button>
+          <span className="eyebrow section-label">Permanent action</span>
+          <h2 id="account-erase-title">Erase your mood and journal entries?</h2>
+          <p>
+            This permanently removes your calendar check-ins, including mood, rest, people, tags, and journal notes.
+            Your account stays. This cannot be undone.
+          </p>
+          <label htmlFor="account-erase-confirmation">
+            Type <strong>ERASE</strong> to confirm
+          </label>
+          <input
+            id="account-erase-confirmation"
+            value={eraseConfirmation}
+            onChange={(event) => setEraseConfirmation(event.target.value)}
+            autoComplete="off"
+            spellCheck={false}
+          />
+          <div className="account-delete-actions">
+            <button
+              type="button"
+              className="account-handle-cancel"
+              disabled={accountActionStatus === "erasing"}
+              onClick={() => setEraseDialogOpen(false)}
+            >
+              Keep entries
+            </button>
+            <button
+              type="button"
+              className="account-delete-confirm-button"
+              disabled={eraseConfirmation !== "ERASE" || accountActionStatus === "erasing"}
+              onClick={() => void eraseCheckInData()}
+            >
+              {accountActionStatus === "erasing" ? "Erasing…" : "Erase check-ins"}
             </button>
           </div>
         </ModalPortal>

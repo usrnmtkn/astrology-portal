@@ -100,20 +100,21 @@ for (const width of [390, 1440]) {
       await map.getByLabel("Composition Sun sign").selectOption("Virgo");
       await map.getByLabel("Composition Moon sign").selectOption("Cancer");
       await studio.getByLabel("Search summary wording").fill("Virgo");
-      await expect(studio.getByRole("article")).toHaveCount(2);
+      const fields = studio.getByLabel("Daily Sky Summary fields");
+      await expect(fields.getByRole("article")).toHaveCount(2);
       await page.screenshot({ path: `test-results/sky-studio-${width}-${theme}.png`, fullPage: true });
       await studio.getByLabel("Search summary wording").fill("unmatched-search");
       await expect(studio.getByText("No summary fields match this search.")).toBeVisible();
       await studio.getByLabel("Search summary wording").fill("");
       await studio.getByLabel("Summary section").selectOption("Timing and retrogrades");
-      await expect(studio.getByRole("article")).toHaveCount(5);
+      await expect(fields.getByRole("article")).toHaveCount(6);
       await expect(studio.getByRole("article", { name: "Full Moon explanation", exact: true })).toHaveCount(0);
       await expect(studio.getByRole("article", { name: "No retrograde planets", exact: true })).toHaveCount(0);
       await studio.getByLabel("Summary section").selectOption("Ingress TLDRs");
-      await expect(studio.getByRole("article")).toHaveCount(1);
-      await expect(studio.getByRole("article")).toContainText("No ingress TLDR added here.");
+      await expect(fields.getByRole("article")).toHaveCount(1);
+      await expect(fields.getByRole("article")).toContainText("No ingress TLDR added here.");
       await studio.getByLabel("Ingress planet or point").selectOption("North Node");
-      await expect(studio.getByRole("article")).toHaveAttribute("aria-label", "North Node enters Libra");
+      await expect(fields.getByRole("article")).toHaveAttribute("aria-label", "North Node enters Libra");
       expect(await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth)).toBeLessThanOrEqual(1);
     });
   }
@@ -369,6 +370,7 @@ test("full template controls preview order, publish, and reload", async ({ page,
   ] }] } } }));
   await reader.goto(`${readerBaseURL}/?date=2026-09-10#sky`);
   const summary = reader.getByLabel("Daily sky summary", { exact: true });
+  await expect(summary).toHaveAttribute("aria-busy", "false", { timeout: 30_000 });
   await expect(summary).toContainText("Mercury stations retrograde in Scorpio today.");
   await expect(summary).not.toContainText("Saturn stations");
   await expect(summary).toContainText("New Moon in Virgo at 18° calls us to clear the clutter");
@@ -563,11 +565,12 @@ for (const width of [390, 1440]) test(`owner event-first summary reaches reader 
   await reader.route("**/api/calendar?**", route => route.fulfill({ json: { ok: true, calendar: { days: [{ dateKey: "2026-09-10", events }] } } }));
   await reader.goto(`${readerBaseURL}/?date=2026-09-10#sky`);
   const summary = reader.getByLabel("Daily sky summary", { exact: true });
+  await expect(summary).not.toHaveAttribute("aria-busy", "true", { timeout: 30_000 });
   await expect(summary).toContainText(revision.body);
   await expect(summary.locator(":scope > p")).toHaveCount(3);
   await expect(summary.locator(":scope > p").first()).toContainText(`punishing. The New Moon in Virgo at 18° ${revision.body}.`);
   await expect(summary.locator(":scope > p").nth(1)).toContainText("Two planets change signs today: Venus enters Scorpio and Mercury enters Libra.");
-  await expect(summary.locator(":scope > p").nth(1)).toContainText("Uranus stations retrograde in Gemini today, bringing the number of retrograde planets to six:");
+  await expect(summary.locator(":scope > p").nth(1)).toContainText("Uranus stations retrograde in Gemini today, bringing the number of retrograde planets to five:");
   await expect(summary.locator(":scope > p").last()).toHaveText("Moon squares Uranus is exact today.");
   await expect(summary.getByRole("link", { name: "New Moon in Virgo at 18°", exact: true })).toHaveAttribute("href", "#sky/lunation/2026-09-11/virgo");
   await expect(summary).not.toContainText(/Also today|There are|Today brings/u);

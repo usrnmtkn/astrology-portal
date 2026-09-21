@@ -1,20 +1,22 @@
 # Calendar Moon-sign editing
 
-Calendar Write-ups defaults to complete Moon-sign passages. Choose a Moon sign
-or search for a title such as `Moon in Libra`. The selected passage and its edit
-action appear before the result list; each result also opens its own editor.
-Results expand in groups of twelve. Other Calendar families remain available
-through the content-family selector. Changing filters returns to Write-ups so
-a stale composition selection cannot obscure the matching passages.
+Calendar Write-ups defaults to leftover Moon-sign passages under the Day and
+Week Moon story job. Choose a Moon sign or search for a title such as
+`Moon in Libra`. The selected passage and its edit action appear before the
+result list; each result also opens its own editor. Results expand in groups of
+twelve. Lunation articles, timing sentences, event readings, and Sky-shared
+summaries are separate families. Changing filters returns to Write-ups so a
+stale composition selection cannot obscure the matching passages.
 
-Adding is a separate, secondary action called **Add Moon-in-sign write-up**.
+Adding is a separate, secondary action called **Add leftover write-up**.
 Both this action and the header Create menu open the same sign chooser. No sign
 silently defaults to Aries, and the menu cannot create an unassigned source key.
-The chooser explains existing alternatives, offers **View saved write-ups**, and
+The chooser explains existing leftovers, offers **View saved write-ups**, and
 disables **Start draft** until inventory is loaded, a sign is chosen, and an
 allowed variant is available. Archived slots still count; the excluded Cancer
-base is never recreated. The editor identifies the new sign/variant and opens
-with blank writing. Opening the editor does not save a record.
+base is never recreated. The editor identifies the new leftover and opens
+with blank writing. Opening the editor does not save a record. Source keys stay
+`authored/calendar-weekly-moon/...`.
 
 The five Calendar browser cases cover existing edits, archive/restore, blank
 sign selection, full slots, both Create entry points, separate draft creation

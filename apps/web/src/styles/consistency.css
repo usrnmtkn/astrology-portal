@@ -13,12 +13,26 @@
   .article-eyebrow,
   .article-section__eyebrow,
   .admin-eyebrow,
-  .admin-nav-section-label
+  .admin-nav-section-label,
+  .calendar-kind-label,
+  .calendar-reading__card-label,
+  .calendar-reading__article-label
 ) {
   display: block;
   margin: var(--label-eyebrow-margin);
   padding: var(--label-eyebrow-padding);
   color: var(--card-meta-color);
+  font-family: var(--label-eyebrow-font-family);
+  font-size: var(--label-eyebrow-font-size);
+  font-weight: var(--label-eyebrow-font-weight);
+  line-height: var(--label-eyebrow-line-height);
+  letter-spacing: var(--label-eyebrow-tracking);
+  text-transform: uppercase;
+}
+
+:where(
+  .calendar-section-label
+) {
   font-family: var(--label-eyebrow-font-family);
   font-size: var(--label-eyebrow-font-size);
   font-weight: var(--label-eyebrow-font-weight);
@@ -85,7 +99,6 @@
   .manual-chart-overflow-menu,
   .you-profile-overflow-menu,
   .friend-compare-popover,
-  .lunar-location-picker,
   .admin-create-menu-panel
 ) :where(
   button,
@@ -107,7 +120,6 @@
   .auth-page,
   .chart-modal,
   .settings-location-editor,
-  .lunar-location-picker,
   .admin-dashboard
 ) :where(input, select, textarea) {
   font-family: var(--font-body);
@@ -119,7 +131,6 @@
   .auth-page,
   .chart-modal,
   .settings-location-editor,
-  .lunar-location-picker,
   .admin-dashboard
 ) :where(label, legend, .auth-label, .settings-row__label) {
   font-weight: var(--weight-medium);
@@ -145,7 +156,11 @@
   .natal-pattern-card__activation-eyebrow,
   .lunar-selected-card__eyebrow,
   .nl-eyebrow,
-  .sky-lunar-pill-copy em
+  .sky-lunar-pill-copy em,
+  .calendar-kind-label,
+  .calendar-section-label,
+  .calendar-reading__card-label,
+  .calendar-reading__article-label
 ) {
   font-family: var(--label-eyebrow-font-family);
   font-size: var(--label-eyebrow-font-size);

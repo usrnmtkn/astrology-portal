@@ -22,6 +22,7 @@ on:
       - "apps/web/src/main.tsx"
       - "apps/web/src/features/friends/**"
       - "apps/web/src/features/you/**"
+      - "apps/web/src/features/calendar/**"
       - "apps/web/src/components/**"
       - "apps/web/src/services/**"
       - "apps/web/src/content/**"
@@ -32,6 +33,7 @@ on:
       - "packages/**"
       - "artifacts/owner-author-*-2026-*.md"
       - "scripts/test-*friend*"
+      - "scripts/test-calendar-check-ins.mjs"
       - "scripts/test-*report*"
       - "scripts/test-birth-time-angle-reliability.mts"
       - "scripts/test-transit-reading-checkpoints.mts"
@@ -74,6 +76,7 @@ jobs:
       - run: node --import tsx scripts/test-generated-report-owner-corpus.mjs
       - run: node --import tsx scripts/test-generated-report-breadth.mjs
       - run: node --import tsx scripts/test-friend-transit-reading-request-render.mjs
+      - run: node scripts/test-calendar-check-ins.mjs
       - run: npm run typecheck
       - run: npm run build:web
 
@@ -97,6 +100,8 @@ jobs:
         run: psql "postgresql://postgres:postgres@127.0.0.1:54322/postgres" -v ON_ERROR_STOP=1 -f apps/web/supabase/tests/you_report_lifecycle_authorization.sql
       - name: Run You report production hardening test
         run: psql "postgresql://postgres:postgres@127.0.0.1:54322/postgres" -v ON_ERROR_STOP=1 -f apps/web/supabase/tests/you_report_production_hardening.sql
+      - name: Run calendar check-in authorization test
+        run: psql "postgresql://postgres:postgres@127.0.0.1:54322/postgres" -v ON_ERROR_STOP=1 -f apps/web/supabase/tests/calendar_check_ins_authorization.sql
       - name: Run generated report owner feedback authorization test
         run: psql "postgresql://postgres:postgres@127.0.0.1:54322/postgres" -v ON_ERROR_STOP=1 -f scripts/test-generated-report-owner-feedback-authorization.sql
       - name: Run report checkpoint storage authorization test

@@ -56,7 +56,7 @@ async function fixture(page: Page, initialRows = fixtureRows()) {
     if (url.pathname.endsWith("/personal-transit-writing")) {
       return route.fulfill({ json: { ok: true, action: "generate", saved: false, published: false, approved: false, youDraft: null, friendDraft: null, checks: [] } });
     }
-    if (url.pathname !== '/api/admin/generated-content') return route.fulfill({ json: { ok: true, rows: [], records: [], statuses: [], nextCursor: null } });
+    if (!['/api/admin/generated-content', '/api/admin/generated-content-inventory'].includes(url.pathname)) return route.fulfill({ json: { ok: true, rows: [], records: [], statuses: [], nextCursor: null } });
     if (method === 'GET') {
       reads.push(url);
       if (url.searchParams.get('variables') === 'true') return route.fulfill({ json: { ok: true, variables: [] } });

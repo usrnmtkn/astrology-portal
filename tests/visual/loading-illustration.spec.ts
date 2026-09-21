@@ -85,7 +85,7 @@ for (const screen of ['sky', 'friends']) for (const width of [390, 1440]) for (c
   });
 }
 
-test('reduced motion freezes the thinking orb; the reading still arrives', async ({ page }) => {
+test('thinking orb retains its waiting animation under reduced motion; the reading still arrives', async ({ page }) => {
   test.setTimeout(90_000);
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await prepare(page, 'light');
@@ -95,11 +95,8 @@ test('reduced motion freezes the thinking orb; the reading still arrives', async
     await page.goto('/#sky', { waitUntil: 'domcontentloaded' });
     const frame = page.locator('.sky-reading-layout__loading .loading-illustration');
     await expect(frame).toBeVisible({ timeout: 60_000 });
-    const orb = frame.locator('canvas');
-    await expect(orb).toBeVisible();
-    const still = await orb.evaluate(canvas => canvas.toDataURL());
-    await page.waitForTimeout(350);
-    expect(await orb.evaluate(canvas => canvas.toDataURL())).toBe(still);
+    // The shared loader contract deliberately keeps this waiting indicator moving.
+    await expectAnimatedOrb(frame);
   } finally { blocked.release(); }
   await expect(page.getByLabel('Daily sky summary')).toBeVisible({ timeout: 60_000 });
   await expect(page.locator('.sky-reading-layout__loading')).toHaveCount(0);

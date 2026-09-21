@@ -29,6 +29,18 @@ assert.ok(skySummaryTemplateErrors(hidden.contentKey, "{stationsSentence}").leng
 const customizedOpening = row("opening", "The {sunPlacementLink} {sunSummary}. The {moonPlacementLink} {moonSummary}.");
 const composed = buildSkySummaryComposition("Virgo", "Cancer", [{ content_key: customizedOpening.contentKey, id: "o", body: customizedOpening.body, status: "LIVE", lane: "serving" }], false);
 assert.ok(composed.parts.map(p => p.text).join("").includes("punishing. The Moon"));
+assert.equal(composed.parts.map(p => p.text).join("").includes("punishing ."), false);
+const trailingSpaceVirgo = {
+  ...row("sun/virgo", "turns our attention to the daily rituals and systems we rely on, helping us see which support us and which have become too rigid, demanding, or punishing ."),
+  contentKey: "cms/sky-daily-summary/sun/virgo"
+};
+const trailingSpaceText = skyDailySummaryParts(
+  facts,
+  new Map([[trailingSpaceVirgo.contentKey, trailingSpaceVirgo]])
+).map(part => part.text).join("");
+assert.ok(trailingSpaceText.includes("punishing. The New Moon"));
+assert.equal(trailingSpaceText.includes("punishing ."), false, "A stored Sun clause must not keep a space before the period.");
+assert.equal(trailingSpaceText.includes("punishing.."), false, "A clause that already ends in a period must not gain a second one.");
 assert.ok(skyDailySummaryParts(facts, new Map([[customizedOpening.contentKey, customizedOpening]])).some(p => p.action === "sun" && p.text === "Sun in Virgo at 15°"));
 const station = { id: "s", type: "station", planet: "Mercury", sign: "Scorpio", direction: "retrograde", startsAt: "2026-09-10T10:00:00Z" } as any;
 assert.deepEqual(skySummaryEventFacts([station, station], new Map()).stations, facts.stations);
@@ -51,3 +63,54 @@ assert.deepEqual(render(facts, [priorSameSign]), render(facts));
 const priorComposition = buildSkySummaryComposition("Virgo", "Virgo", [{ content_key: priorSameSign.contentKey, id: "same", body: priorSameSign.body, status: "LIVE", lane: "serving" }], false);
 assert.ok(priorComposition.parts.map(part => part.text).join("").includes("Moon in Virgo"));
 assert.ok(skySummaryTemplateErrors(priorSameSign.contentKey, "The {sunName} in {sunSign}{sunDegree} {sunSummary}; the {moonName} there{moonDegree} {moonSummary}.").length, "New templates must include the Moon sign");
+
+const seasonFacts = {
+  ...facts,
+  seasonName: "Virgo",
+  nextSunSign: "Libra",
+  seasonEndDate: "September 22",
+  daysUntilSeasonEnd: 3
+};
+const seasonParagraphs = render(seasonFacts);
+assert.ok(seasonParagraphs[0].includes("Sun in Virgo at 15°"));
+assert.ok(seasonParagraphs[0].includes("turns our attention to the daily rituals"));
+assert.equal(seasonParagraphs.slice(1, -1).some((paragraph) => /season/.test(paragraph)), false);
+assert.match(
+  seasonParagraphs.at(-1) ?? "",
+  /Virgo season ends in 3 days, when the Sun enters Libra on September 22/
+);
+assert.doesNotMatch(seasonParagraphs.join("\n"), /You can have an organized schedule|Libra season begins|The Sun's time in Virgo|attention turns from the systems/);
+assert.ok(skyDailySummaryParts(seasonFacts).some(part => part.action === "sun" && part.text === "Sun in Virgo at 15°"));
+const openingOnlyText = skyDailySummaryParts(seasonFacts, undefined, { openingOnly: true }).map(part => part.text).join("");
+assert.equal(
+  openingOnlyText.includes("Libra season begins") || openingOnlyText.includes("Virgo season ends"),
+  false,
+  "Calendar Sun introduction stays the linked opening and does not take the season paragraph"
+);
+const upcomingSeason = {
+  ...seasonFacts,
+  daysUntilSeasonEnd: 2,
+  event: { name: "Full Moon", sign: "Aries", countdown: "in 6 days", isToday: false }
+};
+assert.match(
+  render(upcomingSeason).at(-1) ?? "",
+  /Virgo season ends in 2 days, when the Sun enters Libra on September 22\. The next Full Moon in Aries is in 6 days/
+);
+const editedSeason = {
+  id: "seasonTransition",
+  contentKey: "cms/sky-daily-summary/seasonTransition",
+  body: "{seasonName} season ends {countdown}. The Sun enters {nextSunSign} on {seasonEndDate}.",
+  status: "LIVE",
+  updatedAt: ""
+};
+assert.deepEqual(skySummaryTemplateErrors(editedSeason.contentKey, editedSeason.body), []);
+assert.match(
+  render(upcomingSeason, [editedSeason]).at(-1) ?? "",
+  /Virgo season ends in 2 days\. The Sun enters Libra on September 22\. The next Full Moon in Aries is in 6 days/
+);
+const priorLayout = row("layout", "{openingSentence} {voidSentence}\n\n{ingressesSentence} {stationsSentence}\n\n{exactAspectsSentence}\n\n{currentRetrogradesSentence}\n\n{lunationSentence}");
+assert.deepEqual(skySummaryTemplateErrors(priorLayout.contentKey, priorLayout.body), []);
+assert.match(render(seasonFacts, [priorLayout]).at(-1) ?? "", /Virgo season ends in 3 days/);
+const midSeasonLayout = row("layout", "{openingSentence} {voidSentence}\n\n{seasonTransitionSentence}\n\n{ingressesSentence} {stationsSentence}\n\n{exactAspectsSentence}\n\n{currentRetrogradesSentence}\n\n{lunationSentence}");
+assert.match(render(seasonFacts, [midSeasonLayout]).at(-1) ?? "", /Virgo season ends in 3 days/);
+assert.equal(render(seasonFacts, [midSeasonLayout]).slice(1, -1).some((paragraph) => /season/.test(paragraph)), false);

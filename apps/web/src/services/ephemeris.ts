@@ -150,6 +150,7 @@ export type LunarCalendarMonth = {
   location: LocationInput;
   days: LunarCalendarDay[];
   events: LunarCalendarEvent[];
+  cycleEvents?: LunarCalendarEvent[];
 };
 
 export type LunarCalendarDetailLevel = "basic" | "full";
@@ -1550,6 +1551,45 @@ function findIngresses(
   return events;
 }
 
+function findMoonIngresses(
+  swe: SwissEphInstance,
+  start: Date,
+  end: Date,
+  timeZone: string
+): LunarCalendarEvent[] {
+  const events: LunarCalendarEvent[] = [];
+  const stepMs = 3 * 60 * 60_000;
+  let previousDate = start;
+  let previousSign = exactPlanetSign(swe, swe.SE_MOON, previousDate);
+
+  for (let time = start.getTime() + stepMs; time <= end.getTime(); time += stepMs) {
+    const currentDate = new Date(time);
+    const currentSign = exactPlanetSign(swe, swe.SE_MOON, currentDate);
+    if (currentSign !== previousSign) {
+      const occursAt = refineSignIngress(swe, swe.SE_MOON, previousSign, previousDate, currentDate);
+      const toSign = exactPlanetSign(swe, swe.SE_MOON, occursAt);
+      events.push({
+        id: `ingress-moon-${occursAt.toISOString()}`,
+        type: "ingress",
+        title: `Moon enters ${toSign}`,
+        startsAt: occursAt.toISOString(),
+        dateKey: localDateKey(occursAt, timeZone),
+        glyph: "☽",
+        primary: false,
+        planet: "Moon",
+        fromSign: previousSign,
+        toSign,
+        sign: toSign,
+        longitude: exactPlanetLongitude(swe, swe.SE_MOON, occursAt)
+      });
+    }
+    previousDate = currentDate;
+    previousSign = currentSign;
+  }
+
+  return events;
+}
+
 function refineStationEvent(
   swe: SwissEphInstance,
   planetId: number,
@@ -2741,8 +2781,8 @@ function weekGridRange(anchor: Date, timeZone: string) {
     weekday: "short"
   }).format(localMidnight);
   const weekdayIndex = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].indexOf(weekday);
-  const daysSinceMonday = weekdayIndex === 0 ? 6 : Math.max(0, weekdayIndex - 1);
-  const gridStart = zonedDateTimeToUtc(timeZone, localParts.year, localParts.month, localParts.day - daysSinceMonday);
+  const daysSinceSunday = Math.max(0, weekdayIndex);
+  const gridStart = zonedDateTimeToUtc(timeZone, localParts.year, localParts.month, localParts.day - daysSinceSunday);
   const gridEnd = shiftLocalCalendarDay(gridStart, 7, timeZone);
 
   return { gridStart, gridEnd };
@@ -2764,6 +2804,15 @@ function buildLunarCalendarRange(
   const seasonIngresses = findIngresses(swe,
     new Date(gridStart.getTime() - 40 * 86_400_000),
     new Date(gridEnd.getTime() + 40 * 86_400_000), timeZone, "Sun");
+  const cycleStart = new Date(gridStart.getTime() - 5 * 86_400_000);
+  const cycleEnd = new Date(gridEnd.getTime() + 5 * 86_400_000);
+  const cycleEvents = detail === "full"
+    ? [
+      ...findLunations(swe, cycleStart, cycleEnd, timeZone),
+      ...findMoonIngresses(swe, cycleStart, cycleEnd, timeZone),
+      ...seasonIngresses
+    ].sort((first, second) => first.startsAt.localeCompare(second.startsAt))
+    : [];
   const events = detail === "full"
     ? (() => {
       const eventStart = new Date(gridStart.getTime() - 2 * 86_400_000);
@@ -2833,7 +2882,8 @@ function buildLunarCalendarRange(
       ...events.filter((event) => event.planet !== "Sun" || event.type !== "ingress")
         .filter((event) => days.some((day) => day.dateKey === event.dateKey)),
       ...seasonIngresses
-    ].sort((first, second) => first.startsAt.localeCompare(second.startsAt))
+    ].sort((first, second) => first.startsAt.localeCompare(second.startsAt)),
+    cycleEvents
   };
 }
 

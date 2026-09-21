@@ -1,5 +1,5 @@
 {
-  "layout": "{openingSentence} {voidSentence}\n\n{ingressesSentence} {stationsSentence}\n\n{exactAspectsSentence}\n\n{currentRetrogradesSentence}\n\n{lunationSentence}",
+  "layout": "{openingSentence} {voidSentence}\n\n{ingressesSentence} {stationsSentence}\n\n{exactAspectsSentence}\n\n{currentRetrogradesSentence}\n\n{seasonTransitionSentence} {lunationSentence}",
   "opening": "The {sunName} in {sunSign}{sunDegree} {sunSummary}. The {moonName} in {moonSign}{moonDegree} {moonSummary}.",
   "sunOnly": "The {sunName} in {sunSign}{sunDegree} {sunSummary}.",
   "moonOnly": "The {moonName} in {moonSign}{moonDegree} {moonSummary}.",
