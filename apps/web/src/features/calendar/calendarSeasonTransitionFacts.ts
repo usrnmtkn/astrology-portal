@@ -1,5 +1,14 @@
 import { calendarDayDistance } from "../../services/calendarDayDistance.js";
-import { nextZodiacSignName } from "./moonSignTransitions.js";
+
+const zodiacSignOrder = [
+  "aries", "taurus", "gemini", "cancer", "leo", "virgo",
+  "libra", "scorpio", "sagittarius", "capricorn", "aquarius", "pisces"
+] as const;
+
+function nextZodiacSignName(sign: string) {
+  const index = zodiacSignOrder.indexOf(sign.toLowerCase().trim() as typeof zodiacSignOrder[number]);
+  return index >= 0 ? zodiacSignOrder[(index + 1) % zodiacSignOrder.length] : "";
+}
 
 export function calendarSeasonTransitionCountdown(daysUntilSeasonEnd: number | null | undefined) {
   if (daysUntilSeasonEnd === 0) return "today";

@@ -14451,7 +14451,6 @@ export function App() {
                   preloadYouExperience();
                   preloadFriendsExperience();
                 }
-                preloadCalendarExperience();
                 return !isOpen;
               });
             }}

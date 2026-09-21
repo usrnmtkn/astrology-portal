@@ -285,12 +285,20 @@ export function calendarPreviewValues({ sunSign, moonSign, calculation, rows, mo
       const facts = cycleFacts.get(day.dateKey);
       const visitId = facts?.moonVisitId ?? `${day.moonSign}:${day.dateKey}`;
       const used = usedAuthoredByVisit.get(visitId) ?? [];
-      const writeup = calendarMoonWriteupForDay(rows, day, facts, seasonSummary, used);
-      writeupsByDate.set(day.dateKey, writeup);
+      const destackWriteup = calendarMoonWriteupForDay(rows, day, facts, seasonSummary, used);
+      writeupsByDate.set(day.dateKey, destackWriteup);
+      const weekday = new Intl.DateTimeFormat("en-US", { weekday: "long", timeZone }).format(new Date(day.date)).toLowerCase();
+      // Weekly overview Monday is Luna's leftover passage, even when the Day
+      // destack prefers last-full-day or ingress timing on that civil date.
+      const leftover = days.length === 7 && weekday === "monday" && destackWriteup?.kind !== "exact-lunation"
+        ? calendarMoonPassageForDay(rows, day.moonSign, used)
+        : null;
+      const writeup = leftover?.body
+        ? { body: leftover.body, contentKey: leftover.content_key, kind: "authored" as const, row: leftover }
+        : destackWriteup;
       if (writeup?.kind === "authored") {
         usedAuthoredByVisit.set(visitId, [...used, writeup.body]);
       }
-      const weekday = new Intl.DateTimeFormat("en-US", { weekday: "long", timeZone }).format(new Date(day.date)).toLowerCase();
       if (days.length !== 7) continue;
       put(`${weekday}Date`, formatDate(day.date), "fact");
       put(`${weekday}MoonSign`, calendarPreviewSign(day.moonSign) || day.moonSign, "fact");

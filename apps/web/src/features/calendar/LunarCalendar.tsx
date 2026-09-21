@@ -3477,6 +3477,7 @@ export function LunarCalendar({
           />
 
           {seasonPill}
+          {milestonePills}
 
           {dayPanelProps && (
             <CalendarDayPanel
@@ -3499,6 +3500,7 @@ export function LunarCalendar({
             zone={zone}
           />
           {seasonPill}
+          {milestonePills}
           <CalendarDayGroupList label={`Day-by-day astrology for ${weeklyRangeLabel}`}>
             {calendarMoonWritingSequenceWithoutRepeat(selectedWeekDays, (day) => {
               return moonWritingForDay(

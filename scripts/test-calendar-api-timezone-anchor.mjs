@@ -32,8 +32,25 @@ assert.ok(
 );
 assert.equal(
   payload.calendar.days[0]?.dateKey,
-  requestedDate,
-  "Monday must remain Monday instead of shifting to the prior local Sunday on the server."
+  "2026-08-23",
+  "Reader week ranges begin on Sunday, so Monday must sit in the week that starts the prior local Sunday."
+);
+assert.deepEqual(
+  payload.calendar.days.map((day) => day.dateKey),
+  ["2026-08-23", "2026-08-24", "2026-08-25", "2026-08-26", "2026-08-27", "2026-08-28", "2026-08-29"]
+);
+
+const sundayResponse = responseRecorder();
+await calendarHandler({
+  method: "GET",
+  url: "/api/calendar?mode=week&detail=basic&date=2026-08-30&lat=40.7128&lon=-74.006&label=New%20York%20City&timeZone=America%2FNew_York"
+}, sundayResponse);
+assert.equal(sundayResponse.statusCode, 200);
+const sundayPayload = JSON.parse(sundayResponse.body);
+assert.equal(
+  sundayPayload.calendar.days[0]?.dateKey,
+  "2026-08-30",
+  "A western-timezone Sunday must stay the week start instead of shifting to the prior local Saturday on the server."
 );
 
 for (const scenario of [
@@ -79,7 +96,7 @@ await calendarHandler({ method: "GET", url: "/api/calendar?mode=week&detail=full
 assert.equal(fullResponse.statusCode, 200);
 const fullCalendar = JSON.parse(fullResponse.body).calendar;
 assert.deepEqual(fullCalendar.days.map((day) => day.dateKey),
-  ["2026-10-26", "2026-10-27", "2026-10-28", "2026-10-29", "2026-10-30", "2026-10-31", "2026-11-01"]);
+  ["2026-11-01", "2026-11-02", "2026-11-03", "2026-11-04", "2026-11-05", "2026-11-06", "2026-11-07"]);
 const passages = fullCalendar.events.filter((event) => event.phase === "retrograde-passage");
 assert.ok(passages.length > 0, "Full-calendar regression must exercise active retrograde sampling.");
 assert.equal(new Set(passages.map((event) => `${event.planet}/${event.dateKey}`)).size, passages.length,
