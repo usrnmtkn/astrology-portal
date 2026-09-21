@@ -3944,9 +3944,10 @@ test.describe("content dashboard admin user flow case studies", () => {
     expect(await theyField.locator(":scope > *").evaluateAll((children) => children.map((child) => child.tagName))).toEqual([
       "SPAN",
       "SMALL",
-      "TEXTAREA",
+      "SPAN",
       "SMALL"
     ]);
+    await expect(theyField.locator(":scope > .studio-writing-field > textarea")).toHaveCount(1);
 
     await editor.locator("details.admin-editor-details > summary").click();
     await editor.locator("details.admin-editor-settings > summary").click();
@@ -5126,7 +5127,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expect(editor.getByLabel("Purpose (editors only)")).toHaveValue("Plain 'what this planet is in your life' phrase for synastry aspect lines.");
     await expect(editor.getByLabel("Reader phrase · You")).toHaveValue("how you handle power and deep change");
     await expect(editor.getByLabel("Reader phrase · They")).toHaveValue("how they handle power and deep change");
-    expect((await editor.locator("label > span").allTextContents()).slice(0, 4)).toEqual([
+    expect((await editor.locator("label > span:not(.studio-writing-field)").allTextContents()).slice(0, 4)).toEqual([
       "Editor label",
       "Purpose (editors only)",
       "Reader phrase · You",
