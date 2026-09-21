@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { calendarMoonCycleFactsForDays } from "../apps/web/src/features/calendar/calendarMoonCycle.ts";
 import calendarHandler from "../api/calendar.ts";
 import { getLunarCalendarFromApi } from "../apps/web/src/services/calendarApi.ts";
 import { getAstrodienstSky } from "../apps/web/src/services/ephemeris.ts";
@@ -119,12 +120,23 @@ for (const scenario of [
     assert.equal(response.statusCode, 200);
     const calendar = JSON.parse(response.body).calendar;
     const ingresses = calendar.events.filter(event => event.type === "ingress" && event.planet === "Moon");
+    const cycleFacts = calendarMoonCycleFactsForDays(calendar.days, calendar.cycleEvents, scenario.zone);
     assert.ok(ingresses.length >= 2, `${mode} must expose computed Moon ingresses.`);
     assert.equal(new Set(ingresses.map(event => event.id)).size, ingresses.length);
     for (const event of ingresses) {
       const matchingDays = calendar.days.filter(day => day.events.some(item => item.id === event.id));
       assert.equal(matchingDays.length, 1, "Each exact event belongs to one local day.");
       assert.equal(matchingDays[0].dateKey, event.dateKey);
+      const facts = cycleFacts.get(event.dateKey);
+      assert.equal(facts.moonChangesSignToday, true, "Daily guidance must agree with the exact card date.");
+      assert.equal(facts.moonSign, event.fromSign);
+      assert.equal(facts.nextMoonSign, event.toSign);
+      assert.equal(facts.isLastFullDayInMoonSign, false, "An ingress today must never be described as tomorrow.");
+      const followingDay = calendar.days[calendar.days.indexOf(matchingDays[0]) + 1];
+      if (followingDay) {
+        assert.equal(cycleFacts.get(followingDay.dateKey).moonChangesSignToday, false);
+        assert.equal(cycleFacts.get(followingDay.dateKey).isFirstFullDayInMoonSign, true);
+      }
       assert.equal(event.dateKey, new Intl.DateTimeFormat("en-CA", { timeZone: scenario.zone,
         year: "numeric", month: "2-digit", day: "2-digit" }).format(new Date(event.startsAt)));
       assert.ok(calendar.cycleEvents.some(item => item.id === event.id && item.startsAt === event.startsAt),
