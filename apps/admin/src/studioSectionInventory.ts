@@ -28,7 +28,11 @@ export const STUDIO_HOUSE_TRANSIT_PREFIXES = [
 
 export const STUDIO_SKY_WRITEUP_PREFIXES = [
   "sky-placement/",
-  "sky-article/",
+  "sky-article",
+  "sky/article",
+  "sky/placement/",
+  "sky/station/",
+  "authored/sky-lunation-macro/",
   "fallback-hook/sky-placement-lived/",
   "sky.placement."
 ] as const;
@@ -148,10 +152,10 @@ export function studioInventoryQuery(route: StudioInventoryRoute): StudioInvento
     return prefixesQuery(STUDIO_HOUSE_TRANSIT_PREFIXES);
   }
   if (route.page === "calendarWriteups") return prefixesQuery(STUDIO_LUNAR_CALENDAR_PREFIXES);
-  if (route.page === "skyWriteups" && route.friendsTransitAudience && route.skyWriteupWorkspaceView === "house-transits") {
+  if (route.page === "skyWriteups" && route.skyWriteupWorkspaceView === "house-transits") {
     return prefixesQuery(STUDIO_HOUSE_TRANSIT_PREFIXES);
   }
-  if (route.page === "skyWriteups" && route.friendsTransitAudience && route.skyWriteupWorkspaceView === "transits-to-natal") {
+  if (route.page === "skyWriteups" && route.skyWriteupWorkspaceView === "transits-to-natal") {
     return prefixesQuery(STUDIO_PERSONAL_TRANSIT_PREFIXES);
   }
   if (route.page === "skyWriteups") return prefixesQuery(STUDIO_SKY_WRITEUP_PREFIXES);
@@ -173,7 +177,7 @@ export function studioInventoryQuery(route: StudioInventoryRoute): StudioInvento
   if (route.page === "knowledge" && route.fallbackSectionFilter === "sky") {
     return prefixesQuery([...STUDIO_SKY_WRITEUP_PREFIXES, ...STUDIO_CALENDAR_ASPECT_PREFIXES]);
   }
-  if (route.page === "knowledge") return prefixesQuery(["fallback-hook/", "authored/calendar-weekly-moon/"]);
+  if (route.page === "knowledge") return prefixesQuery(["fallback-hook/", "house-horoscope-core/", "authored/calendar-weekly-moon/"]);
   if (route.page === "vocabulary") return prefixesQuery(["vocab/", "fallback-vocab/"]);
   if (route.page === "slotDictionary") return prefixesQuery(["slot-template/"]);
   if (route.page === "templates") return prefixesQuery(["fallback-template/", "slot-template/"]);

@@ -100,6 +100,7 @@ import {
   skyPlacementBodies,
   skyPlacementSigns,
   skyWriteupContextForRow,
+  skyWriteupRelatedSourcePrefixes,
   skyWriteupSubjectTypeForRow
 } from "./skyWriteupRelations";
 import {
@@ -3194,6 +3195,10 @@ export function GeneratedContentAdminDashboard() {
   const [skyFallbackVariableTarget, setSkyFallbackVariableTarget] = useState("");
   const [skyWritingContext, setSkyWritingContext] = useState<{ fieldPath?: string; selection?: SkyPlacementSelection }>({});
   const [templateVariableReferenceOpen, setTemplateVariableReferenceOpen] = useState(false);
+  const loadTemplateSourceInventory = useCallback(async (prefixes: string[], signal: AbortSignal) => {
+    await loadAllGeneratedContentRows(secret, { prefixes, visibility: "all", scope: "all", mode: null, catalog: false },
+      loaded => setRows(current => mergeContentInventory(current, loaded)), signal);
+  }, [secret]);
   const [buildVariableReferences, setBuildVariableReferences] = useState<typeof import("./templateVariableReference").templateVariableReferences | null>(null);
   const [calendarCreateRequest, setCalendarCreateRequest] = useState(0);
   const [templateVariableQuery, setTemplateVariableQuery] = useState("");
@@ -3726,7 +3731,7 @@ export function GeneratedContentAdminDashboard() {
     };
   }, [activePage]);
 
-  const studioListQuery = useMemo(() => studioInventoryQuery({
+  const studioSectionQuery = useMemo(() => studioInventoryQuery({
     page: activePage,
     categoryFilter,
     fallbackSectionFilter,
@@ -3745,6 +3750,11 @@ export function GeneratedContentAdminDashboard() {
     showRetiredRows,
     skyWriteupWorkspaceView
   ]);
+  const relatedSourceKey = JSON.stringify(selectedRow ? skyWriteupRelatedSourcePrefixes(selectedRow) : []);
+  const studioListQuery = useMemo(() => !studioSectionQuery.prefixes.length || relatedSourceKey === "[]"
+    ? studioSectionQuery
+    : { ...studioSectionQuery, mode: null, prefixes: [...new Set([...studioSectionQuery.prefixes, ...JSON.parse(relatedSourceKey) as string[]])] },
+  [studioSectionQuery, relatedSourceKey]);
   const studioListQueryKey = studioInventoryQueryKey(studioListQuery);
   // Authentication callbacks outlive their initial render; use the current route.
   const studioListQueryRef = useRef(studioListQuery);
@@ -5527,6 +5537,13 @@ export function GeneratedContentAdminDashboard() {
       ];
     loadSourceDocuments([...new Set(sources.map((row) => row.id))].slice(0, skyRelationHydrationLimit));
   }, [selectedRow, rows, loadSourceDocuments]);
+
+  useEffect(() => {
+    if (activePage !== "skyWriteups" || skyWriteupWorkspaceView !== "house-transits" || !houseTransitPlanet || !houseTransitSign || !houseTransitHouse) return;
+    const keys = new Set(houseTransitSourceGroups({ planet: houseTransitPlanet, sign: houseTransitSign, house: houseTransitHouse, motion: houseTransitMotion })
+      .flatMap(group => group.sources.flatMap(source => source.candidateKeys)));
+    loadSourceDocuments(rows.filter(row => keys.has(row.content_key)).map(row => row.id));
+  }, [activePage, skyWriteupWorkspaceView, houseTransitPlanet, houseTransitSign, houseTransitHouse, houseTransitMotion, rows, loadSourceDocuments]);
 
   // A row on screen shows its saved copy, and the list it came from carries only headlines.
   const loadVisibleRowDocuments = useCallback((visible: readonly { id: string }[]) => {
@@ -12012,6 +12029,7 @@ export function GeneratedContentAdminDashboard() {
               : rows).filter(row => !isZodiacSeasonSourceKey(row.content_key)), ...seasonSourceRows]}
             onInsert={insertDraftToken}
             onLoadSourceDocuments={loadSourceDocuments}
+            onLoadSourceInventory={loadTemplateSourceInventory}
             templateContentKey={currentDraft.contentKey}
             factExamples={transitFactExamples}
             templatePreviewRow={templatePreviewRow}

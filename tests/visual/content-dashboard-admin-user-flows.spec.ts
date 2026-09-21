@@ -5306,6 +5306,44 @@ test.describe("content dashboard admin user flow case studies", () => {
     await assertNoBrowserErrors();
   });
 
+  test("template source inventory retries without losing the editor draft", async ({ page }) => {
+    const template = {
+      ...generatedContentRows[0], id: "qa-template-source-retry",
+      content_key: "fallback-template/natal.planet-in-sign/sun", block_type: "fallback_template",
+      provider: "tldrastro-fallback-architecture-v3", body: "{{planetBest}}",
+      sections: { body_you: "{{planetBest}}", body_they: "{{planetBest}}", packageRecord: {
+        contentKey: "fallback-template/natal.planet-in-sign/sun", content_role: "template",
+        review_status: "needs_review", requiredSlots: ["planetBest"], body_you: "{{planetBest}}", body_they: "{{planetBest}}"
+      } }
+    };
+    const source = { ...generatedContentRows[0], id: "qa-template-support-retry",
+      content_key: "fallback-hook/planet-best/sun", body: "QA supporting passage recovered.",
+      block_type: "fallback_hook", provider: "tldrastro-fallback-architecture-v3",
+      sections: { packageRecord: { contentKey: "fallback-hook/planet-best/sun", content_role: "fallback_hook",
+        review_status: "approved", body: "QA supporting passage recovered." } }
+    };
+    await seedAdminApi(page, { generatedRows: [template, source] });
+    let fail = true;
+    await page.route("**/api/admin/generated-content-inventory?*", async route => {
+      if (fail && new URL(route.request().url()).searchParams.get("contentKeyPrefix") === "fallback-hook/planet-best/") {
+        await route.fulfill({ status: 400, json: { error: "Synthetic source read failure." } });
+      } else await route.fallback();
+    });
+    await expectAdminRouteLoads(page, "/admin/content#templates");
+    await page.locator(".admin-content-row").getByRole("button", { name: "Edit" }).click();
+    const editor = page.getByRole("dialog", { name: "Generated content editor" });
+    const draftText = "{{planetBest}} QA unsaved template change.";
+    await editor.getByLabel("You view copy").fill(draftText);
+    await editor.getByRole("button", { name: /^Reader preview & variables/ }).click();
+    const rail = page.getByRole("complementary", { name: "Template variable reference" });
+    await expect(rail.getByRole("alert")).toContainText("Template sources could not load.");
+    fail = false;
+    await rail.getByRole("button", { name: "Retry source loading" }).click();
+    await expect(rail.getByRole("region", { name: "Example reader write-up" })).toContainText(source.body);
+    await expect(rail.getByRole("alert")).toHaveCount(0);
+    await expect(editor.getByLabel("You view copy")).toHaveValue(draftText);
+  });
+
   test("template editor opens a readable variable reference without losing the draft", async ({ page }) => {
     const assertNoBrowserErrors = await expectNoBrowserErrors(page);
     const bodyYou = "{{#planetIntro}}{{planetIntro}}{{/planetIntro}} {{possessive}} {{planetTitle}} is in {{signTitle}}, meaning you {{planetVerb}} {{signAdverb}}, and what you want most is {{signNeed}}.{{#placementGerundText}} Day to day, that can look like {{placementGerundText}}.{{/placementGerundText}} Pushed too far, this side of you can tip into {{planetExcess}}. {{planetBest}}{{#modifierSentences}} {{.}}{{/modifierSentences}}";
@@ -5369,7 +5407,7 @@ test.describe("content dashboard admin user flow case studies", () => {
       }
     };
     await seedAdminApi(page, { generatedRows: [templateRow, planetIntroRow, planetBestRow] });
-    await expectAdminRouteLoads(page, "/admin/content#fallback-hooks");
+    await expectAdminRouteLoads(page, "/admin/content#templates");
 
     const savedRow = page.locator(".admin-content-row", { hasText: "fallback-template/natal.planet-in-sign/sun" });
     await expect(savedRow).toHaveCount(1);

@@ -39,6 +39,19 @@ No content mutation. Production verification remains a release gate.
   search placeholders instead of example aspects that resemble selected values.
 - Browser fixtures now honor inventory prefix/mode filters and the 80-row cap.
   The older Compatibility test incorrectly expected a 500-row request.
+- The full browser suite exposed omitted Sky article/template/edition and slash
+  placement keys, plus lunation macro sources. Sky's query includes those
+  supported families. The template variable-reference flow opens Templates.
+- Template previews load referenced source-family inventories on open instead
+  of assuming another section loaded them first. Selecting a source loads its
+  full document. Closing the rail cancels pending inventory requests, and failed
+  source inventory loads offer a retry while retaining the editor draft.
+- Legacy Sky transit tabs use the same scoped Personal/House Transit inventories
+  as Friends; the fallback library includes its house-horoscope sources. The
+  variable rail shares the existing deferred editor chunk, preserving budgets.
+- Opening a Sky article or lunation includes its related horoscope/aspect source
+  families in the inventory query before document hydration; those sources no
+  longer depend on a prior visit to the global catalog.
 
 ## Audit scope
 

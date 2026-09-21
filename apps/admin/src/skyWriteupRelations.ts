@@ -394,3 +394,16 @@ export function relatedAspectPassages<Row extends SkyWriteupRelationRow>(rows: R
 export const skyWriteupContextForRow = memoByObject(skyWriteupContextForRowUncached);
 
 export const skyLunationContextForRow = memoByObject(skyLunationContextForRowUncached);
+
+/** Discover supporting rows before trying to hydrate their documents. */
+export function skyWriteupRelatedSourcePrefixes(row: SkyWriteupRelationRow) {
+  const context = skyWriteupContextForRow(row);
+  if (!context) return [];
+  const aspect = `authored/transit-aspect/${context.planet}/`;
+  if (skyLunationContextForRow(row)) return [aspect,
+    "fallback-hook/lunation-horoscope/", "fallback-hook/lunation-sign-compact/",
+    "fallback-hook/lunation-opening-situation/", "fallback-vocab/house-jurisdiction/"];
+  return [aspect, `house-horoscope-core/${context.planet}/`,
+    `authored/transit-house/${context.planet}/`, `authored/transit-house-intro/${context.planet}/`,
+    `authored/transit-house-sign/${context.planet}/`];
+}

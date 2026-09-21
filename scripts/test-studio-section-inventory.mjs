@@ -44,6 +44,21 @@ assert.deepEqual(calendarWriteups.prefixes, [...STUDIO_LUNAR_CALENDAR_PREFIXES])
 
 const skyWriteups = studioInventoryQuery({ page: "skyWriteups" });
 assert.deepEqual(skyWriteups.prefixes, [...STUDIO_SKY_WRITEUP_PREFIXES]);
+for (const key of [
+  "sky/article-template/sun/virgo", "sky/article-edition/jupiter/leo",
+  "sky/placement/mercury/virgo/retrograde", "sky/article/sun/virgo",
+  "sky-article-template/sun/virgo", "sky-article/mercury/virgo",
+  "sky/station/mercury/retrograde/virgo",
+  "authored/sky-lunation-macro/new-moon/virgo"
+]) {
+  assert.ok(skyWriteups.prefixes.some(prefix => key.startsWith(prefix)),
+    `Sky inventory must load its supported source key ${key}`);
+}
+for (const view of ["house-transits", "transits-to-natal"]) {
+  assert.deepEqual(studioInventoryQuery({ page: "skyWriteups", skyWriteupWorkspaceView: view }),
+    studioInventoryQuery({ page: "skyWriteups", skyWriteupWorkspaceView: view, friendsTransitAudience: true }));
+}
+assert.ok(studioInventoryQuery({ page: "knowledge" }).prefixes.includes("house-horoscope-core/"));
 
 // Visibility must never discard a section's identity. Calendar Aspects enables
 // reference rows on entry; retired/reference toggles occur on other sections too.
