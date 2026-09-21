@@ -1,4 +1,4 @@
-import { cloneElement, forwardRef, lazy, Suspense, useImperativeHandle, isValidElement, useEffect, useId, useRef, useState, type ComponentPropsWithoutRef, type ReactNode } from "react";
+import { cloneElement, forwardRef, lazy, Suspense, useImperativeHandle, isValidElement, useEffect, useLayoutEffect, useId, useRef, useState, type ComponentPropsWithoutRef, type ReactNode } from "react";
 import { requestStudioReturnAfterSave, returnToStudioParentEditor, studioEditorReturnContext } from "./studioEditorReturn";
 import { installStudioStatusCompatibility } from "./studioStatusCompatibility";
 
@@ -75,10 +75,21 @@ export const StudioTextarea = forwardRef<HTMLTextAreaElement, ComponentPropsWith
   function StudioTextarea({ formatting = true, ...props }, ref) {
     const textarea = useRef<HTMLTextAreaElement>(null);
     const [format, setFormat] = useState<{ value: string; label: string } | null>(null);
+    const [label, setLabel] = useState<string>();
+    useLayoutEffect(() => {
+      // Formatting controls can sit inside an existing wrapping label. Keep their
+      // names and editor contents out of the native field's accessible name.
+      const labels = Array.from(textarea.current?.labels ?? []).map(source => {
+        const copy = source.cloneNode(true) as HTMLLabelElement;
+        copy.querySelectorAll('.studio-writing-field, input, textarea, select, button, [aria-hidden="true"]').forEach(node => node.remove());
+        return copy.textContent?.replace(/\s+/gu, " ").trim() ?? "";
+      }).filter(Boolean).join(" ");
+      setLabel(labels || undefined);
+    });
     useImperativeHandle(ref, () => textarea.current!, []);
     const close = () => { setFormat(null); requestAnimationFrame(() => textarea.current?.focus()); };
     return <span className="studio-writing-field">
-      <textarea {...props} ref={textarea} hidden={Boolean(format)} data-studio-component="textarea" />
+      <textarea {...props} aria-label={props["aria-label"] ?? (props["aria-labelledby"] ? undefined : label)} ref={textarea} hidden={Boolean(format)} data-studio-component="textarea" />
       {format ? <Suspense fallback={<span role="status">Loading formatting…</span>}>
         <StudioFormattingEditor value={typeof props.value === "string" ? props.value : format.value} label={format.label} maxLength={props.maxLength} onDone={close} onChange={value => {
           const field = textarea.current;
@@ -91,7 +102,7 @@ export const StudioTextarea = forwardRef<HTMLTextAreaElement, ComponentPropsWith
       </Suspense> : formatting && !props.readOnly && !props.disabled && props.onChange ? <StudioButton className="studio-formatting-open" onClick={() => {
         const field = textarea.current;
         if (field) setFormat({ value: field.value, label: props["aria-label"] || field.labels?.[0]?.querySelector("span")?.textContent?.trim() || "Writing" });
-      }} aria-label={`Format ${props["aria-label"] || "text"}`}><span aria-hidden="true">Format text · B / I / Lists</span></StudioButton> : null}
+      }} aria-label="Format text" aria-description={props["aria-label"] || label || "Writing"}><span aria-hidden="true">Format text · B / I / Lists</span></StudioButton> : null}
     </span>;
   }
 );

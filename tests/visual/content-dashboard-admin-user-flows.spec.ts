@@ -2023,8 +2023,8 @@ test.describe("content dashboard admin user flow case studies", () => {
     await editor.getByLabel("TL;DR / summary").fill("Updated summary from the visual admin editor.");
     await editor.getByLabel("Article body").fill("Updated body from the visual admin editor.");
     await expect(savebar).toContainText("Unsaved changes");
-    await expect(editor.getByLabel("TL;DR / summary").locator("xpath=following-sibling::*[contains(@class, 'admin-field-metrics')]")).toContainText("7 words");
-    await expect(editor.getByLabel("Article body").locator("xpath=following-sibling::*[contains(@class, 'admin-field-metrics')]")).toContainText("7 words");
+    await expect(editor.getByLabel("TL;DR / summary").locator("xpath=ancestor::label[1]").locator(".admin-field-metrics")).toContainText("7 words");
+    await expect(editor.getByLabel("Article body").locator("xpath=ancestor::label[1]").locator(".admin-field-metrics")).toContainText("7 words");
     await editor.getByRole("button", { name: "Save" }).click();
 
     await expect.poll(() => generatedContentWrite).toMatchObject({
@@ -7396,7 +7396,7 @@ for (const theme of ['dark','light']) for (const width of [1440,390]) {
     await editor.screenshot({path:`outputs/studio-style/fallback-editor-cards-${theme}-${width}.png`});
     const body=editor.locator('.admin-copy-field-body');
     await body.scrollIntoViewIfNeeded();
-    const bodyCard=body.locator('..');
+    const bodyCard=editor.locator('label.admin-review-copy-editor').filter({has:page.locator('.admin-copy-field-body')});
     const cardBox=(await bodyCard.boundingBox())!,copyBox=(await copy.boundingBox())!;
     expect(Math.abs(cardBox.x-copyBox.x)).toBeLessThan(1);
     expect(Math.abs(cardBox.width-copyBox.width)).toBeLessThan(1);

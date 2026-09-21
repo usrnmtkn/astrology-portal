@@ -51,7 +51,7 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
       await expect(editor.locator('.admin-editor-context-line')).not.toContainText('all');
       const body = editor.getByRole('textbox', { name: 'Section 1 body', exact: true });
       const original = await body.inputValue();
-      await editor.getByRole('button', { name: 'Format Section 1 body', exact: true }).click();
+      await body.locator('..').getByRole('button', { name: 'Format text', exact: true }).click();
       const writing = editor.getByRole('textbox', { name: 'Section 1 body formatted text', exact: true });
       await writing.selectText();
       await editor.getByRole('button', { name: 'Bold', exact: true }).click();
@@ -90,7 +90,7 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
       await page.reload();
       await page.getByText(rows[0].headline, { exact: true }).click();
       await expect(body).toHaveValue(formatted);
-      await editor.getByRole('button', { name: 'Format Section 1 body', exact: true }).click();
+      await body.locator('..').getByRole('button', { name: 'Format text', exact: true }).click();
       await expect(writing.locator('ol > li')).toHaveCount(2);
       await editor.getByRole('button', { name: 'Done formatting', exact: true }).click();
       await expect(body).toHaveValue(formatted);
@@ -107,7 +107,7 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
       expect((await store.call({ method: 'rows' }))[1].sections).toEqual(rows[1].sections);
       await editor.getByRole('button', { name: 'Close', exact: true }).click();
       await page.getByRole('button', { name: 'New chapter', exact: true }).click();
-      await editor.getByRole('button', { name: 'Format Article intro', exact: true }).click();
+      await editor.getByRole('textbox', { name: 'Article intro', exact: true }).locator('..').getByRole('button', { name: 'Format text', exact: true }).click();
       const emptyWriting = editor.getByRole('textbox', { name: 'Article intro formatted text', exact: true });
       await expect(emptyWriting).toHaveText('');
       await emptyWriting.scrollIntoViewIfNeeded();

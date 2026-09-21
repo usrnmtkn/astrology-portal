@@ -4,6 +4,9 @@ import { calendarMonthlyCompatibilityPattern, calendarMonthlyEditorialPattern } 
 import { lunarSigns } from "../../apps/admin/src/lunarCalendarContent";
 import { getAstrodienstSky } from "../../apps/web/src/services/ephemeris";
 
+// The season fixture targets the New York calendar day of the calculated ingress.
+test.use({ timezoneId: "America/New_York" });
+
 const weekly = skyForecastTemplates["weekly-sky"];
 const pattern = "{{sunSign}} / {{moonSign}} · {{sunDegree}}\n\n{{sunSummary}}\n\n{{moonWriteup}}\n\n{{mondayDate}}\n{{mondayTiming}}\n{{mondayWriteup}}\n\n{{weeklyIntegration}}";
 const notes = "Fixture editor-only writing instructions. Preserve this complete guidance.";
