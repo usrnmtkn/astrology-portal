@@ -173,7 +173,6 @@ for (const scenario of [
     await expect(detail.locator('.calendar-reading__body')).toHaveText(expected);
     await expect(detail.locator('.calendar-reading__meta')).toHaveText(scenario.meta);
     await detail.getByRole('button', { name: 'Close', exact: true }).click();
-    await page.getByRole('dialog', { name: 'Day slideout', exact: true }).getByRole('button', { name: 'Close', exact: true }).click();
     await page.getByRole('tab', { name: 'Month', exact: true }).click();
     const monthDay = page.locator(`.lunar-calendar-day[data-calendar-date="${scenario.date}"]`);
     await expect(monthDay.locator('.is-enter .astro-glyph__mask')).toHaveCSS("mask-image", /aquarius/, { timeout: 60_000 });
