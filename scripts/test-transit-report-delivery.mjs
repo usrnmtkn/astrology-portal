@@ -181,6 +181,18 @@ try{
       assert(html.includes('Avoiding the conversation can have the opposite'));
       assert(html.includes('The conversation may end with a better understanding of what still needs attention.'));
       assert(!html.includes('Synthetic diagnostic'));assert(!html.includes('transport alias'));
+      if(scenario==='first-pass') {
+        const canonical=api.renderToStaticMarkup(api.createElement(api.GeneratedReportArticle,{report:{
+          ...loaded,
+          summary:'Synthetic summary opening. This complete summary ends here.',
+          tldr:'Hidden legacy summary sentinel.',
+        }}));
+        assert.equal(canonical.split('Synthetic summary opening.').length-1,1,'The canonical summary opening is rendered once');
+        assert.equal(canonical.split('This complete summary ends here.').length-1,1,'The complete summary ending is rendered once');
+        assert(!canonical.includes('Hidden legacy summary sentinel.'),'Legacy transport TLDR is never displayed');
+        assert(canonical.includes('Avoiding the conversation can have the opposite'));
+        assert(canonical.includes('The conversation may end with a better understanding of what still needs attention.'));
+      }
       const [item]=await api.listReportLibrary();assert.equal(item.status,'ready');
       const calls=clone(f.calls);
       job.state='retry';await run({workerId:'recovery-worker',jobId:job.id,admin:f.admin});

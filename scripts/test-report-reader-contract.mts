@@ -119,7 +119,7 @@ for (const task of ['revision', 'cleanup'] as const) {
     assert.doesNotMatch(prompt, /Write one in-depth|3-5 natural paragraphs|220-380 words/);
   });
 }
-test('judge, both validation adapters, persistence and reader agree on the canonical fields', () => {
+test('judge, both validation adapters and persistence agree on the canonical fields', () => {
   const judge = fs.readFileSync('api/_lib/transit-reading-judge.ts', 'utf8');
   assert.match(judge, /JSON\.stringify\(transitReadingReaderCopy\(input\.draft\)/);
   assert.doesNotMatch(judge, /tldr:\s*input\.draft\.tldr/);
@@ -129,7 +129,4 @@ test('judge, both validation adapters, persistence and reader agree on the canon
     assert.match(source, /draft: readerCopy/);
     assert.match(source, /\.\.\.transitReadingReaderCopy\(input\.generated\)/);
   }
-  const reader = fs.readFileSync('apps/web/src/components/reports/ReportLibraryView.tsx', 'utf8');
-  assert.match(reader, /article-tldr__copy">\{report\.summary\}/);
-  assert.doesNotMatch(reader, /\{report\.tldr\}/);
 });
