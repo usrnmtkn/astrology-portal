@@ -3,6 +3,7 @@ import { friendTransitReadingRequestLock } from "./friend-transit-reading.js";
 import { generateFriendTransitReadingForUser, type FriendTransitReadingRow } from "./friend-transit-reading-generation.js";
 import { isTransitReadingJudgeBlockedError } from "./transit-reading-generation.js";
 import { createSupabaseReportAdmin, type SupabaseReportAdmin } from "./supabase-report-admin.js";
+import { restoreRequestedGeneratedReport } from "./report-library-deletion.js";
 
 export type FriendReportBillingMode = "free_test" | "stripe";
 export type FriendReportJobState = "queued" | "running" | "retry" | "complete" | "failed" | "cancelled";
@@ -274,10 +275,11 @@ export async function requestFriendReport(input: {
     admin
   });
 
+  if (entitlement && entitlement.status !== "active") {
+    return { status: "unavailable" as const, entitlement, job: null };
+  }
+
   if (billingMode === "stripe" && !entitlementGrantsAccess(entitlement, billingMode)) {
-    if (entitlement && entitlement.status !== "active") {
-      return { status: "unavailable" as const, entitlement, job: null };
-    }
     return { status: "payment_required" as const, locked, entitlement, job: null };
   }
 
@@ -289,6 +291,7 @@ export async function requestFriendReport(input: {
     admin
   });
   if (completed && (billingMode === "free_test" || completed.friend_report_entitlement_id === entitlement?.id)) {
+    await restoreRequestedGeneratedReport(admin, input.userId, completed.id);
     return { status: "ready" as const, reading: completed, entitlement, job: null };
   }
 
@@ -306,6 +309,8 @@ export async function requestFriendReport(input: {
   }
 
   const placeholder = await ensurePlaceholder({ admin, entitlement, locked });
+  if (!placeholder?.id) throw new Error("Report placeholder could not be saved.");
+  await restoreRequestedGeneratedReport(admin, input.userId, placeholder.id);
   const job = await ensureJob({ admin, entitlement, locked });
   if (job.state === "complete" && placeholder?.body?.trim()) {
     return { status: "ready" as const, reading: placeholder, entitlement, job };
