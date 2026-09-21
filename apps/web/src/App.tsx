@@ -32,6 +32,8 @@ import { PublishedSkySummary } from "./features/sky/PublishedSkySummary";
 import { SkyReadingLayout, useSkyCardsSettled } from "./features/sky/SkyReadingLayout";
 import { SkyRoute } from "./routes/SkyRoute";
 import { YouRoute } from "./routes/YouRoute";
+import { loadYouPage, readYouPage } from "./features/you/youExperienceLoader";
+import type { YouPageProps } from "./features/you/YouPage";
 import { isStandaloneLearnPath } from "./content/learnRoutePath";
 import { refreshContentPublications } from "./services/contentPublications";
 import {
@@ -10785,20 +10787,18 @@ const GeneratedContentAdminDashboard = lazy(() =>
   }))
 );
 
-const loadYouPage = () => import("./features/you/YouPage");
 const preloadYouExperience = () => {
-  void loadYouPage();
+  void loadYouPage().catch(() => { /* The mounted route owns import errors. */ });
 };
 
 const ReportRoute = lazy(() =>
   import("./routes/ReportRoute").then((module) => ({ default: module.ReportRoute }))
 );
 
-const YouPage = lazy(() =>
-  loadYouPage().then((module) => ({
-    default: module.YouPage
-  }))
-);
+function YouPage(props: YouPageProps) {
+  const ReadyPage = readYouPage();
+  return <ReadyPage {...props} />;
+}
 
 const NatalAspectPatternsSection = lazy(() =>
   import("./features/you/NatalAspectPatternsSection").then((module) => ({
@@ -10989,6 +10989,7 @@ export function App() {
   const followsCurrentTransitDateRef = useRef(skyDate === currentLocalDate);
   const [mode, setMode] = useState<PortalMode>(() => studioReturnPath ? "profile" : getInitialPortalMode());
   const [youPagePainted, setYouPagePainted] = useState(false);
+  const youDetailsReady = youPagePainted || Boolean(placementRouteIdFromUrl());
   const markYouPagePainted = useCallback(() => setYouPagePainted(true), []);
   useEffect(() => {
     if (mode !== "profile") setYouPagePainted(false);
@@ -11701,6 +11702,10 @@ export function App() {
   }
 
   function navigateToPortalMode(nextMode: PortalMode, animate = true) {
+    // Capturing an animated loading screen delays the saved profile itself.
+    // Keep transitions for completed pages; leave unfinished Sky immediately.
+    const leavingSkyPlaceholder = !selectedSkyDetail && (mode === "guest" || mode === "member")
+      && (skyStatus === "loading" || skyStatus === "cached" || skyTimingStatus === "loading" || skyPlacementFallbackStatus !== "ready");
     transitionPage(() => {
       setSelectedSkyDetail(null);
       setSkyDetailRoutePath(null);
@@ -11708,7 +11713,7 @@ export function App() {
       storePortalMode(nextMode);
       setMode(nextMode);
       if (nextMode === "learn") setLearnPath(learnPathFromUrl());
-    }, animate && (nextMode !== mode || Boolean(selectedSkyDetail)) && !isSignupMode && !(nextMode === "profile" && !userProfile));
+    }, animate && (nextMode !== mode || Boolean(selectedSkyDetail)) && !isSignupMode && !(nextMode === "profile" && (!userProfile || leavingSkyPlaceholder)));
   }
 
   function navigateToLearnPath(nextPath: string) {
@@ -14847,13 +14852,13 @@ export function App() {
                       profileHandle={ownSocialProfile?.handle}
                       targetDate={skyDate}
                       transitForm={transitForm}
-                      transitItems={selectedDateTransits}
-                      currentSky={selectedDateSky}
-                      currentSkyLoading={!selectedDateSky && skyStatus !== "error"}
-                      natalSky={profileNatalSky}
-                      natalCalculationStatus={profileNatalCalculationStatus}
+                      transitItems={youDetailsReady ? selectedDateTransits : []}
+                      currentSky={youDetailsReady ? selectedDateSky : null}
+                      currentSkyLoading={!youDetailsReady || !selectedDateSky && skyStatus !== "error"}
+                      natalSky={youDetailsReady ? profileNatalSky : null}
+                      natalCalculationStatus={youDetailsReady ? profileNatalCalculationStatus : "loading"}
                       natalCalculationError={profileNatalCalculationError}
-                      natalAspectPatternLoadStatus={profileNatalAspectPatternStatus}
+                      natalAspectPatternLoadStatus={youDetailsReady ? profileNatalAspectPatternStatus : "loading"}
                       personalTiming={personalTiming}
                       personalTimingGenerated={personalTimingGenerated}
                       personalTimingGeneratedStatus={personalTimingGeneratedStatus}

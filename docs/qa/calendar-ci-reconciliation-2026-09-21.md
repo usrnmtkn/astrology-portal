@@ -12,6 +12,12 @@ overview remain covered by browser regressions.
 - On direct You links, fetch the profile page alongside App. Paint the saved
   profile before evaluating optional prose packages. A network regression holds
   App's response and verifies that the profile module is already requested.
+- Share the You module resource between intent preloading, direct-link startup
+  and rendering. A prefetched module renders synchronously. Paint the saved
+  profile before chart-detail rendering, while direct article links receive
+  their full data immediately. Leaving an unfinished Sky loading screen for
+  You skips the expensive snapshot; completed-page transitions remain intact.
+  Warm navigation measured 268 ms with 8x CPU throttling (800 ms limit).
 - Measure warm You navigation from the browser's actual click to its first
   visible profile frame. Record Playwright's pre-click preparation separately;
   all original performance limits remain unchanged.
