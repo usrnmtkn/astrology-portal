@@ -34,6 +34,7 @@ type SkyCalculationResponse =
   | { id: number; ok: false; error: string };
 
 const foregroundQueue: SkyCalculationRequest[] = [];
+const detailQueue: SkyCalculationRequest[] = [];
 const backgroundQueue: SkyCalculationRequest[] = [];
 let draining = false;
 
@@ -61,11 +62,11 @@ async function calculate(request: SkyCalculationRequest) {
   }
 }
 
-// Timing enrichment can enqueue dozens of calculations after You first paints.
-// Yield between jobs so a later Calendar/Sky navigation can enter the queue,
-// then serve visible-route facts before that optional background enrichment.
+// Core positions and Calendar dates precede expensive transit-window searches.
+// Those details still precede optional natal timing, which can enqueue dozens
+// of jobs. Yield between jobs so route changes can enter the foreground queue.
 async function drainCalculations() {
-  const request = foregroundQueue.shift() ?? backgroundQueue.shift();
+  const request = foregroundQueue.shift() ?? detailQueue.shift() ?? backgroundQueue.shift();
   if (!request) {
     draining = false;
     return;
@@ -88,7 +89,9 @@ async function drainCalculations() {
 
 self.addEventListener("message", (event: MessageEvent<SkyCalculationRequest>) => {
   const request = event.data;
-  const queue = request.kind === "natal-transit-timing" ? backgroundQueue : foregroundQueue;
+  const queue = request.kind === "natal-transit-timing" ? backgroundQueue
+    : request.kind === "sky" && request.options?.includeTransitWindows ? detailQueue
+    : foregroundQueue;
   queue.push(request);
   if (!draining) {
     draining = true;

@@ -13,6 +13,7 @@ export const friendsLoadingPerformanceBudgets = {
   slowNetworkListReadyMs: 800,
   slowNetworkDetailShellReadyMs: 1_200,
   slowNetworkRelationshipLoadingReadyMs: 900,
+  slowNetworkColdRelationshipReadyMs: 7_000,
   slowNetworkRelationshipReadyMs: 2_200,
   slowNetworkRelationshipEnhancedMs: 250
 } as const;

@@ -78,17 +78,60 @@ test("Calendar Day waits for full event facts before selecting leftover Moon wri
   await expect(weekly).toBeVisible({ timeout: 15_000 });
   expect(await weekly.getAttribute("data-guidance-key")).not.toContain("sky-placement-lived");
   const leftoverKey = await weekly.getAttribute("data-guidance-key");
+  await page.evaluate(basic => {
+    for (const key of Object.keys(localStorage)) {
+      if (key.startsWith("tldr-lunar-calendar|")) localStorage.removeItem(key);
+    }
+    // Current-version entries without a full-detail marker must also be ignored.
+    localStorage.setItem("tldr-lunar-calendar|v12|week|2026-08-02|40.7128|-74.0060|America/New_York",
+      JSON.stringify({ savedAt: Date.now(), calendar: basic }));
+  }, basic);
   holdFull = true;
   try {
     await page.goto("/#calendar?view=day&date=2026-08-04");
     await expect.poll(() => waiting).toBe(true);
-    await expect(page.locator(".lunar-calendar-loading")).toBeVisible();
+    await expect(page.getByRole("region", { name: "Selected week", exact: true })).toBeVisible();
+    await expect(page.getByText("Loading this day’s reading…", { exact: true })).toBeVisible();
     await expect(dayGuidance(page)).toHaveCount(0);
+    expect(await page.evaluate(() => Object.keys(localStorage).filter(key => key.startsWith("tldr-lunar-calendar|")))).toEqual([]);
   } finally { release(); }
   const day = dayGuidance(page);
   await expect(day).toHaveAttribute("data-guidance-key", leftoverKey ?? "");
   expect(await day.getAttribute("data-guidance-key")).not.toContain("sky-placement-lived");
   await expect(day.locator("p").first()).toBeVisible();
+  expect(await page.evaluate(() => Object.keys(localStorage).filter(key => key.startsWith("tldr-lunar-calendar|"))
+    .every(key => JSON.parse(localStorage.getItem(key)!).detail === "full"))).toBe(true);
+});
+
+test("Calendar full facts can arrive first without a late basic response replacing them", async ({ page }) => {
+  const { getLunarCalendarWeek } = await import("../../apps/web/src/services/ephemeris");
+  const location = { label: "New York, New York", latitude: 40.7128, longitude: -74.006, timeZone: "America/New_York" };
+  const anchor = new Date("2026-08-08T12:00:00Z");
+  const full = await getLunarCalendarWeek(location, anchor, { detail: "full" });
+  const basic = await getLunarCalendarWeek(location, anchor, { detail: "basic" });
+  let release!: () => void;
+  const held = new Promise<void>(resolve => { release = resolve; });
+  await page.addInitScript(location => localStorage.setItem("tldrastro:selectedLocation", JSON.stringify(location)), location);
+  await page.route("**/api/calendar?**", async route => {
+    const detailed = new URL(route.request().url()).searchParams.get("detail") === "full";
+    if (!detailed) await held;
+    await route.fulfill({ json: { ok: true, calendar: detailed ? full : basic } }).catch(() => {});
+  });
+  try {
+    await page.goto("/#calendar?view=day&date=2026-08-08");
+    await expect.poll(() => page.evaluate(() => Object.keys(localStorage).some(key =>
+      key.startsWith("tldr-lunar-calendar|") && JSON.parse(localStorage.getItem(key)!).detail === "full"))).toBe(true);
+    const basicResponse = page.waitForResponse(response => response.url().includes("/api/calendar?")
+      && new URL(response.url()).searchParams.get("detail") === "basic");
+    release();
+    await basicResponse;
+    await expect(dayGuidance(page)).toHaveAttribute("data-guidance-key", "authored/calendar-weekly-moon/gemini");
+    const stored = await page.evaluate(() => Object.keys(localStorage).filter(key => key.startsWith("tldr-lunar-calendar|"))
+      .map(key => JSON.parse(localStorage.getItem(key)!)));
+    expect(stored).toHaveLength(1);
+    expect(stored[0].calendar.events).toEqual(full.events);
+    expect(stored[0].detail).toBe("full");
+  } finally { release(); }
 });
 
 for (const leaveCalendar of [false, true]) test(`Calendar pending event click ${leaveCalendar ? "does not reopen after leaving" : "opens after the Sky calculation loads"}`, async ({ page }) => {
@@ -143,8 +186,9 @@ for (const view of ["weekly", "week"]) test(`Calendar ${view} waits for authored
     await page.goto(`/#calendar?view=${view}&date=2026-08-08`, { waitUntil: "domcontentloaded" });
     // Calculation has completed independently of the deliberately held prose bundle.
     await expect.poll(() => page.evaluate(() => Object.keys(localStorage).some(key => key.startsWith("tldr-lunar-calendar|"))), { timeout: 25_000 }).toBe(true);
-    await expect(page.locator(".lunar-calendar-loading")).toBeVisible();
-    await expect(page.locator(".lunar-calendar-body")).toHaveCount(0);
+    await expect(page.locator(".lunar-calendar-body")).toBeVisible();
+    await expect(page.getByRole("region", { name: "Selected week", exact: true })).toBeVisible();
+    await expect(view === "weekly" ? weekGuidance(page, "2026-08-08") : dayGuidance(page)).toHaveCount(0);
   } finally { release(); }
   const guidance = view === "weekly"
     ? weekGuidance(page, "2026-08-08")
@@ -153,6 +197,82 @@ for (const view of ["weekly", "week"]) test(`Calendar ${view} waits for authored
   expect(await guidance.getAttribute("data-guidance-key")).not.toContain("sky-placement-lived");
   await expect(view === "weekly" ? guidance : guidance.locator("p")).toHaveText(view === "weekly" ? source.body : source.body.split(/\n\n/));
   await expect(page.locator(".lunar-calendar-loading")).toHaveCount(0);
+});
+
+test("Calendar cold mobile and desktop deliver controls and complete reading within budgets", async ({ browser }) => {
+  test.setTimeout(120_000);
+  for (const width of [390, 1440]) {
+    const samples: Array<{ controls: number; reading: number }> = [];
+    for (let sample = 0; sample < 3; sample++) {
+      const context = await browser.newContext({ viewport: { width, height: 900 } });
+      try {
+        const page = await context.newPage();
+        const calculationDownloads: string[] = [];
+        context.on("request", request => {
+          const path = new URL(request.url()).pathname;
+          if (/^\/wasm\/swisseph\.(?:wasm|data)$/.test(path)) calculationDownloads.push(path);
+        });
+        // Freeze calendar dates only. Playwright's clock also replaces the
+        // Performance API, which would suppress the real User Timing measures.
+        await page.addInitScript(() => {
+          const NativeDate = Date;
+          const now = NativeDate.parse("2026-09-20T16:00:00Z");
+          window.Date = new Proxy(NativeDate, {
+            construct(target, args) { return Reflect.construct(target, args.length ? args : [now]); },
+            apply() { return new NativeDate(now).toString(); },
+            get(target, property) { return property === "now" ? () => now : Reflect.get(target, property); }
+          });
+        });
+        await page.route("**/rest/v1/**", route => route.fulfill({ json: [] }));
+        await page.route("**/api/calendar?**", route => route.fulfill({ status: 503, json: {} }));
+        await page.route("https://tldrastro-api-27165565299.us-central1.run.app/**", route => route.fulfill({ status: 503, json: {} }));
+        await page.addInitScript(() => localStorage.setItem("tldrastro:selectedLocation", JSON.stringify({
+          label: "New York, New York", latitude: 40.7128, longitude: -74.006, timeZone: "America/New_York"
+        })));
+        const cdp = await context.newCDPSession(page);
+        await cdp.send("Network.enable");
+        await cdp.send("Network.emulateNetworkConditions", { offline: false, latency: 150, downloadThroughput: 1_000_000, uploadThroughput: 100_000 });
+        await cdp.send("Emulation.setCPUThrottlingRate", { rate: width === 390 ? 2 : 1 });
+        const compressedAsset = page.waitForResponse(response => /\/assets\/.*\.js$/.test(response.url()));
+        await page.goto("/#calendar?view=day&date=2026-09-20", { waitUntil: "domcontentloaded" });
+        expect((await compressedAsset).headers()["content-encoding"]).toMatch(/gzip|br/);
+        await expect(page.getByRole("region", { name: "Selected week", exact: true })).toBeVisible({ timeout: 8_000 });
+        await expect(dayGuidance(page).locator("p").first()).toBeVisible({ timeout: 8_000 });
+        await page.waitForFunction(() => performance.getEntriesByName("tldr:calendar.reading:ready").length > 0);
+        // Read the app's next-frame marks relative to document navigation; test
+        // assertion polling must not be counted as user-visible loading time.
+        const completedAt = await page.evaluate(() => {
+          const end = (name: string) => {
+            const entry = performance.getEntriesByName(`tldr:calendar.${name}:ready`)[0];
+            if (!entry) throw new Error(`Missing ${name} completion mark`);
+            return Math.round(entry.startTime + entry.duration);
+          };
+          return { controls: end("controls"), reading: end("reading") };
+        });
+        samples.push(completedAt);
+        expect(calculationDownloads.sort()).toEqual(["/wasm/swisseph.data", "/wasm/swisseph.wasm"]);
+      } finally { await context.close(); }
+    }
+    console.log(JSON.stringify({ scenario: "cold Calendar with uncached local calculation", width, latencyMs: 150, bytesPerSecond: 1_000_000, samples }));
+    expect(Math.max(...samples.map(sample => sample.controls))).toBeLessThanOrEqual(6_000);
+    expect(Math.max(...samples.map(sample => sample.reading))).toBeLessThanOrEqual(7_500);
+  }
+});
+
+test("Calendar failed reading asset stays local and explicit retry reloads the reading", async ({ page }) => {
+  test.setTimeout(60_000);
+  let fail = true;
+  let navigations = 0;
+  page.on("request", request => { if (request.isNavigationRequest() && request.frame() === page.mainFrame()) navigations++; });
+  await page.route(/\/assets\/fallbackArchitectureV3DeferredBundle-.*\.js$/, route => fail ? route.abort("failed") : route.continue());
+  await page.goto("/#calendar?view=day&date=2026-08-08");
+  await expect(page.getByRole("region", { name: "Selected week", exact: true })).toBeVisible();
+  await expect(page.locator(".calendar-sky-card").getByRole("alert")).toContainText("reading could not load");
+  expect(navigations).toBe(1);
+  fail = false;
+  await page.locator(".calendar-sky-card").getByRole("button", { name: "Retry", exact: true }).click();
+  await expect(dayGuidance(page)).toBeVisible();
+  expect(navigations).toBe(2);
 });
 
 for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {

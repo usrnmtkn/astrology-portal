@@ -1,4 +1,5 @@
 import type { LocationInput } from "../types";
+import { withRequestDeadline } from "./requestDeadline";
 import type {
   LunarCalendarDetailLevel,
   LunarCalendarMonth
@@ -30,41 +31,44 @@ export async function getLunarCalendarFromApi(
   anchor: Date,
   detail: LunarCalendarDetailLevel
 ) {
-  const requestedDate = dateParam(anchor, location.timeZone);
-  const params = new URLSearchParams({
-    mode,
-    detail,
-    factsVersion: "solar-seasons-v3",
-    date: requestedDate,
-    lat: String(location.latitude),
-    lon: String(location.longitude),
-    label: location.label
-  });
+  return withRequestDeadline(async signal => {
+    const requestedDate = dateParam(anchor, location.timeZone);
+    const params = new URLSearchParams({
+      mode,
+      detail,
+      factsVersion: "solar-seasons-v3",
+      date: requestedDate,
+      lat: String(location.latitude),
+      lon: String(location.longitude),
+      label: location.label
+    });
 
-  if (location.timeZone) {
-    params.set("timeZone", location.timeZone);
-  }
-
-  const response = await fetch(`/api/calendar?${params}`, {
-    headers: {
-      Accept: "application/json"
+    if (location.timeZone) {
+      params.set("timeZone", location.timeZone);
     }
-  });
-  const contentType = response.headers.get("content-type") ?? "";
 
-  if (!response.ok || !contentType.includes("application/json")) {
-    throw new Error(`Calendar API unavailable: ${response.status}`);
-  }
+    const response = await fetch(`/api/calendar?${params}`, {
+      signal,
+      headers: {
+        Accept: "application/json"
+      }
+    });
+    const contentType = response.headers.get("content-type") ?? "";
 
-  const payload = await response.json() as CalendarApiResponse;
+    if (!response.ok || !contentType.includes("application/json")) {
+      throw new Error(`Calendar API unavailable: ${response.status}`);
+    }
 
-  if (!payload.ok || !payload.calendar) {
-    throw new Error(payload.error ?? "Calendar API returned no calendar.");
-  }
+    const payload = await response.json() as CalendarApiResponse;
 
-  if (mode === "week" && !payload.calendar.days.some((day) => day.dateKey === requestedDate)) {
-    throw new Error("Calendar API returned the wrong week.");
-  }
+    if (!payload.ok || !payload.calendar) {
+      throw new Error(payload.error ?? "Calendar API returned no calendar.");
+    }
 
-  return payload.calendar;
+    if (mode === "week" && !payload.calendar.days.some((day) => day.dateKey === requestedDate)) {
+      throw new Error("Calendar API returned the wrong week.");
+    }
+
+    return payload.calendar;
+  }, { timeoutMs: 2_500 });
 }

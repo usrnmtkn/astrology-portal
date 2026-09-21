@@ -2844,6 +2844,93 @@ test.describe("client-facing user flow case studies", () => {
     await assertNoClientErrors();
   });
 
+  test("Calendar dates remain usable during a reading timeout and recover without losing a draft", async ({ page }) => {
+    test.setTimeout(90_000);
+    await seedClientState(page, { now: "2026-09-20T16:00:00.000Z" });
+    await page.route("**/rest/v1/**", route => route.fulfill({ json: [] }));
+    let releaseContent!: () => void;
+    const gate = new Promise<void>(resolve => { releaseContent = resolve; });
+    await page.route("**/assets/fallback-content-deferred-core-*.js", async route => {
+      await gate;
+      await route.continue();
+    });
+    await page.goto("/#calendar?view=day&date=2026-09-20", { waitUntil: "domcontentloaded" });
+    await expect(page.getByRole("region", { name: "Selected week", exact: true })).toBeVisible();
+    await expect(page.getByRole("tab", { name: "Month", exact: true })).toBeEnabled();
+    await page.locator("button.calendar-checkin-card").click();
+    const editor = page.getByRole("dialog", { name: "Check-in", exact: true });
+    for (let step = 0; step < 3; step++) await editor.getByRole("button", { name: "Next", exact: true }).click();
+    await editor.locator("textarea").fill("Keep this private draft during recovery.");
+    await expect(page.locator(".calendar-sky-card").getByRole("alert")).toContainText("reading could not load", { timeout: 10_000 });
+    await expect(editor.locator("textarea")).toHaveValue("Keep this private draft during recovery.");
+    releaseContent();
+    await editor.getByRole("button", { name: "Close", exact: true }).click();
+    await page.locator(".calendar-sky-card").getByRole("button", { name: "Retry", exact: true }).click();
+    await expect(page.locator('.calendar-sky-card [aria-label="Moon guidance"]').first()).toBeVisible();
+    await expect(page.locator(".calendar-sky-card").getByRole("alert")).toHaveCount(0);
+  });
+
+  test("Calendar selected check-in ignores slow library and history; retry preserves the draft", async ({ page }) => {
+    test.setTimeout(90_000);
+    await page.setViewportSize({ width: 390, height: 844 });
+    await seedClientState(page, { profile: true, now: "2026-09-20T16:00:00.000Z" });
+    await seedSignedInSession(page);
+    await page.route("**/rest/v1/**", route => route.fulfill({ json: [] }));
+    const queries: URL[] = [];
+    await page.route("**/rest/v1/calendar_check_ins?**", async route => {
+      const url = new URL(route.request().url());
+      queries.push(url);
+      expect(url.searchParams.get("user_id")).toBe(`eq.${fixtureUserId}`);
+      expect(url.searchParams.getAll("date_key")).toHaveLength(2);
+      await route.fulfill({ json: [] });
+    });
+    let refuseLibrary = true;
+    await page.route("**/rest/v1/calendar_check_in_library?**", route => refuseLibrary
+      ? route.fulfill({ status: 503, json: { message: "Fixture unavailable" } })
+      : route.fulfill({ json: [{ user_id: fixtureUserId, kind: "tag", label: "My saved tag" }] }));
+    await page.goto("/#calendar?view=day&date=2026-09-20");
+    await page.locator("button.calendar-checkin-card").click();
+    const editor = page.getByRole("dialog", { name: "Check-in", exact: true });
+    await expect(editor.getByRole("button", { name: "Next", exact: true })).toBeVisible({ timeout: 2_000 });
+    for (let step = 0; step < 3; step++) await editor.getByRole("button", { name: "Next", exact: true }).click();
+    await editor.locator("textarea").fill("Draft survives the tags retry.");
+    await editor.getByRole("button", { name: /^Tags/ }).click();
+    await expect(editor.getByRole("alert")).toContainText("saved tags could not load");
+    refuseLibrary = false;
+    await editor.getByRole("button", { name: "Retry tags" }).click();
+    await expect(editor.getByRole("button", { name: "Delete tag My saved tag" })).toBeVisible();
+    await editor.getByRole("button", { name: "Done", exact: true }).click();
+    await expect(editor.locator("textarea")).toHaveValue("Draft survives the tags retry.");
+    expect(queries.filter(url => url.searchParams.get("select")?.includes("note")).every(url =>
+      url.searchParams.getAll("date_key").join(",") === "gte.2026-09-20,lte.2026-09-20")).toBe(true);
+    await editor.getByRole("button", { name: "Close", exact: true }).click();
+    await page.getByRole("tab", { name: "Month", exact: true }).click();
+    await expect.poll(() => queries.some(url => url.searchParams.get("select") === "user_id,date_key,mood")).toBe(true);
+  });
+
+  test("Calendar stalled selected check-in times out and retries without an empty editable form", async ({ page }) => {
+    test.setTimeout(90_000);
+    await seedClientState(page, { profile: true, now: "2026-09-20T16:00:00.000Z" });
+    await seedSignedInSession(page);
+    await page.route("**/rest/v1/**", route => route.fulfill({ json: [] }));
+    let release!: () => void;
+    const stalled = new Promise<void>(resolve => { release = resolve; });
+    let block = true;
+    await page.route("**/rest/v1/calendar_check_ins?**", async route => {
+      if (block) await stalled;
+      await route.fulfill({ json: [] });
+    });
+    await page.goto("/#calendar?view=day&date=2026-09-20");
+    await page.locator("button.calendar-checkin-card").click();
+    const editor = page.getByRole("dialog", { name: "Check-in", exact: true });
+    await expect(editor.getByRole("alert")).toContainText("saved check-in could not load", { timeout: 10_000 });
+    await expect(editor.getByRole("button", { name: "Next", exact: true })).toHaveCount(0);
+    block = false;
+    release();
+    await editor.getByRole("button", { name: "Retry", exact: true }).click();
+    await expect(editor.getByRole("button", { name: "Next", exact: true })).toBeVisible({ timeout: 2_000 });
+  });
+
   for (const { width, theme } of [{ width: 1440, theme: "light" }, { width: 390, theme: "dark" }] as const) {
     test(`Calendar interaction controls and private people search ${theme} ${width}`, async ({ page }) => {
       test.setTimeout(120_000);

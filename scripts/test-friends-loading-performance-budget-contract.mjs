@@ -14,6 +14,7 @@ const expectedBudgetKeys = [
   "incompleteChartListReadyMs",
   "incompleteChartRepairReadyMs",
   "mobileNavigationReadyMs",
+  "slowNetworkColdRelationshipReadyMs",
   "slowNetworkDetailShellReadyMs",
   "slowNetworkListReadyMs",
   "slowNetworkRelationshipEnhancedMs",
@@ -83,6 +84,7 @@ const hardCeilings = {
   slowNetworkListReadyMs: 800,
   slowNetworkDetailShellReadyMs: 1_200,
   slowNetworkRelationshipLoadingReadyMs: 900,
+  slowNetworkColdRelationshipReadyMs: 7_000,
   slowNetworkRelationshipReadyMs: 2_200,
   slowNetworkRelationshipEnhancedMs: 250
 };

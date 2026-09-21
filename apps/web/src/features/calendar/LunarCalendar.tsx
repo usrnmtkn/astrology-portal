@@ -1,14 +1,13 @@
 import { FormattedProse } from "../../components/FormattedProse";
-import { getVerifiedAuthUser, onAuthAccountChange } from "../../services/auth";
+import { useCalendarCheckIns } from "./useCalendarCheckIns";
+import { startReaderMeasurement } from "../../services/readerPerformance";
+import { withRequestDeadline } from "../../services/requestDeadline";
 import {
   addCalendarCheckInLibraryItem,
-  listCalendarCheckInLibrary,
-  listCalendarCheckIns,
   removeCalendarCheckInLibraryItem,
   upsertCalendarCheckIn
 } from "../../services/calendarCheckIns";
 import { calendarSunSummary, calendarSkyForDay } from "./calendarDaySummary";
-import { CalendarSummaryText } from "./CalendarSummaryText";
 import { skyDailySummaryFields } from "../../content/skyDailySummaryCatalog";
 import type { SkySnapshot } from "../../types";
 import { CardReadMore } from "../../components/CardReadMore";
@@ -85,7 +84,7 @@ import {
   type CalendarV9TransitResolver
 } from "./calendarV9Transit";
 import { calendarPhaseLabelForDay } from "./calendarPhaseLabel";
-import { lunarDayGeneratedContentKeys, resolveLunarDay } from "./lunarDayResolver";
+import { lunarDayGeneratedContentKeys } from "./lunarDayResolver";
 import type { LunarDay, LunarDayArcPoint } from "./lunarDayTypes";
 import { sunIngressSeasonSign, sunIngressSeasonWindow } from "./seasonWindow";
 import { calendarMonthlyOverviewContentKeys, resolveCalendarMonthlyOverview } from "./monthlyOverview";
@@ -93,8 +92,7 @@ import { AstroGlyph } from "./AstroGlyph";
 import {
   CalendarCheckIn,
   CalendarMoodChip,
-  calendarMoodOf,
-  type CalendarCheckInEntry
+  calendarMoodOf
 } from "./CalendarCheckIn";
 import { CalendarDayGroup, CalendarDayGroupList, CalendarSeasonPill, type CalendarDayGroupRow } from "./CalendarDayGroup";
 import { CalendarDayPanel } from "./CalendarDayPanel";
@@ -184,6 +182,7 @@ const enableCalendarApi = import.meta.env.PROD
 
 type StoredCalendarPayload = {
   savedAt: number;
+  detail: "full";
   calendar: LunarCalendarMonthData;
 };
 
@@ -302,7 +301,7 @@ function readStoredCalendar(key: string): LunarCalendarMonthData | null {
 
     const parsed = JSON.parse(raw) as StoredCalendarPayload;
 
-    if (!parsed?.calendar || Date.now() - parsed.savedAt > calendarStorageTtlMs) {
+    if (!parsed?.calendar || parsed.detail !== "full" || Date.now() - parsed.savedAt > calendarStorageTtlMs) {
       window.localStorage.removeItem(key);
       return null;
     }
@@ -315,7 +314,7 @@ function readStoredCalendar(key: string): LunarCalendarMonthData | null {
 
 function writeStoredCalendar(key: string, calendar: LunarCalendarMonthData) {
   try {
-    window.localStorage.setItem(key, JSON.stringify({ savedAt: Date.now(), calendar }));
+    window.localStorage.setItem(key, JSON.stringify({ savedAt: Date.now(), detail: "full", calendar }));
   } catch {
     // Best effort cache only.
   }
@@ -572,75 +571,8 @@ function activeRetrogradeUntilLabel(event: LunarCalendarEvent, timeZone: string)
   return `until ${formatEventDateMonthDay(event.endsAt, timeZone)}`;
 }
 
-function isExactDayEvent(event: LunarCalendarEvent, day: LunarCalendarDay) {
-  return event.dateKey === day.dateKey && !isActiveRetrogradeEvent(event);
-}
-
-function removeActiveRetrogradeStationDuplicates(events: LunarCalendarEvent[], day: LunarCalendarDay) {
-  const exactStationPlanets = new Set(
-    events
-      .filter((event) => (
-        event.primary
-        && event.type === "station"
-        && event.planet
-        && event.dateKey === day.dateKey
-        && event.title.toLowerCase().includes("stations")
-      ))
-      .map((event) => event.planet)
-  );
-
-  if (exactStationPlanets.size === 0) {
-    return events;
-  }
-
-  return events.filter((event) => !(
-    isActiveRetrogradeEvent(event)
-    && event.planet
-    && exactStationPlanets.has(event.planet)
-  ));
-}
-
-function selectedDayTransitEvents(
-  day: LunarCalendarDay,
-  lunarDay: ReturnType<typeof resolveLunarDay> | null,
-  selectedEvents: LunarCalendarEvent[]
-) {
-  const transits = (lunarDay?.traditional.transits.map((transit) => transit.sourceEvent)
-    ?? selectedEvents.filter(isDayCardSurfaceEvent))
-    .filter((event) => isExactDayEvent(event, day) || isActiveRetrogradeEvent(event));
-
-  return removeActiveRetrogradeStationDuplicates([...transits], day).sort((first, second) => {
-    const firstIsExact = isExactDayEvent(first, day);
-    const secondIsExact = isExactDayEvent(second, day);
-
-    if (firstIsExact !== secondIsExact) {
-      return firstIsExact ? -1 : 1;
-    }
-
-    const firstTime = new Date(first.startsAt).getTime();
-    const secondTime = new Date(second.startsAt).getTime();
-
-    if (firstIsExact && secondIsExact) {
-      return secondTime - firstTime;
-    }
-
-    return firstTime - secondTime;
-  });
-}
-
 function weekTransitCardEvents(days: LunarCalendarDay[]) {
   return majorRangeEvents(days);
-}
-
-function isDayCardSurfaceEvent(event: LunarCalendarEvent) {
-  if (isActiveRetrogradeEvent(event)) {
-    return true;
-  }
-
-  return event.type === "lunation"
-    || event.type === "ingress"
-    || event.type === "station"
-    || event.type === "aspect";
 }
 
 function calendarDayTooltipEvents(day: LunarCalendarDay, previousDay?: LunarCalendarDay | null) {
@@ -2227,7 +2159,17 @@ export function LunarCalendar({
   const [selectedCalendar, setSelectedCalendar] = useState<LunarCalendarMonthData | null>(null);
   const [seasonEvents, setSeasonEvents] = useState<LunarCalendarEvent[]>([]);
   const [status, setStatus] = useState<LunarCalendarStatus>("loading");
-  const [moonContentReady, setMoonContentReady] = useState(() => isDeferredFallbackArchitectureV3BundleLoaded() && isSkyPlacementFallbackArchitectureV3BundleLoaded());
+  const [hasCalendarFacts, setHasCalendarFacts] = useState(false);
+  const [calendarDetailState, setCalendarDetailState] = useState<"loading" | "ready" | "error">("loading");
+  const [moonContentState, setMoonContentState] = useState<"loading" | "ready" | "error">(() =>
+    isDeferredFallbackArchitectureV3BundleLoaded() && isSkyPlacementFallbackArchitectureV3BundleLoaded() ? "ready" : "loading");
+  const [moonContentRetry, setMoonContentRetry] = useState(0);
+  const moonContentAssetFailed = useRef(false);
+  const readingMeasurement = useRef<ReturnType<typeof startReaderMeasurement> | null>(null);
+  const moonContentReady = moonContentState === "ready";
+  const readingState: "loading" | "ready" | "error" = moonContentState === "error" || calendarDetailState === "error" ? "error"
+    : moonContentReady && calendarDetailState === "ready" ? "ready" : "loading";
+  const readingReady = readingState === "ready";
   const [selectedDateKey, setSelectedDateKey] = useState(initialDateKey);
   const [retryNonce, setRetryNonce] = useState(0);
   const [knowledgeMatrixV9, setKnowledgeMatrixV9] = useState<CalendarV9TransitResolver | null>(null);
@@ -2239,100 +2181,63 @@ export function LunarCalendar({
   const [checkInOpen, setCheckInOpen] = useState(false);
   const [subscribeOpen, setSubscribeOpen] = useState(false);
   const [subscribed, setSubscribed] = useState(false);
-  const [signedIn, setSignedIn] = useState(false);
-  const [checkIns, setCheckIns] = useState<Record<string, CalendarCheckInEntry>>({});
-  const [libraryTags, setLibraryTags] = useState<string[]>([]);
-  const [knownPeople, setKnownPeople] = useState<string[]>([]);
-  const checkInAccountIdRef = useRef<string | null>(null);
-  const checkInReadyRef = useRef(false);
-  const [checkInLoadState, setCheckInLoadState] = useState<"loading" | "ready" | "error">("loading");
-  const [checkInRetry, setCheckInRetry] = useState(0);
+  const retryCalendarContent = () => {
+    if (calendarDetailState === "error") setRetryNonce(value => value + 1);
+    // Browsers cache failed module imports. An explicit retry may need fresh HTML;
+    // a request deadline can retry the still-pending import without reloading.
+    if (moonContentAssetFailed.current && !checkInOpen) window.location.reload();
+    else setMoonContentRetry(value => value + 1);
+  };
+  const checkInData = useCalendarCheckIns({
+    dateKey: selectedDateKey,
+    fromDateKey: viewMode === "month" ? calendar?.days[0]?.dateKey : undefined,
+    toDateKey: viewMode === "month" ? calendar?.days.at(-1)?.dateKey : undefined,
+    editorOpen: checkInOpen,
+    closeEditor: () => setCheckInOpen(false)
+  });
+  const { signedIn, loadState: checkInLoadState } = checkInData;
+  const libraryTags = checkInData.library.tags;
+  const knownPeople = checkInData.library.people;
   const [journalPrompt, setJournalPrompt] = useState<string | null>(null);
   const [checkInTarot, setCheckInTarot] = useState(false);
 
   useEffect(() => {
-    let cancelled = false;
-    let loadId = 0;
+    const finish = startReaderMeasurement("calendar.reading", moonContentReady ? "hit" : "miss");
+    readingMeasurement.current = finish;
+    return () => finish("cancelled");
+  }, [moonContentRetry]);
 
-    function clearCheckInState() {
-      if (checkInAccountIdRef.current) setCheckInOpen(false);
-      checkInAccountIdRef.current = null;
-      setSignedIn(false);
-      setCheckIns({});
-      setLibraryTags([]);
-      setKnownPeople([]);
-      checkInReadyRef.current = true;
-      setCheckInLoadState("ready");
-    }
-
-    async function loadAccountCheckIns() {
-      const requestId = ++loadId;
-      try {
-        const user = await getVerifiedAuthUser();
-        if (cancelled || requestId !== loadId) return;
-        if (!user) {
-          clearCheckInState();
-          return;
-        }
-        if (checkInAccountIdRef.current !== user.id) {
-          if (checkInAccountIdRef.current) setCheckInOpen(false);
-          checkInAccountIdRef.current = user.id;
-          checkInReadyRef.current = false;
-          setCheckInLoadState("loading");
-          setCheckIns({});
-          setLibraryTags([]);
-          setKnownPeople([]);
-        }
-        setSignedIn(true);
-        try {
-          const [entries, library] = await Promise.all([
-            listCalendarCheckIns(),
-            listCalendarCheckInLibrary()
-          ]);
-          if (cancelled || requestId !== loadId) return;
-          setCheckIns(entries);
-          setLibraryTags(library.tags);
-          setKnownPeople(library.people);
-          checkInReadyRef.current = true;
-          setCheckInLoadState("ready");
-        } catch (error) {
-          if (cancelled || requestId !== loadId) return;
-          if (!checkInReadyRef.current) setCheckInLoadState("error");
-          console.warn("Calendar check-ins could not load for this account.", {
-            name: error instanceof Error ? error.name : "UnknownError"
-          });
-        }
-      } catch (error) {
-        if (cancelled || requestId !== loadId) return;
-        if (!checkInReadyRef.current) setCheckInLoadState("error");
-        console.warn("Calendar check-in session could not be confirmed.", {
-          name: error instanceof Error ? error.name : "UnknownError"
-        });
+  useEffect(() => {
+    // On a cold visit, reserve bandwidth for calculation assets before prose.
+    // Once facts have loaded, subsequent navigation keeps the warmed bundles.
+    if (!hasCalendarFacts) return;
+    const controller = new AbortController();
+    const finish = readingMeasurement.current!;
+    setMoonContentState("loading");
+    moonContentAssetFailed.current = false;
+    void withRequestDeadline(() => Promise.all([
+      loadDeferredFallbackArchitectureV3Bundle(), loadSkyPlacementFallbackArchitectureV3Bundle()
+    ]), { signal: controller.signal }).then(() => {
+      if (!controller.signal.aborted) setMoonContentState("ready");
+    }).catch(error => {
+      finish(error?.name === "TimeoutError" ? "timeout" : controller.signal.aborted ? "cancelled" : "error");
+      if (!controller.signal.aborted) {
+        moonContentAssetFailed.current = error?.name !== "TimeoutError" && error?.name !== "AbortError";
+        setMoonContentState("error");
       }
-    }
-
-    void loadAccountCheckIns();
-    const unsubscribe = onAuthAccountChange(() => {
-      void loadAccountCheckIns();
     });
-
-    return () => {
-      cancelled = true;
-      unsubscribe();
-    };
-  }, [checkInRetry]);
+    return () => { controller.abort(); finish("cancelled"); };
+  }, [moonContentRetry, hasCalendarFacts]);
 
   useEffect(() => {
-    let active = true;
-    // Calculated days and the authored Moon bundle load concurrently. An absent
-    // row while its bundle is loading is not a genuine content gap.
-    void Promise.all([loadDeferredFallbackArchitectureV3Bundle(), loadSkyPlacementFallbackArchitectureV3Bundle()])
-      .catch(error => console.warn("Calendar Moon content could not load; keeping available fallback content.", error))
-      .finally(() => { if (active) setMoonContentReady(true); });
-    return () => { active = false; };
-  }, []);
+    if (status === "ready" && readingReady) {
+      const frame = requestAnimationFrame(() => readingMeasurement.current?.("ready"));
+      return () => cancelAnimationFrame(frame);
+    }
+  }, [status, readingReady]);
 
   useEffect(() => {
+    if (!hasCalendarFacts || !moonContentReady) return;
     let active = true;
 
     void loadKnowledgeMatrixV9Runtime()
@@ -2346,9 +2251,10 @@ export function LunarCalendar({
     return () => {
       active = false;
     };
-  }, []);
+  }, [hasCalendarFacts, moonContentReady]);
 
   useEffect(() => {
+    if (!hasCalendarFacts || !moonContentReady) return;
     let active = true;
 
     void import("../../content/skyRegistry")
@@ -2365,7 +2271,7 @@ export function LunarCalendar({
     return () => {
       active = false;
     };
-  }, []);
+  }, [hasCalendarFacts, moonContentReady]);
 
   useEffect(() => {
     let cancelled = false;
@@ -2374,11 +2280,13 @@ export function LunarCalendar({
       : visibleMonth;
     const storedCalendarKey = calendarStorageKey(location, viewMode, visibleAnchor);
     const storedCalendar = readStoredCalendar(storedCalendarKey);
-    // Day selects its Moon guidance from the same event-dependent weekly
-    // sequence as Week. Basic facts omit those events and select different copy.
-    const initialDetail = isWeekBasedView(viewMode) ? "full" : "basic";
+    const finishControls = startReaderMeasurement("calendar.controls", storedCalendar ? "hit" : "miss");
+    // Basic facts make dates usable while prose downloads overlap the detailed
+    // calculation. Reading selection is gated separately on complete facts.
+    setCalendarDetailState(storedCalendar ? "ready" : "loading");
 
     if (storedCalendar) {
+      setHasCalendarFacts(true);
       setCalendar(storedCalendar);
       setSelectedDateKey((existingKey) => {
         if (existingKey) return existingKey;
@@ -2395,6 +2303,7 @@ export function LunarCalendar({
         return defaultDay?.dateKey || "";
       });
       setStatus("ready");
+      requestAnimationFrame(() => finishControls("ready"));
     } else {
       setCalendar(null);
       setSelectedCalendar(null);
@@ -2402,8 +2311,17 @@ export function LunarCalendar({
       setStatus("loading");
     }
 
-    loadCalendarData(location, viewMode, visibleAnchor, initialDetail)
-      .then((nextCalendar) => {
+    // Start both requests together so detailed facts enter the worker queue
+    // before expensive Sky enrichment. Either successful response can paint
+    // dates; a later basic response must never replace complete facts.
+    const basicRequest = storedCalendar ? null
+      : loadCalendarData(location, viewMode, visibleAnchor, "basic")
+        .then(calendar => ({ calendar, detail: "basic" as const }));
+    const fullRequest = loadCalendarData(location, viewMode, visibleAnchor, "full")
+      .then(calendar => ({ calendar, detail: "full" as const }));
+    const initialRequest = basicRequest ? Promise.any([basicRequest, fullRequest]) : fullRequest;
+    initialRequest
+      .then(({ calendar: nextCalendar, detail }) => {
         if (cancelled) return;
 
         const currentKey = todayKey(nextCalendar.timeZone);
@@ -2412,7 +2330,7 @@ export function LunarCalendar({
           ?? nextCalendar.days[0];
 
         setCalendar(nextCalendar);
-        writeStoredCalendar(storedCalendarKey, nextCalendar);
+        setHasCalendarFacts(true);
         setSelectedDateKey((existingKey) => {
           if (existingKey) return existingKey;
 
@@ -2423,34 +2341,42 @@ export function LunarCalendar({
           return defaultDay?.dateKey || "";
         });
         setStatus("ready");
+        requestAnimationFrame(() => finishControls("ready"));
 
-        if (initialDetail === "full") {
+        if (detail === "full") {
+          setCalendarDetailState("ready");
+          writeStoredCalendar(storedCalendarKey, nextCalendar);
           return;
         }
 
-        // The detailed calculation runs in the astronomy worker, so queue it
-        // immediately after the basic paint. This preserves a fast shell while
-        // ensuring event rows are not starved behind lower-priority season work.
-        void loadCalendarData(location, viewMode, visibleAnchor, "full")
-          .then((fullCalendar) => {
+        void fullRequest
+          .then(({ calendar: fullCalendar }) => {
             if (!cancelled) {
               setCalendar(fullCalendar);
+              setCalendarDetailState("ready");
               writeStoredCalendar(storedCalendarKey, fullCalendar);
             }
           })
           .catch((error) => {
             console.warn("Full lunar calendar details failed to load.", error);
+            if (!cancelled) {
+              setCalendarDetailState("error");
+              readingMeasurement.current?.("error");
+            }
           });
       })
       .catch((error) => {
+        finishControls("error");
         console.warn("Lunar calendar failed to load.", error);
         if (!cancelled) {
           setStatus("error");
+          readingMeasurement.current?.("error");
         }
       });
 
     return () => {
       cancelled = true;
+      finishControls("cancelled");
     };
   }, [location, retryNonce, viewMode, visibleMonth, visibleWeekDateKey]);
 
@@ -2570,9 +2496,10 @@ export function LunarCalendar({
   }, [calendar, location, selectedCalendar, selectedDateKey]);
 
   const selectedDay = useMemo(() => (
-    selectedCalendar?.days.find((day) => day.dateKey === selectedDateKey)
+    calendar?.days.find((day) => day.dateKey === selectedDateKey)
+    ?? selectedCalendar?.days.find((day) => day.dateKey === selectedDateKey)
     ?? null
-  ), [selectedCalendar, selectedDateKey]);
+  ), [calendar, selectedCalendar, selectedDateKey]);
 
   const zone = calendar?.timeZone ?? location.timeZone ?? "UTC";
   const currentDateKey = todayKey(zone);
@@ -2676,9 +2603,9 @@ export function LunarCalendar({
   }, [calendar, zone]);
 
   const moonResolvedByDate = useMemo(() => {
-    if (!calendar) return new Map();
+    if (!calendar || calendarDetailState !== "ready") return new Map();
     return calendarMoonResolvedByDate(calendar.days, moonCycleFacts, generatedContent);
-  }, [calendar, generatedContent, moonCycleFacts]);
+  }, [calendar, calendarDetailState, generatedContent, moonCycleFacts]);
 
   const weeklyRangeLabel = formatWeeklyRange(selectedWeekDays, calendar?.timeZone ?? location.timeZone ?? "UTC");
   const arcEvents = useMemo(() => {
@@ -2694,31 +2621,15 @@ export function LunarCalendar({
 
     return [...eventsById.values()];
   }, [calendar, seasonEvents, selectedCalendar]);
-  const selectedLunarDay = useMemo(() => (
-    selectedDay
-      ? resolveLunarDay({
-          day: selectedDay,
-          events: arcEvents,
-          location,
-          timeZone: zone,
-          arcEnabled: enableLunarArcContent,
-          generatedContent
-        })
-      : null
-  ), [arcEvents, generatedContent, location, selectedDay, zone]);
   const selectedSky = selectedDay ? calendarSkyForDay(sky, selectedDay.dateKey, location) : null;
   const selectedMoon = selectedSky?.positions.find(position => position.planet === "Moon");
   const readingDay = selectedDay && selectedMoon ? { ...selectedDay, moonSign: selectedMoon.sign } : selectedDay;
   const sunSummary = calendarSunSummary(selectedSky, generatedContent);
-  const selectedEvents = selectedDay ? dayEventPreview(selectedDay.events) : [];
   const previousSelectedDay = selectedCalendar && selectedDay
     ? selectedCalendar.days[selectedCalendar.days.findIndex((day) => day.dateKey === selectedDay.dateKey) - 1] ?? null
     : null;
   const selectedDaySurfaceEvents = selectedDay
     ? daySurfaceEvents(selectedDay, previousSelectedDay)
-    : [];
-  const selectedDayTransits = selectedDay
-    ? selectedDayTransitEvents(selectedDay, selectedLunarDay, selectedEvents)
     : [];
   const selectedDayEventCards = selectedDaySurfaceEvents.map((event) => {
     const editorial = calendarEventEditorialContent(
@@ -2789,61 +2700,12 @@ export function LunarCalendar({
   // Collective-energy write-ups for the aspects exact on the selected day. These
   // read as part of the day's narrative (appended under the main Moon write-up),
   // not as per-row call-outs. Deduped so a twice-logged aspect appears once.
-  const selectedDayAspectWriteups = useMemo(() => {
-    const writeups: string[] = [];
-    const seenAspectKeys = new Set<string>();
-
-    for (const event of selectedDaySurfaceEvents) {
-      if (event.type !== "aspect" || !event.planets || !event.aspect) {
-        continue;
-      }
-
-      const aspectKey = `${event.planets[0]}-${event.aspect}-${event.planets[1]}`.toLowerCase();
-
-      if (seenAspectKeys.has(aspectKey)) {
-        continue;
-      }
-
-      // Use the same reviewed, sign-specific aspect content selected for Sky.
-      // When that exact row is unavailable, preserve Calendar coverage with
-      // the package renderer instead of leaving the write-up blank.
-      const editorial = calendarEventEditorialContent(
-        event,
-        generatedContent,
-        zone,
-        knowledgeMatrixV9,
-        approvedExactSkyAspectLookup,
-        composedSkyCalendarCardLookup
-      );
-      const body = editorial.eventCopy ?? "";
-
-      if (body) {
-        seenAspectKeys.add(aspectKey);
-        writeups.push(body);
-      }
-    }
-
-    return writeups;
-  }, [approvedExactSkyAspectLookup, generatedContent, knowledgeMatrixV9, selectedDaySurfaceEvents, zone]);
   const selectedPrimaryLunation = selectedDay ? primaryLunationForDay(selectedDay) : undefined;
   const selectedDayPhase = selectedDay && calendar
     ? calendarPhaseLabelForDay(selectedDay, calendar.days)
     : null;
   const selectedDayPhaseSign = selectedPrimaryLunation?.sign ?? readingDay?.moonSign ?? "";
-  const selectedTransitNotes = enableLunarArcContent && selectedLunarDay
-    ? selectedLunarDay.editorial.transitNotes
-        .map((note) => ({
-          ...note,
-          event: selectedDayTransits.find((event) => event.id === note.transitRef) ?? null
-        }))
-        .filter((note) => note.body && (note.event || note.title))
-    : [];
-  const selectedVoidWindow = selectedDay ? formatVoidCourseDetailWindow(selectedDay, zone) : "";
-  const selectedVoidDuration = selectedDay?.voidOfCourse?.durationLabel || "";
-  const selectedVoidNextSign = selectedDay ? voidCourseNextSignLabel(selectedDay) : null;
-  // Keep the dated Calendar leftover Moon-sign passage, never the
-  // Sky Placement Moon article.
-  const selectedPackageWeeklyMoon = selectedDay
+  const selectedPackageWeeklyMoon = selectedDay && calendarDetailState === "ready"
     ? packagedWeeklyMoon(
       selectedDay,
       moonCycleFacts.get(selectedDay.dateKey),
@@ -2851,7 +2713,7 @@ export function LunarCalendar({
       moonResolvedByDate
     )
     : null;
-  const selectedMoonWriting = readingDay
+  const selectedMoonWriting = readingDay && calendarDetailState === "ready" && moonContentReady
     ? moonWritingForDay(
       readingDay,
       generatedContent,
@@ -2860,7 +2722,6 @@ export function LunarCalendar({
         : null
     )
     : [];
-  const selectedMoonReading = selectedMoonWriting[0] ?? null;
   const selectedDayBodyPresentation = {
     main: calendarMoonWritingParagraphs(selectedMoonWriting),
     prompt: null
@@ -2894,285 +2755,6 @@ export function LunarCalendar({
         }
       })()
     : null;
-  const selectedPackageVoid = selectedDay?.voidOfCourse && selectedVoidNextSign
-    ? (() => {
-        try {
-          return calendarFallbackRendererV3.renderVoidOfCourse({
-            sign: slugContentPart(selectedDay.moonSign),
-            nextSign: slugContentPart(selectedVoidNextSign.sign)
-          });
-        } catch (error) {
-          if (error instanceof FallbackV3SourceGapError) return null;
-          throw error;
-        }
-      })()
-    : null;
-  const selectedSeasonArc = selectedLunarDay?.arc ?? null;
-  const selectedSeasonArcMilestones = useMemo(
-    () => lunarArcMilestones(selectedLunarDay),
-    [selectedLunarDay]
-  );
-  const selectedSixMonthArcMilestones = selectedSeasonArcMilestones.filter((milestone) => milestone.group === "sixMonth");
-  // The New Moon and Full Moon that fall within the current zodiac season, shown
-  // in the season chip. For Leo season these are the Leo New Moon and the
-  // Aquarius Full Moon (each carries its own sign from the ephemeris).
-  const selectedSeasonMoonMilestones = useMemo(() => {
-    if (!selectedSeasonArc || !selectedDay) {
-      return [] as Array<{ id: string; label: string; discClass: string; point: { sign: string; datetime: string }; isCurrent: boolean }>;
-    }
-
-    const startTime = Date.parse(selectedSeasonArc.season.startsAt);
-    const endTime = Date.parse(selectedSeasonArc.season.endsAt);
-    const selectedTime = dayKeyToUtcTime(selectedDay.dateKey);
-    const seasonLunations = arcEvents
-      .filter((event) => event.type === "lunation")
-      .filter((event) => {
-        const eventTime = Date.parse(event.startsAt);
-
-        return eventTime >= startTime && eventTime < endTime;
-      });
-    const newMoon = seasonLunations.find((event) => event.title.startsWith("New Moon")) ?? null;
-    const fullMoon = seasonLunations.find((event) => event.title.startsWith("Full Moon")) ?? null;
-
-    const rows = [
-      newMoon && { id: newMoon.id, label: "New Moon", discClass: "is-new", event: newMoon },
-      fullMoon && { id: fullMoon.id, label: "Full Moon", discClass: "is-full", event: fullMoon }
-    ].filter((row): row is { id: string; label: string; discClass: string; event: LunarCalendarEvent } => Boolean(row));
-
-    const currentId = rows
-      .filter((row) => dayKeyToUtcTime(row.event.dateKey) <= selectedTime)
-      .sort((first, second) => dayKeyToUtcTime(first.event.dateKey) - dayKeyToUtcTime(second.event.dateKey))
-      .at(-1)?.id ?? null;
-
-    return rows.map((row) => ({
-      id: row.id,
-      label: row.label,
-      discClass: row.discClass,
-      point: { sign: row.event.sign ?? "", datetime: row.event.startsAt },
-      isCurrent: row.id === currentId
-    }));
-  }, [arcEvents, selectedDay, selectedSeasonArc]);
-  const _selectedDayCard = selectedDay && calendar && (
-    <section className="lunar-selected-card" aria-label="Selected lunar day">
-      <div className="lunar-selected-card__main">
-        <div className="lunar-selected-card__copy">
-          <span className="lunar-selected-card__eyebrow">
-            {seasonEyebrowForDay(selectedDay, zone, arcEvents)}
-          </span>
-          <h2>
-            {selectedPrimaryLunation ? (
-              <button
-                className="lunar-selected-card__lunation-link"
-                onClick={() => openEventReading(selectedPrimaryLunation)}
-                type="button"
-              >
-                {selectedPackagePhase?.headline
-                  ?? (selectedDayPhase
-                    ? calculatedPhaseTitle(selectedDayPhase, selectedDayPhaseSign)
-                    : titleForDay(selectedDay))}
-              </button>
-            ) : (
-              selectedPackagePhase?.headline
-                ?? (selectedDayPhase
-                  ? calculatedPhaseTitle(selectedDayPhase, selectedDayPhaseSign)
-                  : titleForDay(selectedDay))
-            )}
-          </h2>
-          {selectedPackagePhase?.tagline && (
-            <small className="lunar-selected-card__phase-tagline">{selectedPackagePhase.tagline}</small>
-          )}
-          <p className="lunar-selected-card__meta">
-            <span className={`lunar-selected-card__meta-element ${elementClassForSign(readingDay?.moonSign ?? selectedDay.moonSign)}`}>
-              {signElements[readingDay?.moonSign ?? selectedDay.moonSign] ?? "Element"}
-            </span>
-            <span className="lunar-selected-card__meta-separator" aria-hidden="true">·</span>
-            <span className="lunar-selected-card__meta-date">{formatSelectedDay(selectedDay, zone)}</span>
-            {selectedPrimaryLunation && (
-              <>
-                <span className="lunar-selected-card__meta-separator" aria-hidden="true">·</span>
-                <span className="lunar-selected-card__meta-time">Exact at {formatEventTime(selectedPrimaryLunation.startsAt, zone)}</span>
-              </>
-            )}
-          </p>
-          {(sunSummary.length > 0 || selectedDayBodyPresentation.main.length > 0 || selectedDayAspectWriteups.length > 0) && (
-            <div className="lunar-selected-card__body">
-              {(sunSummary.length > 0 || selectedDayBodyPresentation.main.length > 0) && (
-                <div className="lunar-selected-card__body-section">
-                  {sunSummary.length > 0 && <section aria-label="Sun in season"><CalendarSummaryText parts={sunSummary} sky={selectedSky} date={selectedDay.dateKey} /></section>}
-                  {selectedDayBodyPresentation.main.length > 0 && (
-                    <section
-                      className="lunar-selected-card__body-section"
-                      aria-label="Moon guidance"
-                      data-guidance-key={selectedMoonReading?.contentKey}
-                    >
-                      {selectedDayBodyPresentation.main.map((paragraph) => (
-                        <FormattedProse key={paragraph} text={paragraph} />
-                      ))}
-                    </section>
-                  )}
-                </div>
-              )}
-              {selectedDayAspectWriteups.length > 0 && (
-                <section className="lunar-selected-card__body-section" aria-labelledby="lunar-selected-exact-heading">
-                  <h3 id="lunar-selected-exact-heading">Exact today</h3>
-                  {selectedDayAspectWriteups.map((writeup) => (
-                    <FormattedProse className="lunar-selected-card__aspect-writeup" key={writeup} text={writeup} />
-                  ))}
-                </section>
-              )}
-              {selectedDayBodyPresentation.prompt && (
-                <section className="lunar-selected-card__check-in" aria-label="Check-in">
-                  <span>Check-in</span>
-                  <FormattedProse text={selectedDayBodyPresentation.prompt} />
-                </section>
-              )}
-            </div>
-          )}
-        </div>
-
-        {(selectedDayTransits.length > 0 || selectedTransitNotes.length > 0 || (selectedDay.voidOfCourse && selectedVoidWindow)) && (
-          <div className="lunar-selected-card__after">
-            {selectedPackageVoid && selectedVoidWindow && (
-              <section className="lunar-selected-card__void" aria-label="Moon void of course">
-                <div className="lunar-selected-card__void-heading">
-                  <span aria-hidden="true">☾</span>
-                  <strong>{selectedPackageVoid.headline}</strong>
-                </div>
-                <p className="lunar-selected-card__void-meta">
-                  <span>{selectedVoidWindow}</span>
-                  {selectedVoidDuration && (
-                    <>
-                      <span aria-hidden="true">·</span>
-                      <span>{selectedVoidDuration}</span>
-                    </>
-                  )}
-                  {selectedVoidNextSign && (
-                    <>
-                      <span aria-hidden="true">·</span>
-                      <span className="lunar-selected-card__void-next">
-                        then enters
-                        {selectedVoidNextSign.glyph && <span aria-hidden="true">{selectedVoidNextSign.glyph}</span>}
-                        {selectedVoidNextSign.sign}
-                      </span>
-                    </>
-                  )}
-                </p>
-                {selectedPackageVoid.body && <FormattedProse text={selectedPackageVoid.body} />}
-              </section>
-            )}
-            {viewMode !== "week" && selectedDayTransits.length > 0 && (
-              <div className="lunar-selected-card__daily-events" aria-label="Daily transits and aspects">
-                <span className="lunar-selected-card__section-label">
-                  {selectedDayTransits.every(isActiveRetrogradeEvent) ? "Longer background" : "Sky movements"}
-                </span>
-                {selectedDayTransits.map((event) => {
-                  const editorial = calendarEventEditorialContent(
-                    event,
-                    generatedContent,
-                    zone,
-                    knowledgeMatrixV9,
-                    approvedExactSkyAspectLookup,
-                    composedSkyCalendarCardLookup
-                  );
-                  const eventTitle = editorial.headline ?? event.title;
-                  const description = editorial.eventCopy ?? "";
-
-                  return (
-                    <button
-                      className={`lunar-selected-card__daily-event event-${event.type}`}
-                      data-content-key={editorial.contentKey}
-                      type="button"
-                      key={event.id}
-                      aria-label={eventTitle}
-                      onClick={() => openEventReading(event)}
-                    >
-                      <span className="lunar-selected-card__daily-event-glyph" aria-hidden="true">{monthCellEventLabel(event)}</span>
-                      <strong>{eventTitle}</strong>
-                      <span className="lunar-selected-card__daily-event-time">
-                        {isActiveRetrogradeEvent(event)
-                          ? activeRetrogradeUntilLabel(event, zone)
-                          : formatEventTime(event.startsAt, zone)}
-                      </span>
-                    </button>
-                  );
-                })}
-              </div>
-            )}
-            {selectedTransitNotes.length > 0 && (
-              <div className="lunar-selected-card__transit-notes" aria-label="Daily transit notes">
-                {selectedTransitNotes.map((note) => (
-                  <section key={note.transitRef}>
-                    <span>{note.event ? calendarMotionTitle(note.event) : note.title}</span>
-                    {textParagraphs(note.body ?? "").map((paragraph) => (
-                      <FormattedProse key={paragraph} text={paragraph} />
-                    ))}
-                  </section>
-                ))}
-              </div>
-            )}
-          </div>
-        )}
-      </div>
-
-      <div className="lunar-selected-card__rail">
-        <div className="lunar-selected-card__stats">
-          <div>
-            <span>Illumination</span>
-            <strong>
-              <span className="lunar-selected-card__stat-dial" style={{ "--ip": selectedDay.illumination } as CSSProperties} aria-hidden="true" />
-              <span>{selectedDay.illumination}</span><small className="is-percent">%</small>
-            </strong>
-          </div>
-          <div>
-            <span>Lunar day</span>
-            <strong><span>{selectedLunarDay?.traditional.lunarDayNumber ?? lunarDayFor(selectedDay, calendar.events)}</span> <small className="is-fraction">/ 30*</small></strong>
-          </div>
-        </div>
-        <p className="lunar-selected-card__stats-note">* A lunar cycle runs ~29.5 days from one new moon to the next (synodic month).</p>
-
-        {enableLunarArcContent && selectedSeasonArc && (
-          <section className="lunar-selected-card__arc" aria-label={`${selectedSeasonArc.season.sign} season lunar arc`}>
-            <div className="lunar-selected-card__arc-head">
-              <span>{selectedSeasonArc.season.sign} season</span>
-              <small>{formatSeasonRange(selectedSeasonArc.season.start, selectedSeasonArc.season.end, zone)}</small>
-            </div>
-            {(selectedSeasonMoonMilestones.length > 0 || selectedSixMonthArcMilestones.length > 0) && (
-              <div className="lunar-selected-card__arc-milestone-groups" aria-label="Lunar arc milestones">
-                {selectedSeasonMoonMilestones.length > 0 && (
-                  <section>
-                    <ol className="lunar-selected-card__arc-milestones">
-                      {selectedSeasonMoonMilestones.map((milestone) => (
-                        <li className={milestone.isCurrent ? "is-current" : ""} key={milestone.id}>
-                          <span className={`lunar-moon-disc ${milestone.discClass}`} aria-hidden="true" />
-                          <strong>{milestone.label} <span>{signGlyphs[milestone.point.sign] ?? ""}</span></strong>
-                          <small>{formatEventDateTime(milestone.point.datetime, zone)}</small>
-                        </li>
-                      ))}
-                    </ol>
-                  </section>
-                )}
-                {selectedSixMonthArcMilestones.length > 0 && (
-                  <section>
-                    <span>Six-month arc</span>
-                    <ol className="lunar-selected-card__arc-milestones">
-                      {selectedSixMonthArcMilestones.map((milestone) => (
-                        <li className={milestone.isCurrent ? "is-current" : ""} key={milestone.id}>
-                          <span className={`lunar-moon-disc ${milestone.discClass}`} aria-hidden="true" />
-                          <strong>{milestone.label} <span>{signGlyphs[milestone.point.sign] ?? ""}</span></strong>
-                          <small>{formatEventDateTime(milestone.point.datetime, zone)}</small>
-                        </li>
-                      ))}
-                    </ol>
-                  </section>
-                )}
-              </div>
-            )}
-          </section>
-        )}
-      </div>
-
-    </section>
-  );
   const handleViewModeChange = (nextMode: LunarCalendarViewMode) => {
     if (nextMode === viewMode) return;
     setViewMode(nextMode);
@@ -3305,7 +2887,9 @@ export function LunarCalendar({
     return resolveCalendarMonthlyOverview(calendar, generatedContent);
   }, [calendar, generatedContent, viewMode, contentVersion]);
   const dayPanelProps = selectedDay ? {
-    checkInEntry: checkIns[selectedDay.dateKey],
+    checkInEntry: checkInData.value,
+    contentState: readingState,
+    onRetryContent: retryCalendarContent,
     dateKey: selectedDay.dateKey,
     dateLine: formatSlideoutDate(selectedDay, zone),
     elementClass: elementClassForSign(selectedMoonSign),
@@ -3427,7 +3011,7 @@ export function LunarCalendar({
         </div>
       </header>
 
-      {(status === "loading" || !moonContentReady) && (
+      {status === "loading" && (
         <div className="lunar-calendar-loading">
           <PageLoading compact message="Calculating calendar" />
         </div>
@@ -3441,7 +3025,7 @@ export function LunarCalendar({
         </div>
       )}
 
-      {calendar && status === "ready" && moonContentReady && (
+      {calendar && status === "ready" && (
         <div
           className={`lunar-calendar-body is-${viewMode}`}
           id="lunar-calendar-view-panel"
@@ -3483,7 +3067,10 @@ export function LunarCalendar({
             zone={zone}
           />
           {seasonPill}
-          <CalendarDayGroupList label={`Day-by-day astrology for ${weeklyRangeLabel}`}>
+          {!readingReady && (readingState === "loading"
+            ? <PageLoading compact message="Loading this week’s readings…" />
+            : <PageLoadError message="This week’s readings could not load." onRetry={retryCalendarContent} />)}
+          {readingReady && <CalendarDayGroupList label={`Day-by-day astrology for ${weeklyRangeLabel}`}>
             {calendarMoonWritingSequenceWithoutRepeat(selectedWeekDays, (day) => {
               return moonWritingForDay(
                 day,
@@ -3530,13 +3117,13 @@ export function LunarCalendar({
                 />
               );
             })}
-          </CalendarDayGroupList>
+          </CalendarDayGroupList>}
         </div>
       )}
 
       {viewMode === "month" && (
         <div className="lunar-calendar-layout">
-          {monthlyOverview && (
+          {readingReady && monthlyOverview && (
             <section className="lunar-month-overview" aria-labelledby="lunar-month-overview-heading">
               <h2 className="sr-only" id="lunar-month-overview-heading">Monthly overview</h2>
               {monthlyOverview.paragraphs.map((paragraph, index) => <FormattedProse key={index} text={paragraph} />)}
@@ -3563,8 +3150,8 @@ export function LunarCalendar({
                 const previousDay = index > 0 ? calendar.days[index - 1] : null;
                 const tooltipEvents = calendarDayTooltipEvents(day, previousDay);
                 const tooltipLines = calendarDayTooltipLines(day, tooltipEvents, zone, calendar.days);
-                const mood = calendarMoodOf(checkIns[day.dateKey]);
-                const moodIndex = checkIns[day.dateKey]?.mood;
+                const mood = calendarMoodOf(checkInData.summaries[day.dateKey]);
+                const moodIndex = checkInData.summaries[day.dateKey]?.mood;
                 const dayLabel = [
                   ...tooltipLines,
                   ...(mood ? [`Check-in ${mood.label}`] : [])
@@ -3574,7 +3161,7 @@ export function LunarCalendar({
                 const display = monthCellDisplay(day.events);
                 const seasonStart = daySeasonStart(day);
                 const moonEnter = Boolean(moonIngressEvent(day, previousDay));
-                const journaled = Boolean(checkIns[day.dateKey]);
+                const journaled = Boolean(checkInData.summaries[day.dateKey]);
                 const lunarReturn = isLunarReturnDay(day, previousDay, natalMoonSign);
                 const eclipse = isEclipseDay(day);
 
@@ -3804,7 +3391,14 @@ export function LunarCalendar({
           onClose={() => setDaySlideoutOpen(false)}
         />
       )}
-      {readingEvent && (
+      {readingEvent && !readingReady && (
+        <CalendarSlideout label="Event reading" onClose={() => setReadingEvent(null)}>
+          {readingState === "loading" ? <PageLoading compact message="Loading this reading…" /> : (
+            <PageLoadError message="This reading could not load." onRetry={retryCalendarContent} />
+          )}
+        </CalendarSlideout>
+      )}
+      {readingEvent && readingReady && (
         <CalendarEventReading
           backLabel={selectedDay ? formatCheckInDate(selectedDay, zone) : undefined}
           dateLine={`${formatEventDate(readingEvent.startsAt, zone)} · ${formatEventTime(readingEvent.startsAt, zone)}`}
@@ -3850,8 +3444,7 @@ export function LunarCalendar({
             <PageLoadError
               message="Your saved check-in could not load. Try again before editing."
               onRetry={() => {
-                setCheckInLoadState("loading");
-                setCheckInRetry(current => current + 1);
+                checkInData.retry();
               }}
             />
           )}
@@ -3861,6 +3454,9 @@ export function LunarCalendar({
         <CalendarCheckIn
           dateKey={selectedDay.dateKey}
           dateLine={formatCheckInDate(selectedDay, zone)}
+          key={`${checkInData.accountId ?? "guest"}:${selectedDay.dateKey}`}
+          libraryLoadState={checkInData.libraryState}
+          onRetryLibrary={checkInData.retryLibrary}
           knownPeople={knownPeople}
           libraryTags={libraryTags}
           onClose={() => {
@@ -3869,20 +3465,20 @@ export function LunarCalendar({
             setCheckInTarot(false);
           }}
           onLibraryPersonAdd={async (name) => {
-            if (signedIn) await addCalendarCheckInLibraryItem("person", name);
-            setKnownPeople((current) => current.includes(name) ? current : [...current, name]);
+            if (signedIn) await addCalendarCheckInLibraryItem("person", name, { expectedUserId: checkInData.accountId ?? undefined });
+            checkInData.updateLibrary(current => ({ ...current, people: current.people.includes(name) ? current.people : [...current.people, name] }));
           }}
           onLibraryTagAdd={async (tag) => {
-            if (signedIn) await addCalendarCheckInLibraryItem("tag", tag);
-            setLibraryTags((current) => current.includes(tag) ? current : [...current, tag]);
+            if (signedIn) await addCalendarCheckInLibraryItem("tag", tag, { expectedUserId: checkInData.accountId ?? undefined });
+            checkInData.updateLibrary(current => ({ ...current, tags: current.tags.includes(tag) ? current.tags : [...current.tags, tag] }));
           }}
           onLibraryTagRemove={async (tag) => {
-            if (signedIn) await removeCalendarCheckInLibraryItem("tag", tag);
-            setLibraryTags((current) => current.filter((item) => item !== tag));
+            if (signedIn) await removeCalendarCheckInLibraryItem("tag", tag, { expectedUserId: checkInData.accountId ?? undefined });
+            checkInData.updateLibrary(current => ({ ...current, tags: current.tags.filter(item => item !== tag) }));
           }}
           onSave={async (entry) => {
-            const saved = await upsertCalendarCheckIn(selectedDay.dateKey, entry);
-            setCheckIns((current) => ({ ...current, [selectedDay.dateKey]: saved }));
+            const saved = await upsertCalendarCheckIn(selectedDay.dateKey, entry, { expectedUserId: checkInData.accountId ?? undefined });
+            checkInData.saved(saved);
           }}
           onSignIn={onSignIn}
           openTagSheet={checkInTarot}
@@ -3890,7 +3486,7 @@ export function LunarCalendar({
           signedIn={signedIn}
           startStep={journalPrompt ? 4 : 0}
           tarotMode={checkInTarot}
-          value={checkIns[selectedDay.dateKey]}
+          value={checkInData.value}
         />
       )}
       {subscribeOpen && (

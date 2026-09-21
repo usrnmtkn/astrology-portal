@@ -11758,7 +11758,8 @@ export function App() {
 
   useEffect(() => {
     let cancelled = false;
-    if (!shouldLoadDeferredFallbackContent({
+    // Calendar owns its content deadline and local retry without replacing the date grid.
+    if (mode === "calendar" || !shouldLoadDeferredFallbackContent({
       mode,
       friendNatalContentRequested,
       friendRelationshipContentRequests,

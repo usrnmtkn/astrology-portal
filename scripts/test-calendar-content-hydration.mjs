@@ -637,8 +637,8 @@ assert.match(
 );
 assert.match(
   calendarSource,
-  /selectedDayTransits\.map[\s\S]*?calendarEventEditorialContent\([\s\S]*?const description = editorial\.eventCopy \?\? "";[\s\S]*?data-content-key=\{editorial\.contentKey\}[\s\S]*?onClick=\{\(\) => openEventReading\(event\)\}/u,
-  "Selected-day ingress, station, and aspect buttons must carry their approved rendered copy into detail."
+  /selectedDayEventCards = selectedDaySurfaceEvents\.map[\s\S]*?calendarEventEditorialContent\([\s\S]*?title: editorial\.headline \?\? event\.title,[\s\S]*?excerpt: calendarEventExcerpt\(event, generatedContent, editorial\.eventCopy\)/u,
+  "Selected-day event cards must use approved editorial titles and copy from the active calendar renderer."
 );
 assert.match(
   calendarSource,

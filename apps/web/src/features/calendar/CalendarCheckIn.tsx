@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { withRequestDeadline } from "../../services/requestDeadline";
 import { Check, ChevronLeft, ChevronRight, Tag, Users, X } from "lucide-react";
 import { onAuthAccountChange } from "../../services/auth";
 import type { CalendarCheckInPerson } from "./calendarCheckInPeople";
@@ -35,7 +36,7 @@ function normalizeEntry(value: Partial<CalendarCheckInEntry> | undefined): Calen
   };
 }
 
-export function calendarMoodOf(entry?: CalendarCheckInEntry | null) {
+export function calendarMoodOf(entry?: Pick<CalendarCheckInEntry, "mood"> | null) {
   if (entry?.mood == null) return null;
   return CALENDAR_MOODS[entry.mood] ?? null;
 }
@@ -164,6 +165,8 @@ export function CalendarCheckIn({
   signedIn = false,
   libraryTags = [],
   knownPeople = [],
+  libraryLoadState = "ready",
+  onRetryLibrary,
   onClose,
   onSave,
   onSignIn,
@@ -181,6 +184,8 @@ export function CalendarCheckIn({
   signedIn?: boolean;
   libraryTags?: string[];
   knownPeople?: string[];
+  libraryLoadState?: "loading" | "ready" | "error";
+  onRetryLibrary?: () => void;
   onClose: () => void;
   onSave: (entry: CalendarCheckInEntry) => void | Promise<void>;
   onSignIn?: () => void;
@@ -215,14 +220,21 @@ export function CalendarCheckIn({
     if (picker !== "people" || !signedIn) return;
     let active = true;
     let request = 0;
+    let controller: AbortController | undefined;
     const load = async () => {
       const current = ++request;
+      controller?.abort();
+      controller = new AbortController();
+      const signal = controller.signal;
       setPersonOptions([]);
       setPeopleLoading(true);
       setPeopleError(false);
       try {
-        const { loadCalendarCheckInPeople } = await import("./calendarCheckInPeople");
-        const result = await loadCalendarCheckInPeople();
+        const result = await withRequestDeadline(async requestSignal => {
+          const { loadCalendarCheckInPeople } = await import("./calendarCheckInPeople");
+          requestSignal.throwIfAborted();
+          return loadCalendarCheckInPeople();
+        }, { signal });
         if (!active || current !== request) return;
         setPersonOptions(result.people);
         setPeopleError(result.incomplete);
@@ -234,7 +246,7 @@ export function CalendarCheckIn({
     };
     void load();
     const unsubscribe = onAuthAccountChange(() => { void load(); });
-    return () => { active = false; unsubscribe(); };
+    return () => { active = false; controller?.abort(); unsubscribe(); };
   }, [picker, signedIn, peopleRetry]);
 
   const entry = useMemo<CalendarCheckInEntry>(() => ({
@@ -544,6 +556,8 @@ export function CalendarCheckIn({
                 <Check size={18} aria-hidden="true" />
               </button>
             </header>
+            {libraryLoadState === "loading" ? <p role="status">Loading your tags…</p> : null}
+            {libraryLoadState === "error" ? <p role="alert">Your saved tags could not load. <button onClick={onRetryLibrary} type="button">Retry tags</button></p> : null}
             {availableTags.length === 0 && !creating ? (
               <p className="calendar-checkin-picker__empty">Keep your journey organized and easy to explore. Add tags to group and filter your entries.</p>
             ) : null}
@@ -553,7 +567,7 @@ export function CalendarCheckIn({
                 <input
                   aria-label="Tag name"
                   autoFocus
-                  disabled={libraryBusy}
+                  disabled={libraryBusy || libraryLoadState === "loading"}
                   maxLength={CALENDAR_CHECK_IN_LABEL_MAX}
                   onChange={(event) => setDraftTag(event.target.value)}
                   onKeyDown={(event) => {
@@ -572,10 +586,10 @@ export function CalendarCheckIn({
                   const on = tags.includes(tag);
                   return (
                     <span className={`calendar-checkin__chip-wrap${on ? " is-on" : ""}${isCardTag(tag) ? " is-card" : ""}`} key={tag}>
-                      <button aria-pressed={on} disabled={libraryBusy} onClick={() => toggleTag(tag)} type="button">
+                      <button aria-pressed={on} disabled={libraryBusy || libraryLoadState === "loading"} onClick={() => toggleTag(tag)} type="button">
                         {isCardTag(tag) ? tagLabel(tag) : `#${tag}`}
                       </button>
-                      <button aria-label={`Delete tag ${tagLabel(tag)}`} disabled={libraryBusy} onClick={() => { void deleteTag(tag); }} type="button">
+                      <button aria-label={`Delete tag ${tagLabel(tag)}`} disabled={libraryBusy || libraryLoadState === "loading"} onClick={() => { void deleteTag(tag); }} type="button">
                         <X size={12} aria-hidden="true" />
                       </button>
                     </span>
@@ -586,14 +600,14 @@ export function CalendarCheckIn({
             {creating ? (
               <button
                 className={`calendar-checkin__add${draftTag.trim() ? " is-ready" : ""}`}
-                disabled={libraryBusy || !draftTag.trim()}
+                disabled={libraryBusy || libraryLoadState === "loading" || !draftTag.trim()}
                 onClick={() => { void addTag(); }}
                 type="button"
               >
                 Add tag
               </button>
             ) : (
-              <button className="calendar-checkin__add is-ready" disabled={libraryBusy} onClick={() => setCreating(true)} type="button">New tag</button>
+              <button className="calendar-checkin__add is-ready" disabled={libraryBusy || libraryLoadState === "loading"} onClick={() => setCreating(true)} type="button">New tag</button>
             )}
             {libraryError ? <p role="alert">{libraryError}</p> : null}
           </div>
@@ -625,9 +639,10 @@ export function CalendarCheckIn({
                   type="search"
                   value={draftPerson}
                 />
-                <button className={draftPerson.trim() ? "is-ready" : undefined} disabled={libraryBusy || !draftPerson.trim()} onClick={() => { void addPerson(); }} type="button">Add</button>
+                <button className={draftPerson.trim() ? "is-ready" : undefined} disabled={libraryBusy || libraryLoadState === "loading" || !draftPerson.trim()} onClick={() => { void addPerson(); }} type="button">Add</button>
               </span>
               {peopleLoading ? <p role="status">Loading charts and friends…</p> : null}
+              {libraryLoadState === "error" ? <p role="alert">Your saved names could not load. <button onClick={onRetryLibrary} type="button">Retry names</button></p> : null}
               {matchingPeople.map((person) => {
                 const on = people.includes(person.name);
                 return (

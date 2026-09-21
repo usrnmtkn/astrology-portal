@@ -149,7 +149,7 @@ function elapsedSince(readyAt: number, startedAt: number) {
 }
 
 test.describe("You loading performance matrix", () => {
-  test("repeated cold direct links reveal the saved profile within budget", async ({ browser }) => {
+  test("repeated cold browser direct links with cached natal data reveal the saved profile within budget", async ({ browser }) => {
     const samples = [];
 
     for (let index = 0; index < 3; index += 1) {
