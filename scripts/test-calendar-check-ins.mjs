@@ -3,7 +3,7 @@ import { build } from "esbuild";
 
 const result = await build({
   stdin: {
-    contents: "export { addCalendarCheckInLibraryItem, CalendarCheckInAuthError, deleteAllCalendarCheckInData, exportCalendarCheckInBundle, isCalendarDateKey, listCalendarCheckIns, sanitizeCheckInEntry, sanitizeLibraryLabel, upsertCalendarCheckIn } from './apps/web/src/services/calendarCheckIns.ts';",
+    contents: "export { addCalendarCheckInLibraryItem, removeCalendarCheckInLibraryItem, CalendarCheckInAuthError, deleteAllCalendarCheckInData, exportCalendarCheckInBundle, isCalendarDateKey, listCalendarCheckIns, sanitizeCheckInEntry, sanitizeLibraryLabel, upsertCalendarCheckIn } from './apps/web/src/services/calendarCheckIns.ts'; export { loadCalendarCheckInPeople } from './apps/web/src/features/calendar/calendarCheckInPeople.ts';",
     resolveDir: process.cwd()
   },
   bundle: true,
@@ -14,6 +14,13 @@ const result = await build({
     name: "auth-transport",
     setup(buildApi) {
       buildApi.onResolve({ filter: /\/auth$/ }, () => ({ path: "auth", namespace: "test" }));
+      buildApi.onResolve({ filter: /\/manualCharts$/ }, () => ({ path: "charts", namespace: "people-test" }));
+      buildApi.onResolve({ filter: /\/socialFriends$/ }, () => ({ path: "friends", namespace: "people-test" }));
+      buildApi.onLoad({ filter: /.*/, namespace: "people-test" }, ({ path }) => ({
+        contents: path === "charts"
+          ? "export const listManualCharts = async id => globalThis.calendarCheckInFixture.loadCharts(id);"
+          : "export const listSocialFriends = async () => globalThis.calendarCheckInFixture.loadFriends();"
+      }));
       buildApi.onLoad({ filter: /.*/, namespace: "test" }, () => ({
         contents: `
           export const getSupabaseClient = async () => globalThis.calendarCheckInFixture.client;
@@ -26,6 +33,8 @@ const result = await build({
 
 const {
   addCalendarCheckInLibraryItem,
+  removeCalendarCheckInLibraryItem,
+  loadCalendarCheckInPeople,
   CalendarCheckInAuthError,
   deleteAllCalendarCheckInData,
   exportCalendarCheckInBundle,
@@ -105,6 +114,8 @@ globalThis.calendarCheckInFixture = {
 };
 
 await assert.rejects(listCalendarCheckIns(), CalendarCheckInAuthError);
+await assert.rejects(removeCalendarCheckInLibraryItem("tag", "Private"), CalendarCheckInAuthError);
+assert.deepEqual(await loadCalendarCheckInPeople(), { people: [], incomplete: false });
 await assert.rejects(upsertCalendarCheckIn("2026-09-20", sanitized), CalendarCheckInAuthError);
 await assert.rejects(exportCalendarCheckInBundle(), CalendarCheckInAuthError);
 await assert.rejects(deleteAllCalendarCheckInData(), CalendarCheckInAuthError);
@@ -184,3 +195,29 @@ assert.equal(
 );
 
 console.log("Calendar check-in store keeps verified-user ownership, sanitizes payloads, and refuses unsigned writes.");
+
+await removeCalendarCheckInLibraryItem("tag", "  Rest Day  ");
+assert.deepEqual(store.filters.slice(-3), [
+  { table: "calendar_check_in_library", column: "user_id", value: "owner-a" },
+  { table: "calendar_check_in_library", column: "kind", value: "tag" },
+  { table: "calendar_check_in_library", column: "label", value: "Rest Day" }
+]);
+globalThis.calendarCheckInFixture.loadCharts = async id => {
+  assert.equal(id, "owner-a");
+  return [{ id: "chart-a", ownerUserId: "owner-a", displayName: "Robin" }, { id: "chart-b", ownerUserId: "other-owner", displayName: "Must not appear" }];
+};
+globalThis.calendarCheckInFixture.loadFriends = async () => [{ userId: "friend-a", displayName: "Avery", handle: "avery_qa" }];
+assert.deepEqual(await loadCalendarCheckInPeople(), {
+  people: [{ id: "friend:friend-a", name: "Avery", kind: "Friend", handle: "avery_qa" }, { id: "chart:chart-a", name: "Robin", kind: "Chart" }],
+  incomplete: false
+});
+globalThis.calendarCheckInFixture.loadFriends = async () => { throw new Error("Unavailable"); };
+const partial = await loadCalendarCheckInPeople();
+assert.equal(partial.incomplete, true);
+assert.deepEqual(partial.people.map(person => person.name), ["Robin"]);
+globalThis.calendarCheckInFixture.loadFriends = async () => {
+  globalThis.calendarCheckInFixture.user = { id: "owner-b" };
+  return [];
+};
+await assert.rejects(loadCalendarCheckInPeople(), /account changed/);
+console.log("Calendar tag deletion is owner-scoped; people lookup includes owned charts and friends, handles partial failure, and discards account-switch results.");

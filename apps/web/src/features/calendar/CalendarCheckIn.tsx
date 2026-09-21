@@ -1,5 +1,7 @@
-import { useMemo, useState } from "react";
-import { Check, ChevronLeft, ChevronRight, Tag, Users } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import { Check, ChevronLeft, ChevronRight, Tag, Users, X } from "lucide-react";
+import { onAuthAccountChange } from "../../services/auth";
+import type { CalendarCheckInPerson } from "./calendarCheckInPeople";
 import {
   CALENDAR_CHECK_IN_LABEL_MAX,
   CALENDAR_CHECK_IN_MOOD_NOTE_MAX,
@@ -12,7 +14,6 @@ import { CalendarSlideout } from "./CalendarSlideout";
 export type { CalendarCheckInEntry };
 
 const CHECKIN_STEPS = 5;
-const DEFAULT_TAGS = ["Got promoted", "Got laid off", "Rest Day", "Beginnings", "Little Wins"];
 
 export const CALENDAR_MOODS = [
   { label: "Terrible", path: "M7.6 11.6q1.6-2.2 3.2 0M13.2 11.6q1.6-2.2 3.2 0M9.4 16.4q2.6-2.2 5.2 0" },
@@ -203,6 +204,38 @@ export function CalendarCheckIn({
   const [creating, setCreating] = useState(tarotMode);
   const [draftTag, setDraftTag] = useState(tarotMode ? "Card: " : "");
   const [draftPerson, setDraftPerson] = useState("");
+  const [libraryBusy, setLibraryBusy] = useState(false);
+  const [libraryError, setLibraryError] = useState<string | null>(null);
+  const [personOptions, setPersonOptions] = useState<CalendarCheckInPerson[]>([]);
+  const [peopleLoading, setPeopleLoading] = useState(false);
+  const [peopleError, setPeopleError] = useState(false);
+  const [peopleRetry, setPeopleRetry] = useState(0);
+
+  useEffect(() => {
+    if (picker !== "people" || !signedIn) return;
+    let active = true;
+    let request = 0;
+    const load = async () => {
+      const current = ++request;
+      setPersonOptions([]);
+      setPeopleLoading(true);
+      setPeopleError(false);
+      try {
+        const { loadCalendarCheckInPeople } = await import("./calendarCheckInPeople");
+        const result = await loadCalendarCheckInPeople();
+        if (!active || current !== request) return;
+        setPersonOptions(result.people);
+        setPeopleError(result.incomplete);
+      } catch {
+        if (active && current === request) setPeopleError(true);
+      } finally {
+        if (active && current === request) setPeopleLoading(false);
+      }
+    };
+    void load();
+    const unsubscribe = onAuthAccountChange(() => { void load(); });
+    return () => { active = false; unsubscribe(); };
+  }, [picker, signedIn, peopleRetry]);
 
   const entry = useMemo<CalendarCheckInEntry>(() => ({
     mood,
@@ -215,7 +248,15 @@ export function CalendarCheckIn({
   }), [mood, sleep, social, moodNote, note, tags, people]);
 
   const moodWord = CALENDAR_MOODS[mood ?? 2]?.label.toLowerCase() ?? "okay";
-  const tagIdeas = DEFAULT_TAGS.filter((tag) => !libraryTags.includes(tag)).slice(0, 3);
+  const availableTags = [...new Set([...libraryTags, ...tags])];
+  const personQuery = draftPerson.trim().toLocaleLowerCase();
+  const availablePeople = signedIn ? personOptions : [];
+  const matchingPeople = [
+    ...availablePeople,
+    ...[...new Set([...knownPeople, ...people])]
+      .filter(name => !availablePeople.some(person => person.name === name))
+      .map(name => ({ id: `name:${name}`, name, kind: "" as const, handle: undefined }))
+  ].filter(person => `${person.name} ${person.handle ?? ""}`.toLocaleLowerCase().includes(personQuery));
   const readyToSave = mood != null || Boolean(moodNote.trim() || note.trim() || tags.length || people.length);
   const isCardTag = (tag: string) => /^card:/i.test(tag);
   const tagLabel = (tag: string) => tag.replace(/^card:\s*/i, "");
@@ -246,7 +287,7 @@ export function CalendarCheckIn({
   }
 
   function goNext() {
-    if (saving) return;
+    if (saving || libraryBusy) return;
     if (step < 4) {
       setStep((current) => current + 1);
       return;
@@ -258,29 +299,51 @@ export function CalendarCheckIn({
     void persist(entry);
   }
 
-  function deleteTag(tag: string) {
-    void onLibraryTagRemove?.(tag);
-    setTags((current) => current.filter((item) => item !== tag));
+  async function deleteTag(tag: string) {
+    if (libraryBusy) return;
+    setLibraryBusy(true);
+    setLibraryError(null);
+    try {
+      await onLibraryTagRemove?.(tag);
+      setTags((current) => current.filter((item) => item !== tag));
+    } catch {
+      setLibraryError("This tag could not be deleted. Try again.");
+    } finally { setLibraryBusy(false); }
   }
 
   function toggleTag(tag: string) {
     setTags((current) => current.includes(tag) ? current.filter((item) => item !== tag) : [...current, tag]);
   }
 
-  function addTag() {
+  async function addTag() {
+    if (libraryBusy) return;
     const next = draftTag.trim().slice(0, CALENDAR_CHECK_IN_LABEL_MAX);
     if (!next) return;
-    void onLibraryTagAdd?.(next);
-    if (!tags.includes(next)) setTags([...tags, next]);
-    setDraftTag("");
+    setLibraryBusy(true);
+    setLibraryError(null);
+    try {
+      await onLibraryTagAdd?.(next);
+      setTags(current => current.includes(next) ? current : [...current, next]);
+      setDraftTag("");
+      setCreating(false);
+    } catch {
+      setLibraryError("This tag could not be saved. Try again.");
+    } finally { setLibraryBusy(false); }
   }
 
-  function addPerson() {
+  async function addPerson() {
+    if (libraryBusy) return;
     const next = draftPerson.trim().slice(0, CALENDAR_CHECK_IN_LABEL_MAX);
     if (!next) return;
-    void onLibraryPersonAdd?.(next);
-    if (!people.includes(next)) setPeople([...people, next]);
-    setDraftPerson("");
+    setLibraryBusy(true);
+    setLibraryError(null);
+    try {
+      await onLibraryPersonAdd?.(next);
+      setPeople(current => current.includes(next) ? current : [...current, next]);
+      setDraftPerson("");
+    } catch {
+      setLibraryError("This name could not be saved. Try again.");
+    } finally { setLibraryBusy(false); }
   }
 
   function togglePerson(name: string) {
@@ -356,12 +419,12 @@ export function CalendarCheckIn({
           {step === 3 && (
             <div className="calendar-checkin__block is-entry">
               <div className="calendar-checkin__pills">
-                <button onClick={() => setPicker("tags")} type="button">
+                <button onClick={() => { setLibraryError(null); setPicker("tags"); }} type="button">
                   <Tag size={14} aria-hidden="true" />
                   Tags
                   {tags.length > 0 ? <span>{tags.length}</span> : null}
                 </button>
-                <button onClick={() => setPicker("people")} type="button">
+                <button onClick={() => { setLibraryError(null); setPicker("people"); }} type="button">
                   <Users size={14} aria-hidden="true" />
                   People
                   {people.length > 0 ? <span>{people.length}</span> : null}
@@ -402,12 +465,12 @@ export function CalendarCheckIn({
           {step === 4 && (
             <div className="calendar-checkin__block is-entry">
               <div className="calendar-checkin__pills">
-                <button onClick={() => setPicker("tags")} type="button">
+                <button onClick={() => { setLibraryError(null); setPicker("tags"); }} type="button">
                   <Tag size={14} aria-hidden="true" />
                   Tags
                   {tags.length > 0 ? <span>{tags.length}</span> : null}
                 </button>
-                <button onClick={() => setPicker("people")} type="button">
+                <button onClick={() => { setLibraryError(null); setPicker("people"); }} type="button">
                   <Users size={14} aria-hidden="true" />
                   People
                   {people.length > 0 ? <span>{people.length}</span> : null}
@@ -462,7 +525,7 @@ export function CalendarCheckIn({
           <button
             aria-label={step < 4 ? "Next" : signedIn ? "Save" : "Sign in to save"}
             className={`calendar-checkin__round${step < 4 || readyToSave || !signedIn ? " is-next" : ""}${saved ? " is-saved" : ""}`}
-            disabled={saving}
+            disabled={saving || libraryBusy}
             onClick={goNext}
             type="button"
           >
@@ -481,21 +544,22 @@ export function CalendarCheckIn({
                 <Check size={18} aria-hidden="true" />
               </button>
             </header>
-            {libraryTags.length === 0 && !creating ? (
+            {availableTags.length === 0 && !creating ? (
               <p className="calendar-checkin-picker__empty">Keep your journey organized and easy to explore. Add tags to group and filter your entries.</p>
             ) : null}
             {creating ? (
               <div className="calendar-checkin-picker__create">
                 <span className="calendar-checkin-picker__illustration" aria-hidden="true" />
                 <input
+                  aria-label="Tag name"
                   autoFocus
+                  disabled={libraryBusy}
                   maxLength={CALENDAR_CHECK_IN_LABEL_MAX}
                   onChange={(event) => setDraftTag(event.target.value)}
                   onKeyDown={(event) => {
                     if (event.key === "Enter") {
                       event.preventDefault();
-                      addTag();
-                      setCreating(false);
+                      void addTag();
                     }
                   }}
                   placeholder={tarotMode ? "Which card did you draw?" : "# Name Your Tag"}
@@ -504,14 +568,16 @@ export function CalendarCheckIn({
               </div>
             ) : (
               <div className="calendar-checkin__tag-list">
-                {libraryTags.map((tag) => {
+                {availableTags.map((tag) => {
                   const on = tags.includes(tag);
                   return (
                     <span className={`calendar-checkin__chip-wrap${on ? " is-on" : ""}${isCardTag(tag) ? " is-card" : ""}`} key={tag}>
-                      <button onClick={() => toggleTag(tag)} type="button">
+                      <button aria-pressed={on} disabled={libraryBusy} onClick={() => toggleTag(tag)} type="button">
                         {isCardTag(tag) ? tagLabel(tag) : `#${tag}`}
                       </button>
-                      <button aria-label={`Delete tag ${tagLabel(tag)}`} onClick={() => deleteTag(tag)} type="button">×</button>
+                      <button aria-label={`Delete tag ${tagLabel(tag)}`} disabled={libraryBusy} onClick={() => { void deleteTag(tag); }} type="button">
+                        <X size={12} aria-hidden="true" />
+                      </button>
                     </span>
                   );
                 })}
@@ -520,28 +586,16 @@ export function CalendarCheckIn({
             {creating ? (
               <button
                 className={`calendar-checkin__add${draftTag.trim() ? " is-ready" : ""}`}
-                onClick={() => {
-                  addTag();
-                  setCreating(false);
-                }}
+                disabled={libraryBusy || !draftTag.trim()}
+                onClick={() => { void addTag(); }}
                 type="button"
               >
                 Add tag
               </button>
             ) : (
-              <>
-                {tagIdeas.length > 0 ? (
-                  <div className="calendar-checkin__tag-list">
-                    {tagIdeas.map((idea) => (
-                      <button key={idea} onClick={() => { setDraftTag(idea); setCreating(true); }} type="button">
-                        {idea}
-                      </button>
-                    ))}
-                  </div>
-                ) : null}
-                <button className="calendar-checkin__add is-ready" onClick={() => setCreating(true)} type="button">New tag</button>
-              </>
+              <button className="calendar-checkin__add is-ready" disabled={libraryBusy} onClick={() => setCreating(true)} type="button">New tag</button>
             )}
+            {libraryError ? <p role="alert">{libraryError}</p> : null}
           </div>
         </div>
       )}
@@ -556,31 +610,45 @@ export function CalendarCheckIn({
               </button>
             </header>
             <div className="calendar-checkin-picker__people">
-              {knownPeople.map((name) => {
-                const on = people.includes(name);
-                return (
-                  <button className={on ? "is-on" : undefined} key={name} onClick={() => togglePerson(name)} type="button">
-                    <span aria-hidden="true">{name.slice(0, 1).toUpperCase()}</span>
-                    {name}
-                    {on ? <Check size={16} aria-hidden="true" /> : null}
-                  </button>
-                );
-              })}
               <span className="calendar-checkin__add-row">
                 <input
+                  aria-label="Search charts, friends, or names"
                   maxLength={CALENDAR_CHECK_IN_LABEL_MAX}
                   onChange={(event) => setDraftPerson(event.target.value)}
                   onKeyDown={(event) => {
                     if (event.key === "Enter") {
                       event.preventDefault();
-                      addPerson();
+                      void addPerson();
                     }
                   }}
-                  placeholder="Add someone by name"
+                  placeholder="Search charts, friends, or add a name"
+                  type="search"
                   value={draftPerson}
                 />
-                <button className={draftPerson.trim() ? "is-ready" : undefined} onClick={addPerson} type="button">Add</button>
+                <button className={draftPerson.trim() ? "is-ready" : undefined} disabled={libraryBusy || !draftPerson.trim()} onClick={() => { void addPerson(); }} type="button">Add</button>
               </span>
+              {peopleLoading ? <p role="status">Loading charts and friends…</p> : null}
+              {matchingPeople.map((person) => {
+                const on = people.includes(person.name);
+                return (
+                  <button aria-pressed={on} className={on ? "is-on" : undefined} key={person.id} onClick={() => togglePerson(person.name)} type="button">
+                    <span aria-hidden="true">{person.name.slice(0, 1).toUpperCase()}</span>
+                    <span className="calendar-checkin-picker__person-copy">
+                      {person.name}
+                      {person.kind ? <small>{person.kind}{person.handle ? ` · @${person.handle}` : ""}</small> : null}
+                    </span>
+                    {on ? <Check size={16} aria-hidden="true" /> : null}
+                  </button>
+                );
+              })}
+              {!peopleLoading && personQuery && matchingPeople.length === 0 ? <p>No matching charts or friends. You can add this name to your notes.</p> : null}
+              {peopleError ? (
+                <div role="alert">
+                  <p>Some charts or friends could not load.</p>
+                  <button onClick={() => setPeopleRetry(current => current + 1)} type="button">Retry</button>
+                </div>
+              ) : null}
+              {libraryError ? <p role="alert">{libraryError}</p> : null}
               <p>Names you add here are just for your notes. Nobody gets tagged or notified.</p>
             </div>
           </div>

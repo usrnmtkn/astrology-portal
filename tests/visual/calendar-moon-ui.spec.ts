@@ -25,28 +25,7 @@ for (const theme of ["light", "dark"] as const) {
       for (const view of ["Day", "Week", "Month"]) {
         await page.getByRole("tab", { name: view, exact: true }).click();
         await expect(page.getByRole("tab", { name: view, exact: true })).toHaveAttribute("aria-selected", "true");
-        const moons = page.locator(".lunar-milestones .lunar-moon-disc.is-crescent, .lunar-milestones .lunar-moon-disc.is-gibbous");
-        if (await moons.count()) {
-          await expect(moons.first()).toBeVisible();
-          const geometry = await moons.evaluateAll((elements) => elements.map((element) => {
-            const disc = getComputedStyle(element);
-            const shadow = getComputedStyle(element, "::after");
-            const bounds = element.getBoundingClientRect();
-            return {
-              radius: shadow.borderRadius,
-              square: Math.abs(bounds.width - bounds.height) < 0.5,
-              shrink: disc.flexShrink,
-              continuousShadow: !element.classList.contains("is-crescent") || disc.backgroundColor === shadow.backgroundColor
-            };
-          }));
-          for (const moon of geometry) {
-            // A 999px pill radius resolves to a near-rectangle on this half-disc.
-            expect(moon.radius).toMatch(/100%/);
-            expect(moon.square).toBe(true);
-            expect(moon.shrink).toBe("0");
-            expect(moon.continuousShadow).toBe(true);
-          }
-        }
+        await expect(page.locator(".lunar-milestones")).toHaveCount(0);
         expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1)).toBe(true);
         const clippedControls = await page.locator(".lunar-calendar-controls button, .lunar-calendar-segmented button, .calendar-day-panel")
           .evaluateAll((nodes) => nodes.filter((node) => {

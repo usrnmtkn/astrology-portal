@@ -2844,6 +2844,116 @@ test.describe("client-facing user flow case studies", () => {
     await assertNoClientErrors();
   });
 
+  for (const { width, theme } of [{ width: 1440, theme: "light" }, { width: 390, theme: "dark" }] as const) {
+    test(`Calendar interaction controls and private people search ${theme} ${width}`, async ({ page }) => {
+      test.setTimeout(120_000);
+      await page.setViewportSize({ width, height: 1000 });
+      await page.route("**/rest/v1/**", route => route.fulfill({ json: [] }));
+      await seedClientState(page, { profile: true, friends: true, theme, now: "2026-09-20T16:00:00.000Z" });
+      await seedSignedInSession(page);
+      const entries: Array<Record<string, unknown>> = [];
+      let labels: Array<{ user_id: string; kind: string; label: string }> = [];
+      let refuseDelete = false;
+      let friendRequests = 0;
+      await page.route("**/rest/v1/rpc/list_social_friends", route => route.fulfill({ json: [{
+        friendship_id: "qa-calendar-friend", user_id: "qa-avery", handle: "avery_qa", display_name: "Avery",
+        avatar_url: null, natal_chart: null, viewer_shares_chart: false, friend_shares_chart: false, accepted_at: fixedNow
+      }] }));
+      await page.route("**/rest/v1/rpc/send_social_friend_request", route => { friendRequests++; return route.fulfill({ json: [] }); });
+      await page.route("**/rest/v1/calendar_check_ins?**", async route => {
+        if (route.request().method() === "POST") {
+          const row = route.request().postDataJSON();
+          expect(row.user_id).toBe(fixtureUserId);
+          entries.splice(0, entries.length, row);
+          await route.fulfill({ json: row });
+        } else await route.fulfill({ json: entries, headers: { "content-range": entries.length ? "0-0/1" : "*/0" } });
+      });
+      await page.route("**/rest/v1/calendar_check_in_library?**", async route => {
+        const url = new URL(route.request().url());
+        if (route.request().method() === "POST") {
+          const row = route.request().postDataJSON();
+          expect(row.user_id).toBe(fixtureUserId);
+          if (!labels.some(label => label.kind === row.kind && label.label === row.label)) labels.push(row);
+          await route.fulfill({ status: 201, json: row });
+        } else if (route.request().method() === "DELETE") {
+          expect(url.searchParams.get("user_id")).toBe(`eq.${fixtureUserId}`);
+          expect(url.searchParams.get("kind")).toBe("eq.tag");
+          if (refuseDelete) return route.fulfill({ status: 500, json: { message: "Fixture refused delete" } });
+          labels = labels.filter(label => label.label !== url.searchParams.get("label")?.slice(3));
+          await route.fulfill({ status: 204, body: "" });
+        } else await route.fulfill({ json: labels });
+      });
+      await page.goto("/#calendar?view=day&date=2026-09-20");
+      const strip = page.getByRole("region", { name: "Selected week", exact: true });
+      await expect(strip).toBeVisible();
+      await expect(page.getByLabel("Upcoming lunar milestones")).toHaveCount(0);
+      const initialTop = (await strip.boundingBox())!.y;
+      await strip.hover();
+      await page.mouse.wheel(0, 600);
+      await expect.poll(async () => (await strip.boundingBox())!.y).toBeLessThan(initialTop - 100);
+      expect(page.url()).toContain("date=2026-09-20");
+      await page.getByRole("tab", { name: "Week", exact: true }).click();
+      await expect(page.locator(".lunar-milestones")).toHaveCount(0);
+      await page.getByRole("tab", { name: "Day", exact: true }).click();
+      const checkIn = page.getByRole("dialog", { name: "Check-in", exact: true });
+      async function openNotes() {
+        await page.locator("button.calendar-checkin-card").click();
+        await expect(checkIn).toBeVisible();
+        for (let step = 0; step < 3; step++) await checkIn.getByRole("button", { name: "Next", exact: true }).click();
+      }
+      await openNotes();
+      await checkIn.getByRole("button", { name: /^Tags/ }).click();
+      const tagSheet = checkIn.locator('[data-screen-label="Tags"]');
+      await expect(tagSheet.getByText(/Got promoted|Got laid off|Rest Day|Beginnings|Little Wins/)).toHaveCount(0);
+      for (const tag of ["Train ride", "Weekend"]) {
+        await tagSheet.getByRole("button", { name: "New tag", exact: true }).click();
+        await tagSheet.getByRole("textbox", { name: "Tag name" }).fill(tag);
+        await tagSheet.getByRole("button", { name: "Add tag", exact: true }).click();
+        await expect(tagSheet.getByRole("button", { name: `Delete tag ${tag}`, exact: true })).toBeVisible();
+      }
+      const remove = tagSheet.getByRole("button", { name: "Delete tag Weekend", exact: true });
+      const bounds = await remove.evaluate(button => ({ button: button.getBoundingClientRect().toJSON(), pill: button.parentElement!.getBoundingClientRect().toJSON() }));
+      expect(bounds.button.left).toBeGreaterThanOrEqual(bounds.pill.left);
+      expect(bounds.button.right).toBeLessThanOrEqual(bounds.pill.right);
+      refuseDelete = true;
+      await remove.click();
+      await expect(tagSheet.getByRole("alert")).toContainText("could not be deleted");
+      await expect(remove).toBeVisible();
+      refuseDelete = false;
+      await remove.click();
+      await expect(remove).toHaveCount(0);
+      await page.screenshot({ path: `test-results/calendar-interactions-tags-${theme}-${width}.png` });
+      await tagSheet.getByRole("button", { name: "Done", exact: true }).click();
+      await checkIn.getByRole("button", { name: /^People/ }).click();
+      const peopleSheet = checkIn.locator('[data-screen-label="Friends"]');
+      const search = peopleSheet.getByRole("searchbox", { name: "Search charts, friends, or names" });
+      await search.fill("nik");
+      const chart = peopleSheet.getByRole("button", { name: /Nikki.*Chart/ });
+      await expect(chart).toBeVisible();
+      await expect(peopleSheet.getByRole("button", { name: /River.*Chart/ })).toHaveCount(0);
+      await chart.click();
+      await expect(chart).toHaveAttribute("aria-pressed", "true");
+      await search.fill("AVERY_QA");
+      const friend = peopleSheet.getByRole("button", { name: /Avery.*Friend.*@avery_qa/ });
+      await friend.click();
+      await expect(friend).toHaveAttribute("aria-pressed", "true");
+      await page.screenshot({ path: `test-results/calendar-interactions-people-${theme}-${width}.png` });
+      await peopleSheet.getByRole("button", { name: "Done", exact: true }).click();
+      await checkIn.getByRole("button", { name: "Next", exact: true }).click();
+      await checkIn.getByRole("button", { name: "Save", exact: true }).click();
+      await expect(checkIn).toHaveCount(0);
+      expect(entries[0].tags).toEqual(["Train ride"]);
+      expect(entries[0].people).toEqual(["Nikki", "Avery"]);
+      expect(friendRequests).toBe(0);
+      await page.reload();
+      await openNotes();
+      await expect(checkIn.locator(".calendar-checkin__people")).toContainText("Avery");
+      await checkIn.getByRole("button", { name: /^Tags/ }).click();
+      await expect(tagSheet.getByRole("button", { name: "Delete tag Train ride", exact: true })).toBeVisible();
+      await expect(tagSheet.getByRole("button", { name: "Delete tag Weekend", exact: true })).toHaveCount(0);
+    });
+  }
+
   test("guest calendar check-in opens login to save a journal entry", async ({ page }) => {
     const assertNoClientErrors = await expectNoClientErrors(page);
 
