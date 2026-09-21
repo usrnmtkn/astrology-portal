@@ -181,12 +181,12 @@ test("Calendar honors the shared date and finishes skeletons on a stalled conten
   await expect(reading.getByLabel("Loading interpretation")).toHaveCount(0);
   await expect(reading).toContainText("Black Moon Lilith stations, and a preference, refusal, or old point of anger");
   await expect(reading).toContainText("It is to stop pretending the preference does not exist.");
-  await expect(page.locator(".lunar-milestones")).toContainText("in 2 days");
+  await expect(page.locator(".lunar-milestones")).toHaveCount(0);
   await page.screenshot({ path: "test-results/reader-recovery/calendar-finished.png", fullPage: true });
   await reading.getByRole("button", { name: "Close", exact: true }).click();
   await page.locator(".lunar-week-day[data-calendar-date='2026-11-28']").click();
   expect(`${page.url()}`).toMatch(/2026-11-28/);
-  await expect(page.locator(".lunar-milestones")).toContainText("tomorrow");
+  await expect(page.locator(".lunar-milestones")).toHaveCount(0);
   await page.getByRole("tab", { name: "Month", exact: true }).click();
   await expect(page.locator(".lunar-calendar-day[data-calendar-date='2026-11-27']")).toBeVisible();
   await page.getByRole("navigation", { name: "Primary navigation" }).getByRole("button", { name: "You", exact: true }).click();

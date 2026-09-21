@@ -242,16 +242,16 @@ export function AccountJournal({ onBack }: { onBack: () => void }) {
           libraryTags={libraryTags}
           onClose={() => setEditingDateKey(null)}
           onLibraryPersonAdd={async (name) => {
-            setKnownPeople((current) => current.includes(name) ? current : [...current, name]);
             await addCalendarCheckInLibraryItem("person", name);
+            setKnownPeople((current) => current.includes(name) ? current : [...current, name]);
           }}
           onLibraryTagAdd={async (tag) => {
-            setLibraryTags((current) => current.includes(tag) ? current : [...current, tag]);
             await addCalendarCheckInLibraryItem("tag", tag);
+            setLibraryTags((current) => current.includes(tag) ? current : [...current, tag]);
           }}
           onLibraryTagRemove={async (tag) => {
-            setLibraryTags((current) => current.filter((item) => item !== tag));
             await removeCalendarCheckInLibraryItem("tag", tag);
+            setLibraryTags((current) => current.filter((item) => item !== tag));
           }}
           onSave={async (entry) => {
             const saved = await upsertCalendarCheckIn(editingDateKey, entry);

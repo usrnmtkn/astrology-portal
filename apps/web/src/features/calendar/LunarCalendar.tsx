@@ -11,7 +11,7 @@ import { CalendarSummaryText } from "./CalendarSummaryText";
 import { skyDailySummaryFields } from "../../content/skyDailySummaryCatalog";
 import type { SkySnapshot } from "../../types";
 import { CardReadMore } from "../../components/CardReadMore";
-import { PageLoading } from "../../components/PageLoading";
+import { PageLoadError, PageLoading } from "../../components/PageLoading";
 import { calendarMotionTitle } from "../../content/skyMotionLabels";
 import { isDisplayRetrograde } from "../../services/astrologyDisplay";
 import { CalendarCheck, CalendarDays, CalendarPlus, ChevronDown, ChevronLeft, ChevronRight, RotateCcw } from "lucide-react";
@@ -98,6 +98,7 @@ import {
 import { CalendarDayGroup, CalendarDayGroupList, CalendarSeasonPill, type CalendarDayGroupRow } from "./CalendarDayGroup";
 import { CalendarDayPanel } from "./CalendarDayPanel";
 import { CalendarEventReading } from "./CalendarEventReading";
+import { CalendarSlideout } from "./CalendarSlideout";
 import { CalendarSubscribeSheet } from "./CalendarSubscribeSheet";
 import { ASTRO_2026_EVENTS } from "./calendarHandoff";
 import { CalendarMonthChip, eventGlyphText } from "./CalendarKindTag";
@@ -1663,8 +1664,6 @@ const signGlyphs: Record<string, string> = {
   Pisces: "\u{2653}"
 };
 
-const milestoneSignGlyphs = signGlyphs;
-
 const unicodeGlyphs = {
   conjunction: "\u{260C}",
   opposition: "\u{260D}",
@@ -2178,18 +2177,6 @@ function dayKeyToUtcTime(dateKey: string) {
   return Date.UTC(year, month - 1, day);
 }
 
-function relativeDayLabel(fromDateKey: string, toDateKey: string) {
-  const start = dayKeyToUtcTime(fromDateKey);
-  const end = dayKeyToUtcTime(toDateKey);
-  const diff = Math.round((end - start) / 86_400_000);
-
-  if (diff === 0) return "today";
-  if (diff === 1) return "tomorrow";
-  if (diff > 1) return `in ${diff} days`;
-  if (diff === -1) return "yesterday";
-  return `${Math.abs(diff)} days ago`;
-}
-
 function dateKeyFromUtcTime(time: number) {
   return new Date(time).toISOString().slice(0, 10);
 }
@@ -2256,6 +2243,9 @@ export function LunarCalendar({
   const [libraryTags, setLibraryTags] = useState<string[]>([]);
   const [knownPeople, setKnownPeople] = useState<string[]>([]);
   const checkInAccountIdRef = useRef<string | null>(null);
+  const checkInReadyRef = useRef(false);
+  const [checkInLoadState, setCheckInLoadState] = useState<"loading" | "ready" | "error">("loading");
+  const [checkInRetry, setCheckInRetry] = useState(0);
   const [journalPrompt, setJournalPrompt] = useState<string | null>(null);
   const [checkInTarot, setCheckInTarot] = useState(false);
 
@@ -2264,11 +2254,14 @@ export function LunarCalendar({
     let loadId = 0;
 
     function clearCheckInState() {
+      if (checkInAccountIdRef.current) setCheckInOpen(false);
       checkInAccountIdRef.current = null;
       setSignedIn(false);
       setCheckIns({});
       setLibraryTags([]);
       setKnownPeople([]);
+      checkInReadyRef.current = true;
+      setCheckInLoadState("ready");
     }
 
     async function loadAccountCheckIns() {
@@ -2281,7 +2274,10 @@ export function LunarCalendar({
           return;
         }
         if (checkInAccountIdRef.current !== user.id) {
+          if (checkInAccountIdRef.current) setCheckInOpen(false);
           checkInAccountIdRef.current = user.id;
+          checkInReadyRef.current = false;
+          setCheckInLoadState("loading");
           setCheckIns({});
           setLibraryTags([]);
           setKnownPeople([]);
@@ -2296,13 +2292,18 @@ export function LunarCalendar({
           setCheckIns(entries);
           setLibraryTags(library.tags);
           setKnownPeople(library.people);
+          checkInReadyRef.current = true;
+          setCheckInLoadState("ready");
         } catch (error) {
+          if (cancelled || requestId !== loadId) return;
+          if (!checkInReadyRef.current) setCheckInLoadState("error");
           console.warn("Calendar check-ins could not load for this account.", {
             name: error instanceof Error ? error.name : "UnknownError"
           });
         }
       } catch (error) {
         if (cancelled || requestId !== loadId) return;
+        if (!checkInReadyRef.current) setCheckInLoadState("error");
         console.warn("Calendar check-in session could not be confirmed.", {
           name: error instanceof Error ? error.name : "UnknownError"
         });
@@ -2318,7 +2319,7 @@ export function LunarCalendar({
       cancelled = true;
       unsubscribe();
     };
-  }, []);
+  }, [checkInRetry]);
 
   useEffect(() => {
     let active = true;
@@ -2950,35 +2951,6 @@ export function LunarCalendar({
       isCurrent: row.id === currentId
     }));
   }, [arcEvents, selectedDay, selectedSeasonArc]);
-  const milestones = calendar
-    ? calendar.events
-        .filter((event) => event.type === "lunation")
-        .filter((event) => event.dateKey >= selectedDateKey)
-        .sort((first, second) => new Date(first.startsAt).getTime() - new Date(second.startsAt).getTime())
-        .slice(0, 2)
-    : [];
-  const milestonePills = milestones.length > 0 && (
-    <div className="lunar-milestones" aria-label="Upcoming lunar milestones">
-      {milestones.map((event) => {
-        const isPrimaryLunation = event.title.startsWith("New Moon") || event.title.startsWith("Full Moon");
-        const signGlyph = isPrimaryLunation ? milestoneSignGlyphs[event.sign ?? ""] : "";
-
-        return (
-          <button type="button" key={event.id} onClick={() => handleSelectDate(event.dateKey)}>
-            <span className={`lunar-moon-disc ${lunationDiscClass(event)}`} aria-hidden="true" />
-            <strong>
-              {lunationDisplayLabel(event)}
-              {signGlyph && <span className="lunar-milestones__sign" aria-label={`in ${event.sign}`}>{signGlyph}</span>}
-            </strong>
-            <span className="lunar-milestones__separator" aria-hidden="true">·</span>
-            <span className="lunar-milestones__date">{new Intl.DateTimeFormat("en-US", { timeZone: zone, month: "short", day: "numeric" }).format(new Date(event.startsAt))}</span>
-            <span className="lunar-milestones__separator" aria-hidden="true">·</span>
-            <span className="lunar-milestones__relative">{relativeDayLabel(selectedDateKey, event.dateKey)}</span>
-          </button>
-        );
-      })}
-    </div>
-  );
   const _selectedDayCard = selectedDay && calendar && (
     <section className="lunar-selected-card" aria-label="Selected lunar day">
       <div className="lunar-selected-card__main">
@@ -3488,7 +3460,6 @@ export function LunarCalendar({
           />
 
           {seasonPill}
-          {milestonePills}
 
           {dayPanelProps && (
             <CalendarDayPanel
@@ -3511,7 +3482,6 @@ export function LunarCalendar({
             zone={zone}
           />
           {seasonPill}
-          {milestonePills}
           <CalendarDayGroupList label={`Day-by-day astrology for ${weeklyRangeLabel}`}>
             {calendarMoonWritingSequenceWithoutRepeat(selectedWeekDays, (day) => {
               return moonWritingForDay(
@@ -3867,7 +3837,26 @@ export function LunarCalendar({
           title={readingJournal?.headline ?? readingEditorial?.headline ?? readingEvent.title}
         />
       )}
-      {checkInOpen && selectedDay && (
+      {checkInOpen && selectedDay && checkInLoadState !== "ready" && (
+        <CalendarSlideout label="Check-in" onClose={() => {
+          setCheckInOpen(false);
+          setJournalPrompt(null);
+          setCheckInTarot(false);
+        }} variant="checkin">
+          {checkInLoadState === "loading" ? (
+            <PageLoading compact message="Loading your check-in…" />
+          ) : (
+            <PageLoadError
+              message="Your saved check-in could not load. Try again before editing."
+              onRetry={() => {
+                setCheckInLoadState("loading");
+                setCheckInRetry(current => current + 1);
+              }}
+            />
+          )}
+        </CalendarSlideout>
+      )}
+      {checkInOpen && selectedDay && checkInLoadState === "ready" && (
         <CalendarCheckIn
           dateKey={selectedDay.dateKey}
           dateLine={formatCheckInDate(selectedDay, zone)}
@@ -3879,37 +3868,16 @@ export function LunarCalendar({
             setCheckInTarot(false);
           }}
           onLibraryPersonAdd={async (name) => {
+            if (signedIn) await addCalendarCheckInLibraryItem("person", name);
             setKnownPeople((current) => current.includes(name) ? current : [...current, name]);
-            if (!signedIn) return;
-            try {
-              await addCalendarCheckInLibraryItem("person", name);
-            } catch (error) {
-              console.warn("Calendar check-in person could not save.", {
-                name: error instanceof Error ? error.name : "UnknownError"
-              });
-            }
           }}
           onLibraryTagAdd={async (tag) => {
+            if (signedIn) await addCalendarCheckInLibraryItem("tag", tag);
             setLibraryTags((current) => current.includes(tag) ? current : [...current, tag]);
-            if (!signedIn) return;
-            try {
-              await addCalendarCheckInLibraryItem("tag", tag);
-            } catch (error) {
-              console.warn("Calendar check-in tag could not save.", {
-                name: error instanceof Error ? error.name : "UnknownError"
-              });
-            }
           }}
           onLibraryTagRemove={async (tag) => {
+            if (signedIn) await removeCalendarCheckInLibraryItem("tag", tag);
             setLibraryTags((current) => current.filter((item) => item !== tag));
-            if (!signedIn) return;
-            try {
-              await removeCalendarCheckInLibraryItem("tag", tag);
-            } catch (error) {
-              console.warn("Calendar check-in tag could not delete.", {
-                name: error instanceof Error ? error.name : "UnknownError"
-              });
-            }
           }}
           onSave={async (entry) => {
             const saved = await upsertCalendarCheckIn(selectedDay.dateKey, entry);
