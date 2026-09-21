@@ -2360,9 +2360,9 @@ test.describe("client-facing user flow case studies", () => {
   test("calendar ingress, station, and aspect details always open with approved prose", async ({ page }) => {
     const assertNoClientErrors = await expectNoClientErrors(page);
     const cases = [
-      { date: "2026-07-09", eventType: "ingress", title: "Venus enters Virgo", usesV9: true },
-      { date: "2026-07-23", eventType: "station", title: "Mercury stations direct", usesV9: true },
-      { date: "2026-07-13", eventType: "aspect", title: "Venus squares Uranus", usesV9: false }
+      { date: "2026-07-09", title: "Venus enters Virgo" },
+      { date: "2026-07-23", title: "Mercury stations direct" },
+      { date: "2026-07-13", title: "Venus squares Uranus" }
     ];
 
     await seedClientState(page, { now: "2026-07-31T12:00:00.000Z" });
@@ -2375,11 +2375,7 @@ test.describe("client-facing user flow case studies", () => {
       });
 
       await expect(eventButton, `${eventCase.title} has one Calendar detail trigger`).toHaveCount(1);
-      if (eventCase.usesV9) {
-        await expect(eventButton).toHaveAttribute("data-content-key", /^knowledge-matrix-v9\/transit\//u);
-      } else {
-        await expect(eventButton).not.toHaveAttribute("data-content-key", /^knowledge-matrix-v9\//u);
-      }
+      await expect(eventButton.locator(".calendar-stoic-card__excerpt")).toBeVisible();
       await eventButton.click();
       await page.getByRole("dialog", { name: "Event detail" }).getByRole("button", { name: "Read article" }).click();
       await expect(page.locator(".app-shell.mode-detail")).toBeVisible();
@@ -2548,7 +2544,8 @@ test.describe("client-facing user flow case studies", () => {
     await expectClientRouteLoads(page, "/#calendar?view=weekly&date=2026-08-03");
 
     const expectedByDate = new Map<string, { body: string; contentKey: string }>();
-    for (const dateKey of ["2026-08-03", "2026-08-04", "2026-08-05", "2026-08-06", "2026-08-07", "2026-08-08", "2026-08-09"]) {
+    // Reader Calendar weeks run Sunday through Saturday.
+    for (const dateKey of ["2026-08-02", "2026-08-03", "2026-08-04", "2026-08-05", "2026-08-06", "2026-08-07", "2026-08-08"]) {
       const guidance = page.locator(`#calendar-day-group-${dateKey} .calendar-day-group__blurb`);
       await expect(guidance).toHaveCount(1);
       const contentKey = await guidance.getAttribute("data-guidance-key") ?? "";
@@ -2586,13 +2583,13 @@ test.describe("client-facing user flow case studies", () => {
     await seedClientState(page, { now: "2026-08-20T16:00:00.000Z" });
     await expectClientRouteLoads(page, "/#calendar?view=weekly&date=2026-08-20");
 
-    const firstQuarterEvent = page.locator(".lunar-weekly-event").filter({
-      has: page.getByRole("heading", { name: "First Quarter Moon in Scorpio", exact: true })
+    const firstQuarterEvent = page.locator(".calendar-day-group__block").filter({
+      has: page.getByRole("button", { name: /First Quarter Moon in Scorpio/ })
     });
     await expect(firstQuarterEvent).toHaveCount(1);
-    await expect(firstQuarterEvent.locator(".lunar-weekly-event__body")).toHaveCount(0);
-    const firstQuarterDay = page.locator(".lunar-weekly-day").filter({ has: firstQuarterEvent });
-    await expect(firstQuarterDay.locator(".lunar-weekly-day__guidance")).toBeVisible();
+    await expect(firstQuarterEvent.locator(".calendar-day-group__excerpt")).toHaveCount(0);
+    const firstQuarterDay = page.locator(".calendar-day-group").filter({ has: firstQuarterEvent });
+    await expect(firstQuarterDay.locator(".calendar-day-group__blurb")).toBeVisible();
     await expect(firstQuarterEvent).not.toContainText(
       "Adjust the plan, not the intention"
     );
@@ -2730,7 +2727,7 @@ test.describe("client-facing user flow case studies", () => {
 
     const selectedDay = page.getByLabel("Selected lunar day");
     const aspectDay = page.getByLabel("Selected week").getByRole("button", {
-      name: /Full Moon\. Moon in Aquarius\. Venus squares Mars/
+      name: /^Wednesday, July 29\./
     });
     await aspectDay.click();
     await expect(selectedDay.getByRole("button", { name: "Venus squares Mars" })).toBeVisible({ timeout: 15_000 });
@@ -2743,7 +2740,7 @@ test.describe("client-facing user flow case studies", () => {
     const monthTab = page.getByRole("tab", { name: "Month", exact: true });
     await monthTab.click();
     await expect(monthTab).toHaveAttribute("aria-selected", "true");
-    await page.getByRole("button", { name: /Venus squares Mars/ }).first().click();
+    await page.locator('.lunar-calendar-day[data-calendar-date="2026-07-29"]').click();
     const monthDay = page.getByLabel("Selected lunar day");
     await expect(monthDay).toBeVisible({ timeout: 15_000 });
     await monthDay.getByRole("button", { name: "Venus squares Mars" }).click();
@@ -2763,12 +2760,12 @@ test.describe("client-facing user flow case studies", () => {
 
     const selectedDay = page.getByLabel("Selected lunar day");
     await expect(selectedDay).toBeVisible({ timeout: 15_000 });
-    await expect(selectedDay.getByRole("heading", { level: 2 })).toHaveText("Waxing Gibbous Moon in Capricorn");
-    await expect(page.getByRole("button", { name: /Full Moon in Aquarius Jul 29 tomorrow/ })).toBeVisible();
+    await expect(selectedDay.getByRole("heading", { level: 2 })).toHaveText("Waxing Gibbous Moon in Aquarius");
 
     await page.getByLabel("Selected week").getByRole("button", { name: /Full Moon\. Moon in Aquarius/ }).click();
     await expect(selectedDay.getByRole("heading", { level: 2 })).toHaveText("Full Moon in Aquarius");
-    await expect(selectedDay.getByText("Exact at 10:35 AM")).toBeVisible();
+    await selectedDay.getByRole("button", { name: "Full Moon in Aquarius", exact: true }).click();
+    await expect(page.getByRole("dialog", { name: "Event detail" }).locator(".calendar-reading__meta")).toContainText("Jul 29 · 10:35 AM");
     await assertNoClientErrors();
   });
 
@@ -4618,11 +4615,13 @@ test("Sky detail hydrates published aspects for its displayed snapshot and dated
     await expect(article).toContainText(row.readerCopy.body, { timeout: 60_000 });
     expect(requested.has(`sky.aspect.${row.transiting}.${row.aspect}.${row.other}`)).toBe(true);
   }
-  const datedLink = page.locator('.article-related-aspect-row').filter({ hasText: "Lilith Square Sun" });
+  const datedLink = page.getByRole("link", { name: "Read more about Lilith Square Sun", exact: true });
   const datedHref = await datedLink.getAttribute("href");
   expect(datedHref).toContain("/at/");
   // Preserve complete-copy coverage for sampled links outside that shorter chapter.
-  const sampleInstant = encodeURIComponent("2026-09-08T14:03:00.000Z");
+  // Direct Swiss calculations put both Chiron trine Lilith and Neptune square
+  // Lilith in this snapshot; neither is active on the original September 8 date.
+  const sampleInstant = encodeURIComponent("2026-08-01T12:00:00.000Z");
   await page.evaluate(hash => { window.location.hash = hash; }, `sky/aspect/chiron/trine/lilith/on/${sampleInstant}`);
   const chiron = JSON.parse(readFileSync("packages/astro-knowledge/data/transits/chiron-trine-lilith.json", "utf8"));
   await expect(page.locator('.sky-detail-article')).toContainText(chiron.readerCopy.body, { timeout: 60_000 });

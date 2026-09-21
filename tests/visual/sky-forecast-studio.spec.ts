@@ -18,7 +18,7 @@ async function studioApi(page: Page, rows = fixtureRows()) {
   await page.route("**/api/admin/**", async route => {
     const url = new URL(route.request().url());
     let data: any = { ok: true, rows: [], statuses: [], records: [], nextCursor: null };
-    if (url.pathname.endsWith("/generated-content")) {
+    if (url.pathname.endsWith("/generated-content") || url.pathname.endsWith("/generated-content-inventory")) {
       if (["POST", "PATCH"].includes(route.request().method())) {
         const input = route.request().postDataJSON();
         writes.push(input);
@@ -108,7 +108,9 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
     await expect(tabs.getByRole("tab", { name: "Daily Sky", exact: true })).toHaveAttribute("aria-selected", "true");
     await expect(page.getByLabel("Search Lunar Calendar")).toHaveValue("unmatched");
     await expect(page.getByText("No lunar passages match these filters.")).toBeVisible();
-    await page.getByRole("link", { name: "Edit Sun summary" }).click();
+    if (width === 390) await page.getByRole("button", { name: "Open Content Studio navigation" }).click();
+    await nav.getByRole("button", { name: "Sky Write-ups", exact: true }).click();
+    await skyTabs.getByRole("tab", { name: "Daily Sky Summary", exact: true }).click();
     await expect(page.getByRole("region", { name: "Daily Sky Summary editor", exact: true })).toBeVisible();
     expect(errors).toEqual([]);
   });

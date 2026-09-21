@@ -1618,6 +1618,7 @@
   --calendar-selected-fill: var(--calendar-chip);
   --calendar-chip-on-canvas: var(--color-surface-3);
   --calendar-ink: var(--color-ink);
+  --calendar-kind-return-fg: var(--color-paper);
   --calendar-copy: var(--color-ink-2);
   --calendar-secondary: var(--color-muted);
   --calendar-tertiary: var(--color-faint);

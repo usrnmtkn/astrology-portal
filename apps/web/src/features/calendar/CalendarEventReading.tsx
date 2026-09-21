@@ -231,7 +231,12 @@ export function CalendarEventReading({
 }) {
   const resolvedKind = kind ?? calendarKindFromEvent(event);
   const article = handoffArticleForTitle(event.title);
-  const canReadArticle = Boolean(onReadArticle && article?.article);
+  // Internal Sky routes are independent of the optional external catalog.
+  const canReadArticle = Boolean(onReadArticle && (
+    (event.type === "aspect" && event.planets?.length === 2 && event.aspect)
+    || (event.type === "lunation" && event.sign)
+    || ((event.type === "ingress" || event.type === "station") && event.planet)
+  ));
   const hasJournal = Boolean(journalBlocks?.length);
   const showMoonFallback = !hasJournal && resolvedKind === "moon" && paragraphs.length === 0 && event.sign && element;
   const hasEventTime = Boolean(event.startsAt);
@@ -286,7 +291,7 @@ export function CalendarEventReading({
             />
           ))
           : paragraphs.filter(Boolean).map((text) => <p key={text.slice(0, 48)}>{text}</p>)}
-        {canReadArticle ? (
+        {canReadArticle && article ? (
           <button className="calendar-reading__article-card" onClick={onReadArticle} type="button">
             <span className="calendar-reading__article-icon" aria-hidden="true" />
             <span>

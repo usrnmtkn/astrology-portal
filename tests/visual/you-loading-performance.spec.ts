@@ -23,6 +23,11 @@ const budgets = {
   warmNavigationReadyMs: 800
 };
 
+// Match the Friends performance matrix: tracing large response bodies and DOM
+// snapshots competes with the browser during these sub-second measurements.
+// Functional reader suites retain traces; these tests retain failure screenshots.
+test.use({ trace: "off" });
+
 async function seedYouPerformanceState(page: Page) {
   const birthDateTime = zonedDateTimeToUtc(
     fixtureBirthDate,
@@ -101,9 +106,13 @@ async function seedYouPerformanceState(page: Page) {
 }
 
 async function expectYouProfileReady(page: Page) {
-  await expect(page.getByRole("region", { name: "You", exact: true })).toBeVisible();
-  await expect(page.getByLabel("Profile summary")).toBeVisible();
-  await expect(page.getByText("Project Author")).toBeVisible();
+  // Preserve all readiness conditions without locator assertions' 500–1000 ms
+  // retry backoff being charged to an 800 ms paint budget.
+  await expect.poll(async () => (await Promise.all([
+    page.getByRole("region", { name: "You", exact: true }).isVisible(),
+    page.getByLabel("Profile summary").isVisible(),
+    page.getByText("Project Author").isVisible()
+  ])).every(Boolean), { intervals: [16] }).toBe(true);
 }
 
 test.describe("You loading performance matrix", () => {
@@ -170,7 +179,7 @@ test.describe("You loading performance matrix", () => {
     await page.goto("/#you", { waitUntil: "domcontentloaded" });
     await expectYouProfileReady(page);
     const profileReadyMs = Math.round(performance.now() - startedAt);
-    await expect(page.getByText("Adding today’s transits.", { exact: true })).toBeVisible();
+    await expect.poll(() => page.getByText("Adding today’s transits.", { exact: true }).isVisible(), { intervals: [16] }).toBe(true);
     const milestoneReadyMs = Math.round(performance.now() - startedAt);
     await expect(page.getByRole("navigation", { name: "Primary navigation" })).toBeVisible();
 

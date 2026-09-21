@@ -14702,7 +14702,9 @@ export function App() {
                   </section>
                   <SkyReadingLayout persistKey={`${skyDate}:${location.latitude}:${location.longitude}:${location.timeZone}`}
                     key={`${skyDate}:${location.latitude}:${location.longitude}:${location.timeZone}`}
-                    pending={isSkyLoading || skyTimingStatus === "loading" || skyPlacementFallbackStatus === "idle" || skyPlacementFallbackStatus === "loading"}
+                    // Initial cached calculations must finish refreshing before the first reading
+                    // appears; otherwise the temporary cache notice shifts all of its content.
+                    pending={isSkyLoading || skyStatus === "cached" || skyTimingStatus === "loading" || skyPlacementFallbackStatus === "idle" || skyPlacementFallbackStatus === "loading"}
                     failed={skyStatus === "error" || skyTimingStatus === "error" || skyPlacementFallbackStatus === "error"}>
                   {(skyStatus === "cached" || skyStatus === "stale") && sky?.cacheState && (
                     <div
