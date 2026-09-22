@@ -79,6 +79,14 @@ Web/admin typechecks and CSS/token contracts passed. Public-asset and staged pri
 scans must pass on the final release bytes. CI must pass on the exact PR head;
 local evidence never substitutes for that gate.
 
+Reader browser fixtures now use the public transport and V2 offline schema.
+Twenty-five publication, retirement, offline and Calendar cases passed; the six
+Calendar/formatting cases then passed after correcting the complete monthly-field
+projection and legacy fixture metadata. The API regression preserves all twelve
+Calendar overview passage fields byte-for-byte while rejecting internal notes.
+The 3,914-row checked-in snapshot was compared with the original main artifact;
+no additional saved Calendar fields existed there, so its bytes remain unchanged.
+
 ### Bundle comparison
 
 Independent builds of main `bd2316b853` and this release used separate `npm ci`

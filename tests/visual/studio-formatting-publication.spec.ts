@@ -28,7 +28,9 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
       }, theme);
       await context.route('**/rest/v1/**', route => route.fulfill({ json: [] }));
       await context.route('**/api/content-reader', async route => {
-        expect(route.request().postDataJSON().prefix).toBe('education/astro-101/');
+        const query = route.request().postDataJSON();
+        if (query.prefix !== 'education/astro-101/') return route.fulfill({ json: readerResponse([]) });
+        expect(query.surfaces).toEqual(['education']);
         return route.fulfill({ json: readerResponse((await store.call({ method: 'rows' })).filter(astro101IsLiveOnLearn)) });
       });
       await routeStudioInventoryApi(page, { call: store.call, answer: async (route, url) => {
