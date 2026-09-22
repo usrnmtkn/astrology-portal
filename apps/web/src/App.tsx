@@ -2864,10 +2864,10 @@ function isSignupForm(value: unknown): value is SignupForm {
     && typeof form.birthCity === "string";
 }
 
-function updateTransitDateUrl(value: string, mode: "push" | "replace" = "push") {
+function updateTransitDateUrl(value: string, mode: "push" | "replace", today: string | null) {
   try {
     const url = new URL(window.location.href);
-    if (value === dateInputValue()) {
+    if (value === today) {
       url.searchParams.delete("date");
     } else {
       url.searchParams.set("date", value);
@@ -11958,7 +11958,7 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
 
   useEffect(() => {
     if (followsCurrentTransitDateRef.current) {
-      updateTransitDateUrl(currentLocalDateRef.current, "replace");
+      updateTransitDateUrl(currentLocalDateRef.current, "replace", mode === 'calendar' ? null : currentLocalDateRef.current);
     }
   }, []);
 
@@ -11996,12 +11996,12 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
         // Calendar owns its selected day. A browser-zone midnight must not move
         // its Sky snapshot to another day or drop that selection on reload.
         if (mode === "calendar") {
-          updateTransitDateUrl(skyDateRef.current, "replace");
+          updateTransitDateUrl(skyDateRef.current, "replace", null);
           return;
         }
         skyDateRef.current = nextCurrentLocalDate;
         setSkyDate(nextCurrentLocalDate);
-        updateTransitDateUrl(nextCurrentLocalDate, "replace");
+        updateTransitDateUrl(nextCurrentLocalDate, "replace", nextCurrentLocalDate);
       }
     }
 
@@ -14083,7 +14083,7 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
     followsCurrentTransitDateRef.current = nextDate === currentLocalDateRef.current;
     skyDateRef.current = nextDate;
 
-    updateTransitDateUrl(nextDate);
+    updateTransitDateUrl(nextDate, "push", mode === 'calendar' ? null : currentLocalDateRef.current);
 
     setSkyDate(nextDate);
     setDatePickerOpen(false);

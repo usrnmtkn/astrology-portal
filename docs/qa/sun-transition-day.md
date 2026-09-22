@@ -21,6 +21,9 @@ location's zone. The new browser regression reproduced the old UTC-browser
 rollover advancing New York to September 23 before its evening ingress.
 Calendar continues to own its explicit selected date. Historical selections
 retain the existing local-noon policy.
+Today also keeps a date-free URL in the selected zone, so a later reload does
+not silently turn it into a historical selection. Calendar URLs retain their
+explicit selected date.
 
 Verification from an isolated checkout with its own dependencies:
 

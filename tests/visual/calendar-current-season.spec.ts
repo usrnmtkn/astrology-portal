@@ -138,8 +138,7 @@ for (const scenario of [
   await page.evaluate(() => window.dispatchEvent(new Event('focus')));
   await expect(summary).toContainText(`The Sun entered Libra at ${scenario.time} today, ending Virgo season.`, { timeout: 60_000 });
   await expect(summary).toContainText('Sun in Libra at 0°');
-  // Today may use the clean URL; an explicit selection must retain its local day.
-  expect([null, scenario.date]).toContain(new URL(page.url()).searchParams.get('date'));
+  expect(new URL(page.url()).searchParams.get('date')).toBeNull();
   await expect(page.getByRole('button', { name: 'Read more about Sun in Libra', exact: true })).toBeVisible();
   await page.reload();
   await expect(summary).toContainText(`entered Libra at ${scenario.time} today`, { timeout: 60_000 });
@@ -150,6 +149,9 @@ for (const scenario of [
   await expect(page.locator('.sky-daily-summary .sky-today-ledger__head')).toContainText(scenario.zone === 'Asia/Tokyo' ? 'Thu, Sep 24' : 'Wed, Sep 23');
   await expect(summary).toContainText('Sun in Libra', { timeout: 60_000 });
   await expect(summary).not.toContainText('ending Virgo season');
+  expect(new URL(page.url()).searchParams.get('date')).toBeNull();
+  await page.reload();
+  await expect(page.locator('.sky-daily-summary .sky-today-ledger__head')).toContainText(scenario.zone === 'Asia/Tokyo' ? 'Thu, Sep 24' : 'Wed, Sep 23');
 });
 
 test('Sky switches its transition template at the ingress without focus or reload', async ({ page }) => {
