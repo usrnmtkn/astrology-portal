@@ -16,7 +16,7 @@ type LoadState = { key: string; content: Content; status: "loading" | "ready" | 
 
 export function skySummarySourceKeys(facts: SkyDailySummaryFacts, events: LunarCalendarEvent[]) {
   const kind = selectedMoonKind(facts.event);
-  const sun = kind === "regular" ? facts.sun : facts.event?.sun ?? facts.sun;
+  const sun = kind === "regular" || facts.sunTransition ? facts.sun : facts.event?.sun ?? facts.sun;
   const moon = kind === "regular" ? facts.moon : facts.event;
   const common = skyDailySummaryFields.filter(field => !/^cms\/sky-daily-summary\/(sun|moon)\//u.test(field.key)).map(field => field.key);
   return [...new Set([...common,

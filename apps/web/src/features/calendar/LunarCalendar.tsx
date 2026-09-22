@@ -2657,7 +2657,7 @@ export function LunarCalendar({
   }, [calendar, seasonEvents, selectedCalendar]);
   const selectedMoon = selectedSky?.positions.find(position => position.planet === "Moon");
   const readingDay = selectedDay && selectedMoon ? { ...selectedDay, moonSign: selectedMoon.sign } : selectedDay;
-  const sunSummary = calendarSunSummary(selectedSky, generatedContent);
+  const sunSummary = calendarSunSummary(selectedSky, generatedContent, selectedDay?.events);
   const previousSelectedDay = selectedCalendar && selectedDay
     ? selectedCalendar.days[selectedCalendar.days.findIndex((day) => day.dateKey === selectedDay.dateKey) - 1] ?? null
     : null;

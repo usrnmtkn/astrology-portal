@@ -32,10 +32,11 @@ import { usePageTransition, readAnimationPreference, animationPreferenceKey } fr
 import { skyBodyLabel } from "./content/skyMotionLabels";
 import { skyPlacementMotionCopy, skyPlacementMotionParts } from "./content/skyPlacementMotion";
 import { calendarDayDistance } from "./services/calendarDayDistance";
-import { liveSkyReference, remainingSkyMinutes } from "./services/skyClock";
+import { liveSkyReference, remainingSkyMinutes, skyCivilDate } from "./services/skyClock";
 import { skySummaryParagraphs } from "./content/skyDailySummary";
 import { calendarSeasonTransitionFactsFromSun } from "./features/calendar/calendarSeasonTransitionFacts";
 import { PublishedSkySummary } from "./features/sky/PublishedSkySummary";
+import { skySunTransition } from "./content/skySunTransition";
 import { SkyReadingLayout, useSkyCardsSettled } from "./features/sky/SkyReadingLayout";
 import { SkyRoute } from "./routes/SkyRoute";
 import { YouRoute } from "./routes/YouRoute";
@@ -2864,10 +2865,10 @@ function isSignupForm(value: unknown): value is SignupForm {
     && typeof form.birthCity === "string";
 }
 
-function updateTransitDateUrl(value: string, mode: "push" | "replace" = "push") {
+function updateTransitDateUrl(value: string, mode: "push" | "replace", today: string | null) {
   try {
     const url = new URL(window.location.href);
-    if (value === dateInputValue()) {
+    if (value === today) {
       url.searchParams.delete("date");
     } else {
       url.searchParams.set("date", value);
@@ -10897,7 +10898,7 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
   const [dyslexiaFriendlyFont, setDyslexiaFriendlyFont] = useState(getInitialDyslexiaFont);
   const [journalPromptsEnabled, setJournalPromptsEnabled] = useState(getInitialJournalPrompts);
   const [guestHouseSignLabelStyle, setGuestHouseSignLabelStyle] = useState<HouseSignLabelStyle>(getInitialHouseSignLabelStyle);
-  const [currentLocalDate, setCurrentLocalDate] = useState(dateInputValue);
+  const [currentLocalDate, setCurrentLocalDate] = useState(() => skyCivilDate(initialLocationState.location.timeZone));
   const currentLocalDateRef = useRef(currentLocalDate);
   const [skyDate, setSkyDate] = useState(getInitialTransitDate);
   const skyDateRef = useRef(skyDate);
@@ -11910,7 +11911,7 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
       // Nested natal state must change inside the same snapshot as the portal.
       window.dispatchEvent(new Event(articleHistoryChangeEvent));
       const urlMode = portalModeFromUrl();
-      const nextCurrentLocalDate = dateInputValue();
+      const nextCurrentLocalDate = skyCivilDate(location.timeZone);
       const fixedTransitDate = transitDateFromUrl();
       const nextSkyDate = fixedTransitDate ?? nextCurrentLocalDate;
 
@@ -11954,11 +11955,13 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
       window.removeEventListener("popstate", handlePortalUrlChange);
       window.removeEventListener("hashchange", handlePortalUrlChange);
     };
-  }, [mode, skyDetailRoutePath, userProfile, transitionPage]);
+  }, [mode, skyDetailRoutePath, userProfile, transitionPage, location.timeZone]);
 
   useEffect(() => {
-    if (followsCurrentTransitDateRef.current) {
-      updateTransitDateUrl(currentLocalDateRef.current, "replace");
+    // Calendar owns its date in the hash. Do not add a second, unrelated Today
+    // query on initial load; doing so turns hash navigation into a full reload.
+    if (mode !== "calendar" && followsCurrentTransitDateRef.current) {
+      updateTransitDateUrl(currentLocalDateRef.current, "replace", currentLocalDateRef.current);
     }
   }, []);
 
@@ -11971,10 +11974,10 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
       }
 
       const now = new Date();
-      const nextLocalDay = new Date(now);
-      nextLocalDay.setDate(nextLocalDay.getDate() + 1);
-      nextLocalDay.setHours(0, 0, 0, 50);
-      const delay = Math.max(50, nextLocalDay.getTime() - now.getTime());
+      const nextDay = new Date(`${skyCivilDate(location.timeZone, now)}T12:00:00Z`);
+      nextDay.setUTCDate(nextDay.getUTCDate() + 1);
+      const nextLocalDay = zonedDateTimeToUtc(nextDay.toISOString().slice(0, 10), '12:00 AM', location.timeZone);
+      const delay = Math.max(50, nextLocalDay.getTime() - now.getTime() + 50);
 
       rolloverTimer = window.setTimeout(() => {
         syncTransitDateWithLocalDay();
@@ -11983,7 +11986,7 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
     }
 
     function syncTransitDateWithLocalDay() {
-      const nextCurrentLocalDate = dateInputValue();
+      const nextCurrentLocalDate = skyCivilDate(location.timeZone);
 
       if (nextCurrentLocalDate === currentLocalDateRef.current) {
         return;
@@ -11996,12 +11999,12 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
         // Calendar owns its selected day. A browser-zone midnight must not move
         // its Sky snapshot to another day or drop that selection on reload.
         if (mode === "calendar") {
-          updateTransitDateUrl(skyDateRef.current, "replace");
+          updateTransitDateUrl(skyDateRef.current, "replace", null);
           return;
         }
         skyDateRef.current = nextCurrentLocalDate;
         setSkyDate(nextCurrentLocalDate);
-        updateTransitDateUrl(nextCurrentLocalDate, "replace");
+        updateTransitDateUrl(nextCurrentLocalDate, "replace", nextCurrentLocalDate);
       }
     }
 
@@ -12017,6 +12020,7 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
       scheduleNextLocalDaySync();
     }
 
+    syncTransitDateWithLocalDay();
     scheduleNextLocalDaySync();
     document.addEventListener("visibilitychange", handleVisibilityChange);
     window.addEventListener("focus", handleWindowFocus);
@@ -12028,7 +12032,7 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
       document.removeEventListener("visibilitychange", handleVisibilityChange);
       window.removeEventListener("focus", handleWindowFocus);
     };
-  }, [mode]);
+  }, [mode, location.timeZone]);
 
   useEffect(() => {
     // A calculation/content update can queue this effect just before a hash
@@ -12232,7 +12236,11 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
       clearSharedGeneratedContentCache();
       clearPlanetTopicVocabularyCache();
       clearNatalCardTaglineCache();
-      calendarContentCacheRef.current.clear();
+      // Revalidate the keys without blanking already-loaded Calendar writing.
+      calendarContentCacheRef.current.forEach((entry) => {
+        entry.content = eligibleSkyDetailContent(entry.content);
+        entry.requestedKeys.clear();
+      });
       fallbackDashboardHydrationRequestedRef.current = false;
       compatibilityDashboardHydrationVersionRef.current = null;
       setContentRefreshVersion((version) => version + 1);
@@ -12284,7 +12292,6 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
 
     if (mode !== "calendar") {
       setCalendarContentStatus("idle");
-      setCalendarContentRequest(null);
     }
 
     if (!shouldLoadSkyGenerated || !sky) {
@@ -12311,7 +12318,7 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
       };
       const missingKeys = calendarContentRequest.contentKeys.filter((key) => !cached.requestedKeys.has(key));
 
-      setSkyGeneratedContent(mergeGeneratedContentMaps(cached.content, normalizedSkySnapshotContent));
+      setSkyGeneratedContent(eligibleSkyDetailContent(mergeGeneratedContentMaps(cached.content, normalizedSkySnapshotContent)));
 
       if (missingKeys.length === 0) {
         setCalendarContentStatus("ready");
@@ -12320,12 +12327,16 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
         };
       }
 
-      loadLiveGeneratedContentForKeys(missingKeys)
+      loadLiveGeneratedContentForKeys(missingKeys, { requireFresh: cached.content.size > 0 })
         .then((content) => {
           if (cancelled) return;
 
+          // A successful response replaces these rows and all of their aliases.
+          // Keep keys from other requests; a failed refresh keeps eligible copy.
+          const refreshedRows = new Set(missingKeys.map((key) => cached.content.get(key)));
+          const refreshedContent = new Map([...cached.content].filter(([, row]) => !refreshedRows.has(row)));
           const nextEntry: CalendarContentCacheEntry = {
-            content: mergeGeneratedContentMaps(content, cached.content),
+            content: mergeGeneratedContentMaps(content, refreshedContent),
             requestedKeys: new Set([...cached.requestedKeys, ...missingKeys])
           };
 
@@ -12342,8 +12353,9 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
           setCalendarContentStatus("ready");
         })
         .catch((error) => {
-          console.warn("Live Calendar interpretations failed to load; unpublished content will remain hidden.", error);
+          console.warn("Calendar content refresh failed; retaining eligible loaded writing.", error);
           if (!cancelled) {
+            setSkyGeneratedContent(eligibleSkyDetailContent(cached.content));
             setCalendarContentStatus("ready");
           }
         });
@@ -14074,7 +14086,7 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
     followsCurrentTransitDateRef.current = nextDate === currentLocalDateRef.current;
     skyDateRef.current = nextDate;
 
-    updateTransitDateUrl(nextDate);
+    updateTransitDateUrl(nextDate, "push", mode === 'calendar' ? null : currentLocalDateRef.current);
 
     setSkyDate(nextDate);
     setDatePickerOpen(false);
@@ -16087,8 +16099,10 @@ function SkyCards({
   }, [exactEventKey, summaryFactsRetry]);
   const eventResolved = summaryEventSky?.key === exactEventKey;
   const verifiedEventSky = eventResolved ? summaryEventSky.placements : null;
+  const sunTransition = skySunTransition(events, sky.generatedAt, timeZone);
   const summaryFacts = {
     sun,
+    sunTransition,
     moon,
     moonIsVoid: sky.moonStatus?.kind === "void",
     retrogradePlacements: activeRetrogradePositions(sky.positions).map(position => ({ ...position, planet: skyDisplayPlanetName(position.planet) })),
@@ -16142,7 +16156,7 @@ function SkyCards({
                 click.preventDefault(); onOpenEvent(item);
               }}><FormattedText text={part.text} /></a>;
             }
-            const placement = part.action === "sun" ? verifiedEventSky?.sun ?? sun : part.action === "moon" ? moon
+            const placement = part.action === "sun" ? sunTransition ? sun : verifiedEventSky?.sun ?? sun : part.action === "moon" ? moon
               : part.action === "retrograde" ? sky.positions.find(position => skyDisplayPlanetName(position.planet) === part.planet) : undefined;
             if (placement) {
               return (

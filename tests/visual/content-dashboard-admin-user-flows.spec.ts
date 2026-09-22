@@ -519,6 +519,7 @@ async function seedAdminApi(
     generatedContentFailuresBeforeSuccess?: number;
     generatedContentWriteReturnsEmpty?: boolean;
     loseFirstPublicationResponse?: boolean;
+    useGeneratedContentHandler?: boolean;
     onGeneratedContentRead?: (url: URL) => void;
     reviewRows?: Record<string, unknown>[];
     compositionCatalog?: Array<{ content_key: string; headline: string | null; role: string }>;
@@ -862,7 +863,7 @@ async function seedAdminApi(
         if (process.env.STATUS_DEBUG) console.log("WRITEDEBUG", JSON.stringify({ method, payload }));
         await options.onGeneratedContentWrite?.({ method, payload });
         const existingRow = apiGeneratedContentRows.find((row) => row.id === payload.id) ?? generatedContentRows[0];
-        if (payload.ownerAction === "approve-package-revision") {
+        if (payload.ownerAction === "approve-package-revision" || options.useGeneratedContentHandler) {
           // Use the real handler and transactional SQL for the response/receipt;
           // a fabricated LIVE row cannot prove successful publication.
           const store = await studioApiStore(apiGeneratedContentRows);
@@ -1572,6 +1573,117 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expect(page.getByRole("region", { name: "Admin status" })).toContainText("Connected");
     await expect(page.getByRole("region", { name: "Content controls" })).toContainText("1 aspect cards");
   });
+
+  for (const theme of ["light", "dark"]) {
+    for (const width of [1440, 390]) {
+      test(`Calendar Aspects signed titles and optional advanced filters ${theme} ${width}`, async ({ page }) => {
+        const assertNoBrowserErrors = await expectNoBrowserErrors(page);
+        await page.setViewportSize({ width, height: 900 });
+        await page.addInitScript(theme => localStorage.setItem("tldrastro:studio-theme", theme), theme);
+        const keys = [
+          "sky.aspect.moon.sextile.neptune",
+          "sky.aspect.moon.sextile.neptune.aquarius.aries",
+          "sky-card/moon/aquarius/sextile/neptune/aries",
+          "fallback-hook/sky-aspect-sign/moon/aquarius/sextile/neptune/aries",
+          "sky.aspect.moon.sextile.neptune.gemini.aries"
+        ];
+        const fixtures = keys.map((content_key, index) => ({
+          ...generatedContentRows[0], id: `qa-calendar-signed-${index}`, content_key,
+          headline: "Moon sextile Neptune", body: `Complete synthetic passage ${index}. Final sentence ${index}.`,
+          block_type: "sky_aspect", event_type: "collective-aspect-card",
+          status: "DRAFT", lane: "reference", review_state: "owner-review-required"
+        }));
+        const writes: Record<string, unknown>[] = [];
+        await seedAdminApi(page, { generatedRows: fixtures, useGeneratedContentHandler: true,
+          onGeneratedContentWrite: write => { writes.push(write.payload); } });
+        await page.goto("/admin/content#exact-content?category=Calendar+Aspects");
+        const filters = page.getByRole("region", { name: "Content list filters" });
+        const rows = page.locator(".admin-content-row");
+        const row = (index: number) => rows.filter({ hasText: keys[index] }).filter({ has: page.getByText(keys[index], { exact: true }) });
+        await expect(rows).toHaveCount(5);
+        await expectAdminHeader(page, "Calendar Aspect Cards", "Admin / Write / Calendar aspects");
+        await expect(filters.getByLabel("Calendar aspect first sign")).toBeHidden();
+        const headingStyle = (element: Element) => {
+          const style = getComputedStyle(element);
+          return Object.fromEntries(["fontFamily", "fontSize", "fontWeight", "lineHeight", "letterSpacing", "marginTop", "marginBottom", "textTransform", "textAlign"].map(key => [key, style[key as keyof CSSStyleDeclaration]]));
+        };
+        let genericStyle: unknown;
+        for (let index = 0; index < fixtures.length; index += 1) {
+          const title = index === 0 ? "Moon sextile Neptune" : `Moon in ${index === 4 ? "Gemini" : "Aquarius"} Sextile Neptune in Aries`;
+          await expect(row(index).locator(".admin-content-row-title")).toHaveText(title);
+          await row(index).getByRole("button", { name: "Edit", exact: true }).click();
+          const editor = page.locator(".admin-editor-panel");
+          const heading = editor.getByRole("heading", { name: `Edit ${title}`, exact: true });
+          await expect(heading).toHaveJSProperty("tagName", "H2");
+          if (index === 0) genericStyle = await heading.evaluate(headingStyle);
+          else expect(await heading.evaluate(headingStyle)).toEqual(genericStyle);
+          await expect(editor.getByLabel(/^(Full passage \/ body|Reader copy)$/)).toHaveValue(fixtures[index].body);
+          await expectNoHorizontalOverflow(page, "Calendar Aspect editor");
+          if (index === 1) {
+            await mkdir(adminScreenshotDir, { recursive: true });
+            await page.screenshot({ path: path.join(adminScreenshotDir, `calendar-signed-editor-${theme}-${width}.png`) });
+            if (theme === "light" && width === 1440) {
+              const revisedBody = "Updated synthetic exact passage. Exact final sentence retained.";
+              await editor.getByLabel(/^(Full passage \/ body|Reader copy)$/).fill(revisedBody);
+              await editor.getByRole("button", { name: "Save", exact: true }).click();
+              await expect(editor).toContainText("All changes saved");
+              expect(writes.at(-1)).toMatchObject({ id: fixtures[index].id, contentKey: keys[index], headline: fixtures[index].headline, body: revisedBody });
+              fixtures[index].body = revisedBody;
+            }
+          }
+          await editor.getByRole("button", { name: "Close", exact: true }).click();
+        }
+        await filters.getByText("Advanced signs", { exact: true }).click();
+        const firstSign = filters.getByLabel("Calendar aspect first sign", { exact: true });
+        const secondSign = filters.getByLabel("Calendar aspect second sign", { exact: true });
+        const first = filters.getByLabel("Calendar aspect planet or point", { exact: true });
+        const aspect = filters.getByLabel("Calendar aspect type", { exact: true });
+        const second = filters.getByLabel("Other calendar aspect planet or point", { exact: true });
+        for (const select of [first, firstSign, aspect, second, secondSign]) await expect(select).not.toHaveAttribute("required", "");
+        await firstSign.selectOption("aquarius");
+        await expect(rows).toHaveCount(3); // Sign alone works.
+        await first.selectOption("moon");
+        await expect(rows).toHaveCount(3);
+        await aspect.selectOption("sextile");
+        await second.selectOption("neptune");
+        await expect(rows).toHaveCount(3); // Second sign remains optional.
+        await secondSign.selectOption("aries");
+        await expect(rows).toHaveCount(3);
+        await expect(page).toHaveURL(/firstSign=aquarius.*secondSign=aries/);
+        await page.reload();
+        await expect(firstSign).toBeVisible();
+        await expect(firstSign).toHaveValue("aquarius");
+        await expect(secondSign).toHaveValue("aries");
+        await expect(rows).toHaveCount(3);
+        await row(1).getByRole("button", { name: "Edit", exact: true }).click();
+        await expect(page.locator(".admin-editor-panel").getByLabel(/^(Full passage \/ body|Reader copy)$/)).toHaveValue(fixtures[1].body);
+        await page.locator(".admin-editor-panel").getByRole("button", { name: "Close", exact: true }).click();
+        await firstSign.selectOption("aries");
+        await expect(rows).toHaveCount(0); // Neptune's sign cannot match Moon.
+        await expectNoHorizontalOverflow(page, "Calendar Aspects empty state");
+        await filters.getByRole("button", { name: "Clear filters", exact: true }).click();
+        await expect(rows).toHaveCount(5);
+        await expect(first).toHaveValue("");
+        await expect(aspect).toHaveValue("");
+        await expect(second).toHaveValue("");
+        await filters.getByText("Advanced signs", { exact: true }).click();
+        await expect(firstSign).toHaveValue("");
+        await expect(secondSign).toHaveValue("");
+        await secondSign.selectOption("aquarius");
+        await expect(rows).toHaveCount(3); // Other sign alone works too.
+        await first.selectOption("neptune");
+        await firstSign.selectOption("aries");
+        await second.selectOption("moon");
+        await expect(rows).toHaveCount(3); // Reversed planet/sign pairs work.
+        await expect(filters.getByRole("group", { name: "Calendar aspect filters", exact: true }).locator("label > span:first-child")).toHaveText(["Planet or point", "Aspect", "Other planet or point"]);
+        await expect(filters.getByRole("group", { name: "Calendar aspect sign filters", exact: true }).locator("label > span:first-child")).toHaveText(["Neptune in sign", "Moon in sign"]);
+        await expectNoHorizontalOverflow(page, "Calendar Aspect filters");
+        await page.evaluate(() => window.scrollTo(0, 0));
+        await page.screenshot({ path: path.join(adminScreenshotDir, `calendar-signed-filters-${theme}-${width}.png`), fullPage: true });
+        await assertNoBrowserErrors();
+      });
+    }
+  }
 
   test("Calendar Aspects navigation opens and edits the governed non-serving draft catalog", async ({ page }) => {
     const assertNoBrowserErrors = await expectNoBrowserErrors(page);

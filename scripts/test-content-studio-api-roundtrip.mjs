@@ -367,6 +367,33 @@ for (const key of ["cms/sky-daily-summary/sun/aries", "cms/sky-daily-summary/moo
 }
 row = beforeBank;
 
+// Transition-day grammar is editable through the same real handler and reader
+// boundary. Only isolated fixture rows are written by this contract.
+const { skyAssemblyFields } = await import('../apps/web/src/content/skyDailySummaryCatalog.ts');
+for (const template of skyAssemblyFields.filter(field => /\/sunIngress(?:Before|After)$/.test(field.key))) {
+  const created = await invokeApi('POST', '/api/admin/generated-content', {
+    contentKey: template.key, surface: 'sky', mode: 'feed', eventType: 'sky-daily-summary',
+    status: 'DRAFT', lane: 'serving', reviewState: 'EDITORIAL_REVIEW_REQUIRED', body: template.body,
+    sourceSnapshot: { contentSystem: 'cms-surface-override', contentType: 'mustache-template', allowedSlots: template.allowedSlots }
+  });
+  assert.equal(created.status, 200, JSON.stringify(created.payload));
+  assert.equal((await loadLiveGeneratedContentForKeys([template.key])).size, 0);
+  const reopened = await invokeApi('GET', `/api/admin/generated-content?contentKey=${encodeURIComponent(template.key)}&status=all`);
+  assert.equal(reopened.payload.rows[0].body, template.body);
+  const version = row.updated_at;
+  const published = await invokeApi('PATCH', '/api/admin/generated-content', {
+    id: row.id, expectedUpdatedAt: version, status: 'LIVE', lane: 'serving', reviewState: null
+  });
+  assert.equal(published.status, 200, JSON.stringify(published.payload));
+  assert.equal((await loadLiveGeneratedContentForKeys([template.key])).get(template.key)?.body, template.body);
+  const conflict = await invokeApi('PATCH', '/api/admin/generated-content', {
+    id: row.id, expectedUpdatedAt: version, status: 'DRAFT', body: 'Stale fixture replacement.'
+  });
+  assert.equal(conflict.status, 409);
+  assert.equal(row.body, template.body);
+}
+row = beforeBank;
+
 // An unsaved Studio summary starts with the legacy UI mode "card". Exercise
 // creation as well as editing; patching a pre-existing fixture missed this.
 const createdSummary = await invokeApi("POST", "/api/admin/generated-content", {

@@ -1,6 +1,6 @@
 import type { LocationInput } from "../types";
 import { withTimeZone, zonedDateTimeToUtc } from "./timezones";
-import { liveSkyReference } from "./skyClock";
+import { liveSkyReference, skyCivilDate } from "./skyClock";
 
 export const defaultLocation: LocationInput = {
   label: "New York City, NY",
@@ -56,7 +56,7 @@ export function transitDateFromUrl() {
 }
 
 export function getInitialTransitDate() {
-  return transitDateFromUrl() ?? dateInputValue();
+  return transitDateFromUrl() ?? skyCivilDate(getInitialLocation().location.timeZone);
 }
 
 export function skyDateTimeFromInput(value: string, location: LocationInput, live = false, now: Date = new Date()) {
@@ -98,4 +98,3 @@ export function getInitialLocation() {
     };
   }
 }
-
