@@ -7,7 +7,12 @@
   "headers": [
     {
       "source": "/wasm/:version/:asset",
-      "headers": [{ "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }]
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
     },
     {
       "source": "/",
@@ -74,6 +79,10 @@
     }
   ],
   "functions": {
+    "api/calendar-feed.ts": {
+      "includeFiles": "node_modules/swisseph-wasm/wasm/*",
+      "maxDuration": 60
+    },
     "api/sky.ts": {
       "includeFiles": "node_modules/swisseph-wasm/wasm/*",
       "maxDuration": 15
@@ -104,6 +113,10 @@
     }
   },
   "rewrites": [
+    {
+      "source": "/feed/:token.ics",
+      "destination": "/api/calendar-feed?token=:token"
+    },
     {
       "source": "/api/admin/review-records",
       "destination": "/api/admin/review-records-fast"

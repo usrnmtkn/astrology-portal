@@ -99,7 +99,7 @@ import { CalendarDayPanel } from "./CalendarDayPanel";
 import { CalendarEventReading } from "./CalendarEventReading";
 import { CalendarSlideout } from "./CalendarSlideout";
 import { CalendarSubscribeSheet } from "./CalendarSubscribeSheet";
-import { ASTRO_2026_EVENTS } from "./calendarHandoff";
+import { loadCalendarSubscription } from "./calendarSubscription";
 import { CalendarMonthChip, eventGlyphText } from "./CalendarKindTag";
 import { calendarKindFromEvent } from "./calendarKinds";
 import {
@@ -2200,7 +2200,7 @@ export function LunarCalendar({
   const [readingEvent, setReadingEvent] = useState<LunarCalendarEvent | null>(null);
   const [checkInOpen, setCheckInOpen] = useState(false);
   const [subscribeOpen, setSubscribeOpen] = useState(false);
-  const [subscribed, setSubscribed] = useState(false);
+  const [subscribed, setSubscribed] = useState(() => Boolean(loadCalendarSubscription()));
   const retryCalendarContent = () => {
     if (calendarDetailState === "error") setRetryNonce(value => value + 1);
     // Browsers cache failed module imports. An explicit retry may need fresh HTML;
@@ -2871,25 +2871,6 @@ export function LunarCalendar({
     ));
     if (seasonEvent) openEventReading(seasonEvent);
   };
-  const subscribeCounts = ASTRO_2026_EVENTS.reduce<Record<string, number>>((counts, event) => {
-    const feed = event.kind === "lunation" || event.kind === "eclipse"
-      ? "lunations"
-      : event.kind === "moon"
-        ? "moon-signs"
-        : event.kind === "ingress" && event.title.startsWith("The Sun enters")
-          ? "seasons"
-          : event.kind === "ingress"
-            ? "ingresses"
-            : event.kind === "station"
-              ? "retrogrades"
-              : event.kind === "key"
-                ? "key"
-                : event.kind === "aspect"
-                  ? "aspects"
-                  : null;
-    if (feed) counts[feed] = (counts[feed] ?? 0) + 1;
-    return counts;
-  }, { weekly: 52 });
   const selectedDaySkyParagraphs = selectedDayBodyPresentation.main;
   const selectedDaySkyTitle = selectedDayJournal?.headline
     ?? selectedPackagePhase?.headline
@@ -3021,7 +3002,7 @@ export function LunarCalendar({
             onChange={handleViewModeChange}
           />
           <button
-            aria-label={subscribed ? "Calendar subscribed" : "Add to your calendar"}
+            aria-label={subscribed ? "Calendar subscription link" : "Add to your calendar"}
             className="lunar-calendar-subscribe"
             onClick={() => setSubscribeOpen(true)}
             type="button"
@@ -3278,13 +3259,13 @@ export function LunarCalendar({
                   <ChevronDown size={10} aria-hidden="true" />
                 </button>
                 <button
-                  aria-label={subscribed ? "Calendar subscribed" : "Add to your calendar"}
+                  aria-label={subscribed ? "Calendar subscription link" : "Add to your calendar"}
                   className="lunar-calendar-subscribe lunar-calendar-subscribe--inline"
                   onClick={() => setSubscribeOpen(true)}
                   type="button"
                 >
                   {subscribed ? <CalendarCheck size={15} aria-hidden="true" /> : <CalendarPlus size={15} aria-hidden="true" />}
-                  {subscribed ? "Subscribed" : "Subscribe"}
+                  {subscribed ? "Calendar link" : "Subscribe"}
                 </button>
               </div>
               {legendOpen && (
@@ -3511,13 +3492,11 @@ export function LunarCalendar({
       )}
       {subscribeOpen && (
         <CalendarSubscribeSheet
-          counts={subscribeCounts}
           onClose={() => setSubscribeOpen(false)}
-          onSubscribed={() => {
+          onLinkReady={() => {
             setSubscribed(true);
           }}
-          subscribed={subscribed}
-          timeZoneLabel={location.label}
+          timeZone={location.timeZone ?? "UTC"}
         />
       )}
     </section>
