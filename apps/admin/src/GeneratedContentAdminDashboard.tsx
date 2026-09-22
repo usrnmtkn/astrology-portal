@@ -2727,12 +2727,13 @@ function restorePendingPublication(): PendingStudioPublication | null {
   } catch { /* Storage may be disabled; the database receipt remains durable. */ }
   return null;
 }
-type StudioPublicationResult = { ok: boolean; rows: AdminGeneratedContentRow[]; found?: boolean; publicationReceipt?: { currentPublicationState?: string; currentStatus?: string; targetVersion?: string; currentVersion?: string } };
+type StudioPublicationResult = { ok: boolean; rows: AdminGeneratedContentRow[]; found?: boolean; publicationReceipt?: { targetId?: string; contentKey?: string; currentPublicationState?: string; currentStatus?: string; targetVersion?: string; currentVersion?: string } };
 function publicationStateMessage(result: StudioPublicationResult) {
   const receipt = result.publicationReceipt;
+  if (receipt?.currentStatus === "DELETED") return "The publication completed earlier. Its source has since been removed.";
   if (receipt?.currentPublicationState === "retired") return "The publication completed earlier. This content is now retired.";
   if (receipt && (receipt.currentStatus !== "LIVE" || !["live", "dated"].includes(receipt.currentPublicationState ?? ""))) return "The publication completed earlier. This content is no longer published.";
-  if (receipt && receipt.currentVersion !== receipt.targetVersion) return "The publication completed earlier. A newer saved version is now open.";
+  if (receipt && receipt.currentVersion !== receipt.targetVersion) return "The publication completed earlier. A newer saved version is available in the library.";
   return "The reviewed revision is published.";
 }
 
@@ -5009,12 +5010,16 @@ export function GeneratedContentAdminDashboard() {
     setPendingPublication(operation);
     try {
       const result = await adminJsonRequest<StudioPublicationResult>("/api/admin/generated-content", secret, { method: "PATCH", body: JSON.stringify(operation) });
+      if (result.publicationReceipt?.currentStatus === "DELETED") throw new AdminRequestError(publicationStateMessage(result), { status: 409, path: "/api/admin/generated-content", method: "PATCH", details: publicationStateMessage(result) });
       if (!result.ok || !result.rows?.[0] || !result.publicationReceipt) throw new Error("Publication could not be confirmed. Check publication status to recover its result.");
       setPendingPublication(null);
       return result;
     } catch (error) {
-      if (error instanceof AdminRequestError && [400, 401, 403, 404, 409, 422].includes(error.status)) setPendingPublication(null);
-      throw error;
+      if (error instanceof AdminRequestError && [400, 401, 403, 404, 409, 422].includes(error.status)) {
+        setPendingPublication(null);
+        throw error;
+      }
+      throw new Error("Publication is awaiting confirmation. Your saved revision is retained. Choose Check publication status to recover its result.");
     }
   }
 
@@ -5024,6 +5029,11 @@ export function GeneratedContentAdminDashboard() {
     try {
       const params = new URLSearchParams({ id: pendingPublication.id, expectedUpdatedAt: pendingPublication.expectedUpdatedAt, publicationAction: pendingPublication.ownerAction });
       const result = await adminJsonRequest<StudioPublicationResult>(`/api/admin/generated-content?${params}`, secret);
+      if (result.found && result.publicationReceipt?.currentStatus === "DELETED") {
+        setRows(rows => rows.filter(row => row.id !== result.publicationReceipt?.targetId && row.id !== pendingPublication.id));
+        setPendingPublication(null); setEditorSaveError(""); setMessage(publicationStateMessage(result));
+        return;
+      }
       if (!result.found || !result.rows?.[0]) {
         setEditorSaveError("No completed publication was found yet. Your saved revision is retained. Check again before publishing.");
         setMessage("No completed publication was found yet. Your saved revision is retained. Check again before publishing.");
@@ -5523,12 +5533,15 @@ export function GeneratedContentAdminDashboard() {
       }
       const updatedRows = updates.flatMap((result) => result.status === "fulfilled" ? result.value.rows ?? [] : []);
       const failedIds = actionRows.filter((_, index) => updates[index].status === "rejected").map((row) => row.id);
-      updatedRows.forEach((row) => announceContentUpdate({
-        contentKey: row.content_key,
-        published: row.status === "LIVE",
-        updatedAt: row.updated_at ?? new Date().toISOString()
-      }));
-      setRows((current) => current.map((row) => updatedRows.find((updated) => updated.id === row.id) ?? row));
+      for (const result of updates) if (result.status === "fulfilled") {
+        for (const row of result.value.rows ?? []) announceContentUpdate({
+          contentKey: row.content_key,
+          published: result.value.publicationReceipt ? ["live", "dated"].includes(result.value.publicationReceipt.currentPublicationState ?? "") : row.status === "LIVE",
+          updatedAt: row.updated_at ?? new Date().toISOString()
+        });
+      }
+      const completedIds = new Set(actionRows.filter((_, index) => updates[index].status === "fulfilled").map(row => row.id));
+      setRows(current => [...updatedRows, ...current.filter(row => !completedIds.has(row.id) && !updatedRows.some(updated => updated.id === row.id))]);
       setSelectedIds(new Set(failedIds));
       const failure = updates.find((result) => result.status === "rejected");
       setMessage(`Updated ${updatedRows.length} rows. ${failedIds.length ? `${failedIds.length} failed and remain selected: ${failure?.status === "rejected" ? dashboardErrorMessage(failure.reason) : "Retry the selected rows."}` : "All selected changes saved."}`);

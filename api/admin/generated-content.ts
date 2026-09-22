@@ -2029,7 +2029,11 @@ async function rowsFromPublicationReceipt(receipt: Record<string, any>) {
   const { row: _privateSavedRow, ...metadata } = receipt;
   context.receipt = metadata;
   const current = await fetchExistingRowById(receipt.targetId);
-  if (!current) throw new GeneratedContentRequestError("This publication completed, but the source has since been removed. Reload the inventory.", 409, undefined, "PUBLICATION_COMMITTED_RELOAD");
+  if (!current) {
+    context.receipt.currentStatus = "DELETED";
+    context.receipt.currentPublicationState = "removed";
+    return [];
+  }
   context.receipt.currentVersion = current.updated_at;
   context.receipt.currentStatus = current.status;
   const publication = await currentPublication(current.content_key);
@@ -3158,7 +3162,7 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
       await loadGeneratedContentLibraries();
       const context: PublicationContext = { actor: (await getContentAdminPrincipal(req))!, dependencies: new Map() };
       const rows = await publicationContext.run(context, () => updateGeneratedContent(req));
-      if (!Array.isArray(rows) || rows.length === 0) throw new Error("Update completed without returning the saved row.");
+      if (!Array.isArray(rows) || rows.length === 0 && !context.receipt) throw new Error("Update completed without returning the saved row.");
       sendJson(res, 200, { ok: true, rows, ...(context.receipt ? { publicationReceipt: context.receipt } : {}) });
       return;
     }

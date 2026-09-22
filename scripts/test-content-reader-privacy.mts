@@ -58,6 +58,12 @@ try {
     assert.deepEqual((await request()).value.rows, [], JSON.stringify(mutation));
   }
   stored = [row];
+  calls = [];
+  assert.equal((await request({ scope: 'sky-list', vocabularyOnly: true })).statusCode, 200);
+  const scopes = calls[0].searchParams.getAll('or');
+  assert(scopes.some(value => value.includes('sky-context')));
+  assert(scopes.some(value => value.includes('cc/planet/')));
+  assert.equal((await request({ scope: 'raw-authoring' })).statusCode, 400);
   ledger[1].state = 'retired'; assert.deepEqual((await request()).value.rows, []);
   ledger[1].state = 'live'; ledger[1].row_updated_at = '2026-09-21T18:00:00.123457+00:00';
   assert.deepEqual((await request()).value.rows, [], 'Microsecond stale publication must not serve');

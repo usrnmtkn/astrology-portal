@@ -208,7 +208,7 @@
     "test:studio-variables": "node --import tsx scripts/test-studio-variable-catalog.mts && node --import tsx scripts/test-studio-variable-renderers.mts",
     "pretest:calendar-subscriptions": "npm run prepare:app-test-dependencies",
     "test:calendar-subscriptions": "node --import tsx scripts/test-calendar-subscriptions.mts",
-    "test:content-reader-privacy": "node --import tsx scripts/test-generated-row-writers.mts && node --import tsx scripts/test-content-reader-privacy.mts && node --import tsx scripts/test-content-studio-private-versions.mts && node scripts/test-content-studio-last-known-good.mjs && node --import tsx scripts/test-content-studio-publication-receipts.mts"
+    "test:content-reader-privacy": "node --import tsx scripts/test-publication-recovery-status.mts && node --import tsx scripts/test-generated-row-writers.mts && node --import tsx scripts/test-content-reader-privacy.mts && node --import tsx scripts/test-content-studio-private-versions.mts && node scripts/test-content-studio-last-known-good.mjs && node --import tsx scripts/test-content-studio-publication-receipts.mts"
   },
   "optionalDependencies": {
     "@esbuild/linux-x64": "^0.27.7",

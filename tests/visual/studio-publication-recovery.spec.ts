@@ -19,12 +19,12 @@ for(const width of [390,1440]) for(const theme of ['light','dark'] as const) {
    await ready;const fixture=await call({method:'fixture',key});
    for(const tab of [page,second]) {
     await tab.setViewportSize({width,height:1000});await tab.emulateMedia({colorScheme:theme});tab.on('pageerror',error=>errors.push(error.message));
-    await tab.addInitScript(()=>localStorage.setItem('tldrastro:contentAdminSecret','calendar-api-fixture'));
+    await tab.addInitScript(theme=>{localStorage.setItem('tldrastro:contentAdminSecret','calendar-api-fixture');localStorage.setItem('tldrastro:studio-theme',theme);},theme);
     await routeStudioInventoryApi(tab,{call,listRows:rows=>rows.filter(row=>row.content_key===key && row.status!=='ARCHIVED'),answer:async(route,url)=>{
      if(url.pathname!=='/api/admin/content-live-status')return false;
      const statuses=await call({method:'statuses',body:route.request().postDataJSON()});await route.fulfill({json:{ok:true,statuses}});return true;
     }});
-    await tab.goto('/admin/content#review-queue');await tab.evaluate(value=>{document.documentElement.dataset.theme=value;},theme);
+    await tab.goto('/admin/content#review-queue');await expect(tab.locator('main.admin-dashboard')).toHaveAttribute('data-studio-theme',theme);
     await tab.getByRole('row').filter({hasText:key}).first().getByRole('button',{name:'Edit',exact:true}).click();
    }
    const editor=page.getByRole('dialog'),other=second.getByRole('dialog');
