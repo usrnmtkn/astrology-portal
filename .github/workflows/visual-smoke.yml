@@ -198,7 +198,7 @@ jobs:
       - run: npm run build:knowledge
       - run: npx playwright install --with-deps chromium
       - name: Run Content Studio admin user flows
-        run: npx playwright test -c playwright.config.ts --fully-parallel --workers=1 --shard=${{ matrix.shard }}/4 tests/visual/content-dashboard-admin-user-flows.spec.ts tests/visual/calendar-review-queue-api.spec.ts tests/visual/review-queue-workflow.spec.ts tests/visual/content-publication-offline.spec.ts tests/visual/content-studio-reader-destinations.spec.ts tests/visual/content-studio-needs-attention.spec.ts tests/visual/studio-formatting-publication.spec.ts
+        run: npx playwright test -c playwright.config.ts --fully-parallel --workers=1 --shard=${{ matrix.shard }}/4 tests/visual/content-dashboard-admin-user-flows.spec.ts tests/visual/calendar-review-queue-api.spec.ts tests/visual/review-queue-workflow.spec.ts tests/visual/content-publication-offline.spec.ts tests/visual/content-studio-reader-destinations.spec.ts tests/visual/content-studio-needs-attention.spec.ts tests/visual/studio-formatting-publication.spec.ts tests/visual/calendar-subscriptions.spec.ts
       - name: Upload Content Studio flow artifacts
         if: always()
         uses: actions/upload-artifact@v6

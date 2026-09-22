@@ -246,7 +246,13 @@
   gap: var(--lunar-space-8);
 }
 
-.calendar-subscribe__open button {
+.calendar-subscribe__open :is(button, a) {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  text-decoration: none;
+  box-sizing: border-box;
   width: 100%;
   height: var(--calendar-open-secondary-height);
   padding: 0;
@@ -260,7 +266,7 @@
   cursor: pointer;
 }
 
-.calendar-subscribe__open button.is-primary {
+.calendar-subscribe__open :is(button, a).is-primary {
   height: var(--calendar-open-primary-height);
   border: 0;
   background: var(--calendar-ink);
@@ -517,4 +523,13 @@
   .calendar-subscribe__row {
     padding: var(--calendar-subscribe-row-padding-compact);
   }
+}
+
+.calendar-subscribe__url input {
+  width: 100%;
+  min-width: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
 }

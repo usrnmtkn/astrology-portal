@@ -3010,6 +3010,22 @@ export function getLunarCalendarWeek(
   return request;
 }
 
+/** Shared event calculations for subscriptions; omits the visual day grid. */
+export async function getCalendarSubscriptionEvents(year: number): Promise<LunarCalendarEvent[]> {
+  if (!Number.isInteger(year) || year < 2020 || year > 2100) throw new Error("Unsupported calendar year.");
+  const swe = await getSwissEph();
+  const start = new Date(Date.UTC(year, 0, 1));
+  const end = new Date(Date.UTC(year + 1, 0, 1));
+  return [
+    ...findLunations(swe, start, end, "UTC"),
+    ...findMoonIngresses(swe, start, end, "UTC"),
+    ...findIngresses(swe, start, end, "UTC"),
+    ...findStations(swe, start, end, "UTC"),
+    ...findSkyAspects(swe, start, end, "UTC")
+  ].filter(event => event.startsAt >= start.toISOString() && event.startsAt < end.toISOString())
+    .sort((a, b) => a.startsAt.localeCompare(b.startsAt));
+}
+
 /**
  * Lean event feed for horoscope assembly. Unlike the visual calendar builders,
  * this skips ingress/aspect scans, daily moon status, void-of-course searches,

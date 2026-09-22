@@ -243,6 +243,7 @@ const ImportedArticleHoroscopesEditor = lazy(() => import("./ImportedArticleHoro
 const StudioEditorReviewPanels = lazy(() => import('./StudioEditorReviewPanels'));
 const SkyDailySummaryStudio = lazy(() => import("./SkyDailySummaryStudio").then(module => ({ default: module.SkyDailySummaryStudio })));
 const SkyDebilityStudio = lazy(() => import("./SkyDebilityStudio").then(module => ({ default: module.SkyDebilityStudio })));
+const CalendarSubscriptionEvents = lazy(() => import("./CalendarSubscriptionEvents"));
 const LunarCalendarWorkspace = lazy(() => import("./LunarCalendarWorkspace"));
 const CompositionMapWorkspace = lazy(() => import("./CompositionMapWorkspace"));
 const SkyPlacementComposition = lazy(() => import("./SkyPlacementComposition"));
@@ -362,12 +363,13 @@ type AdminWritingSurfaceMapPayload = {
 type AdminArticlePointFilter = "all" | "sun" | "moon" | "mercury" | "venus" | "mars" | "jupiter" | "saturn" | "uranus" | "neptune" | "pluto" | "other";
 type AdminSkyWriteupSubjectFilter = "all" | "planet" | "angle" | "point";
 type SkyWriteupWorkspaceView = "daily-summary" | "catalog" | "transits-to-natal" | "house-transits";
-type CalendarWriteupWorkspaceView = SkyForecastPeriod | "season-transitions";
+type CalendarWriteupWorkspaceView = SkyForecastPeriod | "season-transitions" | "subscription-events";
 const calendarWriteupWorkspaceTabs: { value: CalendarWriteupWorkspaceView; label: string }[] = [
   { value: "daily-sky", label: "Daily Sky" },
   { value: "weekly-sky", label: "Weekly Sky" },
   { value: "monthly-sky", label: "Monthly Sky" },
-  { value: "season-transitions", label: "Season transitions" }
+  { value: "season-transitions", label: "Season transitions" },
+  { value: "subscription-events", label: "Subscription events" }
 ];
 const skyWriteupWorkspaceTabs: { value: SkyWriteupWorkspaceView; label: string }[] = [
   { value: "daily-summary", label: "Daily Sky Summary" },
@@ -3153,6 +3155,7 @@ export function GeneratedContentAdminDashboard() {
   const [skyWriteupDestinationFilter, setSkyWriteupDestinationFilter] = useState<ContentDestinationFilter>("all");
   const [skyWriteupSort, setSkyWriteupSort] = useState<ContentPlacementSort>("updated-desc");
   const [skyWriteupWorkspaceView, setSkyWriteupWorkspaceView] = useState<SkyWriteupWorkspaceView>("catalog");
+  const subscriptionEventDirtyRef = useRef(false);
   const [calendarWriteupWorkspaceView, setCalendarWriteupWorkspaceView] = useState<CalendarWriteupWorkspaceView>("daily-sky");
   const [transitReadingContext, setTransitReadingContext] = useState<import("./transitNatalSources").TransitNatalReadingContext>({});
   const [transitNatalPlanet, setTransitNatalPlanet] = useState<TransitNatalPlanet | "">("");
@@ -4237,7 +4240,7 @@ export function GeneratedContentAdminDashboard() {
       page === "skyWriteups" && skyWriteupWorkspaceTabs.some(tab => tab.value === view)
         ? view as SkyWriteupWorkspaceView : "catalog"
     );
-    setCalendarWriteupWorkspaceView(page === "calendarWriteups" && (view === "weekly-sky" || view === "monthly-sky" || view === "season-transitions") ? view : "daily-sky");
+    setCalendarWriteupWorkspaceView(page === "calendarWriteups" && (view === "weekly-sky" || view === "monthly-sky" || view === "season-transitions" || view === "subscription-events") ? view : "daily-sky");
     setTransitReadingContext(page === "skyWriteups" && view === "transits-to-natal" ? {
       ...(params.get("pass") ? { pass: Number(params.get("pass")) } : {}),
       ...(params.get("variant") ? { variant: Number(params.get("variant")) } : {}),
@@ -4290,7 +4293,8 @@ export function GeneratedContentAdminDashboard() {
 
   function hasPendingArticleChanges() {
     return Boolean(
-      skyArticleEditor && skyArticleEditor.saveState !== "saved"
+      subscriptionEventDirtyRef.current
+      || skyArticleEditor && skyArticleEditor.saveState !== "saved"
       || skyArticleEditionForm && ["unsaved", "saving", "error"].includes(skyArticleEditionForm.saveState)
     );
   }
@@ -7080,7 +7084,8 @@ export function GeneratedContentAdminDashboard() {
             <StudioTabs label="Calendar Write-ups workspaces" value={calendarWriteupWorkspaceView}
               tabs={calendarWriteupWorkspaceTabs}
               onValueChange={view => navigateAdminPage("calendarWriteups", new URLSearchParams({ view }))}>
-              {calendarWriteupWorkspaceView !== "season-transitions" && <Suspense fallback={<PageLoading message="Loading Calendar template…" />}><SkyForecastTemplateStudio period={calendarWriteupWorkspaceView} rows={rows} busy={isLoading}
+              {calendarWriteupWorkspaceView === "subscription-events" && <Suspense fallback={<PageLoading message="Loading subscription events…" />}><CalendarSubscriptionEvents secret={secret} dirtyRef={subscriptionEventDirtyRef} /></Suspense>}
+              {calendarWriteupWorkspaceView !== "season-transitions" && calendarWriteupWorkspaceView !== "subscription-events" && <Suspense fallback={<PageLoading message="Loading Calendar template…" />}><SkyForecastTemplateStudio period={calendarWriteupWorkspaceView} rows={rows} busy={isLoading}
                 loadRows={loadCalendarPreviewRows} draft={draft}
                 onEditSource={row => void openCalendarWritingSource(row as AdminGeneratedContentRow)}
                 onEditOverview={field => void openSkyForecastTemplate(calendarWriteupWorkspaceView as SkyForecastPeriod, field)}
