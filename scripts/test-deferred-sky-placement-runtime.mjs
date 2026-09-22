@@ -115,6 +115,12 @@ assert.throws(
   "The exact Moon sign-entry unit must remain in the deferred placement partition."
 );
 
+assert.equal(await runtime.loadSkyPlacementFallbackArchitectureV3Bundle(false), true);
+assert.equal(runtime.isSkyPlacementFallbackArchitectureV3BundleLoaded(), false,
+  "List readiness must not claim that Calendar/detail house sources have loaded.");
+const listReading = runtime.transitSynastryFallbackRendererV3.renderSkyPlacement(facts);
+assert.match(listReading.body, /the work reaches the audience it was made for/u);
+
 const concurrentLoads = await Promise.all([
   runtime.loadSkyPlacementFallbackArchitectureV3Bundle(),
   runtime.loadSkyPlacementFallbackArchitectureV3Bundle()

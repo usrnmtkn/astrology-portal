@@ -534,6 +534,8 @@ let localDeferredReaderBundle: FallbackArchitectureV3Bundle | null = null;
 let localEmptyHouseReaderBundle: FallbackArchitectureV3Bundle | null = null;
 let localRelationshipReaderBundle: FallbackArchitectureV3Bundle | null = null;
 let localLunationBookReaderBundle: FallbackArchitectureV3Bundle | null = null;
+let localSkyPlacementHouseReaderBundle: FallbackArchitectureV3Bundle | null = null;
+let skyPlacementHouseBundlePromise: Promise<boolean> | null = null;
 let localSkyPlacementReaderBundle: FallbackArchitectureV3Bundle | null = null;
 let lastKnownGoodReaderBundle: FallbackArchitectureV3Bundle | null = null;
 let dashboardCoreReaderBundle: FallbackArchitectureV3Bundle | null = null;
@@ -608,7 +610,7 @@ function recomposeReaderBundle() {
   const dashboardCore = mergeReaderBundles(localCoreWithLunationBook, dashboardCoreReaderBundle);
   const skyCore = mergeReaderBundles(dashboardCore, dashboardSkyCoreReaderBundle);
   const core = mergeReaderBundles(skyCore, dashboardCompatibilityReaderBundle);
-  const withLocalSky = mergeReaderBundles(core, localSkyPlacementReaderBundle);
+  const withLocalSky = mergeReaderBundles(mergeReaderBundles(core, localSkyPlacementReaderBundle), localSkyPlacementHouseReaderBundle);
   activateReaderBundle(mergeReaderBundles(withLocalSky, dashboardSkyPlacementReaderBundle));
 }
 
@@ -929,10 +931,25 @@ export async function loadRelationshipFallbackArchitectureV3Bundle() {
 }
 
 export function isSkyPlacementFallbackArchitectureV3BundleLoaded() {
-  return Boolean(localSkyPlacementReaderBundle || dashboardSkyPlacementReaderBundle);
+  return Boolean(localSkyPlacementReaderBundle && localSkyPlacementHouseReaderBundle || dashboardSkyPlacementReaderBundle);
 }
 
-export async function loadSkyPlacementFallbackArchitectureV3Bundle() {
+export async function loadSkyPlacementFallbackArchitectureV3Bundle(includeHouses = true) {
+  if (loadedSkyV4ReaderRoute && localSkyPlacementReaderBundle && (!includeHouses || localSkyPlacementHouseReaderBundle)) return false;
+  const placement = loadSkyPlacementListBundle();
+  if (!includeHouses) return placement;
+  skyPlacementHouseBundlePromise ??= import("./fallbackArchitectureV3SkyPlacementHouseBundle")
+    .then(({ skyPlacementHouseBundle }) => {
+      if (localSkyPlacementHouseReaderBundle) return false;
+      localSkyPlacementHouseReaderBundle = readerEligibleBundle(skyPlacementHouseBundle);
+      recomposeReaderBundle();
+      return true;
+    }).catch((error) => { skyPlacementHouseBundlePromise = null; throw error; });
+  const changes = await Promise.all([placement, skyPlacementHouseBundlePromise]);
+  return changes.some(Boolean);
+}
+
+async function loadSkyPlacementListBundle() {
   if (loadedSkyV4ReaderRoute && localSkyPlacementReaderBundle) {
     return false;
   }

@@ -230,7 +230,7 @@ assert.match(
   "The Sky Placement route partition must use its generated package slice."
 );
 assert.match(
-  deferredSkyPlacementSource,
+  fs.readFileSync(path.join(repoRoot, "apps/web/src/content/fallbackArchitectureV3SkyPlacementHouseBundle.ts"), "utf8"),
   /bundled-sky-placement-house-rows-v3\.json/u,
   "Sky Placement house horoscopes must remain in their on-demand package slice."
 );

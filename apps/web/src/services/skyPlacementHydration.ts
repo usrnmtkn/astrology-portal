@@ -12,7 +12,7 @@ export { missingSkyPlacementPublications, skyPlacementPublicationIdentity };
 async function prepareSources(selection?: string) {
   let timer: ReturnType<typeof setTimeout> | undefined;
   const prepare = async () => {
-    const bundled = loadSkyPlacementFallbackArchitectureV3Bundle();
+    const bundled = loadSkyPlacementFallbackArchitectureV3Bundle(!selection);
     void bundled.catch(() => { /* Joined below, including its failure. */ });
     await refreshContentPublications();
     // Live readers already resolve current rows below. The full offline snapshot

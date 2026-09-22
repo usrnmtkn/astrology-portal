@@ -301,7 +301,7 @@ jobs:
         run: npm run test:sky-daily-summary && node scripts/test-sky-placement-aspect-matrix.mjs && node --import tsx scripts/test-calendar-template-preview.mts
       - name: Verify daily Sky summary reader
         if: matrix.phase == 'reader'
-        run: npx playwright test -c playwright.config.ts --workers=1 tests/visual/sky-loading-layout.spec.ts tests/visual/sky-summary-cold-hydration.spec.ts tests/visual/sky-daily-summary.spec.ts tests/visual/sky-live-clock.spec.ts tests/visual/sky-summary-paragraphs.spec.ts tests/visual/sky-placement-aspects.spec.ts tests/visual/sky-refresh-performance.spec.ts tests/visual/sky-summary-supplied-copy.spec.ts
+        run: npx playwright test -c playwright.config.ts --workers=1 tests/visual/sky-early-loading.spec.ts tests/visual/sky-loading-layout.spec.ts tests/visual/sky-summary-cold-hydration.spec.ts tests/visual/sky-daily-summary.spec.ts tests/visual/sky-live-clock.spec.ts tests/visual/sky-summary-paragraphs.spec.ts tests/visual/sky-placement-aspects.spec.ts tests/visual/sky-refresh-performance.spec.ts tests/visual/sky-summary-supplied-copy.spec.ts
       - name: Verify daily Sky summary Studio
         if: matrix.phase == 'studio'
         run: |

@@ -135,10 +135,10 @@ const importerSource = readSource("scripts/import-sky-placement-continuous-v2.mj
 assert.match(runtimeSource, /import\("\.\/fallbackArchitectureV3SkyPlacementBundle"\)/u);
 assert.doesNotMatch(runtimeSource, /^import .*sky-(?:planet-frames|placement-inventories|sign-copy).*\.json/mu);
 assert.match(placementBundleSource, /bundled-sky-placement-rows-v3\.json/u);
-assert.match(placementBundleSource, /bundled-sky-placement-house-rows-v3\.json/u);
+assert.match(readSource("apps/web/src/content/fallbackArchitectureV3SkyPlacementHouseBundle.ts"), /bundled-sky-placement-house-rows-v3\.json/u);
 assert.match(appSource, /prepareSkyPlacementSources\(placementSelection \|\| undefined\)/u);
 const preparationSource = readSource("apps/web/src/services/skyPlacementHydration.ts");
-assert.match(preparationSource, /loadSkyPlacementFallbackArchitectureV3Bundle\(\)/u);
+assert.match(preparationSource, /loadSkyPlacementFallbackArchitectureV3Bundle\(!selection\)/u);
 assert.match(generatedContentSource, /tldrastro-fallback-architecture-v3-sky-placement/u);
 assert.match(materializerSource, /serving-awaiting-owner-approval/u);
 assert.match(importerSource, /distribution_state: "staged"/u);

@@ -235,6 +235,9 @@ export default defineConfig(({ mode }) => {
       rollupOptions: {
         output: {
           manualChunks(id) {
+            // Shared civil-date/location helpers are used together by Sky and
+            // its articles; one chunk avoids repeated tiny preload dependencies.
+            if (/\/services\/(?:timezones|skySelection|skyClock)\.ts$/u.test(id)) return "sky-time";
             // Keep the shared Studio return path with its authentication callers.
             // A separate shared chunk adds a preload import to every auth consumer.
             if (id.endsWith("/services/auth.ts") || id.endsWith("/services/studioAuthReturn.ts")) {
@@ -273,6 +276,7 @@ export default defineConfig(({ mode }) => {
             if (
               id.includes("fallbackArchitectureV3/bundled-sky-placement-rows-v3.json")
               || id.includes("fallbackArchitectureV3/bundled-sky-placement-manifest-v3.json")
+              || id.includes("fallbackArchitectureV3/authored-inputs/owner-authored-sky-placement-house-passages-v1.json")
             ) {
               return "fallback-content-sky-placement";
             }
@@ -289,9 +293,6 @@ export default defineConfig(({ mode }) => {
               id.includes("fallbackArchitectureV3/bundled-sky-core-rows-v3.json")
               || id.includes("fallbackArchitectureV3/bundled-sky-authored-cards-v3.json")
               || id.includes("fallbackArchitectureV3/bundled-initial-reader-rows-v3.json")
-              // Both are already part of reader startup; share one compressed
-              // payload instead of downloading the protected passages separately.
-              || id.includes("fallbackArchitectureV3/authored-inputs/owner-authored-sky-placement-house-passages-v1.json")
             ) {
               return "fallback-content-sky-core";
             }

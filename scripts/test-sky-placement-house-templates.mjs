@@ -32,6 +32,10 @@ const browserResolverModule = await vite.ssrLoadModule(
 const protectedOwnerModule = await vite.ssrLoadModule(
   "/src/content/protectedOwnerSkyPlacementPassages.ts"
 );
+assert.throws(() => protectedOwnerModule.preserveProtectedOwnerSkyPlacementPassage({
+  body: "A compact replacement.", house: 5, planet: "jupiter", sign: "leo"
+}), /SOURCE_GAP/, "Missing protected copy must fail closed before the deferred source loads.");
+await protectedOwnerModule.loadProtectedOwnerSkyPlacementPassages();
 const browserSourceRenderer = browserResolverModule.createTransitSynastryRenderer(...browserRendererInputs);
 const shippedRenderer = createShippedTransitSynastryRenderer(...browserRendererInputs);
 const protectedOwnerSource = JSON.parse(read(
@@ -181,9 +185,9 @@ assert.match(
 
 const app = read("apps/web/src/App.tsx");
 const article = read("apps/web/src/features/sky/SkyDetailArticle.tsx");
-assert.match(app, /heading: packageSection\?\.heading \|\| personalTransitDisplayTitle\(transit\)/u);
-assert.match(app, /body: packageSection\?\.body \?\? compiledAspect\?\.body \?\? null/u);
-assert.match(article, /detail\.personalizedPlacement\.natalAspects\.map/u);
+assert.match(app, /heading: `\$\{transit\.transitPlanet\} \$\{transit\.aspect\} your \$\{transit\.natalPoint\}`/u);
+assert.match(app, /personalTransitPackageSection\(transit, generatedAt\.slice\(0, 10\)\)[\s\S]*?body: packageSection\?\.body \?\? null/u);
+assert.match(article, /skyActiveChartEvents\(detail\.personalizedPlacement\.natalAspects\)\.map/u);
 assert.match(article, /<h4>\{aspect\.heading\}<\/h4>/u);
 
 await vite.close();

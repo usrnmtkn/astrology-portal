@@ -121,14 +121,9 @@ const appSource = [
 const driverStart = appSource.indexOf("function dailyGlanceDriver(");
 const driverEnd = appSource.indexOf("\nfunction dailyGlanceGeneratedContent(", driverStart);
 const driverSource = appSource.slice(driverStart, driverEnd);
-const skyDateTimeStart = appSource.indexOf("function skyDateTimeFromInput(");
-const skyDateTimeEnd = appSource.indexOf("\nfunction skyFactValidation(", skyDateTimeStart);
-const skyDateTimeSource = appSource.slice(skyDateTimeStart, skyDateTimeEnd);
+const skyDateTimeSource = fs.readFileSync(new URL("../apps/web/src/services/skySelection.ts", import.meta.url), "utf8");
 assert.ok(driverStart >= 0 && driverEnd > driverStart, "The Daily At-a-Glance driver must exist.");
-assert.ok(
-  skyDateTimeStart >= 0 && skyDateTimeEnd > skyDateTimeStart,
-  "The selected-date sky timestamp helper must exist."
-);
+assert.match(appSource, /import \{[^}]*skyDateTimeFromInput[^}]*\} from "\.\/services\/skySelection"/u, "App must use the shared selected-date helper.");
 assert.match(
   skyDateTimeSource,
   /withTimeZone\(location\)[\s\S]*?zonedDateTimeToUtc\(value, "12:00 PM", resolvedLocation\.timeZone\)/u,
