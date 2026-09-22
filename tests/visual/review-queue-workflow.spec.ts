@@ -47,11 +47,16 @@ for (const width of [390, 1440])
                 await page.goto('/admin/content#review-queue');
                 await page.evaluate(value => document.documentElement.dataset.theme = value, theme);
                 await expect(page.getByRole('button', { name: 'Ready for review', exact: true })).toBeVisible();
-                await expect(page.getByRole('row').filter({ hasText: 'Chiron sextile North Node' })).toHaveCount(0);
+                const aspectRow = page.getByRole('row').filter({ hasText: 'sky.aspect.chiron.sextile.nodes.taurus.aquarius' });
+                await expect(aspectRow).toHaveCount(0);
                 await expect(page.getByRole('row').filter({ hasText: 'source/sky-aspect-pair/sun-chiron' })).toHaveCount(0);
                 await page.getByRole('button', { name: 'Needs changes', exact: true }).click();
-                await page.getByRole('row').filter({ hasText: 'Chiron sextile North Node' }).getByRole('button', { name: 'Edit', exact: true }).click();
+                await expect(aspectRow).toContainText('Chiron in Taurus');
+                await expect(aspectRow).toContainText('in Aquarius');
+                await aspectRow.getByRole('button', { name: 'Edit', exact: true }).click();
                 const editor = page.getByRole('dialog');
+                await expect(editor.getByRole('heading', { level: 2 })).toContainText('Chiron in Taurus');
+                await expect(editor.getByRole('heading', { level: 2 })).toContainText('in Aquarius');
                 const body = editor.getByRole('textbox', { name: 'Full passage / body', exact: true });
                 await expect(editor.getByRole('button', { name: 'Approve & schedule', exact: true })).toBeDisabled();
                 const original = await body.inputValue();

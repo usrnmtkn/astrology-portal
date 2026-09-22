@@ -1,6 +1,7 @@
 import { test, expect } from '@playwright/test';
 import { fork } from 'node:child_process';
 import path from 'node:path';
+import { routeStudioInventoryApi } from '../helpers/studio-inventory-route';
 
 for (const width of [390,1440]) for (const colorScheme of ['light','dark'] as const) {
   test(`Studio edit to memory ${width} ${colorScheme}`,async ({page})=>{
@@ -17,20 +18,20 @@ for (const width of [390,1440]) for (const colorScheme of ['light','dark'] as co
       await ready;await page.setViewportSize({width,height:1000});await page.emulateMedia({colorScheme});
       await page.addInitScript(()=>localStorage.setItem('tldrastro:contentAdminSecret','calendar-api-fixture'));
       const errors:string[]=[]; page.on('pageerror',error=>errors.push(error.message));
-      await page.route('**/api/**',async route=>{
-        const request=route.request(),url=new URL(request.url());
+      await routeStudioInventoryApi(page, {call, answer: async (route,url)=>{
+        const request=route.request();
         if (['/api/admin/studio-memory-feedback','/api/admin/memory-graph','/api/admin/sky-draft-writing'].includes(url.pathname)
-          || url.pathname==='/api/admin/generated-content' && request.method()!=='GET') {
+        ) {
           const result=await call({method:request.method(),url:url.pathname+url.search,body:request.postData()?request.postDataJSON():null});
-          return route.fulfill({status:result.status,json:result.payload});
+          await route.fulfill({status:result.status,json:result.payload});
+          return true;
         }
-        if(url.pathname==='/api/admin/generated-content')return route.fulfill({json:{ok:true,rows:await call({method:'rows'}),hasMore:false}});
-        return route.fulfill({json:{ok:true,rows:[],records:[],contentKeys:[],candidates:[],statuses:[],enabled:false}});
-      });
+        return false;
+      }});
       await page.goto('/admin/content#review-queue');
       await page.evaluate(value => document.documentElement.dataset.theme = value,colorScheme);
       await page.getByRole('button',{name:'Needs changes',exact:true}).click();
-      await page.getByRole('row').filter({hasText:'Chiron sextile North Node'}).getByRole('button',{name:'Edit',exact:true}).click();
+      await page.getByRole('row').filter({hasText:'sky.aspect.chiron.sextile.nodes.taurus.aquarius'}).getByRole('button',{name:'Edit',exact:true}).click();
       const editor=page.getByRole('dialog');
       const body=editor.getByRole('textbox',{name:'Full passage / body',exact:true});
       await body.fill('Fixture revised opening. Fixture complete final sentence.');

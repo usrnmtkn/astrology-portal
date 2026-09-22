@@ -52,7 +52,7 @@ typechecks; Calendar Aspect helper tests (all 32 filter subsets in both orders);
 reader cache rehydration and last-known-good contracts; exact Sky/Calendar routing
 parity; CSS audit; workflow YAML and scope checks; and the web bundle gate.
 
-The final build has 3,456,182 total JavaScript gzip bytes under the documented
+The final build has 3,456,248 total JavaScript gzip bytes under the documented
 3,456,250 cap. The Studio feature's existing 500-byte aggregate allocation also
 fits this cache fix; no further limit was raised. Startup and CSS caps are unchanged.
 
@@ -86,3 +86,14 @@ The build uses workflow placeholders; the admin-auth fixture must run without
 those inherited placeholders because it supplies its own authentication project.
 Both unchanged main and this branch fail that fixture if the entire suite
 inherits the build placeholders. No authentication behavior was changed.
+
+The complete hosted Studio entry suite passes all 289 cases on `0a79947aa`.
+The Review Queue workflow also uses the new signed title, so its old generic-title
+row locator was replaced with the exact content key. Its four desktop/mobile and
+light/dark cases pass through the actual save, deterministic check, publication,
+source-edit and generation handlers, with both signs asserted in the list/editor.
+The corresponding memory-flow locator now uses the same stable content identity
+and the shared inventory fixture, replacing its obsolete generated-content-only
+list stub. All eight Review Queue and memory-flow cases pass from a fresh build.
+These final changes affect only tests and this evidence document; application
+source is unchanged from `0a79947aa`.
