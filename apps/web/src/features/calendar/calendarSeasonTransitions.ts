@@ -96,23 +96,23 @@ export const calendarSeasonTransitions: Record<string, string[]> = {
 };
 
 /**
- * Compact transition-day bridges taken verbatim from the base Ends record for
- * each sign pair. Keep these explicit so Sky and Calendar never slice editable
- * prose at runtime or rotate into one of the Begins variants.
+ * One-sentence transition-day summaries based on the base Ends record for each
+ * sign pair. Sky and Calendar need a shorter handoff than the full seasonal
+ * record, so keep these explicit instead of slicing editable prose at runtime.
  */
 export const calendarSeasonTransitionEndsBridges: Record<string, string> = {
-  "pisces-aries": "After a month of sitting with uncertainty or letting something come to an end, our attention shifts toward the choices we can make now. Aries season helps us act on what we do know and learn from what happens next, rather than treating certainty as a condition for beginning.",
-  "aries-taurus": "After a month of starting things and acting on what we want, we begin to notice how those choices feel to live with. Taurus season brings attention to what we can sustain and what makes the effort worthwhile.",
-  "taurus-gemini": "After a month of deciding what is worth keeping, building, or investing in, new information can give us a reason to reconsider. Gemini season helps us stay curious enough to revise a decision using the information we have now, rather than defending what we believed before.",
-  "gemini-cancer": "After a month of talking things through and comparing possibilities, we begin to notice what we need once the conversation is over. Cancer season helps us take those responses seriously as we decide where to give our time and care.",
-  "cancer-leo": "After a month of paying closer attention to our needs and what we want to protect, we turn toward what we want to share. Leo season brings attention to expression and the responses it draws.",
-  "leo-virgo": "After a month of giving more attention to what we want to create and enjoy, we turn toward the daily work that supports those things. Virgo season helps us make specific changes to the routine, from removing an unnecessary step to giving a recurring task enough time.",
-  "virgo-libra": "After a month of working on the routines and details that keep life functioning, we turn toward how that work is divided between people. Libra season brings attention to the agreements behind those habits, including the ones nobody remembers making.",
-  "libra-scorpio": "After a month of considering how we cooperate and make relationships work, we turn toward what those arrangements leave unspoken. Scorpio season brings attention to what is at stake when we depend on someone.",
-  "scorpio-sagittarius": "After a month of looking closely at what was difficult to admit or discuss, our attention begins to widen beyond the immediate situation. Sagittarius season helps us reconsider the conclusions we have drawn, especially when one experience has started to determine what we expect from everything else.",
-  "sagittarius-capricorn": "After a month of looking ahead and imagining what else might be possible, we begin to decide what we can commit to and what that commitment will require. Capricorn season brings attention to what we can reasonably promise and the responsibilities that follow.",
-  "capricorn-aquarius": "After a month of taking responsibility and working within limits, we step back to examine the rules shaping those responsibilities. Aquarius season shifts our attention from how well we meet expectations to how those expectations were decided and who they work for.",
-  "aquarius-pisces": "After a month of examining how things work, our attention shifts toward the feelings that an explanation alone cannot resolve. Pisces season reminds us that understanding something is not the same as being finished with it."
+  "pisces-aries": "Aries season brings attention to what we can act on now, even when we do not know how everything will turn out.",
+  "aries-taurus": "Taurus season brings attention to the choices we can sustain and what makes the effort worthwhile.",
+  "taurus-gemini": "Gemini season brings attention to the new information that may change what we decide, keep, or invest in.",
+  "gemini-cancer": "Cancer season brings attention to what we need once the conversation is over and where we want to give our time and care.",
+  "cancer-leo": "Leo season brings attention to what we want to share and the response it draws.",
+  "leo-virgo": "Virgo season brings attention to the daily work that supports what we want to create and enjoy, including the routines that make it easier to return.",
+  "virgo-libra": "Libra season brings attention to how the work of daily life is shared, including the agreements nobody remembers making.",
+  "libra-scorpio": "Scorpio season brings attention to what our agreements leave unspoken and what is at stake when we depend on someone.",
+  "scorpio-sagittarius": "Sagittarius season brings attention to the conclusions we have drawn, especially when one experience has started to determine what we expect from everything else.",
+  "sagittarius-capricorn": "Capricorn season brings attention to what we can reasonably promise and the responsibilities that follow.",
+  "capricorn-aquarius": "Aquarius season brings attention to how expectations were decided, who they work for, and what needs to change.",
+  "aquarius-pisces": "Pisces season brings attention to the feelings an explanation alone cannot resolve, because understanding something is not the same as being finished with it."
 };
 
 export const calendarSeasonTransitionVariantCount = 5;
