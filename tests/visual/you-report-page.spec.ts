@@ -66,7 +66,18 @@ for (const viewport of [{ name: "desktop", width: 1440, height: 1000 }, { name: 
         await page.getByRole("menuitem", { name: "Account", exact: true }).click();
         const account = page.locator(".account-page");
         const assertAccount = async () => {
-          await expect(account.getByLabel("Birth date", { exact: true })).toHaveValue("1990-01-01");
+          await expect(account.getByRole("heading", { name: "account.", exact: true })).toBeVisible();
+          if (signedIn) {
+            await expect(account.getByLabel("Birth date", { exact: true })).toHaveValue("1990-01-01");
+            await expect(account.getByRole("button", { name: "Sign out", exact: true })).toBeVisible();
+          } else {
+            await expect(account.getByText(/You are signed out\./)).toBeVisible();
+            await expect(account.getByRole("button", { name: "Sign in", exact: true })).toBeVisible();
+            await expect(account.locator(".settings-profile-row, .account-chart-group, .account-data-group")).toHaveCount(0);
+            await expect(account).not.toContainText(profile.name);
+            await expect(account).not.toContainText(profile.email);
+            expect(await page.evaluate(() => JSON.parse(localStorage.getItem("tldrastro:userProfile")!).id)).toBe(user.id);
+          }
           await expect(page.getByRole("region", { name: "In-depth transit reports" })).toBeHidden();
           await expect(page).toHaveURL(/\?date=2026-09-12#account$/);
         };
