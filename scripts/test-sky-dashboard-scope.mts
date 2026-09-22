@@ -113,6 +113,28 @@ try {
       assert.equal(deadlines, before + 1, 'The content request must still have a bounded deadline');
     }
   } finally { AbortSignal.timeout = originalTimeout; Reflect.deleteProperty(globalThis, 'publicationWait'); }
+  const originalClient = (globalThis as any).fixtureClient;
+  const listSource = { ...rows[0], content_key: 'sky-context/fixture-paging' };
+  const pages: number[] = [];
+  const pagedRows = Array.from({ length: 1001 }, (_, i) => ({ ...listSource, id: String(i).padStart(8, '0') }));
+  let failSecondPage = false;
+  class PagedQuery extends Query {
+    async returns() {
+      const data = pagedRows.filter(row => this.filters.every(filter => filter(row))).slice(0, 1000);
+      pages.push(data.length);
+      return failSecondPage && pages.length === 2 ? { data: null, error: new Error('Fixture page failure') } : { data };
+    }
+  }
+  (globalThis as any).fixtureClient = { from: () => new PagedQuery(), rpc: originalClient.rpc };
+  try {
+    qa.clearCachedFallbackArchitectureV3Bundle();
+    await qa.loadFallbackArchitectureV3DashboardBundle('sky-list');
+    assert.deepEqual(pages, [1000, 1], 'The shared pager must fetch beyond the first page using its ID cursor');
+    qa.clearCachedFallbackArchitectureV3Bundle();
+    pages.length = 0; failSecondPage = true;
+    await assert.rejects(qa.loadFallbackArchitectureV3DashboardBundle('sky-list'), /Current Sky content/);
+    assert.equal(qa.readCachedFallbackArchitectureV3Bundle('sky-list'), null, 'A failed later page must not cache a partial overlay');
+  } finally { (globalThis as any).fixtureClient = originalClient; }
   const virgin = snapshot.rows.find((row: any) => row.content_key === 'sky-placement/article/sun/virgo');
   const libra = snapshot.rows.find((row: any) => row.content_key === 'sky-placement/article/sun/libra');
   assert(virgin && libra); rows.push(virgin, libra);
