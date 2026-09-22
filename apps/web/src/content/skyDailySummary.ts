@@ -10,6 +10,10 @@ import {
   calendarSeasonTransitionCountdown,
   calendarSeasonTransitionIsCurrent
 } from "../features/calendar/calendarSeasonTransitionFacts";
+import {
+  calendarSeasonTransitionEndsBridge,
+  calendarSeasonTransitionKey
+} from "../features/calendar/calendarSeasonTransitions";
 
 const skySummaryLiveCopyCacheKey = "tldrastro:sky-daily-summary-live-copy:v1";
 type CachedSkySummaryCopy = { identity: string; body: string };
@@ -160,9 +164,12 @@ export function skyDailySummaryParts(facts: SkyDailySummaryFacts, content?: CmsG
     values[`${body}Degree`] = plain(degreeText(placement.degree));
     values[`${body}Summary`] = clause ? [{ text: clause, sourceKey }] : [];
   }
+  const transition = facts.sunTransition;
   const hasSun = Boolean(values.sunName), hasMoon = Boolean(values.moonName);
   const openingKey = skySummaryOpeningKey(sunPlacement?.sign, moonPlacement?.sign, content);
-  let opening = hasSun && hasMoon ? assembly[openingKey] : hasSun ? assembly.sunOnly : assembly.moonOnly;
+  let opening = transition
+    ? hasMoon ? assembly.moonOnly : ""
+    : hasSun && hasMoon ? assembly[openingKey] : hasSun ? assembly.sunOnly : assembly.moonOnly;
   // Preserve the existing factual fallback when a summary is unavailable.
   if (!values.sunSummary?.length) opening = opening.replace("{sunName} in {sunSign}", "{sunName} is in {sunSign}");
   if (!values.moonSummary?.length) opening = opening.replace("{moonName} in {moonSign}", specialMoon ? "{moonName} is in {moonSign}" : "{moonName} moves through {moonSign}");
@@ -174,21 +181,25 @@ export function skyDailySummaryParts(facts: SkyDailySummaryFacts, content?: CmsG
     });
   }
   values.openingSentence = hasSun || hasMoon ? fillSkyTemplate(opening, values) : [];
-  const transition = facts.sunTransition;
   const transitionKey = transition?.phase === 'before' ? 'sunIngressBefore' : 'sunIngressAfter';
   const transitionParts = transition ? fillSkyTemplate(assembly[transitionKey], {
     fromSign: plain(transition.fromSign),
     toSign: [{ text: transition.toSign, action: 'event', eventId: transition.id }],
-    transitionTime: plain(transition.time)
+    transitionTime: plain(transition.time),
+    sunTransitionPlacementLink: [{
+      text: `Sun is in ${sunPlacement?.sign ?? transition.fromSign}${degreeText(sunPlacement?.degree)}`,
+      action: 'sun',
+      emphasis: true
+    }]
   }) : [];
   const transitionText = transitionParts.map(part => part.text).join('');
   if (transition && transitionText) {
-    if (values.openingSentence[0]) values.openingSentence[0].paragraphStart = true;
-    const ingressCopy = facts.ingresses?.find(item => item.id === transition.id)?.tldr;
+    const bridge = calendarSeasonTransitionEndsBridge(transition.fromSign, transition.toSign);
+    const bridgeSourceKey = calendarSeasonTransitionKey(transition.fromSign, transition.toSign);
     values.openingSentence = [
       ...transitionParts,
-      ...(ingressCopy ? [{ text: ` ${ingressCopy}` }] : []),
-      ...values.openingSentence
+      ...(bridge ? [{ text: ` ${bridge}`, sourceKey: bridgeSourceKey }] : []),
+      ...(values.openingSentence.length ? [{ text: " " }, ...values.openingSentence] : [])
     ];
   }
   if (calendarSeasonTransitionIsCurrent(facts) && facts.seasonName && facts.nextSunSign) {
