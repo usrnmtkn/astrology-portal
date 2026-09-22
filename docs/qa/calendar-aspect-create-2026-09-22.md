@@ -70,6 +70,26 @@ bytes. Its aggregate cap increases from 3,457,500 to 3,459,000. Every reader
 startup, CSS, individual deferred chunk and forbidden-payload limit stays unchanged.
 No dependencies or new content payloads are added.
 
+### Integration with the later main update
+
+Main advanced to `058583c62` during release. All 23 targeted browser cases and the
+full API contract pass after the clean rebase. Its new Sky summary import pulled
+the complete seasonal catalog into startup: an independent build of unchanged
+main measures 471,011 app boot / 524,497 reader boot bytes, above existing caps.
+Move the twelve existing bridge passages and identity helpers into a lightweight
+module, keep the old exports compatible, and import that module from Sky. The
+bridge/helper bytes and complete seasonal catalog compare exactly with main;
+all-sign bridge, handoff catalog and Calendar summary tests pass. Regenerate the
+Studio variable index to include main's new `sunTransitionPlacementLink` slot.
+
+The final web build uses 458.7 kB app boot / 512.2 kB reader boot, inside unchanged
+startup caps; total JavaScript is 3,459,541 bytes versus clean main's 3,457,742.
+Allocate 1,000 additional aggregate bytes (3,460,000 cap) for the inherited change
+and module compression cost. Standalone Studio measures 748,125 raw / 218,126 gzip
+entry and 734,427 aggregate, versus main's 744,640 / 217,198 / 732,510. Its final raw
+entry/largest cap is 748,500, entry gzip remains 218,250, and aggregate is 734,750.
+No runtime CSS, dependencies, calculated facts or source wording change.
+
 ## Pre-existing broader test failures
 
 The optional `test:sky-aspects` aggregate does not pass on the untouched baseline:
