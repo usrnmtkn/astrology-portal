@@ -3,7 +3,7 @@
   "opening": "The {sunName} in {sunSign}{sunDegree} {sunSummary}. The {moonName} in {moonSign}{moonDegree} {moonSummary}.",
   "sunOnly": "The {sunName} in {sunSign}{sunDegree} {sunSummary}.",
   "sunIngressBefore": "The {sunTransitionPlacementLink} until {transitionTime} today, when it enters {toSign}.",
-  "sunIngressAfter": "The Sun entered {toSign} at {transitionTime} today, ending {fromSign} season.",
+  "sunIngressAfter": "The Sun entered {toSign} at {transitionTime} today, ending {fromSign} season. The {sunTransitionPlacementLink}.",
   "moonOnly": "The {moonName} in {moonSign}{moonDegree} {moonSummary}.",
   "retrogrades": "{retrogradeIntro} {retrogradeList}.",
   "aspectsFirstOne": "{aspectList} is exact today.",
