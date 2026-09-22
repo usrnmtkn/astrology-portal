@@ -931,7 +931,9 @@ export async function loadRelationshipFallbackArchitectureV3Bundle() {
 }
 
 export function isSkyPlacementFallbackArchitectureV3BundleLoaded() {
-  return Boolean(localSkyPlacementReaderBundle && localSkyPlacementHouseReaderBundle || dashboardSkyPlacementReaderBundle);
+  // CMS overlays may contain only the selected list rows. They cannot prove
+  // that the full local article/Calendar partition is ready.
+  return Boolean(loadedSkyV4ReaderRoute && localSkyPlacementReaderBundle && localSkyPlacementHouseReaderBundle);
 }
 
 export async function loadSkyPlacementFallbackArchitectureV3Bundle(includeHouses = true) {
