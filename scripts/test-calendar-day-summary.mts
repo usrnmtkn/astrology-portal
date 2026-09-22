@@ -57,11 +57,16 @@ for (const [asOf, phase, sign, expected] of [
   assert.equal(text(parts), text(shared), 'Sky and Calendar share the entire transition opening');
   assert.equal(text(shared).includes('Sun enters Libra today.'), false, 'No duplicate untimed ingress sentence');
   const sourceKey = `cms/sky-daily-summary/assembly/sunIngress${phase === 'before' ? 'Before' : 'After'}`;
-  const template = '{sunTransitionPlacementLink}: {fromSign} → {toSign}: {transitionTime}.';
+  const template = phase === 'before'
+    ? '{sunTransitionPlacementLink} → {toSign}: {transitionTime}.'
+    : '{sunTransitionPlacementLink}: {fromSign} → {toSign}: {transitionTime}.';
   assert.deepEqual(skySummaryTemplateErrors(sourceKey, template), []);
   assert.ok(skySummaryTemplateErrors(sourceKey, template.replace('{transitionTime}', '8 PM')).length);
   const custom = new Map([[sourceKey, { body: template, status: 'LIVE' } as any]]);
-  assert.ok(text(calendarSunSummary(snapshot, custom, [ingress])).startsWith(`Sun is in ${sign} at 19°: Virgo → Libra: 8:05 PM EDT.`));
+  const customOpening = phase === 'before'
+    ? `Sun is in ${sign} at 19° → Libra: 8:05 PM EDT.`
+    : `Sun is in ${sign} at 19°: Virgo → Libra: 8:05 PM EDT.`;
+  assert.ok(text(calendarSunSummary(snapshot, custom, [ingress])).startsWith(customOpening));
   assert.equal(text(calendarSunSummary(snapshot, new Map([[sourceKey, { ...custom.get(sourceKey), status: 'DRAFT' } as any]]), [ingress])), text(parts));
 }
 assert.equal(skySunTransition([ingress], '2026-09-22T18:52:00Z', 'UTC'), undefined, 'UTC ingress is tomorrow');
