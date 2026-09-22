@@ -478,6 +478,59 @@ export function AccountView({
       onRetryAuth={onRetryAuth} onSignIn={onSignIn} onBack={() => openJournal(false)} />;
   }
 
+  const journalLink = (
+    <section className="settings-group account-journal-group" aria-label="Journal">
+      <span className="settings-group-label">Journal</span>
+      <div className="settings-card">
+        <div className="settings-list">
+          <button
+            type="button"
+            className="settings-row settings-row-button account-data-action"
+            onClick={() => openJournal(true)}
+          >
+            <span className="settings-row-copy">
+              <span className="settings-row-title">Open journal</span>
+              <small className="settings-row-description">
+                Read and add mood and journal check-ins by day, week, or month.
+              </small>
+            </span>
+            <BookOpen size={19} aria-hidden="true" />
+          </button>
+        </div>
+      </div>
+    </section>
+  );
+
+  // A remembered profile is local data, not proof of a current account session.
+  // Keep the journal mounted above this boundary while the same session recovers.
+  const verifiedAccount = accountChecked && !accountError && accountId && profile.id === accountId;
+  if (!verifiedAccount) {
+    const recoveryMessage = accountError || (accountId ? "Your account details could not be loaded. Please try again." : null);
+    return (
+      <section className="account-page page-shell--narrow" aria-label="Account">
+        <div className="account-page-heading">
+          <h1>account.</h1>
+        </div>
+        <section className="settings-card settings-account-card" aria-label="Account access">
+          <div className="settings-list">
+            <div className="settings-row" role="status">
+              <span className="settings-row-description">
+                {!accountChecked ? "Checking your account…" : recoveryMessage || "You are signed out. Sign in to sync your account and journal across devices."}
+              </span>
+            </div>
+            {accountChecked && (
+              <button type="button" className="settings-row settings-signout-row" onClick={recoveryMessage ? onRetryAuth : onSignIn}>
+                <span className="settings-row__action">{recoveryMessage ? "Retry" : "Sign in"}</span>
+                <ChevronRight size={18} aria-hidden="true" />
+              </button>
+            )}
+          </div>
+        </section>
+        {journalLink}
+      </section>
+    );
+  }
+
   return (
     <section className="account-page page-shell--narrow" aria-label="Account">
       <div className="account-page-heading">
@@ -586,28 +639,14 @@ export function AccountView({
               {handleMessage || "3–24 characters. Start with a letter; use letters, numbers, or underscores."}
             </div>
           )}
-          {accountId ? (
-            <>
-              <div className="settings-row">
-                <span className="settings-row__label">Signed in with</span>
-                <span className="settings-row__value settings-row__value--provider">{providerLabel(profile.provider)}</span>
-              </div>
-              <button type="button" className="settings-row settings-signout-row" onClick={onSignOut}>
-                <span className="settings-row__action">Sign out</span>
-                <ChevronRight size={18} aria-hidden="true" />
-              </button>
-            </>
-          ) : !accountChecked ? (
-            <p className="account-action-message" role="status">Checking your account…</p>
-          ) : (
-            <>
-              <p className="account-action-message" role="status">{accountError || "Sign in to sync your account and journal across devices."}</p>
-              <button type="button" className="settings-row settings-signout-row" onClick={accountError ? onRetryAuth : onSignIn}>
-                <span className="settings-row__action">{accountError ? "Retry" : "Sign in"}</span>
-                <ChevronRight size={18} aria-hidden="true" />
-              </button>
-            </>
-          )}
+          <div className="settings-row">
+            <span className="settings-row__label">Signed in with</span>
+            <span className="settings-row__value settings-row__value--provider">{providerLabel(profile.provider)}</span>
+          </div>
+          <button type="button" className="settings-row settings-signout-row" onClick={onSignOut}>
+            <span className="settings-row__action">Sign out</span>
+            <ChevronRight size={18} aria-hidden="true" />
+          </button>
         </div>
       </section>
 
@@ -677,26 +716,7 @@ export function AccountView({
         </div>
       </section>
 
-      <section className="settings-group account-journal-group" aria-label="Journal">
-        <span className="settings-group-label">Journal</span>
-        <div className="settings-card">
-          <div className="settings-list">
-            <button
-              type="button"
-              className="settings-row settings-row-button account-data-action"
-              onClick={() => openJournal(true)}
-            >
-              <span className="settings-row-copy">
-                <span className="settings-row-title">Open journal</span>
-                <small className="settings-row-description">
-                  Read and add mood and journal check-ins by day, week, or month.
-                </small>
-              </span>
-              <BookOpen size={19} aria-hidden="true" />
-            </button>
-          </div>
-        </div>
-      </section>
+      {journalLink}
 
       <section className="settings-group account-data-group" aria-label="Account data">
         <span className="settings-group-label">Your data</span>
