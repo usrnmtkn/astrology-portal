@@ -1,3 +1,4 @@
+/// <reference lib="es2022.intl" />
 /** Calendar subscriptions explicitly use excerpts; the full reader copy is untouched. */
 export function calendarFeedExcerpt(body: string, sentenceCount = 3) {
   // Convert formatting to plain text for calendar clients, preserving the words.

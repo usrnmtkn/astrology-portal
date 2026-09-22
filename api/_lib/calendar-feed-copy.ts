@@ -16,19 +16,27 @@ import { resolveApprovedExactSkyAspectCopy, resolveComposedSkyCalendarCard } fro
 import { moonSignTransitionForPair, moonSignTransitionKey } from "../../apps/web/src/features/calendar/moonSignTransitions.js";
 import type { LunarCalendarEvent } from "../../apps/web/src/services/ephemeris.js";
 import { skyPlacementSourceCorpus } from "./sky-placement-sources.js";
-// @ts-ignore Shared canonical reader checks the approved release state.
-import { createSkyV4ReaderRoute } from "../../apps/web/src/content/fallbackArchitectureV3/resolver/skyPlacementV4Canonical.mjs";
+import { createPublishedSkyReader } from "../../apps/web/src/content/skyPlacementPublishedSources.js";
+import { isReaderServableGeneratedContentRow } from "../../apps/web/src/content/generatedContentEligibility.js";
 
 const registry = createDomainRegistry(knowledge as any);
-const canonicalReader = createSkyV4ReaderRoute(skyPlacementSourceCorpus);
 const slug = (value: string) => value.trim().toLowerCase().replace(/\s+/gu, "-");
 const partitions = [initial, core, deferred, shared, placements, cards] as Record<string, any[]>[];
 const buckets = ["authoredCards", "hookRows", "vocabularyRows", "templates"] as const;
 export const calendarWeekCopyKeys = ["quiet", "standard", "headliner", "station", "new-moon", "full-moon"].map(key => `authored/week-opener/${key}`);
 
 /** Request-scoped lifecycle filtering: one subscriber must not change global reader state. */
-export function calendarFeedCopyReader(publications: ReadonlyMap<string, ContentPublication>) {
+export function calendarFeedCopyReader(publications: ReadonlyMap<string, ContentPublication>, publishedRows: Record<string, any>[] = []) {
   const allowed = (key: string) => publicationAllowsContent(key, undefined, undefined, undefined, publications);
+  // Variable imports do not replace the approved article. Keep ineligible
+  // article revisions visible to the shared reader so they block stale copy.
+  const canonicalSources = publishedRows.filter(row => row.sections?.packageRecord?.contentKey === row.content_key
+    && row.sections.packageRecord.studio_version_status === "approved-serving-revision")
+    .map(row => ({ ...row.sections.packageRecord,
+      review_status: row.status === "LIVE" && row.lane === "serving" && !row.review_state && !row.sections.packageDraft
+        && isReaderServableGeneratedContentRow({ ...row, content_key: row.content_key }) ? row.sections.packageRecord.review_status : "needs_review",
+      publicationRowId: row.id, publicationRowUpdatedAt: row.updated_at }));
+  const canonicalReader = createPublishedSkyReader(skyPlacementSourceCorpus, undefined, () => canonicalSources, publications);
   const data = Object.fromEntries(buckets.map(bucket => [bucket,
     [...new Map(partitions.flatMap(partition => partition[bucket] ?? []).map(row => [row.contentKey, row])).values()]
       .filter(row => isGovernedReaderEligible(row) && allowed(row.contentKey))
@@ -54,12 +62,12 @@ export function calendarFeedCopyReader(publications: ReadonlyMap<string, Content
     if (canonicalInput) {
       try {
         const rendered = canonicalReader(canonicalInput);
-        // A newer publication or retirement must never reveal an older corpus.
-        if (!rendered.contentKey || !allowed(rendered.contentKey)) return "";
+        if (!rendered.contentKey) return "";
         const body = safe(rendered.readerParts?.join("\n\n"));
         if (body) return body;
       } catch (error) {
         if (!(error instanceof Error) || !/^SKY_V4_(?:NOT_RELEASED|NOT_SERVABLE|SOURCE_GAP)/u.test(error.message)) throw error;
+        if (/^SKY_V4_SOURCE_GAP/u.test(error.message)) return "";
       }
     }
     try {
@@ -107,7 +115,7 @@ export function calendarFeedCopyReader(publications: ReadonlyMap<string, Content
     const key = `authored/week-opener/${kind}`;
     const row = data.authoredCards.find(row => row.contentKey === key);
     const body = (row?.weeklyOverview ?? row?.body ?? "").replaceAll("{{signTitle}}", lunation?.sign ?? "");
-    return { key, body: safe(body) };
+    return { key, body: safe(body), signTitle: lunation?.sign ?? "" };
   }
   return { eventBody, weekSource };
 }

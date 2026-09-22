@@ -10,6 +10,7 @@ import type { CalendarFeedCategory, CalendarFeedEvent, CalendarFeedEventRecord, 
 import { calendarFeedCopyReader, calendarWeekCopyKeys } from "./calendar-feed-copy.js";
 import { calendarFeedDescription, calendarReadingUrl } from "../../apps/web/src/features/calendar/calendarFeedPreview.js";
 import { allCalendarRows } from "./calendar-subscriptions.js";
+import { isGovernedReaderEligible } from "../../apps/web/src/content/fallbackArchitectureV3/resolver/readerEligibility.browser.js";
 
 export type FeedEntry = CalendarFeedEvent & { readingId: string; sourceUrl?: string; uid: string; modified: string; sequence: number; cancelled?: boolean };
 const factCache = new Map<number, Promise<LunarCalendarEvent[]>>();
@@ -36,18 +37,25 @@ function contentKeys(event: LunarCalendarEvent) {
   return [...new Set([calendarSkyV4LunationContentKey(event), ...calendarEventGeneratedContentKeys(event), ...canonical]
     .filter((key): key is string => Boolean(key) && !/^(fallback-|ms\/)/u.test(key!)))];
 }
-export function selectCalendarFeedCopy(keys: string[], date: string, rows: Record<string, any>[], publications: ReadonlyMap<string, ContentPublication>) {
+export function selectCalendarFeedCopy(keys: string[], date: string, rows: Record<string, any>[], publications: ReadonlyMap<string, ContentPublication>, weekSign?: string) {
   for (const key of keys) {
     const candidates = rows.filter(row => row.content_key === key && (!row.target_date || row.target_date === date))
       .sort((a, b) => Number(Boolean(b.target_date)) - Number(Boolean(a.target_date)) || b.updated_at.localeCompare(a.updated_at));
     for (const row of candidates) {
+      const weeklyTemplate = weekSign !== undefined && calendarWeekCopyKeys.includes(key);
+      const record = row.sections?.packageRecord;
+      // Weekly openers are approved templates in Studio. Only this known
+      // source and its calculated sign slot may cross the package boundary.
+      if (record && ((!weeklyTemplate && record.content_role !== "full_copy") || record.contentKey !== key || !isGovernedReaderEligible(record))) continue;
+      const source = record ? weeklyTemplate ? record.weeklyOverview ?? record.body : record.body : row.body;
+      const body = typeof source === "string" && weeklyTemplate ? source.replaceAll("{{signTitle}}", weekSign) : source;
       // Only a complete published reader body crosses into the feed. Authoring
       // objects, package drafts, templates, and private metadata never do.
-      if (row.status !== "LIVE" || row.lane !== "serving" || row.review_state || row.sections?.packageDraft || row.sections?.packageRecord
-        || typeof row.body !== "string" || !row.body.trim() || /\{\{[^]*?\}\}/u.test(row.body)
-        || !isReaderServableGeneratedContentRow(row) || !isGeneratedContentReaderBoundaryAllowed(row)
+      if (row.status !== "LIVE" || row.lane !== "serving" || row.review_state || row.sections?.packageDraft
+        || typeof body !== "string" || !body.trim() || /\{\{[^]*?\}\}/u.test(body)
+        || !isReaderServableGeneratedContentRow({ ...row, content_key: key }) || !isGeneratedContentReaderBoundaryAllowed({ ...row, content_key: key })
         || !publicationAllowsContent(key, row.id, row.updated_at, row.target_date, publications)) continue;
-      return { body: row.body, updatedAt: row.updated_at };
+      return { body, updatedAt: row.updated_at };
     }
   }
   return null;
@@ -86,7 +94,7 @@ export async function buildCalendarFeedEntries(options: CalendarSubscriptionOpti
     publishedCopy(facts),
     allCalendarRows<CalendarFeedEventRecord>("calendar_feed_events", { select: "id,published,cancelled,revision,published_at", published: "not.is.null", order: "id.asc" })
   ]);
-  const reader = calendarFeedCopyReader(copy.publications);
+  const reader = calendarFeedCopyReader(copy.publications, copy.rows);
   const entries: FeedEntry[] = facts.map(event => {
     const text = selectCalendarFeedCopy(contentKeys(event), event.dateKey, copy.rows, copy.publications);
     return { readingId: event.id, uid: `astro-${createHash("sha256").update(event.id).digest("hex")}@tldrastro`, title: event.title,
@@ -103,7 +111,7 @@ export async function buildCalendarFeedEntries(options: CalendarSubscriptionOpti
       const date = day.toISOString().slice(0, 10), start = zonedDateTimeToUtc(date, "9:00 AM", options.timeZone);
       const weekEnd = new Date(day.getTime() + 6 * 86400000).toISOString().slice(0, 10);
       const week = reader.weekSource(allFacts.filter(event => event.dateKey >= date && event.dateKey <= weekEnd));
-      const text = selectCalendarFeedCopy([week.key], date, copy.rows, copy.publications);
+      const text = selectCalendarFeedCopy([week.key], date, copy.rows, copy.publications, week.signTitle);
       entries.push({ readingId: id, uid: `${id}@tldrastro`, title: "Weekly emotional forecast", description: text?.body ?? week.body, start: start.toISOString(), end: new Date(start.getTime() + 60000).toISOString(), allDay: false,
         category: "weekly", url: calendarReadingUrl(origin, date, id, options.timeZone), modified: text?.updatedAt ?? factsModified, sequence: text ? Math.max(1, Math.floor((Date.parse(text.updatedAt) - Date.UTC(2020, 0, 1)) / 1000)) : 0 });
     }

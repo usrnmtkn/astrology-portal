@@ -1,7 +1,7 @@
 import type {
   ApprovedExactSkyAspectCopy,
   ResolvedSkyCalendarComposedCard
-} from "../content/domainRegistry";
+} from "../content/domainRegistry.js";
 import { isReaderFacingCopy } from "../content/readerSafety.js";
 import {
   interpolateTemplateString,

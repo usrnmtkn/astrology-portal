@@ -8,6 +8,8 @@ import { calendarLocalDateKey } from "../apps/web/src/features/calendar/calendar
 import { calendarSkyV4LunationContentKey } from "../apps/web/src/features/calendar/calendarContentKeys.js";
 import { verifyCalendarFeedRuntimeImports } from "../tests/helpers/calendar-feed-runtime.mts";
 import { calendarFeedExcerpt, calendarFeedDescription, calendarReadingUrl } from "../apps/web/src/features/calendar/calendarFeedPreview.js";
+import { calendarFeedCopyReader } from "../api/_lib/calendar-feed-copy.js";
+import { skyPlacementSourceRecords } from "../api/_lib/sky-placement-sources.js";
 
 verifyCalendarFeedRuntimeImports();
 const fixture = await calendarSubscriptionFixture();
@@ -104,6 +106,19 @@ try {
   ledger.get(key).state = "retired"; assert.equal(selectCalendarFeedCopy([key], "2026-10-04", [source], ledger), null);
   // Compare two separate dates with the actual Calendar calculation, never catalog dates.
   const calculated = await getCalendarSubscriptionEvents(2026);
+  const sun = calculated.find(event => event.type === "ingress" && event.planet === "Sun" && event.toSign === "Libra")!;
+  assert(sun);
+  const sunKey = "sky-placement/article/sun/libra", sunRecord = skyPlacementSourceRecords.get(sunKey)!;
+  const sunRow = { ...source, id: "published-sun", content_key: sunKey, body: "", event_type: "sky-writeup-variable-import", sections: { packageRecord: sunRecord } };
+  const sunLedger = new Map([[sunKey, { ...ledger.get(key), content_key: sunKey, state: "live", row_id: sunRow.id } as any]]);
+  const sunBody = calendarFeedCopyReader(sunLedger, [sunRow]).eventBody(sun, options.timeZone, calculated);
+  assert(sunBody.includes(sunRecord.placementArticle), "Variable-only Studio imports retain the approved canonical article");
+  const sunRevision = { ...sunRow, sections: { packageRecord: { ...sunRecord, studio_version_status: "approved-serving-revision", placementArticle: "Published article opening. Published article ending." } } };
+  assert(calendarFeedCopyReader(sunLedger, [sunRevision]).eventBody(sun, options.timeZone, calculated).includes("Published article opening. Published article ending."));
+  assert.equal(calendarFeedCopyReader(sunLedger, [{ ...sunRevision, updated_at: "2026-09-23T00:00:00Z" }]).eventBody(sun, options.timeZone, calculated), "", "Stale canonical revisions cannot resurrect bundled or legacy copy");
+  assert.equal(calendarFeedCopyReader(sunLedger, [{ ...sunRevision, review_state: "needs_review" }]).eventBody(sun, options.timeZone, calculated), "", "Held canonical revisions cannot resurrect bundled copy");
+  sunLedger.get(sunKey).state = "retired";
+  assert.equal(calendarFeedCopyReader(sunLedger, [sunRow]).eventBody(sun, options.timeZone, calculated), "", "Retired canonical articles cannot fall through to a legacy renderer");
   const moon = calculated.find(event => event.type === "lunation" && event.primary && event.dateKey !== calendarLocalDateKey(event.startsAt, "America/New_York"))!;
   assert(moon, "Exercise an event that occurs on different local and UTC dates");
   const localDate = calendarLocalDateKey(moon.startsAt, "America/New_York");
@@ -127,7 +142,19 @@ try {
   assert(week.json().reading.body.startsWith("A Full Moon in Aries arrives this week,"));
   assert(week.json().reading.body.endsWith("before turning one intense moment into a final verdict."));
   assert(weekFeed.includes(`DESCRIPTION:${escapeCalendarText(calendarFeedDescription(week.json().reading.body, week.json().reading.url))}`));
-  await fixture.db.query("insert into content_publications(content_key,state,revision,updated_at) values('authored/week-opener/full-moon','retired',1,now())");
+  const weeklyRecord = JSON.parse(readFileSync(new URL("../apps/web/src/content/fallbackArchitectureV3/bundled-initial-reader-rows-v3.json", import.meta.url), "utf8")).authoredCards.find((row: any) => row.contentKey === "authored/week-opener/full-moon");
+  const weekRowId = "af2f1000-0000-4000-8000-000000000002";
+  await fixture.db.query("insert into generated_interpretations(id,content_key,status,lane,body,updated_at,source_snapshot,sections) values($1,$2,'LIVE','serving',$3,now(),$4,$5)", [weekRowId, weeklyRecord.contentKey, weeklyRecord.body, JSON.stringify({ review_status: "approved" }), JSON.stringify({ packageRecord: weeklyRecord })]);
+  await fixture.db.query("insert into content_publications(content_key,state,revision,row_id,row_updated_at,updated_at) select content_key,'live',1,id,updated_at,updated_at from generated_interpretations where id=$1", [weekRowId]);
+  assert.equal((await fixture.invoke(readingPath("week-2026-09-21"))).json().reading.body, week.json().reading.body, "Published Studio package templates use the calculated sign and preserve the full approved body");
+  const publishedWeekFeed = (await fixture.invoke(`/feed/${weekSub.token}.ics`)).body.replace(/\r\n /gu, "");
+  assert(publishedWeekFeed.includes(`DESCRIPTION:${escapeCalendarText("A Full Moon in Aries arrives this week,")}`));
+  assert(!publishedWeekFeed.includes("{{signTitle}}"));
+  const weekRow = { ...source, content_key: weeklyRecord.contentKey, sections: { packageRecord: weeklyRecord } };
+  const weekLedger = new Map([[weeklyRecord.contentKey, { ...ledger.get(key), content_key: weeklyRecord.contentKey, state: "live" } as any]]);
+  assert.equal(selectCalendarFeedCopy([weeklyRecord.contentKey], "2026-09-21", [{ ...weekRow, sections: { packageRecord: { ...weeklyRecord, review_status: "needs_review" } } }], weekLedger, "Aries"), null);
+  assert.equal(selectCalendarFeedCopy([weeklyRecord.contentKey], "2026-09-21", [{ ...weekRow, sections: { packageRecord: { ...weeklyRecord, body: "{{unknownSlot}}" } } }], weekLedger, "Aries"), null);
+  await fixture.db.query("update content_publications set state='retired',revision=2 where content_key='authored/week-opener/full-moon'");
   assert.equal((await fixture.invoke(readingPath("week-2026-09-21"))).json().reading.body, "", "Retired bundled copy cannot reappear in the app link");
   const linkedUrl = new URL(calendarReadingUrl("https://example.com", localDate, moon.id, options.timeZone));
   assert.equal(new URLSearchParams(linkedUrl.hash.split("?")[1]).get("event"), moon.id);
