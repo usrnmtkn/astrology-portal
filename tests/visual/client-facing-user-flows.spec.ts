@@ -4080,7 +4080,7 @@ test.describe("client-facing user flow case studies", () => {
   });
 
   for (const theme of ["light", "dark"] as const) {
-    for (const width of [390, 430, 1440]) {
+    for (const width of [390, 430, 768, 1440]) {
       test(`Account and Settings child navigation matches articles ${theme} ${width}`, async ({ page }) => {
         test.setTimeout(90_000);
         const assertNoClientErrors = await expectNoClientErrors(page);
@@ -4119,7 +4119,7 @@ test.describe("client-facing user flow case studies", () => {
           await expect(page.getByText(child.empty, { exact: true })).toBeVisible();
 
           const expectChildHeader = async () => {
-            await back.click({ trial: true });
+            await back.click({ trial: true, timeout: 5_000 });
             // WebKit can retain the trial click's hover across a reload/scroll.
             // Compare settled resting controls, not an in-progress hover lift.
             await page.mouse.move(0, 0);
@@ -4133,7 +4133,8 @@ test.describe("client-facing user flow case studies", () => {
             expect(box.x).toBeCloseTo(reference.x, 0);
             expect(box.y).toBeCloseTo(reference.y, 0);
             expect(box.height).toBeCloseTo(reference.height, 0);
-            expect(box.x + box.width).toBeLessThanOrEqual(nav.x);
+            expect(box.x + box.width <= nav.x || nav.y + nav.height <= box.y,
+              "Back control clears the brand in both one-row and tablet two-row navigation").toBe(true);
             expect(nav.x + nav.width).toBeLessThanOrEqual(menu.x);
             if (width <= 720) {
               expect(box.width).toBeCloseTo(reference.width, 0);

@@ -132,6 +132,18 @@
   }
 }
 
+@media (min-width: 721px) and (max-width: 800px) {
+  .settings-back-button {
+    top: var(--article-back-top);
+    left: var(--mobile-page-gutter);
+  }
+
+  .settings-back-row {
+    display: block;
+    min-height: var(--top-control-height);
+  }
+}
+
 @media (max-width: 900px) {
   .auth-page {
     align-items: flex-start;
