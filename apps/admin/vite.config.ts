@@ -1,5 +1,5 @@
 import { memoryGraphReferencePlugin } from "../../scripts/memory-graph-reference-plugin.mjs";
-import { browserOnlySwissEphemerisPlugin, trimSwissEphemerisWebDataPlugin, serveFullSwissEphemerisDataInDevPlugin } from "../web/vite.config";
+import { browserOnlySwissEphemerisPlugin, trimSwissEphemerisWebDataPlugin, serveFullSwissEphemerisDataInDevPlugin, versionedSwissAssetsPlugin } from "../web/vite.config";
 import { defineConfig, loadEnv } from "vite";
 import react from "@vitejs/plugin-react";
 import { appStartupHtmlPlugin } from "../../scripts/app-startup-html-plugin.mjs";
@@ -104,7 +104,7 @@ export default defineConfig(({ command, mode }) => {
     : "";
 
   return {
-    plugins: [memoryGraphReferencePlugin(), appStartupHtmlPlugin(), localApiRoutePlugin(), browserOnlySwissEphemerisPlugin(), trimSwissEphemerisWebDataPlugin(), serveFullSwissEphemerisDataInDevPlugin(), {
+    plugins: [memoryGraphReferencePlugin(), appStartupHtmlPlugin(), localApiRoutePlugin(), browserOnlySwissEphemerisPlugin(), trimSwissEphemerisWebDataPlugin(), serveFullSwissEphemerisDataInDevPlugin(), versionedSwissAssetsPlugin(), {
       name: "studio-swiss-ephemeris-assets",
       generateBundle() {
         for (const name of ["swisseph.wasm", "swisseph.data"]) this.emitFile({ type: "asset", fileName: `wasm/${name}`, source: readFileSync(resolve(repoRoot, "apps/web/public/wasm", name)) });

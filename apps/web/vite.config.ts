@@ -16,7 +16,7 @@ const swissAssets = ["swisseph.data", "swisseph.wasm"].map(name => ({ name,
   source: readFileSync(resolve(repoRoot, "apps/web/public/wasm", name)) }));
 const swissAssetVersion = createHash("sha256").update(Buffer.concat(swissAssets.map(asset => asset.source))).digest("hex").slice(0,16);
 
-function versionedSwissAssetsPlugin() {
+export function versionedSwissAssetsPlugin() {
   return { name: "tldr-versioned-swiss-assets", apply: "build" as const,
     generateBundle() {
       for (const asset of swissAssets) this.emitFile({ type: "asset", fileName: `wasm/${swissAssetVersion}/${asset.name}`, source: asset.source });

@@ -2623,9 +2623,9 @@ export function LunarCalendar({
   }, [calendar, zone]);
 
   const moonResolvedByDate = useMemo(() => {
-    if (!calendar || calendarDetailState !== "ready") return new Map();
+    if (!calendar || calendarDetailState !== "ready" || !moonContentReady) return new Map();
     return calendarMoonResolvedByDate(calendar.days, moonCycleFacts, generatedContent);
-  }, [calendar, calendarDetailState, generatedContent, moonCycleFacts]);
+  }, [calendar, calendarDetailState, generatedContent, moonCycleFacts, moonContentReady, contentVersion]);
 
   const weeklyRangeLabel = formatWeeklyRange(selectedWeekDays, calendar?.timeZone ?? location.timeZone ?? "UTC");
   const arcEvents = useMemo(() => {

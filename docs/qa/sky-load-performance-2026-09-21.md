@@ -247,3 +247,22 @@ fixture assertion: April 17 versus expected April 14 in
 untouched `a05a04bce` baseline with its own dependencies reproduces the exact
 failure. The fixture and report sources are unchanged; the full content suite
 is not reported as green.
+
+Release CI exposed two integration defects. The standalone Studio build shared
+the versioned astronomy URL transform but did not emit those assets; it now
+uses the same asset-emission plugin as the web build. Calendar also cached Moon
+selection before the deferred source bundles arrived; selection now waits for
+bundle readiness and invalidates on content revision. All eight existing
+mobile/desktop, light/dark, empty/populated first-copy checks pass unchanged.
+Browser download counting and fault injection now recognize the content-addressed
+asset paths, preserving their original request counts and timing thresholds.
+The affected Calendar performance/error cases and two real Studio calculation
+cases pass locally. Web/admin bundle budgets and public-output privacy scans pass.
+
+The Git-built preview repeat at `04a9c650` measured three cold/reload pairs:
+cold median 11.32 s (9.54–11.93), reload median 3.50 s (3.42–3.58). All six
+completed with identical prose and zero page errors, worker requests or CLS.
+The provisional 10-second cold target is not consistently met; variable asset
+and publication response times remain visible. The earlier five-pair result
+does not establish a guarantee. Final release commit, CI, production deployment
+and post-release verification are recorded in PR #1003.
