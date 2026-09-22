@@ -20,11 +20,10 @@ import {
   prepareTransitReadingProductionKernel,
   type TransitReadingProductionInput
 } from "./transit-reading-production.js";
-import { instructionsForRole } from "../../src/astro-writing/openAIResponses.cjs";
+import { generatedReportJudgeRubric, GENERATED_REPORT_JUDGE_PACKET_CONTRACT } from "./transit-reading-judge-prompt.js";
 
-export const GENERATED_REPORT_JUDGE_ADAPTER_VERSION = "generated-report-judge-adapter-v1.5";
+export const GENERATED_REPORT_JUDGE_ADAPTER_VERSION = "generated-report-judge-adapter-v1.6";
 export const GENERATED_REPORT_JUDGE_ADAPTER_PATH = "tldr-astro-phrasebank/TLDR-GENERATED-REPORT-JUDGE-ADAPTER-V1-OWNER.md";
-const REPORT_JUDGE_PATH = "tldr-astro-phrasebank/TLDR-REPORT-JUDGE-RUBRIC-V3.4-OWNER.md";
 const REPORT_OWNER_REVIEW_EVIDENCE_PATH = "tldr-astro-phrasebank/TLDR-REPORT-OWNER-REVIEW-EVIDENCE-2026-08-11.md";
 
 export type GeneratedReportJudgeAudit = {
@@ -61,14 +60,23 @@ export const GENERATED_REPORT_JUDGE_SCHEMA = {
       items: {
         type: "object",
         additionalProperties: false,
-        required: ["category", "location", "finding", "draftQuote", "sourcePath", "sourceQuote"],
+        required: ["category", "location", "finding", "draftQuote", "sourcePath", "sourceQuote", "ownerComparisons"],
         properties: {
           category: { type: "string", enum: [...GENERATED_REPORT_JUDGE_FINDING_CATEGORIES] },
           location: { type: "string" },
           finding: { type: "string" },
           draftQuote: { type: "string", pattern: "\\S" },
           sourcePath: { type: ["string", "null"] },
-          sourceQuote: { type: ["string", "null"] }
+          sourceQuote: { type: ["string", "null"] },
+          ownerComparisons: { type: "array", items: {
+            type: "object", additionalProperties: false,
+            required: ["evidenceId", "quote", "difference"],
+            properties: {
+              evidenceId: { type: "string", pattern: "\\S" },
+              quote: { type: "string", pattern: "\\S" },
+              difference: { type: "string", pattern: "\\S" }
+            }
+          } }
         }
       }
     }
@@ -90,9 +98,9 @@ function judgePrompt(input: {
     ? input.ownerEvidence.map((text, index) => `${index + 1}. ${text}`).join("\n")
     : "No additional generated-report owner feedback has been explicitly approved yet.";
   return [
-    instructionsForRole("REVIEWER"),
+    GENERATED_REPORT_JUDGE_PACKET_CONTRACT,
     "",
-    requiredFile(REPORT_JUDGE_PATH),
+    generatedReportJudgeRubric(),
     "",
     requiredFile(GENERATED_REPORT_JUDGE_ADAPTER_PATH),
     "",
@@ -137,6 +145,7 @@ export async function judgeGeneratedTransitReading(input: {
     role: "REVIEWER",
     draftValidated: true
   });
+  const evidenceInput = { ...input, ownerComparisonSet: kernel.ownerVoice };
   const response = await callGovernedTransitReadingModel<JudgeProviderPayload>({
     kernel,
     provider,
@@ -144,9 +153,9 @@ export async function judgeGeneratedTransitReading(input: {
     prompt,
     schemaName: "tldr_generated_report_judge",
     schema: GENERATED_REPORT_JUDGE_SCHEMA as unknown as Record<string, unknown>,
-    validateResponse: (value) => { assertGeneratedReportJudgeEvidence(value, input); }
+    validateResponse: (value) => { assertGeneratedReportJudgeEvidence(value, evidenceInput); }
   });
-  const providerResult = assertGeneratedReportJudgeEvidence(response.value, input);
+  const providerResult = assertGeneratedReportJudgeEvidence(response.value, evidenceInput);
   const scores = providerResult.scores;
   const overall = generatedReportJudgeOverall(scores);
   return {

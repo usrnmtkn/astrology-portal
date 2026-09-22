@@ -29,7 +29,7 @@ const bundle = await build({
         export const getVerifiedAuthUser = async () => ({id:globalThis.reportDeliveryFixture.client.userId});`,
       transport: 'export const callReportCalibrationModel = async input => { await input.beforeProviderCall(); return globalThis.reportDeliveryFixture.call(input); };',
       gate: 'export const prepareProductionPreCallGate = () => ({}); export const assertProductionPreCallGate = () => true;',
-      voice: `export const transitReadingOwnerVoice = () => []; export const assertTransitReadingOwnerVoice = () => true;
+      voice: `export const transitReadingOwnerVoice = () => [{evidenceId:'synthetic-owner',text:'Synthetic owner comparison.'}]; export const assertTransitReadingOwnerVoice = () => true;
         export const transitReadingOwnerVoiceReceipt = () => ({version:'synthetic-only', sources:[]});
         export const transitReadingOwnerVoicePrompt = () => 'SYNTHETIC OWNER EVIDENCE ACCESS. NOT PRODUCTION PROOF.';`,
       instructions: `export const governedInstructionsForRole = () => 'Synthetic role boundary'; export const instructionsForRole = () => 'Synthetic reviewer boundary';`,
@@ -143,10 +143,10 @@ function fixture(kind, scenario) {
         const submitted=JSON.parse(input.prompt.split('COMPLETE READER-VISIBLE DRAFT\n')[1].split('\n').slice(1).join('\n').split('\n\nSYNTHETIC')[0]);
         assert.deepEqual(Object.keys(submitted),['headline','summary','body']);
         assert(!input.prompt.includes(output.summary),'Discarded transport alias must never be reviewed');
-        const failed=scenario==='rejected' || (['correction','cleanup'].includes(scenario) && judgeCalls===1);
+        const failed=['rejected','invalid-judge-evidence'].includes(scenario) || (['correction','cleanup'].includes(scenario) && judgeCalls===1);
         const scores=Object.fromEntries(api.GENERATED_REPORT_JUDGE_CATEGORIES.map(key=>[key,4]));
         if(failed)scores.owner_voice=3;
-        return {value:{scores,findings:failed?[{category:'owner_voice',location:'body, first sentence',finding:'Synthetic diagnostic: simplify the transition while preserving supplied facts.',draftQuote:submitted.body.slice(0,30),sourcePath:null,sourceQuote:null}]:[]},provider:input.provider,model:input.model,responseId:`judge-${judgeCalls}`};
+        return {value:{scores,findings:failed?[{category:'owner_voice',location:'body, first sentence',finding:'Synthetic diagnostic: simplify the transition while preserving supplied facts.',draftQuote:submitted.body.slice(0,30),sourcePath:null,sourceQuote:null,ownerComparisons:scenario==='invalid-judge-evidence'?[]:[{evidenceId:'synthetic-owner',quote:'Synthetic owner comparison.',difference:'Synthetic difference in the transition.'}]}]:[]},provider:input.provider,model:input.model,responseId:`judge-${judgeCalls}`};
       }
       writerCalls++;
       if(writerCalls>1 && ['correction','cleanup','rejected'].includes(scenario)){
@@ -168,7 +168,7 @@ const savedEnv = {...process.env};
 Object.assign(process.env,{CONTENT_GENERATION_PROVIDER:'openai',CONTENT_GENERATION_PROVIDER_TRANSIT_TO_NATAL:'openai',FRIEND_REPORT_BILLING_MODE:'free_test',YOU_REPORT_JOB_ATTEMPT_CAP:'1',FRIEND_REPORT_JOB_ATTEMPT_CAP:'1'});
 let cases=0;
 try{
-  for(const kind of ['day','week','friends']) for(const scenario of ['first-pass','correction','cleanup','rejected','save-error','empty-save','completion-error']){
+  for(const kind of ['day','week','friends']) for(const scenario of ['first-pass','correction','cleanup','rejected','invalid-judge-evidence','save-error','empty-save','completion-error']){
     const f=fixture(kind,scenario);globalThis.reportDeliveryFixture=f;
     const queued=kind==='friends'
       ? await api.requestFriendReport({userId:f.client.userId,subjectId:'synthetic-friend',targetDate:'2026-09-14',facts:{friendTransitsBrief:f.friendBrief},admin:f.admin})
@@ -221,7 +221,11 @@ try{
       assert.equal(await api.loadGeneratedReportById(row.id),null);
       assert(!f.writes.some(([table,write])=>table.endsWith('_jobs') && write.state==='complete'));
     }
-    assert.equal(f.calls.judge,scenario==='first-pass'||['save-error','empty-save','completion-error'].includes(scenario)?1:2);
+    assert.equal(f.calls.judge,scenario==='first-pass'||['invalid-judge-evidence','save-error','empty-save','completion-error'].includes(scenario)?1:2);
+    if(scenario==='invalid-judge-evidence') {
+      assert.equal(f.calls.writer,1,'Invalid judge evidence must not instruct a corrective writer.');
+      assert.match(job.last_error,/owner_voice lacks eligible comparison evidence/u);
+    }
     if(scenario==='cleanup')assert.equal(f.calls.writer,3);
     console.log(`PASS ${kind}: ${scenario}`);cases++;
   }

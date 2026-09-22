@@ -6,7 +6,7 @@ assert.match(fs.readFileSync("api/_lib/content-generation.ts", "utf8"), /friendT
   "The legacy Friends prompt path must load the same contract.");
 
 // Test the real judge schema, prompt assembly, and release decision. Replace
-// only provider transport/config and global instructions; no billed calls.
+// only provider transport/config and the catalog gate; no billed calls.
 const bundle = await build({
   // Bundled CommonJS dependencies need Node's require even inside a data URL.
   banner: { js: `import { createRequire } from "node:module"; const require = createRequire(${JSON.stringify(import.meta.url)});` },
@@ -16,14 +16,11 @@ const bundle = await build({
     builder.onResolve({ filter: /report-model-client\.js$/ }, () => ({ path: "transport", namespace: "fixture" }));
     builder.onResolve({ filter: /productionPreCallGate\.cjs$/ }, () => ({ path: "gate", namespace: "fixture" }));
     builder.onResolve({ filter: /report-fulfillment-config\.js$/ }, () => ({ path: "config", namespace: "fixture" }));
-    builder.onResolve({ filter: /openAIResponses\.cjs$/ }, () => ({ path: "instructions", namespace: "fixture" }));
     builder.onLoad({ filter: /.*/, namespace: "fixture" }, ({ path }) => ({ contents: path === "transport"
       ? `export const callReportCalibrationModel = async (input) => { await input.beforeProviderCall(); return globalThis.reportBreadthFixture(input); };`
       : path === "gate"
         ? `export const prepareProductionPreCallGate = () => ({}); export const assertProductionPreCallGate = () => true;`
-      : path === "config"
-        ? `export const REPORT_JUDGE_THRESHOLD = 0.85; export const reportFulfillmentConfig = () => ({judgeProvider: "fixture", judgeModel: "fixture"});`
-        : `export const instructionsForRole = () => "Fixture canonical review instructions";`
+      : `export const REPORT_JUDGE_THRESHOLD = 0.85; export const reportFulfillmentConfig = () => ({judgeProvider: "fixture", judgeModel: "fixture"});`
     }));
   }}]
 });
@@ -31,7 +28,7 @@ const { judgeGeneratedTransitReading, GENERATED_REPORT_JUDGE_SCHEMA } = await im
   `data:text/javascript;base64,${Buffer.from(bundle.outputFiles[0].text).toString("base64")}`
 );
 const scores = Object.fromEntries(GENERATED_REPORT_JUDGE_SCHEMA.properties.scores.required.map((key) => [key, 4]));
-const evidence = { draftQuote: "Fixture", sourcePath: null, sourceQuote: null };
+const evidence = { draftQuote: "Fixture", sourcePath: null, sourceQuote: null, ownerComparisons: [] };
 const scoreCategory = {
   over_specification: "factual_traceability", unsupported_interpretation: "factual_traceability",
   unsupported_timing: "astrology_chronology", narrative_repetition: "interpretive_movement", owner_language: "owner_voice"
@@ -39,8 +36,25 @@ const scoreCategory = {
 assert.ok(GENERATED_REPORT_JUDGE_SCHEMA.properties.findings.items.properties.category.enum.includes("over_specification"));
 const previous = globalThis.reportBreadthFixture;
 let response;
+let ownerComparison;
 try {
   globalThis.reportBreadthFixture = async (input) => {
+    for (const name of ['V3', 'V3.2', 'V3.3', 'V3.4']) {
+      const path = `tldr-astro-phrasebank/TLDR-REPORT-JUDGE-RUBRIC-${name}-OWNER.md`;
+      assert.ok(input.prompt.includes(`SOURCE_PATH: ${path}`));
+      // Every approved non-transport section survives byte-for-byte.
+      for (const section of fs.readFileSync(path, 'utf8').split(/(?=^## )/mu)) {
+        if (!/^## Output (?:contract|and verdict)\s*$/mu.test(section)) assert.ok(input.prompt.includes(section));
+        else assert.ok(!input.prompt.includes(section));
+      }
+    }
+    assert.ok(input.prompt.includes('fixed product headline is metadata'));
+    assert.ok(input.prompt.includes('no defect is supported'));
+    assert.ok(input.prompt.includes('4/4 owner_voice and natural_language release floors remain unchanged'));
+    assert.doesNotMatch(input.prompt, /ASSUME THERE IS A DEFECT|Return PASS or REVISE only|## Output contract/u);
+    const passage = input.prompt.match(/OWNER PASSAGE ([^\n]+)\nFUNCTION: [^\n]+\n([\s\S]+?)\nEND OWNER PASSAGE/u);
+    assert.ok(passage, 'Comparison passage identifiers and supplied functions must reach the judge.');
+    ownerComparison = { evidenceId: passage[1], quote: passage[2], difference: 'Synthetic diagnostic comparing the supplied passage with the candidate.' };
     assert.ok(input.prompt.includes("Weekly progression and contextual owner corrections"));
     assert.ok(input.prompt.includes("what is happening → where it hits → trap → what to do"));
     assert.ok(input.prompt.includes("A New Moon label alone does not authorize"));
@@ -90,6 +104,8 @@ try {
   response = { scores: { ...scores, owner_voice: 3 }, findings: [] };
   await assert.rejects(judge(), /below-floor owner_voice score has no diagnostic evidence/);
   response.findings = [{ category: "owner_voice", location: "body", finding: "The wording fails the supplied voice rubric.", ...evidence }];
+  await assert.rejects(judge(), /lacks eligible comparison evidence/);
+  response.findings[0].ownerComparisons = [ownerComparison];
   assert.equal((await judge()).result.verdict, "below_threshold", "Breadth does not waive voice floors");
   response = { scores, findings: [{ category: "unknown_category", location: "body", finding: "Invalid result" }] };
   await assert.rejects(judge(), /malformed finding/);

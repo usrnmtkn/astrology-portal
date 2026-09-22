@@ -33,6 +33,7 @@ export type GeneratedReportJudgeFinding = {
   draftQuote?: string;
   sourcePath?: string | null;
   sourceQuote?: string | null;
+  ownerComparisons?: Array<{ evidenceId: string; quote: string; difference: string }>;
 };
 export type GeneratedReportJudgeResult = {
   scores: GeneratedReportJudgeScores;

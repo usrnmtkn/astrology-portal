@@ -31,10 +31,11 @@ assert.equal(generatedReportJudgeVerdict({ ...perfectScores, natural_language: 3
 assert.equal(generatedReportJudgeVerdict({ ...perfectScores, factual_traceability: 2 }, 0.85), "below_threshold");
 
 const judgeInput = { draft: { headline: 'Synthetic title', summary: 'Synthetic summary.', body: 'That specific opportunity will return.' },
-  brief: { approvedReaderText: { body: 'A recurring theme can invite reconsideration.' } } };
+  brief: { approvedReaderText: { body: 'A recurring theme can invite reconsideration.' } },
+  ownerComparisonSet: [{ evidenceId: 'synthetic-owner-1', text: 'Synthetic comparison passage. It develops the consequence.' }] };
 const citedFinding = { category: 'unsupported_timing' as const, location: 'body',
   finding: 'A recurring theme does not establish that this specific opportunity returns.',
-  draftQuote: judgeInput.draft.body, sourcePath: '/approvedReaderText/body', sourceQuote: judgeInput.brief.approvedReaderText.body };
+  draftQuote: judgeInput.draft.body, sourcePath: '/approvedReaderText/body', sourceQuote: judgeInput.brief.approvedReaderText.body, ownerComparisons: [] };
 const coherentJudgment = { scores: { ...perfectScores, astrology_chronology: 2 }, findings: [citedFinding] };
 assert.doesNotThrow(() => assertGeneratedReportJudgeEvidence(coherentJudgment, judgeInput));
 assert.equal(generatedReportJudgeVerdict(coherentJudgment.scores, 0.85, coherentJudgment.findings), 'below_threshold');
@@ -51,6 +52,24 @@ assert.throws(() => assertGeneratedReportJudgeEvidence({ ...coherentJudgment, fi
 assert.throws(() => assertGeneratedReportJudgeEvidence({ ...coherentJudgment, findings: [] }, judgeInput), /no diagnostic evidence/u);
 assert.doesNotThrow(() => assertGeneratedReportJudgeEvidence({ ...coherentJudgment, findings: [{ ...citedFinding, sourcePath: null, sourceQuote: null }] }, judgeInput));
 assert.doesNotThrow(() => assertGeneratedReportJudgeEvidence({ scores: perfectScores, findings: [] }, judgeInput));
+
+// An exact candidate quote alone cannot establish owner likeness. Eligibility
+// and exact text are machine-checkable; editorial correctness still needs calibration.
+const comparison = { evidenceId: 'synthetic-owner-1', quote: 'It develops the consequence.', difference: 'The candidate repeats the result rather than developing its consequence.' };
+const voiceFinding = { ...citedFinding, category: 'owner_voice' as const, sourcePath: null, sourceQuote: null, ownerComparisons: [comparison] };
+const voiceJudgment = { scores: { ...perfectScores, owner_voice: 3 }, findings: [voiceFinding] };
+assert.doesNotThrow(() => assertGeneratedReportJudgeEvidence(voiceJudgment, judgeInput));
+for (const [ownerComparisons, expected] of [
+  [undefined, /must be an array/u], [[], /lacks eligible comparison/u],
+  [[{ ...comparison, evidenceId: 'not-in-packet' }], /ineligible/u],
+  [[{ ...comparison, quote: 'Invented owner quotation' }], /quote is not exact/u],
+  [[{ ...comparison, quote: ' ' }], /quote is not exact/u],
+  [[{ ...comparison, difference: ' ' }], /observable difference/u],
+  [[comparison, comparison], /duplicated/u]
+] as const) {
+  assert.throws(() => assertGeneratedReportJudgeEvidence({ ...voiceJudgment, findings: [{ ...voiceFinding, ownerComparisons }] }, judgeInput), expected);
+}
+assert.throws(() => assertGeneratedReportJudgeEvidence(voiceJudgment, { ...judgeInput, ownerComparisonSet: [] }), /ineligible/u);
 
 const feedbackBase = {
   source_generated_interpretation_id: "report-1",

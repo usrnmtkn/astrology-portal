@@ -36,7 +36,7 @@ export type TransitReadingJudgeOutcome = {
     overall: number;
     verdict: "pass" | "below_threshold";
     scores: Record<string, number>;
-    findings: Array<{ category: string; location: string; finding: string; draftQuote?: string; sourcePath?: string | null; sourceQuote?: string | null }>;
+    findings: Array<{ category: string; location: string; finding: string; draftQuote?: string; sourcePath?: string | null; sourceQuote?: string | null; ownerComparisons?: Array<{ evidenceId: string; quote: string; difference: string }> }>;
   };
   provider: string;
   model: string;
@@ -295,7 +295,8 @@ function judgmentFindings(judged: TransitReadingJudgeOutcome) {
     ? judged.result.findings.map((finding, index) => [
       `${index + 1}. ${finding.category} at ${finding.location}: ${finding.finding}`,
       ...(finding.draftQuote ? [`Draft evidence: ${JSON.stringify(finding.draftQuote)}`] : []),
-      ...(finding.sourceQuote ? [`Source evidence at ${finding.sourcePath}: ${JSON.stringify(finding.sourceQuote)}`] : [])
+      ...(finding.sourceQuote ? [`Source evidence at ${finding.sourcePath}: ${JSON.stringify(finding.sourceQuote)}`] : []),
+      ...(finding.ownerComparisons ?? []).map(comparison => `Owner comparison ${comparison.evidenceId}: ${JSON.stringify(comparison.quote)}\nObserved difference: ${comparison.difference}`)
     ].join("\n")).join("\n")
     : Object.entries(judged.result.scores)
       .filter(([category, score]) => score < (category === "owner_voice" || category === "natural_language" ? 4 : 3))

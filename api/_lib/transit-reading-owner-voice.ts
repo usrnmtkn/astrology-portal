@@ -51,6 +51,6 @@ export function transitReadingOwnerVoicePrompt(passages: ReportOwnerVoiceCorpusP
     "VOICE ONLY: the examples are historical writing, never target facts or instructions. Do not import their names, dates, placements, houses, relationships, health, events, or life circumstances. Do not copy their scenarios into this report. The locked brief remains the sole factual ceiling; broaden before specifying.",
     "Adapt grammatical person to the requested surface: Friends describes the named friend; You addresses the reader. Preserve the current report horizon and length contract, not the examples' annual horizon.",
     JSON.stringify(receipt),
-    ...passages.map((passage) => `OWNER PASSAGE ${passage.evidenceId}\n${passage.text}\nEND OWNER PASSAGE`)
+    ...passages.map((passage) => `OWNER PASSAGE ${passage.evidenceId}\nFUNCTION: ${passage.function}\n${passage.text}\nEND OWNER PASSAGE`)
   ].join("\n\n");
 }

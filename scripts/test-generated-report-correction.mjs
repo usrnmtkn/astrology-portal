@@ -108,7 +108,7 @@ try {
             verdict: scenario === "first-pass" || (judgeCalls === 2 && ["corrected-pass", "cleanup-pass"].includes(scenario)) ? "pass" : "below_threshold",
             overall: 0.9,
             scores: { owner_voice: 3 },
-            findings: [{ category: "over_specification", location: "body", finding: "Fixture diagnostic" }]
+            findings: [{ category: "owner_voice", location: "body", finding: "Fixture diagnostic", ownerComparisons: [{ evidenceId: "synthetic-owner", quote: "Synthetic reference quote.", difference: "Synthetic difference in sentence movement." }] }]
           },
           version: "fixture", provider: "fixture", model: "fixture", threshold: 0.85
         };
@@ -147,6 +147,8 @@ try {
         assert.ok(prompts[1].includes(original.body), "The corrective writer must receive the draft the judge diagnosed.");
         assert.ok(prompts[1].includes(original.tldr));
         assert.ok(prompts[1].includes("Fixture diagnostic"));
+        assert.ok(prompts[1].includes('Owner comparison synthetic-owner: "Synthetic reference quote."'));
+        assert.ok(prompts[1].includes('Observed difference: Synthetic difference in sentence movement.'));
       }
       if (["cleanup-pass", "invalid-cleanup"].includes(scenario)) {
         assert.ok(!prompts[2].includes("correct the sentence's function"), "Mechanical cleanup must not invite another stylistic rewrite.");
@@ -154,6 +156,7 @@ try {
         assert.ok(prompts[2].includes("DETERMINISTIC CLEANUP — NO NEW INTERPRETATION"));
         assert.ok(prompts[2].includes("Corrected draft introduced a deterministic defect"));
         assert.ok(prompts[2].includes("Fixture diagnostic"), "Cleanup must preserve the quality correction instead of starting over.");
+        assert.ok(prompts[2].includes('Observed difference: Synthetic difference in sentence movement.'));
       }
     }
   }
