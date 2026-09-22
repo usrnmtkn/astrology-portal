@@ -79,6 +79,10 @@
     }
   ],
   "functions": {
+    "api/calendar-feed.ts": {
+      "includeFiles": "node_modules/swisseph-wasm/wasm/*",
+      "maxDuration": 60
+    },
     "api/sky.ts": {
       "includeFiles": "node_modules/swisseph-wasm/wasm/*",
       "maxDuration": 15
@@ -106,10 +110,6 @@
     },
     "api/**/*.ts": {
       "includeFiles": "{api/_lib,artifacts,config,src/astro-writing,packages/astro-knowledge/{generated,scripts,data,config,reference,voice,sources/authored/owner-author-book},apps/web/{public/content,src/content},tldr-astro-phrasebank}/**/*.{cjs,js,json,md,mjs,ts}"
-    },
-    "api/calendar-feed.ts": {
-      "includeFiles": "node_modules/swisseph-wasm/wasm/*",
-      "maxDuration": 60
     }
   },
   "rewrites": [

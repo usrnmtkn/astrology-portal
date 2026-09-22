@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
 import { calendarSubscriptionFixture } from "../tests/helpers/calendar-subscription-fixture.js";
 import { escapeCalendarText, foldCalendarLine, serializeCalendarFeed, selectCalendarFeedCopy } from "../api/_lib/calendar-feed.js";
 import { getCalendarSubscriptionEvents, getLunarCalendarMonth } from "../apps/web/src/services/ephemeris.js";
@@ -10,6 +11,10 @@ const fixture = await calendarSubscriptionFixture();
 const options = { include: ["key"], reminder: "At the time", timeZone: "America/New_York" };
 const owner = { authorization: "Bearer fixture-owner" };
 try {
+  const deployment = JSON.parse(readFileSync(new URL("../vercel.json", import.meta.url), "utf8"));
+  const patterns = Object.keys(deployment.functions);
+  assert(patterns.indexOf("api/calendar-feed.ts") < patterns.indexOf("api/**/*.ts"), "Vercel must match the feed's explicit configuration before the catch-all");
+  assert.equal(deployment.functions["api/calendar-feed.ts"].includeFiles, "node_modules/swisseph-wasm/wasm/*");
   await fixture.db.exec("set role anon");
   await assert.rejects(fixture.db.query("select * from calendar_subscriptions"), /permission denied/);
   await assert.rejects(fixture.db.query("insert into calendar_feed_events(draft) values ('{}')"), /permission denied/);
