@@ -1,8 +1,11 @@
 # Generated-report scoped review proposal
 
-Status: implemented as an inactive experimental path; not activated or proven.
+Status: implemented but failed the September 22 eight-call development check;
+inactive and not approved for release.
 The owner's subsequent “pleaes proceed with fix” authorizes this implementation
-and offline verification, not additional paid calls or automatic release.
+and offline verification. A subsequent explicit eight-call extension authorized
+the development check; that batch is complete and its call allowance is exhausted.
+Neither approval authorizes automatic release.
 Source: owner task
 `thread:01a0c440-92d0-7822-bda6-af3338840786`, September 22, 2026. The owner asked
 whether there should be two judges after the frozen v1.7 calibration began.
@@ -111,3 +114,40 @@ or treat a calibrated reviewer as proof that new writing is good.
 
 Do not promise a release date before step 3. Role separation addresses
 diagnostic scope; whether it repairs editorial judgment is still unproven.
+
+## Eight-call development outcome
+
+On implementation `82663411`, the authorized split-review batch returned eight
+valid provider responses on four unchanged daily/weekly drafts. No writer or
+retry calls occurred. All three owner-accepted controls failed the unchanged
+editorial floors. The relatively weaker weekly alternative passed; that
+is not itself an absolute classification error, because its owner feedback
+allowed it in isolation. No pairwise preference calls were included.
+
+The preferred weekly report received 4 for both factual categories and every
+prose category except voice/naturalness, which each received 3. The voice
+criticism was explicitly minor and the reviewer acknowledged clear meaning.
+The short-report adapter intentionally makes those 3s blocking; the runtime
+computed the contract correctly. Full-paragraph evidence made the objection
+inspectable but did not establish that it should override owner acceptance.
+The two daily controls additionally received 2 for interpretive movement, so
+relaxing only voice/naturalness floors would not resolve their failures.
+
+Every factual category received 4. The previously identified support concern
+in one daily ending was not reported. That discrepancy needs claim-level
+adjudication against the locked brief; absence of a finding is not proof the
+concern was resolved. Role separation is therefore not demonstrated to repair
+either editorial alignment or factual reliability.
+
+Keep this implementation inactive. Preserve the four drafts, all earlier
+failures, source packets, raw responses and usage records. The next design
+decision must distinguish a material reading defect from a minor editorial
+preference in a complete short report, and establish when report explanation
+is useful development rather than prose scaffolding. The stricter 4/4 release
+rule is owner-governed: do not silently lower it, relabel 3 as 4, or turn all
+editorial findings into advice. Any proposed change needs a concrete versioned
+contract and owner approval. Independent factual source-support controls and
+unseen daily/weekly/Friends evidence remain required for eventual release.
+
+The batch cost $0.237768 by recorded tokens, bringing the combined total to
+42 calls / $1.833885. All eight newly authorized call slots are consumed.

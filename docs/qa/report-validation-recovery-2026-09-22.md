@@ -142,3 +142,56 @@ owner agreement, then pass unseen daily/weekly/Friends calibration and real
 app verification before activation. Existing development controls are not
 held-out evidence, and the relative weekly preference is not an absolute
 negative label.
+
+## v1.8 scoped review: authorized development batch failed
+
+The owner explicitly authorized eight additional OpenAI judge-only calls
+within the existing combined $5 cap. Recorded that exact authorization in
+the protected batch artifact, tied to the prepared manifest and budget hashes.
+Ran `82663411` against the same four frozen drafts and model: one facts review
+and one writing review per draft. Eight calls completed, with no new writing,
+retries, production writes or release.
+
+All eight responses passed the actual scoped schema, citation, paragraph,
+category-ownership and draft-hash validation. Archived request bytes matched
+the approved frozen requests plus the disclosed output-token cap. Each raw
+response matched its final audit, usage and draft. The three previous ledgers
+remain byte-identical. Additional token-based usage cost is $0.237768; total
+42 calls / $1.833885. No authorized calls remain.
+
+| Development case | Prior owner assessment | Voice | Naturalness | Result |
+| --- | --- | --- | --- | --- |
+| C01, daily baseline | Acceptable writing | 2 | 3 | Blocked |
+| C02, daily alternative | Acceptable writing | 3 | 3 | Blocked |
+| C03, weekly alternative | Acceptable alone, weaker than C04 | 4 | 4 | Pass |
+| C04, weekly baseline | Preferred / acceptable writing | 3 | 3 | Blocked |
+
+Accepted-control editorial passage is 0/3, compared with 0/6 judgments in
+v1.7. These sample sizes differ and v1.8 did not repeat any judgment; this is
+no evidence of general reliability or a stable change in preference. The
+absolute pass for C03 must not be mislabeled a false positive solely because
+the owner preferred C04. No direct preference test was run in this batch.
+
+C04 scores 34/36 and passes both factual categories but fails the stricter
+voice/naturalness floors. Its new criticism targets the causal explanation,
+where v1.7 criticized its closing. The reviewer calls the drift minor and
+acknowledges clear meaning. This identifies a disputed editorial judgment
+whose impact is amplified by the release rule; it is not a response-format,
+arithmetic, or checkpoint failure. C01 and C02 also score 2 for progression,
+so changing only the two release floors would leave both blocked.
+
+All four factual reviews returned full scores and no findings. Rechecking
+the first daily draft's approved meaning still does not locate support for
+the added update-related benefit in its ending. Its prior support concern
+therefore remains unresolved; a silent pass cannot adjudicate it. These
+manual observations are technical assessments, not new owner rulings or
+positive writing evidence.
+
+Decision: scoped mode remains inactive, with no database migration applied
+and no release-policy changes. The protected results include complete
+drafts, paragraph-level findings, raw provider responses, exact request and
+ledger hashes, a manual evidence review, and a local HTML comparison. The
+next design decision is report-specific editorial materiality and source
+claim adjudication. Do not schedule another unchanged-prompt batch or claim
+that adding a second reviewer fixed the judge. Friends, unseen cases, fresh
+generation and saved-reader verification remain outstanding.
