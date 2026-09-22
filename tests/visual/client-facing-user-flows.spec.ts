@@ -4109,6 +4109,9 @@ test.describe("client-facing user flow case studies", () => {
           { parent: "Account", route: "/#account", open: /Open journal/, title: "journal.", hash: "#account?view=journal", empty: "No check-ins yet" },
           { parent: "Settings", route: "/#settings", open: /Blocked accounts Review/, title: "blocked accounts.", hash: "#settings?view=blocked-accounts", empty: "None" }
         ]) {
+          // Let isolated background requests finish before replacing the document.
+          // WebKit reports interrupted route.fulfill requests as CORS page errors.
+          await page.waitForLoadState("networkidle");
           await page.goto(child.route);
           await expect(page.getByRole("heading", { name: `${child.parent.toLowerCase()}.`, exact: true })).toBeVisible();
           await expect(page.locator(".settings-back-button")).toHaveCount(0);
@@ -4169,6 +4172,8 @@ test.describe("client-facing user flow case studies", () => {
             })));
           }
           await page.getByRole("button", { name: child.open }).click();
+          await expect(page.locator(child.parent === "Account" ? ".account-journal-entry" : ".settings-blocked-row")).toHaveCount(child.parent === "Account" ? 10 : 20);
+          await page.waitForLoadState("networkidle");
           await page.reload();
           await expect(title).toBeVisible();
           expect(new URL(page.url()).hash).toBe(child.hash);
