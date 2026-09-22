@@ -2730,10 +2730,11 @@ function restorePendingPublication(): PendingStudioPublication | null {
 type StudioPublicationResult = { ok: boolean; rows: AdminGeneratedContentRow[]; found?: boolean; publicationReceipt?: { targetId?: string; contentKey?: string; currentPublicationState?: string; currentStatus?: string; targetVersion?: string; currentVersion?: string } };
 function publicationStateMessage(result: StudioPublicationResult) {
   const receipt = result.publicationReceipt;
-  if (receipt?.currentStatus === "DELETED") return "The publication completed earlier. Its source has since been removed.";
-  if (receipt?.currentPublicationState === "retired") return "The publication completed earlier. This content is now retired.";
-  if (receipt && (receipt.currentStatus !== "LIVE" || !["live", "dated"].includes(receipt.currentPublicationState ?? ""))) return "The publication completed earlier. This content is no longer published.";
-  if (receipt && receipt.currentVersion !== receipt.targetVersion) return "The publication completed earlier. A newer saved version is available in the library.";
+  const completed = "The publication completed earlier. ";
+  if (receipt?.currentStatus === "DELETED") return completed + "Its source has since been removed.";
+  if (receipt?.currentPublicationState === "retired") return completed + "This content is now retired.";
+  if (receipt && (receipt.currentStatus !== "LIVE" || !["live", "dated"].includes(receipt.currentPublicationState ?? ""))) return completed + "This content is no longer published.";
+  if (receipt && receipt.currentVersion !== receipt.targetVersion) return completed + "A newer saved version is available in the library.";
   return "The reviewed revision is published.";
 }
 
@@ -5011,7 +5012,8 @@ export function GeneratedContentAdminDashboard() {
     try {
       const result = await adminJsonRequest<StudioPublicationResult>("/api/admin/generated-content", secret, { method: "PATCH", body: JSON.stringify(operation) });
       if (result.publicationReceipt?.currentStatus === "DELETED") throw new AdminRequestError(publicationStateMessage(result), { status: 409, path: "/api/admin/generated-content", method: "PATCH", details: publicationStateMessage(result) });
-      if (!result.ok || !result.rows?.[0] || !result.publicationReceipt) throw new Error("Publication could not be confirmed. Check publication status to recover its result.");
+      // The catch below supplies the same recovery message for every uncertain result.
+      if (!result.ok || !result.rows?.[0] || !result.publicationReceipt) throw new Error();
       setPendingPublication(null);
       return result;
     } catch (error) {
@@ -5035,8 +5037,9 @@ export function GeneratedContentAdminDashboard() {
         return;
       }
       if (!result.found || !result.rows?.[0]) {
-        setEditorSaveError("No completed publication was found yet. Your saved revision is retained. Check again before publishing.");
-        setMessage("No completed publication was found yet. Your saved revision is retained. Check again before publishing.");
+        const message = "No completed publication was found yet. Your saved revision is retained. Check again before publishing.";
+        setEditorSaveError(message);
+        setMessage(message);
         return;
       }
       const current = result.rows[0];
@@ -6686,6 +6689,8 @@ export function GeneratedContentAdminDashboard() {
         ? [{ label: "Admin", page: "reviewQueue" as AdminDashboardPage }, { label: "Write", page: "skyWriteups" as AdminDashboardPage }, { label: "Friends Transits" }, { label: "Between you two" }]
       : adminPageBreadcrumbItems(activePage);
 
+  const publicationStatusButton = (disabled: boolean) => <StudioButton type="button" className="admin-secondary-button" disabled={disabled} onClick={() => void checkPendingPublication()}>Check publication status</StudioButton>;
+
   const nav = (
     <aside className="admin-sidebar" data-mobile-open={isMobileNavOpen ? "true" : "false"}>
       <div className="admin-sidebar-chrome">
@@ -6937,7 +6942,7 @@ export function GeneratedContentAdminDashboard() {
         {pendingPublication && !draft && !selectedRow && (
           <div className="admin-inline-warning" role="status">
             <span>A publication is awaiting confirmation. Its saved revision is retained.</span>
-            <StudioButton type="button" className="admin-secondary-button" disabled={isLoading || hasAccessIssue} onClick={() => void checkPendingPublication()}>Check publication status</StudioButton>
+            {publicationStatusButton(isLoading || hasAccessIssue)}
           </div>
         )}
 
@@ -11981,7 +11986,7 @@ export function GeneratedContentAdminDashboard() {
           </details>
         </section>
         {editorSaveError && <div className="admin-inline-warning" role="alert">{editorSaveError}</div>}
-        {pendingPublication && <StudioButton type="button" className="admin-secondary-button" disabled={isLoading} onClick={() => void checkPendingPublication()}>Check publication status</StudioButton>}
+        {pendingPublication && publicationStatusButton(isLoading)}
         {!compiledSkyArticleEdition && <div className={`admin-toolbar-actions admin-editor-savebar studio-surface${isLoading ? " is-saving" : ""}`} aria-busy={isLoading}>
           <span className={`admin-editor-save-state ${isLoading ? "is-saving" : draftHasUnsavedChanges || isNewDraft && !unchangedSkySource || packageWillPublishOnSave ? "is-unsaved" : "is-saved"}`} aria-live="polite">
             {isLoading

@@ -1,11 +1,13 @@
 # Content Studio publication reliability
 
-Release state: implemented on the review branch; production activation and deployed
-verification are pending. This is a technical change, not approval of reader prose.
+Implementation and staged release procedure are reviewed in [PR #1006](https://github.com/usrnmtkn/astrology-portal/pull/1006).
+The PR records the tested commit and production activation/verification outcomes. This is a technical change, not approval of reader prose.
 Implementation was rebased onto main `bd2316b8531068bbaae80add4d5f675dc382c85e`
-(PR #1003), then `9bee69955` (#1004); it retains inventory and scoped Sky loading
-plus main's account-access fixes. The comparative bundle figures below refer to
-the isolated #1003 baseline; #1004's existing allocations are retained separately.
+(PR #1003), then `9bee69955` (#1004) and `31cea6613` (#1005); it retains inventory,
+scoped Sky loading, account-access fixes and Calendar subscriptions. The comparative bundle figures below refer to
+the isolated #1003 baseline; #1004 and #1005 allocations are retained separately.
+Integration deduplicates recovery messages and the existing status button without
+changing their visible text or behavior. Raw entry and timing limits are unchanged.
 
 ## Contracts and caller audit
 
