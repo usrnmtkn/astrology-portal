@@ -99,3 +99,24 @@ iPhone Calendar acceptance. After deployment, finish an actual iPhone subscripti
 and verify a subsequent published edit through its existing URL before claiming
 the original device failure resolved in production. No production content, payment,
 or native-calendar subscription was changed by these tests.
+
+## Release integration
+
+The owner authorized commit and merge on September 21, 2026. The feature was
+rebased onto main `bd2316b8531068bbaae80add4d5f675dc382c85e`; the full local API
+gate and nine fresh-build browser cases passed after integration. The feed's
+explicit Vercel function rule precedes the generic rule and packages the Swiss
+Ephemeris WASM assets. The first preview exposed this ordering requirement.
+
+The integrated web build measures 3,446,118 aggregate gzip bytes against the
+recorded main build's 3,443,068 (+3,050). Allocate 3,000 bytes above current main's
+3,443,500 cap: 3,446,500, leaving 382 bytes. This replaces the original 1,000-byte
+allocation, which relied on headroom consumed by the intervening Sky release.
+Current-main startup, CSS, individual chunk and performance caps remain unchanged.
+
+The additive migration was applied to the deployment's confirmed Supabase project
+on September 22 UTC. Migration history was aligned to the committed migration
+version. RLS and grants were verified: neither public client role can read either
+table; the service role has the required access. The advisor's informational
+no-policy notices for these tables reflect the intentional service-only design.
+No owner event or reader prose was created or modified during migration.
