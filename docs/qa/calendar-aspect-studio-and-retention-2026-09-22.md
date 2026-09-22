@@ -26,19 +26,26 @@ revalidation. Before the fix, the approved fixture body disappears and bundled
 fallback copy replaces it while the request is held. After the fix, the card and
 open detail retain the complete body throughout the held request.
 
-The fresh-build Chromium run passed all 17 selected Calendar and Studio cases:
+The final fresh-build Chromium run passed all 23 selected Calendar and Studio cases:
 
 ```sh
 PLAYWRIGHT_BASE_URL=http://127.0.0.1:4318 npx playwright test \
   tests/visual/calendar-content-retention.spec.ts \
   tests/visual/content-dashboard-admin-user-flows.spec.ts \
-  --project=chromium-desktop --grep 'Calendar|calendar' --workers=1
+  tests/visual/calendar-current-season.spec.ts \
+  --project=chromium-desktop --grep 'Calendar|calendar|season|missing Sky candidates' --workers=1
 ```
 
 Coverage includes 390px/1440px, light/dark, held refresh, updated copy, HTTP 503,
 confirmed removal, in-app navigation, signed titles, optional filters, reload,
 clear, and an isolated actual-handler editor save/reopen. The new retention
 regression is included in the Visual smoke Sky reader job.
+
+Hosted Studio coverage caught a title regression for an unsaved five-value Sky
+candidate. Signed editor titles now apply to existing saved or packaged sources;
+new manual candidates retain the established "Create saved row" heading. The
+existing missing-candidate save regression passes alongside the signed-title
+cases. Current-season and midnight navigation cases also pass after integration.
 
 Additional passing checks: full `test:content-studio-api`; web and admin
 typechecks; Calendar Aspect helper tests (all 32 filter subsets in both orders);

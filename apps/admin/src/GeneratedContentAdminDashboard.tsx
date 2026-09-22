@@ -10368,7 +10368,9 @@ export function GeneratedContentAdminDashboard() {
       return `${wordCount} ${wordCount === 1 ? "word" : "words"} · ${value.length} ${value.length === 1 ? "character" : "characters"}`;
     };
     const unchangedSkySource = isSkyPlacementSource && selectedRow?.id.startsWith("package:") && !draftHasUnsavedChanges && !packageHasProposal;
-    const signedAspectTitle = calendarAspectSignedTitle(currentDraft.contentKey);
+    const signedAspectTitle = currentDraft.id || selectedRow?.id.startsWith("package:") || currentDraft.sections?.packageOriginalRecord
+      ? calendarAspectSignedTitle(currentDraft.contentKey)
+      : null;
     const editorHeading = signedAspectTitle ? `Edit ${signedAspectTitle}` : !currentDraft.id && currentDraft.contentKey.startsWith("authored/calendar-weekly-moon/") ? `New leftover write-up · ${lunarIdentity?.title ?? "Moon-sign leftover"}` : isSkySummaryDraft || selectedRow?.id.startsWith("package:") ? `Edit ${currentDraft.headline}` : currentDraft.id
       ? isVocabularyDraft
         ? "Edit phrase"
