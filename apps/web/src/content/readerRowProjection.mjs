@@ -94,7 +94,8 @@ const sections = {
   sections: [section], blocks: [{ ...section, ...numbers('level'), ...booleans('group'), ...strings('style'),
     list: [{ ...booleans('ordered'), items: ['string'] }] }],
   lunarJournal: { blocks: [lunarBlock] },
-  calendarOverview: strings('weeklyOverview'), packageRecord, skyArticleEdition: edition,
+  calendarOverview: strings('weeklyOverview weeklyIntegration monthlyOverview monthlyIntegration seasonOverview lunarOverview transitOverview seasonOpening planetaryHighlights newMoonOverview fullMoonOverview lunationConnection'),
+  packageRecord, skyArticleEdition: edition,
   articleHoroscopes: { ...strings('schema heading introduction'), passages: [{ ...strings('risingSign heading body'), ...numbers('house') }] }
 };
 const rowContract = {

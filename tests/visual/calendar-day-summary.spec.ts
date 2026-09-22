@@ -103,6 +103,7 @@ test('Calendar and Sky preserve formatted summary lists and placement links', as
   test.setTimeout(90_000);
   const dateKey = '2026-09-12';
   const row = { id: 'format-summary', content_key: 'cms/sky-daily-summary/sun/virgo', surface: 'sky', mode: 'card',
+    updated_at: '2026-09-12T12:00:00.000Z',
     status: 'LIVE', lane: 'serving', review_state: null, headline: 'QA summary',
     body: 'QA opening.\n\n- **First QA item**\n- *Final QA item*',
     source_snapshot: { contentType: 'mustache-template', contentSystem: 'cms-surface-override', allowedSlots: [] } };

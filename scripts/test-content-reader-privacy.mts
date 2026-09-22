@@ -51,6 +51,13 @@ try {
   assert.equal(result.body.includes('PRIVATE_SERVICE_KEY'), false);
   assert.equal(result.headers['Cache-Control'], 'no-store');
   assert.deepEqual(row, initial, 'Projection must not mutate the original, history or draft');
+  const calendarWriting = Object.fromEntries(['weeklyOverview', 'weeklyIntegration', 'monthlyOverview', 'monthlyIntegration',
+    'seasonOverview', 'lunarOverview', 'transitOverview', 'seasonOpening', 'planetaryHighlights', 'newMoonOverview',
+    'fullMoonOverview', 'lunationConnection'].map(field => [field, `${field}: ${text}`]));
+  stored = [{ ...row, sections: { calendarOverview: { ...calendarWriting, internalNotes: privateText } } }];
+  const calendar = await request({ keys: [row.content_key] });
+  assert.deepEqual(calendar.value.rows[0].sections.calendarOverview, calendarWriting, 'Complete Calendar passage fields must survive public projection');
+  assert.equal(calendar.body.includes(privateText), false);
   for (const mutation of [{ status: 'DRAFT' }, { lane: 'reference' }, { review_state: 'needs-review' },
     { facts: { sampleOnly: true } }, { flags: ['BLOCKLIST_MATCH'] },
     { source_snapshot: { content_role: 'source_material' } }]) {
