@@ -6,6 +6,15 @@ test.beforeAll(async () => {
     import React from 'react'; import {createRoot} from 'react-dom/client';
     import {YouReportActions} from './apps/web/src/features/you/YouReportActions';
     const h = window.reportHarness = {userId:window.existingReportAccount, items:[], reads:0, creates:0, read:async()=>h.items, create:async()=>({status:'queued'}), emit:null};
+    // Keep the real request's session check. Count POSTs only after that check,
+    // including when sign-out and source completion occur in the same tick.
+    window.fetch=async (url,options)=>{
+      if(url!=='/api/you-report-request'||options.method!=='POST')throw Error('Unexpected request');
+      h.creates++;
+      if(!h.userId||options.headers.authorization!=='Bearer synthetic-'+h.userId)throw Error('session mismatch');
+      h.submittedBrief=JSON.parse(options.body).brief;
+      return new Response(JSON.stringify(await h.create()),{status:202,headers:{'content-type':'application/json'}});
+    };
     const root=createRoot(document.getElementById('root'));
     const summary={headline:'Test',summary:'Synthetic report fixture.',status:'ready'};
     h.prepareSources=async()=>({reportTransitReadings:[],reportSourceGaps:[]});
@@ -18,9 +27,7 @@ test.beforeAll(async () => {
       b.onResolve({filter:/services\/auth$/},()=>({path:'auth',namespace:'fixture'}));
       b.onResolve({filter:/services\/reportLibrary$/},()=>({path:'library',namespace:'fixture'}));
       b.onResolve({filter:/\.css$/},()=>({path:'css',namespace:'fixture'}));
-      b.onLoad({filter:/.*/,namespace:'fixture'},({path})=>({contents:path==='auth'?'export const getSupabaseClient=async()=>{throw Error("The report card must use the page account")};':path==='library'?'export async function listReportLibrary(options){const h=window.reportHarness;h.reads++;if(options.expectedUserId!==h.userId)throw Error("session mismatch");return h.read();}':''}));
-      // Keep the real brief builders, replace only the network request boundary.
-      b.onLoad({filter:/youTransitReports\.ts$/},async ({path})=>{const fs=await import('node:fs/promises');let source=await fs.readFile(path,'utf8');source=source.slice(0,source.indexOf('export async function requestYouTransitReport'))+'export async function requestYouTransitReport(brief,userId){const h=window.reportHarness;h.creates++;h.submittedBrief=brief;if(userId!==h.userId)throw Error("session mismatch");return h.create();}';return {contents:source,loader:'ts'};});
+      b.onLoad({filter:/.*/,namespace:'fixture'},({path})=>({contents:path==='auth'?'export const getSupabaseClient=async()=>({auth:{getSession:async()=>{const id=window.reportHarness.userId;return {data:{session:id?{user:{id},access_token:"synthetic-"+id}:null},error:null};}}});':path==='library'?'export async function listReportLibrary(options){const h=window.reportHarness;h.reads++;if(options.expectedUserId!==h.userId)throw Error("session mismatch");return h.read();}':''}));
     }}]});
   script=output.outputFiles[0].text;
 });

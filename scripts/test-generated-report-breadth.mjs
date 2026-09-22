@@ -31,6 +31,11 @@ const { judgeGeneratedTransitReading, GENERATED_REPORT_JUDGE_SCHEMA } = await im
   `data:text/javascript;base64,${Buffer.from(bundle.outputFiles[0].text).toString("base64")}`
 );
 const scores = Object.fromEntries(GENERATED_REPORT_JUDGE_SCHEMA.properties.scores.required.map((key) => [key, 4]));
+const evidence = { draftQuote: "Fixture", sourcePath: null, sourceQuote: null };
+const scoreCategory = {
+  over_specification: "factual_traceability", unsupported_interpretation: "factual_traceability",
+  unsupported_timing: "astrology_chronology", narrative_repetition: "interpretive_movement", owner_language: "owner_voice"
+};
 assert.ok(GENERATED_REPORT_JUDGE_SCHEMA.properties.findings.items.properties.category.enum.includes("over_specification"));
 const previous = globalThis.reportBreadthFixture;
 let response;
@@ -53,12 +58,15 @@ try {
     draft: { headline: "Fixture", tldr: "Fixture", summary: "Fixture", body: "Fixture" },
     productionInput: { surface: "friends", contentKey: "fixture", eventType: "transit", facts: { friendTransitsBrief: { source: "locked fixture" } }, knowledgeIds: ["fixture"], sourceSnapshot: {} }, ownerEvidence: ["Approved fixture rule"]
   });
+  response = { scores, findings: [{ category: "over_specification", location: "body", finding: "Unsupported outcome.", ...evidence }] };
+  await assert.rejects(judge(), /finding contradicts a perfect category score/,
+    "Contradictory diagnostics must not enter the correction loop.");
   for (const outcome of ["breakup", "job loss", "move", "major financial loss", "illness", "quitting"]) {
-    response = { scores, findings: [{ category: "over_specification", location: "body paragraph 2", finding: `Unsupported ${outcome} inferred from a broad category.` }] };
+    response = { scores: { ...scores, factual_traceability: 3 }, findings: [{ category: "over_specification", location: "body", finding: `Unsupported ${outcome} inferred from a broad category.`, ...evidence }] };
     const result = await judge();
     assert.equal(result.ownerVoiceEvidence.sources.length, 3);
-    assert.equal(result.result.overall, 1);
-    assert.equal(result.result.verdict, "below_threshold", `${outcome} must block even with perfect scores`);
+    assert.ok(result.result.overall >= 0.85);
+    assert.equal(result.result.verdict, "below_threshold", `${outcome} must block even when the aggregate score passes`);
     assert.equal(result.result.findings[0].category, "over_specification");
   }
   for (const [category, finding] of [
@@ -71,18 +79,20 @@ try {
     ["owner_language", "Real is used as vague emphasis rather than a factual distinction."]
   ]) {
     assert.ok(GENERATED_REPORT_JUDGE_SCHEMA.properties.findings.items.properties.category.enum.includes(category));
-    response = { scores, findings: [{ category, location: "body", finding }] };
+    response = { scores: { ...scores, [scoreCategory[category]]: 3 }, findings: [{ category, location: "body", finding, ...evidence }] };
     const result = await judge();
-    assert.equal(result.result.overall, 1);
+    assert.ok(result.result.overall >= 0.85);
     assert.equal(result.result.verdict, "below_threshold", category);
   }
   // Grounded examples and negated outcomes are not blocked by a word blacklist.
   response = { scores, findings: [] };
   assert.equal((await judge()).result.verdict, "pass");
   response = { scores: { ...scores, owner_voice: 3 }, findings: [] };
+  await assert.rejects(judge(), /below-floor owner_voice score has no diagnostic evidence/);
+  response.findings = [{ category: "owner_voice", location: "body", finding: "The wording fails the supplied voice rubric.", ...evidence }];
   assert.equal((await judge()).result.verdict, "below_threshold", "Breadth does not waive voice floors");
   response = { scores, findings: [{ category: "unknown_category", location: "body", finding: "Invalid result" }] };
-  await assert.rejects(judge(), /invalid finding/);
+  await assert.rejects(judge(), /malformed finding/);
 } finally {
   if (previous === undefined) delete globalThis.reportBreadthFixture;
   else globalThis.reportBreadthFixture = previous;
