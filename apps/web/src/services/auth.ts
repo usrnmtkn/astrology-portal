@@ -70,6 +70,7 @@ export const isPhoneAuthEnabled = (
 let supabaseClientPromise: Promise<SupabaseClient | null> | null = null;
 let verifiedAuthUserRequest: {
   accessToken: string;
+  checkedAt: number;
   promise: Promise<User | null>;
 } | null = null;
 
@@ -106,10 +107,11 @@ export async function getVerifiedAuthUser(client?: SupabaseClient | null) {
     return null;
   }
 
-  if (verifiedAuthUserRequest?.accessToken !== accessToken) {
+  if (verifiedAuthUserRequest?.accessToken !== accessToken || Date.now() - verifiedAuthUserRequest.checkedAt > 30_000) {
     const request = {
       accessToken,
-      promise: supabase.auth.getUser().then(({ data, error }) => {
+      checkedAt: Date.now(),
+      promise: supabase.auth.getUser(accessToken).then(({ data, error }) => {
         if (error) {
           throw error;
         }
@@ -128,12 +130,15 @@ export async function getVerifiedAuthUser(client?: SupabaseClient | null) {
   return verifiedAuthUserRequest.promise;
 }
 
-function redirectTo() {
+async function redirectTo() {
   const url = new URL(authRedirectUrl || window.location.origin);
   const studioPath = rememberStudioReturnPath();
+  const { rememberReaderReturnPath } = await import("./readerAuthReturn");
+  const readerPath = rememberReaderReturnPath();
   if (studioPath && url.origin === window.location.origin) {
     url.searchParams.set("returnTo", studioPath);
   }
+  if (!studioPath && readerPath && url.origin === window.location.origin) url.searchParams.set("readerReturn", readerPath);
   return url.href;
 }
 
@@ -254,7 +259,7 @@ export async function signInWithProvider(provider: AuthProvider) {
   const { error } = await supabase.auth.signInWithOAuth({
     provider,
     options: {
-      redirectTo: redirectTo()
+      redirectTo: await redirectTo()
     }
   });
 
@@ -285,7 +290,7 @@ export async function signUpWithEmail({
       data: {
         full_name: fullName
       },
-      emailRedirectTo: redirectTo()
+      emailRedirectTo: await redirectTo()
     }
   });
 
@@ -310,7 +315,7 @@ export async function resendEmailSignupConfirmation(email: string) {
     type: "signup",
     email: email.trim(),
     options: {
-      emailRedirectTo: redirectTo()
+      emailRedirectTo: await redirectTo()
     }
   });
 
@@ -476,14 +481,17 @@ export async function signOutAuth() {
     return;
   }
 
-  const { error } = await supabase.auth.signOut();
+  // The ordinary account action signs out this device only. Supabase's
+  // default global scope also revokes sessions on the user's other devices.
+  const { error } = await supabase.auth.signOut({ scope: "local" });
 
   if (error) {
     throw error;
   }
+  verifiedAuthUserRequest = null;
 }
 
-export async function deleteOwnAccount() {
+export async function deleteOwnAccount(expectedUserId?: string) {
   const supabase = await getSupabaseClient();
 
   if (!supabase) {
@@ -493,7 +501,7 @@ export async function deleteOwnAccount() {
   const { data, error } = await supabase.auth.getSession();
   const accessToken = data.session?.access_token;
 
-  if (error || !accessToken) {
+  if (error || !accessToken || (expectedUserId && data.session?.user.id !== expectedUserId)) {
     throw new Error("Sign in again before deleting your account.");
   }
 
@@ -513,5 +521,6 @@ export async function deleteOwnAccount() {
     );
   }
 
-  await supabase.auth.signOut({ scope: "local" });
+  const current = await supabase.auth.getSession();
+  if (current.data.session?.user.id === data.session?.user.id) await signOutAuth();
 }

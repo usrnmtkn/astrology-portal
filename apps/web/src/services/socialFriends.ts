@@ -61,6 +61,8 @@ export type SocialInvitationSummary = {
 };
 
 export type SocialInvitationPreview = {
+  token: string;
+  accountId: string;
   invitationId: string;
   contactKind: "email" | "phone" | "link";
   inviterUserId: string;
@@ -294,7 +296,7 @@ function socialError(error: unknown, fallback: string) {
   return new Error(fallback);
 }
 
-async function authenticatedClient() {
+async function authenticatedClient(expectedUserId?: string) {
   const client = await getSupabaseClient();
 
   if (!client) {
@@ -303,7 +305,7 @@ async function authenticatedClient() {
 
   const user = await getVerifiedAuthUser(client);
 
-  if (!user) {
+  if (!user || (expectedUserId && user.id !== expectedUserId)) {
     throw new SocialSignInRequiredError();
   }
 
@@ -355,8 +357,8 @@ export async function syncOwnSocialProfile({
   avatarUrl?: string;
   natalChart: SkySnapshot | null;
   birthTimeKnown: boolean;
-}): Promise<SocialProfile> {
-  const { client, user } = await authenticatedClient();
+}, expectedUserId?: string): Promise<SocialProfile> {
+  const { client, user } = await authenticatedClient(expectedUserId);
   const { data, error } = await client
     .rpc("ensure_own_social_profile", {
       display_name_input: displayName.trim() || "New stargazer",
@@ -388,8 +390,8 @@ export async function syncOwnSocialProfile({
   return rowToProfile(currentProfile as SocialProfileRow);
 }
 
-export async function loadOwnSocialProfile(): Promise<SocialProfile | null> {
-  const { client, user } = await authenticatedClient();
+export async function loadOwnSocialProfile(expectedUserId?: string): Promise<SocialProfile | null> {
+  const { client, user } = await authenticatedClient(expectedUserId);
   const { data, error } = await client
     .from("social_profiles")
     .select("user_id, handle, display_name, avatar_url, discoverable, natal_chart")
@@ -411,14 +413,14 @@ export async function saveSocialHandle({
   handle: string;
   displayName: string;
   avatarUrl?: string;
-}): Promise<SocialProfile> {
+}, expectedUserId?: string): Promise<SocialProfile> {
   const normalizedHandle = normalizeSocialHandle(handle);
 
   if (!socialHandleIsValid(normalizedHandle)) {
     throw new Error("Use 3–24 characters, starting with a letter. Letters, numbers, and underscores only.");
   }
 
-  const { client, user } = await authenticatedClient();
+  const { client, user } = await authenticatedClient(expectedUserId);
   const profileValues = {
     handle: normalizedHandle,
     display_name: displayName.trim() || "New stargazer",
@@ -570,8 +572,8 @@ export async function cancelSocialFriendRequest(requestId: string) {
   }
 }
 
-export async function listSocialFriendRequests(): Promise<SocialFriendRequest[]> {
-  const { client } = await authenticatedClient();
+export async function listSocialFriendRequests(expectedUserId?: string): Promise<SocialFriendRequest[]> {
+  const { client } = await authenticatedClient(expectedUserId);
   const { data, error } = await client.rpc("list_social_friend_requests");
 
   if (error) {
@@ -728,14 +730,15 @@ export function captureSocialInvitationFromUrl() {
   return true;
 }
 
-export async function previewPendingSocialInvitation(): Promise<SocialInvitationPreview | null> {
+export async function previewPendingSocialInvitation(expectedAccountId: string): Promise<SocialInvitationPreview | null> {
   const token = pendingInvitationToken();
 
   if (!token) {
     return null;
   }
 
-  const { client } = await authenticatedClient();
+  const { client, user } = await authenticatedClient();
+  if (user.id !== expectedAccountId) return null;
   const { data, error } = await client.rpc("preview_social_invitation", {
     invitation_token_input: token
   });
@@ -746,11 +749,13 @@ export async function previewPendingSocialInvitation(): Promise<SocialInvitation
 
   const row = (data as InvitationPreviewRow[] | null)?.[0];
 
-  if (!row) {
+  if (!row || pendingInvitationToken() !== token) {
     return null;
   }
 
   return {
+    token,
+    accountId: user.id,
     invitationId: row.invitation_id,
     contactKind: row.contact_kind,
     inviterUserId: row.inviter_user_id,
@@ -761,42 +766,44 @@ export async function previewPendingSocialInvitation(): Promise<SocialInvitation
   };
 }
 
-export async function declinePendingSocialInvitation() {
-  const token = pendingInvitationToken();
-
-  if (!token) {
-    return;
+async function invitationClient(preview: SocialInvitationPreview) {
+  const { client, user } = await authenticatedClient();
+  if (user.id !== preview.accountId || pendingInvitationToken() !== preview.token) {
+    throw new Error("Your account or invitation changed. Open the invitation again.");
   }
+  const { data, error } = await client.auth.getSession();
+  if (error || data.session?.user.id !== preview.accountId || !data.session.access_token) {
+    throw new Error("Your account changed. Open the invitation again.");
+  }
+  return { client, accessToken: data.session.access_token };
+}
 
-  const { client } = await authenticatedClient();
+export async function declinePendingSocialInvitation(preview: SocialInvitationPreview) {
+  const { client, accessToken } = await invitationClient(preview);
+  const token = preview.token;
   const { error } = await client.rpc("decline_social_invitation", {
     invitation_token_input: token
-  });
+  }).setHeader("Authorization", `Bearer ${accessToken}`);
 
   if (error) {
     throw socialError(error, "Could not decline this invitation.");
   }
 
-  clearPendingSocialInvitation();
+  if (pendingInvitationToken() === token) clearPendingSocialInvitation();
 }
 
-export async function claimPendingSocialInvitation() {
-  const token = pendingInvitationToken();
-
-  if (!token) {
-    return null;
-  }
-
-  const { client } = await authenticatedClient();
+export async function claimPendingSocialInvitation(preview: SocialInvitationPreview) {
+  const { client, accessToken } = await invitationClient(preview);
+  const token = preview.token;
   const { data, error } = await client.rpc("claim_social_invitation", {
     invitation_token_input: token
-  });
+  }).setHeader("Authorization", `Bearer ${accessToken}`);
 
   if (error) {
     throw socialError(error, "Could not accept the invitation.");
   }
 
-  clearPendingSocialInvitation();
+  if (pendingInvitationToken() === token) clearPendingSocialInvitation();
   return (data as Array<{
     invitation_id: string;
     request_id: string | null;
@@ -856,8 +863,8 @@ export function subscribeToSocialChanges(onChange: () => void) {
   };
 }
 
-export async function listSocialFriends(): Promise<ConnectedSocialFriend[]> {
-  const { client } = await authenticatedClient();
+export async function listSocialFriends(expectedUserId?: string): Promise<ConnectedSocialFriend[]> {
+  const { client } = await authenticatedClient(expectedUserId);
   const { data, error } = await client.rpc("list_social_friends").abortSignal(AbortSignal.timeout(8000));
 
   if (error) {
@@ -922,8 +929,8 @@ export async function unblockSocialUser(userId: string) {
   }
 }
 
-export async function listSocialBlocks(): Promise<SocialBlock[]> {
-  const { client } = await authenticatedClient();
+export async function listSocialBlocks(expectedUserId?: string): Promise<SocialBlock[]> {
+  const { client } = await authenticatedClient(expectedUserId);
   const { data, error } = await client.rpc("list_social_blocks");
 
   if (error) {
@@ -939,12 +946,12 @@ export async function listSocialBlocks(): Promise<SocialBlock[]> {
   }));
 }
 
-export async function exportSocialAccountBundle() {
+export async function exportSocialAccountBundle(expectedUserId?: string) {
   const [profile, requests, friends, blocks] = await Promise.all([
-    loadOwnSocialProfile(),
-    listSocialFriendRequests(),
-    listSocialFriends(),
-    listSocialBlocks()
+    loadOwnSocialProfile(expectedUserId),
+    listSocialFriendRequests(expectedUserId),
+    listSocialFriends(expectedUserId),
+    listSocialBlocks(expectedUserId)
   ]);
 
   return {

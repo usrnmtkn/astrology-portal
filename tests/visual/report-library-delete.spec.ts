@@ -4,7 +4,7 @@ for (const theme of ['light', 'dark'] as const) {
  for (const width of [390, 1440]) {
   test(`report delete confirmation, persistence, and failure at ${width} ${theme}`, async ({ page }) => {
     await page.setViewportSize({width,height:1000});
-    const user={id:'00000000-0000-4000-8000-000000000001',aud:'authenticated',role:'authenticated',email:'report-delete@example.test'};
+    const user={id:'00000000-0000-4000-8000-000000000001',aud:'authenticated',role:'authenticated',app_metadata: { provider: "email" }, user_metadata: {}, email:'report-delete@example.test'};
     const state: Record<string, unknown>[]=[];
     let writes=0,fail=false;
     const rows=[{id:'00000000-0000-4000-8000-000000000002',subject_type:'you_day_reading',status:'DRAFT',body:'Saved test reading.',headline:'Daily test report',target_date:'2026-09-11',created_at:'2026-09-11T12:00:00Z',updated_at:'2026-09-11T12:00:00Z'},

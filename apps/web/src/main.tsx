@@ -108,6 +108,14 @@ async function startApp() {
   }
 
   const appModulePromise = import("./App");
+  const callbackUrl = new URL(window.location.href);
+  if (callbackUrl.searchParams.has("code") || /(?:^#|&)(?:access_token|error|error_code)=/u.test(callbackUrl.hash)) {
+    // The SDK reads the callback URL asynchronously. Restoring a hash route
+    // (or letting the user navigate) before it finishes can erase the tokens
+    // and leave every protected feature without a session.
+    const { completeAuthCallback } = await import("./services/authCallback");
+    await completeAuthCallback();
+  }
   // A direct You link needs the profile page immediately. Fetch it alongside
   // App instead of adding a second module/CSS waterfall after React mounts.
   if (/^#\/?you(?:[/?]|$)/u.test(window.location.hash)) {

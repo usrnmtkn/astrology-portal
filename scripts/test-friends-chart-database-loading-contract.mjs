@@ -29,7 +29,7 @@ assert.match(
 );
 assert.match(
   authSource,
-  /supabase\.auth\.getUser\(\)/,
+  /supabase\.auth\.getUser\(accessToken\)/,
   "Friend chart database QA must cover the signed-in remote-user branch."
 );
 assert.match(
@@ -153,8 +153,8 @@ assert.deepEqual(
     persistedProfileId: "persisted-id",
     legacyOwnerIds
   }),
-  ["cached-id", "persisted-id", "account-id", "legacy-a", "legacy-b"],
-  "Auth migration must behaviorally sweep older local manual-chart keys before showing the remote Friends chart list."
+  ["account-id", "persisted-id"],
+  "Migration accepts only the verified account and its server-persisted legacy owner mapping."
 );
 assert.equal(
   accountProfileBootstrapAction({

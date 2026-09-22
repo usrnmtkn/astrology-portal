@@ -9,6 +9,7 @@ import {
   type ReportLibraryItem,
   type ReportReadyEventDetail
 } from "../../services/reportLibrary";
+import { observeVerifiedAccount } from "../../services/verifiedAccountObserver";
 import "../../styles/report-notifications.css";
 
 const pollIntervalMs = 30_000;
@@ -35,12 +36,18 @@ export function ReportsGlobalLayer() {
   const [items, setItems] = useState<ReportLibraryItem[]>([]);
   const [menuSlot, setMenuSlot] = useState<HTMLElement | null>(null);
   const [toast, setToast] = useState<ReportReadyEventDetail | null>(null);
+  const accountRef = useRef<string | null>(null);
+  const requestVersion = useRef(0);
   const notifiedThisSessionRef = useRef(new Set<string>());
   const pathIsReport = window.location.pathname.startsWith("/reports/") || window.location.pathname === "/reports";
 
   const refresh = useCallback(async () => {
+    const accountId = accountRef.current;
+    if (!accountId) return;
+    const version = ++requestVersion.current;
     try {
-      const nextItems = await listReportLibrary();
+      const nextItems = await listReportLibrary({ expectedUserId: accountId });
+      if (version !== requestVersion.current || accountId !== accountRef.current) return;
       setItems(nextItems);
       const unseen = unreadReadyReports(nextItems);
       const nextToast = unseen.find((item) => !notifiedThisSessionRef.current.has(item.id));
@@ -61,7 +68,16 @@ export function ReportsGlobalLayer() {
 
   useEffect(() => {
     if (pathIsReport) return undefined;
-    void refresh();
+    const unsubscribe = observeVerifiedAccount(({ id }) => {
+      if (id !== accountRef.current) {
+        ++requestVersion.current;
+        accountRef.current = id;
+        setItems([]);
+        setToast(null);
+        notifiedThisSessionRef.current.clear();
+      }
+      if (id) void refresh();
+    });
     const timer = window.setInterval(() => {
       if (document.visibilityState === "visible") void refresh();
     }, pollIntervalMs);
@@ -71,6 +87,9 @@ export function ReportsGlobalLayer() {
     window.addEventListener("focus", handleVisible);
     document.addEventListener("visibilitychange", handleVisible);
     return () => {
+      unsubscribe();
+      ++requestVersion.current;
+      accountRef.current = null;
       window.clearInterval(timer);
       window.removeEventListener("focus", handleVisible);
       document.removeEventListener("visibilitychange", handleVisible);
@@ -79,15 +98,9 @@ export function ReportsGlobalLayer() {
 
   useEffect(() => {
     if (pathIsReport) return undefined;
-    const handleReady = (event: Event) => {
-      const detail = (event as CustomEvent<ReportReadyEventDetail>).detail;
-      if (detail?.sourceId && detail.route) {
-        const key = `${detail.sourceKind}:${detail.sourceId}`;
-        notifiedThisSessionRef.current.add(key);
-        setToast(detail);
-      }
-      void refresh();
-    };
+    // The event may belong to a generation started by a previous account.
+    // Only the current owner's authorized library can supply notification data.
+    const handleReady = () => { void refresh(); };
     window.addEventListener(reportReadyEvent, handleReady);
     return () => window.removeEventListener(reportReadyEvent, handleReady);
   }, [pathIsReport, refresh]);
@@ -104,9 +117,12 @@ export function ReportsGlobalLayer() {
   const unreadCount = useMemo(() => unreadReadyReports(items).length, [items]);
 
   const openReport = useCallback(async (detail: ReportReadyEventDetail) => {
+    const accountId = accountRef.current;
+    if (!accountId) return;
     const item = items.find((candidate) => (
       candidate.sourceKind === detail.sourceKind && candidate.sourceId === detail.sourceId
     ));
+    if (!item || item.ownerId !== accountId) return;
     if (item) {
       try {
         await markReportSeen(item);
@@ -114,7 +130,7 @@ export function ReportsGlobalLayer() {
         // Opening the saved report is more important than clearing its badge.
       }
     }
-    window.location.assign(detail.route);
+    if (accountId === accountRef.current) window.location.assign(detail.route);
   }, [items]);
 
   if (pathIsReport) return null;

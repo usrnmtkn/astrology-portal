@@ -8,6 +8,7 @@ export type ReportLibraryStatus = "generating" | "ready" | "needs_attention";
 export type GeneratedReportKind = "friend_transit_reading" | "you_day_reading" | "you_week_reading";
 
 export type ReportLibraryItem = {
+  ownerId?: string;
   id: string;
   sourceKind: ReportLibrarySourceKind;
   sourceId: string;
@@ -264,6 +265,7 @@ export async function listReportLibrary(options: { expectedUserId?: string } = {
     const periodEnd = row.subject_type === "you_week_reading" ? generatedPeriodEnd(row) : singleDayWindow.periodEnd;
     const vanitySlug = reportVanitySlug({ targetDate: row.target_date, createdAt: row.created_at, subjectLabel: generatedVanitySubject(row), title });
     return [{
+      ownerId: userId,
       id: `generated_interpretation:${row.id}`,
       sourceKind: "generated_interpretation",
       sourceId: row.id,
@@ -299,6 +301,7 @@ export async function listReportLibrary(options: { expectedUserId?: string } = {
     const subjectLabel = title;
     const vanitySlug = reportVanitySlug({ targetDate: row.period_start, createdAt: row.created_at, subjectLabel, title });
     return [{
+      ownerId: userId,
       id: `premium_report:${row.id}`,
       sourceKind: "premium_report",
       sourceId: row.id,
@@ -386,9 +389,10 @@ export function generatedReportVanityPath(report: Pick<GeneratedReportRecord, "s
 async function upsertLibraryState(
   sourceKind: ReportLibrarySourceKind,
   sourceId: string,
-  patch: { archived_at?: string | null; seen_at?: string | null; deleted_at?: string }
+  patch: { archived_at?: string | null; seen_at?: string | null; deleted_at?: string },
+  expectedUserId?: string
 ) {
-  const context = await authenticatedContext();
+  const context = await authenticatedContext(expectedUserId);
   if (!context) throw new Error("Sign in to manage reports.");
   const { client, userId } = context;
   const { error } = await client
@@ -403,17 +407,17 @@ async function upsertLibraryState(
   if (error) throw error;
 }
 
-export async function markReportSeen(item: Pick<ReportLibraryItem, "sourceKind" | "sourceId">) {
-  await upsertLibraryState(item.sourceKind, item.sourceId, { seen_at: new Date().toISOString() });
+export async function markReportSeen(item: Pick<ReportLibraryItem, "sourceKind" | "sourceId" | "ownerId">) {
+  await upsertLibraryState(item.sourceKind, item.sourceId, { seen_at: new Date().toISOString() }, item.ownerId);
 }
 
 export async function markReportArchived(
-  item: Pick<ReportLibraryItem, "sourceKind" | "sourceId">,
+  item: Pick<ReportLibraryItem, "sourceKind" | "sourceId" | "ownerId">,
   archived: boolean
 ) {
   await upsertLibraryState(item.sourceKind, item.sourceId, {
     archived_at: archived ? new Date().toISOString() : null
-  });
+  }, item.ownerId);
 }
 
 export function unreadReadyReports(items: ReportLibraryItem[]) {
@@ -421,6 +425,6 @@ export function unreadReadyReports(items: ReportLibraryItem[]) {
 }
 
 // A library deletion retains fulfillment and payment history, but has no Restore action.
-export async function deleteReport(item: Pick<ReportLibraryItem, "sourceKind" | "sourceId">) {
-  await upsertLibraryState(item.sourceKind, item.sourceId, { deleted_at: new Date().toISOString() });
+export async function deleteReport(item: Pick<ReportLibraryItem, "sourceKind" | "sourceId" | "ownerId">) {
+  await upsertLibraryState(item.sourceKind, item.sourceId, { deleted_at: new Date().toISOString() }, item.ownerId);
 }

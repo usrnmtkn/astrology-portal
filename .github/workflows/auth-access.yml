@@ -1,0 +1,34 @@
+name: Auth and feature access
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: auth-access-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+jobs:
+  auth-access:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build:knowledge
+      - run: npm run test:auth-access
+      - run: node scripts/test-you-report-session.mjs
+      - run: npm run test:account-view
+      - run: npx playwright install --with-deps chromium webkit
+      - run: npm run qa:auth-access
+      - run: npm run qa:bundle
+      - uses: actions/upload-artifact@v7
+        if: failure()
+        with:
+          name: auth-access-failures
+          path: test-results/

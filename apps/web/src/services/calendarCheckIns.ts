@@ -318,10 +318,10 @@ export type CalendarCheckInExportBundle = {
   people: string[];
 };
 
-export async function exportCalendarCheckInBundle(): Promise<CalendarCheckInExportBundle> {
+export async function exportCalendarCheckInBundle(options: CheckInRequestOptions = {}): Promise<CalendarCheckInExportBundle> {
   const [checkIns, library] = await Promise.all([
-    listCalendarCheckIns(),
-    listCalendarCheckInLibrary()
+    listCalendarCheckIns(options),
+    listCalendarCheckInLibrary(options)
   ]);
 
   return {
@@ -333,8 +333,8 @@ export async function exportCalendarCheckInBundle(): Promise<CalendarCheckInExpo
   };
 }
 
-export async function deleteAllCalendarCheckInData() {
-  const { client, user } = await requireVerifiedUser();
+export async function deleteAllCalendarCheckInData(options: CheckInRequestOptions = {}) {
+  const { client, user } = await requireVerifiedUser(options.signal, options.expectedUserId);
 
   const { error: entriesError } = await client
     .from("calendar_check_ins")

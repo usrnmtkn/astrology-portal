@@ -14,14 +14,18 @@ export type SharedReportPayload =
       report: NonNullable<ReportDeliveryPayload["report"]>;
     };
 
-async function accessToken() {
+async function accessToken(expectedUserId?: string) {
   const client = await getSupabaseClient();
   const session = await client?.auth.getSession();
+  if (session?.error) throw session.error;
+  if (expectedUserId && session?.data.session?.user.id !== expectedUserId) {
+    throw new Error("Your account changed. Open the report again.");
+  }
   return session?.data.session?.access_token ?? "";
 }
 
-export async function createReportShareLink(item: Pick<ReportLibraryItem, "sourceKind" | "sourceId" | "vanitySlug">) {
-  const token = await accessToken();
+export async function createReportShareLink(item: Pick<ReportLibraryItem, "sourceKind" | "sourceId" | "vanitySlug" | "ownerId">) {
+  const token = await accessToken(item.ownerId);
   if (!token) throw new Error("Sign in to share reports.");
   const response = await fetch("/api/report-share", {
     method: "POST",
@@ -37,11 +41,12 @@ export async function createReportShareLink(item: Pick<ReportLibraryItem, "sourc
   });
   const payload = await response.json().catch(() => null) as { shareUrl?: string; error?: string } | null;
   if (!response.ok || !payload?.shareUrl) throw new Error(payload?.error ?? "Could not create a share link.");
+  await accessToken(item.ownerId);
   return payload.shareUrl;
 }
 
-export async function stopReportSharing(item: Pick<ReportLibraryItem, "sourceKind" | "sourceId">) {
-  const token = await accessToken();
+export async function stopReportSharing(item: Pick<ReportLibraryItem, "sourceKind" | "sourceId" | "ownerId">) {
+  const token = await accessToken(item.ownerId);
   if (!token) throw new Error("Sign in to manage report sharing.");
   const response = await fetch("/api/report-share", {
     method: "DELETE",
