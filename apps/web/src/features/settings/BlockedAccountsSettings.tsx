@@ -49,8 +49,8 @@ export function BlockedAccountsSettings({ onBack }: { onBack: () => void }) {
   return (
     <section className="settings-page settings-subpage page-shell--narrow" aria-label="Blocked accounts settings">
       <div className="page-back-row settings-back-row">
-        <button className="settings-back-button floating-back-button" type="button" onClick={onBack}>
-          <ChevronLeft size={20} aria-hidden="true" />
+        <button aria-label="Back to Settings" className="settings-back-button floating-back-button" type="button" onClick={onBack}>
+          <ChevronLeft size={18} aria-hidden="true" />
           <span>Settings</span>
         </button>
       </div>

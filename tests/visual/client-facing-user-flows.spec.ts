@@ -4043,7 +4043,7 @@ test.describe("client-facing user flow case studies", () => {
         logoutScope = new URL(route.request().url()).searchParams.get("scope");
         return route.fulfill({ status: 204 });
       });
-      await page.getByRole("button", { name: "Account", exact: true }).click();
+      await page.getByRole("button", { name: "Back to Account", exact: true }).click();
       await page.getByRole("button", { name: "Sign out", exact: true }).click();
       await expect.poll(() => logoutScope).toBe("local");
       expect(await phone.evaluate(key => Boolean(localStorage.getItem(key)), supabaseAuthStorageKey())).toBe(true);
@@ -4080,6 +4080,112 @@ test.describe("client-facing user flow case studies", () => {
   });
 
   for (const theme of ["light", "dark"] as const) {
+    for (const width of [390, 430, 1440]) {
+      test(`Account and Settings child navigation matches articles ${theme} ${width}`, async ({ page }) => {
+        test.setTimeout(90_000);
+        const assertNoClientErrors = await expectNoClientErrors(page);
+        await page.setViewportSize({ width, height: 844 });
+        await page.route("**/rest/v1/**", route => route.fulfill({ json: [] }));
+        await seedClientState(page, { profile: true, theme, now: "2026-07-29T16:00:00.000Z" });
+        await seedSignedInSession(page);
+        const entries: Array<Record<string, unknown>> = [];
+        const blocks: Array<Record<string, unknown>> = [];
+        await routeCalendarCheckInStore(page, entries);
+        await page.route("**/rest/v1/rpc/list_social_blocks", route => route.fulfill({ json: blocks }));
+
+        await page.goto("/#sky/placement/sun/leo");
+        const articleBack = page.locator(".sky-detail-back");
+        await expect(articleBack).toBeVisible();
+        await page.mouse.move(0, 0);
+        await expect(articleBack).toHaveCSS("transform", "none");
+        const reference = await articleBack.evaluate(node => {
+          const style = getComputedStyle(node);
+          const box = node.getBoundingClientRect();
+          return { x: box.x, y: box.y, height: box.height, width: box.width,
+            radius: style.borderRadius, background: style.backgroundColor, shadow: style.boxShadow };
+        });
+
+        for (const child of [
+          { parent: "Account", route: "/#account", open: /Open journal/, title: "journal.", hash: "#account?view=journal", empty: "No check-ins yet" },
+          { parent: "Settings", route: "/#settings", open: /Blocked accounts Review/, title: "blocked accounts.", hash: "#settings?view=blocked-accounts", empty: "None" }
+        ]) {
+          await page.goto(child.route);
+          await expect(page.getByRole("heading", { name: `${child.parent.toLowerCase()}.`, exact: true })).toBeVisible();
+          await expect(page.locator(".settings-back-button")).toHaveCount(0);
+          await page.getByRole("button", { name: child.open }).click();
+          const back = page.getByRole("button", { name: `Back to ${child.parent}`, exact: true });
+          const title = page.getByRole("heading", { name: child.title, exact: true });
+          await expect(title).toBeVisible();
+          await expect(page.getByText(child.empty, { exact: true })).toBeVisible();
+
+          const expectChildHeader = async () => {
+            await back.click({ trial: true });
+            // WebKit can retain the trial click's hover across a reload/scroll.
+            // Compare settled resting controls, not an in-progress hover lift.
+            await page.mouse.move(0, 0);
+            await expect(back).toHaveCSS("transform", "none");
+            await expect(back).toHaveCSS("border-radius", reference.radius);
+            await expect(back).toHaveCSS("background-color", reference.background);
+            await expect(back).toHaveCSS("box-shadow", reference.shadow);
+            const box = (await back.boundingBox())!;
+            const nav = (await page.locator(".nav-pill").boundingBox())!;
+            const menu = (await page.getByRole("button", { name: "Open menu", exact: true }).boundingBox())!;
+            expect(box.x).toBeCloseTo(reference.x, 0);
+            expect(box.y).toBeCloseTo(reference.y, 0);
+            expect(box.height).toBeCloseTo(reference.height, 0);
+            expect(box.x + box.width).toBeLessThanOrEqual(nav.x);
+            expect(nav.x + nav.width).toBeLessThanOrEqual(menu.x);
+            if (width <= 720) {
+              expect(box.width).toBeCloseTo(reference.width, 0);
+              expect(box.width).toBeCloseTo(box.height, 0);
+              expect(box.y).toBeCloseTo(nav.y, 0);
+              expect(box.y).toBeCloseTo(menu.y, 0);
+              await expect(back.locator("span")).toBeHidden();
+            } else {
+              await expect(back.locator("span")).toBeVisible();
+            }
+            await expectNoHorizontalOverflow(page, `${child.parent} child ${theme} ${width}`);
+          };
+
+          await expectChildHeader();
+          const titleBox = (await title.boundingBox())!;
+          const backBox = (await back.boundingBox())!;
+          expect(titleBox.y).toBeGreaterThan(backBox.y + backBox.height);
+          await page.screenshot({ path: test.info().outputPath(`${child.parent}-child-empty.png`) });
+          await back.click();
+          await expect(page.getByRole("heading", { name: `${child.parent.toLowerCase()}.`, exact: true })).toBeVisible();
+          await expect(page.locator(".settings-back-button")).toHaveCount(0);
+
+          if (child.parent === "Account") {
+            entries.push(...Array.from({ length: 10 }, (_, index) => ({
+              user_id: fixtureUserId, date_key: `2026-07-${String(index + 10).padStart(2, "0")}`,
+              mood: 3, sleep: 50, social: 50, mood_note: "Synthetic journal entry", note: "", tags: [], people: []
+            })));
+          } else {
+            blocks.push(...Array.from({ length: 20 }, (_, index) => ({
+              user_id: `blocked-fixture-${index}`, handle: `fixture_${index}`, display_name: `Test person ${index + 1}`,
+              avatar_url: null, blocked_at: "2026-07-29T16:00:00.000Z"
+            })));
+          }
+          await page.getByRole("button", { name: child.open }).click();
+          await page.reload();
+          await expect(title).toBeVisible();
+          expect(new URL(page.url()).hash).toBe(child.hash);
+          await expect(page.locator(child.parent === "Account" ? ".account-journal-entry" : ".settings-blocked-row")).toHaveCount(child.parent === "Account" ? 10 : 20);
+          await page.evaluate(() => window.scrollTo(0, 450));
+          await expect(page.locator("html")).toHaveAttribute("data-scrolled", "");
+          await expectChildHeader();
+          await page.screenshot({ path: test.info().outputPath(`${child.parent}-child-scrolled.png`) });
+          await page.getByRole("button", { name: "Open menu", exact: true }).click();
+          await expect(page.getByRole("menuitem", { name: child.parent, exact: true })).toBeVisible();
+          await page.getByRole("button", { name: "Close menu", exact: true }).click();
+          await back.click();
+          await expect(page.getByRole("heading", { name: `${child.parent.toLowerCase()}.`, exact: true })).toBeVisible();
+        }
+        await assertNoClientErrors();
+      });
+    }
+
     test(`journal sync never presents a cached profile as signed in for ${theme}`, async ({ page }) => {
       await page.route("**/rest/v1/**", route => route.fulfill({ json: [] }));
       await seedClientState(page, { profile: true, theme });
