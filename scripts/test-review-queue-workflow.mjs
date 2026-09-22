@@ -120,3 +120,58 @@ assert.ok(skyWritingIssues({...baseline, judge_gate:'auto-publish', judge_score:
 // Imported Composite authoring notes are not a publishable reader article.
 assert.equal(reviewWorkBucket(importedComposite), 'source');
 assert.equal((await store.invoke('PATCH', {id: importedComposite.id, expectedUpdatedAt: importedComposite.updated_at, status:'LIVE'})).status, 409);
+
+
+// Creating an exact Calendar write-up uses the same draft/review lifecycle.
+const { calendarAspectDraft, calendarAspectIdentityKeys } = await import('../apps/admin/src/calendarAspectSources.ts');
+const { skyAspectGeneratedContentKeys } = await import('../apps/web/src/services/skyAspectContent.ts');
+for (const selection of [
+  { first: 'moon', firstSign: 'aquarius', aspect: 'square', second: 'venus', secondSign: 'scorpio' },
+  { first: 'venus', firstSign: 'scorpio', aspect: 'square', second: 'moon', secondSign: 'aquarius' },
+  { first: 'sun', firstSign: 'leo', aspect: 'trine', second: 'lilith', secondSign: 'aries' },
+  { first: 'sun', firstSign: 'leo', aspect: 'trine', second: 'nodes', secondSign: 'aries' },
+  { first: 'sun', firstSign: 'leo', aspect: 'trine', second: 'north-node', secondSign: 'aries' },
+  { first: 'south-node', firstSign: 'libra', aspect: 'sextile', second: 'sun', secondSign: 'leo' }
+]) {
+  const draft = calendarAspectDraft(selection);
+  assert.ok(draft);
+  assert.equal(draft.body, '');
+  assert.equal(draft.summary, '');
+  assert.equal(draft.status, 'DRAFT');
+  assert.ok(calendarAspectIdentityKeys(selection).includes(draft.contentKey));
+  // The reversed selection must resolve to the already-created row, never a second identity.
+  if ([...store.rows.values()].some(row => row.content_key === draft.contentKey)) continue;
+  const body = `Complete synthetic opening for ${selection.first}.\n\nComplete synthetic final sentence.`;
+  const { id: _newId, ...input } = draft;
+  let saved = await store.invoke('POST', { ...input, body, eventType: 'collective-aspect-card' });
+  assert.equal(saved.status, 200, JSON.stringify(saved));
+  let exact = saved.payload.rows[0];
+  assert.equal(exact.body, body);
+  assert.equal(exact.status, 'DRAFT');
+  assert.equal(isReaderServableGeneratedContentRow(exact), false);
+  const reopened = await store.invoke('GET', undefined, `/api/admin/generated-content?contentKey=${encodeURIComponent(draft.contentKey)}&status=all`);
+  assert.equal(reopened.payload.rows[0].body, body);
+  assert.deepEqual(reopened.payload.rows[0].facts, draft.facts);
+  const duplicate = await store.invoke('POST', { ...input, body: 'Competing draft.', eventType: 'collective-aspect-card' });
+  assert.equal(duplicate.status, 409, JSON.stringify(duplicate));
+  assert.equal(store.rows.get(exact.id).body, body, 'A competing create cannot replace the saved copy');
+  const premature = await store.invoke('PATCH', { id: exact.id, expectedUpdatedAt: exact.updated_at, ownerAction: 'approve-and-schedule' });
+  assert.equal(premature.status, 409, JSON.stringify(premature));
+  saved = await store.write({ action: 'recheck', contentKey: exact.content_key, expectedUpdatedAt: exact.updated_at });
+  assert.equal(saved.status, 200, JSON.stringify(saved));
+  exact = saved.payload.rows[0];
+  saved = await store.invoke('PATCH', { id: exact.id, expectedUpdatedAt: exact.updated_at, ownerAction: 'approve-and-schedule' });
+  assert.equal(saved.status, 200, JSON.stringify(saved));
+  exact = saved.payload.rows[0];
+  assert.equal(exact.status, 'LIVE');
+  assert.equal(isReaderServableGeneratedContentRow(exact), true);
+  assert.equal(isGeneratedContentReaderBoundaryAllowed(exact), true);
+  const options = { first: selection.first, firstSign: selection.firstSign, second: selection.second, secondSign: selection.secondSign, aspect: selection.aspect };
+  assert.ok(skyAspectGeneratedContentKeys(options).includes(exact.content_key), 'Reader hydration requests the created identity');
+  const selected = resolveSkyAspectGeneratedContent({ ...options, generatedContent: new Map([[exact.content_key, { ...exact, contentKey: exact.content_key, eventType: exact.event_type, sourceSnapshot: exact.source_snapshot, judgeScore: exact.judge_score, judgeGate: exact.judge_gate }]]) });
+  assert.equal(selected?.body, body, 'Approved exact draft reaches the actual reader without changing a generic row');
+  const content = { ...exact, contentKey: exact.content_key, sourceSnapshot: exact.source_snapshot, judgeScore: exact.judge_score, judgeGate: exact.judge_gate };
+  assert.equal(resolveSkyAspectGeneratedContent({ ...options, firstSign: 'gemini', generatedContent: new Map([[exact.content_key, content]]) }), null, 'A different sign cannot receive the exact draft');
+  assert.equal(resolveSkyAspectGeneratedContent({ ...options, generatedContent: new Map([[exact.content_key, { ...content, status: 'DRAFT' }]]) }), null, 'Unpublished copy never serves');
+}
+console.log('New exact Calendar drafts preserve five-value identity, full copy, review gates and reader selection.');

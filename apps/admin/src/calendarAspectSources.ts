@@ -1,4 +1,5 @@
 import { natalPlacementSigns } from "./natalPlacementSources.ts";
+import type { AdminDraft } from "./GeneratedContentAdminDashboard";
 
 export const calendarAspectDefaultBodies = [
   "sun",
@@ -121,6 +122,43 @@ export function calendarAspectSignedTitle(contentKey: string) {
   const selection = parseCalendarAspectContentKey(contentKey);
   return selection && (selection.firstSign || selection.secondSign)
     ? calendarAspectDisplayTitle(selection) : null;
+}
+
+/** Creation needs an exact identity; the independent browsing filters do not. */
+export function calendarAspectDraft(selection: CalendarAspectSelection): AdminDraft | null {
+  const bodies: readonly string[] = [...calendarAspectDefaultBodies, "nodes"];
+  if (!bodies.includes(selection.first) || !bodies.includes(selection.second)
+    || selection.first === selection.second || ![...calendarAspectDefaultTypes, "quincunx"].includes(selection.aspect)
+    || !calendarAspectSigns.has(selection.firstSign ?? "") || !calendarAspectSigns.has(selection.secondSign ?? "")) return null;
+  const isNodePole = (body: string) => body === "north-node" || body === "south-node";
+  if ((isNodePole(selection.first) || selection.first === "nodes") && (isNodePole(selection.second) || selection.second === "nodes")) return null;
+  const order = (body: string) => isNodePole(body) ? -1 : bodies.indexOf(body);
+  const identity = order(selection.first) <= order(selection.second) ? selection : {
+    first: selection.second, firstSign: selection.secondSign, aspect: selection.aspect,
+    second: selection.first, secondSign: selection.firstSign
+  };
+  return {
+    id: null,
+    contentKey: `sky.aspect.${identity.first}.${identity.aspect}.${identity.second}.${identity.firstSign}.${identity.secondSign}`,
+    surface: "sky", mode: "feed", status: "DRAFT",
+    headline: calendarAspectDisplayTitle(identity), summary: "", body: "",
+    lane: "serving", reviewState: "EDITORIAL_REVIEW_REQUIRED", blockType: "sky_aspect",
+    promptVersion: "manual-admin", sections: null,
+    facts: { a: identity.first, signA: identity.firstSign, aspect: identity.aspect, b: identity.second, signB: identity.secondSign },
+    reviewerNotes: "",
+    sourceSnapshot: { contentType: "owner-authored-sky-aspect", content_role: "authored_card",
+      review_status: "needs_review", authoringSource: "admin-dashboard-calendar-aspect" }
+  };
+}
+
+export function calendarAspectIdentityKeys(selection: CalendarAspectSelection) {
+  const reverse = { first: selection.second, firstSign: selection.secondSign, aspect: selection.aspect,
+    second: selection.first, secondSign: selection.firstSign };
+  return [selection, reverse].flatMap(({ first, firstSign, aspect, second, secondSign }) => [
+    `sky.aspect.${first}.${aspect}.${second}.${firstSign}.${secondSign}`,
+    `sky-card/${first}/${firstSign}/${aspect}/${second}/${secondSign}`,
+    `fallback-hook/sky-aspect-sign/${first}/${firstSign}/${aspect}/${second}/${secondSign}`
+  ]);
 }
 
 export function normalizeCalendarAspectSearch(search: string) {
