@@ -40,6 +40,10 @@ assert.doesNotThrow(() => assertGeneratedReportJudgeEvidence(coherentJudgment, j
 assert.equal(generatedReportJudgeVerdict(coherentJudgment.scores, 0.85, coherentJudgment.findings), 'below_threshold');
 assert.throws(() => assertGeneratedReportJudgeEvidence({ scores: perfectScores, findings: [citedFinding] }, judgeInput), /perfect category score/u);
 assert.throws(() => assertGeneratedReportJudgeEvidence({ ...coherentJudgment, findings: [{ ...citedFinding, draftQuote: 'Invented quotation' }] }, judgeInput), /reader-visible copy/u);
+for (const draftQuote of ['', '   ']) {
+  assert.throws(() => assertGeneratedReportJudgeEvidence({ ...coherentJudgment, findings: [{ ...citedFinding, draftQuote }] }, judgeInput), /reader-visible copy/u,
+    'Nonempty diagnostic quotations remain runtime-enforced independently of the provider schema.');
+}
 assert.throws(() => assertGeneratedReportJudgeEvidence({ ...coherentJudgment, findings: [{ ...citedFinding, sourcePath: '/not-in-the-brief' }] }, judgeInput), /sourcePath/u);
 assert.throws(() => assertGeneratedReportJudgeEvidence({ ...coherentJudgment, findings: [{ ...citedFinding, sourceQuote: 'The exact opportunity will return.' }] }, judgeInput), /sourceQuote/u);
 assert.throws(() => assertGeneratedReportJudgeEvidence({ ...coherentJudgment, findings: [] }, judgeInput), /no diagnostic evidence/u);

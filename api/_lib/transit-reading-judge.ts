@@ -66,7 +66,7 @@ export const GENERATED_REPORT_JUDGE_SCHEMA = {
           category: { type: "string", enum: [...GENERATED_REPORT_JUDGE_FINDING_CATEGORIES] },
           location: { type: "string" },
           finding: { type: "string" },
-          draftQuote: { type: "string", minLength: 1 },
+          draftQuote: { type: "string", pattern: "\\S" },
           sourcePath: { type: ["string", "null"] },
           sourceQuote: { type: ["string", "null"] }
         }

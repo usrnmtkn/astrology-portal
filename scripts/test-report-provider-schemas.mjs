@@ -1,6 +1,9 @@
 import assert from "node:assert/strict";
 import { REPORT_REDUNDANCY_SCHEMA } from "../api/_lib/report-assembly.ts";
 import { REPORT_JUDGE_SCHEMA, reportOverviewSentenceContract } from "../api/_lib/report-judge.ts";
+import { GENERATED_REPORT_JUDGE_SCHEMA } from "../api/_lib/transit-reading-judge.ts";
+import { TRANSIT_READING_PROVIDER_SCHEMA } from "../api/_lib/transit-reading-generation.ts";
+import { FRIEND_TRANSIT_READING_PROVIDER_SCHEMA } from "../api/_lib/friend-transit-reading-generation.ts";
 import {
   assertOpenAiStrictResponseSchema,
   callReportCalibrationModel,
@@ -40,6 +43,9 @@ const providerSchemas = new Map([
   ["report_unit_cold_read", reportSentenceAddressedCritiqueSchema(markdownHeavyKeyDates, true)],
   ["report_unit_revision_spans", REPORT_REVISION_PATCH_SCHEMA],
   ["report_fulfillment_judge", REPORT_JUDGE_SCHEMA],
+  ["tldr_generated_report_judge", GENERATED_REPORT_JUDGE_SCHEMA],
+  ["tldr_astro_you_transit_reading", TRANSIT_READING_PROVIDER_SCHEMA],
+  ["tldr_astro_friend_transit_reading", FRIEND_TRANSIT_READING_PROVIDER_SCHEMA],
   ["report_redundancy_pass", REPORT_REDUNDANCY_SCHEMA]
 ]);
 
