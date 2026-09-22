@@ -3815,7 +3815,7 @@ test.describe("client-facing user flow case studies", () => {
         ? { status: 400, json: { message: "Synthetic verification failure" } }
         : { json: fixtureAuthUser });
     });
-    await page.goto("/#access_token=fixture-callback-token&refresh_token=fixture-callback-refresh&expires_in=3600&token_type=bearer");
+    await page.goto("/#access_token=fixture-callback-token&refresh_token=fixture-callback-refresh&expires_in=3600&token_type=bearer", { waitUntil: "domcontentloaded" });
     await expect(page.locator("#app-startup")).toBeVisible();
     await expect(page.getByRole("button", { name: "Open menu", exact: true })).toBeHidden();
     finishVerification();
