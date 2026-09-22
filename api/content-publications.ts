@@ -1,5 +1,5 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
-import { canonicalPublicationLedger, publicationLedgerTag } from "../apps/web/src/services/publicationLedgerTransport.js";
+import { canonicalPublicationLedger, publicationLedgerTag, publicationLedgerTagMatches } from "../apps/web/src/services/publicationLedgerTransport.js";
 
 /** Aggregate the existing anonymous reads close to the database. Every request
  * rereads all ranges; 304 means the complete current ledger matched, never TTL
@@ -49,7 +49,7 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
     const publications = canonicalPublicationLedger(pages.flat());
     const tag = await publicationLedgerTag(publications);
     res.setHeader("etag", tag);
-    if (req.headers["if-none-match"] === tag) {
+    if (publicationLedgerTagMatches(req.headers["if-none-match"], tag)) {
       res.statusCode = 304; res.end(); return;
     }
     res.statusCode = 200;

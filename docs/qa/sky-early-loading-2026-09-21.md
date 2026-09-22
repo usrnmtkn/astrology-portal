@@ -141,3 +141,11 @@ The actual-handler tests cover all pages, anonymous/elevated key handling, fresh
 read failure. Browser checks exercise a 200 followed by 304 from a fresh reload,
 then the existing complete article/revision/retirement flow. Final deployed
 measurements and exact-head release checks are recorded in the PR.
+
+Deployment verification exposed two transport differences hidden by local
+loaders: Node needs emitted `.js` import paths, and Vercel compression marks
+the ETag weak. The unbundled Node regression now loads the actual handler;
+client and server accept the weak marker only for the exact computed digest.
+Browser publication tests cover those compressed-response tags. Sky supplies
+the relay loader to the shared refresh coordinator, keeping the relay out of
+the Admin bundle; the unchanged Admin limits and privacy scan pass.

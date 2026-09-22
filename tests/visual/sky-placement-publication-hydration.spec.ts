@@ -44,7 +44,7 @@ for (const width of [390, 1440]) test(`placement publication stays authoritative
     const etag = await publicationLedgerTag(publications);
     const unchanged = route.request().headers()['if-none-match'] === etag;
     relayStatuses.push(unchanged ? 304 : 200);
-    await route.fulfill({ status: unchanged ? 304 : 200, headers: { etag, 'cache-control': 'private, no-store', 'content-type': 'application/json' },
+    await route.fulfill({ status: unchanged ? 304 : 200, headers: { etag: `W/${etag}`, 'cache-control': 'private, no-store', 'content-type': 'application/json' },
       body: unchanged ? undefined : JSON.stringify({ schema: 'tldr-publications/v1', publications }) });
   });
   await page.route('**/rest/v1/**', async route => {

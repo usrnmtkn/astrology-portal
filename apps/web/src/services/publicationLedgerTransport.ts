@@ -1,4 +1,4 @@
-import { validContentPublication, type ContentPublication } from "../content/contentPublicationState.js";
+import { contentPublicationRecords, validContentPublication, type ContentPublication } from "../content/contentPublicationState.js";
 
 /** The tag describes the complete public ledger, including retirements. No
  * publication timestamp or subset is sufficient to validate the cached set. */
@@ -17,7 +17,13 @@ export async function publicationLedgerTag(rows: readonly ContentPublication[]) 
   return `"publications-v1-${Array.from(new Uint8Array(hash), byte => byte.toString(16).padStart(2, "0")).join("")}"`;
 }
 
-export async function loadPublicationLedgerFromApi(cached: readonly ContentPublication[]) {
+// HTTP compression can weaken an ETag without changing the decoded JSON hash.
+// Accept only this exact digest; the weak marker never bypasses body validation.
+export function publicationLedgerTagMatches(received: unknown, expected: string) {
+  return received === expected || received === `W/${expected}`;
+}
+
+export async function loadPublicationLedgerFromApi(cached: readonly ContentPublication[] = contentPublicationRecords()) {
   const snapshot = canonicalPublicationLedger(cached);
   const tag = snapshot.length ? await publicationLedgerTag(snapshot) : null;
   const response = await fetch("/api/content-publications", {
@@ -25,13 +31,13 @@ export async function loadPublicationLedgerFromApi(cached: readonly ContentPubli
     headers: tag ? { "if-none-match": tag } : {}
   });
   if (response.status === 304) {
-    if (!tag || response.headers.get("etag") !== tag) throw new Error("Unverified publication response.");
+    if (!tag || !publicationLedgerTagMatches(response.headers.get("etag"), tag)) throw new Error("Unverified publication response.");
     return snapshot;
   }
   if (!response.ok) throw new Error("Publication service unavailable.");
   const payload = await response.json();
   if (payload.schema !== "tldr-publications/v1") throw new Error("Invalid publication response.");
   const rows = canonicalPublicationLedger(payload.publications);
-  if (response.headers.get("etag") !== await publicationLedgerTag(rows)) throw new Error("Unverified publication response.");
+  if (!publicationLedgerTagMatches(response.headers.get("etag"), await publicationLedgerTag(rows))) throw new Error("Unverified publication response.");
   return rows;
 }

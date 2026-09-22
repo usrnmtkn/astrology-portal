@@ -75,7 +75,8 @@ export function startInitialSkyLoad(): InitialSkyLoad | null {
   const result = getSkyFromApi(location, date).catch(() => null);
   // The relay uses anonymous reads and validates the complete current ledger.
   // It can start before App without first downloading the Supabase SDK.
-  void import("./contentPublications").then(({ refreshContentPublications }) => refreshContentPublications(false, true)).catch(() => {});
+  void Promise.all([import("./contentPublications"), import("./publicationLedgerTransport")])
+    .then(([{ refreshContentPublications }, { loadPublicationLedgerFromApi }]) => refreshContentPublications(false, loadPublicationLedgerFromApi)).catch(() => {});
 
   let calculation: Promise<SkySnapshot> | undefined;
   const initial: InitialSkyLoad = {

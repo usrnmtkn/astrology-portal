@@ -73,7 +73,7 @@ for (const failure of ['network', 'invalid', 'cursor']) {
 console.log('PASS: concurrent disjoint publication ranges, boundary/future keys, large-range pagination, coalescing, all-or-nothing failure and non-advancing cursor.');
 {
   const h = harness();
-  await h.refreshContentPublications(true, true);
+  await h.refreshContentPublications(true, async () => { throw new Error('Relay unavailable'); });
   assert.equal(h.installed.length, 1, 'An unavailable relay falls back to the complete direct read');
   assert.equal(h.requests.length, 6);
   assert(h.contentPublicationsAvailableOnline());

@@ -6,7 +6,7 @@ const keys = ['!', '__content-publication-ledger/v1', 'authored/compat-pair/s', 
   ...Array.from({ length: 2010 }, (_, i) => `authored/compat-pair/a-${String(i).padStart(4, '0')}`)].sort();
 const originalRows = keys.map((content_key, i) => ({ content_key, state: i % 17 === 0 ? 'retired' : 'live', revision: 1,
   row_id: content_key, row_updated_at: '2026-09-21T16:00:00.123456Z', updated_at: '2026-09-21T16:00:00.123456Z' }));
-let rows = structuredClone(originalRows), requests: URL[] = [], failure = '', held: Promise<void> | null = null;
+let rows = structuredClone(originalRows), requests: URL[] = [], failure = '', held: Promise<void> | null = null, compressed = false;
 const originalFetch = globalThis.fetch;
 const envKeys = ['SUPABASE_URL', 'VITE_SUPABASE_URL', 'SUPABASE_PUBLISHABLE_KEY', 'SUPABASE_ANON_KEY', 'VITE_SUPABASE_PUBLISHABLE_KEY', 'VITE_SUPABASE_ANON_KEY'];
 const saved = Object.fromEntries(envKeys.map(key => [key, process.env[key]]));
@@ -24,6 +24,7 @@ try {
     if (String(input) === '/api/content-publications') {
       assert.equal(options.cache, 'no-store');
       const result = await invoke(options.headers['if-none-match']);
+      if (compressed && result.headers.etag) result.headers.etag = `W/${result.headers.etag}`;
       return new Response(result.body ?? null, { status: result.status, headers: result.headers });
     }
     const url = new URL(String(input)); requests.push(url);
@@ -60,6 +61,8 @@ try {
   const unchanged = await invoke(tag);
   assert.equal(unchanged.status, 304); assert.equal(unchanged.body, undefined);
   assert.equal(requests.length, 6, '304 still requires a complete fresh database read');
+  assert.equal((await invoke(`W/${tag}`)).status, 304, 'GET uses weak ETag comparison after HTTP compression');
+  compressed = true;
   const clientRows = await loadPublicationLedgerFromApi([]);
   assert.deepEqual(await loadPublicationLedgerFromApi(clientRows), clientRows);
   rows[2] = { ...rows[2], state: 'retired', revision: 2, row_id: null as any, updated_at: '2026-09-21T16:01:00.000001Z' };

@@ -1,5 +1,5 @@
 import { getSupabaseClient } from "./auth";
-import { installContentPublications, validContentPublication, publicationLedgerReady, contentPublicationRecords } from "../content/contentPublicationState";
+import { installContentPublications, validContentPublication, publicationLedgerReady } from "../content/contentPublicationState";
 
 let pending: Promise<void> | null = null;
 let checkedAt = 0;
@@ -10,16 +10,15 @@ export function contentPublicationsAvailableOnline() { return resolvedFromNetwor
 /** A failed first lookup is not evidence that no published override exists. */
 export function contentPublicationsResolved() { return resolved || publicationLedgerReady(); }
 /** Fetch every page before installing; partial or failed reads cannot erase retirements. */
-export async function refreshContentPublications(force = false, usePublicRelay = false): Promise<void> {
+export async function refreshContentPublications(force = false, readRelay?: () => Promise<readonly unknown[]>): Promise<void> {
   if (pending) return pending;
   if (!force && Date.now() - checkedAt < 30_000) return;
   resolvedFromNetwork = false;
   pending = (async () => {
     if (typeof navigator !== "undefined" && navigator.onLine === false) return;
-    if (usePublicRelay) {
+    if (readRelay) {
       try {
-        const { loadPublicationLedgerFromApi } = await import("./publicationLedgerTransport");
-        const rows = await loadPublicationLedgerFromApi(contentPublicationRecords());
+        const rows = await readRelay();
         installContentPublications(rows);
         resolved = resolvedFromNetwork = true;
         checkedAt = Date.now();
