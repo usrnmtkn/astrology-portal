@@ -228,6 +228,9 @@ test("Calendar cold mobile and desktop deliver controls and complete reading wit
           });
         });
         await page.route("**/rest/v1/**", route => route.fulfill({ json: [] }));
+        // Each sample owns a new context, so it does not inherit beforeEach's
+        // healthy empty reader. Keep the same source plane as the old REST fixture.
+        await page.route('**/api/content-reader', route => route.fulfill({ json: readerResponse([]) }));
         await page.route("**/api/calendar?**", route => route.fulfill({ status: 503, json: {} }));
         await page.route("https://tldrastro-api-27165565299.us-central1.run.app/**", route => route.fulfill({ status: 503, json: {} }));
         await page.addInitScript(() => localStorage.setItem("tldrastro:selectedLocation", JSON.stringify({
