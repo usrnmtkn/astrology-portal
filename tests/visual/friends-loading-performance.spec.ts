@@ -1,3 +1,4 @@
+import { readerResponse } from '../helpers/reader-response';
 import { expect, test, type Browser, type BrowserContext, type Locator, type Page } from "@playwright/test";
 import {
   FRIENDS_INCOMPLETE_CHART_CALCULATION_DELAY_MS,
@@ -51,8 +52,9 @@ async function preparePage(page: Page, options: FixtureOptions = {}): Promise<Pr
     const requestUrl = decodeURIComponent(request.url());
 
     if (
-      requestUrl.includes("/rest/v1/generated_interpretations")
-      && requestUrl.includes("provider=eq.tldrastro-fallback-architecture-v3")
+      requestUrl.endsWith("/api/content-reader")
+      && request.postDataJSON()?.provider === "tldrastro-fallback-architecture-v3"
+      && !request.postDataJSON()?.latestVersion
     ) {
       dashboardMirrorRequests += 1;
     }
@@ -78,14 +80,14 @@ async function preparePage(page: Page, options: FixtureOptions = {}): Promise<Pr
     });
   });
   await page.route("**/rest/v1/content_publications*", route => route.fulfill({ json: [] }));
-  await page.route("**/rest/v1/generated_interpretations*", async (route) => {
+  await page.route('**/api/content-reader', async (route) => {
     if (options.slowRelationshipContent) {
       await delay(FRIENDS_SLOW_NETWORK_LATENCY_MS);
     }
     await route.fulfill({
       status: 200,
       contentType: "application/json",
-      body: JSON.stringify([])
+      body: JSON.stringify(readerResponse([]))
     });
   });
 

@@ -177,7 +177,7 @@ test("edit, save, reload, publish, and hydrate the summary reader", async ({ pag
   const reader = await context.newPage();
   await reader.clock.setFixedTime(new Date("2026-09-07T16:00:00Z"));
   await reader.route("**/content-studio-last-known-good.json", route => route.fulfill({ json: {
-    schema: "content-studio-last-known-good-v1", rowCount: stored.length, rows: stored
+    schema: "content-studio-last-known-good-v2", rowCount: stored.length, rows: stored
   } }));
   await reader.route("**/api/calendar?**", route => route.fulfill({ json: { ok: true, calendar: { days: [{ dateKey: "2026-09-07", events: [] }] } } }));
   await reader.goto(`${readerBaseURL}/#sky`);
@@ -291,7 +291,7 @@ test('Daily Sky retirement and an unavailable publication never reveal older bun
   const key = 'cms/sky-daily-summary/sun/virgo';
   const publication = { content_key: key, state: 'retired', revision: 1, row_id: 'missing-summary', row_updated_at: '2026-09-07T15:00:00Z', updated_at: '2026-09-07T15:00:00Z' };
   await page.route('**/content-studio-last-known-good.json', route => route.fulfill({ json: {
-    schema: 'content-studio-last-known-good-v1', rowCount: 0, rows: [], publications: [publication]
+    schema: 'content-studio-last-known-good-v2', rowCount: 0, rows: [], publications: [publication]
   } }));
   await page.goto(`${readerBaseURL}/#sky`);
   const summary = page.getByLabel('Daily sky summary');
@@ -313,7 +313,7 @@ test("reader composes selected-day events with a dedicated ingress TLDR", async 
     { dateKey: "2026-09-08", events: [{ ...event, id: "other-day", planet: "Venus" }] }
   ] } } }));
   const row = { id: "ingress-tldr", content_key: "cms/sky-daily-summary/ingress/mercury/libra", surface: "sky", mode: "card", status: "LIVE", lane: "serving", review_state: null, body: "Complete supplied short wording for this fixture.", headline: "Mercury enters Libra", source_snapshot: { contentType: "mustache-template", contentSystem: "cms-surface-override", allowedSlots: [] } };
-  await reader.route("**/content-studio-last-known-good.json", route => route.fulfill({ json: { schema: "content-studio-last-known-good-v1", rowCount: 1, rows: [row] } }));
+  await reader.route("**/content-studio-last-known-good.json", route => route.fulfill({ json: { schema: "content-studio-last-known-good-v2", rowCount: 1, rows: [row] } }));
   await reader.goto(`${readerBaseURL}/#sky`);
   const summary = reader.getByLabel("Daily sky summary");
   await expect(summary).toContainText("Saturn squares Lilith and Mercury opposes Neptune are exact today.");
@@ -362,7 +362,7 @@ test("full template controls preview order, publish, and reload", async ({ page,
   const reader = await context.newPage();
   await reader.clock.setFixedTime(new Date("2026-09-11T02:00:00Z"));
   await reader.addInitScript(() => localStorage.setItem("tldrastro:selectedLocation", JSON.stringify({ label: "New York, NY", latitude: 40.7128, longitude: -74.006, timeZone: "America/New_York" })));
-  await reader.route("**/content-studio-last-known-good.json", route => route.fulfill({ json: { schema: "content-studio-last-known-good-v1", rowCount: stored.length, rows: stored } }));
+  await reader.route("**/content-studio-last-known-good.json", route => route.fulfill({ json: { schema: "content-studio-last-known-good-v2", rowCount: stored.length, rows: stored } }));
   await reader.route("**/api/calendar?**", route => route.fulfill({ json: { ok: true, calendar: { days: [{ dateKey: "2026-09-10", events: [
     { id: "station", type: "station", phase: "station-retrograde", direction: "retrograde", planet: "Mercury", sign: "Scorpio", startsAt: "2026-09-11T03:27:00.999Z", dateKey: "2026-09-10" },
     { id: "ongoing", type: "station", phase: "retrograde-passage", direction: "retrograde", planet: "Saturn", sign: "Aries", startsAt: "2026-09-11T00:00:00Z", dateKey: "2026-09-10" },
@@ -400,7 +400,7 @@ test("inline connecting words preserve variables, publish and reach the reader",
   const reader = await context.newPage();
   await reader.clock.setFixedTime(new Date("2026-09-07T16:00:00Z"));
   await reader.route("**/api/calendar?**", route => route.fulfill({ json: { ok: true, calendar: { days: [{ dateKey: "2026-09-07", events: [] }] } } }));
-  await reader.route("**/content-studio-last-known-good.json", route => route.fulfill({ json: { schema: "content-studio-last-known-good-v1", rowCount: stored.length, rows: stored } }));
+  await reader.route("**/content-studio-last-known-good.json", route => route.fulfill({ json: { schema: "content-studio-last-known-good-v2", rowCount: stored.length, rows: stored } }));
   await reader.goto(`${readerBaseURL}/#sky`);
   const summary = reader.getByLabel("Daily sky summary", { exact: true });
   await expect(summary).toContainText("Today, the Sun moving through Virgo at 15° turns our attention");
@@ -554,7 +554,7 @@ for (const width of [390, 1440]) test(`owner event-first summary reaches reader 
   await reader.clock.setFixedTime(new Date("2026-09-11T02:00:00Z"));
   await reader.addInitScript(() => localStorage.setItem("tldrastro:selectedLocation", JSON.stringify({ label: "New York, NY", latitude: 40.7128, longitude: -74.006, timeZone: "America/New_York" })));
   const rows = [{ id: "owner-new-moon", content_key: revision.contentKey, body: revision.body, status: "LIVE", lane: "serving", surface: "sky", mode: "feed", block_type: "essay", prompt_version: "cms-surface-template-v1", source_snapshot: { contentType: "mustache-template", contentSystem: "cms-surface-override" } }];
-  await reader.route("**/content-studio-last-known-good.json", route => route.fulfill({ json: { schema: "content-studio-last-known-good-v1", rowCount: rows.length, rows } }));
+  await reader.route("**/content-studio-last-known-good.json", route => route.fulfill({ json: { schema: "content-studio-last-known-good-v2", rowCount: rows.length, rows } }));
   const events = [
     { id: "station", type: "station", phase: "station-retrograde", direction: "retrograde", planet: "Uranus", sign: "Gemini", startsAt: "2026-09-10T12:00:00Z", dateKey: "2026-09-10" },
     { id: "venus", type: "ingress", planet: "Venus", sign: "Scorpio", startsAt: "2026-09-10T08:00:00Z", dateKey: "2026-09-10" },

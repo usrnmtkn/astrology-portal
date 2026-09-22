@@ -1,3 +1,4 @@
+import { readerResponse } from '../helpers/reader-response';
 import { expect, test, type Locator, type Page } from "@playwright/test";
 import { bundledPublications } from "../helpers/bundled-publications";
 import { observeArticleTransitions, expectAnimatedArticleNavigation } from "./qaArticleTransitions";
@@ -152,12 +153,12 @@ async function seedClientState(page: Page, options: SeedOptions = {}) {
     });
   });
   await page.route("**/rest/v1/content_publications*", route => route.fulfill({ json: options.contentPublications ?? [] }));
-  await page.route("**/rest/v1/generated_interpretations*", async (route) => {
+  await page.route('**/api/content-reader', async (route) => {
     if (options.generatedInterpretations) {
       await route.fulfill({
         status: 200,
         contentType: "application/json",
-        body: JSON.stringify(options.generatedInterpretations)
+        body: JSON.stringify(readerResponse(options.generatedInterpretations))
       });
       return;
     }
@@ -165,7 +166,7 @@ async function seedClientState(page: Page, options: SeedOptions = {}) {
     // A bundled-source fixture means a successful empty remote result. Reserve
     // outages (and the client's retry/backoff) for explicit offline/cache cases.
     if (!options.cachedDashboardOverlay) {
-      await route.fulfill({ json: [] });
+      await route.fulfill({ json: readerResponse([]) });
       return;
     }
 
@@ -1654,14 +1655,14 @@ test.describe("client-facing user flow case studies", () => {
     await page.route("**/rest/v1/content_publications*", route => route.fulfill({ json: [publication] }));
     await page.route("**/rest/v1/rpc/content_runtime_revision", route => route.fulfill({ json: row.updated_at }));
     await page.route("**/content-studio-last-known-good.json", route => route.fulfill({
-      json: { schema: "content-studio-last-known-good-v1", rowCount: 0, rows: [] }
+      json: { schema: "content-studio-last-known-good-v2", rowCount: 0, rows: [] }
     }));
     let releaseCopy!: () => void;
     const contentReady = new Promise<void>(resolve => { releaseCopy = resolve; });
-    await page.route("**/rest/v1/generated_interpretations*", async route => {
-      if (new URL(route.request().url()).searchParams.get("provider") === "eq.tldrastro-fallback-architecture-v3") {
+    await page.route('**/api/content-reader', async route => {
+      if (route.request().postDataJSON().provider === "tldrastro-fallback-architecture-v3") {
         await contentReady;
-        await route.fulfill({ json: [row] });
+        await route.fulfill({ json: readerResponse([row]) });
       } else {
         await route.fulfill({ status: 503, json: { message: "Explicit offline reader fixture" } });
       }
@@ -5094,13 +5095,13 @@ test("Chiron Jupiter owner revision renders its complete opening and ending", as
   await page.route("**/rest/v1/rpc/content_runtime_revision", route => route.fulfill({ json: row.updated_at }));
   let releaseCopy!: () => void;
   const contentReady = new Promise<void>(resolve => { releaseCopy = resolve; });
-  await page.route("**/rest/v1/generated_interpretations*", async route => {
+  await page.route('**/api/content-reader', async route => {
     await contentReady;
-    await route.fulfill({ json: [row] });
+    await route.fulfill({ json: readerResponse([row]) });
   });
   await page.route("**/content-studio-last-known-good.json", async route => {
     await contentReady;
-    await route.fulfill({ json: { schema: "content-studio-last-known-good-v1", rowCount: 1, rows: [row] } });
+    await route.fulfill({ json: { schema: "content-studio-last-known-good-v2", rowCount: 1, rows: [row] } });
   });
   await expectClientRouteLoads(page, "/#you");
   await page.getByRole("tab", { name: /updates|transits/i }).click();
@@ -5123,12 +5124,11 @@ test("Sky detail hydrates published aspects for its displayed snapshot and dated
   const publications = snapshot.publications.filter((row: any) => row.content_key.startsWith("sky.aspect."));
   await seedClientState(page, { now: "2026-09-08T14:03:00.000Z", contentPublications: publications });
   const requested = new Set<string>();
-  await page.route("**/rest/v1/generated_interpretations*", async route => {
-    const query = new URL(route.request().url()).searchParams.get("content_key");
-    const keys = query?.startsWith("in.(") ? query.slice(4, -1).split(",").map(key => key.replaceAll('"', '')) : [];
+  await page.route('**/api/content-reader', async route => {
+    const keys: string[] = route.request().postDataJSON().keys ?? [];
     keys.forEach(key => requested.add(key));
     // A broad fixture response would conceal the missing-key bug.
-    await route.fulfill({ json: snapshot.rows.filter((row: any) => keys.includes(row.content_key)) });
+    await route.fulfill({ json: readerResponse(snapshot.rows.filter((row: any) => keys.includes(row.content_key))) });
   });
   await expectClientRouteLoads(page, "/?date=2026-09-08#sky/placement/lilith/sagittarius");
   // Placement cards now follow the displayed motion chapter, not the full residency.
@@ -5287,12 +5287,12 @@ test("an open Friends article survives an empty initial dashboard overlay", asyn
   let releaseOverlay!: () => void;
   const overlayReady = new Promise<void>(resolve => { releaseOverlay = resolve; });
   let overlayReads = 0;
-  await page.route("**/rest/v1/generated_interpretations*", async route => {
-    if (new URL(route.request().url()).searchParams.get("provider") === "eq.tldrastro-fallback-architecture-v3") {
+  await page.route('**/api/content-reader', async route => {
+    if (route.request().postDataJSON().provider === "tldrastro-fallback-architecture-v3") {
       overlayReads += 1;
       await overlayReady;
     }
-    await route.fulfill({ json: [] });
+    await route.fulfill({ json: readerResponse([]) });
   });
   await expectClientRouteLoads(page, "/#friends?tab=charts&chart=friend-batch4&view=synastry");
   const card = page.getByRole("button", { name: "Open full entry for Your Midheaven sextile Sofia's Sun", exact: true });
@@ -5425,14 +5425,14 @@ async function seedCrossSurfacePublications(page: Page, records: Array<Record<st
   })) });
   await page.route("**/rest/v1/rpc/content_runtime_revision", route => route.fulfill({ json: updatedAt }));
   await page.route("**/content-studio-last-known-good.json", route => route.fulfill({
-    json: { schema: "content-studio-last-known-good-v1", rowCount: 0, rows: [] }
+    json: { schema: "content-studio-last-known-good-v2", rowCount: 0, rows: [] }
   }));
-  await page.route("**/rest/v1/generated_interpretations*", route => {
-    const params = new URL(route.request().url()).searchParams;
-    const keys = params.get("content_key");
-    const selected = params.get("provider") === "eq.tldrastro-fallback-architecture-v3"
+  await page.route('**/api/content-reader', route => {
+    const params = route.request().postDataJSON();
+    const keys: string[] = params.keys ?? [];
+    const selected = params.provider === "tldrastro-fallback-architecture-v3"
       ? rows : rows.filter(row => keys?.includes(row.content_key));
-    return route.fulfill({ json: selected });
+    return route.fulfill({ json: readerResponse(selected) });
   });
 }
 
@@ -5467,7 +5467,7 @@ for (const theme of ["light", "dark"] as const) {
         row_id: "qa-cross-surface-0", row_updated_at: "2026-09-10T20:00:00.000Z", updated_at: retiredAt
       }] }));
       await page.route("**/rest/v1/rpc/content_runtime_revision", route => route.fulfill({ json: retiredAt }));
-      await page.route("**/rest/v1/generated_interpretations*", route => route.fulfill({ json: [] }));
+      await page.route('**/api/content-reader', route => route.fulfill({ json: readerResponse([]) }));
       await page.evaluate(contentKey => window.dispatchEvent(new CustomEvent("tldrastro:content-update", {
         detail: { contentKey, published: false }
       })), contentKey);

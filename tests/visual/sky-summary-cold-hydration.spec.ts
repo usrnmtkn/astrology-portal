@@ -1,3 +1,4 @@
+import { readerResponse } from '../helpers/reader-response';
 import { expect, test } from '@playwright/test';
 
 const moonKey = 'cms/sky-daily-summary/moon/libra/regular';
@@ -29,7 +30,7 @@ for (const width of [390, 1440]) {
     // revision 1000 with a real nightly snapshot whose revisions may be newer.
     // An explicitly older offline publication must not resurrect old prose.
     await page.route('**/content-studio-last-known-good.json', route => route.fulfill({ json: {
-      schema: 'content-studio-last-known-good-v1', rowCount: 1,
+      schema: 'content-studio-last-known-good-v2', rowCount: 1,
       rows: [{ id: 'older-moon', content_key: moonKey, surface: 'sky', mode: 'feed', status: 'LIVE', lane: 'serving', review_state: null, target_date: null, event_type: null, headline: null, summary: null, body: 'contains an obsolete offline Moon summary', sections: null, model: null, updated_at: '2026-09-12T23:00:00Z' }],
       publications: [{ content_key: moonKey, state: 'live', revision: 999, row_id: 'older-moon', row_updated_at: '2026-09-12T23:00:00Z', updated_at: '2026-09-12T23:00:00Z' }]
     } }));
@@ -40,12 +41,12 @@ for (const width of [390, 1440]) {
         { content_key: moonKey, state: retired ? 'retired' : 'live', revision, row_id: rowId(), row_updated_at: updatedAt(), updated_at: updatedAt() }
       ] });
     });
-    await page.route('**/rest/v1/generated_interpretations*', async route => {
-      const requested = new URL(route.request().url()).searchParams.get('content_key') || '';
-      if (!requested.includes(moonKey)) return route.fulfill({ json: [] });
+    await page.route('**/api/content-reader', async route => {
+      const requested = route.request().postDataJSON().keys ?? [];
+      if (!requested.includes(moonKey)) return route.fulfill({ json: readerResponse([]) });
       await new Promise(resolve => setTimeout(resolve, 1800));
       if (unavailable) return route.fulfill({ status: 503, json: { message: 'Synthetic read outage' } });
-      await route.fulfill({ json: retired ? [] : [{ id: rowId(), content_key: moonKey, surface: 'sky', mode: 'feed', status: 'LIVE', lane: 'serving', review_state: null, target_date: null, event_type: null, headline: null, summary: null, body, sections: null, model: null, updated_at: updatedAt() }] });
+      await route.fulfill({ json: readerResponse(retired ? [] : [{ id: rowId(), content_key: moonKey, surface: 'sky', mode: 'feed', status: 'LIVE', lane: 'serving', review_state: null, target_date: null, event_type: null, headline: null, summary: null, body, sections: null, model: null, updated_at: updatedAt() }]) });
     });
     const notify = () => page.evaluate(key => window.dispatchEvent(new CustomEvent('tldrastro:content-update', { detail: { contentKey: key, published: true, updatedAt: new Date().toISOString() + Math.random() } })), moonKey);
     const summary = page.getByLabel('Daily sky summary', { exact: true });

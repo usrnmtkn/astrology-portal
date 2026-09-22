@@ -1,3 +1,4 @@
+import { readerResponse } from '../helpers/reader-response';
 import { emptyHousePreviewApi } from "../helpers/empty-house-preview-api";
 import { normalizeTransitNatalPreviewInput, renderTransitNatalPreviewState } from "../../api/admin/transit-natal-preview";
 import { approveNatalAspectStudioCopy } from "../../api/_lib/content-studio-approval";
@@ -2503,7 +2504,7 @@ test.describe("content dashboard admin user flow case studies", () => {
       id: "qa-separate-sextile", content_key: exactKey, surface: "you", mode: "in_depth", status: "DRAFT", lane: "reference", block_type: "fallback_hook", headline: "Sun sextile your Sun", summary: "", body: exact.body,
       sections: { packageRecord: exact }, facts: { fallbackArchitectureV3: true }, provider: "tldrastro-fallback-architecture-v3", updated_at: now
     }] });
-    await page.route("**/rest/v1/generated_interpretations*", route => route.fulfill({ json: [] }));
+    await page.route('**/api/content-reader', route => route.fulfill({ json: readerResponse([]) }));
     await page.route("**/api/admin/transit-natal-preview", async route => {
       await route.fulfill({ json: { ok: true, rendered: renderTransitNatalPreviewState(normalizeTransitNatalPreviewInput(route.request().postDataJSON())) } });
     });
@@ -2584,7 +2585,7 @@ test.describe("content dashboard admin user flow case studies", () => {
       onGeneratedContentWrite: write => writes.push(write),
       onPersonalTransitWrite: payload => transitWrites.push(payload)
     });
-    await page.route("**/rest/v1/generated_interpretations*", route => route.fulfill({ json: [] }));
+    await page.route('**/api/content-reader', route => route.fulfill({ json: readerResponse([]) }));
     await page.route("**/api/admin/transit-natal-preview", async route => {
       await route.fulfill({ json: { ok: true, rendered: renderTransitNatalPreviewState(normalizeTransitNatalPreviewInput(route.request().postDataJSON())) } });
     });
@@ -2635,7 +2636,7 @@ test.describe("content dashboard admin user flow case studies", () => {
       const record = servingPackageRecords.get(content_key)!;
       return { id: `qa-${content_key}`, content_key, headline: content_key, body: String(record.body_you ?? record.body), summary: "", surface: "you", mode: "feed", status: "LIVE", lane: "serving", block_type: "fallback_hook", sections: { packageRecord: record }, facts: { fallbackArchitectureV3: true }, provider: "tldrastro-fallback-architecture-v3", updated_at: now };
     })] });
-    await page.route("**/rest/v1/generated_interpretations*", (route) => route.fulfill({ json: [] }));
+    await page.route('**/api/content-reader', (route) => route.fulfill({ json: readerResponse([]) }));
     await page.route("**/api/admin/transit-natal-preview", async (route) => {
       try { await route.fulfill({ json: { ok: true, rendered: renderTransitNatalPreviewState(normalizeTransitNatalPreviewInput(route.request().postDataJSON())) } }); }
       catch (error) { await route.fulfill({ json: { error: String(error) } }); }
@@ -2764,7 +2765,7 @@ test.describe("content dashboard admin user flow case studies", () => {
       const record = servingPackageRecords.get(content_key)!;
       return { id: `qa-friends-${content_key}`, content_key, headline: content_key, body: String(record.body_you ?? record.body), summary: "", surface: "you", mode: "feed", status: "LIVE", lane: "serving", block_type: "fallback_hook", sections: { packageRecord: record }, facts: { fallbackArchitectureV3: true }, provider: "tldrastro-fallback-architecture-v3", updated_at: now };
     }) });
-    await page.route("**/rest/v1/generated_interpretations*", route => route.fulfill({ json: [] }));
+    await page.route('**/api/content-reader', route => route.fulfill({ json: readerResponse([]) }));
     await page.route("**/api/admin/transit-natal-preview", async route => {
       const input = normalizeTransitNatalPreviewInput(route.request().postDataJSON());
       expect(input.voice).toBe("{{Name}}");
@@ -2816,7 +2817,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     const reads: URL[] = [];
     const writes: Array<{ method: string; payload: Record<string, unknown> }> = [];
     await seedAdminApi(page, { generatedRows: [], onGeneratedContentRead: url => reads.push(url), onGeneratedContentWrite: write => writes.push(write) });
-    await page.route("**/rest/v1/generated_interpretations*", route => route.fulfill({ json: [] }));
+    await page.route('**/api/content-reader', route => route.fulfill({ json: readerResponse([]) }));
     const inputs: any[] = [];
     await page.route("**/api/admin/transit-natal-preview", async route => {
       const input = normalizeTransitNatalPreviewInput(route.request().postDataJSON());
@@ -2909,7 +2910,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     expect(family).toBeTruthy();
     await page.setViewportSize({ width: 1440, height: 1000 });
     await seedAdminApi(page, { onGeneratedContentWrite: write => writes.push(write), generatedRows: [] });
-    await page.route("**/rest/v1/generated_interpretations*", route => route.fulfill({ json: [] }));
+    await page.route('**/api/content-reader', route => route.fulfill({ json: readerResponse([]) }));
     await page.route("**/api/admin/transit-natal-preview", async route => {
       await route.fulfill({ json: { ok: true, rendered: renderTransitNatalPreviewState(normalizeTransitNatalPreviewInput(route.request().postDataJSON())) } });
     });
@@ -2949,7 +2950,7 @@ test.describe("content dashboard admin user flow case studies", () => {
   test("transit preview rejects stale and malformed source responses", async ({ page }) => {
     page.on("dialog", dialog => { dialog.accept().catch(() => undefined); });
     await seedAdminApi(page, { generatedRows: [] });
-    await page.route("**/rest/v1/generated_interpretations*", route => route.fulfill({ json: [] }));
+    await page.route('**/api/content-reader', route => route.fulfill({ json: readerResponse([]) }));
     let release: (() => Promise<void>) | undefined;
     await page.route("**/api/admin/transit-natal-preview", async route => {
       const input = normalizeTransitNatalPreviewInput(route.request().postDataJSON());

@@ -3,7 +3,9 @@
 Release state: implemented on the review branch; production activation and deployed
 verification are pending. This is a technical change, not approval of reader prose.
 Implementation was rebased onto main `bd2316b8531068bbaae80add4d5f675dc382c85e`
-(PR #1003); it retains #1002 inventory loading and #1003 scoped Sky loading.
+(PR #1003), then `9bee69955` (#1004); it retains inventory and scoped Sky loading
+plus main's account-access fixes. The comparative bundle figures below refer to
+the isolated #1003 baseline; #1004's existing allocations are retained separately.
 
 ## Contracts and caller audit
 

@@ -25,7 +25,7 @@ test("offline snapshot publication keeps complete Calendar guidance available du
     label: "New York, New York", latitude: 40.7128, longitude: -74.006, timeZone: "America/New_York"
   })));
   await page.route("**/api/calendar?**", route => route.fulfill({ status: 503, json: {} }));
-  await page.route("**/rest/v1/generated_interpretations*", route => route.fulfill({ status: 503, json: {} }));
+  await page.route('**/api/content-reader', route => route.fulfill({ status: 503, json: {} }));
   // Keep the independent live overlay request pending. The offline snapshot
   // must install its own rows before announcing their publication identities.
   await page.route("**/rest/v1/rpc/content_runtime_revision", async route => {
