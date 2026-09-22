@@ -1,5 +1,4 @@
 import { expect, test, type Page } from '@playwright/test';
-import { skyListDashboardScopeFilter } from '../../apps/web/src/services/skyDashboardScope';
 import skyHandler from '../../api/sky';
 import type { IncomingMessage, ServerResponse } from 'node:http';
 
@@ -74,13 +73,14 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
       await skyHandler({ method: 'GET', url: route.request().url() } as IncomingMessage, response as unknown as ServerResponse);
     });
     await page.route('**/content-studio-last-known-good.json', route => route.fulfill({ json: {
-      schema: 'content-studio-last-known-good-v1', rows: [], publications: [], rowCount: 0
+      schema: 'content-studio-last-known-good-v2', rows: [], publications: [], rowCount: 0
     } }));
-    await page.route('**/rest/v1/**', async route => {
-      if (new URL(route.request().url()).pathname.endsWith('/generated_interpretations')) {
-        await new Promise(resolve => setTimeout(resolve, 1800));
-      }
-      await route.fulfill({ json: [] });
+    await page.route('**/rest/v1/**', route => route.fulfill({ json: [] }));
+    const readerRequests: any[] = [];
+    await page.route('**/api/content-reader', async route => {
+      readerRequests.push(route.request().postDataJSON());
+      await new Promise(resolve => setTimeout(resolve, 1800));
+      await route.fulfill({ json: { schema: 'content-reader-row-v1', rows: [], publications: [], nextCursor: null } });
     });
     await page.route('**/api/calendar?**', route => route.fulfill({ json: { ok: true, calendar: { days: [] } } }));
     const errors: string[] = [];
@@ -92,11 +92,10 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
     expect(downloads.some(url => url.pathname.startsWith('/wasm/')), 'The successful initial API path must not download browser ephemeris assets').toBe(false);
     expect(downloads.some(url => url.pathname.endsWith('/content-studio-last-known-good.json')),
       'Healthy live reads must not download the complete offline snapshot').toBe(false);
-    const inventories = downloads.filter(url => url.pathname.endsWith('/generated_interpretations')
-      && url.searchParams.get('provider') === 'eq.tldrastro-fallback-architecture-v3');
+    const inventories = readerRequests.filter(request => request.provider === 'tldrastro-fallback-architecture-v3' && !request.latestVersion);
     expect(inventories).toHaveLength(1);
-    expect(inventories[0].searchParams.get('or')).toBe(`(${skyListDashboardScopeFilter})`);
-    expect(downloads.some(url => /natal|you/u.test(url.searchParams.get('surface') ?? '')),
+    expect(inventories[0].scope).toBe('sky-list');
+    expect(readerRequests.some(request => request.surfaces?.some((surface: string) => /natal|you/u.test(surface))),
       'Sky must defer the personal inventory until its reader is opened').toBe(false);
     await page.screenshot({ path: testInfo.outputPath('cold.png') });
     await page.reload();

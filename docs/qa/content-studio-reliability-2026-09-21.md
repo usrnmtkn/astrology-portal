@@ -77,6 +77,26 @@ Web/admin typechecks and CSS/token contracts passed. Public-asset and staged pri
 scans must pass on the final release bytes. CI must pass on the exact PR head;
 local evidence never substitutes for that gate.
 
+### Bundle comparison
+
+Independent builds of main `bd2316b853` and this release used separate `npm ci`
+dependencies and identical workflow Supabase placeholders. Gzip uses level 9.
+
+| Metric (bytes) | Main | Release | Change |
+| --- | ---: | ---: | ---: |
+| Web startup JavaScript | 458,625 | 458,479 | -146 |
+| Reader startup including CSS | 511,412 | 511,266 | -146 |
+| All web JavaScript | 3,443,143 | 3,444,253 | +1,110 |
+| Admin entry raw | 738,164 | 741,824 | +3,660 |
+| Admin entry gzip | 215,185 | 216,316 | +1,131 |
+| All admin JavaScript | 727,348 | 728,536 | +1,188 |
+
+The transport schema constant is separate from the server projection, avoiding
+unneeded schema construction in reader startup. The small aggregate and admin
+allocations cover publication recovery and version-aware controls. No dependency
+or CSS is added; reader startup, deferred-source, editor, graph and timing
+boundaries remain enforced. Both bundle gates pass with these measured allocations.
+
 ## Ordered rollout and rollback
 
 1. Review and pass the exact PR head, including full API, PostgreSQL concurrency,

@@ -121,7 +121,7 @@ function project(value, contract) {
   return output;
 }
 
-export const READER_ROW_SCHEMA = 'content-reader-row-v1';
+export { READER_ROW_SCHEMA } from './readerRowSchema.mjs';
 export function projectReaderRow(row) {
   const result = project(row, rowContract);
   if (!result || !result.id || !result.content_key || !result.updated_at) return null;
