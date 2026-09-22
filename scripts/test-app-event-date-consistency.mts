@@ -34,6 +34,7 @@ try {
   const { sunIngressSeasonWindow, sunIngressSeasonSign } = await vite.ssrLoadModule("/src/features/calendar/seasonWindow.ts");
   const { resolveLunarDay } = await vite.ssrLoadModule("/src/features/calendar/lunarDayResolver.ts");
   const calendarUi = await vite.ssrLoadModule("/src/features/calendar/LunarCalendar.tsx");
+  const { skySunTransition } = await vite.ssrLoadModule("/src/content/skySunTransition.ts");
   const zones = ["America/New_York", "UTC", "Asia/Tokyo"];
   for (const [dateKey, signIndex] of [["2026-09-14", 5], ["2027-01-12", 9]] as const) {
     for (const timeZone of zones) {
@@ -95,6 +96,11 @@ try {
       const sky = await ephemeris.getAstrodienstSky(location, new Date(instant));
       const sun = sky.positions.find((position: any) => position.planet === "Sun");
       assert.equal(sun.sign, expected);
+      const transition = skySunTransition(calendar.events, instant, timeZone);
+      assert.equal(transition?.phase, offset < 0 ? 'before' : 'after');
+      assert.equal(transition?.fromSign, oldSign);
+      assert.equal(transition?.toSign, newSign);
+      if (timeZone === 'America/New_York') assert.equal(transition?.time, newSign === 'Libra' ? '8:05 PM EDT' : '3:50 PM EST');
       assert.equal(directSunSign(instant, 0), ["Aries", "Taurus", "Gemini", "Cancer", "Leo", "Virgo", "Libra", "Scorpio", "Sagittarius", "Capricorn", "Aquarius", "Pisces"].indexOf(expected));
       assert.equal(sunIngressSeasonSign(dateKey, calendar.events, sky.generatedAt), expected);
       assert.equal(sunIngressSeasonWindow(dateKey, calendar.events, sky.generatedAt)?.sign, expected);

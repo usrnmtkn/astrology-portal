@@ -86,6 +86,7 @@ function savedCopy(content: CmsGeneratedContentMap | undefined, key: string, fal
 export type SummaryPart = { text: string; paragraphStart?: boolean; emphasis?: boolean; highlight?: boolean; action?: "lunation" | "sun" | "moon" | "retrograde" | "event"; eventId?: string; planet?: string; sourceKey?: string };
 export type SummaryPlacement = { sign: string; degree?: number };
 export type SkyDailySummaryFacts = {
+  sunTransition?: import('./skySunTransition').SunTransition;
   sun?: SummaryPlacement;
   moon?: SummaryPlacement;
   moonIsVoid: boolean;
@@ -142,7 +143,9 @@ export function skyDailySummaryParts(facts: SkyDailySummaryFacts, content?: CmsG
   const values: Record<string, SummaryPart[]> = {};
   const moonKind = selectedMoonKind(facts.event);
   const specialMoon = moonKind !== "regular";
-  const sunPlacement = specialMoon ? facts.event?.sun ?? facts.sun : facts.sun;
+  // On a solar transition day the opening describes the current Sun, while
+  // lunation geometry is still validated against its own event-time snapshot.
+  const sunPlacement = specialMoon && !facts.sunTransition ? facts.event?.sun ?? facts.sun : facts.sun;
   if (specialMoon && facts.event?.sun && !validSummaryGeometry(facts.event.sun.sign, facts.event.sign, moonKind)) {
     throw new Error("IMPOSSIBLE_SKY: event-time Sun and Moon do not match the selected lunation.");
   }
@@ -171,6 +174,23 @@ export function skyDailySummaryParts(facts: SkyDailySummaryFacts, content?: CmsG
     });
   }
   values.openingSentence = hasSun || hasMoon ? fillSkyTemplate(opening, values) : [];
+  const transition = facts.sunTransition;
+  const transitionKey = transition?.phase === 'before' ? 'sunIngressBefore' : 'sunIngressAfter';
+  const transitionParts = transition ? fillSkyTemplate(assembly[transitionKey], {
+    fromSign: plain(transition.fromSign),
+    toSign: [{ text: transition.toSign, action: 'event', eventId: transition.id }],
+    transitionTime: plain(transition.time)
+  }) : [];
+  const transitionText = transitionParts.map(part => part.text).join('');
+  if (transition && transitionText) {
+    if (values.openingSentence[0]) values.openingSentence[0].paragraphStart = true;
+    const ingressCopy = facts.ingresses?.find(item => item.id === transition.id)?.tldr;
+    values.openingSentence = [
+      ...transitionParts,
+      ...(ingressCopy ? [{ text: ` ${ingressCopy}` }] : []),
+      ...values.openingSentence
+    ];
+  }
   if (calendarSeasonTransitionIsCurrent(facts) && facts.seasonName && facts.nextSunSign) {
     const countdown = calendarSeasonTransitionCountdown(facts.daysUntilSeasonEnd);
     const seasonEndDate = facts.seasonEndDate?.trim() ?? "";
@@ -217,7 +237,8 @@ export function skyDailySummaryParts(facts: SkyDailySummaryFacts, content?: CmsG
       if (event.isToday && values[slot].some(p => p.text)) previousEvent = true;
       continue;
     }
-    const items = slot === "exactAspectsSentence" ? facts.exactAspects : slot === "stationsSentence" ? facts.stations : facts.ingresses;
+    const ingresses = facts.ingresses?.filter(item => !transitionText || item.id !== transition?.id);
+    const items = slot === "exactAspectsSentence" ? facts.exactAspects : slot === "stationsSentence" ? facts.stations : ingresses;
     if (!items?.length) continue;
     const many = items.length > 1;
     const position = previousEvent ? "Also" : "First";
@@ -251,7 +272,7 @@ export function skyDailySummaryParts(facts: SkyDailySummaryFacts, content?: CmsG
       values.currentRetrogradesSentence = [];
     }
     if (slot === "ingressesSentence" && values[slot].length) {
-      for (const item of facts.ingresses ?? []) if (item.tldr) values[slot].push({ text: ` ${item.tldr}` });
+      for (const item of ingresses ?? []) if (item.tldr) values[slot].push({ text: ` ${item.tldr}` });
     }
     if (values[slot].some(p => p.text)) previousEvent = true;
   }
