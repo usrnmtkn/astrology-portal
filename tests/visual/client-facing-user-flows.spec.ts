@@ -1858,7 +1858,8 @@ test.describe("client-facing user flow case studies", () => {
 
     await seedClientState(page, {
       profile: true,
-      now: "2026-08-20T23:59:50"
+      // The selected location is New York, even when CI's browser runs in UTC.
+      now: "2026-08-21T03:59:50Z"
     });
     await expectClientRouteLoads(page, "/?date=2026-08-20#you");
 
@@ -1867,7 +1868,7 @@ test.describe("client-facing user flow case studies", () => {
     await expect(page).not.toHaveURL(/[?&]date=/u);
 
     await page.evaluate(() => {
-      (window as any).__tldrSetQaNow("2026-08-21T00:00:05");
+      (window as any).__tldrSetQaNow("2026-08-21T04:00:05Z");
       window.dispatchEvent(new Event("focus"));
     });
 
@@ -1883,7 +1884,7 @@ test.describe("client-facing user flow case studies", () => {
     await expect(dateTrigger).toContainText("Aug 20");
 
     await page.evaluate(() => {
-      (window as any).__tldrSetQaNow("2026-08-22T00:00:05");
+      (window as any).__tldrSetQaNow("2026-08-22T04:00:05Z");
       window.dispatchEvent(new Event("focus"));
     });
 

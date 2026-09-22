@@ -11957,8 +11957,10 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
   }, [mode, skyDetailRoutePath, userProfile, transitionPage, location.timeZone]);
 
   useEffect(() => {
-    if (followsCurrentTransitDateRef.current) {
-      updateTransitDateUrl(currentLocalDateRef.current, "replace", mode === 'calendar' ? null : currentLocalDateRef.current);
+    // Calendar owns its date in the hash. Do not add a second, unrelated Today
+    // query on initial load; doing so turns hash navigation into a full reload.
+    if (mode !== "calendar" && followsCurrentTransitDateRef.current) {
+      updateTransitDateUrl(currentLocalDateRef.current, "replace", currentLocalDateRef.current);
     }
   }, []);
 
