@@ -44,7 +44,6 @@ import { loadYouPage, readYouPage } from "./features/you/youExperienceLoader";
 import type { YouPageProps } from "./features/you/YouPage";
 import { isStandaloneLearnPath } from "./content/learnRoutePath";
 import { refreshContentPublications } from "./services/contentPublications";
-import { preparePersonalReportSources } from "./services/personalReportSources";
 import {
   ArrowDownRight,
   ArrowRight,
@@ -18102,7 +18101,10 @@ function ProfileView({
     dontItems: dailyDoDont?.dont,
     specialSections: dailySpecialSections.slice(0, 2),
     ...readDailyReportSources(),
-    prepareReportSources: () => preparePersonalReportSources(readDailyReportSources),
+    prepareReportSources: async () => {
+      const { preparePersonalReportSources } = await import("./services/personalReportSources");
+      return preparePersonalReportSources(readDailyReportSources);
+    },
     behindForecastGroups,
     derivation: {
       targetDate,

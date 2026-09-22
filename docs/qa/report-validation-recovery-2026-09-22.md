@@ -244,3 +244,61 @@ Combined observed spending remains **$1.833885 / 42 calls**; those call allowanc
 are exhausted. No environment activation, migration, deployment, fresh real
 report or production-reader verification occurred. Tests establish operational
 behavior, not agreement with the owner's editorial judgments.
+
+## Authenticated production browser verification and CI follow-up
+
+The owner requested real in-app browser verification. In the authenticated
+production app, existing Daily, Weekly and Friends reports each opened with a
+TLDR and full body; a reload preserved the opening and ending. This verifies
+stored-report retrieval and rendering, not fresh generation or factual accuracy.
+No generate, retry, purchase, delete or share action was taken. Browser logs
+also contained asynchronous message-channel errors of unconfirmed origin; this
+is not a clean-console claim.
+
+The two latest unsuccessful Daily and Friends reports both displayed **Needs
+review** in the library and the content-check failure in the reader. The live
+reader still invites a retry. Read-only job inspection corroborated failed jobs
+at attempt four, with no saved result, after a second judgment. Both recorded
+an aggregate of 32/36 and below-threshold verdicts. Editorial findings include
+repetition, voice and natural language; both also have an unsupported-
+interpretation finding. The Friends review assigns full factual scores despite
+that finding. These are recorded evaluator reasons, not independently adjudicated
+source-support decisions. Relaxing editorial floors alone cannot resolve them.
+Private report bodies, identifying routes and database identifiers are not copied
+into this record.
+
+After integrating main `058583c6`, two stale CI expectations were repaired:
+
+- The real worker lifecycle regression now distinguishes a terminal quality hold
+  from recoverable provider infrastructure errors, across Day/Week/Friends and
+  Stripe/free-test/comp entitlements: 72 cases pass. It verifies backoff, exhausted
+  attempts, stopped checkpoints and no dispatch after a quality hold.
+- Archive/delete browser assertions expect the held report's **Needs review**
+  label after reload. No status is changed merely to satisfy the test.
+
+Personal report preparation is imported when requested; complete-source handoff
+and source hydration remain covered. The generated Studio variable index now
+includes the transition link introduced by the merged main commit. No approved
+source passage or rubric is edited.
+
+All 16 fresh-build report browser regressions pass, covering library states,
+archive/delete at both viewport sizes and themes, shared reading, account
+recovery and complete-source handoff. These use synthetic data. Web typecheck,
+source-handoff regression, CSS/token audits and the Content Studio API suite
+also pass. Two additional release failures reproduce on isolated current
+main with its own dependencies; they are not waived:
+
+- Bundle budgets fail on main in both local builds and CI run `35794343366`,
+  visual-smoke job `106970765235`. With CI's build environment, local main measures
+  471,005 bytes App boot, 524,491 reader boot and 3,457,775 total JavaScript gzip.
+  The repair measures 471,177 / 524,663 / 3,458,551 respectively. Limits remain
+  461,000 / 513,750 / 3,457,500. Deferring report preparation does not solve the
+  existing main failure; the repair adds a small additional total-size increase.
+- The standalone full-detail integrity test rejects the line clamp on
+  `lunar-calendar.css:.calendar-stoic-card__excerpt` on both branches. No report
+  repair changes that stylesheet or its test.
+
+Existing-reader browser verification is now complete. Fresh real Day/Week/Friends
+generation and independent judge calibration remain unverified. No additional
+paid call, production setting, database mutation, migration or deployment was
+performed. The previous 42-call allowance remains exhausted. Keep the PR in draft.

@@ -62,6 +62,9 @@ try {
 } finally { globalThis.fetch = originalFetch; }
 
 const app = fs.readFileSync("apps/web/src/App.tsx", "utf8");
+assert.doesNotMatch(app, /import[^;\n]+from\s+["']\.\/services\/personalReportSources["']/u,
+  "Report preparation must not pull deferred dashboard loading into reader startup.");
+assert.match(app, /await import\(["']\.\/services\/personalReportSources["']\)/u);
 assert.match(app, /dailyReportTransitSources = aspectRows\.map/u);
 assert.match(app, /section: personalTransitPackageSection\(transit, targetDate\)/u);
 assert.match(app, /body: section\.body,\s*sourceUnits: section\.sourceKeys/u);

@@ -43,8 +43,8 @@ for (const theme of ['light', 'dark'] as const) {
     await page.reload();
     await expect(page.getByRole('tab',{name:'Reports 0',exact:true})).toBeVisible();
     await page.getByRole('tab',{name:'Archived 1',exact:true}).click();
-    await expect(page.getByText('Could not finish',{exact:true})).toBeVisible();
-    await expect(page.getByText('Needs review',{exact:true})).toHaveCount(0);
+    await expect(page.getByText('Needs review',{exact:true})).toBeVisible();
+    await expect(page.getByText('Could not finish',{exact:true})).toHaveCount(0);
     const archivedMenu=page.getByRole('button',{name:'More options for Failed test report',exact:true});
     await archivedMenu.click();
     await expect(page.getByRole('menuitem')).toHaveText(['Restore','Delete']);
