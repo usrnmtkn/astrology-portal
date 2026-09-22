@@ -74,6 +74,16 @@ assert.equal(skySunTransition([ingress], '2026-09-24T00:00:00Z', location.timeZo
 assert.equal(skySunTransition([ingress], 'invalid', location.timeZone), undefined);
 assert.equal(skySunTransition([{ ...ingress, startsAt: 'invalid' }], sky.generatedAt, location.timeZone), undefined);
 assert.equal(skySunTransition([ingress], '2026-09-23T00:04:00Z', 'Asia/Tokyo')?.time, '9:05 AM GMT+9');
+const approvedTransition = skyDailySummaryParts({
+  sun: { sign: 'Virgo', degree: 29 },
+  moon: { sign: 'Aquarius', degree: 14 },
+  moonIsVoid: false,
+  sunTransition: skySunTransition([ingress], '2026-09-22T18:52:00Z', location.timeZone)
+});
+assert.equal(
+  text(approvedTransition),
+  "The Sun is in Virgo at 29° until 8:05 PM EDT today, when it enters Libra. After a month of working on the routines and details that keep life functioning, we turn toward how that work is divided between people. Libra season brings attention to the agreements behind those habits, including the ones nobody remembers making. The Moon in Aquarius at 14° reminds us that truth is not always comfortable, but it is necessary."
+);
 const concurrentLunation = skyDailySummaryParts({ sun: { sign: 'Virgo', degree: 29 }, moonIsVoid: false,
   sunTransition: skySunTransition([ingress], '2026-09-22T18:52:00Z', location.timeZone),
   event: { name: 'Full Moon', sign: 'Aries', sun: { sign: 'Libra', degree: 0 }, isToday: true, countdown: 'today' } });
