@@ -1638,7 +1638,7 @@ export async function loadLiveGeneratedContentForSurfaces(
   return generatedContentMapFromRows(sortGeneratedRowsNewestFirst(rows), previewMode);
 }
 
-export async function loadLiveGeneratedContentForKeys(contentKeys: string[]) {
+export async function loadLiveGeneratedContentForKeys(contentKeys: string[], options: { requireFresh?: boolean } = {}) {
   await refreshContentPublications();
   const keys = Array.from(new Set(contentKeys.map((key) => key.trim()).filter(Boolean)));
 
@@ -1649,6 +1649,7 @@ export async function loadLiveGeneratedContentForKeys(contentKeys: string[]) {
   const supabase = await getSupabaseClient();
 
   if (!supabase) {
+    if (options.requireFresh) throw new Error("Live content is unavailable.");
     return loadLastKnownGoodGeneratedContentForKeys(keys);
   }
   const requestSignal = AbortSignal.timeout(8000);
@@ -1661,6 +1662,8 @@ export async function loadLiveGeneratedContentForKeys(contentKeys: string[]) {
     const { data, error } = await loadReaderRows({ keys: batch }, requestSignal);
 
     if (error) {
+      // A refresh must distinguish confirmed removals from an offline snapshot.
+      if (options.requireFresh) throw error;
       console.warn("Targeted generated content failed to load; using the nightly reader-safe snapshot.", error);
       return loadLastKnownGoodGeneratedContentForKeys(keys);
     }
