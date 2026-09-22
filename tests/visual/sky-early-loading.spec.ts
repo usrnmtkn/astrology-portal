@@ -2,12 +2,17 @@ import { expect, test } from '@playwright/test';
 import { bundledPublications } from '../helpers/bundled-publications';
 import skyHandler from '../../api/sky';
 import type { IncomingMessage, ServerResponse } from 'node:http';
+import { publicationLedgerTag } from '../../apps/web/src/services/publicationLedgerTransport';
 
 test.use({ timezoneId: 'America/New_York', viewport: { width: 390, height: 844 } });
 for (const changeSelection of [false, true]) {
   test(`Sky starts before App and ${changeSelection ? 'rejects a changed selection' : 'reuses the exact initial response'}`, async ({ page }) => {
     test.setTimeout(90_000);
     await bundledPublications(page);
+    const emptyTag = await publicationLedgerTag([]);
+    await page.route('**/api/content-publications', route => route.fulfill({
+      json: { schema: 'tldr-publications/v1', publications: [] }, headers: { etag: emptyTag }
+    }));
     // The two normal reader fonts must work without the optional external
     // accessibility/symbol stylesheet or another origin's font connection.
     await page.route('https://fonts.googleapis.com/**', route => route.abort());
@@ -41,6 +46,7 @@ for (const changeSelection of [false, true]) {
       await expect.poll(() => requests.some(url => /\/assets\/App-[^/]+\.js$/.test(url.pathname))).toBe(true);
       releaseReact();
       await expect.poll(() => requests.some(url => url.pathname === '/api/sky')).toBe(true);
+      await expect.poll(() => requests.some(url => url.pathname === '/api/content-publications')).toBe(true);
       expect(requests.some(url => /sky-v4-canonical-content-studio-stage.*\.json$/.test(url.pathname))).toBe(false);
       expect(requests.some(url => url.pathname.endsWith('/content_publications'))).toBe(false);
       expect(await page.locator('.app-shell').count()).toBe(0);
@@ -54,7 +60,6 @@ for (const changeSelection of [false, true]) {
     } catch (error) { releasePlacement(); throw error; } finally { releaseReact(); releaseApp(); }
     try {
       await expect.poll(() => requests.some(url => /sky-v4-canonical-content-studio-stage.*\.json$/.test(url.pathname))).toBe(true);
-      await expect.poll(() => requests.some(url => url.pathname.endsWith('/content_publications'))).toBe(true);
       await expect(page.locator('.app-shell')).toBeVisible();
     } finally { releasePlacement(); }
     await expect(page.getByLabel('Daily sky summary', { exact: true })).toBeVisible({ timeout: 60_000 });

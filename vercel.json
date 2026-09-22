@@ -79,6 +79,10 @@
     }
   ],
   "functions": {
+    "api/content-publications.ts": {
+      "includeFiles": "apps/web/src/services/publicationLedgerTransport.ts",
+      "maxDuration": 15
+    },
     "api/calendar-feed.ts": {
       "includeFiles": "node_modules/swisseph-wasm/wasm/*",
       "maxDuration": 60

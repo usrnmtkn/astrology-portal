@@ -73,8 +73,9 @@ export function startInitialSkyLoad(): InitialSkyLoad | null {
   const now = new Date();
   const date = skyDateTimeFromInput(day, location, true, now);
   const result = getSkyFromApi(location, date).catch(() => null);
-  // Publication refresh remains at mount. Its SDK and ledger compete with
-  // App on a slow connection; only the small exact-facts request starts early.
+  // The relay uses anonymous reads and validates the complete current ledger.
+  // It can start before App without first downloading the Supabase SDK.
+  void import("./contentPublications").then(({ refreshContentPublications }) => refreshContentPublications(false, true)).catch(() => {});
 
   let calculation: Promise<SkySnapshot> | undefined;
   const initial: InitialSkyLoad = {

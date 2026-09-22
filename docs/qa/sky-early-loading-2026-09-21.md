@@ -7,8 +7,8 @@ The implementation is based on refreshed main `9bee69955187ffbb4588d33471e257820
 ## Behavior
 
 For a direct Sky list link, after authentication callback completion, the entry
-point starts the exact-input Sky API request while App downloads. Publication
-refresh starts at mount, and the nine immutable source assets download alongside
+point starts the exact-input Sky API request and public-ledger relay while App
+downloads. The nine immutable source assets download alongside
 the large placement module. A separate small placement-key index lets current
 published rows download without waiting for that archive. The mounted reader adopts
 the initial instant only for the same day, coordinates, time zone and live/daily
@@ -52,7 +52,7 @@ house-reading chunk is absent from the initial list's requests.
 ## Verification and release evidence
 
 - Browser regression holds the App response back and requires the facts
-  request to start first while publication/content downloads wait. A held placement-module
+  and public-ledger requests to start first while large content downloads wait. A held placement-module
   response proves canonical assets start without waiting for that module. It checks one API
   request for the unchanged selection and rejects a changed date plus location.
 - Initial list requests exclude house-reading and ephemeris assets; opening an
@@ -109,9 +109,35 @@ routes. The graph comes from Vite's actual output, not hardcoded asset names.
 The browser regression holds React and requires the App request to start before
 releasing it, then verifies exact-selection adoption and the content barrier.
 
-The final schedule keeps only the exact facts request before App; publication
-SDK/ledger downloads wait for App to mount. The 6 kB placement-key manifest is
+A third preview kept only facts before App and delayed the publication SDK/ledger
+until mount. Five pairs measured 9.43 s cold and 3.33 s on reload versus 9.63 s
+and 3.85 s baseline; cold improvement was too small to claim. The 6 kB placement-key manifest is
 separate from the 139 kB placement archive, so targeted published-row reads can
 overlap archive/source downloads. The publication browser regression holds the
 archive response and requires the targeted current-row request to start, while
 asserting that no article is exposed before all sources are ready.
+
+## Complete public ledger relay
+
+Direct Sky visits now request `/api/content-publications` before App. The endpoint
+uses only the existing public/anonymous Supabase key and its RLS permissions,
+never an owner token or service role. Four disjoint ranges retain complete
+keyset pagination, validation and a seven-second deadline. Every request rereads
+the database. The response contains only the same six public metadata fields
+that the browser previously queried. There are no database writes or schema
+changes. An unavailable relay falls back to the unchanged direct reader.
+
+The client hashes a canonical projection of its existing publication records;
+it does not create a second ledger cache. A 304 is accepted only for that exact
+snapshot/tag after a fresh complete server read. A changed revision, retirement
+or new key yields the current full response, whose tag is also validated.
+`private, no-store` prevents a CDN/HTTP cache from substituting a stale ledger.
+The same publication/source barrier still controls installation and display.
+The first request sends the full ledger; unchanged reloads avoid retransmitting
+it. No real-user timing claim is made from the isolated handler test.
+
+The actual-handler tests cover all pages, anonymous/elevated key handling, fresh
+304 validation, new keys, retirements, malformed/corrupt responses and partial
+read failure. Browser checks exercise a 200 followed by 304 from a fresh reload,
+then the existing complete article/revision/retirement flow. Final deployed
+measurements and exact-head release checks are recorded in the PR.

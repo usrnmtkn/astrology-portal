@@ -1,9 +1,10 @@
 import { readerResponse } from '../helpers/reader-response';
 import { expect, test } from '@playwright/test';
 import { skyPlacementSourceRecords } from '../../api/_lib/sky-placement-sources';
+import { canonicalPublicationLedger, publicationLedgerTag } from '../../apps/web/src/services/publicationLedgerTransport';
 
 for (const width of [390, 1440]) test(`placement publication stays authoritative at ${width}px`, async ({ page }) => {
-  test.setTimeout(120_000);
+  test.setTimeout(180_000);
   await page.setViewportSize({ width, height: 1000 });
   await page.clock.setFixedTime(new Date('2026-09-13T23:40:00Z'));
   const key = 'sky-placement/article/sun/virgo';
@@ -36,6 +37,16 @@ for (const width of [390, 1440]) test(`placement publication stays authoritative
     }).observe(document, { subtree: true, childList: true, characterData: true });
   });
   await page.route('**/content-studio-last-known-good.json', route => route.fulfill({ json: { schema: 'content-studio-last-known-good-v2', rows: [], publications: [], rowCount: 0 } }));
+  const relayStatuses: number[] = [];
+  await page.route('**/api/content-publications', async route => {
+    const publications = canonicalPublicationLedger([{ content_key: key, state: retired ? 'retired' : 'live', revision,
+      row_id: row().id, row_updated_at: timestamp(), updated_at: timestamp() }]);
+    const etag = await publicationLedgerTag(publications);
+    const unchanged = route.request().headers()['if-none-match'] === etag;
+    relayStatuses.push(unchanged ? 304 : 200);
+    await route.fulfill({ status: unchanged ? 304 : 200, headers: { etag, 'cache-control': 'private, no-store', 'content-type': 'application/json' },
+      body: unchanged ? undefined : JSON.stringify({ schema: 'tldr-publications/v1', publications }) });
+  });
   await page.route('**/rest/v1/**', async route => {
     const path = new URL(route.request().url()).pathname;
     if (path.endsWith('/content_publications')) {
@@ -70,10 +81,15 @@ for (const width of [390, 1440]) test(`placement publication stays authoritative
     return url.pathname.endsWith('/generated_interpretations') && url.searchParams.get('id')?.includes(row().id) === true;
   });
   try {
-    await page.goto('/?date=2026-09-13#sky/placement/sun/virgo', { waitUntil: 'domcontentloaded' });
+    await page.goto('/?date=2026-09-13#sky', { waitUntil: 'domcontentloaded' });
     await publishedRowRequest;
     await expect(article).toHaveCount(0);
   } finally { releaseArchive(); }
+  await expect(page.getByLabel('Daily sky summary', { exact: true })).toBeVisible({ timeout: 60_000 });
+  await page.reload();
+  await expect(page.getByLabel('Daily sky summary', { exact: true })).toBeVisible({ timeout: 60_000 });
+  expect(relayStatuses).toEqual([200, 304]);
+  await page.getByRole('button', { name: 'Read more about Sun in Virgo', exact: true }).click();
   await assertCopy();
   await page.reload();
   await assertCopy();
