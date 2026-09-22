@@ -55,6 +55,8 @@ export type PersonalTimingSummary = {
 export type DailyHoroscopeAssembly = {
   doItems?: string[];
   dontItems?: string[];
+  reportTransitReadings?: import("./youTransitReports").YouReportTransitReading[];
+  reportSourceGaps?: string[];
   specialSections: Array<{
     headline: string;
     body: string;

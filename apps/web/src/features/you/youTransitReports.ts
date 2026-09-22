@@ -3,6 +3,13 @@ import type { WeeklyHoroscopeAssembly, WeeklyHoroscopeReading } from "../../serv
 
 export type YouTransitReportWindow = "day" | "week";
 
+export type YouReportTransitReading = {
+  transitId: string;
+  heading: string;
+  body: string;
+  sourceUnits: string[];
+};
+
 export type YouTransitReportBrief = {
   schema: "tldr.you-transit-reading-brief.v1";
   window: YouTransitReportWindow;
@@ -26,6 +33,8 @@ type DailyAssembly = {
   doItems?: string[];
   dontItems?: string[];
   specialSections: Array<{ headline: string; body: string }>;
+  reportTransitReadings?: YouReportTransitReading[];
+  reportSourceGaps?: string[];
   derivation: Record<string, unknown>;
 };
 
@@ -70,7 +79,8 @@ export function buildYouDayReportBrief(input: {
   const moonDriver = derivation?.moonDriver ?? null;
   const summaryReady = input.dailySummary?.status === "ready" && Boolean(input.dailySummary.summary.trim());
   const specialSections = input.dailyAssembly?.specialSections ?? [];
-  if (!summaryReady && specialSections.length === 0) return null;
+  const transitReadings = input.dailyAssembly?.reportTransitReadings ?? [];
+  if (!summaryReady && specialSections.length === 0 && transitReadings.length === 0) return null;
   if (qualifyingTransits.length === 0 && !moonDriver) return null;
 
   return {
@@ -89,12 +99,14 @@ export function buildYouDayReportBrief(input: {
       } : null,
       doItems: input.dailyAssembly?.doItems ?? [],
       dontItems: input.dailyAssembly?.dontItems ?? [],
-      specialSections
+      specialSections,
+      transitReadings
     },
     technicalEvidence: {
       qualifyingTransits,
       moonDriver,
-      targetDate
+      targetDate,
+      sourceGaps: input.dailyAssembly?.reportSourceGaps ?? []
     }
   };
 }

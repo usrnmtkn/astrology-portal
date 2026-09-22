@@ -147,6 +147,47 @@ for (const viewport of [{ name: "desktop", width: 1440, height: 1000 }, { name: 
       await expect(reports.getByText("Sign in to create or read your reports.")).toBeHidden();
     });
 
+    test(`daily report request includes complete transit detail sources on ${viewport.name} ${theme}`, async ({ page }) => {
+      test.setTimeout(60_000);
+      await page.setViewportSize(viewport);
+      await prepare(page, theme);
+      await page.route("**/rest/v1/user_generated_interpretations**", route => route.fulfill({ json: [] }));
+      // Capture the real app request without creating a report or calling a model.
+      await page.route("**/api/you-report-request", route => route.fulfill({ status: 503, json: { error: "Synthetic request captured; generation disabled." } }));
+      const errors: string[] = [];
+      page.on("pageerror", error => errors.push(error.message));
+      await page.goto("/#you");
+      const cards = page.locator('[aria-label="Areas of your life"] button');
+      await expect(cards.first()).toBeVisible();
+      const create = page.getByRole("button", { name: "Create day report", exact: true });
+      await expect(create).toBeEnabled();
+      const requestPromise = page.waitForRequest(request => new URL(request.url()).pathname === "/api/you-report-request");
+      await create.click();
+      const { brief } = (await requestPromise).postDataJSON();
+      const readings = brief.approvedReaderText.transitReadings as { transitId: string; heading: string; body: string; sourceUnits: string[] }[];
+      expect(readings.length).toBeGreaterThan(0);
+      expect(readings.length).toBeLessThanOrEqual(4);
+      expect(brief.approvedReaderText.sourceGaps).toBeUndefined();
+      for (const reading of readings) {
+        const fact = brief.technicalEvidence.qualifyingTransits.find((transit: { id: string }) => transit.id === reading.transitId);
+        expect(fact).toBeTruthy();
+        expect(reading.sourceUnits.length).toBeGreaterThan(0);
+        const title = `${fact.transitPlanet} ${fact.aspect} your ${fact.natalPoint}`;
+        await cards.filter({ hasText: title }).first().click();
+        const article = page.locator(".you-transit-article-page");
+        await expect(article).toBeVisible();
+        // Match the entire rendered passage, including its opening and ending.
+        const paragraphs = reading.body.split(/\n\s*\n/u).filter(Boolean);
+        for (const paragraph of paragraphs) await expect(article).toContainText(paragraph);
+        const rendered = (await article.locator(".article-section p").allTextContents()).join("\n\n");
+        expect(rendered).toContain(reading.body);
+        await article.getByRole("button", { name: /Back/ }).click();
+      }
+      expect(errors).toEqual([]);
+      expect(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth + 1)).toBe(false);
+      await page.screenshot({ path: test.info().outputPath(`daily-source-handoff-${viewport.name}-${theme}.png`) });
+    });
+
     test(`You macro view expands its complete passage on ${viewport.name} ${theme}`, async ({ page }) => {
       test.setTimeout(60_000);
       await page.setViewportSize(viewport);

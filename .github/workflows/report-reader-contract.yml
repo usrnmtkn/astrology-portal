@@ -11,6 +11,9 @@ on:
       - 'apps/web/src/components/reports/**'
       - 'apps/web/src/components/FormattedProse.tsx'
       - 'apps/web/src/services/reportLibrary.ts'
+      - 'apps/web/src/App.tsx'
+      - 'apps/web/src/features/you/**'
+      - 'tests/visual/you-report-page.spec.ts'
       - '.github/workflows/report-reader-contract.yml'
   push:
     branches: [main]
@@ -23,6 +26,9 @@ on:
       - 'apps/web/src/components/reports/**'
       - 'apps/web/src/components/FormattedProse.tsx'
       - 'apps/web/src/services/reportLibrary.ts'
+      - 'apps/web/src/App.tsx'
+      - 'apps/web/src/features/you/**'
+      - 'tests/visual/you-report-page.spec.ts'
       - '.github/workflows/report-reader-contract.yml'
 
 permissions:
@@ -56,6 +62,7 @@ jobs:
           node --import tsx scripts/test-transit-report-delivery.mjs
           node --import tsx scripts/test-you-report-paid-lifecycle.mts
           node --import tsx scripts/test-you-report-quality-floor.mts
+          node scripts/test-you-report-source-handoff.mjs
           node --import tsx scripts/test-friend-report-paid-lifecycle.mts
           node --import tsx scripts/test-friend-transit-reading-contract.mts
           node --import tsx scripts/test-generated-report-judge-governance.mts

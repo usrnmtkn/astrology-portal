@@ -18139,10 +18139,23 @@ function ProfileView({
       return [];
     }
   })();
+  // Use the same complete, governed passages as the ranked daily transit details.
+  // Technical labels alone do not authorize the report writer to interpret them.
+  const dailyReportTransitSources = aspectRows.map((transit) => ({
+    transitId: transit.id,
+    section: personalTransitPackageSection(transit, targetDate)
+  }));
   const dailyHoroscopeAssembly = {
     doItems: dailyDoDont?.do,
     dontItems: dailyDoDont?.dont,
     specialSections: dailySpecialSections.slice(0, 2),
+    reportTransitReadings: dailyReportTransitSources.flatMap(({ transitId, section }) => section ? [{
+      transitId,
+      heading: section.heading,
+      body: section.body,
+      sourceUnits: section.sourceKeys
+    }] : []),
+    reportSourceGaps: dailyReportTransitSources.filter(({ section }) => !section).map(({ transitId }) => transitId),
     behindForecastGroups,
     derivation: {
       targetDate,

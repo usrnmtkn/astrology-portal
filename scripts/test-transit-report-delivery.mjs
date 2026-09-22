@@ -43,6 +43,7 @@ const bundle = await build({
 const api = await import(`data:text/javascript;base64,${Buffer.from(bundle.outputFiles[0].text).toString('base64')}`);
 const clone = value => structuredClone(value);
 const asParams = value => value instanceof URLSearchParams ? value : new URLSearchParams(value);
+const fullDailySource = 'Complete source opening.\n\n' + 'Approved source material remains available. '.repeat(100) + 'Complete source ending.';
 const matches = (row, params) => [...asParams(params)].every(([key,value]) => {
   if (['select','order','limit','offset','on_conflict'].includes(key)) return true;
   if (value.startsWith('eq.')) return String(row[key] ?? '') === value.slice(3);
@@ -78,6 +79,10 @@ function fixture(kind, scenario) {
       evidence:{transitPlanet:'Mars', aspect:'conjunction',natalPoint:'Moon',natalSign:'Scorpio',timingBonuses:[],contentKeys:['synthetic-mars-moon']} }],
     relationshipActivations:[],houseContext:[],daily:null,longerCycles:[],activePatterns:[],hasAnyTransit:true,counts:{primaryThemes:1},
   };
+  if (kind === 'day') youBrief.approvedReaderText.transitReadings = [{
+    transitId: 'synthetic-transit', heading: 'Synthetic source', body: fullDailySource,
+    sourceUnits: ['fixture/approved-source'],
+  }];
   function select(table, params) {
     const result = rows[table].filter(row => matches(row,params));
     if (asParams(params).get('order') === 'step.desc') result.sort((a,b)=>b.step-a.step);
@@ -131,6 +136,8 @@ function fixture(kind, scenario) {
     async call(input){
       const judge=input.schemaName==='tldr_generated_report_judge';
       prompts.push({judge,prompt:input.prompt});
+      if (kind === 'day') assert(input.prompt.includes(JSON.stringify(fullDailySource)),
+        'Every daily writer, correction and judge call must receive the complete approved source');
       if(judge){
         judgeCalls++;
         const submitted=JSON.parse(input.prompt.split('COMPLETE READER-VISIBLE DRAFT\n')[1].split('\n').slice(1).join('\n').split('\n\nSYNTHETIC')[0]);
@@ -167,6 +174,8 @@ try{
       ? await api.requestFriendReport({userId:f.client.userId,subjectId:'synthetic-friend',targetDate:'2026-09-14',facts:{friendTransitsBrief:f.friendBrief},admin:f.admin})
       : await api.requestYouReport({userId:f.client.userId,reportWindow:kind,brief:f.youBrief,admin:f.admin});
     assert.equal(queued.status,'queued',JSON.stringify(queued));
+    if (kind === 'day') assert.equal(f.rows.you_report_jobs[0].facts.youTransitReadingBrief.approvedReaderText.transitReadings[0].body, fullDailySource,
+      'The queued job must persist the complete source for background generation');
     const run=kind==='friends'?api.runFriendReportJobs:api.runYouReportJobs;
     const result=await run({workerId:'fixture-worker',jobId:queued.job.id,admin:f.admin});
     const job=f.rows[kind==='friends'?'friend_report_jobs':'you_report_jobs'][0];
