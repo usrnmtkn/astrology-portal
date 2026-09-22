@@ -1,6 +1,8 @@
 // Real API handler with a strict, isolated PostgREST store. Never contacts a service.
+import { publicationRpcFixture } from "./studio-publication-rpc.mjs";
 import { fileURLToPath } from "node:url";
 import { Readable } from "node:stream";
+import { readerRouteResponse, fixturePublications } from './content-reader-route.mjs';
 import { readFileSync } from "node:fs";
 import { calendarAspectStudioRecord } from "../../apps/web/src/content/fallbackArchitectureV3/resolver/calendarAspectContentStudio.mjs";
 const read = path => JSON.parse(readFileSync(new URL(path, import.meta.url), "utf8"));
@@ -29,7 +31,10 @@ export async function createApiStore(initial = fixtures) {
   const { default: handler } = await import(process.env.CALENDAR_TEST_HANDLER ?? "../../api/admin/generated-content.ts");
   Object.assign(process.env, env);
   const rows = new Map(initial.map(row => [row.id, structuredClone(row)]));
+  const publication = publicationRpcFixture(() => [...rows.values()], saved => { for (const row of saved) rows.set(row.id, row); });
   let sequence = 0;
+  let versionSequence = 0;
+  const nextVersion = () => new Date(Date.now() + ++versionSequence).toISOString();
   const matches = (row, params) => [...params].every(([field, value]) => {
     if (["select", "order", "limit", "offset", "on_conflict"].includes(field)) return true;
     if (value === "is.null") return row[field] == null;
@@ -38,26 +43,33 @@ export async function createApiStore(initial = fixtures) {
     throw new Error(`Unmodeled storage filter ${field}=${value}`);
   });
   globalThis.fetch = async (input, options = {}) => {
+    const operation = await publication(input, options);
+    if (operation) return operation;
+    const reader = await readerRouteResponse(input, options);
+    if (reader) return reader;
     const url = new URL(String(input));
-    if (url.origin === env.SUPABASE_URL && url.pathname === "/rest/v1/content_publications" && (!options.method || options.method === "GET")) return Response.json([]);
+    if (url.origin === env.SUPABASE_URL && url.pathname === "/rest/v1/content_publications" && (!options.method || options.method === "GET")) return Response.json(fixturePublications([...rows.values()]));
     if (url.origin !== env.SUPABASE_URL || url.pathname !== "/rest/v1/generated_interpretations") throw new Error(`Unexpected test storage request ${url.origin}${url.pathname}`);
     const found = [...rows.values()].filter(row => matches(row, url.searchParams));
     const method = options.method ?? "GET";
     if (method === "GET") return Response.json(found);
     const patch = JSON.parse(String(options.body));
     if (method === "POST") {
-      const created = { ...patch, id: `revision-${++sequence}` };
+      const created = { ...patch, id: `revision-${++sequence}`, updated_at: nextVersion(), created_at: new Date().toISOString() };
       rows.set(created.id, created);
       return Response.json([created]);
     }
     if (method === "PATCH") {
-      const updated = found.map(row => ({ ...row, ...patch }));
+      const updated = found.map(row => ({ ...row, ...patch, updated_at: nextVersion() }));
       for (const row of updated) rows.set(row.id, row);
       return Response.json(updated);
     }
     throw new Error(`Unmodeled storage method ${method}`);
   };
   const invoke = async (method, body, url = "/api/admin/generated-content", secret = env.CONTENT_GENERATION_SECRET) => {
+    // By default this fixture represents an editor opened at the current row.
+    // Explicit versions are retained for stale/concurrent request tests.
+    if (method === 'PATCH' && body && !Object.hasOwn(body, 'expectedUpdatedAt')) body = { ...body, expectedUpdatedAt: rows.get(body.id)?.updated_at };
     const request = Readable.from(body === undefined ? [] : [JSON.stringify(body)]);
     Object.assign(request, { method, url, headers: { authorization: `Bearer ${secret}` } });
     return new Promise(async (resolve, reject) => {
@@ -65,7 +77,7 @@ export async function createApiStore(initial = fixtures) {
       try { await handler(request, response); } catch (error) { reject(error); }
     });
   };
-  return { rows, invoke };
+  return { rows, invoke, publication, close: publication.close };
 }
 
 if (process.argv.includes("--ipc") && process.argv[1] === fileURLToPath(import.meta.url)) {

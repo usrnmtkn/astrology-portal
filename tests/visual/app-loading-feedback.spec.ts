@@ -1,6 +1,7 @@
 import { expect, test, type Page } from "@playwright/test";
 import { writeFile } from "node:fs/promises";
 import { readFileSync } from "node:fs";
+import { readerResponse } from '../helpers/reader-response';
 
 const weekGuidance = (page: Page, dateKey: string) => page.locator(`#calendar-day-group-${dateKey} .calendar-day-group__blurb`);
 const dayGuidance = (page: Page) => page.locator("[data-calendar-date] [data-guidance-key]").first();
@@ -8,6 +9,7 @@ const dayGuidance = (page: Page) => page.locator("[data-calendar-date] [data-gui
 test.beforeEach(async ({ page }) => {
   await page.clock.setFixedTime(new Date("2026-09-08T04:06:00Z"));
   await page.route("**/rest/v1/**", route => route.fulfill({ json: [] }));
+  await page.route('**/api/content-reader', route => route.fulfill({ json: readerResponse([]) }));
 });
 
 test("offline snapshot publication keeps complete Calendar guidance available during live API failure", async ({ page }) => {
@@ -25,7 +27,7 @@ test("offline snapshot publication keeps complete Calendar guidance available du
     label: "New York, New York", latitude: 40.7128, longitude: -74.006, timeZone: "America/New_York"
   })));
   await page.route("**/api/calendar?**", route => route.fulfill({ status: 503, json: {} }));
-  await page.route("**/rest/v1/generated_interpretations*", route => route.fulfill({ status: 503, json: {} }));
+  await page.route('**/api/content-reader', route => route.fulfill({ status: 503, json: {} }));
   // Keep the independent live overlay request pending. The offline snapshot
   // must install its own rows before announcing their publication identities.
   await page.route("**/rest/v1/rpc/content_runtime_revision", async route => {
@@ -226,6 +228,9 @@ test("Calendar cold mobile and desktop deliver controls and complete reading wit
           });
         });
         await page.route("**/rest/v1/**", route => route.fulfill({ json: [] }));
+        // Each sample owns a new context, so it does not inherit beforeEach's
+        // healthy empty reader. Keep the same source plane as the old REST fixture.
+        await page.route('**/api/content-reader', route => route.fulfill({ json: readerResponse([]) }));
         await page.route("**/api/calendar?**", route => route.fulfill({ status: 503, json: {} }));
         await page.route("https://tldrastro-api-27165565299.us-central1.run.app/**", route => route.fulfill({ status: 503, json: {} }));
         await page.addInitScript(() => localStorage.setItem("tldrastro:selectedLocation", JSON.stringify({

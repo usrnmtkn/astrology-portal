@@ -15,11 +15,6 @@ assert.match(fs.readFileSync("apps/admin/src/studioSectionInventory.ts", "utf8")
 assert.match(dashboard, /async function hydrateGeneratedContentRow\(row: AdminGeneratedContentRow/u, "Opening an inventory row must hydrate full document detail.");
 assert.match(dashboard, /generated-content-inventory\?/u, "Document detail hydration must use the fast inventory API.");
 
-const pagination = reader.slice(reader.indexOf("async function readDashboardRows"), reader.indexOf("export async function loadFallbackArchitectureV3DashboardBundle"));
-assert.match(pagination, /\.order\("id", \{ ascending: true \}\)/u);
-assert.match(pagination, /page < 10/u);
-assert.doesNotMatch(pagination, /\.range\(/u);
-
 for (const fn of [
   "loadFallbackArchitectureV3DashboardBundle",
   "loadFallbackArchitectureV3CompatibilityDashboardBundle",
@@ -33,13 +28,12 @@ for (const fn of [
   const nextExport = reader.indexOf("\nexport ", index + 10);
   const body = reader.slice(index, nextExport >= 0 ? nextExport : reader.length);
   assert.doesNotMatch(body, /\.range\(/u, `${fn} must not use OFFSET/range pagination.`);
-  if (fn !== "loadLiveGeneratedContentForSurfaces") {
-    assert.match(body, /await readDashboardRows\(/u, `${fn} must use the shared cursor pager.`);
-  }
-  assert.match(fn === "loadLiveGeneratedContentForSurfaces" ? body : pagination,
-    /\.gt\("id", cursorId\)/u, `${fn} must advance by an ID cursor.`);
+  assert.match(body, /loadReaderRows\(/u, `${fn} must use the bounded public reader transport.`);
 }
 
+const readerClient = fs.readFileSync("apps/web/src/services/readerContentClient.ts", "utf8");
+assert.match(readerClient, /afterId/u, "The shared reader transport must follow the ID cursor.");
+assert.match(readerClient, /nextCursor/u, "Every page must validate the returned cursor.");
 assert.match(reader, /sortGeneratedRowsNewestFirst\(rows\)/u, "Reader precedence must be restored after ID-cursor batch loading.");
 assert.match(migration, /generated_interpretations_provider_id_idx/u);
 assert.match(migration, /generated_interpretations_live_serving_surface_id_idx/u);

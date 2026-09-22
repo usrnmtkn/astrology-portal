@@ -1,3 +1,4 @@
+import { readerResponse } from '../helpers/reader-response';
 import { expect, test } from '@playwright/test';
 import { skyPlacementSourceRecords } from '../../api/_lib/sky-placement-sources';
 
@@ -34,7 +35,7 @@ for (const width of [390, 1440]) test(`placement publication stays authoritative
       if (samples.at(-1) !== text) samples.push(text);
     }).observe(document, { subtree: true, childList: true, characterData: true });
   });
-  await page.route('**/content-studio-last-known-good.json', route => route.fulfill({ json: { schema: 'content-studio-last-known-good-v1', rows: [], publications: [], rowCount: 0 } }));
+  await page.route('**/content-studio-last-known-good.json', route => route.fulfill({ json: { schema: 'content-studio-last-known-good-v2', rows: [], publications: [], rowCount: 0 } }));
   await page.route('**/rest/v1/**', async route => {
     const path = new URL(route.request().url()).pathname;
     if (path.endsWith('/content_publications')) {
@@ -42,11 +43,13 @@ for (const width of [390, 1440]) test(`placement publication stays authoritative
       return route.fulfill({ json: [{ content_key: key, state: retired ? 'retired' : 'live', revision,
         row_id: row().id, row_updated_at: timestamp(), updated_at: timestamp() }] });
     }
-    if (path.endsWith('/generated_interpretations')) {
-      await new Promise(resolve => setTimeout(resolve, 2500));
-      return route.fulfill({ json: retired ? [] : [row()] });
-    }
     return route.fulfill({ json: [] });
+  });
+  await page.route('**/api/content-reader', async route => {
+    await new Promise(resolve => setTimeout(resolve, 2500));
+    return route.fulfill({ json: readerResponse(retired ? [] : [row()], [
+      { content_key: key, state: retired ? 'retired' : 'live', revision, row_id: row().id, row_updated_at: timestamp(), updated_at: timestamp() }
+    ]) });
   });
   await page.route('**/api/calendar?**', route => route.fulfill({ json: { ok: true, calendar: { days: [] } } }));
   const article = page.locator('.article-body-inner').first();

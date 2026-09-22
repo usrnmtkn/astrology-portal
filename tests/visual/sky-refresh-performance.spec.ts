@@ -1,3 +1,4 @@
+import { readerResponse } from '../helpers/reader-response';
 import { expect, test } from '@playwright/test';
 
 test('Sky shell and loading feedback render before the publication service responds', async ({ page }) => {
@@ -46,7 +47,7 @@ test('a cold summary waits for publication identity rather than flashing retired
       updated_at: '2026-09-08T00:00:00Z'
     }] });
   });
-  await page.route('**/rest/v1/generated_interpretations?**', route => route.fulfill({ json: [] }));
+  await page.route('**/api/content-reader', route => route.fulfill({ json: readerResponse([]) }));
   await page.goto('/#sky');
   const summary = page.getByLabel('Daily sky summary', { exact: true });
   await expect(page.getByText('Loading the sky…', { exact: true })).toBeVisible({ timeout: 5000 });

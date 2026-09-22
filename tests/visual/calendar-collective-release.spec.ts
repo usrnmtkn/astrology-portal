@@ -1,3 +1,4 @@
+import { readerResponse } from '../helpers/reader-response';
 import fs from "node:fs";
 import { expect, test } from "@playwright/test";
 
@@ -32,12 +33,11 @@ test("Calendar serves the owner's published Saturn revision with incomplete even
   await page.route("**/rest/v1/**", route => route.fulfill({ json: [] }));
   await page.route("**/rest/v1/content_publications?**", route => route.fulfill({ json: snapshot.publications }));
   const requested = new Set<string>();
-  await page.route("**/rest/v1/generated_interpretations?**", route => {
-    const query = new URL(route.request().url()).searchParams.get("content_key");
-    const keys = query?.startsWith("in.(") ? query.slice(4, -1).split(",").map(key => key.replaceAll('"', '')) : [];
+  await page.route('**/api/content-reader', route => {
+    const keys: string[] = route.request().postDataJSON().keys ?? [];
     keys.forEach(key => requested.add(key));
     // Return only requested rows so a broad fixture cannot conceal missing hydration.
-    return route.fulfill({ json: snapshot.rows.filter((candidate: { content_key: string }) => keys.includes(candidate.content_key)) });
+    return route.fulfill({ json: readerResponse(snapshot.rows.filter((candidate: { content_key: string }) => keys.includes(candidate.content_key))) });
   });
   const dateKey = "2026-09-12";
   const event = { id: "qa-saturn-lilith", type: "aspect", primary: true, glyph: "□", title: "Saturn square Lilith", planets: ["Saturn", "Lilith"], aspect: "square", startsAt: `${dateKey}T12:00:00Z`, dateKey };

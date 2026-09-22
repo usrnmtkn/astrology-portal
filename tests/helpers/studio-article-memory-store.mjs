@@ -27,6 +27,13 @@ Object.assign(process.env,{STUDIO_MEMORY_FEEDBACK_ENABLED:'true',SUPABASE_URL:'h
 const originalFetch=globalThis.fetch, memoryFetch=databaseFetch(db);
 globalThis.fetch=async(input,init={})=>{
   const url=new URL(String(input));
+  if(url.pathname==='/rest/v1/content_publications' || url.pathname.startsWith('/rest/v1/rpc/content_studio_')) {
+    url.host='calendar-api.invalid'; const result=await originalFetch(url,init);
+    if(result.ok && url.pathname.endsWith('/content_studio_publish_revision')) {
+      for(const row of store.rows.values()) await persist(row);
+    }
+    return result;
+  }
   if(url.pathname==='/rest/v1/generated_interpretations'){
     url.host='calendar-api.invalid';const result=await originalFetch(url,init);
     if(result.ok && init.method==='POST'){

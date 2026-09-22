@@ -186,12 +186,12 @@ const compatibilityLoaderSource = generatedContentSource.slice(
 assert.ok(compatibilityLoaderStart >= 0 && compatibilityLoaderEnd > compatibilityLoaderStart);
 assert.match(
   compatibilityLoaderSource,
-  /\.like\("content_key", "authored\/compat-pair\/%"\)/,
+  /loadReaderRows\(\{ prefix: "authored\/compat-pair\/" \}\)/,
   "Compatibility hydration must select the exact authored Compatibility namespace."
 );
 assert.doesNotMatch(
   compatibilityLoaderSource,
-  /\.eq\("provider", fallbackArchitectureV3Provider\)/,
+  /loadReaderRows\(\{[^}]*provider:/,
   "Compatibility hydration must accept the approved materialization providers used by authored cards."
 );
 assert.match(

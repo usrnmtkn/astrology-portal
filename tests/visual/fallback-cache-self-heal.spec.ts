@@ -6,7 +6,7 @@ const staleJupiterHook = "Someone just took the stage without asking if they wer
 const currentJupiterArticle = "With Jupiter moving through Leo, confidence, visibility, recognition, and the desire to make something larger all increase";
 
 test("an old Jupiter/Lilith package cache self-heals to the bundled package", async ({ page }) => {
-  await page.route("**/rest/v1/generated_interpretations*", async (route) => {
+  await page.route('**/api/content-reader', async (route) => {
     await route.fulfill({
       status: 503,
       contentType: "application/json",

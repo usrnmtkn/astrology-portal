@@ -11,6 +11,7 @@ const { isLegacyLiveBase, isReusableLiveTopper, requiresBaseRegeneration } = req
 
 const app = read("apps/web/src/App.tsx");
 const generatedContent = read("apps/web/src/services/generatedContent.ts");
+const readerEligibility = read("apps/web/src/content/generatedContentEligibility.ts");
 const generatedContentKeys = read("apps/web/src/services/generatedContentKeys.ts");
 const migration = read(
   "apps/web/supabase/migrations/20260726203000_generated_content_sky_placement_block_type.sql"
@@ -49,9 +50,9 @@ assert.doesNotMatch(app, /compiledSkyArticleWritingSection/);
 assert.doesNotMatch(app, /generatedSkyPlacementTopper/);
 assert.doesNotMatch(app, /skyPlacementBaseContentKey/);
 assert.doesNotMatch(app, /skyPlacementTopperContentKey/);
-assert.match(generatedContent, /const isSkyPlacementWorkspace = row\.content_key\.startsWith\("sky\.placement\."\)/);
-assert.match(generatedContent, /!isSynastryGeneratedLane && !isSkyPlacementWorkspace/);
-assert.match(generatedContent, /writer,[\s\S]*judge,[\s\S]*owner-review tooling/);
+assert.match(readerEligibility, /const isSkyPlacementWorkspace = row\.content_key\.startsWith\("sky\.placement\."\)/);
+assert.match(readerEligibility, /!isSynastryGeneratedLane && !isSkyPlacementWorkspace/);
+assert.match(readerEligibility, /writer,[\s\S]*judge,[\s\S]*owner-review tooling/);
 
 assert.match(cron, /generatePlacementCard\?: PlacementGenerator/);
 assert.match(cron, /error: "sky-placement-engine-not-ready"/);
@@ -91,11 +92,10 @@ assert.match(cron, /The tight current aspect has separated/);
 assert.match(cron, /toppers: await syncPlacementToppers\(sky\)/);
 assert.match(cron, /isReusableLiveTopper\(existing, clean\)/);
 assert.match(generatedContentAdmin, /skyBlockType === "sky_placement"/);
-assert.match(generatedContentAdmin, /judgeGate === "human-review"/);
-assert.match(generatedContentAdmin, /legacyAutoPublishEligible = skyBlockType === "sky_aspect"/);
+assert.match(generatedContentAdmin, /libs\(\)\.skyWritingIssues\(/, "Publication must use the shared saved-writing check contract.");
 assert.match(
   generatedContentAdmin,
-  /if \(existingRow\?\.status === "LIVE"\)[\s\S]*skippedLiveRows\.push[\s\S]*return false/,
+  /if \(existing\?\.status === "LIVE"\)[\s\S]*skippedLiveRows\.push[\s\S]*continue/,
   "Admin bulk import must preserve LIVE rows without changing their gate or serving state."
 );
 assert.match(

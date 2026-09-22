@@ -1,3 +1,4 @@
+import { readerResponse } from '../helpers/reader-response';
 import { expect, test } from "@playwright/test";
 import { calendarMonthlyEditorialPattern } from "../../apps/admin/src/skyForecastTemplates";
 import { CALENDAR_MONTHLY_OVERVIEW_KEY } from "../../apps/web/src/features/calendar/monthlyOverview";
@@ -28,15 +29,15 @@ test("Calendar month view renders a published monthly overview", async ({ page }
     json: { ok: true, calendar: { month: "2026-09", timeZone: location.timeZone, location, days, events } }
   }));
   await page.route("**/content-studio-last-known-good.json", route => route.fulfill({ json: {
-    schema: "content-studio-last-known-good-v1", rowCount: 0, rows: [], publications: []
+    schema: "content-studio-last-known-good-v2", rowCount: 0, rows: [], publications: []
   } }));
   await page.route("**/rest/v1/**", route => route.fulfill({ json: [] }));
-  await page.route("**/rest/v1/generated_interpretations**", route => {
-    const url = new URL(route.request().url());
-    if (!url.search.includes(encodeURIComponent(CALENDAR_MONTHLY_OVERVIEW_KEY)) && !url.search.includes("monthly-overview")) {
-      return route.fulfill({ json: [] });
+  await page.route('**/api/content-reader', route => {
+    const keys: string[] = route.request().postDataJSON().keys ?? [];
+    if (!keys.includes(CALENDAR_MONTHLY_OVERVIEW_KEY)) {
+      return route.fulfill({ json: readerResponse([]) });
     }
-    return route.fulfill({ json: [{
+    return route.fulfill({ json: readerResponse([{
       id: "monthly-overview",
       content_key: CALENDAR_MONTHLY_OVERVIEW_KEY,
       surface: "calendar",
@@ -55,7 +56,7 @@ test("Calendar month view renders a published monthly overview", async ({ page }
       provider: null,
       model: null,
       updated_at: "2026-09-16T00:00:00.000Z"
-    }] });
+    }]) });
   });
   await page.goto("/?date=2026-09-15#calendar?view=month&date=2026-09-15");
   const overview = page.getByRole("region", { name: "Monthly overview", exact: true });

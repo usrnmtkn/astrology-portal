@@ -1,3 +1,4 @@
+import { readerResponse } from '../helpers/reader-response';
 import { test, expect } from '@playwright/test';
 import { build } from 'esbuild';
 
@@ -41,11 +42,11 @@ test('published Sky house writing loads independently of an obsolete mirror and 
   await context.route('**/publication-sky-qa',route=>route.fulfill({contentType:'text/html',body:'<html><body>Sky publication verification<script type="module">import * as qa from "/publication-sky-qa.js";window.qa=qa;</script></body></html>'}));
   await context.route('**/publication-sky-qa.js',route=>route.fulfill({contentType:'text/javascript',body:bundled.outputFiles[0].text}));
   await context.route('**/rest/v1/content_publications*',route=>route.fulfill({json:[publication]}));
-  await context.route('**/rest/v1/generated_interpretations*',route=>{
-    expect(new URL(route.request().url()).searchParams.get('id')).toContain(publication.row_id);
-    return route.fulfill({json:[source]});
+  await context.route('**/api/content-reader',route=>{
+    expect(route.request().postDataJSON().ids).toContain(publication.row_id);
+    return route.fulfill({json:readerResponse([source])});
   });
-  await context.route('**/content-studio-last-known-good.json',route=>route.fulfill({json:{schema:'content-studio-last-known-good-v1',rowCount:1,rows:[source],publications:[publication]}}));
+  await context.route('**/content-studio-last-known-good.json',route=>route.fulfill({json:{schema:'content-studio-last-known-good-v2',rowCount:1,rows:[source],publications:[publication]}}));
   await page.goto('/publication-sky-qa');await page.waitForFunction(()=>Boolean((window as any).qa));
   const live=await page.evaluate(async()=> (window as any).qa.loadFallbackArchitectureV3SkyPlacementDashboardBundle());
   expect(live.rowsFile.hookRows[0].body_you).toBe(record.body_you);

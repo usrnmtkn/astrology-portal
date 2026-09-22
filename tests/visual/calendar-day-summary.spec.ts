@@ -1,3 +1,4 @@
+import { readerResponse } from '../helpers/reader-response';
 import { test, expect } from '@playwright/test';
 import { readFileSync } from 'node:fs';
 import { bundledPublications } from '../helpers/bundled-publications';
@@ -102,15 +103,16 @@ test('Calendar and Sky preserve formatted summary lists and placement links', as
   test.setTimeout(90_000);
   const dateKey = '2026-09-12';
   const row = { id: 'format-summary', content_key: 'cms/sky-daily-summary/sun/virgo', surface: 'sky', mode: 'card',
+    updated_at: '2026-09-12T12:00:00.000Z',
     status: 'LIVE', lane: 'serving', review_state: null, headline: 'QA summary',
     body: 'QA opening.\n\n- **First QA item**\n- *Final QA item*',
     source_snapshot: { contentType: 'mustache-template', contentSystem: 'cms-surface-override', allowedSlots: [] } };
   await page.clock.setFixedTime(new Date(`${dateKey}T16:00:00Z`));
   await page.addInitScript(location => localStorage.setItem('tldrastro:selectedLocation', JSON.stringify(location)), location);
   await bundledPublications(page);
-  await page.route('**/rest/v1/generated_interpretations?**', route => route.fulfill({ json: [row] }));
+  await page.route('**/api/content-reader', route => route.fulfill({ json: readerResponse([row]) }));
   await page.route('**/content-studio-last-known-good.json', route => route.fulfill({ json: {
-    schema: 'content-studio-last-known-good-v1', rowCount: 1, rows: [row], publications: []
+    schema: 'content-studio-last-known-good-v2', rowCount: 1, rows: [row], publications: []
   } }));
   await page.route('**/api/calendar?**', route => route.fulfill({ json: { ok: true, calendar: {
     month: '2026-09', timeZone: location.timeZone, location, events: [], days: [{ date: `${dateKey}T16:00:00Z`, dateKey,

@@ -1,3 +1,4 @@
+import { generatedRowVersionQuery, confirmedGeneratedRowWrite } from "../_lib/generated-row-writes.js";
 import type { IncomingMessage, ServerResponse } from "node:http";
 import skyAspectGenerator from "../../packages/astro-knowledge/scripts/generate-sky-aspect-cards.js";
 import editorialJudgeRuntime from "../../packages/astro-knowledge/scripts/editorial-judge-runtime.js";
@@ -179,6 +180,7 @@ type LivePlacementBaseRow = ExistingPlacementRow & {
 };
 
 type ExistingTopperRow = {
+  updated_at: string;
   id: string;
   content_key: string;
   status: string;
@@ -462,7 +464,7 @@ async function existingTopperRows() {
     content_key: "like.sky.placement.topper.*",
     target_date: "is.null",
     mode: "eq.feed",
-    select: "id,content_key,status,review_state,body,judge_score,judge_gate,source_snapshot"
+    select: "id,content_key,status,updated_at,review_state,body,judge_score,judge_gate,source_snapshot"
   });
   const key = serviceRoleKey();
   const response = await fetch(`${supabaseUrl()}/rest/v1/generated_interpretations?${params}`, {
@@ -527,12 +529,13 @@ async function deactivateTopper(row: ExistingTopperRow, reason: string) {
 
   const key = serviceRoleKey();
   const now = new Date().toISOString();
-  const response = await fetch(`${supabaseUrl()}/rest/v1/generated_interpretations?id=eq.${encodeURIComponent(row.id)}`, {
+  const response = await fetch(`${supabaseUrl()}/rest/v1/generated_interpretations?${generatedRowVersionQuery(row)}`, {
     method: "PATCH",
     headers: {
       apikey: key,
       authorization: `Bearer ${key}`,
-      "content-type": "application/json"
+      "content-type": "application/json",
+      prefer: "return=representation"
     },
     body: JSON.stringify({
       status: "DRAFT",
@@ -546,9 +549,7 @@ async function deactivateTopper(row: ExistingTopperRow, reason: string) {
     })
   });
 
-  if (!response.ok) {
-    throw new Error(`Sky-placement topper deactivation failed with ${response.status}.`);
-  }
+  await confirmedGeneratedRowWrite(response);
 
   return true;
 }
@@ -559,12 +560,13 @@ async function reactivateTopperDraft(
   flag: "SKY_PLACEMENT_TOPPER_VOICE_REVIEW_REQUIRED"
 ) {
   const key = serviceRoleKey();
-  const response = await fetch(`${supabaseUrl()}/rest/v1/generated_interpretations?id=eq.${encodeURIComponent(row.id)}`, {
+  const response = await fetch(`${supabaseUrl()}/rest/v1/generated_interpretations?${generatedRowVersionQuery(row)}`, {
     method: "PATCH",
     headers: {
       apikey: key,
       authorization: `Bearer ${key}`,
-      "content-type": "application/json"
+      "content-type": "application/json",
+      prefer: "return=representation"
     },
     body: JSON.stringify({
       status: "DRAFT",
@@ -576,9 +578,7 @@ async function reactivateTopperDraft(
     })
   });
 
-  if (!response.ok) {
-    throw new Error(`Sky-placement topper reactivation failed with ${response.status}.`);
-  }
+  await confirmedGeneratedRowWrite(response);
 }
 
 function topperRowMatches(
@@ -709,7 +709,7 @@ async function savePlacementCard(
   const contentKey = contentKeyFor(args);
   const response = await fetch(
     existing
-      ? `${supabaseUrl()}/rest/v1/generated_interpretations?id=eq.${encodeURIComponent(existing.id)}`
+      ? `${supabaseUrl()}/rest/v1/generated_interpretations?${generatedRowVersionQuery(existing)}`
       : `${supabaseUrl()}/rest/v1/generated_interpretations?on_conflict=content_key,target_date,mode`,
     {
       method: existing ? "PATCH" : "POST",
@@ -717,7 +717,7 @@ async function savePlacementCard(
         apikey: key,
         authorization: `Bearer ${key}`,
         "content-type": "application/json",
-        prefer: existing ? "return=representation" : "resolution=merge-duplicates,return=representation"
+        prefer: existing ? "return=representation" : "resolution=ignore-duplicates,return=representation"
       },
       body: JSON.stringify({
         content_key: contentKey,
@@ -784,11 +784,7 @@ async function savePlacementCard(
       })
     }
   );
-  const payload = await response.json().catch(() => null);
-
-  if (!response.ok) {
-    throw new Error(`Sky-placement save failed with ${response.status}: ${JSON.stringify(payload)}`);
-  }
+  await confirmedGeneratedRowWrite(response);
 
   return {
     contentKey,
@@ -897,7 +893,7 @@ async function savePlacementTopper(
   const contentKey = topperContentKeyFor(contact);
   const response = await fetch(
     existing
-      ? `${supabaseUrl()}/rest/v1/generated_interpretations?id=eq.${encodeURIComponent(existing.id)}`
+      ? `${supabaseUrl()}/rest/v1/generated_interpretations?${generatedRowVersionQuery(existing)}`
       : `${supabaseUrl()}/rest/v1/generated_interpretations?on_conflict=content_key,target_date,mode`,
     {
       method: existing ? "PATCH" : "POST",
@@ -905,7 +901,7 @@ async function savePlacementTopper(
         apikey: key,
         authorization: `Bearer ${key}`,
         "content-type": "application/json",
-        prefer: existing ? "return=representation" : "resolution=merge-duplicates,return=representation"
+        prefer: existing ? "return=representation" : "resolution=ignore-duplicates,return=representation"
       },
       body: JSON.stringify({
         content_key: contentKey,
@@ -988,11 +984,7 @@ async function savePlacementTopper(
       })
     }
   );
-  const payload = await response.json().catch(() => null);
-
-  if (!response.ok) {
-    throw new Error(`Sky-placement topper save failed with ${response.status}: ${JSON.stringify(payload)}`);
-  }
+  await confirmedGeneratedRowWrite(response);
 
   return {
     contentKey,

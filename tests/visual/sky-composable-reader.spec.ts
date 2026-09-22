@@ -1,3 +1,4 @@
+import { readerResponse } from '../helpers/reader-response';
 import { expect, test } from '@playwright/test';
 import { skyPlacementSourceRecords } from '../../api/_lib/sky-placement-sources';
 import { makeSkyIngressComposition } from '../../apps/web/src/content/fallbackArchitectureV3/resolver/skyIngressComposition.mjs';
@@ -23,11 +24,12 @@ test('published V5 sentences assemble on the reader with calculated occurrence v
  await page.clock.setFixedTime(new Date('2026-07-10T12:00:00Z'));
  await page.addInitScript(() => localStorage.setItem('tldrastro:selectedLocation', JSON.stringify({ label: 'New York', latitude: 40.7, longitude: -74, timeZone: 'America/New_York' })));
  const errors: string[] = []; page.on('pageerror', error => errors.push(error.message));
+ await page.route('**/api/content-reader', route => route.fulfill({ json: readerResponse([row]) }));
  await page.route('**/rest/v1/**', route => {
   const path = new URL(route.request().url()).pathname;
   return route.fulfill({ json: path.endsWith('/content_runtime_revision') ? updatedAt
    : path.endsWith('/content_publications') ? [{ content_key: key, state: 'live', revision: 1, row_id: row.id, row_updated_at: updatedAt, updated_at: updatedAt }]
-   : path.endsWith('/generated_interpretations') ? [row] : [] });
+   : [] });
  });
  await page.route('**/api/calendar?**', route => route.fulfill({ json: { ok: true, calendar: { days: [] } } }));
  await emptyLastKnownGoodSnapshot(page);
@@ -70,11 +72,12 @@ test('published motion blocks receive real residency and retrograde aspect facts
    postMessage(message: any, ...args: any[]) { if(message.kind === 'placement-sky') (window as any).__aspectRequests.push(message); return super.postMessage(message, ...args); }
   };
  });
+ await page.route('**/api/content-reader', route => route.fulfill({ json: readerResponse([row]) }));
  await page.route('**/rest/v1/**', route => {
   const path = new URL(route.request().url()).pathname;
   const data = path.endsWith('/content_runtime_revision') ? updatedAt
    : path.endsWith('/content_publications') ? [{ content_key:key, state:'live', revision:1, row_id:row.id, row_updated_at:updatedAt, updated_at:updatedAt }]
-   : path.endsWith('/generated_interpretations') ? [row] : [];
+   : [];
   return route.fulfill({ json: data });
  });
  await page.route('**/api/calendar?**', route => route.fulfill({ json: { ok:true, calendar:{ days:[] } } }));
@@ -118,11 +121,12 @@ for (const motionArticle of [false, true]) test(`Placement article phrases reach
  await page.clock.setFixedTime(new Date('2026-07-10T12:00:00Z'));
  await page.addInitScript(() => localStorage.setItem('tldrastro:selectedLocation', JSON.stringify({ label: 'New York', latitude: 40.7, longitude: -74, timeZone: 'America/New_York' })));
  const errors: string[] = []; page.on('pageerror', error => errors.push(error.message));
+ await page.route('**/api/content-reader', route => route.fulfill({ json: readerResponse([row]) }));
  await page.route('**/rest/v1/**', route => {
   const path = new URL(route.request().url()).pathname;
   return route.fulfill({ json: path.endsWith('/content_runtime_revision') ? updatedAt
    : path.endsWith('/content_publications') ? [{ content_key: key, state: 'live', revision: 1, row_id: row.id, row_updated_at: updatedAt, updated_at: updatedAt }]
-   : path.endsWith('/generated_interpretations') ? [row] : [] });
+   : [] });
  });
  await page.route('**/api/calendar?**', route => route.fulfill({ json: { ok: true, calendar: { days: [] } } }));
  await emptyLastKnownGoodSnapshot(page);

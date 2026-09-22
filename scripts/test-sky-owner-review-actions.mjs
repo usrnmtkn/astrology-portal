@@ -1,3 +1,4 @@
+import { publicationRpcFixture } from "../tests/helpers/studio-publication-rpc.mjs";
 import assert from "node:assert/strict";
 import { Readable } from "node:stream";
 
@@ -37,6 +38,7 @@ function responseResult() {
 function existingRow(overrides = {}) {
   return {
     id: "sky-row",
+    updated_at: "2026-09-21T12:00:00.123456Z",
     content_key: "sky.aspect.mercury.opposition.saturn.virgo.pisces",
     surface: "sky",
     target_date: null,
@@ -77,7 +79,7 @@ async function invoke(body, row) {
     throw new Error(`Unexpected fetch method ${options.method}`);
   };
   const { res, completed } = responseResult();
-  await handler(request(body), res);
+  await handler(request({ expectedUpdatedAt: row.updated_at, ...body }), res);
   return { ...await completed, patches };
 }
 
@@ -438,46 +440,36 @@ const liveEditionRow = {
   source_snapshot: approvedEdition.patches[0].source_snapshot
 };
 
-async function invokeRevision(body, rowsById, databaseTriggers = false, competingRevision = false) {
+async function invokeRevision(body, rowsById, competingRevision = false) {
   rowsById = structuredClone(rowsById);
-  let revisionClock = 0;
   const writes = [];
+  const publication = publicationRpcFixture(() => Object.values(rowsById), saved => { for (const row of saved) rowsById[row.id] = row; });
   globalThis.fetch = async (url, options = {}) => {
-    if (!options.method) {
-      const id = new URL(url).searchParams.get("id")?.replace(/^eq\./u, "");
-      return new Response(JSON.stringify(id && rowsById[id] ? [rowsById[id]] : []), { status: 200 });
+    const parsed = new URL(url);
+    if (parsed.pathname.endsWith('/content_studio_publish_revision')) {
+      writes.push({ method: options.method, url, body: JSON.parse(options.body) });
+      if (competingRevision) rowsById[body.id].updated_at = '2026-09-21T18:00:00.000001Z';
     }
+    const operation = await publication(url, options);
+    if (operation) return operation;
+    if (parsed.pathname.endsWith('/content_publications')) return Response.json([]);
+    const id = parsed.searchParams.get('id')?.replace(/^eq\./u, '');
+    if (!options.method) return Response.json(id && rowsById[id] ? [rowsById[id]] : []);
     const write = JSON.parse(options.body);
     writes.push({ method: options.method, url, body: write });
-    if (options.method === "POST") {
-      return new Response(JSON.stringify([{ id: "revision-row", ...write }]), { status: 200 });
-    }
-    if (options.method === "PATCH") {
-      const id = new URL(url).searchParams.get("id")?.replace(/^eq\./u, "");
-      const expected = new URL(url).searchParams.get("updated_at")?.replace(/^eq\./u, "");
-      if (databaseTriggers && expected && rowsById[id]?.updated_at !== expected) {
-        return new Response("[]", { status: 200 });
-      }
-      const saved = { ...(rowsById[id] ?? {}), ...write };
-      if (databaseTriggers) saved.updated_at = `2026-09-10T07:06:57.${String(++revisionClock).padStart(6, "0")}+00:00`;
-      rowsById[id] = saved;
-      if (databaseTriggers && saved.status === "LIVE") {
-        for (const revision of Object.values(rowsById)) {
-          if (revision.source_snapshot?.targetRowId !== id || revision.status !== "DRAFT") continue;
-          revision.status = "ARCHIVED";
-          revision.lane = "reference";
-          revision.review_state = "published-revision";
-          revision.updated_at = saved.updated_at;
-          if (competingRevision) revision.sections = { ...revision.sections, competingEdit: true };
-        }
-      }
-      return new Response(JSON.stringify([saved]), { status: 200 });
+    if (options.method === 'POST') return Response.json([{ id: 'revision-row', ...write }]);
+    if (options.method === 'PATCH') {
+      const expected = parsed.searchParams.get('updated_at')?.replace(/^eq\./u, '');
+      if (expected && rowsById[id]?.updated_at !== expected) return Response.json([]);
+      const saved = { ...rowsById[id], ...write };rowsById[id] = saved;return Response.json([saved]);
     }
     throw new Error(`Unexpected fetch method ${options.method}`);
   };
   const { res, completed } = responseResult();
-  await handler(request(body), res);
-  return { ...await completed, writes };
+  try {
+    await handler(request({ expectedUpdatedAt: rowsById[body.id]?.updated_at, ...body }), res);
+    return { ...await completed, writes, rowsById };
+  } finally { await publication.close(); }
 }
 
 const savedRevision = await invokeRevision({
@@ -519,13 +511,14 @@ const publishedRevision = await invokeRevision({
   ownerAction: "publish-sky-article-edition-revision"
 }, { "revision-row": revisionRow, "sky-row": liveEditionRow });
 assert.equal(publishedRevision.status, 200);
-assert.equal(publishedRevision.writes.length, 2);
-assert.equal(publishedRevision.writes[0].method, "PATCH");
-assert.equal(publishedRevision.writes[0].body.status, "LIVE");
-assert.equal(publishedRevision.writes[0].body.summary, revisedEdition.tldr);
-assert.equal(publishedRevision.writes[0].body.source_snapshot.ownerApproval.compiledHash, revisedEdition.compiledHash);
-assert.equal(publishedRevision.writes[0].body.source_snapshot.skyArticleRevisionHistory[0].edition.compiledHash, compiledEdition.compiledHash);
-assert.equal(publishedRevision.writes[1].body.status, "ARCHIVED");
+assert.equal(publishedRevision.writes.length, 1);
+assert.equal(publishedRevision.writes[0].method, "POST");
+assert.match(publishedRevision.writes[0].url, /content_studio_publish_revision$/);
+assert.equal(publishedRevision.writes[0].body.p_patch.status, "LIVE");
+assert.equal(publishedRevision.writes[0].body.p_patch.summary, revisedEdition.tldr);
+assert.equal(publishedRevision.writes[0].body.p_patch.source_snapshot.ownerApproval.compiledHash, revisedEdition.compiledHash);
+assert.equal(publishedRevision.writes[0].body.p_patch.source_snapshot.skyArticleRevisionHistory[0].edition.compiledHash, compiledEdition.compiledHash);
+assert.equal(publishedRevision.rowsById["revision-row"].status, "ARCHIVED");
 
 const staleLiveRow = {
   ...liveEditionRow,
@@ -546,7 +539,7 @@ console.log("Sky owner review action checks passed: cards, complete editions, an
 for (const kind of ["article", "package"]) {
   const version = "2026-09-10T07:00:00.123456+00:00";
   const target = kind === "article" ? { ...liveEditionRow, updated_at: version } : { ...packageRow, updated_at: version };
-  const revision = kind === "article" ? { ...revisionRow, updated_at: version } : {
+  const revision = kind === "article" ? { ...revisionRow, updated_at: version, source_snapshot: { ...revisionRow.source_snapshot, targetRowUpdatedAt: version } } : {
     ...target, id: "revision-row", status: "DRAFT", lane: "reference", review_state: "owner-review-required",
     event_type: "sky-v4-governed-aspect-draft",
     source_snapshot: { ...target.source_snapshot, targetRowId: target.id, targetRowUpdatedAt: version },
@@ -555,14 +548,15 @@ for (const kind of ["article", "package"]) {
   const action = kind === "article" ? "publish-sky-article-edition-revision" : "approve-package-revision";
   const input = { id: revision.id, ownerAction: action, expectedUpdatedAt: version };
   const rows = { [target.id]: target, [revision.id]: revision };
-  const result = await invokeRevision(input, rows, true);
+  const result = await invokeRevision(input, rows);
   assert.equal(result.status, 200, JSON.stringify(result.payload));
   assert.equal(result.payload.rows[0].id, target.id);
   assert.equal(result.payload.rows[0].status, "LIVE");
-  const archiveWrite = result.writes.find(write => write.body.status === "ARCHIVED");
-  assert.match(archiveWrite.url, /000001/, "Cleanup must use the timestamp returned by the database claim.");
-  const conflict = await invokeRevision(input, rows, true, true);
-  assert.equal(conflict.status, 409, "A different archived proposal is not successful completion.");
+  assert.equal(result.rowsById[revision.id].status, "ARCHIVED");
+  assert.notEqual(result.payload.rows[0].updated_at, version, "The transaction returns its database version.");
+  assert(result.payload.publicationReceipt, "Publication must return its immutable receipt.");
+  const conflict = await invokeRevision(input, rows, true);
+  assert.equal(conflict.status, 409, "A concurrently changed proposal must not be published.");
 }
 console.log("Database timestamp and revision-completion trigger regressions passed.");
 

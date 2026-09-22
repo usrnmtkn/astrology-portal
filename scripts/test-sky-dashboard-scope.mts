@@ -66,6 +66,21 @@ class Query {
 }
 const storage = new Map<string, string>();
 const originalWindow = globalThis.window;
+const originalFetch = globalThis.fetch;
+globalThis.fetch = async (input, init) => {
+  assert.equal(String(input), '/api/content-reader');
+  const body = JSON.parse(String(init?.body));
+  let query = (globalThis as any).fixtureClient.from();
+  if (body.provider) query.eq('provider', body.provider);
+  if (body.scope) query.or(body.scope === 'sky' ? skyDashboardScopeFilter : skyListDashboardScopeFilter);
+  if (body.keys) query.in('content_key', body.keys);
+  if (body.ids) query.in('id', body.ids);
+  if (body.surfaces) query.in('surface', body.surfaces);
+  if (body.afterId) query.gt('id', body.afterId);
+  const { data, error } = await query.returns();
+  if (error) return new Response('synthetic storage failure', { status: 503 });
+  return Response.json({ schema: 'content-reader-row-v1', rows: data, publications: [], nextCursor: data.length === 250 ? data.at(-1).id : null });
+};
 Object.assign(globalThis, {
   window: Object.assign(new EventTarget(), { location: { hostname: 'reader.example' }, localStorage: { getItem: (key: string) => storage.get(key) ?? null,
     setItem: (key: string, value: string) => storage.set(key, value), removeItem: (key: string) => storage.delete(key) } }),
@@ -116,11 +131,11 @@ try {
   const originalClient = (globalThis as any).fixtureClient;
   const listSource = { ...rows[0], content_key: 'sky-context/fixture-paging' };
   const pages: number[] = [];
-  const pagedRows = Array.from({ length: 1001 }, (_, i) => ({ ...listSource, id: String(i).padStart(8, '0') }));
+  const pagedRows = Array.from({ length: 251 }, (_, i) => ({ ...listSource, id: `aaaaaaaa-aaaa-aaaa-aaaa-${String(i).padStart(12, '0')}` }));
   let failSecondPage = false;
   class PagedQuery extends Query {
     async returns() {
-      const data = pagedRows.filter(row => this.filters.every(filter => filter(row))).slice(0, 1000);
+      const data = pagedRows.filter(row => this.filters.every(filter => filter(row))).slice(0, 250);
       pages.push(data.length);
       return failSecondPage && pages.length === 2 ? { data: null, error: new Error('Fixture page failure') } : { data };
     }
@@ -129,7 +144,7 @@ try {
   try {
     qa.clearCachedFallbackArchitectureV3Bundle();
     await qa.loadFallbackArchitectureV3DashboardBundle('sky-list');
-    assert.deepEqual(pages, [1000, 1], 'The shared pager must fetch beyond the first page using its ID cursor');
+    assert.deepEqual(pages, [250, 1], 'The shared pager must fetch beyond the first page using its ID cursor');
     qa.clearCachedFallbackArchitectureV3Bundle();
     pages.length = 0; failSecondPage = true;
     await assert.rejects(qa.loadFallbackArchitectureV3DashboardBundle('sky-list'), /Current Sky content/);
@@ -158,12 +173,13 @@ try {
   qa.installContentPublications([publication(virgin,3,'retired')]);
   assert.equal(await qa.loadFallbackArchitectureV3SkyPlacementDashboardBundle('sun/virgo'),null,'Retired rows must disappear from cache-backed reads');
   qa.installContentPublications([publication(virgin), publication(libra)]);
-  storage.delete('tldrastro:sky-publication-rows:v1');
+  storage.delete('tldrastro:sky-publication-rows:v2');
   rows.splice(rows.indexOf(libra), 1);
   await assert.rejects(qa.loadFallbackArchitectureV3SkyPlacementDashboardBundle('sun/virgo,sun/libra'), /Current Sky publications/,
     'One valid row must not disguise a partial response missing another required publication');
   console.log('PASS: Sky inventory filtering, isolated revision caches, shared invalidation and cross-page overlay preservation.');
 } finally {
+  globalThis.fetch = originalFetch;
   if (originalWindow === undefined) Reflect.deleteProperty(globalThis, 'window'); else globalThis.window = originalWindow;
   Reflect.deleteProperty(globalThis, 'fixtureClient');
 }

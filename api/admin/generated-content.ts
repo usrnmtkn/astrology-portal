@@ -2,11 +2,12 @@ import { handleStudioVariables, StudioVariableError, snapshotStudioVariables, as
 import { mergeGeneratedInterpretationSections } from "../_lib/generated-interpretation-sections.js";
 import { approveNatalAspectStudioCopy } from "../_lib/content-studio-approval.js";
 import type { IncomingMessage, ServerResponse } from "node:http";
+import { AsyncLocalStorage } from "node:async_hooks";
 import { createHash } from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath, URL } from "node:url";
-import { isContentAdminAuthorized } from "../_lib/admin-auth.js";
+import { isContentAdminAuthorized, getContentAdminPrincipal } from "../_lib/admin-auth.js";
 import { loadLocalWebEnv } from "../_lib/local-env.js";
 import { postgrestContentKeyPrefixAnd } from "../_lib/postgrest-content-key-prefix.js";
 import type * as GeneratedContentLibraries from "./generated-content-libraries.js";
@@ -110,13 +111,26 @@ type GeneratedContentRequestBody = GeneratedContentWriteBody & {
 
 class GeneratedContentRequestError extends Error {
   readonly statusCode: number;
+  code?: string;
   savedRows?: unknown[];
 
-  constructor(message: string, statusCode = 400) {
+  constructor(message: string, statusCode = 400, savedRows?: unknown[], code?: string) {
     super(message);
     this.name = "GeneratedContentRequestError";
     this.statusCode = statusCode;
+    this.savedRows = savedRows;
+    this.code = code;
   }
+}
+
+function requireCallerVersion(value: unknown): asserts value is string {
+  if (typeof value === 'string' && /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{1,6})?(?:Z|[+-]\d{2}:\d{2})$/u.test(value)
+    && Number.isFinite(Date.parse(value))) return;
+  const error = new GeneratedContentRequestError(value == null || value === ''
+    ? 'The saved version is required. Reload this row before making changes; your writing has not been overwritten.'
+    : 'The saved version is invalid. Reload this row before making changes.');
+  error.code = value == null || value === '' ? 'VERSION_REQUIRED' : 'VERSION_INVALID';
+  throw error;
 }
 
 type ExistingGeneratedContentRow = {
@@ -1878,7 +1892,7 @@ async function assertZodiacSeasonPublication(row: Record<string, any>) {
   if (!libs().supportsZodiacSeasonVariables(source)) throw new GeneratedContentRequestError("This template has no supported sign context for zodiac season variables.");
   const keys = [...new Set(dependencies.map((item: {contentKey: string}) => item.contentKey))];
   const params = new URLSearchParams({ select: "id,content_key,sections,status,lane,review_state,updated_at", content_key: `in.(${keys.join(",")})`, status: "eq.LIVE", lane: "eq.serving", order: "updated_at.desc", limit: "80" });
-  const publicationParams = new URLSearchParams({ select: "content_key,row_id,row_updated_at,state", content_key: `in.(${keys.join(",")})` });
+  const publicationParams = new URLSearchParams({ select: "content_key,row_id,row_updated_at,state,revision", content_key: `in.(${keys.join(",")})` });
   const [response, publications] = await Promise.all([
     adminStorageFetch(`${supabaseUrl()}/rest/v1/generated_interpretations?${params}`, { headers: adminHeaders() }),
     adminStorageFetch(`${supabaseUrl()}/rest/v1/content_publications?${publicationParams}`, { headers: adminHeaders() })
@@ -1888,7 +1902,11 @@ async function assertZodiacSeasonPublication(row: Record<string, any>) {
   for (const candidate of response.payload) {
     const publication = publications.payload.find((item: Record<string, any>) => item.content_key === candidate.content_key);
     const isPublished = publication?.state === "live" && publication.row_id === candidate.id && publication.row_updated_at === candidate.updated_at;
-    if (isPublished && !candidate.review_state && !sources.some(item => item.contentKey === candidate.content_key)) sources.push(v3PackageRecord(candidate));
+    if (isPublished && !candidate.review_state && !sources.some(item => item.contentKey === candidate.content_key)) {
+      if (publication.revision == null && publicationContext.getStore()?.operationId) throw new GeneratedContentRequestError("The shared season publication has no revision. Reload before publishing.", 409);
+      recordPublicationDependency(candidate, publication.revision);
+      sources.push(v3PackageRecord(candidate));
+    }
   }
   for (const dependency of dependencies) {
     try { libs().resolveZodiacSeasonVariables(`{{${dependency.name}}}`, { sign: dependency.sign }, sources); }
@@ -1947,22 +1965,105 @@ async function patchGeneratedContentRow(
   return rows;
 }
 
-async function completePublishedRevision(existing: ExistingGeneratedContentRow, expectedUpdatedAt: string | null, now: string) {
-  try {
-    await patchGeneratedContentRow(existing.id, {
-      status: "ARCHIVED", lane: "reference", review_state: "published-revision", updated_at: now
-    }, expectedUpdatedAt);
-  } catch (error) {
-    // Publishing the target can archive this exact proposal in a database
-    // trigger. A completed transition is success, not a stale-edit failure.
-    if (error instanceof GeneratedContentRequestError && error.statusCode === 409) {
-      const latest = await fetchExistingRowById(existing.id);
-      if (latest?.status === "ARCHIVED" && latest.lane === "reference" && latest.review_state === "published-revision"
-        && latest.source_snapshot?.targetRowId === existing.source_snapshot?.targetRowId
-        && JSON.stringify(latest.sections) === JSON.stringify(existing.sections)) return;
-    }
-    throw error;
+type PublicationDependency = { id: string; updatedAt: string; publicationRevision?: string };
+type PublicationContext = {
+  actor: string; operationId?: string; requestSha256?: string;
+  dependencies: Map<string, PublicationDependency>; targetPublication?: unknown; receipt?: Record<string, unknown>;
+};
+const publicationContext = new AsyncLocalStorage<PublicationContext>();
+const atomicPublicationActions = new Set(["approve-package-revision", "publish-sky-article-edition-revision"]);
+
+function recordPublicationDependency(row: { id: string; updated_at: string }, publicationRevision?: string | number) {
+  const context = publicationContext.getStore();
+  if (!context?.operationId) return;
+  if (!row.id || !row.updated_at) throw new GeneratedContentRequestError("Referenced writing has no saved version. Reload before publishing.", 409);
+  const previous = context.dependencies.get(row.id);
+  const dependency = { id: row.id, updatedAt: row.updated_at, ...(publicationRevision != null ? { publicationRevision: String(publicationRevision) } : {}) };
+  if (previous && (previous.updatedAt !== dependency.updatedAt || (previous.publicationRevision && dependency.publicationRevision && previous.publicationRevision !== dependency.publicationRevision))) {
+    throw new GeneratedContentRequestError("Referenced writing changed during validation. Reload before publishing.", 409);
   }
+  context.dependencies.set(row.id, { ...previous, ...dependency });
+}
+
+async function assertVersionedStudioVariablePublication(record: unknown) {
+  const dependencies = await assertStudioVariablePublication(record, studioVariableStorage);
+  for (const dependency of dependencies) recordPublicationDependency({ id: dependency.id, updated_at: dependency.updatedAt });
+}
+
+async function publicationRpc(name: string, body: Record<string, unknown>) {
+  return adminStorageFetch(`${supabaseUrl()}/rest/v1/rpc/${name}`, {
+    method: "POST", headers: adminHeaders(), body: JSON.stringify(body)
+  });
+}
+
+function identifyPublicationOperation(body: GeneratedContentWriteBody, context: PublicationContext) {
+  const identity = JSON.stringify({ schema: "content-studio-publication-operation-v1", actor: context.actor,
+    action: body.ownerAction, proposalId: body.id, proposalVersion: body.expectedUpdatedAt });
+  context.requestSha256 = createHash("sha256").update(identity).digest("hex");
+  context.operationId = context.requestSha256;
+}
+
+async function readPublicationReceipt() {
+  const context = publicationContext.getStore()!;
+  const response = await publicationRpc("content_studio_publication_receipt", {
+    p_operation_id: context.operationId, p_actor: context.actor, p_request_sha256: context.requestSha256
+  });
+  if (!response.ok) throw new GeneratedContentRequestError("Publication history could not be checked. Reload before trying again.", 503, undefined, "PUBLICATION_UNCONFIRMED");
+  if (response.payload === null) return null;
+  if (response.payload?.schema !== "content-studio-publication-receipt-v1" || response.payload.operationId !== context.operationId || response.payload.requestSha256 !== context.requestSha256) {
+    throw new GeneratedContentRequestError("Publication returned an invalid receipt. Reload to check its saved status.", 503, undefined, "PUBLICATION_UNCONFIRMED");
+  }
+  return response.payload as Record<string, any>;
+}
+
+async function currentPublication(contentKey: string) {
+  const response = await adminStorageFetch(`${supabaseUrl()}/rest/v1/content_publications?${new URLSearchParams({ select: "content_key,state,revision,row_id,row_updated_at", content_key: `eq.${contentKey}`, limit: "1" })}`, { headers: adminHeaders() });
+  if (!response.ok || !Array.isArray(response.payload)) throw new GeneratedContentRequestError("The current publication state could not be checked. Reload before publishing.", 503, undefined, "PUBLICATION_UNCONFIRMED");
+  return response.payload.find((item: any) => item.content_key === contentKey) ?? null;
+}
+
+async function rowsFromPublicationReceipt(receipt: Record<string, any>) {
+  // A receipt proves a past commit. Always reload today's row: later retirement
+  // or editing must not be presented as still-published historical copy.
+  const context = publicationContext.getStore()!;
+  const { row: _privateSavedRow, ...metadata } = receipt;
+  context.receipt = metadata;
+  const current = await fetchExistingRowById(receipt.targetId);
+  if (!current) {
+    context.receipt.currentStatus = "DELETED";
+    context.receipt.currentPublicationState = "removed";
+    return [];
+  }
+  context.receipt.currentVersion = current.updated_at;
+  context.receipt.currentStatus = current.status;
+  const publication = await currentPublication(current.content_key);
+  context.receipt.currentPublicationState = publication?.state ?? (current.target_date ? "dated" : "unpublished");
+  return [current];
+}
+
+async function publishRevisionAtomically(body: GeneratedContentWriteBody, proposal: ExistingGeneratedContentRow, target: ExistingGeneratedContentRow, patch: Record<string, unknown>) {
+  const context = publicationContext.getStore()!;
+  const dependencies = [...context.dependencies.values()].filter(item => ![proposal.id, target.id].includes(item.id)).sort((a, b) => a.id.localeCompare(b.id));
+  let response;
+  try {
+    response = await publicationRpc("content_studio_publish_revision", {
+      p_operation_id: context.operationId, p_actor: context.actor, p_request_sha256: context.requestSha256,
+      p_action: body.ownerAction, p_proposal_id: proposal.id, p_proposal_version: body.expectedUpdatedAt,
+      p_target_id: target.id, p_target_version: target.updated_at, p_patch: patch,
+      p_dependencies: dependencies,
+      p_validation_context: { schema: "content-studio-publication-validation-v1", commit: process.env.VERCEL_GIT_COMMIT_SHA ?? "local", readerBoundary: true, targetPublication: context.targetPublication ?? null }
+    });
+  } catch { /* A lost response is recovered by the immutable operation receipt. */ }
+  if (response?.ok && response.payload?.schema === "content-studio-publication-receipt-v1"
+    && response.payload.operationId === context.operationId && response.payload.requestSha256 === context.requestSha256) {
+    return rowsFromPublicationReceipt(response.payload);
+  }
+  const receipt = await readPublicationReceipt();
+  if (receipt) return rowsFromPublicationReceipt(receipt);
+  if (response && !response.ok && ["40001", "40P01", "23505"].includes(response.payload?.code)) {
+    throw new GeneratedContentRequestError("The proposal, source, or referenced writing changed during publication. Your saved proposal is intact; reload to compare it.", 409, undefined, "PUBLICATION_CONFLICT");
+  }
+  throw new GeneratedContentRequestError("Publication could not be confirmed. Your saved proposal is retained. Check its status before publishing again.", 503, undefined, "PUBLICATION_UNCONFIRMED");
 }
 
 async function upsertGeneratedContentRow(row: Record<string, unknown>) {
@@ -2115,7 +2216,8 @@ async function bulkUpsertGeneratedContent(body: GeneratedContentRequestBody) {
     if (existing) row.updated_at = nextGeneratedContentVersion(existing.updated_at);
     try {
       const conflict = () => new GeneratedContentRequestError(`Content ${row.content_key} changed while the batch was saving. Reload it before retrying; the newer version was not overwritten.`, 409);
-      if (existing && (!existing.updated_at || (rows[index].expectedUpdatedAt && rows[index].expectedUpdatedAt !== existing.updated_at))) throw conflict();
+      if (existing) requireCallerVersion(rows[index].expectedUpdatedAt);
+      if (existing && (!existing.updated_at || rows[index].expectedUpdatedAt !== existing.updated_at)) throw conflict();
       assertReaderEligiblePublication({ ...existing, ...row });
       const params = existing
         ? new URLSearchParams({ id: `eq.${existing.id}`, updated_at: `eq.${existing.updated_at}`, status: "neq.LIVE" })
@@ -2188,6 +2290,16 @@ async function updateGeneratedContent(req: IncomingMessage) {
   if (!body.id) {
     throw new GeneratedContentRequestError("id is required.");
   }
+  requireCallerVersion(body.expectedUpdatedAt);
+  if (atomicPublicationActions.has(body.ownerAction ?? "")) {
+    if (Object.entries(body).some(([key, value]) => !["id", "ownerAction", "expectedUpdatedAt"].includes(key) && value !== undefined)) {
+      throw new GeneratedContentRequestError("Publish the saved revision separately from other edits.", 400);
+    }
+    const context = publicationContext.getStore()!;
+    identifyPublicationOperation(body, context);
+    const receipt = await readPublicationReceipt();
+    if (receipt) return rowsFromPublicationReceipt(receipt);
+  }
 
   if (body.status && !allowedStatuses.has(body.status)) {
     throw new GeneratedContentRequestError("status must be DRAFT, REVIEWED, LIVE, ARCHIVED, or ERROR.");
@@ -2200,7 +2312,7 @@ async function updateGeneratedContent(req: IncomingMessage) {
   if (!existing) {
     throw new GeneratedContentRequestError("Content row was not found.", 404);
   }
-  if (body.expectedUpdatedAt && body.expectedUpdatedAt !== existing.updated_at) {
+  if (body.expectedUpdatedAt !== existing.updated_at) {
     throw new GeneratedContentRequestError("This content changed after the editor was opened. Reload the row before saving so a newer edit is not overwritten.", 409);
   }
   if (existing.content_key.startsWith(libs().STUDIO_VARIABLE_PREFIX)) throw new GeneratedContentRequestError("Manage this definition in Variables.");
@@ -2248,7 +2360,11 @@ async function updateGeneratedContent(req: IncomingMessage) {
       throw new GeneratedContentRequestError("The revision targets a retired composition.", 409);
     }
 
+    publicationContext.getStore()!.targetPublication = await currentPublication(target.content_key);
     const targetVersion = stringFrom(existing.source_snapshot?.targetRowUpdatedAt);
+    if (target.id !== existing.id && !targetVersion) {
+      throw new GeneratedContentRequestError('This revision has no saved target version. Reopen the live source and save a new revision before publishing.', 409);
+    }
     if (target.id !== existing.id && targetVersion && target.updated_at !== targetVersion) {
       throw new GeneratedContentRequestError("The live source changed after this revision was started. Reload it before publishing so newer writing is not overwritten.", 409);
     }
@@ -2296,7 +2412,7 @@ async function updateGeneratedContent(req: IncomingMessage) {
     validateFallbackArchitectureV3Copy(target, {
       sections: { ...targetSections, packageDraft: publicationDraft }
     });
-    await assertStudioVariablePublication(packageDraft, studioVariableStorage);
+    await assertVersionedStudioVariablePublication(packageDraft);
     const promotedRecord = structuredClone(targetRecord);
     if (Array.isArray(packageDraft._studioVariables)) promotedRecord._studioVariables = structuredClone(packageDraft._studioVariables);
     for (const [field, value] of packageLeafFields(packageDraft)) {
@@ -2316,9 +2432,10 @@ async function updateGeneratedContent(req: IncomingMessage) {
       const keys = [...new Set(references)].filter(key => key !== promotedRecord.contentKey);
       const referencedRecords: Record<string, unknown>[] = [promotedRecord, ...sharedSources];
       if (keys.length) {
-        const params = new URLSearchParams({ select: "content_key,sections,status,lane", content_key: `in.(${keys.join(",")})`, status: "eq.LIVE", lane: "eq.serving", limit: "80" });
+        const params = new URLSearchParams({ select: "id,updated_at,content_key,sections,status,lane", content_key: `in.(${keys.join(",")})`, status: "eq.LIVE", lane: "eq.serving", limit: "80" });
         const response = await adminStorageFetch(`${supabaseUrl()}/rest/v1/generated_interpretations?${params}`, { headers: adminHeaders() });
         if (!response.ok || !Array.isArray(response.payload)) throw new Error("Referenced writing could not be verified. The current publication has not changed.");
+        for (const referenced of response.payload) recordPublicationDependency(referenced);
         referencedRecords.push(...response.payload.map((row: ExistingGeneratedContentRow) => v3PackageRecord(row)));
       }
       const issues = [
@@ -2425,18 +2542,7 @@ async function updateGeneratedContent(req: IncomingMessage) {
     promotionPatch.reviewed_at = now;
     promotionPatch.published_at = now;
     assertReaderEligiblePublication({ ...target, ...promotionPatch });
-    let revisionExpectedUpdatedAt = body.expectedUpdatedAt ?? existing.updated_at ?? null;
-    if (target.id !== existing.id && body.expectedUpdatedAt) {
-      const claimedAt = new Date().toISOString();
-      const [claimed] = await patchGeneratedContentRow(existing.id, { updated_at: claimedAt }, body.expectedUpdatedAt);
-      if (!claimed.updated_at) throw new Error("The saved revision version was not returned.");
-      revisionExpectedUpdatedAt = claimed.updated_at;
-    }
-    const published = await patchGeneratedContentRow(target.id, promotionPatch, target.updated_at);
-    if (target.id !== existing.id) {
-      await completePublishedRevision(existing, revisionExpectedUpdatedAt, now);
-    }
-    return published;
+    return publishRevisionAtomically(body, existing, target, promotionPatch);
   }
 
   if (body.ownerAction === "save-sky-article-edition-revision") {
@@ -2459,6 +2565,8 @@ async function updateGeneratedContent(req: IncomingMessage) {
       review_status: "needs_review",
       ownerApproval: null,
       targetRowId,
+      targetRowUpdatedAt: existing.event_type === 'sky-article-edition-revision'
+        ? existing.source_snapshot?.targetRowUpdatedAt : existing.updated_at,
       targetContentKey,
       baseCompiledHash: base.compiledHash,
       changedFields: changes.map(({ fieldId, label }) => ({ fieldId, label })),
@@ -2513,17 +2621,14 @@ async function updateGeneratedContent(req: IncomingMessage) {
     );
     const targetRowId = stringFrom(existing.source_snapshot?.targetRowId);
     if (!targetRowId) throw new Error("Sky article revision is missing its live target row.");
-    let revisionExpectedUpdatedAt = body.expectedUpdatedAt ?? existing.updated_at ?? null;
-    if (body.expectedUpdatedAt) {
-      const claimedAt = new Date().toISOString();
-      const [claimed] = await patchGeneratedContentRow(existing.id, { updated_at: claimedAt }, body.expectedUpdatedAt);
-      if (!claimed.updated_at) throw new Error("The saved revision version was not returned.");
-      revisionExpectedUpdatedAt = claimed.updated_at;
-    }
     const target = await fetchExistingRowById(targetRowId);
     if (!target || target.event_type !== "sky-article-edition") {
       throw new Error("The live Sky article targeted by this revision no longer exists.");
     }
+    if (!existing.source_snapshot?.targetRowUpdatedAt || target.updated_at !== existing.source_snapshot.targetRowUpdatedAt) {
+      throw new GeneratedContentRequestError("The article source changed or this draft has no saved source version. Reopen it and save a current revision before publishing.", 409);
+    }
+    publicationContext.getStore()!.targetPublication = await currentPublication(target.content_key);
     const current = libs().assertCompiledSkyArticleEdition(target.sections?.skyArticleEdition);
     if (current.compiledHash !== base.compiledHash) {
       throw new Error("The live Sky article changed after this draft began. Reopen it before publishing.");
@@ -2545,7 +2650,7 @@ async function updateGeneratedContent(req: IncomingMessage) {
       revisionRowId: existing.id,
       publishedAt: now
     };
-    const published = await patchGeneratedContentRow(target.id, {
+    const publicationPatch = {
       headline: revised.headline,
       summary: revised.tldr,
       body: revised.body,
@@ -2557,9 +2662,9 @@ async function updateGeneratedContent(req: IncomingMessage) {
       reviewed_at: now,
       published_at: now,
       updated_at: now
-    }, target.updated_at);
-    await completePublishedRevision(existing, revisionExpectedUpdatedAt, now);
-    return published;
+    };
+    assertReaderEligiblePublication({ ...target, ...publicationPatch });
+    return publishRevisionAtomically(body, existing, target, publicationPatch);
   }
 
   if (body.ownerAction === "approve-and-schedule") {
@@ -2897,8 +3002,8 @@ async function updateGeneratedContent(req: IncomingMessage) {
 
   const updateParams = new URLSearchParams();
   updateParams.set("id", `eq.${body.id}`);
-  const expectedUpdatedAt = body.expectedUpdatedAt ?? existing.updated_at;
-  if (expectedUpdatedAt) updateParams.set("updated_at", `eq.${expectedUpdatedAt}`);
+  const expectedUpdatedAt = body.expectedUpdatedAt;
+  updateParams.set("updated_at", `eq.${expectedUpdatedAt}`);
   const response = await adminStorageFetch(`${supabaseUrl()}/rest/v1/generated_interpretations?${updateParams.toString()}`, {
     method: "PATCH",
     headers: {
@@ -2932,6 +3037,7 @@ async function deleteGeneratedContent(req: IncomingMessage) {
   if (!id) {
     throw new GeneratedContentRequestError("id is required.");
   }
+  requireCallerVersion(expectedUpdatedAt);
 
   const existing = await fetchExistingRowById(id);
   if (!existing) {
@@ -2941,15 +3047,14 @@ async function deleteGeneratedContent(req: IncomingMessage) {
   if (existing.status === "LIVE") {
     throw new GeneratedContentRequestError("Published rows cannot be hard-deleted. Demote or archive the row first.", 409);
   }
-  if (expectedUpdatedAt && expectedUpdatedAt !== existing.updated_at) {
+  if (expectedUpdatedAt !== existing.updated_at) {
     throw new GeneratedContentRequestError("This content changed after it was selected for deletion. Reload before deleting it.", 409);
   }
 
   const deleteParams = new URLSearchParams();
   deleteParams.set("id", `eq.${id}`);
   deleteParams.set("status", "neq.LIVE");
-  const deleteVersion = expectedUpdatedAt || existing.updated_at;
-  if (deleteVersion) deleteParams.set("updated_at", `eq.${deleteVersion}`);
+  deleteParams.set("updated_at", `eq.${expectedUpdatedAt}`);
   const response = await adminStorageFetch(`${supabaseUrl()}/rest/v1/generated_interpretations?${deleteParams.toString()}`, {
     method: "DELETE",
     headers: {
@@ -2983,6 +3088,21 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
     }
     if (req.method === "GET") {
       const requestUrl = new URL(req.url ?? "/api/admin/generated-content", "http://localhost");
+      if (requestUrl.searchParams.has("publicationAction")) {
+        const action = requestUrl.searchParams.get("publicationAction")!;
+        const id = requestUrl.searchParams.get("id");
+        const version = requestUrl.searchParams.get("expectedUpdatedAt");
+        if (!atomicPublicationActions.has(action) || !id) throw new GeneratedContentRequestError("Select the saved publication to check.");
+        requireCallerVersion(version);
+        const context: PublicationContext = { actor: (await getContentAdminPrincipal(req))!, dependencies: new Map() };
+        identifyPublicationOperation({ id, ownerAction: action as GeneratedContentWriteBody["ownerAction"], expectedUpdatedAt: version }, context);
+        const result = await publicationContext.run(context, async () => {
+          const receipt = await readPublicationReceipt();
+          return receipt ? { found: true, rows: await rowsFromPublicationReceipt(receipt), publicationReceipt: context.receipt } : { found: false, rows: [] };
+        });
+        sendJson(res, 200, { ok: true, ...result });
+        return;
+      }
       if (requestUrl.searchParams.get("sourceDrafts") === "sky-aspects") {
         sendJson(res, 200, { ok: true, rows: listHeldSkyAspectSourceDrafts() });
         return;
@@ -3040,9 +3160,10 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
 
     if (req.method === "PATCH") {
       await loadGeneratedContentLibraries();
-      const rows = await updateGeneratedContent(req);
-      if (!Array.isArray(rows) || rows.length === 0) throw new Error("Update completed without returning the saved row.");
-      sendJson(res, 200, { ok: true, rows });
+      const context: PublicationContext = { actor: (await getContentAdminPrincipal(req))!, dependencies: new Map() };
+      const rows = await publicationContext.run(context, () => updateGeneratedContent(req));
+      if (!Array.isArray(rows) || rows.length === 0 && !context.receipt) throw new Error("Update completed without returning the saved row.");
+      sendJson(res, 200, { ok: true, rows, ...(context.receipt ? { publicationReceipt: context.receipt } : {}) });
       return;
     }
 
@@ -3066,6 +3187,7 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
       {
         ok: false,
         ...(error instanceof GeneratedContentRequestError && error.savedRows ? { savedRows: error.savedRows } : {}),
+        ...(error instanceof GeneratedContentRequestError && error.code ? { code: error.code } : {}),
         error: error instanceof Error ? error.message : "Unknown generated content admin error."
       }
     );

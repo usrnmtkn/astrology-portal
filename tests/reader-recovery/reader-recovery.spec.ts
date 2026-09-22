@@ -1,4 +1,5 @@
 import { expect, test, type Page } from "@playwright/test";
+import { readerResponse } from '../helpers/reader-response';
 import { getAstrodienstSky } from "../../apps/web/src/services/ephemeris";
 import { natalSkySnapshotCacheKey, skySnapshotCacheKey, VERIFIED_SKY_CACHE_SCHEMA } from "../../apps/web/src/services/verifiedSkyCache";
 
@@ -34,6 +35,11 @@ async function prepare(page: Page, options: { circleFailure?: boolean; slowConte
     for (const record of cacheRecords as any[]) localStorage.setItem(record.cacheKey, JSON.stringify({ ...record, verifiedAt: new Date().toISOString() }));
   }, { location, user, profile: readerProfile, cacheRecords, session: options.session });
   await page.route("**/api/**", route => route.request().method() === "GET" ? route.continue() : route.fulfill({ status: 503, json: {} }));
+  await page.route('**/api/content-reader', async route => {
+    state.contentRequests++;
+    if (options.slowContent) await new Promise(resolve => setTimeout(resolve, 30_000));
+    await route.fulfill({ json: readerResponse([]) }).catch(() => {});
+  });
   await page.route("https://tldrastro-api-27165565299.us-central1.run.app/**", route => route.fulfill({ status: 503, json: {} }));
   await page.route(/^https:\/\/[^/]+\.supabase\.(?:test|co)\//, async route => {
     const path = new URL(route.request().url()).pathname;
@@ -51,10 +57,6 @@ async function prepare(page: Page, options: { circleFailure?: boolean; slowConte
     if (path === "/rest/v1/rpc/list_social_friends") {
       state.circleRequests++;
       return route.fulfill(state.circleFailure ? { status: 503, json: { message: "Database unavailable" } } : { json: [{ friendship_id: "qa-friendship", user_id: "friend-qa", handle: "qa-friend", display_name: "QA Friend", natal_chart: null, accepted_at: "2026-09-01T12:00:00Z" }] });
-    }
-    if (path === "/rest/v1/generated_interpretations") {
-      state.contentRequests++;
-      if (options.slowContent) { await new Promise(resolve => setTimeout(resolve, 30_000)); }
     }
     return route.fulfill({ json: [] }).catch(() => {});
   });

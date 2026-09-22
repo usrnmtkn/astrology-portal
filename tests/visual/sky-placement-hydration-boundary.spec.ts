@@ -1,3 +1,4 @@
+import { readerResponse } from '../helpers/reader-response';
 import { expect, test, type Page } from '@playwright/test';
 import { skyPlacementSourceRecords } from '../../api/_lib/sky-placement-sources';
 
@@ -47,7 +48,7 @@ async function installSources(page: Page) {
   // A failed fixture request must not install unrelated production publication
   // identities from the checked-in nightly snapshot before Retry is exercised.
   await page.route('**/content-studio-last-known-good.json', route => route.fulfill({
-    json: { schema: 'content-studio-last-known-good-v1', rows: [], publications: [], rowCount: 0 }
+    json: { schema: 'content-studio-last-known-good-v2', rows: [], publications: [], rowCount: 0 }
   }));
   await page.route('**/rest/v1/**', async route => {
     const url = new URL(route.request().url());
@@ -57,16 +58,16 @@ async function installSources(page: Page) {
         row_id: id, row_updated_at: timestamp(), updated_at: timestamp() }] });
     }
     if (url.pathname.endsWith('/content_runtime_revision')) return route.fulfill({ json: timestamp() });
-    if (url.pathname.endsWith('/generated_interpretations')) {
-      const query = decodeURIComponent(url.search);
-      // Delay the canonical overlay, not calculations or the shipped corpus.
-      await new Promise(resolve => setTimeout(resolve, 1800));
-      if (unavailable) return route.fulfill({ status: 503, json: { message: 'Fixture source unavailable' } });
-      const matches = !query.includes('content_key=') && !query.includes('id=in.')
-        || query.includes(key) || query.includes(id);
-      return route.fulfill({ json: matches && !retired ? [row()] : [] });
-    }
     return route.fulfill({ json: [] });
+  });
+  await page.route('**/api/content-reader', async route => {
+    const query = route.request().postDataJSON();
+    await new Promise(resolve => setTimeout(resolve, 1800));
+    if (unavailable) return route.fulfill({ status: 503, json: { message: 'Fixture source unavailable' } });
+    const matches = (!query.keys && !query.ids) || query.keys?.includes(key) || query.ids?.includes(id);
+    return route.fulfill({ json: readerResponse(matches && !retired ? [row()] : [], [
+      { content_key: key, state: retired ? 'retired' : 'live', revision, row_id: id, row_updated_at: timestamp(), updated_at: timestamp() }
+    ]) });
   });
   await page.route('**/api/calendar?**', route => route.fulfill({ json: { ok: true, calendar: { days: [] } } }));
   const notify = () => page.evaluate(key => window.dispatchEvent(new CustomEvent('tldrastro:content-update', {

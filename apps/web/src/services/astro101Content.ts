@@ -1,4 +1,4 @@
-import { getSupabaseClient } from "./auth";
+import { loadReaderRows } from "./readerContentClient";
 import {
   astro101BlocksFromSections,
   astro101HubTitleFromSections,
@@ -35,7 +35,7 @@ type Astro101Row = {
   summary: string | null;
   body: string | null;
   sections: unknown;
-  facts: unknown;
+  facts?: unknown;
 };
 
 function pageFromRow(row: Astro101Row): Astro101Page | null {
@@ -61,18 +61,7 @@ function pageFromRow(row: Astro101Row): Astro101Page | null {
 }
 
 export async function loadLiveAstro101Pages(): Promise<Astro101Page[]> {
-  const supabase = await getSupabaseClient();
-  if (!supabase) return [];
-
-  const { data, error } = await supabase
-    .from("generated_interpretations")
-    .select("id, content_key, headline, summary, body, sections, facts")
-    .eq("status", "LIVE")
-    .eq("lane", "serving")
-    .eq("surface", "education")
-    .is("review_state", null)
-    .like("content_key", `${ASTRO_101_KEY_PREFIX}%`)
-    .returns<Astro101Row[]>();
+  const { data, error } = await loadReaderRows({ prefix: ASTRO_101_KEY_PREFIX, surfaces: ["education"] });
 
   if (error) {
     console.warn("Astro 101 pages failed to load.", error);

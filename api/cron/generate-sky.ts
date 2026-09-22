@@ -1,6 +1,8 @@
+import { GeneratedRowWriteConflict } from "../_lib/generated-row-writes.js";
 import type { IncomingMessage, ServerResponse } from "node:http";
 import { currentSkyFacts, type SkySnapshot } from "../_lib/current-sky.js";
 import {
+  assertNewGeneratedInterpretation,
   generateContent,
   loadSkySourceSnapshot,
   saveGeneratedInterpretation,
@@ -72,6 +74,7 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
       sourceSnapshot: loadSkySourceSnapshot(),
       voiceNotes: "Write for the Sky page. Make it actionable. Use the pattern: headline, what you may notice, why, what to do, timing."
     };
+    await assertNewGeneratedInterpretation(input);
     const generated = await generateContent(input);
     const saved = await saveGeneratedInterpretation(input, generated);
 
@@ -82,6 +85,10 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
       saved
     });
   } catch (error) {
+    if (error instanceof GeneratedRowWriteConflict) {
+      sendJson(res, 200, { ok: true, skipped: true, reason: "Saved content already exists or changed; generation did not overwrite it." });
+      return;
+    }
     sendJson(res, 500, {
       ok: false,
       error: error instanceof Error ? error.message : "Unknown cron generation error."
