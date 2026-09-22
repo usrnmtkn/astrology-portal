@@ -8,6 +8,7 @@ import {
   upsertCalendarCheckIn
 } from "../../services/calendarCheckIns";
 import { calendarSunSummary, calendarSkyForDay } from "./calendarDaySummary";
+import { skyDateTimeFromInput } from "../../services/skySelection";
 import { skyDailySummaryFields } from "../../content/skyDailySummaryCatalog";
 import type { SkySnapshot } from "../../types";
 import { CardReadMore } from "../../components/CardReadMore";
@@ -2473,23 +2474,29 @@ export function LunarCalendar({
     };
   }, [calendar, location, selectedCalendar, selectedDateKey, viewMode, visibleMonth, visibleWeekDateKey]);
 
+  const selectedSky = selectedDateKey ? calendarSkyForDay(sky, selectedDateKey, location) : null;
+  const seasonReference = useMemo(() => selectedDateKey
+    ? selectedSky?.generatedAt ?? skyDateTimeFromInput(selectedDateKey, location, true).toISOString()
+    : undefined, [selectedDateKey, selectedSky?.generatedAt, location]);
+  // Depend on the season boundaries, not each live clock tick, when fetching
+  // its lunar milestones. Labels and prose still share the exact Sky instant.
+  const selectedSeasonWindow = useMemo(() => sunIngressSeasonWindow(selectedDateKey ?? "", [
+    ...(calendar?.events ?? []), ...(selectedCalendar?.events ?? [])
+  ], seasonReference), [calendar, selectedCalendar, selectedDateKey, seasonReference]);
+  const seasonStartsAt = selectedSeasonWindow?.startsAt;
+  const seasonEndsAt = selectedSeasonWindow?.endsAt;
+
   useEffect(() => {
-    if (!enableLunarArcContent || !selectedDateKey) {
+    if (!enableLunarArcContent || !seasonStartsAt || !seasonEndsAt) {
       setSeasonEvents([]);
       return;
     }
 
     let cancelled = false;
 
-    const localEvents = [
-      ...(calendar?.events ?? []),
-      ...(selectedCalendar?.events ?? [])
-    ];
-    const season = sunIngressSeasonWindow(selectedDateKey, localEvents);
     // Clear the previous selection before loading; never carry a season across
     // location/date changes or substitute static dates while facts are absent.
     setSeasonEvents([]);
-    if (!season) return;
 
     // The day and week surfaces intentionally load a seven-day calendar for a
     // fast first paint. Fetch only the season's lunation/station feed so the
@@ -2497,15 +2504,15 @@ export function LunarCalendar({
     // additional 42-day visual calendar.
     getLunarCalendarRangeEvents(
       location,
-      new Date(season.startsAt),
-      new Date(season.endsAt)
+      new Date(seasonStartsAt),
+      new Date(seasonEndsAt)
     )
       .then((events) => {
         if (!cancelled) {
           setSeasonEvents(events.filter((event) => (
             event.type === "lunation"
-            && event.startsAt >= season.startsAt
-            && event.startsAt < season.endsAt
+            && event.startsAt >= seasonStartsAt
+            && event.startsAt < seasonEndsAt
           )));
         }
       })
@@ -2520,7 +2527,7 @@ export function LunarCalendar({
     return () => {
       cancelled = true;
     };
-  }, [calendar, location, selectedCalendar, selectedDateKey]);
+  }, [location, seasonStartsAt, seasonEndsAt]);
 
   const selectedDay = useMemo(() => (
     calendar?.days.find((day) => day.dateKey === selectedDateKey)
@@ -2648,7 +2655,6 @@ export function LunarCalendar({
 
     return [...eventsById.values()];
   }, [calendar, seasonEvents, selectedCalendar]);
-  const selectedSky = selectedDay ? calendarSkyForDay(sky, selectedDay.dateKey, location) : null;
   const selectedMoon = selectedSky?.positions.find(position => position.planet === "Moon");
   const readingDay = selectedDay && selectedMoon ? { ...selectedDay, moonSign: selectedMoon.sign } : selectedDay;
   const sunSummary = calendarSunSummary(selectedSky, generatedContent);
@@ -2717,8 +2723,9 @@ export function LunarCalendar({
     }))
     : [];
   const selectedDayJournalEvent = selectedDay
-    ? (selectedDaySurfaceEvents.find((event) => journalTypeForEvent(event))
-      ?? selectedDay.events.find((event) => journalTypeForEvent(event))
+    ? ([...selectedDaySurfaceEvents, ...selectedDay.events].find((event) => journalTypeForEvent(event)
+      && (event.type !== "ingress" || event.planet !== "Sun"
+        || (seasonReference !== undefined && Date.parse(event.startsAt) <= Date.parse(seasonReference))))
       ?? null)
     : null;
   const selectedDayJournal = selectedDayJournalEvent
@@ -2862,8 +2869,8 @@ export function LunarCalendar({
 
   };
   const seasonDateKey = selectedDateKey || currentDateKey;
-  const seasonSign = sunIngressSeasonSign(seasonDateKey, arcEvents);
-  const seasonWindow = sunIngressSeasonWindow(seasonDateKey, arcEvents);
+  const seasonSign = sunIngressSeasonSign(seasonDateKey, arcEvents, seasonReference);
+  const seasonWindow = selectedSeasonWindow;
   const seasonDaysAway = seasonWindow
     ? calendarDateKeyDistance(seasonDateKey, seasonWindow.end)
     : null;

@@ -78,6 +78,34 @@ try {
   assert.equal(app.formatCountdown("2026-09-14", "2026-09-23T00:05:13.999Z", "America/New_York"), "8D left");
   assert.equal(sunIngressSeasonWindow("2026-09-14", []), null, "Missing calculated facts must never produce a date-table fallback.");
   assert.equal(sunIngressSeasonSign("2026-09-14", []), null);
+  // An ingress date is not an all-day placement. Check both sides of two
+  // independently calculated boundaries, including a UTC/local date crossover.
+  for (const [anchor, oldSign, newSign] of [
+    ["2026-09-22T13:20:00Z", "Virgo", "Libra"],
+    ["2026-12-21T12:00:00Z", "Sagittarius", "Capricorn"]
+  ]) for (const timeZone of zones) {
+    const location = { label: "Test", latitude: 40.7, longitude: -74, timeZone };
+    const calendar = await ephemeris.getLunarCalendarWeek(location, new Date(anchor));
+    const ingress = calendar.events.find((event: any) => event.planet === "Sun" && event.toSign === newSign);
+    assert.ok(ingress);
+    const civil = new Intl.DateTimeFormat("en-CA", { timeZone, year: "numeric", month: "2-digit", day: "2-digit" });
+    for (const [offset, expected] of [[-60_000, oldSign], [60_000, newSign]] as const) {
+      const instant = new Date(Date.parse(ingress.startsAt) + offset).toISOString();
+      const dateKey = civil.format(new Date(instant));
+      const sky = await ephemeris.getAstrodienstSky(location, new Date(instant));
+      const sun = sky.positions.find((position: any) => position.planet === "Sun");
+      assert.equal(sun.sign, expected);
+      assert.equal(directSunSign(instant, 0), ["Aries", "Taurus", "Gemini", "Cancer", "Leo", "Virgo", "Libra", "Scorpio", "Sagittarius", "Capricorn", "Aquarius", "Pisces"].indexOf(expected));
+      assert.equal(sunIngressSeasonSign(dateKey, calendar.events, sky.generatedAt), expected);
+      assert.equal(sunIngressSeasonWindow(dateKey, calendar.events, sky.generatedAt)?.sign, expected);
+      const basic = await ephemeris.getLunarCalendarWeek(location, new Date(instant), { detail: "basic" });
+      assert.equal(sunIngressSeasonSign(dateKey, basic.events, instant), expected);
+      console.log(`${instant} ${timeZone}: current season and Sun both ${expected}; ingress ${ingress.startsAt}`);
+    }
+    assert.equal(sunIngressSeasonSign(ingress.dateKey, calendar.events, ingress.startsAt), newSign, "Exact ingress starts the next season.");
+    assert.equal(sunIngressSeasonSign(ingress.dateKey, calendar.events, "invalid"), null);
+    assert.equal(sunIngressSeasonSign(ingress.dateKey, calendar.events), newSign, "Date-based editorial arcs retain their event-day scope.");
+  }
   for (const [start, end, expected] of [
     ["2026-09-01T01:00:00Z", "2026-09-02T01:00:00Z", "Aug 31 - Sep 1"],
     ["2027-01-01T01:00:00Z", "2027-01-02T01:00:00Z", "Dec 31, 2026 - Jan 1, 2027"],
