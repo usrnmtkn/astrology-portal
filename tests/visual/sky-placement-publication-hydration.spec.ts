@@ -11,6 +11,8 @@ for (const width of [390, 1440]) test(`placement publication stays authoritative
   const base = skyPlacementSourceRecords.get(key)!;
   let revision = 1000;
   let retired = false;
+  const ledger = { content_key: '__content-publication-ledger/v1', state: 'live' as const, revision: 1,
+    row_id: null, row_updated_at: null, updated_at: '2026-09-13T23:00:00Z' };
   const copy = () => `{{myCustomOpening}}\n\nFixture published final sentence ${revision}.`;
   const timestamp = () => `2026-09-13T23:00:00.${String(revision).padStart(6, '0')}Z`;
   const row = () => ({
@@ -25,7 +27,10 @@ for (const width of [390, 1440]) test(`placement publication stays authoritative
     source_snapshot: { sourcePackage: base.source_package, content_role: base.content_role },
     block_type: 'fallback_hook', event_type: 'fallback-hook'
   });
-  await page.addInitScript(() => {
+  await page.addInitScript(({ ledger, key }) => {
+    if (!localStorage.getItem('tldrastro:content-publications:v1')) localStorage.setItem('tldrastro:content-publications:v1', JSON.stringify([
+      ledger, { content_key: key, state: 'live', revision: 999, row_id: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb', row_updated_at: '2026-09-13T23:00:00.000999Z', updated_at: '2026-09-13T23:00:00.000999Z' }
+    ]));
     localStorage.setItem('tldrastro:selectedLocation', JSON.stringify({ label: 'New York', latitude: 40.7, longitude: -74, timeZone: 'America/New_York' }));
     (window as any).__articlePaints = [];
     new MutationObserver(() => {
@@ -35,11 +40,11 @@ for (const width of [390, 1440]) test(`placement publication stays authoritative
       const samples = (window as any).__articlePaints;
       if (samples.at(-1) !== text) samples.push(text);
     }).observe(document, { subtree: true, childList: true, characterData: true });
-  });
+  }, { ledger, key });
   await page.route('**/content-studio-last-known-good.json', route => route.fulfill({ json: { schema: 'content-studio-last-known-good-v2', rows: [], publications: [], rowCount: 0 } }));
   const relayStatuses: number[] = [];
   await page.route('**/api/content-publications', async route => {
-    const publications = canonicalPublicationLedger([{ content_key: key, state: retired ? 'retired' : 'live', revision,
+    const publications = canonicalPublicationLedger([ledger, { content_key: key, state: retired ? 'retired' : 'live', revision,
       row_id: row().id, row_updated_at: timestamp(), updated_at: timestamp() }]);
     const etag = await publicationLedgerTag(publications);
     const unchanged = route.request().headers()['if-none-match'] === etag;

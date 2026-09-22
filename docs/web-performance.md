@@ -155,8 +155,10 @@ Calendar event scan and exact week boundaries while skipping the seven-day
 presentation grid; only those deterministic week events use a bounded cache.
 
 The follow-up discovers App's static imports from the HTML on direct Sky list
-visits and starts exact Sky facts plus a public publication-ledger relay before
-App finishes downloading. Canonical source assets start once App is available.
+visits and starts exact Sky facts before App finishes downloading. Returning
+readers also validate their existing ledger through a public relay; first visits
+keep publication reads after App. Canonical source assets and local reader fonts
+start once App is available.
 The relay rereads the complete anonymous ledger on every request and validates
 the existing cached snapshot with an exact tag; unchanged reloads transfer no
 ledger body. A failed relay retains the direct reader path. A separate

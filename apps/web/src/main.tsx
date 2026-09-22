@@ -157,6 +157,10 @@ async function startApp() {
   }
 
   const { App } = await appModulePromise;
+  // Prime the reader faces alongside content, without competing with App's download.
+  for (const face of ['400 16px Newsreader', '500 16px "Geist Mono"']) {
+    void document.fonts.load(face).catch(() => {});
+  }
   const initialSkyLoad = await initialSkyLoadPromise;
   if (!isAdminContentPath()) {
     const { refreshContentPublications } = await import("./services/contentPublications");

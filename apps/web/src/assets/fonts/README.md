@@ -1,10 +1,11 @@
 # Reader fonts
 
-These unmodified WOFF2 files are the same Newsreader v26 and Geist Mono v6
-files served by the previous Google Fonts stylesheet. `sources.json` records
+These unmodified WOFF2 files use the existing Newsreader v26 and Geist Mono v6
+families from Google Fonts. `sources.json` records
 the exact CDN URLs, sizes and SHA-256 hashes retrieved on 2026-09-21.
 
-All original Unicode subsets are retained; only the Latin files are preloaded.
+All original Unicode subsets are retained. The Latin faces are requested after
+App downloads, alongside reader content, so they do not delay startup JavaScript.
 The CSS preserves the existing normal weights (Newsreader 400–500, Geist Mono
 400–700), display behavior and Unicode coverage. Vite emits content-hashed asset
 URLs. Accessibility and symbol fonts retain their existing external loading.

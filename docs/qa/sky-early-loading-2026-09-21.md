@@ -7,8 +7,9 @@ The implementation is based on refreshed main `9bee69955187ffbb4588d33471e257820
 ## Behavior
 
 For a direct Sky list link, after authentication callback completion, the entry
-point starts the exact-input Sky API request and public-ledger relay while App
-downloads. The nine immutable source assets download alongside
+point starts the exact-input Sky API request while App downloads. Returning
+readers also validate their cached publication ledger early; first visits keep
+the existing post-App publication read. The nine immutable source assets download alongside
 the large placement module. A separate small placement-key index lets current
 published rows download without waiting for that archive. The mounted reader adopts
 the initial instant only for the same day, coordinates, time zone and live/daily
@@ -52,7 +53,8 @@ house-reading chunk is absent from the initial list's requests.
 ## Verification and release evidence
 
 - Browser regression holds the App response back and requires the facts
-  and public-ledger requests to start first while large content downloads wait. A held placement-module
+  request to start first while large content downloads wait. A cached-ledger case
+  also requires early validation; a cold case forbids an early ledger or font download. A held placement-module
   response proves canonical assets start without waiting for that module. It checks one API
   request for the unchanged selection and rejects a changed date plus location.
 - Initial list requests exclude house-reading and ephemeris assets; opening an
@@ -83,7 +85,8 @@ Earlier reveal exposed late Google Fonts swaps: one trace took 2.1 seconds for
 the external stylesheet and another 2.1–2.6 seconds for Newsreader/Geist Mono.
 The completed summary then changed size/position. The reader now serves the
 unmodified Google Fonts binaries locally, preserves all nine Unicode subsets and ships
-the original OFL licenses. Only the two Latin files (155,128 bytes total) are preloaded. Families, weights and theme tokens stay
+the original OFL licenses. The two Latin faces (155,128 bytes total) are requested when App is available,
+alongside content downloads. Families, weights and theme tokens stay
 the same; optional accessibility/symbol fonts keep their existing loading.
 
 The nine font-face declarations add 651 gzip CSS bytes; the initial-CSS cap
@@ -119,7 +122,8 @@ asserting that no article is exposed before all sources are ready.
 
 ## Complete public ledger relay
 
-Direct Sky visits now request `/api/content-publications` before App. The endpoint
+Direct Sky visits with an existing resolved publication cache request
+`/api/content-publications` before App. The endpoint
 uses only the existing public/anonymous Supabase key and its RLS permissions,
 never an owner token or service role. Four disjoint ranges retain complete
 keyset pagination, validation and a seven-second deadline. Every request rereads
@@ -133,7 +137,7 @@ snapshot/tag after a fresh complete server read. A changed revision, retirement
 or new key yields the current full response, whose tag is also validated.
 `private, no-store` prevents a CDN/HTTP cache from substituting a stale ledger.
 The same publication/source barrier still controls installation and display.
-The first request sends the full ledger; unchanged reloads avoid retransmitting
+A changed cache receives the full ledger; unchanged reloads avoid retransmitting
 it. No real-user timing claim is made from the isolated handler test.
 
 The actual-handler tests cover all pages, anonymous/elevated key handling, fresh
@@ -149,3 +153,19 @@ client and server accept the weak marker only for the exact computed digest.
 Browser publication tests cover those compressed-response tags. Sky supplies
 the relay loader to the shared refresh coordinator, keeping the relay out of
 the Admin bundle; the unchanged Admin limits and privacy scan pass.
+
+## Returning-reader scope after mobile measurement
+
+The integrated always-early relay preview measured median full reading 7.77 s
+cold / 3.34 s reload versus 8.18 s / 3.65 s on pinned main b62c70e0 (five pairs
+each), but delayed the navigation shell from 3.24 s to 4.25 s. All text hashes
+matched and no layout shift or page errors occurred. That first-visit scheduling
+tradeoff was rejected. Diagnostic variants that delayed all publication work
+also delayed the reading; they are not release timing evidence.
+
+The final scope keeps first-visit publication reads after App and uses the relay
+for returning readers, where unchanged cached data can receive a 304. Local
+fonts start after App download, alongside content, rather than competing for
+startup bandwidth. Cold/cached browser cases separately verify these request
+boundaries, complete text, revision/retirement handling and layout stability.
+Final fixed-deployment measurements remain in the release PR.
