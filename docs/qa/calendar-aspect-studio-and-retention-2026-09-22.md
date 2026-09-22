@@ -63,3 +63,19 @@ fits this cache fix; no further limit was raised. Startup and CSS caps are uncha
 The latter two assertions were checked directly against `origin/main` Git objects;
 the underlying Calendar source, phrasebook test, and transit records are unchanged
 by this branch. These failures have not been waived or reported as passing.
+
+## Release integration
+
+Main `cb1e87a72` (Calendar selection across midnight) merged without conflicts.
+Independent npm-ci builds with the same workflow Supabase placeholders measure
+standalone Studio entry at 742,395 raw / 216,658 gzip bytes on main and
+744,012 raw / 217,060 gzip bytes with the optional sign controls (+1,617 / +402).
+Aggregate Studio JavaScript increases 326 gzip bytes (731,240 to 731,566).
+The documented Studio allocation adds 1,750 raw entry/largest-chunk bytes,
+500 entry gzip bytes, and 500 aggregate bytes. Reader startup, CSS, deferred
+module boundaries, memory graph, and forbidden-payload limits are unchanged.
+
+The build uses workflow placeholders; the admin-auth fixture must run without
+those inherited placeholders because it supplies its own authentication project.
+Both unchanged main and this branch fail that fixture if the entire suite
+inherits the build placeholders. No authentication behavior was changed.
