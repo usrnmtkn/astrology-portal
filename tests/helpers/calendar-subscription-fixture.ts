@@ -2,6 +2,7 @@ import { PGlite } from "@electric-sql/pglite";
 import { readFileSync } from "node:fs";
 import createSubscription from "../../api/calendar-subscriptions.js";
 import feed from "../../api/calendar-feed.js";
+import reading from "../../api/calendar-reading.js";
 import events from "../../api/admin/calendar-feed-events.js";
 
 /** Actual handlers and migration, backed by isolated PostgreSQL in tests. */
@@ -55,7 +56,7 @@ export async function calendarSubscriptionFixture() {
       const collected: Record<string, string> = {}; let responseBody = "";
       const req = { url: path, method, body, headers };
       const res = { statusCode: 200, setHeader(key: string, value: string) { collected[key.toLowerCase()] = String(value); }, end(value?: string) { responseBody = value ?? ""; } };
-      const handler = path.startsWith("/api/admin/") ? events : path.startsWith("/feed/") || path.startsWith("/api/calendar-feed") ? feed : createSubscription;
+      const handler = path.startsWith("/api/admin/") ? events : path.startsWith("/api/calendar-reading") ? reading : path.startsWith("/feed/") || path.startsWith("/api/calendar-feed") ? feed : createSubscription;
       await handler(req as any, res as any);
       return { status: res.statusCode, headers: collected, body: responseBody, json: () => JSON.parse(responseBody) };
     },

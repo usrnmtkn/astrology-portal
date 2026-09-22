@@ -2,11 +2,11 @@ import type {
   ApprovedExactSkyAspectCopy,
   ResolvedSkyCalendarComposedCard
 } from "../content/domainRegistry";
-import { isReaderFacingCopy } from "../content/readerSafety";
+import { isReaderFacingCopy } from "../content/readerSafety.js";
 import {
   interpolateTemplateString,
   type TemplateSlotValues
-} from "./templateInterpolation";
+} from "./templateInterpolation.js";
 
 export type ApprovedExactSkyAspectLookup = (
   planetA: string,

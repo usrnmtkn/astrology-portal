@@ -97,6 +97,7 @@ import {
 import { CalendarDayGroup, CalendarDayGroupList, CalendarSeasonPill, type CalendarDayGroupRow } from "./CalendarDayGroup";
 import { CalendarDayPanel } from "./CalendarDayPanel";
 import { CalendarEventReading } from "./CalendarEventReading";
+import { CalendarLinkedReading } from "./CalendarLinkedReading";
 import { CalendarSlideout } from "./CalendarSlideout";
 import { CalendarSubscribeSheet } from "./CalendarSubscribeSheet";
 import { loadCalendarSubscription } from "./calendarSubscription";
@@ -206,7 +207,10 @@ function calendarRouteStateFromUrl(fallbackDate: string) {
       ? rawDate
       : fallbackDate;
 
-    return { view, date };
+    const eventId = params.get("event");
+    let eventTimeZone = params.get("timeZone");
+    try { if (eventTimeZone) new Intl.DateTimeFormat("en", { timeZone: eventTimeZone }); } catch { eventTimeZone = null; }
+    return { view, date, eventId, eventTimeZone };
   } catch {
     return null;
   }
@@ -224,6 +228,7 @@ function updateCalendarRouteUrl(view: LunarCalendarViewMode, date: string, mode:
     url.hash = `calendar?${params.toString()}`;
     window.history[mode === "replace" ? "replaceState" : "pushState"]({}, "", url.toString());
     if (sharedDateChanged) window.dispatchEvent(new PopStateEvent("popstate"));
+    else window.dispatchEvent(new HashChangeEvent("hashchange"));
   } catch {
     // URL state is an enhancement; Calendar remains usable without history.
   }
@@ -2175,6 +2180,7 @@ export function LunarCalendar({
   ));
   const [visibleWeekDateKey, setVisibleWeekDateKey] = useState(() => initialDateKey);
   const [viewMode, setViewMode] = useState<LunarCalendarViewMode>(initialRouteState?.view ?? "week");
+  const [linkedReading, setLinkedReading] = useState(() => initialRouteState?.eventId ? initialRouteState : null);
   const [calendar, setCalendar] = useState<LunarCalendarMonthData | null>(null);
   const [selectedCalendar, setSelectedCalendar] = useState<LunarCalendarMonthData | null>(null);
   const [seasonEvents, setSeasonEvents] = useState<LunarCalendarEvent[]>([]);
@@ -2406,6 +2412,7 @@ export function LunarCalendar({
 
       if (!routeState) return;
       setViewMode(routeState.view);
+      setLinkedReading(routeState.eventId ? routeState : null);
       setSelectedDateKey(routeState.date);
       setVisibleWeekDateKey(routeState.date);
       setVisibleMonth(monthAnchorFromDateKey(routeState.date, location.timeZone || "UTC"));
@@ -3392,6 +3399,11 @@ export function LunarCalendar({
           onClose={() => setDaySlideoutOpen(false)}
         />
       )}
+      {linkedReading?.eventId && <CalendarLinkedReading
+        key={`${linkedReading.eventId}:${linkedReading.date}:${linkedReading.eventTimeZone}`}
+        id={linkedReading.eventId} date={linkedReading.date} timeZone={linkedReading.eventTimeZone ?? zone}
+        onClose={() => { setLinkedReading(null); updateCalendarRouteUrl(viewMode, selectedDateKey, "replace"); }}
+      />}
       {readingEvent && !readingReady && (
         <CalendarSlideout label="Event reading" onClose={() => setReadingEvent(null)}>
           {readingState === "loading" ? <PageLoading compact message="Loading this reading…" /> : (
