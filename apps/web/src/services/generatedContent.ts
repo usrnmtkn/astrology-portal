@@ -1316,6 +1316,27 @@ async function loadContentStudioLastKnownGoodCompatibilityBundle() {
   return packageFallbackArchitectureV3CompatibilityRows(await loadContentStudioLastKnownGoodRows());
 }
 
+type ContentClient = NonNullable<Awaited<ReturnType<typeof getSupabaseClient>>>;
+const dashboardQuery = (client: ContentClient) => client.from("generated_interpretations").select(generatedContentSelect);
+type DashboardQuery = ReturnType<typeof dashboardQuery>;
+/** Shared bounded ID pagination; callers retain their own filters and recovery. */
+async function readDashboardRows(createQuery: () => DashboardQuery) {
+  const rows: GeneratedContentRow[] = [];
+  const pageSize = 1000;
+  let cursorId: string | null = null;
+  for (let page = 0; page < 10; page += 1) {
+    let query = createQuery().order("id", { ascending: true }).limit(pageSize);
+    if (cursorId) query = query.gt("id", cursorId);
+    const { data, error } = await query.returns<GeneratedContentRow[]>();
+    if (error) return { rows, error };
+    rows.push(...(data ?? []));
+    const lastId = data?.at(-1)?.id ?? null;
+    if (!data || data.length < pageSize || !lastId) break;
+    cursorId = lastId;
+  }
+  return { rows, error: null };
+}
+
 export async function loadFallbackArchitectureV3DashboardBundle(scope: DashboardScope = "all"): Promise<FallbackArchitectureV3Bundle | null> {
   await refreshContentPublications();
   const supabase = await getSupabaseClient();
@@ -1349,35 +1370,18 @@ export async function loadFallbackArchitectureV3DashboardBundle(scope: Dashboard
   }
   if (cached && dashboardVersion && cached.version === dashboardVersion) return cached.bundle;
 
-  const rows: GeneratedContentRow[] = [];
-  const pageSize = 1000;
-  let cursorId: string | null = null;
-
-  for (let page = 0; page < 10; page += 1) {
-    let query = supabase
-      .from("generated_interpretations")
-      .select(generatedContentSelect)
-      .eq("provider", fallbackArchitectureV3Provider)
-      .eq("status", "LIVE")
-      .eq("lane", "serving")
-      .order("id", { ascending: true })
-      .limit(pageSize);
+  const { rows, error } = await readDashboardRows(() => {
+    let query = dashboardQuery(supabase)
+      .eq("provider", fallbackArchitectureV3Provider).eq("status", "LIVE").eq("lane", "serving");
     // Sky has no dependency on the personal transit or relationship inventories.
     if (scope === "sky") query = query.or(skyDashboardScopeFilter);
     if (scope === "sky-list") query = query.or(skyListDashboardScopeFilter);
-    if (cursorId) query = query.gt("id", cursorId);
-    const { data, error } = await query.abortSignal(AbortSignal.timeout(8000)).returns<GeneratedContentRow[]>();
-
-    if (error) {
-      if (scope === "sky-list") throw new Error("Current Sky content did not load.");
-      console.warn("Fallback architecture V3 live overlay failed to load; nightly/cached/local copy remains active.", error);
-      return cached?.bundle ?? await loadContentStudioLastKnownGoodCoreBundle(scope);
-    }
-
-    rows.push(...(data ?? []));
-    const lastId = data?.at(-1)?.id ?? null;
-    if (!data || data.length < pageSize || !lastId) break;
-    cursorId = lastId;
+    return query.abortSignal(AbortSignal.timeout(8000));
+  });
+  if (error) {
+    if (scope === "sky-list") throw new Error("Current Sky content did not load.");
+    console.warn("Fallback architecture V3 live overlay failed to load; nightly/cached/local copy remains active.", error);
+    return cached?.bundle ?? await loadContentStudioLastKnownGoodCoreBundle(scope);
   }
 
   let currentCoreManifest: FallbackArchitectureV3PackageManifest;
@@ -1402,29 +1406,11 @@ export async function loadFallbackArchitectureV3CompatibilityDashboardBundle(): 
   const supabase = await getSupabaseClient();
   if (!supabase) return loadContentStudioLastKnownGoodCompatibilityBundle();
 
-  const rows: GeneratedContentRow[] = [];
-  const pageSize = 1000;
-  let cursorId: string | null = null;
-
-  for (let page = 0; page < 10; page += 1) {
-    let query = supabase
-      .from("generated_interpretations")
-      .select(generatedContentSelect)
-      .like("content_key", "authored/compat-pair/%")
-      .order("id", { ascending: true })
-      .limit(pageSize);
-    if (cursorId) query = query.gt("id", cursorId);
-    const { data, error } = await query.returns<GeneratedContentRow[]>();
-
-    if (error) {
-      console.warn("Compatibility dashboard content failed to load; nightly/bundled relationship copy remains active.", error);
-      return loadContentStudioLastKnownGoodCompatibilityBundle();
-    }
-
-    rows.push(...(data ?? []));
-    const lastId = data?.at(-1)?.id ?? null;
-    if (!data || data.length < pageSize || !lastId) break;
-    cursorId = lastId;
+  const { rows, error } = await readDashboardRows(() => dashboardQuery(supabase)
+    .like("content_key", "authored/compat-pair/%"));
+  if (error) {
+    console.warn("Compatibility dashboard content failed to load; nightly/bundled relationship copy remains active.", error);
+    return loadContentStudioLastKnownGoodCompatibilityBundle();
   }
 
   return packageFallbackArchitectureV3CompatibilityRows(rows);
@@ -1517,29 +1503,11 @@ export async function loadFallbackArchitectureV3SkyPlacementDashboardBundle(sele
   }
   if (cached?.version === dashboardVersion) return cached.bundle;
 
-  const rows: GeneratedContentRow[] = [];
-  const pageSize = 1000;
-  let cursorId: string | null = null;
-
-  for (let page = 0; page < 10; page += 1) {
-    let query = supabase
-      .from("generated_interpretations")
-      .select(generatedContentSelect)
-      .eq("provider", fallbackArchitectureV3SkyPlacementProvider)
-      .order("id", { ascending: true })
-      .limit(pageSize);
-    if (cursorId) query = query.gt("id", cursorId);
-    const { data, error } = await query.returns<GeneratedContentRow[]>();
-
-    if (error) {
-      console.warn("Sky Placement dashboard partition failed to load; cached/local content remains active.", error);
-      return cached?.bundle ?? null;
-    }
-
-    rows.push(...(data ?? []));
-    const lastId = data?.at(-1)?.id ?? null;
-    if (!data || data.length < pageSize || !lastId) break;
-    cursorId = lastId;
+  const { rows, error } = await readDashboardRows(() => dashboardQuery(supabase)
+    .eq("provider", fallbackArchitectureV3SkyPlacementProvider));
+  if (error) {
+    console.warn("Sky Placement dashboard partition failed to load; cached/local content remains active.", error);
+    return cached?.bundle ?? null;
   }
 
   const approvedRows = rows.filter((row) => (

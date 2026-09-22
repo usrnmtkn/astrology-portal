@@ -226,3 +226,24 @@ Main's existing CI failures are recorded for comparison: Social friends security
 fails its database authorization step; Corpus grammar reports
 `PRODUCTION_SKY_COMPARISON_STALE`. Neither workflow or source artifact is changed
 by this release. They are not reported as passing.
+
+The integrated CI-configured build exposed a 629-byte aggregate overage. Factoring
+three identical dashboard pagination loops into one preserves their filters,
+page bounds, deadlines and caller-owned recovery and saves 61 gzip bytes. Separate
+isolated builds with identical CI configuration measure main at 3,440,218 bytes
+and the release at 3,443,068 (+2,850). The aggregate allocation increases by 1,000
+to 3,443,500; the already-reviewed boot limits, CSS, individual chunk and timing
+limits stay unchanged. The release does not claim a JavaScript size reduction.
+
+A local mobile-dark layout run observed late Google font swaps (summary geometry
+changed by 1–2 pixels; recorded CLS 0.0000277). The existing asynchronous font
+policy deliberately permits reading before fonts load. The test assertion is
+preserved; repeat checks and production measurements remain separate evidence.
+
+With protected report fixtures supplied privately, the restarted full content
+suite passes the reconciled copy checks and then fails the existing report-judge
+fixture assertion: April 17 versus expected April 14 in
+`scripts/report-judge-v3-fixture-packets.mjs:127`. Running the same test in the
+untouched `a05a04bce` baseline with its own dependencies reproduces the exact
+failure. The fixture and report sources are unchanged; the full content suite
+is not reported as green.
