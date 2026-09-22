@@ -10,13 +10,14 @@ function sunIngressEvents(events: LunarCalendarEvent[]) {
     .sort((first, second) => new Date(first.startsAt).getTime() - new Date(second.startsAt).getTime());
 }
 
-function currentAndNextIngress(dateKey: string, events: LunarCalendarEvent[]) {
+function currentAndNextIngress(dateKey: string, events: LunarCalendarEvent[], asOf?: string) {
   const ingresses = sunIngressEvents(events);
+  const instant = asOf === undefined ? null : Date.parse(asOf);
   let current: LunarCalendarEvent | undefined;
   let next: LunarCalendarEvent | undefined;
 
   for (const event of ingresses) {
-    if (event.dateKey <= dateKey) {
+    if (instant === null ? event.dateKey <= dateKey : Date.parse(event.startsAt) <= instant) {
       current = event;
     } else {
       next = event;
@@ -33,13 +34,15 @@ function ingressSign(event: LunarCalendarEvent) {
 
 // Only calculated ingresses may identify a season. Missing facts remain absent;
 // a conventional date table is not an ephemeris or a time-zone conversion.
-export function sunIngressSeasonSign(dateKey: string, events: LunarCalendarEvent[]): string | null {
-  const { current } = currentAndNextIngress(dateKey, events);
+// Day-based editorial arcs may use the ingress date. Current-season labels must
+// supply the same instant as their Sky snapshot, including on the ingress day.
+export function sunIngressSeasonSign(dateKey: string, events: LunarCalendarEvent[], asOf?: string): string | null {
+  const { current } = currentAndNextIngress(dateKey, events, asOf);
   return current ? ingressSign(current) : null;
 }
 
-export function sunIngressSeasonWindow(dateKey: string, events: LunarCalendarEvent[]): SeasonWindow | null {
-  const { current, next } = currentAndNextIngress(dateKey, events);
+export function sunIngressSeasonWindow(dateKey: string, events: LunarCalendarEvent[], asOf?: string): SeasonWindow | null {
+  const { current, next } = currentAndNextIngress(dateKey, events, asOf);
   if (!current || !next) return null;
   return {
     sign: ingressSign(current),

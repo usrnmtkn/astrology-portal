@@ -12810,6 +12810,7 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
     };
   }, [currentSkyCalculationNeeded, location.latitude, location.longitude, location.timeZone, mode, skyDate, skyRefreshKey]);
 
+  const sunSeasonEnd = sky?.positions.find(position => position.planet === "Sun")?.transitEnd;
   useEffect(() => {
     if (mode !== "guest" && mode !== "member" && mode !== "calendar") return;
     const timeZone = withTimeZone(location).timeZone;
@@ -12817,7 +12818,10 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
       if (document.visibilityState === "visible" && liveSkyReference(skyDate, timeZone)) setSkyRefreshKey(Date.now());
     };
     const timer = window.setInterval(refresh, 60_000);
-    const boundary = sky?.moonStatus?.until ? Date.parse(sky.moonStatus.until) : NaN;
+    const boundary = Math.min(...[
+      sky?.moonStatus?.until,
+      sunSeasonEnd
+    ].map(value => value ? Date.parse(value) : NaN).filter(value => Number.isFinite(value) && value >= Date.now()));
     const remaining = boundary - Date.now();
     const boundaryTimer = Number.isFinite(remaining) && remaining >= 0 && remaining < 2_147_483_000
       ? window.setTimeout(refresh, remaining + 100) : null;
@@ -12829,7 +12833,7 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
       window.removeEventListener("focus", refresh);
       document.removeEventListener("visibilitychange", refresh);
     };
-  }, [mode, skyDate, location, sky?.moonStatus?.until]);
+  }, [mode, skyDate, location, sky?.moonStatus?.until, sunSeasonEnd]);
 
   useEffect(() => {
     document.documentElement.dataset.theme = theme;
