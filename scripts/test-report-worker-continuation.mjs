@@ -16,14 +16,14 @@ try {
         b.onLoad({ filter: /.*/, namespace: 'fixture' }, ({ path }) => ({ contents: path === 'generate'
           ? 'export const generateFriendTransitReadingForUser = (...args) => globalThis.workerFixture.generate(...args); export const generateYouTransitReadingForUser = generateFriendTransitReadingForUser;'
           : path === 'judge' ? 'export const isTransitReadingJudgeBlockedError = e => e.code === "TRANSIT_READING_JUDGE_BLOCKED";'
-          : 'export const TRANSIT_READING_INVOCATION_BUDGET_MS = 240000; export class TransitReadingCheckpointYield extends Error {} export class TransitReadingCheckpointStopped extends Error {} export const withTransitReadingCheckpoints = (input, run) => { globalThis.workerFixture.deadlines.push(input.deadline); return run(); };'
+          : 'export const TRANSIT_READING_INVOCATION_BUDGET_MS = 240000; export class TransitReadingCheckpointYield extends Error {} export class TransitReadingCheckpointStopped extends Error {} export const withTransitReadingCheckpoints = (input, run) => { globalThis.workerFixture.checkpoints.push(input); globalThis.workerFixture.yieldError = new TransitReadingCheckpointYield(); globalThis.workerFixture.stopError = new TransitReadingCheckpointStopped(); return run(); };'
         }));
       }}]
     });
     const module = await import(`data:text/javascript;base64,${Buffer.from(bundle.outputFiles[0].text).toString('base64')}`);
     const run = module[family === 'friend' ? 'runFriendReportJobs' : 'runYouReportJobs'];
     for (const window of family === 'you' ? ['day', 'week'] : ['day']) {
-      for (const scenario of ['recover', 'cap', 'deadline', 'other-worker', 'revoked', 'infrastructure', 'slow-claim']) {
+      for (const scenario of ['quality-held', 'checkpoint-resume', 'checkpoint-revoked', 'checkpoint-other-worker', 'short-deadline', 'infrastructure', 'checkpoint-stop']) {
         let now = 1_800_000_000_000;
         Date.now = () => now;
         const started = now;
@@ -32,11 +32,13 @@ try {
         let calls = 0;
         let claims = 0;
         const updates = [];
-        const deadlines = [];
-        globalThis.workerFixture = { deadlines, generate: async () => {
+        const checkpoints = [];
+        globalThis.workerFixture = { checkpoints, generate: async () => {
           calls++;
-          now += scenario === 'deadline' ? 190_000 : 20_000;
-          if (scenario === 'recover' && calls === 2) return { saved: [{ id: 'test-result' }] };
+          now += 20_000;
+          if (scenario === 'checkpoint-resume' && calls === 2) return { saved: [{ id: 'test-result' }] };
+          if (scenario === 'checkpoint-stop') throw globalThis.workerFixture.stopError;
+          if (scenario.startsWith('checkpoint-')) throw globalThis.workerFixture.yieldError;
           if (scenario === 'infrastructure') throw new Error('Temporary storage failure');
           throw Object.assign(new Error('Rejected draft'), { code: 'TRANSIT_READING_JUDGE_BLOCKED', diagnostic: { stage: 'second_judgment' } });
         }};
@@ -45,18 +47,15 @@ try {
             assert.equal(path, `rpc/claim_${family}_report_jobs`);
             const input = JSON.parse(options.body);
             claims++;
-            if (claims > 1) {
-              assert.equal(input.requested_job_id, job.id);
-              assert.equal(input.batch_limit, 1);
-              if (scenario === 'other-worker') return [];
-              if (scenario === 'slow-claim') now += 170_000;
-            }
-            assert.ok(['queued', 'retry'].includes(job.state));
-            if (job.run_after) assert.ok(Date.parse(job.run_after) <= now);
+            assert.equal(input.requested_job_id, job.id);
+            assert.equal(input.batch_limit, 1);
+            if (claims > 1 && scenario === 'checkpoint-other-worker') return [];
+            if (!['queued', 'retry'].includes(job.state) || Date.parse(job.run_after) > now) return [];
+            if (scenario === 'short-deadline') now += 190_000;
             job = { ...job, state: 'running', attempt: job.attempt + 1 };
             return [{ ...job }];
           },
-          selectOne: async () => ({ id: job.entitlement_id, status: scenario === 'revoked' && claims > 1 ? 'revoked' : 'active' }),
+          selectOne: async () => ({ id: job.entitlement_id, status: scenario === 'checkpoint-revoked' && claims > 1 ? 'revoked' : 'active' }),
           update: async (table, filter, patch) => {
             updates.push({ table, patch });
             if (table === `${family}_report_jobs`) job = { ...job, ...patch };
@@ -64,24 +63,44 @@ try {
           }
         };
         await run({ workerId: 'test-worker', jobId: job.id, admin });
-        assert.ok(deadlines.every(d => d === started + 240_000), 'Retries must share the original deadline.');
-        if (scenario === 'recover') {
-          assert.equal(calls, 2); assert.equal(job.state, 'complete'); assert.equal(job.result_id, 'test-result');
+        assert.equal(claims, 1, 'The worker must not immediately reclaim a completed quality cycle or yielded checkpoint.');
+        assert.ok(checkpoints.every(c => c.deadline === started + 240_000));
+        if (scenario === 'quality-held' || scenario === 'checkpoint-stop') {
+          assert.equal(calls, 1); assert.equal(job.state, 'failed'); assert.equal(job.attempt, 1);
+          assert.equal(job.checkpoint_attempt, 1);
+          if (scenario === 'quality-held') assert.match(job.last_error, /^Report review required:/);
+          assert.equal((await run({ workerId: 'later-worker', jobId: job.id, admin })).claimed, 0);
+          assert.equal(calls, 1, 'A terminal job cannot dispatch another generation.');
+        } else if (scenario === 'infrastructure') {
+          assert.equal(calls, 1); assert.equal(job.state, 'retry'); assert.equal(job.attempt, 1);
           assert.equal(job.checkpoint_attempt, 2);
-        } else if (scenario === 'cap') {
-          assert.equal(calls, 4); assert.equal(job.state, 'failed'); assert.equal(job.attempt, 4);
-        } else if (scenario === 'revoked') {
-          assert.equal(calls, 1); assert.equal(job.state, 'cancelled');
+          assert.equal(Date.parse(job.run_after) - now, 120_000);
+          assert.equal((await run({ workerId: 'later-worker', jobId: job.id, admin })).claimed, 0);
+          assert.equal(calls, 1, 'An invocation cannot bypass infrastructure backoff.');
         } else {
-          assert.equal(calls, 1); assert.equal(job.state, 'retry');
-          if (scenario === 'infrastructure') assert.equal(Date.parse(job.run_after) - now, 120_000);
-          if (scenario === 'deadline') assert.equal(claims, 1);
-          if (scenario === 'other-worker') assert.equal(claims, 2);
+          assert.equal(calls, scenario === 'short-deadline' ? 0 : 1);
+          assert.equal(job.state, 'retry'); assert.equal(job.attempt, 0);
+          assert.equal(job.checkpoint_attempt, 1, 'Yielding preserves the saved model-call attempt.');
+          assert.ok(updates.some(({ patch }) => patch.source_snapshot?.reportProgress?.stage === 'waiting'));
+          if (scenario !== 'short-deadline') {
+            const resumedAt = now;
+            const resumed = await run({ workerId: 'later-worker', jobId: job.id, admin });
+            if (scenario === 'checkpoint-resume') {
+              assert.equal(calls, 2); assert.equal(job.state, 'complete'); assert.equal(job.result_id, 'test-result');
+              assert.equal(job.attempt, 1); assert.equal(job.checkpoint_attempt, 1);
+              assert.deepEqual(checkpoints.map(c => c.attempt), [1, 1]);
+              assert.equal(checkpoints[1].deadline, resumedAt + 240_000);
+            } else if (scenario === 'checkpoint-revoked') {
+              assert.equal(calls, 1); assert.equal(job.state, 'cancelled');
+            } else {
+              assert.equal(resumed.claimed, 0); assert.equal(calls, 1); assert.equal(job.state, 'retry');
+            }
+          }
         }
       }
     }
   }
-  console.log('Friends/day/week workers: immediate recovery, four-attempt cap, shared deadline, concurrent claim, revoked entitlement and infrastructure backoff passed.');
+  console.log('Friends/day/week workers: 21 cases passed for terminal review holds, checkpoint resumption, deadlines, concurrent claims, revoked entitlement and infrastructure backoff.');
 } finally {
   Date.now = realNow;
   delete globalThis.workerFixture;

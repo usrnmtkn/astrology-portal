@@ -302,3 +302,13 @@ Existing-reader browser verification is now complete. Fresh real Day/Week/Friend
 generation and independent judge calibration remain unverified. No additional
 paid call, production setting, database mutation, migration or deployment was
 performed. The previous 42-call allowance remains exhausted. Keep the PR in draft.
+
+The first follow-up CI run passed the 72-case lifecycle regression and then
+exposed a second obsolete expectation in the worker-continuation test: it still
+required immediate generation after a completed second rejection. That test now
+passes 21 Day/Week/Friends scenarios covering terminal holds, same-attempt
+checkpoint resumption, fresh invocation deadlines, a slow initial claim,
+another worker winning the claim, revoked entitlement and infrastructure backoff.
+All remaining social-contract script steps after it also pass locally. This
+changes test expectations and coverage, not the runtime release policy. Hosted
+checks must still finish on the final pushed revision.
