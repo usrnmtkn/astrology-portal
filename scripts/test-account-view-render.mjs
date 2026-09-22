@@ -14,7 +14,12 @@ const server = await createServer({
 
 try {
   const { AccountView } = await server.ssrLoadModule("/src/features/account/AccountView.tsx");
-  const html = renderToStaticMarkup(React.createElement(AccountView, {
+  const props = {
+    accountId: "account-1",
+    accountChecked: true,
+    accountError: null,
+    onRetryAuth() {},
+    onSignIn() {},
     profile: {
       id: "account-1",
       name: "Alex Morgan",
@@ -34,7 +39,8 @@ try {
     onPhoneChange() {},
     onSignOut() {},
     onSocialProfileChange() {}
-  }));
+  };
+  const html = renderToStaticMarkup(React.createElement(AccountView, props));
 
   assert.match(html, /class="account-page page-shell--narrow"/);
   assert.match(html, /Alex Morgan/);
@@ -50,6 +56,12 @@ try {
   assert.doesNotMatch(html, /Delete your TLDR Astro account/);
   assert.doesNotMatch(html, /Erase your mood and journal entries/);
   assert.doesNotMatch(html, /Check your current phone/);
+  const signedOut = renderToStaticMarkup(React.createElement(AccountView, { ...props, accountId: null }));
+  assert.doesNotMatch(signedOut, /Signed in with|>Sign out</);
+  assert.match(signedOut, /Sign in to sync your account and journal across devices/);
+  const checking = renderToStaticMarkup(React.createElement(AccountView, { ...props, accountId: null, accountChecked: false }));
+  assert.match(checking, /Checking your account/);
+  assert.doesNotMatch(checking, /Signed in with|>Sign out</);
 } finally {
   await server.close();
 }

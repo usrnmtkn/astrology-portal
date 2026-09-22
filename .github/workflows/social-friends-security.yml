@@ -1,6 +1,7 @@
 name: Social friends security
 
 on:
+  pull_request:
   push:
     branches: [main]
     paths:
@@ -94,6 +95,10 @@ jobs:
         run: supabase db reset --local --workdir apps/web
       - name: Run rollback-only cross-user authorization test
         run: psql "postgresql://postgres:postgres@127.0.0.1:54322/postgres" -v ON_ERROR_STOP=1 -f apps/web/supabase/tests/social_friend_authorization.sql
+      - name: Verify invitation rejection and replay cases
+        run: psql "postgresql://postgres:postgres@127.0.0.1:54322/postgres" -v ON_ERROR_STOP=1 -f apps/web/supabase/tests/social_invitation_handoffs.sql
+      - name: Verify concurrent invitation claims
+        run: node scripts/test-social-invitation-race.mjs
       - name: Run Friends report lifecycle authorization test
         run: psql "postgresql://postgres:postgres@127.0.0.1:54322/postgres" -v ON_ERROR_STOP=1 -f apps/web/supabase/tests/friend_report_lifecycle_authorization.sql
       - name: Run You report lifecycle authorization test

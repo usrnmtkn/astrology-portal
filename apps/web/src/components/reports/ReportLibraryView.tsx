@@ -1,6 +1,7 @@
+import { getVerifiedAuthUser } from "../../services/auth";
 import { FormattedProse } from "../FormattedProse";
 import { Archive, ChevronLeft, FileText, Link2Off, MoreHorizontal, RotateCcw, Share2, Trash2 } from "lucide-react";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { SegmentedControl } from "../SegmentedControl";
 import {
   deleteReport,
@@ -116,12 +117,13 @@ function statusLabel(item: ReportLibraryItem) {
   return "Preparing";
 }
 
-function openItem(item: ReportLibraryItem) {
-  if (item.status !== "ready") {
-    window.location.assign(item.route);
-    return;
-  }
-  void markReportSeen(item).finally(() => window.location.assign(item.route));
+async function openItem(item: ReportLibraryItem) {
+  const currentOwner = async () => (await getVerifiedAuthUser())?.id === item.ownerId;
+  try {
+    if (!await currentOwner()) return;
+    if (item.status === "ready") await markReportSeen(item).catch(() => undefined);
+    if (await currentOwner()) window.location.assign(item.route);
+  } catch { /* Account recovery remains on the current page. */ }
 }
 
 async function copyText(value: string) {
@@ -305,7 +307,7 @@ function ReportLibraryEmpty({ view }: { view: "active" | "archived" }) {
   );
 }
 
-export function ReportLibraryView() {
+export function ReportLibraryView({ accessFallback }: { accessFallback?: ReactNode } = {}) {
   const [items, setItems] = useState<ReportLibraryItem[]>([]);
   const [view, setView] = useState<"active" | "archived">("active");
   const [status, setStatus] = useState<"loading" | "ready" | "error">("loading");
@@ -326,11 +328,12 @@ export function ReportLibraryView() {
   }
 
   useEffect(() => {
+    if (accessFallback) return;
     void refresh();
     const interval = window.setInterval(() => {
       if (document.visibilityState === "visible") void refresh();
     }, reportLibraryPollMs);
-    return () => window.clearInterval(interval);
+    return () => { ++refreshVersion.current; window.clearInterval(interval); };
   }, []);
 
   const visible = useMemo(() => items.filter((item) => (
@@ -415,10 +418,11 @@ export function ReportLibraryView() {
           aria-labelledby={`report-library-tabs-${view}-tab`}
           aria-live="polite"
         >
-          {status === "loading" ? <PageLoading compact message="Loading your reports…" /> : null}
-          {status === "error" ? <p className="report-library-loading type-body-muted">Your reports could not be loaded right now.</p> : null}
-          {status === "ready" && visible.length === 0 ? <ReportLibraryEmpty view={view} /> : null}
-          {status === "ready" ? visible.map((item) => (
+          {accessFallback}
+          {!accessFallback && status === "loading" ? <PageLoading compact message="Loading your reports…" /> : null}
+          {!accessFallback && status === "error" ? <p className="report-library-loading type-body-muted">Your reports could not be loaded right now.</p> : null}
+          {!accessFallback && status === "ready" && visible.length === 0 ? <ReportLibraryEmpty view={view} /> : null}
+          {!accessFallback && status === "ready" ? visible.map((item) => (
             <ReportLibraryRow
               key={item.id}
               item={item}

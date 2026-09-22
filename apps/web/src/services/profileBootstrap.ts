@@ -11,7 +11,10 @@ export function profileBootstrapLocalOwnerIds({
   legacyOwnerIds: string[];
   persistedProfileId?: string | null;
 }) {
-  return [cachedProfileId, persistedProfileId, accountId, ...legacyOwnerIds];
+  // Only a persisted profile returned by this account's RLS-scoped read can
+  // establish a legacy owner mapping. Unrelated local buckets stay on disk;
+  // signing into B must never import A's charts automatically.
+  return [...new Set([accountId, persistedProfileId].filter((id): id is string => Boolean(id)))];
 }
 
 export function accountProfileBootstrapAction({

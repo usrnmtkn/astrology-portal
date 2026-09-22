@@ -1,11 +1,12 @@
 import { BookOpen, ChevronRight, Download, Trash2, X } from "lucide-react";
-import { useEffect, useState, type FormEvent } from "react";
+import { useEffect, useRef, useState, type FormEvent } from "react";
 import { AccountJournal } from "./AccountJournal";
 import type { UserProfile } from "../../App";
 import { ModalPortal } from "../../components/ModalPortal";
 import { ProfileAvatar } from "../../components/ProfileAvatar";
 import {
   deleteOwnAccount,
+  getVerifiedAuthUser,
   resendPhoneNumberChangeCode,
   sendPhoneSignInCode,
   startPhoneNumberChange,
@@ -40,6 +41,11 @@ type BirthDetails = {
 };
 
 type AccountViewProps = {
+  accountId: string | null;
+  accountChecked: boolean;
+  accountError: string | null;
+  onRetryAuth: () => void;
+  onSignIn: () => void;
   profile: UserProfile;
   savedBirthCity: string;
   savedBirthDate: string;
@@ -60,6 +66,11 @@ function providerLabel(provider: UserProfile["provider"]) {
 }
 
 export function AccountView({
+  accountId,
+  accountChecked,
+  accountError,
+  onRetryAuth,
+  onSignIn,
   profile,
   savedBirthCity,
   savedBirthDate,
@@ -94,7 +105,25 @@ export function AccountView({
   const [newPhoneCode, setNewPhoneCode] = useState("");
   const [phoneChangeDestination, setPhoneChangeDestination] = useState("");
   const [phoneChangeResendSeconds, setPhoneChangeResendSeconds] = useState(0);
-  const [journalOpen, setJournalOpen] = useState(false);
+  const activeAccount = useRef(accountId);
+  activeAccount.current = accountId;
+  useEffect(() => {
+    activeAccount.current = accountId;
+    return () => { activeAccount.current = null; };
+  }, [accountId]);
+  const requireCurrentAccount = async () => {
+    const user = await getVerifiedAuthUser();
+    if (!accountId || accountError || !accountChecked || activeAccount.current !== accountId || user?.id !== accountId) {
+      throw new Error("Your account changed or could not be checked. Please try again.");
+    }
+    return accountId;
+  };
+  const [journalOpen, setJournalOpen] = useState(() => typeof window !== "undefined" && window.location.hash === "#account?view=journal");
+
+  const openJournal = (open: boolean) => {
+    setJournalOpen(open);
+    window.history.replaceState(window.history.state, "", `#account${open ? "?view=journal" : ""}`);
+  };
 
   useEffect(() => {
     setDraftBirthDate(savedBirthDate);
@@ -117,13 +146,20 @@ export function AccountView({
   useEffect(() => {
     let cancelled = false;
 
-    setHandleStatus("loading");
+    setHandleStatus(accountChecked && !accountId ? "unavailable" : "loading");
     setHandleMessage("");
+    setSocialHandle(null);
+    setHandleDraft("");
+    setHandleEditing(false);
+    if (!accountId) return;
 
-    loadOwnSocialProfile()
+    loadOwnSocialProfile(accountId)
       .then((socialProfile) => {
         if (cancelled) {
           return;
+        }
+        if (socialProfile && socialProfile.userId !== accountId) {
+          throw new Error("Your session could not be confirmed. Please try again.");
         }
 
         const nextHandle = socialProfile?.handle ?? null;
@@ -146,7 +182,7 @@ export function AccountView({
     return () => {
       cancelled = true;
     };
-  }, [onSocialProfileChange, profile.id]);
+  }, [accountId, accountChecked, onSocialProfileChange]);
 
   const birthDraftDirty =
     draftBirthDate !== savedBirthDate ||
@@ -180,11 +216,13 @@ export function AccountView({
     setHandleMessage("");
 
     try {
+      const ownerId = await requireCurrentAccount();
       const savedProfile = await saveSocialHandle({
         handle: normalizedHandleDraft,
         displayName: profile.name,
         avatarUrl: profile.avatarUrl
-      });
+      }, ownerId);
+      if (activeAccount.current !== ownerId) return;
       const nextHandle = savedProfile.handle ?? normalizedHandleDraft;
 
       setSocialHandle(nextHandle);
@@ -223,14 +261,12 @@ export function AccountView({
     setAccountActionMessage("");
 
     try {
+      const ownerId = await requireCurrentAccount();
       const [social, calendar] = await Promise.all([
-        exportSocialAccountBundle(),
-        exportCalendarCheckInBundle().catch(() => ({
-          checkIns: [],
-          tags: [] as string[],
-          people: [] as string[]
-        }))
+        exportSocialAccountBundle(ownerId),
+        exportCalendarCheckInBundle({ expectedUserId: ownerId })
       ]);
+      await requireCurrentAccount();
       const exportPayload = {
         exportedAt: new Date().toISOString(),
         account: {
@@ -272,7 +308,9 @@ export function AccountView({
     setAccountActionMessage("");
 
     try {
-      await deleteAllCalendarCheckInData();
+      const ownerId = await requireCurrentAccount();
+      await deleteAllCalendarCheckInData({ expectedUserId: ownerId });
+      if (activeAccount.current !== ownerId) return;
       setEraseDialogOpen(false);
       setEraseConfirmation("");
       setAccountActionMessage("Your mood and journal entries were removed.");
@@ -292,7 +330,9 @@ export function AccountView({
     setAccountActionMessage("");
 
     try {
-      await deleteOwnAccount();
+      const ownerId = await requireCurrentAccount();
+      await deleteOwnAccount(ownerId);
+      if (activeAccount.current !== ownerId) return;
       setDeleteDialogOpen(false);
       onAccountDeleted();
     } catch (error) {
@@ -429,11 +469,13 @@ export function AccountView({
 
   const profilePhoneLastFour = profile.phone ? phoneNumberLastFour(profile.phone) : "";
   const accountLoginSummary = profile.provider === "phone" && profilePhoneLastFour
-    ? `Signed in with Phone ending in ${profilePhoneLastFour}`
-    : profile.email || `Signed in with ${providerLabel(profile.provider)}`;
+    ? `${accountId ? "Signed in with " : ""}Phone ending in ${profilePhoneLastFour}`
+    : profile.email || (accountId ? `Signed in with ${providerLabel(profile.provider)}` : "");
 
   if (journalOpen) {
-    return <AccountJournal onBack={() => setJournalOpen(false)} />;
+    return <AccountJournal key={profile.id} accountId={accountId}
+      accountChecked={accountChecked} accountError={accountError}
+      onRetryAuth={onRetryAuth} onSignIn={onSignIn} onBack={() => openJournal(false)} />;
   }
 
   return (
@@ -544,14 +586,28 @@ export function AccountView({
               {handleMessage || "3–24 characters. Start with a letter; use letters, numbers, or underscores."}
             </div>
           )}
-          <div className="settings-row">
-            <span className="settings-row__label">Signed in with</span>
-            <span className="settings-row__value settings-row__value--provider">{providerLabel(profile.provider)}</span>
-          </div>
-          <button type="button" className="settings-row settings-signout-row" onClick={onSignOut}>
-            <span className="settings-row__action">Sign out</span>
-            <ChevronRight size={18} aria-hidden="true" />
-          </button>
+          {accountId ? (
+            <>
+              <div className="settings-row">
+                <span className="settings-row__label">Signed in with</span>
+                <span className="settings-row__value settings-row__value--provider">{providerLabel(profile.provider)}</span>
+              </div>
+              <button type="button" className="settings-row settings-signout-row" onClick={onSignOut}>
+                <span className="settings-row__action">Sign out</span>
+                <ChevronRight size={18} aria-hidden="true" />
+              </button>
+            </>
+          ) : !accountChecked ? (
+            <p className="account-action-message" role="status">Checking your account…</p>
+          ) : (
+            <>
+              <p className="account-action-message" role="status">{accountError || "Sign in to sync your account and journal across devices."}</p>
+              <button type="button" className="settings-row settings-signout-row" onClick={accountError ? onRetryAuth : onSignIn}>
+                <span className="settings-row__action">{accountError ? "Retry" : "Sign in"}</span>
+                <ChevronRight size={18} aria-hidden="true" />
+              </button>
+            </>
+          )}
         </div>
       </section>
 
@@ -628,7 +684,7 @@ export function AccountView({
             <button
               type="button"
               className="settings-row settings-row-button account-data-action"
-              onClick={() => setJournalOpen(true)}
+              onClick={() => openJournal(true)}
             >
               <span className="settings-row-copy">
                 <span className="settings-row-title">Open journal</span>
@@ -649,7 +705,7 @@ export function AccountView({
             <button
               type="button"
               className="settings-row settings-row-button account-data-action"
-              disabled={accountActionStatus !== "idle"}
+              disabled={!accountId || !accountChecked || Boolean(accountError) || accountActionStatus !== "idle"}
               onClick={() => void exportAccountData()}
             >
               <span className="settings-row-copy">
@@ -663,7 +719,7 @@ export function AccountView({
             <button
               type="button"
               className="settings-row settings-row-button account-data-action"
-              disabled={accountActionStatus !== "idle"}
+              disabled={!accountId || !accountChecked || Boolean(accountError) || accountActionStatus !== "idle"}
               onClick={() => {
                 setEraseConfirmation("");
                 setEraseDialogOpen(true);
@@ -681,7 +737,7 @@ export function AccountView({
             <button
               type="button"
               className="settings-row settings-row-button account-data-action account-delete-action"
-              disabled={accountActionStatus !== "idle"}
+              disabled={!accountId || !accountChecked || Boolean(accountError) || accountActionStatus !== "idle"}
               onClick={() => {
                 setDeleteConfirmation("");
                 setDeleteDialogOpen(true);

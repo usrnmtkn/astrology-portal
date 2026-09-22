@@ -5,7 +5,7 @@ for (const theme of ["light", "dark"] as const) {
     test(`generating report beam preserves layout and menus at ${width} ${theme}`, async ({ page }) => {
       await page.setViewportSize({ width, height: 1000 });
       await page.emulateMedia({ reducedMotion: "no-preference", colorScheme: theme === "light" ? "dark" : "light" });
-      const user = { id: "00000000-0000-4000-8000-000000000001", aud: "authenticated", role: "authenticated", email: "beam@example.test" };
+      const user = { id: "00000000-0000-4000-8000-000000000001", aud: "authenticated", role: "authenticated", app_metadata: { provider: "email" }, user_metadata: {}, email: "beam@example.test" };
       const storageKey = `sb-${new URL(process.env.VITE_SUPABASE_URL ?? "https://visual-smoke.supabase.test").hostname.split(".")[0]}-auth-token`;
       const row = {
         id: "00000000-0000-4000-8000-000000000002", subject_type: "you_day_reading", status: "DRAFT", body: "",

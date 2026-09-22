@@ -1,5 +1,7 @@
 import { lazy, Suspense, useEffect, useState } from "react";
 import type { ReactNode } from "react";
+import { observeVerifiedAccount, type VerifiedAccountState } from "../services/verifiedAccountObserver";
+import { reportShareKeyFromHash } from "../services/reportLinks";
 import { PageLoading } from "../components/PageLoading";
 import type { ReportTheme } from "../components/reports/ReportTopNavigation";
 import "../styles/report-article.css";
@@ -67,6 +69,22 @@ function isUuid(value: string) {
   return /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/iu.test(value);
 }
 
+function PrivateReportBoundary({ children }: { children: ReactNode }) {
+  const [account, setAccount] = useState<VerifiedAccountState>({ id: null, checked: false, error: false });
+  const [retry, setRetry] = useState(0);
+  useEffect(() => observeVerifiedAccount(setAccount), [retry]);
+  if (!account.checked) return <LibraryFallback />;
+  const accessFallback = <div className="report-library-loading type-body-muted" role="status">
+    <p>{account.error ? "Your account could not be checked." : "Sign in to view your reports."}</p>
+    {account.error ? <button type="button" onClick={() => setRetry((value) => value + 1)}>Try again</button>
+      : <a href={`/?auth=login&readerReturn=${encodeURIComponent(window.location.pathname)}`}>Sign in</a>}
+  </div>;
+  if (!account.id) return /^\/reports\/?$/u.test(window.location.pathname)
+    ? deferred(<ReportLibraryView accessFallback={accessFallback} />)
+    : <main className="report-delivery-state">{accessFallback}</main>;
+  return <div key={account.id}>{children}</div>;
+}
+
 export function ReportRoute() {
   const path = window.location.pathname.replace(/\/+$/u, "") || "/";
   let content: ReactNode;
@@ -88,5 +106,7 @@ export function ReportRoute() {
     }
   }
 
-  return <ReportThemeBoundary>{content}</ReportThemeBoundary>;
+  const publicShare = /^\/reports\/[^/]+$/u.test(path) && !isUuid(path.split("/").at(-1) ?? "") && reportShareKeyFromHash(window.location.hash);
+  return <ReportThemeBoundary>{publicShare
+    ? content : <PrivateReportBoundary>{content}</PrivateReportBoundary>}</ReportThemeBoundary>;
 }

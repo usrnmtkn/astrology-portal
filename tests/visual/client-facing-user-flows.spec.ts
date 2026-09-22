@@ -431,18 +431,29 @@ function supabaseAuthStorageKey() {
   return `sb-${new URL(process.env.VITE_SUPABASE_URL ?? "https://visual-smoke.supabase.test").hostname.split(".")[0]}-auth-token`;
 }
 
-async function seedSignedInSession(page: Page) {
+async function seedSignedInSession(page: Page, { storeSession = true, expiresIn = 3600 } = {}) {
   const user = fixtureAuthUser;
   const storageKey = supabaseAuthStorageKey();
-  await page.addInitScript(({ user, storageKey }) => {
+  // Authenticated app chrome subscribes to social updates. Keep that transport
+  // isolated too; WebKit reports an unresolved fixture socket as a page error.
+  await page.routeWebSocket("**/realtime/v1/websocket*", socket => {
+    socket.onMessage(raw => {
+      const message = JSON.parse(String(raw));
+      if (message.event === "phx_join" || message.event === "heartbeat") {
+        socket.send(JSON.stringify({ topic: message.topic, event: "phx_reply", ref: message.ref,
+          payload: { status: "ok", response: {} } }));
+      }
+    });
+  });
+  if (storeSession) await page.addInitScript(({ user, storageKey, expiresIn }) => {
     localStorage.setItem(storageKey, JSON.stringify({
       access_token: "fixture-token",
       refresh_token: "fixture-refresh",
-      expires_at: Math.floor(Date.now() / 1000) + 3600,
+      expires_at: Math.floor(Date.now() / 1000) + expiresIn,
       token_type: "bearer",
       user
     }));
-  }, { user, storageKey });
+  }, { user, storageKey, expiresIn });
   await page.route("**/auth/v1/**", route => route.fulfill({ json: user }));
 }
 
@@ -3749,6 +3760,286 @@ test.describe("client-facing user flow case studies", () => {
     await page.getByRole("button", { name: "Close create chart" }).click();
     await expect(page.getByLabel("Profile summary")).toBeVisible();
     await assertNoClientErrors();
+  });
+
+  for (const restoredMode of ["profile", "friends"]) {
+    test(`auth callback establishes one session before restoring ${restoredMode}`, async ({ page }) => {
+      test.setTimeout(60_000);
+      await page.route("**/rest/v1/**", route => route.fulfill({ json: [] }));
+      await seedClientState(page, { profile: true, preloadProfileNatalSky: true });
+      // Exercise the real SDK callback, without a session preinstalled in storage.
+      await seedSignedInSession(page, { storeSession: false });
+      await page.addInitScript(mode => localStorage.setItem("tldrastro:portalMode", mode), restoredMode);
+      let journalReads = 0;
+      await page.route("**/rest/v1/calendar_check_ins?**", route => {
+        expect(route.request().headers().authorization).toBe("Bearer fixture-callback-token");
+        expect(new URL(route.request().url()).searchParams.get("user_id")).toBe(`eq.${fixtureUserId}`);
+        journalReads++;
+        return route.fulfill({ json: [] });
+      });
+      await page.goto("/#access_token=fixture-callback-token&refresh_token=fixture-callback-refresh&expires_in=3600&token_type=bearer");
+      await expect.poll(() => page.evaluate(key => Boolean(localStorage.getItem(key)), supabaseAuthStorageKey())).toBe(true);
+      await page.getByRole("button", { name: "Open menu", exact: true }).click();
+      await page.getByRole("menuitem", { name: "Account", exact: true }).click();
+      await expect(page.getByText("Signed in with", { exact: true })).toBeVisible();
+      await page.getByRole("button", { name: /Open journal/ }).click();
+      await expect(page.getByText("No check-ins yet", { exact: true })).toBeVisible();
+      expect(journalReads).toBeGreaterThan(0);
+      await expect(page.getByRole("button", { name: "Sign in", exact: true })).toBeHidden();
+      // A second protected feature must use that same callback session.
+      let reportRequests = 0;
+      await page.route("**/api/you-report-request", route => {
+        expect(route.request().headers().authorization).toBe("Bearer fixture-callback-token");
+        reportRequests++;
+        return route.fulfill({ status: 202, json: { status: "queued" } });
+      });
+      await page.goto("/#you");
+      await expect(page.getByRole("button", { name: "Create day report", exact: true })).toBeEnabled({ timeout: 30_000 });
+      await page.getByRole("button", { name: "Create day report", exact: true }).click();
+      await expect(page.getByText("Your day report is being prepared.", { exact: false })).toBeVisible();
+      expect(reportRequests).toBe(1);
+    });
+  }
+
+  test("auth callback keeps navigation pending until verification succeeds and restarts a rejected sign-in", async ({ page }) => {
+    await page.route("**/rest/v1/**", route => route.fulfill({ json: [] }));
+    await seedClientState(page, { profile: true });
+    await seedSignedInSession(page, { storeSession: false });
+    await page.addInitScript(() => localStorage.setItem("tldrastro:portalMode", "friends"));
+    let finishVerification!: () => void;
+    const verification = new Promise<void>(resolve => { finishVerification = resolve; });
+    let rejectVerification = true;
+    await page.route("**/auth/v1/user", async route => {
+      await verification;
+      await route.fulfill(rejectVerification
+        ? { status: 400, json: { message: "Synthetic verification failure" } }
+        : { json: fixtureAuthUser });
+    });
+    await page.goto("/#access_token=fixture-callback-token&refresh_token=fixture-callback-refresh&expires_in=3600&token_type=bearer", { waitUntil: "domcontentloaded" });
+    await expect(page.locator("#app-startup")).toBeVisible();
+    await expect(page.getByRole("button", { name: "Open menu", exact: true })).toBeHidden();
+    finishVerification();
+    await expect(page).toHaveURL(/auth=login/);
+    await expect(page.getByRole("button", { name: /Google/ })).toBeVisible();
+    expect(await page.evaluate(key => Boolean(localStorage.getItem(key)), supabaseAuthStorageKey())).toBe(false);
+    rejectVerification = false;
+    await page.goto("/#access_token=fixture-callback-token&refresh_token=fixture-callback-refresh&expires_in=3600&token_type=bearer");
+    await expect.poll(() => page.evaluate(key => Boolean(localStorage.getItem(key)), supabaseAuthStorageKey())).toBe(true);
+    await expect(page.getByRole("button", { name: "Open menu", exact: true })).toBeVisible();
+  });
+
+  test("account session refresh restores journal access without another sign-in", async ({ page }) => {
+    await page.route("**/rest/v1/**", route => route.fulfill({ json: [] }));
+    await seedClientState(page, { profile: true });
+    await seedSignedInSession(page, { expiresIn: -60 });
+    let refreshes = 0;
+    let journalReads = 0;
+    await page.route("**/auth/v1/token?grant_type=refresh_token", route => {
+      expect(route.request().postDataJSON().refresh_token).toBe("fixture-refresh");
+      refreshes++;
+      return route.fulfill({ json: {
+        access_token: "fixture-refreshed-token", refresh_token: "fixture-rotated-refresh",
+        expires_in: 3600, token_type: "bearer", user: fixtureAuthUser
+      } });
+    });
+    await page.route("**/rest/v1/calendar_check_ins?**", route => {
+      expect(route.request().headers().authorization).toBe("Bearer fixture-refreshed-token");
+      journalReads++;
+      return route.fulfill({ json: [] });
+    });
+    await page.goto("/#account");
+    await expect(page.getByText("Signed in with", { exact: true })).toBeVisible();
+    await expect(page.getByText("Sign in to load your saved connections.", { exact: true })).toBeHidden();
+    await page.getByRole("button", { name: /Open journal/ }).click();
+    await expect(page.getByText("No check-ins yet", { exact: true })).toBeVisible();
+    expect(refreshes).toBe(1);
+    expect(journalReads).toBeGreaterThan(0);
+  });
+
+  test("account session recovery reloads the handle after a temporary verification failure", async ({ page }) => {
+    await page.route("**/rest/v1/**", route => route.fulfill({ json: [] }));
+    await seedClientState(page, { profile: true });
+    await seedSignedInSession(page);
+    let rejectVerification = true;
+    let userReads = 0;
+    await page.route("**/auth/v1/user", route => {
+      userReads++;
+      return route.fulfill(rejectVerification
+        ? { status: 400, json: { message: "Synthetic verification failure" } }
+        : { json: fixtureAuthUser });
+    });
+    await page.route("**/rest/v1/social_profiles?**", route => route.fulfill({ json: {
+      user_id: fixtureUserId, handle: "fixture_owner", display_name: "Project Author", discoverable: true
+    } }));
+    await page.goto("/#account");
+    await expect(page.getByText("Your account could not be checked. Please try again.", { exact: true })).toBeVisible();
+    await expect(page.getByRole("button", { name: "Sign in", exact: true })).toBeHidden();
+    await expect(page.getByText("Signed in with", { exact: true })).toBeHidden();
+    // SDK events can restore a cached session without verifying the user.
+    // A cross-tab SIGNED_IN must not override the failed account check.
+    const previousReads = userReads;
+    await page.evaluate(key => {
+      const channel = new BroadcastChannel(key);
+      channel.postMessage({ event: "SIGNED_IN", session: JSON.parse(localStorage.getItem(key)!) });
+      channel.close();
+    }, supabaseAuthStorageKey());
+    await expect.poll(() => userReads).toBeGreaterThan(previousReads);
+    await expect(page.getByText("Your account could not be checked. Please try again.", { exact: true })).toBeVisible();
+    await expect(page.getByText("Signed in with", { exact: true })).toBeHidden();
+    rejectVerification = false;
+    await page.getByRole("button", { name: "Retry", exact: true }).click();
+    await expect(page.getByText("Signed in with", { exact: true })).toBeVisible();
+    await expect(page.getByText("@fixture_owner", { exact: true })).toBeVisible();
+    await expect(page.getByText("Sign in to load your saved connections.", { exact: true })).toBeHidden();
+  });
+
+  test("journal sync preserves an open draft during same-account verification recovery", async ({ page }) => {
+    await page.route("**/rest/v1/**", route => route.fulfill({ json: [] }));
+    await seedClientState(page, { profile: true });
+    await seedSignedInSession(page);
+    let rejectVerification = false;
+    await page.route("**/auth/v1/user", route => route.fulfill(rejectVerification
+      ? { status: 400, json: { message: "Synthetic temporary verification failure" } }
+      : { json: fixtureAuthUser }));
+    await page.goto("/#account");
+    await page.getByRole("button", { name: /Open journal/ }).click();
+    await page.getByRole("button", { name: /Add check-in/ }).click();
+    const editor = page.getByRole("dialog", { name: "Check-in", exact: true });
+    await editor.getByRole("button", { name: "Good", exact: true }).click();
+    for (let step = 0; step < 3; step++) await editor.getByRole("button", { name: "Next", exact: true }).click();
+    await editor.locator("textarea").fill("Synthetic unsaved draft stays with this account.");
+    rejectVerification = true;
+    await page.evaluate(key => {
+      const session = JSON.parse(localStorage.getItem(key)!);
+      session.access_token = "synthetic-refreshed-token";
+      localStorage.setItem(key, JSON.stringify(session));
+      const channel = new BroadcastChannel(key);
+      channel.postMessage({ event: "SIGNED_IN", session });
+      channel.close();
+    }, supabaseAuthStorageKey());
+    await expect(page.getByText("Your account could not be checked. Please try again.", { exact: true })).toBeVisible();
+    await expect(editor.locator("textarea")).toHaveValue("Synthetic unsaved draft stays with this account.");
+    rejectVerification = false;
+    await page.evaluate(() => window.dispatchEvent(new Event("focus")));
+    await expect(page.getByText("Your account could not be checked. Please try again.", { exact: true })).toHaveCount(0);
+    await expect(editor.locator("textarea")).toHaveValue("Synthetic unsaved draft stays with this account.");
+  });
+
+  test("journal sync shares saved entries between independent desktop and mobile sessions", async ({ page, browser, baseURL }) => {
+    test.setTimeout(90_000);
+    const mobileContext = await browser.newContext({ baseURL, viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
+    const phone = await mobileContext.newPage();
+    const assertDesktopErrors = await expectNoClientErrors(page);
+    const assertPhoneErrors = await expectNoClientErrors(phone);
+    const rows: Array<Record<string, unknown>> = [];
+    let logoutScope: string | null = null;
+    let phoneReads = 0;
+    try {
+      for (const device of [page, phone]) {
+        await device.route("**/rest/v1/**", route => route.fulfill({ json: [] }));
+        await seedClientState(device, { profile: true, now: "2026-09-21T16:00:00.000Z", theme: device === phone ? "dark" : "light" });
+        await seedSignedInSession(device);
+        await routeCalendarCheckInStore(device, rows);
+        await device.route("**/rest/v1/calendar_check_ins?**", async route => {
+          const request = route.request();
+          if (request.method() === "POST") {
+            const entry = request.postDataJSON();
+            expect(entry.user_id).toBe(fixtureUserId);
+            const existing = rows.findIndex(row => row.date_key === entry.date_key);
+            if (existing >= 0) rows[existing] = entry;
+            else rows.push(entry);
+            await route.fulfill({ json: entry });
+          } else {
+            expect(new URL(request.url()).searchParams.get("user_id")).toBe(`eq.${fixtureUserId}`);
+            if (device === phone) phoneReads++;
+            await route.fulfill({ json: rows });
+          }
+        });
+        await device.goto("/#account");
+        await device.getByRole("button", { name: /Open journal/ }).click();
+        await expect(device.getByText("No check-ins yet", { exact: true })).toBeVisible();
+      }
+      await page.getByRole("button", { name: /Add check-in/ }).click();
+      const editor = page.getByRole("dialog", { name: "Check-in", exact: true });
+      await editor.getByRole("button", { name: "Good", exact: true }).click();
+      for (let step = 0; step < 3; step++) await editor.getByRole("button", { name: "Next", exact: true }).click();
+      await editor.locator("textarea").fill("Synthetic journal saved on desktop.");
+      await editor.getByRole("button", { name: "Next", exact: true }).click();
+      await editor.getByRole("button", { name: "Save", exact: true }).click();
+      await expect(editor).toHaveCount(0);
+      await expect(page.locator(".account-journal-entry")).toContainText("Synthetic journal saved on desktop.");
+      expect(rows).toHaveLength(1);
+      // A resumed phone page must re-read the server, without reloading or logging in again.
+      await phone.evaluate(() => window.dispatchEvent(new Event("pageshow")));
+      await expect(phone.locator(".account-journal-entry")).toContainText("Synthetic journal saved on desktop.");
+      // Do not let a remote refresh discard a draft in the active editor.
+      await phone.locator(".account-journal-entry").click();
+      const phoneEditor = phone.getByRole("dialog", { name: "Check-in", exact: true });
+      for (let step = 0; step < 3; step++) await phoneEditor.getByRole("button", { name: "Next", exact: true }).click();
+      await phoneEditor.locator("textarea").fill("Synthetic update saved on phone.");
+      const readsBeforeDraft = phoneReads;
+      await phone.evaluate(() => document.dispatchEvent(new Event("visibilitychange")));
+      await expect(phoneEditor.locator("textarea")).toHaveValue("Synthetic update saved on phone.");
+      expect(phoneReads).toBe(readsBeforeDraft);
+      await phoneEditor.getByRole("button", { name: "Next", exact: true }).click();
+      await phoneEditor.getByRole("button", { name: "Save", exact: true }).click();
+      await expect(phoneEditor).toHaveCount(0);
+      await page.getByRole("button", { name: "Refresh journal", exact: true }).click();
+      await expect(page.locator(".account-journal-entry")).toContainText("Synthetic update saved on phone.");
+      await phone.reload();
+      await expect(phone.locator(".account-journal-entry")).toContainText("Synthetic update saved on phone.");
+      await page.route("**/auth/v1/logout?**", route => {
+        logoutScope = new URL(route.request().url()).searchParams.get("scope");
+        return route.fulfill({ status: 204 });
+      });
+      await page.getByRole("button", { name: "Account", exact: true }).click();
+      await page.getByRole("button", { name: "Sign out", exact: true }).click();
+      await expect.poll(() => logoutScope).toBe("local");
+      expect(await phone.evaluate(key => Boolean(localStorage.getItem(key)), supabaseAuthStorageKey())).toBe(true);
+      await phone.getByRole("button", { name: "Refresh journal", exact: true }).click();
+      await expect(phone.locator(".account-journal-entry")).toContainText("Synthetic update saved on phone.");
+      await assertDesktopErrors();
+      await assertPhoneErrors();
+    } finally {
+      await mobileContext.close();
+    }
+  });
+
+  test("journal sync shows a retry for failed reads and refreshes an already-open empty journal", async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.route("**/rest/v1/**", route => route.fulfill({ json: [] }));
+    await seedClientState(page, { profile: true });
+    await seedSignedInSession(page);
+    let failing = true;
+    const rows: Array<Record<string, unknown>> = [];
+    await routeCalendarCheckInStore(page, rows);
+    await page.route("**/rest/v1/calendar_check_ins?**", route => failing
+      ? route.fulfill({ status: 403, json: { message: "Synthetic read failure" } })
+      : route.fulfill({ json: rows }));
+    await page.goto("/#account");
+    await page.getByRole("button", { name: /Open journal/ }).click();
+    await expect(page.getByText("Your check-ins could not load.")).toBeVisible();
+    await expect(page.getByText("No check-ins yet", { exact: true })).toHaveCount(0);
+    failing = false;
+    await page.getByRole("button", { name: "Retry", exact: true }).click();
+    await expect(page.getByText("No check-ins yet", { exact: true })).toBeVisible();
+    rows.push({ user_id: fixtureUserId, date_key: "2026-09-21", mood: 3, sleep: 50, social: 50, mood_note: "Entry from another device", note: "", tags: [], people: [] });
+    await page.evaluate(() => window.dispatchEvent(new Event("online")));
+    await expect(page.locator(".account-journal-entry")).toContainText("Entry from another device");
+  });
+
+  test("journal sync never treats a cached profile as a signed-in account", async ({ page }) => {
+    await page.route("**/rest/v1/**", route => route.fulfill({ json: [] }));
+    await seedClientState(page, { profile: true });
+    await page.goto("/#account");
+    await expect(page.getByText("Sign in to sync your account and journal across devices.")).toBeVisible();
+    await expect(page.getByText("Signed in with", { exact: true })).toHaveCount(0);
+    await page.getByRole("button", { name: /Open journal/ }).click();
+    await expect(page.getByText("Sign in to see your saved journal on this device.")).toBeVisible();
+    await expect(page.getByText("No check-ins yet", { exact: true })).toHaveCount(0);
+    await expect(page.getByRole("button", { name: /Add check-in/ })).toBeDisabled();
+    await page.getByRole("button", { name: "Sign in", exact: true }).click();
+    await expect(page.getByRole("region", { name: "Log in", exact: true })).toBeVisible();
   });
 
   test("signed-in user can open Account journal weeks that start on Monday", async ({ page }) => {

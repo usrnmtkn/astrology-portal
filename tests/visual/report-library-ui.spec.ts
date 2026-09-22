@@ -196,7 +196,7 @@ test("a shared Friends reading opens from a compact vanity URL without an owner 
 });
 
 test('a preparing report advances and opens without a reload, preserving state through a transient error', async ({ page }) => {
-  const user = { id: '00000000-0000-4000-8000-000000000001', aud: 'authenticated', role: 'authenticated', email: 'progress@example.test' };
+  const user = { id: '00000000-0000-4000-8000-000000000001', aud: 'authenticated', role: 'authenticated', app_metadata: { provider: "email" }, user_metadata: {}, email: 'progress@example.test' };
   const storageKey = `sb-${new URL(process.env.VITE_SUPABASE_URL ?? 'https://visual-smoke.supabase.test').hostname.split('.')[0]}-auth-token`;
   await page.addInitScript(({ user, storageKey }) => {
     localStorage.setItem(storageKey, JSON.stringify({ access_token: 'fixture-token', refresh_token: 'fixture-refresh', expires_at: Math.floor(Date.now()/1000)+3600, token_type: 'bearer', user }));

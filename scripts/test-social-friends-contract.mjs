@@ -343,7 +343,7 @@ assert.match(
 );
 assert.match(
   accountView,
-  /function AccountView[\s\S]*loadOwnSocialProfile\(\)[\s\S]*saveSocialHandle\(\{/,
+  /function AccountView[\s\S]*loadOwnSocialProfile\(accountId\)[\s\S]*saveSocialHandle\(\{/,
   "The account page must load and save the member's social handle."
 );
 assert.match(
@@ -528,17 +528,17 @@ assert.match(
 );
 assert.match(
   accountView,
-  /exportSocialAccountBundle\(\)[\s\S]*exportCalendarCheckInBundle\(\)[\s\S]*JSON\.stringify\(exportPayload, null, 2\)/,
+  /exportSocialAccountBundle\(ownerId\)[\s\S]*exportCalendarCheckInBundle\(\{ expectedUserId: ownerId \}\)[\s\S]*JSON\.stringify\(exportPayload, null, 2\)/,
   "Account must provide a downloadable account-data export that includes calendar check-ins."
 );
 assert.match(
   accountView,
-  /deleteAllCalendarCheckInData\(\)[\s\S]*eraseConfirmation !== "ERASE"/,
+  /deleteAllCalendarCheckInData\(\{ expectedUserId: ownerId \}\)[\s\S]*eraseConfirmation !== "ERASE"/,
   "Account must let a signed-in user erase mood and journal entries without deleting the account."
 );
 assert.match(
   accountView,
-  /deleteConfirmation !== "DELETE"[\s\S]*deleteOwnAccount\(\)[\s\S]*Type <strong>DELETE<\/strong> to confirm/,
+  /deleteConfirmation !== "DELETE"[\s\S]*deleteOwnAccount\(ownerId\)[\s\S]*Type <strong>DELETE<\/strong> to confirm/,
   "Account deletion must require explicit permanent-deletion confirmation."
 );
 assert.match(
@@ -908,7 +908,7 @@ assert.match(
 );
 assert.match(
   authService,
-  /resendEmailSignupConfirmation[\s\S]*supabase\.auth\.resend\(\{[\s\S]*type: "signup"[\s\S]*emailRedirectTo: redirectTo\(\)/,
+  /resendEmailSignupConfirmation[\s\S]*supabase\.auth\.resend\(\{[\s\S]*type: "signup"[\s\S]*emailRedirectTo: await redirectTo\(\)/,
   "Pending email accounts must be able to request a fresh confirmation link with the configured app redirect."
 );
 assert.match(

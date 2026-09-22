@@ -238,6 +238,7 @@ import {
 } from "./services/auth";
 import type { AuthAccount } from "./services/auth";
 import type { YouAccountRecovery } from "./features/you/YouReportActions";
+import { rememberReaderReturnPath, clearReaderReturnPath } from "./services/readerAuthReturn";
 import { rememberStudioReturnPath, returnToStudioAfterSignIn } from "./services/studioAuthReturn";
 import {
   generatedContentSections,
@@ -2624,6 +2625,7 @@ function getStoredPortalMode() {
 }
 
 function getInitialPortalMode(): PortalMode {
+  if (new URL(window.location.href).searchParams.get("auth") === "login") return "profile";
   const urlMode = portalModeFromUrl();
 
   return urlMode ?? getStoredPortalMode() ?? getInitialAccountMode();
@@ -11046,6 +11048,7 @@ export function App() {
   );
   const signInDestinationRef = useRef<PortalMode | null>(null);
   const setAccountIntent = useCallback((intent: AuthMode, options?: { loginHeadline?: string }) => {
+    if (intent === "login") rememberReaderReturnPath(true);
     storeAccountIntent(intent);
     setAccountIntentState(intent);
     setSignInRequested(intent === "login");
@@ -11369,20 +11372,21 @@ export function App() {
   }, []);
 
   useEffect(() => {
-    if (!userProfile || !remoteAccountId || !remoteProfileReady) {
-      return;
-    }
-
-    void previewPendingSocialInvitation()
-      .then((preview) => {
-        setPendingSocialInvitation(preview);
-      })
+    let cancelled = false;
+    setPendingSocialInvitation(null);
+    setSocialInvitationMessage("");
+    setSocialInvitationStatus("idle");
+    if (!remoteAccountId || !authAccountChecked || authAccountError) return;
+    const generation = authBootstrapGenerationRef.current;
+    void previewPendingSocialInvitation(remoteAccountId)
+      .then((preview) => { if (!cancelled && generation === authBootstrapGenerationRef.current) setPendingSocialInvitation(preview); })
       .catch((error) => {
-        setSocialInvitationMessage(
+        if (!cancelled && generation === authBootstrapGenerationRef.current) setSocialInvitationMessage(
           error instanceof Error ? error.message : "This invitation could not be opened."
         );
       });
-  }, [remoteAccountId, remoteProfileReady, userProfile?.id]);
+    return () => { cancelled = true; };
+  }, [remoteAccountId, authAccountChecked, authAccountError]);
 
   useEffect(() => {
     if (mode === "friends") {
@@ -13517,7 +13521,11 @@ export function App() {
       return;
     }
 
-    if (account && returnToStudioAfterSignIn()) return;
+    if (account) {
+      if (returnToStudioAfterSignIn()) return;
+      const { returnToReaderAfterSignIn } = await import("./services/readerAuthReturn");
+      if (isCancelled() || returnToReaderAfterSignIn()) return;
+    }
 
     setAuthAccountError(null);
 
@@ -13560,18 +13568,20 @@ export function App() {
     setOwnSocialProfile(null);
 
     const pendingForm = readPendingSignupForm();
-    const cachedLocalProfile = getInitialUserProfile();
+    const storedLocalProfile = getInitialUserProfile();
+    const cachedLocalProfile = storedLocalProfile?.id === account.id ? storedLocalProfile : null;
     let persistedProfileId: string | null = null;
     let accountProfile: UserProfile;
     const hydrateBootstrapSocialProfile = async (profile: UserProfile) => {
       try {
-        const existingSocialProfile = await loadOwnSocialProfile();
+        const existingSocialProfile = await loadOwnSocialProfile(account.id);
+        if (isCancelled()) return;
         const socialProfile = existingSocialProfile ?? await syncOwnSocialProfile({
           displayName: profile.name,
           avatarUrl: profile.avatarUrl,
           natalChart: null,
           birthTimeKnown: false
-        });
+        }, account.id);
 
         if (!isCancelled()) {
           setOwnSocialProfile(socialProfile);
@@ -13725,7 +13735,18 @@ export function App() {
         return;
       }
 
-      void applyAuthAccount(account);
+      // SIGNED_IN can mean the SDK restored a cached session, not that its
+      // user was verified. Never let it supersede a failed account check.
+      if (event === "SIGNED_OUT") void applyAuthAccount(null);
+      else {
+        if (account?.id !== appliedAuthAccountIdRef.current) {
+          ++authBootstrapGenerationRef.current;
+          setRemoteAccountId(null);
+          setAuthAccountChecked(false);
+          setPendingSocialInvitation(null);
+        }
+        void recoverAuthAccount();
+      }
     });
 
     const recover = () => { if (!cancelled) void recoverAuthAccount(); };
@@ -14157,11 +14178,14 @@ export function App() {
   }
 
   async function acceptSocialInvitation() {
+    if (!pendingSocialInvitation || socialInvitationStatus === "loading") return;
+    const generation = authBootstrapGenerationRef.current;
     setSocialInvitationStatus("loading");
     setSocialInvitationMessage("");
 
     try {
-      const result = await claimPendingSocialInvitation();
+      const result = await claimPendingSocialInvitation(pendingSocialInvitation);
+      if (generation !== authBootstrapGenerationRef.current) return;
       setPendingSocialInvitation(null);
 
       if (result?.request_status === "pending") {
@@ -14169,27 +14193,32 @@ export function App() {
       }
       navigateToFriends();
     } catch (error) {
+      if (generation !== authBootstrapGenerationRef.current) return;
       setSocialInvitationMessage(
         error instanceof Error ? error.message : "Could not accept this invitation."
       );
     } finally {
-      setSocialInvitationStatus("idle");
+      if (generation === authBootstrapGenerationRef.current) setSocialInvitationStatus("idle");
     }
   }
 
   async function declineSocialInvitation() {
+    if (!pendingSocialInvitation || socialInvitationStatus === "loading") return;
+    const generation = authBootstrapGenerationRef.current;
     setSocialInvitationStatus("loading");
     setSocialInvitationMessage("");
 
     try {
-      await declinePendingSocialInvitation();
+      await declinePendingSocialInvitation(pendingSocialInvitation);
+      if (generation !== authBootstrapGenerationRef.current) return;
       setPendingSocialInvitation(null);
     } catch (error) {
+      if (generation !== authBootstrapGenerationRef.current) return;
       setSocialInvitationMessage(
         error instanceof Error ? error.message : "Could not decline this invitation."
       );
     } finally {
-      setSocialInvitationStatus("idle");
+      if (generation === authBootstrapGenerationRef.current) setSocialInvitationStatus("idle");
     }
   }
 
@@ -14514,6 +14543,11 @@ export function App() {
                   type="button"
                   role="menuitem"
                   onClick={async () => {
+                    try { await signOutAuth(); }
+                    catch {
+                      setAuthAccountError("Sign-out could not finish. Please try again.");
+                      return;
+                    }
                     flushSync(() => {
                       setSelectedSkyDetail(null);
                       setUserProfile(null);
@@ -14521,7 +14555,7 @@ export function App() {
                       navigateToPortalMode("profile", false);
                       setMenuOpen(false);
                     });
-                    await signOutAuth();
+
                   }}
                 >
                   <LogOut size={20} aria-hidden="true" />
@@ -14802,7 +14836,7 @@ export function App() {
                   ) : userProfile && !studioReturnPath && !signInRequested ? (
                     <ProfileView
                       onInitialPaint={markYouPagePainted}
-                      accountId={remoteAccountId}
+                      accountId={authAccountChecked && !authAccountError ? remoteAccountId : null}
                       accountRecovery={{
                         error: authAccountError,
                         onRetry: () => {
@@ -14864,6 +14898,7 @@ export function App() {
                         }}
                         onClearPendingForm={clearPendingSignupForm}
                         onClose={() => {
+                          clearReaderReturnPath();
                           signInDestinationRef.current = null;
                           setAccountIntent("create");
                           navigateToPortalMode(userProfile ? "profile" : "guest");
@@ -14927,6 +14962,19 @@ export function App() {
               {mode === "account" && userProfile && (
                 <Suspense fallback={<FeatureLoadingFallback />}>
                   <AccountView
+                    key={remoteAccountId ?? "disconnected"}
+                    accountId={authAccountChecked && !authAccountError ? remoteAccountId : null}
+                    accountChecked={authAccountChecked}
+                    accountError={authAccountError}
+                    onRetryAuth={() => {
+                      setAuthAccountChecked(false);
+                      void recoverAuthAccount();
+                    }}
+                    onSignIn={() => {
+                      signInDestinationRef.current = "account";
+                      setAccountIntent("login");
+                      navigateToPortalMode("profile");
+                    }}
                     profile={userProfile}
                     savedBirthCity={validChartBirthCity(userProfile.charts[0])}
                     savedBirthDate={validChartBirthDate(userProfile.charts[0])}
@@ -14969,12 +15017,17 @@ export function App() {
                     onPhoneChange={(phone) => setUserProfile({ ...userProfile, phone })}
                     onSocialProfileChange={setOwnSocialProfile}
                     onSignOut={async () => {
-                      flushSync(() => {
+                      try { await signOutAuth(); }
+                    catch {
+                      setAuthAccountError("Sign-out could not finish. Please try again.");
+                      return;
+                    }
+                    flushSync(() => {
                         setUserProfile(null);
                         setOwnSocialProfile(null);
                         navigateToPortalMode("profile");
                       });
-                      await signOutAuth();
+
                     }}
                   />
                 </Suspense>

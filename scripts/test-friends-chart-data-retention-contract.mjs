@@ -150,8 +150,8 @@ assert.deepEqual(
     persistedProfileId: "persisted-id",
     legacyOwnerIds: ["legacy-a", "legacy-b"]
   }),
-  ["cached-id", "persisted-id", "account-id", "legacy-a", "legacy-b"],
-  "Successful auth/profile loading must retain active, persisted, account, and legacy local owner ids for migration."
+  ["account-id", "persisted-id"],
+  "Migration accepts only the verified account and its server-persisted legacy owner mapping."
 );
 assert.deepEqual(
   profileBootstrapLocalOwnerIds({
@@ -159,11 +159,11 @@ assert.deepEqual(
     cachedProfileId: "cached-id",
     legacyOwnerIds: ["legacy-a"]
   }),
-  ["cached-id", undefined, "account-id", "legacy-a"],
-  "Fallback auth/profile loading must still retain cached, account, and legacy local owner ids for migration."
+  ["account-id"],
+  "Without a server owner mapping, other local accounts cannot be imported."
 );
 console.log(JSON.stringify({
   status: "PASS",
   surface: "friends chart data retention",
-  contract: "Legacy local manual-chart keys are swept into the signed-in account before the remote Friends chart list replaces local state."
+  contract: "Local chart buckets are retained; migration is limited to the verified account and its server-proven owner mapping."
 }, null, 2));

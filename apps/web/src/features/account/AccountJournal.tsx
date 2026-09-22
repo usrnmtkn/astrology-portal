@@ -33,7 +33,14 @@ const GROUP_OPTIONS: Array<{ id: AccountJournalGroupBy; label: string }> = [
   { id: "months", label: "Months" }
 ];
 
-export function AccountJournal({ onBack }: { onBack: () => void }) {
+export function AccountJournal({ accountId, accountChecked, accountError, onRetryAuth, onSignIn, onBack }: {
+  accountId: string | null;
+  accountChecked: boolean;
+  accountError: string | null;
+  onRetryAuth: () => void;
+  onSignIn: () => void;
+  onBack: () => void;
+}) {
   const [status, setStatus] = useState<"loading" | "ready" | "error">("loading");
   const [message, setMessage] = useState("");
   const [entries, setEntries] = useState<Record<string, CalendarCheckInEntry>>({});
@@ -42,40 +49,68 @@ export function AccountJournal({ onBack }: { onBack: () => void }) {
   const [groupBy, setGroupBy] = useState<AccountJournalGroupBy>("days");
   const [composerDate, setComposerDate] = useState(localCalendarDateKey);
   const [editingDateKey, setEditingDateKey] = useState<string | null>(null);
+  const [refresh, setRefresh] = useState(0);
 
   useEffect(() => {
-    let cancelled = false;
+    if (!accountId || editingDateKey) return;
+    let request: AbortController | undefined;
 
     async function loadJournal() {
+      if (document.visibilityState === "hidden" || request) return;
+      const controller = new AbortController();
+      request = controller;
       setStatus("loading");
       setMessage("");
       try {
+        const options = { expectedUserId: accountId!, signal: controller.signal };
         const [checkIns, library] = await Promise.all([
-          listCalendarCheckIns(),
-          listCalendarCheckInLibrary()
+          listCalendarCheckIns(options),
+          listCalendarCheckInLibrary(options)
         ]);
-        if (cancelled) return;
+        if (controller.signal.aborted) return;
         setEntries(checkIns);
         setLibraryTags(library.tags);
         setKnownPeople(library.people);
         setStatus("ready");
       } catch (error) {
-        if (cancelled) return;
+        if (controller.signal.aborted) return;
         setStatus("error");
         setMessage(error instanceof Error ? error.message : "Your journal could not load.");
+      } finally {
+        if (request === controller) request = undefined;
       }
     }
 
     void loadJournal();
+    // Mobile browsers suspend background pages. Re-read account storage when
+    // the reader returns, reconnects, or keeps the journal open on two devices.
+    window.addEventListener("focus", loadJournal);
+    window.addEventListener("pageshow", loadJournal);
+    window.addEventListener("online", loadJournal);
+    document.addEventListener("visibilitychange", loadJournal);
+    const timer = window.setInterval(loadJournal, 30_000);
     return () => {
-      cancelled = true;
+      request?.abort();
+      window.clearInterval(timer);
+      window.removeEventListener("focus", loadJournal);
+      window.removeEventListener("pageshow", loadJournal);
+      window.removeEventListener("online", loadJournal);
+      document.removeEventListener("visibilitychange", loadJournal);
     };
-  }, []);
+  }, [accountId, editingDateKey, refresh]);
 
   const items = useMemo(() => accountJournalItemsFromEntries(entries), [entries]);
   const groups = useMemo(() => groupAccountJournalEntries(items, groupBy), [groupBy, items]);
   const highlights = useMemo(() => accountJournalMoodHighlights(items), [items]);
   const editingDateLine = editingDateKey ? formatAccountJournalDateLine(editingDateKey) : "";
+
+  function requireAccountId() {
+    if (!accountId) {
+      onRetryAuth();
+      throw new Error("Your account could not be checked. Please try saving again.");
+    }
+    return accountId;
+  }
 
   function openEditor(dateKey: string) {
     if (!isCalendarDateKey(dateKey)) {
@@ -118,6 +153,7 @@ export function AccountJournal({ onBack }: { onBack: () => void }) {
             </label>
             <button
               className="settings-row settings-row-button account-journal-add"
+              disabled={!accountId || status !== "ready"}
               onClick={() => openEditor(composerDate)}
               type="button"
             >
@@ -178,10 +214,27 @@ export function AccountJournal({ onBack }: { onBack: () => void }) {
           </div>
         )}
 
-        {status === "loading" && <p className="account-action-message" role="status">Loading your journal…</p>}
-        {message && <p className="account-action-message" role="status">{message}</p>}
+        {!accountChecked ? (
+          <p className="account-action-message" role="status">Checking your account…</p>
+        ) : !accountId ? (
+          <>
+            <p className="account-action-message" role="status">{accountError || "Sign in to see your saved journal on this device."}</p>
+            <button type="button" className="account-handle-save" onClick={accountError ? onRetryAuth : onSignIn}>
+              {accountError ? "Retry" : "Sign in"}
+            </button>
+          </>
+        ) : (
+          <>
+            {status === "loading" && <p className="account-action-message" role="status">Loading your journal…</p>}
+            {message && <p className="account-action-message" role="status">{message}</p>}
+            <button type="button" className="account-handle-save" disabled={status === "loading"}
+              onClick={() => setRefresh(value => value + 1)}>
+              {status === "error" ? "Retry" : "Refresh journal"}
+            </button>
+          </>
+        )}
 
-        {status === "ready" && groups.length === 0 && (
+        {accountId && status === "ready" && groups.length === 0 && (
           <div className="settings-card">
             <div className="settings-row">
               <span className="settings-row-copy">
@@ -241,20 +294,21 @@ export function AccountJournal({ onBack }: { onBack: () => void }) {
           knownPeople={knownPeople}
           libraryTags={libraryTags}
           onClose={() => setEditingDateKey(null)}
+          onSignIn={onSignIn}
           onLibraryPersonAdd={async (name) => {
-            await addCalendarCheckInLibraryItem("person", name);
+            await addCalendarCheckInLibraryItem("person", name, { expectedUserId: requireAccountId() });
             setKnownPeople((current) => current.includes(name) ? current : [...current, name]);
           }}
           onLibraryTagAdd={async (tag) => {
-            await addCalendarCheckInLibraryItem("tag", tag);
+            await addCalendarCheckInLibraryItem("tag", tag, { expectedUserId: requireAccountId() });
             setLibraryTags((current) => current.includes(tag) ? current : [...current, tag]);
           }}
           onLibraryTagRemove={async (tag) => {
-            await removeCalendarCheckInLibraryItem("tag", tag);
+            await removeCalendarCheckInLibraryItem("tag", tag, { expectedUserId: requireAccountId() });
             setLibraryTags((current) => current.filter((item) => item !== tag));
           }}
           onSave={async (entry) => {
-            const saved = await upsertCalendarCheckIn(editingDateKey, entry);
+            const saved = await upsertCalendarCheckIn(editingDateKey, entry, { expectedUserId: requireAccountId() });
             setEntries((current) => ({ ...current, [editingDateKey]: saved }));
           }}
           signedIn

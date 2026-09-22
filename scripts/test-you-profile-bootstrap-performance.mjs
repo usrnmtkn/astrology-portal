@@ -22,8 +22,8 @@ assert.deepEqual(
     persistedProfileId: "persisted-id",
     legacyOwnerIds: ["legacy-a", "legacy-b"]
   }),
-  ["cached-id", "persisted-id", "account-id", "legacy-a", "legacy-b"],
-  "Background migration must retain every current, persisted, account, and legacy chart owner id."
+  ["account-id", "persisted-id"],
+  "Migration accepts only the verified account and its server-persisted legacy owner mapping."
 );
 assert.deepEqual(
   profileBootstrapLocalOwnerIds({
@@ -31,8 +31,8 @@ assert.deepEqual(
     cachedProfileId: "cached-id",
     legacyOwnerIds: ["legacy-a"]
   }),
-  ["cached-id", undefined, "account-id", "legacy-a"],
-  "Fallback profile hydration must still retain cached, account, and legacy chart owner ids."
+  ["account-id"],
+  "Without a server owner mapping, other local accounts cannot be imported."
 );
 assert.equal(
   accountProfileBootstrapAction({
