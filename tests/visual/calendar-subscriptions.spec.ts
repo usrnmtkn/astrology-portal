@@ -1,6 +1,7 @@
 import { expect, test, type Page } from "@playwright/test";
 import { calendarSubscriptionFixture } from "../helpers/calendar-subscription-fixture";
 import { bundledPublications } from "../helpers/bundled-publications";
+import { calendarReadingUrl } from "../../apps/web/src/features/calendar/calendarFeedPreview";
 let fixture: Awaited<ReturnType<typeof calendarSubscriptionFixture>>;
 test.beforeEach(async ({ page }) => {
   fixture = await calendarSubscriptionFixture();
@@ -16,6 +17,11 @@ test.beforeEach(async ({ page }) => {
   });
   await page.route("**/feed/*.ics", async route => {
     const result = await fixture.invoke(new URL(route.request().url()).pathname, route.request().method(), undefined, route.request().headers());
+    await route.fulfill({ status: result.status, headers: result.headers, body: result.body });
+  });
+  await page.route("**/api/calendar-reading?*", async route => {
+    const url = new URL(route.request().url());
+    const result = await fixture.invoke(url.pathname + url.search);
     await route.fulfill({ status: result.status, headers: result.headers, body: result.body });
   });
   await page.addInitScript(() => {
@@ -78,6 +84,78 @@ test("creation failure preserves choices and never reports success", async ({ pa
   fixture.setStorageFailure(false);
   await sheet.getByRole("button", { name: "Create my calendar link" }).click();
   await expect(sheet.getByText("Your calendar link is ready", { exact: true })).toBeVisible();
+});
+
+for (const width of [390, 1440]) for (const theme of ["light", "dark"]) test(`feed excerpt links open exact full readings ${theme} ${width}`, async ({ page }, testInfo) => {
+  test.setTimeout(90000);
+  await page.setViewportSize({ width, height: 950 });
+  await page.addInitScript(value => localStorage.setItem("tldrastro:theme", value), theme);
+  const errors: string[] = []; page.on("pageerror", error => errors.push(error.message));
+  const fullBody = "Published first sentence. Second sentence. Third sentence.\n\nFourth sentence remains in the app. The complete final sentence is preserved.";
+  const result = await fixture.invoke("/api/admin/calendar-feed-events", "POST", { action: "publish", event: {
+    title: "Community calendar reading", description: fullBody, start: "2026-09-21", end: "2026-09-22", allDay: true, category: "key", url: ""
+  } }, { authorization: "Bearer fixture-owner" });
+  expect(result.status).toBe(201);
+  const id = `event-${result.json().event.id}`;
+  const sub = (await fixture.invoke("/api/calendar-subscriptions", "POST", { include: ["key"], reminder: "None", timeZone: "America/New_York" })).json().subscription;
+  const feed = (await fixture.invoke(`/feed/${sub.token}.ics`)).body.replace(/\r\n /gu, "");
+  const entry = feed.split("BEGIN:VEVENT").find(part => part.includes(`UID:${id}@tldrastro`))!;
+  expect(entry).toContain("Published first sentence. Second sentence. Third sentence.");
+  expect(entry).not.toContain("Fourth sentence");
+  const link = new URL(entry.match(/\r\nURL:([^\r]+)/)![1]);
+  expect(entry).toContain(`Read more: ${link.href}`);
+  await page.goto(link.pathname + link.search + link.hash);
+  const dialog = page.getByRole("dialog", { name: "Community calendar reading" });
+  await expect(dialog.getByRole("heading", { level: 2 })).toHaveText("Community calendar reading");
+  await expect(dialog.locator(".calendar-reading__body")).toContainText("Published first sentence.");
+  await expect(dialog.locator(".calendar-reading__body")).toContainText("The complete final sentence is preserved.");
+  expect(await dialog.locator("h1,h2,h3").allTextContents()).toEqual(["Community calendar reading"]);
+  const typography = await dialog.getByRole("heading").evaluate(node => {
+    const properties = ["fontFamily", "fontSize", "fontWeight", "lineHeight", "letterSpacing", "margin", "textTransform", "textAlign"];
+    const snapshot = (element: Element) => Object.fromEntries(properties.map(key => [key, getComputedStyle(element)[key as any]]));
+    return snapshot(node);
+  });
+  await testInfo.attach("linked-reading-typography", { body: JSON.stringify(typography), contentType: "application/json" });
+  expect(await dialog.evaluate(node => node.scrollWidth <= node.clientWidth + 1)).toBe(true);
+  await page.screenshot({ path: `test-results/calendar-linked-reading-${theme}-${width}.png` });
+  await page.reload(); await expect(dialog).toBeVisible();
+  await dialog.getByRole("button", { name: "Close", exact: true }).click();
+  await expect(dialog).toHaveCount(0); expect(page.url()).not.toContain("&event=");
+  await page.getByRole("button", { name: "Moon enters Aquarius", exact: true }).click();
+  const ordinaryTitle = page.locator("#calendar-reading-title");
+  await expect(ordinaryTitle).toBeVisible();
+  expect(await ordinaryTitle.evaluate(node => {
+    const style = getComputedStyle(node);
+    return Object.fromEntries(["fontFamily", "fontSize", "fontWeight", "lineHeight", "letterSpacing", "margin", "textTransform", "textAlign"].map(key => [key, style[key as any]]));
+  })).toEqual(typography);
+  await page.getByRole("dialog").getByRole("button", { name: "Close", exact: true }).click();
+  const weekly = new URL(calendarReadingUrl("https://example.com", "2026-09-21", "week-2026-09-21", "America/New_York"));
+  await page.goto(weekly.pathname + weekly.search + weekly.hash);
+  const weekDialog = page.getByRole("dialog", { name: "Weekly emotional forecast" });
+  await expect(weekDialog).toContainText("A Full Moon in Aries arrives this week,");
+  await expect(weekDialog).toContainText("before turning one intense moment into a final verdict.");
+  await page.goBack(); await expect(dialog).toHaveCount(0);
+  expect(errors).toEqual([]);
+});
+
+test("event links show loading, recover after an outage, and handle missing events", async ({ page }) => {
+  test.setTimeout(90000);
+  let release: () => void;
+  const held = new Promise<void>(resolve => { release = resolve; });
+  await page.route("**/api/calendar-reading?*", async route => { await held; await route.fallback(); });
+  const link = new URL(calendarReadingUrl("https://example.com", "2026-09-21", "week-2026-09-21", "UTC"));
+  fixture.setStorageFailure(true);
+  await page.goto(link.pathname + link.search + link.hash);
+  await expect(page.getByRole("status", { name: "Loading event reading…" })).toBeVisible();
+  release!();
+  await expect(page.getByRole("dialog").getByRole("alert")).toContainText("This reading could not load");
+  fixture.setStorageFailure(false);
+  await page.getByRole("dialog").getByRole("button", { name: "Retry", exact: true }).click();
+  await expect(page.getByRole("dialog", { name: "Weekly emotional forecast" })).toBeVisible();
+  await page.goto(link.pathname + link.search + link.hash.replace("event=week-2026-09-21", "event=event-00000000-0000-4000-8000-000000000000"));
+  await expect(page.getByRole("dialog").getByRole("alert")).toContainText("This calendar event is not available.");
+  await page.getByRole("dialog").getByRole("button", { name: "Close", exact: true }).click();
+  await expect(page.getByRole("dialog")).toHaveCount(0);
 });
 for (const width of [390, 1440]) for (const theme of ["light", "dark"]) test(`owner can draft, publish, edit and cancel an event ${theme} ${width}`, async ({ page }, testInfo) => {
   test.setTimeout(90000);

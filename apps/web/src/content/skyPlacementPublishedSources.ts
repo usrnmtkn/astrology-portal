@@ -1,6 +1,6 @@
 import { isZodiacSeasonSourceKey } from "./fallbackArchitectureV3/resolver/zodiacSeasonVariables.mjs";
-import { contentPublication, contentPublicationGeneration, publicationAllowsContent } from "./contentPublicationState";
-import { isCanonicalSkyReaderRecord } from "./fallbackArchitectureV3/dashboardExtensions";
+import { contentPublication, contentPublicationGeneration, publicationAllowsContent, type ContentPublication } from "./contentPublicationState.js";
+import { isCanonicalSkyReaderRecord } from "./fallbackArchitectureV3/dashboardExtensions.js";
 // @ts-ignore The canonical renderer and its editable-field contract are shared ESM.
 import { createSkyV4ReaderRoute, skyV4ContentStudioRecords } from "./fallbackArchitectureV3/resolver/skyPlacementV4Canonical.mjs";
 // @ts-ignore Shared evergreen structure is validated at the publication boundary.
@@ -22,7 +22,9 @@ function set(value: RecordValue, path: string, copy: unknown) {
 /** Only a publication's exact row version can supersede the immutable corpus.
  * The corpus owns the editable paths; incoming metadata can never add paths.
  */
-export function createPublishedSkyReader(corpus: RecordValue, lunarSource: unknown, sources: () => unknown[]) {
+export function createPublishedSkyReader(corpus: RecordValue, lunarSource: unknown, sources: () => unknown[], requestPublications?: ReadonlyMap<string, ContentPublication>) {
+  const publicationFor = (key: string) => requestPublications ? requestPublications.get(key) : contentPublication(key);
+  const allows = (key: string, id: string, updatedAt: string) => publicationAllowsContent(key, id, updatedAt, undefined, requestPublications);
   const baselines = new Map<string, RecordValue>(skyV4ContentStudioRecords(corpus).map((row: RecordValue) => [row.contentKey, row]));
   let fingerprint = "";
   let render: ((input: Record<string, unknown>) => any) | null = null;
@@ -35,14 +37,14 @@ export function createPublishedSkyReader(corpus: RecordValue, lunarSource: unkno
       && row.review_status === "approved"
       && (isZodiacSeasonSourceKey(row.contentKey) || isCanonicalSkyReaderRecord(row as any)
         && row.studio_version_status === "approved-serving-revision")
-      && publicationAllowsContent(row.contentKey, row.publicationRowId, row.publicationRowUpdatedAt));
-    const nextFingerprint = JSON.stringify([published.map(row => [row.contentKey, row.publicationRowId, row.publicationRowUpdatedAt]), contentPublicationGeneration]);
+      && allows(row.contentKey, row.publicationRowId, row.publicationRowUpdatedAt));
+    const nextFingerprint = JSON.stringify([published.map(row => [row.contentKey, row.publicationRowId, row.publicationRowUpdatedAt]), requestPublications ? 0 : contentPublicationGeneration]);
     if (nextFingerprint !== fingerprint) {
       const byKey = new Map(published.map(row => [row.contentKey, row]));
       const suppliedIds = new Set(supplied.map(row => row.publicationRowId).filter((id): id is string => typeof id === "string"));
       const nextBlocked = new Set([...baselines.keys()].filter(key => {
         if (byKey.has(key)) return false;
-        const publication = contentPublication(key);
+        const publication = publicationFor(key);
         if (!publication) return false;
         if (publication.state === "retired") return true;
         if (publication.state !== "live" || !publication.row_id) return false;

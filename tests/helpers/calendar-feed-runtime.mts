@@ -34,8 +34,10 @@ export function verifyCalendarFeedRuntimeImports() {
   try {
     writeFileSync(join(stage, "package.json"), '{"type":"module"}');
     symlinkSync(join(root, "node_modules"), join(stage, "node_modules"), "dir");
-    const entry = join(stage, "api/calendar-feed.js");
-    emit(join(root, "api/calendar-feed.ts"), entry);
-    execFileSync(process.execPath, ["--input-type=module", "--eval", `await import(${JSON.stringify(pathToFileURL(entry).href)})`], { cwd: stage, stdio: "pipe" });
+    for (const name of ["calendar-feed", "calendar-reading"]) {
+      const entry = join(stage, `api/${name}.js`);
+      emit(join(root, `api/${name}.ts`), entry);
+      execFileSync(process.execPath, ["--input-type=module", "--eval", `await import(${JSON.stringify(pathToFileURL(entry).href)})`], { cwd: stage, stdio: "pipe" });
+    }
   } finally { rmSync(stage, { recursive: true, force: true }); }
 }
