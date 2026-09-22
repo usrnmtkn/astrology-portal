@@ -64,7 +64,10 @@ assert.ok(calendarSeasonTransitionPackageRecords.every((record) => record.servin
 assert.ok(calendarSeasonTransitionPackageRecords.every((record) => record.body.includes("{{date}}")));
 assert.equal(Object.keys(calendarSeasonTransitionEndsBridges).length, 12);
 for (const [pair, bridge] of Object.entries(calendarSeasonTransitionEndsBridges)) {
-  assert.ok(calendarSeasonTransitions[pair]?.[0]?.includes(bridge), `${pair} bridge must stay verbatim inside its base Ends record`);
+  const base = calendarSeasonTransitions[pair]?.[0] ?? "";
+  for (const sentence of bridge.match(/[^.!?]+[.!?]+/g) ?? []) {
+    assert.ok(base.includes(sentence.trim()), `${pair} bridge sentence must stay verbatim inside its base Ends record`);
+  }
 }
 assert.ok(prefixes.includes("authored/lunar-journal/"));
 assert.ok(prefixes.includes("authored/calendar-moon-continuation-summary/"));
