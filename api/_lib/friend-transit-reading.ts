@@ -1,4 +1,5 @@
 import { transitReadingReaderCopy, transitReadingReaderText } from "./transit-reading-reader-copy.js";
+import { untraceableTransitReadingDates } from "./transit-reading-dates.js";
 import { isOrdinaryAspectWord } from "./transit-reading-aspect-claims.js";
 import { FRIEND_RELATIONSHIP_CONTEXT_RULE, friendReadingContexts, friendAspectClaims } from "./friend-reading-context.js";
 type RecordLike = Record<string, unknown>;
@@ -544,8 +545,8 @@ export function validateFriendTransitReadingDraft(input: { draft: FriendTransitR
   for (const match of text.matchAll(/\b\d{1,3}(?:\.\d+)?°/gu)) {
     if (!source.includes(match[0].toLowerCase())) issues.push({ code: "untraceable_degree", value: match[0], message: `${match[0]} is not present in the governed brief.` });
   }
-  for (const match of text.matchAll(/\b(?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:tember)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?)\s+\d{1,2}\b/giu)) {
-    if (!source.includes(match[0].toLowerCase())) issues.push({ code: "untraceable_date", value: match[0], message: `${match[0]} is not present in the governed brief.` });
+  for (const date of untraceableTransitReadingDates(text, input.brief)) {
+    issues.push({ code: "untraceable_date", value: date, message: `${date} is not present in the governed brief.` });
   }
   for (const match of text.matchAll(/\b(?:they always|they usually|they tend to|this is who they are|this is how they are)\b/giu)) {
     issues.push({ code: "standing_trait_language", value: match[0], message: "Temporary transit synthesis became a permanent personality claim." });

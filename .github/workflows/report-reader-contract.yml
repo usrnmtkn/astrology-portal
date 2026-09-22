@@ -66,6 +66,7 @@ jobs:
           node scripts/test-personal-report-source-hydration.mjs
           node --import tsx scripts/test-friend-report-paid-lifecycle.mts
           node --import tsx scripts/test-friend-transit-reading-contract.mts
+          node --import tsx scripts/test-transit-reading-dates.mts
           node --import tsx scripts/test-generated-report-judge-governance.mts
           node --import tsx scripts/test-report-provider-schemas.mjs
           node --import tsx scripts/test-report-library-delete.mjs
