@@ -11,6 +11,10 @@ import {
 } from "../apps/web/src/features/calendar/lunarJournal.ts";
 import { lunarJournalPackageRecords } from "../api/_lib/lunar-journal-sources.ts";
 import { calendarSeasonTransitionPackageRecords } from "../api/_lib/calendar-season-transition-sources.ts";
+import {
+  calendarSeasonTransitionEndsBridges,
+  calendarSeasonTransitions
+} from "../apps/web/src/features/calendar/calendarSeasonTransitions.ts";
 import { compactHandoffTitle, isHandoffKeyEvent } from "../apps/web/src/features/calendar/calendarHandoff.ts";
 import { calendarKindFromEvent } from "../apps/web/src/features/calendar/calendarKinds.ts";
 import {
@@ -58,6 +62,10 @@ assert.ok(calendarSeasonTransitionPackageRecords.every((record) => record.review
 assert.ok(calendarSeasonTransitionPackageRecords.every((record) => record.owner_approved === false));
 assert.ok(calendarSeasonTransitionPackageRecords.every((record) => record.serving_enabled === false));
 assert.ok(calendarSeasonTransitionPackageRecords.every((record) => record.body.includes("{{date}}")));
+assert.equal(Object.keys(calendarSeasonTransitionEndsBridges).length, 12);
+for (const [pair, bridge] of Object.entries(calendarSeasonTransitionEndsBridges)) {
+  assert.ok(calendarSeasonTransitions[pair]?.[0]?.includes(bridge), `${pair} bridge must stay verbatim inside its base Ends record`);
+}
 assert.ok(prefixes.includes("authored/lunar-journal/"));
 assert.ok(prefixes.includes("authored/calendar-moon-continuation-summary/"));
 assert.ok(prefixes.includes("authored/calendar-moon-transition/"));
