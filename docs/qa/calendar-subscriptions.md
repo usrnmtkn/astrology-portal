@@ -36,6 +36,8 @@ ID, plus its date and subscription time zone. Opening or reloading a link opens
 that reading in Calendar, including the full published description. Closing it
 returns to the dated calendar. No subscription or management token enters the
 app link. Existing feed URLs and event UIDs remain stable when descriptions change.
+Published package edits and retirements also advance the calculated entries'
+calendar version and modification time, so clients can recognize revised copy.
 
 The subscription URL stays unchanged when content or preferences change. Calendar
 apps choose their own refresh interval and may cache updates; the feed advertises

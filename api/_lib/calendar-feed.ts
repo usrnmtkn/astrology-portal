@@ -95,12 +95,21 @@ export async function buildCalendarFeedEntries(options: CalendarSubscriptionOpti
     allCalendarRows<CalendarFeedEventRecord>("calendar_feed_events", { select: "id,published,cancelled,revision,published_at", published: "not.is.null", order: "id.asc" })
   ]);
   const reader = calendarFeedCopyReader(copy.publications, copy.rows);
+  // Bundled compositions can depend on several published sources. Advance
+  // their calendar version when the publication ledger changes, including
+  // canonical article revisions and retirements with no root body field.
+  const copyModified = [...copy.publications.values()].reduce((latest, publication) =>
+    Date.parse(publication.updated_at) > Date.parse(latest) ? publication.updated_at : latest, factsModified);
+  const version = (updatedAt?: string) => {
+    const modified = updatedAt && Date.parse(updatedAt) > Date.parse(copyModified) ? updatedAt : copyModified;
+    return { modified, sequence: Math.max(1, Math.floor((Date.parse(modified) - Date.UTC(2020, 0, 1)) / 1000)) };
+  };
   const entries: FeedEntry[] = facts.map(event => {
     const text = selectCalendarFeedCopy(contentKeys(event), event.dateKey, copy.rows, copy.publications);
     return { readingId: event.id, uid: `astro-${createHash("sha256").update(event.id).digest("hex")}@tldrastro`, title: event.title,
       description: text?.body ?? reader.eventBody(event, options.timeZone, allFacts), start: event.startsAt, end: event.endsAt && event.endsAt > event.startsAt ? event.endsAt : new Date(Date.parse(event.startsAt) + 60000).toISOString(),
       allDay: false, category: eventFeedCategory(event), url: calendarReadingUrl(origin, event.dateKey, event.id, options.timeZone),
-      modified: text?.updatedAt ?? factsModified, sequence: text ? Math.max(1, Math.floor((Date.parse(text.updatedAt) - Date.UTC(2020, 0, 1)) / 1000)) : 0 };
+      ...version(text?.updatedAt) };
   });
   // Weekly entries have a dated identity and the same full reading as their app link.
   if (options.include.includes("weekly")) {
@@ -113,7 +122,7 @@ export async function buildCalendarFeedEntries(options: CalendarSubscriptionOpti
       const week = reader.weekSource(allFacts.filter(event => event.dateKey >= date && event.dateKey <= weekEnd));
       const text = selectCalendarFeedCopy([week.key], date, copy.rows, copy.publications, week.signTitle);
       entries.push({ readingId: id, uid: `${id}@tldrastro`, title: "Weekly emotional forecast", description: text?.body ?? week.body, start: start.toISOString(), end: new Date(start.getTime() + 60000).toISOString(), allDay: false,
-        category: "weekly", url: calendarReadingUrl(origin, date, id, options.timeZone), modified: text?.updatedAt ?? factsModified, sequence: text ? Math.max(1, Math.floor((Date.parse(text.updatedAt) - Date.UTC(2020, 0, 1)) / 1000)) : 0 });
+        category: "weekly", url: calendarReadingUrl(origin, date, id, options.timeZone), ...version(text?.updatedAt) });
     }
   }
   for (const row of custom) {
