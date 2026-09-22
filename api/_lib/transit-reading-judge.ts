@@ -1,3 +1,6 @@
+import { GENERATED_REPORT_JUDGE_SCHEMA } from "./transit-reading-judge-schema.js";
+import { judgeScopedGeneratedTransitReading } from "./transit-reading-scoped-judge.js";
+import { transitReadingReviewMode } from "./transit-reading-review-contract.js";
 import { transitReadingReaderCopy } from "./transit-reading-reader-copy.js";
 import { assertGeneratedReportJudgeEvidence, GENERATED_REPORT_JUDGE_EVIDENCE_CONTRACT } from "./transit-reading-judge-evidence.js";
 import { transitReadingOwnerVoiceReceipt, transitReadingVoiceContext } from "./transit-reading-owner-voice.js";
@@ -7,8 +10,6 @@ import { REPORT_JUDGE_THRESHOLD, reportFulfillmentConfig } from "./report-fulfil
 import type { GeneratedTransitReadingDraft } from "./transit-reading-generation.js";
 import type { GeneratedTransitReportSurface } from "./transit-reading-owner-evidence.js";
 import {
-  GENERATED_REPORT_JUDGE_CATEGORIES,
-  GENERATED_REPORT_JUDGE_FINDING_CATEGORIES,
   generatedReportJudgeOverall,
   generatedReportJudgeVerdict,
   type GeneratedReportJudgeFinding,
@@ -41,47 +42,7 @@ type JudgeProviderPayload = {
   findings: GeneratedReportJudgeFinding[];
 };
 
-export const GENERATED_REPORT_JUDGE_SCHEMA = {
-  type: "object",
-  additionalProperties: false,
-  required: ["scores", "findings"],
-  properties: {
-    scores: {
-      type: "object",
-      additionalProperties: false,
-      required: [...GENERATED_REPORT_JUDGE_CATEGORIES],
-      properties: Object.fromEntries(GENERATED_REPORT_JUDGE_CATEGORIES.map((category) => [
-        category,
-        { type: "number", minimum: 0, maximum: 4 }
-      ]))
-    },
-    findings: {
-      type: "array",
-      items: {
-        type: "object",
-        additionalProperties: false,
-        required: ["category", "location", "finding", "draftQuote", "sourcePath", "sourceQuote", "ownerComparisons"],
-        properties: {
-          category: { type: "string", enum: [...GENERATED_REPORT_JUDGE_FINDING_CATEGORIES] },
-          location: { type: "string" },
-          finding: { type: "string" },
-          draftQuote: { type: "string", pattern: "\\S" },
-          sourcePath: { type: ["string", "null"] },
-          sourceQuote: { type: ["string", "null"] },
-          ownerComparisons: { type: "array", items: {
-            type: "object", additionalProperties: false,
-            required: ["evidenceId", "quote", "difference"],
-            properties: {
-              evidenceId: { type: "string", pattern: "\\S" },
-              quote: { type: "string", pattern: "\\S" },
-              difference: { type: "string", pattern: "\\S" }
-            }
-          } }
-        }
-      }
-    }
-  }
-} as const;
+export { GENERATED_REPORT_JUDGE_SCHEMA } from "./transit-reading-judge-schema.js";
 
 function requiredFile(path: string) {
   return fs.readFileSync(path, "utf8");
@@ -136,6 +97,7 @@ export async function judgeGeneratedTransitReading(input: {
   productionInput: TransitReadingProductionInput;
   ownerEvidence?: string[];
 }) {
+  if (transitReadingReviewMode() === "scoped") return judgeScopedGeneratedTransitReading(input);
   const config = reportFulfillmentConfig();
   const provider = config.judgeProvider;
   const model = config.judgeModel;

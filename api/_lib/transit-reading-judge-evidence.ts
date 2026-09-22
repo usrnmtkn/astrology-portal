@@ -1,6 +1,6 @@
 import { transitReadingReaderCopy } from "./transit-reading-reader-copy.js";
 import { GENERATED_REPORT_JUDGE_CATEGORIES, GENERATED_REPORT_JUDGE_FINDING_CATEGORIES,
-  type GeneratedReportJudgeFinding, type GeneratedReportJudgeScores } from "./transit-reading-judge-rules.js";
+  type GeneratedReportJudgeFinding, type GeneratedReportJudgeScores, type GeneratedReportJudgeCategory } from "./transit-reading-judge-rules.js";
 
 export function findingScoreCategory(category: GeneratedReportJudgeFinding["category"]) {
   if (GENERATED_REPORT_JUDGE_CATEGORIES.includes(category as keyof GeneratedReportJudgeScores)) return category as keyof GeneratedReportJudgeScores;
@@ -24,21 +24,25 @@ export const GENERATED_REPORT_JUDGE_EVIDENCE_CONTRACT = [
 ].join("\n");
 
 /** Check diagnostic integrity; the approved rubric still determines quality. */
-export function assertGeneratedReportJudgeEvidence(value: unknown, input: {
+export function assertGeneratedReportDiagnosticEvidence(value: unknown, input: {
   draft: { headline: string; summary: string; body: string }; brief: unknown;
   ownerComparisonSet?: ReadonlyArray<{ evidenceId: string; text: string }>;
-}): { scores: GeneratedReportJudgeScores; findings: GeneratedReportJudgeFinding[] } {
+  scoreCategories?: readonly GeneratedReportJudgeCategory[];
+  findingCategories?: readonly string[];
+}): { scores: Partial<GeneratedReportJudgeScores>; findings: GeneratedReportJudgeFinding[] } {
   const fail = (message: string): never => { throw new Error(`Generated report judge diagnostic invalid: ${message}`); };
   if (!value || typeof value !== "object" || Array.isArray(value)) return fail("expected scores and findings.");
-  const payload = value as { scores: GeneratedReportJudgeScores; findings: GeneratedReportJudgeFinding[] };
+  const payload = value as { scores: Partial<GeneratedReportJudgeScores>; findings: GeneratedReportJudgeFinding[] };
   if (!payload.scores || typeof payload.scores !== "object" || !Array.isArray(payload.findings)) return fail("missing scores or findings.");
-  for (const category of GENERATED_REPORT_JUDGE_CATEGORIES) {
+  const categories = input.scoreCategories ?? GENERATED_REPORT_JUDGE_CATEGORIES;
+  if (Array.isArray(payload.scores) || Object.keys(payload.scores).some(key => !categories.includes(key as GeneratedReportJudgeCategory))) return fail("out-of-scope score.");
+  for (const category of categories) {
     const score = payload.scores[category];
-    if (!Number.isFinite(score) || score < 0 || score > 4) return fail(`invalid ${category} score.`);
+    if (typeof score !== "number" || !Number.isFinite(score) || score < 0 || score > 4) return fail(`invalid ${category} score.`);
   }
   const fields = Object.values(transitReadingReaderCopy(input.draft));
   for (const finding of payload.findings) {
-    if (!finding || !GENERATED_REPORT_JUDGE_FINDING_CATEGORIES.includes(finding.category)
+    if (!finding || !(input.findingCategories ?? GENERATED_REPORT_JUDGE_FINDING_CATEGORIES).includes(finding.category)
       || typeof finding.location !== "string" || !finding.location.trim()
       || typeof finding.finding !== "string" || !finding.finding.trim()) return fail("malformed finding.");
     if (typeof finding.draftQuote !== "string" || !finding.draftQuote.trim()
@@ -66,8 +70,13 @@ export function assertGeneratedReportJudgeEvidence(value: unknown, input: {
   }
   const floor: Partial<GeneratedReportJudgeScores> = { astrology_chronology: 3, factual_traceability: 3, lived_experience: 3, interpretive_movement: 3, owner_voice: 4, natural_language: 4 };
   for (const [category, minimum] of Object.entries(floor)) {
-    if (payload.scores[category as keyof GeneratedReportJudgeScores] < minimum
+    if (categories.includes(category as GeneratedReportJudgeCategory) && payload.scores[category as keyof GeneratedReportJudgeScores]! < minimum
       && !payload.findings.some(finding => findingScoreCategory(finding.category) === category)) return fail(`below-floor ${category} score has no diagnostic evidence.`);
   }
   return payload;
+}
+
+export function assertGeneratedReportJudgeEvidence(value: unknown, input: Parameters<typeof assertGeneratedReportDiagnosticEvidence>[1]) {
+  return assertGeneratedReportDiagnosticEvidence(value, { ...input, scoreCategories: GENERATED_REPORT_JUDGE_CATEGORIES,
+    findingCategories: GENERATED_REPORT_JUDGE_FINDING_CATEGORIES }) as { scores: GeneratedReportJudgeScores; findings: GeneratedReportJudgeFinding[] };
 }

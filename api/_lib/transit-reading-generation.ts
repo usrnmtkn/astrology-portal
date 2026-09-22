@@ -2,6 +2,7 @@ import { transitReadingReaderCopy } from "./transit-reading-reader-copy.js";
 import { transitReadingRevisionPrompt, type TransitReadingWriterTask } from "./transit-reading-revision.js";
 import { previousTransitReadingCorrectionFeedback } from "./transit-reading-checkpoints.js";
 import type { TransitReadingOwnerVoiceReceipt } from "./transit-reading-owner-voice.js";
+import { SCOPED_REVIEW_VERSION, transitReadingDraftHash, type TransitReadingScopedReviewReceipt } from "./transit-reading-review-contract.js";
 import { contentGenerationProvider } from "./provider-config.js";
 import { generatedReportLanguageContract, generatedReportWritingContract } from "./transit-reading-writing-contract.js";
 import {
@@ -36,16 +37,18 @@ export type TransitReadingJudgeOutcome = {
     overall: number;
     verdict: "pass" | "below_threshold";
     scores: Record<string, number>;
-    findings: Array<{ category: string; location: string; finding: string; draftQuote?: string; sourcePath?: string | null; sourceQuote?: string | null; ownerComparisons?: Array<{ evidenceId: string; quote: string; difference: string }> }>;
+    findings: Array<{ category: string; location: string; finding: string; draftQuote?: string; contextQuote?: string; readerConsequence?: string; sourcePath?: string | null; sourceQuote?: string | null; ownerComparisons?: Array<{ evidenceId: string; quote: string; difference: string }> }>;
   };
   provider: string;
   model: string;
   version: string;
   threshold: number;
   ownerVoiceEvidence?: TransitReadingOwnerVoiceReceipt;
+  scopedReviews?: TransitReadingScopedReviewReceipt[];
 };
 
 export type TransitReadingJudgeAudit = {
+  scopedReviews?: TransitReadingScopedReviewReceipt[];
   version: string;
   threshold: number;
   ownerVoiceEvidence?: TransitReadingOwnerVoiceReceipt;
@@ -249,7 +252,7 @@ async function initialValidatedDraft<TBrief>(
       if (error instanceof TransitReadingQualityError) return [error.message];
       throw error;
     }
-  });
+  }, options.headline);
   let feedback = priorFeedback;
   let lastQualityError: TransitReadingQualityError | null = null;
   const validationFeedback: string[] = [];
@@ -295,6 +298,8 @@ function judgmentFindings(judged: TransitReadingJudgeOutcome) {
     ? judged.result.findings.map((finding, index) => [
       `${index + 1}. ${finding.category} at ${finding.location}: ${finding.finding}`,
       ...(finding.draftQuote ? [`Draft evidence: ${JSON.stringify(finding.draftQuote)}`] : []),
+      ...(finding.contextQuote ? [`Complete paragraph: ${JSON.stringify(finding.contextQuote)}`] : []),
+      ...(finding.readerConsequence ? [`Reader consequence: ${finding.readerConsequence}`] : []),
       ...(finding.sourceQuote ? [`Source evidence at ${finding.sourcePath}: ${JSON.stringify(finding.sourceQuote)}`] : []),
       ...(finding.ownerComparisons ?? []).map(comparison => `Owner comparison ${comparison.evidenceId}: ${JSON.stringify(comparison.quote)}\nObserved difference: ${comparison.difference}`)
     ].join("\n")).join("\n")
@@ -355,8 +360,19 @@ function judgeAudit(judged: TransitReadingJudgeOutcome, attempts: 1 | 2): Transi
     provider: judged.provider,
     model: judged.model,
     attempts,
-    ...(judged.ownerVoiceEvidence ? { ownerVoiceEvidence: judged.ownerVoiceEvidence } : {})
+    ...(judged.ownerVoiceEvidence ? { ownerVoiceEvidence: judged.ownerVoiceEvidence } : {}),
+    ...(judged.scopedReviews ? { scopedReviews: judged.scopedReviews } : {})
   };
+}
+
+function assertReviewDraft(judged: TransitReadingJudgeOutcome, draft: GeneratedTransitReadingDraft) {
+  if (judged.version !== SCOPED_REVIEW_VERSION && !judged.scopedReviews) return;
+  const reviews = judged.scopedReviews;
+  if (reviews?.length !== 2 || new Set(reviews.map(review => review.scope)).size !== 2
+    || !reviews.some(review => review.scope === "facts") || !reviews.some(review => review.scope === "writing")
+    || reviews.some(review => review.draftSha256 !== transitReadingDraftHash(draft))) {
+    throw new Error("The report needs both scoped reviews of this exact draft before correction or delivery.");
+  }
 }
 
 export async function generateGovernedTransitReading<TBrief>(options: GovernedTransitReadingOptions<TBrief>) {
@@ -369,6 +385,7 @@ export async function generateGovernedTransitReading<TBrief>(options: GovernedTr
     brief: initial.brief,
     ownerEvidence: options.ownerEvidence ?? []
   });
+  assertReviewDraft(firstJudgment, initial.draft);
   if (firstJudgment.result.verdict === "pass") {
     return { draft: initial.draft, provider, judgeAudit: judgeAudit(firstJudgment, 1) };
   }
@@ -416,6 +433,7 @@ export async function generateGovernedTransitReading<TBrief>(options: GovernedTr
     brief: initial.brief,
     ownerEvidence: options.ownerEvidence ?? []
   });
+  assertReviewDraft(secondJudgment, corrected);
   if (secondJudgment.result.verdict !== "pass") throw new TransitReadingJudgeBlockedError({
     stage: "second_judgment", judgment: secondJudgment
   });

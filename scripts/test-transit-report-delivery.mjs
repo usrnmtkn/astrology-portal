@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import { build } from 'esbuild';
+const scoped = process.argv.includes('--scoped');
 
 // Real generation, validation, judge verdict, checkpoint, lifecycle, retrieval
 // and reader component. Only external storage, model transport and private
@@ -135,19 +136,23 @@ function fixture(kind, scenario) {
     admin,client,rows,prompts,writes,output,youBrief,friendBrief,background:[],
     get calls(){return {writer:writerCalls,judge:judgeCalls};},
     async call(input){
-      const judge=input.schemaName==='tldr_generated_report_judge';
+      const judge=input.schemaName.includes('judge');
       prompts.push({judge,prompt:input.prompt});
       if (kind === 'day') assert(input.prompt.includes(JSON.stringify(fullDailySource)),
         'Every daily writer, correction and judge call must receive the complete approved source');
       if(judge){
         judgeCalls++;
-        const submitted=JSON.parse(input.prompt.split('COMPLETE READER-VISIBLE DRAFT\n')[1].split('\n').slice(1).join('\n').split('\n\nSYNTHETIC')[0]);
+        const submitted=JSON.parse(scoped
+          ? input.prompt.split('COMPLETE READER-VISIBLE DRAFT\n\n')[1].split('\n\nDRAFT_SHA256:')[0]
+          : input.prompt.split('COMPLETE READER-VISIBLE DRAFT\n')[1].split('\n').slice(1).join('\n').split('\n\nSYNTHETIC')[0]);
         assert.deepEqual(Object.keys(submitted),['headline','summary','body']);
         assert(!input.prompt.includes(output.summary),'Discarded transport alias must never be reviewed');
-        const failed=['rejected','invalid-judge-evidence'].includes(scenario) || (['correction','cleanup'].includes(scenario) && judgeCalls===1);
-        const scores=Object.fromEntries(api.GENERATED_REPORT_JUDGE_CATEGORIES.map(key=>[key,4]));
+        const draftSha256=scoped ? input.prompt.match(/DRAFT_SHA256: ([a-f0-9]{64})/)[1] : null;
+        if(input.schemaName==='tldr_generated_report_facts_judge') return {value:{draftSha256,scores:{astrology_chronology:4,factual_traceability:4},findings:[]},provider:input.provider,model:input.model,usage:{inputTokens:10,outputTokens:5,totalTokens:15}};
+        const failed=['rejected','invalid-judge-evidence'].includes(scenario) || (['correction','cleanup'].includes(scenario) && judgeCalls===(scoped?2:1));
+        const scores=Object.fromEntries(api.GENERATED_REPORT_JUDGE_CATEGORIES.filter(key=>!scoped||!['astrology_chronology','factual_traceability'].includes(key)).map(key=>[key,4]));
         if(failed)scores.owner_voice=3;
-        return {value:{scores,findings:failed?[{category:'owner_voice',location:'body, first sentence',finding:'Synthetic diagnostic: simplify the transition while preserving supplied facts.',draftQuote:submitted.body.slice(0,30),sourcePath:null,sourceQuote:null,ownerComparisons:scenario==='invalid-judge-evidence'?[]:[{evidenceId:'synthetic-owner',quote:'Synthetic owner comparison.',difference:'Synthetic difference in the transition.'}]}]:[]},provider:input.provider,model:input.model,responseId:`judge-${judgeCalls}`};
+        return {value:{...(scoped?{draftSha256}:{}),scores,findings:failed?[{...(scoped?{contextQuote:submitted.body.split('\n\n')[0],readerConsequence:'Synthetic transition obscures the reader connection.'}:{}),category:'owner_voice',location:'body, first sentence',finding:'Synthetic diagnostic: simplify the transition while preserving supplied facts.',draftQuote:submitted.body.slice(0,30),sourcePath:null,sourceQuote:null,ownerComparisons:scenario==='invalid-judge-evidence'?[]:[{evidenceId:'synthetic-owner',quote:'Synthetic owner comparison.',difference:'Synthetic difference in the transition.'}]}]:[]},provider:input.provider,model:input.model,responseId:`judge-${judgeCalls}`,usage:{inputTokens:10,outputTokens:5,totalTokens:15}};
       }
       writerCalls++;
       if(writerCalls>1 && ['correction','cleanup','rejected'].includes(scenario)){
@@ -166,7 +171,7 @@ function fixture(kind, scenario) {
 
 const previous = globalThis.reportDeliveryFixture;
 const savedEnv = {...process.env};
-Object.assign(process.env,{CONTENT_GENERATION_PROVIDER:'openai',CONTENT_GENERATION_PROVIDER_TRANSIT_TO_NATAL:'openai',FRIEND_REPORT_BILLING_MODE:'free_test',YOU_REPORT_JOB_ATTEMPT_CAP:'1',FRIEND_REPORT_JOB_ATTEMPT_CAP:'1'});
+Object.assign(process.env,{GENERATED_REPORT_REVIEW_MODE:scoped?'scoped':'combined',CONTENT_GENERATION_PROVIDER:'openai',CONTENT_GENERATION_PROVIDER_TRANSIT_TO_NATAL:'openai',FRIEND_REPORT_BILLING_MODE:'free_test',YOU_REPORT_JOB_ATTEMPT_CAP:'1',FRIEND_REPORT_JOB_ATTEMPT_CAP:'1'});
 let cases=0;
 try{
   for(const kind of ['day','week','friends']) for(const scenario of ['first-pass','correction','cleanup','rejected','invalid-judge-evidence','save-error','empty-save','completion-error']){
@@ -186,6 +191,7 @@ try{
       assert.equal(job.state,'complete',JSON.stringify(result)+' '+job.last_error+' '+JSON.stringify(f.rows.transit_report_model_checkpoints.filter(c=>c.state==='failed')));
       assert.equal(job.result_id,row.id); assert.equal(row.body,f.output.body);
       assert.equal(row.summary,f.output.tldr);assert.equal(row.source_snapshot.generatedReportQualityGate.verdict,'pass');
+      if(scoped) { const reviews=row.source_snapshot.generatedReportQualityGate.scopedReviews; assert.equal(reviews.length,2);assert.equal(reviews[0].draftSha256,reviews[1].draftSha256);assert.ok(reviews.every(r=>r.requestSha256&&r.responseSha256&&r.usage.totalTokens===15)); }
       const loaded=await api.loadGeneratedReportById(row.id);assert.equal(loaded.body,f.output.body);
       const html=api.renderToStaticMarkup(api.createElement(api.GeneratedReportArticle,{report:loaded}));
       assert.equal(html.split(f.output.tldr).length-1,1,'The reader displays the TLDR once');
@@ -222,7 +228,7 @@ try{
       assert.equal(await api.loadGeneratedReportById(row.id),null);
       assert(!f.writes.some(([table,write])=>table.endsWith('_jobs') && write.state==='complete'));
     }
-    assert.equal(f.calls.judge,scenario==='first-pass'||['invalid-judge-evidence','save-error','empty-save','completion-error'].includes(scenario)?1:2);
+    assert.equal(f.calls.judge,scenario==='first-pass'||['invalid-judge-evidence','save-error','empty-save','completion-error'].includes(scenario)?(scoped?2:1):(scoped?4:2));
     if(scenario==='invalid-judge-evidence') {
       assert.equal(f.calls.writer,1,'Invalid judge evidence must not instruct a corrective writer.');
       assert.match(job.last_error,/owner_voice lacks eligible comparison evidence/u);
@@ -323,10 +329,10 @@ try{
   const copy={headline:'Title',summary:'Summary',body:'Body'};
   for(const rows of [[],[{...copy}],[{id:'x',...copy,body:''}],[{id:'x',...copy,body:'Changed'}],[{id:'x',...copy},{id:'y',...copy}]]) assert.throws(()=>api.assertSavedTransitReading(rows,copy));
   api.assertSavedTransitReading([{id:'x',...copy}],copy);
-  console.log(`Transit report delivery: ${cases} actual-pipeline fixture cases passed; save acknowledgement, client retrieval, ownership, deletion and rendered opening/ending verified. No live provider or production claim.`);
+  console.log(`Transit report delivery (${scoped?'scoped':'combined'}): ${cases} actual-pipeline fixture cases passed; save acknowledgement, client retrieval, ownership, deletion and rendered opening/ending verified. No live provider or production claim.`);
 }finally{
   if(previous===undefined)delete globalThis.reportDeliveryFixture;else globalThis.reportDeliveryFixture=previous;
-  for(const key of ['CONTENT_GENERATION_PROVIDER','CONTENT_GENERATION_PROVIDER_TRANSIT_TO_NATAL','FRIEND_REPORT_BILLING_MODE','YOU_REPORT_JOB_ATTEMPT_CAP','FRIEND_REPORT_JOB_ATTEMPT_CAP']){
+  for(const key of ['GENERATED_REPORT_REVIEW_MODE','CONTENT_GENERATION_PROVIDER','CONTENT_GENERATION_PROVIDER_TRANSIT_TO_NATAL','FRIEND_REPORT_BILLING_MODE','YOU_REPORT_JOB_ATTEMPT_CAP','FRIEND_REPORT_JOB_ATTEMPT_CAP']){
     if(savedEnv[key]===undefined)delete process.env[key];else process.env[key]=savedEnv[key];
   }
 }

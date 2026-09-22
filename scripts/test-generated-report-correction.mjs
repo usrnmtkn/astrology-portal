@@ -199,7 +199,7 @@ try {
     const column = `${family}_job_id`;
     const rows = [
       { id: 'old-judge', [column]: 'fixture-job', attempt: 1, step: 1, state: 'complete', schema_name: 'tldr_generated_report_judge', response: { value: { findings: [{ finding: 'Stale judgment' }] } } },
-      { id: 'latest-writer', [column]: 'fixture-job', attempt: 1, step: 2, state: 'complete', schema_name: 'fixture', response: { value: original } }
+      { id: 'latest-writer', [column]: 'fixture-job', attempt: 1, step: 2, state: 'complete', schema_name: `tldr_astro_${family === 'you' ? 'you' : 'friend'}_transit_reading`, response: { value: original } }
     ];
     const matches = (row, params) => [...params].every(([key, value]) => ['select', 'order', 'limit'].includes(key)
       || (value.startsWith('neq.') ? String(row[key]) !== value.slice(4) : String(row[key]) === value.slice(3)));

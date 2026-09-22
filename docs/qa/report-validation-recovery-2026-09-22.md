@@ -73,3 +73,72 @@ Manual review separates the daily baseline's source-support problem from editori
 The preferred weekly report passed the judge's factual categories twice. Its prose rejection focused on a figurative reference to the peak of a feeling; the complete report identifies anger, urgency, and the larger-decision consequence around that line. This is an editorial dispute about naturalness and contextual clarity, not an astrology defect. The broader approved naturalness rule already instructs the judge to consider complete paragraph context. The comparisons also favored more explicit explanatory follow-through over the owner's stronger preferred version. Exact citations made the disagreement inspectable but did not resolve it.
 
 The batch rejects this candidate as release-ready. It does not prove that every model criticism is wrong, that the writer is reliable, or that separating review roles will repair editorial preference. Do not perform another unchanged-prompt batch, add a majority vote, lower floors, or use the same four now-familiar controls as unseen release evidence. See the [proposed scoped-review design](../writing/GENERATED_REPORT_SCOPED_REVIEW_PROPOSAL.md). No change to the production release contract or approved feedback activation is made by this record.
+
+## Inactive scoped-review implementation, September 22
+
+The owner subsequently directed proceeding with the fix. Implemented
+`generated-report-scoped-review-v1.8` behind
+`GENERATED_REPORT_REVIEW_MODE=scoped`; default and production remain combined.
+This is an implementation authorization, not approval of new prose, a change
+in editorial standards, a new billed-call allowance, or proof of calibration.
+
+Facts and writing use separate provider requests and score/finding enums. The
+facts packet omits owner passages and editorial feedback; writing gets approved
+reader meaning and the existing governed comparison set, not the technical
+inventory. Exact source excerpts preserve rubric wording and source hashes.
+Writing findings require an exact complete paragraph and reader consequence.
+The nine-score aggregate retains 0.85 and all existing floors and blocking
+findings. Both results must match the immutable reader draft. Correction and
+cleanup trigger both reviews again; final saved audits contain both request,
+response and draft hashes plus provider usage.
+
+Recovery selects the actual family-specific writer schema and then the latest
+combined/facts/writing reviews. Scoped findings must match the latest normalized
+visible draft hash. An unrelated model response cannot become a writer draft;
+an old review cannot diagnose a newer unreviewed revision. The experimental
+mode permits at most two calls to each reviewer and five writer calls, nine
+steps total; default mode retains seven. The new migration was created with
+the locally cached Supabase CLI and changes only the step constraint from 0–6
+to 0–8. It has not been applied to production. The CLI's create-migration help
+was checked. The current Supabase changelog was inspected; listed breaking
+changes do not affect the existing equality-filtered Data API reads used here.
+No auth, RLS, grants, provider versions, or source approval states changed.
+
+Offline verification passed:
+
+- `test-transit-reading-scoped-review.mts`: actual governed pre-call kernel,
+  strict schemas, full-context evidence, wrong-draft rejection, daily/weekly/
+  Friends request separation, correction-induced factual regression, malformed
+  review handling, bounded nine-step recovery, role ceilings, replay, yield and
+  previous-attempt retrieval. HTTP and storage are synthetic; no paid calls.
+- `test-transit-report-delivery.mjs`: all 48 existing pipeline cases pass in
+  combined mode and all 48 pass with `--scoped`, including persistence, reader
+  opening/ending, ownership, failure states, deletion and retry. These are
+  fixtures against actual pipeline/reader code, not a live browser claim.
+- `test-transit-reading-scoped-migration.mjs`: executes the actual migration
+  against isolated PGlite PostgreSQL; slots 7/8 succeed, 9 and negative fail,
+  saved rows remain byte-equivalent and reapplication succeeds.
+- Existing checkpoint, correction, judge-governance, breadth, runtime-asset and
+  27 reader-contract checks pass; targeted report/lifecycle TypeScript passes.
+- `npm run test:content-studio-api` passes. Its local Vite socket emits the
+  sandbox EPERM warning after the successful contract result; no deployed CRUD
+  claim is made. Privacy scan and `git diff --check` pass.
+
+CI now runs the scoped delivery, migration and protected-corpus integration
+regressions. No protected source text or prepared paid payload is committed.
+Memory was refreshed after a successful fetch to `a62a1b04` (main); applicable
+required context is unchanged. The new technical proposal stays outside active
+owner-evidence indexing. No invented approval or candidate feedback was added.
+
+A separate protected eight-call development batch is prepared: facts and
+writing on each of the same four frozen controls, same judge model, no new
+writing, retries, votes or release. It is not authorized or dispatched. Prior
+usage remains 34 calls / $1.596117, with all call allowances exhausted. Maximum
+additional reservation is $1.328424 and maximum aggregate is $2.924541 under
+the existing $5 ceiling. Frozen-request/hash checks, prior-ledger integrity,
+eight-call and dollar bounds, duplicate/uncertain-outcome stops and refusal
+before authorization all pass offline. The candidate must still demonstrate
+owner agreement, then pass unseen daily/weekly/Friends calibration and real
+app verification before activation. Existing development controls are not
+held-out evidence, and the relative weekly preference is not an absolute
+negative label.

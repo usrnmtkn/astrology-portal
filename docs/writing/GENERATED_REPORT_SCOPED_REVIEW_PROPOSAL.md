@@ -1,6 +1,9 @@
 # Generated-report scoped review proposal
 
-Status: proposed; not implemented, activated, or proven. Source: owner task
+Status: implemented as an inactive experimental path; not activated or proven.
+The owner's subsequent “pleaes proceed with fix” authorizes this implementation
+and offline verification, not additional paid calls or automatic release.
+Source: owner task
 `thread:01a0c440-92d0-7822-bda6-af3338840786`, September 22, 2026. The owner asked
 whether there should be two judges after the frozen v1.7 calibration began.
 The [calibration record](../qa/report-validation-recovery-2026-09-22.md)
@@ -101,8 +104,10 @@ or treat a calibrated reviewer as proof that new writing is good.
    feedback process; freeze separate evaluation cases and exact paid inputs.
 3. Run a bounded comparison against the combined reviewer, inspect every
    disagreement, and decide whether to retain the split.
-4. Only after that evidence, integrate the scoped reviews into the existing
-   writer/correction path and verify real app generation and retrieval.
+4. Only after that evidence, activate the implemented integration and verify
+   real app generation and retrieval. The offline integration and fixtures were
+   built first so calibration exercises the intended correction and checkpoint
+   design. That implementation is not itself approval to activate it.
 
 Do not promise a release date before step 3. Role separation addresses
 diagnostic scope; whether it repairs editorial judgment is still unproven.

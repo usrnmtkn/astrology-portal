@@ -22,3 +22,39 @@ The shared `TLDR-GENERATED-REPORT-BREADTH-AND-VOICE-V1.md` contract is loaded in
 Draft Review feedback is stored in `generated_report_owner_feedback` as `candidate` by default. Candidate and rejected feedback never enters future writer or judge calls. The owner must explicitly choose **Approve as owner evidence**, supply the governed evidence wording, and choose its scope. Only approved `governed_evidence_text` is loaded into future generated-report packets.
 
 Existing completed Friends/You reports are grandfathered and are not retroactively re-judged.
+
+## Experimental scoped review (inactive)
+
+The September 22 repair implements an opt-in candidate under
+`GENERATED_REPORT_REVIEW_MODE=scoped`. The default remains `combined`. It has
+not passed live editorial calibration and is not approved for activation.
+The candidate assigns astrology/chronology and factual traceability to the
+facts reviewer; the writing reviewer owns the other seven scores. Each
+reviewer has a separate prompt, schema, checkpoint and receipt tied to the
+same exact reader-visible draft. Neither receives the other's judgment.
+The facts packet excludes owner prose exemplars. The writing packet includes
+approved reader meaning, not the technical inventory, and requires complete
+paragraph context plus the reader consequence for each finding.
+
+The existing threshold, category floors and blocking findings still apply.
+The runtime assembles the nine separately owned scores; it does not average
+two competing opinions. Missing, malformed or wrong-draft output is an
+evaluation failure, not a diagnosis that the writing failed.
+
+This mode uses two review calls per round and at most two rounds per logical
+attempt: four review calls plus the existing maximum five writer calls.
+Corrections invalidate both reviews. Each reviewer has a two-call ceiling;
+unused writer or review slots cannot be transferred to another role. The
+default combined mode retains seven total steps. The prepared migration
+`20260922215546_transit_report_scoped_review_steps.sql` permits slots 0–8 and
+must be applied and verified before scoped activation. It changes no stored
+draft, response, ownership, permission, or approval status. No production
+environment setting or database migration has been applied by this repair.
+
+Activation requires the separate calibration and release review described in
+[the scoped-review proposal](writing/GENERATED_REPORT_SCOPED_REVIEW_PROPOSAL.md),
+including the increased per-job cost, held-out owner-labeled cases, real
+daily/weekly/Friends runs and saved-reader verification. Offline fixture
+passes alone do not authorize activation. Switch modes only for new reviewed
+attempts; existing checkpoints reject changed request hashes instead of
+silently reusing a judgment made under another mode.

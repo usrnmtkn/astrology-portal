@@ -1,4 +1,5 @@
-import { checkpointTransitReadingModel } from "./transit-reading-checkpoints.js";
+import { checkpointTransitReadingModel, transitReadingModelRequestHash } from "./transit-reading-checkpoints.js";
+import { SCOPED_REVIEW_SCHEMAS, type TransitReadingReviewScope } from "./transit-reading-review-contract.js";
 import { transitReadingOwnerVoice, transitReadingOwnerVoicePrompt, assertTransitReadingOwnerVoice, transitReadingVoiceContext } from "./transit-reading-owner-voice.js";
 import {
   callReportCalibrationModel,
@@ -95,20 +96,27 @@ export async function callGovernedTransitReadingModel<T>(input: {
   prompt: string;
   schemaName: string;
   schema: Record<string, unknown>;
+  reviewScope?: TransitReadingReviewScope;
   validateResponse?: (value: T) => void;
-}): Promise<ReportModelResult<T>> {
+}): Promise<ReportModelResult<T> & { requestSha256: string }> {
   assertTransitReadingProductionKernel(input.kernel);
-  const ownerVoicePrompt = transitReadingOwnerVoicePrompt(input.kernel.ownerVoice,
+  if (input.reviewScope && (input.kernel.role !== "REVIEWER" || input.schemaName !== SCOPED_REVIEW_SCHEMAS[input.reviewScope])) {
+    throw new Error("Scoped review requires the corresponding reviewer schema.");
+  }
+  const ownerVoicePrompt = input.reviewScope === "facts" ? "" : transitReadingOwnerVoicePrompt(input.kernel.ownerVoice,
     transitReadingVoiceContext(input.kernel.input.facts, input.kernel.input.surface));
-  return checkpointTransitReadingModel<T>({
+  const request = {
     provider: input.provider,
     model: input.model,
-    prompt: `${input.prompt}\n\n${ownerVoicePrompt}`,
+    prompt: ownerVoicePrompt ? `${input.prompt}\n\n${ownerVoicePrompt}` : input.prompt,
     schemaName: input.schemaName,
     schema: input.schema,
     validateResponse: input.validateResponse,
+    ...(input.reviewScope ? { disableFallback: true } : {}),
     beforeProviderCall: async () => {
       assertTransitReadingProductionKernel(input.kernel);
     }
-  }, callReportCalibrationModel);
+  };
+  const response = await checkpointTransitReadingModel<T>(request, callReportCalibrationModel);
+  return { ...response, requestSha256: transitReadingModelRequestHash(request) };
 }

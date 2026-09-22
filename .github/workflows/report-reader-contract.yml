@@ -6,6 +6,7 @@ on:
       - 'api/_lib/**'
       - 'scripts/test-*report*'
       - 'scripts/test-*transit*'
+      - 'apps/web/supabase/migrations/*transit_report*'
       - 'src/astro-writing/**'
       - 'tldr-astro-phrasebank/**'
       - 'apps/web/src/components/reports/**'
@@ -21,6 +22,7 @@ on:
       - 'api/_lib/**'
       - 'scripts/test-*report*'
       - 'scripts/test-*transit*'
+      - 'apps/web/supabase/migrations/*transit_report*'
       - 'src/astro-writing/**'
       - 'tldr-astro-phrasebank/**'
       - 'apps/web/src/components/reports/**'
@@ -60,6 +62,8 @@ jobs:
           node --import tsx --test scripts/test-report-reader-contract.mts
           node --import tsx scripts/test-transit-reading-checkpoints.mts
           node --import tsx scripts/test-transit-report-delivery.mjs
+          node --import tsx scripts/test-transit-report-delivery.mjs --scoped
+          node scripts/test-transit-reading-scoped-migration.mjs
           node --import tsx scripts/test-you-report-paid-lifecycle.mts
           node --import tsx scripts/test-you-report-quality-floor.mts
           node scripts/test-you-report-source-handoff.mjs
@@ -79,6 +83,7 @@ jobs:
           node --import tsx scripts/test-generated-report-correction.mjs
           node --import tsx scripts/test-generated-report-breadth.mjs
           node --import tsx scripts/test-generated-report-owner-corpus.mjs
+          node --import tsx scripts/test-transit-reading-scoped-review.mts
       - run: npm run typecheck
       - run: npm run build:web
 
