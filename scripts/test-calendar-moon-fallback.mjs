@@ -248,6 +248,7 @@ assert.match(
 assert.equal(calendarSeasonTransitionVariantIndex({ surface: "leftover", daysUntilSeasonEnd: 3, fromSign: "Virgo" }), 0);
 assert.equal(calendarSeasonTransitionVariantIndex({ surface: "leftover", daysUntilSeasonEnd: 2, fromSign: "Virgo" }), 4);
 assert.equal(calendarSeasonTransitionVariantIndex({ surface: "leftover", daysUntilSeasonEnd: 1, fromSign: "Virgo" }), 3);
+assert.equal(calendarSeasonTransitionVariantIndex({ surface: "daily-sky", daysUntilSeasonEnd: 0 }), 0);
 assert.equal(calendarSeasonTransitionVariantIndex({ surface: "daily-sky", daysUntilSeasonEnd: 3 }), 1);
 assert.equal(calendarSeasonTransitionVariantIndex({ surface: "daily-sky", daysUntilSeasonEnd: 2 }), 0);
 assert.equal(calendarSeasonTransitionVariantIndex({ surface: "daily-sky", daysUntilSeasonEnd: 1 }), 2);

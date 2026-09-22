@@ -15,6 +15,8 @@ export function currentSkySummaryWording(key: string, body: string): string {
   // Owner correction (2026-09-10): name the Moon's sign even when it matches
   // the Sun. Upgrade only the former built-in template saved by older editors.
   if (part === "assembly/openingSameSign" && body.trim() === "The {sunName} in {sunSign}{sunDegree} {sunSummary}, while the {moonName} there{moonDegree} {moonSummary}.") return assembly.openingSameSign;
+  if (part === "assembly/sunIngressBefore" && body.trim() === "The Sun is in {fromSign} until {transitionTime} today, when it enters {toSign}.") return assembly.sunIngressBefore;
+  if (part === "assembly/sunIngressAfter" && body.trim() === "The Sun entered {toSign} at {transitionTime} today, ending {fromSign} season.") return assembly.sunIngressAfter;
   const assemblyName = part.replace(/^assembly\//u, "") as keyof typeof legacyAssembly;
   if (part === "assembly/layout" && [
     "{openingSentence} {voidSentence}\n\n{ingressesSentence} {stationsSentence}\n\n{exactAspectsSentence}\n\n{currentRetrogradesSentence}\n\n{lunationSentence}",

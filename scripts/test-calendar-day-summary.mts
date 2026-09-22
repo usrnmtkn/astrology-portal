@@ -38,8 +38,9 @@ console.log('Calendar Sun introduction: shared complete source, calculated degre
 
 const ingress = { id: 'ingress-sun-2026-09-23T00:05:14.000Z', type: 'ingress', planet: 'Sun',
   fromSign: 'Virgo', toSign: 'Libra', startsAt: '2026-09-23T00:05:14Z', dateKey: '2026-09-23' } as any;
+const transitionBridge = "After a month of working on the routines and details that keep life functioning, we turn toward how that work is divided between people. Libra season brings attention to the agreements behind those habits, including the ones nobody remembers making.";
 for (const [asOf, phase, sign, expected] of [
-  ['2026-09-22T18:52:00Z', 'before', 'Virgo', 'The Sun is in Virgo until 8:05 PM EDT today, when it enters Libra.'],
+  ['2026-09-22T18:52:00Z', 'before', 'Virgo', 'The Sun is in Virgo at 19° until 8:05 PM EDT today, when it enters Libra.'],
   ['2026-09-23T00:05:14Z', 'after', 'Libra', 'The Sun entered Libra at 8:05 PM EDT today, ending Virgo season.']
 ]) {
   const snapshot = { ...sky, generatedAt: asOf, positions: [{ ...sky.positions[0], sign }] };
@@ -47,17 +48,25 @@ for (const [asOf, phase, sign, expected] of [
   assert.equal(transition?.phase, phase);
   const parts = calendarSunSummary(snapshot, undefined, [ingress]);
   assert.ok(text(parts).startsWith(expected));
+  assert.ok(text(parts).includes(transitionBridge));
+  assert.equal(parts.find(part => part.sourceKey === 'authored/calendar-season-transition/virgo/libra')?.text.trim(), transitionBridge);
+  assert.equal(text(parts).includes('turns our attention to the daily rituals'), false, 'Transition day replaces the ordinary Sun summary');
   assert.equal(parts.find(part => part.action === 'event')?.eventId, ingress.id);
   const shared = skyDailySummaryParts({ sun: snapshot.positions[0], moonIsVoid: false, sunTransition: transition,
     ...skySummaryEventFacts([ingress], new Map()) });
   assert.equal(text(parts), text(shared), 'Sky and Calendar share the entire transition opening');
   assert.equal(text(shared).includes('Sun enters Libra today.'), false, 'No duplicate untimed ingress sentence');
   const sourceKey = `cms/sky-daily-summary/assembly/sunIngress${phase === 'before' ? 'Before' : 'After'}`;
-  const template = '{fromSign} → {toSign}: {transitionTime}.';
+  const template = phase === 'before'
+    ? '{sunTransitionPlacementLink} → {toSign}: {transitionTime}.'
+    : '{sunTransitionPlacementLink}: {fromSign} → {toSign}: {transitionTime}.';
   assert.deepEqual(skySummaryTemplateErrors(sourceKey, template), []);
   assert.ok(skySummaryTemplateErrors(sourceKey, template.replace('{transitionTime}', '8 PM')).length);
   const custom = new Map([[sourceKey, { body: template, status: 'LIVE' } as any]]);
-  assert.ok(text(calendarSunSummary(snapshot, custom, [ingress])).startsWith('Virgo → Libra: 8:05 PM EDT.'));
+  const customOpening = phase === 'before'
+    ? `Sun is in ${sign} at 19° → Libra: 8:05 PM EDT.`
+    : `Sun is in ${sign} at 19°: Virgo → Libra: 8:05 PM EDT.`;
+  assert.ok(text(calendarSunSummary(snapshot, custom, [ingress])).startsWith(customOpening));
   assert.equal(text(calendarSunSummary(snapshot, new Map([[sourceKey, { ...custom.get(sourceKey), status: 'DRAFT' } as any]]), [ingress])), text(parts));
 }
 assert.equal(skySunTransition([ingress], '2026-09-22T18:52:00Z', 'UTC'), undefined, 'UTC ingress is tomorrow');
@@ -65,8 +74,19 @@ assert.equal(skySunTransition([ingress], '2026-09-24T00:00:00Z', location.timeZo
 assert.equal(skySunTransition([ingress], 'invalid', location.timeZone), undefined);
 assert.equal(skySunTransition([{ ...ingress, startsAt: 'invalid' }], sky.generatedAt, location.timeZone), undefined);
 assert.equal(skySunTransition([ingress], '2026-09-23T00:04:00Z', 'Asia/Tokyo')?.time, '9:05 AM GMT+9');
+const approvedTransition = skyDailySummaryParts({
+  sun: { sign: 'Virgo', degree: 29 },
+  moon: { sign: 'Aquarius', degree: 14 },
+  moonIsVoid: false,
+  sunTransition: skySunTransition([ingress], '2026-09-22T18:52:00Z', location.timeZone)
+});
+assert.equal(
+  text(approvedTransition),
+  "The Sun is in Virgo at 29° until 8:05 PM EDT today, when it enters Libra. After a month of working on the routines and details that keep life functioning, we turn toward how that work is divided between people. Libra season brings attention to the agreements behind those habits, including the ones nobody remembers making. The Moon in Aquarius at 14° reminds us that truth is not always comfortable, but it is necessary."
+);
 const concurrentLunation = skyDailySummaryParts({ sun: { sign: 'Virgo', degree: 29 }, moonIsVoid: false,
   sunTransition: skySunTransition([ingress], '2026-09-22T18:52:00Z', location.timeZone),
   event: { name: 'Full Moon', sign: 'Aries', sun: { sign: 'Libra', degree: 0 }, isToday: true, countdown: 'today' } });
-assert.equal(concurrentLunation.find(part => part.action === 'sun')?.text, 'Sun in Virgo at 29°', 'Event-time lunation facts must not advance the current Sun before its transition');
+assert.equal(concurrentLunation.find(part => part.action === 'sun')?.text, 'Sun is in Virgo at 29°', 'Event-time lunation facts must not advance the current Sun before its transition');
+assert.ok(text(concurrentLunation).includes(transitionBridge), 'A same-day lunation keeps the base Ends bridge');
 console.log('Sun transition: shared before/after template, local day/time, event link, publication and missing-fact checks passed.');
