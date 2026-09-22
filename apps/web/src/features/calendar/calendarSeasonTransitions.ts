@@ -162,6 +162,7 @@ export function calendarSeasonTransitionVariantIndex(input: {
 }) {
   const days = input.daysUntilSeasonEnd == null ? 0 : input.daysUntilSeasonEnd;
   if (input.surface === "daily-sky") {
+    if (days === 0) return 0;
     return ((days + 1) % 3 + 3) % 3;
   }
   if (days % 3 === 0) return 0;
