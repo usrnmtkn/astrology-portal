@@ -11992,6 +11992,12 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
       setCurrentLocalDate(nextCurrentLocalDate);
 
       if (followsCurrentTransitDateRef.current) {
+        // Calendar owns its selected day. A browser-zone midnight must not move
+        // its Sky snapshot to another day or drop that selection on reload.
+        if (mode === "calendar") {
+          updateTransitDateUrl(skyDateRef.current, "replace");
+          return;
+        }
         skyDateRef.current = nextCurrentLocalDate;
         setSkyDate(nextCurrentLocalDate);
         updateTransitDateUrl(nextCurrentLocalDate, "replace");
@@ -12021,7 +12027,7 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
       document.removeEventListener("visibilitychange", handleVisibilityChange);
       window.removeEventListener("focus", handleWindowFocus);
     };
-  }, []);
+  }, [mode]);
 
   useEffect(() => {
     // A calculation/content update can queue this effect just before a hash

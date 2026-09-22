@@ -1,6 +1,9 @@
 import { expect, test } from '@playwright/test';
 import { bundledPublications } from '../helpers/bundled-publications';
 
+// The browser crosses UTC midnight during the New York evening ingress.
+test.use({ timezoneId: 'UTC' });
+
 const location = { label: 'New York, NY', latitude: 40.7128, longitude: -74.006, timeZone: 'America/New_York' };
 const typography = (element: Element) => {
   const style = getComputedStyle(element);
@@ -64,6 +67,7 @@ for (const scenario of [
     await expect(badge).toContainText('Libra season');
     await expect(panel.locator('.calendar-sky-card__meta')).toContainText('Libra season');
     await expect(title).toHaveText('Libra Season');
+    await expect(page).toHaveURL(new RegExp(`date=${scenario.date}`));
     expect(await title.evaluate(typography)).toEqual(beforeTypography);
     await panel.locator('.calendar-sky-card').screenshot({ path: `test-results/season-after-${scenario.width}-${scenario.theme}.png` });
     await page.reload();

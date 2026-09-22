@@ -31,3 +31,10 @@ Verification:
   scan pass. The full local Content Studio API contract passes.
 
 The PR records the tested head, exact-head CI gate and deployed-main verification.
+
+Production verification also exposed an independent browser-midnight rollover:
+with a UTC browser and New York selected, the outer app advanced Sky to September
+23 while Calendar still displayed September 22. Calendar now preserves its
+selected Sky date and persists it in the reload URL during rollover; the other
+live Today surfaces retain their existing advancement. The season browser suite
+explicitly runs in UTC to exercise this evening/local-date crossover.
