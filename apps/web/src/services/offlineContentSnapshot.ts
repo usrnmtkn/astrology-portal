@@ -37,7 +37,7 @@ export async function loadOfflineContentRows(): Promise<GeneratedContentRow[]> {
         const response = await fetch("/content-studio-last-known-good.json", { cache: "no-cache", signal: AbortSignal.timeout(8000) });
         if (!response.ok) return [];
         const snapshot = await response.json() as { schema?: unknown; rowCount?: unknown; rows?: unknown; publications?: unknown };
-        if (snapshot.schema !== "content-studio-last-known-good-v1" || !Array.isArray(snapshot.rows)
+        if (snapshot.schema !== "content-studio-last-known-good-v2" || !Array.isArray(snapshot.rows)
           || snapshot.rowCount !== snapshot.rows.length) return [];
         if (Array.isArray(snapshot.publications)) {
           await installOfflineContentSnapshot(snapshot.rows, snapshot.publications);

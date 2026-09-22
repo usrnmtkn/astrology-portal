@@ -1,3 +1,4 @@
+import { GeneratedRowWriteConflict, confirmedGeneratedRowWrite } from "./generated-row-writes.js";
 import { studioArticleWritingMemory } from './studio-article-memory.js';
 import { transitReadingOwnerVoice, transitReadingOwnerVoicePrompt } from "./transit-reading-owner-voice.js";
 import fs from "node:fs";
@@ -6069,6 +6070,18 @@ export async function generateContent(input: GenerateContentInput): Promise<Stor
   throw new Error(`Unsupported content generation provider '${provider}'. Use 'openai' or 'claude'.`);
 }
 
+export async function assertNewGeneratedInterpretation(input: GenerateContentInput) {
+  const url = process.env.SUPABASE_URL ?? requireEnv("VITE_SUPABASE_URL");
+  const key = requireEnv("SUPABASE_SERVICE_ROLE_KEY");
+  const params = new URLSearchParams({ select: "id", content_key: `eq.${input.contentKey}`, mode: `eq.${input.mode}`,
+    target_date: input.targetDate ? `eq.${input.targetDate}` : "is.null", limit: "1" });
+  const response = await fetch(`${url}/rest/v1/generated_interpretations?${params}`, { headers: { apikey: key, authorization: `Bearer ${key}` } });
+  if (!response.ok) throw new Error("Existing writing could not be checked before generation.");
+  const rows = await response.json();
+  if (!Array.isArray(rows)) throw new Error("Existing writing returned an invalid response.");
+  if (rows.length) throw new GeneratedRowWriteConflict();
+}
+
 export async function saveGeneratedInterpretation(input: GenerateContentInput, generated: StoredGeneratedContent) {
   const supabaseUrl = process.env.SUPABASE_URL ?? requireEnv("VITE_SUPABASE_URL");
   const serviceRoleKey = requireEnv("SUPABASE_SERVICE_ROLE_KEY");
@@ -6084,7 +6097,7 @@ export async function saveGeneratedInterpretation(input: GenerateContentInput, g
       apikey: serviceRoleKey,
       authorization: `Bearer ${serviceRoleKey}`,
       "content-type": "application/json",
-      prefer: "resolution=merge-duplicates,return=representation"
+      prefer: "resolution=ignore-duplicates,return=representation"
     },
     body: JSON.stringify({
       content_key: input.contentKey,
@@ -6120,13 +6133,7 @@ export async function saveGeneratedInterpretation(input: GenerateContentInput, g
     })
   });
 
-  const payload = await response.json().catch(() => null);
-
-  if (!response.ok) {
-    throw new Error(`Supabase save failed with ${response.status}: ${JSON.stringify(payload)}`);
-  }
-
-  return payload;
+  return confirmedGeneratedRowWrite(response);
 }
 
 export function loadSkySourceSnapshot() {

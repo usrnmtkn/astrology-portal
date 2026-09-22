@@ -1,4 +1,4 @@
-import { timingSafeEqual } from "node:crypto";
+import { createHash, timingSafeEqual } from "node:crypto";
 import type { IncomingMessage } from "node:http";
 
 export const CONTENT_ADMIN_SECRET_HEADER = "x-content-generation-secret";
@@ -57,35 +57,49 @@ function configuredOwnerEmails() {
   );
 }
 
-async function hasVerifiedAdminIdentity(req: IncomingMessage, fetchImpl: typeof fetch) {
+async function verifiedAdminPrincipal(req: IncomingMessage, fetchImpl: typeof fetch) {
   const token = sessionToken(req);
   const { url, key } = supabaseAuthConfig();
-  if (!token || !url || !key) return false;
+  if (!token || !url || !key) return null;
 
   try {
     const response = await fetchImpl(`${url}/auth/v1/user`, {
       headers: { apikey: key, authorization: `Bearer ${token}` }
     });
     const payload = await response.json().catch(() => null) as {
-      email?: unknown;
+      id?: unknown; email?: unknown;
       app_metadata?: { role?: unknown };
-      user?: { email?: unknown; app_metadata?: { role?: unknown } };
+      user?: { id?: unknown; email?: unknown; app_metadata?: { role?: unknown } };
     } | null;
     const role = payload?.app_metadata?.role ?? payload?.user?.app_metadata?.role;
     const email = payload?.email ?? payload?.user?.email;
     const verifiedEmail = typeof email === "string" ? email.trim().toLowerCase() : "";
-    return response.ok && (
+    const allowed = response.ok && (
       role === "admin"
       || (verifiedEmail !== "" && configuredOwnerEmails().has(verifiedEmail))
     );
+    if (!allowed) return null;
+    const id = payload?.id ?? payload?.user?.id;
+    return typeof id === "string" && id.trim() ? `user:${id}` : verifiedEmail ? `owner:${createHash("sha256").update(verifiedEmail).digest("hex")}` : null;
   } catch {
-    return false;
+    return null;
   }
 }
 
-export async function isContentAdminAuthorized(req: IncomingMessage, fetchImpl: typeof fetch = fetch) {
+const verifiedPrincipals = new WeakMap<IncomingMessage, string>();
+
+export async function getContentAdminPrincipal(req: IncomingMessage, fetchImpl: typeof fetch = fetch): Promise<string | null> {
+  const cached = verifiedPrincipals.get(req);
+  if (cached) return cached;
   const expected = normalizeSecret(process.env.CONTENT_GENERATION_SECRET);
-  if (expected && suppliedSecrets(req).some((supplied) => secretsMatch(supplied, expected))) return true;
-  if (!expected && process.env.NODE_ENV !== "production" && !sessionToken(req)) return true;
-  return hasVerifiedAdminIdentity(req, fetchImpl);
+  const principal = expected && suppliedSecrets(req).some(supplied => secretsMatch(supplied, expected))
+    ? "content-admin-secret"
+    : !expected && process.env.NODE_ENV !== "production" && !sessionToken(req)
+      ? "local-development" : await verifiedAdminPrincipal(req, fetchImpl);
+  if (principal) verifiedPrincipals.set(req, principal);
+  return principal;
+}
+
+export async function isContentAdminAuthorized(req: IncomingMessage, fetchImpl: typeof fetch = fetch) {
+  return Boolean(await getContentAdminPrincipal(req, fetchImpl));
 }

@@ -1,7 +1,8 @@
 import type { Page } from '@playwright/test';
+import { readerResponse } from './reader-response';
 
 const emptySnapshot = {
-  schema: 'content-studio-last-known-good-v1',
+  schema: 'content-studio-last-known-good-v2',
   rowCount: 0,
   rows: [],
   publications: []
@@ -15,7 +16,7 @@ export async function emptyLastKnownGoodSnapshot(page: Page) {
 /** These typography/calculation fixtures select the bundled corpus. Resolve an
  * explicitly empty remote plane; DNS failure is not proof of no publication. */
 export async function bundledPublications(page: Page) {
+  await page.route('**/api/content-reader', route => route.fulfill({ json: readerResponse([]) }));
   await page.route('**/rest/v1/**', route => route.fulfill({ json: [] }));
   await emptyLastKnownGoodSnapshot(page);
 }
-

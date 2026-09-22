@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+import { projectReaderRow, READER_ROW_SCHEMA } from "../apps/web/src/content/readerRowProjection.mjs";
 import { correctedReaderSummary } from "../apps/web/src/content/fallbackArchitectureV3/readerSummaryReferenceCorrections.mjs";
 import { loadPrivacyPolicy, privateSafeExport } from "./lib/privacy-policy.mjs";
 import fs from "node:fs";
@@ -83,40 +84,24 @@ function durableRow(row) {
   return true;
 }
 
-const select = "id,content_key,surface,mode,status,lane,review_state,event_type,target_date,facts,source_snapshot,headline,summary,body,sections,block_type,flags,provider,judge_score,judge_gate,model,updated_at";
+const readerUrl = process.env.CONTENT_READER_URL ?? "https://tldrastro.vercel.app/api/content-reader";
 const rows = [];
 let cursor = null;
-// Wide source records can exceed PostgREST's statement deadline in larger pages.
-const pageSize = 20;
-const maxPages = 1000;
+const maxPages = 200;
 for (let page = 0; page < maxPages; page += 1) {
-  const url = new URL(`${supabaseUrl}/rest/v1/generated_interpretations`);
-  url.searchParams.set("select", select);
-  url.searchParams.set("status", "eq.LIVE");
-  url.searchParams.set("lane", "eq.serving");
-  url.searchParams.set("review_state", "is.null");
-  url.searchParams.set("target_date", "is.null");
-  url.searchParams.set("order", "id.asc");
-  url.searchParams.set("limit", String(pageSize));
-  if (cursor) url.searchParams.set("id", `gt.${cursor}`);
-  const response = await fetch(url, {
-    headers: {
-      apikey: publishableKey,
-      authorization: `Bearer ${publishableKey}`
-    }
+  const response = await fetch(readerUrl, {
+    method: "POST", headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(cursor ? { afterId: cursor } : {}), signal: AbortSignal.timeout(20000)
   });
-  if (!response.ok) throw new Error(`Snapshot query failed (${response.status}): ${await response.text()}`);
-  const pageRows = await response.json();
-  if (!Array.isArray(pageRows)) throw new Error("Snapshot query returned a non-array payload.");
-  rows.push(...pageRows);
-  const lastId = pageRows.at(-1)?.id ?? null;
-  if (pageRows.length < pageSize) {
-    cursor = null;
-    break;
-  }
-  if (!lastId) throw new Error("Snapshot pagination did not return a stable id cursor.");
-  cursor = lastId;
-  if (page === maxPages - 1) throw new Error("Snapshot pagination hit its safety page limit; refusing a partial snapshot.");
+  if (!response.ok) throw new Error(`Reader snapshot query failed (${response.status}).`);
+  const payload = await response.json();
+  if (payload.schema !== READER_ROW_SCHEMA || !Array.isArray(payload.rows)
+    || !(payload.nextCursor === null || typeof payload.nextCursor === "string")) throw new Error("Invalid reader snapshot response.");
+  rows.push(...payload.rows);
+  if (payload.nextCursor === null) break;
+  if (cursor && payload.nextCursor <= cursor) throw new Error("Snapshot pagination did not advance.");
+  cursor = payload.nextCursor;
+  if (page === maxPages - 1) throw new Error("Snapshot pagination hit its safety limit; refusing a partial snapshot.");
 }
 
 // Export the same durable lifecycle records used by Studio and the reader.
@@ -156,12 +141,9 @@ const candidates = rows.filter(durableRow).filter(isCurrentPublication).sort((a,
 });
 const newest = new Map();
 for (const row of candidates) if (!newest.has(row.content_key)) newest.set(row.content_key, row);
-const snapshotRows = [...newest.values()].map((source) => {
-  const row = { ...source, summary: correctedReaderSummary(source.content_key, source.summary) };
-  if (!isRecord(row.sections) || !("calendarReleaseHistory" in row.sections)) return row;
-  const { calendarReleaseHistory: _adminRecoveryHistory, ...sections } = row.sections;
-  return { ...row, sections };
-}).sort((a, b) => String(a.content_key).localeCompare(String(b.content_key)));
+const snapshotRows = [...newest.values()].map((source) => projectReaderRow({
+  ...source, summary: correctedReaderSummary(source.content_key, source.summary)
+})).filter(Boolean).sort((a, b) => String(a.content_key).localeCompare(String(b.content_key)));
 if (snapshotRows.length < 100) throw new Error(`Refusing implausibly small last-known-good snapshot (${snapshotRows.length} rows).`);
 
 let previous = null;
@@ -178,7 +160,7 @@ if (
 
 const sourceRevision = snapshotRows.reduce((latest, row) => row.updated_at > latest ? row.updated_at : latest, "");
 const snapshot = {
-  schema: "content-studio-last-known-good-v1",
+  schema: "content-studio-last-known-good-v2",
   sourceRevision,
   publications,
   rowCount: snapshotRows.length,

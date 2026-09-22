@@ -1,3 +1,4 @@
+import { readerResponse } from '../helpers/reader-response';
 import { test, expect } from '@playwright/test';
 import { studioApiStore } from '../helpers/studio-api-store';
 import { routeStudioInventoryApi } from '../helpers/studio-inventory-route';
@@ -25,13 +26,12 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
         localStorage.setItem('tldrastro:studio-theme', theme);
         localStorage.setItem('tldrastro:theme', theme);
       }, theme);
-      await context.route('**/rest/v1/**', async route => {
-        if (!route.request().url().includes('/generated_interpretations')) return route.fulfill({ json: [] });
-        const url = new URL(route.request().url());
-        expect(url.searchParams.get('status')).toBe('eq.LIVE');
-        expect(url.searchParams.get('lane')).toBe('eq.serving');
-        expect(url.searchParams.get('review_state')).toBe('is.null');
-        return route.fulfill({ json: (await store.call({ method: 'rows' })).filter(astro101IsLiveOnLearn) });
+      await context.route('**/rest/v1/**', route => route.fulfill({ json: [] }));
+      await context.route('**/api/content-reader', async route => {
+        const query = route.request().postDataJSON();
+        if (query.prefix !== 'education/astro-101/') return route.fulfill({ json: readerResponse([]) });
+        expect(query.surfaces).toEqual(['education']);
+        return route.fulfill({ json: readerResponse((await store.call({ method: 'rows' })).filter(astro101IsLiveOnLearn)) });
       });
       await routeStudioInventoryApi(page, { call: store.call, answer: async (route, url) => {
         if (url.pathname !== '/api/admin/content-live-status') return false;

@@ -1,4 +1,5 @@
-#!/usr/bin/env node
+import { publicationRpcFixture } from "../tests/helpers/studio-publication-rpc.mjs";
+import { readerRouteResponse, fixturePublications } from "../tests/helpers/content-reader-route.mjs";
 import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
 import os from "node:os";
@@ -126,12 +127,16 @@ function matchesFilter(params, name, value) {
   throw new Error(`Unhandled test filter ${name}=${filter}`);
 }
 
+const atomicPublication = publicationRpcFixture(() => [row, ...compatibilitySupportRows], saved => { const target=saved.find(item=>item.id===row.id); if(target) row={...row,...target}; });
 globalThis.fetch = async (input, init = {}) => {
+  const operation = await atomicPublication(input, init); if (operation) return operation;
+  const reader = await readerRouteResponse(input, init); if (reader) return reader;
   const url = new URL(String(input));
   const method = init.method ?? "GET";
   requests.push({ method, url: url.toString() });
 
   assert.equal(url.origin, "https://content-studio-api-test.invalid");
+  if (url.pathname === "/rest/v1/content_publications") return Response.json(fixturePublications([row, ...compatibilitySupportRows]));
   assert.equal(url.pathname, "/rest/v1/generated_interpretations");
 
   if (method === "PATCH") {
@@ -183,6 +188,11 @@ globalThis.fetch = async (input, init = {}) => {
 };
 
 function apiRequest(method, url, body, secret = "content-studio-api-test-secret") {
+  // Existing cases model an editor with the currently loaded baseline. Explicit
+  // stale versions remain unchanged; missing versions have a dedicated suite.
+  if (method === "PATCH" && body && !Object.hasOwn(body, "expectedUpdatedAt")) body = { ...body, expectedUpdatedAt: row.updated_at };
+  if (method === "DELETE" && !url.includes('expectedUpdatedAt=')) url += `&expectedUpdatedAt=${encodeURIComponent(row.updated_at)}`;
+
   const req = body === undefined
     ? Readable.from([])
     : Readable.from([JSON.stringify(body)]);
@@ -870,13 +880,14 @@ for (const body of ["QA edit after restore.", "QA second edit after restore."]) 
   assert.equal(result.status, 200);
   assert.equal(row.body, body);
 }
-const staleDelete = await invokeApi("DELETE", `/api/admin/generated-content?id=${row.id}&expectedUpdatedAt=2000-01-01`);
+const staleDelete = await invokeApi("DELETE", `/api/admin/generated-content?id=${row.id}&expectedUpdatedAt=2000-01-01T00%3A00%3A00.000Z`);
 assert.equal(staleDelete.status, 409);
 const deletedId = row.id;
+const deletedVersion = row.updated_at;
 const deleted = await invokeApi("DELETE", `/api/admin/generated-content?id=${row.id}&expectedUpdatedAt=${encodeURIComponent(row.updated_at)}`);
 assert.equal(deleted.status, 200);
 assert.equal((await invokeApi("GET", `/api/admin/generated-content?id=${deletedId}&status=all`)).payload.rows.length, 0);
-assert.equal((await invokeApi("DELETE", `/api/admin/generated-content?id=${deletedId}`)).status, 404);
+assert.equal((await invokeApi("DELETE", `/api/admin/generated-content?id=${deletedId}&expectedUpdatedAt=${encodeURIComponent(deletedVersion)}`)).status, 404);
 row = structuredClone(packageRegressionBaseline);
 for (const action of ["archive", "restore"]) {
   const result = await invokeApi("PATCH", "/api/admin/generated-content", { id: row.id, expectedUpdatedAt: row.updated_at, sourceLifecycleAction: action });
@@ -1437,7 +1448,7 @@ await publicationDb.exec(readFileSync('apps/web/supabase/migrations/202609071800
 const storedFetch = globalThis.fetch;
 let createdIndex = 0;
 globalThis.fetch = async (input, init = {}) => {
-  if (init.method !== 'POST') return storedFetch(input, init);
+  if (init.method !== 'POST' || !String(input).includes('/rest/v1/generated_interpretations')) return storedFetch(input, init);
   const saved = await storedFetch(input, init);
   row.id = `aaaaaaaa-aaaa-aaaa-aaaa-${String(++createdIndex).padStart(12, '0')}`;
   const headers = new Headers(init.headers);

@@ -1,3 +1,4 @@
+import { readerRouteResponse, fixturePublications } from './content-reader-route.mjs';
 import { servingPackageRecords } from "../../api/_lib/content-live-status";
 // Actual handler, isolated storage, realistic latest-first/limit-one reads.
 import { createApiStore } from './calendar-review-api.mjs';
@@ -20,6 +21,8 @@ const template = structuredClone(servingPackageRecords.get('fallback-template/na
 template.body = 'Fixture {{signTitle}}. TARGET';
 const templateRow = {...structuredClone(live), id: 'fixture-natal-template', content_key: template.contentKey, surface: 'natal', event_type: 'fallback-template', block_type: 'fallback_template', headline: 'Fixture sign-aware template', body: template.body, sections: {packageRecord: template}, source_snapshot: {sourcePackage: 'tldrastro-fallback-architecture-v3', content_role: 'template'}};
 export const store = await createApiStore(process.env.ZODIAC_TEMPLATE_FIXTURE ? [templateRow] : [revision, live]);
+let versionSequence = 0;
+const nextVersion = () => new Date(Date.now() + ++versionSequence).toISOString();
 const matches = (row: any, params: URLSearchParams) => [...params].every(([field, value]) => {
  if (['select', 'order', 'limit', 'offset', 'on_conflict'].includes(field)) return true;
  if (value === 'is.null') return row[field] == null;
@@ -30,9 +33,11 @@ const matches = (row: any, params: URLSearchParams) => [...params].every(([field
  throw new Error(`Unmodeled storage filter ${field}=${value}`);
 });
 globalThis.fetch = async (input: any, options: any = {}) => {
+ const operation = await store.publication(input, options); if (operation) return operation;
+ const reader = await readerRouteResponse(input, options); if (reader) return reader;
  const url = new URL(String(input));
  if (url.origin !== 'https://calendar-api.invalid') throw new Error('Fixture refuses external storage');
- if (url.pathname === '/rest/v1/content_publications') return Response.json([...store.rows.values()].filter((r: any) => r.status === 'LIVE').map((r: any) => ({ content_key: r.content_key, row_id: r.id, state: 'live', row_updated_at: r.updated_at })));
+ if (url.pathname === '/rest/v1/content_publications') return Response.json(fixturePublications([...store.rows.values()]));
  if (url.pathname !== '/rest/v1/generated_interpretations') throw new Error(`Unexpected storage path ${url.pathname}`);
  const found = [...store.rows.values()].filter(row => matches(row, url.searchParams));
  if (!options.method || options.method === 'GET') {
@@ -43,11 +48,12 @@ globalThis.fetch = async (input: any, options: any = {}) => {
  if (options.method === 'DELETE') { found.forEach(row => store.rows.delete(row.id)); return Response.json(found); }
  const patch = JSON.parse(String(options.body));
  if (options.method === 'PATCH') {
-  const updated = found.map(row => ({ ...row, ...patch })); updated.forEach(row => store.rows.set(row.id, row)); return Response.json(updated);
+  const updated = found.map(row => ({ ...row, ...patch, updated_at: nextVersion() })); updated.forEach(row => store.rows.set(row.id, row)); return Response.json(updated);
  }
  if (options.method === 'POST') {
   if ([...store.rows.values()].some((r: any) => r.content_key === patch.content_key && r.mode === patch.mode && r.target_date == patch.target_date)) return Response.json({message: 'duplicate target'}, {status: 409});
-  const created = { ...patch, id: `new-${store.rows.size}` }; store.rows.set(created.id, created); return Response.json([created]);
+  const timestamp = nextVersion();
+  const created = { ...patch, id: `new-${store.rows.size}`, updated_at: timestamp, created_at: timestamp }; store.rows.set(created.id, created); return Response.json([created]);
  }
  throw new Error(`Unexpected storage method ${options.method}`);
 };

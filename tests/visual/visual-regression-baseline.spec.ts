@@ -102,13 +102,8 @@ async function seedClientState(page: Page, theme: "light" | "dark" = "light") {
       body: "Visual regression tests use local deterministic fallback content."
     });
   });
-  await page.route("**/rest/v1/generated_interpretations*", async (route) => {
-    await route.fulfill({
-      status: 503,
-      contentType: "application/json",
-      body: JSON.stringify({ message: "Visual regression tests use the deterministic local content snapshot." })
-    });
-  });
+  // bundledPublications supplies an empty successful reader response so this
+  // visual fixture selects the bundled corpus without creating an outage alert.
 
   await page.addInitScript(({ fixtureLocation, fixtureUserId, fixedNow, theme, friendNatalChart }) => {
     window.localStorage.clear();
@@ -265,9 +260,14 @@ test.describe("visual regression baseline", () => {
       // intermediate frame. Keep the expected image and pixel tolerance intact.
       await expect(page.getByRole("button", { name: "Read more about Sun in Cancer", exact: true }))
         .toContainText("Jun 21 - Jul 22", { timeout: routeReadyTimeoutMs });
+      // Wait for the calculated ingress too: the Darwin baseline previously
+      // captured the earlier frame, while Linux already included this event.
+      await expect(page.getByRole("link", { name: "Moon enters Virgo", exact: true }))
+        .toBeVisible({ timeout: routeReadyTimeoutMs });
       await expect(page.getByRole("link", { name: "Moon trines Lilith", exact: true }))
         .toBeVisible({ timeout: routeReadyTimeoutMs });
     });
+    await page.evaluate(() => document.fonts.ready.then(() => undefined));
     await expect.soft(page).toHaveScreenshot("client-sky-desktop-light.png", screenshotOptions);
 
     await expectRouteLoadsWithin(page, "/#calendar", "client calendar desktop light", async () => {

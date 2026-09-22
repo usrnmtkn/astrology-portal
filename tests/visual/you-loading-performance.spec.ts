@@ -41,7 +41,7 @@ async function seedYouPerformanceState(page: Page) {
     await route.fulfill({ status: 503, contentType: "text/plain", body: "Performance QA uses local calculations." });
   });
   await page.route("**/rest/v1/content_publications*", route => route.fulfill({ json: [] }));
-  await page.route("**/rest/v1/generated_interpretations*", async (route) => {
+  await page.route('**/api/content-reader', async (route) => {
     await route.fulfill({ status: 503, contentType: "application/json", body: "{}" });
   });
   await page.addInitScript(({ fixtureBirthDate, fixtureBirthTime, fixtureLocation, fixtureNow, natalCacheKey, natalSky, verifiedSchema }) => {

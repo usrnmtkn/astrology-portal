@@ -1,3 +1,4 @@
+import { readerResponse } from '../helpers/reader-response';
 import { expect, test, type Page } from '@playwright/test';
 
 async function prepare(page: Page, theme: string, visual?: 'artwork') {
@@ -13,7 +14,7 @@ async function prepare(page: Page, theme: string, visual?: 'artwork') {
     }));
   }, { theme, visual });
   await page.route('**/content-studio-last-known-good.json', route => route.fulfill({ json: {
-    schema: 'content-studio-last-known-good-v1', rows: [], publications: [], rowCount: 0
+    schema: 'content-studio-last-known-good-v2', rows: [], publications: [], rowCount: 0
   } }));
   await page.route('**/rest/v1/**', route => route.fulfill({ json: [] }));
   await page.route('**/api/calendar?**', route => route.fulfill({ json: { ok: true, calendar: { days: [] } } }));
@@ -43,10 +44,10 @@ for (const screen of ['sky', 'friends']) for (const width of [390, 1440]) for (c
     await page.setViewportSize({ width, height: 1000 });
     await prepare(page, theme);
     const blocked = hold();
-    const requestPattern = screen === 'sky' ? '**/rest/v1/generated_interpretations*' : /\/assets\/ManualChartsPanel-[^/]+\.js$/;
+    const requestPattern = screen === 'sky' ? '**/api/content-reader' : /\/assets\/ManualChartsPanel-[^/]+\.js$/;
     await page.route(requestPattern, async route => {
       await blocked.promise;
-      if (screen === 'sky') await route.fulfill({ json: [] });
+      if (screen === 'sky') await route.fulfill({ json: readerResponse([]) });
       else await route.continue();
     });
     const errors: string[] = [];
@@ -90,7 +91,7 @@ test('thinking orb retains its waiting animation under reduced motion; the readi
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await prepare(page, 'light');
   const blocked = hold();
-  await page.route('**/rest/v1/generated_interpretations*', async route => { await blocked.promise; await route.fulfill({ json: [] }); });
+  await page.route('**/api/content-reader', async route => { await blocked.promise; await route.fulfill({ json: readerResponse([]) }); });
   try {
     await page.goto('/#sky', { waitUntil: 'domcontentloaded' });
     const frame = page.locator('.sky-reading-layout__loading .loading-illustration');
@@ -141,10 +142,10 @@ for (const screen of ['sky', 'friends']) for (const width of [390, 1440]) for (c
     await page.clock.setFixedTime(new Date('2026-09-14T16:00:00Z'));
     await prepare(page, theme, 'artwork');
     const blocked = hold();
-    const requestPattern = screen === 'sky' ? '**/rest/v1/generated_interpretations*' : /\/assets\/ManualChartsPanel-[^/]+\.js$/;
+    const requestPattern = screen === 'sky' ? '**/api/content-reader' : /\/assets\/ManualChartsPanel-[^/]+\.js$/;
     await page.route(requestPattern, async route => {
       await blocked.promise;
-      if (screen === 'sky') await route.fulfill({ json: [] });
+      if (screen === 'sky') await route.fulfill({ json: readerResponse([]) });
       else await route.continue();
     });
     try {

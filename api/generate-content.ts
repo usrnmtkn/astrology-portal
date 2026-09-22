@@ -1,7 +1,9 @@
+import { GeneratedRowWriteConflict } from "./_lib/generated-row-writes.js";
 import type { IncomingMessage, ServerResponse } from "node:http";
 import {
   ContentGenerationHardEditorialError,
   ContentGenerationQualityError,
+  assertNewGeneratedInterpretation,
   generateContent,
   hardEditorialFailureResponse,
   natalPlacementGenerationSafetySummary,
@@ -164,6 +166,7 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
       ...input,
       sourceSnapshot
     };
+    if (input.save !== false) await assertNewGeneratedInterpretation(generationInput);
     const generated = await generateContent(generationInput);
     const saved = input.save === false ? [] : await saveGeneratedInterpretation(generationInput, generated);
 
@@ -175,6 +178,10 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
       adminDraft: adminDraftMetadata(generationInput, generated)
     });
   } catch (error) {
+    if (error instanceof GeneratedRowWriteConflict) {
+      sendJson(res, 409, { ok: false, error: error.message });
+      return;
+    }
     if (error instanceof ContentGenerationHardEditorialError) {
       sendJson(res, 422, {
         ok: false,

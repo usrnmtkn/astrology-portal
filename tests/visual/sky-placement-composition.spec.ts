@@ -1,9 +1,21 @@
+import { studioApiStore } from "../helpers/studio-api-store";
 import { expect, test } from "@playwright/test";
 import { skyPlacementSourceRecords, skyPlacementSourceCorpus } from "../../api/_lib/sky-placement-sources";
 import { contentLiveStatuses, servingPackageRecords } from "../../api/_lib/content-live-status";
 import { skyPlacementAssembly, skyPlacementAssemblyFields } from "../../apps/admin/src/skyPlacementAssembly";
 import { skyFallbackWorkspace } from "../../apps/admin/src/skyFallbackWorkspace";
 import { renderSkyV4ReaderRoute, renderSkyV4ContinuousPreview } from "../../apps/web/src/content/fallbackArchitectureV3/resolver/skyPlacementV4Canonical.mjs";
+// Publication uses the real handler and SQL receipt; surrounding source browsing
+// remains a synthetic package fixture.
+async function publishFixture(rows: any[], input: Record<string, unknown>) {
+ const store = await studioApiStore(rows);
+ try {
+  const result = await store.call({ method: "PATCH", body: input });
+  expect(result.status, JSON.stringify(result.payload)).toBe(200);
+  expect(result.payload.publicationReceipt).toBeTruthy();
+  return result.payload;
+ } finally { store.close(); }
+}
 const requestedKeys = (url: URL) => [...url.searchParams.getAll("contentKeys").flatMap(value => value.split(",")), url.searchParams.get("contentKey") ?? ""].filter(Boolean);
 const virtual = (key: string) => {
  const source = skyPlacementSourceRecords.get(key) ?? servingPackageRecords.get(key);
@@ -233,7 +245,8 @@ test("retrograde editor saves two revisions to its own source and preserves the 
     const input = route.request().postDataJSON(); writes.push(input);
     if (input.ownerAction) {
      expect(input.id).toBe("saved-saturn-retrograde");
-     saved = { ...saved, status: "LIVE", lane: "serving", sections: { packageRecord: saved.sections.packageDraft }, updated_at: `2026-09-08T06:00:0${writes.length}Z` };
+     Object.assign(data, await publishFixture([saved], input));
+     saved = data.rows[0];
     } else {
      expect(input.contentKey ?? saved?.content_key).toBe(key);
      saved = { ...virtual(key), id: "saved-saturn-retrograde", package_starter: false, sections: input.sections, updated_at: `2026-09-08T06:00:0${writes.length}Z` };
@@ -281,10 +294,13 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
      ? [saved] : requestedKeys(url).map(k => k === key && saved ? saved : virtual(k)).filter(Boolean);
     else {
      const input = route.request().postDataJSON(); version++;
-     saved = input.ownerAction
-      ? { ...saved, status: "LIVE", lane: "serving", sections: { packageRecord: saved.sections.packageDraft } }
-      : { ...virtual(key), id: "saved-evergreen", package_starter: false, sections: input.sections };
-     saved.updated_at = new Date(Date.UTC(2026, 8, 8, 10, 0, version)).toISOString();
+     if (input.ownerAction) {
+      Object.assign(data, await publishFixture([saved], input));
+      saved = data.rows[0];
+     } else {
+      saved = { ...virtual(key), id: "saved-evergreen", package_starter: false, sections: input.sections,
+       updated_at: new Date(Date.UTC(2026, 8, 8, 10, 0, version)).toISOString() };
+     }
      data.rows = [saved];
     }
    }
@@ -363,10 +379,14 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
      const current = [...saved.values()].find(row => row.id === input.id);
      const key = input.contentKey ?? current?.content_key;
      expect(key).toMatch(/^sky-placement\/seasonal-context\/aries\//);
-     const row = input.ownerAction
-       ? { ...current, status: "LIVE", lane: "serving", sections: { packageRecord: current.sections.packageDraft } }
-       : { ...virtual(key), id: `saved-${key}`, package_starter: false, sections: input.sections };
-     row.updated_at = new Date(Date.UTC(2026, 8, 12, 0, 0, ++version)).toISOString();
+     let row;
+     if (input.ownerAction) {
+      Object.assign(data, await publishFixture([...saved.values()], input));
+      row = data.rows[0];
+     } else {
+      row = { ...virtual(key), id: `saved-${key}`, package_starter: false, sections: input.sections,
+       updated_at: new Date(Date.UTC(2026, 8, 12, 0, 0, ++version)).toISOString() };
+     }
      saved.set(key, row); data.rows = [row];
     }
    }

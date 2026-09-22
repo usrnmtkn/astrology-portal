@@ -1,3 +1,4 @@
+import { readerResponse } from '../helpers/reader-response';
 import { expect, test } from "@playwright/test";
 import { skyPlacementSourceRecords } from "../../api/_lib/sky-placement-sources";
 import { getLunarCalendarWeek } from "../../apps/web/src/services/ephemeris";
@@ -30,11 +31,12 @@ for (const width of [390, 1440]) for (const withVariable of [false, true]) {
     const row = { id: "eeeeeeee-eeee-eeee-eeee-eeeeeeeeeeee", content_key: key, surface: "sky", mode: "in_depth", status: "LIVE", lane: "serving", review_state: null, target_date: null,
       provider: "tldrastro-fallback-architecture-v3", updated_at: updatedAt, headline: base.headline, body: template, summary: base.summary,
       sections: { packageRecord: source }, facts: { fallbackArchitectureV3: true }, source_snapshot: { sourcePackage: base.source_package, content_role: base.content_role }, block_type: "fallback_hook", event_type: "fallback-hook" };
-    await page.route("**/rest/v1/**", route => {
+    await page.route('**/api/content-reader', route => route.fulfill({ json: readerResponse([row]) }));
+    await page.route('**/rest/v1/**', route => {
       const path = new URL(route.request().url()).pathname;
       return route.fulfill({ json: path.endsWith("/content_runtime_revision") ? updatedAt
         : path.endsWith("/content_publications") ? [{ content_key: key, state: "live", revision: 1, row_id: row.id, row_updated_at: updatedAt, updated_at: updatedAt }]
-        : path.endsWith("/generated_interpretations") ? [row] : [] });
+        : [] });
     });
     await page.route("**/api/calendar?**", route => route.fulfill({ json: { ok: true, calendar: { days: [] } } }));
     await emptyLastKnownGoodSnapshot(page);
@@ -69,7 +71,9 @@ test("Calendar ingress opens the complete placement Key dates", async ({ page })
   test.setTimeout(120_000);
   await page.clock.setFixedTime(new Date("2026-08-22T12:00:00Z"));
   await page.addInitScript(() => localStorage.setItem("tldrastro:selectedLocation", JSON.stringify({ label: "New York", latitude: 40.7, longitude: -74, timeZone: "America/New_York" })));
-  await page.route("**/rest/v1/**", route => route.fulfill({ json: [] }));
+  await page.route('**/api/content-reader', route => route.fulfill({ json: readerResponse([]) }));
+  await page.route('**/rest/v1/**', route => route.fulfill({ json: [] }));
+  await emptyLastKnownGoodSnapshot(page);
   const calendar = await getLunarCalendarWeek({ label: "New York", latitude: 40.7, longitude: -74, timeZone: "America/New_York" }, new Date("2026-08-22T12:00:00Z"), { detail: "full" });
   expect(calendar.events.some(event => event.type === "ingress" && event.planet === "Sun" && event.toSign === "Virgo")).toBe(true);
   await page.route("**/api/calendar?**", route => route.fulfill({ json: { ok: true, calendar } }));
