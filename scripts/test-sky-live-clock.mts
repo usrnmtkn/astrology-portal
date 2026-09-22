@@ -1,7 +1,11 @@
 import assert from 'node:assert/strict';
-import { liveSkyReference, remainingSkyMinutes } from '../apps/web/src/services/skyClock.ts';
+import { liveSkyReference, remainingSkyMinutes, skyCivilDate } from '../apps/web/src/services/skyClock.ts';
 import { getAstrodienstSky } from '../apps/web/src/services/ephemeris.ts';
 const now = new Date('2026-09-08T02:00:00Z');
+assert.equal(skyCivilDate('America/New_York', new Date('2026-09-23T00:06:30Z')), '2026-09-22');
+assert.equal(skyCivilDate('Asia/Tokyo', new Date('2026-09-22T23:30:00Z')), '2026-09-23');
+assert.equal(skyCivilDate('America/New_York', new Date('2027-01-01T00:01:00Z')), '2026-12-31');
+assert.equal(skyCivilDate('America/New_York', new Date('2026-03-08T07:01:00Z')), '2026-03-08');
 assert.equal(liveSkyReference('2026-09-07', 'America/New_York', now)?.toISOString(), now.toISOString());
 assert.equal(liveSkyReference('2026-09-08', 'America/New_York', now), null);
 assert.equal(liveSkyReference('2026-09-08', 'Asia/Tokyo', now)?.toISOString(), now.toISOString());

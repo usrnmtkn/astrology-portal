@@ -10,6 +10,8 @@ export function CalendarSummaryText({ parts, sky, date }: {
   return <>{skySummaryParagraphs(parts).map((paragraph, i) => <FormattedParagraph key={i} parts={paragraph} renderPart={(part, j) =>
     part.action === 'sun' && sun
       ? <a key={j} className="sky-daily-summary__link" href={`?date=${date}#sky/placement/sun/${slugContentPart(sun.sign)}`}><FormattedText text={part.text} /></a>
-      : undefined
+      : part.action === 'event' && part.eventId
+        ? <a key={j} className="sky-daily-summary__link" href={`#calendar?${new URLSearchParams({ view: 'day', date, event: part.eventId, timeZone: sky?.location.timeZone || 'UTC' })}`}><FormattedText text={part.text} /></a>
+        : undefined
   } />)}</>;
 }
