@@ -124,8 +124,8 @@ export function AccountJournal({ accountId, accountChecked, accountError, onRetr
   return (
     <section className="account-page account-journal-page page-shell--narrow" aria-label="Journal">
       <div className="page-back-row settings-back-row">
-        <button className="settings-back-button floating-back-button" type="button" onClick={onBack}>
-          <ChevronLeft size={20} aria-hidden="true" />
+        <button aria-label="Back to Account" className="settings-back-button floating-back-button" type="button" onClick={onBack}>
+          <ChevronLeft size={18} aria-hidden="true" />
           <span>Account</span>
         </button>
       </div>
