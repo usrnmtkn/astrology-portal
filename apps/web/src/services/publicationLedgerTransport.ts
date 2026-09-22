@@ -1,4 +1,4 @@
-import { validContentPublication, type ContentPublication } from "../content/contentPublicationState";
+import { validContentPublication, type ContentPublication } from "../content/contentPublicationState.js";
 
 /** The tag describes the complete public ledger, including retirements. No
  * publication timestamp or subset is sufficient to validate the cached set. */

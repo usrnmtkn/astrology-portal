@@ -78,7 +78,7 @@ for (const width of [390, 1440]) test(`placement publication stays authoritative
   await page.route(archivePattern, async route => { await archiveGate; await route.continue(); });
   const publishedRowRequest = page.waitForRequest(request => {
     const url = new URL(request.url());
-    return url.pathname.endsWith('/generated_interpretations') && url.searchParams.get('id')?.includes(row().id) === true;
+    return url.pathname === '/api/content-reader' && request.postDataJSON()?.ids?.includes(row().id) === true;
   });
   try {
     await page.goto('/?date=2026-09-13#sky', { waitUntil: 'domcontentloaded' });
