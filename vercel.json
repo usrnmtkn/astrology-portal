@@ -6,6 +6,10 @@
   "framework": "vite",
   "headers": [
     {
+      "source": "/wasm/:version/:asset",
+      "headers": [{ "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }]
+    },
+    {
       "source": "/",
       "headers": [
         {
@@ -70,6 +74,10 @@
     }
   ],
   "functions": {
+    "api/sky.ts": {
+      "includeFiles": "node_modules/swisseph-wasm/wasm/*",
+      "maxDuration": 15
+    },
     "api/admin/sky-draft-writing.ts": {
       "includeFiles": "{api/_lib,artifacts,config,src/astro-writing,packages/astro-knowledge/{generated,scripts,data,config,reference,voice,sources/authored/owner-author-book},apps/web/{public/content,src/content},tldr-astro-phrasebank,data/writing}/**/*.{*js,json,jsonl,md,ts}"
     },

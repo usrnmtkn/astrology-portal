@@ -100,4 +100,12 @@ const v5Rendered = reader({
 assert(v5Rendered.readerParts.some((part: string) => part.includes("Fixture planetFunctionSentence for Mercury in Cancer.")),
   `V5 overlay must assemble required sentences, received: ${JSON.stringify(v5Rendered.readerParts)}`);
 assert.equal(JSON.stringify(corpus), original, "approved corpus remains byte-identical after V5 overlay");
+let keyInspections = 0;
+sources = [v5Packaged, { get contentKey() { keyInspections += 1; return "unversioned-fixture"; } }];
+const cachedInput = { route: "placement", planet: "mercury", sign: "cancer", isRetrograde: false };
+const prepared = reader(cachedInput);
+for (let index = 0; index < 14; index++) assert.deepEqual(reader(cachedInput), prepared);
+assert.equal(keyInspections, 0, "Unversioned rows must be rejected before expensive key classification");
+sources[0].review_status = "needs_review";
+assert.throws(() => reader(cachedInput), /SOURCE_GAP/, "Changed eligibility must invalidate prepared copy immediately");
 console.log("PASS: current published Sky article/Rx revisions replace the baseline, repeated edits, stale/draft rejection and retirement.");

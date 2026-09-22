@@ -1,5 +1,5 @@
 import { isZodiacSeasonSourceKey } from "./fallbackArchitectureV3/resolver/zodiacSeasonVariables.mjs";
-import { contentPublication, contentPublicationRecords, publicationAllowsContent } from "./contentPublicationState";
+import { contentPublication, contentPublicationGeneration, publicationAllowsContent } from "./contentPublicationState";
 import { isCanonicalSkyReaderRecord } from "./fallbackArchitectureV3/dashboardExtensions";
 // @ts-ignore The canonical renderer and its editable-field contract are shared ESM.
 import { createSkyV4ReaderRoute, skyV4ContentStudioRecords } from "./fallbackArchitectureV3/resolver/skyPlacementV4Canonical.mjs";
@@ -28,13 +28,15 @@ export function createPublishedSkyReader(corpus: RecordValue, lunarSource: unkno
   let render: ((input: Record<string, unknown>) => any) | null = null;
   let blocked = new Set<string>();
   return (input: Record<string, unknown>) => {
+    // Reject unversioned bundled rows before classifying keys. The ledger
+    // generation avoids serializing its full inventory separately for every card.
     const supplied = sources().map(object);
-    const published = supplied.filter(row => (isZodiacSeasonSourceKey(row.contentKey) || isCanonicalSkyReaderRecord(row as any)
-      && row.studio_version_status === "approved-serving-revision")
-      && typeof row.publicationRowId === "string"
+    const published = supplied.filter(row => typeof row.publicationRowId === "string"
       && row.review_status === "approved"
+      && (isZodiacSeasonSourceKey(row.contentKey) || isCanonicalSkyReaderRecord(row as any)
+        && row.studio_version_status === "approved-serving-revision")
       && publicationAllowsContent(row.contentKey, row.publicationRowId, row.publicationRowUpdatedAt));
-    const nextFingerprint = JSON.stringify([published.map(row => [row.contentKey, row.publicationRowId, row.publicationRowUpdatedAt]), contentPublicationRecords()]);
+    const nextFingerprint = JSON.stringify([published.map(row => [row.contentKey, row.publicationRowId, row.publicationRowUpdatedAt]), contentPublicationGeneration]);
     if (nextFingerprint !== fingerprint) {
       const byKey = new Map(published.map(row => [row.contentKey, row]));
       const suppliedIds = new Set(supplied.map(row => row.publicationRowId).filter((id): id is string => typeof id === "string"));

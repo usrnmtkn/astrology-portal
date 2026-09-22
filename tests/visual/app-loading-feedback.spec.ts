@@ -212,7 +212,7 @@ test("Calendar cold mobile and desktop deliver controls and complete reading wit
         const calculationDownloads: string[] = [];
         context.on("request", request => {
           const path = new URL(request.url()).pathname;
-          if (/^\/wasm\/swisseph\.(?:wasm|data)$/.test(path)) calculationDownloads.push(path);
+          if (/^\/wasm\/(?:[a-f0-9]{16}\/)?swisseph\.(?:wasm|data)$/.test(path)) calculationDownloads.push(path);
         });
         // Freeze calendar dates only. Playwright's clock also replaces the
         // Performance API, which would suppress the real User Timing measures.
@@ -252,7 +252,10 @@ test("Calendar cold mobile and desktop deliver controls and complete reading wit
           return { controls: end("controls"), reading: end("reading") };
         });
         samples.push(completedAt);
-        expect(calculationDownloads.sort()).toEqual(["/wasm/swisseph.data", "/wasm/swisseph.wasm"]);
+        expect(calculationDownloads.sort()).toEqual([
+          expect.stringMatching(/^\/wasm\/[a-f0-9]{16}\/swisseph\.data$/),
+          expect.stringMatching(/^\/wasm\/[a-f0-9]{16}\/swisseph\.wasm$/)
+        ]);
       } finally { await context.close(); }
     }
     console.log(JSON.stringify({ scenario: "cold Calendar with uncached local calculation", width, latencyMs: 150, bytesPerSecond: 1_000_000, samples }));

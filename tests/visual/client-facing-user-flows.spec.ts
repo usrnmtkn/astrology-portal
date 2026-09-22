@@ -1579,7 +1579,7 @@ test.describe("client-facing user flow case studies", () => {
     // in the document just as navigation begins.
     await expect(page.locator(".chart-layout__visual")).toHaveAttribute("data-chart-calculation-status", "ready", { timeout: 15_000 });
     await expect.poll(() => page.evaluate(() => (window as any).__completedNatalTiming), { timeout: routeReadyTimeoutMs }).toBeGreaterThan(0);
-    expect(await page.evaluate(() => performance.getEntriesByType("resource").filter(entry => /\/wasm\/swisseph\.(wasm|data)/u.test(entry.name)).length)).toBe(0);
+    expect(await page.evaluate(() => performance.getEntriesByType("resource").filter(entry => /\/wasm\/(?:[a-f0-9]{16}\/)?swisseph\.(wasm|data)/u.test(entry.name)).length)).toBe(0);
     await page.reload();
     await expect(page.getByRole("region", { name: "You", exact: true })).toBeVisible();
     await expect(natalTab).toHaveAttribute("aria-selected", "true");
@@ -1884,7 +1884,7 @@ test.describe("client-facing user flow case studies", () => {
   });
 
   test("chart calculation failure terminates in a visible error state", async ({ page }) => {
-    await page.route("**/wasm/swisseph.data", async (route) => {
+    await page.route(/\/wasm\/(?:[a-f0-9]{16}\/)?swisseph\.data$/u, async (route) => {
       await route.fulfill({ status: 503, body: "Ephemeris unavailable for visual-smoke coverage." });
     });
     await seedClientState(page, { profile: true });

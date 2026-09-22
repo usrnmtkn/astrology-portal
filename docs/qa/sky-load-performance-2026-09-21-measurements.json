@@ -1,0 +1,1032 @@
+{
+  "baseRevision": "c186d9c5f279c99b25bb1ccdd5d00e2baa79016d",
+  "date": "2026-09-21",
+  "profile": "Chromium desktop 1440x1000, unthrottled, identical gzip previews and public content service",
+  "endpoint": "Visible resolved summary and 14 resolved cards, no busy layout or error alert",
+  "measurements": [
+    {
+      "revision": "baseline",
+      "run": 1,
+      "warm": false,
+      "error": null,
+      "shellMs": 123,
+      "chartMs": 442,
+      "completeReadingMs": 8073,
+      "longTaskMs": 554,
+      "cls": 0
+    },
+    {
+      "revision": "baseline",
+      "run": 1,
+      "warm": true,
+      "error": null,
+      "shellMs": 58,
+      "chartMs": 292,
+      "completeReadingMs": 5319,
+      "longTaskMs": 468,
+      "cls": 0
+    },
+    {
+      "revision": "baseline",
+      "run": 2,
+      "warm": false,
+      "error": null,
+      "shellMs": 70,
+      "chartMs": 334,
+      "completeReadingMs": 5670,
+      "longTaskMs": 542,
+      "cls": 0
+    },
+    {
+      "revision": "baseline",
+      "run": 2,
+      "warm": true,
+      "error": null,
+      "shellMs": 68,
+      "chartMs": 311,
+      "completeReadingMs": 5663,
+      "longTaskMs": 487,
+      "cls": 0
+    },
+    {
+      "revision": "baseline",
+      "run": 3,
+      "warm": false,
+      "error": null,
+      "shellMs": 142,
+      "chartMs": 390,
+      "completeReadingMs": 5789,
+      "longTaskMs": 484,
+      "cls": 0
+    },
+    {
+      "revision": "baseline",
+      "run": 3,
+      "warm": true,
+      "error": null,
+      "shellMs": 59,
+      "chartMs": 278,
+      "completeReadingMs": 5497,
+      "longTaskMs": 456,
+      "cls": 0
+    },
+    {
+      "revision": "baseline",
+      "run": 4,
+      "warm": false,
+      "error": null,
+      "shellMs": 66,
+      "chartMs": 286,
+      "completeReadingMs": 6450,
+      "longTaskMs": 489,
+      "cls": 0
+    },
+    {
+      "revision": "baseline",
+      "run": 4,
+      "warm": true,
+      "error": null,
+      "shellMs": 51,
+      "chartMs": 249,
+      "completeReadingMs": 5312,
+      "longTaskMs": 442,
+      "cls": 0
+    },
+    {
+      "revision": "baseline",
+      "run": 5,
+      "warm": false,
+      "error": null,
+      "shellMs": 72,
+      "chartMs": 299,
+      "completeReadingMs": 6089,
+      "longTaskMs": 466,
+      "cls": 0
+    },
+    {
+      "revision": "baseline",
+      "run": 5,
+      "warm": true,
+      "error": null,
+      "shellMs": 62,
+      "chartMs": 283,
+      "completeReadingMs": 5387,
+      "longTaskMs": 458,
+      "cls": 0
+    },
+    {
+      "revision": "candidate",
+      "run": 1,
+      "warm": false,
+      "error": null,
+      "shellMs": 64,
+      "chartMs": 265,
+      "completeReadingMs": 3415,
+      "longTaskMs": 199,
+      "cls": 0
+    },
+    {
+      "revision": "candidate",
+      "run": 1,
+      "warm": true,
+      "error": null,
+      "shellMs": 41,
+      "chartMs": 232,
+      "completeReadingMs": 2326,
+      "longTaskMs": 372,
+      "cls": 0
+    },
+    {
+      "revision": "candidate",
+      "run": 2,
+      "warm": false,
+      "error": null,
+      "shellMs": 61,
+      "chartMs": 279,
+      "completeReadingMs": 3421,
+      "longTaskMs": 203,
+      "cls": 0
+    },
+    {
+      "revision": "candidate",
+      "run": 2,
+      "warm": true,
+      "error": null,
+      "shellMs": 44,
+      "chartMs": 228,
+      "completeReadingMs": 2181,
+      "longTaskMs": 206,
+      "cls": 0
+    },
+    {
+      "revision": "candidate",
+      "run": 3,
+      "warm": false,
+      "error": null,
+      "shellMs": 58,
+      "chartMs": 276,
+      "completeReadingMs": 3392,
+      "longTaskMs": 191,
+      "cls": 0
+    },
+    {
+      "revision": "candidate",
+      "run": 3,
+      "warm": true,
+      "error": null,
+      "shellMs": 43,
+      "chartMs": 221,
+      "completeReadingMs": 2185,
+      "longTaskMs": 362,
+      "cls": 0
+    },
+    {
+      "revision": "candidate",
+      "run": 4,
+      "warm": false,
+      "error": null,
+      "shellMs": 57,
+      "chartMs": 259,
+      "completeReadingMs": 3337,
+      "longTaskMs": 197,
+      "cls": 0
+    },
+    {
+      "revision": "candidate",
+      "run": 4,
+      "warm": true,
+      "error": null,
+      "shellMs": 39,
+      "chartMs": 227,
+      "completeReadingMs": 2259,
+      "longTaskMs": 364,
+      "cls": 0
+    },
+    {
+      "revision": "candidate",
+      "run": 5,
+      "warm": false,
+      "error": null,
+      "shellMs": 58,
+      "chartMs": 264,
+      "completeReadingMs": 3746,
+      "longTaskMs": 191,
+      "cls": 0
+    },
+    {
+      "revision": "candidate",
+      "run": 5,
+      "warm": true,
+      "error": null,
+      "shellMs": 39,
+      "chartMs": 221,
+      "completeReadingMs": 2140,
+      "longTaskMs": 187,
+      "cls": 0
+    }
+  ],
+  "mobileHostedPilot": {
+    "baseRevision": "79f22c148d3993ebdf9aa8f6af0d2fcf3183ca98",
+    "deployment": "https://tldrastro-omuoklh6y-usrnmtkns-projects.vercel.app",
+    "finalCheckout": false,
+    "profile": "390x844, CPU 4x, 80ms latency, 1.6Mbps download, 750kbps upload",
+    "instant": "2026-09-21T16:00:00Z",
+    "measurements": [
+      {
+        "run": 0,
+        "warm": false,
+        "error": null,
+        "errors": [],
+        "shellMs": 3205,
+        "chartMs": 6162.199999988079,
+        "completeReadingMs": 10168.5,
+        "workerRequests": 0,
+        "cls": 0,
+        "proseHash": "d62c09efe8704a95dfc0929f545ebbba0d830d7f379a4d990f59ffa5dbc709f7"
+      },
+      {
+        "run": 0,
+        "warm": true,
+        "error": null,
+        "errors": [],
+        "shellMs": 632.9000000357628,
+        "chartMs": 632.9000000357628,
+        "completeReadingMs": 5813.800000011921,
+        "workerRequests": 0,
+        "cls": 0,
+        "proseHash": "d62c09efe8704a95dfc0929f545ebbba0d830d7f379a4d990f59ffa5dbc709f7"
+      }
+    ],
+    "limitation": "One pilot context and reload, not repeated acceptance. Before combined-node selection fix, immediate daily events, eight-second API deadline and main integration. Provisional 10s cold / 4s warm targets not met."
+  },
+  "finalCandidate": {
+    "baseRevision": "cf29be0e1ca8e14e403da5e27abd8110784ceaa7",
+    "sourceFingerprint": "3e043b0fa4074fec7b78151c15ad0ea02d67cb5adbae5fca0e89e0b908a35f7a",
+    "files": [
+      {
+        "path": "api/sky.ts",
+        "sha256": "2725be19c97066f0f58a1f9842d9deed94532428b02b99babc1d73b3cc8b2b07"
+      },
+      {
+        "path": "apps/web/src/App.tsx",
+        "sha256": "36d5e472d7fb957486346eb7e19c457031aa9f354658e922af42731d5743d292"
+      },
+      {
+        "path": "apps/web/src/content/fallbackArchitectureV3Runtime.ts",
+        "sha256": "a3d20168f455d43d4306c6327b5dba58c8df81cfef85ff86563bfa9e29a2e355"
+      },
+      {
+        "path": "apps/web/src/main.tsx",
+        "sha256": "ebbf097911798fef7942937b920201085bd836b5be8501e2c5e05a53dde67918"
+      },
+      {
+        "path": "apps/web/src/services/contentPublications.ts",
+        "sha256": "68b73bcf80951717cf79fe501a73a64f1775cd93771fedeca8b4e5e5c2247199"
+      },
+      {
+        "path": "apps/web/src/services/generatedContent.ts",
+        "sha256": "55ecf265cec0b2bb83e567475c1dd525b3d19d27b6b06aab1f8e00c7e2bb0afe"
+      },
+      {
+        "path": "apps/web/src/services/planetTopicVocabulary.ts",
+        "sha256": "7789bef4326f829d535060d25695ef27c1747b1f2368f8a9530fbee07c2481d9"
+      },
+      {
+        "path": "apps/web/src/services/skyApi.ts",
+        "sha256": "c8ec4dee21237f86e0e85ea0b0af747c9b3dc7a62d93b91924594d0c3063cff0"
+      },
+      {
+        "path": "apps/web/src/services/skyDashboardScope.ts",
+        "sha256": "27fbab3acbfe080e7b27a4d0c139ec4e6e249faa43763bd9224c291e88c91964"
+      },
+      {
+        "path": "apps/web/src/services/skyPlacementHydration.ts",
+        "sha256": "72359b1c272004dc5eeeb4d1c02c31a5c35f2a88666335c1916316338ed844a3"
+      },
+      {
+        "path": "apps/web/src/services/skyPlacementSourceScope.ts",
+        "sha256": "5f412aeceba25c9b261ab400db60fc7e3ff30a7db80c4171d098cf9cabfbc3ce"
+      },
+      {
+        "path": "apps/web/src/services/verifiedSkyCache.ts",
+        "sha256": "910355f16fd9ad6562160c04dbf2bb574920a8050f4c7d0d7e8bf163e09d8b11"
+      },
+      {
+        "path": "apps/web/src/types.ts",
+        "sha256": "0a5902c090ede9e506d222c83a5c8008bd6a1a6d389f071d6a4684c1c3e6e114"
+      },
+      {
+        "path": "apps/web/vite.config.ts",
+        "sha256": "8722a92ced826ee89b4c6eab56a59b6e2cf78a181a3a2990a294d7b41a8c373c"
+      },
+      {
+        "path": "package.json",
+        "sha256": "aed3076988bdec50f15f7a4150ab8e88dcdc7ff66a9018af75c850e947de735b"
+      },
+      {
+        "path": "vercel.json",
+        "sha256": "414ca2531a86f0aa59b4251ee6fa203811a0702df93b63675d7227d93009fbb7"
+      }
+    ],
+    "productionDeployed": false
+  },
+  "finalLocalMobile": {
+    "sourceFingerprint": "3e043b0fa4074fec7b78151c15ad0ea02d67cb5adbae5fca0e89e0b908a35f7a",
+    "profile": "390x844, CPU 4x, 80ms latency, 1.6Mbps download, 750kbps upload; fresh Vite gzip preview and actual local API handler; anonymous live content service",
+    "instant": "2026-09-21T16:00:00Z",
+    "measurements": [
+      {
+        "run": 0,
+        "warm": false,
+        "error": null,
+        "errors": [],
+        "shellMs": 3165.199999988079,
+        "chartMs": 5833,
+        "completeReadingMs": 10909.800000011921,
+        "workerRequests": 0,
+        "cls": 0,
+        "proseHash": "4ee9a5723d9b99f53b9df3440f53fa14c9c3f39b1bc29b9ed97eab6bd44356ed"
+      },
+      {
+        "run": 0,
+        "warm": true,
+        "error": null,
+        "errors": [],
+        "shellMs": 3088.100000023842,
+        "chartMs": 3088.100000023842,
+        "completeReadingMs": 8245.5,
+        "workerRequests": 0,
+        "cls": 0,
+        "proseHash": "4ee9a5723d9b99f53b9df3440f53fa14c9c3f39b1bc29b9ed97eab6bd44356ed"
+      },
+      {
+        "run": 1,
+        "warm": false,
+        "error": null,
+        "errors": [],
+        "shellMs": 3139.5,
+        "chartMs": 5053.300000011921,
+        "completeReadingMs": 10401.5,
+        "workerRequests": 0,
+        "cls": 0,
+        "proseHash": "4ee9a5723d9b99f53b9df3440f53fa14c9c3f39b1bc29b9ed97eab6bd44356ed"
+      },
+      {
+        "run": 1,
+        "warm": true,
+        "error": null,
+        "errors": [],
+        "shellMs": 3095,
+        "chartMs": 3095,
+        "completeReadingMs": 8187,
+        "workerRequests": 0,
+        "cls": 0,
+        "proseHash": "4ee9a5723d9b99f53b9df3440f53fa14c9c3f39b1bc29b9ed97eab6bd44356ed"
+      },
+      {
+        "run": 2,
+        "warm": false,
+        "error": null,
+        "errors": [],
+        "shellMs": 3139,
+        "chartMs": 5007,
+        "completeReadingMs": 10468,
+        "workerRequests": 0,
+        "cls": 0,
+        "proseHash": "4ee9a5723d9b99f53b9df3440f53fa14c9c3f39b1bc29b9ed97eab6bd44356ed"
+      },
+      {
+        "run": 2,
+        "warm": true,
+        "error": null,
+        "errors": [],
+        "shellMs": 3085.399999976158,
+        "chartMs": 3085.399999976158,
+        "completeReadingMs": 8321.800000011921,
+        "workerRequests": 0,
+        "cls": 0,
+        "proseHash": "4ee9a5723d9b99f53b9df3440f53fa14c9c3f39b1bc29b9ed97eab6bd44356ed"
+      },
+      {
+        "run": 3,
+        "warm": false,
+        "error": null,
+        "errors": [],
+        "shellMs": 3138.300000011921,
+        "chartMs": 5013.699999988079,
+        "completeReadingMs": 11081.199999988079,
+        "workerRequests": 0,
+        "cls": 0,
+        "proseHash": "4ee9a5723d9b99f53b9df3440f53fa14c9c3f39b1bc29b9ed97eab6bd44356ed"
+      },
+      {
+        "run": 3,
+        "warm": true,
+        "error": null,
+        "errors": [],
+        "shellMs": 3091.699999988079,
+        "chartMs": 3091.800000011921,
+        "completeReadingMs": 8319.399999976158,
+        "workerRequests": 0,
+        "cls": 0,
+        "proseHash": "4ee9a5723d9b99f53b9df3440f53fa14c9c3f39b1bc29b9ed97eab6bd44356ed"
+      },
+      {
+        "run": 4,
+        "warm": false,
+        "error": null,
+        "errors": [],
+        "shellMs": 3139,
+        "chartMs": 5035.099999964237,
+        "completeReadingMs": 10540.899999976158,
+        "workerRequests": 0,
+        "cls": 0,
+        "proseHash": "4ee9a5723d9b99f53b9df3440f53fa14c9c3f39b1bc29b9ed97eab6bd44356ed"
+      },
+      {
+        "run": 4,
+        "warm": true,
+        "error": null,
+        "errors": [],
+        "shellMs": 3111.5,
+        "chartMs": 3111.5,
+        "completeReadingMs": 8213.400000035763,
+        "workerRequests": 0,
+        "cls": 0,
+        "proseHash": "4ee9a5723d9b99f53b9df3440f53fa14c9c3f39b1bc29b9ed97eab6bd44356ed"
+      }
+    ],
+    "limitation": "Local preview revalidates static assets and has no Vercel function cold start; not hosted acceptance or production p75."
+  },
+  "finalHostedMobile": {
+    "baseRevision": "cf29be0e1ca8e14e403da5e27abd8110784ceaa7",
+    "sourceFingerprint": "3e043b0fa4074fec7b78151c15ad0ea02d67cb5adbae5fca0e89e0b908a35f7a",
+    "deploymentId": "dpl_5tA1mzWtmZfoCFek2dQ5XReiy3Ff",
+    "deployment": "https://tldrastro-1t7bqywkj-usrnmtkns-projects.vercel.app",
+    "target": "preview",
+    "status": "READY",
+    "date": "2026-09-21",
+    "profile": "Chromium 390x844, CPU 4x, 80ms latency, 1.6Mbps download, 750kbps upload; five fresh anonymous contexts, each followed by a reload retaining browser storage",
+    "instant": "2026-09-21T16:00:00Z",
+    "cold": {
+      "count": 5,
+      "medianMs": 10530.800000011921,
+      "maxMs": 11498,
+      "failures": 0
+    },
+    "reload": {
+      "count": 5,
+      "medianMs": 5889.400000035763,
+      "maxMs": 5993.100000023842,
+      "failures": 0
+    },
+    "measurements": [
+      {
+        "run": 0,
+        "warm": false,
+        "error": null,
+        "errors": [],
+        "shellMs": 3267.900000035763,
+        "chartMs": 8462.800000011921,
+        "completeReadingMs": 11498,
+        "workerRequests": 0,
+        "cls": 0,
+        "longTaskMs": 1024,
+        "proseHash": "4ee9a5723d9b99f53b9df3440f53fa14c9c3f39b1bc29b9ed97eab6bd44356ed"
+      },
+      {
+        "run": 0,
+        "warm": true,
+        "error": null,
+        "errors": [],
+        "shellMs": 622.3000000119209,
+        "chartMs": 622.3000000119209,
+        "completeReadingMs": 5739.900000035763,
+        "workerRequests": 0,
+        "cls": 0,
+        "longTaskMs": 2542,
+        "proseHash": "4ee9a5723d9b99f53b9df3440f53fa14c9c3f39b1bc29b9ed97eab6bd44356ed"
+      },
+      {
+        "run": 1,
+        "warm": false,
+        "error": null,
+        "errors": [],
+        "shellMs": 3195.600000023842,
+        "chartMs": 6095.300000011921,
+        "completeReadingMs": 10493.199999988079,
+        "workerRequests": 0,
+        "cls": 0,
+        "longTaskMs": 809,
+        "proseHash": "4ee9a5723d9b99f53b9df3440f53fa14c9c3f39b1bc29b9ed97eab6bd44356ed"
+      },
+      {
+        "run": 1,
+        "warm": true,
+        "error": null,
+        "errors": [],
+        "shellMs": 621,
+        "chartMs": 621,
+        "completeReadingMs": 5237.899999976158,
+        "workerRequests": 0,
+        "cls": 0,
+        "longTaskMs": 1932,
+        "proseHash": "4ee9a5723d9b99f53b9df3440f53fa14c9c3f39b1bc29b9ed97eab6bd44356ed"
+      },
+      {
+        "run": 2,
+        "warm": false,
+        "error": null,
+        "errors": [],
+        "shellMs": 3194.300000011921,
+        "chartMs": 6184.600000023842,
+        "completeReadingMs": 10645.699999988079,
+        "workerRequests": 0,
+        "cls": 0,
+        "longTaskMs": 838,
+        "proseHash": "4ee9a5723d9b99f53b9df3440f53fa14c9c3f39b1bc29b9ed97eab6bd44356ed"
+      },
+      {
+        "run": 2,
+        "warm": true,
+        "error": null,
+        "errors": [],
+        "shellMs": 623.8000000119209,
+        "chartMs": 623.8000000119209,
+        "completeReadingMs": 5896.300000011921,
+        "workerRequests": 0,
+        "cls": 0,
+        "longTaskMs": 2535,
+        "proseHash": "4ee9a5723d9b99f53b9df3440f53fa14c9c3f39b1bc29b9ed97eab6bd44356ed"
+      },
+      {
+        "run": 3,
+        "warm": false,
+        "error": null,
+        "errors": [],
+        "shellMs": 3197.599999964237,
+        "chartMs": 6190.5,
+        "completeReadingMs": 10142.300000011921,
+        "workerRequests": 0,
+        "cls": 0,
+        "longTaskMs": 870,
+        "proseHash": "4ee9a5723d9b99f53b9df3440f53fa14c9c3f39b1bc29b9ed97eab6bd44356ed"
+      },
+      {
+        "run": 3,
+        "warm": true,
+        "error": null,
+        "errors": [],
+        "shellMs": 623.3000000119209,
+        "chartMs": 623.3000000119209,
+        "completeReadingMs": 5993.100000023842,
+        "workerRequests": 0,
+        "cls": 0,
+        "longTaskMs": 2600,
+        "proseHash": "4ee9a5723d9b99f53b9df3440f53fa14c9c3f39b1bc29b9ed97eab6bd44356ed"
+      },
+      {
+        "run": 4,
+        "warm": false,
+        "error": null,
+        "errors": [],
+        "shellMs": 3188.199999988079,
+        "chartMs": 6154,
+        "completeReadingMs": 10530.800000011921,
+        "workerRequests": 0,
+        "cls": 0,
+        "longTaskMs": 906,
+        "proseHash": "4ee9a5723d9b99f53b9df3440f53fa14c9c3f39b1bc29b9ed97eab6bd44356ed"
+      },
+      {
+        "run": 4,
+        "warm": true,
+        "error": null,
+        "errors": [],
+        "shellMs": 624.9000000357628,
+        "chartMs": 624.9000000357628,
+        "completeReadingMs": 5889.400000035763,
+        "workerRequests": 0,
+        "cls": 0,
+        "longTaskMs": 2591,
+        "proseHash": "4ee9a5723d9b99f53b9df3440f53fa14c9c3f39b1bc29b9ed97eab6bd44356ed"
+      }
+    ],
+    "verification": {
+      "origin": "https://tldrastro-1t7bqywkj-usrnmtkns-projects.vercel.app",
+      "checks": [
+        {
+          "at": "2026-09-21T16:00:00.000Z",
+          "timeZone": "America/New_York",
+          "status": 200,
+          "positions": 14,
+          "events": 9,
+          "parity": true,
+          "requestAndComparisonMs": 4197
+        },
+        {
+          "at": "2026-03-27T00:00:00.000Z",
+          "timeZone": "Asia/Tokyo",
+          "status": 200,
+          "positions": 14,
+          "events": 6,
+          "parity": true,
+          "requestAndComparisonMs": 4130
+        },
+        {
+          "at": "2026-11-01T06:30:00.000Z",
+          "timeZone": "America/New_York",
+          "status": 200,
+          "positions": 14,
+          "events": 13,
+          "parity": true,
+          "requestAndComparisonMs": 6050
+        }
+      ],
+      "immutableAsset": true,
+      "assetMatchesSource": true,
+      "mobileNavigation": true,
+      "articleReturn": true,
+      "dateAndSignChange": true,
+      "pageErrors": []
+    },
+    "targetsMet": false,
+    "limitations": "Browser cold loads, not five forced server cold starts. Lab results are not production p75. No simultaneous live-production baseline was measured; do not calculate a hosted percentage improvement from the earlier local failed loads."
+  },
+  "continuationCandidate": {
+    "baseRevision": "cf29be0e1ca8e14e403da5e27abd8110784ceaa7",
+    "sourceFingerprint": "18e13b9f763c7b441f222b3fb6dbb56710648dee7a766431dd223fe9a502b397",
+    "files": [
+      {
+        "path": "api/sky.ts",
+        "sha256": "14c0077b157580d7829d89f919460975e12cfed682d33051d6e0dd46b6a35e37"
+      },
+      {
+        "path": "apps/web/src/App.tsx",
+        "sha256": "36d5e472d7fb957486346eb7e19c457031aa9f354658e922af42731d5743d292"
+      },
+      {
+        "path": "apps/web/src/components/LoadingIllustration.tsx",
+        "sha256": "b9b7153d717872870dc88ad79a086183ef0f68a2a2bf70edcb5e1ad737a95d33"
+      },
+      {
+        "path": "apps/web/src/content/contentPublicationState.ts",
+        "sha256": "bdeb41e4b801f950b63bf4bb7b0ea54fb01f5f4f8ca7b2ca4761a0a81aa163fd"
+      },
+      {
+        "path": "apps/web/src/content/fallbackArchitectureV3Runtime.ts",
+        "sha256": "a3d20168f455d43d4306c6327b5dba58c8df81cfef85ff86563bfa9e29a2e355"
+      },
+      {
+        "path": "apps/web/src/content/skyPlacementPublishedSources.ts",
+        "sha256": "e87c4dbae144e13f0e217d1818646d66d4d3af4e2081e5e3eaaf269df01985c4"
+      },
+      {
+        "path": "apps/web/src/main.tsx",
+        "sha256": "ebbf097911798fef7942937b920201085bd836b5be8501e2c5e05a53dde67918"
+      },
+      {
+        "path": "apps/web/src/services/contentPublications.ts",
+        "sha256": "c0e8e484ea7bc189a9991a5520ccce0fd864bde11353aacea3adafac800dacca"
+      },
+      {
+        "path": "apps/web/src/services/ephemeris.ts",
+        "sha256": "fe28294cff055930b7e3ac079a6336bc8d9a19ef1553491837372c7e093b7203"
+      },
+      {
+        "path": "apps/web/src/services/generatedContent.ts",
+        "sha256": "55ecf265cec0b2bb83e567475c1dd525b3d19d27b6b06aab1f8e00c7e2bb0afe"
+      },
+      {
+        "path": "apps/web/src/services/planetTopicVocabulary.ts",
+        "sha256": "7789bef4326f829d535060d25695ef27c1747b1f2368f8a9530fbee07c2481d9"
+      },
+      {
+        "path": "apps/web/src/services/skyApi.ts",
+        "sha256": "c1e947b3ea97b71d72d8d8a6cd105ce5a707bf9ce991bd9db46c1dff1a4197ff"
+      },
+      {
+        "path": "apps/web/src/services/skyDashboardScope.ts",
+        "sha256": "27fbab3acbfe080e7b27a4d0c139ec4e6e249faa43763bd9224c291e88c91964"
+      },
+      {
+        "path": "apps/web/src/services/skyPlacementHydration.ts",
+        "sha256": "72359b1c272004dc5eeeb4d1c02c31a5c35f2a88666335c1916316338ed844a3"
+      },
+      {
+        "path": "apps/web/src/services/skyPlacementSourceScope.ts",
+        "sha256": "5f412aeceba25c9b261ab400db60fc7e3ff30a7db80c4171d098cf9cabfbc3ce"
+      },
+      {
+        "path": "apps/web/src/services/verifiedSkyCache.ts",
+        "sha256": "910355f16fd9ad6562160c04dbf2bb574920a8050f4c7d0d7e8bf163e09d8b11"
+      },
+      {
+        "path": "apps/web/src/types.ts",
+        "sha256": "0a5902c090ede9e506d222c83a5c8008bd6a1a6d389f071d6a4684c1c3e6e114"
+      },
+      {
+        "path": "apps/web/vite.config.ts",
+        "sha256": "8722a92ced826ee89b4c6eab56a59b6e2cf78a181a3a2990a294d7b41a8c373c"
+      },
+      {
+        "path": "package.json",
+        "sha256": "720829469c8c27ec779606d6ddace795aa84717c19e190507be8c585b6f745fe"
+      },
+      {
+        "path": "vercel.json",
+        "sha256": "414ca2531a86f0aa59b4251ee6fa203811a0702df93b63675d7227d93009fbb7"
+      }
+    ],
+    "productionDeployed": false,
+    "branch": "codex/sky-load-performance-20260921",
+    "ahead": 0,
+    "behind": 0,
+    "committed": false
+  },
+  "continuationHostedMobile": {
+    "baseRevision": "cf29be0e1ca8e14e403da5e27abd8110784ceaa7",
+    "sourceFingerprint": "18e13b9f763c7b441f222b3fb6dbb56710648dee7a766431dd223fe9a502b397",
+    "deploymentId": "dpl_5SVauzpBfaM7G5VA3A44SghsGY1w",
+    "deployment": "https://tldrastro-gs0q1c1ec-usrnmtkns-projects.vercel.app",
+    "target": "preview",
+    "status": "READY",
+    "date": "2026-09-21",
+    "profile": {
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "cpuSlowdown": 4,
+      "latencyMs": 80,
+      "downloadBitsPerSecond": 1600000,
+      "uploadBitsPerSecond": 750000
+    },
+    "instant": "2026-09-21T16:00:00Z",
+    "cold": {
+      "count": 5,
+      "medianMs": 9556.599999964237,
+      "maxMs": 9748.200000047684,
+      "failures": 0
+    },
+    "reload": {
+      "count": 5,
+      "medianMs": 3713.199999988079,
+      "maxMs": 3774.600000023842,
+      "failures": 0
+    },
+    "measurements": [
+      {
+        "run": 0,
+        "warm": false,
+        "error": null,
+        "errors": [],
+        "shellMs": 3200,
+        "chartMs": 7254.400000035763,
+        "completeReadingMs": 9748.200000047684,
+        "workerRequests": 0,
+        "cls": 0,
+        "longTaskMs": [
+          70,
+          184
+        ],
+        "proseHash": "4ee9a5723d9b99f53b9df3440f53fa14c9c3f39b1bc29b9ed97eab6bd44356ed",
+        "copyHash": "b4775e4223a66f4c106ea69160df3b574778b7b8900a8704d5a9ec1ddc769bd5"
+      },
+      {
+        "run": 0,
+        "warm": true,
+        "error": null,
+        "errors": [],
+        "shellMs": 621.6000000238419,
+        "chartMs": 621.6000000238419,
+        "completeReadingMs": 3774.600000023842,
+        "workerRequests": 0,
+        "cls": 0,
+        "longTaskMs": [
+          56,
+          153,
+          100,
+          93,
+          187
+        ],
+        "proseHash": "4ee9a5723d9b99f53b9df3440f53fa14c9c3f39b1bc29b9ed97eab6bd44356ed",
+        "copyHash": "b4775e4223a66f4c106ea69160df3b574778b7b8900a8704d5a9ec1ddc769bd5"
+      },
+      {
+        "run": 1,
+        "warm": false,
+        "error": null,
+        "errors": [],
+        "shellMs": 3196.699999988079,
+        "chartMs": 6190.899999976158,
+        "completeReadingMs": 9556.599999964237,
+        "workerRequests": 0,
+        "cls": 0,
+        "longTaskMs": [
+          71,
+          188
+        ],
+        "proseHash": "4ee9a5723d9b99f53b9df3440f53fa14c9c3f39b1bc29b9ed97eab6bd44356ed",
+        "copyHash": "b4775e4223a66f4c106ea69160df3b574778b7b8900a8704d5a9ec1ddc769bd5"
+      },
+      {
+        "run": 1,
+        "warm": true,
+        "error": null,
+        "errors": [],
+        "shellMs": 597.3999999761581,
+        "chartMs": 597.3999999761581,
+        "completeReadingMs": 3687.099999964237,
+        "workerRequests": 0,
+        "cls": 0,
+        "longTaskMs": [
+          56,
+          158,
+          96,
+          89,
+          188
+        ],
+        "proseHash": "4ee9a5723d9b99f53b9df3440f53fa14c9c3f39b1bc29b9ed97eab6bd44356ed",
+        "copyHash": "b4775e4223a66f4c106ea69160df3b574778b7b8900a8704d5a9ec1ddc769bd5"
+      },
+      {
+        "run": 2,
+        "warm": false,
+        "error": null,
+        "errors": [],
+        "shellMs": 3195.199999988079,
+        "chartMs": 6051.099999964237,
+        "completeReadingMs": 9555.300000011921,
+        "workerRequests": 0,
+        "cls": 0,
+        "longTaskMs": [
+          69,
+          179
+        ],
+        "proseHash": "4ee9a5723d9b99f53b9df3440f53fa14c9c3f39b1bc29b9ed97eab6bd44356ed",
+        "copyHash": "b4775e4223a66f4c106ea69160df3b574778b7b8900a8704d5a9ec1ddc769bd5"
+      },
+      {
+        "run": 2,
+        "warm": true,
+        "error": null,
+        "errors": [],
+        "shellMs": 598.7999999523163,
+        "chartMs": 598.7999999523163,
+        "completeReadingMs": 3732.199999988079,
+        "workerRequests": 0,
+        "cls": 0,
+        "longTaskMs": [
+          57,
+          162,
+          96,
+          95,
+          196
+        ],
+        "proseHash": "4ee9a5723d9b99f53b9df3440f53fa14c9c3f39b1bc29b9ed97eab6bd44356ed",
+        "copyHash": "b4775e4223a66f4c106ea69160df3b574778b7b8900a8704d5a9ec1ddc769bd5"
+      },
+      {
+        "run": 3,
+        "warm": false,
+        "error": null,
+        "errors": [],
+        "shellMs": 3195,
+        "chartMs": 6067.600000023842,
+        "completeReadingMs": 9535.600000023842,
+        "workerRequests": 0,
+        "cls": 0,
+        "longTaskMs": [
+          73,
+          182
+        ],
+        "proseHash": "4ee9a5723d9b99f53b9df3440f53fa14c9c3f39b1bc29b9ed97eab6bd44356ed",
+        "copyHash": "b4775e4223a66f4c106ea69160df3b574778b7b8900a8704d5a9ec1ddc769bd5"
+      },
+      {
+        "run": 3,
+        "warm": true,
+        "error": null,
+        "errors": [],
+        "shellMs": 622.6999999880791,
+        "chartMs": 622.6999999880791,
+        "completeReadingMs": 3713.199999988079,
+        "workerRequests": 0,
+        "cls": 0,
+        "longTaskMs": [
+          60,
+          152,
+          93,
+          95,
+          188
+        ],
+        "proseHash": "4ee9a5723d9b99f53b9df3440f53fa14c9c3f39b1bc29b9ed97eab6bd44356ed",
+        "copyHash": "b4775e4223a66f4c106ea69160df3b574778b7b8900a8704d5a9ec1ddc769bd5"
+      },
+      {
+        "run": 4,
+        "warm": false,
+        "error": null,
+        "errors": [],
+        "shellMs": 3207,
+        "chartMs": 6118.800000011921,
+        "completeReadingMs": 9591.899999976158,
+        "workerRequests": 0,
+        "cls": 0,
+        "longTaskMs": [
+          73,
+          186
+        ],
+        "proseHash": "4ee9a5723d9b99f53b9df3440f53fa14c9c3f39b1bc29b9ed97eab6bd44356ed",
+        "copyHash": "b4775e4223a66f4c106ea69160df3b574778b7b8900a8704d5a9ec1ddc769bd5"
+      },
+      {
+        "run": 4,
+        "warm": true,
+        "error": null,
+        "errors": [],
+        "shellMs": 608.6999999880791,
+        "chartMs": 608.6999999880791,
+        "completeReadingMs": 3682.899999976158,
+        "workerRequests": 0,
+        "cls": 0,
+        "longTaskMs": [
+          54,
+          157,
+          96,
+          92,
+          184
+        ],
+        "proseHash": "4ee9a5723d9b99f53b9df3440f53fa14c9c3f39b1bc29b9ed97eab6bd44356ed",
+        "copyHash": "b4775e4223a66f4c106ea69160df3b574778b7b8900a8704d5a9ec1ddc769bd5"
+      }
+    ],
+    "verification": {
+      "origin": "https://tldrastro-gs0q1c1ec-usrnmtkns-projects.vercel.app",
+      "checks": [
+        {
+          "at": "2026-09-21T16:00:00.000Z",
+          "timeZone": "America/New_York",
+          "status": 200,
+          "positions": 14,
+          "events": 9,
+          "parity": true,
+          "requestAndComparisonMs": 4174
+        },
+        {
+          "at": "2026-03-27T00:00:00.000Z",
+          "timeZone": "Asia/Tokyo",
+          "status": 200,
+          "positions": 14,
+          "events": 6,
+          "parity": true,
+          "requestAndComparisonMs": 3253
+        },
+        {
+          "at": "2026-11-01T06:30:00.000Z",
+          "timeZone": "America/New_York",
+          "status": 200,
+          "positions": 14,
+          "events": 13,
+          "parity": true,
+          "requestAndComparisonMs": 5316
+        }
+      ],
+      "immutableAsset": true,
+      "assetMatchesSource": true,
+      "mobileNavigation": true,
+      "articleReturn": true,
+      "dateAndSignChange": true,
+      "pageErrors": []
+    },
+    "targetsMet": {
+      "cold": true,
+      "reload": true,
+      "allTenRuns": true
+    },
+    "proseMatchesPreviousPreview": true,
+    "fullCardTextMatchesPreviousPreview": true,
+    "maxLongTaskMs": 196,
+    "previousMaxLongTaskMs": 1239,
+    "publicLedgerParity": {
+      "records": 3944,
+      "exactMatch": true
+    },
+    "limitations": [
+      "Five cold/reload pairs on one synthetic mobile profile; not real-user percentile data.",
+      "Cold means a fresh browser context; server cold-start state is not controlled for every run.",
+      "Previous preview comparison, not a simultaneous production baseline.",
+      "Full content prerequisite still stops at the unchanged Calendar Moon–Lilith owner-payload mismatch."
+    ]
+  },
+  "protectedCopyReconciliation": {
+    "rows": 231,
+    "individualLilithApprovals": 78,
+    "lockedMatrixApprovals": 153,
+    "allBodiesAndPayloadHashesMatch": true,
+    "projectionSha256": "7469bac8e7742fe8e0a31ec8e002d8cca923e238fa75d226c60918d8e1784789",
+    "approvalSourcesUnchanged": true,
+    "readerRowsUnchanged": true
+  }
+}

@@ -121,9 +121,9 @@ async function startApp() {
     return preloadFriendsExperience();
   }).catch(() => { /* The mounted route owns import errors and recovery. */ });
   const readerStylesPromise = import("./styles.css");
-  // These routes all need astronomy. Fetch/initialize it alongside the app
-  // download rather than starting the worker waterfall after React mounts.
-  if (/^#\/?(?:sky|calendar)(?:[/?]|$)/u.test(window.location.hash)) {
+  // Sky first loads compact server facts. Calendar still benefits from a
+  // local engine for interactive navigation beyond the initial date.
+  if (/^#\/?calendar(?:[/?]|$)/u.test(window.location.hash)) {
     void import("./services/skyCalculationClient").then(({ preloadSwissEphemerisOffMainThread }) => (
       preloadSwissEphemerisOffMainThread()
     )).catch(() => { /* The active route owns its error and retry state. */ });

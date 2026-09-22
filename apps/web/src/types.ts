@@ -70,6 +70,7 @@ export type SkyPlacementAspectFacts = {
 };
 
 export type SkySnapshot = {
+  dailyEvents?: import("./services/ephemeris").LunarCalendarEvent[];
   placementAspectFacts?: SkyPlacementAspectFacts;
   location: LocationInput;
   generatedAt: string;

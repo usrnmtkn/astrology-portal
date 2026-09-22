@@ -517,8 +517,8 @@ assert.doesNotMatch(
 );
 assert.match(
   appSource,
-  /const coreSkyRequest = getAstrodienstSky\(skyLocation, selectedDateTime, \{ includeTransitWindows: refreshing \}\)[\s\S]*getAstrodienstSky\(skyLocation, selectedDateTime, \{ includeTransitWindows: true \}\)/u,
-  "Initial core sky data is posted first so it can paint before transit-window enrichment; both requests are queued on the same worker without waiting for the core round-trip."
+  /getSkyOnlineFirst\(skyLocation, selectedDateTime\)[\s\S]*publishFreshSky\(nextSky\)/u,
+  "Initial Sky must publish one complete API-first calculation without starting the browser ephemeris download."
 );
 assert.match(
   appSource,

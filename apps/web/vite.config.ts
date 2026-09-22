@@ -6,11 +6,23 @@ import { previewCompressionPlugin } from "../../scripts/preview-compression-plug
 import { existsSync, readFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
+import { createHash } from "node:crypto";
 
 const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), "../..");
 const apiRoot = resolve(repoRoot, "api");
 const adminAppRoot = resolve(repoRoot, "apps/admin");
 const swissEphFullDataPath = resolve(repoRoot, "node_modules/swisseph-wasm/wasm/swisseph.data");
+const swissAssets = ["swisseph.data", "swisseph.wasm"].map(name => ({ name,
+  source: readFileSync(resolve(repoRoot, "apps/web/public/wasm", name)) }));
+const swissAssetVersion = createHash("sha256").update(Buffer.concat(swissAssets.map(asset => asset.source))).digest("hex").slice(0,16);
+
+export function versionedSwissAssetsPlugin() {
+  return { name: "tldr-versioned-swiss-assets", apply: "build" as const,
+    generateBundle() {
+      for (const asset of swissAssets) this.emitFile({ type: "asset", fileName: `wasm/${swissAssetVersion}/${asset.name}`, source: asset.source });
+    }
+  };
+}
 
 const swissEphFullDataManifest = 'files:[{filename:"/sweph/seas_18.se1",start:0,end:223002},{filename:"/sweph/seasnam.txt",start:223002,end:10153224},{filename:"/sweph/sefstars.txt",start:10153224,end:10286461},{filename:"/sweph/seleapsec.txt",start:10286461,end:10286743},{filename:"/sweph/semo_18.se1",start:10286743,end:11591514},{filename:"/sweph/seorbel.txt",start:11591514,end:11597371},{filename:"/sweph/sepl_18.se1",start:11597371,end:12081426}],remote_package_size:12081426';
 const swissEphWebDataManifest = 'files:[{filename:"/sweph/seas_18.se1",start:0,end:223002},{filename:"/sweph/seleapsec.txt",start:223002,end:223284},{filename:"/sweph/semo_18.se1",start:223284,end:1528055},{filename:"/sweph/seorbel.txt",start:1528055,end:1533912},{filename:"/sweph/sepl_18.se1",start:1533912,end:2017967}],remote_package_size:2017967';
@@ -50,7 +62,7 @@ export function browserOnlySwissEphemerisPlugin() {
         }
         return code.replace(
           sourceNodeBranch,
-          `    // The Vite target is browser-only; omit the dependency's Node path resolver.\n${match[1]}\n\n    this.SweModule`
+          `    // Browser assets use a content-addressed path.\n${match[1].replace("new URL('../wasm/' + path, import.meta.url).href", `'/wasm/${swissAssetVersion}/' + path`)}\n\n    this.SweModule`
         );
       }
 
@@ -188,6 +200,7 @@ export default defineConfig(({ mode }) => {
       suppressUnrelatedMonorepoHotUpdatesPlugin(),
       localApiRoutePlugin(),
       serveFullSwissEphemerisDataInDevPlugin(),
+      versionedSwissAssetsPlugin(),
       browserOnlySwissEphemerisPlugin(),
       trimSwissEphemerisWebDataPlugin(),
       react()

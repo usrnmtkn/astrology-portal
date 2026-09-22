@@ -29,15 +29,21 @@ function OrbCanvas({ size }: { size: 20 | 64 }) {
     let dark = readDocumentDark();
     let frame = 0;
     let running = true;
+    let lastPaint = -Infinity;
 
     const paint = (time: number) => {
       context.setTransform(ratio, 0, 0, ratio, 0, 0);
       context.clearRect(0, 0, size, size);
       draw(context, size, time, dark, opts);
     };
-    const loop = () => {
+    const loop = (timestamp: number) => {
       if (!running) return;
-      paint(performance.now() / 1000 * speed);
+      // Keep the same motion and artwork while leaving time for the reading.
+      // rAF may run at 60/120 Hz; this decorative canvas needs only 30 frames/s.
+      if (timestamp - lastPaint >= 1000 / 30) {
+        paint(timestamp / 1000 * speed);
+        lastPaint = timestamp;
+      }
       frame = requestAnimationFrame(loop);
     };
 

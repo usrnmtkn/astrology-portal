@@ -40,7 +40,7 @@ function finiteCoordinate(value: unknown) {
   return typeof value === "number" && Number.isFinite(value);
 }
 
-function isVerifiedSkySnapshot(value: unknown): value is SkySnapshot {
+export function isVerifiedSkySnapshot(value: unknown): value is SkySnapshot {
   if (!value || typeof value !== "object") {
     return false;
   }

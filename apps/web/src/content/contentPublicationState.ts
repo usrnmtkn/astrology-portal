@@ -14,6 +14,7 @@ export function publicationLedgerReady() { return publications.has(publicationLe
 export const publicationCacheKey = "tldrastro:content-publications:v1";
 const publications = new Map<string, ContentPublication>();
 const listeners = new Set<() => void>();
+export let contentPublicationGeneration = 0;
 
 export function validContentPublication(value: unknown): value is ContentPublication {
   if (!value || typeof value !== "object") return false;
@@ -54,6 +55,7 @@ if (typeof window !== "undefined") {
 
 export function installContentPublications(incoming: readonly unknown[]) {
   if (!mergeContentPublications(publications, incoming)) return;
+  contentPublicationGeneration += 1;
   if (typeof window !== "undefined") {
     try { window.localStorage.setItem(publicationCacheKey, JSON.stringify([...publications.values()])); }
     catch { /* Memory still retains the retirement for this session. */ }
