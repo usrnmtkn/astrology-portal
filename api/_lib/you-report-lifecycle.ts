@@ -288,15 +288,16 @@ export async function runYouReportJobs(input: {
       results.push({ jobId: job.id, status: "cancelled" });
       continue;
     }
+    const saveProgress = async (stage: "writing" | "checking" | "revising" | "waiting") => {
+      await admin.update("user_generated_interpretations",
+        `user_id=eq.${job.user_id}&you_report_entitlement_id=eq.${job.entitlement_id}&status=eq.DRAFT&body=eq.`,
+        { source_snapshot: { ...job.source_snapshot, reportProgress: { stage, updatedAt: new Date().toISOString() } } }
+      ).catch(() => { console.warn("Report progress could not be saved", { jobId: job.id, stage }); });
+    };
     try {
       if (deadline - Date.now() < 60_000) throw new TransitReadingCheckpointYield();
       const generated = await withTransitReadingCheckpoints({ admin, family: "you", jobId: job.id, attempt: job.checkpoint_attempt ?? 1, deadline,
-        onProgress: async (stage) => {
-          await admin.update("user_generated_interpretations",
-            `user_id=eq.${job.user_id}&you_report_entitlement_id=eq.${job.entitlement_id}&status=eq.DRAFT&body=eq.`,
-            { source_snapshot: { ...job.source_snapshot, reportProgress: { stage, updatedAt: new Date().toISOString() } } }
-          ).catch(() => { console.warn("Report progress could not be saved", { jobId: job.id, stage }); });
-        }
+        onProgress: saveProgress
       }, () => generateYouTransitReadingForUser({
         userId: job.user_id,
         facts: job.facts,
@@ -318,6 +319,7 @@ export async function runYouReportJobs(input: {
           state: "retry", attempt: Math.max(0, job.attempt - 1), run_after: new Date().toISOString(),
           locked_at: null, locked_by: null, last_error: null
         });
+        await saveProgress("waiting");
         results.push({ jobId: job.id, status: "retry" });
         continue;
       }
@@ -345,6 +347,7 @@ export async function runYouReportJobs(input: {
       });
       if (failed) await markPlaceholderFailed(admin, job, error instanceof TransitReadingCheckpointStopped
         ? "This report could not finish generating. Please try again." : errorMessage);
+      if (!failed) await saveProgress("waiting");
       results.push({ jobId: job.id, status: failed ? "failed" : "retry" });
       if (!failed && judgeBlocked && deadline - Date.now() >= 60_000) {
         // Reclaim through the database, so cancellation, ownership and the

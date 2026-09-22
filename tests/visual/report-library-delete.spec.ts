@@ -8,7 +8,7 @@ for (const theme of ['light', 'dark'] as const) {
     const state: Record<string, unknown>[]=[];
     let writes=0,fail=false;
     const rows=[{id:'00000000-0000-4000-8000-000000000002',subject_type:'you_day_reading',status:'DRAFT',body:'Saved test reading.',headline:'Daily test report',target_date:'2026-09-11',created_at:'2026-09-11T12:00:00Z',updated_at:'2026-09-11T12:00:00Z'},
-    {id:'00000000-0000-4000-8000-000000000003',subject_type:'friend_transit_reading',status:'ERROR',body:'',friend_report_entitlement_id:'fixture-entitlement',headline:'Failed test report',target_date:'2026-09-10',created_at:'2026-09-10T12:00:00Z',updated_at:'2026-09-10T12:00:00Z'}];
+    {id:'00000000-0000-4000-8000-000000000003',subject_type:'friend_transit_reading',status:'ERROR',body:'',error:'Writing quality gate did not pass after one corrective rewrite and re-judge.',friend_report_entitlement_id:'fixture-entitlement',headline:'Failed test report',target_date:'2026-09-10',created_at:'2026-09-10T12:00:00Z',updated_at:'2026-09-10T12:00:00Z'}];
     state.push({user_id:user.id,source_kind:'generated_interpretation',source_id:rows[1].id,archived_at:'2026-09-11T12:00:00Z'});
     const storageKey = `sb-${new URL(process.env.VITE_SUPABASE_URL ?? 'https://visual-smoke.supabase.test').hostname.split('.')[0]}-auth-token`;
     await page.addInitScript(({user,theme,storageKey})=>{
@@ -43,6 +43,8 @@ for (const theme of ['light', 'dark'] as const) {
     await page.reload();
     await expect(page.getByRole('tab',{name:'Reports 0',exact:true})).toBeVisible();
     await page.getByRole('tab',{name:'Archived 1',exact:true}).click();
+    await expect(page.getByText('Could not finish',{exact:true})).toBeVisible();
+    await expect(page.getByText('Needs review',{exact:true})).toHaveCount(0);
     const archivedMenu=page.getByRole('button',{name:'More options for Failed test report',exact:true});
     await archivedMenu.click();
     await expect(page.getByRole('menuitem')).toHaveText(['Restore','Delete']);

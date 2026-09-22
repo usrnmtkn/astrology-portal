@@ -63,6 +63,7 @@ jobs:
           node --import tsx scripts/test-you-report-paid-lifecycle.mts
           node --import tsx scripts/test-you-report-quality-floor.mts
           node scripts/test-you-report-source-handoff.mjs
+          node scripts/test-personal-report-source-hydration.mjs
           node --import tsx scripts/test-friend-report-paid-lifecycle.mts
           node --import tsx scripts/test-friend-transit-reading-contract.mts
           node --import tsx scripts/test-generated-report-judge-governance.mts

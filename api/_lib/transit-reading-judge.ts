@@ -1,4 +1,5 @@
 import { transitReadingReaderCopy } from "./transit-reading-reader-copy.js";
+import { assertGeneratedReportJudgeEvidence, GENERATED_REPORT_JUDGE_EVIDENCE_CONTRACT } from "./transit-reading-judge-evidence.js";
 import { transitReadingOwnerVoiceReceipt } from "./transit-reading-owner-voice.js";
 import fs from "node:fs";
 import { generatedReportWritingContract } from "./transit-reading-writing-contract.js";
@@ -21,7 +22,7 @@ import {
 } from "./transit-reading-production.js";
 import { instructionsForRole } from "../../src/astro-writing/openAIResponses.cjs";
 
-export const GENERATED_REPORT_JUDGE_ADAPTER_VERSION = "generated-report-judge-adapter-v1.4";
+export const GENERATED_REPORT_JUDGE_ADAPTER_VERSION = "generated-report-judge-adapter-v1.5";
 export const GENERATED_REPORT_JUDGE_ADAPTER_PATH = "tldr-astro-phrasebank/TLDR-GENERATED-REPORT-JUDGE-ADAPTER-V1-OWNER.md";
 const REPORT_JUDGE_PATH = "tldr-astro-phrasebank/TLDR-REPORT-JUDGE-RUBRIC-V3.4-OWNER.md";
 const REPORT_OWNER_REVIEW_EVIDENCE_PATH = "tldr-astro-phrasebank/TLDR-REPORT-OWNER-REVIEW-EVIDENCE-2026-08-11.md";
@@ -60,11 +61,14 @@ export const GENERATED_REPORT_JUDGE_SCHEMA = {
       items: {
         type: "object",
         additionalProperties: false,
-        required: ["category", "location", "finding"],
+        required: ["category", "location", "finding", "draftQuote", "sourcePath", "sourceQuote"],
         properties: {
           category: { type: "string", enum: [...GENERATED_REPORT_JUDGE_FINDING_CATEGORIES] },
           location: { type: "string" },
-          finding: { type: "string" }
+          finding: { type: "string" },
+          draftQuote: { type: "string", minLength: 1 },
+          sourcePath: { type: ["string", "null"] },
+          sourceQuote: { type: ["string", "null"] }
         }
       }
     }
@@ -73,24 +77,6 @@ export const GENERATED_REPORT_JUDGE_SCHEMA = {
 
 function requiredFile(path: string) {
   return fs.readFileSync(path, "utf8");
-}
-
-function assertProviderPayload(value: unknown): JudgeProviderPayload {
-  if (!value || typeof value !== "object" || Array.isArray(value)) throw new Error("Generated report judge returned invalid structured output.");
-  const payload = value as Partial<JudgeProviderPayload>;
-  if (!payload.scores || typeof payload.scores !== "object" || Array.isArray(payload.scores) || !Array.isArray(payload.findings)) {
-    throw new Error("Generated report judge omitted scores or findings.");
-  }
-  for (const category of GENERATED_REPORT_JUDGE_CATEGORIES) {
-    const score = (payload.scores as Partial<GeneratedReportJudgeScores>)[category];
-    if (typeof score !== "number" || score < 0 || score > 4) throw new Error(`Generated report judge returned an invalid ${category} score.`);
-  }
-  for (const finding of payload.findings) {
-    if (!finding || !GENERATED_REPORT_JUDGE_FINDING_CATEGORIES.includes(finding.category) || !finding.location?.trim() || !finding.finding?.trim()) {
-      throw new Error("Generated report judge returned an invalid finding.");
-    }
-  }
-  return payload as JudgeProviderPayload;
 }
 
 function judgePrompt(input: {
@@ -123,6 +109,7 @@ function judgePrompt(input: {
     `Report kind: ${input.reportKind}`,
     "The governed brief is the factual ceiling. Do not ask the writer to invent a scene, fact, chart claim, date, or life circumstance that is absent from it.",
     "Return scores and diagnostic findings only. Do not return a verdict, overall score, replacement sentence, rewrite, or suggested prose.",
+    GENERATED_REPORT_JUDGE_EVIDENCE_CONTRACT,
     "",
     "GOVERNED BRIEF",
     JSON.stringify(input.brief, null, 2),
@@ -157,9 +144,9 @@ export async function judgeGeneratedTransitReading(input: {
     prompt,
     schemaName: "tldr_generated_report_judge",
     schema: GENERATED_REPORT_JUDGE_SCHEMA as unknown as Record<string, unknown>,
-    validateResponse: (value) => { assertProviderPayload(value); }
+    validateResponse: (value) => { assertGeneratedReportJudgeEvidence(value, input); }
   });
-  const providerResult = assertProviderPayload(response.value);
+  const providerResult = assertGeneratedReportJudgeEvidence(response.value, input);
   const scores = providerResult.scores;
   const overall = generatedReportJudgeOverall(scores);
   return {

@@ -164,7 +164,7 @@ assert.match(prompt, /synthesis only/i);
 assert.match(prompt, /Do not re-rank the evidence/i);
 assert.match(prompt, /Things between you and \${brief\.friendName}|Things between you and Alex/i);
 assert.match(prompt, /Do not use you\/your outside relationship context/i);
-assert.match(prompt, /Every sentence containing you\/your must itself name the friend/u);
+assert.match(prompt, /Following sentences may keep that context without repeating the name/u);
 assert.match(prompt, /Return exactly four fields: headline, tldr, summary, body/u);
 assert.doesNotMatch(prompt, /(?:action|timing|sections|sceneLock|astrologyDrilldown): return/u,
   'The writing prompt must not request fields forbidden by its provider schema.');
@@ -175,9 +175,43 @@ const relationshipFollowup = validateFriendTransitReadingDraft({
     body: 'Things between you and Alex need patience today. You can take your time before answering. Alex can consider the current situation.' }
 });
 const followupIssues = relationshipFollowup.issues.filter(issue => issue.code === 'second_person');
-assert.equal(followupIssues.length, 1, 'Diagnose the failing sentence once, not once per pronoun.');
-assert.match(followupIssues[0].message, /body, sentence 2/u);
-assert.match(followupIssues[0].message, /preceding relationship sentence is insufficient/u);
+assert.equal(followupIssues.length, 0, 'An anchored relationship paragraph can continue without repeating the friend name.');
+assert.equal(validateFriendTransitReadingDraft({ brief, expectedHeadline: lockedRequest.headline,
+  draft: { headline: lockedRequest.headline, summary: 'Alex can respond to the current situation.',
+    body: 'Things between you and Alex need patience. Alex can hear what you mean. You can take your time before answering.' }
+}).passed, true, 'Naming the friend while addressing the reader must not falsely end relationship context.');
+
+// Synthetic reproduction of the production failure. Relationship evidence is
+// licensed only within that relationship and for the explicitly supplied owner.
+const relationshipBrief = assertFriendTransitReadingBrief({ ...rawBrief, relationshipActivations: [{
+  id: 'synthetic-relationship', headline: 'Chiron sextile your Sun', transitPlanet: 'Chiron',
+  activationBody: "Chiron in Pisces is sextile your Sun through November 28, activating the connection it makes with Alex's Moon.",
+  effectBody: 'The connection can make uncertainty easier to acknowledge.'
+}] });
+const checkRelationship = (body: string, selectedBrief = relationshipBrief) => validateFriendTransitReadingDraft({
+  brief: selectedBrief, expectedHeadline: lockedRequest.headline,
+  draft: { headline: lockedRequest.headline, summary: 'Alex can respond to the current situation.', body }
+});
+assert.equal(checkRelationship("Things between you and Alex can make uncertainty easier to acknowledge. Chiron in Pisces is sextile your Sun through November 28, activating the connection it makes with Alex's Moon.").passed, true);
+for (const body of [
+  'Things between you and Alex need patience. Chiron is sextile their Sun.',
+  "Things between you and Alex need patience. Chiron is sextile Alex's Sun.",
+  'Things between you and Alex need patience. Mars is trine your Moon.',
+  'Things between you and Alex need patience. Chiron is opposite your Sun.',
+  'Chiron is sextile their Sun.'
+]) {
+  assert.ok(checkRelationship(body).issues.some(issue => issue.code === 'untraceable_transit_claim'), body);
+}
+for (const body of [
+  'Things between you and Alex need patience.\n\nYou can take your time.',
+  'Things between you and Alex need patience. Alex can consider their own schedule. You can take your time.',
+  'You can take your time. Things between you and Alex need patience.'
+]) {
+  assert.equal(checkRelationship(body).issues.filter(issue => issue.code === 'second_person').length, 1, body);
+}
+assert.ok(checkRelationship('Things between you and Alex need patience.', assertFriendTransitReadingBrief({ ...rawBrief, relationshipActivations: [] }))
+  .issues.some(issue => issue.code === 'second_person'));
+assert.ok(checkRelationship('Alex is responding to Chiron in Pisces.').issues.some(issue => issue.code === 'untraceable_sign'));
 assert.match(prompt, /Mars trine Moon/);
 assert.match(prompt, /SPECIFICITY WITHOUT INVENTION/u);
 assert.match(prompt, /"lifeDomains": \[\s*"partnerships"/u, "Known natal houses must expose concrete semantic domains to the writer.");

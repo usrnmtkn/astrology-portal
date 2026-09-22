@@ -1,11 +1,12 @@
 import { transitReadingReaderCopy, transitReadingReaderText } from "./transit-reading-reader-copy.js";
-import { extractTransitAspectClaims, isOrdinaryAspectWord } from "./transit-reading-aspect-claims.js";
+import { isOrdinaryAspectWord } from "./transit-reading-aspect-claims.js";
+import { FRIEND_RELATIONSHIP_CONTEXT_RULE, friendReadingContexts, friendAspectClaims } from "./friend-reading-context.js";
 type RecordLike = Record<string, unknown>;
 
 export const FRIEND_TRANSIT_READING_CONTENT_TYPE = "friend_transit_reading";
 export const FRIEND_TRANSIT_READING_EVENT_TYPE = "friend-transit-reading";
 export const FRIEND_TRANSITS_BRIEF_SCHEMA = "tldr.friend-transits-brief.v1";
-export const FRIEND_TRANSIT_READING_PROMPT_VERSION = "friend-transit-reading-v1.6";
+export const FRIEND_TRANSIT_READING_PROMPT_VERSION = "friend-transit-reading-v1.7";
 
 export type FriendTransitReadingBrief = {
   schema: typeof FRIEND_TRANSITS_BRIEF_SCHEMA;
@@ -403,13 +404,13 @@ export function friendTransitReadingMeaningPlan(brief: FriendTransitReadingBrief
 export function friendTransitReadingPrompt(input: { brief: FriendTransitReadingBrief; headline: string }) {
   const { brief } = input;
   return [
-    "TLDR ASTRO FRIEND TRANSIT SYNTHESIS V1.6",
+    "TLDR ASTRO FRIEND TRANSIT SYNTHESIS V1.7",
     "",
     "TASK",
     `Write one short answer to: ${input.headline}`,
     `Write ${brief.friendName}\'s personal astrology in third person using their name and they/them/their.`,
     `When using Between You Two relationship context, address the reader directly and prefer the bridge: "Things between you and ${brief.friendName}..." Do not use you/your outside relationship context.`,
-    "Every sentence containing you/your must itself name the friend and explicitly identify the relationship or connection. A relationship sentence does not license second person in the following sentence. When that is awkward, use the friend's name and third person instead.",
+    FRIEND_RELATIONSHIP_CONTEXT_RULE,
     "This is synthesis only. TLDR Astro has already calculated, selected, ordered, and content-gated the astrology.",
     "Do not calculate astrology. Do not add a transit, placement, aspect, sign, house, date, degree, orb, interpretation, example, or life event that is not present below.",
     "Do not re-rank the evidence. Preserve the supplied order inside each lane.",
@@ -464,7 +465,6 @@ function allowedTechnicalFacts(brief: FriendTransitReadingBrief) {
     bodies: new Set([
       ...transits.flatMap((item) => [item.evidence.transitPlanet, item.evidence.natalPoint]),
       ...brief.houseContext.map((item) => item.transitPlanet),
-      ...brief.relationshipActivations.map((item) => item.transitPlanet ?? ""),
       brief.daily?.forecast ? "Moon" : ""
     ].filter(Boolean).map((value) => canonicalBody(value))),
     aspects: new Set(transits.map((item) => canonicalAspect(item.evidence.aspect))),
@@ -483,67 +483,63 @@ function allowedTechnicalFacts(brief: FriendTransitReadingBrief) {
   };
 }
 
-function relationshipSecondPersonAllowed(text: string, matchIndex: number, brief: FriendTransitReadingBrief) {
-  if (brief.relationshipActivations.length === 0 || matchIndex < 0) return false;
-  const starts = [
-    text.lastIndexOf(".", matchIndex),
-    text.lastIndexOf("!", matchIndex),
-    text.lastIndexOf("?", matchIndex),
-    text.lastIndexOf("\n", matchIndex)
-  ];
-  const start = Math.max(...starts) + 1;
-  const endings = [
-    text.indexOf(".", matchIndex),
-    text.indexOf("!", matchIndex),
-    text.indexOf("?", matchIndex),
-    text.indexOf("\n", matchIndex)
-  ].filter((value) => value >= 0);
-  const end = endings.length > 0 ? Math.min(...endings) : text.length;
-  const sentence = text.slice(start, end);
-  const friendNamePattern = new RegExp(`\\b${escapeRegex(brief.friendName)}\\b`, "iu");
-  return friendNamePattern.test(sentence)
-    && /\b(?:between|connection|relationship)\b/iu.test(sentence);
+function relationshipTechnicalFacts(brief: FriendTransitReadingBrief) {
+  // Only the supplied activation/heading establishes a technical relationship
+  // fact. Never license arbitrary claims from effect prose or the rejected draft.
+  const text = brief.relationshipActivations.map(item => `${item.headline}\n${item.activationBody}`).join("\n");
+  const claims = friendAspectClaims(text, brief.friendName);
+  return {
+    bodies: new Set([...text.matchAll(new RegExp(`\\b(${BODY_PATTERN})\\b`, "giu"))].map(match => canonicalBody(match[1]))),
+    aspects: new Set(claims.map(claim => claim.aspect)),
+    signs: new Set([...text.matchAll(new RegExp(`\\b(${SIGN_PATTERN})\\b`, "giu"))].map(match => match[1].toLowerCase())),
+    transitClaims: new Set(claims.filter(claim => claim.owner !== "unspecified").map(claim => `${claim.owner}|${claim.key}`))
+  };
 }
 
 export function validateFriendTransitReadingDraft(input: { draft: FriendTransitReadingDraft; brief: FriendTransitReadingBrief; expectedHeadline: string }) {
   const issues: FriendTransitReadingValidationIssue[] = [];
   const text = renderedText(input.draft);
-  const normalized = text.toLowerCase();
   const source = sourceText(input.brief);
   const allowed = allowedTechnicalFacts(input.brief);
+  const relationshipFacts = relationshipTechnicalFacts(input.brief);
+  const contexts = friendReadingContexts(text, input.brief.friendName, input.brief.relationshipActivations.length > 0);
+  const inRelationship = (index: number) => contexts.some(sentence => index >= sentence.start && index < sentence.end && sentence.relationship);
   if (input.draft.headline.trim() !== input.expectedHeadline.trim()) {
     issues.push({ code: "invalid_brief", value: input.draft.headline, message: "Friend transit reading headline changed from the locked question." });
   }
   for (const [field, prose] of Object.entries(transitReadingReaderCopy(input.draft))) {
-    const reportedSentences = new Set<number>();
-    for (const match of prose.matchAll(/\b(?:you|your|yours|yourself|yourselves)\b/giu)) {
-      if (relationshipSecondPersonAllowed(prose, match.index ?? -1, input.brief)) continue;
-      const sentence = [...prose.slice(0, match.index).matchAll(/[^.!?\n]+[.!?\n]+/gu)].length + 1;
-      if (reportedSentences.has(sentence)) continue;
-      reportedSentences.add(sentence);
-      issues.push({ code: "second_person", value: match[0], message: `Friend transit reading used second person outside explicit relationship context (${field}, sentence ${sentence}). Each second-person sentence must name the friend and the relationship; otherwise use third person. A preceding relationship sentence is insufficient.` });
-    }
+    const sentences = friendReadingContexts(prose, input.brief.friendName, input.brief.relationshipActivations.length > 0);
+    sentences.forEach((sentence, index) => {
+      const match = sentence.text.match(/\b(?:you|your|yours|yourself|yourselves)\b/iu);
+      if (!match || sentence.relationship) return;
+      issues.push({ code: "second_person", value: match[0], message: `Friend transit reading used second person outside explicit relationship context (${field}, sentence ${index + 1}). Establish the supplied relationship with the friend in this paragraph; a new paragraph or switch to the friend's own life ends that context.` });
+    });
   }
   for (const match of text.matchAll(/\b(?:score|significance|timing bonuses?|content keys?|source rows?|approval state|schema|backend)\b/giu)) {
     issues.push({ code: "internal_field_leak", value: match[0], message: "Friend transit reading exposed an internal brief field." });
   }
   for (const match of text.matchAll(new RegExp(`\\b(${BODY_PATTERN})\\b`, "giu"))) {
     const body = canonicalBody(match[1]);
-    if (!allowed.bodies.has(body)) issues.push({ code: "untraceable_body", value: match[0], message: `${match[0]} is not present in the governed brief.` });
+    if (!allowed.bodies.has(body) && !(inRelationship(match.index!) && relationshipFacts.bodies.has(body))) issues.push({ code: "untraceable_body", value: match[0], message: `${match[0]} is not present in the governed brief for this context.` });
   }
   for (const match of text.matchAll(new RegExp(`\\b(${ASPECT_PATTERN})\\b`, "giu"))) {
     if (isOrdinaryAspectWord(text, match.index ?? 0, match[0])) continue;
     const aspect = canonicalAspect(match[1]);
-    if (!allowed.aspects.has(aspect)) issues.push({ code: "untraceable_aspect", value: match[0], message: `${match[0]} is not present in the governed brief.` });
+    if (!allowed.aspects.has(aspect) && !(inRelationship(match.index!) && relationshipFacts.aspects.has(aspect))) issues.push({ code: "untraceable_aspect", value: match[0], message: `${match[0]} is not present in the governed brief.` });
   }
   for (const match of text.matchAll(new RegExp(`\\b(${SIGN_PATTERN})\\b`, "giu"))) {
-    if (!allowed.signs.has(match[1].toLowerCase())) issues.push({ code: "untraceable_sign", value: match[0], message: `${match[0]} is not present in the governed brief.` });
+    if (!allowed.signs.has(match[1].toLowerCase()) && !(inRelationship(match.index!) && relationshipFacts.signs.has(match[1].toLowerCase()))) issues.push({ code: "untraceable_sign", value: match[0], message: `${match[0]} is not present in the governed brief.` });
   }
   for (const match of text.matchAll(/\b([1-9]|1[0-2])(?:st|nd|rd|th)?\s+house\b/giu)) {
     if (!allowed.houses.has(Number(match[1]))) issues.push({ code: "untraceable_house", value: match[0], message: `${match[0]} is not present in the governed brief.` });
   }
-  for (const claim of extractTransitAspectClaims(text)) {
-    if (!allowed.transitClaims.has(claim.key)) issues.push({ code: "untraceable_transit_claim", value: claim.text, message: `${claim.text} is not a transit in the governed brief.` });
+  for (const sentence of contexts) {
+    for (const claim of friendAspectClaims(sentence.text, input.brief.friendName)) {
+      const personalFact = claim.owner !== "reader" && allowed.transitClaims.has(claim.key);
+      const relationshipFact = sentence.relationship && relationshipFacts.transitClaims.has(`${claim.owner}|${claim.key}`);
+      if (!personalFact && !relationshipFact) issues.push({ code: "untraceable_transit_claim", value: claim.text,
+        message: `${claim.text} is not supplied for that person in this context. Keep the reader's relationship activation separate from the friend's personal transits.` });
+    }
   }
   for (const match of text.matchAll(/\b\d{1,3}(?:\.\d+)?°/gu)) {
     if (!source.includes(match[0].toLowerCase())) issues.push({ code: "untraceable_degree", value: match[0], message: `${match[0]} is not present in the governed brief.` });

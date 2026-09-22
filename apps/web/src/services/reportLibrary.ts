@@ -193,7 +193,7 @@ export function dispatchReportReady(detail: ReportReadyEventDetail) {
 }
 
 function generatedProgressLabel(row: GeneratedReportRow, status: ReportLibraryStatus) {
-  if (status === "needs_attention") return row.error?.includes("quality gate") ? "Needs review" : "Could not finish";
+  if (status === "needs_attention") return "Could not finish";
   if (status !== "generating") return undefined;
   const progress = row.source_snapshot?.reportProgress;
   const stage = progress && typeof progress === "object" ? (progress as { stage?: unknown }).stage : undefined;

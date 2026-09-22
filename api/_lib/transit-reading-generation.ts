@@ -36,7 +36,7 @@ export type TransitReadingJudgeOutcome = {
     overall: number;
     verdict: "pass" | "below_threshold";
     scores: Record<string, number>;
-    findings: Array<{ category: string; location: string; finding: string }>;
+    findings: Array<{ category: string; location: string; finding: string; draftQuote?: string; sourcePath?: string | null; sourceQuote?: string | null }>;
   };
   provider: string;
   model: string;
@@ -291,7 +291,11 @@ async function initialValidatedDraft<TBrief>(
 
 function judgmentFindings(judged: TransitReadingJudgeOutcome) {
   return judged.result.findings.length
-    ? judged.result.findings.map((finding, index) => `${index + 1}. ${finding.category} at ${finding.location}: ${finding.finding}`).join("\n")
+    ? judged.result.findings.map((finding, index) => [
+      `${index + 1}. ${finding.category} at ${finding.location}: ${finding.finding}`,
+      ...(finding.draftQuote ? [`Draft evidence: ${JSON.stringify(finding.draftQuote)}`] : []),
+      ...(finding.sourceQuote ? [`Source evidence at ${finding.sourcePath}: ${JSON.stringify(finding.sourceQuote)}`] : [])
+    ].join("\n")).join("\n")
     : Object.entries(judged.result.scores)
       .filter(([category, score]) => score < (category === "owner_voice" || category === "natural_language" ? 4 : 3))
       .map(([category, score], index) => `${index + 1}. ${category} scored ${score}/4 and did not meet the release floor.`)

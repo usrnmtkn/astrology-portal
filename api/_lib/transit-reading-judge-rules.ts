@@ -28,6 +28,11 @@ export type GeneratedReportJudgeFinding = {
   category: typeof GENERATED_REPORT_JUDGE_FINDING_CATEGORIES[number];
   location: string;
   finding: string;
+  // Older checkpoints may predate the evidence protocol. New judge responses
+  // require all three fields; optional here permits diagnostic history reads.
+  draftQuote?: string;
+  sourcePath?: string | null;
+  sourceQuote?: string | null;
 };
 export type GeneratedReportJudgeResult = {
   scores: GeneratedReportJudgeScores;

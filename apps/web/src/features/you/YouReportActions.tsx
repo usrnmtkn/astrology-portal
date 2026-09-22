@@ -6,6 +6,7 @@ import "../../styles/you-reports.css";
 import type { DailyHoroscopeAssembly, PersonalTimingSummary } from "./YouPage";
 import {
   buildYouDayReportBrief,
+  prepareYouDayReportBrief,
   buildYouWeekReportBrief,
   requestYouTransitReport,
   type YouTransitReportWindow
@@ -50,7 +51,9 @@ function findPersistedReport(
 function reconcileAction(current: ReportAction, item: ReportLibraryItem | null): ReportAction {
   if (current.state === "loading") return current;
   if (!item) {
-    return current.state === "queued" ? current : idleAction;
+    // A source-load failure happens before a job exists. An empty poll must not
+    // erase its retry state while the error is still shown to the reader.
+    return current.state === "queued" || current.state === "error" ? current : idleAction;
   }
   if (item.status === "ready") return { state: "ready", route: item.route, observedUpdate: item.updatedAt };
   if (item.status === "generating") return { state: "queued", route: null };
@@ -149,7 +152,12 @@ export function YouReportActions({
     setAction((current) => ({ ...current, state: "loading", route: null }));
     setMessage("");
     try {
-      const result = await requestYouTransitReport(brief, session.userId);
+      const preparedBrief = reportWindow === "day" ? await prepareYouDayReportBrief({
+        dateLabel: transitDateLabel, dailySummary: dailyUpdateSummary, dailyAssembly: dailyHoroscopeAssembly
+      }) : brief;
+      if (!mounted.current || scopeRef.current !== requestScope) return;
+      if (!preparedBrief) throw new Error("The report's source material could not load. Please try again.");
+      const result = await requestYouTransitReport(preparedBrief, session.userId);
       if (!mounted.current || scopeRef.current !== requestScope) return;
       ++requestVersion.current;
       setAction((current) => ({ ...current, state: result.status === "ready" ? "checking" : "queued", route: null }));

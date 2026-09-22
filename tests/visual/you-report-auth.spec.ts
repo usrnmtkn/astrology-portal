@@ -8,7 +8,8 @@ test.beforeAll(async () => {
     const h = window.reportHarness = {userId:window.existingReportAccount, items:[], reads:0, creates:0, read:async()=>h.items, create:async()=>({status:'queued'}), emit:null};
     const root=createRoot(document.getElementById('root'));
     const summary={headline:'Test',summary:'Synthetic report fixture.',status:'ready'};
-    const assembly={specialSections:[],derivation:{targetDate:'2026-09-11',qualifyingTransits:[{}]}};
+    h.prepareSources=async()=>({reportTransitReadings:[],reportSourceGaps:[]});
+    const assembly={specialSections:[],derivation:{targetDate:'2026-09-11',qualifyingTransits:[{}]},prepareReportSources:()=>h.prepareSources()};
     const reading={body:'Synthetic weekly fixture.',dayLabel:'Test',sourceUnits:[]};
     const weekly={status:'ready',weekStart:'2026-09-07',weekEnd:'2026-09-13',horoscope:reading,aspects:[]};
     h.render=(ready=h.ready ?? true,date='September 11')=>{h.ready=ready;root.render(<YouReportActions accountId={h.userId} accountRecovery={h.recovery} transitDateLabel={date} dailyUpdateSummary={ready?summary:{...summary,status:'loading'}} dailyHoroscopeAssembly={assembly} weeklyHoroscopeAssembly={ready?weekly:{...weekly,status:'loading'}}/>);};
@@ -19,7 +20,7 @@ test.beforeAll(async () => {
       b.onResolve({filter:/\.css$/},()=>({path:'css',namespace:'fixture'}));
       b.onLoad({filter:/.*/,namespace:'fixture'},({path})=>({contents:path==='auth'?'export const getSupabaseClient=async()=>{throw Error("The report card must use the page account")};':path==='library'?'export async function listReportLibrary(options){const h=window.reportHarness;h.reads++;if(options.expectedUserId!==h.userId)throw Error("session mismatch");return h.read();}':''}));
       // Keep the real brief builders, replace only the network request boundary.
-      b.onLoad({filter:/youTransitReports\.ts$/},async ({path})=>{const fs=await import('node:fs/promises');let source=await fs.readFile(path,'utf8');source=source.slice(0,source.indexOf('export async function requestYouTransitReport'))+'export async function requestYouTransitReport(brief,userId){const h=window.reportHarness;h.creates++;if(userId!==h.userId)throw Error("session mismatch");return h.create();}';return {contents:source,loader:'ts'};});
+      b.onLoad({filter:/youTransitReports\.ts$/},async ({path})=>{const fs=await import('node:fs/promises');let source=await fs.readFile(path,'utf8');source=source.slice(0,source.indexOf('export async function requestYouTransitReport'))+'export async function requestYouTransitReport(brief,userId){const h=window.reportHarness;h.creates++;h.submittedBrief=brief;if(userId!==h.userId)throw Error("session mismatch");return h.create();}';return {contents:source,loader:'ts'};});
     }}]});
   script=output.outputFiles[0].text;
 });
@@ -84,6 +85,28 @@ test('uses the signed-in page account immediately after mounting', async ({page}
   await page.getByRole('button',{name:'Create day report',exact:true}).click();
   await expect(page.getByRole('status')).toContainText('Your day report is being prepared.');
   expect(await page.evaluate(()=>(window as any).reportHarness.creates)).toBe(1);
+});
+
+test('daily report waits for full sources before submitting and preserves the full passage', async ({page}) => {
+  await page.evaluate(()=>{const h=(window as any).reportHarness;h.prepareSources=()=>new Promise(resolve=>h.sourcesReady=resolve);h.emit('owner');});
+  await page.getByRole('button',{name:'Create day report',exact:true}).click();
+  await expect(page.getByRole('button',{name:'Day report is loading',exact:true})).toBeDisabled();
+  expect(await page.evaluate(()=>(window as any).reportHarness.creates)).toBe(0);
+  await page.evaluate(()=>(window as any).reportHarness.sourcesReady({reportTransitReadings:[{transitId:'fixture',heading:'Fixture',body:'Complete source opening.\n\nComplete source ending.',sourceUnits:['fixture/approved']}],reportSourceGaps:[]}));
+  await expect(page.getByRole('status')).toContainText('Your day report is being prepared.');
+  expect(await page.evaluate(()=>(window as any).reportHarness.submittedBrief.approvedReaderText.transitReadings[0].body)).toBe('Complete source opening.\n\nComplete source ending.');
+});
+
+test('source loading failure or sign-out cannot submit the earlier daily brief', async ({page}) => {
+  await page.evaluate(()=>{const h=(window as any).reportHarness;h.prepareSources=async()=>{throw Error('Sources unavailable. Please try again.');};h.emit('owner');});
+  await page.getByRole('button',{name:'Create day report',exact:true}).click();
+  await expect(page.getByRole('status')).toHaveText('Sources unavailable. Please try again.');
+  expect(await page.evaluate(()=>(window as any).reportHarness.creates)).toBe(0);
+  await page.evaluate(()=>{const h=(window as any).reportHarness;h.prepareSources=()=>new Promise(resolve=>h.sourcesReady=resolve);});
+  await page.getByRole('button',{name:'Try day report again',exact:true}).click();
+  await page.evaluate(()=>{const h=(window as any).reportHarness;h.emit(null);h.sourcesReady({reportTransitReadings:[],reportSourceGaps:[]});});
+  await expect(page.getByRole('status')).toHaveText('Sign in to create or read your reports.');
+  expect(await page.evaluate(()=>(window as any).reportHarness.creates)).toBe(0);
 });
 
 test('failed account recovery offers retry without requesting another sign-in', async ({page}) => {

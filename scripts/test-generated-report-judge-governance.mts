@@ -13,6 +13,7 @@ import {
   type GeneratedReportOwnerFeedbackRow
 } from "../api/_lib/transit-reading-owner-evidence-rules.ts";
 import { youTransitReadingProductionKnowledgeIds } from "../api/_lib/transit-reading-production-evidence.ts";
+import { assertGeneratedReportJudgeEvidence } from "../api/_lib/transit-reading-judge-evidence.ts";
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const read = (relative: string) => fs.readFileSync(path.join(repoRoot, relative), "utf8");
@@ -28,6 +29,22 @@ assert.equal(generatedReportJudgeVerdict(perfectScores, 0.85), "pass");
 assert.equal(generatedReportJudgeVerdict({ ...perfectScores, owner_voice: 3 }, 0.85), "below_threshold");
 assert.equal(generatedReportJudgeVerdict({ ...perfectScores, natural_language: 3 }, 0.85), "below_threshold");
 assert.equal(generatedReportJudgeVerdict({ ...perfectScores, factual_traceability: 2 }, 0.85), "below_threshold");
+
+const judgeInput = { draft: { headline: 'Synthetic title', summary: 'Synthetic summary.', body: 'That specific opportunity will return.' },
+  brief: { approvedReaderText: { body: 'A recurring theme can invite reconsideration.' } } };
+const citedFinding = { category: 'unsupported_timing' as const, location: 'body',
+  finding: 'A recurring theme does not establish that this specific opportunity returns.',
+  draftQuote: judgeInput.draft.body, sourcePath: '/approvedReaderText/body', sourceQuote: judgeInput.brief.approvedReaderText.body };
+const coherentJudgment = { scores: { ...perfectScores, astrology_chronology: 2 }, findings: [citedFinding] };
+assert.doesNotThrow(() => assertGeneratedReportJudgeEvidence(coherentJudgment, judgeInput));
+assert.equal(generatedReportJudgeVerdict(coherentJudgment.scores, 0.85, coherentJudgment.findings), 'below_threshold');
+assert.throws(() => assertGeneratedReportJudgeEvidence({ scores: perfectScores, findings: [citedFinding] }, judgeInput), /perfect category score/u);
+assert.throws(() => assertGeneratedReportJudgeEvidence({ ...coherentJudgment, findings: [{ ...citedFinding, draftQuote: 'Invented quotation' }] }, judgeInput), /reader-visible copy/u);
+assert.throws(() => assertGeneratedReportJudgeEvidence({ ...coherentJudgment, findings: [{ ...citedFinding, sourcePath: '/not-in-the-brief' }] }, judgeInput), /sourcePath/u);
+assert.throws(() => assertGeneratedReportJudgeEvidence({ ...coherentJudgment, findings: [{ ...citedFinding, sourceQuote: 'The exact opportunity will return.' }] }, judgeInput), /sourceQuote/u);
+assert.throws(() => assertGeneratedReportJudgeEvidence({ ...coherentJudgment, findings: [] }, judgeInput), /no diagnostic evidence/u);
+assert.doesNotThrow(() => assertGeneratedReportJudgeEvidence({ ...coherentJudgment, findings: [{ ...citedFinding, sourcePath: null, sourceQuote: null }] }, judgeInput));
+assert.doesNotThrow(() => assertGeneratedReportJudgeEvidence({ scores: perfectScores, findings: [] }, judgeInput));
 
 const feedbackBase = {
   source_generated_interpretation_id: "report-1",

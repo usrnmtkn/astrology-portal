@@ -146,7 +146,7 @@ function fixture(kind, scenario) {
         const failed=scenario==='rejected' || (['correction','cleanup'].includes(scenario) && judgeCalls===1);
         const scores=Object.fromEntries(api.GENERATED_REPORT_JUDGE_CATEGORIES.map(key=>[key,4]));
         if(failed)scores.owner_voice=3;
-        return {value:{scores,findings:failed?[{category:'owner_voice',location:'body, first sentence',finding:'Synthetic diagnostic: simplify the transition while preserving supplied facts.'}]:[]},provider:input.provider,model:input.model,responseId:`judge-${judgeCalls}`};
+        return {value:{scores,findings:failed?[{category:'owner_voice',location:'body, first sentence',finding:'Synthetic diagnostic: simplify the transition while preserving supplied facts.',draftQuote:submitted.body.slice(0,30),sourcePath:null,sourceQuote:null}]:[]},provider:input.provider,model:input.model,responseId:`judge-${judgeCalls}`};
       }
       writerCalls++;
       if(writerCalls>1 && ['correction','cleanup','rejected'].includes(scenario)){
@@ -217,6 +217,7 @@ try{
       assert((await api.loadGeneratedReportById(row.id))?.body);
     }else{
       assert.equal(job.state,'failed',job.last_error);assert(!job.result_id);assert.equal(row.body,'');
+      assert.equal((await api.listReportLibrary())[0].progressLabel,'Could not finish');
       assert.equal(await api.loadGeneratedReportById(row.id),null);
       assert(!f.writes.some(([table,write])=>table.endsWith('_jobs') && write.state==='complete'));
     }
@@ -298,6 +299,21 @@ try{
       }
     }
     console.log(`PASS ${kind}: deleted report ${state}`);cases++;
+  }
+  for (const kind of ['day','week','friends']) {
+    const f=fixture(kind,'first-pass'); globalThis.reportDeliveryFixture=f;
+    const friend=kind==='friends';
+    const queued=friend
+      ? await api.requestFriendReport({userId:f.client.userId,subjectId:'synthetic-friend',targetDate:'2026-09-14',facts:{friendTransitsBrief:f.friendBrief},admin:f.admin})
+      : await api.requestYouReport({userId:f.client.userId,reportWindow:kind,brief:f.youBrief,admin:f.admin});
+    process.env[friend?'FRIEND_REPORT_JOB_ATTEMPT_CAP':'YOU_REPORT_JOB_ATTEMPT_CAP']='2';
+    f.call=async()=>{throw new Error('Synthetic transient provider outage');};
+    await (friend?api.runFriendReportJobs:api.runYouReportJobs)({workerId:'retry-worker',jobId:queued.job.id,admin:f.admin});
+    assert.equal(f.rows[friend?'friend_report_jobs':'you_report_jobs'][0].state,'retry');
+    assert.equal((await api.listReportLibrary())[0].progressLabel,'Queued to continue');
+    assert.equal(f.rows.user_generated_interpretations[0].source_snapshot.reportProgress.stage,'waiting');
+    process.env[friend?'FRIEND_REPORT_JOB_ATTEMPT_CAP':'YOU_REPORT_JOB_ATTEMPT_CAP']='1';
+    console.log(`PASS ${kind}: retry progress`); cases++;
   }
   const copy={headline:'Title',summary:'Summary',body:'Body'};
   for(const rows of [[],[{...copy}],[{id:'x',...copy,body:''}],[{id:'x',...copy,body:'Changed'}],[{id:'x',...copy},{id:'y',...copy}]]) assert.throws(()=>api.assertSavedTransitReading(rows,copy));
