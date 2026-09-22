@@ -21,10 +21,23 @@ Calendar continues to use the existing ephemeris.
 The feed also includes selected calculated events for the current UTC year and
 the following year. Eligible published Calendar descriptions are read on each
 refresh through the existing reader/publication rules, using the subscriber's
-selected time zone for dated content. Whole published bodies are preserved.
-Weekly entries link to that week's Calendar; owners can publish additional weekly
-forecast text in Subscription events. No generated or draft forecast is published
-automatically.
+selected time zone for dated content. Subscription descriptions include the first
+three complete sentences plus a visible **Read more** link. This is the owner's
+explicitly requested subscription preview; stored copy and the app reading retain
+the complete body. Approved bundled Calendar/Sky sources supply copy when no
+current published body is available, subject to the same retirement and version
+gates. Events without eligible prose still carry their date and reading link.
+Weekly entries use the approved week opener selected from that week's calculated
+events; owners can publish additional weekly forecast text in Subscription events.
+No generated or draft forecast is published automatically.
+
+Links contain the exact calculated event ID, `week-YYYY-MM-DD`, or custom event
+ID, plus its date and subscription time zone. Opening or reloading a link opens
+that reading in Calendar, including the full published description. Closing it
+returns to the dated calendar. No subscription or management token enters the
+app link. Existing feed URLs and event UIDs remain stable when descriptions change.
+Published package edits and retirements also advance the calculated entries'
+calendar version and modification time, so clients can recognize revised copy.
 
 The subscription URL stays unchanged when content or preferences change. Calendar
 apps choose their own refresh interval and may cache updates; the feed advertises
@@ -41,6 +54,9 @@ downloaded file once.
   and `/feed/2026.ics` are no longer issued.
 - `/api/admin/calendar-feed-events` uses the existing owner authorization and
   compare-and-swap writes. Draft and published JSON are stored separately.
+- `GET /api/calendar-reading?id=…&date=…&timeZone=…` exposes the same published
+  reading used by the feed. It validates the event identity/date/zone, returns
+  404 for absent or draft-only custom events, and never returns editor metadata.
 - The additive migration is
   `apps/web/supabase/migrations/20260922000528_calendar_subscriptions.sql`.
   Both new tables enable RLS and deny `anon` and `authenticated`; only the

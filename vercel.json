@@ -79,6 +79,10 @@
     }
   ],
   "functions": {
+    "api/calendar-reading.ts": {
+      "includeFiles": "node_modules/swisseph-wasm/wasm/*",
+      "maxDuration": 60
+    },
     "api/calendar-feed.ts": {
       "includeFiles": "node_modules/swisseph-wasm/wasm/*",
       "maxDuration": 60
