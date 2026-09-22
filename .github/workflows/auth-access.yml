@@ -27,7 +27,7 @@ jobs:
       - run: npx playwright install --with-deps chromium webkit
       - run: npm run qa:auth-access
       - run: npm run qa:bundle
-      - uses: actions/upload-artifact@v7
+      - uses: actions/upload-artifact@v6
         if: failure()
         with:
           name: auth-access-failures

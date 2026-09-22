@@ -176,6 +176,14 @@ begin
   delete from public.calendar_check_ins
   where user_id = member_a;
 
+  if found then
+    raise exception 'Authenticated user deleted another account check-in.';
+  end if;
+
+  -- The non-owner cannot SELECT this row either. Inspect persistence only
+  -- after leaving the restricted role; zero visible rows is expected under RLS.
+  execute 'reset role';
+
   select count(*) into visible
   from public.calendar_check_ins
   where user_id = member_a;
@@ -183,8 +191,6 @@ begin
   if visible <> 1 then
     raise exception 'Authenticated user deleted another account check-in.';
   end if;
-
-  execute 'reset role';
 
   delete from auth.users
   where id = member_a;

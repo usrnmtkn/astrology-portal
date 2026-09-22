@@ -25,7 +25,8 @@ const bundle = await build({
     ]) b.onResolve({ filter }, () => ({ path: name, namespace: 'fixture' }));
     b.onLoad({ filter: /.*/, namespace: 'fixture' }, ({path}) => ({ contents: {
       admin: 'export const createSupabaseReportAdmin = () => globalThis.reportDeliveryFixture.admin;',
-      auth: 'export const getSupabaseClient = async () => globalThis.reportDeliveryFixture.client;',
+      auth: `export const getSupabaseClient = async () => globalThis.reportDeliveryFixture.client;
+        export const getVerifiedAuthUser = async () => ({id:globalThis.reportDeliveryFixture.client.userId});`,
       transport: 'export const callReportCalibrationModel = async input => { await input.beforeProviderCall(); return globalThis.reportDeliveryFixture.call(input); };',
       gate: 'export const prepareProductionPreCallGate = () => ({}); export const assertProductionPreCallGate = () => true;',
       voice: `export const transitReadingOwnerVoice = () => []; export const assertTransitReadingOwnerVoice = () => true;
