@@ -4086,7 +4086,8 @@ test.describe("client-facing user flow case studies", () => {
         const assertNoClientErrors = await expectNoClientErrors(page);
         await page.setViewportSize({ width, height: 844 });
         await page.route("**/rest/v1/**", route => route.fulfill({ json: [] }));
-        await seedClientState(page, { profile: true, theme, now: "2026-07-29T16:00:00.000Z" });
+        // Navigation needs an account, not a birth chart or background AI reads.
+        await seedClientState(page, { theme, now: "2026-07-29T16:00:00.000Z" });
         await seedSignedInSession(page);
         const entries: Array<Record<string, unknown>> = [];
         const blocks: Array<Record<string, unknown>> = [];
@@ -4178,6 +4179,7 @@ test.describe("client-facing user flow case studies", () => {
           await expect(title).toBeVisible();
           expect(new URL(page.url()).hash).toBe(child.hash);
           await expect(page.locator(child.parent === "Account" ? ".account-journal-entry" : ".settings-blocked-row")).toHaveCount(child.parent === "Account" ? 10 : 20);
+          await page.waitForLoadState("networkidle");
           await page.evaluate(() => window.scrollTo(0, 450));
           await expect(page.locator("html")).toHaveAttribute("data-scrolled", "");
           await expectChildHeader();
