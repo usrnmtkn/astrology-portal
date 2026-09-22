@@ -2,6 +2,13 @@ import { transitReadingReaderCopy } from "./transit-reading-reader-copy.js";
 import { GENERATED_REPORT_JUDGE_CATEGORIES, GENERATED_REPORT_JUDGE_FINDING_CATEGORIES,
   type GeneratedReportJudgeFinding, type GeneratedReportJudgeScores, type GeneratedReportJudgeCategory } from "./transit-reading-judge-rules.js";
 
+export class GeneratedReportJudgeEvidenceError extends Error {
+  constructor(message: string) {
+    super(`Generated report judge diagnostic invalid: ${message}`);
+    this.name = "GeneratedReportJudgeEvidenceError";
+  }
+}
+
 export function findingScoreCategory(category: GeneratedReportJudgeFinding["category"]) {
   if (GENERATED_REPORT_JUDGE_CATEGORIES.includes(category as keyof GeneratedReportJudgeScores)) return category as keyof GeneratedReportJudgeScores;
   const blockingScores: Partial<Record<GeneratedReportJudgeFinding["category"], keyof GeneratedReportJudgeScores>> = {
@@ -30,7 +37,7 @@ export function assertGeneratedReportDiagnosticEvidence(value: unknown, input: {
   scoreCategories?: readonly GeneratedReportJudgeCategory[];
   findingCategories?: readonly string[];
 }): { scores: Partial<GeneratedReportJudgeScores>; findings: GeneratedReportJudgeFinding[] } {
-  const fail = (message: string): never => { throw new Error(`Generated report judge diagnostic invalid: ${message}`); };
+  const fail = (message: string): never => { throw new GeneratedReportJudgeEvidenceError(message); };
   if (!value || typeof value !== "object" || Array.isArray(value)) return fail("expected scores and findings.");
   const payload = value as { scores: Partial<GeneratedReportJudgeScores>; findings: GeneratedReportJudgeFinding[] };
   if (!payload.scores || typeof payload.scores !== "object" || !Array.isArray(payload.findings)) return fail("missing scores or findings.");
@@ -38,7 +45,7 @@ export function assertGeneratedReportDiagnosticEvidence(value: unknown, input: {
   if (Array.isArray(payload.scores) || Object.keys(payload.scores).some(key => !categories.includes(key as GeneratedReportJudgeCategory))) return fail("out-of-scope score.");
   for (const category of categories) {
     const score = payload.scores[category];
-    if (typeof score !== "number" || !Number.isFinite(score) || score < 0 || score > 4) return fail(`invalid ${category} score.`);
+    if (typeof score !== "number" || !Number.isInteger(score) || score < 0 || score > 4) return fail(`invalid ${category} score.`);
   }
   const fields = Object.values(transitReadingReaderCopy(input.draft));
   for (const finding of payload.findings) {

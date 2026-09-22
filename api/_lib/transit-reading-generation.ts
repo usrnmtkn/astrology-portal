@@ -1,6 +1,6 @@
 import { transitReadingReaderCopy } from "./transit-reading-reader-copy.js";
 import { transitReadingRevisionPrompt, type TransitReadingWriterTask } from "./transit-reading-revision.js";
-import { previousTransitReadingCorrectionFeedback } from "./transit-reading-checkpoints.js";
+import { previousTransitReadingCorrectionFeedback, TransitReadingCheckpointYield } from "./transit-reading-checkpoints.js";
 import type { TransitReadingOwnerVoiceReceipt } from "./transit-reading-owner-voice.js";
 import { SCOPED_REVIEW_VERSION, transitReadingDraftHash, type TransitReadingScopedReviewReceipt } from "./transit-reading-review-contract.js";
 import { contentGenerationProvider } from "./provider-config.js";
@@ -11,6 +11,9 @@ import {
   type TransitReadingProductionInput
 } from "./transit-reading-production.js";
 import { governedInstructionsForRole } from "../../src/astro-writing/openAIResponses.cjs";
+import { decideTransitReadingRelease, transitReadingReleasePolicy, type ReportReleaseDecision } from "./transit-reading-release-policy.js";
+import { TransitReadingReviewRequiredError, isInvalidReportReview } from "./transit-reading-review-stop.js";
+import type { GeneratedReportJudgeFinding } from "./transit-reading-judge-rules.js";
 
 export type TransitReadingProvider = "openai" | "claude";
 
@@ -48,6 +51,7 @@ export type TransitReadingJudgeOutcome = {
 };
 
 export type TransitReadingJudgeAudit = {
+  releaseDecision?: ReportReleaseDecision & { draftSha256: string };
   scopedReviews?: TransitReadingScopedReviewReceipt[];
   version: string;
   threshold: number;
@@ -110,6 +114,8 @@ export class TransitReadingJudgeBlockedError extends Error {
     stage: "corrected_validation" | "second_judgment";
     judgment: TransitReadingJudgeOutcome;
     validationError?: string;
+    releaseDecision?: ReportReleaseDecision;
+    reviewedDraftSha256?: string;
   }) {
     super("The generated report did not pass its writing quality gate after one corrective rewrite and re-judge.");
     this.name = "TransitReadingJudgeBlockedError";
@@ -351,8 +357,9 @@ function deterministicCleanupFeedback(
   ].join("\n");
 }
 
-function judgeAudit(judged: TransitReadingJudgeOutcome, attempts: 1 | 2): TransitReadingJudgeAudit {
+function judgeAudit(judged: TransitReadingJudgeOutcome, attempts: 1 | 2, decision: ReportReleaseDecision, draft: GeneratedTransitReadingDraft): TransitReadingJudgeAudit {
   return {
+    ...(decision.policy !== "strict" ? { releaseDecision: { ...decision, draftSha256: transitReadingDraftHash(draft) } } : {}),
     version: judged.version,
     threshold: judged.threshold,
     verdict: "pass",
@@ -371,46 +378,75 @@ function assertReviewDraft(judged: TransitReadingJudgeOutcome, draft: GeneratedT
   if (reviews?.length !== 2 || new Set(reviews.map(review => review.scope)).size !== 2
     || !reviews.some(review => review.scope === "facts") || !reviews.some(review => review.scope === "writing")
     || reviews.some(review => review.draftSha256 !== transitReadingDraftHash(draft))) {
-    throw new Error("The report needs both scoped reviews of this exact draft before correction or delivery.");
+    throw new TransitReadingReviewRequiredError({ reason: "wrong_or_missing_review_draft", draftSha256: transitReadingDraftHash(draft) });
   }
 }
 
 export async function generateGovernedTransitReading<TBrief>(options: GovernedTransitReadingOptions<TBrief>) {
+  const policy = transitReadingReleasePolicy();
+  if (policy !== "strict" && !options.judge) throw new Error("The materiality candidate requires a report judge before generation.");
   const provider = contentGenerationProvider({ contentType: options.contentType }) as TransitReadingProvider;
   const initial = await initialValidatedDraft(provider, options);
   if (!options.judge) return { draft: initial.draft, provider, judgeAudit: null };
 
-  const firstJudgment = await options.judge({
-    draft: initial.draft,
-    brief: initial.brief,
-    ownerEvidence: options.ownerEvidence ?? []
-  });
+  const review = async (draft: GeneratedTransitReadingDraft, correctionStarted = false) => {
+    try {
+      return await options.judge!({ draft, brief: initial.brief, ownerEvidence: options.ownerEvidence ?? [] });
+    } catch (error) {
+      if (error instanceof TransitReadingCheckpointYield) throw error;
+      if (!isInvalidReportReview(error) && !correctionStarted) throw error;
+      const details: string[] = [];
+      const seen = new Set<unknown>();
+      for (let cause: unknown = error; cause instanceof Error && !seen.has(cause); cause = cause.cause) {
+        seen.add(cause); details.push(cause.message);
+      }
+      throw new TransitReadingReviewRequiredError({ reason: isInvalidReportReview(error) ? "invalid_evaluator_response" : "corrected_review_unavailable", draftSha256: transitReadingDraftHash(draft),
+        detail: details.join(" | ").slice(0, 4000) }, { cause: error });
+    }
+  };
+  const decide = (judged: TransitReadingJudgeOutcome, draft: GeneratedTransitReadingDraft) => {
+    const decision = decideTransitReadingRelease({ ...judged.result,
+      findings: judged.result.findings as GeneratedReportJudgeFinding[], threshold: judged.threshold }, policy);
+    if (decision.action === "review_required") throw new TransitReadingReviewRequiredError({
+      reason: decision.reason, draftSha256: transitReadingDraftHash(draft), detail: decision
+    });
+    return decision;
+  };
+  const firstJudgment = await review(initial.draft);
   assertReviewDraft(firstJudgment, initial.draft);
-  if (firstJudgment.result.verdict === "pass") {
-    return { draft: initial.draft, provider, judgeAudit: judgeAudit(firstJudgment, 1) };
+  const firstDecision = decide(firstJudgment, initial.draft);
+  if (firstDecision.action === "accept") {
+    return { draft: initial.draft, provider, judgeAudit: judgeAudit(firstJudgment, 1, firstDecision, initial.draft) };
   }
+
+  // Advisory observations are retained for audit, but never sent as rewrite instructions.
+  const correctionJudgment = { ...firstJudgment, result: { ...firstJudgment.result, findings: firstDecision.blockingFindings } };
 
   let corrected: GeneratedTransitReadingDraft | null = null;
   try {
     corrected = await providerDraft(
       provider,
       initial.brief,
-      judgeCorrectionFeedback(firstJudgment, initial.draft, initial.validationFeedback),
+      judgeCorrectionFeedback(correctionJudgment, initial.draft, initial.validationFeedback),
       3,
       options,
       "revision"
     );
     validateShape(corrected, options, initial.brief);
   } catch (error) {
-    if (!(error instanceof TransitReadingQualityError)) throw error;
+    if (error instanceof TransitReadingCheckpointYield) throw error;
+    if (!(error instanceof TransitReadingQualityError)) throw new TransitReadingReviewRequiredError({
+      reason: "correction_unavailable", draftSha256: transitReadingDraftHash(initial.draft)
+    }, { cause: error });
     if (!corrected) throw new TransitReadingJudgeBlockedError({
-      stage: "corrected_validation", judgment: firstJudgment, validationError: error.message
+      stage: "corrected_validation", judgment: firstJudgment, validationError: error.message,
+      releaseDecision: firstDecision, reviewedDraftSha256: transitReadingDraftHash(initial.draft)
     });
     try {
       corrected = await providerDraft(
         provider,
         initial.brief,
-        deterministicCleanupFeedback(firstJudgment, corrected, error.message, initial.validationFeedback),
+        deterministicCleanupFeedback(correctionJudgment, corrected, error.message, initial.validationFeedback),
         4,
         options,
         "cleanup"
@@ -418,25 +454,26 @@ export async function generateGovernedTransitReading<TBrief>(options: GovernedTr
       validateShape(corrected, options, initial.brief);
     } catch (cleanupError) {
       if (cleanupError instanceof TransitReadingQualityError) throw new TransitReadingJudgeBlockedError({
-        stage: "corrected_validation", judgment: firstJudgment, validationError: cleanupError.message
+        stage: "corrected_validation", judgment: firstJudgment, validationError: cleanupError.message,
+        releaseDecision: firstDecision, reviewedDraftSha256: transitReadingDraftHash(initial.draft)
       });
-      throw cleanupError;
+      if (cleanupError instanceof TransitReadingCheckpointYield) throw cleanupError;
+      throw new TransitReadingReviewRequiredError({ reason: "cleanup_unavailable", draftSha256: transitReadingDraftHash(corrected) }, { cause: cleanupError });
     }
   }
 
   if (!corrected) throw new TransitReadingJudgeBlockedError({
-    stage: "corrected_validation", judgment: firstJudgment, validationError: "The corrective draft was unavailable for final review."
+    stage: "corrected_validation", judgment: firstJudgment, validationError: "The corrective draft was unavailable for final review.",
+    releaseDecision: firstDecision, reviewedDraftSha256: transitReadingDraftHash(initial.draft)
   });
 
-  const secondJudgment = await options.judge({
-    draft: corrected,
-    brief: initial.brief,
-    ownerEvidence: options.ownerEvidence ?? []
-  });
+  const secondJudgment = await review(corrected, true);
   assertReviewDraft(secondJudgment, corrected);
-  if (secondJudgment.result.verdict !== "pass") throw new TransitReadingJudgeBlockedError({
-    stage: "second_judgment", judgment: secondJudgment
+  const secondDecision = decide(secondJudgment, corrected);
+  if (secondDecision.action !== "accept") throw new TransitReadingJudgeBlockedError({
+    stage: "second_judgment", judgment: secondJudgment,
+    releaseDecision: secondDecision, reviewedDraftSha256: transitReadingDraftHash(corrected)
   });
 
-  return { draft: corrected, provider, judgeAudit: judgeAudit(secondJudgment, 2) };
+  return { draft: corrected, provider, judgeAudit: judgeAudit(secondJudgment, 2, secondDecision, corrected) };
 }

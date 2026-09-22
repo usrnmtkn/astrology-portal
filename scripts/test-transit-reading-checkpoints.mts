@@ -276,3 +276,26 @@ for (const family of ['you', 'friend'] as const) {
   await assert.rejects(resume(scope, () => step(request('writer'), async () => { assert.fail('must not repeat a returned response'); })), TransitReadingCheckpointStopped);
 }
 console.log('Post-provider save errors fail closed even when recording the failure succeeds.');
+
+// Candidate policy is pinned inside an invocation and across checkpoint replay.
+{
+  const original = process.env.GENERATED_REPORT_RELEASE_POLICY;
+  try {
+    delete process.env.GENERATED_REPORT_RELEASE_POLICY;
+    const { rows, admin } = storage();
+    const scope = { admin, family: 'you' as const, jobId: 'policy-job', attempt: 1 };
+    await resume(scope, () => step(request('writer'), async () => result('writer')));
+    process.env.GENERATED_REPORT_RELEASE_POLICY = 'report-materiality-candidate-v1';
+    await assert.rejects(resume(scope, () => step(request('writer'), async () => assert.fail('must not bill on policy change'))), /instructions or evidence changed/);
+    assert.equal(rows.length, 1);
+    await assert.rejects(resume({ ...scope, attempt: 2 }, async () => {
+      process.env.GENERATED_REPORT_RELEASE_POLICY = 'strict';
+      return step(request('writer'), async () => assert.fail('must not bill on in-flight policy change'));
+    }), /release policy changed/);
+    assert.equal(rows.length, 1);
+  } finally {
+    if (original === undefined) delete process.env.GENERATED_REPORT_RELEASE_POLICY;
+    else process.env.GENERATED_REPORT_RELEASE_POLICY = original;
+  }
+}
+console.log('Release policy: mid-invocation changes and cross-policy checkpoint replay stop before dispatch.');

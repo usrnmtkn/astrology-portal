@@ -195,3 +195,52 @@ next design decision is report-specific editorial materiality and source
 claim adjudication. Do not schedule another unchanged-prompt batch or claim
 that adding a second reviewer fixed the judge. Friends, unseen cases, fresh
 generation and saved-reader verification remain outstanding.
+
+## Bounded repair and inactive materiality policy
+
+The next implementation stops completed quality-rejection loops. The strict gate
+remains the default. A second rejection, invalid evaluator output, or outage
+once correction has begun holds the report. A normal checkpoint yield resumes
+saved work. Re-request cannot reset a hold, and a legacy retry with a recorded
+completed correction/re-judge failure stops before another provider call.
+Infrastructure failures before a usable first judgment keep their existing bound.
+
+The Reports list and reader distinguish **Needs review** from an outage, and a
+held report no longer tells the reader to try again. One browser regression
+initially exposed the stale retry instruction; the reader component was fixed
+and the fresh-build suite subsequently passed.
+
+`report-materiality-candidate-v1` is separately selectable, inactive and limited
+to the combined reviewer. It makes ordinary score-3 editorial findings advisory,
+keeps explicit/factual and score-0–2 defects blocking, and holds invalid or
+insufficient aggregate reviews without manufacturing rewrite instructions. Its
+saved receipt records the original strict verdict, scores/findings, draft hash
+and policy. Default checkpoint hashes are unchanged; candidate policy changes
+invalidate replay. Fractional scores now fail the integer schema contract.
+The [candidate contract](../writing/GENERATED_REPORT_MATERIALITY_CANDIDATE.md)
+states the policy delta, exact limits and a single conditional release evaluation.
+No owner rubric, writing prompt, source prose or approved feedback was changed.
+
+Offline replay of saved scores rescues 2/3 accepted controls on v1.7 (both repeats)
+and 1/3 on v1.8; this is a retrospective policy calculation, not calibration.
+The source-support dispute on C01 and remaining editorial disagreements are
+unresolved. No result is promoted into positive owner evidence. The candidate
+is not release-ready and no automatic tuning batch follows.
+
+Verification on the branch incorporating main through `a62a1b04`:
+
+| Boundary | Evidence and limit |
+| --- | --- |
+| Release rules | Category tests cover strict default, minor/material boundaries, factual and explicit blockers, conflicting/missing scores, aggregate hold and policy identity |
+| Generation → review → save → reader | 60 strict, 60 scoped and 72 material-policy fixture scenarios across Day, Week and Friends; real orchestration with synthetic storage/model transport |
+| Re-request/cron | Zero-call hold tests, four-attempt budget remaining, legacy failed/retrying rejection, policy rollback and post-rejection outage |
+| Checkpoint | Exact replay, policy changes, time yield, concurrency, deadline and uncertain persistence tests |
+| Browser | Fresh current-checkout build; five Reports browser tests pass, including review status, no retry instruction, reload, progress and shared reading |
+| Source/governance | Protected owner corpus, judge evidence, correction, breadth, schemas and scoped-review integration tests; no real provider calls |
+| Repository | Report API and web typechecks; Content Studio API suite; repository and built-public-asset privacy scans |
+
+Paid calls in this repair: **0**. Previous four ledger files remain unchanged.
+Combined observed spending remains **$1.833885 / 42 calls**; those call allowances
+are exhausted. No environment activation, migration, deployment, fresh real
+report or production-reader verification occurred. Tests establish operational
+behavior, not agreement with the owner's editorial judgments.

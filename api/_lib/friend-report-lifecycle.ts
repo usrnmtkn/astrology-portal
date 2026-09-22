@@ -1,3 +1,4 @@
+import { hasCompletedReportReview, isReportReviewHeld, isTransitReadingReviewRequiredError, REPORT_REVIEW_REQUIRED, REPORT_REVIEW_REQUIRED_MESSAGE } from "./transit-reading-review-stop.js";
 import { TRANSIT_READING_INVOCATION_BUDGET_MS, withTransitReadingCheckpoints, TransitReadingCheckpointYield, TransitReadingCheckpointStopped } from "./transit-reading-checkpoints.js";
 import { friendTransitReadingRequestLock } from "./friend-transit-reading.js";
 import { generateFriendTransitReadingForUser, type FriendTransitReadingRow } from "./friend-transit-reading-generation.js";
@@ -145,7 +146,7 @@ async function ensurePlaceholder(input: {
     contentKey: input.locked.contentKey,
     admin: input.admin
   });
-  if (existing?.body?.trim() && existing.friend_report_entitlement_id === input.entitlement.id) {
+  if (existing && existing.friend_report_entitlement_id === input.entitlement.id) {
     return existing;
   }
 
@@ -186,6 +187,7 @@ async function ensureJob(input: {
     new URLSearchParams({ entitlement_id: `eq.${input.entitlement.id}`, select: "*" })
   );
   if (existing) {
+    if (isReportReviewHeld(existing)) return existing;
     if (["failed", "cancelled"].includes(existing.state) && input.entitlement.status === "active") {
       await input.admin.update(
         "user_generated_interpretations",
@@ -315,7 +317,7 @@ export async function requestFriendReport(input: {
   if (job.state === "complete" && placeholder?.body?.trim()) {
     return { status: "ready" as const, reading: placeholder, entitlement, job };
   }
-  return { status: "queued" as const, reading: placeholder, entitlement, job };
+  return { status: isReportReviewHeld(job) ? "needs_review" as const : "queued" as const, reading: placeholder, entitlement, job };
 }
 
 export async function createFriendReportCheckoutIntent(input: {
@@ -573,6 +575,18 @@ export async function runFriendReportJobs(input: {
       results.push({ jobId: job.id, status: "cancelled" });
       continue;
     }
+    // A pre-repair retry may already have consumed its complete quality cycle.
+    // Hold it before provider dispatch; never migrate a rejected draft to ready.
+    if (hasCompletedReportReview(job.last_error)) {
+      const message = `${REPORT_REVIEW_REQUIRED} ${REPORT_REVIEW_REQUIRED_MESSAGE}`;
+      await admin.update("friend_report_jobs", `id=eq.${job.id}&state=eq.running&locked_by=eq.${encodeURIComponent(input.workerId)}`, {
+        state: "failed", locked_at: null, locked_by: null,
+        last_error: `${message} ${job.last_error}`.slice(0, 12000)
+      });
+      await markPlaceholderFailed(admin, job, message);
+      results.push({ jobId: job.id, status: "failed" });
+      continue;
+    }
     const saveProgress = async (stage: "writing" | "checking" | "revising" | "waiting") => {
       await admin.update("user_generated_interpretations",
         `user_id=eq.${job.user_id}&friend_report_entitlement_id=eq.${job.entitlement_id}&status=eq.DRAFT&body=eq.`,
@@ -611,37 +625,29 @@ export async function runFriendReportJobs(input: {
         continue;
       }
       const judgeBlocked = isTransitReadingJudgeBlockedError(error);
-      // Reject this draft, but give the existing entitlement its remaining retries.
-      const failed = job.attempt >= attemptCap || error instanceof TransitReadingCheckpointStopped;
-      // A completed review rejection is not a provider outage. Its next
-      // permitted attempt can run now; infrastructure failures keep backoff.
-      const delayMinutes = judgeBlocked ? 0 : Math.min(30, Math.max(1, job.attempt * 2));
-      const errorMessage = judgeBlocked
-        ? "Writing quality gate did not pass after one corrective rewrite and re-judge."
-        : error instanceof Error
-          ? error.message.slice(0, 2000)
-          : "Friends report generation failed.";
+      const invalidReview = isTransitReadingReviewRequiredError(error);
+      const reviewHeld = judgeBlocked || invalidReview;
+      // The one corrective rewrite is the whole quality budget, not a loop inside four job attempts.
+      const failed = reviewHeld || job.attempt >= attemptCap || error instanceof TransitReadingCheckpointStopped;
+      const delayMinutes = Math.min(30, Math.max(1, job.attempt * 2));
+      const errorMessage = reviewHeld
+        ? `${REPORT_REVIEW_REQUIRED} ${REPORT_REVIEW_REQUIRED_MESSAGE}`
+        : error instanceof Error ? error.message.slice(0, 2000) : "Report generation failed.";
       await admin.update("friend_report_jobs", `id=eq.${job.id}`, {
         state: failed ? "failed" : "retry",
         ...(!failed ? { checkpoint_attempt: (job.checkpoint_attempt ?? 1) + 1 } : {}),
-        run_after: !failed && judgeBlocked ? job.run_after
-          : failed ? new Date().toISOString() : new Date(Date.now() + delayMinutes * 60_000).toISOString(),
+        run_after: failed ? new Date().toISOString() : new Date(Date.now() + delayMinutes * 60_000).toISOString(),
         locked_at: null,
         locked_by: null,
-        last_error: judgeBlocked && error.diagnostic
+        last_error: (judgeBlocked || invalidReview) && error.diagnostic
           ? `${errorMessage} ${JSON.stringify(error.diagnostic)}`.slice(0, 12000)
           : errorMessage
       });
-      if (failed) await markPlaceholderFailed(admin, job, error instanceof TransitReadingCheckpointStopped
+      if (failed) await markPlaceholderFailed(admin, job, !reviewHeld && error instanceof TransitReadingCheckpointStopped
         ? "This report could not finish generating. Please try again." : errorMessage);
       if (!failed) await saveProgress("waiting");
       results.push({ jobId: job.id, status: failed ? "failed" : "retry" });
-      if (!failed && judgeBlocked && deadline - Date.now() >= 60_000) {
-        // Reclaim through the database, so cancellation, ownership and the
-        // attempt counter remain authoritative even with concurrent workers.
-        // Every continuation shares the original invocation deadline.
-        jobs.push(...await claimJobs({ admin, workerId: input.workerId, jobId: job.id, batchLimit: 1 }));
-      }
+
     }
   }
   return { claimed: jobs.length, results };

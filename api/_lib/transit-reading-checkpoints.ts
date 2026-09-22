@@ -3,6 +3,7 @@ import { createHash } from "node:crypto";
 import type { SupabaseReportAdmin } from "./supabase-report-admin.js";
 import type { ReportModelCallInput, ReportModelResult } from "./report-model-client.js";
 import { SCOPED_REVIEW_SCHEMAS, transitReadingReviewMode, transitReadingDraftHash, type TransitReadingReviewMode } from "./transit-reading-review-contract.js";
+import { transitReadingReleasePolicy, type ReportReleasePolicy } from "./transit-reading-release-policy.js";
 
 // Continue checkpointed steps while the invocation has time. Replaying saved
 // responses runs the existing fact/voice/review gates again, without billing.
@@ -16,6 +17,7 @@ type Context = {
   called: boolean;
   deadline: number;
   reviewMode: TransitReadingReviewMode;
+  releasePolicy: ReportReleasePolicy;
   judgeCalls: { facts: number; writing: number };
   writerCalls: number;
   onProgress?: (stage: "writing" | "checking" | "revising" | "waiting") => Promise<void>;
@@ -40,14 +42,16 @@ export function withTransitReadingCheckpoints<T>(
   input: Pick<Context, "admin" | "family" | "jobId" | "attempt" | "onProgress"> & { deadline?: number },
   run: () => Promise<T>
 ): Promise<T> {
-  return context.run({ ...input, reviewMode: transitReadingReviewMode(), judgeCalls: { facts: 0, writing: 0 }, writerCalls: 0,
+  return context.run({ ...input, reviewMode: transitReadingReviewMode(), releasePolicy: transitReadingReleasePolicy(), judgeCalls: { facts: 0, writing: 0 }, writerCalls: 0,
     step: 0, called: false, deadline: Math.min(input.deadline ?? Infinity, Date.now() + TRANSIT_READING_INVOCATION_BUDGET_MS) }, run);
 }
 
 export function transitReadingModelRequestHash(input: ReportModelCallInput<unknown>) {
+  const policy = transitReadingReleasePolicy();
   return createHash("sha256").update(JSON.stringify({
     version: 1, provider: input.provider, model: input.model,
-    prompt: input.prompt, schemaName: input.schemaName, schema: input.schema
+    prompt: input.prompt, schemaName: input.schemaName, schema: input.schema,
+    ...(policy === "strict" ? {} : { releasePolicy: policy })
   })).digest("hex");
 }
 
@@ -99,6 +103,7 @@ export async function checkpointTransitReadingModel<T>(
   if (!scope) return call(input);
   const step = scope.step++;
   if (scope.reviewMode !== transitReadingReviewMode()) throw new TransitReadingCheckpointStopped("Report review mode changed during an invocation.");
+  if (scope.releasePolicy !== transitReadingReleasePolicy()) throw new TransitReadingCheckpointStopped("Report release policy changed during an invocation.");
   const limit = scope.reviewMode === "scoped" ? 9 : 7;
   if (step >= limit) throw new TransitReadingCheckpointStopped(`Report generation exceeded its ${limit === 7 ? "seven" : "nine"}-step limit.`);
   if (scope.reviewMode === "scoped") {

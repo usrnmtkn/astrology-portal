@@ -19,6 +19,7 @@ export type ReportLibraryItem = {
   status: ReportLibraryStatus;
   progressLabel?: string;
   statusMessage?: string;
+  retryAllowed?: boolean;
   targetDate: string | null;
   periodEnd: string | null;
   createdAt: string;
@@ -193,7 +194,7 @@ export function dispatchReportReady(detail: ReportReadyEventDetail) {
 }
 
 function generatedProgressLabel(row: GeneratedReportRow, status: ReportLibraryStatus) {
-  if (status === "needs_attention") return "Could not finish";
+  if (status === "needs_attention") return (row.error?.startsWith("Report review required:") || row.error?.includes("quality gate")) ? "Needs review" : "Could not finish";
   if (status !== "generating") return undefined;
   const progress = row.source_snapshot?.reportProgress;
   const stage = progress && typeof progress === "object" ? (progress as { stage?: unknown }).stage : undefined;
@@ -274,9 +275,12 @@ export async function listReportLibrary(options: { expectedUserId?: string } = {
       subjectLabel,
       subtitle: row.subject_type === "friend_transit_reading" ? "Friends" : "You",
       status,
+      retryAllowed: !(row.error?.startsWith("Report review required:") || row.error?.includes("quality gate")),
       progressLabel: generatedProgressLabel(row, status),
       statusMessage: status === "needs_attention"
-        ? row.error?.includes("quality gate")
+        ? row.error?.startsWith("Report review required:")
+          ? "This report needs review before it can finish. Automatic rewriting has stopped."
+          : row.error?.includes("quality gate")
           ? "This report did not pass its content checks. No finished report is available."
           : "This report could not finish generating. Your saved reports are unchanged."
         : undefined,

@@ -222,3 +222,31 @@ test('a preparing report advances and opens without a reload, preserving state t
   row.body = 'The completed fixture report is now available.';
   await expect(page.getByText(row.body, { exact: true })).toBeVisible();
 });
+
+test('review-held reports show a stable review state instead of preparing or finished copy', async ({ page }) => {
+  const user = { id: '00000000-0000-4000-8000-000000000001', aud: 'authenticated', role: 'authenticated', app_metadata: { provider: 'email' }, user_metadata: {}, email: 'review@example.test' };
+  const storageKey = `sb-${new URL(process.env.VITE_SUPABASE_URL ?? 'https://visual-smoke.supabase.test').hostname.split('.')[0]}-auth-token`;
+  await page.addInitScript(({ user, storageKey }) => {
+    localStorage.setItem(storageKey, JSON.stringify({ access_token: 'fixture-token', refresh_token: 'fixture-refresh', expires_at: Math.floor(Date.now()/1000)+3600, token_type: 'bearer', user }));
+  }, { user, storageKey });
+  const row = { id: '00000000-0000-4000-8000-000000000002', subject_type: 'you_day_reading', status: 'ERROR', body: '', headline: 'Review fixture', target_date: '2026-09-11', created_at: '2026-09-11T12:00:00Z', updated_at: '2026-09-11T12:00:00Z', you_report_entitlement_id: 'fixture-entitlement', error: 'Report review required: This report needs review before it can finish. Automatic rewriting has stopped.' };
+  let generationRequests = 0;
+  await page.route('**/api/*report-request', route => { generationRequests++; return route.fulfill({ status: 409, json: { status: 'needs_review', error: 'Review required.' } }); });
+  await page.route('**/auth/v1/**', route => route.fulfill({ json: user }));
+  await page.route('**/rest/v1/**', route => {
+    const table = new URL(route.request().url()).pathname.split('/').pop();
+    return route.fulfill({ json: table === 'user_generated_interpretations' ? (route.request().headers().accept?.includes('vnd.pgrst.object') ? row : [row]) : [] });
+  });
+  const errors: string[] = [];
+  page.on('pageerror', error => errors.push(error.message));
+  await page.goto('/reports/');
+  await expect(page.getByText('Needs review', { exact: true })).toBeVisible();
+  await page.getByRole('button').filter({ hasText: 'Review fixture' }).click();
+  await expect(page.getByText('This report needs review before it can finish. Automatic rewriting has stopped.', { exact: true })).toBeVisible();
+  await expect(page.getByText('Preparing', { exact: true })).toHaveCount(0);
+  await page.reload();
+  await expect(page.getByText('This report needs review before it can finish. Automatic rewriting has stopped.', { exact: true })).toBeVisible();
+  expect(generationRequests).toBe(0);
+  expect(errors).toEqual([]);
+  await page.screenshot({ path: test.info().outputPath('report-review-required.png') });
+});

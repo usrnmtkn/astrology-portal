@@ -99,7 +99,8 @@ export function ReportVanityDeliveryView({ slug }: { slug: string }) {
     return <DeliveryState message={`${item.progressLabel ?? "Preparing"}. This page updates automatically when your report is ready.`} />;
   }
   if (item.status === "needs_attention") {
-    return <DeliveryState message={`${item.statusMessage ?? "This report could not be prepared."} Return to the page where you started it to try again.`} />;
+    const retry = item.retryAllowed === false ? "" : " Return to the page where you started it to try again.";
+    return <DeliveryState message={`${item.statusMessage ?? "This report could not be prepared."}${retry}`} />;
   }
   if (item.sourceKind === "generated_interpretation") {
     return <GeneratedReportDeliveryView reportId={item.sourceId} />;

@@ -1,3 +1,4 @@
+import { REPORT_REVIEW_REQUIRED_MESSAGE } from "./_lib/transit-reading-review-stop.js";
 import type { IncomingMessage, ServerResponse } from "node:http";
 import { waitUntil } from "@vercel/functions";
 import { requestFriendReport, runFriendReportJobs } from "./_lib/friend-report-lifecycle.js";
@@ -36,6 +37,10 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
     }
     if (result.status === "ready") {
       return sendJson(res, 200, { status: "ready", saved: result.reading ? [result.reading] : [] });
+    }
+    if (result.status === "needs_review") {
+      return sendJson(res, 409, { status: "needs_review", reportId: result.reading?.id ?? null,
+        error: REPORT_REVIEW_REQUIRED_MESSAGE });
     }
     const jobId = result.job?.id;
     if (jobId) {

@@ -9,9 +9,19 @@ New Friends readings and You Day/Week reports follow this release path:
 5. If the first judge blocks, perform exactly one corrective rewrite using those run-local findings and the same governed brief.
 6. Re-run deterministic validation.
 7. Re-judge once.
-8. Persist only if that second judgment passes. Otherwise reject that draft and retry the existing job while its attempt budget remains. Show Needs attention only when the job exhausts that budget.
+8. Persist only if that second judgment passes. Otherwise hold the report for review. Do not repeat the quality cycle using the infrastructure attempt budget.
 
-Each You Day/Week and Friends job gets four attempts by default, controlled by `YOU_REPORT_JOB_ATTEMPT_CAP` and `FRIEND_REPORT_JOB_ATTEMPT_CAP`. A judge rejection can retry immediately within the existing worker deadline; other retryable failures use two minutes per attempt (capped at 30 minutes). Cron workers pick up eligible work. The report remains generating between attempts. Rejected drafts may remain in protected model checkpoints, but are never published as reader results.
+The September 22 bounded-recovery repair is implemented on the repair branch,
+not yet deployed. You Day/Week and Friends retain four infrastructure attempts
+by default (`YOU_REPORT_JOB_ATTEMPT_CAP` / `FRIEND_REPORT_JOB_ATTEMPT_CAP`), with
+two minutes per attempt of backoff, capped at 30 minutes, before a usable initial
+review. A completed second rejection, malformed evaluation, or failure after
+quality correction begins now stops automatic work. A checkpoint time yield
+continues the same immutable attempt. Re-requesting a held report returns
+`needs_review` without resetting its allowance. Legacy completed-rejection
+retries stop before dispatch. See the [bounded repair and inactive policy
+candidate](writing/GENERATED_REPORT_MATERIALITY_CANDIDATE.md) for exact decisions,
+limits, evaluation evidence and recovery disposition.
 
 Retries reuse the same job, active entitlement, target date, and locked factual brief. They do not create another purchase, although fresh provider calls incur model cost. Every attempt runs the governed generation and validation path, with bounded deterministic correction, at most one judge-directed rewrite and two judgments. Revoked or refunded entitlements cancel the job before generation. Completed reports are reused rather than regenerated.
 

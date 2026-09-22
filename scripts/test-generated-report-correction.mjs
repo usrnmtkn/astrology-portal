@@ -1,3 +1,5 @@
+import { GENERATED_REPORT_JUDGE_CATEGORIES } from "../api/_lib/transit-reading-judge-rules.ts";
+const fixtureScores = (pass) => Object.fromEntries(GENERATED_REPORT_JUDGE_CATEGORIES.map(key => [key, key === "owner_voice" && !pass ? 3 : 4]));
 import assert from "node:assert/strict";
 import { build } from "esbuild";
 import { DEFAULT_BANNED, NEGATION_PIVOT_PAGE_CAP, STOCK_TROPES } from "../src/astro-writing/validateCopy.mjs";
@@ -103,12 +105,13 @@ try {
         assert.deepEqual(input.ownerEvidence, ["Approved fixture evidence"]);
         const expectedBody = judgeCalls === 1 ? original.body : scenario === "cleanup-pass" ? cleaned.body : corrected.body;
         assert.equal(input.draft.body, expectedBody);
+        const pass = scenario === "first-pass" || (judgeCalls === 2 && ["corrected-pass", "cleanup-pass"].includes(scenario));
         return {
           result: {
-            verdict: scenario === "first-pass" || (judgeCalls === 2 && ["corrected-pass", "cleanup-pass"].includes(scenario)) ? "pass" : "below_threshold",
+            verdict: pass ? "pass" : "below_threshold",
             overall: 0.9,
-            scores: { owner_voice: 3 },
-            findings: [{ category: "owner_voice", location: "body", finding: "Fixture diagnostic", ownerComparisons: [{ evidenceId: "synthetic-owner", quote: "Synthetic reference quote.", difference: "Synthetic difference in sentence movement." }] }]
+            scores: fixtureScores(pass),
+            findings: pass ? [] : [{ category: "owner_voice", location: "body", finding: "Fixture diagnostic", ownerComparisons: [{ evidenceId: "synthetic-owner", quote: "Synthetic reference quote.", difference: "Synthetic difference in sentence movement." }] }]
           },
           version: "fixture", provider: "fixture", model: "fixture", threshold: 0.85
         };
@@ -178,7 +181,7 @@ try {
     validate: draft => ({ passed: !["Fixture draft 1", "Fixture draft 2"].includes(draft.body), message: draft.body === "Fixture draft 1" ? "First deterministic defect" : "Second deterministic defect" }),
     compactBriefForRecovery: source => source,
     minSummaryLength: 1, minBodyLength: 1, recoveryLabel: "Fixture",
-    judge: async () => ({ result: { verdict: ++carriedJudges === 1 ? "below_threshold" : "pass", overall: 0.9, scores: { owner_voice: 3 }, findings: [{ category: "owner_voice", location: "body", finding: "Current judge finding" }] }, version: "fixture", provider: "fixture", model: "fixture", threshold: 0.85 })
+    judge: async () => ({ result: { verdict: ++carriedJudges === 1 ? "below_threshold" : "pass", overall: 0.9, scores: fixtureScores(carriedJudges > 1), findings: carriedJudges > 1 ? [] : [{ category: "owner_voice", location: "body", finding: "Current judge finding" }] }, version: "fixture", provider: "fixture", model: "fixture", threshold: 0.85 })
   });
   assert.ok(carriedPrompts[1].includes("Fixture draft 1"), "Deterministic correction must receive the failed draft, not just error messages.");
   assert.ok(carriedPrompts[2].includes("Fixture draft 2"), "Final recovery must edit the latest rejected draft instead of starting over.");
@@ -225,7 +228,7 @@ try {
       promptForAttempt: (source, headline, feedback) => JSON.stringify(source) + feedback,
       validate: draft => ({ passed: draft.body !== original.body, message: 'Current deterministic recovery defect' }),
       compactBriefForRecovery: source => source, minSummaryLength: 1, minBodyLength: 1, recoveryLabel: 'Fixture',
-      judge: async () => ({ result: { verdict: 'pass', overall: 1, scores: {}, findings: [] }, version: 'fixture', provider: 'fixture', model: 'fixture', threshold: 0.85 })
+      judge: async () => ({ result: { verdict: 'pass', overall: 1, scores: fixtureScores(true), findings: [] }, version: 'fixture', provider: 'fixture', model: 'fixture', threshold: 0.85 })
     });
     const scope = { admin, family, jobId: 'fixture-job', attempt: 2 };
     assert.equal((await withTransitReadingCheckpoints(scope, run)).draft.body, corrected.body);

@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import { build } from 'esbuild';
 const scoped = process.argv.includes('--scoped');
+const material = process.argv.includes('--material');
 
 // Real generation, validation, judge verdict, checkpoint, lifecycle, retrieval
 // and reader component. Only external storage, model transport and private
@@ -151,10 +152,22 @@ function fixture(kind, scenario) {
         if(input.schemaName==='tldr_generated_report_facts_judge') return {value:{draftSha256,scores:{astrology_chronology:4,factual_traceability:4},findings:[]},provider:input.provider,model:input.model,usage:{inputTokens:10,outputTokens:5,totalTokens:15}};
         const failed=['rejected','invalid-judge-evidence'].includes(scenario) || (['correction','cleanup'].includes(scenario) && judgeCalls===(scoped?2:1));
         const scores=Object.fromEntries(api.GENERATED_REPORT_JUDGE_CATEGORIES.filter(key=>!scoped||!['astrology_chronology','factual_traceability'].includes(key)).map(key=>[key,4]));
-        if(failed)scores.owner_voice=3;
+        if(failed)scores.owner_voice=material?2:3;
+        if (material && ['advisory','mixed','factual','aggregate'].includes(scenario)) {
+          const first = judgeCalls === 1;
+          const categories = scenario === 'aggregate' ? api.GENERATED_REPORT_JUDGE_CATEGORIES.filter(key=>!['astrology_chronology','factual_traceability'].includes(key))
+            : scenario === 'factual' ? ['factual_traceability'] : scenario === 'mixed' && first ? ['owner_voice','interpretive_movement'] : ['owner_voice','natural_language'];
+          for (const category of categories) scores[category] = scenario === 'mixed' && first && category === 'interpretive_movement' ? 2 : 3;
+          return {value:{scores,findings:categories.map(category=>({category,location:'body',finding:category === 'interpretive_movement' ? 'Material movement sentinel' : category === 'factual_traceability' ? 'Unsupported fact sentinel' : 'Advisory style sentinel',draftQuote:submitted.body.slice(0,30),sourcePath:null,sourceQuote:null,
+            ownerComparisons:category==='owner_voice'?[{evidenceId:'synthetic-owner',quote:'Synthetic owner comparison.',difference:'Synthetic difference.'}]:[]}))},provider:input.provider,model:input.model,usage:{inputTokens:10,outputTokens:5,totalTokens:15}};
+        }
         return {value:{...(scoped?{draftSha256}:{}),scores,findings:failed?[{...(scoped?{contextQuote:submitted.body.split('\n\n')[0],readerConsequence:'Synthetic transition obscures the reader connection.'}:{}),category:'owner_voice',location:'body, first sentence',finding:'Synthetic diagnostic: simplify the transition while preserving supplied facts.',draftQuote:submitted.body.slice(0,30),sourcePath:null,sourceQuote:null,ownerComparisons:scenario==='invalid-judge-evidence'?[]:[{evidenceId:'synthetic-owner',quote:'Synthetic owner comparison.',difference:'Synthetic difference in the transition.'}]}]:[]},provider:input.provider,model:input.model,responseId:`judge-${judgeCalls}`,usage:{inputTokens:10,outputTokens:5,totalTokens:15}};
       }
       writerCalls++;
+      if (scenario === 'mixed' && writerCalls > 1) {
+        assert(input.prompt.includes('Material movement sentinel'));
+        assert(!input.prompt.includes('Advisory style sentinel'), 'Advisory feedback cannot instruct a rewrite');
+      }
       if(writerCalls>1 && ['correction','cleanup','rejected'].includes(scenario)){
         assert.match(input.prompt,/TARGETED REPORT REVISION TASK|DETERMINISTIC CLEANUP TASK/);
         assert(!input.prompt.includes('TLDR ASTRO PERSONAL TRANSIT SYNTHESIS'));
@@ -171,11 +184,13 @@ function fixture(kind, scenario) {
 
 const previous = globalThis.reportDeliveryFixture;
 const savedEnv = {...process.env};
-Object.assign(process.env,{GENERATED_REPORT_REVIEW_MODE:scoped?'scoped':'combined',CONTENT_GENERATION_PROVIDER:'openai',CONTENT_GENERATION_PROVIDER_TRANSIT_TO_NATAL:'openai',FRIEND_REPORT_BILLING_MODE:'free_test',YOU_REPORT_JOB_ATTEMPT_CAP:'1',FRIEND_REPORT_JOB_ATTEMPT_CAP:'1'});
+Object.assign(process.env,{GENERATED_REPORT_RELEASE_POLICY:material?'report-materiality-candidate-v1':'strict',GENERATED_REPORT_REVIEW_MODE:scoped?'scoped':'combined',CONTENT_GENERATION_PROVIDER:'openai',CONTENT_GENERATION_PROVIDER_TRANSIT_TO_NATAL:'openai',FRIEND_REPORT_BILLING_MODE:'free_test',YOU_REPORT_JOB_ATTEMPT_CAP:'1',FRIEND_REPORT_JOB_ATTEMPT_CAP:'1'});
 let cases=0;
 try{
-  for(const kind of ['day','week','friends']) for(const scenario of ['first-pass','correction','cleanup','rejected','invalid-judge-evidence','save-error','empty-save','completion-error']){
+  for(const kind of ['day','week','friends']) for(const scenario of ['first-pass','correction','cleanup','rejected','invalid-judge-evidence','save-error','empty-save','completion-error',...(material?['advisory','mixed','factual','aggregate']:[])]){
     const f=fixture(kind,scenario);globalThis.reportDeliveryFixture=f;
+    const held = ['rejected','invalid-judge-evidence','factual','aggregate'].includes(scenario);
+    process.env.YOU_REPORT_JOB_ATTEMPT_CAP = process.env.FRIEND_REPORT_JOB_ATTEMPT_CAP = held ? '4' : '1';
     const queued=kind==='friends'
       ? await api.requestFriendReport({userId:f.client.userId,subjectId:'synthetic-friend',targetDate:'2026-09-14',facts:{friendTransitsBrief:f.friendBrief},admin:f.admin})
       : await api.requestYouReport({userId:f.client.userId,reportWindow:kind,brief:f.youBrief,admin:f.admin});
@@ -186,11 +201,16 @@ try{
     const result=await run({workerId:'fixture-worker',jobId:queued.job.id,admin:f.admin});
     const job=f.rows[kind==='friends'?'friend_report_jobs':'you_report_jobs'][0];
     const row=f.rows.user_generated_interpretations[0];
-    const success=['first-pass','correction','cleanup'].includes(scenario);
+    const success=['first-pass','correction','cleanup','advisory','mixed'].includes(scenario);
     if(success){
       assert.equal(job.state,'complete',JSON.stringify(result)+' '+job.last_error+' '+JSON.stringify(f.rows.transit_report_model_checkpoints.filter(c=>c.state==='failed')));
       assert.equal(job.result_id,row.id); assert.equal(row.body,f.output.body);
       assert.equal(row.summary,f.output.tldr);assert.equal(row.source_snapshot.generatedReportQualityGate.verdict,'pass');
+      if(material) {
+        const receipt=row.source_snapshot.generatedReportQualityGate.releaseDecision;
+        assert.equal(receipt.policy,'report-materiality-candidate-v1'); assert.match(receipt.draftSha256,/^[a-f0-9]{64}$/);
+        if (['advisory','mixed'].includes(scenario)) {assert.equal(receipt.strictVerdict,'below_threshold');assert.equal(receipt.advisoryFindings.length,2);}
+      }
       if(scoped) { const reviews=row.source_snapshot.generatedReportQualityGate.scopedReviews; assert.equal(reviews.length,2);assert.equal(reviews[0].draftSha256,reviews[1].draftSha256);assert.ok(reviews.every(r=>r.requestSha256&&r.responseSha256&&r.usage.totalTokens===15)); }
       const loaded=await api.loadGeneratedReportById(row.id);assert.equal(loaded.body,f.output.body);
       const html=api.renderToStaticMarkup(api.createElement(api.GeneratedReportArticle,{report:loaded}));
@@ -224,16 +244,36 @@ try{
       assert((await api.loadGeneratedReportById(row.id))?.body);
     }else{
       assert.equal(job.state,'failed',job.last_error);assert(!job.result_id);assert.equal(row.body,'');
-      assert.equal((await api.listReportLibrary())[0].progressLabel,'Could not finish');
+      assert.equal((await api.listReportLibrary())[0].progressLabel,held?'Needs review':'Could not finish');
       assert.equal(await api.loadGeneratedReportById(row.id),null);
       assert(!f.writes.some(([table,write])=>table.endsWith('_jobs') && write.state==='complete'));
     }
-    assert.equal(f.calls.judge,scenario==='first-pass'||['invalid-judge-evidence','save-error','empty-save','completion-error'].includes(scenario)?(scoped?2:1):(scoped?4:2));
+    assert.equal(f.calls.judge,scenario==='first-pass'||['invalid-judge-evidence','save-error','empty-save','completion-error','advisory','aggregate'].includes(scenario)?(scoped?2:1):(scoped?4:2));
     if(scenario==='invalid-judge-evidence') {
       assert.equal(f.calls.writer,1,'Invalid judge evidence must not instruct a corrective writer.');
       assert.match(job.last_error,/owner_voice lacks eligible comparison evidence/u);
     }
     if(scenario==='cleanup')assert.equal(f.calls.writer,3);
+    if(scenario==='advisory'||scenario==='aggregate')assert.equal(f.calls.writer,1);
+    if(held) {
+      assert.equal(job.attempt,1,'Four available attempts must not repeat a completed quality cycle');
+      assert.equal(job.checkpoint_attempt,1);
+      const before=clone(f.calls), checkpointCount=f.rows.transit_report_model_checkpoints.length;
+      const response={setHeader(){}};
+      const body=kind==='friends'
+        ? {subjectType:'friend_transit_reading',subjectId:'synthetic-friend',targetDate:'2026-09-14',facts:{friendTransitsBrief:f.friendBrief}}
+        : {reportWindow:kind,brief:f.youBrief};
+      // Both HTTP re-request and cron must preserve the hold, including after a policy rollback.
+      process.env.GENERATED_REPORT_RELEASE_POLICY='strict';
+      await (kind==='friends'?api.friendRequestHandler:api.youRequestHandler)({method:'POST',body},response);
+      assert.equal(response.status,409);assert.equal(response.body.status,'needs_review');assert.equal(response.body.reportId,row.id);
+      assert.equal(f.background.length,0);assert.equal(row.status,'ERROR');
+      await run({workerId:'next-cron',jobId:job.id,admin:f.admin});
+      assert.deepEqual(f.calls,before);assert.equal(f.rows.transit_report_model_checkpoints.length,checkpointCount);
+      assert.equal(job.state,'failed');assert.equal(job.checkpoint_attempt,1);
+      assert.equal((await api.listReportLibrary())[0].progressLabel,'Needs review');
+      process.env.GENERATED_REPORT_RELEASE_POLICY=material?'report-materiality-candidate-v1':'strict';
+    }
     console.log(`PASS ${kind}: ${scenario}`);cases++;
   }
   for (const kind of ['day','week','friends']) for (const state of ['failed','running','complete','revoked','restore-conflict','share-error','deleted-during-work']) {
@@ -326,13 +366,55 @@ try{
     process.env[friend?'FRIEND_REPORT_JOB_ATTEMPT_CAP':'YOU_REPORT_JOB_ATTEMPT_CAP']='1';
     console.log(`PASS ${kind}: retry progress`); cases++;
   }
+  for (const kind of ['day','week','friends']) for (const phase of ['correction','final-review']) {
+    const f=fixture(kind,'correction'); globalThis.reportDeliveryFixture=f;
+    const friend=kind==='friends';
+    process.env.YOU_REPORT_JOB_ATTEMPT_CAP=process.env.FRIEND_REPORT_JOB_ATTEMPT_CAP='4';
+    const queued=friend
+      ? await api.requestFriendReport({userId:f.client.userId,subjectId:'synthetic-friend',targetDate:'2026-09-14',facts:{friendTransitsBrief:f.friendBrief},admin:f.admin})
+      : await api.requestYouReport({userId:f.client.userId,reportWindow:kind,brief:f.youBrief,admin:f.admin});
+    const original=f.call.bind(f); let dispatched=0;
+    f.call=async input=>{
+      dispatched++;
+      if (phase==='correction' && !input.schemaName.includes('judge') && f.calls.writer===1
+        || phase==='final-review' && input.schemaName.includes('judge') && f.calls.writer===2) throw new Error('Synthetic outage after correction began');
+      return original(input);
+    };
+    const run=friend?api.runFriendReportJobs:api.runYouReportJobs;
+    await run({workerId:'outage-worker',jobId:queued.job.id,admin:f.admin});
+    const job=f.rows[friend?'friend_report_jobs':'you_report_jobs'][0];
+    assert.equal(job.state,'failed'); assert.match(job.last_error,/Report review required:/);
+    assert.equal(job.checkpoint_attempt,1); assert.equal(job.attempt,1);
+    const before=dispatched;
+    await run({workerId:'next-worker',jobId:queued.job.id,admin:f.admin});
+    assert.equal(dispatched,before,'An outage after a quality rejection must not reset the correction allowance');
+    console.log(`PASS ${kind}: ${phase} outage holds without resetting quality budget`);cases++;
+  }
+  for (const kind of ['day','week','friends']) for (const state of ['failed','retry']) {
+    const f=fixture(kind,'first-pass'); globalThis.reportDeliveryFixture=f;
+    const friend=kind==='friends';
+    const request=()=>friend
+      ? api.requestFriendReport({userId:f.client.userId,subjectId:'synthetic-friend',targetDate:'2026-09-14',facts:{friendTransitsBrief:f.friendBrief},admin:f.admin})
+      : api.requestYouReport({userId:f.client.userId,reportWindow:kind,brief:f.youBrief,admin:f.admin});
+    await request();
+    const job=f.rows[friend?'friend_report_jobs':'you_report_jobs'][0];
+    Object.assign(job,{state,attempt:2,checkpoint_attempt:2,last_error:'Writing quality gate did not pass after one corrective rewrite and re-judge. {"stage":"second_judgment"}'});
+    const row=f.rows.user_generated_interpretations[0];row.status=state==='failed'?'ERROR':'DRAFT';row.error=job.last_error;
+    const requested=await request();
+    assert.equal(requested.status,state==='failed'?'needs_review':'queued');
+    await (friend?api.runFriendReportJobs:api.runYouReportJobs)({workerId:'legacy-worker',jobId:job.id,admin:f.admin});
+    assert.equal(job.state,'failed');assert.equal(job.checkpoint_attempt,2);assert.equal(row.status,'ERROR');
+    assert.deepEqual(f.calls,{writer:0,judge:0},'Legacy exhausted quality cycles cannot restart');
+    assert.equal((await api.listReportLibrary())[0].progressLabel,'Needs review');
+    console.log(`PASS ${kind}: legacy ${state} rejection held without model calls`);cases++;
+  }
   const copy={headline:'Title',summary:'Summary',body:'Body'};
   for(const rows of [[],[{...copy}],[{id:'x',...copy,body:''}],[{id:'x',...copy,body:'Changed'}],[{id:'x',...copy},{id:'y',...copy}]]) assert.throws(()=>api.assertSavedTransitReading(rows,copy));
   api.assertSavedTransitReading([{id:'x',...copy}],copy);
-  console.log(`Transit report delivery (${scoped?'scoped':'combined'}): ${cases} actual-pipeline fixture cases passed; save acknowledgement, client retrieval, ownership, deletion and rendered opening/ending verified. No live provider or production claim.`);
+  console.log(`Transit report delivery (${material?'material candidate':scoped?'scoped':'combined'}): ${cases} actual-pipeline fixture cases passed; save acknowledgement, client retrieval, ownership, deletion and rendered opening/ending verified. No live provider or production claim.`);
 }finally{
   if(previous===undefined)delete globalThis.reportDeliveryFixture;else globalThis.reportDeliveryFixture=previous;
-  for(const key of ['GENERATED_REPORT_REVIEW_MODE','CONTENT_GENERATION_PROVIDER','CONTENT_GENERATION_PROVIDER_TRANSIT_TO_NATAL','FRIEND_REPORT_BILLING_MODE','YOU_REPORT_JOB_ATTEMPT_CAP','FRIEND_REPORT_JOB_ATTEMPT_CAP']){
+  for(const key of ['GENERATED_REPORT_RELEASE_POLICY','GENERATED_REPORT_REVIEW_MODE','CONTENT_GENERATION_PROVIDER','CONTENT_GENERATION_PROVIDER_TRANSIT_TO_NATAL','FRIEND_REPORT_BILLING_MODE','YOU_REPORT_JOB_ATTEMPT_CAP','FRIEND_REPORT_JOB_ATTEMPT_CAP']){
     if(savedEnv[key]===undefined)delete process.env[key];else process.env[key]=savedEnv[key];
   }
 }

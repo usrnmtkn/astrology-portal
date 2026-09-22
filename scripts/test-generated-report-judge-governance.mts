@@ -157,15 +157,16 @@ assert.deepEqual(weeklyMoonEvidence.mapped.canonicalIds, ["body/moon", "sign/sco
 
 const sharedGenerator = read("api/_lib/transit-reading-generation.ts");
 assert.match(sharedGenerator, /initialValidatedDraft/u, "Deterministic validation must precede the judge.");
-assert.match(sharedGenerator, /firstJudgment\.result\.verdict === "pass"/u);
+assert.match(sharedGenerator, /firstDecision\.action === "accept"/u);
 assert.match(sharedGenerator, /QUALITY JUDGE CORRECTION — ONE PASS ONLY/u);
 assert.match(sharedGenerator, /DETERMINISTIC CLEANUP — NO NEW INTERPRETATION/u);
-assert.match(sharedGenerator, /deterministicCleanupFeedback\(firstJudgment, corrected, error\.message, initial\.validationFeedback\)/u);
-assert.match(sharedGenerator, /const secondJudgment = await options\.judge/u);
-assert.match(sharedGenerator, /secondJudgment\.result\.verdict !== "pass"\) throw new TransitReadingJudgeBlockedError/u);
+assert.match(sharedGenerator, /deterministicCleanupFeedback\(correctionJudgment, corrected, error\.message, initial\.validationFeedback\)/u);
+assert.match(sharedGenerator, /const secondJudgment = await review/u);
+assert.match(sharedGenerator, /secondDecision\.action !== "accept"\) throw new TransitReadingJudgeBlockedError/u);
 assert.match(sharedGenerator, /validateShape\(corrected, options, initial\.brief\)/u, "The judge correction and any deterministic cleanup must pass validation before re-judge.");
-assert.match(sharedGenerator, /judgeAudit\(secondJudgment, 2\)/u);
-assert.doesNotMatch(sharedGenerator, /findings:\s*judged\.result\.findings/u, "Judge findings must not be persisted in the pass audit.");
+assert.match(sharedGenerator, /judgeAudit\(secondJudgment, 2, secondDecision, corrected\)/u);
+// Correction and delivery fixtures verify that strict pass audits omit findings and
+// candidate advisory receipts stay out of rendered prose and approved owner evidence.
 assert.doesNotMatch(sharedGenerator, /callOpenAIResponses\s*\(/u, "Friends/You writers may not open a direct provider path.");
 assert.doesNotMatch(sharedGenerator, /api\.anthropic\.com/u, "Friends/You writers may not open a direct Claude path.");
 assert.match(sharedGenerator, /prepareTransitReadingProductionKernel/u);
@@ -207,10 +208,9 @@ const friendLifecycle = read("api/_lib/friend-report-lifecycle.ts");
 const youLifecycle = read("api/_lib/you-report-lifecycle.ts");
 for (const source of [friendLifecycle, youLifecycle]) {
   assert.match(source, /isTransitReadingJudgeBlockedError/u);
-  assert.match(source, /const failed = job\.attempt >= attemptCap/u);
-  assert.doesNotMatch(source, /const failed = judgeBlocked \|\|/u, "A rejected draft must not consume the whole job retry budget.");
-  assert.match(source, /Writing quality gate did not pass after one corrective rewrite and re-judge\./u);
-  assert.match(source, /attempt: 0/u, "A later explicit retry must receive a fresh bounded job budget.");
+  // Actual delivery fixtures assert terminal review holds with four attempts remaining,
+  // unchanged infrastructure recovery, and zero-call re-request/legacy-job behavior.
+  assert.match(source, /attempt: 0/u, "A retryable infrastructure failure retains a bounded explicit-retry path.");
   assert.match(source, /result_id: null/u);
 }
 

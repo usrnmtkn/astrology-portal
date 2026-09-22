@@ -4,7 +4,7 @@ import { REPORT_JUDGE_THRESHOLD, reportFulfillmentConfig } from "./report-fulfil
 import { loadVersionedReportPrompt } from "./report-prompt-versions.js";
 import { GENERATED_REPORT_JUDGE_SCHEMA } from "./transit-reading-judge-schema.js";
 import { GENERATED_REPORT_JUDGE_RUBRIC_PATHS } from "./transit-reading-judge-prompt.js";
-import { GENERATED_REPORT_JUDGE_EVIDENCE_CONTRACT, assertGeneratedReportDiagnosticEvidence } from "./transit-reading-judge-evidence.js";
+import { GeneratedReportJudgeEvidenceError, GENERATED_REPORT_JUDGE_EVIDENCE_CONTRACT, assertGeneratedReportDiagnosticEvidence } from "./transit-reading-judge-evidence.js";
 import { generatedReportJudgeOverall, generatedReportJudgeVerdict, type GeneratedReportJudgeScores, type GeneratedReportJudgeFinding } from "./transit-reading-judge-rules.js";
 import { SCOPED_REVIEW_SCHEMAS, SCOPED_REVIEW_VERSION, REVIEW_CATEGORIES, REVIEW_FINDINGS,
   transitReadingDraftHash, type TransitReadingReviewScope, type TransitReadingScopedReviewReceipt } from "./transit-reading-review-contract.js";
@@ -37,7 +37,7 @@ export function scopedReviewSchema(scope: TransitReadingReviewScope) {
 
 export function assertScopedReview(value: unknown, scope: TransitReadingReviewScope,
   input: Parameters<typeof assertGeneratedReportDiagnosticEvidence>[1]): ScopedJudgment {
-  const fail = (message: string): never => { throw new Error(`Scoped report ${scope} review invalid: ${message}`); };
+  const fail = (message: string): never => { throw new GeneratedReportJudgeEvidenceError(`Scoped report ${scope} review invalid: ${message}`); };
   if (!value || typeof value !== "object" || Array.isArray(value)) return fail("missing review.");
   const payload = value as ScopedJudgment;
   if (Object.keys(value).some(key => !["draftSha256", "scores", "findings"].includes(key))) return fail("unexpected field.");
@@ -146,7 +146,7 @@ export async function judgeScopedGeneratedTransitReading(input: Input) {
       responseSha256: hash(value), provider: response.provider, model: response.model,
       ...(response.responseId ? { responseId: response.responseId } : {}), usage: response.usage });
   }
-  if (transitReadingDraftHash(input.draft) !== transitReadingDraftHash(frozen.draft)) throw new Error("Draft changed during scoped review.");
+  if (transitReadingDraftHash(input.draft) !== transitReadingDraftHash(frozen.draft)) throw new GeneratedReportJudgeEvidenceError("Draft changed during scoped review.");
   const scores = { ...responses.facts!.scores, ...responses.writing!.scores } as GeneratedReportJudgeScores;
   const findings = [...responses.facts!.findings, ...responses.writing!.findings];
   return {
