@@ -48,3 +48,19 @@ changed shared chunk references, so its limit gains 50 bytes. Reader startup,
 CSS, dependencies and other individual limits are unchanged.
 
 The PR records exact tested heads, hosted gates and deployed-main checks.
+
+Post-merge CI exposed two release checks not exercised by the original targeted
+suite. On initial Calendar entry, the Today URL cleanup must leave Calendar's
+hash-owned date alone. Adding a redundant root query made the next hash link
+reload the document and reintroduced the smoke fixture's old cache. Calendar
+date selections and rollover still retain their explicitly selected date.
+The existing full-facts loading regression and cross-surface Today regression
+cover this behavior.
+
+Studio must also be measured with the workflow's Supabase placeholders. That
+build matches the hosted entry hash and measures 744,283 raw / 217,148 gzip at
+entry and 732,119 aggregate gzip bytes. This is 271 raw / 88 entry gzip and 553
+aggregate bytes above the preceding release's documented build. Allocate 100
+additional raw entry/largest-chunk bytes and 500 aggregate gzip bytes; preserve
+entry gzip and all deferred-payload limits. The earlier standalone build
+understated CI's configuration overhead.
