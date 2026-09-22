@@ -343,7 +343,7 @@ assert.match(
 );
 assert.match(
   accountView,
-  /function AccountView[\s\S]*loadOwnSocialProfile\(\)[\s\S]*saveSocialHandle\(\{/,
+  /function AccountView[\s\S]*loadOwnSocialProfile\(accountId\)[\s\S]*saveSocialHandle\(\{/,
   "The account page must load and save the member's social handle."
 );
 assert.match(
