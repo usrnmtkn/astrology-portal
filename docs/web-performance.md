@@ -154,8 +154,9 @@ The decorative orb draws at most 30 frames per second. The Sky API shares the
 Calendar event scan and exact week boundaries while skipping the seven-day
 presentation grid; only those deterministic week events use a bounded cache.
 
-The follow-up starts Sky facts, publication refresh and canonical source assets
-before App finishes downloading. It adopts only the unchanged initial selection
+The follow-up starts Sky facts and publication refresh before App finishes
+downloading. Canonical source assets then load alongside the placement module,
+avoiding both a module-to-JSON waterfall and contention with App. It adopts only the unchanged initial selection
 and retains the publication barrier. The list defers house-reading rows until
 article/Calendar demand; protected full passages remain mandatory before reader
 composition. Equal builds reduce static reader boot by 4,277 gzip bytes while

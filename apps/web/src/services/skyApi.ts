@@ -73,10 +73,10 @@ export function startInitialSkyLoad(): InitialSkyLoad | null {
   const now = new Date();
   const date = skyDateTimeFromInput(day, location, true, now);
   const result = getSkyFromApi(location, date).catch(() => null);
-  // These sources are needed for every Sky list. Their own shared promises
-  // preserve retry behavior and the mounted reader's publication gate.
+  // Publication state is small and needed for every Sky list. Large content
+  // assets wait for App so they cannot compete with its initial download.
   void import("./contentPublications").then(({ refreshContentPublications }) => refreshContentPublications()).catch(() => {});
-  void import("../content/skyPlacementSourceAssets").then(({ loadSkyPlacementSourceAssets }) => loadSkyPlacementSourceAssets()).catch(() => {});
+
   let calculation: Promise<SkySnapshot> | undefined;
   const initial: InitialSkyLoad = {
     day, location, date, live: Boolean(liveSkyReference(day, location.timeZone, now)), startedAt: performance.now(), result,

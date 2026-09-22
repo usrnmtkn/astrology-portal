@@ -18,6 +18,9 @@ for (const changeSelection of [false, true]) {
     })));
     let releaseApp!: () => void;
     const appGate = new Promise<void>(resolve => { releaseApp = resolve; });
+    let releasePlacement!: () => void;
+    const placementGate = new Promise<void>(resolve => { releasePlacement = resolve; });
+    await page.route(/\/assets\/fallback-content-sky-placement-[^/]+\.js$/, async route => { await placementGate; await route.continue(); });
     await page.route(/\/assets\/App-[^/]+\.js$/, async route => { await appGate; await route.continue(); });
     const requests: URL[] = [];
     const errors: string[] = [];
@@ -33,7 +36,7 @@ for (const changeSelection of [false, true]) {
     try {
       await page.goto('/#sky', { waitUntil: 'commit' });
       await expect.poll(() => requests.some(url => url.pathname === '/api/sky')).toBe(true);
-      await expect.poll(() => requests.some(url => /sky-v4-canonical-content-studio-stage.*\.json$/.test(url.pathname))).toBe(true);
+      expect(requests.some(url => /sky-v4-canonical-content-studio-stage.*\.json$/.test(url.pathname))).toBe(false);
       await expect.poll(() => requests.some(url => url.pathname.endsWith('/content_publications'))).toBe(true);
       expect(await page.locator('.app-shell').count()).toBe(0);
       expect(requests.find(url => url.pathname === '/api/sky')?.searchParams.get('at')).toBe('2026-09-21T16:00:00.000Z');
@@ -43,7 +46,11 @@ for (const changeSelection of [false, true]) {
           localStorage.setItem('tldrastro:selectedLocation', JSON.stringify({ label: 'Synthetic Tokyo', latitude: 35.6762, longitude: 139.6503, timeZone: 'Asia/Tokyo' }));
         });
       }
-    } finally { releaseApp(); }
+    } catch (error) { releasePlacement(); throw error; } finally { releaseApp(); }
+    try {
+      await expect.poll(() => requests.some(url => /sky-v4-canonical-content-studio-stage.*\.json$/.test(url.pathname))).toBe(true);
+      await expect(page.locator('.app-shell')).toBeVisible();
+    } finally { releasePlacement(); }
     await expect(page.getByLabel('Daily sky summary', { exact: true })).toBeVisible({ timeout: 60_000 });
     await expect(page.locator('.planet-placement-row--sky')).toHaveCount(14);
     const skyRequests = requests.filter(url => url.pathname === '/api/sky');

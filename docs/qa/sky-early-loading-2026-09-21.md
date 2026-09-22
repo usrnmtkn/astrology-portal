@@ -7,8 +7,8 @@ The implementation is based on refreshed main `9bee69955187ffbb4588d33471e257820
 ## Behavior
 
 For a direct Sky list link, after authentication callback completion, the entry
-point starts the exact-input Sky API request, complete publication refresh and
-nine immutable content assets while App downloads. The mounted reader adopts
+point starts the exact-input Sky API request, complete publication refresh while App downloads. Once App is available, the
+nine immutable source assets download alongside the large placement module. The mounted reader adopts
 the initial instant only for the same day, coordinates, time zone and live/daily
 mode, before ten seconds have elapsed on the monotonic clock. A refresh or
 changed selection abandons it. StrictMode replay shares the same request.
@@ -50,7 +50,8 @@ house-reading chunk is absent from the initial list's requests.
 ## Verification and release evidence
 
 - Browser regression holds the App response back and requires the facts,
-  publication and canonical-source requests to start first. It checks one API
+  and publication requests to start first. A separate held placement-module
+  response proves canonical assets start without waiting for that module. It checks one API
   request for the unchanged selection and rejects a changed date plus location.
 - Initial list requests exclude house-reading and ephemeris assets; opening an
   article requests the house partition.
@@ -89,3 +90,12 @@ increases by 1,000 bytes to 54,000. Startup and aggregate CSS caps stay unchange
 The early-loading browser regression blocks both external font origins and
 requires the normal reader fonts to be loaded. The layout regression still
 requires stable summary, transit and card geometry from the first visible frame.
+
+## Scheduling correction after stress measurement
+
+The first preview started the large canonical JSON during App download. Five
+slow-mobile pairs showed that this competed for bandwidth and delayed the shell,
+leaving cold reading time close to baseline. That schedule was rejected. The
+final schedule starts only facts/publications before App; JSON starts alongside
+the placement module once App is available. The release PR records the final
+comparison rather than claiming the rejected preview as an improvement.
