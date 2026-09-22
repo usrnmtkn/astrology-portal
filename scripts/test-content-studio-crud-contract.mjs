@@ -27,6 +27,7 @@ function matches(row, params) {
 globalThis.fetch = async (input, init = {}) => {
   const url = new URL(String(input));
   assert.equal(url.origin, env.SUPABASE_URL);
+  if (url.pathname === '/rest/v1/rpc/content_studio_publication_receipt') return Response.json(null);
   assert.equal(url.pathname, '/rest/v1/generated_interpretations');
   const method = init.method ?? 'GET';
   const found = [...rows.values()].filter(row => matches(row, url.searchParams));
@@ -62,7 +63,22 @@ globalThis.fetch = async (input, init = {}) => {
   }
   throw new Error(`Unmodeled method ${method}`);
 };
-async function invoke(method, body, { raw = false, parsed = false, secret = env.CONTENT_GENERATION_SECRET, query = '' } = {}) {
+async function invoke(method, body, { raw = false, parsed = false, secret = env.CONTENT_GENERATION_SECRET, query = '', versioned = true } = {}) {
+  if (versioned && method === 'DELETE') {
+    const params = new URLSearchParams(query);
+    if (!params.has('expectedUpdatedAt') && rows.get(params.get('id'))?.updated_at) params.set('expectedUpdatedAt', rows.get(params.get('id')).updated_at);
+    query = `?${params}`;
+  }
+  // Default fixtures model an editor with a loaded baseline. Explicit caller
+  // versions and versioned:false exercise stale and missing-version requests.
+  if (versioned && body && typeof body === 'object' && !Array.isArray(body)) {
+    if (method === 'PATCH' && !Object.hasOwn(body, 'expectedUpdatedAt')) body = { ...body, expectedUpdatedAt: rows.get(body.id)?.updated_at };
+    if (method === 'POST' && Array.isArray(body.rows)) body = { ...body, rows: body.rows.map(item => {
+      if (!item || Object.hasOwn(item, 'expectedUpdatedAt')) return item;
+      const source = [...rows.values()].find(row => row.content_key === item.contentKey && row.mode === item.mode && (row.target_date ?? null) === (item.targetDate ?? null));
+      return source ? { ...item, expectedUpdatedAt: source.updated_at } : item;
+    }) };
+  }
   const request = Readable.from(parsed || body === undefined ? [] : [raw ? body : JSON.stringify(body)]);
   Object.assign(request, { method, url: `/api/admin/generated-content${query}`, headers: { authorization: `Bearer ${secret}` }, ...(parsed ? { body } : {}) });
   const response = { statusCode: 0, setHeader() {}, end(value) { this.payload = JSON.parse(value); } };
@@ -150,7 +166,7 @@ await test('bulk insert race preserves a newly created row', async () => {
   assert.equal(rows.get(baseline.id).body, 'QA competing insert');
 });
 
-await test('legacy update/delete still guard changes made after the API lookup', async () => {
+await test('versioned update/delete guard changes made after the API lookup', async () => {
   for (const method of ['PATCH', 'DELETE']) {
     reset(); afterLookup = () => rows.set(baseline.id, { ...baseline, body: 'QA newer concurrent draft', updated_at: '2026-09-10T12:01:00Z' });
     const result = method === 'PATCH'
@@ -265,4 +281,17 @@ await test('Astro 101 articles and chapters move live to draft and back without 
     assert.equal(rows.get(baseline.id).status, 'LIVE');
     assert.deepEqual(rows.get(baseline.id).sections, sections);
   }
+});
+
+await test('missing caller versions cannot overwrite, publish, archive, delete or bulk-replace an existing row', async () => {
+  for (const fields of [{ body: 'unversioned replacement' }, { status: 'LIVE' }, { status: 'ARCHIVED' }]) {
+    reset(); const before = structuredClone([...rows.values()]);
+    const result = await invoke('PATCH', { id: baseline.id, ...fields }, { versioned: false });
+    assert.equal(result.status, 400); assert.equal(result.code, 'VERSION_REQUIRED');
+    assert.deepEqual([...rows.values()], before); assert.deepEqual(writes, []);
+  }
+  reset(); const deleted = await invoke('DELETE', undefined, { query: `?id=${baseline.id}`, versioned: false });
+  assert.equal(deleted.status, 400); assert.equal(deleted.code, 'VERSION_REQUIRED'); assert.deepEqual(writes, []);
+  reset(); const batch = await invoke('POST', { rows: [writeBody()] }, { versioned: false });
+  assert.equal(batch.status, 400); assert.equal(batch.code, 'VERSION_REQUIRED'); assert.deepEqual(writes, []);
 });

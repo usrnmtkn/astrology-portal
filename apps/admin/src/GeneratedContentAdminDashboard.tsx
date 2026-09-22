@@ -2717,6 +2717,25 @@ function relationshipTypeCopy(row: AdminGeneratedContentRow, type: string) {
   return "";
 }
 
+type PendingStudioPublication = { id: string; expectedUpdatedAt: string; ownerAction: "approve-package-revision" | "publish-sky-article-edition-revision" };
+const pendingPublicationStorageKey = "tldr-studio-pending-publication-v1";
+function restorePendingPublication(): PendingStudioPublication | null {
+  try {
+    const value = JSON.parse(sessionStorage.getItem(pendingPublicationStorageKey) ?? "null");
+    if (value && typeof value.id === "string" && typeof value.expectedUpdatedAt === "string"
+      && ["approve-package-revision", "publish-sky-article-edition-revision"].includes(value.ownerAction)) return value;
+  } catch { /* Storage may be disabled; the database receipt remains durable. */ }
+  return null;
+}
+type StudioPublicationResult = { ok: boolean; rows: AdminGeneratedContentRow[]; found?: boolean; publicationReceipt?: { currentPublicationState?: string; currentStatus?: string; targetVersion?: string; currentVersion?: string } };
+function publicationStateMessage(result: StudioPublicationResult) {
+  const receipt = result.publicationReceipt;
+  if (receipt?.currentPublicationState === "retired") return "The publication completed earlier. This content is now retired.";
+  if (receipt && (receipt.currentStatus !== "LIVE" || !["live", "dated"].includes(receipt.currentPublicationState ?? ""))) return "The publication completed earlier. This content is no longer published.";
+  if (receipt && receipt.currentVersion !== receipt.targetVersion) return "The publication completed earlier. A newer saved version is now open.";
+  return "The reviewed revision is published.";
+}
+
 class AdminRequestError extends Error {
   status: number;
   path: string;
@@ -2752,6 +2771,11 @@ function dashboardErrorMessage(error: unknown) {
 
 async function adminJsonRequest<T>(path: string, secret: string, options: RequestInit = {}) {
   const method = options.method ?? "GET";
+  if (path.startsWith("/api/admin/generated-content") && ["PATCH", "DELETE"].includes(method)) {
+    const body = method === "PATCH" && typeof options.body === "string" ? JSON.parse(options.body) : null;
+    const version = body?.expectedUpdatedAt ?? new URL(path, window.location.origin).searchParams.get("expectedUpdatedAt");
+    if (!version) throw new Error("Reload this row to get its saved version before changing it. Your writing is still here.");
+  }
   const normalizedSecret = normalizeAdminSecret(secret);
   const controller = new AbortController();
   const externalSignal = options.signal;
@@ -2762,7 +2786,7 @@ async function adminJsonRequest<T>(path: string, secret: string, options: Reques
   const timeout = window.setTimeout(() => {
     timedOut = true;
     controller.abort();
-  }, path === "/api/admin/sky-draft-writing" ? 305_000 : 10_000);
+  }, path === "/api/admin/sky-draft-writing" ? 305_000 : path === "/api/admin/generated-content" && method === "PATCH" ? 45_000 : 10_000);
   let response: Response;
   let payload: unknown;
 
@@ -3246,6 +3270,13 @@ export function GeneratedContentAdminDashboard() {
   const variableInsertionRef = useRef<{ element: HTMLTextAreaElement; start: number; end: number } | null>(null);
   const editorReturnFocusRef = useRef<HTMLElement | null>(null);
   const [editorSaveError, setEditorSaveError] = useState("");
+  const [pendingPublication, setPendingPublication] = useState<PendingStudioPublication | null>(restorePendingPublication);
+  useEffect(() => {
+    try {
+      if (pendingPublication) sessionStorage.setItem(pendingPublicationStorageKey, JSON.stringify(pendingPublication));
+      else sessionStorage.removeItem(pendingPublicationStorageKey);
+    } catch { /* The current editor can still recover without browser storage. */ }
+  }, [pendingPublication]);
   const editorBaselineRef = useRef<string | null>(null);
   const editorSavedInputRef = useRef<string | null>(null);
   const hookCatalogRequestRef = useRef<Promise<{ definitions: FallbackHookDefinition[]; packageVersion: string }> | null>(null);
@@ -4971,6 +5002,45 @@ export function GeneratedContentAdminDashboard() {
     }
   }
 
+  async function submitSavedPublication(row: AdminGeneratedContentRow, ownerAction: PendingStudioPublication["ownerAction"]) {
+    if (pendingPublication) throw new Error("Check the previous publication before starting another one.");
+    if (!row.updated_at) throw new Error("Reload this row to get its saved version before publishing. Your writing is still here.");
+    const operation: PendingStudioPublication = { id: row.id, expectedUpdatedAt: row.updated_at, ownerAction };
+    setPendingPublication(operation);
+    try {
+      const result = await adminJsonRequest<StudioPublicationResult>("/api/admin/generated-content", secret, { method: "PATCH", body: JSON.stringify(operation) });
+      if (!result.ok || !result.rows?.[0] || !result.publicationReceipt) throw new Error("Publication could not be confirmed. Check publication status to recover its result.");
+      setPendingPublication(null);
+      return result;
+    } catch (error) {
+      if (error instanceof AdminRequestError && [400, 401, 403, 404, 409, 422].includes(error.status)) setPendingPublication(null);
+      throw error;
+    }
+  }
+
+  async function checkPendingPublication() {
+    if (!pendingPublication) return;
+    setIsLoading(true);
+    try {
+      const params = new URLSearchParams({ id: pendingPublication.id, expectedUpdatedAt: pendingPublication.expectedUpdatedAt, publicationAction: pendingPublication.ownerAction });
+      const result = await adminJsonRequest<StudioPublicationResult>(`/api/admin/generated-content?${params}`, secret);
+      if (!result.found || !result.rows?.[0]) {
+        setEditorSaveError("No completed publication was found yet. Your saved revision is retained. Check again before publishing.");
+        setMessage("No completed publication was found yet. Your saved revision is retained. Check again before publishing.");
+        return;
+      }
+      const current = result.rows[0];
+      setRows(rows => [current, ...rows.filter(row => row.id !== current.id && row.id !== pendingPublication.id)]);
+      // Keep any writing currently in the editor. The recovered source can be
+      // reopened explicitly from the inventory without discarding unsaved text.
+      setPendingPublication(null);
+      setEditorSaveError("");
+      setMessage(publicationStateMessage(result));
+      announceContentUpdate({ contentKey: current.content_key, published: result.publicationReceipt?.currentPublicationState === "live", updatedAt: current.updated_at ?? new Date().toISOString() });
+    } catch (error) { setEditorSaveError(dashboardErrorMessage(error)); setMessage(dashboardErrorMessage(error)); }
+    finally { setIsLoading(false); }
+  }
+
   async function publishSkyArticleChanges() {
     if (!skyArticleEditor || skyArticleEditor.saveState !== "saved") return;
     const revisionRow = rows.find((row) => row.id === skyArticleEditor.rowId);
@@ -4988,16 +5058,17 @@ export function GeneratedContentAdminDashboard() {
       const ownerAction = revisionRow.event_type === "sky-article-edition-revision"
         ? "publish-sky-article-edition-revision"
         : "approve-sky-article-edition";
-      const payload = await adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[] }>("/api/admin/generated-content", secret, {
-        method: "PATCH",
-        body: JSON.stringify({ id: revisionRow.id, ...(revisionRow.updated_at ? { expectedUpdatedAt: revisionRow.updated_at } : {}), ownerAction })
-      });
+      const payload = ownerAction === "publish-sky-article-edition-revision"
+        ? await submitSavedPublication(revisionRow, ownerAction)
+        : await adminJsonRequest<StudioPublicationResult>("/api/admin/generated-content", secret, {
+          method: "PATCH", body: JSON.stringify({ id: revisionRow.id, expectedUpdatedAt: revisionRow.updated_at, ownerAction })
+        });
       const saved = payload.rows?.[0];
       if (!saved) throw new Error("The published article edition was not returned.");
       setRows((current) => [saved, ...current.filter((row) => row.id !== saved.id && row.id !== revisionRow.id)]);
       openRow(saved);
       announceContentUpdate({ contentKey: saved.content_key, published: true, updatedAt: saved.updated_at ?? new Date().toISOString() });
-      setMessage(`${saved.content_key} published with ${changes.length} reviewed change${changes.length === 1 ? "" : "s"}.`);
+      setMessage(publicationStateMessage(payload));
     } catch (error) {
       setMessage(error instanceof Error ? error.message : "Could not publish the article changes.");
     } finally {
@@ -5341,7 +5412,7 @@ export function GeneratedContentAdminDashboard() {
       installContentPublications([result.publication]);
       announceContentUpdate({ contentKey: draft.contentKey, published: action === "publish", updatedAt: new Date().toISOString() });
       setMessage(action === "retire" ? `${draft.contentKey} retired everywhere. Devices apply the retirement when they reconnect.` : `${draft.contentKey} published again.`);
-    } catch (error) { setEditorSaveError(dashboardErrorMessage(error)); }
+    } catch (error) { setEditorSaveError(dashboardErrorMessage(error)); setMessage(dashboardErrorMessage(error)); }
     finally { setIsLoading(false); }
   }
 
@@ -5349,17 +5420,12 @@ export function GeneratedContentAdminDashboard() {
     setEditorSaveError("");
     setIsLoading(true);
     try {
-      const payload = await adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[] }>("/api/admin/generated-content", secret, {
-        method: "PATCH",
-        body: JSON.stringify({ id: row.id, ...(row.updated_at ? { expectedUpdatedAt: row.updated_at } : {}), ownerAction: "approve-package-revision" })
-      });
-      const published = payload.rows?.[0];
-      if (!payload.ok || !published || published.content_key !== row.content_key || published.status !== "LIVE") {
-        throw new Error("Publication was not confirmed. Your revision is saved; try Save & publish again.");
-      }
+      const payload = await submitSavedPublication(row, "approve-package-revision");
+      const published = payload.rows[0];
+      if (published.content_key !== row.content_key) throw new Error("The saved publication identity did not match this source. Reload its status.");
       const publishedDraft = draftFromRow(published);
       if (draftHasPackageProposal(publishedDraft)) {
-        throw new Error("The API returned an unpublished revision. Your revision is saved; try Save & publish again.");
+        throw new Error("The API returned an unpublished revision. Your revision is saved; check publication status before publishing again.");
       }
       setRows((current) => [published, ...current.filter((item) => item.id !== published.id && item.id !== row.id)]);
       if (updateEditor) {
@@ -5372,7 +5438,7 @@ export function GeneratedContentAdminDashboard() {
         published: published.status === "LIVE",
         updatedAt: published.updated_at ?? new Date().toISOString()
       });
-      setMessage(`${published.content_key} approved and published to the app.`);
+      setMessage(publicationStateMessage(payload));
       return published;
     } catch (error) {
       setEditorSaveError(dashboardErrorMessage(error));
@@ -5384,6 +5450,7 @@ export function GeneratedContentAdminDashboard() {
 
   async function applyBulkStatus() {
     if (selectedSavedRows.length === 0) return;
+    if (pendingPublication) { setMessage("Check the pending publication before starting another bulk action."); return; }
     // Inventory rows omit proposals. Hydrate before deciding which publish
     // action applies, otherwise a saved revision can be mistaken for a status-only change.
     let actionRows: AdminGeneratedContentRow[];
@@ -5427,7 +5494,11 @@ export function GeneratedContentAdminDashboard() {
     }
     setIsLoading(true);
     try {
-      const updates = await Promise.allSettled(actionRows.map((row) => {
+      const updates: PromiseSettledResult<StudioPublicationResult>[] = [];
+      let stopped = false;
+      for (const row of actionRows) {
+        if (stopped) { updates.push({ status: "rejected", reason: new Error("Not submitted. Check the pending publication first.") }); continue; }
+        try {
         const isPackageRow = rowIsFallbackArchitectureV3(row);
         const hasProposal = Boolean(objectRecord(objectRecord(row.sections)?.packageDraft));
         const requestBody = isPackageRow
@@ -5439,11 +5510,17 @@ export function GeneratedContentAdminDashboard() {
               status: bulkStatus,
               reviewState: bulkStatus === "LIVE" || bulkStatus === "REVIEWED" ? null : row.review_state ?? null
             };
-        return adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[] }>("/api/admin/generated-content", secret, {
-          method: "PATCH",
-          body: JSON.stringify(row.updated_at ? { ...requestBody, expectedUpdatedAt: row.updated_at } : requestBody)
-        });
-      }));
+          const result = isPackageRow && bulkStatus === "LIVE" && hasProposal
+            ? await submitSavedPublication(row, "approve-package-revision")
+            : await adminJsonRequest<StudioPublicationResult>("/api/admin/generated-content", secret, {
+              method: "PATCH", body: JSON.stringify({ ...requestBody, expectedUpdatedAt: row.updated_at })
+            });
+          updates.push({ status: "fulfilled", value: result });
+        } catch (error) {
+          updates.push({ status: "rejected", reason: error });
+          stopped = !(error instanceof AdminRequestError && [400, 401, 403, 404, 409, 422].includes(error.status));
+        }
+      }
       const updatedRows = updates.flatMap((result) => result.status === "fulfilled" ? result.value.rows ?? [] : []);
       const failedIds = actionRows.filter((_, index) => updates[index].status === "rejected").map((row) => row.id);
       updatedRows.forEach((row) => announceContentUpdate({
@@ -6844,6 +6921,12 @@ export function GeneratedContentAdminDashboard() {
           />
         )}
         {hasLoadFailure && renderLoadFailure()}
+        {pendingPublication && !draft && !selectedRow && (
+          <div className="admin-inline-warning" role="status">
+            <span>A publication is awaiting confirmation. Its saved revision is retained.</span>
+            <StudioButton type="button" className="admin-secondary-button" disabled={isLoading || hasAccessIssue} onClick={() => void checkPendingPublication()}>Check publication status</StudioButton>
+          </div>
+        )}
 
         {isInitialDashboardLoad && (
           <section className="admin-content-toolbar admin-review-queue-hero admin-initial-loading" aria-label="Loading saved content" aria-live="polite">
@@ -11885,6 +11968,7 @@ export function GeneratedContentAdminDashboard() {
           </details>
         </section>
         {editorSaveError && <div className="admin-inline-warning" role="alert">{editorSaveError}</div>}
+        {pendingPublication && <StudioButton type="button" className="admin-secondary-button" disabled={isLoading} onClick={() => void checkPendingPublication()}>Check publication status</StudioButton>}
         {!compiledSkyArticleEdition && <div className={`admin-toolbar-actions admin-editor-savebar studio-surface${isLoading ? " is-saving" : ""}`} aria-busy={isLoading}>
           <span className={`admin-editor-save-state ${isLoading ? "is-saving" : draftHasUnsavedChanges || isNewDraft && !unchangedSkySource || packageWillPublishOnSave ? "is-unsaved" : "is-saved"}`} aria-live="polite">
             {isLoading

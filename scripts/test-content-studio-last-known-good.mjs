@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 import assert from "node:assert/strict";
 import fs from "node:fs";
+import { projectReaderRow } from "../apps/web/src/content/readerRowProjection.mjs";
 
 const snapshotPath = "apps/web/public/content-studio-last-known-good.json";
 assert.ok(fs.existsSync(snapshotPath), "The last-known-good snapshot must exist after refresh.");
@@ -12,7 +13,7 @@ const vocabulary = fs.readFileSync("apps/web/src/services/planetTopicVocabulary.
 const taglines = fs.readFileSync("apps/web/src/services/natalPlacementTaglines.ts", "utf8");
 const exporter = fs.readFileSync("scripts/refresh-content-studio-last-known-good.mjs", "utf8");
 
-assert.equal(snapshot.schema, "content-studio-last-known-good-v1");
+assert.equal(snapshot.schema, "content-studio-last-known-good-v2");
 assert.equal(snapshot.rowCount, snapshot.rows.length);
 assert.ok(snapshot.rowCount >= 100);
 const keys = new Set();
@@ -49,11 +50,10 @@ assert.match(workflow, /pull-requests: write/u, "The snapshot publisher must use
 assert.match(workflow, /gh pr create --base main/u);
 assert.match(workflow, /gh pr merge[^\n]*--match-head-commit/u, "Only the validated snapshot commit may merge.");
 assert.doesNotMatch(workflow, /\n\s+git push\s*\n/u, "The workflow must not push directly to protected main.");
-assert.match(exporter, /calendarReleaseHistory: _adminRecoveryHistory/u);
-assert.match(exporter, /sb_publishable_/u, "Nightly fallback must use the public reader boundary.");
-assert.match(exporter, /const pageSize = 20/u, "Wide source rows need small pages to stay within the database deadline.");
-assert.match(exporter, /const maxPages = 1000/u, "Smaller pages must retain the 20,000-row export capacity.");
-assert.match(exporter, /page === maxPages - 1/u, "Export must still refuse a truncated inventory.");
+assert.match(exporter, /api\/content-reader/u, "Nightly fallback must use the controlled public reader endpoint.");
+assert.doesNotMatch(exporter, /rest\/v1\/generated_interpretations/u, "No raw authoring reads in public exports.");
+assert.match(exporter, /page === maxPages - 1/u, "Export refuses a truncated inventory.");
+for (const row of snapshot.rows) assert.deepEqual(row, projectReaderRow(row), `${row.content_key}: private fields in downloadable snapshot`);
 assert.match(snapshotLoader, /fetch\("\/content-studio-last-known-good\.json"/u, "The LKG snapshot must be fetched as a static asset, not bundled into application JS.");
 assert.doesNotMatch(snapshotLoader, /import\([^)]*content-studio-last-known-good\.json/u);
 assert.ok(!fs.existsSync("apps/web/src/services/contentStudioLastKnownGood.ts"), "LKG must not create a standalone JavaScript chunk.");

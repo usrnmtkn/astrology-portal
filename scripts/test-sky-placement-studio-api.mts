@@ -1,3 +1,5 @@
+import { publicationRpcFixture } from "../tests/helpers/studio-publication-rpc.mjs";
+import { readerRouteResponse, fixturePublications } from "../tests/helpers/content-reader-route.mjs";
 import { build } from "esbuild";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
@@ -22,11 +24,14 @@ function matches(row: any, params: URLSearchParams) {
   throw Error(`Unhandled ${name}=${filter}`);
  });
 }
+const publication = publicationRpcFixture(() => stored, (saved: any[]) => { for (const row of saved) { const existing=stored.find(item=>item.id===row.id); if(existing) Object.assign(existing,row); else stored.push(row); } });
 globalThis.fetch = async (input, init = {}) => {
+ const operation = await publication(input, init); if (operation) return operation;
+ const reader = await readerRouteResponse(input, init); if (reader) return reader;
  const url = new URL(String(input));
  assert.equal(url.origin, "https://sky-studio-test.invalid");
  if (url.pathname === "/rest/v1/rpc/content_runtime_revision") return Response.json(new Date().toISOString());
- if (url.pathname === "/rest/v1/content_publications") return Response.json(stored.filter(row => row.status === "LIVE").map(row => ({ content_key: row.content_key, row_id: row.id, row_updated_at: row.updated_at, updated_at: row.updated_at, state: "live", revision: Date.parse(row.updated_at) })));
+ if (url.pathname === "/rest/v1/content_publications") return Response.json(fixturePublications(stored));
  assert.equal(url.pathname, "/rest/v1/generated_interpretations");
  const found = stored.filter(row => matches(row, url.searchParams));
  if (init.method === "DELETE") { for (const row of found) stored.splice(stored.indexOf(row), 1); return Response.json(found); }

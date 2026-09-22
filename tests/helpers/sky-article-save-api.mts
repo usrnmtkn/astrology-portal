@@ -1,3 +1,4 @@
+import { readerRouteResponse, fixturePublications } from './content-reader-route.mjs';
 import { servingPackageRecords } from "../../api/_lib/content-live-status";
 // Actual handler, isolated storage, realistic latest-first/limit-one reads.
 import { createApiStore } from './calendar-review-api.mjs';
@@ -30,9 +31,11 @@ const matches = (row: any, params: URLSearchParams) => [...params].every(([field
  throw new Error(`Unmodeled storage filter ${field}=${value}`);
 });
 globalThis.fetch = async (input: any, options: any = {}) => {
+ const operation = await store.publication(input, options); if (operation) return operation;
+ const reader = await readerRouteResponse(input, options); if (reader) return reader;
  const url = new URL(String(input));
  if (url.origin !== 'https://calendar-api.invalid') throw new Error('Fixture refuses external storage');
- if (url.pathname === '/rest/v1/content_publications') return Response.json([...store.rows.values()].filter((r: any) => r.status === 'LIVE').map((r: any) => ({ content_key: r.content_key, row_id: r.id, state: 'live', row_updated_at: r.updated_at })));
+ if (url.pathname === '/rest/v1/content_publications') return Response.json(fixturePublications([...store.rows.values()]));
  if (url.pathname !== '/rest/v1/generated_interpretations') throw new Error(`Unexpected storage path ${url.pathname}`);
  const found = [...store.rows.values()].filter(row => matches(row, url.searchParams));
  if (!options.method || options.method === 'GET') {
