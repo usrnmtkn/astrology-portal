@@ -3856,42 +3856,92 @@ test.describe("client-facing user flow case studies", () => {
     expect(journalReads).toBeGreaterThan(0);
   });
 
-  test("account session recovery reloads the handle after a temporary verification failure", async ({ page }) => {
-    await page.route("**/rest/v1/**", route => route.fulfill({ json: [] }));
-    await seedClientState(page, { profile: true });
-    await seedSignedInSession(page);
-    let rejectVerification = true;
-    let userReads = 0;
-    await page.route("**/auth/v1/user", route => {
-      userReads++;
-      return route.fulfill(rejectVerification
-        ? { status: 400, json: { message: "Synthetic verification failure" } }
-        : { json: fixtureAuthUser });
+  for (const theme of ["light", "dark"] as const) {
+    test(`account session recovery keeps identity hidden until verified in ${theme}`, async ({ page }) => {
+      await page.route("**/rest/v1/**", route => route.fulfill({ json: [] }));
+      await seedClientState(page, { profile: true, theme });
+      await seedSignedInSession(page);
+      let rejectVerification = true;
+      let userReads = 0;
+      let releaseVerification: (() => void) | undefined;
+      let verificationPending: Promise<void> | undefined;
+      await page.route("**/auth/v1/user", async route => {
+        userReads++;
+        await verificationPending;
+        return route.fulfill(rejectVerification
+          ? { status: 400, json: { message: "Synthetic verification failure" } }
+          : { json: fixtureAuthUser });
+      });
+      await page.route("**/rest/v1/social_profiles?**", route => route.fulfill({ json: {
+        user_id: fixtureUserId, handle: "fixture_owner", display_name: "Project Author", discoverable: true
+      } }));
+      await page.goto("/#account");
+      await expect(page.getByText("Your account could not be checked. Please try again.", { exact: true })).toBeVisible();
+      await expect(page.getByRole("button", { name: "Sign in", exact: true })).toBeHidden();
+      await expect(page.getByText("Signed in with", { exact: true })).toBeHidden();
+      await expect(page.locator(".settings-profile-row, .account-chart-group, .account-data-group")).toHaveCount(0);
+      // SDK events can restore a cached session without verifying the user.
+      // A cross-tab SIGNED_IN must not override the failed account check.
+      const previousReads = userReads;
+      await page.evaluate(key => {
+        const channel = new BroadcastChannel(key);
+        channel.postMessage({ event: "SIGNED_IN", session: JSON.parse(localStorage.getItem(key)!) });
+        channel.close();
+      }, supabaseAuthStorageKey());
+      await expect.poll(() => userReads).toBeGreaterThan(previousReads);
+      await expect(page.getByText("Your account could not be checked. Please try again.", { exact: true })).toBeVisible();
+      await expect(page.getByText("Signed in with", { exact: true })).toBeHidden();
+      await expect(page.locator(".settings-profile-row, .account-chart-group, .account-data-group")).toHaveCount(0);
+      rejectVerification = false;
+      await page.getByRole("button", { name: "Retry", exact: true }).click();
+      await expect(page.getByText("Signed in with", { exact: true })).toBeVisible();
+      await expect(page.getByText("@fixture_owner", { exact: true })).toBeVisible();
+      await expect(page.getByText("Sign in to load your saved connections.", { exact: true })).toBeHidden();
+      await expect(page.locator(".settings-profile-row")).toContainText("Project Author");
+      const headingStyle = () => page.locator(".account-page-heading h1").evaluate(heading => {
+        const style = getComputedStyle(heading);
+        return Object.fromEntries(["fontFamily", "fontSize", "fontWeight", "lineHeight", "letterSpacing", "margin", "textTransform", "textAlign"].map(key => [key, style[key as keyof CSSStyleDeclaration]]));
+      });
+      const verifiedHeadingStyle = await headingStyle();
+      // Resume after the shared 30-second verification cache has expired.
+      rejectVerification = true;
+      await page.evaluate(() => {
+        (window as any).__tldrSetQaNow(new Date(Date.now() + 31_000).toISOString());
+        window.dispatchEvent(new Event("focus"));
+      });
+      await expect(page.getByRole("button", { name: "Retry", exact: true })).toBeVisible();
+      await expect(page.locator(".settings-profile-row, .account-chart-group, .account-data-group")).toHaveCount(0);
+      await expect(page.getByRole("button", { name: "Sign in", exact: true })).toHaveCount(0);
+      expect(await headingStyle()).toEqual(verifiedHeadingStyle);
+      await page.screenshot({ path: test.info().outputPath(`account-recovery-${theme}.png`), fullPage: true });
+      rejectVerification = false;
+      verificationPending = new Promise<void>(resolve => { releaseVerification = resolve; });
+      await page.getByRole("button", { name: "Retry", exact: true }).click();
+      await expect(page.getByText("Checking your account…", { exact: true })).toBeVisible();
+      await expect(page.locator(".settings-profile-row, .account-chart-group, .account-data-group")).toHaveCount(0);
+      await expect(page.getByRole("button", { name: /^(Sign in|Sign out|Retry)$/ })).toHaveCount(0);
+      expect(await headingStyle()).toEqual(verifiedHeadingStyle);
+      await page.screenshot({ path: test.info().outputPath(`account-checking-${theme}.png`), fullPage: true });
+      releaseVerification!();
+      await expect(page.getByText("Signed in with", { exact: true })).toBeVisible();
+      await expect(page.locator(".settings-profile-row")).toContainText("Project Author");
+      await page.screenshot({ path: test.info().outputPath(`account-verified-${theme}.png`), fullPage: true });
+      // A sign-out from another tab invalidates account access but retains local chart data.
+      await page.evaluate(key => {
+        localStorage.removeItem(key);
+        const channel = new BroadcastChannel(key);
+        channel.postMessage({ event: "SIGNED_OUT", session: null });
+        channel.close();
+      }, supabaseAuthStorageKey());
+      await expect(page.getByText(/You are signed out\./)).toBeVisible();
+      await expect(page.locator(".settings-profile-row, .account-chart-group, .account-data-group")).toHaveCount(0);
+      expect(await page.evaluate(() => Boolean(localStorage.getItem("tldrastro:userProfile")))).toBe(true);
+      expect(await headingStyle()).toEqual(verifiedHeadingStyle);
+      await page.getByRole("button", { name: "Open menu", exact: true }).click();
+      await expect(page.getByRole("menuitem", { name: "Login", exact: true })).toBeVisible();
+      await expect(page.getByRole("menuitem", { name: "Sign out", exact: true })).toHaveCount(0);
     });
-    await page.route("**/rest/v1/social_profiles?**", route => route.fulfill({ json: {
-      user_id: fixtureUserId, handle: "fixture_owner", display_name: "Project Author", discoverable: true
-    } }));
-    await page.goto("/#account");
-    await expect(page.getByText("Your account could not be checked. Please try again.", { exact: true })).toBeVisible();
-    await expect(page.getByRole("button", { name: "Sign in", exact: true })).toBeHidden();
-    await expect(page.getByText("Signed in with", { exact: true })).toBeHidden();
-    // SDK events can restore a cached session without verifying the user.
-    // A cross-tab SIGNED_IN must not override the failed account check.
-    const previousReads = userReads;
-    await page.evaluate(key => {
-      const channel = new BroadcastChannel(key);
-      channel.postMessage({ event: "SIGNED_IN", session: JSON.parse(localStorage.getItem(key)!) });
-      channel.close();
-    }, supabaseAuthStorageKey());
-    await expect.poll(() => userReads).toBeGreaterThan(previousReads);
-    await expect(page.getByText("Your account could not be checked. Please try again.", { exact: true })).toBeVisible();
-    await expect(page.getByText("Signed in with", { exact: true })).toBeHidden();
-    rejectVerification = false;
-    await page.getByRole("button", { name: "Retry", exact: true }).click();
-    await expect(page.getByText("Signed in with", { exact: true })).toBeVisible();
-    await expect(page.getByText("@fixture_owner", { exact: true })).toBeVisible();
-    await expect(page.getByText("Sign in to load your saved connections.", { exact: true })).toBeHidden();
-  });
+  }
 
   test("journal sync preserves an open draft during same-account verification recovery", async ({ page }) => {
     await page.route("**/rest/v1/**", route => route.fulfill({ json: [] }));
@@ -4028,19 +4078,39 @@ test.describe("client-facing user flow case studies", () => {
     await expect(page.locator(".account-journal-entry")).toContainText("Entry from another device");
   });
 
-  test("journal sync never treats a cached profile as a signed-in account", async ({ page }) => {
-    await page.route("**/rest/v1/**", route => route.fulfill({ json: [] }));
-    await seedClientState(page, { profile: true });
-    await page.goto("/#account");
-    await expect(page.getByText("Sign in to sync your account and journal across devices.")).toBeVisible();
-    await expect(page.getByText("Signed in with", { exact: true })).toHaveCount(0);
-    await page.getByRole("button", { name: /Open journal/ }).click();
-    await expect(page.getByText("Sign in to see your saved journal on this device.")).toBeVisible();
-    await expect(page.getByText("No check-ins yet", { exact: true })).toHaveCount(0);
-    await expect(page.getByRole("button", { name: /Add check-in/ })).toBeDisabled();
-    await page.getByRole("button", { name: "Sign in", exact: true }).click();
-    await expect(page.getByRole("region", { name: "Log in", exact: true })).toBeVisible();
-  });
+  for (const theme of ["light", "dark"] as const) {
+    test(`journal sync never presents a cached profile as signed in for ${theme}`, async ({ page }) => {
+      await page.route("**/rest/v1/**", route => route.fulfill({ json: [] }));
+      await seedClientState(page, { profile: true, theme });
+      await page.goto("/#account");
+      await expect(page.getByText("Sign in to sync your account and journal across devices.")).toBeVisible();
+      await expect(page.getByText("Signed in with", { exact: true })).toHaveCount(0);
+      await expect(page.getByText(/You are signed out\./)).toBeVisible();
+      await expect(page.locator(".settings-profile-row, .account-chart-group, .account-data-group")).toHaveCount(0);
+      const account = page.getByRole("region", { name: "Account", exact: true });
+      await expect(account.getByRole("heading")).toHaveText(["account."]);
+      await expect(account).not.toContainText("Project Author");
+      await expect(account).not.toContainText("qa-flow@example.com");
+      await expect(account.getByRole("button", { name: "Handle", exact: false })).toHaveCount(0);
+      await expectNoHorizontalOverflow(page, `Signed-out Account ${theme}`);
+      const status = account.getByRole("status");
+      const statusBox = (await status.boundingBox())!;
+      const copyBox = (await status.locator(".settings-row-description").boundingBox())!;
+      expect(copyBox.x).toBeGreaterThan(statusBox.x);
+      expect(copyBox.x + copyBox.width).toBeLessThan(statusBox.x + statusBox.width);
+      await page.screenshot({ path: test.info().outputPath(`account-signed-out-${theme}.png`), fullPage: true });
+      await page.getByRole("button", { name: "Open menu", exact: true }).click();
+      await expect(page.getByRole("menuitem", { name: "Login", exact: true })).toBeVisible();
+      await expect(page.getByRole("menuitem", { name: "Sign out", exact: true })).toHaveCount(0);
+      await page.getByRole("button", { name: "Close menu", exact: true }).click();
+      await page.getByRole("button", { name: /Open journal/ }).click();
+      await expect(page.getByText("Sign in to see your saved journal on this device.")).toBeVisible();
+      await expect(page.getByText("No check-ins yet", { exact: true })).toHaveCount(0);
+      await expect(page.getByRole("button", { name: /Add check-in/ })).toBeDisabled();
+      await page.getByRole("button", { name: "Sign in", exact: true }).click();
+      await expect(page.getByRole("region", { name: "Log in", exact: true })).toBeVisible();
+    });
+  }
 
   test("signed-in user can open Account journal weeks that start on Monday", async ({ page }) => {
     const assertNoClientErrors = await expectNoClientErrors(page);

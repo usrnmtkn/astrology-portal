@@ -58,10 +58,27 @@ try {
   assert.doesNotMatch(html, /Check your current phone/);
   const signedOut = renderToStaticMarkup(React.createElement(AccountView, { ...props, accountId: null }));
   assert.doesNotMatch(signedOut, /Signed in with|>Sign out</);
+  assert.match(signedOut, /You are signed out/);
   assert.match(signedOut, /Sign in to sync your account and journal across devices/);
-  const checking = renderToStaticMarkup(React.createElement(AccountView, { ...props, accountId: null, accountChecked: false }));
+  const checking = renderToStaticMarkup(React.createElement(AccountView, { ...props, accountChecked: false }));
   assert.match(checking, /Checking your account/);
-  assert.doesNotMatch(checking, /Signed in with|>Sign out</);
+  assert.doesNotMatch(checking, />Sign in<|>Retry</);
+  const error = renderToStaticMarkup(React.createElement(AccountView, {
+    ...props, accountError: "Your account could not be checked. Please try again."
+  }));
+  assert.match(error, /Your account could not be checked/);
+  assert.match(error, />Retry</);
+  assert.doesNotMatch(error, /You are signed out|>Sign in</);
+  const mismatched = renderToStaticMarkup(React.createElement(AccountView, { ...props, accountId: "account-2" }));
+  assert.match(mismatched, /Your account details could not be loaded/);
+  assert.match(mismatched, />Retry</);
+  for (const disconnected of [signedOut, checking, error, mismatched]) {
+    assert.doesNotMatch(disconnected, /Alex Morgan|alex@example.com|Phone ending|0100|settings-profile-row/);
+    assert.doesNotMatch(disconnected, /Birth date|Birth time|Birth place|New York City|1990-04-10|08:30/);
+    assert.doesNotMatch(disconnected, /Signed in with|>Sign out<|>Handle<|Export account|Erase check-ins|Delete account/);
+    assert.match(disconnected, /Open journal/);
+    assert.equal((disconnected.match(/<h1[\s>]/g) || []).length, 1);
+  }
 } finally {
   await server.close();
 }
