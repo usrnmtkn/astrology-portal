@@ -6,7 +6,9 @@ import { getCalendarSubscriptionEvents, getLunarCalendarMonth } from "../apps/we
 import { calendarSubscriptionUrls } from "../apps/web/src/features/calendar/calendarSubscription.js";
 import { calendarLocalDateKey } from "../apps/web/src/features/calendar/calendarPhaseLabel.js";
 import { calendarSkyV4LunationContentKey } from "../apps/web/src/features/calendar/calendarContentKeys.js";
+import { verifyCalendarFeedRuntimeImports } from "../tests/helpers/calendar-feed-runtime.mts";
 
+verifyCalendarFeedRuntimeImports();
 const fixture = await calendarSubscriptionFixture();
 const options = { include: ["key"], reminder: "At the time", timeZone: "America/New_York" };
 const owner = { authorization: "Bearer fixture-owner" };

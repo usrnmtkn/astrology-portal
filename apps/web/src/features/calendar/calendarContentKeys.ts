@@ -4,9 +4,9 @@ import {
   skyIngressContentKey,
   skyIngressInstanceContentKey,
   slugContentPart
-} from "../../services/generatedContentKeys";
-import { calendarAspectPublicationKeys, skyAspectGeneratedContentKeys } from "../../services/skyAspectContent";
-import { lunarJournalContentKeyForEvent } from "./lunarJournalKeys";
+} from "../../services/generatedContentKeys.js";
+import { calendarAspectPublicationKeys, skyAspectGeneratedContentKeys } from "../../services/skyAspectContent.js";
+import { lunarJournalContentKeyForEvent } from "./lunarJournalKeys.js";
 
 export function calendarEventGeneratedContentKeys(event: LunarCalendarEvent) {
   const dateKey = event.dateKey || event.startsAt.slice(0, 10);

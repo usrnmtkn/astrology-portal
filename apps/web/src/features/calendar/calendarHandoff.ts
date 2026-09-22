@@ -2,7 +2,7 @@ import astro2026Catalog from "./data/astro-2026.catalog.json" with { type: "json
 import {
   LUNAR_JOURNAL_INDEX,
   type LunarJournalType
-} from "./lunarJournalKeys";
+} from "./lunarJournalKeys.js";
 
 export type HandoffEventKind =
   | "lunation"

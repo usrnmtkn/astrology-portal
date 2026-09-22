@@ -120,3 +120,10 @@ version. RLS and grants were verified: neither public client role can read eithe
 table; the service role has the required access. The advisor's informational
 no-policy notices for these tables reflect the intentional service-only design.
 No owner event or reader prose was created or modified during migration.
+
+Live preview verification created two durable subscriptions and exposed an ESM
+startup failure: browser-resolved extensionless imports in Calendar helpers were
+not resolvable by Vercel's Node runtime. Those imports now use explicit `.js`
+extensions. The API regression emits the feed's dependency graph and imports it
+with native Node, in addition to exercising its handlers with the storage fixture.
+The preview must pass the live feed checks before merge.
