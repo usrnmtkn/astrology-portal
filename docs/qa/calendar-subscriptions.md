@@ -127,3 +127,12 @@ not resolvable by Vercel's Node runtime. Those imports now use explicit `.js`
 extensions. The API regression emits the feed's dependency graph and imports it
 with native Node, in addition to exercising its handlers with the storage fixture.
 The preview must pass the live feed checks before merge.
+
+Final integration is based on main `9bee69955187ffbb4588d33471e25782039e2510`
+(account/journal release). The existing forecast browser test now includes the
+new Subscription events tab in its navigation expectations. The combined build
+measures 3,449,969 aggregate gzip bytes; the cap carries forward main's
+3,447,500 plus the subscription feature's 3,000-byte allowance. All other
+current-main limits are preserved. The corrected live preview returned 346 events,
+200/304/HEAD responses, stable event IDs and same-URL preference updates. Its two
+disposable subscriptions were revoked after verification.
