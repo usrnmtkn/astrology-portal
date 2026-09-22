@@ -30,6 +30,7 @@ const bundle = await build({
       transport: 'export const callReportCalibrationModel = async input => { await input.beforeProviderCall(); return globalThis.reportDeliveryFixture.call(input); };',
       gate: 'export const prepareProductionPreCallGate = () => ({}); export const assertProductionPreCallGate = () => true;',
       voice: `export const transitReadingOwnerVoice = () => [{evidenceId:'synthetic-owner',text:'Synthetic owner comparison.'}]; export const assertTransitReadingOwnerVoice = () => true;
+        export const transitReadingVoiceContext = (facts, surface) => ({surface, horizon: surface === 'friends' ? 'current' : facts.youTransitReadingBrief.window});
         export const transitReadingOwnerVoiceReceipt = () => ({version:'synthetic-only', sources:[]});
         export const transitReadingOwnerVoicePrompt = () => 'SYNTHETIC OWNER EVIDENCE ACCESS. NOT PRODUCTION PROOF.';`,
       instructions: `export const governedInstructionsForRole = () => 'Synthetic role boundary'; export const instructionsForRole = () => 'Synthetic reviewer boundary';`,

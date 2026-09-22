@@ -335,7 +335,7 @@ function readerTransit(item: FriendTransitReadingPersonalTransit) {
   };
 }
 
-function approvedReaderText(brief: FriendTransitReadingBrief) {
+export function friendTransitReadingApprovedReaderText(brief: FriendTransitReadingBrief) {
   return {
     daily: brief.daily,
     relationshipActivations: brief.relationshipActivations.map(({ headline, effectBody, activationBody }) => ({ headline, effectBody, activationBody })),
@@ -445,7 +445,7 @@ export function friendTransitReadingPrompt(input: { brief: FriendTransitReadingB
     "Return JSON only.",
     "",
     "APPROVED READER TEXT",
-    JSON.stringify(approvedReaderText(brief), null, 2),
+    JSON.stringify(friendTransitReadingApprovedReaderText(brief), null, 2),
     "",
     "TECHNICAL EVIDENCE - FACT LOCK ONLY",
     JSON.stringify(technicalEvidence(brief), null, 2)
@@ -457,7 +457,7 @@ function renderedText(draft: FriendTransitReadingDraft) {
 }
 
 function sourceText(brief: FriendTransitReadingBrief) {
-  return JSON.stringify({ approvedReaderText: approvedReaderText(brief), technicalEvidence: technicalEvidence(brief) }).toLowerCase();
+  return JSON.stringify({ approvedReaderText: friendTransitReadingApprovedReaderText(brief), technicalEvidence: technicalEvidence(brief) }).toLowerCase();
 }
 
 function allowedTechnicalFacts(brief: FriendTransitReadingBrief) {

@@ -11,6 +11,16 @@ uses the ignored `.private-documents/reports.json`. These original documents
 must never be copied into Git, browser assets, logs, test attachments, or PRs.
 Source integrity hashes remain those of the complete original documents.
 
+The short-report comparison repair also supports an optional neutral
+`private:report/social-writing-references-20260921` record in the same protected
+store. It contains complete, visually checked screenshot transcriptions with
+text and image hashes and their source assignment. Original images and their
+personal filesystem paths are not runtime assets. This supplement must remain
+outside Git, browser bundles, logs, test attachments, and PRs. A local provision
+does not establish that the deployment secret contains it; verify deployment
+coverage without exposing the source bodies. Missing coverage is recorded,
+while a malformed or integrity-invalid provision is rejected.
+
 Original database content records are archived in the restricted
 `project_privacy.content_archive` table before identifier removal. The schema
 and table deny access to `anon` and `authenticated`, and the table has RLS with

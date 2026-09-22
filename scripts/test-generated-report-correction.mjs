@@ -50,7 +50,7 @@ const { generateGovernedTransitReading, isTransitReadingJudgeBlockedError, withT
 const original = { headline: "Test report", tldr: "Original summary", body: "Original report body with the diagnosed defect." };
 const corrected = { ...original, tldr: "Corrected summary", body: "Corrected report body preserving the source facts." };
 const cleaned = { ...corrected, tldr: "Cleaned summary", body: "Cleaned corrected report body preserving the source facts." };
-const brief = { source: "locked fixture" };
+const brief = { source: "locked fixture", window: "day", approvedReaderText: {}, primaryThemes: [], longerCycles: [], relationshipActivations: [], houseContext: [], activePatterns: [], daily: null };
 const priorFixture = globalThis.reportCorrectionFixture;
 try {
   for (const scenario of ["first-pass", "corrected-pass", "cleanup-pass", "second-block", "invalid-cleanup", "invalid-initial"]) {

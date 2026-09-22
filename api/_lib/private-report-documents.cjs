@@ -3,10 +3,10 @@ const path = require('node:path');
 const { gunzipSync } = require('node:zlib');
 const { createHash } = require('node:crypto');
 
-const ids = new Set(['general-2026', 'work-money-2026', 'love-connection-2026', 'personal-health-2026'].map(id => `private:report/${id}`));
+const ids = new Set(['general-2026', 'work-money-2026', 'love-connection-2026', 'personal-health-2026', 'social-writing-references-20260921'].map(id => `private:report/${id}`));
 
 /** Original owner evidence lives in protected storage, never in Git or web assets. */
-function readPrivateReportDocument(id) {
+function readDocument(id, optional = false) {
   if (!ids.has(id)) throw new Error('Unknown private report document.');
   const encoded = process.env.PRIVATE_REPORT_DOCUMENTS;
   let raw;
@@ -15,13 +15,26 @@ function readPrivateReportDocument(id) {
     const file = path.join(process.cwd(), '.private-documents/reports.json');
     if (fs.existsSync(file)) raw = fs.readFileSync(file, 'utf8');
   }
-  if (!raw) throw new Error('Private report evidence is unavailable. Configure protected document storage.');
-  const corpus = JSON.parse(raw);
-  const record = corpus.schema === 'private-reports/v1' && corpus.documents?.[id];
+  if (!raw) {
+    if (optional) return null;
+    throw new Error('Private report evidence is unavailable. Configure protected document storage.');
+  }
+  let corpus;
+  try { corpus = JSON.parse(raw); }
+  catch { throw new Error('Private report evidence failed integrity verification.'); }
+  if (!corpus || corpus.schema !== 'private-reports/v1' || !corpus.documents
+    || typeof corpus.documents !== 'object' || Array.isArray(corpus.documents)) {
+    throw new Error('Private report evidence failed integrity verification.');
+  }
+  const record = corpus.documents[id];
+  // An absent supplemental collection may be provisioned later. A malformed
+  // store or corrupt supplied collection must never silently become a fallback.
+  if (optional && !Object.hasOwn(corpus.documents, id)) return null;
   if (!record || typeof record.body !== 'string' || createHash('sha256').update(record.body).digest('hex') !== record.sha256) {
     throw new Error('Private report evidence failed integrity verification.');
   }
   return record.body;
 }
 
-exports.readPrivateReportDocument = readPrivateReportDocument;
+exports.readPrivateReportDocument = (id) => readDocument(id);
+exports.readOptionalPrivateReportDocument = (id) => readDocument(id, true);

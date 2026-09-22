@@ -1,5 +1,5 @@
 import { checkpointTransitReadingModel } from "./transit-reading-checkpoints.js";
-import { transitReadingOwnerVoice, transitReadingOwnerVoicePrompt, assertTransitReadingOwnerVoice } from "./transit-reading-owner-voice.js";
+import { transitReadingOwnerVoice, transitReadingOwnerVoicePrompt, assertTransitReadingOwnerVoice, transitReadingVoiceContext } from "./transit-reading-owner-voice.js";
 import {
   callReportCalibrationModel,
   type ReportModelResult
@@ -98,7 +98,8 @@ export async function callGovernedTransitReadingModel<T>(input: {
   validateResponse?: (value: T) => void;
 }): Promise<ReportModelResult<T>> {
   assertTransitReadingProductionKernel(input.kernel);
-  const ownerVoicePrompt = transitReadingOwnerVoicePrompt(input.kernel.ownerVoice);
+  const ownerVoicePrompt = transitReadingOwnerVoicePrompt(input.kernel.ownerVoice,
+    transitReadingVoiceContext(input.kernel.input.facts, input.kernel.input.surface));
   return checkpointTransitReadingModel<T>({
     provider: input.provider,
     model: input.model,

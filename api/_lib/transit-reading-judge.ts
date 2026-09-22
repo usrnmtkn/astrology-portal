@@ -1,6 +1,6 @@
 import { transitReadingReaderCopy } from "./transit-reading-reader-copy.js";
 import { assertGeneratedReportJudgeEvidence, GENERATED_REPORT_JUDGE_EVIDENCE_CONTRACT } from "./transit-reading-judge-evidence.js";
-import { transitReadingOwnerVoiceReceipt } from "./transit-reading-owner-voice.js";
+import { transitReadingOwnerVoiceReceipt, transitReadingVoiceContext } from "./transit-reading-owner-voice.js";
 import fs from "node:fs";
 import { generatedReportWritingContract } from "./transit-reading-writing-contract.js";
 import { REPORT_JUDGE_THRESHOLD, reportFulfillmentConfig } from "./report-fulfillment-config.js";
@@ -22,7 +22,7 @@ import {
 } from "./transit-reading-production.js";
 import { generatedReportJudgeRubric, GENERATED_REPORT_JUDGE_PACKET_CONTRACT } from "./transit-reading-judge-prompt.js";
 
-export const GENERATED_REPORT_JUDGE_ADAPTER_VERSION = "generated-report-judge-adapter-v1.6";
+export const GENERATED_REPORT_JUDGE_ADAPTER_VERSION = "generated-report-judge-adapter-v1.7";
 export const GENERATED_REPORT_JUDGE_ADAPTER_PATH = "tldr-astro-phrasebank/TLDR-GENERATED-REPORT-JUDGE-ADAPTER-V1-OWNER.md";
 const REPORT_OWNER_REVIEW_EVIDENCE_PATH = "tldr-astro-phrasebank/TLDR-REPORT-OWNER-REVIEW-EVIDENCE-2026-08-11.md";
 
@@ -169,6 +169,7 @@ export async function judgeGeneratedTransitReading(input: {
     model: response.model,
     version: GENERATED_REPORT_JUDGE_ADAPTER_VERSION,
     threshold: REPORT_JUDGE_THRESHOLD,
-    ownerVoiceEvidence: transitReadingOwnerVoiceReceipt(kernel.ownerVoice)
+    ownerVoiceEvidence: transitReadingOwnerVoiceReceipt(kernel.ownerVoice,
+      transitReadingVoiceContext(kernel.input.facts, kernel.input.surface))
   };
 }

@@ -52,7 +52,7 @@ try {
     assert.ok(input.prompt.includes('no defect is supported'));
     assert.ok(input.prompt.includes('4/4 owner_voice and natural_language release floors remain unchanged'));
     assert.doesNotMatch(input.prompt, /ASSUME THERE IS A DEFECT|Return PASS or REVISE only|## Output contract/u);
-    const passage = input.prompt.match(/OWNER PASSAGE ([^\n]+)\nFUNCTION: [^\n]+\n([\s\S]+?)\nEND OWNER PASSAGE/u);
+    const passage = input.prompt.match(/OWNER PASSAGE ([^\n]+)\nFUNCTION: [^\n]+\nREFERENCE FORMAT: [^\n]+\nSOURCE SECTION: [^\n]+\n([\s\S]+?)\nEND OWNER PASSAGE/u);
     assert.ok(passage, 'Comparison passage identifiers and supplied functions must reach the judge.');
     ownerComparison = { evidenceId: passage[1], quote: passage[2], difference: 'Synthetic diagnostic comparing the supplied passage with the candidate.' };
     assert.ok(input.prompt.includes("Weekly progression and contextual owner corrections"));
@@ -70,7 +70,7 @@ try {
     surface: "friends", reportKind: "friend_transit_reading",
     brief: { source: "locked fixture" },
     draft: { headline: "Fixture", tldr: "Fixture", summary: "Fixture", body: "Fixture" },
-    productionInput: { surface: "friends", contentKey: "fixture", eventType: "transit", facts: { friendTransitsBrief: { source: "locked fixture" } }, knowledgeIds: ["fixture"], sourceSnapshot: {} }, ownerEvidence: ["Approved fixture rule"]
+    productionInput: { surface: "friends", contentKey: "fixture", eventType: "transit", facts: { friendTransitsBrief: { primaryThemes: [], longerCycles: [], relationshipActivations: [], houseContext: [], activePatterns: [], daily: null } }, knowledgeIds: ["fixture"], sourceSnapshot: {} }, ownerEvidence: ["Approved fixture rule"]
   });
   response = { scores, findings: [{ category: "over_specification", location: "body", finding: "Unsupported outcome.", ...evidence }] };
   await assert.rejects(judge(), /finding contradicts a perfect category score/,
@@ -78,7 +78,8 @@ try {
   for (const outcome of ["breakup", "job loss", "move", "major financial loss", "illness", "quitting"]) {
     response = { scores: { ...scores, factual_traceability: 3 }, findings: [{ category: "over_specification", location: "body", finding: `Unsupported ${outcome} inferred from a broad category.`, ...evidence }] };
     const result = await judge();
-    assert.equal(result.ownerVoiceEvidence.sources.length, 3);
+    assert.ok([3, 4].includes(result.ownerVoiceEvidence.sources.length));
+    assert.deepEqual(result.ownerVoiceEvidence.target, { surface: "friends", horizon: "current" });
     assert.ok(result.result.overall >= 0.85);
     assert.equal(result.result.verdict, "below_threshold", `${outcome} must block even when the aggregate score passes`);
     assert.equal(result.result.findings[0].category, "over_specification");
