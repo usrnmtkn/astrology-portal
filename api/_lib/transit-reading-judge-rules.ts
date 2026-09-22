@@ -29,7 +29,7 @@ export type GeneratedReportJudgeFinding = {
   location: string;
   finding: string;
   // Older checkpoints may predate the evidence protocol. New judge responses
-  // require all three fields; optional here permits diagnostic history reads.
+  // require the evidence fields; optional here permits diagnostic history reads.
   draftQuote?: string;
   sourcePath?: string | null;
   sourceQuote?: string | null;
