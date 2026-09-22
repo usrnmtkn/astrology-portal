@@ -8,6 +8,10 @@ for (const changeSelection of [false, true]) {
   test(`Sky starts before App and ${changeSelection ? 'rejects a changed selection' : 'reuses the exact initial response'}`, async ({ page }) => {
     test.setTimeout(90_000);
     await bundledPublications(page);
+    // The two normal reader fonts must work without the optional external
+    // accessibility/symbol stylesheet or another origin's font connection.
+    await page.route('https://fonts.googleapis.com/**', route => route.abort());
+    await page.route('https://fonts.gstatic.com/**', route => route.abort());
     await page.clock.setFixedTime(new Date('2026-09-21T16:00:00Z'));
     await page.addInitScript(() => localStorage.setItem('tldrastro:selectedLocation', JSON.stringify({
       label: 'Synthetic New York', latitude: 40.7128, longitude: -74.006, timeZone: 'America/New_York'
@@ -52,6 +56,8 @@ for (const changeSelection of [false, true]) {
     expect(requests.some(url => /fallback-content-sky-horoscopes-/.test(url.pathname))).toBe(false);
     expect(requests.some(url => url.pathname.startsWith('/wasm/'))).toBe(false);
     expect(errors).toEqual([]);
+    expect(await page.evaluate(() => document.fonts.check('400 16px Newsreader') && document.fonts.check('500 16px "Geist Mono"'))).toBe(true);
+    expect(requests.some(url => /newsreader-latin.*\.woff2$/.test(url.pathname) && url.host === new URL(page.url()).host)).toBe(true);
     await page.getByRole('button', { name: `Read more about Sun in ${changeSelection ? 'Aries' : 'Virgo'}`, exact: true }).click();
     await expect(page.locator('.article-shell')).toBeVisible({ timeout: 30_000 });
     await expect.poll(() => requests.some(url => /fallback-content-sky-horoscopes-/.test(url.pathname))).toBe(true);

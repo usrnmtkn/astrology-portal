@@ -42,8 +42,8 @@ for current main and the candidate. Values are gzip bytes at level 9.
 
 The aggregate cap increases by 2,500 bytes for request coordination and new
 partitions. The two unchanged presentation modules receive 100 bytes each for
-changed shared imports. Startup, CSS, calculation, content and timing caps do
-not increase. Moving protected passages into the requested placement package is
+changed shared imports. Startup, calculation, content and timing caps do not increase. The later font
+delivery fix below has a separate, explicit initial-CSS allowance. Moving protected passages into the requested placement package is
 not counted as a reduction in total first-visit bytes. The separately deferred
 house-reading chunk is absent from the initial list's requests.
 
@@ -73,3 +73,19 @@ and retained-cache reload separately; preserve complete text and count errors.
 These lab samples are not real-user percentiles. Three pre-change production
 pairs measured cold median 9.67 s (9.52–11.67) and reload median 4.04 s (3.94–6.62),
 with all six completing and zero page errors, workers or layout shift.
+
+## Font delivery follow-up
+
+Earlier reveal exposed late Google Fonts swaps: one trace took 2.1 seconds for
+the external stylesheet and another 2.1–2.6 seconds for Newsreader/Geist Mono.
+The completed summary then changed size/position. The reader now serves the
+byte-identical font files locally, preserves all nine Unicode subsets and ships
+the original OFL licenses. Only the two Latin files (155,128 bytes total, already
+used by the old reader) are preloaded. Families, weights and theme tokens stay
+the same; optional accessibility/symbol fonts keep their existing loading.
+
+The nine font-face declarations add 651 gzip CSS bytes; the initial-CSS cap
+increases by 1,000 bytes to 54,000. Startup and aggregate CSS caps stay unchanged.
+The early-loading browser regression blocks both external font origins and
+requires the normal reader fonts to be loaded. The layout regression still
+requires stable summary, transit and card geometry from the first visible frame.
