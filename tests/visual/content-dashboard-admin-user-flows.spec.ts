@@ -1,3 +1,4 @@
+import { studioApiStore } from "../helpers/studio-api-store";
 import { readerResponse } from '../helpers/reader-response';
 import { emptyHousePreviewApi } from "../helpers/empty-house-preview-api";
 import { normalizeTransitNatalPreviewInput, renderTransitNatalPreviewState } from "../../api/admin/transit-natal-preview";
@@ -517,6 +518,7 @@ async function seedAdminApi(
     generatedContentDelayMs?: number;
     generatedContentFailuresBeforeSuccess?: number;
     generatedContentWriteReturnsEmpty?: boolean;
+    loseFirstPublicationResponse?: boolean;
     onGeneratedContentRead?: (url: URL) => void;
     reviewRows?: Record<string, unknown>[];
     compositionCatalog?: Array<{ content_key: string; headline: string | null; role: string }>;
@@ -524,6 +526,8 @@ async function seedAdminApi(
 ) {
   const apiGeneratedContentRows = structuredClone(options.generatedRows ?? generatedContentRows) as Record<string, unknown>[];
   const publications = new Map<string, Record<string, unknown>>();
+  const publicationResults = new Map<string, any>();
+  let losePublicationResponse = options.loseFirstPublicationResponse ?? false;
   await page.route("**/rest/v1/content_publications*", (route) => route.fulfill({ json: [...publications.values()] }));
   let generatedContentFailuresRemaining = options.generatedContentFailuresBeforeSuccess ?? 0;
   await page.route("https://tldrastro-api-27165565299.us-central1.run.app/**", async (route) => {
@@ -835,6 +839,12 @@ async function seedAdminApi(
 
     if (pathname.endsWith("/generated-content")) {
       const method = route.request().method();
+      if (method === "GET" && url.searchParams.has("publicationAction")) {
+        const key = JSON.stringify([url.searchParams.get("id"), url.searchParams.get("publicationAction"), url.searchParams.get("expectedUpdatedAt")]);
+        const result = publicationResults.get(key);
+        await route.fulfill({ json: result ? { ...result, found: true } : { ok: true, found: false, rows: [] } });
+        return;
+      }
       if (method === "GET" && url.searchParams.get("variables") === "true") {
         await route.fulfill({ json: { ok: true, variables: [] } });
         return;
@@ -853,40 +863,27 @@ async function seedAdminApi(
         await options.onGeneratedContentWrite?.({ method, payload });
         const existingRow = apiGeneratedContentRows.find((row) => row.id === payload.id) ?? generatedContentRows[0];
         if (payload.ownerAction === "approve-package-revision") {
-          const existingSections = existingRow.sections && typeof existingRow.sections === "object"
-            ? existingRow.sections as Record<string, unknown>
-            : {};
-          const installedRecord = existingSections.packageRecord && typeof existingSections.packageRecord === "object"
-            ? existingSections.packageRecord as Record<string, unknown>
-            : {};
-          const proposedRecord = existingSections.packageDraft && typeof existingSections.packageDraft === "object"
-            ? existingSections.packageDraft as Record<string, unknown>
-            : {};
-          const promotedRecord = { ...installedRecord, ...proposedRecord, review_status: "approved" };
-          approveNatalAspectStudioCopy(promotedRecord, String(existingRow.content_key));
-          const { packageDraft: _discardedProposal, ...remainingSections } = existingSections;
-          const publishedRow = {
-            ...existingRow,
-            status: "LIVE",
-            lane: "serving",
-            review_state: null,
-            body: typeof promotedRecord.body_you === "string"
-              ? promotedRecord.body_you
-              : typeof promotedRecord.body === "string"
-                ? promotedRecord.body
-                : existingRow.body,
-            sections: { ...remainingSections, packageRecord: promotedRecord },
-            facts: { ...(existingRow.facts ?? {}), review_status: "approved" },
-            source_snapshot: { ...(existingRow.source_snapshot ?? {}), review_status: "approved" }
-          };
-          const publishedIndex = apiGeneratedContentRows.findIndex((row) => row.id === publishedRow.id);
-          if (publishedIndex >= 0) apiGeneratedContentRows[publishedIndex] = publishedRow;
-          else apiGeneratedContentRows.push(publishedRow);
-          await route.fulfill({
-            status: 200,
-            contentType: "application/json",
-            body: JSON.stringify({ ok: true, rows: [publishedRow] })
-          });
+          // Use the real handler and transactional SQL for the response/receipt;
+          // a fabricated LIVE row cannot prove successful publication.
+          const store = await studioApiStore(apiGeneratedContentRows);
+          try {
+            const result = await store.call({ method: "PATCH", body: payload });
+            for (const saved of await store.call({ method: "rows" })) {
+              const index = apiGeneratedContentRows.findIndex(row => row.id === saved.id);
+              if (index >= 0) apiGeneratedContentRows[index] = saved;
+              else apiGeneratedContentRows.push(saved);
+            }
+            if (result.status === 200 && result.payload.publicationReceipt) {
+              const key = JSON.stringify([payload.id, payload.ownerAction, payload.expectedUpdatedAt]);
+              publicationResults.set(key, result.payload);
+              if (losePublicationResponse) {
+                losePublicationResponse = false;
+                await route.fulfill({ json: { ok: true, rows: [] } });
+                return;
+              }
+            }
+            await route.fulfill({ status: result.status, json: result.payload });
+          } finally { store.close(); }
           return;
         }
         const packageReviewStatus = typeof payload.reviewStatus === "string" ? payload.reviewStatus : null;
@@ -4183,6 +4180,7 @@ test.describe("content dashboard admin user flow case studies", () => {
 
     await seedAdminApi(page, {
       generatedRows: [pendingRevision],
+      loseFirstPublicationResponse: true,
       onGeneratedContentWrite: (write) => writes.push(write)
     });
     await expectAdminRouteLoads(
@@ -4198,19 +4196,15 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expect(editor.getByLabel("Reader phrase · You")).toHaveValue("Approved revised You copy.");
     const publishRevisionButton = editor.getByRole("button", { name: "Save & publish" });
     await expect(publishRevisionButton).toBeEnabled();
-    let unconfirmedPublish = true;
-    await page.route("**/api/admin/generated-content", async route => {
-      if (unconfirmedPublish && route.request().method() === "PATCH"
-        && route.request().postDataJSON().ownerAction === "approve-package-revision") {
-        unconfirmedPublish = false;
-        await route.fulfill({ json: { ok: true, rows: [pendingRevision] } });
-      } else await route.fallback();
-    });
     await publishRevisionButton.click();
-    await expect(editor.getByRole("alert")).toContainText("Publication was not confirmed");
+    await expect(editor.getByRole("alert")).toContainText("Publication is awaiting confirmation");
     await expect(editor.getByLabel("Reader phrase · You")).toHaveValue("Approved revised You copy.");
     await expect(publishRevisionButton).toBeEnabled();
-    await publishRevisionButton.click();
+    await editor.getByRole("button", { name: "Check publication status", exact: true }).click();
+    await expect(editor.getByRole("alert")).toHaveCount(0);
+    await expect(page.getByRole("status")).toContainText("The reviewed revision is published.");
+    await editor.getByRole("button", { name: "Close", exact: true }).click();
+    await page.getByRole("button", { name: "Edit source", exact: true }).click();
 
     await expect.poll(() => writes.length).toBe(1);
     expect(writes[0]?.method).toBe("PATCH");
@@ -4223,7 +4217,6 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expect(editor.getByLabel("Reader status", { exact: true })).toHaveText("Live");
     await expect(editor.getByLabel("Reader phrase · You")).toHaveValue("Approved revised You copy.");
     await expect(editor.getByRole("button", { name: "Save & publish" })).toHaveCount(0);
-    await expect(page.getByRole("status")).toContainText(`${contentKey} approved and published to the app`);
     await assertNoBrowserErrors();
   });
 

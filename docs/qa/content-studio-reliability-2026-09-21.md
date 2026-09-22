@@ -107,6 +107,25 @@ allocations cover publication recovery and version-aware controls. No dependency
 or CSS is added; reader startup, deferred-source, editor, graph and timing
 boundaries remain enforced. Both bundle gates pass with these measured allocations.
 
+## Browser fixture compatibility
+
+The reader boundary changes browser fixture transport from direct PostgREST to
+`/api/content-reader`. Healthy-empty fixtures resolve the public transport explicitly;
+outage tests retain their own failing route. The reader-recovery suite passed all
+19 cases after its stalled-request counter moved to the actual reader endpoint.
+Storage fixtures now assign database-style versions on inserts and updates, including
+new Calendar season sources and Zodiac templates. Existing Studio publication flows
+exercise the real handler and SQL receipt instead of fabricated `LIVE` responses.
+The interrupted-publication case recovers the completed receipt without dispatching
+another mutation and verifies the complete saved revision after reopening.
+
+The Mac Sky image previously omitted the calculated Moon ingress at the fixed test
+time. An isolated, fresh build of unchanged main baseline `bd2316b85` reproduced the
+same difference; the existing Linux image already contains the ingress. The test now
+waits for that event and fonts before capture. Only the Mac light Sky image is
+refreshed from the unchanged main rendering; pixel tolerance and performance limits
+are unchanged. No reader prose or visual styling was changed to match a test.
+
 ## Ordered rollout and rollback
 
 1. Review and pass the exact PR head, including full API, PostgreSQL concurrency,

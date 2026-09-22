@@ -33,6 +33,8 @@ export async function createApiStore(initial = fixtures) {
   const rows = new Map(initial.map(row => [row.id, structuredClone(row)]));
   const publication = publicationRpcFixture(() => [...rows.values()], saved => { for (const row of saved) rows.set(row.id, row); });
   let sequence = 0;
+  let versionSequence = 0;
+  const nextVersion = () => new Date(Date.now() + ++versionSequence).toISOString();
   const matches = (row, params) => [...params].every(([field, value]) => {
     if (["select", "order", "limit", "offset", "on_conflict"].includes(field)) return true;
     if (value === "is.null") return row[field] == null;
@@ -53,12 +55,12 @@ export async function createApiStore(initial = fixtures) {
     if (method === "GET") return Response.json(found);
     const patch = JSON.parse(String(options.body));
     if (method === "POST") {
-      const created = { ...patch, id: `revision-${++sequence}` };
+      const created = { ...patch, id: `revision-${++sequence}`, updated_at: nextVersion(), created_at: new Date().toISOString() };
       rows.set(created.id, created);
       return Response.json([created]);
     }
     if (method === "PATCH") {
-      const updated = found.map(row => ({ ...row, ...patch }));
+      const updated = found.map(row => ({ ...row, ...patch, updated_at: nextVersion() }));
       for (const row of updated) rows.set(row.id, row);
       return Response.json(updated);
     }

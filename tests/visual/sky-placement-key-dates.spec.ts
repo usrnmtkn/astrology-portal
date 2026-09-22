@@ -71,8 +71,9 @@ test("Calendar ingress opens the complete placement Key dates", async ({ page })
   test.setTimeout(120_000);
   await page.clock.setFixedTime(new Date("2026-08-22T12:00:00Z"));
   await page.addInitScript(() => localStorage.setItem("tldrastro:selectedLocation", JSON.stringify({ label: "New York", latitude: 40.7, longitude: -74, timeZone: "America/New_York" })));
-  await page.route('**/api/content-reader', route => route.fulfill({ json: readerResponse([row]) }));
+  await page.route('**/api/content-reader', route => route.fulfill({ json: readerResponse([]) }));
   await page.route('**/rest/v1/**', route => route.fulfill({ json: [] }));
+  await emptyLastKnownGoodSnapshot(page);
   const calendar = await getLunarCalendarWeek({ label: "New York", latitude: 40.7, longitude: -74, timeZone: "America/New_York" }, new Date("2026-08-22T12:00:00Z"), { detail: "full" });
   expect(calendar.events.some(event => event.type === "ingress" && event.planet === "Sun" && event.toSign === "Virgo")).toBe(true);
   await page.route("**/api/calendar?**", route => route.fulfill({ json: { ok: true, calendar } }));
