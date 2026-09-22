@@ -1,5 +1,20 @@
 import assert from "node:assert/strict";
 import { build } from "esbuild";
+import { DEFAULT_BANNED, NEGATION_PIVOT_PAGE_CAP, STOCK_TROPES } from "../src/astro-writing/validateCopy.mjs";
+import { WRITING_POLICY_DATA } from "../src/astro-writing/policyData.generated.mjs";
+
+function assertWriterLanguagePolicy(prompt) {
+  const jsonLine = (label) => JSON.parse(prompt.split(`${label}: `)[1].split("\n")[0]);
+  assert.deepEqual(jsonLine("Forbidden words and phrases"), [...new Set(DEFAULT_BANNED)],
+    "Every dispatched writer prompt must include the same unconditional bans as the validator.");
+  assert.ok(jsonLine("Forbidden words and phrases").includes("whether"), "The initial paid draft failed on this undisclosed rule.");
+  assert.deepEqual(jsonLine("Forbidden stock examples"), STOCK_TROPES);
+  assert.ok(prompt.includes(`Use at most ${NEGATION_PIVOT_PAGE_CAP} negation pivot`));
+  assert.deepEqual(jsonLine("Contextual and advisory word policies"), WRITING_POLICY_DATA.wordPolicies
+    .filter(entry => !["HARD_BAN", "WAIVED"].includes(entry.policyClass)),
+    "Preserve literal exceptions and advisory classes; never promote them into blanket bans.");
+  assert.ok(prompt.includes("EDITORIAL_REVIEW and REPLACEMENT_SUGGESTION are advisory, not bans"));
+}
 
 // Exercise the real orchestration with a deterministic provider at its transport
 // boundary. No live model calls or production data are used by this regression.
@@ -43,6 +58,7 @@ try {
     const prompts = [];
     let judgeCalls = 0;
     globalThis.reportCorrectionFixture = async ({ prompt }) => {
+      assertWriterLanguagePolicy(prompt);
       assert.ok(prompt.includes("Weekly progression and contextual owner corrections"));
       assert.ok(prompt.includes("narrative_repetition"));
       assert.ok(prompt.includes("EXACT OWNER-AUTHORED REPORT VOICE EVIDENCE"));
@@ -127,11 +143,13 @@ try {
             : ["writer", "validate", "judge", "writer", "validate", "judge"];
       assert.deepEqual(events, expectedEvents);
       if (scenario !== "first-pass") {
+        assert.ok(prompts[1].includes("correct the sentence's function, not just its vocabulary"));
         assert.ok(prompts[1].includes(original.body), "The corrective writer must receive the draft the judge diagnosed.");
         assert.ok(prompts[1].includes(original.tldr));
         assert.ok(prompts[1].includes("Fixture diagnostic"));
       }
       if (["cleanup-pass", "invalid-cleanup"].includes(scenario)) {
+        assert.ok(!prompts[2].includes("correct the sentence's function"), "Mechanical cleanup must not invite another stylistic rewrite.");
         assert.ok(prompts[2].includes(corrected.body), "Deterministic cleanup must receive the corrected draft that failed validation.");
         assert.ok(prompts[2].includes("DETERMINISTIC CLEANUP — NO NEW INTERPRETATION"));
         assert.ok(prompts[2].includes("Corrected draft introduced a deterministic defect"));
@@ -144,6 +162,7 @@ try {
   const carriedPrompts = [];
   let carriedJudges = 0;
   globalThis.reportCorrectionFixture = async ({ prompt }) => {
+    assertWriterLanguagePolicy(prompt);
     carriedPrompts.push(prompt);
     assert.ok(carriedPrompts.length <= 4);
     return { value: { ...original, body: `Fixture draft ${carriedPrompts.length}` }, model: "fixture" };
@@ -188,6 +207,7 @@ try {
     };
     let calls = 0;
     globalThis.reportCorrectionFixture = async ({ prompt }) => {
+      assertWriterLanguagePolicy(prompt);
       calls++;
       assert.ok(prompt.includes(original.body));
       assert.ok(prompt.includes('Current deterministic recovery defect'));

@@ -21,6 +21,9 @@ export function transitReadingRevisionPrompt(input: {
     input.task === "cleanup"
       ? "Make only the smallest wording changes needed for the specified deterministic checks. Preserve the quality correction already made."
       : "Where repetition is diagnosed, remove the redundant explanation or develop only a consequence already supported by the brief. Do not invent a scene to satisfy a voice finding.",
+    input.task === "revision"
+      ? "When a finding identifies abstract scaffolding, correct the sentence's function, not just its vocabulary. State the supported observation directly in the supplied owner's register. If the sentence only announces what another sentence already explains, remove it. Do not replace the rejected abstraction with new abstract synonyms or add an unsupported example."
+      : "",
     input.surface === "you"
       ? "Use second person (you/your). Temporary conditions are not permanent personality traits."
       : `Use the friend's supplied name and they/them/their for their own life. ${FRIEND_RELATIONSHIP_CONTEXT_RULE}`,

@@ -3,7 +3,7 @@ import { transitReadingRevisionPrompt, type TransitReadingWriterTask } from "./t
 import { previousTransitReadingCorrectionFeedback } from "./transit-reading-checkpoints.js";
 import type { TransitReadingOwnerVoiceReceipt } from "./transit-reading-owner-voice.js";
 import { contentGenerationProvider } from "./provider-config.js";
-import { generatedReportWritingContract } from "./transit-reading-writing-contract.js";
+import { generatedReportLanguageContract, generatedReportWritingContract } from "./transit-reading-writing-contract.js";
 import {
   callGovernedTransitReadingModel,
   prepareTransitReadingProductionKernel,
@@ -195,6 +195,7 @@ function writerPrompt<TBrief>(
       }),
     "",
     generatedReportWritingContract(),
+    generatedReportLanguageContract(),
     "The tldr and summary response fields are storage aliases for one visible TLDR, not two passages. Return the same text in both; the body must advance that TLDR.",
     "",
     "OWNER-APPROVED GENERATED-REPORT FEEDBACK EVIDENCE",
