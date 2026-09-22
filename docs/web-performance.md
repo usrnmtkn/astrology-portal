@@ -153,3 +153,21 @@ publication-generation identity instead of repeatedly serializing the ledger.
 The decorative orb draws at most 30 frames per second. The Sky API shares the
 Calendar event scan and exact week boundaries while skipping the seven-day
 presentation grid; only those deterministic week events use a bounded cache.
+
+The follow-up discovers App's static imports from the HTML on direct Sky list
+visits and starts exact Sky facts before App finishes downloading. Returning
+readers also validate their existing ledger through a public relay; first visits
+keep publication reads after App. Canonical source assets and local reader fonts
+start once App is available.
+The relay rereads the complete anonymous ledger on every request and validates
+the existing cached snapshot with an exact tag; unchanged reloads transfer no
+ledger body. A failed relay retains the direct reader path. A separate
+placement-key index lets published-row reads overlap the large archive download.
+It adopts only the unchanged initial selection
+and retains the publication barrier. The list defers house-reading rows until
+article/Calendar demand; protected full passages remain mandatory before reader
+composition. Equal builds reduce static reader boot by 4,277 gzip bytes while
+adding 2,189 bytes across all deferred JavaScript. See the
+[early-loading verification record](qa/sky-early-loading-2026-09-21.md) for exact
+selection, retry, partition and budget details; the release PR carries timing
+and deployment evidence.

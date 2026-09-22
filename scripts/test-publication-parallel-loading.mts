@@ -11,6 +11,7 @@ const built = await build({ entryPoints: ['apps/web/src/services/contentPublicat
       export const installContentPublications = rows => fixture.installed.push(rows);
       export const validContentPublication = value => fixture.valid(value);
       export const publicationLedgerReady = () => false;
+      export const contentPublicationRecords = () => [];
     ` }));
   } }] });
 const row = (content_key: string) => ({ content_key, state: 'live', revision: 1,
@@ -36,7 +37,8 @@ function harness(reply?: (request: any, data: any[]) => Promise<any>) {
     };
     return query;
   } };
-  const context: any = { module: { exports: {} }, fixture: { client, installed, valid: validContentPublication }, AbortSignal };
+  const context: any = { module: { exports: {} }, fixture: { client, installed, valid: validContentPublication }, AbortSignal,
+    fetch: async () => new Response('{}', { status: 503 }) };
   vm.runInNewContext(built.outputFiles[0].text, context);
   return { ...context.module.exports, requests, installed };
 }
@@ -69,3 +71,23 @@ for (const failure of ['network', 'invalid', 'cursor']) {
   assert.equal(h.contentPublicationsAvailableOnline(), false);
 }
 console.log('PASS: concurrent disjoint publication ranges, boundary/future keys, large-range pagination, coalescing, all-or-nothing failure and non-advancing cursor.');
+{
+  const h = harness();
+  let release!: (rows: unknown[]) => void;
+  const relay = new Promise<unknown[]>(resolve => { release = resolve; });
+  const early = h.refreshContentPublications(false, () => relay);
+  const mounted = h.refreshContentPublications();
+  assert.equal(h.requests.length, 0, 'App must join the relay while its module/data is still loading');
+  release(records);
+  await Promise.all([early, mounted]);
+  assert.equal(h.requests.length, 0);
+  assert.equal(h.installed.length, 1);
+  assert(h.contentPublicationsAvailableOnline());
+}
+{
+  const h = harness();
+  await h.refreshContentPublications(true, async () => { throw new Error('Relay unavailable'); });
+  assert.equal(h.installed.length, 1, 'An unavailable relay falls back to the complete direct read');
+  assert.equal(h.requests.length, 6);
+  assert(h.contentPublicationsAvailableOnline());
+}

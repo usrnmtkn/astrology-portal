@@ -1,5 +1,3 @@
-import protectedOwnerPassages from "./fallbackArchitectureV3/authored-inputs/owner-authored-sky-placement-house-passages-v1.json";
-
 type ProtectedOwnerPassage = {
   body_sha256: string;
   body_you: string;
@@ -13,9 +11,15 @@ type ProtectedOwnerPassageSelection = {
   protectionApplied: boolean;
 };
 
-const protectedPassagesByKey = new Map(
-  (protectedOwnerPassages.rows as ProtectedOwnerPassage[]).map((row) => [row.contentKey, row])
-);
+let protectedPassagesByKey: Map<string, ProtectedOwnerPassage> | null = null;
+
+export async function loadProtectedOwnerSkyPlacementPassages() {
+  if (protectedPassagesByKey) return;
+  const { default: protectedOwnerPassages } = await import("./fallbackArchitectureV3/authored-inputs/owner-authored-sky-placement-house-passages-v1.json");
+  protectedPassagesByKey ??= new Map(
+    (protectedOwnerPassages.rows as ProtectedOwnerPassage[]).map(row => [row.contentKey, row])
+  );
+}
 
 /**
  * Prevents any compact summary, excerpt, stale CMS article passage, or other
@@ -36,6 +40,7 @@ export function preserveProtectedOwnerSkyPlacementPassage({
   planet: string;
   sign: string;
 }): ProtectedOwnerPassageSelection {
+  if (!protectedPassagesByKey) throw new Error("SOURCE_GAP: protected owner house passages have not loaded.");
   const protectedKey = `house-horoscope-core/${planet}/${sign}/house-${house}`;
   const protectedPassage = protectedPassagesByKey.get(protectedKey);
 

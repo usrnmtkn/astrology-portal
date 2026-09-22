@@ -23,6 +23,7 @@ await build({
     contents: `
       export {
         isSkyPlacementFallbackArchitectureV3BundleLoaded,
+        installSkyPlacementFallbackArchitectureV3Bundle,
         loadSkyPlacementFallbackArchitectureV3Bundle,
         transitSynastryFallbackRendererV3
       } from "./apps/web/src/content/fallbackArchitectureV3Runtime.ts";
@@ -114,6 +115,19 @@ assert.throws(
   /SOURCE_GAP/u,
   "The exact Moon sign-entry unit must remain in the deferred placement partition."
 );
+
+assert.equal(await runtime.loadSkyPlacementFallbackArchitectureV3Bundle(false), true);
+assert.equal(runtime.isSkyPlacementFallbackArchitectureV3BundleLoaded(), false,
+  "List readiness must not claim that Calendar/detail house sources have loaded.");
+runtime.installSkyPlacementFallbackArchitectureV3Bundle({
+  transitLib: { authoredCards: [] }, templatesFile: { templates: [] },
+  rowsFile: { hookRows: [placementRows.hookRows[0]], vocabularyRows: [] }
+});
+assert.equal(runtime.isSkyPlacementFallbackArchitectureV3BundleLoaded(), false,
+  "A partial CMS overlay must not make a list-only load appear complete to Calendar.");
+runtime.installSkyPlacementFallbackArchitectureV3Bundle(null);
+const listReading = runtime.transitSynastryFallbackRendererV3.renderSkyPlacement(facts);
+assert.match(listReading.body, /the work reaches the audience it was made for/u);
 
 const concurrentLoads = await Promise.all([
   runtime.loadSkyPlacementFallbackArchitectureV3Bundle(),

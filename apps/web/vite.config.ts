@@ -2,6 +2,7 @@ import { memoryGraphReferencePlugin } from "../../scripts/memory-graph-reference
 import { defineConfig, loadEnv } from "vite";
 import react from "@vitejs/plugin-react";
 import { appStartupHtmlPlugin } from "../../scripts/app-startup-html-plugin.mjs";
+import { skyEntryPreloadPlugin } from "../../scripts/sky-entry-preload-plugin.mjs";
 import { previewCompressionPlugin } from "../../scripts/preview-compression-plugin.mjs";
 import { existsSync, readFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
@@ -196,6 +197,7 @@ export default defineConfig(({ mode }) => {
     plugins: [
       memoryGraphReferencePlugin(),
       appStartupHtmlPlugin(),
+      skyEntryPreloadPlugin(),
       previewCompressionPlugin(),
       suppressUnrelatedMonorepoHotUpdatesPlugin(),
       localApiRoutePlugin(),
@@ -235,6 +237,9 @@ export default defineConfig(({ mode }) => {
       rollupOptions: {
         output: {
           manualChunks(id) {
+            // Shared civil-date/location helpers are used together by Sky and
+            // its articles; one chunk avoids repeated tiny preload dependencies.
+            if (/\/services\/(?:timezones|skySelection|skyClock)\.ts$/u.test(id)) return "sky-time";
             // Keep the shared Studio return path with its authentication callers.
             // A separate shared chunk adds a preload import to every auth consumer.
             if (id.endsWith("/services/auth.ts") || id.endsWith("/services/studioAuthReturn.ts")) {
@@ -270,9 +275,15 @@ export default defineConfig(({ mode }) => {
             ) {
               return "fallback-content-relationships-hooks";
             }
+            // Current row IDs only need this small key index. Sharing the
+            // placement archive delayed the published-row request until all
+            // fallback prose had downloaded.
+            if (id.includes("fallbackArchitectureV3/bundled-sky-placement-manifest-v3.json")) {
+              return "fallback-content-sky-placement-manifest";
+            }
             if (
               id.includes("fallbackArchitectureV3/bundled-sky-placement-rows-v3.json")
-              || id.includes("fallbackArchitectureV3/bundled-sky-placement-manifest-v3.json")
+              || id.includes("fallbackArchitectureV3/authored-inputs/owner-authored-sky-placement-house-passages-v1.json")
             ) {
               return "fallback-content-sky-placement";
             }
@@ -289,9 +300,6 @@ export default defineConfig(({ mode }) => {
               id.includes("fallbackArchitectureV3/bundled-sky-core-rows-v3.json")
               || id.includes("fallbackArchitectureV3/bundled-sky-authored-cards-v3.json")
               || id.includes("fallbackArchitectureV3/bundled-initial-reader-rows-v3.json")
-              // Both are already part of reader startup; share one compressed
-              // payload instead of downloading the protected passages separately.
-              || id.includes("fallbackArchitectureV3/authored-inputs/owner-authored-sky-placement-house-passages-v1.json")
             ) {
               return "fallback-content-sky-core";
             }

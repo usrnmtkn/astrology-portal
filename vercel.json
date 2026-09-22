@@ -79,9 +79,9 @@
     }
   ],
   "functions": {
-    "api/calendar-reading.ts": {
-      "includeFiles": "node_modules/swisseph-wasm/wasm/*",
-      "maxDuration": 60
+    "api/content-publications.ts": {
+      "includeFiles": "apps/web/src/services/publicationLedgerTransport.ts",
+      "maxDuration": 15
     },
     "api/calendar-feed.ts": {
       "includeFiles": "node_modules/swisseph-wasm/wasm/*",
@@ -111,6 +111,10 @@
     },
     "api/admin/memory-graph.ts": {
       "includeFiles": "{AGENTS.md,config/agent-memory-sources-v1.json,{docs/{writing,content-management},data/{writing,agent-memory},skills/tldr-astro-writer,.agents/skills/satori-writer,tldr-astro-phrasebank,packages/astro-knowledge/review}/**/*.{jsonl,md}}"
+    },
+    "api/calendar-reading.ts": {
+      "includeFiles": "node_modules/swisseph-wasm/wasm/*",
+      "maxDuration": 60
     },
     "api/**/*.ts": {
       "includeFiles": "{api/_lib,artifacts,config,src/astro-writing,packages/astro-knowledge/{generated,scripts,data,config,reference,voice,sources/authored/owner-author-book},apps/web/{public/content,src/content},tldr-astro-phrasebank}/**/*.{cjs,js,json,md,mjs,ts}"

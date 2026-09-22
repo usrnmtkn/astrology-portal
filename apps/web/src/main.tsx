@@ -116,6 +116,9 @@ async function startApp() {
     const { completeAuthCallback } = await import("./services/authCallback");
     await completeAuthCallback();
   }
+  const initialSkyLoadPromise = /^#\/?sky\/?$/u.test(window.location.hash)
+    ? import("./services/skyApi").then(({ startInitialSkyLoad }) => startInitialSkyLoad()).catch(() => null)
+    : Promise.resolve(null);
   // A direct You link needs the profile page immediately. Fetch it alongside
   // App instead of adding a second module/CSS waterfall after React mounts.
   if (/^#\/?you(?:[/?]|$)/u.test(window.location.hash)) {
@@ -154,6 +157,11 @@ async function startApp() {
   }
 
   const { App } = await appModulePromise;
+  // Prime the reader faces alongside content, without competing with App's download.
+  for (const face of ['400 16px Newsreader', '500 16px "Geist Mono"']) {
+    void document.fonts.load(face).catch(() => {});
+  }
+  const initialSkyLoad = await initialSkyLoadPromise;
   if (!isAdminContentPath()) {
     const { refreshContentPublications } = await import("./services/contentPublications");
     // Publication state restores its verified cache synchronously. Revalidate
@@ -167,7 +175,7 @@ async function startApp() {
 
   createRoot(document.getElementById("root")!).render(
     <React.StrictMode>
-      <PageLoadBoundary><React.Suspense fallback={<PageLoading illustrated />}><App /></React.Suspense></PageLoadBoundary>
+      <PageLoadBoundary><React.Suspense fallback={<PageLoading illustrated />}><App initialSkyLoad={initialSkyLoad} /></React.Suspense></PageLoadBoundary>
       {!isAdminContentPath() && !reportPath ? (
         <React.Suspense fallback={null}>
           <ReportsGlobalLayer />

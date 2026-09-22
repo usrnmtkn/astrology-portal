@@ -1,3 +1,8 @@
+import {
+  defaultLocation, selectedLocationStorageKey, isLocationInput, dateInputValue, dateFromInput,
+  isDateInputValue, transitDateFromUrl, getInitialTransitDate, skyDateTimeFromInput, getInitialLocation
+} from "./services/skySelection";
+import type { InitialSkyLoad } from "./services/skyApi";
 import { skyPlacementSelection } from "./services/skyPlacementSourceScope";
 import { FormattedParagraph, FormattedProse, FormattedText } from "./components/FormattedProse";
 import { weeklyHoroscopeTagItems } from "./utils/weeklyFocusTags";
@@ -401,13 +406,6 @@ type PortalMode = AccountMode | "member" | "profile" | "friends" | "calendar" | 
 type TransitTerm = "short" | "long";
 type TransitDirection = "applying" | "separating";
 type UiTheme = "light" | "dark";
-
-const defaultLocation: LocationInput = {
-  label: "New York City, NY",
-  latitude: 40.7128,
-  longitude: -74.006,
-  timeZone: "America/New_York"
-};
 
 type UserChart = {
   id: string;
@@ -2182,7 +2180,6 @@ type ProfilePersistencePayload = {
 type SkyLoadStatus = "loading" | "ready" | "cached" | "stale" | "error";
 type NatalChartCalculationStatus = "idle" | "loading" | "ready" | "error";
 
-const selectedLocationStorageKey = "tldrastro:selectedLocation";
 const selectedThemeStorageKey = "tldrastro:theme";
 const sunriseOrbStorageKey = "tldrastro:sunriseOrb";
 const dyslexiaFontStorageKey = "tldrastro:dyslexiaFont";
@@ -2788,20 +2785,6 @@ const defaultSignupForm: SignupForm = {
   birthLocation: null
 };
 
-function isLocationInput(value: unknown): value is LocationInput {
-  if (!value || typeof value !== "object") {
-    return false;
-  }
-
-  const location = value as Partial<LocationInput>;
-
-  return (
-    typeof location.label === "string" &&
-    typeof location.latitude === "number" &&
-    typeof location.longitude === "number"
-  );
-}
-
 function sameLocationInput(first: LocationInput, second: LocationInput) {
   const firstTimeZone = first.timeZone ?? "";
   const secondTimeZone = second.timeZone ?? "";
@@ -2880,40 +2863,6 @@ function isSignupForm(value: unknown): value is SignupForm {
     && typeof form.birthCity === "string";
 }
 
-function dateInputValue(date: Date = new Date()) {
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, "0");
-  const day = String(date.getDate()).padStart(2, "0");
-
-  return `${year}-${month}-${day}`;
-}
-
-function dateFromInput(value: string) {
-  return new Date(`${value}T12:00:00`);
-}
-
-function isDateInputValue(value: string | null): value is string {
-  if (!value || !/^\d{4}-\d{2}-\d{2}$/u.test(value)) {
-    return false;
-  }
-
-  const parsed = dateFromInput(value);
-  return !Number.isNaN(parsed.getTime()) && dateInputValue(parsed) === value;
-}
-
-function transitDateFromUrl() {
-  try {
-    const value = new URL(window.location.href).searchParams.get("date");
-    return isDateInputValue(value) ? value : null;
-  } catch {
-    return null;
-  }
-}
-
-function getInitialTransitDate() {
-  return transitDateFromUrl() ?? dateInputValue();
-}
-
 function updateTransitDateUrl(value: string, mode: "push" | "replace" = "push") {
   try {
     const url = new URL(window.location.href);
@@ -2946,14 +2895,6 @@ function timeInZoneForInput(date: Date, timeZone = browserTimeZone()) {
   const meridiem = valueFor("dayPeriod").toUpperCase() === "PM" ? "PM" : "AM";
 
   return `${hour}:${minute} ${meridiem}`;
-}
-
-function skyDateTimeFromInput(value: string, location: LocationInput, live = false) {
-  const resolvedLocation = withTimeZone(location);
-  const current = live && liveSkyReference(value, resolvedLocation.timeZone);
-  if (current) return current;
-  // Other dates and editorial calculations retain the local-noon anchor.
-  return zonedDateTimeToUtc(value, "12:00 PM", resolvedLocation.timeZone);
 }
 
 function skyFactValidation(snapshot: SkySnapshot) {
@@ -3129,38 +3070,6 @@ function calendarDaysFor(month: Date) {
     day.setDate(start.getDate() + index);
     return day;
   });
-}
-
-function getInitialLocation() {
-  try {
-    const savedLocation = window.localStorage.getItem(selectedLocationStorageKey);
-
-    if (!savedLocation) {
-      return {
-        location: defaultLocation,
-        hasSavedLocation: false
-      };
-    }
-
-    const parsedLocation = JSON.parse(savedLocation) as unknown;
-
-    if (isLocationInput(parsedLocation)) {
-      return {
-        location: withTimeZone(parsedLocation),
-        hasSavedLocation: true
-      };
-    }
-
-    return {
-      location: defaultLocation,
-      hasSavedLocation: false
-    };
-  } catch {
-    return {
-      location: defaultLocation,
-      hasSavedLocation: false
-    };
-  }
 }
 
 function getInitialTheme(): UiTheme {
@@ -10966,7 +10875,7 @@ function FeatureLoadingFallback({ message = "Loading reading…" }: { message?: 
   return <PageLoading message={message} />;
 }
 
-export function App() {
+export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad | null } = {}) {
   if (isAdminContentPath()) {
     return (
       <Suspense fallback={<main className="admin-loading-fallback"><PageLoading message="Loading Content Studio…" /></main>}>
@@ -11075,6 +10984,8 @@ export function App() {
   const [personalTransitGeneratedContent, setPersonalTransitGeneratedContent] = useState<GeneratedContentMap>(() => new Map());
   const [selectedTransitId, setSelectedTransitId] = useState(sampleTransits[0].id);
   const [skyRefreshKey, setSkyRefreshKey] = useState(() => Date.now());
+  const initialSkyRefreshKey = useRef(skyRefreshKey);
+  const initialSkyLoadRef = useRef(initialSkyLoad);
   const skyCalculationSelectionRef = useRef("");
   const lastRemoteProfileSaveRef = useRef("");
   const lastSocialProfileSaveRef = useRef("");
@@ -11929,7 +11840,7 @@ export function App() {
     const shouldLoadPlacementContent = placementContentNeeded;
 
     if (shouldLoadPlacementContent && placementSelection === "pending") {
-      void loadSkyPlacementFallbackArchitectureV3Bundle().catch(() => { /* The source gate retries and reports errors. */ });
+      void loadSkyPlacementFallbackArchitectureV3Bundle(false).catch(() => { /* The source gate retries and reports errors. */ });
     }
     if (!shouldLoadPlacementContent || placementSelection === "pending") {
       // Keep a resolved Sky reading. Resetting to idle made every return visit
@@ -12807,13 +12718,19 @@ export function App() {
     let coreSkyTimer = 0;
 
     if (!currentSkyCalculationNeeded) {
+      initialSkyLoadRef.current = null;
       return () => {
         cancelled = true;
       };
     }
 
     const skyLocation = withTimeZone(location);
-    const selectedDateTime = skyDateTimeFromInput(skyDate, skyLocation, (mode === "guest" || mode === "member" || mode === "calendar"));
+    const initialRequest = initialSkyRefreshKey.current === skyRefreshKey && (mode === "guest" || mode === "member")
+      ? (initialSkyLoadRef.current?.matches(skyDate, skyLocation) ?? null) : null;
+    // A changed selection, refresh or expired bootstrap permanently abandons it.
+    // Keeping the promise for the matching mount also supports StrictMode replay.
+    if (!initialRequest) initialSkyLoadRef.current = null;
+    const selectedDateTime = initialRequest?.date ?? skyDateTimeFromInput(skyDate, skyLocation, (mode === "guest" || mode === "member" || mode === "calendar"));
     const live = (mode === "guest" || mode === "member" || mode === "calendar") && Boolean(liveSkyReference(skyDate, skyLocation.timeZone));
     const selectionKey = skySnapshotCacheKey(skyLocation, `${skyDate}:${live ? "live" : "daily"}`);
     const refreshing = skyCalculationSelectionRef.current === selectionKey && Boolean(sky);
@@ -12867,8 +12784,10 @@ export function App() {
       coreSkyTimer = window.setTimeout(() => {
         // One complete response keeps timing and placements atomic and avoids
         // downloading the browser ephemeris on the initial Sky route.
-        void import("./services/skyApi").then(({ getSkyOnlineFirst }) =>
-          getSkyOnlineFirst(skyLocation, selectedDateTime))
+        const calculation = initialRequest
+          ? initialRequest.resolve().then(snapshot => ({ ...snapshot, location: skyLocation }))
+          : import("./services/skyApi").then(({ getSkyOnlineFirst }) => getSkyOnlineFirst(skyLocation, selectedDateTime));
+        void calculation
           .then((nextSky) => {
             const published = publishFreshSky(nextSky);
             if (!cancelled) setSkyTimingStatus(published ? "ready" : "error");

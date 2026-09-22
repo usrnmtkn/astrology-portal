@@ -4,6 +4,34 @@ import assert from "node:assert/strict";
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { runInNewContext } from "node:vm";
+import { skyEntryPreloadPlugin } from "./sky-entry-preload-plugin.mjs";
+
+// Exercise route scoping and graph traversal, including cycles and deferred
+// article imports, without depending on unstable content hashes.
+const preloadPlugin = skyEntryPreloadPlugin();
+const chunk = (fileName, imports, extra = {}) => ({ type: "chunk", fileName, imports, ...extra });
+const bundle = {
+  "assets/app.js": chunk("assets/app.js", ["assets/react.js"], {
+    facadeModuleId: "/repo/apps/web/src/App.tsx", dynamicImports: ["assets/article.js"]
+  }),
+  "assets/react.js": chunk("assets/react.js", ["assets/app.js"]),
+  "assets/article.js": chunk("assets/article.js", [])
+};
+const [hint] = preloadPlugin.transformIndexHtml.handler("", { bundle });
+for (const [pathname, hash, expected] of [
+  ["/", "#sky", 2], ["/", "#/sky/", 2], ["/", "#sky/placement/sun/virgo", 0],
+  ["/admin/content", "#sky", 0], ["/", "#calendar", 0], ["/", "#you", 0]
+]) {
+  const links = [];
+  runInNewContext(hint.children, { location: { pathname, hash }, document: {
+    querySelectorAll: () => links, createElement: () => ({ getAttribute(name) { return this[name]; } }),
+    head: { appendChild: link => links.push(link) }
+  } });
+  assert.equal(links.length, expected, `${pathname}${hash}: preload scope`);
+  assert(links.every(link => link.rel === "modulepreload" && !link.href.includes("article")));
+}
+assert.throws(() => preloadPlugin.transformIndexHtml.handler("", { bundle: {} }), /locate/);
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const appSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/App.tsx"), "utf8");
@@ -230,7 +258,7 @@ assert.match(
   "The Sky Placement route partition must use its generated package slice."
 );
 assert.match(
-  deferredSkyPlacementSource,
+  fs.readFileSync(path.join(repoRoot, "apps/web/src/content/fallbackArchitectureV3SkyPlacementHouseBundle.ts"), "utf8"),
   /bundled-sky-placement-house-rows-v3\.json/u,
   "Sky Placement house horoscopes must remain in their on-demand package slice."
 );

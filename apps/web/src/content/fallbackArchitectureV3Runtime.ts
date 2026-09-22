@@ -534,6 +534,8 @@ let localDeferredReaderBundle: FallbackArchitectureV3Bundle | null = null;
 let localEmptyHouseReaderBundle: FallbackArchitectureV3Bundle | null = null;
 let localRelationshipReaderBundle: FallbackArchitectureV3Bundle | null = null;
 let localLunationBookReaderBundle: FallbackArchitectureV3Bundle | null = null;
+let localSkyPlacementHouseReaderBundle: FallbackArchitectureV3Bundle | null = null;
+let skyPlacementHouseBundlePromise: Promise<boolean> | null = null;
 let localSkyPlacementReaderBundle: FallbackArchitectureV3Bundle | null = null;
 let lastKnownGoodReaderBundle: FallbackArchitectureV3Bundle | null = null;
 let dashboardCoreReaderBundle: FallbackArchitectureV3Bundle | null = null;
@@ -608,7 +610,7 @@ function recomposeReaderBundle() {
   const dashboardCore = mergeReaderBundles(localCoreWithLunationBook, dashboardCoreReaderBundle);
   const skyCore = mergeReaderBundles(dashboardCore, dashboardSkyCoreReaderBundle);
   const core = mergeReaderBundles(skyCore, dashboardCompatibilityReaderBundle);
-  const withLocalSky = mergeReaderBundles(core, localSkyPlacementReaderBundle);
+  const withLocalSky = mergeReaderBundles(mergeReaderBundles(core, localSkyPlacementReaderBundle), localSkyPlacementHouseReaderBundle);
   activateReaderBundle(mergeReaderBundles(withLocalSky, dashboardSkyPlacementReaderBundle));
 }
 
@@ -929,16 +931,37 @@ export async function loadRelationshipFallbackArchitectureV3Bundle() {
 }
 
 export function isSkyPlacementFallbackArchitectureV3BundleLoaded() {
-  return Boolean(localSkyPlacementReaderBundle || dashboardSkyPlacementReaderBundle);
+  // CMS overlays may contain only the selected list rows. They cannot prove
+  // that the full local article/Calendar partition is ready.
+  return Boolean(loadedSkyV4ReaderRoute && localSkyPlacementReaderBundle && localSkyPlacementHouseReaderBundle);
 }
 
-export async function loadSkyPlacementFallbackArchitectureV3Bundle() {
+export async function loadSkyPlacementFallbackArchitectureV3Bundle(includeHouses = true) {
+  if (loadedSkyV4ReaderRoute && localSkyPlacementReaderBundle && (!includeHouses || localSkyPlacementHouseReaderBundle)) return false;
+  const placement = loadSkyPlacementListBundle();
+  if (!includeHouses) return placement;
+  skyPlacementHouseBundlePromise ??= import("./fallbackArchitectureV3SkyPlacementHouseBundle")
+    .then(({ skyPlacementHouseBundle }) => {
+      if (localSkyPlacementHouseReaderBundle) return false;
+      localSkyPlacementHouseReaderBundle = readerEligibleBundle(skyPlacementHouseBundle);
+      recomposeReaderBundle();
+      return true;
+    }).catch((error) => { skyPlacementHouseBundlePromise = null; throw error; });
+  const changes = await Promise.all([placement, skyPlacementHouseBundlePromise]);
+  return changes.some(Boolean);
+}
+
+async function loadSkyPlacementListBundle() {
   if (loadedSkyV4ReaderRoute && localSkyPlacementReaderBundle) {
     return false;
   }
 
-  skyPlacementFallbackBundlePromise ??= import("./fallbackArchitectureV3SkyPlacementBundle")
-    .then(async ({ skyPlacementFallbackArchitectureV3Bundle, loadCanonicalSkyV4ReaderRoute }) => {
+  // Discover JSON assets alongside the large placement module, after App is
+  // available. Prefetching them at entry delayed the shell on slow networks.
+  skyPlacementFallbackBundlePromise ??= Promise.all([
+    import("./fallbackArchitectureV3SkyPlacementBundle"),
+    import("./skyPlacementSourceAssets").then(({ loadSkyPlacementSourceAssets }) => loadSkyPlacementSourceAssets())
+  ]).then(async ([{ skyPlacementFallbackArchitectureV3Bundle, loadCanonicalSkyV4ReaderRoute }]) => {
       loadedSkyV4ReaderRoute = await loadCanonicalSkyV4ReaderRoute(() => [
         ...hookRowsByKey.values(), ...transitAuthoredCardsByKey.values()
       ]);
