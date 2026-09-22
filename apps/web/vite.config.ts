@@ -2,6 +2,7 @@ import { memoryGraphReferencePlugin } from "../../scripts/memory-graph-reference
 import { defineConfig, loadEnv } from "vite";
 import react from "@vitejs/plugin-react";
 import { appStartupHtmlPlugin } from "../../scripts/app-startup-html-plugin.mjs";
+import { skyEntryPreloadPlugin } from "../../scripts/sky-entry-preload-plugin.mjs";
 import { previewCompressionPlugin } from "../../scripts/preview-compression-plugin.mjs";
 import { existsSync, readFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
@@ -196,6 +197,7 @@ export default defineConfig(({ mode }) => {
     plugins: [
       memoryGraphReferencePlugin(),
       appStartupHtmlPlugin(),
+      skyEntryPreloadPlugin(),
       previewCompressionPlugin(),
       suppressUnrelatedMonorepoHotUpdatesPlugin(),
       localApiRoutePlugin(),
@@ -273,9 +275,14 @@ export default defineConfig(({ mode }) => {
             ) {
               return "fallback-content-relationships-hooks";
             }
+            // Current row IDs only need this small key index. Sharing the
+            // placement archive delayed the published-row request until all
+            // fallback prose had downloaded.
+            if (id.includes("fallbackArchitectureV3/bundled-sky-placement-manifest-v3.json")) {
+              return "fallback-content-sky-placement-manifest";
+            }
             if (
               id.includes("fallbackArchitectureV3/bundled-sky-placement-rows-v3.json")
-              || id.includes("fallbackArchitectureV3/bundled-sky-placement-manifest-v3.json")
               || id.includes("fallbackArchitectureV3/authored-inputs/owner-authored-sky-placement-house-passages-v1.json")
             ) {
               return "fallback-content-sky-placement";

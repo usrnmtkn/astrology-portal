@@ -73,9 +73,8 @@ export function startInitialSkyLoad(): InitialSkyLoad | null {
   const now = new Date();
   const date = skyDateTimeFromInput(day, location, true, now);
   const result = getSkyFromApi(location, date).catch(() => null);
-  // Publication state is small and needed for every Sky list. Large content
-  // assets wait for App so they cannot compete with its initial download.
-  void import("./contentPublications").then(({ refreshContentPublications }) => refreshContentPublications()).catch(() => {});
+  // Publication refresh remains at mount. Its SDK and ledger compete with
+  // App on a slow connection; only the small exact-facts request starts early.
 
   let calculation: Promise<SkySnapshot> | undefined;
   const initial: InitialSkyLoad = {

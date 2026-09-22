@@ -7,8 +7,10 @@ The implementation is based on refreshed main `9bee69955187ffbb4588d33471e257820
 ## Behavior
 
 For a direct Sky list link, after authentication callback completion, the entry
-point starts the exact-input Sky API request, complete publication refresh while App downloads. Once App is available, the
-nine immutable source assets download alongside the large placement module. The mounted reader adopts
+point starts the exact-input Sky API request while App downloads. Publication
+refresh starts at mount, and the nine immutable source assets download alongside
+the large placement module. A separate small placement-key index lets current
+published rows download without waiting for that archive. The mounted reader adopts
 the initial instant only for the same day, coordinates, time zone and live/daily
 mode, before ten seconds have elapsed on the monotonic clock. A refresh or
 changed selection abandons it. StrictMode replay shares the same request.
@@ -49,8 +51,8 @@ house-reading chunk is absent from the initial list's requests.
 
 ## Verification and release evidence
 
-- Browser regression holds the App response back and requires the facts,
-  and publication requests to start first. A separate held placement-module
+- Browser regression holds the App response back and requires the facts
+  request to start first while publication/content downloads wait. A held placement-module
   response proves canonical assets start without waiting for that module. It checks one API
   request for the unchanged selection and rejects a changed date plus location.
 - Initial list requests exclude house-reading and ephemeris assets; opening an
@@ -80,9 +82,8 @@ with all six completing and zero page errors, workers or layout shift.
 Earlier reveal exposed late Google Fonts swaps: one trace took 2.1 seconds for
 the external stylesheet and another 2.1–2.6 seconds for Newsreader/Geist Mono.
 The completed summary then changed size/position. The reader now serves the
-byte-identical font files locally, preserves all nine Unicode subsets and ships
-the original OFL licenses. Only the two Latin files (155,128 bytes total, already
-used by the old reader) are preloaded. Families, weights and theme tokens stay
+unmodified Google Fonts binaries locally, preserves all nine Unicode subsets and ships
+the original OFL licenses. Only the two Latin files (155,128 bytes total) are preloaded. Families, weights and theme tokens stay
 the same; optional accessibility/symbol fonts keep their existing loading.
 
 The nine font-face declarations add 651 gzip CSS bytes; the initial-CSS cap
@@ -96,6 +97,21 @@ requires stable summary, transit and card geometry from the first visible frame.
 The first preview started the large canonical JSON during App download. Five
 slow-mobile pairs showed that this competed for bandwidth and delayed the shell,
 leaving cold reading time close to baseline. That schedule was rejected. The
-final schedule starts only facts/publications before App; JSON starts alongside
+next schedule started facts/publications before App; JSON started alongside
 the placement module once App is available. The release PR records the final
 comparison rather than claiming the rejected preview as an improvement.
+
+A second trace still showed React delaying discovery of the App graph. The
+build now emits route-scoped module-preload hints for App's existing static
+imports on root Sky list URLs. This starts their downloads from the HTML without
+executing App, fetching deferred articles, or adding hints on Studio/other
+routes. The graph comes from Vite's actual output, not hardcoded asset names.
+The browser regression holds React and requires the App request to start before
+releasing it, then verifies exact-selection adoption and the content barrier.
+
+The final schedule keeps only the exact facts request before App; publication
+SDK/ledger downloads wait for App to mount. The 6 kB placement-key manifest is
+separate from the 139 kB placement archive, so targeted published-row reads can
+overlap archive/source downloads. The publication browser regression holds the
+archive response and requires the targeted current-row request to start, while
+asserting that no article is exposed before all sources are ready.

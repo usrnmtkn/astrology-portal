@@ -61,7 +61,19 @@ for (const width of [390, 1440]) test(`placement publication stays authoritative
     expect(paints.length).toBeGreaterThan(0);
     expect(paints.every(text => text.includes('Fixture published opening'))).toBe(true);
   };
-  await page.goto('/?date=2026-09-13#sky/placement/sun/virgo');
+  let releaseArchive!: () => void;
+  const archiveGate = new Promise<void>(resolve => { releaseArchive = resolve; });
+  const archivePattern = /\/assets\/fallback-content-sky-placement-(?!manifest-)[^/]+\.js$/;
+  await page.route(archivePattern, async route => { await archiveGate; await route.continue(); });
+  const publishedRowRequest = page.waitForRequest(request => {
+    const url = new URL(request.url());
+    return url.pathname.endsWith('/generated_interpretations') && url.searchParams.get('id')?.includes(row().id) === true;
+  });
+  try {
+    await page.goto('/?date=2026-09-13#sky/placement/sun/virgo', { waitUntil: 'domcontentloaded' });
+    await publishedRowRequest;
+    await expect(article).toHaveCount(0);
+  } finally { releaseArchive(); }
   await assertCopy();
   await page.reload();
   await assertCopy();

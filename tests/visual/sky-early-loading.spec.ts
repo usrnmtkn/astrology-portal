@@ -18,10 +18,13 @@ for (const changeSelection of [false, true]) {
     })));
     let releaseApp!: () => void;
     const appGate = new Promise<void>(resolve => { releaseApp = resolve; });
+    let releaseReact!: () => void;
+    const reactGate = new Promise<void>(resolve => { releaseReact = resolve; });
     let releasePlacement!: () => void;
     const placementGate = new Promise<void>(resolve => { releasePlacement = resolve; });
-    await page.route(/\/assets\/fallback-content-sky-placement-[^/]+\.js$/, async route => { await placementGate; await route.continue(); });
+    await page.route(/\/assets\/fallback-content-sky-placement-(?!manifest-)[^/]+\.js$/, async route => { await placementGate; await route.continue(); });
     await page.route(/\/assets\/App-[^/]+\.js$/, async route => { await appGate; await route.continue(); });
+    await page.route(/\/assets\/react-[^/]+\.js$/, async route => { await reactGate; await route.continue(); });
     const requests: URL[] = [];
     const errors: string[] = [];
     page.on('request', request => requests.push(new URL(request.url())));
@@ -35,9 +38,11 @@ for (const changeSelection of [false, true]) {
     await page.route('**/api/calendar?**', route => route.fulfill({ json: { ok: true, calendar: { days: [] } } }));
     try {
       await page.goto('/#sky', { waitUntil: 'commit' });
+      await expect.poll(() => requests.some(url => /\/assets\/App-[^/]+\.js$/.test(url.pathname))).toBe(true);
+      releaseReact();
       await expect.poll(() => requests.some(url => url.pathname === '/api/sky')).toBe(true);
       expect(requests.some(url => /sky-v4-canonical-content-studio-stage.*\.json$/.test(url.pathname))).toBe(false);
-      await expect.poll(() => requests.some(url => url.pathname.endsWith('/content_publications'))).toBe(true);
+      expect(requests.some(url => url.pathname.endsWith('/content_publications'))).toBe(false);
       expect(await page.locator('.app-shell').count()).toBe(0);
       expect(requests.find(url => url.pathname === '/api/sky')?.searchParams.get('at')).toBe('2026-09-21T16:00:00.000Z');
       if (changeSelection) {
@@ -46,9 +51,10 @@ for (const changeSelection of [false, true]) {
           localStorage.setItem('tldrastro:selectedLocation', JSON.stringify({ label: 'Synthetic Tokyo', latitude: 35.6762, longitude: 139.6503, timeZone: 'Asia/Tokyo' }));
         });
       }
-    } catch (error) { releasePlacement(); throw error; } finally { releaseApp(); }
+    } catch (error) { releasePlacement(); throw error; } finally { releaseReact(); releaseApp(); }
     try {
       await expect.poll(() => requests.some(url => /sky-v4-canonical-content-studio-stage.*\.json$/.test(url.pathname))).toBe(true);
+      await expect.poll(() => requests.some(url => url.pathname.endsWith('/content_publications'))).toBe(true);
       await expect(page.locator('.app-shell')).toBeVisible();
     } finally { releasePlacement(); }
     await expect(page.getByLabel('Daily sky summary', { exact: true })).toBeVisible({ timeout: 60_000 });
