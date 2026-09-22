@@ -434,7 +434,7 @@ assert.doesNotMatch(
 );
 assert.match(
   appSource,
-  /calendarContentRequest\.contentKeys\.filter[\s\S]*?loadLiveGeneratedContentForKeys\(missingKeys\)/u,
+  /calendarContentRequest\.contentKeys\.filter[\s\S]*?loadLiveGeneratedContentForKeys\(missingKeys, \{ requireFresh: cached\.content\.size > 0 \}\)/u,
   "Calendar must hydrate only missing exact keys."
 );
 assert.match(

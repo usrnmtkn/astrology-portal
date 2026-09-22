@@ -182,6 +182,7 @@ import {
   calendarAspectMatchesSelection,
   calendarAspectSearchMatches,
   calendarAspectSelectionOptions,
+  calendarAspectSignedTitle,
   type CalendarAspectSelection
 } from "./calendarAspectSources";
 import {
@@ -2274,6 +2275,8 @@ async function loadAdminSourceDraftCatalog(secret: string): Promise<AdminSourceD
 }
 
 function rowTitleUncached(row: AdminGeneratedContentRow | AdminReviewRecord | AdminUserGeneratedContentRow) {
+  const signedAspectTitle = calendarAspectSignedTitle("content_key" in row ? row.content_key : row.contentKey);
+  if (signedAspectTitle) return signedAspectTitle;
   if ("content_key" in row) {
     const lunar = lunarContentIdentity(row.content_key);
     if (lunar) return lunar.title;
@@ -3145,9 +3148,8 @@ export function GeneratedContentAdminDashboard() {
   const [natalAspectFirst, setNatalAspectFirst] = useState("");
   const [natalAspectName, setNatalAspectName] = useState("");
   const [natalAspectSecond, setNatalAspectSecond] = useState("");
-  const [calendarAspectFirst, setCalendarAspectFirst] = useState("");
-  const [calendarAspectName, setCalendarAspectName] = useState("");
-  const [calendarAspectSecond, setCalendarAspectSecond] = useState("");
+  const [calendarAspectSelection, setCalendarAspectSelection] = useState<CalendarAspectSelection>({ first: "", aspect: "", second: "" });
+  const { first: calendarAspectFirst, aspect: calendarAspectName, second: calendarAspectSecond, firstSign: calendarAspectFirstSign = "", secondSign: calendarAspectSecondSign = "" } = calendarAspectSelection;
   const [fallbackSectionFilter, setFallbackSectionFilter] = useState<AdminFallbackHookSectionFilter>("all");
   const friendsBetweenYouTwoWorkspace = friendsTransitAudience
     && fallbackSectionFilter === "friends"
@@ -3523,13 +3525,9 @@ export function GeneratedContentAdminDashboard() {
     && (categoryFilter === "all" || contentCategoryForRow(row) === categoryFilter)
     && (calendarAspectFilterScopeActive
       ? calendarAspectSearchMatches(`${row.content_key} ${visibleRowSearchText(row)}`, query)
-        && calendarAspectMatchesSelection(row, {
-          first: calendarAspectFirst,
-          aspect: calendarAspectName,
-          second: calendarAspectSecond
-        })
+        && calendarAspectMatchesSelection(row, calendarAspectSelection)
       : matchesFallbackLibrarySearch(row.content_key, visibleRowSearchText(row), query.trim().toLowerCase()))
-  ), [visibleRows, contentLibraryView, calendarAspectFilterScopeActive, calendarAspectFirst, calendarAspectName, calendarAspectSecond, contentClassFilter, tierFilter, categoryFilter, query]);
+  ), [visibleRows, contentLibraryView, calendarAspectFilterScopeActive, calendarAspectSelection, contentClassFilter, tierFilter, categoryFilter, query]);
   const liveStatusResults = useContentLiveStatusResults(loadLiveStatus, statusCountRows,
     activePage === "content" && (statusFiltersOpen || contentStatusFilter !== "all"));
   const statusChecking = !liveStatusResults || liveStatusResults.pending > 0;
@@ -4266,9 +4264,11 @@ export function GeneratedContentAdminDashboard() {
     setNatalAspectFirst(page === "content" && category === "Natal Aspects" ? natalAspectFirstParam : "");
     setNatalAspectName(page === "content" && category === "Natal Aspects" ? natalAspectNameParam : "");
     setNatalAspectSecond(page === "content" && category === "Natal Aspects" ? natalAspectSecondParam : "");
-    setCalendarAspectFirst(page === "content" && category === "Calendar Aspects" ? natalAspectFirstParam : "");
-    setCalendarAspectName(page === "content" && category === "Calendar Aspects" ? natalAspectNameParam : "");
-    setCalendarAspectSecond(page === "content" && category === "Calendar Aspects" ? natalAspectSecondParam : "");
+    const firstSign = page === "content" && category === "Calendar Aspects" ? params.get("firstSign") ?? "" : "";
+    const secondSign = page === "content" && category === "Calendar Aspects" ? params.get("secondSign") ?? "" : "";
+    setCalendarAspectSelection(page === "content" && category === "Calendar Aspects"
+      ? { first: natalAspectFirstParam, aspect: natalAspectNameParam, second: natalAspectSecondParam, firstSign, secondSign }
+      : { first: "", aspect: "", second: "" });
     setSkyWriteupWorkspaceView(
       page === "skyWriteups" && skyWriteupWorkspaceTabs.some(tab => tab.value === view)
         ? view as SkyWriteupWorkspaceView : "catalog"
@@ -4500,9 +4500,7 @@ export function GeneratedContentAdminDashboard() {
       setNatalAspectFirst("");
       setNatalAspectName("");
       setNatalAspectSecond("");
-      setCalendarAspectFirst("");
-      setCalendarAspectName("");
-      setCalendarAspectSecond("");
+      setCalendarAspectSelection({ first: "", aspect: "", second: "" });
     }
     navigateAdminPage(
       item.page,
@@ -8888,18 +8886,12 @@ export function GeneratedContentAdminDashboard() {
   }
 
   function updateCalendarAspectSelection(next: Partial<CalendarAspectSelection>) {
-    const first = next.first ?? calendarAspectFirst;
-    const aspect = next.aspect ?? calendarAspectName;
-    const second = next.second ?? calendarAspectSecond;
-    setCalendarAspectFirst(first);
-    setCalendarAspectName(aspect);
-    setCalendarAspectSecond(second);
+    const selection = { ...calendarAspectSelection, ...next };
+    setCalendarAspectSelection(selection);
 
     const params = new URLSearchParams({ category: "Calendar Aspects" });
     if (query.trim()) params.set("q", query.trim());
-    if (first) params.set("first", first);
-    if (aspect) params.set("aspect", aspect);
-    if (second) params.set("second", second);
+    for (const [key, value] of Object.entries(selection)) if (value) params.set(key, value);
     setAdminHash(adminHashForPage("content", params), "replace");
   }
 
@@ -8907,7 +8899,7 @@ export function GeneratedContentAdminDashboard() {
     const calendarAspectOptions = calendarAspectSelectionOptions(rows);
     return (
       <AdminFilterBar
-        activeFilterCount={[contentStatusFilter !== "all", categoryFilter !== "all" && !calendarAspectWorkspaceActive, contentClassFilter !== "all", tierFilter !== "all", showReferenceRows && !calendarAspectWorkspaceActive, showRetiredRows, calendarAspectWorkspaceActive && Boolean(calendarAspectFirst || calendarAspectName || calendarAspectSecond)].filter(Boolean).length}
+        activeFilterCount={[contentStatusFilter !== "all", categoryFilter !== "all" && !calendarAspectWorkspaceActive, contentClassFilter !== "all", tierFilter !== "all", showReferenceRows && !calendarAspectWorkspaceActive, showRetiredRows, calendarAspectWorkspaceActive && Boolean(calendarAspectFirst || calendarAspectName || calendarAspectSecond || calendarAspectFirstSign || calendarAspectSecondSign)].filter(Boolean).length}
         label="Content list filters"
         searchLabel={calendarAspectWorkspaceActive ? "Find an aspect" : "Search content"}
         query={query}
@@ -8915,6 +8907,7 @@ export function GeneratedContentAdminDashboard() {
         placeholder={calendarAspectWorkspaceActive ? "Search by planet, aspect, or content key" : "Search by title, surface, kind, or content key"}
         tabs={<>
         {calendarAspectWorkspaceActive && (
+        <>
         <div className="admin-natal-placement-selectors admin-filter-form admin-filter-form--three" role="group" aria-label="Calendar aspect filters">
           <label>
             <span>Planet or point</span>
@@ -8938,6 +8931,20 @@ export function GeneratedContentAdminDashboard() {
             </AdminSelect>
           </label>
         </div>
+        <details className="admin-advanced" open={Boolean(calendarAspectFirstSign || calendarAspectSecondSign)}>
+          <AdminDisclosureSummary>Advanced signs{calendarAspectFirstSign || calendarAspectSecondSign ? " · Filtered" : ""}</AdminDisclosureSummary>
+          <p className="admin-field-hint">Filter by either planet’s sign. Every dropdown is optional.</p>
+          <div className="admin-filter-form" role="group" aria-label="Calendar aspect sign filters">
+            {(["first", "second"] as const).map((side) => <label key={side}>
+              <span>{calendarAspectSelection[side] ? titleFromKey(calendarAspectSelection[side]) : side === "first" ? "First planet or point" : "Other planet or point"} in sign</span>
+              <AdminSelect aria-label={`Calendar aspect ${side} sign`} value={calendarAspectSelection[`${side}Sign`] ?? ""} onChange={(event) => updateCalendarAspectSelection({ [`${side}Sign`]: event.target.value })}>
+                <option value="">Any sign</option>
+                {natalPlacementSigns.map((sign) => <option value={sign} key={sign}>{titleFromKey(sign)}</option>)}
+              </AdminSelect>
+            </label>)}
+          </div>
+        </details>
+        </>
         )}
         {!calendarAspectWorkspaceActive && (
         <div className="admin-filter-choices" role="group" aria-label="Content Library saved views">
@@ -8995,9 +9002,7 @@ export function GeneratedContentAdminDashboard() {
               setNatalPlacementPlanet("");
               setNatalPlacementSign("");
               setNatalPlacementHouse("");
-              setCalendarAspectFirst("");
-              setCalendarAspectName("");
-              setCalendarAspectSecond("");
+              setCalendarAspectSelection({ first: "", aspect: "", second: "" });
               if (calendarAspectWorkspaceActive) {
                 setAdminHash(adminHashForPage("content", new URLSearchParams({ category: "Calendar Aspects" })), "replace");
               }
@@ -10363,7 +10368,8 @@ export function GeneratedContentAdminDashboard() {
       return `${wordCount} ${wordCount === 1 ? "word" : "words"} · ${value.length} ${value.length === 1 ? "character" : "characters"}`;
     };
     const unchangedSkySource = isSkyPlacementSource && selectedRow?.id.startsWith("package:") && !draftHasUnsavedChanges && !packageHasProposal;
-    const editorHeading = !currentDraft.id && currentDraft.contentKey.startsWith("authored/calendar-weekly-moon/") ? `New leftover write-up · ${lunarIdentity?.title ?? "Moon-sign leftover"}` : isSkySummaryDraft || selectedRow?.id.startsWith("package:") ? `Edit ${currentDraft.headline}` : currentDraft.id
+    const signedAspectTitle = calendarAspectSignedTitle(currentDraft.contentKey);
+    const editorHeading = signedAspectTitle ? `Edit ${signedAspectTitle}` : !currentDraft.id && currentDraft.contentKey.startsWith("authored/calendar-weekly-moon/") ? `New leftover write-up · ${lunarIdentity?.title ?? "Moon-sign leftover"}` : isSkySummaryDraft || selectedRow?.id.startsWith("package:") ? `Edit ${currentDraft.headline}` : currentDraft.id
       ? isVocabularyDraft
         ? "Edit phrase"
         : compatibilityIdentity

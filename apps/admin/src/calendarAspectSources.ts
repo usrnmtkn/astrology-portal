@@ -1,3 +1,5 @@
+import { natalPlacementSigns } from "./natalPlacementSources.ts";
+
 export const calendarAspectDefaultBodies = [
   "sun",
   "moon",
@@ -58,10 +60,14 @@ const ignoredCalendarSearchTokens = new Set([
   "stationary"
 ]);
 
+const calendarAspectSigns = new Set<string>(natalPlacementSigns);
+
 export type CalendarAspectSelection = {
   first: string;
+  firstSign?: string;
   aspect: string;
   second: string;
+  secondSign?: string;
 };
 
 export type CalendarAspectSourceRow = {
@@ -83,7 +89,12 @@ export function parseCalendarAspectContentKey(contentKey: string): CalendarAspec
   if (contentKey.startsWith("sky.aspect.")) {
     const parts = contentKey.slice("sky.aspect.".length).split(".");
     if (parts.length < 3 || !isCalendarAspectType(parts[1]) || !parts[0] || !parts[2]) return null;
-    return { first: parts[0], aspect: parts[1], second: parts[2] };
+    return {
+      first: parts[0], aspect: parts[1], second: parts[2],
+      // Legacy dated keys have a date here, rather than placement signs.
+      ...(calendarAspectSigns.has(parts[3]) && calendarAspectSigns.has(parts[4])
+        ? { firstSign: parts[3], secondSign: parts[4] } : {})
+    };
   }
 
   const slashPrefix = contentKey.startsWith("sky-card/")
@@ -94,12 +105,22 @@ export function parseCalendarAspectContentKey(contentKey: string): CalendarAspec
   if (!slashPrefix) return null;
 
   const parts = contentKey.slice(slashPrefix.length).split("/");
-  if (parts.length < 5 || !isCalendarAspectType(parts[2]) || !parts[0] || !parts[3]) return null;
-  return { first: parts[0], aspect: parts[2], second: parts[3] };
+  if (parts.length < 5 || !isCalendarAspectType(parts[2]) || !parts[0] || !parts[3]
+    || !calendarAspectSigns.has(parts[1]) || !calendarAspectSigns.has(parts[4])) return null;
+  return { first: parts[0], firstSign: parts[1], aspect: parts[2], second: parts[3], secondSign: parts[4] };
 }
 
 export function calendarAspectDisplayTitle(selection: CalendarAspectSelection) {
-  return `${titleCase(selection.first)} ${titleCase(selection.aspect)} ${titleCase(selection.second)}`;
+  const first = `${titleCase(selection.first)}${selection.firstSign ? ` in ${titleCase(selection.firstSign)}` : ""}`;
+  const second = `${titleCase(selection.second)}${selection.secondSign ? ` in ${titleCase(selection.secondSign)}` : ""}`;
+  return `${first} ${titleCase(selection.aspect)} ${second}`;
+}
+
+/** Use the saved identity even when a five-value row still has a generic headline. */
+export function calendarAspectSignedTitle(contentKey: string) {
+  const selection = parseCalendarAspectContentKey(contentKey);
+  return selection && (selection.firstSign || selection.secondSign)
+    ? calendarAspectDisplayTitle(selection) : null;
 }
 
 export function normalizeCalendarAspectSearch(search: string) {
@@ -140,14 +161,15 @@ export function calendarAspectMatchesSelection(
   row: CalendarAspectSourceRow,
   selection: Partial<CalendarAspectSelection>
 ) {
-  if (!selection.first && !selection.aspect && !selection.second) return true;
+  if (!selection.first && !selection.firstSign && !selection.aspect && !selection.second && !selection.secondSign) return true;
   const parsed = parseCalendarAspectContentKey(row.content_key);
   if (!parsed) return false;
   if (selection.aspect && parsed.aspect !== selection.aspect) return false;
-  if (selection.first && selection.second) {
-    return (parsed.first === selection.first && parsed.second === selection.second)
-      || (parsed.first === selection.second && parsed.second === selection.first);
-  }
-  const selectedBody = selection.first || selection.second;
-  return !selectedBody || parsed.first === selectedBody || parsed.second === selectedBody;
+  // Reverse whole placements together so a sign never matches the other planet.
+  const matchesPlacement = (body: string, sign: string | undefined, selectedBody?: string, selectedSign?: string) =>
+    (!selectedBody || body === selectedBody) && (!selectedSign || sign === selectedSign);
+  return (matchesPlacement(parsed.first, parsed.firstSign, selection.first, selection.firstSign)
+      && matchesPlacement(parsed.second, parsed.secondSign, selection.second, selection.secondSign))
+    || (matchesPlacement(parsed.second, parsed.secondSign, selection.first, selection.firstSign)
+      && matchesPlacement(parsed.first, parsed.firstSign, selection.second, selection.secondSign));
 }

@@ -12225,7 +12225,11 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
       clearSharedGeneratedContentCache();
       clearPlanetTopicVocabularyCache();
       clearNatalCardTaglineCache();
-      calendarContentCacheRef.current.clear();
+      // Revalidate the keys without blanking already-loaded Calendar writing.
+      calendarContentCacheRef.current.forEach((entry) => {
+        entry.content = eligibleSkyDetailContent(entry.content);
+        entry.requestedKeys.clear();
+      });
       fallbackDashboardHydrationRequestedRef.current = false;
       compatibilityDashboardHydrationVersionRef.current = null;
       setContentRefreshVersion((version) => version + 1);
@@ -12277,7 +12281,6 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
 
     if (mode !== "calendar") {
       setCalendarContentStatus("idle");
-      setCalendarContentRequest(null);
     }
 
     if (!shouldLoadSkyGenerated || !sky) {
@@ -12304,7 +12307,7 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
       };
       const missingKeys = calendarContentRequest.contentKeys.filter((key) => !cached.requestedKeys.has(key));
 
-      setSkyGeneratedContent(mergeGeneratedContentMaps(cached.content, normalizedSkySnapshotContent));
+      setSkyGeneratedContent(eligibleSkyDetailContent(mergeGeneratedContentMaps(cached.content, normalizedSkySnapshotContent)));
 
       if (missingKeys.length === 0) {
         setCalendarContentStatus("ready");
@@ -12313,12 +12316,16 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
         };
       }
 
-      loadLiveGeneratedContentForKeys(missingKeys)
+      loadLiveGeneratedContentForKeys(missingKeys, { requireFresh: cached.content.size > 0 })
         .then((content) => {
           if (cancelled) return;
 
+          // A successful response replaces these rows and all of their aliases.
+          // Keep keys from other requests; a failed refresh keeps eligible copy.
+          const refreshedRows = new Set(missingKeys.map((key) => cached.content.get(key)));
+          const refreshedContent = new Map([...cached.content].filter(([, row]) => !refreshedRows.has(row)));
           const nextEntry: CalendarContentCacheEntry = {
-            content: mergeGeneratedContentMaps(content, cached.content),
+            content: mergeGeneratedContentMaps(content, refreshedContent),
             requestedKeys: new Set([...cached.requestedKeys, ...missingKeys])
           };
 
@@ -12335,8 +12342,9 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
           setCalendarContentStatus("ready");
         })
         .catch((error) => {
-          console.warn("Live Calendar interpretations failed to load; unpublished content will remain hidden.", error);
+          console.warn("Calendar content refresh failed; retaining eligible loaded writing.", error);
           if (!cancelled) {
+            setSkyGeneratedContent(eligibleSkyDetailContent(cached.content));
             setCalendarContentStatus("ready");
           }
         });
