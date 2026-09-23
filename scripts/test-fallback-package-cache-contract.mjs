@@ -37,7 +37,7 @@ assert.match(
 );
 assert.match(
   generatedContentSource,
-  /fallbackArchitectureV3BundleCacheSchema = "fallback-architecture-v3-dashboard-overlay-cache-v7"/u,
+  /fallbackArchitectureV3BundleCacheSchema = "fallback-architecture-v3-dashboard-overlay-cache-v9"/u,
   "Core browser cache envelopes must identify the live editorial-overlay schema."
 );
 assert.match(
@@ -67,13 +67,13 @@ assert.match(
 );
 assert.match(
   generatedContentSource,
-  /\.eq\("status", "LIVE"\)[\s\S]*\.eq\("lane", "serving"\)[\s\S]*loadFallbackArchitectureV3BundledCoreManifest/u,
+  /loadReaderRows\(\{ provider: fallbackArchitectureV3Provider, \.\.\.\(scope[\s\S]*loadFallbackArchitectureV3BundledCoreManifest/u,
   "Core hydration must query reader-live rows and validate their stable keys against the current package."
 );
 assert.match(
-  generatedContentSource,
-  /let cursorId: string \| null = null[\s\S]*?\.order\("id", \{ ascending: true \}\)[\s\S]*?if \(cursorId\) query = query\.gt\("id", cursorId\)/u,
-  "Supabase pagination must use a stable monotonic ID cursor."
+  read("api/content-reader.ts"),
+  /status: 'eq.LIVE', lane: 'eq.serving',[\s\S]*order: 'id.asc'[\s\S]*params.append\('id', `gt.\$\{query.afterId\}`\)/u,
+  "The reader endpoint must select live serving rows with a stable monotonic ID cursor."
 );
 assert.match(
   generatedContentSource,
@@ -92,7 +92,7 @@ assert.match(
 );
 assert.match(
   appSource,
-  /<ProfileView[\s\S]{0,240}targetDate=\{skyDate\}/u,
+  /<ProfileView[\s\S]*?targetDate=\{skyDate\}/u,
   "The You daily surface must receive the selected Sky date."
 );
 assert.match(

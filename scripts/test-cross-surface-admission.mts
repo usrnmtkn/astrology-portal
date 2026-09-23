@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import {
   isDynamicHouseTransitRecord,
+  isDynamicLunationMacroRecord,
   isDynamicSkyPlacementArticleRecord,
   isDynamicSynastryExactRecord,
   isFallbackDashboardRecordAllowed
@@ -66,4 +67,15 @@ assert.equal(packagePublicationAdmissionIssue({
   content_key: "authored/calendar-season-transition/virgo/libra",
   sections: { packageRecord: { contentKey: "authored/calendar-season-transition/virgo/libra", content_role: "full_copy" } }
 }), null);
-console.log("PASS: bounded House Transit and exact synastry admission, distinct chart holders, and publication key protection.");
+for (const phase of ['new-moon', 'full-moon']) for (const sign of ['aries', 'taurus', 'gemini', 'cancer', 'leo', 'virgo', 'libra', 'scorpio', 'sagittarius', 'capricorn', 'aquarius', 'pisces']) {
+  const contentKey = `authored/sky-lunation-macro/${phase}/${sign}`;
+  const record = { contentKey, content_role: 'authored_card' };
+  assert.ok(isDynamicLunationMacroRecord(record));
+  assert.ok(isFallbackDashboardRecordAllowed(record, new Set()));
+  assert.equal(packagePublicationAdmissionIssue({ status: 'LIVE', provider: 'tldrastro-fallback-architecture-v3', content_key: contentKey, sections: { packageRecord: record } }), null);
+}
+for (const contentKey of ['authored/sky-lunation-macro/new-moon/unknown', 'authored/sky-lunation-macro/quarter-moon/aquarius', 'authored/sky-lunation-macro/new-moon/aquarius/extra', 'authored/unknown/new-moon/aquarius']) {
+  assert.equal(isDynamicLunationMacroRecord({ contentKey, content_role: 'authored_card' }), false);
+}
+assert.equal(isFallbackDashboardRecordAllowed({ contentKey: 'authored/sky-lunation-macro/new-moon/aquarius', content_role: 'source_material' }, new Set()), false);
+console.log("PASS: bounded House Transit, exact synastry and all 24 lunation identities, invalid key/role refusal and publication key protection.");
