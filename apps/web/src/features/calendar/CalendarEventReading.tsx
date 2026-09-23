@@ -224,10 +224,10 @@ export function CalendarEventReading({
 }) {
   const resolvedKind = kind ?? calendarKindFromEvent(event);
   const article = handoffArticleForTitle(event.title);
-  // Internal Sky routes are independent of the optional external catalog.
+  // Aspect details repeat the complete passage already shown here. Only link
+  // to the separate placement and lunation articles, regardless of the catalog.
   const canReadArticle = Boolean(onReadArticle && (
-    (event.type === "aspect" && event.planets?.length === 2 && event.aspect)
-    || (event.type === "lunation" && event.sign)
+    (event.type === "lunation" && event.sign)
     || ((event.type === "ingress" || event.type === "station") && event.planet)
   ));
   const hasJournal = Boolean(journalBlocks?.length);

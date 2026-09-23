@@ -6,6 +6,41 @@ import { watchBrowserErrors } from "./qaRuntimeGuards";
 
 const output = "test-results/calendar-ui-qa";
 
+const jupiterLilithBody = JSON.parse(readFileSync("packages/astro-knowledge/data/transits/jupiter-trine-lilith.json", "utf8")).readerCopy.body as string;
+
+for (const theme of ["light", "dark"] as const) for (const width of [390, 1440]) {
+  test(`Calendar aspect keeps its complete passage without a duplicate article link ${theme} ${width}`, async ({ page }) => {
+    test.setTimeout(90_000);
+    const assertNoErrors = watchBrowserErrors(page);
+    await page.setViewportSize({ width, height: 1000 });
+    await page.clock.setFixedTime(new Date("2026-09-24T16:00:00Z"));
+    await bundledPublications(page);
+    await page.addInitScript(theme => {
+      localStorage.setItem("tldrastro:theme", theme);
+      localStorage.setItem("tldrastro:selectedLocation", JSON.stringify({
+        label: "New York City, NY", latitude: 40.7128, longitude: -74.006, timeZone: "America/New_York"
+      }));
+    }, theme);
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    await page.goto("/#calendar?view=day&date=2026-09-24");
+    const aspect = page.getByRole("button", { name: "Jupiter trines Lilith", exact: true });
+    await aspect.click();
+    const reading = page.getByRole("dialog", { name: "Event detail", exact: true });
+    await expect(reading.getByRole("heading", { name: "Jupiter trines Lilith", exact: true })).toBeVisible();
+    await expect(reading.locator(".calendar-reading__body")).toHaveText(jupiterLilithBody);
+    await expect(reading.getByRole("button", { name: "Read article" })).toHaveCount(0);
+    await expect(reading.locator(".calendar-reading__article-card")).toHaveCount(0);
+    await expect(page).toHaveURL(/#calendar\?view=day&date=2026-09-24$/u);
+    expect(await reading.evaluate(panel => panel.scrollWidth <= panel.clientWidth + 1)).toBe(true);
+    await mkdir(output, { recursive: true });
+    await page.screenshot({ path: `${output}/aspect-article-link-${theme}-${width}.png` });
+    await reading.getByRole("button", { name: "Close", exact: true }).click();
+    await expect(reading).toHaveCount(0);
+    await expect(aspect).toBeVisible();
+    assertNoErrors();
+  });
+}
+
 const virgoBlocks = JSON.parse(readFileSync("apps/web/src/features/calendar/data/lunar-journal.entries.json", "utf8"))
   .entries.find((entry: { type: string; sign: string }) => entry.type === "season" && entry.sign === "Virgo").blocks as Array<{
     type: string; text?: string; label?: string; items?: string[];
