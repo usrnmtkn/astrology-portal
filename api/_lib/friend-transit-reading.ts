@@ -1,3 +1,5 @@
+import { transitReportEditorialGuide } from "./transit-report-editorial-guide.js";
+import { selectDistinctFriendTransits } from "./friend-report-selection.js";
 import { transitReadingReaderCopy, transitReadingReaderText } from "./transit-reading-reader-copy.js";
 import { untraceableTransitReadingDates } from "./transit-reading-dates.js";
 import { isOrdinaryAspectWord } from "./transit-reading-aspect-claims.js";
@@ -8,7 +10,7 @@ type ReaderSection = { body: string; sourceKeys: string[] };
 export const FRIEND_TRANSIT_READING_CONTENT_TYPE = "friend_transit_reading";
 export const FRIEND_TRANSIT_READING_EVENT_TYPE = "friend-transit-reading";
 export const FRIEND_TRANSITS_BRIEF_SCHEMA = "tldr.friend-transits-brief.v1";
-export const FRIEND_TRANSIT_READING_PROMPT_VERSION = "friend-transit-reading-v1.7";
+export const FRIEND_TRANSIT_READING_PROMPT_VERSION = "friend-transit-reading-v1.8";
 
 export type FriendTransitReadingBrief = {
   schema: typeof FRIEND_TRANSITS_BRIEF_SCHEMA;
@@ -357,10 +359,11 @@ function readerTransit(item: FriendTransitReadingPersonalTransit) {
 }
 
 export function friendTransitReadingApprovedReaderText(brief: FriendTransitReadingBrief) {
+  const distinct = selectDistinctFriendTransits(brief);
   return {
     daily: brief.daily,
     relationshipActivations: brief.relationshipActivations.map(({ headline, effectBody, activationBody }) => ({ headline, effectBody, activationBody })),
-    primaryThemes: brief.primaryThemes.map(readerTransit),
+    primaryThemes: distinct.primaryThemes.map(readerTransit),
     houseContext: brief.houseContext.map(({ title, durationLabel, timingRange, rowSummary, readerSections, termLabel, keywords, houseLabel, house }) => ({
       title,
       durationLabel,
@@ -371,7 +374,7 @@ export function friendTransitReadingApprovedReaderText(brief: FriendTransitReadi
       houseLabel,
       lifeDomains: friendTransitHouseLifeDomains(house)
     })),
-    longerCycles: brief.longerCycles.map(readerTransit),
+    longerCycles: distinct.longerCycles.map(readerTransit),
     activePatterns: brief.activePatterns.map((pattern) => ({
       id: stringValue(pattern.id),
       activationCopy: stringValue(pattern.activationCopy),
@@ -409,13 +412,13 @@ export function friendTransitReadingMeaningPlan(brief: FriendTransitReadingBrief
     rankingAuthority: "brief-order-is-final",
     friendName: brief.friendName,
     leadLane: brief.daily?.forecast ? "daily" : brief.primaryThemes.length ? "primaryThemes" : "longerCycles",
-    laneOrder: ["daily", "relationshipActivations", "primaryThemes", "houseContext", "longerCycles", "activePatterns"],
+    laneOrder: ["daily", "primaryThemes", "houseContext", "longerCycles", "activePatterns", "relationshipActivations"],
     primaryThemeIds: brief.primaryThemes.map((item) => item.id),
     longerCycleIds: brief.longerCycles.map((item) => item.id),
     guardrails: [
       "Do not calculate astrology.",
       "Do not re-rank the brief.",
-      "Do not invent a concrete life event or example.",
+      "Do not assert an invented life event. Hypothetical illustrations require supplied meaning and domain support.",
       "Named house life domains describe semantic scope, not a claim that a specific event happened there.",
       "Do not turn relationship context into a claim about the friend's own life.",
       "Do not turn current transits into permanent personality traits."
@@ -426,21 +429,21 @@ export function friendTransitReadingMeaningPlan(brief: FriendTransitReadingBrief
 export function friendTransitReadingPrompt(input: { brief: FriendTransitReadingBrief; headline: string }) {
   const { brief } = input;
   return [
-    "TLDR ASTRO FRIEND TRANSIT SYNTHESIS V1.7",
+    "TLDR ASTRO FRIEND TRANSIT SYNTHESIS V1.8",
     "",
     "TASK",
-    `Write one short answer to: ${input.headline}`,
+    `Write one developed transit outlook answering: ${input.headline}`,
     `Write ${brief.friendName}\'s personal astrology in third person using their name and they/them/their.`,
     `When using Between You Two relationship context, address the reader directly and prefer the bridge: "Things between you and ${brief.friendName}..." Do not use you/your outside relationship context.`,
     FRIEND_RELATIONSHIP_CONTEXT_RULE,
     "This is synthesis only. TLDR Astro has already calculated, selected, ordered, and content-gated the astrology.",
-    "Do not calculate astrology. Do not add a transit, placement, aspect, sign, house, date, degree, orb, interpretation, example, or life event that is not present below.",
+    "Do not calculate astrology. Do not add a transit, placement, aspect, sign, house, date, degree, orb, or interpretation that is not present below. Hypothetical illustrations follow the current owner report direction below.",
     "Do not re-rank the evidence. Preserve the supplied order inside each lane.",
     "Do not make a permanent personality claim from temporary transits.",
     "Do not turn Between You Two material into a claim about the friend's life outside the relationship.",
     "Do not expose scores, significance labels, timing bonuses, content keys, IDs, source rows, approval state, schemas, or backend language.",
-    "No tarot. No em dashes. No bullets. No section labels inside the body.",
-    "Do not invent a menu-ordering, texting, workplace, money, family, health, or relationship example unless that concrete situation is already in the approved reader text.",
+    "No tarot. No em dashes. No bullets. The only body section label is the final relationship heading specified below.",
+    "Use an ordinary hypothetical example only when the supplied reader meaning supports its domain and consequence; never assert that it happened.",
     "",
     "SPECIFICITY WITHOUT INVENTION",
     "When an approved transit includes lifeDomains, use one or two of those concrete domains when they clarify what the transit touches.",
@@ -461,9 +464,11 @@ export function friendTransitReadingPrompt(input: { brief: FriendTransitReadingB
     `headline: return exactly ${JSON.stringify(input.headline)}.`,
     "tldr: 1-2 natural sentences that answer the question directly.",
     "summary: return exactly the same text as tldr, at least 40 characters. These are storage aliases for one visible TLDR.",
-    "body: 2-3 natural paragraphs, roughly 120-220 words. Start with what matters, explain the astrology only as needed, and end with the practical consequence or useful perspective. Do not add a generic coaching closer.",
+    "body: develop the distinct selected meanings in natural paragraphs. A sparse brief may need only a few paragraphs; a rich brief needs enough space for its different transits. Do not compress a full outlook into 120-220 words or expand thin evidence to meet a word target. Explain immediate and longer conditions without repeating them. Do not add a generic coaching closer.",
     "Return exactly four fields: headline, tldr, summary, body.",
     "Return JSON only.",
+    "",
+    transitReportEditorialGuide(),
     "",
     "APPROVED READER TEXT",
     JSON.stringify(friendTransitReadingApprovedReaderText(brief), null, 2),

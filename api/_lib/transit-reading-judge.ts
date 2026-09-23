@@ -1,3 +1,4 @@
+import { transitReportEditorialReviewGuide } from "./transit-report-editorial-guide.js";
 import { GENERATED_REPORT_JUDGE_SCHEMA } from "./transit-reading-judge-schema.js";
 import { judgeScopedGeneratedTransitReading } from "./transit-reading-scoped-judge.js";
 import { transitReadingReviewMode } from "./transit-reading-review-contract.js";
@@ -26,7 +27,7 @@ import { generatedReportJudgeRubric, GENERATED_REPORT_JUDGE_PACKET_CONTRACT } fr
 import { assertReportReviewReconciliation, reportReviewReconciliationPrompt, RECONCILED_REPORT_JUDGE_SCHEMA,
   type TransitReadingPriorReview } from "./transit-reading-review-reconciliation.js";
 
-export const GENERATED_REPORT_JUDGE_ADAPTER_VERSION = "generated-report-judge-adapter-v1.11";
+export const GENERATED_REPORT_JUDGE_ADAPTER_VERSION = "generated-report-judge-adapter-v1.12";
 export const EVIDENCE_DELIVERY_JUDGE_VERSION = "generated-report-judge-adapter-v2.0-candidate";
 export const GENERATED_REPORT_JUDGE_ADAPTER_PATH = "tldr-astro-phrasebank/TLDR-GENERATED-REPORT-JUDGE-ADAPTER-V1-OWNER.md";
 const REPORT_OWNER_REVIEW_EVIDENCE_PATH = "tldr-astro-phrasebank/TLDR-REPORT-OWNER-REVIEW-EVIDENCE-2026-08-11.md";
@@ -69,10 +70,11 @@ export function judgePrompt(input: {
     "EXPLICITLY APPROVED GENERATED-REPORT OWNER FEEDBACK",
     approvedFeedback,
     "",
+    transitReportEditorialReviewGuide(),
     "JUDGE THIS COMPLETE GENERATED REPORT",
     `Surface: ${input.surface}`,
     `Report kind: ${input.reportKind}`,
-    "The governed brief is the factual ceiling. Do not ask the writer to invent a scene, fact, chart claim, date, or life circumstance that is absent from it.",
+    "The governed brief is the factual ceiling. Do not ask the writer to invent a fact, chart claim, date, or actual life circumstance. Assess hypothetical illustrations under the current owner report direction.",
     "Return the diagnostic fields required by the supplied schema, including reconciliation when requested. Do not return a verdict, overall score, replacement sentence, rewrite, or suggested prose.",
     generatedReportJudgeEvidenceContract(true, evidenceDelivery),
     "",

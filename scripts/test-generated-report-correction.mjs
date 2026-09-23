@@ -6,6 +6,8 @@ import { DEFAULT_BANNED, NEGATION_PIVOT_PAGE_CAP, STOCK_TROPES } from "../src/as
 import { WRITING_POLICY_DATA } from "../src/astro-writing/policyData.generated.mjs";
 
 function assertWriterLanguagePolicy(prompt) {
+  assert.ok(prompt.includes('CURRENT OWNER REPORT DIRECTION: transit-report-plain-language-v1'));
+  assert.ok(prompt.includes('The source must support both its life domain and its emotional/causal meaning.'));
   const jsonLine = (label) => JSON.parse(prompt.split(`${label}: `)[1].split("\n")[0]);
   assert.deepEqual(jsonLine("Forbidden words and phrases"), [...new Set(DEFAULT_BANNED)],
     "Every dispatched writer prompt must include the same unconditional bans as the validator.");

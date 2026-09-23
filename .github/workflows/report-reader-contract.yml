@@ -8,6 +8,7 @@ on:
       - 'scripts/test-*transit*'
       - 'apps/web/supabase/migrations/*transit_report*'
       - 'src/astro-writing/**'
+      - 'src/reporting/**'
       - 'tldr-astro-phrasebank/**'
       - 'apps/web/src/components/reports/**'
       - 'apps/web/src/components/FormattedProse.tsx'
@@ -28,6 +29,7 @@ on:
       - 'scripts/test-*transit*'
       - 'apps/web/supabase/migrations/*transit_report*'
       - 'src/astro-writing/**'
+      - 'src/reporting/**'
       - 'tldr-astro-phrasebank/**'
       - 'apps/web/src/components/reports/**'
       - 'apps/web/src/components/FormattedProse.tsx'
@@ -78,6 +80,7 @@ jobs:
           node --import tsx scripts/test-transit-report-delivery.mjs --material
           node --import tsx scripts/test-transit-report-delivery.mjs --evidence-delivery
           node scripts/test-transit-source-completion.mjs
+          node --import tsx scripts/test-report-editorial-guide.mts
           node scripts/test-transit-reading-scoped-migration.mjs
           node --import tsx scripts/test-you-report-paid-lifecycle.mts
           node --import tsx scripts/test-you-report-quality-floor.mts

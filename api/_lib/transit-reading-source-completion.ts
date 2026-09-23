@@ -3,6 +3,8 @@ import type { GeneratedTransitReadingDraft } from "./transit-reading-generation.
 import type { YouTransitReadingBrief } from "./you-transit-reading.js";
 import type { FriendTransitReadingBrief } from "./friend-transit-reading.js";
 import { transitReadingReaderCopy } from "./transit-reading-reader-copy.js";
+import { selectDistinctFriendTransits } from "./friend-report-selection.js";
+import { friendRelationshipHeading } from "../../src/reporting/friendReportStructure.js";
 
 export const SOURCE_COMPLETION_POLICY = "report-source-completion-v1";
 const hash = (text: string) => createHash("sha256").update(text).digest("hex");
@@ -13,9 +15,12 @@ function canonical(value: unknown): string {
   return JSON.stringify(value) ?? "null";
 }
 type SourceUnit = { path: string; text: string; sourceKeys: string[]; field: "summary" | "body" };
+const SOURCE_LAYOUT_VERSION = "source-report-layout-v2";
 export type SourceCompletionReceipt = {
   version: typeof SOURCE_COMPLETION_POLICY;
   mode: "source_readings";
+  assemblyVersion?: typeof SOURCE_LAYOUT_VERSION;
+  duplicateReadings?: Array<{ path: string; retainedPath: string }>;
   // Provenance to the locked request, not a new editorial or factual approval.
   briefSha256: string;
   readerSha256: string;
@@ -24,7 +29,7 @@ export type SourceCompletionReceipt = {
   rejectedDraftSha256?: string;
   reviews: unknown[];
 };
-export type SourceCompletion = { draft: GeneratedTransitReadingDraft; receipt: SourceCompletionReceipt };
+export type SourceCompletion = { draft: GeneratedTransitReadingDraft; receipt: SourceCompletionReceipt; legacy?: () => SourceCompletion };
 const record = (value: unknown): Record<string, unknown> => value && typeof value === "object" && !Array.isArray(value) ? value as Record<string, unknown> : {};
 const array = (value: unknown): unknown[] => Array.isArray(value) ? value : [];
 
@@ -60,7 +65,17 @@ export function restoreCompleteFriendSourceSections(original: FriendTransitReadi
 /** Select complete reader fields only. Never excerpt, repair, paraphrase or
  * recursively flatten a brief (which also contains internal technical data). */
 export function prepareSourceCompletion(brief: YouTransitReadingBrief | FriendTransitReadingBrief, headline: string): SourceCompletion {
+  const result = assembleSourceCompletion(brief, headline, false);
+  // Existing saved reports remain byte-identical and verifiable under the
+  // assembly that issued their receipt. New jobs always use the new layout.
+  result.legacy = () => assembleSourceCompletion(brief, headline, true);
+  return result;
+}
+
+function assembleSourceCompletion(brief: YouTransitReadingBrief | FriendTransitReadingBrief, headline: string, legacy: boolean): SourceCompletion {
   const units: SourceUnit[] = [];
+  let duplicateReadings: SourceCompletionReceipt["duplicateReadings"] = [];
+  let relationshipHeading = "";
   const add = (path: string, text: unknown, field: SourceUnit["field"] = "body", sourceKeys: unknown = []) => {
     if (typeof text !== "string" || !text.trim()) throw new Error(`Complete source reading missing at ${path}.`);
     units.push({ path, text, field, sourceKeys: array(sourceKeys).filter((key): key is string => typeof key === "string" && Boolean(key.trim())) });
@@ -90,9 +105,12 @@ export function prepareSourceCompletion(brief: YouTransitReadingBrief | FriendTr
     }
   } else if (brief.schema === "tldr.friend-transits-brief.v1") {
     const b = brief as FriendTransitReadingBrief;
+    duplicateReadings = legacy ? [] : selectDistinctFriendTransits(b).duplicates;
+    relationshipHeading = legacy ? "" : friendRelationshipHeading(b.friendName);
     if (b.daily?.forecast?.body) add("daily.forecast.body", b.daily.forecast.body, "summary");
     for (const group of ["primaryThemes", "houseContext", "longerCycles"] as const) {
       b[group].forEach((reading, index) => {
+        if (duplicateReadings?.some(duplicate => duplicate.path === `${group}.${index}`)) return;
         if (!reading.readerSections?.length) throw new Error(`Complete Friends source missing at ${group}.${index}; a preview is not a full reading.`);
         reading.readerSections.forEach((section, sectionIndex) => {
           if (!section.sourceKeys.length) throw new Error("Friends source identity is missing.");
@@ -100,17 +118,24 @@ export function prepareSourceCompletion(brief: YouTransitReadingBrief | FriendTr
         });
       });
     }
-    b.relationshipActivations.forEach((reading, index) => {
+    const addRelationships = () => b.relationshipActivations.forEach((reading, index) => {
       add(`relationshipActivations.${index}.activationBody`, reading.activationBody);
       add(`relationshipActivations.${index}.effectBody`, reading.effectBody);
     });
+    if (legacy) addRelationships();
     b.activePatterns.forEach((reading, index) => {
       if (typeof reading.activationCopy === "string" && reading.activationCopy.trim()) add(`activePatterns.${index}.activationCopy`, reading.activationCopy);
     });
+    if (!legacy) addRelationships();
   } else throw new Error("Unknown report source schema.");
   const fields = { summary: "", body: "" };
   const receipts: SourceCompletionReceipt["units"] = [];
+  let relationshipHeadingAdded = false;
   for (const unit of units) {
+    if (relationshipHeading && !relationshipHeadingAdded && unit.path.startsWith("relationshipActivations.")) {
+      fields.body += (fields.body ? "\n\n" : "") + relationshipHeading;
+      relationshipHeadingAdded = true;
+    }
     const prefix = fields[unit.field] ? "\n\n" : "";
     const start = fields[unit.field].length + prefix.length;
     fields[unit.field] += prefix + unit.text;
@@ -120,6 +145,7 @@ export function prepareSourceCompletion(brief: YouTransitReadingBrief | FriendTr
   if (!fields.body.trim()) throw new Error("A report needs complete source readings beyond its summary.");
   const draft: GeneratedTransitReadingDraft = { headline, ...fields, tldr: fields.summary, action: "", timing: "", sections: [], model: SOURCE_COMPLETION_POLICY, retryCount: 0 };
   return { draft, receipt: { version: SOURCE_COMPLETION_POLICY, mode: "source_readings", briefSha256: hash(canonical(brief)),
+    ...(!legacy ? { assemblyVersion: SOURCE_LAYOUT_VERSION, duplicateReadings } : {}),
     readerSha256: hash(JSON.stringify(transitReadingReaderCopy(draft))), units: receipts, reason: "", reviews: [] } };
 }
 
@@ -139,9 +165,12 @@ export function assertReusableSourceCompletion(row: {
 }, prepared: SourceCompletion) {
   if (row.provider !== "source") return;
   const receipt = record(record(row.source_snapshot).reportDelivery);
+  if (receipt.assemblyVersion === undefined && prepared.legacy) prepared = prepared.legacy();
   if (canonical(transitReadingReaderCopy(row)) !== canonical(transitReadingReaderCopy(prepared.draft))
     || receipt.briefSha256 !== prepared.receipt.briefSha256 || receipt.readerSha256 !== prepared.receipt.readerSha256
     || canonical(receipt.units) !== canonical(prepared.receipt.units) || receipt.version !== SOURCE_COMPLETION_POLICY
+    || receipt.assemblyVersion !== prepared.receipt.assemblyVersion
+    || canonical(receipt.duplicateReadings) !== canonical(prepared.receipt.duplicateReadings)
     || receipt.mode !== "source_readings" || typeof receipt.reason !== "string" || !receipt.reason
     || !Array.isArray(receipt.reviews) || record(row.source_snapshot).generatedReportQualityGate) {
     throw new Error("Stored source report does not match the locked request and source receipt.");

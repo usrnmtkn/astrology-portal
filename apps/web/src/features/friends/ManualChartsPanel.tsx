@@ -1369,11 +1369,18 @@ export function ManualChartsPanel({
           friendGeneratedContent
         );
         const renderedWindow = normalized.sections[0]?.window ?? timingRange;
+        // Reports receive each selected personal contact in its own lane with
+        // full identity/timing. Do not also embed aspect readings in the house
+        // context, whose parts do not carry those contact identities.
+        const reportNormalized = normalizeTransitHouseSurface(
+          transit, activation.house, timingRange, selectedChart.displayName, [], friendGeneratedContent
+        );
 
         return {
           activation,
           contentKey: transitHouseContentKey(transit.transitPlanet, activation.house),
           normalized,
+          reportNormalized,
           rowSummary: transitCardPreview(
             transitBodyWithoutRepeatedWindow(normalizedSurfacePreview(normalized), renderedWindow)
           ),
@@ -1558,7 +1565,7 @@ export function ManualChartsPanel({
       timingRange: card.timingRange,
       rowSummary: card.rowSummary,
       readerSections: acceptedOwnerApprovedTransitSections(
-        card.normalized.detailSections,
+        card.reportNormalized.detailSections,
         fallbackV3ApprovalLevelForContentKey
       ).map(({ body, sourceKeys }) => ({ body, sourceKeys })),
       termLabel: longTransitPlanets.has(card.transit.transitPlanet) ? "Long-term" : "Short-term",
@@ -1566,7 +1573,7 @@ export function ManualChartsPanel({
       house: card.activation.house,
       houseLabel: `${ordinalHouse(card.activation.house)} house`,
       detailAvailable: acceptedOwnerApprovedTransitSections(
-        card.normalized.detailSections,
+        card.reportNormalized.detailSections,
         fallbackV3ApprovalLevelForContentKey
       ).length > 0
     }))
