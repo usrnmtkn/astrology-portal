@@ -391,3 +391,30 @@ scan pass. These fixture results do not establish model consistency or prose
 quality. A separately authorized, frozen Day/Week/Friends batch is next, with at
 most 21 calls inside the remaining $2.557656 and a stop after the first held,
 failed or uncertain result. No production mutation or deployment has occurred.
+
+The v1.9 batch on `4631f2d1` stopped after three calls ($0.178746) at the first
+Daily review. One of four source citations paraphrased the supplied passage;
+exact-evidence validation correctly held as `invalid_evaluator_response`.
+Neither correction nor final reconciliation was reached. Weekly and Friends
+were not run. Combined usage is 56 calls / $2.621090; all responses are archived,
+prior ledgers unchanged, and the batch is closed without an automatic second run.
+This run does not validate final reconciliation with a model or establish a
+release-ready report.
+
+The follow-up v1.10 citation repair removes model-copied source quotations from
+the combined transport. A schema enum limits the selected JSON pointer to a
+string field in the locked brief; runtime attaches the whole original and keeps
+the original provider response immutable. Unknown/non-string fields and an
+unexpected copied source quote fail. The original exact-evidence validator and
+strict factual/voice gates are unchanged; inactive scoped mode is unchanged.
+
+An offline simulation retained the saved failed response's paths, findings and
+scores while omitting the copied source-quote fields, as the new schema requires.
+It resolved exact original sources, passed diagnostic integrity and still held
+all seven findings under the strict release rule. It was not a new provider
+response or a correction run. Synthetic regressions cover immutable responses,
+complete text/whitespace/Unicode preservation, escaped paths, invalid references,
+both review schemas, actual judge normalization and unchanged factual blocking.
+Twelve provider schemas and 60 strict / 60 scoped / 72 candidate delivery cases
+pass. Real v1.10 review, correction, reconciliation and report delivery remain
+unverified; do not merge or deploy based on the offline replay.

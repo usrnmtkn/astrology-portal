@@ -69,6 +69,7 @@ jobs:
           node --import tsx scripts/test-transit-reading-checkpoints.mts
           node --import tsx scripts/test-transit-reading-release-policy.mts
           node --import tsx scripts/test-transit-reading-review-reconciliation.mts
+          node --import tsx scripts/test-transit-reading-source-citations.mts
           node --import tsx scripts/test-transit-report-delivery.mjs
           node --import tsx scripts/test-transit-report-delivery.mjs --scoped
           node --import tsx scripts/test-transit-report-delivery.mjs --material

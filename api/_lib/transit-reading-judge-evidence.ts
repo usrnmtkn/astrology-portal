@@ -18,17 +18,23 @@ export function findingScoreCategory(category: GeneratedReportJudgeFinding["cate
   return blockingScores[category]!;
 }
 
-export const GENERATED_REPORT_JUDGE_EVIDENCE_CONTRACT = [
+export function generatedReportJudgeEvidenceContract(sourcePointers = false) {
+  return [
   "DIAGNOSTIC EVIDENCE CONTRACT",
   "Every finding must diagnose a defect, quote its exact reader-visible wording in draftQuote, and explain why it fails the supplied rubric. Do not propose replacement prose.",
-  "Copy draftQuote as one contiguous substring of a single reader-visible field, preserving its exact punctuation and whitespace. Never shorten it with an ellipsis, join separate sentences or paragraphs, or paraphrase. For a defect spanning passages, quote one exact passage and identify the other location in finding; use separate findings when they diagnose separate defects. Apply the same exact-substring rule to sourceQuote.",
-  "Use sourcePath as an RFC 6901 JSON pointer into GOVERNED BRIEF and sourceQuote as an exact excerpt from that string when comparing a claim with its source. If no supplied passage supports the claim, use null for both and name the missing support in finding. For style-only findings, both may also be null.",
+  "Copy draftQuote as one contiguous substring of a single reader-visible field, preserving its exact punctuation and whitespace. Never shorten it with an ellipsis, join separate sentences or paragraphs, or paraphrase. For a defect spanning passages, quote one exact passage and identify the other location in finding; use separate findings when they diagnose separate defects." + (sourcePointers ? "" : " Apply the same exact-substring rule to sourceQuote."),
+  sourcePointers
+    ? "When comparing a claim with its source, select sourcePath from the schema's RFC 6901 JSON pointers into GOVERNED BRIEF. The application attaches that complete original string verbatim; do not return sourceQuote or recreate the source passage in your output. In finding, explain the specific difference between the claim and the selected source. Selecting a real path does not establish that the claim is supported or contradicted. If no supplied passage supports the claim, use null and name the missing support in finding. Style-only findings may also use null."
+    : "Use sourcePath as an RFC 6901 JSON pointer into GOVERNED BRIEF and sourceQuote as an exact excerpt from that string when comparing a claim with its source. If no supplied passage supports the claim, use null for both and name the missing support in finding. For style-only findings, both may also be null.",
   "Every owner_voice finding requires at least one ownerComparisons entry: cite an eligible OWNER PASSAGE evidenceId, one exact contiguous quote from it, and explain the observable difference in sentence movement, ordinary wording, consequence, or judgment, using its supplied function. A statement that the tone does not match is insufficient. Do not cite the candidate or another report. Other categories may use an empty array; owner_language identifies an explicit contextual owner rule rather than general likeness.",
   "In each comparison difference, explain the shared local prose function and why the comparison applies across the labeled formats. Historical function tags are context, not mandatory target structure. A complete forecast may demonstrate opening, development, turn, and close within one passage. Do not reject direct language simply because a selected annual passage ends observationally. For owner_language, name and quote the applicable supplied owner rule in finding and explain its context; do not use that category to bypass the owner_voice comparison requirement.",
   "Necessary reference to a TLDR topic is not itself narrative repetition. Identify the repeated conclusion that adds no explanation or consequence. An explanation within supplied meaning and life domains is not an invented event. A transit end date or retrograde theme does not establish that a specific opportunity will recur.",
   "Scores must agree with findings: a category with a defect cannot score 4. Map over_specification and unsupported_interpretation to factual_traceability; unsupported_timing to astrology_chronology; narrative_repetition to interpretive_movement; owner_language to owner_voice. Other findings map to their own score category.",
   "For any score below a release floor, include a finding with concrete draft evidence. Do not lower a score merely to manufacture agreement: reconsider the finding against the source and rubric first. Do not invent a flaw to fill a category."
-].join("\n");
+  ].join("\n");
+}
+
+export const GENERATED_REPORT_JUDGE_EVIDENCE_CONTRACT = generatedReportJudgeEvidenceContract();
 
 /** Check diagnostic integrity; the approved rubric still determines quality. */
 export function assertGeneratedReportDiagnosticEvidence(value: unknown, input: {

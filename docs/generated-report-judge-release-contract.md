@@ -36,6 +36,23 @@ invalidate old checkpoint request identities; historical held jobs are neither
 reset nor replayed automatically. Real-provider verification is required before
 release; fixture checks only establish protocol and lifecycle behavior.
 
+### Exact source references (adapter v1.10, repair branch)
+
+The combined provider schema now asks for `sourcePath`, restricted to the exact
+string-field pointers in the locked brief, instead of a model-copied
+`sourceQuote`. Runtime attaches the complete original string byte-for-byte and
+then applies the existing evidence, score/finding and release validation. The
+raw response remains unchanged. Missing, non-string or unknown references fail;
+an unexpected provider `sourceQuote` also fails rather than being silently
+replaced. A null reference still means missing support or a style-only finding.
+
+This avoids paraphrases masquerading as exact source quotations. It does not
+prove that the selected source supports the diagnosis, approve a factual claim,
+or waive the unchanged draft/owner comparison quotation checks. The legacy and
+inactive scoped schemas retain exact-quote validation. Real v1.10 provider
+verification is still pending; an offline reconstruction from a saved response
+only verifies deterministic reference resolution.
+
 The September 22 bounded-recovery repair is implemented on the repair branch,
 not yet deployed. You Day/Week and Friends retain four infrastructure attempts
 by default (`YOU_REPORT_JOB_ATTEMPT_CAP` / `FRIEND_REPORT_JOB_ATTEMPT_CAP`), with

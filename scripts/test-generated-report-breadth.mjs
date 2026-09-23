@@ -28,7 +28,7 @@ const { judgeGeneratedTransitReading, GENERATED_REPORT_JUDGE_SCHEMA } = await im
   `data:text/javascript;base64,${Buffer.from(bundle.outputFiles[0].text).toString("base64")}`
 );
 const scores = Object.fromEntries(GENERATED_REPORT_JUDGE_SCHEMA.properties.scores.required.map((key) => [key, 4]));
-const evidence = { draftQuote: "Fixture", sourcePath: null, sourceQuote: null, ownerComparisons: [] };
+const evidence = { draftQuote: "Fixture", sourcePath: null, ownerComparisons: [] };
 const scoreCategory = {
   over_specification: "factual_traceability", unsupported_interpretation: "factual_traceability",
   unsupported_timing: "astrology_chronology", narrative_repetition: "interpretive_movement", owner_language: "owner_voice"
@@ -111,8 +111,15 @@ try {
   await assert.rejects(judge(), /lacks eligible comparison evidence/);
   response.findings[0].ownerComparisons = [ownerComparison];
   assert.equal((await judge()).result.verdict, "below_threshold", "Breadth does not waive voice floors");
-  response = { scores, findings: [{ category: "unknown_category", location: "body", finding: "Invalid result" }] };
+  response = { scores, findings: [{ category: "unknown_category", location: "body", finding: "Invalid result", ...evidence }] };
   await assert.rejects(judge(), /malformed finding/);
+  response={scores:{...scores,factual_traceability:3},findings:[{category:'unsupported_interpretation',location:'body',finding:'The fixture claim is unsupported.',...evidence,sourcePath:'/source'}]};
+  const referenced=await judge();
+  assert.equal(referenced.result.findings[0].sourceQuote,'locked fixture');
+  assert.equal(referenced.result.verdict,'below_threshold');
+  assert.deepEqual(lastInput.schema.properties.findings.items.properties.sourcePath.enum,[null,'/source']);
+  assert.equal(Object.hasOwn(lastInput.schema.properties.findings.items.properties,'sourceQuote'),false);
+  assert(lastInput.prompt.includes('do not return sourceQuote'));
   const priorReview={draft:{headline:'Fixture',summary:'Fixture',body:'Fixture'},scores:{...scores,natural_language:3},findings:[{category:'natural_language',location:'body',finding:'Synthetic initial ambiguity.',...evidence}]};
   response={scores,findings:[]};
   await assert.rejects(judge(priorReview),/review reconciliation: missing accounting/);

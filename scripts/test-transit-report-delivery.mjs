@@ -31,6 +31,9 @@ const bundle = await build({
         export const getVerifiedAuthUser = async () => ({id:globalThis.reportDeliveryFixture.client.userId});`,
       transport: `export const callReportCalibrationModel = async input => {
         await input.beforeProviderCall(); const result = await globalThis.reportDeliveryFixture.call(input);
+        if(input.schemaName==='tldr_generated_report_judge' && !input.schema.properties.findings.items.properties.sourceQuote) {
+          result.value.findings=result.value.findings.map(({sourceQuote,...finding})=>finding);
+        }
         if(input.schema.properties.reconciliation) {
           const prior=JSON.parse(input.prompt.split('PREVIOUS REVIEW DATA\\n')[1].split('\\nEXACT FIELD CHANGE RECEIPT')[0]);
           result.value.reconciliation={
