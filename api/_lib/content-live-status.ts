@@ -1,3 +1,4 @@
+import { calendarMoonIngressPackageRecordForKey } from "./calendar-moon-ingress-sources.js";
 import { isZodiacSeasonSourceKey } from "../../apps/web/src/content/fallbackArchitectureV3/resolver/zodiacSeasonVariables.mjs";
 import { isRetiredCompositionKey } from "../../apps/web/src/content/fallbackArchitectureV3/resolver/retiredCompositions.mjs";
 import { skyPlacementSourceRecords } from "./sky-placement-sources.js";
@@ -134,6 +135,19 @@ export function contentLiveStatuses(rows: LiveStatusRow[], candidates: LiveStatu
   }
   return rows.map((row) => {
     if (isRetiredCompositionKey(row.content_key)) return { id: row.id, live: false, label: "Not live", source: null, detail: "Superseded composition. Use the canonical Personal Transit source.", updatedAt: row.updated_at ?? null } as ContentLiveStatus;
+    const ingress = calendarMoonIngressPackageRecordForKey(row.content_key);
+    if (ingress) {
+      const current = [...candidates].sort((a, b) => (b.updated_at ?? "").localeCompare(a.updated_at ?? ""))
+        .find(candidate => candidate.content_key === row.content_key && candidate.status === "LIVE"
+          && candidate.lane === "serving" && !candidate.review_state && candidate.body?.trim()
+          && isReaderServableGeneratedContentRow(candidate) && isGeneratedContentReaderBoundaryAllowed(candidate));
+      const servingBody = current?.body ?? (allowsPublication(row) ? ingress.body : null);
+      const requestedBody = row.sections?.packageDraft?.body ?? row.body;
+      const live = Boolean(servingBody && requestedBody === servingBody);
+      return { id: row.id, live, label: live ? "Live" : "Not live", source: live ? current ? "studio" : "package" : null,
+        detail: live ? "Readers can receive this complete Moon ingress passage." : "This revision is not the published Moon ingress passage.",
+        updatedAt: row.updated_at ?? null, servingRowId: live ? current?.id ?? null : null } as ContentLiveStatus;
+    }
     const builtin = builtinContentRecords.get(row.content_key);
     if (builtin) {
       if (builtin.readerEnabled === false) return { id: row.id, live: false, label: "Not live", source: null,

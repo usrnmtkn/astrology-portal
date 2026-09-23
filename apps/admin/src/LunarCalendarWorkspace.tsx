@@ -20,9 +20,9 @@ const seasonPairs = lunarSigns.map((from, index) => ({
   sign: from,
   label: `${signName(from)} to ${signName(lunarSigns[(index + 1) % lunarSigns.length])}`
 }));
-export type Props = { scope?: "all" | "season-transitions"; rows: Row[]; editor: ReactNode; query: string; createRequest?: number; onCreateRequestHandled?: () => void; isLoading?: boolean; onQuery: (value: string) => void; onEdit: (row: Row) => void; onLoad: (row: Row) => Promise<unknown>; loadRows: (keys: string[]) => Promise<Row[]>; onCreate: (sign: string) => void };
+export type Props = { scope?: "all" | "season-transitions" | "lunar-ingresses"; rows: Row[]; editor: ReactNode; query: string; createRequest?: number; onCreateRequestHandled?: () => void; isLoading?: boolean; onQuery: (value: string) => void; onEdit: (row: Row) => void; onLoad: (row: Row) => Promise<unknown>; loadRows: (keys: string[]) => Promise<Row[]>; onCreate: (sign: string) => void };
 export default function LunarCalendarWorkspace(props: Props) {
-  return props.scope === 'season-transitions' ? <SeasonTransitionWorkspace {...props} /> : <LunarPassageWorkspace {...props} />;
+  return props.scope === 'season-transitions' || props.scope === 'lunar-ingresses' ? <SeasonTransitionWorkspace {...props} /> : <LunarPassageWorkspace {...props} />;
 }
 function LunarPassageWorkspace({ rows, editor, query, createRequest = 0, onCreateRequestHandled, isLoading = false, onQuery, onEdit, onLoad, onCreate }: Props) {
   const workspaceLabel = "Lunar Calendar workspace";

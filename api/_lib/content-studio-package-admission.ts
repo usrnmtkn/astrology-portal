@@ -1,3 +1,4 @@
+import { isCalendarMoonIngressContentKey } from "./calendar-moon-ingress-sources.js";
 import coreManifest from "../../apps/web/src/content/fallbackArchitectureV3/bundled-core-manifest-v3.json" with { type: "json" };
 import skyManifest from "../../apps/web/src/content/fallbackArchitectureV3/bundled-sky-placement-manifest-v3.json" with { type: "json" };
 import { isFallbackDashboardRecordAllowed } from "../../apps/web/src/content/fallbackArchitectureV3/dashboardExtensions.js";
@@ -29,6 +30,8 @@ export function packagePublicationAdmissionIssue(row: Record<string, any>): stri
   if (key.startsWith("authored/compat-pair/")) return null;
   // Calendar leftover season transitions have a dedicated leftover reader, not the fallback package loader.
   if (key.startsWith("authored/calendar-season-transition/")) return null;
+  // Moon ingress passages use the exact Calendar event reader. Admit only its twelve supported pairs.
+  if (isCalendarMoonIngressContentKey(key)) return null;
   // Education articles have a dedicated /learn reader, not the fallback package loader.
   if (row.surface === "education" || key.startsWith("education/astro-101/")) return null;
   if (skyKeys.has(key) || isFallbackDashboardRecordAllowed({ ...record, contentKey: key }, coreKeys)) return null;

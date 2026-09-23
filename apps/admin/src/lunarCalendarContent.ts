@@ -15,7 +15,7 @@ export const lunarWorkspaceFamilyOrder = [
   "Lunation articles",
   "Moon-sign leftover",
   "Continuation sentences",
-  "Sign-change sentences",
+  "Lunar ingresses",
   "Season transitions",
   "Lunar journal",
   "Sun daily summary",
@@ -135,13 +135,13 @@ export function lunarContentIdentity(key: string): LunarContentIdentity | null {
   const moonTransition = key.match(/^authored\/calendar-moon-transition\/([^/]+)\/([^/]+)$/);
   if (moonTransition) {
     return withJob({
-      family: "Sign-change sentences",
-      sign: moonTransition[1],
+      family: "Lunar ingresses",
+      sign: moonTransition[2],
       variant: 1,
-      title: `Moon ${words(moonTransition[1])} to ${words(moonTransition[2])}`,
-      kind: "Timing sentence",
-      destination: "Calendar leftover on Moon ingress days",
-      selection: "This pair-specific sentence is the second line on a Moon sign-change day. It is not two leftover passages joined together.",
+      title: `Moon enters ${words(moonTransition[2])}`,
+      kind: "Complete passage",
+      destination: "Calendar Moon ingress events and Day and Week sign changes",
+      selection: "This complete passage appears when the Moon enters this sign. Calendar Day and Week also use it for the same sign change.",
       excluded: false
     });
   }
