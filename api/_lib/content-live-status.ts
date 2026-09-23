@@ -168,7 +168,7 @@ export function contentLiveStatuses(rows: LiveStatusRow[], candidates: LiveStatu
     const exact = exactAspectStatus(row, candidates);
     if (exact) return exact;
     if (isAstro101ContentKey(row.content_key) || row.surface === "education") {
-      const live = astro101IsLiveOnLearn(row);
+      const live = allowsPublication(row) && astro101IsLiveOnLearn(row);
       return {
         id: row.id,
         live,

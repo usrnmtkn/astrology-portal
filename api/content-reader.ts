@@ -8,6 +8,7 @@ import { isGovernedReaderEligible } from '../apps/web/src/content/fallbackArchit
 import { publicationAllowsContent, publicationLedgerKey, validContentPublication } from '../apps/web/src/content/contentPublicationState.js';
 import type { ContentPublication } from '../apps/web/src/content/contentPublicationState.js';
 import type { GeneratedContentRow } from '../apps/web/src/services/generatedContent.js';
+import { astro101IsLiveOnLearn, isAstro101ContentKey } from '../apps/web/src/content/astro101.js';
 
 loadLocalWebEnv();
 const pageSize = 250;
@@ -43,6 +44,10 @@ export function readerRowIsEligible(row: GeneratedContentRow) {
   if (row.status !== 'LIVE' || row.lane !== 'serving' || row.review_state != null) return false;
   if (row.content_key.startsWith('sample-') || row.facts?.sampleOnly || row.source_snapshot?.sampleOnly) return false;
   if (row.flags?.some(flag => ['REFERENCE_ONLY_NEVER_SERVE_VERBATIM', 'PARAPHRASE_PENDING', 'BLOCKLIST_MATCH'].includes(flag))) return false;
+  // Education publishes its saved article fields. Its packageRecord is the
+  // original import descriptor, whose review label is not the Studio decision.
+  // The exact publication ledger is still required by the handler below.
+  if (isAstro101ContentKey(row.content_key) && row.surface === 'education') return astro101IsLiveOnLearn(row);
   const record = (row.sections as Record<string, unknown> | null)?.packageRecord;
   if (record && typeof record === 'object' && !Array.isArray(record)) {
     const value = record as Record<string, unknown>;
