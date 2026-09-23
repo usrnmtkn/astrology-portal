@@ -2364,12 +2364,12 @@ test.describe("client-facing user flow case studies", () => {
     await assertNoClientErrors();
   });
 
-  test("calendar ingress, station, and aspect details always open with approved prose", async ({ page }) => {
+  test("calendar keeps complete aspect writing in the drawer and links separate placement articles", async ({ page }) => {
     const assertNoClientErrors = await expectNoClientErrors(page);
     const cases = [
-      { date: "2026-07-09", title: "Venus enters Virgo" },
-      { date: "2026-07-23", title: "Mercury stations direct" },
-      { date: "2026-07-13", title: "Venus squares Uranus" }
+      { date: "2026-07-09", title: "Venus enters Virgo", hasArticle: true },
+      { date: "2026-07-23", title: "Mercury stations direct", hasArticle: true },
+      { date: "2026-07-13", title: "Venus squares Uranus", hasArticle: false }
     ];
 
     await seedClientState(page, { now: "2026-07-31T12:00:00.000Z" });
@@ -2384,7 +2384,14 @@ test.describe("client-facing user flow case studies", () => {
       await expect(eventButton, `${eventCase.title} has one Calendar detail trigger`).toHaveCount(1);
       await expect(eventButton.locator(".calendar-stoic-card__excerpt")).toBeVisible();
       await eventButton.click();
-      await page.getByRole("dialog", { name: "Event detail" }).getByRole("button", { name: "Read article" }).click();
+      const reading = page.getByRole("dialog", { name: "Event detail", exact: true });
+      if (!eventCase.hasArticle) {
+        await expect(reading.locator(".calendar-reading__body")).not.toBeEmpty();
+        await expect(reading.getByRole("button", { name: "Read article" })).toHaveCount(0);
+        await expect(page).toHaveURL(new RegExp(`#calendar\\?view=week&date=${eventCase.date}$`, "u"));
+        continue;
+      }
+      await reading.getByRole("button", { name: "Read article" }).click();
       await expect(page.locator(".app-shell.mode-detail")).toBeVisible();
       const detailParagraphs = page.locator(".app-shell.mode-detail article p");
 
