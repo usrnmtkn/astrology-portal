@@ -19,7 +19,10 @@ export default function SkyForecastTemplateStudio({ period, rows, busy, onOpen, 
         <h3>{template.title}</h3>
         <p>{template.description}</p>
       </div>
-      <StudioButton disabled={busy} onClick={() => onOpen(period)}>Open {period.split("-")[0]} template</StudioButton>
+      <div className="admin-new-actions">
+        <StudioButton disabled={busy} onClick={() => onOpen(period)}>Open {period.split("-")[0]} template</StudioButton>
+        {period === "daily-sky" && <a className="admin-source-action" href="#sky-writeups?view=daily-summary&section=sun">Edit Sun summaries</a>}
+      </div>
     </header>
     <p>{saved ? `Saved template · ${saved.status.toLowerCase()}` : "Open to find your saved template or start a draft."}</p>
     <Suspense fallback={<PageLoading message="Loading template preview…" />}><CalendarTemplatePreview period={period} rows={rows} loadRows={loadRows} draft={draft} onEditSource={onEditSource} onEditOverview={onEditOverview} onBrowseSeasonTransitions={onBrowseSeasonTransitions} /></Suspense>

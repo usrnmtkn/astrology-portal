@@ -22,7 +22,6 @@
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "swisseph-wasm": "^0.0.5",
-    "thinking-orbs": "0.3.1",
     "typescript": "^5.8.3",
     "vite": "^7.0.0"
   },

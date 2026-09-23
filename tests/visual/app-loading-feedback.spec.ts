@@ -310,9 +310,9 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
     await expect(loading).toHaveAttribute("role", "status");
     await expect(loading).toHaveCSS("background-color", "rgba(0, 0, 0, 0)");
     await expect(loading).toHaveCSS("border-width", "0px");
-    const illustration = loading.locator('.loading-illustration .loading-orb');
-    await expect(illustration).toBeVisible();
-    expect(await illustration.evaluate(el => getComputedStyle(el).animationDuration)).toBe('0s');
+    const spinner = loading.locator('.loading-spinner');
+    await expect(spinner).toBeVisible();
+    expect(await spinner.evaluate(el => getComputedStyle(el).animationDuration)).toBe('0s');
     const typography = await loading.evaluate(el => { const s = getComputedStyle(el); return { font: s.fontFamily, size: s.fontSize, weight: s.fontWeight, line: s.lineHeight, tracking: s.letterSpacing }; });
     expect(typography.font).toContain("system-ui");
     expect(typography.weight).toBe("400");

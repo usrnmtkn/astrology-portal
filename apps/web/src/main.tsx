@@ -175,7 +175,7 @@ async function startApp() {
 
   createRoot(document.getElementById("root")!).render(
     <React.StrictMode>
-      <PageLoadBoundary><React.Suspense fallback={<PageLoading illustrated />}><App initialSkyLoad={initialSkyLoad} /></React.Suspense></PageLoadBoundary>
+      <PageLoadBoundary><React.Suspense fallback={<PageLoading />}><App initialSkyLoad={initialSkyLoad} /></React.Suspense></PageLoadBoundary>
       {!isAdminContentPath() && !reportPath ? (
         <React.Suspense fallback={null}>
           <ReportsGlobalLayer />
