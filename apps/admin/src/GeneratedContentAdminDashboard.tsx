@@ -11953,7 +11953,7 @@ export function GeneratedContentAdminDashboard() {
                         {packageStatusAfterSave === "LIVE" ? "Live" : "Not live"}
                       </span>
                     ) : (
-                      <AdminSelect aria-label="Status" value={currentDraft.status} onChange={(event) => setDraft({ ...currentDraft, status: event.target.value as GeneratedContentStatus })} disabled={Boolean(compiledSkyArticleEdition)}>
+                      <AdminSelect aria-label="Status" value={currentDraft.status} onChange={(event) => setDraft({ ...currentDraft, status: event.target.value as GeneratedContentStatus })} disabled={Boolean(compiledSkyArticleEdition) || isGovernedSkyDraft}>
                         {contentStatuses.map((status) => <option key={status} value={status}>{contentStatusLabel(status)}</option>)}
                       </AdminSelect>
                     )}
@@ -11968,7 +11968,9 @@ export function GeneratedContentAdminDashboard() {
                           : currentDraft.status === "LIVE"
                             ? "This approved copy is live for readers."
                             : "Approval controls reader availability. Set review status to approved, then Save to publish."
-                        : "This is the editorial workflow stage. The Status badge checks the copy readers can receive."}
+                        : isGovernedSkyDraft
+                          ? `Save your edits, run writing checks, then ${currentDraft.blockType === "sky_placement" ? "Approve for package" : "Approve & schedule"}. These actions update the status.`
+                          : "This is the editorial workflow stage. The Status badge checks the copy readers can receive."}
                     </small>
                   </label>
                   {!isSharedSeasonSource && <label className="admin-metadata-field">
@@ -12172,7 +12174,11 @@ export function GeneratedContentAdminDashboard() {
           )}
           {!isPackageDraft && !isCmsSurfaceDraft && !isNewDraft && (
             <>
-              {!isAstro101Draft && <StudioButton className="admin-review-button" type="button" onClick={() => void saveDraft("REVIEWED")} disabled={isLoading || !publishReady || reviewComplete}>
+              {isGovernedSkyDraft && selectedRow && !["LIVE", "ARCHIVED"].includes(selectedRow.status) && <StudioButton className="admin-review-button" type="button" onClick={() => void runSkyDraftWriting(selectedRow.content_key, "recheck", selectedRow)} disabled={isLoading || draftHasUnsavedChanges || !selectedRow.body?.trim()} title={draftHasUnsavedChanges ? "Save changes before running writing checks." : "Check this saved version without changing your writing."}>
+                <Check size={16} aria-hidden="true" />
+                Run writing checks
+              </StudioButton>}
+              {!isAstro101Draft && !isGovernedSkyDraft && <StudioButton className="admin-review-button" type="button" onClick={() => void saveDraft("REVIEWED")} disabled={isLoading || !publishReady || reviewComplete}>
                 <Check size={16} aria-hidden="true" />
                 {reviewComplete ? "Reviewed" : "Mark reviewed"}
               </StudioButton>}

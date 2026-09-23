@@ -175,3 +175,39 @@ for (const selection of [
   assert.equal(resolveSkyAspectGeneratedContent({ ...options, generatedContent: new Map([[exact.content_key, { ...content, status: 'DRAFT' }]]) }), null, 'Unpublished copy never serves');
 }
 console.log('New exact Calendar drafts preserve five-value identity, full copy, review gates and reader selection.');
+
+// Saved revisions must not inherit an obsolete paragraph error. Exercise the
+// real checker through the actual endpoint, rather than a successful lint stub.
+const stale = { ...baseline, id: 'stale-calendar-check', content_key: 'sky.aspect.moon.trine.uranus.aquarius.gemini',
+  body: 'Synthetic old paragraph.', judge_gate: null, judge_score: null,
+  source_snapshot: { studioWritingCheck: null, skyAspectVoiceLint: { score: 1, fails: 1, findings: [
+    { severity: 'fail', source: 'shape', term: 'paragraph-count', reason: 'the card template is exactly two paragraphs' }
+  ] } } };
+assert.equal(skyWritingIssues(stale).some(issue => issue.includes('exactly two paragraphs')), false,
+  'An invalidated check cannot describe the newly saved writing');
+const actual = await createWorkflowStore([stale], { realRecheck: true });
+const revised = 'Synthetic opening for a document you usually review.\n\nComplete synthetic final sentence.';
+let saved = await actual.invoke('PATCH', { id: stale.id, expectedUpdatedAt: stale.updated_at, body: revised });
+assert.equal(saved.status, 200, JSON.stringify(saved));
+let current = saved.payload.rows[0];
+assert.equal(current.body, revised);
+assert.equal(current.source_snapshot.skyAspectVoiceLint, null);
+assert.equal(current.source_snapshot.studioWritingCheck, null);
+assert.equal((await actual.invoke('PATCH', { id: current.id, expectedUpdatedAt: current.updated_at, ownerAction: 'approve-and-schedule' })).status, 409);
+saved = await actual.write({ action: 'recheck', contentKey: current.content_key, expectedUpdatedAt: current.updated_at });
+assert.equal(saved.status, 200, JSON.stringify(saved));
+current = saved.payload.rows[0];
+assert.deepEqual(saved.payload.issues, [], 'An ordinary relative clause is not a natal personality claim');
+assert.equal(current.body, revised);
+saved = await actual.invoke('PATCH', { id: current.id, expectedUpdatedAt: current.updated_at, ownerAction: 'approve-and-schedule' });
+assert.equal(saved.status, 200, JSON.stringify(saved));
+current = saved.payload.rows[0];
+assert.equal(isReaderServableGeneratedContentRow(current), true);
+const selected = resolveSkyAspectGeneratedContent({ first: 'moon', second: 'uranus', aspect: 'trine', firstSign: 'aquarius', secondSign: 'gemini',
+  generatedContent: new Map([[current.content_key, { ...current, contentKey: current.content_key, sourceSnapshot: current.source_snapshot, judgeGate: current.judge_gate, judgeScore: current.judge_score }]]) });
+assert.equal(selected?.body, revised);
+for (const firstSentence of ['You usually choose this.', ' You usually choose this.', 'The placement means you usually choose this.', 'During this event, you usually choose this.', 'You always choose this.', 'Your personality is fixed.']) {
+  const check = await runStudioSkyWriting(stale.content_key, 'recheck', `${firstSentence}\n\nSynthetic final sentence.`);
+  assert.ok(check.lint.findings.some(finding => finding.term === 'standing-pattern second person' && finding.severity === 'fail'), firstSentence);
+}
+console.log('Saved Calendar revisions clear stale findings and pass actual deterministic checks without losing publication safeguards.');

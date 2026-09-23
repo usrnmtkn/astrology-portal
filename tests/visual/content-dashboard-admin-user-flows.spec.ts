@@ -6259,9 +6259,8 @@ for (const theme of ["light", "dark"]) for (const width of [1440, 390]) {
     await page.evaluate(value => document.documentElement.setAttribute("data-theme", value), theme);
     await page.locator(".admin-review-queue-rows .admin-content-row", { hasText: row.content_key }).getByRole("button", { name: "Edit", exact: true }).click();
     const editor = page.getByRole("dialog", { name: "Generated content editor" });
-    await editor.getByRole("button", { name: "Mark reviewed", exact: true }).click();
-    await expect.poll(() => writes.length).toBe(1);
-    expect(writes[0].payload.status).toBe("REVIEWED");
+    await expect(editor.getByRole("button", { name: "Mark reviewed", exact: true })).toHaveCount(0);
+    expect(writes).toHaveLength(0);
     const approve = editor.getByRole("button", { name: "Approve & schedule", exact: true });
     await approve.click();
     await expect(editor.getByRole("alert")).toContainText("first-person plural");
@@ -6314,7 +6313,7 @@ test("reopening a saved aspect fetches the current copy and version before anoth
   await expect(editor.getByLabel("Full passage / body", { exact: true })).toHaveValue(saved.body);
   expect(reads).toBe(2);
   await editor.getByLabel("Full passage / body", { exact: true }).fill("Owner's next exact revision.");
-  await editor.getByRole("button", { name: "Mark reviewed", exact: true }).click();
+  await editor.getByRole("button", { name: "Save", exact: true }).click();
   await expect.poll(() => saved.body).toBe("Owner's next exact revision.");
   expect(writtenVersion).toBe("2026-09-10T07:06:57.684208+00:00");
   await expect(editor.getByRole("alert")).toHaveCount(0);

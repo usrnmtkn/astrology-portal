@@ -2943,7 +2943,10 @@ async function updateGeneratedContent(req: IncomingMessage) {
     patch.judge_verdict = null;
     patch.judge_gate = null;
     patch.judge_why = "Saved writing changed. Run writing checks on this version before approving it.";
-    patch.source_snapshot = { ...(patch.source_snapshot as Record<string, unknown> ?? {}), studioWritingCheck: null };
+    const prefix = existing.block_type === "sky_placement" ? "skyPlacement" : "skyAspect";
+    patch.source_snapshot = { ...(patch.source_snapshot as Record<string, unknown> ?? {}), studioWritingCheck: null,
+      studioWritingError: null, [`${prefix}VoiceLint`]: null, [`${prefix}Judge`]: null,
+      ...(existing.block_type === "sky_placement" ? { skyPlacementTopperVoiceLint: null, skyPlacementTopperJudge: null } : {}) };
     patch.published_at = null;
   }
 
