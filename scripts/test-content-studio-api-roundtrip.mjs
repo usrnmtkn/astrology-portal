@@ -8,6 +8,7 @@ import path from "node:path";
 import { Readable } from "node:stream";
 import { pathToFileURL } from "node:url";
 import { build } from "esbuild";
+import { lunationKey, lunationOriginal, lunationRevision, lunationPublicationDraft } from "../tests/helpers/lunation-publication.mjs";
 
 process.env.NODE_ENV = "test";
 process.env.CONTENT_GENERATION_SECRET = "content-studio-api-test-secret";
@@ -35,6 +36,7 @@ await build({
   },
   stdin: { loader: "ts", resolveDir: process.cwd(), contents: `
     export * from "./apps/web/src/services/generatedContent.ts";
+    export { packageFallbackArchitectureV3CoreRows } from "./apps/web/src/services/fallbackArchitectureV3CorePackaging.ts";
     export { installContentPublications } from "./apps/web/src/content/contentPublicationState.ts";
     export { installFallbackArchitectureV3Bundle, fallbackRendererV3, fallbackV3ApprovalLevelForContentKey, loadDeferredFallbackArchitectureV3Bundle, transitSynastryFallbackRendererV3 } from "./apps/web/src/content/fallbackArchitectureV3Runtime.ts";
     export { isFriendsAcceptedApprovalLevel } from "./apps/web/src/content/fallbackApproval.ts";
@@ -1462,6 +1464,42 @@ const batch=await invokeApi('POST','/api/admin/generated-content',{rows:[{...uns
 assert.equal(batch.status,409,JSON.stringify(batch.payload));
 assert.deepEqual(row,before);
 console.log('PASS: new House Transit and exact synastry publication, shipped full-copy/direction selection, and unsupported-key refusal.');
+
+// A staged lunation absent from the bundled manifest must be publishable only
+// through the saved, approved revision and must reach the shipped reader.
+row = lunationPublicationDraft();
+const originalLunationRecord = structuredClone(row.sections.packageOriginalRecord);
+const lunarSaved = await invokeApi('PATCH', '/api/admin/generated-content', {
+  id: row.id, expectedUpdatedAt: row.updated_at, reviewStatus: 'needs_review',
+  sections: { ...row.sections, packageDraft: { ...row.sections.packageDraft, body: lunationRevision } }
+});
+assert.equal(lunarSaved.status, 200, JSON.stringify(lunarSaved.payload));
+assert.equal(row.status, 'DRAFT');
+assert.equal(row.sections.packageDraft.body, lunationRevision);
+assert.equal(row.sections.packageRecord.body, lunationOriginal);
+const lunarReopened = await invokeApi('GET', `/api/admin/generated-content?status=all&contentKey=${lunationKey}`);
+assert.equal(lunarReopened.payload.rows[0].sections.packageDraft.body, lunationRevision);
+const pendingLunation = structuredClone(row);
+assert.equal(runtime.packageFallbackArchitectureV3CoreRows([row], { keys: [] }, () => true), null, 'A staged lunation must not serve before approval.');
+const staleLunation = await invokeApi('PATCH', '/api/admin/generated-content', { id: row.id, expectedUpdatedAt: '2000-01-01T00:00:00.000Z', ownerAction: 'approve-package-revision' });
+assert.equal(staleLunation.status, 409);
+assert.deepEqual(row, pendingLunation);
+const lunarPublished = await invokeApi('PATCH', '/api/admin/generated-content', { id: row.id, expectedUpdatedAt: row.updated_at, ownerAction: 'approve-package-revision' });
+assert.equal(lunarPublished.status, 200, JSON.stringify(lunarPublished.payload));
+assert.equal(row.status, 'LIVE');
+assert.equal(row.body, lunationRevision);
+assert.equal(row.sections.packageRecord.body, lunationRevision);
+assert.deepEqual(row.sections.packageOriginalRecord, originalLunationRecord);
+assert.equal(runtime.packageFallbackArchitectureV3CoreRows([row], { keys: [] }, () => false), null, 'A retired or mismatched publication must not serve.');
+globalThis.fetch = async (input, init) => String(input).includes('/rpc/content_runtime_revision') ? Response.json(row.updated_at) : normalFetch(input, init);
+const lunarBundle = await runtime.loadFallbackArchitectureV3DashboardBundle();
+assert.equal(lunarBundle?.transitLib?.authoredCards.find(record => record.contentKey === lunationKey)?.body, lunationRevision);
+runtime.installFallbackArchitectureV3Bundle(lunarBundle);
+const lunarRendered = runtime.transitSynastryFallbackRendererV3.renderLunationMacro({ kind: 'new-moon', sign: 'aquarius' });
+assert.equal(lunarRendered.contentKey, lunationKey);
+assert.equal(lunarRendered.body, lunationRevision);
+globalThis.fetch = normalFetch;
+console.log('PASS: staged Aquarius New Moon save, reopen, stale approval refusal, exact publication and shipped reader hydration.');
 
 // Exercise the production SQL trigger with the real handler's HTTP headers.
 // A LIVE row alone is insufficient once the publication ledger is enabled.

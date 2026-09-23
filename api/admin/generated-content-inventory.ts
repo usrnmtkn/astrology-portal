@@ -232,6 +232,17 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
         rows.push(inventoryView ? calendarSeasonTransitionInventoryRow(record) : calendarSeasonTransitionDetailRow(record));
       }
     }
+    const moonPrefix = "authored/calendar-moon-transition/";
+    const requestedMoonKeys = [...contentKeys, ...(contentKey ? [contentKey] : [])].filter(key => key.startsWith(moonPrefix));
+    if (!id && (contentKeyPrefix === moonPrefix || requestedMoonKeys.length) && pageIsComplete) {
+      const { calendarMoonIngressPackageRecords, calendarMoonIngressInventoryRow, calendarMoonIngressDetailRow } = await import("../_lib/calendar-moon-ingress-sources.js");
+      const savedKeys = new Set(rows.map(row => String(row.content_key ?? "")));
+      const records = requestedMoonKeys.length ? calendarMoonIngressPackageRecords.filter(record => requestedMoonKeys.includes(record.contentKey)) : calendarMoonIngressPackageRecords;
+      for (const record of records) {
+        if (savedKeys.has(record.contentKey)) continue;
+        rows.push(inventoryView ? calendarMoonIngressInventoryRow(record) : calendarMoonIngressDetailRow(record));
+      }
+    }
     sendAdminJson(res, 200, { ok: true, rows, nextCursor });
   } catch (error) {
     sendAdminJson(res, adminErrorStatus(error), {
