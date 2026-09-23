@@ -120,6 +120,14 @@ export function isDynamicSkyPlacementArticleRecord(
   );
 }
 
+/** Complete passages addressed by renderLunationMacro, including staged keys. */
+export function isDynamicLunationMacroRecord(record: FallbackDashboardExtensionRecord) {
+  if (record.content_role !== "authored_card") return false;
+  const [prefix, family, phase, sign, extra] = record.contentKey.split("/");
+  return prefix === "authored" && family === "sky-lunation-macro"
+    && (phase === "new-moon" || phase === "full-moon") && zodiacSigns.has(sign) && extra === undefined;
+}
+
 export function isFallbackDashboardRecordAllowed(
   record: FallbackDashboardExtensionRecord,
   currentPackageKeys: ReadonlySet<string>
@@ -132,5 +140,6 @@ export function isFallbackDashboardRecordAllowed(
     || isDynamicHouseTransitRecord(record)
     || isDynamicSynastryExactRecord(record)
     || isDynamicSkyPlacementArticleRecord(record)
+    || isDynamicLunationMacroRecord(record)
     || (isCanonicalSkyReaderRecord(record) && record.studio_version_status === "approved-serving-revision");
 }

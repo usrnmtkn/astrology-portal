@@ -33,6 +33,12 @@ reader, content package and dependency changes.
   bundled catalog entry. Synastry publication requires both chart directions.
   The roundtrip test checks the complete source bytes, rendered wording, and
   the owner-action receipt; synthetic fixtures never change production copy.
+- Staged New Moon / Full Moon sign macros (including Aquarius New Moon, absent
+  from the approved bundle) must save, reopen and publish through the actual
+  handler, then hydrate the shipped resolver and Calendar Day reading without
+  losing paragraphs. Unsupported identities, unapproved drafts, stale versions
+  and denied publication identities remain blocked. The Calendar Review Queue
+  browser suite covers this editor-to-reader flow in both themes and widths.
 - Browser upgrade fixtures seed an old overlay cache at the same database
   revision. The new cache schema must refetch sources the previous admission
   rules omitted, without requiring the owner to edit or publish them again.
