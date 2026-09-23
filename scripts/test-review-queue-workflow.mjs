@@ -206,6 +206,31 @@ assert.equal(isReaderServableGeneratedContentRow(current), true);
 const selected = resolveSkyAspectGeneratedContent({ first: 'moon', second: 'uranus', aspect: 'trine', firstSign: 'aquarius', secondSign: 'gemini',
   generatedContent: new Map([[current.content_key, { ...current, contentKey: current.content_key, sourceSnapshot: current.source_snapshot, judgeGate: current.judge_gate, judgeScore: current.judge_score }]]) });
 assert.equal(selected?.body, revised);
+const threeParagraphs = 'Synthetic opening for a document you usually review before marking the complete source revision ready.\n\nA separate synthetic middle paragraph stays in the saved document exactly as the owner entered it.\n\nComplete synthetic final sentence.';
+const { default: skyLint } = await import('../packages/astro-knowledge/scripts/lint-sky-voice.js');
+assert.ok(skyLint.lintCard(threeParagraphs).findings.some(f => f.term === 'paragraph-count' && f.severity === 'fail'),
+  'Generator template checks retain their existing enforcement');
+saved = await actual.invoke('PATCH', { id: current.id, expectedUpdatedAt: current.updated_at, body: threeParagraphs });
+assert.equal(saved.status, 200, JSON.stringify(saved));
+current = saved.payload.rows[0];
+assert.equal(current.status, 'DRAFT');
+saved = await actual.write({ action: 'recheck', contentKey: current.content_key, expectedUpdatedAt: current.updated_at });
+assert.equal(saved.status, 200, JSON.stringify(saved));
+current = saved.payload.rows[0];
+assert.equal(current.body, threeParagraphs);
+assert.deepEqual(saved.payload.issues, [], 'Owner-selected paragraph breaks cannot block approval');
+assert.ok(current.source_snapshot.skyAspectVoiceLint.findings.some(f => f.term === 'paragraph-count' && f.severity === 'note'));
+saved = await actual.invoke('PATCH', { id: current.id, expectedUpdatedAt: current.updated_at, ownerAction: 'approve-and-schedule' });
+assert.equal(saved.status, 200, JSON.stringify(saved));
+current = saved.payload.rows[0];
+assert.equal(isReaderServableGeneratedContentRow(current), true);
+assert.equal(current.body, threeParagraphs, 'Approval preserves every paragraph break');
+const threeSelected = resolveSkyAspectGeneratedContent({ first: 'moon', second: 'uranus', aspect: 'trine', firstSign: 'aquarius', secondSign: 'gemini',
+  generatedContent: new Map([[current.content_key, { ...current, contentKey: current.content_key, sourceSnapshot: current.source_snapshot, judgeGate: current.judge_gate, judgeScore: current.judge_score }]]) });
+assert.equal(threeSelected?.body, threeParagraphs);
+const unsafe = await runStudioSkyWriting(stale.content_key, 'recheck', `${threeParagraphs}\n\nInternal provenance.`);
+assert.ok(unsafe.lint.findings.some(f => f.source === 'reader-boundary' && f.severity === 'fail'));
+assert.equal(unsafe.lint.score, 1, 'Paragraph advice cannot suppress a reader-boundary failure');
 for (const firstSentence of ['You usually choose this.', ' You usually choose this.', 'The placement means you usually choose this.', 'During this event, you usually choose this.', 'You always choose this.', 'Your personality is fixed.']) {
   const check = await runStudioSkyWriting(stale.content_key, 'recheck', `${firstSentence}\n\nSynthetic final sentence.`);
   assert.ok(check.lint.findings.some(finding => finding.term === 'standing-pattern second person' && finding.severity === 'fail'), firstSentence);

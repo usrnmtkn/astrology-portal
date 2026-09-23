@@ -15,11 +15,12 @@ const headingStyle = (element: Element) => {
   return Object.fromEntries(['fontFamily', 'fontSize', 'fontWeight', 'lineHeight', 'letterSpacing', 'marginTop', 'marginBottom', 'textTransform', 'textAlign'].map(key => [key, style[key as keyof CSSStyleDeclaration]]));
 };
 
-for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
-  test(`Calendar exact saved revision checks before publication ${theme} ${width}`, async ({ page }) => {
+for (const width of [390, 1440]) for (const theme of ['light', 'dark']) for (const paragraphs of [2, 3]) {
+  test(`Calendar exact saved revision checks before publication ${paragraphs} paragraphs ${theme} ${width}`, async ({ page }) => {
     test.setTimeout(90000);
     const savedKey = 'sky.aspect.moon.trine.uranus.aquarius.gemini';
-    const revised = 'Synthetic opening for a document you usually review.\n\nComplete synthetic final sentence.';
+    const revised = paragraphs === 2 ? 'Synthetic opening for a document you usually review.\n\nComplete synthetic final sentence.'
+      : 'Synthetic opening for a document you usually review before marking the complete source revision ready.\n\nA separate synthetic middle paragraph stays in the saved document exactly as the owner entered it.\n\nComplete synthetic final sentence.';
     const seed = { ...generic, id: 'stale-exact', content_key: savedKey, headline: 'Moon trine Uranus', body: 'Synthetic old paragraph.',
       judge_gate: null, source_snapshot: { studioWritingCheck: null, skyAspectVoiceLint: { score: 1, fails: 1, findings: [
         { severity: 'fail', source: 'shape', term: 'paragraph-count', reason: 'the card template is exactly two paragraphs' }
@@ -70,8 +71,9 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
       await expect(body).toHaveValue(revised);
       await expect(readiness).not.toContainText('the card template is exactly two paragraphs');
       await expect(editor.getByRole('button', { name: 'Run writing checks', exact: true })).toHaveCount(1);
+      if (paragraphs === 3) await expect(readiness).toContainText('Paragraph breaks are your editorial choice.');
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
-      await page.screenshot({ path: `test-results/calendar-publish-checks-${width}-${theme}.png` });
+      await page.screenshot({ path: `test-results/calendar-publish-checks-${paragraphs}-${width}-${theme}.png` });
       await approve.click();
       await expect.poll(async () => (await store.call({ method: 'rows' }))[0].status).toBe('LIVE');
       const saved = (await store.call({ method: 'rows' }))[0];

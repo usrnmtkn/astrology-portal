@@ -26,6 +26,8 @@ export default function ReviewWorkflowPanel({ row, unsaved, busy, onCheck, onGen
     const source = isContentStudioReferenceSource(row.content_key, row.source_snapshot ?? {});
     const sky = ["sky_aspect", "sky_placement"].includes(row.block_type ?? "");
     const issues = skyWritingIssues(row);
+    const findings = row.source_snapshot?.skyAspectVoiceLint?.findings;
+    const advisories = Array.isArray(findings) ? findings.filter((finding: any) => finding.severity === "note" && typeof finding.reason === "string") : [];
     const history = row.source_snapshot?.studioRevisionHistory;
     const aspects = /^sky\.aspect\.([^.]+)\.([^.]+)\.([^.]+)\./.exec(row.content_key);
     const placement = /^sky\.placement\.base\.([^.]+)\.([^.]+)$/.exec(row.content_key);
@@ -53,6 +55,7 @@ export default function ReviewWorkflowPanel({ row, unsaved, busy, onCheck, onGen
       {sky && <div className="admin-review-status-checks">
         <p>Writing checks: {unsaved ? "Save changes before checking" : issues.length ? "Needs attention" : row.status === "LIVE" ? "Passed" : "Passed; awaiting your approval"}</p>
         {!unsaved && issues.length > 0 && <ul>{issues.map(issue => <li key={issue}>{issue}</li>)}</ul>}
+        {!unsaved && row.source_snapshot?.studioWritingCheck && advisories.length > 0 && <ul>{advisories.map((finding: any) => <li key={finding.term}>{finding.reason}</li>)}</ul>}
         {row.source_snapshot?.studioWritingError && <p role="alert">{String(row.source_snapshot.studioWritingError)}</p>}
         {row.status !== "LIVE" && row.status !== "ARCHIVED" && (!checkInSaveBar || !row.body?.trim()) && <StudioButton type="button" disabled={busy || unsaved} onClick={row.body?.trim() ? onCheck : onGenerate}>
           {busy ? "Working…" : row.body?.trim() ? "Run writing checks" : "Generate draft"}
