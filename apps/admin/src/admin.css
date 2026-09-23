@@ -3619,7 +3619,7 @@ body,
   min-height: 220px;
 }
 
-.admin-initial-loading .loading-illustration {
+.admin-initial-loading .loading-spinner {
   align-self: center;
 }
 
