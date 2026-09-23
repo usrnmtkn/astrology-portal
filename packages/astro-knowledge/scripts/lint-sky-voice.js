@@ -125,12 +125,18 @@ function lintCard(text, { mode = "collective-aspect-card" } = {}) {
     }
   }
 
-  if (mode !== PLACEMENT_TOPPER_MODE && /\b(?:you tend to|you always|you usually|you have always|your personality)\b/i.test(text)) {
+  // "A document you usually review" describes an existing routine inside a
+  // relative clause; it does not claim that the event defines the reader.
+  // Keep direct habitual claims blocked, including clauses after punctuation
+  // and explicit "means/shows/suggests" attribution.
+  const standingPattern = text.match(/\b(?:you tend to|you always|you have always|your personality)\b/i)
+    || text.match(/(?:^\s*|[.!?;:,\n]\s*|\b(?:and|but|so|because|means(?:\s+that)?|shows(?:\s+that)?|suggests(?:\s+that)?)\s+)(you usually)\b/i);
+  if (mode !== PLACEMENT_TOPPER_MODE && standingPattern) {
     findings.push({
       severity: "fail",
       source: "reader-boundary",
       term: "standing-pattern second person",
-      match: text.match(/\b(?:you tend to|you always|you usually|you have always|your personality)\b/i)?.[0] || "",
+      match: standingPattern[1] || standingPattern[0],
       reason: "Calendar may address the reader directly, but it must not turn a temporary collective event into a natal standing pattern."
     });
   }

@@ -4,12 +4,12 @@ import { tmpdir } from 'node:os';
 import path from 'node:path';
 
 /** Runs the actual Studio API handler with a private, isolated in-memory PostgREST store. */
-export async function studioApiStore(rows: unknown[], options: { writing?: boolean } = {}) {
+export async function studioApiStore(rows: unknown[], options: { writing?: boolean; realRecheck?: boolean } = {}) {
   const directory = mkdtempSync(path.join(tmpdir(), 'studio-formatting-'));
   const fixturePath = path.join(directory, 'rows.json');
   writeFileSync(fixturePath, JSON.stringify(rows));
   const child = fork(path.resolve(options.writing ? 'tests/helpers/sky-review-workflow-api.mjs' : 'tests/helpers/calendar-review-api.mjs'), ['--ipc'], {
-    env: { ...process.env, CALENDAR_REVIEW_FIXTURE: fixturePath }, execArgv: ['--import', 'tsx'], stdio: ['ignore', 'pipe', 'pipe', 'ipc']
+    env: { ...process.env, CALENDAR_REVIEW_FIXTURE: fixturePath, STUDIO_REAL_RECHECK: String(Boolean(options.realRecheck)) }, execArgv: ['--import', 'tsx'], stdio: ['ignore', 'pipe', 'pipe', 'ipc']
   });
   let sequence = 0;
   const pending = new Map<number, { resolve: (value: any) => void; reject: (error: Error) => void }>();

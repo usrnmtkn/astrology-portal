@@ -16,6 +16,74 @@ const headingStyle = (element: Element) => {
 };
 
 for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
+  test(`Calendar exact saved revision checks before publication ${theme} ${width}`, async ({ page }) => {
+    test.setTimeout(90000);
+    const savedKey = 'sky.aspect.moon.trine.uranus.aquarius.gemini';
+    const revised = 'Synthetic opening for a document you usually review.\n\nComplete synthetic final sentence.';
+    const seed = { ...generic, id: 'stale-exact', content_key: savedKey, headline: 'Moon trine Uranus', body: 'Synthetic old paragraph.',
+      judge_gate: null, source_snapshot: { studioWritingCheck: null, skyAspectVoiceLint: { score: 1, fails: 1, findings: [
+        { severity: 'fail', source: 'shape', term: 'paragraph-count', reason: 'the card template is exactly two paragraphs' }
+      ] } } };
+    const store = await studioApiStore([seed], { writing: true, realRecheck: true });
+    try {
+      await page.setViewportSize({ width, height: 1000 });
+      await page.addInitScript(theme => {
+        localStorage.setItem('tldrastro:contentAdminSecret', 'calendar-api-fixture');
+        localStorage.setItem('tldrastro:studio-theme', theme);
+      }, theme);
+      await routeStudioInventoryApi(page, { call: store.call, answer: async (route, url) => {
+        if (url.pathname === '/api/admin/content-live-status') {
+          await route.fulfill({ json: { ok: true, statuses: await store.call({ method: 'statuses', body: route.request().postDataJSON() }) } });
+          return true;
+        }
+        if (url.pathname !== '/api/admin/sky-draft-writing') return false;
+        const result = await store.call({ method: 'POST', url: url.pathname, body: route.request().postDataJSON() });
+        await route.fulfill({ status: result.status, json: result.payload });
+        return true;
+      } });
+      await page.goto('/admin/content#exact-content?category=Calendar+Aspects&first=moon&aspect=trine&second=uranus&firstSign=aquarius&secondSign=gemini');
+      await page.getByRole('button', { name: 'Open write-up', exact: true }).click();
+      const editor = page.locator('.admin-editor-panel');
+      const footer = editor.locator('.admin-editor-savebar');
+      const check = footer.getByRole('button', { name: 'Run writing checks', exact: true });
+      const approve = footer.getByRole('button', { name: 'Approve & schedule', exact: true });
+      const body = editor.getByRole('textbox', { name: 'Full passage / body', exact: true });
+      const readiness = editor.getByRole('region', { name: 'Review and publication readiness', exact: true });
+      await expect(readiness).not.toContainText('the card template is exactly two paragraphs');
+      await expect(check).toBeEnabled();
+      await expect(approve).toBeDisabled();
+      await expect(editor.getByLabel('Status', { exact: true })).toBeDisabled();
+      await expect(editor.getByRole('button', { name: 'Mark reviewed', exact: true })).toHaveCount(0);
+      await body.fill(revised);
+      await editor.getByRole('textbox', { name: 'TL;DR / summary', exact: true }).fill('Separate synthetic summary.');
+      await expect(check).toBeDisabled();
+      await footer.getByRole('button', { name: 'Save', exact: true }).click();
+      await expect(editor).toContainText('All changes saved');
+      await expect(check).toBeEnabled();
+      await expect(approve).toBeDisabled();
+      await editor.locator('summary').filter({ hasText: /^Details/ }).click();
+      await editor.getByText('Edit metadata', { exact: true }).click();
+      await expect(editor.getByLabel('Status', { exact: true })).toBeDisabled();
+      await expect(editor).toContainText('Save your edits, run writing checks, then Approve & schedule.');
+      await check.click();
+      await expect(approve).toBeEnabled();
+      await expect(body).toHaveValue(revised);
+      await expect(readiness).not.toContainText('the card template is exactly two paragraphs');
+      await expect(editor.getByRole('button', { name: 'Run writing checks', exact: true })).toHaveCount(1);
+      expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
+      await page.screenshot({ path: `test-results/calendar-publish-checks-${width}-${theme}.png` });
+      await approve.click();
+      await expect.poll(async () => (await store.call({ method: 'rows' }))[0].status).toBe('LIVE');
+      const saved = (await store.call({ method: 'rows' }))[0];
+      expect(saved.body).toBe(revised);
+      expect(saved.summary).toBe('Separate synthetic summary.');
+      expect(saved.source_snapshot.skyAspectVoiceLint).toMatchObject({ score: 3, fails: 0 });
+      await expect(body).toHaveValue(revised);
+    } finally { store.close(); }
+  });
+}
+
+for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
   test(`Calendar exact aspect create save reopen ${theme} ${width}`, async ({ page }) => {
     test.setTimeout(90000);
     const store = await studioApiStore([generic], { writing: true });
