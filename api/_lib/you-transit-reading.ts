@@ -1,3 +1,4 @@
+import { transitReportEditorialGuide } from "./transit-report-editorial-guide.js";
 import { transitReadingReaderText } from "./transit-reading-reader-copy.js";
 import { untraceableTransitReadingDates } from "./transit-reading-dates.js";
 import { extractTransitAspectClaims, isOrdinaryAspectWord, transitAspectKeysFromEvidence } from "./transit-reading-aspect-claims.js";
@@ -6,7 +7,7 @@ type RecordLike = Record<string, unknown>;
 export const YOU_TRANSIT_READING_BRIEF_SCHEMA = "tldr.you-transit-reading-brief.v1";
 export const YOU_DAY_READING_SUBJECT_TYPE = "you_day_reading";
 export const YOU_WEEK_READING_SUBJECT_TYPE = "you_week_reading";
-export const YOU_TRANSIT_READING_PROMPT_VERSION = "you-transit-reading-v1.4";
+export const YOU_TRANSIT_READING_PROMPT_VERSION = "you-transit-reading-v1.5";
 
 export type YouTransitReadingWindow = "day" | "week";
 
@@ -160,21 +161,21 @@ export function youTransitReadingPrompt(input: { brief: YouTransitReadingBrief; 
   const { brief } = input;
   const bodyContract = brief.window === "day"
     ? "body: 2-3 natural paragraphs, roughly 120-200 words. The TLDR already states the main observation, so begin with the next supported consequence, distinction, or action and end with a practical consequence or useful perspective."
-    : "body: 3-5 natural paragraphs, usually 180-300 words. If the brief has only one meaningful reader-safe source, 140-220 words is enough. Build the internal stages what is happening → where it hits → trap → what to do from the supplied evidence, without section headings. Advance the TLDR instead of restarting it. Preserve supplied timing and distinguish the main theme from secondary pressure or support; never invent a trap or action to fill a stage.";
+    : "body: 3-5 natural paragraphs, usually 180-300 words. If the brief has only one meaningful reader-safe source, 140-220 words is enough. Develop the main theme and its distinct supported consequences, without section headings or a mandatory paragraph sequence. Advance the TLDR instead of restarting it. Preserve supplied timing and distinguish the main theme from secondary pressure or support; advice is optional and must follow from the supplied meaning.";
   return [
-    "TLDR ASTRO PERSONAL TRANSIT SYNTHESIS V1.4",
+    "TLDR ASTRO PERSONAL TRANSIT SYNTHESIS V1.5",
     "",
     "TASK",
     `Write one in-depth ${brief.window} report for the reader.`,
     "Write directly to the reader in second person using you/your.",
-    "Use the same synthesis standard as the governed Friends transit reading: what matters first, astrology only as needed, concrete known life domains when they are actually supplied, and no invented scenes.",
+    "Use the same synthesis standard as the governed Friends transit reading: what matters first, astrology only as needed, concrete known life domains when they are actually supplied, and clearly hypothetical illustrations supported by the supplied meaning.",
     "This is synthesis only. TLDR Astro has already calculated and selected the evidence and already supplied reader-safe source text.",
     "Reader-facing meaning must come from APPROVED READER TEXT. TECHNICAL EVIDENCE may confirm names, dates, houses, aspects, and timing, but it does not authorize a new behavioral interpretation, motive, outcome, or life circumstance from general astrology knowledge. If a technical transit has no reader-safe meaning in APPROVED READER TEXT, omit its interpretation instead of explaining it.",
-    "Do not calculate astrology. Do not add a transit, placement, aspect, sign, house, date, degree, orb, interpretation, example, or life event that is not present below.",
+    "Do not calculate astrology. Do not add a transit, placement, aspect, sign, house, date, degree, orb, or interpretation that is not present below. Hypothetical illustrations follow the current owner report direction below.",
     "Do not turn a temporary transit into a permanent personality claim.",
     "Do not expose source units, IDs, schemas, scores, derivation fields, approval state, or backend language.",
     "No tarot. No em dashes. No bullets. No section labels inside the body.",
-    "Do not invent texting, workplace, money, family, health, dating, shopping, travel, or other concrete examples unless that situation is already present in APPROVED READER TEXT.",
+    "Use an ordinary hypothetical example only when the supplied reader meaning supports its domain and consequence; never assert that it happened.",
     "Prefer concrete nouns already present in the approved reader text instead of retreating to vague phrases such as 'something important' or 'an area of life.'",
     "Do not animate abstractions. An opening or opportunity may appear, be available, or be used; do not make it sit, become a door, point, carry weight, form a longer arc, or 'point the same way' unless that wording is explicitly supplied in APPROVED READER TEXT.",
     "Do not use report-scaffolding phrases such as 'the trap is,' 'what this means,' 'what this looks like in practice,' 'the conditions right now,' or 'not today's headline.' State the supported condition or consequence directly.",
@@ -188,6 +189,8 @@ export function youTransitReadingPrompt(input: { brief: YouTransitReadingBrief; 
     bodyContract,
     "Do not add a generic coaching closer.",
     "Return JSON only.",
+    "",
+    transitReportEditorialGuide(),
     "",
     "APPROVED READER TEXT",
     JSON.stringify(brief.approvedReaderText, null, 2),

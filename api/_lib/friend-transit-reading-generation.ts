@@ -131,7 +131,7 @@ async function generateReading(locked: ReturnType<typeof friendTransitReadingReq
     surface: "friends",
     family: "friends-transit",
     schemaName: "tldr_astro_friend_transit_reading",
-    toolDescription: "Return the short TLDR Astro Friends transit reading.",
+    toolDescription: "Return the developed TLDR Astro Friends transit outlook.",
     productionInput,
     promptForAttempt,
     validate: validateGeneratedReading,

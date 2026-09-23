@@ -15,6 +15,7 @@ import {
 import { createReportShareLink, stopReportSharing } from "../../services/reportSharing";
 import { ReportGenerationBeam } from "./ReportGenerationBeam";
 import { PageLoading } from "../PageLoading";
+import { isFriendRelationshipHeading } from "../../../../../src/reporting/friendReportStructure";
 
 const reportMonthNames = [
   "Jan", "Feb", "Mar", "Apr", "May", "June",
@@ -515,7 +516,9 @@ export function GeneratedReportArticle({
               <div className="article-body-inner">
                 <section className="article-section sky-detail-section">
                   {paragraphs.map((paragraph, index) => (
-                    <FormattedProse key={`${report.id}-paragraph-${index}`} text={paragraph} />
+                    isFriendsReading && isFriendRelationshipHeading(paragraph, report.subjectLabel)
+                      ? <h2 key={`${report.id}-paragraph-${index}`}>{paragraph.slice(3)}</h2>
+                      : <FormattedProse key={`${report.id}-paragraph-${index}`} text={paragraph} />
                   ))}
                 </section>
                 <p className="saved-generated-report__created type-meta">Created {formatCreatedDate(report.createdAt)}</p>

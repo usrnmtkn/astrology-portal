@@ -23,6 +23,11 @@ for (const kind of ['day', 'week', 'friends']) for (const scenario of [
   // Preview copy is deliberately different: it must never replace full units.
   f.friendBrief.primaryThemes[0].readerSections = [{ body: f.output.body, sourceKeys: ['synthetic-full-source'] }];
   f.friendBrief.primaryThemes[0].summary = 'Preview only. Never deliver this in place of the full reading.';
+  if (friend && scenario === 'initial-judge-outage') {
+    f.friendBrief.relationshipActivations = [{id:'synthetic-connection',headline:'A supplied connection',
+      activationBody:'Things between you and Morgan may be easier to discuss.',
+      effectBody:'You could explain what you need before agreeing to a plan.'}];
+  }
   const brief = friend ? f.friendBrief : f.youBrief;
   if (scenario === 'missing-source') {
     if (friend) delete brief.primaryThemes[0].readerSections;
@@ -116,6 +121,7 @@ for (const kind of ['day', 'week', 'friends']) for (const scenario of [
       if (scenario === 'rejected') assert.equal(receipt.reviews.length, 2);
     }
     if (outputDir && scenario === 'initial-judge-outage') fs.writeFileSync(path.join(outputDir, kind + '.json'), JSON.stringify({ ...row, id: 'source-' + kind }));
+    if (outputDir && friend && scenario === 'rejected') fs.writeFileSync(path.join(outputDir, 'friends-personal.json'), JSON.stringify({ ...row, id: 'source-friends-personal', headline:'Personal outlook for Morgan' }));
     const loaded = await api.loadGeneratedReportById(row.id);
     assert.equal(loaded.body, row.body);
     const html = api.renderToStaticMarkup(api.createElement(api.GeneratedReportArticle, { report: loaded }));

@@ -41,6 +41,8 @@ let lastInput;
 try {
   globalThis.reportBreadthFixture = async (input) => {
     lastInput=input;
+    assert.ok(input.prompt.includes('CURRENT OWNER REPORT DIRECTION: transit-report-plain-language-v1'));
+    assert.ok(input.prompt.includes('A scene is not unsupported solely because its exact nouns are absent from the source.'));
     for (const name of ['V3', 'V3.2', 'V3.3', 'V3.4']) {
       const path = `tldr-astro-phrasebank/TLDR-REPORT-JUDGE-RUBRIC-${name}-OWNER.md`;
       assert.ok(input.prompt.includes(`SOURCE_PATH: ${path}`));

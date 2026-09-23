@@ -1,3 +1,4 @@
+import { transitReportEditorialGuide } from "./transit-report-editorial-guide.js";
 import { transitReadingReaderCopy } from "./transit-reading-reader-copy.js";
 import { transitReadingRevisionPrompt, type TransitReadingWriterTask } from "./transit-reading-revision.js";
 import { previousTransitReadingCorrectionFeedback, TransitReadingCheckpointYield } from "./transit-reading-checkpoints.js";
@@ -215,13 +216,14 @@ function writerPrompt<TBrief>(
     "",
     generatedReportWritingContract(),
     generatedReportLanguageContract(),
+    transitReportEditorialGuide(),
     "The tldr and summary response fields are storage aliases for one visible TLDR, not two passages. Return the same text in both; the body must advance that TLDR.",
     "",
     "OWNER-APPROVED GENERATED-REPORT FEEDBACK EVIDENCE",
     approvedOwnerEvidence.length
       ? approvedOwnerEvidence.map((entry, index) => `${index + 1}. ${entry}`).join("\n")
       : "No additional generated-report feedback has been explicitly owner-approved yet.",
-    "The governed brief and approved owner evidence supply factual and voice authority. Run-local findings for this draft may guide the requested correction, but unapproved Draft Review notes and findings from other reports are not evidence."
+    "The governed brief supplies factual authority. Approved owner evidence supplies voice only, never facts about this person. Run-local findings for this draft may guide the requested correction, but unapproved Draft Review notes and findings from other reports are not evidence."
   ].join("\n");
 }
 
