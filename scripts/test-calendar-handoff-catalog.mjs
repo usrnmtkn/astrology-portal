@@ -190,7 +190,7 @@ assert.equal(lunarWorkspaceSelectionFromQuery("authored/calendar-weekly-moon/lib
 assert.equal(lunarContentIdentity("authored/calendar-weekly-moon/libra")?.title, "Moon in Libra · Leftover 1");
 assert.equal(lunarContentIdentity("authored/calendar-weekly-moon/libra/variant-2")?.title, "Moon in Libra · Leftover 2");
 assert.equal(lunarWorkspaceSelectionFromQuery("authored/calendar-moon-continuation-summary/scorpio")?.family, "Continuation sentences");
-assert.equal(lunarWorkspaceSelectionFromQuery("authored/calendar-moon-transition/scorpio/sagittarius")?.family, "Sign-change sentences");
+assert.equal(lunarWorkspaceSelectionFromQuery("authored/calendar-moon-transition/scorpio/sagittarius")?.family, "Lunar ingresses");
 assert.equal(lunarWorkspaceSelectionFromQuery("authored/calendar-season-transition/virgo/libra")?.family, "Season transitions");
 assert.equal(lunarWorkspaceSelectionFromQuery("authored/calendar-season-transition/virgo/libra/variant-2")?.family, "Season transitions");
 assert.equal(lunarContentIdentity("authored/calendar-season-transition/virgo/libra/variant-3")?.variant, 3);

@@ -44,14 +44,23 @@ async function isolate(page: Page, theme = "light") {
 }
 
 async function assertGrid(region: Locator, labels: string[], columns: number) {
-  const boxes = [];
   for (const label of labels) {
-    const control = region.getByLabel(label, { exact: true });
-    await expect(control).toBeVisible();
-    const box = await control.boundingBox();
-    expect(box, label).not.toBeNull();
-    expect(box!.height, `${label} keeps a touch target`).toBeGreaterThanOrEqual(44);
-    boxes.push(box!);
+    await expect(region.getByLabel(label, { exact: true })).toBeVisible();
+  }
+  // Inventory hydration can move the whole workspace between Playwright calls.
+  // Compare controls from one layout frame, after fonts are ready, so a shared
+  // vertical shift is not mistaken for misaligned controls within the grid.
+  const boxes = await region.evaluate(async (element, labels) => {
+    await document.fonts.ready;
+    return labels.map(label => {
+      const control = element.querySelector<HTMLElement>(`[aria-label="${CSS.escape(label)}"]`);
+      if (!control) throw new Error(`Missing grid control: ${label}`);
+      const { x, y, width, height } = control.getBoundingClientRect();
+      return { x, y, width, height };
+    });
+  }, labels);
+  for (let index = 0; index < boxes.length; index += 1) {
+    expect(boxes[index].height, `${labels[index]} keeps a touch target`).toBeGreaterThanOrEqual(44);
   }
   for (let index = 0; index < boxes.length; index += 1) {
     const firstInRow = boxes[Math.floor(index / columns) * columns];
@@ -312,4 +321,3 @@ test("sidebar can switch green chrome without replacing light and dark", async (
   expect(await dashboard.evaluate(element => getComputedStyle(element).backgroundColor)).not.toEqual(canvasBefore);
   await expect(page.getByRole("button", { name: "Switch to black and white chrome", exact: true })).toBeVisible();
 });
-

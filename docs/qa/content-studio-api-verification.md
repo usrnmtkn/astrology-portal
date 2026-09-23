@@ -186,3 +186,20 @@ for the repair journal, full-inventory checks and agent requirements.
 The [2026-09-10 route audit](content-studio-api-audit-2026-09-10.md) records scope, defects, and the distinction between source review and actual-handler verification. The required API gate now also covers Aspect Patterns, issue resolutions/source decisions, queue prepopulation, and report correction/feedback handlers. Test stores use `.invalid` hosts; never run these write scenarios against production.
 
 Existing Aspect Pattern and report-unit edits must submit `expectedUpdatedAt` from the opened record. Issue resolutions submit their opened version or null for first creation. Conflicts require reload; clients must preserve unsaved input. Prepopulation reports `skippedExistingRows`; on a failed batch, `savedRows` contains confirmed writes and `failedContentKey` identifies the uncertain/failed operation. Reload before retrying an uncertain write.
+
+## Lunar ingress editing
+
+Calendar Write-ups > Lunar ingresses lists the twelve existing Moon sign-change
+passages, sorted by the sign entered. The authenticated inventory supplies complete
+original sources when no saved row exists; browsing does not insert a draft. Saved
+rows take precedence. Edit opens the same source used by Calendar ingress events
+and Day/Week sign changes, with Save draft and Save & publish kept separate.
+
+`test-calendar-lunar-ingress-editor.mts` exercises the actual inventory and mutation
+handlers for all twelve keys, original hashes, publication admission, the actual
+reader loader and Calendar event adapter, stale writes and unauthorized reads.
+`calendar-lunar-ingresses.spec.ts` covers navigation, full-copy save/reopen/publish,
+reader display, computed table typography, empty search results and light/dark
+mobile/desktop layouts. Browser write tests use isolated storage, including when
+testing deployed assets. Existing reader prose and computed ingress timing are
+unchanged.

@@ -61,8 +61,8 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
     if (width === 390) await page.getByRole("button", { name: "Open Content Studio navigation" }).click();
     await nav.getByRole("button", { name: "Calendar Write-ups", exact: true }).click();
     const tabs = page.getByRole("tablist", { name: "Calendar Write-ups workspaces" });
-    await expect(tabs.getByRole("tab")).toHaveText(["Daily Sky", "Weekly Sky", "Monthly Sky", "Season transitions", "Subscription events"]);
-    await expect(page.getByLabel("Calendar Write-ups sections").getByRole("button", { includeHidden: true })).toHaveText(["Daily Sky", "Weekly Sky", "Monthly Sky", "Season transitions", "Subscription events"]);
+    await expect(tabs.getByRole("tab")).toHaveText(["Daily Sky", "Weekly Sky", "Monthly Sky", "Lunar ingresses", "Season transitions", "Subscription events"]);
+    await expect(page.getByLabel("Calendar Write-ups sections").getByRole("button", { includeHidden: true })).toHaveText(["Daily Sky", "Weekly Sky", "Monthly Sky", "Lunar ingresses", "Season transitions", "Subscription events"]);
     await tabs.getByRole("tab", { name: "Weekly Sky", exact: true }).click();
     const heading = page.getByRole("heading", { name: "Weekly overview template", exact: true });
     await expect(heading).toBeVisible();

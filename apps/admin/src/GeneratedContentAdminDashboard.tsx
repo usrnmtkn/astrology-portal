@@ -366,11 +366,12 @@ type AdminWritingSurfaceMapPayload = {
 type AdminArticlePointFilter = "all" | "sun" | "moon" | "mercury" | "venus" | "mars" | "jupiter" | "saturn" | "uranus" | "neptune" | "pluto" | "other";
 type AdminSkyWriteupSubjectFilter = "all" | "planet" | "angle" | "point";
 type SkyWriteupWorkspaceView = "daily-summary" | "catalog" | "transits-to-natal" | "house-transits";
-type CalendarWriteupWorkspaceView = SkyForecastPeriod | "season-transitions" | "subscription-events";
+type CalendarWriteupWorkspaceView = SkyForecastPeriod | "season-transitions" | "subscription-events" | "lunar-ingresses";
 const calendarWriteupWorkspaceTabs: { value: CalendarWriteupWorkspaceView; label: string }[] = [
   { value: "daily-sky", label: "Daily Sky" },
   { value: "weekly-sky", label: "Weekly Sky" },
   { value: "monthly-sky", label: "Monthly Sky" },
+  { value: "lunar-ingresses", label: "Lunar ingresses" },
   { value: "season-transitions", label: "Season transitions" },
   { value: "subscription-events", label: "Subscription events" }
 ];
@@ -4279,7 +4280,7 @@ export function GeneratedContentAdminDashboard() {
       page === "skyWriteups" && skyWriteupWorkspaceTabs.some(tab => tab.value === view)
         ? view as SkyWriteupWorkspaceView : "catalog"
     );
-    setCalendarWriteupWorkspaceView(page === "calendarWriteups" && (view === "weekly-sky" || view === "monthly-sky" || view === "season-transitions" || view === "subscription-events") ? view : "daily-sky");
+    setCalendarWriteupWorkspaceView(page === "calendarWriteups" && calendarWriteupWorkspaceTabs.some(tab => tab.value === view) ? view as CalendarWriteupWorkspaceView : "daily-sky");
     setTransitReadingContext(page === "skyWriteups" && view === "transits-to-natal" ? {
       ...(params.get("pass") ? { pass: Number(params.get("pass")) } : {}),
       ...(params.get("variant") ? { variant: Number(params.get("variant")) } : {}),
@@ -7249,17 +7250,17 @@ export function GeneratedContentAdminDashboard() {
               tabs={calendarWriteupWorkspaceTabs}
               onValueChange={view => navigateAdminPage("calendarWriteups", new URLSearchParams({ view }))}>
               {calendarWriteupWorkspaceView === "subscription-events" && <Suspense fallback={<PageLoading message="Loading subscription events…" />}><CalendarSubscriptionEvents secret={secret} dirtyRef={subscriptionEventDirtyRef} /></Suspense>}
-              {calendarWriteupWorkspaceView !== "season-transitions" && calendarWriteupWorkspaceView !== "subscription-events" && <Suspense fallback={<PageLoading message="Loading Calendar template…" />}><SkyForecastTemplateStudio period={calendarWriteupWorkspaceView} rows={rows} busy={isLoading}
+              {calendarWriteupWorkspaceView !== "lunar-ingresses" && calendarWriteupWorkspaceView !== "season-transitions" && calendarWriteupWorkspaceView !== "subscription-events" && <Suspense fallback={<PageLoading message="Loading Calendar template…" />}><SkyForecastTemplateStudio period={calendarWriteupWorkspaceView} rows={rows} busy={isLoading}
                 loadRows={loadCalendarPreviewRows} draft={draft}
                 onEditSource={row => void openCalendarWritingSource(row as AdminGeneratedContentRow)}
                 onEditOverview={field => void openSkyForecastTemplate(calendarWriteupWorkspaceView as SkyForecastPeriod, field)}
                 onBrowseSeasonTransitions={() => navigateAdminPage("calendarWriteups", new URLSearchParams({ view: "season-transitions" }))}
                 onOpen={period => void openSkyForecastTemplate(period)} editor={calendarWriteupWorkspaceView === "daily-sky" ? null : renderEditor()} /></Suspense>}
-              {(calendarWriteupWorkspaceView === "daily-sky" || calendarWriteupWorkspaceView === "season-transitions") && (
+              {(calendarWriteupWorkspaceView === "daily-sky" || calendarWriteupWorkspaceView === "season-transitions" || calendarWriteupWorkspaceView === "lunar-ingresses") && (
                 <Suspense fallback={<PageLoading message="Loading Calendar passages…" />}>
-                  <LunarCalendarWorkspace key={calendarWriteupWorkspaceView} scope={calendarWriteupWorkspaceView === "season-transitions" ? "season-transitions" : "all"} rows={rows} query={query} onQuery={setQuery} createRequest={calendarCreateRequest}
+                  <LunarCalendarWorkspace key={calendarWriteupWorkspaceView} scope={calendarWriteupWorkspaceView === "daily-sky" ? "all" : calendarWriteupWorkspaceView} rows={rows} query={query} onQuery={setQuery} createRequest={calendarCreateRequest}
                     onCreateRequestHandled={() => setCalendarCreateRequest(0)} isLoading={isLoading || loadState !== "loaded"}
-                    editor={renderEditor()} onEdit={row => openRow(row as AdminGeneratedContentRow, null, calendarWriteupWorkspaceView === "season-transitions" ? "body" : undefined)}
+                    editor={renderEditor()} onEdit={row => openRow(row as AdminGeneratedContentRow, null, calendarWriteupWorkspaceView !== "daily-sky" ? "body" : undefined)}
                     loadRows={loadCalendarPreviewRows} onLoad={row => hydrateGeneratedContentRow(row as AdminGeneratedContentRow)}
                     onCreate={sign => handleCreateAction("knowledge", "Draft opened. Nothing has been saved yet.", sign)} />
                 </Suspense>
@@ -10386,7 +10387,7 @@ export function GeneratedContentAdminDashboard() {
               : isTemplateDraft
                 ? "Template purpose (optional)"
                 : "TL;DR / summary");
-    const bodyFieldLabel = isReferenceDraft ? "Source text" : isSkySummaryDraft ? "Summary wording" : lunarIdentity?.family === "Season transitions" ? "Season transition passage" : lunarIdentity ? "Full lunar passage" : isYouOnlyNatalExactDraft
+    const bodyFieldLabel = isReferenceDraft ? "Source text" : isSkySummaryDraft ? "Summary wording" : lunarIdentity?.family === "Lunar ingresses" ? "Lunar ingress passage" : lunarIdentity?.family === "Season transitions" ? "Season transition passage" : lunarIdentity ? "Full lunar passage" : isYouOnlyNatalExactDraft
       ? "You view exact copy"
       : isVocabularyDraft && isPackageDraft
       ? vocabularyHasTheyVersion ? "You version" : "Variable value"
@@ -10436,7 +10437,7 @@ export function GeneratedContentAdminDashboard() {
     const signedAspectTitle = currentDraft.id || selectedRow?.id.startsWith("package:") || currentDraft.sections?.packageOriginalRecord
       ? calendarAspectSignedTitle(currentDraft.contentKey)
       : null;
-    const editorHeading = signedAspectTitle ? `Edit ${signedAspectTitle}` : !currentDraft.id && currentDraft.sourceSnapshot?.authoringSource === "admin-dashboard-calendar-aspect" ? `Write ${calendarAspectSignedTitle(currentDraft.contentKey)}` : !currentDraft.id && currentDraft.contentKey.startsWith("authored/calendar-weekly-moon/") ? `New leftover write-up · ${lunarIdentity?.title ?? "Moon-sign leftover"}` : isSkySummaryDraft || selectedRow?.id.startsWith("package:") ? `Edit ${currentDraft.headline}` : currentDraft.id
+    const editorHeading = lunarIdentity?.family === "Lunar ingresses" ? `Edit ${lunarIdentity.title}` : signedAspectTitle ? `Edit ${signedAspectTitle}` : !currentDraft.id && currentDraft.sourceSnapshot?.authoringSource === "admin-dashboard-calendar-aspect" ? `Write ${calendarAspectSignedTitle(currentDraft.contentKey)}` : !currentDraft.id && currentDraft.contentKey.startsWith("authored/calendar-weekly-moon/") ? `New leftover write-up · ${lunarIdentity?.title ?? "Moon-sign leftover"}` : isSkySummaryDraft || selectedRow?.id.startsWith("package:") ? `Edit ${currentDraft.headline}` : currentDraft.id
       ? isVocabularyDraft
         ? "Edit phrase"
         : compatibilityIdentity

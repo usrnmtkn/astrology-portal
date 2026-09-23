@@ -37,6 +37,11 @@ export async function createApiStore(initial = fixtures) {
   const nextVersion = () => new Date(Date.now() + ++versionSequence).toISOString();
   const matches = (row, params) => [...params].every(([field, value]) => {
     if (["select", "order", "limit", "offset", "on_conflict"].includes(field)) return true;
+    if (field === "and") {
+      const prefix = /^\(content_key\.gte\."([^"]+)",content_key\.lt\."([^"]+)"\)$/.exec(value);
+      if (!prefix) throw new Error(`Unmodeled prefix ${value}`);
+      return row.content_key >= prefix[1] && row.content_key < prefix[2];
+    }
     if (value === "is.null") return row[field] == null;
     if (value.startsWith("eq.")) return String(row[field] ?? "") === value.slice(3);
     if (value.startsWith("in.(")) return value.slice(4, -1).split(",").map(v => v.replaceAll('"', '')).includes(String(row[field]));
@@ -74,7 +79,7 @@ export async function createApiStore(initial = fixtures) {
     Object.assign(request, { method, url, headers: { authorization: `Bearer ${secret}` } });
     return new Promise(async (resolve, reject) => {
       const response = { statusCode: 200, setHeader() {}, end(text) { resolve({ status: this.statusCode, payload: JSON.parse(text) }); } };
-      try { await handler(request, response); } catch (error) { reject(error); }
+      try { const selectedHandler = url.startsWith("/api/admin/generated-content-inventory") ? (await import("../../api/admin/generated-content-inventory.ts")).default : handler; await selectedHandler(request, response); } catch (error) { reject(error); }
     });
   };
   return { rows, invoke, publication, close: publication.close };
