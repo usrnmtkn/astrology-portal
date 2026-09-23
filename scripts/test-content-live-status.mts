@@ -129,7 +129,7 @@ const astro101 = {
   sections: { packageRecord: { content_role: "education_article", review_status: "needs_review" } }
 };
 assert.equal(contentLiveStatuses([astro101])[0].live, true, "Learn-serving Astro 101 rows stay Live even with an education packageRecord.");
-assert.equal(contentLiveStatuses([astro101], [astro101], () => false)[0].live, true, "Learn does not use the publication ledger for Astro 101.");
+assert.equal(contentLiveStatuses([astro101], [astro101], () => false)[0].live, false, "Learn now uses the reader API and must honor its publication ledger.");
 assert.equal(contentLiveStatuses([{ ...astro101, status: "DRAFT" }])[0].live, false);
 for (const extra of [{ facts: { sourceStatus: "legacy" } }, { flags: ["BLOCKLIST_MATCH"], facts: { tldrStore: {} } }, { sections: { body: "Imported from approved project source material." } }, { review_state: "needs-review" }]) {
   assert.equal(contentLiveStatuses([{ ...safe, ...extra }])[0].live, false, JSON.stringify(extra));
