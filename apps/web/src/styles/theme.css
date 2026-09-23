@@ -927,7 +927,7 @@
   --aspect-row-glyph-width: calc((var(--aspect-inline-icon-size) * 3) + (var(--aspect-row-glyph-gap) * 2));
   --aspect-row-template: 78px minmax(0, 1fr) 30px;
   --aspect-row-gap: var(--card-row-gap);
-  --aspect-row-copy-gap: var(--inline-gap);
+  --aspect-row-copy-gap: calc(var(--space-1) + var(--space-1) / 2);
   --aspect-row-copy-size: var(--text-row-body-size);
   --aspect-row-copy-line: var(--leading-description);
   --aspect-row-subtitle-margin: var(--space-1);

@@ -1122,7 +1122,7 @@
 }
 
 .aspect-section .aspect-row-copy {
-  gap: var(--sp-1);
+  gap: var(--aspect-row-copy-gap);
 }
 
 .aspect-section .aspect-row-copy :is(h3, h4) {
