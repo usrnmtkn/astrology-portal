@@ -243,6 +243,10 @@ function skyAspectContentKeysFromExpected(expected: ExpectedSkyAspectFacts, targ
   return [evergreenKey, datedKey, skyAspectContentKey(expected.a, expected.aspect, expected.b)].filter(Boolean);
 }
 
+function signedStudioAspectKey(expected: ExpectedSkyAspectFacts) {
+  return `sky.aspect.${expected.a}.${expected.aspect}.${expected.b}.${expected.signA}.${expected.signB}`;
+}
+
 export function isSkyAspectRetired(first: string, aspect: string, second: string) {
   const a = canonicalContentStudioExactSkyPoint(first);
   const b = canonicalContentStudioExactSkyPoint(second);
@@ -337,8 +341,10 @@ export function skyAspectGeneratedContentKeys(options: SkyAspectContentKeyOption
   const expected = normalizedCollectiveSkyAspectFacts(options);
   const studioExpected = normalizedContentStudioExactSkyAspectFacts(options);
   const keys = expected ? skyAspectContentKeysFromExpected(expected, options.targetDate) : [];
+  if (expected?.signA && expected.signB) keys.push(signedStudioAspectKey(expected));
 
   if (studioExpected) {
+    if (studioExpected.signA && studioExpected.signB) keys.push(signedStudioAspectKey(studioExpected));
     keys.push(`sky.aspect.${studioExpected.a}.${studioExpected.aspect}.${studioExpected.b}`);
 
     if (studioExpected.a === "north-node") {
@@ -357,6 +363,15 @@ export function resolveSkyAspectGeneratedContent(options: ResolveSkyAspectConten
     return null;
   }
 
+  // New manual five-value drafts retain a named node pole. Older generated
+  // cards use the shared "nodes" identity; keep that lookup as the fallback.
+  const exact = normalizedContentStudioExactSkyAspectFacts(options);
+  for (const identity of [exact, expected]) {
+    const exactContent = identity ? options.generatedContent.get(signedStudioAspectKey(identity)) : null;
+    if (identity && exactContent && generatedSkyAspectCardPassesBoundary(exactContent, identity)) {
+      return { body: skyAspectBody(exactContent), content: exactContent, pairSource: identity.pairSource };
+    }
+  }
   const content = skyAspectContentKeysFromExpected(expected, options.targetDate)
     .map((key) => options.generatedContent.get(key))
     .find((candidate): candidate is LiveGeneratedContent => Boolean(

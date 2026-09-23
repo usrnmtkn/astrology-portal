@@ -1,5 +1,5 @@
 import { build } from 'esbuild';
-import { unlink } from 'node:fs/promises';
+import { unlink, readFile } from 'node:fs/promises';
 import { Readable } from 'node:stream';
 import { pathToFileURL, fileURLToPath } from 'node:url';
 import { createApiStore } from './calendar-review-api.mjs';
@@ -55,8 +55,8 @@ export async function createWorkflowStore(initial = [baseline, source, importedC
         if (method === 'POST') {
             const duplicate = [...store.rows.values()].find(row => row.content_key === patch.content_key && row.mode === patch.mode && row.target_date == patch.target_date);
             if (duplicate)
-                return Response.json([]);
-            const created = { ...patch, id: `new-${store.rows.size}` };
+                return String(options.headers?.prefer ?? '').includes('ignore-duplicates') ? Response.json([]) : Response.json({ message: 'duplicate identity' }, { status: 409 });
+            const created = { ...patch, id: `new-${store.rows.size}`, updated_at: new Date().toISOString() };
             store.rows.set(created.id, created);
             return Response.json([created]);
         }
@@ -77,7 +77,7 @@ export async function createWorkflowStore(initial = [baseline, source, importedC
     return { ...store, write, get calls() { return calls; }, race(fn) { beforeFinish = fn; }, fail(value) { failWriter = value; } };
 }
 if (process.argv.includes('--ipc')) {
-    const store = await createWorkflowStore();
+    const store = await createWorkflowStore(process.env.CALENDAR_REVIEW_FIXTURE ? JSON.parse(await readFile(process.env.CALENDAR_REVIEW_FIXTURE, 'utf8')) : undefined);
     const { contentLiveStatuses } = await import('../../api/_lib/content-live-status.ts');
     process.on('message', async ({ id, method, body, url }) => {
         try {

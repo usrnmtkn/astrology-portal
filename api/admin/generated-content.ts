@@ -2702,6 +2702,11 @@ async function updateGeneratedContent(req: IncomingMessage) {
     patch.review_state = isSkyPlacement ? "owner-approved-package-import-required" : null;
     patch.reviewed_at = now;
     patch.published_at = isSkyPlacement ? null : now;
+    if (!isSkyPlacement) {
+      // Manual aspect drafts carry an explicit review hold in their metadata.
+      // Clear it only after this saved version passes checks and the owner approves it.
+      patch.source_snapshot = { ...(existing.source_snapshot ?? {}), review_status: "approved" };
+    }
     if (isSkyPlacement) {
       patch.source_snapshot = {
         ...(existing.source_snapshot ?? {}),
