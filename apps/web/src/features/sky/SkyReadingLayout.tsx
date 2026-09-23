@@ -1,5 +1,7 @@
 import { createContext, useContext, useLayoutEffect, useState, type ReactNode } from "react";
-import { PageLoading } from "../../components/PageLoading";
+import { LoadingStatus } from "../../components/CardSkeleton";
+import { useMinimumLoading } from "../../hooks/useMinimumLoading";
+import { SkyPlacementListSkeleton, SkyPlacementSection } from "./SkyToday";
 
 const SummarySettled = createContext<((settled: boolean) => void) | null>(null);
 const CardsSettled = createContext<((settled: boolean) => void) | null>(null);
@@ -22,25 +24,27 @@ export function useSkyCardsSettled(settled: boolean) {
  * in parallel. After reveal, each existing content boundary owns revalidation.
  * This stores presentation readiness only, never another copy of the prose.
  */
-export function SkyReadingLayout({ persistKey, pending, failed, children }: {
+export function SkyReadingLayout({ persistKey, pending, failed, placementCount = 3, children }: {
   persistKey: string;
   pending: boolean;
   failed: boolean;
   children: ReactNode;
+  placementCount?: number;
 }) {
   const [summarySettled, setSummarySettled] = useState(false);
   const [cardsSettled, setCardsSettled] = useState(false);
   const [revealed, setRevealed] = useState(false);
   const ready = failed || !pending && summarySettled && cardsSettled;
+  const holding = useMinimumLoading(!failed && !ready && !revealed);
   useLayoutEffect(() => {
-    if (!ready) return;
+    if (!ready || holding && !failed) return;
     setRevealed(true);
-  }, [persistKey, ready]);
-  const loading = !failed && !ready && !revealed;
+  }, [persistKey, ready, holding, failed]);
+  const loading = !failed && (!ready && !revealed || holding);
   return <SummarySettled.Provider value={setSummarySettled}>
     <CardsSettled.Provider value={setCardsSettled}>
       <div className="sky-reading-layout" aria-busy={loading}>
-        {loading && <div className="sky-reading-layout__loading"><PageLoading message="Loading the sky…" /></div>}
+        {loading && <div className="sky-reading-layout__loading"><LoadingStatus>Loading the sky…</LoadingStatus><SkyPlacementSection><SkyPlacementListSkeleton count={placementCount} /></SkyPlacementSection></div>}
         <div className="sky-reading-layout__content" aria-hidden={loading || undefined}>{children}</div>
       </div>
     </CardsSettled.Provider>

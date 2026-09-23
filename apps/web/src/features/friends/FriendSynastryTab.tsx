@@ -80,7 +80,7 @@ export function FriendSynastryTab({
             {group.contacts.map((contact) => (
               <button
                 type="button"
-                className="aspect-row aspect-row-button friend-aspect-row"
+                className="aspect-row aspect-row-button friend-aspect-row is-revealing"
                 key={contact.id}
                 aria-label={`Open full entry for ${contact.title}`}
                 onClick={() => onOpenContact(contact.id)}

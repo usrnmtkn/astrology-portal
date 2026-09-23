@@ -1,3 +1,4 @@
+import { CalendarDaySkeleton } from "./features/calendar/CalendarDaySkeleton";
 import {
   defaultLocation, selectedLocationStorageKey, isLocationInput, dateInputValue, dateFromInput,
   isDateInputValue, transitDateFromUrl, getInitialTransitDate, skyDateTimeFromInput, getInitialLocation
@@ -37,6 +38,7 @@ import { skySummaryParagraphs } from "./content/skyDailySummary";
 import { calendarSeasonTransitionFactsFromSun } from "./features/calendar/calendarSeasonTransitionFacts";
 import { PublishedSkySummary } from "./features/sky/PublishedSkySummary";
 import { skySunTransition } from "./content/skySunTransition";
+import { useMinimumLoading } from "./hooks/useMinimumLoading";
 import { SkyReadingLayout, useSkyCardsSettled } from "./features/sky/SkyReadingLayout";
 import { SkyRoute } from "./routes/SkyRoute";
 import { YouRoute } from "./routes/YouRoute";
@@ -199,6 +201,7 @@ import { SKY_BODY_ORDER, skyBodyOrderIndex, transitToNatalOrbLimit } from "./ast
 import { SkyDebilityCard } from "./features/sky/SkyDebilityCard";
 import {
   SkyPlacementList,
+  SkyPlacementListSkeleton,
   SkyPlacementListItem,
   SkyTodayView
 } from "./features/sky/SkyToday";
@@ -5794,7 +5797,7 @@ function relatedAspectRowsForPlacement({
           node: (
           <button
             aria-label={`Read more about ${title}`}
-            className="article-related-aspect-row aspect-row aspect-row-button"
+            className="article-related-aspect-row aspect-row aspect-row-button is-revealing"
             onClick={() => onOpenNatalAspect(aspect)}
             type="button"
           >
@@ -5812,7 +5815,7 @@ function relatedAspectRowsForPlacement({
           node: (
           <button
             aria-label={`Read more about ${title}`}
-            className="article-related-aspect-row aspect-row aspect-row-button"
+            className="article-related-aspect-row aspect-row aspect-row-button is-revealing"
             onClick={() => onOpenSkyAspect(aspect)}
             type="button"
           >
@@ -5824,7 +5827,7 @@ function relatedAspectRowsForPlacement({
 
       if (mode === "sky") return {
         key, aspectType: aspect.type, group: rowGroup,
-        node: <a className="article-related-aspect-row aspect-row aspect-row-button"
+        node: <a className="article-related-aspect-row aspect-row aspect-row-button is-revealing"
           aria-label={`Read more about ${title}`} href={`#${skyAspectRoutePath(aspect)}${generatedAt ? `/${aspect.exactAt ? "at" : "on"}/${encodeURIComponent(aspect.exactAt ?? generatedAt)}` : ""}`}>{rowContent}</a>
       };
 
@@ -14552,7 +14555,7 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
       )}
 
       <PageLoadBoundary resetKey={`${mode}:${skyDetailRoutePath ?? ""}`}>
-      <Suspense fallback={<PageLoading message={mode === "calendar" ? "Loading calendar…" : mode === "friends" ? "Loading Friends…" : mode === "profile" ? "Loading your profile…" : "Loading page…"} />}>
+      <Suspense fallback={mode === "calendar" ? <CalendarDaySkeleton message="Loading calendar…" /> : <PageLoading message={mode === "friends" ? "Loading Friends…" : mode === "profile" ? "Loading your profile…" : "Loading page…"} />}>
       {selectedSkyDetail && (!/^sky\/(?:placement|retrograde)\//u.test(skyDetailRoutePath ?? "")
         || skyPlacementFallbackStatus === "ready" && skyDetailResolvedIdentity === skyPlacementResolvedIdentity) ? (
         <>
@@ -14649,7 +14652,7 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
                       </form>
                     )}
                   </section>
-                  <SkyReadingLayout persistKey={`${skyDate}:${location.latitude}:${location.longitude}:${location.timeZone}`}
+                  <SkyReadingLayout placementCount={skyPlacementPlanetOrder.length} persistKey={`${skyDate}:${location.latitude}:${location.longitude}:${location.timeZone}`}
                     key={`${skyDate}:${location.latitude}:${location.longitude}:${location.timeZone}`}
                     // Initial cached calculations must finish refreshing before the first reading
                     // appears; otherwise the temporary cache notice shifts all of its content.
@@ -14746,7 +14749,7 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
               {mode === "calendar" && (
                 <CalendarRoute
                   sky={sky}
-                  fallback={<PageLoading message="Loading calendar…" />}
+                  fallback={<CalendarDaySkeleton message="Loading calendar…" />}
                   generatedContent={skyGeneratedContent}
                   generatedContentStatus={calendarContentStatus}
                   skyPlacementContentStatus={skyPlacementFallbackStatus}
@@ -16479,11 +16482,10 @@ function PlacementTable({
     ),
     [displayPositions, lifeAreaFocus]
   );
-  useSkyCardsSettled(skyPlacementCardsSettled(
-    orderedPositions,
-    contentStatus,
-    skyPlacementPlanetOrder.length
-  ));
+  const cardsSettled = skyPlacementCardsSettled(orderedPositions, contentStatus, skyPlacementPlanetOrder.length);
+  const holdingCards = useMinimumLoading(!cardsSettled);
+  const cardsLoading = contentStatus !== "error" && holdingCards;
+  useSkyCardsSettled(cardsSettled && !cardsLoading);
   const aspectsByPlacement = useMemo(() => {
     const nextAspects = new Map<string, SkySnapshot["aspects"]>();
 
@@ -16503,6 +16505,8 @@ function PlacementTable({
 
     return nextAspects;
   }, [aspects]);
+
+  if (cardsLoading) return <SkyPlacementListSkeleton count={skyPlacementPlanetOrder.length} />;
 
   return (
     <SkyPlacementList>

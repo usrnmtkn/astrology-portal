@@ -54,14 +54,21 @@ for (const screen of ['sky', 'friends']) for (const width of [390, 1440]) for (c
     page.on('pageerror', error => errors.push(error.message));
     try {
       await page.goto(screen === 'sky' ? '/?date=2026-09-14#sky' : '/#friends?tab=charts', { waitUntil: 'domcontentloaded' });
-      const loader = screen === 'sky' ? page.locator('.sky-reading-layout__loading .app-loading') : page.getByRole('status').filter({ hasText: 'Loading Friends…' });
+      const loader = screen === 'sky' ? page.locator('.sky-reading-layout__loading') : page.getByRole('status').filter({ hasText: 'Loading Friends…' });
       await expect(loader).toBeVisible({ timeout: 60_000 });
-      await expect(loader).toHaveAttribute('role', 'status');
-      await expect(loader).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
-      await expect(loader).toHaveCSS('border-width', '0px');
-      const spinner = loader.locator('.loading-spinner');
+      if (screen === 'sky') {
+        await expect(loader.getByRole('status').filter({ hasText: 'Loading the sky…' })).toHaveCount(1);
+        await expect(loader.locator('.placement-table-wrap')).toHaveAttribute('aria-busy', 'true');
+        await expect(loader.locator('.planet-placement-row--sky.card-skeleton')).toHaveCount(14);
+        await expect(loader.locator('.loading-spinner')).toHaveCount(0);
+        await expect(loader.locator('.card-skeleton-bar').first()).toHaveCSS('animation-name', 'none');
+      } else {
+        await expect(loader).toHaveAttribute('role', 'status');
+        await expect(loader).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
+        await expect(loader).toHaveCSS('border-width', '0px');
+        await expectCssSpinner(loader.locator('.loading-spinner'));
+      }
       await expect(loader.locator('canvas, img')).toHaveCount(0);
-      await expectCssSpinner(spinner);
       const hiddenSpinners = page.locator('.sky-reading-layout__content[aria-hidden="true"] .loading-spinner');
       for (const hidden of await hiddenSpinners.all()) await expect(hidden).toHaveCSS('animation-name', 'none');
       const loaderBounds = await loader.boundingBox();
@@ -95,9 +102,9 @@ test('CSS loader respects reduced motion and still dismisses when the reading ar
   await page.route('**/api/content-reader', async route => { await blocked.promise; await route.fulfill({ json: readerResponse([]) }); });
   try {
     await page.goto('/#sky', { waitUntil: 'domcontentloaded' });
-    const spinner = page.locator('.sky-reading-layout__loading .loading-spinner');
-    await expect(spinner).toBeVisible({ timeout: 60_000 });
-    await expect(spinner).toHaveCSS('animation-name', 'none');
+    const skeleton = page.locator('.sky-reading-layout__loading .card-skeleton').first();
+    await expect(skeleton).toBeVisible({ timeout: 60_000 });
+    await expect(skeleton).toHaveCSS('animation-name', 'none');
     await expect(page.locator('.app-loading canvas')).toHaveCount(0);
   } finally { blocked.release(); }
   await expect(page.getByLabel('Daily sky summary')).toBeVisible({ timeout: 60_000 });

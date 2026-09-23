@@ -25,7 +25,7 @@ async function installObservation(page: Page, theme: string) {
         loading: box(document.querySelector('.sky-reading-layout__loading')),
         summary: box(summary),
         summaryBusy: summary?.getAttribute('aria-busy'),
-        transits: box(document.querySelector('[aria-label="Transits"]')),
+        transits: box(document.querySelector('.sky-reading-layout__content [aria-label="Transits"]')),
         cards: [...document.querySelectorAll('.planet-placement-row--sky')].map(el => ({
           title: el.getAttribute('aria-label'), box: box(el), busy: el.getAttribute('aria-busy'),
         })).filter(card => card.box)
