@@ -3536,25 +3536,16 @@ button.calendar-reading__toggle {
 }
 
 .calendar-stoic-card__excerpt {
-  display: -webkit-box;
-  overflow: hidden;
+  display: block;
+  overflow: visible;
   align-self: start;
   margin: 0;
   padding-top: var(--lunar-space-2);
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 4;
   color: var(--calendar-copy);
   font-family: var(--font-body);
   font-size: var(--calendar-stoic-excerpt);
   font-weight: var(--weight-regular);
   line-height: var(--leading-description);
-}
-
-/* Calendar Moon transitions are complete owner-authored units. */
-.calendar-stoic-card--moon .calendar-stoic-card__excerpt {
-  display: block;
-  overflow: visible;
-  -webkit-line-clamp: unset;
 }
 
 .calendar-stoic-card__key {
@@ -4610,12 +4601,10 @@ button.calendar-reading__toggle {
 }
 
 .calendar-day-group__excerpt {
-  display: -webkit-box;
-  overflow: hidden;
+  display: block;
+  overflow: visible;
   padding: 0 0 var(--lunar-space-4);
   color: var(--calendar-secondary);
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 3;
 }
 
 .calendar-day-group__blurb {

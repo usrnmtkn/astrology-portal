@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import {
   assertFriendTransitReadingBrief,
+  friendTransitReadingApprovedReaderText,
   friendTransitHouseLifeDomains,
   friendTransitReadingCanGenerate,
   friendTransitReadingKnowledgeIds,
@@ -9,6 +10,8 @@ import {
   friendTransitReadingRequestLock,
   validateFriendTransitReadingDraft
 } from "../api/_lib/friend-transit-reading.ts";
+import { buildFriendTransitsBrief } from "../apps/web/src/features/friends/friendTransitsBrief.ts";
+import { acceptedOwnerApprovedTransitSections } from "../apps/web/src/features/friends/transitDetailApproval.ts";
 
 const rawBrief = {
   schema: "tldr.friend-transits-brief.v1",
@@ -257,4 +260,45 @@ assert.ok(invented.issues.some((issue) => issue.code === "standing_trait_languag
 const dailyOnly = assertFriendTransitReadingBrief({ ...rawBrief, primaryThemes: [], longerCycles: [] });
 assert.equal(friendTransitReadingCanGenerate(dailyOnly), false, "V1 must fail closed without at least one content-approved personal transit.");
 
-console.log("Friend transit reading contract tests passed.");
+// A card preview must never be the only meaning source when approved detail
+// exists. Exercise client assembly, serialization, server locking and prompts.
+const fullBody = "  Complete fixture opening.\n\n" + "Full source paragraph remains available. ".repeat(180) + "\n\nExact fixture ending.  ";
+const sourceSections = acceptedOwnerApprovedTransitSections([
+  { body: fullBody, sourceKeys: ["fixture/approved"] },
+  { body: "Rejected fixture must not reach the report.", sourceKeys: ["fixture/rejected"] }
+], key => key === "fixture/approved" ? "exact_owner_approved" : "rejected");
+assert.equal(sourceSections.length, 1);
+const enrichedClient = buildFriendTransitsBrief({
+  friendName: brief.friendName, dateLabel: brief.dateLabel,
+  personalTransitGroups: [
+    { key: "short", label: "Short", transits: brief.primaryThemes.map(item => ({ ...item, summary: "Clipped preview…", readerSections: sourceSections })) },
+    { key: "long", label: "Long", transits: brief.longerCycles.map(item => ({ ...item, readerSections: sourceSections })) }
+  ],
+  bondTransits: brief.relationshipActivations,
+  houseTransits: brief.houseContext.map(item => ({ ...item, rowSummary: "Clipped house preview…", readerSections: sourceSections })),
+  dailyForecast: null, dailyDoItems: [], dailyDontItems: [], patternItems: []
+});
+const enrichedLock = friendTransitReadingRequestLock({
+  brief: JSON.parse(JSON.stringify(enrichedClient)), subjectId: "fixture-friend", targetDate: "2026-09-06"
+});
+const restored = assertFriendTransitReadingBrief(enrichedLock.facts.friendTransitsBrief);
+const readerText = friendTransitReadingApprovedReaderText(restored);
+for (const lane of [readerText.primaryThemes, readerText.longerCycles, readerText.houseContext]) {
+  assert.deepEqual(lane[0].readerSections, sourceSections, "Whole source units and source keys must survive the request and saved-job recovery.");
+}
+const richPrompt = friendTransitReadingPrompt({ brief: restored, headline: enrichedLock.headline });
+const approvedText = JSON.parse(richPrompt.split("APPROVED READER TEXT\n")[1].split("\n\nTECHNICAL EVIDENCE")[0]);
+assert.equal(approvedText.primaryThemes[0].readerSections[0].body, fullBody);
+assert.equal(approvedText.houseContext[0].readerSections[0].body, fullBody);
+assert.equal(approvedText.primaryThemes[0].summary, undefined, "Do not mix truncated previews into the complete meaning packet.");
+assert.equal(approvedText.houseContext[0].rowSummary, undefined);
+assert.ok(!richPrompt.includes("Rejected fixture"));
+for (const invalid of [[], [{ body: "", sourceKeys: ["fixture/approved"] }], [{ body: fullBody, sourceKeys: [] }]]) {
+  assert.throws(() => assertFriendTransitReadingBrief({ ...enrichedClient,
+    primaryThemes: [{ ...enrichedClient.primaryThemes[0], readerSections: invalid }]
+  }), /SOURCE_SECTIONS_INVALID/u, "Malformed complete sources cannot silently fall back to a clipped preview.");
+}
+assert.deepEqual(assertFriendTransitReadingBrief(JSON.parse(JSON.stringify(brief))), brief,
+  "Existing frozen briefs stay byte-compatible; this change does not add material to old jobs.");
+
+console.log("Friend transit reading contract and complete-source handoff tests passed.");

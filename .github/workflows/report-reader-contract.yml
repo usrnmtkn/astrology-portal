@@ -111,3 +111,10 @@ jobs:
           npx playwright test -c playwright.config.ts
           tests/visual/report-library-ui.spec.ts tests/visual/you-report-auth.spec.ts
           tests/visual/you-report-page.spec.ts tests/visual/friend-report-state.spec.ts
+      - name: Fresh built Friends complete-source request
+        env:
+          VITE_SUPABASE_URL: https://friends-qa.supabase.co
+        run: >-
+          npx playwright test -c playwright.config.ts
+          tests/visual/friends-authenticated-loading-diagnostic.spec.ts
+          --grep 'complete approved detail' --workers=1

@@ -312,3 +312,54 @@ another worker winning the claim, revoked entitlement and infrastructure backoff
 All remaining social-contract script steps after it also pass locally. This
 changes test expectations and coverage, not the runtime release policy. Hosted
 checks must still finish on the final pushed revision.
+
+## September 23: release blockers and complete Friends sources
+
+Integrated main `edb69820`. Its Calendar transition extraction fixes the earlier
+startup graph regression. Removed the now-redundant report-preparation dynamic
+import; requesting a report still awaits full-source preparation. Web and admin
+bundle budgets pass with the existing limits from main. No budget was raised by
+this follow-up.
+
+Removed Calendar Day event and Week group CSS line clamps. The existing complete-
+copy integrity gate now passes unchanged (1,880 protected multi-paragraph units,
+15 consumers). CSS/token audits pass. All 34 fresh-build Calendar, season-transition,
+Reports library and account/source-handoff browser tests pass across the suites'
+existing desktop/mobile and light/dark cases. Calendar screenshots were inspected.
+
+The source audit found that Friends still submitted truncated personal-transit
+and house-transit card previews although approved full detail was available.
+The client now carries those complete detail sections, with source keys, through
+the frozen request and server normalization. The writer's meaning packet uses
+the full sections; the combined judge receives the same locked brief, including
+those sections. New malformed source sections fail instead of silently falling
+back to previews. Legacy frozen briefs retain their original shape and meaning;
+no held job was changed. The existing source-approval filter remains authoritative.
+
+The complete-source regression verifies paragraph boundaries, opening/ending,
+exact whitespace, rejected-source exclusion, request serialization, saved-job
+recovery and writer input. A separate fresh-build authenticated browser test uses
+synthetic auth/storage, intercepts the generation endpoint before dispatch, and
+verifies that the real app's request includes the complete passage displayed in
+its detail reader. That browser check is added to report-reader CI. No real model
+or production database is used by it.
+
+Web and report API typechecks, the Content Studio API suite, repository/public-
+asset privacy scans, Friends contract/lifecycle checks and 60 strict, 60 scoped
+and 72 candidate delivery scenarios pass locally. These transport/storage fixtures
+do not establish that generated prose will pass an actual judge.
+
+Manual comparison against the exact saved material supports the Daily finding
+that a recurring theme was converted into a guaranteed recurring circumstance.
+The saved Friends house passage is visibly truncated, so its source-support
+dispute cannot establish how a complete brief would be judged. Its perfect
+factual score and unsupported-interpretation finding also contradict each other.
+The C01 development control adds a causal benefit absent from its supplied
+approved meaning. These are technical source comparisons by the implementation
+agent, not independent human calibration or owner editorial decisions. Exact
+private excerpts and hashes remain outside Git; owner labels were not changed.
+
+No provider calls, policy activation, held-job mutation, merge or deployment were
+performed. The combined record remains 42 calls and $1.833885; its call allowance
+is exhausted. Keep the PR in draft pending final-head hosted checks and separately
+authorized real verification. The judge-policy candidate remains inactive.

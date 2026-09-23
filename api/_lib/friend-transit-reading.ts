@@ -3,6 +3,7 @@ import { untraceableTransitReadingDates } from "./transit-reading-dates.js";
 import { isOrdinaryAspectWord } from "./transit-reading-aspect-claims.js";
 import { FRIEND_RELATIONSHIP_CONTEXT_RULE, friendReadingContexts, friendAspectClaims } from "./friend-reading-context.js";
 type RecordLike = Record<string, unknown>;
+type ReaderSection = { body: string; sourceKeys: string[] };
 
 export const FRIEND_TRANSIT_READING_CONTENT_TYPE = "friend_transit_reading";
 export const FRIEND_TRANSIT_READING_EVENT_TYPE = "friend-transit-reading";
@@ -29,6 +30,7 @@ export type FriendTransitReadingBrief = {
     durationLabel: string | null;
     timingRange: string;
     rowSummary: string;
+    readerSections?: ReaderSection[];
     termLabel: string;
     keywords: string[];
     house: number;
@@ -61,6 +63,7 @@ export type FriendTransitReadingPersonalTransit = {
   rangeLabel: string;
   timingLabel: string;
   summary: string;
+  readerSections?: ReaderSection[];
   orb: string;
   detailAvailable: boolean;
   evidence: {
@@ -140,6 +143,22 @@ function numberValue(value: unknown) {
   return typeof value === "number" && Number.isFinite(value) ? value : null;
 }
 
+// Old locked jobs contain previews only. Preserve that input identity; new
+// requests carry the complete approved detail units used by the reader.
+function readerSections(value: unknown): { readerSections?: ReaderSection[] } {
+  if (value === undefined) return {};
+  if (!Array.isArray(value) || value.length === 0) throw new Error("FRIEND_TRANSIT_READING_SOURCE_SECTIONS_INVALID");
+  return { readerSections: value.map((value) => {
+    const section = record(value);
+    if (typeof section?.body !== "string" || !section.body.trim()
+      || !Array.isArray(section.sourceKeys) || section.sourceKeys.length === 0
+      || !section.sourceKeys.every((key) => typeof key === "string" && key.trim())) {
+      throw new Error("FRIEND_TRANSIT_READING_SOURCE_SECTIONS_INVALID");
+    }
+    return { body: section.body, sourceKeys: [...section.sourceKeys] as string[] };
+  }) };
+}
+
 function array(value: unknown) {
   return Array.isArray(value) ? value : [];
 }
@@ -173,6 +192,7 @@ function assertPersonalTransit(value: unknown): FriendTransitReadingPersonalTran
     rangeLabel: stringValue(item.rangeLabel),
     timingLabel: stringValue(item.timingLabel),
     summary: stringValue(item.summary),
+    ...readerSections(item.readerSections),
     orb: stringValue(item.orb),
     detailAvailable: item.detailAvailable === true,
     evidence: {
@@ -227,6 +247,7 @@ export function assertFriendTransitReadingBrief(value: unknown): FriendTransitRe
       id: stringValue(item.id), contentKey: stringValue(item.contentKey), transitPlanet: stringValue(item.transitPlanet),
       title: stringValue(item.title), durationLabel: item.durationLabel == null ? null : stringValue(item.durationLabel),
       timingRange: stringValue(item.timingRange), rowSummary: stringValue(item.rowSummary), termLabel: stringValue(item.termLabel),
+      ...readerSections(item.readerSections),
       keywords: array(item.keywords).map(stringValue).filter(Boolean), house, houseLabel: stringValue(item.houseLabel), detailAvailable: true
     }];
   });
@@ -330,7 +351,7 @@ function readerTransit(item: FriendTransitReadingPersonalTransit) {
     durationLabel,
     rangeLabel,
     timingLabel,
-    summary,
+    ...(item.readerSections ? { readerSections: item.readerSections } : { summary }),
     lifeDomains: friendTransitHouseLifeDomains(item.evidence.natalHouse)
   };
 }
@@ -340,11 +361,11 @@ export function friendTransitReadingApprovedReaderText(brief: FriendTransitReadi
     daily: brief.daily,
     relationshipActivations: brief.relationshipActivations.map(({ headline, effectBody, activationBody }) => ({ headline, effectBody, activationBody })),
     primaryThemes: brief.primaryThemes.map(readerTransit),
-    houseContext: brief.houseContext.map(({ title, durationLabel, timingRange, rowSummary, termLabel, keywords, houseLabel, house }) => ({
+    houseContext: brief.houseContext.map(({ title, durationLabel, timingRange, rowSummary, readerSections, termLabel, keywords, houseLabel, house }) => ({
       title,
       durationLabel,
       timingRange,
-      rowSummary,
+      ...(readerSections ? { readerSections } : { rowSummary }),
       termLabel,
       keywords,
       houseLabel,
