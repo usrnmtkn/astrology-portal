@@ -49,9 +49,27 @@ replaced. A null reference still means missing support or a style-only finding.
 This avoids paraphrases masquerading as exact source quotations. It does not
 prove that the selected source supports the diagnosis, approve a factual claim,
 or waive the unchanged draft/owner comparison quotation checks. The legacy and
-inactive scoped schemas retain exact-quote validation. Real v1.10 provider
-verification is still pending; an offline reconstruction from a saved response
-only verifies deterministic reference resolution.
+inactive scoped schemas retain exact-quote validation. A bounded real v1.10
+Daily run accepted the initial review and reached the corrective writer and
+final review. The final response resolved source references successfully but
+failed reconciliation metadata validation; no ready report was persisted.
+Weekly and Friends were not dispatched after that stop.
+
+### Redundant change evidence (adapter v1.11, repair branch)
+
+The observed final reviewer correctly classified new quotations as introduced
+by the edit, but also repeated each `draftQuote` in `changeQuote`. The previous
+validator required null and rejected otherwise consistent accounting. An
+introduced finding now permits null or a byte-identical duplicate of its
+validated `draftQuote`. Different, invented or unchanged quotations remain
+invalid. Changed-context findings still require separate newly edited evidence;
+unresolved and previously missed findings still require null.
+
+This changes metadata acceptance only. The raw response, scores, findings,
+strict release floors and call limits are preserved. The saved real response
+still contains blocking findings after metadata validation. Offline replay is
+not a new model judgment, owner approval or successful report generation;
+release verification remains incomplete.
 
 The September 22 bounded-recovery repair is implemented on the repair branch,
 not yet deployed. You Day/Week and Friends retain four infrastructure attempts

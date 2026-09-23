@@ -22,6 +22,15 @@ assert.throws(()=>validate({...missed,reconciliation:{...missed.reconciliation,c
 const introduced={...missed,scores:{...scores,factual_traceability:3},findings:[finding("unsupported_interpretation","Corrected sentence.")],reconciliation:{...missed.reconciliation,currentFindings:[{...missed.reconciliation.currentFindings[0],origin:"introduced_by_edit"}]}};
 assert.doesNotThrow(()=>validate(introduced,prior,current));
 assert.equal(generatedReportJudgeVerdict(introduced.scores,0.85,introduced.findings),"below_threshold","A correction cannot bypass the factual gate.");
+const introducedWithQuote={...introduced,reconciliation:{...introduced.reconciliation,currentFindings:[{...introduced.reconciliation.currentFindings[0],changeQuote:"Corrected sentence."}]}};
+const exactWire=JSON.stringify(introducedWithQuote);
+assert.doesNotThrow(()=>validate(introducedWithQuote,prior,current));
+assert.equal(JSON.stringify(introducedWithQuote),exactWire,"Validation preserves the provider response.");
+assert.equal(generatedReportJudgeVerdict(introducedWithQuote.scores,0.85,introducedWithQuote.findings),"below_threshold","Redundant evidence never waives an introduced factual defect.");
+for(const changeQuote of ["Unchanged sentence.","Not in either draft","Corrected"]){
+  assert.throws(()=>validate({...introducedWithQuote,reconciliation:{...introducedWithQuote.reconciliation,currentFindings:[{...introducedWithQuote.reconciliation.currentFindings[0],changeQuote}]}},prior,current),/change quote contradicts/);
+}
+assert.throws(()=>validate({...missed,reconciliation:{...missed.reconciliation,currentFindings:[{...missed.reconciliation.currentFindings[0],changeQuote:"Unchanged sentence."}]}},prior,current),/change quote contradicts/);
 const context={...missed,reconciliation:{...missed.reconciliation,currentFindings:[{...missed.reconciliation.currentFindings[0],origin:"changed_context",changeQuote:"Corrected sentence."}]}};
 assert.doesNotThrow(()=>validate(context,prior,current));
 for(const changeQuote of [null,"Unchanged sentence.","Not in either draft"]){assert.throws(()=>validate({...context,reconciliation:{...context.reconciliation,currentFindings:[{...context.reconciliation.currentFindings[0],changeQuote}]}},prior,current),/newly edited evidence/);}
