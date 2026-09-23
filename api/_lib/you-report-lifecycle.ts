@@ -1,3 +1,5 @@
+import { SOURCE_COMPLETION_POLICY } from "./transit-reading-source-completion.js";
+import { transitReadingReleasePolicy } from "./transit-reading-release-policy.js";
 import { hasCompletedReportReview, isReportReviewHeld, isTransitReadingReviewRequiredError, REPORT_REVIEW_REQUIRED, REPORT_REVIEW_REQUIRED_MESSAGE } from "./transit-reading-review-stop.js";
 import { TRANSIT_READING_INVOCATION_BUDGET_MS, withTransitReadingCheckpoints, TransitReadingCheckpointYield, TransitReadingCheckpointStopped } from "./transit-reading-checkpoints.js";
 import { youTransitReadingRequestLock, type YouTransitReadingWindow } from "./you-transit-reading.js";
@@ -132,7 +134,16 @@ async function ensureJob(input: {
     new URLSearchParams({ entitlement_id: `eq.${input.entitlement.id}`, select: "*" })
   );
   if (existing) {
-    if (isReportReviewHeld(existing)) return existing;
+    if (isReportReviewHeld(existing)) {
+      if (transitReadingReleasePolicy() !== SOURCE_COMPLETION_POLICY || input.entitlement.status !== "active") return existing;
+      // An explicit re-request may finish from its ORIGINAL source readings.
+      // Retain the old diagnostic, counters and checkpoints; do not buy a new
+      // writer cycle or substitute a new brief for the previously held report.
+      const rows = await input.admin.update<YouReportJob>("you_report_jobs", `id=eq.${existing.id}&state=eq.failed`, {
+        state: "queued", run_after: new Date().toISOString(), locked_at: null, locked_by: null
+      });
+      return rows[0] ?? existing;
+    }
     if (["failed", "cancelled"].includes(existing.state) && input.entitlement.status === "active") {
       await input.admin.update(
         "user_generated_interpretations",
@@ -292,7 +303,9 @@ export async function runYouReportJobs(input: {
     }
     // A pre-repair retry may already have consumed its complete quality cycle.
     // Hold it before provider dispatch; never migrate a rejected draft to ready.
-    if (hasCompletedReportReview(job.last_error)) {
+    const sourceOnly = transitReadingReleasePolicy() === SOURCE_COMPLETION_POLICY
+      && (hasCompletedReportReview(job.last_error) || (job.checkpoint_attempt ?? 1) > 1);
+    if (hasCompletedReportReview(job.last_error) && !sourceOnly) {
       const message = `${REPORT_REVIEW_REQUIRED} ${REPORT_REVIEW_REQUIRED_MESSAGE}`;
       await admin.update("you_report_jobs", `id=eq.${job.id}&state=eq.running&locked_by=eq.${encodeURIComponent(input.workerId)}`, {
         state: "failed", locked_at: null, locked_by: null,
@@ -315,6 +328,7 @@ export async function runYouReportJobs(input: {
       }, () => generateYouTransitReadingForUser({
         userId: job.user_id,
         facts: job.facts,
+        sourceOnly,
         entitlementId: job.entitlement_id
       }));
       const resultId = generated.saved[0]?.id;

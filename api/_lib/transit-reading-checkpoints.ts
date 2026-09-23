@@ -4,6 +4,7 @@ import type { SupabaseReportAdmin } from "./supabase-report-admin.js";
 import type { ReportModelCallInput, ReportModelResult } from "./report-model-client.js";
 import { SCOPED_REVIEW_SCHEMAS, transitReadingReviewMode, transitReadingDraftHash, type TransitReadingReviewMode } from "./transit-reading-review-contract.js";
 import { transitReadingReleasePolicy, type ReportReleasePolicy } from "./transit-reading-release-policy.js";
+import { SOURCE_COMPLETION_POLICY } from "./transit-reading-source-completion.js";
 
 // Continue checkpointed steps while the invocation has time. Replaying saved
 // responses runs the existing fact/voice/review gates again, without billing.
@@ -105,8 +106,14 @@ export async function checkpointTransitReadingModel<T>(
   const step = scope.step++;
   if (scope.reviewMode !== transitReadingReviewMode()) throw new TransitReadingCheckpointStopped("Report review mode changed during an invocation.");
   if (scope.releasePolicy !== transitReadingReleasePolicy()) throw new TransitReadingCheckpointStopped("Report release policy changed during an invocation.");
-  const limit = scope.reviewMode === "scoped" ? 9 : 7;
-  if (step >= limit) throw new TransitReadingCheckpointStopped(`Report generation exceeded its ${limit === 7 ? "seven" : "nine"}-step limit.`);
+  const limit = scope.releasePolicy === SOURCE_COMPLETION_POLICY ? 4 : scope.reviewMode === "scoped" ? 9 : 7;
+  if (step >= limit) throw new TransitReadingCheckpointStopped(`Report generation exceeded its ${limit === 7 ? "seven" : limit === 9 ? "nine" : "four"}-step limit.`);
+  if (scope.releasePolicy === SOURCE_COMPLETION_POLICY) {
+    if (input.schemaName === "tldr_generated_report_judge") scope.judgeCalls.writing++;
+    else if (input.schemaName === `tldr_astro_${scope.family === "friend" ? "friend" : "you"}_transit_reading`) scope.writerCalls++;
+    else throw new TransitReadingCheckpointStopped("Unexpected source completion model role.");
+    if (scope.writerCalls > 2 || scope.judgeCalls.writing > 2) throw new TransitReadingCheckpointStopped("Source completion exceeded its role call limit.");
+  }
   if (scope.reviewMode === "scoped") {
     if (input.schemaName === SCOPED_REVIEW_SCHEMAS.facts) scope.judgeCalls.facts++;
     else if (input.schemaName === SCOPED_REVIEW_SCHEMAS.writing) scope.judgeCalls.writing++;

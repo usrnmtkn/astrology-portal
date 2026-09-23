@@ -173,7 +173,7 @@ assert.match(sharedGenerator, /prepareTransitReadingProductionKernel/u);
 assert.match(sharedGenerator, /callGovernedTransitReadingModel/u);
 
 const checkpointRuntime = read("api/_lib/transit-reading-checkpoints.ts");
-assert.match(checkpointRuntime, /const limit = scope.reviewMode === "scoped" \? 9 : 7/u, "The bounded checkpoint budget must allow one deterministic cleanup before the final re-judge.");
+assert.match(checkpointRuntime, /const limit = scope.releasePolicy === SOURCE_COMPLETION_POLICY \? 4 : scope.reviewMode === "scoped" \? 9 : 7/u, "Source completion permits four steps; legacy policies retain their existing bounded budgets.");
 const checkpointMigration = read("apps/web/supabase/migrations/20260916062707_transit_report_checkpoint_cleanup_step.sql");
 assert.match(checkpointMigration, /step <= 6/u, "The database checkpoint bound must admit the seventh bounded model step.");
 

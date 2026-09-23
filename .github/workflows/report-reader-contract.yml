@@ -18,6 +18,7 @@ on:
       - 'apps/web/src/features/friends/friendTransitsBrief.ts'
       - 'tests/visual/friends-authenticated-loading-diagnostic.spec.ts'
       - 'tests/visual/you-report-page.spec.ts'
+      - 'tests/visual/report-source-completion.spec.ts'
       - '.github/workflows/report-reader-contract.yml'
   push:
     branches: [main]
@@ -37,6 +38,7 @@ on:
       - 'apps/web/src/features/friends/friendTransitsBrief.ts'
       - 'tests/visual/friends-authenticated-loading-diagnostic.spec.ts'
       - 'tests/visual/you-report-page.spec.ts'
+      - 'tests/visual/report-source-completion.spec.ts'
       - '.github/workflows/report-reader-contract.yml'
 
 permissions:
@@ -75,6 +77,7 @@ jobs:
           node --import tsx scripts/test-transit-report-delivery.mjs --scoped
           node --import tsx scripts/test-transit-report-delivery.mjs --material
           node --import tsx scripts/test-transit-report-delivery.mjs --evidence-delivery
+          node scripts/test-transit-source-completion.mjs
           node scripts/test-transit-reading-scoped-migration.mjs
           node --import tsx scripts/test-you-report-paid-lifecycle.mts
           node --import tsx scripts/test-you-report-quality-floor.mts
@@ -119,7 +122,7 @@ jobs:
       - name: Fresh built Reports reader, account isolation and generation states
         run: >-
           npx playwright test -c playwright.config.ts
-          tests/visual/report-library-ui.spec.ts tests/visual/you-report-auth.spec.ts
+          tests/visual/report-library-ui.spec.ts tests/visual/report-source-completion.spec.ts tests/visual/you-report-auth.spec.ts
           tests/visual/you-report-page.spec.ts tests/visual/friend-report-state.spec.ts
       - name: Fresh built Friends complete-source request
         env:

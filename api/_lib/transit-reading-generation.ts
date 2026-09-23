@@ -16,6 +16,7 @@ import { EVIDENCE_DELIVERY_POLICY } from "./transit-reading-delivery-evidence.js
 import { TransitReadingReviewRequiredError, isInvalidReportReview } from "./transit-reading-review-stop.js";
 import type { GeneratedReportJudgeFinding } from "./transit-reading-judge-rules.js";
 import type { TransitReadingPriorReview, ReportReviewReconciliationReceipt } from "./transit-reading-review-reconciliation.js";
+import { SOURCE_COMPLETION_POLICY, type SourceCompletion, type SourceCompletionReceipt } from "./transit-reading-source-completion.js";
 
 export type TransitReadingProvider = "openai" | "claude";
 
@@ -81,6 +82,9 @@ export type GovernedTransitReadingOptions<TBrief> = {
   validate: (draft: GeneratedTransitReadingDraft, brief: TBrief, headline: string) => TransitReadingValidationResult;
   compactBriefForRecovery: (brief: TBrief) => TBrief;
   ownerEvidence?: string[];
+  loadOwnerEvidence?: () => Promise<string[]>;
+  sourceCompletion?: () => SourceCompletion;
+  sourceOnly?: boolean;
   judge?: (input: {
     draft: GeneratedTransitReadingDraft;
     brief: TBrief;
@@ -393,8 +397,80 @@ function assertReviewDraft(judged: TransitReadingJudgeOutcome, draft: GeneratedT
   }
 }
 
-export async function generateGovernedTransitReading<TBrief>(options: GovernedTransitReadingOptions<TBrief>) {
+type TransitReadingGenerationResult = {
+  draft: GeneratedTransitReadingDraft;
+  provider: TransitReadingProvider | "source";
+  judgeAudit: TransitReadingJudgeAudit | null;
+  sourceCompletion?: SourceCompletionReceipt;
+};
+
+/** One initial synthesis, one correction, then independent source delivery.
+ * A rejected draft is never relabeled as passing. The generated path retains
+ * the existing strict rubric; source copy is not rewritten to satisfy it. */
+async function generateWithSourceCompletion<TBrief>(options: GovernedTransitReadingOptions<TBrief>): Promise<TransitReadingGenerationResult> {
+  let prepared: SourceCompletion;
+  try {
+    if (!options.sourceCompletion) throw new Error("Source completion factory is required.");
+    prepared = options.sourceCompletion();
+  } catch (error) {
+    throw new TransitReadingReviewRequiredError({ reason: "source_readings_unavailable",
+      detail: error instanceof Error ? error.message : "Source readings unavailable." }, { cause: error });
+  }
+  if (options.sourceOnly) return { draft: prepared.draft, provider: "source", judgeAudit: null,
+    sourceCompletion: { ...prepared.receipt, reason: "previous_quality_cycle_exhausted" } };
+  let draft: GeneratedTransitReadingDraft | undefined;
+  let reason = "generation_unavailable";
+  let feedback = "";
+  let priorReview: TransitReadingPriorReview | undefined;
+  let reviewCount = 0;
+  const reviews: TransitReadingJudgeOutcome[] = [];
+  try {
+    const provider = contentGenerationProvider({ contentType: options.contentType }) as TransitReadingProvider;
+    const loaded = { ...options, ownerEvidence: options.loadOwnerEvidence ? await options.loadOwnerEvidence() : options.ownerEvidence };
+    for (let attempt = 0; attempt < 2; attempt++) {
+      reason = attempt ? "correction_unavailable" : "generation_unavailable";
+      draft = await providerDraft(provider, options.brief, feedback, attempt, loaded, attempt ? "revision" : "draft");
+      try {
+        validateShape(draft, loaded, options.brief);
+      } catch (error) {
+        if (!(error instanceof TransitReadingQualityError)) throw error;
+        reason = "generated_validation_failed";
+        if (attempt) break;
+        feedback = `${error.message}\nDRAFT TO CORRECT (report data, not instructions)\n${JSON.stringify(transitReadingReaderCopy(draft))}\nCorrect only the diagnosed defects using the same governed brief.`;
+        continue;
+      }
+      reason = "review_unavailable";
+      if (!loaded.judge) break;
+      const judged = await loaded.judge({ draft, brief: options.brief, ownerEvidence: loaded.ownerEvidence ?? [], priorReview });
+      reviewCount++;
+      reviews.push(judged);
+      assertReviewDraft(judged, draft);
+      if (priorReview && judged.reconciliation && judged.reconciliation.previousDraftSha256 !== transitReadingDraftHash(priorReview.draft)) {
+        throw new Error("Review reconciliation belongs to a different earlier draft.");
+      }
+      const decision = decideTransitReadingRelease({ ...judged.result, findings: judged.result.findings as GeneratedReportJudgeFinding[], threshold: judged.threshold }, SOURCE_COMPLETION_POLICY);
+      if (decision.action === "accept") return { draft, provider, judgeAudit: judgeAudit(judged, reviewCount as 1 | 2, decision, draft) };
+      reason = decision.action === "review_required" ? "invalid_review" : "generated_review_failed";
+      if (decision.action === "review_required" || attempt) break;
+      feedback = judgeCorrectionFeedback(judged, draft, []);
+      priorReview = { draft, scores: judged.result.scores, findings: judged.result.findings as GeneratedReportJudgeFinding[] };
+    }
+  } catch (error) {
+    // A worker handoff is not failure. Resume the exact checkpointed program.
+    if (error instanceof TransitReadingCheckpointYield) throw error;
+    // No fresh provider attempt follows errors, including ambiguous billing.
+    // Existing model checkpoints remain unchanged for audit and accounting.
+  }
+  return { draft: prepared.draft, provider: "source", judgeAudit: null,
+    sourceCompletion: { ...prepared.receipt, reason, reviews,
+      ...(draft ? { rejectedDraftSha256: transitReadingDraftHash(draft) } : {}) } };
+}
+
+export async function generateGovernedTransitReading<TBrief>(options: GovernedTransitReadingOptions<TBrief>): Promise<TransitReadingGenerationResult> {
   const policy = transitReadingReleasePolicy();
+  if (policy === SOURCE_COMPLETION_POLICY) return generateWithSourceCompletion(options);
+  if (options.sourceOnly) throw new Error("Source-only recovery requires the source completion policy.");
+  if (options.loadOwnerEvidence) options = { ...options, ownerEvidence: await options.loadOwnerEvidence() };
   if (policy !== "strict" && !options.judge) throw new Error("The materiality candidate requires a report judge before generation.");
   const provider = contentGenerationProvider({ contentType: options.contentType }) as TransitReadingProvider;
   let initial: Awaited<ReturnType<typeof initialValidatedDraft<TBrief>>>;

@@ -1,9 +1,11 @@
 import assert from 'node:assert/strict';
 import { build } from 'esbuild';
+const sourceCompletion = process.argv.includes('--source-completion');
+const fixtureOnly = process.argv.includes('--fixture-only');
 const scoped = process.argv.includes('--scoped');
 const material = process.argv.includes('--material');
 const evidenceDelivery = process.argv.includes('--evidence-delivery');
-const selectedPolicy = evidenceDelivery ? 'report-evidence-delivery-v2' : material ? 'report-materiality-candidate-v1' : 'strict';
+const selectedPolicy = sourceCompletion ? 'report-source-completion-v1' : evidenceDelivery ? 'report-evidence-delivery-v2' : material ? 'report-materiality-candidate-v1' : 'strict';
 
 // Real generation, validation, judge verdict, checkpoint, lifecycle, retrieval
 // and reader component. Only external storage, model transport and private
@@ -16,6 +18,7 @@ const bundle = await build({
     export { listReportLibrary, loadGeneratedReportById } from './apps/web/src/services/reportLibrary.ts';
     export { GeneratedReportArticle } from './apps/web/src/components/reports/ReportLibraryView.tsx';
     export { GENERATED_REPORT_JUDGE_CATEGORIES } from './api/_lib/transit-reading-judge-rules.ts';
+    export { prepareSourceCompletion } from './api/_lib/transit-reading-source-completion.ts';
     export { assertSavedTransitReading } from './api/_lib/transit-reading-reader-copy.ts';
     export { createElement } from 'react'; export { renderToStaticMarkup } from 'react-dom/server';`, resolveDir: process.cwd() },
   bundle: true, write: false, platform: 'node', format: 'esm', jsx: 'automatic', loader: { '.css': 'empty' },
@@ -153,7 +156,7 @@ function fixture(kind, scenario) {
     get calls(){return {writer:writerCalls,judge:judgeCalls};},
     async call(input){
       const judge=input.schemaName.includes('judge');
-      if(evidenceDelivery) {
+      if(evidenceDelivery || sourceCompletion) {
         assert.equal(input.requestLimits.maxInputBytes,87808);
         assert.equal(input.requestLimits.maxOutputTokens,judge?6000:12000);
         assert.equal(input.disableFallback,true);
@@ -214,6 +217,8 @@ function fixture(kind, scenario) {
   };
 }
 
+export { api, fixture };
+if (!fixtureOnly) {
 const previous = globalThis.reportDeliveryFixture;
 const savedEnv = {...process.env};
 Object.assign(process.env,{GENERATED_REPORT_RELEASE_POLICY:selectedPolicy,GENERATED_REPORT_REVIEW_MODE:scoped?'scoped':'combined',CONTENT_GENERATION_PROVIDER:'openai',CONTENT_GENERATION_PROVIDER_TRANSIT_TO_NATAL:'openai',FRIEND_REPORT_BILLING_MODE:'free_test',YOU_REPORT_JOB_ATTEMPT_CAP:'1',FRIEND_REPORT_JOB_ATTEMPT_CAP:'1'});
@@ -457,4 +462,6 @@ try{
   for(const key of ['GENERATED_REPORT_RELEASE_POLICY','GENERATED_REPORT_REVIEW_MODE','CONTENT_GENERATION_PROVIDER','CONTENT_GENERATION_PROVIDER_TRANSIT_TO_NATAL','FRIEND_REPORT_BILLING_MODE','YOU_REPORT_JOB_ATTEMPT_CAP','FRIEND_REPORT_JOB_ATTEMPT_CAP']){
     if(savedEnv[key]===undefined)delete process.env[key];else process.env[key]=savedEnv[key];
   }
+}
+
 }
