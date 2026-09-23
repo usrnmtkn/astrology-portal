@@ -14,6 +14,9 @@ on:
       - 'apps/web/src/services/reportLibrary.ts'
       - 'apps/web/src/App.tsx'
       - 'apps/web/src/features/you/**'
+      - 'apps/web/src/features/friends/ManualChartsPanel.tsx'
+      - 'apps/web/src/features/friends/friendTransitsBrief.ts'
+      - 'tests/visual/friends-authenticated-loading-diagnostic.spec.ts'
       - 'tests/visual/you-report-page.spec.ts'
       - '.github/workflows/report-reader-contract.yml'
   push:
@@ -30,6 +33,9 @@ on:
       - 'apps/web/src/services/reportLibrary.ts'
       - 'apps/web/src/App.tsx'
       - 'apps/web/src/features/you/**'
+      - 'apps/web/src/features/friends/ManualChartsPanel.tsx'
+      - 'apps/web/src/features/friends/friendTransitsBrief.ts'
+      - 'tests/visual/friends-authenticated-loading-diagnostic.spec.ts'
       - 'tests/visual/you-report-page.spec.ts'
       - '.github/workflows/report-reader-contract.yml'
 
