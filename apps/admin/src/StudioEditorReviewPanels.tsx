@@ -16,7 +16,7 @@ export default function StudioEditorReviewPanels({ isPackageDraft, articleSaveSt
       <StudioMemoryFeedback key={row.content_key} contentKey={row.content_key} credential={credential}
         revision={row.updated_at} unsaved={unsaved || Boolean(articleSaveState && articleSaveState !== 'saved')} />
     </Suspense>}
-    {!isPackageDraft && <ReviewWorkflowPanel {...review}
+    {!isPackageDraft && <ReviewWorkflowPanel {...review} checkInSaveBar
       onCheck={() => onWritingAction('recheck')} onGenerate={() => onWritingAction('generate')} />}
   </>;
 }

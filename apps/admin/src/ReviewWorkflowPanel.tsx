@@ -13,18 +13,21 @@ type Row = ReviewableContent & {
     updated_at?: string | null;
     headline?: string | null;
 };
-export default function ReviewWorkflowPanel({ row, unsaved, busy, onCheck, onGenerate, credential = '' }: {
+export default function ReviewWorkflowPanel({ row, unsaved, busy, onCheck, onGenerate, credential = '', checkInSaveBar = false }: {
     row: Row;
     unsaved: boolean;
     busy: boolean;
     onCheck: () => void;
     onGenerate: () => void;
     credential?: string;
+    checkInSaveBar?: boolean;
 }) {
     const [verification, setVerification] = useState(0);
     const source = isContentStudioReferenceSource(row.content_key, row.source_snapshot ?? {});
     const sky = ["sky_aspect", "sky_placement"].includes(row.block_type ?? "");
     const issues = skyWritingIssues(row);
+    const findings = row.source_snapshot?.skyAspectVoiceLint?.findings;
+    const advisories = Array.isArray(findings) ? findings.filter((finding: any) => finding.severity === "note" && typeof finding.reason === "string") : [];
     const history = row.source_snapshot?.studioRevisionHistory;
     const aspects = /^sky\.aspect\.([^.]+)\.([^.]+)\.([^.]+)\./.exec(row.content_key);
     const placement = /^sky\.placement\.base\.([^.]+)\.([^.]+)$/.exec(row.content_key);
@@ -52,8 +55,9 @@ export default function ReviewWorkflowPanel({ row, unsaved, busy, onCheck, onGen
       {sky && <div className="admin-review-status-checks">
         <p>Writing checks: {unsaved ? "Save changes before checking" : issues.length ? "Needs attention" : row.status === "LIVE" ? "Passed" : "Passed; awaiting your approval"}</p>
         {!unsaved && issues.length > 0 && <ul>{issues.map(issue => <li key={issue}>{issue}</li>)}</ul>}
+        {!unsaved && row.source_snapshot?.studioWritingCheck && advisories.length > 0 && <ul>{advisories.map((finding: any) => <li key={finding.term}>{finding.reason}</li>)}</ul>}
         {row.source_snapshot?.studioWritingError && <p role="alert">{String(row.source_snapshot.studioWritingError)}</p>}
-        {row.status !== "LIVE" && row.status !== "ARCHIVED" && <StudioButton type="button" disabled={busy || unsaved} onClick={row.body?.trim() ? onCheck : onGenerate}>
+        {row.status !== "LIVE" && row.status !== "ARCHIVED" && (!checkInSaveBar || !row.body?.trim()) && <StudioButton type="button" disabled={busy || unsaved} onClick={row.body?.trim() ? onCheck : onGenerate}>
           {busy ? "Working…" : row.body?.trim() ? "Run writing checks" : "Generate draft"}
         </StudioButton>}
         <p>Writing checks inspect your saved text without rewriting it. Your approval remains a separate action.</p>

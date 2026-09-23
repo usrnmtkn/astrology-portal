@@ -595,6 +595,7 @@ function fromRow(
     id: row.id,
     contentKey: row.content_key,
     surface: row.surface,
+    status: row.status ?? undefined,
     mode: row.mode,
     eventType: row.event_type,
     targetDate: row.target_date,

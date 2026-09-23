@@ -19,6 +19,12 @@ export function skyWritingIssues(row: ReviewableContent): string[] {
     const issues: string[] = [];
     if (!row.body?.trim())
         issues.push("Add the missing writing, then save the draft.");
+    // Saving an edit explicitly invalidates its check. Historical findings refer
+    // to the previous body and must not be presented as findings on this version.
+    if (snapshot.studioWritingCheck === null) {
+        issues.push("Run writing checks on this saved version before approving it. Your review is the final editorial decision.");
+        return issues;
+    }
     if (lint?.score !== 3 || lint?.fails !== 0) {
         const reasons = (Array.isArray(lint?.findings) ? lint.findings : [])
             .filter((finding: any) => finding.severity === "fail" && typeof finding.reason === "string")

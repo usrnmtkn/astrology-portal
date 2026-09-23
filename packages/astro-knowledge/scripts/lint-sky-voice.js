@@ -87,7 +87,7 @@ function closerSentenceCount(sentences) {
   return Math.max(count, 1);
 }
 
-function lintCard(text, { mode = "collective-aspect-card" } = {}) {
+function lintCard(text, { mode = "collective-aspect-card", paragraphCountAdvisory = false } = {}) {
   const findings = [];
   const sentences = (text.match(/[^.!?]+[.!?]+/g) || []).map((s) => s.trim());
   const placementCloserCount = mode === PLACEMENT_MODE ? closerSentenceCount(sentences) : 0;
@@ -125,12 +125,18 @@ function lintCard(text, { mode = "collective-aspect-card" } = {}) {
     }
   }
 
-  if (mode !== PLACEMENT_TOPPER_MODE && /\b(?:you tend to|you always|you usually|you have always|your personality)\b/i.test(text)) {
+  // "A document you usually review" describes an existing routine inside a
+  // relative clause; it does not claim that the event defines the reader.
+  // Keep direct habitual claims blocked, including clauses after punctuation
+  // and explicit "means/shows/suggests" attribution.
+  const standingPattern = text.match(/\b(?:you tend to|you always|you have always|your personality)\b/i)
+    || text.match(/(?:^\s*|[.!?;:,\n]\s*|\b(?:and|but|so|because|means(?:\s+that)?|shows(?:\s+that)?|suggests(?:\s+that)?)\s+)(you usually)\b/i);
+  if (mode !== PLACEMENT_TOPPER_MODE && standingPattern) {
     findings.push({
       severity: "fail",
       source: "reader-boundary",
       term: "standing-pattern second person",
-      match: text.match(/\b(?:you tend to|you always|you usually|you have always|your personality)\b/i)?.[0] || "",
+      match: standingPattern[1] || standingPattern[0],
       reason: "Calendar may address the reader directly, but it must not turn a temporary collective event into a natal standing pattern."
     });
   }
@@ -222,11 +228,13 @@ function lintCard(text, { mode = "collective-aspect-card" } = {}) {
   const expectedParagraphs = mode === PLACEMENT_TOPPER_MODE ? 1 : 2;
   if (paras !== expectedParagraphs) {
     findings.push({
-      severity: "fail",
+      severity: paragraphCountAdvisory ? "note" : "fail",
       source: "shape",
       term: "paragraph-count",
       match: `${paras} paragraphs`,
-      reason: `the card template is exactly ${expectedParagraphs === 1 ? "one paragraph" : "two paragraphs"}`
+      reason: paragraphCountAdvisory
+        ? "The suggested card template has two paragraphs. Paragraph breaks are your editorial choice."
+        : `the card template is exactly ${expectedParagraphs === 1 ? "one paragraph" : "two paragraphs"}`
     });
   }
   // stacked ending: 3+ short sentences piled at the close. The template wants

@@ -11,7 +11,9 @@ export { studioSkyIdentity } from "./sky-studio-identity.js";
 export async function runStudioSkyWriting(key: string, action: "generate" | "recheck", body: string, source?: any): Promise<Partial<SkyAspectCardResult> & { memoryReceipt?: ReturnType<typeof buildSkyWritingMemory>["receipt"] }> {
     const identity = studioSkyIdentity(key);
     const mode = identity.kind === "aspect" ? "collective-aspect-card" : "collective-placement-card";
-    const lint = lintModule.lintCard(body, { mode });
+    // Owner review controls structure (August 25 ruling). Preserve saved aspect
+    // paragraphs; generated drafts retain their existing template validation.
+    const lint = lintModule.lintCard(body, { mode, paragraphCountAdvisory: action === "recheck" && identity.kind === "aspect" });
     if (action === "recheck")
         return { text: body, lint, judge: null };
     // Read live corrections before any paid work. Failure is explicit, never an empty-success fallback.

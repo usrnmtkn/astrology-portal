@@ -1,5 +1,5 @@
 import { build } from 'esbuild';
-import { unlink } from 'node:fs/promises';
+import { unlink, readFile } from 'node:fs/promises';
 import { Readable } from 'node:stream';
 import { pathToFileURL, fileURLToPath } from 'node:url';
 import { createApiStore } from './calendar-review-api.mjs';
@@ -7,8 +7,9 @@ export const original = 'Fixture complete opening. Fixture complete final senten
 export const baseline = { id: 'sky-fixture', content_key: 'sky.aspect.chiron.sextile.nodes.taurus.aquarius', status: 'DRAFT', lane: 'serving', review_state: 'sky-voice-needs-review', block_type: 'sky_aspect', body: original, summary: '', headline: 'Chiron sextile North Node', surface: 'sky', mode: 'feed', target_date: null, provider: 'owner-resource-review', source_snapshot: { sourceType: 'owner-resource-review' }, updated_at: '2026-09-10T12:00:00Z' };
 export const source = { ...baseline, id: 'source-fixture', content_key: 'source/sky-aspect-pair/sun-chiron', block_type: 'fallback_hook', status: 'REVIEWED', lane: 'reference', review_state: null, headline: 'Sun-Chiron', body: 'Fixture source original.', source_snapshot: { sourceType: 'owner-resource-review', pairKey: 'sun-chiron', content_role: 'fallback_source' } };
 export const importedComposite = { ...source, id: 'composite-reference', content_key: 'ms/composite/planet/saturn', headline: 'Ms / Composite / Planet / Saturn', status: 'DRAFT', lane: 'serving', block_type: 'relationship', provider: 'manual', source_snapshot: {sourceFile:'authored-library.generated.json'} };
-export async function createWorkflowStore(initial = [baseline, source, importedComposite]) {
+export async function createWorkflowStore(initial = [baseline, source, importedComposite], { realRecheck = false } = {}) {
     const store = await createApiStore(initial);
+    const checkSavedWriting = realRecheck ? (await import('../../api/_lib/sky-studio-writing.ts')).runStudioSkyWriting : null;
     let beforeFinish = null, failWriter = false, calls = 0;
     // The real service is swapped only in this test build; runtime has no injection switch.
     globalThis.__reviewTestWriter = async (_key, action, body, pair) => {
@@ -18,6 +19,7 @@ export async function createWorkflowStore(initial = [baseline, source, importedC
         const text = action === 'recheck' ? body : original;
         beforeFinish?.();
         beforeFinish = null;
+        if (action === 'recheck' && checkSavedWriting) return checkSavedWriting(_key, action, body);
         return { text, lint: { score: 3, fails: 0, findings: [] }, judge: null, provider: 'fixture-writer', pair,
             ...(action === 'generate' ? {memoryReceipt: {schema: 'tldr-sky-writing-memory/v1', promptSha256: 'fixture-hash', selected: []}} : {}) };
     };
@@ -55,8 +57,8 @@ export async function createWorkflowStore(initial = [baseline, source, importedC
         if (method === 'POST') {
             const duplicate = [...store.rows.values()].find(row => row.content_key === patch.content_key && row.mode === patch.mode && row.target_date == patch.target_date);
             if (duplicate)
-                return Response.json([]);
-            const created = { ...patch, id: `new-${store.rows.size}` };
+                return String(options.headers?.prefer ?? '').includes('ignore-duplicates') ? Response.json([]) : Response.json({ message: 'duplicate identity' }, { status: 409 });
+            const created = { ...patch, id: `new-${store.rows.size}`, updated_at: new Date().toISOString() };
             store.rows.set(created.id, created);
             return Response.json([created]);
         }
@@ -77,7 +79,7 @@ export async function createWorkflowStore(initial = [baseline, source, importedC
     return { ...store, write, get calls() { return calls; }, race(fn) { beforeFinish = fn; }, fail(value) { failWriter = value; } };
 }
 if (process.argv.includes('--ipc')) {
-    const store = await createWorkflowStore();
+    const store = await createWorkflowStore(process.env.CALENDAR_REVIEW_FIXTURE ? JSON.parse(await readFile(process.env.CALENDAR_REVIEW_FIXTURE, 'utf8')) : undefined, { realRecheck: process.env.STUDIO_REAL_RECHECK === 'true' });
     const { contentLiveStatuses } = await import('../../api/_lib/content-live-status.ts');
     process.on('message', async ({ id, method, body, url }) => {
         try {

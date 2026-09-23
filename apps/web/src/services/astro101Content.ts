@@ -6,7 +6,7 @@ import {
   astro101KindFromSections,
   astro101PageIsServable,
   astro101RelatedFromFacts,
-  astro101SlugFromFacts,
+  astro101ResolvedReaderPath,
   ASTRO_101_KEY_PREFIX,
   isAstro101Kind,
   type Astro101Block,
@@ -40,9 +40,9 @@ type Astro101Row = {
 
 function pageFromRow(row: Astro101Row): Astro101Page | null {
   const filled = fillAstro101EphemerisSlots(row);
-  const slug = astro101SlugFromFacts(filled.facts);
+  const slug = astro101ResolvedReaderPath(filled.content_key, filled.facts);
   const headline = (filled.headline ?? "").trim();
-  if (!astro101PageIsServable(filled)) return null;
+  if (!astro101PageIsServable({ ...filled, facts: { slug } })) return null;
   const kindFromKey = filled.content_key.match(/^education\/astro-101\/([^/]+)\//u)?.[1];
   const kind = astro101KindFromSections(filled.sections) || (isAstro101Kind(kindFromKey) ? kindFromKey : "article");
   return {
@@ -64,8 +64,7 @@ export async function loadLiveAstro101Pages(): Promise<Astro101Page[]> {
   const { data, error } = await loadReaderRows({ prefix: ASTRO_101_KEY_PREFIX, surfaces: ["education"] });
 
   if (error) {
-    console.warn("Astro 101 pages failed to load.", error);
-    return [];
+    throw error;
   }
 
   return (data ?? [])

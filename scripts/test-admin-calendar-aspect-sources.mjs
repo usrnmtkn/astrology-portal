@@ -6,6 +6,8 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import {
   calendarAspectDisplayTitle,
+  calendarAspectDraft,
+  calendarAspectIdentityKeys,
   calendarAspectMatchesSelection,
   calendarAspectSearchMatches,
   calendarAspectSelectionOptions,
@@ -131,3 +133,27 @@ assert.match(dashboardSource, /normalizeCalendarAspectSearch|calendarAspectSearc
 assert.match(dashboardSource, /aria-label="Calendar aspect planet or point"/u);
 assert.match(dashboardSource, /aria-label="Calendar aspect type"/u);
 assert.match(dashboardSource, /aria-label="Other calendar aspect planet or point"/u);
+
+const exact = { first: "moon", firstSign: "aquarius", aspect: "square", second: "venus", secondSign: "scorpio" };
+const draft = calendarAspectDraft(exact);
+assert.equal(draft.contentKey, "sky.aspect.moon.square.venus.aquarius.scorpio");
+assert.equal(draft.headline, "Moon in Aquarius Square Venus in Scorpio");
+assert.equal(draft.body, "");
+assert.equal(draft.summary, "");
+assert.equal(draft.status, "DRAFT");
+assert.equal(draft.sourceSnapshot.review_status, "needs_review");
+assert.equal(draft.sourceSnapshot.activeWindows, undefined);
+assert.deepEqual(calendarAspectDraft({ first: "venus", firstSign: "scorpio", aspect: "square", second: "moon", secondSign: "aquarius" }), draft);
+for (const field of Object.keys(exact)) assert.equal(calendarAspectDraft({ ...exact, [field]: "" }), null);
+assert.equal(calendarAspectDraft({ ...exact, first: "venus" }), null);
+assert.equal(calendarAspectDraft({ ...exact, firstSign: "unknown" }), null);
+assert.equal(calendarAspectDraft({ ...exact, first: "unknown" }), null);
+assert.equal(calendarAspectDraft({ ...exact, aspect: "unknown" }), null);
+assert.deepEqual(calendarAspectIdentityKeys(exact), [
+  "sky.aspect.moon.square.venus.aquarius.scorpio",
+  "sky-card/moon/aquarius/square/venus/scorpio",
+  "fallback-hook/sky-aspect-sign/moon/aquarius/square/venus/scorpio",
+  "sky.aspect.venus.square.moon.scorpio.aquarius",
+  "sky-card/venus/scorpio/square/moon/aquarius",
+  "fallback-hook/sky-aspect-sign/venus/scorpio/square/moon/aquarius"
+]);

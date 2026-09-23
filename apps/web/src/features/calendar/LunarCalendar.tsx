@@ -918,6 +918,10 @@ function liveCalendarEventContent(
     });
     if (calendarPublication) return calendarPublication.content;
 
+    const signedDraft = resolveSkyAspectGeneratedContent({ generatedContent, first, second, aspect: event.aspect,
+      firstSign: event.fromSign ?? "", secondSign: event.toSign ?? "", targetDate: event.dateKey || event.startsAt.slice(0, 10) });
+    if (signedDraft?.content.sourceSnapshot?.contentType === "owner-authored-sky-aspect") return signedDraft.content;
+
     const exactStudio = resolveSkyAspectContentStudioExact({
       generatedContent,
       first,
@@ -932,15 +936,7 @@ function liveCalendarEventContent(
       return exactStudio.content;
     }
 
-    return resolveSkyAspectGeneratedContent({
-      generatedContent,
-      first,
-      second,
-      aspect: event.aspect,
-      firstSign: event.fromSign ?? "",
-      secondSign: event.toSign ?? "",
-      targetDate: event.dateKey || event.startsAt.slice(0, 10)
-    })?.content ?? null;
+    return signedDraft?.content ?? null;
   }
 
   for (const contentKey of calendarEventGeneratedContentKeys(event)) {
@@ -1331,10 +1327,27 @@ export function normalizeCalendarEventSurface(
           tier: "content-studio-exact-sky-aspect-v1"
         }
       : null;
+    const signedStudioResolved = resolveSkyAspectGeneratedContent({
+      generatedContent: generatedContent ?? (content ? new Map([[content.contentKey, content]]) : new Map()),
+      first,
+      second,
+      aspect: event.aspect,
+      firstSign: event.fromSign ?? "",
+      secondSign: event.toSign ?? "",
+      targetDate: event.dateKey || event.startsAt.slice(0, 10)
+    });
+    const signedStudio = signedStudioResolved?.content.sourceSnapshot?.contentType === "owner-authored-sky-aspect"
+      ? {
+          body: signedStudioResolved.body,
+          layer: "authored" as const,
+          sourceKeys: [signedStudioResolved.content.contentKey],
+          tier: "content-studio-signed-sky-aspect-v1"
+        }
+      : null;
     const selected = selectSkyAspectCopyByPrecedence<CalendarSkyAspectCandidate>({
       composed,
       signSpecific: packageCandidates.signSpecific,
-      exact: studioExact ?? exact,
+      exact: signedStudio ?? studioExact ?? exact,
       phrasebook: packageCandidates.phrasebook,
       generated
     });

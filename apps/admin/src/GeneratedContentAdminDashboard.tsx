@@ -179,6 +179,8 @@ import {
   type NatalAspectSourceDraft
 } from "./natalAspectSources";
 import {
+  calendarAspectDraft,
+  calendarAspectIdentityKeys,
   calendarAspectMatchesSelection,
   calendarAspectSearchMatches,
   calendarAspectSelectionOptions,
@@ -2592,6 +2594,10 @@ function draftSourceSnapshot(draft: AdminDraft) {
       contentSystem: "cms-surface-override",
       contentLevel: "owner-authored"
     };
+  }
+
+  if (draft.blockType === "sky_aspect" && draft.sourceSnapshot?.contentType === "owner-authored-sky-aspect") {
+    return { ...draft.sourceSnapshot, contentSystem: "authored", contentLevel: "owner-authored" };
   }
 
   return {
@@ -5974,6 +5980,48 @@ export function GeneratedContentAdminDashboard() {
     scrollEditorToTop();
   }
 
+  async function openSelectedCalendarAspect() {
+    setIsCreateMenuOpen(false);
+    const nextDraft = calendarAspectDraft(calendarAspectSelection);
+    if (!nextDraft) {
+      setMessage("Choose two different planets, their signs, and an aspect to add an exact write-up. You can still browse with any filters.");
+      return;
+    }
+    setIsLoading(true);
+    try {
+      // Look beyond the visible list: search, status and pagination can hide a saved identity.
+      const editorSession = editorSessionRef.current;
+      const keys = calendarAspectIdentityKeys(calendarAspectSelection);
+      const payload = await adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[] }>(studioInventoryDocumentsPath(keys), secret);
+      if (editorSession !== editorSessionRef.current) return;
+      if (!payload.ok || !Array.isArray(payload.rows)) throw new Error("Could not check existing write-ups. Try again before creating a draft.");
+      const existing = [...payload.rows, ...rows].find(row => keys.includes(row.content_key));
+      if (existing) {
+        if (await openRow(existing)) setMessage("Opened the existing exact write-up.");
+        return;
+      }
+      if (draft && (JSON.stringify(draft) !== editorBaselineRef.current && JSON.stringify(draft) !== editorSavedInputRef.current || hasPendingArticleChanges())
+        && !window.confirm("Discard the unsaved changes in this editor?")) return;
+      if (document.activeElement instanceof HTMLElement) editorReturnFocusRef.current = document.activeElement;
+      setSelectedRowId(null);
+      setEditorSourceRow(null);
+      setCompositionEditorContext(null);
+      setSkyWritingContext({});
+      setSkyWriteupParentId(null);
+      setSkyArticleEditionForm(null);
+      setSkyArticleEditor(null);
+      editorSessionRef.current += 1;
+      skyArticleAutosaveSequenceRef.current += 1;
+      skyArticleWorkspaceAutosaveSequenceRef.current += 1;
+      setEditorSaveError("");
+      rememberSavedDraft(nextDraft);
+      setMessage("Add your write-up, then save the draft for review.");
+      scrollEditorToTop();
+    } catch (error) {
+      setMessage(`Could not open this write-up. ${dashboardErrorMessage(error)}`);
+    } finally { setIsLoading(false); }
+  }
+
   function openSourceDraft(item: AdminSourceDraft) {
     const saved = rows.find((row) => row.content_key === item.id || row.content_key === item.canonicalId);
     if (saved) {
@@ -6656,6 +6704,9 @@ export function GeneratedContentAdminDashboard() {
   const natalChartWorkspaceActive = activePage === "content" && categoryFilter === "Natal Chart";
   const natalAspectWorkspaceActive = activePage === "content" && categoryFilter === "Natal Aspects";
   const calendarAspectWorkspaceActive = activePage === "content" && categoryFilter === "Calendar Aspects";
+  const selectedCalendarAspectDraft = calendarAspectWorkspaceActive ? calendarAspectDraft(calendarAspectSelection) : null;
+  const selectedCalendarAspectKeys = selectedCalendarAspectDraft ? calendarAspectIdentityKeys(calendarAspectSelection) : [];
+  const selectedCalendarAspectExists = selectedCalendarAspectDraft && rows.some(row => selectedCalendarAspectKeys.includes(row.content_key));
   const lunarWorkspaceActive = activePage === "calendarWriteups" && calendarWriteupWorkspaceView === "daily-sky";
   const inventoryLoading = loadState === "loading"
     || (loadState === "loaded" && !allRowsLoaded && !loadError);
@@ -6893,10 +6944,10 @@ export function GeneratedContentAdminDashboard() {
             },
             {
               key: "content",
-              label: "Create content row",
-              description: "Add a saved row to the library",
+              label: calendarAspectWorkspaceActive ? "Add aspect write-up" : "Create content row",
+              description: calendarAspectWorkspaceActive ? "Write for the selected planets and signs" : "Add a saved row to the library",
               icon: BookOpenText,
-              onSelect: () => handleCreateAction("content", "Create content row opened.")
+              onSelect: () => calendarAspectWorkspaceActive ? void openSelectedCalendarAspect() : handleCreateAction("content", "Create content row opened.")
             },
             {
               key: "vocabulary",
@@ -7161,6 +7212,20 @@ export function GeneratedContentAdminDashboard() {
                     </section>
                   )}
                   {renderContentFilters()}
+                  {calendarAspectWorkspaceActive && (
+                    <section className="admin-reader-safety-panel" aria-label="Exact aspect write-up">
+                      <div>
+                        {selectedCalendarAspectDraft
+                          ? <><strong>{selectedCalendarAspectDraft.headline}</strong><p>{selectedCalendarAspectExists ? "Open the saved write-up for this exact aspect." : "Add a write-up for this exact aspect. It starts as a draft for your review."}</p></>
+                          : <p>To add an exact write-up, choose both planets, their signs, and the aspect above. Every filter remains optional for browsing.</p>}
+                      </div>
+                      {selectedCalendarAspectDraft && <div className="admin-new-actions">
+                        <StudioButton type="button" disabled={isLoading || inventoryLoading || loadState !== "loaded"} onClick={() => void openSelectedCalendarAspect()}>
+                          {selectedCalendarAspectExists ? "Open write-up" : "Add write-up"}
+                        </StudioButton>
+                      </div>}
+                    </section>
+                  )}
                   <details className="admin-library-guide admin-status-guide" role="region" aria-label="Content status definitions">
                     <AdminDisclosureSummary>What readers can see</AdminDisclosureSummary>
                     <p><strong>Live</strong> means readers can currently receive this copy. <strong>Not live</strong> means readers cannot currently receive this copy.</p>
@@ -10371,7 +10436,7 @@ export function GeneratedContentAdminDashboard() {
     const signedAspectTitle = currentDraft.id || selectedRow?.id.startsWith("package:") || currentDraft.sections?.packageOriginalRecord
       ? calendarAspectSignedTitle(currentDraft.contentKey)
       : null;
-    const editorHeading = signedAspectTitle ? `Edit ${signedAspectTitle}` : !currentDraft.id && currentDraft.contentKey.startsWith("authored/calendar-weekly-moon/") ? `New leftover write-up · ${lunarIdentity?.title ?? "Moon-sign leftover"}` : isSkySummaryDraft || selectedRow?.id.startsWith("package:") ? `Edit ${currentDraft.headline}` : currentDraft.id
+    const editorHeading = signedAspectTitle ? `Edit ${signedAspectTitle}` : !currentDraft.id && currentDraft.sourceSnapshot?.authoringSource === "admin-dashboard-calendar-aspect" ? `Write ${calendarAspectSignedTitle(currentDraft.contentKey)}` : !currentDraft.id && currentDraft.contentKey.startsWith("authored/calendar-weekly-moon/") ? `New leftover write-up · ${lunarIdentity?.title ?? "Moon-sign leftover"}` : isSkySummaryDraft || selectedRow?.id.startsWith("package:") ? `Edit ${currentDraft.headline}` : currentDraft.id
       ? isVocabularyDraft
         ? "Edit phrase"
         : compatibilityIdentity
@@ -11888,7 +11953,7 @@ export function GeneratedContentAdminDashboard() {
                         {packageStatusAfterSave === "LIVE" ? "Live" : "Not live"}
                       </span>
                     ) : (
-                      <AdminSelect aria-label="Status" value={currentDraft.status} onChange={(event) => setDraft({ ...currentDraft, status: event.target.value as GeneratedContentStatus })} disabled={Boolean(compiledSkyArticleEdition)}>
+                      <AdminSelect aria-label="Status" value={currentDraft.status} onChange={(event) => setDraft({ ...currentDraft, status: event.target.value as GeneratedContentStatus })} disabled={Boolean(compiledSkyArticleEdition) || isGovernedSkyDraft}>
                         {contentStatuses.map((status) => <option key={status} value={status}>{contentStatusLabel(status)}</option>)}
                       </AdminSelect>
                     )}
@@ -11903,7 +11968,9 @@ export function GeneratedContentAdminDashboard() {
                           : currentDraft.status === "LIVE"
                             ? "This approved copy is live for readers."
                             : "Approval controls reader availability. Set review status to approved, then Save to publish."
-                        : "This is the editorial workflow stage. The Status badge checks the copy readers can receive."}
+                        : isGovernedSkyDraft
+                          ? `Save your edits, run writing checks, then ${currentDraft.blockType === "sky_placement" ? "Approve for package" : "Approve & schedule"}. These actions update the status.`
+                          : "This is the editorial workflow stage. The Status badge checks the copy readers can receive."}
                     </small>
                   </label>
                   {!isSharedSeasonSource && <label className="admin-metadata-field">
@@ -12107,7 +12174,11 @@ export function GeneratedContentAdminDashboard() {
           )}
           {!isPackageDraft && !isCmsSurfaceDraft && !isNewDraft && (
             <>
-              {!isAstro101Draft && <StudioButton className="admin-review-button" type="button" onClick={() => void saveDraft("REVIEWED")} disabled={isLoading || !publishReady || reviewComplete}>
+              {isGovernedSkyDraft && selectedRow && !["LIVE", "ARCHIVED"].includes(selectedRow.status) && <StudioButton className="admin-review-button" type="button" onClick={() => void runSkyDraftWriting(selectedRow.content_key, "recheck", selectedRow)} disabled={isLoading || draftHasUnsavedChanges || !selectedRow.body?.trim()} title={draftHasUnsavedChanges ? "Save changes before running writing checks." : "Check this saved version without changing your writing."}>
+                <Check size={16} aria-hidden="true" />
+                Run writing checks
+              </StudioButton>}
+              {!isAstro101Draft && !isGovernedSkyDraft && <StudioButton className="admin-review-button" type="button" onClick={() => void saveDraft("REVIEWED")} disabled={isLoading || !publishReady || reviewComplete}>
                 <Check size={16} aria-hidden="true" />
                 {reviewComplete ? "Reviewed" : "Mark reviewed"}
               </StudioButton>}

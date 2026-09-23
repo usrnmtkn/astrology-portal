@@ -64,10 +64,11 @@ assert.ok(calendarSeasonTransitionPackageRecords.every((record) => record.servin
 assert.ok(calendarSeasonTransitionPackageRecords.every((record) => record.body.includes("{{date}}")));
 assert.equal(Object.keys(calendarSeasonTransitionEndsBridges).length, 12);
 for (const [pair, bridge] of Object.entries(calendarSeasonTransitionEndsBridges)) {
-  const base = calendarSeasonTransitions[pair]?.[0] ?? "";
-  for (const sentence of bridge.match(/[^.!?]+[.!?]+/g) ?? []) {
-    assert.ok(base.includes(sentence.trim()), `${pair} bridge sentence must stay verbatim inside its base Ends record`);
-  }
+  const incomingSign = pair.split("-")[1];
+  assert.ok(calendarSeasonTransitions[pair]?.[0], `${pair} must retain its base Ends record`);
+  assert.equal(bridge.startsWith("After a month"), false, `${pair} transition-day summary must not repeat the long handoff`);
+  assert.ok(bridge.toLowerCase().startsWith(`${incomingSign} season brings attention to `), `${pair} must lead with the incoming season`);
+  assert.equal((bridge.match(/[^.!?]+[.!?]+/g) ?? []).length, 1, `${pair} transition-day summary must be one sentence`);
 }
 assert.ok(prefixes.includes("authored/lunar-journal/"));
 assert.ok(prefixes.includes("authored/calendar-moon-continuation-summary/"));

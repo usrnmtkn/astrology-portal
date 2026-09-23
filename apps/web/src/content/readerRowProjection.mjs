@@ -129,6 +129,10 @@ export function projectReaderRow(row) {
   // Legacy generic article sections also use an array, or a single body string.
   if (Array.isArray(row.sections)) result.sections = project(row.sections, [section]);
   else if (typeof row.sections === 'string') result.sections = row.sections;
+  // Astro 101 renders the saved intro/blocks/body, never its import descriptor.
+  if (row.surface === 'education' && row.content_key.startsWith('education/astro-101/') && result.sections && typeof result.sections === 'object') {
+    delete result.sections.packageRecord;
+  }
   const rawRecord = row.sections?.packageRecord;
   const publicRecord = result.sections?.packageRecord;
   if (rawRecord?.ingress?.sources && publicRecord?.ingress) {
