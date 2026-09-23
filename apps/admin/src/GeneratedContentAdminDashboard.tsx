@@ -4280,7 +4280,7 @@ export function GeneratedContentAdminDashboard() {
       page === "skyWriteups" && skyWriteupWorkspaceTabs.some(tab => tab.value === view)
         ? view as SkyWriteupWorkspaceView : "catalog"
     );
-    setCalendarWriteupWorkspaceView(page === "calendarWriteups" && (view === "weekly-sky" || view === "monthly-sky" || view === "season-transitions" || view === "subscription-events" || view === "lunar-ingresses") ? view : "daily-sky");
+    setCalendarWriteupWorkspaceView(page === "calendarWriteups" && calendarWriteupWorkspaceTabs.some(tab => tab.value === view) ? view as CalendarWriteupWorkspaceView : "daily-sky");
     setTransitReadingContext(page === "skyWriteups" && view === "transits-to-natal" ? {
       ...(params.get("pass") ? { pass: Number(params.get("pass")) } : {}),
       ...(params.get("variant") ? { variant: Number(params.get("variant")) } : {}),
