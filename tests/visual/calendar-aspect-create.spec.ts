@@ -79,7 +79,11 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
       expect(saved.summary).toBe('Separate synthetic summary.');
       expect(saved.source_snapshot.skyAspectVoiceLint).toMatchObject({ score: 3, fails: 0 });
       await expect(body).toHaveValue(revised);
-    } finally { store.close(); }
+    } finally {
+      await page.close();
+      await page.unrouteAll({ behavior: 'wait' });
+      store.close();
+    }
   });
 }
 
