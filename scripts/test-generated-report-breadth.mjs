@@ -6,7 +6,7 @@ assert.match(fs.readFileSync("api/_lib/content-generation.ts", "utf8"), /friendT
   "The legacy Friends prompt path must load the same contract.");
 
 // Test the real judge schema, prompt assembly, and release decision. Replace
-// only provider transport/config and global instructions; no billed calls.
+// only provider transport/config and the catalog gate; no billed calls.
 const bundle = await build({
   // Bundled CommonJS dependencies need Node's require even inside a data URL.
   banner: { js: `import { createRequire } from "node:module"; const require = createRequire(${JSON.stringify(import.meta.url)});` },
@@ -16,14 +16,11 @@ const bundle = await build({
     builder.onResolve({ filter: /report-model-client\.js$/ }, () => ({ path: "transport", namespace: "fixture" }));
     builder.onResolve({ filter: /productionPreCallGate\.cjs$/ }, () => ({ path: "gate", namespace: "fixture" }));
     builder.onResolve({ filter: /report-fulfillment-config\.js$/ }, () => ({ path: "config", namespace: "fixture" }));
-    builder.onResolve({ filter: /openAIResponses\.cjs$/ }, () => ({ path: "instructions", namespace: "fixture" }));
     builder.onLoad({ filter: /.*/, namespace: "fixture" }, ({ path }) => ({ contents: path === "transport"
       ? `export const callReportCalibrationModel = async (input) => { await input.beforeProviderCall(); return globalThis.reportBreadthFixture(input); };`
       : path === "gate"
         ? `export const prepareProductionPreCallGate = () => ({}); export const assertProductionPreCallGate = () => true;`
-      : path === "config"
-        ? `export const REPORT_JUDGE_THRESHOLD = 0.85; export const reportFulfillmentConfig = () => ({judgeProvider: "fixture", judgeModel: "fixture"});`
-        : `export const instructionsForRole = () => "Fixture canonical review instructions";`
+      : `export const REPORT_JUDGE_THRESHOLD = 0.85; export const reportFulfillmentConfig = () => ({judgeProvider: "fixture", judgeModel: "fixture"});`
     }));
   }}]
 });
@@ -31,11 +28,35 @@ const { judgeGeneratedTransitReading, GENERATED_REPORT_JUDGE_SCHEMA } = await im
   `data:text/javascript;base64,${Buffer.from(bundle.outputFiles[0].text).toString("base64")}`
 );
 const scores = Object.fromEntries(GENERATED_REPORT_JUDGE_SCHEMA.properties.scores.required.map((key) => [key, 4]));
+const evidence = { draftQuote: "Fixture", sourcePath: null, ownerComparisons: [] };
+const scoreCategory = {
+  over_specification: "factual_traceability", unsupported_interpretation: "factual_traceability",
+  unsupported_timing: "astrology_chronology", narrative_repetition: "interpretive_movement", owner_language: "owner_voice"
+};
 assert.ok(GENERATED_REPORT_JUDGE_SCHEMA.properties.findings.items.properties.category.enum.includes("over_specification"));
 const previous = globalThis.reportBreadthFixture;
 let response;
+let ownerComparison;
+let lastInput;
 try {
   globalThis.reportBreadthFixture = async (input) => {
+    lastInput=input;
+    for (const name of ['V3', 'V3.2', 'V3.3', 'V3.4']) {
+      const path = `tldr-astro-phrasebank/TLDR-REPORT-JUDGE-RUBRIC-${name}-OWNER.md`;
+      assert.ok(input.prompt.includes(`SOURCE_PATH: ${path}`));
+      // Every approved non-transport section survives byte-for-byte.
+      for (const section of fs.readFileSync(path, 'utf8').split(/(?=^## )/mu)) {
+        if (!/^## Output (?:contract|and verdict)\s*$/mu.test(section)) assert.ok(input.prompt.includes(section));
+        else assert.ok(!input.prompt.includes(section));
+      }
+    }
+    assert.ok(input.prompt.includes('fixed product headline is metadata'));
+    assert.ok(input.prompt.includes('no defect is supported'));
+    assert.ok(input.prompt.includes('4/4 owner_voice and natural_language release floors remain unchanged'));
+    assert.doesNotMatch(input.prompt, /ASSUME THERE IS A DEFECT|Return PASS or REVISE only|## Output contract/u);
+    const passage = input.prompt.match(/OWNER PASSAGE ([^\n]+)\nFUNCTION: [^\n]+\nREFERENCE FORMAT: [^\n]+\nSOURCE SECTION: [^\n]+\n([\s\S]+?)\nEND OWNER PASSAGE/u);
+    assert.ok(passage, 'Comparison passage identifiers and supplied functions must reach the judge.');
+    ownerComparison = { evidenceId: passage[1], quote: passage[2], difference: 'Synthetic diagnostic comparing the supplied passage with the candidate.' };
     assert.ok(input.prompt.includes("Weekly progression and contextual owner corrections"));
     assert.ok(input.prompt.includes("what is happening → where it hits → trap → what to do"));
     assert.ok(input.prompt.includes("A New Moon label alone does not authorize"));
@@ -47,18 +68,23 @@ try {
     input.validateResponse(response);
     return { value: response, provider: "fixture", model: "fixture" };
   };
-  const judge = () => judgeGeneratedTransitReading({
+  const judge = (priorReview) => judgeGeneratedTransitReading({
+    priorReview,
     surface: "friends", reportKind: "friend_transit_reading",
     brief: { source: "locked fixture" },
     draft: { headline: "Fixture", tldr: "Fixture", summary: "Fixture", body: "Fixture" },
-    productionInput: { surface: "friends", contentKey: "fixture", eventType: "transit", facts: { friendTransitsBrief: { source: "locked fixture" } }, knowledgeIds: ["fixture"], sourceSnapshot: {} }, ownerEvidence: ["Approved fixture rule"]
+    productionInput: { surface: "friends", contentKey: "fixture", eventType: "transit", facts: { friendTransitsBrief: { primaryThemes: [], longerCycles: [], relationshipActivations: [], houseContext: [], activePatterns: [], daily: null } }, knowledgeIds: ["fixture"], sourceSnapshot: {} }, ownerEvidence: ["Approved fixture rule"]
   });
+  response = { scores, findings: [{ category: "over_specification", location: "body", finding: "Unsupported outcome.", ...evidence }] };
+  await assert.rejects(judge(), /finding contradicts a perfect category score/,
+    "Contradictory diagnostics must not enter the correction loop.");
   for (const outcome of ["breakup", "job loss", "move", "major financial loss", "illness", "quitting"]) {
-    response = { scores, findings: [{ category: "over_specification", location: "body paragraph 2", finding: `Unsupported ${outcome} inferred from a broad category.` }] };
+    response = { scores: { ...scores, factual_traceability: 3 }, findings: [{ category: "over_specification", location: "body", finding: `Unsupported ${outcome} inferred from a broad category.`, ...evidence }] };
     const result = await judge();
-    assert.equal(result.ownerVoiceEvidence.sources.length, 3);
-    assert.equal(result.result.overall, 1);
-    assert.equal(result.result.verdict, "below_threshold", `${outcome} must block even with perfect scores`);
+    assert.ok([3, 4].includes(result.ownerVoiceEvidence.sources.length));
+    assert.deepEqual(result.ownerVoiceEvidence.target, { surface: "friends", horizon: "current" });
+    assert.ok(result.result.overall >= 0.85);
+    assert.equal(result.result.verdict, "below_threshold", `${outcome} must block even when the aggregate score passes`);
     assert.equal(result.result.findings[0].category, "over_specification");
   }
   for (const [category, finding] of [
@@ -71,18 +97,41 @@ try {
     ["owner_language", "Real is used as vague emphasis rather than a factual distinction."]
   ]) {
     assert.ok(GENERATED_REPORT_JUDGE_SCHEMA.properties.findings.items.properties.category.enum.includes(category));
-    response = { scores, findings: [{ category, location: "body", finding }] };
+    response = { scores: { ...scores, [scoreCategory[category]]: 3 }, findings: [{ category, location: "body", finding, ...evidence }] };
     const result = await judge();
-    assert.equal(result.result.overall, 1);
+    assert.ok(result.result.overall >= 0.85);
     assert.equal(result.result.verdict, "below_threshold", category);
   }
   // Grounded examples and negated outcomes are not blocked by a word blacklist.
   response = { scores, findings: [] };
   assert.equal((await judge()).result.verdict, "pass");
   response = { scores: { ...scores, owner_voice: 3 }, findings: [] };
+  await assert.rejects(judge(), /below-floor owner_voice score has no diagnostic evidence/);
+  response.findings = [{ category: "owner_voice", location: "body", finding: "The wording fails the supplied voice rubric.", ...evidence }];
+  await assert.rejects(judge(), /lacks eligible comparison evidence/);
+  response.findings[0].ownerComparisons = [ownerComparison];
   assert.equal((await judge()).result.verdict, "below_threshold", "Breadth does not waive voice floors");
-  response = { scores, findings: [{ category: "unknown_category", location: "body", finding: "Invalid result" }] };
-  await assert.rejects(judge(), /invalid finding/);
+  response = { scores, findings: [{ category: "unknown_category", location: "body", finding: "Invalid result", ...evidence }] };
+  await assert.rejects(judge(), /malformed finding/);
+  response={scores:{...scores,factual_traceability:3},findings:[{category:'unsupported_interpretation',location:'body',finding:'The fixture claim is unsupported.',...evidence,sourcePath:'/source'}]};
+  const referenced=await judge();
+  assert.equal(referenced.result.findings[0].sourceQuote,'locked fixture');
+  assert.equal(referenced.result.verdict,'below_threshold');
+  assert.deepEqual(lastInput.schema.properties.findings.items.properties.sourcePath.enum,[null,'/source']);
+  assert.equal(Object.hasOwn(lastInput.schema.properties.findings.items.properties,'sourceQuote'),false);
+  assert(lastInput.prompt.includes('do not return sourceQuote'));
+  const priorReview={draft:{headline:'Fixture',summary:'Fixture',body:'Fixture'},scores:{...scores,natural_language:3},findings:[{category:'natural_language',location:'body',finding:'Synthetic initial ambiguity.',...evidence}]};
+  response={scores,findings:[]};
+  await assert.rejects(judge(priorReview),/review reconciliation: missing accounting/);
+  response.reconciliation={priorFindings:[{index:0,resolution:'withdrawn',explanation:'The first reading of the unchanged fixture was incorrect.'}],currentFindings:[]};
+  const final=await judge(priorReview);
+  assert.equal(final.result.verdict,'pass');
+  assert.equal(final.reconciliation.priorFindings[0].resolution,'withdrawn');
+  assert(lastInput.schema.required.includes('reconciliation'));
+  assert(lastInput.prompt.includes('Synthetic initial ambiguity.'));
+  assert(lastInput.prompt.includes('still a full fact and writing review'));
+  response={scores:{...scores,factual_traceability:3},findings:[{category:'unsupported_interpretation',location:'body',finding:'A factual defect missed in the first review.',...evidence}],reconciliation:{priorFindings:[{index:0,resolution:'withdrawn',explanation:'The initial language criticism was not justified.'}],currentFindings:[{index:0,priorFindingIndex:null,origin:'previously_missed',explanation:'The unchanged text was unsupported at the first review too.',changeQuote:null}]}};
+  assert.equal((await judge(priorReview)).result.verdict,'below_threshold','Prior review must never waive a previously missed factual defect.');
 } finally {
   if (previous === undefined) delete globalThis.reportBreadthFixture;
   else globalThis.reportBreadthFixture = previous;

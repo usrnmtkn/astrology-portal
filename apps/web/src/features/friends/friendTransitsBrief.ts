@@ -1,6 +1,8 @@
 import type { DailyMoonContext } from "../../components/DailyMoonContextTags";
 import type { NatalAspectPatternReaderItem } from "../../services/natalAspectPatterns";
 
+export type FriendTransitReaderSection = { body: string; sourceKeys: string[] };
+
 export type FriendBondTransitView = {
   id: string;
   headline: string;
@@ -17,6 +19,7 @@ export type FriendHouseTransitView = {
   durationLabel: string | null;
   timingRange: string;
   rowSummary: string;
+  readerSections?: FriendTransitReaderSection[];
   termLabel: string;
   keywords: string[];
   house: number;
@@ -45,6 +48,7 @@ export type FriendPersonalTransitView = {
   rangeLabel: string;
   timingLabel: string;
   summary: string;
+  readerSections?: FriendTransitReaderSection[];
   orb: string;
   detailAvailable: boolean;
   evidence: FriendPersonalTransitEvidence;

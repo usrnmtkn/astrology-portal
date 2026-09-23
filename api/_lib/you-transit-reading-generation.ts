@@ -1,3 +1,4 @@
+import { prepareSourceCompletion, assertSavedSourceCompletion, assertReusableSourceCompletion, type SourceCompletionReceipt } from "./transit-reading-source-completion.js";
 import { transitReadingReaderCopy, assertSavedTransitReading } from "./transit-reading-reader-copy.js";
 import {
   YOU_TRANSIT_READING_PROMPT_VERSION,
@@ -33,6 +34,7 @@ export type YouTransitReadingRow = {
   summary: string | null;
   body: string;
   sections: unknown | null;
+  source_snapshot?: unknown;
   provider: string | null;
   model: string | null;
   updated_at: string;
@@ -89,9 +91,9 @@ function productionInputForLocked(locked: ReturnType<typeof youTransitReadingReq
   };
 }
 
-async function generateReading(locked: ReturnType<typeof youTransitReadingRequestLock>) {
+async function generateReading(locked: ReturnType<typeof youTransitReadingRequestLock>, sourceOnly = false) {
   const reportKind: GeneratedTransitReportKind = locked.brief.window === "day" ? "you_day_reading" : "you_week_reading";
-  const ownerEvidence = await loadApprovedGeneratedReportOwnerEvidence({ surface: "you", reportKind });
+  const loadOwnerEvidence = () => loadApprovedGeneratedReportOwnerEvidence({ surface: "you", reportKind });
   const productionInput = productionInputForLocked(locked);
   return {
     productionInput,
@@ -107,14 +109,17 @@ async function generateReading(locked: ReturnType<typeof youTransitReadingReques
       promptForAttempt,
       validate: validateGeneratedReading,
       compactBriefForRecovery: compactYouTransitReadingBrief,
-      ownerEvidence,
-      judge: ({ draft, brief: governedBrief, ownerEvidence: approvedEvidence }) => judgeGeneratedTransitReading({
+      loadOwnerEvidence,
+      sourceCompletion: () => prepareSourceCompletion(locked.brief, locked.headline),
+      sourceOnly,
+      judge: ({ draft, brief: governedBrief, ownerEvidence: approvedEvidence, priorReview }) => judgeGeneratedTransitReading({
         surface: "you",
         reportKind,
         brief: governedBrief,
         draft,
         productionInput,
-        ownerEvidence: approvedEvidence
+        ownerEvidence: approvedEvidence,
+        priorReview
       }),
       minSummaryLength: 40,
       minBodyLength: locked.brief.window === "day" ? 180 : 320,
@@ -139,7 +144,7 @@ async function existingReading(
       content_key: `eq.${locked.contentKey}`,
       target_date: `eq.${locked.brief.targetDate}`,
       mode: "eq.in_depth",
-      select: "id,content_key,surface,mode,status,event_type,target_date,headline,summary,body,sections,provider,model,updated_at,you_report_entitlement_id",
+      select: "id,content_key,surface,mode,status,event_type,target_date,headline,summary,body,sections,provider,model,source_snapshot,updated_at,you_report_entitlement_id",
       order: "updated_at.desc"
     })
   );
@@ -150,7 +155,8 @@ async function saveReading(input: {
   entitlementId?: string | null;
   locked: ReturnType<typeof youTransitReadingRequestLock>;
   generated: GeneratedTransitReadingDraft;
-  provider: "openai" | "claude";
+  provider: "openai" | "claude" | "source";
+  sourceCompletion?: SourceCompletionReceipt;
   judgeAudit: TransitReadingJudgeAudit | null;
   knowledgeIds: string[];
 }) {
@@ -169,40 +175,45 @@ async function saveReading(input: {
     knowledge_ids: input.knowledgeIds,
     source_snapshot: {
       ...input.locked.sourceSnapshot,
-      ...(input.judgeAudit ? { generatedReportQualityGate: input.judgeAudit } : {})
+      ...(input.judgeAudit ? { generatedReportQualityGate: input.judgeAudit } : {}),
+      ...(input.sourceCompletion ? { reportDelivery: input.sourceCompletion } : {})
     },
-    prompt_version: YOU_TRANSIT_READING_PROMPT_VERSION,
+    prompt_version: input.sourceCompletion?.version ?? YOU_TRANSIT_READING_PROMPT_VERSION,
     provider: input.provider,
     model: input.generated.model,
     ...transitReadingReaderCopy(input.generated),
     sections: { sections: [], sceneLock: null, astrologyDrilldown: null },
-    response_id: input.generated.responseId,
+    response_id: input.generated.responseId ?? null,
     error: null,
     ...(input.entitlementId ? { you_report_entitlement_id: input.entitlementId } : {})
   }, { onConflict: "user_id,subject_type,subject_id,content_key,target_date,mode" });
   assertSavedTransitReading(rows, input.generated);
+  assertSavedSourceCompletion(rows, input.sourceCompletion);
   return rows;
 }
 
 export async function generateYouTransitReadingForUser(input: {
   userId: string;
   facts?: Record<string, unknown>;
+  sourceOnly?: boolean;
   entitlementId?: string | null;
 }) {
   const locked = youTransitReadingRequestLock({ brief: input.facts?.youTransitReadingBrief });
   const existing = await existingReading(input.userId, locked);
   if (existing && ["DRAFT", "REVIEWED", "LIVE"].includes(existing.status) && existing.body.trim()) {
+    if (existing.provider === "source") assertReusableSourceCompletion(existing, prepareSourceCompletion(locked.brief, locked.headline));
     return { reused: true, contentKey: locked.contentKey, saved: [existing], generated: null };
   }
 
-  const result = await generateReading(locked);
-  const { draft, provider, judgeAudit } = result.generated;
+  const result = await generateReading(locked, input.sourceOnly);
+  const { draft, provider, judgeAudit, sourceCompletion } = result.generated;
   const saved = await saveReading({
     userId: input.userId,
     entitlementId: input.entitlementId,
     locked,
     generated: draft,
     provider,
+    sourceCompletion,
     judgeAudit,
     knowledgeIds: result.productionInput.knowledgeIds
   });

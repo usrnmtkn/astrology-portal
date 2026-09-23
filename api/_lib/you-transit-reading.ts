@@ -1,4 +1,5 @@
 import { transitReadingReaderText } from "./transit-reading-reader-copy.js";
+import { untraceableTransitReadingDates } from "./transit-reading-dates.js";
 import { extractTransitAspectClaims, isOrdinaryAspectWord, transitAspectKeysFromEvidence } from "./transit-reading-aspect-claims.js";
 type RecordLike = Record<string, unknown>;
 
@@ -250,8 +251,8 @@ export function validateYouTransitReadingDraft(input: {
   for (const match of text.matchAll(/\b\d{1,3}(?:\.\d+)?°/gu)) {
     if (!source.includes(match[0].toLowerCase())) issues.push({ code: "untraceable_degree", value: match[0], message: `${match[0]} is not present in the governed report brief.` });
   }
-  for (const match of text.matchAll(/\b(?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:tember)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?)\s+\d{1,2}\b/giu)) {
-    if (!source.includes(match[0].toLowerCase())) issues.push({ code: "untraceable_date", value: match[0], message: `${match[0]} is not present in the governed report brief.` });
+  for (const date of untraceableTransitReadingDates(text, input.brief)) {
+    issues.push({ code: "untraceable_date", value: date, message: `${date} is not present in the governed report brief.` });
   }
   for (const match of text.matchAll(/\b(?:you always|you usually|you tend to|this is who you are|this is how you are)\b/giu)) {
     issues.push({ code: "standing_trait_language", value: match[0], message: "Temporary transit synthesis became a permanent personality claim." });

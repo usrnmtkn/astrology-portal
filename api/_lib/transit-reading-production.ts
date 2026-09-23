@@ -1,5 +1,9 @@
-import { checkpointTransitReadingModel } from "./transit-reading-checkpoints.js";
-import { transitReadingOwnerVoice, transitReadingOwnerVoicePrompt, assertTransitReadingOwnerVoice } from "./transit-reading-owner-voice.js";
+import { checkpointTransitReadingModel, transitReadingModelRequestHash } from "./transit-reading-checkpoints.js";
+import { SCOPED_REVIEW_SCHEMAS, type TransitReadingReviewScope } from "./transit-reading-review-contract.js";
+import { transitReadingReleasePolicy } from "./transit-reading-release-policy.js";
+import { EVIDENCE_DELIVERY_POLICY } from "./transit-reading-delivery-evidence.js";
+import { SOURCE_COMPLETION_POLICY } from "./transit-reading-source-completion.js";
+import { transitReadingOwnerVoice, transitReadingOwnerVoicePrompt, assertTransitReadingOwnerVoice, transitReadingVoiceContext } from "./transit-reading-owner-voice.js";
 import {
   callReportCalibrationModel,
   type ReportModelResult
@@ -95,19 +99,33 @@ export async function callGovernedTransitReadingModel<T>(input: {
   prompt: string;
   schemaName: string;
   schema: Record<string, unknown>;
+  reviewScope?: TransitReadingReviewScope;
   validateResponse?: (value: T) => void;
-}): Promise<ReportModelResult<T>> {
+}): Promise<ReportModelResult<T> & { requestSha256: string }> {
   assertTransitReadingProductionKernel(input.kernel);
-  const ownerVoicePrompt = transitReadingOwnerVoicePrompt(input.kernel.ownerVoice);
-  return checkpointTransitReadingModel<T>({
+  if (input.reviewScope && (input.kernel.role !== "REVIEWER" || input.schemaName !== SCOPED_REVIEW_SCHEMAS[input.reviewScope])) {
+    throw new Error("Scoped review requires the corresponding reviewer schema.");
+  }
+  const ownerVoicePrompt = input.reviewScope === "facts" ? "" : transitReadingOwnerVoicePrompt(input.kernel.ownerVoice,
+    transitReadingVoiceContext(input.kernel.input.facts, input.kernel.input.surface));
+  const request = {
     provider: input.provider,
     model: input.model,
-    prompt: `${input.prompt}\n\n${ownerVoicePrompt}`,
+    prompt: ownerVoicePrompt ? `${input.prompt}\n\n${ownerVoicePrompt}` : input.prompt,
     schemaName: input.schemaName,
     schema: input.schema,
     validateResponse: input.validateResponse,
+    ...([EVIDENCE_DELIVERY_POLICY, SOURCE_COMPLETION_POLICY].includes(transitReadingReleasePolicy()) ? {
+      // Includes the full wire payload, not just prose. Together with an 8192
+      // protocol allowance this bounds text input conservatively at 96000 tokens.
+      requestLimits: { maxInputBytes: 87_808, maxOutputTokens: input.kernel.role === "REVIEWER" ? 6_000 : 12_000 },
+      disableFallback: true
+    } : {}),
+    ...(input.reviewScope ? { disableFallback: true } : {}),
     beforeProviderCall: async () => {
       assertTransitReadingProductionKernel(input.kernel);
     }
-  }, callReportCalibrationModel);
+  };
+  const response = await checkpointTransitReadingModel<T>(request, callReportCalibrationModel);
+  return { ...response, requestSha256: transitReadingModelRequestHash(request) };
 }

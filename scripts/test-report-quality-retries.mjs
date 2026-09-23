@@ -50,7 +50,7 @@ try {
     const family = window === "friend" ? "friend" : "you";
     const run = window === "friend" ? runFriendReportJobs : runYouReportJobs;
     for (const source of ["stripe", "free_test", "comp"]) {
-      for (const scenario of ["recovery", "exhaustion", "refunded", "revoked", "missing-entitlement", "checkpoint-progress", "checkpoint-stopped"]) {
+      for (const scenario of ["quality-held", "infrastructure-recovery", "infrastructure-exhaustion", "refunded", "revoked", "missing-entitlement", "checkpoint-progress", "checkpoint-stopped"]) {
         let now = previousNow();
         Date.now = () => now;
         const facts = { brief: { schema: "locked-test-brief", targetDate: "2026-09-09", window } };
@@ -95,12 +95,12 @@ try {
               } else assert.equal("attempt" in patch, false, "Automatic retries must never reset their budget.");
               assert.equal("facts" in patch, false, "The saved factual brief must remain locked.");
               if (patch.state === "retry" && scenario !== "checkpoint-progress") {
-                assert.equal(placeholder.status, "DRAFT", "Rejected drafts remain private between attempts.");
-                assert.equal(patch.run_after, job.run_after, "Review retry retains its already-due timestamp.");
+                assert.ok(scenario.startsWith("infrastructure-"), "A completed quality cycle must not retry.");
+                assert.equal(placeholder.status, "DRAFT", "Unfinished drafts remain private between attempts.");
+                assert.ok(Date.parse(patch.run_after) > now, "Infrastructure retry waits for its backoff.");
                 assert.equal(patch.locked_at, null);
                 assert.equal(patch.locked_by, null);
-                assert.match(patch.last_error, /Writing quality gate did not pass/);
-                assert.match(patch.last_error, /Diagnostic fixture/);
+                assert.match(patch.last_error, /Provider temporarily unavailable/);
                 assert.ok(!String(placeholder.error).includes("Diagnostic fixture"));
               }
               Object.assign(job, patch);
@@ -108,8 +108,15 @@ try {
             } else if (route === "user_generated_interpretations") {
               assert.equal(init.method, "PATCH");
               assert.equal(new URL(url).searchParams.get(`${family}_report_entitlement_id`), `eq.${job.entitlement_id}`);
-              assert.equal(new URL(url).searchParams.get("subject_type"), `eq.${family === "friend" ? "friend_transit_reading" : `you_${window}_reading`}`);
-              Object.assign(placeholder, JSON.parse(init.body));
+              const patch = JSON.parse(init.body);
+              if (patch.source_snapshot?.reportProgress) {
+                assert.equal(new URL(url).searchParams.get("status"), "eq.DRAFT");
+                assert.equal(new URL(url).searchParams.get("body"), "eq.");
+                assert.equal(patch.source_snapshot.reportProgress.stage, "waiting");
+              } else {
+                assert.equal(new URL(url).searchParams.get("subject_type"), `eq.${family === "friend" ? "friend_transit_reading" : `you_${window}_reading`}`);
+              }
+              Object.assign(placeholder, patch);
               rows = [placeholder];
             } else assert.fail(`Unexpected request (including any billing mutation): ${init.method} ${route}`);
             return new Response(JSON.stringify(rows), { status: 200 });
@@ -129,7 +136,8 @@ try {
             if (generationCalls < 4) throw new TransitReadingCheckpointYield();
             return { saved: [{ id: "checkpoint-complete" }] };
           }
-          if (scenario === "recovery" && generationCalls === 2) return { saved: [{ id: "approved-report-fixture" }] };
+          if (scenario === "infrastructure-recovery" && generationCalls === 2) return { saved: [{ id: "approved-report-fixture" }] };
+          if (scenario.startsWith("infrastructure-")) throw new Error("Provider temporarily unavailable");
           throw new TransitReadingJudgeBlockedError({ stage: "second_judgment", judgment: { result: { scores: { owner_voice: 3 }, findings: [{ category: "owner_voice", location: "body", finding: "Diagnostic fixture" }], overall: 0.8, verdict: "below_threshold" }, provider: "fixture", model: "fixture", version: "fixture", threshold: 0.85 } });
         };
         const execute = () => run({ workerId: "retry-regression", jobId: job.id, admin });
@@ -156,15 +164,32 @@ try {
           assert.equal(job.state, 'complete');
           assert.equal(job.attempt, 1);
           assert.equal(generationCalls, 4);
+        } else if (scenario === "quality-held") {
+          assert.equal(job.attempt, 1, "A completed correction/review cycle consumes only one logical attempt.");
+          assert.equal(job.state, "failed");
+          assert.equal(generationCalls, 1);
+          assert.equal(job.result_id, null);
+          assert.equal(placeholder.status, "ERROR");
+          assert.match(job.last_error, /^Report review required:/);
+          assert.match(job.last_error, /Diagnostic fixture/);
+          assert.ok(!String(placeholder.error).includes("Diagnostic fixture"));
+          assert.equal((await execute()).claimed, 0, "Remaining scheduler attempts cannot restart a completed review.");
+          assert.equal(generationCalls, 1);
         } else {
-          // Completed review failures continue in this invocation through the
-          // same exclusive claim; the initial call must finish or exhaust its cap.
-          assert.equal(job.attempt, scenario === "recovery" ? 2 : 4);
-          assert.equal(job.state, scenario === "recovery" ? "complete" : "failed");
-          assert.equal(generationCalls, scenario === "recovery" ? 2 : 4);
-          assert.equal(job.result_id, scenario === "recovery" ? "approved-report-fixture" : null);
-          assert.equal(placeholder.status, scenario === "recovery" ? "DRAFT" : "ERROR");
-          if (scenario === "recovery") assert.equal(job.last_error, null);
+          const finalAttempt = scenario === "infrastructure-recovery" ? 2 : 4;
+          for (let attempt = 1; attempt < finalAttempt; attempt++) {
+            assert.equal(job.state, "retry");
+            assert.equal(job.attempt, attempt);
+            assert.equal((await execute()).claimed, 0, "Infrastructure backoff must not be bypassed.");
+            now = Date.parse(job.run_after);
+            await execute();
+          }
+          assert.equal(job.attempt, finalAttempt);
+          assert.equal(job.state, scenario === "infrastructure-recovery" ? "complete" : "failed");
+          assert.equal(generationCalls, finalAttempt);
+          assert.equal(job.result_id, scenario === "infrastructure-recovery" ? "approved-report-fixture" : null);
+          assert.equal(placeholder.status, scenario === "infrastructure-recovery" ? "DRAFT" : "ERROR");
+          if (scenario === "infrastructure-recovery") assert.equal(job.last_error, null);
           assert.equal((await execute()).claimed, 0, "Completed/exhausted jobs must not run again automatically.");
         }
         assert.equal(placeholder.body, "", "The worker must never expose a rejected draft.");
@@ -182,4 +207,4 @@ try {
     else process.env[key] = previousCaps[index];
   }
 }
-console.log(`Report quality retries: ${cases} lifecycle cases passed (day/week/Friends; Stripe/free test/comp; recovery/exhaustion/cancellation).`);
+console.log(`Report quality retries: ${cases} lifecycle cases passed (day/week/Friends; Stripe/free test/comp; quality hold/infrastructure recovery/exhaustion/cancellation).`);

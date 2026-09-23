@@ -2,10 +2,12 @@ import { AsyncLocalStorage } from "node:async_hooks";
 import { createHash } from "node:crypto";
 import type { SupabaseReportAdmin } from "./supabase-report-admin.js";
 import type { ReportModelCallInput, ReportModelResult } from "./report-model-client.js";
+import { SCOPED_REVIEW_SCHEMAS, transitReadingReviewMode, transitReadingDraftHash, type TransitReadingReviewMode } from "./transit-reading-review-contract.js";
+import { transitReadingReleasePolicy, type ReportReleasePolicy } from "./transit-reading-release-policy.js";
+import { SOURCE_COMPLETION_POLICY } from "./transit-reading-source-completion.js";
 
 // Continue checkpointed steps while the invocation has time. Replaying saved
 // responses runs the existing fact/voice/review gates again, without billing.
-const MAX_STEPS = 7;
 export const TRANSIT_READING_INVOCATION_BUDGET_MS = 240_000;
 type Context = {
   admin: SupabaseReportAdmin;
@@ -15,6 +17,10 @@ type Context = {
   step: number;
   called: boolean;
   deadline: number;
+  reviewMode: TransitReadingReviewMode;
+  releasePolicy: ReportReleasePolicy;
+  judgeCalls: { facts: number; writing: number };
+  writerCalls: number;
   onProgress?: (stage: "writing" | "checking" | "revising" | "waiting") => Promise<void>;
 };
 type Checkpoint<T> = {
@@ -37,31 +43,51 @@ export function withTransitReadingCheckpoints<T>(
   input: Pick<Context, "admin" | "family" | "jobId" | "attempt" | "onProgress"> & { deadline?: number },
   run: () => Promise<T>
 ): Promise<T> {
-  return context.run({ ...input, step: 0, called: false, deadline: Math.min(input.deadline ?? Infinity, Date.now() + TRANSIT_READING_INVOCATION_BUDGET_MS) }, run);
+  return context.run({ ...input, reviewMode: transitReadingReviewMode(), releasePolicy: transitReadingReleasePolicy(), judgeCalls: { facts: 0, writing: 0 }, writerCalls: 0,
+    step: 0, called: false, deadline: Math.min(input.deadline ?? Infinity, Date.now() + TRANSIT_READING_INVOCATION_BUDGET_MS) }, run);
+}
+
+export function transitReadingModelRequestHash(input: ReportModelCallInput<unknown>) {
+  const policy = transitReadingReleasePolicy();
+  return createHash("sha256").update(JSON.stringify({
+    version: 1, provider: input.provider, model: input.model,
+    prompt: input.prompt, schemaName: input.schemaName, schema: input.schema,
+    ...(input.requestLimits ? { requestLimits: input.requestLimits } : {}),
+    ...(policy === "strict" ? {} : { releasePolicy: policy })
+  })).digest("hex");
 }
 
 // Completed checkpoints are immutable, so this feedback remains identical when
 // an invocation yields and resumes. Never use mutable job.last_error for prompts.
 export async function previousTransitReadingCorrectionFeedback(
-  validateDraft?: (draft: Record<string, unknown>) => string[]
+  validateDraft?: (draft: Record<string, unknown>) => string[],
+  expectedHeadline?: string
 ): Promise<string> {
   const scope = context.getStore();
   if (!scope || scope.attempt <= 1) return "";
   const base = { [`${scope.family}_job_id`]: `eq.${scope.jobId}`, attempt: `eq.${scope.attempt - 1}`,
     state: "eq.complete", select: "*", order: "step.desc", limit: "1" };
-  const [judge, writer] = await Promise.all([
-    scope.admin.selectOne<Checkpoint<Record<string, unknown>>>("transit_report_model_checkpoints",
-      new URLSearchParams({ ...base, schema_name: "eq.tldr_generated_report_judge" })),
-    scope.admin.selectOne<Checkpoint<Record<string, unknown>>>("transit_report_model_checkpoints",
-      new URLSearchParams({ ...base, schema_name: "neq.tldr_generated_report_judge" }))
-  ]).catch((cause) => { throw new TransitReadingCheckpointStopped("Previous report feedback could not be read safely.", { cause }); });
+  const [writer, ...judges] = await Promise.all([
+    `tldr_astro_${scope.family}_transit_reading`, "tldr_generated_report_judge",
+    SCOPED_REVIEW_SCHEMAS.facts, SCOPED_REVIEW_SCHEMAS.writing
+  ].map(schema => scope.admin.selectOne<Checkpoint<Record<string, unknown>>>("transit_report_model_checkpoints",
+    new URLSearchParams({ ...base, schema_name: `eq.${schema}` }))
+  )).catch((cause) => { throw new TransitReadingCheckpointStopped("Previous report feedback could not be read safely.", { cause }); });
   const draft = writer?.response?.value;
   if (!draft || typeof draft.body !== "string") return "";
   // A correction may fail deterministic validation before a second judgment.
   // In that case the last judge diagnosed an earlier draft, not this one.
-  const judgedLatestDraft = judge && writer && judge.step > writer.step;
-  const findings = judgedLatestDraft && Array.isArray(judge.response?.value?.findings)
-    ? judge.response.value.findings : [];
+  // Writer checkpoints precede normalization. Match the same visible projection
+  // as generation; tldr is a compatibility alias, not an additional paragraph.
+  const text = (value: unknown) => typeof value === "string" ? value.trim() : "";
+  const draftHash = transitReadingDraftHash({ headline: expectedHeadline ?? text(draft.headline),
+    summary: (text(draft.tldr) || text(draft.summary)).replace(/^tldr\s*:\s*/iu, "").trim(), body: draft.body.trim() });
+  const findings = judges.flatMap((judge, index) => {
+    const value = judge?.response?.value;
+    const matches = judge && writer && judge.step > writer.step
+      && (index === 0 || value?.draftSha256 === draftHash);
+    return matches && Array.isArray(value?.findings) ? value.findings : [];
+  });
   const validationErrors = validateDraft?.(draft) ?? [];
   if (findings.length === 0 && validationErrors.length === 0) return "";
   return [
@@ -78,12 +104,25 @@ export async function checkpointTransitReadingModel<T>(
   const scope = context.getStore();
   if (!scope) return call(input);
   const step = scope.step++;
-  if (step >= MAX_STEPS) throw new TransitReadingCheckpointStopped("Report generation exceeded its seven-step limit.");
+  if (scope.reviewMode !== transitReadingReviewMode()) throw new TransitReadingCheckpointStopped("Report review mode changed during an invocation.");
+  if (scope.releasePolicy !== transitReadingReleasePolicy()) throw new TransitReadingCheckpointStopped("Report release policy changed during an invocation.");
+  const limit = scope.releasePolicy === SOURCE_COMPLETION_POLICY ? 4 : scope.reviewMode === "scoped" ? 9 : 7;
+  if (step >= limit) throw new TransitReadingCheckpointStopped(`Report generation exceeded its ${limit === 7 ? "seven" : limit === 9 ? "nine" : "four"}-step limit.`);
+  if (scope.releasePolicy === SOURCE_COMPLETION_POLICY) {
+    if (input.schemaName === "tldr_generated_report_judge") scope.judgeCalls.writing++;
+    else if (input.schemaName === `tldr_astro_${scope.family === "friend" ? "friend" : "you"}_transit_reading`) scope.writerCalls++;
+    else throw new TransitReadingCheckpointStopped("Unexpected source completion model role.");
+    if (scope.writerCalls > 2 || scope.judgeCalls.writing > 2) throw new TransitReadingCheckpointStopped("Source completion exceeded its role call limit.");
+  }
+  if (scope.reviewMode === "scoped") {
+    if (input.schemaName === SCOPED_REVIEW_SCHEMAS.facts) scope.judgeCalls.facts++;
+    else if (input.schemaName === SCOPED_REVIEW_SCHEMAS.writing) scope.judgeCalls.writing++;
+    else if (input.schemaName === `tldr_astro_${scope.family}_transit_reading`) scope.writerCalls++;
+    else throw new TransitReadingCheckpointStopped("Unexpected model role in scoped review attempt.");
+    if (scope.judgeCalls.facts > 2 || scope.judgeCalls.writing > 2 || scope.writerCalls > 5) throw new TransitReadingCheckpointStopped("Scoped review exceeded its role call limit.");
+  }
   const jobColumn = `${scope.family}_job_id`;
-  const requestHash = createHash("sha256").update(JSON.stringify({
-    version: 1, provider: input.provider, model: input.model,
-    prompt: input.prompt, schemaName: input.schemaName, schema: input.schema
-  })).digest("hex");
+  const requestHash = transitReadingModelRequestHash(input);
   const saved = await scope.admin.selectOne<Checkpoint<T>>("transit_report_model_checkpoints", new URLSearchParams({
     [jobColumn]: `eq.${scope.jobId}`, attempt: `eq.${scope.attempt}`, step: `eq.${step}`, select: "*"
   })).catch((cause) => { throw new TransitReadingCheckpointStopped("Report checkpoints could not be read safely.", { cause }); });

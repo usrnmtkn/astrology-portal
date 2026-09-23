@@ -21,6 +21,18 @@ const day = api.buildYouDayReportBrief({
   dailyAssembly: { specialSections: [], reportTransitReadings: [transit], reportSourceGaps: ["missing-source"],
     derivation: { targetDate: "2026-09-21", qualifyingTransits: [{id: transit.transitId}], moonDriver: null } }
 });
+let prepared = false;
+const freshDay = await api.prepareYouDayReportBrief({ dateLabel: 'September 21', dailyAssembly: {
+  specialSections: [], reportTransitReadings: [], reportSourceGaps: [transit.transitId],
+  derivation: { targetDate: '2026-09-21', qualifyingTransits: [{ id: transit.transitId }] },
+  prepareReportSources: async () => { await Promise.resolve(); prepared = true; return { reportTransitReadings: [transit], reportSourceGaps: [] }; }
+} });
+assert.ok(prepared);
+assert.deepEqual(freshDay.approvedReaderText.transitReadings, [transit], 'Explicit report intent rebuilds the brief after source loading.');
+assert.deepEqual(freshDay.technicalEvidence.sourceGaps, []);
+await assert.rejects(() => api.prepareYouDayReportBrief({ dateLabel: '', dailyAssembly: {
+  specialSections: [], derivation: {}, prepareReportSources: async () => { throw Error('source unavailable'); }
+} }), /source unavailable/u, 'A loading failure must not silently submit the earlier thin brief.');
 assert.ok(day, "A complete approved transit can support a report without a daily summary.");
 assert.deepEqual(day.approvedReaderText.transitReadings, [transit]);
 assert.deepEqual(day.technicalEvidence.sourceGaps, ["missing-source"]);
@@ -46,7 +58,7 @@ try {
     assert.equal(payload.brief.approvedReaderText.transitReadings[0].body, wholeBody);
     return new Response(JSON.stringify({ status: "queued" }), {status: 202});
   };
-  await api.requestYouTransitReport(day, "fixture");
+  await api.requestYouTransitReport(freshDay, "fixture");
 } finally { globalThis.fetch = originalFetch; }
 
 const app = fs.readFileSync("apps/web/src/App.tsx", "utf8");

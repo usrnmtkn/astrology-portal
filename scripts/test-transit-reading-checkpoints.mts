@@ -196,11 +196,11 @@ for (const family of ['you', 'friend'] as const) {
   const {rows,admin}=storage();
   const column=`${family}_job_id`;
   const saved=(step:number,schema:string,value:unknown,job='job')=>({id:`prior-${job}-${step}`,[column]:job,attempt:1,step,state:'complete',schema_name:schema,response:{value}});
-  rows.push(saved(0,'writer',{body:'Earlier discarded draft'}),
+  rows.push(saved(0,`tldr_astro_${family}_transit_reading`,{body:'Earlier discarded draft'}),
     saved(1,'tldr_generated_report_judge',{findings:[{finding:'Earlier finding'}]}),
-    saved(2,'writer',{headline:'Fixture',tldr:'Fixture summary',body:'Last rejected draft'}),
+    saved(2,`tldr_astro_${family}_transit_reading`,{headline:'Fixture',tldr:'Fixture summary',body:'Last rejected draft'}),
     saved(3,'tldr_generated_report_judge',{findings:[{category:'factual_traceability',location:'body',finding:'Preserve conditional language'}]}),
-    saved(9,'writer',{body:'Unrelated private draft'},'other-job'));
+    saved(9,`tldr_astro_${family}_transit_reading`,{body:'Unrelated private draft'},'other-job'));
   assert.equal(await resume({admin,family,jobId:'job',attempt:1},priorFeedback),'');
   const scope={admin,family,jobId:'job',attempt:2};
   const feedback=await resume(scope,priorFeedback);
@@ -224,9 +224,9 @@ for (const family of ['you', 'friend'] as const) {
   const {rows,admin}=storage();
   const column=`${family}_job_id`;
   rows.push(
-    {id:'draft-1',[column]:'job',attempt:1,step:0,state:'complete',schema_name:'writer',response:{value:{body:'Earlier judged draft'}}},
+    {id:'draft-1',[column]:'job',attempt:1,step:0,state:'complete',schema_name:`tldr_astro_${family}_transit_reading`,response:{value:{body:'Earlier judged draft'}}},
     {id:'judge-1',[column]:'job',attempt:1,step:1,state:'complete',schema_name:'tldr_generated_report_judge',response:{value:{findings:[{finding:'Only applies to earlier draft'}]}}},
-    {id:'draft-2',[column]:'job',attempt:1,step:2,state:'complete',schema_name:'writer',response:{value:{headline:'Fixture',tldr:'Fixture summary',body:'Latest invalid draft'}}}
+    {id:'draft-2',[column]:'job',attempt:1,step:2,state:'complete',schema_name:`tldr_astro_${family}_transit_reading`,response:{value:{headline:'Fixture',tldr:'Fixture summary',body:'Latest invalid draft'}}}
   );
   const scope={admin,family,jobId:'job',attempt:2};
   const feedback=await resume(scope,()=>priorFeedback(draft=>draft.body==='Latest invalid draft' ? ['Current deterministic defect'] : []));
@@ -276,3 +276,26 @@ for (const family of ['you', 'friend'] as const) {
   await assert.rejects(resume(scope, () => step(request('writer'), async () => { assert.fail('must not repeat a returned response'); })), TransitReadingCheckpointStopped);
 }
 console.log('Post-provider save errors fail closed even when recording the failure succeeds.');
+
+// Candidate policy is pinned inside an invocation and across checkpoint replay.
+{
+  const original = process.env.GENERATED_REPORT_RELEASE_POLICY;
+  try {
+    delete process.env.GENERATED_REPORT_RELEASE_POLICY;
+    const { rows, admin } = storage();
+    const scope = { admin, family: 'you' as const, jobId: 'policy-job', attempt: 1 };
+    await resume(scope, () => step(request('writer'), async () => result('writer')));
+    process.env.GENERATED_REPORT_RELEASE_POLICY = 'report-materiality-candidate-v1';
+    await assert.rejects(resume(scope, () => step(request('writer'), async () => assert.fail('must not bill on policy change'))), /instructions or evidence changed/);
+    assert.equal(rows.length, 1);
+    await assert.rejects(resume({ ...scope, attempt: 2 }, async () => {
+      process.env.GENERATED_REPORT_RELEASE_POLICY = 'strict';
+      return step(request('writer'), async () => assert.fail('must not bill on in-flight policy change'));
+    }), /release policy changed/);
+    assert.equal(rows.length, 1);
+  } finally {
+    if (original === undefined) delete process.env.GENERATED_REPORT_RELEASE_POLICY;
+    else process.env.GENERATED_REPORT_RELEASE_POLICY = original;
+  }
+}
+console.log('Release policy: mid-invocation changes and cross-policy checkpoint replay stop before dispatch.');

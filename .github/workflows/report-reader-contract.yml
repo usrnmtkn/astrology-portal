@@ -6,6 +6,7 @@ on:
       - 'api/_lib/**'
       - 'scripts/test-*report*'
       - 'scripts/test-*transit*'
+      - 'apps/web/supabase/migrations/*transit_report*'
       - 'src/astro-writing/**'
       - 'tldr-astro-phrasebank/**'
       - 'apps/web/src/components/reports/**'
@@ -13,7 +14,11 @@ on:
       - 'apps/web/src/services/reportLibrary.ts'
       - 'apps/web/src/App.tsx'
       - 'apps/web/src/features/you/**'
+      - 'apps/web/src/features/friends/ManualChartsPanel.tsx'
+      - 'apps/web/src/features/friends/friendTransitsBrief.ts'
+      - 'tests/visual/friends-authenticated-loading-diagnostic.spec.ts'
       - 'tests/visual/you-report-page.spec.ts'
+      - 'tests/visual/report-source-completion.spec.ts'
       - '.github/workflows/report-reader-contract.yml'
   push:
     branches: [main]
@@ -21,6 +26,7 @@ on:
       - 'api/_lib/**'
       - 'scripts/test-*report*'
       - 'scripts/test-*transit*'
+      - 'apps/web/supabase/migrations/*transit_report*'
       - 'src/astro-writing/**'
       - 'tldr-astro-phrasebank/**'
       - 'apps/web/src/components/reports/**'
@@ -28,7 +34,11 @@ on:
       - 'apps/web/src/services/reportLibrary.ts'
       - 'apps/web/src/App.tsx'
       - 'apps/web/src/features/you/**'
+      - 'apps/web/src/features/friends/ManualChartsPanel.tsx'
+      - 'apps/web/src/features/friends/friendTransitsBrief.ts'
+      - 'tests/visual/friends-authenticated-loading-diagnostic.spec.ts'
       - 'tests/visual/you-report-page.spec.ts'
+      - 'tests/visual/report-source-completion.spec.ts'
       - '.github/workflows/report-reader-contract.yml'
 
 permissions:
@@ -59,12 +69,23 @@ jobs:
         run: |
           node --import tsx --test scripts/test-report-reader-contract.mts
           node --import tsx scripts/test-transit-reading-checkpoints.mts
+          node --import tsx scripts/test-transit-reading-release-policy.mts
+          node --import tsx scripts/test-transit-reading-delivery-evidence.mts
+          node --import tsx scripts/test-transit-reading-review-reconciliation.mts
+          node --import tsx scripts/test-transit-reading-source-citations.mts
           node --import tsx scripts/test-transit-report-delivery.mjs
+          node --import tsx scripts/test-transit-report-delivery.mjs --scoped
+          node --import tsx scripts/test-transit-report-delivery.mjs --material
+          node --import tsx scripts/test-transit-report-delivery.mjs --evidence-delivery
+          node scripts/test-transit-source-completion.mjs
+          node scripts/test-transit-reading-scoped-migration.mjs
           node --import tsx scripts/test-you-report-paid-lifecycle.mts
           node --import tsx scripts/test-you-report-quality-floor.mts
           node scripts/test-you-report-source-handoff.mjs
+          node scripts/test-personal-report-source-hydration.mjs
           node --import tsx scripts/test-friend-report-paid-lifecycle.mts
           node --import tsx scripts/test-friend-transit-reading-contract.mts
+          node --import tsx scripts/test-transit-reading-dates.mts
           node --import tsx scripts/test-generated-report-judge-governance.mts
           node --import tsx scripts/test-report-provider-schemas.mjs
           node --import tsx scripts/test-report-library-delete.mjs
@@ -77,6 +98,7 @@ jobs:
           node --import tsx scripts/test-generated-report-correction.mjs
           node --import tsx scripts/test-generated-report-breadth.mjs
           node --import tsx scripts/test-generated-report-owner-corpus.mjs
+          node --import tsx scripts/test-transit-reading-scoped-review.mts
       - run: npm run typecheck
       - run: npm run build:web
 
@@ -100,5 +122,12 @@ jobs:
       - name: Fresh built Reports reader, account isolation and generation states
         run: >-
           npx playwright test -c playwright.config.ts
-          tests/visual/report-library-ui.spec.ts tests/visual/you-report-auth.spec.ts
+          tests/visual/report-library-ui.spec.ts tests/visual/report-source-completion.spec.ts tests/visual/you-report-auth.spec.ts
           tests/visual/you-report-page.spec.ts tests/visual/friend-report-state.spec.ts
+      - name: Fresh built Friends complete-source request
+        env:
+          VITE_SUPABASE_URL: https://friends-qa.supabase.co
+        run: >-
+          npx playwright test -c playwright.config.ts
+          tests/visual/friends-authenticated-loading-diagnostic.spec.ts
+          --grep 'complete approved detail' --workers=1

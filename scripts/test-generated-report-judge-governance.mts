@@ -13,6 +13,7 @@ import {
   type GeneratedReportOwnerFeedbackRow
 } from "../api/_lib/transit-reading-owner-evidence-rules.ts";
 import { youTransitReadingProductionKnowledgeIds } from "../api/_lib/transit-reading-production-evidence.ts";
+import { assertGeneratedReportJudgeEvidence } from "../api/_lib/transit-reading-judge-evidence.ts";
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const read = (relative: string) => fs.readFileSync(path.join(repoRoot, relative), "utf8");
@@ -28,6 +29,47 @@ assert.equal(generatedReportJudgeVerdict(perfectScores, 0.85), "pass");
 assert.equal(generatedReportJudgeVerdict({ ...perfectScores, owner_voice: 3 }, 0.85), "below_threshold");
 assert.equal(generatedReportJudgeVerdict({ ...perfectScores, natural_language: 3 }, 0.85), "below_threshold");
 assert.equal(generatedReportJudgeVerdict({ ...perfectScores, factual_traceability: 2 }, 0.85), "below_threshold");
+
+const judgeInput = { draft: { headline: 'Synthetic title', summary: 'Synthetic summary.', body: 'That specific opportunity will return.' },
+  brief: { approvedReaderText: { body: 'A recurring theme can invite reconsideration.' } },
+  ownerComparisonSet: [{ evidenceId: 'synthetic-owner-1', text: 'Synthetic comparison passage. It develops the consequence.' }] };
+const citedFinding = { category: 'unsupported_timing' as const, location: 'body',
+  finding: 'A recurring theme does not establish that this specific opportunity returns.',
+  draftQuote: judgeInput.draft.body, sourcePath: '/approvedReaderText/body', sourceQuote: judgeInput.brief.approvedReaderText.body, ownerComparisons: [] };
+const coherentJudgment = { scores: { ...perfectScores, astrology_chronology: 2 }, findings: [citedFinding] };
+assert.doesNotThrow(() => assertGeneratedReportJudgeEvidence(coherentJudgment, judgeInput));
+assert.equal(generatedReportJudgeVerdict(coherentJudgment.scores, 0.85, coherentJudgment.findings), 'below_threshold');
+assert.throws(() => assertGeneratedReportJudgeEvidence({ scores: perfectScores, findings: [citedFinding] }, judgeInput), /perfect category score/u);
+assert.throws(() => assertGeneratedReportJudgeEvidence({ ...coherentJudgment, findings: [{ ...citedFinding, draftQuote: 'Invented quotation' }] }, judgeInput), /reader-visible copy/u);
+assert.throws(() => assertGeneratedReportJudgeEvidence({ ...coherentJudgment, findings: [{ ...citedFinding, draftQuote: 'That specific...will return.' }] }, judgeInput), /reader-visible copy/u,
+  'Ellipsis-joined diagnostic snippets cannot stand in for an exact draft quotation.');
+for (const draftQuote of ['', '   ']) {
+  assert.throws(() => assertGeneratedReportJudgeEvidence({ ...coherentJudgment, findings: [{ ...citedFinding, draftQuote }] }, judgeInput), /reader-visible copy/u,
+    'Nonempty diagnostic quotations remain runtime-enforced independently of the provider schema.');
+}
+assert.throws(() => assertGeneratedReportJudgeEvidence({ ...coherentJudgment, findings: [{ ...citedFinding, sourcePath: '/not-in-the-brief' }] }, judgeInput), /sourcePath/u);
+assert.throws(() => assertGeneratedReportJudgeEvidence({ ...coherentJudgment, findings: [{ ...citedFinding, sourceQuote: 'The exact opportunity will return.' }] }, judgeInput), /sourceQuote/u);
+assert.throws(() => assertGeneratedReportJudgeEvidence({ ...coherentJudgment, findings: [] }, judgeInput), /no diagnostic evidence/u);
+assert.doesNotThrow(() => assertGeneratedReportJudgeEvidence({ ...coherentJudgment, findings: [{ ...citedFinding, sourcePath: null, sourceQuote: null }] }, judgeInput));
+assert.doesNotThrow(() => assertGeneratedReportJudgeEvidence({ scores: perfectScores, findings: [] }, judgeInput));
+
+// An exact candidate quote alone cannot establish owner likeness. Eligibility
+// and exact text are machine-checkable; editorial correctness still needs calibration.
+const comparison = { evidenceId: 'synthetic-owner-1', quote: 'It develops the consequence.', difference: 'The candidate repeats the result rather than developing its consequence.' };
+const voiceFinding = { ...citedFinding, category: 'owner_voice' as const, sourcePath: null, sourceQuote: null, ownerComparisons: [comparison] };
+const voiceJudgment = { scores: { ...perfectScores, owner_voice: 3 }, findings: [voiceFinding] };
+assert.doesNotThrow(() => assertGeneratedReportJudgeEvidence(voiceJudgment, judgeInput));
+for (const [ownerComparisons, expected] of [
+  [undefined, /must be an array/u], [[], /lacks eligible comparison/u],
+  [[{ ...comparison, evidenceId: 'not-in-packet' }], /ineligible/u],
+  [[{ ...comparison, quote: 'Invented owner quotation' }], /quote is not exact/u],
+  [[{ ...comparison, quote: ' ' }], /quote is not exact/u],
+  [[{ ...comparison, difference: ' ' }], /observable difference/u],
+  [[comparison, comparison], /duplicated/u]
+] as const) {
+  assert.throws(() => assertGeneratedReportJudgeEvidence({ ...voiceJudgment, findings: [{ ...voiceFinding, ownerComparisons }] }, judgeInput), expected);
+}
+assert.throws(() => assertGeneratedReportJudgeEvidence(voiceJudgment, { ...judgeInput, ownerComparisonSet: [] }), /ineligible/u);
 
 const feedbackBase = {
   source_generated_interpretation_id: "report-1",
@@ -115,22 +157,23 @@ assert.deepEqual(weeklyMoonEvidence.mapped.canonicalIds, ["body/moon", "sign/sco
 
 const sharedGenerator = read("api/_lib/transit-reading-generation.ts");
 assert.match(sharedGenerator, /initialValidatedDraft/u, "Deterministic validation must precede the judge.");
-assert.match(sharedGenerator, /firstJudgment\.result\.verdict === "pass"/u);
+assert.match(sharedGenerator, /firstDecision\.action === "accept"/u);
 assert.match(sharedGenerator, /QUALITY JUDGE CORRECTION — ONE PASS ONLY/u);
 assert.match(sharedGenerator, /DETERMINISTIC CLEANUP — NO NEW INTERPRETATION/u);
-assert.match(sharedGenerator, /deterministicCleanupFeedback\(firstJudgment, corrected, error\.message, initial\.validationFeedback\)/u);
-assert.match(sharedGenerator, /const secondJudgment = await options\.judge/u);
-assert.match(sharedGenerator, /secondJudgment\.result\.verdict !== "pass"\) throw new TransitReadingJudgeBlockedError/u);
+assert.match(sharedGenerator, /deterministicCleanupFeedback\(correctionJudgment, corrected, error\.message, initial\.validationFeedback\)/u);
+assert.match(sharedGenerator, /const secondJudgment = await review/u);
+assert.match(sharedGenerator, /secondDecision\.action !== "accept"\) throw new TransitReadingJudgeBlockedError/u);
 assert.match(sharedGenerator, /validateShape\(corrected, options, initial\.brief\)/u, "The judge correction and any deterministic cleanup must pass validation before re-judge.");
-assert.match(sharedGenerator, /judgeAudit\(secondJudgment, 2\)/u);
-assert.doesNotMatch(sharedGenerator, /findings:\s*judged\.result\.findings/u, "Judge findings must not be persisted in the pass audit.");
+assert.match(sharedGenerator, /judgeAudit\(secondJudgment, 2, secondDecision, corrected\)/u);
+// Correction and delivery fixtures verify that strict pass audits omit findings and
+// candidate advisory receipts stay out of rendered prose and approved owner evidence.
 assert.doesNotMatch(sharedGenerator, /callOpenAIResponses\s*\(/u, "Friends/You writers may not open a direct provider path.");
 assert.doesNotMatch(sharedGenerator, /api\.anthropic\.com/u, "Friends/You writers may not open a direct Claude path.");
 assert.match(sharedGenerator, /prepareTransitReadingProductionKernel/u);
 assert.match(sharedGenerator, /callGovernedTransitReadingModel/u);
 
 const checkpointRuntime = read("api/_lib/transit-reading-checkpoints.ts");
-assert.match(checkpointRuntime, /const MAX_STEPS = 7/u, "The bounded checkpoint budget must allow one deterministic cleanup before the final re-judge.");
+assert.match(checkpointRuntime, /const limit = scope.releasePolicy === SOURCE_COMPLETION_POLICY \? 4 : scope.reviewMode === "scoped" \? 9 : 7/u, "Source completion permits four steps; legacy policies retain their existing bounded budgets.");
 const checkpointMigration = read("apps/web/supabase/migrations/20260916062707_transit_report_checkpoint_cleanup_step.sql");
 assert.match(checkpointMigration, /step <= 6/u, "The database checkpoint bound must admit the seventh bounded model step.");
 
@@ -165,10 +208,9 @@ const friendLifecycle = read("api/_lib/friend-report-lifecycle.ts");
 const youLifecycle = read("api/_lib/you-report-lifecycle.ts");
 for (const source of [friendLifecycle, youLifecycle]) {
   assert.match(source, /isTransitReadingJudgeBlockedError/u);
-  assert.match(source, /const failed = job\.attempt >= attemptCap/u);
-  assert.doesNotMatch(source, /const failed = judgeBlocked \|\|/u, "A rejected draft must not consume the whole job retry budget.");
-  assert.match(source, /Writing quality gate did not pass after one corrective rewrite and re-judge\./u);
-  assert.match(source, /attempt: 0/u, "A later explicit retry must receive a fresh bounded job budget.");
+  // Actual delivery fixtures assert terminal review holds with four attempts remaining,
+  // unchanged infrastructure recovery, and zero-call re-request/legacy-job behavior.
+  assert.match(source, /attempt: 0/u, "A retryable infrastructure failure retains a bounded explicit-retry path.");
   assert.match(source, /result_id: null/u);
 }
 

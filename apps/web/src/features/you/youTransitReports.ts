@@ -35,8 +35,15 @@ type DailyAssembly = {
   specialSections: Array<{ headline: string; body: string }>;
   reportTransitReadings?: YouReportTransitReading[];
   reportSourceGaps?: string[];
+  prepareReportSources?: () => Promise<{ reportTransitReadings: YouReportTransitReading[]; reportSourceGaps: string[] }>;
   derivation: Record<string, unknown>;
 };
+
+export async function prepareYouDayReportBrief(input: Parameters<typeof buildYouDayReportBrief>[0]) {
+  const sources = await input.dailyAssembly?.prepareReportSources?.();
+  return buildYouDayReportBrief({ ...input, dailyAssembly: input.dailyAssembly && sources
+    ? { ...input.dailyAssembly, ...sources } : input.dailyAssembly });
+}
 
 function record(value: unknown): Record<string, unknown> | null {
   return value && typeof value === "object" && !Array.isArray(value)

@@ -1557,6 +1557,10 @@ export function ManualChartsPanel({
       durationLabel: card.durationLabel,
       timingRange: card.timingRange,
       rowSummary: card.rowSummary,
+      readerSections: acceptedOwnerApprovedTransitSections(
+        card.normalized.detailSections,
+        fallbackV3ApprovalLevelForContentKey
+      ).map(({ body, sourceKeys }) => ({ body, sourceKeys })),
       termLabel: longTransitPlanets.has(card.transit.transitPlanet) ? "Long-term" : "Short-term",
       keywords: houseLifeAreaKeywords(card.activation.house),
       house: card.activation.house,
@@ -1603,6 +1607,10 @@ export function ManualChartsPanel({
               selectedChart.pronouns,
               currentSky.generatedAt
             ),
+            readerSections: acceptedOwnerApprovedTransitSections(
+              normalized.sections,
+              fallbackV3ApprovalLevelForContentKey
+            ).map(({ body, sourceKeys }) => ({ body, sourceKeys })),
             orb: transit.orb,
             detailAvailable: acceptedOwnerApprovedTransitSections(
               normalized.sections,

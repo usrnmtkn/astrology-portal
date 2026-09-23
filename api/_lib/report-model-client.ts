@@ -32,6 +32,7 @@ export type ReportModelCallInput<T> = {
   schema: Record<string, unknown>;
   signal?: AbortSignal;
   disableFallback?: boolean;
+  requestLimits?: { maxInputBytes: number; maxOutputTokens: number };
   productionKernel?: ReportProductionKernel;
   validateResponse?: (value: T) => void;
   beforeProviderCall?: (attempt: ReportProviderAttempt) => Promise<void>;
@@ -42,6 +43,19 @@ export type ReportModelCall = <T>(input: ReportModelCallInput<T>) => Promise<Rep
 
 function usage(inputTokens = 0, outputTokens = 0, cachedInputTokens = 0): ReportModelUsage {
   return { inputTokens, cachedInputTokens, outputTokens, totalTokens: inputTokens + outputTokens };
+}
+
+function boundedRequestBody(payload: Record<string, unknown>, limits?: { maxInputBytes: number; maxOutputTokens: number }) {
+  if (limits) {
+    if (!Number.isSafeInteger(limits.maxInputBytes) || limits.maxInputBytes <= 0
+      || !Number.isSafeInteger(limits.maxOutputTokens) || limits.maxOutputTokens <= 0) {
+      throw new Error("Invalid report request limits.");
+    }
+    payload[Object.hasOwn(payload, "messages") ? "max_tokens" : "max_output_tokens"] = limits.maxOutputTokens;
+  }
+  const body = JSON.stringify(payload);
+  if (limits && Buffer.byteLength(body, "utf8") > limits.maxInputBytes) throw new Error("Report request exceeds its pre-dispatch input limit.");
+  return body;
 }
 
 function outputText(payload: Record<string, unknown>) {
@@ -63,6 +77,7 @@ async function callOpenAi<T>(input: {
   schema: Record<string, unknown>;
   signal?: AbortSignal;
   disableFallback?: boolean;
+  requestLimits?: { maxInputBytes: number; maxOutputTokens: number };
   productionKernel?: ReportProductionKernel;
   validateResponse?: (value: T) => void;
   beforeProviderCall?: (attempt: ReportProviderAttempt) => Promise<void>;
@@ -80,11 +95,11 @@ async function callOpenAi<T>(input: {
     method: "POST",
     signal: input.signal,
     headers: { authorization: `Bearer ${key}`, "content-type": "application/json" },
-    body: JSON.stringify({
+    body: boundedRequestBody({
       model: input.model,
       input: input.prompt,
       text: { format: { type: "json_schema", name: input.schemaName, strict: true, schema: input.schema } }
-    })
+    }, input.requestLimits)
   });
     const payload = await response.json() as Record<string, unknown> & { error?: { message?: string }; id?: string };
     if (!response.ok) throw new Error(payload.error?.message ?? `Report model call failed with ${response.status}.`);
@@ -134,6 +149,7 @@ async function callClaude<T>(input: {
   provider: string; model: string; prompt: string; schemaName: string; schema: Record<string, unknown>;
   signal?: AbortSignal;
   disableFallback?: boolean;
+  requestLimits?: { maxInputBytes: number; maxOutputTokens: number };
   productionKernel?: ReportProductionKernel;
   validateResponse?: (value: T) => void;
   beforeProviderCall?: (attempt: ReportProviderAttempt) => Promise<void>;
@@ -150,13 +166,13 @@ async function callClaude<T>(input: {
     method: "POST",
     signal: input.signal,
     headers: { "x-api-key": key, "anthropic-version": "2023-06-01", "content-type": "application/json" },
-    body: JSON.stringify({
+    body: boundedRequestBody({
       model: input.model,
       max_tokens: 12_000,
       messages: [{ role: "user", content: input.prompt }],
       tools: [{ name: input.schemaName, description: "Return structured report fulfillment output.", input_schema: input.schema }],
       tool_choice: { type: "tool", name: input.schemaName }
-    })
+    }, input.requestLimits)
   });
     const payload = await response.json() as {
     id?: string; content?: Array<{ type?: string; name?: string; input?: T }>;
@@ -190,6 +206,7 @@ async function directReportModelCall<T>(input: {
   provider: string; model: string; prompt: string; schemaName: string; schema: Record<string, unknown>;
   signal?: AbortSignal;
   disableFallback?: boolean;
+  requestLimits?: { maxInputBytes: number; maxOutputTokens: number };
   productionKernel?: ReportProductionKernel;
   validateResponse?: (value: T) => void;
   beforeProviderCall?: (attempt: ReportProviderAttempt) => Promise<void>;
@@ -205,6 +222,7 @@ const callReportModel: ReportModelCall = async <T>(input: {
   provider: string; model: string; prompt: string; schemaName: string; schema: Record<string, unknown>;
   signal?: AbortSignal;
   disableFallback?: boolean;
+  requestLimits?: { maxInputBytes: number; maxOutputTokens: number };
   productionKernel?: ReportProductionKernel;
   validateResponse?: (value: T) => void;
   beforeProviderCall?: (attempt: ReportProviderAttempt) => Promise<void>;

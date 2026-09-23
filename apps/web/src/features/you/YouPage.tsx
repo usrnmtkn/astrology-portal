@@ -57,6 +57,7 @@ export type DailyHoroscopeAssembly = {
   dontItems?: string[];
   reportTransitReadings?: import("./youTransitReports").YouReportTransitReading[];
   reportSourceGaps?: string[];
+  prepareReportSources?: () => Promise<{ reportTransitReadings: import("./youTransitReports").YouReportTransitReading[]; reportSourceGaps: string[] }>;
   specialSections: Array<{
     headline: string;
     body: string;

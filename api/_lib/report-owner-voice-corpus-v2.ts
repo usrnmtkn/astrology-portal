@@ -1,7 +1,5 @@
-import { readPrivateReportDocument } from "./private-report-documents.mjs";
+import { readPrivateReportDocument, readOptionalPrivateReportDocument } from "./private-report-documents.mjs";
 import crypto from "node:crypto";
-import fs from "node:fs";
-import path from "node:path";
 import type { ReportDomain } from "./report-types.js";
 import type { ReportComparisonFunction } from "./report-owner-comparison.js";
 
@@ -14,11 +12,14 @@ export type ReportOwnerVoiceCorpusPassage = {
   function: ReportComparisonFunction;
   sectionHeading: string;
   text: string;
+  referenceFormat: "annual_report" | "weekly_forecast" | "seasonal_forecast" | "transit_forecast";
   provenance: {
     sourcePath: string;
     sourceType: "owner_authored_final";
     sourceSha256: string;
     passageSha256: string;
+    sourceImageSha256?: string;
+    sourceAssignment?: string;
   };
 };
 
@@ -28,6 +29,7 @@ const OWNER_FINALS: Array<{ reportDomain: ReportDomain; sourcePath: string }> = 
   { reportDomain: "love_connection", sourcePath: "private:report/love-connection-2026" },
   { reportDomain: "personal_health", sourcePath: "private:report/personal-health-2026" }
 ];
+const annualSourceParagraphs = new Map<string, string[]>();
 
 function sha256(value: string) {
   return crypto.createHash("sha256").update(value).digest("hex");
@@ -71,6 +73,7 @@ function eligibleParagraphs(section: string) {
 
 function corpusForSource(source: { reportDomain: ReportDomain; sourcePath: string }) {
   const text = readPrivateReportDocument(source.sourcePath);
+  annualSourceParagraphs.set(source.sourcePath, text.split(/\n\s*\n/gu).map((paragraph) => paragraph.trim()));
   const sourceSha256 = sha256(text);
   const sections = text.split(/(?=^## )/gmu).filter((section) => /^## /u.test(section));
   return sections.flatMap((section, sectionIndex) => {
@@ -86,6 +89,7 @@ function corpusForSource(source: { reportDomain: ReportDomain; sourcePath: strin
         function: paragraphFunction(paragraph, paragraphIndex, paragraphs.length),
         sectionHeading: heading,
         text: paragraph,
+        referenceFormat: "annual_report",
         provenance: {
           sourcePath: source.sourcePath,
           sourceType: "owner_authored_final",
@@ -102,6 +106,101 @@ let cachedCorpus: ReportOwnerVoiceCorpusPassage[] | null = null;
 export function reportOwnerVoiceCorpusV2() {
   if (!cachedCorpus) cachedCorpus = OWNER_FINALS.flatMap(corpusForSource);
   return structuredClone(cachedCorpus);
+}
+
+const SOCIAL_SOURCE = "private:report/social-writing-references-20260921";
+const SOCIAL_ASSIGNMENT = "thread:01a0c440-92d0-7822-bda6-af3338840786";
+
+/** Supplemental, complete screenshot transcriptions. Raw OCR is never eligible. */
+export function reportOwnerSocialVoiceCorpusV1(): ReportOwnerVoiceCorpusPassage[] {
+  const body = readOptionalPrivateReportDocument(SOCIAL_SOURCE);
+  if (body === null) return [];
+  const invalid = () => { throw new Error("REPORT_OWNER_SOCIAL_EVIDENCE_INVALID"); };
+  let document;
+  try { document = JSON.parse(body); }
+  catch { return invalid(); }
+  if (!document || document.schema !== "owner-social-references/v1" || document.role !== "register_only"
+    || document.sourceAssignment !== SOCIAL_ASSIGNMENT || !Array.isArray(document.records)
+    || !document.records.length) return invalid();
+  const ids = new Set<string>();
+  return document.records.map((entry: Record<string, unknown>): ReportOwnerVoiceCorpusPassage => {
+    if (!entry || typeof entry !== "object" || typeof entry.id !== "string" || !/^social-\d{2}$/u.test(entry.id)
+      || ids.has(entry.id) || typeof entry.text !== "string" || !entry.text.trim()
+      || typeof entry.heading !== "string" || !entry.heading.trim()
+      || !["weekly_forecast", "seasonal_forecast", "transit_forecast"].includes(String(entry.sourceFormat))
+      || entry.transcription !== "visually_checked_complete_body_reflowed"
+      || typeof entry.imageSha256 !== "string" || !/^[a-f0-9]{64}$/u.test(entry.imageSha256)
+      || sha256(entry.text) !== entry.passageSha256) return invalid();
+    ids.add(entry.id);
+    return {
+      evidenceId: `report-owner-social-v1:${entry.id}:${String(entry.passageSha256).slice(0, 12)}`,
+      reportDomain: "general",
+      unitType: "domain",
+      function: "development",
+      sectionHeading: entry.heading,
+      text: entry.text,
+      referenceFormat: entry.sourceFormat as ReportOwnerVoiceCorpusPassage["referenceFormat"],
+      provenance: {
+        sourcePath: SOCIAL_SOURCE,
+        sourceType: "owner_authored_final",
+        sourceSha256: sha256(body),
+        passageSha256: entry.passageSha256 as string,
+        sourceImageSha256: entry.imageSha256,
+        sourceAssignment: SOCIAL_ASSIGNMENT
+      }
+    };
+  });
+}
+
+function rankByRelevance<T>(entries: T[], text: (entry: T) => string, key: (entry: T) => string, relevanceText = "") {
+  const stopWords = new Set("that this with from have been your they their them when where what which will would could should through about into more than then also only some does each these those because while there before after".split(" "));
+  const terms = (value: string) => new Set((value.toLowerCase().match(/\b[a-z]{4,}\b/gu) ?? []).filter((term) => !stopWords.has(term)));
+  const query = terms(relevanceText);
+  const documents = entries.map((entry) => terms(text(entry)));
+  const frequency = new Map<string, number>();
+  for (const document of documents) for (const term of document) frequency.set(term, (frequency.get(term) ?? 0) + 1);
+  return entries.map((entry, index) => ({ entry, score: [...documents[index]].reduce((score, term) => (
+    query.has(term) ? score + Math.log(1 + documents.length / frequency.get(term)!) : score
+  ), 0) })).sort((a, b) => b.score - a.score || key(a.entry).localeCompare(key(b.entry))).map(({ entry }) => entry);
+}
+
+export function reportOwnerVoicePassagesAreConnected(passages: ReportOwnerVoiceCorpusPassage[]) {
+  if (!passages.length) return false;
+  if (!cachedCorpus) reportOwnerVoiceCorpusV2();
+  const source = annualSourceParagraphs.get(passages[0].provenance.sourcePath);
+  return Boolean(source?.some((_, index) => passages.every((passage, offset) => (
+    passage.provenance.sourcePath === passages[0].provenance.sourcePath
+    && passage.sectionHeading === passages[0].sectionHeading
+    && passage.text === source[index + offset]
+  ))));
+}
+
+/** Read a connected development, rather than three unrelated overview lines. */
+export function reportOwnerVoiceDevelopmentSetV2(relevanceText: string) {
+  const sections = new Map<string, ReportOwnerVoiceCorpusPassage[]>();
+  for (const passage of reportOwnerVoiceCorpusV2()) {
+    if (!["theme", "season", "domain"].includes(passage.unitType)) continue;
+    const key = `${passage.provenance.sourcePath}:${passage.sectionHeading}`;
+    sections.set(key, [...(sections.get(key) ?? []), passage]);
+  }
+  const windows = [...sections.values()].flatMap((paragraphs) => paragraphs.flatMap((_, index) => (
+    index + 3 <= paragraphs.length ? [paragraphs.slice(index, index + 3)] : []
+  )));
+  // The general corpus omits short/date-only paragraphs. Such omissions must
+  // not turn a nonadjacent sequence into a purported connected development.
+  const connected = windows.filter(reportOwnerVoicePassagesAreConnected);
+  const selected = rankByRelevance(connected, (window) => window.map((passage) => passage.text).join("\n\n"), (window) => window[0].evidenceId, relevanceText)[0];
+  if (!selected) throw new Error("REPORT_OWNER_VOICE_DEVELOPMENT_GAP");
+  return selected;
+}
+
+export function reportOwnerSocialVoiceComparison(relevanceText: string, horizon: "day" | "week" | "current") {
+  const corpus = reportOwnerSocialVoiceCorpusV1();
+  // These are adjacent registers, never mislabeled as personalized daily or
+  // third-person Friends gold examples. Format wins before topic relevance.
+  const preferred = horizon === "week" ? "weekly_forecast" : "transit_forecast";
+  const sameFormat = corpus.filter((passage) => passage.referenceFormat === preferred);
+  return rankByRelevance(sameFormat.length ? sameFormat : corpus, (passage) => passage.text, (passage) => passage.evidenceId, relevanceText)[0] ?? null;
 }
 
 const FUNCTION_TARGETS: Record<ReportVoiceUnitType, ReportComparisonFunction[]> = {

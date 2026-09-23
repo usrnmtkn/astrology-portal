@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import {
   assertFriendTransitReadingBrief,
+  friendTransitReadingApprovedReaderText,
   friendTransitHouseLifeDomains,
   friendTransitReadingCanGenerate,
   friendTransitReadingKnowledgeIds,
@@ -9,6 +10,8 @@ import {
   friendTransitReadingRequestLock,
   validateFriendTransitReadingDraft
 } from "../api/_lib/friend-transit-reading.ts";
+import { buildFriendTransitsBrief } from "../apps/web/src/features/friends/friendTransitsBrief.ts";
+import { acceptedOwnerApprovedTransitSections } from "../apps/web/src/features/friends/transitDetailApproval.ts";
 
 const rawBrief = {
   schema: "tldr.friend-transits-brief.v1",
@@ -164,7 +167,7 @@ assert.match(prompt, /synthesis only/i);
 assert.match(prompt, /Do not re-rank the evidence/i);
 assert.match(prompt, /Things between you and \${brief\.friendName}|Things between you and Alex/i);
 assert.match(prompt, /Do not use you\/your outside relationship context/i);
-assert.match(prompt, /Every sentence containing you\/your must itself name the friend/u);
+assert.match(prompt, /Following sentences may keep that context without repeating the name/u);
 assert.match(prompt, /Return exactly four fields: headline, tldr, summary, body/u);
 assert.doesNotMatch(prompt, /(?:action|timing|sections|sceneLock|astrologyDrilldown): return/u,
   'The writing prompt must not request fields forbidden by its provider schema.');
@@ -175,9 +178,43 @@ const relationshipFollowup = validateFriendTransitReadingDraft({
     body: 'Things between you and Alex need patience today. You can take your time before answering. Alex can consider the current situation.' }
 });
 const followupIssues = relationshipFollowup.issues.filter(issue => issue.code === 'second_person');
-assert.equal(followupIssues.length, 1, 'Diagnose the failing sentence once, not once per pronoun.');
-assert.match(followupIssues[0].message, /body, sentence 2/u);
-assert.match(followupIssues[0].message, /preceding relationship sentence is insufficient/u);
+assert.equal(followupIssues.length, 0, 'An anchored relationship paragraph can continue without repeating the friend name.');
+assert.equal(validateFriendTransitReadingDraft({ brief, expectedHeadline: lockedRequest.headline,
+  draft: { headline: lockedRequest.headline, summary: 'Alex can respond to the current situation.',
+    body: 'Things between you and Alex need patience. Alex can hear what you mean. You can take your time before answering.' }
+}).passed, true, 'Naming the friend while addressing the reader must not falsely end relationship context.');
+
+// Synthetic reproduction of the production failure. Relationship evidence is
+// licensed only within that relationship and for the explicitly supplied owner.
+const relationshipBrief = assertFriendTransitReadingBrief({ ...rawBrief, relationshipActivations: [{
+  id: 'synthetic-relationship', headline: 'Chiron sextile your Sun', transitPlanet: 'Chiron',
+  activationBody: "Chiron in Pisces is sextile your Sun through November 28, activating the connection it makes with Alex's Moon.",
+  effectBody: 'The connection can make uncertainty easier to acknowledge.'
+}] });
+const checkRelationship = (body: string, selectedBrief = relationshipBrief) => validateFriendTransitReadingDraft({
+  brief: selectedBrief, expectedHeadline: lockedRequest.headline,
+  draft: { headline: lockedRequest.headline, summary: 'Alex can respond to the current situation.', body }
+});
+assert.equal(checkRelationship("Things between you and Alex can make uncertainty easier to acknowledge. Chiron in Pisces is sextile your Sun through November 28, activating the connection it makes with Alex's Moon.").passed, true);
+for (const body of [
+  'Things between you and Alex need patience. Chiron is sextile their Sun.',
+  "Things between you and Alex need patience. Chiron is sextile Alex's Sun.",
+  'Things between you and Alex need patience. Mars is trine your Moon.',
+  'Things between you and Alex need patience. Chiron is opposite your Sun.',
+  'Chiron is sextile their Sun.'
+]) {
+  assert.ok(checkRelationship(body).issues.some(issue => issue.code === 'untraceable_transit_claim'), body);
+}
+for (const body of [
+  'Things between you and Alex need patience.\n\nYou can take your time.',
+  'Things between you and Alex need patience. Alex can consider their own schedule. You can take your time.',
+  'You can take your time. Things between you and Alex need patience.'
+]) {
+  assert.equal(checkRelationship(body).issues.filter(issue => issue.code === 'second_person').length, 1, body);
+}
+assert.ok(checkRelationship('Things between you and Alex need patience.', assertFriendTransitReadingBrief({ ...rawBrief, relationshipActivations: [] }))
+  .issues.some(issue => issue.code === 'second_person'));
+assert.ok(checkRelationship('Alex is responding to Chiron in Pisces.').issues.some(issue => issue.code === 'untraceable_sign'));
 assert.match(prompt, /Mars trine Moon/);
 assert.match(prompt, /SPECIFICITY WITHOUT INVENTION/u);
 assert.match(prompt, /"lifeDomains": \[\s*"partnerships"/u, "Known natal houses must expose concrete semantic domains to the writer.");
@@ -223,4 +260,45 @@ assert.ok(invented.issues.some((issue) => issue.code === "standing_trait_languag
 const dailyOnly = assertFriendTransitReadingBrief({ ...rawBrief, primaryThemes: [], longerCycles: [] });
 assert.equal(friendTransitReadingCanGenerate(dailyOnly), false, "V1 must fail closed without at least one content-approved personal transit.");
 
-console.log("Friend transit reading contract tests passed.");
+// A card preview must never be the only meaning source when approved detail
+// exists. Exercise client assembly, serialization, server locking and prompts.
+const fullBody = "  Complete fixture opening.\n\n" + "Full source paragraph remains available. ".repeat(180) + "\n\nExact fixture ending.  ";
+const sourceSections = acceptedOwnerApprovedTransitSections([
+  { body: fullBody, sourceKeys: ["fixture/approved"] },
+  { body: "Rejected fixture must not reach the report.", sourceKeys: ["fixture/rejected"] }
+], key => key === "fixture/approved" ? "exact_owner_approved" : "rejected");
+assert.equal(sourceSections.length, 1);
+const enrichedClient = buildFriendTransitsBrief({
+  friendName: brief.friendName, dateLabel: brief.dateLabel,
+  personalTransitGroups: [
+    { key: "short", label: "Short", transits: brief.primaryThemes.map(item => ({ ...item, summary: "Clipped preview…", readerSections: sourceSections })) },
+    { key: "long", label: "Long", transits: brief.longerCycles.map(item => ({ ...item, readerSections: sourceSections })) }
+  ],
+  bondTransits: brief.relationshipActivations,
+  houseTransits: brief.houseContext.map(item => ({ ...item, rowSummary: "Clipped house preview…", readerSections: sourceSections })),
+  dailyForecast: null, dailyDoItems: [], dailyDontItems: [], patternItems: []
+});
+const enrichedLock = friendTransitReadingRequestLock({
+  brief: JSON.parse(JSON.stringify(enrichedClient)), subjectId: "fixture-friend", targetDate: "2026-09-06"
+});
+const restored = assertFriendTransitReadingBrief(enrichedLock.facts.friendTransitsBrief);
+const readerText = friendTransitReadingApprovedReaderText(restored);
+for (const lane of [readerText.primaryThemes, readerText.longerCycles, readerText.houseContext]) {
+  assert.deepEqual(lane[0].readerSections, sourceSections, "Whole source units and source keys must survive the request and saved-job recovery.");
+}
+const richPrompt = friendTransitReadingPrompt({ brief: restored, headline: enrichedLock.headline });
+const approvedText = JSON.parse(richPrompt.split("APPROVED READER TEXT\n")[1].split("\n\nTECHNICAL EVIDENCE")[0]);
+assert.equal(approvedText.primaryThemes[0].readerSections[0].body, fullBody);
+assert.equal(approvedText.houseContext[0].readerSections[0].body, fullBody);
+assert.equal(approvedText.primaryThemes[0].summary, undefined, "Do not mix truncated previews into the complete meaning packet.");
+assert.equal(approvedText.houseContext[0].rowSummary, undefined);
+assert.ok(!richPrompt.includes("Rejected fixture"));
+for (const invalid of [[], [{ body: "", sourceKeys: ["fixture/approved"] }], [{ body: fullBody, sourceKeys: [] }]]) {
+  assert.throws(() => assertFriendTransitReadingBrief({ ...enrichedClient,
+    primaryThemes: [{ ...enrichedClient.primaryThemes[0], readerSections: invalid }]
+  }), /SOURCE_SECTIONS_INVALID/u, "Malformed complete sources cannot silently fall back to a clipped preview.");
+}
+assert.deepEqual(assertFriendTransitReadingBrief(JSON.parse(JSON.stringify(brief))), brief,
+  "Existing frozen briefs stay byte-compatible; this change does not add material to old jobs.");
+
+console.log("Friend transit reading contract and complete-source handoff tests passed.");

@@ -1,5 +1,22 @@
+import { GENERATED_REPORT_JUDGE_CATEGORIES } from "../api/_lib/transit-reading-judge-rules.ts";
+const fixtureScores = (pass) => Object.fromEntries(GENERATED_REPORT_JUDGE_CATEGORIES.map(key => [key, key === "owner_voice" && !pass ? 3 : 4]));
 import assert from "node:assert/strict";
 import { build } from "esbuild";
+import { DEFAULT_BANNED, NEGATION_PIVOT_PAGE_CAP, STOCK_TROPES } from "../src/astro-writing/validateCopy.mjs";
+import { WRITING_POLICY_DATA } from "../src/astro-writing/policyData.generated.mjs";
+
+function assertWriterLanguagePolicy(prompt) {
+  const jsonLine = (label) => JSON.parse(prompt.split(`${label}: `)[1].split("\n")[0]);
+  assert.deepEqual(jsonLine("Forbidden words and phrases"), [...new Set(DEFAULT_BANNED)],
+    "Every dispatched writer prompt must include the same unconditional bans as the validator.");
+  assert.ok(jsonLine("Forbidden words and phrases").includes("whether"), "The initial paid draft failed on this undisclosed rule.");
+  assert.deepEqual(jsonLine("Forbidden stock examples"), STOCK_TROPES);
+  assert.ok(prompt.includes(`Use at most ${NEGATION_PIVOT_PAGE_CAP} negation pivot`));
+  assert.deepEqual(jsonLine("Contextual and advisory word policies"), WRITING_POLICY_DATA.wordPolicies
+    .filter(entry => !["HARD_BAN", "WAIVED"].includes(entry.policyClass)),
+    "Preserve literal exceptions and advisory classes; never promote them into blanket bans.");
+  assert.ok(prompt.includes("EDITORIAL_REVIEW and REPLACEMENT_SUGGESTION are advisory, not bans"));
+}
 
 // Exercise the real orchestration with a deterministic provider at its transport
 // boundary. No live model calls or production data are used by this regression.
@@ -35,7 +52,7 @@ const { generateGovernedTransitReading, isTransitReadingJudgeBlockedError, withT
 const original = { headline: "Test report", tldr: "Original summary", body: "Original report body with the diagnosed defect." };
 const corrected = { ...original, tldr: "Corrected summary", body: "Corrected report body preserving the source facts." };
 const cleaned = { ...corrected, tldr: "Cleaned summary", body: "Cleaned corrected report body preserving the source facts." };
-const brief = { source: "locked fixture" };
+const brief = { source: "locked fixture", window: "day", approvedReaderText: {}, primaryThemes: [], longerCycles: [], relationshipActivations: [], houseContext: [], activePatterns: [], daily: null };
 const priorFixture = globalThis.reportCorrectionFixture;
 try {
   for (const scenario of ["first-pass", "corrected-pass", "cleanup-pass", "second-block", "invalid-cleanup", "invalid-initial"]) {
@@ -43,6 +60,7 @@ try {
     const prompts = [];
     let judgeCalls = 0;
     globalThis.reportCorrectionFixture = async ({ prompt }) => {
+      assertWriterLanguagePolicy(prompt);
       assert.ok(prompt.includes("Weekly progression and contextual owner corrections"));
       assert.ok(prompt.includes("narrative_repetition"));
       assert.ok(prompt.includes("EXACT OWNER-AUTHORED REPORT VOICE EVIDENCE"));
@@ -83,16 +101,23 @@ try {
       judge: async (input) => {
         events.push("judge");
         judgeCalls += 1;
+        if (judgeCalls === 1) assert.equal(input.priorReview, undefined);
+        else {
+          assert.equal(input.priorReview.draft.body, original.body);
+          assert.equal(input.priorReview.findings[0].finding, "Fixture diagnostic");
+          assert.equal(input.priorReview.scores.owner_voice, 3);
+        }
         assert.deepEqual(input.brief, brief);
         assert.deepEqual(input.ownerEvidence, ["Approved fixture evidence"]);
         const expectedBody = judgeCalls === 1 ? original.body : scenario === "cleanup-pass" ? cleaned.body : corrected.body;
         assert.equal(input.draft.body, expectedBody);
+        const pass = scenario === "first-pass" || (judgeCalls === 2 && ["corrected-pass", "cleanup-pass"].includes(scenario));
         return {
           result: {
-            verdict: scenario === "first-pass" || (judgeCalls === 2 && ["corrected-pass", "cleanup-pass"].includes(scenario)) ? "pass" : "below_threshold",
+            verdict: pass ? "pass" : "below_threshold",
             overall: 0.9,
-            scores: { owner_voice: 3 },
-            findings: [{ category: "over_specification", location: "body", finding: "Fixture diagnostic" }]
+            scores: fixtureScores(pass),
+            findings: pass ? [] : [{ category: "owner_voice", location: "body", finding: "Fixture diagnostic", ownerComparisons: [{ evidenceId: "synthetic-owner", quote: "Synthetic reference quote.", difference: "Synthetic difference in sentence movement." }] }]
           },
           version: "fixture", provider: "fixture", model: "fixture", threshold: 0.85
         };
@@ -127,15 +152,20 @@ try {
             : ["writer", "validate", "judge", "writer", "validate", "judge"];
       assert.deepEqual(events, expectedEvents);
       if (scenario !== "first-pass") {
+        assert.ok(prompts[1].includes("correct the sentence's function, not just its vocabulary"));
         assert.ok(prompts[1].includes(original.body), "The corrective writer must receive the draft the judge diagnosed.");
         assert.ok(prompts[1].includes(original.tldr));
         assert.ok(prompts[1].includes("Fixture diagnostic"));
+        assert.ok(prompts[1].includes('Owner comparison synthetic-owner: "Synthetic reference quote."'));
+        assert.ok(prompts[1].includes('Observed difference: Synthetic difference in sentence movement.'));
       }
       if (["cleanup-pass", "invalid-cleanup"].includes(scenario)) {
+        assert.ok(!prompts[2].includes("correct the sentence's function"), "Mechanical cleanup must not invite another stylistic rewrite.");
         assert.ok(prompts[2].includes(corrected.body), "Deterministic cleanup must receive the corrected draft that failed validation.");
         assert.ok(prompts[2].includes("DETERMINISTIC CLEANUP — NO NEW INTERPRETATION"));
         assert.ok(prompts[2].includes("Corrected draft introduced a deterministic defect"));
         assert.ok(prompts[2].includes("Fixture diagnostic"), "Cleanup must preserve the quality correction instead of starting over.");
+        assert.ok(prompts[2].includes('Observed difference: Synthetic difference in sentence movement.'));
       }
     }
   }
@@ -144,6 +174,7 @@ try {
   const carriedPrompts = [];
   let carriedJudges = 0;
   globalThis.reportCorrectionFixture = async ({ prompt }) => {
+    assertWriterLanguagePolicy(prompt);
     carriedPrompts.push(prompt);
     assert.ok(carriedPrompts.length <= 4);
     return { value: { ...original, body: `Fixture draft ${carriedPrompts.length}` }, model: "fixture" };
@@ -156,7 +187,7 @@ try {
     validate: draft => ({ passed: !["Fixture draft 1", "Fixture draft 2"].includes(draft.body), message: draft.body === "Fixture draft 1" ? "First deterministic defect" : "Second deterministic defect" }),
     compactBriefForRecovery: source => source,
     minSummaryLength: 1, minBodyLength: 1, recoveryLabel: "Fixture",
-    judge: async () => ({ result: { verdict: ++carriedJudges === 1 ? "below_threshold" : "pass", overall: 0.9, scores: { owner_voice: 3 }, findings: [{ category: "owner_voice", location: "body", finding: "Current judge finding" }] }, version: "fixture", provider: "fixture", model: "fixture", threshold: 0.85 })
+    judge: async () => ({ result: { verdict: ++carriedJudges === 1 ? "below_threshold" : "pass", overall: 0.9, scores: fixtureScores(carriedJudges > 1), findings: carriedJudges > 1 ? [] : [{ category: "owner_voice", location: "body", finding: "Current judge finding" }] }, version: "fixture", provider: "fixture", model: "fixture", threshold: 0.85 })
   });
   assert.ok(carriedPrompts[1].includes("Fixture draft 1"), "Deterministic correction must receive the failed draft, not just error messages.");
   assert.ok(carriedPrompts[2].includes("Fixture draft 2"), "Final recovery must edit the latest rejected draft instead of starting over.");
@@ -177,7 +208,7 @@ try {
     const column = `${family}_job_id`;
     const rows = [
       { id: 'old-judge', [column]: 'fixture-job', attempt: 1, step: 1, state: 'complete', schema_name: 'tldr_generated_report_judge', response: { value: { findings: [{ finding: 'Stale judgment' }] } } },
-      { id: 'latest-writer', [column]: 'fixture-job', attempt: 1, step: 2, state: 'complete', schema_name: 'fixture', response: { value: original } }
+      { id: 'latest-writer', [column]: 'fixture-job', attempt: 1, step: 2, state: 'complete', schema_name: `tldr_astro_${family === 'you' ? 'you' : 'friend'}_transit_reading`, response: { value: original } }
     ];
     const matches = (row, params) => [...params].every(([key, value]) => ['select', 'order', 'limit'].includes(key)
       || (value.startsWith('neq.') ? String(row[key]) !== value.slice(4) : String(row[key]) === value.slice(3)));
@@ -188,6 +219,7 @@ try {
     };
     let calls = 0;
     globalThis.reportCorrectionFixture = async ({ prompt }) => {
+      assertWriterLanguagePolicy(prompt);
       calls++;
       assert.ok(prompt.includes(original.body));
       assert.ok(prompt.includes('Current deterministic recovery defect'));
@@ -202,7 +234,7 @@ try {
       promptForAttempt: (source, headline, feedback) => JSON.stringify(source) + feedback,
       validate: draft => ({ passed: draft.body !== original.body, message: 'Current deterministic recovery defect' }),
       compactBriefForRecovery: source => source, minSummaryLength: 1, minBodyLength: 1, recoveryLabel: 'Fixture',
-      judge: async () => ({ result: { verdict: 'pass', overall: 1, scores: {}, findings: [] }, version: 'fixture', provider: 'fixture', model: 'fixture', threshold: 0.85 })
+      judge: async () => ({ result: { verdict: 'pass', overall: 1, scores: fixtureScores(true), findings: [] }, version: 'fixture', provider: 'fixture', model: 'fixture', threshold: 0.85 })
     });
     const scope = { admin, family, jobId: 'fixture-job', attempt: 2 };
     assert.equal((await withTransitReadingCheckpoints(scope, run)).draft.body, corrected.body);

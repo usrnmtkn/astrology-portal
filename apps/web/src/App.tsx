@@ -44,6 +44,7 @@ import { loadYouPage, readYouPage } from "./features/you/youExperienceLoader";
 import type { YouPageProps } from "./features/you/YouPage";
 import { isStandaloneLearnPath } from "./content/learnRoutePath";
 import { refreshContentPublications } from "./services/contentPublications";
+import { preparePersonalReportSources } from "./services/personalReportSources";
 import {
   ArrowDownRight,
   ArrowRight,
@@ -18084,21 +18085,24 @@ function ProfileView({
   })();
   // Use the same complete, governed passages as the ranked daily transit details.
   // Technical labels alone do not authorize the report writer to interpret them.
-  const dailyReportTransitSources = aspectRows.map((transit) => ({
-    transitId: transit.id,
-    section: personalTransitPackageSection(transit, targetDate)
-  }));
+  const readDailyReportSources = () => {
+    const dailyReportTransitSources = aspectRows.map((transit) => ({
+      transitId: transit.id,
+      section: personalTransitPackageSection(transit, targetDate)
+    }));
+    return {
+      reportTransitReadings: dailyReportTransitSources.flatMap(({ transitId, section }) => section ? [{
+        transitId, heading: section.heading, body: section.body, sourceUnits: section.sourceKeys
+      }] : []),
+      reportSourceGaps: dailyReportTransitSources.filter(({ section }) => !section).map(({ transitId }) => transitId)
+    };
+  };
   const dailyHoroscopeAssembly = {
     doItems: dailyDoDont?.do,
     dontItems: dailyDoDont?.dont,
     specialSections: dailySpecialSections.slice(0, 2),
-    reportTransitReadings: dailyReportTransitSources.flatMap(({ transitId, section }) => section ? [{
-      transitId,
-      heading: section.heading,
-      body: section.body,
-      sourceUnits: section.sourceKeys
-    }] : []),
-    reportSourceGaps: dailyReportTransitSources.filter(({ section }) => !section).map(({ transitId }) => transitId),
+    ...readDailyReportSources(),
+    prepareReportSources: () => preparePersonalReportSources(readDailyReportSources),
     behindForecastGroups,
     derivation: {
       targetDate,

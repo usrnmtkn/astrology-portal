@@ -1,29 +1,34 @@
+import { GENERATED_REPORT_JUDGE_SCHEMA } from "./transit-reading-judge-schema.js";
+import { judgeScopedGeneratedTransitReading } from "./transit-reading-scoped-judge.js";
+import { transitReadingReviewMode } from "./transit-reading-review-contract.js";
 import { transitReadingReaderCopy } from "./transit-reading-reader-copy.js";
-import { transitReadingOwnerVoiceReceipt } from "./transit-reading-owner-voice.js";
+import { assertGeneratedReportJudgeEvidence, generatedReportJudgeEvidenceContract } from "./transit-reading-judge-evidence.js";
+import { reportJudgeSourcePointerSchema, resolveReportJudgeSourcePointers } from "./transit-reading-source-citations.js";
+import { transitReadingOwnerVoiceReceipt, transitReadingVoiceContext } from "./transit-reading-owner-voice.js";
 import fs from "node:fs";
+import { transitReadingReleasePolicy } from "./transit-reading-release-policy.js";
+import { EVIDENCE_DELIVERY_POLICY, assertReportDeliveryEvidence, reportDeliveryEvidenceSchema, reportDeliveryReviewContract } from "./transit-reading-delivery-evidence.js";
 import { generatedReportWritingContract } from "./transit-reading-writing-contract.js";
 import { REPORT_JUDGE_THRESHOLD, reportFulfillmentConfig } from "./report-fulfillment-config.js";
 import type { GeneratedTransitReadingDraft } from "./transit-reading-generation.js";
 import type { GeneratedTransitReportSurface } from "./transit-reading-owner-evidence.js";
 import {
-  GENERATED_REPORT_JUDGE_CATEGORIES,
-  GENERATED_REPORT_JUDGE_FINDING_CATEGORIES,
   generatedReportJudgeOverall,
   generatedReportJudgeVerdict,
-  type GeneratedReportJudgeFinding,
-  type GeneratedReportJudgeResult,
-  type GeneratedReportJudgeScores
+  type GeneratedReportJudgeResult
 } from "./transit-reading-judge-rules.js";
 import {
   callGovernedTransitReadingModel,
   prepareTransitReadingProductionKernel,
   type TransitReadingProductionInput
 } from "./transit-reading-production.js";
-import { instructionsForRole } from "../../src/astro-writing/openAIResponses.cjs";
+import { generatedReportJudgeRubric, GENERATED_REPORT_JUDGE_PACKET_CONTRACT } from "./transit-reading-judge-prompt.js";
+import { assertReportReviewReconciliation, reportReviewReconciliationPrompt, RECONCILED_REPORT_JUDGE_SCHEMA,
+  type TransitReadingPriorReview } from "./transit-reading-review-reconciliation.js";
 
-export const GENERATED_REPORT_JUDGE_ADAPTER_VERSION = "generated-report-judge-adapter-v1.4";
+export const GENERATED_REPORT_JUDGE_ADAPTER_VERSION = "generated-report-judge-adapter-v1.11";
+export const EVIDENCE_DELIVERY_JUDGE_VERSION = "generated-report-judge-adapter-v2.0-candidate";
 export const GENERATED_REPORT_JUDGE_ADAPTER_PATH = "tldr-astro-phrasebank/TLDR-GENERATED-REPORT-JUDGE-ADAPTER-V1-OWNER.md";
-const REPORT_JUDGE_PATH = "tldr-astro-phrasebank/TLDR-REPORT-JUDGE-RUBRIC-V3.4-OWNER.md";
 const REPORT_OWNER_REVIEW_EVIDENCE_PATH = "tldr-astro-phrasebank/TLDR-REPORT-OWNER-REVIEW-EVIDENCE-2026-08-11.md";
 
 export type GeneratedReportJudgeAudit = {
@@ -36,84 +41,30 @@ export type GeneratedReportJudgeAudit = {
   attempts: 1 | 2;
 };
 
-type JudgeProviderPayload = {
-  scores: GeneratedReportJudgeScores;
-  findings: GeneratedReportJudgeFinding[];
-};
-
-export const GENERATED_REPORT_JUDGE_SCHEMA = {
-  type: "object",
-  additionalProperties: false,
-  required: ["scores", "findings"],
-  properties: {
-    scores: {
-      type: "object",
-      additionalProperties: false,
-      required: [...GENERATED_REPORT_JUDGE_CATEGORIES],
-      properties: Object.fromEntries(GENERATED_REPORT_JUDGE_CATEGORIES.map((category) => [
-        category,
-        { type: "number", minimum: 0, maximum: 4 }
-      ]))
-    },
-    findings: {
-      type: "array",
-      items: {
-        type: "object",
-        additionalProperties: false,
-        required: ["category", "location", "finding"],
-        properties: {
-          category: { type: "string", enum: [...GENERATED_REPORT_JUDGE_FINDING_CATEGORIES] },
-          location: { type: "string" },
-          finding: { type: "string" }
-        }
-      }
-    }
-  }
-} as const;
+export { GENERATED_REPORT_JUDGE_SCHEMA } from "./transit-reading-judge-schema.js";
 
 function requiredFile(path: string) {
   return fs.readFileSync(path, "utf8");
 }
 
-function assertProviderPayload(value: unknown): JudgeProviderPayload {
-  if (!value || typeof value !== "object" || Array.isArray(value)) throw new Error("Generated report judge returned invalid structured output.");
-  const payload = value as Partial<JudgeProviderPayload>;
-  if (!payload.scores || typeof payload.scores !== "object" || Array.isArray(payload.scores) || !Array.isArray(payload.findings)) {
-    throw new Error("Generated report judge omitted scores or findings.");
-  }
-  for (const category of GENERATED_REPORT_JUDGE_CATEGORIES) {
-    const score = (payload.scores as Partial<GeneratedReportJudgeScores>)[category];
-    if (typeof score !== "number" || score < 0 || score > 4) throw new Error(`Generated report judge returned an invalid ${category} score.`);
-  }
-  for (const finding of payload.findings) {
-    if (!finding || !GENERATED_REPORT_JUDGE_FINDING_CATEGORIES.includes(finding.category) || !finding.location?.trim() || !finding.finding?.trim()) {
-      throw new Error("Generated report judge returned an invalid finding.");
-    }
-  }
-  return payload as JudgeProviderPayload;
-}
-
-function judgePrompt(input: {
+export function judgePrompt(input: {
   surface: GeneratedTransitReportSurface;
   reportKind: string;
   brief: unknown;
   draft: GeneratedTransitReadingDraft;
   ownerEvidence: string[];
+  priorReview?: TransitReadingPriorReview;
 }) {
+  const evidenceDelivery = transitReadingReleasePolicy() === EVIDENCE_DELIVERY_POLICY;
   const approvedFeedback = input.ownerEvidence.length
     ? input.ownerEvidence.map((text, index) => `${index + 1}. ${text}`).join("\n")
     : "No additional generated-report owner feedback has been explicitly approved yet.";
   return [
-    instructionsForRole("REVIEWER"),
+    ...(evidenceDelivery ? [reportDeliveryReviewContract()] : [GENERATED_REPORT_JUDGE_PACKET_CONTRACT,
+      "", generatedReportJudgeRubric(), "", requiredFile(GENERATED_REPORT_JUDGE_ADAPTER_PATH),
+      "", generatedReportWritingContract()]),
     "",
-    requiredFile(REPORT_JUDGE_PATH),
-    "",
-    requiredFile(GENERATED_REPORT_JUDGE_ADAPTER_PATH),
-    "",
-    generatedReportWritingContract(),
-    "",
-    "OWNER REVIEW EVIDENCE",
-    requiredFile(REPORT_OWNER_REVIEW_EVIDENCE_PATH),
+    ...(evidenceDelivery ? [] : ["OWNER REVIEW EVIDENCE", requiredFile(REPORT_OWNER_REVIEW_EVIDENCE_PATH)]),
     "",
     "EXPLICITLY APPROVED GENERATED-REPORT OWNER FEEDBACK",
     approvedFeedback,
@@ -122,11 +73,15 @@ function judgePrompt(input: {
     `Surface: ${input.surface}`,
     `Report kind: ${input.reportKind}`,
     "The governed brief is the factual ceiling. Do not ask the writer to invent a scene, fact, chart claim, date, or life circumstance that is absent from it.",
-    "Return scores and diagnostic findings only. Do not return a verdict, overall score, replacement sentence, rewrite, or suggested prose.",
+    "Return the diagnostic fields required by the supplied schema, including reconciliation when requested. Do not return a verdict, overall score, replacement sentence, rewrite, or suggested prose.",
+    generatedReportJudgeEvidenceContract(true, evidenceDelivery),
     "",
     "GOVERNED BRIEF",
     JSON.stringify(input.brief, null, 2),
     "",
+    ...(input.priorReview ? [reportReviewReconciliationPrompt(input.priorReview, input.draft, evidenceDelivery), ""] : [
+      "INITIAL REVIEW COVERAGE: Read the TLDR, every body paragraph, the links between paragraphs and the ending before finalizing scores. Collect all supported release-blocking defects in this one review; do not stop at the first example or reserve other known defects for the corrective round. Do not invent a defect to fill a paragraph or category.", ""
+    ]),
     "COMPLETE READER-VISIBLE DRAFT",
     "The summary field is the one TLDR displayed before the body. Storage aliases and provider metadata are not additional prose. Judge actual repetition between this TLDR and body, not imagined duplicate fields.",
     JSON.stringify(transitReadingReaderCopy(input.draft), null, 2)
@@ -140,7 +95,11 @@ export async function judgeGeneratedTransitReading(input: {
   draft: GeneratedTransitReadingDraft;
   productionInput: TransitReadingProductionInput;
   ownerEvidence?: string[];
+  priorReview?: TransitReadingPriorReview;
 }) {
+  const policy = transitReadingReleasePolicy();
+  const evidenceDelivery = policy === EVIDENCE_DELIVERY_POLICY;
+  if (transitReadingReviewMode() === "scoped") return judgeScopedGeneratedTransitReading(input);
   const config = reportFulfillmentConfig();
   const provider = config.judgeProvider;
   const model = config.judgeModel;
@@ -150,16 +109,24 @@ export async function judgeGeneratedTransitReading(input: {
     role: "REVIEWER",
     draftValidated: true
   });
-  const response = await callGovernedTransitReadingModel<JudgeProviderPayload>({
+  const evidenceInput = { ...input, ownerComparisonSet: kernel.ownerVoice };
+  const validateEvidence = evidenceDelivery ? assertReportDeliveryEvidence : assertGeneratedReportJudgeEvidence;
+  const baseSchema = (input.priorReview ? RECONCILED_REPORT_JUDGE_SCHEMA : GENERATED_REPORT_JUDGE_SCHEMA) as unknown as Record<string, unknown>;
+  const response = await callGovernedTransitReadingModel<unknown>({
     kernel,
     provider,
     model,
     prompt,
     schemaName: "tldr_generated_report_judge",
-    schema: GENERATED_REPORT_JUDGE_SCHEMA as unknown as Record<string, unknown>,
-    validateResponse: (value) => { assertProviderPayload(value); }
+    schema: reportJudgeSourcePointerSchema(evidenceDelivery ? reportDeliveryEvidenceSchema(baseSchema) : baseSchema, input.brief),
+    validateResponse: (value) => {
+      const resolved = resolveReportJudgeSourcePointers(value, input.brief);
+      validateEvidence(resolved, evidenceInput);
+      if (input.priorReview) assertReportReviewReconciliation(resolved, input.priorReview, input.draft);
+    }
   });
-  const providerResult = assertProviderPayload(response.value);
+  const resolved = resolveReportJudgeSourcePointers(response.value, input.brief);
+  const providerResult = validateEvidence(resolved, evidenceInput);
   const scores = providerResult.scores;
   const overall = generatedReportJudgeOverall(scores);
   return {
@@ -167,12 +134,15 @@ export async function judgeGeneratedTransitReading(input: {
       scores,
       overall,
       verdict: generatedReportJudgeVerdict(scores, REPORT_JUDGE_THRESHOLD, providerResult.findings),
-      findings: providerResult.findings
+      findings: providerResult.findings,
+      ...(evidenceDelivery ? { deliveryPolicy: policy } : {})
     } satisfies GeneratedReportJudgeResult,
     provider: response.provider,
     model: response.model,
-    version: GENERATED_REPORT_JUDGE_ADAPTER_VERSION,
+    version: evidenceDelivery ? EVIDENCE_DELIVERY_JUDGE_VERSION : GENERATED_REPORT_JUDGE_ADAPTER_VERSION,
     threshold: REPORT_JUDGE_THRESHOLD,
-    ownerVoiceEvidence: transitReadingOwnerVoiceReceipt(kernel.ownerVoice)
+    ...(input.priorReview ? { reconciliation: assertReportReviewReconciliation(resolved, input.priorReview, input.draft) } : {}),
+    ownerVoiceEvidence: transitReadingOwnerVoiceReceipt(kernel.ownerVoice,
+      transitReadingVoiceContext(kernel.input.facts, kernel.input.surface))
   };
 }

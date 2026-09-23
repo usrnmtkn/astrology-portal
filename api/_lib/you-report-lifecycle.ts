@@ -1,3 +1,6 @@
+import { SOURCE_COMPLETION_POLICY } from "./transit-reading-source-completion.js";
+import { transitReadingReleasePolicy } from "./transit-reading-release-policy.js";
+import { hasCompletedReportReview, isReportReviewHeld, isTransitReadingReviewRequiredError, REPORT_REVIEW_REQUIRED, REPORT_REVIEW_REQUIRED_MESSAGE } from "./transit-reading-review-stop.js";
 import { TRANSIT_READING_INVOCATION_BUDGET_MS, withTransitReadingCheckpoints, TransitReadingCheckpointYield, TransitReadingCheckpointStopped } from "./transit-reading-checkpoints.js";
 import { youTransitReadingRequestLock, type YouTransitReadingWindow } from "./you-transit-reading.js";
 import { generateYouTransitReadingForUser, type YouTransitReadingRow } from "./you-transit-reading-generation.js";
@@ -92,7 +95,7 @@ async function ensurePlaceholder(input: {
   locked: ReturnType<typeof youTransitReadingRequestLock>;
 }) {
   const existing = await findYouReading({ userId: input.entitlement.user_id, locked: input.locked, admin: input.admin });
-  if (existing?.body?.trim() && existing.you_report_entitlement_id === input.entitlement.id) return existing;
+  if (existing && existing.you_report_entitlement_id === input.entitlement.id) return existing;
 
   const rows = await input.admin.insert<YouTransitReadingRow>("user_generated_interpretations", {
     user_id: input.entitlement.user_id,
@@ -131,6 +134,16 @@ async function ensureJob(input: {
     new URLSearchParams({ entitlement_id: `eq.${input.entitlement.id}`, select: "*" })
   );
   if (existing) {
+    if (isReportReviewHeld(existing)) {
+      if (transitReadingReleasePolicy() !== SOURCE_COMPLETION_POLICY || input.entitlement.status !== "active") return existing;
+      // An explicit re-request may finish from its ORIGINAL source readings.
+      // Retain the old diagnostic, counters and checkpoints; do not buy a new
+      // writer cycle or substitute a new brief for the previously held report.
+      const rows = await input.admin.update<YouReportJob>("you_report_jobs", `id=eq.${existing.id}&state=eq.failed`, {
+        state: "queued", run_after: new Date().toISOString(), locked_at: null, locked_by: null
+      });
+      return rows[0] ?? existing;
+    }
     if (["failed", "cancelled"].includes(existing.state) && input.entitlement.status === "active") {
       await input.admin.update(
         "user_generated_interpretations",
@@ -232,7 +245,7 @@ export async function requestYouReport(input: {
   if (job.state === "complete" && placeholder?.body?.trim()) {
     return { status: "ready" as const, reading: placeholder, entitlement, job };
   }
-  return { status: "queued" as const, reading: placeholder, entitlement, job };
+  return { status: isReportReviewHeld(job) ? "needs_review" as const : "queued" as const, reading: placeholder, entitlement, job };
 }
 
 async function claimJobs(input: {
@@ -288,18 +301,34 @@ export async function runYouReportJobs(input: {
       results.push({ jobId: job.id, status: "cancelled" });
       continue;
     }
+    // A pre-repair retry may already have consumed its complete quality cycle.
+    // Hold it before provider dispatch; never migrate a rejected draft to ready.
+    const sourceOnly = transitReadingReleasePolicy() === SOURCE_COMPLETION_POLICY
+      && (hasCompletedReportReview(job.last_error) || (job.checkpoint_attempt ?? 1) > 1);
+    if (hasCompletedReportReview(job.last_error) && !sourceOnly) {
+      const message = `${REPORT_REVIEW_REQUIRED} ${REPORT_REVIEW_REQUIRED_MESSAGE}`;
+      await admin.update("you_report_jobs", `id=eq.${job.id}&state=eq.running&locked_by=eq.${encodeURIComponent(input.workerId)}`, {
+        state: "failed", locked_at: null, locked_by: null,
+        last_error: `${message} ${job.last_error}`.slice(0, 12000)
+      });
+      await markPlaceholderFailed(admin, job, message);
+      results.push({ jobId: job.id, status: "failed" });
+      continue;
+    }
+    const saveProgress = async (stage: "writing" | "checking" | "revising" | "waiting") => {
+      await admin.update("user_generated_interpretations",
+        `user_id=eq.${job.user_id}&you_report_entitlement_id=eq.${job.entitlement_id}&status=eq.DRAFT&body=eq.`,
+        { source_snapshot: { ...job.source_snapshot, reportProgress: { stage, updatedAt: new Date().toISOString() } } }
+      ).catch(() => { console.warn("Report progress could not be saved", { jobId: job.id, stage }); });
+    };
     try {
       if (deadline - Date.now() < 60_000) throw new TransitReadingCheckpointYield();
       const generated = await withTransitReadingCheckpoints({ admin, family: "you", jobId: job.id, attempt: job.checkpoint_attempt ?? 1, deadline,
-        onProgress: async (stage) => {
-          await admin.update("user_generated_interpretations",
-            `user_id=eq.${job.user_id}&you_report_entitlement_id=eq.${job.entitlement_id}&status=eq.DRAFT&body=eq.`,
-            { source_snapshot: { ...job.source_snapshot, reportProgress: { stage, updatedAt: new Date().toISOString() } } }
-          ).catch(() => { console.warn("Report progress could not be saved", { jobId: job.id, stage }); });
-        }
+        onProgress: saveProgress
       }, () => generateYouTransitReadingForUser({
         userId: job.user_id,
         facts: job.facts,
+        sourceOnly,
         entitlementId: job.entitlement_id
       }));
       const resultId = generated.saved[0]?.id;
@@ -318,40 +347,34 @@ export async function runYouReportJobs(input: {
           state: "retry", attempt: Math.max(0, job.attempt - 1), run_after: new Date().toISOString(),
           locked_at: null, locked_by: null, last_error: null
         });
+        await saveProgress("waiting");
         results.push({ jobId: job.id, status: "retry" });
         continue;
       }
       const judgeBlocked = isTransitReadingJudgeBlockedError(error);
-      // Reject this draft, but give the existing entitlement its remaining retries.
-      const failed = job.attempt >= attemptCap || error instanceof TransitReadingCheckpointStopped;
-      // A completed review rejection is not a provider outage. Its next
-      // permitted attempt can run now; infrastructure failures keep backoff.
-      const delayMinutes = judgeBlocked ? 0 : Math.min(30, Math.max(1, job.attempt * 2));
-      const errorMessage = judgeBlocked
-        ? "Writing quality gate did not pass after one corrective rewrite and re-judge."
-        : error instanceof Error
-          ? error.message.slice(0, 2000)
-          : "You report generation failed.";
+      const invalidReview = isTransitReadingReviewRequiredError(error);
+      const reviewHeld = judgeBlocked || invalidReview;
+      // The one corrective rewrite is the whole quality budget, not a loop inside four job attempts.
+      const failed = reviewHeld || job.attempt >= attemptCap || error instanceof TransitReadingCheckpointStopped;
+      const delayMinutes = Math.min(30, Math.max(1, job.attempt * 2));
+      const errorMessage = reviewHeld
+        ? `${REPORT_REVIEW_REQUIRED} ${REPORT_REVIEW_REQUIRED_MESSAGE}`
+        : error instanceof Error ? error.message.slice(0, 2000) : "Report generation failed.";
       await admin.update("you_report_jobs", `id=eq.${job.id}`, {
         state: failed ? "failed" : "retry",
         ...(!failed ? { checkpoint_attempt: (job.checkpoint_attempt ?? 1) + 1 } : {}),
-        run_after: !failed && judgeBlocked ? job.run_after
-          : failed ? new Date().toISOString() : new Date(Date.now() + delayMinutes * 60_000).toISOString(),
+        run_after: failed ? new Date().toISOString() : new Date(Date.now() + delayMinutes * 60_000).toISOString(),
         locked_at: null,
         locked_by: null,
-        last_error: judgeBlocked && error.diagnostic
+        last_error: (judgeBlocked || invalidReview) && error.diagnostic
           ? `${errorMessage} ${JSON.stringify(error.diagnostic)}`.slice(0, 12000)
           : errorMessage
       });
-      if (failed) await markPlaceholderFailed(admin, job, error instanceof TransitReadingCheckpointStopped
+      if (failed) await markPlaceholderFailed(admin, job, !reviewHeld && error instanceof TransitReadingCheckpointStopped
         ? "This report could not finish generating. Please try again." : errorMessage);
+      if (!failed) await saveProgress("waiting");
       results.push({ jobId: job.id, status: failed ? "failed" : "retry" });
-      if (!failed && judgeBlocked && deadline - Date.now() >= 60_000) {
-        // Reclaim through the database, so cancellation, ownership and the
-        // attempt counter remain authoritative even with concurrent workers.
-        // Every continuation shares the original invocation deadline.
-        jobs.push(...await claimJobs({ admin, workerId: input.workerId, jobId: job.id, batchLimit: 1 }));
-      }
+
     }
   }
   return { claimed: jobs.length, results };

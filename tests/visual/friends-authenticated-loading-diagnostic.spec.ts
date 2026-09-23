@@ -301,3 +301,39 @@ test("sign out during migration cannot restore Friends", async ({ page }) => {
   await expect(page.getByRole("button", { name: `Open ${fixtureFriendName}`, exact: true })).not.toBeVisible();
   await expect(page.getByRole("button", { name: "Friends", exact: true })).not.toBeVisible();
 });
+
+test("Friends report request carries complete approved detail beyond its card previews", async ({ page }) => {
+  test.setTimeout(120_000);
+  await page.clock.setFixedTime(new Date("2026-09-22T12:00:00Z"));
+  await prepareAuthenticatedPage(page, {});
+  let submitted: any;
+  await page.route("**/api/friend-report-request", async route => {
+    submitted = route.request().postDataJSON();
+    // Capture the real built app's request without starting a job or a paid call.
+    await route.fulfill({ status: 409, json: { error: "Synthetic verification stops before generation." } });
+  });
+  await page.goto(url("/#friends?tab=charts"));
+  await page.getByRole("button", { name: `Open ${fixtureFriendName}`, exact: true }).click();
+  await page.getByRole("tab", { name: "Transits", exact: true }).click();
+  await page.getByRole("button", { name: "Generate reading", exact: true }).click();
+  await expect.poll(() => submitted).toBeTruthy();
+  const brief = submitted.facts.friendTransitsBrief;
+  const transits = [...brief.primaryThemes, ...brief.longerCycles];
+  expect(transits.length).toBeGreaterThan(0);
+  expect(brief.houseContext.length).toBeGreaterThan(0);
+  for (const item of [...transits, ...brief.houseContext]) {
+    expect(item.readerSections.length).toBeGreaterThan(0);
+    for (const section of item.readerSections) {
+      expect(section.sourceKeys.length).toBeGreaterThan(0);
+      expect(section.body.trim()).not.toBe("");
+    }
+  }
+  const expanded = transits.find((item: any) => item.summary.endsWith("…") && item.readerSections.some((section: any) => section.body.length > item.summary.length));
+  expect(expanded, "At least one complete detail extends beyond the shortened card.").toBeTruthy();
+  await page.getByRole("button", { name: `Open full entry for ${expanded.title}`, exact: true }).click();
+  const detail = page.getByRole("region", { name: expanded.title, exact: true });
+  for (const section of expanded.readerSections) {
+    await expect(detail).toContainText(section.body, { useInnerText: true });
+  }
+  await page.screenshot({ path: "test-results/friends-complete-source-detail.png" });
+});
