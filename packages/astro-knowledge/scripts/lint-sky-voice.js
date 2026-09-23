@@ -87,7 +87,7 @@ function closerSentenceCount(sentences) {
   return Math.max(count, 1);
 }
 
-function lintCard(text, { mode = "collective-aspect-card" } = {}) {
+function lintCard(text, { mode = "collective-aspect-card", paragraphCountAdvisory = false } = {}) {
   const findings = [];
   const sentences = (text.match(/[^.!?]+[.!?]+/g) || []).map((s) => s.trim());
   const placementCloserCount = mode === PLACEMENT_MODE ? closerSentenceCount(sentences) : 0;
@@ -228,11 +228,13 @@ function lintCard(text, { mode = "collective-aspect-card" } = {}) {
   const expectedParagraphs = mode === PLACEMENT_TOPPER_MODE ? 1 : 2;
   if (paras !== expectedParagraphs) {
     findings.push({
-      severity: "fail",
+      severity: paragraphCountAdvisory ? "note" : "fail",
       source: "shape",
       term: "paragraph-count",
       match: `${paras} paragraphs`,
-      reason: `the card template is exactly ${expectedParagraphs === 1 ? "one paragraph" : "two paragraphs"}`
+      reason: paragraphCountAdvisory
+        ? "The suggested card template has two paragraphs. Paragraph breaks are your editorial choice."
+        : `the card template is exactly ${expectedParagraphs === 1 ? "one paragraph" : "two paragraphs"}`
     });
   }
   // stacked ending: 3+ short sentences piled at the close. The template wants

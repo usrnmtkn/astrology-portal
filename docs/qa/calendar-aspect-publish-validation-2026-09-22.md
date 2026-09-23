@@ -43,3 +43,21 @@ review, publication-error, and concurrent-version flows remain regressions.
 Release receipts, exact commit checks, bundle measurements, and production
 verification are recorded on the release PR. The owner-authored diagnostic
 passage stays outside Git.
+
+## Saved paragraph structure follow-up
+
+The final live inspection found the saved body has three paragraphs, including
+a separate final paragraph, whereas the supplied diagnostic text had two. The
+draft must keep its saved paragraph breaks. In explicit aspect rechecks,
+paragraph count is therefore a visible advisory and does not lower the check
+score. This follows the August 25 owner ruling in
+`docs/writing/WRITING_RULE_RECONCILIATION_OWNER_RULING_2026-08-25.md`.
+Generated drafts keep their existing template check; reader-boundary failures,
+saved-version checks, exact body hashes, and explicit owner approval remain
+enforced. No production body is normalized or rewritten.
+
+Actual-handler and browser regressions now cover both two- and three-paragraph
+saved aspects, including complete reader selection and visible paragraph advice.
+A negative case confirms paragraph advice cannot suppress a reader-boundary
+failure. The previous two-paragraph local result alone did not verify the saved
+three-paragraph draft; the follow-up release must pass its own exact-head gates.
