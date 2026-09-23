@@ -34,8 +34,18 @@ export type GeneratedReportJudgeFinding = {
   sourcePath?: string | null;
   sourceQuote?: string | null;
   ownerComparisons?: Array<{ evidenceId: string; quote: string; difference: string }>;
+  // Required (nullable) only in the separately versioned evidence-delivery policy.
+  delivery?: {
+    kind: "source_contradiction" | "unsupported_claim" | "explicit_owner_rule";
+    claimType: "assertion" | "prediction" | "conditional_illustration" | "interpretation" | "advice";
+    claimQuote: string;
+    sourceGap: string;
+    ruleId: string | null;
+    ruleApplication: string | null;
+  } | null;
 };
 export type GeneratedReportJudgeResult = {
+  deliveryPolicy?: string;
   scores: GeneratedReportJudgeScores;
   overall: number;
   verdict: "pass" | "below_threshold";

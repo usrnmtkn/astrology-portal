@@ -18,7 +18,7 @@ export function findingScoreCategory(category: GeneratedReportJudgeFinding["cate
   return blockingScores[category]!;
 }
 
-export function generatedReportJudgeEvidenceContract(sourcePointers = false) {
+export function generatedReportJudgeEvidenceContract(sourcePointers = false, diagnosticScores = false) {
   return [
   "DIAGNOSTIC EVIDENCE CONTRACT",
   "Every finding must diagnose a defect, quote its exact reader-visible wording in draftQuote, and explain why it fails the supplied rubric. Do not propose replacement prose.",
@@ -29,8 +29,10 @@ export function generatedReportJudgeEvidenceContract(sourcePointers = false) {
   "Every owner_voice finding requires at least one ownerComparisons entry: cite an eligible OWNER PASSAGE evidenceId, one exact contiguous quote from it, and explain the observable difference in sentence movement, ordinary wording, consequence, or judgment, using its supplied function. A statement that the tone does not match is insufficient. Do not cite the candidate or another report. Other categories may use an empty array; owner_language identifies an explicit contextual owner rule rather than general likeness.",
   "In each comparison difference, explain the shared local prose function and why the comparison applies across the labeled formats. Historical function tags are context, not mandatory target structure. A complete forecast may demonstrate opening, development, turn, and close within one passage. Do not reject direct language simply because a selected annual passage ends observationally. For owner_language, name and quote the applicable supplied owner rule in finding and explain its context; do not use that category to bypass the owner_voice comparison requirement.",
   "Necessary reference to a TLDR topic is not itself narrative repetition. Identify the repeated conclusion that adds no explanation or consequence. An explanation within supplied meaning and life domains is not an invented event. A transit end date or retrograde theme does not establish that a specific opportunity will recur.",
-  "Scores must agree with findings: a category with a defect cannot score 4. Map over_specification and unsupported_interpretation to factual_traceability; unsupported_timing to astrology_chronology; narrative_repetition to interpretive_movement; owner_language to owner_voice. Other findings map to their own score category.",
-  "For any score below a release floor, include a finding with concrete draft evidence. Do not lower a score merely to manufacture agreement: reconsider the finding against the source and rubric first. Do not invent a flaw to fill a category."
+  ...(diagnosticScores ? ["Scores are diagnostic observations only, with no delivery floor. Do not invent a finding to explain a score or change a score to force rejection. A category name does not establish a delivery defect."] : [
+    "Scores must agree with findings: a category with a defect cannot score 4. Map over_specification and unsupported_interpretation to factual_traceability; unsupported_timing to astrology_chronology; narrative_repetition to interpretive_movement; owner_language to owner_voice. Other findings map to their own score category.",
+    "For any score below a release floor, include a finding with concrete draft evidence. Do not lower a score merely to manufacture agreement: reconsider the finding against the source and rubric first. Do not invent a flaw to fill a category."
+  ])
   ].join("\n");
 }
 
@@ -42,6 +44,7 @@ export function assertGeneratedReportDiagnosticEvidence(value: unknown, input: {
   ownerComparisonSet?: ReadonlyArray<{ evidenceId: string; text: string }>;
   scoreCategories?: readonly GeneratedReportJudgeCategory[];
   findingCategories?: readonly string[];
+  diagnosticScores?: boolean;
 }): { scores: Partial<GeneratedReportJudgeScores>; findings: GeneratedReportJudgeFinding[] } {
   const fail = (message: string): never => { throw new GeneratedReportJudgeEvidenceError(message); };
   if (!value || typeof value !== "object" || Array.isArray(value)) return fail("expected scores and findings.");
@@ -60,7 +63,7 @@ export function assertGeneratedReportDiagnosticEvidence(value: unknown, input: {
       || typeof finding.finding !== "string" || !finding.finding.trim()) return fail("malformed finding.");
     if (typeof finding.draftQuote !== "string" || !finding.draftQuote.trim()
       || !fields.some(field => field.includes(finding.draftQuote!))) return fail("draftQuote does not occur in reader-visible copy.");
-    if (payload.scores[findingScoreCategory(finding.category)] === 4) return fail("finding contradicts a perfect category score.");
+    if (!input.diagnosticScores && payload.scores[findingScoreCategory(finding.category)] === 4) return fail("finding contradicts a perfect category score.");
     if (!Array.isArray(finding.ownerComparisons)) return fail("ownerComparisons must be an array.");
     if (finding.category === "owner_voice" && !finding.ownerComparisons.length) return fail("owner_voice lacks eligible comparison evidence.");
     const cited = new Set<string>();
@@ -82,7 +85,7 @@ export function assertGeneratedReportDiagnosticEvidence(value: unknown, input: {
     if (typeof source !== "string" || !source.includes(finding.sourceQuote)) return fail("sourceQuote does not occur at sourcePath.");
   }
   const floor: Partial<GeneratedReportJudgeScores> = { astrology_chronology: 3, factual_traceability: 3, lived_experience: 3, interpretive_movement: 3, owner_voice: 4, natural_language: 4 };
-  for (const [category, minimum] of Object.entries(floor)) {
+  for (const [category, minimum] of Object.entries(input.diagnosticScores ? {} : floor)) {
     if (categories.includes(category as GeneratedReportJudgeCategory) && payload.scores[category as keyof GeneratedReportJudgeScores]! < minimum
       && !payload.findings.some(finding => findingScoreCategory(finding.category) === category)) return fail(`below-floor ${category} score has no diagnostic evidence.`);
   }

@@ -2,6 +2,8 @@ import assert from 'node:assert/strict';
 import { build } from 'esbuild';
 const scoped = process.argv.includes('--scoped');
 const material = process.argv.includes('--material');
+const evidenceDelivery = process.argv.includes('--evidence-delivery');
+const selectedPolicy = evidenceDelivery ? 'report-evidence-delivery-v2' : material ? 'report-materiality-candidate-v1' : 'strict';
 
 // Real generation, validation, judge verdict, checkpoint, lifecycle, retrieval
 // and reader component. Only external storage, model transport and private
@@ -151,11 +153,17 @@ function fixture(kind, scenario) {
     get calls(){return {writer:writerCalls,judge:judgeCalls};},
     async call(input){
       const judge=input.schemaName.includes('judge');
+      if(evidenceDelivery) {
+        assert.equal(input.requestLimits.maxInputBytes,87808);
+        assert.equal(input.requestLimits.maxOutputTokens,judge?6000:12000);
+        assert.equal(input.disableFallback,true);
+      }
       prompts.push({judge,prompt:input.prompt});
       if (kind === 'day') assert(input.prompt.includes(JSON.stringify(fullDailySource)),
         'Every daily writer, correction and judge call must receive the complete approved source');
       if(judge){
         judgeCalls++;
+        if(scenario==='initial-judge-outage') throw Error('Synthetic initial review outage');
         const submitted=JSON.parse(scoped
           ? input.prompt.split('COMPLETE READER-VISIBLE DRAFT\n\n')[1].split('\n\nDRAFT_SHA256:')[0]
           : input.prompt.split('COMPLETE READER-VISIBLE DRAFT\n')[1].split('\n').slice(1).join('\n').split('\n\nSYNTHETIC')[0]);
@@ -165,6 +173,15 @@ function fixture(kind, scenario) {
         if(input.schemaName==='tldr_generated_report_facts_judge') return {value:{draftSha256,scores:{astrology_chronology:4,factual_traceability:4},findings:[]},provider:input.provider,model:input.model,usage:{inputTokens:10,outputTokens:5,totalTokens:15}};
         const failed=['rejected','invalid-judge-evidence'].includes(scenario) || (['correction','cleanup'].includes(scenario) && judgeCalls===(scoped?2:1));
         const scores=Object.fromEntries(api.GENERATED_REPORT_JUDGE_CATEGORIES.filter(key=>!scoped||!['astrology_chronology','factual_traceability'].includes(key)).map(key=>[key,4]));
+        if (evidenceDelivery) {
+          const advisory = {category:'owner_voice',location:'body',finding:'Advisory style sentinel',draftQuote:submitted.body.slice(0,30),sourcePath:null,sourceQuote:null,
+            ownerComparisons:scenario==='invalid-judge-evidence'?[]:[{evidenceId:'synthetic-owner',quote:'Synthetic owner comparison.',difference:'Synthetic difference.'}],delivery:null};
+          const blocker = {...advisory,category:'unsupported_interpretation',finding:'Synthetic diagnostic: unsupported fact sentinel',ownerComparisons:[],delivery:{kind:'unsupported_claim',claimType:'interpretation',claimQuote:submitted.body.slice(0,30),sourceGap:'Synthetic protocol test of missing claim support; not a semantic assessment.',ruleId:null,ruleApplication:null}};
+          const blocked = failed && scenario !== 'invalid-judge-evidence' || scenario==='factual' || scenario==='mixed' && judgeCalls===1;
+          const findings = [...(blocked?[blocker]:[]), ...(['advisory','aggregate','mixed','invalid-judge-evidence'].includes(scenario)?[advisory]:[])];
+          if (['advisory','aggregate'].includes(scenario)) for (const key of Object.keys(scores)) scores[key]=0;
+          return {value:{scores,findings},provider:input.provider,model:input.model,usage:{inputTokens:10,outputTokens:5,totalTokens:15}};
+        }
         if(failed)scores.owner_voice=material?2:3;
         if (material && ['advisory','mixed','factual','aggregate'].includes(scenario)) {
           const first = judgeCalls === 1;
@@ -177,8 +194,9 @@ function fixture(kind, scenario) {
         return {value:{...(scoped?{draftSha256}:{}),scores,findings:failed?[{...(scoped?{contextQuote:submitted.body.split('\n\n')[0],readerConsequence:'Synthetic transition obscures the reader connection.'}:{}),category:'owner_voice',location:'body, first sentence',finding:'Synthetic diagnostic: simplify the transition while preserving supplied facts.',draftQuote:submitted.body.slice(0,30),sourcePath:null,sourceQuote:null,ownerComparisons:scenario==='invalid-judge-evidence'?[]:[{evidenceId:'synthetic-owner',quote:'Synthetic owner comparison.',difference:'Synthetic difference in the transition.'}]}]:[]},provider:input.provider,model:input.model,responseId:`judge-${judgeCalls}`,usage:{inputTokens:10,outputTokens:5,totalTokens:15}};
       }
       writerCalls++;
+      if(scenario==='initial-writer-outage') throw Error('Synthetic initial writer outage');
       if (scenario === 'mixed' && writerCalls > 1) {
-        assert(input.prompt.includes('Material movement sentinel'));
+        assert(input.prompt.includes(evidenceDelivery?'unsupported fact sentinel':'Material movement sentinel'));
         assert(!input.prompt.includes('Advisory style sentinel'), 'Advisory feedback cannot instruct a rewrite');
       }
       if(writerCalls>1 && ['correction','cleanup','rejected'].includes(scenario)){
@@ -189,6 +207,7 @@ function fixture(kind, scenario) {
         assert(input.prompt.includes(JSON.stringify(output.body)));
       }
       let body=output.body;
+      if(scenario==='initial-validation-exhausted') body='Incomplete.';
       if(scenario==='cleanup' && writerCalls===2) body=body.replace('Avoiding the conversation','Questioning whether to have the conversation');
       return {value:{...output,body},provider:input.provider,model:input.model,responseId:`writer-${writerCalls}`};
     },
@@ -197,12 +216,12 @@ function fixture(kind, scenario) {
 
 const previous = globalThis.reportDeliveryFixture;
 const savedEnv = {...process.env};
-Object.assign(process.env,{GENERATED_REPORT_RELEASE_POLICY:material?'report-materiality-candidate-v1':'strict',GENERATED_REPORT_REVIEW_MODE:scoped?'scoped':'combined',CONTENT_GENERATION_PROVIDER:'openai',CONTENT_GENERATION_PROVIDER_TRANSIT_TO_NATAL:'openai',FRIEND_REPORT_BILLING_MODE:'free_test',YOU_REPORT_JOB_ATTEMPT_CAP:'1',FRIEND_REPORT_JOB_ATTEMPT_CAP:'1'});
+Object.assign(process.env,{GENERATED_REPORT_RELEASE_POLICY:selectedPolicy,GENERATED_REPORT_REVIEW_MODE:scoped?'scoped':'combined',CONTENT_GENERATION_PROVIDER:'openai',CONTENT_GENERATION_PROVIDER_TRANSIT_TO_NATAL:'openai',FRIEND_REPORT_BILLING_MODE:'free_test',YOU_REPORT_JOB_ATTEMPT_CAP:'1',FRIEND_REPORT_JOB_ATTEMPT_CAP:'1'});
 let cases=0;
 try{
-  for(const kind of ['day','week','friends']) for(const scenario of ['first-pass','correction','cleanup','rejected','invalid-judge-evidence','save-error','empty-save','completion-error',...(material?['advisory','mixed','factual','aggregate']:[])]){
+  for(const kind of ['day','week','friends']) for(const scenario of ['first-pass','correction','cleanup','rejected','invalid-judge-evidence','save-error','empty-save','completion-error',...(material||evidenceDelivery?['advisory','mixed','factual','aggregate']:[]),...(evidenceDelivery?['initial-writer-outage','initial-validation-exhausted','initial-judge-outage']:[])]){
     const f=fixture(kind,scenario);globalThis.reportDeliveryFixture=f;
-    const held = ['rejected','invalid-judge-evidence','factual','aggregate'].includes(scenario);
+    const held = ['rejected','invalid-judge-evidence','factual'].includes(scenario) || scenario===(evidenceDelivery?'cleanup':'aggregate') || scenario.startsWith('initial-');
     process.env.YOU_REPORT_JOB_ATTEMPT_CAP = process.env.FRIEND_REPORT_JOB_ATTEMPT_CAP = held ? '4' : '1';
     const queued=kind==='friends'
       ? await api.requestFriendReport({userId:f.client.userId,subjectId:'synthetic-friend',targetDate:'2026-09-14',facts:{friendTransitsBrief:f.friendBrief},admin:f.admin})
@@ -214,7 +233,7 @@ try{
     const result=await run({workerId:'fixture-worker',jobId:queued.job.id,admin:f.admin});
     const job=f.rows[kind==='friends'?'friend_report_jobs':'you_report_jobs'][0];
     const row=f.rows.user_generated_interpretations[0];
-    const success=['first-pass','correction','cleanup','advisory','mixed'].includes(scenario);
+    const success=['first-pass','correction','advisory','mixed',evidenceDelivery?'aggregate':'cleanup'].includes(scenario);
     if(success){
       assert.equal(job.state,'complete',JSON.stringify(result)+' '+job.last_error+' '+JSON.stringify(f.rows.transit_report_model_checkpoints.filter(c=>c.state==='failed')));
       assert.equal(job.result_id,row.id); assert.equal(row.body,f.output.body);
@@ -223,6 +242,12 @@ try{
         const receipt=row.source_snapshot.generatedReportQualityGate.releaseDecision;
         assert.equal(receipt.policy,'report-materiality-candidate-v1'); assert.match(receipt.draftSha256,/^[a-f0-9]{64}$/);
         if (['advisory','mixed'].includes(scenario)) {assert.equal(receipt.strictVerdict,'below_threshold');assert.equal(receipt.advisoryFindings.length,2);}
+      }
+      if(evidenceDelivery) {
+        const receipt=row.source_snapshot.generatedReportQualityGate.releaseDecision;
+        assert.equal(receipt.policy,selectedPolicy);
+        if (['advisory','aggregate'].includes(scenario)) {assert.equal(receipt.strictVerdict,'below_threshold');assert.equal(receipt.overall,0);assert.equal(receipt.advisoryFindings.length,1);}
+        assert.equal(receipt.blockingFindings.length,0);
       }
       if(scoped) { const reviews=row.source_snapshot.generatedReportQualityGate.scopedReviews; assert.equal(reviews.length,2);assert.equal(reviews[0].draftSha256,reviews[1].draftSha256);assert.ok(reviews.every(r=>r.requestSha256&&r.responseSha256&&r.usage.totalTokens===15)); }
       const loaded=await api.loadGeneratedReportById(row.id);assert.equal(loaded.body,f.output.body);
@@ -261,12 +286,14 @@ try{
       assert.equal(await api.loadGeneratedReportById(row.id),null);
       assert(!f.writes.some(([table,write])=>table.endsWith('_jobs') && write.state==='complete'));
     }
-    assert.equal(f.calls.judge,scenario==='first-pass'||['invalid-judge-evidence','save-error','empty-save','completion-error','advisory','aggregate'].includes(scenario)?(scoped?2:1):(scoped?4:2));
+    assert.equal(f.calls.judge,['initial-writer-outage','initial-validation-exhausted'].includes(scenario)?0:scenario==='first-pass'||evidenceDelivery&&scenario==='cleanup'||['initial-judge-outage','invalid-judge-evidence','save-error','empty-save','completion-error','advisory','aggregate'].includes(scenario)?(scoped?2:1):(scoped?4:2));
+    if(scenario==='initial-validation-exhausted') assert.equal(f.calls.writer,3,'The initial validation allowance cannot restart in another job attempt');
+    if(['initial-writer-outage','initial-judge-outage'].includes(scenario)) assert.equal(f.calls.writer,1);
     if(scenario==='invalid-judge-evidence') {
       assert.equal(f.calls.writer,1,'Invalid judge evidence must not instruct a corrective writer.');
       assert.match(job.last_error,/owner_voice lacks eligible comparison evidence/u);
     }
-    if(scenario==='cleanup')assert.equal(f.calls.writer,3);
+    if(scenario==='cleanup')assert.equal(f.calls.writer,evidenceDelivery?2:3);
     if(scenario==='advisory'||scenario==='aggregate')assert.equal(f.calls.writer,1);
     if(held) {
       assert.equal(job.attempt,1,'Four available attempts must not repeat a completed quality cycle');
@@ -285,7 +312,7 @@ try{
       assert.deepEqual(f.calls,before);assert.equal(f.rows.transit_report_model_checkpoints.length,checkpointCount);
       assert.equal(job.state,'failed');assert.equal(job.checkpoint_attempt,1);
       assert.equal((await api.listReportLibrary())[0].progressLabel,'Needs review');
-      process.env.GENERATED_REPORT_RELEASE_POLICY=material?'report-materiality-candidate-v1':'strict';
+      process.env.GENERATED_REPORT_RELEASE_POLICY=selectedPolicy;
     }
     console.log(`PASS ${kind}: ${scenario}`);cases++;
   }
@@ -373,9 +400,9 @@ try{
     process.env[friend?'FRIEND_REPORT_JOB_ATTEMPT_CAP':'YOU_REPORT_JOB_ATTEMPT_CAP']='2';
     f.call=async()=>{throw new Error('Synthetic transient provider outage');};
     await (friend?api.runFriendReportJobs:api.runYouReportJobs)({workerId:'retry-worker',jobId:queued.job.id,admin:f.admin});
-    assert.equal(f.rows[friend?'friend_report_jobs':'you_report_jobs'][0].state,'retry');
-    assert.equal((await api.listReportLibrary())[0].progressLabel,'Queued to continue');
-    assert.equal(f.rows.user_generated_interpretations[0].source_snapshot.reportProgress.stage,'waiting');
+    assert.equal(f.rows[friend?'friend_report_jobs':'you_report_jobs'][0].state,evidenceDelivery?'failed':'retry');
+    assert.equal((await api.listReportLibrary())[0].progressLabel,evidenceDelivery?'Needs review':'Queued to continue');
+    if(!evidenceDelivery) assert.equal(f.rows.user_generated_interpretations[0].source_snapshot.reportProgress.stage,'waiting');
     process.env[friend?'FRIEND_REPORT_JOB_ATTEMPT_CAP':'YOU_REPORT_JOB_ATTEMPT_CAP']='1';
     console.log(`PASS ${kind}: retry progress`); cases++;
   }
@@ -424,7 +451,7 @@ try{
   const copy={headline:'Title',summary:'Summary',body:'Body'};
   for(const rows of [[],[{...copy}],[{id:'x',...copy,body:''}],[{id:'x',...copy,body:'Changed'}],[{id:'x',...copy},{id:'y',...copy}]]) assert.throws(()=>api.assertSavedTransitReading(rows,copy));
   api.assertSavedTransitReading([{id:'x',...copy}],copy);
-  console.log(`Transit report delivery (${material?'material candidate':scoped?'scoped':'combined'}): ${cases} actual-pipeline fixture cases passed; save acknowledgement, client retrieval, ownership, deletion and rendered opening/ending verified. No live provider or production claim.`);
+  console.log(`Transit report delivery (${selectedPolicy}/${scoped?'scoped':'combined'}): ${cases} actual-pipeline fixture cases passed; save acknowledgement, client retrieval, ownership, deletion and rendered opening/ending verified. No live provider or production claim.`);
 }finally{
   if(previous===undefined)delete globalThis.reportDeliveryFixture;else globalThis.reportDeliveryFixture=previous;
   for(const key of ['GENERATED_REPORT_RELEASE_POLICY','GENERATED_REPORT_REVIEW_MODE','CONTENT_GENERATION_PROVIDER','CONTENT_GENERATION_PROVIDER_TRANSIT_TO_NATAL','FRIEND_REPORT_BILLING_MODE','YOU_REPORT_JOB_ATTEMPT_CAP','FRIEND_REPORT_JOB_ATTEMPT_CAP']){

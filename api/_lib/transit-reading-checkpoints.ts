@@ -51,6 +51,7 @@ export function transitReadingModelRequestHash(input: ReportModelCallInput<unkno
   return createHash("sha256").update(JSON.stringify({
     version: 1, provider: input.provider, model: input.model,
     prompt: input.prompt, schemaName: input.schemaName, schema: input.schema,
+    ...(input.requestLimits ? { requestLimits: input.requestLimits } : {}),
     ...(policy === "strict" ? {} : { releasePolicy: policy })
   })).digest("hex");
 }

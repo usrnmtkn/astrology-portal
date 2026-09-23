@@ -2,13 +2,14 @@ import { GENERATED_REPORT_JUDGE_CATEGORIES, GENERATED_REPORT_JUDGE_BLOCKING_FIND
   GENERATED_REPORT_JUDGE_FINDING_CATEGORIES, generatedReportJudgeOverall, generatedReportJudgeVerdict,
   type GeneratedReportJudgeScores, type GeneratedReportJudgeFinding } from "./transit-reading-judge-rules.js";
 import { findingScoreCategory } from "./transit-reading-judge-evidence.js";
+import { EVIDENCE_DELIVERY_POLICY, isReportDeliveryBlocker } from "./transit-reading-delivery-evidence.js";
 
 // A policy experiment, not an amendment to the approved owner rubric. Off by default.
 export const MATERIAL_REVIEW_POLICY = "report-materiality-candidate-v1";
-export type ReportReleasePolicy = "strict" | typeof MATERIAL_REVIEW_POLICY;
+export type ReportReleasePolicy = "strict" | typeof MATERIAL_REVIEW_POLICY | typeof EVIDENCE_DELIVERY_POLICY;
 export function transitReadingReleasePolicy(): ReportReleasePolicy {
   const value = process.env.GENERATED_REPORT_RELEASE_POLICY ?? "strict";
-  if (value !== "strict" && value !== MATERIAL_REVIEW_POLICY) throw new Error("Unknown report release policy.");
+  if (value !== "strict" && value !== MATERIAL_REVIEW_POLICY && value !== EVIDENCE_DELIVERY_POLICY) throw new Error("Unknown report release policy.");
   if (value !== "strict" && process.env.GENERATED_REPORT_REVIEW_MODE === "scoped") {
     throw new Error("The materiality candidate is limited to the combined reviewer; scoped review remains a separate experiment.");
   }
@@ -29,6 +30,7 @@ export type ReportReleaseDecision = {
 /** Consume evidence-validated findings; never let the model choose the release action. */
 export function decideTransitReadingRelease(input: {
   scores: Record<string, number>; findings: GeneratedReportJudgeFinding[]; threshold: number;
+  deliveryPolicy?: string;
 }, policy: ReportReleasePolicy): ReportReleaseDecision {
   const scores = input.scores as GeneratedReportJudgeScores;
   const validScores = Object.keys(scores).length === GENERATED_REPORT_JUDGE_CATEGORIES.length
@@ -38,7 +40,15 @@ export function decideTransitReadingRelease(input: {
   const strictVerdict = validScores && validFindings ? generatedReportJudgeVerdict(scores, input.threshold, input.findings) : "below_threshold";
   const decision: ReportReleaseDecision = { policy, action: "review_required", strictVerdict, overall,
     scores: { ...scores }, blockingFindings: [], advisoryFindings: [], reason: "invalid_review" };
-  if (!validScores || !validFindings || !Number.isFinite(input.threshold) || input.threshold < 0.85 || input.threshold > 1) return decision;
+  if (!validScores || !validFindings || !Number.isFinite(input.threshold)) return decision;
+  if (policy === EVIDENCE_DELIVERY_POLICY) {
+    if (input.deliveryPolicy !== policy || input.findings.some(f => !Object.hasOwn(f, "delivery"))) return decision;
+    const blockingFindings = input.findings.filter(isReportDeliveryBlocker);
+    return { ...decision, blockingFindings, advisoryFindings: input.findings.filter(f => !isReportDeliveryBlocker(f)),
+      action: blockingFindings.length ? "correct" : "accept",
+      reason: blockingFindings.length ? "evidenced_delivery_defect" : "no_evidenced_delivery_defect" };
+  }
+  if (input.threshold < 0.85 || input.threshold > 1) return decision;
   if (policy === "strict") return { ...decision, action: strictVerdict === "pass" ? "accept" : "correct",
     blockingFindings: input.findings, reason: "approved_strict_contract" };
   if (policy !== MATERIAL_REVIEW_POLICY) return decision;

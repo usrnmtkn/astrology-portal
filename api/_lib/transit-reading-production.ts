@@ -1,5 +1,7 @@
 import { checkpointTransitReadingModel, transitReadingModelRequestHash } from "./transit-reading-checkpoints.js";
 import { SCOPED_REVIEW_SCHEMAS, type TransitReadingReviewScope } from "./transit-reading-review-contract.js";
+import { transitReadingReleasePolicy } from "./transit-reading-release-policy.js";
+import { EVIDENCE_DELIVERY_POLICY } from "./transit-reading-delivery-evidence.js";
 import { transitReadingOwnerVoice, transitReadingOwnerVoicePrompt, assertTransitReadingOwnerVoice, transitReadingVoiceContext } from "./transit-reading-owner-voice.js";
 import {
   callReportCalibrationModel,
@@ -112,6 +114,12 @@ export async function callGovernedTransitReadingModel<T>(input: {
     schemaName: input.schemaName,
     schema: input.schema,
     validateResponse: input.validateResponse,
+    ...(transitReadingReleasePolicy() === EVIDENCE_DELIVERY_POLICY ? {
+      // Includes the full wire payload, not just prose. Together with an 8192
+      // protocol allowance this bounds text input conservatively at 96000 tokens.
+      requestLimits: { maxInputBytes: 87_808, maxOutputTokens: input.kernel.role === "REVIEWER" ? 6_000 : 12_000 },
+      disableFallback: true
+    } : {}),
     ...(input.reviewScope ? { disableFallback: true } : {}),
     beforeProviderCall: async () => {
       assertTransitReadingProductionKernel(input.kernel);

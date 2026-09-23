@@ -50,7 +50,7 @@ export const RECONCILED_REPORT_JUDGE_SCHEMA = {
   }
 } as const;
 
-export function reportReviewReconciliationPrompt(prior: TransitReadingPriorReview, current: ReaderDraft) {
+export function reportReviewReconciliationPrompt(prior: TransitReadingPriorReview, current: ReaderDraft, diagnosticScores = false) {
   const previous = transitReadingReaderCopy(prior.draft);
   const next = transitReadingReaderCopy(current);
   return [
@@ -59,7 +59,9 @@ export function reportReviewReconciliationPrompt(prior: TransitReadingPriorRevie
     "Evaluate the COMPLETE CURRENT READER-VISIBLE DRAFT against the unchanged full rubric and governed brief. This is still a full fact and writing review; fixing earlier findings is necessary but not sufficient for release. Do not rubber-stamp earlier scores or invent a new defect to maintain a rejection.",
     "Account for every previous finding by its zero-based index: resolved (the correction fixes it), still_present (a current finding identifies the remaining defect), or withdrawn (the original diagnosis was not justified; explain using the supplied source/rubric). Do not mark a finding resolved just because its words changed.",
     "Classify every current finding by its zero-based index. unresolved links to a still_present priorFindingIndex in the same category. A new finding has null priorFindingIndex: introduced_by_edit if its exact draftQuote did not occur previously; previously_missed if it already occurred; changed_context if that unchanged quote becomes defective because another passage changed. For changed_context, changeQuote must quote exact new wording absent from the previous draft and the explanation must show the causal connection. For introduced_by_edit, changeQuote may be null or an exact duplicate of that finding's draftQuote. For unresolved and previously_missed, changeQuote is null.",
-    "For previously_missed findings, explicitly acknowledge the first review's omission and substantiate the current defect. An omission is not permission to ignore a factual or material defect, lower a floor, or demand another paid rewrite. Final scores must describe the current report, with the same 4 meaning and category floors as before.",
+    diagnosticScores
+      ? "For previously_missed findings, acknowledge the first review's omission and substantiate the current defect under the evidence-delivery policy. Final scores remain diagnostic only, with no release floors. An omission never authorizes an additional rewrite. Editorial observations remain advisory."
+      : "For previously_missed findings, explicitly acknowledge the first review's omission and substantiate the current defect. An omission is not permission to ignore a factual or material defect, lower a floor, or demand another paid rewrite. Final scores must describe the current report, with the same 4 meaning and category floors as before.",
     "Return reconciliation as well as scores and findings. No replacement prose.",
     "PREVIOUS REVIEW DATA",
     JSON.stringify({ draft: previous, scores: prior.scores, findings: prior.findings }, null, 2),

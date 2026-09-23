@@ -12,6 +12,7 @@ import {
 } from "./transit-reading-production.js";
 import { governedInstructionsForRole } from "../../src/astro-writing/openAIResponses.cjs";
 import { decideTransitReadingRelease, transitReadingReleasePolicy, type ReportReleaseDecision } from "./transit-reading-release-policy.js";
+import { EVIDENCE_DELIVERY_POLICY } from "./transit-reading-delivery-evidence.js";
 import { TransitReadingReviewRequiredError, isInvalidReportReview } from "./transit-reading-review-stop.js";
 import type { GeneratedReportJudgeFinding } from "./transit-reading-judge-rules.js";
 import type { TransitReadingPriorReview, ReportReviewReconciliationReceipt } from "./transit-reading-review-reconciliation.js";
@@ -39,10 +40,11 @@ export type TransitReadingValidationResult = {
 export type TransitReadingJudgeOutcome = {
   reconciliation?: ReportReviewReconciliationReceipt;
   result: {
+    deliveryPolicy?: string;
     overall: number;
     verdict: "pass" | "below_threshold";
     scores: Record<string, number>;
-    findings: Array<{ category: string; location: string; finding: string; draftQuote?: string; contextQuote?: string; readerConsequence?: string; sourcePath?: string | null; sourceQuote?: string | null; ownerComparisons?: Array<{ evidenceId: string; quote: string; difference: string }> }>;
+    findings: Array<{ category: string; location: string; finding: string; draftQuote?: string; contextQuote?: string; readerConsequence?: string; sourcePath?: string | null; sourceQuote?: string | null; ownerComparisons?: Array<{ evidenceId: string; quote: string; difference: string }>; delivery?: GeneratedReportJudgeFinding["delivery"] }>;
   };
   provider: string;
   model: string;
@@ -311,6 +313,7 @@ function judgmentFindings(judged: TransitReadingJudgeOutcome) {
       ...(finding.contextQuote ? [`Complete paragraph: ${JSON.stringify(finding.contextQuote)}`] : []),
       ...(finding.readerConsequence ? [`Reader consequence: ${finding.readerConsequence}`] : []),
       ...(finding.sourceQuote ? [`Source evidence at ${finding.sourcePath}: ${JSON.stringify(finding.sourceQuote)}`] : []),
+      ...(finding.delivery ? [`Specific delivery defect: ${JSON.stringify(finding.delivery)}`] : []),
       ...(finding.ownerComparisons ?? []).map(comparison => `Owner comparison ${comparison.evidenceId}: ${JSON.stringify(comparison.quote)}\nObserved difference: ${comparison.difference}`)
     ].join("\n")).join("\n")
     : Object.entries(judged.result.scores)
@@ -394,7 +397,18 @@ export async function generateGovernedTransitReading<TBrief>(options: GovernedTr
   const policy = transitReadingReleasePolicy();
   if (policy !== "strict" && !options.judge) throw new Error("The materiality candidate requires a report judge before generation.");
   const provider = contentGenerationProvider({ contentType: options.contentType }) as TransitReadingProvider;
-  const initial = await initialValidatedDraft(provider, options);
+  let initial: Awaited<ReturnType<typeof initialValidatedDraft<TBrief>>>;
+  try {
+    initial = await initialValidatedDraft(provider, options);
+  } catch (error) {
+    if (policy !== EVIDENCE_DELIVERY_POLICY || error instanceof TransitReadingCheckpointYield) throw error;
+    // A fresh job attempt must not buy another initial recovery cycle. There
+    // may be no complete draft; do not manufacture a draft hash in that case.
+    throw new TransitReadingReviewRequiredError({
+      reason: error instanceof TransitReadingQualityError ? "initial_validation_exhausted" : "initial_generation_unavailable",
+      detail: error instanceof Error ? error.message : "Initial generation failed."
+    }, { cause: error });
+  }
   if (!options.judge) return { draft: initial.draft, provider, judgeAudit: null };
 
   const review = async (draft: GeneratedTransitReadingDraft, priorReview?: TransitReadingPriorReview) => {
@@ -402,13 +416,13 @@ export async function generateGovernedTransitReading<TBrief>(options: GovernedTr
       return await options.judge!({ draft, brief: initial.brief, ownerEvidence: options.ownerEvidence ?? [], ...(priorReview ? { priorReview } : {}) });
     } catch (error) {
       if (error instanceof TransitReadingCheckpointYield) throw error;
-      if (!isInvalidReportReview(error) && !priorReview) throw error;
+      if (!isInvalidReportReview(error) && !priorReview && policy !== EVIDENCE_DELIVERY_POLICY) throw error;
       const details: string[] = [];
       const seen = new Set<unknown>();
       for (let cause: unknown = error; cause instanceof Error && !seen.has(cause); cause = cause.cause) {
         seen.add(cause); details.push(cause.message);
       }
-      throw new TransitReadingReviewRequiredError({ reason: isInvalidReportReview(error) ? "invalid_evaluator_response" : "corrected_review_unavailable", draftSha256: transitReadingDraftHash(draft),
+      throw new TransitReadingReviewRequiredError({ reason: isInvalidReportReview(error) ? "invalid_evaluator_response" : priorReview ? "corrected_review_unavailable" : "initial_review_unavailable", draftSha256: transitReadingDraftHash(draft),
         detail: details.join(" | ").slice(0, 4000) }, { cause: error });
     }
   };
@@ -449,6 +463,12 @@ export async function generateGovernedTransitReading<TBrief>(options: GovernedTr
     if (!corrected) throw new TransitReadingJudgeBlockedError({
       stage: "corrected_validation", judgment: firstJudgment, validationError: error.message,
       releaseDecision: firstDecision, reviewedDraftSha256: transitReadingDraftHash(initial.draft)
+    });
+    // This policy permits one judge-directed correction, not an extra paid
+    // cleanup after that correction fails validation. Keep the draft checkpoint.
+    if (policy === EVIDENCE_DELIVERY_POLICY) throw new TransitReadingJudgeBlockedError({
+      stage: "corrected_validation", judgment: firstJudgment, validationError: error.message,
+      releaseDecision: firstDecision, reviewedDraftSha256: transitReadingDraftHash(corrected)
     });
     try {
       corrected = await providerDraft(

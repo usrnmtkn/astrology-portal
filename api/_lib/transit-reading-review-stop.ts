@@ -3,7 +3,7 @@ export const REPORT_REVIEW_REQUIRED_MESSAGE = "This report needs review before i
 
 export class TransitReadingReviewRequiredError extends Error {
   readonly code = "TRANSIT_READING_REVIEW_REQUIRED";
-  constructor(readonly diagnostic: { reason: string; draftSha256: string; detail?: unknown }, options?: ErrorOptions) {
+  constructor(readonly diagnostic: { reason: string; draftSha256?: string; detail?: unknown }, options?: ErrorOptions) {
     super(`${REPORT_REVIEW_REQUIRED} ${REPORT_REVIEW_REQUIRED_MESSAGE}`, options);
     this.name = "TransitReadingReviewRequiredError";
   }
