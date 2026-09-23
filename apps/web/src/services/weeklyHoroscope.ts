@@ -1,6 +1,7 @@
 import initialReaderRows from "../content/fallbackArchitectureV3/bundled-initial-reader-rows-v3.json";
 import {
   fallbackV3LunationCompact,
+  loadDeferredFallbackArchitectureV3Bundle,
   loadLunationBookFallbackArchitectureV3Bundle,
   SourceGapError,
   transitSynastryFallbackRendererV3
@@ -1278,7 +1279,12 @@ export async function buildWeeklyHoroscope({
 }): Promise<WeeklyHoroscopeAssembly> {
   const timeZone = location.timeZone || "UTC";
   const window = weeklyWindowFor(now, timeZone);
-  const { events, snapshots, lunationEventSkies, matchingNewMoons, stationEventPositions } = await loadWeeklyEphemeris(location, window);
+  // Calculation and prose transport can overlap, but a reading must not be
+  // assembled from a partial bundle and then invalidated when it finishes.
+  const [{ events, snapshots, lunationEventSkies, matchingNewMoons, stationEventPositions }] = await Promise.all([
+    loadWeeklyEphemeris(location, window),
+    loadDeferredFallbackArchitectureV3Bundle()
+  ]);
   if (events.some(isPrincipalLunation)) {
     await loadLunationBookFallbackArchitectureV3Bundle();
   }

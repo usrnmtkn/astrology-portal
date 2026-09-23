@@ -530,7 +530,7 @@ assert.match(
 );
 assert.match(
   profileViewSource,
-  /const weeklyAssemblyFrame = window\.requestAnimationFrame\(\(\) => \{[\s\S]*weeklyAssemblyTimer = window\.setTimeout\(\(\) => \{[\s\S]*void buildWeeklyHoroscope\(\{[\s\S]*if \(!cancelled\) setWeeklyHoroscopeAssembly\(assembly\);[\s\S]*\}, 0\);[\s\S]*window\.cancelAnimationFrame\(weeklyAssemblyFrame\);[\s\S]*window\.clearTimeout\(weeklyAssemblyTimer\);/u,
+  /const weeklyAssemblyFrame = window\.requestAnimationFrame\(\(\) => \{[\s\S]*weeklyAssemblyTimer = window\.setTimeout\(\(\) => \{[\s\S]*void buildWeeklyHoroscope\(\{[\s\S]*if \(!cancelled\) setWeeklyHoroscopeResult\(\{ key: weeklyAssemblyKey, assembly \}\);[\s\S]*\}, 0\);[\s\S]*window\.cancelAnimationFrame\(weeklyAssemblyFrame\);[\s\S]*window\.clearTimeout\(weeklyAssemblyTimer\);/u,
   "Weekly horoscope assembly must yield a browser paint, then start and ignore results after navigation."
 );
 assert.doesNotMatch(
