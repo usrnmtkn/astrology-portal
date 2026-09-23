@@ -80,8 +80,9 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
       expect(saved.source_snapshot.skyAspectVoiceLint).toMatchObject({ score: 3, fails: 0 });
       await expect(body).toHaveValue(revised);
     } finally {
-      await page.close();
+      await page.context().route('**/api/**', route => route.abort());
       await page.unrouteAll({ behavior: 'wait' });
+      await page.close();
       store.close();
     }
   });
