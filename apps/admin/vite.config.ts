@@ -132,7 +132,6 @@ export default defineConfig(({ command, mode }) => {
         output: {
           onlyExplicitManualChunks: true,
           manualChunks(id) {
-            if (id.includes("node_modules/thinking-orbs/")) return "thinking-orbs";
             // Shared controls are rendered immediately. Keeping them in this
             // lazy group pulls the whole editor group into the startup graph.
             if (/apps\/admin\/src\/(?:FriendsTransitSectionFinder|NatalPlacementSourceFinder|NatalPlacementReaderPreview|TemplateReaderDrilldown|TemplateVariableReviewPanels|TemplateVariablesRail)\.tsx$|apps\/admin\/src\/(?:compositionMap|templateVariableSources)\.ts$/u.test(id)) {

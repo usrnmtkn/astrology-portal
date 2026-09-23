@@ -299,7 +299,7 @@ test.describe("Friends loading performance matrix", () => {
           await waitForMeasuredVisibility(page.getByRole("button", { name: `Open ${fixtureFriendName}` }));
         });
         await page.waitForTimeout(250);
-        await expect(page.locator('.app-loading--illustrated:visible'), 'Cached chart rows stay visible without a loading illustration during refresh.').toHaveCount(0);
+        await expect(page.locator('.app-loading--centered:visible'), 'Cached chart rows stay visible without a page loader during refresh.').toHaveCount(0);
         expect(prepared.dashboardMirrorRequests(), "A bare Friends list must not hydrate the complete dashboard mirror.").toBe(0);
         expect(prepared.emptyHouseFallbackRequests(), "A bare Friends list must not download empty-house content.").toBe(0);
         expect(prepared.delayedRelationshipRequests(), "A bare Friends list must not download relationship packages.").toBe(0);
