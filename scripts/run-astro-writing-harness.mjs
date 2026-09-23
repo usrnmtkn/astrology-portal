@@ -5,6 +5,7 @@ import fs from "node:fs";
 import path from "node:path";
 import process from "node:process";
 import { failedRetrievalResult, runWritingPipeline } from "../src/astro-writing/runWritingPipeline.mjs";
+import { resolveStudioWritingProfile } from "../src/astro-writing/studioWritingProfileReceipt.mjs";
 import { resolveAstrology } from "../src/astro-writing/resolveAstrology.mjs";
 import { retrieveOwnerContext } from "../src/astro-writing/retrieveOwnerContext.mjs";
 import { assertPositiveOwnerEvidenceContext, OwnerEvidencePreconditionError } from "../src/astro-writing/ownerEvidencePolicy.mjs";
@@ -106,9 +107,15 @@ function modelClient(config, apiKeys, forceRole = null) {
 const requestPath = argValue("--request");
 const outputPath = argValue("--out");
 const transmittedPacketPath = argValue("--packet-out");
-if (!requestPath || !outputPath) throw new Error("Usage: node scripts/run-astro-writing-harness.mjs --request request.json --out result.json [--authorize-live]");
+if (!requestPath || !outputPath) throw new Error("Usage: node scripts/run-astro-writing-harness.mjs --request request.json --out result.json [--writing-profile saved-profile.json] [--authorize-live]");
 
 const request = JSON.parse(fs.readFileSync(path.resolve(requestPath), "utf8"));
+const writingProfilePath = argValue("--writing-profile");
+if (writingProfilePath) {
+  if (request.writingProfile) throw new Error("Choose one writing profile: in the request or via --writing-profile.");
+  request.writingProfile = JSON.parse(fs.readFileSync(path.resolve(writingProfilePath), "utf8"));
+}
+if (request.writingProfile) resolveStudioWritingProfile(request.writingProfile);
 const willDraft = request.approvedArgumentOutline?.ownerApproved === true;
 const corrections = [
   ...readJsonl(path.resolve("data/writing/owner-corrections.jsonl")),

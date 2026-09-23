@@ -1,0 +1,128 @@
+import { test, expect } from '@playwright/test';
+import { fork } from 'node:child_process';
+import { readFileSync } from 'node:fs';
+import path from 'node:path';
+import { routeStudioInventoryApi } from '../helpers/studio-inventory-route';
+
+const endpoint = '/api/admin/generated-content?writingProfiles=true';
+const entry = process.env.STUDIO_PRODUCTION_ENTRY === '1' ? '/admin/content' : '/';
+for (const [width, theme] of [[390, 'light'], [390, 'dark'], [1440, 'light'], [1440, 'dark']] as const) {
+ test(`AI Writing saves, previews and handles conflicts at ${width} ${theme}`, async ({ page }) => {
+  const child = fork(path.resolve('tests/helpers/sky-article-save-api.mts'), [], { env: { ...process.env, SKY_SAVE_LEGACY_DRAFT: '', ZODIAC_TEMPLATE_FIXTURE: '1' }, execArgv: ['--import', 'tsx'], stdio: ['ignore', 'pipe', 'pipe', 'ipc'] });
+  let sequence = 0, stderr = '';
+  const pending = new Map<number, { resolve: (value: any) => void; reject: (reason: Error) => void }>();
+  child.stderr?.on('data', value => { stderr += value; });
+  const ready = new Promise<void>((resolve, reject) => {
+   child.on('message', (message: any) => {
+    if (message.ready) return resolve();
+    const task = pending.get(message.id);
+    if (task) { pending.delete(message.id); message.error ? task.reject(new Error(message.error)) : task.resolve(message.result); }
+   });
+   child.on('exit', code => { const error = new Error(`Fixture exited ${code}: ${stderr}`); reject(error); pending.forEach(task => task.reject(error)); });
+  });
+  const call = (message: any) => new Promise<any>((resolve, reject) => { const id = ++sequence; pending.set(id, { resolve, reject }); child.send({ ...message, id }); });
+  try {
+   await ready;
+   const errors: string[] = [];
+   page.on('pageerror', error => errors.push(error.message));
+   await page.setViewportSize({width, height: 1000});
+   await page.addInitScript(theme => {localStorage.setItem('tldrastro:contentAdminSecret', 'calendar-api-fixture'); localStorage.setItem('tldrastro:studio-theme', theme);}, theme);
+   await routeStudioInventoryApi(page, {call});
+   await page.goto(entry + '#templates');
+   const typography = () => page.locator('h1').evaluate(el => {const s = getComputedStyle(el); return [s.fontFamily,s.fontSize,s.fontWeight,s.lineHeight,s.letterSpacing,s.margin,s.textTransform,s.textAlign];});
+   await expect(page.getByRole('heading', {name: 'Templates', exact: true})).toBeVisible();
+   await expect(page.getByRole('button', {name: 'Create', exact: true})).toBeVisible();
+   const headingStyle = await typography();
+   if (width < 720) await page.getByRole('button', {name: 'Open Content Studio navigation', exact: true}).click();
+   await page.getByRole('button', {name: 'AI Writing', exact: true}).click();
+   await expect(page.getByRole('heading', {name: 'AI Writing', exact: true})).toBeVisible();
+   await expect(page.getByRole('button', {name: 'Create', exact: true})).toHaveCount(0);
+   expect(await typography()).toEqual(headingStyle);
+   await expect(page.locator('h1')).toHaveCount(1);
+   const editor = page.getByRole('region', {name: 'Horoscope writing profiles'});
+   const voice = editor.locator('textarea[aria-label="Voice guidance"]:visible');
+   const prompt = editor.locator('textarea[aria-label="Prompt"]:visible');
+   const preview = editor.locator('textarea[aria-label="Assembled writing prompt"]:visible');
+   await expect(voice).toBeVisible();
+   await expect(editor.locator('form:visible > label > span:first-child')).toHaveText(['Voice guidance', 'Reading structure', 'Source guidance', 'Prompt']);
+   await expect(editor.locator('p.admin-field-hint:visible').filter({hasText: /^Starter profile · not saved$/})).toBeVisible();
+   expect((await call({method: 'rows'})).filter((r: any) => r.content_key.startsWith('studio-writing-profile/')).length).toBe(0);
+   await page.screenshot({path: `test-results/ai-writing-starter-${width}-${theme}.png`, fullPage: true});
+   const custom = 'Fixture exact weekly guidance.\n\nKeep this second paragraph — unchanged.';
+   await voice.fill(custom);
+   await expect(preview).toHaveValue(new RegExp('Fixture exact weekly guidance'));
+   await editor.getByLabel('Horoscope period').selectOption('daily');
+   await expect(voice).not.toHaveValue(custom);
+   await editor.getByLabel('Horoscope period').selectOption('weekly');
+   await expect(voice).toHaveValue(custom);
+   // Hash navigation retains the mounted editor and its unsaved text.
+   await page.evaluate(() => {location.hash = 'templates';});
+   await expect(page.getByRole('heading', {name: 'Templates', exact: true})).toBeVisible();
+   await page.evaluate(() => {location.hash = 'ai-writing';});
+   await expect(voice).toHaveValue(custom);
+   const originalPrompt = await prompt.inputValue();
+   await prompt.fill(originalPrompt + '\n{{unknown}}');
+   await expect(editor.getByRole('alert')).toContainText('unknown');
+   await expect(editor.getByRole('button', {name: 'Save writing profile', exact: true})).toBeDisabled();
+   await prompt.fill(originalPrompt);
+   await editor.getByRole('button', {name: 'Save writing profile', exact: true}).click();
+   await expect(editor.getByRole('status')).toHaveText('Saved Weekly profile, revision 1.');
+   const downloadPromise = page.waitForEvent('download');
+   await editor.getByRole('button', {name: 'Export saved profile', exact: true}).click();
+   const download = await downloadPromise;
+   const exported = JSON.parse(readFileSync((await download.path())!, 'utf8'));
+   expect(exported.profile.voiceGuidance).toBe(custom);
+   expect(exported.revision).toBe(1); expect(exported.sha256).toMatch(/^[a-f0-9]{64}$/);
+   await page.reload();
+   await expect(voice).toHaveValue(custom);
+   const external = {...exported.profile, voiceGuidance: 'Fixture another editor saved this version.'};
+   const changed = await call({method: 'POST', url: endpoint, body: {profile: external, expectedUpdatedAt: exported.updatedAt}});
+   expect(changed.status).toBe(200);
+   await voice.fill('Fixture unsaved work to preserve.');
+   await editor.getByRole('button', {name: 'Save writing profile', exact: true}).click();
+   await expect(editor.getByRole('alert')).toContainText('changed');
+   await expect(voice).toHaveValue('Fixture unsaved work to preserve.');
+   await editor.getByRole('button', {name: 'Reload saved version', exact: true}).click();
+   await expect(editor.getByLabel('Saved voice guidance')).toHaveValue(external.voiceGuidance);
+   await expect(voice).toHaveValue('Fixture unsaved work to preserve.');
+   await editor.getByRole('button', {name: 'Replace my edits with saved version', exact: true}).click();
+   await expect(voice).toHaveValue(external.voiceGuidance);
+   await editor.getByLabel('Horoscope period').selectOption('seasonal');
+   await editor.getByRole('button', {name: 'Save writing profile', exact: true}).click();
+   await expect(editor.getByRole('status')).toHaveText('Saved Seasonal profile, revision 1.');
+   await editor.getByLabel('Horoscope period').selectOption('weekly');
+   await expect(voice).toHaveValue(external.voiceGuidance);
+   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+   await page.evaluate(() => window.scrollTo(0, 0));
+   await page.screenshot({path: `test-results/ai-writing-saved-${width}-${theme}.png`, fullPage: true});
+   expect(errors).toEqual([]);
+  } finally {child.kill();}
+ });
+}
+
+test('AI Writing recovers from loading and save failures without discarding edits', async ({page}) => {
+ const {defaultHoroscopeProfile} = await import('../../src/astro-writing/horoscopeWritingProfiles.mjs');
+ const {createHash} = await import('node:crypto');
+ const profiles = ['daily', 'weekly', 'seasonal'].map((period: any) => {const profile = defaultHoroscopeProfile(period); return {profile, id:null, updatedAt:null, revision:0, sha256:createHash('sha256').update(JSON.stringify(profile)).digest('hex')};});
+ await page.addInitScript(() => localStorage.setItem('tldrastro:contentAdminSecret', 'calendar-api-fixture'));
+ let reads = 0;
+ await page.route('**/api/**', async route => {
+  const url = new URL(route.request().url());
+  if (url.searchParams.has('writingProfiles')) {
+   if (route.request().method() === 'POST') return route.fulfill({status: 503, json: {ok:false, error:'Fixture storage unavailable.'}});
+   if (++reads === 1) return route.fulfill({status: 503, json:{ok:false, error:'Fixture loading unavailable.'}});
+   return route.fulfill({json:{ok:true, profiles}});
+  }
+  return route.fulfill({json:{ok:true, rows:[], statuses:[], records:[], nextCursor:null}});
+ });
+ await page.goto(entry + '#ai-writing');
+ const editor = page.getByRole('region', {name:'Horoscope writing profiles'});
+ await expect(editor.getByRole('alert')).toHaveText('Fixture loading unavailable.');
+ await editor.getByRole('button', {name:'Retry loading profiles'}).click();
+ const voice = editor.locator('textarea[aria-label="Voice guidance"]:visible');
+ await voice.fill('Fixture unsaved text.');
+ await editor.getByRole('button', {name:'Save writing profile', exact:true}).click();
+ await expect(editor.getByRole('alert')).toHaveText('Fixture storage unavailable.');
+ await expect(voice).toHaveValue('Fixture unsaved text.');
+ await expect(editor.getByRole('button', {name:'Save writing profile', exact:true})).toBeEnabled();
+});
