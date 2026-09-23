@@ -28,7 +28,7 @@ const budgets = {
 // Functional reader suites retain traces; these tests retain failure screenshots.
 test.use({ trace: "off" });
 
-async function seedYouPerformanceState(page: Page) {
+async function seedYouPerformanceState(page: Page, cacheNatal = true, now = fixtureNow) {
   const birthDateTime = zonedDateTimeToUtc(
     fixtureBirthDate,
     fixtureBirthTime,
@@ -44,7 +44,7 @@ async function seedYouPerformanceState(page: Page) {
   await page.route('**/api/content-reader', async (route) => {
     await route.fulfill({ status: 503, contentType: "application/json", body: "{}" });
   });
-  await page.addInitScript(({ fixtureBirthDate, fixtureBirthTime, fixtureLocation, fixtureNow, natalCacheKey, natalSky, verifiedSchema }) => {
+  await page.addInitScript(({ fixtureBirthDate, fixtureBirthTime, fixtureLocation, fixtureNow, natalCacheKey, natalSky, verifiedSchema, cacheNatal }) => {
     const RealDate = Date;
     const fixedTime = new RealDate(fixtureNow).getTime();
 
@@ -117,7 +117,7 @@ async function seedYouPerformanceState(page: Page) {
         birthLocation: fixtureLocation
       }]
     }));
-    window.localStorage.setItem(natalCacheKey, JSON.stringify({
+    if (cacheNatal) window.localStorage.setItem(natalCacheKey, JSON.stringify({
       schema: verifiedSchema,
       cacheKey: natalCacheKey,
       snapshot: natalSky,
@@ -127,9 +127,10 @@ async function seedYouPerformanceState(page: Page) {
     fixtureBirthDate,
     fixtureBirthTime,
     fixtureLocation,
-    fixtureNow,
+    fixtureNow: now,
     natalCacheKey,
     natalSky,
+    cacheNatal,
     verifiedSchema: VERIFIED_SKY_CACHE_SCHEMA
   });
   await page.emulateMedia({ reducedMotion: "reduce" });
@@ -231,6 +232,40 @@ test.describe("You loading performance matrix", () => {
     await expect(page.getByRole("alert", { name: "Chart calculation error" })).toHaveCount(0);
     await expect(page.locator('[aria-label="Transit chart wheel"], [aria-label="Natal chart wheel"]')).toBeVisible();
   });
+});
+
+test("uncached You reserves calculation bandwidth before deferred reading packages", async ({ page }) => {
+  test.setTimeout(45_000);
+  await seedYouPerformanceState(page, false, "2026-09-21T16:00:00.000Z");
+  let release!: () => void;
+  const held = new Promise<void>(resolve => { release = resolve; });
+  let calculationRequested = false;
+  const proseRequests: string[] = [];
+  page.on("request", request => {
+    if (/\/assets\/fallback-content-(?:empty-house|deferred-core|transit)-[^/]+\.js$/u.test(request.url())) proseRequests.push(request.url());
+  });
+  await page.route("**/*.wasm", async route => {
+    calculationRequested = true;
+    await held;
+    await route.continue();
+  });
+  try {
+    await page.goto("/#you?tab=chart", { waitUntil: "domcontentloaded" });
+    await expect(page.getByLabel("Profile summary")).toBeVisible();
+    await expect.poll(() => calculationRequested).toBe(true);
+    await expect(page.getByRole("region", { name: "Chart calculation", exact: true })).toBeVisible();
+    // Allow the existing post-paint effects to run while the actual calculation
+    // transport remains held. No timing budget is inferred from this fixture.
+    await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(() => setTimeout(resolve, 0)))));
+    expect(proseRequests).toEqual([]);
+  } finally { release(); }
+  await expect(page.getByRole("region", { name: "Chart calculation", exact: true })).toHaveCount(0);
+  await expect(page.locator('[aria-label="Bodies in signs and houses"] > *')).toHaveCount(13);
+  await expect.poll(() => proseRequests.length).toBeGreaterThan(0);
+  await expect(page.getByRole("alert", { name: "Chart calculation error" })).toHaveCount(0);
+  await page.getByRole("tab", { name: "Transits", exact: true }).click();
+  await expect(page.getByLabel("Daily horoscope summary", { exact: true })).toBeVisible();
+  await expect(page.getByLabel("This week's transits", { exact: true })).toBeVisible();
 });
 
 

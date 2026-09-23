@@ -11661,6 +11661,9 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
 
     // Render the saved profile before evaluating optional prose packages.
     if (mode === "profile" && !youPagePainted) return;
+    // A cold natal calculation first needs the ephemeris data. Competing
+    // prose downloads can otherwise consume its entire calculation deadline.
+    if (mode === "profile" && profileNatalCalculationStatus !== "ready") return;
     loadEmptyHouseFallbackArchitectureV3Bundle()
       .then((installed) => {
         if (installed && !cancelled) {
@@ -11674,7 +11677,7 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
     return () => {
       cancelled = true;
     };
-  }, [friendNatalContentRequested, mode, youPagePainted]);
+  }, [friendNatalContentRequested, mode, youPagePainted, profileNatalCalculationStatus]);
 
   useEffect(() => {
     let cancelled = false;
@@ -11695,6 +11698,7 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
 
     // Render the saved profile before evaluating optional prose packages.
     if (mode === "profile" && !youPagePainted) return;
+    if (mode === "profile" && profileNatalCalculationStatus !== "ready") return;
     loadDeferredFallbackArchitectureV3Bundle()
       .then((installed) => {
         if (installed && !cancelled) {
@@ -11716,7 +11720,8 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
     profileNatalSky?.ascendant,
     skyDetailRoutePath,
     userProfile?.rising,
-    youPagePainted
+    youPagePainted,
+    profileNatalCalculationStatus
   ]);
 
   useEffect(() => {
@@ -13284,6 +13289,7 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
     setPersonalTimingGenerated(rendered);
     setPersonalTimingGeneratedStatus(rendered ? "ready" : "error");
   }, [
+    fallbackArchitectureV3Version,
     isProfileMode,
     selectedDateSky,
     skyDate,
@@ -17127,7 +17133,10 @@ function ProfileView({
   }, [fallbackArchitectureV3Version, natalSky, personalTransitGeneratedContent, targetDate, transitItems]);
 
   const [activePlacementRouteId, setActivePlacementRouteId] = useState<string | null>(null);
-  const [weeklyHoroscopeAssembly, setWeeklyHoroscopeAssembly] = useState<WeeklyHoroscopeAssembly | null>(null);
+  const [weeklyHoroscopeResult, setWeeklyHoroscopeResult] = useState<{
+    key: object;
+    assembly: WeeklyHoroscopeAssembly;
+  } | null>(null);
   const [dailyMatchingNewMoon, setDailyMatchingNewMoon] = useState<{
     fullMoonEventDate: string;
     fact: MatchingNewMoonFact;
@@ -17155,9 +17164,35 @@ function ProfileView({
   const safeMoon = displayMoon || "your Moon";
   const safeRising = displayRising || "your rising sign";
   const natalPositions = natalSky?.positions ?? [];
+  const weeklyAssemblyKey = useMemo(() => ({}), [
+    profile.id,
+    profile.currentLocation,
+    profile.currentLocationData?.label,
+    profile.currentLocationData?.latitude,
+    profile.currentLocationData?.longitude,
+    profile.currentLocationData?.timeZone,
+    natalSky?.generatedAt,
+    natalSky?.location.latitude,
+    natalSky?.location.longitude,
+    natalSky?.location.timeZone,
+    currentSky?.generatedAt,
+    currentSky?.location.latitude,
+    currentSky?.location.longitude,
+    currentSky?.location.timeZone,
+    displayRising,
+    fallbackArchitectureV3Version,
+    generatedContent,
+    unknownBirthTime,
+    targetDate
+  ]);
+  // Reject an earlier account/date/content result during render, before an
+  // effect can run. Otherwise a stale ready frame precedes the loading state.
+  const weeklyHoroscopeAssembly = weeklyHoroscopeResult?.key === weeklyAssemblyKey
+    ? weeklyHoroscopeResult.assembly
+    : null;
   useEffect(() => {
     if (!natalSky || !displayRising || displayRising === "Rising pending") {
-      setWeeklyHoroscopeAssembly(null);
+      setWeeklyHoroscopeResult(null);
       return;
     }
 
@@ -17167,14 +17202,11 @@ function ProfileView({
         ? locationFromLabel(profile.currentLocation)
         : null;
     if (!currentLocation) {
-      setWeeklyHoroscopeAssembly(null);
+      setWeeklyHoroscopeResult(null);
       return;
     }
 
     let cancelled = false;
-    setWeeklyHoroscopeAssembly((current) => current
-      ? { ...current, status: "loading" }
-      : null);
     const dailyDriver = currentSky ? dailyGlanceDriver(currentSky, natalSky, unknownBirthTime) : null;
     const dailyServedUnitsByDate = dailyDriver
       ? {
@@ -17199,13 +17231,13 @@ function ProfileView({
           generatedContent
         })
           .then((assembly) => {
-            if (!cancelled) setWeeklyHoroscopeAssembly(assembly);
+            if (!cancelled) setWeeklyHoroscopeResult({ key: weeklyAssemblyKey, assembly });
           })
           .catch((error) => {
             console.warn("Weekly horoscope assembly failed; hiding unavailable cards.", error);
             if (!cancelled) {
-              setWeeklyHoroscopeAssembly((current) => current
-                ? { ...current, status: "error" }
+              setWeeklyHoroscopeResult((current) => current
+                ? { key: weeklyAssemblyKey, assembly: { ...current.assembly, status: "error" } }
                 : null);
             }
           });
@@ -17217,21 +17249,7 @@ function ProfileView({
       window.cancelAnimationFrame(weeklyAssemblyFrame);
       window.clearTimeout(weeklyAssemblyTimer);
     };
-  }, [
-    profile.id,
-    profile.currentLocation,
-    profile.currentLocationData?.label,
-    profile.currentLocationData?.latitude,
-    profile.currentLocationData?.longitude,
-    profile.currentLocationData?.timeZone,
-    natalSky?.generatedAt,
-    currentSky?.generatedAt,
-    displayRising,
-    fallbackArchitectureV3Version,
-    generatedContent,
-    unknownBirthTime,
-    targetDate
-  ]);
+  }, [weeklyAssemblyKey]);
   const lunationBlendYouFallbackEnabled = String(
     import.meta.env.VITE_ENABLE_LUNATION_BLEND_YOU_FALLBACK ?? "true"
   ).toLowerCase() === "true";
