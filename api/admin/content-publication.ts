@@ -1,5 +1,6 @@
 // @ts-ignore Shared reader-copy validation.
 import { readerCopyIssues } from "../../apps/web/src/content/editorialCopyBoundary.mjs";
+import { HOROSCOPE_PROFILE_PREFIX } from "../../src/astro-writing/horoscopeWritingProfiles.mjs";
 import { isRetiredCompositionKey } from "../../apps/web/src/content/fallbackArchitectureV3/resolver/retiredCompositions.mjs";
 import { validContentPublication, publicationTimestamp } from "../../apps/web/src/content/contentPublicationState.js";
 import { contentLiveStatuses } from "../_lib/content-live-status.js";
@@ -17,6 +18,7 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
     if (!body || typeof body !== "object" || Array.isArray(body) || !["retire", "publish"].includes(body.action ?? "") || typeof body.contentKey !== "string" || !body.contentKey.trim() || typeof body.id !== "string" || typeof body.expectedUpdatedAt !== "string" || !/^[a-f\d]{8}-[a-f\d]{4}-[a-f\d]{4}-[a-f\d]{4}-[a-f\d]{12}$/i.test(body.id ?? "") || !Number.isFinite(Date.parse(body.expectedUpdatedAt ?? ""))) {
       return sendAdminJson(res, 400, { ok: false, error: "Select a saved source and its current version before changing publication." });
     }
+    if (body.contentKey.startsWith(HOROSCOPE_PROFILE_PREFIX)) throw new AdminHttpError(400, "Writing profiles are editor-only. Manage them in AI Writing.");
     if (body.action === "publish" && isRetiredCompositionKey(body.contentKey)) {
       return sendAdminJson(res, 422, { ok: false, error: "This composition has been retired. Edit the canonical Personal Transit source instead." });
     }

@@ -338,7 +338,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        suite: [studio-style, studio-web-entry, studio-variables, sky-article]
+        suite: [studio-style, studio-web-entry, studio-variables, sky-article, horoscope-writing]
     env:
       VITE_SUPABASE_URL: https://visual-smoke.supabase.test
       VITE_SUPABASE_ANON_KEY: visual-smoke-placeholder
@@ -352,6 +352,8 @@ jobs:
       - run: npm run build:knowledge
       - run: npx playwright install --with-deps chromium
       - name: Run the ${{ matrix.suite }} suite
+        env:
+          STUDIO_PRODUCTION_ENTRY: ${{ matrix.suite == 'horoscope-writing' && '1' || '0' }}
         run: npx playwright test -c playwright.${{ matrix.suite }}.config.ts
       - name: Upload ${{ matrix.suite }} artifacts
         if: always()

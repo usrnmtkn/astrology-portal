@@ -163,6 +163,8 @@ scripts/
 
 ## Content Studio access
 
+For editable daily, weekly and seasonal AI instructions, see [Horoscope writing in Content Studio](horoscope-writing-studio.md). The AI Writing workspace saves profiles and exports them into the governed writing harness.
+
 Content Studio uses the existing signed-in TLDR Astro owner session. The Admin
 API verifies that session with Supabase on every request. It authorizes either
 the protected `app_metadata.role = admin` claim or an exact verified email in

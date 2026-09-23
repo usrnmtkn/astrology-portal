@@ -96,7 +96,7 @@ export function AdminPageHeader({
         </nav>
         <h1>{title}</h1>
       </div>
-      <div className="admin-page-actions">
+      {createActions.length > 0 && <div className="admin-page-actions">
         <div className="admin-create-menu">
           <StudioButton
             ref={createButtonRef}
@@ -139,7 +139,7 @@ export function AdminPageHeader({
             </>
           )}
         </div>
-      </div>
+      </div>}
       <nav className="admin-page-utilities" aria-label="Content health">
         <a
           className="admin-page-link"

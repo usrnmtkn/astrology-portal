@@ -9,6 +9,7 @@ import { attachGenerationMetadata, writeGenerationMetadata } from "./generationM
 import { assertArgumentOutlineApproved } from "./argumentGate.mjs";
 import { assertSurfaceRegisterContract } from "./surfaceRegisterContract.mjs";
 import { effectiveRulePrompt } from "./effectiveRuleGovernance.mjs";
+import { resolveStudioWritingProfile } from "./studioWritingProfileReceipt.mjs";
 
 export const PLACEMENT_DRAFT_SCHEMA = Object.freeze({
   type: "object",
@@ -118,10 +119,12 @@ export function buildDraftInput({
   engineFacts = null,
   argumentSource = null,
   argumentOutline,
-  spine
+  spine,
+  writingProfile = null
 }) {
   const sections = [
     `TASK\n${String(task ?? "Write one TLDR Astro passage.").trim()}`,
+    ...(writingProfile ? [`CONTENT STUDIO EDITORIAL INSTRUCTIONS\n${resolveStudioWritingProfile(writingProfile).prompt}\nThese editorial instructions do not replace the fact boundary, evidence requirements, output schema or owner approval.`] : []),
     `RESOLVED RENDER TARGET\n${JSON.stringify(target, null, 2)}`,
     `SURFACE\n${surface}`,
     `CONTENT FAMILY\n${family}`,
@@ -195,7 +198,8 @@ export async function generateDraft({
   argumentOutline,
   spine,
   modelClient,
-  schema = null
+  schema = null,
+  writingProfile = null
 }) {
   if (typeof modelClient !== "function") throw new Error("generateDraft requires an injected modelClient; no implicit billed call is allowed.");
   const resolvedTarget = assertSurfaceRegisterContract(target, { surface, register });
@@ -214,7 +218,7 @@ export async function generateDraft({
     stage: "draft",
     role,
     instructions: effectiveRulePrompt(baseInstructions, { surface, family }),
-    input: buildDraftInput({ plan, context, task, target: resolvedTarget, family, register, surface, familyContext, engineFacts, argumentSource, argumentOutline, spine }),
+    input: buildDraftInput({ plan, context, task, target: resolvedTarget, family, register, surface, familyContext, engineFacts, argumentSource, argumentOutline, spine, writingProfile }),
     schema: resolvedSchema
   });
   if (!value || typeof value !== "object") throw new Error("Writer returned no structured draft.");
@@ -222,7 +226,8 @@ export async function generateDraft({
     ...unapprovedDraft(value),
     argumentOutline,
     argumentOutlineHash: argumentOutline.approvedOutlineHash,
-    contentSpineId: spine.id
+    contentSpineId: spine.id,
+    ...(writingProfile ? { studioWritingProfile: resolveStudioWritingProfile(writingProfile).receipt } : {})
   }, writeGenerationMetadata({
     role,
     provider: modelClient.provider ?? null,

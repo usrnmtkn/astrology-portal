@@ -73,7 +73,8 @@ export async function runWritingPipeline({
   reservedNegationPivots = 0,
   excludedEvidenceContentKeys = [],
   preferredEvidenceContentKeys = [],
-  phraseEvidence = []
+  phraseEvidence = [],
+  writingProfile = null
 }) {
   const resolvedTarget = assertSurfaceRegisterContract(target, { surface, register });
   const plan = await resolveAstrology(meaningInput, { plannerClient });
@@ -155,6 +156,7 @@ export async function runWritingPipeline({
     argumentOutline: approvedArgumentOutline,
     spine: requiredSpine,
     modelClient: writerClient,
+    writingProfile,
     schema: partialRewrite?.mode === "lived-section-only" ? ARTICLE_LIVED_SECTION_DRAFT_SCHEMA : null
   });
   const draft = partialRewrite?.mode === "lived-section-only"

@@ -272,6 +272,7 @@ import { AdminPaginatedCollection } from "./AdminPaginatedCollection";
 import AdminFilterDisclosure from "./AdminFilterDisclosure";
 const StudioVariableInsert = lazy(() => import("./StudioVariableInsert"));
 const StudioVariables = lazy(() => import("./StudioVariables"));
+const HoroscopeWritingStudio = lazy(() => import("./HoroscopeWritingStudio"));
 import ReviewQueueSkyWrite from "./ReviewQueueSkyWrite";
 const SkyForecastTemplateStudio = lazy(() => import("./SkyForecastTemplateStudio"));
 const CalendarOverviewEditor = lazy(() => import("./CalendarOverviewEditor"));
@@ -321,6 +322,7 @@ type AdminDashboardPage =
   | "compositionMap"
   | "vocabulary"
   | "variables"
+  | "aiWriting"
   | "slotDictionary"
   | "knowledge"
   | "templates"
@@ -692,6 +694,7 @@ const adminPageHashKeys: Record<AdminDashboardPage, string> = {
   vocabulary: "vocabulary",
   slotDictionary: "slots",
   variables: "variables",
+  aiWriting: "ai-writing",
   knowledge: "fallback-hooks",
   templates: "templates",
   hooks: "surface-map",
@@ -734,6 +737,7 @@ const compositionTabs: AdminNavItem[] = [
   { page: "hooks", label: "Surface Map", icon: Flag }
 ];
 const primaryAdminNavItems: AdminNavItem[] = [
+  { page: "aiWriting", label: "AI Writing", icon: Sparkles, group: "Compose" },
   { page: "variables", label: "Variables", icon: KeyRound, group: "Compose" },
   { page: "reviewQueue", label: "Review Queue", icon: Check, group: "Publish" },
   { page: "unresolvedContent", label: "Unresolved Content", icon: Flag, group: "Publish" },
@@ -921,6 +925,7 @@ function adminPageTitle(activePage: AdminDashboardPage) {
     case "compositionMap": return "Composition Map";
     case "vocabulary": return "Vocabulary & Phrases";
     case "variables": return "Variables";
+    case "aiWriting": return "AI Writing";
     case "slotDictionary": return "Slots";
     case "knowledge": return "Fallback Articles & Passages";
     case "templates": return "Templates";
@@ -955,6 +960,7 @@ function adminPageBreadcrumbItems(activePage: AdminDashboardPage): AdminBreadcru
     case "compositionMap": return [{ label: "Admin", page: "reviewQueue" }, { label: "Composition", page: "compositionMap" }, { label: "Map" }];
     case "vocabulary": return [{ label: "Admin", page: "reviewQueue" }, { label: "Composition", page: "compositionMap" }, { label: "Vocabulary & phrases" }];
     case "variables": return [{ label: "Admin", page: "reviewQueue" }, { label: "Variables" }];
+    case "aiWriting": return [{ label: "Admin", page: "reviewQueue" }, { label: "AI Writing" }];
     case "slotDictionary": return [{ label: "Admin", page: "reviewQueue" }, { label: "Composition", page: "compositionMap" }, { label: "Slots" }];
     case "knowledge": return [{ label: "Admin", page: "reviewQueue" }, { label: "Composition", page: "compositionMap" }, { label: "Fallback articles & passages" }];
     case "templates": return [{ label: "Admin", page: "reviewQueue" }, { label: "Composition", page: "compositionMap" }, { label: "Templates" }];
@@ -993,6 +999,8 @@ function adminPageDescription(activePage: AdminDashboardPage) {
       return "Edit reusable words and phrases used across the app.";
     case "variables":
       return "Search calculated facts and editable prose, and find where each variable can be used.";
+    case "aiWriting":
+      return "Edit the guidance, structure and prompts used for horoscope drafts.";
     case "slotDictionary":
       return "See what fills each template variable.";
     case "templates":
@@ -3085,6 +3093,8 @@ export function GeneratedContentAdminDashboard() {
     return payload.rows;
   }, [secret]);
   const [activePage, setActivePage] = useState<AdminDashboardPage>(() => parseAdminHash().page);
+  const [hasOpenedAiWriting, setHasOpenedAiWriting] = useState(() => parseAdminHash().page === "aiWriting");
+  useEffect(() => { if (activePage === "aiWriting") setHasOpenedAiWriting(true); }, [activePage]);
   const friendsTransitAudience = parseAdminHash().params.get("audience") === "friends";
   const [rows, setRows] = useState<AdminGeneratedContentRow[]>([]);
   const rowsRef = useRef<AdminGeneratedContentRow[]>([]);
@@ -6937,7 +6947,7 @@ export function GeneratedContentAdminDashboard() {
             href: item.page ? adminHashForPage(item.page) : undefined,
             onSelect: item.page ? () => navigateAdminPage(item.page as AdminDashboardPage) : undefined
           }))}
-          createActions={activePage === "variables" ? [{ key: "variable", label: "Create variable", description: "Name, write, and tag your own variable", icon: KeyRound, onSelect: () => { setVariableCreateRequest(value => value + 1); setIsCreateMenuOpen(false); } }] : [
+          createActions={activePage === "aiWriting" ? [] : activePage === "variables" ? [{ key: "variable", label: "Create variable", description: "Name, write, and tag your own variable", icon: KeyRound, onSelect: () => { setVariableCreateRequest(value => value + 1); setIsCreateMenuOpen(false); } }] : [
             {
               key: "article",
               label: "Create article",
@@ -7018,6 +7028,8 @@ export function GeneratedContentAdminDashboard() {
         )}
 
         {activePage === "variables" && <><Suspense fallback={<PageLoading message="Loading variables…" />}><StudioVariables secret={secret} customVariables={customVariableLibrary.variables} onCustomChange={customVariableLibrary.setVariables} customError={customVariableLibrary.error} customLoading={customVariableLibrary.loading} onReloadCustom={customVariableLibrary.reload} createRequest={variableCreateRequest} onCreateHandled={() => setVariableCreateRequest(0)} onOpenSource={(key, _label, field) => void openRow(rows.find(row => row.content_key === key) ?? { id: `package:${key}`, content_key: key, inventory_only: true } as AdminGeneratedContentRow, null, field)} /></Suspense>{renderEditor()}</>}
+
+        {hasOpenedAiWriting && <div hidden={activePage !== "aiWriting"}><Suspense fallback={<PageLoading message="Loading AI writing…" />}><HoroscopeWritingStudio secret={secret} /></Suspense></div>}
 
         {activePage === "reviewQueue" && (
           <section className="admin-template-page">
