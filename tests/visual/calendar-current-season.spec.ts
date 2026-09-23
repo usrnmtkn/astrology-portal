@@ -1,5 +1,8 @@
 import { expect, test } from '@playwright/test';
 import { bundledPublications } from '../helpers/bundled-publications';
+import { calendarSeasonTransitionEndsBridge } from '../../apps/web/src/features/calendar/calendarSeasonTransitionBridge';
+
+const transitionBridge = calendarSeasonTransitionEndsBridge('Virgo', 'Libra');
 
 // The browser crosses UTC midnight during the New York evening ingress.
 test.use({ timezoneId: 'UTC' });
@@ -42,8 +45,9 @@ for (const scenario of [
     const sun = panel.getByRole('region', { name: 'Sun in season', exact: true });
     const title = panel.locator('.calendar-sky-card__title');
     const badge = page.locator('.calendar-header-season');
-    await expect(sun).toContainText('Sun in Virgo at 29°', { timeout: 90_000 });
-    await expect(sun).toContainText(`The Sun is in Virgo until ${scenario.zone === 'Asia/Tokyo' ? '9:05 AM GMT+9' : '8:05 PM EDT'} today, when it enters Libra.`);
+    await expect(sun).toContainText('Sun is in Virgo at 29°', { timeout: 90_000 });
+    await expect(sun).toContainText(`The Sun is in Virgo at 29° until ${scenario.zone === 'Asia/Tokyo' ? '9:05 AM GMT+9' : '8:05 PM EDT'} today, when it enters Libra.`);
+    await expect(sun).toContainText(transitionBridge);
     await expect(sun.getByRole('link', { name: 'Libra', exact: true })).toHaveAttribute('href', /event=ingress-sun-/);
     await expect(badge).toContainText('Virgo season');
     await expect(panel.locator('.calendar-sky-card__meta')).toContainText('Virgo season');
@@ -59,14 +63,15 @@ for (const scenario of [
     await expect(event).toContainText(scenario.eventTime);
     await panel.locator('.calendar-sky-card').screenshot({ path: `test-results/season-before-${scenario.width}-${scenario.theme}.png` });
     await page.reload();
-    await expect(sun).toContainText('Sun in Virgo at 29°', { timeout: 60_000 });
+    await expect(sun).toContainText('Sun is in Virgo at 29°', { timeout: 60_000 });
     await expect(title).toHaveText(beforeHeading);
     await expect(badge).toContainText('Virgo season');
     // Focus refresh catches up after the user leaves the tab open across ingress.
     await page.clock.setFixedTime(new Date('2026-09-23T00:06:30Z'));
     await page.evaluate(() => window.dispatchEvent(new Event('focus')));
-    await expect(sun).toContainText('Sun in Libra at 0°', { timeout: 60_000 });
+    await expect(sun).toContainText('Sun is in Libra at 0°', { timeout: 60_000 });
     await expect(sun).toContainText(`The Sun entered Libra at ${scenario.zone === 'Asia/Tokyo' ? '9:05 AM GMT+9' : '8:05 PM EDT'} today, ending Virgo season.`);
+    await expect(sun).toContainText(transitionBridge);
     await expect(badge).toContainText('Libra season');
     await expect(panel.locator('.calendar-sky-card__meta')).toContainText('Libra season');
     await expect(title).toHaveText('Libra Season');
@@ -74,7 +79,7 @@ for (const scenario of [
     expect(await title.evaluate(typography)).toEqual(beforeTypography);
     await panel.locator('.calendar-sky-card').screenshot({ path: `test-results/season-after-${scenario.width}-${scenario.theme}.png` });
     await page.reload();
-    await expect(sun).toContainText('Sun in Libra at 0°', { timeout: 60_000 });
+    await expect(sun).toContainText('Sun is in Libra at 0°', { timeout: 60_000 });
     await expect(title).toHaveText('Libra Season');
     await expect(badge).toContainText('Libra season');
     // Switching views preserves the live season while keeping the event date.
@@ -86,7 +91,7 @@ for (const scenario of [
     const monthDay = page.locator(`.lunar-calendar-day[data-calendar-date="${scenario.date}"]`);
     await expect(monthDay.locator('.calendar-kind--season')).toContainText('Libra season', { timeout: 60_000 });
     await monthDay.click();
-    await expect(sun).toContainText('Sun in Libra at 0°');
+    await expect(sun).toContainText('Sun is in Libra at 0°');
     await expect(title).toHaveText('Libra Season');
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
     expect(errors).toEqual([]);
@@ -100,10 +105,10 @@ test('Calendar changes Sun season at the ingress while the tab stays open', asyn
   await bundledPublications(page);
   await page.goto('/?date=2026-09-22#calendar?view=day&date=2026-09-22');
   const sun = page.getByRole('region', { name: 'Sun in season', exact: true });
-  await expect(sun).toContainText('Sun in Virgo', { timeout: 60_000 });
+  await expect(sun).toContainText('Sun is in Virgo', { timeout: 60_000 });
   await expect(page.locator('.calendar-header-season')).toContainText('Virgo season');
   await page.clock.fastForward(30_000);
-  await expect(sun).toContainText('Sun in Libra at 0°', { timeout: 60_000 });
+  await expect(sun).toContainText('Sun is in Libra at 0°', { timeout: 60_000 });
   await expect(page.locator('.calendar-header-season')).toContainText('Libra season');
   await expect(page.locator('.calendar-sky-card__title')).toHaveText('Libra Season');
 });
@@ -124,9 +129,10 @@ for (const scenario of [
   await bundledPublications(page);
   await page.goto('/#sky');
   const summary = page.getByLabel('Daily sky summary');
-  await expect(summary).toContainText(`The Sun is in Virgo until ${scenario.time} today, when it enters Libra.`, { timeout: 90_000 });
-  await expect(summary).toContainText('Sun in Virgo at 29°');
-  await expect(summary).toContainText('too rigid, demanding, or punishing.');
+  await expect(summary).toContainText(`The Sun is in Virgo at 29° until ${scenario.time} today, when it enters Libra.`, { timeout: 90_000 });
+  await expect(summary).toContainText('Sun is in Virgo at 29°');
+  await expect(summary).toContainText(transitionBridge);
+  await expect(summary).not.toContainText('too rigid, demanding, or punishing.');
   await expect(page.getByRole('button', { name: 'Read more about Sun in Virgo', exact: true })).toBeVisible();
   await page.locator('.sky-daily-summary').screenshot({ path: `test-results/sky-transition-before-${scenario.width}-${scenario.theme}.png` });
   await summary.getByRole('link', { name: 'Libra', exact: true }).click();
@@ -137,7 +143,8 @@ for (const scenario of [
   await page.clock.setFixedTime(new Date('2026-09-23T00:06:30Z'));
   await page.evaluate(() => window.dispatchEvent(new Event('focus')));
   await expect(summary).toContainText(`The Sun entered Libra at ${scenario.time} today, ending Virgo season.`, { timeout: 60_000 });
-  await expect(summary).toContainText('Sun in Libra at 0°');
+  await expect(summary).toContainText('Sun is in Libra at 0°');
+  await expect(summary).toContainText(transitionBridge);
   expect(new URL(page.url()).searchParams.get('date')).toBeNull();
   await expect(page.getByRole('button', { name: 'Read more about Sun in Libra', exact: true })).toBeVisible();
   await page.reload();
@@ -161,8 +168,9 @@ test('Sky switches its transition template at the ingress without focus or reloa
   await bundledPublications(page);
   await page.goto('/#sky');
   const summary = page.getByLabel('Daily sky summary');
-  await expect(summary).toContainText('Sun is in Virgo until 8:05 PM EDT today', { timeout: 60_000 });
+  await expect(summary).toContainText(/Sun is in Virgo(?: at 29°)? until 8:05 PM EDT today/, { timeout: 60_000 });
   await page.clock.fastForward(30_000);
   await expect(summary).toContainText('Sun entered Libra at 8:05 PM EDT today', { timeout: 60_000 });
-  await expect(summary).toContainText('Sun in Libra at 0°');
+  await expect(summary).toContainText('Sun is in Libra at 0°');
+  await expect(summary).toContainText(transitionBridge);
 });

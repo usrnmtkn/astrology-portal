@@ -82,13 +82,27 @@ bridge/helper bytes and complete seasonal catalog compare exactly with main;
 all-sign bridge, handoff catalog and Calendar summary tests pass. Regenerate the
 Studio variable index to include main's new `sunTransitionPlacementLink` slot.
 
-The final web build uses 458.7 kB app boot / 512.2 kB reader boot, inside unchanged
+The `058583c62` integration build uses 458.7 kB app boot / 512.2 kB reader boot, inside unchanged
 startup caps; total JavaScript is 3,459,541 bytes versus clean main's 3,457,742.
 Allocate 1,000 additional aggregate bytes (3,460,000 cap) for the inherited change
 and module compression cost. Standalone Studio measures 748,125 raw / 218,126 gzip
 entry and 734,427 aggregate, versus main's 744,640 / 217,198 / 732,510. Its final raw
 entry/largest cap is 748,500, entry gzip remains 218,250, and aggregate is 734,750.
 No runtime CSS, dependencies, calculated facts or source wording change.
+
+The inherited transition browser assertions still expected the previous sentence
+shape and generic placement paragraph after main changed the transition-day copy.
+The same failure was reproduced in the clean `058583c62` checkout. Align those
+assertions with main's linked placement sentence and verify the complete base Ends
+bridge on both sides of ingress. Keep the existing New York/Tokyo, mobile/desktop,
+reload, automatic clock update, event-link, typography and view-switch checks.
+This corrects the browser contract without changing reader wording.
+
+Main subsequently advanced to `58c2aec59` with revised concise transition text.
+Retain all twelve latest passages verbatim in the extracted helper and preserve
+the complete season catalog. The helper/source byte comparison and current-main
+handoff, all-sign and daily-summary tests pass. The existing budget allocations
+are unchanged; release-head browser/API and deployment receipts are on the PR.
 
 ## Pre-existing broader test failures
 
