@@ -66,7 +66,7 @@ assert.match(
 );
 assert.match(panelSource, /readingSubjectId=\{selectedChart.id\}/u, "Saved report lookup must follow the selected chart on vanity and legacy routes.");
 assert.match(panelSource, /readingTargetDate=\{selectedFriendTransitReadingDate\}/u, "Lookup and generation must use the same selected date.");
-assert.doesNotMatch(transitsSource, /window.location/u, "Saved report identity must not depend on a legacy URL format.");
+assert.doesNotMatch(transitsSource, /window.location\.(?:hash|search|pathname)/u, "Saved report identity must not depend on a legacy URL format.");
 assert.match(transitsSource, /queuedReadingPollMs/u, "A queued reading must be polled until its saved row is complete.");
 assert.match(transitsSource, /savedReading\?\.status === "ERROR"/u, "Terminal background failure must become the safe retry state.");
 assert.match(transitsSource, /You can leave this page and come back later/u);
@@ -247,8 +247,10 @@ try {
       status: "DRAFT"
     }
   }));
-  assert.match(ready, /Alex has more room to move/u);
-  assert.match(ready, /The transit cards below remain the source of truth/u);
+  assert.match(ready, /Your reading is ready in Reports/u);
+  assert.match(ready, /View report/u);
+  assert.doesNotMatch(ready, /Alex has more room to move/u, "The report summary belongs only in Reports.");
+  assert.doesNotMatch(ready, /The transit cards below remain the source of truth/u, "The report body belongs only in Reports.");
   assert.doesNotMatch(ready, /Generate reading/u);
 
   const locked = renderToStaticMarkup(React.createElement(FriendTransitsTab, {

@@ -85,6 +85,10 @@ jobs:
       - uses: supabase/setup-cli@v1
         with:
           version: 2.113.0
+      - name: Enable Supabase image registry fallback
+        # setup-cli forces GHCR; an empty override restores the pinned CLI's
+        # built-in ECR/GHCR/Docker Hub fallback without changing image versions.
+        run: echo "SUPABASE_INTERNAL_IMAGE_REGISTRY=" >> "$GITHUB_ENV"
       - name: Start ephemeral Supabase database
         run: supabase db start --workdir apps/web
       - name: Apply migrations to a clean database

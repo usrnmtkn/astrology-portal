@@ -46,6 +46,7 @@ function FriendPersonalTransitCard({
 }
 
 export type FriendTransitReadingView = {
+  id?: string;
   headline: string | null;
   summary: string | null;
   body: string;
@@ -204,8 +205,14 @@ export function FriendTransitsTab({
             <h3>{`What's going on with ${friendName} right now?`}</h3>
             {effectiveReadingStatus === "ready" && effectiveReading ? (
               <>
-                {effectiveReading.summary ? <FormattedProse text={effectiveReading.summary} /> : null}
-                {effectiveReading.body.split(/\n{2,}/u).filter(Boolean).map((paragraph) => <FormattedProse key={paragraph} text={paragraph} />)}
+                <p>Your reading is ready in Reports.</p>
+                <button
+                  className="friend-transit-reading__cta"
+                  onClick={() => window.location.assign(effectiveReading.id
+                    ? `/reports/generated/${encodeURIComponent(effectiveReading.id)}`
+                    : "/reports/")}
+                  type="button"
+                >View report</button>
               </>
             ) : effectiveReadingStatus === "loading" ? (
               <PageLoading compact message={`Preparing ${friendName}'s reading. You can leave this page and come back later.`} />
