@@ -13,15 +13,16 @@ import { SkySummaryAssemblyStudio } from "./SkySummaryAssemblyStudio";
 import SkyWritingSystemDetails from "./SkyWritingSystemDetails";
 import { importedSkySummary } from "./skySummaryImportedCopy";
 import ContentLiveStatusBadge from "./ContentLiveStatus";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { currentSkySummaryWording, skyDailySummaryFields, skyIngressBodies, skyIngressSummaryFields, skySummarySigns, type SkySummaryField } from "../../web/src/content/skyDailySummaryCatalog";
 import { publishedIngressTldr } from "./skyIngressTldrSources";
 
 import { publishedSkySummaryContent, buildSkySummaryComposition, type SummaryCompositionRow } from "./skySummaryComposition";
-export function SkyDailySummaryStudio({ rows, onEdit, busy }: {
+export function SkyDailySummaryStudio({ rows, onEdit, busy, focusSunSummaries = false }: {
   rows: SummaryCompositionRow[];
   onEdit: (field: SkySummaryField, initialBody?: string) => void;
   busy: boolean;
+  focusSunSummaries?: boolean;
 }) {
   const [moonSources, setMoonSources] = useState<SkyMoonSummarySources>();
   const [sourceBank, setSourceBank] = useState<SkySummarySourceBank>();
@@ -53,7 +54,21 @@ export function SkyDailySummaryStudio({ rows, onEdit, busy }: {
     slots[`${body}Degree`] = <span className="admin-summary-omitted-variable" aria-label={`${name} degree, omitted in this example`} />;
   }
   const [query, setQuery] = useState("");
-  const [group, setGroup] = useState("all");
+  const [group, setGroup] = useState(focusSunSummaries ? "Sun summaries" : "all");
+  const summarySection = useRef<HTMLSelectElement>(null);
+  useEffect(() => {
+    if (!focusSunSummaries) return;
+    setGroup("Sun summaries");
+    setQuery("");
+  }, [focusSunSummaries]);
+  useEffect(() => {
+    if (!focusSunSummaries || busy) return;
+    const frame = requestAnimationFrame(() => {
+      summarySection.current?.focus({ preventScroll: true });
+      summarySection.current?.scrollIntoView({ block: "center" });
+    });
+    return () => cancelAnimationFrame(frame);
+  }, [focusSunSummaries, busy]);
   const [ingressPlanet, setIngressPlanet] = useState("Mercury");
   const [ingressSign, setIngressSign] = useState("Libra");
   const isIngress = group === "Ingress TLDRs";
@@ -119,7 +134,7 @@ export function SkyDailySummaryStudio({ rows, onEdit, busy }: {
       </div>
     </section>
     <div className="admin-content-filters admin-filter-form">
-      <label><span>Summary section</span><AdminSelect aria-label="Summary section" value={group} onChange={event => setGroup(event.target.value)}>
+      <label><span>Summary section</span><AdminSelect ref={summarySection} aria-label="Summary section" value={group} onChange={event => setGroup(event.target.value)}>
         <option value="all">Sun, Moon, and timing</option>
         {["Sun summaries", "Moon summaries", "Timing and retrogrades", "Ingress TLDRs"].map(value => <option key={value}>{value}</option>)}
       </AdminSelect></label>

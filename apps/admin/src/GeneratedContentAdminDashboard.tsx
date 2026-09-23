@@ -3190,6 +3190,7 @@ export function GeneratedContentAdminDashboard() {
   const [skyWriteupDestinationFilter, setSkyWriteupDestinationFilter] = useState<ContentDestinationFilter>("all");
   const [skyWriteupSort, setSkyWriteupSort] = useState<ContentPlacementSort>("updated-desc");
   const [skyWriteupWorkspaceView, setSkyWriteupWorkspaceView] = useState<SkyWriteupWorkspaceView>("catalog");
+  const [focusSunSummaries, setFocusSunSummaries] = useState(false);
   const subscriptionEventDirtyRef = useRef(false);
   const [calendarWriteupWorkspaceView, setCalendarWriteupWorkspaceView] = useState<CalendarWriteupWorkspaceView>("daily-sky");
   const [transitReadingContext, setTransitReadingContext] = useState<import("./transitNatalSources").TransitNatalReadingContext>({});
@@ -4280,6 +4281,7 @@ export function GeneratedContentAdminDashboard() {
       page === "skyWriteups" && skyWriteupWorkspaceTabs.some(tab => tab.value === view)
         ? view as SkyWriteupWorkspaceView : "catalog"
     );
+    setFocusSunSummaries(page === "skyWriteups" && view === "daily-summary" && params.get("section") === "sun");
     setCalendarWriteupWorkspaceView(page === "calendarWriteups" && calendarWriteupWorkspaceTabs.some(tab => tab.value === view) ? view as CalendarWriteupWorkspaceView : "daily-sky");
     setTransitReadingContext(page === "skyWriteups" && view === "transits-to-natal" ? {
       ...(params.get("pass") ? { pass: Number(params.get("pass")) } : {}),
@@ -7284,7 +7286,7 @@ export function GeneratedContentAdminDashboard() {
             {skyWriteupWorkspaceView === "daily-summary" ? (
               <>
                 <Suspense fallback={<PageLoading message="Loading Daily Sky Summary editor…" />}>
-                  <SkyDailySummaryStudio rows={rows} onEdit={(field, initialBody) => void openSkySummaryField(field, initialBody)} busy={isLoading} />
+                  <SkyDailySummaryStudio rows={rows} onEdit={(field, initialBody) => void openSkySummaryField(field, initialBody)} busy={isLoading} focusSunSummaries={focusSunSummaries} />
                 </Suspense>
                 <Suspense fallback={<PageLoading message="Loading Without their tools editor…" />}>
                   <SkyDebilityStudio rows={rows} onEdit={(field, initialBody) => void openSkySummaryField(field, initialBody)} busy={isLoading} />
