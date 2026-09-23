@@ -58,7 +58,9 @@ const prompt = youTransitReadingPrompt({ brief: dayBrief, headline: dayLock.head
 assert.match(prompt, /same synthesis standard as the governed Friends transit reading/u);
 assert.match(prompt, /second person using you\/your/u);
 assert.match(prompt, /Do not calculate astrology/u);
-assert.match(prompt, /Do not invent texting, workplace, money, family, health, dating, shopping, travel/u);
+assert.match(prompt, /Use an ordinary hypothetical example only when the supplied reader meaning supports its domain and consequence; never assert that it happened/u);
+assert.match(prompt, /The source must support both its life domain and its emotional\/causal meaning/u);
+assert.match(prompt, /A technical planet or house label alone does not license an example/u);
 
 const validDraft = {
   headline: dayLock.headline,
