@@ -363,3 +363,31 @@ No provider calls, policy activation, held-job mutation, merge or deployment wer
 performed. The combined record remains 42 calls and $1.833885; its call allowance
 is exhausted. Keep the PR in draft pending final-head hosted checks and separately
 authorized real verification. The judge-policy candidate remains inactive.
+
+## September 23: correction-review reconciliation
+
+The next authorized real-provider batch used the complete sources and strict
+combined gate. Friends passed at 36/36 and its exact saved result opened and
+reloaded in the fresh-built desktop/mobile Reports reader using isolated storage.
+Daily held after its final review raised objections to unchanged paragraphs;
+Weekly was not dispatched under the stop-first-held rule. Both judge requests
+were identical except for the corrected draft. This establishes inconsistent
+review coverage, not that the later objections were necessarily wrong. The batch
+used 11 calls and $0.608459; the combined record reached 53 calls and $2.442344.
+Private requests, responses, before/after text and ledgers remain outside Git.
+
+Adapter v1.9 supplies the first draft, first review and exact field/paragraph
+change receipts to the final combined judge. It requires complete finding
+reconciliation and validates quote identity and both draft hashes. Missing or
+contradictory accounting holds as evaluator failure. Previously missed factual
+defects still block, and strict floors, thresholds, the single correction limit,
+and inactive experimental modes remain unchanged.
+
+Offline reconciliation, correction handoff, actual judge transport/schema,
+checkpoint and release-policy tests pass. Ten provider schemas compile before
+billing. Delivery regressions pass 60 strict, 60 scoped and 72 candidate cases;
+the mandatory Content Studio API suite, web/API typechecks and repository privacy
+scan pass. These fixture results do not establish model consistency or prose
+quality. A separately authorized, frozen Day/Week/Friends batch is next, with at
+most 21 calls inside the remaining $2.557656 and a stop after the first held,
+failed or uncertain result. No production mutation or deployment has occurred.

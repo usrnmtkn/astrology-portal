@@ -11,6 +11,31 @@ New Friends readings and You Day/Week reports follow this release path:
 7. Re-judge once.
 8. Persist only if that second judgment passes. Otherwise hold the report for review. Do not repeat the quality cycle using the infrastructure attempt budget.
 
+### Correction reconciliation (adapter v1.9, repair branch)
+
+The initial combined review is instructed to finish checking the TLDR, every
+paragraph, their connections and the ending before emitting its findings.
+The final combined reviewer receives the original draft and review alongside
+the current complete draft, with exact field/paragraph change receipts. It must
+account for every earlier finding as resolved, still present or withdrawn, and
+classify every current finding as unresolved, introduced by an edit, previously
+missed, or caused by changed context. An unchanged quote cannot be labeled newly
+introduced; changed context requires an exact newly edited supporting quote.
+
+Accounting, finding indices, quote identity and previous/current draft hashes
+are validated. Missing or contradictory accounting is an evaluator failure and
+holds the report; it does not instruct another writer call. Pass audits retain
+the reconciliation receipt. A previously missed factual or editorial defect
+still uses the unchanged strict release rules. This is not a score floor change,
+permission to ignore a new defect, or a guarantee of complete/stable model review.
+The origin classification checks textual identity, not semantic causality.
+
+The scoped experiment is unchanged and inactive. The combined reviewer keeps
+the same two-review/one-quality-correction ceiling. Changed prompts/schema
+invalidate old checkpoint request identities; historical held jobs are neither
+reset nor replayed automatically. Real-provider verification is required before
+release; fixture checks only establish protocol and lifecycle behavior.
+
 The September 22 bounded-recovery repair is implemented on the repair branch,
 not yet deployed. You Day/Week and Friends retain four infrastructure attempts
 by default (`YOU_REPORT_JOB_ATTEMPT_CAP` / `FRIEND_REPORT_JOB_ATTEMPT_CAP`), with

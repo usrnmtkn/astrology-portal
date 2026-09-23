@@ -37,8 +37,10 @@ assert.ok(GENERATED_REPORT_JUDGE_SCHEMA.properties.findings.items.properties.cat
 const previous = globalThis.reportBreadthFixture;
 let response;
 let ownerComparison;
+let lastInput;
 try {
   globalThis.reportBreadthFixture = async (input) => {
+    lastInput=input;
     for (const name of ['V3', 'V3.2', 'V3.3', 'V3.4']) {
       const path = `tldr-astro-phrasebank/TLDR-REPORT-JUDGE-RUBRIC-${name}-OWNER.md`;
       assert.ok(input.prompt.includes(`SOURCE_PATH: ${path}`));
@@ -66,7 +68,8 @@ try {
     input.validateResponse(response);
     return { value: response, provider: "fixture", model: "fixture" };
   };
-  const judge = () => judgeGeneratedTransitReading({
+  const judge = (priorReview) => judgeGeneratedTransitReading({
+    priorReview,
     surface: "friends", reportKind: "friend_transit_reading",
     brief: { source: "locked fixture" },
     draft: { headline: "Fixture", tldr: "Fixture", summary: "Fixture", body: "Fixture" },
@@ -110,6 +113,18 @@ try {
   assert.equal((await judge()).result.verdict, "below_threshold", "Breadth does not waive voice floors");
   response = { scores, findings: [{ category: "unknown_category", location: "body", finding: "Invalid result" }] };
   await assert.rejects(judge(), /malformed finding/);
+  const priorReview={draft:{headline:'Fixture',summary:'Fixture',body:'Fixture'},scores:{...scores,natural_language:3},findings:[{category:'natural_language',location:'body',finding:'Synthetic initial ambiguity.',...evidence}]};
+  response={scores,findings:[]};
+  await assert.rejects(judge(priorReview),/review reconciliation: missing accounting/);
+  response.reconciliation={priorFindings:[{index:0,resolution:'withdrawn',explanation:'The first reading of the unchanged fixture was incorrect.'}],currentFindings:[]};
+  const final=await judge(priorReview);
+  assert.equal(final.result.verdict,'pass');
+  assert.equal(final.reconciliation.priorFindings[0].resolution,'withdrawn');
+  assert(lastInput.schema.required.includes('reconciliation'));
+  assert(lastInput.prompt.includes('Synthetic initial ambiguity.'));
+  assert(lastInput.prompt.includes('still a full fact and writing review'));
+  response={scores:{...scores,factual_traceability:3},findings:[{category:'unsupported_interpretation',location:'body',finding:'A factual defect missed in the first review.',...evidence}],reconciliation:{priorFindings:[{index:0,resolution:'withdrawn',explanation:'The initial language criticism was not justified.'}],currentFindings:[{index:0,priorFindingIndex:null,origin:'previously_missed',explanation:'The unchanged text was unsupported at the first review too.',changeQuote:null}]}};
+  assert.equal((await judge(priorReview)).result.verdict,'below_threshold','Prior review must never waive a previously missed factual defect.');
 } finally {
   if (previous === undefined) delete globalThis.reportBreadthFixture;
   else globalThis.reportBreadthFixture = previous;

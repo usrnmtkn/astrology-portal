@@ -14,6 +14,7 @@ import { governedInstructionsForRole } from "../../src/astro-writing/openAIRespo
 import { decideTransitReadingRelease, transitReadingReleasePolicy, type ReportReleaseDecision } from "./transit-reading-release-policy.js";
 import { TransitReadingReviewRequiredError, isInvalidReportReview } from "./transit-reading-review-stop.js";
 import type { GeneratedReportJudgeFinding } from "./transit-reading-judge-rules.js";
+import type { TransitReadingPriorReview, ReportReviewReconciliationReceipt } from "./transit-reading-review-reconciliation.js";
 
 export type TransitReadingProvider = "openai" | "claude";
 
@@ -36,6 +37,7 @@ export type TransitReadingValidationResult = {
 };
 
 export type TransitReadingJudgeOutcome = {
+  reconciliation?: ReportReviewReconciliationReceipt;
   result: {
     overall: number;
     verdict: "pass" | "below_threshold";
@@ -51,6 +53,7 @@ export type TransitReadingJudgeOutcome = {
 };
 
 export type TransitReadingJudgeAudit = {
+  reconciliation?: ReportReviewReconciliationReceipt;
   releaseDecision?: ReportReleaseDecision & { draftSha256: string };
   scopedReviews?: TransitReadingScopedReviewReceipt[];
   version: string;
@@ -80,6 +83,7 @@ export type GovernedTransitReadingOptions<TBrief> = {
     draft: GeneratedTransitReadingDraft;
     brief: TBrief;
     ownerEvidence: string[];
+    priorReview?: TransitReadingPriorReview;
   }) => Promise<TransitReadingJudgeOutcome>;
   minSummaryLength?: number;
   minBodyLength?: number;
@@ -359,6 +363,7 @@ function deterministicCleanupFeedback(
 
 function judgeAudit(judged: TransitReadingJudgeOutcome, attempts: 1 | 2, decision: ReportReleaseDecision, draft: GeneratedTransitReadingDraft): TransitReadingJudgeAudit {
   return {
+    ...(judged.reconciliation ? { reconciliation: judged.reconciliation } : {}),
     ...(decision.policy !== "strict" ? { releaseDecision: { ...decision, draftSha256: transitReadingDraftHash(draft) } } : {}),
     version: judged.version,
     threshold: judged.threshold,
@@ -373,6 +378,9 @@ function judgeAudit(judged: TransitReadingJudgeOutcome, attempts: 1 | 2, decisio
 }
 
 function assertReviewDraft(judged: TransitReadingJudgeOutcome, draft: GeneratedTransitReadingDraft) {
+  if (judged.reconciliation && judged.reconciliation.currentDraftSha256 !== transitReadingDraftHash(draft)) {
+    throw new TransitReadingReviewRequiredError({ reason: "wrong_reconciliation_draft", draftSha256: transitReadingDraftHash(draft) });
+  }
   if (judged.version !== SCOPED_REVIEW_VERSION && !judged.scopedReviews) return;
   const reviews = judged.scopedReviews;
   if (reviews?.length !== 2 || new Set(reviews.map(review => review.scope)).size !== 2
@@ -389,12 +397,12 @@ export async function generateGovernedTransitReading<TBrief>(options: GovernedTr
   const initial = await initialValidatedDraft(provider, options);
   if (!options.judge) return { draft: initial.draft, provider, judgeAudit: null };
 
-  const review = async (draft: GeneratedTransitReadingDraft, correctionStarted = false) => {
+  const review = async (draft: GeneratedTransitReadingDraft, priorReview?: TransitReadingPriorReview) => {
     try {
-      return await options.judge!({ draft, brief: initial.brief, ownerEvidence: options.ownerEvidence ?? [] });
+      return await options.judge!({ draft, brief: initial.brief, ownerEvidence: options.ownerEvidence ?? [], ...(priorReview ? { priorReview } : {}) });
     } catch (error) {
       if (error instanceof TransitReadingCheckpointYield) throw error;
-      if (!isInvalidReportReview(error) && !correctionStarted) throw error;
+      if (!isInvalidReportReview(error) && !priorReview) throw error;
       const details: string[] = [];
       const seen = new Set<unknown>();
       for (let cause: unknown = error; cause instanceof Error && !seen.has(cause); cause = cause.cause) {
@@ -467,7 +475,13 @@ export async function generateGovernedTransitReading<TBrief>(options: GovernedTr
     releaseDecision: firstDecision, reviewedDraftSha256: transitReadingDraftHash(initial.draft)
   });
 
-  const secondJudgment = await review(corrected, true);
+  const secondJudgment = await review(corrected, {
+    draft: initial.draft, scores: firstJudgment.result.scores,
+    findings: firstJudgment.result.findings as GeneratedReportJudgeFinding[]
+  });
+  if (secondJudgment.reconciliation && secondJudgment.reconciliation.previousDraftSha256 !== transitReadingDraftHash(initial.draft)) {
+    throw new TransitReadingReviewRequiredError({ reason: "wrong_reconciliation_previous_draft", draftSha256: transitReadingDraftHash(corrected) });
+  }
   assertReviewDraft(secondJudgment, corrected);
   const secondDecision = decide(secondJudgment, corrected);
   if (secondDecision.action !== "accept") throw new TransitReadingJudgeBlockedError({

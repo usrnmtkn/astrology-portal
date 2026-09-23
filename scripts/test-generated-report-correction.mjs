@@ -101,6 +101,12 @@ try {
       judge: async (input) => {
         events.push("judge");
         judgeCalls += 1;
+        if (judgeCalls === 1) assert.equal(input.priorReview, undefined);
+        else {
+          assert.equal(input.priorReview.draft.body, original.body);
+          assert.equal(input.priorReview.findings[0].finding, "Fixture diagnostic");
+          assert.equal(input.priorReview.scores.owner_voice, 3);
+        }
         assert.deepEqual(input.brief, brief);
         assert.deepEqual(input.ownerEvidence, ["Approved fixture evidence"]);
         const expectedBody = judgeCalls === 1 ? original.body : scenario === "cleanup-pass" ? cleaned.body : corrected.body;

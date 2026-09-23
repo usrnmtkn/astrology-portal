@@ -29,7 +29,17 @@ const bundle = await build({
       admin: 'export const createSupabaseReportAdmin = () => globalThis.reportDeliveryFixture.admin;',
       auth: `export const getSupabaseClient = async () => globalThis.reportDeliveryFixture.client;
         export const getVerifiedAuthUser = async () => ({id:globalThis.reportDeliveryFixture.client.userId});`,
-      transport: 'export const callReportCalibrationModel = async input => { await input.beforeProviderCall(); return globalThis.reportDeliveryFixture.call(input); };',
+      transport: `export const callReportCalibrationModel = async input => {
+        await input.beforeProviderCall(); const result = await globalThis.reportDeliveryFixture.call(input);
+        if(input.schema.properties.reconciliation) {
+          const prior=JSON.parse(input.prompt.split('PREVIOUS REVIEW DATA\\n')[1].split('\\nEXACT FIELD CHANGE RECEIPT')[0]);
+          result.value.reconciliation={
+            priorFindings:prior.findings.map((f,index)=>({index,resolution:result.value.findings.some(n=>n.category===f.category)?'still_present':'resolved',explanation:'Synthetic correction outcome.'})),
+            currentFindings:result.value.findings.map((f,index)=>{const previous=prior.findings.findIndex(p=>p.category===f.category);return {index,priorFindingIndex:previous<0?null:previous,origin:previous<0?'previously_missed':'unresolved',explanation:'Synthetic retained or missed defect.',changeQuote:null};})
+          };
+        }
+        return result;
+      };`,
       gate: 'export const prepareProductionPreCallGate = () => ({}); export const assertProductionPreCallGate = () => true;',
       voice: `export const transitReadingOwnerVoice = () => [{evidenceId:'synthetic-owner',text:'Synthetic owner comparison.'}]; export const assertTransitReadingOwnerVoice = () => true;
         export const transitReadingVoiceContext = (facts, surface) => ({surface, horizon: surface === 'friends' ? 'current' : facts.youTransitReadingBrief.window});

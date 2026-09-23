@@ -135,13 +135,14 @@ async function generateReading(locked: ReturnType<typeof friendTransitReadingReq
     validate: validateGeneratedReading,
     compactBriefForRecovery,
     ownerEvidence,
-    judge: ({ draft, brief: governedBrief, ownerEvidence: approvedEvidence }) => judgeGeneratedTransitReading({
+    judge: ({ draft, brief: governedBrief, ownerEvidence: approvedEvidence, priorReview }) => judgeGeneratedTransitReading({
       surface: "friends",
       reportKind: "friend_transit_reading",
       brief: governedBrief,
       draft,
       productionInput,
-      ownerEvidence: approvedEvidence
+      ownerEvidence: approvedEvidence,
+      priorReview
     }),
     minSummaryLength: 40,
     minBodyLength: 180,

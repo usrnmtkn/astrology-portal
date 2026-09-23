@@ -108,13 +108,14 @@ async function generateReading(locked: ReturnType<typeof youTransitReadingReques
       validate: validateGeneratedReading,
       compactBriefForRecovery: compactYouTransitReadingBrief,
       ownerEvidence,
-      judge: ({ draft, brief: governedBrief, ownerEvidence: approvedEvidence }) => judgeGeneratedTransitReading({
+      judge: ({ draft, brief: governedBrief, ownerEvidence: approvedEvidence, priorReview }) => judgeGeneratedTransitReading({
         surface: "you",
         reportKind,
         brief: governedBrief,
         draft,
         productionInput,
-        ownerEvidence: approvedEvidence
+        ownerEvidence: approvedEvidence,
+        priorReview
       }),
       minSummaryLength: 40,
       minBodyLength: locked.brief.window === "day" ? 180 : 320,
