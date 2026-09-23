@@ -28,6 +28,35 @@ export type SourceCompletion = { draft: GeneratedTransitReadingDraft; receipt: S
 const record = (value: unknown): Record<string, unknown> => value && typeof value === "object" && !Array.isArray(value) ? value as Record<string, unknown> : {};
 const array = (value: unknown): unknown[] => Array.isArray(value) ? value : [];
 
+/** Old Friends jobs stored previews. An explicit retry may supply the missing
+ * full reader sections, but may not replace their selected transits or facts. */
+export function restoreCompleteFriendSourceSections(original: FriendTransitReadingBrief, supplied: FriendTransitReadingBrief): FriendTransitReadingBrief {
+  const result = structuredClone(original);
+  let added = false;
+  for (const group of ["primaryThemes", "houseContext", "longerCycles"] as const) {
+    for (const reading of result[group]) {
+      if (reading.readerSections?.length) continue;
+      if (original.dateLabel !== supplied.dateLabel || original.friendName !== supplied.friendName) throw new Error("The source retry does not match the original friend and date.");
+      const matches = supplied[group].filter(candidate => candidate.id === reading.id);
+      const candidate = matches.length === 1 ? matches[0] : undefined;
+      const identity = (value: unknown) => {
+        const r = record(value), e = record(r.evidence);
+        return group === "houseContext"
+          ? [r.contentKey, r.transitPlanet, r.house, r.timingRange]
+          : [e.transitPlanet, e.transitSign, e.aspect, e.natalPoint, e.natalSign, e.natalHouse, e.contentKeys, r.rangeLabel, r.timingLabel];
+      };
+      if (!candidate?.readerSections?.length || canonical(identity(reading)) !== canonical(identity(candidate))) {
+        throw new Error(`Complete source retry does not match the original reading at ${group}.${reading.id}.`);
+      }
+      reading.readerSections = structuredClone(candidate.readerSections);
+      added = true;
+    }
+  }
+  // Check every full reader field before altering any persisted job.
+  prepareSourceCompletion(result, "Source recovery");
+  return added ? result : original;
+}
+
 /** Select complete reader fields only. Never excerpt, repair, paraphrase or
  * recursively flatten a brief (which also contains internal technical data). */
 export function prepareSourceCompletion(brief: YouTransitReadingBrief | FriendTransitReadingBrief, headline: string): SourceCompletion {

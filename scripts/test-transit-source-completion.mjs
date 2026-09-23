@@ -135,4 +135,45 @@ for (const kind of ['day', 'week', 'friends']) for (const scenario of [
   console.log(`PASS source completion ${kind}: ${scenario}`);
   cases++;
 }
+for (const scenario of ['legacy-sources', 'wrong-house', 'wrong-aspect', 'missing-source', 'wrong-timing', 'wrong-person']) {
+  const f = fixture('friends', 'historical-held');
+  globalThis.reportDeliveryFixture = f;
+  const brief = structuredClone(f.friendBrief);
+  brief.houseContext = [{ id: 'transit.house.mercury.1', contentKey: 'transit.house.mercury.1', transitPlanet: 'Mercury',
+    title: 'Mercury through their first house', durationLabel: '20D', timingRange: 'Sep 10 - 30', rowSummary: 'Old preview',
+    termLabel: 'Short-term', keywords: ['identity'], house: 1, houseLabel: '1st house', detailAvailable: true }];
+  brief.longerCycles = structuredClone(brief.primaryThemes);
+  for (const group of ['primaryThemes', 'houseContext', 'longerCycles']) for (const item of brief[group]) delete item.readerSections;
+  const request = () => api.requestFriendReport({ userId: f.client.userId, subjectId: 'synthetic-friend', targetDate: '2026-09-14', facts: { friendTransitsBrief: brief }, admin: f.admin });
+  await request();
+  const job = f.rows.friend_report_jobs[0];
+  Object.assign(job, { state: 'failed', attempt: 4, checkpoint_attempt: 4, last_error: 'Report review required: historical preview-only job' });
+  const original = structuredClone(job.facts);
+  for (const group of ['primaryThemes', 'houseContext', 'longerCycles']) for (const item of brief[group]) item.readerSections = [{ body: f.output.body, sourceKeys: ['complete-source-'+group] }];
+  if (scenario === 'wrong-house') brief.houseContext[0].house = 2;
+  if (scenario === 'wrong-aspect') brief.primaryThemes[0].evidence.aspect = 'opposition';
+  if (scenario === 'missing-source') delete brief.longerCycles[0].readerSections;
+  if (scenario === 'wrong-timing') brief.houseContext[0].timingRange = 'Oct 10 - 30';
+  if (scenario === 'wrong-person') brief.friendName = 'Different person';
+  if (scenario !== 'legacy-sources') {
+    await assert.rejects(request, /source retry|friend and date/);
+    assert.equal(job.state, 'failed');
+    assert.deepEqual(job.facts, original, 'Rejected recovery leaves the original request intact');
+  } else {
+    const queued = await request();
+    assert.equal(queued.status, 'queued');
+    assert.deepEqual(job.facts.sourceCompletionOriginalFacts, original);
+    await api.runFriendReportJobs({ workerId: 'legacy-source-recovery', jobId: job.id, admin: f.admin });
+    assert.equal(job.state, 'complete', job.last_error);
+    const row = f.rows.user_generated_interpretations[0];
+    assert.equal(row.provider, 'source');
+    assert.deepEqual(row.source_snapshot.sourceCompletionOriginalFacts, original);
+    assert.equal(row.source_snapshot.reportDelivery.units.filter(unit => unit.field === 'body').length, 3);
+    assert.equal(job.checkpoint_attempt, 4);
+    assert.equal((await api.loadGeneratedReportById(row.id)).body, row.body);
+  }
+  assert.deepEqual(f.calls, {writer:0, judge:0});
+  console.log(`PASS source completion Friends: ${scenario}`);
+  cases++;
+}
 console.log(`${cases} actual-pipeline source completion scenarios passed. No model/network calls.`);

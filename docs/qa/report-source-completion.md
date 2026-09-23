@@ -31,6 +31,13 @@ of a held report can complete from its original job inputs with no model calls;
 the old counters, diagnostic and checkpoints are preserved until completion.
 Inactive entitlements, ownership and deletion rules still apply.
 
+Legacy Friends jobs may contain only previews. An explicit retry can attach
+missing complete reader sections only when their selected transit identity,
+house/aspect, date, person and timing match. Existing complete passages are never
+replaced. The original facts remain in both the job and saved source snapshot;
+changed or missing source matches leave the held job untouched. This recovery
+still uses no model calls.
+
 ## Verification
 
 - `node scripts/test-transit-source-completion.mjs`: actual request, worker,

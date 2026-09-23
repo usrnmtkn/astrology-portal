@@ -181,6 +181,7 @@ async function saveReading(input: {
   generated: GeneratedTransitReadingDraft;
   provider: "openai" | "claude" | "source";
   sourceCompletion?: SourceCompletionReceipt;
+  originalFacts?: unknown;
   judgeAudit: TransitReadingJudgeAudit | null;
 }) {
   const admin = createSupabaseReportAdmin();
@@ -199,7 +200,8 @@ async function saveReading(input: {
     source_snapshot: {
       ...input.locked.sourceSnapshot,
       ...(input.judgeAudit ? { generatedReportQualityGate: input.judgeAudit } : {}),
-      ...(input.sourceCompletion ? { reportDelivery: input.sourceCompletion } : {})
+      ...(input.sourceCompletion ? { reportDelivery: input.sourceCompletion } : {}),
+      ...(input.sourceCompletion && input.originalFacts ? { sourceCompletionOriginalFacts: input.originalFacts } : {})
     },
     prompt_version: input.sourceCompletion?.version ?? FRIEND_TRANSIT_READING_PROMPT_VERSION,
     provider: input.provider,
@@ -244,6 +246,7 @@ export async function generateFriendTransitReadingForUser(input: {
     generated: draft,
     provider,
     sourceCompletion,
+    originalFacts: input.facts?.sourceCompletionOriginalFacts,
     judgeAudit
   });
   return { reused: false, contentKey: locked.contentKey, saved, generated: draft, judgeAudit };

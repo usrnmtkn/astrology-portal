@@ -1,4 +1,4 @@
-import { SOURCE_COMPLETION_POLICY } from "./transit-reading-source-completion.js";
+import { SOURCE_COMPLETION_POLICY, restoreCompleteFriendSourceSections } from "./transit-reading-source-completion.js";
 import { transitReadingReleasePolicy } from "./transit-reading-release-policy.js";
 import { hasCompletedReportReview, isReportReviewHeld, isTransitReadingReviewRequiredError, REPORT_REVIEW_REQUIRED, REPORT_REVIEW_REQUIRED_MESSAGE } from "./transit-reading-review-stop.js";
 import { TRANSIT_READING_INVOCATION_BUDGET_MS, withTransitReadingCheckpoints, TransitReadingCheckpointYield, TransitReadingCheckpointStopped } from "./transit-reading-checkpoints.js";
@@ -191,11 +191,15 @@ async function ensureJob(input: {
   if (existing) {
     if (isReportReviewHeld(existing)) {
       if (transitReadingReleasePolicy() !== SOURCE_COMPLETION_POLICY || input.entitlement.status !== "active") return existing;
-      // An explicit re-request may finish from its ORIGINAL source readings.
-      // Retain the old diagnostic, counters and checkpoints; do not buy a new
-      // writer cycle or substitute a new brief for the previously held report.
+      const original = friendTransitReadingRequestLock({ brief: existing.facts.friendTransitsBrief,
+        subjectId: existing.subject_id, targetDate: existing.target_date }).brief;
+      const restored = restoreCompleteFriendSourceSections(original, input.locked.brief);
+      // Retain original facts and checkpoints. Only missing full reader sections
+      // may be added, with matching transit identity and timing; no new AI cycle.
       const rows = await input.admin.update<FriendReportJob>("friend_report_jobs", `id=eq.${existing.id}&state=eq.failed`, {
-        state: "queued", run_after: new Date().toISOString(), locked_at: null, locked_by: null
+        state: "queued", run_after: new Date().toISOString(), locked_at: null, locked_by: null,
+        ...(restored !== original ? { facts: { ...existing.facts, friendTransitsBrief: restored,
+          sourceCompletionOriginalFacts: existing.facts } } : {})
       });
       return rows[0] ?? existing;
     }
