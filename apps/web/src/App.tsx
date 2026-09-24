@@ -16125,6 +16125,7 @@ function SkyCards({
     retrogradePlacements: activeRetrogradePositions(sky.positions).map(position => ({ ...position, planet: skyDisplayPlanetName(position.planet) })),
     asOf: sky.generatedAt,
     voidRemainingLabel: sky.moonStatus?.remainingLabel,
+    voidNextSign: sky.moonStatus?.nextSign,
     event: validEvent && (!eventIsToday || verifiedEventSky) ? {
       name: event.name,
       sun: verifiedEventSky?.sun,

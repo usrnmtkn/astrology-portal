@@ -1,3 +1,4 @@
+import { skySunSummaryExcerpt } from "./skySunSummaryExcerpt";
 import { validSummaryGeometry } from "./skySummaryGeometry";
 import { selectedMoonKind, moonEventNames, moonSummaryKey, moonSummaryBody } from "./skyMoonSummary";
 import defaultAssembly from "./skyDailySummaryAssembly.json" with { type: "json" };
@@ -101,6 +102,7 @@ export type SkyDailySummaryFacts = {
   stations?: Array<{ id: string; label: string; direction: "direct" | "retrograde"; planet?: string; startsAt?: string }>;
   ingresses?: Array<{ id: string; label: string; tldr?: string }>;
   voidRemainingLabel?: string;
+  voidNextSign?: string;
   event?: { placementsPending?: boolean; sun?: SummaryPlacement; name: string; degree?: number; sign: string; countdown: string; isToday?: boolean; eclipseType?: "solar" | "lunar" };
   seasonName?: string;
   nextSunSign?: string;
@@ -136,7 +138,13 @@ export function skySummaryOpeningKey(sun?: string, moon?: string, content?: CmsG
     ? "openingSameSign" : "opening";
 }
 
-export function skyDailySummaryParts(facts: SkyDailySummaryFacts, content?: CmsGeneratedContentMap, { editorialPreview = false, openingOnly = false } = {}): SummaryPart[] {
+export type SkyDailySummaryOptions = {
+  editorialPreview?: boolean;
+  openingOnly?: boolean;
+  sunSummaryLength?: "full" | "short";
+};
+
+export function skyDailySummaryParts(facts: SkyDailySummaryFacts, content?: CmsGeneratedContentMap, { editorialPreview = false, openingOnly = false, sunSummaryLength = "full" }: SkyDailySummaryOptions = {}): SummaryPart[] {
   const copy = (key: string, fallback: string) => savedCopy(content, `cms/sky-daily-summary/${key}`, fallback, editorialPreview);
   const timing = { ...defaultTiming };
   for (const field of skyDailySummaryFields.filter(field => field.group === "Timing and retrogrades")) {
@@ -158,7 +166,10 @@ export function skyDailySummaryParts(facts: SkyDailySummaryFacts, content?: CmsG
     const placement = body === "moon" ? moonPlacement : sunPlacement;
     if (!placement?.sign) continue;
     const sourceKey = body === "moon" ? moonSummaryKey(placement.sign, moonKind) : `cms/sky-daily-summary/sun/${placement.sign.toLowerCase()}`;
-    const clause = body === "moon" ? savedCopy(content, sourceKey, moonSummaryBody(placement.sign, moonKind), editorialPreview) : fullerClause(body, placement.sign, content, editorialPreview);
+    const fullClause = body === "moon" ? savedCopy(content, sourceKey, moonSummaryBody(placement.sign, moonKind), editorialPreview) : fullerClause(body, placement.sign, content, editorialPreview);
+    // Apply the Sky excerpt before assembly normalizes sentence punctuation.
+    // Saved content and the verified publication cache retain the full body.
+    const clause = body === "sun" && sunSummaryLength === "short" ? skySunSummaryExcerpt(fullClause) : fullClause;
     values[`${body}Name`] = plain(body === "sun" ? "Sun" : moonEventNames[moonKind]);
     values[`${body}Sign`] = plain(placement.sign);
     values[`${body}Degree`] = plain(degreeText(placement.degree));
@@ -228,10 +239,26 @@ export function skyDailySummaryParts(facts: SkyDailySummaryFacts, content?: CmsG
     values.retrogradeCount = plain((words[planets.length] ?? String(planets.length)).toLowerCase());
     values.currentRetrogradesSentence = intro ? fillSkyTemplate(assembly.retrogrades, values) : [];
   }
-  if (facts.moon && facts.moonIsVoid) {
-    const remaining = facts.voidRemainingLabel?.replace(/(\d+)\s*(?:min|m)\b/giu, (_, n) => `${n} ${n === "1" ? "minute" : "minutes"}`)
-      .replace(/(\d+)\s*(?:hrs?|h)\b/giu, (_, n) => `${n} ${n === "1" ? "hour" : "hours"}`);
-    values.voidSentence = [{ text: remaining ? timing.voidRemaining.replace("{remaining}", remaining) : timing.voidWithoutTiming, highlight: true }];
+  const remaining = facts.voidRemainingLabel?.trim()
+    .replace(/(\d+)\s*(?:min|m)\b/giu, (_, n) => `${n} ${n === "1" ? "minute" : "minutes"}`)
+    .replace(/(\d+)\s*(?:hrs?|h)\b/giu, (_, n) => `${n} ${n === "1" ? "hour" : "hours"}`);
+  const voidText = facts.moon && facts.moonIsVoid
+    ? remaining ? timing.voidRemaining.replace("{remaining}", remaining) : timing.voidWithoutTiming
+    : "";
+  const nextSign = facts.voidNextSign?.trim();
+  // The caller supplies ingresses for the selected local day. Consume a
+  // matching ingress only when its replacement sentence is actually shown.
+  const sameDayVoidIngress = voidText.trim() && assembly.layout.includes("{voidSentence}") && nextSign
+    ? facts.ingresses?.find(item => item.label.trim().toLowerCase() === `moon enters ${nextSign}`.toLowerCase())
+    : undefined;
+  if (voidText.trim()) {
+    values.voidSentence = sameDayVoidIngress ? [
+      { text: voidText.replace(/\.\s*$/u, ""), highlight: true },
+      { text: remaining ? ", until it enters " : " until it enters " },
+      { text: nextSign!, action: "event", eventId: sameDayVoidIngress.id, emphasis: true },
+      { text: "." },
+      ...(sameDayVoidIngress.tldr?.trim() ? [{ text: ` ${sameDayVoidIngress.tldr}` }] : [])
+    ] : [{ text: voidText, highlight: true }];
   }
   // Resolve transitions in the order chosen in the full layout. Hidden or empty
   // categories never cause a later sentence to begin with "also".
@@ -248,7 +275,8 @@ export function skyDailySummaryParts(facts: SkyDailySummaryFacts, content?: CmsG
       if (event.isToday && values[slot].some(p => p.text)) previousEvent = true;
       continue;
     }
-    const ingresses = facts.ingresses?.filter(item => !transitionText || item.id !== transition?.id);
+    const ingresses = facts.ingresses?.filter(item => (!transitionText || item.id !== transition?.id)
+      && item.id !== sameDayVoidIngress?.id);
     const items = slot === "exactAspectsSentence" ? facts.exactAspects : slot === "stationsSentence" ? facts.stations : ingresses;
     if (!items?.length) continue;
     const many = items.length > 1;

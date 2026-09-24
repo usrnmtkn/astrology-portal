@@ -25777,8 +25777,8 @@
    "contentKey": "fallback-hook/moon-void",
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
-   "body_you": "Between its last aspect in {{signTitle}} and its entry into {{nextSignTitle}}, the Moon runs void of course. Momentum is thin in these windows, so finish instead of start: tidy loose ends, rest, and hold the launches and big asks until the Moon lands.",
-   "body_they": "Between its last aspect in {{signTitle}} and its entry into {{nextSignTitle}}, the Moon runs void of course. Momentum is thin in these windows, so finish instead of start: tidy loose ends, rest, and hold the launches and big asks until the Moon lands.",
+   "body_you": "The Moon is void of course in {{signTitle}} until it enters {{nextSignTitle}}. Use this time to finish what is already underway, return to something you set aside, or take a break before beginning something new.",
+   "body_they": "The Moon is void of course in {{signTitle}} until it enters {{nextSignTitle}}. Use this time to finish what is already underway, return to something you set aside, or take a break before beginning something new.",
    "review_status": "approved",
    "notes": "Calendar: void-of-course card copy (replaces legacy VoC text). Slots {{signTitle}}, {{nextSignTitle}}; the app shows the times.",
    "approved_via": "owner sign-off, chat 2026-07-22"
