@@ -26,6 +26,11 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          case "$(git remote get-url origin)" in
+            https://github.com/usrnmtkn/astrology-portal|https://github.com/usrnmtkn/astrology-portal.git) ;;
+            *) echo 'Unexpected repository'; exit 1 ;;
+          esac
+          git remote set-url origin https://github.com/usrnmtkn/astrology-portal.git
           git fetch --prune origin
           git remote -v
           git log -1
