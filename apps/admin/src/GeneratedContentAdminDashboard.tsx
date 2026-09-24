@@ -6935,7 +6935,7 @@ export function GeneratedContentAdminDashboard() {
     <ContentLiveStatusProvider value={loadLiveStatus}>
     <main className="admin-dashboard" {...studioShellAttributes(studioTheme, studioPalette)}>
       {nav}
-      <section className={`admin-main${isCreateMenuOpen ? " admin-create-menu-open" : ""}`}>
+      <section className={`admin-main${activePage === "aiWriting" ? " admin-main--ai-writing" : ""}${isCreateMenuOpen ? " admin-create-menu-open" : ""}`}>
         {message && (
           <div
             className={loadState === "error" || loadState === "accessDenied" ? "admin-page-notice" : `admin-save-toast ${message.includes("Partial load:") || loadState === "idle" ? "is-warning" : ""}`}
