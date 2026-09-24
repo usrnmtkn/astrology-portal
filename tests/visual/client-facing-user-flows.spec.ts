@@ -2884,10 +2884,11 @@ test.describe("client-facing user flow case studies", () => {
     await expect(page.locator(".calendar-sky-card").getByRole("alert")).toContainText("reading could not load", { timeout: 10_000 });
     await expect(editor.locator("textarea")).toHaveValue("Keep this private draft during recovery.");
     releaseContent();
-    await editor.getByRole("button", { name: "Close", exact: true }).click();
-    await page.locator(".calendar-sky-card").getByRole("button", { name: "Retry", exact: true }).click();
     await expect(page.locator('.calendar-sky-card [aria-label="Moon guidance"]').first()).toBeVisible();
     await expect(page.locator(".calendar-sky-card").getByRole("alert")).toHaveCount(0);
+    await expect(editor).toBeVisible();
+    await expect(editor.locator("textarea")).toHaveValue("Keep this private draft during recovery.");
+    await editor.getByRole("button", { name: "Close", exact: true }).click();
   });
 
   test("Calendar selected check-in ignores slow library and history; retry preserves the draft", async ({ page }) => {
@@ -5391,7 +5392,7 @@ for (const theme of ["light", "dark"] as const) {
       await page.locator(".updates-aspect-row .card-read-more").first().click();
       await expect(page.locator(".app-shell.mode-detail")).toBeVisible();
       await expectClientRouteLoads(page, "/#sky");
-      const skyCard = page.locator(".planet-placement-row:has(.card-read-more)").first();
+      const skyCard = page.locator(".planet-placement-row:not(.card-skeleton):has(.card-read-more)").first();
       await expect(skyCard.locator(".card-read-more")).toBeVisible();
       await skyCard.focus();
       await page.keyboard.press("Enter");

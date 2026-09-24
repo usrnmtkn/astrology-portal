@@ -33,6 +33,8 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
     await expect(page.getByRole("status").filter({ hasText: "Loading this day’s reading…" })).toHaveCount(1);
     const sizes = () => page.evaluate(() => Object.fromEntries([".placement-table", ".planet-placement-row", ".calendar-day-events__grid", ".calendar-stoic-card", ".calendar-stoic-card.is-wide", ".calendar-season-transits ul", ".calendar-season-transits li"].map(selector => [selector, [...document.querySelectorAll(selector)].map(el => el.getBoundingClientRect().height)])));
     const anatomy = () => page.locator(".planet-placement-row").first().evaluate(el => [...el.querySelectorAll("[class]")].map(node => ({ class: node.className, height: node.getBoundingClientRect().height, line: getComputedStyle(node).lineHeight, font: getComputedStyle(node).fontSize })));
+    const calendarAnatomy = () => page.locator(".calendar-stoic-card").first().evaluate(el => [...el.children].map(node => ({ class: node.className, height: node.getBoundingClientRect().height, line: getComputedStyle(node).lineHeight, font: getComputedStyle(node).fontFamily })));
+    const beforeCalendarAnatomy = await calendarAnatomy();
     const beforeAnatomy = await anatomy();
     const before = await sizes();
     await page.screenshot({ path: info.outputPath("skeletons.png"), fullPage: true });
@@ -45,10 +47,13 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
     await expect(page.locator(".calendar-day-events")).toHaveAttribute("aria-busy", "false");
     await expect(page.locator(".planet-placement-row.card-skeleton, .calendar-day-panel .card-skeleton")).toHaveCount(0);
     const after = await sizes();
-    writeFileSync(info.outputPath("card-heights.json"), JSON.stringify({ before, after, beforeAnatomy, afterAnatomy: await anatomy() }, null, 2));
+    writeFileSync(info.outputPath("card-heights.json"), JSON.stringify({ before, after, beforeAnatomy, afterAnatomy: await anatomy(), beforeCalendarAnatomy, afterCalendarAnatomy: await calendarAnatomy() }, null, 2));
     await info.attach("card-heights", { path: info.outputPath("card-heights.json"), contentType: "application/json" });
     expect(before[".planet-placement-row"]).toEqual(after[".planet-placement-row"]);
     expect(before[".placement-table"]).toEqual(after[".placement-table"]);
+    for (const selector of [".calendar-stoic-card", ".calendar-day-events__grid"]) {
+      before[selector].forEach((height, index) => expect(Math.abs(height - after[selector][index])).toBeLessThanOrEqual(4));
+    }
     for (const height of before[".calendar-season-transits li"]) expect(Math.abs(height - after[".calendar-season-transits li"][0])).toBeLessThanOrEqual(4);
     expect(before[".calendar-season-transits ul"]).toEqual(after[".calendar-season-transits ul"]);
     for (const card of await page.locator(".is-revealing").all()) {
@@ -73,6 +78,38 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
     await page.evaluate(() => (window as any).renderFixture({ long: true }));
     writeFileSync(info.outputPath("unbounded-copy-heights.json"), JSON.stringify(await sizes(), null, 2));
     await info.attach("unbounded-copy-heights", { path: info.outputPath("unbounded-copy-heights.json"), contentType: "application/json" });
+    // Known full prose sizes its skeleton using the same paragraph renderer.
+    const longResolved = await sizes();
+    await page.evaluate(() => (window as any).renderFixture({ loading: true }));
+    const longPending = await sizes();
+    for (const selector of [".calendar-stoic-card", ".calendar-day-events__grid"]) {
+      longPending[selector].forEach((height, index) => expect(Math.abs(height - longResolved[selector][index])).toBeLessThanOrEqual(4));
+    }
+    // When refresh temporarily removes the copy, use measured geometry at this
+    // width; never store the text itself or constrain the resolved cards.
+    await page.evaluate(() => (window as any).renderFixture({ loading: false, missingCopy: false }));
+    await expect(page.locator(".calendar-day-events")).toHaveAttribute("aria-busy", "false");
+    await page.evaluate(() => (window as any).renderFixture({ loading: true, missingCopy: true }));
+    const refresh = await sizes();
+    expect(refresh[".calendar-stoic-card"]).toEqual(longResolved[".calendar-stoic-card"]);
+    expect(refresh[".calendar-day-events__grid"]).toEqual(longResolved[".calendar-day-events__grid"]);
+    await page.setViewportSize({ width: width === 390 ? 1440 : 390, height: 1000 });
+    await expect(page.locator(".calendar-stoic-card[data-measured-skeleton]")).toHaveCount(0);
+    await page.setViewportSize({ width, height: 1000 });
+    await expect(page.locator(".calendar-stoic-card[data-measured-skeleton]")).toHaveCount(3);
+    await page.evaluate(() => { document.documentElement.dataset.dyslexiaFont = "true"; });
+    await expect(page.locator(".calendar-stoic-card[data-measured-skeleton]")).toHaveCount(0);
+    await page.evaluate(() => { delete document.documentElement.dataset.dyslexiaFont; });
+    await expect(page.locator(".calendar-stoic-card[data-measured-skeleton]")).toHaveCount(3);
+    await page.evaluate(() => (window as any).renderFixture({ loading: false, missingCopy: false, formatted: true }));
+    await expect(page.locator(".calendar-day-events")).toHaveAttribute("aria-busy", "false");
+    await expect(page.locator(".calendar-stoic-card ul")).toHaveCount(3);
+    const formattedResolved = await sizes();
+    await page.evaluate(() => (window as any).renderFixture({ loading: true }));
+    const formattedPending = await sizes();
+    for (const selector of [".calendar-stoic-card", ".calendar-day-events__grid"]) {
+      formattedPending[selector].forEach((height, index) => expect(Math.abs(height - formattedResolved[selector][index])).toBeLessThanOrEqual(4));
+    }
     await page.evaluate(() => (window as any).renderFixture({ loading: true, empty: true }));
     await expect(page.locator(".calendar-stoic-card.card-skeleton")).toHaveCount(2);
     await expect(page.locator(".calendar-season-transits .card-skeleton")).toHaveCount(3);

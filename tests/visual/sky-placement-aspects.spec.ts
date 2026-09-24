@@ -16,22 +16,25 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
     await expect(page.locator('.aspect-section')).toHaveCount(0);
     await expect(page.locator('.deferred-render-placeholder--aspects')).toHaveCount(0);
     await page.getByLabel('Daily sky summary').getByRole('link', {name:'Read about Neptune in Aries',exact:true}).click();
-    const card = page.getByRole('link', {name:'Read more about Neptune Rx Sextile Pluto Rx', exact:true});
+    // The opening write-up remains usable while the complete placement timeline
+    // arrives. Its interim current-aspect cards are not the final dated list.
+    await expect(page.locator('.sky-detail-article')).toHaveAttribute('aria-busy', 'false', {timeout:60000});
+    await expect(page.locator('html')).not.toHaveAttribute('data-page-transition', 'active');
+    const card = page.getByRole('region', { name: 'Gifts', exact: true })
+      .getByRole('link', {name:'Read more about Neptune Sextile Pluto', exact:true});
     await expect(card).toBeVisible({timeout:60000});
-    await expect(card).toHaveCSS('animation-name', 'lazy-fade');
-    await expect(card).toHaveCSS('animation-duration', '0.12s');
-    await expect(card).toHaveCSS('animation-delay', '0s');
-    await expect(card).toContainText('Building through September 15.');
-    await expect(card).toContainText('Pass 2 of 13.');
-    await expect(card).toContainText('These two last met like this in 1986.');
-    await expect(card).toHaveAttribute('href', /#sky\/aspect\/neptune\/sextile\/pluto/);
+    const section = card.locator('..');
+    await expect(section).toContainText('Exact · July 25 and September 15, 2026');
+    await expect(section).toContainText('Strong feeling can become more trustworthy');
+    await expect(section).toContainText('the story that was easiest to sell.');
+    const destination = '#sky/aspect/neptune/sextile/pluto/at/2026-07-25T05%3A26%3A37.999Z';
+    await expect(card).toHaveAttribute('href', destination);
     await expect(card.locator('h4')).toHaveCount(1);
-    await expect(card.getByLabel('exact aspect')).toBeVisible();
     expect(await card.evaluate(el => getComputedStyle(el).textDecorationLine)).toBe('none');
     await card.scrollIntoViewIfNeeded();
     await page.screenshot({path:`test-results/sky-placement-aspects-${width}-${theme}.png`});
     await card.click();
-    await expect(page).toHaveURL(/#sky\/aspect\/neptune\/sextile\/pluto/);
+    await expect(page).toHaveURL(url => url.hash === destination);
     await expect(page.locator('#sky-detail-title')).toHaveText(/Neptune.*sextile.*Pluto/i);
     await expect(page.locator('.article-related-aspect-row')).toHaveCount(0);
     await page.getByRole('button', {name:'Close detail', exact:true}).click();

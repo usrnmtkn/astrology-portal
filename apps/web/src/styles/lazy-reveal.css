@@ -30,6 +30,15 @@
   background: var(--surface-2);
 }
 
+.card-skeleton-disc--small {
+  width: var(--size-2);
+  height: var(--size-2);
+}
+
+.card-skeleton .calendar-kind-label .card-skeleton-bar {
+  height: 9px;
+}
+
 .card-skeleton-tag {
   display: block;
   width: var(--calendar-tag-width);
@@ -40,6 +49,45 @@
 
 .card-skeleton {
   pointer-events: none;
+}
+
+/* Runtime measurements, not a fixed card-height or typography scale. */
+.card-skeleton[data-measured-skeleton] {
+  block-size: var(--lazy-measured-height, auto);
+  min-block-size: var(--lazy-measured-height, auto);
+  overflow: hidden;
+}
+
+.card-skeleton-text {
+  display: inline-block;
+  position: relative;
+  max-width: 100%;
+  vertical-align: baseline;
+}
+
+.card-skeleton-text__measure {
+  visibility: hidden;
+}
+
+.card-skeleton-text__bars {
+  position: absolute;
+  inset: 0;
+  border-radius: var(--radius-pill);
+}
+
+.card-skeleton-text__bars,
+.card-skeleton-prose {
+  background: linear-gradient(to bottom, transparent calc((1lh - var(--lazy-bar-height)) / 2), var(--surface-2) calc((1lh - var(--lazy-bar-height)) / 2), var(--surface-2) calc((1lh + var(--lazy-bar-height)) / 2), transparent calc((1lh + var(--lazy-bar-height)) / 2));
+  background-size: 100% 1lh;
+}
+
+.card-skeleton .card-skeleton-prose,
+.card-skeleton-prose-list {
+  color: transparent;
+}
+
+.card-skeleton-prose * {
+  visibility: hidden;
 }
 
 .card-skeleton .planet-placement-row__glyph {

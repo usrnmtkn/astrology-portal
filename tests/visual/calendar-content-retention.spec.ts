@@ -94,3 +94,28 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
     } finally { release(); }
   });
 }
+
+
+test('Calendar recovers when its content bundle finishes after the deadline', async ({ page }) => {
+  test.setTimeout(60_000);
+  await page.setViewportSize({ width: 390, height: 844 });
+  await bundledPublications(page);
+  let release = () => {};
+  const held = new Promise<void>(resolve => { release = resolve; });
+  await page.route('**/assets/fallback-content-deferred-core-*.js', async route => {
+    await held;
+    await route.continue();
+  });
+  try {
+    await page.goto(`/?date=${date}#calendar?view=day&date=${date}`);
+    const day = page.getByLabel('Selected lunar day');
+    await expect(day.getByRole('alert')).toContainText('This day’s reading could not load.', { timeout: 30_000 });
+    await expect(day.getByRole('button', { name: 'Retry', exact: true })).toBeVisible();
+    release();
+    await expect(day.getByRole('alert')).toHaveCount(0, { timeout: 15_000 });
+    await expect(day.locator('.calendar-sky-card__body')).toHaveAttribute('aria-busy', 'false');
+    await expect(day.locator('.card-skeleton')).toHaveCount(0);
+    await expect(day.locator('.calendar-stoic-card').first()).toBeEnabled();
+    await expect(day.locator('.calendar-sky-card__body p').first()).not.toBeEmpty();
+  } finally { release(); }
+});

@@ -123,17 +123,20 @@ try {
   await fixture.db.query("insert into generated_interpretations(id,content_key,status,lane,body,updated_at,source_snapshot,sections) values($1,$2,'LIVE','serving','','2026-09-23T00:00:00Z',$3,$4)", [sunRowId, sunKey, JSON.stringify({ review_status: "approved" }), JSON.stringify(sunRevision.sections)]);
   await fixture.db.query("insert into content_publications(content_key,state,revision,row_id,row_updated_at,updated_at) select content_key,'live',1,id,updated_at,updated_at from generated_interpretations where id=$1", [sunRowId]);
   const sunSub = (await fixture.invoke("/api/calendar-subscriptions", "POST", { ...options, include: ["seasons"] })).json().subscription;
+  // Publication edits must be later than the real subscription creation time;
+  // a fixed September timestamp becomes stale as the test clock advances.
+  const revisedSunAt = new Date(Date.parse(sunSub.updatedAt) + 86_400_000).toISOString();
   const sunEntry = async () => (await fixture.invoke(`/feed/${sunSub.token}.ics`)).body.replace(/\r\n /gu, "").split("BEGIN:VEVENT").find(part => part.includes(`event=${encodeURIComponent(sun.id)}`))!;
   const beforeSun = await sunEntry();
   assert((await fixture.invoke(readingPath(sun.id, calendarLocalDateKey(sun.startsAt, options.timeZone)))).json().reading.body.includes("Published article opening. Published article ending."));
   const revisedSun = { packageRecord: { ...sunRevision.sections.packageRecord, placementArticle: "Updated article opening. Updated article ending." } };
-  await fixture.db.query("update generated_interpretations set sections=$2,updated_at='2026-09-24T00:00:00Z' where id=$1", [sunRowId, JSON.stringify(revisedSun)]);
-  await fixture.db.query("update content_publications set revision=2,row_updated_at='2026-09-24T00:00:00Z',updated_at='2026-09-24T00:00:00Z' where row_id=$1", [sunRowId]);
+  await fixture.db.query("update generated_interpretations set sections=$2,updated_at=$3 where id=$1", [sunRowId, JSON.stringify(revisedSun), revisedSunAt]);
+  await fixture.db.query("update content_publications set revision=2,row_updated_at=$2,updated_at=$2 where row_id=$1", [sunRowId, revisedSunAt]);
   const afterSun = await sunEntry();
   assert((await fixture.invoke(readingPath(sun.id, calendarLocalDateKey(sun.startsAt, options.timeZone)))).json().reading.body.includes("Updated article opening. Updated article ending."));
   assert.equal(afterSun.match(/UID:([^\r]+)/)![1], beforeSun.match(/UID:([^\r]+)/)![1]);
   assert(Number(afterSun.match(/SEQUENCE:(\d+)/)![1]) > Number(beforeSun.match(/SEQUENCE:(\d+)/)![1]), "Published package edits advance the same event's calendar version");
-  assert(afterSun.includes("LAST-MODIFIED:20260924T000000Z"));
+  assert(afterSun.includes(`LAST-MODIFIED:${revisedSunAt.replace(/[-:]/gu, "").replace(/\.\d{3}Z$/u, "Z")}`));
   const moon = calculated.find(event => event.type === "lunation" && event.primary && event.dateKey !== calendarLocalDateKey(event.startsAt, "America/New_York"))!;
   assert(moon, "Exercise an event that occurs on different local and UTC dates");
   const localDate = calendarLocalDateKey(moon.startsAt, "America/New_York");

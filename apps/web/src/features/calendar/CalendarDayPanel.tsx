@@ -1,4 +1,5 @@
 import { useMinimumLoading } from "../../hooks/useMinimumLoading";
+import { useSkeletonGeometry } from "../../hooks/useSkeletonGeometry";
 import { LoadingStatus, SkeletonBar } from "../../components/CardSkeleton";
 import { StoicCardSkeleton, SeasonTransitRowSkeleton } from "./CalendarDaySkeleton";
 import { FormattedProse } from "../../components/FormattedProse";
@@ -164,6 +165,7 @@ export function CalendarDayPanel({
 }) {
   const holding = useMinimumLoading(contentState === "loading");
   const loading = contentState !== "error" && holding;
+  const geometry = useSkeletonGeometry(`calendar:${dateKey}`, loading, ".calendar-stoic-card, .calendar-season-transits li");
   const seasonFirst = [...events].sort((left, right) => {
     const leftSeason = (left.kind ?? calendarKindFromEvent(left.event)) === "season" ? 0 : 1;
     const rightSeason = (right.kind ?? calendarKindFromEvent(right.event)) === "season" ? 0 : 1;
@@ -171,7 +173,7 @@ export function CalendarDayPanel({
   });
 
   const body = (
-      <article aria-label="Selected lunar day" className={`calendar-day-panel${embedded ? " is-embedded" : ""}`} data-calendar-date={dateKey}>
+      <article ref={geometry} aria-label="Selected lunar day" className={`calendar-day-panel${embedded ? " is-embedded" : ""}`} data-calendar-date={dateKey}>
         {loading && !showSky ? <LoadingStatus>Loading this day’s reading…</LoadingStatus> : null}
         {showSky ? (
         <section className={`calendar-sky-card${embedded ? "" : " is-flush"}`}>
@@ -231,7 +233,7 @@ export function CalendarDayPanel({
               const isSeason = (card.kind ?? calendarKindFromEvent(card.event)) === "season";
               const wide = isSeason || (!isSeason && rest.length % 2 === 1 && rest.at(-1) === card);
 
-              if (loading) return <StoicCardSkeleton key={card.event.id} wide={wide} moon={kind === "moon"} />;
+              if (loading) return <StoicCardSkeleton key={card.event.id} wide={wide} moon={kind === "moon"} title={card.title} excerpt={card.excerpt} meta={card.meta} />;
 
               return (
                 <button
