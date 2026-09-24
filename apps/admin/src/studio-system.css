@@ -576,7 +576,104 @@ body:has(.admin-dashboard) { margin: 0; }
 #root .admin-dashboard .studio-text[data-tone="secondary"] { color: var(--studio-text-secondary); }
 #root .admin-dashboard .studio-preview-canvas { background: var(--studio-preview-canvas); color: var(--studio-text-primary); padding: var(--workspace-panel-inset); border: var(--border-width-thin) solid var(--studio-border-default); border-radius: var(--workspace-control-radius); }
 
+/* AI Writing uses Studio controls and the shared workspace rhythm. */
+#root .admin-dashboard .admin-main--ai-writing > .admin-dashboard-header {
+  position: static;
+  padding: 0;
+}
+#root .admin-dashboard :is(.admin-writing-workspace, .admin-writing-profile) {
+  display: grid;
+  gap: var(--workspace-panel-inset);
+}
+#root .admin-dashboard :is(.admin-writing-period-bar, .admin-writing-preview-header, .admin-writing-field-heading, .admin-writing-savebar-row) {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--workspace-panel-inset);
+}
+#root .admin-dashboard .admin-writing-period-bar > span,
+#root .admin-dashboard .admin-writing-save-state > span {
+  font-family: var(--font-label);
+  font-size: var(--type-label-size);
+  line-height: var(--leading-label);
+  font-weight: var(--weight-regular);
+  letter-spacing: var(--tracking-body);
+}
+#root .admin-dashboard .admin-writing-periods {
+  display: flex;
+  gap: var(--space-1);
+  padding: var(--space-1);
+  border-radius: var(--radius-pill);
+  background: var(--workspace-surface);
+}
+#root .admin-dashboard .admin-writing-periods button { border-color: transparent; }
+#root .admin-dashboard .admin-writing-profile {
+  padding: var(--workspace-card-padding);
+  border-radius: var(--workspace-radius);
+  background: var(--workspace-surface);
+}
+#root .admin-dashboard .admin-writing-profile-header {
+  display: grid;
+  grid-template-columns: minmax(0,1fr) auto;
+  align-items: start;
+  gap: var(--workspace-field-gap);
+}
+#root .admin-dashboard .admin-writing-profile-header > p { grid-column: 1 / -1; }
+#root .admin-dashboard .admin-writing-profile > .studio-tabs > .studio-tab-panel {
+  padding: var(--workspace-panel-inset) 0;
+}
+#root .admin-dashboard :is(.admin-writing-field, .admin-writing-preview, .admin-writing-conflict) {
+  display: grid;
+  gap: var(--workspace-control-inset);
+}
+#root .admin-dashboard .admin-writing-field textarea {
+  min-height: var(--studio-body-field-height);
+}
+#root .admin-dashboard .admin-writing-variables {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--workspace-field-gap);
+}
+#root .admin-dashboard .admin-writing-variables button { padding-inline: var(--workspace-control-inset); }
+#root .admin-dashboard .admin-writing-preview-text {
+  white-space: pre-wrap;
+  padding: var(--workspace-panel-inset);
+  border: var(--border-width-thin) solid var(--workspace-line);
+  border-radius: var(--workspace-control-radius);
+}
+#root .admin-dashboard .admin-writing-conflict {
+  padding: var(--workspace-panel-inset);
+  border: var(--border-width-thin) solid var(--workspace-line);
+  border-radius: var(--workspace-control-radius);
+}
+#root .admin-dashboard .admin-writing-savebar {
+  position: sticky;
+  bottom: 0;
+  z-index: var(--studio-layer-page-header);
+  display: grid;
+  gap: var(--workspace-field-gap);
+  padding-block: var(--workspace-panel-inset);
+  border-top: var(--border-width-thin) solid var(--workspace-line);
+  background: var(--workspace-surface);
+}
+#root .admin-dashboard .admin-writing-save-state {
+  display: grid;
+  gap: var(--workspace-field-gap);
+}
+#root .admin-dashboard .admin-writing-savebar-row > .admin-toolbar-actions {
+  margin-inline-start: auto;
+}
+
 @media (max-width: 720px) {
+  #root .admin-dashboard .admin-writing-period-bar { gap: var(--workspace-field-gap); }
+  #root .admin-dashboard .admin-writing-periods { width: 100%; }
+  #root .admin-dashboard .admin-writing-periods button { flex: 1; padding-inline: var(--workspace-control-inset); }
+  #root .admin-dashboard .admin-writing-profile { padding: var(--workspace-panel-inset); }
+  #root .admin-dashboard .admin-writing-profile [role="tablist"] > [role="tab"] { padding-inline: var(--space-1); }
+  #root .admin-dashboard .admin-writing-savebar-row > .admin-toolbar-actions { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); width: 100%; }
+  #root .admin-dashboard .admin-writing-savebar-row button { width: 100%; padding-inline: var(--workspace-control-inset); }
+  #root .admin-dashboard .admin-writing-savebar-row .admin-primary-button { grid-column: 1 / -1; grid-row: 1; }
   #root .admin-dashboard :is(.studio-variable-card,.studio-variable-controls) { padding: var(--workspace-panel-inset); }
   #root .admin-dashboard .studio-variable-source { grid-template-columns: minmax(0,1fr); }
   #root .admin-dashboard .studio-variable-source > button { margin-block-end: 0; }
