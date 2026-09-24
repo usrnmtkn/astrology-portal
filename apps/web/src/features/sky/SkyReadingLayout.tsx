@@ -1,6 +1,7 @@
 import { createContext, useContext, useLayoutEffect, useState, type ReactNode } from "react";
 import { LoadingStatus } from "../../components/CardSkeleton";
 import { useMinimumLoading } from "../../hooks/useMinimumLoading";
+import { useSkeletonGeometry } from "../../hooks/useSkeletonGeometry";
 import { SkyPlacementListSkeleton, SkyPlacementSection } from "./SkyToday";
 
 const SummarySettled = createContext<((settled: boolean) => void) | null>(null);
@@ -41,9 +42,11 @@ export function SkyReadingLayout({ persistKey, pending, failed, placementCount =
     setRevealed(true);
   }, [persistKey, ready, holding, failed]);
   const loading = !failed && (!ready && !revealed || holding);
+  const geometry = useSkeletonGeometry(`sky:${persistKey}`, loading,
+    ".sky-reading-layout__loading .planet-placement-row--sky", ".sky-reading-layout__content .planet-placement-row--sky");
   return <SummarySettled.Provider value={setSummarySettled}>
     <CardsSettled.Provider value={setCardsSettled}>
-      <div className="sky-reading-layout" aria-busy={loading}>
+      <div ref={geometry} className="sky-reading-layout" aria-busy={loading}>
         {loading && <div className="sky-reading-layout__loading"><LoadingStatus>Loading the sky…</LoadingStatus><SkyPlacementSection><SkyPlacementListSkeleton count={placementCount} /></SkyPlacementSection></div>}
         <div className="sky-reading-layout__content" aria-hidden={loading || undefined}>{children}</div>
       </div>

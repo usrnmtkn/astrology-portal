@@ -9,7 +9,7 @@ import { useMinimumLoading } from "../../apps/web/src/hooks/useMinimumLoading";
 const event = { id: "fixture-event", type: "ingress", title: "Sun enters Virgo", startsAt: "2026-09-01T12:00:00Z", dateKey: "2026-09-01", planet: "Sun", toSign: "Virgo", sign: "Virgo", planets: ["Sun"], glyph: "☉", primary: true } as const;
 const noop = () => {};
 
-function Fixture({ loading, long, empty, failed, later, showSky }: { loading: boolean; long: boolean; empty: boolean; failed: boolean; later: boolean; showSky: boolean }) {
+function Fixture({ loading, long, empty, failed, later, showSky, missingCopy, formatted }: { loading: boolean; long: boolean; empty: boolean; failed: boolean; later: boolean; showSky: boolean; missingCopy: boolean; formatted: boolean }) {
   const holding = useMinimumLoading(loading);
   return <>
     <SkyPlacementList loading={holding}>
@@ -20,14 +20,14 @@ function Fixture({ loading, long, empty, failed, later, showSky }: { loading: bo
     <CalendarDayPanel dateKey="2026-09-01" title="Moon in Virgo" dateLine="September 1" metaLine="Waxing Moon" paragraphs={[]} embedded showSky={showSky} showCheckIn={false}
       contentState={failed ? "error" : loading ? "loading" : "ready"} onOpenEvent={noop} onCheckIn={noop}
       events={empty ? [] : ["ingress", "moon", "season"].map((kind, index) => ({
-        event: { ...event, id: `${event.id}-${index}`, planets: [...event.planets] }, kind: kind as "ingress" | "moon" | "season", title: "Virgo season", excerpt: long ? "Full editorial excerpts retain all their text across every viewport. ".repeat(10) : "First excerpt line.\nSecond excerpt line.", meta: "Sep 1"
+        event: { ...event, id: `${event.id}-${index}`, planets: [...event.planets] }, kind: kind as "ingress" | "moon" | "season", title: "Virgo season", excerpt: missingCopy ? undefined : formatted ? "**First formatted paragraph.**\n\nA separate complete paragraph.\n\n- First list item.\n- Second list item." : long ? "Full editorial excerpts retain all their text across every viewport. ".repeat(10) : "First excerpt line.\nSecond excerpt line.", meta: "Sep 1"
       }))}
       seasonTransits={empty ? [] : Array.from({ length: 3 }, (_, index) => ({ id: `transit-${index}`, glyph: "☉", title: "Sun in Virgo", meta: "Sep 1–30" }))} />
   </>;
 }
 
 const root = createRoot(document.getElementById("fixture")!);
-const props = { loading: true, long: false, empty: false, failed: false, later: false, showSky: false };
+const props = { loading: true, long: false, empty: false, failed: false, later: false, showSky: false, missingCopy: false, formatted: false };
 (window as any).renderFixture = (next: Partial<typeof props>) => {
   Object.assign(props, next);
   flushSync(() => root.render(<Fixture {...props} />));

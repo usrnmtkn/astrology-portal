@@ -42,6 +42,45 @@
   pointer-events: none;
 }
 
+/* Runtime measurements, not a fixed card-height or typography scale. */
+.card-skeleton[data-measured-skeleton] {
+  block-size: var(--lazy-measured-height, auto);
+  min-block-size: var(--lazy-measured-height, auto);
+  overflow: hidden;
+}
+
+.card-skeleton-text {
+  display: inline-block;
+  position: relative;
+  max-width: 100%;
+  vertical-align: top;
+}
+
+.card-skeleton-text__measure {
+  visibility: hidden;
+}
+
+.card-skeleton-text__bars {
+  position: absolute;
+  inset: 0;
+  border-radius: var(--radius-pill);
+}
+
+.card-skeleton-text__bars,
+.card-skeleton-prose {
+  background: linear-gradient(to bottom, transparent calc((1lh - var(--lazy-bar-height)) / 2), var(--surface-2) calc((1lh - var(--lazy-bar-height)) / 2), var(--surface-2) calc((1lh + var(--lazy-bar-height)) / 2), transparent calc((1lh + var(--lazy-bar-height)) / 2));
+  background-size: 100% 1lh;
+}
+
+.card-skeleton .card-skeleton-prose,
+.card-skeleton-prose-list {
+  color: transparent;
+}
+
+.card-skeleton-prose * {
+  visibility: hidden;
+}
+
 .card-skeleton .planet-placement-row__glyph {
   gap: var(--space-2);
 }

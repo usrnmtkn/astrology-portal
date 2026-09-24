@@ -81,6 +81,7 @@ export type SkyPersonalizedPlacement = {
 };
 
 export type SkyDetail = {
+  placementFactsPending?: boolean;
   pills?: ArticlePillData;
   transitDescription?: string;
   routePath?: string;
@@ -568,7 +569,7 @@ export function SkyDetailArticle({
         <ChevronLeft size={18} aria-hidden="true" />
         <span>Back</span>
       </button>
-      <article className={`article-shell sky-detail-article${detail.compactHeader ? " you-transit-article" : ""}`}>
+      <article aria-busy={Boolean(detail.placementFactsPending)} className={`article-shell sky-detail-article${detail.compactHeader ? " you-transit-article" : ""}`}>
         <div className={`article-card sky-detail-card${isAspectsOnlyArticle ? " sky-detail-card--aspects-only" : ""}`}>
           <header className="article-id sky-detail-id">
             <div className="article-eyebrow" aria-label={eyebrowGlyphs.length ? `${eyebrowLabel}: ${eyebrowGlyphs.map((glyph) => glyph.label).join(" ")}` : eyebrowLabel}>

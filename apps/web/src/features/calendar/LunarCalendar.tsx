@@ -2262,9 +2262,12 @@ export function LunarCalendar({
     moonContentAssetFailed.current = false;
     void withRequestDeadline(() => Promise.all([
       loadDeferredFallbackArchitectureV3Bundle(), loadSkyPlacementFallbackArchitectureV3Bundle()
-    ]), { signal: controller.signal }).then(() => {
+    ]).then(() => {
+      // Dynamic imports cannot be cancelled by the request deadline. A slow
+      // download may still complete after Retry appears; accept that success
+      // while this Calendar instance is current instead of leaving it stuck.
       if (!controller.signal.aborted) setMoonContentState("ready");
-    }).catch(error => {
+    }), { signal: controller.signal }).catch(error => {
       finish(error?.name === "TimeoutError" ? "timeout" : controller.signal.aborted ? "cancelled" : "error");
       if (!controller.signal.aborted) {
         moonContentAssetFailed.current = error?.name !== "TimeoutError" && error?.name !== "AbortError";

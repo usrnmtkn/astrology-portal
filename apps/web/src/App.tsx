@@ -11368,12 +11368,13 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
       if (awaitPlacementTiming && skyPlacementFallbackStatus === "ready" && skyPlacementResolvedIdentity) {
         setSkyDetailResolvedIdentity(skyPlacementResolvedIdentity);
       }
-      setSelectedSkyDetail(personalizedSkyPlacementDetail(
+      const openedDetail = personalizedSkyPlacementDetail(
         detail,
         profileNatalSky?.ascendant ?? userProfile?.rising,
         skyPlacementPersonalizationTransits,
         skyDate
-      ));
+      );
+      setSelectedSkyDetail(openedDetail ? { ...openedDetail, placementFactsPending: Boolean(awaitPlacementTiming) } : null);
 
       if (detail.routePath) {
         setSkyDetailRoutePath(detail.routePath);
@@ -12129,7 +12130,12 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
           console.warn("Sky Placement in-sign aspect copy failed to load; facts-only cards remain visible.", error);
           renderPlacement(baseContent);
         }
-      }).catch(error => { if (!cancelled) { console.warn("Requested placement calculation failed.", error); setSkyDetailReadError(skyDetailRoutePath); } });
+      }).catch(error => {
+        if (cancelled) return;
+        console.warn("Requested placement calculation failed.", error);
+        setSkyDetailReadError(skyDetailRoutePath);
+        setSelectedSkyDetail(current => current ? { ...current, placementFactsPending: false } : current);
+      });
       return () => { cancelled = true; };
     }
     if (!calendarEvent && encodedExactAt && baseRoute.startsWith("sky/aspect/")) {

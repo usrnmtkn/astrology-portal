@@ -303,7 +303,7 @@ test.describe("visual regression baseline", () => {
         timeout: routeReadyTimeoutMs
       });
     });
-    const initialLoading = page.locator(".sky-reading-layout__loading").getByRole("status");
+    const initialLoading = page.locator(".sky-reading-layout__loading").getByRole("status").filter({ hasText: "Loading the sky…" });
     await expect(initialLoading).toBeVisible();
     await expect(initialLoading).toHaveText("Loading the sky…");
     await expect(page.getByLabel("Daily sky summary")).not.toBeVisible();
