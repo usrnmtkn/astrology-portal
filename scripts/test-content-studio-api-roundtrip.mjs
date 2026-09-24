@@ -816,6 +816,74 @@ for (const revision of [1, 2]) {
   // publication; the real target retains its original feed identity.
   row.mode = "feed";
 }
+// A retained Calendar source can contain a banned word the editor is replacing.
+// Draft validation must check the proposal, then publication must promote it.
+{
+  const publishedCalendarRow = structuredClone(row);
+  const retained = "Handle something before frustration has to become the main engine.";
+  const replacement = "Under the Moon trine Mars, you are armed with the audacity to ask for exactly what you want. Instead of letting minor frustrations simmer into arguments, speak up now. Instead of hoping someone notices you’re carrying too much, ask for a lifeline. You don’t need to wait until you're angry to set a firm boundary, and you don’t have to reach the point of burnout to deserve support. Channel this assertive energy to initiate the conversation you’ve been avoiding, or to dive into a passion project that excites you. Just remember: having extra energy isn't an invitation for others to drain it.";
+  const exactRecord = {
+    contentKey: "sky.aspect.moon.trine.mars", Headline: "Moon Trine Mars",
+    Summary: "Action becomes easier.", Body: retained,
+    content_role: "full_copy", review_status: "approved",
+    render_policy: "content-studio-exact-sky-aspect-v1", studio_content_type: "aspect",
+    studio_editable_fields: [{ path: "Summary" }, { path: "Body" }]
+  };
+  row = {
+    ...publishedCalendarRow, content_key: exactRecord.contentKey, status: "LIVE", lane: "serving", review_state: null,
+    event_type: "sky-aspect-owner-approved-exact", headline: exactRecord.Headline,
+    summary: exactRecord.Summary, body: retained,
+    sections: { packageRecord: exactRecord, packageOriginalRecord: structuredClone(exactRecord), body_you: retained, body_they: retained },
+    facts: { fallbackArchitectureV3: true, content_role: "full_copy", review_status: "approved" },
+    source_snapshot: { sourcePackage: "tldrastro-fallback-architecture-v3", contentStudioExactAspect: true, exactSkyAspectIdentity: { a: "moon", aspect: "trine", b: "mars" }, content_role: "full_copy", review_status: "approved" }
+  };
+  const savedVersion = row.updated_at;
+  const saved = await invokeApi("PATCH", "/api/admin/generated-content", {
+    id: row.id, expectedUpdatedAt: savedVersion,
+    sections: { ...row.sections, packageDraft: { ...exactRecord, Body: replacement } },
+    reviewStatus: "needs_review"
+  });
+  assert.equal(saved.status, 200, JSON.stringify(saved.payload));
+  assert.equal(row.body, retained, "Saving the replacement must keep the original body.");
+  assert.equal(row.sections.packageRecord.Body, retained);
+  assert.equal(row.sections.packageDraft.Body, replacement);
+  assert.equal(row.summary, exactRecord.Summary);
+  const stale = await invokeApi("PATCH", "/api/admin/generated-content", {
+    id: row.id, expectedUpdatedAt: savedVersion,
+    sections: { ...row.sections, packageDraft: { ...exactRecord, Body: `${replacement} Stale write.` } },
+    reviewStatus: "needs_review"
+  });
+  assert.equal(stale.status, 409, JSON.stringify(stale.payload));
+  assert.equal(row.sections.packageDraft.Body, replacement, "A stale draft save must not replace the current proposal.");
+  const bannedDraft = await invokeApi("PATCH", "/api/admin/generated-content", {
+    id: row.id, expectedUpdatedAt: row.updated_at,
+    sections: { ...row.sections, packageDraft: { ...exactRecord, Body: "The engine starts." } },
+    reviewStatus: "needs_review"
+  });
+  assert.equal(bannedDraft.status, 400, JSON.stringify(bannedDraft.payload));
+  assert.match(bannedDraft.payload.error, /^packageDraft\.Body contains banned word "engine"\./u);
+  assert.equal(row.body, retained);
+  assert.equal(row.sections.packageDraft.Body, replacement);
+  const emDashDraft = await invokeApi("PATCH", "/api/admin/generated-content", {
+    id: row.id, expectedUpdatedAt: row.updated_at,
+    sections: { ...row.sections, packageDraft: { ...exactRecord, Body: "New copy—draft." } },
+    reviewStatus: "needs_review"
+  });
+  assert.equal(emDashDraft.status, 400, JSON.stringify(emDashDraft.payload));
+  assert.match(emDashDraft.payload.error, /^packageDraft\.Body contains an em dash\./u);
+  assert.equal(row.sections.packageDraft.Body, replacement);
+  const published = await invokeApi("PATCH", "/api/admin/generated-content", {
+    id: row.id, expectedUpdatedAt: row.updated_at, ownerAction: "approve-package-revision"
+  });
+  assert.equal(published.status, 200, JSON.stringify(published.payload));
+  assert.equal(row.body, replacement, "Publication must promote the reviewed replacement.");
+  assert.equal(row.sections.packageRecord.Body, replacement);
+  assert.equal(row.sections.body_you, replacement);
+  assert.equal(row.sections.body_they, replacement);
+  assert.equal(row.sections.packageDraft, undefined);
+  assert.equal(row.body.includes("engine"), false);
+  row = publishedCalendarRow;
+}
 // Lunar Calendar articles use their authored key and lowercase body field.
 const moonRecord = JSON.parse(readFileSync(new URL("../apps/web/src/content/fallbackArchitectureV3/source-rows/transit-synastry-rows-v1.json", import.meta.url))).authoredCards
   .find((item) => item.contentKey === "authored/calendar-weekly-moon/libra/variant-2");

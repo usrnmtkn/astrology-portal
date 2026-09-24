@@ -572,6 +572,13 @@ function validateFallbackArchitectureV3Copy(row: ExistingGeneratedContentRow, pa
   editableFields.push(["body_they", sections.body_they, record.body_they]);
   const packageDraft = isRecord(sections.packageDraft) ? sections.packageDraft : null;
   const proposedRecord = packageDraft ?? (isRecord(sections.packageRecord) ? sections.packageRecord : record);
+  const retainedMirrors: Record<string, unknown> = {
+    headline: row.headline ?? "",
+    summary: row.summary ?? "",
+    body: row.body ?? "",
+    body_you: record.body_you ?? null,
+    body_they: record.body_they ?? null
+  };
   if (libs().isSkyEvergreenSource(record)) {
     libs().validateSkyIngressComposition(proposedRecord.ingress, Array.isArray(proposedRecord._studioVariables) ? proposedRecord._studioVariables.map((item: any) => item.name) : []);
     const layout = packageValueAt(proposedRecord, libs().SKY_EVERGREEN_SECTIONS_PATH);
@@ -612,6 +619,12 @@ function validateFallbackArchitectureV3Copy(row: ExistingGeneratedContentRow, pa
 
   for (const [field, value, original] of editableFields) {
     if (typeof value !== "string") continue;
+    // Draft saves retain the existing source in these mirrors. Check the
+    // proposal, not unchanged baseline copy that the editor cannot replace.
+    // Changed mirrors and every packageDraft field still require validation;
+    // publication without a packageDraft still checks all reader mirrors.
+    if (packageDraft && Object.hasOwn(retainedMirrors, field)
+      && value === retainedMirrors[field]) continue;
     // Envelope mirrors remain on the approved source while a separate draft is edited.
     const variableOwner = packageDraft && !field.startsWith("packageDraft.") ? record : proposedRecord;
     if (libs().isZodiacSeasonSourceKey(row.content_key) && /\{\{|\}\}/u.test(value)) throw new GeneratedContentRequestError("Season sources contain full prose, without nested variables.");
@@ -635,7 +648,7 @@ function validateFallbackArchitectureV3Copy(row: ExistingGeneratedContentRow, pa
       if (issues.length) throw new GeneratedContentRequestError(`${field}: ${issues.join(" ")}`);
     }
     if (value.includes("—")) {
-      throw new Error(`${field} contains an em dash. Use a comma, colon, or separate sentence instead.`);
+      throw new GeneratedContentRequestError(`${field} contains an em dash. Use a comma, colon, or separate sentence instead.`);
     }
 
     const lower = value.toLowerCase();
@@ -645,7 +658,7 @@ function validateFallbackArchitectureV3Copy(row: ExistingGeneratedContentRow, pa
       return new RegExp(`(^|[^a-z])${escaped}([^a-z]|$)`, "i").test(lower);
     });
     if (banned) {
-      throw new Error(`${field} contains banned word "${banned}".`);
+      throw new GeneratedContentRequestError(`${field} contains banned word "${banned}".`);
     }
 
     const originalSlots = packagePlaceholders(original);
