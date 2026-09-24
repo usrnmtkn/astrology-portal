@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import {PGlite} from '@electric-sql/pglite';
-import {readFileSync} from 'node:fs';
+import {readFileSync,globSync} from 'node:fs';
 import {store} from '../tests/helpers/sky-article-save-api.mts';
 import {readerRouteResponse} from '../tests/helpers/content-reader-route.mjs';
 import {horoscopeCivilWindow,prepareHoroscopeBrief} from '../api/_lib/horoscope-editions';
@@ -9,6 +9,8 @@ import {emptyHoroscopeEdition,horoscopeEditionBody,horoscopeEditionKey,horoscope
 const briefUrl='/api/admin/generated-content?horoscopeBrief=true&period=weekly&date=2026-09-24&timeZone=America/New_York';
 const deployment=JSON.parse(readFileSync(new URL('../vercel.json',import.meta.url),'utf8'));
 assert(deployment.functions['api/admin/generated-content.ts'].includeFiles.includes('node_modules/swisseph-wasm/wasm/*'));
+const functionFiles=new Set(globSync(deployment.functions['api/admin/generated-content.ts'].includeFiles));
+assert(globSync(deployment.functions['api/**/*.ts'].includeFiles).every(file=>functionFiles.has(file)), 'Horoscope calculation packaging must preserve every existing admin runtime source');
 assert(Object.keys(deployment.functions).indexOf('api/admin/generated-content.ts')<Object.keys(deployment.functions).indexOf('api/**/*.ts'));
 assert.equal((await store.invoke('GET',undefined,briefUrl,'wrong')).status,401);
 assert.equal((await store.invoke('GET',undefined,briefUrl.replace('2026-09-24','2026-02-30'))).status,400);
