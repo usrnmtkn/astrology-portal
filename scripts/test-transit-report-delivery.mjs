@@ -19,6 +19,7 @@ const bundle = await build({
     export { GeneratedReportArticle } from './apps/web/src/components/reports/ReportLibraryView.tsx';
     export { GENERATED_REPORT_JUDGE_CATEGORIES } from './api/_lib/transit-reading-judge-rules.ts';
     export { prepareSourceCompletion } from './api/_lib/transit-reading-source-completion.ts';
+    export { ReportProviderUnavailableError, REPORT_PROVIDER_UNAVAILABLE_MESSAGE } from './api/_lib/report-provider-availability.ts';
     export { assertSavedTransitReading } from './api/_lib/transit-reading-reader-copy.ts';
     export { createElement } from 'react'; export { renderToStaticMarkup } from 'react-dom/server';`, resolveDir: process.cwd() },
   bundle: true, write: false, platform: 'node', format: 'esm', jsx: 'automatic', loader: { '.css': 'empty' },

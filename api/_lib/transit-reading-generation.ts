@@ -1,4 +1,5 @@
 import { transitReportEditorialGuide } from "./transit-report-editorial-guide.js";
+import { reportProviderUnavailableCause } from "./report-provider-availability.js";
 import { transitReadingReaderCopy } from "./transit-reading-reader-copy.js";
 import { transitReadingRevisionPrompt, type TransitReadingWriterTask } from "./transit-reading-revision.js";
 import { previousTransitReadingCorrectionFeedback, TransitReadingCheckpointYield } from "./transit-reading-checkpoints.js";
@@ -460,6 +461,10 @@ async function generateWithSourceCompletion<TBrief>(options: GovernedTransitRead
   } catch (error) {
     // A worker handoff is not failure. Resume the exact checkpointed program.
     if (error instanceof TransitReadingCheckpointYield) throw error;
+    // Account rejection is an operational failure, whether it interrupts the
+    // writer or reviewer. Source assembly must not hide that failure.
+    const unavailable = reportProviderUnavailableCause(error);
+    if (unavailable) throw unavailable;
     // No fresh provider attempt follows errors, including ambiguous billing.
     // Existing model checkpoints remain unchanged for audit and accounting.
   }

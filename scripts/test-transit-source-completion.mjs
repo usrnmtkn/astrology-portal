@@ -182,4 +182,68 @@ for (const scenario of ['legacy-sources', 'wrong-house', 'wrong-aspect', 'missin
   console.log(`PASS source completion Friends: ${scenario}`);
   cases++;
 }
+// Account rejection is operational failure, not an exhausted quality review.
+// Exercise real checkpoint wrapping, persistence, library state and a manual
+// retry (including a worker handoff) without a provider/network call.
+for (const kind of ['day', 'week', 'friends']) for (const failureRole of ['writer', 'judge']) {
+  const f = fixture(kind, 'first-pass');
+  globalThis.reportDeliveryFixture = f;
+  const friend = kind === 'friends';
+  f.friendBrief.primaryThemes[0].readerSections = [{ body: f.output.body, sourceKeys: ['synthetic-full-source'] }];
+  const request = () => friend
+    ? api.requestFriendReport({ userId:f.client.userId, subjectId:'synthetic-friend', targetDate:'2026-09-14', facts:{friendTransitsBrief:f.friendBrief}, admin:f.admin })
+    : api.requestYouReport({ userId:f.client.userId, reportWindow:kind, brief:f.youBrief, admin:f.admin });
+  const run = friend ? api.runFriendReportJobs : api.runYouReportJobs;
+  const normalCall = f.call.bind(f);
+  let rejectedCalls = 0;
+  f.call = async input => {
+    if (input.schemaName.includes('judge') === (failureRole === 'judge')) {
+      rejectedCalls++;
+      throw new api.ReportProviderUnavailableError(failureRole === 'writer' ? 'claude' : 'openai', 'credits');
+    }
+    return normalCall(input);
+  };
+  const queued = await request();
+  await run({workerId:'account-failure',jobId:queued.job.id,admin:f.admin});
+  const job = f.rows[friend ? 'friend_report_jobs' : 'you_report_jobs'][0];
+  const row = f.rows.user_generated_interpretations[0];
+  assert.equal(job.state,'failed');
+  assert.equal(job.result_id ?? null,null);
+  assert.equal(row.body,'');
+  assert.equal(row.status,'ERROR');
+  assert.equal(row.error,api.REPORT_PROVIDER_UNAVAILABLE_MESSAGE);
+  assert.match(job.last_error,/^Report provider unavailable:/);
+  assert.equal(row.source_snapshot.reportDelivery,undefined);
+  assert.equal((await api.listReportLibrary())[0].status,'needs_attention');
+  assert.equal(rejectedCalls,1);
+  await run({workerId:'no-auto-retry',jobId:job.id,admin:f.admin});
+  assert.equal(rejectedCalls,1,'Account rejection must not create an automatic retry loop');
+  const firstCheckpoints = structuredClone(f.rows.transit_report_model_checkpoints);
+  await request();
+  assert.equal(job.checkpoint_attempt,2);
+  assert.match(job.last_error,/^Report provider unavailable:/);
+  const realNow = Date.now;
+  let elapsed = 0;
+  Date.now = () => realNow() + elapsed;
+  f.call = async input => {
+    const result = await normalCall(input);
+    if (!input.schemaName.includes('judge')) elapsed = 200_000;
+    return result;
+  };
+  try { await run({workerId:'restored-account',jobId:job.id,admin:f.admin}); }
+  finally { Date.now = realNow; }
+  assert.equal(job.state,'retry','Restored writer must run and checkpoint before the worker yields');
+  assert.match(job.last_error,/^Report provider unavailable:/,'Handoff must preserve explicit retry identity');
+  f.call = normalCall;
+  await run({workerId:'restored-account-resume',jobId:job.id,admin:f.admin});
+  assert.equal(job.state,'complete',job.last_error);
+  assert.notEqual(row.provider,'source');
+  assert.equal(row.body,f.output.body);
+  assert.equal(row.source_snapshot.generatedReportQualityGate.verdict,'pass');
+  assert.equal(row.source_snapshot.reportDelivery,undefined);
+  assert.deepEqual(f.rows.transit_report_model_checkpoints.slice(0,firstCheckpoints.length),firstCheckpoints,
+    'Explicit recovery preserves the original failed checkpoints');
+  console.log(`PASS account failure and explicit recovery: ${kind}/${failureRole}`);
+  cases++;
+}
 console.log(`${cases} actual-pipeline source completion scenarios passed. No model/network calls.`);
