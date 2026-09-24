@@ -25,6 +25,10 @@ let versionSequence = 0;
 const nextVersion = () => new Date(Date.now() + ++versionSequence).toISOString();
 const matches = (row: any, params: URLSearchParams) => [...params].every(([field, value]) => {
  if (['select', 'order', 'limit', 'offset', 'on_conflict'].includes(field)) return true;
+ if (field.startsWith('sections->horoscopeEdition->window->>')) {
+  const actual = row.sections?.horoscopeEdition?.window?.[field.split('->>').at(-1)!];
+  return typeof actual === 'string' && (value.startsWith('lte.') ? actual <= value.slice(4) : value.startsWith('gt.') ? actual > value.slice(3) : false);
+ }
  if (value === 'is.null') return row[field] == null;
  if (value.startsWith('like.')) return String(row[field] ?? '').startsWith(value.slice(5).replace(/\*$/u, ''));
  if (value.startsWith('eq.')) return String(row[field] ?? '') === value.slice(3);
@@ -48,17 +52,25 @@ globalThis.fetch = async (input: any, options: any = {}) => {
  if (options.method === 'DELETE') { found.forEach(row => store.rows.delete(row.id)); return Response.json(found); }
  const patch = JSON.parse(String(options.body));
  if (options.method === 'PATCH') {
-  const updated = found.map(row => ({ ...row, ...patch, updated_at: nextVersion() })); updated.forEach(row => store.rows.set(row.id, row)); return Response.json(updated);
+  const updated = found.map(row => storageOrder({ ...row, ...patch, updated_at: nextVersion() })); updated.forEach(row => store.rows.set(row.id, row)); return Response.json(updated);
  }
  if (options.method === 'POST') {
   if ([...store.rows.values()].some((r: any) => r.content_key === patch.content_key && r.mode === patch.mode && r.target_date == patch.target_date)) return Response.json({message: 'duplicate target'}, {status: 409});
   const timestamp = nextVersion();
-  const created = { ...patch, id: `new-${store.rows.size}`, updated_at: timestamp, created_at: timestamp }; store.rows.set(created.id, created); return Response.json([created]);
+  const created = storageOrder({ ...patch, id: `new-${store.rows.size}`, updated_at: timestamp, created_at: timestamp }); store.rows.set(created.id, created); return Response.json([created]);
  }
  throw new Error(`Unexpected storage method ${options.method}`);
 };
+function storageOrder(row:any) {
+ if (!row.content_key.startsWith('horoscope/')) return row;
+ const ordered=(value:any):any=>Array.isArray(value)?value.map(ordered):value&&typeof value==='object'?Object.fromEntries(Object.keys(value).sort().map(key=>[key,ordered(value[key])])):value;
+ return ordered(row);
+}
 if (process.send) process.on('message', async ({ id, method, body, url }: any) => {
- try { process.send!({ id, result: method === 'rows' ? [...store.rows.values()] : await store.invoke(method, body, url) }); }
+ try {
+  if (method === 'reader') { const response = await readerRouteResponse('/api/content-reader',{method:'POST',body:JSON.stringify(body)}); process.send!({id,result:{status:response.status,payload:await response.json()}}); return; }
+  process.send!({ id, result: method === 'rows' ? [...store.rows.values()] : await store.invoke(method, body, url) });
+ }
  catch (error) { process.send!({ id, error: String(error) }); }
 });
 if (process.send) process.send({ ready: true });

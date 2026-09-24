@@ -110,6 +110,8 @@ const deferredSignupItem = javaScriptFiles.find((item) => item.file.includes("Si
 const deferredFriendsWorkspaceItem = javaScriptFiles.find((item) => item.file.includes("FriendsWorkspaceShell-"));
 const deferredSkyDetailItem = javaScriptFiles.find((item) => item.file.includes("SkyDetailArticle-"));
 const deferredReportRouteItem = javaScriptFiles.find((item) => item.file.includes("ReportRoute-"));
+const horoscopeReaderItem = javaScriptFiles.find((item) => item.file.includes("HoroscopeReader-"));
+const horoscopeEditorItem = javaScriptFiles.find((item) => item.file.includes("HoroscopeEditionsStudio-"));
 const largestJavaScript = [...javaScriptFiles].sort((first, second) => second.gzipBytes - first.gzipBytes)[0];
 const memoryGraphItems = javaScriptFiles.filter(item => /\/(?:MemoryGraphDashboard|memory-graph-renderer)-/u.test(item.file));
 // Follow the route's declared stylesheet dependency: Memory uses the canonical
@@ -128,6 +130,8 @@ const measurements = {
   friendsWorkspaceChunkGzipBytes: deferredFriendsWorkspaceItem?.gzipBytes ?? 0,
   skyDetailChunkGzipBytes: deferredSkyDetailItem?.gzipBytes ?? 0,
   reportRouteChunkGzipBytes: deferredReportRouteItem?.gzipBytes ?? 0,
+  horoscopeReaderChunkGzipBytes: horoscopeReaderItem?.gzipBytes ?? 0,
+  horoscopeEditorChunkGzipBytes: horoscopeEditorItem?.gzipBytes ?? 0,
   skyPlacementFallbackChunkGzipBytes: deferredSkyPlacementItem?.gzipBytes ?? 0,
   lunationBookFallbackChunkGzipBytes: deferredLunationBookItem?.gzipBytes ?? 0,
   transitFallbackChunkGzipBytes: deferredTransitFallbackItem?.gzipBytes ?? 0,
@@ -145,6 +149,10 @@ const failures = Object.entries(budgets).flatMap(([metric, limit]) => {
 });
 
 const formattingChunks = javaScriptFiles.filter(item => /\/(?:studio-rich-text|writing-markdown|FormattedWritingContent)-/u.test(item.file));
+for (const [name, item] of [['Horoscope reader', horoscopeReaderItem], ['Horoscope editor', horoscopeEditorItem]]) {
+  if (!item) failures.push(`${name} deferred chunk is missing.`);
+  else if (bootFiles.has(item.file)) failures.push(`${name} must remain deferred from reader startup.`);
+}
 if (formattingChunks.length !== 3) failures.push("The deferred writing editor, parser, or reader renderer is missing.");
 for (const item of formattingChunks) {
   if (bootFiles.has(item.file)) failures.push(`Writing tools must remain deferred from reader startup: ${item.file}`);

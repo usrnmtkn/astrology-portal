@@ -1,6 +1,7 @@
 import type { FriendProfileTab } from "./friendsRouting";
 
 type FriendsContentLoadingMode =
+  | "horoscopes"
   | "guest"
   | "member"
   | "profile"

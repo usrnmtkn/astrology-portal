@@ -407,7 +407,7 @@ import {
 import { compactCityLabel } from "./utils/locationLabels";
 
 type FriendRelationshipContentTab = Exclude<FriendProfileTab, "natal">;
-type PortalMode = AccountMode | "member" | "profile" | "friends" | "calendar" | "account" | "settings" | "learn";
+type PortalMode = AccountMode | "horoscopes" | "member" | "profile" | "friends" | "calendar" | "account" | "settings" | "learn";
 type TransitTerm = "short" | "long";
 type TransitDirection = "applying" | "separating";
 type UiTheme = "light" | "dark";
@@ -2373,7 +2373,7 @@ const lifeAreaFocusAstrology: Record<LifeAreaFocus, {
   growth: { houses: [9, 11, 1], planets: ["Jupiter", "Sun", "Saturn", "North Node"], aspects: ["conjunction", "trine", "sextile", "square"] },
   spirituality: { houses: [12, 9, 8], planets: ["Neptune", "Jupiter", "Moon", "Pluto"], aspects: ["conjunction", "trine", "sextile", "opposition"] }
 };
-const portalModes: PortalMode[] = ["guest", "member", "profile", "friends", "calendar", "account", "settings", "learn"];
+const portalModes: PortalMode[] = ["horoscopes", "guest", "member", "profile", "friends", "calendar", "account", "settings", "learn"];
 const authenticatedPortalModes: PortalMode[] = ["member", "profile", "friends", "calendar", "account", "settings", "learn"];
 
 function isPortalMode(value: unknown): value is PortalMode {
@@ -2417,6 +2417,8 @@ function portalModeFromHashPath(path: string): PortalMode | null {
       return "profile";
     case "friends":
       return "friends";
+    case "horoscopes":
+      return "horoscopes";
     case "calendar":
       return "calendar";
     case "account":
@@ -2465,6 +2467,8 @@ function portalHashForMode(mode: PortalMode) {
       return "you";
     case "friends":
       return "friends";
+    case "horoscopes":
+      return "horoscopes";
     case "calendar":
       return "calendar";
     case "account":
@@ -10732,6 +10736,7 @@ const NatalAspectPatternActivationsSection = lazy(() =>
 );
 
 const loadCalendarRoute = () => import("./routes/CalendarRoute");
+const HoroscopeReader = lazy(() => import("./features/horoscopes/HoroscopeReader"));
 const loadLunarCalendar = () => import("./features/calendar/LunarCalendar");
 const preloadCalendarExperience = () => {
   void Promise.all([loadCalendarRoute(), loadLunarCalendar()]);
@@ -11075,7 +11080,7 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
   const isSignupMode = mode === "profile" && (!userProfile || signInRequested || Boolean(studioReturnPath));
   const isFriendsMode = mode === "friends";
   const isCalendarMode = mode === "calendar";
-  const isLearnMode = mode === "learn";
+  const isLearnMode = mode === "learn" || mode === "horoscopes";
   const isProfileMode = mode === "profile" || mode === "account" || mode === "settings";
   const usesFullPageLayout = isProfileMode || isFriendsMode || isCalendarMode || isLearnMode;
   const activeSunriseOrbDegrees = DEFAULT_SUNRISE_ORB_DEGREES;
@@ -14211,6 +14216,7 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
                 <CalendarDays size={18} aria-hidden="true" />
                 <span>Calendar</span>
               </button>
+              <button className={mode === "horoscopes" ? "active" : ""} type="button" onClick={() => navigateToPortalMode("horoscopes")}><Sparkles size={18} aria-hidden="true" /><span>Horoscopes</span></button>
               <button className={mode === "learn" ? "active" : ""} type="button" onFocus={preloadLearnExperience} onPointerEnter={preloadLearnExperience} onClick={() => navigateToPortalMode("learn")}>
                 <BookOpen size={18} aria-hidden="true" />
                 <span>Learn</span>
@@ -14429,6 +14435,7 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
                 <SkyNavIcon size={20} />
                 <span>Sky</span>
               </button>
+              <button type="button" role="menuitem" className={mode === "horoscopes" ? "active" : ""} onClick={() => { setSelectedSkyDetail(null); navigateToPortalMode("horoscopes"); setMenuOpen(false); }}><Sparkles size={20} aria-hidden="true" /><span>Horoscopes</span></button>
               <button
                 className={mode === "calendar" ? "active" : ""}
                 type="button"
@@ -14773,6 +14780,7 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
                   natalSunSign={userProfile?.sun && userProfile.sun !== "Sun pending" ? userProfile.sun : undefined}
                 />
               )}
+              {mode === "horoscopes" && <HoroscopeReader defaultSign={userProfile?.rising} />}
               {mode === "learn" && (
                 <LearnRoute>
                   <Suspense fallback={<PageLoading message="Loading Astro 101…" />}>

@@ -272,6 +272,7 @@ import { AdminPaginatedCollection } from "./AdminPaginatedCollection";
 import AdminFilterDisclosure from "./AdminFilterDisclosure";
 const StudioVariableInsert = lazy(() => import("./StudioVariableInsert"));
 const StudioVariables = lazy(() => import("./StudioVariables"));
+const HoroscopeEditionsStudio = lazy(() => import("./HoroscopeEditionsStudio"));
 const HoroscopeWritingStudio = lazy(() => import("./HoroscopeWritingStudio"));
 import ReviewQueueSkyWrite from "./ReviewQueueSkyWrite";
 const SkyForecastTemplateStudio = lazy(() => import("./SkyForecastTemplateStudio"));
@@ -323,6 +324,7 @@ type AdminDashboardPage =
   | "vocabulary"
   | "variables"
   | "aiWriting"
+  | "horoscopes"
   | "slotDictionary"
   | "knowledge"
   | "templates"
@@ -695,6 +697,7 @@ const adminPageHashKeys: Record<AdminDashboardPage, string> = {
   slotDictionary: "slots",
   variables: "variables",
   aiWriting: "ai-writing",
+  horoscopes: "horoscopes",
   knowledge: "fallback-hooks",
   templates: "templates",
   hooks: "surface-map",
@@ -737,6 +740,7 @@ const compositionTabs: AdminNavItem[] = [
   { page: "hooks", label: "Surface Map", icon: Flag }
 ];
 const primaryAdminNavItems: AdminNavItem[] = [
+  { page: "horoscopes", label: "Horoscopes", icon: Sparkles, group: "Write" },
   { page: "aiWriting", label: "AI Writing", icon: Sparkles, group: "Compose" },
   { page: "variables", label: "Variables", icon: KeyRound, group: "Compose" },
   { page: "reviewQueue", label: "Review Queue", icon: Check, group: "Publish" },
@@ -926,6 +930,7 @@ function adminPageTitle(activePage: AdminDashboardPage) {
     case "vocabulary": return "Vocabulary & Phrases";
     case "variables": return "Variables";
     case "aiWriting": return "AI Writing";
+    case "horoscopes": return "Horoscopes";
     case "slotDictionary": return "Slots";
     case "knowledge": return "Fallback Articles & Passages";
     case "templates": return "Templates";
@@ -960,6 +965,7 @@ function adminPageBreadcrumbItems(activePage: AdminDashboardPage): AdminBreadcru
     case "compositionMap": return [{ label: "Admin", page: "reviewQueue" }, { label: "Composition", page: "compositionMap" }, { label: "Map" }];
     case "vocabulary": return [{ label: "Admin", page: "reviewQueue" }, { label: "Composition", page: "compositionMap" }, { label: "Vocabulary & phrases" }];
     case "variables": return [{ label: "Admin", page: "reviewQueue" }, { label: "Variables" }];
+    case "horoscopes": return [{ label: "Admin", page: "reviewQueue" }, { label: "Horoscopes" }];
     case "aiWriting": return [{ label: "Admin", page: "reviewQueue" }, { label: "AI Writing" }];
     case "slotDictionary": return [{ label: "Admin", page: "reviewQueue" }, { label: "Composition", page: "compositionMap" }, { label: "Slots" }];
     case "knowledge": return [{ label: "Admin", page: "reviewQueue" }, { label: "Composition", page: "compositionMap" }, { label: "Fallback articles & passages" }];
@@ -3093,6 +3099,8 @@ export function GeneratedContentAdminDashboard() {
     return payload.rows;
   }, [secret]);
   const [activePage, setActivePage] = useState<AdminDashboardPage>(() => parseAdminHash().page);
+  const [hasOpenedHoroscopes, setHasOpenedHoroscopes] = useState(() => parseAdminHash().page === "horoscopes");
+  useEffect(() => { if (activePage === "horoscopes") setHasOpenedHoroscopes(true); }, [activePage]);
   const [hasOpenedAiWriting, setHasOpenedAiWriting] = useState(() => parseAdminHash().page === "aiWriting");
   useEffect(() => { if (activePage === "aiWriting") setHasOpenedAiWriting(true); }, [activePage]);
   const friendsTransitAudience = parseAdminHash().params.get("audience") === "friends";
@@ -6947,7 +6955,7 @@ export function GeneratedContentAdminDashboard() {
             href: item.page ? adminHashForPage(item.page) : undefined,
             onSelect: item.page ? () => navigateAdminPage(item.page as AdminDashboardPage) : undefined
           }))}
-          createActions={activePage === "aiWriting" ? [] : activePage === "variables" ? [{ key: "variable", label: "Create variable", description: "Name, write, and tag your own variable", icon: KeyRound, onSelect: () => { setVariableCreateRequest(value => value + 1); setIsCreateMenuOpen(false); } }] : [
+          createActions={["aiWriting", "horoscopes"].includes(activePage) ? [] : activePage === "variables" ? [{ key: "variable", label: "Create variable", description: "Name, write, and tag your own variable", icon: KeyRound, onSelect: () => { setVariableCreateRequest(value => value + 1); setIsCreateMenuOpen(false); } }] : [
             {
               key: "article",
               label: "Create article",
@@ -7029,6 +7037,7 @@ export function GeneratedContentAdminDashboard() {
 
         {activePage === "variables" && <><Suspense fallback={<PageLoading message="Loading variables…" />}><StudioVariables secret={secret} customVariables={customVariableLibrary.variables} onCustomChange={customVariableLibrary.setVariables} customError={customVariableLibrary.error} customLoading={customVariableLibrary.loading} onReloadCustom={customVariableLibrary.reload} createRequest={variableCreateRequest} onCreateHandled={() => setVariableCreateRequest(0)} onOpenSource={(key, _label, field) => void openRow(rows.find(row => row.content_key === key) ?? { id: `package:${key}`, content_key: key, inventory_only: true } as AdminGeneratedContentRow, null, field)} /></Suspense>{renderEditor()}</>}
 
+        {hasOpenedHoroscopes && <div hidden={activePage !== "horoscopes"}><Suspense fallback={<PageLoading message="Loading horoscope editions…" />}><HoroscopeEditionsStudio secret={secret} /></Suspense></div>}
         {hasOpenedAiWriting && <div hidden={activePage !== "aiWriting"}><Suspense fallback={<PageLoading message="Loading AI writing…" />}><HoroscopeWritingStudio secret={secret} /></Suspense></div>}
 
         {activePage === "reviewQueue" && (

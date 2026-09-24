@@ -1,4 +1,5 @@
 import { isReaderFacingCopy } from "./readerSafety.js";
+import { horoscopeEditionFromRow } from './horoscopeEditions.mjs';
 import { skyArticleEditionRecord, hasExactSkyArticleOwnerApproval } from "./skyArticleTemplateCompiler.js";
 type GeneratedContentRow = { content_key: string; provider?: string | null; source_snapshot?: Record<string, unknown> | null; facts?: Record<string, unknown> | null; flags?: string[] | null };
 function isRecord(value: unknown): value is Record<string, unknown> { return Boolean(value) && typeof value === "object" && !Array.isArray(value); }
@@ -101,6 +102,7 @@ export function isReaderServableGeneratedContentRow(
   }
 ) {
   const normalizedContentKey = row.content_key.trim().toLowerCase();
+  if (normalizedContentKey.startsWith('horoscope/')) return Boolean(horoscopeEditionFromRow(row));
   if (normalizedContentKey.startsWith("sky/article-template/") || normalizedContentKey.startsWith("sky-article-template/")) {
     return false;
   }
@@ -207,4 +209,3 @@ export function isGeneratedContentReaderBoundaryAllowed(row: GeneratedContentRea
   // copy source for synastry or Sky Placement.
   return false;
 }
-

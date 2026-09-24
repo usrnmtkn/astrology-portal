@@ -84,6 +84,7 @@ const edition = {
   aspectPassages: [strings('aspect body contentKey natalPoint')]
 };
 const sections = {
+  horoscopeEdition: { ...strings('schema'), window: strings('period audience timeZone startsAt endsAt seasonSign'), passages: [strings('sign headline body')] },
   ...strings(`body body_you body_they text tagline energy intention ritual
     experience guidance note expanded_narrative natal_sign_story collective_shift house_integration
     home_scene meaning advice reading collective_reading intro kind hubTitle do dont gift shadow integration`),

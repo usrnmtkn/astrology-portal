@@ -1,5 +1,6 @@
 import { handleStudioVariables, StudioVariableError, snapshotStudioVariables, assertStudioVariablePublication } from "../_lib/studio-variables.js";
 import { handleStudioWritingProfiles } from "../_lib/studio-writing-profiles.js";
+import { prepareHoroscopeBrief, assertHoroscopeRow } from "../_lib/horoscope-editions.js";
 import { AdminHttpError } from "../_lib/admin-http.js";
 import { HOROSCOPE_PROFILE_PREFIX } from "../../src/astro-writing/horoscopeWritingProfiles.mjs";
 import { mergeGeneratedInterpretationSections } from "../_lib/generated-interpretation-sections.js";
@@ -1198,11 +1199,13 @@ function validateWriteBody(body: Record<string, unknown>) {
 }
 
 function normalizeArticleHoroscopes<T extends Record<string, any>>(row: T): T {
+  assertHoroscopeRow(row);
   try { return libs().separateArticleHoroscopeRow(row); }
   catch (error) { throw new GeneratedContentRequestError((error as Error).message, 422); }
 }
 
 function assertReaderEligiblePublication(row: Record<string, any>) {
+  assertHoroscopeRow(row);
   if (row.status !== "LIVE") return;
   if (String(row.content_key ?? "").startsWith("education/astro-101/") || row.surface === "education") {
     const filled = libs().fillAstro101EphemerisSlots(row);
@@ -2899,6 +2902,18 @@ async function updateGeneratedContent(req: IncomingMessage) {
     && !(body.sections as Record<string, unknown>)?.articleHoroscopes) {
     throw new GeneratedContentRequestError("Saved article horoscopes cannot be omitted. Reload the article before saving.", 422);
   }
+  const editsHoroscopeEdition = existing.content_key.startsWith('horoscope/') && (
+    (body.body !== undefined && body.body !== existing.body)
+    || (body.headline !== undefined && body.headline !== existing.headline)
+    || (body.summary !== undefined && body.summary !== existing.summary)
+    || (body.sections !== undefined && JSON.stringify(body.sections) !== JSON.stringify(existing.sections))
+  );
+  // Saving copy is never the approval action, including through the generic editor.
+  if (editsHoroscopeEdition) {
+    patch.status = 'DRAFT';
+    patch.published_at = null;
+    patch.reviewed_at = null;
+  }
   const effectiveArticle = { ...existing, ...patch };
   const separatedArticle = normalizeArticleHoroscopes(effectiveArticle);
   if (separatedArticle !== effectiveArticle) {
@@ -3096,6 +3111,18 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
   }
 
   try {
+    if (new URL(req.url ?? "/", "http://localhost").searchParams.get("horoscopeBrief") === "true") {
+      if (req.method !== "GET") throw new AdminHttpError(405, "Use GET to prepare horoscope facts.");
+      sendJson(res, 200, await prepareHoroscopeBrief(new URL(req.url!, "http://localhost")));
+      return;
+    }
+    if (new URL(req.url ?? "/", "http://localhost").searchParams.get("horoscopeEditions") === "true") {
+      if (req.method !== "GET") throw new AdminHttpError(405, "Use GET to list horoscope editions.");
+      const result = await studioVariableStorage(new URLSearchParams({content_key:"like.horoscope/*",mode:"eq.article",select:"*",order:"updated_at.desc",limit:"30"}));
+      if (!result.ok || !Array.isArray(result.payload)) throw new AdminHttpError(502, "Horoscope editions could not load.");
+      sendJson(res, 200, {ok:true,rows:result.payload});
+      return;
+    }
     if (new URL(req.url ?? "/", "http://localhost").searchParams.get("writingProfiles") === "true") {
       sendJson(res, 200, await handleStudioWritingProfiles(req, studioVariableStorage));
       return;
