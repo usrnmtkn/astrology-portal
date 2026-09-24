@@ -73,10 +73,15 @@ for (const state of ['DRAFT', 'LIVE']) {
       assert.match(rejected.payload.error, expected);
       assert.deepEqual([...rows], before, 'Rejected edits must not mutate stored copy.');
     }
+    const beforeGuards = structuredClone([...rows]);
     const stale = await invoke('PATCH', { id: draft.id, expectedUpdatedAt: '2026-09-01T00:00:00.000Z', sections: { packageDraft: { Body: copy } } });
-    assert.equal(stale.status, 409);
+    // A version-scoped source lookup can return 404 before the 409 comparison.
+    // In either case the stale request must never overwrite the newer revision.
+    assert.ok([404, 409].includes(stale.status), JSON.stringify(stale.payload));
+    assert.deepEqual([...rows], beforeGuards, 'Stale writes must preserve the saved revision.');
     const unauthorized = await invoke('PATCH', { id: draft.id, expectedUpdatedAt: draft.updated_at, ownerAction: 'approve-package-revision' }, undefined, 'invalid');
-    assert.equal(unauthorized.status, 401);
+    assert.equal(unauthorized.status, 401, JSON.stringify(unauthorized.payload));
+    assert.deepEqual([...rows], beforeGuards, 'Unauthorized writes must preserve the saved revision.');
     const published = await invoke('PATCH', { id: draft.id, expectedUpdatedAt: draft.updated_at, ownerAction: 'approve-package-revision' });
     assert.equal(published.status, 200, JSON.stringify(published.payload));
     const live = published.payload.rows[0];
