@@ -230,26 +230,26 @@ export function skyDailySummaryParts(facts: SkyDailySummaryFacts, content?: CmsG
     values.currentRetrogradesSentence = intro ? fillSkyTemplate(assembly.retrogrades, values) : [];
   }
   const remaining = facts.voidRemainingLabel?.trim()
-  .replace(/(\d+)\s*(?:min|m)\b/giu, (_, n) => `${n} ${n === "1" ? "minute" : "minutes"}`)
-  .replace(/(\d+)\s*(?:hrs?|h)\b/giu, (_, n) => `${n} ${n === "1" ? "hour" : "hours"}`);
-const voidText = facts.moon && facts.moonIsVoid
-  ? remaining ? timing.voidRemaining.replace("{remaining}", remaining) : timing.voidWithoutTiming
-  : "";
-const nextSign = facts.voidNextSign?.trim();
-// The caller supplies ingresses for the selected local day. Consume a
-// matching ingress only when its replacement sentence is actually shown.
-const sameDayVoidIngress = voidText.trim() && assembly.layout.includes("{voidSentence}") && nextSign
-  ? facts.ingresses?.find(item => item.label.trim().toLowerCase() === `moon enters ${nextSign}`.toLowerCase())
-  : undefined;
-if (voidText.trim()) {
-  values.voidSentence = sameDayVoidIngress ? [
-    { text: voidText.replace(/\.\s*$/u, ""), highlight: true },
-    { text: remaining ? ", until it enters " : " until it enters " },
-    { text: nextSign!, action: "event", eventId: sameDayVoidIngress.id, emphasis: true },
-    { text: "." },
-    ...(sameDayVoidIngress.tldr?.trim() ? [{ text: ` ${sameDayVoidIngress.tldr}` }] : [])
-  ] : [{ text: voidText, highlight: true }];
-}
+    .replace(/(\d+)\s*(?:min|m)\b/giu, (_, n) => `${n} ${n === "1" ? "minute" : "minutes"}`)
+    .replace(/(\d+)\s*(?:hrs?|h)\b/giu, (_, n) => `${n} ${n === "1" ? "hour" : "hours"}`);
+  const voidText = facts.moon && facts.moonIsVoid
+    ? remaining ? timing.voidRemaining.replace("{remaining}", remaining) : timing.voidWithoutTiming
+    : "";
+  const nextSign = facts.voidNextSign?.trim();
+  // The caller supplies ingresses for the selected local day. Consume a
+  // matching ingress only when its replacement sentence is actually shown.
+  const sameDayVoidIngress = voidText.trim() && assembly.layout.includes("{voidSentence}") && nextSign
+    ? facts.ingresses?.find(item => item.label.trim().toLowerCase() === `moon enters ${nextSign}`.toLowerCase())
+    : undefined;
+  if (voidText.trim()) {
+    values.voidSentence = sameDayVoidIngress ? [
+      { text: voidText.replace(/\.\s*$/u, ""), highlight: true },
+      { text: remaining ? ", until it enters " : " until it enters " },
+      { text: nextSign!, action: "event", eventId: sameDayVoidIngress.id, emphasis: true },
+      { text: "." },
+      ...(sameDayVoidIngress.tldr?.trim() ? [{ text: ` ${sameDayVoidIngress.tldr}` }] : [])
+    ] : [{ text: voidText, highlight: true }];
+  }
   // Resolve transitions in the order chosen in the full layout. Hidden or empty
   // categories never cause a later sentence to begin with "also".
   let previousEvent = false;
