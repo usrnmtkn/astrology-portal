@@ -30,6 +30,15 @@
   background: var(--surface-2);
 }
 
+.card-skeleton-disc--small {
+  width: var(--size-2);
+  height: var(--size-2);
+}
+
+.card-skeleton .calendar-kind-label .card-skeleton-bar {
+  height: 9px;
+}
+
 .card-skeleton-tag {
   display: block;
   width: var(--calendar-tag-width);
@@ -53,7 +62,7 @@
   display: inline-block;
   position: relative;
   max-width: 100%;
-  vertical-align: top;
+  vertical-align: baseline;
 }
 
 .card-skeleton-text__measure {

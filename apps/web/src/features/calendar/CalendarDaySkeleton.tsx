@@ -9,7 +9,7 @@ export function StoicCardSkeleton({ wide = false, moon = false, title, excerpt, 
       <strong>{title ? <SkeletonText>{title}</SkeletonText> : <SkeletonBar title />}</strong>
     </span>
     {excerpt ? <FormattedProse className="calendar-stoic-card__excerpt card-skeleton-prose" listClassName="formatted-prose-list card-skeleton-prose-list" text={excerpt} /> : excerpt === "" ? null : <p className="calendar-stoic-card__excerpt"><SkeletonBar /><br /><SkeletonBar /></p>}
-    <span className="calendar-stoic-card__cta"><span>{meta ? <SkeletonText>{meta}</SkeletonText> : <SkeletonBar short />}</span><span><SkeletonBar short /></span></span>
+    <span className="calendar-stoic-card__cta"><span>{meta ? <SkeletonText>{meta}</SkeletonText> : <SkeletonBar short />}</span><span className="card-skeleton-disc card-skeleton-disc--small" /></span>
   </button>;
 }
 

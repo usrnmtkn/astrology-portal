@@ -33,6 +33,8 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
     await expect(page.getByRole("status").filter({ hasText: "Loading this day’s reading…" })).toHaveCount(1);
     const sizes = () => page.evaluate(() => Object.fromEntries([".placement-table", ".planet-placement-row", ".calendar-day-events__grid", ".calendar-stoic-card", ".calendar-stoic-card.is-wide", ".calendar-season-transits ul", ".calendar-season-transits li"].map(selector => [selector, [...document.querySelectorAll(selector)].map(el => el.getBoundingClientRect().height)])));
     const anatomy = () => page.locator(".planet-placement-row").first().evaluate(el => [...el.querySelectorAll("[class]")].map(node => ({ class: node.className, height: node.getBoundingClientRect().height, line: getComputedStyle(node).lineHeight, font: getComputedStyle(node).fontSize })));
+    const calendarAnatomy = () => page.locator(".calendar-stoic-card").first().evaluate(el => [...el.children].map(node => ({ class: node.className, height: node.getBoundingClientRect().height, line: getComputedStyle(node).lineHeight, font: getComputedStyle(node).fontFamily })));
+    const beforeCalendarAnatomy = await calendarAnatomy();
     const beforeAnatomy = await anatomy();
     const before = await sizes();
     await page.screenshot({ path: info.outputPath("skeletons.png"), fullPage: true });
@@ -45,7 +47,7 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
     await expect(page.locator(".calendar-day-events")).toHaveAttribute("aria-busy", "false");
     await expect(page.locator(".planet-placement-row.card-skeleton, .calendar-day-panel .card-skeleton")).toHaveCount(0);
     const after = await sizes();
-    writeFileSync(info.outputPath("card-heights.json"), JSON.stringify({ before, after, beforeAnatomy, afterAnatomy: await anatomy() }, null, 2));
+    writeFileSync(info.outputPath("card-heights.json"), JSON.stringify({ before, after, beforeAnatomy, afterAnatomy: await anatomy(), beforeCalendarAnatomy, afterCalendarAnatomy: await calendarAnatomy() }, null, 2));
     await info.attach("card-heights", { path: info.outputPath("card-heights.json"), contentType: "application/json" });
     expect(before[".planet-placement-row"]).toEqual(after[".planet-placement-row"]);
     expect(before[".placement-table"]).toEqual(after[".placement-table"]);

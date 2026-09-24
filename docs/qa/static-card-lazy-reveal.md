@@ -13,7 +13,7 @@ A bounded in-memory cache stores card heights, never reader copy. Sky and Calend
 At 390 and 1440 px in both themes, the regression checks individual cards and whole grids with `getBoundingClientRect()`:
 
 - Short placements and season transit rows match exactly.
-- Known short Calendar cards differ by at most 0.44 px; their grids differ by at most 1.32 px, down from the previous roughly 19 px per-card mismatch.
+- Known short Calendar cards and their grids match exactly, down from the previous roughly 19 px per-card mismatch. Matching the footer's real icon height and keeping the label bar inside its line box also removes the platform-dependent discrepancy caught by Linux CI.
 - Long and formatted Calendar excerpts remain within 4 px, for both cards and their grids.
 - A refresh with temporarily unavailable copy retains the measured card and grid heights exactly.
 - Resizing and accessibility-font changes discard incompatible measurements.
@@ -25,6 +25,8 @@ At 390 and 1440 px in both themes, the regression checks individual cards and wh
 The aspect regression previously clicked an interim current-aspect card while the placement's complete Gifts/Lessons timeline was arriving. The final list replaces that node. Placement articles now expose `aria-busy` until their facts finish resolving; tests wait for the final dated card, click normally, and verify the dated destination and both back steps. Opening copy remains visible during hydration.
 
 Calendar's uncancellable dynamic imports could finish after its eight-second deadline, leaving a permanent error despite successful downloads. The current Calendar instance now accepts that late success. Timeout/Retry and genuine failures retain their existing treatment; an unmounted or superseded load cannot update the reading. A browser regression holds an actual bundle until Retry appears, releases it, then verifies that full reading content returns automatically.
+
+The draft-recovery regression verifies that an open check-in editor and its text survive automatic recovery. The separate failed-asset regression continues to exercise explicit Retry after a genuinely rejected import.
 
 Two release tests had stale selectors: the Sky loader contains multiple status messages, and disabled skeletons share placement classes. The tests now select the Sky-specific status and resolved interactive cards respectively. Assertions and screenshot tolerances were not weakened.
 
@@ -38,6 +40,8 @@ The original failed local Sky audit made 64 requests to `visual-smoke.supabase.t
 
 - Sky: all 14 cards and complete summary, no reader error, CLS 0.000057, LCP about 12.8 s, performance 46 under actual mobile throttling. Correct loading is not evidence of acceptable speed.
 - Calendar: a real timeout error after successful but slow content downloads. This prompted the late-completion repair above; the pre-repair run is not counted as a successful Calendar audit.
+
+An unmocked audit of repair candidate `69a9615a` completed both readings without errors: Sky LCP about 13.0 s, CLS 0.000057, performance 45; Calendar LCP about 33.9 s, CLS 0.252, performance 35. These establish recovery, not acceptable cold-load speed or zero layout shift. The candidate also passed real article navigation and Calendar loading at both widths in both themes.
 
 ## Verification
 

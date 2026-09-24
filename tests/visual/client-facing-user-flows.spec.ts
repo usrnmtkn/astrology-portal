@@ -2884,10 +2884,11 @@ test.describe("client-facing user flow case studies", () => {
     await expect(page.locator(".calendar-sky-card").getByRole("alert")).toContainText("reading could not load", { timeout: 10_000 });
     await expect(editor.locator("textarea")).toHaveValue("Keep this private draft during recovery.");
     releaseContent();
-    await editor.getByRole("button", { name: "Close", exact: true }).click();
-    await page.locator(".calendar-sky-card").getByRole("button", { name: "Retry", exact: true }).click();
     await expect(page.locator('.calendar-sky-card [aria-label="Moon guidance"]').first()).toBeVisible();
     await expect(page.locator(".calendar-sky-card").getByRole("alert")).toHaveCount(0);
+    await expect(editor).toBeVisible();
+    await expect(editor.locator("textarea")).toHaveValue("Keep this private draft during recovery.");
+    await editor.getByRole("button", { name: "Close", exact: true }).click();
   });
 
   test("Calendar selected check-in ignores slow library and history; retry preserves the draft", async ({ page }) => {
