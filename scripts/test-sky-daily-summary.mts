@@ -78,10 +78,22 @@ const sameDayVoid = {
 assert.ok(text(sameDayVoid).includes("The Moon is void of course for another 42 minutes, until it enters Pisces."));
 assert.equal(text(sameDayVoid).includes("Moon enters Pisces today."), false);
 assert.equal(skyDailySummaryParts(sameDayVoid).find(part => part.eventId === "moon-pisces")?.text, "Pisces");
+// The joined sentence must not swallow content or invent another day's ingress.
+assert.ok(text({ ...sameDayVoid, voidRemainingLabel: undefined }).includes("The Moon is void of course until it enters Pisces."));
+assert.ok(text({ ...sameDayVoid, moonIsVoid: false }).includes("Moon enters Pisces today."));
+assert.ok(!text({ ...sameDayVoid, moonIsVoid: false }).includes("void of course"));
+assert.ok(text({ ...sameDayVoid, moon: undefined }).includes("Moon enters Pisces today."));
+assert.ok(!text({ ...sameDayVoid, ingresses: [] }).includes("until it enters"));
+assert.ok(text({ ...sameDayVoid, voidNextSign: "Aries" }).includes("Moon enters Pisces today."));
+const ingressDescription = "Return to the drawing you set aside.";
+const preservedIngressCopy = text({ ...sameDayVoid, ingresses: [{ id: "moon-pisces", label: "Moon enters Pisces", tldr: ingressDescription }, { id: "venus-scorpio", label: "Venus enters Scorpio" }] });
+assert.equal(preservedIngressCopy.split(ingressDescription).length - 1, 1);
+assert.ok(preservedIngressCopy.includes("Venus enters Scorpio"));
+assert.equal((skyDailySummaryParts(sameDayVoid).filter(part => part.eventId === "moon-pisces")).length, 1);
 const { renderVoidOfCourse } = await import("../apps/web/src/content/fallbackArchitectureV3/resolver/renderTransitSynastry.mjs");
 assert.equal(
   renderVoidOfCourse({ sign: "aquarius", nextSign: "pisces" }).body,
-  "After its final aspect in Aquarius, the Moon is void of course until it enters Pisces. Use this window to finish what is already underway, clear a small task, or let a decision wait until the Moon changes signs."
+  "The Moon is void of course in Aquarius until it enters Pisces. Use this time to finish what is already underway, return to something you set aside, or take a break before beginning something new."
 );
 
 
