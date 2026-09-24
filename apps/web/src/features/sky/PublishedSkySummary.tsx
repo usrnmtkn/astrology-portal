@@ -115,6 +115,6 @@ export function PublishedSkySummary({ facts, events, factsReady, factsError, onR
     style={loading || failed ? { minHeight: height } : undefined}>
     {failed ? <PageLoadError message="The daily summary could not load. Your published writing has not changed." onRetry={retry} />
       : loading ? <PageLoading message="Loading the daily sky summary…" announce={false} />
-      : children(skyDailySummaryParts({ ...facts, ...skySummaryEventFacts(events, state.content) }, state.content))}
+      : children(skyDailySummaryParts({ ...facts, ...skySummaryEventFacts(events, state.content) }, state.content, { sunSummaryLength: "short" }))}
   </div>;
 }

@@ -1,9 +1,61 @@
+import { skySunSummaryExcerpt } from "../apps/web/src/content/skySunSummaryExcerpt.ts";
+import { calendarSunSummary } from "../apps/web/src/features/calendar/calendarDaySummary.ts";
+import { moonSummaryKey } from "../apps/web/src/content/skyMoonSummary.ts";
 import { moonSummaryBody } from "../apps/web/src/content/skyMoonSummary.ts";
 import { calendarDayDistance } from "../apps/web/src/services/calendarDayDistance.ts";
 import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
 import { skyDailySummaryParts, skySummaryParagraphs } from "../apps/web/src/content/skyDailySummary.ts";
+
+// Owner request 2026-09-24: short Sun overview in Sky, full copy in Calendar.
+// This runs before the later publication-retirement fixtures.
+{
+  const shortClause = "shifts the spotlight entirely to the spaces between us. There is a sudden, collective sensitivity to friction in the air and a shared pull to bring things back to center.";
+  const fullClause = `${shortClause} This season asks us all to discover what genuine symmetry actually feels like. The collective focus highlights exactly where things have grown lopsided across our schedules, our environments, and our connections, making it easier to smooth out the edges together. We are invited to prioritize beauty, collaboration, and fairness, remembering that true harmony requires everyone’s needs to carry the same weight.`;
+  const sunKey = "cms/sky-daily-summary/sun/libra";
+  const moonKey = moonSummaryKey("Aquarius", "regular");
+  const moonClause = "brings a first thought. The second thought has space. The third thought stays in the Moon passage.";
+  const content = new Map([
+    [sunKey, { contentKey: sunKey, body: fullClause, status: "LIVE" }],
+    [moonKey, { contentKey: moonKey, body: moonClause, status: "LIVE" }]
+  ]) as Parameters<typeof skyDailySummaryParts>[1];
+  const facts = {
+    sun: { sign: "Libra", degree: 1 }, moon: { sign: "Aquarius", degree: 29 },
+    moonIsVoid: true, voidRemainingLabel: "42 min", voidNextSign: "Pisces",
+    ingresses: [{ id: "moon-pisces", label: "Moon enters Pisces" }]
+  };
+  const short = skyDailySummaryParts(facts, content, { sunSummaryLength: "short" });
+  const full = skyDailySummaryParts(facts, content);
+  const rendered = short.map(part => part.text).join("");
+  assert.equal(skySunSummaryExcerpt(fullClause), shortClause);
+  assert.equal(short.find(part => part.sourceKey === sunKey)?.text, shortClause);
+  assert.equal(full.find(part => part.sourceKey === sunKey)?.text, fullClause);
+  assert.equal(short.find(part => part.sourceKey === moonKey)?.text, moonClause);
+  assert.equal(content?.get(sunKey)?.body, fullClause, "Excerpt must not mutate the saved source");
+  assert.equal(short.find(part => part.action === "sun")?.text, "Sun in Libra at 1°");
+  assert.ok(rendered.startsWith(`The Sun in Libra at 1° ${shortClause}`));
+  assert.ok(!rendered.includes(".."), "Assembly must not add a second full stop");
+  assert.ok(!rendered.includes("This season asks"));
+  assert.ok(rendered.includes("The Moon is void of course for another 42 minutes, until it enters Pisces."));
+  assert.ok(!rendered.includes("Moon enters Pisces today."));
+  const sky = {
+    generatedAt: "2026-09-23T12:00:00Z", location: { timeZone: "America/New_York" },
+    positions: [{ planet: "Sun", sign: "Libra", degree: 1 }]
+  } as Parameters<typeof calendarSunSummary>[0];
+  const calendar = calendarSunSummary(sky, content, []);
+  assert.equal(calendar.find(part => part.sourceKey === sunKey)?.text, fullClause, "Calendar must retain every sentence after Sky renders");
+  assert.equal(skyDailySummaryParts(facts, content, { sunSummaryLength: "full" }).find(part => part.sourceKey === sunKey)?.text, fullClause);
+  for (const body of ["", "One sentence.", "One sentence. Two sentences.", "No final full stop"]) {
+    assert.equal(skySunSummaryExcerpt(body), body);
+  }
+  assert.equal(skySunSummaryExcerpt("Allow 3.5 hours. Start tomorrow. Keep this third sentence in Calendar."), "Allow 3.5 hours. Start tomorrow.");
+  assert.equal(skySunSummaryExcerpt("Can this wait? Yes, it can! The third sentence stays in Calendar."), "Can this wait? Yes, it can!");
+  assert.equal(skySunSummaryExcerpt("First sentence.\n\nSecond sentence.\n\nThird sentence."), "First sentence.\n\nSecond sentence.");
+  const readerSource = readFileSync(new URL("../apps/web/src/features/sky/PublishedSkySummary.tsx", import.meta.url), "utf8");
+  assert.ok(readerSource.includes('state.content, { sunSummaryLength: "short" }'), "The live Sky reader must opt in to the excerpt");
+  console.log("Sky Sun excerpt: supplied Libra copy, unchanged Calendar/source/Moon/link/void behavior, sentence boundaries, and live reader opt-in passed.");
+}
 
 const clauses = JSON.parse(readFileSync(new URL("../apps/web/src/content/skyDailySummaryClauses.json", import.meta.url), "utf8"));
 const suppliedRevisions = JSON.parse(readFileSync(new URL("../docs/content-review/sky-summary-supplied-copy-2026-09-08.json", import.meta.url), "utf8")).revisions;

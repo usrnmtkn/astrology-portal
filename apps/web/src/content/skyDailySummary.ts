@@ -1,3 +1,4 @@
+import { skySunSummaryExcerpt } from "./skySunSummaryExcerpt";
 import { validSummaryGeometry } from "./skySummaryGeometry";
 import { selectedMoonKind, moonEventNames, moonSummaryKey, moonSummaryBody } from "./skyMoonSummary";
 import defaultAssembly from "./skyDailySummaryAssembly.json" with { type: "json" };
@@ -137,7 +138,13 @@ export function skySummaryOpeningKey(sun?: string, moon?: string, content?: CmsG
     ? "openingSameSign" : "opening";
 }
 
-export function skyDailySummaryParts(facts: SkyDailySummaryFacts, content?: CmsGeneratedContentMap, { editorialPreview = false, openingOnly = false } = {}): SummaryPart[] {
+export type SkyDailySummaryOptions = {
+  editorialPreview?: boolean;
+  openingOnly?: boolean;
+  sunSummaryLength?: "full" | "short";
+};
+
+export function skyDailySummaryParts(facts: SkyDailySummaryFacts, content?: CmsGeneratedContentMap, { editorialPreview = false, openingOnly = false, sunSummaryLength = "full" }: SkyDailySummaryOptions = {}): SummaryPart[] {
   const copy = (key: string, fallback: string) => savedCopy(content, `cms/sky-daily-summary/${key}`, fallback, editorialPreview);
   const timing = { ...defaultTiming };
   for (const field of skyDailySummaryFields.filter(field => field.group === "Timing and retrogrades")) {
@@ -159,7 +166,10 @@ export function skyDailySummaryParts(facts: SkyDailySummaryFacts, content?: CmsG
     const placement = body === "moon" ? moonPlacement : sunPlacement;
     if (!placement?.sign) continue;
     const sourceKey = body === "moon" ? moonSummaryKey(placement.sign, moonKind) : `cms/sky-daily-summary/sun/${placement.sign.toLowerCase()}`;
-    const clause = body === "moon" ? savedCopy(content, sourceKey, moonSummaryBody(placement.sign, moonKind), editorialPreview) : fullerClause(body, placement.sign, content, editorialPreview);
+    const fullClause = body === "moon" ? savedCopy(content, sourceKey, moonSummaryBody(placement.sign, moonKind), editorialPreview) : fullerClause(body, placement.sign, content, editorialPreview);
+    // Apply the Sky excerpt before assembly normalizes sentence punctuation.
+    // Saved content and the verified publication cache retain the full body.
+    const clause = body === "sun" && sunSummaryLength === "short" ? skySunSummaryExcerpt(fullClause) : fullClause;
     values[`${body}Name`] = plain(body === "sun" ? "Sun" : moonEventNames[moonKind]);
     values[`${body}Sign`] = plain(placement.sign);
     values[`${body}Degree`] = plain(degreeText(placement.degree));
