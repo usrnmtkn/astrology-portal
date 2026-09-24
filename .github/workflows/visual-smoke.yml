@@ -340,7 +340,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        suite: [studio-style, studio-web-entry, studio-variables, sky-article, horoscope-writing]
+        suite: [studio-style, studio-web-entry, studio-variables, sky-article, horoscope-writing, horoscope-reader]
     env:
       VITE_SUPABASE_URL: https://visual-smoke.supabase.test
       VITE_SUPABASE_ANON_KEY: visual-smoke-placeholder

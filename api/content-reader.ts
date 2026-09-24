@@ -9,13 +9,14 @@ import { publicationAllowsContent, publicationLedgerKey, validContentPublication
 import type { ContentPublication } from '../apps/web/src/content/contentPublicationState.js';
 import type { GeneratedContentRow } from '../apps/web/src/services/generatedContent.js';
 import { astro101IsLiveOnLearn, isAstro101ContentKey } from '../apps/web/src/content/astro101.js';
+import { HOROSCOPE_PERIODS, horoscopeEditionFromRow } from '../apps/web/src/content/horoscopeEditions.mjs';
 
 loadLocalWebEnv();
 const pageSize = 250;
 const select = 'id,content_key,surface,mode,status,lane,review_state,event_type,target_date,facts,source_snapshot,headline,summary,body,sections,block_type,flags,provider,model,updated_at,judge_score,judge_gate';
 const providers = new Set(['tldrastro-fallback-architecture-v3', 'tldrastro-fallback-architecture-v3-sky-placement']);
 const surfaces = new Set(['sky', 'you', 'natal', 'synastry', 'composite', 'relationship', 'modifier', 'year_ahead', 'education']);
-type Query = { provider?: string; keys?: string[]; ids?: string[]; prefix?: string; surfaces?: string[]; targetDate?: string; afterId?: string; scope?: "sky" | "sky-list"; vocabularyOnly?: boolean; latestVersion?: boolean };
+type Query = { provider?: string; keys?: string[]; ids?: string[]; prefix?: string; surfaces?: string[]; targetDate?: string; afterId?: string; scope?: "sky" | "sky-list"; vocabularyOnly?: boolean; latestVersion?: boolean; horoscope?: {period:string; at:string} };
 const uuid = /^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/iu;
 const key = /^[a-zA-Z0-9_./:| -]{1,500}$/u;
 class QueryError extends Error {}
@@ -23,7 +24,13 @@ class QueryError extends Error {}
 async function readQuery(req: IncomingMessage): Promise<Query> {
   const value = await readAdminJsonBody<Record<string, unknown>>(req, 40_000);
   if (!value || typeof value !== 'object' || Array.isArray(value)) throw new QueryError('Invalid request.');
-  if (Object.keys(value).some(name => !['provider', 'keys', 'ids', 'prefix', 'surfaces', 'targetDate', 'afterId', 'latestVersion', 'scope', 'vocabularyOnly'].includes(name))) throw new QueryError('Unsupported reader query.');
+  if (Object.keys(value).some(name => !['provider', 'keys', 'ids', 'prefix', 'surfaces', 'targetDate', 'afterId', 'latestVersion', 'scope', 'vocabularyOnly', 'horoscope'].includes(name))) throw new QueryError('Unsupported reader query.');
+  if (value.horoscope !== undefined) {
+    const input = value.horoscope as Record<string,unknown>;
+    if (!input || typeof input !== 'object' || Array.isArray(input) || Object.keys(input).some(key => !['period','at'].includes(key))
+      || !HOROSCOPE_PERIODS.includes(input.period as any) || typeof input.at !== 'string' || !/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/u.test(input.at) || !Number.isFinite(Date.parse(input.at))
+      || Object.keys(value).some(key => !['horoscope','afterId'].includes(key))) throw new QueryError('Invalid horoscope query.');
+  }
   for (const name of ['keys', 'ids', 'surfaces'] as const) {
     const items = value[name];
     if (items === undefined) continue;
@@ -44,6 +51,7 @@ export function readerRowIsEligible(row: GeneratedContentRow) {
   if (row.status !== 'LIVE' || row.lane !== 'serving' || row.review_state != null) return false;
   if (row.content_key.startsWith('sample-') || row.facts?.sampleOnly || row.source_snapshot?.sampleOnly) return false;
   if (row.flags?.some(flag => ['REFERENCE_ONLY_NEVER_SERVE_VERBATIM', 'PARAPHRASE_PENDING', 'BLOCKLIST_MATCH'].includes(flag))) return false;
+  if (row.content_key.startsWith('horoscope/')) return Boolean(horoscopeEditionFromRow(row));
   // Education publishes its saved article fields. Its packageRecord is the
   // original import descriptor, whose review label is not the Studio decision.
   // The exact publication ledger is still required by the handler below.
@@ -91,6 +99,11 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
     };
     const params = new URLSearchParams({ select, status: 'eq.LIVE', lane: 'eq.serving', review_state: 'is.null', order: 'id.asc', limit: String(pageSize) });
     if (query.provider) params.set('provider', `eq.${query.provider}`);
+    if (query.horoscope) {
+      params.set('content_key', `like.horoscope/${query.horoscope.period}/*`);
+      params.set('sections->horoscopeEdition->window->>startsAt', `lte.${query.horoscope.at}`);
+      params.set('sections->horoscopeEdition->window->>endsAt', `gt.${query.horoscope.at}`);
+    }
     if (query.prefix) params.set('content_key', `like.${query.prefix}*`);
     if (query.keys) params.set('content_key', `in.(${query.keys.map(item => `"${item}"`).join(',')})`);
     if (query.ids) params.set('id', `in.(${query.ids.join(',')})`);

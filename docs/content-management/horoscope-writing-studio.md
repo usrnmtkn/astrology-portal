@@ -27,7 +27,7 @@ node scripts/run-astro-writing-harness.mjs \
 
 Alternatively provide the export as `writingProfile` in the request, but not both. The harness validates it before the pipeline starts. `generateDraft` includes its expanded instructions in the actual writer input and attaches `studioWritingProfile: {id, period, revision, updatedAt, sha256}` to the unapproved candidate. The full prompt is not copied into reader fields. The existing explicit live-call authorization, target/register checks, evidence requirements and owner argument gate remain in force.
 
-This release provides editing and export into the governed writing infrastructure. It does **not** add a horoscope renderer, twelve-sign batch generator, scheduled daily/weekly/seasonal generation, or automatic fetching of the latest Studio profile by a cron job. Those require a dedicated horoscope request adapter with calculated period boundaries, an explicit sign/house convention, eligible source packets and reviewable dated outlines. Existing unrelated Sky and Calendar generation does not automatically inherit these profiles.
+The reader and twelve-sign edition editor are documented in [Horoscope editions](horoscope-editions.md). This profile integration does **not** itself generate horoscope prose, schedule writing, or automatically supply unrelated Sky and Calendar generation. The current canonical harness family map covers Sky Placement articles; the dedicated horoscope target/evidence mapping must be resolved before a horoscope writer call. Exporting a profile or edition brief is not a successful generation run.
 
 ## Storage and verification
 

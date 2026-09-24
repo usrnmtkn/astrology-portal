@@ -2,7 +2,7 @@ import type { GeneratedContentRow } from './generatedContent';
 import { READER_ROW_SCHEMA } from '../content/readerRowSchema.mjs';
 import { installContentPublications, validContentPublication } from '../content/contentPublicationState';
 
-type ReaderQuery = { provider?: string; keys?: string[]; ids?: string[]; prefix?: string; surfaces?: string[]; targetDate?: string; scope?: "sky" | "sky-list"; vocabularyOnly?: boolean; latestVersion?: boolean };
+type ReaderQuery = { provider?: string; keys?: string[]; ids?: string[]; prefix?: string; surfaces?: string[]; targetDate?: string; scope?: "sky" | "sky-list"; vocabularyOnly?: boolean; latestVersion?: boolean; horoscope?: {period:string;at:string} };
 /** Only this transport may fetch shared Studio rows in a reader. It deliberately
  * has no table name, arbitrary select, or authoring-field escape hatch. */
 export async function loadReaderRows(query: ReaderQuery, signal = AbortSignal.timeout(20_000)) {

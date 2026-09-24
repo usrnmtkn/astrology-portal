@@ -115,6 +115,9 @@ for (const key of initialChunks) {
   if (memoryGraphFiles.some((item) => item.file === file)) {
     failures.push(`Memory graph must remain deferred from Content Studio startup: ${file}`);
   }
+  if (key === 'src/HoroscopeEditionsStudio.tsx') {
+    failures.push(`Horoscope edition editor must remain deferred from Content Studio startup: ${file}`);
+  }
   if (file?.endsWith(".js") && fs.readFileSync(path.join(distRoot, file), "utf8").includes("Sky variable key")) {
     failures.push(`Sky variable reference must remain deferred: ${file}`);
   }
@@ -131,6 +134,7 @@ for (const key of initialChunks) {
 
 const expectedDynamicEntries = [
   "src/StudioFormattingEditor.tsx",
+  "src/HoroscopeEditionsStudio.tsx",
   "src/CompositionMapWorkspace.tsx",
   "src/SkyPlacementComposition.tsx",
   "src/SkyFallbackFieldsEditor.tsx",

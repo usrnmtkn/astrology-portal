@@ -1,0 +1,18 @@
+export type HoroscopePeriod = 'daily' | 'weekly' | 'seasonal';
+export type HoroscopeWindow = {period:HoroscopePeriod; audience:'rising'; timeZone:string; startsAt:string; endsAt:string; seasonSign?:string};
+export type HoroscopePassage = {sign:string; headline:string; body:string};
+export type HoroscopeEdition = {schema:string; window:HoroscopeWindow; passages:HoroscopePassage[]};
+export const HOROSCOPE_EDITION_PREFIX:string;
+export const HOROSCOPE_EDITION_SCHEMA:string;
+export const HOROSCOPE_SIGNS:readonly string[];
+export const HOROSCOPE_PERIODS:readonly HoroscopePeriod[];
+export function horoscopeCanonicalJson(value:unknown):string;
+export function horoscopeSignLabel(sign:string):string;
+export function horoscopeEditionKey(window:HoroscopeWindow):string;
+export function validateHoroscopeWindow(value:unknown):HoroscopeWindow;
+export function validateHoroscopeEdition(value:unknown, complete?:boolean):HoroscopeEdition;
+export function emptyHoroscopeEdition(window:HoroscopeWindow):HoroscopeEdition;
+export function horoscopeEditionBody(edition:HoroscopeEdition):string;
+export function horoscopeEditionFromRow(row:unknown):HoroscopeEdition|null;
+export function horoscopeEditionAt(rows:unknown[],period:HoroscopePeriod,at:string):HoroscopeEdition|null;
+export function horoscopeWindowLabel(window:HoroscopeWindow):string;

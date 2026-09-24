@@ -106,6 +106,10 @@
     "api/admin/generated-content-inventory.ts": {
       "includeFiles": "api/_lib/**/*.{js,ts}"
     },
+    "api/admin/generated-content.ts": {
+      "includeFiles": "{node_modules/swisseph-wasm/wasm/*,{api/_lib,artifacts,config,src/*-writing,packages/*/{generated,scripts,data,config,reference,voice,sources/authored/owner-author-book},apps/web/{public/content,src/content},tldr-astro-phrasebank}/**/*.{*js,json,md,ts}}",
+      "maxDuration": 60
+    },
     "api/admin/package-source.ts": {
       "includeFiles": "{api/_lib,apps/web/src/content}/**/*.{cjs,js,json,md,mjs,ts}"
     },
