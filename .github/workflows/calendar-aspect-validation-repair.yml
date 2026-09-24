@@ -1,0 +1,105 @@
+name: Calendar validation repair
+on:
+  push:
+    branches: [fix/calendar-aspect-draft-validation-20260924]
+    paths: [.github/workflows/calendar-aspect-validation-repair.yml]
+permissions:
+  contents: write
+concurrency:
+  group: calendar-validation-repair-20260924
+  cancel-in-progress: false
+jobs:
+  repair:
+    if: github.repository == 'usrnmtkn/astrology-portal'
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: fix/calendar-aspect-draft-validation-20260924
+          fetch-depth: 0
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+      - name: Verify source provenance and scoped instructions
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch --prune origin
+          git remote -v
+          git log -1
+          git rev-list --left-right --count origin/main...HEAD
+          test "$(git rev-parse origin/main)" = 6250a5cf2042043bafb0c8bad03ab38e89efc82e
+          test "$(git hash-object api/admin/generated-content.ts)" = 903600e259cc01fd48cf4f73781665a356983851
+          for f in api/AGENTS.md api/admin/AGENTS.md scripts/AGENTS.md .github/AGENTS.md .github/workflows/AGENTS.md; do
+            if test -f "$f"; then echo "--- $f"; cat "$f"; fi
+          done
+      - run: npm ci
+      - name: Retrieve current project context
+        run: node scripts/agent-memory.mjs recall "Content Studio Calendar aspect packageDraft validation retained original mirrors" --repo . --ref origin/main --fetch --limit 4 --state "$RUNNER_TEMP/tldr-astro-memory"
+      - name: Build isolated knowledge prerequisite
+        run: npm run build -w @tldr/astro-knowledge
+      - name: Reproduce the reported failure before changing the handler
+        shell: bash
+        run: |
+          set +e
+          node --import tsx scripts/test-calendar-aspect-retained-mirrors.mjs > "$RUNNER_TEMP/calendar-before.log" 2>&1
+          result=$?
+          set -e
+          cat "$RUNNER_TEMP/calendar-before.log"
+          test "$result" -ne 0
+          grep -F 'contains banned word' "$RUNNER_TEMP/calendar-before.log"
+          grep -F 'engine' "$RUNNER_TEMP/calendar-before.log"
+      - name: Apply only the reviewed validation changes
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p = Path('api/admin/generated-content.ts')
+          source = p.read_text()
+          changes = [
+            ('  const proposedRecord = packageDraft ?? (isRecord(sections.packageRecord) ? sections.packageRecord : record);\n',
+             '  const proposedRecord = packageDraft ?? (isRecord(sections.packageRecord) ? sections.packageRecord : record);\n  const retainedMirrors: Record<string, unknown> = {\n    headline: row.headline ?? "",\n    summary: row.summary ?? "",\n    body: row.body ?? "",\n    body_you: record.body_you ?? null,\n    body_they: record.body_they ?? null\n  };\n'),
+            ('    // Envelope mirrors remain on the approved source while a separate draft is edited.\n',
+             '    // Draft saves retain the existing source in these mirrors. Check the\n    // proposal, not unchanged baseline copy that the editor cannot replace.\n    // Changed mirrors and every packageDraft field still require validation;\n    // publication without a packageDraft still checks all reader mirrors.\n    if (packageDraft && Object.hasOwn(retainedMirrors, field)\n      && value === retainedMirrors[field]) continue;\n    // Envelope mirrors remain on the approved source while a separate draft is edited.\n'),
+            ('      throw new Error(`${field} contains an em dash. Use a comma, colon, or separate sentence instead.`);',
+             '      throw new GeneratedContentRequestError(`${field} contains an em dash. Use a comma, colon, or separate sentence instead.`);'),
+            ('      throw new Error(`${field} contains banned word "${banned}".`);',
+             '      throw new GeneratedContentRequestError(`${field} contains banned word "${banned}".`);')
+          ]
+          for old, new in changes:
+            assert source.count(old) == 1, f'Expected one exact source anchor: {old}'
+            source = source.replace(old, new, 1)
+          p.write_text(source)
+          suite = Path('scripts/test-content-studio-api-roundtrip.mjs')
+          content = suite.read_text()
+          assert 'test-calendar-aspect-retained-mirrors.mjs' not in content
+          suite.write_text(content + '\n// Keep the stale-mirror regression in the required API release gate.\nawait import("./test-calendar-aspect-retained-mirrors.mjs");\n')
+          PY
+          git diff --check
+          git diff --stat
+      - name: Verify the actual draft, publish, reader and rejection paths
+        run: node --import tsx scripts/test-calendar-aspect-retained-mirrors.mjs
+      - name: Verify reader-copy boundaries
+        run: npm run test:reader-copy-boundary
+      - name: Verify the complete Content Studio API contract
+        run: npm run test:content-studio-api
+        env:
+          PRIVATE_REPORT_DOCUMENTS: ${{ secrets.PRIVATE_REPORT_DOCUMENTS }}
+      - name: Typecheck
+        run: npm run typecheck
+      - name: Record the source-only repair on the fix branch
+        shell: bash
+        run: |
+          set -euo pipefail
+          git diff --check
+          git diff --exit-code -- packages/astro-knowledge/data apps/web/src/content
+          git add api/admin/generated-content.ts scripts/test-content-studio-api-roundtrip.mjs
+          git rm .github/workflows/calendar-aspect-validation-repair.yml
+          git config user.name 'usrnmtkn'
+          git config user.email 'usrnmtkn@proton.me'
+          git commit -m 'Fix Calendar draft validation of retained source mirrors'
+          git push origin HEAD:fix/calendar-aspect-draft-validation-20260924
+          git log -1
+          git diff origin/main...HEAD --stat
