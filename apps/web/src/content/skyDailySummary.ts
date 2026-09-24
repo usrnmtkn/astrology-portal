@@ -101,6 +101,7 @@ export type SkyDailySummaryFacts = {
   stations?: Array<{ id: string; label: string; direction: "direct" | "retrograde"; planet?: string; startsAt?: string }>;
   ingresses?: Array<{ id: string; label: string; tldr?: string }>;
   voidRemainingLabel?: string;
+  voidNextSign?: string;
   event?: { placementsPending?: boolean; sun?: SummaryPlacement; name: string; degree?: number; sign: string; countdown: string; isToday?: boolean; eclipseType?: "solar" | "lunar" };
   seasonName?: string;
   nextSunSign?: string;
@@ -228,10 +229,19 @@ export function skyDailySummaryParts(facts: SkyDailySummaryFacts, content?: CmsG
     values.retrogradeCount = plain((words[planets.length] ?? String(planets.length)).toLowerCase());
     values.currentRetrogradesSentence = intro ? fillSkyTemplate(assembly.retrogrades, values) : [];
   }
+  const sameDayVoidIngress = facts.moonIsVoid && facts.voidNextSign
+    ? facts.ingresses?.find(item => item.label.toLowerCase() === `moon enters ${facts.voidNextSign}`.toLowerCase())
+    : undefined;
   if (facts.moon && facts.moonIsVoid) {
     const remaining = facts.voidRemainingLabel?.replace(/(\d+)\s*(?:min|m)\b/giu, (_, n) => `${n} ${n === "1" ? "minute" : "minutes"}`)
       .replace(/(\d+)\s*(?:hrs?|h)\b/giu, (_, n) => `${n} ${n === "1" ? "hour" : "hours"}`);
-    values.voidSentence = [{ text: remaining ? timing.voidRemaining.replace("{remaining}", remaining) : timing.voidWithoutTiming, highlight: true }];
+    const voidText = remaining ? timing.voidRemaining.replace("{remaining}", remaining) : timing.voidWithoutTiming;
+    values.voidSentence = sameDayVoidIngress ? [
+      { text: voidText.replace(/\.\s*$/u, ""), highlight: true },
+      { text: ", until it enters " },
+      { text: facts.voidNextSign!, action: "event", eventId: sameDayVoidIngress.id, emphasis: true },
+      { text: "." }
+    ] : [{ text: voidText, highlight: true }];
   }
   // Resolve transitions in the order chosen in the full layout. Hidden or empty
   // categories never cause a later sentence to begin with "also".
@@ -248,7 +258,8 @@ export function skyDailySummaryParts(facts: SkyDailySummaryFacts, content?: CmsG
       if (event.isToday && values[slot].some(p => p.text)) previousEvent = true;
       continue;
     }
-    const ingresses = facts.ingresses?.filter(item => !transitionText || item.id !== transition?.id);
+    const ingresses = facts.ingresses?.filter(item => (!transitionText || item.id !== transition?.id)
+      && item.id !== sameDayVoidIngress?.id);
     const items = slot === "exactAspectsSentence" ? facts.exactAspects : slot === "stationsSentence" ? facts.stations : ingresses;
     if (!items?.length) continue;
     const many = items.length > 1;
