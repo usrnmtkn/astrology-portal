@@ -1,0 +1,137 @@
+name: Complete same-day void Moon refinement
+
+on:
+  push:
+    branches: [codex/refine-same-day-void-moon]
+    paths: [.github/workflows/refine-void-moon-once.yml]
+
+permissions:
+  contents: write
+
+jobs:
+  refine:
+    if: github.repository == 'usrnmtkn/astrology-portal' && github.ref == 'refs/heads/codex/refine-same-day-void-moon'
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: codex/refine-same-day-void-moon
+          fetch-depth: 1
+      - name: Apply narrowly scoped summary and copy corrections
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+
+          summary = Path('apps/web/src/content/skyDailySummary.ts')
+          source = summary.read_text()
+          start = source.index('  const sameDayVoidIngress = facts.moonIsVoid && facts.voidNextSign')
+          end = source.index('  // Resolve transitions in the order chosen', start)
+          replacement = r'''  const remaining = facts.voidRemainingLabel?.trim()
+            .replace(/(\d+)\s*(?:min|m)\b/giu, (_, n) => `${n} ${n === "1" ? "minute" : "minutes"}`)
+            .replace(/(\d+)\s*(?:hrs?|h)\b/giu, (_, n) => `${n} ${n === "1" ? "hour" : "hours"}`);
+          const voidText = facts.moon && facts.moonIsVoid
+            ? remaining ? timing.voidRemaining.replace("{remaining}", remaining) : timing.voidWithoutTiming
+            : "";
+          const nextSign = facts.voidNextSign?.trim();
+          // The caller supplies ingresses for the selected local day. Consume a
+          // matching ingress only when its replacement sentence is actually shown.
+          const sameDayVoidIngress = voidText.trim() && assembly.layout.includes("{voidSentence}") && nextSign
+            ? facts.ingresses?.find(item => item.label.trim().toLowerCase() === `moon enters ${nextSign}`.toLowerCase())
+            : undefined;
+          if (voidText.trim()) {
+            values.voidSentence = sameDayVoidIngress ? [
+              { text: voidText.replace(/\.\s*$/u, ""), highlight: true },
+              { text: remaining ? ", until it enters " : " until it enters " },
+              { text: nextSign!, action: "event", eventId: sameDayVoidIngress.id, emphasis: true },
+              { text: "." },
+              ...(sameDayVoidIngress.tldr?.trim() ? [{ text: ` ${sameDayVoidIngress.tldr}` }] : [])
+            ] : [{ text: voidText, highlight: true }];
+          }
+          '''
+          # The literal above starts at the function's two-space indentation.
+          summary.write_text(source[:start] + replacement + source[end:])
+
+          new_body = 'The Moon is void of course in {{signTitle}} until it enters {{nextSignTitle}}. Use this time to finish what is already underway, return to something you set aside, or take a break before beginning something new.'
+          rows_path = Path('apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json')
+          original = rows_path.read_text()
+          data = json.loads(original)
+          matching = [row for row in data['hookRows'] if row.get('contentKey') == 'fallback-hook/moon-void']
+          assert len(matching) == 1, 'Expected exactly one authoritative void-of-course hook'
+          row = matching[0]
+          # Never silently alter protected or separately signed owner material.
+          assert not row.get('protected_content') and not row.get('approval'), 'This hook requires its explicit approval workflow'
+          old_bodies = {row[field] for field in ('body_you', 'body_they') if isinstance(row.get(field), str) and row[field]}
+          assert old_bodies and all('Between its last aspect' in body and 'Momentum is thin' in body for body in old_bodies), 'Unexpected source copy; stop rather than overwrite a newer edit'
+          changed = original
+          for body in old_bodies:
+              old_literal = json.dumps(body, ensure_ascii=False)
+              assert old_literal in changed, 'Source JSON serialization changed'
+              changed = changed.replace(old_literal, json.dumps(new_body, ensure_ascii=False))
+          rows_path.write_text(changed)
+          updated = json.loads(changed)
+          # Prove that only the two text fields of this one hook changed.
+          expected = json.loads(original)
+          for item in expected['hookRows']:
+              if item.get('contentKey') == 'fallback-hook/moon-void':
+                  for field in ('body_you', 'body_they'):
+                      if item.get(field):
+                          item[field] = new_body
+          assert updated == expected, 'Unexpected collateral content change'
+
+          tests = Path('scripts/test-sky-daily-summary.mts')
+          test_source = tests.read_text()
+          old_expected = 'After its final aspect in Aquarius, the Moon is void of course until it enters Pisces. Use this window to finish what is already underway, clear a small task, or let a decision wait until the Moon changes signs.'
+          assert test_source.count(old_expected) == 1
+          test_source = test_source.replace(old_expected, new_body.replace('{{signTitle}}', 'Aquarius').replace('{{nextSignTitle}}', 'Pisces'))
+          marker = 'const { renderVoidOfCourse } = await import'
+          regression = '''// The joined sentence must not swallow content or invent another day's ingress.
+          assert.ok(text({ ...sameDayVoid, voidRemainingLabel: undefined }).includes("The Moon is void of course until it enters Pisces."));
+          assert.ok(text({ ...sameDayVoid, moonIsVoid: false }).includes("Moon enters Pisces today."));
+          assert.ok(!text({ ...sameDayVoid, moonIsVoid: false }).includes("void of course"));
+          assert.ok(text({ ...sameDayVoid, moon: undefined }).includes("Moon enters Pisces today."));
+          assert.ok(!text({ ...sameDayVoid, ingresses: [] }).includes("until it enters"));
+          assert.ok(text({ ...sameDayVoid, voidNextSign: "Aries" }).includes("Moon enters Pisces today."));
+          const ingressDescription = "Return to the drawing you set aside.";
+          const preservedIngressCopy = text({ ...sameDayVoid, ingresses: [{ id: "moon-pisces", label: "Moon enters Pisces", tldr: ingressDescription }, { id: "venus-scorpio", label: "Venus enters Scorpio" }] });
+          assert.equal(preservedIngressCopy.split(ingressDescription).length - 1, 1);
+          assert.ok(preservedIngressCopy.includes("Venus enters Scorpio"));
+          assert.equal((skyDailySummaryParts(sameDayVoid).filter(part => part.eventId === "moon-pisces")).length, 1);
+          '''
+          assert test_source.count(marker) == 1
+          tests.write_text(test_source.replace(marker, regression + marker))
+          print('Updated summary, one shared void-of-course hook, and focused regression tests.')
+          PY
+          git diff --check
+          git diff --stat
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - name: Install locked test dependencies without lifecycle scripts
+        run: npm ci --ignore-scripts --no-audit --no-fund
+      - name: Verify the summary and adjacent rendering contracts
+        shell: bash
+        run: |
+          set -euo pipefail
+          node --import tsx scripts/test-sky-daily-summary.mts
+          node --import tsx scripts/test-sky-summary-assembly.mts
+          node --import tsx scripts/test-sky-summary-event-grammar.mts
+          node --import tsx scripts/test-sky-summary-composition.mts
+          node --import tsx scripts/test-sky-moon-v6.mts
+          node scripts/test-calendar-timing-event-copy.mjs
+      - name: Commit only verified changes and remove this one-time workflow
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git branch --show-current)" = 'codex/refine-same-day-void-moon'
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git rm .github/workflows/refine-void-moon-once.yml
+          git add apps/web/src/content/skyDailySummary.ts apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json scripts/test-sky-daily-summary.mts
+          git diff --cached --check
+          git commit -m 'Complete same-day void Moon wording and preserve ingress content'
+          git push origin HEAD:refs/heads/codex/refine-same-day-void-moon
