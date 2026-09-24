@@ -164,3 +164,4 @@ const paragraphs = skySummaryParagraphs(example).map(parts => parts.map(p => p.t
 assert.equal(paragraphs.length, 4);
 assert.ok(paragraphs[1].endsWith("are exact today."));
 assert.ok(paragraphs[3].startsWith("The next New Moon"));
+
