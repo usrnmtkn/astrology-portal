@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { ReportProviderUnavailableError } from "../api/_lib/report-provider-availability.ts";
 import { REPORT_REDUNDANCY_SCHEMA } from "../api/_lib/report-assembly.ts";
 import { REPORT_JUDGE_SCHEMA, reportOverviewSentenceContract } from "../api/_lib/report-judge.ts";
 import { GENERATED_REPORT_JUDGE_SCHEMA } from "../api/_lib/transit-reading-judge.ts";
@@ -148,5 +149,47 @@ try {
 }
 assert.equal(lifecycleCalls, 0, "Schema compilation must precede the metered lifecycle hook.");
 assert.equal(fetchCalls, 0, "An unsupported keyword must never reach a provider request.");
+
+const savedKeys = { anthropic: process.env.ANTHROPIC_API_KEY, openai: process.env.OPENAI_API_KEY };
+process.env.ANTHROPIC_API_KEY = 'synthetic-key';
+process.env.OPENAI_API_KEY = 'synthetic-key';
+try {
+  for (const [provider, status, error, reason] of [
+    ['claude', 400, {type:'invalid_request_error',message:'Your credit balance is too low to access the Anthropic API.'}, 'credits'],
+    ['openai', 429, {code:'insufficient_quota',message:'Quota unavailable'}, 'credits'],
+    ['claude', 401, {type:'authentication_error',message:'Authentication failed'}, 'credentials'],
+    ['openai', 403, {message:'Access denied'}, 'credentials'],
+    ['openai', 429, {code:'rate_limit_exceeded',message:'Temporary rate limit'}, null],
+    ['claude', 400, {type:'invalid_request_error',message:'Invalid tool schema'}, null],
+    ['claude', 529, {type:'overloaded_error',message:'Overloaded'}, null],
+  ]) {
+    let requests = 0;
+    let recordedError;
+    globalThis.fetch = async () => {
+      requests++;
+      return new Response(JSON.stringify({error}),{status,headers:{'content-type':'application/json'}});
+    };
+    await assert.rejects(callReportCalibrationModel({
+      provider, model:'FIXTURE_ONLY_MODEL', prompt:'FIXTURE_ONLY_PROMPT',
+      schemaName:'account_failure', schema:TRANSIT_READING_PROVIDER_SCHEMA,
+      disableFallback:true, onProviderCallError:async (_attempt, failure) => { recordedError = failure; }
+    }), failure => {
+      assert.equal(failure instanceof ReportProviderUnavailableError, Boolean(reason));
+      if (reason) {
+        assert.equal(failure.provider,provider);
+        assert.equal(failure.reason,reason);
+      }
+      return true;
+    });
+    assert.equal(requests,1,'Confirmed account errors must not buy a transport retry');
+    assert.equal(recordedError instanceof ReportProviderUnavailableError,Boolean(reason));
+  }
+} finally {
+  globalThis.fetch = originalFetch;
+  if (savedKeys.anthropic === undefined) delete process.env.ANTHROPIC_API_KEY;
+  else process.env.ANTHROPIC_API_KEY = savedKeys.anthropic;
+  if (savedKeys.openai === undefined) delete process.env.OPENAI_API_KEY;
+  else process.env.OPENAI_API_KEY = savedKeys.openai;
+}
 
 console.log(`Report provider schema contract passed: ${providerSchemas.size} live schemas compile, the General 12-month overview enforces 5-7 sentences, unsupported keywords fail before billing, and sentence-ID uniqueness remains runtime-enforced.`);

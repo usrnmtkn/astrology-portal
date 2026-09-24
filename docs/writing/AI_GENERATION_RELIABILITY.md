@@ -62,6 +62,23 @@ Checkpointing exists to prevent duplicate billing and unsafe replay, not to turn
 
 These checkpoint rules are shared by You and Friends report generation.
 
+### Provider account rejection
+
+For You Day, You Week, and Friends reports, a confirmed provider credit or
+credential rejection is an operational failure. It must not be converted into
+a completed report assembled from source passages, even when source completion
+is the selected delivery policy. Stop automatic retries, preserve the failed
+checkpoint and sanitized operator diagnostic, and show the reader that report
+writing is unavailable.
+
+An explicit retry after account recovery starts a fresh checkpoint attempt and
+must reach the writer/reviewer workflow, including across worker handoffs. It
+must not be mistaken for an exhausted quality cycle that selects source-only
+delivery. Replenishing provider credits does not rewrite an already-saved report.
+Regression coverage lives in `test-transit-source-completion.mjs` and
+`test-report-provider-schemas.mjs`; fixture success does not prove live writing
+quality or recover an existing production result.
+
 ### Quality gate
 
 Quality standards are not reduced to improve completion rate. A high aggregate score does not override required owner-voice, natural-language, factual-traceability, or other hard criteria. Unsupported invented circumstances remain a valid reason to reject a report.

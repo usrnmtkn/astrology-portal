@@ -1,3 +1,4 @@
+import { reportProviderUnavailableCause, isReportProviderUnavailableMessage, REPORT_PROVIDER_UNAVAILABLE_MESSAGE } from "./report-provider-availability.js";
 import { SOURCE_COMPLETION_POLICY, restoreCompleteFriendSourceSections } from "./transit-reading-source-completion.js";
 import { transitReadingReleasePolicy } from "./transit-reading-release-policy.js";
 import { hasCompletedReportReview, isReportReviewHeld, isTransitReadingReviewRequiredError, REPORT_REVIEW_REQUIRED, REPORT_REVIEW_REQUIRED_MESSAGE } from "./transit-reading-review-stop.js";
@@ -216,7 +217,9 @@ async function ensureJob(input: {
         run_after: new Date().toISOString(),
         locked_at: null,
         locked_by: null,
-        last_error: null,
+        // Retain the operational cause through an explicit retry so it is
+        // not mistaken for an exhausted writing/review cycle.
+        last_error: isReportProviderUnavailableMessage(existing.last_error) ? existing.last_error : null,
         result_id: null
       });
       return rows[0] ?? existing;
@@ -593,6 +596,7 @@ export async function runFriendReportJobs(input: {
     // A pre-repair retry may already have consumed its complete quality cycle.
     // Hold it before provider dispatch; never migrate a rejected draft to ready.
     const sourceOnly = transitReadingReleasePolicy() === SOURCE_COMPLETION_POLICY
+      && !isReportProviderUnavailableMessage(job.last_error)
       && (hasCompletedReportReview(job.last_error) || (job.checkpoint_attempt ?? 1) > 1);
     if (hasCompletedReportReview(job.last_error) && !sourceOnly) {
       const message = `${REPORT_REVIEW_REQUIRED} ${REPORT_REVIEW_REQUIRED_MESSAGE}`;
@@ -636,21 +640,23 @@ export async function runFriendReportJobs(input: {
       if (error instanceof TransitReadingCheckpointYield) {
         await admin.update("friend_report_jobs", `id=eq.${job.id}&state=eq.running&locked_by=eq.${encodeURIComponent(input.workerId)}`, {
           state: "retry", attempt: Math.max(0, job.attempt - 1), run_after: new Date().toISOString(),
-          locked_at: null, locked_by: null, last_error: null
+          locked_at: null, locked_by: null,
+          last_error: isReportProviderUnavailableMessage(job.last_error) ? job.last_error : null
         });
         await saveProgress("waiting");
         results.push({ jobId: job.id, status: "retry" });
         continue;
       }
+      const providerUnavailable = reportProviderUnavailableCause(error);
       const judgeBlocked = isTransitReadingJudgeBlockedError(error);
       const invalidReview = isTransitReadingReviewRequiredError(error);
       const reviewHeld = judgeBlocked || invalidReview;
       // The one corrective rewrite is the whole quality budget, not a loop inside four job attempts.
-      const failed = reviewHeld || job.attempt >= attemptCap || error instanceof TransitReadingCheckpointStopped;
+      const failed = Boolean(providerUnavailable) || reviewHeld || job.attempt >= attemptCap || error instanceof TransitReadingCheckpointStopped;
       const delayMinutes = Math.min(30, Math.max(1, job.attempt * 2));
       const errorMessage = reviewHeld
         ? `${REPORT_REVIEW_REQUIRED} ${REPORT_REVIEW_REQUIRED_MESSAGE}`
-        : error instanceof Error ? error.message.slice(0, 2000) : "Report generation failed.";
+        : providerUnavailable?.message ?? (error instanceof Error ? error.message.slice(0, 2000) : "Report generation failed.");
       await admin.update("friend_report_jobs", `id=eq.${job.id}`, {
         state: failed ? "failed" : "retry",
         ...(!failed ? { checkpoint_attempt: (job.checkpoint_attempt ?? 1) + 1 } : {}),
@@ -661,8 +667,9 @@ export async function runFriendReportJobs(input: {
           ? `${errorMessage} ${JSON.stringify(error.diagnostic)}`.slice(0, 12000)
           : errorMessage
       });
-      if (failed) await markPlaceholderFailed(admin, job, !reviewHeld && error instanceof TransitReadingCheckpointStopped
-        ? "This report could not finish generating. Please try again." : errorMessage);
+      if (failed) await markPlaceholderFailed(admin, job, providerUnavailable ? REPORT_PROVIDER_UNAVAILABLE_MESSAGE
+        : !reviewHeld && error instanceof TransitReadingCheckpointStopped
+          ? "This report could not finish generating. Please try again." : errorMessage);
       if (!failed) await saveProgress("waiting");
       results.push({ jobId: job.id, status: failed ? "failed" : "retry" });
 

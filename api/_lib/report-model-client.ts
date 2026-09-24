@@ -1,6 +1,7 @@
 import { reportFulfillmentConfig } from "./report-fulfillment-config.js";
 import { assertOpenAiStrictResponseSchema, ReportProviderSchemaError } from "./report-provider-schema.js";
 import { assertReportProductionKernel, type ReportProductionKernel } from "./report-production-gate.js";
+import { ReportProviderUnavailableError, reportProviderResponseError } from "./report-provider-availability.js";
 
 export { assertOpenAiStrictResponseSchema, ReportProviderSchemaError } from "./report-provider-schema.js";
 
@@ -90,7 +91,7 @@ async function callOpenAi<T>(input: {
   let result: ReportModelResult<T>;
   try {
     const key = process.env.OPENAI_API_KEY;
-    if (!key) throw new Error("OPENAI_API_KEY is not configured.");
+    if (!key) throw new ReportProviderUnavailableError("openai", "credentials");
     const response = await fetch("https://api.openai.com/v1/responses", {
     method: "POST",
     signal: input.signal,
@@ -101,8 +102,8 @@ async function callOpenAi<T>(input: {
       text: { format: { type: "json_schema", name: input.schemaName, strict: true, schema: input.schema } }
     }, input.requestLimits)
   });
-    const payload = await response.json() as Record<string, unknown> & { error?: { message?: string }; id?: string };
-    if (!response.ok) throw new Error(payload.error?.message ?? `Report model call failed with ${response.status}.`);
+    const payload = await response.json() as Record<string, unknown> & { error?: { message?: string; code?: string; type?: string }; id?: string };
+    if (!response.ok) throw reportProviderResponseError("openai", response.status, payload.error);
     const rawUsage = payload.usage && typeof payload.usage === "object" ? payload.usage as Record<string, unknown> : {};
     const inputTokens = typeof rawUsage.input_tokens === "number" ? rawUsage.input_tokens : 0;
     const outputTokens = typeof rawUsage.output_tokens === "number" ? rawUsage.output_tokens : 0;
@@ -161,7 +162,7 @@ async function callClaude<T>(input: {
   let result: ReportModelResult<T>;
   try {
     const key = process.env.ANTHROPIC_API_KEY;
-    if (!key) throw new Error("ANTHROPIC_API_KEY is not configured.");
+    if (!key) throw new ReportProviderUnavailableError("claude", "credentials");
     const response = await fetch("https://api.anthropic.com/v1/messages", {
     method: "POST",
     signal: input.signal,
@@ -176,9 +177,9 @@ async function callClaude<T>(input: {
   });
     const payload = await response.json() as {
     id?: string; content?: Array<{ type?: string; name?: string; input?: T }>;
-    usage?: { input_tokens?: number; output_tokens?: number }; error?: { message?: string };
+    usage?: { input_tokens?: number; output_tokens?: number }; error?: { message?: string; code?: string; type?: string };
   };
-    if (!response.ok) throw new Error(payload.error?.message ?? `Anthropic report call failed with ${response.status}.`);
+    if (!response.ok) throw reportProviderResponseError("claude", response.status, payload.error);
     const responseUsage = usage(payload.usage?.input_tokens, payload.usage?.output_tokens);
     const value = payload.content?.find((entry) => entry.type === "tool_use" && entry.name === input.schemaName)?.input;
     if (!value) throw new ReportModelResponseRejectedError(

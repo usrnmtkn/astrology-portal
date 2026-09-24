@@ -3027,15 +3027,14 @@ test.describe("content dashboard admin user flow case studies", () => {
     const finder = page.getByRole("region", { name: "Personal Transits source finder" });
     const liveCard = finder.getByRole("region", { name: "Live reader write-up" });
     const editor = page.getByRole("dialog", { name: "Generated content editor" });
-    await expect(finder.getByRole("status")).toContainText("authored/transit-aspect/mars/north-node/sextile");
+    // Opening the transit adds a loading status alongside the destination prompt.
+    const destination = finder.getByRole("status").filter({ hasText: "Write-up destination" });
+    await expect(destination).toContainText("authored/transit-aspect/mars/north-node/sextile");
     await liveCard.getByRole("button", { name: "Edit live Mars sextile your North Node" }).click();
     await expect(editor.getByLabel("Content key", { exact: true })).toHaveValue(sharedKey);
     await expect(editor.locator('[data-sky-field="body_you"]')).toHaveValue(String(shared.body_you ?? shared.body ?? ""));
     await expect(page.getByRole("status").filter({ hasText: "not materialized" })).toHaveCount(0);
     await expect(page.getByRole("status").filter({ hasText: "from the packaged source" })).toBeVisible();
-    // The finder gained a second status when it started naming the write-up destination,
-    // so the key is read from that prompt rather than from whichever status came first.
-    const destination = finder.getByRole("status").filter({ hasText: "Write-up destination" });
     await expect(destination).toContainText("authored/transit-aspect/mars/north-node/sextile");
     await closeGeneratedEditor(page);
     await page.getByLabel("Transit zodiac sign", { exact: true }).selectOption("scorpio");
