@@ -645,7 +645,8 @@ assert.match(
   /function calendarStationDirectPackageDescription\(event: LunarCalendarEvent, dateLine: string\)[\s\S]*?replaceAll\("\{\{dateLine\}\}", dateLine\)/u,
   "Direct-station copy must use the event date line instead of claiming every event happens this week."
 );
-assert.match(calendarCss, /\.tx-body--loading/u, "Calendar cards must reserve prose space while content hydrates.");
+assert.match(calendarSource, /isContentLoading[\s\S]*TransitCardSkeleton/u, "Pending transit interpretation must use its real card skeleton.");
+assert.doesNotMatch(calendarCss, /\.tx-body--loading/u, "Retired Calendar gradient placeholders must not remain in CSS.");
 
 console.log(JSON.stringify({
   aspectKeys: aspectKeys.length,

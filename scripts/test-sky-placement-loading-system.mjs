@@ -79,7 +79,7 @@ assert.match(
 );
 assert.match(
   app,
-  /useSkyCardsSettled\(skyPlacementCardsSettled\(/,
+  /const cardsSettled = skyPlacementCardsSettled\([\s\S]*useSkyCardsSettled\(cardsSettled && !cardsLoading\)/,
   "The Sky list must report card readiness to the shared first-paint gate."
 );
 const readingLayout = read("apps/web/src/features/sky/SkyReadingLayout.tsx");
@@ -95,8 +95,8 @@ assert.match(
 );
 assert.match(
   placementRows,
-  /descriptionLoading\s*\?[\s\S]*PageLoading compact/,
-  "A placement with unresolved copy must render an in-card loader while content is loading."
+  /if \(descriptionLoading\) return[\s\S]*PlacementRowSkeleton/,
+  "A placement with unresolved copy must render a full static card skeleton while content is loading."
 );
 assert.match(
   app,

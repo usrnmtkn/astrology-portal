@@ -18,6 +18,9 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
     await page.getByLabel('Daily sky summary').getByRole('link', {name:'Read about Neptune in Aries',exact:true}).click();
     const card = page.getByRole('link', {name:'Read more about Neptune Rx Sextile Pluto Rx', exact:true});
     await expect(card).toBeVisible({timeout:60000});
+    await expect(card).toHaveCSS('animation-name', 'lazy-fade');
+    await expect(card).toHaveCSS('animation-duration', '0.12s');
+    await expect(card).toHaveCSS('animation-delay', '0s');
     await expect(card).toContainText('Building through September 15.');
     await expect(card).toContainText('Pass 2 of 13.');
     await expect(card).toContainText('These two last met like this in 1986.');

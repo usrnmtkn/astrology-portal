@@ -1,0 +1,68 @@
+:root {
+  --lazy-fade-duration: 120ms;
+  --lazy-min-skeleton: 280ms;
+}
+
+.card-skeleton-bar {
+  display: inline-block;
+  vertical-align: middle;
+  width: calc(var(--size-8) * 2);
+  max-width: 100%;
+  height: 11px;
+  border-radius: var(--radius-pill);
+  background: var(--surface-2);
+}
+
+.card-skeleton-bar--title {
+  width: calc(var(--size-8) * 3);
+  height: 16px;
+}
+
+.card-skeleton-bar--short {
+  width: var(--size-8);
+}
+
+.card-skeleton-disc {
+  display: block;
+  width: var(--text-glyph);
+  height: var(--text-glyph);
+  border-radius: var(--radius-circle);
+  background: var(--surface-2);
+}
+
+.card-skeleton-tag {
+  display: block;
+  width: var(--calendar-tag-width);
+  height: var(--calendar-tag-height);
+  border-radius: var(--calendar-tag-radius);
+  background: var(--surface-2);
+}
+
+.card-skeleton {
+  pointer-events: none;
+}
+
+.card-skeleton .planet-placement-row__glyph {
+  gap: var(--space-2);
+}
+
+.card-skeleton :is(.planet-placement-row__description, .calendar-stoic-card__excerpt) {
+  width: 100%;
+}
+
+.card-skeleton :is(.planet-placement-row__description, .aspect-row-copy p, .calendar-stoic-card__excerpt) .card-skeleton-bar {
+  width: 80%;
+}
+
+.is-revealing {
+  animation: lazy-fade var(--lazy-fade-duration) ease both;
+}
+
+/* Initial Sky children are mounted for parallel loading before their reveal. */
+.sky-reading-layout__content[aria-hidden="true"] .is-revealing {
+  animation-play-state: paused;
+}
+
+@keyframes lazy-fade {
+  from { opacity: 0; }
+}

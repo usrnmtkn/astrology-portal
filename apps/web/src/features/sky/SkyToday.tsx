@@ -1,3 +1,7 @@
+import { PlacementRowSkeleton } from "../../components/charts/PlacementRows";
+import { AspectListSkeleton } from "../../components/charts/AspectRowSkeleton";
+import { LoadingStatus } from "../../components/CardSkeleton";
+import { MINIMUM_SKELETON_MS } from "../../hooks/useMinimumLoading";
 import type { ReactNode } from "react";
 import { DeferredRender } from "../../components/DeferredRender";
 import type { AspectGiftLessonLabel } from "../../services/aspectGiftLesson";
@@ -14,14 +18,23 @@ export function SkyPlacementSection({ children }: { children: ReactNode }) {
   );
 }
 
-export function SkyPlacementList({ children }: { children: ReactNode }) {
+export function SkyPlacementList({ children, loading = false }: { children: ReactNode; loading?: boolean }) {
   return (
-    <div className="placement-table-wrap" role="list" aria-label="Daily planetary placements">
+    <div className="placement-table-wrap" aria-busy={loading} role="list" aria-label="Daily planetary placements">
       <div className="placement-table">
         {children}
       </div>
     </div>
   );
+}
+
+export function SkyPlacementListSkeleton({ count = 3 }: { count?: number }) {
+  return <SkyPlacementList loading>
+    <LoadingStatus>Loading description</LoadingStatus>
+    {Array.from({ length: count }, (_, index) => <SkyPlacementListItem key={index} id={`loading-${index}`}>
+      <PlacementRowSkeleton />
+    </SkyPlacementListItem>)}
+  </SkyPlacementList>;
 }
 
 export function SkyPlacementListItem({ children, id }: { children: ReactNode; id: string }) {
@@ -76,7 +89,7 @@ export function SkyTodayView({
       <SkyPlacementSection>
         {placements}
       </SkyPlacementSection>
-      {aspects ? <DeferredRender fallback={<div className="deferred-render-placeholder deferred-render-placeholder--aspects" aria-hidden="true" />}>
+      {aspects ? <DeferredRender delay={MINIMUM_SKELETON_MS} fallback={<AspectListSkeleton />}>
         {aspects}
       </DeferredRender> : null}
     </>

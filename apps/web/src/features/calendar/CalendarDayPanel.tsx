@@ -1,3 +1,6 @@
+import { useMinimumLoading } from "../../hooks/useMinimumLoading";
+import { LoadingStatus, SkeletonBar } from "../../components/CardSkeleton";
+import { StoicCardSkeleton, SeasonTransitRowSkeleton } from "./CalendarDaySkeleton";
 import { FormattedProse } from "../../components/FormattedProse";
 import { ChevronRight } from "lucide-react";
 import type { SummaryPart } from "../../content/skyDailySummary";
@@ -16,7 +19,7 @@ import { CalendarKindLabel, CalendarKindTag } from "./CalendarKindTag";
 import { CalendarSlideout } from "./CalendarSlideout";
 import { CalendarSummaryText } from "./CalendarSummaryText";
 import { calendarKindFromEvent, type CalendarEventKind } from "./calendarKinds";
-import { PageLoadError, PageLoading } from "../../components/PageLoading";
+import { PageLoadError } from "../../components/PageLoading";
 
 export type CalendarDayEventCard = {
   event: LunarCalendarEvent;
@@ -159,6 +162,8 @@ export function CalendarDayPanel({
   onOpenEvent: (event: LunarCalendarEvent) => void;
   onCheckIn: () => void;
 }) {
+  const holding = useMinimumLoading(contentState === "loading");
+  const loading = contentState !== "error" && holding;
   const seasonFirst = [...events].sort((left, right) => {
     const leftSeason = (left.kind ?? calendarKindFromEvent(left.event)) === "season" ? 0 : 1;
     const rightSeason = (right.kind ?? calendarKindFromEvent(right.event)) === "season" ? 0 : 1;
@@ -167,6 +172,7 @@ export function CalendarDayPanel({
 
   const body = (
       <article aria-label="Selected lunar day" className={`calendar-day-panel${embedded ? " is-embedded" : ""}`} data-calendar-date={dateKey}>
+        {loading && !showSky ? <LoadingStatus>Loading this day’s reading…</LoadingStatus> : null}
         {showSky ? (
         <section className={`calendar-sky-card${embedded ? "" : " is-flush"}`}>
           <p className="calendar-sky-card__date">
@@ -185,8 +191,8 @@ export function CalendarDayPanel({
               </p>
             </div>
           </div>
-          <div className="calendar-sky-card__body">
-            {contentState === "loading" ? <PageLoading compact message="Loading this day’s reading…" /> : contentState === "error" ? (
+          <div className="calendar-sky-card__body" aria-busy={loading}>
+            {loading ? <><LoadingStatus>Loading this day’s reading…</LoadingStatus><p aria-hidden="true"><SkeletonBar /><br /><SkeletonBar /></p></> : contentState === "error" ? (
               <PageLoadError message="This day’s reading could not load." onRetry={onRetryContent} />
             ) : <>
             {sunSummary.length > 0 ? (
@@ -215,20 +221,22 @@ export function CalendarDayPanel({
 
         {showCheckIn ? <CheckInCard entry={checkInEntry} onCheckIn={onCheckIn} /> : null}
 
-        {seasonFirst.length > 0 ? (
-        <section className="calendar-day-events" aria-label={`${seasonFirst.length} events`}>
-          <span className="calendar-section-label">{seasonFirst.length} {seasonFirst.length === 1 ? "event" : "events"}</span>
+        {loading || seasonFirst.length > 0 ? (
+        <section className="calendar-day-events" aria-busy={loading} aria-label={loading ? undefined : `${seasonFirst.length} events`}>
+          <span className="calendar-section-label">{loading ? <span aria-hidden="true"><SkeletonBar short /></span> : <>{seasonFirst.length} {seasonFirst.length === 1 ? "event" : "events"}</>}</span>
           <div className="calendar-day-events__grid">
-            {seasonFirst.map((card) => {
+            {loading && seasonFirst.length === 0 ? <><StoicCardSkeleton /><StoicCardSkeleton /></> : seasonFirst.map((card) => {
               const kind: CalendarEventKind = card.kind ?? calendarKindFromEvent(card.event);
               const rest = seasonFirst.filter((item) => (item.kind ?? calendarKindFromEvent(item.event)) !== "season");
               const isSeason = (card.kind ?? calendarKindFromEvent(card.event)) === "season";
               const wide = isSeason || (!isSeason && rest.length % 2 === 1 && rest.at(-1) === card);
 
+              if (loading) return <StoicCardSkeleton key={card.event.id} wide={wide} moon={kind === "moon"} />;
+
               return (
                 <button
                   aria-label={card.title}
-                  className={`calendar-stoic-card${wide ? " is-wide" : ""}${kind === "moon" ? " calendar-stoic-card--moon" : ""}`}
+                  className={`calendar-stoic-card is-revealing${wide ? " is-wide" : ""}${kind === "moon" ? " calendar-stoic-card--moon" : ""}`}
                   key={card.event.id}
                   onClick={() => onOpenEvent(card.event)}
                   type="button"
@@ -251,18 +259,18 @@ export function CalendarDayPanel({
         </section>
         ) : null}
 
-        {seasonTransits.length > 0 ? (
-          <section className="calendar-season-transits" aria-label="Season-long transits">
+        {loading || seasonTransits.length > 0 ? (
+          <section className="calendar-season-transits" aria-busy={loading} aria-label="Season-long transits">
             <span className="calendar-section-label">
               Season-long transits
               <small>
-                {seasonTransits.filter((row) => row.retrograde).length
+                {loading ? <span aria-hidden="true"><SkeletonBar short /></span> : seasonTransits.filter((row) => row.retrograde).length
                   ? `${seasonTransits.filter((row) => row.retrograde).length} of ${seasonTransits.length} retrograde`
                   : "All direct"}
               </small>
             </span>
             <ul>
-              {seasonTransits.map((row) => {
+              {loading ? Array.from({ length: seasonTransits.length || 3 }, (_, index) => <SeasonTransitRowSkeleton key={index} />) : seasonTransits.map((row) => {
                 const content = (
                   <>
                     <CalendarKindTag glyph={row.glyph} kind={row.retrograde ? "station" : "ingress"} />
@@ -272,7 +280,7 @@ export function CalendarDayPanel({
                 );
 
                 return (
-                  <li className={row.retrograde ? "is-rx" : undefined} key={row.id}>
+                  <li className={`is-revealing${row.retrograde ? " is-rx" : ""}`} key={row.id}>
                     {row.event ? (
                       <button onClick={() => onOpenEvent(row.event!)} type="button">
                         {content}

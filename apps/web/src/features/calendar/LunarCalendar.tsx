@@ -1,3 +1,6 @@
+import { LoadingStatus, SkeletonBar } from "../../components/CardSkeleton";
+import { useMinimumLoading } from "../../hooks/useMinimumLoading";
+import { CalendarDaySkeleton } from "./CalendarDaySkeleton";
 import { FormattedProse } from "../../components/FormattedProse";
 import { useCalendarCheckIns } from "./useCalendarCheckIns";
 import { startReaderMeasurement } from "../../services/readerPerformance";
@@ -2199,6 +2202,8 @@ export function LunarCalendar({
   const [selectedCalendar, setSelectedCalendar] = useState<LunarCalendarMonthData | null>(null);
   const [seasonEvents, setSeasonEvents] = useState<LunarCalendarEvent[]>([]);
   const [status, setStatus] = useState<LunarCalendarStatus>("loading");
+  const holdingCalendar = useMinimumLoading(status === "loading");
+  const calendarLoading = status !== "error" && holdingCalendar;
   const [hasCalendarFacts, setHasCalendarFacts] = useState(false);
   const [calendarDetailState, setCalendarDetailState] = useState<"loading" | "ready" | "error">("loading");
   const [moonContentState, setMoonContentState] = useState<"loading" | "ready" | "error">(() =>
@@ -3039,11 +3044,7 @@ export function LunarCalendar({
         </div>
       </header>
 
-      {status === "loading" && (
-        <div className="lunar-calendar-loading">
-          <PageLoading compact message="Calculating calendar" />
-        </div>
-      )}
+      {calendarLoading && <div className="lunar-calendar-body"><CalendarDaySkeleton /></div>}
 
       {status === "error" && (
         <div className="lunar-calendar-empty" role="alert">
@@ -3053,7 +3054,7 @@ export function LunarCalendar({
         </div>
       )}
 
-      {calendar && status === "ready" && (
+      {calendar && status === "ready" && !calendarLoading && (
         <div
           className={`lunar-calendar-body is-${viewMode}`}
           id="lunar-calendar-view-panel"
@@ -3626,6 +3627,20 @@ function CalendarWeekStrip({
   );
 }
 
+function TransitCardSkeleton({ interactive, eventType }: { interactive: boolean; eventType: string }) {
+  const content = <>
+    <span className="tx-glyphs"><span className="card-skeleton-disc" /></span>
+    <h3 className="tx-title"><SkeletonBar title /></h3>
+    <div className="tx-foot"><span className="tx-tag"><SkeletonBar short /></span><span className="tx-date"><SkeletonBar /></span></div>
+    <p className="tx-body"><SkeletonBar /></p>
+    {interactive ? <span className="card-read-more"><SkeletonBar short /></span> : null}
+  </>;
+  const className = `aspect-card tx-card lunar-month-transit-card card-skeleton event-${eventType}`;
+  return interactive
+    ? <button className={`${className} lunar-month-transit-card--button`} type="button" disabled tabIndex={-1} aria-hidden="true">{content}</button>
+    : <article className={className} aria-hidden="true">{content}</article>;
+}
+
 function TransitCard({
   approvedExactSkyAspectLookup,
   composedSkyCalendarCardLookup,
@@ -3656,7 +3671,8 @@ function TransitCard({
   );
   const title = editorial.headline ?? event.title;
   const description = editorial.eventCopy ?? "";
-  const isContentLoading = contentStatus === "loading" && !description;
+  const isContentLoading = useMinimumLoading(contentStatus === "loading" && !description);
+  if (isContentLoading) return <><LoadingStatus>Loading interpretation</LoadingStatus><TransitCardSkeleton interactive={Boolean(onOpenTransit)} eventType={event.type} /></>;
   const cardContent = (
     <>
       <span className="tx-glyphs" aria-hidden="true">
@@ -3669,9 +3685,7 @@ function TransitCard({
         <span className="tx-tag">{transitCardStatusTag(event)}</span>
         <span className="tx-date">{formatEventDate(event.startsAt, timeZone)} · {formatEventTime(event.startsAt, timeZone)}</span>
       </div>
-      {isContentLoading ? (
-        <PageLoading compact message="Loading interpretation" />
-      ) : description ? <FormattedProse className="tx-body" text={description} /> : null}
+      {description ? <FormattedProse className="tx-body" text={description} /> : null}
       {onOpenTransit && !isContentLoading ? <CardReadMore /> : null}
     </>
   );
@@ -3680,7 +3694,7 @@ function TransitCard({
     return (
       <button
         aria-busy={isContentLoading}
-        className={`aspect-card tx-card lunar-month-transit-card lunar-month-transit-card--button event-${event.type}`}
+        className={`aspect-card tx-card is-revealing lunar-month-transit-card lunar-month-transit-card--button event-${event.type}`}
         data-content-key={editorial.contentKey}
         onClick={() => onOpenTransit(event, description)}
         type="button"
@@ -3693,7 +3707,7 @@ function TransitCard({
   return (
     <article
       aria-busy={isContentLoading}
-      className={`aspect-card tx-card lunar-month-transit-card event-${event.type}`}
+      className={`aspect-card tx-card is-revealing lunar-month-transit-card event-${event.type}`}
       data-content-key={editorial.contentKey}
     >
       {cardContent}

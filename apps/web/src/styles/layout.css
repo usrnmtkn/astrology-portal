@@ -22,22 +22,6 @@
   background: color-mix(in srgb, var(--surface) 62%, transparent);
 }
 
-.feature-loading-fallback__lines {
-  margin-top: 0;
-}
-
-.deferred-render-placeholder {
-  min-height: var(--deferred-placeholder-height);
-}
-
-.deferred-render-placeholder--table {
-  --deferred-placeholder-height: var(--ds-layout-deferred-placeholder-height);
-}
-
-.deferred-render-placeholder--aspects {
-  --deferred-placeholder-height: var(--ds-layout-deferred-placeholder-height-variant-2);
-}
-
 .chart-layout,
 .sky-layout {
   display: grid;

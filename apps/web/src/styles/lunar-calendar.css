@@ -1081,20 +1081,6 @@ a.tx-card.has-article:hover {
   text-wrap: pretty;
 }
 
-.tx-body--loading {
-  display: block;
-  min-height: calc(3 * var(--leading-body) * 1em);
-  border-radius: var(--radius-sm);
-  background: linear-gradient(
-    90deg,
-    color-mix(in srgb, var(--line) 55%, transparent) 20%,
-    color-mix(in srgb, var(--surface-2) 88%, var(--line)) 50%,
-    color-mix(in srgb, var(--line) 55%, transparent) 80%
-  );
-  background-size: 220% 100%;
-  animation: summary-skeleton-shimmer 1.8s ease-in-out infinite;
-}
-
 .tx-foot {
   display: flex;
   grid-column: 1;
@@ -1163,7 +1149,6 @@ a.tx-card.has-article:hover .tx-more {
   font-size: var(--type-label-size);
 }
 
-.lunar-calendar-loading,
 .lunar-calendar-empty {
   display: flex;
   align-items: center;
@@ -1175,10 +1160,6 @@ a.tx-card.has-article:hover .tx-more {
   background: var(--card-bg);
   color: var(--muted);
   font-size: var(--lunar-type-meta);
-}
-
-.lunar-calendar-loading svg {
-  animation: lunar-calendar-spin 900ms linear infinite;
 }
 
 .lunar-calendar-week-view {
@@ -2343,12 +2324,6 @@ a.tx-card.has-article:hover .tx-more {
 .lunar-weekly-day__events + .lunar-weekly-day__guidance {
   padding-top: var(--lunar-space-14);
   border-top: var(--border-width-thin) solid var(--line);
-}
-
-@keyframes lunar-calendar-spin {
-  to {
-    transform: rotate(360deg);
-  }
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -82,7 +82,7 @@ export function FriendCompositeTab({
                 listClassName="friend-aspect-list"
               >
                 {group.aspects.map((aspect) => (
-                  <button type="button" className="aspect-row aspect-row-button friend-aspect-row" key={`${aspect.from}-${aspect.type}-${aspect.to}`}
+                  <button type="button" className="aspect-row aspect-row-button friend-aspect-row is-revealing" key={`${aspect.from}-${aspect.type}-${aspect.to}`}
                     disabled={!aspect.summary || !onAspectClick}
                     aria-label={`Open full entry for ${aspect.from} ${aspect.type} ${aspect.to}`}
                     onClick={() => onAspectClick?.(aspect)}

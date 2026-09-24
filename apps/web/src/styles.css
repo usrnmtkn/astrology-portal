@@ -37,5 +37,6 @@ intentional display clamp() values.
 @import url("./styles/pill.css");
 @import url("./styles/responsive.css");
 @import url("./styles/card-systems.css");
+@import url("./styles/lazy-reveal.css");
 @import url("./styles/live-ds.css");
 @import url("./styles/learn.css");

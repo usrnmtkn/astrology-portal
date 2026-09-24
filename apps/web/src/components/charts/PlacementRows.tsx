@@ -1,7 +1,7 @@
 import { FormattedText } from "../FormattedProse";
 import { planetSignDignity, type EssentialDignity } from "../../services/planetSignDignity.mjs";
 import { CardReadMore } from "../CardReadMore";
-import { PageLoading } from "../PageLoading";
+import { LoadingStatus, SkeletonBar } from "../CardSkeleton";
 import type { PlanetPosition, SkySnapshot } from "../../types";
 import { SKY_BODY_ORDER, normalizeSkyBodyName } from "../../astrologyConfig";
 import { isDisplayRetrograde } from "../../services/astrologyDisplay";
@@ -621,6 +621,27 @@ export function PlacementTableRow({
   );
 }
 
+export function PlacementRowSkeleton({ interactive = true }: { interactive?: boolean }) {
+  const content = <>
+    <span className="planet-placement-row__glyph">
+      <span className="card-skeleton-disc" /><span className="card-skeleton-disc" />
+    </span>
+    <span className="planet-placement-row__body">
+      <span className="planet-placement-row__topline">
+        <span className="planet-placement-row__title"><span><SkeletonBar title /></span></span>
+        <span className="planet-placement-row__degree placement-row__degree"><SkeletonBar short /></span>
+      </span>
+      <span className="planet-placement-row__meta planet-placement-row__meta--timing"><span><SkeletonBar /></span></span>
+      <span className="planet-placement-row__description"><SkeletonBar /></span>
+      {interactive ? <span className="card-read-more"><SkeletonBar short /></span> : null}
+    </span>
+  </>;
+  const className = "sky-card planet-placement-row planet-placement-row--sky card-skeleton";
+  return interactive
+    ? <button className={`${className} planet-placement-row--clickable`} type="button" tabIndex={-1} aria-hidden="true" disabled>{content}</button>
+    : <article className={className} aria-hidden="true">{content}</article>;
+}
+
 export function PlanetPlacementRow({
   ariaLabel,
   degree,
@@ -678,11 +699,14 @@ export function PlanetPlacementRow({
     );
   }
 
+  if (descriptionLoading) return <><LoadingStatus>Loading description</LoadingStatus><PlacementRowSkeleton interactive={Boolean(onClick)} /></>;
+
   const hasTiming = Boolean(rangeLabel);
   const displayHouse = displayHouseForPoint(house, pointName);
   const houseLabel = displayHouse ? `${ordinalHouse(displayHouse)} House` : "House pending";
   const rowClassName = [
     "sky-card",
+    "is-revealing",
     "planet-placement-row",
     `planet-placement-row--${variant}`,
     onClick ? "planet-placement-row--clickable" : "",
@@ -714,8 +738,6 @@ export function PlanetPlacementRow({
         )}
         {description ? (
           <span className="planet-placement-row__description"><FormattedText text={description} /></span>
-        ) : descriptionLoading ? (
-          <PageLoading compact message="Loading description" />
         ) : null}
         {onClick && !descriptionLoading ? <CardReadMore /> : null}
       </span>
