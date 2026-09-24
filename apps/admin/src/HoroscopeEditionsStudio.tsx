@@ -113,7 +113,7 @@ export default function HoroscopeEditionsStudio({secret}:{secret:string}) {
       <details className="admin-workspace-details"><AdminDisclosureSummary>Calculated facts and timing</AdminDisclosureSummary><StudioTextarea aria-label="Calculated horoscope facts" readOnly rows={12} value={JSON.stringify(packet?.brief,null,2)}/></details>
       <details className="admin-workspace-details"><AdminDisclosureSummary>Review all twelve readings</AdminDisclosureSummary>{draft.passages.map(p=><section className="admin-hook-detail-section" key={p.sign} aria-label={`${horoscopeSignLabel(p.sign)} reading preview`}><h2>{horoscopeSignLabel(p.sign)}</h2><p>{p.headline}</p>{p.body?<div className="admin-copy-preview"><FormattedProse text={p.body}/></div>:<p>No reading written yet.</p>}</section>)}</details>
       <label><input type="checkbox" checked={approved} disabled={busy||dirty||complete!==12||!saved} onChange={e=>setApproved(e.target.checked)}/> I have reviewed and approve the exact wording of all twelve saved readings.</label>
-      <div className="admin-toolbar-actions"><StudioButton disabled={busy||dirty||!approved||!saved||saved.status==='LIVE'} onClick={()=>void save(true)}>Publish edition</StudioButton><a href="/#horoscopes">Open Horoscopes</a></div>
+      <div className="admin-toolbar-actions"><StudioButton disabled={busy||dirty||!approved||!saved||saved.status==='LIVE'} onClick={()=>void save(true)}>Publish edition</StudioButton></div>
     </>}
   </section>;
 }
