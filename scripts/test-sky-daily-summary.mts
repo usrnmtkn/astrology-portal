@@ -69,6 +69,20 @@ assert.ok(ordered.indexOf("The Moon is void") < ordered.indexOf("The next Full M
 assert.ok(!/—|undefined|\{\{/u.test(ordered));
 assert.ok(text({ ...facts, voidRemainingLabel: "1min" }).includes("for another 1 minute."));
 assert.ok(text({ ...facts, voidRemainingLabel: undefined }).includes("The Moon is void of course."));
+const sameDayVoid = {
+  ...facts,
+  voidRemainingLabel: "42 min",
+  voidNextSign: "Pisces",
+  ingresses: [{ id: "moon-pisces", label: "Moon enters Pisces" }]
+};
+assert.ok(text(sameDayVoid).includes("The Moon is void of course for another 42 minutes, until it enters Pisces."));
+assert.equal(text(sameDayVoid).includes("Moon enters Pisces today."), false);
+assert.equal(skyDailySummaryParts(sameDayVoid).find(part => part.eventId === "moon-pisces")?.text, "Pisces");
+const { renderVoidOfCourse } = await import("../apps/web/src/content/fallbackArchitectureV3/resolver/renderTransitSynastry.mjs");
+assert.equal(
+  renderVoidOfCourse({ sign: "aquarius", nextSign: "pisces" }).body,
+  "After its final aspect in Aquarius, the Moon is void of course until it enters Pisces. Use this window to finish what is already underway, clear a small task, or let a decision wait until the Moon changes signs."
+);
 
 
 for (const [name, eclipseType, label] of [["New Moon", "solar", "Solar Eclipse"], ["Full Moon", "lunar", "Lunar Eclipse"]] as const) {
