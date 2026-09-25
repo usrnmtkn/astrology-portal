@@ -175,10 +175,11 @@
 
 .natal-pattern-card__activation-body > p,
 .natal-pattern-card__activation-section p {
-  color: var(--card-body-color);
-  font-size: var(--type-sm);
-  line-height: var(--leading-description);
   margin: 0;
+  color: var(--ink-2);
+  font-family: var(--font-body);
+  font-size: var(--text-body);
+  line-height: var(--leading-body);
 }
 
 .natal-pattern-card__activation-sections {
@@ -241,10 +242,11 @@
 
 .soul-roadmap-card__header p {
   margin: 0;
-  color: var(--card-body-color);
-  font-size: var(--type-md);
+  color: var(--ink-2);
+  font-family: var(--font-body);
+  font-size: var(--text-body);
   font-weight: var(--weight-regular);
-  line-height: var(--leading-description);
+  line-height: var(--leading-body);
 }
 
 .soul-roadmap-card__points {
@@ -291,9 +293,10 @@
 
 .soul-roadmap-card__keywords p {
   margin: 0;
-  color: var(--card-body-color);
-  font-size: var(--type-sm);
-  line-height: var(--leading-description);
+  color: var(--ink-2);
+  font-family: var(--font-body);
+  font-size: var(--text-body);
+  line-height: var(--leading-body);
 }
 
 .soul-roadmap-card__keywords strong {
@@ -339,8 +342,12 @@
 .career-archetype-card__summary,
 .career-archetype-card__sections p {
   margin: 0;
-  color: var(--card-body-color);
-  line-height: var(--leading-description);
+  max-width: var(--reading-measure);
+  color: var(--ink-2);
+  font-family: var(--font-body);
+  font-size: var(--text-body);
+  line-height: var(--leading-body);
+  text-align: start;
 }
 
 .career-archetype-card__summary {

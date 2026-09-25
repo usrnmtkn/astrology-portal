@@ -448,11 +448,12 @@
 }
 
 .learn-chapter__blurb {
-  max-width: 66ch;
-  color: var(--muted);
+  max-width: var(--reading-measure);
+  color: var(--ink-2);
   font-family: var(--font-body);
   font-size: var(--text-body);
   line-height: var(--leading-body);
+  text-align: start;
 }
 
 .learn-page .learn-sheet--article {

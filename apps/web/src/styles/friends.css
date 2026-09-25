@@ -233,8 +233,10 @@
 
 .social-sharing-heading p,
 .social-sharing-note {
-  color: var(--muted);
-  line-height: var(--leading-description);
+  color: var(--ink-2);
+  font-family: var(--font-body);
+  font-size: var(--text-body);
+  line-height: var(--leading-body);
 }
 
 .social-sharing-details {
@@ -266,9 +268,10 @@
 
 .social-sharing-details p {
   margin: var(--space-1) 0 0;
-  color: var(--muted);
+  color: var(--ink-2);
+  font-family: var(--font-body);
   font-size: var(--text-body);
-  line-height: var(--leading-description);
+  line-height: var(--leading-body);
 }
 
 .social-sharing-switch {
@@ -436,11 +439,13 @@
 }
 
 .you-empty-state p {
-  max-width: var(--container-prose);
+  max-width: var(--reading-measure);
   margin: 0;
-  color: var(--card-body-color);
-  font-size: var(--text-description);
-  line-height: var(--leading-description);
+  color: var(--ink-2);
+  font-family: var(--font-body);
+  font-size: var(--text-body);
+  line-height: var(--leading-body);
+  text-align: start;
 }
 
 .you-empty-cta {
@@ -505,8 +510,10 @@
 .you-empty-card p,
 .friends-logic-card p {
   margin: 0;
-  color: var(--card-body-color);
-  line-height: var(--leading-description);
+  color: var(--ink-2);
+  font-family: var(--font-body);
+  font-size: var(--text-body);
+  line-height: var(--leading-body);
 }
 
 .you-empty-card button {
@@ -1096,10 +1103,11 @@
 }
 
 .you-signatures-main p {
-  color: var(--card-body-color);
-  font-size: var(--type-md);
+  color: var(--ink-2);
+  font-family: var(--font-body);
+  font-size: var(--text-body);
   font-weight: var(--weight-regular);
-  line-height: var(--leading-description);
+  line-height: var(--leading-body);
 }
 
 .elemental-balance {
@@ -1128,10 +1136,11 @@
 
 .elemental-balance p {
   margin: 0;
-  color: var(--card-body-color);
-  font-size: var(--type-sm);
+  color: var(--ink-2);
+  font-family: var(--font-body);
+  font-size: var(--text-body);
   font-weight: var(--weight-regular);
-  line-height: var(--leading-description);
+  line-height: var(--leading-body);
 }
 
 .friend-chart-modal-backdrop {
@@ -1280,6 +1289,8 @@
 
 .manual-chart-form-heading p,
 .friend-chart-modal-heading p {
-  color: var(--muted);
-  line-height: var(--leading-description);
+  color: var(--ink-2);
+  font-family: var(--font-body);
+  font-size: var(--text-body);
+  line-height: var(--leading-body);
 }

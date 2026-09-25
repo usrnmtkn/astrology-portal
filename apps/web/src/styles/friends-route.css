@@ -447,8 +447,10 @@
 .compatibility-glance p,
 .compatibility-card p {
   margin: 0;
-  color: var(--card-body-color);
-  line-height: var(--leading-description);
+  color: var(--ink-2);
+  font-family: var(--font-body);
+  font-size: var(--text-body);
+  line-height: var(--leading-body);
 }
 
 .compatibility-card__header {
@@ -1304,10 +1306,12 @@
 }
 
 .friends-unified-empty p {
-  max-width: 540px;
-  color: var(--friend-directory-subtle-text);
-  font-size: var(--friend-directory-message-size);
-  line-height: var(--leading-description);
+  max-width: var(--reading-measure);
+  color: var(--ink-2);
+  font-family: var(--font-body);
+  font-size: var(--text-body);
+  line-height: var(--leading-body);
+  text-align: start;
 }
 
 .friends-unified-empty .social-primary-button {
@@ -1454,8 +1458,10 @@
 
 .friends-remove-dialog > p {
   margin: 0;
-  color: var(--muted);
-  line-height: var(--friend-directory-dialog-copy-leading);
+  color: var(--ink-2);
+  font-family: var(--font-body);
+  font-size: var(--text-body);
+  line-height: var(--leading-body);
 }
 
 .friends-remove-actions {
@@ -1547,8 +1553,10 @@
 
 .friends-invite-heading p,
 .friends-invite-ready p {
-  color: var(--muted);
-  line-height: var(--leading-description);
+  color: var(--ink-2);
+  font-family: var(--font-body);
+  font-size: var(--text-body);
+  line-height: var(--leading-body);
 }
 
 .friends-invite-form,
@@ -1819,8 +1827,10 @@
 }
 
 .social-invitation-accept-modal > p {
-  color: var(--muted);
-  line-height: var(--friend-directory-dialog-copy-leading);
+  color: var(--ink-2);
+  font-family: var(--font-body);
+  font-size: var(--text-body);
+  line-height: var(--leading-body);
 }
 
 @media (max-width: 700px) {

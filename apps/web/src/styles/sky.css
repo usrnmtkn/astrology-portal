@@ -186,11 +186,12 @@
 }
 
 .article-sub {
-  max-width: 62ch;
+  max-width: var(--reading-measure);
   margin: 0;
-  color: var(--card-body-color);
+  color: var(--ink-2);
   font-family: var(--font-body);
-  font-size: var(--type-body-size);
+  font-size: var(--text-body);
+  text-align: start;
   font-weight: var(--weight-regular);
   letter-spacing: var(--tracking-body);
   line-height: var(--leading-body);
@@ -221,9 +222,11 @@
 }
 
 .article-tldr__copy {
-  max-width: none;
+  max-width: var(--reading-measure);
+  font-family: var(--font-body);
   font-size: var(--text-body);
   line-height: var(--leading-body);
+  text-align: start;
 }
 
 .article-rule {
@@ -257,7 +260,7 @@
 
 .article-lens-hint p {
   margin: 0;
-  color: var(--muted);
+  color: var(--ink-2);
   font-family: var(--font-body);
   font-size: var(--text-body);
   font-weight: var(--weight-regular);
@@ -337,10 +340,12 @@
 }
 
 .sky-detail-intro-section p {
-  max-width: none;
-  color: var(--card-body-color);
-  font-size: var(--type-body-size);
+  max-width: var(--reading-measure);
+  color: var(--ink-2);
+  font-family: var(--font-body);
+  font-size: var(--text-body);
   line-height: var(--leading-body);
+  text-align: start;
 }
 
 :is(.theme-dark, [data-theme="dark"]) .sky-detail-intro-section {
@@ -352,8 +357,6 @@
 .sky-detail-section h2,
 .article-section h3,
 .sky-detail-section h3,
-.article-section p,
-.sky-detail-section p,
 .sky-detail-lede {
   max-width: none;
 }
@@ -1012,7 +1015,16 @@
   line-height: var(--leading-description);
 }
 
-.retro-copy,
+.retro-copy {
+  max-width: var(--reading-measure);
+  color: var(--ink-2);
+  font-family: var(--font-body);
+  font-size: var(--text-body);
+  font-weight: var(--weight-regular);
+  line-height: var(--leading-body);
+  text-align: start;
+}
+
 .retrograde-detail-line {
   color: var(--card-body-color);
   max-width: var(--container-form);
@@ -1435,7 +1447,7 @@
 }
 
 .article-transit-description p {
-  color: var(--card-meta-color);
+  color: var(--ink-2);
   letter-spacing: var(--tracking-body);
 }
 

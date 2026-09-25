@@ -64,7 +64,9 @@ const requiredTypographyTokenValues = new Map([
   ["--text-body-sm", "var(--text-body)"],
   ["--text-description", "var(--text-body)"],
   ["--text-row-body-size", "var(--text-body)"],
-  ["--text-table-body-size", "var(--text-body)"],
+  // Table cells stay at the previous 15px body size. Reading paragraphs use --text-body at 1rem.
+  // Table cells stay at the previous 15px body size. Reading paragraphs use --text-body at 1rem.
+  ["--text-table-body-size", "15px"],
   ["--article-body-size", "var(--text-body)"],
   ["--label-eyebrow-font-family", "var(--font-label)"]
 ]);

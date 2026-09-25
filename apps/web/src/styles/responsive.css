@@ -1232,8 +1232,8 @@
     line-height: var(--leading-title);
   }
 
-  .mode-guest :where(.sky-pl-degree, .sky-pl-range, .sky-pl-status, .planet-placement-row__degree, .planet-placement-row__meta, .retro-until, .retro-sub, .retro-copy, .retrograde-detail-line),
-  .mode-member :where(.sky-pl-degree, .sky-pl-range, .sky-pl-status, .planet-placement-row__degree, .planet-placement-row__meta, .retro-until, .retro-sub, .retro-copy, .retrograde-detail-line) {
+  .mode-guest :where(.sky-pl-degree, .sky-pl-range, .sky-pl-status, .planet-placement-row__degree, .planet-placement-row__meta, .retro-until, .retro-sub, .retrograde-detail-line),
+  .mode-member :where(.sky-pl-degree, .sky-pl-range, .sky-pl-status, .planet-placement-row__degree, .planet-placement-row__meta, .retro-until, .retro-sub, .retrograde-detail-line) {
     font-size: var(--sky-mobile-meta);
     line-height: var(--leading-meta);
   }

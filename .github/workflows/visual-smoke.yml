@@ -403,6 +403,7 @@ jobs:
           tests/visual/swisseph-web-data-parity.spec.ts
           tests/visual/you-loading-performance.spec.ts
           tests/visual/friends-authenticated-loading-diagnostic.spec.ts
+          tests/visual/body-paragraph-type.spec.ts
       - name: Upload reader surface artifacts
         if: always()
         uses: actions/upload-artifact@v6
