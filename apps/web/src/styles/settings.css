@@ -197,7 +197,7 @@ button.settings-signout-row {
 }
 
 .settings-row p {
-  color: var(--muted);
+  color: var(--ink-2);
 }
 
 .settings-row-copy {
@@ -328,8 +328,10 @@ button.settings-signout-row {
 }
 
 .account-delete-modal p {
-  color: var(--card-body-color);
-  line-height: var(--leading-description);
+  color: var(--ink-2);
+  font-family: var(--font-body);
+  font-size: var(--text-body);
+  line-height: var(--leading-body);
 }
 
 .account-delete-modal label {
@@ -403,8 +405,10 @@ button.settings-signout-row {
 }
 
 .account-phone-modal p {
-  color: var(--card-body-color);
-  line-height: var(--leading-description);
+  color: var(--ink-2);
+  font-family: var(--font-body);
+  font-size: var(--text-body);
+  line-height: var(--leading-body);
 }
 
 .account-phone-modal label {

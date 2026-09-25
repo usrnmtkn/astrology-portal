@@ -68,9 +68,19 @@ h2,
 h3,
 h4,
 h5,
-h6,
+h6 {
+  margin: 0;
+}
+
 p {
   margin: 0;
+  max-width: var(--reading-measure);
+  color: var(--ink-2);
+  font-family: var(--font-body);
+  font-size: var(--text-body);
+  font-weight: var(--weight-regular);
+  line-height: var(--leading-body);
+  text-align: start;
 }
 
 h1,
@@ -169,6 +179,7 @@ svg {
 .type-body-muted,
 .type-body-strong {
   color: var(--ink-2);
+  font-family: var(--font-body);
   font-size: var(--text-body);
   font-weight: var(--weight-regular);
   line-height: var(--leading-body);

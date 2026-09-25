@@ -51,12 +51,13 @@
 
 .sky-intro__copy {
   margin: var(--sp-2) 0 0;
-  max-width: 620px;
+  max-width: var(--reading-measure);
   color: var(--ink-2);
   font-family: var(--font-body);
-  font-size: var(--text-section-heading-size);
+  font-size: var(--text-body);
   font-weight: var(--weight-regular);
-  line-height: var(--leading-description);
+  line-height: var(--leading-body);
+  text-align: start;
   text-wrap: pretty;
 }
 

@@ -126,7 +126,8 @@
 
 .report-chapter__copy > p:not(.report-label, .report-attribution, .report-chapter__source),
 .report-key-date-sheet__body > p:not(.report-label, .report-key-date-sheet__date, .report-attribution) {
-  color: var(--card-body-color);
+  color: var(--ink-2);
+  font-family: var(--font-body);
   font-size: var(--text-body);
   line-height: var(--leading-body);
 }

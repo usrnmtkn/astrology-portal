@@ -65,12 +65,13 @@
 
 .calendar-subscribe__intro {
   margin: 0;
-  color: var(--calendar-secondary);
+  max-width: var(--reading-measure);
+  color: var(--calendar-copy);
   font-family: var(--font-body);
-  font-size: var(--calendar-subscribe-intro);
+  font-size: var(--text-body);
   font-weight: var(--weight-regular);
-  line-height: var(--calendar-subscribe-intro-leading);
-  text-align: center;
+  line-height: var(--leading-body);
+  text-align: start;
   text-wrap: pretty;
 }
 
@@ -516,8 +517,6 @@
 
   .calendar-subscribe__intro {
     margin-top: calc(var(--lunar-space-6) * -1);
-    font-size: var(--calendar-subscribe-intro-compact);
-    line-height: var(--calendar-subscribe-intro-leading-compact);
   }
 
   .calendar-subscribe__row {
