@@ -186,7 +186,7 @@
 }
 
 .article-sub {
-  max-width: var(--reading-measure);
+  justify-self: stretch;
   margin: 0;
   color: var(--ink-2);
   font-family: var(--font-body);
@@ -222,7 +222,7 @@
 }
 
 .article-tldr__copy {
-  max-width: var(--reading-measure);
+  justify-self: stretch;
   font-family: var(--font-body);
   font-size: var(--text-body);
   line-height: var(--leading-body);
@@ -340,12 +340,20 @@
 }
 
 .sky-detail-intro-section p {
-  max-width: var(--reading-measure);
   color: var(--ink-2);
   font-family: var(--font-body);
   font-size: var(--text-body);
   line-height: var(--leading-body);
   text-align: start;
+}
+
+/* The article sheet is already the reading column. Body paragraphs fill it. */
+.article-body-inner p {
+  max-width: none;
+}
+
+.article-body-inner .sky-placement-hook-quote p {
+  max-width: 30ch;
 }
 
 :is(.theme-dark, [data-theme="dark"]) .sky-detail-intro-section {
@@ -1016,7 +1024,6 @@
 }
 
 .retro-copy {
-  max-width: var(--reading-measure);
   color: var(--ink-2);
   font-family: var(--font-body);
   font-size: var(--text-body);

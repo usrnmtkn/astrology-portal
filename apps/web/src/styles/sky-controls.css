@@ -51,7 +51,6 @@
 
 .sky-intro__copy {
   margin: var(--sp-2) 0 0;
-  max-width: var(--reading-measure);
   color: var(--ink-2);
   font-family: var(--font-body);
   font-size: var(--text-body);

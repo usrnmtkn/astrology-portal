@@ -433,7 +433,6 @@
   --calendar-slideout-leading: var(--leading-display);
   --calendar-slideout-control: var(--space-8);
   --calendar-checkin-star: var(--type-large-title-size);
-  --reading-measure: 68ch;
   --calendar-reading-copy: var(--text-card-title);
   --calendar-reading-heading: var(--type-h2-size);
   --calendar-day-title: var(--type-h1-size);

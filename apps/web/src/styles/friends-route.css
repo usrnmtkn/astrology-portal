@@ -1306,7 +1306,7 @@
 }
 
 .friends-unified-empty p {
-  max-width: var(--reading-measure);
+  justify-self: stretch;
   color: var(--ink-2);
   font-family: var(--font-body);
   font-size: var(--text-body);

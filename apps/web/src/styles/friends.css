@@ -439,7 +439,6 @@
 }
 
 .you-empty-state p {
-  max-width: var(--reading-measure);
   margin: 0;
   color: var(--ink-2);
   font-family: var(--font-body);
