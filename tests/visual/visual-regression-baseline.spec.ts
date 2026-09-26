@@ -260,9 +260,9 @@ test.describe("visual regression baseline", () => {
       // intermediate frame. Keep the expected image and pixel tolerance intact.
       await expect(page.getByRole("button", { name: "Read more about Sun in Cancer", exact: true }))
         .toContainText("Jun 21 - Jul 22", { timeout: routeReadyTimeoutMs });
-      // Wait for the calculated ingress too: the Darwin baseline previously
-      // captured the earlier frame, while Linux already included this event.
-      await expect(page.getByRole("link", { name: "Moon enters Virgo", exact: true }))
+      // A same-day Moon ingress is folded into the void sentence. Wait for that
+      // calculated next-sign link so the screenshot is not the earlier frame.
+      await expect(page.getByRole("paragraph").filter({ hasText: "until it enters" }).getByRole("link", { name: "Virgo", exact: true }))
         .toBeVisible({ timeout: routeReadyTimeoutMs });
       await expect(page.getByRole("link", { name: "Moon trines Lilith", exact: true }))
         .toBeVisible({ timeout: routeReadyTimeoutMs });
