@@ -972,7 +972,6 @@ body:has(.app-shell.mode-calendar),
 }
 
 .lunar-calendar-event-card__body > span:last-child {
-  max-width: var(--reading-measure);
   color: var(--calendar-copy);
   font-family: var(--font-body);
   font-size: var(--text-body);
@@ -2253,7 +2252,6 @@ a.tx-card.has-article:hover .tx-more {
   align-content: start;
   gap: var(--lunar-space-16);
   align-self: stretch;
-  max-width: 76ch;
   padding-left: var(--lunar-grid-aside-padding);
   border-left: var(--border-width-thin) solid var(--line);
 }
@@ -2315,7 +2313,6 @@ a.tx-card.has-article:hover .tx-more {
 
 .lunar-weekly-event__body,
 .lunar-weekly-day__guidance > div {
-  max-width: var(--reading-measure);
   color: var(--ink-2);
   font-family: var(--font-body);
   font-size: var(--text-body);
@@ -2861,7 +2858,7 @@ a.tx-card.has-article:hover .tx-more {
 .lunar-month-overview {
   display: grid;
   gap: var(--lunar-space-12);
-  max-width: var(--ds-lunar-calendar-lunar-selected-content-width);
+  max-width: none;
 }
 
 .lunar-month-overview p {
@@ -3349,7 +3346,6 @@ a.tx-card.has-article:hover .tx-more {
 .calendar-reading__body p,
 .calendar-sky-card__body p {
   margin: 0;
-  max-width: var(--reading-measure);
   color: var(--calendar-copy);
   font-family: var(--font-body);
   font-size: var(--text-body);
@@ -3514,13 +3510,15 @@ button.calendar-reading__toggle {
   display: grid;
   gap: var(--lunar-space-6);
   justify-items: center;
+  justify-self: stretch;
+  width: 100%;
 }
 
 .calendar-stoic-card__excerpt {
   display: block;
   overflow: visible;
   align-self: start;
-  max-width: var(--reading-measure);
+  justify-self: stretch;
   margin: 0;
   padding-top: var(--lunar-space-2);
   color: var(--calendar-copy);
@@ -4152,7 +4150,6 @@ button.calendar-reading__toggle {
 
 .calendar-checkin__summary {
   margin: 0;
-  max-width: var(--reading-measure);
   border-left: var(--calendar-quote-rule) solid var(--calendar-hairline);
   padding-left: var(--space-3);
   color: var(--calendar-copy);
@@ -4579,7 +4576,6 @@ button.calendar-reading__toggle {
 .calendar-day-group__excerpt,
 .calendar-day-group__blurb p {
   margin: 0;
-  max-width: var(--reading-measure);
   color: var(--calendar-copy);
   font-family: var(--font-body);
   font-size: var(--text-body);

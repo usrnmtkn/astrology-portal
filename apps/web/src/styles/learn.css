@@ -448,7 +448,6 @@
 }
 
 .learn-chapter__blurb {
-  max-width: var(--reading-measure);
   color: var(--ink-2);
   font-family: var(--font-body);
   font-size: var(--text-body);

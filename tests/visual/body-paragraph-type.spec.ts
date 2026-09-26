@@ -143,6 +143,56 @@ test.describe("body paragraph type", () => {
       expect(clipped, clipped.join("\n")).toEqual([]);
     });
   }
+
+  test("article, aspect, and calendar writing fills its card", async ({ page }) => {
+    test.setTimeout(180_000);
+    for (const width of [390, 1280]) {
+      await page.setViewportSize({ width, height: 900 });
+      for (const route of [
+        { name: "sky", path: routes[0].path, selectors: [".article-body-inner > .article-section p, .article-body-inner > .sky-detail-section p", ".article-related-aspects__copy p"] },
+        { name: "calendar-day", path: routes[1].path, selectors: [".calendar-sky-card__body p", ".calendar-stoic-card__excerpt"] },
+        { name: "calendar-week", path: routes[2].path, selectors: [".calendar-day-group__excerpt, .calendar-day-group__blurb p"] }
+      ]) {
+        await page.goto(route.path);
+        await waitForRoute(page, route.name === "calendar-week" ? "calendar-week" : route.name);
+        const needed = route.selectors;
+        for (const selector of needed) {
+          await expect(page.locator(selector).filter({ hasText: /.{40,}/ }).first(), `${route.name} ${selector} at ${width}px`).toBeVisible({ timeout: 60_000 });
+        }
+        const result = await page.evaluate((selectors) => {
+          const contentWidth = (node: Element) => {
+            let parent = node.parentElement;
+            while (parent) {
+              const style = getComputedStyle(parent);
+              if (style.display !== "contents" && parent.clientWidth > 0) {
+                const horizontalPadding = parseFloat(style.paddingLeft) + parseFloat(style.paddingRight);
+                return { width: parent.clientWidth - horizontalPadding, className: parent.className };
+              }
+              parent = parent.parentElement;
+            }
+            return { width: 0, className: "" };
+          };
+          const gaps: string[] = [];
+          const counts = selectors.map((selector) => {
+            const measured = [...document.querySelectorAll(selector)].filter((node) => {
+              if (!(node instanceof HTMLElement)) return false;
+              const text = (node.textContent || "").replace(/\s+/g, " ").trim();
+              if (text.length < 40) return false;
+              const box = node.getBoundingClientRect();
+              if (box.width < 8 || box.height < 8) return false;
+              const parent = contentWidth(node);
+              if (Math.abs(box.width - parent.width) > 1) gaps.push(`${selector} ${Math.round(box.width)}/${Math.round(parent.width)} ${parent.className} ${text.slice(0, 42)}`);
+              return true;
+            });
+            return measured.length;
+          });
+          return { gaps, counts };
+        }, needed);
+        expect(result.counts, `${route.name} at ${width}px`).not.toContain(0);
+        expect(result.gaps, `${route.name} at ${width}px`).toEqual([]);
+      }
+    }
+  });
 });
 
 async function waitForRoute(page: Page, name: string) {

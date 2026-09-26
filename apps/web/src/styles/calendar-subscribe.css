@@ -65,7 +65,6 @@
 
 .calendar-subscribe__intro {
   margin: 0;
-  max-width: var(--reading-measure);
   color: var(--calendar-copy);
   font-family: var(--font-body);
   font-size: var(--text-body);

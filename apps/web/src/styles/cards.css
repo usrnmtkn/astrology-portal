@@ -342,7 +342,6 @@
 .career-archetype-card__summary,
 .career-archetype-card__sections p {
   margin: 0;
-  max-width: var(--reading-measure);
   color: var(--ink-2);
   font-family: var(--font-body);
   font-size: var(--text-body);
