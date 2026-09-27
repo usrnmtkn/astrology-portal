@@ -13,7 +13,10 @@ import {loadPhraseEvidenceIndex} from './phraseEvidence.mjs';
 import {runWritingPipeline} from './runWritingPipeline.mjs';
 import {LUNATION_ARTICLE_PROTOCOL_VERSION,lunationArticleGuidance} from './lunationArticleInput.mjs';
 
-export const lunationArticleHash = value => createHash('sha256').update(typeof value === 'string' ? value : JSON.stringify(value)).digest('hex');
+// Storage may reorder any JSON object. Arrays and exact source text retain order.
+export const lunationArticleHash = value => createHash('sha256').update(typeof value === 'string' ? value : JSON.stringify(value, (_key, item) =>
+  item && typeof item === 'object' && !Array.isArray(item)
+    ? Object.fromEntries(Object.keys(item).sort().map(key => [key, item[key]])) : item)).digest('hex');
 const root=fileURLToPath(new URL('../../',import.meta.url));
 const family='lunation-article';
 const target={surface:family,route:'calendar',renderer:'LunationWritingStudio',contentKeyFamily:'studio-lunation',temporality:'current_sky',voiceMode:'second_person'};

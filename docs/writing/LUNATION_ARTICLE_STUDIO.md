@@ -1,13 +1,20 @@
 # Lunation article drafts in Content Studio
 
 Open **Content Studio → Calendar Write-ups → New & Full Moons & Eclipses**.
-The single workspace has **Reusable sign readings** and **Dated articles & eclipses**.
+The workspace opens **Dated articles & eclipses** first; **Reusable sign readings**
+remains available in the adjacent tab.
 The dated view is `/admin/content#calendar-writeups?view=lunation-writing&writing=dated`;
 old `view=lunations` links resolve to this view.
 
-Choose a month, time zone and calculated event, open its plan, review it, and
-select **Generate draft**. New Moons, Full Moons, solar eclipses and lunar
-eclipses are supported. Edit, save and reopen the complete article here.
+1. Choose a month and time zone. Calculated events load automatically.
+2. Select **Write Full Moon in Aries**, or the corresponding event button.
+   An existing workspace shows **Open** and preserves its saved text.
+3. Review the prepared writing plan, check **I've reviewed this writing plan**,
+   and select **Generate draft**. Writing direction is optional.
+4. Edit and save the result. **Open reader draft** takes it to the content editor
+   for review and publication.
+
+New Moons, Full Moons, solar eclipses and lunar eclipses are supported.
 **Edit shared writing guidance** opens the same saved profile used by reusable
 readings. The reusable view retains the argument editor, journal question and
 exact-key saved corrections. See [the reusable writer](CALENDAR_LUNATION_WRITER.md).
@@ -15,7 +22,9 @@ exact-key saved corrections. See [the reusable writer](CALENDAR_LUNATION_WRITER.
 **Open reader draft** copies a saved dated article into the normal content
 editor the first time. Existing reader edits are preserved on subsequent opens.
 The server checks the saved workspace version and applies the shared reader-copy and CMS-template validation before inserting a draft. This action neither approves nor
-publishes wording. Review and publish through the content editor.
+publishes wording. The handoff preserves check findings. Publication recalculates
+the event from its dated key and rechecks the final edited copy; factual errors
+block publication while voice suggestions remain advisory.
 
 A published `cms/lunation-article/{UTC-date}/{phase}/{sign}` takes priority for
 that calculated event. Calendar and the Sky lunar article use one shared source
@@ -61,6 +70,8 @@ same-family passages and a register reference are selected from the existing
 governed voice index. Reviewed phase, Moon-sign and ruler-placement sources
 provide meaning. The preview exposes the exact selected voice passages. Source
 hashes, protocol, facts, shared guidance and exact-key feedback versions bind the reviewed plan.
+Nested object keys are consistently ordered before hashing; database JSON key
+order alone cannot change the fingerprint. Array order and exact text still matter.
 
 Generation calls the configured writing model only after the owner reviews the
 plan and chooses Generate draft. A version-checked reservation precedes the

@@ -1754,6 +1754,7 @@ async function createGeneratedContentFromBody(body: GeneratedContentWriteBody) {
   Object.assign(row, normalizeArticleHoroscopes(row));
   assertReaderEligiblePublication(row);
   await assertZodiacSeasonPublication(row);
+  Object.assign(row, await validatedLunationPublication(row));
   if (row.status === "LIVE") await assertStudioVariablePublication(v3PackageRecord(row), studioVariableStorage);
   const response = await adminStorageFetch(`${supabaseUrl()}/rest/v1/generated_interpretations`, {
     method: "POST",
@@ -1899,6 +1900,12 @@ function nextGeneratedContentVersion(previous?: string | null) {
   return new Date(Math.max(Date.now(), Number.isFinite(previousTime) ? previousTime + 1 : 0)).toISOString();
 }
 
+async function validatedLunationPublication(row: Record<string, any>) {
+  if (row.status !== "LIVE" || !String(row.content_key ?? "").startsWith("cms/lunation-article/")) return {};
+  const { lunationPublicationPatch } = await import("../_lib/lunation-article-publication.js");
+  return lunationPublicationPatch(row);
+}
+
 /** Validate shared dependencies against serving revisions, never an editor draft. */
 async function assertZodiacSeasonPublication(row: Record<string, any>) {
   if (row.status !== "LIVE") return [];
@@ -1955,6 +1962,7 @@ async function patchGeneratedContentRow(
         facts: merged.facts
       };
     }
+    Object.assign(patch, await validatedLunationPublication(merged));
     assertReaderEligiblePublication(merged);
     await assertZodiacSeasonPublication(merged);
     await assertStudioVariablePublication(v3PackageRecord(merged), studioVariableStorage);
@@ -2062,6 +2070,7 @@ async function rowsFromPublicationReceipt(receipt: Record<string, any>) {
 }
 
 async function publishRevisionAtomically(body: GeneratedContentWriteBody, proposal: ExistingGeneratedContentRow, target: ExistingGeneratedContentRow, patch: Record<string, unknown>) {
+  Object.assign(patch, await validatedLunationPublication({ ...target, ...patch }));
   const context = publicationContext.getStore()!;
   const dependencies = [...context.dependencies.values()].filter(item => ![proposal.id, target.id].includes(item.id)).sort((a, b) => a.id.localeCompare(b.id));
   let response;
@@ -2087,6 +2096,7 @@ async function publishRevisionAtomically(body: GeneratedContentWriteBody, propos
 }
 
 async function upsertGeneratedContentRow(row: Record<string, unknown>) {
+  Object.assign(row, await validatedLunationPublication(row));
   const params = new URLSearchParams({
     select: "id,status,updated_at",
     content_key: `eq.${row.content_key}`,
@@ -2216,6 +2226,7 @@ async function bulkUpsertGeneratedContent(body: GeneratedContentRequestBody) {
   const prepared = rows.map(generatedContentRowFromWriteBody);
   prepared.forEach(assertReaderEligiblePublication);
   for (const row of prepared) {
+    Object.assign(row, await validatedLunationPublication(row));
     await assertZodiacSeasonPublication(row);
     if (row.status === "LIVE") await assertStudioVariablePublication(v3PackageRecord(row), studioVariableStorage);
   }
@@ -3044,6 +3055,7 @@ async function updateGeneratedContent(req: IncomingMessage) {
     });
   }
 
+  Object.assign(patch, await validatedLunationPublication({ ...existing, ...patch }));
   assertReaderEligiblePublication({ ...existing, ...patch });
   await assertZodiacSeasonPublication({ ...existing, ...patch });
   if (patch.status === "LIVE") await assertStudioVariablePublication(v3PackageRecord({ ...existing, ...patch }), studioVariableStorage);

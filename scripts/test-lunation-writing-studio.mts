@@ -1,8 +1,11 @@
 import assert from 'node:assert/strict';
 import {rows,invoke,providerFixture,feedbackFixture} from '../tests/helpers/lunation-writing-api.mts';
 import {calculateLunationArticleFacts,lunationArticleEvents,verifiedLunationEclipse} from '../api/_lib/lunation-article-facts';
-import {prepareLunationArticle,writeLunationArticle} from '../src/astro-writing/lunationArticleWriting.mjs';
+import {prepareLunationArticle,writeLunationArticle,lunationArticleHash} from '../src/astro-writing/lunationArticleWriting.mjs';
 
+assert.equal(lunationArticleHash({z:[{b:2,a:1}],a:null}),lunationArticleHash({a:null,z:[{a:1,b:2}]}));
+assert.notEqual(lunationArticleHash([1,2]),lunationArticleHash([2,1]));
+assert.notEqual(lunationArticleHash({a:1}),lunationArticleHash({a:2}));
 assert.equal((await invoke('GET',undefined,undefined,'wrong')).status,401);
 assert.equal((await invoke('DELETE')).status,405);
 assert.equal((await invoke('POST',{action:'prepare',month:'2026-09',timeZone:'UTC',eventId:'invented',direction:''})).status,422);
@@ -97,10 +100,39 @@ feedbackFixture.fail=false;
 const corrected=await call('generate',{approvedPlanHash:fresh.source_snapshot.lunationWriting.planHash});
 assert.equal(corrected.status,202,JSON.stringify(corrected));
 assert(providerFixture.requests.at(-1).input.includes(feedbackFixture.rows[0].owner_reason));
+// Factual findings must survive the handoff and be rechecked after reader-editor changes.
+let invalid=[...rows.values()].find(row=>row.facts?.lunationArticle?.event.startsAt.startsWith('2026-09-26'));
+const wrongCopy={headline:'Aries Full Moon',body:'With the Sun in Aries, you may want more room for a personal ambition. You can ask how a change in your availability would affect a shared plan.'};
+invalid=(await invoke('POST',{action:'save',id:invalid.id,expectedUpdatedAt:invalid.updated_at,...wrongCopy})).payload.rows[0];
+assert(invalid.source_snapshot.lunationWriting.lint.violations.some((finding:any)=>finding.category==='lunation_fact_boundary'));
+const invalidStage=await invoke('POST',{action:'stage',id:invalid.id,expectedUpdatedAt:invalid.updated_at});
+assert.equal(invalidStage.status,200);
+const invalidReader=[...rows.values()].find(row=>row.content_key===invalidStage.payload.contentKey);
+assert(invalidReader.source_snapshot.lunationWorkspace.lint.violations.some((finding:any)=>finding.category==='lunation_fact_boundary'));
 const {createApiStore}=await import('../tests/helpers/calendar-review-api.mjs');
 const datedRows=[...rows.values()].filter(row=>row.content_key.startsWith('studio-lunation/'));
-const generalStore=await createApiStore(datedRows);
+const generalStore=await createApiStore([...datedRows,invalidReader]);
 try{
+  const refused=await generalStore.invoke('PATCH',{id:invalidReader.id,status:'LIVE'});
+  assert.equal(refused.status,422,JSON.stringify(refused));
+  assert.match(refused.payload.error,/Sun in Aries/);
+  assert.equal(generalStore.rows.get(invalidReader.id).status,'DRAFT');
+  // Removing the recorded finding or forging facts cannot bypass event-time validation.
+  const forged=await generalStore.invoke('PATCH',{id:invalidReader.id,status:'LIVE',sourceSnapshot:{contentSystem:'cms-surface-override',allowedSlots:[]},facts:{lunationArticle:{positions:[{planet:'Sun',sign:'Aries'}]}}});
+  assert.equal(forged.status,422,JSON.stringify(forged));
+  const correctedBody=wrongCopy.body.replace('Sun in Aries','Sun in Libra');
+  const fixed=await generalStore.invoke('PATCH',{id:invalidReader.id,body:correctedBody,status:'LIVE'});
+  assert.equal(fixed.status,200,JSON.stringify(fixed));
+  assert.equal(fixed.payload.rows[0].body,correctedBody);
+  assert.equal(fixed.payload.rows[0].source_snapshot.lunationPublicationCheck.lint.passed,true);
+  const changedAgain=await generalStore.invoke('PATCH',{id:invalidReader.id,body:wrongCopy.body,status:'LIVE'});
+  assert.equal(changedAgain.status,422,JSON.stringify(changedAgain));
+  assert.equal(generalStore.rows.get(invalidReader.id).body,correctedBody);
+  for(const bulk of [false,true]){
+    const direct={contentKey:invalidReader.content_key,surface:'sky',mode:'article',eventType:'lunation-article',status:'LIVE',lane:'serving',...wrongCopy,sections:{},sourceSnapshot:{contentSystem:'cms-surface-override',allowedSlots:[]},blockType:'sky_article'};
+    const result=await generalStore.invoke('POST',bulk?{rows:[direct]}:direct);
+    assert.equal(result.status,422,JSON.stringify(result));
+  }
   const example=datedRows[0];
   for(const [method,input] of [
     ['POST',{contentKey:'studio-lunation/forged',mode:'article',status:'LIVE',headline:'Forged',body:'Synthetic'}],
