@@ -1,3 +1,4 @@
+import {lunationReaderContentKeys} from '../content/lunationReaderSource';
 import { contentPublication, publicationAllowsContent } from "../content/contentPublicationState";
 import type { SkySnapshot } from "../types";
 import type { LiveGeneratedContent } from "./generatedContent";
@@ -42,7 +43,7 @@ export async function loadSkyDetailContent(
   extraKeys: string[],
   load: (keys: string[]) => Promise<Map<string, LiveGeneratedContent>>
 ) {
-  const keys = Array.from(new Set([...skySnapshotAspectContentKeys(snapshot), ...extraKeys]));
+  const keys = Array.from(new Set([...skySnapshotAspectContentKeys(snapshot), ...(snapshot.moonEvent ? lunationReaderContentKeys({startsAt:snapshot.moonEvent.occursAt,sign:snapshot.moonEvent.sign,title:snapshot.moonEvent.name}) : []), ...extraKeys]));
   const retained = eligibleSkyDetailContent(existing);
   const missing = keys.filter(key => !retained.has(key));
   const complete = (content: Map<string, LiveGeneratedContent>) => {

@@ -1,4 +1,11 @@
 const SURFACE_RULES = Object.freeze({
+  "lunation-article": Object.freeze({route:"calendar",renderers:Object.freeze(["LunationWritingStudio"]),
+    temporalities:Object.freeze(["current_sky"]),voiceModes:Object.freeze(["second_person"]),registers:Object.freeze(["second_person"])}),
+  "calendar-lunation": Object.freeze({
+    route: "calendar", renderers: Object.freeze(["renderLunationMacro"]),
+    temporalities: Object.freeze(["current_sky"]), voiceModes: Object.freeze(["second_person"]),
+    registers: Object.freeze(["second_person"])
+  }),
   horoscopes: Object.freeze({route:'horoscopes',renderers:Object.freeze(['HoroscopeReader']),
     temporalities:Object.freeze(['current_sky']),voiceModes:Object.freeze(['second_person']),registers:Object.freeze(['second_person'])}),
   "sky-placement-page": Object.freeze({
@@ -105,6 +112,9 @@ export function assertSurfaceRegisterContract(target, { surface, register } = {}
   requireAllowed("renderer", normalized.renderer, rule.renderers);
   requireAllowed("temporality", normalized.temporality, rule.temporalities);
   requireAllowed("voice_mode", normalized.voiceMode, rule.voiceModes);
+  if (normalized.surface === "calendar-lunation") {
+    requireAllowed("content_key_family", normalized.contentKeyFamily, ["authored/sky-lunation-macro"]);
+  }
 
   if (surface != null && normalized.surface !== surface) {
     throw new SurfaceRegisterContractError(`surface_argument_mismatch:${surface}`);

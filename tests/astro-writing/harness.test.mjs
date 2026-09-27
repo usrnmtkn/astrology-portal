@@ -1030,7 +1030,7 @@ assert.equal(pipeline.report.automaticallyRevised, 0);
 assert.equal(pipeline.report.finalLintStatus, "PASS");
 assert.equal(pipeline.report.proseModelGateCalls, 0);
 assert.equal(writerCallCount, 1);
-assert.deepEqual(missingContentSpines(), ["cards", "lunations", "aspects", "house-cores"]);
+assert.deepEqual(missingContentSpines(), ["cards", "aspects", "house-cores"]);
 assert.equal(selectOwnerCorrectionPairs(allOwnerCorrections, { family: "lilith-placement-lived", count: 6 }).pairs.length, 6);
 assert.ok(validateCopy("You can name the actual preference.", { register: "collective", surface: "sky-placement-page" }).passed);
 assert.ok(!validateCopy("You can name the actual preference.", { register: "collective", surface: "card" }).passed);

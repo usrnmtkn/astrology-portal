@@ -46,7 +46,7 @@ export default async function handler(req:IncomingMessage,res:ServerResponse) {
     if(input.action==='release') {
       if(!operation||Date.now()-Date.parse(operation.startedAt)<310000||input.acknowledgeUnknownOutcome!==true)throw new AdminHttpError(409,'Wait for the in-flight request, then acknowledge its unknown outcome before releasing it.');
       if(operation.responseId){
-        const response=await fetch(`https://api.openai.com/v1/responses/${encodeURIComponent(operation.responseId)}/cancel`,{method:'POST',headers:{authorization:`Bearer ${process.env.OPENAI_API_KEY}`},signal:AbortSignal.timeout(20000)});
+        const response=await responses.storedWritingResponse({apiKey:process.env.OPENAI_API_KEY,responseId:operation.responseId,cancel:true});
         const result:any=await response.json();
         if(!response.ok||!['cancelled','failed','incomplete'].includes(result.status))throw new AdminHttpError(409,'This request could not be cancelled, or has already completed. Resume generation to retrieve its result.');
       }
@@ -59,7 +59,7 @@ export default async function handler(req:IncomingMessage,res:ServerResponse) {
     if(input.action==='poll') {
       if(!apiKey)throw new AdminHttpError(503,'The horoscope writer is not connected. Restore its server API key to retrieve this reading.');
       if(!operation.responseId)throw new AdminHttpError(409,'The request has no confirmed response ID yet. Wait, then reopen the edition. If interrupted, release it after five minutes.');
-      const response=await fetch(`https://api.openai.com/v1/responses/${encodeURIComponent(operation.responseId)}`,{headers:{authorization:`Bearer ${apiKey}`},signal:AbortSignal.timeout(20000)});
+      const response=await responses.storedWritingResponse({apiKey,responseId:operation.responseId});
       const payload:any=await response.json();
       if(!response.ok)throw new AdminHttpError(503,'The writer result is temporarily unavailable. Resume to retrieve the same request.');
       if(['queued','in_progress'].includes(payload.status))return sendAdminJson(res,202,{ok:true,rows:[row],pending:true});
@@ -106,7 +106,7 @@ export default async function handler(req:IncomingMessage,res:ServerResponse) {
         operation={...operation,requestHash:hash({request,instructions})};
         // Persist the exact request identity before the potentially billed call.
         await persist({source_snapshot:{...row.source_snapshot,horoscopeGeneration:{...row.source_snapshot.horoscopeGeneration,active:operation}}});
-        const {response,payload:result}=await responses.callOpenAIResponses({apiKey,role,request,governedInstructions:instructions,surface:'horoscopes',family:'horoscope',fetchImpl:(url:any,options:any)=>fetch(url,{...options,signal:AbortSignal.timeout(25000)})});
+        const {response,payload:result}=await responses.startStoredWritingResponse({apiKey,role,request,governedInstructions:instructions,surface:'horoscopes',family:'horoscope',fetchImpl:(url:any,options:any)=>fetch(url,{...options,signal:AbortSignal.timeout(25000)})});
         payload=result;
         if(!response.ok) {
           if(response.status>=400&&response.status<500)throw new ProviderFailure('The writer declined this request. Check its configuration or available quota, then resume.');

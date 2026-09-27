@@ -75,6 +75,7 @@ import {
 import { zonedDateTimeToUtc } from "../../services/timezones";
 import type { LocationInput } from "../../types";
 import { calendarEventGeneratedContentKeys } from "./calendarContentKeys";
+import {resolveLunationReaderSource} from '../../content/lunationReaderSource';
 import { calendarDayMoonWriting, calendarLunationMacroKey, calendarMoonWritingParagraphs, calendarMoonWritingSequenceWithoutRepeat, type CalendarMoonWritingPiece } from "./calendarDayMoonReading";
 import { calendarDateKeyDistance, calendarMoonCycleFactsForDays, type CalendarMoonCycleFacts } from "./calendarMoonCycle";
 import { resolveCalendarMoonFallback } from "./calendarMoonFallback";
@@ -1220,6 +1221,10 @@ export function normalizeCalendarEventSurface(
   generatedContent?: Map<string, LiveGeneratedContent>,
   timeZone = "UTC"
 ): NormalizedCalendarEventSurface {
+  if (event.type === 'lunation') {
+    const selected=resolveLunationReaderSource(event,generatedContent);
+    if(selected)return selected.body ? {surface:'calendar-event',status:'servable',sections:[{slot:'description',required:false,layer:'authored',tier:'stored-source',sourceKeys:selected.sourceKeys,body:selected.body.split(/\n\s*\n/u)[0]}]} : {surface:'calendar-event',status:'not-servable',sections:[]};
+  }
   if (event.type === "ingress" && event.planet === "Moon") {
     const from = event.fromSign ?? "";
     const to = event.toSign ?? event.sign ?? "";
@@ -1848,14 +1853,9 @@ function calendarMoonFallbackOptions(
   authoredUsedThisVisit = false
 ) {
   const lunation = primaryLunationForDay(day);
-  const lunationKey = calendarLunationMacroKey(lunation, day.moonSign);
-  const lunationBody = lunationKey
-    ? calendarLiveBody(
-      generatedContent,
-      lunationKey,
-      fallbackArchitectureV3AuthoredContentForKey(lunationKey)?.body
-    )
-    : "";
+  const lunarSource = lunation ? resolveLunationReaderSource(lunation, generatedContent) : null;
+  const lunationKey = lunarSource?.contentKey ?? '';
+  const lunationBody = lunarSource?.body ?? '';
   const seasonKey = facts.seasonName ? `fallback-hook/zodiac-season/${slugContentPart(facts.seasonName)}` : "";
   const seasonBody = seasonKey
     ? calendarLiveBody(generatedContent, seasonKey, fallbackV3HookBody(seasonKey))
@@ -1942,17 +1942,12 @@ function moonWritingForDay(
   leftoverFallback?: { contentKey: string; body: string } | null
 ) {
   const lunation = primaryLunationForDay(day);
-  const lunationKey = calendarLunationMacroKey(lunation, day.moonSign);
+  const lunarSource = lunation ? resolveLunationReaderSource(lunation, generatedContent) : null;
   return calendarDayMoonWriting({
     moonSign: day.moonSign,
     lunation,
-    lunationBody: lunationKey
-      ? calendarLiveBody(
-        generatedContent,
-        lunationKey,
-        fallbackArchitectureV3AuthoredContentForKey(lunationKey)?.body
-      )
-      : "",
+    lunationBody: lunarSource?.body ?? '',
+    lunationContentKey: lunarSource?.contentKey,
     leftoverFallback: leftoverFallback?.body?.trim() ? leftoverFallback : null
   });
 }
@@ -2627,7 +2622,7 @@ export function LunarCalendar({
     ].filter((contentKey) => (
       // Signed-off Studio exact revisions can supersede their bundled baseline.
       // Keep requesting these keys even when local approved prose is available.
-      contentKey.startsWith("sky.aspect.") || !fallbackArchitectureV3AuthoredContentForKey(contentKey)
+      contentKey.startsWith("sky.aspect.") || contentKey.startsWith("authored/sky-lunation-macro/") || !fallbackArchitectureV3AuthoredContentForKey(contentKey)
     ));
     const firstDate = visibleDays[0]?.dateKey ?? selectedDateKey;
     const lastDate = visibleDays.at(-1)?.dateKey ?? selectedDateKey;

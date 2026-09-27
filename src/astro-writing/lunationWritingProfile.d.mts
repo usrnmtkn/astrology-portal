@@ -1,0 +1,12 @@
+export const LUNATION_PROFILE_KEY:string;
+export const LUNATION_WORKSPACE_PREFIX:string;
+export const LUNATION_PROFILE_FIELDS:readonly ['voiceGuidance','phaseContext','scopeGuidance','factsAndLinks'];
+export const LUNATION_ARGUMENT_FIELDS:readonly string[];
+export const LUNATION_SIGNS:readonly string[];
+export const LUNATION_PHASES:readonly string[];
+export type LunationProfile={schema:'calendar-lunation-writing-profile/v1';voiceGuidance:string;phaseContext:string;scopeGuidance:string;factsAndLinks:string};
+export function defaultLunationProfile():LunationProfile;
+export function validateLunationProfile(value:unknown):LunationProfile;
+export function lunationEditorialPrompt(value:unknown):string;
+export function lunationContentKey(phase:string,sign:string):string;
+export function emptyLunationWorkspace(phase:string,sign:string):any;

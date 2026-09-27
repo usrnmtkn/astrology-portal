@@ -115,6 +115,7 @@ for (const key of initialChunks) {
   if (memoryGraphFiles.some((item) => item.file === file)) {
     failures.push(`Memory graph must remain deferred from Content Studio startup: ${file}`);
   }
+  if (['src/LunationWritingStudio.tsx','src/ReusableLunationWritingStudio.tsx','src/DatedLunationWritingStudio.tsx'].includes(key)) failures.push(`Lunar editors must remain deferred: ${file}`);
   if (key === 'src/HoroscopeEditionsStudio.tsx') {
     failures.push(`Horoscope edition editor must remain deferred from Content Studio startup: ${file}`);
   }
@@ -133,6 +134,9 @@ for (const key of initialChunks) {
 }
 
 const expectedDynamicEntries = [
+  "src/LunationWritingStudio.tsx",
+  "src/ReusableLunationWritingStudio.tsx",
+  "src/DatedLunationWritingStudio.tsx",
   "src/StudioFormattingEditor.tsx",
   "src/HoroscopeEditionsStudio.tsx",
   "src/CompositionMapWorkspace.tsx",

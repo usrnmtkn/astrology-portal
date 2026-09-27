@@ -46,6 +46,7 @@ export function buildMeaningPlan(input) {
   );
   const risks = textList(input.risks ?? input.shadowExpression);
   const plan = {
+    ...(input.calculatedFactsHash ? { calculatedFactsHash: input.calculatedFactsHash } : {}),
     content_type: String(input.contentType ?? input.content_type ?? "placement"),
     object,
     sign,

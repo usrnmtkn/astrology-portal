@@ -39,7 +39,8 @@ export const ARGUMENT_OUTLINE_FIELDS = Object.freeze([
 ]);
 
 export function argumentOutlineFieldsForFamily(family) {
-  if (family === 'horoscope') return Object.freeze(['thesis','transit_job','recognition','complication','response','scope_guard']);
+  if (family === 'lunations') return Object.freeze(['thesis','phase_context','sign_meaning','recognition','intention_or_reflection','journal_focus','scope_guard']);
+  if (['horoscope','lunation-article'].includes(family)) return Object.freeze(['thesis','transit_job','recognition','complication','response','scope_guard']);
   return Object.freeze([
     ...ARGUMENT_OUTLINE_CORE_FIELDS,
     ...ARGUMENT_OUTLINE_SPINE_QUALITY_FIELDS,

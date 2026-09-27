@@ -28,6 +28,11 @@ const ARTICLE_POLICY = Object.freeze({
 });
 
 export const OWNER_EVIDENCE_FAMILY_MAP = Object.freeze({
+  "lunation-article": Object.freeze({...ARTICLE_POLICY, sameFamilyFamilies:Object.freeze(["sky-lunation"]), registerGoldIds:Object.freeze(["register-gold:lunation-article"])}),
+  lunations: Object.freeze({...ARTICLE_POLICY,
+    sameFamilyFamilies: Object.freeze(['sky-lunation']),
+    registerGoldIds: Object.freeze(['register-gold:lunations:new-moon','register-gold:lunations:full-moon'])
+  }),
   horoscope: Object.freeze({...ARTICLE_POLICY, sameFamilyFamilies:Object.freeze(['weekly-astrology','sky-season','sky-lunation','sky-article-longform','sky-article-reference'])}),
   "fast-mover-article": ARTICLE_POLICY,
   "slow-mover-article": ARTICLE_POLICY
