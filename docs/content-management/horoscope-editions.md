@@ -213,3 +213,7 @@ schema or broader feedback scope is introduced. Save a profile, then adopt it in
 an edition and review the updated plan before generation. Existing bodies,
 publication state, signed briefs and execution receipts are preserved by a
 profile change. A code/profile deployment does not regenerate saved readings.
+
+New generated headlines use “[Sign] & [Sign] Rising” through the provider output
+schema. Existing saved/custom headlines remain unchanged. The calculated house
+convention remains the edition’s declared rising-sign convention.

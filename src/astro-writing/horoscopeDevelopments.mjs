@@ -11,6 +11,15 @@ export function horoscopeEventPlanet(event) {
   return String(event.type === 'lunation' ? 'Moon' : event.planet ?? '').toLowerCase();
 }
 
+function eventTitle(event) {
+  if(event.title)return event.title;
+  // Older signed briefs stored the phase in the calculation ID, not a title.
+  const phase=String(event.id).match(/^lunation-(new-moon|full-moon|first-quarter|last-quarter)-/iu)?.[1];
+  const label=phase ? phase.replaceAll('-',' ').replace(/\b\w/gu,c=>c.toUpperCase())
+    : `${event.planet??'Moon'} ${event.type==='ingress'?'enters':event.type}`;
+  return `${label}${event.type==='ingress'?'':' in'} ${event.sign}`;
+}
+
 export function horoscopeEventsInWindow(brief) {
   const start = Date.parse(brief.window.startsAt), end = Date.parse(brief.window.endsAt);
   return (brief.events ?? []).filter(event => {
@@ -38,7 +47,7 @@ export function buildHoroscopeDevelopments(brief, rising, {placements, houses}) 
   const events = horoscopeEventsInWindow(brief).flatMap(event => {
     const binding = bind(horoscopeEventPlanet(event),event.sign);
     return binding ? [{id:event.id,type:event.type,...binding,startsAt:event.startsAt,
-      localTiming:localTime.format(new Date(event.startsAt)),title:event.title ?? event.id,
+      localTiming:localTime.format(new Date(event.startsAt)),title:eventTitle(event),
       fromSign:event.fromSign ?? null,direction:event.direction ?? null,
       timingScope:'exact sky event; a possible personal development has no guaranteed date'}] : [];
   });

@@ -37,7 +37,9 @@ for(const entry of plan.payload.plan.readings){
 const changedBrief=structuredClone(row);changedBrief.facts.horoscopeBrief.brief.events=brief.events.filter((e:any)=>e.type!=='ingress');
 assert.notEqual(prepareHoroscopeWriting(changedBrief).planHash,prepareHoroscopeWriting(row).planHash,'Fact coverage invalidates plan approval');
 // Legacy signed rows retain only their actual coverage, without invented ingresses.
+for(const event of changedBrief.facts.horoscopeBrief.brief.events)delete event.title;
 const legacy=prepareHoroscopeWriting(changedBrief);
+assert(legacy.entries.every((e:any)=>e.developments.events.some((d:any)=>d.title==='Full Moon in Aries')),'Legacy calculation IDs render as readable event names');
 assert(legacy.entries.every((e:any)=>e.developments.events.every((d:any)=>d.type!=='ingress')));
 
 // A generic "owner passages present" check missed the excluded sign readings.
