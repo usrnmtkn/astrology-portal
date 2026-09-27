@@ -74,7 +74,7 @@ for(const request of writerFixture.requests.values()){
  assert.equal(row.source_snapshot.horoscopeGeneration.readings[request.sign].version,'horoscope-writer/v2');
 }
 const protectedReceipt=structuredClone(row.source_snapshot.horoscopeGeneration);
-result=await store.invoke('PATCH',{id:row.id,expectedUpdatedAt:row.updated_at,sourceSnapshot:{horoscopeGeneration:null}});
+result=await store.invoke('PATCH',{id:row.id,expectedUpdatedAt:row.updated_at,sourceSnapshot:{...row.source_snapshot,horoscopeGeneration:null}});
 assert.equal(result.status,200,JSON.stringify(result.payload));row=result.payload.rows[0];assert.deepEqual(row.source_snapshot.horoscopeGeneration,protectedReceipt);
 const invalid={...row.sections.horoscopeEdition.passages[0],body:'You were born with the Sun in Aries. Your seventh house is activated.'};
 assert.equal(validateHoroscopeReading(invalid,brief).passed,false);
