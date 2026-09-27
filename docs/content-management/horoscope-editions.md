@@ -281,3 +281,26 @@ DST, skipped midnight, year boundaries and fractional zones.
 URL persistence, complete bodies, responsive themes, empty editions and midnight
 rollover; the existing editor-to-reader test covers actual-handler publication.
 These checks establish data and instruction routing, not owner voice approval.
+
+## Owner edit guidance — September 27
+
+Writer v5 applies the owner's requested editorial principles to daily and weekly
+instructions: keep imagery coherent within a thought, name the real human concern
+directly, explain its emotional consequence clearly, and remove activity lists
+that distract from it. Useful specific examples and effective sentences remain;
+this is not a brevity target, a global word ban or a single metaphor imposed on
+every paragraph. Complete owner source passages stay exact and indivisible.
+
+The writer finishes its new draft against the saved Voice and Structure guidance
+within the original generation call. No additional model call or prose gate is
+introduced. Supplied before/after wording is not installed as a recurring script
+for every sign. The editorial principles remain editable in AI Writing. Existing
+saved profiles require an explicit version-checked update; existing editions
+adopt them through the normal latest-instructions or rejection workflow. A restart
+retains rejected bodies, facts and profile snapshots before clearing draft fields.
+
+Horoscope edits still do not automatically become private correction-memory
+records. This change applies the owner's requested guidance through the existing
+writing profile; it does not add or claim a per-reading feedback control. Actual
+daily and weekly provider-input tests verify delivery of the saved guidance and
+the instruction to finish against it. Voice quality remains the owner's decision.

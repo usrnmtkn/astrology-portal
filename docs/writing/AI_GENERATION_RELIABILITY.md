@@ -247,3 +247,19 @@ or publishes an edition.
 Verification is documented in `docs/content-management/horoscope-editions.md`.
 Actual-provider input regressions use injected fixtures and do not establish the
 quality of newly generated live prose. The owner remains the voice reviewer.
+
+### Owner edit guidance and horoscope restart
+
+Writer v5 uses the editable daily and weekly profiles to carry the owner's
+requested principles for coherent imagery, direct human meaning and focused
+examples. The existing writing call finishes the draft against those saved
+instructions; no extra reviewer call, automated taste gate or new banned-word
+list is added. Protected owner evidence is never compressed. Changing a profile
+or writer version invalidates the prepared plan; old bodies remain unchanged until
+the owner requests regeneration. Rejection preserves the exact former reading in
+history and adopts the latest profile before preparing the replacement plan.
+
+Do not describe this as automatic learning from horoscope edits. The current
+private correction-memory scopes still exclude horoscope editions. A distinct
+feedback control and scoped retrieval would need their own implementation and
+verification. This update uses the existing saved-profile path explicitly.
