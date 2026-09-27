@@ -50,6 +50,8 @@ for (const [width, theme] of [[390, 'light'], [390, 'dark'], [1440, 'light'], [1
     await page.screenshot({path:`test-results/ai-writing-${state}-${width}-${theme}.png`, fullPage:true, animations:'disabled'});
    };
    await expect(voice).toBeVisible();
+   await expect(voice).toHaveValue(/Name the actual calculated destination sign/);
+   await expect(voice).toHaveValue(/both lived-experience and transit-first openings/);
    await expect(editor.getByRole('tab')).toHaveText(['Voice', 'Structure', 'Sources', 'Prompt', 'Preview']);
    await expect(editor.getByRole('heading')).toHaveText(['Weekly instructions']);
    await expect(editor.getByRole('heading', {level:2})).toHaveText('Weekly instructions');

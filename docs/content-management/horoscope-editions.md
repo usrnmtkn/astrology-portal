@@ -137,6 +137,14 @@ forecast examples stop preparation before a provider call. Exact source text,
 IDs and hashes reach the prompt; source IDs are retained in the receipt.
 Writer version v2 invalidates old prepared plans so the revised examples require
 a refreshed plan. Existing saved readings and editable profiles are preserved.
+The weekly starter profile names calculated destination signs and explains life
+areas in ordinary language. It follows complete owner examples without prescribing
+one opening, paragraph sequence or advice ending. Supporting weekly developments
+must already be verified in the supplied facts; editorial guidance cannot expand
+the brief's event coverage. These instructions remain editable in AI Writing.
+Deploying a starter change does not overwrite saved profiles or edition snapshots.
+An authorized saved-profile update uses its exact current version; existing
+editions adopt it through “Use latest saved instructions” before a new plan.
 The actual-handler regression checks the full dispatched examples for all twelve
 signs. It verifies retrieval and text integrity, not owner acceptance of new prose.
 Current Studio feedback is checked without expanding another surface’s approved
