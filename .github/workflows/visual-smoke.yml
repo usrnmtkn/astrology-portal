@@ -396,6 +396,7 @@ jobs:
           tests/visual/calendar-pressure-release.spec.ts
           tests/visual/calendar-month-overview.spec.ts
           tests/visual/calendar-moon-ui.spec.ts
+          tests/visual/calendar-lunation-preview.spec.ts
           tests/visual/calendar-moon-editor.spec.ts
           tests/visual/calendar-lunar-ingresses.spec.ts
           tests/visual/event-date-consistency.spec.ts

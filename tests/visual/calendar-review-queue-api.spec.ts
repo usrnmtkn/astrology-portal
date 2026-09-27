@@ -173,15 +173,19 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"] as const)
         localStorage.setItem("tldrastro:fallbackArchitectureV3:dashboardBundleVersion", String(version));
       }, { manifest, version: Date.parse(published.updated_at) });
       await page.goto("/?date=2027-02-06#calendar?view=day&date=2027-02-06");
-      for (const paragraph of lunationRevision.split("\n\n")) {
-        await expect(page.getByText(paragraph, { exact: true }).first()).toBeVisible({ timeout: 30_000 });
-      }
+      const guidance = page.locator(`[data-guidance-key="${lunationKey}"]`);
+      const paragraphs = lunationRevision.split("\n\n");
+      await expect(guidance.locator("p")).toHaveText([paragraphs[0]], { timeout: 30_000 });
+      await guidance.getByRole("button", { name: "Read more", exact: true }).click();
+      await expect(guidance.locator("p")).toHaveText(paragraphs);
       await expect.poll(() => page.evaluate(() => JSON.parse(localStorage.getItem("tldrastro:fallbackArchitectureV3:dashboardBundle") ?? "null")?.schema)).toBe("fallback-architecture-v3-dashboard-overlay-cache-v9");
       await expect(page.locator("html")).toHaveAttribute("data-theme", theme);
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
       await page.screenshot({ path: `test-results/lunation-reader-${width}-${theme}.png`, fullPage: true });
       await page.reload();
-      for (const paragraph of lunationRevision.split("\n\n")) await expect(page.getByText(paragraph, { exact: true }).first()).toBeVisible();
+      await expect(guidance.locator("p")).toHaveText([paragraphs[0]]);
+      await guidance.getByRole("button", { name: "Read more", exact: true }).click();
+      await expect(guidance.locator("p")).toHaveText(paragraphs);
       expect(errors).toEqual([]);
     } finally { store.close(); }
   });

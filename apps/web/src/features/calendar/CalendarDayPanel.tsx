@@ -1,3 +1,4 @@
+import { useId, useState } from "react";
 import { useMinimumLoading } from "../../hooks/useMinimumLoading";
 import { useSkeletonGeometry } from "../../hooks/useSkeletonGeometry";
 import { LoadingStatus, SkeletonBar } from "../../components/CardSkeleton";
@@ -45,6 +46,34 @@ export type CalendarMoonPassage = {
   paragraphs: string[];
   role?: "lunation" | "leftover";
 };
+
+function MoonPassage({ passage }: { passage: CalendarMoonPassage }) {
+  const [expanded, setExpanded] = useState(false);
+  const bodyId = useId();
+  const hasMore = passage.role === "lunation" && passage.paragraphs.length > 1;
+
+  return (
+    <section aria-label="Moon guidance" data-guidance-key={passage.contentKey}>
+      {/* Owner-requested Calendar preview: one complete opening paragraph;
+          expanding retains every paragraph from the same published passage. */}
+      <div id={bodyId} className="calendar-sky-card__moon-passage">
+        {(hasMore && !expanded ? passage.paragraphs.slice(0, 1) : passage.paragraphs)
+          .map((paragraph, index) => <FormattedProse key={index} text={paragraph} />)}
+      </div>
+      {hasMore ? (
+        <button
+          type="button"
+          className="card-read-more calendar-sky-card__toggle"
+          aria-expanded={expanded}
+          aria-controls={bodyId}
+          onClick={() => setExpanded(current => !current)}
+        >
+          {expanded ? "Read less" : "Read more"}
+        </button>
+      ) : null}
+    </section>
+  );
+}
 
 function CheckInCard({
   entry,
@@ -203,13 +232,7 @@ export function CalendarDayPanel({
               </section>
             ) : null}
             {moonPassages.length > 0 ? moonPassages.map((passage) => (
-              <section
-                aria-label="Moon guidance"
-                data-guidance-key={passage.contentKey}
-                key={passage.contentKey}
-              >
-                {passage.paragraphs.map((paragraph) => <FormattedProse key={paragraph.slice(0, 48)} text={paragraph} />)}
-              </section>
+              <MoonPassage key={`${dateKey}:${passage.contentKey}`} passage={passage} />
             )) : paragraphs.length > 0 ? (
               <section aria-label="Moon guidance">
                 {paragraphs.map((paragraph) => <FormattedProse key={paragraph.slice(0, 48)} text={paragraph} />)}
