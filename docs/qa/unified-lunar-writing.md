@@ -4,6 +4,10 @@ September 27, 2026 integration on `codex/unified-lunar-writing`, based on
 `31d1c7deb` and main `8f9fdfc17`. The new dated editor joins the reusable writer
 under Calendar Write-ups > New & Full Moons & Eclipses. See the
 [workflow and source-selection contract](../writing/LUNATION_ARTICLE_STUDIO.md).
+Before release, the two feature commits were rebased onto main `99058edae`.
+The shared writer retains main's sign-specific horoscope schema and gives dated
+lunar articles their own headline/body schema. The integrated API and browser
+checks are rerun before merge; exact-head hosted results belong to the PR.
 
 Local verification uses this checkout's own `npm ci` dependencies and generated
 knowledge package. Synthetic stores and model responses avoid production
