@@ -60,7 +60,7 @@ for (const scenario of [
   // Retain the independently calculated full-Moon date and exact-time check.
   await page.goto("/?date=2026-08-28#calendar?view=day&date=2026-08-28");
   await page.locator(".calendar-day-events").getByRole("button", { name: /Full Moon|Lunar Eclipse/i }).first().click();
-  await expect(reading.locator(".calendar-reading__meta")).toContainText(scenario.fullMoon.replace(", ", " · "));
+  await expect(reading.locator(".calendar-reading__meta")).toHaveText(scenario.fullMoon.replace(", ", ", 2026 · "));
   await reading.screenshot({ path: `test-results/season-${scenario.timeZone.replaceAll("/", "-")}.png` });
 
   // The same exact event has a different civil date in Tokyo. Calendar's row

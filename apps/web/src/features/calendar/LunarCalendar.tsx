@@ -167,7 +167,6 @@ type LunarCalendarProps = {
   onGeneratedContentRequest?: (request: { cacheKey: string; contentKeys: string[] }) => void;
   onOpenTransit?: (event: LunarCalendarEvent, description?: string) => void;
   onSignIn?: () => void;
-  showJournalPrompts?: boolean;
   natalSunSign?: string | null;
   natalMoonSign?: string | null;
 };
@@ -2183,7 +2182,6 @@ export function LunarCalendar({
   onGeneratedContentRequest,
   onOpenTransit,
   onSignIn,
-  showJournalPrompts = true,
   natalSunSign = null,
   natalMoonSign = null
 }: LunarCalendarProps) {
@@ -3465,13 +3463,13 @@ export function LunarCalendar({
           onClose={() => setReadingEvent(null)}
           natalSun={natalSunSign}
           timeCity={location.label.split(",")[0]?.trim() || location.label}
-          onJournalPrompt={showJournalPrompts ? (text, options) => {
+          onJournalPrompt={(text, options) => {
             setJournalPrompt(text);
             setCheckInTarot(Boolean(options?.tarot));
             setDaySlideoutOpen(false);
             setReadingEvent(null);
             setCheckInOpen(true);
-          } : undefined}
+          }}
           onReadArticle={onOpenTransit ? () => onOpenTransit(readingEvent) : undefined}
           paragraphs={
             readingJournal
@@ -3480,7 +3478,6 @@ export function LunarCalendar({
                 ? [voidCourseDescription(selectedDay)].filter(Boolean)
                 : (readingLunationBody || readingEditorial?.eventCopy || "").split(/\n\n+/).filter(Boolean)
           }
-          showJournalPrompts={showJournalPrompts}
           title={readingJournal?.headline ?? readingEditorial?.headline ?? readingEvent.title}
         />
       )}

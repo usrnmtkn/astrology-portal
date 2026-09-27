@@ -1,6 +1,6 @@
-import { FormattedProse } from "../../components/FormattedProse";
+import { FormattedProse, FormattedText } from "../../components/FormattedProse";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import type { LunarCalendarEvent } from "../../services/ephemeris";
 import { AstroGlyph } from "./AstroGlyph";
 import { CalendarKindLabel, CalendarKindTag } from "./CalendarKindTag";
@@ -41,7 +41,6 @@ function JournalBlock({
   timeCity,
   hasEventTime,
   natalSun,
-  showJournalPrompts,
   onJournalPrompt
 }: {
   block: LunarJournalBlock;
@@ -52,10 +51,10 @@ function JournalBlock({
   timeCity?: string;
   hasEventTime?: boolean;
   natalSun?: string | null;
-  showJournalPrompts?: boolean;
   onJournalPrompt?: (text: string, options?: { tarot?: boolean }) => void;
 }) {
   const [open, setOpen] = useState(false);
+  const promptId = useId();
 
   if (block.type === "heading") return <h3>{block.text}</h3>;
   if (block.type === "para") return <FormattedProse text={block.text} />;
@@ -139,20 +138,28 @@ function JournalBlock({
     );
   }
   if (block.type === "prompt" || block.type === "tarot") {
+    const action = block.type === "tarot" ? "Record your card" : "Write about this";
+    if (block.text && onJournalPrompt) {
+      return (
+        <button
+          className="calendar-reading__card calendar-reading__prompt"
+          aria-label={action}
+          aria-describedby={promptId}
+          onClick={() => onJournalPrompt(block.text ?? "", { tarot: block.type === "tarot" })}
+          type="button"
+        >
+          <span className="calendar-reading__card-label">{block.label ?? (block.type === "tarot" ? "Tarot" : "Prompt")}</span>
+          <span className="calendar-reading__prompt-text" id={promptId}><FormattedText text={block.text} /></span>
+          <span className="calendar-reading__toggle" aria-hidden="true">
+            {action}<ChevronRight size={13} aria-hidden="true" />
+          </span>
+        </button>
+      );
+    }
     return (
       <section className="calendar-reading__card">
         <span className="calendar-reading__card-label">{block.label ?? (block.type === "tarot" ? "Tarot" : "Prompt")}</span>
         {block.text ? <FormattedProse text={block.text} /> : null}
-        {showJournalPrompts && block.text && onJournalPrompt ? (
-          <button
-            className="calendar-reading__toggle"
-            onClick={() => onJournalPrompt(block.text ?? "", { tarot: block.type === "tarot" })}
-            type="button"
-          >
-            {block.type === "tarot" ? "Record your card" : "Write about this"}
-            <ChevronRight size={13} aria-hidden="true" />
-          </button>
-        ) : null}
       </section>
     );
   }
@@ -209,7 +216,6 @@ export function CalendarEventReading({
   kind,
   natalSun,
   timeCity,
-  showJournalPrompts,
   backLabel,
   onClose,
   onBack,
@@ -227,7 +233,6 @@ export function CalendarEventReading({
   element?: string;
   natalSun?: string | null;
   timeCity?: string;
-  showJournalPrompts?: boolean;
   backLabel?: string;
   onClose: () => void;
   onBack?: () => void;
@@ -294,7 +299,6 @@ export function CalendarEventReading({
               key={`${block.type}-${index}`}
               natalSun={natalSun}
               onJournalPrompt={onJournalPrompt}
-              showJournalPrompts={showJournalPrompts}
               timeCity={timeCity}
             />
           ))

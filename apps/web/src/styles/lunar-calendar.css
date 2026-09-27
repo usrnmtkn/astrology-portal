@@ -3344,6 +3344,7 @@ a.tx-card.has-article:hover .tx-more {
 }
 
 .calendar-reading__body p,
+.calendar-reading__prompt-text,
 .calendar-sky-card__body p {
   margin: 0;
   color: var(--calendar-copy);
@@ -3397,7 +3398,8 @@ a.tx-card.has-article:hover .tx-more {
   font-weight: var(--weight-semibold);
 }
 
-button.calendar-reading__toggle {
+button.calendar-reading__toggle,
+.calendar-reading__prompt .calendar-reading__toggle {
   display: inline-flex;
   align-items: center;
   gap: var(--space-2);
@@ -3427,6 +3429,13 @@ button.calendar-reading__toggle {
   display: grid;
   gap: var(--space-3);
   min-width: 0;
+}
+
+.calendar-reading__prompt {
+  width: 100%;
+  border: 0;
+  text-align: start;
+  cursor: pointer;
 }
 
 .calendar-reading__article-card {
