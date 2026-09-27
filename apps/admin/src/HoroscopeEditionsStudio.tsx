@@ -159,6 +159,20 @@ export default function HoroscopeEditionsStudio({secret}:{secret:string}) {
     if(!saved||!window.confirm('The previous request may have been billed. Release it so you can start a new request?'))return;
     setBusy(true);setError('');try{const data=await request(secret,'/api/admin/horoscope-writing',{action:'release',id:saved.id,expectedUpdatedAt:saved.updated_at,acknowledgeUnknownOutcome:true});retain(data.rows[0]);setMessage('Interrupted request released. Review the plan before starting another request.');setPlanApproved(false);}catch(reason){setError((reason as Error).message);}finally{setBusy(false);}
   }
+  async function reject(target:string){
+    if(!saved||locked||saved.status!=='DRAFT')return;
+    const all=target==='all',label=all?'all twelve drafts':`${horoscopeSignLabel(target)}’s reading`;
+    if(!window.confirm(`Reject ${label} and start again? Current edits will be saved and the rejected writing kept in history. ${all?'Dates stay the same; calculated facts will be refreshed. ':''}The new plan will use your latest saved writing instructions. Generating replacements is a separate step.`))return;
+    setBusy(true);setError('');setMessage('');
+    try {
+      const current=dirty?await save():saved;if(!current)return;setBusy(true);
+      const data=await request(secret,'/api/admin/horoscope-writing',{action:'reject',id:current.id,expectedUpdatedAt:current.updated_at,sign:target});
+      const row=data.rows?.[0];if(!row||row.id!==current.id)throw new Error('The rejection could not be confirmed. Reopen the saved edition.');
+      retain(row,true);setPacket(row.facts.horoscopeBrief);setStep('generate');if(all)setSign('aries');
+      setMessage(`Rejected ${label}. The previous writing is in Rejected drafts. Review the new plan, then generate replacements.`);
+      await loadPlan(row);
+    }catch(reason){setError((reason as Error).message);}finally{setBusy(false);}
+  }
   const passage=draft?.passages.find(p=>p.sign===sign);
   const complete=draft?.passages.filter(p=>p.headline.trim()&&p.body.trim()).length ?? 0;
   const empty=draft?.passages.filter(p=>!p.headline.trim()&&!p.body.trim()).length ?? 0;
@@ -222,10 +236,12 @@ export default function HoroscopeEditionsStudio({secret}:{secret:string}) {
             {busy&&running.current?<StudioButton className="admin-primary-button" onClick={()=>{stop.current=true;setMessage('Pausing after the current request. Your progress is saved.');}}>Pause generation</StudioButton>:empty===0&&!active?<StudioButton className="admin-primary-button" disabled={busy} onClick={()=>void moveTo('edit')}>Continue to review</StudioButton>:!active&&(dirty||!plan)?<StudioButton className="admin-primary-button" disabled={busy||saved?.status==='LIVE'} onClick={()=>void reviewPlan()}>Review writing plan</StudioButton>:<StudioButton className="admin-primary-button" disabled={busy||dirty||!saved||saved.status==='LIVE'||(!active&&(!planApproved||!configured))} onClick={()=>void generate()}>{active?'Resume generation':empty===12?'Generate 12 drafts':'Generate missing readings'}</StudioButton>}
           </div>
           {active&&Date.now()-Date.parse(active.startedAt)>=310000&&<StudioButton disabled={busy} onClick={()=>void release()}>Release interrupted request</StudioButton>}
+          {saved?.status==='DRAFT'&&empty<12&&<StudioButton disabled={locked} onClick={()=>void reject('all')}>Reject all drafts</StudioButton>}
         </footer>
       </>:step==='edit'?<>
         <div className="admin-horoscope-signs" role="group" aria-label="Readings by sign">{draft.passages.map(p=><StudioButton key={p.sign} aria-pressed={sign===p.sign} onClick={()=>setSign(p.sign)}>{horoscopeSignLabel(p.sign)}{p.body.trim()&&p.headline.trim()?' ✓':''}</StudioButton>)}</div>
         <p>Reading {signIndex+1} of 12 · {horoscopeSignLabel(sign)}</p>
+        {saved?.status==='DRAFT'&&<div className="admin-toolbar-actions"><StudioButton disabled={locked||!passage.headline.trim()&&!passage.body.trim()} onClick={()=>void reject(sign)}>Reject this reading</StudioButton><StudioButton disabled={locked||empty===12} onClick={()=>void reject('all')}>Reject all drafts</StudioButton></div>}
         {!passage.body&&<p>No reading for {horoscopeSignLabel(sign)} yet. Return to Generate or write it below.</p>}
         {(saved?.source_snapshot?.horoscopeGeneration?.readings?.[sign]?.lint?.violations??[]).map((issue:any,index:number)=><p role="note" key={index}>Original AI draft check: {issue.detail}</p>)}
         <label className="admin-review-copy-editor"><span>Reading headline</span><StudioInput aria-label="Reading headline" value={passage.headline} maxLength={200} disabled={locked} onChange={e=>{setDraft({...draft,passages:draft.passages.map(p=>p.sign===sign?{...p,headline:e.target.value}:p)});setApproved(false);}}/></label>
@@ -242,6 +258,7 @@ export default function HoroscopeEditionsStudio({secret}:{secret:string}) {
           <footer className="admin-writing-savebar admin-horoscope-actions"><label><input type="checkbox" checked={approved} disabled={locked||dirty||complete!==12||!saved} onChange={e=>setApproved(e.target.checked)}/> I have reviewed and approve the exact wording of all twelve saved readings.</label><p>{approved?'Ready to publish all twelve readings.':'Check the approval box when you are happy with the complete edition.'}</p><div className="admin-toolbar-actions"><StudioButton disabled={locked} onClick={()=>void moveTo('edit')}>Back to readings</StudioButton><StudioButton className="admin-primary-button" disabled={locked||dirty||!approved||!saved} onClick={()=>void save(true)}>Publish edition</StudioButton></div></footer>
         </>}
       </>}
+      {saved?.source_snapshot?.horoscopeGeneration?.rejections?.length>0&&<details className="admin-workspace-details"><AdminDisclosureSummary>Rejected drafts</AdminDisclosureSummary><p>Saved for reference only. Rejected writing is not used as a writing example or published.</p>{[...saved.source_snapshot.horoscopeGeneration.rejections].reverse().map((entry:any)=><details key={entry.id}><AdminDisclosureSummary>{entry.scope==='all'?'All drafts':horoscopeSignLabel(entry.scope)} · {new Date(entry.rejectedAt).toLocaleString()}</AdminDisclosureSummary>{entry.passages.map((p:any)=><label className="admin-review-copy-editor" key={p.sign}><span>{horoscopeSignLabel(p.sign)}</span><StudioTextarea aria-label={`Rejected ${horoscopeSignLabel(p.sign)} reading`} readOnly rows={6} value={`${p.headline}\n\n${p.body}`}/></label>)}</details>)}</details>}
       {step==='edit'&&<details className="admin-workspace-details"><AdminDisclosureSummary>Advanced · import, export and calculations</AdminDisclosureSummary>
         <div className="admin-toolbar-actions"><StudioButton disabled={busy} onClick={()=>download('horoscope-writing-brief.json',{schema:'horoscope-writing-request/v1',edition:draft,calculatedFacts:packet,writingProfile:profile,outlines,ownerApproved:false})}>Export writing brief</StudioButton><label>Import draft<StudioInput aria-label="Import horoscope draft" type="file" accept="application/json,.json" disabled={locked} onChange={e=>{void importDraft(e.target.files?.[0]);e.target.value='';}}/></label></div><StudioTextarea aria-label="Calculated horoscope facts" readOnly rows={12} value={JSON.stringify(packet?.brief,null,2)}/>
       </details>}
