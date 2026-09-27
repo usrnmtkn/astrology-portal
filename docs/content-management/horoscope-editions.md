@@ -34,6 +34,11 @@ Open **Write → Horoscopes** (`/admin/content#horoscopes`).
    unsaved work, and leaving the browser warns about it. Private outlines and
    import/export tools stay in optional disclosures. Partially written passages
    are preserved and must be completed before publication.
+   **Reject this reading** clears the selected sign; **Reject all drafts** clears
+   the edition. Confirming saves current edits first and archives the exact
+   rejected writing in **Rejected drafts**. Both return to Generate with the
+   latest saved writing instructions. Review the new plan and approve generation
+   to create replacements. Rejecting alone makes no paid request.
 4. **Publish:** review all twelve saved readings, approve their exact wording and
    select **Publish edition**. The success screen links directly to the published
    edition and offers **Create another edition**. Publication remains a separate
@@ -125,6 +130,27 @@ checks in private metadata. Confirmed failures are retried only on another owner
 action. Uncertain starts remain reserved; explicit release is available after
 five minutes, and known in-flight responses must be cancelled before release.
 Neither generation nor model review authorizes publication.
+
+The `reject` action accepts one sign or `all`, requires the exact DRAFT version
+and refuses an active generation. It atomically preserves complete rejected
+passages, their hash, original signed facts, outlines, profile, import source and
+generation receipts in server-protected `horoscopeGeneration.rejections` history.
+Generic edits cannot erase this history. It clears the selected reader fields,
+outlines and current check receipts, and adopts the latest saved profile. A
+single-sign rejection preserves the other eleven passages and their original
+facts. Rejecting all recalculates the brief and requires the identical period
+window/time zone before saving. This refreshes older, narrower fact coverage
+without changing edition identity. Rejected prose is private reference history,
+not positive writer evidence or automatically activated Memory Graph feedback.
+Published editions are not rejected through this action; publication remains
+separate. No database migration is required.
+
+`scripts/test-horoscope-rejection.mts` covers daily/weekly/seasonal resets, full
+history, updated profiles, old brief coverage, regeneration, version conflicts,
+active-operation protection and unauthorized access through the actual handler.
+The browser flow checks cancellation, unsaved-edit preservation, one/all controls,
+history, fresh plan approval and replacement generation in all four screen/theme
+variants, with isolated storage and a synthetic provider.
 
 The horoscope family uses the canonical writer, a forecast-specific output
 schema, actual owner passages, separately identified reviewed meaning doctrine,

@@ -4,7 +4,8 @@ import {getContentAdminPrincipal} from '../_lib/admin-auth.js';
 import {loadLocalWebEnv} from '../_lib/local-env.js';
 import {AdminHttpError,adminFetchJson,adminStorageRows,readAdminJsonBody,sendAdminJson,sendAdminMethodNotAllowed,adminErrorStatus} from '../_lib/admin-http.js';
 import {studioStorage} from '../_lib/sky-studio-sources.js';
-import {assertHoroscopeRow} from '../_lib/horoscope-editions.js';
+import {assertHoroscopeRow,prepareHoroscopeBrief} from '../_lib/horoscope-editions.js';
+import {listStudioWritingProfiles} from '../_lib/studio-writing-profiles.js';
 import {activeStudioFeedback,studioFeedbackEnabled,feedbackHash} from '../_lib/studio-memory-feedback.js';
 import {prepareHoroscopeWriting,horoscopePlanPreview,writeHoroscopeSign,horoscopeWritingVersion} from '../../src/astro-writing/horoscopeWriting.mjs';
 import {horoscopeEditionBody,HOROSCOPE_SIGNS,horoscopeCanonicalJson} from '../../apps/web/src/content/horoscopeEditions.mjs';
@@ -25,7 +26,7 @@ export default async function handler(req:IncomingMessage,res:ServerResponse) {
   if(!actor)return sendAdminJson(res,401,{ok:false,error:'Unauthorized.'});
   try {
     const input=await readAdminJsonBody<Record<string,any>>(req);
-    if(!['prepare','generate','poll','release'].includes(input.action)||typeof input.id!=='string'||!input.id
+    if(!['prepare','generate','poll','release','reject'].includes(input.action)||typeof input.id!=='string'||!input.id
       ||typeof input.expectedUpdatedAt!=='string'||Object.keys(input).some(k=>!['action','id','expectedUpdatedAt','sign','approvedPlanHash','acknowledgeUnknownOutcome'].includes(k)))throw new AdminHttpError(400,'Choose a saved edition and a writing action.');
     const {url,headers}=studioStorage();
     const read=await adminFetchJson(`${url}?${new URLSearchParams({id:`eq.${input.id}`,select:'*',limit:'1'})}`,{headers});
@@ -43,6 +44,41 @@ export default async function handler(req:IncomingMessage,res:ServerResponse) {
       row=saved[0];return row;
     };
     let operation=row.source_snapshot?.horoscopeGeneration?.active;
+    if(input.action==='reject') {
+      if(operation)throw new AdminHttpError(409,'Finish or release the running request before rejecting drafts.');
+      if(input.sign!=='all'&&!HOROSCOPE_SIGNS.includes(input.sign))throw new AdminHttpError(400,'Choose a zodiac sign or all drafts.');
+      const all=input.sign==='all',original=row.sections.horoscopeEdition;
+      const selected=original.passages.filter((p:any)=>all||p.sign===input.sign);
+      if(!selected.some((p:any)=>p.headline.trim()||p.body.trim()))throw new AdminHttpError(409,'These readings are already empty. Review the writing plan to generate them.');
+      const snapshot=row.source_snapshot??{},generation=snapshot.horoscopeGeneration??{};
+      const profiles=await listStudioWritingProfiles(params=>adminFetchJson(`${url}?${params}`,{headers}));
+      const profile=profiles.find(p=>p.profile.period===original.window.period);
+      let packet=row.facts.horoscopeBrief;
+      if(all) {
+        const params=new URLSearchParams({period:original.window.period,date:packet.brief.referenceDate,timeZone:original.window.timeZone});
+        const fresh=await prepareHoroscopeBrief(new URL(`http://localhost/?${params}`));
+        if(horoscopeCanonicalJson(fresh.brief.window)!==horoscopeCanonicalJson(original.window))throw new AdminHttpError(409,'The calculated dates changed. Your drafts are intact; create a new edition for the updated dates.');
+        packet={brief:fresh.brief,signature:fresh.signature};
+      }
+      const targets=new Set(selected.map((p:any)=>p.sign));
+      const {rejections=[],...previousGeneration}=generation;
+      const rejected={id:randomUUID(),rejectedAt:new Date().toISOString(),rejectedBy:actor,scope:input.sign,
+        reason:'Rejected in Content Studio to prepare a fresh draft.',updatedAt:row.updated_at,
+        passages:selected,passagesHash:createHash('sha256').update(horoscopeCanonicalJson(selected)).digest('hex'),facts:row.facts,writingProfile:snapshot.studioWritingProfile??null,
+        outlines:snapshot.horoscopeOutlines??{},editorialImport:snapshot.editorialImport??null,generation:previousGeneration};
+      const edition={...original,passages:original.passages.map((p:any)=>targets.has(p.sign)?{...p,headline:'',body:''}:p)};
+      const patch={status:'DRAFT',review_state:null,reviewed_at:null,sections:{...row.sections,horoscopeEdition:edition},body:horoscopeEditionBody(edition),
+        facts:{...row.facts,horoscopeBrief:packet},source_snapshot:{...snapshot,studioWritingProfile:profile,
+          horoscopeOutlines:Object.fromEntries(Object.entries(snapshot.horoscopeOutlines??{}).filter(([sign])=>!targets.has(sign))),
+          ...(all?{editorialImport:null}:{}),
+          horoscopeGeneration:{...generation,active:null,lastError:null,rejections:[...rejections,rejected],
+            readings:Object.fromEntries(Object.entries(generation.readings??{}).filter(([sign])=>!targets.has(sign)))}}};
+      assertHoroscopeRow({...row,...patch});await persist(patch);
+      if(horoscopeCanonicalJson(row.sections)!==horoscopeCanonicalJson(patch.sections)
+        ||horoscopeCanonicalJson(row.facts)!==horoscopeCanonicalJson(patch.facts)
+        ||horoscopeCanonicalJson(row.source_snapshot)!==horoscopeCanonicalJson(patch.source_snapshot))throw new AdminHttpError(502,'The exact reset could not be confirmed. Reopen this edition before continuing.');
+      return sendAdminJson(res,200,{ok:true,rows:[row]});
+    }
     if(input.action==='release') {
       if(!operation||Date.now()-Date.parse(operation.startedAt)<310000||input.acknowledgeUnknownOutcome!==true)throw new AdminHttpError(409,'Wait for the in-flight request, then acknowledge its unknown outcome before releasing it.');
       if(operation.responseId){
@@ -89,7 +125,7 @@ export default async function handler(req:IncomingMessage,res:ServerResponse) {
     const sign=input.sign;
     if(!HOROSCOPE_SIGNS.includes(sign))throw new AdminHttpError(400,'Choose a zodiac sign.');
     const passage=prepared.edition.passages.find((p:any)=>p.sign===sign);
-    if(passage.headline.trim()||passage.body.trim())throw new AdminHttpError(409,'This sign already contains writing. Edit it directly; generation will not replace it.');
+    if(passage.headline.trim()||passage.body.trim())throw new AdminHttpError(409,'This sign already contains writing. Reject the reading in Review before generating a replacement.');
     const planHash=input.approvedPlanHash;
     if(planHash!==prepared.planHash)throw new AdminHttpError(409,'The writing plan or its sources changed. Review the current plan before generating.');
     const config=provider.normalizeProviderConfig({},'writer');
