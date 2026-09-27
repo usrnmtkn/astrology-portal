@@ -3058,18 +3058,17 @@ export async function getCalendarSubscriptionEvents(year: number): Promise<Lunar
 /**
  * Lean event feed for horoscope assembly. Unlike the visual calendar builders,
  * this skips aspect scans, daily moon status, void-of-course searches,
- * illumination, and the 42-day month grid. Ingresses are opt-in for the Studio
- * forecast brief; existing lunar-only consumers retain their original coverage.
+ * illumination, and the 42-day month grid. Existing consumers retain lunar
+ * coverage; horoscope briefs add ingresses through their separate adapter.
  */
 export function getLunarCalendarRangeEvents(
   location: LocationInput = defaultLocation,
   start: Date,
-  end: Date,
-  options: { includeIngresses?: boolean } = {}
+  end: Date
 ): Promise<LunarCalendarEvent[]> {
   const timeZone = location.timeZone || Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC";
   const key = [
-    options.includeIngresses ? "range-events-with-ingresses" : "range-events",
+    "range-events",
     start.toISOString(),
     end.toISOString(),
     location.latitude.toFixed(4),
@@ -3086,11 +3085,7 @@ export function getLunarCalendarRangeEvents(
 
     return [
       ...findLunations(swe, searchStart, searchEnd, timeZone),
-      ...findStations(swe, searchStart, searchEnd, timeZone),
-      ...(options.includeIngresses ? [
-        ...findIngresses(swe, searchStart, searchEnd, timeZone),
-        ...findMoonIngresses(swe, searchStart, searchEnd, timeZone)
-      ] : [])
+      ...findStations(swe, searchStart, searchEnd, timeZone)
     ].sort((first, second) => first.startsAt.localeCompare(second.startsAt));
   });
 
@@ -3107,6 +3102,21 @@ export function getLunarCalendarRangeEvents(
   }
 
   return request;
+}
+
+/** Studio-only range assembly; unused browser consumers tree-shake this adapter. */
+export async function getHoroscopeCalendarRangeEvents(
+  location: LocationInput,
+  start: Date,
+  end: Date
+): Promise<LunarCalendarEvent[]> {
+  const [lunar, swe] = await Promise.all([getLunarCalendarRangeEvents(location, start, end), getSwissEph()]);
+  const timeZone = location.timeZone || Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC";
+  const searchStart = new Date(start.getTime() - 2 * 86_400_000);
+  const searchEnd = new Date(end.getTime() + 2 * 86_400_000);
+  return [...lunar, ...findIngresses(swe, searchStart, searchEnd, timeZone),
+    ...findMoonIngresses(swe, searchStart, searchEnd, timeZone)]
+    .sort((first, second) => first.startsAt.localeCompare(second.startsAt));
 }
 
 export function matchingNewMoonForFullMoon(

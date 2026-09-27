@@ -26,7 +26,7 @@ export async function prepareHoroscopeBrief(url: URL) {
   const civil = horoscopeCivilWindow(period,date,timeZone);
   const referenceDate = period === 'weekly' ? civil.start : date;
   const reference = zonedDateTimeToUtc(referenceDate,'12:00 PM',timeZone);
-  const {getAstrodienstSky,getSkyPlacementTransitFacts,getLunarCalendarRangeEvents} = await import('../../apps/web/src/services/ephemeris.js');
+  const {getAstrodienstSky,getSkyPlacementTransitFacts,getHoroscopeCalendarRangeEvents} = await import('../../apps/web/src/services/ephemeris.js');
   // Shared sign forecasts use geocentric positions; these coordinates are not a natal chart.
   const location = {label:'Geocentric horoscope calculation',latitude:0,longitude:0,timeZone};
   const sky = await getAstrodienstSky(location,reference,{includeTransitWindows:false});
@@ -39,7 +39,7 @@ export async function prepareHoroscopeBrief(url: URL) {
     startsAt = new Date(transit.transitStart).toISOString(); endsAt = new Date(transit.transitEnd).toISOString();
   }
   const window = validateHoroscopeWindow({period,audience:'rising',timeZone,startsAt,endsAt,...(period === 'seasonal' ? {seasonSign:sun.sign.toLowerCase()} : {})});
-  const events = (await getLunarCalendarRangeEvents(location,new Date(startsAt),new Date(endsAt),{includeIngresses:true}))
+  const events = (await getHoroscopeCalendarRangeEvents(location,new Date(startsAt),new Date(endsAt)))
     .filter(event => event.startsAt >= startsAt && event.startsAt < endsAt)
     .map(event => ({id:event.id,type:event.type,planet:event.planet ?? null,sign:event.sign ?? event.toSign ?? null,startsAt:event.startsAt,
       title:event.title,fromSign:event.fromSign ?? null,direction:event.direction ?? null}));

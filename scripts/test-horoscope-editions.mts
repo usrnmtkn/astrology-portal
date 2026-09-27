@@ -27,7 +27,7 @@ const ephemeris=await import('../apps/web/src/services/ephemeris');
 for(const [date,timeZone] of [['2026-09-24','America/New_York'],['2026-12-25','Pacific/Kiritimati']]){
  const packet=await prepareHoroscopeBrief(new URL(`http://localhost/?period=weekly&date=${date}&timeZone=${timeZone}`));
  const location={label:'Test geocentric',latitude:0,longitude:0,timeZone};
- const direct=await ephemeris.getLunarCalendarRangeEvents(location,new Date(packet.brief.window.startsAt),new Date(packet.brief.window.endsAt),{includeIngresses:true});
+ const direct=await ephemeris.getHoroscopeCalendarRangeEvents(location,new Date(packet.brief.window.startsAt),new Date(packet.brief.window.endsAt));
  const legacy=await ephemeris.getLunarCalendarRangeEvents(location,new Date(packet.brief.window.startsAt),new Date(packet.brief.window.endsAt));
  assert(legacy.every((e:any)=>e.type!=='ingress'),'The opt-in cannot alter Calendar/You lunar-only coverage');
  const ingress=packet.brief.events.find((e:any)=>e.type==='ingress'&&e.planet==='Sun');assert(ingress);
