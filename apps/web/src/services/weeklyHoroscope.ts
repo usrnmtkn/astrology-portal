@@ -1,4 +1,5 @@
-import {resolveLunationReaderSource} from '../content/lunationReaderSource';
+import {lunationReaderContentKeys, resolveLunationReaderSource} from '../content/lunationReaderSource';
+import {loadLiveGeneratedContentForKeys} from './generatedContent';
 import initialReaderRows from "../content/fallbackArchitectureV3/bundled-initial-reader-rows-v3.json";
 import {
   fallbackV3LunationCompact,
@@ -1491,19 +1492,35 @@ export async function buildWeeklyHoroscope({
   let macro: WeeklyHoroscopeAssembly["macro"];
   if (macroEvent) {
     try {
-      const rendered = transitSynastryFallbackRendererV3.renderLunationMacro({
-        kind: lunationKind(macroEvent),
-        sign: normalizeId(macroEvent.sign ?? "")
-      });
-      const override = resolveLunationReaderSource(macroEvent,generatedContent) ?? resolveCmsSurfaceOverride(
+      // The You page loads natal/you surfaces, while lunar articles belong to
+      // sky. Hydrate this week's event keys before applying the shared selector.
+      const lunarContent = await loadLiveGeneratedContentForKeys(lunationReaderContentKeys(macroEvent));
+      const override = resolveLunationReaderSource(macroEvent, new Map([
+        ...(generatedContent ?? []), ...lunarContent
+      ])) ?? resolveCmsSurfaceOverride(
         generatedContent,
         cmsSurfaceKeys.weeklySection("macro", risingSign),
         { risingSign, weekStart: window.weekStart, weekEnd: window.weekEnd }
       );
-      macro = {
-        headline: override?.headline || rendered.headline,
-        body: override?.body ?? rendered.body
-      };
+      if (override) {
+        let headline = override.headline;
+        if (!headline) {
+          try {
+            headline = transitSynastryFallbackRendererV3.renderLunationMacro({
+              kind: lunationKind(macroEvent), sign: normalizeId(macroEvent.sign ?? "")
+            }).headline;
+          } catch (error) {
+            if (!(error instanceof SourceGapError)) throw error;
+          }
+        }
+        macro = { headline: headline || macroEvent.title, body: override.body };
+      } else {
+        const rendered = transitSynastryFallbackRendererV3.renderLunationMacro({
+          kind: lunationKind(macroEvent),
+          sign: normalizeId(macroEvent.sign ?? "")
+        });
+        macro = { headline: rendered.headline, body: rendered.body };
+      }
     } catch (error) {
       if (!(error instanceof SourceGapError)) throw error;
       // Macro coverage is intentionally sparse. Missing units leave the existing

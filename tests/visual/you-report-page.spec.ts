@@ -1,5 +1,7 @@
 import { expect, test, type Page } from "@playwright/test";
 import { readFileSync } from "node:fs";
+import { emptyLastKnownGoodSnapshot } from "../helpers/bundled-publications";
+import { readerResponse } from "../helpers/reader-response";
 
 const sourceRows = JSON.parse(readFileSync(new URL("../../apps/web/src/content/fallbackArchitectureV3/source-rows/transit-synastry-rows-v1.json", import.meta.url), "utf8"));
 const macroBody: string = sourceRows.authoredCards.find((row: { contentKey: string }) => row.contentKey === "authored/sky-lunation-macro/new-moon/virgo").body;
@@ -200,6 +202,8 @@ for (const viewport of [{ name: "desktop", width: 1440, height: 1000 }, { name: 
       test.setTimeout(60_000);
       await page.setViewportSize(viewport);
       await prepare(page, theme);
+      await emptyLastKnownGoodSnapshot(page);
+      await page.route("**/api/content-reader", route => route.fulfill({ json: readerResponse([]) }));
       await page.goto("/#you");
       const macro = page.locator(".weekly-horoscope__macro");
       const body = macro.locator(".weekly-horoscope__macro-body");
@@ -223,6 +227,32 @@ for (const viewport of [{ name: "desktop", width: 1440, height: 1000 }, { name: 
       await less.click();
       await expect(more).toHaveAttribute("aria-expanded", "false");
       expect((await body.locator("p").allTextContents()).join("\n\n")).toBe(preview);
+    });
+
+    test(`You loads the dated lunar article from the sky surface on ${viewport.name} ${theme}`, async ({ page }) => {
+      test.setTimeout(60_000);
+      await page.setViewportSize(viewport);
+      await prepare(page, theme);
+      await emptyLastKnownGoodSnapshot(page);
+      const key = "cms/lunation-article/2026-09-11/new-moon/virgo";
+      const passage = "The dated lunar fixture begins here.\n\nIts complete ending comes from the same approved article.";
+      const requestedKeys: string[] = [];
+      await page.route("**/api/content-reader", async route => {
+        const request = route.request().postDataJSON() ?? {};
+        requestedKeys.push(...(request.keys ?? []));
+        const rows = request.keys?.includes(key) ? [{
+          id: "dated-you-lunar-fixture", content_key: key, status: "LIVE", lane: "serving",
+          review_state: "reviewed", surface: "sky", mode: "article", headline: "Virgo New Moon fixture",
+          body: passage, updated_at: "2026-09-11T12:00:00Z"
+        }] : [];
+        await route.fulfill({ json: readerResponse(rows) });
+      });
+      await page.goto("/#you");
+      const macro = page.locator(".weekly-horoscope__macro");
+      await expect(macro).toContainText("Virgo New Moon fixture", { timeout: 45_000 });
+      expect((await macro.locator(".weekly-horoscope__macro-body p").allTextContents()).join("\n\n")).toBe(passage);
+      expect(requestedKeys).toContain(key);
+      expect(requestedKeys).toContain("authored/sky-lunation-macro/new-moon/virgo");
     });
   }
 }

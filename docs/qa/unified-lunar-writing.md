@@ -57,3 +57,25 @@ Local checks do not establish production deployment or the quality of a live
 model's prose. Require the hosted Content Studio API contract on the exact PR
 head, main's Git deployment, and the deployed editor/reader browser regressions.
 No test result approves generated wording or publishes an owner draft.
+
+## Main deployment and You-page follow-up
+
+Main `5023c0e67e5da2963ccea33e300af3b6343b52fa` deployed successfully. Read-only
+production checks verified both authenticated lunar APIs, the real saved guidance,
+calculated events, draft listing, and all four memory sections with matching
+repository revision and full-text hashes. Both editor modes passed eight deployed
+browser cases; Calendar and the lunar article passed ten deployed cases. No
+production content was written and no model was called.
+
+The wider hosted report suites exposed the You macro's missing Sky-source
+hydration. Its parent only loads natal/you content. The follow-up requests the
+specific dated and reusable lunar keys before selecting the shared source and
+preserves existing reusable titles. Browser fixtures now explicitly choose the
+bundled corpus rather than inheriting nightly production publications. Eight
+targeted checks cover reusable disclosure and dated Sky articles across both
+widths and themes. The reusable editor smoke also opens `/admin/content`, which
+works on both the isolated admin preview and the production host.
+
+The broad weekly assembly script reaches an unrelated stale Saturn-square-Venus
+copy assertion at line 1104. The clean `8f9fdfc17` baseline reproduces the same
+actual and expected wording; the protected source and assertion are unchanged.
