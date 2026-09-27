@@ -25,6 +25,16 @@ export const skyWritingSystems = {
       { label: "Moon writing proposal · V5", status: "Superseded proposal", detail: "An earlier Daily Sky Moon proposal. It is unrelated to placement composition format 5." },
     ],
   },
+  lunation: {
+    name: "Lunation and ingress argument",
+    purpose: "How a New Moon, Full Moon, eclipse, or ingress article is argued: sky anchor, cycle anchor, the question, one governing planet, condition layer, archetypal close. It governs generation; serving lunation articles render verbatim.",
+    contract: "Lunation and ingress reasoning",
+    source: "facts.reasoning on queued sky-lunation rows",
+    documentation: "SKY_WRITING_SYSTEMS.md",
+    history: [
+      { label: "Reasoning chain · v1", status: "Awaiting owner approval", detail: "September 27, 2026. Derived from the owner's Aries Full Moon exemplar. Calculated facts come from skyEventReasoningFacts.mjs." },
+    ],
+  },
 } as const;
 
 export type SkyWritingSystem = keyof typeof skyWritingSystems;

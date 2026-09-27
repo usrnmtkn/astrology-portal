@@ -83,6 +83,11 @@ Each of these binds on its surface and postdates the standard.
 - `TLDR-CARD-TRANSIT-WRITING-STANDARD-OWNER.md` (2026-08-09).
 - 2026-09-17: on Taurus copy, `steady`, `steadier`, `steadily`, `steadiness`, and `steadies` are approved. Vague `steady energy` remains banned (CF-015, CF-019).
 
+**Sky: lunations and ingresses**
+
+- `docs/writing/LUNATION-INGRESS-REASONING.md` (2026-09-27, agent-prepared from the owner's Aries Full Moon exemplar, unsigned) — the argument order for New Moon, Full Moon, eclipse, and ingress articles: sky anchor, cycle anchor, the question, one governing planet, condition layer, archetypal close. An ingress is read through the ruler of the sign it enters and that ruler's condition. Traditional rulerships only. It governs reasoning, not wording; it approves no reader copy.
+- `apps/web/src/content/fallbackArchitectureV3/admin/OWNER-LUNATION-TEMPLATE-LIBRARY.md` (2026-07-21) — owner section structures and eclipse canon (no rituals on eclipses).
+
 **Lilith**
 
 - `TLDR-LILITH-FACT-BOUNDARY-OWNER.md` (2026-08-09) — the source-safe fact boundary. Section 1 is the shared astronomical and astrological doctrine that is safe in any copy. Section 2 is the source's distinctive editorial framing, which is never reused. Section 3 is the approved owner framing: Lilith = refusals, where you stop apologizing, the no you have been swallowing, anger as information about a crossed limit. Compose Lilith copy from Sections 1 and 3 only.

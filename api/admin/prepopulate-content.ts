@@ -5,6 +5,7 @@ import { AdminHttpError, adminErrorMessage, adminErrorStatus, adminFetchJson, ad
 import { loadLocalWebEnv } from "../_lib/local-env.js";
 import { currentSkyFacts, type SkySnapshot } from "../_lib/current-sky.js";
 import { loadSkySourceSnapshot } from "../_lib/content-generation.js";
+import { lunationReasoningFacts } from "../../apps/web/src/services/skyEventReasoningFacts.mjs";
 
 loadLocalWebEnv();
 
@@ -511,7 +512,7 @@ function buildTemplateQueueRows(surface: Exclude<GeneratedContentSurface, "sky" 
   return rows;
 }
 
-function buildSkyQueueRows(sky: SkySnapshot, targetDate: string) {
+function buildSkyQueueRows(sky: SkySnapshot, targetDate: string, lunationSky: SkySnapshot | null = null) {
   const sourceSnapshot = loadSkySourceSnapshot();
   const sun = sky.positions.find((position) => position.planet === "Sun");
   const moon = sky.positions.find((position) => position.planet === "Moon");
@@ -636,7 +637,17 @@ function buildSkyQueueRows(sky: SkySnapshot, targetDate: string) {
         moonEvent: sky.moonEvent,
         moonPhase: sky.moonPhase,
         topAspects,
-        positions: collectiveSkyPositions(sky.positions)
+        positions: collectiveSkyPositions(sky.positions),
+        // Argument facts for docs/writing/LUNATION-INGRESS-REASONING.md. They
+        // must come from the sky at the exact lunation, never the queue date.
+        reasoning: lunationSky
+          ? lunationReasoningFacts({
+              positions: lunationSky.positions,
+              moonEvent: sky.moonEvent,
+              occursAt: sky.moonEvent.occursAt,
+              timeZone: sky.location?.timeZone
+            })
+          : { status: "incomplete", reason: "The sky at the exact lunation could not be calculated." }
       },
       knowledgeIds: topAspects.map(skyAspectKnowledgeId),
       sourceSnapshot
@@ -646,6 +657,16 @@ function buildSkyQueueRows(sky: SkySnapshot, targetDate: string) {
   return Array.from(new Map(rows.map((row) => [row.content_key, row])).values());
 }
 
+
+async function skyAtLunation(sky: SkySnapshot) {
+  const occursAt = sky.moonEvent && sky.moonEvent.days <= 7 ? new Date(sky.moonEvent.occursAt) : null;
+  if (!occursAt || Number.isNaN(occursAt.getTime())) return null;
+  try {
+    return await currentSkyFacts(occursAt);
+  } catch {
+    return null;
+  }
+}
 
 function queueTargetParams(row: QueueRow) {
   const params = new URLSearchParams();
@@ -712,7 +733,7 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
 
     if (requestedSurface === "sky" || requestedSurface === "all") {
       const sky = await currentSkyFacts(date);
-      rows = rows.concat(buildSkyQueueRows(sky, targetDate));
+      rows = rows.concat(buildSkyQueueRows(sky, targetDate, await skyAtLunation(sky)));
     }
 
     if (requestedSurface === "modifier") {

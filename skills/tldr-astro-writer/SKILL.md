@@ -134,3 +134,12 @@ relabeled as register evidence and never licenses a house claim in houseless cop
 Never infer owner approval. Generated or refined prose remains `needs_review`, `ownerApproved: false`, `promotionAuthorized: false`, and `canonical: false` until the owner explicitly approves the exact wording.
 
 Never make a billed model call without explicit authorization for that call or batch.
+
+## Lunation and ingress articles
+
+Before drafting or generating a New Moon, Full Moon, eclipse, or ingress
+article, read `docs/writing/LUNATION-INGRESS-REASONING.md` for the argument
+order and use `facts.reasoning` (from
+`apps/web/src/services/skyEventReasoningFacts.mjs`) for every ruler, dignity,
+reception, seed conjunction, and same-window ingress. State none that it does
+not contain.

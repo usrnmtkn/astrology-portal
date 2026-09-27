@@ -11,6 +11,37 @@
       "body": "Use reviewed lunar-event resources as structure and reasoning references, not as prose to copy. Extract the event type, current astrology facts, aspect logic, house activation, timing, and practical action. Then write fresh TLDR Astro language from those facts."
     },
     {
+      "id": "reasoning-chain",
+      "heading": "Reasoning Chain",
+      "body": "Owner-derived argument order for lunation and ingress articles (docs/writing/LUNATION-INGRESS-REASONING.md). These beats are hidden logic, not a paragraph template: two beats may share a paragraph, and a short piece may compress them. This order governs the argument; Event Page Architecture lists what the page must contain. Traditional rulerships only: Uranus, Neptune, Pluto, Chiron, Lilith, and the nodes can sit in a lunation or seed a story, but never rule a sign or govern the article.",
+      "items": [
+        {
+          "label": "1. Sky anchor",
+          "body": "Open with where the Moon physically is: its degree and the bodies in the lunation (reasoning.skyAnchor). When the Moon sits between two bodies, say which two."
+        },
+        {
+          "label": "2. Cycle anchor",
+          "body": "Tie the event to the conjunction that began the story in this part of the sky (reasoning.cycleAnchor.seedConjunctions): the pair, the month and year, the degree, and what that conjunction began. When the seed planets are retrograde, they are going back over that same ground. With no seed, anchor to the lunation's own cycle: the same-sign New Moon six months earlier for a Full Moon, the eclipse series for an eclipse."
+        },
+        {
+          "label": "3. The question",
+          "body": "A New Moon asks what begins. A Full Moon is a check-in on what the seed started: it asks whether the reader is doing that work on purpose or being carried along by it. An eclipse redirects and asks the reader to notice, not force. Pose the question once, in the reader's own terms."
+        },
+        {
+          "label": "4. Governing planet",
+          "body": "One planet governs the article: reasoning.governingPlanet, chosen from the seven traditional planets by how many of the event's facts run through it. Route every other detail back to it: the day ruler, the receptions, the dignities, and any ingress in the window. An ingress in the window is never a separate item; read it through the ruler of the sign it enters and say how that ruler is doing."
+        },
+        {
+          "label": "5. Condition layer",
+          "body": "Go deeper through the lights and their rulers: the Sun's and Moon's dignity, an exaltation-fall swap on the axis (reasoning.axis), each light's ruler with its sign, dignity, motion, and whole-sign relation to the light, mutual receptions, and dispositor loops. Use a fact only when it changes what the article says about the question. Skip the rest."
+        },
+        {
+          "label": "6. Archetypal close",
+          "body": "Name the governing planet's archetype and turn it into an embodied call for this moment. Default significations: Saturn is time, endings, and the teacher; Mars is courage and what we fight for; Venus is value and relationship; Jupiter is meaning and faith; Mercury is the mind and the message; the Sun is purpose and visibility; the Moon is the body, need, and memory. The owner's own framing of a planet overrides these defaults."
+        }
+      ]
+    },
+    {
       "id": "event-page-architecture",
       "heading": "Event Page Architecture",
       "body": "Long-form lunar and seasonal content should move in a clear sequence: opening theme, exact astrology facts, sign or axis meaning, key aspects, what may surface, what to do, timing, and optional reflection prompts. The reader should understand what is happening, why it may feel that way, and what action or reflection is useful now.",
@@ -98,6 +129,17 @@
         {
           "label": "Action",
           "body": "Do not recommend manifestation or elaborate release rituals during eclipses. Recommend observation, grounding, documenting what changes, and waiting for the energy to settle before forcing decisions."
+        }
+      ]
+    },
+    {
+      "id": "ingress-logic",
+      "heading": "Ingress Logic",
+      "body": "An ingress is read through the ruler of the sign being entered and that ruler's current condition (reasoning.rulerReading). State the planet, the sign, the date and time, the motion, and the sign it is leaving. Then say where the new sign's ruler is, its dignity and motion, and whether it sees the sign by whole-sign aspect or is in aversion to it. A ruler in fall or detriment, retrograde, or in aversion changes how the ingress lands; a ruler in its own sign or exaltation supports it. Name any mutual reception between the planet and that ruler. Connect the ingress to any lunation or seed conjunction in the same window. Then follow the placement composition modules in docs/content-management/SKY_PLACEMENT_V5.md.",
+      "items": [
+        {
+          "label": "Lilith",
+          "body": "The app calculates True Lilith. If a source names Mean Lilith's sign, say Mean Lilith, because the two can be in different signs on the same day."
         }
       ]
     },

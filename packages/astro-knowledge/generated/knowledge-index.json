@@ -97022,7 +97022,7 @@
             "document": true
           },
           "path": "packages/astro-knowledge/data/frameworks/lunar-event-content-architecture.json",
-          "sourceSha256": "0d0729aef04935ca4d90f30d2910012419e4e28d8f4855fe89dad9917e326d0a"
+          "sourceSha256": "e6967bf2abc0521310609e6fbb1cafedff032c6dc04fc7b2381ac7a12116f663"
         }
       ]
     },
@@ -524196,7 +524196,7 @@
     }
   ],
   "integrity": {
-    "contentSha256": "2b14a79f33976814d9d38b3820383a678b6940eceee388cb4bf0837ba5724537",
+    "contentSha256": "2b735bb0f9adbeec980492748aa451ff14f4624af23fc4f8554e422bd4ae27d8",
     "distinctSourceFiles": 3455
   }
 }

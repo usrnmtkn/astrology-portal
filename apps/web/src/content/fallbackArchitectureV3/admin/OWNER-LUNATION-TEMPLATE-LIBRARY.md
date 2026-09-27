@@ -2,6 +2,8 @@
 
 Supplied by the owner in chat 2026-07-21. These are AUTHORING GUIDES for future article writing, not machine templates: they never render. The machine-composable parts have been extracted into rows and renderer structure (see notes at the bottom). Bracketed slots are for a human (or future authoring session) to fill from real ephemeris facts.
 
+The argument order inside these structures (sky anchor, cycle anchor, the question, governing planet, condition layer, archetypal close) is in `docs/writing/LUNATION-INGRESS-REASONING.md`.
+
 ## New Moon in [Sign] article structure
 
 1. **Opening energy statement** — fresh cycle for [core theme]; Sun and Moon joined in [Sign]; focus on [sign qualities] over the next six months; elemental nature and what it creates ground for.

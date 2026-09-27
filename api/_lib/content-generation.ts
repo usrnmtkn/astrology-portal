@@ -358,7 +358,8 @@ type FrameworkSnapshot = {
 };
 
 const promptVersion = "tldr-astro-v5";
-const SKY_LUNATION_FRAMEWORK_ID = "lunation-content-architecture-framework";
+// Must match packages/astro-knowledge/data/frameworks/lunar-event-content-architecture.json.
+const SKY_LUNATION_FRAMEWORK_ID = "lunar-event-content-architecture";
 const SKY_LUNATION_RITUAL_ID = "lunation-ritual-practice-framework";
 const defaultOpenAiModel = "gpt-4.1-mini";
 const defaultClaudeModel = "claude-sonnet-4-6";
@@ -2435,15 +2436,22 @@ function formatFrameworkSection(framework: FrameworkSnapshot | undefined, sectio
   return lines.join("\n");
 }
 
-function formatLunationTemplateInstruction(input: GenerateContentInput) {
+export function formatLunationTemplateInstruction(input: GenerateContentInput) {
   if (input.surface !== "sky") {
+    return "";
+  }
+
+  // Only lunation and ingress articles take this framework. Daily feed,
+  // aspect, and retrograde rows keep their own rules.
+  const factType = stringValue(input.facts.type);
+  if (factType !== "lunation" && factType !== "ingress") {
     return "";
   }
 
   const sourceSnapshot = isRecord(input.sourceSnapshot) ? input.sourceSnapshot : {};
   let frameworks = asArray<FrameworkSnapshot>(sourceSnapshot.frameworks);
 
-  if (!frameworks.length) {
+  if (!frameworks.some((framework) => framework?.id === SKY_LUNATION_FRAMEWORK_ID)) {
     frameworks = loadSkyFrameworks();
   }
 
@@ -2455,14 +2463,18 @@ function formatLunationTemplateInstruction(input: GenerateContentInput) {
   }
 
   const moonEvent = factRecord(input.facts, "moonEvent");
-  const eventSignature = normalizeWords(stringValue(moonEvent?.name) || stringValue(input.facts.type) || input.eventType);
-  const eventLabel = slug(eventSignature).includes("full")
-    ? "full moon"
-    : slug(eventSignature).includes("new")
-      ? "new moon"
-      : slug(eventSignature).includes("eclipse")
-        ? "eclipse"
-        : "";
+  const eventSignature = normalizeWords(stringValue(moonEvent?.name) || factType || input.eventType);
+  const signatureSlug = slug(eventSignature);
+  const eventSectionId = factType === "ingress"
+    ? "ingress-logic"
+    : signatureSlug.includes("eclipse")
+      ? "eclipse-logic"
+      : signatureSlug.includes("full")
+        ? "full-moon-logic"
+        : signatureSlug.includes("new")
+          ? "new-moon-logic"
+          : "";
+  const isEclipse = eventSectionId === "eclipse-logic";
 
   const modeLine = input.mode === "feed"
     ? "Use Feed Mode structure for brief timing-focused delivery."
@@ -2470,40 +2482,25 @@ function formatLunationTemplateInstruction(input: GenerateContentInput) {
       ? "Use In-Depth Mode with mechanism, behavior, and integration."
       : "Use Article Mode with clear sections and reflective practical close.";
 
-  const cardStructure = formatFrameworkSection(architecture, "sky-card-structure");
-  const planetaryContext = formatFrameworkSection(architecture, "planetary-context");
-  const houseSignLinking = formatFrameworkSection(architecture, "house-and-sign-bridging");
-  const toneGuide = formatFrameworkSection(architecture, "tone-guide");
+  const reasoning = factRecord(input.facts, "reasoning");
+  const reasoningLine = reasoning && stringValue(reasoning.status) === "complete"
+    ? "ASTROLOGY FACTS.reasoning holds the calculated argument facts. Build the argument from them in the reasoning-chain order. Name the governing planet from reasoning.governingPlanet, and use only receptions, dignities, seed conjunctions, and ingresses that appear there."
+    : "No calculated reasoning facts were supplied. Do not state dignities, receptions, rulers' conditions, seed conjunctions, or same-day ingresses that are not in ASTROLOGY FACTS.";
 
-  const eventSection = asArray<FrameworkSection>(architecture.sections).find((section) => section?.id === "lunar-event-templates");
-  const eventItem = eventSection
-    ? asArray<{ label?: string; body?: string }>(eventSection.items).find((item) => {
-        const label = normalizeWords(stringValue(item.label));
-        return eventLabel ? label.includes(eventLabel) : false;
-      })
-    : undefined;
-
-  const eventGuidance = eventItem
-    ? `LUNAR EVENT TEMPLATE (${stringValue(eventItem.label)}): ${stringValue(eventItem.body)}`
-    : "Choose the strongest lunar event template from the framework by event type.";
-
-  const modeSection = formatFrameworkSection(architecture, "content-modes");
-  const modeGuidance = modeSection || `Use ${input.mode.replace("_", " ").toUpperCase()} mode guidance from the framework.`;
-
-  const ritualNotes = ritual ? `RITUAL PRACTICE FRAMEWORK (reference):\n${JSON.stringify(ritual, null, 2)}` : "";
-  const sourceMode = eventSignature ? `LUNATION EVENT: ${eventSignature}.` : "";
+  const ritualNotes = ritual && !isEclipse ? `RITUAL PRACTICE FRAMEWORK (reference):\n${JSON.stringify(ritual, null, 2)}` : "";
 
   return [
-    "LUNATION FRAMEWORK",
-    sourceMode,
+    "LUNATION AND INGRESS FRAMEWORK",
+    eventSignature ? `EVENT: ${eventSignature}.` : "",
     modeLine,
-    modeGuidance,
-    modeSection ? `Mode section:\n${modeSection}` : "",
-    cardStructure ? `Sky Card Structure:\n${cardStructure}` : "",
-    eventGuidance ? `Event-specific guidance:\n${eventGuidance}` : "",
-    planetaryContext ? `Planetary context:\n${planetaryContext}` : "",
-    houseSignLinking ? `House/sign bridging:\n${houseSignLinking}` : "",
-    toneGuide ? `Tone guide:\n${toneGuide}` : "",
+    reasoningLine,
+    formatFrameworkSection(architecture, "reasoning-chain"),
+    eventSectionId ? formatFrameworkSection(architecture, eventSectionId) : "",
+    formatFrameworkSection(architecture, "event-page-architecture"),
+    formatFrameworkSection(architecture, "content-modes"),
+    formatFrameworkSection(architecture, "aspect-logic"),
+    formatFrameworkSection(architecture, "reflection-prompts"),
+    formatFrameworkSection(architecture, "voice-guardrails"),
     ritualNotes
   ].filter(Boolean).join("\n\n");
 }
