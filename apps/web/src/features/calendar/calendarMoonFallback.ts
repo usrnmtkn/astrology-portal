@@ -1,8 +1,9 @@
-import type { CalendarMoonCycleFacts } from "./calendarMoonCycle";
-import { calendarFirstQuarterCopy, calendarMoonPhaseCopy } from "./calendarMoonPhaseCopy";
-import { calendarSeasonTransitionForSurface, calendarSeasonTransitionWhen } from "./calendarSeasonTransitions";
-import { moonContinuationSummaryForSign } from "./moonContinuationSummaries";
-import { moonSignTransitionForPair } from "./moonSignTransitions";
+import type { CalendarMoonCycleFacts } from "./calendarMoonCycle.js";
+import { calendarMoonContextCopy } from "./calendarMoonContext.js";
+import { calendarMoonPhaseCopy, isRetiredCalendarMoonPhaseBody } from "./calendarMoonPhaseCopy.js";
+import { calendarSeasonTransitionForSurface, calendarSeasonTransitionWhen } from "./calendarSeasonTransitions.js";
+import { moonContinuationSummaryForSign } from "./moonContinuationSummaries.js";
+import { moonSignTransitionForPair } from "./moonSignTransitions.js";
 
 function resolvedAuthoredPhase(
   facts: CalendarMoonCycleFacts,
@@ -11,20 +12,8 @@ function resolvedAuthoredPhase(
     exactQuarterCopy?: { body: string; contentKey: string } | null;
   }
 ) {
-  if (facts.exactFirstQuarter) {
-    const override = options.authoredPhaseCopy?.body.trim() || options.exactQuarterCopy?.body.trim() || "";
-    if (override.includes("about a week after the New Moon")) {
-      return options.authoredPhaseCopy?.body.trim()
-        ? options.authoredPhaseCopy
-        : options.exactQuarterCopy;
-    }
-    return {
-      body: calendarFirstQuarterCopy,
-      contentKey: "generated/calendar-moon-fallback/first-quarter"
-    };
-  }
-  if (options.authoredPhaseCopy?.body.trim()) return options.authoredPhaseCopy;
-  if (options.exactQuarterCopy?.body.trim()) return options.exactQuarterCopy;
+  if (options.authoredPhaseCopy?.body.trim() && !isRetiredCalendarMoonPhaseBody(options.authoredPhaseCopy.body)) return options.authoredPhaseCopy;
+  if (options.exactQuarterCopy?.body.trim() && !isRetiredCalendarMoonPhaseBody(options.exactQuarterCopy.body)) return options.exactQuarterCopy;
   return calendarMoonPhaseCopy(facts, () => "");
 }
 
@@ -41,13 +30,8 @@ export type CalendarMoonFallbackCopy = {
   body: string;
   contentKey: string;
   contextKind?: string;
+  contextSource?: { contentKey: string; body: string };
 };
-
-function spellCount(value: number) {
-  if (value === 2) return "two";
-  if (value === 3) return "three";
-  return String(value);
-}
 
 function joinParts(...parts: Array<string | null | undefined>) {
   return parts.map((part) => part?.trim()).filter(Boolean).join(" ");
@@ -172,8 +156,9 @@ function contextCopy(
     exactQuarterCopy?: { body: string; contentKey: string } | null;
     seasonSummary?: string | null;
     seasonTransition?: string | null;
+    contextLookup?: (key: string) => string | null | undefined;
   }
-): { kind: string; body: string } | null {
+): { kind: string; body: string; contentKey?: string } | null {
   const authoredPhase = options.authoredPhaseCopy?.body.trim() || options.exactQuarterCopy?.body.trim() || "";
   const authoredPhaseKind = facts.exactFirstQuarter
     ? "firstQuarter"
@@ -181,28 +166,16 @@ function contextCopy(
       ? "lastQuarter"
       : "moonPhase";
   if (facts.daysSincePreviousEclipse === 1) {
-    return {
-      kind: "dayAfterEclipse",
-      body: "The eclipse was yesterday. Treat the first reaction as information, not the final answer. Give the facts time to catch up."
-    };
+    return calendarMoonContextCopy("dayAfterEclipse", facts, options.contextLookup);
   }
   if (facts.daysSincePreviousEclipse != null && facts.daysSincePreviousEclipse >= 2 && facts.daysSincePreviousEclipse <= 3) {
-    return {
-      kind: "afterEclipse",
-      body: `The eclipse was ${spellCount(facts.daysSincePreviousEclipse)} days ago. Some of the noise has cleared. Pay attention to what still matters now that the first reaction has passed.`
-    };
+    return calendarMoonContextCopy("afterEclipse", facts, options.contextLookup);
   }
   if (facts.daysSincePreviousLunation === 1 && facts.previousLunationType === "new-moon") {
-    return {
-      kind: "dayAfterNewMoon",
-      body: "The New Moon was yesterday. Leave the plan alone for a minute. Let it meet your actual schedule before you start fixing it."
-    };
+    return calendarMoonContextCopy("dayAfterNewMoon", facts, options.contextLookup);
   }
   if (facts.daysSincePreviousLunation === 1 && facts.previousLunationType === "full-moon") {
-    return {
-      kind: "dayAfterFullMoon",
-      body: "The Full Moon was yesterday. Keep the part that became clear. You do not need to turn the rest into a conclusion yet."
-    };
+    return calendarMoonContextCopy("dayAfterFullMoon", facts, options.contextLookup);
   }
   if (
     facts.previousLunationType === "new-moon"
@@ -210,10 +183,7 @@ function contextCopy(
     && facts.daysSincePreviousLunation >= 2
     && facts.daysSincePreviousLunation <= 3
   ) {
-    return {
-      kind: "afterNewMoon",
-      body: `The New Moon was ${spellCount(facts.daysSincePreviousLunation)} days ago. Now you know more. Adjust the plan to fit the life you are actually living.`
-    };
+    return calendarMoonContextCopy("afterNewMoon", facts, options.contextLookup);
   }
   if (
     facts.previousLunationType === "full-moon"
@@ -221,31 +191,19 @@ function contextCopy(
     && facts.daysSincePreviousLunation >= 2
     && facts.daysSincePreviousLunation <= 3
   ) {
-    return {
-      kind: "afterFullMoon",
-      body: `The Full Moon was ${spellCount(facts.daysSincePreviousLunation)} days ago. The first reaction has had some time to settle. Notice what still needs your attention now.`
-    };
+    return calendarMoonContextCopy("afterFullMoon", facts, options.contextLookup);
   }
   if ((facts.exactFirstQuarter || facts.exactLastQuarter) && authoredPhase) {
     return { kind: authoredPhaseKind, body: authoredPhase };
   }
   if (facts.daysUntilNextEclipse === 1 && facts.nextEclipseType && facts.nextEclipseSign) {
-    return {
-      kind: "eclipseTomorrow",
-      body: `The ${facts.nextEclipseType} in ${facts.nextEclipseSign} arrives tomorrow. Leave some room for the plan to change.`
-    };
+    return calendarMoonContextCopy("eclipseTomorrow", facts, options.contextLookup);
   }
   if (facts.daysUntilNextLunation === 1 && facts.nextLunationType === "new-moon" && facts.nextLunationSign) {
-    return {
-      kind: "newMoonTomorrow",
-      body: `The New Moon in ${facts.nextLunationSign} arrives tomorrow. Notice what keeps asking for a different approach. You do not need the whole plan yet.`
-    };
+    return calendarMoonContextCopy("newMoonTomorrow", facts, options.contextLookup);
   }
   if (facts.daysUntilNextLunation === 1 && facts.nextLunationType === "full-moon" && facts.nextLunationSign) {
-    return {
-      kind: "fullMoonTomorrow",
-      body: `The Full Moon in ${facts.nextLunationSign} arrives tomorrow. Notice what has become too obvious to keep working around.`
-    };
+    return calendarMoonContextCopy("fullMoonTomorrow", facts, options.contextLookup);
   }
   if (facts.daysUntilSeasonEnd === 1 && facts.seasonName) {
     return {
@@ -293,6 +251,7 @@ export function resolveCalendarMoonFallback(
     exactQuarterCopy?: { body: string; contentKey: string } | null;
     seasonSummary?: string | null;
     seasonTransition?: string | null;
+    contextLookup?: (key: string) => string | null | undefined;
     moonContinuationSummary?: string | null;
     pairTransition?: string | null;
   } = {}
@@ -362,6 +321,7 @@ export function resolveCalendarMoonFallback(
     kind: moonKind,
     body: joinParts(moonBody, contextBody),
     contentKey: key(moonKind),
-    contextKind: contextBody ? context?.kind : undefined
+    contextKind: contextBody ? context?.kind : undefined,
+    contextSource: contextBody && context?.contentKey ? { contentKey: context.contentKey, body: context.body } : undefined
   };
 }

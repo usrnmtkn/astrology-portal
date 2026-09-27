@@ -243,6 +243,16 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
         rows.push(inventoryView ? calendarMoonIngressInventoryRow(record) : calendarMoonIngressDetailRow(record));
       }
     }
+    const contextPrefixes = ["authored/calendar-moon-context/", "authored/calendar-moon-continuation-summary/", "fallback-hook/moon-phase/"];
+    const requestedContextKeys = [...contentKeys, ...(contentKey ? [contentKey] : [])].filter(key => contextPrefixes.some(prefix => key.startsWith(prefix)));
+    if (!id && (contextPrefixes.includes(contentKeyPrefix) || requestedContextKeys.length) && pageIsComplete) {
+      const { calendarMoonContextRecords, calendarMoonContextRow } = await import("../_lib/calendar-moon-context-sources.js");
+      const savedKeys = new Set(rows.map(row => String(row.content_key ?? "")));
+      for (const record of calendarMoonContextRecords) {
+        if (savedKeys.has(record.contentKey) || (requestedContextKeys.length ? !requestedContextKeys.includes(record.contentKey) : !record.contentKey.startsWith(contentKeyPrefix))) continue;
+        rows.push(calendarMoonContextRow(record, inventoryView));
+      }
+    }
     sendAdminJson(res, 200, { ok: true, rows, nextCursor });
   } catch (error) {
     sendAdminJson(res, adminErrorStatus(error), {

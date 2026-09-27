@@ -1,5 +1,6 @@
 import { createHash } from "node:crypto";
 import { moonSignTransitionKey, moonSignTransitions } from "../../apps/web/src/features/calendar/moonSignTransitions.js";
+import { calendarMoonCopyRevision } from '../../apps/web/src/features/calendar/calendarMoonCopyRevisions.js';
 
 export const CALENDAR_MOON_INGRESS_PREFIX = "authored/calendar-moon-transition/";
 
@@ -18,6 +19,7 @@ function wordCount(value: string) {
 export function calendarMoonIngressPackageRecord(fromSign: string, toSign: string, body: string) {
   const contentKey = moonSignTransitionKey(fromSign, toSign);
   const title = `Moon enters ${toSign[0].toUpperCase()}${toSign.slice(1)}`;
+  const revision = calendarMoonCopyRevision(contentKey);
   return {
     contentKey,
     content_role: "full_copy",
@@ -31,6 +33,7 @@ export function calendarMoonIngressPackageRecord(fromSign: string, toSign: strin
     source_keys: [contentKey],
     fromSign,
     toSign,
+    ...(revision ? { editorialRevision: revision } : {}),
     notes: "Complete existing Moon ingress passage. Draft edits stay unpublished until Save & publish. Calendar uses the original passage until a published replacement exists.",
     calendarWritingSource: {
       contentKey,

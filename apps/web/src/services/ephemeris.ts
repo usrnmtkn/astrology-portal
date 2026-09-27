@@ -2882,7 +2882,11 @@ function buildLunarCalendarRange(
   const cycleEnd = new Date(gridEnd.getTime() + 5 * 86_400_000);
   const cycleEvents = detail === "full"
     ? [
-      ...findLunations(swe, cycleStart, cycleEnd, timeZone),
+      // Day/Week prose names the surrounding New and Full Moon even when
+      // neither is inside the visible week. Keep this separate from the short
+      // ingress window so wider context cannot add visible events.
+      ...findLunations(swe, new Date(gridStart.getTime() - 32 * 86_400_000),
+        new Date(gridEnd.getTime() + 32 * 86_400_000), timeZone),
       ...findMoonIngresses(swe, cycleStart, cycleEnd, timeZone),
       ...seasonIngresses
     ].sort((first, second) => first.startsAt.localeCompare(second.startsAt))

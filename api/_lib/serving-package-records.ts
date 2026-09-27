@@ -1,3 +1,4 @@
+import { calendarMoonContextRecords } from './calendar-moon-context-sources.js';
 import { calendarMoonIngressPackageRecords } from "./calendar-moon-ingress-sources.js";
 import { createRequire } from "node:module";
 import { calendarWritingSourceStarters } from "./calendar-writing-sources.js";
@@ -33,6 +34,7 @@ for (const partition of readerPartitions as Record<string, any>[]) {
 for (const record of calendarWritingSourceStarters) servingPackageRecords.set(record.contentKey, record);
 for (const record of lunarJournalPackageRecords) servingPackageRecords.set(record.contentKey, record);
 for (const record of calendarSeasonTransitionPackageRecords) servingPackageRecords.set(record.contentKey, record);
+for (const record of calendarMoonContextRecords) servingPackageRecords.set(record.contentKey, record);
 for (const record of calendarMoonIngressPackageRecords) servingPackageRecords.set(record.contentKey, record);
 for (const [key, record] of skyPlacementSourceRecords) servingPackageRecords.set(key, record);
 

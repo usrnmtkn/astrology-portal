@@ -1,3 +1,5 @@
+import { validateCmsTemplate } from '../../apps/web/src/content/cmsTemplateValidation.js';
+import { calendarMoonContextRecordForKey } from './calendar-moon-context-sources.js';
 import { isCalendarMoonIngressContentKey } from "./calendar-moon-ingress-sources.js";
 import coreManifest from "../../apps/web/src/content/fallbackArchitectureV3/bundled-core-manifest-v3.json" with { type: "json" };
 import skyManifest from "../../apps/web/src/content/fallbackArchitectureV3/bundled-sky-placement-manifest-v3.json" with { type: "json" };
@@ -31,6 +33,11 @@ export function packagePublicationAdmissionIssue(row: Record<string, any>): stri
   // Calendar leftover season transitions have a dedicated leftover reader, not the fallback package loader.
   if (key.startsWith("authored/calendar-season-transition/")) return null;
   // Moon ingress passages use the exact Calendar event reader. Admit only its twelve supported pairs.
+  const moonContext = calendarMoonContextRecordForKey(key);
+  if (moonContext) {
+    const validation = validateCmsTemplate({ allowedSlots: moonContext.optionalSlots, body: String(row.body ?? '') });
+    return validation.errors.length ? validation.errors.join(' ') : null;
+  }
   if (isCalendarMoonIngressContentKey(key)) return null;
   // Education articles have a dedicated /learn reader, not the fallback package loader.
   if (row.surface === "education" || key.startsWith("education/astro-101/")) return null;

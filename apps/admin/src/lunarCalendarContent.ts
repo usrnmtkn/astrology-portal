@@ -15,6 +15,8 @@ export const lunarWorkspaceFamilyOrder = [
   "Lunation articles",
   "Moon-sign leftover",
   "Continuation sentences",
+  "Moon cycle context",
+  "Moon phases",
   "Lunar ingresses",
   "Season transitions",
   "Lunar journal",
@@ -106,6 +108,11 @@ export function lunarContentIdentity(key: string): LunarContentIdentity | null {
       excluded: false
     });
   }
+  const context = key.match(/^authored\/calendar-moon-context\/([^/]+)$/);
+  if (context) return withJob({ family: "Moon cycle context", sign: "", variant: 1,
+    title: words(context[1]), kind: "Passage with calculated variables",
+    destination: "Calendar Day and Week Moon reading",
+    selection: "This passage supplies the context before or after a New Moon, Full Moon, or eclipse. Preview the complete day reading and edit its dates and signs using calculated variables.", excluded: false });
   const moonSummary = key.match(/^authored\/calendar-moon-continuation-summary\/([^/]+)$/);
   if (moonSummary) {
     return withJob({
@@ -113,9 +120,9 @@ export function lunarContentIdentity(key: string): LunarContentIdentity | null {
       sign: moonSummary[1],
       variant: 1,
       title: `Moon in ${words(moonSummary[1])} · Continuation`,
-      kind: "Timing sentence",
-      destination: "Calendar leftover after the Moon-sign leftover is used",
-      selection: "This sentence describes what is different about a leftover day in the sign. It is not a full passage, and it is used once the leftover for this Moon visit is already on the calendar.",
+      kind: "Passage with calculated variables",
+      destination: "Calendar Day and Week Moon reading",
+      selection: "This passage describes the Moon in this sign on continuation days. The reader combines it with calculated timing and the relevant lunar-cycle context. Edit the complete passage here.",
       excluded: false
     });
   }

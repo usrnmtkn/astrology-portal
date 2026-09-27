@@ -1,0 +1,112 @@
+[
+  {
+    "contentKey": "authored/calendar-moon-continuation-summary/aries",
+    "originalBody": "If you already started it yesterday, today shows you if you still want it once the first burst wears off.",
+    "originalBodySha256": "51b676c24d5cf952e713c2a0f5a8425b56b5ac8082eaa77102d031b4b6bdba27",
+    "review_status": "needs_review",
+    "owner_approved": false,
+    "promotion_authorized": false,
+    "authorship": "assistant_revision",
+    "scope": "Calendar Day and Week Moon passages, September 27–October 3 review"
+  },
+  {
+    "contentKey": "authored/calendar-moon-continuation-summary/taurus",
+    "originalBody": "Repeat what actually made yesterday easier instead of adding more to the plan.",
+    "originalBodySha256": "765b44b7f2cab9cd0421b42eff2f9a79333bdd233dcf177c1ac4d60afdd8300b",
+    "review_status": "needs_review",
+    "owner_approved": false,
+    "promotion_authorized": false,
+    "authorship": "assistant_revision",
+    "scope": "Calendar Day and Week Moon passages, September 27–October 3 review"
+  },
+  {
+    "contentKey": "authored/calendar-moon-continuation-summary/gemini",
+    "originalBody": "The extra information is useful only if it changes the decision.",
+    "originalBodySha256": "372673f7f28028ba91483dc2ac7e7848bbc2de5a2a5ab260dc41d84781f934da",
+    "review_status": "needs_review",
+    "owner_approved": false,
+    "promotion_authorized": false,
+    "authorship": "assistant_revision",
+    "scope": "Calendar Day and Week Moon passages, September 27–October 3 review"
+  },
+  {
+    "contentKey": "authored/calendar-moon-continuation-summary/cancer",
+    "originalBody": "Notice what you keep needing once the immediate mood passes.",
+    "originalBodySha256": "c4cc8044e568f2340d06163d092012da60cd7c4723a873fad8331332076b95c9",
+    "review_status": "needs_review",
+    "owner_approved": false,
+    "promotion_authorized": false,
+    "authorship": "assistant_revision",
+    "scope": "Calendar Day and Week Moon passages, September 27–October 3 review"
+  },
+  {
+    "contentKey": "authored/calendar-moon-transition/aries/taurus",
+    "originalBody": "The urgency starts to wear off once the Moon enters Taurus. You may care less about getting it done fast and more about making the plan something your body, budget, or schedule can actually support.",
+    "originalBodySha256": "9247b488d7dbb7b41f6e2ad3ee732252018ae1385b5672c3b96a0267f81c67ab",
+    "review_status": "needs_review",
+    "owner_approved": false,
+    "promotion_authorized": false,
+    "authorship": "assistant_revision",
+    "scope": "Calendar Day and Week Moon passages, September 27–October 3 review"
+  },
+  {
+    "contentKey": "authored/calendar-moon-transition/taurus/gemini",
+    "originalBody": "What felt simple enough to leave alone can turn into a question once the Moon enters Gemini. You may want one more detail, another conversation, or a little more information before you decide.",
+    "originalBodySha256": "b7e341d3a2412d6670c37cfc67fd34d7a3443f44bfbb2da552e57550c066cae1",
+    "review_status": "needs_review",
+    "owner_approved": false,
+    "promotion_authorized": false,
+    "authorship": "assistant_revision",
+    "scope": "Calendar Day and Week Moon passages, September 27–October 3 review"
+  },
+  {
+    "contentKey": "authored/calendar-moon-transition/gemini/cancer",
+    "originalBody": "The conversation can keep moving until the Moon enters Cancer, when the part that actually bothered you becomes harder to talk around. You may want less input and more time to figure out how you feel about it.",
+    "originalBodySha256": "c4a033ea1f1dd855a72ab91e6ee5b3c9300d45d9a5863cd5f4d391dfcbd474a1",
+    "review_status": "needs_review",
+    "owner_approved": false,
+    "promotion_authorized": false,
+    "authorship": "assistant_revision",
+    "scope": "Calendar Day and Week Moon passages, September 27–October 3 review"
+  },
+  {
+    "contentKey": "authored/calendar-moon-context/day-after-full-moon",
+    "originalBody": "The Full Moon was yesterday. Keep the part that became clear. You do not need to turn the rest into a conclusion yet.",
+    "originalBodySha256": "2c0220da2d2788384b40ce9da63338971fac7ddaadb5bc46bb3ba0357d0e5899",
+    "review_status": "needs_review",
+    "owner_approved": false,
+    "promotion_authorized": false,
+    "authorship": "assistant_revision",
+    "scope": "Calendar Day and Week Moon passages, September 27–October 3 review"
+  },
+  {
+    "contentKey": "authored/calendar-moon-context/after-full-moon",
+    "originalBody": "The Full Moon was {{daysSincePreviousLunation}} days ago. The first reaction has had some time to settle. Notice what still needs your attention now.",
+    "originalBodySha256": "e1ca0545bec2c46f10655ebc0f2197f6800fecb5329ce83ad4da2b64b22202be",
+    "review_status": "needs_review",
+    "owner_approved": false,
+    "promotion_authorized": false,
+    "authorship": "assistant_revision",
+    "scope": "Calendar Day and Week Moon passages, September 27–October 3 review"
+  },
+  {
+    "contentKey": "fallback-hook/moon-phase/disseminating",
+    "originalBody": "The light starts giving itself away. Tell someone what this cycle taught you; a lesson settles when it is shared.",
+    "originalBodySha256": "856f8b2c4c3411948f4780dc80eb78ecc1976d2495fff15ea182e0a1c48f8a4f",
+    "review_status": "needs_review",
+    "owner_approved": false,
+    "promotion_authorized": false,
+    "authorship": "assistant_revision",
+    "scope": "Calendar Day and Week Moon passages, September 27–October 3 review"
+  },
+  {
+    "contentKey": "fallback-hook/moon-phase/last-quarter",
+    "originalBody": "The waning Moon carries things out. Put down what the harvest proved you no longer need.",
+    "originalBodySha256": "f815d8dc06193425b30b6fbd22659f1a849390bf8b037c0c3b00cda1f84208de",
+    "review_status": "needs_review",
+    "owner_approved": false,
+    "promotion_authorized": false,
+    "authorship": "assistant_revision",
+    "scope": "Calendar Day and Week Moon passages, September 27–October 3 review"
+  }
+]

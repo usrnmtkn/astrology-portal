@@ -1,9 +1,11 @@
-/** Owner-provided continuation sentences. Not leftover Moon-sign passages. */
+import { isRejectedCalendarMoonCopy } from './calendarMoonCopyRevisions.js';
+
+/** Calendar continuation passages; September revisions retain their original text in calendarMoonCopyRevisions.json. */
 export const moonContinuationSummaries: Record<string, string> = {
-  aries: "If you already started it yesterday, today shows you if you still want it once the first burst wears off.",
-  taurus: "Repeat what actually made yesterday easier instead of adding more to the plan.",
-  gemini: "The extra information is useful only if it changes the decision.",
-  cancer: "Notice what you keep needing once the immediate mood passes.",
+  aries: "With the Moon in Aries, wanting something and acting on it can feel very close together. That directness can help you speak honestly about what matters to you. Impatience can also make a delay feel like a refusal, even when the answer is simply not yet.",
+  taurus: "The Taurus Moon brings attention to comfort and the things that help you feel secure. A familiar routine can be reassuring, especially when you have a lot to manage. The same attachment to familiarity can make a useful change harder to consider.",
+  gemini: "With the Moon in Gemini, talking through a feeling can help you understand it. A question or a different point of view may give you words for something you had trouble explaining. There is also room to change your mind as you learn more.",
+  cancer: "The Cancer Moon brings attention to home, closeness, and the care you need. You may want the company of someone who knows you well, or more privacy than usual. Caring for someone and needing time to yourself can both be true.",
   leo: "The reaction matters less than knowing what you still care about when nobody is responding.",
   virgo: "Use the second pass to make the system easier, not stricter.",
   libra: "If the compromise keeps landing on the same person, that is part of the story.",
@@ -30,8 +32,9 @@ export function moonContinuationSummaryForSign(
   options?: { exactFirstQuarter?: boolean }
 ) {
   const slug = sign.toLowerCase().trim();
+  if (override?.trim() && !isRejectedCalendarMoonCopy(moonContinuationSummaryKey(slug), override)) return override.trim();
   if (options?.exactFirstQuarter && moonContinuationOnFirstQuarter[slug]) {
     return moonContinuationOnFirstQuarter[slug];
   }
-  return override?.trim() || moonContinuationSummaries[slug] || "";
+  return moonContinuationSummaries[slug] || "";
 }
