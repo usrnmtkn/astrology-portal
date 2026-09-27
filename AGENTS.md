@@ -59,6 +59,22 @@ before git operations. Never run `git stash`, `git clean`,
 `git checkout -- .`, or `git reset --hard`. Do not discard unrelated changes
 or commit without the owner's request.
 
+## Feature acceptance before completion claims
+
+Before calling a feature done or ready for review, derive concrete acceptance
+criteria from the owner's request and check the complete user journey. Verify
+discovery/navigation, existing saved content, the primary action, persistence
+after reload, and relevant loading, empty and error states. Use the actual
+rendered surface and appropriate API/storage checks; a build or isolated unit
+test alone is not acceptance evidence.
+
+Record each criterion as passed, failed or unverified with evidence tied to the
+tested revision. State remaining gaps instead of reporting completion. Distinguish
+isolated-fixture tests from read-only production checks, and verify the deployed
+revision before claiming a change is live. Do not mutate owner content or incur
+paid generation merely to obtain acceptance evidence. The lunar Studio checklist
+is [documented here](docs/qa/lunar-studio-acceptance.md).
+
 ## Heading and visual-style integrity
 
 Do not add or change an `h1`-`h6` tag, visible title, eyebrow, section label, or

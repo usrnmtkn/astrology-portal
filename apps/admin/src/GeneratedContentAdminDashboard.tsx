@@ -7279,7 +7279,11 @@ export function GeneratedContentAdminDashboard() {
               tabs={calendarWriteupWorkspaceTabs}
               onValueChange={view => navigateAdminPage("calendarWriteups", new URLSearchParams({ view }))}>
               {calendarWriteupWorkspaceView === "subscription-events" && <Suspense fallback={<PageLoading message="Loading subscription events…" />}><CalendarSubscriptionEvents secret={secret} dirtyRef={subscriptionEventDirtyRef} /></Suspense>}
-              {calendarWriteupWorkspaceView === "lunation-writing" && <Suspense fallback={<PageLoading message="Loading lunar writing…" />}><LunationWritingStudio secret={secret} dirtyRef={lunationWritingDirtyRef} onOpenContent={async key => {
+              {calendarWriteupWorkspaceView === "lunation-writing" && <Suspense fallback={<PageLoading message="Loading lunar writing…" />}><LunationWritingStudio secret={secret} dirtyRef={lunationWritingDirtyRef}
+                library={<LunarCalendarWorkspace scope="lunations" rows={rows} query={query} onQuery={setQuery} isLoading={isLoading || loadState !== "loaded"}
+                  editor={null} onEdit={row => openCalendarWritingSource(row as AdminGeneratedContentRow)}
+                  loadRows={loadCalendarPreviewRows} onLoad={row => hydrateGeneratedContentRow(row as AdminGeneratedContentRow)} onCreate={() => {}} />}
+                onOpenContent={async key => {
                 const saved = await loadCalendarPreviewRows([key]);
                 if (!saved[0]) throw new Error("This content entry has not been saved in Studio yet. The writing workspace is preserved.");
                 openCalendarWritingSource(saved[0]);

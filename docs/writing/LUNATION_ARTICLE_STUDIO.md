@@ -3,6 +3,13 @@
 Open **Content Studio → Calendar Write-ups → New & Full Moons & Eclipses**.
 The workspace opens **Dated articles & eclipses** first; **Reusable sign readings**
 remains available in the adjacent tab.
+**Saved write-ups** opens the existing Calendar New Moon and Full Moon content
+entries, including published readings and drafts. Choose **Event readings** in
+that library for lunar journal and eclipse passages. The library edits existing
+reader sources; the dated writer's saved list contains generation workspaces.
+Opening either list does not create, replace or publish content.
+The direct library view is
+`/admin/content#calendar-writeups?view=lunation-writing&writing=library`.
 The dated view is `/admin/content#calendar-writeups?view=lunation-writing&writing=dated`;
 old `view=lunations` links resolve to this view.
 
