@@ -31,7 +31,9 @@ globalThis.fetch=async(input:any,options:any={})=>{
   if(url.origin!==env.SUPABASE_URL||url.pathname!=='/rest/v1/generated_interpretations')throw new Error(`External request refused: ${url.origin}${url.pathname}`);
   const found=[...rows.values()].filter(r=>matches(r,url.searchParams));
   if(!options.method||options.method==='GET')return Response.json(found);
-  const patch=JSON.parse(options.body);
+  // jsonb round-trips do not preserve object insertion order.
+  const patch=JSON.parse(options.body,(_key,value)=>value&&typeof value==='object'&&!Array.isArray(value)
+    ?Object.fromEntries(Object.keys(value).sort().map(key=>[key,value[key]])):value);
   if(options.method==='POST'){
     if([...rows.values()].some(r=>r.content_key===patch.content_key&&r.mode===patch.mode&&r.target_date===patch.target_date))return Response.json({code:'23505'},{status:409});
     const created={...patch,id:randomUUID()};rows.set(created.id,created);return Response.json([created]);

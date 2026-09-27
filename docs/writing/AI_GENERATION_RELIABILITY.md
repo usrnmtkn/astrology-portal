@@ -177,3 +177,31 @@ cover plan review, generation recovery, editing, publication and reader retrieva
 with isolated storage/provider fixtures. These tests prove routing and persistence,
 not that new live prose matches the owner's voice. A paid sample and exact owner
 review are separate evidence; no new paid sample is implied by this repair.
+
+## Lunar article workflow repair — September 27
+
+Content Studio > Calendar Write-ups > New & Full Moons & Eclipses opens the
+Dated articles & eclipses view by default. Events load for the chosen month and
+time zone. Each event has a Write/Open action leading directly to its saved
+writing plan. The owner reviews that plan before the single paid Generate draft
+request; existing writing is never overwritten by opening an event. Reusable
+sign readings and shared guidance remain available in the adjacent tab.
+
+`lunationArticleHash` orders nested object keys before hashing so a PostgreSQL
+JSON round-trip cannot invalidate an unchanged plan. Array order, exact source
+text, factual edits, guidance revisions and scoped feedback still affect the
+fingerprint. Old plans can be refreshed with Update writing plan.
+
+The reader-draft handoff retains deterministic findings. Dated lunar publication
+recalculates the event from the content key and validates the final title,
+summary and body, including edits made in the reader editor. Client-supplied
+facts or removed check metadata cannot authorize a factual error. Corrected text
+receives a fresh publication check while the historical handoff check remains
+available. Voice and cadence findings remain advisory; the owner decides prose.
+
+Regression coverage uses the actual handlers with isolated storage and provider
+fixtures, including reordered JSON objects, incorrect placements, forged facts,
+corrected copy, direct and bulk publication. Browser coverage exercises automatic
+event loading, event filters, plan review, generation, save/reopen and reader
+handoff across desktop/mobile and light/dark themes. These checks do not establish
+live model quality or authorize a paid sample or publication of owner content.

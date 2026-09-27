@@ -5,7 +5,7 @@ const Reusable = lazy(()=>import('./ReusableLunationWritingStudio'));
 const Dated = lazy(()=>import('./DatedLunationWritingStudio'));
 export default function LunationWritingStudio({secret,dirtyRef,onOpenContent}:{secret:string;dirtyRef:{current:boolean};onOpenContent:(key:string)=>Promise<void>}) {
   const initial=new URLSearchParams(window.location.hash.split('?')[1]??'');
-  const [mode,setMode]=useState(initial.get('writing')==='dated'?'dated':'reusable');
+  const [mode,setMode]=useState(initial.get('writing')==='reusable'?'reusable':'dated');
   const childDirty=useRef(false);
   // Both children update the parent's existing navigation guard.
   const guard={get current(){return childDirty.current;},set current(value:boolean){childDirty.current=value;dirtyRef.current=value;}};
@@ -18,7 +18,7 @@ export default function LunationWritingStudio({secret,dirtyRef,onOpenContent}:{s
     window.history.replaceState(null,'',`${window.location.pathname}${window.location.search}#calendar-writeups?${params}`);
     childDirty.current=false;dirtyRef.current=false;setMode(value);
   }
-  return <StudioTabs label="Lunar writing type" tabs={[{value:'reusable',label:'Reusable sign readings'},{value:'dated',label:'Dated articles & eclipses'}]} value={mode} onValueChange={choose}>
+  return <StudioTabs label="Lunar writing type" tabs={[{value:'dated',label:'Dated articles & eclipses'},{value:'reusable',label:'Reusable sign readings'}]} value={mode} onValueChange={choose}>
     <Suspense fallback={<PageLoading message="Loading lunar writing…"/>}>
       {mode==='reusable'?<Reusable secret={secret} dirtyRef={stableGuard} onOpenContent={onOpenContent}/>:<Dated secret={secret} dirtyRef={stableGuard} onOpenContent={onOpenContent} onEditGuidance={()=>choose('reusable')}/>}
     </Suspense>

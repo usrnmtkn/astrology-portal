@@ -86,7 +86,8 @@ export default async function handler(req:IncomingMessage,res:ServerResponse) {
         const saved=await adminFetchJson(url,{method:'POST',headers:{...headers,prefer:'return=representation'},body:JSON.stringify({
           content_key:contentKey,surface:'sky',mode:'article',target_date:null,event_type:'lunation-article',status:'DRAFT',lane:'serving',review_state:null,
           headline:row.headline,summary:'',body:row.body,facts:row.facts,sections:{},provider:'manual-admin',prompt_version:'lunation-reader-draft-v1',block_type:'sky_article',
-          source_snapshot:{contentSystem:'cms-surface-override',allowedSlots:[],lunationWorkspace:{id:row.id,updatedAt:row.updated_at}},updated_at:new Date().toISOString()
+          source_snapshot:{contentSystem:'cms-surface-override',allowedSlots:[],lunationWorkspace:{id:row.id,updatedAt:row.updated_at,
+            lint:validateLunationArticle({headline:row.headline,body:row.body},row.facts.lunationArticle)}},updated_at:new Date().toISOString()
         })});
         const records=adminStorageRows<any>(saved.payload);
         if(!saved.ok||records.length!==1||records[0].content_key!==contentKey||records[0].body!==row.body)throw new AdminHttpError(409,'The reader draft save was not confirmed. Reopen it before retrying; existing edits were preserved.');
@@ -137,7 +138,7 @@ export default async function handler(req:IncomingMessage,res:ServerResponse) {
     if(operation)throw new AdminHttpError(409,'A draft is already running. Retrieve its result before starting another.');
     if(row.body.trim())throw new AdminHttpError(409,'This draft already contains writing. Edit the saved article; generation will not replace it.');
     const prepared=await prepareSharedArticle(row.facts.lunationArticle,state().direction);
-    if(input.approvedPlanHash!==prepared.planHash||state().planHash!==prepared.planHash)throw new AdminHttpError(409,'The writing sources or plan changed. Prepare a new review before generation.');
+    if(input.approvedPlanHash!==prepared.planHash||state().planHash!==prepared.planHash)throw new AdminHttpError(409,'The writing sources or plan changed. Select Update writing plan, review it again, then choose Generate draft.');
     const config=provider.normalizeProviderConfig({},'writer');
     operation={id:randomUUID(),startedAt:new Date().toISOString(),actor,responseId:null,config,planHash:prepared.planHash,
       version:LUNATION_ARTICLE_PROTOCOL_VERSION,sourceHashes:prepared.sources,sourceIds:prepared.context.sameFamilyExamples.map((e:any)=>e.id),
