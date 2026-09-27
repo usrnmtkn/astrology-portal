@@ -3,6 +3,8 @@ import assert from "node:assert/strict";
 import fs from "node:fs";
 
 const deployment = JSON.parse(fs.readFileSync("vercel.json", "utf8"));
+const functionRules=Object.keys(deployment.functions??{});
+assert.equal(functionRules.at(-1),'api/**/*.ts','The API catch-all must follow specific function rules so Vercel can match each endpoint.');
 const memoryConfig = JSON.parse(fs.readFileSync("config/agent-memory-sources-v1.json", "utf8"));
 const correctionSources = memoryConfig.sources
   .filter((source) => source.kind === "correction")
@@ -19,6 +21,7 @@ for (const endpoint of [
   "api/admin/personal-transit-writing.ts",
   "api/admin/horoscope-writing.ts",
   "api/admin/lunation-writing.ts",
+  "api/admin/calendar-lunation-writing.ts",
 ]) {
   const rule = deployment.functions?.[endpoint];
   assert.ok(rule && typeof rule.includeFiles === "string", `${endpoint} needs an explicit Vercel includeFiles rule.`);
