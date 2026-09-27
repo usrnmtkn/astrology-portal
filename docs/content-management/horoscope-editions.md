@@ -17,23 +17,33 @@ unaffected.
 
 Open **Write → Horoscopes** (`/admin/content#horoscopes`).
 
-1. Choose daily, weekly or seasonal, a reference date, and a city or time zone.
-   **Create or open edition** calculates its dates and facts. If a saved edition
-   exists, that version opens with its writing intact.
-2. In **Generate**, edit the writing instructions if needed. **Use latest saved
-   instructions** explicitly adopts that profile for this edition. **Review writing
-   plan** saves the draft and prepares the twelve-sign plan without a model call.
-   Approve the exact plan, then select **Generate 12 drafts** or **Generate missing
-   readings**. Each completed sign saves automatically. **Resume generation**
-   retrieves an interrupted request before starting another sign.
-3. **Read & edit** contains sign tabs, complete headline/body fields, and a private
-   outline. Generation preserves existing writing, including partially completed
-   readings. Save manual edits before publication; a version conflict preserves the
-   local changes. Leaving the browser warns about unsaved work.
-4. **Publish** displays all twelve complete readings. Review the exact saved words
-   and select the approval checkbox before **Publish edition**. Publication remains
-   separate from generation and uses the saved version. **Read published edition**
-   opens that exact edition and sign, including after the period ends.
+1. **Dates:** choose daily, weekly or seasonal, a date, and a city or time zone.
+   **Continue to writing plan** calculates the period, saves an empty draft and
+   prepares its plan without a model call. An existing edition opens with its
+   writing intact. **Continue a saved edition** reopens previous work.
+2. **Generate:** review the exact plan using the sign buttons. Writing instructions
+   are optional; saved instructions are selected automatically. To change them,
+   expand **Writing instructions**, save the profile, and select **Use latest saved
+   instructions**. Review the refreshed plan before generating. The approval box
+   and **Generate 12 drafts** action stay together in the footer, with a clear
+   explanation of missing approval and the number of paid calls. Each completed
+   sign saves automatically. **Resume generation** retrieves an interrupted request.
+3. **Review:** read one complete headline/body at a time. **Save & next** saves
+   changes before moving to the next sign; **Continue to publish** saves the last
+   reading. Sign buttons allow direct navigation. Back and section navigation keep
+   unsaved work, and leaving the browser warns about it. Private outlines and
+   import/export tools stay in optional disclosures. Partially written passages
+   are preserved and must be completed before publication.
+4. **Publish:** review all twelve saved readings, approve their exact wording and
+   select **Publish edition**. The success screen links directly to the published
+   edition and offers **Create another edition**. Publication remains a separate
+   explicit action, and exact edition links also work after the period ends.
+
+The four-step navigation indicates the current step. Future steps explain their
+requirements through the active screen; publication is unavailable until all
+readings are complete. The primary action and Back remain with each step, and
+focus moves to its heading when navigating. Failed plan preparation can be retried
+against the saved draft without creating another edition or making a model call.
 
 **Advanced** retains export, import and calculated facts. Import accepts
 `{schema: "horoscope-draft/v1", edition, editorialNotes?}`; `schema` may be omitted.
