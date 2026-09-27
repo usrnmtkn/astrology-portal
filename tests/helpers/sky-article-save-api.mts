@@ -69,7 +69,7 @@ function storageOrder(row:any) {
  const ordered=(value:any):any=>Array.isArray(value)?value.map(ordered):value&&typeof value==='object'?Object.fromEntries(Object.keys(value).sort().map(key=>[key,ordered(value[key])])):value;
  return ordered(row);
 }
-export const writerFixture={calls:0,polls:0,failNext:false,unknownNext:false,requests:new Map<string,any>()};
+export const writerFixture={calls:0,polls:0,pendingPolls:0,terminalNext:false,failNext:false,unknownNext:false,requests:new Map<string,any>()};
 export async function invokeHoroscopeWriting(body:any,secret='calendar-api-fixture') {
  const req=Readable.from([JSON.stringify(body)]);Object.assign(req,{method:'POST',headers:{authorization:`Bearer ${secret}`}});
  let result:any;const res={statusCode:200,setHeader(){},end(value:string){result={status:this.statusCode,payload:JSON.parse(value)};}};
@@ -95,12 +95,18 @@ export function installHoroscopeWriterFixture(){
    }
    const id=url.split('/').at(-1)!,request=writerFixture.requests.get(id);
    if(!request)throw new Error('Unrecognized fixture response');writerFixture.polls++;
+   if(writerFixture.pendingPolls>0){writerFixture.pendingPolls--;return Response.json({id,status:'in_progress'});}
+   if(writerFixture.terminalNext){writerFixture.terminalNext=false;return Response.json({id,status:'failed',error:{message:'Fixture provider could not finish this reading.'}});}
    return Response.json({id,status:'completed',usage:{input_tokens:100,output_tokens:40},output:[{type:'message',content:[{type:'output_text',text:JSON.stringify({headline:request.text.format.schema.properties.headline.enum?.[0]??`Fixture ${request.sign} reading`,body:`You can read the complete ${request.sign} fixture opening.\n\nYour saved fixture ends here.`})}]}]});
  };
 }
 if(process.env.HOROSCOPE_WRITER_FIXTURE==='1')installHoroscopeWriterFixture();
 if (process.send) process.on('message', async ({ id, method, body, url }: any) => {
  try {
+  if (method === 'writer-state') {
+    for(const key of ['pendingPolls','terminalNext','unknownNext'] as const)if(body?.[key]!==undefined)(writerFixture as any)[key]=body[key];
+    process.send!({id,result:{calls:writerFixture.calls,polls:writerFixture.polls,responseIds:[...writerFixture.requests.keys()]}});return;
+  }
   if (method === 'lunar-writing') {
     const handler = (await import('../../api/admin/calendar-lunation-writing')).default;
     const req:any=Readable.from([JSON.stringify(body)]);req.method='POST';req.url='/api/admin/calendar-lunation-writing';req.headers={'x-content-generation-secret':'calendar-api-fixture'};
