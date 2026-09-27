@@ -21,6 +21,9 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark'] as const)
     let failLookup = false;
     try {
       await page.context().route('**/*', route => new URL(route.request().url()).pathname.startsWith('/api/') || !['GET', 'HEAD'].includes(route.request().method()) ? route.abort() : route.continue());
+      // Studio also loads and caches the publication ledger. Isolate it before
+      // the first navigation so real row identities cannot reject fixture rows.
+      await bundledPublications(page);
       await page.setViewportSize({ width, height: 1000 });
       await page.emulateMedia({ colorScheme: theme });
       await page.addInitScript(value => {
