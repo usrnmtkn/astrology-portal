@@ -75,6 +75,14 @@ for(const [width,theme] of [[390,'light'],[390,'dark'],[1440,'light'],[1440,'dar
    await expect(studio.getByText('12 missing readings',{exact:false})).toBeVisible();
    await expect(studio.getByRole('button',{name:'2 · Generate',exact:true})).toHaveAttribute('aria-current','step');
    await expect(studio.getByRole('button',{name:'Generate 12 drafts',exact:true})).toBeDisabled();
+   const writingPlan=studio.getByRole('region',{name:'Aries writing plan',exact:true});
+   await expect(writingPlan).toContainText('calculated developments');
+   await writingPlan.getByText('Full plan details',{exact:true}).click();
+   await expect(writingPlan.locator('li').filter({hasText:'Sun enters Libra'})).toContainText('House 7');
+   await expect(writingPlan.locator('li').filter({hasText:'Full Moon'})).toContainText('House 1');
+   await expect(writingPlan.locator('h3')).toHaveText('Aries writing plan');
+   await writingPlan.getByText('Full plan details',{exact:true}).click();
+
    expect(generationCalls).toBe(0);
    expect(await studio.locator('h2').evaluate(el=>{const s=getComputedStyle(el);return[s.fontFamily,s.fontSize,s.fontWeight,s.lineHeight,s.letterSpacing,s.margin,s.textTransform,s.textAlign];})).toEqual(titleStyle);
    await expect(studio.locator('h2,h3')).toHaveText(['Generate your drafts','Aries writing plan']);

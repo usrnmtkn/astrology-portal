@@ -15,9 +15,10 @@ import {assertPositiveOwnerEvidenceContext} from './ownerEvidencePolicy.mjs';
 import {loadPhraseEvidenceIndex} from './phraseEvidence.mjs';
 import {validateHoroscopeReading} from './horoscopeValidation.mjs';
 import {runWritingPipeline} from './runWritingPipeline.mjs';
+import {buildHoroscopeDevelopments} from './horoscopeDevelopments.mjs';
 
 const root=fileURLToPath(new URL('../../',import.meta.url));
-export const horoscopeWritingVersion='horoscope-writer/v2';
+export const horoscopeWritingVersion='horoscope-writer/v3';
 const digest=value=>createHash('sha256').update(typeof value==='string'?value:horoscopeCanonicalJson(value)).digest('hex');
 let repositorySources;
 const preparedPlans=new Map();
@@ -47,7 +48,7 @@ function loadSources() {
   const phrases=loadPhraseEvidenceIndex(path.join(root,phrasePath));
   const houses=json('packages/astro-knowledge/data/primitives/houses.json').entries;
   const meaningPath='tldr-astro-phrasebank/phrasebank/cc-planet-in-sign-reviewed.json';
-  const meanings=json(meaningPath).reviewed.filter(e=>['sun','moon'].includes(e.body));
+  const meanings=json(meaningPath).reviewed;
   const placements=Object.fromEntries(meanings.map(e=>{
     if(e.status!=='REVIEWED_CLAUSE')throw new Error('Reviewed horoscope meaning is unavailable.');
     return [`${e.body}-${e.sign}`,{...e,sourcePath:meaningPath,tldr:e.collective_shift,body:e.natal_sign_story,
@@ -92,20 +93,24 @@ export function prepareHoroscopeWriting(row,{studioCorrections=[],feedbackReceip
     const domain=sources.houses.find(h=>h.id===String(house));
     if(!domain?.plainTranslation)throw new Error('The calculated house has no topic definition.');
     const topics=domain.plainTranslation.split(',').map(s=>s.trim());
+    const developments=buildHoroscopeDevelopments(brief,rising,sources);
+    const periodDomains=[...new Set([...developments.events,...developments.background].map(d=>d.domain))];
     const meaningInput={contentType:'horoscope',object:planet,sign,house,objectFunction:meaning.tldr,
       signMechanics:meaning.body,actualHouseDomain:domain.plainTranslation,coreTension:meaning.challenge,
-      likelyObservableBehaviors:[meaning.gift],likelyConsequences:[meaning.challenge],allowedLivedDomains:topics,
+      likelyObservableBehaviors:[meaning.gift],likelyConsequences:[meaning.challenge],allowedLivedDomains:periodDomains,
       risks:[meaning.challenge],DO_NOT_ASSUME:['natal biography or a permanent personality pattern','events beyond the signed calculation coverage','a placement lasting beyond its supplied boundaries']};
     const plan=buildMeaningPlan(meaningInput);
     const savedOutline=String(row.source_snapshot?.horoscopeOutlines?.[rising]??'').trim();
-    const argumentInput={thesis:savedOutline?savedOutline.replace(/\s+/gu,' '):`Explore ${planet} in ${sign} through the ${house}th house: ${domain.plainTranslation}.`,
-      transit_job:`Interpret the temporary ${planet} emphasis using the governed ${sign} meaning and calculated house ${house}.`,
-      recognition:`Use proportionate possibilities within ${domain.plainTranslation}; no assumed biography.`,
-      complication:`Keep the possible complication within the approved meaning: ${meaning.challenge}`,
-      response:`Develop one useful response to the chosen possibility, supported by ${meaning.gift}`,
-      scope_guard:`Only ${edition.window.period} timing from ${edition.window.startsAt} to ${edition.window.endsAt} in ${edition.window.timeZone}; no unsupplied aspects or exact events.`,
-      scope_breadth:{broad_mechanism:meaning.body,chosen_expression:`Temporary emphasis in house ${house}: ${domain.plainTranslation}`,
-        other_valid_expressions:[...topics,'A choice within the supplied house topics','A conversation within the supplied house topics','A change of approach within the supplied house topics']}};
+    const datedScope=developments.events.map(d=>`${d.title} (${d.localTiming}; house ${d.house}: ${d.domain})`).join('; ');
+    const argumentInput={thesis:savedOutline?savedOutline.replace(/\s+/gu,' '):`Develop a connected ${edition.window.period} interpretation for ${rising} from the supplied developments and their individual life areas. Let a meaningful concern emerge from those facts; the reference ${planet} placement is not a prescribed story.`,
+      transit_job:`Consider the dated developments with their own planet, sign, house and governed meaning: ${datedScope||'No dated developments with governed meaning are available; stay within the reference-instant coverage.'}`,
+      recognition:'Develop what the chosen circumstances could mean to this reader: a desire, fear, pleasure, conflict, loyalty or decision only where the selected facts and house support it. Observable detail should deepen that concern, not become a catalogue of activities or administrative tasks.',
+      complication:'Follow what changes or becomes harder to ignore in the selected concern. A complication is optional; do not manufacture a crisis, trauma, childhood history or a repeated compromise plot.',
+      response:'Let the ending follow from the recognition developed in this reading. A useful response may be an action, a changed understanding or permission earned by the passage; no compulsory checklist or moral.',
+      scope_guard:`Only ${edition.window.period} timing from ${edition.window.startsAt} to ${edition.window.endsAt} in ${edition.window.timeZone}. Dated sky events support timing; reference positions do not. No unsupplied aspects, guaranteed personal events or imported historical dates.`,
+      scope_breadth:{broad_mechanism:'Each supplied development has its own temporary meaning and calculated life area; related developments may deepen one concern over the period.',
+        chosen_expression:`Select the developments that make a coherent reading for ${rising}; each house remains bound to its own event or placement.`,
+        other_valid_expressions:[...periodDomains,...topics]}};
     const argumentOutline=buildArgumentOutline(argumentInput,{plan,family:'horoscope',surface:'horoscopes'});
     const scenes=sceneEvidenceForTarget({approvedExamples:targetApproved,matrixEvidenceRows:targetMatrix,registerExamples:targetExamples,sceneNounLexicon:sources.sceneLexicon,plan});
     const reviewedMeaningExamples=[{id:meaning.id,planet,sign,status:meaning.status,text:meaning.collective_shift,sourcePath:meaning.sourcePath,sourceKind:'reviewed-doctrine',ownerAuthored:false,ownerApproved:false,reviewNote:meaning.review_note}];
@@ -123,11 +128,11 @@ export function prepareHoroscopeWriting(row,{studioCorrections=[],feedbackReceip
     try{assertPositiveOwnerEvidenceContext(context,{family:'horoscope'});}catch(error){
       if(error.code!=='OWNER_EVIDENCE_ROLE_MISSING'||error.detail?.role!=='argument')throw error;
     }
-    return {sign:rising,house,anchor:{planet,sign},domain:domain.plainTranslation,outline:savedOutline||argumentInput.thesis,
+    return {sign:rising,house,anchor:{planet,sign},developments,domain:domain.plainTranslation,outline:savedOutline||argumentInput.thesis,
       argumentOutline,meaningInput,plan,contextOptions,validationCorrections:context.corrections,sourceIds:context.sameFamilyExamples.map(e=>e.id)};
   });
   const planHash=digest({version:horoscopeWritingVersion,window:edition.window,writingProfile,sourceHash:sources.sha256,
-    feedbackReceipt,entries:entries.map(e=>({sign:e.sign,outline:e.argumentOutline}))});
+    feedbackReceipt,brief,entries:entries.map(e=>({sign:e.sign,outline:e.argumentOutline,developments:e.developments}))});
   const prepared={edition,brief,writingProfile,entries,planHash,sources:sources.hashes,sourceHash:sources.sha256,feedbackReceipt};
   if(preparedPlans.size>=4)preparedPlans.delete(preparedPlans.keys().next().value);preparedPlans.set(cacheKey,prepared);return prepared;
 }
@@ -135,7 +140,7 @@ export function prepareHoroscopeWriting(row,{studioCorrections=[],feedbackReceip
 export function horoscopePlanPreview(prepared) {
   return {version:horoscopeWritingVersion,planHash:prepared.planHash,window:prepared.edition.window,
     readings:prepared.entries.map(e=>({sign:e.sign,anchor:e.anchor,house:e.house,domain:e.domain,outline:e.outline,
-      argument:e.argumentOutline,sourceIds:e.sourceIds})),writerCalls:prepared.edition.passages.filter(p=>!p.headline.trim()&&!p.body.trim()).length};
+      argument:e.argumentOutline,developments:e.developments,sourceIds:e.sourceIds})),writerCalls:prepared.edition.passages.filter(p=>!p.headline.trim()&&!p.body.trim()).length};
 }
 
 export async function writeHoroscopeSign(prepared,sign,{approvedPlanHash,writerClient,approvalReference}) {
@@ -150,7 +155,7 @@ export async function writeHoroscopeSign(prepared,sign,{approvedPlanHash,writerC
       chosen_expression:entry.argumentOutline.scopeBreadth.chosenExpression,other_valid_expressions:entry.argumentOutline.scopeBreadth.otherValidExpressions}},
     approvedArgumentOutline:approved,argumentSource,family:'horoscope',surface:'horoscopes',register:'second_person',writingProfile:prepared.writingProfile,
     target:{surface:'horoscopes',route:'horoscopes',renderer:'HoroscopeReader',contentKeyFamily:'horoscope',temporality:'current_sky',voiceMode:'second_person'},
-    engineFacts:{...prepared.brief,risingSign:sign,anchor:entry.anchor,house:entry.house},
+    engineFacts:{...prepared.brief,risingSign:sign,anchor:entry.anchor,house:entry.house,developments:entry.developments},
     task:`Write one complete ${prepared.edition.window.period} horoscope for ${sign} rising in ${prepared.edition.window.timeZone}.`,writerClient});
   if(!result.draft)throw new Error('The writer could not prepare a horoscope from the available evidence.');
   const {headline,body}=result.draft;

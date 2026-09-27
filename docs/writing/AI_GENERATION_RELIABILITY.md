@@ -145,3 +145,35 @@ Completion requires a verified completed You Day, You Week, and Friends job, eac
 Diagnostic memory records symptoms, confirmed recovery defects, implementation paths, regression evidence, and unresolved production checks. It must retain provenance and stay ineligible as positive writer evidence. Raw failed prose and judge opinions never become broadly active writing rules automatically; reusable editorial corrections require the existing owner-review process.
 
 Local verification on September 21: Content Studio API gate; typecheck of affected report modules; focused report correction, checkpoint, lifecycle, judge, schema, and delivery regressions; premium fulfillment regression; all 21 memory tests; privacy scan; and five browser tests from a fresh production build covering Reports and Friends saved-result transitions. The delivery tests exercise 21 synthetic pipeline cases. All model transports/storage used by those tests are fixtures. These checks establish local behavior, not actual provider writing quality, deployed memory freshness, or recovery of a production report.
+
+## Horoscope period planning repair — September 27
+
+Surface: Content Studio Horoscopes, `POST /api/admin/horoscope-writing`.
+Writer v3 prepares each sign from the signed local-period brief and governed
+planet/sign/house meanings in `horoscopeDevelopments.mjs`. The former reference
+Sun/Moon remains an evidence-retrieval anchor, not a compulsory thesis. Calculated
+ingresses join lunations and stations in new briefs; exact aspects remain outside
+coverage. Existing Calendar and You lunar-only range callers retain their original
+coverage through an opt-in calculation flag.
+
+The canonical writer receives three complete eligible owner weekly passages,
+scoped corrections, the saved Studio profile, distinct event meanings and local
+times. Profile instructions develop emotional meaning without assuming biography
+or imposing a confrontation/compromise narrative. The Supabase profile and edition
+snapshot are live writing inputs; repository memory describes their relationship.
+Private feedback from other families is not silently widened to horoscopes.
+
+Generation retains one reserved provider call per sign, a persisted response ID,
+source/profile/plan/request hashes, exact draft text and an immutable historical
+check receipt. Fresh fact validation distinguishes a lunation from a reference
+Moon and checks each named house against its own placement. Current facts replace
+obsolete fact warnings at publication, while other historical checks remain.
+No model approves voice, rewrites reader copy automatically or publishes it.
+
+Actual-handler tests inspect every dispatched sign request and persisted receipt,
+exercise old brief coverage, source completeness, wrong lunations/houses, multiple
+dates against direct Swiss calculation and local time zones. Fresh browser tests
+cover plan review, generation recovery, editing, publication and reader retrieval
+with isolated storage/provider fixtures. These tests prove routing and persistence,
+not that new live prose matches the owner's voice. A paid sample and exact owner
+review are separate evidence; no new paid sample is implied by this repair.

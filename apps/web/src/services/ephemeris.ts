@@ -3057,17 +3057,19 @@ export async function getCalendarSubscriptionEvents(year: number): Promise<Lunar
 
 /**
  * Lean event feed for horoscope assembly. Unlike the visual calendar builders,
- * this skips ingress/aspect scans, daily moon status, void-of-course searches,
- * illumination, and the 42-day month grid.
+ * this skips aspect scans, daily moon status, void-of-course searches,
+ * illumination, and the 42-day month grid. Ingresses are opt-in for the Studio
+ * forecast brief; existing lunar-only consumers retain their original coverage.
  */
 export function getLunarCalendarRangeEvents(
   location: LocationInput = defaultLocation,
   start: Date,
-  end: Date
+  end: Date,
+  options: { includeIngresses?: boolean } = {}
 ): Promise<LunarCalendarEvent[]> {
   const timeZone = location.timeZone || Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC";
   const key = [
-    "range-events",
+    options.includeIngresses ? "range-events-with-ingresses" : "range-events",
     start.toISOString(),
     end.toISOString(),
     location.latitude.toFixed(4),
@@ -3084,7 +3086,11 @@ export function getLunarCalendarRangeEvents(
 
     return [
       ...findLunations(swe, searchStart, searchEnd, timeZone),
-      ...findStations(swe, searchStart, searchEnd, timeZone)
+      ...findStations(swe, searchStart, searchEnd, timeZone),
+      ...(options.includeIngresses ? [
+        ...findIngresses(swe, searchStart, searchEnd, timeZone),
+        ...findMoonIngresses(swe, searchStart, searchEnd, timeZone)
+      ] : [])
     ].sort((first, second) => first.startsAt.localeCompare(second.startsAt));
   });
 

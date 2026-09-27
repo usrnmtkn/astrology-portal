@@ -2,12 +2,12 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import {createHash} from 'node:crypto';
 import {store,installHoroscopeWriterFixture,invokeHoroscopeWriting,writerFixture} from '../tests/helpers/sky-article-save-api.mts';
-import {emptyHoroscopeEdition,horoscopeEditionBody,horoscopeEditionKey,horoscopeEditionAt,canonicalHoroscopeTimeZone} from '../apps/web/src/content/horoscopeEditions.mjs';
+import {emptyHoroscopeEdition,horoscopeEditionBody,horoscopeEditionKey,horoscopeEditionAt,canonicalHoroscopeTimeZone,horoscopeCanonicalJson} from '../apps/web/src/content/horoscopeEditions.mjs';
 import {validateHoroscopeReading} from '../src/astro-writing/horoscopeValidation.mjs';
 import {prepareHoroscopeBrief} from '../api/_lib/horoscope-editions';
 import {prepareHoroscopeWriting} from '../src/astro-writing/horoscopeWriting.mjs';
 import {retrieveOwnerContext} from '../src/astro-writing/retrieveOwnerContext.mjs';
-import {defaultHoroscopeProfile,horoscopeEditorialPrompt} from '../src/astro-writing/horoscopeWritingProfiles.mjs';
+import {defaultHoroscopeProfile,horoscopeEditorialPrompt,HOROSCOPE_EMOTIONAL_DEVELOPMENT_GUIDANCE} from '../src/astro-writing/horoscopeWritingProfiles.mjs';
 installHoroscopeWriterFixture();
 const savedProfile=await store.invoke('POST',{profile:defaultHoroscopeProfile('weekly'),expectedUpdatedAt:null},'/api/admin/generated-content?writingProfiles=true');
 assert.equal(savedProfile.status,200,JSON.stringify(savedProfile.payload));
@@ -23,6 +23,23 @@ assert.equal((await invokeHoroscopeWriting({action:'prepare',id:row.id,expectedU
 assert.equal((await action('generate',{sign:'aries',approvedPlanHash:'wrong'})).status,409);assert.equal(writerFixture.calls,0);
 const plan=await action('prepare');assert.equal(plan.status,200,JSON.stringify(plan.payload));assert.equal(plan.payload.plan.readings.length,12);assert.equal(writerFixture.calls,0);
 const planHash=plan.payload.plan.planHash;
+assert.equal(brief.referenceDate,'2026-09-21','Weekly context is stable across selected days');
+for(const entry of plan.payload.plan.readings){
+ const sunIngress=entry.developments.events.find((d:any)=>d.type==='ingress'&&d.planet==='sun');
+ const fullMoon=entry.developments.events.find((d:any)=>d.id.startsWith('lunation-full-moon-'));
+ assert(sunIngress&&fullMoon,'Both calculated developments must reach every sign plan');
+ assert.equal(sunIngress.sign,'libra');assert.equal(fullMoon.sign,'aries');
+ assert.notEqual(sunIngress.house,fullMoon.house,'Events retain separate life areas');
+ assert.match(sunIngress.localTiming,/Wednesday.*GMT\+9/,'Tokyo receives its own weekday, not New York Tuesday');
+ assert(entry.developments.background.some((d:any)=>d.planet==='venus'&&d.meaning.sourceId&&d.domain));
+ assert.doesNotMatch(entry.outline,/^Explore sun/,'A snapshot is no longer the prescribed thesis');
+}
+const changedBrief=structuredClone(row);changedBrief.facts.horoscopeBrief.brief.events=brief.events.filter((e:any)=>e.type!=='ingress');
+assert.notEqual(prepareHoroscopeWriting(changedBrief).planHash,prepareHoroscopeWriting(row).planHash,'Fact coverage invalidates plan approval');
+// Legacy signed rows retain only their actual coverage, without invented ingresses.
+const legacy=prepareHoroscopeWriting(changedBrief);
+assert(legacy.entries.every((e:any)=>e.developments.events.every((d:any)=>d.type!=='ingress')));
+
 // A generic "owner passages present" check missed the excluded sign readings.
 // Use the actual governed corpus and inspect every dispatched provider request.
 const voice=JSON.parse(fs.readFileSync(new URL('../packages/astro-knowledge/voice/tldr-astro/satori-writer/voice-index.json',import.meta.url),'utf8'));
@@ -58,6 +75,16 @@ for(const sign of edition.passages.slice(1).map(p=>p.sign)){
 }
 assert.equal(writerFixture.calls,13);assert.equal(row.sections.horoscopeEdition.passages.filter((p:any)=>p.body).length,12);
 for(const request of writerFixture.requests.values()){
+ assert(request.input.includes(HOROSCOPE_EMOTIONAL_DEVELOPMENT_GUIDANCE));
+ const label=request.sign[0].toUpperCase()+request.sign.slice(1);
+ assert.deepEqual(request.text.format.schema.properties.headline.enum,[`${label} & ${label} Rising`]);
+ assert.equal(row.sections.horoscopeEdition.passages.find((p:any)=>p.sign===request.sign).headline,`${label} & ${label} Rising`);
+ const developmentSection=request.input.match(/PERIOD DEVELOPMENTS — EACH FACT WITH ITS OWN MEANING AND LIFE AREA\n([^\n]+)\n\n/);
+ assert(developmentSection,'Inspect the actual provider boundary, not only the plan object');
+ const developments=JSON.parse(developmentSection[1]);
+ assert.deepEqual(developments,plan.payload.plan.readings.find((e:any)=>e.sign===request.sign).developments);
+ assert(developments.events.every((d:any)=>d.meaning.role.includes('not owner voice')));
+
  assert(request.input.includes(horoscopeEditorialPrompt(writingProfile.profile)),'Every sign must receive the complete saved weekly guidance, including sign specificity and flexible interpretation');
  const section=request.input.match(/COMPLETE OWNER HOROSCOPES — PRIMARY PROSE EXAMPLES\n([^\n]+)\n\n/);
  assert(section,'The actual provider prompt must contain the primary horoscope examples');
@@ -71,14 +98,40 @@ for(const request of writerFixture.requests.values()){
  }
  assert(request.input.indexOf(section[0])<request.input.indexOf('CONTENT STUDIO WRITING INSTRUCTIONS'));
  assert.deepEqual(row.source_snapshot.horoscopeGeneration.readings[request.sign].sourceIds.slice(0,3),passages.map((e:any)=>e.id));
- assert.equal(row.source_snapshot.horoscopeGeneration.readings[request.sign].version,'horoscope-writer/v2');
+ assert.equal(row.source_snapshot.horoscopeGeneration.readings[request.sign].version,'horoscope-writer/v3');
 }
+// The lunation is distinct from the Monday snapshot Moon. Houses must bind to
+// the named subject, rather than matching the Sun's house or any available house.
+const factIssues=(body:string,b=brief)=>validateHoroscopeReading({sign:'aries',headline:'Fixture',body},b).violations.filter((v:any)=>v.category==='horoscope_fact_boundary');
+assert.deepEqual(factIssues('You can notice the Full Moon in Aries in your first house. The Sun enters Libra in your seventh house.'),[]);
+assert(factIssues('You can notice the Full Moon in Taurus in your second house.').length);
+assert(factIssues('You can notice the New Moon in Aries in your first house.').length);
+assert(factIssues('You can notice the Full Moon in Aries in your seventh house.').length);
+assert(factIssues('You can notice the Sun entering Libra in your first house.').length);
+assert(factIssues('You can notice the Sun entering Libra in your seventh house.',changedBrief.facts.horoscopeBrief.brief).length);
+const outOfWindow={...brief,events:brief.events.map((e:any)=>({...e,startsAt:brief.window.endsAt}))};
+assert(factIssues('You can notice the Full Moon in Aries in your first house.',outOfWindow).length);
+assert(factIssues('You can notice the Full Moon in Aries square Saturn.').length,'Unsupported exact aspects remain blocked');
 const protectedReceipt=structuredClone(row.source_snapshot.horoscopeGeneration);
 result=await store.invoke('PATCH',{id:row.id,expectedUpdatedAt:row.updated_at,sourceSnapshot:{...row.source_snapshot,horoscopeGeneration:null}});
 assert.equal(result.status,200,JSON.stringify(result.payload));row=result.payload.rows[0];assert.deepEqual(row.source_snapshot.horoscopeGeneration,protectedReceipt);
 const invalid={...row.sections.horoscopeEdition.passages[0],body:'You were born with the Sun in Aries. Your seventh house is activated.'};
 assert.equal(validateHoroscopeReading(invalid,brief).passed,false);
-const live=await store.invoke('PATCH',{id:row.id,expectedUpdatedAt:row.updated_at,status:'LIVE'});assert.equal(live.status,200,JSON.stringify(live.payload));row=live.payload.rows[0];
+// Seed an obsolete receipt exactly as a pre-v2 saved generation would have it.
+// The actual publication handler reruns facts but must not drop other checks.
+const legacyRow=structuredClone(row);
+const currentPassage=legacyRow.sections.horoscopeEdition.passages[0];
+const oldCheck=legacyRow.source_snapshot.horoscopeGeneration.readings.aries;
+oldCheck.bodyHash=createHash('sha256').update(horoscopeCanonicalJson({headline:currentPassage.headline,body:currentPassage.body})).digest('hex');
+delete oldCheck.lint.version;
+oldCheck.lint.violations=[{category:'owner_correction',detail:'Synthetic private correction still applies.'}];
+store.rows.set(row.id,legacyRow);
+assert.equal((await store.invoke('PATCH',{id:row.id,expectedUpdatedAt:row.updated_at,status:'LIVE'})).status,422,'Private correction findings cannot be discarded with obsolete fact checks');
+oldCheck.lint.violations=[{category:'horoscope_fact_boundary',detail:'Synthetic obsolete snapshot-Moon warning.'}];
+store.rows.set(row.id,legacyRow);
+const live=await store.invoke('PATCH',{id:row.id,expectedUpdatedAt:row.updated_at,status:'LIVE'});
+assert.equal(live.status,200,JSON.stringify(live.payload));row=live.payload.rows[0];
+assert.deepEqual(row.source_snapshot.horoscopeGeneration.readings.aries.lint.violations,oldCheck.lint.violations,'Publication preserves the historical receipt');
 assert(horoscopeEditionAt([row],'weekly','2026-09-24T16:00:00Z','Asia/Tokyo'));
 assert.equal(horoscopeEditionAt([row],'weekly','2026-09-24T16:00:00Z','America/New_York'),null);
 // An unconfirmed POST retains its reservation and cannot silently bill twice.

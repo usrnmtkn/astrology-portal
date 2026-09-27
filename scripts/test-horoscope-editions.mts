@@ -21,6 +21,26 @@ assert.equal(brief.provenance.actualEphemeris,'swiss');
 assert.equal(brief.window.startsAt,'2026-09-21T04:00:00.000Z');
 assert.equal(brief.window.endsAt,'2026-09-28T04:00:00.000Z');
 assert.equal(brief.signs.length,12);
+// Two seasons and both sides of the date line use the same calculation functions
+// as Calendar. Check direct Swiss positions on either side of each ingress.
+const ephemeris=await import('../apps/web/src/services/ephemeris');
+for(const [date,timeZone] of [['2026-09-24','America/New_York'],['2026-12-25','Pacific/Kiritimati']]){
+ const packet=await prepareHoroscopeBrief(new URL(`http://localhost/?period=weekly&date=${date}&timeZone=${timeZone}`));
+ const location={label:'Test geocentric',latitude:0,longitude:0,timeZone};
+ const direct=await ephemeris.getLunarCalendarRangeEvents(location,new Date(packet.brief.window.startsAt),new Date(packet.brief.window.endsAt),{includeIngresses:true});
+ const legacy=await ephemeris.getLunarCalendarRangeEvents(location,new Date(packet.brief.window.startsAt),new Date(packet.brief.window.endsAt));
+ assert(legacy.every((e:any)=>e.type!=='ingress'),'The opt-in cannot alter Calendar/You lunar-only coverage');
+ const ingress=packet.brief.events.find((e:any)=>e.type==='ingress'&&e.planet==='Sun');assert(ingress);
+ assert.equal(ingress.startsAt,direct.find((e:any)=>e.id===ingress.id)?.startsAt);
+ for(const [offset,sign] of [[-60000,ingress.fromSign],[60000,ingress.sign]] as const){
+  const sky=await ephemeris.getAstrodienstSky(location,new Date(Date.parse(ingress.startsAt)+offset),{includeTransitWindows:false});
+  assert.equal(sky.calculationProvenance?.actualEphemeris,'swiss');
+  assert.equal(sky.positions.find((p:any)=>p.planet==='Sun')?.sign,sign);
+ }
+}
+const sameWeek=await prepareHoroscopeBrief(new URL('http://localhost'+briefUrl.replace('2026-09-24','2026-09-27')));
+assert.deepEqual(sameWeek.brief,brief,'Choosing another day within the same week cannot change the writing facts');
+
 assert.deepEqual(horoscopeCivilWindow('weekly','2027-01-01','America/New_York'),{start:'2026-12-28',end:'2027-01-04'});
 for(const [date,hours] of [['2026-03-08',23],['2026-11-01',25]] as const){
   const value=await prepareHoroscopeBrief(new URL(`http://localhost/?period=daily&date=${date}&timeZone=America/New_York`));

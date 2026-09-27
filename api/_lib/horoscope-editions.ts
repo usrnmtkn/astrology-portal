@@ -3,7 +3,7 @@ import {AdminHttpError} from './admin-http.js';
 import {zonedDateTimeToUtc} from '../../apps/web/src/services/timezones.js';
 import {HOROSCOPE_PERIODS, HOROSCOPE_SIGNS, HOROSCOPE_EDITION_PREFIX, validateHoroscopeEdition, validateHoroscopeWindow, isHoroscopeEditionKey, horoscopeEditionBody, horoscopeCanonicalJson, canonicalHoroscopeTimeZone} from '../../apps/web/src/content/horoscopeEditions.mjs';
 
-import {validateHoroscopeReading} from '../../src/astro-writing/horoscopeValidation.mjs';
+import {validateHoroscopeReading,horoscopeValidationVersion} from '../../src/astro-writing/horoscopeValidation.mjs';
 
 function signature(brief: unknown) {
   const secret = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -24,7 +24,8 @@ export async function prepareHoroscopeBrief(url: URL) {
   let timeZone:string;
   try {timeZone=canonicalHoroscopeTimeZone(requestedZone);} catch {throw new AdminHttpError(400,'Choose a valid time zone.');}
   const civil = horoscopeCivilWindow(period,date,timeZone);
-  const reference = zonedDateTimeToUtc(date,'12:00 PM',timeZone);
+  const referenceDate = period === 'weekly' ? civil.start : date;
+  const reference = zonedDateTimeToUtc(referenceDate,'12:00 PM',timeZone);
   const {getAstrodienstSky,getSkyPlacementTransitFacts,getLunarCalendarRangeEvents} = await import('../../apps/web/src/services/ephemeris.js');
   // Shared sign forecasts use geocentric positions; these coordinates are not a natal chart.
   const location = {label:'Geocentric horoscope calculation',latitude:0,longitude:0,timeZone};
@@ -38,12 +39,13 @@ export async function prepareHoroscopeBrief(url: URL) {
     startsAt = new Date(transit.transitStart).toISOString(); endsAt = new Date(transit.transitEnd).toISOString();
   }
   const window = validateHoroscopeWindow({period,audience:'rising',timeZone,startsAt,endsAt,...(period === 'seasonal' ? {seasonSign:sun.sign.toLowerCase()} : {})});
-  const events = (await getLunarCalendarRangeEvents(location,new Date(startsAt),new Date(endsAt)))
+  const events = (await getLunarCalendarRangeEvents(location,new Date(startsAt),new Date(endsAt),{includeIngresses:true}))
     .filter(event => event.startsAt >= startsAt && event.startsAt < endsAt)
-    .map(event => ({id:event.id,type:event.type,planet:event.planet ?? null,sign:event.sign ?? event.toSign ?? null,startsAt:event.startsAt}));
+    .map(event => ({id:event.id,type:event.type,planet:event.planet ?? null,sign:event.sign ?? event.toSign ?? null,startsAt:event.startsAt,
+      title:event.title,fromSign:event.fromSign ?? null,direction:event.direction ?? null}));
   const positions = sky.positions.map(position => ({planet:position.planet,sign:position.sign,degree:position.degree,motion:position.motion}));
-  const brief = {schema:'horoscope-brief/v1',window,referenceDate:date,calculatedAt:sky.generatedAt,provenance:sky.calculationProvenance,
-    coverage:'Positions at the reference instant; lunations and stations within the period. This is not a complete list of exact aspects or ingresses.',positions,events,
+  const brief = {schema:'horoscope-brief/v1',window,referenceDate,calculatedAt:sky.generatedAt,provenance:sky.calculationProvenance,
+    coverage:'Positions at the reference instant; calculated lunations, stations and planetary ingresses within the period. Exact aspects are not included. An event time describes the sky event, not a guaranteed personal event.',positions,events,
     signs:HOROSCOPE_SIGNS.map(sign => ({sign,houses:positions.map(position => ({planet:position.planet,house:((HOROSCOPE_SIGNS.indexOf(position.sign.toLowerCase())-HOROSCOPE_SIGNS.indexOf(sign)+12)%12)+1}))}))};
   return {ok:true,brief,signature:signature(brief)};
 }
@@ -63,7 +65,11 @@ export function assertHoroscopeRow(row: Record<string,any>) {
         const lint=validateHoroscopeReading(passage,packet.brief);
         const receipt=row.source_snapshot.horoscopeGeneration.readings?.[passage.sign];
         const bodyHash=createHash('sha256').update(horoscopeCanonicalJson({headline:passage.headline,body:passage.body})).digest('hex');
-        const issues=[...lint.violations,...(receipt?.bodyHash===bodyHash?receipt?.lint?.violations??[]:[])];
+        // Preserve the original diagnostic receipt. Recomputed fact checks replace
+        // obsolete fact findings (e.g. a lunation compared with a snapshot Moon).
+        // Other recorded checks, including private owner corrections, still apply.
+        const recorded=receipt?.bodyHash===bodyHash?receipt?.lint?.violations??[]:[];
+        const issues=[...lint.violations,...recorded.filter((issue:any)=>issue.category!=='horoscope_fact_boundary'||receipt?.lint?.version===horoscopeValidationVersion)];
         if(issues.length)throw new Error(`${passage.sign}: ${issues[0].detail} Edit this reading before publishing.`);
       }
     }
