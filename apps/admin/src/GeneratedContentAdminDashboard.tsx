@@ -370,12 +370,13 @@ type AdminWritingSurfaceMapPayload = {
 type AdminArticlePointFilter = "all" | "sun" | "moon" | "mercury" | "venus" | "mars" | "jupiter" | "saturn" | "uranus" | "neptune" | "pluto" | "other";
 type AdminSkyWriteupSubjectFilter = "all" | "planet" | "angle" | "point";
 type SkyWriteupWorkspaceView = "daily-summary" | "catalog" | "transits-to-natal" | "house-transits";
-type CalendarWriteupWorkspaceView = SkyForecastPeriod | "season-transitions" | "subscription-events" | "lunar-ingresses";
+type CalendarWriteupWorkspaceView = SkyForecastPeriod | "season-transitions" | "season-writeups" | "subscription-events" | "lunar-ingresses";
 const calendarWriteupWorkspaceTabs: { value: CalendarWriteupWorkspaceView; label: string }[] = [
   { value: "daily-sky", label: "Daily Sky" },
   { value: "weekly-sky", label: "Weekly Sky" },
   { value: "monthly-sky", label: "Monthly Sky" },
   { value: "lunar-ingresses", label: "Lunar ingresses" },
+  { value: "season-writeups", label: "Season write-ups" },
   { value: "season-transitions", label: "Season transitions" },
   { value: "subscription-events", label: "Subscription events" }
 ];
@@ -7274,13 +7275,13 @@ export function GeneratedContentAdminDashboard() {
               tabs={calendarWriteupWorkspaceTabs}
               onValueChange={view => navigateAdminPage("calendarWriteups", new URLSearchParams({ view }))}>
               {calendarWriteupWorkspaceView === "subscription-events" && <Suspense fallback={<PageLoading message="Loading subscription events…" />}><CalendarSubscriptionEvents secret={secret} dirtyRef={subscriptionEventDirtyRef} /></Suspense>}
-              {calendarWriteupWorkspaceView !== "lunar-ingresses" && calendarWriteupWorkspaceView !== "season-transitions" && calendarWriteupWorkspaceView !== "subscription-events" && <Suspense fallback={<PageLoading message="Loading Calendar template…" />}><SkyForecastTemplateStudio period={calendarWriteupWorkspaceView} rows={rows} busy={isLoading}
+              {calendarWriteupWorkspaceView !== "lunar-ingresses" && calendarWriteupWorkspaceView !== "season-transitions" && calendarWriteupWorkspaceView !== "season-writeups" && calendarWriteupWorkspaceView !== "subscription-events" && <Suspense fallback={<PageLoading message="Loading Calendar template…" />}><SkyForecastTemplateStudio period={calendarWriteupWorkspaceView} rows={rows} busy={isLoading}
                 loadRows={loadCalendarPreviewRows} draft={draft}
                 onEditSource={row => void openCalendarWritingSource(row as AdminGeneratedContentRow)}
                 onEditOverview={field => void openSkyForecastTemplate(calendarWriteupWorkspaceView as SkyForecastPeriod, field)}
                 onBrowseSeasonTransitions={() => navigateAdminPage("calendarWriteups", new URLSearchParams({ view: "season-transitions" }))}
                 onOpen={period => void openSkyForecastTemplate(period)} editor={calendarWriteupWorkspaceView === "daily-sky" ? null : renderEditor()} /></Suspense>}
-              {(calendarWriteupWorkspaceView === "daily-sky" || calendarWriteupWorkspaceView === "season-transitions" || calendarWriteupWorkspaceView === "lunar-ingresses") && (
+              {(calendarWriteupWorkspaceView === "daily-sky" || calendarWriteupWorkspaceView === "season-transitions" || calendarWriteupWorkspaceView === "season-writeups" || calendarWriteupWorkspaceView === "lunar-ingresses") && (
                 <Suspense fallback={<PageLoading message="Loading Calendar passages…" />}>
                   <LunarCalendarWorkspace key={calendarWriteupWorkspaceView} scope={calendarWriteupWorkspaceView === "daily-sky" ? "all" : calendarWriteupWorkspaceView} rows={rows} query={query} onQuery={setQuery} createRequest={calendarCreateRequest}
                     onCreateRequestHandled={() => setCalendarCreateRequest(0)} isLoading={isLoading || loadState !== "loaded"}
