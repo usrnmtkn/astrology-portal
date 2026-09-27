@@ -2194,6 +2194,7 @@ export function LunarCalendar({
     location.timeZone || "UTC"
   ));
   const [visibleWeekDateKey, setVisibleWeekDateKey] = useState(() => initialDateKey);
+  const visibleMonthTimestamp = visibleMonth.getTime();
   const [viewMode, setViewMode] = useState<LunarCalendarViewMode>(initialRouteState?.view ?? "week");
   const [linkedReading, setLinkedReading] = useState(() => initialRouteState?.eventId ? initialRouteState : null);
   const [calendar, setCalendar] = useState<LunarCalendarMonthData | null>(null);
@@ -2424,7 +2425,10 @@ export function LunarCalendar({
       cancelled = true;
       finishControls("cancelled");
     };
-  }, [location, retryNonce, viewMode, visibleMonth, visibleWeekDateKey]);
+  // URL/session restoration can recreate Date and location objects without
+  // changing the selection. Reloading on object identity erased the open day
+  // when browser storage was unavailable, replaying the loading skeletons.
+  }, [location.latitude, location.longitude, location.timeZone, retryNonce, viewMode, visibleMonthTimestamp, visibleWeekDateKey]);
 
   useEffect(() => {
     function syncCalendarRoute() {
