@@ -187,6 +187,7 @@ import {
   calendarAspectSignedTitle,
   type CalendarAspectSelection
 } from "./calendarAspectSources";
+import { calendarPlanetaryDraft, calendarPlanetaryIdentity, calendarPlanetaryIdentityKeys, type CalendarPlanetarySelection } from "./calendarPlanetarySources";
 import {
   contentDestinations,
   contentMotion,
@@ -277,6 +278,7 @@ const HoroscopeEditionsStudio = lazy(() => import("./HoroscopeEditionsStudio"));
 const HoroscopeWritingStudio = lazy(() => import("./HoroscopeWritingStudio"));
 import ReviewQueueSkyWrite from "./ReviewQueueSkyWrite";
 const SkyForecastTemplateStudio = lazy(() => import("./SkyForecastTemplateStudio"));
+const CalendarPlanetaryWorkspace = lazy(() => import("./CalendarPlanetaryWorkspace"));
 const CalendarOverviewEditor = lazy(() => import("./CalendarOverviewEditor"));
 const TemplateVariablesRail = lazy(() => import("./TemplateVariablesRail"));
 const NatalPlacementReaderPreview = lazy(() => import("./NatalPlacementReaderPreview"));
@@ -371,13 +373,15 @@ type AdminWritingSurfaceMapPayload = {
 type AdminArticlePointFilter = "all" | "sun" | "moon" | "mercury" | "venus" | "mars" | "jupiter" | "saturn" | "uranus" | "neptune" | "pluto" | "other";
 type AdminSkyWriteupSubjectFilter = "all" | "planet" | "angle" | "point";
 type SkyWriteupWorkspaceView = "daily-summary" | "catalog" | "transits-to-natal" | "house-transits";
-type CalendarWriteupWorkspaceView = SkyForecastPeriod | "season-transitions" | "season-writeups" | "subscription-events" | "lunar-ingresses" | "lunation-writing";
+type CalendarWriteupWorkspaceView = SkyForecastPeriod | "season-transitions" | "season-writeups" | "subscription-events" | "lunar-ingresses" | "lunation-writing" | "planetary-ingresses" | "planetary-stations";
 const calendarWriteupWorkspaceTabs: { value: CalendarWriteupWorkspaceView; label: string }[] = [
   { value: "daily-sky", label: "Daily Sky" },
   { value: "weekly-sky", label: "Weekly Sky" },
   { value: "monthly-sky", label: "Monthly Sky" },
   { value: "lunation-writing", label: "New & Full Moons & Eclipses" },
   { value: "lunar-ingresses", label: "Lunar ingresses" },
+  { value: "planetary-ingresses", label: "Planetary ingresses" },
+  { value: "planetary-stations", label: "Planetary stations" },
   { value: "season-writeups", label: "Season write-ups" },
   { value: "season-transitions", label: "Season transitions" },
   { value: "subscription-events", label: "Subscription events" }
@@ -438,7 +442,7 @@ type FallbackHookDefinition = {
   };
 };
 
-type AdminGeneratedContentRow = {
+export type AdminGeneratedContentRow = {
   id: string;
   content_key: string;
   surface: GeneratedContentSurface;
@@ -2618,6 +2622,10 @@ function draftSourceSnapshot(draft: AdminDraft) {
   if (draft.blockType === "sky_aspect" && draft.sourceSnapshot?.contentType === "owner-authored-sky-aspect") {
     return { ...draft.sourceSnapshot, contentSystem: "authored", contentLevel: "owner-authored" };
   }
+  if (draft.blockType === "calendar_event" && draft.sourceSnapshot?.contentType === "owner-authored-calendar-event") {
+    return { ...draft.sourceSnapshot, contentSystem: "authored", contentLevel: "owner-authored",
+      review_status: fallbackHookReviewStatusForDraft(draft) };
+  }
 
   return {
     ...(draft.sourceSnapshot ?? {}),
@@ -3178,6 +3186,7 @@ export function GeneratedContentAdminDashboard() {
   const [natalAspectName, setNatalAspectName] = useState("");
   const [natalAspectSecond, setNatalAspectSecond] = useState("");
   const [calendarAspectSelection, setCalendarAspectSelection] = useState<CalendarAspectSelection>({ first: "", aspect: "", second: "" });
+  const [calendarPlanetarySelection, setCalendarPlanetarySelection] = useState<CalendarPlanetarySelection>({ planet: "", sign: "", direction: "retrograde" });
   const { first: calendarAspectFirst, aspect: calendarAspectName, second: calendarAspectSecond, firstSign: calendarAspectFirstSign = "", secondSign: calendarAspectSecondSign = "" } = calendarAspectSelection;
   const [fallbackSectionFilter, setFallbackSectionFilter] = useState<AdminFallbackHookSectionFilter>("all");
   const friendsBetweenYouTwoWorkspace = friendsTransitAudience
@@ -3801,6 +3810,7 @@ export function GeneratedContentAdminDashboard() {
     categoryFilter,
     fallbackSectionFilter,
     skyWriteupWorkspaceView,
+    calendarWriteupWorkspaceView,
     friendsTransitAudience,
     betweenYouTwoWorkspace: friendsBetweenYouTwoWorkspace,
     showReferenceRows,
@@ -3813,7 +3823,8 @@ export function GeneratedContentAdminDashboard() {
     friendsTransitAudience,
     showReferenceRows,
     showRetiredRows,
-    skyWriteupWorkspaceView
+    skyWriteupWorkspaceView,
+    calendarWriteupWorkspaceView
   ]);
   const relatedSourceKey = JSON.stringify(selectedRow ? skyWriteupRelatedSourcePrefixes(selectedRow) : []);
   const studioListQuery = useMemo(() => !studioSectionQuery.prefixes.length || relatedSourceKey === "[]"
@@ -6013,15 +6024,26 @@ export function GeneratedContentAdminDashboard() {
       setMessage("Choose two different planets, their signs, and an aspect to add an exact write-up. You can still browse with any filters.");
       return;
     }
+    await openExactCalendarWriteup(nextDraft, calendarAspectIdentityKeys(calendarAspectSelection));
+  }
+
+  async function openSelectedCalendarPlanetaryWriteup() {
+    setIsCreateMenuOpen(false);
+    const kind = calendarWriteupWorkspaceView === "planetary-stations" ? "station" : "ingress";
+    const nextDraft = calendarPlanetaryDraft(kind, calendarPlanetarySelection);
+    if (!nextDraft) { setMessage("Choose a planet and sign to open its write-up."); return; }
+    await openExactCalendarWriteup(nextDraft, calendarPlanetaryIdentityKeys(kind, calendarPlanetarySelection));
+  }
+
+  async function openExactCalendarWriteup(nextDraft: AdminDraft, keys: string[]) {
     setIsLoading(true);
     try {
       // Look beyond the visible list: search, status and pagination can hide a saved identity.
       const editorSession = editorSessionRef.current;
-      const keys = calendarAspectIdentityKeys(calendarAspectSelection);
       const payload = await adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[] }>(studioInventoryDocumentsPath(keys), secret);
       if (editorSession !== editorSessionRef.current) return;
       if (!payload.ok || !Array.isArray(payload.rows)) throw new Error("Could not check existing write-ups. Try again before creating a draft.");
-      const existing = [...payload.rows, ...rows].find(row => keys.includes(row.content_key));
+      const existing = keys.flatMap(key => [...payload.rows, ...rows].filter(row => row.content_key === key))[0];
       if (existing) {
         if (await openRow(existing)) setMessage("Opened the existing exact write-up.");
         return;
@@ -6731,6 +6753,7 @@ export function GeneratedContentAdminDashboard() {
   const natalChartWorkspaceActive = activePage === "content" && categoryFilter === "Natal Chart";
   const natalAspectWorkspaceActive = activePage === "content" && categoryFilter === "Natal Aspects";
   const calendarAspectWorkspaceActive = activePage === "content" && categoryFilter === "Calendar Aspects";
+  const calendarPlanetaryWorkspaceActive = activePage === "calendarWriteups" && (calendarWriteupWorkspaceView === "planetary-ingresses" || calendarWriteupWorkspaceView === "planetary-stations");
   const selectedCalendarAspectDraft = calendarAspectWorkspaceActive ? calendarAspectDraft(calendarAspectSelection) : null;
   const selectedCalendarAspectKeys = selectedCalendarAspectDraft ? calendarAspectIdentityKeys(calendarAspectSelection) : [];
   const selectedCalendarAspectExists = selectedCalendarAspectDraft && rows.some(row => selectedCalendarAspectKeys.includes(row.content_key));
@@ -6971,10 +6994,10 @@ export function GeneratedContentAdminDashboard() {
             },
             {
               key: "content",
-              label: calendarAspectWorkspaceActive ? "Add aspect write-up" : "Create content row",
-              description: calendarAspectWorkspaceActive ? "Write for the selected planets and signs" : "Add a saved row to the library",
+              label: calendarPlanetaryWorkspaceActive ? "Add planetary write-up" : calendarAspectWorkspaceActive ? "Add aspect write-up" : "Create content row",
+              description: calendarPlanetaryWorkspaceActive ? "Write for the selected planet and sign" : calendarAspectWorkspaceActive ? "Write for the selected planets and signs" : "Add a saved row to the library",
               icon: BookOpenText,
-              onSelect: () => calendarAspectWorkspaceActive ? void openSelectedCalendarAspect() : handleCreateAction("content", "Create content row opened.")
+              onSelect: () => calendarPlanetaryWorkspaceActive ? void openSelectedCalendarPlanetaryWriteup() : calendarAspectWorkspaceActive ? void openSelectedCalendarAspect() : handleCreateAction("content", "Create content row opened.")
             },
             {
               key: "vocabulary",
@@ -7289,7 +7312,13 @@ export function GeneratedContentAdminDashboard() {
                 openCalendarWritingSource(saved[0]);
               }} /></Suspense>}
               {calendarWriteupWorkspaceView === "lunation-writing" && renderEditor()}
-              {calendarWriteupWorkspaceView !== "lunation-writing" && calendarWriteupWorkspaceView !== "lunar-ingresses" && calendarWriteupWorkspaceView !== "season-transitions" && calendarWriteupWorkspaceView !== "season-writeups" && calendarWriteupWorkspaceView !== "subscription-events" && <Suspense fallback={<PageLoading message="Loading Calendar template…" />}><SkyForecastTemplateStudio period={calendarWriteupWorkspaceView} rows={rows} busy={isLoading}
+              {(calendarWriteupWorkspaceView === "planetary-ingresses" || calendarWriteupWorkspaceView === "planetary-stations") && <Suspense fallback={<PageLoading message="Loading planetary write-ups…" />}>
+                <CalendarPlanetaryWorkspace kind={calendarWriteupWorkspaceView === "planetary-stations" ? "station" : "ingress"} rows={rows}
+                  selection={calendarPlanetarySelection} onSelection={setCalendarPlanetarySelection}
+                  busy={isLoading || inventoryLoading || loadState !== "loaded"} onOpen={() => void openSelectedCalendarPlanetaryWriteup()}
+                  onEdit={row => void openRow(row, null, "body")} editor={renderEditor()} />
+              </Suspense>}
+              {(calendarWriteupWorkspaceView === "daily-sky" || calendarWriteupWorkspaceView === "weekly-sky" || calendarWriteupWorkspaceView === "monthly-sky") && <Suspense fallback={<PageLoading message="Loading Calendar template…" />}><SkyForecastTemplateStudio period={calendarWriteupWorkspaceView} rows={rows} busy={isLoading}
                 loadRows={loadCalendarPreviewRows} draft={draft}
                 onEditSource={row => void openCalendarWritingSource(row as AdminGeneratedContentRow)}
                 onEditOverview={field => void openSkyForecastTemplate(calendarWriteupWorkspaceView as SkyForecastPeriod, field)}
@@ -9775,6 +9804,7 @@ export function GeneratedContentAdminDashboard() {
     const skyFallbackEditor = skyFallbackWorkspace(currentDraft.contentKey, currentDraft.sections);
     const skyFallbackContentIdentity = skyFallbackIdentity(currentDraft.contentKey);
     const isSkyPlacementSource = /^sky-placement\/(?:article|retrograde|seasonal-context)\//u.test(currentDraft.contentKey);
+    const isManualCalendarEventDraft = currentDraft.blockType === "calendar_event" && Boolean(calendarPlanetaryIdentity(currentDraft.contentKey));
     const SkyRelatedContainer = isSkyPlacementSource ? "details" : "section";
     const SkyChangesContainer = isSkyPlacementSource ? "details" : "section";
     const effectiveSkyFallbackVariableTarget = skyFallbackEditor?.fields.some((field) => field.key === skyFallbackVariableTarget)
@@ -10426,7 +10456,7 @@ export function GeneratedContentAdminDashboard() {
               : isTemplateDraft
                 ? "Template purpose (optional)"
                 : "TL;DR / summary");
-    const bodyFieldLabel = isReferenceDraft ? "Source text" : isSkySummaryDraft ? "Summary wording" : lunarIdentity?.family === "Lunar ingresses" ? "Lunar ingress passage" : lunarIdentity?.family === "Season transitions" ? "Season transition passage" : lunarIdentity ? "Full lunar passage" : isYouOnlyNatalExactDraft
+    const bodyFieldLabel = isManualCalendarEventDraft ? "Event write-up" : isReferenceDraft ? "Source text" : isSkySummaryDraft ? "Summary wording" : lunarIdentity?.family === "Lunar ingresses" ? "Lunar ingress passage" : lunarIdentity?.family === "Season transitions" ? "Season transition passage" : lunarIdentity ? "Full lunar passage" : isYouOnlyNatalExactDraft
       ? "You view exact copy"
       : isVocabularyDraft && isPackageDraft
       ? vocabularyHasTheyVersion ? "You version" : "Variable value"
@@ -10476,7 +10506,7 @@ export function GeneratedContentAdminDashboard() {
     const signedAspectTitle = currentDraft.id || selectedRow?.id.startsWith("package:") || currentDraft.sections?.packageOriginalRecord
       ? calendarAspectSignedTitle(currentDraft.contentKey)
       : null;
-    const editorHeading = lunarIdentity?.family === "Lunar ingresses" ? `Edit ${lunarIdentity.title}` : signedAspectTitle ? `Edit ${signedAspectTitle}` : !currentDraft.id && currentDraft.sourceSnapshot?.authoringSource === "admin-dashboard-calendar-aspect" ? `Write ${calendarAspectSignedTitle(currentDraft.contentKey)}` : !currentDraft.id && currentDraft.contentKey.startsWith("authored/calendar-weekly-moon/") ? `New leftover write-up · ${lunarIdentity?.title ?? "Moon-sign leftover"}` : isSkySummaryDraft || selectedRow?.id.startsWith("package:") ? `Edit ${currentDraft.headline}` : currentDraft.id
+    const editorHeading = isManualCalendarEventDraft ? `${currentDraft.id ? "Edit" : "Write"} ${currentDraft.headline}` : lunarIdentity?.family === "Lunar ingresses" ? `Edit ${lunarIdentity.title}` : signedAspectTitle ? `Edit ${signedAspectTitle}` : !currentDraft.id && currentDraft.sourceSnapshot?.authoringSource === "admin-dashboard-calendar-aspect" ? `Write ${calendarAspectSignedTitle(currentDraft.contentKey)}` : !currentDraft.id && currentDraft.contentKey.startsWith("authored/calendar-weekly-moon/") ? `New leftover write-up · ${lunarIdentity?.title ?? "Moon-sign leftover"}` : isSkySummaryDraft || selectedRow?.id.startsWith("package:") ? `Edit ${currentDraft.headline}` : currentDraft.id
       ? isVocabularyDraft
         ? "Edit phrase"
         : compatibilityIdentity
@@ -12131,10 +12161,10 @@ export function GeneratedContentAdminDashboard() {
                 const saved = draftHasUnsavedChanges || !selectedRow ? await saveDraft() : selectedRow;
                 if (saved) await approvePackageRevision(saved);
               } else {
-                await saveDraft(isCmsSurfaceDraft ? "LIVE" : isAstro101Draft && currentDraft.status !== "LIVE" ? "DRAFT" : undefined);
+                await saveDraft(isCmsSurfaceDraft || isManualCalendarEventDraft ? "LIVE" : isAstro101Draft && currentDraft.status !== "LIVE" ? "DRAFT" : undefined);
               }
             })()}
-            disabled={isLoading || unchangedSkySource || Boolean(compiledSkyArticleEdition) || !compatibilityNewDraftReady || (isCmsSurfaceDraft && (!cmsCanSignOff || !publishReady)) || (packageWillPublishOnSave && (natalAspectMissingCopy || transitNatalMissingCopy)) || (!isNewDraft && !draftHasUnsavedChanges && !packageWillPublishOnSave && !packageCanApproveRevision && !(isCmsSurfaceDraft && currentDraft.status !== "LIVE"))}
+            disabled={isLoading || unchangedSkySource || Boolean(compiledSkyArticleEdition) || !compatibilityNewDraftReady || (isManualCalendarEventDraft && !currentDraft.body.trim()) || (isCmsSurfaceDraft && (!cmsCanSignOff || !publishReady)) || (packageWillPublishOnSave && (natalAspectMissingCopy || transitNatalMissingCopy)) || (!isNewDraft && !draftHasUnsavedChanges && !packageWillPublishOnSave && !packageCanApproveRevision && !((isCmsSurfaceDraft || isManualCalendarEventDraft) && currentDraft.status !== "LIVE"))}
             title={packageWillPublishOnSave && (natalAspectMissingCopy || transitNatalMissingCopy) ? "Write the passage before publishing." : !compatibilityNewDraftReady ? "Complete the Compatibility identity and copy." : undefined}
           >
             <Save size={16} aria-hidden="true" />
@@ -12142,7 +12172,7 @@ export function GeneratedContentAdminDashboard() {
               ? currentDraft.status === "LIVE" ? "Save changes" : "Save draft"
               : isGuidedHeldReview
               ? "Save held draft"
-              : isCmsSurfaceDraft || packageCanApproveRevision || unchangedSkySource
+              : isCmsSurfaceDraft || isManualCalendarEventDraft || packageCanApproveRevision || unchangedSkySource
                 ? "Save & publish"
                 : packageHasProposal
                 ? "Save draft"
@@ -12150,11 +12180,11 @@ export function GeneratedContentAdminDashboard() {
                   ? "Save & publish"
                   : "Save"}
           </StudioButton>
-          {(isCmsSurfaceDraft || isPackageDraft && packageCanApproveRevision || unchangedSkySource) && (
+          {(isCmsSurfaceDraft || isManualCalendarEventDraft || isPackageDraft && packageCanApproveRevision || unchangedSkySource) && (
             <StudioButton
               className="admin-secondary-button"
               type="button"
-              onClick={() => void saveDraft(isCmsSurfaceDraft ? "DRAFT" : undefined)}
+              onClick={() => void saveDraft(isCmsSurfaceDraft || isManualCalendarEventDraft ? "DRAFT" : undefined)}
               disabled={isLoading || unchangedSkySource || (!isNewDraft && !draftHasUnsavedChanges)}
               title="Keep this revision Not live."
             >

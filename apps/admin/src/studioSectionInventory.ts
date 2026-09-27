@@ -43,6 +43,9 @@ export const STUDIO_CALENDAR_ASPECT_PREFIXES = [
   "sky.aspect."
 ] as const;
 
+export const STUDIO_PLANETARY_INGRESS_PREFIXES = ["sky.ingress.", "sky-ingress-", "sky-mercury-", "sky-venus-", "sky-mars-", "sky-jupiter-", "sky-saturn-", "sky-uranus-", "sky-neptune-", "sky-pluto-", "sky-chiron-", "sky-lilith-", "ms/ingress/", "fallback-hook/sky.ingress"] as const;
+export const STUDIO_PLANETARY_STATION_PREFIXES = ["sky.station.", "sky.retrograde.", "fallback-hook/sky.retrograde/", "fallback-hook/sky.station/"] as const;
+
 export const STUDIO_NATAL_ASPECT_PREFIXES = ["fallback-hook/natal-aspect-lived/"] as const;
 
 export const STUDIO_NATAL_CHART_PREFIXES = [
@@ -96,6 +99,7 @@ export type StudioInventoryRoute = {
   categoryFilter?: string;
   fallbackSectionFilter?: string;
   skyWriteupWorkspaceView?: string;
+  calendarWriteupWorkspaceView?: string;
   friendsTransitAudience?: boolean;
   betweenYouTwoWorkspace?: boolean;
   showReferenceRows?: boolean;
@@ -151,7 +155,11 @@ export function studioInventoryQuery(route: StudioInventoryRoute): StudioInvento
   if (route.page === "content" && route.categoryFilter === "House Transits") {
     return prefixesQuery(STUDIO_HOUSE_TRANSIT_PREFIXES);
   }
-  if (route.page === "calendarWriteups") return prefixesQuery(STUDIO_LUNAR_CALENDAR_PREFIXES);
+  if (route.page === "calendarWriteups") {
+    if (route.calendarWriteupWorkspaceView === "planetary-ingresses") return prefixesQuery(STUDIO_PLANETARY_INGRESS_PREFIXES);
+    if (route.calendarWriteupWorkspaceView === "planetary-stations") return prefixesQuery(STUDIO_PLANETARY_STATION_PREFIXES);
+    return prefixesQuery(STUDIO_LUNAR_CALENDAR_PREFIXES);
+  }
   if (route.page === "skyWriteups" && route.skyWriteupWorkspaceView === "house-transits") {
     return prefixesQuery(STUDIO_HOUSE_TRANSIT_PREFIXES);
   }

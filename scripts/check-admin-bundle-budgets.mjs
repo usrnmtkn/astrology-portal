@@ -119,6 +119,7 @@ for (const key of initialChunks) {
   if (key === 'src/HoroscopeEditionsStudio.tsx') {
     failures.push(`Horoscope edition editor must remain deferred from Content Studio startup: ${file}`);
   }
+  if (key === 'src/CalendarPlanetaryWorkspace.tsx') failures.push(`Planetary Calendar workspace must remain deferred: ${file}`);
   if (file?.endsWith(".js") && fs.readFileSync(path.join(distRoot, file), "utf8").includes("Sky variable key")) {
     failures.push(`Sky variable reference must remain deferred: ${file}`);
   }
@@ -147,6 +148,7 @@ const expectedDynamicEntries = [
   "src/CalendarTemplatePreview.tsx",
   "src/CalendarOverviewEditor.tsx",
   "src/CalendarSubscriptionEvents.tsx",
+  "src/CalendarPlanetaryWorkspace.tsx",
   "src/SkyForecastTemplateStudio.tsx",
   "src/calendarPreviewCalculation.ts",
 ];
