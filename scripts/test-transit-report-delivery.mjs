@@ -158,7 +158,7 @@ function fixture(kind, scenario) {
     async call(input){
       const judge=input.schemaName.includes('judge');
       if(evidenceDelivery || sourceCompletion) {
-        assert.equal(input.requestLimits.maxInputBytes,87808);
+        assert.equal(input.requestLimits.maxInputBytes,judge?131072:87808);
         assert.equal(input.requestLimits.maxOutputTokens,judge?6000:12000);
         assert.equal(input.disableFallback,true);
       }

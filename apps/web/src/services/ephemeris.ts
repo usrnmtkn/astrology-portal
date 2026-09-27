@@ -2113,6 +2113,9 @@ type SkyAspectRecord = SkySnapshot["aspects"][number];
 type SkyAspectTiming = NonNullable<SkyAspectRecord["timing"]>;
 
 export type NatalTransitTiming = {
+  /** Continuous orb interval around the reference time, not the whole return series. */
+  currentStart: string;
+  currentEnd: string;
   group: SkyAspectTiming["group"];
   phase: SkyAspectTiming["phase"];
   engagementStart: string;
@@ -2283,8 +2286,11 @@ async function calculateNatalTransitTiming(
   options: NatalTransitTimingOptions
 ): Promise<NatalTransitTiming | null> {
   const swe = await getSwissEph();
-  const planetId = skyPointPlanetId(swe, transitingPlanet);
-  if (planetId === null || transitingPlanet === "South Node") return null;
+  // The South Node is exactly opposite the true North Node. Rotate the
+  // fixed target, retaining the requested aspect and the same physical motion.
+  const planetId = skyPointPlanetId(swe, transitingPlanet === "South Node" ? "North Node" : transitingPlanet);
+  if (planetId === null) return null;
+  if (transitingPlanet === "South Node") natalLongitude = normalizeDegrees(natalLongitude + 180);
   const targetDegrees = options.aspectDegrees ?? 0;
   const presentationDegrees = options.presentationDegrees ?? 1.5;
   const residualsAt = (date: Date) => fixedNatalResidualsAt(swe, planetId, natalLongitude, date, targetDegrees);
@@ -2300,15 +2306,18 @@ async function calculateNatalTransitTiming(
     relativeSpeed: speed,
     fastestSpeed: speed,
     maxBoundaryCapDays: 1800,
+    allowUnperfectedWindow: true,
     seriesFloorDays: slowSeriesFloorDays,
     horizonMinDays: 120,
     horizonMaxDays: 2200
   });
   if (!series) return null;
-  const { engagementEnd, engagementPasses, engagementStart, group, passIndex, phase } = series;
+  const { currentStart, currentEnd, engagementEnd, engagementPasses, engagementStart, group, passIndex, phase } = series;
   return {
     group,
     phase,
+    currentStart: currentStart.toISOString(),
+    currentEnd: currentEnd.toISOString(),
     engagementStart: engagementStart.toISOString(),
     engagementEnd: engagementEnd.toISOString(),
     timeZone: options.timeZone,
@@ -2331,7 +2340,7 @@ export function natalTransitTimingFor(
 ) {
   const aroundDate = aroundDateInput instanceof Date ? aroundDateInput : new Date(aroundDateInput);
   if (!Number.isFinite(natalLongitude) || Number.isNaN(aroundDate.getTime())) return Promise.resolve(null);
-  const day = aroundDate.toISOString().slice(0, 10);
+  const day = aroundDate.toISOString();
   const key = [transitingPlanet, normalizeDegrees(natalLongitude).toFixed(4), day, options.aspectDegrees ?? 0, options.presentationDegrees ?? 1.5, options.timeZone ?? ""].join("|");
   const cached = natalTransitTimingCache.get(key);
   if (cached) return cached;
@@ -2445,7 +2454,8 @@ function aspectPassSeriesTiming({
   maxBoundaryCapDays,
   seriesFloorDays = 10,
   horizonMinDays = 60,
-  horizonMaxDays = 5000
+  horizonMaxDays = 5000,
+  allowUnperfectedWindow = false
 }: {
   residualsAt: AspectResidualsAt;
   motionIsRetrogradeAt: (date: Date) => boolean;
@@ -2457,15 +2467,34 @@ function aspectPassSeriesTiming({
   seriesFloorDays?: number;
   horizonMinDays?: number;
   horizonMaxDays?: number;
+  /** A natal contact can enter the orb and turn back without reaching exact. */
+  allowUnperfectedWindow?: boolean;
 }) {
+  const orbAt = (date: Date) => Math.min(...residualsAt(date).map(Math.abs));
+  if (allowUnperfectedWindow && !(orbAt(reference) <= presentationDegrees)) return null;
   const estimatedDurationDays = (presentationDegrees * 2) / relativeSpeed;
   const boundaryStepDays = Math.max(0.125, Math.min(5, presentationDegrees / (fastestSpeed * 4)));
   const maxBoundaryDays = Math.max(60, Math.min(maxBoundaryCapDays, estimatedDurationDays * 4));
   const currentStart = findResidualBoundary(residualsAt, presentationDegrees, reference, -1, boundaryStepDays, maxBoundaryDays);
   const currentEnd = findResidualBoundary(residualsAt, presentationDegrees, reference, 1, boundaryStepDays, maxBoundaryDays);
+  // A search horizon is not an observed orb crossing. Never publish its cap as
+  // the calculated start/end of a natal report contact.
+  const crossesBoundary = (date: Date, direction: number) =>
+    orbAt(new Date(date.getTime() - direction * 1000)) <= presentationDegrees
+    && orbAt(new Date(date.getTime() + direction * 1000)) >= presentationDegrees;
+  if (allowUnperfectedWindow && (!crossesBoundary(currentStart, -1) || !crossesBoundary(currentEnd, 1))) return null;
   const passStepDays = Math.max(1 / 24, Math.min(2, presentationDegrees / (fastestSpeed * 8)));
   const currentPasses = scanResidualPasses(residualsAt, currentStart, currentEnd, passStepDays);
-  if (!currentPasses.length) return null;
+  if (!currentPasses.length) {
+    if (!allowUnperfectedWindow) return null;
+    const durationDays = (currentEnd.getTime() - currentStart.getTime()) / 86_400_000;
+    const group: SkyAspectTiming["group"] = durationDays <= 10 ? "this-week" : durationDays < 365 ? "this-season" : "undercurrent";
+    const phase: SkyAspectTiming["phase"] = orbAt(addDays(reference, 1 / 24)) < orbAt(reference) ? "building" : "fading";
+    const residuals = residualsAt(reference);
+    const branch = residuals.reduce((best, residual, index) => Math.abs(residual) < Math.abs(residuals[best]) ? index : best, 0);
+    return { branch, currentStart, currentEnd, engagementStart: currentStart, engagementEnd: currentEnd,
+      engagementPasses: currentPasses, estimatedDurationDays, group, passIndex: -1, passStepDays, phase };
+  }
   const passResiduals = residualsAt(currentPasses[0]);
   const branch = passResiduals.reduce((best, residual, index) => Math.abs(residual) < Math.abs(passResiduals[best]) ? index : best, 0);
   const currentDurationDays = Math.max(1, (currentEnd.getTime() - currentStart.getTime()) / 86_400_000);
@@ -2484,7 +2513,7 @@ function aspectPassSeriesTiming({
   const exact = Math.abs(engagementPasses[closestIndex].getTime() - reference.getTime()) <= 12 * 3_600_000;
   const phase: SkyAspectTiming["phase"] = exact ? "exact" : nextIndex >= 0 ? "building" : "fading";
   const passIndex = exact ? closestIndex : nextIndex >= 0 ? nextIndex : engagementPasses.length - 1;
-  return { branch, engagementEnd, engagementPasses, engagementStart, estimatedDurationDays, group, passIndex, passStepDays, phase };
+  return { branch, currentStart, currentEnd, engagementEnd, engagementPasses, engagementStart, estimatedDurationDays, group, passIndex, passStepDays, phase };
 }
 
 function skyAspectTimingFor(

@@ -116,9 +116,12 @@ export async function callGovernedTransitReadingModel<T>(input: {
     schema: input.schema,
     validateResponse: input.validateResponse,
     ...([EVIDENCE_DELIVERY_POLICY, SOURCE_COMPLETION_POLICY].includes(transitReadingReleasePolicy()) ? {
-      // Includes the full wire payload, not just prose. Together with an 8192
-      // protocol allowance this bounds text input conservatively at 96000 tokens.
-      requestLimits: { maxInputBytes: 87_808, maxOutputTokens: input.kernel.role === "REVIEWER" ? 6_000 : 12_000 },
+      // Review includes the full source packet plus current/prior drafts and
+      // findings. Reserve room for that bounded corrective review as well as
+      // the initial one; do not discard evidence to fit the writer's allowance.
+      // UTF-8 byte/token bound including protocol: <=139264 for the reviewer.
+      requestLimits: { maxInputBytes: input.kernel.role === "REVIEWER" ? 131_072 : 87_808,
+        maxOutputTokens: input.kernel.role === "REVIEWER" ? 6_000 : 12_000 },
       disableFallback: true
     } : {}),
     ...(input.reviewScope ? { disableFallback: true } : {}),

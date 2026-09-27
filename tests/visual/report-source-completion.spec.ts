@@ -4,15 +4,16 @@ import os from "node:os";
 import path from "node:path";
 import { execFileSync } from "node:child_process";
 
-// These rows come from the actual request -> worker -> save -> retrieval
-// fixture, not hand-built report results. No provider or live storage calls.
+// Reviewed rows exercise the actual request -> worker -> save -> retrieval
+// fixture. Explicit historical source rows cover backwards-compatible reading;
+// the new worker is never allowed to produce them. No provider/live storage calls.
 const directory = fs.mkdtempSync(path.join(os.tmpdir(), "report-source-reader-"));
 execFileSync(process.execPath, ["scripts/test-transit-source-completion.mjs", "--browser-fixture-dir", directory], { stdio: "pipe" });
-const rows = ["day", "week", "friends", "friends-personal"].map(kind => JSON.parse(fs.readFileSync(path.join(directory, `${kind}.json`), "utf8")));
+const rows = ["day", "week", "friends", "friends-personal", "reviewed-day", "reviewed-week", "reviewed-friends"].map(kind => JSON.parse(fs.readFileSync(path.join(directory, `${kind}.json`), "utf8")));
 fs.rmSync(directory, { recursive: true });
 
 for (const row of rows) for (const viewport of [{ width: 1440, height: 1000 }, { width: 390, height: 844 }]) for (const theme of ['light','dark']) {
-  test(`source report ${row.id} opens and reloads at ${viewport.width}px ${theme}`, async ({ page }) => {
+  test(`saved report ${row.id} opens and reloads at ${viewport.width}px ${theme}`, async ({ page }) => {
     await page.setViewportSize(viewport);
     await page.addInitScript(theme => localStorage.setItem('tldrastro:theme', theme), theme);
     const user = { id: "synthetic-owner", aud: "authenticated", role: "authenticated", app_metadata: { provider: "email" }, user_metadata: {}, email: "source@example.test" };

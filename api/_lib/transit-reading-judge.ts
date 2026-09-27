@@ -79,14 +79,14 @@ export function judgePrompt(input: {
     generatedReportJudgeEvidenceContract(true, evidenceDelivery),
     "",
     "GOVERNED BRIEF",
-    JSON.stringify(input.brief, null, 2),
+    JSON.stringify(input.brief),
     "",
     ...(input.priorReview ? [reportReviewReconciliationPrompt(input.priorReview, input.draft, evidenceDelivery), ""] : [
       "INITIAL REVIEW COVERAGE: Read the TLDR, every body paragraph, the links between paragraphs and the ending before finalizing scores. Collect all supported release-blocking defects in this one review; do not stop at the first example or reserve other known defects for the corrective round. Do not invent a defect to fill a paragraph or category.", ""
     ]),
     "COMPLETE READER-VISIBLE DRAFT",
     "The summary field is the one TLDR displayed before the body. Storage aliases and provider metadata are not additional prose. Judge actual repetition between this TLDR and body, not imagined duplicate fields.",
-    JSON.stringify(transitReadingReaderCopy(input.draft), null, 2)
+    JSON.stringify(transitReadingReaderCopy(input.draft))
   ].join("\n");
 }
 

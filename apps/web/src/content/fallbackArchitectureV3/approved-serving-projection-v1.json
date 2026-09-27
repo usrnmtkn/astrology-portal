@@ -1,6 +1,6 @@
 {
   "schema": "tldrastro-approved-serving-projection/v1",
-  "packageVersion": "v3-2026-09-17-transit-situation-exact",
+  "packageVersion": "v3-2026-09-24-calculated-repeat-contacts",
   "policy": {
     "eligibleReviewStatuses": [
       "approved",
@@ -24,7 +24,7 @@
   },
   "lineage": {
     "file": "approved-serving-lineage-v1.json",
-    "sha256": "0d14aae780f19c316a3ad31202dcbb9921e952e3189789d83529d276f9e40af7",
+    "sha256": "f15833fab0ff639f79c003ffa4b9ca8afe1a84012495b02a6740d6cd19d98eb0",
     "count": 9806,
     "emissionCount": 9882,
     "exactSourceMatchCount": 8764

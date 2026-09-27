@@ -176,11 +176,19 @@ for (const viewport of [{ name: "desktop", width: 1440, height: 1000 }, { name: 
         await cards.filter({ hasText: title }).first().click();
         const article = page.locator(".you-transit-article-page");
         await expect(article).toBeVisible();
-        // Match the entire rendered passage, including its opening and ending.
-        const paragraphs = reading.body.split(/\n\s*\n/u).filter(Boolean);
-        for (const paragraph of paragraphs) await expect(article).toContainText(paragraph);
+        // Report timing replaces the card's estimated date with a calculated,
+        // year-qualified date. Verify that fact separately, then compare every
+        // word of the source passage outside those date substitutions.
+        expect(fact.calculation.status).toBe("calculated");
+        const referenceAt = Date.parse(fact.calculation.referenceAt);
+        expect(Date.parse(fact.calculation.currentStart)).toBeLessThanOrEqual(referenceAt);
+        expect(Date.parse(fact.calculation.currentEnd)).toBeGreaterThanOrEqual(referenceAt);
+        expect(fact.window).toBe(`Until ${new Intl.DateTimeFormat("en-US", {
+          month: "long", day: "numeric", year: "numeric", timeZone: fact.calculation.timeZone
+        }).format(new Date(fact.calculation.currentEnd))}`);
+        const normalizeDates = (text: string) => text.replace(/\b(?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:t(?:ember)?)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?)\s+\d{1,2}(?:,\s+\d{4})?\b/gu, "[date]");
         const rendered = (await article.locator(".article-section p").allTextContents()).join("\n\n");
-        expect(rendered).toContain(reading.body);
+        expect(normalizeDates(rendered)).toContain(normalizeDates(reading.body));
         await article.getByRole("button", { name: /Back/ }).click();
       }
       expect(errors).toEqual([]);

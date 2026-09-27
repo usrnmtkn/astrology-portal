@@ -41,7 +41,7 @@ let lastInput;
 try {
   globalThis.reportBreadthFixture = async (input) => {
     lastInput=input;
-    assert.ok(input.prompt.includes('CURRENT OWNER REPORT DIRECTION: transit-report-plain-language-v1'));
+    assert.ok(input.prompt.includes('CURRENT OWNER REPORT DIRECTION: transit-report-connected-reading-v2'));
     assert.ok(input.prompt.includes('A scene is not unsupported solely because its exact nouns are absent from the source.'));
     for (const name of ['V3', 'V3.2', 'V3.3', 'V3.4']) {
       const path = `tldr-astro-phrasebank/TLDR-REPORT-JUDGE-RUBRIC-${name}-OWNER.md`;
@@ -119,7 +119,10 @@ try {
   const referenced=await judge();
   assert.equal(referenced.result.findings[0].sourceQuote,'locked fixture');
   assert.equal(referenced.result.verdict,'below_threshold');
-  assert.deepEqual(lastInput.schema.properties.findings.items.properties.sourcePath.enum,[null,'/source']);
+  assert.deepEqual(lastInput.schema.properties.findings.items.properties.sourcePath.type,['string','null']);
+  assert.equal(lastInput.schema.properties.findings.items.properties.sourcePath.enum,undefined);
+  response.findings[0].sourcePath='/missing-source';
+  await assert.rejects(judge(),/not an exact string field/,'Compact transport still rejects nonexistent source citations');
   assert.equal(Object.hasOwn(lastInput.schema.properties.findings.items.properties,'sourceQuote'),false);
   assert(lastInput.prompt.includes('do not return sourceQuote'));
   const priorReview={draft:{headline:'Fixture',summary:'Fixture',body:'Fixture'},scores:{...scores,natural_language:3},findings:[{category:'natural_language',location:'body',finding:'Synthetic initial ambiguity.',...evidence}]};

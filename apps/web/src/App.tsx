@@ -46,6 +46,7 @@ import { loadYouPage, readYouPage } from "./features/you/youExperienceLoader";
 import type { YouPageProps } from "./features/you/YouPage";
 import { isStandaloneLearnPath } from "./content/learnRoutePath";
 import { refreshContentPublications } from "./services/contentPublications";
+import { preparePersonalReportTiming } from "./services/personalReportTiming";
 import { preparePersonalReportSources } from "./services/personalReportSources";
 import {
   ArrowDownRight,
@@ -507,6 +508,7 @@ export type TransitItem = {
   stationary?: boolean;
   stationNearNatal?: boolean;
   timing?: NatalTransitTiming | null;
+  reportWindowLabel?: string;
   knowledgeIds?: string[];
   arc: number[];
   note: string;
@@ -7874,7 +7876,7 @@ function personalTransitPackageSection(
     }
   }
 
-  const windowLabel = personalTransitPackageWindow(transit, generatedAt);
+  const windowLabel = transit.reportWindowLabel ?? personalTransitPackageWindow(transit, generatedAt);
   try {
     const rendered = transitSynastryFallbackRendererV3.renderTransitAspect({
       aspect: normalizedAspect,
@@ -18104,8 +18106,8 @@ function ProfileView({
   })();
   // Use the same complete, governed passages as the ranked daily transit details.
   // Technical labels alone do not authorize the report writer to interpret them.
-  const readDailyReportSources = () => {
-    const dailyReportTransitSources = aspectRows.map((transit) => ({
+  const readDailyReportSources = (reportTransits: TransitItem[] = aspectRows) => {
+    const dailyReportTransitSources = reportTransits.map((transit) => ({
       transitId: transit.id,
       section: personalTransitPackageSection(transit, targetDate)
     }));
@@ -18121,7 +18123,17 @@ function ProfileView({
     dontItems: dailyDoDont?.dont,
     specialSections: dailySpecialSections.slice(0, 2),
     ...readDailyReportSources(),
-    prepareReportSources: () => preparePersonalReportSources(readDailyReportSources),
+    prepareReportSources: async () => {
+      const timeZone = currentSky?.location.timeZone || "UTC";
+      const reference = exactDateFromInput(targetDate, timeZone);
+      if (!reference) throw new Error("The report date could not be calculated.");
+      const calculated = await preparePersonalReportTiming(aspectRows, reference, timeZone);
+      const sources = await preparePersonalReportSources(() => readDailyReportSources(calculated.transits));
+      return { ...sources, reportTechnicalEvidence: {
+        qualifyingTransits: calculated.qualifyingTransits,
+        referenceAt: reference.toISOString(), timeZone, localNoon: true
+      } };
+    },
     behindForecastGroups,
     derivation: {
       targetDate,

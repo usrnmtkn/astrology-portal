@@ -32,10 +32,13 @@ for(const base of [GENERATED_REPORT_JUDGE_SCHEMA,RECONCILED_REPORT_JUDGE_SCHEMA]
  assertOpenAiStrictResponseSchema(schema,"source_pointer_fixture");
  assert.equal(Object.hasOwn(schema.properties.findings.items.properties,"sourceQuote"),false);
  assert.equal(schema.properties.findings.items.required.includes("sourceQuote"),false);
- assert.deepEqual(schema.properties.findings.items.properties.sourcePath.enum,[null,"/approved/passages/0","/a~1b/~0key/0"]);
+ assert.equal(schema.properties.findings.items.properties.sourcePath.enum, undefined);
+ const largeBrief = { passages: Array.from({length:1000}, () => source) };
+ assert.equal(JSON.stringify(reportJudgeSourcePointerSchema(base as any, largeBrief)).length, JSON.stringify(schema).length,
+   "Schema size must not grow with source count; exact path validation remains server-side.");
  assert.equal(Object.hasOwn(base.properties.findings.items.properties,"sourceQuote"),true,"Do not alter the legacy/scoped schema.");
 }
 const contract=generatedReportJudgeEvidenceContract(true);
 assert(contract.includes("do not return sourceQuote"));
 assert(contract.includes("Selecting a real path does not establish"));
-console.log("Source citation protocol: exact whole-source resolution, immutable provider response, locked pointer enum, escaped paths, invalid references, legacy quote rejection and unchanged factual blocking passed (no provider calls).");
+console.log("Source citation protocol: exact whole-source resolution, immutable provider response, server-validated pointers, escaped paths, invalid references, legacy quote rejection and unchanged factual blocking passed (no provider calls).");

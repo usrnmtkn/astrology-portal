@@ -51,32 +51,23 @@ function promptForAttempt(brief: YouTransitReadingBrief, headline: string, feedb
   ].filter(Boolean).join("\n");
 }
 
-function validateGeneratedReading(
+export function validateGeneratedReading(
   draft: GeneratedTransitReadingDraft,
   brief: YouTransitReadingBrief,
   expectedHeadline: string
 ) {
   const readerCopy = transitReadingReaderCopy(draft);
   const factLock = validateYouTransitReadingDraft({ draft: readerCopy, brief, expectedHeadline });
-  if (!factLock.passed) {
-    return {
-      passed: false,
-      message: `You report failed fact lock: ${factLock.issues.map((issue) => `${issue.code}: ${issue.message}`).join(" ")}`
-    };
-  }
+  const issues: string[] = [];
+  if (!factLock.passed) issues.push(`You report failed fact lock: ${factLock.issues.map((issue) => `${issue.code}: ${issue.message}`).join(" ")}`);
 
   const writingValidation = validateCopy(readerCopy, {
     validationProfile: "shared-only",
     family: "you-transit-reading",
     register: "second_person"
   });
-  if (!writingValidation.passed) {
-    return {
-      passed: false,
-      message: `You report failed writing validation: ${writingValidation.violations.map((issue: { category?: string; detail?: string }) => `${issue.category ?? "rule"}: ${issue.detail ?? "failed"}`).join("; ")}`
-    };
-  }
-  return { passed: true };
+  if (!writingValidation.passed) issues.push(`You report failed writing validation: ${writingValidation.violations.map((issue: { category?: string; detail?: string }) => `${issue.category ?? "rule"}: ${issue.detail ?? "failed"}`).join("; ")}`);
+  return issues.length ? { passed: false, message: issues.join("\n") } : { passed: true };
 }
 
 function productionInputForLocked(locked: ReturnType<typeof youTransitReadingRequestLock>): TransitReadingProductionInput {
@@ -123,7 +114,7 @@ async function generateReading(locked: ReturnType<typeof youTransitReadingReques
       }),
       minSummaryLength: 40,
       minBodyLength: locked.brief.window === "day" ? 180 : 320,
-      maxBodyLength: locked.brief.window === "day" ? 2200 : 4200,
+      maxBodyLength: locked.brief.window === "day" ? 6000 : 8000,
       claudeMaxTokens: locked.brief.window === "day" ? 2200 : 3200,
       recoveryLabel: locked.brief.window === "day" ? "You day report" : "You week report"
     })

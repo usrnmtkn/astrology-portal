@@ -22,6 +22,12 @@ try {
   const catalog = new Map([...authored.authoredCards, ...rows.hookRows, ...rows.vocabularyRows, ...templates.templates].map(row => [row.contentKey, row]));
   const shipped = shippedFactory(authored, templates, rows);
   const source = sourceFactory(authored, templates, rows);
+  for (const renderer of [nodeRenderer, source, shipped]) {
+    const facts = {transiting:'south-node',natal:'sun',aspect:'opposition',sign:'leo',voice:'you',isRetrograde:true,window:'Until October 27, 2026'};
+    const output = renderer.renderTransitAspect(facts);
+    assert(!output.body.includes('this contact usually repeats'), 'Retrograde status cannot invent a repeated contact');
+    assert(!output.sourceKeys.includes('fallback-hook/transit-retro-aspect'));
+  }
   const planets = ['sun','moon','mercury','venus','mars','jupiter','saturn','uranus','neptune','pluto','chiron','north-node','south-node','lilith'];
   const points = [...planets,'ascendant','midheaven','descendant','imum-coeli'];
   const aspects = ['conjunction','opposition','square','trine','sextile'];

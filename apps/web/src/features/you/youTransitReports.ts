@@ -35,7 +35,8 @@ type DailyAssembly = {
   specialSections: Array<{ headline: string; body: string }>;
   reportTransitReadings?: YouReportTransitReading[];
   reportSourceGaps?: string[];
-  prepareReportSources?: () => Promise<{ reportTransitReadings: YouReportTransitReading[]; reportSourceGaps: string[] }>;
+  reportTechnicalEvidence?: Record<string, unknown>;
+  prepareReportSources?: () => Promise<{ reportTransitReadings: YouReportTransitReading[]; reportSourceGaps: string[]; reportTechnicalEvidence?: Record<string, unknown> }>;
   derivation: Record<string, unknown>;
 };
 
@@ -113,7 +114,8 @@ export function buildYouDayReportBrief(input: {
       qualifyingTransits,
       moonDriver,
       targetDate,
-      sourceGaps: input.dailyAssembly?.reportSourceGaps ?? []
+      sourceGaps: input.dailyAssembly?.reportSourceGaps ?? [],
+      ...input.dailyAssembly?.reportTechnicalEvidence
     }
   };
 }
