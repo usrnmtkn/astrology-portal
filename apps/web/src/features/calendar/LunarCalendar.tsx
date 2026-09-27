@@ -901,7 +901,7 @@ function contentMatchesCalendarEventFacts(event: LunarCalendarEvent, content: Li
   return true;
 }
 
-function liveCalendarEventContent(
+export function liveCalendarEventContent(
   generatedContent: Map<string, LiveGeneratedContent> | undefined,
   event: LunarCalendarEvent
 ) {
@@ -1247,14 +1247,17 @@ export function normalizeCalendarEventSurface(
   if (event.type === "aspect" && event.planets && event.aspect && isSkyAspectRetired(event.planets[0], event.aspect, event.planets[1])) {
     return { surface: "calendar-event", status: "not-servable", sections: [] };
   }
-  const generatedDescription = firstReaderFacingCopy([
-    ...(event.type === "aspect" ? [] : [content?.summary]),
-    ...(event.type === "aspect" && content
+  // Manually authored Calendar entries are complete event write-ups. Preserve
+  // every paragraph in the card and slide-out, as we do for exact aspects.
+  const completeEventWriteup = event.type === "aspect" || content?.eventType === "calendar_event";
+  const generatedDescription = (content?.eventType === "calendar_event" ? fullDetailReaderFacingCopy : firstReaderFacingCopy)([
+    ...(completeEventWriteup ? [] : [content?.summary]),
+    ...(completeEventWriteup && content
       ? [generatedContentParagraphs(content).join("\n\n").trim()]
       : generatedContentParagraphs(content))
   ]);
   const generatedDescriptionFitsDateContext = dateLine === "Today"
-    || weeklyEventDescriptionFitsDateContext(generatedDescription);
+    || weeklyEventDescriptionFitsDateContext(generatedDescription ?? "");
 
   if (event.type === "aspect" && event.planets && event.aspect) {
     const [first, second] = event.planets;

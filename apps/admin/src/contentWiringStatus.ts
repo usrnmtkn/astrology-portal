@@ -1,3 +1,5 @@
+import { calendarPlanetaryIdentity } from "./calendarPlanetarySources.ts";
+
 export type ContentWiringRow = {
   block_type?: string | null;
   content_key: string;
@@ -95,7 +97,8 @@ function isSourceMaterial(row: ContentWiringRow) {
 }
 
 function isKnownRenderedKey(contentKey: string) {
-  return contentKey.startsWith("education/astro-101/")
+  return Boolean(calendarPlanetaryIdentity(contentKey))
+    || contentKey.startsWith("education/astro-101/")
     || contentKey.startsWith("sky.placement.")
     || contentKey.startsWith("sky.aspect.")
     || contentKey.startsWith("cms/")
