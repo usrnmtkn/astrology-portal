@@ -37,7 +37,17 @@ for(const [width,theme] of [[390,'light'],[390,'dark'],[1440,'light'],[1440,'dar
    await page.setViewportSize({width,height:1000});
    await page.clock.setFixedTime(new Date('2026-09-24T16:00:00Z'));
    await page.addInitScript(theme=>{localStorage.setItem('tldrastro:contentAdminSecret','calendar-api-fixture');localStorage.setItem('tldrastro:studio-theme',theme);localStorage.setItem('tldrastro:theme',theme);localStorage.setItem('tldrastro:selectedLocation',JSON.stringify({label:'Tokyo',latitude:35.68,longitude:139.76,timeZone:'Asia/Tokyo'}));},theme);
-   await routeStudioInventoryApi(page,{call,answer:async(route,url)=>{if(url.pathname==='/api/admin/horoscope-writing'){const result=await call({method:'writing',body:route.request().postDataJSON()});await route.fulfill({status:result.status,json:result.payload});return true;}if(url.pathname==='/api/content-reader'){const result=await call({method:'reader',body:route.request().postDataJSON()});await route.fulfill({status:result.status,json:result.payload});return true;}return false;}});
+   let injectConflict=width===390&&theme==='light';
+   const newerOutline='A newer writing outline from another editor. Stay with the calculated temporary emphasis and its house.';
+   await routeStudioInventoryApi(page,{call,answer:async(route,url)=>{if(url.pathname==='/api/admin/horoscope-writing'){
+    const body=route.request().postDataJSON();
+    if(injectConflict&&body.action==='generate'){
+     injectConflict=false;const current=(await call({method:'rows'})).find((row:any)=>row.id===body.id);
+     const changed=await call({method:'PATCH',body:{id:current.id,expectedUpdatedAt:current.updated_at,sourceSnapshot:{...current.source_snapshot,horoscopeOutlines:{aries:newerOutline}}}});
+     expect(changed.status).toBe(200);
+    }
+    const result=await call({method:'writing',body});await route.fulfill({status:result.status,json:result.payload});return true;
+   }if(url.pathname==='/api/content-reader'){const result=await call({method:'reader',body:route.request().postDataJSON()});await route.fulfill({status:result.status,json:result.payload});return true;}return false;}});
    await page.goto('/admin/content#templates');
    await expect(page.getByRole('heading',{name:'Templates',exact:true})).toBeVisible();
    const titleStyle=await page.locator('h1').evaluate(el=>{const s=getComputedStyle(el);return[s.fontFamily,s.fontSize,s.fontWeight,s.lineHeight,s.letterSpacing,s.margin,s.textTransform,s.textAlign];});
@@ -56,6 +66,17 @@ for(const [width,theme] of [[390,'light'],[390,'dark'],[1440,'light'],[1440,'dar
    await page.screenshot({path:`test-results/horoscope-generation-${width}-${theme}.png`,fullPage:true,animations:'disabled'});
    await studio.getByLabel('I approve this writing plan for generation.').check();
    await studio.getByRole('button',{name:'Generate 12 drafts',exact:true}).click();
+   if(width===390&&theme==='light'){
+    await expect(studio.getByRole('alert')).toContainText('This edition changed');
+    await studio.getByRole('tab',{name:'3 · Read & edit',exact:true}).click();
+    await studio.getByText('Writing outline · editor only',{exact:true}).click();
+    await expect(studio.getByLabel('Writing outline',{exact:true})).toHaveValue(newerOutline);
+    await expect(studio.getByRole('button',{name:'Save edition draft',exact:true})).toBeDisabled();
+    await studio.getByRole('tab',{name:'2 · Generate',exact:true}).click();
+    await studio.getByRole('button',{name:'Review writing plan',exact:true}).click();
+    await studio.getByLabel('I approve this writing plan for generation.').check();
+    await studio.getByRole('button',{name:'Generate 12 drafts',exact:true}).click();
+   }
    await expect(studio.getByText('12/12 readings ready',{exact:false})).toBeVisible({timeout:60000});
    await expect(studio.getByLabel('Complete reading')).toBeVisible();
    await expect(studio.getByLabel('Complete reading')).toHaveValue(/Your saved fixture ends here/);

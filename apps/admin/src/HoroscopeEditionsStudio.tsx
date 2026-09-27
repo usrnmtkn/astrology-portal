@@ -34,7 +34,7 @@ export default function HoroscopeEditionsStudio({secret}:{secret:string}) {
   const [step,setStep]=useState<'generate'|'edit'|'publish'>('generate'),[instructions,setInstructions]=useState(false);
   const stop=useRef(false),running=useRef(false);
   const mounted=useRef(true);
-  function retain(row:any){validateHoroscopeEdition(row.sections?.horoscopeEdition);setSaved(row);setDraft(row.sections.horoscopeEdition);setRows(current=>[row,...current.filter(r=>r.id!==row.id)]);setApproved(false);}
+  function retain(row:any,refreshContext=false){validateHoroscopeEdition(row.sections?.horoscopeEdition);setSaved(row);setDraft(row.sections.horoscopeEdition);setRows(current=>[row,...current.filter(r=>r.id!==row.id)]);setApproved(false);if(refreshContext){setOutlines(row.source_snapshot?.horoscopeOutlines??{});setProfile(row.source_snapshot?.studioWritingProfile??null);setEditorialImport(row.source_snapshot?.editorialImport??null);setPlan(null);setPlanApproved(false);}}
   useEffect(()=>{setPlan(null);setPlanApproved(false);},[draft?.window.startsAt,draft?.window.endsAt,draft?.window.timeZone,outlines,profile]);
   const dirty=Boolean(draft && (!saved || horoscopeCanonicalJson(draft)!==horoscopeCanonicalJson(saved.sections.horoscopeEdition) || horoscopeCanonicalJson(outlines)!==horoscopeCanonicalJson(saved.source_snapshot?.horoscopeOutlines ?? {}) || horoscopeCanonicalJson(profile)!==horoscopeCanonicalJson(saved.source_snapshot?.studioWritingProfile ?? null) || horoscopeCanonicalJson(editorialImport)!==horoscopeCanonicalJson(saved.source_snapshot?.editorialImport ?? null)));
   async function load() {setLoading(true);try {const data=await request(secret,endpoint+'?horoscopeEditions=true');if(!Array.isArray(data.rows))throw new Error('The edition list could not be read.');for(const row of data.rows)validateHoroscopeEdition(row.sections?.horoscopeEdition);if(mounted.current)setRows(data.rows);}catch(reason){if(mounted.current)setError((reason as Error).message);}finally{if(mounted.current)setLoading(false);}}
@@ -122,7 +122,7 @@ export default function HoroscopeEditionsStudio({secret}:{secret:string}) {
       let changed=(reason as any).rows?.[0];
       // Recover saved request state after an uncertain response without replaying it.
       if(!changed){try{changed=(await request(secret,endpoint+'?'+new URLSearchParams({id:row.id}))).rows?.[0];}catch{/* Preserve the displayed draft until the owner reopens it. */}}
-      if(changed?.id===row.id)retain(changed);setError((reason as Error).message);
+      if(changed?.id===row.id)retain(changed,true);setError((reason as Error).message);
     }
     finally{running.current=false;setBusy(false);setProgress('');}
   }
