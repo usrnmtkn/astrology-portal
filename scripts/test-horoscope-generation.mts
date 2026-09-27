@@ -7,7 +7,7 @@ import {validateHoroscopeReading} from '../src/astro-writing/horoscopeValidation
 import {prepareHoroscopeBrief} from '../api/_lib/horoscope-editions';
 import {prepareHoroscopeWriting} from '../src/astro-writing/horoscopeWriting.mjs';
 import {retrieveOwnerContext} from '../src/astro-writing/retrieveOwnerContext.mjs';
-import {defaultHoroscopeProfile,horoscopeEditorialPrompt,HOROSCOPE_EMOTIONAL_DEVELOPMENT_GUIDANCE} from '../src/astro-writing/horoscopeWritingProfiles.mjs';
+import {defaultHoroscopeProfile,horoscopeEditorialPrompt,HOROSCOPE_EMOTIONAL_DEVELOPMENT_GUIDANCE,HOROSCOPE_CONNECTED_READING_GUIDANCE,HOROSCOPE_PUBLICATION_TIMING_GUIDANCE} from '../src/astro-writing/horoscopeWritingProfiles.mjs';
 installHoroscopeWriterFixture();
 const savedProfile=await store.invoke('POST',{profile:defaultHoroscopeProfile('weekly'),expectedUpdatedAt:null},'/api/admin/generated-content?writingProfiles=true');
 assert.equal(savedProfile.status,200,JSON.stringify(savedProfile.payload));
@@ -78,6 +78,8 @@ for(const sign of edition.passages.slice(1).map(p=>p.sign)){
 assert.equal(writerFixture.calls,13);assert.equal(row.sections.horoscopeEdition.passages.filter((p:any)=>p.body).length,12);
 for(const request of writerFixture.requests.values()){
  assert(request.input.includes(HOROSCOPE_EMOTIONAL_DEVELOPMENT_GUIDANCE));
+ assert(request.input.includes(HOROSCOPE_CONNECTED_READING_GUIDANCE));
+ assert(request.input.includes(HOROSCOPE_PUBLICATION_TIMING_GUIDANCE));
  const label=request.sign[0].toUpperCase()+request.sign.slice(1);
  assert.deepEqual(request.text.format.schema.properties.headline.enum,[`${label} & ${label} Rising`]);
  assert.equal(row.sections.horoscopeEdition.passages.find((p:any)=>p.sign===request.sign).headline,`${label} & ${label} Rising`);
@@ -100,7 +102,7 @@ for(const request of writerFixture.requests.values()){
  }
  assert(request.input.indexOf(section[0])<request.input.indexOf('CONTENT STUDIO WRITING INSTRUCTIONS'));
  assert.deepEqual(row.source_snapshot.horoscopeGeneration.readings[request.sign].sourceIds.slice(0,3),passages.map((e:any)=>e.id));
- assert.equal(row.source_snapshot.horoscopeGeneration.readings[request.sign].version,'horoscope-writer/v3');
+ assert.equal(row.source_snapshot.horoscopeGeneration.readings[request.sign].version,'horoscope-writer/v4');
 }
 // The lunation is distinct from the Monday snapshot Moon. Houses must bind to
 // the named subject, rather than matching the Sun's house or any available house.
@@ -157,8 +159,37 @@ assert.equal(canonicalHoroscopeTimeZone('Asia/Kathmandu'),canonicalHoroscopeTime
 for(const period of ['daily','seasonal']){
  const packet=await prepareHoroscopeBrief(new URL(`http://localhost/?period=${period}&date=2026-09-24&timeZone=Asia/Tokyo`));
  const other=prepareHoroscopeWriting({sections:{horoscopeEdition:emptyHoroscopeEdition(packet.brief.window)},facts:{horoscopeBrief:packet},source_snapshot:{}});
- assert(other.entries.every((entry:any)=>entry.contextOptions.primaryRegisterContentKeys.length===0&&!entry.contextOptions.requirePrimaryRegister));
- assert(other.entries.every((entry:any)=>!entry.sourceIds.some((id:string)=>[...forecastSources.values()].some((source:any)=>source.sourceId===id))),'The weekly repair must not change daily or seasonal register selection');
+ if(period==='seasonal') {
+  assert(other.entries.every((entry:any)=>entry.contextOptions.primaryRegisterContentKeys.length===0&&!entry.contextOptions.requirePrimaryRegister));
+  assert(other.entries.every((entry:any)=>!entry.sourceIds.some((id:string)=>[...forecastSources.values()].some((source:any)=>source.sourceId===id))),'Seasonal register selection is unchanged');
+ } else {
+  for(const entry of other.entries) {
+   assert(entry.contextOptions.requirePrimaryRegister);
+   assert.equal(entry.sourceIds[0],(forecastSources.get(entry.sign) as any).sourceId,'Daily writing receives the complete matching owner sign forecast');
+   assert.match(entry.argumentOutline.scope_guard,/publication window is not a transit duration/i);
+  }
+  const profile={...defaultHoroscopeProfile('daily'),sourceGuidance:defaultHoroscopeProfile('daily').sourceGuidance+' Fixture daily instructions remain editable.'};
+  const saved=await store.invoke('POST',{profile,expectedUpdatedAt:null},'/api/admin/generated-content?writingProfiles=true');assert.equal(saved.status,200);
+  const daily=emptyHoroscopeEdition(packet.brief.window);
+  const created=await store.invoke('POST',{contentKey:horoscopeEditionKey(daily.window),surface:'sky',mode:'article',eventType:'horoscope-edition',provider:'manual-admin',status:'DRAFT',lane:'serving',headline:'Synthetic daily edition',body:horoscopeEditionBody(daily),sections:{horoscopeEdition:daily},facts:{horoscopeBrief:packet},sourceSnapshot:{studioWritingProfile:saved.payload.profile}});
+  assert.equal(created.status,200,JSON.stringify(created.payload));let dailyRow=created.payload.rows[0];
+  const planned=await invokeHoroscopeWriting({action:'prepare',id:dailyRow.id,expectedUpdatedAt:dailyRow.updated_at});assert.equal(planned.status,200);
+  const generated=await invokeHoroscopeWriting({action:'generate',id:dailyRow.id,expectedUpdatedAt:dailyRow.updated_at,sign:'gemini',approvedPlanHash:planned.payload.plan.planHash});
+  assert.equal(generated.status,202,JSON.stringify(generated.payload));dailyRow=generated.payload.rows[0];
+  const request=writerFixture.requests.get(dailyRow.source_snapshot.horoscopeGeneration.active.responseId);
+  assert(request,'Inspect the actual daily provider request');
+  assert(request.input.includes(horoscopeEditorialPrompt(profile)),'The full saved daily profile reaches the writer');
+  assert(request.input.includes(HOROSCOPE_CONNECTED_READING_GUIDANCE));
+  assert(request.input.includes(HOROSCOPE_PUBLICATION_TIMING_GUIDANCE));
+  assert.match(request.input,/weekly passages as voice references for a new focused daily reading/);
+  assert.match(request.input,/not the lifetime of every influence/);
+  assert.doesNotMatch(request.input,/Timing language must stay within the declared local period/);
+  const primary=JSON.parse(request.input.match(/COMPLETE OWNER HOROSCOPES — PRIMARY PROSE EXAMPLES\n([^\n]+)\n\n/)![1]);
+  assert.equal(primary.length,3);assert.equal(primary[0].id,(forecastSources.get('gemini') as any).sourceId);
+  for(const passage of primary){const source=voice.entries.find((e:any)=>e.sourceId===passage.id);assert.equal(passage.text,source.text);assert.equal(passage.sourceRecordSha256,createHash('sha256').update(source.text).digest('hex'));assert.equal(source.ownerAuthored,true);}
+  const polled=await invokeHoroscopeWriting({action:'poll',id:dailyRow.id,expectedUpdatedAt:dailyRow.updated_at});assert.equal(polled.status,200);
+  assert.equal(polled.payload.rows[0].status,'DRAFT');assert.equal(polled.payload.rows[0].source_snapshot.horoscopeGeneration.readings.gemini.ownerApproved,false);
+ }
 }
 const aliasPacket=await prepareHoroscopeBrief(new URL('http://localhost/?period=daily&date=2026-09-24&timeZone=Asia/Kathmandu'));
 const aliasEdition=emptyHoroscopeEdition(aliasPacket.brief.window);aliasEdition.passages=aliasEdition.passages.map(p=>({...p,headline:'Synthetic alias fixture',body:'You can read this complete timezone fixture.'}));

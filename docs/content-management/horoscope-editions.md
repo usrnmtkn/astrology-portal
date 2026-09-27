@@ -243,3 +243,41 @@ profile change. A code/profile deployment does not regenerate saved readings.
 New generated headlines use “[Sign] & [Sign] Rising” through the provider output
 schema. Existing saved/custom headlines remain unchanged. The calculated house
 convention remains the edition’s declared rising-sign convention.
+
+## Daily and weekly reading flow — September 27
+
+Writer v4 gives daily and weekly runs three complete eligible owner sign forecasts
+as primary voice references, with the requested sign first. The available complete
+sign examples are weekly: the daily prompt explicitly identifies their use as
+register evidence for a new daily passage, never a compressed weekly reading or
+current factual source. Relevant owner articles remain additional topic evidence.
+Seasonal source selection is unchanged. External product comparisons supply no
+positive voice passages or reader text.
+
+The daily and weekly profiles develop one recognizable experience with related
+examples, brief specific astrology and an earned ending. A complication belongs
+only when supported; there is no mandatory sentence sequence. Weekly readings
+retain the connected developments of the week. The publication window is distinct
+from a transit's duration. A daily may introduce an ingress or revisit an ongoing
+placement; a duration, exit or future event still requires calculated evidence.
+Current briefs supply reference positions and events within the local period,
+not complete residency windows. No prompt licenses invented longer timing.
+
+The reader opens Today and defaults to the profile's rising sign, then Sun sign
+when rising is unavailable. Your rising sign and Your Sun sign buttons select
+passages from the same published edition; the all-sign selector remains available.
+Explicit sign/period URLs take precedence and survive reload and browser history.
+The reader never derives a natal chart or changes published prose when switching.
+Local-day selection follows the chosen city/time zone, including DST and fractional
+offsets. It rechecks at the next local date boundary even without a published
+edition, and at an earlier seasonal edition boundary. Exact archive links keep
+their published date. The existing focus/online/periodic refresh remains active.
+
+Verification: `test-horoscope-generation.mts` checks complete daily and weekly
+source text/hashes and saved instructions at the actual provider boundary using
+an unbilled fixture. `test-horoscope-editions.mts` checks day boundaries across
+DST, skipped midnight, year boundaries and fractional zones.
+`tests/visual/horoscope-personalization.spec.ts` covers personal sign shortcuts,
+URL persistence, complete bodies, responsive themes, empty editions and midnight
+rollover; the existing editor-to-reader test covers actual-handler publication.
+These checks establish data and instruction routing, not owner voice approval.

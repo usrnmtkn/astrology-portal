@@ -1,3 +1,4 @@
+import {nextHoroscopeRefresh} from '../apps/web/src/features/horoscopes/horoscopeRefresh';
 import assert from 'node:assert/strict';
 import {PGlite} from '@electric-sql/pglite';
 import {readFileSync,globSync} from 'node:fs';
@@ -97,3 +98,17 @@ assert.equal(revised.status,200,JSON.stringify(revised.payload));
 assert.equal(revised.payload.rows[0].status,'DRAFT','Editing cannot approve new wording in the same save');
 assert.equal((await read()).rows.length,0,'Editing removes the previous publication');
 console.log('PASS horoscope editions: calculated periods/DST/year boundary/solar ingress, actual-handler saves, exact text, complete publication, stale conflicts, signed facts and private-to-reader boundary');
+
+// Civil-day refresh is independent of whether an edition has been published.
+for(const [zone,now,next] of [
+ ['America/New_York','2026-03-08T05:00:00Z','2026-03-09T04:00:00.000Z'],
+ ['America/New_York','2026-11-01T04:00:00Z','2026-11-02T05:00:00.000Z'],
+ ['Asia/Kathmandu','2026-09-27T10:00:00Z','2026-09-27T18:15:00.000Z'],
+ ['Pacific/Kiritimati','2026-12-31T09:59:00Z','2026-12-31T10:00:00.000Z'],
+ ['Pacific/Honolulu','2027-01-01T09:59:00Z','2027-01-01T10:00:00.000Z'],
+ ['America/Santiago','2026-09-05T16:00:00Z','2026-09-06T04:00:00.000Z'],
+]) {
+ assert.equal(new Date(nextHoroscopeRefresh(zone,undefined,Date.parse(now))).toISOString(),next);
+ assert.equal(new Date(nextHoroscopeRefresh(zone,now,Date.parse(now))).toISOString(),next,'An expired edition does not spin in a refresh loop');
+}
+assert.equal(new Date(nextHoroscopeRefresh('America/New_York','2026-09-27T17:00:00Z',Date.parse('2026-09-27T16:00:00Z'))).toISOString(),'2026-09-27T17:00:00.000Z','Seasonal ingress boundaries refresh before midnight');

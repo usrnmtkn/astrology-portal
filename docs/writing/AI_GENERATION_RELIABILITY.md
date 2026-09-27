@@ -205,3 +205,28 @@ corrected copy, direct and bulk publication. Browser coverage exercises automati
 event loading, event filters, plan review, generation, save/reopen and reader
 handoff across desktop/mobile and light/dark themes. These checks do not establish
 live model quality or authorize a paid sample or publication of owner content.
+
+## Daily and weekly editorial flow — September 27
+
+Horoscope writer v4 extends primary owner sign-forecast retrieval to daily runs.
+The complete eligible weekly passages supply voice behavior; daily instructions
+name that adaptation explicitly and do not reuse their dates, stories or weekly
+scope. External product examples are not ingested as positive owner evidence.
+The saved daily and weekly Studio profiles control focused human subjects,
+connected examples, brief specific astrology and earned endings, without a fixed
+five-sentence formula. Publication windows select reading dates and do not imply
+transit durations. Unsupplied exits, future events and personal history remain
+outside factual coverage. Seasonal evidence selection remains unchanged.
+
+Reader controls default to the available rising sign, offer a Sun-sign shortcut,
+and preserve explicit shared URLs. Midnight refresh follows the selected location
+and works when no edition was previously available. Both signs read the same
+published twelve-sign edition; no second generation or personalized rewrite runs
+in the browser. Existing drafts remain exact saved text. To use new profiles on
+an existing edition, use its latest-instructions action or Reject all drafts,
+then review the new plan before generation. Saving a profile alone never rewrites
+or publishes an edition.
+
+Verification is documented in `docs/content-management/horoscope-editions.md`.
+Actual-provider input regressions use injected fixtures and do not establish the
+quality of newly generated live prose. The owner remains the voice reviewer.
