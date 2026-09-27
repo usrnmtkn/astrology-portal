@@ -1,3 +1,4 @@
+import { calendarMoonContextKeys, renderCalendarMoonWriting } from "./calendarMoonContext";
 import { LoadingStatus, SkeletonBar } from "../../components/CardSkeleton";
 import { useMinimumLoading } from "../../hooks/useMinimumLoading";
 import { CalendarDaySkeleton } from "./CalendarDaySkeleton";
@@ -1866,13 +1867,14 @@ function calendarMoonFallbackOptions(
     calendarLiveBody(generatedContent, contentKey, fallbackV3HookBody(contentKey))
   ));
   return {
+    contextLookup: (key: string) => generatedContent?.get(key)?.body,
     exactLunationCopy: lunationBody ? { body: lunationBody, contentKey: lunationKey } : null,
     unusedAuthored: unusedAuthored?.body?.trim() ? unusedAuthored : null,
     authoredUsedThisVisit,
     authoredPhaseCopy: authoredPhase,
     seasonSummary: seasonBody.split(/\n\n+/)[0]?.trim() || null,
-    moonContinuationSummary: calendarLiveBody(generatedContent, summaryKey) || null,
-    pairTransition: transitionKey ? calendarLiveBody(generatedContent, transitionKey) || null : null,
+    moonContinuationSummary: generatedContent?.has(summaryKey) ? renderCalendarMoonWriting(generatedContent.get(summaryKey)!.body, summaryKey, facts) : null,
+    pairTransition: transitionKey && generatedContent?.has(transitionKey) ? renderCalendarMoonWriting(generatedContent.get(transitionKey)!.body, transitionKey, facts) : null,
     seasonTransition: facts.seasonName && facts.nextSunSign
       ? calendarLiveBody(
         generatedContent,
@@ -1905,7 +1907,7 @@ function calendarMoonResolvedWeekly(
   );
 }
 
-function calendarMoonResolvedByDate(
+export function calendarMoonResolvedByDate(
   days: LunarCalendarDay[],
   factsByDate: Map<string, CalendarMoonCycleFacts>,
   generatedContent?: Map<string, LiveGeneratedContent> | null
@@ -2589,6 +2591,7 @@ export function LunarCalendar({
       ...(selectedCalendar?.events ?? [])
     ].map((event) => [event.id, event])).values());
     const contentKeys = [
+      ...calendarMoonContextKeys,
       ...visibleEvents.flatMap(calendarEventGeneratedContentKeys),
       ...selectedEvents.flatMap(calendarEventGeneratedContentKeys),
       ...skyDailySummaryFields.map(field => field.key),
@@ -2596,13 +2599,14 @@ export function LunarCalendar({
       ...["new-moon", "waxing-crescent", "first-quarter", "waxing-gibbous", "full-moon", "disseminating", "last-quarter", "balsamic"]
         .map((phase) => `fallback-hook/moon-phase/${phase}`),
       ...visibleDays.flatMap((day) => {
+        const startingSign = day.events.find(event => event.type === "ingress" && event.planet === "Moon")?.fromSign ?? day.moonSign;
         const seasonSignForDay = sunIngressSeasonSign(day.dateKey, calendar.events);
         return [
           ...cmsSurfaceKeys.calendarDay("moon", day.moonSign),
           ...cmsSurfaceKeys.calendarDay("phase", calendarPhaseContentKey(calendarPhaseLabelForDay(day, calendar.days))),
           ...cmsSurfaceKeys.calendarDay("continuation", day.moonSign),
-          moonContinuationSummaryKey(day.moonSign),
-          moonSignTransitionKey(day.moonSign, nextZodiacSignName(day.moonSign)),
+          moonContinuationSummaryKey(startingSign),
+          moonSignTransitionKey(startingSign, nextZodiacSignName(startingSign)),
           ...(seasonSignForDay
             ? calendarSeasonTransitionKeys(seasonSignForDay, nextZodiacSignName(seasonSignForDay))
             : []),
@@ -2622,7 +2626,7 @@ export function LunarCalendar({
     ].filter((contentKey) => (
       // Signed-off Studio exact revisions can supersede their bundled baseline.
       // Keep requesting these keys even when local approved prose is available.
-      contentKey.startsWith("sky.aspect.") || contentKey.startsWith("authored/sky-lunation-macro/") || !fallbackArchitectureV3AuthoredContentForKey(contentKey)
+      contentKey.startsWith("sky.aspect.") || contentKey.startsWith("authored/sky-lunation-macro/") || contentKey.startsWith("authored/calendar-") || contentKey.startsWith("fallback-hook/moon-phase/") || !fallbackArchitectureV3AuthoredContentForKey(contentKey)
     ));
     const firstDate = visibleDays[0]?.dateKey ?? selectedDateKey;
     const lastDate = visibleDays.at(-1)?.dateKey ?? selectedDateKey;

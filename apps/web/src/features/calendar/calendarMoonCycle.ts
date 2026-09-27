@@ -31,6 +31,10 @@ export type CalendarMoonCycleFacts = {
   exactLunarEclipse: boolean;
   exactFirstQuarter: boolean;
   exactLastQuarter: boolean;
+  previousLunationUrl?: string;
+  nextLunationUrl?: string;
+  previousEclipseUrl?: string;
+  nextEclipseUrl?: string;
   previousLunationType: CalendarLunationKind | "";
   previousLunationSign: string;
   previousLunationDate: string;
@@ -125,6 +129,10 @@ function localHour(value: string, timeZone: string) {
   } catch {
     return null;
   }
+}
+
+function calendarEventReadingLink(event: LunarCalendarEvent | undefined, timeZone: string) {
+  return event ? `#calendar?${new URLSearchParams({ view: 'day', date: event.dateKey, event: event.id, timeZone })}` : '';
 }
 
 export function calendarMoonCycleFactsForDays(
@@ -223,6 +231,10 @@ export function calendarMoonCycleFactsForDays(
       exactLunarEclipse: todayLunations.some((event) => event.eclipseType === "lunar"),
       exactFirstQuarter: todayQuarters.some((event) => quarterKind(event) === "first-quarter"),
       exactLastQuarter: todayQuarters.some((event) => quarterKind(event) === "last-quarter"),
+      previousLunationUrl: calendarEventReadingLink(previousLunation, timeZone),
+      nextLunationUrl: calendarEventReadingLink(nextLunation, timeZone),
+      previousEclipseUrl: calendarEventReadingLink(previousEclipse, timeZone),
+      nextEclipseUrl: calendarEventReadingLink(nextEclipse, timeZone),
       previousLunationType: previousLunation ? lunationKind(previousLunation) : "",
       previousLunationSign: previousLunation?.sign ?? "",
       previousLunationDate: previousLunation ? formatDate(previousLunation.startsAt, timeZone) : "",

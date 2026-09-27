@@ -670,6 +670,10 @@ function validateFallbackArchitectureV3Copy(row: ExistingGeneratedContentRow, pa
       : new Set<string>();
     for (const slot of packagePlaceholders(value)) {
       if (skyVariableField || ingressVariableField) continue;
+      // Calendar's calculated slots are fixed by the source adapter, never by
+      // caller-supplied package metadata. They may be added during an edit.
+      if (["body", "packageDraft.body"].includes(field)
+        && libs().calendarMoonWritingVariableNames(row.content_key).includes(slot.replace(/[{}\s]/gu, ""))) continue;
       if (Array.isArray(variableOwner._studioVariables) && variableOwner._studioVariables.some((item: any) => slot.replace(/[{}\s]/gu, "") === item.name)) continue;
       if (libs().supportsZodiacSeasonVariables(proposedRecord) && libs().zodiacSeasonVariableNames(slot).length) continue;
       const isAllowedFriendName = (

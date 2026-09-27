@@ -55,6 +55,8 @@ export const STUDIO_LUNAR_CALENDAR_PREFIXES = [
   "authored/calendar-weekly-moon/",
   "authored/calendar-moon-continuation-summary/",
   "authored/calendar-moon-transition/",
+  "authored/calendar-moon-context/",
+  "fallback-hook/moon-phase/",
   "authored/calendar-season-transition/",
   "authored/lunar-journal/",
   "authored/sky-lunation-macro/",

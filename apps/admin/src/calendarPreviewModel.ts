@@ -1,3 +1,4 @@
+import { calendarMoonContextKeys, renderCalendarMoonWriting } from "../../web/src/features/calendar/calendarMoonContext";
 import type { CalendarPreviewCalculation } from "./calendarPreviewCalculation";
 import { skyForecastTemplates, type SkyForecastPeriod } from "./skyForecastTemplates";
 import { lunarContentIdentity } from "./lunarCalendarContent";
@@ -64,7 +65,7 @@ function calendarWorkingRow(row: CalendarPreviewRow | undefined) {
 }
 
 export function calendarPreviewSourceKeys(period: SkyForecastPeriod, signs: string[]) {
-  return [skyForecastTemplates[period].contentKey, ...new Set(signs.filter(Boolean).flatMap(sign => {
+  return [skyForecastTemplates[period].contentKey, ...calendarMoonContextKeys, ...new Set(signs.filter(Boolean).flatMap(sign => {
     const slug = sign.toLowerCase();
     return [
       `fallback-hook/zodiac-season/${slug}`,
@@ -151,6 +152,7 @@ export function calendarMoonWriteupForDay(
   }
   const phaseCopy = calendarMoonPhaseCopy(facts, (contentKey) => calendarWorkingRow(rows.find(row => row.content_key === contentKey && calendarCopyEligible(row)))?.body ?? "");
   const resolved = resolveCalendarMoonFallback(facts, {
+    contextLookup: key => calendarWorkingRow(rows.find(row => row.content_key === key && calendarCopyEligible(row)))?.body,
     exactLunationCopy: lunationRow?.body
       ? { body: lunationRow.body, contentKey: lunationRow.content_key }
       : null,
@@ -160,8 +162,8 @@ export function calendarMoonWriteupForDay(
     authoredUsedThisVisit: used.size > 0,
     authoredPhaseCopy: phaseCopy,
     seasonSummary,
-    moonContinuationSummary: summaryRow?.body,
-    pairTransition: transitionRow?.body,
+    moonContinuationSummary: summaryRow?.body ? renderCalendarMoonWriting(summaryRow.body, summaryKey, facts) : undefined,
+    pairTransition: transitionRow?.body ? renderCalendarMoonWriting(transitionRow.body, transitionKey, facts) : undefined,
     seasonTransition: seasonTransitionRow?.body
   });
   if (!resolved) return null;
@@ -170,17 +172,18 @@ export function calendarMoonWriteupForDay(
     if (text) candidates.push({ name, text, sourceKey, sourceLabel, kind: "copy" });
   };
   if (resolved.kind !== "authored" && resolved.kind !== "exact-lunation") {
-    const continuation = moonContinuationSummaryForSign(facts.moonSign, summaryRow?.body, { exactFirstQuarter: facts.exactFirstQuarter });
+    const continuation = moonContinuationSummaryForSign(facts.moonSign, summaryRow?.body ? renderCalendarMoonWriting(summaryRow.body, summaryKey, facts) : undefined, { exactFirstQuarter: facts.exactFirstQuarter });
     // Some event-specific wording is fixed in the resolver and ignores a saved
     // override. Do not present that wording as editable through the unused row.
-    add("continuation", continuation, facts.exactFirstQuarter && continuation !== summaryRow?.body?.trim() ? undefined : summaryKey, "Moon continuation passage");
-    add("transition", moonSignTransitionForPair(facts.moonSign, nextSign, transitionRow?.body), transitionKey, "Moon sign transition passage");
+    add("continuation", continuation, facts.exactFirstQuarter && !summaryRow?.body ? undefined : summaryKey, "Moon continuation passage");
+    add("transition", moonSignTransitionForPair(facts.moonSign, nextSign, transitionRow?.body ? renderCalendarMoonWriting(transitionRow.body, transitionKey, facts) : undefined), transitionKey, "Moon sign transition passage");
     const phaseRow = calendarWorkingRow(rows.find(row => row.content_key === phaseCopy?.contentKey && calendarCopyEligible(row)));
-    const phaseSourceBody = phaseRow?.body?.trim().replaceAll("{{signTitle}}", calendarPreviewSign(facts.moonSign));
+    const phaseSourceBody = phaseRow?.body ? renderCalendarMoonWriting(phaseRow.body.trim().replaceAll("{{signTitle}}", calendarPreviewSign(facts.moonSign)), phaseRow.content_key, facts) : undefined;
     add("phase", phaseCopy?.body, phaseRow && phaseSourceBody !== phaseCopy?.body ? undefined : phaseCopy?.contentKey, "Moon phase passage");
     add("seasonTransition", calendarSeasonTransitionForSurface({ fromSign: facts.seasonName, toSign: facts.nextSunSign,
       date: calendarSeasonTransitionWhen(facts.daysUntilSeasonEnd, facts.seasonEndDate), surface: "leftover",
       daysUntilSeasonEnd: facts.daysUntilSeasonEnd, override: seasonTransitionRow?.body }), seasonTransitionKey, "Season transition passage");
+    if (resolved.contextSource) add("context", resolved.contextSource.body, resolved.contextSource.contentKey, "Moon cycle context passage");
     add("season", seasonSummary, facts.seasonName ? `fallback-hook/zodiac-season/${facts.seasonName.toLowerCase()}` : undefined, "Zodiac season passage");
   }
   return {

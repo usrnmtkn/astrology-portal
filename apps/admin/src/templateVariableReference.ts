@@ -1,3 +1,4 @@
+import { calendarMoonWritingVariables } from "../../web/src/features/calendar/calendarMoonContext";
 import { ZODIAC_SEASON_VARIABLES, supportsZodiacSeasonVariables } from "../../web/src/content/fallbackArchitectureV3/resolver/zodiacSeasonVariables.mjs";
 export type TemplateVariableRequirement = "Required" | "Optional" | "Runtime";
 
@@ -617,6 +618,11 @@ export function templateVariableReferences(
 
   if (includeAvailable && (supportsZodiacSeasonVariables(packageRecord) || String(packageRecord.contentKey ?? "").startsWith("slot-template/calendar/"))) for (const field of ZODIAC_SEASON_VARIABLES) {
     if (!usages.has(field.id)) usages.set(field.id, { fields: new Set(["Available for insertion"]), conditional: true });
+  }
+  if (includeAvailable && /^(?:authored\/calendar-moon-(?:context|continuation-summary)\/|fallback-hook\/moon-phase\/)/u.test(String(packageRecord.contentKey ?? ""))) {
+    for (const name of calendarMoonWritingVariables) {
+      if (!usages.has(name)) usages.set(name, { fields: new Set(["Available for insertion"]), conditional: true });
+    }
   }
   const transitExactKey = String(packageRecord.contentKey ?? "");
   if (includeAvailable && (/^authored\/transit-aspect\//u.test(transitExactKey) || /^authored\/transit-return\//u.test(transitExactKey))) {

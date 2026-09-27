@@ -4,6 +4,7 @@ import { useSkeletonGeometry } from "../../hooks/useSkeletonGeometry";
 import { LoadingStatus, SkeletonBar } from "../../components/CardSkeleton";
 import { StoicCardSkeleton, SeasonTransitRowSkeleton } from "./CalendarDaySkeleton";
 import { FormattedProse } from "../../components/FormattedProse";
+import { CalendarMoonProse } from "./CalendarMoonProse";
 import { ChevronRight } from "lucide-react";
 import type { SummaryPart } from "../../content/skyDailySummary";
 import type { LunarCalendarEvent } from "../../services/ephemeris";
@@ -58,7 +59,7 @@ function MoonPassage({ passage }: { passage: CalendarMoonPassage }) {
           expanding retains every paragraph from the same published passage. */}
       <div id={bodyId} className="calendar-sky-card__moon-passage">
         {(hasMore && !expanded ? passage.paragraphs.slice(0, 1) : passage.paragraphs)
-          .map((paragraph, index) => <FormattedProse key={index} text={paragraph} />)}
+          .map((paragraph, index) => <CalendarMoonProse key={index} text={paragraph} />)}
       </div>
       {hasMore ? (
         <button

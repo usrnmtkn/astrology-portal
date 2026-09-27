@@ -18,6 +18,8 @@ export function calendarWritingStudioHref(contentKey: string) {
     || key.startsWith("authored/calendar-weekly-moon/")
     || key.startsWith("authored/calendar-moon-continuation-summary/")
     || key.startsWith("authored/calendar-moon-transition/")
+    || key.startsWith("authored/calendar-moon-context/")
+    || key.startsWith("fallback-hook/moon-phase/")
     || key.startsWith("authored/calendar-season-transition/")
     || key.startsWith("authored/sky-lunation-macro/")
     || key.startsWith("cms/sky-daily-summary/sun/")
