@@ -54,3 +54,13 @@ the web total cap to 3,493,000. This corrects the aggregate-budget CI failure
 reported after #1070; it is an explicit feature allocation, not a size reduction.
 All reader startup, CSS, individual chunk, memory graph and runtime-performance
 limits remain unchanged. No dependency or prose payload was added.
+
+### Deployed publication-status module
+
+Production verification of `affba7fd7` found `ERR_MODULE_NOT_FOUND` in
+`/api/admin/content-live-status`: the emitted `contentWiringStatus.js` still
+referenced `calendarPlanetarySources.ts`. Use `.js` specifiers throughout this
+server dependency chain. The planetary API regression now emits all three
+modules separately and imports them with plain Node, without a TypeScript
+loader, before checking the actual API and reader contracts. This catches the
+deployment-only error hidden by bundled or `tsx` fixtures.
