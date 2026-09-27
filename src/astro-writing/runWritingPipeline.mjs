@@ -43,6 +43,7 @@ export async function runWritingPipeline({
   meaningInput,
   examples,
   matrixExamples = [],
+  reviewedMeaningExamples = [],
   matrixArgumentCandidates = [],
   matrixEvidenceAvailableCount = null,
   relevantOwnerPassagesAvailableCount = null,
@@ -78,7 +79,7 @@ export async function runWritingPipeline({
 }) {
   const resolvedTarget = assertSurfaceRegisterContract(target, { surface, register });
   const plan = await resolveAstrology(meaningInput, { plannerClient });
-  const resolvedRequiredFields = requiredFields ?? (["fast-mover-article", "slow-mover-article"].includes(family)
+  const resolvedRequiredFields = requiredFields ?? (family === 'horoscope' ? ['headline','body'] : ["fast-mover-article", "slow-mover-article"].includes(family)
     ? ["opening", "tension", "development", "close"]
     : ["tagline", "hook", "lived", "turn"]);
   const pendingOutline = buildArgumentOutline(argumentInput, { plan, family, surface });
@@ -114,6 +115,7 @@ export async function runWritingPipeline({
     context = retrieveOwnerContext(plan, {
       examples,
       matrixExamples,
+      reviewedMeaningExamples,
       matrixArgumentCandidates,
       matrixEvidenceAvailableCount,
       relevantOwnerPassagesAvailableCount,

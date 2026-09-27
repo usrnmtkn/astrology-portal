@@ -1,4 +1,6 @@
 const SURFACE_RULES = Object.freeze({
+  horoscopes: Object.freeze({route:'horoscopes',renderers:Object.freeze(['HoroscopeReader']),
+    temporalities:Object.freeze(['current_sky']),voiceModes:Object.freeze(['second_person']),registers:Object.freeze(['second_person'])}),
   "sky-placement-page": Object.freeze({
     route: "sky",
     renderers: Object.freeze(["renderSkyPlacement"]),

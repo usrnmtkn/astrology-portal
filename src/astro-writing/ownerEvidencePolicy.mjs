@@ -28,6 +28,7 @@ const ARTICLE_POLICY = Object.freeze({
 });
 
 export const OWNER_EVIDENCE_FAMILY_MAP = Object.freeze({
+  horoscope: Object.freeze({...ARTICLE_POLICY, sameFamilyFamilies:Object.freeze(['weekly-astrology','sky-season','sky-lunation','sky-article-longform','sky-article-reference'])}),
   "fast-mover-article": ARTICLE_POLICY,
   "slow-mover-article": ARTICLE_POLICY
 });

@@ -10,7 +10,19 @@ export function horoscopeCanonicalJson(value) {
 }
 export const horoscopeSignLabel = sign => sign[0].toUpperCase() + sign.slice(1);
 export function horoscopeEditionKey(window) {
-  return `${HOROSCOPE_EDITION_PREFIX}${window.period}/${window.startsAt.replace(/[^0-9]/gu, '')}`;
+  return `${HOROSCOPE_EDITION_PREFIX}${window.period}/${window.startsAt.replace(/[^0-9]/gu, '')}/${window.timeZone}`;
+}
+/** Previously saved editions remain readable without rewriting their content. */
+export function isHoroscopeEditionKey(key, window) {
+  return key === horoscopeEditionKey(window) || key === `${HOROSCOPE_EDITION_PREFIX}${window.period}/${window.startsAt.replace(/[^0-9]/gu, '')}`;
+}
+export function validHoroscopeTimeZone(value) {
+  if (typeof value !== 'string' || !value || value.length > 100) return false;
+  try { new Intl.DateTimeFormat('en', {timeZone:value}); return true; } catch { return false; }
+}
+export function canonicalHoroscopeTimeZone(value) {
+  if (!validHoroscopeTimeZone(value)) throw new Error('Choose a valid time zone.');
+  return new Intl.DateTimeFormat('en', {timeZone:value}).resolvedOptions().timeZone;
 }
 export function validateHoroscopeWindow(value) {
   if (!value || typeof value !== 'object' || Array.isArray(value)
@@ -53,14 +65,15 @@ export function horoscopeEditionFromRow(row) {
   try {
     const edition = validateHoroscopeEdition(row?.sections?.horoscopeEdition, true);
     if (row.status !== 'LIVE' || row.lane !== 'serving' || row.review_state != null || row.surface !== 'sky' || row.mode !== 'article'
-      || row.content_key !== horoscopeEditionKey(edition.window) || row.body !== horoscopeEditionBody(edition)) return null;
+      || !isHoroscopeEditionKey(row.content_key,edition.window) || row.body !== horoscopeEditionBody(edition)) return null;
     return edition;
   } catch { return null; }
 }
-export function horoscopeEditionAt(rows, period, at) {
+export function horoscopeEditionAt(rows, period, at, timeZone) {
   const time = Date.parse(at);
   const values = rows.map(row => ({row, edition:horoscopeEditionFromRow(row)})).filter(({edition}) => edition
-    && edition.window.period === period && Date.parse(edition.window.startsAt) <= time && time < Date.parse(edition.window.endsAt));
+    && edition.window.period === period && (!timeZone || canonicalHoroscopeTimeZone(edition.window.timeZone) === canonicalHoroscopeTimeZone(timeZone))
+    && Date.parse(edition.window.startsAt) <= time && time < Date.parse(edition.window.endsAt));
   // Overlapping editions need editorial resolution, never an arbitrary winner.
   if (values.length > 1) throw new Error('More than one horoscope edition covers this period. Please try again later.');
   return values[0]?.edition ?? null;

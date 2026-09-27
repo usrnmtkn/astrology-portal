@@ -285,6 +285,7 @@ export function buildSharedEvidencePacket({ context, argumentSource, plan } = {}
     ownerAuthored: false,
     sourceKind: "owner-approved-knowledge-matrix"
   }));
+  meaning.push(...(context?.reviewedMeaningExamples ?? []).map(entry => namedEntry(entry, "meaning", {id:`meaning:${entry.id}`,ownerAuthored:false,ownerApproved:false,sourceKind:"reviewed-doctrine"})));
   const register = [
     ...(context?.sameFamilyExamples ?? []),
     ...(context?.registerGoldExamples ?? [])

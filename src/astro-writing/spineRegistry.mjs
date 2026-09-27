@@ -29,6 +29,12 @@ export const SPINE_USAGE_POLICY = Object.freeze({
 });
 
 export const CONTENT_SPINES = Object.freeze({
+  horoscope: Object.freeze({
+    id: 'horoscope-forecast-v1', status: 'recorded', ownerApproved: false,
+    source: 'docs/writing/ASTROLOGY_CONTRACT.md#forecast-first-horoscope-template',
+    satisfactionMode: 'semantic_coverage_not_sentence_or_paragraph_template',
+    fields: Object.freeze(['lived_forecast','astrology_anchor','recognition','complication','response'])
+  }),
   "slow-mover-article": Object.freeze({
     id: "sky-placement-article-slow-mover-v1",
     status: "recorded",

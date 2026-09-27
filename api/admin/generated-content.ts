@@ -2335,6 +2335,9 @@ async function updateGeneratedContent(req: IncomingMessage) {
   if (body.expectedUpdatedAt !== existing.updated_at) {
     throw new GeneratedContentRequestError("This content changed after the editor was opened. Reload the row before saving so a newer edit is not overwritten.", 409);
   }
+  if (existing.content_key.startsWith('horoscope/') && existing.source_snapshot?.horoscopeGeneration?.active) {
+    throw new GeneratedContentRequestError('A horoscope reading is running. Resume generation before editing or publishing this edition.', 409);
+  }
   if (existing.content_key.startsWith(libs().STUDIO_VARIABLE_PREFIX)) throw new GeneratedContentRequestError("Manage this definition in Variables.");
   if (existing.content_key.startsWith(HOROSCOPE_PROFILE_PREFIX)) throw new GeneratedContentRequestError("Manage writing profiles in AI Writing.");
   await prepareStudioVariables(body);
@@ -2882,6 +2885,9 @@ async function updateGeneratedContent(req: IncomingMessage) {
 
   if (body.sourceSnapshot !== undefined) {
     patch.source_snapshot = body.sourceSnapshot;
+    if (existing.content_key.startsWith('horoscope/') && existing.source_snapshot?.horoscopeGeneration) {
+      patch.source_snapshot = { ...(isRecord(body.sourceSnapshot) ? body.sourceSnapshot : {}), horoscopeGeneration: existing.source_snapshot.horoscopeGeneration };
+    }
   }
 
   if (typeof body.lane === "string") {
@@ -3083,6 +3089,9 @@ async function deleteGeneratedContent(req: IncomingMessage) {
   const existing = await fetchExistingRowById(id);
   if (!existing) {
     throw new GeneratedContentRequestError("Content row was not found.", 404);
+  }
+  if (existing.content_key.startsWith('horoscope/') && existing.source_snapshot?.horoscopeGeneration?.active) {
+    throw new GeneratedContentRequestError('A horoscope reading is running. Retrieve or release that request before deleting the edition.', 409);
   }
   if (existing.content_key.startsWith(libs().STUDIO_VARIABLE_PREFIX)) throw new GeneratedContentRequestError("Manage this definition in Variables.");
   if (existing.content_key.startsWith(HOROSCOPE_PROFILE_PREFIX)) throw new GeneratedContentRequestError("Manage writing profiles in AI Writing.");

@@ -27,8 +27,9 @@ function overlapScore(entry, plan) {
   return score;
 }
 
-function registerFamilyMatchesTarget(entry, plan) {
+function registerFamilyMatchesTarget(entry, plan, contentFamily) {
   const family = String(entry?.sourceFamily ?? entry?.family ?? "");
+  if (contentFamily === 'horoscope' && ['weekly-astrology','sky-season','sky-lunation'].includes(family)) return true;
   const object = String(plan?.object ?? "").toLowerCase();
   if (family === "sky-lunation") return false;
   if (family === "sky-season") return object === "sun";
@@ -41,6 +42,7 @@ function registerFamilyMatchesTarget(entry, plan) {
 export function retrieveOwnerContext(plan, {
   examples = [],
   matrixExamples = [],
+  reviewedMeaningExamples = [],
   matrixArgumentCandidates = [],
   matrixEvidenceAvailableCount = null,
   relevantOwnerPassagesAvailableCount = null,
@@ -76,7 +78,7 @@ export function retrieveOwnerContext(plan, {
     && entry.ownerAuthored === true
     && entry.useAsPositiveVoiceEvidence === true
     && policy.sameFamilyFamilies.includes(entry.family)
-    && registerFamilyMatchesTarget(entry, plan)
+    && registerFamilyMatchesTarget(entry, plan, contentFamily)
     && policy.allowedRegisters.includes(entry.register)
     && !excludedKeys.has(entry.contentKey)
     && entry.text.trim()
@@ -164,6 +166,7 @@ export function retrieveOwnerContext(plan, {
   const phraseSelection = selectPhraseEvidence(plan, phraseEvidence);
   const context = {
     examples: [...selectedMatrix, ...selectedSameFamily, ...selectedRegisterGold, ...selectedScenes],
+    reviewedMeaningExamples: contentFamily === "horoscope" ? reviewedMeaningExamples.filter(e => e.status === "REVIEWED_CLAUSE" && e.sourceKind === "reviewed-doctrine" && e.ownerApproved === false && e.ownerAuthored === false && e.planet === targetPlanet && e.sign === targetSign && e.text?.trim()) : [],
     knowledgeMatrixExamples: selectedMatrix,
     knowledgeMatrixArgumentCandidates: selectedMatrixArguments,
     sceneExamples: selectedScenes,

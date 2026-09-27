@@ -4,10 +4,30 @@ import path from 'node:path';
 import {createHash} from 'node:crypto';
 import {routeStudioInventoryApi} from '../helpers/studio-inventory-route';
 import {HOROSCOPE_SIGNS,emptyHoroscopeEdition,horoscopeEditionKey,horoscopeEditionBody} from '../../apps/web/src/content/horoscopeEditions.mjs';
+import {READER_ROW_SCHEMA} from '../../apps/web/src/content/readerRowSchema.mjs';
+
+test('New reader uses device time zone and saves a manual override',async({browser,baseURL})=>{
+ const context=await browser.newContext({baseURL,timezoneId:'Asia/Kathmandu'});
+ try {
+  const page=await context.newPage();const zones:string[]=[];
+  await page.route('**/api/content-reader',route=>{const zone=route.request().postDataJSON()?.horoscope?.timeZone;if(zone)zones.push(zone);return route.fulfill({json:{schema:READER_ROW_SCHEMA,rows:[],publications:[],nextCursor:null}});});
+  await page.goto('/#horoscopes?period=daily');
+  await expect(page.locator('.horoscope-location summary')).toContainText('Device time zone');
+  const detected=await page.evaluate(()=>Intl.DateTimeFormat().resolvedOptions().timeZone);
+  await expect(page.getByRole('status')).toContainText(detected.replaceAll('_',' '));
+  expect(zones).toContain(detected);
+  await page.locator('.horoscope-location summary').click();
+  await page.getByLabel('Horoscope time zone',{exact:true}).selectOption('Pacific/Honolulu');
+  await expect(page.getByRole('status')).toContainText('Pacific/Honolulu');
+  await page.reload();
+  await expect(page.locator('.horoscope-location summary')).toContainText('Pacific/Honolulu');
+  expect(await page.evaluate(()=>localStorage.getItem('tldrastro:selectedLocation'))).toBeNull();
+ }finally{await context.close();}
+});
 
 for(const [width,theme] of [[390,'light'],[390,'dark'],[1440,'light'],[1440,'dark']] as const){
  test(`Twelve-sign edition editor to reader ${width} ${theme}`,async({page})=>{
-  const child=fork(path.resolve('tests/helpers/sky-article-save-api.mts'),[],{env:{...process.env,ZODIAC_TEMPLATE_FIXTURE:'1'},execArgv:['--import','tsx'],stdio:['ignore','pipe','pipe','ipc']});
+  const child=fork(path.resolve('tests/helpers/sky-article-save-api.mts'),[],{env:{...process.env,ZODIAC_TEMPLATE_FIXTURE:'1',HOROSCOPE_WRITER_FIXTURE:'1'},execArgv:['--import','tsx'],stdio:['ignore','pipe','pipe','ipc']});
   let sequence=0,stderr='';const pending=new Map<number,{resolve:(v:any)=>void;reject:(e:Error)=>void}>();
   child.stderr?.on('data',value=>stderr+=value);
   const ready=new Promise<void>((resolve,reject)=>{child.on('message',(message:any)=>{if(message.ready)return resolve();const task=pending.get(message.id);if(task){pending.delete(message.id);message.error?task.reject(new Error(message.error)):task.resolve(message.result);}});child.on('exit',code=>{const error=new Error(`Fixture exited ${code}: ${stderr}`);reject(error);pending.forEach(task=>task.reject(error));});});
@@ -16,8 +36,18 @@ for(const [width,theme] of [[390,'light'],[390,'dark'],[1440,'light'],[1440,'dar
    await ready;const errors:string[]=[];page.on('pageerror',e=>errors.push(e.message));
    await page.setViewportSize({width,height:1000});
    await page.clock.setFixedTime(new Date('2026-09-24T16:00:00Z'));
-   await page.addInitScript(theme=>{localStorage.setItem('tldrastro:contentAdminSecret','calendar-api-fixture');localStorage.setItem('tldrastro:studio-theme',theme);localStorage.setItem('tldrastro:theme',theme);},theme);
-   await routeStudioInventoryApi(page,{call,answer:async(route,url)=>{if(url.pathname==='/api/content-reader'){const result=await call({method:'reader',body:route.request().postDataJSON()});await route.fulfill({status:result.status,json:result.payload});return true;}return false;}});
+   await page.addInitScript(theme=>{localStorage.setItem('tldrastro:contentAdminSecret','calendar-api-fixture');localStorage.setItem('tldrastro:studio-theme',theme);localStorage.setItem('tldrastro:theme',theme);localStorage.setItem('tldrastro:selectedLocation',JSON.stringify({label:'Tokyo',latitude:35.68,longitude:139.76,timeZone:'Asia/Tokyo'}));},theme);
+   let injectConflict=width===390&&theme==='light';
+   const newerOutline='A newer writing outline from another editor. Stay with the calculated temporary emphasis and its house.';
+   await routeStudioInventoryApi(page,{call,answer:async(route,url)=>{if(url.pathname==='/api/admin/horoscope-writing'){
+    const body=route.request().postDataJSON();
+    if(injectConflict&&body.action==='generate'){
+     injectConflict=false;const current=(await call({method:'rows'})).find((row:any)=>row.id===body.id);
+     const changed=await call({method:'PATCH',body:{id:current.id,expectedUpdatedAt:current.updated_at,sourceSnapshot:{...current.source_snapshot,horoscopeOutlines:{aries:newerOutline}}}});
+     expect(changed.status).toBe(200);
+    }
+    const result=await call({method:'writing',body});await route.fulfill({status:result.status,json:result.payload});return true;
+   }if(url.pathname==='/api/content-reader'){const result=await call({method:'reader',body:route.request().postDataJSON()});await route.fulfill({status:result.status,json:result.payload});return true;}return false;}});
    await page.goto('/admin/content#templates');
    await expect(page.getByRole('heading',{name:'Templates',exact:true})).toBeVisible();
    const titleStyle=await page.locator('h1').evaluate(el=>{const s=getComputedStyle(el);return[s.fontFamily,s.fontSize,s.fontWeight,s.lineHeight,s.letterSpacing,s.margin,s.textTransform,s.textAlign];});
@@ -25,28 +55,52 @@ for(const [width,theme] of [[390,'light'],[390,'dark'],[1440,'light'],[1440,'dar
    await expect(page.getByRole('heading',{name:'Horoscopes',exact:true})).toBeVisible();
    expect(await page.locator('h1').evaluate(el=>{const s=getComputedStyle(el);return[s.fontFamily,s.fontSize,s.fontWeight,s.lineHeight,s.letterSpacing,s.margin,s.textTransform,s.textAlign];})).toEqual(titleStyle);
    const studio=page.getByRole('region',{name:'Horoscope editions'});
-   await expect(studio.getByText('No editions saved yet.')).toBeVisible();
+   await expect(studio.getByText('No editions saved yet. Choose your dates above to begin.')).toBeVisible();
    await studio.getByLabel('Reference date').fill('2026-09-24');
-   await studio.getByRole('button',{name:'Prepare edition',exact:true}).click();
+   await studio.locator('.horoscope-location summary').click();
+   await studio.getByLabel('Horoscope time zone',{exact:true}).selectOption('Asia/Tokyo');
+   await studio.getByRole('button',{name:'Create or open edition',exact:true}).click();
+   await expect(studio.getByText('0/12 readings ready',{exact:false})).toBeVisible();
+   await studio.getByRole('button',{name:'Review writing plan',exact:true}).click();
+   await expect(studio.getByText('12 missing readings.',{exact:false})).toBeVisible();
+   await page.screenshot({path:`test-results/horoscope-generation-${width}-${theme}.png`,fullPage:true,animations:'disabled'});
+   await studio.getByLabel('I approve this writing plan for generation.').check();
+   await studio.getByRole('button',{name:'Generate 12 drafts',exact:true}).click();
+   if(width===390&&theme==='light'){
+    await expect(studio.getByRole('alert')).toContainText('This edition changed');
+    await studio.getByRole('tab',{name:'3 · Read & edit',exact:true}).click();
+    await studio.getByText('Writing outline · editor only',{exact:true}).click();
+    await expect(studio.getByLabel('Writing outline',{exact:true})).toHaveValue(newerOutline);
+    await expect(studio.getByRole('button',{name:'Save edition draft',exact:true})).toBeDisabled();
+    await studio.getByRole('tab',{name:'2 · Generate',exact:true}).click();
+    await studio.getByRole('button',{name:'Review writing plan',exact:true}).click();
+    await studio.getByLabel('I approve this writing plan for generation.').check();
+    await studio.getByRole('button',{name:'Generate 12 drafts',exact:true}).click();
+   }
+   await expect(studio.getByText('12/12 readings ready',{exact:false})).toBeVisible({timeout:60000});
    await expect(studio.getByLabel('Complete reading')).toBeVisible();
-   await expect(studio.getByText('0/12 readings complete',{exact:false})).toBeVisible();
+   await expect(studio.getByLabel('Complete reading')).toHaveValue(/Your saved fixture ends here/);
+   await studio.getByText('Writing outline · editor only',{exact:true}).click();
    await studio.getByLabel('Writing outline',{exact:true}).fill('PRIVATE OUTLINE fixture');
    for(const sign of HOROSCOPE_SIGNS){
-    await studio.getByLabel('Edition rising sign').selectOption(sign);
+    await studio.getByRole('group',{name:'Readings by sign'}).getByRole('button',{name:new RegExp('^'+sign[0].toUpperCase()+sign.slice(1))}).click();
     await studio.getByLabel('Reading headline').fill(`Fixture ${sign} weekly headline`);
-    await studio.getByLabel('Complete reading').fill(`Fixture ${sign} opening.\n\nFixture ${sign} complete ending.`);
+    await studio.getByLabel('Complete reading').fill(`You can read the ${sign} fixture opening.\n\nYour fixture ${sign} complete ending.`);
    }
+   await studio.getByRole('tab',{name:'4 · Publish',exact:true}).click();
    await expect(studio.getByRole('button',{name:'Publish edition',exact:true})).toBeDisabled();
+   await studio.getByRole('tab',{name:'3 · Read & edit',exact:true}).click();
    await page.evaluate(()=>{location.hash='ai-writing';});
    await expect(page.getByRole('heading',{name:'AI Writing',exact:true})).toBeVisible();
    await page.evaluate(()=>{location.hash='horoscopes';});
-   await expect(studio.getByLabel('Complete reading')).toHaveValue('Fixture pisces opening.\n\nFixture pisces complete ending.');
+   await expect(studio.getByLabel('Complete reading')).toHaveValue('You can read the pisces fixture opening.\n\nYour fixture pisces complete ending.');
    await studio.getByRole('button',{name:'Save edition draft',exact:true}).click();
    await expect(studio.getByRole('status')).toHaveText('Saved edition draft.');
    const draftRows=await call({method:'rows'});const draft=draftRows.find((row:any)=>row.content_key.startsWith('horoscope/'));
+   await studio.getByText('Advanced · import, export and calculations',{exact:true}).click();
    await studio.getByLabel('Import horoscope draft').setInputFiles({name:'mixed.json',mimeType:'application/json',buffer:Buffer.from(JSON.stringify({edition:draft.sections.horoscopeEdition,instructions:'Unrecognized metadata'}))});
    await expect(studio.getByRole('alert')).toContainText('Review mixed documents');
-   await expect(studio.getByLabel('Complete reading')).toHaveValue('Fixture pisces opening.\n\nFixture pisces complete ending.');
+   await expect(studio.getByLabel('Complete reading')).toHaveValue('You can read the pisces fixture opening.\n\nYour fixture pisces complete ending.');
    const originalSource=JSON.stringify({schema:'horoscope-draft/v1',edition:draft.sections.horoscopeEdition,editorialNotes:'PRIVATE IMPORT NOTES'});
    await studio.getByLabel('Import horoscope draft').setInputFiles({name:'readings.json',mimeType:'application/json',buffer:Buffer.from(originalSource)});
    await studio.getByRole('button',{name:'Save edition draft',exact:true}).click();
@@ -54,38 +108,46 @@ for(const [width,theme] of [[390,'light'],[390,'dark'],[1440,'light'],[1440,'dar
    const imported=(await call({method:'rows'})).find((row:any)=>row.id===draft.id);
    expect(imported.source_snapshot.editorialImport.originalSource).toBe(originalSource);
    expect(imported.source_snapshot.editorialImport.sha256).toBe(createHash('sha256').update(originalSource).digest('hex'));
-   await studio.getByText('Review all twelve readings',{exact:true}).click();
+   await studio.getByRole('tab',{name:'4 · Publish',exact:true}).click();
    await expect(studio.locator('h2')).toHaveText(HOROSCOPE_SIGNS.map(sign=>sign[0].toUpperCase()+sign.slice(1)));
-   await expect(studio.getByRole('region',{name:'Pisces reading preview'})).toContainText('Fixture pisces complete ending.');
+   await expect(studio.getByRole('region',{name:'Pisces reading preview'})).toContainText('Your fixture pisces complete ending.');
    expect((await call({method:'reader',body:{horoscope:{period:'weekly',at:'2026-09-24T16:00:00.000Z'}}})).payload.rows).toEqual([]);
    await page.evaluate(()=>window.scrollTo(0,0));
    await page.screenshot({path:`test-results/horoscope-editor-${width}-${theme}.png`,fullPage:true});
    await studio.getByLabel('I have reviewed and approve the exact wording of all twelve saved readings.').check();
    await studio.getByRole('button',{name:'Publish edition',exact:true}).click();
    await expect(studio.getByRole('status')).toContainText('Published all twelve readings.');
+   const publishedHref=await studio.getByRole('link',{name:'Read published edition',exact:true}).getAttribute('href');
+   expect(publishedHref).toContain(`edition=${draft.id}`);
+   await page.goto(publishedHref!);
+   await expect(page.getByRole('article',{name:'Pisces horoscope'})).toContainText('Your fixture pisces complete ending.');
+   await page.clock.setFixedTime(new Date('2026-10-05T16:00:00Z'));
+   await page.reload();await expect(page.getByRole('article')).toContainText('Published edition');
+   await expect(page.getByRole('article')).toContainText('September 21, 2026');
+   await page.clock.setFixedTime(new Date('2026-09-24T16:00:00Z'));
    await page.goto('/#horoscopes?period=weekly&sign=aries');
    await expect(page.getByRole('heading',{name:'Horoscopes',exact:true})).toBeVisible();
-   await expect(page.getByRole('article',{name:'Aries horoscope'})).toContainText('Fixture aries complete ending.');
+   await expect(page.getByRole('article',{name:'Aries horoscope'})).toContainText('Your fixture aries complete ending.');
    await expect(page.getByText('PRIVATE OUTLINE fixture')).toHaveCount(0);
    await expect(page.getByRole('heading',{name:'Fixture aries weekly headline'})).toBeVisible();
    await expect(page.locator('.horoscope-page :is(h1,h2,h3,h4,h5,h6)')).toHaveText(['Horoscopes','Fixture aries weekly headline']);
    expect(await page.locator('.horoscope-page h1').evaluate(el=>{const probe=document.createElement('h1');probe.className='learn-hero__title';el.parentElement!.append(probe);const actual=getComputedStyle(el),expected=getComputedStyle(probe);const same=['fontFamily','fontSize','fontWeight','lineHeight','letterSpacing','margin','textTransform','textAlign'].every(key=>(actual as any)[key]===(expected as any)[key]);probe.remove();return same;})).toBe(true);
    expect(await page.locator('.horoscope-page h2').evaluate(el=>{const probe=document.createElement('h2');probe.style.cssText='font-family:var(--font-display);font-size:var(--type-h2-size);font-weight:var(--weight-regular);line-height:var(--leading-h2);letter-spacing:var(--tracking-title);margin:var(--space-4) 0';el.parentElement!.append(probe);const actual=getComputedStyle(el),expected=getComputedStyle(probe);const same=['fontFamily','fontSize','fontWeight','lineHeight','letterSpacing','margin','textTransform','textAlign'].every(key=>(actual as any)[key]===(expected as any)[key]);probe.remove();return same;})).toBe(true);
-   for(const sign of HOROSCOPE_SIGNS){await page.getByLabel('Rising sign',{exact:true}).selectOption(sign);await expect(page.getByRole('article')).toContainText(`Fixture ${sign} opening.`);await expect(page.getByRole('article')).toContainText(`Fixture ${sign} complete ending.`);}
+   for(const sign of HOROSCOPE_SIGNS){await page.getByLabel('Rising sign',{exact:true}).selectOption(sign);await expect(page.getByRole('article')).toContainText(`You can read the ${sign} fixture opening.`);await expect(page.getByRole('article')).toContainText(`Your fixture ${sign} complete ending.`);}
    await page.reload();await expect(page.getByLabel('Rising sign',{exact:true})).toHaveValue('pisces');
    await page.getByRole('button',{name:'Today',exact:true}).click();
    await expect(page.getByRole('status')).toContainText('daily horoscopes haven’t been published');
-   await page.goBack();await expect(page.getByRole('button',{name:'This week',exact:true})).toHaveAttribute('aria-pressed','true');await expect(page.getByRole('article')).toContainText('Fixture pisces complete ending.');
+   await page.goBack();await expect(page.getByRole('button',{name:'This week',exact:true})).toHaveAttribute('aria-pressed','true');await expect(page.getByRole('article')).toContainText('Your fixture pisces complete ending.');
    await expect(page.getByText('Loading your horoscope…')).toHaveCount(0);
    await page.mouse.move(0,0);
    expect(await page.locator('.horoscope-prose').evaluate(el=>getComputedStyle(el).whiteSpace)).toBe('pre-wrap');
    expect(await page.locator('.horoscope-prose p').evaluate(el=>{const style=getComputedStyle(el),probe=document.createElement('p');probe.style.cssText='font-family:var(--font-body);font-size:var(--text-body);font-weight:var(--weight-regular);line-height:var(--leading-body);letter-spacing:var(--tracking-body)';el.parentElement!.append(probe);const expected=getComputedStyle(probe);const same=['fontFamily','fontSize','fontWeight','lineHeight','letterSpacing'].every(key=>(style as any)[key]===(expected as any)[key]);probe.remove();return same;})).toBe(true);
    expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
    const bounds=await page.locator('.horoscope-header').boundingBox();expect(bounds!.x).toBeGreaterThanOrEqual(0);expect(bounds!.x+bounds!.width).toBeLessThanOrEqual(width);
-   await expect(page.getByRole('article')).toContainText('Fixture pisces complete ending.');
+   await expect(page.getByRole('article')).toContainText('Your fixture pisces complete ending.');
    await page.evaluate(()=>new Promise<void>(resolve=>requestAnimationFrame(()=>requestAnimationFrame(()=>resolve()))));
    await page.screenshot({path:`test-results/horoscope-reader-${width}-${theme}.png`,fullPage:false,animations:'disabled'});
-   await expect(page.getByRole('article')).toContainText('Fixture pisces complete ending.');
+   await expect(page.getByRole('article')).toContainText('Your fixture pisces complete ending.');
    const live=(await call({method:'rows'})).find((row:any)=>row.id===draft.id);
    const changed=await call({method:'PATCH',body:{id:live.id,expectedUpdatedAt:live.updated_at,status:'DRAFT'}});expect(changed.status).toBe(200);
    await page.reload();await expect(page.getByRole('status')).toContainText('weekly horoscopes haven’t been published');
@@ -94,7 +156,8 @@ for(const [width,theme] of [[390,'light'],[390,'dark'],[1440,'light'],[1440,'dar
    await page.screenshot({path:`test-results/horoscope-empty-${width}-${theme}.png`,animations:'disabled'});
    await page.getByRole('button',{name:'This season',exact:true}).click();await expect(page.getByRole('status')).toContainText('seasonal horoscopes haven’t been published');
    for(const period of ['daily','seasonal'] as const){
-    const facts=await call({method:'GET',url:`/api/admin/generated-content?horoscopeBrief=true&period=${period}&date=2026-09-24&timeZone=America/New_York`});
+    // The fixed UTC instant is already September 25 in Tokyo.
+    const facts=await call({method:'GET',url:`/api/admin/generated-content?horoscopeBrief=true&period=${period}&date=2026-09-25&timeZone=Asia/Tokyo`});
     expect(facts.status).toBe(200);
     const edition=emptyHoroscopeEdition(facts.payload.brief.window);
     edition.passages=HOROSCOPE_SIGNS.map(sign=>({sign,headline:`Fixture ${period} ${sign}`,body:`Fixture ${period} opening.\n\nFixture ${period} complete ending.`}));
@@ -105,6 +168,12 @@ for(const [width,theme] of [[390,'light'],[390,'dark'],[1440,'light'],[1440,'dar
     await expect(page.getByRole('article')).toContainText(`Fixture ${period} opening.`);
     await expect(page.getByRole('article')).toContainText(`Fixture ${period} complete ending.`);
    }
+   await page.locator('.horoscope-location summary').click();
+   await page.getByLabel('Horoscope time zone',{exact:true}).selectOption('Pacific/Honolulu');
+   await expect(page.getByRole('status')).toContainText('Pacific/Honolulu');
+   await page.reload();await expect(page.locator('.horoscope-location summary')).toContainText('Pacific/Honolulu');
+   await page.locator('.horoscope-location summary').click();await page.getByLabel('Horoscope time zone',{exact:true}).selectOption('Asia/Tokyo');
+   await expect(page.getByRole('article')).toContainText('Fixture seasonal complete ending.');
    await page.route('**/api/content-reader',route=>route.fulfill({status:503,json:{error:'fixture outage'}}));
    await page.reload();await expect(page.getByRole('alert')).toContainText('could not load');
    await page.unroute('**/api/content-reader');await page.getByRole('button',{name:'Try again',exact:true}).click();

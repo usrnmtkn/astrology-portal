@@ -39,6 +39,7 @@ export const ARGUMENT_OUTLINE_FIELDS = Object.freeze([
 ]);
 
 export function argumentOutlineFieldsForFamily(family) {
+  if (family === 'horoscope') return Object.freeze(['thesis','transit_job','recognition','complication','response','scope_guard']);
   return Object.freeze([
     ...ARGUMENT_OUTLINE_CORE_FIELDS,
     ...ARGUMENT_OUTLINE_SPINE_QUALITY_FIELDS,

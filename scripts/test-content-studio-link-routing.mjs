@@ -5,6 +5,7 @@ import { fileURLToPath } from "node:url";
 import { isReaderAppHref, normalizeAdminContentHref } from "../apps/admin/src/adminReaderLinks.ts";
 import {
   isContextualReaderHref,
+  horoscopeEditionReaderHref,
   natalPlacementReaderHref,
   readerDestinationPolicyBySurface,
   reportReaderHref,
@@ -49,6 +50,8 @@ assert.equal(natalPlacementReaderHref("Sun", "Aquarius", 9), "/#/you/placement/s
 assert.equal(skyPlacementReaderHref("Mercury", "Cancer"), "/#/sky/placement/mercury/cancer");
 assert.equal(skyAspectReaderHref("Sun", "Conjunction", "Mercury"), "/#/sky/aspect/sun/conjunction/mercury");
 assert.equal(reportReaderHref("report-123"), "/reports/report-123");
+assert.equal(isContextualReaderHref(horoscopeEditionReaderHref('00000000-0000-4000-8000-000000000001','weekly','aries')),true);
+assert.equal(isContextualReaderHref('/#horoscopes'),false);
 
 for (const href of [
   "/#/you/placement/sun-aquarius-9h",
