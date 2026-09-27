@@ -679,12 +679,17 @@ body:has(.admin-dashboard) { margin: 0; }
 #root .admin-dashboard .admin-horoscope-actions { display: grid; gap: var(--workspace-field-gap); }
 #root .admin-dashboard .admin-horoscope-actions > .admin-toolbar-actions { justify-content: space-between; }
 #root .admin-dashboard .admin-horoscope-actions > .admin-primary-button { justify-self: end; }
+#root .admin-dashboard .admin-horoscope-decision-actions { margin-inline-start: auto; justify-content: flex-end; }
+#root .admin-dashboard .admin-horoscope-actions .admin-danger-button:not(:disabled) { background: var(--studio-error-container); color: var(--studio-on-error-container); border-color: var(--workspace-danger); }
 #root .admin-dashboard .admin-horoscope-wizard progress { width: 100%; accent-color: var(--workspace-primary); }
 @media (max-width: 720px) {
   #root .admin-dashboard .admin-horoscope-steps { grid-template-columns: repeat(2,minmax(0,1fr)); }
   #root .admin-dashboard .admin-horoscope-signs { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); }
   #root .admin-dashboard .admin-horoscope-signs button { padding-inline: var(--workspace-control-inset); }
   #root .admin-dashboard .admin-horoscope-actions > .admin-primary-button { justify-self: stretch; }
+  #root .admin-dashboard .admin-horoscope-decision-actions { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); width: 100%; }
+  #root .admin-dashboard .admin-horoscope-decision-actions > button { width: 100%; padding-inline: var(--workspace-control-inset); }
+  #root .admin-dashboard .admin-horoscope-decision-actions > button:only-child { grid-column: 1 / -1; }
   #root .admin-dashboard .admin-writing-period-bar { gap: var(--workspace-field-gap); }
   #root .admin-dashboard .admin-writing-periods { width: 100%; }
   #root .admin-dashboard .admin-writing-periods button { flex: 1; padding-inline: var(--workspace-control-inset); }
