@@ -78,32 +78,23 @@ function promptForAttempt(brief: FriendTransitReadingBrief, headline: string, fe
   ].filter(Boolean).join("\n");
 }
 
-function validateGeneratedReading(
+export function validateGeneratedReading(
   draft: GeneratedTransitReadingDraft,
   brief: FriendTransitReadingBrief,
   expectedHeadline: string
 ) {
   const readerCopy = transitReadingReaderCopy(draft);
   const factLock = validateFriendTransitReadingDraft({ draft: readerCopy, brief, expectedHeadline });
-  if (!factLock.passed) {
-    return {
-      passed: false,
-      message: `Friends reading failed fact lock: ${factLock.issues.map((issue) => `${issue.code}: ${issue.message}`).join(" ")}`
-    };
-  }
+  const issues: string[] = [];
+  if (!factLock.passed) issues.push(`Friends reading failed fact lock: ${factLock.issues.map((issue) => `${issue.code}: ${issue.message}`).join(" ")}`);
 
   const writingValidation = validateCopy(readerCopy, {
     validationProfile: "friends-transit",
     family: "friend-transit-reading",
     register: "third_person"
   });
-  if (!writingValidation.passed) {
-    return {
-      passed: false,
-      message: `Friends reading failed writing validation: ${writingValidation.violations.map((issue: { category?: string; detail?: string }) => `${issue.category ?? "rule"}: ${issue.detail ?? "failed"}`).join("; ")}`
-    };
-  }
-  return { passed: true };
+  if (!writingValidation.passed) issues.push(`Friends reading failed writing validation: ${writingValidation.violations.map((issue: { category?: string; detail?: string }) => `${issue.category ?? "rule"}: ${issue.detail ?? "failed"}`).join("; ")}`);
+  return issues.length ? { passed: false, message: issues.join("\n") } : { passed: true };
 }
 
 function productionInputForLocked(locked: ReturnType<typeof friendTransitReadingRequestLock>): TransitReadingProductionInput {

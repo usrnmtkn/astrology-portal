@@ -7,7 +7,7 @@ type RecordLike = Record<string, unknown>;
 export const YOU_TRANSIT_READING_BRIEF_SCHEMA = "tldr.you-transit-reading-brief.v1";
 export const YOU_DAY_READING_SUBJECT_TYPE = "you_day_reading";
 export const YOU_WEEK_READING_SUBJECT_TYPE = "you_week_reading";
-export const YOU_TRANSIT_READING_PROMPT_VERSION = "you-transit-reading-v1.5";
+export const YOU_TRANSIT_READING_PROMPT_VERSION = "you-transit-reading-v1.6";
 
 export type YouTransitReadingWindow = "day" | "week";
 
@@ -160,16 +160,16 @@ export function compactYouTransitReadingBrief(brief: YouTransitReadingBrief): Yo
 export function youTransitReadingPrompt(input: { brief: YouTransitReadingBrief; headline: string }) {
   const { brief } = input;
   const bodyContract = brief.window === "day"
-    ? "body: 2-3 natural paragraphs, roughly 120-200 words. The TLDR already states the main observation, so begin with the next supported consequence, distinction, or action and end with a practical consequence or useful perspective."
-    : "body: 3-5 natural paragraphs, usually 180-300 words. If the brief has only one meaningful reader-safe source, 140-220 words is enough. Develop the main theme and its distinct supported consequences, without section headings or a mandatory paragraph sequence. Advance the TLDR instead of restarting it. Preserve supplied timing and distinguish the main theme from secondary pressure or support; advice is optional and must follow from the supplied meaning.";
+    ? "body: develop the day's reading in natural paragraphs, usually 300-650 words when several distinct meanings are supplied. Use less when there is less to explain. The opening is only the beginning: explain what makes today's issue difficult, what a conversation or choice could change, and what belongs to a longer period. Give each paragraph a reason to follow the preceding one. Do not pad to meet a word target or reproduce a separate card for each transit."
+    : "body: develop the week in natural paragraphs, usually 400-900 words when the supplied evidence warrants it. Use less for a narrow brief. Explain the main theme and its distinct consequences, keeping the supplied chronology. Do not impose a fixed paragraph sequence, pad to meet a target, or append independent transit cards.";
   return [
-    "TLDR ASTRO PERSONAL TRANSIT SYNTHESIS V1.5",
+    "TLDR ASTRO PERSONAL TRANSIT SYNTHESIS V1.6",
     "",
     "TASK",
     `Write one in-depth ${brief.window} report for the reader.`,
     "Write directly to the reader in second person using you/your.",
     "Use the same synthesis standard as the governed Friends transit reading: what matters first, astrology only as needed, concrete known life domains when they are actually supplied, and clearly hypothetical illustrations supported by the supplied meaning.",
-    "This is synthesis only. TLDR Astro has already calculated and selected the evidence and already supplied reader-safe source text.",
+    "This is synthesis only. TLDR Astro has already calculated and selected the evidence and supplied meaning sources. Legacy source prose still needs editorial judgment and synthesis.",
     "Reader-facing meaning must come from APPROVED READER TEXT. TECHNICAL EVIDENCE may confirm names, dates, houses, aspects, and timing, but it does not authorize a new behavioral interpretation, motive, outcome, or life circumstance from general astrology knowledge. If a technical transit has no reader-safe meaning in APPROVED READER TEXT, omit its interpretation instead of explaining it.",
     "Do not calculate astrology. Do not add a transit, placement, aspect, sign, house, date, degree, orb, or interpretation that is not present below. Hypothetical illustrations follow the current owner report direction below.",
     "Do not turn a temporary transit into a permanent personality claim.",
@@ -184,7 +184,7 @@ export function youTransitReadingPrompt(input: { brief: YouTransitReadingBrief; 
     "",
     "OUTPUT",
     `headline: return exactly ${JSON.stringify(input.headline)}.`,
-    "tldr: 1-2 natural sentences that answer what matters in this period.",
+    "tldr: a concise opening that answers what matters in this period. You may retain the supplied free daily summary intact if the report develops it, without treating its illustrative scene as known biography.",
     "summary: return the same text as tldr. These are compatibility aliases for one visible TLDR, not two reader-facing passages.",
     bodyContract,
     "Do not add a generic coaching closer.",

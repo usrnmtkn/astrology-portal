@@ -29,7 +29,8 @@ assert.match(weekPrompt, /Reader-facing meaning must come from APPROVED READER T
 assert.match(weekPrompt, /TECHNICAL EVIDENCE may confirm names, dates, houses, aspects, and timing/u);
 assert.match(weekPrompt, /does not authorize a new behavioral interpretation/u);
 assert.match(weekPrompt, /If the evidence is thin, write shorter rather than padding the report/u);
-assert.match(weekPrompt, /one meaningful reader-safe source, 140-220 words is enough/u);
+assert.match(weekPrompt, /Use less for a narrow brief/u);
+assert.doesNotMatch(weekPrompt, /exactly \d+ paragraphs/u);
 assert.match(weekPrompt, /Do not use report-scaffolding phrases/u);
 assert.match(weekPrompt, /do not invent a day, progression across the week, or consequence in the following week/iu);
 assert.match(weekPrompt, /summary: return the same text as tldr/u);
@@ -50,7 +51,8 @@ const dayBrief = assertYouTransitReadingBrief({
   }
 });
 const dayPrompt = youTransitReadingPrompt({ brief: dayBrief, headline: "Your day, in depth" });
-assert.match(dayPrompt, /begin with the next supported consequence, distinction, or action/u);
+assert.match(dayPrompt, /Every paragraph must add a distinct supported consequence, explanation, distinction, or action/u);
+assert.match(dayPrompt, /Do not pad to meet a word target or reproduce a separate card for each transit/u);
 assert.match(dayPrompt, /do not make it sit, become a door, point, carry weight, form a longer arc/u);
 assert.match(dayPrompt, /If a technical transit has no reader-safe meaning in APPROVED READER TEXT, omit its interpretation/u);
 

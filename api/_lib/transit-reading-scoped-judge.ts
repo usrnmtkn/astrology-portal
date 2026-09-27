@@ -119,7 +119,7 @@ export function scopedReviewPrompt(input: Input, scope: TransitReadingReviewScop
       : GENERATED_REPORT_JUDGE_EVIDENCE_CONTRACT,
     ...(scope === "writing" ? ["EXPLICITLY APPROVED GENERATED-REPORT OWNER FEEDBACK", JSON.stringify(input.ownerEvidence ?? [])] : []),
     "GOVERNED BRIEF", JSON.stringify(scope === "facts" ? input.brief : scopedReviewBrief(input), null, 2),
-    "COMPLETE READER-VISIBLE DRAFT", JSON.stringify(transitReadingReaderCopy(input.draft), null, 2),
+    "COMPLETE READER-VISIBLE DRAFT", JSON.stringify(transitReadingReaderCopy(input.draft)),
     `DRAFT_SHA256: ${transitReadingDraftHash(input.draft)}`,
     "Echo DRAFT_SHA256 exactly. Scores and findings must concern this draft only. Do not invent a flaw to fill a category."
   ].join("\n\n");

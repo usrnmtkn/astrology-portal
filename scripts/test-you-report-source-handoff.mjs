@@ -25,11 +25,13 @@ let prepared = false;
 const freshDay = await api.prepareYouDayReportBrief({ dateLabel: 'September 21', dailyAssembly: {
   specialSections: [], reportTransitReadings: [], reportSourceGaps: [transit.transitId],
   derivation: { targetDate: '2026-09-21', qualifyingTransits: [{ id: transit.transitId }] },
-  prepareReportSources: async () => { await Promise.resolve(); prepared = true; return { reportTransitReadings: [transit], reportSourceGaps: [] }; }
+  prepareReportSources: async () => { await Promise.resolve(); prepared = true; return { reportTransitReadings: [transit], reportSourceGaps: [], reportTechnicalEvidence: { qualifyingTransits: [{id:transit.transitId,window:"Until October 27, 2026",calculation:{referenceAt:"2026-09-21T16:00:00Z"}}] } }; }
 } });
 assert.ok(prepared);
 assert.deepEqual(freshDay.approvedReaderText.transitReadings, [transit], 'Explicit report intent rebuilds the brief after source loading.');
 assert.deepEqual(freshDay.technicalEvidence.sourceGaps, []);
+assert.equal(freshDay.technicalEvidence.qualifyingTransits[0].window,"Until October 27, 2026");
+assert.equal(freshDay.technicalEvidence.qualifyingTransits[0].calculation.referenceAt,"2026-09-21T16:00:00Z");
 await assert.rejects(() => api.prepareYouDayReportBrief({ dateLabel: '', dailyAssembly: {
   specialSections: [], derivation: {}, prepareReportSources: async () => { throw Error('source unavailable'); }
 } }), /source unavailable/u, 'A loading failure must not silently submit the earlier thin brief.');
@@ -62,7 +64,7 @@ try {
 } finally { globalThis.fetch = originalFetch; }
 
 const app = fs.readFileSync("apps/web/src/App.tsx", "utf8");
-assert.match(app, /dailyReportTransitSources = aspectRows\.map/u);
+assert.match(app, /dailyReportTransitSources = reportTransits\.map/u);
 assert.match(app, /section: personalTransitPackageSection\(transit, targetDate\)/u);
 assert.match(app, /body: section\.body,\s*sourceUnits: section\.sourceKeys/u);
 console.log("Daily report handoff preserves complete approved transit passages through request, writer prompt and recovery; missing meaning stays explicit.");

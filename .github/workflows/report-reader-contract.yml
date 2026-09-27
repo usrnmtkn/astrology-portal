@@ -80,6 +80,9 @@ jobs:
           node --import tsx scripts/test-transit-report-delivery.mjs --material
           node --import tsx scripts/test-transit-report-delivery.mjs --evidence-delivery
           node scripts/test-transit-source-completion.mjs
+          node --import tsx scripts/test-transit-report-prose-integrity.mts
+          node --import tsx scripts/test-report-validation-feedback.mts
+          node scripts/test-personal-report-timing.mjs
           node --import tsx scripts/test-report-editorial-guide.mts
           node scripts/test-transit-reading-scoped-migration.mjs
           node --import tsx scripts/test-you-report-paid-lifecycle.mts

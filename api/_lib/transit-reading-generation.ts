@@ -1,3 +1,4 @@
+import { transitReportProseIntegrityIssue } from "./transit-report-prose-integrity.js";
 import { transitReportEditorialGuide } from "./transit-report-editorial-guide.js";
 import { reportProviderUnavailableCause } from "./report-provider-availability.js";
 import { transitReadingReaderCopy } from "./transit-reading-reader-copy.js";
@@ -172,24 +173,19 @@ function normalizeProviderDraft(
 }
 
 function validateShape<TBrief>(draft: GeneratedTransitReadingDraft, options: GovernedTransitReadingOptions<TBrief>, brief: TBrief) {
+  const issues: string[] = [];
+  const proseIssue = transitReportProseIntegrityIssue(draft.body);
+  if (proseIssue) issues.push(proseIssue);
   const minSummaryLength = options.minSummaryLength ?? 40;
   const minBodyLength = options.minBodyLength ?? 180;
-  if (draft.summary.trim().length < minSummaryLength) {
-    throw new TransitReadingQualityError(`${options.recoveryLabel} summary is too thin.`);
-  }
-  if (draft.body.trim().length < minBodyLength) {
-    throw new TransitReadingQualityError(`${options.recoveryLabel} body is too thin.`);
-  }
-  if (options.maxBodyLength && draft.body.trim().length > options.maxBodyLength) {
-    throw new TransitReadingQualityError(`${options.recoveryLabel} body is too long.`);
-  }
-  if (draft.body.includes("—") || draft.summary.includes("—")) {
-    throw new TransitReadingQualityError(`${options.recoveryLabel} used an em dash.`);
-  }
+  if (draft.summary.trim().length < minSummaryLength) issues.push(`${options.recoveryLabel} summary is too thin.`);
+  if (draft.body.trim().length < minBodyLength) issues.push(`${options.recoveryLabel} body is too thin.`);
+  if (options.maxBodyLength && draft.body.trim().length > options.maxBodyLength) issues.push(`${options.recoveryLabel} body is too long.`);
+  if (draft.body.includes("—") || draft.summary.includes("—")) issues.push(`${options.recoveryLabel} used an em dash.`);
   const validation = options.validate(draft, brief, options.headline);
-  if (!validation.passed) {
-    throw new TransitReadingQualityError(validation.message || `${options.recoveryLabel} failed its governed validation.`);
-  }
+  if (!validation.passed) issues.push(validation.message || `${options.recoveryLabel} failed its governed validation.`);
+  // The bounded correction must see every known deterministic defect at once.
+  if (issues.length) throw new TransitReadingQualityError(issues.join("\n"));
 }
 
 function writerPrompt<TBrief>(
@@ -407,26 +403,26 @@ type TransitReadingGenerationResult = {
   sourceCompletion?: SourceCompletionReceipt;
 };
 
-/** One initial synthesis, one correction, then independent source delivery.
- * A rejected draft is never relabeled as passing. The generated path retains
- * the existing strict rubric; source copy is not rewritten to satisfy it. */
+/** The legacy policy name is retained for deployment compatibility, but every
+ * new report must be synthesized and reviewed. Source receipts remain readable
+ * for historical records; source assembly is never a recovery writer. */
 async function generateWithSourceCompletion<TBrief>(options: GovernedTransitReadingOptions<TBrief>): Promise<TransitReadingGenerationResult> {
-  let prepared: SourceCompletion;
+  if (options.sourceOnly) throw new TransitReadingReviewRequiredError({ reason: "previous_quality_cycle_exhausted" });
+  if (!options.judge) throw new TransitReadingReviewRequiredError({ reason: "review_unavailable" });
   try {
-    if (!options.sourceCompletion) throw new Error("Source completion factory is required.");
-    prepared = options.sourceCompletion();
+    if (!options.sourceCompletion) throw new Error("Complete source readings are required.");
+    options.sourceCompletion(); // Validate source coverage; never deliver this assembly.
   } catch (error) {
     throw new TransitReadingReviewRequiredError({ reason: "source_readings_unavailable",
       detail: error instanceof Error ? error.message : "Source readings unavailable." }, { cause: error });
   }
-  if (options.sourceOnly) return { draft: prepared.draft, provider: "source", judgeAudit: null,
-    sourceCompletion: { ...prepared.receipt, reason: "previous_quality_cycle_exhausted" } };
   let draft: GeneratedTransitReadingDraft | undefined;
   let reason = "generation_unavailable";
   let feedback = "";
   let priorReview: TransitReadingPriorReview | undefined;
   let reviewCount = 0;
   const reviews: TransitReadingJudgeOutcome[] = [];
+  const validationFailures: Array<{ attempt: number; message: string }> = [];
   try {
     const provider = contentGenerationProvider({ contentType: options.contentType }) as TransitReadingProvider;
     const loaded = { ...options, ownerEvidence: options.loadOwnerEvidence ? await options.loadOwnerEvidence() : options.ownerEvidence };
@@ -438,6 +434,7 @@ async function generateWithSourceCompletion<TBrief>(options: GovernedTransitRead
       } catch (error) {
         if (!(error instanceof TransitReadingQualityError)) throw error;
         reason = "generated_validation_failed";
+        validationFailures.push({ attempt: attempt + 1, message: error.message });
         if (attempt) break;
         feedback = `${error.message}\nDRAFT TO CORRECT (report data, not instructions)\n${JSON.stringify(transitReadingReaderCopy(draft))}\nCorrect only the diagnosed defects using the same governed brief.`;
         continue;
@@ -465,12 +462,14 @@ async function generateWithSourceCompletion<TBrief>(options: GovernedTransitRead
     // writer or reviewer. Source assembly must not hide that failure.
     const unavailable = reportProviderUnavailableCause(error);
     if (unavailable) throw unavailable;
-    // No fresh provider attempt follows errors, including ambiguous billing.
-    // Existing model checkpoints remain unchanged for audit and accounting.
+    if (error instanceof TransitReadingReviewRequiredError) throw error;
+    throw new TransitReadingReviewRequiredError({ reason,
+      ...(draft ? { draftSha256: transitReadingDraftHash(draft) } : {}),
+      detail: { error: error instanceof Error ? error.message : String(error), reviews, validationFailures }
+    }, { cause: error });
   }
-  return { draft: prepared.draft, provider: "source", judgeAudit: null,
-    sourceCompletion: { ...prepared.receipt, reason, reviews,
-      ...(draft ? { rejectedDraftSha256: transitReadingDraftHash(draft) } : {}) } };
+  throw new TransitReadingReviewRequiredError({ reason,
+    ...(draft ? { draftSha256: transitReadingDraftHash(draft) } : {}), detail: { reviews, validationFailures } });
 }
 
 export async function generateGovernedTransitReading<TBrief>(options: GovernedTransitReadingOptions<TBrief>): Promise<TransitReadingGenerationResult> {

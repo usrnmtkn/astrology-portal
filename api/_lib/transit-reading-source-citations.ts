@@ -16,14 +16,17 @@ function sourceFields(brief: unknown) {
   return fields;
 }
 
-export function reportJudgeSourcePointerSchema(schema: Record<string, unknown>, brief: unknown) {
+export function reportJudgeSourcePointerSchema(schema: Record<string, unknown>, _brief: unknown) {
   const result = structuredClone(schema) as {
     properties: { findings: { items: { required: string[]; properties: Record<string, unknown> } } };
   };
   const finding = result.properties.findings.items;
   finding.required = finding.required.filter(key => key !== "sourceQuote");
   delete finding.properties.sourceQuote;
-  finding.properties.sourcePath = { type: ["string", "null"], enum: [null, ...sourceFields(brief).keys()] };
+  // A growing enum duplicated every path in the brief and exhausted the wire
+  // budget before review. Resolve against the exact same allowlist below instead.
+  finding.properties.sourcePath = { type: ["string", "null"],
+    description: "RFC 6901 JSON pointer to a nonempty string in GOVERNED BRIEF, or null. The server rejects unknown paths." };
   return result as unknown as Record<string, unknown>;
 }
 

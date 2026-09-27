@@ -2113,6 +2113,9 @@ type SkyAspectRecord = SkySnapshot["aspects"][number];
 type SkyAspectTiming = NonNullable<SkyAspectRecord["timing"]>;
 
 export type NatalTransitTiming = {
+  /** Continuous orb interval around the reference time, not the whole return series. */
+  currentStart: string;
+  currentEnd: string;
   group: SkyAspectTiming["group"];
   phase: SkyAspectTiming["phase"];
   engagementStart: string;
@@ -2283,8 +2286,11 @@ async function calculateNatalTransitTiming(
   options: NatalTransitTimingOptions
 ): Promise<NatalTransitTiming | null> {
   const swe = await getSwissEph();
-  const planetId = skyPointPlanetId(swe, transitingPlanet);
-  if (planetId === null || transitingPlanet === "South Node") return null;
+  // The South Node is exactly opposite the true North Node. Rotate the
+  // fixed target, retaining the requested aspect and the same physical motion.
+  const planetId = skyPointPlanetId(swe, transitingPlanet === "South Node" ? "North Node" : transitingPlanet);
+  if (planetId === null) return null;
+  if (transitingPlanet === "South Node") natalLongitude = normalizeDegrees(natalLongitude + 180);
   const targetDegrees = options.aspectDegrees ?? 0;
   const presentationDegrees = options.presentationDegrees ?? 1.5;
   const residualsAt = (date: Date) => fixedNatalResidualsAt(swe, planetId, natalLongitude, date, targetDegrees);
@@ -2305,10 +2311,12 @@ async function calculateNatalTransitTiming(
     horizonMaxDays: 2200
   });
   if (!series) return null;
-  const { engagementEnd, engagementPasses, engagementStart, group, passIndex, phase } = series;
+  const { currentStart, currentEnd, engagementEnd, engagementPasses, engagementStart, group, passIndex, phase } = series;
   return {
     group,
     phase,
+    currentStart: currentStart.toISOString(),
+    currentEnd: currentEnd.toISOString(),
     engagementStart: engagementStart.toISOString(),
     engagementEnd: engagementEnd.toISOString(),
     timeZone: options.timeZone,
@@ -2331,7 +2339,7 @@ export function natalTransitTimingFor(
 ) {
   const aroundDate = aroundDateInput instanceof Date ? aroundDateInput : new Date(aroundDateInput);
   if (!Number.isFinite(natalLongitude) || Number.isNaN(aroundDate.getTime())) return Promise.resolve(null);
-  const day = aroundDate.toISOString().slice(0, 10);
+  const day = aroundDate.toISOString();
   const key = [transitingPlanet, normalizeDegrees(natalLongitude).toFixed(4), day, options.aspectDegrees ?? 0, options.presentationDegrees ?? 1.5, options.timeZone ?? ""].join("|");
   const cached = natalTransitTimingCache.get(key);
   if (cached) return cached;
@@ -2484,7 +2492,7 @@ function aspectPassSeriesTiming({
   const exact = Math.abs(engagementPasses[closestIndex].getTime() - reference.getTime()) <= 12 * 3_600_000;
   const phase: SkyAspectTiming["phase"] = exact ? "exact" : nextIndex >= 0 ? "building" : "fading";
   const passIndex = exact ? closestIndex : nextIndex >= 0 ? nextIndex : engagementPasses.length - 1;
-  return { branch, engagementEnd, engagementPasses, engagementStart, estimatedDurationDays, group, passIndex, passStepDays, phase };
+  return { branch, currentStart, currentEnd, engagementEnd, engagementPasses, engagementStart, estimatedDurationDays, group, passIndex, passStepDays, phase };
 }
 
 function skyAspectTimingFor(

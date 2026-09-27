@@ -1190,11 +1190,7 @@ export function createTransitSynastryRenderer(
       return passageSource(row, v, vocab.has(key) ? "body" : key === T.contentKey ? (v === "you" && T.body_you != null ? "body_you" : v === "they" && T.body_they != null ? "body_they" : "body") : undefined);
     };
     const contributions = [{ text: body, keys: sourceKeys.filter((key) => Boolean(key)), start: 0 }];
-    // retrograde contacts repeat; say so (fallback path only, authored cards stay verbatim)
-    if (isRetrograde && v === "you") {
-      const retroLine = hooks.get("fallback-hook/transit-retro-aspect")?.body_you;
-      if (retroLine) { const text = fill(retroLine, ctx); contributions.push({ text, keys: ["fallback-hook/transit-retro-aspect"], start: body.length }); body = `${body} ${text}`; }
-    }
+    // Retrograde motion alone does not prove a repeated contact.
     const passHook = pass ? hookVoice(`fallback-hook/transit-pass/${pass}`, v) : null;
     if (passHook) { contributions.push({ text: passHook, keys: [`fallback-hook/transit-pass/${pass}`], start: body.length }); body = `${body}\n\n${passHook}`; }
     return { headline: fill(((v === "you" ? T.headline : ((T as { headline_they?: string }).headline_they ?? T.headline))) ?? "", ctx), body, parts: [body], templateKey: T.contentKey, ...passageSources(body, contributions, sourceFor, [passageSource(T, v, v === "they" && T.headline_they != null ? "headline_they" : "headline")]) };

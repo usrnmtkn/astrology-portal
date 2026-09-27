@@ -2379,7 +2379,7 @@ function createTransitSynastryRenderer(transitLib, templatesFile, rowsFile, opts
         const AW = { conjunction: "conjunct", square: "square", opposition: "opposite", trine: "trine", sextile: "sextile" };
         const untilDate = win ? String(win).replace(/^until\s+/i, "") : null;
         const readerBody = c.body_you ?? c.body;
-        if (!readerBody) throw new SourceGapError(`SOURCE_GAP: transit aspect ${c.contentKey} has no body`);
+        if (!readerBody) continue;
         let aBody = v === "you" ? readerBody : fillKeep(c.body_they ?? friendVoiceFromReaderCopy(readerBody, voice), { Name: voice });
         aBody = aBody.replace(/\{\{aspectWord\}\}/g, AW[aspect] ?? aspect);
         aBody = untilDate ? aBody.replace(/\{\{untilDate\}\}/g, untilDate) : aBody.replace(/ until \{\{untilDate\}\}/g, "");
@@ -2503,14 +2503,6 @@ ${passHook2}`;
       return passageSource(row, v, vocab.has(key) ? "body" : key === T.contentKey ? v === "you" && T.body_you != null ? "body_you" : v === "they" && T.body_they != null ? "body_they" : "body" : void 0);
     };
     const contributions = [{ text: body, keys: sourceKeys.filter((key) => Boolean(key)), start: 0 }];
-    if (isRetrograde && v === "you") {
-      const retroLine = hooks.get("fallback-hook/transit-retro-aspect")?.body_you;
-      if (retroLine) {
-        const text2 = fill2(retroLine, ctx);
-        contributions.push({ text: text2, keys: ["fallback-hook/transit-retro-aspect"], start: body.length });
-        body = `${body} ${text2}`;
-      }
-    }
     const passHook = pass ? hookVoice(`fallback-hook/transit-pass/${pass}`, v) : null;
     if (passHook) {
       contributions.push({ text: passHook, keys: [`fallback-hook/transit-pass/${pass}`], start: body.length });
@@ -6511,7 +6503,7 @@ function skyV4FieldValue(source, path) {
 }
 
 // apps/web/src/content/fallbackArchitectureV3/resolver/index.browser.ts
-var PACKAGE_VERSION = "v3-2026-09-17-transit-situation-exact";
+var PACKAGE_VERSION = "v3-2026-09-24-calculated-repeat-contacts";
 function stablePackageValue(value) {
   if (Array.isArray(value)) {
     return value.map(stablePackageValue);
