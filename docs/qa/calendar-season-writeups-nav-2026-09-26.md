@@ -33,3 +33,12 @@ Validation in an isolated checkout with its own `npm ci`:
 Hosted exact-head API checks and the main deployment are recorded in the PR.
 Production browser verification uses isolated storage; live editor verification
 is read-only and does not change the owner's saved writing.
+
+The hosted forecast suite also asserted the former six-entry navigation list.
+Its exact expected list now includes Season write-ups in both the sidebar and
+tab strip. All eight forecast browser cases passed against a fresh standalone
+Studio build, bringing local affected browser coverage to 21 passing cases.
+A remote preview automation attempt was blocked by Vercel SSO before reaching
+Studio; deployment protection was left intact. The signed-in browser verified
+the new preview sidebar, while complete saved-row verification is reserved for
+the public production alias and the owner's existing Studio session.
