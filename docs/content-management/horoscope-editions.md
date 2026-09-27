@@ -17,40 +17,40 @@ unaffected.
 
 Open **Write → Horoscopes** (`/admin/content#horoscopes`).
 
-1. Select daily, weekly or seasonal, a reference date, and an edition time zone.
-   **Prepare edition** calculates dates and facts without a writer call or storage
-   mutation. If that edition already exists, its saved version opens instead.
-2. Daily editions run midnight to midnight in the edition zone. Weeks start Monday
-   and end the following Monday, respecting DST. Seasons run between calculated
-   solar ingresses; the selected date's local noon chooses the solar season.
-3. Edit each sign's private outline, reader headline and complete reading. Save
-   retains all twelve together. Edits survive navigation to other Studio sections;
-   leaving the browser warns about unsaved work. Replacing an unsaved edition asks
-   before discarding changes. A version conflict preserves the local edits.
-4. **Edit AI writing instructions** opens the separate period profiles.
-   **Use latest writing instructions** explicitly replaces the edition's retained
-   profile snapshot. Save to keep it. **Export writing brief** exports calculated
-   facts, all twelve draft fields, private outlines and that profile snapshot.
-   It is planning input, not the canonical harness request schema or a generation
-   receipt. Unsaved starter profiles are identified as such.
-5. **Import draft** accepts `{schema: "horoscope-draft/v1", edition, editorialNotes?}`;
-   `schema` may be omitted. The edition must contain all twelve signs and match the
-   opened calculated window. Unknown mixed-document fields fail for review.
-   Only headline/body are reader fields. The complete original import and SHA-256
-   remain in private `source_snapshot.editorialImport`; source notes never serve.
-6. Save, expand **Review all twelve readings**, and review exact complete wording.
-   The explicit approval checkbox enables **Publish edition** on the saved version.
-   Publishing is a separate version-checked action. Editing reader fields returns
-   the edition to Draft even if another editor tries to save with `status=LIVE`.
+1. Choose daily, weekly or seasonal, a reference date, and a city or time zone.
+   **Create or open edition** calculates its dates and facts. If a saved edition
+   exists, that version opens with its writing intact.
+2. In **Generate**, edit the writing instructions if needed. **Use latest saved
+   instructions** explicitly adopts that profile for this edition. **Review writing
+   plan** saves the draft and prepares the twelve-sign plan without a model call.
+   Approve the exact plan, then select **Generate 12 drafts** or **Generate missing
+   readings**. Each completed sign saves automatically. **Resume generation**
+   retrieves an interrupted request before starting another sign.
+3. **Read & edit** contains sign tabs, complete headline/body fields, and a private
+   outline. Generation preserves existing writing, including partially completed
+   readings. Save manual edits before publication; a version conflict preserves the
+   local changes. Leaving the browser warns about unsaved work.
+4. **Publish** displays all twelve complete readings. Review the exact saved words
+   and select the approval checkbox before **Publish edition**. Publication remains
+   separate from generation and uses the saved version. **Read published edition**
+   opens that exact edition and sign, including after the period ends.
 
-This increment adds no model calls, billing, automatic approval or background
-generation. The writer's existing evidence, exact-outline, paid-call and exact-prose
-approval boundaries still apply. Reader wording is not approved by publishing code.
+**Advanced** retains export, import and calculated facts. Import accepts
+`{schema: "horoscope-draft/v1", edition, editorialNotes?}`; `schema` may be omitted.
+The edition must contain twelve signs and match the calculated window. Unknown
+mixed-document fields fail for review. Only headline/body are reader fields; the
+complete import and SHA-256 stay in private `source_snapshot.editorialImport`.
+Exported briefs contain instructions and outlines, not publication approval.
+
+Daily editions use local midnight boundaries. Weeks begin Monday and respect DST.
+Seasons run between calculated solar ingresses; the reference date's local noon
+chooses the season. Generation uses the canonical writer and explicit plan/billed
+call authorization. It does not approve wording or publish automatically.
 
 ## Data and access
 
 The existing `generated_interpretations` table stores one `mode=article`,
-`surface=sky` row under `horoscope/{period}/{UTC-start-digits}`. No migration is
+`surface=sky` row under `horoscope/{period}/{UTC-start-digits}/{IANA-time-zone}`. Legacy keys without the zone remain readable and editable. No migration is
 required. `sections.horoscopeEdition` uses `horoscope-edition/v1`: a calculated
 window and exactly twelve `{sign, headline, body}` passages. The row body preserves
 the same full reader text for the generic copy-boundary scanner. Publication rejects
@@ -67,7 +67,7 @@ The existing generated-content function explicitly packages the Swiss WASM asset
 a specific date performs an exact lookup beyond that list. Generic saves retain the
 existing owner authentication, optimistic version checks and publication ledger.
 
-The public `content-reader` query `{horoscope:{period,at}}` filters period and window
+The public `content-reader` query `{horoscope:{period,at,timeZone}}` filters period, local zone and window
 in storage. A row must be LIVE, serving, without a review hold, complete, and admitted
 by the exact publication ledger. The allowlisted public projection includes only
 the edition window and passages. Calculated briefs, signatures, instructions,
