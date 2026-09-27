@@ -145,6 +145,35 @@ const preservedIngressCopy = text({ ...sameDayVoid, ingresses: [{ id: "moon-pisc
 assert.equal(preservedIngressCopy.split(ingressDescription).length - 1, 1);
 assert.ok(preservedIngressCopy.includes("Venus enters Scorpio"));
 assert.equal((skyDailySummaryParts(sameDayVoid).filter(part => part.eventId === "moon-pisces")).length, 1);
+// A same-day New Moon, Full Moon, or eclipse already names that Moon sign.
+for (const event of [
+  { name: "Full Moon" as const, sign: "Aries", sun: "Libra" },
+  { name: "New Moon" as const, sign: "Aries", sun: "Aries" },
+  { name: "New Moon" as const, sign: "Aries", sun: "Aries", eclipseType: "solar" as const },
+  { name: "Full Moon" as const, sign: "Aries", sun: "Libra", eclipseType: "lunar" as const }
+]) {
+  const rendered = text({
+    sun: { sign: event.sun, degree: 3 }, moon: { sign: "Aries", degree: 3 }, moonIsVoid: false,
+    event: { name: event.name, sign: event.sign, degree: 3, countdown: "today", isToday: true, eclipseType: event.eclipseType },
+    ingresses: [{ id: "moon-aries", label: "Moon enters Aries" }, { id: "venus", label: "Venus enters Scorpio", tldr: "Keep the other arrival." }]
+  });
+  assert.equal(rendered.includes("Moon enters Aries today."), false, event.eclipseType ?? event.name);
+  assert.ok(rendered.includes("Venus enters Scorpio today. Keep the other arrival."));
+}
+assert.ok(text({
+  sun: { sign: "Libra", degree: 3 }, moon: { sign: "Aries", degree: 3 }, moonIsVoid: false,
+  event: { name: "Full Moon", sign: "Aries", degree: 3, countdown: "today", isToday: true },
+  ingresses: [{ id: "moon-taurus", label: "Moon enters Taurus" }]
+}).includes("Moon enters Taurus today."));
+assert.ok(text({
+  sun: { sign: "Gemini", degree: 9 }, moon: { sign: "Aries", degree: 1 }, moonIsVoid: false,
+  event: { name: "Full Moon", sign: "Aries", countdown: "in 3 days" },
+  ingresses: [{ id: "moon-aries", label: "Moon enters Aries" }]
+}).includes("Moon enters Aries today."));
+assert.ok(text({
+  sun: { sign: "Libra", degree: 3 }, moon: { sign: "Aries", degree: 3 }, moonIsVoid: false,
+  ingresses: [{ id: "moon-aries", label: "Moon enters Aries" }]
+}).includes("Moon enters Aries today."));
 const { renderVoidOfCourse } = await import("../apps/web/src/content/fallbackArchitectureV3/resolver/renderTransitSynastry.mjs");
 assert.equal(
   renderVoidOfCourse({ sign: "aquarius", nextSign: "pisces" }).body,
