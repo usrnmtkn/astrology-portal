@@ -3792,8 +3792,16 @@ button.calendar-reading__toggle {
   padding-top: var(--lunar-space-10);
 }
 
-.calendar-sky-card__body > section {
+.calendar-sky-card__body > section,
+.calendar-sky-card__moon-passage {
   display: contents;
+}
+
+.calendar-sky-card__toggle {
+  width: fit-content;
+  padding: 0;
+  border: 0;
+  background: transparent;
 }
 
 .calendar-sky-card__today {
