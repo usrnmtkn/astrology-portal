@@ -94,7 +94,7 @@ export function installHoroscopeWriterFixture(){
    }
    const id=url.split('/').at(-1)!,request=writerFixture.requests.get(id);
    if(!request)throw new Error('Unrecognized fixture response');writerFixture.polls++;
-   return Response.json({id,status:'completed',usage:{input_tokens:100,output_tokens:40},output:[{type:'message',content:[{type:'output_text',text:JSON.stringify({headline:`Fixture ${request.sign} reading`,body:`You can read the complete ${request.sign} fixture opening.\n\nYour saved fixture ends here.`})}]}]});
+   return Response.json({id,status:'completed',usage:{input_tokens:100,output_tokens:40},output:[{type:'message',content:[{type:'output_text',text:JSON.stringify({headline:request.text.format.schema.properties.headline.enum?.[0]??`Fixture ${request.sign} reading`,body:`You can read the complete ${request.sign} fixture opening.\n\nYour saved fixture ends here.`})}]}]});
  };
 }
 if(process.env.HOROSCOPE_WRITER_FIXTURE==='1')installHoroscopeWriterFixture();

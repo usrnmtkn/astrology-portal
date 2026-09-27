@@ -10,7 +10,7 @@ import { assertArgumentOutlineApproved } from "./argumentGate.mjs";
 import { assertSurfaceRegisterContract } from "./surfaceRegisterContract.mjs";
 import { effectiveRulePrompt } from "./effectiveRuleGovernance.mjs";
 import { resolveStudioWritingProfile } from "./studioWritingProfileReceipt.mjs";
-import { buildHoroscopeDraftInput, HOROSCOPE_DRAFT_SCHEMA } from './horoscopeDraftInput.mjs';
+import { buildHoroscopeDraftInput, horoscopeDraftSchema } from './horoscopeDraftInput.mjs';
 
 export const PLACEMENT_DRAFT_SCHEMA = Object.freeze({
   type: "object",
@@ -208,7 +208,7 @@ export async function generateDraft({
   assertArgumentOutlineApproved(argumentOutline, { plan, family, surface });
   if (!spine || spine.status !== "recorded") throw new Error(`RECORDED_CONTENT_SPINE_REQUIRED:${family}`);
   const role = isCardWritingSurface({ surface, family }) ? "CARD_WRITER_V3" : "WRITER";
-  const resolvedSchema = schema ?? (family === 'horoscope' ? HOROSCOPE_DRAFT_SCHEMA : family === "fast-mover-article"
+  const resolvedSchema = schema ?? (family === 'horoscope' ? horoscopeDraftSchema(engineFacts?.risingSign) : family === "fast-mover-article"
     ? FAST_MOVER_ARTICLE_DRAFT_SCHEMA
     : family === "slow-mover-article"
       ? SLOW_MOVER_ARTICLE_DRAFT_SCHEMA

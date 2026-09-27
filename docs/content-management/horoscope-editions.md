@@ -67,8 +67,9 @@ the same full reader text for the generic copy-boundary scanner. Publication rej
 incomplete passages, placeholders, invalid boundaries or conflicting identity/body.
 
 Authenticated `generated-content?horoscopeBrief=true` calculates Swiss Ephemeris
-positions, lunations and stations. It clearly identifies that the event list does
-not cover every aspect or ingress. Whole-sign house numbers are derived from the
+positions, lunations, stations and planetary ingresses. It explicitly excludes
+exact aspects. The weekly reference is local Monday noon, independent of the
+selected day within that week. Whole-sign house numbers are derived from the
 calculated signs. A server HMAC protects the brief against edited facts. Canonical
 JSON makes verification stable after PostgreSQL jsonb reorders object keys.
 The existing generated-content function explicitly packages the Swiss WASM assets.
@@ -135,8 +136,8 @@ paragraphs under horoscope headings, not only generic article paragraphs.
 Topical season/lunation references remain separate support. Missing eligible
 forecast examples stop preparation before a provider call. Exact source text,
 IDs and hashes reach the prompt; source IDs are retained in the receipt.
-Writer version v2 invalidates old prepared plans so the revised examples require
-a refreshed plan. Existing saved readings and editable profiles are preserved.
+Writer version v3 binds the complete signed brief and each sign’s development
+packet into the reviewed plan hash, invalidating earlier prepared plans. Existing saved readings and editable profiles are preserved.
 The weekly starter profile names calculated destination signs and explains life
 areas in ordinary language. It follows complete owner examples without prescribing
 one opening, paragraph sequence or advice ending. Supporting weekly developments
@@ -177,3 +178,42 @@ publication and local date boundaries. `playwright.horoscope-reader.config.ts`
 exercises generation → editing → publication → local reader selection at desktop
 and mobile widths in both themes. Synthetic provider checks do not demonstrate
 live provider availability or approve the writing quality.
+
+## Period developments and editorial consistency
+
+The writer receives a chronological set of calculated events and separately
+labelled reference positions. Each supported Sun-through-Pluto placement/event
+carries its own sign, whole-sign house, plain-language life area, reviewed meaning
+source ID/path and local time. Points without a governed meaning remain in the
+raw brief but are explicitly omitted from interpretation. Reviewed meaning is
+never marked owner-authored voice. The canonical single-placement retrieval
+anchor remains for evidence compatibility; it is labelled background and no
+longer determines the whole reading's thesis or only allowed house. The argument
+asks for a connected interpretation selected from the period, not twelve versions
+of a Sun-sign placement. Older signed briefs retain their original coverage;
+preparing a plan does not invent missing ingresses or silently replace facts.
+
+The shared profile direction asks for emotional stakes, related examples that
+deepen a concern, and an earned recognition or response. It does not prescribe
+confrontation, family history, vulnerability, a fixed paragraph count or a
+universal advice ending. Voice quality remains an owner judgment. Generation
+cannot infer guaranteed personal events from exact sky-event times.
+
+The v2 fact validator checks explicit New/Full Moon claims against their actual
+lunation events, ordinary positions against the snapshot or a calculated ingress,
+and numbered houses against the named planet/lunation. Events outside the edition
+window do not license claims. Exact aspects remain unavailable. At publication,
+current fact checks replace obsolete fact findings while the original generation
+receipt stays intact; other recorded checks, including private corrections, are
+preserved. A successful fact check is not editorial approval.
+
+The Memory Graph records architecture and provenance. The editable instructions
+used by generation live in the existing private Supabase profile rows. No new
+schema or broader feedback scope is introduced. Save a profile, then adopt it in
+an edition and review the updated plan before generation. Existing bodies,
+publication state, signed briefs and execution receipts are preserved by a
+profile change. A code/profile deployment does not regenerate saved readings.
+
+New generated headlines use “[Sign] & [Sign] Rising” through the provider output
+schema. Existing saved/custom headlines remain unchanged. The calculated house
+convention remains the edition’s declared rising-sign convention.

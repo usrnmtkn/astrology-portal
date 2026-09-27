@@ -425,7 +425,7 @@ export function validateCopy(copy, {
   }
   const standingPattern = text.match(/\b(?:you tend to|you always|you usually|usually|generally|this is who you are)\b/iu);
   if (profile.surfaceRules.includes("temporary-transit-register") && standingPattern) {
-    violations.push({ category: "temporary_transit_register", detail: `Friends transit copy used standing-pattern language: "${standingPattern[0]}". Rewrite that wording within the supplied transit window without claiming a habitual pattern.` });
+    violations.push({ category: "temporary_transit_register", detail: `${family === 'horoscope' ? 'Horoscope' : 'Friends transit'} copy used standing-pattern language: "${standingPattern[0]}". Rewrite that wording within the supplied transit window without claiming a habitual pattern.` });
   }
   if (profile.surfaceRules.includes("disconnected-stock-coaching")
     && /\b(?:give yourself permission|you are allowed|let yourself|allow yourself|take the win|protect your energy|honor your needs)\b/iu.test(text)) {

@@ -27,7 +27,7 @@ node scripts/run-astro-writing-harness.mjs \
 
 Alternatively provide the export as `writingProfile` in the request, but not both. The harness validates it before the pipeline starts. `generateDraft` includes its expanded instructions in the actual writer input and attaches `studioWritingProfile: {id, period, revision, updatedAt, sha256}` to the unapproved candidate. The full prompt is not copied into reader fields. The existing explicit live-call authorization, target/register checks, evidence requirements and owner argument gate remain in force.
 
-The reader and twelve-sign edition editor are documented in [Horoscope editions](horoscope-editions.md). This profile integration does **not** itself generate horoscope prose, schedule writing, or automatically supply unrelated Sky and Calendar generation. The current canonical harness family map covers Sky Placement articles; the dedicated horoscope target/evidence mapping must be resolved before a horoscope writer call. Exporting a profile or edition brief is not a successful generation run.
+The reader and twelve-sign edition editor are documented in [Horoscope editions](horoscope-editions.md). This profile integration does **not** itself generate horoscope prose, schedule writing, or automatically supply unrelated Sky and Calendar generation. The dedicated horoscope mapping in `horoscopeWriting.mjs` supplies the signed period facts, complete owner forecast examples, governed meanings and approved plan to the canonical pipeline. Exporting a profile or edition brief is not a successful generation run.
 
 ## Storage and verification
 
@@ -36,3 +36,11 @@ The authenticated `generated-content?writingProfiles=true` API reads all three p
 The actual-handler regression is `scripts/test-horoscope-writing-profiles.mts`, included in `test:content-studio-api`. Browser coverage is `npx playwright test --config playwright.horoscope-writing.config.ts`: mobile/desktop, light/dark and green/neutral palettes, starter/saved/empty states, keyboard navigation, cursor insertion, prompt copy and validation, export, recovery, conflict comparison/dismissal, exact text preservation and heading typography parity. Tests use synthetic text and isolated storage; the injected writer makes no billed calls.
 
 Set `STUDIO_PRODUCTION_ENTRY=1` to build and test the actual web entry at `/admin/content`. To verify deployed frontend assets with isolated test storage, also set `PLAYWRIGHT_BASE_URL` to the deployment URL. Production API/storage hydration is a separate authenticated read-only check.
+
+The starter voice guidance includes emotional development: use related details to
+show why a supported possibility matters, instead of turning every passage into
+activities, administrative tasks or a repeated compromise plot. This remains
+editable guidance, not a machine taste test or a template story. Updating a
+starter in code preserves saved profiles; an authorized profile update uses the
+version-checked API and retains any existing owner edits. Memory Graph decisions
+explain the architecture but do not replace these live writing instructions.
