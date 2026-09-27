@@ -1,4 +1,5 @@
 import { useId, useState } from "react";
+import type { ReactNode } from "react";
 import { useMinimumLoading } from "../../hooks/useMinimumLoading";
 import { useSkeletonGeometry } from "../../hooks/useSkeletonGeometry";
 import { LoadingStatus, SkeletonBar } from "../../components/CardSkeleton";
@@ -153,6 +154,7 @@ export function CalendarDayPanel({
   sky = null,
   paragraphs,
   moonPassages = [],
+  lunarContext,
   prompt,
   events,
   seasonTransits,
@@ -178,6 +180,7 @@ export function CalendarDayPanel({
   sky?: SkySnapshot | null;
   paragraphs: string[];
   moonPassages?: CalendarMoonPassage[];
+  lunarContext?: ReactNode;
   prompt?: string;
   events: CalendarDayEventCard[];
   seasonTransits: CalendarSeasonTransit[];
@@ -231,6 +234,7 @@ export function CalendarDayPanel({
                 <CalendarSummaryText date={dateKey} parts={sunSummary} sky={sky} />
               </section>
             ) : null}
+            {lunarContext}
             {moonPassages.length > 0 ? moonPassages.map((passage) => (
               <MoonPassage key={`${dateKey}:${passage.contentKey}`} passage={passage} />
             )) : paragraphs.length > 0 ? (

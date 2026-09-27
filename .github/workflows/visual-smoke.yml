@@ -387,6 +387,8 @@ jobs:
       - run: npm ci
       - run: npm run build:knowledge
       - run: npx playwright install --with-deps chromium
+      - name: Verify calculated lunar reading links
+        run: node --import tsx scripts/test-calendar-lunation-context.mts
       - name: Run Calendar, learning, and date consistency screens
         run: >-
           npx playwright test -c playwright.config.ts --workers=1
@@ -396,6 +398,7 @@ jobs:
           tests/visual/calendar-pressure-release.spec.ts
           tests/visual/calendar-month-overview.spec.ts
           tests/visual/calendar-moon-ui.spec.ts
+          tests/visual/calendar-lunation-context.spec.ts
           tests/visual/calendar-lunation-preview.spec.ts
           tests/visual/calendar-moon-editor.spec.ts
           tests/visual/calendar-lunar-ingresses.spec.ts

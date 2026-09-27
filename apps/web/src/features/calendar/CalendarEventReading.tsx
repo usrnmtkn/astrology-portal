@@ -1,10 +1,12 @@
 import { FormattedProse } from "../../components/FormattedProse";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { LunarCalendarEvent } from "../../services/ephemeris";
 import { AstroGlyph } from "./AstroGlyph";
 import { CalendarKindLabel, CalendarKindTag } from "./CalendarKindTag";
 import { CalendarSlideout } from "./CalendarSlideout";
+import { CalendarCycleLink } from "./CalendarCycleLink";
+import type { LocationInput } from "../../types";
 import { calendarKindFromEvent, type CalendarEventKind } from "./calendarKinds";
 import { handoffArticleForTitle } from "./calendarHandoff";
 import {
@@ -32,6 +34,9 @@ function orderJournalBlocks(blocks: LunarJournalBlock[] | undefined, kind: Calen
 
 function JournalBlock({
   block,
+  event,
+  location,
+  onOpenEvent,
   dateLine,
   timeCity,
   hasEventTime,
@@ -40,6 +45,9 @@ function JournalBlock({
   onJournalPrompt
 }: {
   block: LunarJournalBlock;
+  event: LunarCalendarEvent;
+  location: LocationInput;
+  onOpenEvent: (event: LunarCalendarEvent) => void;
   dateLine: string;
   timeCity?: string;
   hasEventTime?: boolean;
@@ -89,8 +97,8 @@ function JournalBlock({
       <section className="calendar-reading__card">
         {block.title ? <span className="calendar-reading__card-label">{block.title}</span> : null}
         {block.text ? <FormattedProse text={block.text} /> : null}
-        {block.type === "cycle" && block.link && !/^https?:/i.test(block.link) ? (
-          <span className="calendar-reading__toggle">Go to {block.link}</span>
+        {block.type === "cycle" && block.link ? (
+          <CalendarCycleLink event={event} link={block.link} location={location} onOpenEvent={onOpenEvent} />
         ) : null}
       </section>
     );
@@ -192,6 +200,8 @@ function JournalBlock({
 
 export function CalendarEventReading({
   event,
+  location,
+  onOpenEvent,
   title,
   dateLine,
   paragraphs,
@@ -207,6 +217,8 @@ export function CalendarEventReading({
   onJournalPrompt
 }: {
   event: LunarCalendarEvent;
+  location: LocationInput;
+  onOpenEvent: (event: LunarCalendarEvent) => void;
   title: string;
   dateLine: string;
   paragraphs: string[];
@@ -222,6 +234,8 @@ export function CalendarEventReading({
   onReadArticle?: () => void;
   onJournalPrompt?: (text: string, options?: { tarot?: boolean }) => void;
 }) {
+  const titleRef = useRef<HTMLHeadingElement>(null);
+  useEffect(() => { titleRef.current?.focus(); }, [event.id]);
   const resolvedKind = kind ?? calendarKindFromEvent(event);
   const article = handoffArticleForTitle(event.title);
   // Aspect details repeat the complete passage already shown here. Only link
@@ -264,7 +278,7 @@ export function CalendarEventReading({
           <CalendarKindTag event={event} kind={resolvedKind} />
           <CalendarKindLabel event={event} kind={resolvedKind} />
         </div>
-        <h2 className="calendar-reading__title" id="calendar-reading-title">{title}</h2>
+        <h2 ref={titleRef} tabIndex={-1} className="calendar-reading__title" id="calendar-reading-title">{title}</h2>
         <p className="calendar-reading__meta">{dateLine}</p>
       </div>
       <div className="calendar-reading__body">
@@ -272,6 +286,9 @@ export function CalendarEventReading({
           ? orderedBlocks.map((block, index) => (
             <JournalBlock
               block={block}
+              event={event}
+              location={location}
+              onOpenEvent={onOpenEvent}
               dateLine={dateLine}
               hasEventTime={hasEventTime}
               key={`${block.type}-${index}`}

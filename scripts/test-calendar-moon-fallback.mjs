@@ -70,11 +70,13 @@ assert.equal(
 const eclipseDay = resolveCalendarMoonFallback({
   ...wednesday,
   daysSincePreviousEclipse: 1,
-  previousEclipseType: "lunar eclipse"
+  previousEclipseType: "lunar eclipse",
+  previousEclipseSign: "Cancer",
+  previousEclipseDate: "January 12"
 }, {});
 assert.match(eclipseDay?.body ?? "", /The Moon remains in Scorpio today\./);
-assert.match(eclipseDay?.body ?? "", /The eclipse was yesterday\./);
-assert.doesNotMatch(eclipseDay?.body ?? "", /lunar eclipse was yesterday/);
+assert.match(eclipseDay?.body ?? "", /The lunar eclipse in Cancer was on January 12\./);
+assert.doesNotMatch(eclipseDay?.body ?? "", /first reaction|final answer/);
 
 assert.equal(
   resolveCalendarMoonFallback({
@@ -142,10 +144,12 @@ assert.equal(
 const afterNewMoon = resolveCalendarMoonFallback({
   ...wednesday,
   daysSincePreviousLunation: 3,
-  previousLunationType: "new-moon"
+  previousLunationType: "new-moon",
+  previousLunationSign: "Capricorn",
+  previousLunationDate: "January 10"
 }, {});
 assert.match(afterNewMoon?.body ?? "", /The Moon remains in Scorpio today\./);
-assert.match(afterNewMoon?.body ?? "", /The New Moon was three days ago\./);
+assert.match(afterNewMoon?.body ?? "", /The New Moon in Capricorn was on January 10\./);
 assert.equal(afterNewMoon?.contextKind, "afterNewMoon");
 
 const lastMoonDay = resolveCalendarMoonFallback({

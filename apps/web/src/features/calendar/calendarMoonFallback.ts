@@ -43,10 +43,14 @@ export type CalendarMoonFallbackCopy = {
   contextKind?: string;
 };
 
-function spellCount(value: number) {
-  if (value === 2) return "two";
-  if (value === 3) return "three";
-  return String(value);
+function previousLunationContext(facts: CalendarMoonCycleFacts, eclipse = false) {
+  const kind = eclipse ? facts.previousEclipseType : facts.previousLunationType === "new-moon" ? "New Moon" : "Full Moon";
+  const sign = eclipse ? facts.previousEclipseSign : facts.previousLunationSign;
+  const date = eclipse ? facts.previousEclipseDate : facts.previousLunationDate;
+  // Never imply a remembered intention or reaction. This is a factual anchor;
+  // the linked, complete event reading supplies the interpretation.
+  if (!kind || !sign || !date) return null;
+  return `The ${kind} in ${sign} was on ${date}.`;
 }
 
 function joinParts(...parts: Array<string | null | undefined>) {
@@ -183,25 +187,25 @@ function contextCopy(
   if (facts.daysSincePreviousEclipse === 1) {
     return {
       kind: "dayAfterEclipse",
-      body: "The eclipse was yesterday. Treat the first reaction as information, not the final answer. Give the facts time to catch up."
+      body: previousLunationContext(facts, true) || ""
     };
   }
   if (facts.daysSincePreviousEclipse != null && facts.daysSincePreviousEclipse >= 2 && facts.daysSincePreviousEclipse <= 3) {
     return {
       kind: "afterEclipse",
-      body: `The eclipse was ${spellCount(facts.daysSincePreviousEclipse)} days ago. Some of the noise has cleared. Pay attention to what still matters now that the first reaction has passed.`
+      body: previousLunationContext(facts, true) || ""
     };
   }
   if (facts.daysSincePreviousLunation === 1 && facts.previousLunationType === "new-moon") {
     return {
       kind: "dayAfterNewMoon",
-      body: "The New Moon was yesterday. Leave the plan alone for a minute. Let it meet your actual schedule before you start fixing it."
+      body: previousLunationContext(facts) || ""
     };
   }
   if (facts.daysSincePreviousLunation === 1 && facts.previousLunationType === "full-moon") {
     return {
       kind: "dayAfterFullMoon",
-      body: "The Full Moon was yesterday. Keep the part that became clear. You do not need to turn the rest into a conclusion yet."
+      body: previousLunationContext(facts) || ""
     };
   }
   if (
@@ -212,7 +216,7 @@ function contextCopy(
   ) {
     return {
       kind: "afterNewMoon",
-      body: `The New Moon was ${spellCount(facts.daysSincePreviousLunation)} days ago. Now you know more. Adjust the plan to fit the life you are actually living.`
+      body: previousLunationContext(facts) || ""
     };
   }
   if (
@@ -223,7 +227,7 @@ function contextCopy(
   ) {
     return {
       kind: "afterFullMoon",
-      body: `The Full Moon was ${spellCount(facts.daysSincePreviousLunation)} days ago. The first reaction has had some time to settle. Notice what still needs your attention now.`
+      body: previousLunationContext(facts) || ""
     };
   }
   if ((facts.exactFirstQuarter || facts.exactLastQuarter) && authoredPhase) {

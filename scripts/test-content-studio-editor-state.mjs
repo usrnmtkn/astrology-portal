@@ -288,7 +288,7 @@ assert.equal(mondayLunationPreview.mondayWriteup?.text, lunationMacroRow.body);
 assert.equal(mondayLunationPreview.tuesdayWriteup?.text, weeklyMoonRow.body, "Exact lunation copy does not consume a Moon-sign variant.");
 assert.equal(
   mondayLunationPreview.wednesdayWriteup?.text,
-  "The Moon remains in Scorpio today. If the same issue keeps returning, there may be something underneath it that has not been said plainly yet. The New Moon was two days ago. Now you know more. Adjust the plan to fit the life you are actually living.",
+  "The Moon remains in Scorpio today. If the same issue keeps returning, there may be something underneath it that has not been said plainly yet. The New Moon in Scorpio was on January 11.",
   "A second leftover write-up is not used once the sign passage has already been shown."
 );
 

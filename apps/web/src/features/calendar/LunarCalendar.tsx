@@ -101,6 +101,7 @@ import {
 import { CalendarDayGroup, CalendarDayGroupList, CalendarSeasonPill, type CalendarDayGroupRow } from "./CalendarDayGroup";
 import { CalendarDayPanel } from "./CalendarDayPanel";
 import { CalendarEventReading } from "./CalendarEventReading";
+import { CalendarLunationContext } from "./CalendarLunationContext";
 import { CalendarLinkedReading } from "./CalendarLinkedReading";
 import { CalendarSlideout } from "./CalendarSlideout";
 import { CalendarSubscribeSheet } from "./CalendarSubscribeSheet";
@@ -2594,6 +2595,8 @@ export function LunarCalendar({
       ...(selectedCalendar?.events ?? [])
     ].map((event) => [event.id, event])).values());
     const contentKeys = [
+      ...(readingEvent ? calendarEventGeneratedContentKeys(readingEvent) : []),
+      ...(readingEvent ? [calendarLunationMacroKey(readingEvent, readingEvent.sign ?? "")] : []),
       ...visibleEvents.flatMap(calendarEventGeneratedContentKeys),
       ...selectedEvents.flatMap(calendarEventGeneratedContentKeys),
       ...skyDailySummaryFields.map(field => field.key),
@@ -2637,7 +2640,7 @@ export function LunarCalendar({
       cacheKey: `${locationKey}:${viewMode}:${firstDate}:${lastDate}`,
       contentKeys: Array.from(new Set(contentKeys.filter(Boolean))).sort()
     };
-  }, [calendar, location.latitude, location.longitude, selectedCalendar, selectedDateKey, selectedDay, selectedWeekDays, viewMode]);
+  }, [calendar, location.latitude, location.longitude, selectedCalendar, selectedDateKey, selectedDay, selectedWeekDays, viewMode, readingEvent]);
   const generatedContentRequestSignature = generatedContentRequest
     ? `${generatedContentRequest.cacheKey}:${generatedContentRequest.contentKeys.join("|")}`
     : "";
@@ -2782,6 +2785,9 @@ export function LunarCalendar({
     prompt: null
   };
   const readingJournal = readingEvent ? resolveLunarJournal(readingEvent, generatedContent) : null;
+  const readingLunationKey = readingEvent ? calendarLunationMacroKey(readingEvent, readingEvent.sign ?? "") : "";
+  const readingLunationBody = readingLunationKey ? calendarLiveBody(generatedContent, readingLunationKey,
+    fallbackArchitectureV3AuthoredContentForKey(readingLunationKey)?.body) : "";
   const readingEditorial = readingEvent
     ? calendarEventEditorialContent(
       readingEvent,
@@ -2923,6 +2929,10 @@ export function LunarCalendar({
     return resolveCalendarMonthlyOverview(calendar, generatedContent);
   }, [calendar, generatedContent, viewMode, contentVersion]);
   const dayPanelProps = selectedDay ? {
+    lunarContext: <CalendarLunationContext dateKey={selectedDay.dateKey} events={[
+      ...(selectedCalendar?.cycleEvents ?? []), ...(selectedCalendar?.events ?? []),
+      ...(calendar?.cycleEvents ?? []), ...(calendar?.events ?? [])
+    ]} timeZone={zone} onOpenEvent={openEventReading} />,
     checkInEntry: checkInData.value,
     contentState: readingState,
     onRetryContent: retryCalendarContent,
@@ -3125,6 +3135,7 @@ export function LunarCalendar({
               return (
                 <CalendarDayGroup
                   dateKey={day.dateKey}
+                  lunarContext={<CalendarLunationContext dateKey={day.dateKey} events={[...(calendar.cycleEvents ?? []), ...calendar.events]} timeZone={zone} onOpenEvent={openEventReading} />}
                   guidanceKey={moonPieces[0]?.contentKey}
                   isSelected={day.dateKey === selectedDateKey}
                   isToday={day.dateKey === currentDateKey}
@@ -3386,6 +3397,7 @@ export function LunarCalendar({
                 return [
                   <CalendarDayGroup
                     dateKey={day.dateKey}
+                    lunarContext={<CalendarLunationContext dateKey={day.dateKey} events={[...(calendar.cycleEvents ?? []), ...calendar.events]} timeZone={zone} onOpenEvent={openEventReading} />}
                     guidanceKey={moonPieces[0]?.contentKey}
                     isSelected={day.dateKey === selectedDateKey}
                     isToday={day.dateKey === currentDateKey}
@@ -3437,8 +3449,11 @@ export function LunarCalendar({
       )}
       {readingEvent && readingReady && (
         <CalendarEventReading
+          key={`${readingEvent.id}:${zone}`}
+          location={location}
+          onOpenEvent={openEventReading}
           backLabel={selectedDay ? formatCheckInDate(selectedDay, zone) : undefined}
-          dateLine={`${formatEventDate(readingEvent.startsAt, zone)} · ${formatEventTime(readingEvent.startsAt, zone)}`}
+          dateLine={`${new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", year: "numeric", timeZone: zone }).format(new Date(readingEvent.startsAt))} · ${formatEventTime(readingEvent.startsAt, zone)}`}
           element={signElements[readingEvent.sign ?? readingEvent.toSign ?? ""]}
           event={readingEvent}
           journalBlocks={readingJournal?.blocks}
@@ -3463,7 +3478,7 @@ export function LunarCalendar({
               ? []
               : calendarKindFromEvent(readingEvent) === "void" && selectedDay
                 ? [voidCourseDescription(selectedDay)].filter(Boolean)
-                : (readingEditorial?.eventCopy ?? "").split("\n").filter(Boolean)
+                : (readingLunationBody || readingEditorial?.eventCopy || "").split(/\n\n+/).filter(Boolean)
           }
           showJournalPrompts={showJournalPrompts}
           title={readingJournal?.headline ?? readingEditorial?.headline ?? readingEvent.title}

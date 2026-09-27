@@ -3407,6 +3407,22 @@ button.calendar-reading__toggle {
   background: var(--calendar-chip);
 }
 
+.calendar-lunation-context {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.calendar-lunation-context p {
+  margin: 0;
+}
+
+.calendar-lunation-context .calendar-reading__toggle {
+  max-width: 100%;
+  white-space: normal;
+  text-align: start;
+  vertical-align: middle;
+}
+
 .calendar-reading__card {
   display: grid;
   gap: var(--space-3);
