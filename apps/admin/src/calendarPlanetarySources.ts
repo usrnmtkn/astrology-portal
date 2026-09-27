@@ -1,5 +1,5 @@
 import type { AdminDraft } from "./GeneratedContentAdminDashboard";
-import { natalPlacementSigns } from "./natalPlacementSources.ts";
+import { natalPlacementSigns } from "./natalPlacementSources.js";
 
 export const calendarPlanets = ["mercury", "venus", "mars", "jupiter", "saturn", "uranus", "neptune", "pluto", "chiron", "lilith"] as const;
 export const calendarPlanetarySigns = natalPlacementSigns;

@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
+import { execFileSync } from 'node:child_process';
 import { build } from 'esbuild';
-import { mkdtempSync, rmSync } from 'node:fs';
+import { mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { pathToFileURL } from 'node:url';
@@ -12,6 +13,17 @@ const directory = mkdtempSync(join(tmpdir(), 'calendar-planetary-'));
 const store = await createApiStore([]);
 const { contentLiveStatuses } = await import('../api/_lib/content-live-status.ts');
 try {
+  // Vercel emits separate .js files. A TS loader or bundled fixture can hide
+  // broken .ts imports, so import the emitted dependency chain in plain Node.
+  const emitted = join(directory, 'server');
+  await build({ entryPoints: ['contentWiringStatus', 'calendarPlanetarySources', 'natalPlacementSources'].map(name => `apps/admin/src/${name}.ts`), outdir: emitted, platform: 'node', format: 'esm', bundle: false, logLevel: 'silent' });
+  writeFileSync(join(emitted, 'package.json'), '{"type":"module"}');
+  execFileSync(process.execPath, ['--input-type=module', '--eval', `
+    import assert from 'node:assert/strict';
+    const {contentWiringStatus} = await import(process.argv[1]);
+    for (const content_key of ['sky.ingress.mercury.scorpio', 'sky.station.venus.scorpio.retrograde'])
+      assert.equal(contentWiringStatus({content_key, status:'LIVE', lane:'serving'}).state, 'connected');
+  `, pathToFileURL(join(emitted, 'contentWiringStatus.js')).href], { env: { ...process.env, NODE_OPTIONS: '' } });
   const bundle = join(directory, 'reader.mjs');
   await build({ stdin: { contents: `export {loadLiveGeneratedContentForKeys} from './apps/web/src/services/generatedContent.ts'; export {normalizeCalendarEventSurface,liveCalendarEventContent} from './apps/web/src/features/calendar/LunarCalendar.tsx'; export {calendarEventGeneratedContentKeys} from './apps/web/src/features/calendar/calendarContentKeys.ts'; export {isReaderServableGeneratedContentRow} from './apps/web/src/content/generatedContentEligibility.ts';`, resolveDir: process.cwd(), loader: 'ts' }, bundle: true, outfile: bundle, platform: 'node', format: 'esm', define: { 'import.meta.env': JSON.stringify({ VITE_SUPABASE_URL: 'https://calendar-api.invalid', VITE_SUPABASE_ANON_KEY: 'calendar-api-fixture-key' }) }, loader: { '.css': 'empty' }, logLevel: 'silent' });
   const reader = await import(pathToFileURL(bundle).href);

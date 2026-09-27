@@ -1,4 +1,4 @@
-import { calendarPlanetaryIdentity } from "./calendarPlanetarySources.ts";
+import { calendarPlanetaryIdentity } from "./calendarPlanetarySources.js";
 
 export type ContentWiringRow = {
   block_type?: string | null;

@@ -43,3 +43,24 @@ Allocate 4,500 raw entry/largest-chunk bytes, 1,000 entry gzip bytes, and 2,500
 aggregate gzip bytes for the new navigation, identities and workspace. Enforce
 the new workspace as a deferred entry. Dependency, CSS, memory-graph and
 forbidden initial-payload limits remain unchanged.
+
+### Web application allocation
+
+The web application also includes the deferred Studio entry points. Separate
+isolated builds using the browser workflow's environment measure 3,489,359
+aggregate JavaScript gzip bytes on pre-feature main `3ef2237c9` and 3,492,579
+on merged main `affba7fd7` (+3,220). Allocate 3,500 aggregate bytes, bringing
+the web total cap to 3,493,000. This corrects the aggregate-budget CI failure
+reported after #1070; it is an explicit feature allocation, not a size reduction.
+All reader startup, CSS, individual chunk, memory graph and runtime-performance
+limits remain unchanged. No dependency or prose payload was added.
+
+### Deployed publication-status module
+
+Production verification of `affba7fd7` found `ERR_MODULE_NOT_FOUND` in
+`/api/admin/content-live-status`: the emitted `contentWiringStatus.js` still
+referenced `calendarPlanetarySources.ts`. Use `.js` specifiers throughout this
+server dependency chain. The planetary API regression now emits all three
+modules separately and imports them with plain Node, without a TypeScript
+loader, before checking the actual API and reader contracts. This catches the
+deployment-only error hidden by bundled or `tsx` fixtures.
