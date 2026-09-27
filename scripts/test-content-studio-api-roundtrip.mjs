@@ -396,6 +396,31 @@ for (const template of skyAssemblyFields.filter(field => /\/sunIngress(?:Before|
 }
 row = beforeBank;
 
+// New Sun variants must survive the real create/publish/reader boundary.
+for (const sign of ["libra", "aries"]) {
+  const key = `cms/sky-daily-summary/sun/${sign}/ruler-retrograde`;
+  const body = "With the {sunPlacement}, this is a complete fixture passage. {rulerName} is retrograde. The fixture ends here.";
+  const created = await invokeApi("POST", "/api/admin/generated-content", {
+    contentKey: key, surface: "sky", mode: "card", eventType: "sky-daily-summary",
+    status: "DRAFT", lane: "serving", reviewState: "EDITORIAL_REVIEW_REQUIRED", body,
+    sourceSnapshot: { contentSystem: "cms-surface-override", contentType: "mustache-template", allowedSlots: ["sunPlacement", "rulerName"] }
+  });
+  assert.equal(created.status, 200, JSON.stringify(created.payload));
+  assert.equal((await loadLiveGeneratedContentForKeys([key])).size, 0);
+  assert.equal((await invokeApi("GET", `/api/admin/generated-content?contentKey=${encodeURIComponent(key)}&status=all`)).payload.rows[0].body, body);
+  const version = row.updated_at;
+  const published = await invokeApi("PATCH", "/api/admin/generated-content", {
+    id: row.id, expectedUpdatedAt: version, status: "LIVE", lane: "serving", reviewState: null
+  });
+  assert.equal(published.status, 200, JSON.stringify(published.payload));
+  assert.equal((await loadLiveGeneratedContentForKeys([key])).get(key)?.body, body);
+  assert.equal((await invokeApi("PATCH", "/api/admin/generated-content", {
+    id: row.id, expectedUpdatedAt: version, body: "Stale fixture."
+  })).status, 409);
+  assert.equal(row.body, body);
+}
+row = beforeBank;
+
 // An unsaved Studio summary starts with the legacy UI mode "card". Exercise
 // creation as well as editing; patching a pre-existing fixture missed this.
 const createdSummary = await invokeApi("POST", "/api/admin/generated-content", {

@@ -1,20 +1,7 @@
 import { SourceGapError } from "../content/fallbackArchitectureV3Runtime";
 import type { SkySnapshot } from "../types";
 
-const signRulers: Record<string, string> = {
-  aries: "mars",
-  taurus: "venus",
-  gemini: "mercury",
-  cancer: "moon",
-  leo: "sun",
-  virgo: "mercury",
-  libra: "venus",
-  scorpio: "mars",
-  sagittarius: "jupiter",
-  capricorn: "saturn",
-  aquarius: "saturn",
-  pisces: "jupiter"
-};
+import { traditionalSignRulers as signRulers } from "../content/skySunSeason";
 const signs = Object.keys(signRulers);
 const skyBodyClaimPattern = new RegExp(
   `\\b(Sun|Moon|Mercury|Venus|Mars|Jupiter|Saturn|Uranus|Neptune|Pluto|Chiron|Lilith|North Node|South Node)\\s+(?:(?:is\\s+)?(?:currently\\s+)?(?:retrograde|direct|Rx)\\s+|is\\s+)?in\\s+(${signs.join("|")})\\b`,

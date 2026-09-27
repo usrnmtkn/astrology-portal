@@ -1,10 +1,9 @@
+import { skySummarySourceKeys, missingPublishedSkySummaryKeys } from "./skySummarySources";
+export { skySummarySourceKeys, missingPublishedSkySummaryKeys } from "./skySummarySources";
 import { useEffect, useLayoutEffect, useRef, useState, type ReactNode } from "react";
 import { PageLoading, PageLoadError } from "../../components/PageLoading";
 import { skyDailySummaryParts, type SkyDailySummaryFacts, type SummaryPart } from "../../content/skyDailySummary";
-import { skyDailySummaryFields, skySummaryTemplateErrors } from "../../content/skyDailySummaryCatalog";
-import { moonSummaryKey, selectedMoonKind } from "../../content/skyMoonSummary";
-import { ingressSummaryKeys, skySummaryEventFacts } from "../../content/skySummaryEvents";
-import { contentPublication, publicationAllowsContent } from "../../content/contentPublicationState";
+import { skySummaryEventFacts } from "../../content/skySummaryEvents";
 import { contentPublicationsResolved, refreshContentPublications } from "../../services/contentPublications";
 import { loadLiveGeneratedContentForKeys, type LiveGeneratedContent } from "../../services/generatedContent";
 import { subscribeToContentUpdates, subscribeToContentRevalidation } from "../../services/contentUpdateSignal";
@@ -13,31 +12,6 @@ import { useSkySummarySettled } from "./SkyReadingLayout";
 
 type Content = Map<string, LiveGeneratedContent>;
 type LoadState = { key: string; content: Content; status: "loading" | "ready" | "error" };
-
-export function skySummarySourceKeys(facts: SkyDailySummaryFacts, events: LunarCalendarEvent[]) {
-  const kind = selectedMoonKind(facts.event);
-  const sun = kind === "regular" || facts.sunTransition ? facts.sun : facts.event?.sun ?? facts.sun;
-  const moon = kind === "regular" ? facts.moon : facts.event;
-  const common = skyDailySummaryFields.filter(field => !/^cms\/sky-daily-summary\/(sun|moon)\//u.test(field.key)).map(field => field.key);
-  return [...new Set([...common,
-    ...(sun?.sign ? [`cms/sky-daily-summary/sun/${sun.sign.toLowerCase()}`] : []),
-    ...(moon?.sign ? [moonSummaryKey(moon.sign, kind)] : []),
-    ...events.flatMap(ingressSummaryKeys)
-  ])].sort();
-}
-
-export function missingPublishedSkySummaryKeys(keys: readonly string[], content: Content) {
-  return keys.filter(key => {
-    const publication = contentPublication(key);
-    if (publication?.state !== "live") return false;
-    const row = content.get(key);
-    // The canonical loader has already checked LIVE/serving/review-clear;
-    // normalized LiveGeneratedContent does not always retain the status field.
-    return !row || !publicationAllowsContent(key, row.id, row.updatedAt, row.targetDate)
-      || Boolean(row.status && row.status !== "LIVE") || !row.body.trim()
-      || skySummaryTemplateErrors(key, row.body).length > 0;
-  });
-}
 
 /** Resolve sources before the first prose paint, independently of the broader
  * Sky map that is cleared while unrelated placements/aspects revalidate.

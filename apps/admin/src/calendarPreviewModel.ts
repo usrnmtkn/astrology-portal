@@ -70,6 +70,7 @@ export function calendarPreviewSourceKeys(period: SkyForecastPeriod, signs: stri
       `fallback-hook/zodiac-season/${slug}`,
       `fallback-hook/zodiac-season-polar-axis/${slug}`,
       `cms/sky-daily-summary/sun/${slug}`,
+      ...(!["cancer", "leo"].includes(slug) ? [`cms/sky-daily-summary/sun/${slug}/ruler-retrograde`] : []),
       `cms/sky-daily-summary/moon/${slug}/regular`,
       `cms/sky-daily-summary/moon/${slug}/newMoon`,
       `cms/sky-daily-summary/moon/${slug}/fullMoon`,
@@ -217,7 +218,7 @@ export function calendarPreviewValues({ sunSign, moonSign, calculation, rows, mo
   if (sunSign) {
     const parts = calculation ? calendarSunSummary(calculation.sky, content)
       : skyDailySummaryParts({ sun: { sign: sunSign }, moonIsVoid: false }, content, { openingOnly: true });
-    put("sunSummary", parts.map(part => part.text).join(""), "copy", `cms/sky-daily-summary/sun/${sunSign.toLowerCase()}`);
+    put("sunSummary", parts.map(part => part.text).join(""), "copy", parts.find(part => part.sourceKey?.startsWith("cms/sky-daily-summary/sun/"))?.sourceKey ?? `cms/sky-daily-summary/sun/${sunSign.toLowerCase()}`);
   }
   const moonPassages = calendarMoonPassages(rows, moonSign);
   const moon = moonPassages.find(row => row.content_key === moonKey) ?? moonPassages[0];

@@ -1,3 +1,4 @@
+import { sunSeasonKey, sunSeasonRetrograde, sunSeasonRuler } from "./skySunSeason";
 import { skySunSummaryExcerpt } from "./skySunSummaryExcerpt";
 import { validSummaryGeometry } from "./skySummaryGeometry";
 import { selectedMoonKind, moonEventNames, moonSummaryKey, moonSummaryBody } from "./skyMoonSummary";
@@ -176,8 +177,16 @@ export function skyDailySummaryParts(facts: SkyDailySummaryFacts, content?: CmsG
   for (const body of ["sun", "moon"] as const) {
     const placement = body === "moon" ? moonPlacement : sunPlacement;
     if (!placement?.sign) continue;
-    const sourceKey = body === "moon" ? moonSummaryKey(placement.sign, moonKind) : `cms/sky-daily-summary/sun/${placement.sign.toLowerCase()}`;
-    const fullClause = body === "moon" ? savedCopy(content, sourceKey, moonSummaryBody(placement.sign, moonKind), editorialPreview) : fullerClause(body, placement.sign, content, editorialPreview);
+    let sourceKey = body === "moon" ? moonSummaryKey(placement.sign, moonKind) : `cms/sky-daily-summary/sun/${placement.sign.toLowerCase()}`;
+    let fullClause = body === "moon" ? savedCopy(content, sourceKey, moonSummaryBody(placement.sign, moonKind), editorialPreview) : fullerClause(body, placement.sign, content, editorialPreview);
+    if (body === "sun" && sunSeasonRetrograde(placement.sign, facts.retrogradePlacements?.map(p => p.planet) ?? facts.retrogradePlanets)) {
+      const variantKey = sunSeasonKey(placement.sign, true);
+      const variant = savedCopy(content, variantKey, "", editorialPreview);
+      if (variant || (!editorialPreview && contentPublication(variantKey)?.state === "live")) {
+        sourceKey = variantKey;
+        fullClause = variant;
+      }
+    }
     // Apply the Sky excerpt before assembly normalizes sentence punctuation.
     // Saved content and the verified publication cache retain the full body.
     const clause = body === "sun" && sunSummaryLength === "short" ? skySunSummaryExcerpt(fullClause) : fullClause;
@@ -185,6 +194,13 @@ export function skyDailySummaryParts(facts: SkyDailySummaryFacts, content?: CmsG
     values[`${body}Sign`] = plain(placement.sign);
     values[`${body}Degree`] = plain(degreeText(placement.degree));
     values[`${body}Summary`] = clause ? [{ text: clause, sourceKey }] : [];
+    if (body === "sun" && clause.includes("{sunPlacement}")) {
+      const ruler = sunSeasonRuler(placement.sign) ?? "";
+      values.sunPassage = fillSkyTemplate(clause, {
+        sunPlacement: [{ text: `Sun in ${placement.sign}${degreeText(placement.degree)}`, action: "sun", emphasis: true }],
+        rulerName: plain(ruler.charAt(0).toUpperCase() + ruler.slice(1))
+      }).map(part => ({ ...part, sourceKey }));
+    }
   }
   const transition = facts.sunTransition;
   const hasSun = Boolean(values.sunName), hasMoon = Boolean(values.moonName);
@@ -192,6 +208,12 @@ export function skyDailySummaryParts(facts: SkyDailySummaryFacts, content?: CmsG
   let opening = transition
     ? hasMoon ? assembly.moonOnly : ""
     : hasSun && hasMoon ? assembly[openingKey] : hasSun ? assembly.sunOnly : assembly.moonOnly;
+  if (!transition && values.sunPassage) {
+    // Replace only the Sun unit; keep custom Moon assembly and the surrounding layout.
+    const sunUnit = /(?:^|(?<=\.\s))[^{}]*\{sunName\}[^{}]*\{sunSign\}[^{}]*\{sunDegree\}[^{}]*\{sunSummary\}\.?/u;
+    if (!sunUnit.test(opening)) throw new Error("Keep the Sun placement and summary together in the opening template.");
+    opening = opening.replace(sunUnit, "{sunPassage}");
+  }
   // Preserve the existing factual fallback when a summary is unavailable.
   if (!values.sunSummary?.length) opening = opening.replace("{sunName} in {sunSign}", "{sunName} is in {sunSign}");
   if (!values.moonSummary?.length) opening = opening.replace("{moonName} in {moonSign}", specialMoon ? "{moonName} is in {moonSign}" : "{moonName} moves through {moonSign}");

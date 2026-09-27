@@ -158,6 +158,9 @@ export function studioInventoryQuery(route: StudioInventoryRoute): StudioInvento
   if (route.page === "skyWriteups" && route.skyWriteupWorkspaceView === "transits-to-natal") {
     return prefixesQuery(STUDIO_PERSONAL_TRANSIT_PREFIXES);
   }
+  if (route.page === "skyWriteups" && route.skyWriteupWorkspaceView === "daily-summary") {
+    return prefixesQuery(["cms/sky-daily-summary/", "cms/sky-debility/"]);
+  }
   if (route.page === "skyWriteups") return prefixesQuery(STUDIO_SKY_WRITEUP_PREFIXES);
   if (route.page === "knowledge" && route.betweenYouTwoWorkspace) {
     return prefixesQuery(STUDIO_BETWEEN_YOU_TWO_PREFIXES);

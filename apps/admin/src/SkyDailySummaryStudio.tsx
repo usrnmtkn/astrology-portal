@@ -1,3 +1,4 @@
+import { sunSeasonHasRetrograde } from "../../web/src/content/skySunSeason";
 import { StudioButton, StudioInput } from "./StudioControls";
 import { AdminDisclosureSummary, AdminSelect } from "./AdminNativeControls";
 import { MetricCard } from "./studio-ds/patterns";
@@ -38,9 +39,11 @@ export function SkyDailySummaryStudio({ rows, onEdit, busy, focusSunSummaries = 
     return () => { active = false; };
   }, [bankAttempt]);
   const [sunSign, setSunSign] = useState("Virgo");
+  const [sunVersion, setSunVersion] = useState("standard");
+  const [sunFilter, setSunFilter] = useState("all");
   const [moonSign, setMoonSign] = useState("Cancer");
   const [moonKind, setMoonKind] = useState<MoonSummaryKind>("regular");
-  const composition = useMemo(() => buildSkySummaryComposition(sunSign, moonSign, rows, false, null, moonKind), [sunSign, moonSign, rows, moonKind]);
+  const composition = useMemo(() => buildSkySummaryComposition(sunSign, moonSign, rows, false, null, moonKind, sunVersion === "retrograde"), [sunSign, moonSign, rows, moonKind, sunVersion]);
   const openingKey = skySummaryOpeningKey(sunSign, moonSign, publishedSkySummaryContent(rows));
   const openingField = skyDailySummaryFields.find(field => field.key.endsWith(`/assembly/${openingKey}`))!;
   const openingBody = publishedSkySummaryContent(rows).get(openingField.key)?.body ?? openingField.body;
@@ -74,6 +77,7 @@ export function SkyDailySummaryStudio({ rows, onEdit, busy, focusSunSummaries = 
   const isIngress = group === "Ingress TLDRs";
   const ingressSource = isIngress ? publishedIngressTldr(rows, ingressPlanet, ingressSign) : undefined;
   const visible = (isIngress ? skyIngressSummaryFields.filter(field => field.label === `${ingressPlanet} enters ${ingressSign}`) : skyDailySummaryFields).filter(field => field.group !== "Assembly templates" && field.readerEnabled !== false && (group === "all" || field.group === group) && (field.group !== "Moon summaries" || field.key.endsWith(`/${moonKind}`))
+    && (field.group !== "Sun summaries" || field.key.endsWith("/ruler-retrograde") === (sunVersion === "retrograde") && (sunFilter === "all" || field.key.split("/")[3] === sunFilter.toLowerCase()))
     && `${field.label} ${field.body} ${importedSkySummary(field.key) ?? ""} ${rows.find(row => row.content_key === field.key)?.body ?? ""}`.toLowerCase().includes(query.toLowerCase()));
   return <section className="admin-daily-glance-studio" aria-label="Daily Sky Summary editor">
     <header className="admin-section-heading-row">
@@ -81,7 +85,7 @@ export function SkyDailySummaryStudio({ rows, onEdit, busy, focusSunSummaries = 
         <Text size="meta" tone="secondary">Sky Write-ups</Text>
         <h3>Daily Sky Summary</h3>
         <Text size="body">Edit the Sky overview and Calendar Sun summary. Signs, degrees, planet names, and timing come from the calculated sky.</Text>
-        <Text size="body">Start Sun and Moon summaries with a finite verb, such as “turns” or “brings”, without a final period. If no summary is published or included in the app, Sky shows the placement alone. Save & publish makes your edits live. Save draft keeps your changes for later.</Text>
+        <Text size="body">Sun templates use {"{sunPlacement}"}; existing clauses keep their opening. Moon clauses use a verb without a final period.</Text>
       </Stack>
     </header>
     <SkyWritingSystemDetails system="summary" />
@@ -108,6 +112,10 @@ export function SkyDailySummaryStudio({ rows, onEdit, busy, focusSunSummaries = 
         <label><span>Moon event</span><AdminSelect aria-label="Composition Moon event" value={moonKind} onChange={event => { const kind = event.target.value as MoonSummaryKind; setMoonKind(kind); if (kind !== "regular") setMoonSign(pairedSummarySign(sunSign, kind)); }}>
           {Object.entries(moonEventNames).map(([kind, name]) => <option key={kind} value={kind}>{name}</option>)}
         </AdminSelect></label>
+        <label><span>Sun ruler preview</span><AdminSelect aria-label="Sun ruler preview" value={sunSeasonHasRetrograde(sunSign) ? sunVersion : "standard"} onChange={event => setSunVersion(event.target.value)}>
+          <option value="standard">Standard example</option>
+          {sunSeasonHasRetrograde(sunSign) && <option value="retrograde">Ruler retrograde example</option>}
+        </AdminSelect></label>
       </div>
       {moonKind !== "regular" && <p role="status">{moonKind === "newMoon" || moonKind === "solarEclipse" ? "The Sun and Moon share a sign at this event." : "The Sun and Moon occupy opposite signs at this event."} Changing either sign updates the other.</p>}
       <div className="admin-composition-variable-legend" aria-label="Composition color key">
@@ -118,7 +126,7 @@ export function SkyDailySummaryStudio({ rows, onEdit, busy, focusSunSummaries = 
           <div className="admin-composition-preview-chrome"><span>Sun + Moon</span><span>Reader preview</span></div>
           <div className="admin-template-reader-copy">
             <section className="admin-composition-preview-field field-body">
-              {composition.sources.some(source => !source.copy) ? <p aria-label="Combined Sun and Moon preview">{composition.parts.map((part, index) => <span key={index} className={part.action ? "admin-composition-variable variable-fact" : undefined}>{part.text}</span>)}</p>
+              {composition.sources.some(source => !source.copy || source.copy.includes("{sunPlacement}")) ? <p aria-label="Combined Sun and Moon preview">{composition.parts.map((part, index) => <span key={index} className={part.action ? "admin-composition-variable variable-fact" : undefined}>{part.text}</span>)}</p>
                 : <SkyInlineTemplate key={openingBody} field={openingField} body={openingBody} slots={slots} onEdit={onEdit} busy={busy} label="Combined Sun and Moon preview" />}
             </section>
           </div>
@@ -138,6 +146,15 @@ export function SkyDailySummaryStudio({ rows, onEdit, busy, focusSunSummaries = 
         <option value="all">Sun, Moon, and timing</option>
         {["Sun summaries", "Moon summaries", "Timing and retrogrades", "Ingress TLDRs"].map(value => <option key={value}>{value}</option>)}
       </AdminSelect></label>
+      {group === "Sun summaries" && <>
+        <label><span>Sun sign</span><AdminSelect aria-label="Sun passage sign" value={sunFilter} onChange={event => { setSunFilter(event.target.value); if (!sunSeasonHasRetrograde(event.target.value) && event.target.value !== "all") setSunVersion("standard"); }}>
+          <option value="all">All signs</option>{skySummarySigns.map(sign => <option key={sign}>{sign}</option>)}
+        </AdminSelect></label>
+        <label><span>Version</span><AdminSelect aria-label="Sun passage version" value={sunVersion} onChange={event => setSunVersion(event.target.value)}>
+          <option value="standard">Standard</option>
+          {(sunFilter === "all" || sunSeasonHasRetrograde(sunFilter)) && <option value="retrograde">Ruler retrograde</option>}
+        </AdminSelect></label>
+      </>}
       {isIngress && <>
         <label><span>Ingress planet or point</span><AdminSelect aria-label="Ingress planet or point" value={ingressPlanet} onChange={event => setIngressPlanet(event.target.value)}>
           {skyIngressBodies.map(planet => <option key={planet}>{planet}</option>)}
@@ -158,7 +175,7 @@ export function SkyDailySummaryStudio({ rows, onEdit, busy, focusSunSummaries = 
         return <article key={field.key} aria-label={field.label}>
           <div>
             <strong>{field.label}</strong>
-            <p>{(saved?.body ? currentSkySummaryWording(field.key, saved.body) : undefined) ?? ingressSource?.summary ?? (field.body || importedSkySummary(field.key) || (isIngress ? "No ingress TLDR added here. Add your wording, or open an existing ingress write-up to edit its TLDR." : "No summary added. Sky shows the calculated placement."))}</p>
+            <p>{(saved?.body ? currentSkySummaryWording(field.key, saved.body) : undefined) ?? ingressSource?.summary ?? (field.body || importedSkySummary(field.key) || (field.key.endsWith("/ruler-retrograde") ? "No retrograde version. Readers use Standard." : isIngress ? "No ingress TLDR added here. Add your wording, or open an existing ingress write-up to edit its TLDR." : "No summary added. Sky shows the calculated placement."))}</p>
             {source && <p><span>Source status: {saved?.body && saved.body !== source.body ? "Owner edit" : source.status}</span>{source.sources.map(url => <span key={url}> · <a href={url} target="_blank" rel="noreferrer">Source URL</a></span>)}</p>}
             <ContentLiveStatusBadge row={saved ?? ingressSource ?? (isIngress ? {} : { id: `builtin:${field.key}` })} />
             {candidate && candidate.body !== currentBody && <details className={`${containedDisclosure} admin-workspace-details`}>

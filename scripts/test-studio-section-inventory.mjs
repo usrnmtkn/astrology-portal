@@ -117,3 +117,8 @@ assert.match(api, /Request one contentKeyPrefix per inventory page/u);
 assert.match(api, /if \(!id && mode\) \{\s*params\.set\("mode", `eq\.\$\{mode\}`\)/u);
 
 console.log("Content Studio section-first compact inventory contract passed.");
+
+const summaryInventory = studioInventoryQuery({ page: "skyWriteups", skyWriteupWorkspaceView: "daily-summary" });
+for (const key of ["cms/sky-daily-summary/sun/libra", "cms/sky-daily-summary/sun/libra/ruler-retrograde", "cms/sky-daily-summary/assembly/opening", "cms/sky-debility/test"]) {
+  assert.ok(summaryInventory.prefixes.some(prefix => key.startsWith(prefix)), `Direct summary entry must hydrate ${key}`);
+}
