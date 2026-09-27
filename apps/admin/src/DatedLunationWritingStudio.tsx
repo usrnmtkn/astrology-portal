@@ -188,8 +188,8 @@ export default function DatedLunationWritingStudio({secret,dirtyRef,onOpenConten
       </>}
       {writing.active&&<div ref={progress} tabIndex={-1} aria-label="Article generation progress"><Stack gap="sm">
         <p role="status">{error?'Progress checks paused.':writing.active.responseId?'Writing your article…':'Confirming your writing request…'}</p>
-        <Text>Your request is saved. You can leave this page and return; Studio will retrieve the same draft without starting another generation.</Text>
-        <Text size="meta">Elapsed time: {Math.floor(elapsed/60)}m {elapsed%60}s. {error?'Use Check again to retrieve the same request.':'Checking automatically. This can take several minutes.'}</Text>
+        <Text>{writing.active.responseId?'Your request is saved. You can leave this page and return; Studio will retrieve the same draft without starting another generation.':'Your writing request is awaiting confirmation. Use Check again to check its saved status before retrying generation.'}</Text>
+        <Text size="meta">Elapsed time: {Math.floor(elapsed/60)}m {elapsed%60}s. {error||!writing.active.responseId?'Use Check again to check the saved request.':'Checking automatically. This can take several minutes.'}</Text>
         {error&&<p role="alert">{error}</p>}
         {(error||!writing.active.responseId)&&<StudioButton disabled={busy} onClick={()=>void run(async()=>{
           await refresh();setPollRetry(value=>value+1);
