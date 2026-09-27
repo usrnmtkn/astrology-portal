@@ -43,6 +43,7 @@ globalThis.fetch = async (input: any, options: any = {}) => {
  const reader = await readerRouteResponse(input, options); if (reader) return reader;
  const url = new URL(String(input));
  if (url.origin !== 'https://calendar-api.invalid') throw new Error('Fixture refuses external storage');
+ if (process.env.LUNAR_WRITER_FIXTURE === '1' && url.pathname === '/rest/v1/studio_writing_feedback') return Response.json([]);
  if (url.pathname === '/rest/v1/content_publications') return Response.json(fixturePublications([...store.rows.values()]));
  if (url.pathname !== '/rest/v1/generated_interpretations') throw new Error(`Unexpected storage path ${url.pathname}`);
  const found = [...store.rows.values()].filter(row => matches(row, url.searchParams));
@@ -100,6 +101,12 @@ export function installHoroscopeWriterFixture(){
 if(process.env.HOROSCOPE_WRITER_FIXTURE==='1')installHoroscopeWriterFixture();
 if (process.send) process.on('message', async ({ id, method, body, url }: any) => {
  try {
+  if (method === 'lunar-writing') {
+    const handler = (await import('../../api/admin/calendar-lunation-writing')).default;
+    const req:any=Readable.from([JSON.stringify(body)]);req.method='POST';req.url='/api/admin/calendar-lunation-writing';req.headers={'x-content-generation-secret':'calendar-api-fixture'};
+    const res:any={statusCode:200,setHeader(){},end(raw:string){this.payload=JSON.parse(raw);}};
+    await handler(req,res);process.send!({id,result:{status:res.statusCode,payload:res.payload}});return;
+  }
   if (method === 'writing') { process.send!({id,result:await invokeHoroscopeWriting(body)});return; }
   if (method === 'reader') { const response = await readerRouteResponse('/api/content-reader',{method:'POST',body:JSON.stringify(body)}); process.send!({id,result:{status:response.status,payload:await response.json()}}); return; }
   process.send!({ id, result: method === 'rows' ? [...store.rows.values()] : await store.invoke(method, body, url) });

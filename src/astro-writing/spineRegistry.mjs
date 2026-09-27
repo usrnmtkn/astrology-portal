@@ -29,6 +29,12 @@ export const SPINE_USAGE_POLICY = Object.freeze({
 });
 
 export const CONTENT_SPINES = Object.freeze({
+  lunations: Object.freeze({
+    id: "calendar-lunation-v1", status: "recorded", ownerApproved: false,
+    source: "docs/writing/CALENDAR_LUNATION_WRITER.md",
+    satisfactionMode: "semantic_coverage_not_sentence_or_paragraph_template",
+    fields: Object.freeze(["phase_context", "sign_meaning", "intention_or_reflection", "recognizable_possibility", "journal_question"])
+  }),
   horoscope: Object.freeze({
     id: 'horoscope-forecast-v1', status: 'recorded', ownerApproved: false,
     source: 'docs/writing/ASTROLOGY_CONTRACT.md#forecast-first-horoscope-template',
@@ -85,7 +91,7 @@ export const SPINE_COVERAGE = Object.freeze([
   Object.freeze({ family: "slow-mover-article", status: "recorded", spineId: "sky-placement-article-slow-mover-v1" }),
   Object.freeze({ family: "fast-mover-article", status: "recorded", spineId: "sky-placement-article-fast-mover-v1" }),
   Object.freeze({ family: "cards", status: "missing" }),
-  Object.freeze({ family: "lunations", status: "missing" }),
+  Object.freeze({ family: "lunations", status: "recorded", spineId: "calendar-lunation-v1" }),
   Object.freeze({ family: "aspects", status: "missing" }),
   Object.freeze({ family: "house-cores", status: "missing" })
 ]);

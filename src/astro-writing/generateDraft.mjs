@@ -11,6 +11,8 @@ import { assertSurfaceRegisterContract } from "./surfaceRegisterContract.mjs";
 import { effectiveRulePrompt } from "./effectiveRuleGovernance.mjs";
 import { resolveStudioWritingProfile } from "./studioWritingProfileReceipt.mjs";
 import { buildHoroscopeDraftInput, horoscopeDraftSchema } from './horoscopeDraftInput.mjs';
+import { buildLunationDraftInput, LUNATION_DRAFT_SCHEMA } from './lunationDraftInput.mjs';
+import { assertLunationWritingFacts } from './lunationWritingFacts.mjs';
 
 export const PLACEMENT_DRAFT_SCHEMA = Object.freeze({
   type: "object",
@@ -124,6 +126,7 @@ export function buildDraftInput({
   writingProfile = null
 }) {
   if (family === 'horoscope') return buildHoroscopeDraftInput({plan,context,task,target,engineFacts,argumentOutline,spine,writingProfile});
+  if (family === 'lunations') return buildLunationDraftInput({plan,context,task,target,engineFacts,argumentOutline,spine,writingProfile});
   const sections = [
     `TASK\n${String(task ?? "Write one TLDR Astro passage.").trim()}`,
     ...(writingProfile ? [`CONTENT STUDIO EDITORIAL INSTRUCTIONS\n${resolveStudioWritingProfile(writingProfile).prompt}\nThese editorial instructions do not replace the fact boundary, evidence requirements, output schema or owner approval.`] : []),
@@ -205,10 +208,11 @@ export async function generateDraft({
 }) {
   if (typeof modelClient !== "function") throw new Error("generateDraft requires an injected modelClient; no implicit billed call is allowed.");
   const resolvedTarget = assertSurfaceRegisterContract(target, { surface, register });
+  if (family === 'lunations') assertLunationWritingFacts(engineFacts, { plan, target: resolvedTarget });
   assertArgumentOutlineApproved(argumentOutline, { plan, family, surface });
   if (!spine || spine.status !== "recorded") throw new Error(`RECORDED_CONTENT_SPINE_REQUIRED:${family}`);
   const role = isCardWritingSurface({ surface, family }) ? "CARD_WRITER_V3" : "WRITER";
-  const resolvedSchema = schema ?? (family === 'horoscope' ? horoscopeDraftSchema(engineFacts?.risingSign) : family === "fast-mover-article"
+  const resolvedSchema = schema ?? (family === 'lunations' ? LUNATION_DRAFT_SCHEMA : family === 'horoscope' ? horoscopeDraftSchema(engineFacts?.risingSign) : family === "fast-mover-article"
     ? FAST_MOVER_ARTICLE_DRAFT_SCHEMA
     : family === "slow-mover-article"
       ? SLOW_MOVER_ARTICLE_DRAFT_SCHEMA

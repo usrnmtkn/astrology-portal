@@ -27,6 +27,8 @@ import geminiInteractions from "../src/astro-writing/geminiInteractions.cjs";
 import localProviderKeys from "../src/astro-writing/localProviderKeys.cjs";
 import offlineProviderConfig from "../src/astro-writing/offlineProviderConfig.cjs";
 import openAIResponses from "../src/astro-writing/openAIResponses.cjs";
+import { prepareLunationWriting, lunationWritingTarget } from "../src/astro-writing/lunationWriting.mjs";
+import { lunationDigest } from "../src/astro-writing/lunationWritingFacts.mjs";
 
 const { callGeminiInteractions } = geminiInteractions;
 const { readLocalProviderKeys } = localProviderKeys;
@@ -41,6 +43,13 @@ function argValue(name) {
 
 function readJsonl(filePath) {
   return fs.readFileSync(filePath, "utf8").trim().split("\n").filter(Boolean).map(JSON.parse);
+}
+
+function writePrivateJson(filePath, value) {
+  const resolved = path.resolve(filePath);
+  fs.mkdirSync(path.dirname(resolved), { recursive: true, mode: 0o700 });
+  fs.writeFileSync(resolved, `${JSON.stringify(value, null, 2)}\n`, { mode: 0o600 });
+  fs.chmodSync(resolved, 0o600);
 }
 
 function outputText(payload) {
@@ -79,7 +88,7 @@ async function providerResponse({ request, config, apiKeys }) {
   if (!response.ok) throw new Error(payload.error?.message ?? `OpenAI ${stage} failed with ${response.status}.`);
   const text = outputText(payload);
   if (!text) throw new Error(`OpenAI ${stage} returned no structured output.`);
-  return { text, usage: payload.usage ?? null };
+  return { text, usage: payload.usage ?? null, responseId: payload.id ?? null };
 }
 
 function modelClient(config, apiKeys, forceRole = null) {
@@ -92,6 +101,7 @@ function modelClient(config, apiKeys, forceRole = null) {
     });
     const text = typeof providerResult === "string" ? providerResult : providerResult.text;
     client.lastUsage = providerResult?.usage ?? null;
+    client.lastResponseId = providerResult?.responseId ?? null;
     return JSON.parse(text.replace(/^```json\s*|```\s*$/gu, ""));
   };
   client.provider = config.provider;
@@ -110,6 +120,9 @@ const transmittedPacketPath = argValue("--packet-out");
 if (!requestPath || !outputPath) throw new Error("Usage: node scripts/run-astro-writing-harness.mjs --request request.json --out result.json [--writing-profile saved-profile.json] [--authorize-live]");
 
 const request = JSON.parse(fs.readFileSync(path.resolve(requestPath), "utf8"));
+const lunationPreparation = request.family === 'lunations' ? prepareLunationWriting(request) : null;
+if (lunationPreparation) Object.assign(request, { meaningInput: lunationPreparation.meaningInput,
+  target: lunationWritingTarget, family: 'lunations', surface: 'calendar-lunation', register: 'second_person' });
 const writingProfilePath = argValue("--writing-profile");
 if (writingProfilePath) {
   if (request.writingProfile) throw new Error("Choose one writing profile: in the request or via --writing-profile.");
@@ -193,28 +206,25 @@ const sceneEvidence = sceneEvidenceForTarget({
   sceneNounLexicon: matrixSceneNounLexicon(matrixEvidenceRows),
   plan: await resolveAstrology(request.meaningInput)
 });
+const contextOptions = lunationPreparation?.contextOptions ?? {
+  examples, matrixExamples, matrixArgumentCandidates: matrixRoleEvidence.argument_candidate,
+  matrixEvidenceAvailableCount: matrixExamples.length,
+  relevantOwnerPassagesAvailableCount: relevantOwnerEvidence.counts.selected,
+  ownerPassageRelevanceTier: relevantOwnerEvidence.tier,
+  sceneExamples: sceneEvidence.selected, samePlanetSignSceneAvailableCount: sceneEvidence.counts.samePlanetSignSceneAvailable,
+  sceneEvidenceInventoryCounts: sceneEvidence.counts, registerGoldExamples, corrections, phraseEvidence
+};
 if (willDraft) {
   const plan = await resolveAstrology(request.meaningInput);
   let context = null;
   try {
     context = retrieveOwnerContext(plan, {
-      examples,
-      matrixExamples,
-      matrixArgumentCandidates: matrixRoleEvidence.argument_candidate,
-      matrixEvidenceAvailableCount: matrixExamples.length,
-      relevantOwnerPassagesAvailableCount: relevantOwnerEvidence.counts.selected,
-      ownerPassageRelevanceTier: relevantOwnerEvidence.tier,
-      sceneExamples: sceneEvidence.selected,
-      samePlanetSignSceneAvailableCount: sceneEvidence.counts.samePlanetSignSceneAvailable,
-      sceneEvidenceInventoryCounts: sceneEvidence.counts,
+      ...contextOptions,
       argumentSource: request.argumentSource,
-      registerGoldExamples,
-      corrections,
       contentFamily: request.family,
       register: request.register,
       excludedEvidenceContentKeys: request.excludedEvidenceContentKeys,
-      preferredEvidenceContentKeys: request.preferredEvidenceContentKeys,
-      phraseEvidence
+      preferredEvidenceContentKeys: contextOptions.preferredEvidenceContentKeys ?? request.preferredEvidenceContentKeys
     });
     assertPositiveOwnerEvidenceContext(context, { family: request.family });
   } catch (error) {
@@ -233,8 +243,7 @@ if (willDraft) {
       ownerStatus: "PENDING OWNER",
       approvalEffect: "none"
     };
-    fs.mkdirSync(path.dirname(path.resolve(outputPath)), { recursive: true });
-    fs.writeFileSync(path.resolve(outputPath), `${JSON.stringify(failed, null, 2)}\n`);
+    writePrivateJson(outputPath, failed);
     console.log(JSON.stringify(failed.report, null, 2));
     process.exit(0);
   }
@@ -251,21 +260,12 @@ for (const config of willDraft ? [writerConfig] : []) {
 const writerClient = willDraft ? modelClient(writerConfig, apiKeys) : null;
 const result = await runWritingPipeline({
   ...request,
-  examples,
-  matrixExamples,
-  matrixArgumentCandidates: matrixRoleEvidence.argument_candidate,
-  matrixEvidenceAvailableCount: matrixExamples.length,
-  relevantOwnerPassagesAvailableCount: relevantOwnerEvidence.counts.selected,
-  ownerPassageRelevanceTier: relevantOwnerEvidence.tier,
-  sceneExamples: sceneEvidence.selected,
-  samePlanetSignSceneAvailableCount: sceneEvidence.counts.samePlanetSignSceneAvailable,
-  sceneEvidenceInventoryCounts: sceneEvidence.counts,
+  ...contextOptions,
   argumentSource: request.argumentSource,
-  registerGoldExamples,
-  corrections,
-  phraseEvidence,
   writerClient
 });
+if (lunationPreparation) result.preparation = { ...lunationPreparation.receipt,
+  evidence: lunationPreparation.context, engineFacts: request.engineFacts };
 if (result.report && writerClient?.lastUsage) result.report.modelUsage = writerClient.lastUsage;
 if (result.report && transmittedPacketPath && writerClient?.lastRequest) {
   const packetRecord = {
@@ -276,10 +276,12 @@ if (result.report && transmittedPacketPath && writerClient?.lastRequest) {
     maxOutputTokens: writerConfig.maxOutputTokens,
     reviewerCalls: 0,
     retries: 0,
+    responseId: writerClient.lastResponseId,
+    requestSha256: lunationDigest(writerClient.lastRequest),
+    outputSha256: lunationDigest(result.draft),
     request: writerClient.lastRequest
   };
-  fs.mkdirSync(path.dirname(path.resolve(transmittedPacketPath)), { recursive: true });
-  fs.writeFileSync(path.resolve(transmittedPacketPath), `${JSON.stringify(packetRecord, null, 2)}\n`);
+  writePrivateJson(transmittedPacketPath, packetRecord);
   result.report.transmittedPacket = path.relative(repoRoot, path.resolve(transmittedPacketPath));
 }
 result.ownerStatus = "PENDING OWNER";
@@ -289,6 +291,5 @@ result.candidateHistory = {
   ownerStatus: "PENDING OWNER",
   approvalEffect: "none"
 };
-fs.mkdirSync(path.dirname(path.resolve(outputPath)), { recursive: true });
-fs.writeFileSync(path.resolve(outputPath), `${JSON.stringify(result, null, 2)}\n`);
+writePrivateJson(outputPath, result);
 console.log(JSON.stringify(result.report, null, 2));

@@ -8,6 +8,7 @@ import { buildArgumentOutline, assertArgumentOutlineApproved } from "./argumentG
 import { getContentSpine, assertContentSpine } from "./spineRegistry.mjs";
 import { assertPositiveOwnerEvidenceContext, OwnerEvidencePreconditionError } from "./ownerEvidencePolicy.mjs";
 import { assertSurfaceRegisterContract } from "./surfaceRegisterContract.mjs";
+import { assertLunationWritingFacts, lunationDraftFactFindings } from "./lunationWritingFacts.mjs";
 
 export function failedRetrievalResult({ plan, context, argumentOutline, spine, error }) {
   return {
@@ -81,7 +82,8 @@ export async function runWritingPipeline({
 }) {
   const resolvedTarget = assertSurfaceRegisterContract(target, { surface, register });
   const plan = await resolveAstrology(meaningInput, { plannerClient });
-  const resolvedRequiredFields = requiredFields ?? (family === 'horoscope' ? ['headline','body'] : ["fast-mover-article", "slow-mover-article"].includes(family)
+  if (family === 'lunations') assertLunationWritingFacts(engineFacts, { plan, target: resolvedTarget });
+  const resolvedRequiredFields = requiredFields ?? (family === 'lunations' ? ['body','journalPrompt'] : family === 'horoscope' ? ['headline','body'] : ["fast-mover-article", "slow-mover-article"].includes(family)
     ? ["opening", "tension", "development", "close"]
     : ["tagline", "hook", "lived", "turn"]);
   const pendingOutline = buildArgumentOutline(argumentInput, { plan, family, surface });
@@ -200,6 +202,7 @@ export async function runWritingPipeline({
       ? ["planet", "condition", "handoff", "thesis", "failure_mechanism", "close"]
       : []
   });
+  if (family === 'lunations') rawLint.violations.push(...lunationDraftFactFindings(draft, engineFacts));
   const lint = governValidationResult(rawLint, { surface, family });
   const billedCalls = writerClient?.billed === true ? 1 : writerClient?.billed === false ? 0 : null;
   const failureCategories = [...new Set(lint.violations.map((item) => item.category))];

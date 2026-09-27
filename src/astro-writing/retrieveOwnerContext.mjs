@@ -29,6 +29,7 @@ function overlapScore(entry, plan) {
 
 function registerFamilyMatchesTarget(entry, plan, contentFamily) {
   const family = String(entry?.sourceFamily ?? entry?.family ?? "");
+  if (contentFamily === 'lunations') return family === 'sky-lunation';
   if (contentFamily === 'horoscope' && ['weekly-astrology','sky-season','sky-lunation'].includes(family)) return true;
   const object = String(plan?.object ?? "").toLowerCase();
   if (family === "sky-lunation") return false;
@@ -110,7 +111,7 @@ export function retrieveOwnerContext(plan, {
   const relevanceMatches = (entry) => ownerPassageRelevanceTier !== "none"
     && (
       String(entry.sign ?? "").trim().toLowerCase() === targetSign
-      || String(entry.planet ?? "").trim().toLowerCase() === targetPlanet
+      || (contentFamily !== 'lunations' && String(entry.planet ?? "").trim().toLowerCase() === targetPlanet)
     );
   const requiredRelevant = Math.min(
     policy.minimumRelevantOwnerPassages,
@@ -177,9 +178,16 @@ export function retrieveOwnerContext(plan, {
     failureCategories
   });
   const phraseSelection = selectPhraseEvidence(plan, phraseEvidence);
+  const selectedReviewedMeaning = ["horoscope", "lunations"].includes(contentFamily)
+    ? reviewedMeaningExamples.filter(entry => entry.status === "REVIEWED_CLAUSE"
+      && entry.sourceKind === "reviewed-doctrine" && entry.ownerApproved === false && entry.ownerAuthored === false
+      && entry.planet === targetPlanet && entry.text?.trim()
+      && (entry.sign === targetSign || (contentFamily === "lunations" && entry.meaningScope === "lunar-phase"
+        && entry.eventType === plan.eventType)))
+    : [];
   const context = {
     examples: [...selectedMatrix, ...selectedSameFamily, ...selectedRegisterGold, ...selectedScenes],
-    reviewedMeaningExamples: contentFamily === "horoscope" ? reviewedMeaningExamples.filter(e => e.status === "REVIEWED_CLAUSE" && e.sourceKind === "reviewed-doctrine" && e.ownerApproved === false && e.ownerAuthored === false && e.planet === targetPlanet && e.sign === targetSign && e.text?.trim()) : [],
+    reviewedMeaningExamples: selectedReviewedMeaning,
     knowledgeMatrixExamples: selectedMatrix,
     knowledgeMatrixArgumentCandidates: selectedMatrixArguments,
     sceneExamples: selectedScenes,

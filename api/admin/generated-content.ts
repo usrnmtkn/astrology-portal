@@ -2,7 +2,6 @@ import { handleStudioVariables, StudioVariableError, snapshotStudioVariables, as
 import { handleStudioWritingProfiles } from "../_lib/studio-writing-profiles.js";
 import { prepareHoroscopeBrief, assertHoroscopeRow } from "../_lib/horoscope-editions.js";
 import { AdminHttpError } from "../_lib/admin-http.js";
-import { HOROSCOPE_PROFILE_PREFIX } from "../../src/astro-writing/horoscopeWritingProfiles.mjs";
 import { mergeGeneratedInterpretationSections } from "../_lib/generated-interpretation-sections.js";
 import { approveNatalAspectStudioCopy } from "../_lib/content-studio-approval.js";
 import type { IncomingMessage, ServerResponse } from "node:http";
@@ -1182,7 +1181,7 @@ const generatedContentOwnerActions = new Set([
 ]);
 
 function validateWriteBody(body: Record<string, unknown>) {
-  if (String(body.contentKey ?? "").startsWith(HOROSCOPE_PROFILE_PREFIX)) throw new GeneratedContentRequestError("Manage writing profiles in AI Writing.");
+  if (String(body.contentKey ?? "").startsWith("studio-writing-profile/")) throw new GeneratedContentRequestError("Manage writing profiles in their Studio writing workspace.");
   if (String(body.contentKey ?? "").startsWith(libs().STUDIO_VARIABLE_PREFIX)) throw new GeneratedContentRequestError("Manage this definition in Variables.");
   try { libs().assertCleanReaderCopy(body); } catch (error) {
     throw new GeneratedContentRequestError((error as Error).message);
@@ -2339,7 +2338,7 @@ async function updateGeneratedContent(req: IncomingMessage) {
     throw new GeneratedContentRequestError('A horoscope reading is running. Resume generation before editing or publishing this edition.', 409);
   }
   if (existing.content_key.startsWith(libs().STUDIO_VARIABLE_PREFIX)) throw new GeneratedContentRequestError("Manage this definition in Variables.");
-  if (existing.content_key.startsWith(HOROSCOPE_PROFILE_PREFIX)) throw new GeneratedContentRequestError("Manage writing profiles in AI Writing.");
+  if (existing.content_key.startsWith("studio-writing-profile/")) throw new GeneratedContentRequestError("Manage writing profiles in their Studio writing workspace.");
   await prepareStudioVariables(body);
   existing = await recoverPublishedSkyRevision(existing, body);
   const isPackageRow = isFallbackArchitectureV3Row(existing);
@@ -3094,7 +3093,7 @@ async function deleteGeneratedContent(req: IncomingMessage) {
     throw new GeneratedContentRequestError('A horoscope reading is running. Retrieve or release that request before deleting the edition.', 409);
   }
   if (existing.content_key.startsWith(libs().STUDIO_VARIABLE_PREFIX)) throw new GeneratedContentRequestError("Manage this definition in Variables.");
-  if (existing.content_key.startsWith(HOROSCOPE_PROFILE_PREFIX)) throw new GeneratedContentRequestError("Manage writing profiles in AI Writing.");
+  if (existing.content_key.startsWith("studio-writing-profile/")) throw new GeneratedContentRequestError("Manage writing profiles in their Studio writing workspace.");
   if (existing.status === "LIVE") {
     throw new GeneratedContentRequestError("Published rows cannot be hard-deleted. Demote or archive the row first.", 409);
   }

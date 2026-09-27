@@ -7,6 +7,9 @@ export function callOpenAIResponses<T = Record<string, unknown>>(options: {
   role: AstrologyProseRole;
   request: Record<string, unknown>;
   taskInstructions?: string;
+  governedInstructions?: string;
+  surface?: string;
+  family?: string;
   fetchImpl?: typeof fetch;
 }): Promise<{
   response: Response;
