@@ -31,7 +31,7 @@ export function prepareLunationArticle(facts,direction='',{writingProfile=null,p
   const voice=JSON.parse(read('packages/astro-knowledge/voice/tldr-astro/satori-writer/voice-index.json'));
   const examples=withoutOwnerRejectedEvidence(voice.entries,corrections).filter(e=>e.surface==='sky-lunation'
     &&e.authorityClass==='owner_authored_final'&&e.ownerApproved===true&&e.ownerAuthored===true&&e.useAsPositiveVoiceEvidence===true
-    &&e.structuralFunction==='article paragraph'&&e.text?.length>=80)
+    &&e.structuralFunction==='article paragraph'&&e.text?.trim())
     .map(e=>({...e,id:e.sourceId,contentKey:e.sourceId,family:e.surface,register:/\b(?:you|your)\b/iu.test(e.text)?'second_person':'collective'}));
   const gold=examples.find(e=>e.sign===sign&&e.sourceId.includes(phase))??examples.find(e=>e.sourceId.includes(phase));
   if(!gold)throw new Error('Eligible owner lunation writing is unavailable.');
@@ -78,7 +78,8 @@ export function prepareLunationArticle(facts,direction='',{writingProfile=null,p
   const outline=buildArgumentOutline(argumentInput,{plan,family,surface:family});
   const context=retrieveOwnerContext(plan,{...contextOptions,contentFamily:family,register:'second_person'});
   try{assertPositiveOwnerEvidenceContext(context,{family});}catch(error){if(error.code!=='OWNER_EVIDENCE_ROLE_MISSING'||error.detail?.role!=='argument')throw error;}
-  const planHash=lunationArticleHash({version:LUNATION_ARTICLE_PROTOCOL_VERSION,protocol:lunationArticleGuidance,facts,outline,sources,writingProfile,feedbackReceipt});
+  const voiceSelection=context.sameFamilyExamples.map(e=>({id:e.id,sha256:lunationArticleHash(e.text)}));
+  const planHash=lunationArticleHash({version:LUNATION_ARTICLE_PROTOCOL_VERSION,protocol:lunationArticleGuidance,facts,outline,sources,voiceSelection,writingProfile,feedbackReceipt});
   return {writingProfile,feedbackReceipt,facts,eventMeaning,meaningInput,argumentInput,outline,contextOptions,context,sources,planHash,direction,
     preview:{planHash,title:facts.event.title,event:facts.event,positions:facts.positions,rulers:facts.rulers,contacts:facts.contacts,
       argument:outline,writingProfile,corrections:privateCorrections,voiceSources:context.sameFamilyExamples.map(e=>({id:e.id,text:e.text,sourcePath:e.sourcePath})),protocol:lunationArticleGuidance}};
