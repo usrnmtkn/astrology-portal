@@ -1,7 +1,7 @@
 import {createHash,createHmac, timingSafeEqual} from 'node:crypto';
 import {AdminHttpError} from './admin-http.js';
 import {zonedDateTimeToUtc} from '../../apps/web/src/services/timezones.js';
-import {HOROSCOPE_PERIODS, HOROSCOPE_SIGNS, HOROSCOPE_EDITION_PREFIX, validateHoroscopeEdition, validateHoroscopeWindow, isHoroscopeEditionKey, horoscopeEditionBody, horoscopeCanonicalJson} from '../../apps/web/src/content/horoscopeEditions.mjs';
+import {HOROSCOPE_PERIODS, HOROSCOPE_SIGNS, HOROSCOPE_EDITION_PREFIX, validateHoroscopeEdition, validateHoroscopeWindow, isHoroscopeEditionKey, horoscopeEditionBody, horoscopeCanonicalJson, canonicalHoroscopeTimeZone} from '../../apps/web/src/content/horoscopeEditions.mjs';
 
 import {validateHoroscopeReading} from '../../src/astro-writing/horoscopeValidation.mjs';
 
@@ -20,7 +20,9 @@ export function horoscopeCivilWindow(period: string, date: string, timeZone: str
   return {start, end:addDays(start, period === 'weekly' ? 7 : 1)};
 }
 export async function prepareHoroscopeBrief(url: URL) {
-  const period = url.searchParams.get('period') ?? 'weekly', date = url.searchParams.get('date') ?? '', timeZone = url.searchParams.get('timeZone') ?? 'America/New_York';
+  const period = url.searchParams.get('period') ?? 'weekly', date = url.searchParams.get('date') ?? '', requestedZone = url.searchParams.get('timeZone') ?? 'America/New_York';
+  let timeZone:string;
+  try {timeZone=canonicalHoroscopeTimeZone(requestedZone);} catch {throw new AdminHttpError(400,'Choose a valid time zone.');}
   const civil = horoscopeCivilWindow(period,date,timeZone);
   const reference = zonedDateTimeToUtc(date,'12:00 PM',timeZone);
   const {getAstrodienstSky,getSkyPlacementTransitFacts,getLunarCalendarRangeEvents} = await import('../../apps/web/src/services/ephemeris.js');

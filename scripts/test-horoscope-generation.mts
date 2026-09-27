@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import {store,installHoroscopeWriterFixture,invokeHoroscopeWriting,writerFixture} from '../tests/helpers/sky-article-save-api.mts';
-import {emptyHoroscopeEdition,horoscopeEditionBody,horoscopeEditionKey,horoscopeEditionAt} from '../apps/web/src/content/horoscopeEditions.mjs';
+import {emptyHoroscopeEdition,horoscopeEditionBody,horoscopeEditionKey,horoscopeEditionAt,canonicalHoroscopeTimeZone} from '../apps/web/src/content/horoscopeEditions.mjs';
 import {validateHoroscopeReading} from '../src/astro-writing/horoscopeValidation.mjs';
 import {prepareHoroscopeBrief} from '../api/_lib/horoscope-editions';
 installHoroscopeWriterFixture();
@@ -59,5 +59,15 @@ result=await action('release',{acknowledgeUnknownOutcome:true});assert.equal(res
 assert(row.source_snapshot.horoscopeGeneration.lastInterrupted.requestHash);
 for(const [zone,start] of [['Pacific/Kiritimati','2026-09-23T10:00:00.000Z'],['Asia/Kathmandu','2026-09-23T18:15:00.000Z'],['Pacific/Honolulu','2026-09-24T10:00:00.000Z']]){
  const packet=await prepareHoroscopeBrief(new URL(`http://localhost/?period=daily&date=2026-09-24&timeZone=${zone}`));assert.equal(packet.brief.window.startsAt,start);
+}
+assert.equal(canonicalHoroscopeTimeZone('Asia/Kathmandu'),canonicalHoroscopeTimeZone('Asia/Katmandu'));
+const aliasPacket=await prepareHoroscopeBrief(new URL('http://localhost/?period=daily&date=2026-09-24&timeZone=Asia/Kathmandu'));
+const aliasEdition=emptyHoroscopeEdition(aliasPacket.brief.window);aliasEdition.passages=aliasEdition.passages.map(p=>({...p,headline:'Synthetic alias fixture',body:'You can read this complete timezone fixture.'}));
+result=await store.invoke('POST',{contentKey:horoscopeEditionKey(aliasEdition.window),surface:'sky',mode:'article',eventType:'horoscope-edition',provider:'manual-admin',status:'DRAFT',lane:'serving',headline:'Alias fixture',body:horoscopeEditionBody(aliasEdition),sections:{horoscopeEdition:aliasEdition},facts:{horoscopeBrief:aliasPacket}});assert.equal(result.status,200,JSON.stringify(result.payload));const aliasRow=result.payload.rows[0];
+result=await store.invoke('PATCH',{id:aliasRow.id,expectedUpdatedAt:aliasRow.updated_at,status:'LIVE'});assert.equal(result.status,200,JSON.stringify(result.payload));
+const {readerRouteResponse}=await import('../tests/helpers/content-reader-route.mjs');
+for(const timeZone of ['Asia/Kathmandu','Asia/Katmandu']){
+ const response=await readerRouteResponse('/api/content-reader',{method:'POST',body:JSON.stringify({horoscope:{period:'daily',at:'2026-09-24T06:00:00.000Z',timeZone}})});assert(response);const payload=await response.json();assert.equal(payload.rows[0]?.id,aliasRow.id);
+ assert(horoscopeEditionAt(payload.rows,'daily','2026-09-24T06:00:00.000Z',timeZone));
 }
 console.log('PASS horoscope generation: actual handlers, governed provider request, twelve persisted drafts, reload recovery, no duplicate calls, conflicts, explicit publication, fact checks and local date-line/fractional zones.');

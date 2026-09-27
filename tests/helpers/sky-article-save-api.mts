@@ -59,7 +59,7 @@ globalThis.fetch = async (input: any, options: any = {}) => {
  if (options.method === 'POST') {
   if ([...store.rows.values()].some((r: any) => r.content_key === patch.content_key && r.mode === patch.mode && r.target_date == patch.target_date)) return Response.json({message: 'duplicate target'}, {status: 409});
   const timestamp = nextVersion();
-  const created = storageOrder({ ...patch, id: `new-${store.rows.size}`, updated_at: timestamp, created_at: timestamp }); store.rows.set(created.id, created); return Response.json([created]);
+  const created = storageOrder({ ...patch, id: patch.content_key.startsWith('horoscope/') ? `00000000-0000-4000-8000-${String(store.rows.size).padStart(12,'0')}` : `new-${store.rows.size}`, updated_at: timestamp, created_at: timestamp }); store.rows.set(created.id, created); return Response.json([created]);
  }
  throw new Error(`Unexpected storage method ${options.method}`);
 };

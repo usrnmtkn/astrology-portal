@@ -138,6 +138,9 @@ selection. It requests only published editions for that zone. An edition from
 another zone is never silently relabelled as the local
 day or week. Editorial coverage is explicit: publish an edition for each time
 zone you want to serve; an uncovered zone displays an honest empty state.
+Equivalent IANA aliases are normalized during calculation and lookup. Studio's
+published-edition link identifies the exact saved edition and sign, including
+past editions; choosing another period returns to current local readings.
 
 Verification: `scripts/test-horoscope-generation.mts` exercises the actual API
 handlers with isolated storage and a synthetic provider, including billing

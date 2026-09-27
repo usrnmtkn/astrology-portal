@@ -2,6 +2,7 @@ import {lazy,Suspense,useEffect,useRef,useState} from 'react';
 import {AdminSelect,AdminDisclosureSummary} from './AdminNativeControls';
 import {StudioButton,StudioInput,StudioTextarea,StudioTabs} from './StudioControls';
 import {adminCredentialHeaders} from './adminSecret';
+import {horoscopeEditionReaderHref} from './adminReaderDestinations';
 import {PageLoading} from '../../web/src/components/PageLoading';
 import {FormattedProse} from '../../web/src/components/FormattedProse';
 import {announceContentUpdate} from '../../web/src/services/contentUpdateSignal';
@@ -180,7 +181,7 @@ export default function HoroscopeEditionsStudio({secret}:{secret:string}) {
         </div>:<div className="admin-panel">
           <p>{complete===12?'Read the complete edition below, then publish it.':`${12-complete} readings still need a headline and complete body. Return to Generate or Read & edit to finish.`}</p>
           {draft.passages.map(p=><section className="admin-hook-detail-section" key={p.sign} aria-label={`${horoscopeSignLabel(p.sign)} reading preview`}><h2>{horoscopeSignLabel(p.sign)}</h2><p>{p.headline}</p>{p.body?<div className="admin-copy-preview"><FormattedProse text={p.body}/></div>:<p>No reading written yet.</p>}</section>)}
-          <footer className="admin-writing-savebar"><label><input type="checkbox" checked={approved} disabled={locked||dirty||complete!==12||!saved} onChange={e=>setApproved(e.target.checked)}/> I have reviewed and approve the exact wording of all twelve saved readings.</label><div className="admin-toolbar-actions"><StudioButton className="admin-primary-button" disabled={locked||dirty||!approved||!saved||saved.status==='LIVE'} onClick={()=>void save(true)}>{saved?.status==='LIVE'?'Published':'Publish edition'}</StudioButton><a href="/#horoscopes" target="_blank" rel="noreferrer">Open reader app</a></div></footer>
+          <footer className="admin-writing-savebar"><label><input type="checkbox" checked={approved} disabled={locked||dirty||complete!==12||!saved} onChange={e=>setApproved(e.target.checked)}/> I have reviewed and approve the exact wording of all twelve saved readings.</label><div className="admin-toolbar-actions"><StudioButton className="admin-primary-button" disabled={locked||dirty||!approved||!saved||saved.status==='LIVE'} onClick={()=>void save(true)}>{saved?.status==='LIVE'?'Published':'Publish edition'}</StudioButton>{saved?.status==='LIVE'&&<a href={horoscopeEditionReaderHref(saved.id,draft.window.period,sign)} target="_blank" rel="noreferrer">Read published edition</a>}</div></footer>
         </div>}
       </StudioTabs>
       <details className="admin-workspace-details"><AdminDisclosureSummary>Advanced · import, export and calculations</AdminDisclosureSummary>

@@ -53,6 +53,7 @@ for(const [width,theme] of [[390,'light'],[390,'dark'],[1440,'light'],[1440,'dar
    await expect(studio.getByText('0/12 readings ready',{exact:false})).toBeVisible();
    await studio.getByRole('button',{name:'Review writing plan',exact:true}).click();
    await expect(studio.getByText('12 missing readings.',{exact:false})).toBeVisible();
+   await page.screenshot({path:`test-results/horoscope-generation-${width}-${theme}.png`,fullPage:true,animations:'disabled'});
    await studio.getByLabel('I approve this writing plan for generation.').check();
    await studio.getByRole('button',{name:'Generate 12 drafts',exact:true}).click();
    await expect(studio.getByText('12/12 readings ready',{exact:false})).toBeVisible({timeout:60000});
@@ -95,6 +96,14 @@ for(const [width,theme] of [[390,'light'],[390,'dark'],[1440,'light'],[1440,'dar
    await studio.getByLabel('I have reviewed and approve the exact wording of all twelve saved readings.').check();
    await studio.getByRole('button',{name:'Publish edition',exact:true}).click();
    await expect(studio.getByRole('status')).toContainText('Published all twelve readings.');
+   const publishedHref=await studio.getByRole('link',{name:'Read published edition',exact:true}).getAttribute('href');
+   expect(publishedHref).toContain(`edition=${draft.id}`);
+   await page.goto(publishedHref!);
+   await expect(page.getByRole('article',{name:'Pisces horoscope'})).toContainText('Your fixture pisces complete ending.');
+   await page.clock.setFixedTime(new Date('2026-10-05T16:00:00Z'));
+   await page.reload();await expect(page.getByRole('article')).toContainText('Published edition');
+   await expect(page.getByRole('article')).toContainText('September 21, 2026');
+   await page.clock.setFixedTime(new Date('2026-09-24T16:00:00Z'));
    await page.goto('/#horoscopes?period=weekly&sign=aries');
    await expect(page.getByRole('heading',{name:'Horoscopes',exact:true})).toBeVisible();
    await expect(page.getByRole('article',{name:'Aries horoscope'})).toContainText('Your fixture aries complete ending.');

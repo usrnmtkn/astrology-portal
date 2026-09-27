@@ -17,6 +17,7 @@ for (const endpoint of [
   "api/admin/sky-article-writing.ts",
   "api/admin/sky-article-template-slots.ts",
   "api/admin/personal-transit-writing.ts",
+  "api/admin/horoscope-writing.ts",
 ]) {
   const rule = deployment.functions?.[endpoint];
   assert.ok(rule && typeof rule.includeFiles === "string", `${endpoint} needs an explicit Vercel includeFiles rule.`);
@@ -27,6 +28,11 @@ for (const endpoint of [
   }
   assert.ok(packaged.has("config/agent-memory-sources-v1.json"), `${endpoint} does not package the memory source registry.`);
   assert.ok(packaged.has("config/writing-effective-rules-v1.json"), `${endpoint} does not package the effective writing-rule registry.`);
+}
+
+const horoscopeFiles=new Set(fs.globSync(deployment.functions['api/admin/horoscope-writing.ts'].includeFiles));
+for(const source of ['data/writing/OWNER_APPROVED_EXAMPLES.jsonl','data/writing/owner-register-gold.json','data/writing/matrix-evidence-index/TLDR-Matrix-Evidence-Index.jsonl','data/writing/phrase-evidence-index/owner-phrase-evidence-v1.jsonl','packages/astro-knowledge/voice/tldr-astro/satori-writer/voice-index.json','packages/astro-knowledge/data/primitives/houses.json','tldr-astro-phrasebank/phrasebank/cc-planet-in-sign-reviewed.json']) {
+  assert.ok(horoscopeFiles.has(source),`Horoscope writer is missing deployed evidence: ${source}`);
 }
 
 console.log("Article writer deployment assets passed: both production endpoints package every configured correction source and writing registry.");

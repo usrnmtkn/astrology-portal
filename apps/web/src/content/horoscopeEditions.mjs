@@ -20,6 +20,10 @@ export function validHoroscopeTimeZone(value) {
   if (typeof value !== 'string' || !value || value.length > 100) return false;
   try { new Intl.DateTimeFormat('en', {timeZone:value}); return true; } catch { return false; }
 }
+export function canonicalHoroscopeTimeZone(value) {
+  if (!validHoroscopeTimeZone(value)) throw new Error('Choose a valid time zone.');
+  return new Intl.DateTimeFormat('en', {timeZone:value}).resolvedOptions().timeZone;
+}
 export function validateHoroscopeWindow(value) {
   if (!value || typeof value !== 'object' || Array.isArray(value)
     || Object.keys(value).some(key => !['period','audience','timeZone','startsAt','endsAt','seasonSign'].includes(key))
@@ -68,7 +72,7 @@ export function horoscopeEditionFromRow(row) {
 export function horoscopeEditionAt(rows, period, at, timeZone) {
   const time = Date.parse(at);
   const values = rows.map(row => ({row, edition:horoscopeEditionFromRow(row)})).filter(({edition}) => edition
-    && edition.window.period === period && (!timeZone || edition.window.timeZone === timeZone)
+    && edition.window.period === period && (!timeZone || canonicalHoroscopeTimeZone(edition.window.timeZone) === canonicalHoroscopeTimeZone(timeZone))
     && Date.parse(edition.window.startsAt) <= time && time < Date.parse(edition.window.endsAt));
   // Overlapping editions need editorial resolution, never an arbitrary winner.
   if (values.length > 1) throw new Error('More than one horoscope edition covers this period. Please try again later.');
