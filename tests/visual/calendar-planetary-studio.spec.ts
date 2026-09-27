@@ -56,6 +56,8 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark'] as const)
         const names = await tabs.getByRole('tab').allTextContents();
         expect(names.slice(names.indexOf('Lunar ingresses'), names.indexOf('Lunar ingresses') + 4)).toEqual(['Lunar ingresses', 'Planetary ingresses', 'Planetary stations', 'Season write-ups']);
         const workspace = page.getByRole('region', { name: item.label, exact: true });
+        await workspace.getByLabel('Planet or point', { exact: true }).selectOption('');
+        await workspace.getByLabel(item.field, { exact: true }).selectOption('');
         await expect(workspace).toContainText('No saved write-ups match this selection.');
         await expect(workspace.getByRole('button', { name: 'Open write-up', exact: true })).toBeDisabled();
         await workspace.getByLabel('Planet or point', { exact: true }).selectOption(item.planet);
