@@ -82,7 +82,7 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark'] as const)
           && (!query.prefix || key.startsWith(query.prefix)) && (!query.provider || query.provider === published.provider);
         return route.fulfill({ json: readerResponse(matches ? [published] : [], [{ content_key: key, state: 'live', revision: 100_000, row_id: published.id, row_updated_at: published.updated_at, updated_at: published.updated_at }]) });
       });
-      for (const view of ['day', 'week']) {
+      for (const view of ['day', 'weekly']) {
         await page.goto(`/?date=2026-09-29#calendar?view=${view}&date=2026-09-29`);
         await expect(page.getByText(/Synthetic context opening/).first()).toBeVisible({ timeout: 30_000 });
         await expect(page.getByText(/Synthetic context final sentence/).first()).toBeVisible();
@@ -90,6 +90,11 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark'] as const)
         expect(requests.some(keys => keys.includes(key))).toBe(true);
         const link = page.getByRole('link', { name: 'Open event', exact: true }).first();
         await expect(link).toHaveAttribute('href', /date=2026-09-26.*event=/);
+        expect(await link.evaluate(element => {
+          const linkStyle = getComputedStyle(element);
+          return linkStyle.color === getComputedStyle(element.parentElement!).color
+            && linkStyle.textDecorationLine.includes('underline');
+        })).toBe(true);
         await page.screenshot({ path: `test-results/calendar-context-${view}-${width}-${theme}.png`, fullPage: true });
         await link.click();
         const reading = page.getByRole('dialog', { name: /Full Moon in Aries/ });
@@ -120,7 +125,7 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark'] as const)
       localStorage.setItem('tldrastro:theme', theme);
       localStorage.setItem('tldrastro:selectedLocation', JSON.stringify({ label: 'New York, NY', latitude: 40.7128, longitude: -74.006, timeZone: 'America/New_York' }));
     }, theme);
-    await page.goto('/?date=2026-09-27#calendar?view=week&date=2026-09-27');
+    await page.goto('/?date=2026-09-27#calendar?view=weekly&date=2026-09-27');
     for (const [date, opening, ending] of rewrittenDays) {
       const group = page.locator(`#calendar-day-group-${date}`);
       await expect(group).toContainText(opening, { timeout: 30_000 });

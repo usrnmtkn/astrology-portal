@@ -18,7 +18,7 @@ export function CalendarMoonProse({ text, className }: { text: string; className
   const pieces = links.map(match => {
     const before = text.slice(cursor, match.index);
     cursor = match.index! + match[0].length;
-    return <Fragment key={match.index}><FormattedText text={before} /><a href={match[2]}><FormattedText text={match[1]} /></a></Fragment>;
+    return <Fragment key={match.index}><FormattedText text={before} /><a className="sky-daily-summary__link" href={match[2]}><FormattedText text={match[1]} /></a></Fragment>;
   });
   return <p className={className}>{pieces}<FormattedText text={text.slice(cursor)} /></p>;
 }
