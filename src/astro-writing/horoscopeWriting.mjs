@@ -18,7 +18,7 @@ import {runWritingPipeline} from './runWritingPipeline.mjs';
 import {buildHoroscopeDevelopments} from './horoscopeDevelopments.mjs';
 
 const root=fileURLToPath(new URL('../../',import.meta.url));
-export const horoscopeWritingVersion='horoscope-writer/v3';
+export const horoscopeWritingVersion='horoscope-writer/v4';
 const digest=value=>createHash('sha256').update(typeof value==='string'?value:horoscopeCanonicalJson(value)).digest('hex');
 let repositorySources;
 const preparedPlans=new Map();
@@ -80,7 +80,8 @@ export function prepareHoroscopeWriting(row,{studioCorrections=[],feedbackReceip
   if(!meaning)throw new Error('The calculated horoscope anchor is unavailable.');
   const corrections=[...sources.corrections,...studioCorrections];
   const correctedVoice={...sources.voice,entries:withoutOwnerRejectedEvidence(sources.voice.entries,corrections)};
-  const examples=withoutOwnerRejectedEvidence(sources.examples,corrections).filter(e=>edition.window.period==='weekly'||!e.horoscopeAudienceSign);
+  const usesOwnerHoroscopes=['daily','weekly'].includes(edition.window.period);
+  const examples=withoutOwnerRejectedEvidence(sources.examples,corrections).filter(e=>usesOwnerHoroscopes||!e.horoscopeAudienceSign);
   const relevant=ownerRelevantEvidenceFromVoiceIndex(correctedVoice,{planet,sign});
   const relevantSelected=relevant.selected.filter(e=>['weekly-astrology','sky-season','sky-lunation','sky-article-longform','sky-article-reference'].includes(e.family));
   const evidence=ownerApprovedMatrixRoleEvidenceForTarget(sources.matrix,{planet,sign,eventType:null,surface:'horoscopes'});
@@ -107,7 +108,7 @@ export function prepareHoroscopeWriting(row,{studioCorrections=[],feedbackReceip
       recognition:'Develop what the chosen circumstances could mean to this reader: a desire, fear, pleasure, conflict, loyalty or decision only where the selected facts and house support it. Observable detail should deepen that concern, not become a catalogue of activities or administrative tasks.',
       complication:'Follow what changes or becomes harder to ignore in the selected concern. A complication is optional; do not manufacture a crisis, trauma, childhood history or a repeated compromise plot.',
       response:'Let the ending follow from the recognition developed in this reading. A useful response may be an action, a changed understanding or permission earned by the passage; no compulsory checklist or moral.',
-      scope_guard:`Only ${edition.window.period} timing from ${edition.window.startsAt} to ${edition.window.endsAt} in ${edition.window.timeZone}. Dated sky events support timing; reference positions do not. No unsupplied aspects, guaranteed personal events or imported historical dates.`,
+      scope_guard:`Publication window: ${edition.window.startsAt} to ${edition.window.endsAt} in ${edition.window.timeZone}. The ${edition.window.period} publication window is not a transit duration. Dated sky events support timing; reference positions verify an instant, not an ingress or how long a placement lasts. Ongoing placements may inform this reading without an invented duration. No unsupplied future events, aspects, guaranteed personal events or imported historical dates.`,
       scope_breadth:{broad_mechanism:'Each supplied development has its own temporary meaning and calculated life area; related developments may deepen one concern over the period.',
         chosen_expression:`Select the developments that make a coherent reading for ${rising}; each house remains bound to its own event or placement.`,
         other_valid_expressions:[...periodDomains,...topics]}};
@@ -115,13 +116,13 @@ export function prepareHoroscopeWriting(row,{studioCorrections=[],feedbackReceip
     const scenes=sceneEvidenceForTarget({approvedExamples:targetApproved,matrixEvidenceRows:targetMatrix,registerExamples:targetExamples,sceneNounLexicon:sources.sceneLexicon,plan});
     const reviewedMeaningExamples=[{id:meaning.id,planet,sign,status:meaning.status,text:meaning.collective_shift,sourcePath:meaning.sourcePath,sourceKind:'reviewed-doctrine',ownerAuthored:false,ownerApproved:false,reviewNote:meaning.review_note}];
     const exactMatrix=evidence.meaning.filter(e=>!String(e.contentKey).includes('/houseactivations/')||String(e.contentKey).includes(`/houseactivations/${rising}|`));
-    const weeklyForecasts=edition.window.period==='weekly'?examples.filter(e=>e.horoscopeAudienceSign):[];
+    const weeklyForecasts=usesOwnerHoroscopes?examples.filter(e=>e.horoscopeAudienceSign):[];
     const contextOptions={reviewedMeaningExamples,examples:[...examples,...relevantSelected],matrixExamples:exactMatrix,matrixArgumentCandidates:evidence.argument_candidate,
       matrixEvidenceAvailableCount:exactMatrix.length,relevantOwnerPassagesAvailableCount:relevantSelected.length,
       ownerPassageRelevanceTier:relevant.tier,sceneExamples:scenes.selected,samePlanetSignSceneAvailableCount:scenes.counts.samePlanetSignSceneAvailable,
       sceneEvidenceInventoryCounts:scenes.counts,registerGoldExamples:sources.gold,corrections,phraseEvidence:sources.phrases,
-      primaryRegisterContentKeys:weeklyForecasts.map(e=>e.contentKey),requirePrimaryRegister:edition.window.period==='weekly',
-      preferredEvidenceContentKeys:(edition.window.period==='weekly'?weeklyForecasts.filter(e=>e.horoscopeAudienceSign===rising):examples.filter(e=>e.family===(edition.window.period==='seasonal'?'sky-season':'weekly-astrology'))).map(e=>e.contentKey)};
+      primaryRegisterContentKeys:weeklyForecasts.map(e=>e.contentKey),requirePrimaryRegister:usesOwnerHoroscopes,
+      preferredEvidenceContentKeys:(usesOwnerHoroscopes?weeklyForecasts.filter(e=>e.horoscopeAudienceSign===rising):examples.filter(e=>e.family===(edition.window.period==='seasonal'?'sky-season':'weekly-astrology'))).map(e=>e.contentKey)};
     const context=retrieveOwnerContext(plan,{...contextOptions,contentFamily:'horoscope',register:'second_person'});
     // Preparation is unapproved. Validate every evidence precondition except the
     // argument role, which becomes eligible only after the owner's plan action.
