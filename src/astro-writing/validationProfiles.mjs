@@ -13,6 +13,7 @@ const SHARED_BASE_RULES = Object.freeze([
 ]);
 
 const PROFILES = Object.freeze({
+  horoscope: Object.freeze({id:"horoscope",baseRules:SHARED_BASE_RULES,surfaceRules:Object.freeze(["temporary-transit-register","article-meta-scaffolding-ban"])}),
   "shared-only": Object.freeze({
     id: "shared-only",
     baseRules: SHARED_BASE_RULES,

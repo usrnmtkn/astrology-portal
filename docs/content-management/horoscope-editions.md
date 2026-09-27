@@ -94,3 +94,53 @@ aggregate web gzip bytes and 5,605 Admin bytes. Aggregate allocations increase b
 New 2.2 kB reader / 4.5 kB editor chunk caps and explicit lazy-loading checks keep
 both screens outside startup. The shared public edition validator remains in the
 reader eligibility path; startup stays within its existing budget.
+
+## In-app generation and local editions
+
+Content Studio → Horoscopes now offers four stages: choose the period and local
+reference date, review the calculated writing plan and generate drafts, read/edit
+all signs, then publish the saved edition. Writing instructions can be edited
+inside the Generate stage; “Use latest saved instructions” adopts that profile
+for this edition. Import/export remains available under Advanced.
+
+`POST /api/admin/horoscope-writing` requires Content Admin authorization and the
+exact saved row version. `prepare` compiles an unapproved plan without a model
+call. `generate` accepts the owner-selected plan hash and reserves one empty sign
+before submitting a governed Responses request. `poll` retrieves the persisted
+response ID, validates its reader fields and saves the draft. Reloading does not
+start a second request. Every completed sign records its model configuration,
+response ID, token usage, request/source/profile/argument hashes and writing
+checks in private metadata. Confirmed failures are retried only on another owner
+action. Uncertain starts remain reserved; explicit release is available after
+five minutes, and known in-flight responses must be cancelled before release.
+Neither generation nor model review authorizes publication.
+
+The horoscope family uses the canonical writer, a forecast-specific output
+schema, actual owner passages, separately identified reviewed meaning doctrine,
+scoped matrix/scene evidence, the selected writing profile and signed ephemeris
+facts. Doctrine is not marked owner-authored or owner-approved reader wording.
+Current Studio feedback is checked without expanding another surface’s approved
+correction scope. Sources, prompts and operation metadata never enter the public
+reader projection. Blocking writing/fact checks must be resolved before a
+generated edition can publish; editorial voice advice remains advisory.
+
+New edition identities include the IANA time zone. Legacy identities remain
+readable and editable. Daily boundaries are local midnight; weeks begin on local
+Monday, and calculated Sun ingress boundaries define seasons. City search resolves
+the time zone, with a manual zone selector when city search is unavailable.
+These are geocentric rising-sign forecasts, so coordinates do not substitute for
+a natal chart or change the whole-sign house count.
+
+The reader uses the app’s saved location and requests only published editions for
+that time zone. Changing the location persists the preference and refreshes the
+reading. An edition from another zone is never silently relabelled as the local
+day or week. Editorial coverage is explicit: publish an edition for each time
+zone you want to serve; an uncovered zone displays an honest empty state.
+
+Verification: `scripts/test-horoscope-generation.mts` exercises the actual API
+handlers with isolated storage and a synthetic provider, including billing
+reservation, reload recovery, all twelve persisted passages, conflicts, separate
+publication and local date boundaries. `playwright.horoscope-reader.config.ts`
+exercises generation → editing → publication → local reader selection at desktop
+and mobile widths in both themes. Synthetic provider checks do not demonstrate
+live provider availability or approve the writing quality.

@@ -10,6 +10,7 @@ import { assertArgumentOutlineApproved } from "./argumentGate.mjs";
 import { assertSurfaceRegisterContract } from "./surfaceRegisterContract.mjs";
 import { effectiveRulePrompt } from "./effectiveRuleGovernance.mjs";
 import { resolveStudioWritingProfile } from "./studioWritingProfileReceipt.mjs";
+import { buildHoroscopeDraftInput, HOROSCOPE_DRAFT_SCHEMA } from './horoscopeDraftInput.mjs';
 
 export const PLACEMENT_DRAFT_SCHEMA = Object.freeze({
   type: "object",
@@ -122,6 +123,7 @@ export function buildDraftInput({
   spine,
   writingProfile = null
 }) {
+  if (family === 'horoscope') return buildHoroscopeDraftInput({plan,context,task,target,engineFacts,argumentOutline,spine,writingProfile});
   const sections = [
     `TASK\n${String(task ?? "Write one TLDR Astro passage.").trim()}`,
     ...(writingProfile ? [`CONTENT STUDIO EDITORIAL INSTRUCTIONS\n${resolveStudioWritingProfile(writingProfile).prompt}\nThese editorial instructions do not replace the fact boundary, evidence requirements, output schema or owner approval.`] : []),
@@ -206,7 +208,7 @@ export async function generateDraft({
   assertArgumentOutlineApproved(argumentOutline, { plan, family, surface });
   if (!spine || spine.status !== "recorded") throw new Error(`RECORDED_CONTENT_SPINE_REQUIRED:${family}`);
   const role = isCardWritingSurface({ surface, family }) ? "CARD_WRITER_V3" : "WRITER";
-  const resolvedSchema = schema ?? (family === "fast-mover-article"
+  const resolvedSchema = schema ?? (family === 'horoscope' ? HOROSCOPE_DRAFT_SCHEMA : family === "fast-mover-article"
     ? FAST_MOVER_ARTICLE_DRAFT_SCHEMA
     : family === "slow-mover-article"
       ? SLOW_MOVER_ARTICLE_DRAFT_SCHEMA
@@ -227,7 +229,7 @@ export async function generateDraft({
     argumentOutline,
     argumentOutlineHash: argumentOutline.approvedOutlineHash,
     contentSpineId: spine.id,
-    ...(writingProfile ? { studioWritingProfile: resolveStudioWritingProfile(writingProfile).receipt } : {})
+    ...(writingProfile ? { studioWritingProfile: resolveStudioWritingProfile(writingProfile,{allowStarter:family==='horoscope'}).receipt } : {})
   }, writeGenerationMetadata({
     role,
     provider: modelClient.provider ?? null,

@@ -885,3 +885,13 @@ body:has(.admin-dashboard) { margin: 0; }
 #root .admin-dashboard .studio-formatted-writing p { margin: 0 0 var(--space-4); font: inherit; }
 #root .admin-dashboard .studio-formatted-writing :is(ul,ol) { padding-inline-start: var(--space-6); margin-block: var(--space-4); }
 #root .admin-dashboard .studio-formatted-writing strong { font-weight: var(--weight-bold); }
+
+/* Shared city selector in the horoscope workspace uses the Studio tokens. */
+.horoscope-location { width: 100%; overflow-wrap: anywhere; }
+.horoscope-location summary { cursor: pointer; font-family: var(--font-ui); font-size: var(--text-label); }
+.horoscope-location-fields { display: grid; gap: var(--space-3); padding-block: var(--space-4); }
+.horoscope-location-fields label { display: grid; gap: var(--space-2); font-family: var(--font-ui); font-size: var(--text-label); }
+.horoscope-location-fields input, .horoscope-location-fields select { width: 100%; min-width: 0; padding: var(--space-3); border: var(--border-width-thin) solid var(--line); border-radius: var(--radius-sm); background: var(--card-bg); color: var(--ink); font: inherit; }
+.horoscope-location-fields p { margin: 0; font-family: var(--font-body); font-size: var(--text-body); font-weight: var(--weight-regular); line-height: var(--leading-body); letter-spacing: var(--tracking-body); }
+.horoscope-location-fields ul { list-style: none; margin: 0; padding: 0; }
+.horoscope-location-fields button { cursor: pointer; padding: var(--space-3); text-align: start; background: var(--card-bg); color: var(--ink); border: var(--border-width-thin) solid var(--line); border-radius: var(--radius-sm); font: inherit; width: 100%; }

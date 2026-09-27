@@ -1,7 +1,9 @@
-import {createHmac, timingSafeEqual} from 'node:crypto';
+import {createHash,createHmac, timingSafeEqual} from 'node:crypto';
 import {AdminHttpError} from './admin-http.js';
 import {zonedDateTimeToUtc} from '../../apps/web/src/services/timezones.js';
-import {HOROSCOPE_PERIODS, HOROSCOPE_SIGNS, HOROSCOPE_EDITION_PREFIX, validateHoroscopeEdition, validateHoroscopeWindow, horoscopeEditionKey, horoscopeEditionBody, horoscopeCanonicalJson} from '../../apps/web/src/content/horoscopeEditions.mjs';
+import {HOROSCOPE_PERIODS, HOROSCOPE_SIGNS, HOROSCOPE_EDITION_PREFIX, validateHoroscopeEdition, validateHoroscopeWindow, isHoroscopeEditionKey, horoscopeEditionBody, horoscopeCanonicalJson} from '../../apps/web/src/content/horoscopeEditions.mjs';
+
+import {validateHoroscopeReading} from '../../src/astro-writing/horoscopeValidation.mjs';
 
 function signature(brief: unknown) {
   const secret = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -52,7 +54,16 @@ export function assertHoroscopeRow(row: Record<string,any>) {
     if (typeof packet?.signature !== 'string' || !/^[a-f0-9]{64}$/u.test(packet.signature)
       || !timingSafeEqual(Buffer.from(expected),Buffer.from(packet.signature))) throw new Error('Prepare calculated dates and facts before saving this edition.');
     if (JSON.stringify(edition.window) !== JSON.stringify(validateHoroscopeWindow(packet.brief.window))
-      || row.content_key !== horoscopeEditionKey(edition.window) || row.surface !== 'sky' || row.mode !== 'article'
+      || !isHoroscopeEditionKey(row.content_key,edition.window) || row.surface !== 'sky' || row.mode !== 'article'
       || row.body !== horoscopeEditionBody(edition)) throw new Error('The edition must preserve its calculated dates, identity and complete passages.');
+    if(row.status==='LIVE'&&row.source_snapshot?.horoscopeGeneration) {
+      for(const passage of edition.passages) {
+        const lint=validateHoroscopeReading(passage,packet.brief);
+        const receipt=row.source_snapshot.horoscopeGeneration.readings?.[passage.sign];
+        const bodyHash=createHash('sha256').update(horoscopeCanonicalJson({headline:passage.headline,body:passage.body})).digest('hex');
+        const issues=[...lint.violations,...(receipt?.bodyHash===bodyHash?receipt?.lint?.violations??[]:[])];
+        if(issues.length)throw new Error(`${passage.sign}: ${issues[0].detail} Edit this reading before publishing.`);
+      }
+    }
   } catch (error) {throw new AdminHttpError(422,(error as Error).message);}
 }

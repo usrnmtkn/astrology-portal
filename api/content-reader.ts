@@ -9,14 +9,14 @@ import { publicationAllowsContent, publicationLedgerKey, validContentPublication
 import type { ContentPublication } from '../apps/web/src/content/contentPublicationState.js';
 import type { GeneratedContentRow } from '../apps/web/src/services/generatedContent.js';
 import { astro101IsLiveOnLearn, isAstro101ContentKey } from '../apps/web/src/content/astro101.js';
-import { HOROSCOPE_PERIODS, horoscopeEditionFromRow } from '../apps/web/src/content/horoscopeEditions.mjs';
+import { HOROSCOPE_PERIODS, horoscopeEditionFromRow, validHoroscopeTimeZone } from '../apps/web/src/content/horoscopeEditions.mjs';
 
 loadLocalWebEnv();
 const pageSize = 250;
 const select = 'id,content_key,surface,mode,status,lane,review_state,event_type,target_date,facts,source_snapshot,headline,summary,body,sections,block_type,flags,provider,model,updated_at,judge_score,judge_gate';
 const providers = new Set(['tldrastro-fallback-architecture-v3', 'tldrastro-fallback-architecture-v3-sky-placement']);
 const surfaces = new Set(['sky', 'you', 'natal', 'synastry', 'composite', 'relationship', 'modifier', 'year_ahead', 'education']);
-type Query = { provider?: string; keys?: string[]; ids?: string[]; prefix?: string; surfaces?: string[]; targetDate?: string; afterId?: string; scope?: "sky" | "sky-list"; vocabularyOnly?: boolean; latestVersion?: boolean; horoscope?: {period:string; at:string} };
+type Query = { provider?: string; keys?: string[]; ids?: string[]; prefix?: string; surfaces?: string[]; targetDate?: string; afterId?: string; scope?: "sky" | "sky-list"; vocabularyOnly?: boolean; latestVersion?: boolean; horoscope?: {period:string; at:string; timeZone?:string} };
 const uuid = /^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/iu;
 const key = /^[a-zA-Z0-9_./:| -]{1,500}$/u;
 class QueryError extends Error {}
@@ -27,7 +27,8 @@ async function readQuery(req: IncomingMessage): Promise<Query> {
   if (Object.keys(value).some(name => !['provider', 'keys', 'ids', 'prefix', 'surfaces', 'targetDate', 'afterId', 'latestVersion', 'scope', 'vocabularyOnly', 'horoscope'].includes(name))) throw new QueryError('Unsupported reader query.');
   if (value.horoscope !== undefined) {
     const input = value.horoscope as Record<string,unknown>;
-    if (!input || typeof input !== 'object' || Array.isArray(input) || Object.keys(input).some(key => !['period','at'].includes(key))
+    if (!input || typeof input !== 'object' || Array.isArray(input) || Object.keys(input).some(key => !['period','at','timeZone'].includes(key))
+      || (input.timeZone !== undefined && !validHoroscopeTimeZone(input.timeZone))
       || !HOROSCOPE_PERIODS.includes(input.period as any) || typeof input.at !== 'string' || !/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/u.test(input.at) || !Number.isFinite(Date.parse(input.at))
       || Object.keys(value).some(key => !['horoscope','afterId'].includes(key))) throw new QueryError('Invalid horoscope query.');
   }
@@ -101,6 +102,7 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
     if (query.provider) params.set('provider', `eq.${query.provider}`);
     if (query.horoscope) {
       params.set('content_key', `like.horoscope/${query.horoscope.period}/*`);
+      if (query.horoscope.timeZone) params.set('sections->horoscopeEdition->window->>timeZone', `eq.${query.horoscope.timeZone}`);
       params.set('sections->horoscopeEdition->window->>startsAt', `lte.${query.horoscope.at}`);
       params.set('sections->horoscopeEdition->window->>endsAt', `gt.${query.horoscope.at}`);
     }

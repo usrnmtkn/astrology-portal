@@ -5,6 +5,9 @@ import {loadReaderRows} from '../../services/readerContentClient';
 import {subscribeToContentUpdates,subscribeToContentRevalidation} from '../../services/contentUpdateSignal';
 import {HOROSCOPE_SIGNS,HOROSCOPE_PERIODS,horoscopeSignLabel,horoscopeEditionAt,horoscopeWindowLabel,type HoroscopePeriod,type HoroscopeEdition} from '../../content/horoscopeEditions.mjs';
 import '../../styles/horoscopes.css';
+import {HoroscopeLocation} from './HoroscopeLocation';
+import type {LocationInput} from '../../types';
+import {browserTimeZone,timeZoneForLocation} from '../../services/timezones';
 
 const labels={daily:'Today',weekly:'This week',seasonal:'This season'};
 function route(defaultSign:string) {
@@ -12,7 +15,11 @@ function route(defaultSign:string) {
   const period=params.get('period') as HoroscopePeriod, sign=params.get('sign')??defaultSign.toLowerCase();
   return {period:HOROSCOPE_PERIODS.includes(period)?period:'weekly' as HoroscopePeriod,sign:HOROSCOPE_SIGNS.includes(sign)?sign:'aries'};
 }
-export default function HoroscopeReader({defaultSign='aries'}:{defaultSign?:string}) {
+export default function HoroscopeReader({defaultSign='aries',location,onLocationChange}:{defaultSign?:string;location?:LocationInput;onLocationChange?:(location:LocationInput)=>void}) {
+  const [localLocation,setLocalLocation]=useState<LocationInput>(()=>({label:'Device time zone',latitude:0,longitude:0,timeZone:browserTimeZone()}));
+  const selectedLocation=location??localLocation;
+  const timeZone=timeZoneForLocation(selectedLocation);
+  const changeLocation=onLocationChange??setLocalLocation;
   const [selection,setSelection]=useState(()=>route(defaultSign));
   const [edition,setEdition]=useState<HoroscopeEdition|null>(null),[loading,setLoading]=useState(true),[error,setError]=useState(''),[version,setVersion]=useState(0);
   const refresh=()=>setVersion(value=>value+1);
@@ -22,21 +29,22 @@ export default function HoroscopeReader({defaultSign='aries'}:{defaultSign?:stri
   useEffect(()=>{
     const controller=new AbortController();setLoading(true);setError('');
     const at=new Date().toISOString();
-    void loadReaderRows({horoscope:{period:selection.period,at}},AbortSignal.any([controller.signal,AbortSignal.timeout(20000)])).then(result=>{
+    void loadReaderRows({horoscope:{period:selection.period,at,timeZone}},AbortSignal.any([controller.signal,AbortSignal.timeout(20000)])).then(result=>{
       if(controller.signal.aborted)return;
       if(result.error)throw new Error('Your horoscope could not load. Please try again.');
-      setEdition(horoscopeEditionAt(result.data??[],selection.period,at));
+      setEdition(horoscopeEditionAt(result.data??[],selection.period,at,timeZone));
     }).catch(reason=>{if(!controller.signal.aborted)setError((reason as Error).message);}).finally(()=>{if(!controller.signal.aborted)setLoading(false);});
     return()=>controller.abort();
-  },[selection.period,version]);
+  },[selection.period,version,timeZone]);
   useEffect(()=>{if(!edition)return;const timeout=setTimeout(refresh,Math.max(1,Math.min(Date.parse(edition.window.endsAt)-Date.now(),2147483647)));return()=>clearTimeout(timeout);},[edition]);
   function select(next:typeof selection) {setSelection(next);window.location.hash=`horoscopes?period=${next.period}&sign=${next.sign}`;}
-  const currentEdition=edition?.window.period===selection.period && Date.parse(edition.window.startsAt)<=Date.now() && Date.now()<Date.parse(edition.window.endsAt) ? edition : null;
+  const currentEdition=edition?.window.timeZone===timeZone && edition?.window.period===selection.period && Date.parse(edition.window.startsAt)<=Date.now() && Date.now()<Date.parse(edition.window.endsAt) ? edition : null;
   const passage=currentEdition?.passages.find(p=>p.sign===selection.sign);
   return <div className="learn-page horoscope-page">
     <section className="learn-hero-card horoscope-header">
       <h1 className="learn-hero__title">Horoscopes</h1>
       <p>Read for your rising sign.</p>
+      <HoroscopeLocation value={{...selectedLocation,timeZone}} onChange={changeLocation}/>
       <div className="horoscope-controls">
         <div className="learn-jump" role="group" aria-label="Horoscope period">{HOROSCOPE_PERIODS.map(period=><button type="button" className="learn-jump__link" aria-pressed={selection.period===period} onClick={()=>select({...selection,period})} key={period}>{labels[period]}</button>)}</div>
         <label className="horoscope-sign"><span>Rising sign</span><select aria-label="Rising sign" value={selection.sign} onChange={e=>select({...selection,sign:e.target.value})}>{HOROSCOPE_SIGNS.map(sign=><option key={sign} value={sign}>{horoscopeSignLabel(sign)}</option>)}</select></label>
@@ -47,6 +55,6 @@ export default function HoroscopeReader({defaultSign='aries'}:{defaultSign?:stri
       <h2>{passage.headline}</h2>
       <p className="horoscope-date">{horoscopeWindowLabel(currentEdition.window)} · {currentEdition.window.timeZone}</p>
       <div className="horoscope-prose"><FormattedProse text={passage.body}/></div>
-    </article>:<section className="learn-sheet horoscope-reading"><p role="status">The {selection.period==='seasonal'?'seasonal':selection.period} horoscopes haven’t been published yet.</p><p>Check another period or come back soon.</p></section>}
+    </article>:<section className="learn-sheet horoscope-reading"><p role="status">The {selection.period==='seasonal'?'seasonal':selection.period} horoscopes haven’t been published for {timeZone.replaceAll('_',' ')} yet.</p><p>Your selected location sets the local day and week. Check another period or come back soon.</p></section>}
   </div>;
 }

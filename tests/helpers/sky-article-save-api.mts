@@ -1,3 +1,5 @@
+import horoscopeWriter from '../../api/admin/horoscope-writing';
+import {Readable} from 'node:stream';
 import { readerRouteResponse, fixturePublications } from './content-reader-route.mjs';
 import { servingPackageRecords } from "../../api/_lib/content-live-status";
 // Actual handler, isolated storage, realistic latest-first/limit-one reads.
@@ -27,7 +29,7 @@ const matches = (row: any, params: URLSearchParams) => [...params].every(([field
  if (['select', 'order', 'limit', 'offset', 'on_conflict'].includes(field)) return true;
  if (field.startsWith('sections->horoscopeEdition->window->>')) {
   const actual = row.sections?.horoscopeEdition?.window?.[field.split('->>').at(-1)!];
-  return typeof actual === 'string' && (value.startsWith('lte.') ? actual <= value.slice(4) : value.startsWith('gt.') ? actual > value.slice(3) : false);
+  return typeof actual === 'string' && (value.startsWith('lte.') ? actual <= value.slice(4) : value.startsWith('gt.') ? actual > value.slice(3) : value.startsWith('eq.') ? actual === value.slice(3) : false);
  }
  if (value === 'is.null') return row[field] == null;
  if (value.startsWith('like.')) return String(row[field] ?? '').startsWith(value.slice(5).replace(/\*$/u, ''));
@@ -66,8 +68,38 @@ function storageOrder(row:any) {
  const ordered=(value:any):any=>Array.isArray(value)?value.map(ordered):value&&typeof value==='object'?Object.fromEntries(Object.keys(value).sort().map(key=>[key,ordered(value[key])])):value;
  return ordered(row);
 }
+export const writerFixture={calls:0,polls:0,failNext:false,unknownNext:false,requests:new Map<string,any>()};
+export async function invokeHoroscopeWriting(body:any,secret='calendar-api-fixture') {
+ const req=Readable.from([JSON.stringify(body)]);Object.assign(req,{method:'POST',headers:{authorization:`Bearer ${secret}`}});
+ let result:any;const res={statusCode:200,setHeader(){},end(value:string){result={status:this.statusCode,payload:JSON.parse(value)};}};
+ await horoscopeWriter(req as any,res as any);return result;
+}
+export function installHoroscopeWriterFixture(){
+ process.env.OPENAI_API_KEY='synthetic-test-only';process.env.STUDIO_MEMORY_FEEDBACK_ENABLED='false';
+ const storageFetch=globalThis.fetch;
+ globalThis.fetch=async(input:any,options:any={})=>{
+   const url=String(input);
+   if(!url.startsWith('https://api.openai.com/'))return storageFetch(input,options);
+   if(url==='https://api.openai.com/v1/responses'&&options.method==='POST'){
+     writerFixture.calls++;
+     if(writerFixture.unknownNext){writerFixture.unknownNext=false;throw new Error('Fixture connection lost');}
+     if(writerFixture.failNext){writerFixture.failNext=false;return Response.json({error:{message:'Fixture quota'}},{status:429});}
+     const request=JSON.parse(options.body);
+     if(!request.background||!request.instructions||!request.text?.format?.schema)throw new Error('Missing real governed provider request');
+     const sign=request.input.match(/"risingSign":"([a-z]+)"/)?.[1];
+     if(!sign)throw new Error('No calculated rising sign supplied');
+     const id=`resp_fixture_${writerFixture.calls}`;
+     writerFixture.requests.set(id,{...request,sign});return Response.json({id,status:'queued'});
+   }
+   const id=url.split('/').at(-1)!,request=writerFixture.requests.get(id);
+   if(!request)throw new Error('Unrecognized fixture response');writerFixture.polls++;
+   return Response.json({id,status:'completed',usage:{input_tokens:100,output_tokens:40},output:[{type:'message',content:[{type:'output_text',text:JSON.stringify({headline:`Fixture ${request.sign} reading`,body:`You can read the complete ${request.sign} fixture opening.\n\nYour saved fixture ends here.`})}]}]});
+ };
+}
+if(process.env.HOROSCOPE_WRITER_FIXTURE==='1')installHoroscopeWriterFixture();
 if (process.send) process.on('message', async ({ id, method, body, url }: any) => {
  try {
+  if (method === 'writing') { process.send!({id,result:await invokeHoroscopeWriting(body)});return; }
   if (method === 'reader') { const response = await readerRouteResponse('/api/content-reader',{method:'POST',body:JSON.stringify(body)}); process.send!({id,result:{status:response.status,payload:await response.json()}}); return; }
   process.send!({ id, result: method === 'rows' ? [...store.rows.values()] : await store.invoke(method, body, url) });
  }
