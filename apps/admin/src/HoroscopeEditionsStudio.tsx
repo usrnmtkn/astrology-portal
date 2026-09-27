@@ -17,11 +17,19 @@ const steps = ['setup','generate','edit','publish'] as const;
 type Step = typeof steps[number];
 const stepLabels = ['Dates','Generate','Review','Publish'];
 const stepTitles = ['Choose your horoscopes','Generate your drafts','Review each reading','Publish your horoscopes'];
-async function request(secret:string,url:string,body?:unknown,method='POST') {
-  const response = await fetch(url,{method:body ? method:'GET',headers:{...adminCredentialHeaders(secret),'content-type':'application/json'},cache:'no-store',signal:AbortSignal.timeout(60000),...(body ? {body:JSON.stringify(body)}:{})});
-  const data = await response.json();
-  if (!response.ok || data.ok !== true) throw Object.assign(new Error(data.error ?? 'The edition could not be loaded.'),{rows:data.rows});
+async function request(secret:string,url:string,body?:unknown,method='POST',signal?:AbortSignal) {
+  const timeout=AbortSignal.timeout(60000);
+  const response = await fetch(url,{method:body ? method:'GET',headers:{...adminCredentialHeaders(secret),'content-type':'application/json'},cache:'no-store',signal:signal?AbortSignal.any([signal,timeout]):timeout,...(body ? {body:JSON.stringify(body)}:{})});
+  const data = await response.json().catch(()=>({ok:false,error:'The server response could not be read.'}));
+  if (!response.ok || data.ok !== true) throw Object.assign(new Error(data.error ?? 'The edition could not be loaded.'),{rows:data.rows,status:response.status});
   return data;
+}
+const recoverable=(reason:any)=>!reason?.status||[408,409,429].includes(reason.status)||reason.status>=500;
+function waitForPoll(signal:AbortSignal) {
+  return new Promise<void>(resolve=>{
+    const done=()=>{clearTimeout(timer);signal.removeEventListener('abort',done);resolve();};
+    const timer=setTimeout(done,3000);signal.addEventListener('abort',done,{once:true});if(signal.aborted)done();
+  });
 }
 function download(name:string,value:unknown) {
   const url = URL.createObjectURL(new Blob([JSON.stringify(value,null,2)+'\n'],{type:'application/json'}));
@@ -38,13 +46,14 @@ export default function HoroscopeEditionsStudio({secret}:{secret:string}) {
   const [step,setStep]=useState<Step>('setup'),[instructions,setInstructions]=useState(false);
   const heading=useRef<HTMLHeadingElement>(null),previousStep=useRef(step);
   useEffect(()=>{if(previousStep.current===step)return;previousStep.current=step;heading.current?.focus({preventScroll:true});heading.current?.scrollIntoView({block:'center'});},[step]);
-  const stop=useRef(false),running=useRef(false);
+  const stop=useRef(false),running=useRef(false),operation=useRef<AbortController|null>(null);
+  const [checking,setChecking]=useState(false);
   const mounted=useRef(true);
   function retain(row:any,refreshContext=false){validateHoroscopeEdition(row.sections?.horoscopeEdition);setSaved(row);setDraft(row.sections.horoscopeEdition);setRows(current=>[row,...current.filter(r=>r.id!==row.id)]);setApproved(false);if(refreshContext){setOutlines(row.source_snapshot?.horoscopeOutlines??{});setProfile(row.source_snapshot?.studioWritingProfile??null);setEditorialImport(row.source_snapshot?.editorialImport??null);setPlan(null);setPlanApproved(false);}}
   useEffect(()=>{setPlan(null);setPlanApproved(false);},[draft?.window.startsAt,draft?.window.endsAt,draft?.window.timeZone,outlines,profile]);
   const dirty=Boolean(draft && (!saved || horoscopeCanonicalJson(draft)!==horoscopeCanonicalJson(saved.sections.horoscopeEdition) || horoscopeCanonicalJson(outlines)!==horoscopeCanonicalJson(saved.source_snapshot?.horoscopeOutlines ?? {}) || horoscopeCanonicalJson(profile)!==horoscopeCanonicalJson(saved.source_snapshot?.studioWritingProfile ?? null) || horoscopeCanonicalJson(editorialImport)!==horoscopeCanonicalJson(saved.source_snapshot?.editorialImport ?? null)));
   async function load() {setLoading(true);try {const data=await request(secret,endpoint+'?horoscopeEditions=true');if(!Array.isArray(data.rows))throw new Error('The edition list could not be read.');for(const row of data.rows)validateHoroscopeEdition(row.sections?.horoscopeEdition);if(mounted.current)setRows(data.rows);}catch(reason){if(mounted.current)setError((reason as Error).message);}finally{if(mounted.current)setLoading(false);}}
-  useEffect(()=>{mounted.current=true;void load();return()=>{mounted.current=false;stop.current=true;};},[secret]);
+  useEffect(()=>{mounted.current=true;void load();return()=>{mounted.current=false;stop.current=true;operation.current?.abort();};},[secret]);
   useEffect(()=>{if(!dirty)return;const warn=(event:BeforeUnloadEvent)=>event.preventDefault();window.addEventListener('beforeunload',warn);return()=>window.removeEventListener('beforeunload',warn);},[dirty]);
   const mayReplace=()=>!dirty || window.confirm('Discard the unsaved changes to this edition?');
   function adopt(row:any) {
@@ -55,13 +64,20 @@ export default function HoroscopeEditionsStudio({secret}:{secret:string}) {
     const next:Step=row.status==='LIVE'?'publish':row.source_snapshot?.horoscopeGeneration?.active||edition.passages.some(p=>!p.headline.trim()&&!p.body.trim())?'generate':'edit';
     setStep(next);return next;
   }
-  async function loadPlan(row:any) {
-    const data=await request(secret,'/api/admin/horoscope-writing',{action:'prepare',id:row.id,expectedUpdatedAt:row.updated_at});
+  async function loadPlan(row:any,controller?:AbortController) {
+    const data=await request(secret,'/api/admin/horoscope-writing',{action:'prepare',id:row.id,expectedUpdatedAt:row.updated_at},'POST',controller?.signal);
+    if(controller&&!isCurrent(controller))return;
     setPlan(data.plan);setConfigured(data.configured);setPlanApproved(false);
+  }
+  async function readSaved(id:string,signal?:AbortSignal) {
+    const data=await request(secret,endpoint+'?'+new URLSearchParams({id}),undefined,'GET',signal);
+    const row=data.rows?.[0];
+    if(row?.id!==id)throw Object.assign(new Error('This saved edition is unavailable. Refresh the edition list.'),{status:404});
+    validateHoroscopeEdition(row.sections?.horoscopeEdition);return row;
   }
   async function open(row:any) {
     if(!mayReplace())return;setBusy(true);setError('');setMessage('');
-    try{const next=adopt(row);if(next==='generate'&&!row.source_snapshot?.horoscopeGeneration?.active)await loadPlan(row);}
+    try{row=await readSaved(row.id);const next=adopt(row);if(next==='generate'&&!row.source_snapshot?.horoscopeGeneration?.active)await loadPlan(row);}
     catch(reason){setError((reason as Error).message);}finally{setBusy(false);}
   }
   async function prepare() {
@@ -128,32 +144,94 @@ export default function HoroscopeEditionsStudio({secret}:{secret:string}) {
     try {const row=dirty?await save():saved;if(!row)return;setBusy(true);await loadPlan(row);setMessage('Your writing plan is ready to review.');}
     catch(reason){setError((reason as Error).message);}finally{setBusy(false);}
   }
+  function isCurrent(controller:AbortController){return mounted.current&&operation.current===controller&&!controller.signal.aborted;}
+  function beginOperation(){operation.current?.abort();const controller=new AbortController();operation.current=controller;return controller;}
+  function endOperation(controller:AbortController){if(!isCurrent(controller))return;operation.current=null;running.current=false;setBusy(false);setChecking(false);setProgress('');}
+  async function showRecovered(row:any,controller:AbortController) {
+    if(!isCurrent(controller))return;
+    retain(row,true);setPacket(row.facts?.horoscopeBrief);setError('');setProgress('');
+    const edition=row.sections.horoscopeEdition,active=row.source_snapshot?.horoscopeGeneration?.active;
+    const count=edition.passages.filter((p:any)=>p.headline.trim()&&p.body.trim()).length;
+    if(row.status==='LIVE'){setStep('publish');setMessage('Loaded the published edition.');return;}
+    if(active){
+      setStep('generate');setSign(active.sign);
+      setMessage(active.responseId?`${count}/12 readings are saved. ${horoscopeSignLabel(active.sign)} is still processing. Resume generation or check saved progress again.`:'Your request is being confirmed. Check saved progress again shortly; a second request will not be started.');
+      return;
+    }
+    if(!edition.passages.some((p:any)=>!p.headline.trim()&&!p.body.trim())){
+      setStep('edit');setSign('aries');setMessage(count===12?'All twelve readings are saved and ready to review.':`${count}/12 readings are complete. Review the remaining text before publishing.`);return;
+    }
+    setStep('generate');setMessage(`${count}/12 readings are saved. Review the current writing plan to continue the remaining signs.`);
+    await loadPlan(row,controller);
+  }
+  async function recoverGeneration(row:any,controller:AbortController,pollExisting=false) {
+    // Always reconcile from storage. Recovery retrieves an existing response only;
+    // it never releases a reservation or starts another paid generation request.
+    for(let attempt=0;attempt<3;attempt++){
+      row=await readSaved(row.id,controller.signal);
+      if(!isCurrent(controller))return;
+      const active=row.source_snapshot?.horoscopeGeneration?.active;
+      let failure:any;
+      if(pollExisting&&active?.responseId){
+        try{
+          const data=await request(secret,'/api/admin/horoscope-writing',{action:'poll',id:row.id,expectedUpdatedAt:row.updated_at},'POST',controller.signal);
+          if(data.rows?.[0]?.id!==row.id)throw new Error('The saved result could not be confirmed.');
+          row=data.rows[0];
+        }catch(reason){
+          if(!isCurrent(controller))return;
+          if((reason as any).status===409)continue;
+          if(!recoverable(reason)&&!(reason as any).rows?.some((saved:any)=>saved.id===row.id))throw reason;
+          failure=reason;
+          row=await readSaved(row.id,controller.signal);
+        }
+      }
+      await showRecovered(row,controller);
+      if(isCurrent(controller)){
+        const terminal=row.source_snapshot?.horoscopeGeneration?.lastError?.message;
+        if(terminal||failure&&!recoverable(failure))setError(terminal??failure.message);
+      }
+      return;
+    }
+    if(isCurrent(controller))setMessage('This edition is still updating. Check saved progress again shortly. Your saved readings are kept.');
+  }
+  function recoveryUnavailable(reason:any,controller:AbortController){
+    if(!isCurrent(controller))return;
+    if(recoverable(reason))setMessage('Studio could not check saved progress yet. Your saved readings are kept. Check saved progress again when the connection returns.');
+    else setError(reason.message);
+  }
+  async function checkProgress(){
+    if(!saved||dirty||checking||busy&&!running.current)return;
+    stop.current=true;const controller=beginOperation();running.current=false;
+    setBusy(true);setChecking(true);setProgress('');setError('');setMessage('Checking saved progress…');
+    try{await recoverGeneration(saved,controller,true);}catch(reason){recoveryUnavailable(reason,controller);}finally{endOperation(controller);}
+  }
   async function generate(){
     if(!saved||running.current||(!saved.source_snapshot?.horoscopeGeneration?.active&&(!plan||!planApproved)))return;
-    running.current=true;stop.current=false;setBusy(true);setError('');setMessage('');let row=saved;
+    const controller=beginOperation();running.current=true;stop.current=false;setBusy(true);setError('');setMessage('');let row=saved;
     try {
       let calls=0;
-      while(!stop.current&&mounted.current){
+      while(!stop.current&&isCurrent(controller)){
         const active=row.source_snapshot?.horoscopeGeneration?.active;
         const missing=row.sections.horoscopeEdition.passages.find((p:any)=>!p.headline.trim()&&!p.body.trim());
         if(!active&&!missing)break;
         if(!active&&(!planApproved||!plan)){setMessage('Recovered the reading. Review the writing plan to continue the remaining signs.');break;}
         const next=active?.sign??missing.sign;
+        setSign(next);
         setProgress(`Writing ${horoscopeSignLabel(next)} · ${row.sections.horoscopeEdition.passages.filter((p:any)=>p.body.trim()&&p.headline.trim()).length}/12 saved`);
-        const data=await request(secret,'/api/admin/horoscope-writing',{action:active?'poll':'generate',id:row.id,expectedUpdatedAt:row.updated_at,...(!active?{sign:next,approvedPlanHash:plan.planHash}:{})});
+        const data=await request(secret,'/api/admin/horoscope-writing',{action:active?'poll':'generate',id:row.id,expectedUpdatedAt:row.updated_at,...(!active?{sign:next,approvedPlanHash:plan.planHash}:{})},'POST',controller.signal);
+        if(!isCurrent(controller))return;
         const updated=data.rows?.[0];if(!updated||updated.id!==row.id)throw new Error('The generation result could not be confirmed. Reopen the saved edition.');
         row=updated;retain(row);
-        if(data.pending){if(++calls>120){setMessage('This reading is still running. Resume generation to retrieve it.');break;}await new Promise(resolve=>setTimeout(resolve,3000));}
+        if(data.pending){if(++calls>120){setMessage('This reading is still processing. Check saved progress or resume generation to retrieve it.');break;}await waitForPoll(controller.signal);}
         else{calls=0;setSign(next);}
       }
-      if(!row.source_snapshot?.horoscopeGeneration?.active){setStep('edit');setSign('aries');setMessage(stop.current?'Paused. Completed readings are saved.':'Drafts are saved. Read and edit each sign, then publish when you are ready.');}
+      if(isCurrent(controller)&&!row.source_snapshot?.horoscopeGeneration?.active)await showRecovered(row,controller);
     }catch(reason){
-      let changed=(reason as any).rows?.[0];
-      // Recover saved request state after an uncertain response without replaying it.
-      if(!changed){try{changed=(await request(secret,endpoint+'?'+new URLSearchParams({id:row.id}))).rows?.[0];}catch{/* Preserve the displayed draft until the owner reopens it. */}}
-      if(changed?.id===row.id)retain(changed,true);setError((reason as Error).message);
+      if(!isCurrent(controller))return;
+      if(!recoverable(reason)&&!(reason as any).rows){setError((reason as Error).message);return;}
+      try{await recoverGeneration(row,controller);}catch(recoveryError){recoveryUnavailable(recoveryError,controller);}
     }
-    finally{running.current=false;setBusy(false);setProgress('');}
+    finally{endOperation(controller);}
   }
   async function release(){
     if(!saved||!window.confirm('The previous request may have been billed. Release it so you can start a new request?'))return;
@@ -185,7 +263,7 @@ export default function HoroscopeEditionsStudio({secret}:{secret:string}) {
     if(busy)return;
     if(next==='publish') {if(complete!==12||active)return;if(dirty&&!await save())return;}
     setStep(next);
-    if(next==='generate'&&!active&&(!plan||dirty))await reviewPlan();
+    if(next==='generate'&&!active&&empty>0&&(!plan||dirty))await reviewPlan();
   }
   async function nextReading() {
     if(dirty&&!await save())return;
@@ -219,21 +297,22 @@ export default function HoroscopeEditionsStudio({secret}:{secret:string}) {
           {instructions&&<Suspense fallback={<PageLoading message="Loading writing instructions…"/>}><WritingProfiles key={draft.window.period} secret={secret} initialPeriod={draft.window.period}/></Suspense>}
           <StudioButton disabled={locked} onClick={()=>void refreshProfile()}>Use latest saved instructions</StudioButton>
         </details>
-        {busy&&!running.current&&!plan&&<PageLoading message="Preparing your writing plan…"/>}
+        {busy&&!running.current&&!plan&&!checking&&<PageLoading message="Preparing your writing plan…"/>}
         {plan&&<>
           <p>{empty} missing {empty===1?'reading':'readings'} will be generated. Existing writing is kept.</p>
           <div className="admin-horoscope-signs" role="group" aria-label="Writing plans by sign">{plan.readings.map((entry:any)=><StudioButton key={entry.sign} aria-pressed={sign===entry.sign} onClick={()=>setSign(entry.sign)}>{horoscopeSignLabel(entry.sign)}</StudioButton>)}</div>
           {planEntry&&<section className="admin-horoscope-plan" aria-label={`${horoscopeSignLabel(sign)} writing plan`}><h3>{horoscopeSignLabel(sign)} writing plan</h3><p>{planEntry.developments?.events.length??0} calculated developments · {draft.window.timeZone}</p><p className="admin-horoscope-outline">{planEntry.outline}</p><details className="admin-workspace-details"><AdminDisclosureSummary>Full plan details</AdminDisclosureSummary>{planEntry.developments?.events.length>0&&<ul>{planEntry.developments.events.map((event:any)=><li key={event.id}>{event.title} · {event.localTiming} · House {event.house}: {event.domain}</li>)}</ul>}{Object.entries({thesis:'Main idea',transit_job:'Astrology',recognition:'What readers may notice',complication:'Possible complication',response:'Useful response',scope_guard:'Dates and limits'}).map(([key,label])=><p key={key}><strong>{label}: </strong>{planEntry.argument[key]}</p>)}</details></section>}
         </>}
-        {active&&<p>A request for {horoscopeSignLabel(active.sign)} is saved. Resume to retrieve it.</p>}
+        {active&&<p>A request for {horoscopeSignLabel(active.sign)} is saved. Check saved progress to retrieve it without starting again.</p>}
         {complete+empty<12&&<p>{12-complete-empty} partially written readings need your edits in Review. Your existing text will be kept.</p>}
         {progress&&<p role="status">{progress}</p>}
         <progress aria-label="Drafts saved" value={complete} max={12}/>
         <footer className="admin-writing-savebar admin-horoscope-actions">
           {plan&&!active&&empty>0&&!dirty&&<label><input type="checkbox" checked={planApproved} disabled={locked} onChange={e=>setPlanApproved(e.target.checked)}/> I approve this writing plan for generation.</label>}
           {!configured&&plan&&<p role="alert">AI writing is unavailable. Configure the writer before generating, or write the readings yourself.</p>}
-          <p>{busy?'Each completed sign is saved automatically.':active?'Continue the saved request without starting it again.':dirty||!plan?'Prepare the current writing plan to continue.':empty===0?'Your drafts are ready to review.':!planApproved?'Check the plan approval box to continue.':`Ready to write ${empty} drafts. This uses ${empty} paid AI ${empty===1?'request':'requests'} and saves the results for review.`}</p>
+          <p>{checking?'Retrieving your saved request. This does not start another generation.':busy?'Each completed sign is saved automatically.':active?'Continue the saved request without starting it again.':empty===0?'Your drafts are ready to review.':dirty||!plan?'Prepare the current writing plan to continue.':!planApproved?'Check the plan approval box to continue.':`Ready to write ${empty} drafts. This uses ${empty} paid AI ${empty===1?'request':'requests'} and saves the results for review.`}</p>
           <div className="admin-toolbar-actions"><StudioButton disabled={locked} onClick={()=>void moveTo('setup')}>Back</StudioButton><div className="admin-toolbar-actions admin-horoscope-decision-actions">{rejectAllButton}
+            <StudioButton disabled={!saved||dirty||checking||busy&&!running.current} onClick={()=>void checkProgress()}>{checking?'Checking saved progress…':'Check saved progress'}</StudioButton>
             {busy&&running.current?<StudioButton className="admin-primary-button" onClick={()=>{stop.current=true;setMessage('Pausing after the current request. Your progress is saved.');}}>Pause generation</StudioButton>:empty===0&&!active?<StudioButton className="admin-primary-button" disabled={busy} onClick={()=>void moveTo('edit')}>Continue to review</StudioButton>:!active&&(dirty||!plan)?<StudioButton className="admin-primary-button" disabled={busy||saved?.status==='LIVE'} onClick={()=>void reviewPlan()}>Review writing plan</StudioButton>:<StudioButton className="admin-primary-button" disabled={busy||dirty||!saved||saved.status==='LIVE'||(!active&&(!planApproved||!configured))} onClick={()=>void generate()}>{active?'Resume generation':empty===12?'Generate 12 drafts':'Generate missing readings'}</StudioButton>}
           </div></div>
           {active&&Date.now()-Date.parse(active.startedAt)>=310000&&<StudioButton disabled={busy} onClick={()=>void release()}>Release interrupted request</StudioButton>}

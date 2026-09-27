@@ -100,7 +100,9 @@ for(const [width,theme] of [[390,'light'],[390,'dark'],[1440,'light'],[1440,'dar
    await studio.getByLabel('I approve this writing plan for generation.').check();
    await studio.getByRole('button',{name:'Generate 12 drafts',exact:true}).click();
    if(width===390&&theme==='light'){
-    await expect(studio.getByRole('alert')).toContainText('This edition changed');
+    await expect(studio.getByRole('status')).toContainText('Review the current writing plan');
+    await expect(studio.getByRole('alert')).toHaveCount(0);
+    await expect(studio.getByLabel('I approve this writing plan for generation.')).not.toBeChecked();
     await studio.getByRole('button',{name:'3 · Review',exact:true}).click();
     await studio.getByText('Writing outline · editor only',{exact:true}).click();
     await expect(studio.getByLabel('Writing outline',{exact:true})).toHaveValue(newerOutline);
