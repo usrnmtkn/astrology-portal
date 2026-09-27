@@ -2306,6 +2306,7 @@ async function calculateNatalTransitTiming(
     relativeSpeed: speed,
     fastestSpeed: speed,
     maxBoundaryCapDays: 1800,
+    allowUnperfectedWindow: true,
     seriesFloorDays: slowSeriesFloorDays,
     horizonMinDays: 120,
     horizonMaxDays: 2200
@@ -2453,7 +2454,8 @@ function aspectPassSeriesTiming({
   maxBoundaryCapDays,
   seriesFloorDays = 10,
   horizonMinDays = 60,
-  horizonMaxDays = 5000
+  horizonMaxDays = 5000,
+  allowUnperfectedWindow = false
 }: {
   residualsAt: AspectResidualsAt;
   motionIsRetrogradeAt: (date: Date) => boolean;
@@ -2465,15 +2467,34 @@ function aspectPassSeriesTiming({
   seriesFloorDays?: number;
   horizonMinDays?: number;
   horizonMaxDays?: number;
+  /** A natal contact can enter the orb and turn back without reaching exact. */
+  allowUnperfectedWindow?: boolean;
 }) {
+  const orbAt = (date: Date) => Math.min(...residualsAt(date).map(Math.abs));
+  if (allowUnperfectedWindow && !(orbAt(reference) <= presentationDegrees)) return null;
   const estimatedDurationDays = (presentationDegrees * 2) / relativeSpeed;
   const boundaryStepDays = Math.max(0.125, Math.min(5, presentationDegrees / (fastestSpeed * 4)));
   const maxBoundaryDays = Math.max(60, Math.min(maxBoundaryCapDays, estimatedDurationDays * 4));
   const currentStart = findResidualBoundary(residualsAt, presentationDegrees, reference, -1, boundaryStepDays, maxBoundaryDays);
   const currentEnd = findResidualBoundary(residualsAt, presentationDegrees, reference, 1, boundaryStepDays, maxBoundaryDays);
+  // A search horizon is not an observed orb crossing. Never publish its cap as
+  // the calculated start/end of a natal report contact.
+  const crossesBoundary = (date: Date, direction: number) =>
+    orbAt(new Date(date.getTime() - direction * 1000)) <= presentationDegrees
+    && orbAt(new Date(date.getTime() + direction * 1000)) >= presentationDegrees;
+  if (allowUnperfectedWindow && (!crossesBoundary(currentStart, -1) || !crossesBoundary(currentEnd, 1))) return null;
   const passStepDays = Math.max(1 / 24, Math.min(2, presentationDegrees / (fastestSpeed * 8)));
   const currentPasses = scanResidualPasses(residualsAt, currentStart, currentEnd, passStepDays);
-  if (!currentPasses.length) return null;
+  if (!currentPasses.length) {
+    if (!allowUnperfectedWindow) return null;
+    const durationDays = (currentEnd.getTime() - currentStart.getTime()) / 86_400_000;
+    const group: SkyAspectTiming["group"] = durationDays <= 10 ? "this-week" : durationDays < 365 ? "this-season" : "undercurrent";
+    const phase: SkyAspectTiming["phase"] = orbAt(addDays(reference, 1 / 24)) < orbAt(reference) ? "building" : "fading";
+    const residuals = residualsAt(reference);
+    const branch = residuals.reduce((best, residual, index) => Math.abs(residual) < Math.abs(residuals[best]) ? index : best, 0);
+    return { branch, currentStart, currentEnd, engagementStart: currentStart, engagementEnd: currentEnd,
+      engagementPasses: currentPasses, estimatedDurationDays, group, passIndex: -1, passStepDays, phase };
+  }
   const passResiduals = residualsAt(currentPasses[0]);
   const branch = passResiduals.reduce((best, residual, index) => Math.abs(residual) < Math.abs(passResiduals[best]) ? index : best, 0);
   const currentDurationDays = Math.max(1, (currentEnd.getTime() - currentStart.getTime()) / 86_400_000);

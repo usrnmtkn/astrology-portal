@@ -27,6 +27,33 @@ try {
  assert.equal(display.qualifyingTransits[0].calculation.exactPasses[0].dateLabel,"September 27, 2026", "An exact UTC timestamp must carry its local reader date");
  assert.equal(display.qualifyingTransits[0].calculation.exactPasses[0].timeLabel,"9:15 PM EDT");
  assert(!n.window.includes('July'),'Station speed must not extrapolate a false deadline');
+ // Actual Swiss case from the browser's synthetic 1990-01-01 noon NY chart:
+ // Uranus stations short of the square to the natal Moon. The active window
+ // is real even though this visit contains no exact contact.
+ const nearMiss=make('uranus-moon','Uranus','Moon',336.0783,'square',90);
+ const visits=[];
+ for(const date of ['2026-08-01T16:00:00Z','2026-09-13T16:00:00Z']) {
+   const visit=await preparePersonalReportTiming([nearMiss],new Date(date),'America/New_York',e.natalTransitTimingFor);
+   const fact=visit.qualifyingTransits[0];
+   assert.deepEqual(fact.calculation.exactPasses,[],'Entering the orb does not guarantee an exact contact');
+   assert.equal(fact.calculation.repeatContact,false);
+   assert.equal(visit.transits[0].timing.passIndex,0,'No exact pass exists to index');
+   visits.push(fact.calculation);
+ }
+ for(const edge of ['currentStart','currentEnd']) {
+   assert(Math.abs(Date.parse(visits[0][edge])-Date.parse(visits[1][edge]))<60_000,'Different reference dates must resolve the same orb window');
+   const boundary=Date.parse(visits[0][edge]);
+   const direction=edge==='currentStart'?-1:1;
+   for(const offset of [-1,1]) {
+     const sky=await e.getAstrodienstSky(undefined,new Date(boundary+direction*offset*3_600_000),{includeDailyEvents:false,includeTransitWindows:false});
+     const longitude=sky.positions.find(position=>position.planet==='Uranus').longitude;
+     const separation=Math.abs(((longitude-nearMiss.natalLongitude+540)%360)-180);
+     const orb=Math.abs(separation-90);
+     assert.equal(orb>visits[0].orbDegrees,offset===1,'Window edges must be real Swiss orb crossings');
+   }
+ }
+ await assert.rejects(()=>preparePersonalReportTiming([nearMiss],new Date(Date.parse(visits[0].currentEnd)+86_400_000),'America/New_York',e.natalTransitTimingFor),/could not be verified/,
+   'An inactive contact must not receive invented boundaries');
  await assert.rejects(()=>preparePersonalReportTiming([{...contacts[0],natalLongitude:undefined}],ref,'America/New_York',e.natalTransitTimingFor),/could not be verified/,
    'Missing timing must stop before paid submission, not become a false end date in source prose');
  await assert.rejects(()=>preparePersonalReportTiming(contacts,ref,'America/New_York',async()=>null),/has not been submitted/);
