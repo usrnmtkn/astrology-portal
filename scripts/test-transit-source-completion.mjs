@@ -1,9 +1,14 @@
 import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import path from 'node:path';
 process.argv.push('--fixture-only', '--source-completion');
 const { api, fixture } = await import('./test-transit-report-delivery.mjs');
 Object.assign(process.env, { GENERATED_REPORT_RELEASE_POLICY: 'report-source-completion-v1', GENERATED_REPORT_REVIEW_MODE: 'combined',
   CONTENT_GENERATION_PROVIDER: 'openai', CONTENT_GENERATION_PROVIDER_TRANSIT_TO_NATAL: 'openai', FRIEND_REPORT_BILLING_MODE: 'free_test',
   YOU_REPORT_JOB_ATTEMPT_CAP: '4', FRIEND_REPORT_JOB_ATTEMPT_CAP: '4' });
+const outputDirIndex = process.argv.indexOf('--browser-fixture-dir');
+const outputDir = outputDirIndex < 0 ? null : process.argv[outputDirIndex + 1];
+if (outputDir) fs.mkdirSync(outputDir, { recursive: true });
 let cases = 0;
 for (const kind of ['day', 'week', 'friends']) for (const scenario of [
   'first-pass', 'correction', 'rejected', 'cleanup', 'invalid-judge-evidence', 'initial-writer-outage',
@@ -66,6 +71,23 @@ for (const kind of ['day', 'week', 'friends']) for (const scenario of [
     assert.equal(job.state, 'complete', job.last_error);
     assert.equal(row.body, f.output.body);
     assert.equal(row.source_snapshot.generatedReportQualityGate.verdict, 'pass');
+    if (outputDir && scenario === 'first-pass') {
+      fs.writeFileSync(path.join(outputDir, `reviewed-${kind}.json`), JSON.stringify({ ...row, id: `reviewed-${kind}` }));
+      // Explicit historical-record fixtures: never produced by the new worker.
+      // Older saved source reports must still open without new generation.
+      for (const relationship of friend ? [false, true] : [false]) {
+        const historicalBrief = structuredClone(brief);
+        if (relationship) historicalBrief.relationshipActivations = [{ id: 'synthetic-connection', headline: 'A supplied connection',
+          activationBody: 'Things between you and Morgan may be easier to discuss.',
+          effectBody: 'You could explain what you need before agreeing to a plan.' }];
+        const prepared = api.prepareSourceCompletion(historicalBrief, row.headline);
+        const source_snapshot = { ...row.source_snapshot, reportDelivery: { ...prepared.receipt, reason: 'historical_fixture' } };
+        delete source_snapshot.generatedReportQualityGate;
+        const name = relationship ? 'friends' : friend ? 'friends-personal' : kind;
+        const historical = { ...row, ...prepared.draft, id: `source-${name}`, provider: 'source', source_snapshot };
+        fs.writeFileSync(path.join(outputDir, `${name}.json`), JSON.stringify(historical));
+      }
+    }
     const loaded = await api.loadGeneratedReportById(row.id);
     assert.equal(loaded.body, row.body);
     const html = api.renderToStaticMarkup(api.createElement(api.GeneratedReportArticle, { report: loaded }));
