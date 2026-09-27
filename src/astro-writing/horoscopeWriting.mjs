@@ -17,10 +17,15 @@ import {validateHoroscopeReading} from './horoscopeValidation.mjs';
 import {runWritingPipeline} from './runWritingPipeline.mjs';
 
 const root=fileURLToPath(new URL('../../',import.meta.url));
-export const horoscopeWritingVersion='horoscope-writer/v1';
+export const horoscopeWritingVersion='horoscope-writer/v2';
 const digest=value=>createHash('sha256').update(typeof value==='string'?value:horoscopeCanonicalJson(value)).digest('hex');
 let repositorySources;
 const preparedPlans=new Map();
+function weeklyForecastSign(entry) {
+  if(entry.surface!=='weekly-astrology'||!/^paragraph under .*horoscopes?/iu.test(entry.structuralFunction??''))return null;
+  const heading=String(entry.text??'').split(/\r?\n/u)[0].trim().toLowerCase();
+  return HOROSCOPE_SIGNS.includes(heading)?heading:null;
+}
 function loadSources() {
   if(repositorySources)return repositorySources;
   const hashes=[];
@@ -32,9 +37,9 @@ function loadSources() {
   const voice={...raw,entries:withoutOwnerRejectedEvidence(raw.entries,corrections)};
   const examples=voice.entries.filter(e=>e.authorityClass==='owner_authored_final'&&e.ownerAuthored===true&&e.ownerApproved===true
     &&e.useAsPositiveVoiceEvidence===true&&['weekly-astrology','sky-season','sky-lunation','sky-article-longform','sky-article-reference'].includes(e.surface)
-    &&['article paragraph','published article opening excerpt','published article body excerpt'].includes(e.structuralFunction)
+    &&(weeklyForecastSign(e)||['article paragraph','published article opening excerpt','published article body excerpt'].includes(e.structuralFunction))
     &&typeof e.text==='string'&&e.text.trim().length>=80)
-    .map(e=>({...e,id:e.sourceId,contentKey:e.sourceId,family:e.surface,register:/\b(?:you|your)\b/iu.test(e.text)?'second_person':'collective',sourceRecordSha256:digest(e.text)}));
+    .map(e=>({...e,id:e.sourceId,contentKey:e.sourceId,family:e.surface,horoscopeAudienceSign:weeklyForecastSign(e),register:/\b(?:you|your)\b/iu.test(e.text)?'second_person':'collective',sourceRecordSha256:digest(e.text)}));
   const matrix=withoutOwnerRejectedEvidence(lines('data/writing/matrix-evidence-index/TLDR-Matrix-Evidence-Index.jsonl'),corrections,'copy');
   const approved=withoutOwnerRejectedEvidence(lines('data/writing/OWNER_APPROVED_EXAMPLES.jsonl'),corrections);
   const gold=json('data/writing/owner-register-gold.json');
@@ -74,7 +79,7 @@ export function prepareHoroscopeWriting(row,{studioCorrections=[],feedbackReceip
   if(!meaning)throw new Error('The calculated horoscope anchor is unavailable.');
   const corrections=[...sources.corrections,...studioCorrections];
   const correctedVoice={...sources.voice,entries:withoutOwnerRejectedEvidence(sources.voice.entries,corrections)};
-  const examples=withoutOwnerRejectedEvidence(sources.examples,corrections);
+  const examples=withoutOwnerRejectedEvidence(sources.examples,corrections).filter(e=>edition.window.period==='weekly'||!e.horoscopeAudienceSign);
   const relevant=ownerRelevantEvidenceFromVoiceIndex(correctedVoice,{planet,sign});
   const relevantSelected=relevant.selected.filter(e=>['weekly-astrology','sky-season','sky-lunation','sky-article-longform','sky-article-reference'].includes(e.family));
   const evidence=ownerApprovedMatrixRoleEvidenceForTarget(sources.matrix,{planet,sign,eventType:null,surface:'horoscopes'});
@@ -105,11 +110,13 @@ export function prepareHoroscopeWriting(row,{studioCorrections=[],feedbackReceip
     const scenes=sceneEvidenceForTarget({approvedExamples:targetApproved,matrixEvidenceRows:targetMatrix,registerExamples:targetExamples,sceneNounLexicon:sources.sceneLexicon,plan});
     const reviewedMeaningExamples=[{id:meaning.id,planet,sign,status:meaning.status,text:meaning.collective_shift,sourcePath:meaning.sourcePath,sourceKind:'reviewed-doctrine',ownerAuthored:false,ownerApproved:false,reviewNote:meaning.review_note}];
     const exactMatrix=evidence.meaning.filter(e=>!String(e.contentKey).includes('/houseactivations/')||String(e.contentKey).includes(`/houseactivations/${rising}|`));
+    const weeklyForecasts=edition.window.period==='weekly'?examples.filter(e=>e.horoscopeAudienceSign):[];
     const contextOptions={reviewedMeaningExamples,examples:[...examples,...relevantSelected],matrixExamples:exactMatrix,matrixArgumentCandidates:evidence.argument_candidate,
       matrixEvidenceAvailableCount:exactMatrix.length,relevantOwnerPassagesAvailableCount:relevantSelected.length,
       ownerPassageRelevanceTier:relevant.tier,sceneExamples:scenes.selected,samePlanetSignSceneAvailableCount:scenes.counts.samePlanetSignSceneAvailable,
       sceneEvidenceInventoryCounts:scenes.counts,registerGoldExamples:sources.gold,corrections,phraseEvidence:sources.phrases,
-      preferredEvidenceContentKeys:examples.filter(e=>e.family===(edition.window.period==='seasonal'?'sky-season':'weekly-astrology')).map(e=>e.contentKey)};
+      primaryRegisterContentKeys:weeklyForecasts.map(e=>e.contentKey),requirePrimaryRegister:edition.window.period==='weekly',
+      preferredEvidenceContentKeys:(edition.window.period==='weekly'?weeklyForecasts.filter(e=>e.horoscopeAudienceSign===rising):examples.filter(e=>e.family===(edition.window.period==='seasonal'?'sky-season':'weekly-astrology'))).map(e=>e.contentKey)};
     const context=retrieveOwnerContext(plan,{...contextOptions,contentFamily:'horoscope',register:'second_person'});
     // Preparation is unapproved. Validate every evidence precondition except the
     // argument role, which becomes eligible only after the owner's plan action.

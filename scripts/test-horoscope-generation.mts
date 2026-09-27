@@ -1,8 +1,12 @@
 import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import {createHash} from 'node:crypto';
 import {store,installHoroscopeWriterFixture,invokeHoroscopeWriting,writerFixture} from '../tests/helpers/sky-article-save-api.mts';
 import {emptyHoroscopeEdition,horoscopeEditionBody,horoscopeEditionKey,horoscopeEditionAt,canonicalHoroscopeTimeZone} from '../apps/web/src/content/horoscopeEditions.mjs';
 import {validateHoroscopeReading} from '../src/astro-writing/horoscopeValidation.mjs';
 import {prepareHoroscopeBrief} from '../api/_lib/horoscope-editions';
+import {prepareHoroscopeWriting} from '../src/astro-writing/horoscopeWriting.mjs';
+import {retrieveOwnerContext} from '../src/astro-writing/retrieveOwnerContext.mjs';
 installHoroscopeWriterFixture();
 const prepared=await store.invoke('GET',undefined,'/api/admin/generated-content?horoscopeBrief=true&period=weekly&date=2026-09-24&timeZone=Asia/Tokyo');
 assert.equal(prepared.status,200,JSON.stringify(prepared.payload));
@@ -15,6 +19,20 @@ assert.equal((await invokeHoroscopeWriting({action:'prepare',id:row.id,expectedU
 assert.equal((await action('generate',{sign:'aries',approvedPlanHash:'wrong'})).status,409);assert.equal(writerFixture.calls,0);
 const plan=await action('prepare');assert.equal(plan.status,200,JSON.stringify(plan.payload));assert.equal(plan.payload.plan.readings.length,12);assert.equal(writerFixture.calls,0);
 const planHash=plan.payload.plan.planHash;
+// A generic "owner passages present" check missed the excluded sign readings.
+// Use the actual governed corpus and inspect every dispatched provider request.
+const voice=JSON.parse(fs.readFileSync(new URL('../packages/astro-knowledge/voice/tldr-astro/satori-writer/voice-index.json',import.meta.url),'utf8'));
+const forecastSources=new Map(edition.passages.map((p:any)=>[p.sign,voice.entries.find((e:any)=>e.surface==='weekly-astrology'&&e.structuralFunction==='paragraph under Horoscopes for the week of Aug 4th'&&e.text.split(/\r?\n/u)[0].toLowerCase()===p.sign)]));
+for(const reading of plan.payload.plan.readings){
+ const source:any=forecastSources.get(reading.sign);assert(source,`Missing actual ${reading.sign} owner forecast`);
+ assert.equal(reading.sourceIds[0],source.sourceId,'Lead with the complete matching sign forecast, not the article introduction');
+ assert.equal(reading.sourceIds.length,6,'Retain topical evidence within the existing passage limit');
+}
+const evidenceEntry=prepareHoroscopeWriting(row).entries[0];
+assert.throws(()=>retrieveOwnerContext(evidenceEntry.plan,{...evidenceEntry.contextOptions,contentFamily:'horoscope',register:'second_person',primaryRegisterContentKeys:[]}),/OWNER_SURFACE_REGISTER_PASSAGES_MISSING/);
+assert.throws(()=>retrieveOwnerContext(evidenceEntry.plan,{...evidenceEntry.contextOptions,contentFamily:'horoscope',register:'second_person',primaryRegisterContentKeys:evidenceEntry.contextOptions.primaryRegisterContentKeys.slice(0,2)}),/OWNER_SURFACE_REGISTER_PASSAGES_MISSING/);
+const rejectedPrimary=evidenceEntry.contextOptions.examples.map((e:any)=>evidenceEntry.contextOptions.primaryRegisterContentKeys.includes(e.contentKey)?{...e,ownerApproved:false}:e);
+assert.throws(()=>retrieveOwnerContext(evidenceEntry.plan,{...evidenceEntry.contextOptions,examples:rejectedPrimary,contentFamily:'horoscope',register:'second_person'}),/OWNER_SURFACE_REGISTER_PASSAGES_MISSING/);
 const firstVersion=row.updated_at;
 let result=await action('generate',{sign:'aries',approvedPlanHash:planHash});assert.equal(result.status,202,JSON.stringify(result.payload));row=result.payload.rows[0];
 assert.equal(writerFixture.calls,1);assert(row.source_snapshot.horoscopeGeneration.active.responseId);
@@ -35,6 +53,21 @@ for(const sign of edition.passages.slice(1).map(p=>p.sign)){
  result=await action('poll');assert.equal(result.status,200,JSON.stringify(result.payload));row=result.payload.rows[0];
 }
 assert.equal(writerFixture.calls,13);assert.equal(row.sections.horoscopeEdition.passages.filter((p:any)=>p.body).length,12);
+for(const request of writerFixture.requests.values()){
+ const section=request.input.match(/COMPLETE OWNER HOROSCOPES — PRIMARY PROSE EXAMPLES\n([^\n]+)\n\n/);
+ assert(section,'The actual provider prompt must contain the primary horoscope examples');
+ const passages=JSON.parse(section[1]);assert.equal(passages.length,3);
+ assert.equal(passages[0].id,(forecastSources.get(request.sign) as any).sourceId);
+ for(const passage of passages){
+  const source=voice.entries.find((e:any)=>e.sourceId===passage.id);
+  assert.equal(passage.text,source.text,'Preserve the complete original sign reading');
+  assert.equal(passage.sourceRecordSha256,createHash('sha256').update(source.text).digest('hex'));
+  assert.equal(source.ownerAuthored,true);assert.equal(source.ownerApproved,true);
+ }
+ assert(request.input.indexOf(section[0])<request.input.indexOf('CONTENT STUDIO WRITING INSTRUCTIONS'));
+ assert.deepEqual(row.source_snapshot.horoscopeGeneration.readings[request.sign].sourceIds.slice(0,3),passages.map((e:any)=>e.id));
+ assert.equal(row.source_snapshot.horoscopeGeneration.readings[request.sign].version,'horoscope-writer/v2');
+}
 const protectedReceipt=structuredClone(row.source_snapshot.horoscopeGeneration);
 result=await store.invoke('PATCH',{id:row.id,expectedUpdatedAt:row.updated_at,sourceSnapshot:{horoscopeGeneration:null}});
 assert.equal(result.status,200,JSON.stringify(result.payload));row=result.payload.rows[0];assert.deepEqual(row.source_snapshot.horoscopeGeneration,protectedReceipt);
@@ -61,6 +94,12 @@ for(const [zone,start] of [['Pacific/Kiritimati','2026-09-23T10:00:00.000Z'],['A
  const packet=await prepareHoroscopeBrief(new URL(`http://localhost/?period=daily&date=2026-09-24&timeZone=${zone}`));assert.equal(packet.brief.window.startsAt,start);
 }
 assert.equal(canonicalHoroscopeTimeZone('Asia/Kathmandu'),canonicalHoroscopeTimeZone('Asia/Katmandu'));
+for(const period of ['daily','seasonal']){
+ const packet=await prepareHoroscopeBrief(new URL(`http://localhost/?period=${period}&date=2026-09-24&timeZone=Asia/Tokyo`));
+ const other=prepareHoroscopeWriting({sections:{horoscopeEdition:emptyHoroscopeEdition(packet.brief.window)},facts:{horoscopeBrief:packet},source_snapshot:{}});
+ assert(other.entries.every((entry:any)=>entry.contextOptions.primaryRegisterContentKeys.length===0&&!entry.contextOptions.requirePrimaryRegister));
+ assert(other.entries.every((entry:any)=>!entry.sourceIds.some((id:string)=>[...forecastSources.values()].some((source:any)=>source.sourceId===id))),'The weekly repair must not change daily or seasonal register selection');
+}
 const aliasPacket=await prepareHoroscopeBrief(new URL('http://localhost/?period=daily&date=2026-09-24&timeZone=Asia/Kathmandu'));
 const aliasEdition=emptyHoroscopeEdition(aliasPacket.brief.window);aliasEdition.passages=aliasEdition.passages.map(p=>({...p,headline:'Synthetic alias fixture',body:'You can read this complete timezone fixture.'}));
 result=await store.invoke('POST',{contentKey:horoscopeEditionKey(aliasEdition.window),surface:'sky',mode:'article',eventType:'horoscope-edition',provider:'manual-admin',status:'DRAFT',lane:'serving',headline:'Alias fixture',body:horoscopeEditionBody(aliasEdition),sections:{horoscopeEdition:aliasEdition},facts:{horoscopeBrief:aliasPacket}});assert.equal(result.status,200,JSON.stringify(result.payload));const aliasRow=result.payload.rows[0];

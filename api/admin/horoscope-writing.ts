@@ -6,7 +6,7 @@ import {AdminHttpError,adminFetchJson,adminStorageRows,readAdminJsonBody,sendAdm
 import {studioStorage} from '../_lib/sky-studio-sources.js';
 import {assertHoroscopeRow} from '../_lib/horoscope-editions.js';
 import {activeStudioFeedback,studioFeedbackEnabled,feedbackHash} from '../_lib/studio-memory-feedback.js';
-import {prepareHoroscopeWriting,horoscopePlanPreview,writeHoroscopeSign} from '../../src/astro-writing/horoscopeWriting.mjs';
+import {prepareHoroscopeWriting,horoscopePlanPreview,writeHoroscopeSign,horoscopeWritingVersion} from '../../src/astro-writing/horoscopeWriting.mjs';
 import {horoscopeEditionBody,HOROSCOPE_SIGNS,horoscopeCanonicalJson} from '../../apps/web/src/content/horoscopeEditions.mjs';
 import responses from '../../src/astro-writing/openAIResponses.cjs';
 import provider from '../../src/astro-writing/offlineProviderConfig.cjs';
@@ -97,7 +97,7 @@ export default async function handler(req:IncomingMessage,res:ServerResponse) {
       const entry=prepared.entries.find((e:any)=>e.sign===sign);
       operation={id:randomUUID(),sign,planHash,startedAt:new Date().toISOString(),actor,config,responseId:null,state:'starting',
         validationCorrections:entry.validationCorrections,
-        receipt:{version:'horoscope-writer/v1',planHash,sign,sourceHash:prepared.sourceHash,sourceIds:entry.sourceIds,profileHash:hash(prepared.writingProfile),argumentHash:entry.argumentOutline.outlineHash,feedback:prepared.feedbackReceipt,ownerApproved:false,promotionAuthorized:false}};
+        receipt:{version:horoscopeWritingVersion,planHash,sign,sourceHash:prepared.sourceHash,sourceIds:entry.sourceIds,profileHash:hash(prepared.writingProfile),argumentHash:entry.argumentOutline.outlineHash,feedback:prepared.feedbackReceipt,ownerApproved:false,promotionAuthorized:false}};
       await persist({source_snapshot:{...row.source_snapshot,horoscopeGeneration:{...row.source_snapshot?.horoscopeGeneration,active:operation,lastError:null}}});
     }
     let payload:any;

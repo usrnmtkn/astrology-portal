@@ -7,6 +7,10 @@ export function buildHoroscopeDraftInput({plan,context,task,target,engineFacts,a
   return [
     'SURFACE\nhoroscopes','CONTENT FAMILY\nhoroscope','REGISTER\nsecond_person',
     `TASK\n${task}`,
+    ...(context.primaryRegisterPassages?.length?[
+      `COMPLETE OWNER HOROSCOPES — PRIMARY PROSE EXAMPLES\n${JSON.stringify(context.primaryRegisterPassages)}`,
+      'These complete sign readings are the primary examples of how the owner writes a horoscope. Follow their language, sentence movement, direct address and endings. Other owner articles support the topic; they do not replace these horoscope examples. Historical transits and dates are not current facts, and a source sign heading does not change the requested rising sign. The writing plan defines meaning and scope, not sentences to paraphrase or a fixed paragraph sequence.'
+    ]:[]),
     `CONTENT STUDIO WRITING INSTRUCTIONS\n${resolveStudioWritingProfile(writingProfile,{allowStarter:true}).prompt}`,
     `RENDER TARGET\n${JSON.stringify(target)}`,
     `CALCULATED FACTS\n${JSON.stringify(engineFacts)}`,
