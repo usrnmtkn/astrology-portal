@@ -9,7 +9,7 @@ Object.assign(process.env,env);
 export const rows=new Map<string,any>();
 export const feedbackFixture={rows:[] as any[],fail:false};
 rows.set('shared-guidance-fixture',{id:'shared-guidance-fixture',content_key:LUNATION_PROFILE_KEY,mode:'article',target_date:null,status:'DRAFT',lane:'reference',body:'',summary:'',updated_at:'2026-09-27T00:00:00Z',source_snapshot:{revision:1},sections:{writingProfile:{...defaultLunationProfile(),voiceGuidance:'Synthetic shared guidance marker. Develop a thought through its consequence.'}}});
-export const providerFixture={calls:0,requests:[] as any[],fail:false,pending:false};
+export const providerFixture={calls:0,polls:0,requests:[] as any[],fail:false,pending:false,pollFailures:0,terminalStatus:''};
 const matches=(row:any,params:URLSearchParams)=>[...params].every(([key,value])=>{
   if(['select','order','limit'].includes(key))return true;
   if(value==='is.null')return row[key]==null;
@@ -25,7 +25,9 @@ globalThis.fetch=async(input:any,options:any={})=>{
       if(providerFixture.fail)return Response.json({error:'synthetic decline'},{status:429});
       return Response.json({id:'resp_lunation_fixture',status:'queued'});
     }
-    return Response.json(providerFixture.pending?{status:'in_progress'}:{status:'completed',usage:{output_tokens:20},output:[{type:'message',content:[{type:'output_text',text:JSON.stringify({headline:'Synthetic lunar article',body:'You can explore this synthetic possibility. A practical change may give you something specific to consider.\n\nYou can return to the conversation with a clearer question.'})}]}]});
+    providerFixture.polls++;
+    if(providerFixture.pollFailures>0){providerFixture.pollFailures--;return Response.json({error:'Synthetic retrieval outage'},{status:503});}
+    return Response.json(providerFixture.terminalStatus?{status:providerFixture.terminalStatus}:providerFixture.pending?{status:'in_progress'}:{status:'completed',usage:{output_tokens:20},output:[{type:'message',content:[{type:'output_text',text:JSON.stringify({headline:'Synthetic lunar article',body:'You can explore this synthetic possibility. A practical change may give you something specific to consider.\n\nYou can return to the conversation with a clearer question.'})}]}]});
   }
   if(url.origin===env.SUPABASE_URL&&url.pathname==='/rest/v1/studio_writing_feedback')return feedbackFixture.fail?Response.json({}, {status:503}):Response.json(feedbackFixture.rows.filter(row=>url.searchParams.get('target_keys')===`cs.{${row.target_keys[0]}}`));
   if(url.origin!==env.SUPABASE_URL||url.pathname!=='/rest/v1/generated_interpretations')throw new Error(`External request refused: ${url.origin}${url.pathname}`);
@@ -45,6 +47,7 @@ globalThis.fetch=async(input:any,options:any={})=>{
 };
 export async function invoke(method:string,body?:unknown,url='/api/admin/lunation-writing',secret='calendar-api-fixture') {
   if(method==='rows')return [...rows.values()];
+  if(method==='provider'){Object.assign(providerFixture,body??{});return providerFixture;}
   const req=Readable.from(body===undefined?[]:[JSON.stringify(body)]);
   Object.assign(req,{method,url,headers:{authorization:`Bearer ${secret}`}});
   const endpoint=url.startsWith('/api/admin/calendar-lunation-writing')?(await import('../../api/admin/calendar-lunation-writing')).default:handler;
