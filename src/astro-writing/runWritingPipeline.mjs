@@ -74,6 +74,8 @@ export async function runWritingPipeline({
   reservedNegationPivots = 0,
   excludedEvidenceContentKeys = [],
   preferredEvidenceContentKeys = [],
+  primaryRegisterContentKeys = [],
+  requirePrimaryRegister = false,
   phraseEvidence = [],
   writingProfile = null
 }) {
@@ -130,6 +132,8 @@ export async function runWritingPipeline({
       register,
       excludedEvidenceContentKeys,
       preferredEvidenceContentKeys,
+      primaryRegisterContentKeys,
+      requirePrimaryRegister,
       phraseEvidence
     });
     assertPositiveOwnerEvidenceContext(context, { family });

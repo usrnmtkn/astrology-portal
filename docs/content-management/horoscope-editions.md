@@ -129,6 +129,16 @@ The horoscope family uses the canonical writer, a forecast-specific output
 schema, actual owner passages, separately identified reviewed meaning doctrine,
 scoped matrix/scene evidence, the selected writing profile and signed ephemeris
 facts. Doctrine is not marked owner-authored or owner-approved reader wording.
+Weekly generation reserves three complete owner-authored sign forecasts as its
+primary prose examples, prioritizing the requested sign. These include eligible
+paragraphs under horoscope headings, not only generic article paragraphs.
+Topical season/lunation references remain separate support. Missing eligible
+forecast examples stop preparation before a provider call. Exact source text,
+IDs and hashes reach the prompt; source IDs are retained in the receipt.
+Writer version v2 invalidates old prepared plans so the revised examples require
+a refreshed plan. Existing saved readings and editable profiles are preserved.
+The actual-handler regression checks the full dispatched examples for all twelve
+signs. It verifies retrieval and text integrity, not owner acceptance of new prose.
 Current Studio feedback is checked without expanding another surface’s approved
 correction scope. Sources, prompts and operation metadata never enter the public
 reader projection. Blocking writing/fact checks must be resolved before a

@@ -1,5 +1,5 @@
 import { selectOwnerCorrectionPairs } from "./selectOwnerCorrectionPairs.mjs";
-import { normalizeOwnerEvidence, ownerEvidencePolicyFor } from "./ownerEvidencePolicy.mjs";
+import { normalizeOwnerEvidence, ownerEvidencePolicyFor, OwnerEvidencePreconditionError } from "./ownerEvidencePolicy.mjs";
 import { buildSharedEvidencePacket } from "./sharedEvidenceIndex.mjs";
 import { selectPhraseEvidence } from "./phraseEvidence.mjs";
 
@@ -60,6 +60,8 @@ export function retrieveOwnerContext(plan, {
   failureCategories = [],
   excludedEvidenceContentKeys = [],
   preferredEvidenceContentKeys = [],
+  primaryRegisterContentKeys = [],
+  requirePrimaryRegister = false,
   phraseEvidence = []
 } = {}) {
   const policy = ownerEvidencePolicyFor(contentFamily);
@@ -96,6 +98,13 @@ export function retrieveOwnerContext(plan, {
   const selectedSameFamily = [];
   const sourceCounts = new Map();
   const rankedExamples = ranked(eligibleExamples);
+  const primaryKeys = new Set(primaryRegisterContentKeys);
+  const primaryRegisterPassages = rankedExamples.filter(entry => primaryKeys.has(entry.contentKey)).slice(0, policy.minimumSameFamilyPassages);
+  if (requirePrimaryRegister && primaryRegisterPassages.length < policy.minimumSameFamilyPassages) {
+    throw new OwnerEvidencePreconditionError('OWNER_SURFACE_REGISTER_PASSAGES_MISSING', {
+      family: contentFamily, required: policy.minimumSameFamilyPassages, actual: primaryRegisterPassages.length
+    });
+  }
   const targetSign = String(plan.sign ?? "").trim().toLowerCase();
   const targetPlanet = String(plan.object ?? "").trim().toLowerCase();
   const relevanceMatches = (entry) => ownerPassageRelevanceTier !== "none"
@@ -118,6 +127,9 @@ export function retrieveOwnerContext(plan, {
     sourceCounts.set(sourceKey, sourceCount + 1);
     return true;
   };
+  // Complete sign forecasts are independent prose units even when published in
+  // one weekly article. Reserve their register role before topical references.
+  for (const entry of primaryRegisterPassages) add(entry, Number.POSITIVE_INFINITY);
   for (const sourceLimit of [2, Number.POSITIVE_INFINITY]) {
     for (const entry of rankedExamples.filter(relevanceMatches)) {
       add(entry, sourceLimit);
@@ -126,6 +138,7 @@ export function retrieveOwnerContext(plan, {
     if (selectedSameFamily.filter(relevanceMatches).length >= requiredRelevant) break;
   }
   for (const entry of rankedExamples) {
+    if (selectedSameFamily.length >= maximum) break;
     add(entry, 2);
     if (selectedSameFamily.length >= maximum) break;
   }
@@ -176,6 +189,7 @@ export function retrieveOwnerContext(plan, {
       matchedFamily: entry.family,
       sourcePath: entry.sourcePath ?? entry.source
     })),
+    primaryRegisterPassages,
     relevantOwnerPassages,
     supportingOwnerPassages,
     registerGoldExamples: selectedRegisterGold,
