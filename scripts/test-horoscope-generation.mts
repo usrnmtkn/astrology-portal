@@ -7,12 +7,16 @@ import {validateHoroscopeReading} from '../src/astro-writing/horoscopeValidation
 import {prepareHoroscopeBrief} from '../api/_lib/horoscope-editions';
 import {prepareHoroscopeWriting} from '../src/astro-writing/horoscopeWriting.mjs';
 import {retrieveOwnerContext} from '../src/astro-writing/retrieveOwnerContext.mjs';
+import {defaultHoroscopeProfile,horoscopeEditorialPrompt} from '../src/astro-writing/horoscopeWritingProfiles.mjs';
 installHoroscopeWriterFixture();
+const savedProfile=await store.invoke('POST',{profile:defaultHoroscopeProfile('weekly'),expectedUpdatedAt:null},'/api/admin/generated-content?writingProfiles=true');
+assert.equal(savedProfile.status,200,JSON.stringify(savedProfile.payload));
+const writingProfile=savedProfile.payload.profile;
 const prepared=await store.invoke('GET',undefined,'/api/admin/generated-content?horoscopeBrief=true&period=weekly&date=2026-09-24&timeZone=Asia/Tokyo');
 assert.equal(prepared.status,200,JSON.stringify(prepared.payload));
 const {brief,signature}=prepared.payload;
 let edition=emptyHoroscopeEdition(brief.window);
-const created=await store.invoke('POST',{contentKey:horoscopeEditionKey(edition.window),surface:'sky',mode:'article',eventType:'horoscope-edition',provider:'manual-admin',targetDate:null,status:'DRAFT',lane:'serving',reviewState:null,headline:'Synthetic horoscope edition',body:horoscopeEditionBody(edition),sections:{horoscopeEdition:edition},facts:{horoscopeBrief:{brief,signature}},sourceSnapshot:{}});
+const created=await store.invoke('POST',{contentKey:horoscopeEditionKey(edition.window),surface:'sky',mode:'article',eventType:'horoscope-edition',provider:'manual-admin',targetDate:null,status:'DRAFT',lane:'serving',reviewState:null,headline:'Synthetic horoscope edition',body:horoscopeEditionBody(edition),sections:{horoscopeEdition:edition},facts:{horoscopeBrief:{brief,signature}},sourceSnapshot:{studioWritingProfile:writingProfile}});
 assert.equal(created.status,200,JSON.stringify(created.payload));let row=created.payload.rows[0];
 const action=(action:string,extra:any={})=>invokeHoroscopeWriting({action,id:row.id,expectedUpdatedAt:row.updated_at,...extra});
 assert.equal((await invokeHoroscopeWriting({action:'prepare',id:row.id,expectedUpdatedAt:row.updated_at},'wrong')).status,401);
@@ -54,6 +58,7 @@ for(const sign of edition.passages.slice(1).map(p=>p.sign)){
 }
 assert.equal(writerFixture.calls,13);assert.equal(row.sections.horoscopeEdition.passages.filter((p:any)=>p.body).length,12);
 for(const request of writerFixture.requests.values()){
+ assert(request.input.includes(horoscopeEditorialPrompt(writingProfile.profile)),'Every sign must receive the complete saved weekly guidance, including sign specificity and flexible interpretation');
  const section=request.input.match(/COMPLETE OWNER HOROSCOPES — PRIMARY PROSE EXAMPLES\n([^\n]+)\n\n/);
  assert(section,'The actual provider prompt must contain the primary horoscope examples');
  const passages=JSON.parse(section[1]);assert.equal(passages.length,3);
@@ -69,7 +74,7 @@ for(const request of writerFixture.requests.values()){
  assert.equal(row.source_snapshot.horoscopeGeneration.readings[request.sign].version,'horoscope-writer/v2');
 }
 const protectedReceipt=structuredClone(row.source_snapshot.horoscopeGeneration);
-result=await store.invoke('PATCH',{id:row.id,expectedUpdatedAt:row.updated_at,sourceSnapshot:{horoscopeGeneration:null}});
+result=await store.invoke('PATCH',{id:row.id,expectedUpdatedAt:row.updated_at,sourceSnapshot:{...row.source_snapshot,horoscopeGeneration:null}});
 assert.equal(result.status,200,JSON.stringify(result.payload));row=result.payload.rows[0];assert.deepEqual(row.source_snapshot.horoscopeGeneration,protectedReceipt);
 const invalid={...row.sections.horoscopeEdition.passages[0],body:'You were born with the Sun in Aries. Your seventh house is activated.'};
 assert.equal(validateHoroscopeReading(invalid,brief).passed,false);
