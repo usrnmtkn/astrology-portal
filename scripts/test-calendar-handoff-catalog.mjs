@@ -173,6 +173,7 @@ assert.equal(isLocalCalendarWritingHost("tldrastro.com"), false);
 assert.equal(isEditableCalendarWritingKey("authored/lunar-journal/season/libra/20250922t181900z"), true);
 assert.equal(isEditableCalendarWritingKey("generated/calendar-event/aspect/x"), false);
 assert.ok(calendarWritingStudioHref("authored/lunar-journal/season/libra/20250922t181900z").includes("#calendar-writeups?"));
+assert.equal(new URL(calendarWritingStudioHref("authored/lunar-journal/season/libra/20250922t181900z")).hash.includes("view=season-writeups"), true);
 assert.ok(calendarWritingStudioHref("authored/lunar-journal/season/libra/20250922t181900z").includes("q=authored%2Flunar-journal%2Fseason%2Flibra%2F20250922t181900z"));
 assert.ok(calendarWritingStudioHref("fallback-hook/sky-placement-lived/moon/libra").includes("#sky-writeups?"));
 assert.equal(calendarWritingStudioHref("fallback-hook/sky-placement-lived/moon/libra").includes("#calendar-writeups?"), false);
