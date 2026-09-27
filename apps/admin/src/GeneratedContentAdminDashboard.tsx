@@ -6425,7 +6425,8 @@ export function GeneratedContentAdminDashboard() {
         existing = publishedIngressTldr(sources.flat(), planet, sign);
       }
       if (existing) {
-        const current = { ...existing, body: currentSkySummaryWording(existing.content_key, existing.body ?? "") };
+        const current = { ...existing, body: currentSkySummaryWording(existing.content_key, existing.body ?? ""),
+          source_snapshot: { ...existing.source_snapshot, allowedSlots: field.allowedSlots } };
         setRows(rows => [current, ...rows.filter(row => row.id !== current.id)]);
         const opened = await openRow(current);
         if (opened && initialBody !== undefined) setDraft(previous => previous ? { ...previous, body: initialBody,
@@ -11593,6 +11594,9 @@ export function GeneratedContentAdminDashboard() {
               <strong>Reader-facing CMS override</strong>
               <p>A published row replaces prose on the named app surface immediately. Astrology facts remain calculated by the app and can enter this copy only through the allowed slots below.</p>
               <p><strong>Allowed slots:</strong> {cmsAllowedSlots.length > 0 ? cmsAllowedSlots.map((slot) => isSkySummaryDraft ? `{${slot}}` : `{{${slot}}}`).join(", ") : "This row has no calculated slots."}</p>
+              {currentDraft.contentKey.startsWith("cms/sky-daily-summary/sun/") && <div role="group" aria-label="Insert Sun passage variable">
+                {cmsAllowedSlots.map(slot => <StudioButton key={slot} type="button" disabled={isLoading} onMouseDown={event => event.preventDefault()} onClick={() => insertDraftToken(`{${slot}}`)}>Insert {slot === "sunPlacement" ? "Sun placement" : "ruler name"}</StudioButton>)}
+              </div>}
               <p>Save & publish makes your wording live in one step. Save draft keeps an unfinished revision for later.</p>
               <p><strong>Reader status:</strong> <ContentLiveStatusBadge row={editorStatusRow} unsaved={!isAstro101Draft && draftHasUnsavedChanges && !(!currentDraft.id && matchesBuiltinSummary)} /></p>
               {cmsTemplateValidation.errors.length > 0 ? (

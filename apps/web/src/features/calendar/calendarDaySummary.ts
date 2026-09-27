@@ -16,5 +16,6 @@ export function calendarSkyForDay(sky: SkySnapshot | null | undefined, dateKey: 
 export function calendarSunSummary(sky: SkySnapshot | null, content?: CmsGeneratedContentMap, events: LunarCalendarEvent[] = sky?.dailyEvents ?? []) {
   const sun = sky?.positions.find(position => position.planet === 'Sun');
   return sun ? skyDailySummaryParts({ sun, moonIsVoid: false,
+    retrogradePlanets: sky?.positions.filter(p => p.motion === "retrograde").map(p => p.planet),
     sunTransition: skySunTransition(events, sky?.generatedAt, sky?.location.timeZone) }, content, { openingOnly: true }) : [];
 }

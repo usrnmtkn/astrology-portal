@@ -1,3 +1,4 @@
+import { sunSeasonHasRetrograde, sunSeasonKey } from "./skySunSeason.js";
 import { moonEventNames, moonSummaryKey, moonSummaryBody, type MoonSummaryKind } from "./skyMoonSummary.js";
 import legacyAssembly from "./skyDailySummaryLegacyAssembly.json" with { type: "json" };
 import assembly from "./skyDailySummaryAssembly.json" with { type: "json" };
@@ -57,12 +58,12 @@ export const skyMoonSummaryFields: SkySummaryField[] = skySummarySigns.flatMap(s
 export const skyDailySummaryFields: SkySummaryField[] = [
   ...skyMoonSummaryFields,
   ...skyAssemblyFields,
-  ...(["sun"] as const).flatMap(body => skySummarySigns.map(sign => ({
-    key: `cms/sky-daily-summary/${body}/${sign.toLowerCase()}`,
-    label: `${body === "sun" ? "Sun" : "Moon"} in ${sign}`,
+  ...skySummarySigns.flatMap(sign => [false, ...(sunSeasonHasRetrograde(sign) ? [true] : [])].map(retrograde => ({
+    key: sunSeasonKey(sign, retrograde),
+    label: `Sun in ${sign}${retrograde ? " · Ruler retrograde" : ""}`,
     group: "Sun summaries",
-    body: (clauses[body] as Record<string, string>)[sign.toLowerCase()] ?? "",
-    allowedSlots: []
+    body: retrograde ? "" : (clauses.sun as Record<string, string>)[sign.toLowerCase()] ?? "",
+    allowedSlots: retrograde ? ["sunPlacement", "rulerName"] : ["sunPlacement"], optionalSlots: true
   }))),
   ...Object.entries(timingLabels).map(([key, label]) => ({
     key: `cms/sky-daily-summary/${key}`, label, group: "Timing and retrogrades",
@@ -92,6 +93,9 @@ export function skySummaryTemplateErrors(key: string, body: string): string[] {
   for (const slot of field.allowedSlots) {
     if (field.optionalSlots ? slots.filter(value => value === slot).length > 1 : slots.filter(value => value === slot).length !== 1) errors.push(`Keep exactly one {${slot}} slot.`);
   }
-  if (field.optionalSlots && !slots.includes("openingSentence")) errors.push("Keep {openingSentence} in the full template.");
+  if (key === "cms/sky-daily-summary/assembly/layout" && !slots.includes("openingSentence")) errors.push("Keep {openingSentence} in the full template.");
+  if (field.group === "Sun summaries") {
+    if (body.trim() && (slots.length || key.endsWith("/ruler-retrograde")) && !slots.includes("sunPlacement")) errors.push("Include {sunPlacement} once in the complete Sun passage.");
+  }
   return errors;
 }
