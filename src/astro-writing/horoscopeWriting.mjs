@@ -18,7 +18,7 @@ import {runWritingPipeline} from './runWritingPipeline.mjs';
 import {buildHoroscopeDevelopments} from './horoscopeDevelopments.mjs';
 
 const root=fileURLToPath(new URL('../../',import.meta.url));
-export const horoscopeWritingVersion='horoscope-writer/v4';
+export const horoscopeWritingVersion='horoscope-writer/v5';
 const digest=value=>createHash('sha256').update(typeof value==='string'?value:horoscopeCanonicalJson(value)).digest('hex');
 let repositorySources;
 const preparedPlans=new Map();

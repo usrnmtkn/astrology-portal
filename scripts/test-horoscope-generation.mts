@@ -7,7 +7,7 @@ import {validateHoroscopeReading} from '../src/astro-writing/horoscopeValidation
 import {prepareHoroscopeBrief} from '../api/_lib/horoscope-editions';
 import {prepareHoroscopeWriting} from '../src/astro-writing/horoscopeWriting.mjs';
 import {retrieveOwnerContext} from '../src/astro-writing/retrieveOwnerContext.mjs';
-import {defaultHoroscopeProfile,horoscopeEditorialPrompt,HOROSCOPE_EMOTIONAL_DEVELOPMENT_GUIDANCE,HOROSCOPE_CONNECTED_READING_GUIDANCE,HOROSCOPE_PUBLICATION_TIMING_GUIDANCE} from '../src/astro-writing/horoscopeWritingProfiles.mjs';
+import {defaultHoroscopeProfile,horoscopeEditorialPrompt,HOROSCOPE_EMOTIONAL_DEVELOPMENT_GUIDANCE,HOROSCOPE_CONNECTED_READING_GUIDANCE,HOROSCOPE_PUBLICATION_TIMING_GUIDANCE,HOROSCOPE_OWNER_EDIT_GUIDANCE} from '../src/astro-writing/horoscopeWritingProfiles.mjs';
 installHoroscopeWriterFixture();
 const savedProfile=await store.invoke('POST',{profile:defaultHoroscopeProfile('weekly'),expectedUpdatedAt:null},'/api/admin/generated-content?writingProfiles=true');
 assert.equal(savedProfile.status,200,JSON.stringify(savedProfile.payload));
@@ -80,6 +80,8 @@ for(const request of writerFixture.requests.values()){
  assert(request.input.includes(HOROSCOPE_EMOTIONAL_DEVELOPMENT_GUIDANCE));
  assert(request.input.includes(HOROSCOPE_CONNECTED_READING_GUIDANCE));
  assert(request.input.includes(HOROSCOPE_PUBLICATION_TIMING_GUIDANCE));
+ assert(request.input.includes(HOROSCOPE_OWNER_EDIT_GUIDANCE));
+ assert(request.input.includes('FINISH THE NEW DRAFT USING THE SAVED EDITORIAL GUIDANCE'));
  const label=request.sign[0].toUpperCase()+request.sign.slice(1);
  assert.deepEqual(request.text.format.schema.properties.headline.enum,[`${label} & ${label} Rising`]);
  assert.equal(row.sections.horoscopeEdition.passages.find((p:any)=>p.sign===request.sign).headline,`${label} & ${label} Rising`);
@@ -102,7 +104,7 @@ for(const request of writerFixture.requests.values()){
  }
  assert(request.input.indexOf(section[0])<request.input.indexOf('CONTENT STUDIO WRITING INSTRUCTIONS'));
  assert.deepEqual(row.source_snapshot.horoscopeGeneration.readings[request.sign].sourceIds.slice(0,3),passages.map((e:any)=>e.id));
- assert.equal(row.source_snapshot.horoscopeGeneration.readings[request.sign].version,'horoscope-writer/v4');
+ assert.equal(row.source_snapshot.horoscopeGeneration.readings[request.sign].version,'horoscope-writer/v5');
 }
 // The lunation is distinct from the Monday snapshot Moon. Houses must bind to
 // the named subject, rather than matching the Sun's house or any available house.
@@ -181,6 +183,8 @@ for(const period of ['daily','seasonal']){
   assert(request.input.includes(horoscopeEditorialPrompt(profile)),'The full saved daily profile reaches the writer');
   assert(request.input.includes(HOROSCOPE_CONNECTED_READING_GUIDANCE));
   assert(request.input.includes(HOROSCOPE_PUBLICATION_TIMING_GUIDANCE));
+  assert(request.input.includes(HOROSCOPE_OWNER_EDIT_GUIDANCE));
+  assert(request.input.includes('FINISH THE NEW DRAFT USING THE SAVED EDITORIAL GUIDANCE'));
   assert.match(request.input,/weekly passages as voice references for a new focused daily reading/);
   assert.match(request.input,/not the lifetime of every influence/);
   assert.doesNotMatch(request.input,/Timing language must stay within the declared local period/);
