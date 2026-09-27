@@ -13,6 +13,15 @@ const savedBody = (row: Row) => {
   const draft = object(object(row.sections).packageDraft);
   return typeof draft.body === 'string' ? draft.body : row.body ?? '';
 };
+// Listing preview only: search and Edit continue to use the complete saved body.
+const seasonPreview = (body: string) => {
+  const text = body.replace(/\s+/gu, ' ').trim();
+  const characters = Array.from(text);
+  if (characters.length <= 200) return text;
+  const prefix = characters.slice(0, 199).join('');
+  const end = prefix.lastIndexOf(' ');
+  return `${(end > 0 ? prefix.slice(0, end) : prefix).trimEnd()}…`;
+};
 const archived = (row: Row) => row.status === 'ARCHIVED' || object(row.source_snapshot).review_status === 'deprecated' || row.facts?.review_status === 'deprecated';
 const title = (sign: string) => sign[0].toUpperCase() + sign.slice(1);
 
@@ -89,7 +98,7 @@ export default function SeasonTransitionWorkspace({ scope, rows, editor, query, 
             <thead><tr><th scope="col">{seasons ? "Season" : ingress ? "Moon ingress" : "Transition"}</th><th scope="col">Saved passage</th><th scope="col" className="admin-col-visibility">Publication</th><th scope="col" className="admin-col-edit"><span className="sr-only">Edit</span></th></tr></thead>
             <tbody>{filtered.slice(0, limit).map(({ row, identity }) => <tr key={row.content_key}>
               <td data-label={seasons ? "Season" : ingress ? "Moon ingress" : "Transition"}>{identity.title}</td>
-              <td data-label="Saved passage">{row.inventory_only ? <p>{currentDocuments?.error ? 'Passage unavailable. Retry to load your saved writing.' : 'Loading saved passage…'}</p> : <><FormattedProse className="admin-variable-source-prose" text={savedBody(row)} />{!savedBody(row) && <p>No saved passage.</p>}</>}</td>
+              <td data-label="Saved passage">{row.inventory_only ? <p>{currentDocuments?.error ? 'Passage unavailable. Retry to load your saved writing.' : 'Loading saved passage…'}</p> : <><FormattedProse className="admin-variable-source-prose" text={seasons ? seasonPreview(savedBody(row)) : savedBody(row)} />{!savedBody(row) && <p>No saved passage.</p>}</>}</td>
               <td data-label="Publication">{(ingress || seasons) && row.id.startsWith('package:') ? 'Original passage' : archived(row) ? 'Archived' : row.status === 'LIVE' ? 'Published' : row.status === 'DRAFT' ? 'Draft' : row.status.toLowerCase()}{row.updated_at && <small className="admin-field-hint">Saved {new Date(row.updated_at).toLocaleString()}</small>}</td>
               <td className="admin-col-edit"><StudioButton aria-label={`Edit ${identity.title}`} disabled={row.inventory_only} onClick={() => onEdit(row)}>Edit</StudioButton></td>
             </tr>)}</tbody>

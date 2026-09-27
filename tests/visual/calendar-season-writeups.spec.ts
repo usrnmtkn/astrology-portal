@@ -53,6 +53,9 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark'] as const)
       const table = workspace.getByRole('table', { name: 'Season passages' });
       await expect(table.locator('tbody tr')).toHaveCount(12);
       await expect(table.locator('tbody tr').getByRole('cell').filter({ hasText: /^Season · / })).toHaveCount(12);
+      for (const cell of await table.locator('td[data-label="Saved passage"]').all()) {
+        expect(Array.from((await cell.innerText()).trim()).length).toBeLessThanOrEqual(200);
+      }
       await expect(page.getByRole('region', { name: 'Calendar template preview' })).toHaveCount(0);
       await expect(page.getByRole('button', { name: 'Add leftover write-up' })).toHaveCount(0);
       await expect(page.locator('.admin-dashboard-header h1')).toHaveText('Calendar Write-ups');
@@ -63,7 +66,10 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark'] as const)
       const sign = workspace.getByLabel('Season sign', { exact: true });
       await sign.selectOption('libra');
       await expect(table.locator('tbody tr')).toHaveCount(1);
-      await expect(table.getByRole('cell').nth(1)).toHaveText(libra.body);
+      const preview = (await table.getByRole('cell').nth(1).innerText()).trim();
+      expect(preview).toMatch(/…$/u);
+      expect(libra.body.startsWith(preview.slice(0, -1))).toBe(true);
+      expect(preview).not.toContain('What relationships need me to show up more honestly?');
       await expect(page.locator('main.admin-dashboard')).toHaveAttribute('data-studio-theme', theme);
       await page.screenshot({ path: `test-results/season-writeups-${width}-${theme}.png`, fullPage: true });
       await table.getByRole('button', { name: 'Edit Season · Libra', exact: true }).click();
@@ -73,6 +79,9 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark'] as const)
       await expect(editor.getByLabel('Full lunar passage', { exact: true })).toBeFocused();
       await editor.getByRole('button', { name: 'Close', exact: true }).click();
       const search = workspace.getByRole('textbox', { name: 'Search season write-ups' });
+      await search.fill('What relationships need me to show up more honestly?');
+      await expect(table.locator('tbody tr')).toHaveCount(1);
+      await expect(table.getByRole('cell').nth(1)).toHaveText(preview);
       await search.fill('no-matching-season-writeup');
       await expect(workspace.getByText('No season write-ups match these filters.')).toBeVisible();
       await expect(table.locator('tbody tr')).toHaveCount(0);
