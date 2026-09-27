@@ -205,3 +205,20 @@ corrected copy, direct and bulk publication. Browser coverage exercises automati
 event loading, event filters, plan review, generation, save/reopen and reader
 handoff across desktop/mobile and light/dark themes. These checks do not establish
 live model quality or authorize a paid sample or publication of owner content.
+
+### Lunar background progress and recovery
+
+Background result polling must not toggle the editor's foreground busy state.
+Doing so repeatedly disables and re-enables controls while a valid stored
+request is still running. Show a stable progress panel beside the generation
+action, elapsed time, and the fact that reopening retrieves the same request.
+Keep the empty article editor hidden until the request finishes; completion
+loads the persisted body and focuses the article field for review.
+
+Transient retrieval failures pause polling with an explicit same-request retry.
+Terminal provider failures must reconcile the returned saved row, including
+its cleared active request, before showing the error and restoring generation.
+Leaving or switching drafts cancels pending client work so a late response
+cannot replace a different open draft. Tests must exercise multiple pending
+checks, reloads, retrieval errors, terminal errors and eventual completion;
+an immediately completed simulated response does not cover this workflow.

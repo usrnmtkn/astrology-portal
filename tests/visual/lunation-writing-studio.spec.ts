@@ -8,14 +8,18 @@ const typography=(element:Element)=>{
 };
 for(const width of [390,1440])for(const theme of ['light','dark'] as const){
   test(`Lunation writer saves and recovers its draft at ${width} ${theme}`,async({page})=>{
-    test.setTimeout(120000);
+    test.setTimeout(180000);
     const inventory=await studioApiStore([]),writer=await studioApiStore([],{lunationWriting:true});
     const errors:string[]=[];page.on('pageerror',error=>errors.push(error.message));
+    const disabledDuringPoll:boolean[]=[];
     try{
       await page.context().route('**/*',route=>new URL(route.request().url()).pathname.startsWith('/api/')?route.abort():route.continue());
       await routeStudioInventoryApi(page,{call:inventory.call,listRows:()=>[]});
       await page.route('**/api/admin/calendar-feed-events',route=>route.fulfill({status:200,contentType:'application/json',body:JSON.stringify({ok:true,events:[]})}));
       await page.route(/\/api\/admin\/(?:calendar-lunation-writing|lunation-writing)/,async route=>{
+        if(route.request().method()==='POST'&&route.request().postDataJSON()?.action==='poll'){
+          disabledDuringPoll.push(await page.getByRole('button',{name:'Edit shared writing guidance',exact:true}).isDisabled());
+        }
         const req=route.request(),result=await writer.call({method:req.method(),url:new URL(req.url()).pathname+new URL(req.url()).search,...(req.method()==='POST'?{body:req.postDataJSON()}:{})});
         await route.fulfill({status:result.status,contentType:'application/json',body:JSON.stringify(result.payload)});
       });
@@ -71,8 +75,48 @@ for(const width of [390,1440])for(const theme of ['light','dark'] as const){
       await expect(workspace.getByLabel('Full article',{exact:true})).toHaveValue('An unsaved manual draft must not be overwritten.');
       await workspace.getByLabel('Full article',{exact:true}).fill('');
       await workspace.getByRole('checkbox',{name:'I’ve reviewed this writing plan.'}).check();
+      await writer.call({method:'provider',body:{pending:true}});
       await workspace.getByRole('button',{name:'Generate draft',exact:true}).click();
+      await expect(workspace.getByText('Writing your article…',{exact:true})).toBeVisible();
+      await expect(workspace.getByLabel('Article generation progress',{exact:true})).toBeFocused();
+      await expect(workspace.getByLabel('Full article',{exact:true})).toHaveCount(0);
+      await expect.poll(async()=>(await writer.call({method:'provider'})).polls).toBeGreaterThanOrEqual(3);
+      expect(disabledDuringPoll.length).toBeGreaterThanOrEqual(3);
+      expect(disabledDuringPoll.every(disabled=>!disabled)).toBe(true);
+      await page.screenshot({path:`test-results/lunation-writer-progress-${width}-${theme}.png`,fullPage:true});
+      // The paid request survives a reload and a transient retrieval error.
+      await page.reload();
+      await page.getByRole('region',{name:'Saved lunation drafts',exact:true}).getByRole('button',{name:'Full Moon in Aries',exact:true}).click();
+      await expect(workspace.getByText('Writing your article…',{exact:true})).toBeVisible();
+      await writer.call({method:'provider',body:{pollFailures:1}});
+      await expect(workspace.getByText('Progress checks paused.',{exact:true})).toBeVisible();
+      await expect(workspace.getByRole('alert')).toContainText('The writer result is temporarily unavailable.');
+      expect((await writer.call({method:'provider'})).calls).toBe(1);
+      if(width===1440&&theme==='light'){
+        // A terminal provider failure must restore the editor, not leave a
+        // stale Retrieve loop after the server has cleared the operation.
+        await writer.call({method:'provider',body:{terminalStatus:'failed'}});
+        await workspace.getByRole('button',{name:'Check again',exact:true}).click();
+        await expect(workspace.getByRole('alert')).toContainText('The writer did not complete a usable article.');
+        await expect(workspace.getByLabel('Article generation progress',{exact:true})).toHaveCount(0);
+        await expect(workspace.getByRole('region',{name:'Selected lunation draft',exact:true})).toBeFocused();
+        await writer.call({method:'provider',body:{pending:false,terminalStatus:''}});
+        await workspace.getByRole('checkbox',{name:'I’ve reviewed this writing plan.'}).check();
+        await workspace.getByRole('button',{name:'Generate draft',exact:true}).click();
+      }else{
+        await writer.call({method:'provider',body:{pending:false}});
+        if(width===1440&&theme==='dark'){
+          // Another tab can retrieve and save the completed request while this
+          // tab is paused. Check again must reload its current version first.
+          const saved=(await writer.call({method:'rows'})).find((row:any)=>row.content_key.startsWith('studio-lunation/'));
+          const completed=await writer.call({method:'POST',body:{action:'poll',id:saved.id,expectedUpdatedAt:saved.updated_at}});
+          expect(completed.status).toBe(200);
+        }
+        await workspace.getByRole('button',{name:'Check again',exact:true}).click();
+      }
       await expect(workspace.getByLabel('Full article',{exact:true})).toHaveValue(/synthetic possibility/,{timeout:30000});
+      await expect(workspace.getByLabel('Full article',{exact:true})).toBeFocused();
+      expect((await writer.call({method:'provider'})).calls).toBe(width===1440&&theme==='light'?2:1);
       const body=await workspace.getByLabel('Full article',{exact:true}).inputValue();
       const edit=body+'\n\nThis exact synthetic owner edit must survive reopening.';
       await workspace.getByLabel('Full article',{exact:true}).fill(edit);
