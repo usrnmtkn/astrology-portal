@@ -127,6 +127,17 @@ function listParts(items: SummaryPart[]): SummaryPart[] {
 const words = ["Zero", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten", "Eleven", "Twelve"];
 const plain = (text: string): SummaryPart[] => [{ text }];
 const degreeText = (degree?: number) => typeof degree === "number" && Number.isFinite(degree) && degree >= 0 && degree < 30 ? ` at ${Math.floor(degree)}°` : "";
+function moonIngressSign(label: string) {
+  return label.trim().match(/^moon enters ([a-z]+)$/iu)?.[1];
+}
+// A New Moon, Full Moon, or eclipse already names the Moon's arrival in that
+// sign. A later countdown ("the next Full Moon") does not.
+function earlierLunationNamesSign(layout: string, slots: Record<string, SummaryPart[]>, sign: string) {
+  const cutoff = layout.indexOf("{ingressesSentence}");
+  const earlier = fillSkyTemplate(cutoff >= 0 ? layout.slice(0, cutoff) : "", slots).map(part => part.text).join(" ");
+  return earlier.split(/(?<=[.!?])\s+/u).some(sentence => !/\bthe next\b/iu.test(sentence)
+    && new RegExp(`\\b(?:new moon|full moon|solar eclipse|lunar eclipse)\\b[^.]*\\bin ${sign}\\b`, "iu").test(sentence));
+}
 
 export function skySummaryOpeningKey(sun?: string, moon?: string, content?: CmsGeneratedContentMap): "opening" | "openingSameSign" {
   // An existing customized general template retains its behavior unless the owner
@@ -275,8 +286,12 @@ export function skyDailySummaryParts(facts: SkyDailySummaryFacts, content?: CmsG
       if (event.isToday && values[slot].some(p => p.text)) previousEvent = true;
       continue;
     }
-    const ingresses = facts.ingresses?.filter(item => (!transitionText || item.id !== transition?.id)
-      && item.id !== sameDayVoidIngress?.id);
+    const ingresses = facts.ingresses?.filter(item => {
+      if (transitionText && item.id === transition?.id) return false;
+      if (item.id === sameDayVoidIngress?.id) return false;
+      const sign = moonIngressSign(item.label);
+      return !(sign && earlierLunationNamesSign(assembly.layout, values, sign));
+    });
     const items = slot === "exactAspectsSentence" ? facts.exactAspects : slot === "stationsSentence" ? facts.stations : ingresses;
     if (!items?.length) continue;
     const many = items.length > 1;
