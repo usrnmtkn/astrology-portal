@@ -1,6 +1,6 @@
 # Calendar New Moon and Full Moon writer
 
-The editor entry is **Content Studio → Calendar Write-ups → New & Full Moons**:
+The editor entry is **Content Studio → Calendar Write-ups → New & Full Moons & Eclipses → Reusable sign readings**:
 `/admin/content#calendar-writeups?view=lunation-writing`. Optional `phase` and
 `sign` parameters select an exact workspace, for example
 `&phase=new-moon&sign=libra`.
@@ -68,8 +68,7 @@ Drafts retain `ownerApproved: false` and `promotionAuthorized: false`.
 ## Canonical evidence and facts
 
 Dates and event identity come from Swiss Ephemeris. The selected date, phase,
-sign, and time zone must match the calculated event. Eclipses require their
-separate workflow. Related cycle anchors are calculated events, never six-month
+sign, and time zone must match the calculated event. Eclipses use **Dated articles & eclipses** in this same workspace. Related cycle anchors are calculated events, never six-month
 arithmetic. Historical dates inside owner articles are not current event facts.
 The meaning-plan hash binds the exact calculation packet to argument approval;
 the Studio plan hash also binds the saved guidance and private feedback versions.
@@ -100,3 +99,11 @@ Browser verification uses a fresh admin build, the actual API handler with
 isolated storage, and synthetic copy. It covers both themes at mobile and desktop
 widths, navigation, saving and reloading, preparing facts and evidence, edit
 conflicts, and unpublished candidate storage. No tests make paid model calls.
+
+## Shared dated-article workflow
+
+This is one navigation section with [dated articles and eclipses](LUNATION_ARTICLE_STUDIO.md),
+not a competing writer. Both use `studio-writing-profile/calendar/lunations`
+and the shared lunar reasoning protocol. Reusable prose must remain applicable
+across event dates; actual contacts and ruler positions belong to dated articles.
+The prepared plan binds the protocol as well as the profile and feedback.

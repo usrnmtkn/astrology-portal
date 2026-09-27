@@ -1,3 +1,4 @@
+import {buildLunationArticleInput,LUNATION_ARTICLE_SCHEMA} from "./lunationArticleInput.mjs";
 import { candidateCardAstrologyWritingInstructions, canonicalAstrologyWritingInstructions } from "./canonicalInstructions.mjs";
 import {
   buildCardWriterChain,
@@ -126,6 +127,7 @@ export function buildDraftInput({
   writingProfile = null
 }) {
   if (family === 'horoscope') return buildHoroscopeDraftInput({plan,context,task,target,engineFacts,argumentOutline,spine,writingProfile});
+  if (family === 'lunation-article') return buildLunationArticleInput({plan,context,task,target,engineFacts,argumentOutline,spine,writingProfile});
   if (family === 'lunations') return buildLunationDraftInput({plan,context,task,target,engineFacts,argumentOutline,spine,writingProfile});
   const sections = [
     `TASK\n${String(task ?? "Write one TLDR Astro passage.").trim()}`,
@@ -212,7 +214,7 @@ export async function generateDraft({
   assertArgumentOutlineApproved(argumentOutline, { plan, family, surface });
   if (!spine || spine.status !== "recorded") throw new Error(`RECORDED_CONTENT_SPINE_REQUIRED:${family}`);
   const role = isCardWritingSurface({ surface, family }) ? "CARD_WRITER_V3" : "WRITER";
-  const resolvedSchema = schema ?? (family === 'lunations' ? LUNATION_DRAFT_SCHEMA : family === 'horoscope' ? horoscopeDraftSchema(engineFacts?.risingSign) : family === "fast-mover-article"
+  const resolvedSchema = schema ?? (family === 'lunations' ? LUNATION_DRAFT_SCHEMA : family === 'lunation-article' ? LUNATION_ARTICLE_SCHEMA : family === 'horoscope' ? horoscopeDraftSchema(engineFacts?.risingSign) : family === "fast-mover-article"
     ? FAST_MOVER_ARTICLE_DRAFT_SCHEMA
     : family === "slow-mover-article"
       ? SLOW_MOVER_ARTICLE_DRAFT_SCHEMA

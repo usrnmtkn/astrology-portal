@@ -1,3 +1,4 @@
+import {lunationReaderContentKeys} from '../../content/lunationArticleIdentity.js';
 import type { LunarCalendarEvent } from "../../services/ephemeris";
 import {
   moonSignTransitionKey,
@@ -89,6 +90,7 @@ export function calendarEventGeneratedContentKeys(event: LunarCalendarEvent) {
     ]);
   }
 
+  if(event.type==='lunation')return withJournal(lunationReaderContentKeys(event));
   return withJournal([]);
 }
 

@@ -29,7 +29,7 @@ function overlapScore(entry, plan) {
 
 function registerFamilyMatchesTarget(entry, plan, contentFamily) {
   const family = String(entry?.sourceFamily ?? entry?.family ?? "");
-  if (contentFamily === 'lunations') return family === 'sky-lunation';
+  if (['lunations','lunation-article'].includes(contentFamily)) return family === 'sky-lunation';
   if (contentFamily === 'horoscope' && ['weekly-astrology','sky-season','sky-lunation'].includes(family)) return true;
   const object = String(plan?.object ?? "").toLowerCase();
   if (family === "sky-lunation") return false;
@@ -178,7 +178,7 @@ export function retrieveOwnerContext(plan, {
     failureCategories
   });
   const phraseSelection = selectPhraseEvidence(plan, phraseEvidence);
-  const selectedReviewedMeaning = ["horoscope", "lunations"].includes(contentFamily)
+  const selectedReviewedMeaning = ["horoscope", "lunations", "lunation-article"].includes(contentFamily)
     ? reviewedMeaningExamples.filter(entry => entry.status === "REVIEWED_CLAUSE"
       && entry.sourceKind === "reviewed-doctrine" && entry.ownerApproved === false && entry.ownerAuthored === false
       && entry.planet === targetPlanet && entry.text?.trim()

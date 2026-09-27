@@ -1,3 +1,4 @@
+import {lunationArticleGuidance} from '../../src/astro-writing/lunationArticleInput.mjs';
 import {AdminHttpError,adminFetchJson,adminStorageRows} from './admin-http.js';
 import {studioStorage} from './sky-studio-sources.js';
 import {getLunarCalendarRangeEvents} from '../../apps/web/src/services/ephemeris.js';
@@ -51,7 +52,7 @@ export function validateWorkspace(value:any,phase:string,sign:string) {
   if(value.preferredOwnerSourceIds && (!Array.isArray(value.preferredOwnerSourceIds)||value.preferredOwnerSourceIds.length>6||value.preferredOwnerSourceIds.some((id:any)=>typeof id!=='string'||id.length>200)))throw new AdminHttpError(400,'Invalid owner source selection.');
   return value;
 }
-export async function lunarFeedback(contentKey:string) {
+export async function lunarFeedback(contentKey:string,family='lunations') {
   // This existing private store accepts explicit rejections without inventing an approved replacement.
   const {url,headers}=studioStorage();
   const params=new URLSearchParams({target_keys:`cs.{${contentKey}}`,status:'eq.active',select:'*',order:'created_at.desc,id.asc',limit:'501'});
@@ -60,7 +61,7 @@ export async function lunarFeedback(contentKey:string) {
   const rows=adminStorageRows<any>(result.payload);
   if(rows.length>500)throw new AdminHttpError(503,'The feedback inventory needs review before drafting.');
   for(const row of rows)if(!row.id||row.status!=='active'||!row.target_keys?.includes(contentKey)||!Number.isInteger(row.version)||!row.owner_reason||row.kind!=='rejection'||typeof row.rejected_text!=='string'||!row.rejected_text.trim())throw new AdminHttpError(503,'This target has unsupported or invalid writing feedback. Resolve its evidence before drafting.');
-  return {rows,corrections:rows.map(row=>({id:`studio-writing-${row.id}`,contentKey,family:'lunations',bad:row.rejected_text,owner_reason:row.owner_reason,originalSha256:lunationDigest(row.rejected_text),positive_evidence_revoked:true,source_uri:row.source_uri})),receipt:rows.map(row=>({id:row.id,version:row.version,sha256:lunationDigest(row)}))};
+  return {rows,corrections:rows.map(row=>({id:`studio-writing-${row.id}`,contentKey,family,bad:row.rejected_text,owner_reason:row.owner_reason,originalSha256:lunationDigest(row.rejected_text),positive_evidence_revoked:true,source_uri:row.source_uri})),receipt:rows.map(row=>({id:row.id,version:row.version,sha256:lunationDigest(row)}))};
 }
 export async function calculateLunarWritingFacts(workspace:any) {
   if(!workspace.referenceDate)throw new AdminHttpError(400,'Choose the event’s date before preparing a plan.');
@@ -70,7 +71,7 @@ export async function calculateLunarWritingFacts(workspace:any) {
   const lunar=events.filter(e=>e.type==='lunation'&&e.primary&&e.sign);
   const event=lunar.find(e=>e.dateKey===workspace.referenceDate&&kind(e)===workspace.phase&&e.sign!.toLowerCase()===workspace.sign);
   if(!event)throw new AdminHttpError(422,'The ephemeris found no matching Moon on this date in this time zone. Check the phase, sign and date.');
-  if(event.eclipseType)throw new AdminHttpError(422,'This event is an eclipse. Its separate writing workflow is required.');
+  if(event.eclipseType)throw new AdminHttpError(422,'This event is an eclipse. Choose Dated articles & eclipses in this workspace.');
   const related=workspace.phase==='new-moon'?lunar.find(e=>kind(e)==='full-moon'&&e.startsAt>event.startsAt):lunar.filter(e=>kind(e)==='new-moon'&&e.sign!.toLowerCase()===workspace.sign&&e.startsAt<event.startsAt).at(-1);
   const fact=(e:any)=>({id:e.id,kind:kind(e),sign:e.sign.toLowerCase(),startsAt:e.startsAt,...(e.eclipseType?{eclipseType:e.eclipseType}:{})});
   return {source:'swiss-ephemeris',calculationSource:'apps/web/src/services/ephemeris.ts#getLunarCalendarRangeEvents',timeZone:workspace.timeZone,contentKey:workspace.contentKey,event:fact(event),relatedEvents:related?[{...fact(related),relationship:workspace.phase==='new-moon'?'next-full-moon':'previous-same-sign-new-moon'}]:[]};
@@ -80,7 +81,7 @@ export async function prepareStudioLunation(workspace:any,engineFacts?:any) {
   if(!profile.id)throw new AdminHttpError(409,'Save the writing guidance before preparing a draft.');
   const prepared=prepareLunationWriting({engineFacts:facts,argumentInput:workspace.argumentInput,preferredOwnerSourceIds:workspace.preferredOwnerSourceIds??[],privateCorrections:feedback.corrections});
   prepared.receipt.feedbackStorage='private-studio/explicit-writing-feedback';
-  const planHash=lunationDigest({receipt:prepared.receipt,profile:profile.sha256,feedback:feedback.receipt});
+  const planHash=lunationDigest({receipt:prepared.receipt,profile:profile.sha256,feedback:feedback.receipt,approach:lunationArticleGuidance});
   return {prepared,profile,feedback,facts,planHash};
 }
 export function lunarPlanPreview(value:any) {

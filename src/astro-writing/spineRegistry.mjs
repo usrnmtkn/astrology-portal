@@ -29,6 +29,12 @@ export const SPINE_USAGE_POLICY = Object.freeze({
 });
 
 export const CONTENT_SPINES = Object.freeze({
+  "lunation-article": Object.freeze({
+    id: "lunation-article-v1-2026-09-27", status: "recorded", ownerApproved: false,
+    source: "docs/writing/LUNATION_ARTICLE_STUDIO.md",
+    satisfactionMode: "semantic_coverage_not_sentence_or_paragraph_template",
+    fields: Object.freeze(["phase_and_axis", "rulers", "supported_contacts", "human_consequence", "earned_close"])
+  }),
   lunations: Object.freeze({
     id: "calendar-lunation-v1", status: "recorded", ownerApproved: false,
     source: "docs/writing/CALENDAR_LUNATION_WRITER.md",

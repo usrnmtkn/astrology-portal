@@ -146,6 +146,7 @@ import {
 } from "./services/astrologyDisplay";
 import { normalizeBirthTime, twentyFourHourTimeToDisplay } from "./services/chartTime";
 import { natalSnapshotWithBirthTimeReliability } from "./services/birthTimeReliability";
+import {resolveLunationReaderSource,lunationReaderContentKeys} from './content/lunationReaderSource';
 import { lunationEventOccursOnLocalDate } from "./services/lunationEventDay";
 import {
   formatSignupBirthDate,
@@ -5491,6 +5492,8 @@ function currentSkyV4LunationDetailArticle({
       throw error;
     }
   }
+  const selectedLunarSource = resolveLunationReaderSource(event, generatedContent);
+  if(selectedLunarSource){readerParts=selectedLunarSource.body ? selectedLunarSource.body.split(/\n\s*\n/u) : [];resolution=selectedLunarSource.body?'approved-lunar-article':'facts-only';}
   const moonAspects = relatedSkyAspectSectionsForPlacement({
     aspects: sky.aspects,
     generatedAt,
@@ -5510,7 +5513,7 @@ function currentSkyV4LunationDetailArticle({
     .slice(0, 2);
 
   return {
-    routePath: `sky/lunation/${event.dateKey}/${normalizeContentIdPart(event.sign ?? "event")}`,
+    routePath: `sky/lunation/${event.startsAt.slice(0,10)}/${normalizeContentIdPart(event.sign ?? "event")}`,
     glyph: event.glyph,
     kicker: event.eclipseType ? "Eclipse" : "Lunation",
     title: event.title,
@@ -12145,6 +12148,25 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
       });
       return () => { cancelled = true; };
     }
+    if (!calendarEvent && routeType === 'lunation' && routePlanet && routeSign) {
+      let cancelled=false;
+      const date=new Date(`${routePlanet}T00:00:00Z`);
+      if(!Number.isFinite(+date)){commitResolvedSkyDetail(null);return;}
+      void import('./services/skyCalculationClient').then(async ({getLunarCalendarRangeEventsOffMainThread})=>{
+        const events=await getLunarCalendarRangeEventsOffMainThread(sky.location,date,new Date(+date+86400000));
+        const event=events.find(item=>item.type==='lunation'&&item.primary&&item.startsAt.slice(0,10)===routePlanet&&skyRoutePartMatches(item.sign??'',routeSign));
+        if(!event){if(!cancelled)commitResolvedSkyDetail(null);return;}
+        const eventSky=await getAstrodienstSky(sky.location,new Date(event.startsAt));
+        const content=await loadSkyDetailContent(eventSky,availableDetailContent,lunationReaderContentKeys(event),loadLiveGeneratedContentForKeys);
+        if(cancelled||skyDetailRoutePath!==skyDetailRoutePathFromUrl())return;
+        selectedSkyDetailContentRef.current=content;
+        selectedSkyDetailRefreshKeyRef.current=refreshKey;
+        selectedSkyDetailRefreshContentRef.current=skyGeneratedContent;
+        selectedSkyDetailRefreshSkyKeyRef.current=skyArticleIdentityKey;
+        commitResolvedSkyDetail({...currentSkyV4LunationDetailArticle({event,sky:eventSky,generatedContent:content}),routePath:skyDetailRoutePath});
+      }).catch(error=>{if(!cancelled){console.warn('Dated lunar article failed to load.',error);setSkyDetailReadError(skyDetailRoutePath);}});
+      return ()=>{cancelled=true;};
+    }
     if (!calendarEvent && encodedExactAt && baseRoute.startsWith("sky/aspect/")) {
       const exactAt = decodeURIComponent(encodedExactAt);
       if (Number.isNaN(Date.parse(exactAt))) { commitResolvedSkyDetail(null); return; }
@@ -12386,7 +12408,8 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
     const currentSkyContentKeys = [
       ...new Set([
         ...cmsSurfaceKeys.retrogradeSummary(),
-        ...cmsSurfaceKeys.skyDebility()
+        ...cmsSurfaceKeys.skyDebility(),
+        ...(sky.moonEvent ? lunationReaderContentKeys({startsAt:sky.moonEvent.occursAt,sign:sky.moonEvent.sign,title:sky.moonEvent.name}) : [])
       ])
     ];
 

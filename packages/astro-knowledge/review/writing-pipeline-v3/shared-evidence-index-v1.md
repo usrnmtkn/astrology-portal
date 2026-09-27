@@ -8,10 +8,10 @@ Index key: `planet|sign; *|* is globally eligible register evidence`
 
 - Meaning: **2224**
 - Register: **1758**
-- Scene: **428**
+- Scene: **426**
 - Argument: **1181**
 - Phrase: **346**
-- Total entries: **5937** across **247** planet-sign keys
+- Total entries: **5935** across **247** planet-sign keys
 
 Scene precedence is fixed as: same-planet-sign owner-approved house cores; approved serving
 rows; knowledge-matrix scene rows. Governance precedence still applies within each source tier.
@@ -121,7 +121,6 @@ None among the stores represented by the approved-example export.
 - `fallback-hook/sky-sign-trap`
 - `fallback-hook/transit-aspect-type`
 - `fallback-hook/transit-effect-house`
-- `fallback-hook/transit-house-event-frame`
 - `fallback-hook/transit-house-event-scenes`
 - `fallback-hook/transit-house-event-wants`
 - `fallback-hook/transit-house-retro-overlay`

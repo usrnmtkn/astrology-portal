@@ -1,4 +1,4 @@
-import { calendarMoonContinuationText } from "./calendarPhaseLabel";
+import { calendarMoonContinuationText } from "./calendarPhaseLabel.js";
 
 function slugContentPart(value: string) {
   return value
@@ -105,11 +105,13 @@ export function calendarDayMoonWriting({
   moonSign,
   lunation,
   lunationBody,
+  lunationContentKey,
   leftoverFallback
 }: {
   moonSign: string;
   lunation?: CalendarDayLunation | null;
   lunationBody?: string | null;
+  lunationContentKey?: string;
   leftoverFallback?: CalendarDayMoonReading | null;
 }): CalendarMoonWritingPiece[] {
   const pieces: CalendarMoonWritingPiece[] = [];
@@ -122,7 +124,7 @@ export function calendarDayMoonWriting({
     pieces.push({ ...reading, role });
   };
 
-  const lunationReading = usableReading(calendarLunationMacroKey(lunation, moonSign), lunationBody);
+  const lunationReading = usableReading(lunationContentKey ?? calendarLunationMacroKey(lunation, moonSign), lunationBody);
   push("lunation", lunationReading);
   if (lunationReading) return pieces;
   const leftover = leftoverFallback?.contentKey && leftoverFallback.body?.trim()

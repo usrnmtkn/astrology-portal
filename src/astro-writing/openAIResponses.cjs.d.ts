@@ -17,3 +17,6 @@ export function callOpenAIResponses<T = Record<string, unknown>>(options: {
   role: AstrologyProseRole;
   instructions: string;
 }>;
+
+export const startStoredWritingResponse: typeof callOpenAIResponses;
+export function storedWritingResponse(options: {apiKey: string; responseId: string; cancel?: boolean; fetchImpl?: typeof fetch}): Promise<Response>;

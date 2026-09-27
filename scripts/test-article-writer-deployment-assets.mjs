@@ -18,6 +18,7 @@ for (const endpoint of [
   "api/admin/sky-article-template-slots.ts",
   "api/admin/personal-transit-writing.ts",
   "api/admin/horoscope-writing.ts",
+  "api/admin/lunation-writing.ts",
 ]) {
   const rule = deployment.functions?.[endpoint];
   assert.ok(rule && typeof rule.includeFiles === "string", `${endpoint} needs an explicit Vercel includeFiles rule.`);
@@ -36,3 +37,7 @@ for(const source of ['data/writing/OWNER_APPROVED_EXAMPLES.jsonl','data/writing/
 }
 
 console.log("Article writer deployment assets passed: both production endpoints package every configured correction source and writing registry.");
+
+const lunarFiles=new Set(fs.globSync(deployment.functions['api/admin/lunation-writing.ts'].includeFiles));
+for(const source of ['src/astro-writing/lunationArticleInput.mjs','src/astro-writing/lunationArticleWriting.mjs','data/writing/matrix-evidence-index/TLDR-Matrix-Evidence-Index.jsonl','data/writing/phrase-evidence-index/owner-phrase-evidence-v1.jsonl','packages/astro-knowledge/voice/tldr-astro/satori-writer/voice-index.json','tldr-astro-phrasebank/phrasebank/cc-moon-reviewed.json','tldr-astro-phrasebank/phrasebank/cc-planet-in-sign-reviewed.json']) assert.ok(lunarFiles.has(source),`Missing lunation writer source: ${source}`);
+assert.ok([...lunarFiles].some(source=>source.endsWith('.wasm')),'Lunation writer must package its ephemeris.');

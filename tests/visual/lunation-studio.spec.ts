@@ -19,7 +19,7 @@ for(const [width,theme] of [[390,'light'],[390,'dark'],[1440,'light'],[1440,'dar
    const analogue=page.getByRole('heading',{name:'Weekly instructions',exact:true});await expect(analogue).toBeVisible();const headingStyle=await style(analogue);
    if(width<720)await page.getByRole('button',{name:'Open Content Studio navigation',exact:true}).click();
    await page.getByRole('button',{name:'Calendar Write-ups',exact:true}).click();
-   const tab=page.getByRole('tab',{name:'New & Full Moons',exact:true});await expect(tab).toBeVisible();await tab.click();
+   const tab=page.getByRole('tab',{name:'New & Full Moons & Eclipses',exact:true});await expect(tab).toBeVisible();await tab.click();
    const editor=page.getByRole('region',{name:'New and Full Moon writing'});
    await expect(editor.getByRole('heading',{name:'New Moon in Aries',level:2})).toBeVisible();
    expect(await style(editor.getByRole('heading',{level:2}))).toEqual(headingStyle);

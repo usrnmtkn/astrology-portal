@@ -121,7 +121,24 @@ async function callGovernedOpenAIResponses({
   return { ...result, governedClearance };
 }
 
+/** Stored Studio requests still pass through the canonical instruction boundary. */
+async function startStoredWritingResponse(input) {
+  if (input.request?.background !== true || input.request?.store !== true || !input.governedInstructions?.trim()) {
+    throw new Error('A stored writing request needs its governed instructions and background persistence.');
+  }
+  return callOpenAIResponses(input);
+}
+
+async function storedWritingResponse({apiKey,responseId,cancel=false,fetchImpl=globalThis.fetch}) {
+  if (!apiKey || !/^resp_[A-Za-z0-9_-]+$/u.test(responseId ?? '')) throw new Error('A confirmed stored response and server API key are required.');
+  return fetchImpl(`https://api.openai.com/v1/responses/${encodeURIComponent(responseId)}${cancel?'/cancel':''}`, {
+    ...(cancel?{method:'POST'}:{}), headers:{authorization:`Bearer ${apiKey}`}, signal:AbortSignal.timeout(20000)
+  });
+}
+
 module.exports = {
+  startStoredWritingResponse,
+  storedWritingResponse,
   CARD_REVIEWER_V3_CANDIDATE_INSTRUCTIONS,
   callGovernedOpenAIResponses,
   callOpenAIResponses,

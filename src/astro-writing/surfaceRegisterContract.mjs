@@ -1,4 +1,6 @@
 const SURFACE_RULES = Object.freeze({
+  "lunation-article": Object.freeze({route:"calendar",renderers:Object.freeze(["LunationWritingStudio"]),
+    temporalities:Object.freeze(["current_sky"]),voiceModes:Object.freeze(["second_person"]),registers:Object.freeze(["second_person"])}),
   "calendar-lunation": Object.freeze({
     route: "calendar", renderers: Object.freeze(["renderLunationMacro"]),
     temporalities: Object.freeze(["current_sky"]), voiceModes: Object.freeze(["second_person"]),

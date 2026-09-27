@@ -83,7 +83,7 @@ export async function runWritingPipeline({
   const resolvedTarget = assertSurfaceRegisterContract(target, { surface, register });
   const plan = await resolveAstrology(meaningInput, { plannerClient });
   if (family === 'lunations') assertLunationWritingFacts(engineFacts, { plan, target: resolvedTarget });
-  const resolvedRequiredFields = requiredFields ?? (family === 'lunations' ? ['body','journalPrompt'] : family === 'horoscope' ? ['headline','body'] : ["fast-mover-article", "slow-mover-article"].includes(family)
+  const resolvedRequiredFields = requiredFields ?? (family === 'lunations' ? ['body','journalPrompt'] : ['horoscope','lunation-article'].includes(family) ? ['headline','body'] : ["fast-mover-article", "slow-mover-article"].includes(family)
     ? ["opening", "tension", "development", "close"]
     : ["tagline", "hook", "lived", "turn"]);
   const pendingOutline = buildArgumentOutline(argumentInput, { plan, family, surface });

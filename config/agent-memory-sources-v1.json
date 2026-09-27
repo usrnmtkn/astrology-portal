@@ -12,6 +12,7 @@
     { "path": "docs/writing/BANNED_PATTERNS.md", "kind": "rule", "role": "Writing guidance" },
     { "path": "docs/content-management/WRITING-DIRECTIVE.md", "kind": "rule", "role": "Writing guidance" },
     { "path": "docs/writing/CALENDAR_LUNATION_WRITER.md", "kind": "note", "role": "Calendar lunar Studio workflow; not wording approval" },
+    { "path": "docs/writing/LUNATION_ARTICLE_STUDIO.md", "kind": "note", "role": "Shared lunar writing guidance, dated drafts and reader source selection; not wording approval" },
     { "path": "docs/writing/AI_GENERATION_RELIABILITY.md", "kind": "rule", "role": "AI generation reliability architecture" },
     { "path": "docs/writing/WRITING_RULE_RECONCILIATION_OWNER_RULING_2026-08-25.md", "kind": "rule", "role": "Writing guidance" },
     { "path": "tldr-astro-phrasebank/TLDR-WRITING-AUTHORITY-INDEX.md", "kind": "navigation", "role": "Authority index" },

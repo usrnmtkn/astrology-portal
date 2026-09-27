@@ -1,3 +1,4 @@
+import {resolveLunationReaderSource} from '../content/lunationReaderSource';
 import initialReaderRows from "../content/fallbackArchitectureV3/bundled-initial-reader-rows-v3.json";
 import {
   fallbackV3LunationCompact,
@@ -1494,7 +1495,7 @@ export async function buildWeeklyHoroscope({
         kind: lunationKind(macroEvent),
         sign: normalizeId(macroEvent.sign ?? "")
       });
-      const override = resolveCmsSurfaceOverride(
+      const override = resolveLunationReaderSource(macroEvent,generatedContent) ?? resolveCmsSurfaceOverride(
         generatedContent,
         cmsSurfaceKeys.weeklySection("macro", risingSign),
         { risingSign, weekStart: window.weekStart, weekEnd: window.weekEnd }

@@ -10,13 +10,14 @@ const remainder = ["The second fixture paragraph remains part of this saved arti
 const location = { label: "New York, NY", latitude: 40.7128, longitude: -74.006, timeZone: "America/New_York" };
 
 const scenarios = [
+  ...["light", "dark"].flatMap(theme => [390,1440].map(width=>({theme,width,date:"2026-09-26",kind:"full-moon",sign:"aries",opening:"Synthetic dated article opening, preserved exactly.",remainder,dated:true}))),
   ...["light", "dark"].flatMap(theme => [390, 1440].map(width => ({ theme, width, date: "2026-09-26", kind: "full-moon", sign: "aries", opening, remainder }))),
   { theme: "light", width: 390, date: "2026-07-14", kind: "new-moon", sign: "cancer", opening: "The complete opening of the New Moon fixture.", remainder },
   { theme: "light", width: 1440, date: "2026-09-26", kind: "full-moon", sign: "aries", opening, remainder: [] }
 ];
 
 for (const scenario of scenarios) {
-  test(`Calendar lunation preview ${scenario.kind} ${scenario.theme} ${scenario.width} ${scenario.remainder.length} extra paragraphs`, async ({ page }) => {
+  test(`Calendar lunation preview ${scenario.kind} ${scenario.theme} ${scenario.width} ${scenario.remainder.length} extra paragraphs ${"dated" in scenario ? "dated" : "reusable"}`, async ({ page }) => {
     test.setTimeout(120_000);
     const assertNoErrors = watchBrowserErrors(page);
     await page.setViewportSize({ width: scenario.width, height: 1000 });
@@ -26,7 +27,7 @@ for (const scenario of scenarios) {
       localStorage.setItem("tldrastro:selectedLocation", JSON.stringify(location));
       localStorage.setItem("tldrastro:theme", theme);
     }, { location, theme: scenario.theme });
-    const key = `authored/sky-lunation-macro/${scenario.kind}/${scenario.sign}`;
+    const key = "dated" in scenario ? `cms/lunation-article/${scenario.date}/${scenario.kind}/${scenario.sign}` : `authored/sky-lunation-macro/${scenario.kind}/${scenario.sign}`;
     const row = {
       id: "lunation-preview-fixture", content_key: key, updated_at: `${scenario.date}T12:00:00.000Z`,
       status: "LIVE", lane: "serving", review_state: "reviewed", surface: "sky", mode: "article",
@@ -75,6 +76,11 @@ for (const scenario of scenarios) {
     await expect(sun).toHaveText(sunBefore);
     expect(await card.evaluate(el => el.scrollWidth <= el.clientWidth + 1)).toBe(true);
     await card.locator(".calendar-sky-card").screenshot({ path: `test-results/lunation-preview-${scenario.kind}-${scenario.theme}-${scenario.width}-${scenario.remainder.length}.png` });
+    if('dated' in scenario){
+      await page.goto(`/?date=${scenario.date}#sky/lunation/${scenario.date}/${scenario.sign}`);
+      await expect(page.getByText(scenario.opening,{exact:true})).toBeVisible({timeout:60000});
+      await expect(page.getByText(remainder.at(-1)!,{exact:true})).toBeVisible();
+    }
     assertNoErrors();
   });
 }

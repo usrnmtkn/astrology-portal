@@ -1181,6 +1181,7 @@ const generatedContentOwnerActions = new Set([
 ]);
 
 function validateWriteBody(body: Record<string, unknown>) {
+  if (String(body.contentKey ?? "").startsWith("studio-lunation/")) throw new GeneratedContentRequestError("Manage dated drafts in Calendar Write-ups → New & Full Moons & Eclipses.");
   if (String(body.contentKey ?? "").startsWith("studio-writing-profile/")) throw new GeneratedContentRequestError("Manage writing profiles in their Studio writing workspace.");
   if (String(body.contentKey ?? "").startsWith(libs().STUDIO_VARIABLE_PREFIX)) throw new GeneratedContentRequestError("Manage this definition in Variables.");
   try { libs().assertCleanReaderCopy(body); } catch (error) {
@@ -2337,6 +2338,7 @@ async function updateGeneratedContent(req: IncomingMessage) {
   if (existing.content_key.startsWith('horoscope/') && existing.source_snapshot?.horoscopeGeneration?.active) {
     throw new GeneratedContentRequestError('A horoscope reading is running. Resume generation before editing or publishing this edition.', 409);
   }
+  if (existing.content_key.startsWith("studio-lunation/")) throw new GeneratedContentRequestError("Manage dated drafts in Calendar Write-ups → New & Full Moons & Eclipses.");
   if (existing.content_key.startsWith(libs().STUDIO_VARIABLE_PREFIX)) throw new GeneratedContentRequestError("Manage this definition in Variables.");
   if (existing.content_key.startsWith("studio-writing-profile/")) throw new GeneratedContentRequestError("Manage writing profiles in their Studio writing workspace.");
   await prepareStudioVariables(body);
@@ -3092,6 +3094,7 @@ async function deleteGeneratedContent(req: IncomingMessage) {
   if (existing.content_key.startsWith('horoscope/') && existing.source_snapshot?.horoscopeGeneration?.active) {
     throw new GeneratedContentRequestError('A horoscope reading is running. Retrieve or release that request before deleting the edition.', 409);
   }
+  if (existing.content_key.startsWith("studio-lunation/")) throw new GeneratedContentRequestError("Manage dated drafts in Calendar Write-ups → New & Full Moons & Eclipses.");
   if (existing.content_key.startsWith(libs().STUDIO_VARIABLE_PREFIX)) throw new GeneratedContentRequestError("Manage this definition in Variables.");
   if (existing.content_key.startsWith("studio-writing-profile/")) throw new GeneratedContentRequestError("Manage writing profiles in their Studio writing workspace.");
   if (existing.status === "LIVE") {

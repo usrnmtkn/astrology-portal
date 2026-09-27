@@ -376,7 +376,7 @@ const calendarWriteupWorkspaceTabs: { value: CalendarWriteupWorkspaceView; label
   { value: "daily-sky", label: "Daily Sky" },
   { value: "weekly-sky", label: "Weekly Sky" },
   { value: "monthly-sky", label: "Monthly Sky" },
-  { value: "lunation-writing", label: "New & Full Moons" },
+  { value: "lunation-writing", label: "New & Full Moons & Eclipses" },
   { value: "lunar-ingresses", label: "Lunar ingresses" },
   { value: "season-writeups", label: "Season write-ups" },
   { value: "season-transitions", label: "Season transitions" },
@@ -892,6 +892,7 @@ function adminHashForPage(page: AdminDashboardPage, params?: URLSearchParams) {
 
 function canonicalAdminRoute(page: AdminDashboardPage, input = new URLSearchParams()) {
   const params = new URLSearchParams(input);
+  if(page==='calendarWriteups' && params.get('view')==='lunations'){params.set('view','lunation-writing');params.set('writing','dated');}
   const view = params.get("view");
   if (page === "knowledge" && params.get("section") === "lunar-calendar"
     || page === "skyWriteups" && view === "daily-sky" && params.get("section") === "lunar-calendar") {
