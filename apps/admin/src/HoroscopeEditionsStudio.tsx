@@ -117,7 +117,12 @@ export default function HoroscopeEditionsStudio({secret}:{secret:string}) {
         else{calls=0;setSign(next);}
       }
       if(!row.source_snapshot?.horoscopeGeneration?.active){setStep('edit');setMessage(stop.current?'Paused. Completed readings are saved.':'Drafts are saved. Read and edit each sign, then publish when you are ready.');}
-    }catch(reason){const changed=(reason as any).rows?.[0];if(changed?.id===row.id)retain(changed);setError((reason as Error).message);}
+    }catch(reason){
+      let changed=(reason as any).rows?.[0];
+      // Recover saved request state after an uncertain response without replaying it.
+      if(!changed){try{changed=(await request(secret,endpoint+'?'+new URLSearchParams({id:row.id}))).rows?.[0];}catch{/* Preserve the displayed draft until the owner reopens it. */}}
+      if(changed?.id===row.id)retain(changed);setError((reason as Error).message);
+    }
     finally{running.current=false;setBusy(false);setProgress('');}
   }
   async function release(){
@@ -126,6 +131,7 @@ export default function HoroscopeEditionsStudio({secret}:{secret:string}) {
   }
   const passage=draft?.passages.find(p=>p.sign===sign);
   const complete=draft?.passages.filter(p=>p.headline.trim()&&p.body.trim()).length ?? 0;
+  const empty=draft?.passages.filter(p=>!p.headline.trim()&&!p.body.trim()).length ?? 0;
   const active=saved?.source_snapshot?.horoscopeGeneration?.active;
   const locked=busy||Boolean(active);
   return <section className="admin-panel" aria-label="Horoscope editions">
@@ -150,7 +156,7 @@ export default function HoroscopeEditionsStudio({secret}:{secret:string}) {
           <p>AI drafts use your writing instructions, your source examples and the calculated astrology for this edition. Each completed sign is saved automatically.</p>
           <div className="admin-toolbar-actions"><StudioButton disabled={busy} onClick={()=>setInstructions(!instructions)}>{instructions?'Close writing instructions':'Writing instructions'}</StudioButton><StudioButton disabled={locked} onClick={()=>void refreshProfile()}>Use latest saved instructions</StudioButton></div>
           <p>Using {profile?.id?`saved ${draft.window.period} profile, revision ${profile.revision}`:`the ${draft.window.period} starter profile`}.</p>
-          {instructions&&<Suspense fallback={<PageLoading message="Loading writing instructions…"/>}><WritingProfiles secret={secret}/></Suspense>}
+          {instructions&&<Suspense fallback={<PageLoading message="Loading writing instructions…"/>}><WritingProfiles key={draft.window.period} secret={secret} initialPeriod={draft.window.period}/></Suspense>}
           {!active&&<StudioButton disabled={locked||saved?.status==='LIVE'} onClick={()=>void reviewPlan()}>{plan?'Refresh writing plan':'Review writing plan'}</StudioButton>}
           {plan&&<>
             <p>{plan.writerCalls} missing readings. Review the plan below before starting. Generation uses one AI request per missing sign.</p>
@@ -159,13 +165,14 @@ export default function HoroscopeEditionsStudio({secret}:{secret:string}) {
             {!configured&&<p role="alert">The AI writer needs its server API key before generation can start.</p>}
           </>}
           {active&&<p>A request for {horoscopeSignLabel(active.sign)} is saved. Resume to retrieve it.</p>}
-          <div className="admin-toolbar-actions"><StudioButton className="admin-primary-button" disabled={busy||dirty||!saved||saved.status==='LIVE'||(!active&&(!planApproved||!configured||complete===12))} onClick={()=>void generate()}>{active?'Resume generation':complete?'Generate missing readings':'Generate 12 drafts'}</StudioButton>{busy&&running.current&&<StudioButton onClick={()=>{stop.current=true;setMessage('Pausing after the current request. Its progress remains saved.');}}>Pause generation</StudioButton>}</div>
+          {complete+empty<12&&<p>{12-complete-empty} partially written readings need your edits in Read &amp; edit. Generation preserves their existing text.</p>}
+          <div className="admin-toolbar-actions"><StudioButton className="admin-primary-button" disabled={busy||dirty||!saved||saved.status==='LIVE'||(!active&&(!planApproved||!configured||empty===0))} onClick={()=>void generate()}>{active?'Resume generation':empty===12?'Generate 12 drafts':'Generate missing readings'}</StudioButton>{busy&&running.current&&<StudioButton onClick={()=>{stop.current=true;setMessage('Pausing after the current request. Its progress remains saved.');}}>Pause generation</StudioButton>}</div>
           {progress&&<p role="status">{progress}</p>}
           {active&&Date.now()-Date.parse(active.startedAt)>=310000&&<StudioButton disabled={busy} onClick={()=>void release()}>Release interrupted request</StudioButton>}
         </div>:step==='edit'?<div className="admin-panel">
           <div className="admin-writing-periods" role="group" aria-label="Readings by sign">{draft.passages.map(p=><StudioButton key={p.sign} aria-pressed={sign===p.sign} onClick={()=>setSign(p.sign)}>{horoscopeSignLabel(p.sign)}{p.body.trim()&&p.headline.trim()?' ✓':''}</StudioButton>)}</div>
           {!passage.body&&<p>No reading for {horoscopeSignLabel(sign)} yet. Use Generate to draft missing signs, or write it here.</p>}
-          {(saved?.source_snapshot?.horoscopeGeneration?.readings?.[sign]?.lint?.violations??[]).map((issue:any,index:number)=><p role="note" key={index}>Writing check: {issue.detail}</p>)}
+          {(saved?.source_snapshot?.horoscopeGeneration?.readings?.[sign]?.lint?.violations??[]).map((issue:any,index:number)=><p role="note" key={index}>Original AI draft check: {issue.detail}</p>)}
           <label className="admin-review-copy-editor"><span>Reading headline</span><StudioInput aria-label="Reading headline" value={passage.headline} maxLength={200} disabled={locked} onChange={e=>{setDraft({...draft,passages:draft.passages.map(p=>p.sign===sign?{...p,headline:e.target.value}:p)});setApproved(false);}}/></label>
           <label className="admin-review-copy-editor"><span>Complete reading</span><StudioTextarea aria-label="Complete reading" rows={12} value={passage.body} maxLength={20000} disabled={locked} onChange={e=>{setDraft({...draft,passages:draft.passages.map(p=>p.sign===sign?{...p,body:e.target.value}:p)});setApproved(false);}}/></label>
           <details className="admin-workspace-details"><AdminDisclosureSummary>Writing outline · editor only</AdminDisclosureSummary><StudioTextarea aria-label="Writing outline" rows={5} value={outlines[sign]??''} disabled={locked} onChange={e=>{setOutlines(current=>({...current,[sign]:e.target.value}));setApproved(false);}}/></details>

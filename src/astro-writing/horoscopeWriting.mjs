@@ -128,7 +128,7 @@ export function prepareHoroscopeWriting(row,{studioCorrections=[],feedbackReceip
 export function horoscopePlanPreview(prepared) {
   return {version:horoscopeWritingVersion,planHash:prepared.planHash,window:prepared.edition.window,
     readings:prepared.entries.map(e=>({sign:e.sign,anchor:e.anchor,house:e.house,domain:e.domain,outline:e.outline,
-      argument:e.argumentOutline,sourceIds:e.sourceIds})),writerCalls:prepared.entries.filter(e=>!prepared.edition.passages.find(p=>p.sign===e.sign)?.body.trim()).length};
+      argument:e.argumentOutline,sourceIds:e.sourceIds})),writerCalls:prepared.edition.passages.filter(p=>!p.headline.trim()&&!p.body.trim()).length};
 }
 
 export async function writeHoroscopeSign(prepared,sign,{approvedPlanHash,writerClient,approvalReference}) {

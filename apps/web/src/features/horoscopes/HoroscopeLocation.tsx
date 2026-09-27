@@ -23,7 +23,7 @@ export function HoroscopeLocation({value,onChange,disabled=false}:{value:Locatio
       {searching&&<p role="status">Looking up cities…</p>}
       {cities.length>0&&<ul aria-label="Matching cities">{cities.map(city=><li key={`${city.label}/${city.latitude}/${city.longitude}`}><button type="button" disabled={disabled} onClick={()=>choose(city)}>{city.label}</button></li>)}</ul>}
       {error&&<p role="status">{error}</p>}
-      <label>Time zone<select aria-label="Horoscope time zone" value={zone} disabled={disabled} onChange={e=>onChange({label:'Selected time zone',latitude:0,longitude:0,timeZone:e.target.value})}>{zones.map(z=><option key={z} value={z}>{z.replaceAll('_',' ')}</option>)}</select></label>
+      <label>Time zone<select aria-label="Horoscope time zone" value={zone} disabled={disabled} onChange={e=>onChange({...value,label:value.label==='Device time zone'?'Selected time zone':value.label,timeZone:e.target.value})}>{zones.map(z=><option key={z} value={z}>{z.replaceAll('_',' ')}</option>)}</select></label>
       <p>Local dates follow this time zone, including daylight saving time. Readings use your rising sign.</p>
     </div>
   </details>;

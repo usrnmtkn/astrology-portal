@@ -14782,7 +14782,7 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
                   natalSunSign={userProfile?.sun && userProfile.sun !== "Sun pending" ? userProfile.sun : undefined}
                 />
               )}
-              {mode === "horoscopes" && <HoroscopeReader defaultSign={userProfile?.rising} location={location} onLocationChange={setLocation} />}
+              {mode === "horoscopes" && <HoroscopeReader defaultSign={userProfile?.rising} location={hasLocationPreference ? location : undefined} />}
               {mode === "learn" && (
                 <LearnRoute>
                   <Suspense fallback={<PageLoading message="Loading Astro 101…" />}>

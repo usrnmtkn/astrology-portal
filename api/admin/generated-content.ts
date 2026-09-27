@@ -2885,6 +2885,9 @@ async function updateGeneratedContent(req: IncomingMessage) {
 
   if (body.sourceSnapshot !== undefined) {
     patch.source_snapshot = body.sourceSnapshot;
+    if (existing.content_key.startsWith('horoscope/') && existing.source_snapshot?.horoscopeGeneration) {
+      patch.source_snapshot = { ...(isRecord(body.sourceSnapshot) ? body.sourceSnapshot : {}), horoscopeGeneration: existing.source_snapshot.horoscopeGeneration };
+    }
   }
 
   if (typeof body.lane === "string") {

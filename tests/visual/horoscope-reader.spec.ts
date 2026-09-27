@@ -4,6 +4,26 @@ import path from 'node:path';
 import {createHash} from 'node:crypto';
 import {routeStudioInventoryApi} from '../helpers/studio-inventory-route';
 import {HOROSCOPE_SIGNS,emptyHoroscopeEdition,horoscopeEditionKey,horoscopeEditionBody} from '../../apps/web/src/content/horoscopeEditions.mjs';
+import {READER_ROW_SCHEMA} from '../../apps/web/src/content/readerRowSchema.mjs';
+
+test('New reader uses device time zone and saves a manual override',async({browser,baseURL})=>{
+ const context=await browser.newContext({baseURL,timezoneId:'Asia/Kathmandu'});
+ try {
+  const page=await context.newPage();const zones:string[]=[];
+  await page.route('**/api/content-reader',route=>{const zone=route.request().postDataJSON()?.horoscope?.timeZone;if(zone)zones.push(zone);return route.fulfill({json:{schema:READER_ROW_SCHEMA,rows:[],publications:[],nextCursor:null}});});
+  await page.goto('/#horoscopes?period=daily');
+  await expect(page.locator('.horoscope-location summary')).toContainText('Device time zone');
+  const detected=await page.evaluate(()=>Intl.DateTimeFormat().resolvedOptions().timeZone);
+  await expect(page.getByRole('status')).toContainText(detected.replaceAll('_',' '));
+  expect(zones).toContain(detected);
+  await page.locator('.horoscope-location summary').click();
+  await page.getByLabel('Horoscope time zone',{exact:true}).selectOption('Pacific/Honolulu');
+  await expect(page.getByRole('status')).toContainText('Pacific/Honolulu');
+  await page.reload();
+  await expect(page.locator('.horoscope-location summary')).toContainText('Pacific/Honolulu');
+  expect(await page.evaluate(()=>localStorage.getItem('tldrastro:selectedLocation'))).toBeNull();
+ }finally{await context.close();}
+});
 
 for(const [width,theme] of [[390,'light'],[390,'dark'],[1440,'light'],[1440,'dark']] as const){
  test(`Twelve-sign edition editor to reader ${width} ${theme}`,async({page})=>{
@@ -106,7 +126,8 @@ for(const [width,theme] of [[390,'light'],[390,'dark'],[1440,'light'],[1440,'dar
    await page.screenshot({path:`test-results/horoscope-empty-${width}-${theme}.png`,animations:'disabled'});
    await page.getByRole('button',{name:'This season',exact:true}).click();await expect(page.getByRole('status')).toContainText('seasonal horoscopes haven’t been published');
    for(const period of ['daily','seasonal'] as const){
-    const facts=await call({method:'GET',url:`/api/admin/generated-content?horoscopeBrief=true&period=${period}&date=2026-09-24&timeZone=Asia/Tokyo`});
+    // The fixed UTC instant is already September 25 in Tokyo.
+    const facts=await call({method:'GET',url:`/api/admin/generated-content?horoscopeBrief=true&period=${period}&date=2026-09-25&timeZone=Asia/Tokyo`});
     expect(facts.status).toBe(200);
     const edition=emptyHoroscopeEdition(facts.payload.brief.window);
     edition.passages=HOROSCOPE_SIGNS.map(sign=>({sign,headline:`Fixture ${period} ${sign}`,body:`Fixture ${period} opening.\n\nFixture ${period} complete ending.`}));

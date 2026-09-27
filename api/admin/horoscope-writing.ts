@@ -104,6 +104,8 @@ export default async function handler(req:IncomingMessage,res:ServerResponse) {
     const writerClient=Object.assign(async({role,instructions,input:prompt,schema}:any)=>{
         const request={...provider.buildProviderRequest({config:operation.config,role:'writer',input:prompt,schema}),background:true,store:true};
         operation={...operation,requestHash:hash({request,instructions})};
+        // Persist the exact request identity before the potentially billed call.
+        await persist({source_snapshot:{...row.source_snapshot,horoscopeGeneration:{...row.source_snapshot.horoscopeGeneration,active:operation}}});
         const {response,payload:result}=await responses.callOpenAIResponses({apiKey,role,request,governedInstructions:instructions,surface:'horoscopes',family:'horoscope',fetchImpl:(url:any,options:any)=>fetch(url,{...options,signal:AbortSignal.timeout(25000)})});
         payload=result;
         if(!response.ok) {

@@ -131,9 +131,11 @@ the time zone, with a manual zone selector when city search is unavailable.
 These are geocentric rising-sign forecasts, so coordinates do not substitute for
 a natal chart or change the whole-sign house count.
 
-The reader uses the app’s saved location and requests only published editions for
-that time zone. Changing the location persists the preference and refreshes the
-reading. An edition from another zone is never silently relabelled as the local
+The reader initially uses the app’s saved location, or the device time zone when
+there is no saved location. Horoscope location changes persist independently and
+refresh the reading without replacing Sky coordinates with a time-zone-only
+selection. It requests only published editions for that zone. An edition from
+another zone is never silently relabelled as the local
 day or week. Editorial coverage is explicit: publish an edition for each time
 zone you want to serve; an uncovered zone displays an honest empty state.
 

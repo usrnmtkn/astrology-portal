@@ -156,9 +156,9 @@ function ProfileEditor({ initial, secret, onSaved }: { initial: SavedHoroscopePr
   </form>;
 }
 
-export default function HoroscopeWritingStudio({ secret }: { secret: string }) {
+export default function HoroscopeWritingStudio({ secret, initialPeriod = 'weekly' }: { secret: string; initialPeriod?: HoroscopePeriod }) {
   const [profiles, setProfiles] = useState<SavedHoroscopeProfile[]>([]);
-  const [period, setPeriod] = useState<HoroscopePeriod>("weekly");
+  const [period, setPeriod] = useState<HoroscopePeriod>(initialPeriod);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [attempt, setAttempt] = useState(0);

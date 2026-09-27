@@ -3,7 +3,7 @@ import {FormattedProse} from '../../components/FormattedProse';
 import {PageLoading} from '../../components/PageLoading';
 import {loadReaderRows} from '../../services/readerContentClient';
 import {subscribeToContentUpdates,subscribeToContentRevalidation} from '../../services/contentUpdateSignal';
-import {HOROSCOPE_SIGNS,HOROSCOPE_PERIODS,horoscopeSignLabel,horoscopeEditionAt,horoscopeWindowLabel,type HoroscopePeriod,type HoroscopeEdition} from '../../content/horoscopeEditions.mjs';
+import {HOROSCOPE_SIGNS,HOROSCOPE_PERIODS,horoscopeSignLabel,horoscopeEditionAt,horoscopeWindowLabel,validHoroscopeTimeZone,type HoroscopePeriod,type HoroscopeEdition} from '../../content/horoscopeEditions.mjs';
 import '../../styles/horoscopes.css';
 import {HoroscopeLocation} from './HoroscopeLocation';
 import type {LocationInput} from '../../types';
@@ -15,11 +15,15 @@ function route(defaultSign:string) {
   const period=params.get('period') as HoroscopePeriod, sign=params.get('sign')??defaultSign.toLowerCase();
   return {period:HOROSCOPE_PERIODS.includes(period)?period:'weekly' as HoroscopePeriod,sign:HOROSCOPE_SIGNS.includes(sign)?sign:'aries'};
 }
-export default function HoroscopeReader({defaultSign='aries',location,onLocationChange}:{defaultSign?:string;location?:LocationInput;onLocationChange?:(location:LocationInput)=>void}) {
-  const [localLocation,setLocalLocation]=useState<LocationInput>(()=>({label:'Device time zone',latitude:0,longitude:0,timeZone:browserTimeZone()}));
-  const selectedLocation=location??localLocation;
+const locationKey='tldrastro:horoscopeLocation';
+function savedLocation():LocationInput|null {
+  try {const value=JSON.parse(localStorage.getItem(locationKey)??'null');return value&&typeof value.label==='string'&&Number.isFinite(value.latitude)&&Number.isFinite(value.longitude)&&validHoroscopeTimeZone(value.timeZone)?value:null;}catch{return null;}
+}
+export default function HoroscopeReader({defaultSign='aries',location}:{defaultSign?:string;location?:LocationInput}) {
+  const [localLocation,setLocalLocation]=useState<LocationInput|null>(savedLocation);
+  const selectedLocation=localLocation??location??{label:'Device time zone',latitude:0,longitude:0,timeZone:browserTimeZone()};
   const timeZone=timeZoneForLocation(selectedLocation);
-  const changeLocation=onLocationChange??setLocalLocation;
+  function changeLocation(next:LocationInput){setLocalLocation(next);try{localStorage.setItem(locationKey,JSON.stringify(next));}catch{/* Keep the selection for this visit if storage is unavailable. */}}
   const [selection,setSelection]=useState(()=>route(defaultSign));
   const [edition,setEdition]=useState<HoroscopeEdition|null>(null),[loading,setLoading]=useState(true),[error,setError]=useState(''),[version,setVersion]=useState(0);
   const refresh=()=>setVersion(value=>value+1);
