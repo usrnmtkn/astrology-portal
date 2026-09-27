@@ -15,12 +15,8 @@ const savedBody = (row: Row) => {
 };
 // Listing preview only: search and Edit continue to use the complete saved body.
 const seasonPreview = (body: string) => {
-  const text = body.replace(/\s+/gu, ' ').trim();
-  const characters = Array.from(text);
-  if (characters.length <= 200) return text;
-  const prefix = characters.slice(0, 199).join('');
-  const end = prefix.lastIndexOf(' ');
-  return `${(end > 0 ? prefix.slice(0, end) : prefix).trimEnd()}…`;
+  const characters = Array.from(body.replace(/\s+/gu, ' ').trim());
+  return characters.length <= 200 ? characters.join('') : `${characters.slice(0, 199).join('').replace(/\s+\S*$/u, '')}…`;
 };
 const archived = (row: Row) => row.status === 'ARCHIVED' || object(row.source_snapshot).review_status === 'deprecated' || row.facts?.review_status === 'deprecated';
 const title = (sign: string) => sign[0].toUpperCase() + sign.slice(1);
