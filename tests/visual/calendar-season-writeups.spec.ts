@@ -47,7 +47,8 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark'] as const)
       await expect(tab).toHaveAttribute('aria-selected', 'true');
       const tabBox = await tab.boundingBox();
       const strip = await page.getByRole('tablist', { name: 'Calendar Write-ups workspaces' }).boundingBox();
-      expect(tabBox!.x).toBeGreaterThanOrEqual(strip!.x);
+      // Browser scroll offsets round to CSS pixels; allow the same edge tolerance on both sides.
+      expect(tabBox!.x).toBeGreaterThanOrEqual(strip!.x - 1);
       expect(tabBox!.x + tabBox!.width).toBeLessThanOrEqual(strip!.x + strip!.width + 1);
       const workspace = page.getByRole('region', { name: 'Season write-ups', exact: true });
       const table = workspace.getByRole('table', { name: 'Season passages' });

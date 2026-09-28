@@ -80,6 +80,7 @@ import { calendarDayMoonWriting, calendarLunationMacroKey, calendarMoonWritingPa
 import { calendarDateKeyDistance, calendarMoonCycleFactsForDays, type CalendarMoonCycleFacts } from "./calendarMoonCycle";
 import { resolveCalendarMoonFallback } from "./calendarMoonFallback";
 import { calendarMoonPhaseCopy } from "./calendarMoonPhaseCopy";
+import { calendarTransitionPhraseKeys } from "./calendarTransitionPhrases";
 import { moonContinuationSummaryKey } from "./moonContinuationSummaries";
 import { calendarSeasonTransitionKeyForSurface, calendarSeasonTransitionKeys } from "./calendarSeasonTransitions";
 import { moonSignTransitionForPair, moonSignTransitionKey, nextZodiacSignName } from "./moonSignTransitions";
@@ -1877,6 +1878,7 @@ function calendarMoonFallbackOptions(
     authoredUsedThisVisit,
     authoredPhaseCopy: authoredPhase,
     seasonSummary: seasonBody.split(/\n\n+/)[0]?.trim() || null,
+    transitionPhrase: (key: string) => calendarLiveBody(generatedContent, key),
     moonContinuationSummary: calendarLiveBody(generatedContent, summaryKey) || null,
     pairTransition: transitionKey ? calendarLiveBody(generatedContent, transitionKey) || null : null,
     seasonTransition: facts.seasonName && facts.nextSunSign
@@ -2593,6 +2595,7 @@ export function LunarCalendar({
       ...(selectedCalendar?.events ?? [])
     ].map((event) => [event.id, event])).values());
     const contentKeys = [
+      ...calendarTransitionPhraseKeys,
       ...visibleEvents.flatMap(calendarEventGeneratedContentKeys),
       ...selectedEvents.flatMap(calendarEventGeneratedContentKeys),
       ...skyDailySummaryFields.map(field => field.key),

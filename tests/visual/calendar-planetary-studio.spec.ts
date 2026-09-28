@@ -57,7 +57,7 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark'] as const)
         await expect(tab).toHaveAttribute('aria-selected', 'true');
         expect(await tab.evaluate(typography)).toEqual(await tabs.getByRole('tab', { name: 'Lunar ingresses', exact: true }).evaluate(typography));
         const names = await tabs.getByRole('tab').allTextContents();
-        expect(names.slice(names.indexOf('Lunar ingresses'), names.indexOf('Lunar ingresses') + 4)).toEqual(['Lunar ingresses', 'Planetary ingresses', 'Planetary stations', 'Season write-ups']);
+        expect(names.slice(names.indexOf('Lunar ingresses'), names.indexOf('Lunar ingresses') + 5)).toEqual(['Lunar ingresses', 'Moon transition phrases', 'Planetary ingresses', 'Planetary stations', 'Season write-ups']);
         const workspace = page.getByRole('region', { name: item.label, exact: true });
         await workspace.getByLabel('Planet or point', { exact: true }).selectOption('');
         await workspace.getByLabel(item.field, { exact: true }).selectOption('');
