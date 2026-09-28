@@ -23,13 +23,14 @@ async function fixture(page:Page,missing=1,unknown=false,period='weekly'){
     const plan=await action('prepare');expect(plan.status).toBe(200);
     if(unknown)await call({method:'writer-state',body:{unknownNext:true}});
     const start=await action('generate',{sign:edition.passages[12-missing].sign,approvedPlanHash:plan.payload.plan.planHash});expect(start.status).toBe(unknown?500:202);
-    const state={failPoll:false,failRead:false,conflictPoll:false,holdPoll:false,held:false,release:()=>{}};
+    const state={failPoll:false,failRead:false,failDiagnosis:false,conflictPoll:false,holdPoll:false,held:false,release:()=>{}};
     await routeStudioInventoryApi(page,{call:async(message)=>{
       if(state.failRead&&message.method==='GET'&&message.url?.includes('?id='))return {status:503,payload:{ok:false,error:'Fixture connection unavailable.'}};
       return call(message);
     },answer:async(route,url)=>{
       if(url.pathname!=='/api/admin/horoscope-writing')return false;
       const body=route.request().postDataJSON();
+      if(body.action==='diagnose'&&state.failDiagnosis){state.failDiagnosis=false;await route.fulfill({status:503,json:{ok:false,error:'Fixture diagnosis unavailable.'}});return true;}
       if(body.action==='poll'&&state.failPoll){state.failPoll=false;await route.fulfill({status:503,json:{ok:false,error:'Fixture connection interrupted.'}});return true;}
       if(body.action==='poll'&&state.conflictPoll){state.conflictPoll=false;expect((await action('poll')).status).toBe(200);}
       const result=await call({method:'writing',body});
@@ -135,18 +136,48 @@ test('An unconfirmed provider request is retained without starting or releasing 
 });
 
 for(const [width,theme] of [[390,'dark'],[1440,'light']] as const){
+ test(`Opening a legacy seasonal failure explains the saved attempt without retrying ${width} ${theme}`,async({page})=>{
+  await page.setViewportSize({width,height:1000});await page.addInitScript(theme=>localStorage.setItem('tldrastro:studio-theme',theme),theme);
+  const f=await fixture(page,12,false,'seasonal');try{
+   const failedResponse={status:'failed',error:{code:'credit_balance_exhausted',message:'Private fixture billing details'},output:[]};
+   const nextDiagnosis=()=>f.call({method:'writer-state',body:{nextResult:failedResponse}});
+   await nextDiagnosis();expect((await f.action('poll')).status).toBe(422);
+   const legacy=await f.call({method:'legacy-horoscope-failure',body:{id:(await f.latest()).id}});
+   await nextDiagnosis();const studio=await f.open();
+   await expect(studio.getByRole('alert')).toContainText('The previous attempt stopped because the writing API had no credits.');
+   await expect(studio.getByRole('alert')).toContainText('not your current balance');
+   await expect(studio.getByText('The writer did not complete a usable reading.',{exact:false})).toHaveCount(0);
+   await expect(studio.getByRole('button',{name:'Retry Aries',exact:true})).toBeDisabled();
+   expect(await f.latest()).toEqual(legacy);expect((await f.call({method:'writer-state'})).calls).toBe(1);
+   await studio.getByRole('button',{name:'1 · Dates',exact:true}).click();
+   await expect(studio.getByLabel('Reference date')).toHaveValue('2026-09-01');
+   await nextDiagnosis();await studio.getByRole('button',{name:'Continue to writing plan',exact:true}).click();
+   await expect(studio.getByRole('alert')).toContainText('not your current balance');
+   expect(await f.latest()).toEqual(legacy);
+   // An unavailable historical response must leave the plan and recovery action usable.
+   f.state.failDiagnosis=true;await nextDiagnosis();await page.reload();await f.open();
+   await expect(studio.getByRole('alert')).toContainText('its details are temporarily unavailable');
+   await expect(studio.getByLabel('I approve this writing plan for generation.')).not.toBeChecked();
+   await studio.getByRole('button',{name:'Check saved progress',exact:true}).click();
+   await expect(studio.getByRole('alert')).toContainText('not your current balance');
+   await expect(studio.getByRole('button',{name:'Retry Aries',exact:true})).toBeDisabled();
+   expect(await f.latest()).toEqual(legacy);expect((await f.call({method:'writer-state'})).calls).toBe(1);
+   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+   await page.screenshot({path:`test-results/horoscope-legacy-failure-${width}-${theme}.png`,fullPage:true});
+  }finally{f.child.kill();}
+ });
  test(`Seasonal failure retries only one sign and preserves the selected date ${width} ${theme}`,async({page})=>{
   await page.setViewportSize({width,height:1000});await page.addInitScript(theme=>localStorage.setItem('tldrastro:studio-theme',theme),theme);
   const f=await fixture(page,12,false,'seasonal');try{
    const studio=await f.open();
    await f.call({method:'writer-state',body:{nextResult:{status:'failed',error:{code:'credit_balance_exhausted',message:'Private fixture billing details'},output:[]}}});
    await studio.getByRole('button',{name:'Check saved progress',exact:true}).click();
-   await expect(studio.getByRole('alert')).toContainText('The AI writer has run out of API credits.');
+   await expect(studio.getByRole('alert')).toContainText('The previous attempt stopped because the writing API had no credits.');
    await expect(studio.getByText('12 readings still need drafts. Existing writing is kept.',{exact:true})).toBeVisible();
    await expect(studio.getByRole('button',{name:'Retry Aries',exact:true})).toBeDisabled();
    const failed=await f.latest();expect(failed.source_snapshot.horoscopeGeneration.lastError.code).toBe('api_credits');
    await page.reload();await f.open();
-   await expect(studio.getByRole('alert')).toContainText('run out of API credits');
+   await expect(studio.getByRole('alert')).toContainText('not your current balance');
    await studio.getByRole('button',{name:'1 · Dates',exact:true}).click();
    await expect(studio.getByLabel('Reference date')).toHaveValue('2026-09-01');
    await studio.getByRole('button',{name:'Continue to writing plan',exact:true}).click();

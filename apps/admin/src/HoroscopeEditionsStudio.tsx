@@ -66,9 +66,28 @@ export default function HoroscopeEditionsStudio({secret}:{secret:string}) {
     setStep(next);return next;
   }
   async function loadPlan(row:any,controller?:AbortController) {
-    const data=await request(secret,'/api/admin/horoscope-writing',{action:'prepare',id:row.id,expectedUpdatedAt:row.updated_at},'POST',controller?.signal);
-    if(controller&&!isCurrent(controller))return;
-    setPlan(data.plan);setConfigured(data.configured);setPlanApproved(false);
+    const [data,failure]=await Promise.all([
+      request(secret,'/api/admin/horoscope-writing',{action:'prepare',id:row.id,expectedUpdatedAt:row.updated_at},'POST',controller?.signal),
+      savedFailureMessage(row,controller?.signal)
+    ]);
+    if(!mounted.current||controller&&!isCurrent(controller))return;
+    setPlan(data.plan);setConfigured(data.configured);setPlanApproved(false);setError(failure);
+  }
+  async function savedFailureMessage(row:any,signal?:AbortSignal) {
+    const generation=row.source_snapshot?.horoscopeGeneration,failed=generation?.lastError;
+    if(!failed||generation.active)return '';
+    const describe=(failure:any)=>failure.diagnostic?.errorCode==='credit_balance_exhausted'
+      ?'The previous attempt stopped because the writing API had no credits. If you have added credits, approve the writing plan below and retry this reading. This message describes the saved attempt, not your current balance.'
+      :`Previous attempt: ${failure.message}`;
+    if(failed.diagnostic||!failed.operation?.responseId)return describe(failed);
+    // Older drafts only saved a generic error. Opening their plan retrieves the
+    // existing response's cause; it never retries generation or changes the row.
+    try {
+      const details=await request(secret,'/api/admin/horoscope-writing',{action:'diagnose',id:row.id,expectedUpdatedAt:row.updated_at},'POST',signal);
+      return describe(details.failure);
+    }catch{
+      return 'The previous attempt failed, but its details are temporarily unavailable. Choose Check saved progress to try again. Saved readings are kept.';
+    }
   }
   async function readSaved(id:string,signal?:AbortSignal) {
     const data=await request(secret,endpoint+'?'+new URLSearchParams({id}),undefined,'GET',signal);
@@ -189,12 +208,7 @@ export default function HoroscopeEditionsStudio({secret}:{secret:string}) {
       await showRecovered(row,controller);
       if(isCurrent(controller)){
         const terminal=row.source_snapshot?.horoscopeGeneration?.lastError;
-        if(terminal||failure&&!recoverable(failure))setError(terminal?.message??failure.message);
-        if(pollExisting&&!active&&terminal?.operation?.responseId&&!terminal.diagnostic){
-          try{const details=await request(secret,'/api/admin/horoscope-writing',{action:'diagnose',id:row.id,expectedUpdatedAt:row.updated_at},'POST',controller.signal);
-            if(isCurrent(controller))setError(details.failure.message);
-          }catch{if(isCurrent(controller))setMessage('The saved failure details are temporarily unavailable. Your readings are kept.');}
-        }
+        if(!terminal&&failure&&!recoverable(failure))setError(failure.message);
       }
       return;
     }

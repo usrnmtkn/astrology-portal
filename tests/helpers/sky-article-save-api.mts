@@ -110,6 +110,14 @@ if (process.send) process.on('message', async ({ id, method, body, url }: any) =
     for(const key of ['pendingPolls','terminalNext','unknownNext','nextResult','startResult'] as const)if(body?.[key]!==undefined)(writerFixture as any)[key]=body[key];
     process.send!({id,result:{calls:writerFixture.calls,polls:writerFixture.polls,responseIds:[...writerFixture.requests.keys()]}});return;
   }
+  if (method === 'legacy-horoscope-failure') {
+    const row=store.rows.get(body.id),generation=row?.source_snapshot?.horoscopeGeneration;
+    if(!generation?.lastError||generation.active)throw new Error('Choose a failed fixture edition.');
+    const {operation,failedAt}=generation.lastError;
+    generation.lastError={operation,failedAt,message:'The writer did not complete a usable reading. Completed signs are saved. Review the plan and resume to try this sign again.'};
+    delete generation.failures;
+    process.send!({id,result:row});return;
+  }
   if (method === 'lunar-writing') {
     const handler = (await import('../../api/admin/calendar-lunation-writing')).default;
     const req:any=Readable.from([JSON.stringify(body)]);req.method='POST';req.url='/api/admin/calendar-lunation-writing';req.headers={'x-content-generation-secret':'calendar-api-fixture'};
