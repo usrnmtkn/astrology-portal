@@ -20,6 +20,9 @@ export class HoroscopeProviderFailure extends Error {
 export function readHoroscopeProviderResult(payload:any) {
   const diagnostic=horoscopeProviderDiagnostic(payload);
   const fail=(code:string,message:string):never=>{throw new HoroscopeProviderFailure(code,message+' Saved readings are kept. Review the writing plan before trying again.',diagnostic);};
+  if(diagnostic.errorCode==='credit_balance_exhausted')throw new HoroscopeProviderFailure('api_credits','The AI writer has run out of API credits. Replenish the connected OpenAI API balance, then retry this reading. Saved readings are kept.',diagnostic);
+  if(['insufficient_quota','billing_hard_limit_reached','billing_not_active'].includes(diagnostic.errorCode??''))throw new HoroscopeProviderFailure('api_credits','The writing API has reached its billing or usage limit. Check the connected OpenAI API account and available credits, then retry this reading. Saved readings are kept.',diagnostic);
+  if(['invalid_api_key','authentication_error'].includes(diagnostic.errorCode??''))throw new HoroscopeProviderFailure('api_credentials','The writing API could not authenticate. Restore its server API connection, then retry this reading. Saved readings are kept.',diagnostic);
   if(diagnostic.status==='incomplete'&&diagnostic.incompleteReason==='max_output_tokens')fail('output_limit','The writer reached its response limit before finishing this reading.');
   if(diagnostic.status==='cancelled')fail('cancelled','This writing request was cancelled before it finished.');
   if(diagnostic.incompleteReason==='content_filter'||Array.isArray(payload?.output)&&payload.output.some((item:any)=>item?.type==='message'&&Array.isArray(item.content)&&item.content.some((part:any)=>part?.type==='refusal')))fail('refused','The writer could not produce a reading from this request.');

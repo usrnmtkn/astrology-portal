@@ -85,7 +85,7 @@ export function installHoroscopeWriterFixture(){
      if(![...store.rows.values()].some(row=>row.source_snapshot?.horoscopeGeneration?.active?.requestHash))throw new Error('No durable request reservation before provider call');
      writerFixture.calls++;
      if(writerFixture.unknownNext){writerFixture.unknownNext=false;throw new Error('Fixture connection lost');}
-     if(writerFixture.failNext){writerFixture.failNext=false;return Response.json({error:{message:'Fixture quota'}},{status:429});}
+     if(writerFixture.failNext){writerFixture.failNext=false;return Response.json({error:{code:'insufficient_quota',message:'Fixture quota'}},{status:429});}
      const request=JSON.parse(options.body);
      if(!request.background||!request.instructions||!request.text?.format?.schema)throw new Error('Missing real governed provider request');
      const sign=request.input.match(/"risingSign":"([a-z]+)"/)?.[1];

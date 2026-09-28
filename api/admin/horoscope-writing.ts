@@ -160,7 +160,7 @@ export default async function handler(req:IncomingMessage,res:ServerResponse) {
         const {response,payload:result}=await responses.startStoredWritingResponse({apiKey,role,request,governedInstructions:instructions,surface:'horoscopes',family:'horoscope',fetchImpl:(url:any,options:any)=>fetch(url,{...options,signal:AbortSignal.timeout(25000)})});
         payload=result;
         if(!response.ok) {
-          if(response.status>=400&&response.status<500)throw new HoroscopeProviderFailure('request_rejected','The writer declined this request. Check its configuration or available quota, then review the plan to try again.',horoscopeProviderDiagnostic(payload));
+          if(response.status>=400&&response.status<500)readHoroscopeProviderResult({...payload,status:'failed'});
           throw new AdminHttpError(503,'The writer request outcome is unknown. Reopen this edition before retrying.');
         }
         if(typeof payload.id!=='string'||!/^resp_[A-Za-z0-9_-]+$/u.test(payload.id))throw new AdminHttpError(502,'The writer did not confirm a response ID. Reopen this edition before retrying.');

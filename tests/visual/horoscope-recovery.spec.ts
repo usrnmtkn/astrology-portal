@@ -139,13 +139,13 @@ for(const [width,theme] of [[390,'dark'],[1440,'light']] as const){
   await page.setViewportSize({width,height:1000});await page.addInitScript(theme=>localStorage.setItem('tldrastro:studio-theme',theme),theme);
   const f=await fixture(page,12,false,'seasonal');try{
    const studio=await f.open();
-   await f.call({method:'writer-state',body:{nextResult:{status:'incomplete',incomplete_details:{reason:'max_output_tokens'},usage:{output_tokens:12000,output_tokens_details:{reasoning_tokens:12000}},output:[]}}});
+   await f.call({method:'writer-state',body:{nextResult:{status:'failed',error:{code:'credit_balance_exhausted',message:'Private fixture billing details'},output:[]}}});
    await studio.getByRole('button',{name:'Check saved progress',exact:true}).click();
-   await expect(studio.getByRole('alert')).toContainText('The writer reached its response limit before finishing this reading.');
+   await expect(studio.getByRole('alert')).toContainText('The AI writer has run out of API credits.');
    await expect(studio.getByRole('button',{name:'Retry Aries',exact:true})).toBeDisabled();
-   const failed=await f.latest();expect(failed.source_snapshot.horoscopeGeneration.lastError.code).toBe('output_limit');
+   const failed=await f.latest();expect(failed.source_snapshot.horoscopeGeneration.lastError.code).toBe('api_credits');
    await page.reload();await f.open();
-   await expect(studio.getByRole('alert')).toContainText('response limit');
+   await expect(studio.getByRole('alert')).toContainText('run out of API credits');
    await studio.getByRole('button',{name:'1 · Dates',exact:true}).click();
    await expect(studio.getByLabel('Reference date')).toHaveValue('2026-09-01');
    await studio.getByRole('button',{name:'Continue to writing plan',exact:true}).click();

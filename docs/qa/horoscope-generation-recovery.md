@@ -89,3 +89,17 @@ saved text and retained failure history on mobile/dark and desktop/light.
 These synthetic checks do not establish the reason for a historical provider
 failure or prove actual live writer success. Historical responses need authorized
 provider inspection, and a new billed generation needs explicit owner action.
+
+
+The owner's authorized inspection of the reported seasonal response confirmed
+`status: failed`, `error.code: credit_balance_exhausted`, and no output text.
+The read-only deployed diagnostic preserved the complete edition and version.
+Studio now names API credit exhaustion and directs the operator to replenish the
+connected API balance before retrying. Quota/billing and credential rejections
+also receive specific actions, whether returned at request start or polling.
+This is an account-balance failure; increasing token budgets would not resolve it.
+The patch does not refill credits or authorize a fresh paid writing run.
+
+For older generic failures, **Check saved progress** can inspect the exact stored
+failed response through the authenticated server. It returns only safe diagnostics,
+never the credential, prompt or provider prose, and leaves the edition unchanged.

@@ -219,6 +219,8 @@ const cases=[
  {payload:{status:'incomplete',incomplete_details:{reason:'max_output_tokens'},usage,output:[partial]},code:'output_limit'},
  {payload:{status:'failed',error:{code:'server_error',message:'PRIVATE provider error'}},code:'provider_failed'},
  {payload:{status:'cancelled'},code:'cancelled'},
+ {payload:{status:'failed',error:{code:'credit_balance_exhausted',message:'PRIVATE provider billing details'}},code:'api_credits'},
+ {payload:{status:'failed',error:{code:'invalid_api_key',message:'PRIVATE credential details'}},code:'api_credentials'},
  {payload:{status:'completed',output:[{type:'message',content:[{type:'refusal',refusal:'PRIVATE refusal'}]}]},code:'refused'},
  {payload:{status:'completed',output:[partial]},code:'invalid_reading'},
  {payload:{status:'completed',output:[{type:'message',content:[{type:'output_text',text:JSON.stringify({headline:'Fixture',body:' '})}]}]},code:'invalid_reading'},
@@ -247,7 +249,7 @@ for(const immediate of [false,true])for(const scenario of cases){
  assert.equal((await seasonalAction('poll')).status,200);assert.equal((await seasonalAction('prepare')).status,200);
  assert.equal(writerFixture.calls,calls+1,'Inspection and recovery never automatically restart failed provider calls');
 }
-const failures=structuredClone(seasonalRow.source_snapshot.horoscopeGeneration.failures);assert.equal(failures.length,12);
+const failures=structuredClone(seasonalRow.source_snapshot.horoscopeGeneration.failures);assert.equal(failures.length,16);
 const retried=await seasonalAction('generate',{sign:'aries',approvedPlanHash:seasonalPlan.payload.plan.planHash});assert.equal(retried.status,202);seasonalRow=retried.payload.rows[0];
 const recovered=await seasonalAction('poll');assert.equal(recovered.status,200);seasonalRow=recovered.payload.rows[0];
 assert.deepEqual(seasonalRow.source_snapshot.horoscopeGeneration.failures,failures,'Successful retry preserves earlier failures');
