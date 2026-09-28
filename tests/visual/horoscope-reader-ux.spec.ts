@@ -29,9 +29,8 @@ for(const [width,theme] of [[390,'light'],[390,'dark'],[1440,'light'],[1440,'dar
    await expect(page.getByRole('heading',{name:'No seasonal reading yet'})).toBeVisible();
    const nav=page.getByRole('group',{name:'Zodiac signs',exact:true});
    await expect(nav.getByRole('button')).toHaveCount(12);
-   const glyphs=await nav.locator('img').evaluateAll(images=>images.map(image=>({src:(image as HTMLImageElement).getAttribute('src'),loaded:(image as HTMLImageElement).complete&&(image as HTMLImageElement).naturalWidth>0})));
-   expect(glyphs.map(glyph=>glyph.src?.split('?')[0])).toEqual(HOROSCOPE_SIGNS.map(sign=>`/zodiac/${sign}.svg`));
-   expect(glyphs.every(glyph=>glyph.loaded)).toBe(true);
+   expect(await nav.locator('img').evaluateAll(images=>images.map(image=>image.getAttribute('src')?.split('?')[0]))).toEqual(HOROSCOPE_SIGNS.map(sign=>`/zodiac/${sign}.svg`));
+   await expect.poll(()=>nav.locator('img').evaluateAll(images=>images.every(image=>(image as HTMLImageElement).complete&&(image as HTMLImageElement).naturalWidth>0))).toBe(true);
    await page.locator('.horoscope-location summary').click();
    await page.getByLabel('Horoscope time zone',{exact:true}).selectOption('Europe/London');
    await expect(page.locator('.horoscope-location summary')).toContainText('Selected time zone · Europe/London');
