@@ -1,4 +1,4 @@
-import { calendarTransitionPhraseForKey } from "../../web/src/features/calendar/calendarTransitionPhraseIdentity";
+import { calendarTransitionPhraseForKey } from "../../web/src/features/calendar/calendarTransitionPhraseIdentity.js";
 
 /** Editorial labels only: stable source keys and owner prose are never renamed. */
 import { calendarSeasonTransitionTitle } from "../../web/src/features/calendar/calendarSeasonTransitionTitle.js";

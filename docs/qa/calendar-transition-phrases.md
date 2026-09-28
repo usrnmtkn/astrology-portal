@@ -1,10 +1,11 @@
 # Calendar Moon transition phrases — acceptance record
 
-Verified locally on September 28, 2026. This feature has not been deployed.
+Initial local acceptance recorded on September 28, 2026, before deployment.
+Release follow-up and baseline CI findings are recorded below and in PR #1081.
 
 Branch: `feat/calendar-transition-phrase-editor`, based on main
-`3f4092b12d4436973d40df1e690bce583e948613`. The branch has no commits beyond that
-base. The 27 changed implementation/configuration/test files have SHA-256
+`3f4092b12d4436973d40df1e690bce583e948613`. At the initial acceptance check, the 27 changed implementation/configuration/test
+files had SHA-256
 `51e6b9ef33228c8848a91d6f8bf012c471351ce8ea04365e34a1cbf537f4b121` when sorted by
 repository-relative path and hashed as `path + NUL + file bytes + NUL`.
 This document is excluded from that fingerprint.
@@ -117,8 +118,36 @@ at entry** and **761.5 kB aggregate gzip**. Its raw entry/largest limit increase
 explicit feature allocation, not a claim of performance improvement. Memory graph,
 forbidden payload and reader startup protections remain unchanged.
 
-## Not yet verified
+## Release follow-up
 
-No commit, merge, production deployment or production content mutation was performed.
-The live site's new navigation and publication flow must be checked after deployment
-before describing this feature as live.
+Final local verification before the correction commit: the complete API suite and
+plain-Node startup check pass. The fresh-build browser run passed all 20 affected
+Studio/navigation/phrase cases; its additional Calendar pressure-release case
+reproduced the baseline failure below. Typecheck, CSS, bundle and privacy checks
+pass. The final 30 code/configuration/test files have SHA-256
+`9e2f5d37982275c7189b7f6548bcdfd85d23f63efb7232593e30aae3022dc8be` using the same fingerprint method above.
+
+The first hosted run on `b375414ab` passed the Content Studio API contract but
+exposed extensionless imports in the shared phrase catalog under plain Node.
+The release correction uses explicit `.js` specifiers and adds the existing
+production-style Node ESM startup check to the unfiltered API command. This
+ensures API authorization can be reached in the emitted server runtime.
+
+The release also updates the Calendar tab/sidebar assertions to include the new
+workspace. The Season write-ups scroll check now uses its existing one-pixel
+right-edge rounding tolerance on both edges; CI measured a 0.03125-pixel left
+edge difference. The same assertion already failed on main by 0.015625 pixels.
+
+Known baseline failures were compared directly with the workflow on main
+`3f4092b12d4436973d40df1e690bce583e948613`, not inferred from unrelated files:
+
+| Existing failure | Main evidence |
+| --- | --- |
+| Calendar pressure-release cannot find synthetic Pluto–Lilith event | [Reader job](https://github.com/usrnmtkn/astrology-portal/actions/runs/36371637825/job/108769289771) |
+| Calendar collective-release cannot find Mercury–Pluto and Saturn–Lilith events | [Reader job](https://github.com/usrnmtkn/astrology-portal/actions/runs/36371637825/job/108769289804) |
+| Offline publication-cache assertion in app-loading-feedback | [Smoke job](https://github.com/usrnmtkn/astrology-portal/actions/runs/36371637825/job/108769289740) |
+| Horoscope reader expects the old missing-reading message | [Prior release record](https://github.com/usrnmtkn/astrology-portal/pull/1079); test-only follow-up [#1080](https://github.com/usrnmtkn/astrology-portal/pull/1080) |
+
+These are not reported as passing. Production deployment and acceptance results
+are recorded on [PR #1081](https://github.com/usrnmtkn/astrology-portal/pull/1081)
+when completed. All write tests remain isolated from production storage.

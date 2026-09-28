@@ -1,5 +1,5 @@
-import { calendarMoonContextKey, type CalendarMoonContextKind } from './calendarTransitionPhraseIdentity';
-export { calendarMoonContextKey, calendarFirstQuarterContinuationKey, calendarTransitionPhraseKeys, type CalendarMoonContextKind } from './calendarTransitionPhraseIdentity';
+import { calendarMoonContextKey, type CalendarMoonContextKind } from './calendarTransitionPhraseIdentity.js';
+export { calendarMoonContextKey, calendarFirstQuarterContinuationKey, calendarTransitionPhraseKeys, type CalendarMoonContextKind } from './calendarTransitionPhraseIdentity.js';
 
 /** Existing reader wording; published Studio replacements are selected by exact key. */
 export const calendarMoonContextPhrases: Record<CalendarMoonContextKind, { body: string }> = {

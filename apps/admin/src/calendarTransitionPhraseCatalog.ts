@@ -1,6 +1,6 @@
-import { calendarTransitionPhraseKeys, calendarTransitionPhraseForKey, type CalendarMoonContextKind } from '../../web/src/features/calendar/calendarTransitionPhraseIdentity';
-import { calendarMoonContextPhrases } from '../../web/src/features/calendar/calendarTransitionPhrases';
-import { moonContinuationSummaries, moonContinuationOnFirstQuarter } from '../../web/src/features/calendar/moonContinuationSummaries';
+import { calendarTransitionPhraseKeys, calendarTransitionPhraseForKey, type CalendarMoonContextKind } from '../../web/src/features/calendar/calendarTransitionPhraseIdentity.js';
+import { calendarMoonContextPhrases } from '../../web/src/features/calendar/calendarTransitionPhrases.js';
+import { moonContinuationSummaries, moonContinuationOnFirstQuarter } from '../../web/src/features/calendar/moonContinuationSummaries.js';
 export { calendarTransitionPhraseKeys };
 export const calendarTransitionPhrases = calendarTransitionPhraseKeys.map(key => {
   const identity = calendarTransitionPhraseForKey(key)!;
