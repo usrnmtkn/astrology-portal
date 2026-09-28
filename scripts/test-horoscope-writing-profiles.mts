@@ -3,7 +3,7 @@ import { createHash } from 'node:crypto';
 import { Readable } from 'node:stream';
 import { store } from '../tests/helpers/sky-article-save-api.mts';
 import publicationHandler from '../api/admin/content-publication';
-import { defaultHoroscopeProfile, HOROSCOPE_PROFILE_PREFIX, horoscopeEditorialPrompt } from '../src/astro-writing/horoscopeWritingProfiles.mjs';
+import { defaultHoroscopeProfile, HOROSCOPE_PROFILE_PREFIX, HOROSCOPE_PROFILE_FIELDS, HOROSCOPE_PROFILE_FIELD_LIMIT, horoscopeEditorialPrompt } from '../src/astro-writing/horoscopeWritingProfiles.mjs';
 import { resolveStudioWritingProfile } from '../src/astro-writing/studioWritingProfileReceipt.mjs';
 import { generateDraft } from '../src/astro-writing/generateDraft.mjs';
 import { buildArgumentOutline, approveArgumentOutline, ARGUMENT_OUTLINE_FIELDS } from '../src/astro-writing/argumentGate.mjs';
@@ -78,11 +78,20 @@ assert.throws(() => resolveStudioWritingProfile(library.payload.profiles[0]), /s
 // Long context is accepted intact at the limit; overflow must fail without
 // truncating or replacing the previously saved instructions.
 const promptEnding = 'EXACT END OF CONTEXT.';
-const longProfile = {...updated.payload.profile.profile, prompt: updated.payload.profile.profile.prompt.padEnd(12000 - promptEnding.length, ' ') + promptEnding};
-assert.equal(longProfile.prompt.length, 12000);
+const longProfile = {...updated.payload.profile.profile};
+for (const field of HOROSCOPE_PROFILE_FIELDS) {
+  longProfile[field] = longProfile[field].padEnd(HOROSCOPE_PROFILE_FIELD_LIMIT - promptEnding.length, '界') + promptEnding;
+  assert.equal(longProfile[field].length, 32000);
+}
+assert(Buffer.byteLength(JSON.stringify(longProfile)) > 100000, 'All fields must fit beyond the old API body limit');
 const longSaved = await invoke('POST', {profile: longProfile, expectedUpdatedAt: updated.payload.profile.updatedAt});
 assert.equal(longSaved.status, 200);
 assert.deepEqual(longSaved.payload.profile.profile, longProfile);
-assert.equal((await invoke('POST', {profile: {...longProfile, prompt: longProfile.prompt + '!'}, expectedUpdatedAt: longSaved.payload.profile.updatedAt})).status, 400);
+await generateDraft({...args, writingProfile: longSaved.payload.profile});
+assert(seen.includes(horoscopeEditorialPrompt(longProfile)), 'The complete expanded instructions reach the writer');
+for (const field of HOROSCOPE_PROFILE_FIELDS) {
+  assert.equal((await invoke('POST', {profile: {...longProfile, [field]: longProfile[field] + '!'}, expectedUpdatedAt: longSaved.payload.profile.updatedAt})).status, 400);
+}
+assert.equal((await invoke('POST', {profile: {...longProfile, prompt: 'x'.repeat(1000000)}, expectedUpdatedAt: longSaved.payload.profile.updatedAt})).status, 413);
 assert.deepEqual((await invoke('GET')).payload.profiles.find((v: any) => v.profile.period === 'weekly'), longSaved.payload.profile);
 console.log('PASS writing profiles: authenticated actual-handler CRUD, exact text, CAS races, period isolation, publication exclusion and real writer input/receipt with no billed calls');

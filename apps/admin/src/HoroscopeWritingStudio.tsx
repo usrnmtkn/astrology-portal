@@ -124,7 +124,7 @@ function ProfileEditor({ initial, secret, onSaved }: { initial: SavedHoroscopePr
         <p className="admin-field-hint" id={`${saved.profile.period}-${section}-limit`} role={draft[section].length > HOROSCOPE_PROFILE_FIELD_LIMIT ? "alert" : undefined}>
           {draft[section].length > HOROSCOPE_PROFILE_FIELD_LIMIT
             ? `Your full text is kept here, but it is ${(draft[section].length - HOROSCOPE_PROFILE_FIELD_LIMIT).toLocaleString()} characters over this field’s limit. Move context to another guidance field or edit it before saving. Nothing has been saved yet.`
-            : "Each field supports 12,000 characters. Voice, Structure and Sources are included through the prompt variables. Text over the limit stays in the editor until you edit it."}
+            : `Each field supports ${HOROSCOPE_PROFILE_FIELD_LIMIT.toLocaleString()} characters. Voice, Structure and Sources are included through the prompt variables. Text over the limit stays in the editor until you edit it.`}
         </p>
         {section === "prompt" && <div className="admin-writing-variables" role="group" aria-label="Insert prompt variable">
           {HOROSCOPE_PROMPT_VARIABLES.map(name => <StudioButton key={name} disabled={busy} onClick={() => insertVariable(name)} aria-label={`Insert ${name} variable`}>{`{{${name}}}`}</StudioButton>)}

@@ -152,12 +152,16 @@ no production generation.
 
 ## Instruction-field overflow
 
-Voice, Structure, Sources and Prompt each retain the existing 12,000-character
-save limit. The native input no longer truncates pasted text. The editor keeps the
+Voice, Structure, Sources and Prompt each support 32,000 characters, increased
+from 12,000 so a complete seasonal prompt fits. The native input no longer
+truncates pasted text. The editor keeps the
 complete unsaved value, marks an over-limit field invalid, displays the excess
 character count and prevents saving until corrected. Variable insertion likewise
 preserves the whole value. Browser tests cover overflow, field switching and
 recovery in all four desktop/mobile and light/dark combinations. Actual-handler
-checks verify exact 12,000-character persistence and that a longer rejected save
-does not change the stored profile. No writer model, context budget or reader
-passage changes are involved.
+checks verify all four fields at the limit, including multibyte text beyond the
+old API request size, and that a rejected save does not change the stored profile.
+The request byte allowance covers all four fields even when JSON-escaped.
+The complete expanded instructions reach the injected writer. A browser
+regression saves and reloads a seasonal prompt longer than the old limit.
+No writer model, output budget or reader passage changes are involved.
