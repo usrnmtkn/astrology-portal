@@ -35,6 +35,6 @@ export function calendarTransitionPhraseForKey(key: string): CalendarTransitionP
   const kind = sign as CalendarMoonContextKind;
   return { key, sign: '', label: calendarMoonContextLabels[kind],
     group: kind.includes('Season') ? 'Season context' : kind === 'lateIngress' ? 'Moon changes sign' : 'Around New Moons, Full Moons & eclipses',
-    when: kind.includes('Season') ? 'Used only when no sign-specific season transition passage is available. Edit pair-specific writing in Season transitions.' : kind === 'lateIngress' ? 'Added after the calculated sign and time for an ingress at 8 PM or later.' : 'Added after the calculated lunar-event timing sentence when it is the relevant context for the day.',
+    when: kind.includes('Season') ? 'Used only when no sign-specific season transition passage is available. Edit pair-specific writing in Season transitions.' : kind === 'lateIngress' ? 'Added after the calculated sign and time for an ingress at 8 PM or later.' : 'Shown as written when this lunar event is the relevant context for the day.',
   };
 }

@@ -44,12 +44,6 @@ export type CalendarMoonFallbackCopy = {
   contextKind?: string;
 };
 
-function spellCount(value: number) {
-  if (value === 2) return "two";
-  if (value === 3) return "three";
-  return String(value);
-}
-
 function joinParts(...parts: Array<string | null | undefined>) {
   return parts.map((part) => part?.trim()).filter(Boolean).join(" ");
 }
@@ -185,25 +179,25 @@ function contextCopy(
   if (facts.daysSincePreviousEclipse === 1) {
     return {
       kind: "dayAfterEclipse",
-      body: joinParts("The eclipse was yesterday.", calendarMoonContextBody("dayAfterEclipse", options.transitionPhrase))
+      body: calendarMoonContextBody("dayAfterEclipse", options.transitionPhrase)
     };
   }
   if (facts.daysSincePreviousEclipse != null && facts.daysSincePreviousEclipse >= 2 && facts.daysSincePreviousEclipse <= 3) {
     return {
       kind: "afterEclipse",
-      body: joinParts(`The eclipse was ${spellCount(facts.daysSincePreviousEclipse)} days ago.`, calendarMoonContextBody("afterEclipse", options.transitionPhrase))
+      body: calendarMoonContextBody("afterEclipse", options.transitionPhrase)
     };
   }
   if (facts.daysSincePreviousLunation === 1 && facts.previousLunationType === "new-moon") {
     return {
       kind: "dayAfterNewMoon",
-      body: joinParts("The New Moon was yesterday.", calendarMoonContextBody("dayAfterNewMoon", options.transitionPhrase))
+      body: calendarMoonContextBody("dayAfterNewMoon", options.transitionPhrase)
     };
   }
   if (facts.daysSincePreviousLunation === 1 && facts.previousLunationType === "full-moon") {
     return {
       kind: "dayAfterFullMoon",
-      body: joinParts("The Full Moon was yesterday.", calendarMoonContextBody("dayAfterFullMoon", options.transitionPhrase))
+      body: calendarMoonContextBody("dayAfterFullMoon", options.transitionPhrase)
     };
   }
   if (
@@ -214,7 +208,7 @@ function contextCopy(
   ) {
     return {
       kind: "afterNewMoon",
-      body: joinParts(`The New Moon was ${spellCount(facts.daysSincePreviousLunation)} days ago.`, calendarMoonContextBody("afterNewMoon", options.transitionPhrase))
+      body: calendarMoonContextBody("afterNewMoon", options.transitionPhrase)
     };
   }
   if (
@@ -225,7 +219,7 @@ function contextCopy(
   ) {
     return {
       kind: "afterFullMoon",
-      body: joinParts(`The Full Moon was ${spellCount(facts.daysSincePreviousLunation)} days ago.`, calendarMoonContextBody("afterFullMoon", options.transitionPhrase))
+      body: calendarMoonContextBody("afterFullMoon", options.transitionPhrase)
     };
   }
   if ((facts.exactFirstQuarter || facts.exactLastQuarter) && authoredPhase) {
@@ -234,19 +228,19 @@ function contextCopy(
   if (facts.daysUntilNextEclipse === 1 && facts.nextEclipseType && facts.nextEclipseSign) {
     return {
       kind: "eclipseTomorrow",
-      body: joinParts(`The ${facts.nextEclipseType} in ${facts.nextEclipseSign} arrives tomorrow.`, calendarMoonContextBody("eclipseTomorrow", options.transitionPhrase))
+      body: calendarMoonContextBody("eclipseTomorrow", options.transitionPhrase)
     };
   }
   if (facts.daysUntilNextLunation === 1 && facts.nextLunationType === "new-moon" && facts.nextLunationSign) {
     return {
       kind: "newMoonTomorrow",
-      body: joinParts(`The New Moon in ${facts.nextLunationSign} arrives tomorrow.`, calendarMoonContextBody("newMoonTomorrow", options.transitionPhrase))
+      body: calendarMoonContextBody("newMoonTomorrow", options.transitionPhrase)
     };
   }
   if (facts.daysUntilNextLunation === 1 && facts.nextLunationType === "full-moon" && facts.nextLunationSign) {
     return {
       kind: "fullMoonTomorrow",
-      body: joinParts(`The Full Moon in ${facts.nextLunationSign} arrives tomorrow.`, calendarMoonContextBody("fullMoonTomorrow", options.transitionPhrase))
+      body: calendarMoonContextBody("fullMoonTomorrow", options.transitionPhrase)
     };
   }
   if (facts.daysUntilSeasonEnd === 1 && facts.seasonName) {
