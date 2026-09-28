@@ -17,9 +17,12 @@ unaffected.
 
 Published-edition links preserve their period, sign and edition ID when a saved
 account finishes reconnecting. They remain readable after the edition ends.
-The reader's empty period view offers other currently published periods for the
-selected time zone. It does not substitute a weekly reading for Today or reuse
-another time zone's edition. Reader regression coverage includes delayed account
+The reader's empty period view offers current published editions with their exact
+date ranges and reference time zones, preferring the selected zone. A reader
+explicitly chooses another edition; a weekly reading never silently substitutes
+for Today, and another zone's prose is never relabelled as local timing. Available
+edition links preserve the selected sign and exact edition ID. Missing or failed
+discovery also leaves links to Sky and Calendar; failed discovery can be retried. Reader regression coverage includes delayed account
 restoration, reload, archive links, sign switching and empty-period discovery in
 `tests/visual/horoscope-published-navigation.spec.ts`.
 
@@ -197,10 +200,21 @@ a natal chart or change the whole-sign house count.
 The reader initially uses the app’s saved location, or the device time zone when
 there is no saved location. Horoscope location changes persist independently and
 refresh the reading without replacing Sky coordinates with a time-zone-only
-selection. It requests only published editions for that zone. An edition from
-another zone is never silently relabelled as the local
-day or week. Editorial coverage is explicit: publish an edition for each time
-zone you want to serve; an uncovered zone displays an honest empty state.
+selection. The primary lookup requests published editions for that zone. When uncovered,
+optional discovery queries current editions across zones through the existing
+public reader contract. Only complete, publication-eligible editions appear;
+conflicting editions for the same period and zone are omitted. Choices show the
+original dates and zone and open only when selected. The reader's location stays
+visible, with a timing note when the edition uses another zone. No prose or event
+weekday is automatically converted. Publish a local edition for local timing.
+
+**Change → Reset to device time zone** clears the horoscope override and saves an
+explicit device preference, so reloading does not restore the app's saved city.
+Sky's selected coordinates remain unchanged. Selecting a manual time zone clears
+the old city label in the shared location control. The twelve-sign navigation uses
+the existing SVG zodiac assets, with visible names, keyboard access and pressed
+states, alongside the personal rising/Sun sign shortcuts. These paths are covered
+at mobile/desktop widths in both themes by `horoscope-reader-ux.spec.ts`.
 Equivalent IANA aliases are normalized during calculation and lookup. Studio's
 published-edition link identifies the exact saved edition and sign, including
 past editions; choosing another period returns to current local readings.
@@ -312,3 +326,12 @@ records. This change applies the owner's requested guidance through the existing
 writing profile; it does not add or claim a per-reading feedback control. Actual
 daily and weekly provider-input tests verify delivery of the saved guidance and
 the instruction to finish against it. Voice quality remains the owner's decision.
+
+## Reader navigation release verification — September 27
+
+The location-reset and edition-discovery release was measured against isolated
+main `4ee861263` with separate dependency installations and identical workflow
+environment. Aggregate JavaScript grows from 3,493,646 to 3,494,417 gzip bytes
+(+771); the deferred horoscope reader grows from 2,793 to 3,498 bytes. The
+allocations grow by 1,000 aggregate and 800 reader bytes. Startup, CSS, other
+individual caps and dependencies remain unchanged. No editorial content changes.

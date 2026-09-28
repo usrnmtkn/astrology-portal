@@ -208,8 +208,8 @@ for(const [width,theme] of [[390,'light'],[390,'dark'],[1440,'light'],[1440,'dar
    await expect(page.locator('.horoscope-page :is(h1,h2,h3,h4,h5,h6)')).toHaveText(['Horoscopes','Fixture aries weekly headline']);
    expect(await page.locator('.horoscope-page h1').evaluate(el=>{const probe=document.createElement('h1');probe.className='learn-hero__title';el.parentElement!.append(probe);const actual=getComputedStyle(el),expected=getComputedStyle(probe);const same=['fontFamily','fontSize','fontWeight','lineHeight','letterSpacing','margin','textTransform','textAlign'].every(key=>(actual as any)[key]===(expected as any)[key]);probe.remove();return same;})).toBe(true);
    expect(await page.locator('.horoscope-page h2').evaluate(el=>{const probe=document.createElement('h2');probe.style.cssText='font-family:var(--font-display);font-size:var(--type-h2-size);font-weight:var(--weight-regular);line-height:var(--leading-h2);letter-spacing:var(--tracking-title);margin:var(--space-4) 0';el.parentElement!.append(probe);const actual=getComputedStyle(el),expected=getComputedStyle(probe);const same=['fontFamily','fontSize','fontWeight','lineHeight','letterSpacing','margin','textTransform','textAlign'].every(key=>(actual as any)[key]===(expected as any)[key]);probe.remove();return same;})).toBe(true);
-   for(const sign of HOROSCOPE_SIGNS){await page.getByLabel('Zodiac sign',{exact:true}).selectOption(sign);await expect(page.getByRole('article')).toContainText(`You can read the ${sign} fixture opening.`);await expect(page.getByRole('article')).toContainText(`Your fixture ${sign} complete ending.`);}
-   await page.reload();await expect(page.getByLabel('Zodiac sign',{exact:true})).toHaveValue('pisces');
+   for(const sign of HOROSCOPE_SIGNS){await page.getByRole('group',{name:'Zodiac signs',exact:true}).getByRole('button').nth(HOROSCOPE_SIGNS.indexOf(sign)).click();await expect(page.getByRole('article')).toContainText(`You can read the ${sign} fixture opening.`);await expect(page.getByRole('article')).toContainText(`Your fixture ${sign} complete ending.`);}
+   await page.reload();await expect(page.getByRole('button',{name:'Pisces & Pisces Rising',exact:true})).toHaveAttribute('aria-pressed','true');
    await page.getByRole('button',{name:'Today',exact:true}).click();
    await expect(page.getByRole('status')).toContainText('daily horoscopes haven’t been published');
    await page.goBack();await expect(page.getByRole('button',{name:'This week',exact:true})).toHaveAttribute('aria-pressed','true');await expect(page.getByRole('article')).toContainText('Your fixture pisces complete ending.');
@@ -226,7 +226,7 @@ for(const [width,theme] of [[390,'light'],[390,'dark'],[1440,'light'],[1440,'dar
    const live=(await call({method:'rows'})).find((row:any)=>row.id===draft.id);
    const changed=await call({method:'PATCH',body:{id:live.id,expectedUpdatedAt:live.updated_at,status:'DRAFT'}});expect(changed.status).toBe(200);
    await page.reload();await expect(page.getByRole('status')).toContainText('weekly horoscopes haven’t been published');
-   await expect(page.locator('.horoscope-page :is(h1,h2,h3,h4,h5,h6)')).toHaveText(['Horoscopes']);
+   await expect(page.locator('.horoscope-page :is(h1,h2,h3,h4,h5,h6)')).toHaveText(['Horoscopes','No weekly reading yet']);
    await page.evaluate(()=>new Promise<void>(resolve=>requestAnimationFrame(()=>requestAnimationFrame(()=>resolve()))));
    await page.screenshot({path:`test-results/horoscope-empty-${width}-${theme}.png`,animations:'disabled'});
    await page.getByRole('button',{name:'This season',exact:true}).click();await expect(page.getByRole('status')).toContainText('seasonal horoscopes haven’t been published');

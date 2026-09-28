@@ -3,7 +3,7 @@ import type {LocationInput} from '../../types';
 import {browserTimeZone} from '../../services/timezones';
 import {validHoroscopeTimeZone} from '../../content/horoscopeEditions.mjs';
 
-export function HoroscopeLocation({value,onChange,disabled=false}:{value:LocationInput;onChange:(value:LocationInput)=>void;disabled?:boolean}) {
+export function HoroscopeLocation({value,onChange,onReset,description,disabled=false}:{value:LocationInput;onChange:(value:LocationInput)=>void;onReset?:()=>void;description?:string;disabled?:boolean}) {
   const id=useId();
   const [query,setQuery]=useState(''),[cities,setCities]=useState<LocationInput[]>([]),[error,setError]=useState(''),[searching,setSearching]=useState(false);
   const zone=value.timeZone??browserTimeZone();
@@ -23,8 +23,9 @@ export function HoroscopeLocation({value,onChange,disabled=false}:{value:Locatio
       {searching&&<p role="status">Looking up cities…</p>}
       {cities.length>0&&<ul aria-label="Matching cities">{cities.map(city=><li key={`${city.label}/${city.latitude}/${city.longitude}`}><button type="button" disabled={disabled} onClick={()=>choose(city)}>{city.label}</button></li>)}</ul>}
       {error&&<p role="status">{error}</p>}
-      <label>Time zone<select aria-label="Horoscope time zone" value={zone} disabled={disabled} onChange={e=>onChange({...value,label:value.label==='Device time zone'?'Selected time zone':value.label,timeZone:e.target.value})}>{zones.map(z=><option key={z} value={z}>{z.replaceAll('_',' ')}</option>)}</select></label>
-      <p>Local dates follow this time zone, including daylight saving time. Readings use your rising sign.</p>
+      <label>Time zone<select aria-label="Horoscope time zone" value={zone} disabled={disabled} onChange={e=>{setQuery('');onChange({label:'Selected time zone',latitude:0,longitude:0,timeZone:e.target.value});}}>{zones.map(z=><option key={z} value={z}>{z.replaceAll('_',' ')}</option>)}</select></label>
+      {onReset&&<button type="button" disabled={disabled} onClick={()=>{setQuery('');setCities([]);setError('');onReset();}}>Reset to device time zone</button>}
+      <p>{description??'Local dates follow this time zone, including daylight saving time. Readings use your rising sign.'}</p>
     </div>
   </details>;
 }
