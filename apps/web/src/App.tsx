@@ -2377,7 +2377,7 @@ const lifeAreaFocusAstrology: Record<LifeAreaFocus, {
   spirituality: { houses: [12, 9, 8], planets: ["Neptune", "Jupiter", "Moon", "Pluto"], aspects: ["conjunction", "trine", "sextile", "opposition"] }
 };
 const portalModes: PortalMode[] = ["horoscopes", "guest", "member", "profile", "friends", "calendar", "account", "settings", "learn"];
-const authenticatedPortalModes: PortalMode[] = ["member", "profile", "friends", "calendar", "account", "settings", "learn"];
+const authenticatedPortalModes: PortalMode[] = ["horoscopes", "member", "profile", "friends", "calendar", "account", "settings", "learn"];
 
 function isPortalMode(value: unknown): value is PortalMode {
   return typeof value === "string" && portalModes.includes(value as PortalMode);

@@ -15,6 +15,14 @@ unaffected.
 
 ## Content Studio
 
+Published-edition links preserve their period, sign and edition ID when a saved
+account finishes reconnecting. They remain readable after the edition ends.
+The reader's empty period view offers other currently published periods for the
+selected time zone. It does not substitute a weekly reading for Today or reuse
+another time zone's edition. Reader regression coverage includes delayed account
+restoration, reload, archive links, sign switching and empty-period discovery in
+`tests/visual/horoscope-published-navigation.spec.ts`.
+
 Open **Write → Horoscopes** (`/admin/content#horoscopes`).
 
 1. **Dates:** choose daily, weekly or seasonal, a date, and a city or time zone.
