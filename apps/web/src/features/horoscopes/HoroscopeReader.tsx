@@ -11,6 +11,7 @@ import type {LocationInput} from '../../types';
 import {browserTimeZone,timeZoneForLocation} from '../../services/timezones';
 
 const labels={daily:'Today',weekly:'This week',seasonal:'This season'};
+const availableLabels={daily:'Read today’s horoscope',weekly:'Read this week’s horoscope',seasonal:'Read this season’s horoscope'};
 const validSign=(value?:string)=>HOROSCOPE_SIGNS.includes(value?.toLowerCase()??'')?value!.toLowerCase():null;
 function route(defaultSign:string) {
   const params=new URLSearchParams(window.location.hash.split('?')[1]??'');
@@ -31,18 +32,31 @@ export default function HoroscopeReader({defaultSign,sunSign,location}:{defaultS
   const [selection,setSelection]=useState(()=>route(preferredSign));
   const [edition,setEdition]=useState<HoroscopeEdition|null>(null),[loading,setLoading]=useState(true),[error,setError]=useState(''),[version,setVersion]=useState(0);
   const [loadedEditionId,setLoadedEditionId]=useState<string|null>(null);
+  const [availablePeriods,setAvailablePeriods]=useState<HoroscopePeriod[]>([]);
   const refresh=()=>setVersion(value=>value+1);
   useEffect(()=>{const sync=()=>setSelection(route(preferredSign));sync();window.addEventListener('hashchange',sync);window.addEventListener('popstate',sync);return()=>{window.removeEventListener('hashchange',sync);window.removeEventListener('popstate',sync);};},[preferredSign]);
   useEffect(()=>subscribeToContentUpdates(notice=>{if(notice.contentKey.startsWith('horoscope/'))refresh();}),[]);
   useEffect(()=>subscribeToContentRevalidation(refresh),[]);
   useEffect(()=>{
-    const controller=new AbortController();setLoading(true);setError('');
+    const controller=new AbortController();setLoading(true);setError('');setAvailablePeriods([]);
     const at=new Date().toISOString();
-    void loadReaderRows(selection.editionId?{ids:[selection.editionId]}:{horoscope:{period:selection.period,at,timeZone}},AbortSignal.any([controller.signal,AbortSignal.timeout(20000)])).then(result=>{
+    const signal=AbortSignal.any([controller.signal,AbortSignal.timeout(20000)]);
+    void loadReaderRows(selection.editionId?{ids:[selection.editionId]}:{horoscope:{period:selection.period,at,timeZone}},signal).then(async result=>{
       if(controller.signal.aborted)return;
       if(result.error)throw new Error('Your horoscope could not load. Please try again.');
-      setEdition(selection.editionId?horoscopeEditionFromRow(result.data?.find(row=>row.id===selection.editionId)):horoscopeEditionAt(result.data??[],selection.period,at,timeZone));
+      const nextEdition=selection.editionId?horoscopeEditionFromRow(result.data?.find(row=>row.id===selection.editionId)):horoscopeEditionAt(result.data??[],selection.period,at,timeZone);
+      setEdition(nextEdition);
       setLoadedEditionId(selection.editionId);
+      // Keep an explicit period selection. Offer only other published editions
+      // for this reader's current local window, never an unrelated date or zone.
+      if(!nextEdition&&!selection.editionId){
+        setLoading(false);
+        const alternatives=await Promise.all(HOROSCOPE_PERIODS.filter(period=>period!==selection.period).map(async period=>{
+          const result=await loadReaderRows({horoscope:{period,at,timeZone}},signal);
+          return !result.error&&horoscopeEditionAt(result.data??[],period,at,timeZone)?period:null;
+        }));
+        if(!controller.signal.aborted)setAvailablePeriods(alternatives.filter((period):period is HoroscopePeriod=>period!==null));
+      }
     }).catch(reason=>{if(!controller.signal.aborted)setError((reason as Error).message);}).finally(()=>{if(!controller.signal.aborted)setLoading(false);});
     return()=>controller.abort();
   },[selection.period,selection.editionId,version,timeZone]);
@@ -78,6 +92,8 @@ export default function HoroscopeReader({defaultSign,sunSign,location}:{defaultS
       <h2>{passage.headline}</h2>
       <p className="horoscope-date">{horoscopeWindowLabel(currentEdition.window)} · {currentEdition.window.timeZone}</p>
       <div className="horoscope-prose"><FormattedProse text={passage.body}/></div>
-    </article>:<section className="learn-sheet horoscope-reading"><p role="status">{selection.editionId?'This published edition is no longer available.':`The ${selection.period} horoscopes haven’t been published for ${timeZone.replaceAll('_',' ')} yet.`}</p><p>Your selected location sets the local day and week. Check another period or come back soon.</p></section>}
+    </article>:<section className="learn-sheet horoscope-reading"><p role="status">{selection.editionId?'This published edition is no longer available.':`The ${selection.period} horoscopes haven’t been published for ${timeZone.replaceAll('_',' ')} yet.`}</p><p>Your selected location sets the local day and week. Check another period or come back soon.</p>
+      {availablePeriods.length>0&&<div className="learn-jump" role="group" aria-label="Available horoscopes">{availablePeriods.map(period=><button type="button" className="learn-jump__link" key={period} onClick={()=>select({...selection,period,editionId:null})}>{availableLabels[period]}</button>)}</div>}
+    </section>}
   </div>;
 }
