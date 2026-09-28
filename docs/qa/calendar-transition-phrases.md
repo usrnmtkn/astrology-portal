@@ -114,18 +114,26 @@ unchanged.
 
 The standalone admin build measures approximately **755.1 kB raw / 219.7 kB gzip
 at entry** and **761.5 kB aggregate gzip**. Its raw entry/largest limit increases by
-2,000 bytes, entry gzip by 500 bytes and aggregate gzip by 4,000 bytes. This is an
+2,500 bytes, entry gzip by 500 bytes and aggregate gzip by 4,000 bytes. This is an
 explicit feature allocation, not a claim of performance improvement. Memory graph,
 forbidden payload and reader startup protections remain unchanged.
 
 ## Release follow-up
+
+The CI-configured standalone admin build matches hosted chunk
+`index-BtMrEcd1.js`: 755577 raw / 219830 gzip entry bytes and about 761.6 kB
+aggregate gzip. Supabase placeholders add about 500 raw bytes compared with the
+original local measurement. The explicit feature allocation corrects the raw
+entry/largest cap to 756,000 bytes; entry gzip, aggregate, CSS, reader and payload
+caps receive no further increase. All 29 hosted Studio browser cases passed
+before the bundle check detected this measurement difference.
 
 Final local verification before the correction commit: the complete API suite and
 plain-Node startup check pass. The fresh-build browser run passed all 20 affected
 Studio/navigation/phrase cases; its additional Calendar pressure-release case
 reproduced the baseline failure below. Typecheck, CSS, bundle and privacy checks
 pass. The final 30 code/configuration/test files have SHA-256
-`9e2f5d37982275c7189b7f6548bcdfd85d23f63efb7232593e30aae3022dc8be` using the same fingerprint method above.
+`079bd933badbf03116dd80b01bd274c04b2bba7120f9caaf4993c4aff3bcdf98` using the same fingerprint method above.
 
 The first hosted run on `b375414ab` passed the Content Studio API contract but
 exposed extensionless imports in the shared phrase catalog under plain Node.
