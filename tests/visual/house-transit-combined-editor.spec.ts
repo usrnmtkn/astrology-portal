@@ -47,12 +47,16 @@ async function fixture(page: Page, initialRows = fixtureRows()) {
     const id = ++sequence; pending.set(id, { resolve, reject }); child.send({ ...message, id });
   });
   const reads: URL[] = [], writes: { body: Row; status: number }[] = [], errors: string[] = [];
-  let failingId = '', detailGate: Promise<void> | null = null;
+  let failingId = '', uncertainPublicationId = '', detailGate: Promise<void> | null = null;
   page.on('pageerror', error => errors.push(error.message));
   await ready;
   await page.addInitScript(() => localStorage.setItem('tldrastro:contentAdminSecret', 'calendar-api-fixture'));
   await page.route('**/api/**', async route => {
     const request = route.request(), url = new URL(request.url()), method = request.method();
+    if (url.pathname === '/api/content-reader') {
+      const result = await call({ method: 'reader', body: request.postDataJSON() });
+      return route.fulfill({ status: result.status, json: result.payload });
+    }
     if (url.pathname.endsWith("/personal-transit-writing")) {
       return route.fulfill({ json: { ok: true, action: "generate", saved: false, published: false, approved: false, youDraft: null, friendDraft: null, checks: [] } });
     }
@@ -77,10 +81,16 @@ async function fixture(page: Page, initialRows = fixtureRows()) {
       return route.fulfill({ status: 503, json: { ok: false, error: 'Fixture second passage save unavailable.' } });
     }
     const result = await call({ method, body, url: `${url.pathname}${url.search}` });
+    if (body.id === uncertainPublicationId && body.ownerAction === 'approve-package-revision') {
+      uncertainPublicationId = '';
+      writes.push({ body, status: 503 });
+      return route.fulfill({ status: 503, json: { ok: false, error: 'Fixture lost the committed publication response.' } });
+    }
     writes.push({ body, status: result.status });
     return route.fulfill({ status: result.status, json: result.payload });
   });
   return { call, reads, writes, errors, stop: () => child.kill(), failOnce: (id: string) => { failingId = id; },
+    losePublicationResponse: (id: string) => { uncertainPublicationId = id; },
     holdDetails: () => { let release!: () => void; detailGate = new Promise<void>(resolve => { release = resolve; }); return () => { detailGate = null; release(); }; } };
 }
 
@@ -146,7 +156,7 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) for (con
         if (content) content.scrollTop = 0;
       });
       await dialog.screenshot({ path: `test-results/house-transit-combined-${width}-${theme}-${audience.toLowerCase()}.png` });
-      await dialog.getByRole('button', { name: 'Save all changes', exact: true }).click();
+      await dialog.getByRole('button', { name: 'Save draft', exact: true }).click();
       await expect.poll(() => api.writes.length).toBe(2);
       expect(api.writes.map(write => write.status)).toEqual([200, 200]);
       expect(api.writes.map(write => write.body.expectedUpdatedAt)).toEqual([version, version]);
@@ -173,6 +183,20 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) for (con
       await open(page);
       await choose(dialog, audience);
       for (let i = 0; i < 2; i++) await expect(field(dialog, i, audience)).toHaveValue(revised[i]);
+      await dialog.getByRole('button', { name: 'Save & publish', exact: true }).click();
+      await expect(dialog).toContainText('Published. Readers can now receive these passages.');
+      const reader = await api.call({ method: 'reader', body: { keys: initial.slice(0, 2).map(row => row.content_key) } });
+      expect(reader.status).toBe(200);
+      expect(reader.payload.rows).toHaveLength(2);
+      for (let i = 0; i < 2; i++) {
+        const row = reader.payload.rows.find((row: Row) => row.content_key === initial[i].content_key);
+        expect(row.status).toBe('LIVE'); expect(row.lane).toBe('serving');
+        expect(row.sections.packageRecord[fieldKey(audience)]).toBe(revised[i]);
+        expect(row.sections.packageRecord[fieldKey(other(audience))]).toBe(initial[i].sections[fieldKey(other(audience))]);
+      }
+      await close(dialog); await page.reload(); await open(page); await choose(dialog, audience);
+      for (let i = 0; i < 2; i++) await expect(field(dialog, i, audience)).toHaveValue(revised[i]);
+      await expect(dialog.getByRole('button', { name: 'Save & publish', exact: true })).toBeDisabled();
       const detailReads = api.reads.filter(url => url.searchParams.has('id') || url.searchParams.has('contentKey') || url.searchParams.has('contentKeys'));
       expect(detailReads.length).toBeGreaterThanOrEqual(4);
       expect(api.errors).toEqual([]);
@@ -196,6 +220,67 @@ test('Combined editor waits for full sections instead of seeding Friends from in
   } finally { release(); api.stop(); }
 });
 
+test('Combined editor publishes saved drafts without requiring another edit, then saves and publishes a live revision', async ({ page }) => {
+  const rows = fixtureRows(), api = await fixture(page, rows);
+  try {
+    await page.goto(routePath()); const dialog = await open(page);
+    await expect(dialog.getByRole('button', { name: 'Save draft', exact: true })).toBeDisabled();
+    await dialog.getByRole('button', { name: 'Save & publish', exact: true }).click();
+    await expect(dialog).toContainText('Published. Readers can now receive these passages.');
+    expect(api.writes).toHaveLength(4);
+    expect(api.writes.filter(write => write.body.ownerAction === 'approve-package-revision')).toHaveLength(2);
+    const revised = `${rows[0].body}\n\nAn exact new ending on a live passage.`;
+    await field(dialog, 0, 'You').fill(revised);
+    await dialog.getByRole('button', { name: 'Save & publish', exact: true }).click();
+    await expect(dialog).toContainText('Published. Readers can now receive these passages.');
+    expect(api.writes).toHaveLength(6);
+    const result = await api.call({ method: 'reader', body: { keys: [rows[0].content_key] } });
+    expect(result.status).toBe(200);
+    expect(result.payload.rows[0].sections.packageRecord.body_you).toBe(revised);
+    expect(result.payload.rows[0].sections.packageRecord.body_they).toBe(rows[0].sections.body_they);
+    expect((await api.call({ method: 'rows' })).find((row: Row) => row.id === rows[2].id)).toEqual(rows[2]);
+  } finally { api.stop(); }
+});
+
+test('Combined editor recovers a committed publication without duplicate writes or losing remaining edits', async ({ page }) => {
+  const rows = fixtureRows(), api = await fixture(page, rows);
+  try {
+    await page.goto(routePath()); const dialog = await open(page);
+    const revised = `${rows[0].body}\n\nRetained after a lost publication response.`;
+    await field(dialog, 0, 'You').fill(revised);
+    api.losePublicationResponse(rows[0].id);
+    await dialog.getByRole('button', { name: 'Save & publish', exact: true }).click();
+    await expect(dialog.getByRole('alert')).toContainText('awaiting confirmation');
+    await expect(dialog.getByRole('button', { name: 'Save & publish', exact: true })).toBeDisabled();
+    await expect(field(dialog, 0, 'You')).toHaveValue(revised);
+    await dialog.getByRole('button', { name: 'Check publication status', exact: true }).click();
+    await expect(dialog).toContainText('publication confirmed');
+    expect(api.writes).toHaveLength(2);
+    await dialog.getByRole('button', { name: 'Save & publish', exact: true }).click();
+    await expect(dialog).toContainText('Published. Readers can now receive these passages.');
+    expect(api.writes).toHaveLength(4);
+    expect(api.writes[2].body.id).toBe(rows[1].id);
+    expect(api.writes[3].body).toMatchObject({ id: rows[1].id, ownerAction: 'approve-package-revision' });
+    const result = await api.call({ method: 'reader', body: { keys: rows.slice(0, 2).map(row => row.content_key) } });
+    expect(result.payload.rows).toHaveLength(2);
+    expect(result.payload.rows.find((row: Row) => row.content_key === rows[0].content_key).sections.packageRecord.body_you).toBe(revised);
+  } finally { api.stop(); }
+});
+
+test('Combined editor refuses publication when another editor changed the saved draft', async ({ page }) => {
+  const rows = fixtureRows(), api = await fixture(page, rows);
+  try {
+    await page.goto(routePath()); const dialog = await open(page);
+    await api.call({ method: 'PATCH', body: { id: rows[0].id, expectedUpdatedAt: version, summary: 'A newer saved revision.' } });
+    await dialog.getByRole('button', { name: 'Save & publish', exact: true }).click();
+    await expect(dialog.getByRole('alert')).toContainText(/changed|newer edit/i);
+    expect(api.writes.map(write => write.status)).toEqual([409]);
+    await expect(field(dialog, 0, 'You')).toHaveValue(rows[0].body);
+    const result = await api.call({ method: 'reader', body: { keys: rows.slice(0, 2).map(row => row.content_key) } });
+    expect(result.payload.rows).toHaveLength(0);
+  } finally { api.stop(); }
+});
+
 test('Combined editor keeps a successful first save and retries only the failed second source', async ({ page }) => {
   const rows = fixtureRows(), api = await fixture(page, rows);
   try {
@@ -203,14 +288,14 @@ test('Combined editor keeps a successful first save and retries only the failed 
     const dialog = await open(page), revised = rows.slice(0, 2).map(row => `${row.body}\n\nA complete edited ending.`);
     for (let i = 0; i < 2; i++) await field(dialog, i, 'You').fill(revised[i]);
     api.failOnce(rows[1].id);
-    await dialog.getByRole('button', { name: 'Save all changes', exact: true }).click();
+    await dialog.getByRole('button', { name: 'Save draft', exact: true }).click();
     await expect.poll(() => api.writes.length).toBe(2);
     expect(api.writes.map(write => write.status)).toEqual([200, 503]);
     for (let i = 0; i < 2; i++) await expect(field(dialog, i, 'You')).toHaveValue(revised[i]);
     let saved = await api.call({ method: 'rows' });
     expect(effectivePackageRecord(saved.find((row: Row) => row.id === rows[0].id).sections).body_you).toBe(revised[0]);
     expect(effectivePackageRecord(saved.find((row: Row) => row.id === rows[1].id).sections).body_you).toBe(rows[1].body);
-    await dialog.getByRole('button', { name: 'Save all changes', exact: true }).click();
+    await dialog.getByRole('button', { name: 'Save draft', exact: true }).click();
     await expect.poll(() => api.writes.length).toBe(3);
     expect(api.writes[2]).toMatchObject({ body: { id: rows[1].id, expectedUpdatedAt: version }, status: 200 });
     saved = await api.call({ method: 'rows' });
@@ -229,7 +314,7 @@ for (const audience of ['You', 'Friends'] as const) test(`Combined editor preser
     await field(dialog, 0, audience).fill(draft);
     const concurrent = await api.call({ method: 'PATCH', body: { id: rows[0].id, expectedUpdatedAt: version, summary: 'Concurrent editor saved this summary.' } });
     expect(concurrent.status).toBe(200);
-    await dialog.getByRole('button', { name: 'Save all changes', exact: true }).click();
+    await dialog.getByRole('button', { name: 'Save draft', exact: true }).click();
     await expect.poll(() => api.writes.length).toBe(1);
     expect(api.writes[0].status).toBe(409);
     await expect(field(dialog, 0, audience)).toHaveValue(draft);
@@ -267,7 +352,7 @@ test('Combined retrograde editing saves only its exact overlay key', async ({ pa
     await expect(dialog.getByRole('heading', { level: 2 })).toHaveText('Mercury in Aries through your 1st house · Retrograde');
     const overlay = field(dialog, 2, 'You', rx), revised = `${rows[2].body}\n\nSaved overlay ending.`;
     await expect(overlay).toHaveValue(rows[2].body); await overlay.fill(revised);
-    await dialog.getByRole('button', { name: 'Save all changes', exact: true }).click();
+    await dialog.getByRole('button', { name: 'Save draft', exact: true }).click();
     await expect.poll(() => api.writes.length).toBe(1);
     expect(api.writes[0]).toMatchObject({ body: { id: rows[2].id, expectedUpdatedAt: version }, status: 200 });
     const saved = await api.call({ method: 'rows' });
@@ -303,7 +388,7 @@ test('Combined editor traps focus and preserves dirty copy when discard is cance
     const dialog = await open(page), copy = field(dialog, 0, 'You');
     await copy.fill('Synthetic unsaved paragraph retained after cancelled navigation.');
     expect(await page.evaluate(() => !window.dispatchEvent(new Event('beforeunload', { cancelable: true })))).toBe(true);
-    const save = dialog.getByRole('button', { name: 'Save all changes', exact: true });
+    const save = dialog.getByRole('button', { name: 'Save & publish', exact: true });
     await save.focus(); await page.keyboard.press('Tab');
     await expect(dialog.getByRole('button', { name: 'Close', exact: true })).toBeFocused();
     await page.keyboard.press('Shift+Tab'); await expect(save).toBeFocused();
@@ -341,7 +426,7 @@ test('Legacy complete passage edits its generic body while Friends stays unavail
     await choose(dialog, 'You');
     const revised = `${original}\n\nComplete legacy revision.`;
     await you.fill(revised);
-    await dialog.getByRole('button', { name: 'Save all changes', exact: true }).click();
+    await dialog.getByRole('button', { name: 'Save draft', exact: true }).click();
     await expect.poll(() => api.writes.length).toBe(1);
     expect(api.writes[0].status).toBe(200);
     const saved = (await api.call({ method: 'rows' })).find((candidate: Row) => candidate.id === row.id);

@@ -12,6 +12,7 @@ export type HouseTransitEditorSource = {
   friendsUnavailable?: string;
   body_you: string;
   body_they: string;
+  published: boolean;
 };
 
 type SourceEdits = Pick<HouseTransitEditorSource, "body_you" | "body_they">;
@@ -20,7 +21,9 @@ type HouseTransitWriteupEditorProps = {
   title: string;
   initialAudience: "you" | "friends";
   sources: HouseTransitEditorSource[];
-  onSave: (key: string, edits: SourceEdits) => Promise<void>;
+  onSave: (key: string, edits: SourceEdits, publish: boolean) => Promise<{ published: boolean }>;
+  publicationPending: boolean;
+  onCheckPublication: () => Promise<HouseTransitEditorSource>;
   onClose: () => void;
   registerCloseGuard?: (guard: (() => boolean) | null) => void;
 };
@@ -31,7 +34,7 @@ function sourceChanged(source: EditorSource): boolean {
 }
 
 export default function HouseTransitWriteupEditor({
-  title, initialAudience, sources, onSave, onClose, registerCloseGuard
+  title, initialAudience, sources, onSave, publicationPending, onCheckPublication, onClose, registerCloseGuard
 }: HouseTransitWriteupEditorProps) {
   // The editor owns this snapshot until it closes. A successful save updates only
   // that source's baseline, so a later failure cannot discard another source's edits.
@@ -48,6 +51,9 @@ export default function HouseTransitWriteupEditor({
   const headingRef = useRef<HTMLHeadingElement>(null);
   const savingRef = useRef(false);
   const dirty = sourceEdits.some(sourceChanged);
+  const needsPublication = (source: EditorSource) => sourceChanged(source)
+    || (!source.published && Boolean(source.edits.body_you.trim() || source.edits.body_they.trim()));
+  const unpublished = sourceEdits.some(needsPublication);
   const dirtyRef = useRef(dirty);
   const closeCallbackRef = useRef(onClose);
   dirtyRef.current = dirty;
@@ -134,9 +140,9 @@ export default function HouseTransitWriteupEditor({
       : source));
   }
 
-  async function saveAllChanges() {
+  async function saveAllChanges(publish: boolean) {
     if (savingRef.current) return;
-    const pending = sourceEdits.filter(sourceChanged).map((source) => ({
+    const pending = sourceEdits.filter(publish ? needsPublication : sourceChanged).map((source) => ({
       key: source.key, label: source.label, edits: { ...source.edits }
     }));
     if (!pending.length) return;
@@ -146,21 +152,41 @@ export default function HouseTransitWriteupEditor({
     let saved = 0;
     try {
       for (const source of pending) {
-        setSaveStatus(`Saving ${source.label}…`);
+        setSaveStatus(`${publish ? "Publishing" : "Saving"} ${source.label}…`);
+        let result: { published: boolean };
         try {
-          await onSave(source.key, { ...source.edits });
+          result = await onSave(source.key, { ...source.edits }, publish);
         } catch (error) {
           const message = error instanceof Error ? error.message : "Please try again.";
-          setSaveError(`Could not save ${source.label}. ${message}`);
-          setSaveStatus(`${saved} of ${pending.length} changed passages saved. Remaining changes are kept here.`);
+          setSaveError(`Could not ${publish ? "publish" : "save"} ${source.label}. ${message}`);
+          setSaveStatus(`${saved} of ${pending.length} passages ${publish ? "published" : "saved as drafts"}. Remaining changes are kept here.`);
           return;
         }
         saved += 1;
         setSourceEdits((current) => current.map((item) => item.key === source.key
-          ? { ...item, baseline: { ...source.edits } }
+          ? { ...item, baseline: { ...source.edits }, published: result.published }
           : item));
       }
-      setSaveStatus("All changes saved.");
+      setSaveStatus(publish ? "Published. Readers can now receive these passages." : "Changes saved as drafts. Publish when ready for readers.");
+    } finally {
+      savingRef.current = false;
+      setSaving(false);
+    }
+  }
+
+  async function recoverPublication() {
+    if (savingRef.current) return;
+    savingRef.current = true;
+    setSaving(true);
+    setSaveError("");
+    try {
+      const source = await onCheckPublication();
+      setSourceEdits(current => current.map(item => item.key === source.key
+        ? { ...item, published: source.published, baseline: { body_you: source.body_you, body_they: source.body_they } }
+        : item));
+      setSaveStatus(`${source.label}: publication confirmed. Publish any remaining changes when ready.`);
+    } catch (error) {
+      setSaveError(error instanceof Error ? error.message : "Could not confirm publication. Please try again.");
     } finally {
       savingRef.current = false;
       setSaving(false);
@@ -233,7 +259,7 @@ export default function HouseTransitWriteupEditor({
                       ? { ...item, edits: { ...item.edits, body_they: text } }
                       : item))}
                   /></Suspense>}
-                  {sourceChanged(source) && <p className="admin-field-hint">Unsaved changes</p>}
+                  <p className="admin-field-hint">{sourceChanged(source) ? "Unsaved changes" : source.published ? "Published" : "Not published"}</p>
                 </section>
               ))}
               <section className="admin-natal-source-card" aria-labelledby={previewHeadingId}>
@@ -253,11 +279,15 @@ export default function HouseTransitWriteupEditor({
 
         <footer className="admin-toolbar-actions admin-editor-savebar studio-surface">
           <span className={`admin-editor-save-state ${dirty ? "is-unsaved" : "is-saved"}`} role="status">
-            {saveStatus || (dirty ? "Unsaved changes" : "No unsaved changes")}
+            {saveStatus || (dirty ? "Unsaved changes" : unpublished ? "Saved writing is ready to publish" : "No unpublished changes")}
           </span>
-          <StudioButton className="admin-primary-button" onClick={() => void saveAllChanges()} disabled={!dirty || saving}>
-            <Save size={16} aria-hidden="true" />Save all changes
+          <StudioButton onClick={() => void saveAllChanges(false)} disabled={!dirty || saving || publicationPending}>
+            <Save size={16} aria-hidden="true" />Save draft
           </StudioButton>
+          <StudioButton className="admin-primary-button admin-publish-button" onClick={() => void saveAllChanges(true)} disabled={!unpublished || saving || publicationPending}>
+            Save &amp; publish
+          </StudioButton>
+          {publicationPending && <StudioButton onClick={() => void recoverPublication()} disabled={saving}>Check publication status</StudioButton>}
           {saveError && <div className="admin-savebar-next-step" role="alert">{saveError}</div>}
         </footer>
       </aside>
