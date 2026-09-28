@@ -28,7 +28,6 @@ type CalendarRouteProps = {
   onGeneratedContentRequest?: (request: { cacheKey: string; contentKeys: string[] }) => void;
   onOpenTransit?: (event: LunarCalendarEvent, description?: string) => void;
   onSignIn?: () => void;
-  showJournalPrompts?: boolean;
   natalSunSign?: string | null;
   natalMoonSign?: string | null;
 };
@@ -47,7 +46,6 @@ export function CalendarRoute({
   onGeneratedContentRequest,
   onOpenTransit,
   onSignIn,
-  showJournalPrompts = true,
   natalSunSign,
   natalMoonSign
 }: CalendarRouteProps) {
@@ -66,7 +64,6 @@ export function CalendarRoute({
         onGeneratedContentRequest={onGeneratedContentRequest}
         onOpenTransit={onOpenTransit}
         onSignIn={onSignIn}
-        showJournalPrompts={showJournalPrompts}
         natalSunSign={natalSunSign}
         natalMoonSign={natalMoonSign}
       />

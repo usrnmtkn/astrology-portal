@@ -25,6 +25,7 @@ export function CalendarDayGroup({
   isSelected = false,
   rows,
   paragraphs = [],
+  lunarContext,
   prompt,
   guidanceKey,
   onSelectDay,
@@ -38,6 +39,7 @@ export function CalendarDayGroup({
   isSelected?: boolean;
   rows: CalendarDayGroupRow[];
   paragraphs?: string[];
+  lunarContext?: ReactNode;
   prompt?: string;
   guidanceKey?: string;
   onSelectDay: () => void;
@@ -83,6 +85,7 @@ export function CalendarDayGroup({
       ) : null}
       {paragraphs.length > 0 || prompt ? (
         <div className="calendar-day-group__blurb" data-guidance-key={guidanceKey || undefined}>
+          {lunarContext}
           {paragraphs.map((paragraph) => (
             <FormattedProse key={paragraph.slice(0, 48)} text={paragraph} />
           ))}

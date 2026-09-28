@@ -14817,7 +14817,6 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
                     setAccountIntent("login", { loginHeadline: "Sign in to save your journal entry..." });
                     navigateToPortalMode("profile");
                   }}
-                  showJournalPrompts={journalPromptsEnabled}
                   natalMoonSign={userProfile?.moon && userProfile.moon !== "Moon pending" ? userProfile.moon : undefined}
                   natalSunSign={userProfile?.sun && userProfile.sun !== "Sun pending" ? userProfile.sun : undefined}
                 />

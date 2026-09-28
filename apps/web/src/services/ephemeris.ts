@@ -2882,7 +2882,11 @@ function buildLunarCalendarRange(
   const cycleEnd = new Date(gridEnd.getTime() + 5 * 86_400_000);
   const cycleEvents = detail === "full"
     ? [
-      ...findLunations(swe, cycleStart, cycleEnd, timeZone),
+      // Calendar writing names both ends of its lunar interval. Five days is
+      // insufficient for a week between principal phases or across New Year.
+      ...findLunations(swe,
+        new Date(gridStart.getTime() - 35 * 86_400_000),
+        new Date(gridEnd.getTime() + 35 * 86_400_000), timeZone),
       ...findMoonIngresses(swe, cycleStart, cycleEnd, timeZone),
       ...seasonIngresses
     ].sort((first, second) => first.startsAt.localeCompare(second.startsAt))

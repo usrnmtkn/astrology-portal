@@ -78,7 +78,6 @@ export function matchLunarJournalIndex(event: LunarCalendarEvent) {
   });
   if (inWindow) return inWindow;
   return pool.find((entry) => entry.sign && sign && entry.sign.toLowerCase() === sign.toLowerCase())
-    ?? pool.at(-1)
     ?? null;
 }
 
