@@ -3,7 +3,7 @@ import { AdminDisclosureSummary } from "./AdminNativeControls";
 import { StudioButton, StudioTabs, StudioTextarea } from "./StudioControls";
 import { adminCredentialHeaders } from "./adminSecret";
 import { PageLoading } from "../../web/src/components/PageLoading";
-import { HOROSCOPE_PERIODS, HOROSCOPE_PROFILE_FIELDS, HOROSCOPE_PROMPT_VARIABLES, horoscopeEditorialPrompt, validateHoroscopeProfile, type HoroscopePeriod, type HoroscopeProfile, type SavedHoroscopeProfile } from "../../../src/astro-writing/horoscopeWritingProfiles.mjs";
+import { HOROSCOPE_PERIODS, HOROSCOPE_PROFILE_FIELDS, HOROSCOPE_PROFILE_FIELD_LIMIT, HOROSCOPE_PROMPT_VARIABLES, horoscopeEditorialPrompt, validateHoroscopeProfile, type HoroscopePeriod, type HoroscopeProfile, type SavedHoroscopeProfile } from "../../../src/astro-writing/horoscopeWritingProfiles.mjs";
 
 const endpoint = "/api/admin/generated-content?writingProfiles=true";
 const labels = { voiceGuidance: "Voice guidance", structure: "Reading structure", sourceGuidance: "Source guidance", prompt: "Prompt" };
@@ -56,6 +56,7 @@ function ProfileEditor({ initial, secret, onSaved }: { initial: SavedHoroscopePr
     return () => window.removeEventListener("beforeunload", warn);
   }, [dirty]);
   async function save() {
+    if (validation) return;
     setBusy(true); setError(""); setMessage("");
     try {
       const data = await request(secret, { profile: draft, expectedUpdatedAt: saved.updatedAt });
@@ -86,7 +87,6 @@ function ProfileEditor({ initial, secret, onSaved }: { initial: SavedHoroscopePr
     if (!field) return;
     const start = field.selectionStart, end = field.selectionEnd, token = `{{${name}}}`;
     const value = draft.prompt.slice(0, start) + token + draft.prompt.slice(end);
-    if (value.length > 12000) return;
     edit("prompt", value);
     requestAnimationFrame(() => { field.focus(); field.setSelectionRange(start + token.length, start + token.length); });
   }
@@ -113,13 +113,19 @@ function ProfileEditor({ initial, secret, onSaved }: { initial: SavedHoroscopePr
       </section> : <div className="admin-writing-field" key={section}>
         <div className="admin-writing-field-heading">
           <label htmlFor={`${saved.profile.period}-${section}`}>{labels[section]}</label>
-          <span className="admin-textarea-counter">{draft[section].length.toLocaleString()} / 12,000</span>
+          <span className="admin-textarea-counter">{draft[section].length.toLocaleString()} / {HOROSCOPE_PROFILE_FIELD_LIMIT.toLocaleString()} characters</span>
         </div>
         <p className="admin-field-hint" id={`${saved.profile.period}-${section}-hint`}>{hints[section]}</p>
         <StudioTextarea id={`${saved.profile.period}-${section}`} aria-label={labels[section]}
-          aria-describedby={`${saved.profile.period}-${section}-hint`} ref={section === "prompt" ? promptField : undefined}
-          formatting={false} value={draft[section]} rows={12} maxLength={12000} disabled={busy}
+          aria-describedby={`${saved.profile.period}-${section}-hint ${saved.profile.period}-${section}-limit`} ref={section === "prompt" ? promptField : undefined}
+          aria-invalid={draft[section].length > HOROSCOPE_PROFILE_FIELD_LIMIT}
+          formatting={false} value={draft[section]} rows={12} disabled={busy}
           onChange={event => edit(section, event.target.value)} />
+        <p className="admin-field-hint" id={`${saved.profile.period}-${section}-limit`} role={draft[section].length > HOROSCOPE_PROFILE_FIELD_LIMIT ? "alert" : undefined}>
+          {draft[section].length > HOROSCOPE_PROFILE_FIELD_LIMIT
+            ? `Your full text is kept here, but it is ${(draft[section].length - HOROSCOPE_PROFILE_FIELD_LIMIT).toLocaleString()} characters over this field’s limit. Move context to another guidance field or edit it before saving. Nothing has been saved yet.`
+            : `Each field supports ${HOROSCOPE_PROFILE_FIELD_LIMIT.toLocaleString()} characters. Voice, Structure and Sources are included through the prompt variables. Text over the limit stays in the editor until you edit it.`}
+        </p>
         {section === "prompt" && <div className="admin-writing-variables" role="group" aria-label="Insert prompt variable">
           {HOROSCOPE_PROMPT_VARIABLES.map(name => <StudioButton key={name} disabled={busy} onClick={() => insertVariable(name)} aria-label={`Insert ${name} variable`}>{`{{${name}}}`}</StudioButton>)}
         </div>}
@@ -138,7 +144,7 @@ function ProfileEditor({ initial, secret, onSaved }: { initial: SavedHoroscopePr
       </div>
     </section>}
     <footer className="admin-writing-savebar">
-      {validation && <p role="alert">{validation}</p>}
+      {validation && !(section !== "preview" && draft[section].length > HOROSCOPE_PROFILE_FIELD_LIMIT) && <p role="alert">{validation}</p>}
       {error && <p role="alert">{error}</p>}
       {message && <p role="status">{message}</p>}
       <div className="admin-writing-savebar-row">

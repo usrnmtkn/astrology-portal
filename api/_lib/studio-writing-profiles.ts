@@ -1,7 +1,7 @@
 import type { IncomingMessage } from "node:http";
 import { createHash } from "node:crypto";
 import { AdminHttpError, adminStorageRows, readAdminJsonBody } from "./admin-http.js";
-import { defaultHoroscopeProfile, validateHoroscopeProfile, HOROSCOPE_PERIODS, HOROSCOPE_PROFILE_PREFIX, type HoroscopeProfile, type SavedHoroscopeProfile } from "../../src/astro-writing/horoscopeWritingProfiles.mjs";
+import { defaultHoroscopeProfile, validateHoroscopeProfile, HOROSCOPE_PERIODS, HOROSCOPE_PROFILE_PREFIX, HOROSCOPE_PROFILE_FIELDS, HOROSCOPE_PROFILE_FIELD_LIMIT, type HoroscopeProfile, type SavedHoroscopeProfile } from "../../src/astro-writing/horoscopeWritingProfiles.mjs";
 
 type Storage = (params: URLSearchParams, options?: { method?: string; body?: string }) => Promise<{ ok: boolean; status: number; payload: unknown }>;
 const hash = (profile: HoroscopeProfile) => createHash("sha256").update(JSON.stringify(profile)).digest("hex");
@@ -29,7 +29,10 @@ export async function listStudioWritingProfiles(storage: Storage) {
 export async function handleStudioWritingProfiles(req: IncomingMessage, storage: Storage) {
   if (req.method === "GET") return { ok: true, profiles: await listStudioWritingProfiles(storage) };
   if (req.method !== "POST") throw new AdminHttpError(405, "Use GET or POST for writing profiles.");
-  const body = await readAdminJsonBody<{ profile: unknown; expectedUpdatedAt: string | null }>(req, 100000);
+  // A UTF-16 code unit can occupy six JSON bytes when escaped. Allow all four
+  // fields at their shared limit, plus the schema and version-check envelope.
+  const bodyLimit = HOROSCOPE_PROFILE_FIELDS.length * HOROSCOPE_PROFILE_FIELD_LIMIT * 6 + 4096;
+  const body = await readAdminJsonBody<{ profile: unknown; expectedUpdatedAt: string | null }>(req, bodyLimit);
   if (Object.keys(body).some(key => !["profile", "expectedUpdatedAt"].includes(key)) || !("expectedUpdatedAt" in body)
     || body.expectedUpdatedAt !== null && typeof body.expectedUpdatedAt !== "string") throw new AdminHttpError(400, "Send a writing profile and its opened version.");
   let profile: HoroscopeProfile;

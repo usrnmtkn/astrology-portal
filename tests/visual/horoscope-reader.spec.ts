@@ -72,7 +72,7 @@ for(const [width,theme] of [[390,'light'],[390,'dark'],[1440,'light'],[1440,'dar
     await studio.getByRole('button',{name:'Review writing plan',exact:true}).click();
    }
    await expect(studio.getByText('0/12 readings ready',{exact:false})).toBeVisible();
-   await expect(studio.getByText('12 missing readings',{exact:false})).toBeVisible();
+   await expect(studio.getByText('12 readings still need drafts. Existing writing is kept.',{exact:true})).toBeVisible();
    await expect(studio.getByRole('button',{name:'2 · Generate',exact:true})).toHaveAttribute('aria-current','step');
    await expect(studio.getByRole('button',{name:'Generate 12 drafts',exact:true})).toBeDisabled();
    const writingPlan=studio.getByRole('region',{name:'Aries writing plan',exact:true});
@@ -88,7 +88,7 @@ for(const [width,theme] of [[390,'light'],[390,'dark'],[1440,'light'],[1440,'dar
    await expect(studio.locator('h2,h3')).toHaveText(['Generate your drafts','Aries writing plan']);
    expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
    if(width===390&&theme==='dark'){
-    await studio.getByRole('button',{name:'Back',exact:true}).click();
+    await studio.getByRole('button',{name:'Back to editions',exact:true}).click();
     await expect(studio.getByLabel('Reference date')).toHaveValue('2026-09-21');
     await studio.locator('.horoscope-location summary').click();
     await expect(studio.getByLabel('Horoscope time zone',{exact:true})).toHaveValue('Asia/Tokyo');

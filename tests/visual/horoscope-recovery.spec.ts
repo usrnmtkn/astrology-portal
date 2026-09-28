@@ -200,3 +200,64 @@ for(const [width,theme] of [[390,'dark'],[1440,'light']] as const){
   }finally{f.child.kill();}
  });
 }
+
+for(const [width,theme] of [[390,'dark'],[1440,'light']] as const){
+ test(`Pause and leave a held seasonal request immediately ${width} ${theme}`,async({page})=>{
+  await page.setViewportSize({width,height:1000});await page.addInitScript(theme=>localStorage.setItem('tldrastro:studio-theme',theme),theme);
+  const f=await fixture(page,11,false,'seasonal');try{
+   const studio=await f.open();await f.call({method:'writer-state',body:{pendingPolls:1}});f.state.holdPoll=true;
+   await studio.getByRole('button',{name:'Resume generation',exact:true}).click();await expect.poll(()=>f.state.held).toBe(true);
+   await studio.getByRole('button',{name:'Pause generation',exact:true}).click();
+   await expect(studio.getByRole('status')).toContainText('Paused. Completed readings are saved.');
+   await expect(studio.getByRole('button',{name:'Back to editions',exact:true})).toBeEnabled();
+   await expect(studio.getByRole('button',{name:'Resume generation',exact:true})).toBeDisabled();
+   await studio.getByRole('button',{name:'Back to editions',exact:true}).click();
+   await expect(studio.getByLabel('Reference date')).toHaveValue('2026-09-01');
+   expect((await f.latest()).source_snapshot.horoscopeGeneration.active.sign).toBe('taurus');
+   // Retrieve the already-started request elsewhere, then reopen without a new generation.
+   expect((await f.action('poll')).status).toBe(200);
+   await studio.getByText(/^Continue a saved edition/).click();
+   await studio.getByRole('button',{name:/^Synthetic recovery edition/}).click();
+   await expect(studio.getByText('2/12 readings ready',{exact:false})).toBeVisible();
+   f.state.release();
+   await expect(studio.getByRole('button',{name:'Generate missing readings',exact:true})).toBeDisabled();
+   await expect(studio.getByLabel('I approve this writing plan for generation.')).not.toBeChecked();
+   await studio.getByRole('button',{name:'3 · Review',exact:true}).click();
+   await expect(studio.getByLabel('Complete reading')).toHaveValue(f.original.passages[0].body);
+   await studio.getByRole('group',{name:'Readings by sign'}).getByRole('button',{name:/^Taurus/}).click();
+   await expect(studio.getByLabel('Complete reading')).toHaveValue('You can read the complete taurus fixture opening.\n\nYour saved fixture ends here.');
+   await expect(studio.getByRole('alert')).toHaveCount(0);
+   expect((await f.call({method:'writer-state'})).calls).toBe(1);
+   expect((await f.latest()).sections.horoscopeEdition.passages[0]).toEqual(f.original.passages[0]);
+   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+   await page.screenshot({path:`test-results/horoscope-pause-${width}-${theme}.png`,fullPage:true});
+  }finally{f.state.release();f.child.kill();}
+ });
+ test(`Automatically reconcile a seasonal result on return and while idle ${width} ${theme}`,async({page})=>{
+  await page.setViewportSize({width,height:1000});await page.addInitScript(theme=>localStorage.setItem('tldrastro:studio-theme',theme),theme);
+  await page.clock.install();
+  const f=await fixture(page,11,false,'seasonal');try{
+   const studio=await f.open();await f.call({method:'writer-state',body:{pendingPolls:1}});f.state.holdPoll=true;
+   await studio.getByRole('button',{name:'Resume generation',exact:true}).click();await expect.poll(()=>f.state.held).toBe(true);
+   expect((await f.action('poll')).status).toBe(200);
+   await page.clock.fastForward(16000);await page.evaluate(()=>window.dispatchEvent(new Event('focus')));
+   await expect(studio.getByText('2/12 readings ready',{exact:false})).toBeVisible();f.state.release();
+   await expect(studio.getByRole('alert')).toHaveCount(0);
+   await expect(studio.getByRole('button',{name:'Generate missing readings',exact:true})).toBeDisabled();
+   expect((await f.call({method:'writer-state'})).calls).toBe(1);
+   // An existing request on a newly opened edition also catches up without a click.
+   const plan=await f.action('prepare');expect((await f.action('generate',{sign:'gemini',approvedPlanHash:plan.payload.plan.planHash})).status).toBe(202);
+   await studio.getByRole('button',{name:'Back to editions',exact:true}).click();
+   await studio.getByText(/^Continue a saved edition/).click();await studio.getByRole('button',{name:/^Synthetic recovery edition/}).click();
+   await page.clock.fastForward(31000);
+   await expect(studio.getByText('3/12 readings ready',{exact:false})).toBeVisible();
+   expect((await f.call({method:'writer-state'})).calls).toBe(2);
+   await expect(studio.getByLabel('I approve this writing plan for generation.')).not.toBeChecked();
+   const row=await f.latest();expect(row.status).toBe('DRAFT');expect(row.source_snapshot.horoscopeGeneration.active).toBeNull();
+   expect(row.sections.horoscopeEdition.passages[0]).toEqual(f.original.passages[0]);
+   await studio.getByRole('button',{name:'3 · Review',exact:true}).click();await studio.getByRole('group',{name:'Readings by sign'}).getByRole('button',{name:/^Gemini/}).click();
+   await expect(studio.getByLabel('Complete reading')).toHaveValue('You can read the complete gemini fixture opening.\n\nYour saved fixture ends here.');
+   await page.screenshot({path:`test-results/horoscope-auto-recovery-${width}-${theme}.png`,fullPage:true});
+  }finally{f.state.release();f.child.kill();}
+ });
+}

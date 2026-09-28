@@ -126,3 +126,50 @@ and recovery, exact row preservation, unchanged reference date, and no additiona
 provider starts. These use the actual handlers with isolated storage and a
 synthetic provider. They do not verify a replenished production balance or claim
 a successful live generation.
+
+## Leaving an interrupted browser request
+
+The Generate step offers **Back to editions** during writing and recovery.
+**Pause generation** aborts the local browser operation immediately. It leaves the
+provider request and saved readings intact, invalidates plan approval, and requires
+saved-state synchronization before another action. A late response from the
+aborted operation cannot update the current edition. Returning to the saved
+edition reads its current version before presenting the remaining signs.
+
+While Generate is open, Studio checks an idle saved request every 30 seconds.
+Returning to a visible tab also checks saved progress; a running operation is
+superseded only after 15 seconds without a successful update. The periodic
+watchdog waits 60 seconds for a running operation. All these checks use the
+existing retrieval and version-conflict recovery path. They cannot start, release,
+reject or publish a reading. Background synchronization skips unsaved edition
+edits and open writing instructions.
+
+The actual-handler browser suite covers immediate pause with a held response,
+leaving and reopening the same seasonal edition, late-response isolation, focus
+recovery, periodic idle recovery, exact saved copy and explicit plan approval for
+remaining signs. It uses synthetic storage and an injected provider; it performs
+no production generation.
+
+## Instruction-field overflow
+
+Voice, Structure, Sources and Prompt each support 32,000 characters, increased
+from 12,000 so a complete seasonal prompt fits. The native input no longer
+truncates pasted text. The editor keeps the
+complete unsaved value, marks an over-limit field invalid, displays the excess
+character count and prevents saving until corrected. Variable insertion likewise
+preserves the whole value. Browser tests cover overflow, field switching and
+recovery in all four desktop/mobile and light/dark combinations. Actual-handler
+checks verify all four fields at the limit, including multibyte text beyond the
+old API request size, and that a rejected save does not change the stored profile.
+The request byte allowance covers all four fields even when JSON-escaped.
+The complete expanded instructions reach the injected writer. A browser
+regression saves and reloads a seasonal prompt longer than the old limit.
+No writer model, output budget or reader passage changes are involved.
+
+After integrating main `57f4a2ce1`, separate clean `npm ci` builds with the same
+browser-workflow Supabase placeholders measure 3,501,257 aggregate web gzip bytes
+on main and 3,501,832 for the feature, a 575-byte increase. Main itself exceeds
+the previous aggregate limit by 7 bytes. Allocate 750 aggregate web bytes in
+addition to the 1,000-byte deferred-editor and admin-aggregate allocations.
+Preserve the independent House Transit allocation and all reader startup, CSS,
+memory graph, forbidden-payload and other chunk limits.

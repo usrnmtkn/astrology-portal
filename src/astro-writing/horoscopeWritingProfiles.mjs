@@ -4,6 +4,7 @@ export const HOROSCOPE_PROFILE_SCHEMA = "horoscope-writing-profile/v1";
 export const HOROSCOPE_PERIODS = Object.freeze(["daily", "weekly", "seasonal"]);
 export const HOROSCOPE_PROMPT_VARIABLES = Object.freeze(["period", "voiceGuidance", "structure", "sourceGuidance"]);
 export const HOROSCOPE_PROFILE_FIELDS = Object.freeze(["voiceGuidance", "structure", "sourceGuidance", "prompt"]);
+export const HOROSCOPE_PROFILE_FIELD_LIMIT = 32000;
 
 export const HOROSCOPE_EMOTIONAL_DEVELOPMENT_GUIDANCE = "Follow the emotional meaning of the situation: what the reader may want, avoid, enjoy, protect or come to understand, when the selected astrology and life area support it. Let related examples deepen that concern and let the passage develop toward a meaningful recognition or response. Concrete detail is not a quota of errands, appointments, negotiations or tasks. Do not replace emotional meaning with administrative language or decorate it with invented synonyms. Confidence comes from precise observation and point of view; it does not require certainty about personal events. Do not assume childhood history, trauma, family conflict or a dramatic confrontation. An ending may carry an earned recognition, permission or action; it need not deliver a universal lesson. The complete owner passages guide the movement and rhythm. This is editorial direction, not a fixed story, sentence pattern or automatic quality verdict.";
 
@@ -39,8 +40,8 @@ export function validateHoroscopeProfile(value) {
     throw new Error("Send a complete horoscope writing profile.");
   }
   for (const field of HOROSCOPE_PROFILE_FIELDS) {
-    if (typeof value[field] !== "string" || !value[field].trim() || value[field].length > 12000) {
-      throw new Error(`${field} must contain between 1 and 12000 characters.`);
+    if (typeof value[field] !== "string" || !value[field].trim() || value[field].length > HOROSCOPE_PROFILE_FIELD_LIMIT) {
+      throw new Error(`${field} must contain between 1 and ${HOROSCOPE_PROFILE_FIELD_LIMIT} characters.`);
     }
     const tokens = [...value[field].matchAll(/\{\{\s*([^{}]+?)\s*\}\}/gu)];
     if (field !== "prompt" && tokens.length) throw new Error("Prompt variables belong in the Prompt field only.");

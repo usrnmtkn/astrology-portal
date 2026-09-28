@@ -2,6 +2,7 @@ export type HoroscopePeriod = "daily" | "weekly" | "seasonal";
 export type HoroscopeProfile = { schema: "horoscope-writing-profile/v1"; period: HoroscopePeriod; voiceGuidance: string; structure: string; sourceGuidance: string; prompt: string };
 export type SavedHoroscopeProfile = { profile: HoroscopeProfile; id: string | null; updatedAt: string | null; sha256: string; revision: number };
 export const HOROSCOPE_PROFILE_PREFIX: string;
+export const HOROSCOPE_PROFILE_FIELD_LIMIT: number;
 export const HOROSCOPE_PROFILE_SCHEMA: "horoscope-writing-profile/v1";
 export const HOROSCOPE_PERIODS: readonly HoroscopePeriod[];
 export const HOROSCOPE_PROFILE_FIELDS: readonly ("voiceGuidance" | "structure" | "sourceGuidance" | "prompt")[];
