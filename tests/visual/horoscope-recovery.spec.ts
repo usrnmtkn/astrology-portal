@@ -4,7 +4,7 @@ import path from 'node:path';
 import {routeStudioInventoryApi} from '../helpers/studio-inventory-route';
 import {emptyHoroscopeEdition,horoscopeEditionBody,horoscopeEditionKey} from '../../apps/web/src/content/horoscopeEditions.mjs';
 
-async function fixture(page:Page,missing=1,unknown=false){
+async function fixture(page:Page,missing=1,unknown=false,period='weekly'){
   const child=fork(path.resolve('tests/helpers/sky-article-save-api.mts'),[],{env:{...process.env,ZODIAC_TEMPLATE_FIXTURE:'1',HOROSCOPE_WRITER_FIXTURE:'1'},execArgv:['--import','tsx'],stdio:['ignore','pipe','pipe','ipc']});
   let sequence=0,stderr='';const pending=new Map<number,{resolve:(v:any)=>void;reject:(e:Error)=>void}>();
   child.stderr?.on('data',value=>stderr+=value);
@@ -12,7 +12,7 @@ async function fixture(page:Page,missing=1,unknown=false){
   const call=(message:any)=>new Promise<any>((resolve,reject)=>{const id=++sequence;pending.set(id,{resolve,reject});child.send({...message,id});});
   try{
     await ready;
-    const facts=await call({method:'GET',url:'/api/admin/generated-content?horoscopeBrief=true&period=weekly&date=2026-09-24&timeZone=America%2FNew_York'});
+    const facts=await call({method:'GET',url:`/api/admin/generated-content?horoscopeBrief=true&period=${period}&date=${period==='seasonal'?'2026-09-01':'2026-09-24'}&timeZone=America%2FNew_York`});
     expect(facts.status).toBe(200);const {brief,signature}=facts.payload;
     const edition=emptyHoroscopeEdition(brief.window);
     edition.passages.forEach((p:any,index:number)=>{if(index<12-missing){p.headline=`Saved ${p.sign} headline`;p.body=`Existing ${p.sign} opening.\n\nExisting ${p.sign} final sentence.`;}});
@@ -117,9 +117,9 @@ test('A terminal provider failure stays actionable and is not disguised as a sta
   const f=await fixture(page);try{
     const studio=await f.open();await f.call({method:'writer-state',body:{terminalNext:true}});
     await studio.getByRole('button',{name:'Check saved progress',exact:true}).click();
-    await expect(studio.getByRole('alert')).toContainText('The writer did not complete a usable reading. Completed signs are saved.');
+    await expect(studio.getByRole('alert')).toContainText('The writer stopped before finishing this reading. Saved readings are kept.');
     await expect(studio.getByLabel('I approve this writing plan for generation.')).not.toBeChecked();
-    await expect(studio.getByRole('button',{name:'Generate missing readings',exact:true})).toBeDisabled();
+    await expect(studio.getByRole('button',{name:'Retry Pisces',exact:true})).toBeDisabled();
     expect((await f.latest()).source_snapshot.horoscopeGeneration.active).toBeNull();expect((await f.call({method:'writer-state'})).calls).toBe(1);
   }finally{f.child.kill();}
 });
@@ -133,3 +133,38 @@ test('An unconfirmed provider request is retained without starting or releasing 
     expect(await f.latest()).toEqual(before);expect((await f.call({method:'writer-state'})).calls).toBe(1);
   }finally{f.child.kill();}
 });
+
+for(const [width,theme] of [[390,'dark'],[1440,'light']] as const){
+ test(`Seasonal failure retries only one sign and preserves the selected date ${width} ${theme}`,async({page})=>{
+  await page.setViewportSize({width,height:1000});await page.addInitScript(theme=>localStorage.setItem('tldrastro:studio-theme',theme),theme);
+  const f=await fixture(page,12,false,'seasonal');try{
+   const studio=await f.open();
+   await f.call({method:'writer-state',body:{nextResult:{status:'incomplete',incomplete_details:{reason:'max_output_tokens'},usage:{output_tokens:12000,output_tokens_details:{reasoning_tokens:12000}},output:[]}}});
+   await studio.getByRole('button',{name:'Check saved progress',exact:true}).click();
+   await expect(studio.getByRole('alert')).toContainText('The writer reached its response limit before finishing this reading.');
+   await expect(studio.getByRole('button',{name:'Retry Aries',exact:true})).toBeDisabled();
+   const failed=await f.latest();expect(failed.source_snapshot.horoscopeGeneration.lastError.code).toBe('output_limit');
+   await page.reload();await f.open();
+   await expect(studio.getByRole('alert')).toContainText('response limit');
+   await studio.getByRole('button',{name:'1 · Dates',exact:true}).click();
+   await expect(studio.getByLabel('Reference date')).toHaveValue('2026-09-01');
+   await studio.getByRole('button',{name:'Continue to writing plan',exact:true}).click();
+   await expect(studio.getByLabel('I approve this writing plan for generation.')).not.toBeChecked();
+   expect((await f.call({method:'writer-state'})).calls).toBe(1);
+   await studio.getByLabel('I approve this writing plan for generation.').check();
+   await expect(studio.getByText('Retry only Aries with one new paid AI request. Saved readings are kept.',{exact:true})).toBeVisible();
+   await studio.getByRole('button',{name:'Retry Aries',exact:true}).click();
+   await expect(studio.getByRole('status')).toContainText('1/12 readings are saved.');
+   await expect(studio.getByRole('alert')).toHaveCount(0);
+   const row=await f.latest();expect(row.id).toBe(failed.id);expect(row.status).toBe('DRAFT');
+   expect(row.source_snapshot.horoscopeGeneration.failures).toEqual(failed.source_snapshot.horoscopeGeneration.failures);
+   expect(row.sections.horoscopeEdition.passages[0].body).toBe('You can read the complete aries fixture opening.\n\nYour saved fixture ends here.');
+   expect(row.sections.horoscopeEdition.passages.slice(1)).toEqual(f.original.passages.slice(1));
+   expect((await f.call({method:'writer-state'})).calls).toBe(2);
+   await studio.getByRole('button',{name:'3 · Review',exact:true}).click();
+   await expect(studio.getByLabel('Complete reading')).toHaveValue(row.sections.horoscopeEdition.passages[0].body);
+   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+   await page.screenshot({path:`test-results/horoscope-seasonal-retry-${width}-${theme}.png`,fullPage:true});
+  }finally{f.child.kill();}
+ });
+}

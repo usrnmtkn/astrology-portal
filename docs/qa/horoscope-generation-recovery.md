@@ -60,3 +60,32 @@ standalone admin measured about 757.5 kB aggregate. Allocate 1,250 aggregate web
 added request coordination and recovery controls. No dependencies, reader prose,
 CSS, or reader-startup code are added. Startup, other chunks, memory graph,
 forbidden-payload, and runtime-performance budgets remain unchanged.
+
+## Terminal seasonal failure recovery
+
+A seasonal edition can fail before its first saved sign. The formerly generic
+"did not complete a usable reading" message covered response limits, refusals,
+provider failures, cancellations and invalid output. Both immediate and polled
+responses now use the same complete-reading parser. Each confirmed failure keeps
+its operation ID, response ID, request configuration, safe status/reason codes,
+usage counts and output hash in private failure history. Partial prose, prompts
+and arbitrary provider error/refusal messages are not copied into diagnostics.
+A successful retry clears the current error but preserves the historical receipt.
+No timeout or retry limit has been increased; no prompt, model or voice rule changed.
+
+On reopening, Studio shows the saved failure and offers **Retry [sign]** after
+review of the current plan. The action makes one new paid request for that sign
+and stops after saving it. It never automatically regenerates the remaining batch.
+Unknown outcomes keep their existing reservation and same-request recovery.
+The date field retains the signed brief's original reference date. Using an
+evening solar-ingress date at local noon could otherwise select the previous
+season when returning to Dates.
+
+Regression evidence: the actual horoscope handler is exercised with immediate
+and background response-limit, failure, cancellation, refusal, invalid JSON and
+empty-reading fixtures. Browser recovery checks cover seasonal zero-of-twelve,
+reload, unchanged selected date, plan approval, one-sign retry, complete exact
+saved text and retained failure history on mobile/dark and desktop/light.
+These synthetic checks do not establish the reason for a historical provider
+failure or prove actual live writer success. Historical responses need authorized
+provider inspection, and a new billed generation needs explicit owner action.

@@ -204,4 +204,54 @@ for(const timeZone of ['Asia/Kathmandu','Asia/Katmandu']){
  const response=await readerRouteResponse('/api/content-reader',{method:'POST',body:JSON.stringify({horoscope:{period:'daily',at:'2026-09-24T06:00:00.000Z',timeZone}})});assert(response);const payload=await response.json();assert.equal(payload.rows[0]?.id,aliasRow.id);
  assert(horoscopeEditionAt(payload.rows,'daily','2026-09-24T06:00:00.000Z',timeZone));
 }
+// Seasonal terminal responses retain diagnostics and never save partial prose.
+const seasonalPacket=await prepareHoroscopeBrief(new URL('http://localhost/?period=seasonal&date=2026-09-01&timeZone=America/New_York'));
+assert.equal(seasonalPacket.brief.window.seasonSign,'virgo');
+assert.equal(seasonalPacket.brief.referenceDate,'2026-09-01');
+const seasonalEdition=emptyHoroscopeEdition(seasonalPacket.brief.window);
+const seasonalCreated=await store.invoke('POST',{contentKey:horoscopeEditionKey(seasonalEdition.window),surface:'sky',mode:'article',eventType:'horoscope-edition',provider:'manual-admin',status:'DRAFT',lane:'serving',headline:'Synthetic seasonal recovery',body:horoscopeEditionBody(seasonalEdition),sections:{horoscopeEdition:seasonalEdition},facts:{horoscopeBrief:seasonalPacket}});
+assert.equal(seasonalCreated.status,200);let seasonalRow=seasonalCreated.payload.rows[0];
+const seasonalAction=(action:string,extra:any={})=>invokeHoroscopeWriting({action,id:seasonalRow.id,expectedUpdatedAt:seasonalRow.updated_at,...extra});
+const seasonalPlan=await seasonalAction('prepare');assert.equal(seasonalPlan.status,200);
+const usage={input_tokens:100,output_tokens:12000,output_tokens_details:{reasoning_tokens:11990}};
+const partial={type:'message',content:[{type:'output_text',text:'PRIVATE partial text must never become reader copy'}]};
+const cases=[
+ {payload:{status:'incomplete',incomplete_details:{reason:'max_output_tokens'},usage,output:[partial]},code:'output_limit'},
+ {payload:{status:'failed',error:{code:'server_error',message:'PRIVATE provider error'}},code:'provider_failed'},
+ {payload:{status:'cancelled'},code:'cancelled'},
+ {payload:{status:'completed',output:[{type:'message',content:[{type:'refusal',refusal:'PRIVATE refusal'}]}]},code:'refused'},
+ {payload:{status:'completed',output:[partial]},code:'invalid_reading'},
+ {payload:{status:'completed',output:[{type:'message',content:[{type:'output_text',text:JSON.stringify({headline:'Fixture',body:' '})}]}]},code:'invalid_reading'},
+];
+for(const immediate of [false,true])for(const scenario of cases){
+ const calls=writerFixture.calls;
+ if(immediate)writerFixture.startResult=scenario.payload;
+ let failed=await seasonalAction('generate',{sign:'aries',approvedPlanHash:seasonalPlan.payload.plan.planHash});
+ if(!immediate){assert.equal(failed.status,202);seasonalRow=failed.payload.rows[0];writerFixture.nextResult=scenario.payload;failed=await seasonalAction('poll');}
+ assert.equal(failed.status,422,JSON.stringify(failed.payload));seasonalRow=failed.payload.rows[0];
+ const generation=seasonalRow.source_snapshot.horoscopeGeneration;
+ assert.equal(generation.active,null);assert.equal(generation.lastError.code,scenario.code);
+ assert.equal(generation.lastError.operation.sign,'aries');assert(generation.lastError.operation.responseId);
+ assert.equal(generation.lastError.diagnostic.status,scenario.payload.status);
+ assert.equal(generation.lastError.diagnostic.outputCharacters,scenario.payload.output?.includes(partial)?partial.content[0].text.length:scenario.code==='invalid_reading'?JSON.stringify({headline:'Fixture',body:' '}).length:0);
+ if(scenario.code==='output_limit'){assert.equal(generation.lastError.diagnostic.incompleteReason,'max_output_tokens');assert.equal(generation.lastError.diagnostic.usage.reasoningTokens,11990);}
+ assert.doesNotMatch(JSON.stringify(generation.lastError),/PRIVATE/,'Do not store provider messages or partial prose in the failure receipt');
+ assert.deepEqual(seasonalRow.sections.horoscopeEdition,seasonalEdition);
+ assert.equal(seasonalRow.status,'DRAFT');
+ if(!immediate){
+  const before=structuredClone(store.rows.get(seasonalRow.id));writerFixture.nextResult=scenario.payload;
+  const inspected=await seasonalAction('diagnose');assert.equal(inspected.status,200);assert.equal(inspected.payload.failure.code,scenario.code);
+  assert.deepEqual(store.rows.get(seasonalRow.id),before,'Diagnosis is read-only and cannot change dates, prose, version or failure history');
+  assert.equal((await invokeHoroscopeWriting({action:'diagnose',id:seasonalRow.id,expectedUpdatedAt:'stale'})).status,409);
+ }
+ assert.equal((await seasonalAction('poll')).status,200);assert.equal((await seasonalAction('prepare')).status,200);
+ assert.equal(writerFixture.calls,calls+1,'Inspection and recovery never automatically restart failed provider calls');
+}
+const failures=structuredClone(seasonalRow.source_snapshot.horoscopeGeneration.failures);assert.equal(failures.length,12);
+const retried=await seasonalAction('generate',{sign:'aries',approvedPlanHash:seasonalPlan.payload.plan.planHash});assert.equal(retried.status,202);seasonalRow=retried.payload.rows[0];
+const recovered=await seasonalAction('poll');assert.equal(recovered.status,200);seasonalRow=recovered.payload.rows[0];
+assert.deepEqual(seasonalRow.source_snapshot.horoscopeGeneration.failures,failures,'Successful retry preserves earlier failures');
+assert.equal(seasonalRow.source_snapshot.horoscopeGeneration.lastError,null);
+assert.equal(seasonalRow.sections.horoscopeEdition.passages.filter((p:any)=>p.body).length,1);
+assert.equal(seasonalRow.status,'DRAFT');
 console.log('PASS horoscope generation: actual handlers, governed provider request, twelve persisted drafts, reload recovery, no duplicate calls, conflicts, explicit publication, fact checks and local date-line/fractional zones.');
