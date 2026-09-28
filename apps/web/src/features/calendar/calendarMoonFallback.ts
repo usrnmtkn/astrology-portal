@@ -1,3 +1,4 @@
+import { calendarFirstQuarterContinuationKey, calendarMoonContextBody } from "./calendarTransitionPhrases";
 import type { CalendarMoonCycleFacts } from "./calendarMoonCycle";
 import { calendarFirstQuarterCopy, calendarMoonPhaseCopy } from "./calendarMoonPhaseCopy";
 import { calendarSeasonTransitionForSurface, calendarSeasonTransitionWhen } from "./calendarSeasonTransitions";
@@ -82,7 +83,7 @@ function continuationOpening(sign: string, visitDay: number) {
   return `The Moon is still in ${sign} today.`;
 }
 
-function signChangeSentence(facts: CalendarMoonCycleFacts, transition: string) {
+function signChangeSentence(facts: CalendarMoonCycleFacts, transition: string, lookup?: (key: string) => string | null | undefined) {
   const time = facts.nextMoonSignEntryTime;
   const hour = ingressHour(facts);
   if (!facts.nextMoonSign || !time || hour == null) return null;
@@ -110,7 +111,7 @@ function signChangeSentence(facts: CalendarMoonCycleFacts, transition: string) {
       transition
     );
   }
-  return `The Moon stays in ${facts.moonSign} for most of today and enters ${facts.nextMoonSign} at ${time}. You may notice the change more tomorrow than tonight.`;
+  return joinParts(`The Moon stays in ${facts.moonSign} for most of today and enters ${facts.nextMoonSign} at ${time}.`, calendarMoonContextBody("lateIngress", lookup));
 }
 
 function hasExactLunarEvent(facts: CalendarMoonCycleFacts) {
@@ -172,6 +173,7 @@ function contextCopy(
     exactQuarterCopy?: { body: string; contentKey: string } | null;
     seasonSummary?: string | null;
     seasonTransition?: string | null;
+    transitionPhrase?: (key: string) => string | null | undefined;
   }
 ): { kind: string; body: string } | null {
   const authoredPhase = options.authoredPhaseCopy?.body.trim() || options.exactQuarterCopy?.body.trim() || "";
@@ -183,25 +185,25 @@ function contextCopy(
   if (facts.daysSincePreviousEclipse === 1) {
     return {
       kind: "dayAfterEclipse",
-      body: "The eclipse was yesterday. Treat the first reaction as information, not the final answer. Give the facts time to catch up."
+      body: joinParts("The eclipse was yesterday.", calendarMoonContextBody("dayAfterEclipse", options.transitionPhrase))
     };
   }
   if (facts.daysSincePreviousEclipse != null && facts.daysSincePreviousEclipse >= 2 && facts.daysSincePreviousEclipse <= 3) {
     return {
       kind: "afterEclipse",
-      body: `The eclipse was ${spellCount(facts.daysSincePreviousEclipse)} days ago. Some of the noise has cleared. Pay attention to what still matters now that the first reaction has passed.`
+      body: joinParts(`The eclipse was ${spellCount(facts.daysSincePreviousEclipse)} days ago.`, calendarMoonContextBody("afterEclipse", options.transitionPhrase))
     };
   }
   if (facts.daysSincePreviousLunation === 1 && facts.previousLunationType === "new-moon") {
     return {
       kind: "dayAfterNewMoon",
-      body: "The New Moon was yesterday. Leave the plan alone for a minute. Let it meet your actual schedule before you start fixing it."
+      body: joinParts("The New Moon was yesterday.", calendarMoonContextBody("dayAfterNewMoon", options.transitionPhrase))
     };
   }
   if (facts.daysSincePreviousLunation === 1 && facts.previousLunationType === "full-moon") {
     return {
       kind: "dayAfterFullMoon",
-      body: "The Full Moon was yesterday. Keep the part that became clear. You do not need to turn the rest into a conclusion yet."
+      body: joinParts("The Full Moon was yesterday.", calendarMoonContextBody("dayAfterFullMoon", options.transitionPhrase))
     };
   }
   if (
@@ -212,7 +214,7 @@ function contextCopy(
   ) {
     return {
       kind: "afterNewMoon",
-      body: `The New Moon was ${spellCount(facts.daysSincePreviousLunation)} days ago. Now you know more. Adjust the plan to fit the life you are actually living.`
+      body: joinParts(`The New Moon was ${spellCount(facts.daysSincePreviousLunation)} days ago.`, calendarMoonContextBody("afterNewMoon", options.transitionPhrase))
     };
   }
   if (
@@ -223,7 +225,7 @@ function contextCopy(
   ) {
     return {
       kind: "afterFullMoon",
-      body: `The Full Moon was ${spellCount(facts.daysSincePreviousLunation)} days ago. The first reaction has had some time to settle. Notice what still needs your attention now.`
+      body: joinParts(`The Full Moon was ${spellCount(facts.daysSincePreviousLunation)} days ago.`, calendarMoonContextBody("afterFullMoon", options.transitionPhrase))
     };
   }
   if ((facts.exactFirstQuarter || facts.exactLastQuarter) && authoredPhase) {
@@ -232,40 +234,40 @@ function contextCopy(
   if (facts.daysUntilNextEclipse === 1 && facts.nextEclipseType && facts.nextEclipseSign) {
     return {
       kind: "eclipseTomorrow",
-      body: `The ${facts.nextEclipseType} in ${facts.nextEclipseSign} arrives tomorrow. Leave some room for the plan to change.`
+      body: joinParts(`The ${facts.nextEclipseType} in ${facts.nextEclipseSign} arrives tomorrow.`, calendarMoonContextBody("eclipseTomorrow", options.transitionPhrase))
     };
   }
   if (facts.daysUntilNextLunation === 1 && facts.nextLunationType === "new-moon" && facts.nextLunationSign) {
     return {
       kind: "newMoonTomorrow",
-      body: `The New Moon in ${facts.nextLunationSign} arrives tomorrow. Notice what keeps asking for a different approach. You do not need the whole plan yet.`
+      body: joinParts(`The New Moon in ${facts.nextLunationSign} arrives tomorrow.`, calendarMoonContextBody("newMoonTomorrow", options.transitionPhrase))
     };
   }
   if (facts.daysUntilNextLunation === 1 && facts.nextLunationType === "full-moon" && facts.nextLunationSign) {
     return {
       kind: "fullMoonTomorrow",
-      body: `The Full Moon in ${facts.nextLunationSign} arrives tomorrow. Notice what has become too obvious to keep working around.`
+      body: joinParts(`The Full Moon in ${facts.nextLunationSign} arrives tomorrow.`, calendarMoonContextBody("fullMoonTomorrow", options.transitionPhrase))
     };
   }
   if (facts.daysUntilSeasonEnd === 1 && facts.seasonName) {
     return {
       kind: "lastFullDayOfSeason",
       body: seasonTransitionContext(facts, options)
-        || `This is the last full day of ${facts.seasonName} season. Finish what is still useful, and stop forcing the parts that clearly need a different approach.`
+        || joinParts(`This is the last full day of ${facts.seasonName} season.`, calendarMoonContextBody("lastFullDayOfSeason", options.transitionPhrase))
     };
   }
   if (facts.isLastFullWeekendOfSeason && facts.seasonName) {
     return {
       kind: "lastFullWeekendOfSeason",
       body: seasonTransitionContext(facts, options)
-        || `This is the last full weekend of ${facts.seasonName} season. Use it to see what still deserves your time once the season's urgency wears off.`
+        || joinParts(`This is the last full weekend of ${facts.seasonName} season.`, calendarMoonContextBody("lastFullWeekendOfSeason", options.transitionPhrase))
     };
   }
   if (facts.seasonName && facts.daysUntilSeasonEnd != null && facts.daysUntilSeasonEnd >= 2 && facts.daysUntilSeasonEnd <= 3) {
     return {
       kind: "finalDaysOfSeason",
       body: seasonTransitionContext(facts, options)
-        || `${facts.seasonName} season is in its final days. Notice what from this month is actually worth carrying forward.`
+        || joinParts(`${facts.seasonName} season is in its final days.`, calendarMoonContextBody("finalDaysOfSeason", options.transitionPhrase))
     };
   }
   if (facts.isFirstFullDayOfSeason && facts.seasonName) {
@@ -293,6 +295,7 @@ export function resolveCalendarMoonFallback(
     exactQuarterCopy?: { body: string; contentKey: string } | null;
     seasonSummary?: string | null;
     seasonTransition?: string | null;
+    transitionPhrase?: (key: string) => string | null | undefined;
     moonContinuationSummary?: string | null;
     pairTransition?: string | null;
   } = {}
@@ -315,7 +318,8 @@ export function resolveCalendarMoonFallback(
   }
 
   const continuation = moonContinuationSummaryForSign(facts.moonSign, options.moonContinuationSummary, {
-    exactFirstQuarter: facts.exactFirstQuarter
+    exactFirstQuarter: facts.exactFirstQuarter,
+    firstQuarterOverride: options.transitionPhrase?.(calendarFirstQuarterContinuationKey(facts.moonSign))
   });
   const transition = facts.nextMoonSign
     ? moonSignTransitionForPair(facts.moonSign, facts.nextMoonSign, options.pairTransition)
@@ -330,7 +334,7 @@ export function resolveCalendarMoonFallback(
     || Boolean(continuation);
 
   if (facts.moonChangesSignToday) {
-    const changed = signChangeSentence(facts, transition);
+    const changed = signChangeSentence(facts, transition, options.transitionPhrase);
     if (changed) {
       moonKind = "moonChangesLaterToday";
       moonBody = changed;

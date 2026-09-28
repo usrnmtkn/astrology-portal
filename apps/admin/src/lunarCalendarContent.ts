@@ -1,3 +1,5 @@
+import { calendarTransitionPhraseForKey } from "../../web/src/features/calendar/calendarTransitionPhraseIdentity";
+
 /** Editorial labels only: stable source keys and owner prose are never renamed. */
 import { calendarSeasonTransitionTitle } from "../../web/src/features/calendar/calendarSeasonTransitionTitle.js";
 
@@ -14,6 +16,7 @@ export type LunarWorkspaceJob = (typeof lunarWorkspaceJobs)[number];
 export const lunarWorkspaceFamilyOrder = [
   "Lunation articles",
   "Moon-sign leftover",
+  "Moon transition phrases",
   "Continuation sentences",
   "Lunar ingresses",
   "Season transitions",
@@ -63,6 +66,9 @@ const moonDailyKindLabels: Record<string, string> = {
 };
 
 export function lunarContentIdentity(key: string): LunarContentIdentity | null {
+  const phrase = calendarTransitionPhraseForKey(key);
+  if (phrase) return withJob({ family: "Moon transition phrases", sign: phrase.sign, variant: 1, title: phrase.label, kind: "Transition phrase",
+    destination: "Calendar Day and Week Moon paragraphs", selection: phrase.when, excluded: false });
   const sunSummary = key.match(/^cms\/sky-daily-summary\/sun\/([^/]+)$/);
   if (sunSummary) {
     return withJob({

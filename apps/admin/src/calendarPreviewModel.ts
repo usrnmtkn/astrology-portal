@@ -1,3 +1,4 @@
+import { calendarTransitionPhraseKeys, calendarMoonContextBody, calendarFirstQuarterContinuationKey, type CalendarMoonContextKind } from "../../web/src/features/calendar/calendarTransitionPhrases";
 import type { CalendarPreviewCalculation } from "./calendarPreviewCalculation";
 import { skyForecastTemplates, type SkyForecastPeriod } from "./skyForecastTemplates";
 import { lunarContentIdentity } from "./lunarCalendarContent";
@@ -64,7 +65,7 @@ function calendarWorkingRow(row: CalendarPreviewRow | undefined) {
 }
 
 export function calendarPreviewSourceKeys(period: SkyForecastPeriod, signs: string[]) {
-  return [skyForecastTemplates[period].contentKey, ...new Set(signs.filter(Boolean).flatMap(sign => {
+  return [...new Set([...calendarTransitionPhraseKeys, skyForecastTemplates[period].contentKey, ...signs.filter(Boolean).flatMap(sign => {
     const slug = sign.toLowerCase();
     return [
       `fallback-hook/zodiac-season/${slug}`,
@@ -91,7 +92,7 @@ export function calendarPreviewSourceKeys(period: SkyForecastPeriod, signs: stri
       ] : []),
       ...[1, 2, 3, 4].map(variant => `authored/calendar-weekly-moon/${slug}${variant === 1 ? "" : `/variant-${variant}`}`)
     ];
-  }))];
+  })])];
 }
 
 export function calendarMoonPassages(rows: CalendarPreviewRow[], sign: string) {
@@ -150,7 +151,9 @@ export function calendarMoonWriteupForDay(
       : null;
   }
   const phaseCopy = calendarMoonPhaseCopy(facts, (contentKey) => calendarWorkingRow(rows.find(row => row.content_key === contentKey && calendarCopyEligible(row)))?.body ?? "");
+  const transitionPhrase = (key: string) => calendarWorkingRow(rows.find(row => row.content_key === key && calendarCopyEligible(row)))?.body;
   const resolved = resolveCalendarMoonFallback(facts, {
+    transitionPhrase,
     exactLunationCopy: lunationRow?.body
       ? { body: lunationRow.body, contentKey: lunationRow.content_key }
       : null,
@@ -170,10 +173,14 @@ export function calendarMoonWriteupForDay(
     if (text) candidates.push({ name, text, sourceKey, sourceLabel, kind: "copy" });
   };
   if (resolved.kind !== "authored" && resolved.kind !== "exact-lunation") {
-    const continuation = moonContinuationSummaryForSign(facts.moonSign, summaryRow?.body, { exactFirstQuarter: facts.exactFirstQuarter });
-    // Some event-specific wording is fixed in the resolver and ignores a saved
-    // override. Do not present that wording as editable through the unused row.
-    add("continuation", continuation, facts.exactFirstQuarter && continuation !== summaryRow?.body?.trim() ? undefined : summaryKey, "Moon continuation passage");
+    const continuation = moonContinuationSummaryForSign(facts.moonSign, summaryRow?.body, { exactFirstQuarter: facts.exactFirstQuarter, firstQuarterOverride: transitionPhrase(calendarFirstQuarterContinuationKey(facts.moonSign)) });
+    const specialKey = calendarFirstQuarterContinuationKey(facts.moonSign);
+    add("continuation", continuation, facts.exactFirstQuarter && calendarTransitionPhraseKeys.includes(specialKey) ? specialKey : summaryKey, "Moon continuation passage");
+    if (resolved.contextKind) {
+      const contextKey = `authored/calendar-moon-context/${resolved.contextKind}`;
+      if (calendarTransitionPhraseKeys.includes(contextKey)) add("lunarContext", calendarMoonContextBody(resolved.contextKind as CalendarMoonContextKind, transitionPhrase), contextKey, "Lunar event context phrase");
+    }
+    add("lateIngress", calendarMoonContextBody("lateIngress", transitionPhrase), "authored/calendar-moon-context/lateIngress", "Late Moon ingress phrase");
     add("transition", moonSignTransitionForPair(facts.moonSign, nextSign, transitionRow?.body), transitionKey, "Moon sign transition passage");
     const phaseRow = calendarWorkingRow(rows.find(row => row.content_key === phaseCopy?.contentKey && calendarCopyEligible(row)));
     const phaseSourceBody = phaseRow?.body?.trim().replaceAll("{{signTitle}}", calendarPreviewSign(facts.moonSign));

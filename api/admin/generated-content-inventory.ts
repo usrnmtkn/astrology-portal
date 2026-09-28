@@ -243,6 +243,16 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
         rows.push(inventoryView ? calendarMoonIngressInventoryRow(record) : calendarMoonIngressDetailRow(record));
       }
     }
+    if (!id && pageIsComplete) {
+      const { calendarTransitionPhraseRecords, calendarTransitionPhraseInventoryRow, calendarTransitionPhraseDetailRow } = await import("../_lib/calendar-transition-phrase-sources.js");
+      const savedKeys = new Set(rows.map(row => String(row.content_key ?? "")));
+      for (const record of calendarTransitionPhraseRecords) {
+        const requested = contentKeys.includes(record.contentKey) || contentKey === record.contentKey
+          || Boolean(contentKeyPrefix && record.contentKey.startsWith(contentKeyPrefix));
+        if (!requested || savedKeys.has(record.contentKey)) continue;
+        rows.push(inventoryView ? calendarTransitionPhraseInventoryRow(record) : calendarTransitionPhraseDetailRow(record));
+      }
+    }
     sendAdminJson(res, 200, { ok: true, rows, nextCursor });
   } catch (error) {
     sendAdminJson(res, adminErrorStatus(error), {
