@@ -226,7 +226,7 @@ for(const [width,theme] of [[390,'light'],[390,'dark'],[1440,'light'],[1440,'dar
    const live=(await call({method:'rows'})).find((row:any)=>row.id===draft.id);
    const changed=await call({method:'PATCH',body:{id:live.id,expectedUpdatedAt:live.updated_at,status:'DRAFT'}});expect(changed.status).toBe(200);
    await page.reload();await expect(page.getByRole('status')).toContainText('weekly horoscopes haven’t been published');
-   await expect(page.locator('.horoscope-page :is(h1,h2,h3,h4,h5,h6)')).toHaveText(['Horoscopes']);
+   await expect(page.locator('.horoscope-page :is(h1,h2,h3,h4,h5,h6)')).toHaveText(['Horoscopes','No weekly reading yet']);
    await page.evaluate(()=>new Promise<void>(resolve=>requestAnimationFrame(()=>requestAnimationFrame(()=>resolve()))));
    await page.screenshot({path:`test-results/horoscope-empty-${width}-${theme}.png`,animations:'disabled'});
    await page.getByRole('button',{name:'This season',exact:true}).click();await expect(page.getByRole('status')).toContainText('seasonal horoscopes haven’t been published');
