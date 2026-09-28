@@ -5523,7 +5523,7 @@ for (const theme of ["light", "dark"] as const) {
 
 // Synthetic publications exercise keys absent from the shipped catalog. Run
 // these same tests against production; every content request remains isolated.
-async function seedCrossSurfacePublications(page: Page, records: Array<Record<string, any>>, options: SeedOptions) {
+async function seedCrossSurfacePublications(page: Page, records: Array<Record<string, any>>, options: SeedOptions, paginated = false) {
   const updatedAt = "2026-09-10T20:00:00.000Z";
   const manifest = JSON.parse(readFileSync("apps/web/src/content/fallbackArchitectureV3/bundled-manifest-summary-v3.json", "utf8"));
   const rows = records.map((record, index) => ({
@@ -5550,11 +5550,18 @@ async function seedCrossSurfacePublications(page: Page, records: Array<Record<st
   await page.route("**/content-studio-last-known-good.json", route => route.fulfill({
     json: { schema: "content-studio-last-known-good-v2", rowCount: 0, rows: [] }
   }));
-  await page.route('**/api/content-reader', route => {
+  await page.route('**/api/content-reader', async route => {
     const params = route.request().postDataJSON();
     const keys: string[] = params.keys ?? [];
     const selected = params.provider === "tldrastro-fallback-architecture-v3"
       ? rows : rows.filter(row => keys?.includes(row.content_key));
+    if (paginated && params.provider === "tldrastro-fallback-architecture-v3") {
+      // Five healthy requests exceed the old whole-library 20-second timeout.
+      const pageIndex = Number(params.afterId?.slice(-1) ?? 0);
+      await new Promise(resolve => setTimeout(resolve, 6_000));
+      return route.fulfill({ json: { ...readerResponse(pageIndex === 4 ? selected : []),
+        nextCursor: pageIndex < 4 ? `00000000-0000-0000-0000-00000000000${pageIndex + 1}` : null } });
+    }
     return route.fulfill({ json: readerResponse(selected) });
   });
 }
@@ -5610,11 +5617,11 @@ for (const theme of ["light", "dark"] as const) {
           body_you: `QA house ${house} sign passage opening.\n\nQA house ${house} sign passage final sentence.`,
           body_they: `QA friend house ${house} sign passage opening. QA friend sign passage final sentence.` }
       ]);
-      await seedCrossSurfacePublications(page, records, { profile: true, preloadProfileNatalSky: true, theme, now: "2026-09-10T16:00:00.000Z" });
+      await seedCrossSurfacePublications(page, records, { profile: true, preloadProfileNatalSky: true, theme, now: "2026-09-10T16:00:00.000Z" }, theme === "light" && width === 1440);
       const errors = watchBrowserErrors(page);
       await expectClientRouteLoads(page, "/#you");
       const card = page.locator("button.updates-aspect-row--house").filter({ hasText: "Uranus" }).first();
-      await expect(card).toBeVisible({ timeout: 30_000 });
+      await expect(card).toBeVisible({ timeout: 45_000 });
       await card.click();
       const detail = page.getByRole("region", { name: /^Uranus through your \d+(?:st|nd|rd|th) house$/ });
       await expect(detail).toContainText(/QA house \d+ introduction opening\./, { timeout: 30_000 });

@@ -3242,7 +3242,7 @@ export function GeneratedContentAdminDashboard() {
   const [houseTransitEditor, setHouseTransitEditor] = useState<{ title: string; audience: "you" | "friends"; sources: HouseTransitEditorSource[] } | null>(null);
   const [houseTransitOpening, setHouseTransitOpening] = useState(false);
   const houseTransitOpenRequest = useRef(0);
-  const houseTransitEditorDrafts = useRef(new Map<string, { draft: AdminDraft; source: HouseTransitEditorSource; kind: HouseTransitSource["id"] }>());
+  const houseTransitEditorDrafts = useRef(new Map<string, { row?: AdminGeneratedContentRow; draft: AdminDraft; source: HouseTransitEditorSource; kind: HouseTransitSource["id"] }>());
   const houseTransitCloseGuard = useRef<(() => boolean) | null>(null);
   const [transitNatalSourceBodies, setTransitNatalSourceBodies] = useState<Map<string, string>>(() => new Map());
   const [articleContentSystemFilter, setArticleContentSystemFilter] = useState<AdminContentSystemFilter>("all");
@@ -5092,6 +5092,7 @@ export function GeneratedContentAdminDashboard() {
       setEditorSaveError("");
       setMessage(publicationStateMessage(result));
       announceContentUpdate({ contentKey: current.content_key, published: result.publicationReceipt?.currentPublicationState === "live", updatedAt: current.updated_at ?? new Date().toISOString() });
+      return { row: current, live: result.publicationReceipt?.currentPublicationState === "live" };
     } catch (error) { setEditorSaveError(dashboardErrorMessage(error)); setMessage(dashboardErrorMessage(error)); }
     finally { setIsLoading(false); }
   }
@@ -8826,6 +8827,7 @@ export function GeneratedContentAdminDashboard() {
         }
         const fields = houseTransitEditableFields(sourceDraft, source.id, row?.body);
         return { row, draft: sourceDraft, kind: source.id, source: { key, label: source.label, scope: source.scope, optional: source.optional, ...fields,
+          published: row?.status === "LIVE" && !draftHasPackageProposal(sourceDraft),
           ...(source.id === "legacy" ? { friendsUnavailable: "This older passage is used only in You. Friends uses the sign-specific composition when available." } : {}) } };
       }));
       if (requestId !== houseTransitOpenRequest.current || originatingHash !== window.location.hash || editorSession !== editorSessionRef.current) return;
@@ -8852,7 +8854,30 @@ export function GeneratedContentAdminDashboard() {
         : ["house-core", "sign-synthesis"].includes(kind) && typeof record.body === "string" ? record.body : "" };
   }
 
-  async function saveHouseTransitPassage(key: string, edits: { body_you: string; body_they: string }) {
+  function acknowledgeHouseTransitPublication(published: AdminGeneratedContentRow) {
+    const key = published.content_key;
+    const captured = houseTransitEditorDrafts.current.get(key);
+    if (!captured) throw new Error("Reopen this write-up to check its publication.");
+    const publishedDraft = draftFromRow(published);
+    const fields = houseTransitEditableFields(publishedDraft, captured.kind, published.body);
+    if (published.status !== "LIVE" || published.lane !== "serving" || draftHasPackageProposal(publishedDraft)
+      || fields.body_you !== captured.source.body_you || fields.body_they !== captured.source.body_they) {
+      throw new Error("The complete saved passage was not confirmed live. Your writing is retained; reopen the source to check its current version.");
+    }
+    const source = { ...captured.source, ...fields, published: true };
+    houseTransitEditorDrafts.current.set(key, { ...captured, row: published, draft: publishedDraft, source });
+    return source;
+  }
+
+  async function checkHouseTransitPublication() {
+    const published = await checkPendingPublication();
+    if (!published) throw new Error("Publication is not confirmed yet. Your saved writing is retained. Check publication status again.");
+    if (!published.live) throw new Error("This saved revision is not currently live. Reopen the write-up to check its current version.");
+    return acknowledgeHouseTransitPublication(published.row);
+  }
+
+  async function saveHouseTransitPassage(key: string, edits: { body_you: string; body_they: string }, publish: boolean) {
+    if (pendingPublication) throw new Error("Check the previous publication before saving or publishing again.");
     const captured = houseTransitEditorDrafts.current.get(key);
     if (!captured) throw new Error("This write-up editor is no longer open. Reopen it before saving.");
     const baseline = captured.draft;
@@ -8860,32 +8885,52 @@ export function GeneratedContentAdminDashboard() {
     let revised = baseline;
     if (edits.body_you !== captured.source.body_you) revised = setPackageSectionField(revised, captured.kind === "legacy" ? "body" : "body_you", edits.body_you);
     if (captured.kind !== "legacy" && edits.body_they !== captured.source.body_they) revised = setPackageSectionField(revised, "body_they", edits.body_they);
+    // Older saved sources may have no proposal yet. Stage their exact current
+    // wording before using the same versioned publication action as new edits.
+    if (publish && !draftHasPackageProposal(revised)) {
+      revised = setPackageSectionField(revised, captured.kind === "legacy" ? "body" : "body_you", edits.body_you);
+    }
     const acknowledge = (saved: AdminGeneratedContentRow | null) => {
       if (!saved || saved.content_key !== key || saved.inventory_only || !saved.updated_at
         || (baseline.id && (saved.id !== baseline.id || saved.updated_at === baseline.updatedAt))) return false;
       const savedDraft = draftFromRow(saved);
       const fields = houseTransitEditableFields(savedDraft, captured.kind, saved.body);
       if (fields.body_you !== edits.body_you || fields.body_they !== edits.body_they) return false;
-      houseTransitEditorDrafts.current.set(key, { ...captured, draft: savedDraft, source: { ...captured.source, ...fields } });
+      houseTransitEditorDrafts.current.set(key, { ...captured, row: saved, draft: savedDraft,
+        source: { ...captured.source, ...fields, published: saved.status === "LIVE" && !draftHasPackageProposal(savedDraft) } });
       return true;
     };
-    try {
-      const saved = await saveDraft(undefined, revised, undefined, false, false, true);
-      if (!acknowledge(saved)) throw new Error("The save response did not confirm the complete passage. Your edits are still here; reopen the saved source to check it.");
-    } catch (error) {
-      // An uncertain response may follow a committed write. A reread can acknowledge
-      // identical text, but never graft a newer version onto conflicting local edits.
-      if (error instanceof AdminRequestError && [408, 504].includes(error.status)) {
-        const payload = await adminJsonRequest<{ rows: AdminGeneratedContentRow[] }>(
-          studioInventoryDocumentPath(key), secret);
-        const saved = payload.rows?.find(row => row.content_key === key) ?? null;
-        if (acknowledge(saved)) {
-          setRows(current => mergeContentInventory(current, [saved!]));
-          return;
+    if (revised !== baseline || !captured.row) {
+      try {
+        const saved = await saveDraft(undefined, revised, undefined, false, false, true);
+        if (!acknowledge(saved)) throw new Error("The save response did not confirm the complete passage. Your edits are still here; reopen the saved source to check it.");
+      } catch (error) {
+        // A reread may confirm an uncertain draft save, but never replace a
+        // conflicting local version with a newer version from another editor.
+        let recovered = false;
+        if (error instanceof AdminRequestError && [408, 504].includes(error.status)) {
+          const payload = await adminJsonRequest<{ rows: AdminGeneratedContentRow[] }>(studioInventoryDocumentPath(key), secret);
+          const saved = payload.rows?.find(row => row.content_key === key) ?? null;
+          recovered = acknowledge(saved);
+          if (recovered) setRows(current => mergeContentInventory(current, [saved!]));
         }
+        if (!recovered) throw new Error(dashboardErrorMessage(error));
       }
-      throw new Error(dashboardErrorMessage(error));
     }
+    const saved = houseTransitEditorDrafts.current.get(key)!;
+    if (!publish) {
+      setMessage(`${captured.source.label}: changes saved as a draft. Publish when ready for readers.`);
+      return { published: saved.source.published };
+    }
+    if (!saved.row) throw new Error("Save this passage before publishing.");
+    const result = await submitSavedPublication(saved.row, "approve-package-revision");
+    if (result.publicationReceipt?.currentPublicationState !== "live") throw new Error(publicationStateMessage(result));
+    const published = result.rows[0];
+    const source = acknowledgeHouseTransitPublication(published);
+    setRows(current => [published, ...current.filter(row => row.id !== published.id && row.id !== saved.row!.id)]);
+    announceContentUpdate({ contentKey: key, published: true, updatedAt: published.updated_at ?? new Date().toISOString() });
+    setMessage(publicationStateMessage(result));
+    return { published: source.published };
   }
 
   function renderHouseTransitSourceFinder() {
@@ -8918,7 +8963,7 @@ export function GeneratedContentAdminDashboard() {
             <Text size="body" tone="secondary">{friendsTransitAudience
               ? "This is the editor for Friends > Transits > Where it lands. The preview prefers Friends copy for the evergreen house passage, current-sign passage, and retrograde overlay when those sources have separate audience versions."
               : "Choose a planet, sign, and house to preview the complete House Transit and edit its passages."}</Text>
-            <Text size="body" tone="secondary"><strong>Editable lifecycle:</strong> Save creates or updates a passage. Archive removes it from active use; Restore reopens it as a draft.</Text>
+            <Text size="body" tone="secondary">Use Save &amp; publish in the editor to make your writing available to readers. Save draft keeps changes for later.</Text>
           </Stack>
           {selection && <code>transit/{selection.planet}-{selection.sign}/{selection.house}h/{selection.motion}</code>}
         </div>
@@ -9726,6 +9771,8 @@ export function GeneratedContentAdminDashboard() {
           registerCloseGuard={guard => { houseTransitCloseGuard.current = guard; }}
           onClose={() => { setHouseTransitEditor(null); houseTransitEditorDrafts.current.clear(); }}
           onSave={saveHouseTransitPassage}
+          publicationPending={Boolean(pendingPublication)}
+          onCheckPublication={checkHouseTransitPublication}
         />
       </Suspense>;
     }

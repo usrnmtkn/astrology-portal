@@ -5,13 +5,15 @@ import { installContentPublications, validContentPublication } from '../content/
 type ReaderQuery = { provider?: string; keys?: string[]; ids?: string[]; prefix?: string; surfaces?: string[]; targetDate?: string; scope?: "sky" | "sky-list"; vocabularyOnly?: boolean; latestVersion?: boolean; horoscope?: {period:string;at:string;timeZone?:string} };
 /** Only this transport may fetch shared Studio rows in a reader. It deliberately
  * has no table name, arbitrary select, or authoring-field escape hatch. */
-export async function loadReaderRows(query: ReaderQuery, signal = AbortSignal.timeout(20_000)) {
+export async function loadReaderRows(query: ReaderQuery, signal?: AbortSignal) {
   try {
     const rows: GeneratedContentRow[] = [];
     let afterId: string | undefined;
     for (let page = 0; page < 200; page += 1) {
       const response = await fetch('/api/content-reader', { method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...query, ...(afterId ? { afterId } : {}) }), signal, cache: 'no-store' });
+        // A full published library spans many pages. Each page gets a bounded
+        // request window; an explicit caller deadline still bounds the whole read.
+        body: JSON.stringify({ ...query, ...(afterId ? { afterId } : {}) }), signal: signal ?? AbortSignal.timeout(20_000), cache: 'no-store' });
       if (!response.ok) throw new Error(`Published content request failed (${response.status}).`);
       const value = await response.json() as { schema?: string; rows?: GeneratedContentRow[]; publications?: unknown[]; nextCursor?: string | null };
       if (value.schema !== READER_ROW_SCHEMA || !Array.isArray(value.rows) || !(value.nextCursor === null || typeof value.nextCursor === 'string')) throw new Error('Invalid published content response.');

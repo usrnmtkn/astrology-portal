@@ -4,7 +4,9 @@ import { createApiStore } from './calendar-review-api.mjs';
 const store = await createApiStore(JSON.parse(process.env.HOUSE_TRANSIT_TEST_ROWS));
 process.on('message', async ({ id, method, body, url }) => {
   try {
-    const result = method === 'rows' ? [...store.rows.values()] : await store.invoke(method, body, url);
+    const result = method === 'reader'
+      ? await fetch('/api/content-reader', { method: 'POST', body: JSON.stringify(body) }).then(async response => ({ status: response.status, payload: await response.json() }))
+      : method === 'rows' ? [...store.rows.values()] : await store.invoke(method, body, url);
     process.send({ id, result });
   } catch (error) { process.send({ id, error: String(error) }); }
 });
