@@ -3157,11 +3157,10 @@ test.describe("content dashboard admin user flow case studies", () => {
     const signField = editor.getByRole("textbox", { name: "Uranus in Gemini through the 1st house — You copy", exact: true });
     await expect(signField).toHaveValue("Uranus in Gemini changes how you introduce yourself, speak up, and choose what comes next.");
     await signField.fill("Uranus in Gemini changes how you introduce yourself and choose what comes next.");
-    await editor.getByRole("button", { name: "Save all changes", exact: true }).click();
+    await editor.getByRole("button", { name: "Save draft", exact: true }).click();
     await expect.poll(() => writes.length).toBe(1);
     expect(writes[0]).toMatchObject({ method: "PATCH", payload: { id: "qa-uranus-gemini-house-1" } });
-    // Row lifecycle remains covered by the ordinary-content save/archive/restore test.
-    // The combined editor changes prose without adding a new publication action.
+    // This path saves only a draft; the combined-editor real API suite covers publication.
     await editor.getByRole("button", { name: /^Close/ }).click();
 
     await page.setViewportSize({ width: 390, height: 844 });
@@ -3190,10 +3189,10 @@ test.describe("content dashboard admin user flow case studies", () => {
     const editor = page.getByRole("dialog", { name: "House Transit write-up editor" });
     const field = editor.getByRole("textbox", { name: "Uranus through the 1st house — You copy", exact: true });
     await field.fill("A proposed change that must remain visibly unsaved.");
-    await editor.getByRole("button", { name: "Save all changes", exact: true }).click();
+    await editor.getByRole("button", { name: "Save draft", exact: true }).click();
     await expect(editor.getByRole("alert")).toContainText(/did not return the saved row|not saved|save failed/i);
     await expect(field).toHaveValue("A proposed change that must remain visibly unsaved.");
-    await expect(editor.getByRole("button", { name: "Save all changes", exact: true })).toBeEnabled();
+    await expect(editor.getByRole("button", { name: "Save draft", exact: true })).toBeEnabled();
   });
 
   test("legacy transit searches and navigation lead directly to Transit to Natal Charts", async ({ page }) => {
