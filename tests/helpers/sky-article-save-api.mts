@@ -69,7 +69,7 @@ function storageOrder(row:any) {
  const ordered=(value:any):any=>Array.isArray(value)?value.map(ordered):value&&typeof value==='object'?Object.fromEntries(Object.keys(value).sort().map(key=>[key,ordered(value[key])])):value;
  return ordered(row);
 }
-export const writerFixture={calls:0,polls:0,pendingPolls:0,terminalNext:false,failNext:false,unknownNext:false,requests:new Map<string,any>()};
+export const writerFixture={calls:0,polls:0,pendingPolls:0,terminalNext:false,failNext:false,unknownNext:false,nextResult:null as any,startResult:null as any,requests:new Map<string,any>()};
 export async function invokeHoroscopeWriting(body:any,secret='calendar-api-fixture') {
  const req=Readable.from([JSON.stringify(body)]);Object.assign(req,{method:'POST',headers:{authorization:`Bearer ${secret}`}});
  let result:any;const res={statusCode:200,setHeader(){},end(value:string){result={status:this.statusCode,payload:JSON.parse(value)};}};
@@ -85,17 +85,20 @@ export function installHoroscopeWriterFixture(){
      if(![...store.rows.values()].some(row=>row.source_snapshot?.horoscopeGeneration?.active?.requestHash))throw new Error('No durable request reservation before provider call');
      writerFixture.calls++;
      if(writerFixture.unknownNext){writerFixture.unknownNext=false;throw new Error('Fixture connection lost');}
-     if(writerFixture.failNext){writerFixture.failNext=false;return Response.json({error:{message:'Fixture quota'}},{status:429});}
+     if(writerFixture.failNext){writerFixture.failNext=false;return Response.json({error:{code:'insufficient_quota',message:'Fixture quota'}},{status:429});}
      const request=JSON.parse(options.body);
      if(!request.background||!request.instructions||!request.text?.format?.schema)throw new Error('Missing real governed provider request');
      const sign=request.input.match(/"risingSign":"([a-z]+)"/)?.[1];
      if(!sign)throw new Error('No calculated rising sign supplied');
      const id=`resp_fixture_${writerFixture.calls}`;
-     writerFixture.requests.set(id,{...request,sign});return Response.json({id,status:'queued'});
+     writerFixture.requests.set(id,{...request,sign});
+     if(writerFixture.startResult){const result=writerFixture.startResult;writerFixture.startResult=null;return Response.json({id,...result});}
+     return Response.json({id,status:'queued'});
    }
    const id=url.split('/').at(-1)!,request=writerFixture.requests.get(id);
    if(!request)throw new Error('Unrecognized fixture response');writerFixture.polls++;
    if(writerFixture.pendingPolls>0){writerFixture.pendingPolls--;return Response.json({id,status:'in_progress'});}
+   if(writerFixture.nextResult){const result=writerFixture.nextResult;writerFixture.nextResult=null;return Response.json({id,...result});}
    if(writerFixture.terminalNext){writerFixture.terminalNext=false;return Response.json({id,status:'failed',error:{message:'Fixture provider could not finish this reading.'}});}
    return Response.json({id,status:'completed',usage:{input_tokens:100,output_tokens:40},output:[{type:'message',content:[{type:'output_text',text:JSON.stringify({headline:request.text.format.schema.properties.headline.enum?.[0]??`Fixture ${request.sign} reading`,body:`You can read the complete ${request.sign} fixture opening.\n\nYour saved fixture ends here.`})}]}]});
  };
@@ -104,7 +107,7 @@ if(process.env.HOROSCOPE_WRITER_FIXTURE==='1')installHoroscopeWriterFixture();
 if (process.send) process.on('message', async ({ id, method, body, url }: any) => {
  try {
   if (method === 'writer-state') {
-    for(const key of ['pendingPolls','terminalNext','unknownNext'] as const)if(body?.[key]!==undefined)(writerFixture as any)[key]=body[key];
+    for(const key of ['pendingPolls','terminalNext','unknownNext','nextResult','startResult'] as const)if(body?.[key]!==undefined)(writerFixture as any)[key]=body[key];
     process.send!({id,result:{calls:writerFixture.calls,polls:writerFixture.polls,responseIds:[...writerFixture.requests.keys()]}});return;
   }
   if (method === 'lunar-writing') {

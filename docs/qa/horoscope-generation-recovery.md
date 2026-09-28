@@ -60,3 +60,46 @@ standalone admin measured about 757.5 kB aggregate. Allocate 1,250 aggregate web
 added request coordination and recovery controls. No dependencies, reader prose,
 CSS, or reader-startup code are added. Startup, other chunks, memory graph,
 forbidden-payload, and runtime-performance budgets remain unchanged.
+
+## Terminal seasonal failure recovery
+
+A seasonal edition can fail before its first saved sign. The formerly generic
+"did not complete a usable reading" message covered response limits, refusals,
+provider failures, cancellations and invalid output. Both immediate and polled
+responses now use the same complete-reading parser. Each confirmed failure keeps
+its operation ID, response ID, request configuration, safe status/reason codes,
+usage counts and output hash in private failure history. Partial prose, prompts
+and arbitrary provider error/refusal messages are not copied into diagnostics.
+A successful retry clears the current error but preserves the historical receipt.
+No timeout or retry limit has been increased; no prompt, model or voice rule changed.
+
+On reopening, Studio shows the saved failure and offers **Retry [sign]** after
+review of the current plan. The action makes one new paid request for that sign
+and stops after saving it. It never automatically regenerates the remaining batch.
+Unknown outcomes keep their existing reservation and same-request recovery.
+The date field retains the signed brief's original reference date. Using an
+evening solar-ingress date at local noon could otherwise select the previous
+season when returning to Dates.
+
+Regression evidence: the actual horoscope handler is exercised with immediate
+and background response-limit, failure, cancellation, refusal, invalid JSON and
+empty-reading fixtures. Browser recovery checks cover seasonal zero-of-twelve,
+reload, unchanged selected date, plan approval, one-sign retry, complete exact
+saved text and retained failure history on mobile/dark and desktop/light.
+These synthetic checks do not establish the reason for a historical provider
+failure or prove actual live writer success. Historical responses need authorized
+provider inspection, and a new billed generation needs explicit owner action.
+
+
+The owner's authorized inspection of the reported seasonal response confirmed
+`status: failed`, `error.code: credit_balance_exhausted`, and no output text.
+The read-only deployed diagnostic preserved the complete edition and version.
+Studio now names API credit exhaustion and directs the operator to replenish the
+connected API balance before retrying. Quota/billing and credential rejections
+also receive specific actions, whether returned at request start or polling.
+This is an account-balance failure; increasing token budgets would not resolve it.
+The patch does not refill credits or authorize a fresh paid writing run.
+
+For older generic failures, **Check saved progress** can inspect the exact stored
+failed response through the authenticated server. It returns only safe diagnostics,
+never the credential, prompt or provider prose, and leaves the edition unchanged.
