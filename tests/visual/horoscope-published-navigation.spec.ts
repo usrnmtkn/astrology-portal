@@ -62,7 +62,7 @@ test('Empty daily view discovers a published local week without changing the sel
  await page.route('**/api/content-reader',route=>{
   const q=route.request().postDataJSON();if(q.horoscope)queries.push(q.horoscope);
   if(fail&&q.horoscope)return route.fulfill({status:503,json:{error:'Fixture unavailable'}});
-  const matches=available&&q.horoscope?.period==='weekly'&&q.horoscope?.timeZone==='America/New_York';
+  const matches=available&&(q.ids?.includes(row.id)||(q.horoscope?.period==='weekly'&&(!q.horoscope.timeZone||q.horoscope.timeZone==='America/New_York')));
   return route.fulfill({json:{schema:READER_ROW_SCHEMA,rows:matches?[row]:[],publications:[],nextCursor:null}});
  });
  await page.goto('/?date=2026-10-02#horoscopes');
@@ -78,7 +78,8 @@ test('Empty daily view discovers a published local week without changing the sel
  await page.locator('.horoscope-location summary').click();
  await page.getByLabel('Horoscope time zone',{exact:true}).selectOption('Australia/Sydney');
  await expect(page.getByRole('status')).toContainText('Australia/Sydney');
- await expect(page.getByRole('group',{name:'Available horoscopes'})).toHaveCount(0);
+ await expect(page.getByRole('button',{name:'Read weekly horoscope · America/New York',exact:true})).toBeVisible();
+ await expect(page.getByRole('article')).toHaveCount(0);
  available=false;await page.reload();await expect(page.getByRole('status')).toContainText('haven’t been published');
  fail=true;await page.reload();await expect(page.getByRole('alert')).toContainText('could not load');
  fail=false;await page.getByRole('button',{name:'Try again',exact:true}).click();
