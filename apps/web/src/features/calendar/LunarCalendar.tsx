@@ -74,7 +74,7 @@ import {
 } from "../../services/skyAspectRouting";
 import { zonedDateTimeToUtc } from "../../services/timezones";
 import type { LocationInput } from "../../types";
-import { calendarEventGeneratedContentKeys } from "./calendarContentKeys";
+import { calendarEventGeneratedContentKeys, calendarContentRequestResolved, type CalendarContentRequest } from "./calendarContentKeys";
 import {resolveLunationReaderSource} from '../../content/lunationReaderSource';
 import { calendarDayMoonWriting, calendarLunationMacroKey, calendarMoonWritingParagraphs, calendarMoonWritingSequenceWithoutRepeat, type CalendarMoonWritingPiece } from "./calendarDayMoonReading";
 import { calendarDateKeyDistance, calendarMoonCycleFactsForDays, type CalendarMoonCycleFacts } from "./calendarMoonCycle";
@@ -162,6 +162,9 @@ type LunarCalendarProps = {
   location: LocationInput;
   generatedContent?: Map<string, LiveGeneratedContent>;
   generatedContentStatus?: "idle" | "loading" | "ready";
+  resolvedContentRequest?: CalendarContentRequest | null;
+  skyState?: "loading" | "ready" | "error";
+  onRetrySky?: () => void;
   skyPlacementContentStatus?: SkyPlacementContentStatus;
   contentVersion?: number;
   onGeneratedContentRequest?: (request: { cacheKey: string; contentKeys: string[] }) => void;
@@ -2175,6 +2178,9 @@ export function LunarCalendar({
   location,
   generatedContent,
   generatedContentStatus = "idle",
+  resolvedContentRequest,
+  skyState = "ready",
+  onRetrySky,
   skyPlacementContentStatus = "idle",
   contentVersion = 0,
   onGeneratedContentRequest,
@@ -2211,9 +2217,6 @@ export function LunarCalendar({
   const moonContentAssetFailed = useRef(false);
   const readingMeasurement = useRef<ReturnType<typeof startReaderMeasurement> | null>(null);
   const moonContentReady = moonContentState === "ready";
-  const readingState: "loading" | "ready" | "error" = moonContentState === "error" || calendarDetailState === "error" ? "error"
-    : moonContentReady && calendarDetailState === "ready" ? "ready" : "loading";
-  const readingReady = readingState === "ready";
   const [selectedDateKey, setSelectedDateKey] = useState(initialDateKey);
   const [retryNonce, setRetryNonce] = useState(0);
   const [knowledgeMatrixV9, setKnowledgeMatrixV9] = useState<CalendarV9TransitResolver | null>(null);
@@ -2226,6 +2229,7 @@ export function LunarCalendar({
   const [subscribeOpen, setSubscribeOpen] = useState(false);
   const [subscribed, setSubscribed] = useState(() => Boolean(loadCalendarSubscription()));
   const retryCalendarContent = () => {
+    if (skyState === "error") onRetrySky?.();
     if (calendarDetailState === "error") setRetryNonce(value => value + 1);
     // Browsers cache failed module imports. An explicit retry may need fresh HTML;
     // a request deadline can retry the still-pending import without reloading.
@@ -2275,13 +2279,6 @@ export function LunarCalendar({
     });
     return () => { controller.abort(); finish("cancelled"); };
   }, [moonContentRetry, hasCalendarFacts]);
-
-  useEffect(() => {
-    if (status === "ready" && readingReady) {
-      const frame = requestAnimationFrame(() => readingMeasurement.current?.("ready"));
-      return () => cancelAnimationFrame(frame);
-    }
-  }, [status, readingReady]);
 
   useEffect(() => {
     if (!hasCalendarFacts || !moonContentReady) return;
@@ -2645,10 +2642,28 @@ export function LunarCalendar({
     : "";
 
   useEffect(() => {
-    if (generatedContentRequest) {
+    if (generatedContentRequest && calendarDetailState === "ready") {
       onGeneratedContentRequest?.(generatedContentRequest);
     }
-  }, [generatedContentRequestSignature, onGeneratedContentRequest]);
+  }, [generatedContentRequestSignature, calendarDetailState, onGeneratedContentRequest]);
+
+  // Basic facts can paint the date controls. Reveal writing only after the
+  // full event set and its Studio request have resolved, including on navigation.
+  // A revalidation of that same request keeps the already loaded reading visible.
+  const contentResolved = !onGeneratedContentRequest
+    || calendarContentRequestResolved(generatedContentRequest, resolvedContentRequest);
+  const readingState: "loading" | "ready" | "error" = moonContentState === "error" || calendarDetailState === "error" ? "error"
+    : moonContentReady && calendarDetailState === "ready" && contentResolved ? "ready" : "loading";
+  const readingReady = readingState === "ready";
+  const dayReadingState: "loading" | "ready" | "error" = readingState === "error" || skyState === "error" ? "error"
+    : readingReady && selectedSky && skyState === "ready" ? "ready" : "loading";
+
+  useEffect(() => {
+    if (status === "ready" && (viewMode === "week" ? dayReadingState === "ready" : readingReady)) {
+      const frame = requestAnimationFrame(() => readingMeasurement.current?.("ready"));
+      return () => cancelAnimationFrame(frame);
+    }
+  }, [status, viewMode, dayReadingState, readingReady]);
 
   const moonCycleFacts = useMemo(() => {
     if (!calendar) return new Map<string, CalendarMoonCycleFacts>();
@@ -2926,7 +2941,7 @@ export function LunarCalendar({
   }, [calendar, generatedContent, viewMode, contentVersion]);
   const dayPanelProps = selectedDay ? {
     checkInEntry: checkInData.value,
-    contentState: readingState,
+    contentState: dayReadingState,
     onRetryContent: retryCalendarContent,
     dateKey: selectedDay.dateKey,
     dateLine: formatSlideoutDate(selectedDay, zone),

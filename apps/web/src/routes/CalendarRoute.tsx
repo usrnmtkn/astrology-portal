@@ -4,6 +4,7 @@ import type { LocationInput, SkySnapshot } from "../types";
 import type { LunarCalendarEvent } from "../services/ephemeris";
 import type { LiveGeneratedContent } from "../services/generatedContent";
 import type { SkyPlacementContentStatus } from "../features/sky/skyPlacementContentState";
+import type { CalendarContentRequest } from "../features/calendar/calendarContentKeys";
 import "../styles/lunar-calendar.css";
 import "../styles/calendar-subscribe.css";
 
@@ -18,6 +19,9 @@ type CalendarRouteProps = {
   sky?: SkySnapshot | null;
   generatedContent: Map<string, LiveGeneratedContent>;
   generatedContentStatus?: "idle" | "loading" | "ready";
+  resolvedContentRequest?: CalendarContentRequest | null;
+  skyState?: "loading" | "ready" | "error";
+  onRetrySky?: () => void;
   skyPlacementContentStatus?: SkyPlacementContentStatus;
   contentVersion?: number;
   location: LocationInput;
@@ -34,6 +38,9 @@ export function CalendarRoute({
   sky,
   generatedContent,
   generatedContentStatus,
+  resolvedContentRequest,
+  skyState,
+  onRetrySky,
   skyPlacementContentStatus,
   contentVersion,
   location,
@@ -50,6 +57,9 @@ export function CalendarRoute({
         sky={sky}
         generatedContent={generatedContent}
         generatedContentStatus={generatedContentStatus}
+        resolvedContentRequest={resolvedContentRequest}
+        skyState={skyState}
+        onRetrySky={onRetrySky}
         skyPlacementContentStatus={skyPlacementContentStatus}
         contentVersion={contentVersion}
         location={location}

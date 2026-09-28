@@ -9,6 +9,15 @@ import {
 import { calendarAspectPublicationKeys, skyAspectGeneratedContentKeys } from "../../services/skyAspectContent.js";
 import { lunarJournalContentKeyForEvent } from "./lunarJournalKeys.js";
 
+export type CalendarContentRequest = { cacheKey: string; contentKeys: string[] };
+
+/** Readiness belongs to the requested location/range AND its complete key set. */
+export function calendarContentRequestResolved(request: CalendarContentRequest | null, resolved?: CalendarContentRequest | null) {
+  if (!request || !resolved || request.cacheKey !== resolved.cacheKey) return false;
+  const keys = new Set(resolved.contentKeys);
+  return request.contentKeys.every(key => keys.has(key));
+}
+
 export function calendarEventGeneratedContentKeys(event: LunarCalendarEvent) {
   const dateKey = event.dateKey || event.startsAt.slice(0, 10);
   const withJournal = (keys: string[]) => {
