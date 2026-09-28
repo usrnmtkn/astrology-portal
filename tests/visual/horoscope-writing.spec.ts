@@ -68,7 +68,7 @@ for (const [width, theme] of [[390, 'light'], [390, 'dark'], [1440, 'light'], [1
    expect((await call({method: 'rows'})).filter((r: any) => r.content_key.startsWith('studio-writing-profile/')).length).toBe(0);
    await screenshot('starter');
    const fieldStyle = await voice.evaluate(el => {const s=getComputedStyle(el);return [s.fontFamily,s.fontSize,s.fontWeight,s.lineHeight,s.letterSpacing];});
-   const hintStyle = await editor.locator('.admin-writing-field p:visible').evaluate(el => {const s=getComputedStyle(el);return [s.fontFamily,s.fontSize,s.fontWeight,s.lineHeight,s.letterSpacing];});
+   const hintStyle = await editor.locator('.admin-writing-field p:visible').first().evaluate(el => {const s=getComputedStyle(el);return [s.fontFamily,s.fontSize,s.fontWeight,s.lineHeight,s.letterSpacing];});
    expect(fieldStyle).toEqual(hintStyle);
    const saveBox = await editor.getByRole('button',{name:'Save writing profile',exact:true}).boundingBox();
    expect(saveBox!.y + saveBox!.height).toBeLessThanOrEqual(1000);
@@ -105,6 +105,20 @@ for (const [width, theme] of [[390, 'light'], [390, 'dark'], [1440, 'light'], [1
    await expect(prompt).toBeFocused();
    await prompt.fill(originalPrompt);
    await screenshot('prompt');
+   const longPrompt = originalPrompt.padEnd(12000, ' ') + 'FULL PASTED CONTEXT MUST STAY';
+   await prompt.fill(longPrompt);
+   await expect(prompt).toHaveValue(longPrompt);
+   await expect(prompt).toHaveAttribute('aria-invalid', 'true');
+   await expect(editor.getByText(/Your full text is kept here/)).toBeVisible();
+   await expect(editor.getByRole('button', {name: 'Save writing profile', exact: true})).toBeDisabled();
+   await selectSection('Voice'); await selectSection('Prompt');
+   await expect(prompt).toHaveValue(longPrompt);
+   await prompt.evaluate((node: HTMLTextAreaElement) => node.setSelectionRange(node.value.length, node.value.length));
+   await editor.getByRole('button', {name:'Insert period variable',exact:true}).click();
+   await expect(prompt).toHaveValue(longPrompt + '{{period}}');
+   expect((await call({method: 'rows'})).filter((r: any) => r.content_key.startsWith('studio-writing-profile/')).length).toBe(0);
+   await screenshot('overflow');
+
    await prompt.fill(originalPrompt + '\n{{unknown}}');
    await expect(editor.getByRole('alert')).toContainText('unknown');
    await expect(editor.getByRole('button', {name: 'Save writing profile', exact: true})).toBeDisabled();

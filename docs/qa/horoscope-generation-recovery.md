@@ -126,3 +126,38 @@ and recovery, exact row preservation, unchanged reference date, and no additiona
 provider starts. These use the actual handlers with isolated storage and a
 synthetic provider. They do not verify a replenished production balance or claim
 a successful live generation.
+
+## Leaving an interrupted browser request
+
+The Generate step offers **Back to editions** during writing and recovery.
+**Pause generation** aborts the local browser operation immediately. It leaves the
+provider request and saved readings intact, invalidates plan approval, and requires
+saved-state synchronization before another action. A late response from the
+aborted operation cannot update the current edition. Returning to the saved
+edition reads its current version before presenting the remaining signs.
+
+While Generate is open, Studio checks an idle saved request every 30 seconds.
+Returning to a visible tab also checks saved progress; a running operation is
+superseded only after 15 seconds without a successful update. The periodic
+watchdog waits 60 seconds for a running operation. All these checks use the
+existing retrieval and version-conflict recovery path. They cannot start, release,
+reject or publish a reading. Background synchronization skips unsaved edition
+edits and open writing instructions.
+
+The actual-handler browser suite covers immediate pause with a held response,
+leaving and reopening the same seasonal edition, late-response isolation, focus
+recovery, periodic idle recovery, exact saved copy and explicit plan approval for
+remaining signs. It uses synthetic storage and an injected provider; it performs
+no production generation.
+
+## Instruction-field overflow
+
+Voice, Structure, Sources and Prompt each retain the existing 12,000-character
+save limit. The native input no longer truncates pasted text. The editor keeps the
+complete unsaved value, marks an over-limit field invalid, displays the excess
+character count and prevents saving until corrected. Variable insertion likewise
+preserves the whole value. Browser tests cover overflow, field switching and
+recovery in all four desktop/mobile and light/dark combinations. Actual-handler
+checks verify exact 12,000-character persistence and that a longer rejected save
+does not change the stored profile. No writer model, context budget or reader
+passage changes are involved.
