@@ -165,3 +165,11 @@ The request byte allowance covers all four fields even when JSON-escaped.
 The complete expanded instructions reach the injected writer. A browser
 regression saves and reloads a seasonal prompt longer than the old limit.
 No writer model, output budget or reader passage changes are involved.
+
+After integrating main `57f4a2ce1`, separate clean `npm ci` builds with the same
+browser-workflow Supabase placeholders measure 3,501,257 aggregate web gzip bytes
+on main and 3,501,832 for the feature, a 575-byte increase. Main itself exceeds
+the previous aggregate limit by 7 bytes. Allocate 750 aggregate web bytes in
+addition to the 1,000-byte deferred-editor and admin-aggregate allocations.
+Preserve the independent House Transit allocation and all reader startup, CSS,
+memory graph, forbidden-payload and other chunk limits.
