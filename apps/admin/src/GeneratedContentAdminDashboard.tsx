@@ -373,13 +373,14 @@ type AdminWritingSurfaceMapPayload = {
 type AdminArticlePointFilter = "all" | "sun" | "moon" | "mercury" | "venus" | "mars" | "jupiter" | "saturn" | "uranus" | "neptune" | "pluto" | "other";
 type AdminSkyWriteupSubjectFilter = "all" | "planet" | "angle" | "point";
 type SkyWriteupWorkspaceView = "daily-summary" | "catalog" | "transits-to-natal" | "house-transits";
-type CalendarWriteupWorkspaceView = SkyForecastPeriod | "season-transitions" | "season-writeups" | "subscription-events" | "lunar-ingresses" | "lunation-writing" | "planetary-ingresses" | "planetary-stations";
+type CalendarWriteupWorkspaceView = SkyForecastPeriod | "season-transitions" | "season-writeups" | "moon-transition-phrases" | "subscription-events" | "lunar-ingresses" | "lunation-writing" | "planetary-ingresses" | "planetary-stations";
 const calendarWriteupWorkspaceTabs: { value: CalendarWriteupWorkspaceView; label: string }[] = [
   { value: "daily-sky", label: "Daily Sky" },
   { value: "weekly-sky", label: "Weekly Sky" },
   { value: "monthly-sky", label: "Monthly Sky" },
   { value: "lunation-writing", label: "New & Full Moons & Eclipses" },
   { value: "lunar-ingresses", label: "Lunar ingresses" },
+  { value: "moon-transition-phrases", label: "Moon transition phrases" },
   { value: "planetary-ingresses", label: "Planetary ingresses" },
   { value: "planetary-stations", label: "Planetary stations" },
   { value: "season-writeups", label: "Season write-ups" },
@@ -7324,7 +7325,7 @@ export function GeneratedContentAdminDashboard() {
                 onEditOverview={field => void openSkyForecastTemplate(calendarWriteupWorkspaceView as SkyForecastPeriod, field)}
                 onBrowseSeasonTransitions={() => navigateAdminPage("calendarWriteups", new URLSearchParams({ view: "season-transitions" }))}
                 onOpen={period => void openSkyForecastTemplate(period)} editor={calendarWriteupWorkspaceView === "daily-sky" ? null : renderEditor()} /></Suspense>}
-              {(calendarWriteupWorkspaceView === "daily-sky" || calendarWriteupWorkspaceView === "season-transitions" || calendarWriteupWorkspaceView === "season-writeups" || calendarWriteupWorkspaceView === "lunar-ingresses") && (
+              {(calendarWriteupWorkspaceView === "daily-sky" || calendarWriteupWorkspaceView === "season-transitions" || calendarWriteupWorkspaceView === "season-writeups" || calendarWriteupWorkspaceView === "lunar-ingresses" || calendarWriteupWorkspaceView === "moon-transition-phrases") && (
                 <Suspense fallback={<PageLoading message="Loading Calendar passages…" />}>
                   <LunarCalendarWorkspace key={calendarWriteupWorkspaceView} scope={calendarWriteupWorkspaceView === "daily-sky" ? "all" : calendarWriteupWorkspaceView} rows={rows} query={query} onQuery={setQuery} createRequest={calendarCreateRequest}
                     onCreateRequestHandled={() => setCalendarCreateRequest(0)} isLoading={isLoading || loadState !== "loaded"}
@@ -10456,7 +10457,7 @@ export function GeneratedContentAdminDashboard() {
               : isTemplateDraft
                 ? "Template purpose (optional)"
                 : "TL;DR / summary");
-    const bodyFieldLabel = isManualCalendarEventDraft ? "Event write-up" : isReferenceDraft ? "Source text" : isSkySummaryDraft ? "Summary wording" : lunarIdentity?.family === "Lunar ingresses" ? "Lunar ingress passage" : lunarIdentity?.family === "Season transitions" ? "Season transition passage" : lunarIdentity ? "Full lunar passage" : isYouOnlyNatalExactDraft
+    const bodyFieldLabel = isManualCalendarEventDraft ? "Event write-up" : isReferenceDraft ? "Source text" : isSkySummaryDraft ? "Summary wording" : lunarIdentity?.family === "Moon transition phrases" ? "Transition phrase" : lunarIdentity?.family === "Lunar ingresses" ? "Lunar ingress passage" : lunarIdentity?.family === "Season transitions" ? "Season transition passage" : lunarIdentity ? "Full lunar passage" : isYouOnlyNatalExactDraft
       ? "You view exact copy"
       : isVocabularyDraft && isPackageDraft
       ? vocabularyHasTheyVersion ? "You version" : "Variable value"

@@ -57,6 +57,7 @@ export const STUDIO_NATAL_CHART_PREFIXES = [
 export const STUDIO_LUNAR_CALENDAR_PREFIXES = [
   "authored/calendar-weekly-moon/",
   "authored/calendar-moon-continuation-summary/",
+  "authored/calendar-moon-context/",
   "authored/calendar-moon-transition/",
   "authored/calendar-season-transition/",
   "authored/lunar-journal/",
@@ -156,6 +157,7 @@ export function studioInventoryQuery(route: StudioInventoryRoute): StudioInvento
     return prefixesQuery(STUDIO_HOUSE_TRANSIT_PREFIXES);
   }
   if (route.page === "calendarWriteups") {
+    if (route.calendarWriteupWorkspaceView === "moon-transition-phrases") return prefixesQuery(["authored/calendar-moon-continuation-summary/", "authored/calendar-moon-context/"]);
     if (route.calendarWriteupWorkspaceView === "planetary-ingresses") return prefixesQuery(STUDIO_PLANETARY_INGRESS_PREFIXES);
     if (route.calendarWriteupWorkspaceView === "planetary-stations") return prefixesQuery(STUDIO_PLANETARY_STATION_PREFIXES);
     return prefixesQuery(STUDIO_LUNAR_CALENDAR_PREFIXES);

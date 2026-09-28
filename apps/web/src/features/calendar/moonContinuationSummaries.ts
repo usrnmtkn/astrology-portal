@@ -27,11 +27,11 @@ export function moonContinuationSummaryKey(sign: string) {
 export function moonContinuationSummaryForSign(
   sign: string,
   override?: string | null,
-  options?: { exactFirstQuarter?: boolean }
+  options?: { exactFirstQuarter?: boolean; firstQuarterOverride?: string | null }
 ) {
   const slug = sign.toLowerCase().trim();
   if (options?.exactFirstQuarter && moonContinuationOnFirstQuarter[slug]) {
-    return moonContinuationOnFirstQuarter[slug];
+    return options.firstQuarterOverride?.trim() || moonContinuationOnFirstQuarter[slug];
   }
   return override?.trim() || moonContinuationSummaries[slug] || "";
 }

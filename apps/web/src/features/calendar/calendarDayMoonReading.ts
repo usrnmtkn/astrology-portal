@@ -147,6 +147,9 @@ export function calendarMoonWritingParagraphs(
 ) {
   return pieces.flatMap((piece) => {
     const paragraphs = piece.body.split(/\n\n+/).map((paragraph) => paragraph.trim()).filter(Boolean);
-    return paragraphLimit == null ? paragraphs : paragraphs.slice(0, paragraphLimit);
+    // Transition phrases form one assembled Moon passage. A paragraph break in an
+    // edited phrase must not discard the rest when Week shows article previews.
+    const transition = piece.contentKey.startsWith("generated/calendar-moon-fallback/");
+    return paragraphLimit == null || transition ? paragraphs : paragraphs.slice(0, paragraphLimit);
   });
 }

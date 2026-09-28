@@ -55,7 +55,9 @@ export function calendarMoonIngressPackageRecordForKey(key: string) {
   return calendarMoonIngressPackageRecordByKey.get(key) ?? null;
 }
 
-function packageStarterBase(record: ReturnType<typeof calendarMoonIngressPackageRecord>) {
+type CalendarWritingPackageRecord = Omit<ReturnType<typeof calendarMoonIngressPackageRecord>, "fromSign" | "toSign">;
+
+function packageStarterBase(record: CalendarWritingPackageRecord) {
   return {
     id: `package:${record.contentKey}`,
     content_key: record.contentKey,
@@ -73,7 +75,7 @@ function packageStarterBase(record: ReturnType<typeof calendarMoonIngressPackage
   };
 }
 
-export function calendarMoonIngressInventoryRow(record: ReturnType<typeof calendarMoonIngressPackageRecord>) {
+export function calendarMoonIngressInventoryRow(record: CalendarWritingPackageRecord) {
   return {
     ...packageStarterBase(record),
     body: null,
@@ -94,7 +96,7 @@ export function calendarMoonIngressInventoryRow(record: ReturnType<typeof calend
   };
 }
 
-export function calendarMoonIngressDetailRow(record: ReturnType<typeof calendarMoonIngressPackageRecord>) {
+export function calendarMoonIngressDetailRow(record: CalendarWritingPackageRecord) {
   return {
     ...packageStarterBase(record),
     summary: "",

@@ -9,6 +9,7 @@ import type { CompositionMapRow } from './compositionMap';
 import { dropSupersededPackageStarters } from './contentStudioState';
 import { lunarContentIdentity, lunarSigns, lunarWorkspaceFamilyOrder, lunarWorkspaceJobs, lunarWorkspaceSelectionFromQuery } from './lunarCalendarContent';
 import { PageLoading } from '../../web/src/components/PageLoading';
+const MoonTransitionPhraseWorkspace = lazy(() => import("./MoonTransitionPhraseWorkspace"));
 import SeasonTransitionWorkspace from './SeasonTransitionWorkspace';
 const CompositionMapWorkspace = lazy(() => import('./CompositionMapWorkspace'));
 export type Row = CompositionMapRow & { inventory_only?: boolean; facts?: Record<string, unknown> | null };
@@ -24,8 +25,9 @@ const seasonPairs = lunarSigns.map((from, index) => ({
   sign: from,
   label: `${signName(from)} to ${signName(lunarSigns[(index + 1) % lunarSigns.length])}`
 }));
-export type Props = { scope?: "all" | "season-transitions" | "season-writeups" | "lunar-ingresses" | "lunations"; rows: Row[]; editor: ReactNode; query: string; createRequest?: number; onCreateRequestHandled?: () => void; isLoading?: boolean; onQuery: (value: string) => void; onEdit: (row: Row) => void; onLoad: (row: Row) => Promise<unknown>; loadRows: (keys: string[]) => Promise<Row[]>; onCreate: (sign: string) => void };
+export type Props = { scope?: "all" | "moon-transition-phrases" | "season-transitions" | "season-writeups" | "lunar-ingresses" | "lunations"; rows: Row[]; editor: ReactNode; query: string; createRequest?: number; onCreateRequestHandled?: () => void; isLoading?: boolean; onQuery: (value: string) => void; onEdit: (row: Row) => void; onLoad: (row: Row) => Promise<unknown>; loadRows: (keys: string[]) => Promise<Row[]>; onCreate: (sign: string) => void };
 export default function LunarCalendarWorkspace(props: Props) {
+  if (props.scope === "moon-transition-phrases") return <Suspense fallback={<PageLoading compact message="Loading transition phrase editor…" />}><MoonTransitionPhraseWorkspace {...props} /></Suspense>;
   return props.scope === 'season-transitions' || props.scope === 'season-writeups' || props.scope === 'lunar-ingresses' ? <SeasonTransitionWorkspace {...props} /> : <LunarPassageWorkspace {...props} />;
 }
 function LunarPassageWorkspace({ scope, rows, editor, query, createRequest = 0, onCreateRequestHandled, isLoading = false, onQuery, onEdit, onLoad, onCreate }: Props) {
