@@ -211,14 +211,16 @@ export function CalendarDayPanel({
             {isToday ? <span className="calendar-sky-card__today">Today</span> : null}
           </p>
           <div className="calendar-sky-card__lockup">
-            {phaseEmoji ? <span className="calendar-sky-card__visual" aria-hidden="true">{phaseEmoji}</span> : null}
+            {!loading && contentState !== "error" && phaseEmoji ? <span className="calendar-sky-card__visual" aria-hidden="true">{phaseEmoji}</span> : null}
             <div className="calendar-sky-card__copy">
-              <h2 className="calendar-sky-card__title">{title}</h2>
+              {loading ? <div className="calendar-sky-card__title" aria-hidden="true"><SkeletonBar title /></div>
+                : contentState !== "error" ? <h2 className="calendar-sky-card__title">{title}</h2> : null}
               <p className="calendar-sky-card__meta">
-                {elementTag ? (
+                {loading ? <span aria-hidden="true"><SkeletonBar short /></span> : contentState !== "error" ? <>{elementTag ? (
                   <span className={`calendar-sky-card__element ${elementClass ?? ""}`}>{elementTag}</span>
                 ) : null}
                 {metaLine ? <span>{metaLine}</span> : null}
+                </> : null}
               </p>
             </div>
           </div>

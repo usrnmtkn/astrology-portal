@@ -28,7 +28,8 @@ await build({
 
 const {
   calendarEventGeneratedContentKeys,
-  calendarTransitDetailContentKeys
+  calendarTransitDetailContentKeys,
+  calendarContentRequestResolved
 } = await import(`${pathToFileURL(bundleFile).href}?t=${Date.now()}`);
 
 await build({
@@ -223,6 +224,16 @@ assert.equal(
   null,
   "Calendar aspects must remain on the Sky aspect resolver."
 );
+
+// A completed partial request must not reveal a new range or later event keys.
+const initialRequest = { cacheKey: "new-york:week:2026-07-26", contentKeys: calendarEventGeneratedContentKeys(ingressEvent) };
+const fullRequest = { ...initialRequest, contentKeys: [...initialRequest.contentKeys, ...calendarEventGeneratedContentKeys(aspectEvent)] };
+assert.equal(calendarContentRequestResolved(fullRequest, initialRequest), false);
+assert.equal(calendarContentRequestResolved(fullRequest, fullRequest), true);
+assert.equal(calendarContentRequestResolved(initialRequest, fullRequest), true, "A warmed superset stays ready without replaying loaders.");
+assert.equal(calendarContentRequestResolved({ ...fullRequest, cacheKey: "tokyo:week:2026-07-26" }, fullRequest), false);
+assert.equal(calendarContentRequestResolved({ ...fullRequest, cacheKey: "new-york:week:2026-08-02" }, fullRequest), false);
+assert.equal(calendarContentRequestResolved(fullRequest, null), false);
 
 const aspectKeys = calendarEventGeneratedContentKeys(aspectEvent);
 assert.equal(aspectKeys.length, 5, "Calendar aspects must request composed publications in both orders plus evergreen, dated, and exact Studio keys.");
@@ -537,7 +548,7 @@ assert.doesNotMatch(
 );
 assert.match(
   calendarSource,
-  /getLunarCalendarRangeEvents\([\s\S]*?new Date\(season\.startsAt\),[\s\S]*?new Date\(season\.endsAt\)/u,
+  /getLunarCalendarRangeEvents\([\s\S]*?new Date\(seasonStartsAt\),[\s\S]*?new Date\(seasonEndsAt\)/u,
   "Calendar must load the zodiac season's lean event range using the calculated ingress instants."
 );
 assert.match(
@@ -547,7 +558,7 @@ assert.match(
 );
 assert.match(
   calendarSource,
-  /setSeasonEvents\(events\.filter\(\(event\) => \([\s\S]*?event\.type === "lunation"[\s\S]*?event\.startsAt >= season\.startsAt[\s\S]*?event\.startsAt < season\.endsAt/u,
+  /setSeasonEvents\(events\.filter\(\(event\) => \([\s\S]*?event\.type === "lunation"[\s\S]*?event\.startsAt >= seasonStartsAt[\s\S]*?event\.startsAt < seasonEndsAt/u,
   "The season milestone loader must retain the New and Full Moon across the complete zodiac season."
 );
 assert.match(

@@ -11019,6 +11019,9 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
   const [skyGeneratedContent, setSkyGeneratedContent] = useState<GeneratedContentMap>(() => normalizedSkySnapshotContent);
   const [calendarContentStatus, setCalendarContentStatus] = useState<CalendarContentStatus>("idle");
   const [calendarContentRequest, setCalendarContentRequest] = useState<CalendarContentRequest | null>(null);
+  const [resolvedCalendarContent, setResolvedCalendarContent] = useState<{
+    request: CalendarContentRequest; content: GeneratedContentMap;
+  } | null>(null);
   const calendarContentCacheRef = useRef(new Map<string, CalendarContentCacheEntry>());
   const [natalGeneratedContent, setNatalGeneratedContent] = useState<GeneratedContentMap>(() => new Map());
   const [relationshipGeneratedContent, setRelationshipGeneratedContent] = useState<GeneratedContentMap>(() => new Map());
@@ -11421,6 +11424,9 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
         const hydratedContent = mergeGeneratedContentMaps(content, skyGeneratedContent);
 
         setSkyGeneratedContent(hydratedContent);
+        setResolvedCalendarContent(current => current ? {
+          ...current, content: mergeGeneratedContentMaps(content, current.content)
+        } : current);
 
         if (calendarContentRequest) {
           const cacheKey = `${generatedContentPreviewMode}:${calendarContentRequest.cacheKey}`;
@@ -12332,7 +12338,9 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
       setCalendarContentStatus("idle");
     }
 
-    if (!shouldLoadSkyGenerated || !sky) {
+    // Calendar content is keyed by calculated calendar events, independently of
+    // the selected Sky snapshot. Start both loads without a Sky/content waterfall.
+    if (!shouldLoadSkyGenerated || (!sky && mode !== "calendar")) {
       setSkyGeneratedContent(normalizedSkySnapshotContent);
       return () => {
         cancelled = true;
@@ -12360,6 +12368,8 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
 
       if (missingKeys.length === 0) {
         setCalendarContentStatus("ready");
+        setResolvedCalendarContent({ request: calendarContentRequest,
+          content: eligibleSkyDetailContent(mergeGeneratedContentMaps(cached.content, normalizedSkySnapshotContent)) });
         return () => {
           cancelled = true;
         };
@@ -12387,14 +12397,18 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
             calendarContentCacheRef.current.delete(oldestKey);
           }
 
-          setSkyGeneratedContent(mergeGeneratedContentMaps(nextEntry.content, normalizedSkySnapshotContent));
+          const resolvedContent = mergeGeneratedContentMaps(nextEntry.content, normalizedSkySnapshotContent);
+          setSkyGeneratedContent(resolvedContent);
           setCalendarContentStatus("ready");
+          setResolvedCalendarContent({ request: calendarContentRequest, content: resolvedContent });
         })
         .catch((error) => {
           console.warn("Calendar content refresh failed; retaining eligible loaded writing.", error);
           if (!cancelled) {
-            setSkyGeneratedContent(eligibleSkyDetailContent(cached.content));
+            const retainedContent = eligibleSkyDetailContent(cached.content);
+            setSkyGeneratedContent(retainedContent);
             setCalendarContentStatus("ready");
+            setResolvedCalendarContent({ request: calendarContentRequest, content: retainedContent });
           }
         });
 
@@ -12409,7 +12423,7 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
       ...new Set([
         ...cmsSurfaceKeys.retrogradeSummary(),
         ...cmsSurfaceKeys.skyDebility(),
-        ...(sky.moonEvent ? lunationReaderContentKeys({startsAt:sky.moonEvent.occursAt,sign:sky.moonEvent.sign,title:sky.moonEvent.name}) : [])
+        ...(sky?.moonEvent ? lunationReaderContentKeys({startsAt:sky.moonEvent.occursAt,sign:sky.moonEvent.sign,title:sky.moonEvent.name}) : [])
       ])
     ];
 
@@ -14788,8 +14802,11 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
                 <CalendarRoute
                   sky={sky}
                   fallback={<CalendarDaySkeleton message="Loading calendar…" />}
-                  generatedContent={skyGeneratedContent}
+                  generatedContent={resolvedCalendarContent?.content ?? normalizedSkySnapshotContent}
                   generatedContentStatus={calendarContentStatus}
+                  resolvedContentRequest={resolvedCalendarContent?.request}
+                  skyState={skyStatus === "cached" ? "loading" : skyStatus === "stale" ? "ready" : skyStatus}
+                  onRetrySky={() => setSkyRefreshKey(Date.now())}
                   skyPlacementContentStatus={skyPlacementFallbackStatus}
                   contentVersion={fallbackArchitectureV3Version}
                   location={location}
