@@ -142,6 +142,7 @@ for(const [width,theme] of [[390,'dark'],[1440,'light']] as const){
    await f.call({method:'writer-state',body:{nextResult:{status:'failed',error:{code:'credit_balance_exhausted',message:'Private fixture billing details'},output:[]}}});
    await studio.getByRole('button',{name:'Check saved progress',exact:true}).click();
    await expect(studio.getByRole('alert')).toContainText('The AI writer has run out of API credits.');
+   await expect(studio.getByText('12 readings still need drafts. Existing writing is kept.',{exact:true})).toBeVisible();
    await expect(studio.getByRole('button',{name:'Retry Aries',exact:true})).toBeDisabled();
    const failed=await f.latest();expect(failed.source_snapshot.horoscopeGeneration.lastError.code).toBe('api_credits');
    await page.reload();await f.open();

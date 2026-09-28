@@ -308,7 +308,7 @@ export default function HoroscopeEditionsStudio({secret}:{secret:string}) {
         </details>
         {busy&&!running.current&&!plan&&!checking&&<PageLoading message="Preparing your writing plan…"/>}
         {plan&&<>
-          <p>{empty} missing {empty===1?'reading':'readings'} will be generated. Existing writing is kept.</p>
+          <p>{empty} {empty===1?'reading still needs a draft':'readings still need drafts'}. Existing writing is kept.</p>
           <div className="admin-horoscope-signs" role="group" aria-label="Writing plans by sign">{plan.readings.map((entry:any)=><StudioButton key={entry.sign} aria-pressed={sign===entry.sign} onClick={()=>setSign(entry.sign)}>{horoscopeSignLabel(entry.sign)}</StudioButton>)}</div>
           {planEntry&&<section className="admin-horoscope-plan" aria-label={`${horoscopeSignLabel(sign)} writing plan`}><h3>{horoscopeSignLabel(sign)} writing plan</h3><p>{planEntry.developments?.events.length??0} calculated developments · {draft.window.timeZone}</p><p className="admin-horoscope-outline">{planEntry.outline}</p><details className="admin-workspace-details"><AdminDisclosureSummary>Full plan details</AdminDisclosureSummary>{planEntry.developments?.events.length>0&&<ul>{planEntry.developments.events.map((event:any)=><li key={event.id}>{event.title} · {event.localTiming} · House {event.house}: {event.domain}</li>)}</ul>}{Object.entries({thesis:'Main idea',transit_job:'Astrology',recognition:'What readers may notice',complication:'Possible complication',response:'Useful response',scope_guard:'Dates and limits'}).map(([key,label])=><p key={key}><strong>{label}: </strong>{planEntry.argument[key]}</p>)}</details></section>}
         </>}
