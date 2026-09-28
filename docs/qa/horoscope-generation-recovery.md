@@ -103,3 +103,26 @@ The patch does not refill credits or authorize a fresh paid writing run.
 For older generic failures, **Check saved progress** can inspect the exact stored
 failed response through the authenticated server. It returns only safe diagnostics,
 never the credential, prompt or provider prose, and leaves the edition unchanged.
+
+## Reopening historical failures after account recovery
+
+Opening an incomplete saved edition now inspects an older generic failure while
+preparing its writing plan. The operator does not need to discover **Check saved
+progress** to learn why the previous attempt stopped. Current structured failure
+receipts are displayed directly without another provider read. Credit exhaustion
+is explicitly described as the previous attempt's result, not the account's
+current balance. After adding credits, the operator approves the current plan
+and uses **Retry [sign]** for one fresh request.
+
+If the historical diagnostic is temporarily unavailable, Studio keeps the plan
+and recovery control usable. Opening, reloading, revisiting Dates, and checking
+progress never retry generation automatically or modify the failed edition.
+The seasonal reference date remains September 1; its calculated window remains
+the solar season containing that date.
+
+The browser regression adds legacy saved failures in mobile/dark and
+desktop/light layouts, automatic diagnosis on open, temporary diagnostic failure
+and recovery, exact row preservation, unchanged reference date, and no additional
+provider starts. These use the actual handlers with isolated storage and a
+synthetic provider. They do not verify a replenished production balance or claim
+a successful live generation.
