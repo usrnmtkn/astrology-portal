@@ -61,7 +61,7 @@ try {
   assert.equal(calendarTransitionPhraseRecordForKey('authored/calendar-moon-context/unknown'), null);
   const denied = await store.invoke('GET', undefined, '/api/admin/generated-content-inventory?contentKeyPrefix=authored/calendar-moon-context/', 'invalid');
   assert.equal(denied.status, 401);
-  console.log('PASS: all 26 transition phrase sources browse, open, save, publish, reach the actual published-content loader, and reject stale/unauthorized requests.');
+  console.log(`PASS: all ${records.length} transition phrase sources browse, open, save, publish, reach the actual published-content loader, and reject stale/unauthorized requests.`);
 } finally { rmSync(bundle, { force: true }); store.close(); }
 
 // Exercise the real assembly used by both reader views and the Studio preview.

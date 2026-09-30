@@ -53,7 +53,7 @@ function seasonPassage(generatedContent: Map<string, LiveGeneratedContent> | und
   return { body, key };
 }
 
-function calendarMonthlyOverviewFacts(
+export function calendarMonthlyOverviewFacts(
   calendar: LunarCalendarMonth,
   generatedContent?: Map<string, LiveGeneratedContent>
 ) {

@@ -1,3 +1,4 @@
+import { calendarPassageIdentity, calendarPassageErrors } from '../../src/calendar-writing/passageContract.js';
 import { calendarTransitionPhraseRecordForKey } from "./calendar-transition-phrase-sources.js";
 import { isCalendarMoonIngressContentKey } from "./calendar-moon-ingress-sources.js";
 import coreManifest from "../../apps/web/src/content/fallbackArchitectureV3/bundled-core-manifest-v3.json" with { type: "json" };
@@ -21,6 +22,10 @@ export function packagePublicationAdmissionIssue(row: Record<string, any>): stri
   if (!isPackage) return null;
   const key = String(row.content_key ?? "");
   if (record.contentKey && record.contentKey !== key) return "The source and publication have different content keys. Reopen the correct source before publishing.";
+  if (key.startsWith("calendar-passage/")) {
+    if (!calendarPassageIdentity(key)) return "Invalid Calendar passage identity.";
+    return calendarPassageErrors(String(row.body ?? "")).join(" ") || null;
+  }
   // Calendar's governed exact records have their own targeted reader and
   // owner-approval path, rather than the fallback package loader.
   if (record.source_package === "CALENDAR-ASPECT-CONSEQUENCE-FIRST-CONTENT-STUDIO-2026-09-01") return null;
