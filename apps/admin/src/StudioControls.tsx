@@ -71,9 +71,11 @@ export const StudioInput = forwardRef<HTMLInputElement, ComponentPropsWithoutRef
   }
 );
 const StudioFormattingEditor = lazy(() => import("./StudioFormattingEditor"));
-export const StudioTextarea = forwardRef<HTMLTextAreaElement, ComponentPropsWithoutRef<"textarea"> & { formatting?: boolean }>(
-  function StudioTextarea({ formatting = true, ...props }, ref) {
+export const StudioTextarea = forwardRef<HTMLTextAreaElement, ComponentPropsWithoutRef<"textarea"> & { formatting?: boolean; highlight?: ReactNode }>(
+  function StudioTextarea({ formatting = true, highlight, ...props }, ref) {
     const textarea = useRef<HTMLTextAreaElement>(null);
+    const backdrop = useRef<HTMLSpanElement>(null);
+    const highlighted = highlight !== undefined && !props.disabled;
     const [format, setFormat] = useState<{ value: string; label: string } | null>(null);
     const [label, setLabel] = useState<string>();
     useLayoutEffect(() => {
@@ -87,9 +89,27 @@ export const StudioTextarea = forwardRef<HTMLTextAreaElement, ComponentPropsWith
       setLabel(labels || undefined);
     });
     useImperativeHandle(ref, () => textarea.current!, []);
+    const syncHighlight = () => {
+      const field = textarea.current, layer = backdrop.current;
+      if (!field || !layer) return;
+      const text = layer.firstElementChild as HTMLElement;
+      // Match the native field's actual text width, including classic scrollbars.
+      text.style.width = `${field.clientWidth}px`;
+      layer.style.height = `${field.offsetHeight}px`;
+      layer.scrollTop = field.scrollTop;
+      layer.scrollLeft = field.scrollLeft;
+    };
+    useLayoutEffect(syncHighlight);
+    useEffect(() => {
+      if (!highlighted || format || !textarea.current) return;
+      const observer = new ResizeObserver(syncHighlight);
+      observer.observe(textarea.current);
+      return () => observer.disconnect();
+    }, [highlighted, Boolean(format)]);
     const close = () => { setFormat(null); requestAnimationFrame(() => textarea.current?.focus()); };
-    return <span className="studio-writing-field">
-      <textarea {...props} aria-label={props["aria-label"] ?? (props["aria-labelledby"] ? undefined : label)} ref={textarea} hidden={Boolean(format)} data-studio-component="textarea" />
+    return <span className={`studio-writing-field${highlighted && !format ? ' studio-highlighted-field' : ''}`}>
+      {highlighted && !format && <span ref={backdrop} className="studio-highlighted-backdrop" aria-hidden="true"><span>{highlight}{'\u200b'}</span></span>}
+      <textarea {...props} onScroll={event => { syncHighlight(); props.onScroll?.(event); }} aria-label={props["aria-label"] ?? (props["aria-labelledby"] ? undefined : label)} ref={textarea} hidden={Boolean(format)} data-studio-component="textarea" />
       {format ? <Suspense fallback={<span role="status">Loading formatting…</span>}>
         <StudioFormattingEditor value={typeof props.value === "string" ? props.value : format.value} label={format.label} maxLength={props.maxLength} onDone={close} onChange={value => {
           const field = textarea.current;

@@ -1,7 +1,9 @@
 import { CalendarPassageProse } from '../../web/src/features/calendar/CalendarPassageProse';
 import { lunarContentIdentity } from './lunarCalendarContent';
 import { useEffect, useMemo, useState } from 'react';
-import { StudioButton, StudioInput, StudioTextarea } from './StudioControls';
+import { StudioButton, StudioInput } from './StudioControls';
+import CalendarPassageTemplateEditor from './CalendarPassageTemplateEditor';
+import { calendarVariableColor } from './calendarOverviewTemplate';
 import { AdminSelect } from './AdminNativeControls';
 import { calculateCalendarPreview, type CalendarPreviewCalculation } from './calendarPreviewCalculation';
 import { calendarPreviewSourceKeys, type CalendarPreviewRow } from './calendarPreviewModel';
@@ -162,7 +164,7 @@ export default function CalendarPassageEditor({ period: studioPeriod, loadRows, 
     {error && <p role="alert">{error}</p>}
     {ready && <>
       {(sourcesChanged || sourceChanges && sourceChanges.length > 0) && <p role="note">Shared writing has changed since this passage was loaded or saved. Your wording has been preserved. {sourcesChanged ? 'Save your draft and reload the sources before publishing.' : 'Review the assembled preview before publishing.'}</p>}
-      <label><span>{scope === 'date' ? 'Complete passage for this date' : 'Shared passage template'}</span><StudioTextarea aria-label="Complete passage wording" rows={12} value={body} disabled={busy} onChange={event => setBody(event.target.value)} /></label>
+      <CalendarPassageTemplateEditor value={body} onChange={setBody} disabled={busy} values={values} label={scope === 'date' ? 'Complete passage for this date' : 'Shared passage template'} />
       <div className="admin-new-actions">
         {scope === 'date' && <StudioButton disabled={busy} onClick={() => setBody(calendarEditablePassage(body, values))}>Expand shared writing for this date</StudioButton>}
         <StudioButton disabled={busy} onClick={() => setShowSources(value => !value)}>{showSources ? 'Hide sources and variables' : 'Sources and variables'}</StudioButton>
@@ -173,7 +175,7 @@ export default function CalendarPassageEditor({ period: studioPeriod, loadRows, 
         {rendered ? <CalendarPassageProse text={rendered} /> : <p role="status">{errors.join(' ') || 'A required source or variable is unavailable for this date. Check Sources and variables before publishing.'}</p>}
       </div></div>
       {showSources && <div className="admin-editor-guidance"><p>Insert a variable or open its shared writing. The preview above uses the same assembly as the Calendar.</p>
-        <div className="admin-data-table-scroll"><table className="admin-data-table"><thead><tr><th>Variable</th><th>Value preview</th><th>Action</th></tr></thead><tbody>{Object.entries(values).map(([name, value]) => <tr key={name}><td data-label="Variable">{`{{${name}}}`}</td><td data-label="Value preview">{value.text.slice(0, 180)}{value.text.length > 180 ? '…' : ''}</td><td data-label="Action"><StudioButton onClick={() => setBody(text => `${text}{{${name}}}`)}>Insert {name}</StudioButton>{value.sourceKey && sources.find(row => row.content_key === value.sourceKey) && <StudioButton onClick={() => onEditSource(sources.find(row => row.content_key === value.sourceKey)!)}>Edit shared {name}</StudioButton>}</td></tr>)}</tbody></table></div>
+        <div className="admin-data-table-scroll"><table className="admin-data-table"><thead><tr><th>Variable</th><th>Value preview</th><th>Action</th></tr></thead><tbody>{Object.entries(values).map(([name, value]) => <tr key={name}><td data-label="Variable"><code data-variable-name={name} data-variable-color={calendarVariableColor(name)}>{`{{${name}}}`}</code><small className="admin-field-hint">{value.kind === 'copy' ? 'Saved writing' : 'Calculated value'}</small></td><td data-label="Value preview">{value.text.slice(0, 180)}{value.text.length > 180 ? '…' : ''}</td><td data-label="Action"><StudioButton onClick={() => setBody(text => `${text}{{${name}}}`)}>Insert {name}</StudioButton>{value.sourceKey && sources.find(row => row.content_key === value.sourceKey) && <StudioButton onClick={() => onEditSource(sources.find(row => row.content_key === value.sourceKey)!)}>Edit shared {name}</StudioButton>}</td></tr>)}</tbody></table></div>
         {usedSources.length > 0 && <div className="admin-new-actions">{usedSources.map(row => <StudioButton key={row.id} onClick={() => onEditSource(row)}>Edit {lunarContentIdentity(row.content_key)?.title ?? "shared source"}</StudioButton>)}</div>}
         <a className="admin-source-action" href="#calendar-writeups?view=moon-transition-phrases">Edit Moon transition and timing templates</a>
       </div>}
