@@ -56,6 +56,7 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
     await page.goto("/admin/content#sky-writeups?view=daily-summary");
     const reference = await page.getByRole("heading", { name: "Sun and Moon together", exact: true }).evaluate(style);
     await page.goto("/admin/content#calendar-writeups?view=weekly-sky");
+    await page.getByText("Reference templates and source previews", {exact:true}).click();
     const preview = page.getByRole("region", { name: "Calendar template preview", exact: true });
     await preview.getByLabel("Preview source").selectOption("signs");
     await preview.getByLabel("Preview Sun sign").selectOption("Virgo");
@@ -69,7 +70,7 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
     const sunColor = await rendered.locator('[data-variable-name="sunSign"]').evaluate(colorStyle);
     expect(sunColor[1]).not.toBe("rgba(0, 0, 0, 0)");
     expect(await preview.getByRole("heading", { name: "Template preview" }).evaluate(style)).toEqual(reference);
-    expect(await page.locator(".admin-main h1,.admin-main h2,.admin-main h3,.admin-main h4").allTextContents()).toEqual(["Calendar Write-ups", "Calendar writing workspaces", "Weekly overview template", "Template preview"]);
+    expect(await page.locator(".admin-main h1,.admin-main h2,.admin-main h3,.admin-main h4").allTextContents()).toEqual(["Calendar Write-ups", "Calendar writing workspaces", "Complete passage", "Weekly overview template", "Template preview"]);
     await preview.getByLabel("Preview Sun sign").selectOption("Leo");
     await preview.getByLabel("Preview Moon sign").selectOption("Taurus");
     await expect(rendered).toContainText("The Sun in Leo shows the leo fixture.");
@@ -151,7 +152,8 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
 test("Calendar preview calculates two real skies and clears unavailable facts", async ({ page }) => {
   const state = await fixture(page);
   await page.goto("/admin/content#calendar-writeups?view=daily-sky");
-  const preview = page.getByRole("region", { name: "Calendar template preview", exact: true });
+  await page.getByText("Reference templates and source previews", {exact:true}).click();
+    const preview = page.getByRole("region", { name: "Calendar template preview", exact: true });
   for (const date of ["2026-09-14T12:00", "2027-01-12T12:00"]) {
     const instant = await page.evaluate(value => new Date(value).toISOString(), date);
     const timeZone = await page.evaluate(() => Intl.DateTimeFormat().resolvedOptions().timeZone);
@@ -220,7 +222,8 @@ test("Calendar source editing opens a complete existing draft and stays in the w
   Object.assign(source, { id: `package:${key}`, status: "DRAFT", surface: "you", lane: "reference", review_state: "needs-review",
     sections: { packageRecord: { contentKey: key, content_role: "fallback_hook", body: source.body, review_status: "needs_review", sign: "virgo", grammar_frame: "complete_sentence", calendarWritingSource: { title: "Sign season content", originalBody: source.body } } } });
   await page.goto("/admin/content#calendar-writeups?view=weekly-sky");
-  const preview = page.getByRole("region", { name: "Calendar template preview", exact: true });
+  await page.getByText("Reference templates and source previews", {exact:true}).click();
+    const preview = page.getByRole("region", { name: "Calendar template preview", exact: true });
   await preview.getByLabel("Preview source").selectOption("signs");
   await preview.getByLabel("Preview Sun sign").selectOption("Virgo");
   await preview.getByRole("tab", { name: "Variables", exact: true }).click();
@@ -254,7 +257,8 @@ test("Monthly overview structure is an explicit draft change and preserves saved
   state.rows.push({ ...state.rows[0], id: "monthly", content_key: monthly.contentKey, headline: monthly.headline, body: previous,
     sections: { contentStudioReview: { decision: "approved-exact-copy", copySha256: "fixture-prior-review" }, preservedMetadata: "Fixture existing metadata", calendarOverview: { monthlyIntegration: "Fixture complete saved ending." } } });
   await page.goto("/admin/content#calendar-writeups?view=monthly-sky");
-  const preview = page.getByRole("region", { name: "Calendar template preview", exact: true });
+  await page.getByText("Reference templates and source previews", {exact:true}).click();
+    const preview = page.getByRole("region", { name: "Calendar template preview", exact: true });
   await preview.getByLabel("Preview source").selectOption("signs");
   await preview.getByLabel("Preview Sun sign").selectOption("Virgo");
   await preview.getByLabel("Preview Moon sign").selectOption("Cancer");
@@ -302,7 +306,8 @@ test("Monthly editorial structure is opt-in and keeps saved overview passages", 
   state.rows.push({ ...state.rows[0], id: "monthly-editorial", content_key: monthly.contentKey, headline: monthly.headline, body: previous,
     sections: { preservedMetadata: "Fixture existing metadata", calendarOverview: { monthlyOverview: "Fixture saved monthly overview.", monthlyIntegration: "Fixture complete saved ending." } } });
   await page.goto("/admin/content#calendar-writeups?view=monthly-sky");
-  const preview = page.getByRole("region", { name: "Calendar template preview", exact: true });
+  await page.getByText("Reference templates and source previews", {exact:true}).click();
+    const preview = page.getByRole("region", { name: "Calendar template preview", exact: true });
   await preview.getByLabel("Preview source").selectOption("signs");
   await preview.getByLabel("Preview Sun sign").selectOption("Virgo");
   await preview.getByLabel("Preview Moon sign").selectOption("Cancer");
@@ -353,7 +358,8 @@ test("Weekly overview starter uses Monday Moon sign and passage", async ({ page 
   const moon = state.rows.find(row => row.content_key === "authored/calendar-weekly-moon/scorpio");
   moon.source_snapshot.focus = "Necessary endings, emotional honesty, powerful truth";
   await page.goto("/admin/content#calendar-writeups?view=weekly-sky");
-  const preview = page.getByRole("region", { name: "Calendar template preview", exact: true });
+  await page.getByText("Reference templates and source previews", {exact:true}).click();
+    const preview = page.getByRole("region", { name: "Calendar template preview", exact: true });
   await preview.getByLabel("Preview source").selectOption("signs");
   await preview.getByLabel("Preview Sun sign").selectOption("Capricorn");
   await preview.getByLabel("Preview Moon sign").selectOption("Scorpio");
@@ -374,6 +380,7 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
     await page.setViewportSize({ width, height: 1000 });
     await page.addInitScript(theme => localStorage.setItem("tldrastro:studio-theme", theme), theme);
     await page.goto("/admin/content#calendar-writeups?view=weekly-sky");
+    await page.getByText("Reference templates and source previews", {exact:true}).click();
     const preview = page.getByRole("region", { name: "Calendar template preview", exact: true });
     await preview.getByLabel("Preview source").selectOption("signs");
     await preview.getByLabel("Preview Sun sign").selectOption("Virgo");
@@ -434,7 +441,8 @@ test("Daily composed Moon phrases open continuation and season sources separatel
     { id: "transition", content_key: seasonKey, body: "Fixture season transition {{date}}. Fixture season final sentence.", status: "LIVE", lane: "serving", source_snapshot: { content_role: "full_copy", review_status: "approved_reuse" } }
   );
   await page.goto("/admin/content#calendar-writeups?view=daily-sky");
-  const preview = page.getByRole("region", { name: "Calendar template preview", exact: true });
+  await page.getByText("Reference templates and source previews", {exact:true}).click();
+    const preview = page.getByRole("region", { name: "Calendar template preview", exact: true });
   await preview.getByLabel("Preview date and time").fill("2026-09-20T12:00");
   const rendered = preview.getByLabel("Rendered Calendar template");
   await expect(rendered).toContainText("Fixture season transition in 2 days. Fixture season final sentence.");
@@ -461,7 +469,8 @@ test("Editing a packaged Moon phrase previews the draft and cancel restores the 
   source.id = `package:${source.content_key}`;
   source.sections = { packageRecord: { contentKey: source.content_key, content_role: "full_copy", review_status: "approved_reuse", body: source.body } };
   await page.goto("/admin/content#calendar-writeups?view=weekly-sky");
-  const preview = page.getByRole("region", { name: "Calendar template preview", exact: true });
+  await page.getByText("Reference templates and source previews", {exact:true}).click();
+    const preview = page.getByRole("region", { name: "Calendar template preview", exact: true });
   await preview.getByLabel("Preview source").selectOption("signs");
   await preview.getByLabel("Preview Moon sign").selectOption("Cancer");
   const rendered = preview.getByLabel("Rendered Calendar template");
@@ -479,7 +488,8 @@ test("Monthly unfilled phrases open the matching overview field; missing sources
   const state = await fixture(page);
   state.rows.splice(state.rows.findIndex(row => row.id === "sun-virgo"), 1);
   await page.goto("/admin/content#calendar-writeups?view=monthly-sky");
-  const preview = page.getByRole("region", { name: "Calendar template preview", exact: true });
+  await page.getByText("Reference templates and source previews", {exact:true}).click();
+    const preview = page.getByRole("region", { name: "Calendar template preview", exact: true });
   await preview.getByLabel("Preview source").selectOption("signs");
   const rendered = preview.getByLabel("Rendered Calendar template");
   await rendered.getByRole("button", { name: "Edit monthlyOverview", exact: true }).click();

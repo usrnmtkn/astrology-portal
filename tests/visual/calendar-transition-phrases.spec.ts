@@ -63,7 +63,7 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark'] as const)
       await workspace.getByRole('button', { name: 'Retry phrases', exact: true }).click();
       await expect(workspace.getByText('Loading saved transition phrases…')).toBeVisible();
       release(); gate = null;
-      await expect(table.locator('tbody tr')).toHaveCount(26);
+      await expect(table.locator('tbody tr')).toHaveCount(41);
       await expect(table).toContainText('If you already started it yesterday');
       await expect(table).toContainText('Repeat what actually made yesterday easier');
       await expect(table).toContainText('Keep the part that became clear.');
@@ -110,7 +110,7 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark'] as const)
       await expect(workspace.getByText('No transition phrases match these filters.')).toBeVisible();
       await page.screenshot({ path: `test-results/transition-phrases-empty-${width}-${theme}.png`, fullPage: true });
       await workspace.getByRole('button', { name: 'Reset filters', exact: true }).click();
-      await expect(table.locator('tbody tr')).toHaveCount(26);
+      await expect(table.locator('tbody tr')).toHaveCount(41);
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 
       await workspace.getByRole('button', { name: 'Edit Moon in Aries · Continuation', exact: true }).click();

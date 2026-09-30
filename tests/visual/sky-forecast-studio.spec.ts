@@ -12,6 +12,11 @@ function fixtureRows() {
     sections: null, facts: null, updated_at: "2026-09-14T12:00:00.000Z"
   }];
 }
+async function openReferences(page: Page) {
+  const section = page.locator('details').filter({has: page.getByText('Reference templates and source previews', {exact:true})});
+  await expect(section).toBeVisible();
+  if (!(await section.getAttribute('open') === '')) await section.locator('summary').click();
+}
 async function studioApi(page: Page, rows = fixtureRows()) {
   const writes: any[] = [];
   await page.addInitScript(() => localStorage.setItem("tldrastro:contentAdminSecret", "sky-forecast-fixture"));
@@ -64,13 +69,15 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
     await expect(tabs.getByRole("tab")).toHaveText(["Daily Sky", "Weekly Sky", "Monthly Sky", "New & Full Moons & Eclipses", "Lunar ingresses", "Moon transition phrases", "Planetary ingresses", "Planetary stations", "Season write-ups", "Season transitions", "Subscription events"]);
     await expect(page.getByLabel("Calendar Write-ups sections").getByRole("button", { includeHidden: true })).toHaveText(["Daily Sky", "Weekly Sky", "Monthly Sky", "New & Full Moons & Eclipses", "Lunar ingresses", "Moon transition phrases", "Planetary ingresses", "Planetary stations", "Season write-ups", "Season transitions", "Subscription events"]);
     await tabs.getByRole("tab", { name: "Weekly Sky", exact: true }).click();
+    await openReferences(page);
     const heading = page.getByRole("heading", { name: "Weekly overview template", exact: true });
     await expect(heading).toBeVisible();
     expect(await heading.evaluate(headingStyle)).toEqual(summaryStyle);
-    await expect(page.locator(".admin-main h1, .admin-main h2, .admin-main h3")).toHaveText(["Calendar Write-ups", "Calendar writing workspaces", "Weekly overview template"]);
+    await expect(page.locator(".admin-main h1, .admin-main h2, .admin-main h3")).toHaveText(["Calendar Write-ups", "Calendar writing workspaces", "Complete passage", "Weekly overview template"]);
     const notification = page.getByRole("button", { name: "Dismiss notification", exact: true });
     if (await notification.isVisible()) await notification.click();
     await page.screenshot({ path: `test-results/sky-weekly-${width}-${theme}.png`, fullPage: true });
+    await openReferences(page);
     await page.getByRole("button", { name: "Open weekly template" }).click();
     await expect(page.getByLabel("Template pattern", { exact: true })).toHaveValue(weeklyBody);
     await expect(page.getByLabel("Template purpose (optional)", { exact: true })).toHaveValue(weeklyNotes);
@@ -83,10 +90,12 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
     expect(writes[0].summary).toBe(`${weeklyNotes} Added editor note.`);
     expect(writes[0].status).toBe("DRAFT");
     await page.reload();
+    await openReferences(page);
     await page.getByRole("button", { name: "Open weekly template" }).click();
     await expect(page.getByLabel("Template pattern", { exact: true })).toHaveValue(weeklyBody);
     await page.getByRole("dialog", { name: "Generated content editor" }).getByRole("button", { name: "Close", exact: true }).click();
     await tabs.getByRole("tab", { name: "Monthly Sky", exact: true }).click();
+    await openReferences(page);
     await expect(page.getByRole("heading", { name: "Monthly overview template" })).toBeVisible();
     expect(await page.getByRole("heading", { name: "Monthly overview template" }).evaluate(headingStyle)).toEqual(summaryStyle);
     await expect(page.getByText("Open to find your saved template or start a draft.", { exact: false })).toBeVisible();
@@ -100,6 +109,7 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
     expect(writes[1].blockType).toBe("fallback_template");
     expect(writes[1].lane).toBe("reference");
     await page.reload();
+    await openReferences(page);
     await expect(page.getByText("Saved template · draft", { exact: true })).toBeVisible();
     if (await notification.isVisible()) await notification.click();
     await page.screenshot({ path: `test-results/sky-monthly-saved-${width}-${theme}.png`, fullPage: true });
@@ -120,6 +130,7 @@ test("Calendar forecast source errors do not open an empty replacement", async (
   await studioApi(page);
   await page.route("**/api/admin/generated-content-inventory?**contentKey=**", route => route.fulfill({ status: 503, json: { error: "Template source unavailable" } }));
   await page.goto("/admin/content#sky-writeups?view=weekly-sky");
+  await openReferences(page);
   await page.getByRole("button", { name: "Open weekly template" }).click();
   await expect(page.getByText("Template source unavailable", { exact: false })).toBeVisible();
   await expect(page.getByLabel("Template pattern", { exact: true })).toHaveCount(0);
@@ -137,6 +148,7 @@ test("Calendar forecast tabs leave Friends context and protect unsaved changes",
   const tabs = page.getByRole("tablist", { name: "Calendar Write-ups workspaces" });
   await tabs.getByRole("tab", { name: "Weekly Sky", exact: true }).click();
   await expect(page).toHaveURL(/#calendar-writeups\?view=weekly-sky$/);
+  await openReferences(page);
   await page.getByRole("button", { name: "Open weekly template" }).click();
   await page.getByLabel("Template pattern", { exact: true }).fill("{{unsavedTemplate}}");
   page.once("dialog", dialog => dialog.dismiss());

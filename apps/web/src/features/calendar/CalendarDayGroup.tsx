@@ -1,3 +1,4 @@
+import { CalendarPassageProse } from './CalendarPassageProse';
 import { FormattedProse } from "../../components/FormattedProse";
 import { ChevronRight } from "lucide-react";
 import type { ReactNode } from "react";
@@ -84,7 +85,7 @@ export function CalendarDayGroup({
       {paragraphs.length > 0 || prompt ? (
         <div className="calendar-day-group__blurb" data-guidance-key={guidanceKey || undefined}>
           {paragraphs.map((paragraph) => (
-            <FormattedProse key={paragraph.slice(0, 48)} text={paragraph} />
+            <CalendarPassageProse key={paragraph.slice(0, 48)} text={paragraph} />
           ))}
           {prompt ? <FormattedProse className="calendar-day-group__prompt" text={prompt} /> : null}
         </div>

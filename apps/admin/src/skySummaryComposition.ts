@@ -9,7 +9,7 @@ import type { LiveGeneratedContent } from "../../web/src/services/generatedConte
 export type SummaryCompositionRow = {
   id?: string; updated_at?: string | null;
   content_key: string; body?: string | null; status: string; lane?: string | null;
-  summary?: string | null;
+  sections?: unknown; summary?: string | null;
   review_state?: string | null; inventory_only?: boolean; source_snapshot?: Record<string, unknown> | null;
 };
 export type SummaryCompositionDraft = { contentKey: string; body: string };
@@ -19,7 +19,7 @@ export function publishedSkySummaryContent(rows: SummaryCompositionRow[]) {
     && isGeneratedContentReaderBoundaryAllowed(row) && isReaderServableGeneratedContentRow(row)
     && !skySummaryTemplateErrors(row.content_key, row.body ?? "").length).map(row => [row.content_key, {
       id: row.id ?? row.content_key, contentKey: row.content_key, surface: "sky", mode: "feed", eventType: null,
-      targetDate: null, headline: null, summary: row.summary ?? null, body: currentSkySummaryWording(row.content_key, row.body ?? ""), sections: null, model: null,
+      targetDate: null, headline: null, summary: row.summary ?? null, body: currentSkySummaryWording(row.content_key, row.body ?? ""), sections: row.sections ?? null, model: null,
       updatedAt: row.updated_at ?? "", status: "LIVE"
     }]));
 }
@@ -48,7 +48,7 @@ export function buildSkySummaryComposition(sun: string, moon: string, rows: Summ
     if (copy?.trim() && !validation.length) {
       // This map is private to the editorial preview. Drafts are never passed to the reader.
       content.set(key, { id: saved?.id ?? key, contentKey: key, surface: "sky", mode: "feed", eventType: null,
-        targetDate: null, headline: null, summary: null, body: copy, sections: null, model: null, updatedAt: saved?.updated_at ?? "", status: "LIVE" });
+        targetDate: null, headline: null, summary: null, body: copy, sections: saved?.sections ?? null, model: null, updatedAt: saved?.updated_at ?? "", status: "LIVE" });
     }
     return { body, field, copy: copy?.trim() || field.body, status: editor ? "Open editor copy"
       : useSaved ? saved.status === "LIVE" ? readerReady ? "Published copy" : "Held copy (preview only)" : `Saved ${saved.status.toLowerCase()}`

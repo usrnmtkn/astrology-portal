@@ -1,3 +1,4 @@
+import { calendarTimingBody } from './calendarTimingTemplates.js';
 import { calendarFirstQuarterContinuationKey, calendarMoonContextBody } from "./calendarTransitionPhrases";
 import type { CalendarMoonCycleFacts } from "./calendarMoonCycle";
 import { calendarFirstQuarterCopy, calendarMoonPhaseCopy } from "./calendarMoonPhaseCopy";
@@ -69,12 +70,10 @@ function mentionsSameContext(moonText: string, contextText: string) {
   return markers.some((marker) => moon.includes(marker) && context.includes(marker));
 }
 
-function continuationOpening(sign: string, visitDay: number) {
-  if (visitDay <= 1) return `The Moon spends the day in ${sign}.`;
+function continuationOpening(facts: CalendarMoonCycleFacts, lookup?: (key: string) => string | null | undefined) {
+  const visitDay = facts.moonVisitDayIndex ?? facts.moonSignDayIndex;
   const cycle = (Math.max(visitDay, 2) - 2) % 3;
-  if (cycle === 0) return `The Moon spends another day in ${sign}.`;
-  if (cycle === 1) return `The Moon remains in ${sign} today.`;
-  return `The Moon is still in ${sign} today.`;
+  return calendarTimingBody(visitDay <= 1 ? 'firstDay' : cycle === 0 ? 'anotherDay' : cycle === 1 ? 'remains' : 'still', { ...facts }, lookup);
 }
 
 function signChangeSentence(facts: CalendarMoonCycleFacts, transition: string, lookup?: (key: string) => string | null | undefined) {
@@ -83,29 +82,29 @@ function signChangeSentence(facts: CalendarMoonCycleFacts, transition: string, l
   if (!facts.nextMoonSign || !time || hour == null) return null;
   if (hour < 6) {
     return joinParts(
-      `The Moon enters ${facts.nextMoonSign} at ${time}, so most of today belongs to ${facts.nextMoonSign}.`,
+      calendarTimingBody('earlyIngress', { ...facts }, lookup),
       transition
     );
   }
   if (hour < 11) {
     return joinParts(
-      `The day starts in ${facts.moonSign}, then the Moon enters ${facts.nextMoonSign} at ${time}.`,
+      calendarTimingBody('morningIngress', { ...facts }, lookup),
       transition
     );
   }
   if (hour < 15) {
     return joinParts(
-      `The Moon starts the day in ${facts.moonSign} and enters ${facts.nextMoonSign} at ${time}.`,
+      calendarTimingBody('middayIngress', { ...facts }, lookup),
       transition
     );
   }
   if (hour < 20) {
     return joinParts(
-      `The Moon stays in ${facts.moonSign} through most of the day before entering ${facts.nextMoonSign} at ${time}.`,
+      calendarTimingBody('eveningIngress', { ...facts }, lookup),
       transition
     );
   }
-  return joinParts(`The Moon stays in ${facts.moonSign} for most of today and enters ${facts.nextMoonSign} at ${time}.`, calendarMoonContextBody("lateIngress", lookup));
+  return joinParts(calendarTimingBody('lateIngress', { ...facts }, lookup), calendarMoonContextBody("lateIngress", lookup));
 }
 
 function hasExactLunarEvent(facts: CalendarMoonCycleFacts) {
@@ -247,28 +246,28 @@ function contextCopy(
     return {
       kind: "lastFullDayOfSeason",
       body: seasonTransitionContext(facts, options)
-        || joinParts(`This is the last full day of ${facts.seasonName} season.`, calendarMoonContextBody("lastFullDayOfSeason", options.transitionPhrase))
+        || joinParts(calendarTimingBody('lastSeasonDay', { ...facts }, options.transitionPhrase), calendarMoonContextBody("lastFullDayOfSeason", options.transitionPhrase))
     };
   }
   if (facts.isLastFullWeekendOfSeason && facts.seasonName) {
     return {
       kind: "lastFullWeekendOfSeason",
       body: seasonTransitionContext(facts, options)
-        || joinParts(`This is the last full weekend of ${facts.seasonName} season.`, calendarMoonContextBody("lastFullWeekendOfSeason", options.transitionPhrase))
+        || joinParts(calendarTimingBody('lastSeasonWeekend', { ...facts }, options.transitionPhrase), calendarMoonContextBody("lastFullWeekendOfSeason", options.transitionPhrase))
     };
   }
   if (facts.seasonName && facts.daysUntilSeasonEnd != null && facts.daysUntilSeasonEnd >= 2 && facts.daysUntilSeasonEnd <= 3) {
     return {
       kind: "finalDaysOfSeason",
       body: seasonTransitionContext(facts, options)
-        || joinParts(`${facts.seasonName} season is in its final days.`, calendarMoonContextBody("finalDaysOfSeason", options.transitionPhrase))
+        || joinParts(calendarTimingBody('finalSeasonDays', { ...facts }, options.transitionPhrase), calendarMoonContextBody("finalDaysOfSeason", options.transitionPhrase))
     };
   }
   if (facts.isFirstFullDayOfSeason && facts.seasonName) {
     return {
       kind: "firstFullDayOfSeason",
       body: joinParts(
-        `This is the first full day of ${facts.seasonName} season.`,
+        calendarTimingBody('firstSeasonDay', { ...facts }, options.transitionPhrase),
         options.seasonSummary?.trim()
       )
     };
@@ -322,7 +321,7 @@ export function resolveCalendarMoonFallback(
   const authoredPhase = options.authoredPhaseCopy?.body.trim() || options.exactQuarterCopy?.body.trim() || "";
   let moonKind: CalendarMoonFallbackKind = "moonPhaseContinuation";
   let moonBody = authoredPhase
-    || `The Moon remains in ${facts.moonSign} today, continuing the ${facts.moonPhase.toLowerCase()} phase.`;
+    || calendarTimingBody('phase', { ...facts, moonPhase: facts.moonPhase.toLowerCase() }, options.transitionPhrase);
   let allowContext = !authoredPhase
     || facts.isLastFullDayInMoonSign
     || Boolean(continuation);
@@ -337,7 +336,7 @@ export function resolveCalendarMoonFallback(
   } else if (facts.isLastFullDayInMoonSign && facts.nextMoonSign) {
     moonKind = "lastFullDayInMoonSign";
     moonBody = joinParts(
-      `The Moon spends the entire day in ${facts.moonSign} before it enters ${facts.nextMoonSign} tomorrow.`,
+      calendarTimingBody('lastFullDay', { ...facts }, options.transitionPhrase),
       continuation
     );
     allowContext = true;
@@ -348,7 +347,7 @@ export function resolveCalendarMoonFallback(
   } else if (continuation) {
     moonKind = "moonContinuation";
     moonBody = joinParts(
-      continuationOpening(facts.moonSign, facts.moonVisitDayIndex ?? facts.moonSignDayIndex),
+      continuationOpening(facts, options.transitionPhrase),
       continuation
     );
     allowContext = true;

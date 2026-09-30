@@ -1,3 +1,6 @@
+import { CalendarPassageProse } from './CalendarPassageProse';
+import { calendarPassageRequestKeys, useCalendarPassages } from './useCalendarPassages';
+import { calendarMoonResolvedByDate, packagedWeeklyMoon, moonWritingForDay, calendarMoonCycleFallbackPiece } from './calendarMoonSources';
 import { LoadingStatus, SkeletonBar } from "../../components/CardSkeleton";
 import { useMinimumLoading } from "../../hooks/useMinimumLoading";
 import { CalendarDaySkeleton } from "./CalendarDaySkeleton";
@@ -1810,167 +1813,6 @@ function journalGroupCopy(
   };
 }
 
-function calendarLiveBody(
-  generatedContent: Map<string, LiveGeneratedContent> | null | undefined,
-  contentKey: string,
-  packaged?: string | null
-) {
-  return generatedContent?.get(contentKey)?.body?.trim() || packaged?.trim() || "";
-}
-
-function calendarWeeklyMoonAuthoredPassages(
-  sign: string,
-  generatedContent: Map<string, LiveGeneratedContent> | null | undefined
-) {
-  const slug = slugContentPart(sign);
-  const passages: Array<{ body: string; contentKey: string }> = [];
-  for (let variant = 1; variant <= 4; variant += 1) {
-    const contentKey = variant === 1
-      ? `authored/calendar-weekly-moon/${slug}`
-      : `authored/calendar-weekly-moon/${slug}/variant-${variant}`;
-    if (contentKey === "authored/calendar-weekly-moon/cancer") continue;
-    const live = generatedContent?.get(contentKey)?.body?.trim();
-    if (live) {
-      passages.push({ body: live, contentKey });
-      continue;
-    }
-    try {
-      const rendered = calendarFallbackRendererV3.renderWeeklyMoon({ sign: slug, variant });
-      if (rendered.contentKey === contentKey && rendered.body.trim()) {
-        passages.push({ body: rendered.body.trim(), contentKey });
-      }
-    } catch (error) {
-      if (!(error instanceof FallbackV3SourceGapError)) throw error;
-    }
-  }
-  const seen = new Set<string>();
-  return passages.filter((passage) => {
-    const key = passage.body.replace(/\s+/g, " ").trim();
-    if (!key || seen.has(key)) return false;
-    seen.add(key);
-    return true;
-  });
-}
-
-function calendarMoonFallbackOptions(
-  day: LunarCalendarDay,
-  facts: CalendarMoonCycleFacts,
-  generatedContent: Map<string, LiveGeneratedContent> | null | undefined,
-  unusedAuthored?: { body: string; contentKey: string } | null,
-  authoredUsedThisVisit = false
-) {
-  const lunation = primaryLunationForDay(day);
-  const lunarSource = lunation ? resolveLunationReaderSource(lunation, generatedContent) : null;
-  const lunationKey = lunarSource?.contentKey ?? '';
-  const lunationBody = lunarSource?.body ?? '';
-  const seasonKey = facts.seasonName ? `fallback-hook/zodiac-season/${slugContentPart(facts.seasonName)}` : "";
-  const seasonBody = seasonKey
-    ? calendarLiveBody(generatedContent, seasonKey, fallbackV3HookBody(seasonKey))
-    : "";
-  const summaryKey = moonContinuationSummaryKey(facts.moonSign);
-  const transitionKey = facts.nextMoonSign ? moonSignTransitionKey(facts.moonSign, facts.nextMoonSign) : "";
-  const authoredPhase = calendarMoonPhaseCopy(facts, (contentKey) => (
-    calendarLiveBody(generatedContent, contentKey, fallbackV3HookBody(contentKey))
-  ));
-  return {
-    exactLunationCopy: lunationBody ? { body: lunationBody, contentKey: lunationKey } : null,
-    unusedAuthored: unusedAuthored?.body?.trim() ? unusedAuthored : null,
-    authoredUsedThisVisit,
-    authoredPhaseCopy: authoredPhase,
-    seasonSummary: seasonBody.split(/\n\n+/)[0]?.trim() || null,
-    transitionPhrase: (key: string) => calendarLiveBody(generatedContent, key),
-    moonContinuationSummary: calendarLiveBody(generatedContent, summaryKey) || null,
-    pairTransition: transitionKey ? calendarLiveBody(generatedContent, transitionKey) || null : null,
-    seasonTransition: facts.seasonName && facts.nextSunSign
-      ? calendarLiveBody(
-        generatedContent,
-        calendarSeasonTransitionKeyForSurface(
-          facts.seasonName,
-          facts.nextSunSign,
-          "leftover",
-          facts.daysUntilSeasonEnd
-        )
-      ) || null
-      : null
-  };
-}
-
-function calendarMoonResolvedWeekly(
-  day: LunarCalendarDay,
-  facts: CalendarMoonCycleFacts | undefined,
-  generatedContent: Map<string, LiveGeneratedContent> | null | undefined,
-  usedAuthoredBodies: Iterable<string> = []
-) {
-  const used = new Set([...usedAuthoredBodies].map((body) => body.replace(/\s+/g, " ").trim()).filter(Boolean));
-  const authored = calendarWeeklyMoonAuthoredPassages(day.moonSign, generatedContent)
-    .find((passage) => !used.has(passage.body.replace(/\s+/g, " ").trim())) ?? null;
-  if (!facts) {
-    return authored ? { kind: "authored" as const, ...authored } : null;
-  }
-  return resolveCalendarMoonFallback(
-    facts,
-    calendarMoonFallbackOptions(day, facts, generatedContent, authored, used.size > 0)
-  );
-}
-
-function calendarMoonResolvedByDate(
-  days: LunarCalendarDay[],
-  factsByDate: Map<string, CalendarMoonCycleFacts>,
-  generatedContent?: Map<string, LiveGeneratedContent> | null
-) {
-  const usedByVisit = new Map<string, string[]>();
-  const resolved = new Map<string, NonNullable<ReturnType<typeof calendarMoonResolvedWeekly>>>();
-  for (const day of days) {
-    const facts = factsByDate.get(day.dateKey);
-    const visitId = facts?.moonVisitId ?? `${day.moonSign}:${day.dateKey}`;
-    const used = usedByVisit.get(visitId) ?? [];
-    const result = calendarMoonResolvedWeekly(day, facts, generatedContent, used);
-    if (result) resolved.set(day.dateKey, result);
-    if (result?.kind === "authored") {
-      usedByVisit.set(visitId, [...used, result.body]);
-    }
-  }
-  return resolved;
-}
-
-function packagedWeeklyMoon(
-  day: LunarCalendarDay,
-  facts?: CalendarMoonCycleFacts,
-  generatedContent?: Map<string, LiveGeneratedContent> | null,
-  resolvedByDate?: Map<string, NonNullable<ReturnType<typeof calendarMoonResolvedWeekly>>>
-) {
-  const resolved = resolvedByDate?.get(day.dateKey)
-    ?? calendarMoonResolvedWeekly(day, facts, generatedContent);
-  return resolved?.body ? { contentKey: resolved.contentKey, body: resolved.body } : null;
-}
-
-function moonWritingForDay(
-  day: LunarCalendarDay,
-  generatedContent: Map<string, LiveGeneratedContent> | null | undefined,
-  leftoverFallback?: { contentKey: string; body: string } | null
-) {
-  const lunation = primaryLunationForDay(day);
-  const lunarSource = lunation ? resolveLunationReaderSource(lunation, generatedContent) : null;
-  return calendarDayMoonWriting({
-    moonSign: day.moonSign,
-    lunation,
-    lunationBody: lunarSource?.body ?? '',
-    lunationContentKey: lunarSource?.contentKey,
-    leftoverFallback: leftoverFallback?.body?.trim() ? leftoverFallback : null
-  });
-}
-
-function calendarMoonCycleFallbackPiece(
-  day: LunarCalendarDay,
-  facts: CalendarMoonCycleFacts | undefined,
-  generatedContent: Map<string, LiveGeneratedContent> | null | undefined
-): CalendarMoonWritingPiece | null {
-  if (!facts) return null;
-  const fallback = resolveCalendarMoonFallback(facts, calendarMoonFallbackOptions(day, facts, generatedContent));
-  return fallback?.body
-    ? { role: "leftover", contentKey: fallback.contentKey, body: fallback.body }
-    : null;
-}
 
 function weekDayGroupCopy(
   journal: ReturnType<typeof resolveLunarJournal>,
@@ -2595,6 +2437,7 @@ export function LunarCalendar({
       ...(selectedCalendar?.events ?? [])
     ].map((event) => [event.id, event])).values());
     const contentKeys = [
+      ...calendarPassageRequestKeys(visibleDays.map(day => day.dateKey), zone),
       ...calendarTransitionPhraseKeys,
       ...visibleEvents.flatMap(calendarEventGeneratedContentKeys),
       ...selectedEvents.flatMap(calendarEventGeneratedContentKeys),
@@ -2938,13 +2781,15 @@ export function LunarCalendar({
   const selectedLunarDayNumber = selectedDay && calendar
     ? lunarDayFor(selectedDay, calendar.events)
     : null;
+  const assembledPassages = useCalendarPassages(calendar, (viewMode === "month" ? calendar?.days ?? [] : selectedWeekDays).map(day => day.dateKey), selectedDateKey || currentDateKey, location, generatedContent, moonContentRetry);
+  const selectedAssembledPassage = selectedDay ? assembledPassages.daily.get(selectedDay.dateKey) : undefined;
   const monthlyOverview = useMemo(() => {
     if (viewMode !== "month" || !calendar) return null;
     return resolveCalendarMonthlyOverview(calendar, generatedContent);
   }, [calendar, generatedContent, viewMode, contentVersion]);
   const dayPanelProps = selectedDay ? {
     checkInEntry: checkInData.value,
-    contentState: dayReadingState,
+    contentState: assembledPassages.error ? "error" as const : assembledPassages.loading ? "loading" as const : dayReadingState,
     onRetryContent: retryCalendarContent,
     dateKey: selectedDay.dateKey,
     dateLine: formatSlideoutDate(selectedDay, zone),
@@ -2960,8 +2805,8 @@ export function LunarCalendar({
     ].filter(Boolean).join(" · "),
     onCheckIn: () => setCheckInOpen(true),
     onOpenEvent: openEventReading,
-    paragraphs: selectedDaySkyParagraphs,
-    moonPassages: selectedMoonWriting.map((piece) => ({
+    paragraphs: selectedAssembledPassage?.paragraphs ?? selectedDaySkyParagraphs,
+    moonPassages: selectedAssembledPassage ? [] : selectedMoonWriting.map((piece) => ({
       contentKey: piece.contentKey,
       paragraphs: textParagraphs(piece.body),
       role: piece.role
@@ -2970,7 +2815,7 @@ export function LunarCalendar({
     prompt: selectedDayBodyPresentation.prompt ?? undefined,
     seasonTransits: selectedSeasonTransits,
     sky: selectedSky,
-    sunSummary,
+    sunSummary: selectedAssembledPassage ? [] : sunSummary,
     title: selectedDaySkyTitle
   } : null;
   const monthLegendNew = calendar?.days.find((day) => (
@@ -3122,7 +2967,10 @@ export function LunarCalendar({
           {!readingReady && (readingState === "loading"
             ? <PageLoading compact message="Loading this week’s readings…" />
             : <PageLoadError message="This week’s readings could not load." onRetry={retryCalendarContent} />)}
-          {readingReady && <CalendarDayGroupList label={`Day-by-day astrology for ${weeklyRangeLabel}`}>
+          {readingReady && assembledPassages.weekly && <section className="lunar-month-overview" aria-label="Weekly overview"><CalendarPassageProse text={assembledPassages.weekly.body} /></section>}
+          {assembledPassages.loading && <PageLoading compact message="Loading published passages…" />}
+          {assembledPassages.error && <PageLoadError message="Published passages could not load." onRetry={retryCalendarContent} />}
+          {readingReady && !assembledPassages.loading && !assembledPassages.error && <CalendarDayGroupList label={`Day-by-day astrology for ${weeklyRangeLabel}`}>
             {calendarMoonWritingSequenceWithoutRepeat(selectedWeekDays, (day) => {
               return moonWritingForDay(
                 day,
@@ -3153,8 +3001,8 @@ export function LunarCalendar({
                   numberClass={monthDiscClassName(phase, day.dateKey === currentDateKey, false, isExactQuarterMoonDay(day), day.dateKey === selectedDateKey, isEclipseDay(day))}
                   onOpenEvent={() => handleSelectDate(day.dateKey)}
                   onSelectDay={() => handleSelectDate(day.dateKey)}
-                  paragraphs={copy.paragraphs}
-                  prompt={copy.prompt}
+                  paragraphs={assembledPassages.daily.get(day.dateKey)?.paragraphs ?? copy.paragraphs}
+                  prompt={assembledPassages.daily.has(day.dateKey) ? undefined : copy.prompt}
                   rows={buildCalendarDayGroupRows({
                     day,
                     previousDay,
@@ -3175,10 +3023,10 @@ export function LunarCalendar({
 
       {viewMode === "month" && (
         <div className="lunar-calendar-layout">
-          {readingReady && monthlyOverview && (
+          {readingReady && (assembledPassages.monthly || monthlyOverview) && (
             <section className="lunar-month-overview" aria-labelledby="lunar-month-overview-heading">
               <h2 className="sr-only" id="lunar-month-overview-heading">Monthly overview</h2>
-              {monthlyOverview.paragraphs.map((paragraph, index) => <FormattedProse key={index} text={paragraph} />)}
+              {(assembledPassages.monthly || monthlyOverview)!.paragraphs.map((paragraph, index) => <CalendarPassageProse key={index} text={paragraph} />)}
             </section>
           )}
           <div className="lunar-calendar-month-primary">
@@ -3414,8 +3262,8 @@ export function LunarCalendar({
                     numberClass={monthDiscClassName(phase, day.dateKey === currentDateKey, false, isExactQuarterMoonDay(day), day.dateKey === selectedDateKey, isEclipseDay(day))}
                     onOpenEvent={() => handleSelectDate(day.dateKey)}
                     onSelectDay={() => handleSelectDate(day.dateKey)}
-                    paragraphs={copy.paragraphs}
-                    prompt={copy.prompt}
+                    paragraphs={assembledPassages.daily.get(day.dateKey)?.paragraphs ?? copy.paragraphs}
+                    prompt={assembledPassages.daily.has(day.dateKey) ? undefined : copy.prompt}
                   rows={buildCalendarDayGroupRows({
                     day,
                     previousDay,

@@ -1,3 +1,4 @@
+import { calendarPassageIdentity } from '../src/calendar-writing/passageContract.js';
 import { skyDashboardScopeFilter, skyListDashboardScopeFilter } from "../apps/web/src/services/skyDashboardScope.js";
 import type { IncomingMessage, ServerResponse } from 'node:http';
 import { loadLocalWebEnv } from './_lib/local-env.js';
@@ -36,7 +37,7 @@ async function readQuery(req: IncomingMessage): Promise<Query> {
     const items = value[name];
     if (items === undefined) continue;
     if (!Array.isArray(items) || !items.length || items.length > (name === 'surfaces' ? 10 : 200)
-      || items.some(item => typeof item !== 'string' || (name === 'ids' ? !uuid.test(item) : name === 'surfaces' ? !surfaces.has(item) : !key.test(item)))) throw new QueryError(`Invalid ${name}.`);
+      || items.some(item => typeof item !== 'string' || (name === 'ids' ? !uuid.test(item) : name === 'surfaces' ? !surfaces.has(item) : !key.test(item) && !calendarPassageIdentity(item)))) throw new QueryError(`Invalid ${name}.`);
   }
   if (value.scope !== undefined && !['sky', 'sky-list'].includes(String(value.scope))) throw new QueryError('Invalid scope.');
   if (value.vocabularyOnly !== undefined && value.vocabularyOnly !== true) throw new QueryError('Invalid vocabulary scope.');

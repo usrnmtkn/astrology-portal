@@ -18,6 +18,7 @@ export function calendarWritingStudioHref(contentKey: string) {
     || key.startsWith("authored/calendar-weekly-moon/")
     || key.startsWith("authored/calendar-moon-continuation-summary/")
     || key.startsWith("authored/calendar-moon-context/")
+    || key.startsWith("authored/calendar-timing/")
     || key.startsWith("authored/calendar-moon-transition/")
     || key.startsWith("authored/calendar-season-transition/")
     || key.startsWith("authored/sky-lunation-macro/")
@@ -25,7 +26,7 @@ export function calendarWritingStudioHref(contentKey: string) {
     || key.startsWith("cms/sky-daily-summary/moon/")
   ) {
     hash = "calendar-writeups";
-    params.set("view", (key.startsWith("authored/calendar-moon-continuation-summary/") || key.startsWith("authored/calendar-moon-context/")) ? "moon-transition-phrases" : key.startsWith("authored/lunar-journal/season/") ? "season-writeups" : key.startsWith("authored/calendar-moon-transition/") ? "lunar-ingresses" : key.startsWith("authored/calendar-season-transition/") ? "season-transitions" : "daily-sky");
+    params.set("view", (key.startsWith("authored/calendar-moon-continuation-summary/") || key.startsWith("authored/calendar-moon-context/") || key.startsWith("authored/calendar-timing/")) ? "moon-transition-phrases" : key.startsWith("authored/lunar-journal/season/") ? "season-writeups" : key.startsWith("authored/calendar-moon-transition/") ? "lunar-ingresses" : key.startsWith("authored/calendar-season-transition/") ? "season-transitions" : "daily-sky");
   } else if (key.startsWith("fallback-hook/sky-placement-lived/")) {
     hash = "sky-writeups";
   } else if (key.startsWith("cms/sky-daily-summary/")) {

@@ -85,6 +85,11 @@ if (!moonSourceFile?.endsWith(".json") || !fs.existsSync(path.join(distRoot, moo
   }
 }
 
+// Complete Calendar preview must request its sources, not ship the reader corpus.
+if (javaScriptFiles.some(item => /fallbackArchitectureV3DeferredBundle-/.test(item.file))) {
+  failures.push("Studio must not bundle the complete reader fallback corpus for Calendar preview.");
+}
+
 const forbiddenEntryMarkers = [
   "bundled-deferred-core-rows-v3",
   "bundled-sky-core-rows-v3",

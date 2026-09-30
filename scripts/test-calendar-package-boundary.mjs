@@ -39,8 +39,9 @@ const calendarSource = fs.readFileSync(
   path.join(repoRoot, "apps/web/src/features/calendar/LunarCalendar.tsx"),
   "utf8"
 );
+const calendarMoonSources = fs.readFileSync(path.join(repoRoot, "apps/web/src/features/calendar/calendarMoonSources.ts"), "utf8");
 const calendarRendererMethods = new Set(
-  Array.from(calendarSource.matchAll(/calendarFallbackRendererV3\.(render[A-Z]\w*)/gu), (match) => match[1])
+  Array.from((calendarSource + calendarMoonSources).matchAll(/calendarFallbackRendererV3\.(render[A-Z]\w*)/gu), (match) => match[1])
 );
 for (const method of calendarRendererMethods) {
   assert.equal(
@@ -49,12 +50,12 @@ for (const method of calendarRendererMethods) {
     `LunarCalendar calls ${method}, but the installed V3 renderer does not expose it.`
   );
 }
-assert.match(calendarSource, /renderWeeklyMoon\(\{/u);
+assert.match(calendarMoonSources, /renderWeeklyMoon\(\{/u);
 assert.match(calendarSource, /authored\/calendar-weekly-moon\//u);
 assert.doesNotMatch(calendarSource, /fallback-hook\/sky-placement-lived\/moon\//u);
 assert.doesNotMatch(calendarSource, /selectedFullMoonKey/u);
 assert.match(calendarSource, /selectedPackagePhase\?\.headline/u);
-assert.match(calendarSource, /moonPassages: selectedMoonWriting\.map/u);
+assert.match(calendarSource, /moonPassages: selectedAssembledPassage \? \[\] : selectedMoonWriting\.map/u);
 assert.doesNotMatch(calendarSource, /lunarCalendarLibraryResolver|content-library\.json/u);
 
 const deletedLegacyPaths = [

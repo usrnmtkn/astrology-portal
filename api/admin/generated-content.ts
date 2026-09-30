@@ -1,3 +1,4 @@
+import { calendarPassageIdentity, calendarPassageErrors, calendarPassageVariables } from '../../src/calendar-writing/passageContract.js';
 import { handleStudioVariables, StudioVariableError, snapshotStudioVariables, assertStudioVariablePublication } from "../_lib/studio-variables.js";
 import { handleStudioWritingProfiles } from "../_lib/studio-writing-profiles.js";
 import { prepareHoroscopeBrief, assertHoroscopeRow } from "../_lib/horoscope-editions.js";
@@ -660,6 +661,16 @@ function validateFallbackArchitectureV3Copy(row: ExistingGeneratedContentRow, pa
       throw new GeneratedContentRequestError(`${field} contains banned word "${banned}".`);
     }
 
+    const calendarTemplate = Boolean(calendarPassageIdentity(row.content_key)) || row.content_key.startsWith('authored/calendar-timing/');
+    if (calendarTemplate && /[{}]/u.test(value)) {
+      const issues = calendarPassageErrors(value);
+      if (row.content_key.startsWith("authored/calendar-timing/")) {
+        const timing = libs().calendarTimingTemplates[row.content_key.split("/")[2] as keyof ReturnType<typeof libs>["calendarTimingTemplates"]];
+        const allowed = [...(timing?.body.matchAll(/\{\{(\w+)\}\}/gu) ?? [])].map(match => match[1]);
+        if (!timing || [...value.matchAll(/\{\{\s*([^{}]*?)\s*\}\}/gu)].some(match => !allowed.includes(match[1]))) issues.push("Use only the calculated variables listed in this timing template.");
+      }
+      if (issues.length) throw new GeneratedContentRequestError(issues.join(' '));
+    }
     const originalSlots = packagePlaceholders(original);
     const inheritedFriendSlots = (
       row.content_key.startsWith("authored/transit-aspect/")
@@ -669,7 +680,7 @@ function validateFallbackArchitectureV3Copy(row: ExistingGeneratedContentRow, pa
       ? packagePlaceholders(record.body_you)
       : new Set<string>();
     for (const slot of packagePlaceholders(value)) {
-      if (skyVariableField || ingressVariableField) continue;
+      if (skyVariableField || ingressVariableField || calendarTemplate && calendarPassageVariables.includes(slot.replace(/[{}#\/\s]/gu, ""))) continue;
       if (Array.isArray(variableOwner._studioVariables) && variableOwner._studioVariables.some((item: any) => slot.replace(/[{}\s]/gu, "") === item.name)) continue;
       if (libs().supportsZodiacSeasonVariables(proposedRecord) && libs().zodiacSeasonVariableNames(slot).length) continue;
       const isAllowedFriendName = (
@@ -1203,6 +1214,10 @@ function validateWriteBody(body: Record<string, unknown>) {
   // alias out of storage: the production mode constraint accepts "feed".
   if (body.mode === "card") body.mode = "feed";
   if (body.sourceLifecycleAction !== undefined && !["archive", "restore"].includes(body.sourceLifecycleAction as string)) throw new GeneratedContentRequestError("sourceLifecycleAction must be archive or restore.");
+  if (typeof body.contentKey === "string" && body.contentKey.startsWith("calendar-passage/")) {
+    if (!calendarPassageIdentity(body.contentKey)) throw new GeneratedContentRequestError("Invalid Calendar passage identity.");
+    if (body.status === "LIVE") throw new GeneratedContentRequestError("Save a draft, then publish the saved Calendar passage.", 409);
+  }
   if (body.ownerAction !== undefined && !generatedContentOwnerActions.has(body.ownerAction as string)) {
     throw new GeneratedContentRequestError("ownerAction is not supported. Reload Content Studio before retrying.");
   }
@@ -1500,7 +1515,7 @@ async function listGeneratedContent(req: IncomingMessage) {
     throw new GeneratedContentRequestError("mode is not a valid generated-content mode.");
   }
   const contentKeys = requestUrl.searchParams.getAll("contentKeys");
-  if (contentKeys.length > 64 || contentKeys.some((key) => !/^[a-zA-Z0-9_./|-]+$/u.test(key))) {
+  if (contentKeys.length > 64 || contentKeys.some((key) => !/^[a-zA-Z0-9_./|-]+$/u.test(key) && !calendarPassageIdentity(key))) {
     throw new GeneratedContentRequestError("Provide at most 64 valid content keys.");
   }
   const startDate = requestUrl.searchParams.get("startDate");
@@ -2286,7 +2301,7 @@ async function recoverPublishedSkyRevision(existing: ExistingGeneratedContentRow
   const sections = isRecord(body.sections) ? body.sections : {};
   const proposal = isRecord(sections.packageDraft) ? sections.packageDraft : null;
   if (existing.status !== "ARCHIVED" || existing.review_state !== "published-revision"
-    || !["sky-v4-reader-copy-draft", "shared-sign-prose-draft"].includes(existing.event_type ?? "") || body.ownerAction || body.sourceLifecycleAction || !proposal) return existing;
+    || !["sky-v4-reader-copy-draft", "shared-sign-prose-draft", "calendar-passage-draft"].includes(existing.event_type ?? "") || body.ownerAction || body.sourceLifecycleAction || !proposal) return existing;
   validateFallbackArchitectureV3Copy(existing, { sections: body.sections });
   const targetId = stringFrom(existing.source_snapshot?.targetRowId);
   const target = targetId ? await fetchExistingRowById(targetId) : null;
@@ -2364,6 +2379,9 @@ async function updateGeneratedContent(req: IncomingMessage) {
     throw new GeneratedContentRequestError("At least one supported editable field is required.");
   }
   const effectiveContentKey = body.contentKey ?? existing.content_key;
+  if (calendarPassageIdentity(existing.content_key) && !body.ownerAction && body.status === "LIVE") {
+    throw new GeneratedContentRequestError("Save a draft, then publish the saved Calendar passage.", 409);
+  }
   const effectiveSurface = (body.surface ?? existing.surface) as GeneratedContentSurface | undefined;
   if (libs().isRetiredCompositionKey(effectiveContentKey) && (body.status === "LIVE" || body.ownerAction?.startsWith("approve-") || body.ownerAction?.startsWith("publish-"))) {
     throw new GeneratedContentRequestError("This composition has been retired. Edit the canonical Personal Transit source instead.", 409);
@@ -2384,7 +2402,7 @@ async function updateGeneratedContent(req: IncomingMessage) {
       throw new Error(`Approve & publish revision cannot be combined with other changes: ${unexpectedFields.join(", ")}.`);
     }
 
-    const isVersionedReaderDraft = ["sky-v4-governed-aspect-draft", "sky-v4-reader-copy-draft", "shared-sign-prose-draft"].includes(existing.event_type ?? "");
+    const isVersionedReaderDraft = ["sky-v4-governed-aspect-draft", "sky-v4-reader-copy-draft", "shared-sign-prose-draft", "calendar-passage-draft"].includes(existing.event_type ?? "");
     const targetRowId = isVersionedReaderDraft ? stringFrom(existing.source_snapshot?.targetRowId) : existing.id;
     if (!targetRowId) throw new Error("This governed revision is missing its live target row.");
     const target = targetRowId === existing.id ? existing : await fetchExistingRowById(targetRowId);
@@ -2574,6 +2592,7 @@ async function updateGeneratedContent(req: IncomingMessage) {
         }
       });
     }
+    if (calendarPassageIdentity(target.content_key)) finalSections.calendarPassageSources = proposalSections.calendarPassageSources ?? targetSections.calendarPassageSources ?? {};
     promotionPatch.sections = finalSections;
     promotionPatch.reviewed_at = now;
     promotionPatch.published_at = now;
@@ -3026,17 +3045,19 @@ async function updateGeneratedContent(req: IncomingMessage) {
   );
   const forksSharedSeasonDraft = Boolean(isPackageRow && existing?.status === "LIVE" && libs().isZodiacSeasonSourceKey(existing.content_key)
     && isRecord((patch.sections as Record<string, unknown> | undefined)?.packageDraft));
-  if ((forksGovernedAspectDraft || forksSkyV4ServingDraft || forksSharedSeasonDraft) && existing) {
+  const forksCalendarPassageDraft = Boolean(isPackageRow && existing?.status === "LIVE" && calendarPassageIdentity(existing.content_key)
+    && isRecord((patch.sections as Record<string, unknown> | undefined)?.packageDraft));
+  if ((forksGovernedAspectDraft || forksSkyV4ServingDraft || forksSharedSeasonDraft || forksCalendarPassageDraft) && existing) {
     const skyV4ReaderDraft = forksSkyV4ServingDraft && !forksGovernedAspectDraft;
     return upsertGeneratedContentRow({
       content_key: existing.content_key,
       surface: existing.surface,
       target_date: existing.target_date,
       mode: "studio-draft",
-      event_type: forksSharedSeasonDraft ? "shared-sign-prose-draft" : skyV4ReaderDraft ? "sky-v4-reader-copy-draft" : "sky-v4-governed-aspect-draft",
+      event_type: forksCalendarPassageDraft ? "calendar-passage-draft" : forksSharedSeasonDraft ? "shared-sign-prose-draft" : skyV4ReaderDraft ? "sky-v4-reader-copy-draft" : "sky-v4-governed-aspect-draft",
       block_type: existing.block_type,
       provider: "owner-content-studio",
-      prompt_version: forksSharedSeasonDraft ? "shared-sign-prose-draft-v1" : skyV4ReaderDraft ? "sky-v4-reader-copy-draft-v1" : "sky-v4-governed-aspect-draft-v1",
+      prompt_version: forksCalendarPassageDraft ? "calendar-passage-draft-v1" : forksSharedSeasonDraft ? "shared-sign-prose-draft-v1" : skyV4ReaderDraft ? "sky-v4-reader-copy-draft-v1" : "sky-v4-governed-aspect-draft-v1",
       reviewer_notes: forksSharedSeasonDraft ? "Shared sign prose draft. The published source remains unchanged until this revision is published." : skyV4ReaderDraft
         ? "Versioned reader-copy draft. The approved SKY V4 serving baseline remains LIVE and unchanged."
         : "Versioned reader-copy draft. The approved governed aspect baseline remains LIVE and unchanged.",

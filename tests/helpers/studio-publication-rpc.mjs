@@ -10,7 +10,7 @@ export function publicationRpcFixture(getRows, saveRows) {
     if (!ids.has(id)) { const hex = createHash('sha256').update(id).digest('hex').slice(0,32); const value = `${hex.slice(0,8)}-${hex.slice(8,12)}-${hex.slice(12,16)}-${hex.slice(16,20)}-${hex.slice(20)}`; ids.set(id,value); originals.set(value,id); }
     return ids.get(id);
   };
-  const idFields = new Set(['id','targetRowId','rowId','row_id','targetId','proposalId','p_proposal_id','p_target_id']);
+  const idFields = new Set(['id','targetRowId','rowId','row_id','targetId','proposalId','p_proposal_id','p_target_id','p_row_id']);
   function mapIds(value, reverse=false, key='') {
     if (typeof value === 'string' && idFields.has(key)) return reverse ? originals.get(value) ?? value : uuid(value);
     if (Array.isArray(value)) return value.map(item=>mapIds(item,reverse));
@@ -20,14 +20,14 @@ export function publicationRpcFixture(getRows, saveRows) {
   const fixture = async (input, init={}) => {
     const url = new URL(String(input), 'http://fixture.invalid');
     const name = url.pathname.split('/').at(-1);
-    if (!['content_studio_publication_receipt','content_studio_publish_revision'].includes(name)) return null;
+    if (!['content_studio_publication_receipt','content_studio_publish_revision','content_studio_row_history','retire_content_everywhere'].includes(name)) return null;
     const args = JSON.parse(String(init.body));
     if (!db && name === 'content_studio_publication_receipt') return Response.json(null);
     db ??= await createPublicationDb();
     try {
-      if (name === 'content_studio_publish_revision') {
+      if (name !== 'content_studio_publication_receipt') {
         const rows=getRows();
-        const needed = new Set([args.p_proposal_id,args.p_target_id,...args.p_dependencies.map(item=>item.id)]);
+        const needed = new Set(name === 'content_studio_publish_revision' ? [args.p_proposal_id,args.p_target_id,...args.p_dependencies.map(item=>item.id)] : [args.p_row_id]);
         for (const row of rows.filter(row=>needed.has(row.id))) {
           const serialized=JSON.stringify(row); if (seeded.get(row.id)===serialized) continue;
           const mapped = mapIds(row);
@@ -38,6 +38,7 @@ export function publicationRpcFixture(getRows, saveRows) {
           }
           seeded.set(row.id,serialized);
         }
+        if (name === 'content_studio_publish_revision') {
         const targetPublication=args.p_validation_context.targetPublication;
         if (!targetPublication) await db.query('delete from content_publications where content_key=$1',[getRows().find(row=>row.id===args.p_target_id).content_key]);
         if (targetPublication) {
@@ -52,7 +53,13 @@ export function publicationRpcFixture(getRows, saveRows) {
           }
         }
       }
-      const receipt=await callPublicationRpc(db,name,mapIds(args));
+        }
+      const mappedArgs = mapIds(args);
+      const receipt = name === 'content_studio_row_history'
+        ? (await db.query('select public.content_studio_row_history($1,$2) as receipt',[mappedArgs.p_row_id,mappedArgs.p_before])).rows[0].receipt
+        : name === 'retire_content_everywhere'
+        ? (await db.query('select to_jsonb(public.retire_content_everywhere($1,$2,$3)) as receipt',[mappedArgs.p_content_key,mappedArgs.p_row_id,mappedArgs.p_expected_updated_at])).rows[0].receipt
+        : await callPublicationRpc(db,name,mappedArgs);
       if (name === 'content_studio_publish_revision') {
         const result=await db.query('select to_jsonb(g) as row from generated_interpretations g where id=any($1::uuid[])',[[uuid(args.p_proposal_id),uuid(args.p_target_id)]]);
         const saved=result.rows.map(item=>mapIds(item.row,true));
@@ -62,6 +69,7 @@ export function publicationRpcFixture(getRows, saveRows) {
       return Response.json(mapIds(receipt,true));
     } catch(error) { if (process.env.DEBUG_PUBLICATION_FIXTURE) console.error(error.code, error.message); return Response.json({code:error.code,message:error.message},{status:error.code==='40001'?409:400}); }
   };
+  fixture.publications = async () => db ? (await db.query('select to_jsonb(p) as row from content_publications p')).rows.map(item => mapIds(item.row,true)) : [];
   fixture.close=async()=>{await db?.close();};
   return fixture;
 }

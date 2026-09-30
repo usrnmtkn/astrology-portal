@@ -1,5 +1,6 @@
 // Real API handler with a strict, isolated PostgREST store. Never contacts a service.
 import { publicationRpcFixture } from "./studio-publication-rpc.mjs";
+import { randomUUID } from "node:crypto";
 import { fileURLToPath } from "node:url";
 import { Readable } from "node:stream";
 import { readerRouteResponse, fixturePublications } from './content-reader-route.mjs';
@@ -25,7 +26,7 @@ export const fixtures = process.env.CALENDAR_REVIEW_FIXTURE
   };
 });
 
-export async function createApiStore(initial = fixtures) {
+export async function createApiStore(initial = fixtures, storeOptions = {}) {
   const env = { NODE_ENV: "test", CONTENT_GENERATION_SECRET: "calendar-api-fixture", SUPABASE_URL: "https://calendar-api.invalid", SUPABASE_SERVICE_ROLE_KEY: "calendar-api-fixture-key" };
   Object.assign(process.env, env);
   const { default: handler } = await import(process.env.CALENDAR_TEST_HANDLER ?? "../../api/admin/generated-content.ts");
@@ -53,14 +54,14 @@ export async function createApiStore(initial = fixtures) {
     const reader = await readerRouteResponse(input, options);
     if (reader) return reader;
     const url = new URL(String(input));
-    if (url.origin === env.SUPABASE_URL && url.pathname === "/rest/v1/content_publications" && (!options.method || options.method === "GET")) return Response.json(fixturePublications([...rows.values()]));
+    if (url.origin === env.SUPABASE_URL && url.pathname === "/rest/v1/content_publications" && (!options.method || options.method === "GET")) return Response.json([...new Map([...fixturePublications([...rows.values()]), ...await publication.publications()].map(row => [row.content_key,row])).values()]);
     if (url.origin !== env.SUPABASE_URL || url.pathname !== "/rest/v1/generated_interpretations") throw new Error(`Unexpected test storage request ${url.origin}${url.pathname}`);
     const found = [...rows.values()].filter(row => matches(row, url.searchParams));
     const method = options.method ?? "GET";
     if (method === "GET") return Response.json(found);
     const patch = JSON.parse(String(options.body));
     if (method === "POST") {
-      const created = { ...patch, id: `revision-${++sequence}`, updated_at: nextVersion(), created_at: new Date().toISOString() };
+      const created = { ...patch, id: storeOptions.uuidIds ? randomUUID() : `revision-${++sequence}`, updated_at: nextVersion(), created_at: new Date().toISOString() };
       rows.set(created.id, created);
       return Response.json([created]);
     }
@@ -79,19 +80,19 @@ export async function createApiStore(initial = fixtures) {
     Object.assign(request, { method, url, headers: { authorization: `Bearer ${secret}` } });
     return new Promise(async (resolve, reject) => {
       const response = { statusCode: 200, setHeader() {}, end(text) { resolve({ status: this.statusCode, payload: JSON.parse(text) }); } };
-      try { const selectedHandler = url.startsWith("/api/admin/generated-content-inventory") ? (await import("../../api/admin/generated-content-inventory.ts")).default : handler; await selectedHandler(request, response); } catch (error) { reject(error); }
+      try { const selectedHandler = url.startsWith("/api/admin/content-publication") ? (await import("../../api/admin/content-publication.ts")).default : url.startsWith("/api/admin/content-history") ? (await import("../../api/admin/content-history.ts")).default : url === "/api/content-reader" ? (await import("../../api/content-reader.ts")).default : url.startsWith("/api/admin/generated-content-inventory") ? (await import("../../api/admin/generated-content-inventory.ts")).default : handler; await selectedHandler(request, response); } catch (error) { reject(error); }
     });
   };
   return { rows, invoke, publication, close: publication.close };
 }
 
 if (process.argv.includes("--ipc") && process.argv[1] === fileURLToPath(import.meta.url)) {
-  const store = await createApiStore();
+  const store = await createApiStore(fixtures, {uuidIds: process.env.STUDIO_UUID_IDS === "true"});
   const { contentLiveStatuses } = await import("../../api/_lib/content-live-status.ts");
   process.on("message", async ({ id, method, body, url, key }) => {
     try {
       const result = method === "fixture" ? fixtures.find(row => row.content_key === key)
-        : method === "rows" ? [...store.rows.values()]
+        : method === "publications" ? [...new Map([...fixturePublications([...store.rows.values()]), ...await store.publication.publications()].map(row => [row.content_key,row])).values()] : method === "rows" ? [...store.rows.values()]
         : method === "statuses" ? contentLiveStatuses([...store.rows.values()].filter(row => body.ids.includes(row.id)), [...store.rows.values()]) : await store.invoke(method, body, url);
       process.send({ id, result });
     } catch (error) { process.send({ id, error: String(error) }); }

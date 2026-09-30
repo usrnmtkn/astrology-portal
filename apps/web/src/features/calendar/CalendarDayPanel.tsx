@@ -1,3 +1,4 @@
+import { CalendarPassageProse } from './CalendarPassageProse';
 import { useId, useState } from "react";
 import { useMinimumLoading } from "../../hooks/useMinimumLoading";
 import { useSkeletonGeometry } from "../../hooks/useSkeletonGeometry";
@@ -237,7 +238,7 @@ export function CalendarDayPanel({
               <MoonPassage key={`${dateKey}:${passage.contentKey}`} passage={passage} />
             )) : paragraphs.length > 0 ? (
               <section aria-label="Moon guidance">
-                {paragraphs.map((paragraph) => <FormattedProse key={paragraph.slice(0, 48)} text={paragraph} />)}
+                {paragraphs.map((paragraph) => <CalendarPassageProse key={paragraph.slice(0, 48)} text={paragraph} />)}
               </section>
             ) : null}
             {prompt ? <FormattedProse className="calendar-sky-card__prompt" text={prompt} /> : null}
