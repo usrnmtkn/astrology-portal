@@ -1,6 +1,8 @@
 import {resolveStudioWritingProfile} from './studioWritingProfileReceipt.mjs';
 import {HOROSCOPE_SIGNS,horoscopeSignLabel} from '../../apps/web/src/content/horoscopeEditions.mjs';
 
+export const HOROSCOPE_EDITORIAL_AUTHORITY = 'HOROSCOPE EDITORIAL AUTHORITY: For this horoscope, the saved Content Studio Voice and Structure instructions and complete primary owner sign readings govern cadence, opening, paragraph movement and ending over general long-form style preferences. Short sentences, fragments, questions, lists, commands and early astrology are available when they serve the thought; none is a compulsory pattern or a blanket voice failure. Do not impose a medium/long-sentence quota, a natal adaptation narrative, a fixed transit-definition-examples-advice sequence, or a compulsory advice ending. The shared factual boundaries, source integrity, declared register, output schema and exact owner publication approval still apply. Historical owner writing is prose evidence, never current astrology or personal biography. This is a single-sign drafting call; complete-edition comparison is an owner review.';
+
 export const HOROSCOPE_DRAFT_SCHEMA = Object.freeze({type:'object',additionalProperties:false,
   required:['headline','body'],properties:{headline:{type:'string'},body:{type:'string'}}});
 
@@ -13,13 +15,14 @@ export function horoscopeDraftSchema(sign) {
 
 export function buildHoroscopeDraftInput({plan,context,task,target,engineFacts,argumentOutline,spine,writingProfile}) {
   const {developments,...calculatedFacts}=engineFacts??{};
+  const seasonal=writingProfile?.profile?.period==='seasonal';
   return [
     'SURFACE\nhoroscopes','CONTENT FAMILY\nhoroscope','REGISTER\nsecond_person',
     `TASK\n${task}`,
     `READING HEADLINE\n${horoscopeDraftSchema(engineFacts?.risingSign).properties.headline.enum[0]}`,
     ...(context.primaryRegisterPassages?.length?[
       `COMPLETE OWNER HOROSCOPES — PRIMARY PROSE EXAMPLES\n${JSON.stringify(context.primaryRegisterPassages)}`,
-      'These complete owner weekly sign readings are the primary examples of how the owner writes a horoscope. Follow their language, sentence movement, direct address and endings. Other owner articles support the topic; they do not replace these horoscope examples. Historical transits and dates are not current facts, and a source sign heading does not change the requested rising sign. For a daily request, use these weekly passages as voice references for a new focused daily reading, not as stories to shorten or as evidence of daily authorship. The writing plan defines meaning and scope, not sentences to paraphrase or a fixed paragraph sequence.'
+      `These complete owner ${seasonal?'seasonal':'weekly'} sign readings are the primary examples of how the owner writes a horoscope. Follow their language, sentence movement, direct address and endings. Other owner articles support the topic; they do not replace these horoscope examples. Historical transits and dates are not current facts, and a source sign heading does not change the requested rising sign. ${seasonal?'The three seasonal examples preserve independent complete readings for the requested audience sign. Learn how each develops its thought; do not combine their stories, copy their paragraph count or reproduce their historical astrology.':'For a daily request, use these weekly passages as voice references for a new focused daily reading, not as stories to shorten or as evidence of daily authorship.'} The writing plan defines meaning and scope, not sentences to paraphrase or a fixed paragraph sequence.`
     ]:[]),
     `CONTENT STUDIO WRITING INSTRUCTIONS\n${resolveStudioWritingProfile(writingProfile,{allowStarter:true}).prompt}`,
     `RENDER TARGET\n${JSON.stringify(target)}`,
@@ -37,9 +40,10 @@ export function buildHoroscopeDraftInput({plan,context,task,target,engineFacts,a
     `REGISTER REFERENCE\n${JSON.stringify(context.registerGoldExamples)}`,
     `AVAILABLE OWNER LINES\n${JSON.stringify(context.phraseExamples)}`,
     `CURRENT OWNER CORRECTIONS\n${JSON.stringify(context.corrections)}`,
-    ...(['daily','weekly'].includes(writingProfile?.profile?.period)?[
+    ...(['daily','weekly','seasonal'].includes(writingProfile?.profile?.period)?[
       'FINISH THE NEW DRAFT USING THE SAVED EDITORIAL GUIDANCE\nBefore returning this new draft, read its complete thought against the saved Voice and Structure instructions above and the selected owner examples. Apply that guidance while composing: resolve unclear imagery, an abstract substitute for the actual concern, or examples that split the focus when the saved instructions call for those changes. Keep the astrology and calculated timing intact. This is part of writing this draft, not a separate review call, a model approval, or permission to change saved readings or owner evidence. Return the reading only, without a checklist, score or explanation of the edits.'
     ]:[]),
+    'This request contains one sign. Finish that complete reading only. Comparison of all twelve openings, interpretations and endings belongs to the owner’s complete-edition review in Content Studio; do not claim to have reviewed unseen readings.',
     'Return only headline and body. Keep the full reading and natural paragraph breaks. Do not include drafting notes, citations, approval claims, schema labels, or template variables. Exact clock times and numeric dates belong in the separately rendered timing information; omit them from the prose. The publication window determines the local reading date, not the lifetime of every influence. A daily reading can introduce a verified ingress or return to an ongoing placement. Do not imply that an ongoing influence ends at midnight. A stated duration, exit or upcoming event requires its own verified calculated boundary; never infer it from a reference position or the publication window. A weekday must come from the calculated local timing of the selected event, never from a historical voice example. When naming a numbered house, name its planet or lunation in the same sentence so the association can be checked. No model verdict approves this draft.'
   ].join('\n\n');
 }

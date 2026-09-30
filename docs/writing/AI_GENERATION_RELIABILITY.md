@@ -263,3 +263,42 @@ Do not describe this as automatic learning from horoscope edits. The current
 private correction-memory scopes still exclude horoscope editions. A distinct
 feedback control and scoped retrieval would need their own implementation and
 verification. This update uses the existing saved-profile path explicitly.
+
+## Seasonal voice and complete examples — September 30
+
+Writer v6 supersedes the September 27 statement that seasonal selection is
+unchanged. The owner supplied Pisces, Gemini and Virgo Season 2025 as positive
+examples and authorized applying the seasonal voice plan. All 36 complete sign
+readings already exist in the governed long-form owner corpus. A horoscope-only
+adapter resolves registered spans in those originals; it does not rebuild the
+discarded voice subsystem or replace the global voice index. Each seasonal sign
+receives its three matching complete readings, with exact hashes and word counts.
+Missing, changed, duplicate or incomplete registration fails before generation.
+
+Editable Voice, Structure, Sources and Prompt fields remain the execution path
+for owner preferences. Preserve the seasonal 450–600-word editorial target and
+existing owner word choices while permitting short openings, early astrology,
+questions, connected lists, varied cadence and developed emotional meaning.
+Do not convert every passage into an administrative task or fixed advice ending.
+Complete primary examples and the saved horoscope profile take precedence over
+general long-form sentence-length preferences. Factual boundaries and exact
+owner publication approval still apply. Source dates and stories are historical
+prose evidence, never the new edition's calculated facts.
+
+The provider receives one sign per call. Remove instructions claiming it can
+compare all twelve unseen readings; that comparison is available to the owner in
+Content Studio's complete Publish-stage preview. Finish the individual draft
+within the existing writing call. No paid judge, automatic revision loop or
+prose-quality blocking heuristic is introduced. Applicable shared principles
+also reach daily and weekly profiles without changing their own formats.
+
+Profile updates must use optimistic concurrency and exact readback verification.
+Existing edition snapshots and reader bodies remain unchanged until explicitly
+refreshed or regenerated. Record source/profile/plan hashes in the existing
+receipts. Memory records this behavior; it does not itself update saved profiles,
+approve wording, or enable automatic learning from horoscope edits.
+
+Regression coverage verifies complete evidence, all twelve actual seasonal
+provider payloads, one request per missing sign, profile snapshot preservation,
+explicit profile refresh and plan invalidation using isolated storage and provider
+fixtures. These checks establish routing and persistence, not live prose quality.

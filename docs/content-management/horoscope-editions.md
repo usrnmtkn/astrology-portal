@@ -103,6 +103,35 @@ focus/periodic revalidation apply; the reader also expires an edition at its bou
 
 ## Verification
 
+Writer v6 uses three complete owner seasonal readings for each requested sign,
+from the Pisces, Gemini and Virgo 2025 articles already in the governed corpus.
+`data/writing/seasonal-horoscope-units.json` registers all 36 passages by exact
+source offsets, article and passage SHA-256, word count and owner assignment.
+`scripts/build-seasonal-horoscope-units.mjs --check` verifies that registration.
+The seasonal adapter resolves full passages in place; it does not create another
+corpus, shorten the readings, or expose private source files to the browser.
+Missing or changed evidence stops preparation before a paid call.
+
+Complete readings establish voice and movement. Historical astrology is never
+current factual evidence; calculated period developments retain that role.
+Collective essays remain supporting evidence. Daily and weekly calls retain
+their existing complete weekly examples and their own saved writing formats.
+
+The saved Voice and Structure instructions take precedence over general
+long-form cadence preferences in horoscope calls. Short openings, early astrology,
+questions, lists and varied sentence lengths are available when they work in the
+passage. Seasonal starters retain the 450–600-word editorial target. These are
+composing instructions, not automated taste gates or publication approval.
+One provider request writes one sign; the Publish stage already presents all
+twelve complete readings for the owner's comparison. No paid comparison or
+automatic rewrite call is added.
+
+Saving a profile updates future editions. Existing editions keep their saved
+profile until **Use latest saved instructions** is selected, and existing bodies
+remain unchanged. A changed profile or evidence hash requires a refreshed plan.
+The provider input retains the whole saved profile and all three primary passages;
+the saved generation receipt identifies the profile, source and plan hashes.
+
 `scripts/test-horoscope-editions.mts` uses the actual admin and public handlers with
 isolated storage. It checks Swiss period boundaries, DST, a year boundary, multiple
 solar seasons, a PostgreSQL jsonb roundtrip, exact passage bytes, incomplete and

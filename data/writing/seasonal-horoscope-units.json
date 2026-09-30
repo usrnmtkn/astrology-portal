@@ -1,0 +1,283 @@
+{
+  "schema": "seasonal-horoscope-units/v1",
+  "assignment": {
+    "date": "2026-09-30",
+    "reference": "codex-task:01a0ce6e-69e0-7100-bdba-ad413d5c7804",
+    "scope": "Owner supplied Pisces, Gemini and Virgo season examples and authorized complete seasonal sign readings as voice evidence. No new reader publication or factual authority."
+  },
+  "sources": [
+    {
+      "season": "pisces",
+      "file": "reference-surfaces/pisces-season-2025.md",
+      "sha256": "64d7e9fe491c0d5a03e2b8573b4489e253727290baa5971f0e3356160aa56be7",
+      "readings": [
+        {
+          "sign": "aries",
+          "start": 18521,
+          "end": 20707,
+          "sha256": "cb4c2cbbb3f9ebfa9423c734d2b9182bfe410355307d9ceb3366c83a0adf1752",
+          "wordCount": 381
+        },
+        {
+          "sign": "taurus",
+          "start": 20797,
+          "end": 22686,
+          "sha256": "8f0d5a0276ead7c88d1992bf85927daa0b11d1ce2b2ecbaad635e9c7e549539a",
+          "wordCount": 327
+        },
+        {
+          "sign": "gemini",
+          "start": 22776,
+          "end": 24861,
+          "sha256": "46b58ab0df66fa5619eea78f6dd4f647deac1f7b638ec45ad521477246681197",
+          "wordCount": 344
+        },
+        {
+          "sign": "cancer",
+          "start": 24951,
+          "end": 27658,
+          "sha256": "05264a0f6294e9acc948a933647185e3cbd2ef7159ddcf2e3f6a96377ffbb080",
+          "wordCount": 463
+        },
+        {
+          "sign": "leo",
+          "start": 27742,
+          "end": 30154,
+          "sha256": "12ab1de80f8bd961f7e97665cb51c69daee50d010e958f726a7e85c6e1486671",
+          "wordCount": 417
+        },
+        {
+          "sign": "virgo",
+          "start": 30242,
+          "end": 32084,
+          "sha256": "592deb60af919f6a5dff089dbd21cb681be5857cb4bd32da47facd25d9d87f58",
+          "wordCount": 333
+        },
+        {
+          "sign": "libra",
+          "start": 32172,
+          "end": 33850,
+          "sha256": "7aba7faf4b99e33c01f26dfbb3e63f3e371b4e819f764538e2aea313e5853fb3",
+          "wordCount": 290
+        },
+        {
+          "sign": "scorpio",
+          "start": 33942,
+          "end": 35986,
+          "sha256": "8d7da521bfabb2b2559e42187fb949f1f9fc5f9ea71632300659808ad2d4ac05",
+          "wordCount": 353
+        },
+        {
+          "sign": "sagittarius",
+          "start": 36086,
+          "end": 37582,
+          "sha256": "8219559a6b1b1cd1f4fa167b73a69257f86fbed424939b945dbd4ea340582e5c",
+          "wordCount": 267
+        },
+        {
+          "sign": "capricorn",
+          "start": 37678,
+          "end": 39244,
+          "sha256": "3a20b6ebc9e4d2bc897ab33913cd99f8b3a37f018bc9c97180b6df6308cd7f3a",
+          "wordCount": 265
+        },
+        {
+          "sign": "aquarius",
+          "start": 39338,
+          "end": 40857,
+          "sha256": "ae753dd65931d1951255ce05e03476a6e3127ce65bc8368f56fd8464d7468b4c",
+          "wordCount": 253
+        },
+        {
+          "sign": "pisces",
+          "start": 40947,
+          "end": 42879,
+          "sha256": "b98ec816e0acd140a134c410e3c416b5b9ad958fb56fbf306f3d169b9e587a2d",
+          "wordCount": 341
+        }
+      ]
+    },
+    {
+      "season": "gemini",
+      "file": "reference-surfaces/gemini-season-2025.md",
+      "sha256": "1e31142628b75f39ef58e6681bd38d5ba682cdea5f89ee20cb4189ebea96061f",
+      "readings": [
+        {
+          "sign": "aries",
+          "start": 5452,
+          "end": 7004,
+          "sha256": "936a5c7b8cbc01ff0980871aec60434f910fc4ab5e27d29668e1e9dac718f306",
+          "wordCount": 237
+        },
+        {
+          "sign": "taurus",
+          "start": 7035,
+          "end": 8409,
+          "sha256": "ab7ec897961460f9c0edea9bc9f57b638d7218cee45319ebf2fe091ae9352266",
+          "wordCount": 212
+        },
+        {
+          "sign": "gemini",
+          "start": 8440,
+          "end": 9819,
+          "sha256": "3eb17ebc37bda98f8c34a817569475f9ed1d6fc2cc1c82068507ec1dbfad32d1",
+          "wordCount": 217
+        },
+        {
+          "sign": "cancer",
+          "start": 9850,
+          "end": 11176,
+          "sha256": "bb7a18cf5d254cfc3e3f27cd84b1b319a0db9618ff5b24f8b018b5c24a47ea11",
+          "wordCount": 216
+        },
+        {
+          "sign": "leo",
+          "start": 11201,
+          "end": 12586,
+          "sha256": "7951d4cd6d6b952fc3e0c241c2785c858b275558647ae9498b2696e970c585da",
+          "wordCount": 215
+        },
+        {
+          "sign": "virgo",
+          "start": 12615,
+          "end": 13855,
+          "sha256": "04a02431381ed4bf336a548c357944b3b180cd03e48556bb505f51112959acfc",
+          "wordCount": 191
+        },
+        {
+          "sign": "libra",
+          "start": 13884,
+          "end": 15127,
+          "sha256": "447f19d35b4a51c456e64f9e469f3674d8968db3210572766a9618a08a016f6c",
+          "wordCount": 186
+        },
+        {
+          "sign": "scorpio",
+          "start": 15160,
+          "end": 16319,
+          "sha256": "463006e06f88c8ccc7f3395c5f30027e33fb61beb33bc21de22f9005a5e3cd83",
+          "wordCount": 178
+        },
+        {
+          "sign": "sagittarius",
+          "start": 16360,
+          "end": 17485,
+          "sha256": "a6ee2dfac2754c3efeb5c8f8f56ac3af2188398fb9c1bf2121f71d947a82a1bf",
+          "wordCount": 179
+        },
+        {
+          "sign": "capricorn",
+          "start": 17522,
+          "end": 18730,
+          "sha256": "48b1aa3c78197262e0a7f154ef5af0f4cdfd9bc58b51623224a8f4e7d5166dd5",
+          "wordCount": 189
+        },
+        {
+          "sign": "aquarius",
+          "start": 18765,
+          "end": 19973,
+          "sha256": "07e70f2778c8409cfe1436d0543a2bd39ee4af6867902f784994c138b8dc5eb5",
+          "wordCount": 180
+        },
+        {
+          "sign": "pisces",
+          "start": 20004,
+          "end": 21274,
+          "sha256": "5e06bdbf3f0b6c26c2d7ddbc2116fc2c7802b6563ccc9a612a37024637c5f061",
+          "wordCount": 193
+        }
+      ]
+    },
+    {
+      "season": "virgo",
+      "file": "reference-surfaces/virgo-season-2025.md",
+      "sha256": "66d2ef42a2e306fb95c774aeb52a74395b1a626b5417a5b5d08f91b033487ae1",
+      "readings": [
+        {
+          "sign": "aries",
+          "start": 10267,
+          "end": 11488,
+          "sha256": "992b298ba0818d4c6983fc276db4987dff71e58ed2087c904296a364e0c9f15f",
+          "wordCount": 203
+        },
+        {
+          "sign": "taurus",
+          "start": 11518,
+          "end": 12800,
+          "sha256": "dd5c5bdcf873d3e7f79f6ab93ae007ab07c2552b801bcc8e27cb9827d8223058",
+          "wordCount": 212
+        },
+        {
+          "sign": "gemini",
+          "start": 12830,
+          "end": 14258,
+          "sha256": "b1b9765d43edee5e210fa7546b20034aa6380acc07500b74acd3340fe22c61c1",
+          "wordCount": 241
+        },
+        {
+          "sign": "cancer",
+          "start": 14288,
+          "end": 15656,
+          "sha256": "c1a0d3620bb5c097d9b21b62681dbb58b06d143cfaa531444eba5f1bc746113e",
+          "wordCount": 224
+        },
+        {
+          "sign": "leo",
+          "start": 15680,
+          "end": 16970,
+          "sha256": "8981fda2199d42994de0f3c3d3d03a8f37dfe76a42bb1864f456ca499237abe3",
+          "wordCount": 202
+        },
+        {
+          "sign": "virgo",
+          "start": 16998,
+          "end": 18311,
+          "sha256": "3c5072a9a3a6196e12609e6841d0f5b7cbf9952a2d909329df4ff88fce22a9da",
+          "wordCount": 219
+        },
+        {
+          "sign": "libra",
+          "start": 18339,
+          "end": 19577,
+          "sha256": "d6ba5d048c675d72e0edc063f03480bb38ca2eea3cee13107ec93bfcf0cdffcf",
+          "wordCount": 203
+        },
+        {
+          "sign": "scorpio",
+          "start": 19609,
+          "end": 20932,
+          "sha256": "b48aebe09a16f031d155695f41d5405dbe928979f1a4dd139d803fc6213b4ac7",
+          "wordCount": 218
+        },
+        {
+          "sign": "sagittarius",
+          "start": 20972,
+          "end": 22119,
+          "sha256": "6e6eef50d035845cb2de6df92c4c574a50a8a9952f5968791b4bd9fbdfa3664c",
+          "wordCount": 190
+        },
+        {
+          "sign": "capricorn",
+          "start": 22155,
+          "end": 23456,
+          "sha256": "86928fb9dfd4ee70c3eeb92c7d609637b7df105142af38e67bce4b446266d142",
+          "wordCount": 211
+        },
+        {
+          "sign": "aquarius",
+          "start": 23490,
+          "end": 24951,
+          "sha256": "444826e750e774e15907c4908376704184056e197662f7d14e7c2b703d8fa663",
+          "wordCount": 230
+        },
+        {
+          "sign": "pisces",
+          "start": 24981,
+          "end": 26285,
+          "sha256": "87d472170ad7b882f93c3c24e0e96b3c9c26c470a273d7ed562064bba320748e",
+          "wordCount": 223
+        }
+      ]
+    }
+  ]
+}
