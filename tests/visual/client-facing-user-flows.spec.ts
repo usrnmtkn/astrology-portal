@@ -18,6 +18,16 @@ import {
   VERIFIED_SKY_CACHE_SCHEMA
 } from "../../apps/web/src/services/verifiedSkyCache";
 
+async function expectBundledLunationBody(article: Locator, phase: string, sign: string) {
+  const key = `authored/sky-lunation-macro/${phase}/${sign}`;
+  const bundle = JSON.parse(readFileSync("apps/web/src/content/fallbackArchitectureV3/bundled-sky-authored-cards-v3.json", "utf8"));
+  const source = bundle.authoredCards.find((row: any) => row.contentKey === key);
+  expect(source?.review_status).toBe("approved");
+  expect(source?.body).toBeTruthy();
+  await expect.poll(async () => (await article.locator("p").allTextContents()).join("\n\n"))
+    .toContain(source.body.trim());
+}
+
 async function expectHousePillsInArticle(page: Page) {
   const pills = page.locator(".article-id .article-pills");
   await expect(pills.locator(".planet-placement-row__duration")).toHaveText(/^(?:TODAY|\d+D|\d+M|\d+Y(?: \d+M)?)(?:\s+left)?$/);
@@ -1660,9 +1670,10 @@ test.describe("client-facing user flow case studies", () => {
     let releaseCopy!: () => void;
     const contentReady = new Promise<void>(resolve => { releaseCopy = resolve; });
     await page.route('**/api/content-reader', async route => {
-      if (route.request().postDataJSON().provider === "tldrastro-fallback-architecture-v3") {
+      const query = route.request().postDataJSON();
+      if (query.provider === "tldrastro-fallback-architecture-v3" || query.keys?.includes(contentKey)) {
         await contentReady;
-        await route.fulfill({ json: readerResponse([row]) });
+        await route.fulfill({ json: readerResponse([row], [publication]) });
       } else {
         await route.fulfill({ status: 503, json: { message: "Explicit offline reader fixture" } });
       }
@@ -2724,68 +2735,70 @@ test.describe("client-facing user flow case studies", () => {
 
       await page.getByLabel("Selected week").getByRole("button", { name: /Full Moon\. Moon in Aquarius/ }).click();
       await expect(selectedDay.getByRole("heading", { level: 2 })).toHaveText("Full Moon in Aquarius");
-      await selectedDay.getByRole("button", { name: "Full Moon in Aquarius", exact: true }).click();
+      await selectedDay.locator(".calendar-day-events").getByRole("button", { name: /Aquarius.*Full Moon|Full Moon.*Aquarius/u }).click();
       await expect(page.getByRole("dialog", { name: "Event detail" }).locator(".calendar-reading__meta")).toContainText("Jul 29 · 10:35 AM");
       await assertNoClientErrors();
     });
 
   });
 
-  test("calendar Full Moon opens the canonical SKY V4 lunation article on the real detail surface", async ({ page }) => {
+  test("calendar Full Moon opens the complete approved lunation article on the real detail surface", async ({ page }) => {
     const assertNoClientErrors = await expectNoClientErrors(page);
 
     await seedClientState(page, { now: "2026-07-29T16:00:00.000Z" });
     await expectClientRouteLoads(page, "/#calendar?view=week&date=2026-07-29");
     const selectedDay = page.getByLabel("Selected lunar day");
-    const eventButton = selectedDay.getByRole("button", { name: "Full Moon in Aquarius", exact: true });
+    // Studio owns the visible title; target the existing lunation card role.
+    const eventButton = selectedDay.locator(".calendar-day-events").getByRole("button", { name: /Aquarius.*Full Moon|Full Moon.*Aquarius/u });
 
     await expect(eventButton).toBeVisible({ timeout: 15_000 });
     await eventButton.click();
     await page.getByRole("dialog", { name: "Event detail" }).getByRole("button", { name: "Read article" }).click();
     const article = page.locator(".app-shell.mode-detail .sky-detail-article");
     await expect(article).toBeVisible();
-    await expect(article).toContainText("A Full Moon in Aquarius reveals what has grown around community, belonging, future vision");
-    await expect(article).toContainText("Aquarius reminds us that truth is not always comfortable, but it is necessary.");
+    await expectBundledLunationBody(article, "full-moon", "aquarius");
     await expect(article).not.toContainText("Aspects shaping this transit");
     await expect(article).toContainText("Key aspects");
     await assertNoClientErrors();
   });
 
-  test("calendar New Moon opens the canonical SKY V4 lunation article on the real detail surface", async ({ page }) => {
+  test("calendar New Moon opens the complete approved lunation article on the real detail surface", async ({ page }) => {
     const assertNoClientErrors = await expectNoClientErrors(page);
 
     await seedClientState(page, { now: "2026-07-14T16:00:00.000Z" });
     await expectClientRouteLoads(page, "/#calendar?view=week&date=2026-07-14");
     const selectedDay = page.getByLabel("Selected lunar day");
-    const eventButton = selectedDay.getByRole("button", { name: /New Moon in Cancer/u });
+    // Studio owns the visible title; target the existing lunation card role.
+    const eventButton = selectedDay.locator(".calendar-day-events").getByRole("button", { name: /Cancer.*New Moon|New Moon.*Cancer/u });
 
     await expect(eventButton).toBeVisible({ timeout: 15_000 });
     await eventButton.click();
     await page.getByRole("dialog", { name: "Event detail" }).getByRole("button", { name: "Read article" }).click();
     const article = page.locator(".app-shell.mode-detail .sky-detail-article");
     await expect(article).toBeVisible();
-    await expect(article).toContainText("The New Moon in Cancer invites a new beginning rooted in care");
-    await expect(article).toContainText("Let this New Moon be an agreement between you and your nervous system.");
+    await expectBundledLunationBody(article, "new-moon", "cancer");
     await expect(article).not.toContainText("Aspects shaping this transit");
     await expect(article).toContainText("Key aspects");
     await assertNoClientErrors();
   });
 
-  test("calendar exact eclipse opens the exact canonical SKY V4 event article", async ({ page }) => {
+  test("calendar eclipse opens the complete approved lunation article", async ({ page }) => {
     const assertNoClientErrors = await expectNoClientErrors(page);
 
     await seedClientState(page, { now: "2025-09-21T16:00:00.000Z" });
     await expectClientRouteLoads(page, "/#calendar?view=week&date=2025-09-21");
     const selectedDay = page.getByLabel("Selected lunar day");
-    const eventButton = selectedDay.getByRole("button", { name: /Eclipse in Virgo/u });
+    // Studio owns the visible title; target the existing lunation card role.
+    const eventButton = selectedDay.locator(".calendar-day-events .calendar-stoic-card:has(.calendar-kind--lunation, .calendar-kind--eclipse)");
 
     await expect(eventButton).toBeVisible({ timeout: 15_000 });
     await eventButton.click();
     await page.getByRole("dialog", { name: "Event detail" }).getByRole("button", { name: "Read article" }).click();
     const article = page.locator(".app-shell.mode-detail .sky-detail-article");
     await expect(article).toBeVisible();
-    await expect(article).toContainText("The Partial Solar Eclipse in Virgo is a closing ceremony and a question of new foundations.");
-    await expect(article).toContainText("The magick is not in wishing. It is in the doing.");
+    // This fixture has no dated CMS row; the current shared reader selects the
+    // approved reusable Virgo body for the calculated eclipse date.
+    await expectBundledLunationBody(article, "new-moon", "virgo");
     await assertNoClientErrors();
   });
 
@@ -2795,14 +2808,15 @@ test.describe("client-facing user flow case studies", () => {
     await seedClientState(page, { now: "2026-08-12T16:00:00.000Z" });
     await expectClientRouteLoads(page, "/#calendar?view=week&date=2026-08-12");
     const selectedDay = page.getByLabel("Selected lunar day");
-    const eventButton = selectedDay.getByRole("button", { name: /Eclipse in Leo/u });
+    // Studio owns the visible title; target the existing lunation card role.
+    const eventButton = selectedDay.locator(".calendar-day-events .calendar-stoic-card:has(.calendar-kind--lunation, .calendar-kind--eclipse)");
 
     await expect(eventButton).toBeVisible({ timeout: 15_000 });
     await eventButton.click();
     await page.getByRole("dialog", { name: "Event detail" }).getByRole("button", { name: "Read article" }).click();
     const article = page.locator(".app-shell.mode-detail .sky-detail-article");
     await expect(article).toBeVisible();
-    await expect(article).toContainText("The role that kept you visible may no longer feel like the person you want to keep performing.");
+    await expectBundledLunationBody(article, "new-moon", "leo");
     await expect(article).not.toContainText("The Partial Solar Eclipse in Virgo");
     await assertNoClientErrors();
   });
@@ -5244,6 +5258,16 @@ test("Chiron Jupiter owner revision renders its complete opening and ending", as
 test("Sky detail hydrates published aspects for its displayed snapshot and dated links", async ({ page }) => {
   test.setTimeout(120_000);
   const snapshot = JSON.parse(readFileSync("apps/web/public/content-studio-last-known-good.json", "utf8"));
+  const publishedAspect = (id: string) => {
+    const identity = JSON.parse(readFileSync(`packages/astro-knowledge/data/transits/${id}.json`, "utf8"));
+    const contentKey = `sky.aspect.${identity.transiting}.${identity.aspect}.${identity.other}`;
+    const row = snapshot.rows.find((row: any) => row.content_key === contentKey);
+    expect(row?.body, `The published fixture must contain ${contentKey}`).toBeTruthy();
+    return { contentKey, body: row.body as string };
+  };
+  const expectPublishedBody = (body: string) => expect.poll(async () =>
+    (await page.locator(".sky-detail-article p").allTextContents()).join("\n\n"),
+    { timeout: 60_000 }).toContain(body.trim());
   const publications = snapshot.publications.filter((row: any) => row.content_key.startsWith("sky.aspect."));
   await seedClientState(page, { now: "2026-09-08T14:03:00.000Z", contentPublications: publications });
   const requested = new Set<string>();
@@ -5257,10 +5281,9 @@ test("Sky detail hydrates published aspects for its displayed snapshot and dated
   // Placement cards now follow the displayed motion chapter, not the full residency.
   const ids = ["mercury-sextile-lilith", "jupiter-trine-lilith", "sun-square-lilith"];
   for (const id of ids) {
-    const row = JSON.parse(readFileSync(`packages/astro-knowledge/data/transits/${id}.json`, "utf8"));
-    const article = page.locator(".sky-detail-article");
-    await expect(article).toContainText(row.readerCopy.body, { timeout: 60_000 });
-    expect(requested.has(`sky.aspect.${row.transiting}.${row.aspect}.${row.other}`)).toBe(true);
+    const row = publishedAspect(id);
+    await expectPublishedBody(row.body);
+    expect(requested.has(row.contentKey)).toBe(true);
   }
   const datedLink = page.getByRole("link", { name: "Read more about Lilith Square Sun", exact: true });
   const datedHref = await datedLink.getAttribute("href");
@@ -5270,31 +5293,31 @@ test("Sky detail hydrates published aspects for its displayed snapshot and dated
   // Lilith in this snapshot; neither is active on the original September 8 date.
   const sampleInstant = encodeURIComponent("2026-08-01T12:00:00.000Z");
   await page.evaluate(hash => { window.location.hash = hash; }, `sky/aspect/chiron/trine/lilith/on/${sampleInstant}`);
-  const chiron = JSON.parse(readFileSync("packages/astro-knowledge/data/transits/chiron-trine-lilith.json", "utf8"));
-  await expect(page.locator('.sky-detail-article')).toContainText(chiron.readerCopy.body, { timeout: 60_000 });
+  const chiron = publishedAspect("chiron-trine-lilith");
+  await expectPublishedBody(chiron.body);
   expect(requested.has("sky.aspect.chiron.trine.lilith")).toBe(true);
   await page.evaluate(hash => { window.location.hash = hash; }, `sky/aspect/lilith/square/neptune/on/${sampleInstant}`);
-  const neptune = JSON.parse(readFileSync("packages/astro-knowledge/data/transits/neptune-square-lilith.json", "utf8"));
-  await expect(page.locator('.sky-detail-article')).toContainText(neptune.readerCopy.body, { timeout: 60_000 });
+  const neptune = publishedAspect("neptune-square-lilith");
+  await expectPublishedBody(neptune.body);
   await page.reload();
-  await expect(page.locator('.sky-detail-article')).toContainText(neptune.readerCopy.body, { timeout: 60_000 });
+  await expectPublishedBody(neptune.body);
   await page.evaluate(href => { window.location.hash = href!; }, datedHref);
-  const sun = JSON.parse(readFileSync("packages/astro-knowledge/data/transits/sun-square-lilith.json", "utf8"));
-  await expect(page.locator('.sky-detail-article')).toContainText(sun.readerCopy.body);
+  const sun = publishedAspect("sun-square-lilith");
+  await expectPublishedBody(sun.body);
   await page.reload();
-  await expect(page.locator('.sky-detail-article')).toContainText(sun.readerCopy.body, { timeout: 60_000 });
+  await expectPublishedBody(sun.body);
   // Returning to the original date must not leave the alternate snapshot's copy behind.
   await page.evaluate(() => { window.location.hash = "sky/placement/lilith/capricorn"; });
-  const mars = JSON.parse(readFileSync("packages/astro-knowledge/data/transits/mars-opposition-lilith.json", "utf8"));
-  await expect(page.locator('.sky-detail-article')).toContainText(mars.readerCopy.body, { timeout: 60_000 });
-  await expect(page.locator('.sky-detail-article')).not.toContainText(sun.readerCopy.body);
+  const mars = publishedAspect("mars-opposition-lilith");
+  await expectPublishedBody(mars.body);
+  expect((await page.locator(".sky-detail-article p").allTextContents()).join("\n\n")).not.toContain(sun.body.trim());
   await page.screenshot({ path: "test-results/calendar-aspect-hydration-fixed.png", fullPage: true });
   await page.evaluate(() => { window.location.hash = "calendar"; });
   await page.getByRole("button", { name: /^Thursday, September 10\./ }).click();
   await page.getByRole("button", { name: "Venus enters Scorpio", exact: true }).click();
   await page.getByRole("dialog", { name: "Event detail" }).getByRole("button", { name: "Read article" }).click();
-  const venus = JSON.parse(readFileSync("packages/astro-knowledge/data/transits/venus-square-pluto.json", "utf8"));
-  await expect(page.locator('.sky-detail-article')).toContainText(venus.readerCopy.body, { timeout: 60_000 });
+  const venus = publishedAspect("venus-square-pluto");
+  await expectPublishedBody(venus.body);
   await expect(page.locator('.sky-detail-article h1')).toContainText("Venus in Scorpio");
 });
 
@@ -5637,4 +5660,131 @@ for (const theme of ["light", "dark"] as const) {
       errors();
     });
   }
+}
+
+// A published ledger plus a narrow Sky response used to leave these titles
+// visible with no body. Exercise the actual cold reader, not a preloaded runtime.
+for (const theme of ["light", "dark"] as const) for (const width of [390, 1440]) {
+  test(`published personal transit hydration across Sky You Friends ${theme} ${width}`, async ({ page }) => {
+    test.setTimeout(120_000);
+    await page.setViewportSize({ width, height: 1000 });
+    const catalog = JSON.parse(readFileSync("apps/web/src/content/fallbackArchitectureV3/source-rows/transit-synastry-rows-v1.json", "utf8")).authoredCards;
+    const records = catalog.filter((row: any) => row.contentKey.startsWith("authored/transit-aspect/sun/")
+      && row.review_status === "approved").map((row: any, index: number) => ({ ...row,
+      body_you: `QA published transit opening ${index}.\n\nQA published transit final sentence ${index}.`,
+      body_they: `QA published friend transit opening ${index}.\n\nQA published friend transit final sentence ${index}.`
+    }));
+    records.push({ contentKey: "authored/transit-return/sun", content_role: "full_copy", review_status: "approved",
+      reader_only: true, render_policy: "personal-transit-exact-v1",
+      body_you_review_status: "approved", body_they_review_status: "approved",
+      headline: "Solar Return", body_you: "QA published solar return opening.\n\nQA published solar return final sentence.",
+      body_they: "QA published friend solar return opening.\n\nQA published friend solar return final sentence." });
+    await seedCrossSurfacePublications(page, records, { profile: true, friends: true, theme,
+      profileBirthDate: "1979-08-22", preloadProfileNatalSky: true, now: "2026-08-22T16:00:00.000Z" });
+    let personalReads = 0;
+    await page.route('**/api/content-reader', async route => {
+      const query = route.request().postDataJSON();
+      if (query.scope === "sky" || query.scope === "sky-list") return route.fulfill({ json: readerResponse([]) });
+      if (query.keys?.some((key: string) => key.startsWith('authored/transit-'))) personalReads++;
+      return route.fallback();
+    });
+    const errors = watchBrowserErrors(page);
+    await expectClientRouteLoads(page, "/#sky/placement/sun/leo");
+    const personalized = page.getByRole("region", { name: "Where it lands for you" });
+    await expect(personalized).toContainText("QA published solar return opening.", { timeout: 30_000 });
+    await expect(personalized).toContainText("QA published solar return final sentence.");
+    await expect(personalized).not.toContainText("{{");
+    expect(personalReads).toBeGreaterThan(0);
+    await expectNoHorizontalOverflow(page, "published personal Sky reading");
+    await personalized.screenshot({ path: `test-results/published-personal-sky-${theme}-${width}.png` });
+    await page.reload();
+    await expect(personalized).toContainText("QA published solar return final sentence.", { timeout: 30_000 });
+    // Navigate within the same session; the scoped Sky overlay must not wipe
+    // personal sources, nor should the published Friend audience fall back to You.
+    await page.evaluate(() => { window.location.hash = "you"; });
+    const personalRow = page.locator('button.updates-aspect-row').filter({ hasText: /QA published (?:transit|solar return) opening/ }).first();
+    await expect(personalRow).toBeVisible({ timeout: 30_000 });
+    await personalRow.click();
+    await expect(page.locator('.you-transit-article')).toContainText(/QA published (?:transit|solar return) final sentence/);
+    await page.evaluate(() => { window.location.hash = "friends?tab=charts&chart=friend-nikki&view=transits"; });
+    const friend = page.locator('button.friend-transit-row').filter({ hasText: /QA published friend transit opening/ }).first();
+    await expect(friend).toBeVisible({ timeout: 30_000 });
+    await friend.click();
+    await expect(page.locator('.app-shell.mode-detail')).toContainText(/QA published friend transit final sentence/);
+    await expectNoHorizontalOverflow(page, "published friend personal reading");
+    errors();
+  });
+}
+
+test('published personal transit failure retries and retirement clears an open You article', async ({ page }) => {
+  test.setTimeout(90_000);
+  const record = { contentKey: "authored/transit-return/sun", content_role: "full_copy", review_status: "approved",
+      reader_only: true, render_policy: "personal-transit-exact-v1",
+    body_you_review_status: "approved", body_they_review_status: "approved", headline: "Solar Return",
+    body_you: "QA retry solar return opening.\n\nQA retry solar return final sentence.",
+    body_they: "QA retry friend solar return opening.\n\nQA retry friend solar return final sentence." };
+  await seedCrossSurfacePublications(page, [record], { profile: true, friends: true, profileBirthDate: "1979-08-22",
+    preloadProfileNatalSky: true, now: "2026-08-22T16:00:00.000Z" });
+  let fail = true;
+  await page.route('**/api/content-reader', route => {
+    const query = route.request().postDataJSON();
+    if (fail && query.keys?.includes(record.contentKey)) return route.fulfill({ status: 503, json: { error: 'Fixture outage' } });
+    if (query.scope) return route.fulfill({ json: readerResponse([]) });
+    return route.fallback();
+  });
+  await page.goto('/#sky/placement/sun/leo');
+  await expect(page.getByText('The transit readings could not load. Please try again.')).toBeVisible({ timeout: 30_000 });
+  await expect(page.getByRole('region', { name: 'Where it lands for you' })).toHaveCount(0);
+  await page.evaluate(() => { window.location.hash = 'you'; });
+  await expect(page.getByRole('region', { name: 'In-depth transit reports' })).toBeVisible();
+  await expect(page.getByText('The transit readings could not load. Please try again.')).toBeVisible();
+  await page.evaluate(() => { window.location.hash = 'friends?tab=charts&chart=friend-nikki&view=transits'; });
+  await expect(page.getByText('The transit readings could not load. Please try again.')).toBeVisible();
+  await page.getByRole('tab', { name: 'Natal', exact: true }).click();
+  await page.locator('button.placement-table-row').first().click();
+  await expect(page.locator('.app-shell.mode-detail')).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Close detail', exact: true })).toBeVisible();
+  await page.evaluate(() => { window.location.hash = 'sky/placement/sun/leo'; });
+  await expect(page.getByText('The transit readings could not load. Please try again.')).toBeVisible();
+  fail = false;
+  await page.getByRole('button', { name: 'Retry', exact: true }).click();
+  await expect(page.getByRole('region', { name: 'Where it lands for you' })).toContainText('QA retry solar return final sentence.', { timeout: 30_000 });
+  await page.evaluate(() => { window.location.hash = 'you'; });
+  const personal = page.locator('button.updates-aspect-row').filter({ hasText: 'QA retry solar return opening.' });
+  await expect(personal).toBeVisible({ timeout: 30_000 }); await personal.click();
+  await expect(page.locator('.you-transit-article')).toContainText('QA retry solar return final sentence.');
+  const publication = { content_key: record.contentKey, state: 'retired', revision: 100_001,
+    row_id: 'qa-cross-surface-0', row_updated_at: '2026-09-10T20:00:00.000Z', updated_at: '2026-09-30T19:00:00.000Z' };
+  await page.route('**/rest/v1/content_publications*', route => route.fulfill({ json: [publication] }));
+  await page.route('**/api/content-reader', route => route.fulfill({ json: readerResponse([], [publication]) }));
+  await page.evaluate(() => window.dispatchEvent(new CustomEvent('tldrastro:content-update', { detail: { contentKey: '*', published: false } })));
+  await expect(page.locator('.you-transit-article')).toHaveCount(0);
+  await expect(page.locator('main.app-shell')).not.toContainText('QA retry solar return final sentence.');
+});
+
+for (const [width, theme] of [[390, 'light'], [1440, 'dark']] as const) {
+  test(`reported Moon natal aspects retain full published writing ${width} ${theme}`, async ({ page }) => {
+    await page.setViewportSize({ width, height: 1000 });
+    const catalog = JSON.parse(readFileSync('apps/web/src/content/fallbackArchitectureV3/source-rows/transit-synastry-rows-v1.json', 'utf8')).authoredCards;
+    const keys = ['authored/transit-aspect/moon/sun/hard', 'authored/transit-aspect/moon/jupiter/soft'];
+    const records = keys.map(key => catalog.find((row: any) => row.contentKey === key));
+    // Synthetic profile selected using the ephemeris: both contacts are active.
+    await seedCrossSurfacePublications(page, records, { profile: true, profileBirthDate: '1962-08-02',
+      preloadProfileNatalSky: true, theme, now: '2026-10-26T16:00:00.000Z' });
+    await page.route('**/api/content-reader', route => route.request().postDataJSON().scope
+      ? route.fulfill({ json: readerResponse([]) }) : route.fallback());
+    await expectClientRouteLoads(page, '/#sky/placement/moon/taurus');
+    const section = page.getByRole('region', { name: 'Where it lands for you' });
+    for (const [index, title] of ['Moon square your Sun', 'Moon sextile your Jupiter'].entries()) {
+      const article = section.locator('.sky-detail-personalized-aspect').filter({ has: page.getByRole('heading', { name: title, exact: true }) });
+      const source = records[index].body_you ?? records[index].body;
+      const escape = (text: string) => text.replace(/[.*+?^${}()|[\]\\]/gu, "\\$&");
+      const expected = source.trim().replaceAll('{{aspectWord}}', index ? 'sextile' : 'square')
+        .split('{{untilDate}}').map(escape).join('[^{}\\n]+');
+      await expect.poll(async () => (await article.locator('p').allTextContents()).join('\n\n'))
+        .toMatch(new RegExp(`^${expected}$`, 'u'));
+      await expect(article).not.toContainText('{{');
+    }
+    await section.screenshot({ path: `test-results/reported-moon-writing-${width}-${theme}.png` });
+  });
 }

@@ -5,7 +5,7 @@ import { Fragment, isValidElement, useEffect, useId, useLayoutEffect, useRef, us
 import { ChevronLeft, MoreVertical, Pencil, Sparkles } from "lucide-react";
 import { DailyMoonContextTags, type DailyMoonContext } from "../../components/DailyMoonContextTags";
 import { ProfileAvatar } from "../../components/ProfileAvatar";
-import { PageLoading } from "../../components/PageLoading";
+import { PageLoading, PageLoadError } from "../../components/PageLoading";
 import { SegmentedControl } from "../../components/SegmentedControl";
 import { AspectGlyphs } from "../../components/charts/PlacementRows";
 import { NatalChartDataTable, type NatalChartDataTableRow } from "../../components/charts/NatalChartDataTable";
@@ -152,6 +152,9 @@ export type YouPageProps = {
   transitDateLabel: string;
   transitLoadingMessage?: string;
   transitsLoading?: boolean;
+  transitCopyLoading?: boolean;
+  transitCopyError?: boolean;
+  onRetryTransitCopy?: () => void;
   weeklyTransitRows?: ReactNode[];
   transitArticle?: YouTransitArticle | null;
 };
@@ -542,6 +545,7 @@ function YouUpdatesTab({
   transitDateLabel,
   transitLoadingMessage = "Adding today’s transits.",
   transitsLoading = false,
+  transitSourceFeedback,
   weeklyTransitRows = []
 }: {
   accountId: string | null | undefined;
@@ -559,6 +563,7 @@ function YouUpdatesTab({
   transitDateLabel: string;
   transitLoadingMessage?: string;
   transitsLoading?: boolean;
+  transitSourceFeedback?: ReactNode;
   weeklyTransitRows?: ReactNode[];
 }) {
   const dailyHeadline = dailyUpdateSummary?.headline.trim();
@@ -601,7 +606,7 @@ function YouUpdatesTab({
 
   return (
     <div className="subpane updates-section" id="sub-transits">
-      {hasSavedCurrentCity && transitsLoading && (
+      {hasSavedCurrentCity && transitsLoading && !transitSourceFeedback && (
         <PageLoading compact message={transitLoadingMessage} />
       )}
       {hasSavedCurrentCity ? (
@@ -614,6 +619,7 @@ function YouUpdatesTab({
           transitDateLabel={transitDateLabel}
         />
       ) : null}
+      {transitSourceFeedback ?? <>
       {hasSavedCurrentCity && dailyUpdateSummary && (
         <section className={`daily-horoscope-summary you-horoscope-card${dailyUpdateSummary.status === "loading" ? " is-loading" : ""}`} aria-label="Daily horoscope summary">
           {showDailyHeadline ? <h3>{dailyHeadline}</h3> : null}
@@ -716,6 +722,7 @@ function YouUpdatesTab({
           </section>
         </>
       ) : null}
+      </>}
     </div>
   );
 }
@@ -1217,7 +1224,10 @@ export function YouPage({
   transitLoadingMessage,
   transitsLoading = false,
   weeklyTransitRows = [],
-  transitArticle
+  transitArticle,
+  transitCopyLoading = false,
+  transitCopyError = false,
+  onRetryTransitCopy
 }: YouPageProps) {
   const [profileTab, setProfileTab] = useState<YouTab>(youTabFromUrl);
   const [natalChartViewMode, setNatalChartViewMode] = useState<NatalChartViewMode>("circle");
@@ -1297,7 +1307,11 @@ export function YouPage({
     );
   }
 
+  const transitSourceFeedback = transitCopyError && onRetryTransitCopy
+    ? <PageLoadError message="The transit readings could not load. Please try again." onRetry={onRetryTransitCopy} />
+    : transitCopyLoading ? <PageLoading message="Loading transit readings…" /> : null;
   if (transitArticle && onCloseTransitArticle) {
+    if (transitSourceFeedback) return transitSourceFeedback;
     return <YouTransitArticlePage article={transitArticle} onClose={onCloseTransitArticle} />;
   }
 
@@ -1359,6 +1373,7 @@ export function YouPage({
 
           {profileTab === "transits" && (
             <YouUpdatesTab
+              transitSourceFeedback={transitSourceFeedback}
               accountId={accountId}
               accountRecovery={accountRecovery}
               aspectRows={aspectRows}

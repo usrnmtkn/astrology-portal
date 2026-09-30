@@ -3071,11 +3071,12 @@ test.describe("content dashboard admin user flow case studies", () => {
     await closeGeneratedEditor(page, true);
     await expect(preview.locator("[data-transit-source-key]").first()).toBeVisible();
     await page.getByText("Reading preview options", { exact: true }).click();
+    await page.getByLabel("Transit preview timing").fill("until October 27");
     await page.getByLabel("Transit copy variant").selectOption("4");
     await expect.poll(() => Boolean(release)).toBe(true);
     await expect(preview.getByRole("button")).toHaveCount(0);
     await page.getByLabel("Transit copy variant").selectOption("3");
-    const expected = renderTransitNatalPreviewState(normalizeTransitNatalPreviewInput({ planet: "neptune", sign: "aries", aspect: "opposition", natalPoint: "sun", variant: 3 }));
+    const expected = renderTransitNatalPreviewState(normalizeTransitNatalPreviewInput({ planet: "neptune", sign: "aries", aspect: "opposition", natalPoint: "sun", variant: 3, window: "until October 27" }));
     await expect(preview.locator(".admin-natal-source-card-copy > p")).toHaveText(expected.paragraphs.map(p => p.text));
     await release!();
     await expect(preview.locator(".admin-natal-source-card-copy > p")).toHaveText(expected.paragraphs.map(p => p.text));
@@ -8338,3 +8339,33 @@ for (const width of [390, 1440]) test(`Empty-house preview uses the actual authe
     await workspace.screenshot({ path: `test-results/empty-house-actual-api-${width}.png` });
   } finally { await page.unroute("**/api/admin/natal-placement-preview"); api.close(); }
 });
+
+for (const [width, theme] of [[1440, 'light'], [1440, 'dark'], [390, 'light'], [390, 'dark']] as const) {
+  test(`Personal Transit preview explains missing timing ${width} ${theme}`, async ({ page }) => {
+    await page.setViewportSize({ width, height: 1000 });
+    await seedAdminApi(page, { generatedRows: [] });
+    await page.route('**/api/admin/transit-natal-preview', async route => {
+      const input = normalizeTransitNatalPreviewInput(route.request().postDataJSON());
+      await route.fulfill({ json: { ok: true, rendered: renderTransitNatalPreviewState(input) } });
+    });
+    await page.addInitScript(theme => localStorage.setItem('tldrastro:theme', theme), theme);
+    await expectAdminRouteLoads(page, `/admin/content#sky-writeups?view=transits-to-natal${width === 390 ? '&audience=friends' : ''}`);
+    await page.getByLabel('Transiting planet', { exact: true }).selectOption('moon');
+    await page.getByLabel('Transit to natal aspect').selectOption('square');
+    await page.getByLabel('Natal planet or point', { exact: true }).selectOption('sun');
+    const preview = page.getByRole('region', { name: 'Effective transit to natal reader preview' });
+    await expect(preview).toContainText('This preview needs a timing label');
+    await expect(preview).not.toContainText('{{untilDate}}');
+    await expect(preview.getByText(/Shared source \(advanced\)/)).toBeVisible();
+    await page.getByText('Reading preview options', { exact: true }).click();
+    await page.getByLabel('Transit preview timing').fill('until October 27');
+    await expect(preview).not.toContainText('This preview needs a timing label');
+    await expect(preview).toContainText('October 27');
+    await expect(preview).not.toContainText('{{untilDate}}');
+    const expected = renderTransitNatalPreviewState(normalizeTransitNatalPreviewInput({ planet: 'moon', aspect: 'square',
+      natalPoint: 'sun', sign: '', voice: width === 390 ? '{{Name}}' : 'you', window: 'until October 27' }));
+    await expect(preview.locator('.admin-natal-source-card-copy > p')).toHaveText(expected.paragraphs.map(p => p.text));
+    await expectNoHorizontalOverflow(page, 'Personal Transit timing preview');
+    await preview.screenshot({ path: `test-results/personal-transit-preview-${width}-${theme}.png` });
+  });
+}

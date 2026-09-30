@@ -2,6 +2,7 @@ import { expect, test, type Page, type Locator } from "@playwright/test";
 import { getAstrodienstSky } from "../../apps/web/src/services/ephemeris";
 import { natalSkySnapshotCacheKey, skySnapshotCacheKey, VERIFIED_SKY_CACHE_SCHEMA } from "../../apps/web/src/services/verifiedSkyCache";
 import type { SkySnapshot } from "../../apps/web/src/types";
+import { bundledPublications } from "../helpers/bundled-publications";
 
 const location = { label: "New York, NY", latitude: 40.7128, longitude: -74.006, timeZone: "America/New_York" };
 const birth = new Date("1978-09-01T16:00:00Z");
@@ -22,6 +23,7 @@ async function prepare(page: Page, theme: string, unknownFriendBirthTime = false
   await page.route("https://tldrastro-api-27165565299.us-central1.run.app/**", route => route.fulfill({ status: 503, json: {} }));
   await page.route("**/api/**", route => route.fulfill({ status: 503, json: {} }));
   await page.route(/^https:\/\/[^/]+\.supabase\.(?:test|co)\//, route => route.fulfill({ json: [] }));
+  await bundledPublications(page);
   const records = [
     { cacheKey: natalSkySnapshotCacheKey(location, birth), snapshot: natal },
     ...skies.map((snapshot, index) => ({ cacheKey: skySnapshotCacheKey(location, dates[index]), snapshot }))

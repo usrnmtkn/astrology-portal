@@ -162,6 +162,9 @@ export default function TransitNatalReaderPreview({ selection, voice, secret, on
     if (previous && JSON.stringify(previous.sources) === JSON.stringify(paragraph.sources)) previous.texts.push(paragraph.text);
     else groups.push({ texts: [paragraph.text], sources: paragraph.sources });
   }
+  // {{Name}} is an intentional Friend audience preview label; only absent
+  // calculated timing makes this preview incomplete.
+  const incompleteContext = groups.some(group => group.texts.some(text => /\{\{(?:untilDate|window)\}\}/u.test(text)));
 
   return (
     <section className="admin-natal-source-group" aria-label="Effective transit to natal reader preview">
@@ -182,8 +185,9 @@ export default function TransitNatalReaderPreview({ selection, voice, secret, on
                 : "The published preview is still using shared fallback writing. Edit this copy to start a write-up for this aspect only. A saved draft does not replace published reader copy.") : "This preview includes shared fallback writing. There is no independent write-up key for this contact; shared source changes can affect other readings."}
             </aside>}
             {exactKey && onOpenExact && <StudioButton type="button" onClick={onOpenExact}>{exactKey.split("/").length === 8 ? "Write this six-part situation" : "Edit this copy"}</StudioButton>}
+            {incompleteContext && <p role="status" className="admin-field-hint">This preview needs a timing label in Reading preview options. The app supplies calculated timing. The published source is available to edit below.</p>}
             {groups.map((group, index) => <Fragment key={index}>
-              {group.texts.map((text, paragraphIndex) => <p key={paragraphIndex}>{text}</p>)}
+              {!incompleteContext && group.texts.map((text, paragraphIndex) => <p key={paragraphIndex}>{text}</p>)}
               {group.sources.map(source => <TransitSourceEditAction
                 key={`${identity}:${revision}:${source.contentKey}:${source.field}`}
                 source={source} exactKey={exactKey} headline={state.preview!.headline} onOpenSource={onOpenSource}

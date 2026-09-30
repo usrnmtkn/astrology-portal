@@ -1,3 +1,4 @@
+import { bundledPublications } from "../helpers/bundled-publications";
 import { readerResponse } from '../helpers/reader-response';
 import fs from "node:fs";
 import { expect, test } from "@playwright/test";
@@ -14,6 +15,7 @@ async function expectCalendarEventBody(page: import("@playwright/test").Page, ti
 
 test("Calendar renders complete collective passages after Studio hydration and reload", async ({ page }) => {
   test.setTimeout(120_000);
+  await bundledPublications(page);
   // Current engine facts put Mercury trine Pluto on this day. Saturn square
   // Lilith is covered with explicit event facts below, not an obsolete date.
   const copies = [JSON.parse(fs.readFileSync("packages/astro-knowledge/data/transits/mercury-trine-pluto.json", "utf8")).readerCopy];

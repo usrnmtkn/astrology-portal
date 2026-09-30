@@ -19,6 +19,7 @@ test("offline snapshot publication keeps complete Calendar guidance available du
   // August 8 is actually the last full Gemini day, so timing copy takes priority.
   const key = "authored/calendar-weekly-moon/scorpio";
   const row = snapshot.rows.find((candidate: { content_key: string }) => candidate.content_key === key);
+  let snapshotRequested = false;
   let releaseSnapshot!: () => void;
   let releaseLive!: () => void;
   const heldSnapshot = new Promise<void>(resolve => { releaseSnapshot = resolve; });
@@ -28,6 +29,7 @@ test("offline snapshot publication keeps complete Calendar guidance available du
   })));
   await page.route("**/api/calendar?**", route => route.fulfill({ status: 503, json: {} }));
   await page.route('**/api/content-reader', route => route.fulfill({ status: 503, json: {} }));
+  await page.route("**/rest/v1/content_publications*", route => route.fulfill({ status: 503, json: {} }));
   // Keep the independent live overlay request pending. The offline snapshot
   // must install its own rows before announcing their publication identities.
   await page.route("**/rest/v1/rpc/content_runtime_revision", async route => {
@@ -35,18 +37,22 @@ test("offline snapshot publication keeps complete Calendar guidance available du
     await route.fulfill({ status: 503, json: {} }).catch(() => {});
   });
   await page.route("**/content-studio-last-known-good.json", async route => {
+    snapshotRequested = true;
     await heldSnapshot;
     await route.fulfill({ json: snapshot }).catch(() => {});
   });
   try {
     await page.goto("/#calendar?view=weekly&date=2026-08-17");
     const weekly = weekGuidance(page, "2026-08-18");
-    await expect(weekly).toHaveAttribute("data-guidance-key", key, { timeout: 25_000 });
+    // Release the actual offline request before its network deadline. Waiting
+    // for prose first would require the request we deliberately held to time out.
+    await expect.poll(() => snapshotRequested).toBe(true);
     releaseSnapshot();
     await expect.poll(() => page.evaluate(key => {
       const records = JSON.parse(localStorage.getItem("tldrastro:content-publications:v1") ?? "[]");
       return records.some((record: { content_key: string }) => record.content_key === key);
     }, key), { timeout: 15_000 }).toBe(true);
+    await expect(weekly).toHaveAttribute("data-guidance-key", key);
     await expect(weekly).toHaveText(row.body);
     await page.goto("/#calendar?view=day&date=2026-08-18");
     const day = dayGuidance(page);
@@ -138,7 +144,7 @@ test("Calendar full facts can arrive first without a late basic response replaci
   } finally { release(); }
 });
 
-for (const leaveCalendar of [false, true]) test(`Calendar pending event click ${leaveCalendar ? "does not reopen after leaving" : "opens after the Sky calculation loads"}`, async ({ page }) => {
+for (const leaveCalendar of [false, true]) test(`Calendar pending event ${leaveCalendar ? "does not open after leaving" : "opens after the Sky calculation loads"}`, async ({ page }) => {
   test.setTimeout(60_000);
   const { getLunarCalendarWeek } = await import("../../apps/web/src/services/ephemeris");
   const location = { label: "New York, New York", latitude: 40.7128, longitude: -74.006, timeZone: "America/New_York" };
@@ -153,10 +159,11 @@ for (const leaveCalendar of [false, true]) test(`Calendar pending event click ${
   });
   try {
     await page.goto("/#calendar?view=day&date=2026-09-10");
-    await page.getByRole("button", { name: "Venus enters Scorpio", exact: true }).click();
-    await expect(page.locator(".sky-detail-article")).toHaveCount(0);
+    await expect(page.getByRole("region", { name: "Selected week", exact: true })).toBeVisible();
+    await expect(page.getByText("Loading this day’s reading…", { exact: true })).toBeVisible();
+    await expect(page.getByRole("button", { name: "Venus enters Scorpio", exact: true })).toHaveCount(0);
+    await expect(page.getByRole("dialog", { name: "Event detail" })).toHaveCount(0);
     if (leaveCalendar) {
-      await page.getByRole("dialog", { name: "Event detail" }).getByRole("button", { name: "Close", exact: true }).click();
       await page.getByRole("button", { name: "Sky", exact: true }).first().click();
     }
   } finally { release(); }
@@ -166,6 +173,7 @@ for (const leaveCalendar of [false, true]) test(`Calendar pending event click ${
     await expect(page.getByRole("dialog", { name: "Event detail" })).toHaveCount(0);
     return;
   }
+  await page.getByRole("button", { name: "Venus enters Scorpio", exact: true }).click();
   const reading = page.getByRole("dialog", { name: "Event detail" });
   await expect(reading).toBeVisible({ timeout: 30_000 });
   await expect(reading).toContainText("Venus enters Scorpio");

@@ -17,6 +17,8 @@ import type { ArticlePillData } from "./components/ArticlePills";
 import { articleHistoryChangeEvent, pushArticleUrl, returnToArticleParent } from "./services/articleNavigation";
 import { CardReadMore } from "./components/CardReadMore";
 import { isContentRetired, contentPublication } from "./content/contentPublicationState";
+import { personalTransitPublicationIdentity } from "./services/personalTransitPublication";
+import { installPersonalTransitFallbackArchitectureV3Bundle } from "./content/fallbackArchitectureV3Runtime";
 import { prepareSkyPlacementSources, skyPlacementPublicationIdentity } from "./services/skyPlacementHydration";
 import {
   skyPlacementInSignAspectContentKeys,
@@ -47,7 +49,6 @@ import type { YouPageProps } from "./features/you/YouPage";
 import { isStandaloneLearnPath } from "./content/learnRoutePath";
 import { refreshContentPublications } from "./services/contentPublications";
 import { preparePersonalReportTiming } from "./services/personalReportTiming";
-import { preparePersonalReportSources } from "./services/personalReportSources";
 import {
   ArrowDownRight,
   ArrowRight,
@@ -11051,6 +11052,13 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
   // can install the new source set. A clock tick does not change this identity.
   const skyPlacementFallbackStatus: SkyPlacementContentStatus = skyPlacementLoadStatus === "ready"
     && (skyPlacementResolvedIdentity !== skyPlacementPublicationIdentity() || resolvedPlacementSelection !== placementSelection) ? "loading" : skyPlacementLoadStatus;
+  const [personalTransitLoadStatus, setPersonalTransitLoadStatus] = useState<SkyPlacementContentStatus>("idle");
+  const [personalTransitResolvedIdentity, setPersonalTransitResolvedIdentity] = useState<string | null>(null);
+  const [personalTransitRetry, setPersonalTransitRetry] = useState(0);
+  const personalTransitIdentity = personalTransitPublicationIdentity();
+  const personalTransitSourceStatus = personalTransitLoadStatus === "ready"
+    && personalTransitResolvedIdentity !== personalTransitIdentity ? "loading" : personalTransitLoadStatus;
+  const retryPersonalTransitSources = () => setPersonalTransitRetry(value => value + 1);
   const [skyDetailReadError, setSkyDetailReadError] = useState<string | null>(null);
   const [skyDetailRetry, setSkyDetailRetry] = useState(0);
   const [skyDetailResolvedIdentity, setSkyDetailResolvedIdentity] = useState<string | null>(null);
@@ -11822,6 +11830,33 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
     return () => { cancelled = true; compatibilityDashboardHydrationVersionRef.current = null; };
   }, [contentRefreshVersion, friendRelationshipContentRequests, mode]);
 
+  const personalTransitSourcesNeeded = mode === "profile" && youPagePainted
+    || mode === "friends" && friendRelationshipContentRequests.has("transits")
+    || Boolean(userProfile && skyDetailRoutePath?.startsWith("sky/placement/"));
+  const selectedDetailNeedsPersonalTransitSources = personalTransitSourcesNeeded && Boolean(
+    skyDetailRoutePath?.startsWith("sky/placement/")
+    || selectedSkyDetail?.routePath?.startsWith("friends?") && selectedSkyDetail.routePath.includes("view=transits")
+  );
+  useEffect(() => {
+    if (!personalTransitSourcesNeeded) return;
+    let cancelled = false;
+    setPersonalTransitLoadStatus(previous => previous === "ready" ? previous : "loading");
+    void import("./services/personalTransitSources").then(({ preparePersonalTransitSources }) => preparePersonalTransitSources()).then(({ bundle, identity }) => {
+      if (cancelled) return;
+      if (identity !== personalTransitPublicationIdentity()) throw new Error("Transit sources changed during loading.");
+      installPersonalTransitFallbackArchitectureV3Bundle(bundle);
+      setPersonalTransitResolvedIdentity(identity);
+      setPersonalTransitLoadStatus("ready");
+      setFallbackArchitectureV3Version(version => version + 1);
+      setFallbackDashboardOverlayVersion(version => version + 1);
+    }).catch(error => {
+      if (cancelled) return;
+      console.warn("Personal transit sources failed to load.", error);
+      setPersonalTransitLoadStatus("error");
+    });
+    return () => { cancelled = true; };
+  }, [personalTransitSourcesNeeded, personalTransitIdentity, contentRefreshVersion, personalTransitRetry]);
+
   const placementContentNeeded = shouldLoadSkyPlacementContent({ mode, hasSky: Boolean(sky), detailRoutePath: skyDetailRoutePath });
   useEffect(() => {
     if (skyDetailRoutePath) {
@@ -12106,7 +12141,7 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
     // and then replace it. In-sign Studio keys join that same commit so the
     // article body is not painted twice.
     if (routeSurface === "sky" && ["placement", "retrograde"].includes(routeType)
-      && skyPlacementFallbackStatus !== "ready") return;
+      && (skyPlacementFallbackStatus !== "ready" || personalTransitSourcesNeeded && personalTransitSourceStatus !== "ready")) return;
     // Every placement timeline includes exact aspects, even when the author
     // has not used an aspect token in the article.
     if (canLoadPlacementArticle && placementSnapshotRequest) {
@@ -12235,7 +12270,7 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
       renderDetail(detailSky, content, true);
     }).catch(error => { if (!cancelled) { console.warn("Sky detail interpretation failed to load.", error); setSkyDetailReadError(skyDetailRoutePath); } });
     return () => { cancelled = true; };
-  }, [contentRegistryVersion, fallbackArchitectureV3Version, profileNatalSky?.ascendant, sky, skyDate, skyDetailRoutePath, skyGeneratedContent, skyPlacementFallbackStatus, skyPlacementPersonalizationTransits, userProfile?.rising, skyDetailRetry]);
+  }, [contentRegistryVersion, fallbackArchitectureV3Version, profileNatalSky?.ascendant, sky, skyDate, skyDetailRoutePath, skyGeneratedContent, skyPlacementFallbackStatus, skyPlacementPersonalizationTransits, userProfile?.rising, skyDetailRetry, personalTransitSourcesNeeded, personalTransitSourceStatus]);
 
   useEffect(() => {
     if (!selectedSkyDetail?.routePath?.startsWith("friends?")
@@ -14609,7 +14644,8 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
       <PageLoadBoundary resetKey={`${mode}:${skyDetailRoutePath ?? ""}`}>
       <Suspense fallback={mode === "calendar" ? <CalendarDaySkeleton message="Loading calendar…" /> : <PageLoading message={mode === "friends" ? "Loading Friends…" : mode === "profile" ? "Loading your profile…" : "Loading page…"} />}>
       {selectedSkyDetail && (!/^sky\/(?:placement|retrograde)\//u.test(skyDetailRoutePath ?? "")
-        || skyPlacementFallbackStatus === "ready" && skyDetailResolvedIdentity === skyPlacementResolvedIdentity) ? (
+        || skyPlacementFallbackStatus === "ready" && skyDetailResolvedIdentity === skyPlacementResolvedIdentity)
+        && (!selectedDetailNeedsPersonalTransitSources || personalTransitSourceStatus === "ready") ? (
         <>
           {skyPlacementFallbackStatus === "error" ? (
             <div className="feature-loading-fallback" role="status">
@@ -14622,7 +14658,9 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
           </Suspense>
         </>
       ) : skyDetailRoutePath?.startsWith("sky/") ? (
-        skyStatus === "error" ? <PageLoadError message="The sky calculation could not load. Check your connection and try again." onRetry={() => setSkyRefreshKey(value => value + 1)} />
+        personalTransitSourcesNeeded && personalTransitSourceStatus === "error"
+          ? <PageLoadError message="The transit readings could not load. Please try again." onRetry={retryPersonalTransitSources} />
+          : skyStatus === "error" ? <PageLoadError message="The sky calculation could not load. Check your connection and try again." onRetry={() => setSkyRefreshKey(value => value + 1)} />
           : skyPlacementFallbackStatus === "error" && /^sky\/(?:placement|retrograde)\//u.test(skyDetailRoutePath)
             ? <PageLoadError message="The placement reading could not load. Please try again." onRetry={() => setSkyPlacementFallbackRetryKey(value => value + 1)} />
             : skyDetailReadError === skyDetailRoutePath
@@ -14854,6 +14892,9 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
                       transitItems={youDetailsReady ? selectedDateTransits : []}
                       currentSky={youDetailsReady ? selectedDateSky : null}
                       currentSkyLoading={!youDetailsReady || !selectedDateSky && skyStatus !== "error"}
+                      transitCopyLoading={personalTransitSourceStatus !== "ready"}
+                      transitCopyError={personalTransitSourceStatus === "error"}
+                      onRetryTransitCopy={retryPersonalTransitSources}
                       natalSky={youDetailsReady ? profileNatalSky : null}
                       natalCalculationStatus={youDetailsReady ? profileNatalCalculationStatus : "loading"}
                       natalCalculationError={profileNatalCalculationError}
@@ -14930,7 +14971,9 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
                     profileHandle={ownSocialProfile?.handle ?? null}
                     currentSky={selectedDateSky}
                     currentSkyLoading={friendCalculationNeeds.currentSky && !selectedDateSky && skyStatus !== "error"}
-                    transitCopyLoading={!friendTransitsCopyReady({
+                    transitCopyError={personalTransitSourceStatus === "error"}
+                    onRetryTransitCopy={retryPersonalTransitSources}
+                    transitCopyLoading={personalTransitSourceStatus !== "ready" || !friendTransitsCopyReady({
                       deferredLoaded: isDeferredFallbackArchitectureV3BundleLoaded(),
                       relationshipLoaded: isRelationshipFallbackArchitectureV3BundleLoaded()
                     })}
@@ -17110,6 +17153,9 @@ function ProfileView({
   transitItems,
   currentSky,
   currentSkyLoading,
+  transitCopyLoading,
+  transitCopyError,
+  onRetryTransitCopy,
   natalSky,
   natalCalculationStatus,
   natalCalculationError,
@@ -17138,6 +17184,9 @@ function ProfileView({
   transitItems: TransitItem[];
   currentSky: SkySnapshot | null;
   currentSkyLoading: boolean;
+  transitCopyLoading: boolean;
+  transitCopyError: boolean;
+  onRetryTransitCopy: () => void;
   natalSky: SkySnapshot | null;
   natalCalculationStatus: NatalChartCalculationStatus;
   natalCalculationError: string;
@@ -17167,6 +17216,16 @@ function ProfileView({
   }, [onInitialPaint]);
 
   const [transitArticle, setTransitArticle] = useState<YouTransitArticle | null>(null);
+  const articlePublicationIdentity = useRef(personalTransitPublicationIdentity());
+  useEffect(() => {
+    const identity = personalTransitPublicationIdentity();
+    if (identity !== articlePublicationIdentity.current) {
+      // Includes house and weekly articles, whose IDs are not individual transits.
+      // Reopening resolves the current source rather than retaining a retired body.
+      articlePublicationIdentity.current = identity;
+      setTransitArticle(null);
+    }
+  }, [fallbackArchitectureV3Version, transitCopyLoading]);
 
   useEffect(() => {
     setTransitArticle((current) => {
@@ -17174,7 +17233,7 @@ function ProfileView({
       const transit = transitItems.find((item) => personalTransitGeneratedContentKey(item, targetDate) === current.id);
       if (!transit) return current;
       const normalized = normalizePersonalTransitSurface(transit, targetDate);
-      if (!normalizedSurfaceHasReaderDetail(normalized)) return current;
+      if (!normalizedSurfaceHasReaderDetail(normalized)) return null;
       const sections = normalized.sections.map((section, index) => ({
         heading: current.sections[index]?.heading || section.heading || current.title,
         tldr: "",
@@ -18168,6 +18227,7 @@ function ProfileView({
       const reference = exactDateFromInput(targetDate, timeZone);
       if (!reference) throw new Error("The report date could not be calculated.");
       const calculated = await preparePersonalReportTiming(aspectRows, reference, timeZone);
+      const { preparePersonalReportSources } = await import("./services/personalReportSources");
       const sources = await preparePersonalReportSources(() => readDailyReportSources(calculated.transits));
       return { ...sources, reportTechnicalEvidence: {
         qualifyingTransits: calculated.qualifyingTransits,
@@ -18339,7 +18399,10 @@ function ProfileView({
         transitLoadingMessage={targetDate === dateInputValue()
           ? "Adding today’s transits."
           : `Calculating transits for ${formatSkyFullChartDate(targetDate)}…`}
-        transitsLoading={currentSkyLoading}
+        transitsLoading={currentSkyLoading || transitCopyLoading}
+        transitCopyLoading={transitCopyLoading}
+        transitCopyError={transitCopyError}
+        onRetryTransitCopy={onRetryTransitCopy}
       />
     </Suspense>
   );
