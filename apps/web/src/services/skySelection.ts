@@ -48,7 +48,12 @@ export function isDateInputValue(value: string | null): value is string {
 
 export function transitDateFromUrl() {
   try {
-    const value = new URL(window.location.href).searchParams.get("date");
+    const url = new URL(window.location.href);
+    // Calendar's visible selection also owns its calculation date on direct
+    // legacy links, before navigation has synchronized the shared query.
+    const calendarDate = url.hash.startsWith("#calendar?")
+      ? new URLSearchParams(url.hash.slice(10)).get("date") : null;
+    const value = isDateInputValue(calendarDate) ? calendarDate : url.searchParams.get("date");
     return isDateInputValue(value) ? value : null;
   } catch {
     return null;

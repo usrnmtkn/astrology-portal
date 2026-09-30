@@ -40,6 +40,10 @@ async function prepare(page: Page, theme: string, signedIn = true) {
   }, { user, profile, location, storageKey, theme, signedIn });
   await page.route("https://tldrastro-api-27165565299.us-central1.run.app/**", route => route.fulfill({ status: 503, body: "Use local fixture calculations." }));
   await page.route("**/api/**", route => route.fulfill({ status: 503, json: { error: "No generation in this fixture." } }));
+  // Reports use the bundled approved corpus; generation remains unavailable.
+  // A failed public-content request is not an explicitly empty remote plane.
+  await emptyLastKnownGoodSnapshot(page);
+  await page.route("**/api/content-reader", route => route.fulfill({ json: readerResponse([]) }));
   await page.route("**/auth/v1/**", route => route.fulfill({ json: user }));
   await page.route("**/rest/v1/**", route => {
     const path = new URL(route.request().url()).pathname;

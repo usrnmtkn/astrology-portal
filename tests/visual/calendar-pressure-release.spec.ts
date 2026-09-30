@@ -1,10 +1,14 @@
 import fs from 'node:fs';
 import { expect, test } from '@playwright/test';
+import { bundledPublications } from '../helpers/bundled-publications';
 
 // Synthetic event facts exercise every approved identity on the real reader
 // route. They are confined to this test and never enter production code.
 test('Calendar renders all 21 approved refinements in full and after reload', async ({ page }) => {
   test.setTimeout(120_000);
+  // This corpus fixture needs an explicitly resolved publication plane, just
+  // like other bundled-reader tests; an unavailable service is not an empty one.
+  await bundledPublications(page);
   const packet = JSON.parse(fs.readFileSync('packages/astro-knowledge/review/calendar-collective-pressure-pass-2026-09-07/candidate-payloads.json', 'utf8'));
   const entries = Object.entries(packet.entries) as [string, { summary: string; body: string }][];
   const dateKey = '2026-09-12';

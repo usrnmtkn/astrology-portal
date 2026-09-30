@@ -58,6 +58,48 @@ in the content test chain. Targeted browser cases live in
 
 ## Limits and release checks
 
+The broader release matrix found an overbroad You loading boundary: unavailable
+transit sources also hid saved-report controls. The boundary now covers the
+readings while report controls remain accessible. The outage regression verifies
+this separately from successful report preparation. Report/factual-footer
+fixtures explicitly resolve their bundled content plane while keeping generation
+and external calculations isolated.
+
+Two older browser failures were reproduced on unchanged main. A Calendar link
+with its date only in the hash selected that date visibly but calculated today's
+sky, leaving the reading pending. The shared date reader now honors a valid
+Calendar hash date, with precedence, invalid-date and unrelated-route tests.
+The original 21-passage Calendar regression passes without changing its route or
+full-copy assertions. A Sky hydration fixture served the current published
+snapshot but expected superseded knowledge-file prose; its complete-copy
+assertions now reference the same published rows and still verify exact key
+requests, dated links and reloads. No source passage was edited.
+
+An expanded fresh-build run passed 32 cases covering Calendar, all four report
+layouts, both Moon readings, cross-surface transit hydration, outage isolation
+and Studio previews. Five additional factual-footer cases passed for You/Friends,
+including unknown birth times, and the dated Sky article full-copy test passed.
+The Calendar performance check passed all six cold samples: complete readings
+appeared within 6.1 seconds under its configured network/CPU throttling, below
+the unchanged 7.5-second limit.
+
+Release fixtures now model the actual source requests: delayed macros respond to
+both provider and exact-key reads; offline tests fail the publication endpoint
+and release the held snapshot before its deadline; Calendar lunation navigation
+uses the current event identity and card kind because Studio owns its visible title.
+Lunation article assertions compare the complete currently approved reusable
+body selected by the shared reader, rather than superseded SKY V4 wording. Pending
+Calendar event checks respect the existing full-calculation loading boundary.
+Full body, opening/ending, publication identity, navigation and reload assertions
+remain in place. The old offline and delayed-macro fixtures also failed on
+unchanged main `670c84d9d`.
+
+A new read-only live inventory contained 4,079 public rows;
+all 1,591 required transit dependencies packaged successfully. Exercising the
+actual loader against those public rows completed eight bounded reads in
+4.2 seconds with no missing publication versions. This is a single measured
+network run, not a mobile performance guarantee.
+
 Release comparison used separate `npm ci` installations for unchanged main
 `670c84d9d` and implementation `b86c41a73`, with identical browser-workflow
 environment settings. Aggregate JavaScript gzip measured 3,501,845 versus

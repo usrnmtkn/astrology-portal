@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { matchingInitialSkyLoad, type InitialSkyLoad } from '../apps/web/src/services/skyApi';
-import { skyDateTimeFromInput, isDateInputValue } from '../apps/web/src/services/skySelection';
+import { skyDateTimeFromInput, isDateInputValue, transitDateFromUrl } from '../apps/web/src/services/skySelection';
 
 const ny = { label: 'Synthetic New York', latitude: 40.7, longitude: -74, timeZone: 'America/New_York' };
 const tokyo = { label: 'Synthetic Tokyo', latitude: 35.6, longitude: 139.6, timeZone: 'Asia/Tokyo' };
@@ -11,6 +11,24 @@ assert.equal(skyDateTimeFromInput('2026-09-20', tokyo, true, now).toISOString(),
 assert.equal(skyDateTimeFromInput('2026-11-01', ny, false, now).toISOString(), '2026-11-01T17:00:00.000Z');
 assert.equal(isDateInputValue('2026-02-30'), false);
 assert.equal(isDateInputValue('2026-02-28'), true);
+const originalWindow = Object.getOwnPropertyDescriptor(globalThis, 'window');
+try {
+  for (const [route, expected] of [
+    ['/#calendar?view=day&date=2026-09-12', '2026-09-12'],
+    ['/?date=2026-09-30#calendar?view=day&date=2026-09-12', '2026-09-12'],
+    ['/?date=2026-11-01#calendar?view=day', '2026-11-01'],
+    ['/?date=2026-09-30#calendar?date=2026-02-30', '2026-09-30'],
+    ['/#calendar?date=2026-02-30', null],
+    ['/?date=2026-09-30#sky?date=2026-09-12', '2026-09-30'],
+    ['/#sky?date=2026-09-12', null]
+  ]) {
+    Object.defineProperty(globalThis, 'window', { configurable: true, value: { location: { href: `https://example.invalid${route}` } } });
+    assert.equal(transitDateFromUrl(), expected, route ?? '');
+  }
+} finally {
+  if (originalWindow) Object.defineProperty(globalThis, 'window', originalWindow);
+  else Reflect.deleteProperty(globalThis, 'window');
+}
 const day = new Intl.DateTimeFormat('en-CA', { timeZone: ny.timeZone, year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date());
 const initial: InitialSkyLoad = { day, location: ny, date: new Date(), live: true, startedAt: performance.now(), result: Promise.resolve(null), matches: () => initial, resolve: async () => { throw new Error("Unused test stub"); } };
 assert.equal(matchingInitialSkyLoad(initial, day, ny), initial);

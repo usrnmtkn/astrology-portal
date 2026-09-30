@@ -545,6 +545,7 @@ function YouUpdatesTab({
   transitDateLabel,
   transitLoadingMessage = "Adding today’s transits.",
   transitsLoading = false,
+  transitSourceFeedback,
   weeklyTransitRows = []
 }: {
   accountId: string | null | undefined;
@@ -562,6 +563,7 @@ function YouUpdatesTab({
   transitDateLabel: string;
   transitLoadingMessage?: string;
   transitsLoading?: boolean;
+  transitSourceFeedback?: ReactNode;
   weeklyTransitRows?: ReactNode[];
 }) {
   const dailyHeadline = dailyUpdateSummary?.headline.trim();
@@ -604,7 +606,7 @@ function YouUpdatesTab({
 
   return (
     <div className="subpane updates-section" id="sub-transits">
-      {hasSavedCurrentCity && transitsLoading && (
+      {hasSavedCurrentCity && transitsLoading && !transitSourceFeedback && (
         <PageLoading compact message={transitLoadingMessage} />
       )}
       {hasSavedCurrentCity ? (
@@ -617,6 +619,7 @@ function YouUpdatesTab({
           transitDateLabel={transitDateLabel}
         />
       ) : null}
+      {transitSourceFeedback ?? <>
       {hasSavedCurrentCity && dailyUpdateSummary && (
         <section className={`daily-horoscope-summary you-horoscope-card${dailyUpdateSummary.status === "loading" ? " is-loading" : ""}`} aria-label="Daily horoscope summary">
           {showDailyHeadline ? <h3>{dailyHeadline}</h3> : null}
@@ -719,6 +722,7 @@ function YouUpdatesTab({
           </section>
         </>
       ) : null}
+      </>}
     </div>
   );
 }
@@ -1367,8 +1371,9 @@ export function YouPage({
             />
           )}
 
-          {profileTab === "transits" && (transitSourceFeedback ?? (
+          {profileTab === "transits" && (
             <YouUpdatesTab
+              transitSourceFeedback={transitSourceFeedback}
               accountId={accountId}
               accountRecovery={accountRecovery}
               aspectRows={aspectRows}
@@ -1386,7 +1391,7 @@ export function YouPage({
               transitsLoading={transitsLoading}
               weeklyTransitRows={weeklyTransitRows}
             />
-          ))}
+          )}
         </main>
       </div>
     </section>
