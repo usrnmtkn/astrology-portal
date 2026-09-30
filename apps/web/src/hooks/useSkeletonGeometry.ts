@@ -10,9 +10,12 @@ export function useSkeletonGeometry(key: string, loading: boolean, selector: str
   useLayoutEffect(() => {
     const container = ref.current;
     if (!container) return;
+    // A font finishing must not replace an already-visible skeleton with a
+    // different cached height. Use its initial font state for this loading cycle.
+    const loadingFontStatus = document.fonts.status;
     const measure = () => {
       const style = getComputedStyle(container);
-      const identity = [key, container.getBoundingClientRect().width, style.fontFamily, style.fontSize, style.lineHeight, style.letterSpacing, document.fonts.status,
+      const identity = [key, container.getBoundingClientRect().width, style.fontFamily, style.fontSize, style.lineHeight, style.letterSpacing, loading ? loadingFontStatus : document.fonts.status,
         document.documentElement.dataset.theme, document.documentElement.dataset.dyslexiaFont].join("|");
       const cards = [...container.querySelectorAll<HTMLElement>(loading ? selector : resolvedSelector)];
       if (loading) {

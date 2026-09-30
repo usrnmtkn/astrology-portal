@@ -37,7 +37,7 @@ calculate({}, 2_461_000 + 1e-9, 0, 2);
 assert.equal(calls, 8, "ephemeris instances never share results");
 
 // Compare the complete real-engine outputs with the same calculation path
-// running uncached. The fixture changes only cache capacity, not astronomy.
+// running uncached. The fixture bypasses only memoization, not astronomy.
 const root = process.cwd();
 const cacheRoot = path.join(root, "node_modules/.cache/tldrastro");
 await mkdir(cacheRoot, { recursive: true });
@@ -53,9 +53,7 @@ try {
       plugins: uncached ? [{ name: "uncached-ephemeris", setup(builder) {
         builder.onResolve({ filter: /swissCalculationCache\.js$/ }, () => ({ path: "uncached", namespace: "fixture" }));
         builder.onLoad({ filter: /.*/, namespace: "fixture" }, () => ({
-          resolveDir: root, loader: "js",
-          contents: `import { memoizeSwissCalculation as memoize } from ${JSON.stringify(path.join(root, "apps/web/src/services/swissCalculationCache.ts"))};
-            export const memoizeSwissCalculation = calculate => memoize(calculate, 0);`
+          loader: "js", contents: "export const memoizeSwissCalculation = calculate => calculate;"
         }));
       } }] : []
     });

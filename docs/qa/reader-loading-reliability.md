@@ -50,6 +50,11 @@ does not round dates, cache errors, skip searches, or change readiness. Direct
 Swiss comparisons cover complete Calendar and Sky results, multiple dates and
 locations, DST boundaries, and personal transit windows.
 
+Skeleton geometry keeps its initial font-loading identity for each loading
+cycle. A late font completion cannot switch an already-visible placeholder to
+another cached height; resolved measurements still use the current font state.
+Sky regressions force this transition on article return in both themes and sizes.
+
 ## Acceptance checks
 
 - Cold Calendar: three fresh contexts each at 390 px and 1440 px; 150 ms network
