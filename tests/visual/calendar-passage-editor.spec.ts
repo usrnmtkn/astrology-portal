@@ -52,6 +52,18 @@ for (const [width,theme] of [[1440,'light'],[390,'dark'],[390,'light'],[1440,'da
       await editor.getByRole('button',{name:'Load passage',exact:true}).click();
       const field=editor.getByRole('textbox',{name:'Complete passage wording',exact:true});
       await expect(field).toBeVisible({timeout:60000});
+      if (width === 1440 && theme === 'light') {
+        const key = 'authored/sky-lunation-macro/full-moon/aries';
+        const result = await store.call({method:'GET',url:'/api/admin/generated-content?' + new URLSearchParams({contentKeys:key,status:'LIVE',limit:'200'})});
+        const original = result.payload.rows.find((row:any) => row.content_key === key).body.split(/\n\n+/)[0];
+        await editor.getByLabel('Passage date',{exact:true}).fill('2026-09-26');
+        await editor.getByRole('button',{name:'Load passage',exact:true}).click();
+        await expect(editor.getByLabel('Assembled passage preview')).toContainText(original,{timeout:60000});
+        await expect(editor.getByLabel('Assembled passage preview').getByRole('link',{name:'Read more'})).toHaveAttribute('href','?date=2026-09-26#sky/lunation/2026-09-26/aries');
+        await editor.getByLabel('Passage date',{exact:true}).fill(date);
+        await editor.getByRole('button',{name:'Load passage',exact:true}).click();
+        await expect(field).toBeEnabled({timeout:60000});
+      }
       const copy='Synthetic opening for {{moonSign}}.\n\nComplete synthetic ending.\n\n[Read more](?date=2026-09-26#sky/lunation/2026-09-26/aries)';
       await field.fill(copy);
       await expect(editor.getByLabel('Assembled passage preview')).toContainText('Synthetic opening for Aries.');

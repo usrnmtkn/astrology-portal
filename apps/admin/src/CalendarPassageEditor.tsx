@@ -5,16 +5,15 @@ import { StudioButton, StudioInput, StudioTextarea } from './StudioControls';
 import { AdminSelect } from './AdminNativeControls';
 import { calculateCalendarPreview, type CalendarPreviewCalculation } from './calendarPreviewCalculation';
 import { calendarPreviewSourceKeys, type CalendarPreviewRow } from './calendarPreviewModel';
-import { publishedSkySummaryContent } from './skySummaryComposition';
 import { requestStudioJson, studioInventoryDocumentPath } from './generatedContentClient';
 import { announceContentUpdate, subscribeToContentUpdates } from '../../web/src/services/contentUpdateSignal';
 import { zonedDateTimeToUtc } from '../../web/src/services/timezones';
 import { calendarLocalDateKey } from '../../web/src/features/calendar/calendarPhaseLabel';
 import { calendarEventGeneratedContentKeys } from '../../web/src/features/calendar/calendarContentKeys';
-import { loadDeferredFallbackArchitectureV3Bundle } from '../../web/src/content/fallbackArchitectureV3Runtime';
+import { calendarStudioMoonSources, publishedPassageSources } from './calendarPassageSources';
 import { calendarPassageKey, calendarPassageRecord, renderCalendarPassage, calendarPassageErrors, type CalendarPassagePeriod } from '../../web/src/features/calendar/calendarPassageTemplates';
 import { calendarPassageDate, calendarPeriodPassageValues, calendarEditablePassage } from '../../web/src/features/calendar/calendarPassageAssembly';
-import { isContentRetired, publicationAllowsContent } from '../../web/src/content/contentPublicationState';
+import { isContentRetired } from '../../web/src/content/contentPublicationState';
 import { refreshContentPublications } from '../../web/src/services/contentPublications';
 import type { SkyForecastPeriod } from './skyForecastTemplates';
 
@@ -22,8 +21,6 @@ const passageError = (reason: unknown, fallback: string) => reason instanceof Er
 const localEdits = new Map<string, string>();
 type SavedRow = CalendarPreviewRow & { mode?: string; sections?: any; source_snapshot?: Record<string, any>; updated_at: string };
 const bodyOf = (row?: SavedRow) => row?.sections?.packageDraft?.body_you ?? row?.sections?.packageRecord?.body_you ?? row?.body;
-const publishedPassageSources = (rows: CalendarPreviewRow[]) => publishedSkySummaryContent(rows.filter(row =>
-  publicationAllowsContent(row.content_key, row.id, row.updated_at, (row as CalendarPreviewRow & { target_date?: string }).target_date)));
 const defaultPattern = (period: CalendarPassagePeriod) => period === 'daily' ? '{{#sunSummary}}{{sunSummary}}{{/sunSummary}}\n\n{{#moonWriteup}}{{moonWriteup}}{{/moonWriteup}}'
   : period === 'monthly' ? '{{overview}}' : ['sunday','monday','tuesday','wednesday','thursday','friday','saturday'].map(day => `{{#${day}Writeup}}{{${day}Date}}\n\n{{${day}Writeup}}{{/${day}Writeup}}`).join('\n\n');
 
@@ -59,7 +56,7 @@ export default function CalendarPassageEditor({ period: studioPeriod, loadRows, 
   const dirty = body !== baseline;
   const content = useMemo(() => publishedPassageSources(sources), [sources]);
   const values = useMemo(() => calculation ? calendarPeriodPassageValues(period, calculation, requested.date,
-    new Map([[requested.date, calculation.sky]]), content) : {}, [period, calculation, requested.date, content]);
+    new Map([[requested.date, calculation.sky]]), content, calendarStudioMoonSources(content)) : {}, [period, calculation, requested.date, content]);
   const rendered = ready ? renderCalendarPassage(body, values) : null;
   const errors = calendarPassageErrors(body);
   const savedSources = saved?.sections?.calendarPassageSources as Record<string, string> | undefined;
@@ -73,16 +70,20 @@ export default function CalendarPassageEditor({ period: studioPeriod, loadRows, 
     void (async () => {
       const instant = zonedDateTimeToUtc(requested.date, '12:00 PM', requested.timeZone);
       const result = await calculateCalendarPreview(studioPeriod, instant.toISOString(), requested.timeZone);
-      await Promise.all([loadDeferredFallbackArchitectureV3Bundle(), refreshContentPublications(true)]);
+      await refreshContentPublications(true);
       const signs = [...result.days.map(day => day.moonSign), ...result.sky.positions.filter(item => item.planet === 'Sun').map(item => item.sign)];
       const keys = [...new Set([...calendarPreviewSourceKeys(studioPeriod, signs), ...result.events.flatMap(event => calendarEventGeneratedContentKeys(event)), contentKey, calendarPassageKey(period)])];
       const batches = Array.from({ length: Math.ceil(keys.length / 32) }, (_, index) => keys.slice(index * 32, (index + 1) * 32));
       const [rows, document] = await Promise.all([Promise.all(batches.map(async batch => {
           const params = new URLSearchParams({ status: 'all', visibility: 'all', limit: '200' });
           batch.forEach(key => params.append('contentKeys', key));
-          const response = await requestStudioJson(`/api/admin/generated-content-inventory?${params}`, secret);
+          const [response, packaged] = await Promise.all([
+            requestStudioJson(`/api/admin/generated-content-inventory?${params}`, secret),
+            requestStudioJson(`/api/admin/generated-content?${new URLSearchParams([...params].map(([key, value]) => [key, key === 'status' ? 'LIVE' : value]))}`, secret)
+          ]);
+          if (!Array.isArray(packaged.rows) || packaged.nextCursor || packaged.rows.some((row: SavedRow) => !batch.includes(row.content_key))) throw new Error('The published sources could not be verified. Reload before editing.');
           if (!Array.isArray(response.rows) || response.nextCursor || response.rows.some((row: SavedRow) => !batch.includes(row.content_key) || row.inventory_only)) throw new Error('The complete saved sources could not be verified. Reload before editing.');
-          return response.rows as CalendarPreviewRow[];
+          return [...response.rows, ...packaged.rows.filter((row: SavedRow) => row.id?.startsWith('package:'))] as CalendarPreviewRow[];
         })).then(result => result.flat()),
         requestStudioJson(studioInventoryDocumentPath(contentKey, { status: 'all', limit: 10 }), secret)]);
       if (!active) return;
@@ -92,7 +93,7 @@ export default function CalendarPassageEditor({ period: studioPeriod, loadRows, 
       const retiredTarget = !live ? editions.find(row => row.status === 'LIVE' && row.mode !== 'studio-draft') : undefined;
       const sourceContent = publishedPassageSources(rows);
       const shared = sourceContent.get(calendarPassageKey(period));
-      const assembledValues = calendarPeriodPassageValues(period, result, requested.date, new Map([[requested.date, result.sky]]), sourceContent);
+      const assembledValues = calendarPeriodPassageValues(period, result, requested.date, new Map([[requested.date, result.sky]]), sourceContent, calendarStudioMoonSources(sourceContent));
       const sharedPattern = shared?.body ?? defaultPattern(period);
       const pattern = bodyOf(proposal) ?? (scope === 'date' ? calendarEditablePassage(sharedPattern, assembledValues) : sharedPattern);
       setSourcesChanged(false); setCalculation(result); setSources(rows); setSaved(proposal ?? retiredTarget); setPublished(live); setHistoryId(live?.id ?? proposal?.id ?? editions[0]?.id ?? '');

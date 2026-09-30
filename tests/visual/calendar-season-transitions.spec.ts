@@ -57,6 +57,7 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark'] as const)
         }
       });
       await page.goto('/admin/content#calendar-writeups?view=weekly-sky');
+      await page.getByText('Reference templates and source previews', {exact:true}).click();
       await page.getByRole('button', { name: 'Browse season transitions', exact: true }).click();
       await expect(page).toHaveURL(/#calendar-writeups\?view=season-transitions$/);
       await expect(page.getByRole('tab', { name: 'Season transitions', exact: true })).toHaveAttribute('aria-selected', 'true');

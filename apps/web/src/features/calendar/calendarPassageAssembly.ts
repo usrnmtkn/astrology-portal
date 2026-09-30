@@ -4,7 +4,7 @@ import type { LiveGeneratedContent } from '../../services/generatedContent';
 import type { CalendarOverviewValue } from './calendarOverviewResolve';
 import { calendarSunSummary } from './calendarDaySummary';
 import { calendarMoonCycleFactsForDays } from './calendarMoonCycle';
-import { calendarMoonResolvedByDate, moonWritingForDay, packagedWeeklyMoon } from './calendarMoonSources';
+import type { CalendarMoonSources } from './calendarMoonSourcesCore';
 import { calendarMoonWritingParagraphs } from './calendarDayMoonReading';
 import { calendarMonthlyOverviewFacts, resolveCalendarMonthlyOverview } from './monthlyOverview';
 import type { CalendarPassagePeriod } from './calendarPassageTemplates';
@@ -18,8 +18,9 @@ export function calendarPassageDate(period: CalendarPassagePeriod, selected: str
   date.setUTCDate(date.getUTCDate() - date.getUTCDay());
   return date.toISOString().slice(0, 10);
 }
-export function calendarDailyPassageValues(context: CalendarPassageContext, date: string, sky: SkySnapshot | undefined | null, content: Map<string, LiveGeneratedContent>) {
+export function calendarDailyPassageValues(context: CalendarPassageContext, date: string, sky: SkySnapshot | undefined | null, content: Map<string, LiveGeneratedContent>, moonSources: CalendarMoonSources) {
   const { days, events, cycleEvents, timeZone } = context;
+  const { calendarMoonResolvedByDate, moonWritingForDay, packagedWeeklyMoon } = moonSources;
   const day = days.find(day => day.dateKey === date);
   if (!day) return {};
   const factsByDate = calendarMoonCycleFactsForDays(days, [...(cycleEvents ?? []), ...events], timeZone);
@@ -44,8 +45,8 @@ export function calendarDailyPassageValues(context: CalendarPassageContext, date
   if (paragraphs.length) values.moonWriteup = { text: paragraphs.join('\n\n') + lunarLink, kind: 'copy', sourceKey: moon[0]?.contentKey };
   return values;
 }
-export function calendarPeriodPassageValues(period: CalendarPassagePeriod, context: CalendarPassageContext, date: string, skies: ReadonlyMap<string, SkySnapshot>, content: Map<string, LiveGeneratedContent>) {
-  if (period === 'daily') return calendarDailyPassageValues(context, date, skies.get(date), content);
+export function calendarPeriodPassageValues(period: CalendarPassagePeriod, context: CalendarPassageContext, date: string, skies: ReadonlyMap<string, SkySnapshot>, content: Map<string, LiveGeneratedContent>, moonSources: CalendarMoonSources) {
+  if (period === 'daily') return calendarDailyPassageValues(context, date, skies.get(date), content, moonSources);
   const start = calendarPassageDate(period, date, context.days);
   const days = context.days.filter(day => period === 'monthly' ? day.dateKey.startsWith(date.slice(0, 7)) : day.dateKey >= start && day.dateKey < new Date(Date.parse(`${start}T12:00Z`) + 7 * 86400000).toISOString().slice(0, 10));
   const dates = new Set(days.map(day => day.dateKey));
@@ -58,7 +59,7 @@ export function calendarPeriodPassageValues(period: CalendarPassagePeriod, conte
   }
   for (const day of days) {
     const name = new Intl.DateTimeFormat('en-US', { weekday: 'long', timeZone: context.timeZone }).format(new Date(day.date)).toLowerCase();
-    const dayValues = calendarDailyPassageValues(context, day.dateKey, skies.get(day.dateKey), content);
+    const dayValues = calendarDailyPassageValues(context, day.dateKey, skies.get(day.dateKey), content, moonSources);
     if (dayValues.date) values[`${name}Date`] = dayValues.date;
     if (dayValues.moonWriteup) values[`${name}Writeup`] = dayValues.moonWriteup;
   }

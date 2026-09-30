@@ -4,6 +4,8 @@ import { calendarPassageKey, calendarPassageIdentity, calendarPassageRecord, ren
 import { calendarTimingBody } from '../apps/web/src/features/calendar/calendarTimingTemplates.ts';
 import { isReaderServableGeneratedContentRow } from '../apps/web/src/content/generatedContentEligibility.ts';
 
+import { publishedPassageSources, calendarStudioMoonSources } from '../apps/admin/src/calendarPassageSources.ts';
+
 const key = calendarPassageKey('daily', '2026-09-28', 'America/New_York');
 assert.equal(calendarPassageIdentity(key)?.timeZone, 'America/New_York');
 assert.equal(calendarPassageIdentity('calendar-passage/daily/2026-02-30/UTC'), null);
@@ -23,6 +25,18 @@ const store = await createApiStore([], { uuidIds: true });
 const body = 'Synthetic opening.\n\nComplete synthetic ending. {{moonSign}}.';
 const record = calendarPassageRecord(key, body);
 try {
+  const sourceKey = 'authored/sky-lunation-macro/full-moon/aries';
+  const sourceResult = await store.invoke('GET', undefined, '/api/admin/generated-content?' + new URLSearchParams({contentKeys:sourceKey,status:'LIVE',limit:'200'}));
+  assert.equal(sourceResult.status, 200, JSON.stringify(sourceResult));
+  const sourceRow = sourceResult.payload.rows.find(row => row.content_key === sourceKey);
+  assert.ok(sourceRow?.sections?.packageRecord, 'An existing approved reading must load without the reader bundle');
+  const sourceMap = publishedPassageSources([sourceRow]);
+  assert.equal(sourceMap.get(sourceKey)?.body, sourceRow.body);
+  assert.equal(publishedPassageSources([{...sourceRow,body:'Modified synthetic copy.'}]).size,0);
+  assert.equal(publishedPassageSources([{...sourceRow,sections:{packageRecord:{...sourceRow.sections.packageRecord,review_status:'needs_review'}}}]).size,0);
+  const event = {id:'test-moon',type:'lunation',primary:true,title:'Full Moon in Aries',sign:'Aries',startsAt:'2026-09-26T16:49:00Z'};
+  const day = {moonSign:'Aries',events:[event]};
+  assert.equal(calendarStudioMoonSources(sourceMap).moonWritingForDay(day as any, sourceMap)[0]?.body, sourceRow.body);
   const create = {contentKey:key,surface:'sky',mode:'feed',eventType:'calendar-passage',status:'DRAFT',lane:'reference',body,headline:'Calendar assembled passage',provider:'tldrastro-fallback-architecture-v3',
     sections:{packageRecord:record,packageDraft:record},sourceSnapshot:{sourcePackage:'tldrastro-fallback-architecture-v3',content_role:'full_copy',review_status:'needs_review'}};
   let result = await store.invoke('POST', {...create,status:'LIVE'}); assert.equal(result.status,409,JSON.stringify(result));

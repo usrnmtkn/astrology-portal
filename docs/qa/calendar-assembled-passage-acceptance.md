@@ -78,3 +78,34 @@ base was 0 commits ahead and 0 behind `origin/main` at verification.
   a reference preview does not implicitly publish a complete passage.
 - The full content gate is not reported as passed. Report evidence must be
   provisioned through the project's protected store before that gate can complete.
+
+## Release build follow-up
+
+Standalone Studio verification caught an unnecessary import of the full reader
+fallback corpus. Shared Moon assembly now accepts its source provider: the reader
+retains its existing provider and Studio requests only the required approved source
+records through the authenticated API. Both run the same assembly functions.
+A build guard rejects reintroduction of the complete reader bundle in Studio.
+The actual API regression checks recovery of the existing Aries Full Moon passage,
+byte-exact source matching, and rejection of modified or unreviewed package copy.
+
+Matched isolated builds (separate `npm ci`, same CI Supabase placeholders) compare
+main `670c84d9d` with the corrected feature:
+
+| Compressed JavaScript | Main | Feature | Added |
+| --- | ---: | ---: | ---: |
+| Web aggregate | 3,501,794 B | 3,512,819 B | 11,025 B |
+| Admin aggregate | 763,154 B | 780,469 B | 17,315 B |
+| Admin entry | 220,467 B | 221,420 B | 953 B |
+
+Admin raw entry grows by 3,864 B (757,276 to 761,140 B). Narrow feature allocations
+are recorded in the budget files; reader startup, CSS, memory graph, dependency,
+and runtime-performance limits are unchanged. Signup import/hash repartitioning
+adds 11 B; its cap receives 50 B of headroom. This records feature cost, not a
+performance improvement. Existing browser cases now expand the reference section
+before using its controls and expect the fifteen additional editable timing rows.
+
+Release follow-up local checks: 38 passage/reader/template tests and 19 additional
+reference-navigation/season/transition tests passed after the source-provider
+correction. Both bundle guards and source/web/admin public-asset privacy scans
+passed. Exact-head hosted checks and production evidence are tracked in the PR.

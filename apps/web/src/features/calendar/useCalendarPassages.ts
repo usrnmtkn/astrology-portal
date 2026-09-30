@@ -1,3 +1,4 @@
+import { calendarMoonSources } from './calendarMoonSources';
 import { useEffect, useMemo, useState } from 'react';
 import type { LocationInput, SkySnapshot } from '../../types';
 import type { LunarCalendarMonth } from '../../services/ephemeris';
@@ -30,13 +31,13 @@ export function useCalendarPassages(calendar: LunarCalendarMonth | null, dates: 
     const daily = new Map<string, NonNullable<ReturnType<typeof resolveCalendarPassage>>>();
     if (!active || !calendar || !content || state.key !== key || !state.skies) return { daily, weekly: null, monthly: null, loading: Boolean(active && (state.key !== key || !state.error && !state.skies)), error: active && state.key === key && state.error };
     for (const date of dates) {
-      const values = calendarDailyPassageValues(calendar, date, state.skies.get(date), content);
+      const values = calendarDailyPassageValues(calendar, date, state.skies.get(date), content, calendarMoonSources);
       const passage = resolveCalendarPassage('daily', date, timeZone, content, values);
       if (passage) daily.set(date, passage);
     }
     return { daily,
-      weekly: resolveCalendarPassage('weekly', calendarPassageDate('weekly', selected, calendar.days), timeZone, content, calendarPeriodPassageValues('weekly', calendar, selected, state.skies, content)),
-      monthly: resolveCalendarPassage('monthly', calendarPassageDate('monthly', selected, calendar.days), timeZone, content, calendarPeriodPassageValues('monthly', calendar, selected, state.skies, content)),
+      weekly: resolveCalendarPassage('weekly', calendarPassageDate('weekly', selected, calendar.days), timeZone, content, calendarPeriodPassageValues('weekly', calendar, selected, state.skies, content, calendarMoonSources)),
+      monthly: resolveCalendarPassage('monthly', calendarPassageDate('monthly', selected, calendar.days), timeZone, content, calendarPeriodPassageValues('monthly', calendar, selected, state.skies, content, calendarMoonSources)),
       loading: false, error: false };
   }, [active, calendar, content, state, key, selected]);
 }

@@ -5,6 +5,7 @@ for (const width of [390, 1440]) {
     await page.addInitScript(() => localStorage.setItem('tldrastro:contentAdminSecret', 'calendar-summary-fixture'));
     await page.route('**/api/admin/**', route => route.fulfill({ json: { ok: true, rows: [], statuses: [], records: [], nextCursor: null } }));
     await page.goto('/admin/content#calendar-writeups?view=daily-sky');
+    await page.getByText('Reference templates and source previews', {exact:true}).click();
     const summaryLink = page.getByRole('link', { name: 'Edit Sun summaries', exact: true });
     await expect(summaryLink).toBeVisible();
     await page.screenshot({ path: `test-results/calendar-sun-summary-link-${width}.png` });
