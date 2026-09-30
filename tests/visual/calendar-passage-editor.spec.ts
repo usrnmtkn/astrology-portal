@@ -59,7 +59,11 @@ for (const [width,theme] of [[1440,'light'],[390,'dark'],[390,'light'],[1440,'da
         await editor.getByLabel('Passage date',{exact:true}).fill('2026-09-26');
         await editor.getByRole('button',{name:'Load passage',exact:true}).click();
         await expect(editor.getByLabel('Assembled passage preview')).toContainText(original,{timeout:60000});
-        await expect(editor.getByLabel('Assembled passage preview').getByRole('link',{name:'Read more'})).toHaveAttribute('href','?date=2026-09-26#sky/lunation/2026-09-26/aries');
+        const articleLink = editor.getByLabel('Assembled passage preview').getByRole('link',{name:'Read more'});
+        await expect(articleLink).toHaveAttribute('href','/?date=2026-09-26#sky/lunation/2026-09-26/aries');
+        expect(await articleLink.evaluate((link: HTMLAnchorElement) => new URL(link.href).pathname)).toBe('/');
+        const sunLink = editor.getByLabel('Assembled passage preview').getByRole('link',{name:/Sun in Libra/});
+        expect(await sunLink.evaluate((link: HTMLAnchorElement) => new URL(link.href).pathname)).toBe('/');
         await editor.getByLabel('Passage date',{exact:true}).fill(date);
         await editor.getByRole('button',{name:'Load passage',exact:true}).click();
         await expect(field).toBeEnabled({timeout:60000});
@@ -68,7 +72,7 @@ for (const [width,theme] of [[1440,'light'],[390,'dark'],[390,'light'],[1440,'da
       await field.fill(copy);
       await expect(editor.getByLabel('Assembled passage preview')).toContainText('Synthetic opening for Aries.');
       await expect(editor.getByLabel('Assembled passage preview').locator('p')).toHaveCount(3);
-      await expect(editor.getByLabel('Assembled passage preview').getByRole('link',{name:'Read more'})).toHaveAttribute('href','?date=2026-09-26#sky/lunation/2026-09-26/aries');
+      await expect(editor.getByLabel('Assembled passage preview').getByRole('link',{name:'Read more'})).toHaveAttribute('href','/?date=2026-09-26#sky/lunation/2026-09-26/aries');
       await editor.getByRole('button',{name:'Save draft',exact:true}).click();
       await expect(editor.getByRole('status')).toContainText('Draft saved.');
       await page.reload();
