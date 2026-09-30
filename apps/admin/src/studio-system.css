@@ -914,6 +914,25 @@ body:has(.admin-dashboard) { margin: 0; }
 #root .admin-dashboard .studio-writing-field textarea[hidden] { display: none; }
 #root .admin-dashboard .studio-formatting-open { justify-self: start; }
 #root .admin-dashboard .studio-formatting-toolbar { display: flex; flex-wrap: wrap; gap: var(--workspace-field-gap); }
+
+/* Native text editing with an inert color layer. Both layers use identical
+   metrics; tokens never add padding or change wrapping inside the field. */
+#root .admin-dashboard .studio-highlighted-field { position: relative; min-width: 0; }
+#root .admin-dashboard .studio-highlighted-backdrop { position: absolute; inset: 0; overflow: hidden; pointer-events: none; border: var(--border-width-thin) solid transparent; border-radius: var(--studio-field-radius); background: var(--workspace-surface); }
+#root .admin-dashboard .studio-highlighted-backdrop > span { display: block; padding: var(--workspace-panel-inset); min-height: 100%; }
+#root .admin-dashboard :is(.studio-highlighted-backdrop,.studio-highlighted-field textarea) { font-family: var(--font-body); font-size: var(--text-body); font-weight: var(--weight-regular); line-height: var(--leading-body); letter-spacing: var(--tracking-body); white-space: pre-wrap; overflow-wrap: break-word; word-break: normal; }
+#root .admin-dashboard .studio-highlighted-field textarea { position: relative; background: transparent; color: transparent; caret-color: var(--workspace-ink); }
+#root .admin-dashboard .studio-highlighted-field textarea::selection { color: var(--workspace-ink); background: var(--workspace-selected); }
+#root .admin-dashboard .studio-highlighted-backdrop :is(.studio-template-sentences,.studio-template-token) { padding: 0; border: 0; border-radius: 0; box-decoration-break: clone; -webkit-box-decoration-break: clone; }
+#root .admin-dashboard .studio-highlighted-backdrop .studio-template-sentences { color: var(--workspace-ink); }
+#root .admin-dashboard .studio-template-value { text-decoration: underline; }
+#root .admin-dashboard .studio-template-marker { text-decoration: underline dotted; }
+#root .admin-dashboard :is(.studio-calendar-template-editor,.studio-template-variable-key) { display: grid; min-width: 0; gap: var(--workspace-field-gap); }
+#root .admin-dashboard .studio-template-variable-key { grid-template-columns: repeat(auto-fit,minmax(min(100%,var(--studio-menu-width)),1fr)); }
+@media (forced-colors: active) {
+  #root .admin-dashboard .studio-highlighted-backdrop { display: none; }
+  #root .admin-dashboard .studio-highlighted-field textarea { color: var(--workspace-ink); }
+}
 #root .admin-dashboard .studio-formatted-writing { min-height: var(--studio-textarea-height); overflow-wrap: anywhere; }
 #root .admin-dashboard .studio-formatted-writing:focus { outline-color: var(--workspace-primary); border-color: var(--workspace-primary); }
 #root .admin-dashboard .studio-formatted-writing p { margin: 0 0 var(--space-4); font: inherit; }

@@ -68,7 +68,47 @@ for (const [width,theme] of [[1440,'light'],[390,'dark'],[390,'light'],[1440,'da
         await editor.getByRole('button',{name:'Load passage',exact:true}).click();
         await expect(field).toBeEnabled({timeout:60000});
       }
-      const copy='Synthetic opening for {{moonSign}}.\n\nComplete synthetic ending.\n\n[Read more](?date=2026-09-26#sky/lunation/2026-09-26/aries)';
+      // Colors decorate the real editing field. Native selection/undo and exact
+      // template bytes, including conditional markers, survive the whole flow.
+      const originalTemplate=await field.inputValue();
+      const layer=editor.locator('.studio-highlighted-backdrop');
+      await expect(layer).toHaveAttribute('aria-hidden','true');
+      expect(await layer.textContent()).toBe(originalTemplate+'\u200b');
+      const sunColor=await layer.locator('[data-template-section="sunSummary"]').first().evaluate(node=>getComputedStyle(node).backgroundColor);
+      const moonColor=await layer.locator('[data-template-section="moonWriteup"]').first().evaluate(node=>getComputedStyle(node).backgroundColor);
+      expect(sunColor).not.toBe(moonColor);
+      await editor.getByRole('button',{name:'Select Moon passage sentences',exact:true}).click();
+      const selection=await field.evaluate((node:HTMLTextAreaElement)=>({start:node.selectionStart,end:node.selectionEnd}));
+      const selected=originalTemplate.slice(selection.start,selection.end);
+      expect(selected.length).toBeGreaterThan(0);
+      expect(originalTemplate.slice(0,selection.start)).toMatch(/\{\{#moonWriteup\}\}$/);
+      await page.keyboard.insertText('Synthetic selected section.');
+      await expect(field).toHaveValue(originalTemplate.slice(0,selection.start)+'Synthetic selected section.'+originalTemplate.slice(selection.end));
+      await page.keyboard.press('ControlOrMeta+z');
+      await expect(field).toHaveValue(originalTemplate);
+      await field.press('ControlOrMeta+End');
+      await expect.poll(()=>field.evaluate((node:HTMLTextAreaElement)=>Math.abs(node.scrollTop-(node.parentElement!.querySelector('.studio-highlighted-backdrop') as HTMLElement).scrollTop))).toBeLessThan(2);
+      const metrics=(node:Element)=>{const c=getComputedStyle(node);return [c.fontFamily,c.fontSize,c.fontWeight,c.lineHeight,c.letterSpacing,c.whiteSpace,c.overflowWrap];};
+      expect(await field.evaluate(metrics)).toEqual(await layer.evaluate(metrics));
+      await editor.getByRole('button',{name:'Hide template colors',exact:true}).click();
+      await expect(layer).toHaveCount(0);
+      await expect(field).toHaveValue(originalTemplate);
+      await editor.getByRole('button',{name:'Show template colors',exact:true}).click();
+      await field.evaluate((node:HTMLTextAreaElement)=>{node.style.height='240px';});
+      await expect.poll(()=>layer.evaluate(node=>node.getBoundingClientRect().height)).toBe(await field.evaluate(node=>node.getBoundingClientRect().height));
+      expect(await layer.locator(':scope > span').evaluate(node=>node.getBoundingClientRect().width)).toBe(await field.evaluate(node=>node.clientWidth));
+      await field.evaluate((node:HTMLTextAreaElement)=>{node.style.height='';});
+      await field.locator('..').getByRole('button',{name:'Format text',exact:true}).click();
+      await expect(editor.getByRole('textbox',{name:'Complete passage wording formatted text',exact:true})).toBeVisible();
+      await editor.getByRole('button',{name:'Done formatting',exact:true}).click();
+      await expect(field).toHaveValue(originalTemplate);
+      expect(await layer.textContent()).toBe(originalTemplate+'\u200b');
+      await field.press('ControlOrMeta+Home');
+      await field.evaluate((node:HTMLTextAreaElement)=>node.blur());
+      await editor.locator('.studio-calendar-template-editor').screenshot({path:`test-results/calendar-template-colors-${width}-${theme}.png`});
+      await page.evaluate(()=>window.scrollTo(0,0));
+      await page.screenshot({fullPage:true,path:`test-results/calendar-template-colors-page-${width}-${theme}.png`});
+      const copy='{{#moonWriteup}}Synthetic opening for {{moonSign}}.\n\nComplete synthetic ending.\n\n[Read more](?date=2026-09-26#sky/lunation/2026-09-26/aries){{/moonWriteup}}';
       await field.fill(copy);
       await expect(editor.getByLabel('Assembled passage preview')).toContainText('Synthetic opening for Aries.');
       await expect(editor.getByLabel('Assembled passage preview').locator('p')).toHaveCount(3);
@@ -140,7 +180,11 @@ for (const [width,theme] of [[1440,'light'],[390,'dark'],[390,'light'],[1440,'da
       // Invalid slots remain editable but cannot publish; an outage retains the draft.
       await field.fill('{{unknownVariable}}');
       await expect(editor.getByLabel('Assembled passage preview')).toContainText('Unknown variable');
+      await expect(editor.getByLabel('Template variable key')).toContainText('Unknown variable');
       await expect(editor.getByRole('button',{name:'Publish passage',exact:true})).toBeDisabled();
+      await field.fill('');
+      await expect(editor.getByRole('button',{name:'Save draft',exact:true})).toBeDisabled();
+      await expect(editor.getByLabel('Template variable key')).toHaveCount(0);
       await editor.getByRole('button',{name:'Discard unsaved changes'}).click();
       await page.route('**/api/admin/generated-content', route=>route.fulfill({status:503,json:{error:'Synthetic save unavailable'}}));
       await field.fill('Unsaved synthetic content.');
