@@ -43,6 +43,13 @@ stays local to Calendar. Explicit retry reloads failed module imports because
 browsers cache module failures. Background recovery cannot reload an open
 check-in editor. A timed-out but still downloading bundle retries without reload.
 
+Repeated ephemeris scans reuse validated results for the identical Julian day,
+body, flags, and fixed-configuration Swiss instance. The cache holds at most
+16,384 entries, evicts in constant time, and returns independent vectors. It
+does not round dates, cache errors, skip searches, or change readiness. Direct
+Swiss comparisons cover complete Calendar and Sky results, multiple dates and
+locations, DST boundaries, and personal transit windows.
+
 ## Acceptance checks
 
 - Cold Calendar: three fresh contexts each at 390 px and 1440 px; 150 ms network

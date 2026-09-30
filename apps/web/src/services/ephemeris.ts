@@ -13,6 +13,7 @@ import {
 } from "./astrologyFacts.js";
 import { debugInfoForZonedDateTime } from "./timezones.js";
 import { assertCanonicalSkyPoints } from "./canonicalSkyAspectProfile.js";
+import { memoizeSwissCalculation } from "./swissCalculationCache.js";
 
 const signs = [
   ["Aries", "♈"],
@@ -302,7 +303,7 @@ export function validateSwissEphemerisReturnFlag(
   }
 }
 
-function calculateSwissUt(
+const calculateSwissUt = memoizeSwissCalculation(function calculateSwissUt(
   swe: SwissEphInstance,
   julianDay: number,
   body: number,
@@ -335,7 +336,7 @@ function calculateSwissUt(
     swe.SweModule._free(resultPointer);
     swe.SweModule._free(errorPointer);
   }
-}
+});
 
 function moonPhaseName(sunLongitude: number, moonLongitude: number) {
   const phase = normalizeDegrees(moonLongitude - sunLongitude);
