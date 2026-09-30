@@ -2,25 +2,13 @@ import {
   loadDeferredFallbackArchitectureV3Bundle, loadFallbackArchitectureV3BundledCoreManifest,
   type FallbackArchitectureV3Bundle
 } from "../content/fallbackArchitectureV3Runtime";
-import { contentPublicationRecords, publicationAllowsContent, publicationTimestamp } from "../content/contentPublicationState";
+import { contentPublicationRecords, publicationAllowsContent } from "../content/contentPublicationState";
 import { contentPublicationsAvailableOnline, contentPublicationsResolved, refreshContentPublications } from "./contentPublications";
 import { packageFallbackArchitectureV3CoreRows } from "./fallbackArchitectureV3CorePackaging";
 import { loadContentStudioLastKnownGoodRows } from "./generatedContent";
 import { loadReaderRows } from "./readerContentClient";
-
-// Source families, not candidate precedence: the shared renderer still selects
-// exact/situation/family/return copy and the correct audience. Include its house,
-// point, timing and template dependencies for every personal-transit surface.
-export function isPersonalTransitSource(key: string) {
-  return /^(?:authored\/(?:transit-|point-explainer\/)|fallback-hook\/(?:transit-|fog-note|natal-core)|fallback-template\/transit\.|fallback-vocab\/)/u.test(key);
-}
-
-export function personalTransitPublicationIdentity() {
-  return JSON.stringify(contentPublicationRecords().filter(row => isPersonalTransitSource(row.content_key))
-    .map(row => [row.content_key, row.state, row.revision, row.row_id,
-      row.row_updated_at ? publicationTimestamp(row.row_updated_at) : null])
-    .sort((a, b) => String(a[0]).localeCompare(String(b[0]))));
-}
+import { isPersonalTransitSource, personalTransitPublicationIdentity } from "./personalTransitPublication";
+export { isPersonalTransitSource, personalTransitPublicationIdentity } from "./personalTransitPublication";
 
 export function missingPersonalTransitPublications(bundle: FallbackArchitectureV3Bundle | null) {
   const rows = new Map([

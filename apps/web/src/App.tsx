@@ -17,7 +17,7 @@ import type { ArticlePillData } from "./components/ArticlePills";
 import { articleHistoryChangeEvent, pushArticleUrl, returnToArticleParent } from "./services/articleNavigation";
 import { CardReadMore } from "./components/CardReadMore";
 import { isContentRetired, contentPublication } from "./content/contentPublicationState";
-import { preparePersonalTransitSources, personalTransitPublicationIdentity } from "./services/personalTransitSources";
+import { personalTransitPublicationIdentity } from "./services/personalTransitPublication";
 import { installPersonalTransitFallbackArchitectureV3Bundle } from "./content/fallbackArchitectureV3Runtime";
 import { prepareSkyPlacementSources, skyPlacementPublicationIdentity } from "./services/skyPlacementHydration";
 import {
@@ -49,7 +49,6 @@ import type { YouPageProps } from "./features/you/YouPage";
 import { isStandaloneLearnPath } from "./content/learnRoutePath";
 import { refreshContentPublications } from "./services/contentPublications";
 import { preparePersonalReportTiming } from "./services/personalReportTiming";
-import { preparePersonalReportSources } from "./services/personalReportSources";
 import {
   ArrowDownRight,
   ArrowRight,
@@ -11842,7 +11841,7 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
     if (!personalTransitSourcesNeeded) return;
     let cancelled = false;
     setPersonalTransitLoadStatus(previous => previous === "ready" ? previous : "loading");
-    void preparePersonalTransitSources().then(({ bundle, identity }) => {
+    void import("./services/personalTransitSources").then(({ preparePersonalTransitSources }) => preparePersonalTransitSources()).then(({ bundle, identity }) => {
       if (cancelled) return;
       if (identity !== personalTransitPublicationIdentity()) throw new Error("Transit sources changed during loading.");
       installPersonalTransitFallbackArchitectureV3Bundle(bundle);
@@ -18228,6 +18227,7 @@ function ProfileView({
       const reference = exactDateFromInput(targetDate, timeZone);
       if (!reference) throw new Error("The report date could not be calculated.");
       const calculated = await preparePersonalReportTiming(aspectRows, reference, timeZone);
+      const { preparePersonalReportSources } = await import("./services/personalReportSources");
       const sources = await preparePersonalReportSources(() => readDailyReportSources(calculated.transits));
       return { ...sources, reportTechnicalEvidence: {
         qualifyingTransits: calculated.qualifyingTransits,
