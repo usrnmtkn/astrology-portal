@@ -58,6 +58,15 @@ in the content test chain. Targeted browser cases live in
 
 ## Limits and release checks
 
+Release comparison used separate `npm ci` installations for unchanged main
+`670c84d9d` and implementation `b86c41a73`, with identical browser-workflow
+environment settings. Aggregate JavaScript gzip measured 3,501,845 versus
+3,503,019 bytes (+1,174); CI measured 3,502,992 on the implementation head.
+The loader and recovery controls receive a documented 1,500-byte aggregate
+allocation. App boot (460,365 bytes) and reader boot (513,673 bytes) remain below
+their unchanged limits. CSS, individual chunks, deferred-source boundaries,
+memory graph and runtime-performance limits also remain unchanged.
+
 Sun-return and Uranus-return readings remain genuine content gaps in the audited
 package and live inventory. This repair does not invent replacement readings.
 
