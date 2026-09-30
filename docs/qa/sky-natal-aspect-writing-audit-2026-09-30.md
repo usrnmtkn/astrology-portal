@@ -125,3 +125,14 @@ let its Git integration deploy. A live completion claim requires a ready main
 deployment matching the merge revision and the same rendered-copy regression
 against the production URL. Isolated browser fixtures and real public-reader
 checks must remain separately identified in the release evidence.
+
+Final integration includes Calendar passage editing and preview links from main
+`7ae1375e2`. The transit/report loading modules now download only when requested;
+the small publication identity helper stays available for stale-reading detection.
+Matched current-main/release builds measure 3,512,853/3,516,369 aggregate gzip bytes.
+The combined aggregate allocation is 3,517,000 bytes; startup, CSS, individual
+chunk and timing caps stay unchanged. The browser feature-flag build measures
+3,516,418 bytes. This accounts for deferred module/import overhead rather than
+claiming a reduction in total JavaScript. The prior integrated build passed all
+39 affected browser cases and the complete API suite; final-head evidence is
+recorded on the release PR.
