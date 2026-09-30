@@ -11,7 +11,7 @@ import { assertArgumentOutlineApproved } from "./argumentGate.mjs";
 import { assertSurfaceRegisterContract } from "./surfaceRegisterContract.mjs";
 import { effectiveRulePrompt } from "./effectiveRuleGovernance.mjs";
 import { resolveStudioWritingProfile } from "./studioWritingProfileReceipt.mjs";
-import { buildHoroscopeDraftInput, horoscopeDraftSchema } from './horoscopeDraftInput.mjs';
+import { buildHoroscopeDraftInput, horoscopeDraftSchema, HOROSCOPE_EDITORIAL_AUTHORITY } from './horoscopeDraftInput.mjs';
 import { buildLunationDraftInput, LUNATION_DRAFT_SCHEMA } from './lunationDraftInput.mjs';
 import { assertLunationWritingFacts } from './lunationWritingFacts.mjs';
 
@@ -225,7 +225,7 @@ export async function generateDraft({
   const value = await modelClient({
     stage: "draft",
     role,
-    instructions: effectiveRulePrompt(baseInstructions, { surface, family }),
+    instructions: [effectiveRulePrompt(baseInstructions, { surface, family }), ...(family==='horoscope'?[HOROSCOPE_EDITORIAL_AUTHORITY]:[])].join('\n\n'),
     input: buildDraftInput({ plan, context, task, target: resolvedTarget, family, register, surface, familyContext, engineFacts, argumentSource, argumentOutline, spine, writingProfile }),
     schema: resolvedSchema
   });

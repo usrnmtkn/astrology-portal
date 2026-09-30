@@ -7,6 +7,8 @@ import {validateHoroscopeReading} from '../src/astro-writing/horoscopeValidation
 import {prepareHoroscopeBrief} from '../api/_lib/horoscope-editions';
 import {prepareHoroscopeWriting} from '../src/astro-writing/horoscopeWriting.mjs';
 import {retrieveOwnerContext} from '../src/astro-writing/retrieveOwnerContext.mjs';
+import {loadSeasonalHoroscopeEvidence} from '../src/astro-writing/seasonalHoroscopeEvidence.mjs';
+import {HOROSCOPE_EDITORIAL_AUTHORITY} from '../src/astro-writing/horoscopeDraftInput.mjs';
 import {defaultHoroscopeProfile,horoscopeEditorialPrompt,HOROSCOPE_EMOTIONAL_DEVELOPMENT_GUIDANCE,HOROSCOPE_CONNECTED_READING_GUIDANCE,HOROSCOPE_PUBLICATION_TIMING_GUIDANCE,HOROSCOPE_OWNER_EDIT_GUIDANCE} from '../src/astro-writing/horoscopeWritingProfiles.mjs';
 installHoroscopeWriterFixture();
 const savedProfile=await store.invoke('POST',{profile:defaultHoroscopeProfile('weekly'),expectedUpdatedAt:null},'/api/admin/generated-content?writingProfiles=true');
@@ -104,7 +106,7 @@ for(const request of writerFixture.requests.values()){
  }
  assert(request.input.indexOf(section[0])<request.input.indexOf('CONTENT STUDIO WRITING INSTRUCTIONS'));
  assert.deepEqual(row.source_snapshot.horoscopeGeneration.readings[request.sign].sourceIds.slice(0,3),passages.map((e:any)=>e.id));
- assert.equal(row.source_snapshot.horoscopeGeneration.readings[request.sign].version,'horoscope-writer/v5');
+ assert.equal(row.source_snapshot.horoscopeGeneration.readings[request.sign].version,'horoscope-writer/v6');
 }
 // The lunation is distinct from the Monday snapshot Moon. Houses must bind to
 // the named subject, rather than matching the Sun's house or any available house.
@@ -162,8 +164,9 @@ for(const period of ['daily','seasonal']){
  const packet=await prepareHoroscopeBrief(new URL(`http://localhost/?period=${period}&date=2026-09-24&timeZone=Asia/Tokyo`));
  const other=prepareHoroscopeWriting({sections:{horoscopeEdition:emptyHoroscopeEdition(packet.brief.window)},facts:{horoscopeBrief:packet},source_snapshot:{}});
  if(period==='seasonal') {
-  assert(other.entries.every((entry:any)=>entry.contextOptions.primaryRegisterContentKeys.length===0&&!entry.contextOptions.requirePrimaryRegister));
-  assert(other.entries.every((entry:any)=>!entry.sourceIds.some((id:string)=>[...forecastSources.values()].some((source:any)=>source.sourceId===id))),'Seasonal register selection is unchanged');
+  assert(other.entries.every((entry:any)=>entry.contextOptions.primaryRegisterContentKeys.length===3&&entry.contextOptions.requirePrimaryRegister));
+  for(const entry of other.entries) assert.deepEqual(entry.sourceIds.slice(0,3).sort(),['pisces','gemini','virgo'].map(season=>`owner-seasonal:${season}-season-2025:${entry.sign}`).sort());
+  assert(other.entries.every((entry:any)=>!entry.sourceIds.some((id:string)=>[...forecastSources.values()].some((source:any)=>source.sourceId===id))),'Seasonal primary evidence uses complete seasonal readings, not weekly forecasts');
  } else {
   for(const entry of other.entries) {
    assert(entry.contextOptions.requirePrimaryRegister);
@@ -209,7 +212,10 @@ const seasonalPacket=await prepareHoroscopeBrief(new URL('http://localhost/?peri
 assert.equal(seasonalPacket.brief.window.seasonSign,'virgo');
 assert.equal(seasonalPacket.brief.referenceDate,'2026-09-01');
 const seasonalEdition=emptyHoroscopeEdition(seasonalPacket.brief.window);
-const seasonalCreated=await store.invoke('POST',{contentKey:horoscopeEditionKey(seasonalEdition.window),surface:'sky',mode:'article',eventType:'horoscope-edition',provider:'manual-admin',status:'DRAFT',lane:'serving',headline:'Synthetic seasonal recovery',body:horoscopeEditionBody(seasonalEdition),sections:{horoscopeEdition:seasonalEdition},facts:{horoscopeBrief:seasonalPacket}});
+const seasonalProfile={...defaultHoroscopeProfile('seasonal'),voiceGuidance:defaultHoroscopeProfile('seasonal').voiceGuidance+'\nSynthetic saved seasonal guidance: retain this final sentence.'};
+const seasonalProfileSaved=await store.invoke('POST',{profile:seasonalProfile,expectedUpdatedAt:null},'/api/admin/generated-content?writingProfiles=true');
+assert.equal(seasonalProfileSaved.status,200);
+const seasonalCreated=await store.invoke('POST',{contentKey:horoscopeEditionKey(seasonalEdition.window),surface:'sky',mode:'article',eventType:'horoscope-edition',provider:'manual-admin',status:'DRAFT',lane:'serving',headline:'Synthetic seasonal recovery',body:horoscopeEditionBody(seasonalEdition),sections:{horoscopeEdition:seasonalEdition},facts:{horoscopeBrief:seasonalPacket},sourceSnapshot:{studioWritingProfile:seasonalProfileSaved.payload.profile}});
 assert.equal(seasonalCreated.status,200);let seasonalRow=seasonalCreated.payload.rows[0];
 const seasonalAction=(action:string,extra:any={})=>invokeHoroscopeWriting({action,id:seasonalRow.id,expectedUpdatedAt:seasonalRow.updated_at,...extra});
 const seasonalPlan=await seasonalAction('prepare');assert.equal(seasonalPlan.status,200);
@@ -256,4 +262,45 @@ assert.deepEqual(seasonalRow.source_snapshot.horoscopeGeneration.failures,failur
 assert.equal(seasonalRow.source_snapshot.horoscopeGeneration.lastError,null);
 assert.equal(seasonalRow.sections.horoscopeEdition.passages.filter((p:any)=>p.body).length,1);
 assert.equal(seasonalRow.status,'DRAFT');
+// All twelve actual seasonal provider inputs carry the three matching complete units.
+const seasonalSources=loadSeasonalHoroscopeEvidence((file:string)=>fs.readFileSync(file,'utf8'));
+const callsBefore=writerFixture.calls;
+for(const sign of seasonalEdition.passages.slice(1).map(p=>p.sign)){
+ const generated=await seasonalAction('generate',{sign,approvedPlanHash:seasonalPlan.payload.plan.planHash});
+ assert.equal(generated.status,202,JSON.stringify(generated.payload));seasonalRow=generated.payload.rows[0];
+ const polled=await seasonalAction('poll');assert.equal(polled.status,200);seasonalRow=polled.payload.rows[0];
+}
+assert.equal(writerFixture.calls-callsBefore,11,'One call per missing sign, no judge or rewrite requests');
+assert.equal(seasonalRow.status,'DRAFT');
+for(const reading of seasonalEdition.passages){
+ const request:any=[...writerFixture.requests.values()].reverse().find((r:any)=>r.sign===reading.sign&&r.input.includes('complete owner seasonal sign readings'));
+ assert(request,`Missing seasonal provider request for ${reading.sign}`);
+ const primary=JSON.parse(request.input.match(/COMPLETE OWNER HOROSCOPES — PRIMARY PROSE EXAMPLES\n([^\n]+)\n\n/)[1]);
+ assert.equal(primary.length,3);
+ for(const passage of primary){
+  assert.equal(passage.horoscopeAudienceSign,reading.sign);
+  assert.equal(passage.text,seasonalSources.find((p:any)=>p.id===passage.id)?.text);
+  assert.equal(passage.sourceRecordSha256,createHash('sha256').update(passage.text).digest('hex'));
+ }
+ assert(request.instructions.includes(HOROSCOPE_EDITORIAL_AUTHORITY));
+ assert(request.input.includes(horoscopeEditorialPrompt(seasonalProfile)));
+ assert(request.input.includes('FINISH THE NEW DRAFT USING THE SAVED EDITORIAL GUIDANCE'));
+ assert(!request.input.includes('These complete owner weekly sign readings'));
+ const receipt=seasonalRow.source_snapshot.horoscopeGeneration.readings[reading.sign];
+ assert.deepEqual(receipt.sourceIds.slice(0,3),primary.map((p:any)=>p.id));
+ assert.equal(receipt.profileHash,createHash('sha256').update(horoscopeCanonicalJson(seasonalProfileSaved.payload.profile)).digest('hex'));
+ assert.equal(receipt.ownerApproved,false);
+}
+// Profile edits do not rewrite existing bodies or silently replace edition snapshots.
+const bodiesBefore=structuredClone(seasonalRow.sections);
+const updatedSeasonal=await store.invoke('POST',{profile:{...seasonalProfile,prompt:seasonalProfile.prompt+'\nSynthetic new revision.'},expectedUpdatedAt:seasonalProfileSaved.payload.profile.updatedAt},'/api/admin/generated-content?writingProfiles=true');
+assert.equal(updatedSeasonal.status,200);
+assert.deepEqual(store.rows.get(seasonalRow.id).sections,bodiesBefore);
+assert.deepEqual(store.rows.get(seasonalRow.id).source_snapshot.studioWritingProfile,seasonalProfileSaved.payload.profile);
+const oldPlan=prepareHoroscopeWriting(seasonalRow).planHash;
+const refreshed=await store.invoke('PATCH',{id:seasonalRow.id,expectedUpdatedAt:seasonalRow.updated_at,sourceSnapshot:{...seasonalRow.source_snapshot,studioWritingProfile:updatedSeasonal.payload.profile}});
+assert.equal(refreshed.status,200);seasonalRow=refreshed.payload.rows[0];
+assert.deepEqual(seasonalRow.sections,bodiesBefore);
+assert.notEqual(prepareHoroscopeWriting(seasonalRow).planHash,oldPlan);
+assert.equal(prepareHoroscopeWriting(seasonalRow).sourceHash,seasonalPlan.payload.plan.sourceHash);
 console.log('PASS horoscope generation: actual handlers, governed provider request, twelve persisted drafts, reload recovery, no duplicate calls, conflicts, explicit publication, fact checks and local date-line/fractional zones.');
