@@ -540,6 +540,7 @@ let localSkyPlacementReaderBundle: FallbackArchitectureV3Bundle | null = null;
 let lastKnownGoodReaderBundle: FallbackArchitectureV3Bundle | null = null;
 let dashboardCoreReaderBundle: FallbackArchitectureV3Bundle | null = null;
 let dashboardSkyCoreReaderBundle: FallbackArchitectureV3Bundle | null = null;
+let dashboardPersonalTransitReaderBundle: FallbackArchitectureV3Bundle | null = null;
 let dashboardCompatibilityReaderBundle: FallbackArchitectureV3Bundle | null = null;
 let dashboardSkyPlacementReaderBundle: FallbackArchitectureV3Bundle | null = null;
 let deferredFallbackBundlePromise: Promise<boolean> | null = null;
@@ -609,7 +610,8 @@ function recomposeReaderBundle() {
   // contain the same key (including exact natal sign + house passages).
   const dashboardCore = mergeReaderBundles(localCoreWithLunationBook, dashboardCoreReaderBundle);
   const skyCore = mergeReaderBundles(dashboardCore, dashboardSkyCoreReaderBundle);
-  const core = mergeReaderBundles(skyCore, dashboardCompatibilityReaderBundle);
+  const personalTransits = mergeReaderBundles(skyCore, dashboardPersonalTransitReaderBundle);
+  const core = mergeReaderBundles(personalTransits, dashboardCompatibilityReaderBundle);
   const withLocalSky = mergeReaderBundles(mergeReaderBundles(core, localSkyPlacementReaderBundle), localSkyPlacementHouseReaderBundle);
   activateReaderBundle(mergeReaderBundles(withLocalSky, dashboardSkyPlacementReaderBundle));
 }
@@ -810,6 +812,12 @@ export function installFallbackArchitectureV3Bundle(
 /** Keep a Sky-only response separate so navigation cannot erase other overlays. */
 export function installSkyCoreFallbackArchitectureV3Bundle(bundle: FallbackArchitectureV3Bundle | null) {
   dashboardSkyCoreReaderBundle = bundle ? readerEligibleBundle(bundle) : null;
+  recomposeReaderBundle();
+}
+
+/** A targeted transit read must not erase the broader dashboard or Sky overlay. */
+export function installPersonalTransitFallbackArchitectureV3Bundle(bundle: FallbackArchitectureV3Bundle | null) {
+  dashboardPersonalTransitReaderBundle = bundle ? readerEligibleBundle(bundle) : null;
   recomposeReaderBundle();
 }
 

@@ -5638,3 +5638,127 @@ for (const theme of ["light", "dark"] as const) {
     });
   }
 }
+
+// A published ledger plus a narrow Sky response used to leave these titles
+// visible with no body. Exercise the actual cold reader, not a preloaded runtime.
+for (const theme of ["light", "dark"] as const) for (const width of [390, 1440]) {
+  test(`published personal transit hydration across Sky You Friends ${theme} ${width}`, async ({ page }) => {
+    test.setTimeout(120_000);
+    await page.setViewportSize({ width, height: 1000 });
+    const catalog = JSON.parse(readFileSync("apps/web/src/content/fallbackArchitectureV3/source-rows/transit-synastry-rows-v1.json", "utf8")).authoredCards;
+    const records = catalog.filter((row: any) => row.contentKey.startsWith("authored/transit-aspect/sun/")
+      && row.review_status === "approved").map((row: any, index: number) => ({ ...row,
+      body_you: `QA published transit opening ${index}.\n\nQA published transit final sentence ${index}.`,
+      body_they: `QA published friend transit opening ${index}.\n\nQA published friend transit final sentence ${index}.`
+    }));
+    records.push({ contentKey: "authored/transit-return/sun", content_role: "full_copy", review_status: "approved",
+      reader_only: true, render_policy: "personal-transit-exact-v1",
+      body_you_review_status: "approved", body_they_review_status: "approved",
+      headline: "Solar Return", body_you: "QA published solar return opening.\n\nQA published solar return final sentence.",
+      body_they: "QA published friend solar return opening.\n\nQA published friend solar return final sentence." });
+    await seedCrossSurfacePublications(page, records, { profile: true, friends: true, theme,
+      profileBirthDate: "1979-08-22", preloadProfileNatalSky: true, now: "2026-08-22T16:00:00.000Z" });
+    let personalReads = 0;
+    await page.route('**/api/content-reader', async route => {
+      const query = route.request().postDataJSON();
+      if (query.scope === "sky" || query.scope === "sky-list") return route.fulfill({ json: readerResponse([]) });
+      if (query.keys?.some((key: string) => key.startsWith('authored/transit-'))) personalReads++;
+      return route.fallback();
+    });
+    const errors = watchBrowserErrors(page);
+    await expectClientRouteLoads(page, "/#sky/placement/sun/leo");
+    const personalized = page.getByRole("region", { name: "Where it lands for you" });
+    await expect(personalized).toContainText("QA published solar return opening.", { timeout: 30_000 });
+    await expect(personalized).toContainText("QA published solar return final sentence.");
+    await expect(personalized).not.toContainText("{{");
+    expect(personalReads).toBeGreaterThan(0);
+    await expectNoHorizontalOverflow(page, "published personal Sky reading");
+    await personalized.screenshot({ path: `test-results/published-personal-sky-${theme}-${width}.png` });
+    await page.reload();
+    await expect(personalized).toContainText("QA published solar return final sentence.", { timeout: 30_000 });
+    // Navigate within the same session; the scoped Sky overlay must not wipe
+    // personal sources, nor should the published Friend audience fall back to You.
+    await page.evaluate(() => { window.location.hash = "you"; });
+    const personalRow = page.locator('button.updates-aspect-row').filter({ hasText: /QA published (?:transit|solar return) opening/ }).first();
+    await expect(personalRow).toBeVisible({ timeout: 30_000 });
+    await personalRow.click();
+    await expect(page.locator('.you-transit-article')).toContainText(/QA published (?:transit|solar return) final sentence/);
+    await page.evaluate(() => { window.location.hash = "friends?tab=charts&chart=friend-nikki&view=transits"; });
+    const friend = page.locator('button.friend-transit-row').filter({ hasText: /QA published friend transit opening/ }).first();
+    await expect(friend).toBeVisible({ timeout: 30_000 });
+    await friend.click();
+    await expect(page.locator('.app-shell.mode-detail')).toContainText(/QA published friend transit final sentence/);
+    await expectNoHorizontalOverflow(page, "published friend personal reading");
+    errors();
+  });
+}
+
+test('published personal transit failure retries and retirement clears an open You article', async ({ page }) => {
+  test.setTimeout(90_000);
+  const record = { contentKey: "authored/transit-return/sun", content_role: "full_copy", review_status: "approved",
+      reader_only: true, render_policy: "personal-transit-exact-v1",
+    body_you_review_status: "approved", body_they_review_status: "approved", headline: "Solar Return",
+    body_you: "QA retry solar return opening.\n\nQA retry solar return final sentence.",
+    body_they: "QA retry friend solar return opening.\n\nQA retry friend solar return final sentence." };
+  await seedCrossSurfacePublications(page, [record], { profile: true, friends: true, profileBirthDate: "1979-08-22",
+    preloadProfileNatalSky: true, now: "2026-08-22T16:00:00.000Z" });
+  let fail = true;
+  await page.route('**/api/content-reader', route => {
+    const query = route.request().postDataJSON();
+    if (fail && query.keys?.includes(record.contentKey)) return route.fulfill({ status: 503, json: { error: 'Fixture outage' } });
+    if (query.scope) return route.fulfill({ json: readerResponse([]) });
+    return route.fallback();
+  });
+  await page.goto('/#sky/placement/sun/leo');
+  await expect(page.getByText('The transit readings could not load. Please try again.')).toBeVisible({ timeout: 30_000 });
+  await expect(page.getByRole('region', { name: 'Where it lands for you' })).toHaveCount(0);
+  await page.evaluate(() => { window.location.hash = 'friends?tab=charts&chart=friend-nikki&view=transits'; });
+  await expect(page.getByText('The transit readings could not load. Please try again.')).toBeVisible();
+  await page.getByRole('tab', { name: 'Natal', exact: true }).click();
+  await page.locator('button.placement-table-row').first().click();
+  await expect(page.locator('.app-shell.mode-detail')).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Close detail', exact: true })).toBeVisible();
+  await page.evaluate(() => { window.location.hash = 'sky/placement/sun/leo'; });
+  await expect(page.getByText('The transit readings could not load. Please try again.')).toBeVisible();
+  fail = false;
+  await page.getByRole('button', { name: 'Retry', exact: true }).click();
+  await expect(page.getByRole('region', { name: 'Where it lands for you' })).toContainText('QA retry solar return final sentence.', { timeout: 30_000 });
+  await page.evaluate(() => { window.location.hash = 'you'; });
+  const personal = page.locator('button.updates-aspect-row').filter({ hasText: 'QA retry solar return opening.' });
+  await expect(personal).toBeVisible({ timeout: 30_000 }); await personal.click();
+  await expect(page.locator('.you-transit-article')).toContainText('QA retry solar return final sentence.');
+  const publication = { content_key: record.contentKey, state: 'retired', revision: 100_001,
+    row_id: 'qa-cross-surface-0', row_updated_at: '2026-09-10T20:00:00.000Z', updated_at: '2026-09-30T19:00:00.000Z' };
+  await page.route('**/rest/v1/content_publications*', route => route.fulfill({ json: [publication] }));
+  await page.route('**/api/content-reader', route => route.fulfill({ json: readerResponse([], [publication]) }));
+  await page.evaluate(() => window.dispatchEvent(new CustomEvent('tldrastro:content-update', { detail: { contentKey: '*', published: false } })));
+  await expect(page.locator('.you-transit-article')).toHaveCount(0);
+  await expect(page.locator('main.app-shell')).not.toContainText('QA retry solar return final sentence.');
+});
+
+for (const [width, theme] of [[390, 'light'], [1440, 'dark']] as const) {
+  test(`reported Moon natal aspects retain full published writing ${width} ${theme}`, async ({ page }) => {
+    await page.setViewportSize({ width, height: 1000 });
+    const catalog = JSON.parse(readFileSync('apps/web/src/content/fallbackArchitectureV3/source-rows/transit-synastry-rows-v1.json', 'utf8')).authoredCards;
+    const keys = ['authored/transit-aspect/moon/sun/hard', 'authored/transit-aspect/moon/jupiter/soft'];
+    const records = keys.map(key => catalog.find((row: any) => row.contentKey === key));
+    // Synthetic profile selected using the ephemeris: both contacts are active.
+    await seedCrossSurfacePublications(page, records, { profile: true, profileBirthDate: '1962-08-02',
+      preloadProfileNatalSky: true, theme, now: '2026-10-26T16:00:00.000Z' });
+    await page.route('**/api/content-reader', route => route.request().postDataJSON().scope
+      ? route.fulfill({ json: readerResponse([]) }) : route.fallback());
+    await expectClientRouteLoads(page, '/#sky/placement/moon/taurus');
+    const section = page.getByRole('region', { name: 'Where it lands for you' });
+    for (const [index, title] of ['Moon square your Sun', 'Moon sextile your Jupiter'].entries()) {
+      const article = section.locator('.sky-detail-personalized-aspect').filter({ has: page.getByRole('heading', { name: title, exact: true }) });
+      const source = records[index].body_you ?? records[index].body;
+      const escape = (text: string) => text.replace(/[.*+?^${}()|[\]\\]/gu, "\\$&");
+      const expected = source.trim().replaceAll('{{aspectWord}}', index ? 'sextile' : 'square')
+        .split('{{untilDate}}').map(escape).join('[^{}\\n]+');
+      await expect.poll(async () => (await article.locator('p').allTextContents()).join('\n\n'))
+        .toMatch(new RegExp(`^${expected}$`, 'u'));
+      await expect(article).not.toContainText('{{');
+    }
+    await section.screenshot({ path: `test-results/reported-moon-writing-${width}-${theme}.png` });
+  });
+}

@@ -1,5 +1,5 @@
 import { transitArticleDescription } from "../../services/transitArticleDescription";
-import { PageLoading } from "../../components/PageLoading";
+import { PageLoading, PageLoadError } from "../../components/PageLoading";
 import { FriendDetail } from "./FriendDetail";
 import { X } from "lucide-react";
 import {
@@ -241,6 +241,8 @@ export function ManualChartsPanel({
   currentSky,
   currentSkyLoading,
   transitCopyLoading = false,
+  transitCopyError = false,
+  onRetryTransitCopy,
   transitDateLabel,
   fallbackArchitectureV3Version,
   profileNatalSky,
@@ -266,6 +268,8 @@ export function ManualChartsPanel({
   currentSky: SkySnapshot | null;
   currentSkyLoading: boolean;
   transitCopyLoading?: boolean;
+  transitCopyError?: boolean;
+  onRetryTransitCopy?: () => void;
   transitDateLabel: string;
   fallbackArchitectureV3Version: number;
   profileNatalSky: SkySnapshot | null;
@@ -2844,8 +2848,9 @@ export function ManualChartsPanel({
             />
           )}
 
-          {friendProfileTab === "transits" && (
-            <FriendTransitsTab
+          {friendProfileTab === "transits" && (transitCopyError && onRetryTransitCopy
+            ? <PageLoadError message="The transit readings could not load. Please try again." onRetry={onRetryTransitCopy} />
+            : <FriendTransitsTab
               brief={selectedFriendTransitsBrief}
               isLoading={currentSkyLoading || transitCopyLoading}
               onGenerateReading={generateSelectedFriendTransitReading}

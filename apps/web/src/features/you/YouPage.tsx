@@ -5,7 +5,7 @@ import { Fragment, isValidElement, useEffect, useId, useLayoutEffect, useRef, us
 import { ChevronLeft, MoreVertical, Pencil, Sparkles } from "lucide-react";
 import { DailyMoonContextTags, type DailyMoonContext } from "../../components/DailyMoonContextTags";
 import { ProfileAvatar } from "../../components/ProfileAvatar";
-import { PageLoading } from "../../components/PageLoading";
+import { PageLoading, PageLoadError } from "../../components/PageLoading";
 import { SegmentedControl } from "../../components/SegmentedControl";
 import { AspectGlyphs } from "../../components/charts/PlacementRows";
 import { NatalChartDataTable, type NatalChartDataTableRow } from "../../components/charts/NatalChartDataTable";
@@ -152,6 +152,9 @@ export type YouPageProps = {
   transitDateLabel: string;
   transitLoadingMessage?: string;
   transitsLoading?: boolean;
+  transitCopyLoading?: boolean;
+  transitCopyError?: boolean;
+  onRetryTransitCopy?: () => void;
   weeklyTransitRows?: ReactNode[];
   transitArticle?: YouTransitArticle | null;
 };
@@ -1217,7 +1220,10 @@ export function YouPage({
   transitLoadingMessage,
   transitsLoading = false,
   weeklyTransitRows = [],
-  transitArticle
+  transitArticle,
+  transitCopyLoading = false,
+  transitCopyError = false,
+  onRetryTransitCopy
 }: YouPageProps) {
   const [profileTab, setProfileTab] = useState<YouTab>(youTabFromUrl);
   const [natalChartViewMode, setNatalChartViewMode] = useState<NatalChartViewMode>("circle");
@@ -1297,7 +1303,11 @@ export function YouPage({
     );
   }
 
+  const transitSourceFeedback = transitCopyError && onRetryTransitCopy
+    ? <PageLoadError message="The transit readings could not load. Please try again." onRetry={onRetryTransitCopy} />
+    : transitCopyLoading ? <PageLoading message="Loading transit readings…" /> : null;
   if (transitArticle && onCloseTransitArticle) {
+    if (transitSourceFeedback) return transitSourceFeedback;
     return <YouTransitArticlePage article={transitArticle} onClose={onCloseTransitArticle} />;
   }
 
@@ -1357,7 +1367,7 @@ export function YouPage({
             />
           )}
 
-          {profileTab === "transits" && (
+          {profileTab === "transits" && (transitSourceFeedback ?? (
             <YouUpdatesTab
               accountId={accountId}
               accountRecovery={accountRecovery}
@@ -1376,7 +1386,7 @@ export function YouPage({
               transitsLoading={transitsLoading}
               weeklyTransitRows={weeklyTransitRows}
             />
-          )}
+          ))}
         </main>
       </div>
     </section>

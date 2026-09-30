@@ -46,6 +46,7 @@ await build({
     contents: `
       import { friendsViewModelDependencies } from "./apps/web/src/App.tsx";
       export const { normalizePersonalTransitSurface, normalizedSurfacePreview, personalTransitPackageWindow, stableTransitCopyVariant } = friendsViewModelDependencies;
+      export { isPersonalTransitSource } from "./apps/web/src/services/personalTransitSources.ts";
       export { fullDetailReaderFacingCopy } from "./apps/web/src/content/readerSafety.ts";
       export { installContentPublications } from "./apps/web/src/content/contentPublicationState.ts";
       export {
@@ -102,6 +103,9 @@ try {
             const body = runtime.fullDetailReaderFacingCopy(rendered.parts);
             const authored = rendered.templateKey?.startsWith("authored/") === true;
             const surface = reader(transit, voice);
+            for (const section of surface.sections) for (const key of section.sourceKeys ?? []) {
+              if (key.includes("/") && !key.startsWith("tldrastro-")) assert.ok(runtime.isPersonalTransitSource(key), `${identity}: source hydration omits ${key}`);
+            }
             const meaning = surface.sections.find(section => section.slot === "meaning");
             assert.ok(body, `${identity}: selected resolver result must have writing`);
             assert.equal(meaning?.body, body, `${identity}: reader rejected or changed ${rendered.templateKey}`);

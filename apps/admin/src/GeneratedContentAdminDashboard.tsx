@@ -8694,8 +8694,8 @@ export function GeneratedContentAdminDashboard() {
             </header>
             <Text size="body" tone="secondary">
               {exactKey && exactKey.split("/").length === 8
-                ? "The published Friends card still uses this source. Edit live opens that packaged source. The six-part editor is a separate save and does not overwrite it."
-                : "The current Friends Active for {{Name}} card uses this published source. Edit live opens that packaged source. Saving it does not change the three-part or six-part write-up below."}
+                ? "The published reading still uses this source. Edit live opens that packaged source. The six-part editor is a separate save and does not overwrite it."
+                : "The current reading uses this published source. Its You and Friend fields serve the corresponding audience. Edit live opens that packaged source. Saving it does not change the three-part or six-part write-up below."}
             </Text>
             <p className="admin-natal-source-key"><span>Source key</span><code>{liveSourceKey}</code></p>
             <StudioButton

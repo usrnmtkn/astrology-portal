@@ -355,8 +355,8 @@ const friendTransitsSource = fs.readFileSync(
 );
 assert.match(
   appSource,
-  /transitCopyLoading=\{!friendTransitsCopyReady\(\{[\s\S]*deferredLoaded: isDeferredFallbackArchitectureV3BundleLoaded\(\),[\s\S]*relationshipLoaded: isRelationshipFallbackArchitectureV3BundleLoaded\(\)[\s\S]*\}\)\}/u,
-  "Friends must not treat transits as ready until personal-transit and bond-effect copy packages have loaded."
+  /transitCopyLoading=\{personalTransitSourceStatus !== "ready" \|\| !friendTransitsCopyReady\(\{[\s\S]*deferredLoaded: isDeferredFallbackArchitectureV3BundleLoaded\(\),[\s\S]*relationshipLoaded: isRelationshipFallbackArchitectureV3BundleLoaded\(\)[\s\S]*\}\)\}/u,
+  "Friends must not treat transits as ready until published sources, personal-transit and bond-effect copy packages have loaded."
 );
 assert.match(
   appSource,

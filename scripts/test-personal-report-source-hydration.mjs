@@ -11,13 +11,14 @@ const built = await build({ stdin: { resolveDir: process.cwd(), contents: `
   export { fullDetailReaderFacingCopy } from './apps/web/src/content/readerSafety.ts';` },
   bundle: true, write: false, format: 'esm', platform: 'node', define: {'import.meta.env':'{}'},
   plugins: [{ name: 'source-network-fixture', setup(b) {
-    b.onResolve({filter:/\/(generatedContent|contentPublications)$/}, args => {
-      if (!args.importer.endsWith('personalReportSources.ts')) return;
-      return { path: args.path.endsWith('generatedContent') ? 'rows' : 'ledger', namespace: 'fixture' };
+    b.onResolve({filter:/\/(generatedContent|contentPublications|readerContentClient)$/}, args => {
+      if (!/(?:personalReportSources|personalTransitSources)\.ts$/u.test(args.importer)) return;
+      return { path: args.path.endsWith('generatedContent') ? 'rows' : args.path.endsWith('readerContentClient') ? 'reader' : 'ledger', namespace: 'fixture' };
     });
     b.onLoad({filter:/.*/,namespace:'fixture'}, ({path}) => ({contents:path==='rows'
-      ? 'export async function loadFallbackArchitectureV3DashboardBundle(){return globalThis.reportSourceFixture.load();}'
-      : 'export async function refreshContentPublications(){globalThis.reportSourceFixture.refreshed++;} export function contentPublicationsResolved(){return globalThis.reportSourceFixture.resolved;}'}));
+      ? 'export async function loadFallbackArchitectureV3DashboardBundle(){return globalThis.reportSourceFixture.load();} export async function loadContentStudioLastKnownGoodRows(){return globalThis.reportSourceFixture.rows;}'
+      : path==='reader' ? 'export async function loadReaderRows(){return {data:globalThis.reportSourceFixture.rows,error:null};}'
+      : 'export async function refreshContentPublications(){globalThis.reportSourceFixture.refreshed++;} export function contentPublicationsResolved(){return globalThis.reportSourceFixture.resolved;} export function contentPublicationsAvailableOnline(){return true;}'}));
   } }]
 });
 const api = await import(`data:text/javascript;base64,${Buffer.from(built.outputFiles[0].text).toString('base64')}`);
@@ -29,7 +30,9 @@ try {
   const publication={content_key:key,state:'live',revision:90001,row_id:'synthetic-row',row_updated_at:stamp,updated_at:stamp};
   const bundle={transitLib:{authoredCards:[{...card,publicationRowId:publication.row_id,publicationRowUpdatedAt:stamp}]},templatesFile:{templates:[]},rowsFile:{hookRows:[],vocabularyRows:[]}};
   let loads=0, reads=0;
-  globalThis.reportSourceFixture={resolved:true,refreshed:0,load:async()=>{loads++;await Promise.resolve();return bundle;}};
+  globalThis.reportSourceFixture={resolved:true,refreshed:0,rows:[{id:publication.row_id,content_key:key,updated_at:stamp,
+    surface:'you',mode:'in_depth',status:'LIVE',lane:'serving',review_state:null,provider:'tldrastro-fallback-architecture-v3',body:card.body,
+    facts:{content_role:'full_copy',review_status:'approved'},source_snapshot:{sourcePackage:'tldrastro-fallback-architecture-v3',content_role:'full_copy',review_status:'approved'},sections:{packageRecord:card}}],load:async()=>{loads++;await Promise.resolve();return bundle;}};
   const read=()=>{reads++;return api.fullDetailReaderFacingCopy(api.transitSynastryFallbackRendererV3.renderTransitAspect({transiting:'north-node',natal:'sun',aspect:'conjunction',voice:'you',window:'through September 30'}).parts);};
   await api.loadDeferredFallbackArchitectureV3Bundle();
   api.installContentPublications([publication]);
