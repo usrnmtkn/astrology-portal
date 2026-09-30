@@ -137,9 +137,12 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark'] as const)
         const copy = view === 'day' ? page.getByLabel('Selected lunar day', { exact: true }).locator('[data-guidance-key]') : page.locator('.calendar-day-group__blurb').filter({ hasText: 'Synthetic saved Aries continuation.' });
         await expect(copy).toContainText('Synthetic saved Aries continuation.', { timeout: 60_000 });
         for (const paragraph of revision.split('\n\n')) await expect(copy).toContainText(paragraph);
-        await expect(copy).toContainText('The Full Moon was yesterday.');
+        await expect(copy).not.toContainText('The Full Moon was yesterday.');
         await expect(copy).toContainText('before it enters Taurus tomorrow.');
         await expect(copy).not.toContainText(original.body);
+        await page.reload();
+        for (const paragraph of revision.split('\n\n')) await expect(copy).toContainText(paragraph);
+        await expect(copy).not.toContainText('The Full Moon was yesterday.');
         await page.screenshot({ path: `test-results/transition-phrases-reader-${view}-${width}-${theme}.png`, fullPage: true });
       }
       expect(errors).toEqual([]);

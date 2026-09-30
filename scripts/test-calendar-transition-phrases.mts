@@ -91,7 +91,14 @@ for (const [kind, facts, timing] of cases) {
   const revised = resolveCalendarMoonFallback(context, options)!;
   assert.ok(original.body.includes(calendarMoonContextPhrases[kind].body), kind);
   assert.equal(revised.body, original.body.replace(calendarMoonContextPhrases[kind].body, replacement), kind);
-  assert.ok(revised.body.includes(timing), 'Calculated timing survives: ' + kind);
+  const lunarContext = !kind.includes('Season') && kind !== 'lateIngress';
+  if (lunarContext) {
+    assert.ok(!original.body.includes(timing), 'No uneditable lunar lead-in in bundled copy: ' + kind);
+    assert.ok(!revised.body.includes(timing), 'No uneditable lunar lead-in in saved copy: ' + kind);
+    assert.equal(revised.body.slice(revised.body.indexOf(replacement)), replacement, 'Saved context is the complete suffix: ' + kind);
+  } else {
+    assert.ok(revised.body.includes(timing), 'Other calculated timing survives: ' + kind);
+  }
   const row = { id: 'runtime-' + kind, content_key: key, status: 'LIVE', lane: 'serving', body: replacement, surface: 'sky', mode: 'in_depth', review_state: null };
   assert.equal(calendarMoonWriteupForDay([row], day, context)?.body, revised.body, 'Preview and reader agree: ' + kind);
   assert.equal(calendarMoonWriteupForDay([{ ...row, status: 'DRAFT' }], day, context)?.body, original.body, 'Drafts stay private: ' + kind);
@@ -106,7 +113,9 @@ for (const sign of ['Aries', 'Taurus']) {
 }
 const firstQuarter = { ...base, moonSign: 'Sagittarius', nextMoonSign: 'Capricorn', exactFirstQuarter: true } as Parameters<typeof resolveCalendarMoonFallback>[0];
 assert.ok(resolveCalendarMoonFallback(firstQuarter, { transitionPhrase: key => key.endsWith('/sagittarius/first-quarter') ? 'Synthetic First Quarter continuation.' : undefined })!.body.includes('Synthetic First Quarter continuation.'));
-console.log('PASS: all 13 context routes keep calculated timing, respect draft visibility, and match the Studio preview; sign and First Quarter overrides reach assembled prose.');
+const explicitlySavedTiming = 'The Full Moon was yesterday. Synthetic owner-selected ending.';
+assert.ok(resolveCalendarMoonFallback(fullMoonFacts, { transitionPhrase: key => key === calendarMoonContextKey('dayAfterFullMoon') ? explicitlySavedTiming : undefined })!.body.endsWith(explicitlySavedTiming), 'An editable phrase may still contain timing wording chosen by the owner.');
+console.log('PASS: nine lunar contexts serve editable wording without extra timing sentences; all 13 routes respect draft visibility and match the Studio preview.');
 
 assert.deepEqual(calendarMoonWritingParagraphs([{ role: 'leftover', contentKey: 'generated/calendar-moon-fallback/lastFullDayInMoonSign/2026-09-27', body: 'Synthetic opening.\n\nSynthetic ending.' }], 1), ['Synthetic opening.', 'Synthetic ending.']);
 assert.deepEqual(calendarMoonWritingParagraphs([{ role: 'lunation', contentKey: 'authored/sky-lunation-macro/full-moon/aries', body: 'Article preview.\n\nFull article continues.' }], 1), ['Article preview.']);
