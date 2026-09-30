@@ -27,7 +27,10 @@ a retryable error even if authentication or a transport does not settle. A save
 timeout retains the draft; repeating an upsert uses the same account/date key.
 Timeout does not prove a write was rejected by the server.
 
-A direct Calendar visit starts calculation asset downloads in its worker.
+A direct Calendar visit loads the small worker client before importing App, then
+starts calculation asset downloads in its worker without awaiting those assets.
+This keeps App evaluation from postponing the engine downloads while preserving
+the loading shell and local recovery if the engine is slow or unavailable.
 Basic and full fact requests start together. The first successful response makes
 dates usable, and prose downloads overlap the remaining calculations. Late basic
 responses cannot replace full facts. Only full facts enter the calendar cache or select an
