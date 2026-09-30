@@ -92,10 +92,15 @@ try {
   const month = new Date("2026-09-20T16:00:00Z");
   assert.deepEqual(await cached.getLunarCalendarMonth(newYork, month, { detail: "full" }),
     await direct.getLunarCalendarMonth(newYork, month, { detail: "full" }), "complete month event and timing parity");
+  const timingSky = await direct.getAstrodienstSky(newYork, month, { includeDailyEvents: false });
   for (const planet of ["Moon", "Saturn"]) {
     const options = { aspectDegrees: 90, timeZone: newYork.timeZone };
-    assert.deepEqual(await cached.natalTransitTimingFor(planet, 123.456, month, options),
-      await direct.natalTransitTimingFor(planet, 123.456, month, options), `${planet}: personal transit window parity`);
+    const longitude = timingSky.positions.find((row: { planet: string }) => row.planet === planet).longitude;
+    const natalLongitude = (longitude + 270) % 360;
+    const timing = await cached.natalTransitTimingFor(planet, natalLongitude, month, options);
+    assert(timing?.exactPasses.length > 0, `${planet}: the fixture must exercise an active contact and exact pass`);
+    assert.deepEqual(timing, await direct.natalTransitTimingFor(planet, natalLongitude, month, options),
+      `${planet}: personal transit window parity`);
   }
 } finally {
   await rm(directory, { recursive: true, force: true });
