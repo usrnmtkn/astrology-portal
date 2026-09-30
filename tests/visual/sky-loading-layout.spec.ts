@@ -102,8 +102,19 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
     results.push(await assertStableReading(page));
     await page.getByRole('button', { name: 'Read more about Sun in Virgo', exact: true }).click();
     await expect(page.locator('.sky-detail-article .article-body-inner').first()).toBeVisible({ timeout: 30_000 });
-    await page.evaluate(() => { (window as any).__skyLayout.frames = []; (window as any).__skyLayout.shifts = []; });
+    await page.evaluate(() => {
+      (window as any).__skyLayout.frames = []; (window as any).__skyLayout.shifts = [];
+      // A font can finish after the returning skeleton has already painted.
+      // Keep that transition deterministic instead of depending on CI speed.
+      Object.defineProperty(document.fonts, 'status', { configurable: true, value: 'loading' });
+    });
     await page.getByRole('button', { name: 'Close detail', exact: true }).click();
+    await expect(page.locator('.sky-reading-layout__loading')).toBeVisible();
+    await page.waitForFunction(() => (window as any).__skyLayout.frames.some((sample: any) => sample.frame.loading));
+    await page.evaluate(() => {
+      delete (document.fonts as any).status;
+      document.fonts.dispatchEvent(new Event('loadingdone'));
+    });
     results.push(await assertStableReading(page));
     await page.evaluate(() => {
       (window as any).__skyLayout.frames = [];

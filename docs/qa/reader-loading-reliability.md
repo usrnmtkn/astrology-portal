@@ -27,7 +27,10 @@ a retryable error even if authentication or a transport does not settle. A save
 timeout retains the draft; repeating an upsert uses the same account/date key.
 Timeout does not prove a write was rejected by the server.
 
-A direct Calendar visit starts calculation asset downloads in its worker.
+A direct Calendar visit loads the small worker client before importing App, then
+starts calculation asset downloads in its worker without awaiting those assets.
+This keeps App evaluation from postponing the engine downloads while preserving
+the loading shell and local recovery if the engine is slow or unavailable.
 Basic and full fact requests start together. The first successful response makes
 dates usable, and prose downloads overlap the remaining calculations. Late basic
 responses cannot replace full facts. Only full facts enter the calendar cache or select an
@@ -39,6 +42,18 @@ shows its own loading state and does not choose replacement prose. A failed asse
 stays local to Calendar. Explicit retry reloads failed module imports because
 browsers cache module failures. Background recovery cannot reload an open
 check-in editor. A timed-out but still downloading bundle retries without reload.
+
+Repeated ephemeris scans reuse validated results for the identical Julian day,
+body, flags, and fixed-configuration Swiss instance. The cache holds at most
+16,384 entries, evicts in constant time, and returns independent vectors. It
+does not round dates, cache errors, skip searches, or change readiness. Direct
+Swiss comparisons cover complete Calendar and Sky results, multiple dates and
+locations, DST boundaries, and personal transit windows.
+
+Skeleton geometry keeps its initial font-loading identity for each loading
+cycle. A late font completion cannot switch an already-visible placeholder to
+another cached height; resolved measurements still use the current font state.
+Sky regressions force this transition on article return in both themes and sizes.
 
 ## Acceptance checks
 

@@ -107,6 +107,15 @@ async function startApp() {
     return;
   }
 
+  // Start Calendar's worker before importing/evaluating App. A dynamic client
+  // import discovered alongside App can wait behind its main-thread work and
+  // postpone the large ephemeris downloads on a cold mobile visit.
+  if (/^#\/?calendar(?:[/?]|$)/u.test(window.location.hash)) {
+    await import("./services/skyCalculationClient").then(({ preloadSwissEphemerisOffMainThread }) => {
+      // Wait only for the small client module, never for the calculation assets.
+      void preloadSwissEphemerisOffMainThread().catch(() => {});
+    }).catch(() => { /* The active route owns its error and retry state. */ });
+  }
   const appModulePromise = import("./App");
   const callbackUrl = new URL(window.location.href);
   if (callbackUrl.searchParams.has("code") || /(?:^#|&)(?:access_token|error|error_code)=/u.test(callbackUrl.hash)) {
@@ -132,13 +141,6 @@ async function startApp() {
     return preloadFriendsExperience();
   }).catch(() => { /* The mounted route owns import errors and recovery. */ });
   const readerStylesPromise = import("./styles.css");
-  // Sky first loads compact server facts. Calendar still benefits from a
-  // local engine for interactive navigation beyond the initial date.
-  if (/^#\/?calendar(?:[/?]|$)/u.test(window.location.hash)) {
-    void import("./services/skyCalculationClient").then(({ preloadSwissEphemerisOffMainThread }) => (
-      preloadSwissEphemerisOffMainThread()
-    )).catch(() => { /* The active route owns its error and retry state. */ });
-  }
   await friendRoutePromise;
   const initialFriendProfileTab = initialFriendProfileContentRequest(window.location.href);
 
