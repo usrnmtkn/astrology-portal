@@ -332,3 +332,25 @@ Saved seasonal profile updates preserve owner wording and use optimistic version
 checks plus exact readback. Existing edition profile snapshots and reader bodies
 are not replaced automatically. These changes add no judge, retry loop, source
 publication or automatic horoscope generation.
+
+### Seasonal publication claim parsing — September 30
+
+Fact validator v4 recognizes First and Last Quarter Moons as their calculated
+lunation events, including leading-sign phrasing. It no longer compares those
+events with the reference-instant Moon. Seasonal date checks associate dates
+within coordinated event clauses before using proximity, and recognize
+"stationing" as well as "stations". A numbered house may be repeated without
+renaming its planet only after that house has passed an explicit placement check
+in the same paragraph. A newly named body always receives its own factual check.
+
+This is bounded language recognition, not a claim of general prose understanding.
+Dates still use the edition's time zone and supplied events. Unsupported phases,
+signs, houses and event/date combinations remain blocking. Publication recomputes
+facts under the current validator while retaining the historical receipt and
+non-factual findings; no saved horoscope wording is rewritten or regenerated.
+
+The actual-handler regression `test-horoscope-publication-claims.mts` reproduces
+the former publication refusal with synthetic copy, verifies exact persistence
+and reader eligibility, and rejects incorrect claims and stale writes. The
+matching fresh-build browser flow publishes and reloads the full saved reading
+using isolated storage and no model calls.
