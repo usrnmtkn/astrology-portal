@@ -3,7 +3,7 @@ import { fork } from 'node:child_process';
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
 import { routeStudioInventoryApi } from '../helpers/studio-inventory-route';
-import { HOROSCOPE_PROFILE_FIELD_LIMIT } from '../../src/astro-writing/horoscopeWritingProfiles.mjs';
+import { HOROSCOPE_PERIODS, HOROSCOPE_PROFILE_FIELD_LIMIT } from '../../src/astro-writing/horoscopeWritingProfiles.mjs';
 
 const endpoint = '/api/admin/generated-content?writingProfiles=true';
 const entry = process.env.STUDIO_PRODUCTION_ENTRY === '1' ? '/admin/content' : '/';
@@ -192,7 +192,7 @@ for (const [width, theme] of [[390, 'light'], [390, 'dark'], [1440, 'light'], [1
 test('AI Writing recovers from loading and save failures without discarding edits', async ({page}) => {
  const {defaultHoroscopeProfile} = await import('../../src/astro-writing/horoscopeWritingProfiles.mjs');
  const {createHash} = await import('node:crypto');
- const profiles = ['daily', 'weekly', 'seasonal'].map((period: any) => {const profile = defaultHoroscopeProfile(period); return {profile, id:null, updatedAt:null, revision:0, sha256:createHash('sha256').update(JSON.stringify(profile)).digest('hex')};});
+ const profiles = HOROSCOPE_PERIODS.map(period => {const profile = defaultHoroscopeProfile(period); return {profile, id:null, updatedAt:null, revision:0, sha256:createHash('sha256').update(JSON.stringify(profile)).digest('hex')};});
  await page.addInitScript(() => localStorage.setItem('tldrastro:contentAdminSecret', 'calendar-api-fixture'));
  let reads = 0;
  await page.route('**/api/**', async route => {

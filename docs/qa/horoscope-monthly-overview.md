@@ -31,8 +31,9 @@ implementation head, required CI results and deployment revision.
 | Create, recover, publish and actual reader admission | Passed | Real handlers with isolated storage, one fixture provider call, duplicate/stale refusal, exact saved prose, private metadata exclusion |
 | Existing saved seasonal content | Passed | Legacy twelve-unit fixture and actual seasonal publication-claims regressions |
 | New monthly/seasonal reader matrix | Passed | Fresh Vite build, four Playwright 390/1440 light/dark cases, computed heading styles and semantic order; Calendar reuse and error recovery |
-| Existing horoscope regressions | Pending final run | Navigation, personalization and worldwide discovery passed; import and recovery suite rerunning after selected-reading retention fix |
-| Full Content Studio API release gate | Pending | Required unfiltered local gate and exact-head GitHub workflow |
+| Existing horoscope regressions | Passed | Navigation, personalization, worldwide discovery, twelve-sign import, recovery and seasonal source plans passed across the full 45-case reader suite |
+| Full Content Studio API release gate | Local passed | Unfiltered local gate passed; final-head GitHub workflow recorded in the PR |
+| Four-profile editor and lunar workspace | Passed | Monthly profile saves/reloads in four reader cases; five full profile-editor cases and four lunar-workspace cases pass after removing the fixed three-profile assumption |
 | Web/admin typechecks and CSS tokens | Passed | `tsc --noEmit` for both applications and `npm run qa:css-audit` |
 | Bundle boundaries | Passed | Matched isolated builds described below; all startup and deferred-payload guards retained |
 | Built public assets privacy | Passed | Protected-policy scans of both web and admin builds |
@@ -51,12 +52,15 @@ placeholders. Main versus feature, gzip level 9:
 
 | Measure | Main | Feature | Difference |
 | --- | ---: | ---: | ---: |
-| All web JavaScript | 3,518,061 B | 3,519,158 B | +1,097 B |
-| Deferred horoscope reader | 3,498 B | 3,663 B | +165 B |
-| All admin JavaScript | 782,164 B | 782,583 B | +419 B |
+| All web JavaScript | 3,518,061 B | 3,519,258 B | +1,197 B |
+| Reader boot including CSS | 513,607 B | 513,750 B | +143 B |
+| Deferred horoscope reader | 3,498 B | 3,664 B | +166 B |
+| All admin JavaScript | 782,164 B | 782,566 B | +402 B |
 
-Small aggregate/reader allocations cover these additions. Entry, reader startup,
-CSS, largest-chunk, memory graph and forbidden-payload caps remain unchanged.
+Small aggregate/reader allocations cover these additions. The initial Linux CI
+build measured reader boot at 513,751 B, one byte over its prior cap; a 100 B
+allowance retains a tight boundary. Entry, CSS, largest-chunk, memory graph and
+forbidden-payload caps remain unchanged.
 No dependency was added.
 
 ## Boundaries and limitations

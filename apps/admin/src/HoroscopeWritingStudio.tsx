@@ -171,9 +171,9 @@ export default function HoroscopeWritingStudio({ secret, initialPeriod = 'weekly
   useEffect(() => {
     const controller = new AbortController(); setLoading(true); setError("");
     void request(secret, undefined, controller.signal).then(data => {
-      if (!Array.isArray(data.profiles) || data.profiles.length !== 3) throw new Error("The writing profile library is incomplete.");
+      if (!Array.isArray(data.profiles) || data.profiles.length !== HOROSCOPE_PERIODS.length) throw new Error("The writing profile library is incomplete.");
       const values = data.profiles.map(validateSaved);
-      if (new Set(values.map((entry: SavedHoroscopeProfile) => entry.profile.period)).size !== 3) throw new Error("The writing profile library contains duplicate periods.");
+      if (new Set(values.map((entry: SavedHoroscopeProfile) => entry.profile.period)).size !== HOROSCOPE_PERIODS.length) throw new Error("The writing profile library contains duplicate periods.");
       if (!controller.signal.aborted) setProfiles(values);
     }).catch(reason => { if (!controller.signal.aborted) setError((reason as Error).message); }).finally(() => { if (!controller.signal.aborted) setLoading(false); });
     return () => controller.abort();

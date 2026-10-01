@@ -30,6 +30,16 @@ for(const [width,theme] of [[390,'light'],[390,'dark'],[1440,'light'],[1440,'dar
    await expect(studio.getByRole('alert')).toContainText('shared season sources could not be loaded');
    await studio.getByRole('button',{name:'Review writing plan',exact:true}).click();
    await expect(studio.getByRole('alert')).toHaveCount(0);
+   const assertIntroduction=async()=>{
+    const plan=studio.getByRole('region',{name:'Overview writing plan',exact:true});
+    await plan.getByText('Full plan details',{exact:true}).click();
+    const sources=plan.getByLabel('Season and learning-axis sources');
+    for(const body of originals)await expect(sources).toContainText(body);
+    await expect(sources).not.toContainText('House');
+    await expect(studio.getByText('0/13 readings ready',{exact:false})).toBeVisible();
+    await plan.getByText('Full plan details',{exact:true}).click();
+    await studio.getByRole('group',{name:'Writing plans by sign'}).getByRole('button',{name:'Aries',exact:true}).click();
+   };
    const assertSources=async(sign='Aries',house=7)=>{
     const plan=studio.getByRole('region',{name:`${sign} writing plan`,exact:true});
     await plan.getByText('Full plan details',{exact:true}).click();
@@ -42,13 +52,13 @@ for(const [width,theme] of [[390,'light'],[390,'dark'],[1440,'light'],[1440,'dar
     expect(await sources.locator('p').first().evaluate(styles)).toEqual(await plan.locator('.admin-horoscope-outline').evaluate(styles));
     expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
    };
-   await assertSources();
+   await assertIntroduction();await assertSources();
    await studio.getByRole('group',{name:'Writing plans by sign'}).getByRole('button',{name:'Gemini',exact:true}).click();
    // The disclosure stays open while changing signs.
    await studio.getByText('Full plan details',{exact:true}).click();await assertSources('Gemini',5);
    await page.reload();await studio.getByText(/^Continue a saved edition/).click();
    await studio.locator('.admin-horoscope-saved button').first().click();
-   await assertSources();
+   await assertIntroduction();await assertSources();
    expect((await call({method:'writer-state'})).calls).toBe(0);
    await page.screenshot({path:`test-results/seasonal-sources-${width}-${theme}.png`,fullPage:true});
   }finally{child.kill();}

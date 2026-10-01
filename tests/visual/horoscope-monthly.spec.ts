@@ -30,6 +30,17 @@ for(const [width,theme] of [[390,'light'],[390,'dark'],[1440,'light'],[1440,'dar
     const result=await call({method,body:route.request().postDataJSON()});
     await route.fulfill({status:result.status,json:result.payload});return true;
    }});
+   await page.goto('/admin/content#ai-writing');
+   const profiles=page.getByRole('region',{name:'Horoscope writing profiles',exact:true});
+   await expect(profiles.getByRole('heading',{name:'Weekly instructions',exact:true})).toBeVisible();
+   await profiles.getByRole('button',{name:'Monthly',exact:true}).click();
+   await expect(profiles.getByRole('heading',{name:'Monthly instructions',exact:true})).toBeVisible();
+   const monthlyVoice=profiles.getByRole('textbox',{name:'Voice guidance',exact:true});
+   await monthlyVoice.fill('Synthetic shared monthly voice instructions.');
+   await profiles.getByRole('button',{name:'Save writing profile',exact:true}).click();
+   await expect(profiles.getByText('Saved Monthly profile, revision 1.',{exact:true})).toBeVisible();
+   await page.reload();await profiles.getByRole('button',{name:'Monthly',exact:true}).click();
+   await expect(monthlyVoice).toHaveValue('Synthetic shared monthly voice instructions.');
    await page.goto('/admin/content#horoscopes');
    const studio=page.getByRole('region',{name:'Horoscope editions'});
    await studio.getByRole('button',{name:'Monthly',exact:true}).click();
