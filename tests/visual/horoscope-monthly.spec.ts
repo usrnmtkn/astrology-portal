@@ -79,7 +79,8 @@ for(const [width,theme] of [[390,'light'],[390,'dark'],[1440,'light'],[1440,'dar
    const headingStyle=await overview.locator('h2').evaluate(el=>{const s=getComputedStyle(el);return[s.fontFamily,s.fontSize,s.fontWeight,s.lineHeight,s.letterSpacing,s.margin,s.textTransform,s.textAlign];});
    await page.reload();await expect(overview).toContainText('Your complete monthly fixture ends here.');
    await page.screenshot({path:`test-results/monthly-overview-${width}-${theme}.png`,fullPage:true});
-   await page.getByRole('button',{name:'This season',exact:true}).click();
+   await expect(page.getByRole('group',{name:'Horoscope period',exact:true}).getByRole('button')).toHaveText(['Today','This week','This month','Libra Season']);
+   await page.getByRole('button',{name:'Libra Season',exact:true}).click();
    await expect(page.getByRole('article',{name:'Season introduction'})).toContainText('Your fixture reading ends here.');
    await page.getByRole('button',{name:'Gemini & Gemini Rising',exact:true}).click();
    const gemini=page.getByRole('article',{name:'Gemini horoscope'});await expect(gemini).toContainText('You can read your gemini fixture opening.');
@@ -91,6 +92,7 @@ for(const [width,theme] of [[390,'light'],[390,'dark'],[1440,'light'],[1440,'dar
    readerMode='error';await page.getByRole('button',{name:'This month',exact:true}).click();await expect(page.getByRole('alert')).toContainText('could not load');
    readerMode='normal';await page.getByRole('button',{name:'Try again',exact:true}).click();await expect(overview).toContainText('Your complete monthly fixture ends here.');
    await page.getByRole('button',{name:'Today',exact:true}).click();await expect(page.getByRole('heading',{name:'No daily reading yet'})).toBeVisible();
+   await expect(page.getByRole('button',{name:'Read Libra Season horoscope',exact:true})).toBeVisible();
    await expect(page.getByRole('button',{name:'Read this month’s overview',exact:true})).toBeVisible();
    hold=true;await page.getByRole('button',{name:'Read this month’s overview',exact:true}).click();
    await expect(page.getByText('Loading your horoscope…',{exact:true})).toBeVisible();release();

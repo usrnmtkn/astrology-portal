@@ -3,7 +3,7 @@ import {FormattedProse} from '../../components/FormattedProse';
 import {PageLoading} from '../../components/PageLoading';
 import {loadReaderRows} from '../../services/readerContentClient';
 import {subscribeToContentUpdates,subscribeToContentRevalidation} from '../../services/contentUpdateSignal';
-import {HOROSCOPE_SIGNS,HOROSCOPE_PERIODS,horoscopeSignLabel,horoscopeEditionAt,horoscopeEditionFromRow,horoscopeWindowLabel,validHoroscopeTimeZone,canonicalHoroscopeTimeZone,type HoroscopePeriod,type HoroscopeEdition} from '../../content/horoscopeEditions.mjs';
+import {HOROSCOPE_SIGNS,HOROSCOPE_PERIODS,horoscopeSignLabel,horoscopeEditionAt,horoscopeEditionFromRow,horoscopeWindowLabel,horoscopeOverviewHeadline,validHoroscopeTimeZone,canonicalHoroscopeTimeZone,type HoroscopePeriod,type HoroscopeEdition,type HoroscopeWindow} from '../../content/horoscopeEditions.mjs';
 import '../../styles/horoscopes.css';
 import {nextHoroscopeRefresh} from './horoscopeRefresh';
 import {HoroscopeLocation} from './HoroscopeLocation';
@@ -11,7 +11,6 @@ import type {LocationInput} from '../../types';
 import {browserTimeZone,timeZoneForLocation} from '../../services/timezones';
 import {zodiacAssetHref,zodiacSignIconFiles} from '../../components/charts/chartAssets';
 
-const labels={daily:'Today',weekly:'This week',monthly:'This month',seasonal:'This season'};
 const availableLabels={daily:'Read today’s horoscope',weekly:'Read this week’s horoscope',monthly:'Read this month’s overview',seasonal:'Read this season’s horoscope'};
 const periodNames={daily:'Daily',weekly:'Weekly',monthly:'Monthly',seasonal:'Seasonal'};
 type AvailableEdition={id:string;edition:HoroscopeEdition};
@@ -38,6 +37,7 @@ export default function HoroscopeReader({defaultSign,sunSign,location}:{defaultS
   const [selection,setSelection]=useState(()=>route(preferredSign));
   const [edition,setEdition]=useState<HoroscopeEdition|null>(null),[loading,setLoading]=useState(true),[error,setError]=useState(''),[version,setVersion]=useState(0);
   const [loadedEditionId,setLoadedEditionId]=useState<string|null>(null);
+  const [seasonWindow,setSeasonWindow]=useState<HoroscopeWindow|null>(null);
   const [availableEditions,setAvailableEditions]=useState<AvailableEdition[]>([]);
   const [discovering,setDiscovering]=useState(false),[discoveryFailed,setDiscoveryFailed]=useState(false);
   const refresh=()=>setVersion(value=>value+1);
@@ -48,11 +48,17 @@ export default function HoroscopeReader({defaultSign,sunSign,location}:{defaultS
     const controller=new AbortController();setLoading(true);setError('');setAvailableEditions([]);setDiscovering(false);setDiscoveryFailed(false);
     const at=new Date().toISOString();
     const signal=AbortSignal.any([controller.signal,AbortSignal.timeout(20000)]);
+    // Name the destination even when a different period is open. This optional
+    // lookup must not hold up the selected reading or invent a season by date.
+    if(selection.period!=='seasonal')void loadReaderRows({horoscope:{period:'seasonal',at,timeZone}},signal).then(result=>{
+      if(!controller.signal.aborted)setSeasonWindow(horoscopeEditionAt(result.data??[],'seasonal',at,timeZone)?.window??null);
+    }).catch(()=>{if(!controller.signal.aborted)setSeasonWindow(null);});
     void loadReaderRows(selection.editionId?{ids:[selection.editionId]}:{horoscope:{period:selection.period,at,timeZone}},signal).then(async result=>{
       if(controller.signal.aborted)return;
       if(result.error)throw new Error('Your horoscope could not load. Please try again.');
       const nextEdition=selection.editionId?horoscopeEditionFromRow(result.data?.find(row=>row.id===selection.editionId)):horoscopeEditionAt(result.data??[],selection.period,at,timeZone);
       setEdition(nextEdition);
+      if(!selection.editionId&&selection.period==='seasonal')setSeasonWindow(nextEdition?.window??null);
       setLoadedEditionId(selection.editionId);
       // Offer explicitly labelled published editions. A reader chooses another
       // zone's edition; it is never silently substituted for their local reading.
@@ -81,12 +87,15 @@ export default function HoroscopeReader({defaultSign,sunSign,location}:{defaultS
     if(selection.editionId)return;
     const now=Date.now();
     const end=edition?.window.period===selection.period&&canonicalHoroscopeTimeZone(edition.window.timeZone)===timeZone?edition.window.endsAt:undefined;
-    const timeout=setTimeout(refresh,Math.max(1,nextHoroscopeRefresh(timeZone,end,now)-now));
+    const nextRefresh=Math.min(nextHoroscopeRefresh(timeZone,end,now),nextHoroscopeRefresh(timeZone,seasonWindow?.endsAt,now));
+    const timeout=setTimeout(refresh,Math.max(1,nextRefresh-now));
     return()=>clearTimeout(timeout);
-  },[edition,selection.editionId,selection.period,timeZone,version]);
+  },[edition,selection.editionId,selection.period,timeZone,version,seasonWindow]);
   function select(next:typeof selection) {setSelection(next);window.location.hash=`horoscopes?period=${next.period}&sign=${next.sign}${next.editionId?'&edition='+next.editionId:''}`;}
   const exactEdition=Boolean(selection.editionId&&loadedEditionId===selection.editionId);
   const currentEdition=edition?.window.period===selection.period && (exactEdition || (!selection.editionId&&!loadedEditionId&&canonicalHoroscopeTimeZone(edition.window.timeZone)===timeZone&&Date.parse(edition.window.startsAt)<=Date.now()&&Date.now()<Date.parse(edition.window.endsAt))) ? edition : null;
+  const namedSeason=currentEdition?.window.period==='seasonal'?currentEdition.window:seasonWindow&&canonicalHoroscopeTimeZone(seasonWindow.timeZone)===timeZone&&Date.parse(seasonWindow.startsAt)<=Date.now()&&Date.now()<Date.parse(seasonWindow.endsAt)?seasonWindow:null;
+  const labels={daily:'Today',weekly:'This week',monthly:'This month',seasonal:namedSeason?horoscopeOverviewHeadline(namedSeason):'Seasons'};
   const overview=currentEdition?.passages.find(p=>p.sign==='overview');
   const passage=selection.period==='monthly'?overview:currentEdition?.passages.find(p=>p.sign===selection.sign);
   return <div className="learn-page horoscope-page">
@@ -110,7 +119,7 @@ export default function HoroscopeReader({defaultSign,sunSign,location}:{defaultS
         </button>;
       })}</div></>}
     </section>
-    {loading&&!currentEdition?<PageLoading message="Loading your horoscope…"/>:error?<section className="learn-sheet horoscope-reading"><p role="alert">{error}</p><button type="button" onClick={refresh}>Try again</button></section>:currentEdition&&passage?<>{selection.period==='seasonal'&&overview&&<article className="learn-sheet horoscope-reading" aria-label="Season introduction"><p className="learn-kicker">For everyone · This season</p><h2>{overview.headline}</h2><p className="horoscope-date">{horoscopeWindowLabel(currentEdition.window)} · {currentEdition.window.timeZone}</p><div className="horoscope-prose"><FormattedProse text={overview.body}/></div></article>}<article className="learn-sheet horoscope-reading" aria-label={selection.period==='monthly'?'Monthly overview':`${horoscopeSignLabel(selection.sign)} horoscope`}>
+    {loading&&!currentEdition?<PageLoading message="Loading your horoscope…"/>:error?<section className="learn-sheet horoscope-reading"><p role="alert">{error}</p><button type="button" onClick={refresh}>Try again</button></section>:currentEdition&&passage?<>{selection.period==='seasonal'&&overview&&<article className="learn-sheet horoscope-reading" aria-label="Season introduction"><p className="learn-kicker">For everyone · {labels.seasonal}</p><h2>{overview.headline}</h2><p className="horoscope-date">{horoscopeWindowLabel(currentEdition.window)} · {currentEdition.window.timeZone}</p><div className="horoscope-prose"><FormattedProse text={overview.body}/></div></article>}<article className="learn-sheet horoscope-reading" aria-label={selection.period==='monthly'?'Monthly overview':`${horoscopeSignLabel(selection.sign)} horoscope`}>
       <p className="learn-kicker">{selection.period==='monthly'?'For everyone':selection.sign===rising&&selection.sign===sun?'Your Sun & rising sign':selection.sign===rising?'Your rising sign':selection.sign===sun?'Your Sun sign':horoscopeSignLabel(selection.sign)} · {selection.editionId?'Published edition':labels[selection.period]}</p>
       <h2>{passage.headline}</h2>
       <p className="horoscope-date">{horoscopeWindowLabel(currentEdition.window)} · {currentEdition.window.timeZone}</p>
@@ -124,8 +133,9 @@ export default function HoroscopeReader({defaultSign,sunSign,location}:{defaultS
         <p>You can explore these published readings. Each keeps its own dates and time zone.</p>
         <div className="horoscope-available" role="group" aria-label="Available horoscopes">{availableEditions.map(({id,edition:available})=>{
           const local=canonicalHoroscopeTimeZone(available.window.timeZone)===timeZone;
-          return <button type="button" className="learn-jump__link horoscope-edition-link" key={id} aria-label={local?availableLabels[available.window.period]:`Read ${available.window.period} horoscope · ${available.window.timeZone.replaceAll('_',' ')}`} onClick={()=>select({...selection,period:available.window.period,editionId:id})}>
-            <span>{periodNames[available.window.period]} horoscope</span>
+          const seasonName=available.window.period==='seasonal'?horoscopeOverviewHeadline(available.window):null;
+          return <button type="button" className="learn-jump__link horoscope-edition-link" key={id} aria-label={seasonName?`Read ${seasonName} horoscope${local?'':` · ${available.window.timeZone.replaceAll('_',' ')}`}`:local?availableLabels[available.window.period]:`Read ${available.window.period} horoscope · ${available.window.timeZone.replaceAll('_',' ')}`} onClick={()=>select({...selection,period:available.window.period,editionId:id})}>
+            <span>{seasonName??`${periodNames[available.window.period]} horoscope`}</span>
             <span>{horoscopeWindowLabel(available.window)}</span>
             <span>{available.window.timeZone.replaceAll('_',' ')}{local?' · Your time zone':''}</span>
             <span>{available.window.period==='monthly'?'Read overview':`Read ${horoscopeSignLabel(selection.sign)}`} →</span>
