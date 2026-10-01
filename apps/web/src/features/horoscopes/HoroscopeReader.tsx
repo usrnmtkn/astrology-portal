@@ -95,7 +95,9 @@ export default function HoroscopeReader({defaultSign,sunSign,location}:{defaultS
   const exactEdition=Boolean(selection.editionId&&loadedEditionId===selection.editionId);
   const currentEdition=edition?.window.period===selection.period && (exactEdition || (!selection.editionId&&!loadedEditionId&&canonicalHoroscopeTimeZone(edition.window.timeZone)===timeZone&&Date.parse(edition.window.startsAt)<=Date.now()&&Date.now()<Date.parse(edition.window.endsAt))) ? edition : null;
   const namedSeason=currentEdition?.window.period==='seasonal'?currentEdition.window:seasonWindow&&canonicalHoroscopeTimeZone(seasonWindow.timeZone)===timeZone&&Date.parse(seasonWindow.startsAt)<=Date.now()&&Date.now()<Date.parse(seasonWindow.endsAt)?seasonWindow:null;
-  const labels={daily:'Today',weekly:'This week',monthly:'This month',seasonal:namedSeason?horoscopeOverviewHeadline(namedSeason):'Seasons'};
+  const monthWindow=currentEdition?.window.period==='monthly'?currentEdition.window:null;
+  const monthName=new Date(monthWindow?.startsAt??Date.now()).toLocaleDateString('en-US',{month:'long',timeZone:monthWindow?.timeZone??timeZone});
+  const labels={daily:'Today',weekly:'This week',monthly:`${monthName} Horoscopes`,seasonal:namedSeason?horoscopeOverviewHeadline(namedSeason):'Seasons'};
   const overview=currentEdition?.passages.find(p=>p.sign==='overview');
   const passage=selection.period==='monthly'?overview:currentEdition?.passages.find(p=>p.sign===selection.sign);
   return <div className="learn-page horoscope-page">
