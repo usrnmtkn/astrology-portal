@@ -73,6 +73,38 @@ Seasons run between calculated solar ingresses; the reference date's local noon
 chooses the season. Generation uses the canonical writer and explicit plan/billed
 call authorization. It does not approve wording or publish automatically.
 
+Seasonal plans also retrieve the complete shared zodiac-season and learning-axis
+sources for the calculated Sun season. **Full plan details** shows their exact
+text and the two whole-sign life areas for the selected rising sign. All twelve
+readings share the same season/axis sources; the audience sign changes the houses,
+not which season is selected. These sources provide interpretive meaning, while
+the complete historical owner readings remain prose examples and the signed brief
+supplies current events and dates. The opposite sign is not itself a transit.
+
+The latest editable shared source draft takes precedence over its live row. If
+neither exists, the writer uses the complete registered source-bank entry.
+Archived revisions are excluded. Empty saved sources and failed source reads stop
+preparation before a paid call; they never silently select old text. Source edits
+invalidate plan approval. Each generation receipt retains the exact source text,
+identity, version, hash and word count used by that request, including on resume.
+This authoring retrieval does not publish shared sources or change reader copy.
+
+Seasonal prose can introduce selected events with their supplied month/day dates
+in the edition's time zone. Dates need not lead every paragraph. The fact check
+accepts supplied dates and checks an explicitly named nearest event in the same
+sentence; it flags unsupported dates or mismatched events. This is a deterministic
+check with bounded language coverage, not a complete semantic proof. Exact clock
+times remain in the timing display. Daily and weekly timing instructions retain
+their existing behavior.
+
+Verification: `test-horoscope-seasonal-meaning.mts` covers all 144 season/audience
+combinations, complete text/provenance, saved-source precedence, missing-source
+failures, changed approvals, persisted snapshots and time-zone date boundaries.
+`test-horoscope-generation.mts` inspects all twelve actual seasonal provider
+payloads. `horoscope-seasonal-sources.spec.ts` exercises plan discovery, recovery,
+full-text rendering, sign changes and reload on desktop/mobile in both themes.
+Storage and provider calls in these tests are isolated fixtures, not paid samples.
+
 ## Data and access
 
 The existing `generated_interpretations` table stores one `mode=article`,
