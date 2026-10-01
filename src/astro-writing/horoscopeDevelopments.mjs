@@ -28,6 +28,15 @@ export function horoscopeEventsInWindow(brief) {
   }).sort((a,b) => a.startsAt.localeCompare(b.startsAt) || a.id.localeCompare(b.id));
 }
 
+export function horoscopeRelationSnapshots(brief) {
+  return (brief.relationalContext?.snapshots??[]).filter(s=>s.at>=brief.window.startsAt&&s.at<brief.window.endsAt);
+}
+
+// Sampled aspects remain separate from exact events and their dates.
+export function horoscopeSampledAspects(brief) {
+  return horoscopeRelationSnapshots(brief).flatMap(s=>s.aspects.map((a,i)=>({id:`sample/${s.at}/${i}`,type:'aspect',...a,startsAt:s.at,sampled:true})));
+}
+
 /** Each fact retains its own meaning, house and time. Never infer an event from a snapshot. */
 export function buildHoroscopeDevelopments(brief, rising, {placements, houses, aspects=[]}) {
   const localTime = new Intl.DateTimeFormat('en-US', {timeZone:brief.window.timeZone,
@@ -67,7 +76,17 @@ export function buildHoroscopeDevelopments(brief, rising, {placements, houses, a
       referenceDate:brief.referenceDate,motion:position.motion,
       timingScope:'reference instant only; not an ingress or proof of a period-long placement'}] : [];
   });
+  const relationships=brief.relationalContext?{
+    schema:brief.relationalContext.schema,coverage:brief.relationalContext.coverage,
+    snapshots:horoscopeRelationSnapshots(brief).map(snapshot=>({...snapshot,
+      localDate:localTime.format(new Date(snapshot.at)),
+      positions:snapshot.positions.map(position=>{
+        const binding=bind(position.planet,position.sign);
+        return {...position,house:binding?.house??null,domain:binding?.domain??null,meaningSourceId:binding?.meaning.sourceId??null};
+      })})),
+    use:'Select relationships that explain this reading. Connect the participating life areas through a developed human situation, without listing every snapshot or configuration. All aspects in a configuration coexist at the stated instant. Sampled aspects have their own orb and phase; exact event dates remain in events. Rulers are traditional. No historical recurrence or previous cycle date is supplied.'
+  }:null;
   return {schema:'horoscope-developments/v1',period:brief.window.period,timeZone:brief.window.timeZone,
-    events,background,uninterpretedEventIds:horoscopeEventsInWindow(brief).filter(e=>!events.some(d=>d.id===e.id)).map(e=>e.id),
+    events,background,relationships,uninterpretedEventIds:horoscopeEventsInWindow(brief).filter(e=>!events.some(d=>d.id===e.id)).map(e=>e.id),
     use:'Choose related developments for this sign. Chronological order is factual context, not a required prose sequence. Background positions are optional context, not a compulsory lead. Each house belongs only to its attached placement or event.'};
 }

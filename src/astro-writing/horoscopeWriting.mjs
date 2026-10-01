@@ -20,7 +20,7 @@ import {SEASONAL_MEANING_BANK,resolveSeasonalMeaning,seasonalMeaningForRising} f
 import {loadSeasonalHoroscopeEvidence} from './seasonalHoroscopeEvidence.mjs';
 
 const root=fileURLToPath(new URL('../../',import.meta.url));
-export const horoscopeWritingVersion='horoscope-writer/v8';
+export const horoscopeWritingVersion='horoscope-writer/v9';
 const digest=value=>createHash('sha256').update(typeof value==='string'?value:horoscopeCanonicalJson(value)).digest('hex');
 const repositorySources=new Map();
 const preparedPlans=new Map();

@@ -11,6 +11,7 @@ import {HOROSCOPE_PERIODS,emptyHoroscopeEdition,validateHoroscopeEdition,horosco
 import {HoroscopeLocation} from '../../web/src/features/horoscopes/HoroscopeLocation';
 import {browserTimeZone} from '../../web/src/services/timezones';
 import type {LocationInput} from '../../web/src/types';
+import {horoscopePunctuationFindings} from '../../../src/astro-writing/horoscopeEditorialConstraints.mjs';
 const WritingProfiles=lazy(()=>import('./HoroscopeWritingStudio'));
 const endpoint = '/api/admin/generated-content';
 const steps = ['setup','generate','edit','publish'] as const;
@@ -81,6 +82,7 @@ export default function HoroscopeEditionsStudio({secret}:{secret:string}) {
     const describe=(failure:any)=>failure.diagnostic?.errorCode==='credit_balance_exhausted'
       ?'The previous attempt stopped because the writing API had no credits. If you have added credits, approve the writing plan below and retry this reading. This message describes the saved attempt, not your current balance.'
       :`Previous attempt: ${failure.message}`;
+    if(failed.code==='required_punctuation')return describe(failed);
     if(failed.diagnostic||!failed.operation?.responseId)return describe(failed);
     // Older drafts only saved a generic error. Opening their plan retrieves the
     // existing response's cause; it never retries generation or changes the row.
@@ -127,6 +129,8 @@ export default function HoroscopeEditionsStudio({secret}:{secret:string}) {
     if(!draft)return;setBusy(true);setError('');setMessage('');
     try {
       const edition=validateHoroscopeEdition(draft,publish);
+      const changed=edition.passages.filter(p=>publish||!saved?.sections?.horoscopeEdition?.passages?.some((old:any)=>old.sign===p.sign&&old.headline===p.headline&&old.body===p.body));
+      for(const p of changed){const issue=horoscopePunctuationFindings(p)[0];if(issue)throw new Error(`${horoscopeSignLabel(p.sign)}: ${issue.detail}`);}
       const body=publish ? {id:saved.id,status:'LIVE',lane:'serving',reviewState:null,expectedUpdatedAt:saved.updated_at} : {
         ...(saved ? {id:saved.id,expectedUpdatedAt:saved.updated_at}:{contentKey:horoscopeEditionKey(edition.window),surface:'sky',mode:'article',eventType:'horoscope-edition',provider:'manual-admin',model:'manual',targetDate:null}),
         status:'DRAFT',lane:'serving',reviewState:null,headline:`${horoscopeSignLabel(edition.window.period)} horoscopes`,body:horoscopeEditionBody(edition),summary:'',sections:{horoscopeEdition:edition},facts:{horoscopeBrief:packet},
@@ -300,6 +304,13 @@ export default function HoroscopeEditionsStudio({secret}:{secret:string}) {
     return()=>{window.clearInterval(timer);window.removeEventListener('focus',onReturn);window.removeEventListener('pageshow',onReturn);document.removeEventListener('visibilitychange',onReturn);};
   },[step,active,needsSync,dirty,instructions,checking,busy,saved]);
   const failedSign=saved?.source_snapshot?.horoscopeGeneration?.lastError?.operation?.sign;
+  const punctuationHold=saved?.source_snapshot?.horoscopeGeneration?.lastError?.code==='required_punctuation'?saved.source_snapshot.horoscopeGeneration.lastError:null;
+  function editPunctuation(){
+    if(!draft||!punctuationHold||locked||!mayReplace())return;
+    setDraft({...draft,passages:draft.passages.map(p=>p.sign===failedSign?{...p,...punctuationHold.candidate}:p)});
+    setSign(failedSign);setStep('edit');setApproved(false);setError('');
+    setMessage('Correct the punctuation in this unsaved response, then save the draft. No new AI request is needed.');
+  }
   const retrySign=!active&&draft?.passages.some(p=>p.sign===failedSign&&!p.headline.trim()&&!p.body.trim())?failedSign:null;
   const locked=busy||Boolean(active)||needsSync;
   const stepIndex=steps.indexOf(step),signIndex=readingSigns.indexOf(sign),planEntry=plan?.readings.find((entry:any)=>entry.sign===sign);
@@ -328,6 +339,7 @@ export default function HoroscopeEditionsStudio({secret}:{secret:string}) {
     </header>
     {step!=='setup'&&draft&&<div className="admin-horoscope-summary"><span>{horoscopeSignLabel(draft.window.period)} · {horoscopeWindowLabel(draft.window)}</span><span>{draft.window.timeZone.replaceAll('_',' ')} · {complete}/{total} readings ready{dirty?' · Unsaved changes':''}</span></div>}
     {error&&<p role="alert">{error}</p>}{message&&<p role="status">{message}</p>}
+    {punctuationHold&&step==='generate'&&<StudioButton className="admin-primary-button" disabled={locked} onClick={editPunctuation}>Edit punctuation</StudioButton>}
     {step==='setup'?<>
       <div className="admin-horoscope-periods" role="group" aria-label="Edition period">{HOROSCOPE_PERIODS.map(p=><StudioButton key={p} aria-pressed={period===p} disabled={busy} onClick={()=>setPeriod(p)}>{horoscopeSignLabel(p)}</StudioButton>)}</div>
       <label className="admin-review-copy-editor"><span>{period==='daily'?'Date':period==='weekly'?'Choose a date in the week':period==='monthly'?'Choose a date in the calendar month':'Choose a date in the zodiac season'}</span><StudioInput aria-label="Reference date" type="date" value={date} disabled={busy} onChange={e=>setDate(e.target.value)}/></label>

@@ -39,9 +39,39 @@ async function fixture(page:Page,missing=1,unknown=false,period='weekly'){
       await route.fulfill({status:result.status,json:result.payload}).catch(()=>{});return true;
     }});
     await page.addInitScript(()=>localStorage.setItem('tldrastro:contentAdminSecret','calendar-api-fixture'));
-    const open=async()=>{await page.goto('/admin/content#horoscopes');const studio=page.getByRole('region',{name:'Horoscope editions'});await studio.getByText(/^Continue a saved edition/).click();await studio.getByRole('button',{name:/^Synthetic recovery edition/}).click();return studio;};
+    const open=async()=>{await page.goto('/admin/content#horoscopes');const studio=page.getByRole('region',{name:'Horoscope editions'});await studio.getByText(/^Continue a saved edition/).click();await studio.locator('.admin-horoscope-saved button').first().click();return studio;};
     return {child,call,latest,action,state,open,original:edition};
   }catch(error){child.kill();throw error;}
+}
+
+for(const [width,theme] of [[390,'dark'],[1440,'light']] as const){
+ test(`Correct prohibited punctuation without another AI request ${width} ${theme}`,async({page})=>{
+  await page.setViewportSize({width,height:1000});await page.addInitScript(theme=>localStorage.setItem('tldrastro:studio-theme',theme),theme);
+  const f=await fixture(page);try{
+   const original='You can read this fixture\u2014and correct its punctuation.';
+   await f.call({method:'writer-state',body:{nextResult:{status:'completed',usage:{input_tokens:100,output_tokens:40},output:[{type:'message',content:[{type:'output_text',text:JSON.stringify({headline:'Pisces & Pisces Rising',body:original})}]}]}}});
+   const studio=await f.open();await studio.getByRole('button',{name:'Check saved progress',exact:true}).click();
+   await expect(studio.getByRole('alert')).toContainText('prohibited em dash');
+   await expect(studio.getByText('11/12 readings ready',{exact:false})).toBeVisible();
+   await studio.getByRole('button',{name:'Edit punctuation',exact:true}).click();
+   await expect(studio.getByLabel('Complete reading')).toHaveValue(original);
+   await studio.getByRole('button',{name:'Save edition draft',exact:true}).click();
+   await expect(studio.getByRole('alert')).toContainText('Remove the em dash');
+   await expect(studio.getByLabel('Complete reading')).toHaveValue(original);
+   const corrected='You can read this fixture and correct its punctuation.';
+   await studio.getByLabel('Complete reading').fill(corrected);
+   await studio.getByRole('button',{name:'Save edition draft',exact:true}).click();
+   await expect(studio.getByRole('status')).toHaveText('Saved edition draft.');
+   await page.reload();await f.open();await studio.getByRole('group',{name:'Readings by sign'}).getByRole('button',{name:/^Pisces/}).click();
+   await expect(studio.getByLabel('Complete reading')).toHaveValue(corrected);
+   const row=await f.latest();expect(row.source_snapshot.horoscopeGeneration.lastError).toBeNull();
+   expect(row.source_snapshot.horoscopeGeneration.failures.at(-1).candidate.body).toBe(original);
+   expect(row.sections.horoscopeEdition.passages.slice(0,11)).toEqual(f.original.passages.slice(0,11));
+   expect((await f.call({method:'writer-state'})).calls).toBe(1);
+   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+   await page.screenshot({path:`test-results/horoscope-punctuation-${width}-${theme}.png`,fullPage:true});
+  }finally{f.child.kill();}
+ });
 }
 
 for(const [width,theme] of [[390,'dark'],[1440,'light']] as const){
@@ -218,7 +248,7 @@ for(const [width,theme] of [[390,'dark'],[1440,'light']] as const){
    // Retrieve the already-started request elsewhere, then reopen without a new generation.
    expect((await f.action('poll')).status).toBe(200);
    await studio.getByText(/^Continue a saved edition/).click();
-   await studio.getByRole('button',{name:/^Synthetic recovery edition/}).click();
+   await studio.locator('.admin-horoscope-saved button').first().click();
    await expect(studio.getByText('2/12 readings ready',{exact:false})).toBeVisible();
    f.state.release();
    await expect(studio.getByRole('button',{name:'Generate missing readings',exact:true})).toBeDisabled();
@@ -249,7 +279,7 @@ for(const [width,theme] of [[390,'dark'],[1440,'light']] as const){
    // An existing request on a newly opened edition also catches up without a click.
    const plan=await f.action('prepare');expect((await f.action('generate',{sign:'gemini',approvedPlanHash:plan.payload.plan.planHash})).status).toBe(202);
    await studio.getByRole('button',{name:'Back to editions',exact:true}).click();
-   await studio.getByText(/^Continue a saved edition/).click();await studio.getByRole('button',{name:/^Synthetic recovery edition/}).click();
+   await studio.getByText(/^Continue a saved edition/).click();await studio.locator('.admin-horoscope-saved button').first().click();
    // Opening retrieves the saved row asynchronously. Start the idle interval
    // only after that row is adopted; otherwise the clock can jump before the
    // recovery effect registers its timer on a slower CI browser.

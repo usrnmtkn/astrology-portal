@@ -31,6 +31,31 @@ The reader and edition editor are documented in [Horoscope editions](horoscope-e
 
 ## Storage and verification
 
+Seasonal writer v9 supplies signed Swiss event-time relational context alongside
+the dated developments: major aspects within 3 degrees, applying or separating
+state, traditional season/lunation rulers and simultaneous T-squares. Each
+participant has its own whole-sign house, or no personal house in the shared
+overview. These are selected snapshots, not full-season duration. Historical
+recurrences and previous cycle dates remain unavailable and cannot be inferred.
+Saved profiles ask for developed connections and consequences rather than lists
+of placement topics. Complete owner sources remain intact; prose quality remains
+an owner decision.
+
+The explicit no-em-dash requirement blocks accepted horoscope headlines and bodies,
+including quotations and encoded HTML forms, across every horoscope period.
+Provider output violating it is retained only in the private failure receipt.
+**Edit punctuation** opens that response as unsaved text for correction and save
+without another paid request. No automatic replacement, retry, regeneration or
+publication occurs. Existing stored copy is not rewritten. Unchanged legacy
+draft fields remain editable individually; every passage must comply before
+publication.
+
+`scripts/test-horoscope-depth.mts` covers the actual handlers and direct Swiss
+calculations. Recovery browser coverage includes correction, save, reload,
+preserved other readings and unchanged provider call count. A profile update does
+not replace an edition's saved profile/fact snapshot. The existing deliberate
+rejection/reset workflow adopts new facts and instructions for replacements.
+
 The authenticated `generated-content?writingProfiles=true` API reads all four profiles and accepts one POST save with `{profile, expectedUpdatedAt}`. Missing periods return unsaved defaults. Profiles use reserved `studio-writing-profile/horoscope/{period}` keys in `generated_interpretations`, with `mode=article`, null target date, `status=DRAFT`, `lane=reference`, and empty reader body/summary. Generic content editing, deletion and publication reject those keys. The existing unique target index prevents concurrent first saves; later saves compare the opened `updated_at` in the database PATCH.
 
 The actual-handler regression is `scripts/test-horoscope-writing-profiles.mts`, included in `test:content-studio-api`. Browser coverage is `npx playwright test --config playwright.horoscope-writing.config.ts`: mobile/desktop, light/dark and green/neutral palettes, starter/saved/empty states, keyboard navigation, cursor insertion, prompt copy and validation, export, recovery, conflict comparison/dismissal, exact text preservation and heading typography parity. Tests use synthetic text and isolated storage; the injected writer makes no billed calls.

@@ -14,6 +14,7 @@ import {
 import { debugInfoForZonedDateTime } from "./timezones.js";
 import { assertCanonicalSkyPoints } from "./canonicalSkyAspectProfile.js";
 import { memoizeSwissCalculation } from "./swissCalculationCache.js";
+import { traditionalSignRulers } from "../content/skySunSeason.js";
 
 const signs = [
   ["Aries", "♈"],
@@ -3133,6 +3134,60 @@ export async function getHoroscopeCalendarRangeEvents(
       .filter(event => event.planets?.every(planet => ["Sun","Mercury","Venus","Mars","Jupiter","Saturn","Uranus","Neptune","Pluto"].includes(planet))
         && ["conjunction", "sextile", "square", "trine", "opposition"].includes(event.aspect ?? "")) : [])]
     .sort((first, second) => first.startsAt.localeCompare(second.startsAt));
+}
+
+/** Studio-only snapshots. These do not alter Calendar events or reader timings. */
+export async function getHoroscopeRelationalContext(start: Date, seasonSign: string, events: LunarCalendarEvent[]) {
+  const swe = await getSwissEph();
+  const ids = [swe.SE_SUN,swe.SE_MOON,swe.SE_MERCURY,swe.SE_VENUS,swe.SE_MARS,swe.SE_JUPITER,swe.SE_SATURN,swe.SE_URANUS,swe.SE_NEPTUNE,swe.SE_PLUTO];
+  const vectorAt = (id:number,date:Date) => calculateSwissUt(swe,
+    swe.julday(date.getUTCFullYear(),date.getUTCMonth()+1,date.getUTCDate(),utcHour(date)+date.getUTCMilliseconds()/3600000),
+    id,swe.SEFLG_SWIEPH|swe.SEFLG_SPEED).values;
+  const major = new Set(['conjunction','sextile','square','trine','opposition']);
+  // Tight, declared coverage, not an assertion that other aspects do not exist.
+  const orbLimit = 3;
+  const anchors = new Map<string,LunarCalendarEvent[]>();
+  anchors.set(start.toISOString(), []);
+  for (const event of events) {
+    if (event.type !== 'station' && event.type !== 'aspect'
+      && !(event.type === 'lunation' && /^(?:New|Full) Moon/iu.test(event.title))) continue;
+    anchors.set(event.startsAt, [...(anchors.get(event.startsAt) ?? []),event]);
+  }
+  const snapshots = [...anchors].sort(([a],[b])=>a.localeCompare(b)).map(([at,anchors])=>{
+    const date = new Date(at);
+    const positions = planets.slice(0,10).map(([planet],i)=>{
+      const vector = vectorAt(ids[i],date);
+      const longitude = normalizeDegrees(vector[0]), speed = vector[3];
+      return {planet,sign:signForLongitude(longitude).sign,longitude,degree:longitude%30,speed,
+        motion:speed<0?'retrograde':'direct'};
+    });
+    const aspects:{planets:string[];aspect:string;orb:number;phase:string}[] = [];
+    const later = ids.map(id=>normalizeDegrees(vectorAt(id,new Date(date.getTime()+3600000))[0]));
+    positions.forEach((a,i)=>positions.slice(i+1).forEach((b,offset)=>{
+      const j=i+offset+1;
+      for(const [aspect,angle] of calendarAspectDefinitions){
+        if(!major.has(aspect))continue;
+        const orb=Math.abs(angularSeparation(a.longitude,b.longitude)-angle);
+        if(orb>orbLimit)continue;
+        const laterOrb=Math.abs(angularSeparation(later[i],later[j])-angle);
+        aspects.push({planets:[a.planet,b.planet],aspect,orb,
+          phase:orb<=0.01?'exact':laterOrb<orb?'applying':'separating'});
+      }
+    }));
+    const configurations:{type:string;planets:string[];apex:string;aspects:typeof aspects}[] = [];
+    // An opposition and both squares must coexist in this same snapshot.
+    for (const opposition of aspects.filter(a=>a.aspect==='opposition')) {
+      for (const {planet:apex} of positions.filter(p=>!opposition.planets.includes(p.planet))) {
+        const squares = opposition.planets.map(p=>aspects.find(a=>a.aspect==='square'&&a.planets.includes(p)&&a.planets.includes(apex)));
+        if (squares.every(Boolean)) configurations.push({type:'T-square',planets:[...opposition.planets,apex],apex,aspects:[opposition,...squares as typeof aspects]});
+      }
+    }
+    const rulers = [{role:'season',sign:seasonSign,planet:traditionalSignRulers[seasonSign.toLowerCase()]},
+      ...anchors.filter(e=>e.type==='lunation'&&e.sign).map(e=>({role:'lunation',eventId:e.id,sign:e.sign!,planet:traditionalSignRulers[e.sign!.toLowerCase()]}))];
+    return {at,eventIds:anchors.map(e=>e.id),positions,aspects,configurations,rulers};
+  });
+  return {schema:'horoscope-relations/v1',orbLimitDegrees:orbLimit,
+    coverage:'Swiss Ephemeris event-time snapshots at season opening, supplied major exact aspects, stations and New/Full Moons. Major aspects within 3 degrees include the Moon. Applying/separating compares the orb one hour later; within 0.01 degree is labelled exact. T-squares require a simultaneous opposition and both squares. Traditional rulers use the canonical sign-ruler map. Other configurations, historical recurrences and earlier cycle passes are not calculated.',snapshots};
 }
 
 export function matchingNewMoonForFullMoon(

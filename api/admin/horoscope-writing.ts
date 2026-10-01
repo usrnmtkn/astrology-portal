@@ -14,6 +14,7 @@ import provider from '../../src/astro-writing/offlineProviderConfig.cjs';
 import {HoroscopeProviderFailure,horoscopeProviderDiagnostic,readHoroscopeProviderResult} from '../_lib/horoscope-provider-result.js';
 import {loadHoroscopeSeasonalSources} from '../_lib/horoscope-seasonal-sources.js';
 import {validateHoroscopeReading} from '../../src/astro-writing/horoscopeValidation.mjs';
+import {horoscopePunctuationFindings} from '../../src/astro-writing/horoscopeEditorialConstraints.mjs';
 loadLocalWebEnv();
 export const maxDuration=300;
 const hash=(v:unknown)=>createHash('sha256').update(JSON.stringify(v)).digest('hex');
@@ -51,6 +52,15 @@ export default async function handler(req:IncomingMessage,res:ServerResponse) {
       await persist({source_snapshot:{...row.source_snapshot,horoscopeGeneration:{...generation,active:null,lastError:failure,
         failures:[...(generation.failures??[]),failure]}}});
       return sendAdminJson(res,422,{ok:false,error:error.message,rows:[row]});
+    };
+    const holdForPunctuation=async(value:{headline:string;body:string},receipt:any)=>{
+      const generation=row.source_snapshot?.horoscopeGeneration??{};
+      const failure={code:'required_punctuation',message:'The writer used a prohibited em dash. The response is kept for editing. Choose Edit punctuation to correct it without another AI request.',
+        operation,failedAt:new Date().toISOString(),candidate:value,receipt};
+      // Original output is private correction evidence, never an accepted draft,
+      // published reader field or positive writing example. No automatic retry.
+      await persist({source_snapshot:{...row.source_snapshot,horoscopeGeneration:{...generation,active:null,lastError:failure,failures:[...(generation.failures??[]),failure]}}});
+      return sendAdminJson(res,422,{ok:false,error:failure.message,rows:[row]});
     };
     if(input.action==='diagnose') {
       const failed=row.source_snapshot?.horoscopeGeneration?.lastError;
@@ -124,6 +134,7 @@ export default async function handler(req:IncomingMessage,res:ServerResponse) {
       const edition={...row.sections.horoscopeEdition,passages:row.sections.horoscopeEdition.passages.map((p:any)=>p.sign===operation.sign?{...p,...value}:p)};
       const lint=validateHoroscopeReading({sign:operation.sign,...value},row.facts.horoscopeBrief.brief,{ownerCorrections:operation.validationCorrections??[]});
       const receipt={...operation.receipt,bodyHash:createHash('sha256').update(horoscopeCanonicalJson(value)).digest('hex'),operationId:operation.id,responseId:operation.responseId,requestHash:operation.requestHash,config:operation.config,usage:payload.usage??null,completedAt:new Date().toISOString(),lint};
+      if(horoscopePunctuationFindings(value).length)return await holdForPunctuation(value,receipt);
       const patch={status:'DRAFT',sections:{horoscopeEdition:edition},body:horoscopeEditionBody(edition),source_snapshot:{...row.source_snapshot,horoscopeGeneration:{...row.source_snapshot.horoscopeGeneration,active:null,lastError:null,readings:{...row.source_snapshot.horoscopeGeneration.readings,[operation.sign]:receipt}}}};
       assertHoroscopeRow({...row,...patch});await persist(patch);return sendAdminJson(res,200,{ok:true,rows:[row],pending:false});
     }
@@ -176,6 +187,7 @@ export default async function handler(req:IncomingMessage,res:ServerResponse) {
       const result=await writeHoroscopeSign(prepared,sign,{approvedPlanHash:planHash,writerClient,approvalReference:`horoscope-generation/${row.id}/${operation.id}`});
       const edition={...prepared.edition,passages:prepared.edition.passages.map((p:any)=>p.sign===sign?{...p,headline:result.headline,body:result.body}:p)};
       const receipt={...result.receipt,operationId:operation.id,responseId:operation.responseId,requestHash:operation.requestHash,config:operation.config,usage:payload?.usage??null,completedAt:new Date().toISOString(),lint:result.lint,report:result.report};
+      if(horoscopePunctuationFindings(result).length)return await holdForPunctuation({headline:result.headline,body:result.body},receipt);
       const patch={status:'DRAFT',sections:{horoscopeEdition:edition},body:horoscopeEditionBody(edition),source_snapshot:{...row.source_snapshot,horoscopeGeneration:{...row.source_snapshot.horoscopeGeneration,active:null,lastError:null,readings:{...row.source_snapshot.horoscopeGeneration?.readings,[sign]:receipt}}}};
       assertHoroscopeRow({...row,...patch});await persist(patch);
       return sendAdminJson(res,200,{ok:true,rows:[row],pending:false});
