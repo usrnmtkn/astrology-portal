@@ -64,6 +64,18 @@ for(const [date,timeZone] of [['2026-10-01','America/New_York'],['2027-03-02','A
  assert.deepEqual(routed.relationships,prepared.entries.find((e:any)=>e.sign==='aquarius').developments.relationships);
  const facts=JSON.parse(input.match(/CALCULATED FACTS\n([^\n]+)\n\n/)![1]);assert(!facts.relationalContext,'Do not pay for duplicate relational packets');
  assert(input.includes('INTERPRETIVE DEPTH:'));assert(input.includes(HOROSCOPE_PUNCTUATION_RULE));
+ const polled=await invokeHoroscopeWriting({action:'poll',id:row.id,expectedUpdatedAt:row.updated_at});assert.equal(polled.status,200);row=polled.payload.rows[0];
+ const shared=await invokeHoroscopeWriting({action:'generate',id:row.id,expectedUpdatedAt:row.updated_at,sign:'overview',approvedPlanHash:plan.payload.plan.planHash});assert.equal(shared.status,202);row=shared.payload.rows[0];
+ const sharedInput=writerFixture.requests.get(row.source_snapshot.horoscopeGeneration.active.responseId).input;
+ const essays=JSON.parse(sharedInput.match(/COMPLETE SEASONAL OWNER PROSE EVIDENCE\n([^\n]+)\n\n/)![1]);
+ assert.equal(essays.length,3);
+ for(const essay of essays){
+  assert.equal(essay.seasonalVoiceRole,'primary argument and voice');
+  assert.equal(sharedInput.split(JSON.stringify(essay.text).slice(1,-1)).length-1,1);
+  assert.equal(essay.text,fs.readFileSync(essay.sourcePath,'utf8').slice(essay.provenance.start,essay.provenance.end));
+ }
+ assert(sharedInput.includes('Write the human argument first.'));
+ assert(sharedInput.includes('One shared reading for people of all signs.'));
  assert.equal((await invokeHoroscopeWriting({action:'poll',id:row.id,expectedUpdatedAt:row.updated_at})).status,200);
 }
 assert(configurations>0,'Real calculations exercise the configuration path');

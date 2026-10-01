@@ -1,3 +1,4 @@
+import {loadSeasonalArgumentEvidence,SEASONAL_ARGUMENT_MANIFEST} from '../src/astro-writing/seasonalArgumentEvidence.mjs';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import {createHash} from 'node:crypto';
@@ -41,3 +42,18 @@ for(const passage of overviews){
 assert.throws(()=>loadSeasonalHoroscopeEvidence(changeManifest(m=>m.sources[0].overview.end-=20),{includeOverviews:true}),/passage changed/);
 assert.throws(()=>loadSeasonalHoroscopeEvidence(changeManifest(m=>delete m.sources[0].overview),{includeOverviews:true}),/overview/);
 console.log('PASS seasonal evidence: 36 complete exact units, 12 audience signs, provenance, hashes, exclusions and fail-closed integrity.');
+
+const argumentManifest=JSON.parse(read(SEASONAL_ARGUMENT_MANIFEST));
+const essays=loadSeasonalArgumentEvidence(read);
+assert.equal(essays.length,3);
+for(const essay of essays){
+ assert.equal(essay.text,read(essay.sourcePath).slice(essay.provenance.start,essay.provenance.end));
+ assert.equal(essay.sourceRecordSha256,createHash('sha256').update(essay.text).digest('hex'));
+ assert.equal(essay.factUseAuthorized,false);
+}
+const changeArguments=mutate=>{const changed=structuredClone(argumentManifest);mutate(changed);return file=>file===SEASONAL_ARGUMENT_MANIFEST?JSON.stringify(changed):read(file);};
+assert.throws(()=>loadSeasonalArgumentEvidence(changeArguments(m=>m.sources.pop())),/incomplete/);
+assert.throws(()=>loadSeasonalArgumentEvidence(changeArguments(m=>m.sources[1]=m.sources[0])),/registration/);
+assert.throws(()=>loadSeasonalArgumentEvidence(changeArguments(m=>m.sources[0].essay.end-=20)),/passage changed/);
+assert.throws(()=>loadSeasonalArgumentEvidence(file=>read(file)+(file===essays[0].sourcePath?'changed':'')),/integrity/);
+console.log('PASS preferred seasonal essays: exact complete boundaries, source hashes, missing/duplicate/truncated/drift rejection.');

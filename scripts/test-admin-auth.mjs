@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import fs from "node:fs";
-import { isContentAdminAuthorized } from "../api/_lib/admin-auth.ts";
+import { getContentAdminPrincipal, isContentAdminAuthorized } from "../api/_lib/admin-auth.ts";
 import { adminCredentialHeaders, normalizeAdminSecret } from "../apps/admin/src/adminSecret.ts";
 import { validStudioReturnPath, studioSignInHref, rememberStudioReturnPath, returnToStudioAfterSignIn } from "../apps/web/src/services/studioAuthReturn.ts";
 
@@ -92,6 +92,9 @@ try {
   const verifiedUnknownEmail = async () => ({ ok: true, json: async () => ({ id: "unknown-email", email: "reader@example.com", app_metadata: { role: "member" } }) });
   const rejectedSession = async () => ({ ok: false, json: async () => ({ message: "invalid" }) });
   assert.equal(await isContentAdminAuthorized(request({ "x-content-admin-session": "owner-session-token" }), verifiedAdmin), true, "A server-verified admin role must authorize Content Studio.");
+  assert.equal(await getContentAdminPrincipal(request({ "x-content-admin-session": "owner-session-token" }), verifiedAdmin), "user:owner", "Principal-based handlers use the same verified admin authorization.");
+  assert.equal(await getContentAdminPrincipal(request({ "x-content-admin-session": "member-session-token" }), verifiedMember), null, "Principal-based handlers must deny ordinary members.");
+  assert.equal(await getContentAdminPrincipal(request({ "x-content-admin-session": "expired-session-token" }), rejectedSession), null, "Principal-based handlers must deny invalid sessions.");
   assert.equal(await isContentAdminAuthorized(request({ "x-content-admin-session": "owner-email-session-token" }), verifiedOwnerEmail), true, "The exact server-configured owner email must authorize after Supabase verifies the session.");
   assert.equal(await isContentAdminAuthorized(request({ "x-content-admin-session": "unknown-email-session-token" }), verifiedUnknownEmail), false, "A verified email outside the owner allowlist must remain denied.");
   assert.equal(await isContentAdminAuthorized(request({ "x-content-admin-session": "member-session-token" }), verifiedMember), false, "An ordinary signed-in member must remain denied.");
@@ -140,12 +143,12 @@ try {
     if (!source.includes("Unauthorized.")) continue;
     assert.match(
       source,
-      /isContentAdminAuthorized|requireReportAdmin/u,
+      /isContentAdminAuthorized|requireReportAdmin|getContentAdminPrincipal/u,
       `${sourcePath} must use the shared admin authorization path.`
     );
     assert.match(
       source,
-      /await\s+(?:isContentAdminAuthorized|requireReportAdmin)\(/u,
+      /await\s+(?:isContentAdminAuthorized|requireReportAdmin|getContentAdminPrincipal)\(/u,
       `${sourcePath} must await the server-verified owner-session authorization result.`
     );
   }

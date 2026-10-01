@@ -18,9 +18,10 @@ import {runWritingPipeline} from './runWritingPipeline.mjs';
 import {buildHoroscopeDevelopments} from './horoscopeDevelopments.mjs';
 import {SEASONAL_MEANING_BANK,resolveSeasonalMeaning,seasonalMeaningForRising} from './seasonalHoroscopeMeaning.mjs';
 import {loadSeasonalHoroscopeEvidence} from './seasonalHoroscopeEvidence.mjs';
+import {loadSeasonalArgumentEvidence} from './seasonalArgumentEvidence.mjs';
 
 const root=fileURLToPath(new URL('../../',import.meta.url));
-export const horoscopeWritingVersion='horoscope-writer/v9';
+export const horoscopeWritingVersion='horoscope-writer/v10';
 const digest=value=>createHash('sha256').update(typeof value==='string'?value:horoscopeCanonicalJson(value)).digest('hex');
 const repositorySources=new Map();
 const preparedPlans=new Map();
@@ -46,6 +47,7 @@ function loadSources(period) {
   // The seasonal adapter resolves complete units in the existing governed corpus.
   // Other surfaces retain their own evidence pool and selection behavior.
   if(['seasonal','monthly'].includes(period))examples.push(...loadSeasonalHoroscopeEvidence(read,{includeOverviews:true}));
+  if(period==='seasonal')examples.push(...loadSeasonalArgumentEvidence(read));
   const matrix=withoutOwnerRejectedEvidence(lines('data/writing/matrix-evidence-index/TLDR-Matrix-Evidence-Index.jsonl'),corrections,'copy');
   const approved=withoutOwnerRejectedEvidence(lines('data/writing/OWNER_APPROVED_EXAMPLES.jsonl'),corrections);
   const gold=json('data/writing/owner-register-gold.json');
@@ -127,11 +129,17 @@ export function prepareHoroscopeWriting(row,{studioCorrections=[],feedbackReceip
     const reviewedMeaningExamples=[{id:meaning.id,planet,sign,status:meaning.status,text:meaning.collective_shift,sourcePath:meaning.sourcePath,sourceKind:'reviewed-doctrine',ownerAuthored:false,ownerApproved:false,reviewNote:meaning.review_note}];
     const exactMatrix=evidence.meaning.filter(e=>!String(e.contentKey).includes('/houseactivations/')||String(e.contentKey).includes(`/houseactivations/${rising}|`));
     const signForecasts=examples.filter(e=>overview?e.horoscopeAudienceSign==='overview':e.horoscopeAudienceSign&&e.horoscopeAudienceSign!=='overview'&&(primaryPeriod!=='seasonal'||e.horoscopeAudienceSign===rising));
-    const contextOptions={reviewedMeaningExamples,examples:[...examples,...relevantSelected],matrixExamples:exactMatrix,matrixArgumentCandidates:evidence.argument_candidate,
-      matrixEvidenceAvailableCount:exactMatrix.length,relevantOwnerPassagesAvailableCount:relevantSelected.length,
-      ownerPassageRelevanceTier:relevant.tier,sceneExamples:scenes.selected,samePlanetSignSceneAvailableCount:scenes.counts.samePlanetSignSceneAvailable,
+    const seasonal=edition.window.period==='seasonal';
+    const primary=seasonal?examples.filter(e=>e.seasonalArgumentPrimary):signForecasts;
+    // These explicit owner assignments supersede generic topical snippets for
+    // Seasonal only. Keep complete same-audience readings as supporting examples.
+    const proseExamples=seasonal?[...primary,...(overview?[]:signForecasts)]:[...examples,...relevantSelected];
+    const relevantCount=seasonal?proseExamples.filter(e=>e.planet===planet||e.sign===sign).length:relevantSelected.length;
+    const contextOptions={reviewedMeaningExamples,examples:proseExamples,matrixExamples:exactMatrix,matrixArgumentCandidates:evidence.argument_candidate,
+      matrixEvidenceAvailableCount:exactMatrix.length,relevantOwnerPassagesAvailableCount:relevantCount,
+      ownerPassageRelevanceTier:seasonal?'owner-selected-seasonal':relevant.tier,sceneExamples:scenes.selected,samePlanetSignSceneAvailableCount:scenes.counts.samePlanetSignSceneAvailable,
       sceneEvidenceInventoryCounts:scenes.counts,registerGoldExamples:sources.gold,corrections,phraseEvidence:sources.phrases,
-      primaryRegisterContentKeys:signForecasts.map(e=>e.contentKey),requirePrimaryRegister:true,
+      primaryRegisterContentKeys:primary.map(e=>e.contentKey),requirePrimaryRegister:true,
       preferredEvidenceContentKeys:signForecasts.filter(e=>e.horoscopeAudienceSign===rising).map(e=>e.contentKey)};
     const context=retrieveOwnerContext(plan,{...contextOptions,contentFamily:'horoscope',register:'second_person'});
     // Preparation is unapproved. Validate every evidence precondition except the
