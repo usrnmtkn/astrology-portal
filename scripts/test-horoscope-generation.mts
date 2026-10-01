@@ -106,7 +106,7 @@ for(const request of writerFixture.requests.values()){
  }
  assert(request.input.indexOf(section[0])<request.input.indexOf('CONTENT STUDIO WRITING INSTRUCTIONS'));
  assert.deepEqual(row.source_snapshot.horoscopeGeneration.readings[request.sign].sourceIds.slice(0,3),passages.map((e:any)=>e.id));
- assert.equal(row.source_snapshot.horoscopeGeneration.readings[request.sign].version,'horoscope-writer/v6');
+ assert.equal(row.source_snapshot.horoscopeGeneration.readings[request.sign].version,'horoscope-writer/v7');
 }
 // The lunation is distinct from the Monday snapshot Moon. Houses must bind to
 // the named subject, rather than matching the Sun's house or any available house.
@@ -275,6 +275,14 @@ assert.equal(seasonalRow.status,'DRAFT');
 for(const reading of seasonalEdition.passages){
  const request:any=[...writerFixture.requests.values()].reverse().find((r:any)=>r.sign===reading.sign&&r.input.includes('complete owner seasonal sign readings'));
  assert(request,`Missing seasonal provider request for ${reading.sign}`);
+ const meaning=JSON.parse(request.input.match(/ZODIAC SEASON AND LEARNING AXIS — INTERPRETIVE SOURCES\n([^\n]+)\n\n/)[1]);
+ assert.equal(meaning.seasonSign,'virgo');assert.equal(meaning.oppositeSign,'pisces');
+ assert.equal(meaning.risingSign,reading.sign);assert.equal(meaning.sources.length,2);
+ assert.deepEqual(meaning,seasonalPlan.payload.plan.readings.find((r:any)=>r.sign===reading.sign).seasonalMeaning);
+ assert.deepEqual(meaning,seasonalRow.source_snapshot.horoscopeGeneration.readings[reading.sign].seasonalMeaning);
+ assert(!request.input.match(/CALCULATED FACTS\n([^\n]+)/)[1].includes('learning-axis'));
+ assert(request.input.includes('include its supplied calendar date naturally on first mention'));
+ assert(!request.input.includes('numeric dates belong in the separately rendered'));
  const primary=JSON.parse(request.input.match(/COMPLETE OWNER HOROSCOPES — PRIMARY PROSE EXAMPLES\n([^\n]+)\n\n/)[1]);
  assert.equal(primary.length,3);
  for(const passage of primary){

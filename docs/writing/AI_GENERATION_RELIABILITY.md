@@ -302,3 +302,33 @@ Regression coverage verifies complete evidence, all twelve actual seasonal
 provider payloads, one request per missing sign, profile snapshot preservation,
 explicit profile refresh and plan invalidation using isolated storage and provider
 fixtures. These checks establish routing and persistence, not live prose quality.
+
+## Seasonal meaning and dated developments — September 30
+
+Owner direction adds the existing knowledge-base zodiac-season and learning-axis
+material to seasonal horoscopes. Writer v7 resolves the exact complete entries in
+`sign-season-content` and `sign-axis-tensions`, preferring the latest saved shared
+Studio source draft, then the live row, over the original editorial source bank.
+Archived rows are excluded; an empty saved source or storage failure does not
+authorize falling back to older prose. No source text is rewritten or published.
+
+The calculated season sign selects both sources. All twelve audience signs use
+that same season/axis with separately calculated whole-sign houses. Meaning text
+has its own provider section, distinct from calculated facts and complete primary
+owner prose examples. It may deepen interpretation without imposing one lesson,
+conflict or repeated paragraph on the edition. The symbolic opposite sign is not
+an invented transit, aspect, lunation or personal history.
+
+Plan/source hashes include the selected source identities, versions and exact
+bodies. Receipts preserve these sources through asynchronous polling, even when
+an owner edits a source after a request starts. Full plan details exposes the
+complete evidence before generation. Daily/weekly source selection is unchanged.
+
+The owner's first-mention calendar-date guidance also supersedes the old seasonal
+numeric-date prohibition. The provider uses supplied dates in the edition's zone;
+the fact validator accepts these dates and checks explicit event/date associations
+within its documented language coverage. Clock times remain separately rendered.
+Saved seasonal profile updates preserve owner wording and use optimistic version
+checks plus exact readback. Existing edition profile snapshots and reader bodies
+are not replaced automatically. These changes add no judge, retry loop, source
+publication or automatic horoscope generation.

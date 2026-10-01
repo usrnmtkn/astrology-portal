@@ -12,6 +12,7 @@ import {horoscopeEditionBody,HOROSCOPE_SIGNS,horoscopeCanonicalJson} from '../..
 import responses from '../../src/astro-writing/openAIResponses.cjs';
 import provider from '../../src/astro-writing/offlineProviderConfig.cjs';
 import {HoroscopeProviderFailure,horoscopeProviderDiagnostic,readHoroscopeProviderResult} from '../_lib/horoscope-provider-result.js';
+import {loadHoroscopeSeasonalSources} from '../_lib/horoscope-seasonal-sources.js';
 import {validateHoroscopeReading} from '../../src/astro-writing/horoscopeValidation.mjs';
 loadLocalWebEnv();
 export const maxDuration=300;
@@ -130,7 +131,8 @@ export default async function handler(req:IncomingMessage,res:ServerResponse) {
     // Existing feedback families have explicit scopes. Do not widen a passage
     // or Sky correction to a new horoscope surface.
     const feedbackReceipt={enabled:studioFeedbackEnabled(),inventoryHash:hash(memory.map(feedbackHash)),selected:[],reason:'No existing Studio feedback scope includes horoscope editions.'};
-    const prepared=prepareHoroscopeWriting(row,{feedbackReceipt});
+    const seasonalSourceRows=await loadHoroscopeSeasonalSources(row.facts?.horoscopeBrief?.brief);
+    const prepared=prepareHoroscopeWriting(row,{feedbackReceipt,seasonalSourceRows});
     if(input.action==='prepare')return sendAdminJson(res,200,{ok:true,plan:horoscopePlanPreview(prepared),configured:Boolean(apiKey)});
     if(!apiKey)throw new AdminHttpError(503,'The horoscope writer is not connected. Configure the server OpenAI API key, then retry.');
     const sign=input.sign;
@@ -144,7 +146,7 @@ export default async function handler(req:IncomingMessage,res:ServerResponse) {
       const entry=prepared.entries.find((e:any)=>e.sign===sign);
       operation={id:randomUUID(),sign,planHash,startedAt:new Date().toISOString(),actor,config,responseId:null,state:'starting',
         validationCorrections:entry.validationCorrections,
-        receipt:{version:horoscopeWritingVersion,planHash,sign,sourceHash:prepared.sourceHash,sourceIds:entry.sourceIds,profileHash:hash(prepared.writingProfile),argumentHash:entry.argumentOutline.outlineHash,feedback:prepared.feedbackReceipt,ownerApproved:false,promotionAuthorized:false}};
+        receipt:{version:horoscopeWritingVersion,planHash,sign,sourceHash:prepared.sourceHash,sourceIds:entry.sourceIds,seasonalMeaning:entry.seasonalMeaning,profileHash:hash(prepared.writingProfile),argumentHash:entry.argumentOutline.outlineHash,feedback:prepared.feedbackReceipt,ownerApproved:false,promotionAuthorized:false}};
       const generation=row.source_snapshot?.horoscopeGeneration??{};
       const failures=generation.failures??[];
       const legacy=generation.lastError;
@@ -183,6 +185,7 @@ export default async function handler(req:IncomingMessage,res:ServerResponse) {
       throw error;
     }
   }catch(error) {
+    if((error as any)?.code==='SEASONAL_MEANING_UNAVAILABLE')return sendAdminJson(res,409,{ok:false,error:(error as Error).message});
     const status=adminErrorStatus(error);
     return sendAdminJson(res,status,{ok:false,error:error instanceof AdminHttpError?error.message:'Generation could not complete. Reopen the edition to recover its saved progress; no reading was published.'});
   }
