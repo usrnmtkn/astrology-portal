@@ -1,12 +1,14 @@
+import {buildHoroscopeOverviewInput} from './horoscopeOverviewInput.mjs';
 import {resolveStudioWritingProfile} from './studioWritingProfileReceipt.mjs';
-import {HOROSCOPE_SIGNS,horoscopeSignLabel} from '../../apps/web/src/content/horoscopeEditions.mjs';
+import {HOROSCOPE_SIGNS,horoscopeSignLabel,horoscopeOverviewHeadline} from '../../apps/web/src/content/horoscopeEditions.mjs';
 
-export const HOROSCOPE_EDITORIAL_AUTHORITY = 'HOROSCOPE EDITORIAL AUTHORITY: For this horoscope, the saved Content Studio Voice and Structure instructions and complete primary owner sign readings govern cadence, opening, paragraph movement and ending over general long-form style preferences. Short sentences, fragments, questions, lists, commands and early astrology are available when they serve the thought; none is a compulsory pattern or a blanket voice failure. Do not impose a medium/long-sentence quota, a natal adaptation narrative, a fixed transit-definition-examples-advice sequence, or a compulsory advice ending. The shared factual boundaries, source integrity, declared register, output schema and exact owner publication approval still apply. Historical owner writing is prose evidence, never current astrology or personal biography. This is a single-sign drafting call; complete-edition comparison is an owner review.';
+export const HOROSCOPE_EDITORIAL_AUTHORITY = 'HOROSCOPE EDITORIAL AUTHORITY: For this horoscope, the saved Content Studio Voice and Structure instructions and complete primary owner readings govern cadence, opening, paragraph movement and ending over general long-form style preferences. Short sentences, fragments, questions, lists, commands and early astrology are available when they serve the thought; none is a compulsory pattern or a blanket voice failure. Do not impose a medium/long-sentence quota, a natal adaptation narrative, a fixed transit-definition-examples-advice sequence, or a compulsory advice ending. The shared factual boundaries, source integrity, declared register, output schema and exact owner publication approval still apply. Historical owner writing is prose evidence, never current astrology or personal biography. This call drafts one reading for its declared audience; complete-edition comparison is an owner review.';
 
 export const HOROSCOPE_DRAFT_SCHEMA = Object.freeze({type:'object',additionalProperties:false,
   required:['headline','body'],properties:{headline:{type:'string'},body:{type:'string'}}});
 
-export function horoscopeDraftSchema(sign) {
+export function horoscopeDraftSchema(sign,window) {
+  if(sign==='overview')return {...HOROSCOPE_DRAFT_SCHEMA,properties:{...HOROSCOPE_DRAFT_SCHEMA.properties,headline:{type:'string',enum:[horoscopeOverviewHeadline(window)]}}};
   if(!HOROSCOPE_SIGNS.includes(sign))throw new Error('A horoscope draft requires its audience sign.');
   const label=horoscopeSignLabel(sign);
   return {...HOROSCOPE_DRAFT_SCHEMA,properties:{...HOROSCOPE_DRAFT_SCHEMA.properties,
@@ -14,6 +16,7 @@ export function horoscopeDraftSchema(sign) {
 }
 
 export function buildHoroscopeDraftInput({plan,context,task,target,engineFacts,argumentOutline,spine,writingProfile}) {
+  if(engineFacts?.risingSign==='overview')return buildHoroscopeOverviewInput({plan,context,task,target,engineFacts,argumentOutline,spine,writingProfile});
   const {developments,seasonalMeaning,...calculatedFacts}=engineFacts??{};
   const seasonal=writingProfile?.profile?.period==='seasonal';
   return [

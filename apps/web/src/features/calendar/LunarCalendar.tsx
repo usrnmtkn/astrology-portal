@@ -1,3 +1,4 @@
+import {PublishedMonthlyOverview} from './PublishedMonthlyOverview';
 import { CalendarPassageProse } from './CalendarPassageProse';
 import { calendarPassageRequestKeys, useCalendarPassages } from './useCalendarPassages';
 import { calendarMoonResolvedByDate, packagedWeeklyMoon, moonWritingForDay, calendarMoonCycleFallbackPiece } from './calendarMoonSources';
@@ -3023,10 +3024,10 @@ export function LunarCalendar({
 
       {viewMode === "month" && (
         <div className="lunar-calendar-layout">
-          {readingReady && (assembledPassages.monthly || monthlyOverview) && (
-            <section className="lunar-month-overview" aria-labelledby="lunar-month-overview-heading">
+          {calendar && (
+            <section className="lunar-month-overview lunar-month-overview--monthly" aria-labelledby="lunar-month-overview-heading">
               <h2 className="sr-only" id="lunar-month-overview-heading">Monthly overview</h2>
-              {(assembledPassages.monthly || monthlyOverview)!.paragraphs.map((paragraph, index) => <CalendarPassageProse key={index} text={paragraph} />)}
+              <PublishedMonthlyOverview month={calendar.month} timeZone={calendar.timeZone} fallback={(assembledPassages.monthly || monthlyOverview)?.paragraphs.map((paragraph, index) => <CalendarPassageProse key={index} text={paragraph} />)}/>
             </section>
           )}
           <div className="lunar-calendar-month-primary">

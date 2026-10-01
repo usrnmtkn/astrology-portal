@@ -29,7 +29,7 @@ export function horoscopeEventsInWindow(brief) {
 }
 
 /** Each fact retains its own meaning, house and time. Never infer an event from a snapshot. */
-export function buildHoroscopeDevelopments(brief, rising, {placements, houses}) {
+export function buildHoroscopeDevelopments(brief, rising, {placements, houses, aspects=[]}) {
   const localTime = new Intl.DateTimeFormat('en-US', {timeZone:brief.window.timeZone,
     weekday:'long',year:'numeric',month:'long',day:'numeric',hour:'numeric',minute:'2-digit',timeZoneName:'short'});
   const bind = (planet, sign) => {
@@ -37,14 +37,24 @@ export function buildHoroscopeDevelopments(brief, rising, {placements, houses}) 
     const meaning = placements[`${planet}-${sign}`];
     // Unsupported points remain in the calculated brief, not an invented interpretation.
     if (!meaning) return null;
-    const house = horoscopeHouse(sign,rising);
-    const domain = houses.find(h => h.id === String(house))?.plainTranslation;
+    const house = rising==='overview'?null:horoscopeHouse(sign,rising);
+    const domain = rising==='overview'?'shared experience, no personal house':houses.find(h => h.id === String(house))?.plainTranslation;
     if (!domain) throw new Error('A calculated horoscope house has no governed meaning.');
     return {planet,sign,house,domain,meaning:{sourceId:meaning.id,sourcePath:meaning.sourcePath,
       status:meaning.status,temporaryMeaning:meaning.collective_shift,
       role:'reviewed meaning only; not owner voice or reader copy'}};
   };
   const events = horoscopeEventsInWindow(brief).flatMap(event => {
+    if(event.type==='aspect') {
+      const definition=aspects.find(a=>a.id===event.aspect&&a.major);
+      const first=bind(event.planets?.[0],event.fromSign), second=bind(event.planets?.[1],event.toSign);
+      if(!definition||!first||!second)return [];
+      return [{id:event.id,type:event.type,planets:event.planets,aspect:event.aspect,placements:[first,second],
+        domain:[first.domain,second.domain].join('; '),startsAt:event.startsAt,localTiming:localTime.format(new Date(event.startsAt)),title:eventTitle(event),
+        meaning:{sourcePath:'packages/astro-knowledge/data/primitives/aspects.json',sourceId:definition.id,
+          traditional:definition.traditional,role:'knowledge-base interpretive meaning; not owner voice or a predicted personal event'},
+        timingScope:'exact sky aspect; not a guaranteed personal event or a multi-planet configuration'}];
+    }
     const binding = bind(horoscopeEventPlanet(event),event.sign);
     return binding ? [{id:event.id,type:event.type,...binding,startsAt:event.startsAt,
       localTiming:localTime.format(new Date(event.startsAt)),title:eventTitle(event),

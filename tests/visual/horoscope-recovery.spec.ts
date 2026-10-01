@@ -15,6 +15,7 @@ async function fixture(page:Page,missing=1,unknown=false,period='weekly'){
     const facts=await call({method:'GET',url:`/api/admin/generated-content?horoscopeBrief=true&period=${period}&date=${period==='seasonal'?'2026-09-01':'2026-09-24'}&timeZone=America%2FNew_York`});
     expect(facts.status).toBe(200);const {brief,signature}=facts.payload;
     const edition=emptyHoroscopeEdition(brief.window);
+    if(period==='seasonal')edition.passages=edition.passages.filter(p=>p.sign!=='overview'); // Existing saved editions.
     edition.passages.forEach((p:any,index:number)=>{if(index<12-missing){p.headline=`Saved ${p.sign} headline`;p.body=`Existing ${p.sign} opening.\n\nExisting ${p.sign} final sentence.`;}});
     const created=await call({method:'POST',body:{contentKey:horoscopeEditionKey(edition.window),surface:'sky',mode:'article',eventType:'horoscope-edition',provider:'manual-admin',targetDate:null,status:'DRAFT',lane:'serving',reviewState:null,headline:'Synthetic recovery edition',body:horoscopeEditionBody(edition),sections:{horoscopeEdition:edition},facts:{horoscopeBrief:{brief,signature}},sourceSnapshot:{horoscopeOutlines:{}}}});
     expect(created.status).toBe(200);const id=created.payload.rows[0].id;
@@ -60,7 +61,7 @@ for(const [width,theme] of [[390,'dark'],[1440,'light']] as const){
       await expect(studio.getByRole('button',{name:'3 · Review',exact:true})).toHaveAttribute('aria-current','step');
       f.state.release();
       await expect(studio.getByRole('alert')).toHaveCount(0);
-      await expect(studio.getByRole('status')).toHaveText('All twelve readings are saved and ready to review.');
+      await expect(studio.getByRole('status')).toHaveText('All readings are saved and ready to review.');
       await expect(studio.getByLabel('Complete reading')).toHaveValue(f.original.passages[0].body);
       await studio.getByRole('group',{name:'Readings by sign'}).getByRole('button',{name:/^Pisces/}).click();
       await expect(studio.getByLabel('Complete reading')).toHaveValue('You can read the complete pisces fixture opening.\n\nYour saved fixture ends here.');
@@ -92,7 +93,7 @@ test('Reconcile an edition completed elsewhere instead of displaying a stale con
   const f=await fixture(page);try{
     const studio=await f.open();f.state.conflictPoll=true;
     await studio.getByRole('button',{name:'Resume generation',exact:true}).click();
-    await expect(studio.getByRole('status')).toHaveText('All twelve readings are saved and ready to review.');
+    await expect(studio.getByRole('status')).toHaveText('All readings are saved and ready to review.');
     await expect(studio.getByRole('alert')).toHaveCount(0);await expect(studio.getByLabel('Complete reading')).toHaveValue(f.original.passages[0].body);
     expect((await f.call({method:'writer-state'})).calls).toBe(1);
   }finally{f.child.kill();}
@@ -249,6 +250,11 @@ for(const [width,theme] of [[390,'dark'],[1440,'light']] as const){
    const plan=await f.action('prepare');expect((await f.action('generate',{sign:'gemini',approvedPlanHash:plan.payload.plan.planHash})).status).toBe(202);
    await studio.getByRole('button',{name:'Back to editions',exact:true}).click();
    await studio.getByText(/^Continue a saved edition/).click();await studio.getByRole('button',{name:/^Synthetic recovery edition/}).click();
+   // Opening retrieves the saved row asynchronously. Start the idle interval
+   // only after that row is adopted; otherwise the clock can jump before the
+   // recovery effect registers its timer on a slower CI browser.
+   await expect(studio.getByText(/^A request for Gemini is saved\./)).toBeVisible();
+   await expect(studio.getByRole('button',{name:'Check saved progress',exact:true})).toBeEnabled();
    await page.clock.fastForward(31000);
    await expect(studio.getByText('3/12 readings ready',{exact:false})).toBeVisible();
    expect((await f.call({method:'writer-state'})).calls).toBe(2);

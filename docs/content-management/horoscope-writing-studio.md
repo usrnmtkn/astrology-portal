@@ -1,12 +1,12 @@
 # Horoscope writing in Content Studio
 
-Open **Compose → AI Writing** (`#ai-writing`) to edit the daily, weekly or seasonal profile. Each profile contains voice guidance, reading structure, source guidance and the prompt that combines them. These are editorial instructions; they are separate from Calendar's collective overview templates and from reader passages.
+Open **Compose → AI Writing** (`#ai-writing`) to edit the daily, weekly, monthly or seasonal profile. Each profile contains voice guidance, reading structure, source guidance and the prompt that combines them. These are editorial instructions; they are separate from Calendar's collective overview templates and from reader passages.
 
 The weekly starter follows the existing forecast-first horoscope contract. The daily and seasonal starters adapt its scope to the requested period. Starters are proposals, not approved prose, and a first visit does not write rows. Editing or saving a profile does not run a model or publish content.
 
 ## Editing
 
-1. Choose **Daily**, **Weekly** or **Seasonal**, then use the **Voice**, **Structure**, **Sources** and **Prompt** tabs to edit one section at a time. Instructions are plain text. Prompt variable buttons insert at the cursor without changing surrounding text. The prompt must include `{{period}}`, `{{voiceGuidance}}`, `{{structure}}` and `{{sourceGuidance}}`. Unknown variables are rejected. Variables expand once; they cannot be nested inside the guidance fields.
+1. Choose **Daily**, **Weekly**, **Monthly** or **Seasonal**, then use the **Voice**, **Structure**, **Sources** and **Prompt** tabs to edit one section at a time. Instructions are plain text. Prompt variable buttons insert at the cursor without changing surrounding text. The prompt must include `{{period}}`, `{{voiceGuidance}}`, `{{structure}}` and `{{sourceGuidance}}`. Unknown variables are rejected. Variables expand once; they cannot be nested inside the guidance fields.
 2. Each field supports **32,000 characters**, with a visible counter. Pasting longer text keeps the complete value in the editor and explains how far over the limit it is; saving is blocked until it fits. The editor never silently cuts off a paste or a variable insertion. Open **Preview** to see the assembled editorial instructions. The governed run supplies facts, source evidence, argument approval and the response schema separately.
 3. Use the persistent **Save writing profile** action. The save bar shows whether changes are unsaved; saving instructions does not generate or publish readings. A saved profile has its own revision, updated timestamp and SHA-256 digest. Unsaved edits survive period changes and navigation to another Studio section during the session. Leaving or refreshing the browser with unsaved edits triggers its unsaved-work warning.
 4. If another editor saved first, reload the stored version for comparison. Expand the fields you want to compare, or choose **Keep my edits** to dismiss the comparison. Your edits remain until you choose **Replace my edits with saved version**.
@@ -27,11 +27,11 @@ node scripts/run-astro-writing-harness.mjs \
 
 Alternatively provide the export as `writingProfile` in the request, but not both. The harness validates it before the pipeline starts. `generateDraft` includes its expanded instructions in the actual writer input and attaches `studioWritingProfile: {id, period, revision, updatedAt, sha256}` to the unapproved candidate. The full prompt is not copied into reader fields. The existing explicit live-call authorization, target/register checks, evidence requirements and owner argument gate remain in force.
 
-The reader and twelve-sign edition editor are documented in [Horoscope editions](horoscope-editions.md). This profile integration does **not** itself generate horoscope prose, schedule writing, or automatically supply unrelated Sky and Calendar generation. The dedicated horoscope mapping in `horoscopeWriting.mjs` supplies the signed period facts, complete owner forecast examples, governed meanings and approved plan to the canonical pipeline. Exporting a profile or edition brief is not a successful generation run.
+The reader and edition editor are documented in [Horoscope editions](horoscope-editions.md). This profile integration does **not** itself generate horoscope prose, schedule writing, or automatically supply unrelated Sky and Calendar generation. The dedicated horoscope mapping in `horoscopeWriting.mjs` supplies the signed period facts, complete owner forecast examples, governed meanings and approved plan to the canonical pipeline. Exporting a profile or edition brief is not a successful generation run.
 
 ## Storage and verification
 
-The authenticated `generated-content?writingProfiles=true` API reads all three profiles and accepts one POST save with `{profile, expectedUpdatedAt}`. Missing periods return unsaved defaults. Profiles use reserved `studio-writing-profile/horoscope/{period}` keys in `generated_interpretations`, with `mode=article`, null target date, `status=DRAFT`, `lane=reference`, and empty reader body/summary. Generic content editing, deletion and publication reject those keys. The existing unique target index prevents concurrent first saves; later saves compare the opened `updated_at` in the database PATCH.
+The authenticated `generated-content?writingProfiles=true` API reads all four profiles and accepts one POST save with `{profile, expectedUpdatedAt}`. Missing periods return unsaved defaults. Profiles use reserved `studio-writing-profile/horoscope/{period}` keys in `generated_interpretations`, with `mode=article`, null target date, `status=DRAFT`, `lane=reference`, and empty reader body/summary. Generic content editing, deletion and publication reject those keys. The existing unique target index prevents concurrent first saves; later saves compare the opened `updated_at` in the database PATCH.
 
 The actual-handler regression is `scripts/test-horoscope-writing-profiles.mts`, included in `test:content-studio-api`. Browser coverage is `npx playwright test --config playwright.horoscope-writing.config.ts`: mobile/desktop, light/dark and green/neutral palettes, starter/saved/empty states, keyboard navigation, cursor insertion, prompt copy and validation, export, recovery, conflict comparison/dismissal, exact text preservation and heading typography parity. Tests use synthetic text and isolated storage; the injected writer makes no billed calls.
 
@@ -44,3 +44,13 @@ editable guidance, not a machine taste test or a template story. Updating a
 starter in code preserves saved profiles; an authorized profile update uses the
 version-checked API and retains any existing owner edits. Memory Graph decisions
 explain the architecture but do not replace these live writing instructions.
+
+## Monthly and seasonal scope
+
+Monthly has its own profile and produces one shared calendar-month overview for
+all signs. A new Seasonal edition uses its seasonal profile for a shared
+introduction plus twelve sign readings; the introduction excludes personal houses
+and receives the full zodiac-season and learning-axis sources. Existing saved
+profiles are preserved. Publishing a monthly edition makes the exact same body
+available in Horoscopes and Calendar Month. Saving a profile alone does not
+rewrite or regenerate either surface.

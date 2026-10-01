@@ -16,6 +16,7 @@ export function horoscopeCivilWindow(period: string, date: string, timeZone: str
   if (!HOROSCOPE_PERIODS.includes(period as any) || !/^\d{4}-\d{2}-\d{2}$/u.test(date) || !Number.isFinite(day.getTime()) || day.toISOString().slice(0,10) !== date
     || day.getUTCFullYear() < 2020 || day.getUTCFullYear() > 2100) throw new AdminHttpError(400, 'Choose a valid horoscope period and date.');
   try {new Intl.DateTimeFormat('en', {timeZone});} catch {throw new AdminHttpError(400, 'Choose a valid time zone.');}
+  if (period === 'monthly') return {start:date.slice(0,7)+'-01',end:new Date(Date.UTC(day.getUTCFullYear(),day.getUTCMonth()+1,1)).toISOString().slice(0,10)};
   const start = period === 'weekly' ? addDays(date, -((day.getUTCDay() + 6) % 7)) : date;
   return {start, end:addDays(start, period === 'weekly' ? 7 : 1)};
 }
@@ -24,7 +25,7 @@ export async function prepareHoroscopeBrief(url: URL) {
   let timeZone:string;
   try {timeZone=canonicalHoroscopeTimeZone(requestedZone);} catch {throw new AdminHttpError(400,'Choose a valid time zone.');}
   const civil = horoscopeCivilWindow(period,date,timeZone);
-  const referenceDate = period === 'weekly' ? civil.start : date;
+  const referenceDate = ['weekly','monthly'].includes(period) ? civil.start : date;
   const reference = zonedDateTimeToUtc(referenceDate,'12:00 PM',timeZone);
   const {getAstrodienstSky,getSkyPlacementTransitFacts,getHoroscopeCalendarRangeEvents} = await import('../../apps/web/src/services/ephemeris.js');
   // Shared sign forecasts use geocentric positions; these coordinates are not a natal chart.
@@ -38,14 +39,14 @@ export async function prepareHoroscopeBrief(url: URL) {
     const transit = await getSkyPlacementTransitFacts({planet:'Sun',sign:sun.sign,referenceDate:reference,timeZone});
     startsAt = new Date(transit.transitStart).toISOString(); endsAt = new Date(transit.transitEnd).toISOString();
   }
-  const window = validateHoroscopeWindow({period,audience:'rising',timeZone,startsAt,endsAt,...(period === 'seasonal' ? {seasonSign:sun.sign.toLowerCase()} : {})});
-  const events = (await getHoroscopeCalendarRangeEvents(location,new Date(startsAt),new Date(endsAt)))
+  const window = validateHoroscopeWindow({period,audience:period==='monthly'?'collective':'rising',timeZone,startsAt,endsAt,...(period === 'seasonal' ? {seasonSign:sun.sign.toLowerCase()} : {})});
+  const events = (await getHoroscopeCalendarRangeEvents(location,new Date(startsAt),new Date(endsAt),{includeAspects:['monthly','seasonal'].includes(period)}))
     .filter(event => event.startsAt >= startsAt && event.startsAt < endsAt)
     .map(event => ({id:event.id,type:event.type,planet:event.planet ?? null,sign:event.sign ?? event.toSign ?? null,startsAt:event.startsAt,
-      title:event.title,fromSign:event.fromSign ?? null,direction:event.direction ?? null}));
+      title:event.title,...(event.type==='aspect'?{planets:event.planets,aspect:event.aspect,toSign:event.toSign,fromMotion:event.fromMotion,toMotion:event.toMotion}:{}),fromSign:event.fromSign ?? null,direction:event.direction ?? null}));
   const positions = sky.positions.map(position => ({planet:position.planet,sign:position.sign,degree:position.degree,motion:position.motion}));
   const brief = {schema:'horoscope-brief/v1',window,referenceDate,calculatedAt:sky.generatedAt,provenance:sky.calculationProvenance,
-    coverage:'Positions at the reference instant; calculated lunations, stations and planetary ingresses within the period. Exact aspects are not included. An event time describes the sky event, not a guaranteed personal event.',positions,events,
+    coverage:`Positions at the reference instant; calculated lunations, stations and planetary ingresses within the period. ${['monthly','seasonal'].includes(period)?'Exact major aspects between the Sun and planets are included; lunar aspects and multi-planet configurations are not.':'Exact aspects are not included.'} An event time describes the sky event, not a guaranteed personal event.`,positions,events,
     signs:HOROSCOPE_SIGNS.map(sign => ({sign,houses:positions.map(position => ({planet:position.planet,house:((HOROSCOPE_SIGNS.indexOf(position.sign.toLowerCase())-HOROSCOPE_SIGNS.indexOf(sign)+12)%12)+1}))}))};
   return {ok:true,brief,signature:signature(brief)};
 }

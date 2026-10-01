@@ -1,9 +1,10 @@
 # Horoscope editions
 
 Readers open **Horoscopes** from the main navigation or mobile menu. The route is
-`/#horoscopes?period=weekly&sign=aries`. Today, This week and This season each select
-one complete, published twelve-sign edition whose calculated window includes the
-current instant. Readings explicitly address rising signs using whole-sign houses.
+`/#horoscopes?period=weekly&sign=aries`. Today and This week select complete published twelve-sign editions. This season
+adds a shared introduction before the twelve sign readings. This month selects one
+shared calendar-month overview for all readers. The calculated window must include
+the current instant. Individual sign readings use whole-sign houses.
 An available profile supplies the initial rising sign; any reader can change it.
 
 An unpublished period has an empty state. Loading failures have a retry action.
@@ -28,7 +29,7 @@ restoration, reload, archive links, sign switching and empty-period discovery in
 
 Open **Write → Horoscopes** (`/admin/content#horoscopes`).
 
-1. **Dates:** choose daily, weekly or seasonal, a date, and a city or time zone.
+1. **Dates:** choose daily, weekly, monthly or seasonal, a date, and a city or time zone.
    **Continue to writing plan** calculates the period, saves an empty draft and
    prepares its plan without a model call. An existing edition opens with its
    writing intact. **Continue a saved edition** reopens previous work.
@@ -36,7 +37,7 @@ Open **Write → Horoscopes** (`/admin/content#horoscopes`).
    are optional; saved instructions are selected automatically. To change them,
    expand **Writing instructions**, save the profile, and select **Use latest saved
    instructions**. Review the refreshed plan before generating. The approval box
-   and **Generate 12 drafts** action stay together in the footer, with a clear
+   and generation action stay together in the footer, with a clear
    explanation of missing approval and the number of paid calls. Each completed
    sign saves automatically. **Resume generation** retrieves an interrupted request.
 3. **Review:** read one complete headline/body at a time. **Save & next** saves
@@ -50,7 +51,7 @@ Open **Write → Horoscopes** (`/admin/content#horoscopes`).
    rejected writing in **Rejected drafts**. Both return to Generate with the
    latest saved writing instructions. Review the new plan and approve generation
    to create replacements. Rejecting alone makes no paid request.
-4. **Publish:** review all twelve saved readings, approve their exact wording and
+4. **Publish:** review every saved reading in the edition, approve its exact wording and
    select **Publish edition**. The success screen links directly to the published
    edition and offers **Create another edition**. Publication remains a separate
    explicit action, and exact edition links also work after the period ends.
@@ -63,7 +64,9 @@ against the saved draft without creating another edition or making a model call.
 
 **Advanced** retains export, import and calculated facts. Import accepts
 `{schema: "horoscope-draft/v1", edition, editorialNotes?}`; `schema` may be omitted.
-The edition must contain twelve signs and match the calculated window. Unknown
+The edition must contain its expected units (one monthly overview, twelve daily/weekly
+signs, or a new seasonal introduction plus twelve signs) and match the calculated
+window. Legacy twelve-sign seasons remain supported. Unknown
 mixed-document fields fail for review. Only headline/body are reader fields; the
 complete import and SHA-256 stay in private `source_snapshot.editorialImport`.
 Exported briefs contain instructions and outlines, not publication approval.
@@ -110,7 +113,7 @@ Storage and provider calls in these tests are isolated fixtures, not paid sample
 The existing `generated_interpretations` table stores one `mode=article`,
 `surface=sky` row under `horoscope/{period}/{UTC-start-digits}/{IANA-time-zone}`. Legacy keys without the zone remain readable and editable. No migration is
 required. `sections.horoscopeEdition` uses `horoscope-edition/v1`: a calculated
-window and exactly twelve `{sign, headline, body}` passages. The row body preserves
+window and the expected `{sign, headline, body}` passages for its period. The row body preserves
 the same full reader text for the generic copy-boundary scanner. Publication rejects
 incomplete passages, placeholders, invalid boundaries or conflicting identity/body.
 
@@ -172,7 +175,7 @@ exclusion. It is included in the unfiltered Content Studio API suite.
 
 `npx playwright test -c playwright.horoscope-reader.config.ts` builds a fresh web
 preview. Its actual-handler fixture covers twelve-sign edit/save/publish/read,
-all three periods, mobile/desktop, light/dark, private outline exclusion, mixed
+the original three periods, mobile/desktop, light/dark, private outline exclusion, mixed
 import refusal, unsaved navigation, URL reload/back, empty states, error recovery,
 main navigation and the typography contract. No production content is modified.
 
@@ -311,7 +314,8 @@ cannot infer guaranteed personal events from exact sky-event times.
 The v2 fact validator checks explicit New/Full Moon claims against their actual
 lunation events, ordinary positions against the snapshot or a calculated ingress,
 and numbered houses against the named planet/lunation. Events outside the edition
-window do not license claims. Exact aspects remain unavailable. At publication,
+window do not license claims. Older daily/weekly briefs exclude exact aspects. Newly calculated seasonal and
+monthly briefs include supported major aspects, verified as described below. At publication,
 current fact checks replace obsolete fact findings while the original generation
 receipt stays intact; other recorded checks, including private corrections, are
 preserved. A successful fact check is not editorial approval.
@@ -396,3 +400,56 @@ environment. Aggregate JavaScript grows from 3,493,646 to 3,494,417 gzip bytes
 (+771); the deferred horoscope reader grows from 2,793 to 3,498 bytes. The
 allocations grow by 1,000 aggregate and 800 reader bytes. Startup, CSS, other
 individual caps and dependencies remain unchanged. No editorial content changes.
+
+
+## Shared seasonal introductions and monthly overviews
+
+A new **Seasonal** edition has thirteen writing units: a shared introduction,
+then Aries through Pisces. The introduction receives the complete zodiac-season
+and learning-axis sources without assigning personal houses. Each sign reading
+keeps its own whole-sign interpretation. Existing twelve-reading seasons remain
+valid, readable and editable without rewriting approved passages.
+
+A **Monthly** edition has one `overview` passage and a `collective` audience.
+Choose any date in the desired calendar month in Dates. The server calculates
+local midnight on the first day through local midnight at the start of the next
+month, including DST, leap years and December rollover. Generate one draft,
+review/edit its complete text, then approve and publish it. The monthly Voice,
+Structure, Sources and Prompt profile is separate from the seasonal profile.
+Saving or deploying instructions does not regenerate existing bodies.
+
+Both shared formats use three complete collective essays from the already
+registered owner seasonal sources. `seasonal-horoscope-units.json` records their
+exact boundaries, hashes, word counts and assignment provenance. Missing or
+changed evidence stops preparation. The original essays stay intact; their
+historical astrology is never current factual evidence. Shared prose uses direct
+address for all readers, with no individual rising sign or personal house.
+The seasonal introduction uses the saved seasonal voice and vocabulary while
+its explicit shared-audience scope excludes sign-specific profile instructions.
+
+New monthly and seasonal briefs include calculated conjunctions, sextiles,
+squares, trines and oppositions between the Sun and planets through Pluto.
+Moon aspects, additional points and multi-planet configurations are excluded.
+The overview calculation adapter detects signed zero/180-degree crossings;
+existing Calendar/Sky calculation consumers keep their prior adapter behavior.
+Each aspect retains both planets, signs, exact instant and knowledge-base meaning.
+Tests compare the supplied angles with direct Swiss Ephemeris positions on
+multiple dates. Publication checks named pairs, aspect types and supplied local
+dates. A conjunction alone does not authorize a cazimi claim. Old signed briefs
+retain their original coverage until explicitly recalculated through rejection.
+
+The reader's **This month** tab hides personal-sign controls and renders the
+whole approved overview. **This season** renders the whole introduction above
+the selected sign. Explicit edition links retain their archive and time-zone
+behavior. Calendar's Month view loads the same published monthly edition for its
+selected month and time zone; it never makes another writer call or paraphrases
+the body. If there is no matching published monthly edition, the existing Calendar
+monthly composition remains the fallback. A load failure has a retry action.
+
+All units use the existing version-checked reservation, polling, rejection history
+and publication path. The final reading transition saves once before opening
+Publish, avoiding a second save with the previous row version. Generation counts
+and plan approvals reflect one, twelve or thirteen units. No new database schema,
+background generation schedule or automatic prose approval is introduced.
+
+Acceptance evidence is tracked in [monthly and seasonal QA](../qa/horoscope-monthly-overview.md).

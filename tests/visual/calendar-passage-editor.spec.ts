@@ -221,7 +221,9 @@ for (const [width,theme] of [[1440,'light'],[390,'dark'],[390,'light'],[1440,'da
           await expect(editor.getByRole('link',{name:'Open published Calendar'})).toHaveAttribute('href',`/?date=${date}#calendar?view=${view}&date=${date}`);
           await reader.goto('about:blank');
           await reader.goto(`/?date=${date}#calendar?view=${view}&date=${date}`);
-          await expect(reader.getByRole('region',{name:view==='weekly'?'Weekly overview':'Monthly overview',exact:true})).toContainText(`Synthetic ${view} complete ending.`,{timeout:60000});
+          const overview = reader.getByRole('region',{name:view==='weekly'?'Weekly overview':'Monthly overview',exact:true});
+          await expect(overview).toContainText(`Synthetic ${view} opening.`,{timeout:60000});
+          await expect(overview).toContainText(`Synthetic ${view} complete ending.`);
         }
       }
       expect(errors).toEqual([]);

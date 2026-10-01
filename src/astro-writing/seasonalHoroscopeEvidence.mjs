@@ -7,7 +7,7 @@ const seasons = ['pisces','gemini','virgo'];
 const sha = text => createHash('sha256').update(text).digest('hex');
 
 /** Resolve complete author-final units in place. No second corpus or prose transformation. */
-export function loadSeasonalHoroscopeEvidence(read) {
+export function loadSeasonalHoroscopeEvidence(read,{includeOverviews=false}={}) {
   const manifest = JSON.parse(read(SEASONAL_EVIDENCE_MANIFEST));
   const corpus = JSON.parse(read(`${SEASONAL_SOURCE_ROOT}manifest.json`));
   if (manifest.schema !== 'seasonal-horoscope-units/v1' || manifest.sources?.length !== 3) {
@@ -26,12 +26,12 @@ export function loadSeasonalHoroscopeEvidence(read) {
     if (sha(article) !== record.sha256 || record.readings?.length !== 12) {
       throw new Error('Seasonal owner source integrity failed.');
     }
-    for (const sign of HOROSCOPE_SIGNS) {
-      const units = record.readings.filter(unit => unit.sign === sign);
+    for (const sign of [...(includeOverviews?['overview']:[]),...HOROSCOPE_SIGNS]) {
+      const units = sign==='overview'?[record.overview]:record.readings.filter(unit => unit.sign === sign);
       const unit = units[0];
-      if (units.length !== 1 || !Number.isInteger(unit.start) || !Number.isInteger(unit.end)
+      if (units.length !== 1 || !unit || !Number.isInteger(unit.start) || !Number.isInteger(unit.end)
         || unit.start < 0 || unit.end <= unit.start || unit.end > article.length) {
-        throw new Error('Seasonal sign evidence is incomplete.');
+        throw new Error(`Seasonal ${sign==='overview'?'overview':'sign'} evidence is incomplete.`);
       }
       const text = article.slice(unit.start, unit.end);
       if (!text.trim() || sha(text) !== unit.sha256 || text.split(/\s+/u).length !== unit.wordCount) {
@@ -41,11 +41,11 @@ export function loadSeasonalHoroscopeEvidence(read) {
       entries.push({id,sourceId:id,contentKey:id,text,sourcePath,
         sourceRecordSha256:unit.sha256,sourceSha256:unit.sha256,sourceArticleSha256:record.sha256,wordCount:unit.wordCount,
         family:'sky-season',surface:'sky-season',register:'second_person',planet:'sun',sign:season,
-        horoscopeAudienceSign:sign,horoscopePeriod:'seasonal',structuralFunction:'complete seasonal sign reading',
+        horoscopeAudienceSign:sign,horoscopePeriod:'seasonal',structuralFunction:sign==='overview'?'complete seasonal collective essay':'complete seasonal sign reading',
         authorityClass:'owner_authored_final',ownerAuthored:true,ownerApproved:true,useAsPositiveVoiceEvidence:true,
         factUseAuthorized:false,canonical:false,useAsSceneEvidence:false,
         provenance:{manifest:SEASONAL_EVIDENCE_MANIFEST,sourceSlug:original.sourceSlug,start:unit.start,end:unit.end,
-          assignment:manifest.assignment,role:'complete seasonal horoscope register only; historical astrology is not current fact'}});
+          assignment:sign==='overview'?manifest.overviewAssignment:manifest.assignment,role:'complete seasonal horoscope register only; historical astrology is not current fact'}});
     }
   }
   return entries;

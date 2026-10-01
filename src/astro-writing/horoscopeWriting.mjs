@@ -2,7 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {createHash} from 'node:crypto';
-import {HOROSCOPE_SIGNS,validateHoroscopeEdition,horoscopeCanonicalJson} from '../../apps/web/src/content/horoscopeEditions.mjs';
+import {HOROSCOPE_SIGNS,horoscopeReadingSigns,validateHoroscopeEdition,horoscopeCanonicalJson} from '../../apps/web/src/content/horoscopeEditions.mjs';
 import {defaultHoroscopeProfile,validateHoroscopeProfile} from './horoscopeWritingProfiles.mjs';
 import {buildMeaningPlan} from './buildMeaningPlan.mjs';
 import {buildArgumentOutline,approveArgumentOutline} from './argumentGate.mjs';
@@ -20,7 +20,7 @@ import {SEASONAL_MEANING_BANK,resolveSeasonalMeaning,seasonalMeaningForRising} f
 import {loadSeasonalHoroscopeEvidence} from './seasonalHoroscopeEvidence.mjs';
 
 const root=fileURLToPath(new URL('../../',import.meta.url));
-export const horoscopeWritingVersion='horoscope-writer/v7';
+export const horoscopeWritingVersion='horoscope-writer/v8';
 const digest=value=>createHash('sha256').update(typeof value==='string'?value:horoscopeCanonicalJson(value)).digest('hex');
 const repositorySources=new Map();
 const preparedPlans=new Map();
@@ -45,13 +45,14 @@ function loadSources(period) {
     .map(e=>({...e,id:e.sourceId,contentKey:e.sourceId,family:e.surface,horoscopeAudienceSign:weeklyForecastSign(e),horoscopePeriod:weeklyForecastSign(e)?'weekly':null,register:/\b(?:you|your)\b/iu.test(e.text)?'second_person':'collective',sourceRecordSha256:digest(e.text)}));
   // The seasonal adapter resolves complete units in the existing governed corpus.
   // Other surfaces retain their own evidence pool and selection behavior.
-  if(period==='seasonal')examples.push(...loadSeasonalHoroscopeEvidence(read));
+  if(['seasonal','monthly'].includes(period))examples.push(...loadSeasonalHoroscopeEvidence(read,{includeOverviews:true}));
   const matrix=withoutOwnerRejectedEvidence(lines('data/writing/matrix-evidence-index/TLDR-Matrix-Evidence-Index.jsonl'),corrections,'copy');
   const approved=withoutOwnerRejectedEvidence(lines('data/writing/OWNER_APPROVED_EXAMPLES.jsonl'),corrections);
   const gold=json('data/writing/owner-register-gold.json');
   const phrasePath='data/writing/phrase-evidence-index/owner-phrase-evidence-v1.jsonl';read(phrasePath);
   const phrases=loadPhraseEvidenceIndex(path.join(root,phrasePath));
   const houses=json('packages/astro-knowledge/data/primitives/houses.json').entries;
+  const aspects=json('packages/astro-knowledge/data/primitives/aspects.json').entries;
   const meaningPath='tldr-astro-phrasebank/phrasebank/cc-planet-in-sign-reviewed.json';
   const meanings=json(meaningPath).reviewed;
   const placements=Object.fromEntries(meanings.map(e=>{
@@ -60,7 +61,7 @@ function loadSources(period) {
       gift:e.collective_shift,challenge:'Consider the limits of this temporary emphasis without assuming an outcome.'}];
   }));
   const seasonalBank=period==='seasonal'?json(SEASONAL_MEANING_BANK):null;
-  const sources={seasonalBank,voice,examples,matrix,approved,gold,phrases,houses,placements,corrections,hashes,sha256:digest(hashes),sceneLexicon:matrixSceneNounLexicon(matrix)};
+  const sources={seasonalBank,voice,examples,matrix,approved,gold,phrases,houses,aspects,placements,corrections,hashes,sha256:digest(hashes),sceneLexicon:matrixSceneNounLexicon(matrix)};
   repositorySources.set(period,sources);return sources;
 }
 
@@ -88,7 +89,7 @@ export function prepareHoroscopeWriting(row,{studioCorrections=[],feedbackReceip
   if(!meaning)throw new Error('The calculated horoscope anchor is unavailable.');
   const corrections=[...sources.corrections,...studioCorrections];
   const correctedVoice={...sources.voice,entries:withoutOwnerRejectedEvidence(sources.voice.entries,corrections)};
-  const primaryPeriod=edition.window.period==='seasonal'?'seasonal':'weekly';
+  const primaryPeriod=['seasonal','monthly'].includes(edition.window.period)?'seasonal':'weekly';
   const examples=withoutOwnerRejectedEvidence(sources.examples,corrections).filter(e=>!e.horoscopeAudienceSign||e.horoscopePeriod===primaryPeriod);
   const relevant=ownerRelevantEvidenceFromVoiceIndex(correctedVoice,{planet,sign});
   const relevantSelected=relevant.selected.filter(e=>['weekly-astrology','sky-season','sky-lunation','sky-article-longform','sky-article-reference'].includes(e.family));
@@ -97,9 +98,10 @@ export function prepareHoroscopeWriting(row,{studioCorrections=[],feedbackReceip
   const targetMatrix=sources.matrix.filter(e=>String(e.planet).toLowerCase()===planet&&String(e.sign).toLowerCase()===sign);
   const targetExamples=examples.filter(e=>String(e.planet).toLowerCase()===planet&&String(e.sign).toLowerCase()===sign);
   const targetApproved=sources.approved.filter(e=>String(e.contentKey).toLowerCase().includes(planet)&&String(e.contentKey).toLowerCase().includes(sign));
-  const entries=HOROSCOPE_SIGNS.map(rising=>{
-    const house=((HOROSCOPE_SIGNS.indexOf(sign)-HOROSCOPE_SIGNS.indexOf(rising)+12)%12)+1;
-    const domain=sources.houses.find(h=>h.id===String(house));
+  const entries=horoscopeReadingSigns(edition).map(rising=>{
+    const overview=rising==='overview';
+    const house=overview?null:((HOROSCOPE_SIGNS.indexOf(sign)-HOROSCOPE_SIGNS.indexOf(rising)+12)%12)+1;
+    const domain=overview?{plainTranslation:'shared experiences across all zodiac signs; no personal house placement'}:sources.houses.find(h=>h.id===String(house));
     if(!domain?.plainTranslation)throw new Error('The calculated house has no topic definition.');
     const topics=domain.plainTranslation.split(',').map(s=>s.trim());
     const developments=buildHoroscopeDevelopments(brief,rising,sources);
@@ -110,8 +112,8 @@ export function prepareHoroscopeWriting(row,{studioCorrections=[],feedbackReceip
       risks:[meaning.challenge],DO_NOT_ASSUME:['natal biography or a permanent personality pattern','events beyond the signed calculation coverage','a placement lasting beyond its supplied boundaries']};
     const plan=buildMeaningPlan(meaningInput);
     const savedOutline=String(row.source_snapshot?.horoscopeOutlines?.[rising]??'').trim();
-    const datedScope=developments.events.map(d=>`${d.title} (${d.localTiming}; house ${d.house}: ${d.domain})`).join('; ');
-    const argumentInput={thesis:savedOutline?savedOutline.replace(/\s+/gu,' '):`Develop a connected ${edition.window.period} interpretation for ${rising} from the supplied developments and their individual life areas. Let a meaningful concern emerge from those facts; the reference ${planet} placement is not a prescribed story.`,
+    const datedScope=developments.events.map(d=>`${d.title} (${d.localTiming}${d.house?`; house ${d.house}: ${d.domain}`:''})`).join('; ');
+    const argumentInput={thesis:savedOutline?savedOutline.replace(/\s+/gu,' '):overview?`Develop one shared ${edition.window.period==='seasonal'?'season introduction':'monthly overview'} for all readers. Explain how selected dated developments relate, using the owner's complete collective essays for language and movement. ${edition.window.period==='seasonal'?'Integrate the supplied zodiac-season meaning and learning axis; leave personal houses to the twelve sign readings.':'Cover the calendar month, including its change of solar season, without assigning a rising sign or personal house.'}`:`Develop a connected ${edition.window.period} interpretation for ${rising} from the supplied developments and their individual life areas. Let a meaningful concern emerge from those facts; the reference ${planet} placement is not a prescribed story.`,
       transit_job:`Consider the dated developments with their own planet, sign, house and governed meaning: ${datedScope||'No dated developments with governed meaning are available; stay within the reference-instant coverage.'}`,
       recognition:'Develop what the chosen circumstances could mean to this reader: a desire, fear, pleasure, conflict, loyalty or decision only where the selected facts and house support it. Observable detail should deepen that concern, not become a catalogue of activities or administrative tasks.',
       complication:'Follow what changes or becomes harder to ignore in the selected concern. A complication is optional; do not manufacture a crisis, trauma, childhood history or a repeated compromise plot.',
@@ -124,7 +126,7 @@ export function prepareHoroscopeWriting(row,{studioCorrections=[],feedbackReceip
     const scenes=sceneEvidenceForTarget({approvedExamples:targetApproved,matrixEvidenceRows:targetMatrix,registerExamples:targetExamples,sceneNounLexicon:sources.sceneLexicon,plan});
     const reviewedMeaningExamples=[{id:meaning.id,planet,sign,status:meaning.status,text:meaning.collective_shift,sourcePath:meaning.sourcePath,sourceKind:'reviewed-doctrine',ownerAuthored:false,ownerApproved:false,reviewNote:meaning.review_note}];
     const exactMatrix=evidence.meaning.filter(e=>!String(e.contentKey).includes('/houseactivations/')||String(e.contentKey).includes(`/houseactivations/${rising}|`));
-    const signForecasts=examples.filter(e=>e.horoscopeAudienceSign && (primaryPeriod!=='seasonal'||e.horoscopeAudienceSign===rising));
+    const signForecasts=examples.filter(e=>overview?e.horoscopeAudienceSign==='overview':e.horoscopeAudienceSign&&e.horoscopeAudienceSign!=='overview'&&(primaryPeriod!=='seasonal'||e.horoscopeAudienceSign===rising));
     const contextOptions={reviewedMeaningExamples,examples:[...examples,...relevantSelected],matrixExamples:exactMatrix,matrixArgumentCandidates:evidence.argument_candidate,
       matrixEvidenceAvailableCount:exactMatrix.length,relevantOwnerPassagesAvailableCount:relevantSelected.length,
       ownerPassageRelevanceTier:relevant.tier,sceneExamples:scenes.selected,samePlanetSignSceneAvailableCount:scenes.counts.samePlanetSignSceneAvailable,
@@ -137,7 +139,7 @@ export function prepareHoroscopeWriting(row,{studioCorrections=[],feedbackReceip
     try{assertPositiveOwnerEvidenceContext(context,{family:'horoscope'});}catch(error){
       if(error.code!=='OWNER_EVIDENCE_ROLE_MISSING'||error.detail?.role!=='argument')throw error;
     }
-    return {sign:rising,house,seasonalMeaning:seasonalMeaningForRising(seasonalMeaning,rising,sources.houses),anchor:{planet,sign},developments,domain:domain.plainTranslation,outline:savedOutline||argumentInput.thesis,
+    return {sign:rising,house,seasonalMeaning:overview?seasonalMeaning:seasonalMeaningForRising(seasonalMeaning,rising,sources.houses),anchor:{planet,sign},developments,domain:domain.plainTranslation,outline:savedOutline||argumentInput.thesis,
       argumentOutline,meaningInput,plan,contextOptions,validationCorrections:context.corrections,sourceIds:context.sameFamilyExamples.map(e=>e.id)};
   });
   const planHash=digest({version:horoscopeWritingVersion,window:edition.window,writingProfile,sourceHash,
@@ -165,7 +167,7 @@ export async function writeHoroscopeSign(prepared,sign,{approvedPlanHash,writerC
     approvedArgumentOutline:approved,argumentSource,family:'horoscope',surface:'horoscopes',register:'second_person',writingProfile:prepared.writingProfile,
     target:{surface:'horoscopes',route:'horoscopes',renderer:'HoroscopeReader',contentKeyFamily:'horoscope',temporality:'current_sky',voiceMode:'second_person'},
     engineFacts:{...prepared.brief,risingSign:sign,anchor:entry.anchor,house:entry.house,developments:entry.developments,seasonalMeaning:entry.seasonalMeaning},
-    task:`Write one complete ${prepared.edition.window.period} horoscope for ${sign} rising in ${prepared.edition.window.timeZone}.`,writerClient});
+    task:sign==='overview'?`Write one shared ${prepared.edition.window.period==='seasonal'?'season introduction':'calendar-month overview'} for readers of all signs in ${prepared.edition.window.timeZone}. Do not assign a personal house or rising sign.`:`Write one complete ${prepared.edition.window.period} horoscope for ${sign} rising in ${prepared.edition.window.timeZone}.`,writerClient});
   if(!result.draft)throw new Error('The writer could not prepare a horoscope from the available evidence.');
   const {headline,body}=result.draft;
   if(typeof headline!=='string'||!headline.trim()||headline.length>200||typeof body!=='string'||!body.trim()||body.length>20000)throw new Error('The writer returned an incomplete reading.');

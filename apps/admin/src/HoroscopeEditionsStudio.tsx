@@ -6,7 +6,7 @@ import {horoscopeEditionReaderHref} from './adminReaderDestinations';
 import {PageLoading} from '../../web/src/components/PageLoading';
 import {FormattedProse} from '../../web/src/components/FormattedProse';
 import {announceContentUpdate} from '../../web/src/services/contentUpdateSignal';
-import {HOROSCOPE_SIGNS,HOROSCOPE_PERIODS,emptyHoroscopeEdition,validateHoroscopeEdition,horoscopeEditionKey,isHoroscopeEditionKey,horoscopeEditionBody,horoscopeWindowLabel,horoscopeSignLabel,horoscopeCanonicalJson,type HoroscopeEdition,type HoroscopePeriod} from '../../web/src/content/horoscopeEditions.mjs';
+import {HOROSCOPE_PERIODS,emptyHoroscopeEdition,validateHoroscopeEdition,horoscopeEditionKey,isHoroscopeEditionKey,horoscopeEditionBody,horoscopeWindowLabel,horoscopeSignLabel,horoscopeCanonicalJson,type HoroscopeEdition,type HoroscopePeriod} from '../../web/src/content/horoscopeEditions.mjs';
 
 import {HoroscopeLocation} from '../../web/src/features/horoscopes/HoroscopeLocation';
 import {browserTimeZone} from '../../web/src/services/timezones';
@@ -60,7 +60,7 @@ export default function HoroscopeEditionsStudio({secret}:{secret:string}) {
   const mayReplace=()=>!dirty || window.confirm('Discard the unsaved changes to this edition?');
   function adopt(row:any) {
     const edition=validateHoroscopeEdition(row.sections?.horoscopeEdition);
-    retain(row,true);setPacket(row.facts?.horoscopeBrief);setSign('aries');setInstructions(false);
+    retain(row,true);setPacket(row.facts?.horoscopeBrief);setSign(edition.passages[0].sign);setInstructions(false);
     setPeriod(edition.window.period);setZone(edition.window.timeZone);
     setDate(row.facts?.horoscopeBrief?.brief?.referenceDate??new Intl.DateTimeFormat('en-CA',{timeZone:edition.window.timeZone}).format(new Date(edition.window.startsAt)));
     setError(row.status==='DRAFT'?row.source_snapshot?.horoscopeGeneration?.lastError?.message??'':'');
@@ -138,7 +138,7 @@ export default function HoroscopeEditionsStudio({secret}:{secret:string}) {
         || row.status!==(publish ? 'LIVE':'DRAFT')) throw new Error('The exact save could not be confirmed. Your edits are preserved; reload the saved edition before retrying.');
       setSaved(row);setDraft(edition);setRows(current=>[row,...current.filter(r=>r.id!==row.id)]);setApproved(false);
       announceContentUpdate({contentKey:row.content_key,published:publish,updatedAt:row.updated_at});
-      setMessage(publish ? 'Published all twelve readings.' : 'Saved edition draft.');
+      setMessage(publish ? 'Published the complete edition.' : 'Saved edition draft.');
       return row;
     }catch(reason){setError((reason as Error).message);}finally{setBusy(false);}
   }
@@ -153,7 +153,7 @@ export default function HoroscopeEditionsStudio({secret}:{secret:string}) {
       if(JSON.stringify(imported.window)!==JSON.stringify(draft.window))throw new Error('This draft belongs to a different period. Open its edition first.');
       const hash=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(originalSource));
       setEditorialImport({schema:'horoscope-editorial-import/v1',originalSource,sha256:Array.from(new Uint8Array(hash),byte=>byte.toString(16).padStart(2,'0')).join(''),importedAt:new Date().toISOString(),readerFields:['edition.passages[].headline','edition.passages[].body']});
-      setDraft(imported);setApproved(false);setMessage('Imported twelve readings as an unsaved draft. Review the complete edition before publishing.');
+      setDraft(imported);setSign(current=>imported.passages.some(p=>p.sign===current)?current:imported.passages[0].sign);setApproved(false);setMessage('Imported the readings as an unsaved draft. Review the complete edition before publishing.');
     }catch(reason){setError((reason as Error).message);}
   }
   async function refreshProfile() {
@@ -183,13 +183,13 @@ export default function HoroscopeEditionsStudio({secret}:{secret:string}) {
     if(row.status==='LIVE'){setStep('publish');setMessage('Loaded the published edition.');return;}
     if(active){
       setStep('generate');setSign(active.sign);
-      setMessage(active.responseId?`${count}/12 readings are saved. ${horoscopeSignLabel(active.sign)} is still processing. Studio checks automatically; you can also check now or return to your editions.`:'Your request is being confirmed. Studio will check again automatically; a second request will not be started.');
+      setMessage(active.responseId?`${count}/${edition.passages.length} readings are saved. ${horoscopeSignLabel(active.sign)} is still processing. Studio checks automatically; you can also check now or return to your editions.`:'Your request is being confirmed. Studio will check again automatically; a second request will not be started.');
       return;
     }
     if(!edition.passages.some((p:any)=>!p.headline.trim()&&!p.body.trim())){
-      setStep('edit');setSign('aries');setMessage(count===12?'All twelve readings are saved and ready to review.':`${count}/12 readings are complete. Review the remaining text before publishing.`);return;
+      setStep('edit');setSign(edition.passages[0].sign);setMessage(count===edition.passages.length?'All readings are saved and ready to review.':`${count}/${edition.passages.length} readings are complete. Review the remaining text before publishing.`);return;
     }
-    setStep('generate');setMessage(`${count}/12 readings are saved. Review the current writing plan to continue the remaining signs.`);
+    setStep('generate');setMessage(`${count}/${edition.passages.length} readings are saved. Review the current writing plan to continue the remaining readings.`);
     await loadPlan(row,controller);
   }
   async function recoverGeneration(row:any,controller:AbortController,pollExisting=false) {
@@ -243,10 +243,10 @@ export default function HoroscopeEditionsStudio({secret}:{secret:string}) {
         const active=row.source_snapshot?.horoscopeGeneration?.active;
         const missing=row.sections.horoscopeEdition.passages.find((p:any)=>!p.headline.trim()&&!p.body.trim());
         if(!active&&!missing)break;
-        if(!active&&(!planApproved||!plan)){setMessage('Recovered the reading. Review the writing plan to continue the remaining signs.');break;}
+        if(!active&&(!planApproved||!plan)){setMessage('Recovered the reading. Review the writing plan to continue the remaining readings.');break;}
         const next=active?.sign??retrying??missing.sign;
         setSign(next);
-        setProgress(`Writing ${horoscopeSignLabel(next)} · ${row.sections.horoscopeEdition.passages.filter((p:any)=>p.body.trim()&&p.headline.trim()).length}/12 saved`);
+        setProgress(`Writing ${horoscopeSignLabel(next)} · ${row.sections.horoscopeEdition.passages.filter((p:any)=>p.body.trim()&&p.headline.trim()).length}/${row.sections.horoscopeEdition.passages.length} saved`);
         const data=await request(secret,'/api/admin/horoscope-writing',{action:active?'poll':'generate',id:row.id,expectedUpdatedAt:row.updated_at,...(!active?{sign:next,approvedPlanHash:plan.planHash}:{})},'POST',controller.signal);
         if(!isCurrent(controller))return;
         const updated=data.rows?.[0];if(!updated||updated.id!==row.id)throw new Error('The generation result could not be confirmed. Reopen the saved edition.');
@@ -268,18 +268,20 @@ export default function HoroscopeEditionsStudio({secret}:{secret:string}) {
   }
   async function reject(target:string){
     if(!saved||locked||saved.status!=='DRAFT')return;
-    const all=target==='all',label=all?'all twelve drafts':`${horoscopeSignLabel(target)}’s reading`;
+    const all=target==='all',label=all?'all drafts':`${horoscopeSignLabel(target)}’s reading`;
     if(!window.confirm(`Reject ${label} and start again? Current edits will be saved and the rejected writing kept in history. ${all?'Dates stay the same; calculated facts will be refreshed. ':''}The new plan will use your latest saved writing instructions. Generating replacements is a separate step.`))return;
     setBusy(true);setError('');setMessage('');
     try {
       const current=dirty?await save():saved;if(!current)return;setBusy(true);
       const data=await request(secret,'/api/admin/horoscope-writing',{action:'reject',id:current.id,expectedUpdatedAt:current.updated_at,sign:target});
       const row=data.rows?.[0];if(!row||row.id!==current.id)throw new Error('The rejection could not be confirmed. Reopen the saved edition.');
-      retain(row,true);setPacket(row.facts.horoscopeBrief);setStep('generate');if(all)setSign('aries');
+      retain(row,true);setPacket(row.facts.horoscopeBrief);setStep('generate');if(all)setSign(row.sections.horoscopeEdition.passages[0].sign);
       setMessage(`Rejected ${label}. The previous writing is in Rejected drafts. Review the new plan, then generate replacements.`);
       await loadPlan(row);
     }catch(reason){setError((reason as Error).message);}finally{setBusy(false);}
   }
+  const readingSigns=draft?.passages.map(p=>p.sign)??[];
+  const total=readingSigns.length;
   const passage=draft?.passages.find(p=>p.sign===sign);
   const complete=draft?.passages.filter(p=>p.headline.trim()&&p.body.trim()).length ?? 0;
   const empty=draft?.passages.filter(p=>!p.headline.trim()&&!p.body.trim()).length ?? 0;
@@ -300,40 +302,40 @@ export default function HoroscopeEditionsStudio({secret}:{secret:string}) {
   const failedSign=saved?.source_snapshot?.horoscopeGeneration?.lastError?.operation?.sign;
   const retrySign=!active&&draft?.passages.some(p=>p.sign===failedSign&&!p.headline.trim()&&!p.body.trim())?failedSign:null;
   const locked=busy||Boolean(active)||needsSync;
-  const stepIndex=steps.indexOf(step),signIndex=HOROSCOPE_SIGNS.indexOf(sign),planEntry=plan?.readings.find((entry:any)=>entry.sign===sign);
+  const stepIndex=steps.indexOf(step),signIndex=readingSigns.indexOf(sign),planEntry=plan?.readings.find((entry:any)=>entry.sign===sign);
   const isPublished=saved?.status==='LIVE'&&!dirty;
-  const rejectAllButton=saved?.status==='DRAFT'&&empty<12?<StudioButton className="admin-danger-button" disabled={locked} onClick={()=>void reject('all')}>Reject all drafts</StudioButton>:null;
+  const rejectAllButton=saved?.status==='DRAFT'&&empty<total?<StudioButton className="admin-danger-button" disabled={locked} onClick={()=>void reject('all')}>Reject all drafts</StudioButton>:null;
   async function moveTo(next:Step) {
     if(next==='setup'&&(!busy||running.current||checking)){
       pauseGeneration();setStep('setup');setMessage(dirty?'Your unsaved edits are kept in this session. Return to Review to continue editing.':'Your edition is saved. Open it under Continue a saved edition to pick up where you left off.');return;
     }
     if(busy)return;
-    if(next==='publish') {if(complete!==12||active)return;if(dirty&&!await save())return;}
+    if(next==='publish') {if(complete!==total||active)return;if(dirty&&!await save())return;}
     setStep(next);
     if(next==='generate'&&!active&&empty>0&&(!plan||dirty))await reviewPlan();
   }
   async function nextReading() {
-    if(dirty&&!await save())return;
-    if(signIndex<11)setSign(HOROSCOPE_SIGNS[signIndex+1]);else await moveTo('publish');
+    if(signIndex===total-1)await moveTo('publish');
+    else {if(dirty&&!await save())return;setSign(readingSigns[signIndex+1]);}
     heading.current?.scrollIntoView({block:'center'});
   }
   return <section className="admin-panel admin-horoscope-wizard" aria-label="Horoscope editions">
-    <nav aria-label="Horoscope creation steps"><ol className="admin-horoscope-steps">{steps.map((value,index)=><li key={value}><StudioButton aria-current={step===value?'step':undefined} disabled={value==='setup'?busy&&!running.current&&!checking:busy||(Boolean(active)||needsSync)&&value!=='generate'||!draft||value==='publish'&&complete!==12} onClick={()=>void moveTo(value)}>{index+1} · {stepLabels[index]}</StudioButton></li>)}</ol></nav>
+    <nav aria-label="Horoscope creation steps"><ol className="admin-horoscope-steps">{steps.map((value,index)=><li key={value}><StudioButton aria-current={step===value?'step':undefined} disabled={value==='setup'?busy&&!running.current&&!checking:busy||(Boolean(active)||needsSync)&&value!=='generate'||!draft||value==='publish'&&complete!==total} onClick={()=>void moveTo(value)}>{index+1} · {stepLabels[index]}</StudioButton></li>)}</ol></nav>
     <header className="admin-horoscope-step-heading">
       <p className="admin-field-hint">Step {stepIndex+1} of 4</p>
       <h2 ref={heading} tabIndex={-1}>{isPublished&&step==='publish'?'Your horoscopes are published':stepTitles[stepIndex]}</h2>
-      <p>{step==='setup'?'Create a set of twelve rising-sign horoscopes. We’ll guide you from the first draft to publication.':step==='generate'?'Check the writing plan, then let AI write the drafts using your saved instructions.':step==='edit'?'Read one sign at a time. Make any changes, then continue to the next reading.':isPublished?'This edition is ready to read in the app.':'Review the complete edition below. Publishing makes all twelve readings available in the app.'}</p>
+      <p>{step==='setup'?'Create daily or weekly sign readings, a monthly overview for everyone, or a zodiac-season introduction with twelve sign readings.':step==='generate'?'Check the writing plan, then let AI write the drafts using your saved instructions.':step==='edit'?'Read one passage at a time. Make any changes, then continue to the next reading.':isPublished?'This edition is ready to read in the app.':'Review the complete edition below. Publishing makes the complete edition available in the app.'}</p>
     </header>
-    {step!=='setup'&&draft&&<div className="admin-horoscope-summary"><span>{horoscopeSignLabel(draft.window.period)} · {horoscopeWindowLabel(draft.window)}</span><span>{draft.window.timeZone.replaceAll('_',' ')} · {complete}/12 readings ready{dirty?' · Unsaved changes':''}</span></div>}
+    {step!=='setup'&&draft&&<div className="admin-horoscope-summary"><span>{horoscopeSignLabel(draft.window.period)} · {horoscopeWindowLabel(draft.window)}</span><span>{draft.window.timeZone.replaceAll('_',' ')} · {complete}/{total} readings ready{dirty?' · Unsaved changes':''}</span></div>}
     {error&&<p role="alert">{error}</p>}{message&&<p role="status">{message}</p>}
     {step==='setup'?<>
       <div className="admin-horoscope-periods" role="group" aria-label="Edition period">{HOROSCOPE_PERIODS.map(p=><StudioButton key={p} aria-pressed={period===p} disabled={busy} onClick={()=>setPeriod(p)}>{horoscopeSignLabel(p)}</StudioButton>)}</div>
-      <label className="admin-review-copy-editor"><span>{period==='daily'?'Date':period==='weekly'?'Choose a date in the week':'Choose a date in the zodiac season'}</span><StudioInput aria-label="Reference date" type="date" value={date} disabled={busy} onChange={e=>setDate(e.target.value)}/></label>
-      <p className="admin-field-hint">{period==='daily'?'The reading covers this local calendar day.':period==='weekly'?'The week runs Monday through Sunday.':"We’ll calculate the Sun’s zodiac season for this date."}</p>
+      <label className="admin-review-copy-editor"><span>{period==='daily'?'Date':period==='weekly'?'Choose a date in the week':period==='monthly'?'Choose a date in the calendar month':'Choose a date in the zodiac season'}</span><StudioInput aria-label="Reference date" type="date" value={date} disabled={busy} onChange={e=>setDate(e.target.value)}/></label>
+      <p className="admin-field-hint">{period==='daily'?'The reading covers this local calendar day.':period==='weekly'?'The week runs Monday through Sunday.':period==='monthly'?'One shared overview covers the first through the last day of this calendar month, for all zodiac signs.':"We’ll calculate the Sun’s zodiac season for this date. A shared introduction comes before the twelve sign readings."}</p>
       <HoroscopeLocation value={{...place,timeZone:zone}} disabled={busy} onChange={next=>{setPlace(next);setZone(next.timeZone!);}}/>
-      <footer className="admin-writing-savebar admin-horoscope-actions"><p>Next: review the plan for all twelve signs.</p><StudioButton className="admin-primary-button" disabled={busy||!date} onClick={()=>void prepare()}>{busy?'Preparing your edition…':'Continue to writing plan'}</StudioButton></footer>
+      <footer className="admin-writing-savebar admin-horoscope-actions"><p>Next: review the writing plan before generating.</p><StudioButton className="admin-primary-button" disabled={busy||!date} onClick={()=>void prepare()}>{busy?'Preparing your edition…':'Continue to writing plan'}</StudioButton></footer>
       <details className="admin-workspace-details"><AdminDisclosureSummary>Continue a saved edition{rows.length?` (${rows.length})`:''}</AdminDisclosureSummary>
-        {loading?<PageLoading message="Loading horoscope editions…"/>:rows.length?<div className="admin-horoscope-saved">{rows.map(row=><StudioButton key={row.id} disabled={busy} onClick={()=>void open(row)}>{row.headline} · {horoscopeWindowLabel(row.sections.horoscopeEdition.window)} · {row.sections.horoscopeEdition.window.timeZone} · {row.status==='LIVE'?'Published':`${row.sections.horoscopeEdition.passages.filter((p:any)=>p.headline.trim()&&p.body.trim()).length}/12 drafted`}</StudioButton>)}</div>:<p>No saved editions yet. Start with the dates above.</p>}
+        {loading?<PageLoading message="Loading horoscope editions…"/>:rows.length?<div className="admin-horoscope-saved">{rows.map(row=><StudioButton key={row.id} disabled={busy} onClick={()=>void open(row)}>{row.headline} · {horoscopeWindowLabel(row.sections.horoscopeEdition.window)} · {row.sections.horoscopeEdition.window.timeZone} · {row.status==='LIVE'?'Published':`${row.sections.horoscopeEdition.passages.filter((p:any)=>p.headline.trim()&&p.body.trim()).length}/${row.sections.horoscopeEdition.passages.length} drafted`}</StudioButton>)}</div>:<p>No saved editions yet. Start with the dates above.</p>}
         <StudioButton disabled={busy||loading} onClick={()=>void load()}>Refresh editions</StudioButton>
       </details>
     </>:draft&&passage&&<>
@@ -348,9 +350,9 @@ export default function HoroscopeEditionsStudio({secret}:{secret:string}) {
         {plan&&<>
           <p>{empty} {empty===1?'reading still needs a draft':'readings still need drafts'}. Existing writing is kept.</p>
           <div className="admin-horoscope-signs" role="group" aria-label="Writing plans by sign">{plan.readings.map((entry:any)=><StudioButton key={entry.sign} aria-pressed={sign===entry.sign} onClick={()=>setSign(entry.sign)}>{horoscopeSignLabel(entry.sign)}</StudioButton>)}</div>
-          {planEntry&&<section className="admin-horoscope-plan" aria-label={`${horoscopeSignLabel(sign)} writing plan`}><h3>{horoscopeSignLabel(sign)} writing plan</h3><p>{planEntry.developments?.events.length??0} calculated developments · {draft.window.timeZone}</p><p className="admin-horoscope-outline">{planEntry.outline}</p><details className="admin-workspace-details"><AdminDisclosureSummary>Full plan details</AdminDisclosureSummary>{planEntry.developments?.events.length>0&&<ul>{planEntry.developments.events.map((event:any)=><li key={event.id}>{event.title} · {event.localTiming} · House {event.house}: {event.domain}</li>)}</ul>}{planEntry.seasonalMeaning&&<div aria-label="Season and learning-axis sources">
+          {planEntry&&<section className="admin-horoscope-plan" aria-label={`${horoscopeSignLabel(sign)} writing plan`}><h3>{horoscopeSignLabel(sign)} writing plan</h3><p>{planEntry.developments?.events.length??0} calculated developments · {draft.window.timeZone}</p><p className="admin-horoscope-outline">{planEntry.outline}</p><details className="admin-workspace-details"><AdminDisclosureSummary>Full plan details</AdminDisclosureSummary>{planEntry.developments?.events.length>0&&<ul>{planEntry.developments.events.map((event:any)=><li key={event.id}>{event.title} · {event.localTiming}{event.house?` · House ${event.house}: ${event.domain}`:''}</li>)}</ul>}{planEntry.seasonalMeaning&&<div aria-label="Season and learning-axis sources">
             <p>{horoscopeSignLabel(planEntry.seasonalMeaning.seasonSign)} season · {horoscopeSignLabel(planEntry.seasonalMeaning.seasonSign)} / {horoscopeSignLabel(planEntry.seasonalMeaning.oppositeSign)} learning axis</p>
-            <p>{planEntry.seasonalMeaning.areas.map((area:any)=>`${horoscopeSignLabel(area.sign)} · House ${area.house}: ${area.domain}`).join(' · ')}</p>
+            <p>{(planEntry.seasonalMeaning.areas??[]).map((area:any)=>`${horoscopeSignLabel(area.sign)} · House ${area.house}: ${area.domain}`).join(' · ')}</p>
             {planEntry.seasonalMeaning.sources.map((source:any)=><div key={source.contentKey}>
               <p>{source.role==='learning-axis'?'Learning axis':'Zodiac season'} · {source.provenance.kind==='content-studio'?'Saved Studio source':'Knowledge base'}</p>
               <FormattedProse text={source.body}/>
@@ -358,22 +360,22 @@ export default function HoroscopeEditionsStudio({secret}:{secret:string}) {
           </div>}{Object.entries({thesis:'Main idea',transit_job:'Astrology',recognition:'What readers may notice',complication:'Possible complication',response:'Useful response',scope_guard:'Dates and limits'}).map(([key,label])=><p key={key}><strong>{label}: </strong>{planEntry.argument[key]}</p>)}</details></section>}
         </>}
         {active&&<p>A request for {horoscopeSignLabel(active.sign)} is saved. Studio checks for its result automatically. You can pause or return to your editions while it finishes.</p>}
-        {complete+empty<12&&<p>{12-complete-empty} partially written readings need your edits in Review. Your existing text will be kept.</p>}
+        {complete+empty<total&&<p>{total-complete-empty} partially written readings need your edits in Review. Your existing text will be kept.</p>}
         {progress&&<p role="status">{progress}</p>}
-        <progress aria-label="Drafts saved" value={complete} max={12}/>
+        <progress aria-label="Drafts saved" value={complete} max={total}/>
         <footer className="admin-writing-savebar admin-horoscope-actions">
           {plan&&!active&&empty>0&&!dirty&&<label><input type="checkbox" checked={planApproved} disabled={locked} onChange={e=>setPlanApproved(e.target.checked)}/> I approve this writing plan for generation.</label>}
           {!configured&&plan&&<p role="alert">AI writing is unavailable. Configure the writer before generating, or write the readings yourself.</p>}
-          <p>{checking?'Retrieving your saved request. This does not start another generation.':needsSync?'Paused. Check saved progress before continuing; completed readings are kept.':busy?'Each completed sign is saved automatically.':active?'Continue the saved request without starting it again.':empty===0?'Your drafts are ready to review.':dirty||!plan?'Prepare the current writing plan to continue.':!planApproved?'Check the plan approval box to continue.':retrySign?`Retry only ${horoscopeSignLabel(retrySign)} with one new paid AI request. Saved readings are kept.`:`Ready to write ${empty} drafts. This uses ${empty} paid AI ${empty===1?'request':'requests'} and saves the results for review.`}</p>
+          <p>{checking?'Retrieving your saved request. This does not start another generation.':needsSync?'Paused. Check saved progress before continuing; completed readings are kept.':busy?'Each completed reading is saved automatically.':active?'Continue the saved request without starting it again.':empty===0?'Your drafts are ready to review.':dirty||!plan?'Prepare the current writing plan to continue.':!planApproved?'Check the plan approval box to continue.':retrySign?`Retry only ${horoscopeSignLabel(retrySign)} with one new paid AI request. Saved readings are kept.`:`Ready to write ${empty} ${empty===1?'draft':'drafts'}. This uses ${empty} paid AI ${empty===1?'request':'requests'} and saves the results for review.`}</p>
           <div className="admin-toolbar-actions"><StudioButton disabled={busy&&!running.current&&!checking} onClick={()=>void moveTo('setup')}>Back to editions</StudioButton><div className="admin-toolbar-actions admin-horoscope-decision-actions">{rejectAllButton}
             <StudioButton disabled={!saved||dirty||checking||busy&&!running.current} onClick={()=>void checkProgress()}>{checking?'Checking saved progress…':'Check saved progress'}</StudioButton>
-            {busy&&running.current?<StudioButton className="admin-primary-button" onClick={pauseGeneration}>Pause generation</StudioButton>:empty===0&&!active?<StudioButton className="admin-primary-button" disabled={busy||needsSync} onClick={()=>void moveTo('edit')}>Continue to review</StudioButton>:!active&&(dirty||!plan)?<StudioButton className="admin-primary-button" disabled={busy||needsSync||saved?.status==='LIVE'} onClick={()=>void reviewPlan()}>Review writing plan</StudioButton>:<StudioButton className="admin-primary-button" disabled={busy||needsSync||dirty||!saved||saved.status==='LIVE'||(!active&&(!planApproved||!configured))} onClick={()=>void generate()}>{active?'Resume generation':retrySign?`Retry ${horoscopeSignLabel(retrySign)}`:empty===12?'Generate 12 drafts':'Generate missing readings'}</StudioButton>}
+            {busy&&running.current?<StudioButton className="admin-primary-button" onClick={pauseGeneration}>Pause generation</StudioButton>:empty===0&&!active?<StudioButton className="admin-primary-button" disabled={busy||needsSync} onClick={()=>void moveTo('edit')}>Continue to review</StudioButton>:!active&&(dirty||!plan)?<StudioButton className="admin-primary-button" disabled={busy||needsSync||saved?.status==='LIVE'} onClick={()=>void reviewPlan()}>Review writing plan</StudioButton>:<StudioButton className="admin-primary-button" disabled={busy||needsSync||dirty||!saved||saved.status==='LIVE'||(!active&&(!planApproved||!configured))} onClick={()=>void generate()}>{active?'Resume generation':retrySign?`Retry ${horoscopeSignLabel(retrySign)}`:empty===total?`Generate ${total===1?'overview':`${total} drafts`}`:'Generate missing readings'}</StudioButton>}
           </div></div>
           {active&&Date.now()-Date.parse(active.startedAt)>=310000&&<StudioButton disabled={busy||needsSync} onClick={()=>void release()}>Release interrupted request</StudioButton>}
         </footer>
       </>:step==='edit'?<>
         <div className="admin-horoscope-signs" role="group" aria-label="Readings by sign">{draft.passages.map(p=><StudioButton key={p.sign} aria-pressed={sign===p.sign} onClick={()=>setSign(p.sign)}>{horoscopeSignLabel(p.sign)}{p.body.trim()&&p.headline.trim()?' ✓':''}</StudioButton>)}</div>
-        <p>Reading {signIndex+1} of 12 · {horoscopeSignLabel(sign)}</p>
+        <p>Reading {signIndex+1} of {total} · {horoscopeSignLabel(sign)}</p>
         {saved?.status==='DRAFT'&&<div className="admin-toolbar-actions"><StudioButton disabled={locked||!passage.headline.trim()&&!passage.body.trim()} onClick={()=>void reject(sign)}>Reject this reading</StudioButton></div>}
         {!passage.body&&<p>No reading for {horoscopeSignLabel(sign)} yet. Return to Generate or write it below.</p>}
         {(saved?.source_snapshot?.horoscopeGeneration?.readings?.[sign]?.lint?.violations??[]).map((issue:any,index:number)=><p role="note" key={index}>Original AI draft check: {issue.detail}</p>)}
@@ -381,14 +383,14 @@ export default function HoroscopeEditionsStudio({secret}:{secret:string}) {
         <label className="admin-review-copy-editor"><span>Complete reading</span><StudioTextarea aria-label="Complete reading" rows={12} value={passage.body} maxLength={20000} disabled={locked} onChange={e=>{setDraft({...draft,passages:draft.passages.map(p=>p.sign===sign?{...p,body:e.target.value}:p)});setApproved(false);}}/></label>
         <details className="admin-workspace-details"><AdminDisclosureSummary>Writing outline · editor only</AdminDisclosureSummary><StudioTextarea aria-label="Writing outline" rows={5} value={outlines[sign]??''} disabled={locked} onChange={e=>{setOutlines(current=>({...current,[sign]:e.target.value}));setApproved(false);}}/></details>
         <footer className="admin-writing-savebar admin-horoscope-actions">
-          <p>{dirty?'Your changes will be saved when you continue.':isPublished?'Published edition':'All changes saved'}{signIndex===11&&complete!==12?` · ${12-complete} readings still need a headline and body.`:''}</p>
-          <div className="admin-toolbar-actions"><StudioButton disabled={locked} onClick={()=>signIndex?setSign(HOROSCOPE_SIGNS[signIndex-1]):void moveTo('generate')}>Back</StudioButton><div className="admin-toolbar-actions admin-horoscope-decision-actions">{rejectAllButton}<StudioButton className="admin-primary-button" disabled={locked||signIndex===11&&complete!==12} onClick={()=>void nextReading()}>{signIndex===11?'Continue to publish':`${dirty?'Save & next':'Next'}: ${horoscopeSignLabel(HOROSCOPE_SIGNS[signIndex+1])}`}</StudioButton></div></div>
+          <p>{dirty?'Your changes will be saved when you continue.':isPublished?'Published edition':'All changes saved'}{signIndex===total-1&&complete!==total?` · ${total-complete} readings still need a headline and body.`:''}</p>
+          <div className="admin-toolbar-actions"><StudioButton disabled={locked} onClick={()=>signIndex?setSign(readingSigns[signIndex-1]):void moveTo('generate')}>Back</StudioButton><div className="admin-toolbar-actions admin-horoscope-decision-actions">{rejectAllButton}<StudioButton className="admin-primary-button" disabled={locked||signIndex===total-1&&complete!==total} onClick={()=>void nextReading()}>{signIndex===total-1?'Continue to publish':`${dirty?'Save & next':'Next'}: ${horoscopeSignLabel(readingSigns[signIndex+1])}`}</StudioButton></div></div>
           <StudioButton disabled={locked||!dirty} onClick={()=>void save()}>Save edition draft</StudioButton>
         </footer>
       </>:<>
         {isPublished?<div className="admin-horoscope-actions"><a className="admin-primary-button" href={horoscopeEditionReaderHref(saved.id,draft.window.period,sign)} target="_blank" rel="noreferrer">Read published edition</a><StudioButton onClick={()=>void moveTo('setup')}>Create another edition</StudioButton></div>:<>
           {draft.passages.map(p=><section className="admin-hook-detail-section" key={p.sign} aria-label={`${horoscopeSignLabel(p.sign)} reading preview`}><h3>{horoscopeSignLabel(p.sign)}</h3><p>{p.headline}</p>{p.body?<div className="admin-copy-preview"><FormattedProse text={p.body}/></div>:<p>No reading written yet.</p>}</section>)}
-          <footer className="admin-writing-savebar admin-horoscope-actions"><label><input type="checkbox" checked={approved} disabled={locked||dirty||complete!==12||!saved} onChange={e=>setApproved(e.target.checked)}/> I have reviewed and approve the exact wording of all twelve saved readings.</label><p>{approved?'Ready to publish all twelve readings.':'Check the approval box when you are happy with the complete edition.'}</p><div className="admin-toolbar-actions"><StudioButton disabled={locked} onClick={()=>void moveTo('edit')}>Back to readings</StudioButton><div className="admin-toolbar-actions admin-horoscope-decision-actions">{rejectAllButton}<StudioButton className="admin-primary-button" disabled={locked||dirty||!approved||!saved} onClick={()=>void save(true)}>Publish edition</StudioButton></div></div></footer>
+          <footer className="admin-writing-savebar admin-horoscope-actions"><label><input type="checkbox" checked={approved} disabled={locked||dirty||complete!==total||!saved} onChange={e=>setApproved(e.target.checked)}/> I have reviewed and approve the exact wording of every saved reading in this edition.</label><p>{approved?'Ready to publish the complete edition.':'Check the approval box when you are happy with the complete edition.'}</p><div className="admin-toolbar-actions"><StudioButton disabled={locked} onClick={()=>void moveTo('edit')}>Back to readings</StudioButton><div className="admin-toolbar-actions admin-horoscope-decision-actions">{rejectAllButton}<StudioButton className="admin-primary-button" disabled={locked||dirty||!approved||!saved} onClick={()=>void save(true)}>Publish edition</StudioButton></div></div></footer>
         </>}
       </>}
       {saved?.source_snapshot?.horoscopeGeneration?.rejections?.length>0&&<details className="admin-workspace-details"><AdminDisclosureSummary>Rejected drafts</AdminDisclosureSummary><p>Saved for reference only. Rejected writing is not used as a writing example or published.</p>{[...saved.source_snapshot.horoscopeGeneration.rejections].reverse().map((entry:any)=><details key={entry.id}><AdminDisclosureSummary>{entry.scope==='all'?'All drafts':horoscopeSignLabel(entry.scope)} · {new Date(entry.rejectedAt).toLocaleString()}</AdminDisclosureSummary>{entry.passages.map((p:any)=><label className="admin-review-copy-editor" key={p.sign}><span>{horoscopeSignLabel(p.sign)}</span><StudioTextarea aria-label={`Rejected ${horoscopeSignLabel(p.sign)} reading`} readOnly rows={6} value={`${p.headline}\n\n${p.body}`}/></label>)}</details>)}</details>}

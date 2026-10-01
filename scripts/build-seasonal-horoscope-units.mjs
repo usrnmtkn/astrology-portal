@@ -23,11 +23,16 @@ const sources = ['pisces','gemini','virgo'].map(season => {
     const text = article.slice(start,end);
     return {sign:heading[1].toLowerCase(),start,end,sha256:createHash('sha256').update(text).digest('hex'),wordCount:text.split(/\s+/u).length};
   });
-  return {season,file:source.file,sha256:source.sha256,readings};
+  const introductionEnd = article.search(/^#{2,3} (?:Pisces Seasons Horoscopes|Horoscopes for (?:Gemini|Virgo) Season)$/mu);
+  if (introductionEnd < 1 || introductionEnd > headings[0].index) throw new Error('Review the complete seasonal introduction boundary.');
+  const overviewText = article.slice(0,introductionEnd).trimEnd();
+  const overview = {start:0,end:overviewText.length,sha256:createHash('sha256').update(overviewText).digest('hex'),wordCount:overviewText.split(/\s+/u).length};
+  return {season,file:source.file,sha256:source.sha256,overview,readings};
 });
 const manifest = {schema:'seasonal-horoscope-units/v1',
   assignment:{date:'2026-09-30',reference:'codex-task:01a0ce6e-69e0-7100-bdba-ad413d5c7804',
-    scope:'Owner supplied Pisces, Gemini and Virgo season examples and authorized complete seasonal sign readings as voice evidence. No new reader publication or factual authority.'},sources};
+    scope:'Owner supplied Pisces, Gemini and Virgo season examples and authorized complete seasonal sign readings as voice evidence. No new reader publication or factual authority.'},
+  overviewAssignment:{date:'2026-10-01',reference:'codex-task:01a0ce6e-69e0-7100-bdba-ad413d5c7804',scope:'Owner authorized seasonal introductions and shared monthly overviews in the owner voice. Complete collective essays from the same supplied examples are register evidence, not new monthly authorship or current facts.'},sources};
 const serialized = `${JSON.stringify(manifest,null,2)}\n`;
 if (process.argv.includes('--check')) {
   if (fs.readFileSync(SEASONAL_EVIDENCE_MANIFEST,'utf8') !== serialized) throw new Error('Seasonal horoscope unit manifest is stale.');

@@ -5,11 +5,22 @@
     "reference": "codex-task:01a0ce6e-69e0-7100-bdba-ad413d5c7804",
     "scope": "Owner supplied Pisces, Gemini and Virgo season examples and authorized complete seasonal sign readings as voice evidence. No new reader publication or factual authority."
   },
+  "overviewAssignment": {
+    "date": "2026-10-01",
+    "reference": "codex-task:01a0ce6e-69e0-7100-bdba-ad413d5c7804",
+    "scope": "Owner authorized seasonal introductions and shared monthly overviews in the owner voice. Complete collective essays from the same supplied examples are register evidence, not new monthly authorship or current facts."
+  },
   "sources": [
     {
       "season": "pisces",
       "file": "reference-surfaces/pisces-season-2025.md",
       "sha256": "64d7e9fe491c0d5a03e2b8573b4489e253727290baa5971f0e3356160aa56be7",
+      "overview": {
+        "start": 0,
+        "end": 18463,
+        "sha256": "833221b73f1ba4b3e3c1f2fc537772e191955c71d68e53982f66c3df72206644",
+        "wordCount": 3174
+      },
       "readings": [
         {
           "sign": "aries",
@@ -101,6 +112,12 @@
       "season": "gemini",
       "file": "reference-surfaces/gemini-season-2025.md",
       "sha256": "1e31142628b75f39ef58e6681bd38d5ba682cdea5f89ee20cb4189ebea96061f",
+      "overview": {
+        "start": 0,
+        "end": 5389,
+        "sha256": "1424c9dae1fc4ce8765f50c320593be87f5cb853eafba0779cb04aa060aac52e",
+        "wordCount": 874
+      },
       "readings": [
         {
           "sign": "aries",
@@ -192,6 +209,12 @@
       "season": "virgo",
       "file": "reference-surfaces/virgo-season-2025.md",
       "sha256": "66d2ef42a2e306fb95c774aeb52a74395b1a626b5417a5b5d08f91b033487ae1",
+      "overview": {
+        "start": 0,
+        "end": 10207,
+        "sha256": "8fdbb85a7e49264ed1d02ca7304036f917bd59093db87ab721c85465c0516509",
+        "wordCount": 1694
+      },
       "readings": [
         {
           "sign": "aries",

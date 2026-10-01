@@ -1,3 +1,4 @@
+import {horoscopeAspectFindings} from './horoscopeAspectClaims.mjs';
 import {seasonalDateFindings} from './horoscopeSeasonalDates.mjs';
 import {validateCopy} from './validateCopy.mjs';
 import {governValidationResult} from './effectiveRuleGovernance.mjs';
@@ -5,7 +6,7 @@ import {HOROSCOPE_SIGNS} from '../../apps/web/src/content/horoscopeEditions.mjs'
 import {horoscopeEventsInWindow,horoscopeEventPlanet,horoscopeHouse} from './horoscopeDevelopments.mjs';
 import {horoscopePhasePattern,normalizeHoroscopePhase,horoscopeLunationPhase as lunationPhase} from './horoscopeLunationClaims.mjs';
 
-export const horoscopeValidationVersion='horoscope-facts/v4';
+export const horoscopeValidationVersion='horoscope-facts/v5';
 const bodies='Sun|Moon|Mercury|Venus|Mars|Jupiter|Saturn|Uranus|Neptune|Pluto';
 const signs=HOROSCOPE_SIGNS.join('|');
 const ordinals=['first','second','third','fourth','fifth','sixth','seventh','eighth','ninth','tenth','eleventh','twelfth'];
@@ -20,9 +21,9 @@ export function validateHoroscopeReading(passage,brief,{ownerCorrections=[]}={})
   const fail=detail=>violations.push({category:'horoscope_fact_boundary',detail,governanceTier:'blocking'});
   if(!/\b(?:you|your)\b/iu.test(passage.body))fail('Address the reader in the second person.');
   if(/\b(?:born with|your natal|since childhood|you always|you have always)\b/iu.test(text))fail('A temporary forecast cannot establish natal biography.');
-  if(/\b(?:square[sd]?|trine[sd]?|sextile[sd]?|opposes?|opposition|conjunct(?:ion)?)\b/iu.test(text))fail('Exact aspects are not included in this horoscope brief.');
+  horoscopeAspectFindings(text,brief).forEach(fail);
   if(/\b\d{1,2}:\d{2}\b|\b\d{4}-\d{2}-\d{2}\b/iu.test(text))fail('Keep exact clock times and ISO dates in the calculated timing display.');
-  if(brief.window.period==='seasonal')seasonalDateFindings(text,brief).forEach(fail);
+  if(['seasonal','monthly'].includes(brief.window.period))seasonalDateFindings(text,brief).forEach(fail);
   else if(/\b(?:January|February|March|April|May|June|July|August|September|October|November|December)\s+\d/iu.test(text))fail('Keep exact dates in the calculated timing display.');
   // A named quarter is an event-time Moon, just like a Full or New Moon.
   // Validate leading-sign phrasing as well as "Moon in Sign" even without a house.
@@ -45,6 +46,7 @@ export function validateHoroscopeReading(passage,brief,{ownerCorrections=[]}={})
    for(const sentence of paragraph.split(/(?<=[.!?])\s+|\n/u)) {
     const subjects=[...sentence.matchAll(new RegExp(`\\b(?:(?:${signs})\\s+)?(?:(${horoscopePhasePattern})\\s+)?(${bodies})\\b`,'giu'))];
     for(const match of sentence.matchAll(/\b(\d{1,2}(?:st|nd|rd|th)|first|second|third|fourth|fifth|sixth|seventh|eighth|ninth|tenth|eleventh|twelfth)\s+(?:whole[ -]sign\s+)?house\b/giu)) {
+      if(passage.sign==='overview'){fail('A shared overview cannot assign a personal house to every reader.');continue;}
       const n=parseInt(match[1])||ordinals.indexOf(match[1].toLowerCase())+1;
       const subject=subjects.filter(s=>s.index<match.index).at(-1)??subjects[0];
       // Repeating a house already verified in this paragraph adds no new placement.

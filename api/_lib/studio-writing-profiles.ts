@@ -17,7 +17,7 @@ function decode(row: any): SavedHoroscopeProfile {
 }
 
 export async function listStudioWritingProfiles(storage: Storage) {
-  const response = await storage(new URLSearchParams({ content_key: `like.${HOROSCOPE_PROFILE_PREFIX}*`, mode: "eq.article", target_date: "is.null", select: "*", limit: "4" }));
+  const response = await storage(new URLSearchParams({ content_key: `like.${HOROSCOPE_PROFILE_PREFIX}*`, mode: "eq.article", target_date: "is.null", select: "*", limit: "5" }));
   if (!response.ok) throw new AdminHttpError(502, "Writing profiles could not be loaded. Try again.");
   const rows = adminStorageRows(response.payload).map(decode);
   if (new Set(rows.map(row => row.profile.period)).size !== rows.length) throw new AdminHttpError(502, "Conflicting writing profiles need review.");

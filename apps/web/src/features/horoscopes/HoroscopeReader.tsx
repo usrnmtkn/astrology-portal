@@ -11,9 +11,9 @@ import type {LocationInput} from '../../types';
 import {browserTimeZone,timeZoneForLocation} from '../../services/timezones';
 import {zodiacAssetHref,zodiacSignIconFiles} from '../../components/charts/chartAssets';
 
-const labels={daily:'Today',weekly:'This week',seasonal:'This season'};
-const availableLabels={daily:'Read today’s horoscope',weekly:'Read this week’s horoscope',seasonal:'Read this season’s horoscope'};
-const periodNames={daily:'Daily',weekly:'Weekly',seasonal:'Seasonal'};
+const labels={daily:'Today',weekly:'This week',monthly:'This month',seasonal:'This season'};
+const availableLabels={daily:'Read today’s horoscope',weekly:'Read this week’s horoscope',monthly:'Read this month’s overview',seasonal:'Read this season’s horoscope'};
+const periodNames={daily:'Daily',weekly:'Weekly',monthly:'Monthly',seasonal:'Seasonal'};
 type AvailableEdition={id:string;edition:HoroscopeEdition};
 type LocationPreference=LocationInput|'device'|null;
 const validSign=(value?:string)=>HOROSCOPE_SIGNS.includes(value?.toLowerCase()??'')?value!.toLowerCase():null;
@@ -21,7 +21,7 @@ function route(defaultSign:string) {
   const params=new URLSearchParams(window.location.hash.split('?')[1]??'');
   const period=params.get('period') as HoroscopePeriod, sign=params.get('sign')??defaultSign.toLowerCase();
   const id=params.get('edition')??'';
-  return {period:HOROSCOPE_PERIODS.includes(period)?period:'daily' as HoroscopePeriod,sign:HOROSCOPE_SIGNS.includes(sign)?sign:'aries',editionId:/^[a-f0-9]{8}-(?:[a-f0-9]{4}-){3}[a-f0-9]{12}$/iu.test(id)?id:null};
+  return {period:HOROSCOPE_PERIODS.includes(period)?period:'daily' as HoroscopePeriod,sign:HOROSCOPE_SIGNS.includes(sign)?sign:defaultSign,editionId:/^[a-f0-9]{8}-(?:[a-f0-9]{4}-){3}[a-f0-9]{12}$/iu.test(id)?id:null};
 }
 const locationKey='tldrastro:horoscopeLocation';
 function savedLocation():LocationPreference {
@@ -87,16 +87,17 @@ export default function HoroscopeReader({defaultSign,sunSign,location}:{defaultS
   function select(next:typeof selection) {setSelection(next);window.location.hash=`horoscopes?period=${next.period}&sign=${next.sign}${next.editionId?'&edition='+next.editionId:''}`;}
   const exactEdition=Boolean(selection.editionId&&loadedEditionId===selection.editionId);
   const currentEdition=edition?.window.period===selection.period && (exactEdition || (!selection.editionId&&!loadedEditionId&&canonicalHoroscopeTimeZone(edition.window.timeZone)===timeZone&&Date.parse(edition.window.startsAt)<=Date.now()&&Date.now()<Date.parse(edition.window.endsAt))) ? edition : null;
-  const passage=currentEdition?.passages.find(p=>p.sign===selection.sign);
+  const overview=currentEdition?.passages.find(p=>p.sign==='overview');
+  const passage=selection.period==='monthly'?overview:currentEdition?.passages.find(p=>p.sign===selection.sign);
   return <div className="learn-page horoscope-page">
     <section className="learn-hero-card horoscope-header">
       <h1 className="learn-hero__title">Horoscopes</h1>
-      <p>Start with your rising sign. You can also read your Sun sign.</p>
+      <p>{selection.period==='monthly'?'A shared overview of the month’s astrology, for everyone.':'Start with your rising sign. You can also read your Sun sign.'}</p>
       <HoroscopeLocation value={{...selectedLocation,timeZone}} onChange={changeLocation} onReset={resetLocation} description="Your local date follows this time zone. Each published reading shows the time zone used for its dates and timing."/>
       <div className="horoscope-controls">
         <div className="learn-jump" role="group" aria-label="Horoscope period">{HOROSCOPE_PERIODS.map(period=><button type="button" className="learn-jump__link" aria-pressed={selection.period===period} onClick={()=>select({...selection,period,editionId:null})} key={period}>{labels[period]}</button>)}</div>
       </div>
-      <div className="horoscope-controls">
+      {selection.period!=='monthly'&&<><div className="horoscope-controls">
         {(rising||sun)&&<div className="learn-jump" role="group" aria-label="Your signs">
           {rising&&<button type="button" className="learn-jump__link" aria-pressed={selection.sign===rising} onClick={()=>select({...selection,sign:rising})}>Your rising sign · {horoscopeSignLabel(rising)}</button>}
           {sun&&<button type="button" className="learn-jump__link" aria-pressed={selection.sign===sun} onClick={()=>select({...selection,sign:sun})}>Your Sun sign · {horoscopeSignLabel(sun)}</button>}
@@ -107,27 +108,27 @@ export default function HoroscopeReader({defaultSign,sunSign,location}:{defaultS
         return <button type="button" className="learn-jump__link horoscope-sign-link" key={sign} aria-label={`${name} & ${name} Rising`} aria-pressed={selection.sign===sign} onClick={()=>select({...selection,sign})}>
           <img src={zodiacAssetHref(zodiacSignIconFiles[name])!} alt="" aria-hidden="true"/><span>{name}</span>
         </button>;
-      })}</div>
+      })}</div></>}
     </section>
-    {loading&&!currentEdition?<PageLoading message="Loading your horoscope…"/>:error?<section className="learn-sheet horoscope-reading"><p role="alert">{error}</p><button type="button" onClick={refresh}>Try again</button></section>:currentEdition&&passage?<article className="learn-sheet horoscope-reading" aria-label={`${horoscopeSignLabel(selection.sign)} horoscope`}>
-      <p className="learn-kicker">{selection.sign===rising&&selection.sign===sun?'Your Sun & rising sign':selection.sign===rising?'Your rising sign':selection.sign===sun?'Your Sun sign':horoscopeSignLabel(selection.sign)} · {selection.editionId?'Published edition':labels[selection.period]}</p>
+    {loading&&!currentEdition?<PageLoading message="Loading your horoscope…"/>:error?<section className="learn-sheet horoscope-reading"><p role="alert">{error}</p><button type="button" onClick={refresh}>Try again</button></section>:currentEdition&&passage?<>{selection.period==='seasonal'&&overview&&<article className="learn-sheet horoscope-reading" aria-label="Season introduction"><p className="learn-kicker">For everyone · This season</p><h2>{overview.headline}</h2><p className="horoscope-date">{horoscopeWindowLabel(currentEdition.window)} · {currentEdition.window.timeZone}</p><div className="horoscope-prose"><FormattedProse text={overview.body}/></div></article>}<article className="learn-sheet horoscope-reading" aria-label={selection.period==='monthly'?'Monthly overview':`${horoscopeSignLabel(selection.sign)} horoscope`}>
+      <p className="learn-kicker">{selection.period==='monthly'?'For everyone':selection.sign===rising&&selection.sign===sun?'Your Sun & rising sign':selection.sign===rising?'Your rising sign':selection.sign===sun?'Your Sun sign':horoscopeSignLabel(selection.sign)} · {selection.editionId?'Published edition':labels[selection.period]}</p>
       <h2>{passage.headline}</h2>
       <p className="horoscope-date">{horoscopeWindowLabel(currentEdition.window)} · {currentEdition.window.timeZone}</p>
       {canonicalHoroscopeTimeZone(currentEdition.window.timeZone)!==timeZone&&<p className="horoscope-timing-note">Dates and timing in this reading use {currentEdition.window.timeZone.replaceAll('_',' ')}. Some events may fall on a different day in {timeZone.replaceAll('_',' ')}.</p>}
       <div className="horoscope-prose"><FormattedProse text={passage.body}/></div>
-    </article>:<section className="learn-sheet horoscope-reading horoscope-empty">
+    </article></>:<section className="learn-sheet horoscope-reading horoscope-empty">
       <h2>{selection.editionId?'Find another reading':`No ${selection.period} reading yet`}</h2>
       <p role="status">{selection.editionId?'This published edition is no longer available.':`The ${selection.period} horoscopes haven’t been published for ${timeZone.replaceAll('_',' ')} yet.`}</p>
       {discovering&&<p>Finding available readings…</p>}
       {availableEditions.length>0&&<>
-        <p>You can explore these published readings for your sign. Each keeps its own dates and time zone.</p>
+        <p>You can explore these published readings. Each keeps its own dates and time zone.</p>
         <div className="horoscope-available" role="group" aria-label="Available horoscopes">{availableEditions.map(({id,edition:available})=>{
           const local=canonicalHoroscopeTimeZone(available.window.timeZone)===timeZone;
           return <button type="button" className="learn-jump__link horoscope-edition-link" key={id} aria-label={local?availableLabels[available.window.period]:`Read ${available.window.period} horoscope · ${available.window.timeZone.replaceAll('_',' ')}`} onClick={()=>select({...selection,period:available.window.period,editionId:id})}>
             <span>{periodNames[available.window.period]} horoscope</span>
             <span>{horoscopeWindowLabel(available.window)}</span>
             <span>{available.window.timeZone.replaceAll('_',' ')}{local?' · Your time zone':''}</span>
-            <span>Read {horoscopeSignLabel(selection.sign)} →</span>
+            <span>{available.window.period==='monthly'?'Read overview':`Read ${horoscopeSignLabel(selection.sign)}`} →</span>
           </button>;
         })}</div>
       </>}

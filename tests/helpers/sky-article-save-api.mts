@@ -88,7 +88,7 @@ export function installHoroscopeWriterFixture(){
      if(writerFixture.failNext){writerFixture.failNext=false;return Response.json({error:{code:'insufficient_quota',message:'Fixture quota'}},{status:429});}
      const request=JSON.parse(options.body);
      if(!request.background||!request.instructions||!request.text?.format?.schema)throw new Error('Missing real governed provider request');
-     const sign=request.input.match(/"risingSign":"([a-z]+)"/)?.[1];
+     const sign=request.input.includes('AUDIENCE AND SCOPE\nOne shared reading')?'overview':request.input.match(/"risingSign":"([a-z]+)"/)?.[1];
      if(!sign)throw new Error('No calculated rising sign supplied');
      const id=`resp_fixture_${writerFixture.calls}`;
      writerFixture.requests.set(id,{...request,sign});

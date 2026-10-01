@@ -2083,21 +2083,30 @@ function aspectDistanceAt(
   return separation - targetDegrees;
 }
 
+// At conjunction/opposition, unsigned separation touches zero rather than crossing it.
+// The overview range adapter opts into the signed crossing, rejecting the wrap discontinuity.
+function aspectCrossingDistanceAt(swe: SwissEphInstance, first: number, second: number, date: Date, degrees: number) {
+  if (degrees !== 0 && degrees !== 180) return aspectDistanceAt(swe, first, second, date, degrees);
+  return ((planetLongitudeAt(swe, first, date) - planetLongitudeAt(swe, second, date) - degrees + 540) % 360) - 180;
+}
+
 function refineAspectEvent(
   swe: SwissEphInstance,
   firstPlanetId: number,
   secondPlanetId: number,
   targetDegrees: number,
   lowerDate: Date,
-  upperDate: Date
+  upperDate: Date,
+  signedCrossings = false
 ) {
+  const distanceAt = signedCrossings ? aspectCrossingDistanceAt : aspectDistanceAt;
   let lower = lowerDate;
   let upper = upperDate;
-  let lowerDistance = aspectDistanceAt(swe, firstPlanetId, secondPlanetId, lower, targetDegrees);
+  let lowerDistance = distanceAt(swe, firstPlanetId, secondPlanetId, lower, targetDegrees);
 
   for (let index = 0; index < 54; index += 1) {
     const midpoint = new Date((lower.getTime() + upper.getTime()) / 2);
-    const midpointDistance = aspectDistanceAt(swe, firstPlanetId, secondPlanetId, midpoint, targetDegrees);
+    const midpointDistance = distanceAt(swe, firstPlanetId, secondPlanetId, midpoint, targetDegrees);
 
     if (lowerDistance === 0 || lowerDistance * midpointDistance <= 0) {
       upper = midpoint;
@@ -2664,8 +2673,10 @@ function findSkyAspects(
   swe: SwissEphInstance,
   start: Date,
   end: Date,
-  timeZone: string
+  timeZone: string,
+  signedCrossings = false
 ): LunarCalendarEvent[] {
+  const distanceAt = signedCrossings ? aspectCrossingDistanceAt : aspectDistanceAt;
   const planetIds = [
     swe.SE_SUN,
     swe.SE_MOON,
@@ -2691,14 +2702,14 @@ function findSkyAspects(
 
       calendarAspectDefinitions.forEach(([aspect, degrees]) => {
         let previousDate = start;
-        let previousDistance = aspectDistanceAt(swe, firstPlanetId, secondPlanetId, previousDate, degrees);
+        let previousDistance = distanceAt(swe, firstPlanetId, secondPlanetId, previousDate, degrees);
 
         for (let time = start.getTime() + stepMs; time <= end.getTime(); time += stepMs) {
           const currentDate = new Date(time);
-          const currentDistance = aspectDistanceAt(swe, firstPlanetId, secondPlanetId, currentDate, degrees);
+          const currentDistance = distanceAt(swe, firstPlanetId, secondPlanetId, currentDate, degrees);
 
-          if (previousDistance === 0 || previousDistance * currentDistance < 0) {
-            const occursAt = refineAspectEvent(swe, firstPlanetId, secondPlanetId, degrees, previousDate, currentDate);
+          if (previousDistance === 0 || previousDistance * currentDistance < 0 && (!signedCrossings || Math.abs(currentDistance - previousDistance) < 180)) {
+            const occursAt = refineAspectEvent(swe, firstPlanetId, secondPlanetId, degrees, previousDate, currentDate, signedCrossings);
             const dateKey = localDateKey(occursAt, timeZone);
             const title = `${firstPlanet} ${aspect} ${secondPlanet}`;
 
@@ -3109,14 +3120,18 @@ export function getLunarCalendarRangeEvents(
 export async function getHoroscopeCalendarRangeEvents(
   location: LocationInput,
   start: Date,
-  end: Date
+  end: Date,
+  options: {includeAspects?: boolean} = {}
 ): Promise<LunarCalendarEvent[]> {
   const [lunar, swe] = await Promise.all([getLunarCalendarRangeEvents(location, start, end), getSwissEph()]);
   const timeZone = location.timeZone || Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC";
   const searchStart = new Date(start.getTime() - 2 * 86_400_000);
   const searchEnd = new Date(end.getTime() + 2 * 86_400_000);
   return [...lunar, ...findIngresses(swe, searchStart, searchEnd, timeZone),
-    ...findMoonIngresses(swe, searchStart, searchEnd, timeZone)]
+    ...findMoonIngresses(swe, searchStart, searchEnd, timeZone),
+    ...(options.includeAspects ? findSkyAspects(swe, searchStart, searchEnd, timeZone, true)
+      .filter(event => event.planets?.every(planet => ["Sun","Mercury","Venus","Mars","Jupiter","Saturn","Uranus","Neptune","Pluto"].includes(planet))
+        && ["conjunction", "sextile", "square", "trine", "opposition"].includes(event.aspect ?? "")) : [])]
     .sort((first, second) => first.startsAt.localeCompare(second.startsAt));
 }
 

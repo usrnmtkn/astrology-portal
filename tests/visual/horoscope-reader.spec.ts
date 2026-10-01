@@ -185,9 +185,9 @@ for(const [width,theme] of [[390,'light'],[390,'dark'],[1440,'light'],[1440,'dar
    expect((await call({method:'reader',body:{horoscope:{period:'weekly',at:'2026-09-24T16:00:00.000Z'}}})).payload.rows).toEqual([]);
    await page.evaluate(()=>window.scrollTo(0,0));
    await page.screenshot({path:`test-results/horoscope-editor-${width}-${theme}.png`,fullPage:true});
-   await studio.getByLabel('I have reviewed and approve the exact wording of all twelve saved readings.').check();
+   await studio.getByLabel('I have reviewed and approve the exact wording of every saved reading in this edition.').check();
    await studio.getByRole('button',{name:'Publish edition',exact:true}).click();
-   await expect(studio.getByRole('status')).toContainText('Published all twelve readings.');
+   await expect(studio.getByRole('status')).toContainText('Published the complete edition.');
    const publicEdition=await call({method:'reader',body:{ids:[draft.id]}});
    expect(publicEdition.status).toBe(200);expect(publicEdition.payload.rows).toHaveLength(1);
    expect(JSON.stringify(publicEdition.payload)).not.toContain('Fixture unsaved revision');
