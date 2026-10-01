@@ -49,7 +49,7 @@ for(const [width,theme] of [[390,'light'],[390,'dark'],[1440,'light'],[1440,'dar
    const choice=page.getByRole('button',{name:'Read weekly horoscope · America/New York',exact:true});
    await expect(choice).toContainText('September 21, 2026 – September 27, 2026');
    await expect(page.getByRole('article')).toHaveCount(0);
-   await expect(page.getByRole('button',{name:'This season',exact:true})).toHaveAttribute('aria-pressed','true');
+   await expect(page.getByRole('button',{name:'Seasons',exact:true})).toHaveAttribute('aria-pressed','true');
    const headingStyle=await page.locator('.horoscope-empty h2').evaluate(el=>{const s=getComputedStyle(el);return[s.fontFamily,s.fontSize,s.fontWeight,s.lineHeight,s.letterSpacing,s.margin,s.textTransform,s.textAlign];});
    await page.locator('.horoscope-location summary').click();
    await page.screenshot({path:`test-results/horoscope-discovery-${width}-${theme}.png`,fullPage:true,animations:'disabled'});
@@ -72,7 +72,7 @@ for(const [width,theme] of [[390,'light'],[390,'dark'],[1440,'light'],[1440,'dar
    mode='failed';await page.getByRole('button',{name:'Today',exact:true}).click();
    await page.getByRole('button',{name:'Try available readings again',exact:true}).waitFor();
    mode='normal';await page.getByRole('button',{name:'Try available readings again',exact:true}).click();await expect(choice).toBeVisible();
-   mode='conflict';await page.getByRole('button',{name:'This season',exact:true}).click();
+   mode='conflict';await page.getByRole('button',{name:'Seasons',exact:true}).click();
    await expect(page.getByText('Finding available readings…',{exact:true})).toHaveCount(0);
    await expect(page.getByRole('group',{name:'Available horoscopes',exact:true})).toHaveCount(0);
    mode='empty';await page.getByRole('button',{name:'Today',exact:true}).click();
