@@ -74,12 +74,12 @@ for(const [width,theme] of [[390,'light'],[390,'dark'],[1440,'light'],[1440,'dar
    const overview=page.getByRole('article',{name:'Monthly overview',exact:true});
    await expect(overview).toContainText('You can read the exact monthly fixture opening.');await expect(overview).toContainText('Your complete monthly fixture ends here.');
    await expect(page.getByRole('group',{name:'Zodiac signs',exact:true})).toHaveCount(0);
-   await expect(page.getByRole('button',{name:'This month',exact:true})).toHaveAttribute('aria-pressed','true');
+   await expect(page.getByRole('button',{name:'October Horoscopes',exact:true})).toHaveAttribute('aria-pressed','true');
    await expect(page.getByRole('heading')).toHaveText(['Horoscopes','October 2026 Overview']);
    const headingStyle=await overview.locator('h2').evaluate(el=>{const s=getComputedStyle(el);return[s.fontFamily,s.fontSize,s.fontWeight,s.lineHeight,s.letterSpacing,s.margin,s.textTransform,s.textAlign];});
    await page.reload();await expect(overview).toContainText('Your complete monthly fixture ends here.');
    await page.screenshot({path:`test-results/monthly-overview-${width}-${theme}.png`,fullPage:true});
-   await expect(page.getByRole('group',{name:'Horoscope period',exact:true}).getByRole('button')).toHaveText(['Today','This week','This month','Libra Season']);
+   await expect(page.getByRole('group',{name:'Horoscope period',exact:true}).getByRole('button')).toHaveText(['Today','This week','October Horoscopes','Libra Season']);
    await page.getByRole('button',{name:'Libra Season',exact:true}).click();
    await expect(page.getByRole('article',{name:'Season introduction'})).toContainText('Your fixture reading ends here.');
    await page.getByRole('button',{name:'Gemini & Gemini Rising',exact:true}).click();
@@ -89,7 +89,7 @@ for(const [width,theme] of [[390,'light'],[390,'dark'],[1440,'light'],[1440,'dar
    await expect(page.getByRole('heading')).toHaveText(['Horoscopes','overview fixture','gemini fixture']);
    expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
    await page.screenshot({path:`test-results/season-introduction-${width}-${theme}.png`,fullPage:true});
-   readerMode='error';await page.getByRole('button',{name:'This month',exact:true}).click();await expect(page.getByRole('alert')).toContainText('could not load');
+   readerMode='error';await page.getByRole('button',{name:'October Horoscopes',exact:true}).click();await expect(page.getByRole('alert')).toContainText('could not load');
    readerMode='normal';await page.getByRole('button',{name:'Try again',exact:true}).click();await expect(overview).toContainText('Your complete monthly fixture ends here.');
    await page.getByRole('button',{name:'Today',exact:true}).click();await expect(page.getByRole('heading',{name:'No daily reading yet'})).toBeVisible();
    await expect(page.getByRole('button',{name:'Read Libra Season horoscope',exact:true})).toBeVisible();
@@ -109,6 +109,19 @@ for(const [width,theme] of [[390,'light'],[390,'dark'],[1440,'light'],[1440,'dar
    readerMode='normal';await calendarOverview.getByRole('button',{name:'Try again',exact:true}).click();
    await expect(calendarOverview).toContainText('Your complete monthly fixture ends here.');
    expect((await call({method:'writer-state'})).calls).toBe(1);
+   // Current navigation follows the reader's civil month, while a saved edition
+   // keeps its own month after the calendar rolls forward.
+   await page.clock.setFixedTime(new Date('2026-11-01T03:30:00Z'));
+   await page.goto('/#horoscopes?period=monthly');
+   await expect(page.getByRole('button',{name:'October Horoscopes',exact:true})).toHaveAttribute('aria-pressed','true');
+   await page.clock.setFixedTime(new Date('2026-11-01T05:00:00Z'));
+   await page.reload();
+   await expect(page.getByRole('button',{name:'November Horoscopes',exact:true})).toHaveAttribute('aria-pressed','true');
+   await expect(page.getByRole('heading',{name:'No monthly reading yet'})).toBeVisible();
+   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+   await page.goto(href!);
+   await expect(overview).toContainText('Your complete monthly fixture ends here.');
+   await expect(page.getByRole('button',{name:'October Horoscopes',exact:true})).toHaveAttribute('aria-pressed','true');
   }finally{child.kill();}
  });
 }
