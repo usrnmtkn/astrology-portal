@@ -37,7 +37,7 @@ Open **Write → Horoscopes** (`/admin/content#horoscopes`).
    are optional; saved instructions are selected automatically. To change them,
    expand **Writing instructions**, save the profile, and select **Use latest saved
    instructions**. Review the refreshed plan before generating. The approval box
-   and **Generate 12 drafts** action stay together in the footer, with a clear
+   and generation action stay together in the footer, with a clear
    explanation of missing approval and the number of paid calls. Each completed
    sign saves automatically. **Resume generation** retrieves an interrupted request.
 3. **Review:** read one complete headline/body at a time. **Save & next** saves
@@ -51,7 +51,7 @@ Open **Write → Horoscopes** (`/admin/content#horoscopes`).
    rejected writing in **Rejected drafts**. Both return to Generate with the
    latest saved writing instructions. Review the new plan and approve generation
    to create replacements. Rejecting alone makes no paid request.
-4. **Publish:** review all twelve saved readings, approve their exact wording and
+4. **Publish:** review every saved reading in the edition, approve its exact wording and
    select **Publish edition**. The success screen links directly to the published
    edition and offers **Create another edition**. Publication remains a separate
    explicit action, and exact edition links also work after the period ends.
@@ -64,7 +64,9 @@ against the saved draft without creating another edition or making a model call.
 
 **Advanced** retains export, import and calculated facts. Import accepts
 `{schema: "horoscope-draft/v1", edition, editorialNotes?}`; `schema` may be omitted.
-The edition must contain twelve signs and match the calculated window. Unknown
+The edition must contain its expected units (one monthly overview, twelve daily/weekly
+signs, or a new seasonal introduction plus twelve signs) and match the calculated
+window. Legacy twelve-sign seasons remain supported. Unknown
 mixed-document fields fail for review. Only headline/body are reader fields; the
 complete import and SHA-256 stay in private `source_snapshot.editorialImport`.
 Exported briefs contain instructions and outlines, not publication approval.
@@ -111,7 +113,7 @@ Storage and provider calls in these tests are isolated fixtures, not paid sample
 The existing `generated_interpretations` table stores one `mode=article`,
 `surface=sky` row under `horoscope/{period}/{UTC-start-digits}/{IANA-time-zone}`. Legacy keys without the zone remain readable and editable. No migration is
 required. `sections.horoscopeEdition` uses `horoscope-edition/v1`: a calculated
-window and exactly twelve `{sign, headline, body}` passages. The row body preserves
+window and the expected `{sign, headline, body}` passages for its period. The row body preserves
 the same full reader text for the generic copy-boundary scanner. Publication rejects
 incomplete passages, placeholders, invalid boundaries or conflicting identity/body.
 
@@ -173,7 +175,7 @@ exclusion. It is included in the unfiltered Content Studio API suite.
 
 `npx playwright test -c playwright.horoscope-reader.config.ts` builds a fresh web
 preview. Its actual-handler fixture covers twelve-sign edit/save/publish/read,
-all three periods, mobile/desktop, light/dark, private outline exclusion, mixed
+the original three periods, mobile/desktop, light/dark, private outline exclusion, mixed
 import refusal, unsaved navigation, URL reload/back, empty states, error recovery,
 main navigation and the typography contract. No production content is modified.
 
