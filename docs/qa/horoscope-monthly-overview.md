@@ -45,6 +45,9 @@ reading, saving once before publication, reload, exact reader opening and ending
 season navigation, loading/error retry and empty daily discovery. Calendar checks
 use the same body, survive reload and retry a failed read. Auth fixtures use the
 same isolated Supabase placeholders in the browser and fresh build.
+The seasonal idle-recovery regression waits for the reopened request to render
+before advancing its simulated clock; six repeated desktop/mobile cases pass
+without starting duplicate provider requests.
 
 ## Size comparison
 

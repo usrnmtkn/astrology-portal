@@ -250,6 +250,11 @@ for(const [width,theme] of [[390,'dark'],[1440,'light']] as const){
    const plan=await f.action('prepare');expect((await f.action('generate',{sign:'gemini',approvedPlanHash:plan.payload.plan.planHash})).status).toBe(202);
    await studio.getByRole('button',{name:'Back to editions',exact:true}).click();
    await studio.getByText(/^Continue a saved edition/).click();await studio.getByRole('button',{name:/^Synthetic recovery edition/}).click();
+   // Opening retrieves the saved row asynchronously. Start the idle interval
+   // only after that row is adopted; otherwise the clock can jump before the
+   // recovery effect registers its timer on a slower CI browser.
+   await expect(studio.getByText(/^A request for Gemini is saved\./)).toBeVisible();
+   await expect(studio.getByRole('button',{name:'Check saved progress',exact:true})).toBeEnabled();
    await page.clock.fastForward(31000);
    await expect(studio.getByText('3/12 readings ready',{exact:false})).toBeVisible();
    expect((await f.call({method:'writer-state'})).calls).toBe(2);
