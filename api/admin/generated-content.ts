@@ -1226,8 +1226,8 @@ function validateWriteBody(body: Record<string, unknown>) {
   if (body.status === "LIVE" && body.reviewState) throw new GeneratedContentRequestError("Published content cannot retain a review hold.", 409);
 }
 
-function normalizeArticleHoroscopes<T extends Record<string, any>>(row: T): T {
-  assertHoroscopeRow(row);
+function normalizeArticleHoroscopes<T extends Record<string, any>>(row: T, previous:Record<string,any>|null=null): T {
+  assertHoroscopeRow(row,{enforcePunctuation:true,previous});
   try { return libs().separateArticleHoroscopeRow(row); }
   catch (error) { throw new GeneratedContentRequestError((error as Error).message, 422); }
 }
@@ -2965,11 +2965,22 @@ async function updateGeneratedContent(req: IncomingMessage) {
     patch.reviewed_at = null;
   }
   const effectiveArticle = { ...existing, ...patch };
-  const separatedArticle = normalizeArticleHoroscopes(effectiveArticle);
+  const separatedArticle = normalizeArticleHoroscopes(effectiveArticle,existing);
   if (separatedArticle !== effectiveArticle) {
     patch.body = separatedArticle.body;
     patch.sections = separatedArticle.sections;
     patch.source_snapshot = separatedArticle.source_snapshot;
+  }
+  const generation = existing.source_snapshot?.horoscopeGeneration;
+  if (editsHoroscopeEdition && generation?.lastError?.code === 'required_punctuation') {
+    const sign = generation.lastError.operation?.sign;
+    const corrected = separatedArticle.sections?.horoscopeEdition?.passages?.find((p:any) => p.sign === sign);
+    const previous = existing.sections?.horoscopeEdition?.passages?.find((p:any) => p.sign === sign);
+    // The validated text resolves this hold. Generation history remains server-owned.
+    if (corrected?.headline.trim() && corrected?.body.trim()
+      && (corrected.headline !== previous?.headline || corrected.body !== previous?.body)) {
+      patch.source_snapshot = { ...separatedArticle.source_snapshot, horoscopeGeneration: { ...generation, lastError: null } };
+    }
   }
   const editsImportedHoroscopes = /^sky\/article-(?:template|edition)\//u.test(existing.content_key)
     && body.sections !== undefined && JSON.stringify(body.sections) !== JSON.stringify(existing.sections);

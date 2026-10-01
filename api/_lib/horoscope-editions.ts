@@ -4,6 +4,7 @@ import {zonedDateTimeToUtc} from '../../apps/web/src/services/timezones.js';
 import {HOROSCOPE_PERIODS, HOROSCOPE_SIGNS, HOROSCOPE_EDITION_PREFIX, validateHoroscopeEdition, validateHoroscopeWindow, isHoroscopeEditionKey, horoscopeEditionBody, horoscopeCanonicalJson, canonicalHoroscopeTimeZone} from '../../apps/web/src/content/horoscopeEditions.mjs';
 
 import {validateHoroscopeReading,horoscopeValidationVersion} from '../../src/astro-writing/horoscopeValidation.mjs';
+import {horoscopePunctuationFindings} from '../../src/astro-writing/horoscopeEditorialConstraints.mjs';
 
 function signature(brief: unknown) {
   const secret = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -27,7 +28,7 @@ export async function prepareHoroscopeBrief(url: URL) {
   const civil = horoscopeCivilWindow(period,date,timeZone);
   const referenceDate = ['weekly','monthly'].includes(period) ? civil.start : date;
   const reference = zonedDateTimeToUtc(referenceDate,'12:00 PM',timeZone);
-  const {getAstrodienstSky,getSkyPlacementTransitFacts,getHoroscopeCalendarRangeEvents} = await import('../../apps/web/src/services/ephemeris.js');
+  const {getAstrodienstSky,getSkyPlacementTransitFacts,getHoroscopeCalendarRangeEvents,getHoroscopeRelationalContext} = await import('../../apps/web/src/services/ephemeris.js');
   // Shared sign forecasts use geocentric positions; these coordinates are not a natal chart.
   const location = {label:'Geocentric horoscope calculation',latitude:0,longitude:0,timeZone};
   const sky = await getAstrodienstSky(location,reference,{includeTransitWindows:false});
@@ -40,20 +41,28 @@ export async function prepareHoroscopeBrief(url: URL) {
     startsAt = new Date(transit.transitStart).toISOString(); endsAt = new Date(transit.transitEnd).toISOString();
   }
   const window = validateHoroscopeWindow({period,audience:period==='monthly'?'collective':'rising',timeZone,startsAt,endsAt,...(period === 'seasonal' ? {seasonSign:sun.sign.toLowerCase()} : {})});
-  const events = (await getHoroscopeCalendarRangeEvents(location,new Date(startsAt),new Date(endsAt),{includeAspects:['monthly','seasonal'].includes(period)}))
-    .filter(event => event.startsAt >= startsAt && event.startsAt < endsAt)
+  const calculatedEvents = (await getHoroscopeCalendarRangeEvents(location,new Date(startsAt),new Date(endsAt),{includeAspects:['monthly','seasonal'].includes(period)}))
+    .filter(event => event.startsAt >= startsAt && event.startsAt < endsAt);
+  const relationalContext = period==='seasonal' ? await getHoroscopeRelationalContext(new Date(startsAt),sun.sign,calculatedEvents) : undefined;
+  const events = calculatedEvents
     .map(event => ({id:event.id,type:event.type,planet:event.planet ?? null,sign:event.sign ?? event.toSign ?? null,startsAt:event.startsAt,
       title:event.title,...(event.type==='aspect'?{planets:event.planets,aspect:event.aspect,toSign:event.toSign,fromMotion:event.fromMotion,toMotion:event.toMotion}:{}),fromSign:event.fromSign ?? null,direction:event.direction ?? null}));
   const positions = sky.positions.map(position => ({planet:position.planet,sign:position.sign,degree:position.degree,motion:position.motion}));
   const brief = {schema:'horoscope-brief/v1',window,referenceDate,calculatedAt:sky.generatedAt,provenance:sky.calculationProvenance,
-    coverage:`Positions at the reference instant; calculated lunations, stations and planetary ingresses within the period. ${['monthly','seasonal'].includes(period)?'Exact major aspects between the Sun and planets are included; lunar aspects and multi-planet configurations are not.':'Exact aspects are not included.'} An event time describes the sky event, not a guaranteed personal event.`,positions,events,
+    coverage:`Positions at the reference instant; calculated lunations, stations and planetary ingresses within the period. ${['monthly','seasonal'].includes(period)?'Exact major aspects between the Sun and planets are included.':'Exact aspects are not included.'} ${relationalContext?relationalContext.coverage:'Lunar aspects and multi-planet configurations are not included.'} An event time describes the sky event, not a guaranteed personal event.`,positions,events,...(relationalContext?{relationalContext}:{}),
     signs:HOROSCOPE_SIGNS.map(sign => ({sign,houses:positions.map(position => ({planet:position.planet,house:((HOROSCOPE_SIGNS.indexOf(position.sign.toLowerCase())-HOROSCOPE_SIGNS.indexOf(sign)+12)%12)+1}))}))};
   return {ok:true,brief,signature:signature(brief)};
 }
-export function assertHoroscopeRow(row: Record<string,any>) {
+export function assertHoroscopeRow(row: Record<string,any>, {enforcePunctuation=false,previous=null}:{enforcePunctuation?:boolean;previous?:Record<string,any>|null}={}) {
   if (!String(row.content_key ?? '').startsWith(HOROSCOPE_EDITION_PREFIX)) return;
   try {
     const edition = validateHoroscopeEdition(row.sections?.horoscopeEdition,row.status === 'LIVE');
+    if(enforcePunctuation || row.status==='LIVE')for(const passage of edition.passages) {
+      const old=previous?.sections?.horoscopeEdition?.passages?.find((p:any)=>p.sign===passage.sign);
+      if(row.status!=='LIVE'&&old?.headline===passage.headline&&old?.body===passage.body)continue;
+      const issue=horoscopePunctuationFindings(passage)[0];
+      if(issue)throw new Error(`${passage.sign}: ${issue.detail} Your text has not been replaced.`);
+    }
     const packet = row.facts?.horoscopeBrief;
     const expected = signature(packet?.brief);
     if (typeof packet?.signature !== 'string' || !/^[a-f0-9]{64}$/u.test(packet.signature)

@@ -1,16 +1,16 @@
-import {horoscopeAspectPattern,horoscopeAspectClaim,supportsHoroscopeAspect} from './horoscopeAspectClaims.mjs';
-import {horoscopeEventsInWindow,horoscopeEventPlanet} from './horoscopeDevelopments.mjs';
+import {horoscopeAspectPattern,horoscopeAspectClaim,supportsHoroscopeAspect,supportsHoroscopeConfiguration} from './horoscopeAspectClaims.mjs';
+import {horoscopeEventsInWindow,horoscopeEventPlanet,horoscopeSampledAspects,horoscopeRelationSnapshots} from './horoscopeDevelopments.mjs';
 import {horoscopePhasePattern,normalizeHoroscopePhase,horoscopeLunationPhase} from './horoscopeLunationClaims.mjs';
 
 const months='January|February|March|April|May|June|July|August|September|October|November|December';
 const signs='Aries|Taurus|Gemini|Cancer|Leo|Virgo|Libra|Scorpio|Sagittarius|Capricorn|Aquarius|Pisces';
 const bodies='Sun|Moon|Mercury|Venus|Mars|Jupiter|Saturn|Uranus|Neptune|Pluto';
-const eventPattern=`${horoscopeAspectPattern}|(?:(?:${signs})\\s+)?(?:${horoscopePhasePattern})\\s+Moon(?:\\s+in\\s+(?:${signs}))?|(?:${bodies})\\s+(?:enters?|entering|station(?:s|ing)?\\s+(?:retrograde|direct))(?:\\s+(?:in\\s+)?(?:${signs}))?`;
+const eventPattern=`\\bT[ -]square\\b|${horoscopeAspectPattern}|(?:(?:${signs})\\s+)?(?:${horoscopePhasePattern})\\s+Moon(?:\\s+in\\s+(?:${signs}))?|(?:${bodies})\\s+(?:enters?|entering|station(?:s|ing)?\\s+(?:retrograde|direct))(?:\\s+(?:in\\s+)?(?:${signs}))?`;
 
 /** Keep a date with its event clause before comparing distance within that clause. */
 export function seasonalDateFindings(text,brief) {
   const formatter=new Intl.DateTimeFormat('en-US',{timeZone:brief.window.timeZone,month:'long',day:'numeric',year:'numeric'});
-  const events=horoscopeEventsInWindow(brief).map(event=>{
+  const events=[...horoscopeEventsInWindow(brief),...horoscopeSampledAspects(brief),...horoscopeRelationSnapshots(brief).map(s=>({...s,type:'configuration',startsAt:s.at}))].map(event=>{
     const parts=formatter.formatToParts(new Date(event.startsAt));
     const part=type=>parts.find(p=>p.type===type)?.value;
     return {...event,month:part('month').toLowerCase(),day:Number(part('day')),year:Number(part('year'))};
@@ -33,8 +33,12 @@ export function seasonalDateFindings(text,brief) {
       const end=boundaries.findIndex(bound=>bound>date.index);
       const nearest=mentions.filter(m=>m.index>=boundaries[end-1]&&m.index<boundaries[end]).sort((a,b)=>distance(a)-distance(b))[0];
       if(!nearest)continue;
+      if(/^T[ -]square$/iu.test(nearest[0])){
+        if(!supported.some(e=>supportsHoroscopeConfiguration(e,sentence)))findings.push('The date must match the supplied simultaneous configuration in the edition’s time zone.');
+        continue;
+      }
       const aspect=horoscopeAspectClaim(nearest[0]);
-      if(aspect){if(!supported.some(e=>supportsHoroscopeAspect(e,aspect)))findings.push('The date must match the named calculated aspect in the edition’s time zone.');continue;}
+      if(aspect){if(!supported.some(e=>(!e.sampled||!/\bexact\b/iu.test(sentence))&&supportsHoroscopeAspect(e,aspect)))findings.push('The date must match the named calculated aspect in the edition’s time zone.');continue;}
       const phase=normalizeHoroscopePhase(nearest[0].match(new RegExp(`(${horoscopePhasePattern})\\s+Moon`,'iu'))?.[1]);
       const planet=phase?'moon':nearest[0].match(new RegExp(bodies,'iu'))?.[0]?.toLowerCase();
       const sign=nearest[0].match(new RegExp(signs,'iu'))?.[0]?.toLowerCase();

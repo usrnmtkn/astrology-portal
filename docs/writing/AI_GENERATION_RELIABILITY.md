@@ -354,3 +354,30 @@ the former publication refusal with synthetic copy, verifies exact persistence
 and reader eligibility, and rejects incorrect claims and stale writes. The
 matching fresh-build browser flow publishes and reloads the full saved reading
 using isolated storage and no model calls.
+
+
+## Seasonal relational depth and required punctuation (2026-10-01)
+
+Owner direction in [the horoscope task](thread:01a0ce6e-69e0-7100-bdba-ad413d5c7804)
+requires deeper seasonal interpretation and prohibits em dashes. Writer v9 now
+supplies event-time major aspects, their orb and applying/separating state,
+traditional season and lunation rulers, and simultaneous T-squares. Each
+participant retains its own calculated whole-sign house. Coverage is explicit:
+no invented historical recurrence, earlier cycle pass, unsupplied configuration
+or whole-season duration may be inferred.
+
+The explicit punctuation prohibition is a narrow blocking owner constraint for
+horoscope headlines and bodies, qualifying the general advisory style policy.
+It does not turn other prose preferences into automatic quality verdicts. The
+single writing call is told to recast prohibited punctuation before returning.
+An output that still violates the requirement is held in private correction
+metadata and can be edited without a second paid call. New or changed reader
+fields and publication enforce the rule, including encoded forms and quotes.
+Original sources and existing saved copy are not automatically rewritten.
+
+Depth guidance asks for relationships, mechanisms, consequences and meaningful
+distinctions, not extra keywords, examples or rhetorical intensity. The complete
+owner passages remain the voice evidence. The owner judges new prose; these
+calculations and deterministic checks do not certify literary quality. Saved
+Studio instructions are separate private revisions, not Memory Graph prose.
+See the horoscope writing Studio runbook for adoption and recovery.
