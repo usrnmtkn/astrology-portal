@@ -43,6 +43,15 @@ export async function createApiStore(initial = fixtures, storeOptions = {}) {
       if (!prefix) throw new Error(`Unmodeled prefix ${value}`);
       return row.content_key >= prefix[1] && row.content_key < prefix[2];
     }
+    if (field.startsWith('sections->horoscopeEdition->window->>')) {
+      const actual = row.sections?.horoscopeEdition?.window?.[field.split('->>').at(-1)];
+      if (typeof actual !== 'string') return false;
+      if (value.startsWith('eq.')) return actual === value.slice(3);
+      if (value.startsWith('lte.')) return actual <= value.slice(4);
+      if (value.startsWith('gt.')) return actual > value.slice(3);
+      throw new Error(`Unmodeled horoscope window filter ${field}=${value}`);
+    }
+    if (field === 'content_key' && /^like\.[^*%]+\*$/u.test(value)) return String(row.content_key ?? '').startsWith(value.slice(5, -1));
     if (value === "is.null") return row[field] == null;
     if (value.startsWith("eq.")) return String(row[field] ?? "") === value.slice(3);
     if (value.startsWith("in.(")) return value.slice(4, -1).split(",").map(v => v.replaceAll('"', '')).includes(String(row[field]));

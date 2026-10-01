@@ -34,6 +34,7 @@ implementation head, required CI results and deployment revision.
 | Existing horoscope regressions | Passed | Navigation, personalization, worldwide discovery, twelve-sign import, recovery and seasonal source plans passed across the full 45-case reader suite |
 | Full Content Studio API release gate | Local passed | Unfiltered local gate passed; final-head GitHub workflow recorded in the PR |
 | Four-profile editor and lunar workspace | Passed | Monthly profile saves/reloads in four reader cases; five full profile-editor cases and four lunar-workspace cases pass after removing the fixed three-profile assumption |
+| Existing Calendar publication fallback | Passed | Four fresh-build passage-editor cases; the shared isolated database models the monthly lookup, and the published weekly/monthly opening and final sentence remain visible when no horoscope overview exists |
 | Web/admin typechecks and CSS tokens | Passed | `tsc --noEmit` for both applications and `npm run qa:css-audit` |
 | Bundle boundaries | Passed | Matched isolated builds described below; all startup and deferred-payload guards retained |
 | Built public assets privacy | Passed | Protected-policy scans of both web and admin builds |
