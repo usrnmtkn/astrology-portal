@@ -1,3 +1,4 @@
+import {loadSeasonalArgumentEvidence,SEASONAL_ARGUMENT_MANIFEST} from '../src/astro-writing/seasonalArgumentEvidence.mjs';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import {createHash} from 'node:crypto';
@@ -106,7 +107,7 @@ for(const request of writerFixture.requests.values()){
  }
  assert(request.input.indexOf(section[0])<request.input.indexOf('CONTENT STUDIO WRITING INSTRUCTIONS'));
  assert.deepEqual(row.source_snapshot.horoscopeGeneration.readings[request.sign].sourceIds.slice(0,3),passages.map((e:any)=>e.id));
- assert.equal(row.source_snapshot.horoscopeGeneration.readings[request.sign].version,'horoscope-writer/v9');
+ assert.equal(row.source_snapshot.horoscopeGeneration.readings[request.sign].version,'horoscope-writer/v10');
 }
 // The lunation is distinct from the Monday snapshot Moon. Houses must bind to
 // the named subject, rather than matching the Sun's house or any available house.
@@ -165,7 +166,7 @@ for(const period of ['daily','seasonal']){
  const other=prepareHoroscopeWriting({sections:{horoscopeEdition:emptyHoroscopeEdition(packet.brief.window)},facts:{horoscopeBrief:packet},source_snapshot:{}});
  if(period==='seasonal') {
   assert(other.entries.every((entry:any)=>entry.contextOptions.primaryRegisterContentKeys.length===3&&entry.contextOptions.requirePrimaryRegister));
-  for(const entry of other.entries) assert.deepEqual(entry.sourceIds.slice(0,3).sort(),['pisces','gemini','virgo'].map(season=>`owner-seasonal:${season}-season-2025:${entry.sign}`).sort());
+  for(const entry of other.entries) assert.deepEqual(entry.sourceIds.slice(0,3).sort(),['full-moon-in-taurus','gemini-season-2025','libra-season-autumn-equinox'].map(slug=>`owner-seasonal-argument:${slug}`).sort());
   assert(other.entries.every((entry:any)=>!entry.sourceIds.some((id:string)=>[...forecastSources.values()].some((source:any)=>source.sourceId===id))),'Seasonal primary evidence uses complete seasonal readings, not weekly forecasts');
  } else {
   for(const entry of other.entries) {
@@ -266,6 +267,9 @@ assert.equal(seasonalRow.sections.horoscopeEdition.passages.filter((p:any)=>p.bo
 assert.equal(seasonalRow.status,'DRAFT');
 // All twelve actual seasonal provider inputs carry the three matching complete units.
 const seasonalSources=loadSeasonalHoroscopeEvidence((file:string)=>fs.readFileSync(file,'utf8'));
+const preferredEssays=loadSeasonalArgumentEvidence((file:string)=>fs.readFileSync(file,'utf8'));
+const packaged=new Set(fs.globSync(JSON.parse(fs.readFileSync('vercel.json','utf8')).functions['api/admin/horoscope-writing.ts'].includeFiles));
+for(const file of [SEASONAL_ARGUMENT_MANIFEST,...preferredEssays.map(p=>p.sourcePath)])assert(packaged.has(file),file);
 const callsBefore=writerFixture.calls;
 for(const sign of seasonalEdition.passages.slice(1).map(p=>p.sign)){
  const generated=await seasonalAction('generate',{sign,approvedPlanHash:seasonalPlan.payload.plan.planHash});
@@ -275,7 +279,7 @@ for(const sign of seasonalEdition.passages.slice(1).map(p=>p.sign)){
 assert.equal(writerFixture.calls-callsBefore,11,'One call per missing sign, no judge or rewrite requests');
 assert.equal(seasonalRow.status,'DRAFT');
 for(const reading of seasonalEdition.passages){
- const request:any=[...writerFixture.requests.values()].reverse().find((r:any)=>r.sign===reading.sign&&r.input.includes('complete owner seasonal sign readings'));
+ const request:any=[...writerFixture.requests.values()].reverse().find((r:any)=>r.sign===reading.sign&&r.input.includes('COMPLETE SEASONAL OWNER PROSE EVIDENCE'));
  assert(request,`Missing seasonal provider request for ${reading.sign}`);
  const meaning=JSON.parse(request.input.match(/ZODIAC SEASON AND LEARNING AXIS — INTERPRETIVE SOURCES\n([^\n]+)\n\n/)[1]);
  assert.equal(meaning.seasonSign,'virgo');assert.equal(meaning.oppositeSign,'pisces');
@@ -285,19 +289,26 @@ for(const reading of seasonalEdition.passages){
  assert(!request.input.match(/CALCULATED FACTS\n([^\n]+)/)[1].includes('learning-axis'));
  assert(request.input.includes('include its supplied calendar date naturally on first mention'));
  assert(!request.input.includes('numeric dates belong in the separately rendered'));
- const primary=JSON.parse(request.input.match(/COMPLETE OWNER HOROSCOPES — PRIMARY PROSE EXAMPLES\n([^\n]+)\n\n/)[1]);
- assert.equal(primary.length,3);
- for(const passage of primary){
-  assert.equal(passage.horoscopeAudienceSign,reading.sign);
-  assert.equal(passage.text,seasonalSources.find((p:any)=>p.id===passage.id)?.text);
+ const passages=JSON.parse(request.input.match(/COMPLETE SEASONAL OWNER PROSE EVIDENCE\n([^\n]+)\n\n/)[1]);
+ assert.equal(passages.length,6);
+ assert.deepEqual(new Set(passages.slice(0,3).map((p:any)=>p.id)),new Set(preferredEssays.map(p=>p.id)));
+ for(const passage of passages){
+  const primary=passage.seasonalVoiceRole==='primary argument and voice';
+  if(!primary)assert.equal(passage.horoscopeAudienceSign,reading.sign);
+  assert.equal(passage.text,[...preferredEssays,...seasonalSources].find(p=>p.id===passage.id)?.text);
   assert.equal(passage.sourceRecordSha256,createHash('sha256').update(passage.text).digest('hex'));
+  const serialized=JSON.stringify(passage.text).slice(1,-1);
+  assert.equal(request.input.split(serialized).length-1,1,passage.id+' must reach the writer exactly once');
  }
+ assert(request.input.includes('Write the human argument first.'));
+ assert(request.input.includes('Do not average these preferred passages'));
+ assert(request.input.includes('Never use an em dash'));
  assert(request.instructions.includes(HOROSCOPE_EDITORIAL_AUTHORITY));
  assert(request.input.includes(horoscopeEditorialPrompt(seasonalProfile)));
  assert(request.input.includes('FINISH THE NEW DRAFT USING THE SAVED EDITORIAL GUIDANCE'));
  assert(!request.input.includes('These complete owner weekly sign readings'));
  const receipt=seasonalRow.source_snapshot.horoscopeGeneration.readings[reading.sign];
- assert.deepEqual(receipt.sourceIds.slice(0,3),primary.map((p:any)=>p.id));
+ assert.deepEqual(receipt.sourceIds,passages.map((p:any)=>p.id));
  assert.equal(receipt.profileHash,createHash('sha256').update(horoscopeCanonicalJson(seasonalProfileSaved.payload.profile)).digest('hex'));
  assert.equal(receipt.ownerApproved,false);
 }

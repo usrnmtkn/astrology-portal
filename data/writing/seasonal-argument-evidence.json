@@ -1,0 +1,43 @@
+{
+  "schema": "seasonal-argument-evidence/v1",
+  "assignment": {
+    "date": "2026-10-01",
+    "reference": "codex-task:01a0ce6e-69e0-7100-bdba-ad413d5c7804",
+    "scope": "Owner selected these three complete essays as preferred seasonal voice evidence. They guide argument, emotional reasoning and sentence movement, not current facts or reader publication."
+  },
+  "sources": [
+    {
+      "sourceSlug": "full-moon-in-taurus",
+      "file": "reference-surfaces/full-moon-in-taurus.md",
+      "sha256": "843e6a5a2dde919e3a9cd91787c5a92a9054cc29834002b0075c347e46a03728",
+      "essay": {
+        "start": 0,
+        "end": 3755,
+        "sha256": "b71b6a40504ecbf7636e2d7d9c988c027f2b358c7b4980385d2f9c501f49406d",
+        "wordCount": 616
+      }
+    },
+    {
+      "sourceSlug": "gemini-season-2025",
+      "file": "reference-surfaces/gemini-season-2025.md",
+      "sha256": "1e31142628b75f39ef58e6681bd38d5ba682cdea5f89ee20cb4189ebea96061f",
+      "essay": {
+        "start": 0,
+        "end": 5389,
+        "sha256": "1424c9dae1fc4ce8765f50c320593be87f5cb853eafba0779cb04aa060aac52e",
+        "wordCount": 874
+      }
+    },
+    {
+      "sourceSlug": "libra-season-autumn-equinox",
+      "file": "reference-surfaces/libra-season-autumn-equinox.md",
+      "sha256": "0da61c36f8300a92be7902f15dd2232ccd29aad1b9a226fe8c29111450d2a0f9",
+      "essay": {
+        "start": 0,
+        "end": 11501,
+        "sha256": "81f48a5b0709f379df2aa2c11c8b10a773281c271f6cc7d9ef7cfb034a8f0f1a",
+        "wordCount": 1852
+      }
+    }
+  ]
+}
