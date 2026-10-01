@@ -4731,7 +4731,7 @@ button.calendar-reading__toggle {
   .calendar-header-season,
   .lunar-calendar-header .lunar-calendar-subscribe,
   .lunar-month-transits--cards,
-  .lunar-month-overview,
+  .lunar-month-overview:not(.lunar-month-overview--monthly),
   .lunar-calendar-body.is-month .lunar-calendar-day__moon {
     display: none;
   }

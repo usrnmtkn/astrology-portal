@@ -24,9 +24,9 @@ for(const [width,theme] of [[390,'light'],[1440,'dark']] as const){
    await studio.getByRole('button',{name:'4 · Publish',exact:true}).click();
    await expect(studio.getByRole('region',{name:'Cancer reading preview'})).toContainText(seasonalClaimBodies.cancer);
    await expect(studio.getByRole('button',{name:'Publish edition',exact:true})).toBeDisabled();
-   await studio.getByLabel('I have reviewed and approve the exact wording of all twelve saved readings.').check();
+   await studio.getByLabel('I have reviewed and approve the exact wording of every saved reading in this edition.').check();
    await studio.getByRole('button',{name:'Publish edition',exact:true}).click();
-   await expect(studio.getByRole('status')).toContainText('Published all twelve readings.');
+   await expect(studio.getByRole('status')).toContainText('Published the complete edition.');
    const saved=(await call({method:'rows'})).find((r:any)=>r.id===row.id);expect(saved.sections).toEqual(row.sections);expect(saved.source_snapshot).toEqual(row.source_snapshot);
    expect((await call({method:'writer-state'})).calls).toBe(0);
    await page.goto(`/#horoscopes?edition=${row.id}&period=seasonal&sign=cancer`);

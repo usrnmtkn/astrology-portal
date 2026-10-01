@@ -214,7 +214,7 @@ export async function generateDraft({
   assertArgumentOutlineApproved(argumentOutline, { plan, family, surface });
   if (!spine || spine.status !== "recorded") throw new Error(`RECORDED_CONTENT_SPINE_REQUIRED:${family}`);
   const role = isCardWritingSurface({ surface, family }) ? "CARD_WRITER_V3" : "WRITER";
-  const resolvedSchema = schema ?? (family === 'lunations' ? LUNATION_DRAFT_SCHEMA : family === 'lunation-article' ? LUNATION_ARTICLE_SCHEMA : family === 'horoscope' ? horoscopeDraftSchema(engineFacts?.risingSign) : family === "fast-mover-article"
+  const resolvedSchema = schema ?? (family === 'lunations' ? LUNATION_DRAFT_SCHEMA : family === 'lunation-article' ? LUNATION_ARTICLE_SCHEMA : family === 'horoscope' ? horoscopeDraftSchema(engineFacts?.risingSign,engineFacts?.window) : family === "fast-mover-article"
     ? FAST_MOVER_ARTICLE_DRAFT_SCHEMA
     : family === "slow-mover-article"
       ? SLOW_MOVER_ARTICLE_DRAFT_SCHEMA

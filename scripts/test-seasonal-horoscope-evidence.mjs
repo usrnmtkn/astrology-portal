@@ -29,4 +29,15 @@ assert.throws(()=>loadSeasonalHoroscopeEvidence(changeManifest(m=>m.sources[0].r
 assert.throws(()=>loadSeasonalHoroscopeEvidence(changeManifest(m=>m.sources[0].sha256='0'.repeat(64))),/registration changed/);
 const changedPath=SEASONAL_SOURCE_ROOT+manifest.sources[0].file;
 assert.throws(()=>loadSeasonalHoroscopeEvidence(file=>read(file)+(file===changedPath?'\nchanged':'')),/integrity/);
+const expanded = loadSeasonalHoroscopeEvidence(read,{includeOverviews:true});
+const overviews=expanded.filter(p=>p.horoscopeAudienceSign==='overview');
+assert.equal(expanded.length,39);assert.equal(overviews.length,3);
+for(const passage of overviews){
+ assert.equal(passage.text,read(passage.sourcePath).slice(passage.provenance.start,passage.provenance.end));
+ assert.equal(passage.sourceRecordSha256,createHash('sha256').update(passage.text).digest('hex'));
+ assert.equal(passage.wordCount,passage.text.trim().split(/\s+/u).length);
+ assert.equal(passage.factUseAuthorized,false);
+}
+assert.throws(()=>loadSeasonalHoroscopeEvidence(changeManifest(m=>m.sources[0].overview.end-=20),{includeOverviews:true}),/passage changed/);
+assert.throws(()=>loadSeasonalHoroscopeEvidence(changeManifest(m=>delete m.sources[0].overview),{includeOverviews:true}),/overview/);
 console.log('PASS seasonal evidence: 36 complete exact units, 12 audience signs, provenance, hashes, exclusions and fail-closed integrity.');

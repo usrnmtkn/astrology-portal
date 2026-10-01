@@ -1,5 +1,5 @@
-export type HoroscopePeriod = 'daily' | 'weekly' | 'seasonal';
-export type HoroscopeWindow = {period:HoroscopePeriod; audience:'rising'; timeZone:string; startsAt:string; endsAt:string; seasonSign?:string};
+export type HoroscopePeriod = 'daily' | 'weekly' | 'monthly' | 'seasonal';
+export type HoroscopeWindow = {period:HoroscopePeriod; audience:'rising'|'collective'; timeZone:string; startsAt:string; endsAt:string; seasonSign?:string};
 export type HoroscopePassage = {sign:string; headline:string; body:string};
 export type HoroscopeEdition = {schema:string; window:HoroscopeWindow; passages:HoroscopePassage[]};
 export const HOROSCOPE_EDITION_PREFIX:string;
@@ -19,3 +19,6 @@ export function horoscopeEditionBody(edition:HoroscopeEdition):string;
 export function horoscopeEditionFromRow(row:unknown):HoroscopeEdition|null;
 export function horoscopeEditionAt(rows:unknown[],period:HoroscopePeriod,at:string,timeZone?:string):HoroscopeEdition|null;
 export function horoscopeWindowLabel(window:HoroscopeWindow):string;
+
+export function horoscopeReadingSigns(edition:HoroscopeEdition):string[];
+export function horoscopeOverviewHeadline(window:HoroscopeWindow):string;

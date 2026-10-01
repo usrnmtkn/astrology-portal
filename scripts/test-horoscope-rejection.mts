@@ -33,15 +33,15 @@ for(const period of ['daily','weekly','seasonal'] as const){
  const profileResult=await store.invoke('POST',{profile,expectedUpdatedAt:null},'/api/admin/generated-content?writingProfiles=true');assert.equal(profileResult.status,200);
  const result=await action('aries');assert.equal(result.status,200,JSON.stringify(result.payload));row=result.payload.rows[0];
  assert.equal(writerFixture.calls,calls,'Rejection must not call the provider');
- assert.deepEqual(row.sections.horoscopeEdition.passages[0],{sign:'aries',headline:'',body:''});
- assert.deepEqual(row.sections.horoscopeEdition.passages.slice(1),edition.passages.slice(1));
+ assert.deepEqual(row.sections.horoscopeEdition.passages.find((p:any)=>p.sign==='aries'),{sign:'aries',headline:'',body:''});
+ assert.deepEqual(row.sections.horoscopeEdition.passages.filter((p:any)=>p.sign!=='aries'),edition.passages.filter(p=>p.sign!=='aries'));
  assert.deepEqual(row.facts,original.facts,'One rejection preserves the other readings’ governed facts');
  assert.deepEqual(row.source_snapshot.studioWritingProfile,profileResult.payload.profile);
  assert.deepEqual(row.source_snapshot.horoscopeOutlines,{taurus:'Keep this outline'});
  assert.equal(row.source_snapshot.horoscopeGeneration.readings.aries,undefined);
  assert.deepEqual(row.source_snapshot.horoscopeGeneration.readings.taurus,receipts.taurus);
  let history=row.source_snapshot.horoscopeGeneration.rejections;
- assert.deepEqual(history[0].passages,[edition.passages[0]]);
+ assert.deepEqual(history[0].passages,[edition.passages.find(p=>p.sign==='aries')]);
  assert.equal(history[0].passagesHash,createHash('sha256').update(horoscopeCanonicalJson(history[0].passages)).digest('hex'));
  assert.deepEqual(history[0].facts,original.facts);assert.deepEqual(history[0].generation.readings,receipts);
  assert.deepEqual(history[0].editorialImport,original.source_snapshot.editorialImport);
@@ -53,7 +53,7 @@ for(const period of ['daily','weekly','seasonal'] as const){
  assert.equal((await action('all')).status,409,'An active replacement cannot be discarded');
  const polled=await invokeHoroscopeWriting({action:'poll',id:row.id,expectedUpdatedAt:row.updated_at});assert.equal(polled.status,200);row=polled.payload.rows[0];
  assert([...writerFixture.requests.values()].at(-1).input.includes('Fixture latest instructions.'),'Replacement requests use the latest saved instructions');
- assert(row.sections.horoscopeEdition.passages[0].body.includes('complete aries fixture opening'));
+ assert(row.sections.horoscopeEdition.passages.find((p:any)=>p.sign==='aries').body.includes('complete aries fixture opening'));
  const beforeAll=structuredClone(row),beforeVersion=row.updated_at;
  const reset=await action('all');assert.equal(reset.status,200,JSON.stringify(reset.payload));row=reset.payload.rows[0];
  assert.equal(writerFixture.calls,calls+1,'Resetting all drafts adds no billed call');

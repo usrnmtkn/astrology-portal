@@ -14,7 +14,7 @@ const originalCount = store.rows.size;
 assert.equal((await store.invoke('GET', undefined, endpoint, 'wrong')).status, 401);
 const library = await invoke('GET');
 assert.equal(library.status, 200, JSON.stringify(library.payload));
-assert.deepEqual(library.payload.profiles.map((v: any) => [v.profile.period, v.id, v.revision]), [['daily', null, 0], ['weekly', null, 0], ['seasonal', null, 0]]);
+assert.deepEqual(library.payload.profiles.map((v: any) => [v.profile.period, v.id, v.revision]), [['daily', null, 0], ['weekly', null, 0], ['monthly', null, 0], ['seasonal', null, 0]]);
 assert.equal(store.rows.size, originalCount, 'Reading starter profiles never creates content');
 for (const body of [null, [], {}, {profile: defaultHoroscopeProfile('weekly')}, {profile: {...defaultHoroscopeProfile('weekly'), prompt: '{{unknown}}'}, expectedUpdatedAt: null}, {profile: {...defaultHoroscopeProfile('weekly'), voiceGuidance: '{{period}}'}, expectedUpdatedAt: null}]) {
   assert.equal((await invoke('POST', body)).status, 400, JSON.stringify(body));
@@ -45,7 +45,7 @@ const race = await Promise.all(['A', 'B'].map(suffix => invoke('POST', {profile:
 assert.deepEqual(race.map(r => r.status).sort(), [200, 409], 'Concurrent saves cannot overwrite each other');
 saved = race.find(r => r.status === 200)!.payload.profile;
 assert.equal(saved.revision, 2);
-for (const period of ['daily', 'seasonal'] as const) assert.equal((await invoke('POST', {profile: defaultHoroscopeProfile(period), expectedUpdatedAt: null})).status, 200);
+for (const period of ['daily', 'monthly', 'seasonal'] as const) assert.equal((await invoke('POST', {profile: defaultHoroscopeProfile(period), expectedUpdatedAt: null})).status, 200);
 assert.deepEqual((await invoke('GET')).payload.profiles.find((v: any) => v.profile.period === 'weekly'), saved);
 
 // Exercise the real writer boundary with synthetic facts and an injected, unbilled provider.

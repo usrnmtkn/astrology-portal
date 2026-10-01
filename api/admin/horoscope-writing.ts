@@ -8,7 +8,7 @@ import {assertHoroscopeRow,prepareHoroscopeBrief} from '../_lib/horoscope-editio
 import {listStudioWritingProfiles} from '../_lib/studio-writing-profiles.js';
 import {activeStudioFeedback,studioFeedbackEnabled,feedbackHash} from '../_lib/studio-memory-feedback.js';
 import {prepareHoroscopeWriting,horoscopePlanPreview,writeHoroscopeSign,horoscopeWritingVersion} from '../../src/astro-writing/horoscopeWriting.mjs';
-import {horoscopeEditionBody,HOROSCOPE_SIGNS,horoscopeCanonicalJson} from '../../apps/web/src/content/horoscopeEditions.mjs';
+import {horoscopeEditionBody,horoscopeReadingSigns,horoscopeCanonicalJson} from '../../apps/web/src/content/horoscopeEditions.mjs';
 import responses from '../../src/astro-writing/openAIResponses.cjs';
 import provider from '../../src/astro-writing/offlineProviderConfig.cjs';
 import {HoroscopeProviderFailure,horoscopeProviderDiagnostic,readHoroscopeProviderResult} from '../_lib/horoscope-provider-result.js';
@@ -65,7 +65,7 @@ export default async function handler(req:IncomingMessage,res:ServerResponse) {
     }
     if(input.action==='reject') {
       if(operation)throw new AdminHttpError(409,'Finish or release the running request before rejecting drafts.');
-      if(input.sign!=='all'&&!HOROSCOPE_SIGNS.includes(input.sign))throw new AdminHttpError(400,'Choose a zodiac sign or all drafts.');
+      if(input.sign!=='all'&&!horoscopeReadingSigns(row.sections.horoscopeEdition).includes(input.sign))throw new AdminHttpError(400,'Choose a reading or all drafts.');
       const all=input.sign==='all',original=row.sections.horoscopeEdition;
       const selected=original.passages.filter((p:any)=>all||p.sign===input.sign);
       if(!selected.some((p:any)=>p.headline.trim()||p.body.trim()))throw new AdminHttpError(409,'These readings are already empty. Review the writing plan to generate them.');
@@ -136,7 +136,7 @@ export default async function handler(req:IncomingMessage,res:ServerResponse) {
     if(input.action==='prepare')return sendAdminJson(res,200,{ok:true,plan:horoscopePlanPreview(prepared),configured:Boolean(apiKey)});
     if(!apiKey)throw new AdminHttpError(503,'The horoscope writer is not connected. Configure the server OpenAI API key, then retry.');
     const sign=input.sign;
-    if(!HOROSCOPE_SIGNS.includes(sign))throw new AdminHttpError(400,'Choose a zodiac sign.');
+    if(!horoscopeReadingSigns(prepared.edition).includes(sign))throw new AdminHttpError(400,'Choose a reading.');
     const passage=prepared.edition.passages.find((p:any)=>p.sign===sign);
     if(passage.headline.trim()||passage.body.trim())throw new AdminHttpError(409,'This sign already contains writing. Reject the reading in Review before generating a replacement.');
     const planHash=input.approvedPlanHash;

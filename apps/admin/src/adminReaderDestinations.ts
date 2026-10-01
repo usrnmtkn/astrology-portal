@@ -167,7 +167,7 @@ export function isContextualReaderHref(href: string | null) {
     || /^\/#\/sky\/placement\/[^/?#]+\/[^/?#]+$/u.test(normalized)
     || /^\/#\/sky\/aspect\/[^/?#]+\/[^/?#]+\/[^/?#]+$/u.test(normalized)
     || /^\/reports\/[^/?#]+$/u.test(normalized)
-    || /^\/#horoscopes\?edition=[a-f0-9-]{36}&period=(?:daily|weekly|seasonal)&sign=(?:aries|taurus|gemini|cancer|leo|virgo|libra|scorpio|sagittarius|capricorn|aquarius|pisces)$/u.test(normalized)
+    || /^\/#horoscopes\?edition=[a-f0-9-]{36}&period=(?:daily|weekly|monthly|seasonal)&sign=(?:overview|aries|taurus|gemini|cancer|leo|virgo|libra|scorpio|sagittarius|capricorn|aquarius|pisces)$/u.test(normalized)
   );
 }
 

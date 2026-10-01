@@ -106,7 +106,7 @@ for(const request of writerFixture.requests.values()){
  }
  assert(request.input.indexOf(section[0])<request.input.indexOf('CONTENT STUDIO WRITING INSTRUCTIONS'));
  assert.deepEqual(row.source_snapshot.horoscopeGeneration.readings[request.sign].sourceIds.slice(0,3),passages.map((e:any)=>e.id));
- assert.equal(row.source_snapshot.horoscopeGeneration.readings[request.sign].version,'horoscope-writer/v7');
+ assert.equal(row.source_snapshot.horoscopeGeneration.readings[request.sign].version,'horoscope-writer/v8');
 }
 // The lunation is distinct from the Monday snapshot Moon. Houses must bind to
 // the named subject, rather than matching the Sun's house or any available house.
@@ -212,6 +212,8 @@ const seasonalPacket=await prepareHoroscopeBrief(new URL('http://localhost/?peri
 assert.equal(seasonalPacket.brief.window.seasonSign,'virgo');
 assert.equal(seasonalPacket.brief.referenceDate,'2026-09-01');
 const seasonalEdition=emptyHoroscopeEdition(seasonalPacket.brief.window);
+// Existing twelve-sign seasons remain editable and recoverable without adding an introduction.
+seasonalEdition.passages=seasonalEdition.passages.filter(p=>p.sign!=='overview');
 const seasonalProfile={...defaultHoroscopeProfile('seasonal'),voiceGuidance:defaultHoroscopeProfile('seasonal').voiceGuidance+'\nSynthetic saved seasonal guidance: retain this final sentence.'};
 const seasonalProfileSaved=await store.invoke('POST',{profile:seasonalProfile,expectedUpdatedAt:null},'/api/admin/generated-content?writingProfiles=true');
 assert.equal(seasonalProfileSaved.status,200);
