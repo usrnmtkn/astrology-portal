@@ -35,8 +35,8 @@ Open **Write → Horoscopes** (`/admin/content#horoscopes`).
    writing intact. **Continue a saved edition** reopens previous work.
 2. **Generate:** review the exact plan using the sign buttons. Writing instructions
    are optional; saved instructions are selected automatically. To change them,
-   expand **Writing instructions**, save the profile, and select **Use latest saved
-   instructions**. Review the refreshed plan before generating. The approval box
+   expand **Writing instructions** and save the profile. The next writing plan
+   automatically uses it. Review the refreshed plan before generating. The approval box
    and generation action stay together in the footer, with a clear
    explanation of missing approval and the number of paid calls. Each completed
    sign saves automatically. **Resume generation** retrieves an interrupted request.
@@ -161,9 +161,9 @@ One provider request writes one sign; the Publish stage already presents all
 twelve complete readings for the owner's comparison. No paid comparison or
 automatic rewrite call is added.
 
-Saving a profile updates future editions. Existing editions keep their saved
-profile until **Use latest saved instructions** is selected, and existing bodies
-remain unchanged. A changed profile or evidence hash requires a refreshed plan.
+Saving a profile updates future editions. Existing idle editions automatically
+adopt it when their next writing plan is prepared. Existing bodies and active
+requests remain unchanged. A changed profile or evidence hash requires a refreshed plan.
 The provider input retains the whole saved profile and all three primary passages;
 the saved generation receipt identifies the profile, source and plan hashes.
 
@@ -191,7 +191,7 @@ reader eligibility path; startup stays within its existing budget.
 Content Studio → Horoscopes now offers four stages: choose the period and local
 reference date, review the calculated writing plan and generate drafts, read/edit
 all signs, then publish the saved edition. Writing instructions can be edited
-inside the Generate stage; “Use latest saved instructions” adopts that profile
+inside the Generate stage; preparing the next writing plan automatically adopts that profile
 for this edition. Import/export remains available under Advanced.
 
 `POST /api/admin/horoscope-writing` requires Content Admin authorization and the
@@ -246,7 +246,7 @@ must already be verified in the supplied facts; editorial guidance cannot expand
 the brief's event coverage. These instructions remain editable in AI Writing.
 Deploying a starter change does not overwrite saved profiles or edition snapshots.
 An authorized saved-profile update uses its exact current version; existing
-editions adopt it through “Use latest saved instructions” before a new plan.
+idle editions adopt it automatically when a new plan is prepared.
 The actual-handler regression checks the full dispatched examples for all twelve
 signs. It verifies retrieval and text integrity, not owner acceptance of new prose.
 Current Studio feedback is checked without expanding another surface’s approved
@@ -322,8 +322,8 @@ preserved. A successful fact check is not editorial approval.
 
 The Memory Graph records architecture and provenance. The editable instructions
 used by generation live in the existing private Supabase profile rows. No new
-schema or broader feedback scope is introduced. Save a profile, then adopt it in
-an edition and review the updated plan before generation. Existing bodies,
+schema or broader feedback scope is introduced. Save a profile; the next writing
+plan automatically adopts it for review before generation. Existing bodies,
 publication state, signed briefs and execution receipts are preserved by a
 profile change. A code/profile deployment does not regenerate saved readings.
 
@@ -383,7 +383,7 @@ within the original generation call. No additional model call or prose gate is
 introduced. Supplied before/after wording is not installed as a recurring script
 for every sign. The editorial principles remain editable in AI Writing. Existing
 saved profiles require an explicit version-checked update; existing editions
-adopt them through the normal latest-instructions or rejection workflow. A restart
+adopt them automatically when the next plan or rejection workflow runs. A restart
 retains rejected bodies, facts and profile snapshots before clearing draft fields.
 
 Horoscope edits still do not automatically become private correction-memory

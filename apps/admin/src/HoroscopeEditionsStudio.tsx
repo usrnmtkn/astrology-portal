@@ -53,7 +53,7 @@ export default function HoroscopeEditionsStudio({secret}:{secret:string}) {
   const [needsSync,setNeedsSync]=useState(false);
   const mounted=useRef(true);
   function retain(row:any,refreshContext=false){validateHoroscopeEdition(row.sections?.horoscopeEdition);lastSync.current=Date.now();setNeedsSync(false);setSaved(row);setDraft(row.sections.horoscopeEdition);setRows(current=>[row,...current.filter(r=>r.id!==row.id)]);setApproved(false);if(refreshContext){setOutlines(row.source_snapshot?.horoscopeOutlines??{});setProfile(row.source_snapshot?.studioWritingProfile??null);setEditorialImport(row.source_snapshot?.editorialImport??null);setPlan(null);setPlanApproved(false);}}
-  useEffect(()=>{setPlan(null);setPlanApproved(false);},[draft?.window.startsAt,draft?.window.endsAt,draft?.window.timeZone,outlines,profile]);
+  useEffect(()=>{setPlan(null);setPlanApproved(false);},[draft?.window.startsAt,draft?.window.endsAt,draft?.window.timeZone,outlines]);
   const dirty=Boolean(draft && (!saved || horoscopeCanonicalJson(draft)!==horoscopeCanonicalJson(saved.sections.horoscopeEdition) || horoscopeCanonicalJson(outlines)!==horoscopeCanonicalJson(saved.source_snapshot?.horoscopeOutlines ?? {}) || horoscopeCanonicalJson(profile)!==horoscopeCanonicalJson(saved.source_snapshot?.studioWritingProfile ?? null) || horoscopeCanonicalJson(editorialImport)!==horoscopeCanonicalJson(saved.source_snapshot?.editorialImport ?? null)));
   async function load() {setLoading(true);try {const data=await request(secret,endpoint+'?horoscopeEditions=true');if(!Array.isArray(data.rows))throw new Error('The edition list could not be read.');for(const row of data.rows)validateHoroscopeEdition(row.sections?.horoscopeEdition);if(mounted.current)setRows(data.rows);}catch(reason){if(mounted.current)setError((reason as Error).message);}finally{if(mounted.current)setLoading(false);}}
   useEffect(()=>{mounted.current=true;void load();return()=>{mounted.current=false;stop.current=true;operation.current?.abort();};},[secret]);
@@ -69,11 +69,14 @@ export default function HoroscopeEditionsStudio({secret}:{secret:string}) {
     setStep(next);return next;
   }
   async function loadPlan(row:any,controller?:AbortController) {
-    const [data,failure]=await Promise.all([
-      request(secret,'/api/admin/horoscope-writing',{action:'prepare',id:row.id,expectedUpdatedAt:row.updated_at},'POST',controller?.signal),
-      savedFailureMessage(row,controller?.signal)
-    ]);
+    const data=await request(secret,'/api/admin/horoscope-writing',{action:'prepare',id:row.id,expectedUpdatedAt:row.updated_at},'POST',controller?.signal);
+    // Preparation may save the latest profile. Keep its confirmed row version
+    // for generation and failure recovery instead of sending the old timestamp.
+    const updated=data.rows?.[0];
+    if(updated&&updated.id!==row.id)throw new Error('The writing plan edition could not be confirmed.');
+    const failure=await savedFailureMessage(updated??row,controller?.signal);
     if(!mounted.current||controller&&!isCurrent(controller))return;
+    if(updated){retain(updated);setProfile(updated.source_snapshot?.studioWritingProfile??null);}
     setPlan(data.plan);setConfigured(data.configured);setPlanApproved(false);setError(failure);
   }
   async function savedFailureMessage(row:any,signal?:AbortSignal) {
@@ -159,11 +162,6 @@ export default function HoroscopeEditionsStudio({secret}:{secret:string}) {
       setEditorialImport({schema:'horoscope-editorial-import/v1',originalSource,sha256:Array.from(new Uint8Array(hash),byte=>byte.toString(16).padStart(2,'0')).join(''),importedAt:new Date().toISOString(),readerFields:['edition.passages[].headline','edition.passages[].body']});
       setDraft(imported);setSign(current=>imported.passages.some(p=>p.sign===current)?current:imported.passages[0].sign);setApproved(false);setMessage('Imported the readings as an unsaved draft. Review the complete edition before publishing.');
     }catch(reason){setError((reason as Error).message);}
-  }
-  async function refreshProfile() {
-    if(!draft)return;setBusy(true);setError('');
-    try{const data=await request(secret,endpoint+'?writingProfiles=true');const latest=data.profiles.find((entry:any)=>entry.profile.period===draft.window.period);if(!latest)throw new Error('Writing instructions are unavailable.');setProfile(latest);setApproved(false);setMessage('Loaded the latest writing instructions. Save the edition to retain this version.');}
-    catch(reason){setError((reason as Error).message);}finally{setBusy(false);}
   }
   async function reviewPlan(){
     if(!draft||running.current)return;setBusy(true);setError('');
@@ -356,7 +354,7 @@ export default function HoroscopeEditionsStudio({secret}:{secret:string}) {
           <p>Using {profile?.id?`your saved ${draft.window.period} instructions, revision ${profile.revision}`:`the ${draft.window.period} starter instructions`}. You can use these as they are.</p>
           <StudioButton disabled={busy} onClick={()=>setInstructions(!instructions)}>{instructions?'Close writing instructions':'Edit writing instructions'}</StudioButton>
           {instructions&&<Suspense fallback={<PageLoading message="Loading writing instructions…"/>}><WritingProfiles key={draft.window.period} secret={secret} initialPeriod={draft.window.period}/></Suspense>}
-          <StudioButton disabled={locked} onClick={()=>void refreshProfile()}>Use latest saved instructions</StudioButton>
+          <p>Your latest saved instructions are applied automatically when the writing plan is prepared.</p>
         </details>
         {busy&&!running.current&&!plan&&!checking&&<PageLoading message="Preparing your writing plan…"/>}
         {plan&&<>

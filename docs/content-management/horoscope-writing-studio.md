@@ -52,9 +52,10 @@ publication.
 
 `scripts/test-horoscope-depth.mts` covers the actual handlers and direct Swiss
 calculations. Recovery browser coverage includes correction, save, reload,
-preserved other readings and unchanged provider call count. A profile update does
-not replace an edition's saved profile/fact snapshot. The existing deliberate
-rejection/reset workflow adopts new facts and instructions for replacements.
+preserved other readings and unchanged provider call count. Preparing a writing
+plan automatically saves the latest profile onto an idle draft edition, without
+changing its facts, readings or historical receipts. Rejection/reset still
+preserves the exact former writing before preparing replacements.
 
 The authenticated `generated-content?writingProfiles=true` API reads all four profiles and accepts one POST save with `{profile, expectedUpdatedAt}`. Missing periods return unsaved defaults. Profiles use reserved `studio-writing-profile/horoscope/{period}` keys in `generated_interpretations`, with `mode=article`, null target date, `status=DRAFT`, `lane=reference`, and empty reader body/summary. Generic content editing, deletion and publication reject those keys. The existing unique target index prevents concurrent first saves; later saves compare the opened `updated_at` in the database PATCH.
 
@@ -79,3 +80,23 @@ and receives the full zodiac-season and learning-axis sources. Existing saved
 profiles are preserved. Publishing a monthly edition makes the exact same body
 available in Horoscopes and Calendar Month. Saving a profile alone does not
 rewrite or regenerate either surface.
+
+## Automatic instruction updates
+
+Owner direction in [the horoscope task](thread:01a0ce6e-69e0-7100-bdba-ad413d5c7804)
+removes the manual latest-instructions step. Opening an unfinished edition,
+reviewing a plan, and preparing replacements adopt the latest saved profile for
+that period through the authenticated writing handler. The response returns the
+confirmed row version together with its plan, so the next action uses that version.
+
+Generation checks the current saved profile again. If it changed after plan
+review, the old approval cannot start a paid request; Studio reloads the plan for
+ordinary generation approval. Active requests and polling keep their original
+profile and request identity. Saved bodies, per-reading receipts, rejection history,
+and published editions are not rewritten by a profile change. Storage failures
+stop preparation instead of silently generating with stale instructions.
+
+`test-horoscope-latest-instructions.mts` covers all four periods with the actual
+handler and isolated storage/provider fixtures. Monthly browser coverage verifies
+automatic adoption after reopening, confirmed-version generation and reload on
+desktop/mobile in both themes. These checks incur no model charges.

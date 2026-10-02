@@ -381,3 +381,22 @@ owner passages remain the voice evidence. The owner judges new prose; these
 calculations and deterministic checks do not certify literary quality. Saved
 Studio instructions are separate private revisions, not Memory Graph prose.
 See the horoscope writing Studio runbook for adoption and recovery.
+
+## Automatic horoscope profile adoption (2026-10-01)
+
+The owner's [horoscope task](thread:01a0ce6e-69e0-7100-bdba-ad413d5c7804)
+asks to remove prompt re-entry and manual profile adoption. This supersedes the
+earlier manual latest-instructions step: the authenticated horoscope prepare
+action now adopts the latest saved profile for an idle edition with optimistic
+concurrency and returns its confirmed row version and plan together. Generation
+rechecks the saved profile before reserving a paid request. A changed plan needs
+ordinary generation approval; it cannot run under stale approval.
+
+Preparing instructions makes no model call and changes no reader text, facts or
+per-reading historical receipt. In-flight requests and polling keep their original
+profile and request identity. A failed profile read blocks fresh preparation or
+generation, while retrieval of an existing response remains independent. Exact
+rejection history and publication approval are preserved. The actual-handler test
+`test-horoscope-latest-instructions.mts` covers all four periods; Monthly browser
+coverage checks reopening an older edition and generating from its updated row
+version. Tests use isolated storage and simulated responses, not paid generation.
