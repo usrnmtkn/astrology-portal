@@ -29,6 +29,8 @@ Read the whole month before choosing its argument. Identify two or three connect
 
 First write a two or three sentence thesis: what the month is fundamentally about for people, and what may be understood differently by its end. Then select the dated facts that develop or complicate it. For each selected fact, identify what it adds beyond the previous point. Give the reading a movement of thought that may cross dates without confusing their actual sequence. Leave facts that do not advance that thought in the reference catalog. Do not turn every fact into a paragraph or merely restate the thesis at each date.
 
+In each development's changes field, identify the particular function or circumstance that changes and its human consequence. Preserve that mechanism through the story. A sustained-effort development concerns the energy and capacity to continue; do not substitute approval or an audience merely because a participant can also signify recognition. Separate an external constraint from an inferred personal motive. Unknown motives are not established facts. Constructive developments can introduce a distinct possibility instead of providing another lesson about attachment. The ending must account for what the separate stories have changed, not collapse them into a universal permission to change one's mind.
+
 Return only the brief in the supplied schema. It does not approve any interpretation or reader wording. Keep it concise; the full literary development belongs to the subsequent writer.`;
 
 export function validateMonthlySynthesis(value,facts) {
