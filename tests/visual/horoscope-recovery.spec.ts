@@ -187,7 +187,7 @@ for(const [width,theme] of [[390,'dark'],[1440,'light']] as const){
    expect(await f.latest()).toEqual(legacy);
    // An unavailable historical response must leave the plan and recovery action usable.
    f.state.failDiagnosis=true;await nextDiagnosis();await page.reload();await f.open();
-   await expect(studio.getByRole('alert')).toContainText('its details are temporarily unavailable');
+   await expect(studio.getByRole('alert')).toContainText('its details are unavailable');
    await expect(studio.getByLabel('I approve this writing plan for generation.')).not.toBeChecked();
    await studio.getByRole('button',{name:'Check saved progress',exact:true}).click();
    await expect(studio.getByRole('alert')).toContainText('not your current balance');
