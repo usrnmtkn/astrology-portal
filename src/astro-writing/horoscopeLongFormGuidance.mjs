@@ -1,4 +1,5 @@
 import {HOROSCOPE_PUNCTUATION_RULE} from './horoscopeEditorialConstraints.mjs';
+import {MONTHLY_TLDR_GUIDANCE} from './monthlyHoroscopeFormat.mjs';
 
 // Editable starters. Saved profiles remain authoritative; this is not a second
 // runtime style layer. Private owner examples are saved in Studio, never here.
@@ -29,7 +30,7 @@ Include the supplied month and day naturally on first mention of a significant s
 Let the selected developments and the complete owner examples guide depth and length. No word-count target, event quota, fixed paragraph count or mandatory advice ending. Do not pad or compress the interpretation to fit a template. Later developments may change the reading after a convenient narrative ending; consider them before closing.`;
 
 const scopes = {
-  monthly: `Write one substantial shared overview for readers of all signs across the exact local calendar month. Direct address is welcome; no rising sign, personal house or biography applies to everyone. The month may cross two solar seasons. Keep individual sign readings separate. This is one complete overview, not twelve miniature forecasts or a collection of weekly summaries.`,
+  monthly: `Write one substantial shared overview for readers of all signs across the exact local calendar month. Direct address is welcome; no rising sign, personal house or biography applies to everyone. The month may cross two solar seasons. Keep individual sign readings separate. This is one complete overview, not twelve miniature forecasts or a collection of weekly summaries.\n\n${MONTHLY_TLDR_GUIDANCE}`,
   seasonal: `Write the one unit requested by the run within its calculated solar-ingress boundaries. For a shared introduction, address readers of all signs without personal houses. For an individual reading, use that rising sign's supplied whole-sign life areas. Develop what matters inside the life area instead of defining the house and listing everything it rules. Each planet keeps its own calculated house, including aspect participants. Name the planet or lunation with a numbered house so the association is clear.
 
 Use the supplied zodiac-season and learning-axis meaning to deepen the season's interpretation. The shared introduction establishes the season; the separate sign readings develop it through their own life areas. The symbolic axis is not another transit, aspect or personal event. Do not make every sign repeat the same conflict. This call cannot compare unseen sign drafts.`
@@ -43,7 +44,7 @@ const sources = {
 export function longFormHoroscopeProfile(period) {
   if(!Object.hasOwn(scopes,period))throw new Error('Choose Monthly or Seasonal.');
   return {schema:'horoscope-writing-profile/v1',period,voiceGuidance:voice,
-    structure:`${scopes[period]}\n\n${development}`,
+    structure:`${scopes[period]}\n\n${period==='monthly'?development.replace('Include the supplied month and day naturally', 'In the dated forecast after the TLDR, include the supplied month and day naturally'):development}`,
     sourceGuidance:`${sources[period]}
 
 Owner-designated comparison prose, when supplied below, is additional positive language evidence. Read each complete piece independently. Its arrangement, story, dates and conclusions are not a template to transplant. Editorial critique and rejected drafts are not positive prose examples. Current directions override older example wording; preserve every source's exact text, boundaries, identity and hash.
@@ -66,5 +67,5 @@ Before returning, read the whole draft against the primary essays and designated
 
 Verify selected dates, participants and life areas against the supplied facts. Preserve the declared audience. Return zero em dashes (U+2014), including encoded entities. This review is part of the same writing call; it adds no paid review, retry or automatic approval.
 
-Return only headline and body in the supplied schema, with natural paragraph breaks. Keep prompts, source notes, scores and commentary outside reader copy. The owner judges and approves the exact saved prose.`};
+Return only the reader fields required by the supplied schema, with natural paragraph breaks. Monthly requests include headline, tldr and the dated body. Keep prompts, source notes, scores and commentary outside reader copy. The owner judges and approves the exact saved prose.`};
 }

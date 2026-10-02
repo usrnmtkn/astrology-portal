@@ -14,6 +14,7 @@ import { resolveStudioWritingProfile } from "./studioWritingProfileReceipt.mjs";
 import { buildHoroscopeDraftInput, horoscopeDraftSchema, HOROSCOPE_EDITORIAL_AUTHORITY } from './horoscopeDraftInput.mjs';
 import { buildLunationDraftInput, LUNATION_DRAFT_SCHEMA } from './lunationDraftInput.mjs';
 import { assertLunationWritingFacts } from './lunationWritingFacts.mjs';
+import {composeMonthlyHoroscopeDraft} from './monthlyHoroscopeFormat.mjs';
 
 export const PLACEMENT_DRAFT_SCHEMA = Object.freeze({
   type: "object",
@@ -234,8 +235,10 @@ export async function generateDraft({
     schema: resolvedSchema
   });
   if (!value || typeof value !== "object") throw new Error("Writer returned no structured draft.");
+  const readerValue = family==='horoscope' && engineFacts?.risingSign==='overview' && engineFacts?.window?.period==='monthly'
+    ? composeMonthlyHoroscopeDraft(value) : value;
   return attachGenerationMetadata({
-    ...unapprovedDraft(value),
+    ...unapprovedDraft(readerValue),
     argumentOutline,
     argumentOutlineHash: argumentOutline.approvedOutlineHash,
     contentSpineId: spine.id,

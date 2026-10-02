@@ -107,6 +107,32 @@ profiles are preserved. Publishing a monthly edition makes the exact same body
 available in Horoscopes and Calendar Month. Saving a profile alone does not
 rewrite or regenerate either surface.
 
+## Monthly TLDR format
+
+Writer v13 requests `headline`, `tldr` and `body` together in the same monthly
+writer call. The TLDR establishes the core of that month before calendar dates;
+the dated forecast develops the interpretation afterward. The plan, output schema
+and timing guidance distinguish those two jobs. This format does not impose a
+fixed monthly story, event quota, paragraph count or extra model review.
+
+The server requires a nonempty TLDR, then preserves both text fields verbatim in
+the edition body with the existing bold-paragraph labels **TLDR** and **The month
+ahead**. The ordinary edition editor, publication preview, Horoscopes reader and
+Calendar Month therefore share the same complete text. Storage remains
+`horoscope-edition/v1`; a profile change does not rewrite existing drafts.
+
+A new durable request records `outputFormat: monthly-tldr/v1`. Both immediate
+completion and later polling use that format. Older pending requests without this
+marker retain their original two-field response contract and can be recovered
+without starting another paid request. Missing TLDR output is retained as a
+recoverable failed attempt; it does not trigger automatic generation.
+
+The actual-handler monthly regression covers both completion paths, a missing or
+blank TLDR, total saved-length limits, exact ordering and legacy recovery. The
+monthly browser flow checks labels, full opening and ending preservation through
+editing, publication and reload on desktop/mobile in light/dark themes. These
+fixtures verify the feature, not the literary quality of a future model response.
+
 ## Automatic instruction updates
 
 Owner direction in [the horoscope task](thread:01a0ce6e-69e0-7100-bdba-ad413d5c7804)

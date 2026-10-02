@@ -10,6 +10,10 @@ export const HOROSCOPE_DRAFT_SCHEMA = Object.freeze({type:'object',additionalPro
   required:['headline','body'],properties:{headline:{type:'string'},body:{type:'string'}}});
 
 export function horoscopeDraftSchema(sign,window) {
+  if(sign==='overview'&&window?.period==='monthly')return {type:'object',additionalProperties:false,
+    required:['headline','tldr','body'],properties:{headline:{type:'string',enum:[horoscopeOverviewHeadline(window)]},
+      tldr:{type:'string',description:'The core of the month in human language, before any calendar dates. No heading.'},
+      body:{type:'string',description:'The dated forecast that develops the TLDR. No repeated TLDR or section headings.'}}};
   if(sign==='overview')return {...HOROSCOPE_DRAFT_SCHEMA,properties:{...HOROSCOPE_DRAFT_SCHEMA.properties,headline:{type:'string',enum:[horoscopeOverviewHeadline(window)]}}};
   if(!HOROSCOPE_SIGNS.includes(sign))throw new Error('A horoscope draft requires its audience sign.');
   const label=horoscopeSignLabel(sign);

@@ -15,6 +15,7 @@ import {HoroscopeProviderFailure,horoscopeProviderDiagnostic,readHoroscopeProvid
 import {loadHoroscopeSeasonalSources} from '../_lib/horoscope-seasonal-sources.js';
 import {validateHoroscopeReading} from '../../src/astro-writing/horoscopeValidation.mjs';
 import {horoscopePunctuationFindings} from '../../src/astro-writing/horoscopeEditorialConstraints.mjs';
+import {MONTHLY_HOROSCOPE_FORMAT,composeMonthlyHoroscopeDraft} from '../../src/astro-writing/monthlyHoroscopeFormat.mjs';
 loadLocalWebEnv();
 export const maxDuration=300;
 const hash=(v:unknown)=>createHash('sha256').update(JSON.stringify(v)).digest('hex');
@@ -69,7 +70,7 @@ export default async function handler(req:IncomingMessage,res:ServerResponse) {
       const response=await responses.storedWritingResponse({apiKey:process.env.OPENAI_API_KEY,responseId:failed.operation.responseId});
       if(!response.ok)throw new AdminHttpError(503,'The saved writer response is unavailable. The failed request and saved readings are kept.');
       const payload=await response.json();
-      try{readHoroscopeProviderResult(payload);}
+      try{readHoroscopeProviderResult(payload,{format:failed.operation.outputFormat});}
       catch(error){if(error instanceof HoroscopeProviderFailure)return sendAdminJson(res,200,{ok:true,failure:{code:error.code,message:error.message,diagnostic:error.diagnostic}});throw error;}
       return sendAdminJson(res,200,{ok:true,failure:{code:'completed_response',message:'The saved response is complete. Your edition is unchanged; this result needs further review before another request is started.',diagnostic:horoscopeProviderDiagnostic(payload)}});
     }
@@ -129,7 +130,7 @@ export default async function handler(req:IncomingMessage,res:ServerResponse) {
       if(!response.ok)throw new AdminHttpError(503,'The writer result is temporarily unavailable. Resume to retrieve the same request.');
       if(['queued','in_progress'].includes(payload.status))return sendAdminJson(res,202,{ok:true,rows:[row],pending:true});
       let value;
-      try {value=readHoroscopeProviderResult(payload);}
+      try {const raw=readHoroscopeProviderResult(payload,{format:operation.outputFormat});value=operation.outputFormat===MONTHLY_HOROSCOPE_FORMAT?composeMonthlyHoroscopeDraft(raw):raw;}
       catch(error){if(error instanceof HoroscopeProviderFailure)return await recordFailure(error);throw error;}
       const edition={...row.sections.horoscopeEdition,passages:row.sections.horoscopeEdition.passages.map((p:any)=>p.sign===operation.sign?{...p,...value}:p)};
       const lint=validateHoroscopeReading({sign:operation.sign,...value},row.facts.horoscopeBrief.brief,{ownerCorrections:operation.validationCorrections??[]});
@@ -172,8 +173,9 @@ export default async function handler(req:IncomingMessage,res:ServerResponse) {
     if(!operation) {
       const entry=prepared.entries.find((e:any)=>e.sign===sign);
       operation={id:randomUUID(),sign,planHash,startedAt:new Date().toISOString(),actor,config,responseId:null,state:'starting',
+        outputFormat:prepared.edition.window.period==='monthly'?MONTHLY_HOROSCOPE_FORMAT:null,
         validationCorrections:entry.validationCorrections,
-        receipt:{version:horoscopeWritingVersion,planHash,sign,sourceHash:prepared.sourceHash,sourceIds:entry.sourceIds,seasonalMeaning:entry.seasonalMeaning,profileHash:hash(prepared.writingProfile),argumentHash:entry.argumentOutline.outlineHash,feedback:prepared.feedbackReceipt,ownerApproved:false,promotionAuthorized:false}};
+        receipt:{version:horoscopeWritingVersion,outputFormat:prepared.edition.window.period==='monthly'?MONTHLY_HOROSCOPE_FORMAT:null,planHash,sign,sourceHash:prepared.sourceHash,sourceIds:entry.sourceIds,seasonalMeaning:entry.seasonalMeaning,profileHash:hash(prepared.writingProfile),argumentHash:entry.argumentOutline.outlineHash,feedback:prepared.feedbackReceipt,ownerApproved:false,promotionAuthorized:false}};
       const generation=row.source_snapshot?.horoscopeGeneration??{};
       const failures=generation.failures??[];
       const legacy=generation.lastError;
@@ -189,7 +191,7 @@ export default async function handler(req:IncomingMessage,res:ServerResponse) {
         const {response,payload:result}=await responses.startStoredWritingResponse({apiKey,role,request,governedInstructions:instructions,surface:'horoscopes',family:'horoscope',fetchImpl:(url:any,options:any)=>fetch(url,{...options,signal:AbortSignal.timeout(25000)})});
         payload=result;
         if(!response.ok) {
-          if(response.status>=400&&response.status<500)readHoroscopeProviderResult({...payload,status:'failed'});
+          if(response.status>=400&&response.status<500)readHoroscopeProviderResult({...payload,status:'failed'},{format:operation.outputFormat});
           throw new AdminHttpError(503,'The writer request outcome is unknown. Reopen this edition before retrying.');
         }
         if(typeof payload.id!=='string'||!/^resp_[A-Za-z0-9_-]+$/u.test(payload.id))throw new AdminHttpError(502,'The writer did not confirm a response ID. Reopen this edition before retrying.');
@@ -197,12 +199,12 @@ export default async function handler(req:IncomingMessage,res:ServerResponse) {
         await persist({source_snapshot:{...row.source_snapshot,horoscopeGeneration:{...row.source_snapshot.horoscopeGeneration,active:operation}}});
       
       if(['queued','in_progress'].includes(payload.status))throw new Pending();
-      return readHoroscopeProviderResult(payload);
+      return readHoroscopeProviderResult(payload,{format:operation.outputFormat});
     },{provider:'openai',model:operation.config.model,reasoningEffort:operation.config.reasoningEffort,billed:input.action==='generate'});
     try {
       const result=await writeHoroscopeSign(prepared,sign,{approvedPlanHash:planHash,writerClient,approvalReference:`horoscope-generation/${row.id}/${operation.id}`});
       const edition={...prepared.edition,passages:prepared.edition.passages.map((p:any)=>p.sign===sign?{...p,headline:result.headline,body:result.body}:p)};
-      const receipt={...result.receipt,operationId:operation.id,responseId:operation.responseId,requestHash:operation.requestHash,config:operation.config,usage:payload?.usage??null,completedAt:new Date().toISOString(),lint:result.lint,report:result.report};
+      const receipt={...result.receipt,outputFormat:operation.outputFormat,operationId:operation.id,responseId:operation.responseId,requestHash:operation.requestHash,config:operation.config,usage:payload?.usage??null,completedAt:new Date().toISOString(),lint:result.lint,report:result.report};
       if(horoscopePunctuationFindings(result).length)return await holdForPunctuation({headline:result.headline,body:result.body},receipt);
       const patch={status:'DRAFT',sections:{horoscopeEdition:edition},body:horoscopeEditionBody(edition),source_snapshot:{...row.source_snapshot,horoscopeGeneration:{...row.source_snapshot.horoscopeGeneration,active:null,lastError:null,readings:{...row.source_snapshot.horoscopeGeneration?.readings,[sign]:receipt}}}};
       assertHoroscopeRow({...row,...patch});await persist(patch);
