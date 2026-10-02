@@ -2,7 +2,7 @@
 
 Open **Compose → AI Writing** (`#ai-writing`) to edit the daily, weekly, monthly or seasonal profile. Each profile contains voice guidance, reading structure, source guidance and the prompt that combines them. These are editorial instructions; they are separate from Calendar's collective overview templates and from reader passages.
 
-The weekly starter follows the existing forecast-first horoscope contract. The daily and seasonal starters adapt its scope to the requested period. Starters are proposals, not approved prose, and a first visit does not write rows. Editing or saving a profile does not run a model or publish content.
+The daily and weekly starters follow the existing forecast-first horoscope contract. Monthly and Seasonal have consolidated long-form starters with distinct audience and calendar scopes. Starters are proposals, not approved prose, and a first visit does not write rows. Editing or saving a profile does not run a model or publish content.
 
 ## Editing
 
@@ -22,12 +22,25 @@ article spine, sentence-length quotas, negation-pivot cap or mandatory imperativ
 sequence. Those instructions competed with the saved horoscope profiles even
 when the correct profile revision reached the writer.
 
-Monthly requests include each complete primary essay once. Evidence roles and
-the relevant-passage list reference that exact unit, preserving provenance and
-use restrictions; supporting passages remain intact. The Monthly starter no
-longer sets a 450–700 word target. Length follows the developed interpretation
-and the complete owner examples. These changes address request construction,
-not an automatic claim of prose quality or approval.
+Writer v12 removes the unrelated Saturn-in-Capricorn placement gold article from
+horoscope requests. The three-passage same-family floor and meaning, scene,
+argument and conditional phrase requirements remain. Other content families
+retain their configured register gold.
+
+Monthly and Seasonal requests include each selected complete owner essay once.
+Canonical evidence entries reference those units; role indexes reference entries
+instead of repeating their prose. Identical supporting evidence also appears
+once, with its provenance and use restrictions retained. Request-level tests
+check the entire provider input, not only the primary source list.
+
+Monthly and Seasonal starters now hold one coherent set of Voice, Structure,
+Sources and Prompt instructions. Redundant runtime style overlays are removed;
+calculated-fact boundaries and strict punctuation remain runtime constraints.
+Saved owner-designated positive prose belongs in the protected profile, with
+complete previous profiles and mixed review notes archived when rebuilt.
+Rebuilding instructions does not promote examples as reusable phrases or reader
+copy. Length follows the interpretation and complete owner examples, without a
+word target. These checks verify request construction, not literary quality.
 
 The existing writing harness accepts the export:
 

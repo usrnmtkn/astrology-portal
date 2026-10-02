@@ -1,3 +1,4 @@
+import {assertHoroscopeRequestEvidence} from './assert-horoscope-request-evidence.mjs';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import SwissEph from 'swisseph-wasm';
@@ -63,7 +64,7 @@ for(const [date,timeZone] of [['2026-10-01','America/New_York'],['2027-03-02','A
  const routed=JSON.parse(input.match(/PERIOD DEVELOPMENTS[^\n]*\n([^\n]+)\n\n/)![1]);
  assert.deepEqual(routed.relationships,prepared.entries.find((e:any)=>e.sign==='aquarius').developments.relationships);
  const facts=JSON.parse(input.match(/CALCULATED FACTS\n([^\n]+)\n\n/)![1]);assert(!facts.relationalContext,'Do not pay for duplicate relational packets');
- assert(input.includes('INTERPRETIVE DEPTH:'));assert(input.includes(HOROSCOPE_PUNCTUATION_RULE));
+ assert(input.includes('Develop their relationships rather than touring isolated planetary topics'));assertHoroscopeRequestEvidence(input);assert(input.includes(HOROSCOPE_PUNCTUATION_RULE));
  const polled=await invokeHoroscopeWriting({action:'poll',id:row.id,expectedUpdatedAt:row.updated_at});assert.equal(polled.status,200);row=polled.payload.rows[0];
  const shared=await invokeHoroscopeWriting({action:'generate',id:row.id,expectedUpdatedAt:row.updated_at,sign:'overview',approvedPlanHash:plan.payload.plan.planHash});assert.equal(shared.status,202);row=shared.payload.rows[0];
  const sharedInput=writerFixture.requests.get(row.source_snapshot.horoscopeGeneration.active.responseId).input;
@@ -74,7 +75,7 @@ for(const [date,timeZone] of [['2026-10-01','America/New_York'],['2027-03-02','A
   assert.equal(sharedInput.split(JSON.stringify(essay.text).slice(1,-1)).length-1,1);
   assert.equal(essay.text,fs.readFileSync(essay.sourcePath,'utf8').slice(essay.provenance.start,essay.provenance.end));
  }
- assert(sharedInput.includes('Write the human argument first.'));
+ assert(sharedInput.includes('Write from inside a recognizable human experience.'));assertHoroscopeRequestEvidence(sharedInput);
  assert(sharedInput.includes('One shared reading for people of all signs.'));
  assert.equal((await invokeHoroscopeWriting({action:'poll',id:row.id,expectedUpdatedAt:row.updated_at})).status,200);
 }

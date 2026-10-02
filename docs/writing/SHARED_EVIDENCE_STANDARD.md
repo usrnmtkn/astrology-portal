@@ -25,6 +25,13 @@ Assistant-generated prose, summaries of owner style, and derived style guidance 
 REGISTER evidence. A request that omits available relevant owner passages fails retrieval before
 credentials or billing.
 
+For the horoscope family, the owner's October 2026 repair direction replaces the
+unrelated Saturn-in-Capricorn placement gold with the selected complete forecast
+and essay passages. Horoscope requests still require at least three same-family
+passages and all other evidence-role checks. This exception does not change the
+configured register-gold requirements of placement articles or other families.
+See [the horoscope task](thread:01a0ce6e-69e0-7100-bdba-ad413d5c7804).
+
 ## Owner-supplied calibration requires explicit authority
 
 Task-supplied examples may establish a reasoning or review standard without
@@ -88,7 +95,8 @@ LINES`; they may be used verbatim or adapted.
 These fail before credentials are read or billing can begin:
 
 - Empty positive pool.
-- Fewer than three same-family register passages, or missing register gold.
+- Fewer than three same-family register passages, or missing register gold where
+  the content family's policy requires it.
 - Relevant published owner passages exist but the packet contains fewer than three, or omits any
   when fewer than three exist.
 - Approved same-planet-sign meaning rows exist and none are in the packet.
