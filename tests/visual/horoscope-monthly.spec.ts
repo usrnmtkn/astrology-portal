@@ -103,7 +103,6 @@ for(const [width,theme] of [[390,'light'],[390,'dark'],[1440,'light'],[1440,'dar
     expect((await call({method:'POST',url:'/api/admin/generated-content?writingProfiles=true',body:{profile:{...latest.profile,voiceGuidance:'Updated synthetic instructions after the failed attempt.'},expectedUpdatedAt:latest.updatedAt}})).status).toBe(200);
     await page.reload();await studio.getByText(/^Continue a saved edition/).click();await studio.getByRole('button',{name:/^Monthly horoscopes/}).click();
     await expect(error).toContainText(`Attempt ended ${timestamp}.`);
-    await expect(error).toContainText('The writing plan has changed since that attempt.');
     await expect(studio.getByRole('button',{name:'Retry Overview',exact:true})).toBeDisabled();
     expect((await call({method:'writer-state'})).calls).toBe(2);
     await studio.getByLabel('I approve this writing plan for generation.').check();

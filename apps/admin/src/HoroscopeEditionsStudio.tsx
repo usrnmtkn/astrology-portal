@@ -74,25 +74,30 @@ export default function HoroscopeEditionsStudio({secret}:{secret:string}) {
     // for generation and failure recovery instead of sending the old timestamp.
     const updated=data.rows?.[0];
     if(updated&&updated.id!==row.id)throw new Error('The writing plan edition could not be confirmed.');
-    const failure=await savedFailureMessage(updated??row,controller?.signal,data.plan?.planHash);
+    const failure=await savedFailureMessage(updated??row,controller?.signal);
     if(!mounted.current||controller&&!isCurrent(controller))return;
     if(updated){retain(updated);setProfile(updated.source_snapshot?.studioWritingProfile??null);}
     setPlan(data.plan);setConfigured(data.configured);setPlanApproved(false);setError(failure);
   }
-  async function savedFailureMessage(row:any,signal?:AbortSignal,currentPlanHash?:string) {
+  async function savedFailureMessage(row:any,signal?:AbortSignal) {
     const generation=row.source_snapshot?.horoscopeGeneration,failed=generation?.lastError;
     if(!failed||generation.active)return '';
-    const {describeHoroscopeFailure}=await import('./horoscopeFailureMessage');
-    const describe=(failure:any)=>describeHoroscopeFailure(row,failure,currentPlanHash);
-    if(failed.code==='required_punctuation')return describe(failed);
-    if(failed.diagnostic||!failed.operation?.responseId)return describe(failed);
+    const describe=(failure:any)=>{
+      const message=failure.diagnostic?.errorCode==='credit_balance_exhausted'
+        ?'The previous attempt stopped because the writing API had no credits. This describes the saved attempt, not your current balance.'
+        :`Previous attempt: ${failure.message}`;
+      const ended=Date.parse(failed.failedAt);
+      const timestamp=Number.isFinite(ended)?` Attempt ended ${new Date(ended).toLocaleString('en-US',{dateStyle:'medium',timeStyle:'short',timeZone:row.sections.horoscopeEdition.window.timeZone})}.`:'';
+      return message+timestamp;
+    };
+    if(failed.code==='required_punctuation'||failed.diagnostic||!failed.operation?.responseId)return describe(failed);
     // Older drafts only saved a generic error. Opening their plan retrieves the
     // existing response's cause; it never retries generation or changes the row.
     try {
       const details=await request(secret,'/api/admin/horoscope-writing',{action:'diagnose',id:row.id,expectedUpdatedAt:row.updated_at},'POST',signal);
       return describe(details.failure);
     }catch{
-      return 'The previous attempt failed, but its details are temporarily unavailable. Choose Check saved progress to try again. Saved readings are kept.';
+      return 'The previous attempt failed, but its details are unavailable. Check saved progress to try again. Saved readings are kept.';
     }
   }
   async function readSaved(id:string,signal?:AbortSignal) {

@@ -440,11 +440,11 @@ Existing operations retain their reserved settings. An explicit fresh retry uses
 the corrected configuration and reuses a matching validated synthesis; progress
 checks never create a new request. Truncated output remains a private failure,
 not a completed or publishable reading. Studio dates the saved failure in the
-edition's time zone and identifies a writing plan changed since that attempt.
+edition's time zone, including after the writing plan changes.
 The original failure, diagnostic and saved reader text remain intact.
 
 Actual-handler regressions reproduce the reasoning-heavy incomplete response,
 preserve the old operation settings and confirm one-stage retry without paying
-for unchanged planning again. Browser regressions check the dated error, changed
-plan notice, explicit retry approval and complete save/review/publication flow
+for unchanged planning again. Browser regressions check the dated error after a
+profile change, explicit retry approval and complete save/review/publication flow
 with isolated storage and simulated responses. No paid generation is implied.

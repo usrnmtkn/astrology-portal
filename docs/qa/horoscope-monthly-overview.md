@@ -123,6 +123,6 @@ copy, and require explicit retry. A matching saved synthesis is reused.
 The Monthly browser matrix now includes an incomplete prose response followed by
 progress checking, a saved profile change in another session, reload and an
 approved retry. It verifies the original failure timestamp in the edition's time
-zone, the changed-plan notice, unchanged request count while checking, and the
+zone, unchanged request count while checking, and the
 complete later draft through publication and reader reload. Fixture success does
 not establish a live completion rate or the quality of fresh generated prose.
