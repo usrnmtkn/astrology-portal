@@ -1,7 +1,8 @@
 import assert from 'node:assert/strict';
 import {store} from '../tests/helpers/sky-article-save-api.mts';
 import {readerRouteResponse} from '../tests/helpers/content-reader-route.mjs';
-import {createSeasonalPublicationFixture,seasonalClaimBodies} from '../tests/helpers/horoscope-publication-fixture.mts';
+import {createSeasonalPublicationFixture,seasonalClaimBodies,createMonthlyAspectPublicationFixture,monthlyAspectBody} from '../tests/helpers/horoscope-publication-fixture.mts';
+import {horoscopeAspectFindings} from '../src/astro-writing/horoscopeAspectClaims.mjs';
 import {validateHoroscopeReading} from '../src/astro-writing/horoscopeValidation.mjs';
 import {horoscopeEditionBody} from '../apps/web/src/content/horoscopeEditions.mjs';
 
@@ -36,3 +37,34 @@ const rejected=await store.invoke('PATCH',{id:draft.id,expectedUpdatedAt:draft.u
 assert.equal(rejected.status,422);assert.equal(store.rows.get(draft.id).status,'DRAFT');assert.equal(store.rows.get(draft.id).body,draft.body);
 assert.equal((await store.invoke('PATCH',{id:draft.id,expectedUpdatedAt:'2000-01-01T00:00:00Z',status:'LIVE'})).status,409);
 console.log('PASS seasonal claim publication: all quarter phases, clause dates, repeated houses, exact draft/receipt preservation, reader eligibility, wrong claims and stale writes blocked.');
+
+const monthly=await createMonthlyAspectPublicationFixture(m=>store.invoke(m.method,m.body,m.url));
+assert.equal(monthly.status,200,JSON.stringify(monthly.payload));
+const monthlyRow=monthly.payload.rows[0],monthlyBrief=monthlyRow.facts.horoscopeBrief.brief;
+assert.deepEqual(issues('overview',monthlyAspectBody,monthlyBrief),[]);
+const mLive=await store.invoke('PATCH',{id:monthlyRow.id,expectedUpdatedAt:monthlyRow.updated_at,status:'LIVE'});
+assert.equal(mLive.status,200,JSON.stringify(mLive.payload));
+assert.deepEqual(mLive.payload.rows[0].sections,monthlyRow.sections);
+assert.deepEqual(mLive.payload.rows[0].source_snapshot,monthlyRow.source_snapshot,'Historical receipt stays intact');
+const mRead=await readerRouteResponse('/api/content-reader',{method:'POST',body:JSON.stringify({ids:[monthlyRow.id]})});
+assert.equal(mRead.status,200);assert.equal((await mRead.json()).rows[0].body,monthlyRow.body);
+for(const bad of [
+ monthlyAspectBody.replace('now retrograde','now direct'),
+ monthlyAspectBody.replace('October 30','October 2'),
+ monthlyAspectBody.replace('squares Mars again','trines Mars again'),
+ monthlyAspectBody.replace('This square','This opposition'),
+ monthlyAspectBody.replace('This square','\n\nThis square'),
+ monthlyAspectBody.replace('This square','Mercury enters Scorpio. This square'),
+ monthlyAspectBody.replace('This square can','This square with Jupiter can'),
+ monthlyAspectBody.replace('This square can','This exact square can'),
+ monthlyAspectBody.replace('This square can','This square on October 10 can'),
+ monthlyAspectBody.replace('Venus squares Pluto','Venus trines Pluto'),
+ 'You can review this square before Venus squares Pluto on October 20.'
+]){
+ assert(issues('overview',bad,monthlyBrief).length,`Invalid monthly claim accepted: ${bad}`);
+ const invalid=structuredClone(monthlyRow);invalid.sections.horoscopeEdition.passages[0].body=bad;invalid.body=horoscopeEditionBody(invalid.sections.horoscopeEdition);store.rows.set(invalid.id,invalid);
+ const denied=await store.invoke('PATCH',{id:invalid.id,expectedUpdatedAt:invalid.updated_at,status:'LIVE'});
+ assert.equal(denied.status,422);assert.equal(store.rows.get(invalid.id).status,'DRAFT');assert.equal(store.rows.get(invalid.id).body,invalid.body);
+}
+assert(horoscopeAspectFindings('Venus squares Pluto. This square can help you consider it.',{...monthlyBrief,events:[],relationalContext:undefined}).length);
+console.log('PASS monthly aspect publication: motion-qualified pairs and same-paragraph references, exact saved copy and receipts retained, false claims/dates/motions and unanchored references blocked.');

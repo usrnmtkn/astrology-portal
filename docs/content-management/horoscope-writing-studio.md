@@ -206,3 +206,10 @@ stop preparation instead of silently generating with stale instructions.
 handler and isolated storage/provider fixtures. Monthly browser coverage verifies
 automatic adoption after reopening, confirmed-version generation and reload on
 desktop/mobile in both themes. These checks incur no model charges.
+### Aspect references in saved readings
+
+Fact validator v7 recognizes motion asides such as `Mercury, now retrograde, squares Mars` and checks the named motion against the supplied aspect participant. First-mention dates still have to match that same calculated event.
+
+An interpretive `this square` or `that opposition` may refer to a supported explicit pair earlier in the same paragraph. A new paragraph, unresolved aspect or different named subject clears that reference. It cannot supply another planet, date, motion or exactness claim. Unsupported pairs remain blocking.
+
+Publication rechecks the exact saved text with the current validator. Older factual findings remain in their historical generation receipt but do not override the current factual result. No prose rewrite, generation request or publication approval is implied by a parser correction.
