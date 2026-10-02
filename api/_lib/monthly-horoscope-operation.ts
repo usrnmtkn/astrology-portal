@@ -77,7 +77,11 @@ export async function monthlyHoroscopeOperation({action,row:initialRow,persist,p
       if(reusable)applyMonthlySynthesis(draftRequest.input,reusable.brief,synthesisFacts);
       operation={id,workflow:MONTHLY_SYNTHESIS_VERSION,sign:'overview',planHash:prepared.planHash,actor,phase:'synthesis',state:'starting',responseId:null,
         startedAt:new Date().toISOString(),draftRequest,synthesisFacts,synthesisReceipt:reusable,outputFormat:MONTHLY_SYNTHESIS_VERSION,
-        draftConfig:provider.normalizeProviderConfig({},'writer'),config:provider.normalizeProviderConfig({reasoningEffort:'medium',maxOutputTokens:6000},'writer'),
+        // Synthesis already did the month-wide planning. Extra-high reasoning
+        // consumed nearly the whole shared 12k reasoning/output budget in a
+        // failed prose request. Keep the model and cost ceiling; use medium
+        // effort for new drafts only. Stored operations retain their config.
+        draftConfig:provider.normalizeProviderConfig({reasoningEffort:'medium',maxOutputTokens:12000},'writer'),config:provider.normalizeProviderConfig({reasoningEffort:'medium',maxOutputTokens:6000},'writer'),
         validationCorrections:entry.validationCorrections,receipt:{version:horoscopeWritingVersion,outputFormat:MONTHLY_HOROSCOPE_FORMAT,planHash:prepared.planHash,sign:'overview',sourceHash:prepared.sourceHash,sourceIds:entry.sourceIds,profileHash:hash(prepared.writingProfile),argumentHash:entry.argumentOutline.outlineHash,feedback:prepared.feedbackReceipt,ownerApproved:false,promotionAuthorized:false}};
       const generation=row.source_snapshot?.horoscopeGeneration??{};
       const previousFailure=generation.lastError;

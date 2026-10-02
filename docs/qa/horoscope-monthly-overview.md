@@ -111,3 +111,18 @@ fixture output nor a passing build establishes that new prose matches the owner.
 A live writing comparison needs a separately authorized bounded call; exact
 reader wording remains for owner review. Profile migration changes no saved
 reading and starts no generation.
+
+## Monthly response-limit recovery (2026-10-02)
+
+New Monthly drafts use medium reasoning and retain the same writer model and
+12,000-token output ceiling. The preceding synthesis still uses medium reasoning
+and 6,000 tokens. Tests inspect the actual dispatched payload, preserve settings
+for an already reserved operation, retain a truncated failure outside reader
+copy, and require explicit retry. A matching saved synthesis is reused.
+
+The Monthly browser matrix now includes an incomplete prose response followed by
+progress checking, a saved profile change in another session, reload and an
+approved retry. It verifies the original failure timestamp in the edition's time
+zone, the changed-plan notice, unchanged request count while checking, and the
+complete later draft through publication and reader reload. Fixture success does
+not establish a live completion rate or the quality of fresh generated prose.

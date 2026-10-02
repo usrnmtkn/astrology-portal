@@ -74,17 +74,23 @@ export default function HoroscopeEditionsStudio({secret}:{secret:string}) {
     // for generation and failure recovery instead of sending the old timestamp.
     const updated=data.rows?.[0];
     if(updated&&updated.id!==row.id)throw new Error('The writing plan edition could not be confirmed.');
-    const failure=await savedFailureMessage(updated??row,controller?.signal);
+    const failure=await savedFailureMessage(updated??row,controller?.signal,data.plan?.planHash);
     if(!mounted.current||controller&&!isCurrent(controller))return;
     if(updated){retain(updated);setProfile(updated.source_snapshot?.studioWritingProfile??null);}
     setPlan(data.plan);setConfigured(data.configured);setPlanApproved(false);setError(failure);
   }
-  async function savedFailureMessage(row:any,signal?:AbortSignal) {
+  async function savedFailureMessage(row:any,signal?:AbortSignal,currentPlanHash?:string) {
     const generation=row.source_snapshot?.horoscopeGeneration,failed=generation?.lastError;
     if(!failed||generation.active)return '';
-    const describe=(failure:any)=>failure.diagnostic?.errorCode==='credit_balance_exhausted'
+    const describe=(failure:any)=>{
+      const message=failure.diagnostic?.errorCode==='credit_balance_exhausted'
       ?'The previous attempt stopped because the writing API had no credits. If you have added credits, approve the writing plan below and retry this reading. This message describes the saved attempt, not your current balance.'
       :`Previous attempt: ${failure.message}`;
+      const ended=Date.parse(failed.failedAt);
+      const timestamp=Number.isFinite(ended)?` Attempt ended ${new Intl.DateTimeFormat('en-US',{month:'short',day:'numeric',year:'numeric',hour:'numeric',minute:'2-digit',timeZoneName:'short',timeZone:row.sections.horoscopeEdition.window.timeZone}).format(ended)}.`:'';
+      const changed=currentPlanHash&&failed.operation?.planHash&&currentPlanHash!==failed.operation.planHash?' The writing plan has changed since that attempt.':'';
+      return message+timestamp+changed;
+    };
     if(failed.code==='required_punctuation')return describe(failed);
     if(failed.diagnostic||!failed.operation?.responseId)return describe(failed);
     // Older drafts only saved a generic error. Opening their plan retrieves the

@@ -9,6 +9,7 @@ test.use({timezoneId:'America/New_York'});
 
 for(const [width,theme] of [[390,'light'],[390,'dark'],[1440,'light'],[1440,'dark']] as const){
  test(`Monthly overview: create, recover, review, publish, reload and seasonal navigation ${width} ${theme}`,async({page})=>{
+  test.setTimeout(60000);
   const child=fork(path.resolve('tests/helpers/sky-article-save-api.mts'),[],{env:{...process.env,HOROSCOPE_WRITER_FIXTURE:'1',ZODIAC_TEMPLATE_FIXTURE:'1'},execArgv:['--import','tsx'],stdio:['ignore','pipe','pipe','ipc']});
   let sequence=0,stderr='';const pending=new Map<number,{resolve:(v:any)=>void;reject:(e:Error)=>void}>();
   child.stderr?.on('data',value=>stderr+=value);
@@ -85,13 +86,34 @@ for(const [width,theme] of [[390,'light'],[390,'dark'],[1440,'light'],[1440,'dar
     await page.reload();await studio.getByText(/^Continue a saved edition/).click();await studio.getByRole('button',{name:/^Monthly horoscopes/}).click();
     await expect(studio.getByText('Plan saved. Resume generation to write the overview without another planning charge.',{exact:true})).toBeVisible();
     expect((await call({method:'writer-state'})).calls).toBe(1);
+    await call({method:'writer-state',body:{nextResult:{status:'incomplete',incomplete_details:{reason:'max_output_tokens'},usage:{input_tokens:50000,output_tokens:12000,output_tokens_details:{reasoning_tokens:11302}},output:[{type:'message',content:[{type:'output_text',text:'{"headline":"Incomplete fixture'}]}]}}});
     await studio.getByRole('button',{name:'Resume generation',exact:true}).click();
+    const error=studio.getByText(/Previous attempt: The writer reached its response limit/);
+    await expect(error).toBeVisible();
+    const failed=(await call({method:'rows'})).find((r:any)=>r.content_key.startsWith('horoscope/monthly/'));
+    const failedAt=failed.source_snapshot.horoscopeGeneration.lastError.failedAt;
+    const timestamp=new Intl.DateTimeFormat('en-US',{month:'short',day:'numeric',year:'numeric',hour:'numeric',minute:'2-digit',timeZoneName:'short',timeZone:'America/New_York'}).format(new Date(failedAt));
+    await expect(error).toContainText(`Attempt ended ${timestamp}.`);
+    expect(failed.sections.horoscopeEdition.passages[0].body).toBe('');
+    await studio.getByRole('button',{name:'Check saved progress',exact:true}).click();
+    await expect(error).toContainText(`Attempt ended ${timestamp}.`);
+    expect((await call({method:'writer-state'})).calls).toBe(2);
+    const profilesNow=await call({method:'GET',url:'/api/admin/generated-content?writingProfiles=true'});
+    const latest=profilesNow.payload.profiles.find((p:any)=>p.profile.period==='monthly');
+    expect((await call({method:'POST',url:'/api/admin/generated-content?writingProfiles=true',body:{profile:{...latest.profile,voiceGuidance:'Updated synthetic instructions after the failed attempt.'},expectedUpdatedAt:latest.updatedAt}})).status).toBe(200);
+    await page.reload();await studio.getByText(/^Continue a saved edition/).click();await studio.getByRole('button',{name:/^Monthly horoscopes/}).click();
+    await expect(error).toContainText(`Attempt ended ${timestamp}.`);
+    await expect(error).toContainText('The writing plan has changed since that attempt.');
+    await expect(studio.getByRole('button',{name:'Retry Overview',exact:true})).toBeDisabled();
+    expect((await call({method:'writer-state'})).calls).toBe(2);
+    await studio.getByLabel('I approve this writing plan for generation.').check();
+    await studio.getByRole('button',{name:'Retry Overview',exact:true}).click();
    }
    const summary='You can read the complete monthly summary fixture.\n\nYour summary ends here.';
    const generated=`**TLDR**\n\n${summary}\n\n**The month ahead**\n\nYou can read the complete overview fixture opening.\n\nYour saved fixture ends here.`;
    const edited=generated.replace('You can read the complete overview fixture opening.','You can read the exact monthly fixture opening.').replace('Your saved fixture ends here.','Your complete monthly fixture ends here.');
    await expect(studio.getByLabel('Complete reading')).toHaveValue(generated);
-   expect((await call({method:'writer-state'})).calls).toBe(2);
+   expect((await call({method:'writer-state'})).calls).toBe(4);
    await studio.getByLabel('Complete reading').fill(edited);
    await studio.getByRole('button',{name:'Continue to publish',exact:true}).click();
    await expect(studio.getByRole('button',{name:'Publish edition',exact:true})).toBeDisabled();
@@ -159,7 +181,7 @@ for(const [width,theme] of [[390,'light'],[390,'dark'],[1440,'light'],[1440,'dar
    readerMode='error';await page.reload();await expect(calendarOverview).toContainText('The monthly overview couldn’t load.');
    readerMode='normal';await calendarOverview.getByRole('button',{name:'Try again',exact:true}).click();
    await expect(calendarOverview).toContainText('Your complete monthly fixture ends here.');
-   expect((await call({method:'writer-state'})).calls).toBe(2);
+   expect((await call({method:'writer-state'})).calls).toBe(4);
    // Current navigation follows the reader's civil month, while a saved edition
    // keeps its own month after the calendar rolls forward.
    await page.clock.setFixedTime(new Date('2026-11-01T03:30:00Z'));
