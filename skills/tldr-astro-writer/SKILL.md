@@ -81,7 +81,9 @@ Use `../../src/astro-writing/runWritingPipeline.mjs` for generated prose. Its or
 2. build the ten-line argument core plus eight required Sky Placement spine-quality intentions (and four slow-mover additions when applicable), then stop for exact owner approval;
 3. require the target content family's recorded structural spine;
 4. build the shared five-role packet: exact planet-sign matrix meaning; at least three exact
-   owner-authored register passages plus the configured register-gold page; same-planet-sign
+   owner-authored register passages plus register gold when that family's policy
+   requires it (horoscopes use their selected complete forecasts and essays,
+   without the unrelated Saturn-in-Capricorn placement gold); same-planet-sign
    scene evidence in house-core, approved-serving, then matrix order; the current approved
    article as argument-and-close evidence only; five to ten thematically relevant owner-authored
    AVAILABLE LINES from the voice-bank and governed phrasebank index; and six to ten relevant

@@ -15,13 +15,19 @@ export function seasonalSharedEvidence(context) {
 // Keep each role's metadata, including provenance and use restrictions.
 export function sharedEvidenceWithPassageReferences(context,passages) {
   const sources=new Map(passages.map(p=>[p.text,p]));
+  const presented=new Map();
   const reference=e=>{
     const source=sources.get(e.text);
-    if(!source)return e;
     const {text,...metadata}=e;
-    return {...metadata,completePassageRef:source.id};
+    if(source)return {...metadata,completePassageRef:source.id};
+    const existing=presented.get(text);
+    if(existing)return {...metadata,evidenceRef:existing};
+    if(text)presented.set(text,e.id);
+    return e;
   };
   const packet=context.sharedEvidencePacket;
-  return {...packet,roles:Object.fromEntries(Object.entries(packet.roles).map(([role,entries])=>[role,entries.map(reference)])),
-    entries:packet.entries.map(reference)};
+  const entries=packet.entries.map(reference);
+  // Roles index the canonical entries. Never serialize a second copy of prose,
+  // including meaning, scene, phrase and argument evidence outside the essays.
+  return {...packet,roles:Object.fromEntries(Object.entries(packet.roles).map(([role,items])=>[role,items.map(e=>({evidenceRef:e.id}))])),entries};
 }

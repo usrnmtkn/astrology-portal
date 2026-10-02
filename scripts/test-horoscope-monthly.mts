@@ -1,3 +1,4 @@
+import {assertHoroscopeRequestEvidence} from './assert-horoscope-request-evidence.mjs';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import {createHash} from 'node:crypto';
@@ -62,6 +63,7 @@ for(const unrelated of ['SKY PLACEMENT ARTICLE SPINE','SPINE QUALITY GATES','NEG
  assert(!request.instructions.includes(unrelated),`A horoscope must not receive the conflicting general article rule: ${unrelated}`);
 }
 for(const boundary of ['factual-safety-v1','grammar-v1','source-licensing-v1','register-direction-v1','unsupported-astrology-claims-v1'])assert(request.instructions.includes(boundary),boundary);
+assertHoroscopeRequestEvidence(request.input);
 const essays=JSON.parse(request.input.match(/COMPLETE OWNER COLLECTIVE ESSAYS — PRIMARY PROSE EVIDENCE\n([^\n]+)\n\n/)[1]);
 assert.equal(essays.length,3);
 for(const essay of essays){
@@ -81,7 +83,7 @@ for(const entry of [...shared.entries,...Object.values(shared.roles).flat(),...r
  if(entry.completePassageRef)assert(completePassages.has(entry.completePassageRef),'Every role reference resolves to a complete passage in this request');
 }
 for(const passage of supporting)assert.equal(request.input.split(JSON.stringify(passage.text).slice(1,-1)).length-1,1,'Supporting passage remains exact and unduplicated');
-const registerEntries=shared.roles.register.filter((e:any)=>e.completePassageRef);
+const registerEntries=shared.entries.filter((e:any)=>e.role==='register'&&e.completePassageRef);
 assert(registerEntries.length>=3);assert(registerEntries.every((e:any)=>!Object.hasOwn(e,'text')));
 const facts=JSON.parse(request.input.match(/CALCULATED FACTS\n([^\n]+)\n\n/)[1]);assert.equal(facts.window.audience,'collective');assert(!facts.house&&!facts.risingSign&&!facts.signs);
 writerFixture.pendingPolls=1;result=await action('poll');assert.equal(result.status,202);row=result.payload.rows[0];

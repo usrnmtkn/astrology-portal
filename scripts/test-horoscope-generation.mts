@@ -1,3 +1,4 @@
+import {assertHoroscopeRequestEvidence} from './assert-horoscope-request-evidence.mjs';
 import {loadSeasonalArgumentEvidence,SEASONAL_ARGUMENT_MANIFEST} from '../src/astro-writing/seasonalArgumentEvidence.mjs';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
@@ -107,7 +108,7 @@ for(const request of writerFixture.requests.values()){
  }
  assert(request.input.indexOf(section[0])<request.input.indexOf('CONTENT STUDIO WRITING INSTRUCTIONS'));
  assert.deepEqual(row.source_snapshot.horoscopeGeneration.readings[request.sign].sourceIds.slice(0,3),passages.map((e:any)=>e.id));
- assert.equal(row.source_snapshot.horoscopeGeneration.readings[request.sign].version,'horoscope-writer/v11');
+ assert.equal(row.source_snapshot.horoscopeGeneration.readings[request.sign].version,'horoscope-writer/v12');
 }
 // The lunation is distinct from the Monday snapshot Moon. Houses must bind to
 // the named subject, rather than matching the Sun's house or any available house.
@@ -281,6 +282,7 @@ assert.equal(seasonalRow.status,'DRAFT');
 for(const reading of seasonalEdition.passages){
  const request:any=[...writerFixture.requests.values()].reverse().find((r:any)=>r.sign===reading.sign&&r.input.includes('COMPLETE SEASONAL OWNER PROSE EVIDENCE'));
  assert(request,`Missing seasonal provider request for ${reading.sign}`);
+ assertHoroscopeRequestEvidence(request.input);
  const meaning=JSON.parse(request.input.match(/ZODIAC SEASON AND LEARNING AXIS — INTERPRETIVE SOURCES\n([^\n]+)\n\n/)[1]);
  assert.equal(meaning.seasonSign,'virgo');assert.equal(meaning.oppositeSign,'pisces');
  assert.equal(meaning.risingSign,reading.sign);assert.equal(meaning.sources.length,2);
@@ -300,8 +302,8 @@ for(const reading of seasonalEdition.passages){
   const serialized=JSON.stringify(passage.text).slice(1,-1);
   assert.equal(request.input.split(serialized).length-1,1,passage.id+' must reach the writer exactly once');
  }
- assert(request.input.includes('Write the human argument first.'));
- assert(request.input.includes('Do not average these preferred passages'));
+ assert(request.input.includes('Write from inside a recognizable human experience.'));
+ assert(request.input.includes('primary voice references'));
  assert(request.input.includes('Never use an em dash'));
  assert(request.instructions.includes(HOROSCOPE_EDITORIAL_AUTHORITY));
  assert(!request.instructions.includes('SPINE QUALITY GATES'));

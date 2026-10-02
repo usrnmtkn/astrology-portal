@@ -33,7 +33,12 @@ export const OWNER_EVIDENCE_FAMILY_MAP = Object.freeze({
     sameFamilyFamilies: Object.freeze(['sky-lunation']),
     registerGoldIds: Object.freeze(['register-gold:lunations:new-moon','register-gold:lunations:full-moon'])
   }),
-  horoscope: Object.freeze({...ARTICLE_POLICY, sameFamilyFamilies:Object.freeze(['weekly-astrology','sky-season','sky-lunation','sky-article-longform','sky-article-reference'])}),
+  // Horoscope voice comes from the owner-selected complete forecasts/essays.
+  // The placement article's Saturn gold is not a universal voice reference.
+  horoscope: Object.freeze({...ARTICLE_POLICY,
+    sameFamilyFamilies:Object.freeze(['weekly-astrology','sky-season','sky-lunation','sky-article-longform','sky-article-reference']),
+    minimumRegisterGoldPassages:0, registerGoldIds:Object.freeze([])
+  }),
   "fast-mover-article": ARTICLE_POLICY,
   "slow-mover-article": ARTICLE_POLICY
 });

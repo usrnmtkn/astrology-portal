@@ -21,7 +21,7 @@ import {loadSeasonalHoroscopeEvidence} from './seasonalHoroscopeEvidence.mjs';
 import {loadSeasonalArgumentEvidence} from './seasonalArgumentEvidence.mjs';
 
 const root=fileURLToPath(new URL('../../',import.meta.url));
-export const horoscopeWritingVersion='horoscope-writer/v11';
+export const horoscopeWritingVersion='horoscope-writer/v12';
 const digest=value=>createHash('sha256').update(typeof value==='string'?value:horoscopeCanonicalJson(value)).digest('hex');
 const repositorySources=new Map();
 const preparedPlans=new Map();
@@ -50,7 +50,6 @@ function loadSources(period) {
   if(period==='seasonal')examples.push(...loadSeasonalArgumentEvidence(read));
   const matrix=withoutOwnerRejectedEvidence(lines('data/writing/matrix-evidence-index/TLDR-Matrix-Evidence-Index.jsonl'),corrections,'copy');
   const approved=withoutOwnerRejectedEvidence(lines('data/writing/OWNER_APPROVED_EXAMPLES.jsonl'),corrections);
-  const gold=json('data/writing/owner-register-gold.json');
   const phrasePath='data/writing/phrase-evidence-index/owner-phrase-evidence-v1.jsonl';read(phrasePath);
   const phrases=loadPhraseEvidenceIndex(path.join(root,phrasePath));
   const houses=json('packages/astro-knowledge/data/primitives/houses.json').entries;
@@ -63,7 +62,7 @@ function loadSources(period) {
       gift:e.collective_shift,challenge:'Consider the limits of this temporary emphasis without assuming an outcome.'}];
   }));
   const seasonalBank=period==='seasonal'?json(SEASONAL_MEANING_BANK):null;
-  const sources={seasonalBank,voice,examples,matrix,approved,gold,phrases,houses,aspects,placements,corrections,hashes,sha256:digest(hashes),sceneLexicon:matrixSceneNounLexicon(matrix)};
+  const sources={seasonalBank,voice,examples,matrix,approved,phrases,houses,aspects,placements,corrections,hashes,sha256:digest(hashes),sceneLexicon:matrixSceneNounLexicon(matrix)};
   repositorySources.set(period,sources);return sources;
 }
 
@@ -138,7 +137,7 @@ export function prepareHoroscopeWriting(row,{studioCorrections=[],feedbackReceip
     const contextOptions={reviewedMeaningExamples,examples:proseExamples,matrixExamples:exactMatrix,matrixArgumentCandidates:evidence.argument_candidate,
       matrixEvidenceAvailableCount:exactMatrix.length,relevantOwnerPassagesAvailableCount:relevantCount,
       ownerPassageRelevanceTier:seasonal?'owner-selected-seasonal':relevant.tier,sceneExamples:scenes.selected,samePlanetSignSceneAvailableCount:scenes.counts.samePlanetSignSceneAvailable,
-      sceneEvidenceInventoryCounts:scenes.counts,registerGoldExamples:sources.gold,corrections,phraseEvidence:sources.phrases,
+      sceneEvidenceInventoryCounts:scenes.counts,corrections,phraseEvidence:sources.phrases,
       primaryRegisterContentKeys:primary.map(e=>e.contentKey),requirePrimaryRegister:true,
       preferredEvidenceContentKeys:signForecasts.filter(e=>e.horoscopeAudienceSign===rising).map(e=>e.contentKey)};
     const context=retrieveOwnerContext(plan,{...contextOptions,contentFamily:'horoscope',register:'second_person'});
