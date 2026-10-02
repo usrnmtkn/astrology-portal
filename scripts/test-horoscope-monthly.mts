@@ -2,7 +2,7 @@ import {assertHoroscopeRequestEvidence} from './assert-horoscope-request-evidenc
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import {createHash} from 'node:crypto';
-import {store,installHoroscopeWriterFixture,invokeHoroscopeWriting,writerFixture} from '../tests/helpers/sky-article-save-api.mts';
+import {store,installHoroscopeWriterFixture,invokeHoroscopeWriting,writerFixture,fixtureMonthlySynthesis} from '../tests/helpers/sky-article-save-api.mts';
 import {readerRouteResponse} from '../tests/helpers/content-reader-route.mjs';
 import {horoscopeCivilWindow,prepareHoroscopeBrief} from '../api/_lib/horoscope-editions';
 import {emptyHoroscopeEdition,validateHoroscopeEdition,horoscopeEditionBody,horoscopeEditionKey,horoscopeEditionAt,HOROSCOPE_SIGNS} from '../apps/web/src/content/horoscopeEditions.mjs';
@@ -46,7 +46,7 @@ const action=(action:string,extra:any={})=>invokeHoroscopeWriting({action,id:row
 const read=async(at='2026-10-16T12:00:00.000Z')=>{const response=await readerRouteResponse('/api/content-reader',{method:'POST',body:JSON.stringify({horoscope:{period:'monthly',at,timeZone:'America/New_York'}})});assert.equal(response.status,200);return response.json();};
 assert.equal((await read()).rows.length,0);
 assert.equal((await store.invoke('PATCH',{id:row.id,expectedUpdatedAt:row.updated_at,status:'LIVE'})).status,422);
-const plan=await action('prepare');assert.equal(plan.status,200,JSON.stringify(plan.payload));assert.equal(plan.payload.plan.writerCalls,1);assert.equal(plan.payload.plan.readings.length,1);
+const plan=await action('prepare');assert.equal(plan.status,200,JSON.stringify(plan.payload));assert.equal(plan.payload.plan.writerCalls,1);assert.equal(plan.payload.plan.synthesisCalls,1);assert.equal(plan.payload.plan.readings.length,1);
 assert.equal(plan.payload.plan.readings[0].house,null);
 assert.equal(writerFixture.calls,0);
 assert.equal((await action('generate',{sign:'aries',approvedPlanHash:plan.payload.plan.planHash})).status,400);
@@ -55,7 +55,23 @@ result=await action('generate',{sign:'overview',approvedPlanHash:plan.payload.pl
 assert.equal(writerFixture.calls,1);
 assert.equal((await invokeHoroscopeWriting({action:'generate',id:row.id,expectedUpdatedAt:initialVersion,sign:'overview',approvedPlanHash:plan.payload.plan.planHash})).status,409);
 assert.equal((await action('generate',{sign:'overview',approvedPlanHash:plan.payload.plan.planHash})).status,409);
+assert.equal(row.source_snapshot.horoscopeGeneration.active.phase,'synthesis');
+const plannerRequest=writerFixture.requests.get(row.source_snapshot.horoscopeGeneration.active.responseId);
+assert(plannerRequest.instructions.startsWith('HOROSCOPE SYNTHESIS AUTHORITY'));assert(!plannerRequest.instructions.includes('SKY PLACEMENT ARTICLE SPINE'));
+assert.deepEqual(plannerRequest.text.format.schema.required,['thesis','stories','readingMovement','endingChange']);
+assert(!plannerRequest.text.format.schema.properties.body,'The synthesis cannot return prose');
+result=await action('poll');assert.equal(result.status,202);row=result.payload.rows[0];
+assert.equal(row.source_snapshot.horoscopeGeneration.active.state,'ready');
+assert.equal(row.sections.horoscopeEdition.passages[0].body,'');
+const synthesis=structuredClone(row.source_snapshot.horoscopeGeneration.active.synthesisReceipt);
+await action('poll');assert.equal(writerFixture.calls,1,'Polling a ready synthesis must not charge for prose');
+result=await action('continue');assert.equal(result.status,202);row=result.payload.rows[0];
+assert.equal(writerFixture.calls,2);
+assert.equal((await action('continue')).status,409,'A second continue cannot launch a duplicate prose request');
 const request=writerFixture.requests.get(row.source_snapshot.horoscopeGeneration.active.responseId);
+assert(request.input.includes(synthesis.brief.thesis));
+assert(!request.input.includes('[MONTHLY_SYNTHESIS_REQUIRED_BEFORE_DRAFT]'));
+
 assert.deepEqual(request.text.format.schema.properties.headline.enum,['October 2026 Overview']);
 assert.deepEqual(request.text.format.schema.required,['headline','tldr','body']);
 assert.equal(row.source_snapshot.horoscopeGeneration.active.outputFormat,MONTHLY_HOROSCOPE_FORMAT);
@@ -96,14 +112,14 @@ assert(registerEntries.length>=3);assert(registerEntries.every((e:any)=>!Object.
 const facts=JSON.parse(request.input.match(/CALCULATED FACTS\n([^\n]+)\n\n/)[1]);assert.equal(facts.window.audience,'collective');assert(!facts.house&&!facts.risingSign&&!facts.signs);
 writerFixture.pendingPolls=1;result=await action('poll');assert.equal(result.status,202);row=result.payload.rows[0];
 result=await action('poll');assert.equal(result.status,200,JSON.stringify(result.payload));row=result.payload.rows[0];
-assert.equal(writerFixture.calls,1);assert.equal(row.status,'DRAFT');assert.equal(row.sections.horoscopeEdition.passages[0].headline,'October 2026 Overview');
+assert.equal(writerFixture.calls,2);assert.equal(row.status,'DRAFT');assert.equal(row.sections.horoscopeEdition.passages[0].headline,'October 2026 Overview');
 assert.equal(row.source_snapshot.horoscopeGeneration.readings.overview.ownerApproved,false);
 assert.equal(row.source_snapshot.horoscopeGeneration.readings.overview.outputFormat,MONTHLY_HOROSCOPE_FORMAT);
 assert.equal(row.sections.horoscopeEdition.passages[0].body,expectedMonthly.body);
 assert.equal(row.body,horoscopeEditionBody(row.sections.horoscopeEdition));
 assert.equal((await read()).rows.length,0);
 result=await store.invoke('PATCH',{id:row.id,expectedUpdatedAt:row.updated_at,status:'LIVE'});assert.equal(result.status,200,JSON.stringify(result.payload));row=result.payload.rows[0];
-const published=await read();assert.equal(published.rows.length,1);assert(!JSON.stringify(published).includes('Private fixture preference'));assert(!JSON.stringify(published).includes('horoscopeBrief'));
+const published=await read();assert.equal(published.rows.length,1);assert(!JSON.stringify(published).includes(synthesis.brief.thesis));assert(!JSON.stringify(published).includes('synthesisReceipt'));assert(!JSON.stringify(published).includes('draftRequest'));assert(!JSON.stringify(published).includes('Private fixture preference'));assert(!JSON.stringify(published).includes('horoscopeBrief'));
 assert.equal(horoscopeEditionAt(published.rows,'monthly','2026-10-16T12:00:00.000Z','America/New_York')?.passages[0].body,row.sections.horoscopeEdition.passages[0].body);
 assert.equal((await read(packet.brief.window.endsAt)).rows.length,0);
 // New seasons include a shared introduction; old saved seasons retain twelve units.
@@ -133,12 +149,12 @@ for(const claim of [
 result=await store.invoke('PATCH',{id:row.id,expectedUpdatedAt:row.updated_at,status:'DRAFT'});assert.equal(result.status,200);row=result.payload.rows[0];
 const previous=row.sections.horoscopeEdition.passages[0].body;
 result=await action('reject',{sign:'all'});assert.equal(result.status,200,JSON.stringify(result.payload));row=result.payload.rows[0];
-assert.equal(row.sections.horoscopeEdition.passages[0].body,'');assert.equal(row.source_snapshot.horoscopeGeneration.rejections[0].passages[0].body,previous);assert.equal(writerFixture.calls,1);
-console.log('PASS monthly overview: local month/DST/leap boundaries, Swiss aspect exactness, complete owner essays, one durable writer call, recovery, owner publication, public privacy, rejection and legacy seasons.');
+assert.equal(row.sections.horoscopeEdition.passages[0].body,'');assert.equal(row.source_snapshot.horoscopeGeneration.rejections[0].passages[0].body,previous);assert.equal(writerFixture.calls,2);
+console.log('PASS monthly overview: local month/DST/leap boundaries, Swiss aspect exactness, complete owner essays, one saved synthesis then one durable prose call, recovery, owner publication, public privacy, rejection and legacy seasons.');
 
 const providerResult=(draft:any)=>({status:'completed',output:[{type:'message',content:[{type:'output_text',text:JSON.stringify(draft)}]}]});
 const reset=async()=>{const r=await action('reject',{sign:'all'});assert.equal(r.status,200,JSON.stringify(r.payload));row=r.payload.rows[0];};
-const start=async()=>{const p=await action('prepare');assert.equal(p.status,200);row=p.payload.rows[0];const r=await action('generate',{sign:'overview',approvedPlanHash:p.payload.plan.planHash});row=r.payload.rows[0];return r;};
+const start=async()=>{const p=await action('prepare');assert.equal(p.status,200);row=p.payload.rows[0];let r=await action('generate',{sign:'overview',approvedPlanHash:p.payload.plan.planHash});row=r.payload.rows[0];if(row.source_snapshot.horoscopeGeneration.active.state!=='ready'){r=await action('poll');assert.equal(r.status,202);row=r.payload.rows[0];}r=await action('continue');row=r.payload.rows[0];return r;};
 const good={headline:'October 2026 Overview',tldr:'A complete summary opening.\n\nA complete summary ending.',body:'The complete dated forecast opening.\n\nThe complete dated forecast ending.'};
 for(const invalid of [{headline:good.headline,body:good.body},{...good,tldr:' '},{...good,tldr:'x'.repeat(20000)}]){
  assert.equal((await start()).status,202);
@@ -149,8 +165,10 @@ for(const invalid of [{headline:good.headline,body:good.body},{...good,tldr:' '}
  assert.equal(row.sections.horoscopeEdition.passages[0].body,'');
  assert.equal(writerFixture.calls,calls,'Malformed output never launches an automatic paid retry');
 }
+const syncPlan=await action('prepare');row=syncPlan.payload.rows[0];result=await action('generate',{sign:'overview',approvedPlanHash:syncPlan.payload.plan.planHash});row=result.payload.rows[0];if(row.source_snapshot.horoscopeGeneration.active.state!=='ready'){result=await action('poll');row=result.payload.rows[0];}
 writerFixture.startResult=providerResult(good);
-assert.equal((await start()).status,200,'A synchronous monthly completion uses the same composition as a polled response');
+result=await action('continue');row=result.payload.rows[0];
+assert.equal(result.status,200,'A synchronous monthly completion uses the same composition as a polled response');
 assert.equal(row.sections.horoscopeEdition.passages[0].body,composeMonthlyHoroscopeDraft(good).body);
 assert.equal(row.source_snapshot.horoscopeGeneration.readings.overview.outputFormat,MONTHLY_HOROSCOPE_FORMAT);
 await reset();
@@ -158,7 +176,7 @@ assert.equal((await start()).status,202);
 // Reproduce an operation dispatched before v13. Do not demand a new field from
 // a request already stored with the old two-field provider schema.
 const legacyOperation=store.rows.get(row.id)!.source_snapshot.horoscopeGeneration.active;
-delete legacyOperation.outputFormat;
+delete legacyOperation.outputFormat;delete legacyOperation.workflow;
 const legacyDraft={headline:good.headline,body:'An older complete monthly opening.\n\nIts exact ending.'};
 writerFixture.nextResult=providerResult(legacyDraft);
 const callsBeforeRecovery=writerFixture.calls;
@@ -166,3 +184,62 @@ result=await action('poll');assert.equal(result.status,200,JSON.stringify(result
 assert.equal(row.sections.horoscopeEdition.passages[0].body,legacyDraft.body);
 assert.equal(writerFixture.calls,callsBeforeRecovery);
 console.log('PASS monthly TLDR: required provider field, exact summary-before-forecast preservation, one-call sync/poll parity, missing-field recovery and legacy response compatibility.');
+
+// Planning failure never reaches prose. Recovery uses exact saved facts and IDs.
+await reset();
+let planning=await action('prepare');row=planning.payload.rows[0];
+let before=writerFixture.calls;
+result=await action('generate',{sign:'overview',approvedPlanHash:planning.payload.plan.planHash});row=result.payload.rows[0];
+let activePlan=row.source_snapshot.horoscopeGeneration.active;
+const invalidPlan=fixtureMonthlySynthesis(activePlan.synthesisFacts);
+invalidPlan.stories[0].development[0].factId='not-a-calculated-event';
+writerFixture.nextResult=providerResult(invalidPlan);
+result=await action('poll');assert.equal(result.status,422);row=result.payload.rows[0];
+assert.equal(row.source_snapshot.horoscopeGeneration.lastError.code,'invalid_synthesis');
+assert.equal(writerFixture.calls,before+1);assert.equal(row.sections.horoscopeEdition.passages[0].body,'');
+assert.equal((await action('continue')).status,409);
+// Ready synthesis survives checking/reopening. Simultaneous continue attempts
+// cannot both reserve a prose call, and a failed draft retries only that stage.
+planning=await action('prepare');row=planning.payload.rows[0];
+result=await action('generate',{sign:'overview',approvedPlanHash:planning.payload.plan.planHash});row=result.payload.rows[0];
+result=await action('poll');row=result.payload.rows[0];
+const readyVersion=row.updated_at,readySynthesis=structuredClone(row.source_snapshot.horoscopeGeneration.active.synthesisReceipt);
+before=writerFixture.calls;
+await action('poll');assert.equal(writerFixture.calls,before);
+const concurrent=await Promise.all([action('continue'),action('continue')]);
+assert.deepEqual(concurrent.map(r=>r.status).sort(),[202,409]);
+row=concurrent.find(r=>r.status===202)!.payload.rows[0];assert.equal(writerFixture.calls,before+1);
+assert.equal((await invokeHoroscopeWriting({action:'continue',id:row.id,expectedUpdatedAt:readyVersion})).status,409);
+writerFixture.terminalNext=true;result=await action('poll');assert.equal(result.status,422);row=result.payload.rows[0];
+planning=await action('prepare');row=planning.payload.rows[0];
+before=writerFixture.calls;
+result=await action('generate',{sign:'overview',approvedPlanHash:planning.payload.plan.planHash});assert.equal(result.status,202);row=result.payload.rows[0];
+assert.equal(writerFixture.calls,before,'A valid saved synthesis is not billed again');
+assert.deepEqual(row.source_snapshot.horoscopeGeneration.active.synthesisReceipt,readySynthesis);
+result=await action('continue');row=result.payload.rows[0];
+result=await action('poll');assert.equal(result.status,200);row=result.payload.rows[0];
+assert.equal(writerFixture.calls,before+1);
+assert.deepEqual(row.source_snapshot.horoscopeGeneration.readings.overview.synthesis,readySynthesis);
+assert(!row.body.includes(readySynthesis.brief.thesis));
+assert(!JSON.stringify((await read())).includes('synthesisReceipt'));
+console.log('PASS monthly synthesis: invalid facts stop before prose, read-only progress, concurrent continuation, version conflicts, one-stage retry, private saved plan.');
+
+// A changed editorial profile cannot reuse an earlier plan, and an ambiguous
+// dispatch stays reserved rather than starting an automatic second request.
+await reset();planning=await action('prepare');row=planning.payload.rows[0];
+result=await action('generate',{sign:'overview',approvedPlanHash:planning.payload.plan.planHash});row=result.payload.rows[0];
+result=await action('poll');row=result.payload.rows[0];result=await action('continue');row=result.payload.rows[0];
+writerFixture.terminalNext=true;result=await action('poll');row=result.payload.rows[0];
+const profiles=await store.invoke('GET',null,'/api/admin/generated-content?writingProfiles=true');
+const currentProfile=profiles.payload.profiles.find((p:any)=>p.profile.period==='monthly');
+assert.equal((await store.invoke('POST',{profile:{...currentProfile.profile,voiceGuidance:currentProfile.profile.voiceGuidance+' Changed fixture direction.'},expectedUpdatedAt:currentProfile.updatedAt},'/api/admin/generated-content?writingProfiles=true')).status,200);
+planning=await action('prepare');row=planning.payload.rows[0];before=writerFixture.calls;
+writerFixture.unknownNext=true;
+result=await action('generate',{sign:'overview',approvedPlanHash:planning.payload.plan.planHash});assert.equal(result.status,500);
+row=structuredClone(store.rows.get(row.id));
+assert.equal(row.source_snapshot.horoscopeGeneration.active.phase,'synthesis');
+assert.equal(row.source_snapshot.horoscopeGeneration.active.synthesisReceipt,null);
+assert.equal(writerFixture.calls,before+1);
+assert.equal((await action('generate',{sign:'overview',approvedPlanHash:planning.payload.plan.planHash})).status,409);
+assert.equal((await action('poll')).status,409);assert.equal(writerFixture.calls,before+1);
+console.log('PASS monthly synthesis: changed instructions invalidate saved planning; ambiguous dispatch stays reserved with no automatic re-charge.');

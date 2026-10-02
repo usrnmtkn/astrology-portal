@@ -69,6 +69,7 @@ function storageOrder(row:any) {
  const ordered=(value:any):any=>Array.isArray(value)?value.map(ordered):value&&typeof value==='object'?Object.fromEntries(Object.keys(value).sort().map(key=>[key,ordered(value[key])])):value;
  return ordered(row);
 }
+export function fixtureMonthlySynthesis(facts:any){return {thesis:'The synthetic monthly concern develops across the supplied facts.',stories:facts.planetaryArcs.filter((arc:any)=>arc.developmentIds.length>=2).slice(0,2).map((arc:any)=>({planet:arc.planet,humanConcern:'A connected synthetic concern.',development:arc.developmentIds.slice(0,2).map((factId:string,i:number)=>({factId,changes:`The synthetic concern changes at step ${i+1}.`}))})),readingMovement:'Follow each connected concern and its changes.',endingChange:'The reader understands the synthetic concern differently.'};}
 export const writerFixture={calls:0,polls:0,pendingPolls:0,terminalNext:false,failNext:false,unknownNext:false,nextResult:null as any,startResult:null as any,requests:new Map<string,any>()};
 export async function invokeHoroscopeWriting(body:any,secret='calendar-api-fixture') {
  const req=Readable.from([JSON.stringify(body)]);Object.assign(req,{method:'POST',headers:{authorization:`Bearer ${secret}`}});
@@ -88,7 +89,7 @@ export function installHoroscopeWriterFixture(){
      if(writerFixture.failNext){writerFixture.failNext=false;return Response.json({error:{code:'insufficient_quota',message:'Fixture quota'}},{status:429});}
      const request=JSON.parse(options.body);
      if(!request.background||!request.instructions||!request.text?.format?.schema)throw new Error('Missing real governed provider request');
-     const sign=request.input.includes('AUDIENCE AND SCOPE\nOne shared reading')?'overview':request.input.match(/"risingSign":"([a-z]+)"/)?.[1];
+     const sign=request.text.format.schema.required.includes('stories')?'overview':request.input.includes('AUDIENCE AND SCOPE\nOne shared reading')?'overview':request.input.match(/"risingSign":"([a-z]+)"/)?.[1];
      if(!sign)throw new Error('No calculated rising sign supplied');
      const id=`resp_fixture_${writerFixture.calls}`;
      writerFixture.requests.set(id,{...request,sign});
@@ -100,6 +101,7 @@ export function installHoroscopeWriterFixture(){
    if(writerFixture.pendingPolls>0){writerFixture.pendingPolls--;return Response.json({id,status:'in_progress'});}
    if(writerFixture.nextResult){const result=writerFixture.nextResult;writerFixture.nextResult=null;return Response.json({id,...result});}
    if(writerFixture.terminalNext){writerFixture.terminalNext=false;return Response.json({id,status:'failed',error:{message:'Fixture provider could not finish this reading.'}});}
+   if(request.text.format.schema.required.includes('stories')){const facts=JSON.parse(request.input.split('MONTHLY FACTS AND PLAN SCOPE\n')[1].split('\n\n')[0]);return Response.json({id,status:'completed',usage:{input_tokens:50,output_tokens:30},output:[{type:'message',content:[{type:'output_text',text:JSON.stringify(fixtureMonthlySynthesis(facts))}]}]});}
    return Response.json({id,status:'completed',usage:{input_tokens:100,output_tokens:40},output:[{type:'message',content:[{type:'output_text',text:JSON.stringify({headline:request.text.format.schema.properties.headline.enum?.[0]??`Fixture ${request.sign} reading`,...(request.text.format.schema.required.includes('tldr')?{tldr:'You can read the complete monthly summary fixture.\n\nYour summary ends here.'}:{}),body:`You can read the complete ${request.sign} fixture opening.\n\nYour saved fixture ends here.`})}]}]});
  };
 }
