@@ -71,6 +71,22 @@ function storageOrder(row:any) {
 }
 export function fixtureMonthlySynthesis(facts:any){return {thesis:'The synthetic monthly concern develops across the supplied facts.',stories:facts.planetaryArcs.filter((arc:any)=>arc.developmentIds.length>=2).slice(0,2).map((arc:any)=>({planet:arc.planet,humanConcern:'A connected synthetic concern.',development:arc.developmentIds.slice(0,2).map((factId:string,i:number)=>({factId,changes:`The synthetic concern changes at step ${i+1}.`}))})),readingMovement:'Follow each connected concern and its changes.',endingChange:'The reader understands the synthetic concern differently.'};}
 export const writerFixture={calls:0,polls:0,pendingPolls:0,terminalNext:false,failNext:false,unknownNext:false,nextResult:null as any,startResult:null as any,requests:new Map<string,any>()};
+export function fixtureMonthlyContext(facts:any){
+ const plan=fixtureMonthlySynthesis(facts);
+ const mars=plan.stories.find((s:any)=>s.planet==='mars');
+ const station:any=Object.values(facts.factsById).find((f:any)=>f.planet==='mercury'&&f.type==='station');
+ if(!mars||!station)throw new Error('Fixture needs the Mercury station and Mars contacts.');
+ mars.development.push({factId:station.id,changes:'The other participant changes condition before their repeated contact.'});
+ return plan;
+}
+export function seedLegacyMonthlyPlanFailure(id:string){
+ const row=store.rows.get(id),generation=row?.source_snapshot?.horoscopeGeneration;
+ if(generation?.active?.phase!=='synthesis')throw new Error('Choose a saved synthesis request.');
+ const failure={code:'invalid_synthesis',message:'The monthly plan was incomplete or contained an unsupported event. No prose request was started.',operation:structuredClone(generation.active),failedAt:new Date().toISOString(),diagnostic:{status:'completed'}};
+ writerFixture.nextResult={status:'completed',output:[{type:'message',content:[{type:'output_text',text:JSON.stringify(fixtureMonthlyContext(generation.active.synthesisFacts))}]}]};
+ generation.lastError=failure;generation.failures=[...(generation.failures??[]),failure];generation.active=null;
+ return structuredClone(row);
+}
 export async function invokeHoroscopeWriting(body:any,secret='calendar-api-fixture') {
  const req=Readable.from([JSON.stringify(body)]);Object.assign(req,{method:'POST',headers:{authorization:`Bearer ${secret}`}});
  let result:any;const res={statusCode:200,setHeader(){},end(value:string){result={status:this.statusCode,payload:JSON.parse(value)};}};
@@ -120,6 +136,7 @@ if (process.send) process.on('message', async ({ id, method, body, url }: any) =
     delete generation.failures;
     process.send!({id,result:row});return;
   }
+  if(method==='legacy-monthly-plan-failure'){process.send!({id,result:seedLegacyMonthlyPlanFailure(body.id)});return;}
   if (method === 'lunar-writing') {
     const handler = (await import('../../api/admin/calendar-lunation-writing')).default;
     const req:any=Readable.from([JSON.stringify(body)]);req.method='POST';req.url='/api/admin/calendar-lunation-writing';req.headers={'x-content-generation-secret':'calendar-api-fixture'};

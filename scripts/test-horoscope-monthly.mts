@@ -2,7 +2,7 @@ import {assertHoroscopeRequestEvidence} from './assert-horoscope-request-evidenc
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import {createHash} from 'node:crypto';
-import {store,installHoroscopeWriterFixture,invokeHoroscopeWriting,writerFixture,fixtureMonthlySynthesis} from '../tests/helpers/sky-article-save-api.mts';
+import {store,installHoroscopeWriterFixture,invokeHoroscopeWriting,writerFixture,fixtureMonthlySynthesis,fixtureMonthlyContext,seedLegacyMonthlyPlanFailure} from '../tests/helpers/sky-article-save-api.mts';
 import {readerRouteResponse} from '../tests/helpers/content-reader-route.mjs';
 import {horoscopeCivilWindow,prepareHoroscopeBrief} from '../api/_lib/horoscope-editions';
 import {emptyHoroscopeEdition,validateHoroscopeEdition,horoscopeEditionBody,horoscopeEditionKey,horoscopeEditionAt,HOROSCOPE_SIGNS} from '../apps/web/src/content/horoscopeEditions.mjs';
@@ -11,6 +11,7 @@ import {prepareHoroscopeWriting} from '../src/astro-writing/horoscopeWriting.mjs
 import {validateHoroscopeReading} from '../src/astro-writing/horoscopeValidation.mjs';
 import {MONTHLY_HOROSCOPE_FORMAT,composeMonthlyHoroscopeDraft} from '../src/astro-writing/monthlyHoroscopeFormat.mjs';
 import {getAstrodienstSky} from '../apps/web/src/services/ephemeris';
+import {validateMonthlySynthesis,applyMonthlySynthesis,MONTHLY_SYNTHESIS_SLOT} from '../src/astro-writing/monthlyHoroscopeSynthesis.mjs';
 
 const packaged=new Set(fs.globSync(JSON.parse(fs.readFileSync('vercel.json','utf8')).functions['api/admin/horoscope-writing.ts'].includeFiles));
 for(const source of ['src/astro-writing/horoscopeOverviewInput.mjs','src/astro-writing/monthlyHoroscopeFormat.mjs','src/astro-writing/horoscopeAspectClaims.mjs','packages/astro-knowledge/data/primitives/aspects.json','data/writing/seasonal-horoscope-units.json'])assert(packaged.has(source),source);
@@ -196,8 +197,49 @@ invalidPlan.stories[0].development[0].factId='not-a-calculated-event';
 writerFixture.nextResult=providerResult(invalidPlan);
 result=await action('poll');assert.equal(result.status,422);row=result.payload.rows[0];
 assert.equal(row.source_snapshot.horoscopeGeneration.lastError.code,'invalid_synthesis');
+assert.equal(row.source_snapshot.horoscopeGeneration.lastError.diagnostic.validationCode,'unknown_fact');
 assert.equal(writerFixture.calls,before+1);assert.equal(row.sections.horoscopeEdition.passages[0].body,'');
 assert.equal((await action('continue')).status,409);
+// A real production failure grouped Mercury's station with the Mercury–Mars
+// story. Validate related context without relabeling the station as Mars.
+const contextPlan=fixtureMonthlyContext(activePlan.synthesisFacts);
+assert.deepEqual(validateMonthlySynthesis(contextPlan,activePlan.synthesisFacts),contextPlan);
+const hydrated=JSON.parse(applyMonthlySynthesis(MONTHLY_SYNTHESIS_SLOT,contextPlan,activePlan.synthesisFacts));
+const contextTurn=hydrated.stories.find((s:any)=>s.planet==='mars').development.at(-1);
+assert.equal(contextTurn.role,'related-participant-context');assert.equal(contextTurn.fact.planet,'mercury');
+for(const [kind,edit] of [
+ ['unknown_fact',(p:any)=>{p.stories[0].development.at(-1).factId='invented-event';}],
+ ['duplicate_fact',(p:any)=>{p.stories[0].development.push(p.stories[0].development[0]);}],
+ ['insufficient_direct_developments',(p:any)=>{p.stories[0].development.splice(0,1);}],
+ ['unrelated_context',(p:any)=>{p.stories[0].development.at(-1).factId=Object.values(activePlan.synthesisFacts.factsById).find((f:any)=>f.planet==='moon').id;}]
+] as const){const invalid=structuredClone(contextPlan);edit(invalid);assert.throws(()=>validateMonthlySynthesis(invalid,activePlan.synthesisFacts),(e:any)=>e.code===kind,kind);}
+// Still-invalid saved output cannot turn a progress check into a retry or write.
+writerFixture.nextResult=providerResult(invalidPlan);const invalidVersion=row.updated_at;
+result=await action('poll');assert.equal(result.status,422);assert.equal(result.payload.rows[0].updated_at,invalidVersion);
+assert.equal(writerFixture.calls,before+1);
+
+planning=await action('prepare');row=planning.payload.rows[0];
+result=await action('generate',{sign:'overview',approvedPlanHash:planning.payload.plan.planHash});row=result.payload.rows[0];
+row=seedLegacyMonthlyPlanFailure(row.id);before=writerFixture.calls;
+const history=structuredClone(row.source_snapshot.horoscopeGeneration.failures);
+const recoveryOperation=row.source_snapshot.horoscopeGeneration.lastError.operation;
+const savedOutlines=structuredClone(store.rows.get(row.id)!.source_snapshot.horoscopeOutlines);
+store.rows.get(row.id)!.source_snapshot.horoscopeOutlines={overview:'A changed owner outline must not resume the old plan.'};
+const pollsBeforeChangedPlan=writerFixture.polls;
+result=await action('poll');assert.equal(result.status,409);assert.equal(writerFixture.polls,pollsBeforeChangedPlan);
+assert.equal(store.rows.get(row.id)!.source_snapshot.horoscopeGeneration.active,null);
+store.rows.get(row.id)!.source_snapshot.horoscopeOutlines=savedOutlines;
+result=await action('poll');assert.equal(result.status,202,JSON.stringify(result.payload));row=result.payload.rows[0];
+assert.equal(row.source_snapshot.horoscopeGeneration.active.state,'ready');
+assert.equal(row.source_snapshot.horoscopeGeneration.active.responseId,recoveryOperation.responseId);
+assert.deepEqual(row.source_snapshot.horoscopeGeneration.active.synthesisReceipt.brief,contextPlan);
+assert.deepEqual(row.source_snapshot.horoscopeGeneration.failures,history);
+assert.equal(row.source_snapshot.horoscopeGeneration.lastError,null);
+assert.equal(row.sections.horoscopeEdition.passages[0].body,'');assert.equal(writerFixture.calls,before);
+await action('poll');assert.equal(writerFixture.calls,before);
+result=await action('continue');row=result.payload.rows[0];assert.equal(writerFixture.calls,before+1);
+result=await action('poll');row=result.payload.rows[0];assert.equal(result.status,200);
+await reset();
 // Ready synthesis survives checking/reopening. Simultaneous continue attempts
 // cannot both reserve a prose call, and a failed draft retries only that stage.
 planning=await action('prepare');row=planning.payload.rows[0];

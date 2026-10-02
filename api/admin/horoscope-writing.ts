@@ -122,7 +122,10 @@ export default async function handler(req:IncomingMessage,res:ServerResponse) {
       return sendAdminJson(res,200,{ok:true,rows:[row]});
     }
     if(input.action==='generate'&&operation)throw new AdminHttpError(409,'A reading is already running. Resume it to retrieve the saved result.');
-    if(input.action==='poll'&&!operation) return sendAdminJson(res,200,{ok:true,rows:[row],pending:false});
+    const failed=row.source_snapshot?.horoscopeGeneration?.lastError;
+    const recoverMonthlyPlan=input.action==='poll'&&!operation&&failed?.code==='invalid_synthesis'
+      &&failed.operation?.workflow===MONTHLY_SYNTHESIS_VERSION&&failed.operation.phase==='synthesis'&&failed.operation.responseId;
+    if(input.action==='poll'&&!operation&&!recoverMonthlyPlan) return sendAdminJson(res,200,{ok:true,rows:[row],pending:false});
     const apiKey=process.env.OPENAI_API_KEY;
     if(['poll','continue'].includes(input.action)&&operation?.workflow===MONTHLY_SYNTHESIS_VERSION){
       if(!apiKey)throw new AdminHttpError(503,'The horoscope writer is not connected. Restore its server API key to continue.');
@@ -130,7 +133,7 @@ export default async function handler(req:IncomingMessage,res:ServerResponse) {
       return sendAdminJson(res,result.status,result.payload);
     }
     if(input.action==='continue')throw new AdminHttpError(409,'Check saved progress before continuing this reading.');
-    if(input.action==='poll') {
+    if(input.action==='poll'&&!recoverMonthlyPlan) {
       if(!apiKey)throw new AdminHttpError(503,'The horoscope writer is not connected. Restore its server API key to retrieve this reading.');
       if(!operation.responseId)throw new AdminHttpError(409,'The request has no confirmed response ID yet. Wait, then reopen the edition. If interrupted, release it after five minutes.');
       const response=await responses.storedWritingResponse({apiKey,responseId:operation.responseId});
@@ -163,6 +166,12 @@ export default async function handler(req:IncomingMessage,res:ServerResponse) {
     }
     const seasonalSourceRows=await loadHoroscopeSeasonalSources(row.facts?.horoscopeBrief?.brief);
     const prepared=prepareHoroscopeWriting(writingRow,{feedbackReceipt,seasonalSourceRows});
+    if(recoverMonthlyPlan){
+      if(prepared.planHash!==failed.operation.planHash||prepared.edition.passages.some((p:any)=>p.headline.trim()||p.body.trim()))throw new AdminHttpError(409,'The saved plan uses earlier instructions or content. Review the current writing plan before generating. Your saved readings are kept.');
+      if(!apiKey)throw new AdminHttpError(503,'The horoscope writer is not connected. Restore its server API key to retrieve this plan.');
+      const result=await monthlyHoroscopeOperation({action:'recover',row,persist,apiKey,actor});
+      return sendAdminJson(res,result.status,result.payload);
+    }
     if(input.action==='prepare'){
       if(writingRow!==row){
         await persist({source_snapshot:writingRow.source_snapshot});

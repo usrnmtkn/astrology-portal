@@ -1,6 +1,6 @@
 import {createHash} from 'node:crypto';
 import {MONTHLY_HOROSCOPE_FORMAT,composeMonthlyHoroscopeDraft} from '../../src/astro-writing/monthlyHoroscopeFormat.mjs';
-import {MONTHLY_SYNTHESIS_VERSION,validateMonthlySynthesis} from '../../src/astro-writing/monthlyHoroscopeSynthesis.mjs';
+import {MONTHLY_SYNTHESIS_VERSION,MonthlySynthesisValidationError,validateMonthlySynthesis} from '../../src/astro-writing/monthlyHoroscopeSynthesis.mjs';
 
 // Keep provider diagnostics in the private edition receipt, without logging
 // prompts, partial reader copy, refusal text or arbitrary provider messages.
@@ -12,7 +12,7 @@ export function horoscopeProviderDiagnostic(payload:any) {
     .map((item:any)=>typeof item.text==='string'?item.text:'').join(''):'';
   return {status:code(payload?.status),incompleteReason:code(payload?.incomplete_details?.reason),errorCode:code(payload?.error?.code),
     usage:{inputTokens:count(payload?.usage?.input_tokens),outputTokens:count(payload?.usage?.output_tokens),reasoningTokens:count(payload?.usage?.output_tokens_details?.reasoning_tokens)},
-    outputCharacters:text.length,outputHash:createHash('sha256').update(text).digest('hex')};
+    outputCharacters:text.length,outputHash:createHash('sha256').update(text).digest('hex'),validationCode:null as string|null};
 }
 
 export class HoroscopeProviderFailure extends Error {
@@ -40,5 +40,8 @@ export function readHoroscopeProviderResult(payload:any,{format=null,facts=null}
       ||typeof value.body!=='string'||!value.body.trim()||value.body.length>20000)throw new Error();
     if(monthly)composeMonthlyHoroscopeDraft(value);
     return value as {headline:string;body:string;tldr?:string};
-  }catch{fail(format===MONTHLY_SYNTHESIS_VERSION?'invalid_synthesis':'invalid_reading',format===MONTHLY_SYNTHESIS_VERSION?'The monthly plan was incomplete or contained an unsupported event. No prose request was started.':'The writer returned an incomplete or unreadable draft.');}
+  }catch(error){
+    if(format===MONTHLY_SYNTHESIS_VERSION)diagnostic.validationCode=error instanceof MonthlySynthesisValidationError?error.code:'invalid_json';
+    fail(format===MONTHLY_SYNTHESIS_VERSION?'invalid_synthesis':'invalid_reading',format===MONTHLY_SYNTHESIS_VERSION?'The monthly plan was incomplete or contained an unsupported event. No prose request was started.':'The writer returned an incomplete or unreadable draft.');
+  }
 }

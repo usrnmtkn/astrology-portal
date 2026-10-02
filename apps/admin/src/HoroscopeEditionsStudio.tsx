@@ -202,7 +202,7 @@ export default function HoroscopeEditionsStudio({secret}:{secret:string}) {
       if(!isCurrent(controller))return;
       const active=row.source_snapshot?.horoscopeGeneration?.active;
       let failure:any;
-      if(pollExisting&&active?.responseId){
+      if(pollExisting&&(active?.responseId||row.source_snapshot?.horoscopeGeneration?.lastError?.code==='invalid_synthesis')){
         try{
           const data=await request(secret,'/api/admin/horoscope-writing',{action:'poll',id:row.id,expectedUpdatedAt:row.updated_at},'POST',controller.signal);
           if(data.rows?.[0]?.id!==row.id)throw new Error('The saved result could not be confirmed.');
