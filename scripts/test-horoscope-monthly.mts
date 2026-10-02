@@ -14,7 +14,7 @@ import {getAstrodienstSky} from '../apps/web/src/services/ephemeris';
 import {validateMonthlySynthesis,applyMonthlySynthesis,MONTHLY_SYNTHESIS_SLOT} from '../src/astro-writing/monthlyHoroscopeSynthesis.mjs';
 
 const packaged=new Set(fs.globSync(JSON.parse(fs.readFileSync('vercel.json','utf8')).functions['api/admin/horoscope-writing.ts'].includeFiles));
-for(const source of ['src/astro-writing/horoscopeOverviewInput.mjs','src/astro-writing/monthlyHoroscopeFormat.mjs','src/astro-writing/horoscopeAspectClaims.mjs','packages/astro-knowledge/data/primitives/aspects.json','data/writing/seasonal-horoscope-units.json'])assert(packaged.has(source),source);
+for(const source of ['src/astro-writing/horoscopeOverviewInput.mjs','src/astro-writing/monthlyHoroscopeFormat.mjs','src/astro-writing/monthlyHoroscopeGuidance.mjs','src/astro-writing/horoscopeAspectClaims.mjs','packages/astro-knowledge/data/primitives/aspects.json','data/writing/seasonal-horoscope-units.json'])assert(packaged.has(source),source);
 installHoroscopeWriterFixture();
 assert.deepEqual(horoscopeCivilWindow('monthly','2028-02-20','Australia/Sydney'),{start:'2028-02-01',end:'2028-03-01'});
 assert.deepEqual(horoscopeCivilWindow('monthly','2026-12-31','UTC'),{start:'2026-12-01',end:'2027-01-01'});
@@ -58,6 +58,7 @@ assert.equal((await invokeHoroscopeWriting({action:'generate',id:row.id,expected
 assert.equal((await action('generate',{sign:'overview',approvedPlanHash:plan.payload.plan.planHash})).status,409);
 assert.equal(row.source_snapshot.horoscopeGeneration.active.phase,'synthesis');
 const plannerRequest=writerFixture.requests.get(row.source_snapshot.horoscopeGeneration.active.responseId);
+assert(plannerRequest.instructions.includes('Preserve that mechanism through the story.'));
 assert(plannerRequest.instructions.startsWith('HOROSCOPE SYNTHESIS AUTHORITY'));assert(!plannerRequest.instructions.includes('SKY PLACEMENT ARTICLE SPINE'));
 assert.deepEqual(plannerRequest.text.format.schema.required,['thesis','stories','readingMovement','endingChange']);
 assert(!plannerRequest.text.format.schema.properties.body,'The synthesis cannot return prose');
@@ -82,6 +83,14 @@ assert(request.input.includes('The TLDR comes before the dated forecast.'));
 assert(profile.structure.includes('In the dated forecast after the TLDR, include the supplied month and day'));
 const expectedMonthly=composeMonthlyHoroscopeDraft({headline:'October 2026 Overview',tldr:'You can read the complete monthly summary fixture.\n\nYour summary ends here.',body:'You can read the complete overview fixture opening.\n\nYour saved fixture ends here.'});
 assert(request.input.includes(horoscopeEditorialPrompt(profile)));
+assert.equal(request.input.split(horoscopeEditorialPrompt(profile)).length-1,1,'Saved editorial instructions reach the provider once');
+assert(!request.input.includes('MONTHLY READING FORMAT\nBegin with a true TLDR'),'The output schema does not append another editorial overlay');
+assert(request.input.includes('REVIEWED GENERATION SCOPE'));
+assert(!request.input.includes('permission earned by the passage'),'Monthly no longer inherits a permission ending from sign-reading scaffolding');
+assert(!request.input.includes('BEGIN EXACT OCTOBER TLDR'),'Starter profiles never lock a historical summary');
+assert(request.input.includes('Preserve meaning before changing expression.'));
+assert(request.input.includes('Do not turn every development into a reason to reconsider an attachment.'));
+
 assert(!/450[–-]700/.test(profile.structure),'Monthly depth must not be compressed to the old word-count target');
 assert(request.instructions.includes('HOROSCOPE EDITORIAL AUTHORITY'));
 for(const unrelated of ['SKY PLACEMENT ARTICLE SPINE','SPINE QUALITY GATES','NEGATION-PIVOT CAP','at least two short imperatives','4-12 word sentences']) {

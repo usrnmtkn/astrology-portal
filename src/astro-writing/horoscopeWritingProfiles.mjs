@@ -1,5 +1,6 @@
 import {HOROSCOPE_PUNCTUATION_RULE} from './horoscopeEditorialConstraints.mjs';
 import {longFormHoroscopeProfile} from './horoscopeLongFormGuidance.mjs';
+import {monthlyHoroscopeProfile} from './monthlyHoroscopeGuidance.mjs';
 /** Editorial instructions only. Never a reader-content source or approval record. */
 export const HOROSCOPE_PROFILE_PREFIX = "studio-writing-profile/horoscope/";
 export const HOROSCOPE_PROFILE_SCHEMA = "horoscope-writing-profile/v1";
@@ -31,7 +32,8 @@ const prompt = "Draft the requested {{period}} horoscope unit using the governed
 
 export function defaultHoroscopeProfile(period) {
   if (!HOROSCOPE_PERIODS.includes(period)) throw new Error("Choose Daily, Weekly, Monthly or Seasonal.");
-  if(period === "monthly" || period === "seasonal") return longFormHoroscopeProfile(period);
+  if(period === "monthly") return monthlyHoroscopeProfile();
+  if(period === "seasonal") return longFormHoroscopeProfile(period);
   return {schema:HOROSCOPE_PROFILE_SCHEMA,period,
     voiceGuidance:[period === "daily" ? dailyVoiceGuidance : weeklyVoiceGuidance,
       HOROSCOPE_EMOTIONAL_DEVELOPMENT_GUIDANCE,HOROSCOPE_CONNECTED_READING_GUIDANCE,HOROSCOPE_OWNER_EDIT_GUIDANCE,HOROSCOPE_PROSE_BEHAVIOR_GUIDANCE,HOROSCOPE_PUNCTUATION_RULE].join("\n\n"),

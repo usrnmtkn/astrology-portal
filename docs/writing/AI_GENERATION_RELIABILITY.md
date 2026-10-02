@@ -400,3 +400,27 @@ rejection history and publication approval are preserved. The actual-handler tes
 `test-horoscope-latest-instructions.mts` covers all four periods; Monthly browser
 coverage checks reopening an older edition and generating from its updated row
 version. Tests use isolated storage and simulated responses, not paid generation.
+
+## Monthly meaning fidelity and profile authority (2026-10-02)
+
+Writer v15 separates the Monthly starter from Seasonal. The saved private
+profile remains the editorial authority. Monthly scope no longer inherits a
+permission-style ending from sign-reading scaffolding, and output-format
+instructions do not repeat the profile's entire TLDR/prose review. The existing
+synthesis stage preserves each development's particular meaning and consequence;
+it must not replace sustained energy with audience approval or infer a hidden
+motive from an external limit. No new model stage or automatic prose verdict is
+introduced.
+
+The owner authorized a full Monthly repair in the
+[horoscope task](thread:01a0ce6e-69e0-7100-bdba-ad413d5c7804).
+Private profile cleanup preserves the newer saved Voice, complete selected
+comparison units and the three complete primary 2025 essays. Overlapping earlier
+comparison variants and a locked historical TLDR leave the active request but
+remain in protected history. Exact passage corrections retain their narrow
+scope. Existing readings and in-flight requests are never rewritten by a profile
+update. See [Monthly acceptance](../qa/horoscope-monthly-overview.md).
+
+Provider-input and workflow checks establish delivery, not literary success.
+Any paid passage comparison requires its own authorization and retained request
+receipt. Only the owner can approve the resulting prose.

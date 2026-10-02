@@ -83,3 +83,31 @@ No dependency was added.
 - The three complete owner seasonal essays support the new monthly register;
   they are not labeled as owner-authored monthly examples. Historical astrology
   is never promoted to current calculated fact.
+
+## Monthly authorial fidelity repair (2026-10-02)
+
+Writer v15 gives Monthly its own editable starter profile. The saved Studio
+profile still controls the actual editorial instructions, including newer owner
+edits. The engine no longer appends a duplicate prose-editing pass or inherits a
+permission-style ending from the generic sign-reading plan. The synthesis asks
+for the specific human consequence of each development, preserving differences
+between sustained energy, recognition, external constraints and inferred motives.
+These directions are not automatic voice verdicts.
+
+The private Monthly profile cleanup retains the newer saved Voice verbatim,
+selects one complete current monthly comparison plus the complete designated
+lunation paragraph, and keeps their exact hashes. Older overlapping examples and
+the locked historical TLDR are archived outside the active request. The three
+complete published 2025 essays remain primary prose evidence. Specific owner
+opening corrections remain scoped to October 2026. No private examples are
+committed or bundled into public assets.
+
+Verification must distinguish delivery of the correct inputs from writing
+quality. The actual-handler regressions inspect the provider request, full source
+bodies, profile adoption, unchanged in-flight snapshots, persistence, publication
+and recovery. The four fresh-build Monthly browser cases cover desktop/mobile
+and both themes with isolated storage and simulated model responses. Neither
+fixture output nor a passing build establishes that new prose matches the owner.
+A live writing comparison needs a separately authorized bounded call; exact
+reader wording remains for owner review. Profile migration changes no saved
+reading and starts no generation.
