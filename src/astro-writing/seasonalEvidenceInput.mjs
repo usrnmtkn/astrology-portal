@@ -8,7 +8,13 @@ export function seasonalEvidenceInput(context) {
     seasonalVoiceRole:primary.has(p.id)?'primary argument and voice':'supporting same-audience sign reading'})))}\n\n${SEASONAL_SOURCE_PRIORITY}`;
 }
 export function seasonalSharedEvidence(context) {
-  const sources=new Map(context.sameFamilyExamples.map(p=>[p.text,p]));
+  return sharedEvidenceWithPassageReferences(context,context.sameFamilyExamples);
+}
+
+// Only reference passages actually serialized in full elsewhere in this input.
+// Keep each role's metadata, including provenance and use restrictions.
+export function sharedEvidenceWithPassageReferences(context,passages) {
+  const sources=new Map(passages.map(p=>[p.text,p]));
   const reference=e=>{
     const source=sources.get(e.text);
     if(!source)return e;

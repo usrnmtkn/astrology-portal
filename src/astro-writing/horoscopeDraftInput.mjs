@@ -4,7 +4,7 @@ import {HOROSCOPE_PUNCTUATION_RULE,SEASONAL_DEPTH_GUIDANCE,SEASONAL_FACT_RELATIO
 import {resolveStudioWritingProfile} from './studioWritingProfileReceipt.mjs';
 import {HOROSCOPE_SIGNS,horoscopeSignLabel,horoscopeOverviewHeadline} from '../../apps/web/src/content/horoscopeEditions.mjs';
 
-export const HOROSCOPE_EDITORIAL_AUTHORITY = 'HOROSCOPE EDITORIAL AUTHORITY: For this horoscope, the saved Content Studio Voice and Structure instructions and complete primary owner readings govern cadence, opening, paragraph movement and ending over general long-form style preferences. Short sentences, fragments, questions, lists, commands and early astrology are available when they serve the thought; none is a compulsory pattern or a blanket voice failure. Do not impose a medium/long-sentence quota, a natal adaptation narrative, a fixed transit-definition-examples-advice sequence, or a compulsory advice ending. The shared factual boundaries, source integrity, declared register, output schema and exact owner publication approval still apply. Historical owner writing is prose evidence, never current astrology or personal biography. This call drafts one reading for its declared audience; complete-edition comparison is an owner review.';
+export {HOROSCOPE_EDITORIAL_AUTHORITY} from './canonicalInstructions.mjs';
 
 export const HOROSCOPE_DRAFT_SCHEMA = Object.freeze({type:'object',additionalProperties:false,
   required:['headline','body'],properties:{headline:{type:'string'},body:{type:'string'}}});

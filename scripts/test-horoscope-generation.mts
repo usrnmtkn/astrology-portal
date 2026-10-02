@@ -107,7 +107,7 @@ for(const request of writerFixture.requests.values()){
  }
  assert(request.input.indexOf(section[0])<request.input.indexOf('CONTENT STUDIO WRITING INSTRUCTIONS'));
  assert.deepEqual(row.source_snapshot.horoscopeGeneration.readings[request.sign].sourceIds.slice(0,3),passages.map((e:any)=>e.id));
- assert.equal(row.source_snapshot.horoscopeGeneration.readings[request.sign].version,'horoscope-writer/v10');
+ assert.equal(row.source_snapshot.horoscopeGeneration.readings[request.sign].version,'horoscope-writer/v11');
 }
 // The lunation is distinct from the Monday snapshot Moon. Houses must bind to
 // the named subject, rather than matching the Sun's house or any available house.
@@ -304,6 +304,10 @@ for(const reading of seasonalEdition.passages){
  assert(request.input.includes('Do not average these preferred passages'));
  assert(request.input.includes('Never use an em dash'));
  assert(request.instructions.includes(HOROSCOPE_EDITORIAL_AUTHORITY));
+ assert(!request.instructions.includes('SPINE QUALITY GATES'));
+ assert(!request.instructions.includes('NEGATION-PIVOT CAP'));
+ assert(!request.instructions.includes('at least two short imperatives'));
+ assert(request.instructions.includes('factual-safety-v1'));
  assert(request.input.includes(horoscopeEditorialPrompt(seasonalProfile)));
  assert(request.input.includes('FINISH THE NEW DRAFT USING THE SAVED EDITORIAL GUIDANCE'));
  assert(!request.input.includes('These complete owner weekly sign readings'));

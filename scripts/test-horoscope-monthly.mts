@@ -56,6 +56,12 @@ assert.equal((await action('generate',{sign:'overview',approvedPlanHash:plan.pay
 const request=writerFixture.requests.get(row.source_snapshot.horoscopeGeneration.active.responseId);
 assert.deepEqual(request.text.format.schema.properties.headline.enum,['October 2026 Overview']);
 assert(request.input.includes(horoscopeEditorialPrompt(profile)));
+assert(!/450[–-]700/.test(profile.structure),'Monthly depth must not be compressed to the old word-count target');
+assert(request.instructions.includes('HOROSCOPE EDITORIAL AUTHORITY'));
+for(const unrelated of ['SKY PLACEMENT ARTICLE SPINE','SPINE QUALITY GATES','NEGATION-PIVOT CAP','at least two short imperatives','4-12 word sentences']) {
+ assert(!request.instructions.includes(unrelated),`A horoscope must not receive the conflicting general article rule: ${unrelated}`);
+}
+for(const boundary of ['factual-safety-v1','grammar-v1','source-licensing-v1','register-direction-v1','unsupported-astrology-claims-v1'])assert(request.instructions.includes(boundary),boundary);
 const essays=JSON.parse(request.input.match(/COMPLETE OWNER COLLECTIVE ESSAYS — PRIMARY PROSE EVIDENCE\n([^\n]+)\n\n/)[1]);
 assert.equal(essays.length,3);
 for(const essay of essays){
@@ -64,7 +70,19 @@ for(const essay of essays){
  assert.equal(essay.text,source.slice(essay.provenance.start,essay.provenance.end));
  assert.equal(essay.sourceRecordSha256,createHash('sha256').update(essay.text).digest('hex'));
  assert.equal(essay.horoscopeAudienceSign,'overview');assert.equal(essay.factUseAuthorized,false);
+ assert.equal(request.input.split(JSON.stringify(essay.text).slice(1,-1)).length-1,1,'The complete primary essay must be supplied once, without compression');
 }
+const supporting=JSON.parse(request.input.match(/SUPPORTING OWNER PASSAGES\n([^\n]+)\n\n/)[1]);
+const completePassages=new Map([...essays,...supporting].map((p:any)=>[p.id,p]));
+const shared=JSON.parse(request.input.match(/SHARED FIVE-ROLE EVIDENCE\n([^\n]+)\n\n/)[1]);
+const relevant=JSON.parse(request.input.match(/RELEVANT OWNER PASSAGES\n([^\n]+)\n\n/)[1]);
+assert.deepEqual(Object.keys(shared.roles).sort(),['argument','meaning','phrase','register','scene']);
+for(const entry of [...shared.entries,...Object.values(shared.roles).flat(),...relevant] as any[]){
+ if(entry.completePassageRef)assert(completePassages.has(entry.completePassageRef),'Every role reference resolves to a complete passage in this request');
+}
+for(const passage of supporting)assert.equal(request.input.split(JSON.stringify(passage.text).slice(1,-1)).length-1,1,'Supporting passage remains exact and unduplicated');
+const registerEntries=shared.roles.register.filter((e:any)=>e.completePassageRef);
+assert(registerEntries.length>=3);assert(registerEntries.every((e:any)=>!Object.hasOwn(e,'text')));
 const facts=JSON.parse(request.input.match(/CALCULATED FACTS\n([^\n]+)\n\n/)[1]);assert.equal(facts.window.audience,'collective');assert(!facts.house&&!facts.risingSign&&!facts.signs);
 writerFixture.pendingPolls=1;result=await action('poll');assert.equal(result.status,202);row=result.payload.rows[0];
 result=await action('poll');assert.equal(result.status,200,JSON.stringify(result.payload));row=result.payload.rows[0];
