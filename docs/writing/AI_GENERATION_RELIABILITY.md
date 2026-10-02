@@ -424,3 +424,27 @@ update. See [Monthly acceptance](../qa/horoscope-monthly-overview.md).
 Provider-input and workflow checks establish delivery, not literary success.
 Any paid passage comparison requires its own authorization and retained request
 receipt. Only the owner can approve the resulting prose.
+
+## Monthly response-budget repair (2026-10-02)
+
+A saved Monthly prose attempt exhausted its 12,000-token allowance after using
+11,302 reasoning tokens. The request inherited the general writer's extra-high
+reasoning setting even though a separate synthesis had already planned the
+month. New Monthly prose requests now explicitly use medium reasoning with the
+same model and 12,000-token ceiling. Planning remains medium with 6,000 tokens.
+This is a bounded configuration repair, not a guarantee of future completion or
+prose quality. [OpenAI's reasoning documentation](https://developers.openai.com/api/docs/guides/reasoning#controlling-costs)
+confirms that reasoning and visible output share the output allowance.
+
+Existing operations retain their reserved settings. An explicit fresh retry uses
+the corrected configuration and reuses a matching validated synthesis; progress
+checks never create a new request. Truncated output remains a private failure,
+not a completed or publishable reading. Studio dates the saved failure in the
+edition's time zone, including after the writing plan changes.
+The original failure, diagnostic and saved reader text remain intact.
+
+Actual-handler regressions reproduce the reasoning-heavy incomplete response,
+preserve the old operation settings and confirm one-stage retry without paying
+for unchanged planning again. Browser regressions check the dated error after a
+profile change, explicit retry approval and complete save/review/publication flow
+with isolated storage and simulated responses. No paid generation is implied.

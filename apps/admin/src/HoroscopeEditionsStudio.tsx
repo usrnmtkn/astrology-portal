@@ -82,18 +82,22 @@ export default function HoroscopeEditionsStudio({secret}:{secret:string}) {
   async function savedFailureMessage(row:any,signal?:AbortSignal) {
     const generation=row.source_snapshot?.horoscopeGeneration,failed=generation?.lastError;
     if(!failed||generation.active)return '';
-    const describe=(failure:any)=>failure.diagnostic?.errorCode==='credit_balance_exhausted'
-      ?'The previous attempt stopped because the writing API had no credits. If you have added credits, approve the writing plan below and retry this reading. This message describes the saved attempt, not your current balance.'
-      :`Previous attempt: ${failure.message}`;
-    if(failed.code==='required_punctuation')return describe(failed);
-    if(failed.diagnostic||!failed.operation?.responseId)return describe(failed);
+    const describe=(failure:any)=>{
+      const message=failure.diagnostic?.errorCode==='credit_balance_exhausted'
+        ?'The previous attempt stopped because the writing API had no credits. This describes the saved attempt, not your current balance.'
+        :`Previous attempt: ${failure.message}`;
+      const ended=Date.parse(failed.failedAt);
+      const timestamp=Number.isFinite(ended)?` Attempt ended ${new Date(ended).toLocaleString('en-US',{dateStyle:'medium',timeStyle:'short',timeZone:row.sections.horoscopeEdition.window.timeZone})}.`:'';
+      return message+timestamp;
+    };
+    if(failed.code==='required_punctuation'||failed.diagnostic||!failed.operation?.responseId)return describe(failed);
     // Older drafts only saved a generic error. Opening their plan retrieves the
     // existing response's cause; it never retries generation or changes the row.
     try {
       const details=await request(secret,'/api/admin/horoscope-writing',{action:'diagnose',id:row.id,expectedUpdatedAt:row.updated_at},'POST',signal);
       return describe(details.failure);
     }catch{
-      return 'The previous attempt failed, but its details are temporarily unavailable. Choose Check saved progress to try again. Saved readings are kept.';
+      return 'The previous attempt failed, but its details are unavailable. Check saved progress to try again. Saved readings are kept.';
     }
   }
   async function readSaved(id:string,signal?:AbortSignal) {
