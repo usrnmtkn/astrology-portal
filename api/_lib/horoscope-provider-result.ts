@@ -1,4 +1,5 @@
 import {createHash} from 'node:crypto';
+import {MONTHLY_HOROSCOPE_FORMAT,composeMonthlyHoroscopeDraft} from '../../src/astro-writing/monthlyHoroscopeFormat.mjs';
 
 // Keep provider diagnostics in the private edition receipt, without logging
 // prompts, partial reader copy, refusal text or arbitrary provider messages.
@@ -17,7 +18,7 @@ export class HoroscopeProviderFailure extends Error {
   constructor(public code:string,message:string,public diagnostic:ReturnType<typeof horoscopeProviderDiagnostic>){super(message);}
 }
 
-export function readHoroscopeProviderResult(payload:any) {
+export function readHoroscopeProviderResult(payload:any,{format=null}:{format?:string|null}={}) {
   const diagnostic=horoscopeProviderDiagnostic(payload);
   const fail=(code:string,message:string):never=>{throw new HoroscopeProviderFailure(code,message+' Saved readings are kept. Review the writing plan before trying again.',diagnostic);};
   if(diagnostic.errorCode==='credit_balance_exhausted')throw new HoroscopeProviderFailure('api_credits','The AI writer has run out of API credits. Replenish the connected OpenAI API balance, then retry this reading. Saved readings are kept.',diagnostic);
@@ -31,9 +32,11 @@ export function readHoroscopeProviderResult(payload:any) {
     const text=payload.output.filter((item:any)=>item.type==='message').flatMap((item:any)=>item.content??[])
       .filter((item:any)=>item.type==='output_text').map((item:any)=>item.text).join('');
     const value=JSON.parse(text);
-    if(!value||Array.isArray(value)||Object.keys(value).some(k=>!['headline','body'].includes(k))
+    const monthly=format===MONTHLY_HOROSCOPE_FORMAT;
+    if(!value||Array.isArray(value)||Object.keys(value).some(k=>!(monthly?['headline','tldr','body']:['headline','body']).includes(k))
       ||typeof value.headline!=='string'||!value.headline.trim()||value.headline.length>200
       ||typeof value.body!=='string'||!value.body.trim()||value.body.length>20000)throw new Error();
-    return value as {headline:string;body:string};
+    if(monthly)composeMonthlyHoroscopeDraft(value);
+    return value as {headline:string;body:string;tldr?:string};
   }catch{fail('invalid_reading','The writer returned an incomplete or unreadable draft.');}
 }

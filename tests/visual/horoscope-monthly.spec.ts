@@ -67,15 +67,20 @@ for(const [width,theme] of [[390,'light'],[390,'dark'],[1440,'light'],[1440,'dar
    await studio.getByLabel('I approve this writing plan for generation.').check();
    await expect(studio.getByText('Ready to write 1 draft. This uses 1 paid AI request and saves the results for review.')).toBeVisible();
    await studio.getByRole('button',{name:'Generate overview',exact:true}).click();
-   await expect(studio.getByLabel('Complete reading')).toHaveValue('You can read the complete overview fixture opening.\n\nYour saved fixture ends here.');
+   const summary='You can read the complete monthly summary fixture.\n\nYour summary ends here.';
+   const generated=`**TLDR**\n\n${summary}\n\n**The month ahead**\n\nYou can read the complete overview fixture opening.\n\nYour saved fixture ends here.`;
+   const edited=generated.replace('You can read the complete overview fixture opening.','You can read the exact monthly fixture opening.').replace('Your saved fixture ends here.','Your complete monthly fixture ends here.');
+   await expect(studio.getByLabel('Complete reading')).toHaveValue(generated);
    expect((await call({method:'writer-state'})).calls).toBe(1);
-   await studio.getByLabel('Complete reading').fill('You can read the exact monthly fixture opening.\n\nYour complete monthly fixture ends here.');
+   await studio.getByLabel('Complete reading').fill(edited);
    await studio.getByRole('button',{name:'Continue to publish',exact:true}).click();
    await expect(studio.getByRole('button',{name:'Publish edition',exact:true})).toBeDisabled();
+   await expect(studio.locator('strong').filter({hasText:/^(TLDR|The month ahead)$/})).toHaveText(['TLDR','The month ahead']);
+   await expect(studio).toContainText('Your summary ends here.');
    const saved=(await call({method:'rows'})).find((r:any)=>r.content_key.startsWith('horoscope/monthly/'));
    expect(saved.status).toBe('DRAFT');
    await page.reload();await studio.getByText(/^Continue a saved edition/).click();await studio.getByRole('button',{name:/^Monthly horoscopes/}).click();
-   await expect(studio.getByLabel('Complete reading')).toHaveValue('You can read the exact monthly fixture opening.\n\nYour complete monthly fixture ends here.');
+   await expect(studio.getByLabel('Complete reading')).toHaveValue(edited);
    await studio.getByRole('button',{name:'Continue to publish',exact:true}).click();
    await studio.getByLabel('I have reviewed and approve the exact wording of every saved reading in this edition.').check();
    await studio.getByRole('button',{name:'Publish edition',exact:true}).click();
@@ -86,12 +91,21 @@ for(const [width,theme] of [[390,'light'],[390,'dark'],[1440,'light'],[1440,'dar
    expect((await call({method:'PATCH',body:{id:seasonalRow.id,expectedUpdatedAt:seasonalRow.updated_at,status:'LIVE'}})).status).toBe(200);
    await page.goto(href!);
    const overview=page.getByRole('article',{name:'Monthly overview',exact:true});
+   await expect(overview.locator('strong')).toHaveText(['TLDR','The month ahead']);
+   const paragraphs=overview.locator('p');
+   await expect(paragraphs).toContainText(['TLDR','You can read the complete monthly summary fixture.','Your summary ends here.','The month ahead','You can read the exact monthly fixture opening.','Your complete monthly fixture ends here.']);
+   // Section labels reuse the existing bold-paragraph treatment; they do not
+   // create extra page headings or a new typography scale.
+   const labels=await overview.locator('strong').evaluateAll(els=>els.map(el=>{const s=getComputedStyle(el);return[s.fontFamily,s.fontSize,s.fontWeight,s.lineHeight,s.letterSpacing,s.margin,s.textTransform,s.textAlign];}));
+   expect(labels[0]).toEqual(labels[1]);
+   const bodyStyle=await paragraphs.filter({hasText:'Your summary ends here.'}).evaluate(el=>{const s=getComputedStyle(el);return[s.fontFamily,s.fontSize,s.lineHeight,s.letterSpacing];});
+   expect([labels[0][0],labels[0][1],labels[0][3],labels[0][4]]).toEqual(bodyStyle);
    await expect(overview).toContainText('You can read the exact monthly fixture opening.');await expect(overview).toContainText('Your complete monthly fixture ends here.');
    await expect(page.getByRole('group',{name:'Zodiac signs',exact:true})).toHaveCount(0);
    await expect(page.getByRole('button',{name:'October Horoscopes',exact:true})).toHaveAttribute('aria-pressed','true');
    await expect(page.getByRole('heading')).toHaveText(['Horoscopes','October 2026 Overview']);
    const headingStyle=await overview.locator('h2').evaluate(el=>{const s=getComputedStyle(el);return[s.fontFamily,s.fontSize,s.fontWeight,s.lineHeight,s.letterSpacing,s.margin,s.textTransform,s.textAlign];});
-   await page.reload();await expect(overview).toContainText('Your complete monthly fixture ends here.');
+   await page.reload();await expect(overview.locator('strong')).toHaveText(['TLDR','The month ahead']);await expect(overview).toContainText('Your complete monthly fixture ends here.');
    await page.screenshot({path:`test-results/monthly-overview-${width}-${theme}.png`,fullPage:true});
    await expect(page.getByRole('group',{name:'Horoscope period',exact:true}).getByRole('button')).toHaveText(['Today','This week','October Horoscopes','Libra Season']);
    await page.getByRole('button',{name:'Libra Season',exact:true}).click();
@@ -113,6 +127,9 @@ for(const [width,theme] of [[390,'light'],[390,'dark'],[1440,'light'],[1440,'dar
    await expect(overview).toContainText('Your complete monthly fixture ends here.');
    await page.goto('/?date=2026-10-10#calendar?view=month&date=2026-10-10');
    const calendarOverview=page.getByRole('region',{name:'Monthly overview',exact:true});
+   await expect(calendarOverview.locator('strong')).toHaveText(['TLDR','The month ahead']);
+   await expect(calendarOverview).toContainText('You can read the complete monthly summary fixture.');
+   await expect(calendarOverview).toContainText('Your summary ends here.');
    await expect(calendarOverview).toContainText('You can read the exact monthly fixture opening.');
    await expect(calendarOverview).toContainText('Your complete monthly fixture ends here.');
    await expect(calendarOverview.getByRole('heading',{name:'Monthly overview',exact:true})).toHaveClass(/sr-only/);

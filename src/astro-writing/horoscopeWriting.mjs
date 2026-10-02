@@ -21,7 +21,7 @@ import {loadSeasonalHoroscopeEvidence} from './seasonalHoroscopeEvidence.mjs';
 import {loadSeasonalArgumentEvidence} from './seasonalArgumentEvidence.mjs';
 
 const root=fileURLToPath(new URL('../../',import.meta.url));
-export const horoscopeWritingVersion='horoscope-writer/v12';
+export const horoscopeWritingVersion='horoscope-writer/v13';
 const digest=value=>createHash('sha256').update(typeof value==='string'?value:horoscopeCanonicalJson(value)).digest('hex');
 const repositorySources=new Map();
 const preparedPlans=new Map();
@@ -114,7 +114,7 @@ export function prepareHoroscopeWriting(row,{studioCorrections=[],feedbackReceip
     const plan=buildMeaningPlan(meaningInput);
     const savedOutline=String(row.source_snapshot?.horoscopeOutlines?.[rising]??'').trim();
     const datedScope=developments.events.map(d=>`${d.title} (${d.localTiming}${d.house?`; house ${d.house}: ${d.domain}`:''})`).join('; ');
-    const argumentInput={thesis:savedOutline?savedOutline.replace(/\s+/gu,' '):overview?`Develop one shared ${edition.window.period==='seasonal'?'season introduction':'monthly overview'} for all readers. Explain how selected dated developments relate, using the owner's complete collective essays for language and movement. ${edition.window.period==='seasonal'?'Integrate the supplied zodiac-season meaning and learning axis; leave personal houses to the twelve sign readings.':'Cover the calendar month, including its change of solar season, without assigning a rising sign or personal house.'}`:`Develop a connected ${edition.window.period} interpretation for ${rising} from the supplied developments and their individual life areas. Let a meaningful concern emerge from those facts; the reference ${planet} placement is not a prescribed story.`,
+    const argumentInput={thesis:savedOutline?savedOutline.replace(/\s+/gu,' '):overview?`Develop one shared ${edition.window.period==='seasonal'?'season introduction':'monthly overview'} for all readers. Explain how selected dated developments relate, using the owner's complete collective essays for language and movement. ${edition.window.period==='seasonal'?'Integrate the supplied zodiac-season meaning and learning axis; leave personal houses to the twelve sign readings.':'Begin with a true TLDR: what this month is about, what may change for people and what they may understand differently by its end. Then develop that meaning through selected dated events across the calendar month. The TLDR comes before the dated forecast. Do not assign a rising sign or personal house.'}`:`Develop a connected ${edition.window.period} interpretation for ${rising} from the supplied developments and their individual life areas. Let a meaningful concern emerge from those facts; the reference ${planet} placement is not a prescribed story.`,
       transit_job:`Consider the dated developments with their own planet, sign, house and governed meaning: ${datedScope||'No dated developments with governed meaning are available; stay within the reference-instant coverage.'}`,
       recognition:'Develop what the chosen circumstances could mean to this reader: a desire, fear, pleasure, conflict, loyalty or decision only where the selected facts and house support it. Observable detail should deepen that concern, not become a catalogue of activities or administrative tasks.',
       complication:'Follow what changes or becomes harder to ignore in the selected concern. A complication is optional; do not manufacture a crisis, trauma, childhood history or a repeated compromise plot.',

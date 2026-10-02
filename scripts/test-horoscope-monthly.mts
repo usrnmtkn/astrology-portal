@@ -9,10 +9,11 @@ import {emptyHoroscopeEdition,validateHoroscopeEdition,horoscopeEditionBody,horo
 import {defaultHoroscopeProfile,horoscopeEditorialPrompt} from '../src/astro-writing/horoscopeWritingProfiles.mjs';
 import {prepareHoroscopeWriting} from '../src/astro-writing/horoscopeWriting.mjs';
 import {validateHoroscopeReading} from '../src/astro-writing/horoscopeValidation.mjs';
+import {MONTHLY_HOROSCOPE_FORMAT,composeMonthlyHoroscopeDraft} from '../src/astro-writing/monthlyHoroscopeFormat.mjs';
 import {getAstrodienstSky} from '../apps/web/src/services/ephemeris';
 
 const packaged=new Set(fs.globSync(JSON.parse(fs.readFileSync('vercel.json','utf8')).functions['api/admin/horoscope-writing.ts'].includeFiles));
-for(const source of ['src/astro-writing/horoscopeOverviewInput.mjs','src/astro-writing/horoscopeAspectClaims.mjs','packages/astro-knowledge/data/primitives/aspects.json','data/writing/seasonal-horoscope-units.json'])assert(packaged.has(source),source);
+for(const source of ['src/astro-writing/horoscopeOverviewInput.mjs','src/astro-writing/monthlyHoroscopeFormat.mjs','src/astro-writing/horoscopeAspectClaims.mjs','packages/astro-knowledge/data/primitives/aspects.json','data/writing/seasonal-horoscope-units.json'])assert(packaged.has(source),source);
 installHoroscopeWriterFixture();
 assert.deepEqual(horoscopeCivilWindow('monthly','2028-02-20','Australia/Sydney'),{start:'2028-02-01',end:'2028-03-01'});
 assert.deepEqual(horoscopeCivilWindow('monthly','2026-12-31','UTC'),{start:'2026-12-01',end:'2027-01-01'});
@@ -56,6 +57,13 @@ assert.equal((await invokeHoroscopeWriting({action:'generate',id:row.id,expected
 assert.equal((await action('generate',{sign:'overview',approvedPlanHash:plan.payload.plan.planHash})).status,409);
 const request=writerFixture.requests.get(row.source_snapshot.horoscopeGeneration.active.responseId);
 assert.deepEqual(request.text.format.schema.properties.headline.enum,['October 2026 Overview']);
+assert.deepEqual(request.text.format.schema.required,['headline','tldr','body']);
+assert.equal(row.source_snapshot.horoscopeGeneration.active.outputFormat,MONTHLY_HOROSCOPE_FORMAT);
+assert(request.input.includes('Begin with a true TLDR'));
+assert(request.input.includes('The opening TLDR gives the month’s meaning without calendar dates.'));
+assert(request.input.includes('The TLDR comes before the dated forecast.'));
+assert(profile.structure.includes('In the dated forecast after the TLDR, include the supplied month and day'));
+const expectedMonthly=composeMonthlyHoroscopeDraft({headline:'October 2026 Overview',tldr:'You can read the complete monthly summary fixture.\n\nYour summary ends here.',body:'You can read the complete overview fixture opening.\n\nYour saved fixture ends here.'});
 assert(request.input.includes(horoscopeEditorialPrompt(profile)));
 assert(!/450[–-]700/.test(profile.structure),'Monthly depth must not be compressed to the old word-count target');
 assert(request.instructions.includes('HOROSCOPE EDITORIAL AUTHORITY'));
@@ -90,6 +98,9 @@ writerFixture.pendingPolls=1;result=await action('poll');assert.equal(result.sta
 result=await action('poll');assert.equal(result.status,200,JSON.stringify(result.payload));row=result.payload.rows[0];
 assert.equal(writerFixture.calls,1);assert.equal(row.status,'DRAFT');assert.equal(row.sections.horoscopeEdition.passages[0].headline,'October 2026 Overview');
 assert.equal(row.source_snapshot.horoscopeGeneration.readings.overview.ownerApproved,false);
+assert.equal(row.source_snapshot.horoscopeGeneration.readings.overview.outputFormat,MONTHLY_HOROSCOPE_FORMAT);
+assert.equal(row.sections.horoscopeEdition.passages[0].body,expectedMonthly.body);
+assert.equal(row.body,horoscopeEditionBody(row.sections.horoscopeEdition));
 assert.equal((await read()).rows.length,0);
 result=await store.invoke('PATCH',{id:row.id,expectedUpdatedAt:row.updated_at,status:'LIVE'});assert.equal(result.status,200,JSON.stringify(result.payload));row=result.payload.rows[0];
 const published=await read();assert.equal(published.rows.length,1);assert(!JSON.stringify(published).includes('Private fixture preference'));assert(!JSON.stringify(published).includes('horoscopeBrief'));
@@ -124,3 +135,34 @@ const previous=row.sections.horoscopeEdition.passages[0].body;
 result=await action('reject',{sign:'all'});assert.equal(result.status,200,JSON.stringify(result.payload));row=result.payload.rows[0];
 assert.equal(row.sections.horoscopeEdition.passages[0].body,'');assert.equal(row.source_snapshot.horoscopeGeneration.rejections[0].passages[0].body,previous);assert.equal(writerFixture.calls,1);
 console.log('PASS monthly overview: local month/DST/leap boundaries, Swiss aspect exactness, complete owner essays, one durable writer call, recovery, owner publication, public privacy, rejection and legacy seasons.');
+
+const providerResult=(draft:any)=>({status:'completed',output:[{type:'message',content:[{type:'output_text',text:JSON.stringify(draft)}]}]});
+const reset=async()=>{const r=await action('reject',{sign:'all'});assert.equal(r.status,200,JSON.stringify(r.payload));row=r.payload.rows[0];};
+const start=async()=>{const p=await action('prepare');assert.equal(p.status,200);row=p.payload.rows[0];const r=await action('generate',{sign:'overview',approvedPlanHash:p.payload.plan.planHash});row=r.payload.rows[0];return r;};
+const good={headline:'October 2026 Overview',tldr:'A complete summary opening.\n\nA complete summary ending.',body:'The complete dated forecast opening.\n\nThe complete dated forecast ending.'};
+for(const invalid of [{headline:good.headline,body:good.body},{...good,tldr:' '},{...good,tldr:'x'.repeat(20000)}]){
+ assert.equal((await start()).status,202);
+ const calls=writerFixture.calls;
+ writerFixture.nextResult=providerResult(invalid);
+ const failure=await action('poll');assert.equal(failure.status,422,failure.payload.error);row=failure.payload.rows[0];
+ assert.equal(row.source_snapshot.horoscopeGeneration.lastError.code,'invalid_reading');
+ assert.equal(row.sections.horoscopeEdition.passages[0].body,'');
+ assert.equal(writerFixture.calls,calls,'Malformed output never launches an automatic paid retry');
+}
+writerFixture.startResult=providerResult(good);
+assert.equal((await start()).status,200,'A synchronous monthly completion uses the same composition as a polled response');
+assert.equal(row.sections.horoscopeEdition.passages[0].body,composeMonthlyHoroscopeDraft(good).body);
+assert.equal(row.source_snapshot.horoscopeGeneration.readings.overview.outputFormat,MONTHLY_HOROSCOPE_FORMAT);
+await reset();
+assert.equal((await start()).status,202);
+// Reproduce an operation dispatched before v13. Do not demand a new field from
+// a request already stored with the old two-field provider schema.
+const legacyOperation=store.rows.get(row.id)!.source_snapshot.horoscopeGeneration.active;
+delete legacyOperation.outputFormat;
+const legacyDraft={headline:good.headline,body:'An older complete monthly opening.\n\nIts exact ending.'};
+writerFixture.nextResult=providerResult(legacyDraft);
+const callsBeforeRecovery=writerFixture.calls;
+result=await action('poll');assert.equal(result.status,200,JSON.stringify(result.payload));row=result.payload.rows[0];
+assert.equal(row.sections.horoscopeEdition.passages[0].body,legacyDraft.body);
+assert.equal(writerFixture.calls,callsBeforeRecovery);
+console.log('PASS monthly TLDR: required provider field, exact summary-before-forecast preservation, one-call sync/poll parity, missing-field recovery and legacy response compatibility.');
