@@ -135,6 +135,21 @@ fixtures verify the feature, not the literary quality of a future model response
 
 ## Monthly synthesis before prose
 
+Recovery correction (2026-10-02): a planetary story may include a supplied
+change in a participant from one of its selected contacts. For example, a
+Mercury station can give context to a repeated Mercury–Mars contact within a
+Mars story. The plan must still select at least two direct developments of its
+named planet. Unknown facts, duplicate facts and unrelated context are rejected.
+The prose request labels related context and preserves the event's actual
+participants; this grouping does not calculate or assert another aspect.
+
+**Check saved progress** also revalidates a previously rejected monthly plan
+using its existing provider response. When the current plan hash still matches,
+a valid result becomes a saved plan ready for **Resume generation**. This check
+does not start a paid request, alter reader copy, remove failure history or
+approve prose. Changed instructions, facts or existing writing block recovery.
+Private diagnostics record a bounded validation code rather than source text.
+
 Monthly generation now has two bounded stages under the ordinary Generate action.
 Before prose, the meaning planner receives the complete governed month grouped by
 planetary arcs and returns a private thesis, two or three connected stories with

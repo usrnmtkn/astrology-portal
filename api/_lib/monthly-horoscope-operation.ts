@@ -17,6 +17,7 @@ class Captured extends Error { constructor(public request:any){super('Prepared c
 /** Two bounded, resumable stages. Poll retrieves only; continue dispatches the approved prose stage. */
 export async function monthlyHoroscopeOperation({action,row:initialRow,persist,prepared,apiKey,actor}:any) {
   let row=initialRow,operation=row.source_snapshot?.horoscopeGeneration?.active;
+  if(action==='recover')operation=row.source_snapshot.horoscopeGeneration.lastError.operation;
   const pending=()=>({status:202,payload:{ok:true,rows:[row],pending:true}});
   const saveOperation=async()=>{row=await persist({source_snapshot:{...row.source_snapshot,horoscopeGeneration:{...row.source_snapshot?.horoscopeGeneration,active:operation,lastError:null}}});};
   const fail=async(error:HoroscopeProviderFailure)=>{
@@ -28,7 +29,7 @@ export async function monthlyHoroscopeOperation({action,row:initialRow,persist,p
   const complete=async(payload:any)=>{
     if(operation.phase==='synthesis'){
       const brief=readHoroscopeProviderResult(payload,{format:MONTHLY_SYNTHESIS_VERSION,facts:operation.synthesisFacts});
-      operation={...operation,state:'ready',synthesisReceipt:{version:MONTHLY_SYNTHESIS_VERSION,planHash:operation.planHash,
+      operation={...operation,state:'ready',synthesisReceipt:{version:MONTHLY_SYNTHESIS_VERSION,validationVersion:'monthly-synthesis-validation/v2',planHash:operation.planHash,
         brief,briefHash:hash(brief),responseId:operation.responseId,requestHash:operation.requestHash,config:operation.config,usage:payload.usage??null,completedAt:new Date().toISOString(),ownerApproved:false}};
       await saveOperation();return pending();
     }
@@ -97,5 +98,11 @@ export async function monthlyHoroscopeOperation({action,row:initialRow,persist,p
     const response=await responses.storedWritingResponse({apiKey,responseId:operation.responseId});
     if(!response.ok)throw new AdminHttpError(503,'The saved result is temporarily unavailable. Check saved progress to retrieve the same request.');
     const payload=await response.json();return ['queued','in_progress'].includes(payload.status)?pending():await complete(payload);
-  }catch(error){if(error instanceof HoroscopeProviderFailure)return await fail(error);throw error;}
+  }catch(error){
+    if(error instanceof HoroscopeProviderFailure){
+      if(action==='recover')return {status:422,payload:{ok:false,error:error.message,rows:[row]}};
+      return await fail(error);
+    }
+    throw error;
+  }
 }
