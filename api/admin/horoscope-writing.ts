@@ -16,6 +16,8 @@ import {loadHoroscopeSeasonalSources} from '../_lib/horoscope-seasonal-sources.j
 import {validateHoroscopeReading} from '../../src/astro-writing/horoscopeValidation.mjs';
 import {horoscopePunctuationFindings} from '../../src/astro-writing/horoscopeEditorialConstraints.mjs';
 import {MONTHLY_HOROSCOPE_FORMAT,composeMonthlyHoroscopeDraft} from '../../src/astro-writing/monthlyHoroscopeFormat.mjs';
+import {MONTHLY_SYNTHESIS_VERSION} from '../../src/astro-writing/monthlyHoroscopeSynthesis.mjs';
+import {monthlyHoroscopeOperation} from '../_lib/monthly-horoscope-operation.js';
 loadLocalWebEnv();
 export const maxDuration=300;
 const hash=(v:unknown)=>createHash('sha256').update(JSON.stringify(v)).digest('hex');
@@ -29,7 +31,7 @@ export default async function handler(req:IncomingMessage,res:ServerResponse) {
   if(!actor)return sendAdminJson(res,401,{ok:false,error:'Unauthorized.'});
   try {
     const input=await readAdminJsonBody<Record<string,any>>(req);
-    if(!['prepare','generate','poll','release','reject','diagnose'].includes(input.action)||typeof input.id!=='string'||!input.id
+    if(!['prepare','generate','continue','poll','release','reject','diagnose'].includes(input.action)||typeof input.id!=='string'||!input.id
       ||typeof input.expectedUpdatedAt!=='string'||Object.keys(input).some(k=>!['action','id','expectedUpdatedAt','sign','approvedPlanHash','acknowledgeUnknownOutcome'].includes(k)))throw new AdminHttpError(400,'Choose a saved edition and a writing action.');
     const {url,headers}=studioStorage();
     const read=await adminFetchJson(`${url}?${new URLSearchParams({id:`eq.${input.id}`,select:'*',limit:'1'})}`,{headers});
@@ -70,7 +72,7 @@ export default async function handler(req:IncomingMessage,res:ServerResponse) {
       const response=await responses.storedWritingResponse({apiKey:process.env.OPENAI_API_KEY,responseId:failed.operation.responseId});
       if(!response.ok)throw new AdminHttpError(503,'The saved writer response is unavailable. The failed request and saved readings are kept.');
       const payload=await response.json();
-      try{readHoroscopeProviderResult(payload,{format:failed.operation.outputFormat});}
+      try{readHoroscopeProviderResult(payload,{format:failed.operation.outputFormat,facts:failed.operation.synthesisFacts});}
       catch(error){if(error instanceof HoroscopeProviderFailure)return sendAdminJson(res,200,{ok:true,failure:{code:error.code,message:error.message,diagnostic:error.diagnostic}});throw error;}
       return sendAdminJson(res,200,{ok:true,failure:{code:'completed_response',message:'The saved response is complete. Your edition is unchanged; this result needs further review before another request is started.',diagnostic:horoscopeProviderDiagnostic(payload)}});
     }
@@ -122,6 +124,12 @@ export default async function handler(req:IncomingMessage,res:ServerResponse) {
     if(input.action==='generate'&&operation)throw new AdminHttpError(409,'A reading is already running. Resume it to retrieve the saved result.');
     if(input.action==='poll'&&!operation) return sendAdminJson(res,200,{ok:true,rows:[row],pending:false});
     const apiKey=process.env.OPENAI_API_KEY;
+    if(['poll','continue'].includes(input.action)&&operation?.workflow===MONTHLY_SYNTHESIS_VERSION){
+      if(!apiKey)throw new AdminHttpError(503,'The horoscope writer is not connected. Restore its server API key to continue.');
+      const result=await monthlyHoroscopeOperation({action:input.action,row,persist,apiKey,actor});
+      return sendAdminJson(res,result.status,result.payload);
+    }
+    if(input.action==='continue')throw new AdminHttpError(409,'Check saved progress before continuing this reading.');
     if(input.action==='poll') {
       if(!apiKey)throw new AdminHttpError(503,'The horoscope writer is not connected. Restore its server API key to retrieve this reading.');
       if(!operation.responseId)throw new AdminHttpError(409,'The request has no confirmed response ID yet. Wait, then reopen the edition. If interrupted, release it after five minutes.');
@@ -169,6 +177,10 @@ export default async function handler(req:IncomingMessage,res:ServerResponse) {
     if(passage.headline.trim()||passage.body.trim())throw new AdminHttpError(409,'This sign already contains writing. Reject the reading in Review before generating a replacement.');
     const planHash=input.approvedPlanHash;
     if(planHash!==prepared.planHash)throw new AdminHttpError(409,'The writing plan or its sources changed. Review the current plan before generating.');
+    if(prepared.edition.window.period==='monthly'){
+      const result=await monthlyHoroscopeOperation({action:'generate',row,persist,prepared,apiKey,actor});
+      return sendAdminJson(res,result.status,result.payload);
+    }
     const config=provider.normalizeProviderConfig({},'writer');
     if(!operation) {
       const entry=prepared.entries.find((e:any)=>e.sign===sign);

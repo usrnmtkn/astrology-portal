@@ -19,7 +19,9 @@ const EFFECTIVE_RULE_ROLES = new Set(["WRITER", "REVIEWER", "REVISER", "CARD_WRI
 
 function instructionsForRole(role, taskInstructions = "", {surface = "", family = ""} = {}) {
   if (!ROLES.has(role)) throw new Error(`Unknown astrology prose role: ${role}`);
-  const canonical = role === "WRITER" && family === "horoscope" && surface === "horoscopes"
+  const canonical = role === "MEANING_PLANNER" && family === "horoscope" && surface === "horoscopes"
+    ? "HOROSCOPE SYNTHESIS AUTHORITY: Build a private editorial plan from governed calculated facts before reader prose. Return only the planning schema. Planning is not reader copy, positive voice evidence, a quality verdict or owner approval. Do not invent facts or personal biography."
+    : role === "WRITER" && family === "horoscope" && surface === "horoscopes"
     ? HOROSCOPE_EDITORIAL_AUTHORITY
     : role === "COLD_REVIEWER"
     ? coldRenderedProseReviewInstructions
@@ -60,7 +62,7 @@ function governedInstructionsForRole(role, {
     }
     return taskInstructions.trim() ? `${supplied}\n\n${taskInstructions.trim()}` : supplied;
   }
-  if (!EFFECTIVE_RULE_ROLES.has(role)) return instructionsForRole(role, taskInstructions);
+  if (!EFFECTIVE_RULE_ROLES.has(role)) return instructionsForRole(role, taskInstructions, {surface, family});
   const resolvedSurface = surface || (role.startsWith("CARD_") ? "card" : "generic");
   const effectiveRules = renderEffectiveRulesForPrompt({ surface: resolvedSurface, family }).trim();
   const reviewerGovernance = role === "REVIEWER"

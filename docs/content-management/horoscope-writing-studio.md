@@ -109,7 +109,7 @@ rewrite or regenerate either surface.
 
 ## Monthly TLDR format
 
-Writer v13 requests `headline`, `tldr` and `body` together in the same monthly
+Writer v14 requests `headline`, `tldr` and `body` together in the same monthly
 writer call. The TLDR establishes the core of that month before calendar dates;
 the dated forecast develops the interpretation afterward. The plan, output schema
 and timing guidance distinguish those two jobs. This format does not impose a
@@ -132,6 +132,45 @@ blank TLDR, total saved-length limits, exact ordering and legacy recovery. The
 monthly browser flow checks labels, full opening and ending preservation through
 editing, publication and reload on desktop/mobile in light/dark themes. These
 fixtures verify the feature, not the literary quality of a future model response.
+
+## Monthly synthesis before prose
+
+Monthly generation now has two bounded stages under the ordinary Generate action.
+Before prose, the meaning planner receives the complete governed month grouped by
+planetary arcs and returns a private thesis, two or three connected stories with
+calculated event IDs, a movement of thought and a changed understanding at the end.
+The server validates those references against the pinned facts and saves the
+synthesis before a prose request can start. This is a planning artifact, not a
+model verdict or owner approval. The complete canonical owner-evidence request is
+prepared before dispatch and pinned with the run.
+
+The prose request receives the saved synthesis before the fact catalog and uses
+the complete owner essays and designated examples for language. The generic dated
+list no longer appears as the monthly argument outline. Finishing instructions
+preserve developed passages and target repeated explanations, redundant sign
+definitions and empty closing summaries. They do not automatically edit saved copy.
+
+The UI discloses up to two paid requests: synthesis, then prose. The existing
+writer model remains unchanged; planning uses medium reasoning with a 6,000-token
+output ceiling. These are request bounds, not a price estimate. There is no model
+judge, automatic retry or additional review call. The reader receives only the
+headline, TLDR and body. The private plan, provider IDs, usage and request hashes
+remain in owner-only operation metadata and the completion receipt.
+
+Each stage reserves its own request before dispatch. Poll and Check saved progress
+only retrieve; they never launch the next paid stage. The active Generate loop
+continues automatically after a saved synthesis. If the run is paused or reopened,
+Resume generation continues it. Concurrent continuation cannot create two prose
+requests. A failed prose attempt can reuse its saved synthesis when the exact plan
+hash still matches; changed facts or instructions require a new synthesis. Earlier
+pending operations keep their original one-call contract.
+
+Verification covers invalid or missing synthesis, unsupported event references,
+polling without generation, persistence across reopen, concurrent continuation,
+unknown request outcomes, changed-profile invalidation, retry reuse, full owner
+evidence, private/public separation and the rendered monthly journey. Synthetic
+fixtures prove these contracts, not literary quality. No live generation is implied
+by a release test.
 
 ## Automatic instruction updates
 

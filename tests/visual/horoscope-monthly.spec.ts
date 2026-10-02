@@ -65,13 +65,28 @@ for(const [width,theme] of [[390,'light'],[390,'dark'],[1440,'light'],[1440,'dar
    expect((await call({method:'writer-state'})).calls).toBe(0);
    await expect(studio.getByRole('button',{name:'Generate overview',exact:true})).toBeDisabled();
    await studio.getByLabel('I approve this writing plan for generation.').check();
-   await expect(studio.getByText('Ready to write 1 draft. This uses 1 paid AI request and saves the results for review.')).toBeVisible();
-   await studio.getByRole('button',{name:'Generate overview',exact:true}).click();
+   await expect(studio.getByText('Ready to plan and write the monthly overview. This uses up to 2 paid AI requests: one synthesis, then one draft. A saved synthesis is reused when its facts and instructions still match.')).toBeVisible();
+   if(width===1440&&theme==='light'){
+    // Reopen at the boundary between stages. Status checks must not bill again.
+    const initial=(await call({method:'rows'})).find((r:any)=>r.content_key.startsWith('horoscope/monthly/'));
+    let step=await call({method:'writing',body:{action:'prepare',id:initial.id,expectedUpdatedAt:initial.updated_at}});
+    let current=step.payload.rows[0];
+    step=await call({method:'writing',body:{action:'generate',id:current.id,expectedUpdatedAt:current.updated_at,sign:'overview',approvedPlanHash:step.payload.plan.planHash}});
+    current=step.payload.rows[0];
+    step=await call({method:'writing',body:{action:'poll',id:current.id,expectedUpdatedAt:current.updated_at}});
+    expect(step.payload.rows[0].source_snapshot.horoscopeGeneration.active.state).toBe('ready');
+    await page.reload();await studio.getByText(/^Continue a saved edition/).click();await studio.getByRole('button',{name:/^Monthly horoscopes/}).click();
+    await expect(studio.getByText('The monthly synthesis is saved. Resume generation to write the overview from it; the planning request will not be repeated.',{exact:true})).toBeVisible();
+    await studio.getByRole('button',{name:'Check saved progress',exact:true}).click();
+    await expect(studio.getByRole('button',{name:'Resume generation',exact:true})).toBeEnabled();
+    expect((await call({method:'writer-state'})).calls).toBe(1);
+    await studio.getByRole('button',{name:'Resume generation',exact:true}).click();
+   }else await studio.getByRole('button',{name:'Generate overview',exact:true}).click();
    const summary='You can read the complete monthly summary fixture.\n\nYour summary ends here.';
    const generated=`**TLDR**\n\n${summary}\n\n**The month ahead**\n\nYou can read the complete overview fixture opening.\n\nYour saved fixture ends here.`;
    const edited=generated.replace('You can read the complete overview fixture opening.','You can read the exact monthly fixture opening.').replace('Your saved fixture ends here.','Your complete monthly fixture ends here.');
    await expect(studio.getByLabel('Complete reading')).toHaveValue(generated);
-   expect((await call({method:'writer-state'})).calls).toBe(1);
+   expect((await call({method:'writer-state'})).calls).toBe(2);
    await studio.getByLabel('Complete reading').fill(edited);
    await studio.getByRole('button',{name:'Continue to publish',exact:true}).click();
    await expect(studio.getByRole('button',{name:'Publish edition',exact:true})).toBeDisabled();
@@ -139,7 +154,7 @@ for(const [width,theme] of [[390,'light'],[390,'dark'],[1440,'light'],[1440,'dar
    readerMode='error';await page.reload();await expect(calendarOverview).toContainText('The monthly overview couldn’t load.');
    readerMode='normal';await calendarOverview.getByRole('button',{name:'Try again',exact:true}).click();
    await expect(calendarOverview).toContainText('Your complete monthly fixture ends here.');
-   expect((await call({method:'writer-state'})).calls).toBe(1);
+   expect((await call({method:'writer-state'})).calls).toBe(2);
    // Current navigation follows the reader's civil month, while a saved edition
    // keeps its own month after the calendar rolls forward.
    await page.clock.setFixedTime(new Date('2026-11-01T03:30:00Z'));
