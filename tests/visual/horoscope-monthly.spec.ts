@@ -92,7 +92,7 @@ for(const [width,theme] of [[390,'light'],[390,'dark'],[1440,'light'],[1440,'dar
     await expect(error).toBeVisible();
     const failed=(await call({method:'rows'})).find((r:any)=>r.content_key.startsWith('horoscope/monthly/'));
     const failedAt=failed.source_snapshot.horoscopeGeneration.lastError.failedAt;
-    const timestamp=new Intl.DateTimeFormat('en-US',{month:'short',day:'numeric',year:'numeric',hour:'numeric',minute:'2-digit',timeZoneName:'short',timeZone:'America/New_York'}).format(new Date(failedAt));
+    const timestamp=new Intl.DateTimeFormat('en-US',{dateStyle:'medium',timeStyle:'short',timeZone:'America/New_York'}).format(new Date(failedAt));
     await expect(error).toContainText(`Attempt ended ${timestamp}.`);
     expect(failed.sections.horoscopeEdition.passages[0].body).toBe('');
     await studio.getByRole('button',{name:'Check saved progress',exact:true}).click();

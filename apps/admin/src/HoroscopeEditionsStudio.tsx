@@ -82,15 +82,8 @@ export default function HoroscopeEditionsStudio({secret}:{secret:string}) {
   async function savedFailureMessage(row:any,signal?:AbortSignal,currentPlanHash?:string) {
     const generation=row.source_snapshot?.horoscopeGeneration,failed=generation?.lastError;
     if(!failed||generation.active)return '';
-    const describe=(failure:any)=>{
-      const message=failure.diagnostic?.errorCode==='credit_balance_exhausted'
-      ?'The previous attempt stopped because the writing API had no credits. If you have added credits, approve the writing plan below and retry this reading. This message describes the saved attempt, not your current balance.'
-      :`Previous attempt: ${failure.message}`;
-      const ended=Date.parse(failed.failedAt);
-      const timestamp=Number.isFinite(ended)?` Attempt ended ${new Intl.DateTimeFormat('en-US',{month:'short',day:'numeric',year:'numeric',hour:'numeric',minute:'2-digit',timeZoneName:'short',timeZone:row.sections.horoscopeEdition.window.timeZone}).format(ended)}.`:'';
-      const changed=currentPlanHash&&failed.operation?.planHash&&currentPlanHash!==failed.operation.planHash?' The writing plan has changed since that attempt.':'';
-      return message+timestamp+changed;
-    };
+    const {describeHoroscopeFailure}=await import('./horoscopeFailureMessage');
+    const describe=(failure:any)=>describeHoroscopeFailure(row,failure,currentPlanHash);
     if(failed.code==='required_punctuation')return describe(failed);
     if(failed.diagnostic||!failed.operation?.responseId)return describe(failed);
     // Older drafts only saved a generic error. Opening their plan retrieves the
