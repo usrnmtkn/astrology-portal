@@ -49,6 +49,20 @@ for(const [width,theme] of [[390,'light'],[390,'dark'],[1440,'light'],[1440,'dar
    await studio.getByRole('button',{name:'Continue to writing plan',exact:true}).click();
    await expect(studio.getByRole('heading',{name:'Overview writing plan',exact:true})).toBeVisible();
    await expect(studio.getByText('0/1 readings ready',{exact:false})).toBeVisible();
+   // An older unfinished edition should adopt a profile saved in another tab
+   // when reopened. There is no extra refresh-profile action or prompt entry.
+   const library=await call({method:'GET',url:'/api/admin/generated-content?writingProfiles=true'});
+   const before=library.payload.profiles.find((p:any)=>p.profile.period==='monthly');
+   const changed=await call({method:'POST',url:'/api/admin/generated-content?writingProfiles=true',body:{profile:{...before.profile,voiceGuidance:'Latest monthly instructions from the owner.'},expectedUpdatedAt:before.updatedAt}});
+   expect(changed.status).toBe(200);
+   await page.reload();await studio.getByText(/^Continue a saved edition/).click();await studio.getByRole('button',{name:/^Monthly horoscopes/}).click();
+   await expect(studio.getByRole('heading',{name:'Overview writing plan',exact:true})).toBeVisible();
+   await studio.getByText('Writing instructions · optional',{exact:true}).click();
+   await expect(studio.getByText('Using your saved monthly instructions, revision 2. You can use these as they are.',{exact:true})).toBeVisible();
+   await expect(studio.getByRole('button',{name:'Use latest saved instructions',exact:true})).toHaveCount(0);
+   const refreshed=(await call({method:'rows'})).find((r:any)=>r.content_key.startsWith('horoscope/monthly/'));
+   expect(refreshed.source_snapshot.studioWritingProfile).toEqual(changed.payload.profile);
+   expect((await call({method:'writer-state'})).calls).toBe(0);
    await expect(studio.getByRole('button',{name:'Generate overview',exact:true})).toBeDisabled();
    await studio.getByLabel('I approve this writing plan for generation.').check();
    await expect(studio.getByText('Ready to write 1 draft. This uses 1 paid AI request and saves the results for review.')).toBeVisible();

@@ -142,9 +142,25 @@ export default async function handler(req:IncomingMessage,res:ServerResponse) {
     // Existing feedback families have explicit scopes. Do not widen a passage
     // or Sky correction to a new horoscope surface.
     const feedbackReceipt={enabled:studioFeedbackEnabled(),inventoryHash:hash(memory.map(feedbackHash)),selected:[],reason:'No existing Studio feedback scope includes horoscope editions.'};
+    // A new plan always adopts the latest saved instructions. In-flight requests
+    // and their historical receipts stay pinned to the instructions they used.
+    let writingRow=row;
+    if(!operation){
+      const profiles=await listStudioWritingProfiles(params=>adminFetchJson(`${url}?${params}`,{headers}));
+      const latest=profiles.find(p=>p.profile.period===row.sections.horoscopeEdition.window.period);
+      if(latest?.id&&horoscopeCanonicalJson(latest)!==horoscopeCanonicalJson(row.source_snapshot?.studioWritingProfile??null)){
+        writingRow={...row,source_snapshot:{...row.source_snapshot,studioWritingProfile:latest}};
+      }
+    }
     const seasonalSourceRows=await loadHoroscopeSeasonalSources(row.facts?.horoscopeBrief?.brief);
-    const prepared=prepareHoroscopeWriting(row,{feedbackReceipt,seasonalSourceRows});
-    if(input.action==='prepare')return sendAdminJson(res,200,{ok:true,plan:horoscopePlanPreview(prepared),configured:Boolean(apiKey)});
+    const prepared=prepareHoroscopeWriting(writingRow,{feedbackReceipt,seasonalSourceRows});
+    if(input.action==='prepare'){
+      if(writingRow!==row){
+        await persist({source_snapshot:writingRow.source_snapshot});
+        if(horoscopeCanonicalJson(row.source_snapshot)!==horoscopeCanonicalJson(writingRow.source_snapshot))throw new AdminHttpError(502,'The latest writing instructions could not be confirmed. Reopen this edition before continuing.');
+      }
+      return sendAdminJson(res,200,{ok:true,rows:[row],plan:horoscopePlanPreview(prepared),configured:Boolean(apiKey)});
+    }
     if(!apiKey)throw new AdminHttpError(503,'The horoscope writer is not connected. Configure the server OpenAI API key, then retry.');
     const sign=input.sign;
     if(!horoscopeReadingSigns(prepared.edition).includes(sign))throw new AdminHttpError(400,'Choose a reading.');
@@ -161,7 +177,7 @@ export default async function handler(req:IncomingMessage,res:ServerResponse) {
       const generation=row.source_snapshot?.horoscopeGeneration??{};
       const failures=generation.failures??[];
       const legacy=generation.lastError;
-      await persist({source_snapshot:{...row.source_snapshot,horoscopeGeneration:{...generation,active:operation,lastError:null,
+      await persist({source_snapshot:{...writingRow.source_snapshot,horoscopeGeneration:{...generation,active:operation,lastError:null,
         failures:legacy&&!failures.some((failure:any)=>failure.operation?.id===legacy.operation?.id)?[...failures,legacy]:failures}}});
     }
     let payload:any;
