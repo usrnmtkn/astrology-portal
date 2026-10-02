@@ -16,6 +16,19 @@ The export is a reproducible configuration snapshot. Its hash detects edits afte
 
 ## Writer integration
 
+Writer v11 sends the horoscope editorial authority and shared factual/source
+boundaries as its system instructions. It does not also send the generic Sky
+article spine, sentence-length quotas, negation-pivot cap or mandatory imperative
+sequence. Those instructions competed with the saved horoscope profiles even
+when the correct profile revision reached the writer.
+
+Monthly requests include each complete primary essay once. Evidence roles and
+the relevant-passage list reference that exact unit, preserving provenance and
+use restrictions; supporting passages remain intact. The Monthly starter no
+longer sets a 450–700 word target. Length follows the developed interpretation
+and the complete owner examples. These changes address request construction,
+not an automatic claim of prose quality or approval.
+
 The existing writing harness accepts the export:
 
 ```sh

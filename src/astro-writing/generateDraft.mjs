@@ -219,13 +219,17 @@ export async function generateDraft({
     : family === "slow-mover-article"
       ? SLOW_MOVER_ARTICLE_DRAFT_SCHEMA
       : PLACEMENT_DRAFT_SCHEMA);
-  const baseInstructions = isCardWritingSurface({ surface, family })
+  // Horoscope profiles and complete owner readings own prose behavior. The
+  // generic article prompt includes incompatible Sky spines, example quotas,
+  // sentence-length rules and mandatory imperatives. Appending an exception
+  // still sends those competing instructions to the writer.
+  const baseInstructions = family === 'horoscope' ? HOROSCOPE_EDITORIAL_AUTHORITY : isCardWritingSurface({ surface, family })
     ? candidateCardAstrologyWritingInstructions
     : canonicalAstrologyWritingInstructions;
   const value = await modelClient({
     stage: "draft",
     role,
-    instructions: [effectiveRulePrompt(baseInstructions, { surface, family }), ...(family==='horoscope'?[HOROSCOPE_EDITORIAL_AUTHORITY]:[])].join('\n\n'),
+    instructions: effectiveRulePrompt(baseInstructions, { surface, family }),
     input: buildDraftInput({ plan, context, task, target: resolvedTarget, family, register, surface, familyContext, engineFacts, argumentSource, argumentOutline, spine, writingProfile }),
     schema: resolvedSchema
   });
