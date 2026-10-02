@@ -65,7 +65,7 @@ for(const [width,theme] of [[390,'light'],[390,'dark'],[1440,'light'],[1440,'dar
    expect((await call({method:'writer-state'})).calls).toBe(0);
    await expect(studio.getByRole('button',{name:'Generate overview',exact:true})).toBeDisabled();
    await studio.getByLabel('I approve this writing plan for generation.').check();
-   await expect(studio.getByText('Ready to write the overview. Up to 2 paid AI requests: one plan, then one draft. Matching saved plans are reused.')).toBeVisible();
+   await expect(studio.getByText('Up to 2 paid AI requests: one plan, then one draft. Matching saved plans are reused.')).toBeVisible();
    if(width===1440&&theme==='light'){
     // Reopen at the boundary between stages. Status checks must not bill again.
     const initial=(await call({method:'rows'})).find((r:any)=>r.content_key.startsWith('horoscope/monthly/'));
@@ -76,7 +76,7 @@ for(const [width,theme] of [[390,'light'],[390,'dark'],[1440,'light'],[1440,'dar
     step=await call({method:'writing',body:{action:'poll',id:current.id,expectedUpdatedAt:current.updated_at}});
     expect(step.payload.rows[0].source_snapshot.horoscopeGeneration.active.state).toBe('ready');
     await page.reload();await studio.getByText(/^Continue a saved edition/).click();await studio.getByRole('button',{name:/^Monthly horoscopes/}).click();
-    await expect(studio.getByText('Your monthly plan is saved. Resume generation to write the overview. Planning will not be charged again.',{exact:true})).toBeVisible();
+    await expect(studio.getByText('Plan saved. Resume generation to write the overview without another planning charge.',{exact:true})).toBeVisible();
     await studio.getByRole('button',{name:'Check saved progress',exact:true}).click();
     await expect(studio.getByRole('button',{name:'Resume generation',exact:true})).toBeEnabled();
     expect((await call({method:'writer-state'})).calls).toBe(1);
