@@ -20,3 +20,13 @@ export async function createSeasonalPublicationFixture(call:(message:any)=>Promi
  const readings=Object.fromEntries(edition.passages.map(p=>[p.sign,{bodyHash:createHash('sha256').update(horoscopeCanonicalJson({headline:p.headline,body:p.body})).digest('hex'),lint:{version:'horoscope-facts/v3',violations:seasonalClaimBodies[p.sign]?[{category:'horoscope_fact_boundary',detail:'Synthetic obsolete claim warning.'}]:[]}}]));
  return call({method:'POST',body:{contentKey:horoscopeEditionKey(edition.window),surface:'sky',mode:'article',eventType:'horoscope-edition',provider:'manual-admin',status:'DRAFT',lane:'serving',headline:'Synthetic seasonal publication',body:horoscopeEditionBody(edition),sections:{horoscopeEdition:edition},facts:{horoscopeBrief:{brief:packet.payload.brief,signature:packet.payload.signature}},sourceSnapshot:{horoscopeGeneration:{readings}}}});
 }
+
+export const monthlyAspectBody='You can read the complete monthly fixture opening. Venus squares Pluto on October 20. You can consider the same details. This square can help you review the fixture.\n\nMercury, now retrograde, squares Mars again on October 30. Your complete monthly fixture ends here.';
+export async function createMonthlyAspectPublicationFixture(call:(message:any)=>Promise<any>){
+ const packet=await call({method:'GET',url:'/api/admin/generated-content?horoscopeBrief=true&period=monthly&date=2026-10-01&timeZone=America/New_York'});
+ if(packet.status!==200)throw new Error('Fixture facts unavailable');
+ const edition=emptyHoroscopeEdition(packet.payload.brief.window);
+ const passage=edition.passages[0];passage.headline='Monthly aspect fixture';passage.body=monthlyAspectBody;
+ const readings={overview:{bodyHash:createHash('sha256').update(horoscopeCanonicalJson({headline:passage.headline,body:passage.body})).digest('hex'),lint:{version:'horoscope-facts/v6',violations:[{category:'horoscope_fact_boundary',detail:'Name both planets with each aspect so it can be checked against the calculated events.'}]}}};
+ return call({method:'POST',body:{contentKey:horoscopeEditionKey(edition.window),surface:'sky',mode:'article',eventType:'horoscope-edition',provider:'manual-admin',status:'DRAFT',lane:'serving',headline:'Synthetic monthly publication',body:horoscopeEditionBody(edition),sections:{horoscopeEdition:edition},facts:{horoscopeBrief:{brief:packet.payload.brief,signature:packet.payload.signature}},sourceSnapshot:{horoscopeGeneration:{readings}}}});
+}

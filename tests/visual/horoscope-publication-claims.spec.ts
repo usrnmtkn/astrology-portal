@@ -2,7 +2,7 @@ import {test,expect} from '@playwright/test';
 import {fork} from 'node:child_process';
 import path from 'node:path';
 import {routeStudioInventoryApi} from '../helpers/studio-inventory-route';
-import {createSeasonalPublicationFixture,seasonalClaimBodies} from '../helpers/horoscope-publication-fixture.mts';
+import {createSeasonalPublicationFixture,seasonalClaimBodies,createMonthlyAspectPublicationFixture,monthlyAspectBody} from '../helpers/horoscope-publication-fixture.mts';
 
 for(const [width,theme] of [[390,'light'],[1440,'dark']] as const){
  test(`Saved seasonal claims publish without rewriting ${width} ${theme}`,async({page})=>{
@@ -33,6 +33,20 @@ for(const [width,theme] of [[390,'light'],[1440,'dark']] as const){
    const reading=page.getByRole('article',{name:'Cancer horoscope'});await expect(reading).toContainText(seasonalClaimBodies.cancer);
    await page.reload();await expect(reading).toContainText(seasonalClaimBodies.cancer);
    await page.screenshot({path:`test-results/seasonal-publish-claims-${width}-${theme}.png`,fullPage:true});
+   const monthly=await createMonthlyAspectPublicationFixture(call);expect(monthly.status).toBe(200);const month=monthly.payload.rows[0];
+   await page.goto('/admin/content#horoscopes');
+   await studio.getByText(/^Continue a saved edition/).click();await studio.getByRole('button',{name:/Synthetic monthly publication/}).click();
+   await expect(studio.getByLabel('Complete reading')).toHaveValue(monthlyAspectBody);
+   await studio.getByRole('button',{name:'4 · Publish',exact:true}).click();
+   await studio.getByLabel('I have reviewed and approve the exact wording of every saved reading in this edition.').check();
+   await studio.getByRole('button',{name:'Publish edition',exact:true}).click();
+   await expect(studio.getByRole('status')).toContainText('Published the complete edition.');
+   const savedMonth=(await call({method:'rows'})).find((r:any)=>r.id===month.id);
+   expect(savedMonth.sections).toEqual(month.sections);expect(savedMonth.source_snapshot).toEqual(month.source_snapshot);
+   expect((await call({method:'writer-state'})).calls).toBe(0);
+   await page.goto(`/#horoscopes?edition=${month.id}&period=monthly`);
+   const overview=page.getByRole('article',{name:'Monthly overview',exact:true});await expect(overview).toContainText(monthlyAspectBody);
+   await page.reload();await expect(overview).toContainText('You can read the complete monthly fixture opening.');await expect(overview).toContainText('Your complete monthly fixture ends here.');
   }finally{child.kill();}
  });
 }
