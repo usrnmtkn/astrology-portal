@@ -19,7 +19,7 @@ async function request(secret:string,body?:unknown,query='',signal?:AbortSignal)
 }
 const displayTime=(event:Event)=>new Intl.DateTimeFormat('en-US',{timeZone:event.timeZone,dateStyle:'full',timeStyle:'short'}).format(new Date(event.startsAt));
 
-export default function DatedLunationWritingStudio({secret,dirtyRef,onOpenContent,onEditGuidance}:{secret:string;dirtyRef:{current:boolean};onOpenContent:(key:string)=>Promise<void>;onEditGuidance:()=>void}) {
+export default function DatedLunationWritingStudio({secret,dirtyRef,onOpenContent,onEditGuidance,requestedDraftId}:{secret:string;dirtyRef:{current:boolean};onOpenContent:(key:string)=>Promise<void>;onEditGuidance:()=>void;requestedDraftId?:string|null}) {
   const [month,setMonth]=useState(()=>{const today=new Date();return `${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}`;});
   const [zone,setZone]=useState(()=>Intl.DateTimeFormat().resolvedOptions().timeZone||'America/New_York');
   const [kind,setKind]=useState(()=>{const phase=new URLSearchParams(window.location.hash.split('?')[1]??'').get('phase');return phase&&['new-moon','full-moon'].includes(phase)?phase:'all';}),[events,setEvents]=useState<Event[]>([]);
@@ -80,10 +80,25 @@ export default function DatedLunationWritingStudio({secret,dirtyRef,onOpenConten
     return()=>{controller.abort();window.clearTimeout(timer);};
   },[secret,month,zone,eventReload]);
   useEffect(()=>{if(focusDraft){selectedDraft.current?.focus();selectedDraft.current?.scrollIntoView({block:'start'});}},[focusDraft]);
-  function open(next:Row) {
+  const opening=useRef<AbortController|null>(null);
+  useEffect(()=>()=>opening.current?.abort(),[]);
+  async function open(next:Pick<Row,'id'>) {
     if(busy||dirty&&!window.confirm('Discard the unsaved changes to this draft?'))return;
-    accept(next);setError('');setMessage('');setFocusDraft(value=>value+1);
+    const controller=new AbortController();opening.current?.abort();opening.current=controller;
+    await run(async()=>{
+      const result=await request(secret,undefined,`?${new URLSearchParams({id:next.id})}`,controller.signal);
+      if(controller.signal.aborted)return;
+      const saved=result.rows?.[0];
+      if(result.rows?.length!==1||saved?.id!==next.id||!saved.facts?.lunationArticle?.event||!saved.source_snapshot?.lunationWriting)throw new Error('This saved lunar draft could not be verified. Refresh saved drafts and try again.');
+      accept(saved);setFocusDraft(value=>value+1);
+    });
+    if(opening.current===controller)opening.current=null;
   }
+  useEffect(()=>{
+    if(requestedDraftId)void open({id:requestedDraftId});
+    return()=>opening.current?.abort();
+  },[secret,requestedDraftId]);
+
   async function act(action:string,extra:Record<string,unknown>={}) {
     if(!row)return;
     const result=await request(secret,{action,id:row.id,expectedUpdatedAt:row.updated_at,...extra});

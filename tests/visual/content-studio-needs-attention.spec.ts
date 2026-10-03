@@ -171,14 +171,14 @@ for (const view of ['attention', 'coverage']) for (const theme of ['light', 'dar
     let attempts = 0;
     await page.route('**/api/admin/content-coverage', route => {
       attempts++;
-      return route.fulfill({ status: 503, json: { error: 'Coverage is temporarily unavailable. Try again.' } });
+      return route.fulfill({ status: 401, json: { error: 'Owner access could not be verified. Sign in to retry.' } });
     });
     await page.route('**/api/admin/content-inventory**', route => route.fulfill({ json: { ok: true, rows: [] } }));
     await page.goto(`/admin/content/coverage${view === 'attention' ? '?view=attention' : ''}`);
     const alert = page.getByRole('alert');
     const gate = page.getByRole('region', { name: 'Admin access required' });
     const title = page.getByRole('heading', { level: 1 });
-    await expect(alert).toHaveText('Coverage is temporarily unavailable. Try again.');
+    await expect(alert).toHaveText('Owner access could not be verified. Sign in to retry.');
     await expect(gate).toBeVisible();
     expect(await page.locator('.admin-main > :first-child').getAttribute('role')).toBe('alert');
     const errorBox = (await alert.boundingBox())!;
@@ -202,5 +202,25 @@ for (const view of ['attention', 'coverage']) for (const theme of ['light', 'dar
     await expect.poll(() => attempts).toBeGreaterThan(previousAttempts);
     await expect(alert).toBeVisible();
     expect(await page.locator('.admin-main > :first-child').getAttribute('role')).toBe('alert');
+  });
+}
+
+for (const view of ['attention','coverage']) {
+  test(`coverage server failure keeps Refresh available and recovers ${view}`,async({page})=>{
+    await page.addInitScript(()=>localStorage.setItem('tldrastro:contentAdminSecret','qa-secret'));
+    let unavailable=true;
+    await page.route('**/api/admin/content-coverage',route=>route.fulfill(unavailable?{
+      status:503,json:{ok:false,error:'Content coverage could not be loaded. Refresh to retry.'}
+    }:{json:{ok:true,generatedAt:'2026-10-03T00:00:00Z',authority:'Synthetic source',readerEligibility:null,
+      summary:{complete:0,incomplete:0,unresolvedQueue:0,unresolvedIssues:0,unresolvedOptionalQueue:0,unresolvedOptionalIssues:0,unresolvedShadowed:0,unresolvedRetired:0},coverage:[],
+      notes:{friendsIntentionalGap:null,unresolvedReasonCounts:{},unresolvedWorkload:{},unresolvedOptionalWorkload:{},unresolvedShadowedReasonCounts:{},unresolvedRetiredReasonCounts:{}}}}));
+    await page.route('**/api/admin/generated-content-inventory?**',route=>route.fulfill({json:{ok:true,rows:[],nextCursor:null}}));
+    await page.goto(`/admin/content/coverage${view==='attention'?'?view=attention':''}`);
+    await expect(page.getByRole('alert')).toHaveText('Content coverage could not be loaded. Refresh to retry.');
+    await expect(page.getByRole('region',{name:'Admin access required'})).toHaveCount(0);
+    const refresh=page.getByRole('button',{name:'Refresh',exact:true});await expect(refresh).toBeEnabled();
+    unavailable=false;await refresh.click();
+    await expect(page.getByRole('alert')).toHaveCount(0);
+    await expect(page.getByRole('region',{name:view==='attention'?'Needs attention summary':'Coverage summary'})).toBeVisible();
   });
 }
