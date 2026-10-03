@@ -34,6 +34,8 @@ export const STUDIO_SKY_WRITEUP_PREFIXES = [
   "sky/station/",
   "authored/sky-lunation-macro/",
   "fallback-hook/sky-placement-lived/",
+  "fallback-hook/sky-placement-hook/moon/",
+  "fallback-hook/sky-placement-turn/moon/",
   "sky.placement."
 ] as const;
 

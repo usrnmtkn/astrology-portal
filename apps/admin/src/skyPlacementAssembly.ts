@@ -1,6 +1,7 @@
 import type { CompositionMapRow } from "./compositionMap";
 import { effectivePackageRecord, packageValueAt, skyFallbackWorkspace } from "./skyFallbackWorkspace";
 import { skyV4StudioDefinition } from "./skyV4ContentStudio";
+import { skyMoonWriteupSection } from "./skyMoonWriteup";
 import type { SkyEditorialSection } from "./skyArticleOutlines";
 // @ts-ignore Shared canonical evergreen layout used by the reader.
 import { isSkyEvergreenSource, skyPlacementArticlePath, skyEvergreenFields, skyEvergreenLayout, SKY_EVERGREEN_SECTIONS_PATH } from "../../web/src/content/fallbackArchitectureV3/resolver/skyEvergreenSections.mjs";
@@ -20,6 +21,9 @@ export type SkyPlacementAssemblyField = {
 
 export function skyPlacementAssemblyFields(row: CompositionMapRow): SkyPlacementAssemblyField[] {
   const source = effectivePackageRecord(row.sections);
+  const moonSection = skyMoonWriteupSection(row.content_key);
+  if (moonSection) return [{ row, path: "body_you", label: moonSection.label,
+    value: packageValueAt(source, "body_you"), kind: "hook" }];
   const definition = skyV4StudioDefinition(source).editableFields;
   const editable = definition.length ? definition : (skyFallbackWorkspace(row.content_key, row.sections)?.fields ?? []).map(field => ({ path: field.key, label: field.label }));
   if (!editable.length && typeof source.body_you === "string") editable.push({ path: "body_you", label: "Placement passage" });
@@ -45,7 +49,8 @@ export function skyPlacementAssembly(rows: CompositionMapRow[], writing: SkyPlac
   const seasonal = fields.filter(field => field.row.content_key.startsWith("sky-placement/seasonal-context/"));
   const placement = fields.filter(field => !field.row.content_key.includes("/retrograde/") && !field.row.content_key.startsWith("sky-placement/seasonal-context/"));
   const fallback = placement.filter(field => field.path.startsWith("fallback.") && (!field.motion || field.motion === "all" || field.motion === motion));
-  const article = placement.filter(field => (!field.row.content_key.startsWith("sky-nodes/axis/") || field.path === "NodeAxisArticle") && !field.path.startsWith("fallback.") && (!/^placementArticle/u.test(field.path) || field.path === skyPlacementArticlePath(effectivePackageRecord(field.row.sections), motion)));
+  const article = placement.filter(field => (!field.row.content_key.startsWith("sky-nodes/axis/") || field.path === "NodeAxisArticle") && !field.path.startsWith("fallback.") && (!/^placementArticle/u.test(field.path) || field.path === skyPlacementArticlePath(effectivePackageRecord(field.row.sections), motion)
+    || !placement.some(item => item.path === "placementArticle") && field.path === (motion === "retrograde" ? "placementArticleRetrograde" : "placementArticleDirect")));
   const tldr = article.filter(field => /^(?:tldrWhat|tldrTakeaway|TLDR_What|TLDR_Takeaway)$/u.test(field.path));
   const articleWithSeasonal = seasonal.length
     ? [...tldr, ...seasonal, ...article.filter(field => !tldr.includes(field))] : article;

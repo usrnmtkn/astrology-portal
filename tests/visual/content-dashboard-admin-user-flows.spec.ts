@@ -6496,9 +6496,10 @@ for (const theme of ['light', 'dark']) for (const width of [1440, 390]) {
     await editor.getByLabel('aries rising horoscope',{exact:true}).fill('');
     await expect(editor.getByLabel('pisces rising horoscope',{exact:true})).toHaveValue(passages[11].body);
     await editor.getByLabel('aries rising horoscope',{exact:true}).fill(revised);
-    await editor.getByRole('button',{name:'Save',exact:true}).click();
+    await editor.getByRole('button',{name:'Save template',exact:true}).click();
     await expect.poll(()=>writes.length).toBe(1);
     expect(writes[0].payload.body).toBe(body);
+    expect(writes[0].payload.status).toBe('DRAFT');
     const savedSections=writes[0].payload.sections as typeof sections;
     expect(savedSections.articleHoroscopes.passages[0].body).toBe(revised);
     expect(savedSections.articleHoroscopes.passages.slice(1)).toEqual(passages.slice(1));
@@ -7384,6 +7385,40 @@ for (const theme of ['dark','light'] as const) for (const width of [1440,390]) {
   });
 }
 
+
+for (const outcome of ['success', 'failure'] as const) test(`leaving a pending content editor ignores its late ${outcome}`, async ({ page }) => {
+  const row = { ...generatedContentRows[0], id: 'qa-delayed-editor', content_key: 'qa/delayed-editor',
+    headline: 'Delayed editor fixture', mode: 'feed', status: 'DRAFT', body: 'Complete saved fixture.',
+    sections: {}, source_snapshot: {}, facts: {}, provider: 'manual', block_type: 'essay' };
+  await seedAdminApi(page, { generatedRows: [row] });
+  await expectAdminRouteLoads(page, '/admin/content#exact-content');
+  let release!: () => void;
+  const pending = new Promise<void>(resolve => { release = resolve; });
+  let settled!: () => void;
+  const completed = new Promise<void>(resolve => { settled = resolve; });
+  let requested = false;
+  await page.route('**/api/admin/generated-content-inventory?**', async route => {
+    if (new URL(route.request().url()).searchParams.get('id') !== row.id) return route.fallback();
+    requested = true;
+    await pending;
+    try {
+      await route.fulfill(outcome === 'success'
+        ? { json: { ok: true, rows: [{ ...row, inventory_only: false }] } }
+        : { status: 503, json: { ok: false, error: 'Delayed editor read failed.' } });
+    } finally { settled(); }
+  });
+  await page.locator('.admin-content-row').getByRole('button', { name: 'Edit', exact: true }).click();
+  await expect.poll(() => requested).toBe(true);
+  await page.getByRole('button', { name: 'Sky Write-ups', exact: true }).click();
+  await expect(page.getByRole('heading', { name: 'Sky Write-ups', exact: true })).toBeVisible();
+  release();
+  await completed;
+  await page.evaluate(() => new Promise<void>(resolve => requestAnimationFrame(() => requestAnimationFrame(() => resolve()))));
+  await expect(page.getByRole('dialog', { name: 'Generated content editor' })).toHaveCount(0);
+  await expect(page.getByText(/Delayed editor read failed\./)).toHaveCount(0);
+  await page.getByRole('button', { name: 'Content Library', exact: true }).click();
+  await expect(page.getByRole('heading', { name: 'Content Library', exact: true })).toBeVisible();
+});
 
 test('manual source saves preserve typing during an in-flight response', async ({ page }) => {
   const writes: Record<string, unknown>[] = [];

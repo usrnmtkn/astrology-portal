@@ -132,12 +132,14 @@ try {
   const listSource = { ...rows[0], content_key: 'sky-context/fixture-paging' };
   const pages: number[] = [];
   const pagedRows = Array.from({ length: 251 }, (_, i) => ({ ...listSource, id: `aaaaaaaa-aaaa-aaaa-aaaa-${String(i).padStart(12, '0')}` }));
-  let failSecondPage = false;
+  let secondPageFailure: 'none' | 'once' | 'persistent' = 'none';
   class PagedQuery extends Query {
     async returns() {
       const data = pagedRows.filter(row => this.filters.every(filter => filter(row))).slice(0, 250);
       pages.push(data.length);
-      return failSecondPage && pages.length === 2 ? { data: null, error: new Error('Fixture page failure') } : { data };
+      const fail = data[0]?.id === pagedRows[250].id
+        && (secondPageFailure === 'persistent' || secondPageFailure === 'once' && pages.length === 2);
+      return fail ? { data: null, error: new Error('Fixture page failure') } : { data };
     }
   }
   (globalThis as any).fixtureClient = { from: () => new PagedQuery(), rpc: originalClient.rpc };
@@ -146,8 +148,13 @@ try {
     await qa.loadFallbackArchitectureV3DashboardBundle('sky-list');
     assert.deepEqual(pages, [250, 1], 'The shared pager must fetch beyond the first page using its ID cursor');
     qa.clearCachedFallbackArchitectureV3Bundle();
-    pages.length = 0; failSecondPage = true;
+    pages.length = 0; secondPageFailure = 'once';
+    await qa.loadFallbackArchitectureV3DashboardBundle('sky-list');
+    assert.deepEqual(pages, [250, 1, 1], 'A temporary later-page failure retries only that page');
+    qa.clearCachedFallbackArchitectureV3Bundle();
+    pages.length = 0; secondPageFailure = 'persistent';
     await assert.rejects(qa.loadFallbackArchitectureV3DashboardBundle('sky-list'), /Current Sky content/);
+    assert.deepEqual(pages, [250, 1, 1, 1], 'A persistent later-page failure exhausts its bounded retry');
     assert.equal(qa.readCachedFallbackArchitectureV3Bundle('sky-list'), null, 'A failed later page must not cache a partial overlay');
   } finally { (globalThis as any).fixtureClient = originalClient; }
   const virgin = snapshot.rows.find((row: any) => row.content_key === 'sky-placement/article/sun/virgo');

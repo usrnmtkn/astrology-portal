@@ -38,7 +38,10 @@ export default async function handler(req:IncomingMessage,res:ServerResponse) {
     if(req.method==='GET') {
       const params=new URL(req.url??'','http://studio').searchParams;
       if(params.has('month'))return sendAdminJson(res,200,{ok:true,events:await lunationArticleEvents(params.get('month')!,params.get('timeZone')??'America/New_York')});
-      const rows=await read({content_key:`like.${prefix}*`,mode:'eq.article',select:'*',order:'updated_at.desc',limit:'100'});
+      const id=params.get('id');
+      if(params.has('id')&&(!id||!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id)))throw new AdminHttpError(400,'Choose a valid saved draft.');
+      const rows=await read({content_key:`like.${prefix}*`,mode:'eq.article',select:'*',order:'updated_at.desc',limit:id?'1':'100',...(id?{id:`eq.${id}`}:{})});
+      if(id&&!rows.length)throw new AdminHttpError(404,'This saved lunar draft is unavailable. Refresh saved drafts and try again.');
       return sendAdminJson(res,200,{ok:true,rows});
     }
     const input=await readAdminJsonBody<Record<string,any>>(req,96000);

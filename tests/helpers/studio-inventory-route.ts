@@ -11,6 +11,7 @@ export async function routeStudioInventoryApi(page: Page, options: {
   call: StudioApiCall;
   listRows?: (rows: any[]) => any[];
   onWrite?: (write: { body: any; result: any }) => void;
+  actualDocumentRoute?: boolean;
   // Answers a fixture's own endpoints, such as reader status. Return false to take the empty reply.
   answer?: (route: Parameters<Parameters<Page["route"]>[1]>[0], url: URL) => Promise<boolean>;
 }) {
@@ -24,7 +25,7 @@ export async function routeStudioInventoryApi(page: Page, options: {
         const result = await options.call({
           method: request.method(),
           body,
-          url: `/api/admin/generated-content${url.search}`
+          url: `${options.actualDocumentRoute ? url.pathname : "/api/admin/generated-content"}${url.search}`
         });
         if (body) options.onWrite?.({ body, result });
         return route.fulfill({ status: result.status, json: result.payload });
@@ -35,6 +36,10 @@ export async function routeStudioInventoryApi(page: Page, options: {
       return route.fulfill({ json: { ok: true, rows, nextCursor: null } });
     }
     if (options.answer && await options.answer(route, url)) return;
+    if (url.pathname === "/api/admin/package-source") {
+      const result = await options.call({ method: "GET", url: url.pathname + url.search });
+      return route.fulfill({ status: result.status, json: result.payload });
+    }
     return route.fulfill({ json: { ok: true, rows: [], statuses: [], records: [], nextCursor: null } });
   });
 }

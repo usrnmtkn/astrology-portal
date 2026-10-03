@@ -3,7 +3,7 @@ import {StudioTabs} from './StudioControls';
 import {PageLoading} from '../../web/src/components/PageLoading';
 const Reusable = lazy(()=>import('./ReusableLunationWritingStudio'));
 const Dated = lazy(()=>import('./DatedLunationWritingStudio'));
-export default function LunationWritingStudio({secret,dirtyRef,onOpenContent,library}:{secret:string;dirtyRef:{current:boolean};onOpenContent:(key:string)=>Promise<void>;library:ReactNode}) {
+export default function LunationWritingStudio({secret,dirtyRef,onOpenContent,library,requestedDraftId}:{secret:string;dirtyRef:{current:boolean};onOpenContent:(key:string)=>Promise<void>;library:ReactNode;requestedDraftId?:string|null}) {
   const initial=new URLSearchParams(window.location.hash.split('?')[1]??'');
   const [mode,setMode]=useState(['reusable','library'].includes(initial.get('writing')??'')?initial.get('writing')!:'dated');
   const childDirty=useRef(false);
@@ -20,7 +20,7 @@ export default function LunationWritingStudio({secret,dirtyRef,onOpenContent,lib
   }
   return <StudioTabs label="Lunar writing type" tabs={[{value:'library',label:'Saved write-ups'},{value:'dated',label:'Dated articles & eclipses'},{value:'reusable',label:'Reusable sign readings'}]} value={mode} onValueChange={choose}>
     <Suspense fallback={<PageLoading message="Loading lunar writing…"/>}>
-      {mode==='library'?library:mode==='reusable'?<Reusable secret={secret} dirtyRef={stableGuard} onOpenContent={onOpenContent}/>:<Dated secret={secret} dirtyRef={stableGuard} onOpenContent={onOpenContent} onEditGuidance={()=>choose('reusable')}/>}
+      {mode==='library'?library:mode==='reusable'?<Reusable secret={secret} dirtyRef={stableGuard} onOpenContent={onOpenContent}/>:<Dated secret={secret} dirtyRef={stableGuard} requestedDraftId={requestedDraftId} onOpenContent={onOpenContent} onEditGuidance={()=>choose('reusable')}/>}
     </Suspense>
   </StudioTabs>;
 }

@@ -73,6 +73,10 @@ try {
   responseOverride = () => Response.json({ ok: true, rows: [savedAgain], nextCursor: ++pages === 1 ? "next" : null });
   assert.equal((await readGeneratedContentRows("/api/admin/generated-content", "secondary-editor-test")).length, 2);
   assert.equal(pages, 2);
+  pages = 0;
+  responseOverride = () => Response.json({ ok: true, rows: [savedAgain], nextCursor: ++pages < 126 ? String(pages) : null });
+  assert.equal((await readGeneratedContentRows("/api/admin/generated-content", "secondary-editor-test")).length, 126);
+  assert.equal(pages, 126, "Secondary loaders must not stop at the old 125-page catalog cutoff.");
   responseOverride = () => Response.json({ ok: true, rows: [], nextCursor: "repeated" });
   await assert.rejects(() => readGeneratedContentRows("/api/admin/generated-content", "secondary-editor-test"), /invalid pagination cursor/);
   console.log("Secondary Sky editor contracts passed: actual-handler load/save/reopen/stale edits; malformed responses, receipts and pagination.");

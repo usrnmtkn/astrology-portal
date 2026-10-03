@@ -202,7 +202,7 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
   } catch (error) {
     sendJson(res, 500, {
       ok: false,
-      error: error instanceof Error ? error.message : "Content coverage could not be calculated."
+      error: "Content coverage could not be loaded. Refresh to retry."
     });
   }
 }

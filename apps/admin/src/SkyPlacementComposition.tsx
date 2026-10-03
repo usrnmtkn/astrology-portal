@@ -4,6 +4,7 @@ import { AdminDisclosureSummary, AdminSelect } from "./AdminNativeControls";
 import { useEffect, useMemo, useState, useRef } from "react";
 import type { CompositionMapRow } from "./compositionMap";
 import { skyPlacementBodies, skyPlacementSigns } from "./skyWriteupRelations";
+import { skyMoonWriteupKeys, skyMoonWriteupSection } from "./skyMoonWriteup";
 import SkyIngressComposer from "./SkyIngressComposer";
 import SkyWritingSystemDetails from "./SkyWritingSystemDetails";
 import { effectivePackageRecord } from "./skyFallbackWorkspace";
@@ -31,7 +32,8 @@ type Props = {
 const title = (value: string) => value.split("-").map(word => word[0].toUpperCase() + word.slice(1)).join(" ");
 
 export function skyPlacementCompositionKeys({ planet, sign, motion }: Selection, hemisphere = "neutral") {
-  const base = planet === "moon" ? `fallback-hook/sky-placement-hook/moon/${sign}` : planet === "lilith" ? `sky-lilith/article/${sign}`
+  if (planet === "moon") return skyMoonWriteupKeys(sign);
+  const base = planet === "lilith" ? `sky-lilith/article/${sign}`
     : planet.endsWith("-node") ? `sky-nodes/${planet}/${sign}` : `sky-placement/article/${planet}/${sign}`;
   if (planet.endsWith("-node")) {
     const opposite = skyPlacementSigns[(skyPlacementSigns.indexOf(sign as typeof skyPlacementSigns[number]) + 6) % 12];
@@ -104,6 +106,7 @@ export default function SkyPlacementComposition({ rows, selection, onEditRow, on
     : `${field.row.headline || `${title(current.planet)} in ${title(current.sign)}`} · ${field.label}`;
   const scope = (row: CompositionMapRow) => row.content_key.includes("/retrograde/")
     ? `Shared by ${title(current.planet)} retrograde in every sign.`
+    : skyMoonWriteupSection(row.content_key) ? `Part of the Moon in ${title(current.sign)} write-up.`
     : row.content_key.startsWith("sky-placement/seasonal-context/") ? "Seasonal paragraph for the selected hemisphere. The reader selects this from the location."
     : row.content_key === "sky-nodes/education" ? "Shared node education." : row.content_key.startsWith("sky-nodes/axis/") ? "Shared by both ends of this node axis." : `Writing for ${title(current.planet)} in ${title(current.sign)}. Each section can be shared or specific to one motion.`;
   const views = [{ id: "preview", label: "Saved preview" }, { id: "template", label: "Main template" }, { id: "assembly", label: "Assembly" }] as const;
@@ -153,11 +156,11 @@ export default function SkyPlacementComposition({ rows, selection, onEditRow, on
       </AdminSelect>
     </label>}
     {error && <p role="alert">{error} <StudioButton type="button" onClick={() => setRetry(value => value + 1)}>Retry sources</StudioButton></p>}
-    {keys.map((key, index) => !selectedRows[index] && <p role="status" key={key}>{error || finished[key] ? "Source unavailable: " : "Loading "}{key.includes("/retrograde/") ? "retrograde paragraph" : key.includes("/seasonal-context/") ? "seasonal paragraph" : "planet-in-sign source"}{!error && !finished[key] && "…"}</p>)}
+    {keys.map((key, index) => !selectedRows[index] && <p role="status" key={key}>{error || finished[key] ? "Source unavailable: " : "Loading "}{skyMoonWriteupSection(key)?.label.toLowerCase() ?? (key.includes("/retrograde/") ? "retrograde paragraph" : key.includes("/seasonal-context/") ? "seasonal paragraph" : "planet-in-sign source")}{!error && !finished[key] && "…"}</p>)}
     {availableRows.length > 0 && <>
       <div className="admin-sky-placement-sources" aria-label="Selected sources">
         {availableRows.map(row => <div key={row.content_key}>
-          <strong>{row.headline || row.content_key}</strong><ContentLiveStatusBadge row={studioServingStatusRow(row, row.content_key)} />
+          <strong>{skyMoonWriteupSection(row.content_key)?.label ?? (row.headline || row.content_key)}</strong><ContentLiveStatusBadge row={studioServingStatusRow(row, row.content_key)} />
           <Text size="body" tone="secondary">{scope(row)}</Text>
         </div>)}
       </div>
@@ -180,7 +183,7 @@ export default function SkyPlacementComposition({ rows, selection, onEditRow, on
           const row = await loadRowRef.current?.({ id: `package:${key}`, content_key: key, inventory_only: true } as CompositionMapRow) as CompositionMapRow | undefined;
           return row ? effectivePackageRecord(row.sections) : undefined;
         }} /> : <>
-      <p>{selectedWriting === "fallback" ? "These evergreen sections work for any occurrence of this placement. On canonical placement pages, they supply the body when neither a complete article nor an eligible placement composition is available. Only blocks matching the selected motion are included. Open a section to add writing or change the section order." : "This is the complete authored passage for the selected motion, or the shared passage when no motion-specific article is saved. It can be evergreen writing; it is not necessarily a dated article edition. Complete articles take priority over sentence composition and fallback sections."} This preview uses saved sources, including saved drafts. Dates, event additions, aspects, and horoscopes are added on the reader page.</p>
+      <p>{current.planet === "moon" ? "The Moon write-up joins Opening, How it shows up, and Challenge and response in that order. Select a passage to edit its writing." : selectedWriting === "fallback" ? "These evergreen sections work for any occurrence of this placement. On canonical placement pages, they supply the body when neither a complete article nor an eligible placement composition is available. Only blocks matching the selected motion are included. Open a section to add writing or change the section order." : "This is the complete authored passage for the selected motion, or the shared passage when no motion-specific article is saved. It can be evergreen writing; it is not necessarily a dated article edition. Complete articles take priority over sentence composition and fallback sections."} This preview uses saved sources, including saved drafts. Dates, event additions, aspects, and horoscopes are added on the reader page.</p>
       {selectedWriting === "fallback" && <StudioButton type="button" onClick={() => openContextualReaderHref(`/?skyPlacementPreview=fallback#sky/placement/${current.planet}/${current.sign}`)}>Preview evergreen in app</StudioButton>}
       <StudioTabs label="Sky placement composition views" value={view} onValueChange={setView}
         tabs={views.map(item => ({ value: item.id, label: item.label }))}>
@@ -195,7 +198,7 @@ export default function SkyPlacementComposition({ rows, selection, onEditRow, on
             </div>
             {parts.map(field => <div className="admin-composition-preview-field field-body" key={`${field.row.content_key}/${field.path}`}>
               <span className="admin-eyebrow">{field.label}</span>
-              <p><StudioButton type="button" className={`admin-composition-variable variable-${field.kind}`} data-variable-color={field.kind === "hook" ? "2" : "3"} aria-label={`Edit ${field.label.toLowerCase()}`} onClick={() => edit(field)}>
+              <p><StudioButton type="button" className={`admin-composition-variable variable-${field.kind}${skyMoonWriteupSection(field.row.content_key) ? " admin-variable-source-prose" : ""}`} data-variable-color={field.kind === "hook" ? "2" : "3"} aria-label={`Edit ${field.label.toLowerCase()}`} onClick={() => edit(field)}>
                 {field.value ? isSkyPlacementVariableField(field.row.content_key, field.path)
                   ? <SkyVariableText value={field.value} facts={variableFacts} source={isSkyPlacementArticleField(field.row.content_key, field.path) ? phraseRecord : undefined} references={phraseRecord ? [phraseRecord, ...phraseReferences] : []} /> : field.value
                   : "No writing saved. Select to write this section."}
