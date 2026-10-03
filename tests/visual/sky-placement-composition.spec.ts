@@ -137,7 +137,7 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
     await page.getByLabel("Sky placement planet or point").selectOption("moon");
     await page.getByLabel("Sky placement zodiac sign").selectOption("cancer");
     for (let section = 0; section < keys.length; section++) await expect(map.getByRole("button", { name: `Edit ${labels[section].toLowerCase()}`, exact: true })).toHaveText(copies[section]);
-    await expect(table.getByRole("row").filter({ hasText: `Moon in Cancer · ${labels[index]}` }).getByText("Live", { exact: true }).first()).toBeVisible();
+    await expect(table.getByRole("row").filter({ hasText: `Moon in Cancer · ${labels[index]}` }).locator(".studio-status-badge:visible").first()).toHaveText("Live");
    }
    const saved = await store.call({ method: "rows" });
    for (const row of originals.filter(row => !keys.includes(row.content_key))) expect(saved.find((item: any) => item.id === row.id)).toEqual(row);
