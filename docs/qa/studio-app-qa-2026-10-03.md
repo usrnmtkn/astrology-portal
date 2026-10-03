@@ -32,4 +32,4 @@ Independent checkouts with their own `npm ci` installations; both web builds use
 | Web aggregate JavaScript | 3,520,877 | 3,521,155 | +278 |
 | Deferred web horoscope editor | 10,878 | 11,026 | +148 |
 
-Allocate 750 bytes above the previous admin aggregate cap and 100 bytes above the deferred horoscope editor cap for these recovery/routing fixes. All initial-entry, reader-startup, CSS, other individual chunks, memory graph and forbidden-payload gates stay unchanged. The web aggregate remains within its existing budget.
+Allocate 750 bytes above the previous admin aggregate cap and 100 bytes above the deferred horoscope editor cap for these recovery/routing fixes. All initial-entry, reader-startup, CSS, other individual chunks, memory graph and forbidden-payload gates stay unchanged. The browser-fixture web build remains within the prior aggregate budget. Hosted CI without the browser-only feature flag measures 3,521,300 aggregate bytes, 50 above that cap; allocate 250 aggregate bytes (3,521,500 total), leaving 200 measured bytes.
