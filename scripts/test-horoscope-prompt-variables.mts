@@ -52,7 +52,7 @@ for(const period of ['daily','weekly','monthly','seasonal'] as const){
   assert(!request.input.includes('supplied when the writing run is prepared'),'Preview labels never reach the provider');
   const sources=(name:string)=>JSON.parse(request.input.match(new RegExp(`(?:^|\\n)${name}\\n([^\\n]+)\\n\\n`))[1]);
   const primary=sources('primaryOwnerVoiceSources'),supporting=sources('supportingOwnerVoiceSources');
-  assert.equal(primary.length,3);
+  assert.equal(primary.length,period==='monthly'?4:3);
   for(const p of [...primary,...supporting]){
    assert(p.text.trim());assert(p.id);assert.equal(p.sourceRecordSha256,hash(p.text));
    assert.equal(request.input.split(JSON.stringify(p.text).slice(1,-1)).length-1,1,'Each complete owner passage is supplied once');
@@ -65,7 +65,7 @@ for(const period of ['daily','weekly','monthly','seasonal'] as const){
   else assert.equal(facts.risingSign,sign);
   assert.deepEqual(row.source_snapshot.studioWritingProfile.profile,profile,'Assembly never changes saved instructions');
   r=await action('poll');assert.equal(r.status,200,JSON.stringify(r.payload));row=r.payload.rows[0];
-  assert.equal(row.status,'DRAFT');assert.equal(row.source_snapshot.horoscopeGeneration.readings[sign].version,'horoscope-writer/v16');
+  assert.equal(row.status,'DRAFT');assert.equal(row.source_snapshot.horoscopeGeneration.readings[sign].version,'horoscope-writer/v17');
  }
 }
 console.log('PASS horoscope run variables: actual-handler save and generation across all periods, complete exact evidence once, scoped comparisons/corrections, audience-safe facts, strict expansion and unchanged saved profiles. Injected provider only.');

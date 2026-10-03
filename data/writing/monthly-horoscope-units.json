@@ -1,0 +1,16 @@
+{
+  "schema": "monthly-horoscope-units/v1",
+  "sources": [
+    {
+      "slug": "monthly-overview-june-2025",
+      "file": "reference-surfaces/monthly-overview-june-2025.md",
+      "sha256": "a350bedc4432776801f3402f02732a262c66d7f8e0f563418120485bb8074e9e",
+      "overview": {
+        "start": 0,
+        "end": 4445,
+        "sha256": "835d4347084a16de67f5c4099802f141483700cd4262e0981589516bae29ed92",
+        "wordCount": 764
+      }
+    }
+  ]
+}

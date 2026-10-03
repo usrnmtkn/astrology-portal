@@ -19,9 +19,10 @@ import {buildHoroscopeDevelopments} from './horoscopeDevelopments.mjs';
 import {SEASONAL_MEANING_BANK,resolveSeasonalMeaning,seasonalMeaningForRising} from './seasonalHoroscopeMeaning.mjs';
 import {loadSeasonalHoroscopeEvidence} from './seasonalHoroscopeEvidence.mjs';
 import {loadSeasonalArgumentEvidence} from './seasonalArgumentEvidence.mjs';
+import {loadMonthlyHoroscopeEvidence} from './monthlyHoroscopeEvidence.mjs';
 
 const root=fileURLToPath(new URL('../../',import.meta.url));
-export const horoscopeWritingVersion='horoscope-writer/v16';
+export const horoscopeWritingVersion='horoscope-writer/v17';
 const digest=value=>createHash('sha256').update(typeof value==='string'?value:horoscopeCanonicalJson(value)).digest('hex');
 const repositorySources=new Map();
 const preparedPlans=new Map();
@@ -47,6 +48,7 @@ function loadSources(period) {
   // The seasonal adapter resolves complete units in the existing governed corpus.
   // Other surfaces retain their own evidence pool and selection behavior.
   if(['seasonal','monthly'].includes(period))examples.push(...loadSeasonalHoroscopeEvidence(read,{includeOverviews:true}));
+  if(period==='monthly')examples.push(...loadMonthlyHoroscopeEvidence(read));
   if(period==='seasonal')examples.push(...loadSeasonalArgumentEvidence(read));
   const matrix=withoutOwnerRejectedEvidence(lines('data/writing/matrix-evidence-index/TLDR-Matrix-Evidence-Index.jsonl'),corrections,'copy');
   const approved=withoutOwnerRejectedEvidence(lines('data/writing/OWNER_APPROVED_EXAMPLES.jsonl'),corrections);
@@ -90,8 +92,9 @@ export function prepareHoroscopeWriting(row,{studioCorrections=[],feedbackReceip
   if(!meaning)throw new Error('The calculated horoscope anchor is unavailable.');
   const corrections=[...sources.corrections,...studioCorrections];
   const correctedVoice={...sources.voice,entries:withoutOwnerRejectedEvidence(sources.voice.entries,corrections)};
-  const primaryPeriod=['seasonal','monthly'].includes(edition.window.period)?'seasonal':'weekly';
-  const examples=withoutOwnerRejectedEvidence(sources.examples,corrections).filter(e=>!e.horoscopeAudienceSign||e.horoscopePeriod===primaryPeriod);
+  const primaryPeriod=edition.window.period==='seasonal'?'seasonal':edition.window.period==='monthly'?'monthly':'weekly';
+  const allowedPrimaryPeriods=edition.window.period==='monthly'?new Set(['monthly','seasonal']):new Set([primaryPeriod]);
+  const examples=withoutOwnerRejectedEvidence(sources.examples,corrections).filter(e=>!e.horoscopeAudienceSign||allowedPrimaryPeriods.has(e.horoscopePeriod));
   const relevant=ownerRelevantEvidenceFromVoiceIndex(correctedVoice,{planet,sign});
   const relevantSelected=relevant.selected.filter(e=>['weekly-astrology','sky-season','sky-lunation','sky-article-longform','sky-article-reference'].includes(e.family));
   const evidence=ownerApprovedMatrixRoleEvidenceForTarget(sources.matrix,{planet,sign,eventType:null,surface:'horoscopes'});
@@ -139,7 +142,10 @@ export function prepareHoroscopeWriting(row,{studioCorrections=[],feedbackReceip
       ownerPassageRelevanceTier:seasonal?'owner-selected-seasonal':relevant.tier,sceneExamples:scenes.selected,samePlanetSignSceneAvailableCount:scenes.counts.samePlanetSignSceneAvailable,
       sceneEvidenceInventoryCounts:scenes.counts,corrections,phraseEvidence:sources.phrases,
       primaryRegisterContentKeys:primary.map(e=>e.contentKey),requirePrimaryRegister:true,
-      preferredEvidenceContentKeys:signForecasts.filter(e=>e.horoscopeAudienceSign===rising).map(e=>e.contentKey)};
+      includeAllPrimaryRegisterPassages:edition.window.period==='monthly'&&overview,
+      preferredEvidenceContentKeys:(edition.window.period==='monthly'&&overview
+        ?signForecasts.filter(e=>e.horoscopePeriod==='monthly').map(e=>e.contentKey)
+        :signForecasts.filter(e=>e.horoscopeAudienceSign===rising).map(e=>e.contentKey))};
     const context=retrieveOwnerContext(plan,{...contextOptions,contentFamily:'horoscope',register:'second_person'});
     // Preparation is unapproved. Validate every evidence precondition except the
     // argument role, which becomes eligible only after the owner's plan action.

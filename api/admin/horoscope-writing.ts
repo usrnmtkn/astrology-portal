@@ -16,7 +16,7 @@ import {loadHoroscopeSeasonalSources} from '../_lib/horoscope-seasonal-sources.j
 import {validateHoroscopeReading} from '../../src/astro-writing/horoscopeValidation.mjs';
 import {horoscopePunctuationFindings} from '../../src/astro-writing/horoscopeEditorialConstraints.mjs';
 import {MONTHLY_HOROSCOPE_FORMAT,composeMonthlyHoroscopeDraft} from '../../src/astro-writing/monthlyHoroscopeFormat.mjs';
-import {MONTHLY_SYNTHESIS_VERSION} from '../../src/astro-writing/monthlyHoroscopeSynthesis.mjs';
+import {isMonthlySynthesisVersion} from '../../src/astro-writing/monthlyHoroscopeSynthesis.mjs';
 import {monthlyHoroscopeOperation} from '../_lib/monthly-horoscope-operation.js';
 loadLocalWebEnv();
 export const maxDuration=300;
@@ -124,10 +124,10 @@ export default async function handler(req:IncomingMessage,res:ServerResponse) {
     if(input.action==='generate'&&operation)throw new AdminHttpError(409,'A reading is already running. Resume it to retrieve the saved result.');
     const failed=row.source_snapshot?.horoscopeGeneration?.lastError;
     const recoverMonthlyPlan=input.action==='poll'&&!operation&&failed?.code==='invalid_synthesis'
-      &&failed.operation?.workflow===MONTHLY_SYNTHESIS_VERSION&&failed.operation.phase==='synthesis'&&failed.operation.responseId;
+      &&isMonthlySynthesisVersion(failed.operation?.workflow)&&failed.operation.phase==='synthesis'&&failed.operation.responseId;
     if(input.action==='poll'&&!operation&&!recoverMonthlyPlan) return sendAdminJson(res,200,{ok:true,rows:[row],pending:false});
     const apiKey=process.env.OPENAI_API_KEY;
-    if(['poll','continue'].includes(input.action)&&operation?.workflow===MONTHLY_SYNTHESIS_VERSION){
+    if(['poll','continue'].includes(input.action)&&isMonthlySynthesisVersion(operation?.workflow)){
       if(!apiKey)throw new AdminHttpError(503,'The horoscope writer is not connected. Restore its server API key to continue.');
       const result=await monthlyHoroscopeOperation({action:input.action,row,persist,apiKey,actor});
       return sendAdminJson(res,result.status,result.payload);

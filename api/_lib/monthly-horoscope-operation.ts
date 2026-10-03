@@ -28,8 +28,8 @@ export async function monthlyHoroscopeOperation({action,row:initialRow,persist,p
   };
   const complete=async(payload:any)=>{
     if(operation.phase==='synthesis'){
-      const brief=readHoroscopeProviderResult(payload,{format:MONTHLY_SYNTHESIS_VERSION,facts:operation.synthesisFacts});
-      operation={...operation,state:'ready',synthesisReceipt:{version:MONTHLY_SYNTHESIS_VERSION,validationVersion:'monthly-synthesis-validation/v2',planHash:operation.planHash,
+      const brief=readHoroscopeProviderResult(payload,{format:operation.workflow,facts:operation.synthesisFacts});
+      operation={...operation,state:'ready',synthesisReceipt:{version:operation.workflow,validationVersion:'monthly-synthesis-validation/v2',planHash:operation.planHash,
         brief,briefHash:hash(brief),responseId:operation.responseId,requestHash:operation.requestHash,config:operation.config,usage:payload.usage??null,completedAt:new Date().toISOString(),ownerApproved:false}};
       await saveOperation();return pending();
     }

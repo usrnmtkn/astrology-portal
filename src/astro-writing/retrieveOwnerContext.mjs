@@ -62,6 +62,7 @@ export function retrieveOwnerContext(plan, {
   excludedEvidenceContentKeys = [],
   preferredEvidenceContentKeys = [],
   primaryRegisterContentKeys = [],
+  includeAllPrimaryRegisterPassages = false,
   requirePrimaryRegister = false,
   phraseEvidence = []
 } = {}) {
@@ -100,7 +101,8 @@ export function retrieveOwnerContext(plan, {
   const sourceCounts = new Map();
   const rankedExamples = ranked(eligibleExamples);
   const primaryKeys = new Set(primaryRegisterContentKeys);
-  const primaryRegisterPassages = rankedExamples.filter(entry => primaryKeys.has(entry.contentKey)).slice(0, policy.minimumSameFamilyPassages);
+  const eligiblePrimary = rankedExamples.filter(entry => primaryKeys.has(entry.contentKey));
+  const primaryRegisterPassages = includeAllPrimaryRegisterPassages ? eligiblePrimary : eligiblePrimary.slice(0, policy.minimumSameFamilyPassages);
   if (requirePrimaryRegister && primaryRegisterPassages.length < policy.minimumSameFamilyPassages) {
     throw new OwnerEvidencePreconditionError('OWNER_SURFACE_REGISTER_PASSAGES_MISSING', {
       family: contentFamily, required: policy.minimumSameFamilyPassages, actual: primaryRegisterPassages.length
