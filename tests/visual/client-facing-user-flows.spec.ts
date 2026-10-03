@@ -5788,3 +5788,37 @@ for (const [width, theme] of [[390, 'light'], [1440, 'dark']] as const) {
     await section.screenshot({ path: `test-results/reported-moon-writing-${width}-${theme}.png` });
   });
 }
+
+
+for (const [width, theme] of [[390, 'light'], [1440, 'dark']] as const) {
+  test(`temporary published transit outage recovers without manual retry ${width} ${theme}`, async ({ page }) => {
+    test.setTimeout(90_000);
+    await page.setViewportSize({ width, height: 1000 });
+    const record = { contentKey: 'authored/transit-return/sun', content_role: 'full_copy', review_status: 'approved',
+      reader_only: true, render_policy: 'personal-transit-exact-v1', body_you_review_status: 'approved',
+      body_they_review_status: 'approved', headline: 'Solar Return',
+      body_you: 'QA recovered return opening.\n\nQA recovered return final sentence.',
+      body_they: 'QA recovered friend opening.\n\nQA recovered friend final sentence.' };
+    await seedCrossSurfacePublications(page, [record], { profile: true, theme, profileBirthDate: '1979-08-22',
+      preloadProfileNatalSky: true, now: '2026-08-22T16:00:00.000Z' });
+    let attempts = 0;
+    await page.route('**/api/content-reader', route => {
+      const query = route.request().postDataJSON();
+      if (query.scope) return route.fulfill({ json: readerResponse([]) });
+      if (query.keys?.includes(record.contentKey) && ++attempts === 1)
+        return route.fulfill({ status: 503, json: { error: 'Temporary storage failure' } });
+      return route.fallback();
+    });
+    await page.goto('/#sky/placement/sun/leo');
+    const personal = page.getByRole('region', { name: 'Where it lands for you' });
+    await expect(personal).toContainText('QA recovered return opening.', { timeout: 30_000 });
+    await expect(personal).toContainText('QA recovered return final sentence.');
+    await expect(page.getByText('The transit readings could not load. Please try again.')).toHaveCount(0);
+    expect(attempts).toBe(2);
+    attempts = 0;
+    await page.reload();
+    await expect(personal).toContainText('QA recovered return opening.', { timeout: 30_000 });
+    await expect(personal).toContainText('QA recovered return final sentence.');
+    expect(attempts).toBe(2);
+  });
+}
