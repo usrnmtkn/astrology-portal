@@ -165,15 +165,32 @@ assert.ok(text({
   event: { name: "Full Moon", sign: "Aries", degree: 3, countdown: "today", isToday: true },
   ingresses: [{ id: "moon-taurus", label: "Moon enters Taurus" }]
 }).includes("Moon enters Taurus today."));
-assert.ok(text({
+assert.ok(!text({
   sun: { sign: "Gemini", degree: 9 }, moon: { sign: "Aries", degree: 1 }, moonIsVoid: false,
   event: { name: "Full Moon", sign: "Aries", countdown: "in 3 days" },
   ingresses: [{ id: "moon-aries", label: "Moon enters Aries" }]
 }).includes("Moon enters Aries today."));
-assert.ok(text({
+assert.ok(!text({
   sun: { sign: "Libra", degree: 3 }, moon: { sign: "Aries", degree: 3 }, moonIsVoid: false,
   ingresses: [{ id: "moon-aries", label: "Moon enters Aries" }]
 }).includes("Moon enters Aries today."));
+// Owner correction 2026-10-02: the opening already gives the current Moon sign.
+const currentMoonFacts = {
+  sun: { sign: "Libra", degree: 9 }, moon: { sign: "Cancer", degree: 3 }, moonIsVoid: false,
+  ingresses: [{ id: "moon-cancer", label: "Moon enters Cancer" }]
+};
+assert.ok(text(currentMoonFacts).includes("Moon in Cancer at 3°"));
+assert.ok(!text(currentMoonFacts).includes("Moon enters Cancer"));
+const retainedCopy = "Complete synthetic ingress opening. Complete synthetic ingress ending.";
+assert.ok(text({...currentMoonFacts, ingresses: [{...currentMoonFacts.ingresses[0], tldr: retainedCopy}]}).includes(retainedCopy));
+const mixedIngresses = text({...currentMoonFacts, ingresses: [...currentMoonFacts.ingresses, {id:"venus",label:"Venus enters Scorpio"}]});
+assert.ok(!mixedIngresses.includes("Moon enters Cancer"));
+assert.ok(mixedIngresses.includes("Venus enters Scorpio today."));
+assert.ok(!mixedIngresses.includes("Two planets change signs"));
+assert.ok(text({...currentMoonFacts, moon: {sign:"Gemini",degree:29}}).includes("Moon enters Cancer today."));
+assert.ok(text({...currentMoonFacts, moon: undefined, event: {name:"New Moon",sign:"Cancer",countdown:"in 3 days"}}).includes("Moon enters Cancer today."));
+const ingressFirst = new Map([["cms/sky-daily-summary/assembly/layout", {contentKey:"cms/sky-daily-summary/assembly/layout",status:"LIVE",body:"{ingressesSentence}\n\n{openingSentence}"}]]) as Parameters<typeof skyDailySummaryParts>[1];
+assert.ok(skyDailySummaryParts(currentMoonFacts,ingressFirst).map(part=>part.text).join("").includes("Moon enters Cancer today."));
 const { renderVoidOfCourse } = await import("../apps/web/src/content/fallbackArchitectureV3/resolver/renderTransitSynastry.mjs");
 assert.equal(
   renderVoidOfCourse({ sign: "aquarius", nextSign: "pisces" }).body,

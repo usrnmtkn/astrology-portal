@@ -89,7 +89,7 @@ export async function createApiStore(initial = fixtures, storeOptions = {}) {
     Object.assign(request, { method, url, headers: { authorization: `Bearer ${secret}` } });
     return new Promise(async (resolve, reject) => {
       const response = { statusCode: 200, setHeader() {}, end(text) { resolve({ status: this.statusCode, payload: JSON.parse(text) }); } };
-      try { const selectedHandler = url.startsWith("/api/admin/content-publication") ? (await import("../../api/admin/content-publication.ts")).default : url.startsWith("/api/admin/content-history") ? (await import("../../api/admin/content-history.ts")).default : url === "/api/content-reader" ? (await import("../../api/content-reader.ts")).default : url.startsWith("/api/admin/generated-content-inventory") ? (await import("../../api/admin/generated-content-inventory.ts")).default : handler; await selectedHandler(request, response); } catch (error) { reject(error); }
+      try { const selectedHandler = url.startsWith("/api/admin/package-source") ? (await import("../../api/admin/package-source.ts")).default : url.startsWith("/api/admin/content-publication") ? (await import("../../api/admin/content-publication.ts")).default : url.startsWith("/api/admin/content-history") ? (await import("../../api/admin/content-history.ts")).default : url === "/api/content-reader" ? (await import("../../api/content-reader.ts")).default : url.startsWith("/api/admin/generated-content-inventory") ? (await import("../../api/admin/generated-content-inventory.ts")).default : handler; await selectedHandler(request, response); } catch (error) { reject(error); }
     });
   };
   return { rows, invoke, publication, close: publication.close };

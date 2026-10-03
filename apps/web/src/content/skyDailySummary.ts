@@ -131,11 +131,13 @@ const degreeText = (degree?: number) => typeof degree === "number" && Number.isF
 function moonIngressSign(label: string) {
   return label.trim().match(/^moon enters ([a-z]+)$/iu)?.[1];
 }
-// A New Moon, Full Moon, or eclipse already names the Moon's arrival in that
-// sign. A later countdown ("the next Full Moon") does not.
-function earlierLunationNamesSign(layout: string, slots: Record<string, SummaryPart[]>, sign: string) {
+// The current Moon placement or a same-day lunation already names this sign.
+// A later countdown ("the next Full Moon") does not.
+function earlierMoonNamesSign(layout: string, slots: Record<string, SummaryPart[]>, sign: string) {
   const cutoff = layout.indexOf("{ingressesSentence}");
-  const earlier = fillSkyTemplate(cutoff >= 0 ? layout.slice(0, cutoff) : "", slots).map(part => part.text).join(" ");
+  const parts = fillSkyTemplate(cutoff >= 0 ? layout.slice(0, cutoff) : "", slots);
+  if (parts.some(part => part.action === "moon" && new RegExp(`\\b${sign}\\b`, "iu").test(part.text))) return true;
+  const earlier = parts.map(part => part.text).join(" ");
   return earlier.split(/(?<=[.!?])\s+/u).some(sentence => !/\bthe next\b/iu.test(sentence)
     && new RegExp(`\\b(?:new moon|full moon|solar eclipse|lunar eclipse)\\b[^.]*\\bin ${sign}\\b`, "iu").test(sentence));
 }
@@ -311,11 +313,15 @@ export function skyDailySummaryParts(facts: SkyDailySummaryFacts, content?: CmsG
     const ingresses = facts.ingresses?.filter(item => {
       if (transitionText && item.id === transition?.id) return false;
       if (item.id === sameDayVoidIngress?.id) return false;
-      const sign = moonIngressSign(item.label);
-      return !(sign && earlierLunationNamesSign(assembly.layout, values, sign));
+      return true;
     });
-    const items = slot === "exactAspectsSentence" ? facts.exactAspects : slot === "stationsSentence" ? facts.stations : ingresses;
-    if (!items?.length) continue;
+    const ingressLabels = ingresses?.filter(item => {
+      const sign = moonIngressSign(item.label);
+      return !(sign && earlierMoonNamesSign(assembly.layout, values, sign));
+    });
+    const items = (slot === "exactAspectsSentence" ? facts.exactAspects : slot === "stationsSentence" ? facts.stations : ingressLabels) ?? [];
+    // A repeated ingress fact can still have separately saved writing below.
+    if (!items.length && slot !== "ingressesSentence") continue;
     const many = items.length > 1;
     const position = previousEvent ? "Also" : "First";
     let key: keyof typeof assembly;
@@ -327,10 +333,10 @@ export function skyDailySummaryParts(facts: SkyDailySummaryFacts, content?: CmsG
       listSlot = "stationList";
     }
     const count = words[items.length] ?? String(items.length);
-    values[slot] = fillSkyTemplate(assembly[key], {
+    values[slot] = items.length ? fillSkyTemplate(assembly[key], {
       Count: plain(count), count: plain(count.toLowerCase()),
       [listSlot]: listParts(items.map(item => ({ text: item.label, action: "event", eventId: item.id, emphasis: true })))
-    });
+    }) : [];
     // A station changes the current Rx count only after its timestamp and when
     // the same calculated snapshot contains that planet as retrograde. Avoid
     // claiming a new count for future, direct, multiple, or unmatched stations.
@@ -347,7 +353,7 @@ export function skyDailySummaryParts(facts: SkyDailySummaryFacts, content?: CmsG
       });
       values.currentRetrogradesSentence = [];
     }
-    if (slot === "ingressesSentence" && values[slot].length) {
+    if (slot === "ingressesSentence") {
       for (const item of ingresses ?? []) if (item.tldr) values[slot].push({ text: ` ${item.tldr}` });
     }
     if (values[slot].some(p => p.text)) previousEvent = true;
