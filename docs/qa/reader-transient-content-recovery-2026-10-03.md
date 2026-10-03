@@ -10,6 +10,7 @@ The reader transport previously stopped after its first temporary failure. It no
 
 - Actual client plus actual reader handler with isolated storage: temporary 503 recovery, exact complete text, private-field exclusion, persistent-outage limit, connection recovery, non-retryable errors, cancellation, retirement during retry, and pagination without duplicated rows.
 - Fresh production-entry browser build: nine passing desktop/mobile and light/dark cases for Sky/You/Friends personal content, automatic recovery, fresh reload, manual recovery after persistent failure, complete Moon passages, and retirement of an open article.
+- The full loading/performance contract suite passes, including separate transient and persistent later-page failures with no partial cache.
 - Full `test:content-studio-api` and exact-head hosted API/visual gates are required before release. Final results and production verification are recorded in the PR.
 
 Matched browser-fixture aggregate builds measure 3,521,711 bytes on the base and 3,521,763 after recovery (+52); standalone admin stays at 785,002 bytes. Reader boot measures 513,940 gzip bytes, 90 above the former limit. Allocate 250 reader-boot bytes, leaving 160 bytes; all other limits remain unchanged. No dependency, content record or authored passage changes.
