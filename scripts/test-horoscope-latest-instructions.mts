@@ -3,6 +3,7 @@ import {store,installHoroscopeWriterFixture,invokeHoroscopeWriting,writerFixture
 import {prepareHoroscopeBrief} from '../api/_lib/horoscope-editions';
 import {emptyHoroscopeEdition,horoscopeEditionBody,horoscopeEditionKey} from '../apps/web/src/content/horoscopeEditions.mjs';
 import {defaultHoroscopeProfile,horoscopeEditorialPrompt} from '../src/astro-writing/horoscopeWritingProfiles.mjs';
+import {prepareHoroscopeWriting,writeHoroscopeSign} from '../src/astro-writing/horoscopeWriting.mjs';
 
 installHoroscopeWriterFixture();
 const endpoint='/api/admin/generated-content?writingProfiles=true';
@@ -72,4 +73,39 @@ for(const period of ['daily','weekly','monthly','seasonal'] as const){
   assert.equal(writerFixture.calls,calls+(period==='monthly'?2:1));
  }finally{globalThis.fetch=fetch;}
 }
-console.log('PASS automatic horoscope instructions: all four periods, exact latest provider input, preserved copy/history, stale plans, pinned running requests, recovery and storage failure. No billed calls.');
+// A long-form profile edit must not change the Weekly plan or assembled request.
+// Use synthetic editorial markers and stop at the provider boundary; no prose
+// or model-quality assertion is involved.
+const profilesBefore=(await store.invoke('GET',undefined,endpoint)).payload.profiles;
+const weeklyProfile=profilesBefore.find((p:any)=>p.profile.period==='weekly');
+const weeklyFacts=await prepareHoroscopeBrief(new URL('http://localhost/?period=weekly&date=2026-11-02&timeZone=America/New_York'));
+const weeklyEdition=emptyHoroscopeEdition(weeklyFacts.brief.window);
+const weeklyCreated=await store.invoke('POST',{contentKey:horoscopeEditionKey(weeklyEdition.window),surface:'sky',mode:'article',eventType:'horoscope-edition',provider:'manual-admin',status:'DRAFT',lane:'serving',headline:'Weekly isolation fixture',body:horoscopeEditionBody(weeklyEdition),sections:{horoscopeEdition:weeklyEdition},facts:{horoscopeBrief:weeklyFacts},sourceSnapshot:{studioWritingProfile:weeklyProfile,horoscopeOutlines:{},horoscopeGeneration:{readings:{},rejections:[]}}});
+assert.equal(weeklyCreated.status,200,JSON.stringify(weeklyCreated.payload));
+const weeklyRow=weeklyCreated.payload.rows[0];
+const prepareWeekly=()=>invokeHoroscopeWriting({action:'prepare',id:weeklyRow.id,expectedUpdatedAt:weeklyRow.updated_at});
+const planBefore=await prepareWeekly();assert.equal(planBefore.status,200);
+const captureRequest=async(row:any)=>{
+ const prepared=prepareHoroscopeWriting(row);
+ const stop=new Error('Stop at the unbilled provider boundary');let request:any;
+ await assert.rejects(writeHoroscopeSign(prepared,'gemini',{approvedPlanHash:prepared.planHash,approvalReference:'fixture:weekly-period-isolation',writerClient:async(value:any)=>{request=structuredClone(value);throw stop;}}),error=>error===stop);
+ assert(request);return request;
+};
+const requestBefore=await captureRequest(weeklyRow);
+for(const period of ['monthly','seasonal']){
+ const previous=profilesBefore.find((p:any)=>p.profile.period===period);
+ const profile={...previous.profile,voiceGuidance:`ONLY ${period} voice expansion.`,structure:`ONLY ${period} article structure.`,sourceGuidance:`ONLY ${period} source guidance.`,prompt:previous.profile.prompt+`\nONLY ${period} prompt expansion.`};
+ const saved=await store.invoke('POST',{profile,expectedUpdatedAt:previous.updatedAt},endpoint);
+ assert.equal(saved.status,200,JSON.stringify(saved.payload));
+ const profiles=(await store.invoke('GET',undefined,endpoint)).payload.profiles;
+ for(const untouched of ['daily','weekly'])assert.deepEqual(profiles.find((p:any)=>p.profile.period===untouched),profilesBefore.find((p:any)=>p.profile.period===untouched));
+ const planned=await prepareWeekly();assert.equal(planned.status,200);
+ assert.deepEqual(planned.payload.plan,planBefore.payload.plan,'Long-form changes cannot invalidate the Weekly plan');
+ assert.deepEqual(store.rows.get(weeklyRow.id),weeklyRow,'Preparing Weekly must not adopt another period’s profile');
+ assert.deepEqual(await captureRequest(planned.payload.rows[0]),requestBefore,'Weekly facts, sources, instructions, schema and complete provider input must remain identical');
+}
+assert(requestBefore.input.includes(horoscopeEditorialPrompt(weeklyProfile.profile)));
+assert(!requestBefore.input.includes('ONLY monthly'));
+assert(!requestBefore.input.includes('ONLY seasonal'));
+assert.deepEqual(requestBefore.schema.required,['headline','body'],'Weekly retains its sign-reading output, without the Monthly TLDR field');
+console.log('PASS automatic horoscope instructions: all four periods, exact latest provider input, preserved copy/history, stale plans, pinned running requests, recovery, storage failure and unchanged Weekly requests after Monthly/Seasonal edits. No billed calls.');
