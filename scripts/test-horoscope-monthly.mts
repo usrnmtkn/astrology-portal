@@ -14,7 +14,7 @@ import {getAstrodienstSky} from '../apps/web/src/services/ephemeris';
 import {validateMonthlySynthesis,applyMonthlySynthesis,MONTHLY_SYNTHESIS_SLOT} from '../src/astro-writing/monthlyHoroscopeSynthesis.mjs';
 
 const packaged=new Set(fs.globSync(JSON.parse(fs.readFileSync('vercel.json','utf8')).functions['api/admin/horoscope-writing.ts'].includeFiles));
-for(const source of ['src/astro-writing/horoscopeOverviewInput.mjs','src/astro-writing/monthlyHoroscopeFormat.mjs','src/astro-writing/monthlyHoroscopeGuidance.mjs','src/astro-writing/horoscopeAspectClaims.mjs','packages/astro-knowledge/data/primitives/aspects.json','data/writing/seasonal-horoscope-units.json'])assert(packaged.has(source),source);
+for(const source of ['src/astro-writing/horoscopeOverviewInput.mjs','src/astro-writing/monthlyHoroscopeFormat.mjs','src/astro-writing/monthlyHoroscopeGuidance.mjs','src/astro-writing/monthlyHoroscopeEvidence.mjs','src/astro-writing/horoscopeAspectClaims.mjs','packages/astro-knowledge/data/primitives/aspects.json','data/writing/seasonal-horoscope-units.json'])assert(packaged.has(source),source);
 installHoroscopeWriterFixture();
 assert.deepEqual(horoscopeCivilWindow('monthly','2028-02-20','Australia/Sydney'),{start:'2028-02-01',end:'2028-03-01'});
 assert.deepEqual(horoscopeCivilWindow('monthly','2026-12-31','UTC'),{start:'2026-12-01',end:'2027-01-01'});
@@ -95,6 +95,8 @@ assert(!request.input.includes('permission earned by the passage'),'Monthly no l
 assert(!request.input.includes('BEGIN EXACT OCTOBER TLDR'),'Starter profiles never lock a historical summary');
 assert(request.input.includes('Preserve meaning before changing expression.'));
 assert(request.input.includes('Do not turn every development into a reason to reconsider an attachment.'));
+assert(request.input.includes('MONTHLY SPECIFICITY CONTRACT'));
+assert(request.input.includes('project plan, management memo, generic relationship article or productivity guide'));
 
 assert(!/450[–-]700/.test(profile.structure),'Monthly depth must not be compressed to the old word-count target');
 assert(request.instructions.includes('HOROSCOPE EDITORIAL AUTHORITY'));
@@ -105,6 +107,7 @@ for(const boundary of ['factual-safety-v1','grammar-v1','source-licensing-v1','r
 assertHoroscopeRequestEvidence(request.input);
 const essays=JSON.parse(request.input.match(/COMPLETE OWNER COLLECTIVE ESSAYS — PRIMARY PROSE EVIDENCE\n([^\n]+)\n\n/)[1]);
 assert.equal(essays.length,3);
+assert(essays.some((essay:any)=>essay.id==='owner-monthly-register:monthly-overview-june-2025'),'A same-format owner monthly overview must reach the writer as primary prose evidence');
 for(const essay of essays){
  const source=fs.readFileSync(essay.sourcePath,'utf8');
  assert(packaged.has(essay.sourcePath),'Complete overview source is packaged');
