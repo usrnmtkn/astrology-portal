@@ -10,6 +10,7 @@ export const HOROSCOPE_RUN_PROMPT_VARIABLES = Object.freeze(["primaryOwnerVoiceS
 export const HOROSCOPE_PROMPT_VARIABLES = Object.freeze([...HOROSCOPE_PROFILE_PROMPT_VARIABLES, ...HOROSCOPE_RUN_PROMPT_VARIABLES]);
 export const HOROSCOPE_PROFILE_FIELDS = Object.freeze(["voiceGuidance", "structure", "sourceGuidance", "prompt"]);
 export const HOROSCOPE_PROFILE_FIELD_LIMIT = 32000;
+const promptVariable = /\{\{\s*([^{}]+?)\s*\}\}/gu;
 
 export const HOROSCOPE_PROSE_BEHAVIOR_GUIDANCE = "Learn from the complete owner passage: its point of view, movement of thought, imagery, rhythm and ending. A short opening, early astrology, a question, a list or a direct instruction may work when it develops this particular reading. Do not ban those forms or turn any of them into a formula. Vary sentence length with the meaning, rather than smoothing every paragraph into the same measured rhythm. Keep a sensory image coherent while it carries the thought. Let an example make its point without immediately explaining it again. Precision can carry emotional, spiritual or philosophical depth; it does not always require a practical task. Let the ending arrive from what has developed, without a compulsory moral or advice line. Current saved vocabulary preferences take precedence over older source wording. These are editorial directions for owner review, not automatic quality verdicts.";
 
@@ -54,13 +55,13 @@ export function validateHoroscopeProfile(value) {
     if (typeof value[field] !== "string" || !value[field].trim() || value[field].length > HOROSCOPE_PROFILE_FIELD_LIMIT) {
       throw new Error(`${field} must contain between 1 and ${HOROSCOPE_PROFILE_FIELD_LIMIT} characters.`);
     }
-    const tokens = [...value[field].matchAll(/\{\{\s*([^{}]+?)\s*\}\}/gu)];
+    const tokens = [...value[field].matchAll(promptVariable)];
     if (field !== "prompt" && tokens.length) throw new Error("Prompt variables belong in the Prompt field only.");
     if (tokens.some(match => !HOROSCOPE_PROMPT_VARIABLES.includes(match[1]))) throw new Error("The prompt contains an unknown variable.");
     for (const name of HOROSCOPE_RUN_PROMPT_VARIABLES) {
-      if (tokens.filter(match => match[1] === name).length > 1) throw new Error(`Use {{${name}}} once so the writing run does not repeat its source material.`);
+      if (tokens.filter(match => match[1] === name).length > 1) throw new Error(`Use {{${name}}} only once.`);
     }
-    const rest = value[field].replace(/\{\{\s*([^{}]+?)\s*\}\}/gu, "");
+    const rest = value[field].replace(promptVariable, "");
     if (rest.includes("{{") || rest.includes("}}")) throw new Error("Close each prompt variable with matching braces.");
   }
   for (const name of HOROSCOPE_PROFILE_PROMPT_VARIABLES) {
@@ -72,10 +73,10 @@ export function validateHoroscopeProfile(value) {
 /** Expand once. Source text is data, never a second template or caller-supplied facts. */
 export function horoscopeEditorialPrompt(value, runVariables = {}) {
   const profile = validateHoroscopeProfile(value);
-  return profile.prompt.replace(/\{\{\s*([^{}]+?)\s*\}\}/gu, (_, name) => {
-    if (HOROSCOPE_PROFILE_PROMPT_VARIABLES.includes(name)) return profile[name];
-    if (typeof runVariables[name] !== 'string' || !runVariables[name].trim()) throw new Error(`The writing run must supply {{${name}}} before generation.`);
-    return runVariables[name];
+  return profile.prompt.replace(promptVariable, (_, name) => {
+    const text = profile[name] ?? runVariables[name];
+    if (typeof text !== 'string' || !text.trim()) throw new Error(`The writing run must supply {{${name}}}.`);
+    return text;
   });
 }
 
