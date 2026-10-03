@@ -86,6 +86,26 @@ failures were reproduced before the fixes (five save/client cases, six auth
 cases, and the deployed frontend's false `Connected` status with isolated APIs).
 Hosted checks and production verification are recorded on the release PR.
 
+### Measured bundle allowance
+
+Independent checkouts with their own `npm ci`, using identical workflow Supabase
+placeholders, measured main `f9b10366b` against feature `653602f0a`:
+
+| Admin JavaScript | Main | Feature | Change |
+| --- | ---: | ---: | ---: |
+| Entry raw bytes | 764,539 | 765,959 | +1,420 |
+| Entry gzip bytes | 222,550 | 222,962 | +412 |
+| Aggregate gzip bytes | 785,248 | 785,667 | +419 |
+| JavaScript files | 74 | 74 | 0 |
+
+The initial hosted gate exceeded the existing size limits. Following the
+repository's measured feature-allowance convention, allocate 1,500 raw entry/
+largest-chunk bytes, 500 entry gzip bytes, and 750 aggregate gzip bytes for the
+new recovery/status code. These leave 291, 288, and 333 bytes of measured
+headroom, respectively. The complete bundle gate passes with the allowance.
+No dependencies or content corpus are added; deferred boundaries, reader
+startup, CSS, memory graph, and forbidden-payload checks retain their limits.
+
 ## Separate platform follow-ups
 
 These findings are not established causes of the reported CRUD failures:
