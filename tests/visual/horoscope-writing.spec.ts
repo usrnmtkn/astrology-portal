@@ -3,7 +3,7 @@ import { fork } from 'node:child_process';
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
 import { routeStudioInventoryApi } from '../helpers/studio-inventory-route';
-import { HOROSCOPE_PERIODS, HOROSCOPE_PROFILE_FIELD_LIMIT } from '../../src/astro-writing/horoscopeWritingProfiles.mjs';
+import { HOROSCOPE_PERIODS, HOROSCOPE_PROFILE_FIELD_LIMIT, HOROSCOPE_RUN_PROMPT_VARIABLES } from '../../src/astro-writing/horoscopeWritingProfiles.mjs';
 
 const endpoint = '/api/admin/generated-content?writingProfiles=true';
 const entry = process.env.STUDIO_PRODUCTION_ENTRY === '1' ? '/admin/content' : '/';
@@ -169,6 +169,23 @@ for (const [width, theme] of [[390, 'light'], [390, 'dark'], [1440, 'light'], [1
    await expect(prompt).toHaveValue(seasonalPrompt);
    await selectSection('Preview');
    await expect(preview).toContainText('EXACT FINAL SEASONAL INSTRUCTION.');
+   await selectPeriod('Monthly');await selectSection('Prompt');
+   const monthlyOriginal=await prompt.inputValue();
+   for(const name of HOROSCOPE_RUN_PROMPT_VARIABLES){
+    await prompt.evaluate((node:HTMLTextAreaElement)=>node.setSelectionRange(node.value.length,node.value.length));
+    await editor.getByRole('button',{name:`Insert ${name} variable`,exact:true}).click();
+   }
+   const monthlyPrompt=monthlyOriginal+HOROSCOPE_RUN_PROMPT_VARIABLES.map(name=>`{{${name}}}`).join('');
+   await expect(prompt).toHaveValue(monthlyPrompt);
+   await expect(editor.getByRole('alert')).toHaveCount(0);
+   await selectSection('Preview');
+   for(const name of HOROSCOPE_RUN_PROMPT_VARIABLES)await expect(preview).toContainText(`[${name}: supplied when the writing run is prepared]`);
+   await editor.getByRole('button',{name:'Save writing profile',exact:true}).click();
+   await expect(editor.getByRole('status')).toHaveText('Saved Monthly profile, revision 1.');
+   await page.reload();await selectPeriod('Monthly');await selectSection('Prompt');
+   await expect(prompt).toHaveValue(monthlyPrompt);
+   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+   await screenshot('monthly-variables');
    await selectPeriod('Weekly');
    await expect(voice).toHaveValue(external.voiceGuidance);
    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);

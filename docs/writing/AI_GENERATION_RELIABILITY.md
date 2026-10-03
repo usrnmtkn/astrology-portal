@@ -475,3 +475,21 @@ cleanup above; this correction does not reinstate it. A claim that the current
 output violated a verbatim TLDR lock must first be checked against the actual
 saved request. Profile delivery and successful completion do not establish voice
 quality. The owner still judges the next exact prose.
+
+## Horoscope run variables (2026-10-02)
+
+The owner requested real support for five extra prompt variables in the
+[horoscope task](thread:01a0ce6e-69e0-7100-bdba-ad413d5c7804), rather than removing
+them from the Monthly template. Writer v16 supplies selected complete primary
+and supporting owner prose, active marked comparisons, selected and saved scoped
+corrections, and the current governed facts at those variable positions. The
+four editorial variables remain required; run variables are optional and used
+once. Unknown variables remain errors.
+
+This changes assembly, not evidence selection or editorial approval. The saved
+Source Guidance remains byte-identical; only its marked comparison/correction
+sections move in the assembled request, avoiding duplicate full passages.
+Complete comparison hashes are verified. Editor previews label future run data;
+actual generation requires the selected evidence and calculated facts. Existing
+requests and saved readings are unchanged. No paid generation follows from saving
+a profile. See the prompt-authority acceptance record for fixture coverage.

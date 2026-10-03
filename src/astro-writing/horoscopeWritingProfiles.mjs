@@ -5,7 +5,9 @@ import {monthlyHoroscopeProfile} from './monthlyHoroscopeGuidance.mjs';
 export const HOROSCOPE_PROFILE_PREFIX = "studio-writing-profile/horoscope/";
 export const HOROSCOPE_PROFILE_SCHEMA = "horoscope-writing-profile/v1";
 export const HOROSCOPE_PERIODS = Object.freeze(["daily", "weekly", "monthly", "seasonal"]);
-export const HOROSCOPE_PROMPT_VARIABLES = Object.freeze(["period", "voiceGuidance", "structure", "sourceGuidance"]);
+export const HOROSCOPE_PROFILE_PROMPT_VARIABLES = Object.freeze(["period", "voiceGuidance", "structure", "sourceGuidance"]);
+export const HOROSCOPE_RUN_PROMPT_VARIABLES = Object.freeze(["primaryOwnerVoiceSources", "supportingOwnerVoiceSources", "ownerPositiveComparisons", "ownerCorrections", "governedFacts"]);
+export const HOROSCOPE_PROMPT_VARIABLES = Object.freeze([...HOROSCOPE_PROFILE_PROMPT_VARIABLES, ...HOROSCOPE_RUN_PROMPT_VARIABLES]);
 export const HOROSCOPE_PROFILE_FIELDS = Object.freeze(["voiceGuidance", "structure", "sourceGuidance", "prompt"]);
 export const HOROSCOPE_PROFILE_FIELD_LIMIT = 32000;
 
@@ -55,17 +57,29 @@ export function validateHoroscopeProfile(value) {
     const tokens = [...value[field].matchAll(/\{\{\s*([^{}]+?)\s*\}\}/gu)];
     if (field !== "prompt" && tokens.length) throw new Error("Prompt variables belong in the Prompt field only.");
     if (tokens.some(match => !HOROSCOPE_PROMPT_VARIABLES.includes(match[1]))) throw new Error("The prompt contains an unknown variable.");
+    for (const name of HOROSCOPE_RUN_PROMPT_VARIABLES) {
+      if (tokens.filter(match => match[1] === name).length > 1) throw new Error(`Use {{${name}}} once so the writing run does not repeat its source material.`);
+    }
     const rest = value[field].replace(/\{\{\s*([^{}]+?)\s*\}\}/gu, "");
     if (rest.includes("{{") || rest.includes("}}")) throw new Error("Close each prompt variable with matching braces.");
   }
-  for (const name of HOROSCOPE_PROMPT_VARIABLES) {
+  for (const name of HOROSCOPE_PROFILE_PROMPT_VARIABLES) {
     if (!new RegExp(`\\{\\{\\s*${name}\\s*\\}\\}`, "u").test(value.prompt)) throw new Error(`Keep {{${name}}} in the prompt so its guidance reaches the writer.`);
   }
   return { schema: value.schema, period: value.period, ...Object.fromEntries(HOROSCOPE_PROFILE_FIELDS.map(field => [field, value[field]])) };
 }
 
-/** Expand editorial variables once; facts/evidence/schema are supplied separately by the governed pipeline. */
-export function horoscopeEditorialPrompt(value) {
+/** Expand once. Source text is data, never a second template or caller-supplied facts. */
+export function horoscopeEditorialPrompt(value, runVariables = {}) {
   const profile = validateHoroscopeProfile(value);
-  return profile.prompt.replace(/\{\{\s*([^{}]+?)\s*\}\}/gu, (_, name) => profile[name]);
+  return profile.prompt.replace(/\{\{\s*([^{}]+?)\s*\}\}/gu, (_, name) => {
+    if (HOROSCOPE_PROFILE_PROMPT_VARIABLES.includes(name)) return profile[name];
+    if (typeof runVariables[name] !== 'string' || !runVariables[name].trim()) throw new Error(`The writing run must supply {{${name}}} before generation.`);
+    return runVariables[name];
+  });
+}
+
+/** The editor has no edition facts. Label run values honestly; never send these labels to a provider. */
+export function horoscopeEditorialPreview(value) {
+  return horoscopeEditorialPrompt(value, Object.fromEntries(HOROSCOPE_RUN_PROMPT_VARIABLES.map(name => [name, `[${name}: supplied when the writing run is prepared]`])));
 }

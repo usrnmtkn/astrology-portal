@@ -3,7 +3,7 @@ import { AdminDisclosureSummary } from "./AdminNativeControls";
 import { StudioButton, StudioTabs, StudioTextarea } from "./StudioControls";
 import { adminCredentialHeaders } from "./adminSecret";
 import { PageLoading } from "../../web/src/components/PageLoading";
-import { HOROSCOPE_PERIODS, HOROSCOPE_PROFILE_FIELDS, HOROSCOPE_PROFILE_FIELD_LIMIT, HOROSCOPE_PROMPT_VARIABLES, horoscopeEditorialPrompt, validateHoroscopeProfile, type HoroscopePeriod, type HoroscopeProfile, type SavedHoroscopeProfile } from "../../../src/astro-writing/horoscopeWritingProfiles.mjs";
+import { HOROSCOPE_PERIODS, HOROSCOPE_PROFILE_FIELDS, HOROSCOPE_PROFILE_FIELD_LIMIT, HOROSCOPE_PROMPT_VARIABLES, horoscopeEditorialPreview, validateHoroscopeProfile, type HoroscopePeriod, type HoroscopeProfile, type SavedHoroscopeProfile } from "../../../src/astro-writing/horoscopeWritingProfiles.mjs";
 
 const endpoint = "/api/admin/generated-content?writingProfiles=true";
 const labels = { voiceGuidance: "Voice guidance", structure: "Reading structure", sourceGuidance: "Source guidance", prompt: "Prompt" };
@@ -48,7 +48,7 @@ function ProfileEditor({ initial, secret, onSaved }: { initial: SavedHoroscopePr
   const [reloadCandidate, setReloadCandidate] = useState<SavedHoroscopeProfile | null>(null);
   const dirty = JSON.stringify(draft) !== JSON.stringify(saved.profile);
   let preview = "", validation = "";
-  try { preview = horoscopeEditorialPrompt(draft); } catch (reason) { validation = (reason as Error).message.replace(/^(voiceGuidance|structure|sourceGuidance|prompt)\b/u, field => labels[field as ProfileField]); }
+  try { preview = horoscopeEditorialPreview(draft); } catch (reason) { validation = (reason as Error).message.replace(/^(voiceGuidance|structure|sourceGuidance|prompt)\b/u, field => labels[field as ProfileField]); }
   useEffect(() => {
     if (!dirty) return;
     const warn = (event: BeforeUnloadEvent) => { event.preventDefault(); };

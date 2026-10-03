@@ -1,12 +1,12 @@
 import assert from 'node:assert/strict';
 
 // Inspect the provider-bound request, not just the selected primary source list.
-export function assertHoroscopeRequestEvidence(input) {
+export function assertHoroscopeRequestEvidence(input, additionalLabels=[]) {
   assert(!input.includes('register-gold:sky-placement:saturn-capricorn-v3'));
   assert(!input.includes('Saturn stands at the threshold where a choice becomes a consequence.'));
   const packet=JSON.parse(input.match(/SHARED FIVE-ROLE EVIDENCE\n([^\n]+)\n\n/u)[1]);
   const passages=new Map();
-  for(const label of ['COMPLETE OWNER COLLECTIVE ESSAYS — PRIMARY PROSE EVIDENCE','SUPPORTING OWNER PASSAGES','COMPLETE SEASONAL OWNER PROSE EVIDENCE']){
+  for(const label of ['COMPLETE OWNER COLLECTIVE ESSAYS — PRIMARY PROSE EVIDENCE','SUPPORTING OWNER PASSAGES','COMPLETE SEASONAL OWNER PROSE EVIDENCE',...additionalLabels]){
     const match=input.match(new RegExp(`${label}\\n([^\\n]+)\\n\\n`,'u'));
     if(match)for(const passage of JSON.parse(match[1]))passages.set(passage.id,passage);
   }
