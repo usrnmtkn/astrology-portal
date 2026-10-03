@@ -70,7 +70,7 @@ function withReaderCopyFallbacks(value: Record<string, any>, row?: LiveStatusRow
   if (!nonemptyCopy(next.body_you)) next.body_you = nonemptyCopy(next.body) ?? nonemptyCopy(row?.body);
   if (!nonemptyCopy(next.body)) next.body = nonemptyCopy(next.body_you);
   if (!nonemptyCopy(next.Body)) next.Body = nonemptyCopy(next.body);
-  if (!nonemptyCopy(next.body_they) && theyFallback) next.body_they = nonemptyCopy(theyFallback.body_they);
+  if (!nonemptyCopy(next.body_they)) next.body_they = nonemptyCopy(theyFallback?.body_they);
   if (!nonemptyCopy(next.headline) && row) next.headline = nonemptyCopy(row.headline);
   if (!nonemptyCopy(next.summary) && row) next.summary = nonemptyCopy(row.summary);
   return next;

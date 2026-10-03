@@ -7,17 +7,18 @@ process.env.CONTENT_GENERATION_SECRET = 'storage-reliability-fixture';
 process.env.SUPABASE_URL = 'https://storage-reliability.invalid';
 process.env.SUPABASE_SERVICE_ROLE_KEY = 'fixture';
 const { default: handler } = await import('../api/admin/generated-content.ts');
+const { default: fastInventoryHandler } = await import('../api/admin/generated-content-inventory.ts');
 process.env.CONTENT_GENERATION_SECRET = 'storage-reliability-fixture';
 process.env.SUPABASE_URL = 'https://storage-reliability.invalid';
 process.env.SUPABASE_SERVICE_ROLE_KEY = 'fixture';
 
-async function inventory(query = '') {
+async function inventory(query = '', actualHandler = handler) {
   const req = Readable.from([]);
   req.method = 'GET';
   req.url = `/api/admin/generated-content?status=all&visibility=all${query}`;
   req.headers = { authorization: 'Bearer storage-reliability-fixture' };
   const res = { statusCode: 0, setHeader() {}, end(body) { this.payload = JSON.parse(body); } };
-  await handler(req, res);
+  await actualHandler(req, res);
   return res;
 }
 
@@ -34,6 +35,24 @@ globalThis.fetch = async () => Response.json([]);
 const empty = await inventory();
 assert.equal(empty.statusCode, 200);
 assert.deepEqual(empty.payload.rows, [], 'A genuinely empty inventory remains a valid response');
+
+// Opening a document needs one indexed lookup, independent of listing metadata.
+let detailReads = 0;
+const saved = { id: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', content_key: 'fallback-hook/sky-placement-hook/moon/cancer', body: 'Synthetic opening.\n\nSynthetic ending.', updated_at: '2026-10-03T12:00:00Z', sections: { packageRecord: { body_you: 'Complete synthetic saved document.' } } };
+globalThis.fetch = async input => {
+  detailReads++;
+  const query = new URL(String(input)).searchParams;
+  assert.equal(query.get('id'), `eq.${saved.id}`);
+  assert.equal(query.get('limit'), '1');
+  assert.ok(!query.get('select').split(',').includes('studio_facts'));
+  return Response.json([saved]);
+};
+const detail = await inventory(`&id=${saved.id}`, fastInventoryHandler);
+assert.equal(detail.statusCode, 200);
+assert.equal(detailReads, 1);
+assert.deepEqual(detail.payload.rows, [{ ...saved, inventory_only: false }]);
+globalThis.fetch = async () => Response.json({ error: 'Unavailable' }, { status: 503 });
+assert.equal((await inventory(`&id=${saved.id}`, fastInventoryHandler)).statusCode, 502);
 
 // Headers arrive immediately, but the body stalls. The storage deadline must
 // cover both phases. Shorten only that deadline in this isolated test process.

@@ -2,7 +2,6 @@ import type { IncomingMessage, ServerResponse } from "node:http";
 import { URL } from "node:url";
 import { isContentAdminAuthorized } from "../_lib/admin-auth.js";
 import { sendAdminJson, sendAdminMethodNotAllowed } from "../_lib/admin-http.js";
-import reviewRecordsHandler from "./review-records.js";
 
 /**
  * Content Studio loads its saved content inventory separately and already builds
@@ -48,5 +47,6 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
     return;
   }
 
+  const { default: reviewRecordsHandler } = await import("./review-records.js");
   await reviewRecordsHandler(req, res);
 }

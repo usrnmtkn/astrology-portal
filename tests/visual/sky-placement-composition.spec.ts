@@ -62,6 +62,9 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
  test(`Moon complete write-up discovery edit and reload ${width} ${theme}`, async ({ page }) => {
   test.setTimeout(90_000);
   const originals = moonStudioRows();
+  // Production Moon passages have an empty Friend variant. It must not make
+  // the exact published You revision appear Inactive after reopening Studio.
+  for (const row of originals.filter(row => skyMoonWriteupKeys("cancer").includes(row.content_key))) row.sections.packageRecord.body_they = "";
   const placeholder = { ...originals[0], id: "00000000-0000-4000-8000-000000000100", content_key: "sky-placement/article/moon/cancer",
    headline: "Moon in Cancer", body: "", sections: { packageRecord: { contentKey: "sky-placement/article/moon/cancer", studio_content_type: "continuous-placement", placementArticle: "" } } };
   const store = await studioApiStore([...originals, placeholder]);
@@ -79,15 +82,9 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
    }, theme);
    await page.route("**/api/admin/**", async route => {
     const request = route.request(), url = new URL(request.url());
-    if (["/api/admin/generated-content", "/api/admin/generated-content-inventory", "/api/admin/content-publication"].includes(url.pathname)) {
+    if (["/api/admin/generated-content", "/api/admin/generated-content-inventory", "/api/admin/content-publication", "/api/admin/content-live-status"].includes(url.pathname)) {
      const result = await store.call({ method: request.method(), url: url.pathname + url.search, body: request.method() === "GET" ? undefined : request.postDataJSON() });
      return route.fulfill({ status: result.status, json: result.payload });
-    }
-    if (url.pathname === "/api/admin/content-live-status") {
-     const input = request.postDataJSON();
-     const saved = await store.call({ method: "rows" });
-     const statuses = contentLiveStatuses((input.ids ?? []).map((id: string) => saved.find((row: any) => row.id === id) ?? virtual(id.replace(/^package:/, ""))).filter(Boolean), saved);
-     return route.fulfill({ json: input.action === "composition-catalog" ? { ok: true, rows: [] } : { ok: true, statuses } });
     }
     return route.fulfill({ json: { ok: true, rows: [], statuses: [], nextCursor: null } });
    });
@@ -140,6 +137,7 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
     await page.getByLabel("Sky placement planet or point").selectOption("moon");
     await page.getByLabel("Sky placement zodiac sign").selectOption("cancer");
     for (let section = 0; section < keys.length; section++) await expect(map.getByRole("button", { name: `Edit ${labels[section].toLowerCase()}`, exact: true })).toHaveText(copies[section]);
+    await expect(table.getByRole("row").filter({ hasText: `Moon in Cancer · ${labels[index]}` }).locator(".studio-status-badge:visible").first()).toHaveText("Live");
    }
    const saved = await store.call({ method: "rows" });
    for (const row of originals.filter(row => !keys.includes(row.content_key))) expect(saved.find((item: any) => item.id === row.id)).toEqual(row);

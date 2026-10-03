@@ -252,6 +252,12 @@ globalThis.fetch = async input => {
 };
 assert.equal((await request([skyRow.id])).statuses[0].label, 'Live');
 assert.equal(skyReads, 3, 'Read the selected row, key candidates, and publication identities only');
+// Studio saves an unused Friend field as empty text. An identical published
+// source must compare equal whether that optional field is empty or absent.
+for (const bodyThey of ['', '   ', null, undefined]) {
+  skyRow.sections.packageRecord = { ...skySource, body_they: bodyThey };
+  assert.equal((await request([skyRow.id])).statuses[0].label, 'Live', 'An empty Friend field cannot make the current published source inactive');
+}
 globalThis.fetch = originalFetch;
 console.log('PASS bounded current-Sky status lookup without bulk partition loading');
 
