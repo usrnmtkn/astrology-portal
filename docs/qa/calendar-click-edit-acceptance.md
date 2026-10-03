@@ -134,3 +134,21 @@ Its own knowledge package was built before application verification. Baseline
 logs include `/private/tmp/calendar-click-baseline-build.log`,
 `calendar-click-baseline-bundle.log`, and
 `sky-placement-repair-baseline-admin-build.log`.
+
+## Release integration
+
+The owner authorized merge and production release on October 2. Rebased onto
+main `8857bc7ef65bab61ce513b63c83005609a35571f`; the only conflict was the aggregate
+web budget. Preserve the independent horoscope prompt-variable allocation and
+the measured 500-byte allocation here, for a combined cap of 3,521,250 bytes.
+
+On rebased implementation `6aa3e9e3e9fb553b50df6575647ca4800c240c5e`, the full
+unfiltered Content Studio API suite passed again. All 27 Chromium browser cases
+passed against a new web build on a dedicated port. Both rebuilt app bundle
+checks and both public-asset privacy scans passed. Logs are
+`/private/tmp/calendar-sky-release-rebased-{api,browser}.log` and the matching
+`web-budget` / `admin-budget` logs. The new legacy editor regression is included
+in `playwright.sky-article.config.ts` so the existing CI Sky article job runs it;
+the browser-suite coverage check passes. This registration changes no runtime
+source. Final hosted checks, merge revision and production verification are
+recorded in PR #1112.
