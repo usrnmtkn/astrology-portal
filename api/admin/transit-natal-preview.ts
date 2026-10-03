@@ -1,6 +1,6 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
 import { createRequire } from "node:module";
-import { isContentAdminAuthorized } from "../_lib/admin-auth.js";
+import { requireContentAdmin } from "../_lib/admin-auth.js";
 import { AdminHttpError, adminFetchJson, readAdminJsonBody, sendAdminJson, sendAdminMethodNotAllowed } from "../_lib/admin-http.js";
 import { loadLocalWebEnv } from "../_lib/local-env.js";
 import { postgrestContentKeyPrefixAnd, postgrestQuotedValue } from "../_lib/postgrest-content-key-prefix.js";
@@ -107,7 +107,7 @@ async function readRows(base: string, headers: Record<string, string>, table: st
 }
 
 export default async function handler(req: IncomingMessage, res: ServerResponse) {
-  if (!await isContentAdminAuthorized(req)) return sendAdminJson(res, 401, { ok: false, error: "Unauthorized." });
+  if (!await requireContentAdmin(req, res)) return;
   if (req.method !== "POST") return sendAdminMethodNotAllowed(res, ["POST"]);
   try {
     const input = normalizeTransitNatalPreviewInput(await readAdminJsonBody(req, 4096));

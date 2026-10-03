@@ -1,6 +1,6 @@
 import type {IncomingMessage,ServerResponse} from 'node:http';
 import {randomUUID} from 'node:crypto';
-import {getContentAdminPrincipal} from '../_lib/admin-auth.js';
+import {getContentAdminPrincipal,requireContentAdmin} from '../_lib/admin-auth.js';
 import {loadLocalWebEnv} from '../_lib/local-env.js';
 import {AdminHttpError,readAdminJsonBody,sendAdminJson,sendAdminMethodNotAllowed,adminErrorStatus} from '../_lib/admin-http.js';
 import {workspaceKey,readLunarRow,saveLunarRow,loadLunarProfile,validateWorkspace,prepareStudioLunation,lunarPlanPreview,runStudioLunation,lunarFeedback,emptyLunationWorkspace,LUNATION_PROFILE_KEY,validateLunationProfile} from '../_lib/calendar-lunation-studio.js';
@@ -19,8 +19,8 @@ function output(payload:any) {
 }
 export default async function handler(req:IncomingMessage,res:ServerResponse) {
   if(!['GET','POST'].includes(req.method??''))return sendAdminMethodNotAllowed(res,['GET','POST']);
-  const actor=await getContentAdminPrincipal(req);
-  if(!actor)return sendAdminJson(res,401,{ok:false,error:'Unauthorized.'});
+  if(!await requireContentAdmin(req,res))return;
+  const actor=(await getContentAdminPrincipal(req))!;
   try {
     const input:any=req.method==='GET'?Object.fromEntries(new URL(req.url!,'http://localhost').searchParams):await readAdminJsonBody(req,180000);
     const allowed=['action','phase','sign','expectedUpdatedAt','workspace','profile','approvedPlanHash','authorizeWriterCall'];

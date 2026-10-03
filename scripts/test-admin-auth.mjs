@@ -143,12 +143,12 @@ try {
     if (!source.includes("Unauthorized.")) continue;
     assert.match(
       source,
-      /isContentAdminAuthorized|requireReportAdmin|getContentAdminPrincipal/u,
+      /isContentAdminAuthorized|requireContentAdmin|requireReportAdmin|getContentAdminPrincipal/u,
       `${sourcePath} must use the shared admin authorization path.`
     );
     assert.match(
       source,
-      /await\s+(?:isContentAdminAuthorized|requireReportAdmin|getContentAdminPrincipal)\(/u,
+      /await\s+(?:isContentAdminAuthorized|requireContentAdmin|requireReportAdmin|getContentAdminPrincipal)\(/u,
       `${sourcePath} must await the server-verified owner-session authorization result.`
     );
   }

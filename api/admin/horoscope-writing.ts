@@ -1,6 +1,6 @@
 import type {IncomingMessage,ServerResponse} from 'node:http';
 import {createHash,randomUUID} from 'node:crypto';
-import {getContentAdminPrincipal} from '../_lib/admin-auth.js';
+import {getContentAdminPrincipal,requireContentAdmin} from '../_lib/admin-auth.js';
 import {loadLocalWebEnv} from '../_lib/local-env.js';
 import {AdminHttpError,adminFetchJson,adminStorageRows,readAdminJsonBody,sendAdminJson,sendAdminMethodNotAllowed,adminErrorStatus} from '../_lib/admin-http.js';
 import {studioStorage} from '../_lib/sky-studio-sources.js';
@@ -28,8 +28,8 @@ class Pending extends Error {}
 /** Each start reserves one saved sign. Poll only retrieves its durable provider ID. */
 export default async function handler(req:IncomingMessage,res:ServerResponse) {
   if(req.method!=='POST')return sendAdminMethodNotAllowed(res,['POST']);
-  const actor=await getContentAdminPrincipal(req);
-  if(!actor)return sendAdminJson(res,401,{ok:false,error:'Unauthorized.'});
+  if(!await requireContentAdmin(req,res))return;
+  const actor=(await getContentAdminPrincipal(req))!;
   try {
     const input=await readAdminJsonBody<Record<string,any>>(req);
     if(!['prepare','generate','continue','poll','release','reject','diagnose'].includes(input.action)||typeof input.id!=='string'||!input.id

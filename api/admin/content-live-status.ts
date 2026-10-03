@@ -2,12 +2,12 @@ import { publicationLedgerKey, validContentPublication, publicationTimestamp } f
 import { loadLocalWebEnv } from "../_lib/local-env.js";
 loadLocalWebEnv();
 import type { IncomingMessage, ServerResponse } from "node:http";
-import { isContentAdminAuthorized } from "../_lib/admin-auth.js";
+import { requireContentAdmin } from "../_lib/admin-auth.js";
 import { AdminHttpError, adminFetchJson, adminStorageRows, readAdminJsonBody, sendAdminJson, sendAdminMethodNotAllowed, adminErrorStatus, adminErrorMessage } from "../_lib/admin-http.js";
 import { contentLiveStatuses, servingPackageRecords, builtinContentRecords, isSkyPartitionKey, type LiveStatusRow } from "../_lib/content-live-status.js";
 
 export default async function handler(req: IncomingMessage, res: ServerResponse) {
-  if (!await isContentAdminAuthorized(req)) return sendAdminJson(res, 401, { ok: false, error: "Unauthorized." });
+  if (!await requireContentAdmin(req, res)) return;
   if (req.method !== "POST") return sendAdminMethodNotAllowed(res, ["POST"]);
   try {
     const body = await readAdminJsonBody<{ ids?: string[]; action?: string }>(req);

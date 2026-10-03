@@ -6,7 +6,7 @@ import { createRequire } from "node:module";
 // The generated package bundle is the production renderer used by the reader app.
 // @ts-ignore The generated JavaScript bundle intentionally has no declaration file.
 import { createFallbackRenderer } from "../../apps/web/src/content/fallbackArchitectureV3/dist/tldr-content.js";
-import { isContentAdminAuthorized } from "../_lib/admin-auth.js";
+import { requireContentAdmin } from "../_lib/admin-auth.js";
 import { AdminHttpError, adminFetchJson, readAdminJsonBody, sendAdminJson, sendAdminMethodNotAllowed } from "../_lib/admin-http.js";
 import { loadLocalWebEnv } from "../_lib/local-env.js";
 import { isFallbackDashboardRecordAllowed } from "../../apps/web/src/content/fallbackArchitectureV3/dashboardExtensions.js";
@@ -240,10 +240,7 @@ export function renderNatalPlacementPreview(input: ReturnType<typeof normalizeNa
 }
 
 export default async function handler(req: IncomingMessage, res: ServerResponse) {
-  if (!await isContentAdminAuthorized(req)) {
-    sendAdminJson(res, 401, { ok: false, error: "Unauthorized." });
-    return;
-  }
+  if (!await requireContentAdmin(req, res)) return;
   if (req.method !== "POST") {
     sendAdminMethodNotAllowed(res, ["POST"]);
     return;

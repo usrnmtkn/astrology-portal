@@ -1,6 +1,6 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
 import { URL } from "node:url";
-import { isContentAdminAuthorized } from "../_lib/admin-auth.js";
+import { requireContentAdmin } from "../_lib/admin-auth.js";
 import { AdminHttpError, adminErrorMessage, adminErrorStatus, adminFetchJson, adminStorageRows, sendAdminJson, sendAdminMethodNotAllowed } from "../_lib/admin-http.js";
 import skyReviewHorizon from "../../src/astro-writing/skyReviewHorizon.cjs";
 import { currentSkyFacts, type SkySnapshot } from "../_lib/current-sky.js";
@@ -99,10 +99,7 @@ async function skyReviewRows() {
 }
 
 export default async function handler(req: IncomingMessage, res: ServerResponse) {
-  if (!await isContentAdminAuthorized(req)) {
-    sendAdminJson(res, 401, { ok: false, error: "Unauthorized." });
-    return;
-  }
+  if (!await requireContentAdmin(req, res)) return;
   if (req.method !== "GET") {
     sendAdminMethodNotAllowed(res, ["GET"]);
     return;

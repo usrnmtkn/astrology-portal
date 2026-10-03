@@ -11,7 +11,7 @@ import { createHash } from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath, URL } from "node:url";
-import { isContentAdminAuthorized, getContentAdminPrincipal } from "../_lib/admin-auth.js";
+import { requireContentAdmin, getContentAdminPrincipal } from "../_lib/admin-auth.js";
 import { loadLocalWebEnv } from "../_lib/local-env.js";
 import { postgrestContentKeyPrefixAnd } from "../_lib/postgrest-content-key-prefix.js";
 import type * as GeneratedContentLibraries from "./generated-content-libraries.js";
@@ -3185,10 +3185,7 @@ async function deleteGeneratedContent(req: IncomingMessage) {
 }
 
 export default async function handler(req: IncomingMessage, res: ServerResponse) {
-  if (!await isContentAdminAuthorized(req)) {
-    sendJson(res, 401, { error: "Unauthorized." });
-    return;
-  }
+  if (!await requireContentAdmin(req, res)) return;
 
   try {
     if (new URL(req.url ?? "/", "http://localhost").searchParams.get("horoscopeBrief") === "true") {

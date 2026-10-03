@@ -1,7 +1,8 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
 import { waitUntil } from "@vercel/functions";
 import { reportBillingMode, reportCallEstimate, reportSku } from "../_lib/report-fulfillment-config.js";
-import { reportUrl, requireReportAdmin } from "../_lib/report-http.js";
+import { reportUrl } from "../_lib/report-http.js";
+import { requireContentAdmin } from "../_lib/admin-auth.js";
 import { authorizeReportGeneration, createFreshReportGeneration, grantCompEntitlement, revokeEntitlement } from "../_lib/report-entitlements.js";
 import { releaseReviewedReport } from "../_lib/report-release.js";
 import { createSupabaseReportAdmin } from "../_lib/supabase-report-admin.js";
@@ -326,7 +327,7 @@ function adminFailure(error: unknown) {
 }
 
 export default async function handler(req: IncomingMessage, res: ServerResponse) {
-  if (!await requireReportAdmin(req)) return sendJson(res, 401, { error: "Unauthorized." });
+  if (!await requireContentAdmin(req, res)) return;
   try {
     if (req.method === "GET") {
       const reportId = new URL(req.url ?? "/api/admin/report-fulfillment", "http://localhost").searchParams.get("reportId") ?? "";

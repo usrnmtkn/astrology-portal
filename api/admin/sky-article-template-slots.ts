@@ -1,7 +1,7 @@
 import { articleTemplateWithHoroscopes } from "../../apps/web/src/content/skyArticleHoroscopes.mjs";
 import type { IncomingMessage, ServerResponse } from "node:http";
 import { AdminHttpError, adminErrorStatus, adminFetchJson, adminStorageRows, readAdminJsonBody, sendAdminJson, sendAdminMethodNotAllowed } from "../_lib/admin-http.js";
-import { isContentAdminAuthorized } from "../_lib/admin-auth.js";
+import { requireContentAdmin } from "../_lib/admin-auth.js";
 import { generateSkyArticleTemplateSlots } from "../_lib/content-generation.js";
 import { loadLocalWebEnv } from "../_lib/local-env.js";
 import { calculateSkyArticleEditionFacts } from "../_lib/sky-article-facts.js";
@@ -95,10 +95,7 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
     sendAdminMethodNotAllowed(res, ["POST"]);
     return;
   }
-  if (!await isContentAdminAuthorized(req)) {
-    sendAdminJson(res, 401, { error: "Unauthorized." });
-    return;
-  }
+  if (!await requireContentAdmin(req, res)) return;
 
   try {
     const body = await readAdminJsonBody<RequestBody>(req, 256_000);

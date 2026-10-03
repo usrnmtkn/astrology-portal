@@ -11,7 +11,7 @@ assert.match(dashboard, /Archive source/u, "Saved transit passages must provide 
 assert.match(dashboard, /Restore as draft/u, "Archived transit passages must be recoverable.");
 assert.match(dashboard, /did not return the saved row/u, "A successful HTTP status without a returned row must remain an error.");
 assert.match(dashboard, /controller\.abort\(\)/u, "Admin requests must be abortable.");
-assert.match(dashboard, /10_000/u, "The editor must stop waiting on stalled API calls.");
+assert.match(dashboard, /studioRequestTimeoutMs/u, "The editor must stop waiting on stalled API calls.");
 assert.match(dashboard, /!draftForSave\.id \? \{/u, "New governed source rows must include their create-only identity fields.");
 
 assert.match(endpoint, /sourceLifecycleAction\?: "archive" \| "restore"/u, "The API must accept only the governed lifecycle actions.");

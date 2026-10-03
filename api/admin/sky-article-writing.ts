@@ -1,5 +1,5 @@
 import type { IncomingMessage, ServerResponse } from 'node:http';
-import { isContentAdminAuthorized } from '../_lib/admin-auth.js';
+import { requireContentAdmin } from '../_lib/admin-auth.js';
 import {
   AdminHttpError,
   adminErrorMessage,
@@ -121,7 +121,7 @@ type RequestBody = {
 
 export default async function handler(req: IncomingMessage, res: ServerResponse) {
   if (req.method !== 'POST') return sendAdminMethodNotAllowed(res, ['POST']);
-  if (!await isContentAdminAuthorized(req)) return sendAdminJson(res, 401, { ok: false, error: 'Unauthorized.' });
+  if (!await requireContentAdmin(req, res)) return;
 
   try {
     const body = await readAdminJsonBody<RequestBody>(req, 96_000);

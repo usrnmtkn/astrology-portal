@@ -1,5 +1,6 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
-import { jsonRequestBody, requireReportAdmin, sendJson } from "../_lib/report-http.js";
+import { jsonRequestBody, sendJson } from "../_lib/report-http.js";
+import { requireContentAdmin } from "../_lib/admin-auth.js";
 import { createSupabaseReportAdmin } from "../_lib/supabase-report-admin.js";
 
 type CleanupRequest = {
@@ -43,7 +44,7 @@ function inFilter(ids: string[]) {
 
 export default async function handler(req: IncomingMessage, res: ServerResponse) {
   if (req.method !== "POST") return sendJson(res, 405, { error: "Use POST." });
-  if (!await requireReportAdmin(req)) return sendJson(res, 401, { error: "Unauthorized." });
+  if (!await requireContentAdmin(req, res)) return;
 
   try {
     const body = await jsonRequestBody<CleanupRequest>(req);

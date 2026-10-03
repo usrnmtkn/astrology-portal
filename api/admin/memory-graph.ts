@@ -1,7 +1,7 @@
 import type { IncomingMessage, ServerResponse } from 'node:http';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { isContentAdminAuthorized } from '../_lib/admin-auth.js';
+import { isContentAdminAuthorized, contentAdminVerificationUnavailable } from '../_lib/admin-auth.js';
 import { loadLocalWebEnv } from '../_lib/local-env.js';
 import { activeStudioFeedback, studioFeedbackEnabled } from '../_lib/studio-memory-feedback.js';
 import { withStudioFeedback } from '../_lib/studio-memory-graph.js';
@@ -24,7 +24,9 @@ function send(res: ServerResponse, status: number, body: unknown) {
 export async function authorizeMemoryRequest(req: IncomingMessage) {
   // The shared helper allows anonymous development; this private surface does not.
   if (!process.env.CONTENT_GENERATION_SECRET?.trim() && !String(req.headers['x-content-admin-session'] ?? '').trim()) return false;
-  return isContentAdminAuthorized(req);
+  const allowed = await isContentAdminAuthorized(req);
+  if (contentAdminVerificationUnavailable(req)) throw new Error('Verification unavailable');
+  return allowed;
 }
 
 export function createMemoryGraphHandler(authorize = authorizeMemoryRequest) {

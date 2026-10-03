@@ -1,6 +1,6 @@
 import { AdminHttpError, adminErrorStatus, readAdminJsonBody as jsonRequestBody, sendAdminJson as sendJson, adminStorageRows } from "../_lib/admin-http.js";
 import type { IncomingMessage, ServerResponse } from "node:http";
-import { requireReportAdmin } from "../_lib/report-http.js";
+import { requireContentAdmin } from "../_lib/admin-auth.js";
 import { createSupabaseReportAdmin } from "../_lib/supabase-report-admin.js";
 import type {
   GeneratedReportOwnerFeedbackRow,
@@ -162,10 +162,7 @@ async function action(body: FeedbackActionBody) {
 }
 
 export default async function handler(req: IncomingMessage, res: ServerResponse) {
-  if (!await requireReportAdmin(req)) {
-    sendJson(res, 401, { error: "Unauthorized" });
-    return;
-  }
+  if (!await requireContentAdmin(req, res)) return;
   try {
     if (req.method === "GET") {
       sendJson(res, 200, await dashboard());

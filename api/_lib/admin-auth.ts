@@ -1,5 +1,6 @@
 import { createHash, timingSafeEqual } from "node:crypto";
-import type { IncomingMessage } from "node:http";
+import type { IncomingMessage, ServerResponse } from "node:http";
+import { sendAdminJson } from "./admin-http.js";
 
 export const CONTENT_ADMIN_SECRET_HEADER = "x-content-generation-secret";
 export const CONTENT_ADMIN_SESSION_HEADER = "x-content-admin-session";
@@ -57,20 +58,34 @@ function configuredOwnerEmails() {
   );
 }
 
+const unavailableVerifications = new WeakSet<IncomingMessage>();
+export function contentAdminVerificationUnavailable(req: IncomingMessage) {
+  return unavailableVerifications.has(req);
+}
+
 async function verifiedAdminPrincipal(req: IncomingMessage, fetchImpl: typeof fetch) {
   const token = sessionToken(req);
   const { url, key } = supabaseAuthConfig();
-  if (!token || !url || !key) return null;
+  if (!token) return null;
+  if (!url || !key) { unavailableVerifications.add(req); return null; }
 
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), 6_000);
   try {
     const response = await fetchImpl(`${url}/auth/v1/user`, {
+      signal: controller.signal,
       headers: { apikey: key, authorization: `Bearer ${token}` }
     });
-    const payload = await response.json().catch(() => null) as {
+    if (!response.ok) {
+      if (response.status === 429 || response.status >= 500) unavailableVerifications.add(req);
+      return null;
+    }
+    const payload = await response.json() as {
       id?: unknown; email?: unknown;
       app_metadata?: { role?: unknown };
       user?: { id?: unknown; email?: unknown; app_metadata?: { role?: unknown } };
     } | null;
+    if (!payload || typeof payload !== "object" || Array.isArray(payload)) throw new Error("Invalid Auth response");
     const role = payload?.app_metadata?.role ?? payload?.user?.app_metadata?.role;
     const email = payload?.email ?? payload?.user?.email;
     const verifiedEmail = typeof email === "string" ? email.trim().toLowerCase() : "";
@@ -82,7 +97,10 @@ async function verifiedAdminPrincipal(req: IncomingMessage, fetchImpl: typeof fe
     const id = payload?.id ?? payload?.user?.id;
     return typeof id === "string" && id.trim() ? `user:${id}` : verifiedEmail ? `owner:${createHash("sha256").update(verifiedEmail).digest("hex")}` : null;
   } catch {
+    unavailableVerifications.add(req);
     return null;
+  } finally {
+    clearTimeout(timer);
   }
 }
 
@@ -102,4 +120,15 @@ export async function getContentAdminPrincipal(req: IncomingMessage, fetchImpl: 
 
 export async function isContentAdminAuthorized(req: IncomingMessage, fetchImpl: typeof fetch = fetch) {
   return Boolean(await getContentAdminPrincipal(req, fetchImpl));
+}
+
+// Keep outages distinct from rejected credentials, while failing closed in both
+// cases. No handler may reach storage until the verified principal is available.
+export async function requireContentAdmin(req: IncomingMessage, res: ServerResponse) {
+  if (await isContentAdminAuthorized(req)) return true;
+  const unavailable = contentAdminVerificationUnavailable(req);
+  sendAdminJson(res, unavailable ? 503 : 401, { ok: false, error: unavailable
+    ? "Content Studio sign-in verification is temporarily unavailable. Try again; no changes were submitted."
+    : "Unauthorized." });
+  return false;
 }
