@@ -47,7 +47,7 @@ test("Moon sources name loading sections and recover from a read failure", async
   await expect(map.getByRole("status")).toHaveText(["Loading opening…", "Loading how it shows up…", "Loading challenge and response…"]);
   await expect(map.getByRole("button", { name: "Edit opening", exact: true })).toHaveCount(0);
   release();
-  await expect(map.getByRole("alert")).toContainText("HTTP 503");
+  await expect(map.getByRole("alert")).toContainText("Moon source temporarily unavailable");
   await expect(map.getByRole("status")).toHaveText(["Source unavailable: opening", "Source unavailable: how it shows up", "Source unavailable: challenge and response"]);
   failing = false;
   await map.getByRole("button", { name: "Retry sources", exact: true }).click();

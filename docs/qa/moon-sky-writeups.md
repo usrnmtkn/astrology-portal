@@ -77,3 +77,22 @@ Matched standalone-admin builds at this integration measure 783,414 aggregate
 gzip bytes on clean main and 783,809 on the feature (+395). The combined admin
 aggregate cap is 784,000, including 250 bytes for the concurrently merged
 horoscope controls. All other admin limits retain the original Moon allocation.
+
+## Integration with the Calendar/legacy-Sky release
+
+Main `dbadf218c` landed while the prior Moon head `8539f2c62` completed all
+39 applicable hosted checks. The source files merged without conflicts; the
+budget resolution preserves both feature allocations. Its document loader now
+surfaces the server error message directly, so the Moon recovery assertion checks
+that exact message while retaining the 503 injection, loading, unavailable,
+retry and complete-source recovery assertions.
+
+Matched independently installed builds measure current main/combined feature:
+admin aggregate 783,972/784,462 gzip bytes (+490), web aggregate
+3,520,920/3,521,235 (+315). Combined limits are 784,500 admin aggregate and
+3,521,750 web aggregate bytes. Admin entry measures 763,810 raw/222,345 gzip
+bytes within combined limits of 764,250/222,500. Reader startup, CSS, graph,
+individual reader chunks and dependencies retain their existing limits.
+
+The fresh integrated web-hosted Moon suite passes all five cases. Final exact-head
+API and release verification are recorded in PR #1111.

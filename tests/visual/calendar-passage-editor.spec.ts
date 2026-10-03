@@ -77,14 +77,36 @@ for (const [width,theme] of [[1440,'light'],[390,'dark'],[390,'light'],[1440,'da
       const sunColor=await layer.locator('[data-template-section="sunSummary"]').first().evaluate(node=>getComputedStyle(node).backgroundColor);
       const moonColor=await layer.locator('[data-template-section="moonWriteup"]').first().evaluate(node=>getComputedStyle(node).backgroundColor);
       expect(sunColor).not.toBe(moonColor);
-      await editor.getByRole('button',{name:'Select Moon passage sentences',exact:true}).click();
-      const selection=await field.evaluate((node:HTMLTextAreaElement)=>({start:node.selectionStart,end:node.selectionEnd}));
-      const selected=originalTemplate.slice(selection.start,selection.end);
-      expect(selected.length).toBeGreaterThan(0);
-      expect(originalTemplate.slice(0,selection.start)).toMatch(/\{\{#moonWriteup\}\}$/);
+      const sectionStart=originalTemplate.indexOf('{{#moonWriteup}}')+'{{#moonWriteup}}'.length;
+      const sectionEnd=originalTemplate.indexOf('{{/moonWriteup}}',sectionStart);
+      const selected=originalTemplate.slice(sectionStart,sectionEnd);
+      const sectionField=editor.getByRole('textbox',{name:'Moon passage wording',exact:true});
+      // A real click on tinted prose opens the focused section, not just a text selection.
+      await field.scrollIntoViewIfNeeded();
+      await field.evaluate(node=>{ node.scrollTop=0; node.dispatchEvent(new Event('scroll')); });
+      const target=await layer.locator('[data-template-section="sunSummary"]').first().evaluate(node=>{
+        const range=document.createRange(); range.selectNodeContents(node);
+        const rect=Array.from(range.getClientRects()).find(rect=>rect.width>10 && rect.height>10)!;
+        return {x:rect.x+8,y:rect.y+rect.height/2};
+      });
+      await page.mouse.click(target.x,target.y);
+      await expect(editor.getByRole('textbox',{name:'Sun summary wording',exact:true})).toBeFocused();
+      await editor.getByRole('button',{name:'Edit Moon passage',exact:true}).click();
+      await expect(sectionField).toBeFocused();
+      await expect(sectionField).toHaveValue(selected);
+      await expect(field).toBeHidden();
+      await sectionField.press('ControlOrMeta+a');
       await page.keyboard.insertText('Synthetic selected section.');
-      await expect(field).toHaveValue(originalTemplate.slice(0,selection.start)+'Synthetic selected section.'+originalTemplate.slice(selection.end));
+      expect(await editor.locator('textarea[aria-label="Complete passage wording"]').inputValue()).toBe(originalTemplate.slice(0,sectionStart)+'Synthetic selected section.'+originalTemplate.slice(sectionEnd));
       await page.keyboard.press('ControlOrMeta+z');
+      await expect(sectionField).toHaveValue(selected);
+      const save=editor.getByRole('button',{name:'Save draft',exact:true});
+      const fieldBox=await sectionField.boundingBox();
+      const saveBox=await save.boundingBox();
+      expect(saveBox!.y-fieldBox!.y-fieldBox!.height).toBeLessThan(140);
+      await sectionField.evaluate((node:HTMLTextAreaElement)=>{node.setSelectionRange(0,0);node.blur();});
+      await editor.locator('.studio-calendar-template-editor').screenshot({path:`test-results/calendar-focused-editor-${width}-${theme}.png`});
+      await editor.getByRole('button',{name:'Edit complete template',exact:true}).click();
       await expect(field).toHaveValue(originalTemplate);
       await field.press('ControlOrMeta+End');
       await expect.poll(()=>field.evaluate((node:HTMLTextAreaElement)=>Math.abs(node.scrollTop-(node.parentElement!.querySelector('.studio-highlighted-backdrop') as HTMLElement).scrollTop))).toBeLessThan(2);
@@ -109,12 +131,15 @@ for (const [width,theme] of [[1440,'light'],[390,'dark'],[390,'light'],[1440,'da
       await page.evaluate(()=>window.scrollTo(0,0));
       await page.screenshot({fullPage:true,path:`test-results/calendar-template-colors-page-${width}-${theme}.png`});
       const copy='{{#moonWriteup}}Synthetic opening for {{moonSign}}.\n\nComplete synthetic ending.\n\n[Read more](?date=2026-09-26#sky/lunation/2026-09-26/aries){{/moonWriteup}}';
-      await field.fill(copy);
+      await field.fill('{{#moonWriteup}}Synthetic starter.{{/moonWriteup}}');
+      await editor.getByRole('button',{name:'Edit Moon passage',exact:true}).click();
+      await sectionField.fill(copy.slice('{{#moonWriteup}}'.length,-'{{/moonWriteup}}'.length));
       await expect(editor.getByLabel('Assembled passage preview')).toContainText('Synthetic opening for Aries.');
       await expect(editor.getByLabel('Assembled passage preview').locator('p')).toHaveCount(3);
       await expect(editor.getByLabel('Assembled passage preview').getByRole('link',{name:'Read more'})).toHaveAttribute('href','/?date=2026-09-26#sky/lunation/2026-09-26/aries');
       await editor.getByRole('button',{name:'Save draft',exact:true}).click();
       await expect(editor.getByRole('status')).toContainText('Draft saved.');
+      await expect(sectionField).toBeVisible();
       await page.reload();
       await editor.getByLabel('Passage date',{exact:true}).fill(date);
       await editor.getByLabel('Passage time zone',{exact:true}).fill(location.timeZone);
@@ -206,13 +231,34 @@ for (const [width,theme] of [[1440,'light'],[390,'dark'],[390,'light'],[1440,'da
       expect(await editor.getByRole('heading',{name:'Complete passage'}).evaluate(style)).toEqual(reference);
       expect(await editor.getByRole('heading',{name:'Complete passage'}).evaluate(node=>node.tagName)).toBe('H3');
       await page.getByText('Reference templates and source previews',{exact:true}).click();
-      if (width===1440 && theme==='light') {
+      {
         for (const [tab,view] of [['Weekly Sky','weekly'],['Monthly Sky','month']]) {
           await page.getByRole('tablist',{name:'Calendar Write-ups workspaces'}).getByRole('tab',{name:tab,exact:true}).click();
           await editor.getByLabel('Passage date',{exact:true}).fill(date);
           await editor.getByLabel('Passage time zone',{exact:true}).fill(location.timeZone);
           await editor.getByRole('button',{name:'Load passage',exact:true}).click();
           await expect(field).toBeVisible({timeout:60000});
+          if (view==='weekly') {
+            let week=await field.inputValue();
+            for (const day of ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday']) {
+              const name=day.toLowerCase()+'Writeup';
+              const start=week.indexOf('{{#'+name+'}}')+('{{#'+name+'}}').length;
+              const end=week.indexOf('{{/'+name+'}}',start);
+              await editor.getByRole('button',{name:`Edit ${day} Writeup`,exact:true}).click();
+              const weekdayField=editor.getByRole('textbox',{name:`${day} Writeup wording`,exact:true});
+              await expect(weekdayField).toHaveValue(week.slice(start,end));
+              await weekdayField.fill(week.slice(start,end)+` Synthetic ${day} edit.`);
+              week=week.slice(0,end)+` Synthetic ${day} edit.`+week.slice(end);
+              expect(await editor.locator('textarea[aria-label="Complete passage wording"]').inputValue()).toBe(week);
+            }
+            await editor.getByRole('button',{name:'Edit Sunday Writeup',exact:true}).click();
+            await editor.getByRole('textbox',{name:'Sunday Writeup wording',exact:true}).evaluate((node:HTMLTextAreaElement)=>node.blur());
+            await editor.locator('.studio-calendar-template-editor').screenshot({path:`test-results/calendar-weekday-editor-${width}-${theme}.png`});
+            await editor.getByRole('button',{name:'Save draft',exact:true}).click();
+            await expect(editor.getByRole('status')).toContainText('Draft saved.');
+            await editor.getByRole('button',{name:'Reload saved status',exact:true}).click();
+            await expect(field).toHaveValue(week,{timeout:60000});
+          }
           await field.fill(`Synthetic ${view} opening.\n\nSynthetic ${view} complete ending.`);
           await editor.getByRole('button',{name:'Save draft',exact:true}).click();
           await expect(editor.getByRole('status')).toContainText('Draft saved.');

@@ -521,11 +521,10 @@ function isEditablePackageCopyPath(path: string, packageRecord?: Record<string, 
 }
 
 function validateSkyV4TransitPovCopy(record: Record<string, unknown>, packageDraft: Record<string, unknown> | null, seasonSources?: Record<string, any>[]) {
-  if (stringFrom(record.source_package) !== skyV4CanonicalStagePackage) return { passed: true, hardFailures: [] as string[] };
+  if (stringFrom(record.source_package) !== skyV4CanonicalStagePackage && !libs().isSkyEvergreenSource(record)) return { passed: true, hardFailures: [] as string[] };
   const effective = packageDraft ?? record;
-  const fields = Array.isArray(record.studio_editable_fields)
-    ? record.studio_editable_fields.filter(isRecord).map((field) => stringFrom(field.path)).filter(Boolean)
-    : [];
+  const fields = libs().skyEvergreenEditableFields(record).filter(isRecord)
+    .map((field: Record<string, unknown>) => stringFrom(field.path)).filter(Boolean);
   const sections = isRecord(effective.fallback) && Array.isArray(effective.fallback.sections) ? effective.fallback.sections : [];
   const copy = [...fields.map((path) => packageValueAt(effective, path)), ...sections.filter(isRecord).map(section => libs().skyEvergreenSectionText(section))]
     .filter((value) => typeof value === "string").map(value => seasonSources ? String(value).replace(/\{\{\s*(zodiacSeason|zodiacSeasonPolarAxis)\s*\}\}/gu, (token, name) =>
@@ -633,12 +632,14 @@ function validateFallbackArchitectureV3Copy(row: ExistingGeneratedContentRow, pa
       const issues = libs().ingressTextIssues(value);
       if (issues.length) throw new GeneratedContentRequestError(`${field}: ${issues.join(" ")}`);
     }
-    const skyVariableField = record.source_package === skyV4CanonicalStagePackage
-      && (libs().isSkyPlacementVariableField(row.content_key, field.replace(/^packageDraft\./u, ""))
+    const skyVariableField = libs().isSkyPlacementVariableField(row.content_key, field.replace(/^packageDraft\./u, ""))
         // Publication mirrors the selected canonical body into these envelope
         // fields. They must accept the same tokens as their source passage.
-        || (libs().isSkyEvergreenSource(record) || /^sky-placement\/retrograde\/[^/]+$/u.test(row.content_key)) && ["body", "body_you"].includes(field));
+        || (libs().isSkyEvergreenSource(record) || /^sky-placement\/retrograde\/[^/]+$/u.test(row.content_key)) && ["body", "body_you"].includes(field);
     if (skyVariableField) {
+      if (/\{\{\s*(?:aspectSections|lunationSection)\s*\}\}/u.test(value)) {
+        throw new GeneratedContentRequestError("Aspect and lunation sections belong to an article edition. Open the article template, choose Complete edition, and add those passages there. Your placement edits have not been discarded.");
+      }
       // Canonical article mirrors accept the same tokens as their source.
       const articleField = libs().isSkyPlacementArticleField(row.content_key, field.replace(/^packageDraft\./u, ""))
         || libs().isSkyEvergreenSource(record) && ["body", "body_you"].includes(field);
@@ -1051,6 +1052,9 @@ function assertCanPublishGeneratedContent(row: Parameters<typeof isLegacyLiveWri
     throw new GeneratedContentRequestError("This composition has been retired. Edit the canonical Personal Transit source instead.", 409);
   }
   const snapshot = row.sourceSnapshot ?? row.source_snapshot;
+  if (/^(?:sky\/article-template|sky-article-template)\//u.test(row.contentKey ?? row.content_key ?? "")) {
+    throw new GeneratedContentRequestError("Save the template, then choose Complete edition to prepare and publish the article. A template cannot be published directly to readers.", 409);
+  }
   if (libs().isContentStudioReferenceSource(row.contentKey ?? row.content_key ?? "", isRecord(snapshot) ? snapshot : {})) {
     throw new GeneratedContentRequestError("Source notes can be reviewed but cannot be published as reader copy. Publish a finished card instead.", 409);
   }
@@ -2373,6 +2377,9 @@ async function updateGeneratedContent(req: IncomingMessage) {
   if (body.status === "LIVE" && libs().isContentStudioReferenceSource(existing.content_key, existing.source_snapshot ?? {})) {
     throw new GeneratedContentRequestError("Source notes can be reviewed but cannot be published as reader copy. Publish a finished card instead.", 409);
   }
+  if (body.status === "LIVE" && /^(?:sky\/article-template|sky-article-template)\//u.test(existing.content_key)) {
+    throw new GeneratedContentRequestError("Save the template, then choose Complete edition to prepare and publish the article. A template cannot be published directly to readers.", 409);
+  }
   const editableFields = ["status", "contentKey", "surface", "mode", "eventType", "targetDate", "headline", "summary", "body", "sections", "facts", "knowledgeIds", "sourceSnapshot", "lane", "reviewState", "promptVersion", "blockType", "reviewerNotes", "evergreen"];
   const packageFields = ["reviewStatus", "sourceLifecycleAction", "editorialNotes", "revertToPackageOriginal"];
   if (!body.ownerAction && ![...editableFields, ...(isPackageRow ? packageFields : [])].some(field => (body as Record<string, unknown>)[field] !== undefined)) {
@@ -2438,7 +2445,7 @@ async function updateGeneratedContent(req: IncomingMessage) {
       || (typeof targetRecord.contentKey === "string" && targetRecord.contentKey !== target.content_key)) {
       throw new GeneratedContentRequestError("The saved revision and publication target have different content keys. Reload the correct source before publishing.", 409);
     }
-    const canonicalRevision = stringFrom(targetRecord.source_package) === skyV4CanonicalStagePackage;
+    const canonicalRevision = stringFrom(targetRecord.source_package) === skyV4CanonicalStagePackage || libs().isSkyEvergreenSource(targetRecord);
     const calendarRevision = stringFrom(targetRecord.source_package) === calendarAspectContentStudioStagePackage
       && targetRecord.CalendarSourceKind === "composed-card"
       && targetRecord.contentKey === target.content_key
@@ -2503,7 +2510,8 @@ async function updateGeneratedContent(req: IncomingMessage) {
       const field = bodyPaths.find(path => typeof promotedRecord[path] === "string");
       if (field) promotedRecord.body_you = promotedRecord[field];
       if (libs().isSkyEvergreenSource(promotedRecord) && !stringFrom(promotedRecord.placementArticle).trim()) {
-        promotedRecord.body_you = libs().skyEvergreenFields(promotedRecord).map((section: { value: string }) => section.value).filter((value: string) => value.trim()).join("\n\n");
+        promotedRecord.body_you = [promotedRecord.placementArticleDirect, promotedRecord.placementArticleRetrograde].find(value => typeof value === "string" && value.trim())
+          ?? libs().skyEvergreenFields(promotedRecord).map((section: { value: string }) => section.value).filter((value: string) => value.trim()).join("\n\n");
       }
       promotedRecord.summary = promotedRecord.tldrTakeaway ?? promotedRecord.TLDR_Takeaway ?? promotedRecord.CanonicalShort ?? promotedRecord.summary;
     }
@@ -2544,8 +2552,12 @@ async function updateGeneratedContent(req: IncomingMessage) {
     finalSections.dashboardEditHistory = history;
     if (canonicalRevision) {
       const validation = validateSkyV4TransitPovCopy(promotedRecord, null, sharedSources);
-      if (!validation.passed) throw new Error(`SKY V4 POV validation failed: ${validation.hardFailures.join(", ")}.`);
+      if (!validation.passed) throw new GeneratedContentRequestError(`SKY V4 POV validation failed: ${validation.hardFailures.join(", ")}.`);
       const approvedRecord = isRecord(finalSections.packageRecord) ? finalSections.packageRecord : {};
+      // Older imports omitted package identity. This owner-approved revision
+      // has already passed the canonical released-key and copy checks above;
+      // restore its identity for the reader without changing the saved original.
+      approvedRecord.source_package = skyV4CanonicalStagePackage;
       approvedRecord.owner_approved = true;
       approvedRecord.serving_enabled = true;
       approvedRecord.review_status = "approved";
@@ -3050,7 +3062,7 @@ async function updateGeneratedContent(req: IncomingMessage) {
     isPackageRow
     && existing
     && existing.status === "LIVE"
-    && stringFrom(existingPackageRecord.source_package) === skyV4CanonicalStagePackage
+    && (stringFrom(existingPackageRecord.source_package) === skyV4CanonicalStagePackage || libs().isSkyEvergreenSource(existingPackageRecord))
     && libs().skyV4ServingReleasedReaderCopyKeys.has(existing.content_key)
     && isRecord((patch.sections as Record<string, unknown> | undefined)?.packageDraft)
   );

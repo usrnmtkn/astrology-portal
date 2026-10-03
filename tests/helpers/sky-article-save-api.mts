@@ -1,5 +1,6 @@
 import horoscopeWriter from '../../api/admin/horoscope-writing';
 import {Readable} from 'node:stream';
+import {readFileSync} from 'node:fs';
 import { readerRouteResponse, fixturePublications } from './content-reader-route.mjs';
 import { servingPackageRecords } from "../../api/_lib/content-live-status";
 // Actual handler, isolated storage, realistic latest-first/limit-one reads.
@@ -22,7 +23,7 @@ const revision = { ...structuredClone(live), id: 'revision-sun-virgo', mode: 'st
 const template = structuredClone(servingPackageRecords.get('fallback-template/natal.angle-in-sign')!);
 template.body = 'Fixture {{signTitle}}. TARGET';
 const templateRow = {...structuredClone(live), id: 'fixture-natal-template', content_key: template.contentKey, surface: 'natal', event_type: 'fallback-template', block_type: 'fallback_template', headline: 'Fixture sign-aware template', body: template.body, sections: {packageRecord: template}, source_snapshot: {sourcePackage: 'tldrastro-fallback-architecture-v3', content_role: 'template'}};
-export const store = await createApiStore(process.env.ZODIAC_TEMPLATE_FIXTURE ? [templateRow] : [revision, live]);
+export const store = await createApiStore(process.env.SKY_SAVE_FIXTURE ? JSON.parse(readFileSync(process.env.SKY_SAVE_FIXTURE, 'utf8')) : process.env.ZODIAC_TEMPLATE_FIXTURE ? [templateRow] : [revision, live]);
 let versionSequence = 0;
 const nextVersion = () => new Date(Date.now() + ++versionSequence).toISOString();
 const matches = (row: any, params: URLSearchParams) => [...params].every(([field, value]) => {

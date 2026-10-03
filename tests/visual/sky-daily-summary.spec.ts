@@ -244,3 +244,30 @@ for (const width of [390, 1440]) {
     await page.screenshot({ path: `test-results/sky-summary-facts-${width}.png` });
   });
 }
+
+for (const width of [390, 1440]) {
+  test(`current Moon placement replaces the duplicate ingress line at ${width}px`, async ({ page }) => {
+    await page.setViewportSize({ width, height: 1000 });
+    await page.clock.setFixedTime(new Date("2026-10-03T01:55:00Z"));
+    await page.addInitScript(() => localStorage.setItem("tldrastro:selectedLocation", JSON.stringify({ label: "QA reference", latitude: 0, longitude: 0, timeZone: "America/New_York" })));
+    const events = [
+      { id: "moon-cancer", type: "ingress", planet: "Moon", sign: "Cancer", toSign: "Cancer", startsAt: "2026-10-02T20:00:00Z", dateKey: "2026-10-02" },
+      { id: "venus-scorpio", type: "ingress", planet: "Venus", sign: "Scorpio", toSign: "Scorpio", startsAt: "2026-10-02T10:00:00Z", dateKey: "2026-10-02" }
+    ];
+    await page.route("**/api/calendar?**", route => route.fulfill({ json: { ok: true, calendar: { days: [{ dateKey: "2026-10-02", events }] } } }));
+    await page.goto("/?date=2026-10-02#sky");
+    const summary = page.getByLabel("Daily sky summary", { exact: true });
+    for (const reload of [false, true]) {
+      if (reload) await page.reload();
+      await expect(summary).toBeVisible({ timeout: 60_000 });
+      await expect(summary.getByRole("link", { name: "Read about Moon in Cancer", exact: true })).toBeVisible();
+      await expect(summary).toContainText("The Moon in Cancer");
+      await expect(summary).toContainText("Venus enters Scorpio today.");
+      await expect(summary).not.toContainText("Moon enters Cancer");
+      await expect(summary).not.toContainText("Two planets change signs");
+      await expect(summary).toContainText("The next New Moon in Libra");
+      await expect(summary.locator(":scope > p").filter({ hasText: /^\s*$/ })).toHaveCount(0);
+    }
+    await summary.screenshot({ path: `test-results/sky-summary-no-duplicate-moon-${width}.png` });
+  });
+}

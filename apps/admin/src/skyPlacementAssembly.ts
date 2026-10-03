@@ -49,7 +49,8 @@ export function skyPlacementAssembly(rows: CompositionMapRow[], writing: SkyPlac
   const seasonal = fields.filter(field => field.row.content_key.startsWith("sky-placement/seasonal-context/"));
   const placement = fields.filter(field => !field.row.content_key.includes("/retrograde/") && !field.row.content_key.startsWith("sky-placement/seasonal-context/"));
   const fallback = placement.filter(field => field.path.startsWith("fallback.") && (!field.motion || field.motion === "all" || field.motion === motion));
-  const article = placement.filter(field => (!field.row.content_key.startsWith("sky-nodes/axis/") || field.path === "NodeAxisArticle") && !field.path.startsWith("fallback.") && (!/^placementArticle/u.test(field.path) || field.path === skyPlacementArticlePath(effectivePackageRecord(field.row.sections), motion)));
+  const article = placement.filter(field => (!field.row.content_key.startsWith("sky-nodes/axis/") || field.path === "NodeAxisArticle") && !field.path.startsWith("fallback.") && (!/^placementArticle/u.test(field.path) || field.path === skyPlacementArticlePath(effectivePackageRecord(field.row.sections), motion)
+    || !placement.some(item => item.path === "placementArticle") && field.path === (motion === "retrograde" ? "placementArticleRetrograde" : "placementArticleDirect")));
   const tldr = article.filter(field => /^(?:tldrWhat|tldrTakeaway|TLDR_What|TLDR_Takeaway)$/u.test(field.path));
   const articleWithSeasonal = seasonal.length
     ? [...tldr, ...seasonal, ...article.filter(field => !tldr.includes(field))] : article;
