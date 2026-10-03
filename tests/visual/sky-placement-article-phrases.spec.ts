@@ -15,7 +15,7 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) for (con
     await route.fulfill({ json: { ok: true, variables: [] } });
     return;
    }
-   const keys = url.searchParams.getAll('contentKeys').flatMap(v => v.split(','));
+   const keys = [...url.searchParams.getAll('contentKey'), ...url.searchParams.getAll('contentKeys')].flatMap(v => v.split(','));
    if (delayLibrary && keys.some(key => key.startsWith('fallback-'))) await new Promise(resolve => setTimeout(resolve, 300));
    const rows = keys.flatMap(contentKey => {
     const baseline = skyPlacementSourceRecords.get(contentKey) ?? ZODIAC_SEASON_SOURCE_STARTERS.find(row => row.contentKey === contentKey);

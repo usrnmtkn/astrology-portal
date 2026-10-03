@@ -152,3 +152,15 @@ in `playwright.sky-article.config.ts` so the existing CI Sky article job runs it
 the browser-suite coverage check passes. This registration changes no runtime
 source. Final hosted checks, merge revision and production verification are
 recorded in PR #1112.
+
+Hosted browser checks exposed two stale fixture assumptions after the UI/API
+changes: the imported-template flow still clicked `Save`, and the phrase editor
+fixture answered only plural `contentKeys` lookups. Updated the template test to
+click `Save template` and assert `DRAFT`, and made the phrase fixture answer both
+single and batch document lookups. Fresh builds passed all four template cases
+through the web entry, the same four through standalone admin, and all eight
+phrase editor variants. Full article, sibling horoscope and phrase assertions
+remain intact. These corrections change tests only. Logs:
+`/private/tmp/calendar-sky-release-template-label-browser.log`,
+`calendar-sky-release-template-label-admin.log`, and
+`calendar-sky-release-phrase-fixture-browser.log`.

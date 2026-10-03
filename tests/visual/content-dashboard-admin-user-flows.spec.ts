@@ -6496,9 +6496,10 @@ for (const theme of ['light', 'dark']) for (const width of [1440, 390]) {
     await editor.getByLabel('aries rising horoscope',{exact:true}).fill('');
     await expect(editor.getByLabel('pisces rising horoscope',{exact:true})).toHaveValue(passages[11].body);
     await editor.getByLabel('aries rising horoscope',{exact:true}).fill(revised);
-    await editor.getByRole('button',{name:'Save',exact:true}).click();
+    await editor.getByRole('button',{name:'Save template',exact:true}).click();
     await expect.poll(()=>writes.length).toBe(1);
     expect(writes[0].payload.body).toBe(body);
+    expect(writes[0].payload.status).toBe('DRAFT');
     const savedSections=writes[0].payload.sections as typeof sections;
     expect(savedSections.articleHoroscopes.passages[0].body).toBe(revised);
     expect(savedSections.articleHoroscopes.passages.slice(1)).toEqual(passages.slice(1));
