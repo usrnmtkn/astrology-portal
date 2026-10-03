@@ -222,6 +222,24 @@ behind the first application-test import.
 
 Any reader-facing astrology copy written in chat must use the owner’s writing rules, phrase bank, corpus, voice, tone, and prior editorial decisions. Semantic components determine meaning; the owner’s writing determines how that meaning is expressed.
 
+### Horoscope editorial changes stay within the requested period
+
+A Monthly or Seasonal writing request does not authorize changes to Daily or
+Weekly profiles, register, evidence priority, length or drafting behavior.
+Before changing saved horoscope instructions, retain a protected snapshot of all
+four profiles, name the requested period and changed fields, save with the exact
+opened version, and verify the other profiles remain byte-identical. Compare
+the rejected run's actual saved instructions and receipts with the liked run
+before attributing a regression to shared code or a model.
+
+The owner retained the compact Weekly register on 2026-10-03 in
+`thread:01a0ce6e-69e0-7100-bdba-ad413d5c7804`. Do not import Monthly or Seasonal
+expansion targets into Weeklies or silently expand a profile update to all
+periods. Keep private passages and profiles outside Git. The latest-instructions
+API regression verifies period isolation through the assembled writer request;
+it does not certify prose quality. No paid regeneration follows from a profile
+repair without authorization for that generation.
+
 ### Owner-authored copy is never compressed
 
 An owner-authored passage is an indivisible, author-final unit. Never shorten,
