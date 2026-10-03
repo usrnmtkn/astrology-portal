@@ -1,7 +1,7 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
 import { createRequire } from "node:module";
 import { URL } from "node:url";
-import { isContentAdminAuthorized } from "../_lib/admin-auth.js";
+import { requireContentAdmin } from "../_lib/admin-auth.js";
 import { AdminHttpError, adminErrorStatus, adminFetchJson, adminStorageRows, readAdminJsonBody, sendAdminMethodNotAllowed } from "../_lib/admin-http.js";
 import { loadLocalWebEnv } from "../_lib/local-env.js";
 
@@ -561,10 +561,7 @@ async function buildResponse(kind: PatternWriteupKind) {
 
 export default async function handler(req: IncomingMessage, res: ServerResponse) {
   try {
-    if (!await isContentAdminAuthorized(req)) {
-      sendJson(res, 401, { ok: false, error: "Unauthorized." });
-      return;
-    }
+    if (!await requireContentAdmin(req, res)) return;
     const requestUrl = new URL(req.url ?? "/api/admin/aspect-pattern-writeups", "http://localhost");
     const kind = requestUrl.searchParams.get("kind") ?? "natal";
     if (kind !== "natal" && kind !== "activation") throw new AdminHttpError(400, "Invalid write-up kind.");

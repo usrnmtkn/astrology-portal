@@ -11,7 +11,7 @@ const page = read("apps/admin/src/ContentCoverageDashboard.tsx");
 const main = read("apps/admin/src/main.tsx");
 const primitives = read("apps/admin/src/AdminStudioPrimitives.tsx");
 
-assert.match(endpoint, /isContentAdminAuthorized/u);
+assert.match(endpoint, /requireContentAdmin/u);
 assert.match(endpoint, /transit-synastry-rows-v1\.json/u);
 assert.match(endpoint, /sky-calendar-exact-approved-2026-09-04-held-trines-33/u);
 assert.match(endpoint, /sky-v4-continuous-corpus-correction-v1\.json/u);

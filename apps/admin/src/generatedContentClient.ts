@@ -1,5 +1,6 @@
 import { adminCredentialHeaders } from "./adminSecret";
 import { readStudioInventoryPages } from "./studioInventoryPagination";
+import { studioRequestTimeoutMs } from "./studioRequestPolicy";
 
 export type GeneratedContentEditorRow = {
   id: string;
@@ -8,18 +9,25 @@ export type GeneratedContentEditorRow = {
   updated_at?: string | null;
   sections?: unknown;
   event_type?: string | null;
+  source_snapshot?: unknown;
 };
 
 function isObject(value: unknown): value is Record<string, unknown> {
   return value !== null && typeof value === "object" && !Array.isArray(value);
 }
 
+class StudioRequestError extends Error {
+  constructor(message: string, readonly saveUncertain: boolean) { super(message); }
+}
+
 async function request(path: string, secret: string, options: RequestInit = {}) {
+  const method = (options.method ?? "GET").toUpperCase();
+  const isWrite = ["POST", "PATCH", "DELETE"].includes(method);
   const controller = new AbortController();
   const abort = () => controller.abort();
   options.signal?.addEventListener("abort", abort, { once: true });
   if (options.signal?.aborted) abort();
-  const timer = setTimeout(abort, 10_000);
+  const timer = setTimeout(abort, studioRequestTimeoutMs(path, method));
   try {
     const response = await fetch(path, {
       ...options, cache: "no-store", signal: controller.signal,
@@ -27,14 +35,19 @@ async function request(path: string, secret: string, options: RequestInit = {}) 
     });
     const payload: unknown = await response.json();
     if (!response.ok || !isObject(payload) || payload.ok !== true) {
-      throw new Error(isObject(payload) && typeof payload.error === "string"
-        ? payload.error : `Content Studio returned an invalid response (${response.status}). Reload before retrying.`);
+      throw new StudioRequestError(isObject(payload) && typeof payload.error === "string"
+        ? payload.error : `Content Studio returned an invalid response (${response.status}). Reload before retrying.`,
+      isWrite && (response.ok || response.status === 408 || response.status >= 500));
     }
     return payload;
   } catch (error) {
-    if (controller.signal.aborted) throw new Error("Content Studio request was interrupted. Reload before retrying; a save has not been confirmed.");
-    if (error instanceof SyntaxError) throw new Error("Content Studio did not receive JSON from its API. Check the API connection, then reload.");
-    throw error;
+    if (error instanceof StudioRequestError) throw error;
+    if (controller.signal.aborted) throw new StudioRequestError(isWrite
+      ? "Content Studio request was interrupted. Reload before retrying; a save has not been confirmed."
+      : "Loading content was interrupted. Try again; no changes were submitted.", isWrite);
+    throw new StudioRequestError(error instanceof SyntaxError
+      ? "Content Studio did not receive JSON from its API. Reload to verify the saved state before retrying."
+      : error instanceof Error ? error.message : "Content Studio could not connect. Reload before retrying.", isWrite);
   } finally {
     clearTimeout(timer);
     options.signal?.removeEventListener("abort", abort);
@@ -110,6 +123,7 @@ function submittedDraftFields(draftSections: Record<string, unknown>) {
 }
 
 function saveMayHaveCompleted(error: unknown) {
+  if (error instanceof StudioRequestError) return error.saveUncertain;
   const message = error instanceof Error ? error.message : String(error ?? "");
   return /(?:timed out|timeout|408|interrupted|late response|not been confirmed)/iu.test(message);
 }
@@ -118,8 +132,13 @@ async function verifyTimedOutSave(row: GeneratedContentEditorRow, draftSections:
   const path = studioInventoryDocumentPath(row.content_key, { status: "DRAFT", limit: 10 });
   const payload = await request(path, secret);
   const submitted = submittedDraftFields(draftSections);
+  if (!Object.keys(submitted).length) return null;
   return rowsFromPayload(payload)
-    .filter((candidate) => candidate.content_key === row.content_key && candidate.updated_at)
+    .filter((candidate) => candidate.content_key === row.content_key && candidate.status === "DRAFT"
+      && candidate.updated_at && Date.parse(candidate.updated_at) > Date.parse(row.updated_at!)
+      && (candidate.id === row.id || (isObject(candidate.source_snapshot)
+        && candidate.source_snapshot.targetRowId === row.id
+        && candidate.source_snapshot.targetRowUpdatedAt === row.updated_at)))
     .find((candidate) => containsSubmittedFields(candidate.sections, submitted)) ?? null;
 }
 

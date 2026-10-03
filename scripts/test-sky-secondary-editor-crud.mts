@@ -8,6 +8,7 @@ process.env.CONTENT_GENERATION_SECRET = "secondary-editor-test";
 process.env.SUPABASE_URL = "https://secondary-editor-test.invalid";
 process.env.SUPABASE_SERVICE_ROLE_KEY = "secondary-editor-test";
 const { default: handler } = await import("../api/admin/generated-content.ts");
+const { default: inventoryHandler } = await import("../api/admin/generated-content-inventory.ts");
 const key = "sky-placement/article/saturn/aries";
 const baseline = skyPlacementSourceRecords.get(key)!;
 const stored: any[] = [{ id: "secondary-row", content_key: key, status: "DRAFT", surface: "sky", mode: "in_depth", target_date: null,
@@ -16,6 +17,7 @@ const stored: any[] = [{ id: "secondary-row", content_key: key, status: "DRAFT",
   source_snapshot: { sourcePackage: baseline.source_package, content_role: baseline.content_role }, facts: { fallbackArchitectureV3: true } }];
 let writes = 0;
 let responseOverride: (() => Response) | null = null;
+let loseSaveResponse = false;
 let requestedVersions: unknown[] = [];
 const originalFetch = globalThis.fetch;
 globalThis.fetch = async (input, init = {}) => {
@@ -27,7 +29,8 @@ globalThis.fetch = async (input, init = {}) => {
     if (req.method === "PATCH") requestedVersions.push(JSON.parse(String(init.body)).expectedUpdatedAt);
     let reply = new Response(null, { status: 500 });
     const res: any = { statusCode: 0, setHeader() {}, end(body: string) { reply = new Response(body, { status: this.statusCode, headers: { "content-type": "application/json" } }); } };
-    await handler(req, res);
+    await (address.startsWith("/api/admin/generated-content-inventory") ? inventoryHandler : handler)(req, res);
+    if (req.method === "PATCH" && loseSaveResponse) { loseSaveResponse = false; throw new TypeError("Failed to fetch"); }
     return reply;
   }
   const url = new URL(address);
@@ -61,6 +64,14 @@ try {
   await assert.rejects(() => saveGeneratedContentDraft(opened, sections, "secondary-editor-test"), /changed after the editor was opened/);
   assert.equal(writes, writesBeforeConflict);
   assert.equal(stored[0].sections.packageDraft.placementArticle, "Second editor fixture revision.");
+  // Commit through the actual handler, then lose the browser response. Recovery
+  // must reopen that exact draft through the actual inventory handler, once.
+  loseSaveResponse = true;
+  const beforeLostResponse = writes;
+  const recovered = await saveGeneratedContentDraft(savedAgain, { ...savedAgain.sections as object, packageDraft: { ...baseline, placementArticle: "Confirmed after a lost response." } }, "secondary-editor-test");
+  assert.equal(writes, beforeLostResponse + 1);
+  assert.equal((recovered.sections as any).packageDraft.placementArticle, "Confirmed after a lost response.");
+  assert.equal(recovered.updated_at, stored[0].updated_at);
   responseOverride = () => new Response("<!doctype html><html>Static preview</html>");
   await assert.rejects(() => readGeneratedContentRows("/api/admin/generated-content", "secondary-editor-test"), /did not receive JSON/);
   for (const payload of [{ ok: true, rows: [null] }, { ok: false, rows: [] }, []]) {

@@ -2,7 +2,7 @@ import type { IncomingMessage, ServerResponse } from "node:http";
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { isContentAdminAuthorized } from "../_lib/admin-auth.js";
+import { requireContentAdmin } from "../_lib/admin-auth.js";
 import { loadLocalWebEnv } from "../_lib/local-env.js";
 
 loadLocalWebEnv();
@@ -193,10 +193,7 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
     sendJson(res, 405, { ok: false, error: "Use GET." });
     return;
   }
-  if (!await isContentAdminAuthorized(req)) {
-    sendJson(res, 401, { ok: false, error: "Unauthorized." });
-    return;
-  }
+  if (!await requireContentAdmin(req, res)) return;
   try {
     sendJson(res, 200, buildCoverage());
   } catch (error) {

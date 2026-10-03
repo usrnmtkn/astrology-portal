@@ -1,5 +1,5 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
-import { isContentAdminAuthorized } from "../_lib/admin-auth.js";
+import { requireContentAdmin } from "../_lib/admin-auth.js";
 import { AdminHttpError, adminErrorMessage, adminErrorStatus, adminFetchJson, adminStorageRows, readAdminJsonBody, sendAdminJson, sendAdminMethodNotAllowed } from "../_lib/admin-http.js";
 import { loadLocalWebEnv } from "../_lib/local-env.js";
 import { loadContentUnresolvedReport } from "./content-unresolved.js";
@@ -118,10 +118,7 @@ async function saveResolution(input: ContentStudioResolutionInput) {
 }
 
 export default async function handler(req: IncomingMessage, res: ServerResponse) {
-  if (!await isContentAdminAuthorized(req)) {
-    sendAdminJson(res, 401, { ok: false, error: "Unauthorized." });
-    return;
-  }
+  if (!await requireContentAdmin(req, res)) return;
   if (req.method !== "POST") {
     sendAdminMethodNotAllowed(res, ["POST"]);
     return;

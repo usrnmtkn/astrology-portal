@@ -42,14 +42,36 @@ async function selectSaturnPlacement(page: Page) {
   await page.getByLabel("Sky placement zodiac sign").selectOption("aries");
 }
 
-test("invalid secondary responses do not block saved Studio content", async ({ page }) => {
+for (const { malformed, width, theme } of [
+  ...[390, 1440].flatMap(width => ['light', 'dark'].map(theme => ({ width, theme, malformed: null }))),
+  { width: 1440, theme: 'light', malformed: { ok: true, rows: null } }
+]) test(`invalid secondary responses do not block saved Studio content: ${JSON.stringify(malformed)} ${width} ${theme}`, async ({ page }) => {
+  await page.setViewportSize({ width, height: 1000 });
+  await page.addInitScript(value => localStorage.setItem('tldrastro:studio-theme', value), theme);
   await mockStudio(page);
-  await page.route(/\/api\/admin\/(review-records|user-generated-content|content-review-events)\?/, route => route.fulfill({ json: null }));
+  let failing = true;
+  await page.route(/\/api\/admin\/(review-records|user-generated-content|content-review-events)\?/, route => failing ? route.fulfill({ json: malformed }) : route.fallback());
   const errors: string[] = [];
   page.on("pageerror", error => errors.push(error.message));
   await page.goto(`${studioPath}#sky-writeups`);
   await expect(page.getByLabel("Sky write-up rows").locator("tbody tr").first()).toBeVisible();
+  await expect(page.getByRole("region", { name: "Admin status" })).toContainText("Incomplete", recoveryReadiness);
+  const failure = page.getByRole("alert").filter({ hasText: "Some content could not load" });
+  await expect(failure).toContainText("Review records");
+  await expect(failure).toContainText("User content");
+  await expect(failure).toContainText("Reader omission reports");
+  const statusDot = page.getByRole("region", { name: "Admin status" }).locator('.admin-sidebar-status-dot');
+  const failureColor = await statusDot.evaluate(element => getComputedStyle(element).backgroundColor);
+  await expect(page.locator('.admin-dashboard')).toHaveAttribute('data-studio-theme', theme);
+  await page.screenshot({ path: `test-results/studio-partial-load-${width}-${theme}.png` });
+  expect(await page.evaluate(() => document.documentElement.scrollWidth - innerWidth)).toBeLessThanOrEqual(1);
+  await page.waitForTimeout(7_500); // Outlast the transient toast: the warning must persist.
+  await expect(failure).toBeVisible();
+  failing = false;
+  await failure.getByRole("button", { name: "Retry failed loads", exact: true }).click();
   await expect(page.getByRole("region", { name: "Admin status" })).toContainText("Connected", recoveryReadiness);
+  expect(await statusDot.evaluate(element => getComputedStyle(element).backgroundColor)).not.toBe(failureColor);
+  await expect(failure).toHaveCount(0);
   await expect(page.getByRole("heading", { name: "The dashboard could not load saved CMS rows" })).toHaveCount(0);
   expect(errors).toEqual([]);
 });

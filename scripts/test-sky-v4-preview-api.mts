@@ -93,12 +93,12 @@ assert.throws(() => normalizeSkyFallbackVariantPreviewInput({
 }), /event instance ID is required/u);
 
 const endpoint = fs.readFileSync(new URL("../api/admin/sky-v4-preview.ts", import.meta.url), "utf8");
-assert.match(endpoint, /isContentAdminAuthorized/u);
+assert.match(endpoint, /requireContentAdmin/u);
 assert.match(endpoint, /renderSkyV4StudioPreview/u);
 assert.match(endpoint, /sendAdminJson/u);
 assert.doesNotMatch(endpoint, /res\.end\(/u);
 const variantEndpoint = fs.readFileSync(new URL("../api/admin/sky-fallback-variant-preview.ts", import.meta.url), "utf8");
-assert.match(variantEndpoint, /isContentAdminAuthorized/u);
+assert.match(variantEndpoint, /requireContentAdmin/u);
 assert.match(variantEndpoint, /renderSkyContinuousFallbackVariant/u);
 assert.match(variantEndpoint, /servingEnabled:\s*false/u);
 assert.match(variantEndpoint, /eventInstanceId/u);

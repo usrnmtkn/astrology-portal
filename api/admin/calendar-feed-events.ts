@@ -1,14 +1,14 @@
 import { randomUUID } from "node:crypto";
 import type { IncomingMessage, ServerResponse } from "node:http";
 import { loadLocalWebEnv } from "../_lib/local-env.js";
-import { isContentAdminAuthorized } from "../_lib/admin-auth.js";
+import { requireContentAdmin } from "../_lib/admin-auth.js";
 import { AdminHttpError, readAdminJsonBody, sendAdminJson, adminErrorStatus } from "../_lib/admin-http.js";
 import { allCalendarRows, calendarStorage, parseCalendarEvent } from "../_lib/calendar-subscriptions.js";
 import { readerCopyIssues } from "../../apps/web/src/content/editorialCopyBoundary.mjs";
 import type { CalendarFeedEventRecord } from "../../apps/web/src/features/calendar/calendarSubscription.js";
 loadLocalWebEnv();
 export default async function handler(req: IncomingMessage, res: ServerResponse) {
-  if (!await isContentAdminAuthorized(req)) return sendAdminJson(res, 401, { ok: false, error: "Unauthorized." });
+  if (!await requireContentAdmin(req, res)) return;
   try {
     if (req.method === "GET") return sendAdminJson(res, 200, { ok: true, events: await allCalendarRows("calendar_feed_events", { select: "*", order: "id.asc" }) });
     if (!["POST", "PATCH"].includes(req.method ?? "")) { res.setHeader("Allow", "GET, POST, PATCH"); return sendAdminJson(res, 405, { ok: false, error: "Use GET, POST or PATCH." }); }

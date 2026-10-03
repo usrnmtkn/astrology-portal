@@ -260,7 +260,7 @@ assert.match(dashboardSource, /setShowReferenceRows\(true\)/u, "Exact-row links 
 assert.match(dashboardSource, /setShowRetiredRows\(true\)/u, "Exact-row links must reveal retired rows.");
 assert.doesNotMatch(reviewSource, /api\/admin\/generated-content/u, "Resolution recording must not use the serving-content mutation endpoint.");
 assert.match(endpointSource, /req\.method !== "GET"/u, "The unresolved-content endpoint must be GET-only.");
-assert.match(endpointSource, /await isContentAdminAuthorized\(req\)/u, "The unresolved-content endpoint must require verified owner access.");
+assert.match(endpointSource, /await requireContentAdmin\(req, res\)/u, "The unresolved-content endpoint must require verified owner access.");
 assert.doesNotMatch(endpointSource, /\b(?:POST|PATCH|DELETE)\b/u, "The unresolved-content endpoint must remain read-only.");
 assert.match(resolutionEndpointSource, /req\.method !== "POST"/u, "Resolution recording must use a dedicated POST-only endpoint.");
 assert.match(resolutionEndpointSource, /assertCurrentResolutionIssue\(input\)/u, "Recorded responses must match a current issue.");

@@ -143,7 +143,7 @@ assert.match(dashboardSource, /Friend view copy/u, "Dual-voice natal sources mus
 assert.match(dashboardSource, /Edit the copy a friend sees/u, "The same natal edit slide-out must expose the effective Friends copy and its source links.");
 const natalPreviewApiSource = fs.readFileSync(path.join(repoRoot, "api/admin/natal-placement-preview.ts"), "utf8");
 assert.match(natalPreviewApiSource, /createFallbackRenderer/u, "The natal preview endpoint must reuse the production fallback resolver.");
-assert.match(natalPreviewApiSource, /isContentAdminAuthorized/u, "The natal preview endpoint must remain restricted to Content Studio administrators.");
+assert.match(natalPreviewApiSource, /requireContentAdmin/u, "The natal preview endpoint must remain restricted to Content Studio administrators.");
 const natalFinderSource = fs.readFileSync(path.join(repoRoot, "apps/admin/src/NatalPlacementSourceFinder.tsx"), "utf8");
 assert.match(natalFinderSource, /<NatalPlacementReaderPreview/u, "The natal source finder must display the effective reader rendering.");
 const generatedContentApiSource = fs.readFileSync(path.join(repoRoot, "api/admin/generated-content.ts"), "utf8");

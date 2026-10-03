@@ -1,4 +1,5 @@
 import { useStudioCustomVariables } from "./studioCustomVariableClient";
+import { studioRequestTimeoutMs } from "./studioRequestPolicy";
 import { clearStudioEditorReturn, rememberStudioEditorReturn, studioEditorReturnContext } from "./studioEditorReturn";
 import type { HouseTransitEditorSource } from "./HouseTransitWriteupEditor";
 import { ZODIAC_SEASON_SOURCE_STARTERS, isZodiacSeasonSourceKey } from "../../web/src/content/fallbackArchitectureV3/resolver/zodiacSeasonVariables.mjs";
@@ -2830,7 +2831,7 @@ async function adminJsonRequest<T>(path: string, secret: string, options: Reques
   const timeout = window.setTimeout(() => {
     timedOut = true;
     controller.abort();
-  }, path === "/api/admin/sky-draft-writing" ? 305_000 : path === "/api/admin/generated-content" && method === "PATCH" ? 45_000 : 10_000);
+  }, studioRequestTimeoutMs(path, method));
   let response: Response;
   let payload: unknown;
 
@@ -2886,6 +2887,15 @@ async function adminJsonRequest<T>(path: string, secret: string, options: Reques
 }
 
 const generatedContentPageRetryDelaysMs = [350, 1_000];
+
+async function loadSupplementalRows<T>(path: string, secret: string, signal: AbortSignal, legacyField?: string): Promise<T[]> {
+  const payload = await adminJsonRequest<Record<string, unknown>>(path, secret, { signal });
+  const rows = payload.rows ?? (legacyField ? payload[legacyField] : undefined);
+  if (payload.ok !== true || !Array.isArray(rows) || rows.some(row => !row || typeof row !== "object" || Array.isArray(row))) {
+    throw new AdminRequestError("Invalid response schema.", { status: 502, path, method: "GET", details: "Expected a confirmed list of saved records." });
+  }
+  return rows as T[];
+}
 
 function isRetryableAdminReadError(error: unknown) {
   if (!(error instanceof AdminRequestError)) return true;
@@ -3141,6 +3151,7 @@ export function GeneratedContentAdminDashboard() {
   const [message, setMessage] = useState("");
   const [loadState, setLoadState] = useState<AdminLoadState>("loading");
   const [loadError, setLoadError] = useState<string | null>(null);
+  const [partialLoadFailures, setPartialLoadFailures] = useState<string[]>([]);
   const [loadDiagnostics, setLoadDiagnostics] = useState<string | null>(null);
   // Inventory reads have their own loadState; only an editor/action request blocks writing.
   const [isLoading, setIsLoading] = useState(false);
@@ -4648,12 +4659,12 @@ export function GeneratedContentAdminDashboard() {
           },
           loadController.signal
         ),
-        adminJsonRequest<{ ok: boolean; rows?: AdminReviewRecord[]; records?: AdminReviewRecord[]; counts?: unknown }>("/api/admin/review-records?surface=upcomingAspects&status=all", normalizedSecret, { signal: loadController.signal }),
-        adminJsonRequest<{ ok: boolean; rows: AdminUserGeneratedContentRow[] }>("/api/admin/user-generated-content?status=all&limit=100", normalizedSecret, { signal: loadController.signal }),
+        loadSupplementalRows<AdminReviewRecord>("/api/admin/review-records?surface=upcomingAspects&status=all", normalizedSecret, loadController.signal, "records"),
+        loadSupplementalRows<AdminUserGeneratedContentRow>("/api/admin/user-generated-content?status=all&limit=100", normalizedSecret, loadController.signal),
         activePage === "sourceDrafts"
           ? loadAdminSourceDraftCatalog(normalizedSecret)
           : Promise.resolve([] as AdminSourceDraft[]),
-        adminJsonRequest<{ ok: boolean; rows: AdminContentReviewEventRow[] }>("/api/admin/content-review-events?limit=250", normalizedSecret, { signal: loadController.signal })
+        loadSupplementalRows<AdminContentReviewEventRow>("/api/admin/content-review-events?limit=250", normalizedSecret, loadController.signal)
       ]);
 
       if (loadSequence !== dashboardLoadSequenceRef.current || loadController.signal.aborted) return "cancelled" as const;
@@ -4661,10 +4672,9 @@ export function GeneratedContentAdminDashboard() {
         throw generatedResult.reason;
       }
 
-      const review: { ok?: boolean; rows?: AdminReviewRecord[]; records?: AdminReviewRecord[]; counts?: unknown } = reviewResult.status === "fulfilled" ? reviewResult.value : { rows: [] };
-      const usersPayload = usersResult.status === "fulfilled" ? usersResult.value : { rows: [] };
+      const reviewRowsPayload = reviewResult.status === "fulfilled" ? reviewResult.value : [];
+      const userRowsPayload = usersResult.status === "fulfilled" ? usersResult.value : [];
       const generatedRows = generatedResult.value;
-      const reviewRowsPayload = review.rows ?? review.records ?? [];
       setRows((current) => mergeContentInventory(current, generatedRows, false));
       loadedInventoryKeyRef.current = inventoryQueryKey;
       setAllRowsLoaded(true);
@@ -4672,9 +4682,9 @@ export function GeneratedContentAdminDashboard() {
         const rawGlobalRow = generatedRows.find((row) => row.id === record.id || row.content_key === record.contentKey);
         return { ...record, rawGlobalRow };
       }));
-      setUserRows(usersPayload.rows ?? []);
+      setUserRows(userRowsPayload);
       if (runtimeReviewResult.status === "fulfilled") {
-        setSharedLiveOmittedSections(runtimeReviewResult.value.rows.map(sharedLiveOmissionItem));
+        setSharedLiveOmittedSections(runtimeReviewResult.value.map(sharedLiveOmissionItem));
         setSharedLiveOmittedSectionsLoaded(true);
       } else {
         setSharedLiveOmittedSections([]);
@@ -4697,12 +4707,13 @@ export function GeneratedContentAdminDashboard() {
       }
 
       const partialWarnings = [
-        reviewResult.status === "rejected" ? "review records failed" : "",
-        usersResult.status === "rejected" ? "user rows failed" : "",
-        sourceDraftResult.status === "rejected" ? "Sky source drafts failed" : ""
+        reviewResult.status === "rejected" ? "Review records" : "",
+        usersResult.status === "rejected" ? "User content" : "",
+        sourceDraftResult.status === "rejected" ? "Sky source drafts" : "",
+        runtimeReviewResult.status === "rejected" ? "Reader omission reports" : ""
       ].filter(Boolean);
+      setPartialLoadFailures(partialWarnings);
       setLoadState("loaded");
-      if (partialWarnings.length) setMessage(`Partial load: ${partialWarnings.join(", ")}.`);
       return "loaded" as const;
     } catch (error) {
       if (loadSequence !== dashboardLoadSequenceRef.current || loadController.signal.aborted) return "cancelled" as const;
@@ -6985,7 +6996,7 @@ export function GeneratedContentAdminDashboard() {
         </details>
       </nav>
       <section
-        className={`admin-sidebar-status is-${inventoryLoading ? "pending" : loadError ? "error" : loadState === "loaded" ? "ok" : loadState === "accessDenied" || loadState === "error" ? "error" : "pending"}`}
+        className={`admin-sidebar-status is-${inventoryLoading ? "pending" : loadError || partialLoadFailures.length ? "error" : loadState === "loaded" ? "ok" : loadState === "accessDenied" || loadState === "error" ? "error" : "pending"}`}
         aria-label="Admin status"
         title={`Fallback package ${hookCatalogPackageVersion}`}
       >
@@ -6993,7 +7004,7 @@ export function GeneratedContentAdminDashboard() {
         <span>
           {inventoryLoading
             ? `Loading… ${rows.length.toLocaleString()} rows`
-            : loadState === "loaded" && loadError
+            : loadState === "loaded" && (loadError || partialLoadFailures.length > 0)
               ? `Incomplete · ${rows.length.toLocaleString()} rows`
               : loadState === "loaded"
               ? `Connected · ${rows.length.toLocaleString()} rows`
@@ -7015,6 +7026,12 @@ export function GeneratedContentAdminDashboard() {
     <main className="admin-dashboard" {...studioShellAttributes(studioTheme, studioPalette)}>
       {nav}
       <section className={`admin-main${activePage === "aiWriting" ? " admin-main--ai-writing" : ""}${isCreateMenuOpen ? " admin-create-menu-open" : ""}`}>
+        {partialLoadFailures.length > 0 && (
+          <div className="admin-page-notice" role="alert">
+            <span>Some content could not load: {partialLoadFailures.join(", ")}. Loaded content is still available.</span>
+            <StudioButton type="button" disabled={loadState === "loading"} onClick={() => void loadDashboardData()}>Retry failed loads</StudioButton>
+          </div>
+        )}
         {message && (
           <div
             className={loadState === "error" || loadState === "accessDenied" ? "admin-page-notice" : `admin-save-toast ${message.includes("Partial load:") || loadState === "idle" ? "is-warning" : ""}`}

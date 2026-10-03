@@ -72,7 +72,7 @@ assert.match(migration, /enable row level security/u);
 assert.match(migration, /revoke all on table public\.content_runtime_review_events from anon, authenticated/u);
 assert.doesNotMatch(migrationDdl, /\buser_id\b|birth|longitude|latitude|timezone|prose/iu);
 assert.match(userEndpoint, /\/auth\/v1\/user/u, "The write endpoint must authenticate the reader session.");
-assert.match(adminEndpoint, /isContentAdminAuthorized/u, "The queue endpoint must remain admin-only.");
+assert.match(adminEndpoint, /requireContentAdmin/u, "The queue endpoint must remain admin-only.");
 assert.match(reporter, /recordLiveOmittedSections\(flags, context\)/u, "Remote reporting must preserve the local fallback first.");
 
 console.log("Shared omitted-section queue passed: authenticated writes are redacted, deduplicated, RLS-protected, and admin-only to read.");

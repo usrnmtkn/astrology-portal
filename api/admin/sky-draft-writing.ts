@@ -1,6 +1,6 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
 import { createHash, randomUUID } from "node:crypto";
-import { isContentAdminAuthorized } from "../_lib/admin-auth.js";
+import { requireContentAdmin } from "../_lib/admin-auth.js";
 import { loadLocalWebEnv } from "../_lib/local-env.js";
 import { adminFetchJson, adminStorageRows, AdminHttpError, adminErrorStatus, adminErrorMessage, readAdminJsonBody, sendAdminJson, sendAdminMethodNotAllowed } from "../_lib/admin-http.js";
 import { approvedStudioPairSources, studioStorage } from "../_lib/sky-studio-sources.js";
@@ -14,8 +14,7 @@ function nextVersion(previous?: string) {
 export default async function handler(req: IncomingMessage, res: ServerResponse) {
     if (req.method !== "POST")
         return sendAdminMethodNotAllowed(res, ["POST"]);
-    if (!(await isContentAdminAuthorized(req)))
-        return sendAdminJson(res, 401, { ok: false, error: "Unauthorized." });
+    if (!(await requireContentAdmin(req, res))) return;
     try {
         const input = await readAdminJsonBody<Record<string, any>>(req);
         if (!input || typeof input !== "object" || Array.isArray(input) || !["generate", "recheck"].includes(input.action)

@@ -1,11 +1,11 @@
 import type { IncomingMessage, ServerResponse } from 'node:http';
-import { isContentAdminAuthorized } from '../_lib/admin-auth.js';
+import { requireContentAdmin } from '../_lib/admin-auth.js';
 import { loadLocalWebEnv } from '../_lib/local-env.js';
 import { AdminHttpError, adminFetchJson, adminErrorStatus, sendAdminJson } from '../_lib/admin-http.js';
 loadLocalWebEnv();
 
 export default async function handler(req: IncomingMessage, res: ServerResponse) {
-  if (!await isContentAdminAuthorized(req)) return sendAdminJson(res, 401, { ok: false, error: 'Unauthorized.' });
+  if (!await requireContentAdmin(req, res)) return;
   if (req.method !== 'GET') return sendAdminJson(res, 405, { ok: false, error: 'Use GET.' });
   try {
     const query = new URL(req.url ?? '', 'https://studio.invalid').searchParams;

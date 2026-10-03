@@ -6,11 +6,11 @@ import { contentLiveStatuses } from "../_lib/content-live-status.js";
 import { loadLocalWebEnv } from "../_lib/local-env.js";
 loadLocalWebEnv();
 import type { IncomingMessage, ServerResponse } from "node:http";
-import { isContentAdminAuthorized } from "../_lib/admin-auth.js";
+import { requireContentAdmin } from "../_lib/admin-auth.js";
 import { AdminHttpError, adminFetchJson, adminErrorStatus, readAdminJsonBody, sendAdminJson, adminErrorMessage } from "../_lib/admin-http.js";
 
 export default async function handler(req: IncomingMessage, res: ServerResponse) {
-  if (!await isContentAdminAuthorized(req)) return sendAdminJson(res, 401, { ok: false, error: "Unauthorized." });
+  if (!await requireContentAdmin(req, res)) return;
   if (req.method !== "POST") return sendAdminJson(res, 405, { ok: false, error: "Use POST." });
   try {
     const body = await readAdminJsonBody<{ action?: string; contentKey?: string; id?: string; expectedUpdatedAt?: string }>(req);

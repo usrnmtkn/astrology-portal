@@ -1,5 +1,5 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
-import { isContentAdminAuthorized } from "../_lib/admin-auth.js";
+import { requireContentAdmin } from "../_lib/admin-auth.js";
 import { AdminHttpError, adminErrorMessage, adminErrorStatus, readAdminJsonBody, sendAdminJson, sendAdminMethodNotAllowed } from "../_lib/admin-http.js";
 import { currentSkyFacts, type SkySnapshot } from "../_lib/current-sky.js";
 import { loadSkySourceSnapshot } from "../_lib/content-generation.js";
@@ -171,10 +171,7 @@ async function buildSkyFacts(input: ContentFactsInput) {
 }
 
 export default async function handler(req: IncomingMessage, res: ServerResponse) {
-  if (!await isContentAdminAuthorized(req)) {
-    sendAdminJson(res, 401, { ok: false, error: "Unauthorized." });
-    return;
-  }
+  if (!await requireContentAdmin(req, res)) return;
   if (req.method !== "POST") {
     sendAdminMethodNotAllowed(res, ["POST"]);
     return;
