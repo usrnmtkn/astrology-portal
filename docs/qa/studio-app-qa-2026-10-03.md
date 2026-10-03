@@ -33,3 +33,9 @@ Independent checkouts with their own `npm ci` installations; both web builds use
 | Deferred web horoscope editor | 10,878 | 11,026 | +148 |
 
 Allocate 750 bytes above the previous admin aggregate cap and 100 bytes above the deferred horoscope editor cap for these recovery/routing fixes. All initial-entry, reader-startup, CSS, other individual chunks, memory graph and forbidden-payload gates stay unchanged. The browser-fixture web build remains within the prior aggregate budget. Hosted CI without the browser-only feature flag measures 3,521,300 aggregate bytes, 50 above that cap; allocate 250 aggregate bytes (3,521,500 total), leaving 200 measured bytes.
+
+## Integration with the Moon editor release
+
+Main `69bf0c857` landed during QA. Its Moon source discovery/editor changes merge with the cancellation and dedicated-editor routing fixes; both actual-handler tests remain in the full API script. The combined fresh build measures 785,002 admin aggregate and 3,521,711 web aggregate gzip bytes. Preserve the two feature allocations at 785,250 and 3,522,000 aggregate bytes. Combined admin entry measures 764,539 raw / 222,535 gzip; allocate 500 raw and 250 gzip bytes above the current-main entry caps, leaving 211 raw and 215 gzip bytes. Reader startup, CSS and other chunk limits remain unchanged.
+
+The combined fresh web build is retested for exact dedicated-editor save/reload, late document cancellation, health-page retry/access states and Moon source discovery/edit/reload on desktop/mobile and light/dark themes. The PR records the final exact-head API and hosted results. Calendar and Learn also passed 17 additional browser checks, including delayed content, navigation, Moon transitions and the actual reader API.

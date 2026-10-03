@@ -1,6 +1,7 @@
 import type { CompositionMapRow } from "./compositionMap";
 import { effectivePackageRecord, packageValueAt, skyFallbackWorkspace } from "./skyFallbackWorkspace";
 import { skyV4StudioDefinition } from "./skyV4ContentStudio";
+import { skyMoonWriteupSection } from "./skyMoonWriteup";
 import type { SkyEditorialSection } from "./skyArticleOutlines";
 // @ts-ignore Shared canonical evergreen layout used by the reader.
 import { isSkyEvergreenSource, skyPlacementArticlePath, skyEvergreenFields, skyEvergreenLayout, SKY_EVERGREEN_SECTIONS_PATH } from "../../web/src/content/fallbackArchitectureV3/resolver/skyEvergreenSections.mjs";
@@ -20,6 +21,9 @@ export type SkyPlacementAssemblyField = {
 
 export function skyPlacementAssemblyFields(row: CompositionMapRow): SkyPlacementAssemblyField[] {
   const source = effectivePackageRecord(row.sections);
+  const moonSection = skyMoonWriteupSection(row.content_key);
+  if (moonSection) return [{ row, path: "body_you", label: moonSection.label,
+    value: packageValueAt(source, "body_you"), kind: "hook" }];
   const definition = skyV4StudioDefinition(source).editableFields;
   const editable = definition.length ? definition : (skyFallbackWorkspace(row.content_key, row.sections)?.fields ?? []).map(field => ({ path: field.key, label: field.label }));
   if (!editable.length && typeof source.body_you === "string") editable.push({ path: "body_you", label: "Placement passage" });

@@ -1,4 +1,5 @@
 import { astro101ResolvedReaderPath, isAstro101ContentKey } from "../../web/src/content/astro101";
+import { skyMoonWriteupSection } from "./skyMoonWriteup";
 
 export type ArticleWorkspaceRow = {
   block_type?: string | null;
@@ -29,6 +30,7 @@ export function isAstro101ContentRow(row: Pick<ArticleWorkspaceRow, "content_key
 
 export function isSkyWriteupContentRow(row: ArticleWorkspaceRow) {
   const key = row.content_key.toLowerCase();
+  if (skyMoonWriteupSection(key)) return true;
   return row.block_type === "sky_placement"
     || row.block_type === "sky_article"
     || /^sky\.placement\./u.test(key)

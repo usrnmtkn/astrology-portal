@@ -231,6 +231,7 @@ import type {
 } from "./writingSurfaceSourceMap";
 import type { CompositionEditorContext } from "./CompositionMapWorkspace";
 import type { SkyPlacementSelection } from "./skyPlacementAssembly";
+import { skyMoonWriteupSection } from "./skyMoonWriteup";
 import { memoByObject, naturalCollator } from "./derivedCache";
 // Presentation layers that must ship with the dashboard itself. The production
 // route is served by @tldr/web, which lazy-loads this component and never ran
@@ -1238,7 +1239,11 @@ function isAstro101LibraryRow(row: AdminGeneratedContentRow) {
 }
 
 function isSkyWriteupLibraryRow(row: AdminGeneratedContentRow) {
-  return !isRetiredAdminRow(row) && isSkyWriteupContentRow(row);
+  // Moon's reader uses the three section sources, not this generic starter.
+  // Keep the unused starter accessible in Content Library, not as a second
+  // misleading Moon write-up beside the actual article sections.
+  return !/^sky-placement\/article\/moon\//u.test(row.content_key)
+    && !isRetiredAdminRow(row) && isSkyWriteupContentRow(row);
 }
 
 function reviewRecordFromGeneratedRow(row: AdminGeneratedContentRow): AdminReviewRecord {
@@ -3465,7 +3470,8 @@ export function GeneratedContentAdminDashboard() {
     (skyPlacementBody === "all" || skyWriteupContextForRow(row)?.planet === skyPlacementBody)
     && (skyPlacementSign === "all" || skyWriteupContextForRow(row)?.sign === skyPlacementSign || /^sky-placement\/retrograde\/[^/]+$/.test(row.content_key))
     && (skyWriteupSubjectFilter === "all" || skyWriteupSubjectTypeForRow(row) === skyWriteupSubjectFilter)
-    && (skyWriteupMotionFilter === "all" || /^sky-placement\/article\//u.test(row.content_key) || contentMotion(row) === skyWriteupMotionFilter)
+    && (skyWriteupMotionFilter === "all" || /^sky-placement\/article\//u.test(row.content_key)
+      || (skyMoonWriteupSection(row.content_key) && skyWriteupMotionFilter === "direct") || contentMotion(row) === skyWriteupMotionFilter)
     && (skyWriteupDestinationFilter === "all" || contentDestinations(row).has(skyWriteupDestinationFilter))
     && matchesAdminSearch(skyWriteupSearchText(row), skyWriteupQuery)
   )), skyWriteupSort), [skyPlacementBody, skyPlacementSign, skyWriteupDestinationFilter, skyWriteupMotionFilter, skyWriteupQuery, skyWriteupRows, skyWriteupSort, skyWriteupSubjectFilter]);
@@ -9537,11 +9543,12 @@ export function GeneratedContentAdminDashboard() {
               const compatibilityIdentity = showCompatibilityIdentity ? compatibilityBrowseIdentityForRow(row) : null;
               const placement = activePage === "skyWriteups" ? skyWriteupContextForRow(row) : null;
               const lunation = placement ? skyLunationContextForRow(row) : null;
+              const moonSection = placement ? skyMoonWriteupSection(row.content_key) : null;
               const placementLabel = placement?.sign && !row.content_key.includes("/station/")
                 ? lunation ? `${titleFromKey(placement.sign)} ${titleFromKey(lunation.kind)}`
                   : `${titleFromKey(placement.planet)} in ${titleFromKey(placement.sign)}${contentMotion(row) === "unspecified" ? "" : ` · ${titleFromKey(contentMotion(row))}`}`
                 : null;
-              const displayTitle = placementLabel ?? compatibilityIdentity?.title ?? rowTitle(row);
+              const displayTitle = moonSection ? `Moon in ${titleFromKey(moonSection.sign)} · ${moonSection.label}` : placementLabel ?? compatibilityIdentity?.title ?? rowTitle(row);
               const placementKind = placement ? row.content_key.startsWith("sky/article-template/") ? "Placement template"
                 : row.content_key.startsWith("sky/article-edition/") ? "Saved placement edition"
                   : lunation ? "Lunation macro" : "Sky placement" : null;
