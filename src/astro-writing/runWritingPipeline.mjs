@@ -76,6 +76,7 @@ export async function runWritingPipeline({
   excludedEvidenceContentKeys = [],
   preferredEvidenceContentKeys = [],
   primaryRegisterContentKeys = [],
+  includeAllPrimaryRegisterPassages = false,
   requirePrimaryRegister = false,
   phraseEvidence = [],
   writingProfile = null
@@ -135,6 +136,7 @@ export async function runWritingPipeline({
       excludedEvidenceContentKeys,
       preferredEvidenceContentKeys,
       primaryRegisterContentKeys,
+      includeAllPrimaryRegisterPassages,
       requirePrimaryRegister,
       phraseEvidence
     });

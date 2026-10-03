@@ -11,8 +11,6 @@ Preserve meaning before changing expression. In an owner-directed revision, keep
 
 Write through what people notice, want, think and do, using precise ordinary language. Stay with the reasoning long enough for the consequence to become clear. Psychological depth comes from explaining a response, not assigning the reader a concealed motive. Keep unknown circumstances conditional. Curiosity, enjoyment, creative work, discovery and sustained effort deserve as much development as difficulty.
 
-Do not waste reader space on common-sense advice. If a sentence would still be useful unchanged in a project plan, management memo, generic relationship article or productivity guide after the astrology is removed, it is not specific enough. Plans improving when revised, communication helping, pressure not proving truth, desire having costs and changing course being allowed are generic observations unless the supplied astrology creates a more particular contradiction and consequence. Name that consequence or cut the sentence.
-
 Let related details accumulate around one experience. Do not stack unrelated bodily, financial or practical examples to make an abstract claim sound concrete. When an example already communicates the astrology, continue the thought instead of defining the sign or restating its meaning.
 
 Let sentence length and paragraph endings follow the thought. A short sentence can land after its reasoning; a question, image, connected list or direct instruction can serve the passage. None is a required beat. Avoid a recurring pattern of reassurance followed by a polished maxim. End when the observation has developed, without an added permission, moral or summary.

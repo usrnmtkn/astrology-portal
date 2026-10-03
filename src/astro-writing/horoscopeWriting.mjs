@@ -142,6 +142,7 @@ export function prepareHoroscopeWriting(row,{studioCorrections=[],feedbackReceip
       ownerPassageRelevanceTier:seasonal?'owner-selected-seasonal':relevant.tier,sceneExamples:scenes.selected,samePlanetSignSceneAvailableCount:scenes.counts.samePlanetSignSceneAvailable,
       sceneEvidenceInventoryCounts:scenes.counts,corrections,phraseEvidence:sources.phrases,
       primaryRegisterContentKeys:primary.map(e=>e.contentKey),requirePrimaryRegister:true,
+      includeAllPrimaryRegisterPassages:edition.window.period==='monthly'&&overview,
       preferredEvidenceContentKeys:(edition.window.period==='monthly'&&overview
         ?signForecasts.filter(e=>e.horoscopePeriod==='monthly').map(e=>e.contentKey)
         :signForecasts.filter(e=>e.horoscopeAudienceSign===rising).map(e=>e.contentKey))};

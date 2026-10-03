@@ -12,10 +12,22 @@ import {validateHoroscopeReading} from '../src/astro-writing/horoscopeValidation
 import {MONTHLY_HOROSCOPE_FORMAT,composeMonthlyHoroscopeDraft} from '../src/astro-writing/monthlyHoroscopeFormat.mjs';
 import {getAstrodienstSky} from '../apps/web/src/services/ephemeris';
 import {validateMonthlySynthesis,applyMonthlySynthesis,MONTHLY_SYNTHESIS_SLOT} from '../src/astro-writing/monthlyHoroscopeSynthesis.mjs';
+import {loadMonthlyHoroscopeEvidence,MONTHLY_EVIDENCE_MANIFEST} from '../src/astro-writing/monthlyHoroscopeEvidence.mjs';
 
 const packaged=new Set(fs.globSync(JSON.parse(fs.readFileSync('vercel.json','utf8')).functions['api/admin/horoscope-writing.ts'].includeFiles));
-for(const source of ['src/astro-writing/horoscopeOverviewInput.mjs','src/astro-writing/monthlyHoroscopeFormat.mjs','src/astro-writing/monthlyHoroscopeGuidance.mjs','src/astro-writing/monthlyHoroscopeEvidence.mjs','src/astro-writing/horoscopeAspectClaims.mjs','packages/astro-knowledge/data/primitives/aspects.json','data/writing/seasonal-horoscope-units.json'])assert(packaged.has(source),source);
+for(const source of ['src/astro-writing/horoscopeOverviewInput.mjs','src/astro-writing/monthlyHoroscopeFormat.mjs','src/astro-writing/monthlyHoroscopeGuidance.mjs','src/astro-writing/monthlyHoroscopeEvidence.mjs','src/astro-writing/horoscopeAspectClaims.mjs','packages/astro-knowledge/data/primitives/aspects.json','data/writing/seasonal-horoscope-units.json','data/writing/monthly-horoscope-units.json'])assert(packaged.has(source),source);
 installHoroscopeWriterFixture();
+const readSource=(path:string)=>fs.readFileSync(path,'utf8');
+const [monthlySource]=loadMonthlyHoroscopeEvidence(readSource);
+const monthlyArticle=readSource(monthlySource.sourcePath);
+assert.equal(monthlySource.text,monthlyArticle.slice(0,monthlyArticle.indexOf('\n#### Key Dates')).trim(),'Complete monthly overview ends at the separate calendar, not inside the essay');
+assert.equal(monthlySource.wordCount,764);
+assert.throws(()=>loadMonthlyHoroscopeEvidence(path=>path===monthlySource.sourcePath?readSource(path)+' changed':readSource(path)),/integrity failed/);
+assert.throws(()=>loadMonthlyHoroscopeEvidence(path=>{
+ if(path!==MONTHLY_EVIDENCE_MANIFEST)return readSource(path);
+ const shortened=JSON.parse(readSource(path));shortened.sources[0].overview.end-=100;
+ return JSON.stringify(shortened);
+}),/complete monthly owner passage changed/);
 assert.deepEqual(horoscopeCivilWindow('monthly','2028-02-20','Australia/Sydney'),{start:'2028-02-01',end:'2028-03-01'});
 assert.deepEqual(horoscopeCivilWindow('monthly','2026-12-31','UTC'),{start:'2026-12-01',end:'2027-01-01'});
 const checkedAspects=new Set<string>();
@@ -96,7 +108,7 @@ assert(!request.input.includes('BEGIN EXACT OCTOBER TLDR'),'Starter profiles nev
 assert(request.input.includes('Preserve meaning before changing expression.'));
 assert(request.input.includes('Do not turn every development into a reason to reconsider an attachment.'));
 assert(request.input.includes('MONTHLY SPECIFICITY CONTRACT'));
-assert(request.input.includes('project plan, management memo, generic relationship article or productivity guide'));
+assert(request.input.includes('roadmap, management memo or generic relationship article'));
 
 assert(!/450[–-]700/.test(profile.structure),'Monthly depth must not be compressed to the old word-count target');
 assert(request.instructions.includes('HOROSCOPE EDITORIAL AUTHORITY'));
@@ -106,7 +118,8 @@ for(const unrelated of ['SKY PLACEMENT ARTICLE SPINE','SPINE QUALITY GATES','NEG
 for(const boundary of ['factual-safety-v1','grammar-v1','source-licensing-v1','register-direction-v1','unsupported-astrology-claims-v1'])assert(request.instructions.includes(boundary),boundary);
 assertHoroscopeRequestEvidence(request.input);
 const essays=JSON.parse(request.input.match(/COMPLETE OWNER COLLECTIVE ESSAYS — PRIMARY PROSE EVIDENCE\n([^\n]+)\n\n/)[1]);
-assert.equal(essays.length,3);
+assert.equal(essays.length,4);
+for(const season of ['pisces','gemini','virgo'])assert(essays.some((essay:any)=>essay.id===`owner-seasonal:${season}-season-2025:overview`),'Designated primary essays remain complete primary evidence');
 assert(essays.some((essay:any)=>essay.id==='owner-monthly-register:monthly-overview-june-2025'),'A same-format owner monthly overview must reach the writer as primary prose evidence');
 for(const essay of essays){
  const source=fs.readFileSync(essay.sourcePath,'utf8');
@@ -202,6 +215,47 @@ result=await action('poll');assert.equal(result.status,200,JSON.stringify(result
 assert.equal(row.sections.horoscopeEdition.passages[0].body,legacyDraft.body);
 assert.equal(writerFixture.calls,callsBeforeRecovery);
 console.log('PASS monthly TLDR: required provider field, exact summary-before-forecast preservation, one-call sync/poll parity, missing-field recovery and legacy response compatibility.');
+
+// A deployment can change the instruction version while a paid v1 planner is
+// still running. Retrieve it, then continue its exact saved prose request.
+await reset();
+const oldPlan=await action('prepare');row=oldPlan.payload.rows[0];
+result=await action('generate',{sign:'overview',approvedPlanHash:oldPlan.payload.plan.planHash});row=result.payload.rows[0];
+const oldOperation=store.rows.get(row.id)!.source_snapshot.horoscopeGeneration.active;
+oldOperation.workflow='monthly-synthesis/v1';oldOperation.outputFormat='monthly-synthesis/v1';
+oldOperation.receipt.version='horoscope-writer/v16';
+oldOperation.draftConfig.reasoningEffort='low';
+oldOperation.draftRequest.instructions+='\nSynthetic stored v1 instruction.';
+const oldDraft=structuredClone(oldOperation.draftRequest),oldCalls=writerFixture.calls;
+writerFixture.nextResult=providerResult(fixtureMonthlySynthesis(oldOperation.synthesisFacts));
+result=await action('poll');assert.equal(result.status,202,JSON.stringify(result.payload));row=result.payload.rows[0];
+assert.equal(row.source_snapshot.horoscopeGeneration.active.synthesisReceipt.version,'monthly-synthesis/v1');
+assert.equal(writerFixture.calls,oldCalls);
+result=await action('continue');assert.equal(result.status,202,JSON.stringify(result.payload));row=result.payload.rows[0];
+const resumedRequest=writerFixture.requests.get(row.source_snapshot.horoscopeGeneration.active.responseId);
+assert.equal(resumedRequest.instructions,oldDraft.instructions);
+assert.deepEqual(resumedRequest.reasoning,{effort:'low'});
+assert.deepEqual(resumedRequest.text.format.schema,oldDraft.schema);
+assert.equal(writerFixture.calls,oldCalls+1,'Only the explicitly continued prose request starts');
+// If that old prose fails, a new v2 run must not reuse its v1 synthesis.
+writerFixture.nextResult={status:'incomplete',incomplete_details:{reason:'max_output_tokens'},output:[]};
+result=await action('poll');assert.equal(result.status,422);row=result.payload.rows[0];
+assert.equal(row.source_snapshot.horoscopeGeneration.lastError.operation.synthesisReceipt.version,'monthly-synthesis/v1');
+const newPlan=await action('prepare');row=newPlan.payload.rows[0];
+result=await action('generate',{sign:'overview',approvedPlanHash:newPlan.payload.plan.planHash});assert.equal(result.status,202);row=result.payload.rows[0];
+assert.equal(row.source_snapshot.horoscopeGeneration.active.workflow,'monthly-synthesis/v2');
+assert.equal(row.source_snapshot.horoscopeGeneration.active.synthesisReceipt,null);
+assert.equal(writerFixture.calls,oldCalls+2,'A newly approved v2 run plans again instead of reusing a v1 brief');
+result=await action('poll');assert.equal(result.status,202);row=result.payload.rows[0];
+result=await action('continue');assert.equal(result.status,202);row=result.payload.rows[0];
+// v1 prose already in flight at deploy time must also finish unchanged.
+store.rows.get(row.id)!.source_snapshot.horoscopeGeneration.active.workflow='monthly-synthesis/v1';
+const completionCalls=writerFixture.calls;
+writerFixture.nextResult=providerResult(good);
+result=await action('poll');assert.equal(result.status,200,JSON.stringify(result.payload));row=result.payload.rows[0];
+assert.equal(row.sections.horoscopeEdition.passages[0].body,composeMonthlyHoroscopeDraft(good).body);
+assert.equal(writerFixture.calls,completionCalls);
+console.log('PASS monthly version transition: v1 planner/prose recovery, saved settings preserved, no automatic dispatch and no v1 synthesis reuse in a new v2 run.');
 
 // Planning failure never reaches prose. Recovery uses exact saved facts and IDs.
 await reset();
