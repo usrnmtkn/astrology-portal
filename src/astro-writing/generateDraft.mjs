@@ -10,7 +10,7 @@ import { attachGenerationMetadata, writeGenerationMetadata } from "./generationM
 import { assertArgumentOutlineApproved } from "./argumentGate.mjs";
 import { assertSurfaceRegisterContract } from "./surfaceRegisterContract.mjs";
 import { effectiveRulePrompt } from "./effectiveRuleGovernance.mjs";
-import { resolveStudioWritingProfile } from "./studioWritingProfileReceipt.mjs";
+import { resolveStudioWritingProfile, studioWritingProfileReceipt } from "./studioWritingProfileReceipt.mjs";
 import { buildHoroscopeDraftInput, horoscopeDraftSchema, HOROSCOPE_EDITORIAL_AUTHORITY } from './horoscopeDraftInput.mjs';
 import { buildLunationDraftInput, LUNATION_DRAFT_SCHEMA } from './lunationDraftInput.mjs';
 import { assertLunationWritingFacts } from './lunationWritingFacts.mjs';
@@ -242,7 +242,7 @@ export async function generateDraft({
     argumentOutline,
     argumentOutlineHash: argumentOutline.approvedOutlineHash,
     contentSpineId: spine.id,
-    ...(writingProfile ? { studioWritingProfile: resolveStudioWritingProfile(writingProfile,{allowStarter:family==='horoscope'}).receipt } : {})
+    ...(writingProfile ? { studioWritingProfile: studioWritingProfileReceipt(writingProfile,{allowStarter:family==='horoscope'}) } : {})
   }, writeGenerationMetadata({
     role,
     provider: modelClient.provider ?? null,

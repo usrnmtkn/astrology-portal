@@ -21,7 +21,7 @@ import {loadSeasonalHoroscopeEvidence} from './seasonalHoroscopeEvidence.mjs';
 import {loadSeasonalArgumentEvidence} from './seasonalArgumentEvidence.mjs';
 
 const root=fileURLToPath(new URL('../../',import.meta.url));
-export const horoscopeWritingVersion='horoscope-writer/v15';
+export const horoscopeWritingVersion='horoscope-writer/v16';
 const digest=value=>createHash('sha256').update(typeof value==='string'?value:horoscopeCanonicalJson(value)).digest('hex');
 const repositorySources=new Map();
 const preparedPlans=new Map();

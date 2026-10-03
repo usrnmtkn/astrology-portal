@@ -5,9 +5,12 @@ import {monthlyHoroscopeProfile} from './monthlyHoroscopeGuidance.mjs';
 export const HOROSCOPE_PROFILE_PREFIX = "studio-writing-profile/horoscope/";
 export const HOROSCOPE_PROFILE_SCHEMA = "horoscope-writing-profile/v1";
 export const HOROSCOPE_PERIODS = Object.freeze(["daily", "weekly", "monthly", "seasonal"]);
-export const HOROSCOPE_PROMPT_VARIABLES = Object.freeze(["period", "voiceGuidance", "structure", "sourceGuidance"]);
+export const HOROSCOPE_PROFILE_PROMPT_VARIABLES = Object.freeze(["period", "voiceGuidance", "structure", "sourceGuidance"]);
+export const HOROSCOPE_RUN_PROMPT_VARIABLES = Object.freeze(["primaryOwnerVoiceSources", "supportingOwnerVoiceSources", "ownerPositiveComparisons", "ownerCorrections", "governedFacts"]);
+export const HOROSCOPE_PROMPT_VARIABLES = Object.freeze([...HOROSCOPE_PROFILE_PROMPT_VARIABLES, ...HOROSCOPE_RUN_PROMPT_VARIABLES]);
 export const HOROSCOPE_PROFILE_FIELDS = Object.freeze(["voiceGuidance", "structure", "sourceGuidance", "prompt"]);
 export const HOROSCOPE_PROFILE_FIELD_LIMIT = 32000;
+const promptVariable = /\{\{\s*([^{}]+?)\s*\}\}/gu;
 
 export const HOROSCOPE_PROSE_BEHAVIOR_GUIDANCE = "Learn from the complete owner passage: its point of view, movement of thought, imagery, rhythm and ending. A short opening, early astrology, a question, a list or a direct instruction may work when it develops this particular reading. Do not ban those forms or turn any of them into a formula. Vary sentence length with the meaning, rather than smoothing every paragraph into the same measured rhythm. Keep a sensory image coherent while it carries the thought. Let an example make its point without immediately explaining it again. Precision can carry emotional, spiritual or philosophical depth; it does not always require a practical task. Let the ending arrive from what has developed, without a compulsory moral or advice line. Current saved vocabulary preferences take precedence over older source wording. These are editorial directions for owner review, not automatic quality verdicts.";
 
@@ -52,20 +55,32 @@ export function validateHoroscopeProfile(value) {
     if (typeof value[field] !== "string" || !value[field].trim() || value[field].length > HOROSCOPE_PROFILE_FIELD_LIMIT) {
       throw new Error(`${field} must contain between 1 and ${HOROSCOPE_PROFILE_FIELD_LIMIT} characters.`);
     }
-    const tokens = [...value[field].matchAll(/\{\{\s*([^{}]+?)\s*\}\}/gu)];
+    const tokens = [...value[field].matchAll(promptVariable)];
     if (field !== "prompt" && tokens.length) throw new Error("Prompt variables belong in the Prompt field only.");
     if (tokens.some(match => !HOROSCOPE_PROMPT_VARIABLES.includes(match[1]))) throw new Error("The prompt contains an unknown variable.");
-    const rest = value[field].replace(/\{\{\s*([^{}]+?)\s*\}\}/gu, "");
+    for (const name of HOROSCOPE_RUN_PROMPT_VARIABLES) {
+      if (tokens.filter(match => match[1] === name).length > 1) throw new Error(`Use {{${name}}} only once.`);
+    }
+    const rest = value[field].replace(promptVariable, "");
     if (rest.includes("{{") || rest.includes("}}")) throw new Error("Close each prompt variable with matching braces.");
   }
-  for (const name of HOROSCOPE_PROMPT_VARIABLES) {
+  for (const name of HOROSCOPE_PROFILE_PROMPT_VARIABLES) {
     if (!new RegExp(`\\{\\{\\s*${name}\\s*\\}\\}`, "u").test(value.prompt)) throw new Error(`Keep {{${name}}} in the prompt so its guidance reaches the writer.`);
   }
   return { schema: value.schema, period: value.period, ...Object.fromEntries(HOROSCOPE_PROFILE_FIELDS.map(field => [field, value[field]])) };
 }
 
-/** Expand editorial variables once; facts/evidence/schema are supplied separately by the governed pipeline. */
-export function horoscopeEditorialPrompt(value) {
+/** Expand once. Source text is data, never a second template or caller-supplied facts. */
+export function horoscopeEditorialPrompt(value, runVariables = {}) {
   const profile = validateHoroscopeProfile(value);
-  return profile.prompt.replace(/\{\{\s*([^{}]+?)\s*\}\}/gu, (_, name) => profile[name]);
+  return profile.prompt.replace(promptVariable, (_, name) => {
+    const text = profile[name] ?? runVariables[name];
+    if (typeof text !== 'string' || !text.trim()) throw new Error(`The writing run must supply {{${name}}}.`);
+    return text;
+  });
+}
+
+/** The editor has no edition facts. Label run values honestly; never send these labels to a provider. */
+export function horoscopeEditorialPreview(value) {
+  return horoscopeEditorialPrompt(value, Object.fromEntries(HOROSCOPE_RUN_PROMPT_VARIABLES.map(name => [name, `[${name}: supplied when the writing run is prepared]`])));
 }
