@@ -39,11 +39,34 @@ Regression coverage:
   selected sources for 1,216 supported transit contacts.
 - `test-studio-listing-facts.mjs`: execute the migration in PostgreSQL twice,
   preserve full copy and timestamps, validate generated metadata and refresh.
-- `sky-placement-composition.spec.ts --grep Moon`: mobile/desktop, light/dark,
-  loading and failed-read retry, complete section discovery, real-handler
-  isolated save/publication/reload, and Live status with empty Friend fields.
+- `sky-placement-composition.spec.ts --grep Moon`: loading and failed-read retry.
+- `sky-moon-publication-reader.spec.ts`: mobile/desktop, light/dark, complete
+  section discovery, real-handler isolated save/publication/reload, Live status
+  with empty Friend fields, and complete rendered reader paragraphs.
 
 Release evidence belongs to the PR's exact tested head. Production acceptance
 must separately verify the main deployment revision and read-only loading of
 the owner's three Moon/Cancer sections. Do not save synthetic content in
 production to obtain that evidence.
+
+## Published Moon reader regression
+
+A follow-up reproduced a separate presentation failure on
+`/#sky/placement/moon/cancer`: the header and aspects rendered, but the complete
+published article was absent. The Moon renderer had resolved its three governed
+sources. A subsequent unsupported V4 Moon article lookup threw `NOT_RELEASED`;
+the caller incorrectly treated the published Moon opening as a withheld V4
+article and discarded the valid reading.
+
+The V4 publication guard now applies only to its article family. Moon continues
+to use the opening/lived/turn renderer and each source's existing exact-version
+publication checks. This does not change source prose, publication state, the
+resolver package, or calculation facts.
+
+The extended Moon browser flow failed before the change with no article body.
+It now follows Studio Save & publish through the actual isolated reader handler
+and the built web App. It asserts every paragraph in order, reloads the route,
+and separately covers retirement of the opening, middle, and ending across the
+four viewport/theme cases. It runs with the web reader CI suite rather than the
+standalone admin preview. The canonical Sun publication hydration regression
+also retains its no-stale-copy and retirement assertions.

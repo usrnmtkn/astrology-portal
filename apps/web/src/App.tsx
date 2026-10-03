@@ -5100,11 +5100,12 @@ function skyPlacementWritingSection(
     }
     // A governed publication can withhold the canonical article while its exact
     // row loads, or retire it. Neither state licenses an older article underneath.
+    // Moon uses its separately governed opening/lived/turn renderer above, not
+    // a V4 article. Its published opening must not suppress that valid reading.
     const canonicalKey = planet === "lilith" ? `sky-lilith/article/${sign}`
       : planet.endsWith("-node") ? `sky-nodes/${planet}/${sign}`
-      : planet === "moon" ? `fallback-hook/sky-placement-hook/moon/${sign}`
       : `sky-placement/article/${planet}/${sign}`;
-    if (contentPublication(canonicalKey)) return null;
+    if (planet !== "moon" && contentPublication(canonicalKey)) return null;
   }
   if (!rendered) return null;
   const motionCopy = skyPlacementMotionCopy(planet, hasRetrogradeGuidance, skyV4ReaderRenderer);
