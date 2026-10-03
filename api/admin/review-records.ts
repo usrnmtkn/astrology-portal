@@ -1,6 +1,7 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
 import { URL } from "node:url";
 import { requireContentAdmin } from "../_lib/admin-auth.js";
+import { sendSupplementalReviewRecords } from "../_lib/review-records-bootstrap.js";
 import { calculationApiBaseUrl, calculationApiFailureDetail } from "../_lib/calculation-api.js";
 import { AdminHttpError, adminErrorMessage, adminErrorStatus, adminFetchJson, adminStorageRows, sendAdminJson, sendAdminMethodNotAllowed } from "../_lib/admin-http.js";
 import { loadLocalWebEnv } from "../_lib/local-env.js";
@@ -1430,6 +1431,9 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
     if (status && status !== "all" && !["DRAFT", "REVIEWED", "LIVE", "ARCHIVED", "ERROR"].includes(status)) {
       throw new AdminHttpError(400, "status is not supported.");
     }
+    // Production can invoke this physical route directly instead of the fast
+    // rewrite. Initial Studio loading must stay cheap through either entry.
+    if (sendSupplementalReviewRecords(requestUrl, res)) return;
     const person = requestUrl.searchParams.get("person") ?? "";
     const timeZone = validTimeZone(requestUrl.searchParams.get("timeZone") || "America/New_York");
     const requestedStartDate = requestUrl.searchParams.get("startDate");

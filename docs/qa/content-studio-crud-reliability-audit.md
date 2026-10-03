@@ -16,6 +16,7 @@ writing, approvals, database grants, or production rows are changed by this audi
 | A timeout can falsely confirm an older draft | Recovery accepts any of ten drafts with matching submitted fields, without checking row identity or a newer version. Regressions for unrelated, unchanged, and older rows fail on the baseline. | Confirmation requires the same row or an explicitly linked revision, a newer timestamp, DRAFT state, the same content key, and exact submitted fields. Empty submissions cannot confirm a save. |
 | A committed edit with a lost network response is not recovered | Actual save handler commits, then the fixture drops the browser response. The previous client only recognized selected timeout text. | Network/protocol failures receive an explicit uncertain-save classification. One read verifies the saved result; the write is never repeated. Confirmed validation/version/auth rejections are not retried. |
 | Auth outages look like lost admin access | Actual inventory/save/publication/status handlers return 401 when Supabase Auth returns 503; Auth fetch and body lack a deadline. | Six-second verification deadline covers headers and body. Shared Studio authorization returns 503 for unavailable verification and 401 for rejected credentials. Both fail before storage access. Owner role/email rules and emergency-key checks stay intact. |
+| Production initial loading still calculates a month of sky | After PR 1120 deployed, the real `/api/admin/review-records?surface=upcomingAspects&status=all` request ran for 11.81 seconds with multiple eight-second calculation timeouts. Its eventual HTTP 200 arrived after the browser deadline. The separate fast handler's rewrite did not protect this physical route. Retry recovered, and the new persistent warning correctly exposed the failure. | Both physical review handlers now use the same authenticated early return for default supplemental loading, with no storage or calculation calls. Explicit date windows and Daily Glance retain their calculation workflow. |
 
 The auth boundary is shared by Studio content, writing, preview, history,
 publication, and report administration routes. Memory retains its stricter
@@ -68,6 +69,7 @@ Supabase logs were inspected in bounded windows on October 3, 2026, through
 | Deadline and false save confirmation | `test-studio-request-reliability.mts`: fake clock, dropped response, wrong/unchanged/older draft, confirmed 409 |
 | Auth timeout/outage/rejection | `test-studio-auth-availability.mts`: actual handler 503/401, no storage calls, stalled headers/body; existing owner/member auth gate |
 | Partial loading and recovery | `content-studio-recovery.spec.ts`: saved rows stay usable; persistent warning; successful retry; invalid JSON/row lists; mobile/desktop and both themes |
+| Default review bootstrap | `test-studio-review-bootstrap.mts`: invoke both physical handlers, require zero storage/calculation calls for initial loading, verify explicit two-day review still calculates both days, and enforce 401/405 before work. The public-route case failed before the fix. |
 | Reader/publication recovery | Fresh web-build publication recovery and Moon reader suites; exact published text after reload and retired-source behavior |
 | Styling and types | Admin/web typechecks and CSS/token audit |
 | Release | Exact PR-head hosted gates, main Git deployment, deployed asset tests with isolated storage, read-only real production checks |
@@ -85,6 +87,14 @@ authorization tests; and repository plus built-web privacy scans. The baseline
 failures were reproduced before the fixes (five save/client cases, six auth
 cases, and the deployed frontend's false `Connected` status with isolated APIs).
 Hosted checks and production verification are recorded on the release PR.
+
+PR 1120 passed all 42 applicable hosted checks and deployed from main
+`f2ec93f4c684eb001714a8a274c4c02e5b75815a`. Nine deployed-asset browser cases
+passed with isolated storage. Read-only production inspection found all three
+Moon sections Live and exposed the additional default review-route problem
+above. The production request evidence is Vercel request
+`clcb5-1791055584671-2d781566d6ab`, October 3 at 19:26:24 UTC. The successful
+retry is a recovery observation, not proof that its initial-load cause was fixed.
 
 ### Measured bundle allowance
 
