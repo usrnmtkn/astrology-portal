@@ -15,6 +15,8 @@ create or replace function public.generated_interpretations_studio_facts(
 ) returns jsonb
 language sql
 immutable
+security invoker
+set search_path = ''
 as $$
   select jsonb_strip_nulls(jsonb_build_object(
     'source', nullif(jsonb_strip_nulls(jsonb_build_object(

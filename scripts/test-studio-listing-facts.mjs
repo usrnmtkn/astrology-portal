@@ -5,6 +5,7 @@
 // its place in the review queue, and only a browser suite notices.
 import assert from "node:assert/strict";
 import fs from "node:fs";
+import { PGlite } from "@electric-sql/pglite";
 
 const ts = fs.readFileSync("api/_lib/studio-listing-facts.ts", "utf8");
 const sql = fs.readFileSync(
@@ -43,4 +44,32 @@ assert.match(ts, /body: null/u);
 assert.match(ts, /summary: null/u);
 assert.match(ts, /inventory_only: true/u);
 
-console.log("Studio listing-facts projection contract passed.");
+const db = new PGlite();
+try {
+  await db.exec(`create table public.generated_interpretations (
+    id int primary key, body text, updated_at timestamptz,
+    sections jsonb, source_snapshot jsonb, facts jsonb
+  );`);
+  await db.query(`insert into public.generated_interpretations values (1, $1, $2, $3, $4, $5)`, [
+    'Synthetic opening.\n\nSynthetic ending.', '2026-10-03T12:00:00Z',
+    { packageRecord: { contentKey: 'fallback-hook/sky-placement-hook/moon/cancer', review_status: 'approved', body_you: 'Private full document' } },
+    { sourceType: 'fixture', flags: ['fixture'], privateHistory: 'Must not enter listing' },
+    { fallbackArchitectureV3: true }
+  ]);
+  const before = (await db.query('select body,updated_at,sections,source_snapshot,facts from public.generated_interpretations')).rows;
+  await db.exec(sql);
+  await db.exec(sql); // Recovery must also work where the original migration already ran.
+  assert.deepEqual((await db.query('select body,updated_at,sections,source_snapshot,facts from public.generated_interpretations')).rows, before);
+  const metadata = (await db.query('select studio_facts from public.generated_interpretations')).rows[0].studio_facts;
+  assert.deepEqual(metadata, {
+    source: { sourceType: 'fixture', flags: ['fixture'] },
+    packageRecord: { contentKey: 'fallback-hook/sky-placement-hook/moon/cancer', review_status: 'approved' },
+    fallbackArchitectureV3: true
+  });
+  await db.exec(`update public.generated_interpretations set sections = jsonb_set(sections, '{packageRecord,review_status}', '"needs_review"');`);
+  assert.equal((await db.query('select studio_facts from public.generated_interpretations')).rows[0].studio_facts.packageRecord.review_status, 'needs_review');
+  const fn = (await db.query("select prosecdef, proconfig from pg_proc where proname='generated_interpretations_studio_facts'")).rows[0];
+  assert.equal(fn.prosecdef, false);
+  assert.deepEqual(fn.proconfig, ['search_path=""']);
+} finally { await db.close(); }
+console.log("Studio listing-facts SQL projection, idempotent migration, copy/version preservation and automatic refresh passed.");

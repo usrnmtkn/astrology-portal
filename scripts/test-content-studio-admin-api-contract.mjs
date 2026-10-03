@@ -131,6 +131,8 @@ assert.match(reviewRecords, /adminFetch/u);
 assert.match(reviewRecords, /AdminHttpError\(400/u);
 assert.match(reviewRecords, /sendAdminMethodNotAllowed\(res, \["GET"\]\)/u);
 const reviewRecordsFast = source("api/admin/review-records-fast.ts");
+assert.doesNotMatch(reviewRecordsFast, /^import .*from ["']\.\/review-records\.js["']/mu, "The cheap default route must not boot the legacy calculation graph.");
+assert.match(reviewRecordsFast, /await import\("\.\/review-records\.js"\)/u);
 assert.match(reviewRecordsFast, /supplementalOnly: true/u, "Default Studio review-records must stay cheap.");
 const adminVite = source("apps/admin/vite.config.ts");
 assert.match(adminVite, /rewriteLocalApiPath/u, "Local Studio must apply Vercel API rewrites.");

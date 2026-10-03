@@ -26,7 +26,7 @@ const inventoryColumns = [
 ] as const;
 
 const detailColumns = [
-  ...inventoryColumns,
+  ...inventoryColumns.filter((column) => column !== "studio_facts"),
   "summary",
   "body",
   "sections",

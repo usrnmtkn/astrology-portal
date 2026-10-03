@@ -1,12 +1,25 @@
 import assert from 'node:assert/strict';
 import { Readable } from 'node:stream';
 import { createRequire } from 'node:module';
-import handler, { normalizeTransitNatalPreviewInput, renderTransitNatalPreviewState } from '../api/admin/transit-natal-preview.ts';
+import handler, { normalizeTransitNatalPreviewInput, renderTransitNatalPreviewState, transitNatalPreviewScope } from '../api/admin/transit-natal-preview.ts';
 const require = createRequire(import.meta.url);
 const key = 'authored/transit-aspect/sun/north-node/conjunction';
 const source = require('../apps/web/src/content/fallbackArchitectureV3/bundled-transit-core-authored-cards-v3.json').authoredCards.find((row:any) => row.contentKey === key);
 const input = {planet:'sun',sign:'virgo',aspect:'conjunction',natalPoint:'north-node'};
 const baseline = renderTransitNatalPreviewState(normalizeTransitNatalPreviewInput(input));
+const { transitNatalPlanets, transitNatalPoints, transitNatalAspects } = await import('../apps/admin/src/transitNatalSources.ts');
+let verifiedScopes = 0;
+for (const planet of transitNatalPlanets) for (const natalPoint of transitNatalPoints) for (const aspect of transitNatalAspects) {
+ const facts = normalizeTransitNatalPreviewInput({planet,natalPoint,aspect,sign:'aries',pass:2,variant:3,transitHouse:'4',natalHouse:'7'});
+ const {keys,prefixes} = transitNatalPreviewScope(facts);
+ try {
+  const preview = renderTransitNatalPreviewState(facts);
+  for (const key of preview.sourceKeys) assert.ok(keys.includes(key)||prefixes.some(prefix=>key.startsWith(prefix)), `Missing preview dependency: ${key} for ${planet}/${natalPoint}/${aspect}`);
+  verifiedScopes++;
+ } catch(error) { if (!(error instanceof Error) || !/SOURCE_GAP|No reader-eligible/.test(error.message)) throw error; }
+}
+assert.ok(verifiedScopes > 500);
+console.log(`PASS storage scope covers selected sources for ${verifiedScopes} supported transit contacts.`);
 assert.match(baseline.body,/You may be offered a role/);
 assert.match(baseline.body,/accept the first assignment and learn from what happens next\./);
 const id='aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', stamp='2026-09-10T12:00:00Z';
@@ -19,7 +32,13 @@ globalThis.fetch=async(value,init)=>{
   calls++;
   const url=new URL(String(value));assert.equal(url.origin,'https://transit-preview.invalid');assert.ok(!init?.method || init.method==='GET');
   if(failStorage)return Response.json({error:'unavailable'},{status:503});
-  return Response.json(url.pathname.endsWith('/content_publications') ? publications : rows);
+  assert.notEqual(url.searchParams.get('select'), '*', 'Preview never downloads the complete document/audit inventory');
+  const scope=url.searchParams.get('or') ?? '';
+  assert.ok(scope.includes('content_key.in.') && scope.includes('content_key.gte.'), 'Both reads must be scoped before reaching storage');
+  const exact=[...scope.matchAll(/content_key\.in\.\(([^)]+)\)/g)].flatMap(match=>[...match[1].matchAll(/"([^"]+)"/g)].map(item=>item[1]));
+  const ranges=[...scope.matchAll(/and\(content_key\.gte\."([^"]+)",content_key\.lt\."([^"]+)"\)/g)];
+  const included=(row:any)=>exact.includes(row.content_key)||ranges.some(([,lower,upper])=>row.content_key>=lower&&row.content_key<upper);
+  return Response.json((url.pathname.endsWith('/content_publications') ? publications : rows).filter(included));
 };
 async function request(body:unknown=input, secret='transit-preview-test') {
  const req:any=Readable.from([JSON.stringify(body)]);req.method='POST';req.headers={'x-content-generation-secret':secret};
@@ -30,6 +49,10 @@ try {
  assert.equal((await request(input,'wrong')).code,401);assert.equal(calls,0);
  assert.equal((await request({planet:'invalid'})).code,400);assert.equal(calls,0);
  assert.deepEqual((await request()).rendered,baseline);
+ rows=[{id:'unrelated',content_key:'authored/transit-aspect/pluto/venus/hard',sections:{packageRecord:{body_you:'Unrelated source'}}}];
+ publications=[{content_key:'authored/transit-aspect/pluto/venus/hard',state:'invalid-unrelated-publication'}];
+ assert.deepEqual((await request()).rendered,baseline,'Unrelated documents and publication records are not retrieved');
+ rows=[];publications=[];
  rows=[{id,content_key:key,status:'DRAFT',lane:'serving',provider:'tldrastro-fallback-architecture-v3',updated_at:stamp,body:'Synthetic unapproved draft.',sections:{packageRecord:{...source,body_you:'Synthetic unapproved draft.'}}}];
  assert.deepEqual((await request()).rendered,baseline);
  rows[0]={...rows[0],status:'LIVE',body:'Synthetic published transit preview fixture.',sections:{packageRecord:{...source,body_you:'Synthetic published transit preview fixture.'}}};

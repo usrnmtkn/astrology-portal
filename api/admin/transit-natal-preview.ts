@@ -3,9 +3,10 @@ import { createRequire } from "node:module";
 import { isContentAdminAuthorized } from "../_lib/admin-auth.js";
 import { AdminHttpError, adminFetchJson, readAdminJsonBody, sendAdminJson, sendAdminMethodNotAllowed } from "../_lib/admin-http.js";
 import { loadLocalWebEnv } from "../_lib/local-env.js";
+import { postgrestContentKeyPrefixAnd, postgrestQuotedValue } from "../_lib/postgrest-content-key-prefix.js";
 import { renderTransitNatalPreview, transitNatalPlanets, transitNatalSigns, transitNatalAspects, transitNatalPoints, transitNatalHouses } from "../../apps/admin/src/transitNatalSources.js";
 import { packageFallbackArchitectureV3CoreRows } from "../../apps/web/src/services/fallbackArchitectureV3CorePackaging.js";
-import { publicationAllowsContent, validContentPublication, type ContentPublication } from "../../apps/web/src/content/contentPublicationState.js";
+import { publicationAllowsContent, publicationLedgerKey, validContentPublication, type ContentPublication } from "../../apps/web/src/content/contentPublicationState.js";
 import type { GeneratedContentRow } from "../../apps/web/src/services/generatedContent.js";
 // @ts-ignore Generated production reader artifact.
 import { createTransitSynastryRenderer, PACKAGE_VERSION } from "../../apps/web/src/content/fallbackArchitectureV3/dist/tldr-content.js";
@@ -69,6 +70,30 @@ export function renderTransitNatalPreviewState(input: ReturnType<typeof normaliz
   return preview;
 }
 
+/** All potential sources for this contact, including overrides absent from the bundle.
+ * Keep selection in the shipped renderer; only restrict the storage lookup here.
+ */
+export function transitNatalPreviewScope({ planet, natalPoint, aspect }: ReturnType<typeof normalizeTransitNatalPreviewInput>) {
+  return {
+    keys: [publicationLedgerKey, `authored/transit-return/${planet}`, "fallback-template/transit.aspect",
+      `fallback-hook/natal-core/${natalPoint}`, `fallback-hook/transit-house-event-natal/${natalPoint}`,
+      ...["planet-topic", "planet-core", "angle-area"].flatMap(family => [planet, natalPoint].map(point => `fallback-vocab/${family}/${point}`)),
+      `fallback-vocab/aspect-adj/${aspect}`, `fallback-vocab/aspect-verb/${aspect}`],
+    prefixes: [`authored/transit-aspect/${planet}/${natalPoint}/`, `authored/transit-aspect/${natalPoint}/${planet}/`,
+      `authored/transit-aspect/any/${natalPoint}/`, `authored/transit-aspect-insert/${planet}/${natalPoint}/`,
+      "fallback-hook/fog-note/", "fallback-hook/transit-pass/",
+      `fallback-hook/transit-aspect-type/${aspect}`, `fallback-hook/transit-effect-soft/${planet}`,
+      `fallback-hook/transit-effect-hard/${planet}`, `fallback-hook/transit-house-event-wants/${planet}`,
+      `fallback-hook/transit-house-event-scenes/${planet}/${natalPoint}/`]
+  };
+}
+
+function previewScopeFilter(input: ReturnType<typeof normalizeTransitNatalPreviewInput>) {
+  const { keys, prefixes } = transitNatalPreviewScope(input);
+  return `(${[`content_key.in.(${keys.map(postgrestQuotedValue).join(",")})`,
+    ...prefixes.map(prefix => `and${postgrestContentKeyPrefixAnd(prefix)}`)].join(",")})`;
+}
+
 async function readRows(base: string, headers: Record<string, string>, table: string, filters: Record<string, string>) {
   const rows: any[] = [];
   for (let offset = 0; offset < 20000; offset += 1000) {
@@ -90,9 +115,10 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
     const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
     if (!base || !key) throw new AdminHttpError(503, "Published reader sources are unavailable.");
     const headers = { apikey: key, authorization: `Bearer ${key}` };
+    const scope = previewScopeFilter(input);
     const [rows, publications] = await Promise.all([
-      readRows(base, headers, "generated_interpretations", { select: "*", provider: "eq.tldrastro-fallback-architecture-v3", status: "eq.LIVE", lane: "eq.serving", order: "id.asc" }),
-      readRows(base, headers, "content_publications", { select: "content_key,state,revision,row_id,row_updated_at,updated_at", order: "content_key.asc" })
+      readRows(base, headers, "generated_interpretations", { select: "id,content_key,target_date,status,lane,review_state,updated_at,provider,headline,summary,body,sections,source_snapshot,facts,mode,flags,surface,event_type", provider: "eq.tldrastro-fallback-architecture-v3", status: "eq.LIVE", lane: "eq.serving", review_state: "is.null", or: scope, order: "id.asc" }),
+      readRows(base, headers, "content_publications", { select: "content_key,state,revision,row_id,row_updated_at,updated_at", or: scope, order: "content_key.asc" })
     ]);
     if (!publications.every(validContentPublication)) throw new AdminHttpError(503, "Publication status could not be verified.");
     sendAdminJson(res, 200, { ok: true, rendered: renderTransitNatalPreviewState(input, rows, publications) });
