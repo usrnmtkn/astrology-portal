@@ -42,3 +42,35 @@ No paid pilot, automatic rewrite, model approval or publication of the owner's
 rejected draft was performed. A new candidate still requires the owner's exact
 wording review. The private rejected draft and supplied comparison are not
 committed as public test fixtures.
+
+## Run-supplied prompt variables (writer v16)
+
+The four required editorial variables remain compatible. Five optional variables
+now place actual governed run inputs at the owner's chosen points in the prompt:
+
+| Variable | Source |
+| --- | --- |
+| `primaryOwnerVoiceSources` | Selected complete primary register passages with provenance and exact-text hashes |
+| `supportingOwnerVoiceSources` | Selected supporting owner passages, excluding the primary passages |
+| `ownerPositiveComparisons` | The explicitly marked active complete comparisons in the saved Source Guidance |
+| `ownerCorrections` | Selected correction records and the explicitly marked saved owner correction section |
+| `governedFacts` | The current calculated facts and governed period developments, with the run's audience boundary |
+
+These values are not additional editable fields or instructions to fetch arbitrary
+URLs. Missing run context blocks expansion before a provider request. No selected
+comparisons is represented explicitly, without inventing source material. Marked
+comparison bodies retain their complete text and must match their saved SHA-256.
+Source text is expanded once, never interpreted as another template.
+
+The editor preview labels data that will be supplied during preparation. The
+provider receives the actual data. When a run variable moves material into the
+prompt, the original request section becomes a reference or is omitted, so the
+complete passage is sent once. Saved profiles and historical requests stay exact.
+Changing the writer version invalidates old prepared plans without replaying an
+in-flight request. No extra model call or automatic prose approval is added.
+
+Acceptance covers actual-handler save/read and provider assembly for daily,
+weekly, monthly, seasonal sign readings and the shared seasonal introduction in
+`test-horoscope-prompt-variables.mts`. The AI Writing browser flow verifies all
+five insert controls, preview, exact save and reload in desktop/mobile light/dark.
+All provider calls in these tests use fixtures. Delivery does not prove tone.
