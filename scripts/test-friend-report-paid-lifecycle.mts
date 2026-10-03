@@ -89,7 +89,7 @@ assert.match(libraryView, /reportLibraryPollMs/u, "Standalone Reports must refre
 assert.match(libraryView, /document\.visibilityState === "visible"/u);
 assert.match(libraryView, /Needs attention/u);
 
-assert.match(cleanup, /requireReportAdmin/u);
+assert.match(cleanup, /await requireContentAdmin\(req, res\)/u);
 assert.match(cleanup, /PURGE FRIEND REPORT TEST DATA/u);
 assert.match(cleanup, /source: "in\.\(free_test,comp\)"/u);
 assert.match(cleanup, /includeLegacyUnentitled/u);
