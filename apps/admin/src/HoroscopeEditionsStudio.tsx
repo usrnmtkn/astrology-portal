@@ -204,7 +204,7 @@ export default function HoroscopeEditionsStudio({secret,requestedEditionId}:{sec
     if(row.status==='LIVE'){setStep('publish');setMessage('Loaded the published edition.');return;}
     if(active){
       setStep('generate');setSign(active.sign);
-      setMessage(active.phase==='synthesis'&&active.state==='ready'?'':active.responseId?`${count}/${edition.passages.length} readings are saved. ${horoscopeSignLabel(active.sign)} is still processing. Studio checks automatically; you can also check now or return to your editions.`:'Waiting for request confirmation. Studio will recover an interrupted start after five minutes; it will not send a duplicate request.');
+      setMessage(active.phase==='synthesis'&&active.state==='ready'?'':active.responseId?`${count}/${edition.passages.length} readings are saved. ${horoscopeSignLabel(active.sign)} is still processing. Studio checks automatically; you can also check now or return to your editions.`:'Waiting for request confirmation. Studio checks automatically without sending another request.');
       return;
     }
     if(!edition.passages.some((p:any)=>!p.headline.trim()&&!p.body.trim())){
