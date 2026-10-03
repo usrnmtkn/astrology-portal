@@ -133,12 +133,14 @@ export default function NeedsAttentionDashboard() {
   async function loadAttention(nextCredential: string) {
     const normalized = normalizeAdminSecret(nextCredential);
     if (!normalized) return;
+    setCredential(normalized);
     setLoading(true);
     setError("");
     try {
       const coverageResponse = await fetch("/api/admin/content-coverage", {
         headers: adminCredentialHeaders(normalized)
       });
+      if ([401, 403].includes(coverageResponse.status)) setCredential("");
       const coverageBody = await coverageResponse.json().catch(() => null) as CoveragePayload | { error?: string } | null;
       if (!coverageResponse.ok || !coverageBody || !("ok" in coverageBody) || coverageBody.ok !== true) {
         throw new Error(coverageBody && "error" in coverageBody && coverageBody.error ? coverageBody.error : `Coverage request failed (${coverageResponse.status}).`);
@@ -227,7 +229,7 @@ export default function NeedsAttentionDashboard() {
           <PageLoading message="Checking access and loading coverage." />
         )}
 
-        {!coverage && !loading && !bootstrapping && (
+        {!coverage && !credential && !loading && !bootstrapping && (
           <>
             <AdminAccessGate disabled={!normalizeAdminSecret(emergencySecret) || loading} onChange={setEmergencySecret} onSubmit={submitEmergencyAccess} value={emergencySecret} />
           </>

@@ -3117,6 +3117,8 @@ export function GeneratedContentAdminDashboard() {
     return payload.rows;
   }, [secret]);
   const [activePage, setActivePage] = useState<AdminDashboardPage>(() => parseAdminHash().page);
+  const [requestedEditionId, setRequestedEditionId] = useState(() => parseAdminHash().page === "horoscopes" ? parseAdminHash().params.get("edition") : null);
+  const [requestedLunationId, setRequestedLunationId] = useState(() => parseAdminHash().page === "calendarWriteups" ? parseAdminHash().params.get("draft") : null);
   const [hasOpenedHoroscopes, setHasOpenedHoroscopes] = useState(() => parseAdminHash().page === "horoscopes");
   useEffect(() => { if (activePage === "horoscopes") setHasOpenedHoroscopes(true); }, [activePage]);
   const [hasOpenedAiWriting, setHasOpenedAiWriting] = useState(() => parseAdminHash().page === "aiWriting");
@@ -3302,6 +3304,8 @@ export function GeneratedContentAdminDashboard() {
   const routeNavigationGuardRef = useRef<() => boolean>(() => true);
   const guidedReviewOpenedRef = useRef("");
   const sourceOpenRequestRef = useRef(0);
+  const editorLoadRef = useRef<AbortController | null>(null);
+  useEffect(() => () => editorLoadRef.current?.abort(), []);
   const openExactTransitNatalSourceRef = useRef<(selection: TransitNatalContact & Partial<Pick<TransitNatalSelection, "sign" | "transitHouse" | "natalHouse">>) => Promise<void>>(async () => {});
   const transitNatalSelectionRef = useRef({
     planet: "" as TransitNatalPlanet | "",
@@ -4296,6 +4300,8 @@ export function GeneratedContentAdminDashboard() {
     const houseTransitMotionParam = params.get("motion") as HouseTransitMotion | null;
 
     setActivePage(page);
+    setRequestedEditionId(page === "horoscopes" ? params.get("edition") : null);
+    setRequestedLunationId(page === "calendarWriteups" ? params.get("draft") : null);
     setCategoryFilter(category && categoryFilters.some((filter) => filter.key === category) ? category : "all");
     setShowReferenceRows(page === "content" && category === "Calendar Aspects");
     setContentLibraryView(page === "content" && view === "compatibility" ? "compatibility" : "all");
@@ -4430,6 +4436,11 @@ export function GeneratedContentAdminDashboard() {
     }
     if (draft?.contentKey) transitExactDismissedKeysRef.current.add(draft.contentKey);
     sourceOpenRequestRef.current += 1;
+    if (editorLoadRef.current) {
+      editorLoadRef.current.abort();
+      editorLoadRef.current = null;
+      setIsLoading(false);
+    }
     setEditorFocusField(null);
     setTemplateVariableReferenceOpen(false);
     setTemplateVariableQuery("");
@@ -4480,13 +4491,14 @@ export function GeneratedContentAdminDashboard() {
     setIsMobileNavOpen(false);
     window.scrollTo({ top: 0, left: 0, behavior: "auto" });
     if (!options.keepEditorOpen) {
-      if (!confirmNatalNavigation()) return;
-      if (!closeEditor()) return;
+      if (!confirmNatalNavigation()) return false;
+      if (!closeEditor()) return false;
     }
     const route = canonicalAdminRoute(page, params);
     applyAdminRouteState(page, params ?? new URLSearchParams());
     applyAdminRouteState(route.page, route.params);
     setAdminHash(adminHashForPage(route.page, route.params));
+    return true;
   }
 
   function openTransitNatalContactFromSearch(contact: TransitNatalContact, audienceFriends: boolean) {
@@ -5724,10 +5736,10 @@ export function GeneratedContentAdminDashboard() {
       .flatMap((pair) => [pair.headlineRow.id, pair.passageRow.id]));
   }, [fallbackSectionFilter, dailyGlanceWriteups, loadSourceDocuments]);
 
-  async function hydrateGeneratedContentRow(row: AdminGeneratedContentRow, refresh = false, followPublishedRevision = false) {
+  async function hydrateGeneratedContentRow(row: AdminGeneratedContentRow, refresh = false, followPublishedRevision = false, signal?: AbortSignal) {
     if (!row.inventory_only && !refresh) return row;
     const payload = row.id.startsWith("package:")
-      ? await readStudioContentDocument(row.content_key, secret).then<{ rows: AdminGeneratedContentRow[] }>(({ rows, packageSource }) => ({
+      ? await readStudioContentDocument(row.content_key, secret, { signal }).then<{ rows: AdminGeneratedContentRow[] }>(({ rows, packageSource }) => ({
         rows: rows.length ? rows as AdminGeneratedContentRow[] : packageSource ? [{ ...row, inventory_only: false,
           surface: String(packageSource.surface ?? row.surface ?? "sky") as GeneratedContentSurface, mode: "in_depth", status: "DRAFT", lane: "reference", review_state: "needs-review",
           provider: row.provider ?? (/^(?:fallback-hook\/sky-(?:sign-copy|placement-[^/]+|planet-education)\/|house-horoscope-core\/)/u.test(row.content_key) ? "tldrastro-fallback-architecture-v3-sky-placement" : fallbackArchitectureV3Provider),
@@ -5740,23 +5752,30 @@ export function GeneratedContentAdminDashboard() {
         }] : []
       }))
       : await adminJsonRequest<{ rows: AdminGeneratedContentRow[] }>(
-        `/api/admin/generated-content-inventory?id=${encodeURIComponent(row.id)}&status=all&visibility=all&limit=1`, secret);
+        `/api/admin/generated-content-inventory?id=${encodeURIComponent(row.id)}&status=all&visibility=all&limit=1`, secret, { signal });
     let hydrated = payload.rows?.find((candidate) => candidate.id === row.id || row.id.startsWith("package:") && candidate.content_key === row.content_key);
     const publishedTarget = hydrated?.source_snapshot?.targetRowId;
     if ((row.id.startsWith("package:") || followPublishedRevision || refresh && row.status !== "ARCHIVED") && hydrated?.status === "ARCHIVED"
       && hydrated.review_state === "published-revision" && typeof publishedTarget === "string") {
       const target = await adminJsonRequest<{ rows: AdminGeneratedContentRow[] }>(
-        `/api/admin/generated-content-inventory?id=${encodeURIComponent(publishedTarget)}&status=all&visibility=all&limit=1`, secret);
+        `/api/admin/generated-content-inventory?id=${encodeURIComponent(publishedTarget)}&status=all&visibility=all&limit=1`, secret, { signal });
       hydrated = target.rows?.find((candidate) => candidate.id === publishedTarget);
     }
     if (!hydrated || hydrated.inventory_only) {
       throw new Error(`Could not load the full content document for ${row.content_key}.`);
     }
+    signal?.throwIfAborted();
     setRows((current) => mergeContentInventory(current.filter((candidate) => candidate.id !== row.id || row.id === hydrated.id), [hydrated]));
     return hydrated;
   }
 
   async function openRow(row: AdminGeneratedContentRow, compositionContext: CompositionEditorContext | null = null, fieldPath?: string, placementSelection?: SkyPlacementSelection, preservingParentDraft = false): Promise<boolean> {
+    if (row.content_key.startsWith("horoscope/")) {
+      return navigateAdminPage("horoscopes", new URLSearchParams({ edition: row.id }));
+    }
+    if (row.content_key.startsWith("studio-lunation/")) {
+      return navigateAdminPage("calendarWriteups", new URLSearchParams({ view: "lunation-writing", writing: "dated", draft: row.id }));
+    }
     const replacingUnsavedEditor = draft && row.id !== draft.id && (
       JSON.stringify(draft) !== editorBaselineRef.current && JSON.stringify(draft) !== editorSavedInputRef.current
       || hasPendingArticleChanges()
@@ -5766,15 +5785,27 @@ export function GeneratedContentAdminDashboard() {
     if (document.activeElement instanceof HTMLElement && !editorRef.current?.contains(document.activeElement)) {
       editorReturnFocusRef.current = document.activeElement;
     }
+    editorLoadRef.current?.abort();
+    editorLoadRef.current = null;
+    setIsLoading(false);
     if (row.inventory_only || !row.id.startsWith("package:")) {
+      const controller = new AbortController();
+      editorLoadRef.current = controller;
       setIsLoading(true);
       try {
-        row = await hydrateGeneratedContentRow(row, true, Boolean(placementSelection));
+        row = await hydrateGeneratedContentRow(row, true, Boolean(placementSelection), controller.signal);
+        if (controller.signal.aborted) return false;
       } catch (error) {
+        if (controller.signal.aborted) return false;
         setEditorSaveError(dashboardErrorMessage(error));
         setMessage(dashboardErrorMessage(error));
         return false;
-      } finally { setIsLoading(false); }
+      } finally {
+        if (editorLoadRef.current === controller) {
+          editorLoadRef.current = null;
+          setIsLoading(false);
+        }
+      }
     }
     const nextDraft = draftFromRow(row);
     setEditorSaveError("");
@@ -7085,7 +7116,7 @@ export function GeneratedContentAdminDashboard() {
 
         {activePage === "variables" && <><Suspense fallback={<PageLoading message="Loading variables…" />}><StudioVariables secret={secret} customVariables={customVariableLibrary.variables} onCustomChange={customVariableLibrary.setVariables} customError={customVariableLibrary.error} customLoading={customVariableLibrary.loading} onReloadCustom={customVariableLibrary.reload} createRequest={variableCreateRequest} onCreateHandled={() => setVariableCreateRequest(0)} onOpenSource={(key, _label, field) => void openRow(rows.find(row => row.content_key === key) ?? { id: `package:${key}`, content_key: key, inventory_only: true } as AdminGeneratedContentRow, null, field)} /></Suspense>{renderEditor()}</>}
 
-        {hasOpenedHoroscopes && <div hidden={activePage !== "horoscopes"}><Suspense fallback={<PageLoading message="Loading horoscope editions…" />}><HoroscopeEditionsStudio secret={secret} /></Suspense></div>}
+        {hasOpenedHoroscopes && <div hidden={activePage !== "horoscopes"}><Suspense fallback={<PageLoading message="Loading horoscope editions…" />}><HoroscopeEditionsStudio secret={secret} requestedEditionId={requestedEditionId} /></Suspense></div>}
         {hasOpenedAiWriting && <div hidden={activePage !== "aiWriting"}><Suspense fallback={<PageLoading message="Loading AI writing…" />}><HoroscopeWritingStudio secret={secret} /></Suspense></div>}
 
         {activePage === "reviewQueue" && (
@@ -7321,7 +7352,7 @@ export function GeneratedContentAdminDashboard() {
               tabs={calendarWriteupWorkspaceTabs}
               onValueChange={view => navigateAdminPage("calendarWriteups", new URLSearchParams({ view }))}>
               {calendarWriteupWorkspaceView === "subscription-events" && <Suspense fallback={<PageLoading message="Loading subscription events…" />}><CalendarSubscriptionEvents secret={secret} dirtyRef={subscriptionEventDirtyRef} /></Suspense>}
-              {calendarWriteupWorkspaceView === "lunation-writing" && <Suspense fallback={<PageLoading message="Loading lunar writing…" />}><LunationWritingStudio secret={secret} dirtyRef={lunationWritingDirtyRef}
+              {calendarWriteupWorkspaceView === "lunation-writing" && <Suspense fallback={<PageLoading message="Loading lunar writing…" />}><LunationWritingStudio key={requestedLunationId ?? "lunar-workspace"} secret={secret} dirtyRef={lunationWritingDirtyRef} requestedDraftId={requestedLunationId}
                 library={<LunarCalendarWorkspace scope="lunations" rows={rows} query={query} onQuery={setQuery} isLoading={isLoading || loadState !== "loaded"}
                   editor={null} onEdit={row => openCalendarWritingSource(row as AdminGeneratedContentRow)}
                   loadRows={loadCalendarPreviewRows} onLoad={row => hydrateGeneratedContentRow(row as AdminGeneratedContentRow)} onCreate={() => {}} />}

@@ -78,12 +78,14 @@ function CoverageDashboard() {
   async function loadCoverage(nextCredential: string) {
     const normalized = normalizeAdminSecret(nextCredential);
     if (!normalized) return;
+    setCredential(normalized);
     setLoading(true);
     setError("");
     try {
       const response = await fetch("/api/admin/content-coverage", {
         headers: adminCredentialHeaders(normalized)
       });
+      if ([401, 403].includes(response.status)) setCredential("");
       const body = await response.json().catch(() => null) as CoveragePayload | { error?: string } | null;
       if (!response.ok || !body || !("ok" in body) || body.ok !== true) {
         throw new Error(body && "error" in body && body.error ? body.error : `Coverage request failed (${response.status}).`);
@@ -157,7 +159,7 @@ function CoverageDashboard() {
           <PageLoading message="Checking access and loading coverage." />
         )}
 
-        {!payload && !loading && !bootstrapping && (
+        {!payload && !credential && !loading && !bootstrapping && (
           <>
             <AdminAccessGate
               disabled={!normalizeAdminSecret(emergencySecret) || loading}

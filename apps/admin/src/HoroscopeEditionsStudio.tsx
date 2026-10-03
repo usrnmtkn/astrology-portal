@@ -36,7 +36,7 @@ function download(name:string,value:unknown) {
   const url = URL.createObjectURL(new Blob([JSON.stringify(value,null,2)+'\n'],{type:'application/json'}));
   const link = document.createElement('a'); link.href=url; link.download=name; link.click(); setTimeout(()=>URL.revokeObjectURL(url),1000);
 }
-export default function HoroscopeEditionsStudio({secret}:{secret:string}) {
+export default function HoroscopeEditionsStudio({secret,requestedEditionId}:{secret:string;requestedEditionId?:string|null}) {
   const [rows,setRows]=useState<any[]>([]),[loading,setLoading]=useState(true),[busy,setBusy]=useState(false),[error,setError]=useState<string|{previous:string}>(''),[message,setMessage]=useState('');
   const [period,setPeriod]=useState<HoroscopePeriod>('weekly'),[date,setDate]=useState(()=>new Intl.DateTimeFormat('en-CA',{timeZone:browserTimeZone()}).format(new Date())),[zone,setZone]=useState(browserTimeZone);
   const [draft,setDraft]=useState<HoroscopeEdition|null>(null),[saved,setSaved]=useState<any>(null),[packet,setPacket]=useState<any>(null),[profile,setProfile]=useState<any>(null);
@@ -107,11 +107,24 @@ export default function HoroscopeEditionsStudio({secret}:{secret:string}) {
     if(row?.id!==id)throw Object.assign(new Error('This saved edition is unavailable. Refresh the edition list.'),{status:404});
     validateHoroscopeEdition(row.sections?.horoscopeEdition);return row;
   }
-  async function open(row:any) {
-    if(!mayReplace())return;setBusy(true);setError('');setMessage('');
-    try{row=await readSaved(row.id);const next=adopt(row);if(next==='generate'&&!row.source_snapshot?.horoscopeGeneration?.active)await loadPlan(row);}
-    catch(reason){setError((reason as Error).message);}finally{setBusy(false);}
+  const opening=useRef<AbortController|null>(null);
+  async function open(row:any,fromLink=false) {
+    if(busy&&!opening.current?.signal.aborted||running.current){setError('Finish the current operation first.');return;}
+    if(!mayReplace())return;
+    opening.current?.abort();const controller=new AbortController();opening.current=controller;
+    setBusy(true);setError('');setMessage('');
+    try{
+      row=await readSaved(row.id,controller.signal);if(controller.signal.aborted)return;
+      const next=adopt(row);
+      // Library links read only; preparing a writing plan remains explicit.
+      if(!fromLink&&next==='generate'&&!row.source_snapshot?.horoscopeGeneration?.active)await loadPlan(row);
+    }catch(reason){if(!controller.signal.aborted)setError((reason as Error).message);}
+    finally{if(opening.current===controller){opening.current=null;if(!controller.signal.aborted)setBusy(false);}}
   }
+  useEffect(()=>{
+    if(requestedEditionId)void open({id:requestedEditionId},true);
+    return()=>{if(opening.current){opening.current.abort();setBusy(false);}};
+  },[secret,requestedEditionId]);
   async function prepare() {
     if(!mayReplace())return;setBusy(true);setError('');setMessage('');
     try {

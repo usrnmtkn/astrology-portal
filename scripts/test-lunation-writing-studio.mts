@@ -70,6 +70,14 @@ const saved=await invoke('GET');assert.equal(saved.payload.rows.length,4);
 assert(saved.payload.rows.every((r:any)=>r.status==='DRAFT'&&r.lane==='reference'));
 // The reader handoff copies only the saved text, never instructions, and never overwrites reader edits.
 const selected=[...rows.values()].find(row=>row.content_key.startsWith('studio-lunation/'));
+const exact=await invoke('GET',undefined,`/api/admin/lunation-writing?id=${selected.id}`);
+assert.equal(exact.status,200);assert.deepEqual(exact.payload.rows,[selected]);
+assert.equal((await invoke('GET',undefined,'/api/admin/lunation-writing?id=invalid')).status,400);
+assert.equal((await invoke('GET',undefined,'/api/admin/lunation-writing?id=00000000-0000-0000-0000-000000000000')).status,404);
+const foreignId='11111111-1111-1111-1111-111111111111';
+rows.set(foreignId,{...selected,id:foreignId,content_key:'cms/lunation-article/unrelated'});
+assert.equal((await invoke('GET',undefined,`/api/admin/lunation-writing?id=${foreignId}`)).status,404,'An ID lookup must stay inside the lunar workspace.');
+rows.delete(foreignId);
 const stage=(version=selected.updated_at)=>invoke('POST',{action:'stage',id:selected.id,expectedUpdatedAt:version});
 assert.equal((await stage('2000-01-01T00:00:00Z')).status,409);
 const staged=await stage();assert.equal(staged.status,200,JSON.stringify(staged));

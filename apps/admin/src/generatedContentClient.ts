@@ -1,4 +1,5 @@
 import { adminCredentialHeaders } from "./adminSecret";
+import { readStudioInventoryPages } from "./studioInventoryPagination";
 
 export type GeneratedContentEditorRow = {
   id: string;
@@ -95,21 +96,13 @@ export async function readStudioContentDocument(
 
 export async function readGeneratedContentRows(path: string, secret: string, signal?: AbortSignal) {
   const rows: GeneratedContentEditorRow[] = [];
-  const cursors = new Set<string>();
-  let nextPath = path;
-  for (let page = 0; page < 125; page += 1) {
-    const payload = await request(nextPath, secret, { signal });
-    rows.push(...rowsFromPayload(payload));
-    if (payload.nextCursor === null || payload.nextCursor === undefined) return rows;
-    if (typeof payload.nextCursor !== "string" || !payload.nextCursor || cursors.has(payload.nextCursor)) {
-      throw new Error("Content Studio returned an invalid pagination cursor. The inventory is incomplete.");
-    }
-    cursors.add(payload.nextCursor);
+  await readStudioInventoryPages(async cursor => {
     const url = new URL(path, "http://studio.invalid");
-    url.searchParams.set("cursor", payload.nextCursor);
-    nextPath = `${url.pathname}${url.search}`;
-  }
-  throw new Error("Content Studio inventory exceeded the page limit. Narrow the selection before editing.");
+    if (cursor !== null) url.searchParams.set("cursor", cursor);
+    const payload = await request(`${url.pathname}${url.search}`, secret, { signal });
+    return { rows: rowsFromPayload(payload), nextCursor: payload.nextCursor };
+  }, page => rows.push(...page), signal);
+  return rows;
 }
 
 function submittedDraftFields(draftSections: Record<string, unknown>) {
