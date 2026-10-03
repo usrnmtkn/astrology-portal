@@ -448,3 +448,30 @@ preserve the old operation settings and confirm one-stage retry without paying
 for unchanged planning again. Browser regressions check the dated error after a
 profile change, explicit retry approval and complete save/review/publication flow
 with isolated storage and simulated responses. No paid generation is implied.
+
+## Saved horoscope failures are history (2026-10-02)
+
+Reopening or checking an idle failed edition puts its saved diagnostic in a
+collapsed **Previous attempt** disclosure, rather than restoring a current red
+alert. A newly observed terminal failure still produces an immediate alert.
+Refreshing does not erase the diagnostic, clear a reservation, or generate text.
+The current plan and explicit retry approval remain the way to start another
+request. Browser regressions cover Monthly and seasonal failures, legacy
+diagnostic retrieval, unchanged storage and request counts across reloads, and
+fresh failures remaining visible. Existing shared disclosure styles are reused.
+
+## Monthly developed-reason correction (2026-10-02)
+
+The owner rejected the next complete Monthly result and requested one targeted
+Voice instruction: develop the reason a person remains caught in a contradiction
+instead of stacking balanced contrasts and short conclusions. Save that exact
+direction in the private Monthly profile. Preserve complete primary essays and
+selected comparisons; rejected prose remains negative history, never a positive
+voice example. No automatic rewrite, prose approval or paid evaluation follows.
+
+The active profile retains the scoped October forecast and Taurus paragraph
+openings. The earlier historical TLDR lock was removed by the profile-authority
+cleanup above; this correction does not reinstate it. A claim that the current
+output violated a verbatim TLDR lock must first be checked against the actual
+saved request. Profile delivery and successful completion do not establish voice
+quality. The owner still judges the next exact prose.

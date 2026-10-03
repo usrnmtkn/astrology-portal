@@ -37,7 +37,7 @@ function download(name:string,value:unknown) {
   const link = document.createElement('a'); link.href=url; link.download=name; link.click(); setTimeout(()=>URL.revokeObjectURL(url),1000);
 }
 export default function HoroscopeEditionsStudio({secret}:{secret:string}) {
-  const [rows,setRows]=useState<any[]>([]),[loading,setLoading]=useState(true),[busy,setBusy]=useState(false),[error,setError]=useState(''),[message,setMessage]=useState('');
+  const [rows,setRows]=useState<any[]>([]),[loading,setLoading]=useState(true),[busy,setBusy]=useState(false),[error,setError]=useState<string|{previous:string}>(''),[message,setMessage]=useState('');
   const [period,setPeriod]=useState<HoroscopePeriod>('weekly'),[date,setDate]=useState(()=>new Intl.DateTimeFormat('en-CA',{timeZone:browserTimeZone()}).format(new Date())),[zone,setZone]=useState(browserTimeZone);
   const [draft,setDraft]=useState<HoroscopeEdition|null>(null),[saved,setSaved]=useState<any>(null),[packet,setPacket]=useState<any>(null),[profile,setProfile]=useState<any>(null);
   const [outlines,setOutlines]=useState<Record<string,string>>({}),[sign,setSign]=useState('aries'),[approved,setApproved]=useState(false);
@@ -64,7 +64,7 @@ export default function HoroscopeEditionsStudio({secret}:{secret:string}) {
     retain(row,true);setPacket(row.facts?.horoscopeBrief);setSign(edition.passages[0].sign);setInstructions(false);
     setPeriod(edition.window.period);setZone(edition.window.timeZone);
     setDate(row.facts?.horoscopeBrief?.brief?.referenceDate??new Intl.DateTimeFormat('en-CA',{timeZone:edition.window.timeZone}).format(new Date(edition.window.startsAt)));
-    setError(row.status==='DRAFT'?row.source_snapshot?.horoscopeGeneration?.lastError?.message??'':'');
+    setError('');
     const next:Step=row.status==='LIVE'?'publish':row.source_snapshot?.horoscopeGeneration?.active||edition.passages.some(p=>!p.headline.trim()&&!p.body.trim())?'generate':'edit';
     setStep(next);return next;
   }
@@ -77,7 +77,8 @@ export default function HoroscopeEditionsStudio({secret}:{secret:string}) {
     const failure=await savedFailureMessage(updated??row,controller?.signal);
     if(!mounted.current||controller&&!isCurrent(controller))return;
     if(updated){retain(updated);setProfile(updated.source_snapshot?.studioWritingProfile??null);}
-    setPlan(data.plan);setConfigured(data.configured);setPlanApproved(false);setError(failure);
+    setPlan(data.plan);setConfigured(data.configured);setPlanApproved(false);setError(failure?{previous:failure}:'');
+    return failure;
   }
   async function savedFailureMessage(row:any,signal?:AbortSignal) {
     const generation=row.source_snapshot?.horoscopeGeneration,failed=generation?.lastError;
@@ -196,9 +197,10 @@ export default function HoroscopeEditionsStudio({secret}:{secret:string}) {
       setStep('edit');setSign(edition.passages[0].sign);setMessage(count===edition.passages.length?'All readings are saved and ready to review.':`${count}/${edition.passages.length} readings are complete. Review the remaining text before publishing.`);return;
     }
     setStep('generate');setMessage(`${count}/${edition.passages.length} readings are saved. Review the current writing plan to continue the remaining readings.`);
-    await loadPlan(row,controller);
+    return loadPlan(row,controller);
   }
   async function recoverGeneration(row:any,controller:AbortController,pollExisting=false) {
+    const previousFailure=row.source_snapshot?.horoscopeGeneration?.lastError?.failedAt;
     // Always reconcile from storage. Recovery retrieves an existing response only;
     // it never releases a reservation or starts another paid generation request.
     for(let attempt=0;attempt<3;attempt++){
@@ -219,9 +221,10 @@ export default function HoroscopeEditionsStudio({secret}:{secret:string}) {
           row=await readSaved(row.id,controller.signal);
         }
       }
-      await showRecovered(row,controller);
+      const failureMessage=await showRecovered(row,controller);
       if(isCurrent(controller)){
         const terminal=row.source_snapshot?.horoscopeGeneration?.lastError;
+        if(terminal&&terminal.failedAt!==previousFailure)setError(failureMessage||terminal.message);
         if(!terminal&&failure&&!recoverable(failure))setError(failure.message);
       }
       return;
@@ -291,7 +294,7 @@ export default function HoroscopeEditionsStudio({secret}:{secret:string}) {
   const passage=draft?.passages.find(p=>p.sign===sign);
   const complete=draft?.passages.filter(p=>p.headline.trim()&&p.body.trim()).length ?? 0;
   const empty=draft?.passages.filter(p=>!p.headline.trim()&&!p.body.trim()).length ?? 0;
-  const active=saved?.source_snapshot?.horoscopeGeneration?.active;
+  const generation=saved?.source_snapshot?.horoscopeGeneration,active=generation?.active;
   useEffect(()=>{
     if(step!=='generate'||!active&&!needsSync||dirty||instructions||checking||busy&&!running.current)return;
     // A backgrounded tab or an interrupted poll must not leave the last known
@@ -305,8 +308,8 @@ export default function HoroscopeEditionsStudio({secret}:{secret:string}) {
     window.addEventListener('focus',onReturn);window.addEventListener('pageshow',onReturn);document.addEventListener('visibilitychange',onReturn);
     return()=>{window.clearInterval(timer);window.removeEventListener('focus',onReturn);window.removeEventListener('pageshow',onReturn);document.removeEventListener('visibilitychange',onReturn);};
   },[step,active,needsSync,dirty,instructions,checking,busy,saved]);
-  const failedSign=saved?.source_snapshot?.horoscopeGeneration?.lastError?.operation?.sign;
-  const punctuationHold=saved?.source_snapshot?.horoscopeGeneration?.lastError?.code==='required_punctuation'?saved.source_snapshot.horoscopeGeneration.lastError:null;
+  const lastFailure=generation?.lastError,failedSign=lastFailure?.operation?.sign;
+  const punctuationHold=lastFailure?.code==='required_punctuation'?lastFailure:null;
   function editPunctuation(){
     if(!draft||!punctuationHold||locked||!mayReplace())return;
     setDraft({...draft,passages:draft.passages.map(p=>p.sign===failedSign?{...p,...punctuationHold.candidate}:p)});
@@ -340,7 +343,7 @@ export default function HoroscopeEditionsStudio({secret}:{secret:string}) {
       <p>{step==='setup'?'Create daily or weekly sign readings, a monthly overview for everyone, or a zodiac-season introduction with twelve sign readings.':step==='generate'?'Check the writing plan, then let AI write the drafts using your saved instructions.':step==='edit'?'Read one passage at a time. Make any changes, then continue to the next reading.':isPublished?'This edition is ready to read in the app.':'Review the complete edition below. Publishing makes the complete edition available in the app.'}</p>
     </header>
     {step!=='setup'&&draft&&<div className="admin-horoscope-summary"><span>{horoscopeSignLabel(draft.window.period)} · {horoscopeWindowLabel(draft.window)}</span><span>{draft.window.timeZone.replaceAll('_',' ')} · {complete}/{total} readings ready{dirty?' · Unsaved changes':''}</span></div>}
-    {error&&<p role="alert">{error}</p>}{message&&<p role="status">{message}</p>}
+    {error&&(typeof error==='string'?<p role="alert">{error}</p>:step==='generate'&&<details className="admin-workspace-details"><AdminDisclosureSummary>Previous attempt</AdminDisclosureSummary><p>{error.previous}</p></details>)}{message&&<p role="status">{message}</p>}
     {punctuationHold&&step==='generate'&&<StudioButton className="admin-primary-button" disabled={locked} onClick={editPunctuation}>Edit punctuation</StudioButton>}
     {step==='setup'?<>
       <div className="admin-horoscope-periods" role="group" aria-label="Edition period">{HOROSCOPE_PERIODS.map(p=><StudioButton key={p} aria-pressed={period===p} disabled={busy} onClick={()=>setPeriod(p)}>{horoscopeSignLabel(p)}</StudioButton>)}</div>
@@ -380,7 +383,7 @@ export default function HoroscopeEditionsStudio({secret}:{secret:string}) {
         <footer className="admin-writing-savebar admin-horoscope-actions">
           {plan&&!active&&empty>0&&!dirty&&<label><input type="checkbox" checked={planApproved} disabled={locked} onChange={e=>setPlanApproved(e.target.checked)}/> I approve this writing plan for generation.</label>}
           {!configured&&plan&&<p role="alert">AI writing is unavailable. Configure the writer before generating, or write the readings yourself.</p>}
-          <p>{checking?'Retrieving your saved request. This does not start another generation.':needsSync?'Paused. Check saved progress before continuing; completed readings are kept.':busy?'Each completed reading is saved automatically.':active?'Continue the saved request without starting it again.':empty===0?'Your drafts are ready to review.':dirty||!plan?'Prepare the current writing plan to continue.':!planApproved?'Check the plan approval box to continue.':draft.window.period==='monthly'?'Up to 2 paid AI requests: one plan, then one draft. Matching saved plans are reused.':retrySign?`Retry only ${horoscopeSignLabel(retrySign)} with one new paid AI request. Saved readings are kept.`:`Ready to write ${empty} ${empty===1?'draft':'drafts'}. This uses ${empty} paid AI ${empty===1?'request':'requests'} and saves the results for review.`}</p>
+          <p>{checking?'Retrieving your saved request. This does not start another generation.':needsSync?'Paused. Check saved progress before continuing; completed readings are kept.':busy?'Each completed reading is saved automatically.':active?'Continue the saved request without starting it again.':empty===0?'Your drafts are ready to review.':dirty||!plan?'Prepare the current writing plan to continue.':!planApproved?`Check the plan approval box to ${retrySign?'retry':'continue'}.`:draft.window.period==='monthly'?'Up to 2 paid AI requests: one plan, then one draft. Matching saved plans are reused.':retrySign?`Retry only ${horoscopeSignLabel(retrySign)} with one new paid AI request. Saved readings are kept.`:`Ready to write ${empty} ${empty===1?'draft':'drafts'}. This uses ${empty} paid AI ${empty===1?'request':'requests'} and saves the results for review.`}</p>
           <div className="admin-toolbar-actions"><StudioButton disabled={busy&&!running.current&&!checking} onClick={()=>void moveTo('setup')}>Back to editions</StudioButton><div className="admin-toolbar-actions admin-horoscope-decision-actions">{rejectAllButton}
             <StudioButton disabled={!saved||dirty||checking||busy&&!running.current} onClick={()=>void checkProgress()}>{checking?'Checking saved progress…':'Check saved progress'}</StudioButton>
             {busy&&running.current?<StudioButton className="admin-primary-button" onClick={pauseGeneration}>Pause generation</StudioButton>:empty===0&&!active?<StudioButton className="admin-primary-button" disabled={busy||needsSync} onClick={()=>void moveTo('edit')}>Continue to review</StudioButton>:!active&&(dirty||!plan)?<StudioButton className="admin-primary-button" disabled={busy||needsSync||saved?.status==='LIVE'} onClick={()=>void reviewPlan()}>Review writing plan</StudioButton>:<StudioButton className="admin-primary-button" disabled={busy||needsSync||dirty||!saved||saved.status==='LIVE'||(!active&&(!planApproved||!configured))} onClick={()=>void generate()}>{active?'Resume generation':retrySign?`Retry ${horoscopeSignLabel(retrySign)}`:empty===total?`Generate ${total===1?'overview':`${total} drafts`}`:'Generate missing readings'}</StudioButton>}
@@ -392,7 +395,7 @@ export default function HoroscopeEditionsStudio({secret}:{secret:string}) {
         <p>Reading {signIndex+1} of {total} · {horoscopeSignLabel(sign)}</p>
         {saved?.status==='DRAFT'&&<div className="admin-toolbar-actions"><StudioButton disabled={locked||!passage.headline.trim()&&!passage.body.trim()} onClick={()=>void reject(sign)}>Reject this reading</StudioButton></div>}
         {!passage.body&&<p>No reading for {horoscopeSignLabel(sign)} yet. Return to Generate or write it below.</p>}
-        {(saved?.source_snapshot?.horoscopeGeneration?.readings?.[sign]?.lint?.violations??[]).map((issue:any,index:number)=><p role="note" key={index}>Original AI draft check: {issue.detail}</p>)}
+        {(generation?.readings?.[sign]?.lint?.violations??[]).map((issue:any,index:number)=><p role="note" key={index}>Original AI draft check: {issue.detail}</p>)}
         <label className="admin-review-copy-editor"><span>Reading headline</span><StudioInput aria-label="Reading headline" value={passage.headline} maxLength={200} disabled={locked} onChange={e=>{setDraft({...draft,passages:draft.passages.map(p=>p.sign===sign?{...p,headline:e.target.value}:p)});setApproved(false);}}/></label>
         <label className="admin-review-copy-editor"><span>Complete reading</span><StudioTextarea aria-label="Complete reading" rows={12} value={passage.body} maxLength={20000} disabled={locked} onChange={e=>{setDraft({...draft,passages:draft.passages.map(p=>p.sign===sign?{...p,body:e.target.value}:p)});setApproved(false);}}/></label>
         <details className="admin-workspace-details"><AdminDisclosureSummary>Writing outline · editor only</AdminDisclosureSummary><StudioTextarea aria-label="Writing outline" rows={5} value={outlines[sign]??''} disabled={locked} onChange={e=>{setOutlines(current=>({...current,[sign]:e.target.value}));setApproved(false);}}/></details>
@@ -407,7 +410,7 @@ export default function HoroscopeEditionsStudio({secret}:{secret:string}) {
           <footer className="admin-writing-savebar admin-horoscope-actions"><label><input type="checkbox" checked={approved} disabled={locked||dirty||complete!==total||!saved} onChange={e=>setApproved(e.target.checked)}/> I have reviewed and approve the exact wording of every saved reading in this edition.</label><p>{approved?'Ready to publish the complete edition.':'Check the approval box when you are happy with the complete edition.'}</p><div className="admin-toolbar-actions"><StudioButton disabled={locked} onClick={()=>void moveTo('edit')}>Back to readings</StudioButton><div className="admin-toolbar-actions admin-horoscope-decision-actions">{rejectAllButton}<StudioButton className="admin-primary-button" disabled={locked||dirty||!approved||!saved} onClick={()=>void save(true)}>Publish edition</StudioButton></div></div></footer>
         </>}
       </>}
-      {saved?.source_snapshot?.horoscopeGeneration?.rejections?.length>0&&<details className="admin-workspace-details"><AdminDisclosureSummary>Rejected drafts</AdminDisclosureSummary><p>Saved for reference only. Rejected writing is not used as a writing example or published.</p>{[...saved.source_snapshot.horoscopeGeneration.rejections].reverse().map((entry:any)=><details key={entry.id}><AdminDisclosureSummary>{entry.scope==='all'?'All drafts':horoscopeSignLabel(entry.scope)} · {new Date(entry.rejectedAt).toLocaleString()}</AdminDisclosureSummary>{entry.passages.map((p:any)=><label className="admin-review-copy-editor" key={p.sign}><span>{horoscopeSignLabel(p.sign)}</span><StudioTextarea aria-label={`Rejected ${horoscopeSignLabel(p.sign)} reading`} readOnly rows={6} value={`${p.headline}\n\n${p.body}`}/></label>)}</details>)}</details>}
+      {generation?.rejections?.length>0&&<details className="admin-workspace-details"><AdminDisclosureSummary>Rejected drafts</AdminDisclosureSummary><p>Saved for reference only. Rejected writing is not used as a writing example or published.</p>{[...generation.rejections].reverse().map((entry:any)=><details key={entry.id}><AdminDisclosureSummary>{entry.scope==='all'?'All drafts':horoscopeSignLabel(entry.scope)} · {new Date(entry.rejectedAt).toLocaleString()}</AdminDisclosureSummary>{entry.passages.map((p:any)=><label className="admin-review-copy-editor" key={p.sign}><span>{horoscopeSignLabel(p.sign)}</span><StudioTextarea aria-label={`Rejected ${horoscopeSignLabel(p.sign)} reading`} readOnly rows={6} value={`${p.headline}\n\n${p.body}`}/></label>)}</details>)}</details>}
       {step==='edit'&&<details className="admin-workspace-details"><AdminDisclosureSummary>Advanced · import, export and calculations</AdminDisclosureSummary>
         <div className="admin-toolbar-actions"><StudioButton disabled={busy} onClick={()=>download('horoscope-writing-brief.json',{schema:'horoscope-writing-request/v1',edition:draft,calculatedFacts:packet,writingProfile:profile,outlines,ownerApproved:false})}>Export writing brief</StudioButton><label>Import draft<StudioInput aria-label="Import horoscope draft" type="file" accept="application/json,.json" disabled={locked} onChange={e=>{void importDraft(e.target.files?.[0]);e.target.value='';}}/></label></div><StudioTextarea aria-label="Calculated horoscope facts" readOnly rows={12} value={JSON.stringify(packet?.brief,null,2)}/>
       </details>}

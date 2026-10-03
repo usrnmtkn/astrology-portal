@@ -41,7 +41,7 @@ synthetic; these checks incur no billed generation and touch no owner rows.
 | Existing and unsaved writing are preserved | Exact saved first eleven readings; disabled recovery while dirty |
 | Saved results survive reload | Exact reopened text and storage row equality |
 | Unconfirmed requests are not replayed | No response ID: reservation unchanged, one provider start |
-| Terminal failure is distinct from a stall | Actual handler persists failed state; plan review remains available |
+| Terminal failure is distinct from a stall | A newly observed failure is an alert; reopening shows collapsed Previous attempt history and leaves plan review available |
 
 The existing horoscope reader suite also covers four viewport/theme combinations,
 newer outline preservation after a conflict, draft editing, rejection history,
@@ -109,7 +109,9 @@ never the credential, prompt or provider prose, and leaves the edition unchanged
 Opening an incomplete saved edition now inspects an older generic failure while
 preparing its writing plan. The operator does not need to discover **Check saved
 progress** to learn why the previous attempt stopped. Current structured failure
-receipts are displayed directly without another provider read. Credit exhaustion
+receipts are available in collapsed **Previous attempt** history without another
+provider read. Reloading does not restore a current red alert; newly observed
+terminal failures still show one immediately. Credit exhaustion
 is explicitly described as the previous attempt's result, not the account's
 current balance. After adding credits, the operator approves the current plan
 and uses **Retry [sign]** for one fresh request.
@@ -173,3 +175,14 @@ the previous aggregate limit by 7 bytes. Allocate 750 aggregate web bytes in
 addition to the 1,000-byte deferred-editor and admin-aggregate allocations.
 Preserve the independent House Transit allocation and all reader startup, CSS,
 memory graph, forbidden-payload and other chunk limits.
+
+### Saved-failure history release measurement
+
+Matched isolated builds of main `65dc05837851f6d44b99fd8ff7ba0c6f293bd33c`
+and the recovery-history change use the same browser-workflow environment.
+The deferred Horoscope editor grows from 10,798 to 10,880 gzip bytes (+82).
+Aggregate JavaScript changes from 3,520,097 to 3,520,102 bytes (+5); reader
+startup including CSS changes from 513,798 to 513,797 bytes (-1). Allocate
+200 bytes above the previous 10,800-byte editor cap. Startup, aggregate, CSS
+and every other chunk limit remain unchanged. All 20 Monthly/recovery browser
+cases pass, including fresh failures, reopen/reload history and explicit retry.
