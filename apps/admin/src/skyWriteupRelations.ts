@@ -132,6 +132,7 @@ function nestedString(record: Record<string, unknown> | null | undefined, paths:
 function keyPlacementParts(contentKey: string) {
   const normalizedKey = contentKey.toLowerCase();
   const matches = [
+    normalizedKey.match(/^fallback-hook\/sky-placement-(?:hook|lived|turn)\/(moon)\/([^/]+)$/u),
     normalizedKey.match(/^sky-placement\/article\/([a-z_-]+)\/([a-z_-]+)/u),
     normalizedKey.match(/^sky\/station\/([a-z_-]+)\/(?:retrograde|direct)\/([a-z_-]+)/u),
     normalizedKey.match(/^sky\/article-(?:edition|template)\/([a-z_-]+)\/([a-z_-]+)/u),
@@ -220,6 +221,7 @@ function skyWriteupContextForRowUncached(row: SkyWriteupRelationRow): SkyWriteup
       || signFromHeadline(row.headline ?? "")
   );
   const isSkyWriteup = row.block_type === "sky_placement"
+    || /^fallback-hook\/sky-placement-(?:hook|lived|turn)\/moon\//u.test(row.content_key)
     || row.block_type === "sky_article"
     || row.mode === "article"
     || /^sky\.placement\./iu.test(row.content_key)

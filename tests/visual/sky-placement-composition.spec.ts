@@ -1,4 +1,6 @@
 import { studioApiStore } from "../helpers/studio-api-store";
+import { moonStudioRows } from "../helpers/sky-moon-studio";
+import { skyMoonWriteupKeys } from "../../apps/admin/src/skyMoonWriteup";
 import { expect, test } from "@playwright/test";
 import { skyPlacementSourceRecords, skyPlacementSourceCorpus } from "../../api/_lib/sky-placement-sources";
 import { contentLiveStatuses, servingPackageRecords } from "../../api/_lib/content-live-status";
@@ -21,6 +23,134 @@ const virtual = (key: string) => {
  const source = skyPlacementSourceRecords.get(key) ?? servingPackageRecords.get(key);
  return source ? { id: `package:${key}`, content_key: key, surface: "sky", mode: "in_depth", status: "DRAFT", lane: "reference", provider: "tldrastro-fallback-architecture-v3", headline: source.headline, summary: source.summary, body: source.body_you, sections: { packageRecord: source }, facts: { fallbackArchitectureV3: true }, source_snapshot: { sourcePackage: source.source_package, content_role: source.content_role }, block_type: "fallback_hook", event_type: "fallback-hook", package_starter: true } : null;
 };
+
+test("Moon sources name loading sections and recover from a read failure", async ({ page }) => {
+ let release!: () => void;
+ const pending = new Promise<void>(resolve => { release = resolve; });
+ let failing = true;
+ const keys = skyMoonWriteupKeys("cancer");
+ await page.addInitScript(() => localStorage.setItem("tldrastro:contentAdminSecret", "moon-read-recovery-test"));
+ await page.route("**/api/admin/**", async route => {
+  const url = new URL(route.request().url());
+  const requested = requestedKeys(url);
+  if (requested.some(key => keys.includes(key)) && failing) {
+   await pending;
+   return route.fulfill({ status: 503, json: { ok: false, error: "Moon source temporarily unavailable" } });
+  }
+  return route.fulfill({ json: { ok: true, rows: requested.map(virtual).filter(Boolean), statuses: [], nextCursor: null } });
+ });
+ try {
+  await page.goto("/admin/content#sky-writeups");
+  await page.getByLabel("Sky placement planet or point").selectOption("moon");
+  await page.getByLabel("Sky placement zodiac sign").selectOption("cancer");
+  const map = page.getByRole("region", { name: "Sky placement composition map" });
+  await expect(map.getByRole("status")).toHaveText(["Loading opening…", "Loading how it shows up…", "Loading challenge and response…"]);
+  await expect(map.getByRole("button", { name: "Edit opening", exact: true })).toHaveCount(0);
+  release();
+  await expect(map.getByRole("alert")).toContainText("HTTP 503");
+  await expect(map.getByRole("status")).toHaveText(["Source unavailable: opening", "Source unavailable: how it shows up", "Source unavailable: challenge and response"]);
+  failing = false;
+  await map.getByRole("button", { name: "Retry sources", exact: true }).click();
+  await expect(map.getByRole("button", { name: "Edit opening", exact: true })).toContainText("The Moon moves into Cancer");
+  await expect(map.getByRole("button", { name: "Edit challenge and response", exact: true })).toContainText("A tender, thin-skinned day is not proof that a relationship is in trouble.");
+  await expect(map.getByRole("alert")).toHaveCount(0);
+  await expect(map.getByRole("status")).toHaveCount(0);
+ } finally { release(); }
+});
+
+for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
+ test(`Moon complete write-up discovery edit and reload ${width} ${theme}`, async ({ page }) => {
+  test.setTimeout(90_000);
+  const originals = moonStudioRows();
+  const placeholder = { ...originals[0], id: "00000000-0000-4000-8000-000000000100", content_key: "sky-placement/article/moon/cancer",
+   headline: "Moon in Cancer", body: "", sections: { packageRecord: { contentKey: "sky-placement/article/moon/cancer", studio_content_type: "continuous-placement", placementArticle: "" } } };
+  const store = await studioApiStore([...originals, placeholder]);
+  const errors: string[] = []; page.on("pageerror", error => errors.push(error.message));
+  try {
+   await page.context().route("**/*", route => {
+    const request = route.request();
+    if (new URL(request.url()).pathname.startsWith("/api/") || !["GET", "HEAD"].includes(request.method())) return route.abort();
+    return route.continue();
+   });
+   await page.setViewportSize({ width, height: 1000 });
+   await page.addInitScript(value => {
+    localStorage.setItem("tldrastro:contentAdminSecret", "calendar-api-fixture");
+    localStorage.setItem("tldrastro:studio-theme", value);
+   }, theme);
+   await page.route("**/api/admin/**", async route => {
+    const request = route.request(), url = new URL(request.url());
+    if (["/api/admin/generated-content", "/api/admin/generated-content-inventory", "/api/admin/content-publication"].includes(url.pathname)) {
+     const result = await store.call({ method: request.method(), url: url.pathname + url.search, body: request.method() === "GET" ? undefined : request.postDataJSON() });
+     return route.fulfill({ status: result.status, json: result.payload });
+    }
+    if (url.pathname === "/api/admin/content-live-status") {
+     const input = request.postDataJSON();
+     const saved = await store.call({ method: "rows" });
+     const statuses = contentLiveStatuses((input.ids ?? []).map((id: string) => saved.find((row: any) => row.id === id) ?? virtual(id.replace(/^package:/, ""))).filter(Boolean), saved);
+     return route.fulfill({ json: input.action === "composition-catalog" ? { ok: true, rows: [] } : { ok: true, statuses } });
+    }
+    return route.fulfill({ json: { ok: true, rows: [], statuses: [], nextCursor: null } });
+   });
+   await page.goto("/admin/content#sky-writeups");
+   await page.getByLabel("Sky placement planet or point").selectOption("moon");
+   await page.getByLabel("Sky placement zodiac sign").selectOption("cancer");
+   const map = page.getByRole("region", { name: "Sky placement composition map" });
+   const table = page.getByRole("complementary", { name: "Sky write-up rows" });
+   const keys = skyMoonWriteupKeys("cancer");
+   const labels = ["Opening", "How it shows up", "Challenge and response"];
+   const copies = keys.map(key => originals.find(row => row.content_key === key)!.body);
+   for (let index = 0; index < keys.length; index++) {
+    await expect(map.getByRole("button", { name: `Edit ${labels[index].toLowerCase()}`, exact: true })).toHaveText(copies[index]);
+    await expect(map.getByRole("button", { name: `Edit ${labels[index].toLowerCase()}`, exact: true })).toHaveCSS("white-space", "pre-wrap");
+    await expect(table.getByRole("row").filter({ hasText: `Moon in Cancer · ${labels[index]}` })).toHaveCount(1);
+   }
+   await expect(table).not.toContainText("sky-placement/article/moon/cancer");
+   await expect(table.getByRole("row").filter({ has: page.getByRole("button", { name: "Edit", exact: true }) })).toHaveCount(3);
+   await page.getByLabel("Sky write-up motion").selectOption("direct");
+   await expect(table.getByRole("row").filter({ has: page.getByRole("button", { name: "Edit", exact: true }) })).toHaveCount(3);
+   await expect(map.locator(".admin-template-reader-copy .admin-eyebrow")).toHaveText(["Headline", ...labels]);
+   await expect(map.getByRole("heading")).toHaveText("Moon in Cancer");
+   const labelStyles = await map.locator(".admin-template-reader-copy .admin-eyebrow").evaluateAll(elements => elements.map(element => {
+    const style = getComputedStyle(element);
+    return [style.fontFamily, style.fontSize, style.fontWeight, style.lineHeight, style.letterSpacing, style.margin, style.textTransform, style.textAlign];
+   }));
+   for (const style of labelStyles) expect(style).toEqual(labelStyles[0]);
+   const before = await store.call({ method: "rows" });
+   expect(before).toEqual([...originals, placeholder]);
+   await map.getByRole("tab", { name: "Main template", exact: true }).click();
+   await expect(map.getByRole("list", { name: "Placement template order" }).locator(".admin-sky-section-reference")).toHaveText(keys.map(key => `${key}#body_you`));
+   await map.getByRole("tab", { name: "Saved preview", exact: true }).click();
+   await page.evaluate(() => window.scrollTo(0, 0));
+   await page.screenshot({ path: `test-results/moon-complete-${width}-${theme}.png`, fullPage: true });
+   for (let index = 0; index < keys.length; index++) {
+    // Exercise both discovery routes: the list and the exact colored passage.
+    if (index === 1) await table.getByRole("row").filter({ hasText: `Moon in Cancer · ${labels[index]}` }).getByRole("button", { name: "Edit", exact: true }).click();
+    else await map.getByRole("button", { name: `Edit ${labels[index].toLowerCase()}`, exact: true }).click();
+    const editor = page.getByRole("dialog", { name: "Generated content editor" });
+    const field = editor.getByRole("textbox", { name: "Reader phrase · You", exact: true });
+    await expect(field).toHaveValue(copies[index]);
+    const revised = `Synthetic Moon section ${index + 1} opening.\n\nSynthetic complete closing sentence ${index + 1}.`;
+    await field.fill(revised);
+    await editor.getByRole("button", { name: "Save & publish", exact: true }).click();
+    await expect.poll(async () => (await store.call({ method: "rows" })).find((row: any) => row.content_key === keys[index] && row.status === "LIVE")?.sections.packageRecord.body_you).toBe(revised);
+    await expect(editor.getByRole("alert")).toHaveCount(0);
+    copies[index] = revised;
+    await editor.getByRole("button", { name: "Close", exact: true }).click();
+    await page.reload();
+    await page.getByLabel("Sky placement planet or point").selectOption("moon");
+    await page.getByLabel("Sky placement zodiac sign").selectOption("cancer");
+    for (let section = 0; section < keys.length; section++) await expect(map.getByRole("button", { name: `Edit ${labels[section].toLowerCase()}`, exact: true })).toHaveText(copies[section]);
+   }
+   const saved = await store.call({ method: "rows" });
+   for (const row of originals.filter(row => !keys.includes(row.content_key))) expect(saved.find((item: any) => item.id === row.id)).toEqual(row);
+   for (const key of keys) expect(saved.find((row: any) => row.content_key === key && row.status === "LIVE").sections.packageRecord.body_they).toBe(originals.find(row => row.content_key === key)!.sections.packageRecord.body_they);
+   await page.getByRole("searchbox", { name: "Search Sky write-ups", exact: true }).fill("no matching moon section");
+   await expect(table).toContainText("No Sky write-ups match");
+   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+   expect(errors).toEqual([]);
+  } finally { store.close(); }
+ });
+}
 for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
  test(`Saturn composition source discovery and editor ${width} ${theme}`, async ({ page }) => {
   await page.setViewportSize({ width, height: 1000 });
@@ -149,7 +279,7 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
   await expect(map.getByRole("button", { name: "Edit retrograde body", exact: true })).toHaveCount(0);
   await expect(map.getByRole("button", { name: "Edit placement article", exact: true })).toBeVisible();
   await map.getByLabel("Composition planet or point").selectOption("moon");
-  await expect(map.getByRole("button", { name: "Edit placement passage", exact: true })).toContainText("The Moon moves into Aries");
+   await expect(map.getByRole("button", { name: "Edit opening", exact: true })).toContainText("The Moon moves into Aries");
   await expect(map.getByRole("alert")).toHaveCount(0);
   expect(await page.evaluate(() => document.documentElement.scrollWidth - innerWidth)).toBeLessThanOrEqual(1);
   expect(errors).toEqual([]);
