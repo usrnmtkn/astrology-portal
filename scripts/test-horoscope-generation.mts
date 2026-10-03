@@ -144,20 +144,91 @@ assert.equal(live.status,200,JSON.stringify(live.payload));row=live.payload.rows
 assert.deepEqual(row.source_snapshot.horoscopeGeneration.readings.aries.lint.violations,oldCheck.lint.violations,'Publication preserves the historical receipt');
 assert(horoscopeEditionAt([row],'weekly','2026-09-24T16:00:00Z','Asia/Tokyo'));
 assert.equal(horoscopeEditionAt([row],'weekly','2026-09-24T16:00:00Z','America/New_York'),null);
-// An unconfirmed POST retains its reservation and cannot silently bill twice.
+// Lost provider confirmation is isolated to one sign, never automatically replayed.
 result=await store.invoke('PATCH',{id:row.id,expectedUpdatedAt:row.updated_at,status:'DRAFT'});assert.equal(result.status,200);row=result.payload.rows[0];
-edition=structuredClone(row.sections.horoscopeEdition);edition.passages[0]={sign:'aries',headline:'',body:''};
+edition=structuredClone(row.sections.horoscopeEdition);
+edition.passages[0]={sign:'aries',headline:'',body:''};edition.passages[1]={sign:'taurus',headline:'',body:''};
 result=await store.invoke('PATCH',{id:row.id,expectedUpdatedAt:row.updated_at,sections:{horoscopeEdition:edition},body:horoscopeEditionBody(edition)});assert.equal(result.status,200);row=result.payload.rows[0];
-writerFixture.unknownNext=true;result=await action('generate',{sign:'aries',approvedPlanHash:planHash});assert.equal(result.status,500);
-row=store.rows.get(row.id);assert(row.source_snapshot.horoscopeGeneration.active.requestHash);assert.equal(row.source_snapshot.horoscopeGeneration.active.responseId,null);
+const beforeReservation=structuredClone(row),fixtureFetch=globalThis.fetch;
+let reservations=0;
+globalThis.fetch=async(input:any,options:any={})=>{
+ if(options.method==='PATCH'&&String(input).startsWith('https://calendar-api.invalid/')){
+  const patch=JSON.parse(options.body),active=patch.source_snapshot?.horoscopeGeneration?.active;
+  if(active){assert(active.requestHash,'A reservation must already contain the completed request identity');reservations++;}
+ }
+ return fixtureFetch(input,options);
+};
+writerFixture.unknownNext=true;result=await action('generate',{sign:'aries',approvedPlanHash:planHash});assert.equal(result.status,200,JSON.stringify(result.payload));
+row=result.payload.rows[0];assert.equal(reservations,1);globalThis.fetch=fixtureFetch;
+assert.equal(row.source_snapshot.horoscopeGeneration.active,null);
+const held=row.source_snapshot.horoscopeGeneration.heldRequests.aries;
+assert(held.requestHash);assert.equal(held.responseId,null);assert.equal(held.startupDiagnostic.stage,'dispatch');
+assert.equal(held.startupDiagnostic.code,'unexpected_error');assert(!JSON.stringify(held.startupDiagnostic).includes('Fixture connection lost'),'Private error text is not exposed');
 const callsAfterUnknown=writerFixture.calls;
 assert.equal((await action('generate',{sign:'aries',approvedPlanHash:planHash})).status,409);
-assert.equal((await action('poll')).status,409);assert.equal(writerFixture.calls,callsAfterUnknown);
-assert.equal((await action('release',{acknowledgeUnknownOutcome:true})).status,409);
-row.source_snapshot.horoscopeGeneration.active.startedAt=new Date(Date.now()-311000).toISOString();store.rows.set(row.id,row);
-assert.equal((await action('release')).status,409);
-result=await action('release',{acknowledgeUnknownOutcome:true});assert.equal(result.status,200);row=result.payload.rows[0];assert.equal(row.source_snapshot.horoscopeGeneration.active,null);
-assert(row.source_snapshot.horoscopeGeneration.lastInterrupted.requestHash);
+assert.equal((await action('poll')).status,200);assert.equal(writerFixture.calls,callsAfterUnknown);
+assert.equal((await action('reject',{sign:'all'})).status,409);
+// The other sign completes while the unresolved request and earlier writing stay intact.
+result=await action('generate',{sign:'taurus',approvedPlanHash:planHash});assert.equal(result.status,202);row=result.payload.rows[0];
+result=await action('poll');assert.equal(result.status,200);row=result.payload.rows[0];
+assert.deepEqual(row.source_snapshot.horoscopeGeneration.heldRequests.aries,held);
+assert.deepEqual(row.sections.horoscopeEdition.passages.slice(2),beforeReservation.sections.horoscopeEdition.passages.slice(2));
+assert.equal((await action('release',{sign:'aries'})).status,409);
+result=await action('release',{sign:'aries',acknowledgeUnknownOutcome:true});assert.equal(result.status,200);row=result.payload.rows[0];
+assert.equal(row.source_snapshot.horoscopeGeneration.heldRequests.aries,undefined);
+assert.equal(row.source_snapshot.horoscopeGeneration.lastInterrupted.id,held.id);
+assert.equal(writerFixture.calls,callsAfterUnknown+1,'Release never calls the provider');
+
+// A failed reservation cannot leave a half-prepared operation or call the provider.
+const beforeFailedReservation=structuredClone(row),callsBeforeReservation=writerFixture.calls;
+globalThis.fetch=async(input:any,options:any={})=>{
+ if(options.method==='PATCH'&&String(input).startsWith('https://calendar-api.invalid/'))return Response.json({message:'Fixture storage unavailable'},{status:503});
+ return fixtureFetch(input,options);
+};
+result=await action('generate',{sign:'aries',approvedPlanHash:planHash});assert.equal(result.status,502);globalThis.fetch=fixtureFetch;
+assert.deepEqual(store.rows.get(row.id),beforeFailedReservation);assert.equal(writerFixture.calls,callsBeforeReservation);
+
+// Legacy pre-dispatch reservations recover without a paid retry or manual release.
+row.source_snapshot.horoscopeGeneration.active={id:'legacy-pre-dispatch',sign:'aries',state:'starting',startedAt:new Date().toISOString(),responseId:null};
+store.rows.set(row.id,structuredClone(row));
+result=await action('poll');assert.equal(result.status,202);assert.equal(writerFixture.calls,callsBeforeReservation);
+row=store.rows.get(row.id);row.source_snapshot.horoscopeGeneration.active.startedAt=new Date(Date.now()-311000).toISOString();store.rows.set(row.id,structuredClone(row));
+const staleVersion=row.updated_at;
+result=await action('poll');assert.equal(result.status,200);row=result.payload.rows[0];assert.equal(result.payload.recovery,'not_dispatched');
+assert.equal(row.source_snapshot.horoscopeGeneration.active,null);assert.equal(writerFixture.calls,callsBeforeReservation);
+assert.equal((await invokeHoroscopeWriting({action:'generate',id:row.id,expectedUpdatedAt:staleVersion,sign:'aries',approvedPlanHash:planHash})).status,409,'The expired invocation is fenced from dispatch');
+// A crashed process with a dispatch identity must remain held instead of replaying.
+row.source_snapshot.horoscopeGeneration.active={...held,id:'crashed-dispatch',startedAt:new Date(Date.now()-311000).toISOString()};store.rows.set(row.id,structuredClone(row));
+result=await action('poll');assert.equal(result.status,200);row=result.payload.rows[0];assert.equal(result.payload.recovery,'uncertain');
+assert.equal(row.source_snapshot.horoscopeGeneration.heldRequests.aries.id,'crashed-dispatch');assert.equal(writerFixture.calls,callsBeforeReservation);
+assert.equal((await action('generate',{sign:'aries',approvedPlanHash:planHash})).status,409);
+result=await action('release',{sign:'aries',acknowledgeUnknownOutcome:true});assert.equal(result.status,200);row=result.payload.rows[0];
+
+// If only the response-ID save fails, retry storage once and retrieve the same response.
+let failedResponseSave=false;
+globalThis.fetch=async(input:any,options:any={})=>{
+ if(options.method==='PATCH'&&String(input).startsWith('https://calendar-api.invalid/')&&JSON.parse(options.body).source_snapshot?.horoscopeGeneration?.active?.responseId&&!failedResponseSave){failedResponseSave=true;return Response.json({},{status:503});}
+ return fixtureFetch(input,options);
+};
+result=await action('generate',{sign:'aries',approvedPlanHash:planHash});assert.equal(result.status,202,JSON.stringify(result.payload));globalThis.fetch=fixtureFetch;
+row=result.payload.rows[0];assert(row.source_snapshot.horoscopeGeneration.active.responseId);assert.equal(writerFixture.calls,callsBeforeReservation+1);
+result=await action('poll');assert.equal(result.status,200);row=result.payload.rows[0];assert.equal(writerFixture.calls,callsBeforeReservation+1);
+// A concurrent edit wins over a late response-ID save and its recovery attempt.
+row.sections.horoscopeEdition.passages[0]={sign:'aries',headline:'',body:''};
+row.body=horoscopeEditionBody(row.sections.horoscopeEdition);
+store.rows.set(row.id,structuredClone(row));
+let newerRow:any=null;
+globalThis.fetch=async(input:any,options:any={})=>{
+ if(!newerRow&&options.method==='PATCH'&&String(input).startsWith('https://calendar-api.invalid/')&&JSON.parse(options.body).source_snapshot?.horoscopeGeneration?.active?.responseId){
+  newerRow=structuredClone(store.rows.get(row.id));newerRow.updated_at=new Date(Date.now()+60000).toISOString();
+  newerRow.summary='Concurrent owner edit is preserved.';store.rows.set(row.id,newerRow);
+ }
+ return fixtureFetch(input,options);
+};
+const callsBeforeRace=writerFixture.calls;
+result=await action('generate',{sign:'aries',approvedPlanHash:planHash});assert.equal(result.status,409);globalThis.fetch=fixtureFetch;
+assert.deepEqual(store.rows.get(row.id),newerRow);assert.equal(writerFixture.calls,callsBeforeRace+1);
+row=store.rows.get(row.id);
 for(const [zone,start] of [['Pacific/Kiritimati','2026-09-23T10:00:00.000Z'],['Asia/Kathmandu','2026-09-23T18:15:00.000Z'],['Pacific/Honolulu','2026-09-24T10:00:00.000Z']]){
  const packet=await prepareHoroscopeBrief(new URL(`http://localhost/?period=daily&date=2026-09-24&timeZone=${zone}`));assert.equal(packet.brief.window.startsAt,start);
 }

@@ -129,6 +129,17 @@ if (process.send) process.on('message', async ({ id, method, body, url }: any) =
     for(const key of ['pendingPolls','terminalNext','unknownNext','nextResult','startResult'] as const)if(body?.[key]!==undefined)(writerFixture as any)[key]=body[key];
     process.send!({id,result:{calls:writerFixture.calls,polls:writerFixture.polls,responseIds:[...writerFixture.requests.keys()]}});return;
   }
+  if (method === 'interrupted-horoscope-start') {
+    const row=store.rows.get(body.id),generation=row.source_snapshot.horoscopeGeneration;
+    const interrupted=generation.active??Object.values(generation.heldRequests??{})[0];
+    if(!interrupted)throw new Error('Fixture requires a reserved request');
+    generation.active=structuredClone(interrupted);
+    generation.heldRequests={};
+    generation.active.responseId=null;
+    if(body.beforeDispatch)delete generation.active.requestHash;
+    if(body.expired)generation.active.startedAt=new Date(Date.now()-311000).toISOString();
+    process.send!({id,result:structuredClone(row)});return;
+  }
   if (method === 'legacy-horoscope-failure') {
     const row=store.rows.get(body.id),generation=row?.source_snapshot?.horoscopeGeneration;
     if(!generation?.lastError||generation.active)throw new Error('Choose a failed fixture edition.');
