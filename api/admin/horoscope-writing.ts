@@ -18,6 +18,7 @@ import {horoscopePunctuationFindings} from '../../src/astro-writing/horoscopeEdi
 import {MONTHLY_HOROSCOPE_FORMAT,composeMonthlyHoroscopeDraft} from '../../src/astro-writing/monthlyHoroscopeFormat.mjs';
 import {isMonthlySynthesisVersion} from '../../src/astro-writing/monthlyHoroscopeSynthesis.mjs';
 import {monthlyHoroscopeOperation} from '../_lib/monthly-horoscope-operation.js';
+import {horoscopeStartupRecovery} from '../../src/astro-writing/horoscopeRecovery.mjs';
 loadLocalWebEnv();
 export const maxDuration=300;
 const hash=(v:unknown)=>createHash('sha256').update(JSON.stringify(v)).digest('hex');
@@ -49,6 +50,12 @@ export default async function handler(req:IncomingMessage,res:ServerResponse) {
       row=saved[0];return row;
     };
     let operation=row.source_snapshot?.horoscopeGeneration?.active;
+    let dispatchAttempted=false;
+    let stage='prepare';
+    const diagnostic=(error:unknown)=>({stage,status:adminErrorStatus(error),
+      code:error instanceof Error&&['AbortError','TimeoutError'].includes(error.name)?'timeout':error instanceof AdminHttpError?'storage_or_protocol_error':'unexpected_error',
+      errorType:error instanceof Error&&['AbortError','TimeoutError','TypeError','SyntaxError','AdminHttpError','Error'].includes(error.name)?error.name:'Error',
+      recordedAt:new Date().toISOString()});
     const recordFailure=async(error:HoroscopeProviderFailure)=>{
       const generation=row.source_snapshot?.horoscopeGeneration??{};
       const failure={message:error.message,code:error.code,diagnostic:error.diagnostic,operation,failedAt:new Date().toISOString()};
@@ -78,6 +85,7 @@ export default async function handler(req:IncomingMessage,res:ServerResponse) {
     }
     if(input.action==='reject') {
       if(operation)throw new AdminHttpError(409,'Finish or release the running request before rejecting drafts.');
+      if(Object.keys(row.source_snapshot?.horoscopeGeneration?.heldRequests??{}).length)throw new AdminHttpError(409,'Resolve the interrupted requests before rejecting drafts. Saved readings are kept.');
       if(input.sign!=='all'&&!horoscopeReadingSigns(row.sections.horoscopeEdition).includes(input.sign))throw new AdminHttpError(400,'Choose a reading or all drafts.');
       const all=input.sign==='all',original=row.sections.horoscopeEdition;
       const selected=original.passages.filter((p:any)=>all||p.sign===input.sign);
@@ -112,6 +120,15 @@ export default async function handler(req:IncomingMessage,res:ServerResponse) {
       return sendAdminJson(res,200,{ok:true,rows:[row]});
     }
     if(input.action==='release') {
+      const held=input.sign&&row.source_snapshot?.horoscopeGeneration?.heldRequests?.[input.sign];
+      if(held){
+        if(operation||input.acknowledgeUnknownOutcome!==true)throw new AdminHttpError(409,'Finish the current reading and acknowledge the interrupted request before retrying it.');
+        const generation=row.source_snapshot.horoscopeGeneration;
+        const heldRequests={...generation.heldRequests};delete heldRequests[input.sign];
+        const released={...held,releasedAt:new Date().toISOString(),releasedBy:actor,outcome:'unknown'};
+        await persist({source_snapshot:{...row.source_snapshot,horoscopeGeneration:{...generation,heldRequests,lastInterrupted:released,interruptions:[...(generation.interruptions??[]),released]}}});
+        return sendAdminJson(res,200,{ok:true,rows:[row]});
+      }
       if(!operation||Date.now()-Date.parse(operation.startedAt)<310000||input.acknowledgeUnknownOutcome!==true)throw new AdminHttpError(409,'Wait for the in-flight request, then acknowledge its unknown outcome before releasing it.');
       if(operation.responseId){
         const response=await responses.storedWritingResponse({apiKey:process.env.OPENAI_API_KEY,responseId:operation.responseId,cancel:true});
@@ -135,7 +152,21 @@ export default async function handler(req:IncomingMessage,res:ServerResponse) {
     if(input.action==='continue')throw new AdminHttpError(409,'Check saved progress before continuing this reading.');
     if(input.action==='poll'&&!recoverMonthlyPlan) {
       if(!apiKey)throw new AdminHttpError(503,'The horoscope writer is not connected. Restore its server API key to retrieve this reading.');
-      if(!operation.responseId)throw new AdminHttpError(409,'The request has no confirmed response ID yet. Wait, then reopen the edition. If interrupted, release it after five minutes.');
+      if(!operation.responseId){
+        const recovery=horoscopeStartupRecovery(operation);
+        if(recovery==='waiting')return sendAdminJson(res,202,{ok:true,rows:[row],pending:true});
+        if(recovery){
+          const generation=row.source_snapshot.horoscopeGeneration;
+          const interrupted={...operation,interruptedAt:new Date().toISOString(),outcome:recovery==='not_dispatched'?'not_dispatched':'unknown'};
+          // Never replay a possibly billed request. Keep its complete identity
+          // separately so other signs can proceed under their approved plan.
+          await persist({source_snapshot:{...row.source_snapshot,horoscopeGeneration:{...generation,active:null,
+            interruptions:[...(generation.interruptions??[]),interrupted],
+            ...(recovery==='uncertain'?{heldRequests:{...generation.heldRequests,[operation.sign]:interrupted}}:{})}}});
+          return sendAdminJson(res,200,{ok:true,rows:[row],pending:false,recovery});
+        }
+        throw new AdminHttpError(409,'This request cannot be retrieved yet. Check saved progress before retrying.');
+      }
       const response=await responses.storedWritingResponse({apiKey,responseId:operation.responseId});
       const payload:any=await response.json();
       if(!response.ok)throw new AdminHttpError(503,'The writer result is temporarily unavailable. Resume to retrieve the same request.');
@@ -182,6 +213,7 @@ export default async function handler(req:IncomingMessage,res:ServerResponse) {
     if(!apiKey)throw new AdminHttpError(503,'The horoscope writer is not connected. Configure the server OpenAI API key, then retry.');
     const sign=input.sign;
     if(!horoscopeReadingSigns(prepared.edition).includes(sign))throw new AdminHttpError(400,'Choose a reading.');
+    if(row.source_snapshot?.horoscopeGeneration?.heldRequests?.[sign])throw new AdminHttpError(409,'This reading has an interrupted request with an unknown outcome. Continue the other readings or explicitly release this request before retrying.');
     const passage=prepared.edition.passages.find((p:any)=>p.sign===sign);
     if(passage.headline.trim()||passage.body.trim())throw new AdminHttpError(409,'This sign already contains writing. Reject the reading in Review before generating a replacement.');
     const planHash=input.approvedPlanHash;
@@ -197,18 +229,19 @@ export default async function handler(req:IncomingMessage,res:ServerResponse) {
         outputFormat:prepared.edition.window.period==='monthly'?MONTHLY_HOROSCOPE_FORMAT:null,
         validationCorrections:entry.validationCorrections,
         receipt:{version:horoscopeWritingVersion,outputFormat:prepared.edition.window.period==='monthly'?MONTHLY_HOROSCOPE_FORMAT:null,planHash,sign,sourceHash:prepared.sourceHash,sourceIds:entry.sourceIds,seasonalMeaning:entry.seasonalMeaning,profileHash:hash(prepared.writingProfile),argumentHash:entry.argumentOutline.outlineHash,feedback:prepared.feedbackReceipt,ownerApproved:false,promotionAuthorized:false}};
-      const generation=row.source_snapshot?.horoscopeGeneration??{};
-      const failures=generation.failures??[];
-      const legacy=generation.lastError;
-      await persist({source_snapshot:{...writingRow.source_snapshot,horoscopeGeneration:{...generation,active:operation,lastError:null,
-        failures:legacy&&!failures.some((failure:any)=>failure.operation?.id===legacy.operation?.id)?[...failures,legacy]:failures}}});
     }
     let payload:any;
     const writerClient=Object.assign(async({role,instructions,input:prompt,schema}:any)=>{
         const request={...provider.buildProviderRequest({config:operation.config,role:'writer',input:prompt,schema}),background:true,store:true};
         operation={...operation,requestHash:hash({request,instructions})};
-        // Persist the exact request identity before the potentially billed call.
-        await persist({source_snapshot:{...row.source_snapshot,horoscopeGeneration:{...row.source_snapshot.horoscopeGeneration,active:operation}}});
+        // Finish prompt/evidence preparation before reserving. One conditional
+        // save contains the complete identity; a failed save never dispatches.
+        stage='reserve';
+        const generation=row.source_snapshot?.horoscopeGeneration??{};
+        const failures=generation.failures??[],legacy=generation.lastError;
+        await persist({source_snapshot:{...writingRow.source_snapshot,horoscopeGeneration:{...generation,active:operation,lastError:null,
+          failures:legacy&&!failures.some((failure:any)=>failure.operation?.id===legacy.operation?.id)?[...failures,legacy]:failures}}});
+        stage='dispatch';dispatchAttempted=true;
         const {response,payload:result}=await responses.startStoredWritingResponse({apiKey,role,request,governedInstructions:instructions,surface:'horoscopes',family:'horoscope',fetchImpl:(url:any,options:any)=>fetch(url,{...options,signal:AbortSignal.timeout(25000)})});
         payload=result;
         if(!response.ok) {
@@ -217,6 +250,7 @@ export default async function handler(req:IncomingMessage,res:ServerResponse) {
         }
         if(typeof payload.id!=='string'||!/^resp_[A-Za-z0-9_-]+$/u.test(payload.id))throw new AdminHttpError(502,'The writer did not confirm a response ID. Reopen this edition before retrying.');
         operation={...operation,responseId:payload.id,state:'running'};
+        stage='save_response';
         await persist({source_snapshot:{...row.source_snapshot,horoscopeGeneration:{...row.source_snapshot.horoscopeGeneration,active:operation}}});
       
       if(['queued','in_progress'].includes(payload.status))throw new Pending();
@@ -233,6 +267,24 @@ export default async function handler(req:IncomingMessage,res:ServerResponse) {
     } catch(error) {
       if(error instanceof Pending)return sendAdminJson(res,202,{ok:true,rows:[row],pending:true});
       if(error instanceof HoroscopeProviderFailure)return await recordFailure(error);
+      const detail=diagnostic(error);
+      console.error('horoscope_startup_interrupted',{operationId:operation.id,sign, ...detail});
+      // Preserve a returned response ID even if its first save failed. Retrying
+      // this conditional storage save cannot start another provider request.
+      if(dispatchAttempted){
+        operation={...operation,startupDiagnostic:detail};
+        try{
+          const generation=row.source_snapshot.horoscopeGeneration;
+          if(operation.responseId){
+            await persist({source_snapshot:{...row.source_snapshot,horoscopeGeneration:{...generation,active:operation}}});
+            return sendAdminJson(res,202,{ok:true,rows:[row],pending:true});
+          }
+          const held={...operation,interruptedAt:new Date().toISOString(),outcome:'unknown'};
+          await persist({source_snapshot:{...row.source_snapshot,horoscopeGeneration:{...generation,active:null,
+            heldRequests:{...generation.heldRequests,[sign]:held},interruptions:[...(generation.interruptions??[]),held]}}});
+          return sendAdminJson(res,200,{ok:true,rows:[row],pending:false,recovery:'uncertain'});
+        }catch{/* A conflict or unavailable storage is reconciled by the client. */}
+      }
       throw error;
     }
   }catch(error) {

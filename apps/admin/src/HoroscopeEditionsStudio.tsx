@@ -12,6 +12,7 @@ import {HoroscopeLocation} from '../../web/src/features/horoscopes/HoroscopeLoca
 import {browserTimeZone} from '../../web/src/services/timezones';
 import type {LocationInput} from '../../web/src/types';
 import {horoscopePunctuationFindings} from '../../../src/astro-writing/horoscopeEditorialConstraints.mjs';
+import {horoscopePendingReadings} from '../../../src/astro-writing/horoscopeRecovery.mjs';
 const WritingProfiles=lazy(()=>import('./HoroscopeWritingStudio'));
 const endpoint = '/api/admin/generated-content';
 const steps = ['setup','generate','edit','publish'] as const;
@@ -203,13 +204,15 @@ export default function HoroscopeEditionsStudio({secret,requestedEditionId}:{sec
     if(row.status==='LIVE'){setStep('publish');setMessage('Loaded the published edition.');return;}
     if(active){
       setStep('generate');setSign(active.sign);
-      setMessage(active.phase==='synthesis'&&active.state==='ready'?'':active.responseId?`${count}/${edition.passages.length} readings are saved. ${horoscopeSignLabel(active.sign)} is still processing. Studio checks automatically; you can also check now or return to your editions.`:'Your request is being confirmed. Studio will check again automatically; a second request will not be started.');
+      setMessage(active.phase==='synthesis'&&active.state==='ready'?'':active.responseId?`${count}/${edition.passages.length} readings are saved. ${horoscopeSignLabel(active.sign)} is still processing. Studio checks automatically; you can also check now or return to your editions.`:'Waiting for request confirmation. Studio checks automatically without sending another request.');
       return;
     }
     if(!edition.passages.some((p:any)=>!p.headline.trim()&&!p.body.trim())){
       setStep('edit');setSign(edition.passages[0].sign);setMessage(count===edition.passages.length?'All readings are saved and ready to review.':`${count}/${edition.passages.length} readings are complete. Review the remaining text before publishing.`);return;
     }
-    setStep('generate');setMessage(`${count}/${edition.passages.length} readings are saved. Review the current writing plan to continue the remaining readings.`);
+    setStep('generate');setMessage(horoscopePendingReadings(edition,row.source_snapshot?.horoscopeGeneration).length===0
+      ?`${count}/${edition.passages.length} readings are saved. The interrupted readings are listed below and need your decision before another attempt.`
+      :`${count}/${edition.passages.length} readings are saved. Review the current writing plan to continue the remaining readings.`);
     return loadPlan(row,controller);
   }
   async function recoverGeneration(row:any,controller:AbortController,pollExisting=false) {
@@ -221,7 +224,7 @@ export default function HoroscopeEditionsStudio({secret,requestedEditionId}:{sec
       if(!isCurrent(controller))return;
       const active=row.source_snapshot?.horoscopeGeneration?.active;
       let failure:any;
-      if(pollExisting&&(active?.responseId||row.source_snapshot?.horoscopeGeneration?.lastError?.code==='invalid_synthesis')){
+      if(pollExisting&&(active||row.source_snapshot?.horoscopeGeneration?.lastError?.code==='invalid_synthesis')){
         try{
           const data=await request(secret,'/api/admin/horoscope-writing',{action:'poll',id:row.id,expectedUpdatedAt:row.updated_at},'POST',controller.signal);
           if(data.rows?.[0]?.id!==row.id)throw new Error('The saved result could not be confirmed.');
@@ -263,7 +266,7 @@ export default function HoroscopeEditionsStudio({secret,requestedEditionId}:{sec
       let calls=0;
       while(!stop.current&&isCurrent(controller)){
         const active=row.source_snapshot?.horoscopeGeneration?.active;
-        const missing=row.sections.horoscopeEdition.passages.find((p:any)=>!p.headline.trim()&&!p.body.trim());
+        const missing=horoscopePendingReadings(row.sections.horoscopeEdition,row.source_snapshot?.horoscopeGeneration)[0];
         if(!active&&!missing)break;
         if(!active&&(!planApproved||!plan)){setMessage('Recovered the reading. Review the writing plan to continue the remaining readings.');break;}
         const next=active?.sign??retrying??missing.sign;
@@ -284,9 +287,9 @@ export default function HoroscopeEditionsStudio({secret,requestedEditionId}:{sec
     }
     finally{endOperation(controller);}
   }
-  async function release(){
-    if(!saved||!window.confirm('The previous request may have been billed. Release it so you can start a new request?'))return;
-    setBusy(true);setError('');try{const data=await request(secret,'/api/admin/horoscope-writing',{action:'release',id:saved.id,expectedUpdatedAt:saved.updated_at,acknowledgeUnknownOutcome:true});retain(data.rows[0]);setMessage('Interrupted request released. Review the plan before starting another request.');setPlanApproved(false);}catch(reason){setError((reason as Error).message);}finally{setBusy(false);}
+  async function release(heldSign?:string){
+    if(!saved||!window.confirm(`The interrupted ${heldSign?horoscopeSignLabel(heldSign)+' ':''}request may have been billed. Allow a new paid request for this reading?`))return;
+    setBusy(true);setError('');try{const data=await request(secret,'/api/admin/horoscope-writing',{action:'release',id:saved.id,expectedUpdatedAt:saved.updated_at,acknowledgeUnknownOutcome:true,...(heldSign?{sign:heldSign}:{})});retain(data.rows[0]);await loadPlan(data.rows[0]);setMessage('Interrupted request released. Review the plan before starting another request.');setPlanApproved(false);}catch(reason){setError((reason as Error).message);}finally{setBusy(false);}
   }
   async function reject(target:string){
     if(!saved||locked||saved.status!=='DRAFT')return;
@@ -308,6 +311,8 @@ export default function HoroscopeEditionsStudio({secret,requestedEditionId}:{sec
   const complete=draft?.passages.filter(p=>p.headline.trim()&&p.body.trim()).length ?? 0;
   const empty=draft?.passages.filter(p=>!p.headline.trim()&&!p.body.trim()).length ?? 0;
   const generation=saved?.source_snapshot?.horoscopeGeneration,active=generation?.active;
+  const heldSigns=Object.keys(generation?.heldRequests??{});
+  const available=draft?horoscopePendingReadings(draft,generation).length:0;
   useEffect(()=>{
     if(step!=='generate'||!active&&!needsSync||dirty||instructions||checking||busy&&!running.current)return;
     // A backgrounded tab or an interrupted poll must not leave the last known
@@ -329,11 +334,11 @@ export default function HoroscopeEditionsStudio({secret,requestedEditionId}:{sec
     setSign(failedSign);setStep('edit');setApproved(false);setError('');
     setMessage('Correct the punctuation in this unsaved response, then save the draft. No new AI request is needed.');
   }
-  const retrySign=!active&&draft?.passages.some(p=>p.sign===failedSign&&!p.headline.trim()&&!p.body.trim())?failedSign:null;
+  const retrySign=!active&&!generation?.heldRequests?.[failedSign]&&draft?.passages.some(p=>p.sign===failedSign&&!p.headline.trim()&&!p.body.trim())?failedSign:null;
   const locked=busy||Boolean(active)||needsSync;
   const stepIndex=steps.indexOf(step),signIndex=readingSigns.indexOf(sign),planEntry=plan?.readings.find((entry:any)=>entry.sign===sign);
   const isPublished=saved?.status==='LIVE'&&!dirty;
-  const rejectAllButton=saved?.status==='DRAFT'&&empty<total?<StudioButton className="admin-danger-button" disabled={locked} onClick={()=>void reject('all')}>Reject all drafts</StudioButton>:null;
+  const rejectAllButton=saved?.status==='DRAFT'&&empty<total?<StudioButton className="admin-danger-button" disabled={locked||heldSigns.length>0} onClick={()=>void reject('all')}>Reject all drafts</StudioButton>:null;
   async function moveTo(next:Step) {
     if(next==='setup'&&(!busy||running.current||checking)){
       pauseGeneration();setStep('setup');setMessage(dirty?'Your unsaved edits are kept in this session. Return to Review to continue editing.':'Your edition is saved. Open it under Continue a saved edition to pick up where you left off.');return;
@@ -370,6 +375,7 @@ export default function HoroscopeEditionsStudio({secret,requestedEditionId}:{sec
       </details>
     </>:draft&&passage&&<>
       {step==='generate'?<>
+        {heldSigns.map(heldSign=><div key={heldSign} role="note"><p>{horoscopeSignLabel(heldSign)} was interrupted before its response could be confirmed. This reading is held to prevent a duplicate charge. The other readings can continue; saved writing is kept.</p><StudioButton disabled={locked} onClick={()=>void release(heldSign)}>Allow retry for {horoscopeSignLabel(heldSign)}</StudioButton></div>)}
         <details className="admin-workspace-details"><AdminDisclosureSummary>Writing instructions · optional</AdminDisclosureSummary>
           <p>Using {profile?.id?`your saved ${draft.window.period} instructions, revision ${profile.revision}`:`the ${draft.window.period} starter instructions`}. You can use these as they are.</p>
           <StudioButton disabled={busy} onClick={()=>setInstructions(!instructions)}>{instructions?'Close writing instructions':'Edit writing instructions'}</StudioButton>
@@ -394,12 +400,12 @@ export default function HoroscopeEditionsStudio({secret,requestedEditionId}:{sec
         {progress&&<p role="status">{progress}</p>}
         <progress aria-label="Drafts saved" value={complete} max={total}/>
         <footer className="admin-writing-savebar admin-horoscope-actions">
-          {plan&&!active&&empty>0&&!dirty&&<label><input type="checkbox" checked={planApproved} disabled={locked} onChange={e=>setPlanApproved(e.target.checked)}/> I approve this writing plan for generation.</label>}
+          {plan&&!active&&available>0&&!dirty&&<label><input type="checkbox" checked={planApproved} disabled={locked} onChange={e=>setPlanApproved(e.target.checked)}/> I approve this writing plan for generation.</label>}
           {!configured&&plan&&<p role="alert">AI writing is unavailable. Configure the writer before generating, or write the readings yourself.</p>}
-          <p>{checking?'Retrieving your saved request. This does not start another generation.':needsSync?'Paused. Check saved progress before continuing; completed readings are kept.':busy?'Each completed reading is saved automatically.':active?'Continue the saved request without starting it again.':empty===0?'Your drafts are ready to review.':dirty||!plan?'Prepare the current writing plan to continue.':!planApproved?`Check the plan approval box to ${retrySign?'retry':'continue'}.`:draft.window.period==='monthly'?'Up to 2 paid AI requests: one plan, then one draft. Matching saved plans are reused.':retrySign?`Retry only ${horoscopeSignLabel(retrySign)} with one new paid AI request. Saved readings are kept.`:`Ready to write ${empty} ${empty===1?'draft':'drafts'}. This uses ${empty} paid AI ${empty===1?'request':'requests'} and saves the results for review.`}</p>
+          <p>{checking?'Retrieving your saved request. This does not start another generation.':needsSync?'Paused. Check saved progress before continuing; completed readings are kept.':busy?'Each completed reading is saved automatically.':active?'Continue the saved request without starting it again.':empty===0?'Your drafts are ready to review.':available===0?'The remaining readings have interrupted requests. Use Allow retry to retry a reading.':dirty||!plan?'Prepare the current writing plan to continue.':!planApproved?`Check the plan approval box to ${retrySign?'retry':'continue'}.`:draft.window.period==='monthly'?'Up to 2 paid AI requests: one plan, then one draft. Matching saved plans are reused.':retrySign?`Retry only ${horoscopeSignLabel(retrySign)} with one new paid AI request. Saved readings are kept.`:`Ready to write ${available} ${available===1?'draft':'drafts'}. This uses ${available} paid AI ${available===1?'request':'requests'} and saves the results for review.`}</p>
           <div className="admin-toolbar-actions"><StudioButton disabled={busy&&!running.current&&!checking} onClick={()=>void moveTo('setup')}>Back to editions</StudioButton><div className="admin-toolbar-actions admin-horoscope-decision-actions">{rejectAllButton}
             <StudioButton disabled={!saved||dirty||checking||busy&&!running.current} onClick={()=>void checkProgress()}>{checking?'Checking saved progress…':'Check saved progress'}</StudioButton>
-            {busy&&running.current?<StudioButton className="admin-primary-button" onClick={pauseGeneration}>Pause generation</StudioButton>:empty===0&&!active?<StudioButton className="admin-primary-button" disabled={busy||needsSync} onClick={()=>void moveTo('edit')}>Continue to review</StudioButton>:!active&&(dirty||!plan)?<StudioButton className="admin-primary-button" disabled={busy||needsSync||saved?.status==='LIVE'} onClick={()=>void reviewPlan()}>Review writing plan</StudioButton>:<StudioButton className="admin-primary-button" disabled={busy||needsSync||dirty||!saved||saved.status==='LIVE'||(!active&&(!planApproved||!configured))} onClick={()=>void generate()}>{active?'Resume generation':retrySign?`Retry ${horoscopeSignLabel(retrySign)}`:empty===total?`Generate ${total===1?'overview':`${total} drafts`}`:'Generate missing readings'}</StudioButton>}
+            {busy&&running.current?<StudioButton className="admin-primary-button" onClick={pauseGeneration}>Pause generation</StudioButton>:empty===0&&!active?<StudioButton className="admin-primary-button" disabled={busy||needsSync} onClick={()=>void moveTo('edit')}>Continue to review</StudioButton>:!active&&(dirty||!plan)?<StudioButton className="admin-primary-button" disabled={busy||needsSync||saved?.status==='LIVE'} onClick={()=>void reviewPlan()}>Review writing plan</StudioButton>:<StudioButton className="admin-primary-button" disabled={busy||needsSync||dirty||!saved||saved.status==='LIVE'||(!active&&(!available||!planApproved||!configured))} onClick={()=>void generate()}>{active?'Resume generation':retrySign?`Retry ${horoscopeSignLabel(retrySign)}`:empty===total?`Generate ${total===1?'overview':`${total} drafts`}`:'Generate missing readings'}</StudioButton>}
           </div></div>
           {active&&Date.now()-Date.parse(active.startedAt)>=310000&&<StudioButton disabled={busy||needsSync} onClick={()=>void release()}>Release interrupted request</StudioButton>}
         </footer>

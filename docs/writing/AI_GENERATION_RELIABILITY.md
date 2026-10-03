@@ -493,3 +493,29 @@ Complete comparison hashes are verified. Editor previews label future run data;
 actual generation requires the selected evidence and calculated facts. Existing
 requests and saved readings are unchanged. No paid generation follows from saving
 a profile. See the prompt-authority acceptance record for fixture coverage.
+
+## Horoscope startup recovery (2026-10-03)
+
+Single-stage horoscope writing prepares the full governed request before its
+first durable reservation. The request hash and operation are saved together
+with optimistic concurrency before any potentially billed call. This removes
+the earlier half-prepared reservation that could survive a preparation or
+second-checkpoint failure without a retrievable response ID.
+
+A caught dispatch exception without a response ID preserves the complete request
+identity and sanitized diagnostic in `heldRequests`. The approved batch can
+continue its other signs, but the held sign cannot be generated again without
+explicit acknowledgment and fresh plan approval. Releasing a held request does
+not itself generate anything. Known response IDs receive one conditional save
+recovery attempt, then use ordinary retrieval.
+
+Progress checks reconcile legacy/crashed startup reservations after 310 seconds,
+beyond the handler's 300-second maximum. A reservation without a request hash is
+archived as not dispatched; an uncertain dispatch is held without automatic
+replay. This qualifies the earlier rule that progress checking never changes a
+reservation: it may now reconcile an expired startup, while preserving all
+writing and request history. It still never starts paid generation.
+
+The original production exception was not retained, so its exact infrastructure
+cause remains unverified. New records retain the failed lifecycle stage, status,
+safe error category and time. See the [startup recovery acceptance record](../qa/horoscope-startup-recovery.md).

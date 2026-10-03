@@ -23,7 +23,8 @@ async function fixture(page:Page,missing=1,unknown=false,period='weekly'){
     const action=async(action:string,extra:any={})=>{const row=await latest();return call({method:'writing',body:{action,id,expectedUpdatedAt:row.updated_at,...extra}});};
     const plan=await action('prepare');expect(plan.status).toBe(200);
     if(unknown)await call({method:'writer-state',body:{unknownNext:true}});
-    const start=await action('generate',{sign:edition.passages[12-missing].sign,approvedPlanHash:plan.payload.plan.planHash});expect(start.status).toBe(unknown?500:202);
+    const start=await action('generate',{sign:edition.passages[12-missing].sign,approvedPlanHash:plan.payload.plan.planHash});expect(start.status).toBe(unknown?200:202);
+    if(unknown)await call({method:'interrupted-horoscope-start',body:{id}});
     const state={failPoll:false,failRead:false,failDiagnosis:false,conflictPoll:false,holdPoll:false,held:false,release:()=>{}};
     await routeStudioInventoryApi(page,{call:async(message)=>{
       if(state.failRead&&message.method==='GET'&&message.url?.includes('?id='))return {status:503,payload:{ok:false,error:'Fixture connection unavailable.'}};
@@ -160,7 +161,7 @@ test('An unconfirmed provider request is retained without starting or releasing 
   const f=await fixture(page,1,true);try{
     const studio=await f.open();const before=await f.latest();
     await studio.getByRole('button',{name:'Check saved progress',exact:true}).click();
-    await expect(studio.getByRole('status')).toContainText('Your request is being confirmed.');
+    await expect(studio.getByRole('status')).toContainText('Waiting for request confirmation.');
     await expect(studio.getByRole('alert')).toHaveCount(0);
     expect(await f.latest()).toEqual(before);expect((await f.call({method:'writer-state'})).calls).toBe(1);
   }finally{f.child.kill();}
@@ -306,3 +307,55 @@ for(const [width,theme] of [[390,'dark'],[1440,'light']] as const){
   }finally{f.state.release();f.child.kill();}
  });
 }
+
+for(const [width,theme] of [[390,'dark'],[1440,'light']] as const){
+ test(`An interrupted sign does not stop the remaining approved readings ${width} ${theme}`,async({page})=>{
+  await page.setViewportSize({width,height:1000});await page.addInitScript(theme=>localStorage.setItem('tldrastro:studio-theme',theme),theme);
+  const f=await fixture(page,3);try{
+   const studio=await f.open();
+   await studio.getByRole('button',{name:'Check saved progress',exact:true}).click();
+   await expect(studio.getByText('10/12 readings ready',{exact:false})).toBeVisible();
+   await f.call({method:'writer-state',body:{unknownNext:true}});
+   await studio.getByLabel('I approve this writing plan for generation.').check();
+   await studio.getByRole('button',{name:'Generate missing readings',exact:true}).click();
+   await expect(studio.getByText('11/12 readings ready',{exact:false})).toBeVisible();
+   await expect(studio.getByRole('note')).toContainText('Aquarius was interrupted');
+   await expect(studio.getByRole('button',{name:'Generate missing readings',exact:true})).toBeDisabled();
+   const saved=await f.latest();expect(saved.source_snapshot.horoscopeGeneration.heldRequests.aquarius.requestHash).toBeTruthy();
+   expect(saved.source_snapshot.horoscopeGeneration.active).toBeNull();
+   expect(saved.sections.horoscopeEdition.passages.slice(0,9)).toEqual(f.original.passages.slice(0,9));
+   expect(saved.sections.horoscopeEdition.passages[11].body).toContain('complete pisces fixture opening');
+   expect((await f.call({method:'writer-state'})).calls).toBe(3);
+   await page.reload();await f.open();
+   await expect(studio.getByRole('note')).toContainText('Aquarius was interrupted');
+   await page.screenshot({path:`test-results/weekly-held-${width}-${theme}.png`,fullPage:true});
+   await studio.getByRole('button',{name:'Check saved progress',exact:true}).click();
+   expect((await f.call({method:'writer-state'})).calls).toBe(3);
+   page.once('dialog',dialog=>dialog.dismiss());
+   await studio.getByRole('button',{name:'Allow retry for Aquarius',exact:true}).click();
+   expect((await f.latest()).source_snapshot.horoscopeGeneration.heldRequests.aquarius).toBeTruthy();
+   page.once('dialog',dialog=>dialog.accept());
+   await studio.getByRole('button',{name:'Allow retry for Aquarius',exact:true}).click();
+   await expect(studio.getByLabel('I approve this writing plan for generation.')).not.toBeChecked();
+   expect((await f.call({method:'writer-state'})).calls).toBe(3);
+   await studio.getByLabel('I approve this writing plan for generation.').check();
+   await studio.getByRole('button',{name:'Generate missing readings',exact:true}).click();
+   await expect(studio.getByRole('button',{name:'3 · Review',exact:true})).toHaveAttribute('aria-current','step');
+   expect((await f.call({method:'writer-state'})).calls).toBe(4);
+   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+   await page.screenshot({path:`test-results/weekly-recovery-${width}-${theme}.png`,fullPage:true});
+  }finally{f.child.kill();}
+ });
+}
+
+test('A legacy start with no dispatched request recovers after reload without release or paid work',async({page})=>{
+ const f=await fixture(page,1,true);try{
+  await f.call({method:'interrupted-horoscope-start',body:{id:(await f.latest()).id,beforeDispatch:true,expired:true}});
+  const studio=await f.open();await studio.getByRole('button',{name:'Check saved progress',exact:true}).click();
+  await expect(studio.getByLabel('I approve this writing plan for generation.')).toBeVisible();
+  await expect(studio.getByRole('button',{name:'Release interrupted request',exact:true})).toHaveCount(0);
+  expect((await f.latest()).source_snapshot.horoscopeGeneration.active).toBeNull();
+  expect((await f.latest()).source_snapshot.horoscopeGeneration.interruptions.at(-1).outcome).toBe('not_dispatched');
+  expect((await f.call({method:'writer-state'})).calls).toBe(1);
+ }finally{f.child.kill();}
+});
