@@ -67,3 +67,13 @@ An additional legacy source-text test,
 on clean main and this patch because it expects the removed sentence “Only a
 complete, approved Sky house horoscope can appear”. The Moon behavior checks
 above pass. This unrelated existing assertion was not changed or counted as passing.
+
+Integration with main `8857bc7ef` preserves the independent horoscope-variable
+allocation and the Moon allocation: the combined web aggregate cap is 3,521,250
+bytes and the fresh combined build measures 3,520,761 gzip bytes. Reader startup
+and all individual chunk and CSS limits remain unchanged.
+
+Matched standalone-admin builds at this integration measure 783,414 aggregate
+gzip bytes on clean main and 783,809 on the feature (+395). The combined admin
+aggregate cap is 784,000, including 250 bytes for the concurrently merged
+horoscope controls. All other admin limits retain the original Moon allocation.
