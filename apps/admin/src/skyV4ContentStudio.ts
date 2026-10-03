@@ -84,12 +84,10 @@ export function validateSkyV4TransitPov(
 
 export function skyV4StudioDefinition(packageRecord: unknown) {
   const source = record(packageRecord);
-  const fields: SkyV4EditableField[] = Array.isArray(source.studio_editable_fields)
-    ? skyEvergreenEditableFields(source)
+  const fields: SkyV4EditableField[] = skyEvergreenEditableFields(source)
       .map((field: unknown) => record(field))
       .filter((field: Record<string, unknown>) => typeof field.path === "string" && typeof field.label === "string")
-      .map((field: Record<string, unknown>) => ({ path: String(field.path), label: String(field.label) }))
-    : [];
+      .map((field: Record<string, unknown>) => ({ path: String(field.path), label: String(field.label) }));
   const readOnlyFields = Array.isArray(source.studio_read_only_fields)
     ? source.studio_read_only_fields.map(String)
     : [];

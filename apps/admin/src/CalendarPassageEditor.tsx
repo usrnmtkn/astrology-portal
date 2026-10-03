@@ -160,11 +160,19 @@ export default function CalendarPassageEditor({ period: studioPeriod, loadRows, 
       <label><span>Editing scope</span><AdminSelect aria-label="Passage editing scope" value={scope} disabled={busy || dirty} onChange={event => setScope(event.target.value)}><option value="date">This {period === 'daily' ? 'date' : period === 'weekly' ? 'week' : 'month'} only</option><option value="shared">Shared template · all dates</option></AdminSelect></label>
     </div>
     <div className="admin-new-actions"><StudioButton disabled={busy || dirty || !date} onClick={() => { setRequested({ date, timeZone }); setAttempt(value => value + 1); }}>Load passage</StudioButton><StudioButton disabled={busy || dirty} onClick={() => setAttempt(value => value + 1)}>Reload saved status</StudioButton></div>
-    <p role="status">{selectionPending ? 'Choose Load passage to open the selected date and time zone.' : status}{dirty ? ' Unsaved changes. Save or discard them before switching dates.' : ''}</p>
-    {error && <p role="alert">{error}</p>}
+    {!ready && <><p role="status">{selectionPending ? 'Choose Load passage to open the selected date and time zone.' : status}</p>{error && <p role="alert">{error}</p>}</>}
     {ready && <>
       {(sourcesChanged || sourceChanges && sourceChanges.length > 0) && <p role="note">Shared writing has changed since this passage was loaded or saved. Your wording has been preserved. {sourcesChanged ? 'Save your draft and reload the sources before publishing.' : 'Review the assembled preview before publishing.'}</p>}
-      <CalendarPassageTemplateEditor value={body} onChange={setBody} disabled={busy} values={values} label={scope === 'date' ? 'Complete passage for this date' : 'Shared passage template'} />
+      <CalendarPassageTemplateEditor value={body} onChange={setBody} disabled={busy} values={values} label={scope === 'date' ? `This ${period === 'daily' ? 'date' : period === 'weekly' ? 'week' : 'month'} only` : 'Shared template · all dates'}
+        actions={<>
+          <div className="admin-new-actions"><StudioButton className="admin-primary-button" disabled={busy || !body.trim() || !dirty && Boolean(saved)} onClick={() => void save()}>Save draft</StudioButton><StudioButton disabled={busy || dirty || !saved || saved.status === 'LIVE' || !rendered || sourcesChanged} onClick={() => void publish()}>Publish passage</StudioButton>
+            <a className="admin-source-action" href={`/?date=${requested.date}#calendar?view=${period === 'daily' ? 'day' : period === 'weekly' ? 'weekly' : 'month'}&date=${requested.date}`} target="_blank" rel="noreferrer">Open published Calendar</a>
+            {scope === 'date' && published && <StudioButton disabled={busy || dirty} onClick={() => void resetToShared()}>Use shared template for this date</StudioButton>}
+            {historyId && <StudioButton disabled={busy} onClick={() => void requestStudioJson(`/api/admin/content-history?id=${encodeURIComponent(historyId)}`, secret).then(result => setHistory((result.versions ?? []) as any[])).catch(reason => setError(reason.message))}>Version history</StudioButton>}
+          </div>
+        <p role="status">{status}{dirty ? ' Unsaved changes. Save or discard them before switching dates.' : ''}</p>
+        {error && <p role="alert">{error}</p>}
+        </>} />
       <div className="admin-new-actions">
         {scope === 'date' && <StudioButton disabled={busy} onClick={() => setBody(calendarEditablePassage(body, values))}>Expand shared writing for this date</StudioButton>}
         <StudioButton disabled={busy} onClick={() => setShowSources(value => !value)}>{showSources ? 'Hide sources and variables' : 'Sources and variables'}</StudioButton>
@@ -179,11 +187,6 @@ export default function CalendarPassageEditor({ period: studioPeriod, loadRows, 
         {usedSources.length > 0 && <div className="admin-new-actions">{usedSources.map(row => <StudioButton key={row.id} onClick={() => onEditSource(row)}>Edit {lunarContentIdentity(row.content_key)?.title ?? "shared source"}</StudioButton>)}</div>}
         <a className="admin-source-action" href="#calendar-writeups?view=moon-transition-phrases">Edit Moon transition and timing templates</a>
       </div>}
-      <div className="admin-new-actions"><StudioButton disabled={busy || !body.trim() || !dirty && Boolean(saved)} onClick={() => void save()}>Save draft</StudioButton><StudioButton disabled={busy || dirty || !saved || saved.status === 'LIVE' || !rendered || sourcesChanged} onClick={() => void publish()}>Publish passage</StudioButton>
-        <a className="admin-source-action" href={`/?date=${requested.date}#calendar?view=${period === 'daily' ? 'day' : period === 'weekly' ? 'weekly' : 'month'}&date=${requested.date}`} target="_blank" rel="noreferrer">Open published Calendar</a>
-        {scope === 'date' && published && <StudioButton disabled={busy || dirty} onClick={() => void resetToShared()}>Use shared template for this date</StudioButton>}
-        {historyId && <StudioButton disabled={busy} onClick={() => void requestStudioJson(`/api/admin/content-history?id=${encodeURIComponent(historyId)}`, secret).then(result => setHistory((result.versions ?? []) as any[])).catch(reason => setError(reason.message))}>Version history</StudioButton>}
-      </div>
       {history && <details open><summary>Saved versions</summary>{history.length ? history.map((version, index) => <details key={version.versionId ?? index}><summary>{version.rowUpdatedAt} · {version.row?.status}</summary><CalendarPassageProse text={bodyOf(version.row) || ''} /></details>) : <p>No earlier saved versions.</p>}</details>}
     </>}
   </section>;

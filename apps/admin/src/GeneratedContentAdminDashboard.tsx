@@ -2152,8 +2152,8 @@ const skyArticleSigns = [
 ] as const;
 
 function skyArticleTemplatePlanet(row: Pick<AdminGeneratedContentRow, "content_key" | "headline">) {
-  const keyPlanet = row.content_key.match(/^sky\/article-template\/([a-z-]+)\/(?:ingress|structure)$/u)?.[1]
-    ?? row.content_key.match(/^sky-article-template\/([a-z-]+)\/(?:ingress|structure)$/u)?.[1];
+  const keyPlanet = row.content_key.match(/^sky\/article-template\/([a-z-]+)\/[^/]+$/u)?.[1]
+    ?? row.content_key.match(/^sky-article-template\/([a-z-]+)\/[^/]+$/u)?.[1];
   if (keyPlanet && keyPlanet !== "slow-mover") return keyPlanet;
   const headlinePlanet = normalizeText(row.headline).match(/(?:article\s+—\s+)?([A-Za-z-]+)\s+(?:Enters|in)\b/u)?.[1];
   return headlinePlanet ? headlinePlanet.toLowerCase() : null;
@@ -5290,6 +5290,7 @@ export function GeneratedContentAdminDashboard() {
         ? `${draftForSave.contentKey} archived. It no longer serves and can be restored here.`
         : sourceLifecycleAction === "restore"
           ? `${draftForSave.contentKey} restored as a non-serving draft for review.`
+          : isSkyArticleTemplateRow(saved) ? "Template saved. Complete and publish an edition to show this article to readers."
           : `${draftForSave.contentKey} saved as ${contentStatusLabel(saved.status)}.`);
       return saved;
     } catch (error) {
@@ -5719,11 +5720,21 @@ export function GeneratedContentAdminDashboard() {
 
   async function hydrateGeneratedContentRow(row: AdminGeneratedContentRow, refresh = false, followPublishedRevision = false) {
     if (!row.inventory_only && !refresh) return row;
-    const selector = row.id.startsWith("package:") ? `contentKeys=${encodeURIComponent(row.content_key)}` : `id=${encodeURIComponent(row.id)}`;
-    const payload = await adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[] }>(
-      `/api/admin/generated-content-inventory?${selector}&status=all&visibility=all&limit=1`,
-      secret
-    );
+    const payload = row.id.startsWith("package:")
+      ? await readStudioContentDocument(row.content_key, secret).then<{ rows: AdminGeneratedContentRow[] }>(({ rows, packageSource }) => ({
+        rows: rows.length ? rows as AdminGeneratedContentRow[] : packageSource ? [{ ...row, inventory_only: false,
+          surface: String(packageSource.surface ?? row.surface ?? "sky") as GeneratedContentSurface, mode: "in_depth", status: "DRAFT", lane: "reference", review_state: "needs-review",
+          provider: row.provider ?? (/^(?:fallback-hook\/sky-(?:sign-copy|placement-[^/]+|planet-education)\/|house-horoscope-core\/)/u.test(row.content_key) ? "tldrastro-fallback-architecture-v3-sky-placement" : fallbackArchitectureV3Provider),
+          block_type: packageSource.content_role === "template" ? "fallback_template" : packageSource.content_role === "vocabulary" ? "vocabulary_phrase" : "fallback_hook",
+          event_type: packageSource.content_role === "template" ? "fallback-template" : "fallback-hook", updated_at: null,
+          facts: { fallbackArchitectureV3: true }, source_snapshot: { sourcePackage: packageSource.source_package ?? fallbackArchitectureV3Provider, content_role: packageSource.content_role, review_status: packageSource.review_status },
+          headline: String(packageSource.headline ?? row.headline ?? row.content_key),
+          summary: String(packageSource.summary ?? ""), body: String(packageSource.body_you ?? packageSource.body ?? packageSource.text ?? ""),
+          sections: { packageRecord: packageSource }, package_starter: true
+        }] : []
+      }))
+      : await adminJsonRequest<{ rows: AdminGeneratedContentRow[] }>(
+        `/api/admin/generated-content-inventory?id=${encodeURIComponent(row.id)}&status=all&visibility=all&limit=1`, secret);
     let hydrated = payload.rows?.find((candidate) => candidate.id === row.id || row.id.startsWith("package:") && candidate.content_key === row.content_key);
     const publishedTarget = hydrated?.source_snapshot?.targetRowId;
     if ((row.id.startsWith("package:") || followPublishedRevision || refresh && row.status !== "ARCHIVED") && hydrated?.status === "ARCHIVED"
@@ -12209,14 +12220,14 @@ export function GeneratedContentAdminDashboard() {
                 const saved = draftHasUnsavedChanges || !selectedRow ? await saveDraft() : selectedRow;
                 if (saved) await approvePackageRevision(saved);
               } else {
-                await saveDraft(isCmsSurfaceDraft || isManualCalendarEventDraft ? "LIVE" : isAstro101Draft && currentDraft.status !== "LIVE" ? "DRAFT" : undefined);
+                await saveDraft(isSkyArticleTemplate ? "DRAFT" : isCmsSurfaceDraft || isManualCalendarEventDraft ? "LIVE" : isAstro101Draft && currentDraft.status !== "LIVE" ? "DRAFT" : undefined);
               }
             })()}
             disabled={isLoading || unchangedSkySource || Boolean(compiledSkyArticleEdition) || !compatibilityNewDraftReady || (isManualCalendarEventDraft && !currentDraft.body.trim()) || (isCmsSurfaceDraft && (!cmsCanSignOff || !publishReady)) || (packageWillPublishOnSave && (natalAspectMissingCopy || transitNatalMissingCopy)) || (!isNewDraft && !draftHasUnsavedChanges && !packageWillPublishOnSave && !packageCanApproveRevision && !((isCmsSurfaceDraft || isManualCalendarEventDraft) && currentDraft.status !== "LIVE"))}
             title={packageWillPublishOnSave && (natalAspectMissingCopy || transitNatalMissingCopy) ? "Write the passage before publishing." : !compatibilityNewDraftReady ? "Complete the Compatibility identity and copy." : undefined}
           >
             <Save size={16} aria-hidden="true" />
-            {isAstro101Draft
+            {isSkyArticleTemplate ? "Save template" : isAstro101Draft
               ? currentDraft.status === "LIVE" ? "Save changes" : "Save draft"
               : isGuidedHeldReview
               ? "Save held draft"
@@ -12267,7 +12278,7 @@ export function GeneratedContentAdminDashboard() {
               Revert to package original
             </StudioButton>
           )}
-          {!isAstro101Draft && currentDraft.id && !currentDraft.id.startsWith("package:") && !rows.find((row) => row.id === currentDraft.id)?.target_date && (
+          {!isAstro101Draft && !isSkyArticleTemplate && currentDraft.id && !currentDraft.id.startsWith("package:") && !rows.find((row) => row.id === currentDraft.id)?.target_date && (
             <StudioButton type="button" className={isContentRetired(currentDraft.contentKey) ? "admin-secondary-button" : "admin-danger-button"} disabled={isLoading || draftHasUnsavedChanges}
               onClick={() => void retireContentEverywhere(isContentRetired(currentDraft.contentKey) ? "publish" : "retire")}
               title={isContentRetired(currentDraft.contentKey) ? "Restore this saved version for readers." : "Retire this content key across Studio, bundled writing, and synced offline copies."}>
@@ -12308,6 +12319,12 @@ export function GeneratedContentAdminDashboard() {
                   <Check size={16} aria-hidden="true" />
                   {currentDraft.blockType === "sky_placement" ? "Approve for package" : "Approve & schedule"}
                 </StudioButton>
+              ) : isSkyArticleTemplate ? (
+                <StudioButton type="button" className="admin-primary-button" onClick={() => {
+                  const builder = editorRef.current?.querySelector<HTMLElement>(".admin-sky-edition-builder");
+                  builder?.scrollIntoView({ block: "start" });
+                  builder?.querySelector<HTMLInputElement>("input")?.focus({ preventScroll: true });
+                }}>Complete edition</StudioButton>
               ) : isContentStudioReferenceSource(currentDraft.contentKey, currentDraft.sourceSnapshot ?? {}) ? (
                 <small className="admin-field-hint">Source material cannot be published.</small>
               ) : isAstro101Draft && currentDraft.status === "LIVE" ? (
