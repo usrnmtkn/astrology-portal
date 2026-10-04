@@ -1,0 +1,60 @@
+import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
+import { PGlite } from '@electric-sql/pglite';
+
+const migration = name => readFileSync(new URL(`../apps/web/supabase/migrations/${name}`, import.meta.url), 'utf8');
+const db = new PGlite();
+const owner = 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa';
+const other = 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb';
+const data = { version: 1, theme: 'dark', profile: { charts: [{ id: 'synthetic-chart', birthTime: '12:30 PM' }] } };
+const upsert = (id, value) => db.query('insert into public.user_profiles(user_id,data) values($1,$2) on conflict(user_id) do update set data=excluded.data returning data', [id, value]);
+try {
+  await db.exec(`create role anon; create role authenticated; create role service_role bypassrls;
+    create schema auth;
+    create function auth.uid() returns uuid language sql stable as $$ select nullif(current_setting('request.jwt.claim.sub',true),'')::uuid $$;
+    grant usage on schema auth to anon,authenticated;
+    create table public.user_profiles(user_id uuid primary key,data jsonb not null,updated_at timestamptz default now());
+    alter table public.user_profiles enable row level security;
+    grant select,insert,update on public.user_profiles to anon,authenticated,service_role;
+    create policy owner_read on public.user_profiles for select to authenticated using(auth.uid()=user_id);
+    create policy owner_insert on public.user_profiles for insert to authenticated with check(auth.uid()=user_id);
+    create policy owner_update on public.user_profiles for update to authenticated using(auth.uid()=user_id) with check(auth.uid()=user_id);
+    create table public.report_fulfillment_jobs(id uuid primary key,state text,run_after timestamptz,locked_at timestamptz,locked_by text,attempt integer);
+  `);
+  await db.exec(migration('20260810210000_birth_time_normalization.sql'));
+  await upsert(other, {profile:{charts:[]},theme:'light'});
+  await db.exec('set role authenticated');
+  await db.query("select set_config('request.jwt.claim.sub',$1,false)", [owner]);
+  await assert.rejects(upsert(owner, data), error => error.code === '42501' && /canonical_birth_time_text/.test(error.message), 'Original migration reproduces the production denial');
+  await db.exec('reset role');
+  const policies = (await db.query("select policyname,roles,qual,with_check from pg_policies where tablename='user_profiles' order by policyname")).rows;
+  await db.exec(migration('20261004160915_authenticated_birth_time_normalization.sql'));
+  assert.deepEqual((await db.query("select policyname,roles,qual,with_check from pg_policies where tablename='user_profiles' order by policyname")).rows, policies);
+  assert.equal((await db.query("select prosecdef from pg_proc where oid='public.normalize_user_profile_birth_times()'::regprocedure")).rows[0].prosecdef, false);
+  assert.equal((await db.query("select has_function_privilege('service_role','public.canonical_birth_time_text(text)','EXECUTE') as allowed")).rows[0].allowed, true);
+  await db.exec('set role authenticated');
+  const expected = structuredClone(data); expected.profile.charts[0].birthTime = '12:30';
+  assert.deepEqual((await upsert(owner, data)).rows[0].data, expected, 'Own insert normalizes the time and preserves other fields');
+  expected.profile.charts[0].birthTime = '23:20';
+  const update = structuredClone(data); update.profile.charts[0].birthTime = '11:20 PM';
+  assert.deepEqual((await upsert(owner, update)).rows[0].data, expected, 'Own update persists');
+  assert.deepEqual((await db.query('select data from user_profiles where user_id=$1',[owner])).rows[0].data, expected, 'Read after save is exact');
+  const invalid = structuredClone(data); invalid.profile.charts[0].birthTime = '99:99';
+  await assert.rejects(upsert(owner, invalid), error => error.code === '22007');
+  assert.deepEqual((await db.query('select data from user_profiles where user_id=$1',[owner])).rows[0].data, expected, 'Validation failure preserves the saved profile');
+  await assert.rejects(upsert(other, data), error => error.code === '42501', 'Another owner cannot be overwritten by upsert');
+  assert.equal((await db.query('update user_profiles set data=$1 where user_id=$2 returning user_id',[data,other])).rows.length,0);
+  await assert.rejects(db.query('update user_profiles set user_id=$1 where user_id=$2',[other,owner]), error => error.code === '42501');
+  assert.equal((await db.query('select * from user_profiles where user_id=$1',[other])).rows.length,0);
+  for (const charts of [[], [{birthTime:'Time unknown'}], [{birthTime:''}]]) {
+    const value = {profile:{charts},theme:'dark'};
+    assert.deepEqual((await upsert(owner,value)).rows[0].data,value);
+  }
+  await upsert(owner,{profile:{},theme:'dark'});
+  await db.exec('reset role; set role anon');
+  await assert.rejects(db.query("select public.canonical_birth_time_text('12:30 PM')"), error => error.code === '42501');
+  await assert.rejects(upsert(owner,data), error => error.code === '42501');
+  await db.exec('reset role');
+  assert.deepEqual((await db.query('select data from user_profiles where user_id=$1',[other])).rows[0].data,{profile:{charts:[]},theme:'light'});
+  console.log('PASS real profile normalization SQL: original failure, authenticated insert/update/reload, invalid-time rollback, exact unrelated fields, cross-owner and anonymous denial, unchanged RLS and invoker security.');
+} finally { await db.close(); }

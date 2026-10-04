@@ -23,6 +23,13 @@ reader, content package and dependency changes.
   publish, archive, restore and protected/version-checked delete.
 - Invalid JSON, non-object bodies, wrong field types, unknown actions, empty
   updates and duplicate batch identities fail before writes.
+- Body parsing exercises Vercel's throwing lazy `req.body` getter as well as
+  raw streams. Malformed JSON remains 400, size rejection remains 413, and
+  unexpected runtime failures remain server errors across actual reader,
+  generated-content, personalized-content and publication handlers.
+- Profile normalization runs under the authenticated database role, not only
+  the migration owner. Real SQL verifies insert/update/read-after-save,
+  invalid-time rollback, anonymous and cross-owner denial, and unchanged RLS.
 - Publication cannot retain a reference lane or review hold.
 - Package publication uses the reader's key admission rules. A new unsupported
   key returns 409 before create, batch publication, or revision sign-off writes;

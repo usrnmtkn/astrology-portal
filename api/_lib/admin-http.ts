@@ -28,6 +28,21 @@ export function sendAdminMethodNotAllowed(res: ServerResponse, methods: string[]
   });
 }
 
+/** Vercel's lazy body getter can reject JSON before our stream parser runs. */
+export function readPlatformRequestBody(req: IncomingMessage): unknown {
+  try {
+    return (req as IncomingMessage & { body?: unknown }).body;
+  } catch (error) {
+    const status = error instanceof Error && "statusCode" in error ? error.statusCode : undefined;
+    if (error instanceof SyntaxError || status === 400) {
+      throw new AdminHttpError(400, "Request body must be valid JSON.");
+    }
+    if (status === 413) throw new AdminHttpError(413, "Request body is too large.");
+    // Unexpected runtime errors remain server failures, not bad-input responses.
+    throw error;
+  }
+}
+
 export async function readAdminJsonBody<T>(
   req: IncomingMessage,
   maxBytes = defaultAdminJsonBodyLimitBytes
@@ -37,7 +52,7 @@ export async function readAdminJsonBody<T>(
     throw new AdminHttpError(413, `Request body exceeds ${maxBytes} bytes.`);
   }
 
-  const parsedBody = (req as IncomingMessage & { body?: unknown }).body;
+  const parsedBody = readPlatformRequestBody(req);
   if (parsedBody !== undefined) {
     const raw = typeof parsedBody === "string" ? parsedBody : JSON.stringify(parsedBody);
     if (Buffer.byteLength(raw, "utf8") > maxBytes) throw new AdminHttpError(413, `Request body exceeds ${maxBytes} bytes.`);
