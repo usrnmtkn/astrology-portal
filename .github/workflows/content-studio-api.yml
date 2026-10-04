@@ -1,18 +1,16 @@
 name: Content Studio API contract
 
-# Every repository update must verify the actual Content Studio contract.
+# Every branch push and PR must verify the actual Content Studio contract.
 on:
   pull_request:
   push:
-    branches: [main]
+    branches: ['**']
   workflow_dispatch:
 
 permissions:
   contents: read
 
-concurrency:
-  group: content-studio-api-${{ github.event.pull_request.number || github.ref }}
-  cancel-in-progress: true
+# Keep runs independent so a newer check-in cannot cancel earlier API QA.
 
 jobs:
   content-studio-api:

@@ -13,9 +13,21 @@ reader, content package and dependency changes.
    package before tests. Do not run another knowledge rebuild concurrently.
 4. Require the `content-studio-api` check from the `Content Studio API contract`
    workflow on the exact PR head. It intentionally runs without path filters on
-   all PRs and main pushes; it does not require production credentials.
+   all PRs and every branch push, including branches without a PR. Runs are
+   independent: a later push does not cancel an earlier revision's API QA.
+   It does not require production credentials.
 5. Include the tested SHA, command, outcome, and material limitations in the PR.
    Do not remove a failed assertion or widen an approval rule to make CI pass.
+
+GitHub's active `Content Studio API QA` ruleset requires `content-studio-api`
+from the GitHub Actions app before main can be updated, with the branch current
+against main and no bypass actors. Verify the live ruleset when changing release
+configuration; workflow YAML alone does not enforce a merge gate.
+
+Here, a check-in means a push to GitHub. The workflow tests the pushed revision
+and the PR integration revision; it does not run for each unpushed local commit
+or each intermediate commit in a multi-commit push. Local commits retain the
+privacy hook, and the full API command above remains required before merging.
 
 ## What the gate verifies
 
