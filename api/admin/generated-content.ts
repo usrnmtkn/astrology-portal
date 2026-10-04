@@ -2,7 +2,7 @@ import { calendarPassageIdentity, calendarPassageErrors, calendarPassageVariable
 import { handleStudioVariables, StudioVariableError, snapshotStudioVariables, assertStudioVariablePublication } from "../_lib/studio-variables.js";
 import { handleStudioWritingProfiles } from "../_lib/studio-writing-profiles.js";
 import { prepareHoroscopeBrief, assertHoroscopeRow } from "../_lib/horoscope-editions.js";
-import { AdminHttpError } from "../_lib/admin-http.js";
+import { AdminHttpError, readPlatformRequestBody } from "../_lib/admin-http.js";
 import { mergeGeneratedInterpretationSections } from "../_lib/generated-interpretation-sections.js";
 import { approveNatalAspectStudioCopy } from "../_lib/content-studio-approval.js";
 import type { IncomingMessage, ServerResponse } from "node:http";
@@ -1112,6 +1112,7 @@ function serviceRoleKey() {
 function sendJson(res: ServerResponse, status: number, body: unknown) {
   res.statusCode = status;
   res.setHeader("content-type", "application/json");
+  res.setHeader("cache-control", "no-store");
   res.end(JSON.stringify(body));
 }
 
@@ -1160,7 +1161,7 @@ export function listHeldSkyAspectSourceDrafts(): HeldSkyAspectSourceDraft[] {
 }
 
 async function readJsonBody(req: IncomingMessage) {
-  const preParsedBody = (req as IncomingMessage & { body?: unknown }).body;
+  const preParsedBody = readPlatformRequestBody(req);
   let value: unknown = preParsedBody;
   if (value === undefined) {
     const chunks: Buffer[] = [];

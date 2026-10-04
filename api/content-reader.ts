@@ -130,7 +130,8 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
     res.end(JSON.stringify({ schema: READER_ROW_SCHEMA, rows: admitted.map(projectReaderRow).filter(Boolean), publications: ledger,
       nextCursor: rows.length === pageSize ? rows.at(-1)!.id : null }));
   } catch (error) {
-    res.statusCode = error instanceof QueryError ? 400 : error instanceof AdminHttpError && [400, 413].includes(error.statusCode) ? error.statusCode : 503;
-    res.end(JSON.stringify({ error: error instanceof QueryError ? error.message : 'Published content is temporarily unavailable.' }));
+    const invalidBody = error instanceof AdminHttpError && [400, 413].includes(error.statusCode);
+    res.statusCode = error instanceof QueryError ? 400 : invalidBody ? error.statusCode : 503;
+    res.end(JSON.stringify({ error: error instanceof QueryError || invalidBody ? error.message : 'Published content is temporarily unavailable.' }));
   }
 }
