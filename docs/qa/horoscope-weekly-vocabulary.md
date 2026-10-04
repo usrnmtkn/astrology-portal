@@ -55,3 +55,14 @@ reader-copy boundary checks. Browser write tests use actual handlers with
 isolated storage and an injected synthetic provider. Production bundle checks
 use the same isolation; they do not write owner content or call the provider.
 No paid writing run was used as a diagnostic.
+
+## Bundle allocation
+
+Matched isolated builds, each with its own `npm ci` installation and the same
+browser-workflow Supabase placeholders, measure main `1bef7c639` at 3,522,498
+aggregate JavaScript gzip bytes and 11,299 deferred editor bytes. The change
+measures 3,522,810 and 11,663 bytes: increases of 312 and 364 respectively.
+The first exact-head CI build measures 3,522,917 and 11,662 bytes. Allocate
+500 aggregate bytes and 200 editor-cap bytes above the previous limits and
+existing headroom. Reader startup, CSS, other chunks, graph and performance
+limits stay unchanged. The addition remains in the deferred Studio editor.
