@@ -11,7 +11,7 @@ import {HOROSCOPE_PERIODS,emptyHoroscopeEdition,validateHoroscopeEdition,horosco
 import {HoroscopeLocation} from '../../web/src/features/horoscopes/HoroscopeLocation';
 import {browserTimeZone} from '../../web/src/services/timezones';
 import type {LocationInput} from '../../web/src/types';
-import {horoscopePunctuationFindings} from '../../../src/astro-writing/horoscopeEditorialConstraints.mjs';
+import {horoscopePunctuationFindings,horoscopeVocabularyFindings} from '../../../src/astro-writing/horoscopeEditorialConstraints.mjs';
 import {horoscopePendingReadings} from '../../../src/astro-writing/horoscopeRecovery.mjs';
 const WritingProfiles=lazy(()=>import('./HoroscopeWritingStudio'));
 const endpoint = '/api/admin/generated-content';
@@ -308,6 +308,7 @@ export default function HoroscopeEditionsStudio({secret,requestedEditionId}:{sec
   const readingSigns=draft?.passages.map(p=>p.sign)??[];
   const total=readingSigns.length;
   const passage=draft?.passages.find(p=>p.sign===sign);
+  const wordingIssues=draft?.passages.flatMap(p=>horoscopeVocabularyFindings(p,draft.window.period).map(issue=>({...issue,sign:p.sign})))??[];
   const complete=draft?.passages.filter(p=>p.headline.trim()&&p.body.trim()).length ?? 0;
   const empty=draft?.passages.filter(p=>!p.headline.trim()&&!p.body.trim()).length ?? 0;
   const generation=saved?.source_snapshot?.horoscopeGeneration,active=generation?.active;
@@ -414,7 +415,8 @@ export default function HoroscopeEditionsStudio({secret,requestedEditionId}:{sec
         <p>Reading {signIndex+1} of {total} · {horoscopeSignLabel(sign)}</p>
         {saved?.status==='DRAFT'&&<div className="admin-toolbar-actions"><StudioButton disabled={locked||!passage.headline.trim()&&!passage.body.trim()} onClick={()=>void reject(sign)}>Reject this reading</StudioButton></div>}
         {!passage.body&&<p>No reading for {horoscopeSignLabel(sign)} yet. Return to Generate or write it below.</p>}
-        {(generation?.readings?.[sign]?.lint?.violations??[]).map((issue:any,index:number)=><p role="note" key={index}>Original AI draft check: {issue.detail}</p>)}
+        {(generation?.readings?.[sign]?.lint?.violations??[]).filter((issue:any)=>issue.category!=='horoscope_required_vocabulary').map((issue:any,index:number)=><p role="note" key={index}>Original AI draft check: {issue.detail}</p>)}
+        {wordingIssues.filter(issue=>issue.sign===sign).map(issue=><p role="note" key={issue.field}>{issue.detail} No new AI request is needed.</p>)}
         <label className="admin-review-copy-editor"><span>Reading headline</span><StudioInput aria-label="Reading headline" value={passage.headline} maxLength={200} disabled={locked} onChange={e=>{setDraft({...draft,passages:draft.passages.map(p=>p.sign===sign?{...p,headline:e.target.value}:p)});setApproved(false);}}/></label>
         <label className="admin-review-copy-editor"><span>Complete reading</span><StudioTextarea aria-label="Complete reading" rows={12} value={passage.body} maxLength={20000} disabled={locked} onChange={e=>{setDraft({...draft,passages:draft.passages.map(p=>p.sign===sign?{...p,body:e.target.value}:p)});setApproved(false);}}/></label>
         <details className="admin-workspace-details"><AdminDisclosureSummary>Writing outline · editor only</AdminDisclosureSummary><StudioTextarea aria-label="Writing outline" rows={5} value={outlines[sign]??''} disabled={locked} onChange={e=>{setOutlines(current=>({...current,[sign]:e.target.value}));setApproved(false);}}/></details>
@@ -426,7 +428,7 @@ export default function HoroscopeEditionsStudio({secret,requestedEditionId}:{sec
       </>:<>
         {isPublished?<div className="admin-horoscope-actions"><a className="admin-primary-button" href={horoscopeEditionReaderHref(saved.id,draft.window.period,sign)} target="_blank" rel="noreferrer">Read published edition</a><StudioButton onClick={()=>void moveTo('setup')}>Create another edition</StudioButton></div>:<>
           {draft.passages.map(p=><section className="admin-hook-detail-section" key={p.sign} aria-label={`${horoscopeSignLabel(p.sign)} reading preview`}><h3>{horoscopeSignLabel(p.sign)}</h3><p>{p.headline}</p>{p.body?<div className="admin-copy-preview"><FormattedProse text={p.body}/></div>:<p>No reading written yet.</p>}</section>)}
-          <footer className="admin-writing-savebar admin-horoscope-actions"><label><input type="checkbox" checked={approved} disabled={locked||dirty||complete!==total||!saved} onChange={e=>setApproved(e.target.checked)}/> I have reviewed and approve the exact wording of every saved reading in this edition.</label><p>{approved?'Ready to publish the complete edition.':'Check the approval box when you are happy with the complete edition.'}</p><div className="admin-toolbar-actions"><StudioButton disabled={locked} onClick={()=>void moveTo('edit')}>Back to readings</StudioButton><div className="admin-toolbar-actions admin-horoscope-decision-actions">{rejectAllButton}<StudioButton className="admin-primary-button" disabled={locked||dirty||!approved||!saved} onClick={()=>void save(true)}>Publish edition</StudioButton></div></div></footer>
+          <footer className="admin-writing-savebar admin-horoscope-actions"><label><input type="checkbox" checked={approved} disabled={locked||dirty||complete!==total||!saved||wordingIssues.length>0} onChange={e=>setApproved(e.target.checked)}/> I have reviewed and approve the exact wording of every saved reading in this edition.</label><p>{wordingIssues.length?`Edit prohibited wording in ${[...new Set(wordingIssues.map(issue=>horoscopeSignLabel(issue.sign)))].join(', ')} before publishing.`:approved?'Ready to publish the complete edition.':'Check the approval box when you are happy with the complete edition.'}</p><div className="admin-toolbar-actions"><StudioButton disabled={locked} onClick={()=>void moveTo('edit')}>Back to readings</StudioButton><div className="admin-toolbar-actions admin-horoscope-decision-actions">{rejectAllButton}<StudioButton className="admin-primary-button" disabled={locked||dirty||!approved||!saved||wordingIssues.length>0} onClick={()=>void save(true)}>Publish edition</StudioButton></div></div></footer>
         </>}
       </>}
       {generation?.rejections?.length>0&&<details className="admin-workspace-details"><AdminDisclosureSummary>Rejected drafts</AdminDisclosureSummary><p>Saved for reference only. Rejected writing is not used as a writing example or published.</p>{[...generation.rejections].reverse().map((entry:any)=><details key={entry.id}><AdminDisclosureSummary>{entry.scope==='all'?'All drafts':horoscopeSignLabel(entry.scope)} · {new Date(entry.rejectedAt).toLocaleString()}</AdminDisclosureSummary>{entry.passages.map((p:any)=><label className="admin-review-copy-editor" key={p.sign}><span>{horoscopeSignLabel(p.sign)}</span><StudioTextarea aria-label={`Rejected ${horoscopeSignLabel(p.sign)} reading`} readOnly rows={6} value={`${p.headline}\n\n${p.body}`}/></label>)}</details>)}</details>}

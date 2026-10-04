@@ -4,7 +4,7 @@ import {zonedDateTimeToUtc} from '../../apps/web/src/services/timezones.js';
 import {HOROSCOPE_PERIODS, HOROSCOPE_SIGNS, HOROSCOPE_EDITION_PREFIX, validateHoroscopeEdition, validateHoroscopeWindow, isHoroscopeEditionKey, horoscopeEditionBody, horoscopeCanonicalJson, canonicalHoroscopeTimeZone} from '../../apps/web/src/content/horoscopeEditions.mjs';
 
 import {validateHoroscopeReading,horoscopeValidationVersion} from '../../src/astro-writing/horoscopeValidation.mjs';
-import {horoscopePunctuationFindings} from '../../src/astro-writing/horoscopeEditorialConstraints.mjs';
+import {horoscopePunctuationFindings,horoscopeVocabularyFindings} from '../../src/astro-writing/horoscopeEditorialConstraints.mjs';
 
 function signature(brief: unknown) {
   const secret = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -57,6 +57,12 @@ export function assertHoroscopeRow(row: Record<string,any>, {enforcePunctuation=
   if (!String(row.content_key ?? '').startsWith(HOROSCOPE_EDITION_PREFIX)) return;
   try {
     const edition = validateHoroscopeEdition(row.sections?.horoscopeEdition,row.status === 'LIVE');
+    // Keep paid drafts editable and let the remaining signs finish. Publication
+    // always checks current text, including imports with no generation receipt.
+    if(row.status==='LIVE')for(const passage of edition.passages){
+      const issue=horoscopeVocabularyFindings(passage,edition.window.period)[0];
+      if(issue)throw new Error(`${passage.sign}: ${issue.detail} Edit this reading before publishing.`);
+    }
     if(enforcePunctuation || row.status==='LIVE')for(const passage of edition.passages) {
       const old=previous?.sections?.horoscopeEdition?.passages?.find((p:any)=>p.sign===passage.sign);
       if(row.status!=='LIVE'&&old?.headline===passage.headline&&old?.body===passage.body)continue;

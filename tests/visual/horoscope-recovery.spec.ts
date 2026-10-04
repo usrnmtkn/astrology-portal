@@ -46,6 +46,36 @@ async function fixture(page:Page,missing=1,unknown=false,period='weekly'){
 }
 
 for(const [width,theme] of [[390,'dark'],[1440,'light']] as const){
+ test(`Weekly prohibited wording stays editable without regeneration ${width} ${theme}`,async({page})=>{
+  await page.setViewportSize({width,height:1000});await page.addInitScript(theme=>localStorage.setItem('tldrastro:studio-theme',theme),theme);
+  const f=await fixture(page);try{
+   const original='You can check whether this fixture needs editing.\n\nYour original ending stays saved.';
+   await f.call({method:'writer-state',body:{nextResult:{status:'completed',usage:{input_tokens:100,output_tokens:40},output:[{type:'message',content:[{type:'output_text',text:JSON.stringify({headline:'Pisces & Pisces Rising',body:original})}]}]}}});
+   const studio=await f.open();await studio.getByRole('button',{name:'Resume generation',exact:true}).click();
+   await expect(studio.getByRole('status')).toHaveText('All readings are saved and ready to review.');
+   await studio.getByRole('group',{name:'Readings by sign'}).getByRole('button',{name:/^Pisces/}).click();
+   await expect(studio.getByLabel('Complete reading')).toHaveValue(original);
+   await expect(studio.getByRole('note')).toContainText('Remove “whether” from the body');
+   const saved=await f.latest();expect(saved.sections.horoscopeEdition.passages.slice(0,11)).toEqual(f.original.passages.slice(0,11));
+   await studio.getByRole('button',{name:'4 · Publish',exact:true}).click();
+   await expect(studio.getByText('Edit prohibited wording in Pisces before publishing.',{exact:true})).toBeVisible();
+   await expect(studio.getByRole('button',{name:'Publish edition',exact:true})).toBeDisabled();
+   await studio.getByRole('button',{name:'Back to readings',exact:true}).click();
+   const corrected=original.replace('whether','if');await studio.getByLabel('Complete reading').fill(corrected);
+   await expect(studio.getByRole('note').filter({hasText:'Remove “whether”'})).toHaveCount(0);
+   await studio.getByRole('button',{name:'Save edition draft',exact:true}).click();
+   await expect(studio.getByRole('status')).toHaveText('Saved edition draft.');
+   await page.reload();await f.open();
+   await studio.getByRole('group',{name:'Readings by sign'}).getByRole('button',{name:/^Pisces/}).click();
+   await expect(studio.getByLabel('Complete reading')).toHaveValue(corrected);
+   await expect(studio.getByRole('note').filter({hasText:'Remove “whether”'})).toHaveCount(0);
+   await studio.getByRole('button',{name:'4 · Publish',exact:true}).click();
+   await expect(studio.getByRole('checkbox',{name:/I have reviewed/})).toBeEnabled();
+   expect((await f.call({method:'writer-state'})).calls).toBe(1);expect((await f.latest()).status).toBe('DRAFT');
+   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+   await page.screenshot({path:`test-results/weekly-wording-${width}-${theme}.png`,fullPage:true});
+  }finally{f.child.kill();}
+ });
  test(`Correct prohibited punctuation without another AI request ${width} ${theme}`,async({page})=>{
   await page.setViewportSize({width,height:1000});await page.addInitScript(theme=>localStorage.setItem('tldrastro:studio-theme',theme),theme);
   const f=await fixture(page);try{

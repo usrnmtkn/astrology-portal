@@ -1,5 +1,5 @@
 import {horoscopeAspectFindings} from './horoscopeAspectClaims.mjs';
-import {horoscopePunctuationFindings} from './horoscopeEditorialConstraints.mjs';
+import {horoscopePunctuationFindings,horoscopeVocabularyFindings} from './horoscopeEditorialConstraints.mjs';
 import {seasonalDateFindings} from './horoscopeSeasonalDates.mjs';
 import {validateCopy} from './validateCopy.mjs';
 import {governValidationResult} from './effectiveRuleGovernance.mjs';
@@ -18,7 +18,7 @@ export function validateHoroscopeReading(passage,brief,{ownerCorrections=[]}={})
   if(!anchor)throw new Error('Calculated horoscope anchor is missing.');
   const events=horoscopeEventsInWindow(brief);
   const lint=governValidationResult(validateCopy({headline:passage.headline,body:passage.body},{validationProfile:'horoscope',family:'horoscope',surface:'horoscopes',register:'second_person',requiredFields:['headline','body'],ownerCorrections}),{surface:'horoscopes',family:'horoscope'});
-  const violations=[...lint.violations,...horoscopePunctuationFindings(passage)], text=`${passage.headline}\n${passage.body}`;
+  const violations=[...lint.violations,...horoscopePunctuationFindings(passage),...horoscopeVocabularyFindings(passage,brief.window.period)], text=`${passage.headline}\n${passage.body}`;
   const fail=detail=>violations.push({category:'horoscope_fact_boundary',detail,governanceTier:'blocking'});
   if(!/\b(?:you|your)\b/iu.test(passage.body))fail('Address the reader in the second person.');
   if(/\b(?:born with|your natal|since childhood|you always|you have always)\b/iu.test(text))fail('A temporary forecast cannot establish natal biography.');

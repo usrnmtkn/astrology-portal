@@ -6,6 +6,21 @@ export function horoscopePunctuationFindings(passage) {
     ? [{category:'horoscope_required_punctuation',field,detail:`Remove the em dash from the ${field}. Recast the sentence with commas, parentheses, a colon or a full stop.`,governanceTier:'blocking'}] : []);
 }
 
+// Explicit Weekly owner prohibition, not a score for voice or prose quality.
+export const WEEKLY_REQUIRED_VOCABULARY_RULE = 'REQUIRED WEEKLY WORDING: Never use the word "whether" in the headline or body, including quotations. Recast the sentence in plain language while preserving its meaning. This explicit owner prohibition overrides historical examples. Preserve the complete source passages unchanged.';
+
+export function horoscopeVocabularyFindings(passage,period) {
+  if(period!=='weekly')return [];
+  return ['headline','body'].flatMap(field=>{
+    const text=String(passage?.[field]??'').replace(/&#(x[\da-f]+|\d+);?/giu,(_,value)=>{
+      const code=value[0].toLowerCase()==='x'?parseInt(value.slice(1),16):Number(value);
+      return code>0&&code<=0x10ffff?String.fromCodePoint(code):'';
+    }).replace(/[\u200b-\u200d\ufeff]/gu,'');
+    return /(?<![\p{L}\p{N}_])whether(?![\p{L}\p{N}_])/iu.test(text)
+      ? [{category:'horoscope_required_vocabulary',field,detail:`Remove “whether” from the ${field}. Recast the sentence without changing its meaning.`,governanceTier:'blocking'}] : [];
+  });
+}
+
 export const SEASONAL_DEPTH_GUIDANCE = 'INTERPRETIVE DEPTH: Develop the relationship between the selected developments, not a tour of planetary topics. Use supplied event-time aspects, configurations, season and lunation rulers, and their distinct whole-sign life areas to establish the mechanism: what is pulling in different directions, why the apparent solution leaves something unresolved, and what a different response would actually change. A stronger interpretation follows a consequence into the next thought. More house keywords, examples, metaphors, intensity or advice do not substitute for that reasoning. Give the chosen thought enough room; leave unrelated events out. Preserve the owner examples’ movement and vocabulary without copying their stories or imposing a paragraph formula. An ordinary situation should reveal a meaningful distinction, not simply illustrate a label. Constructive possibilities deserve the same depth as difficulty.';
 export const SEASONAL_FACT_RELATIONSHIPS = 'RELATIONAL FACT BOUNDARY: Use only the supplied relational context. A sampled aspect has an orb and phase at that instant; it is not an additional exact aspect date or a claim that it lasts all season. A configuration requires all its participating aspects at the same instant, and each planet keeps its own calculated sign and house. Traditional rulership is interpretive context, not another transit. If ruler condition changes, distinguish the dated states. Historical recurrences, earlier passes and cycle origin dates may be discussed only when separately calculated and supplied; current positions and archived owner writing cannot establish them. When context is absent, deepen the supported interpretation without inventing the missing relationship.';
 export const SEASONAL_DEPTH_REVIEW = 'Before returning, check whether each selected paragraph explains something beyond the placement’s list of topics. Develop any missing link between the astrology, the reader’s possible situation and its consequence. Remove decorative examples and conclusions that merely repeat the opening. Check dated first mentions, keep every participant’s house distinct, and verify the required punctuation rule. This is part of the single writing call, not an additional paid review or an approval of the prose.';
