@@ -7,6 +7,7 @@ import { createTransitSynastryRenderer as shippedRenderer } from "../apps/web/sr
 import { personalTransitReviewChecks, friendTransitNamingRule, bondTransitNamingRule } from "../api/_lib/personal-transit-writing.ts";
 import { bondEffectPageHeadline } from "../apps/admin/src/bondEffectPageAssembly.ts";
 import { packageAuthoredCardFromRow } from "../apps/web/src/services/fallbackArchitectureV3CorePackaging.ts";
+import { relationshipFallbackArchitectureV3Bundle } from "../apps/web/src/content/fallbackArchitectureV3RelationshipBundle.ts";
 
 const root = "apps/web/src/content/fallbackArchitectureV3/";
 const read = (file: string) => JSON.parse(fs.readFileSync(file, "utf8"));
@@ -32,6 +33,7 @@ for (const edit of restoration.edits) {
 }
 const relationshipRows = hooks.hookRows.filter(row => row.contentKey.startsWith("fallback-hook/bond-effect-"));
 assert.equal(relationshipRows.length, 139);
+assert.equal(relationshipFallbackArchitectureV3Bundle.rowsFile.hookRows.filter(row => row.contentKey.startsWith("fallback-hook/bond-effect-")).length, 139, "The actual reader bundle must load every restored relationship row.");
 for (const row of relationshipRows) for (const field of ["body_you", "body_they"]) {
   assert.doesNotMatch(row[field], /\b(?:in|keep|for|with) they\b|\bthey (?:realiz|probably means|no longer has|notice your work and says)\b|\byou know them noticed\b|bothers the two of you does not argue/iu, `${row.contentKey}/${field}: damaged conversion must not return`);
   assert.doesNotMatch(row[field], /\{\{(?!holder1\}\})/u);

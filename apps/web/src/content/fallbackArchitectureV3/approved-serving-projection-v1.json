@@ -18,13 +18,13 @@
     "runtimeFilter": "defense-in-depth"
   },
   "manifest": {
-    "contentHash": "721734ff905d63b380ba4b8165bde78f",
+    "contentHash": "d67bed55c94f49c94ca540874e95da65",
     "keyManifestHash": "36292cda909cae9694622edcb73d286a",
     "keyCount": 9271
   },
   "lineage": {
     "file": "approved-serving-lineage-v1.json",
-    "sha256": "64a87639c63a6e598e6edd7b6c5ee986785838a54b6b0b80774e30ca35ea5a04",
+    "sha256": "338522b5ba4aa4291e049a483771a60016e3311c82d5141ad3ded6b723e85d47",
     "count": 9812,
     "emissionCount": 9888,
     "exactSourceMatchCount": 8770
