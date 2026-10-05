@@ -58,7 +58,7 @@ const measurements = {
 };
 const failures = Object.entries(budgets).flatMap(([metric, limit]) => (
   measurements[metric] > limit
-    ? [`${metric}: ${formatBytes(measurements[metric])} (${measurements[metric]} bytes) exceeds ${formatBytes(limit)} (${limit} bytes)`]
+    ? [`${metric}: ${formatBytes(measurements[metric])} (${measurements[metric]} bytes) exceeds ${formatBytes(limit)} (${limit} bytes) by ${measurements[metric] - limit} bytes`]
     : []
 ));
 
@@ -182,7 +182,8 @@ for (const name of expectedDeferredGroups) {
 console.log("# Admin bundle budget");
 console.log(`Entry JavaScript: ${formatBytes(measurements.entryJavaScriptGzipBytes)} gzip (${formatBytes(measurements.entryJavaScriptRawBytes)} raw)`);
 console.log(`Largest JavaScript: ${largestItem?.file ?? "none"} (${formatBytes(measurements.largestJavaScriptRawBytes)} raw)`);
-console.log(`All JavaScript: ${formatBytes(measurements.totalJavaScriptGzipBytes)} gzip across ${javaScriptFiles.length} files`);
+console.log(`All JavaScript: ${formatBytes(measurements.totalJavaScriptGzipBytes)} gzip (${measurements.totalJavaScriptGzipBytes} bytes) across ${javaScriptFiles.length} files; limit ${budgets.totalJavaScriptGzipBytes} bytes`);
+console.log(`Aggregate headroom: ${budgets.totalJavaScriptGzipBytes - measurements.totalJavaScriptGzipBytes} bytes`);
 console.log(`Deferred memory graph: ${formatBytes(measurements.memoryGraphJavaScriptGzipBytes)} gzip`);
 console.log("\nJavaScript chunks:");
 for (const item of [...javaScriptFiles].sort((first, second) => second.rawBytes - first.rawBytes)) {
