@@ -6,6 +6,26 @@ The owner requested: “please use that to update the synastry and composite cha
 Its uncommitted implementation was recovered as source changes, without importing the
 retired clone's history. The earlier font/card work is already present on current main.
 
+## Subsequent page-fit correction
+
+The scrollable viewport and on-chart display controls were removed after the
+owner's follow-up. Relationship wheels now share the natal wheel's square
+`-24 -24 648 648` canvas and responsive page sizing. Glyph dimensions remain
+26 units for composite and outer synastry planets, and 22 for inner synastry
+planets. House-contained rows are retained when they fit; otherwise labels
+spread around the fixed ring in longitude order. Exact degree ticks and aspect
+anchors do not move. A crowded house no longer enlarges the canvas.
+
+Aspect colors, composite style and composite glyph-ring preferences now live
+under the existing Astrology settings section for guests and members. Existing
+browser preference keys are preserved. Profile and full-screen charts consume
+those saved preferences without rendering display settings beside the wheel.
+The full-screen dialog fits its square canvas between the header and footer.
+
+The release notes below describe the earlier recovery, including its superseded
+scrolling behavior. The current browser regression checks page fit, unchanged
+glyph sizes, site-menu discovery, persistence, both themes and both viewport sizes.
+
 ## Tested source
 
 - Remote: `https://github.com/usrnmtkn/astrology-portal.git`.

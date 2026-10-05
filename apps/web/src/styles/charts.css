@@ -777,7 +777,8 @@
 
 .chart-fullscreen-panel {
   width: min(var(--container-wide), 100%);
-  max-height: min(960px, calc(100svh - 28px));
+  height: var(--chart-dialog-height);
+  max-height: var(--chart-dialog-height);
   overflow: hidden;
   border: var(--border-width-thin) solid var(--modal-border);
   border-radius: var(--radius);
@@ -792,7 +793,8 @@
   display: grid;
   grid-template-rows: auto minmax(0, 1fr) auto;
   gap: calc(var(--space-3) + var(--space-1) / 2);
-  min-height: min(960px, calc(100svh - 28px));
+  height: 100%;
+  min-height: 0;
   padding: var(--chart-dialog-padding);
   box-sizing: border-box;
 }
@@ -831,6 +833,7 @@
 }
 
 .chart-fullscreen-wheel-wrap {
+  container-type: size;
   display: grid;
   align-items: start;
   justify-items: center;
@@ -846,12 +849,17 @@
 }
 
 .chart-shell--fullscreen {
-  width: var(--chart-fullscreen-wheel-size);
-  height: var(--chart-fullscreen-wheel-size);
+  width: var(--chart-fullscreen-canvas-size);
+  height: var(--chart-fullscreen-canvas-size);
   max-width: min(100%, var(--container-reading));
   max-height: min(100%, 820px);
   justify-self: center;
   margin-inline: auto;
+}
+
+.chart-shell--fullscreen :is(.chart-frame, .sky-wheel-shell, .sky-wheel) {
+  width: 100%;
+  max-width: 100%;
 }
 
 .chart-shell--fullscreen:has(.sky-wheel-shell--aspect-inspector.is-inspecting-aspects) {
@@ -1127,86 +1135,7 @@
   opacity: var(--chart-sector-opacity);
 }
 
-.relationship-wheel-controls {
-  display: grid;
-  gap: var(--space-2);
-  width: 100%;
-  padding: var(--space-3);
-  font-family: var(--font-label);
-  font-size: var(--text-meta-size);
-  font-weight: var(--weight-regular);
-  line-height: var(--leading-meta);
-  color: var(--ink);
-}
-.relationship-wheel-controls__row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: var(--space-2);
-}
-.relationship-wheel-controls__legend {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-2) var(--space-3);
-  padding: 0;
-  margin: 0;
-  list-style: none;
-}
-.relationship-wheel-controls__legend li {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-1);
-  font: inherit;
-}
-.chart-shell:has(.relationship-wheel-controls),
-.chart-frame:has(.relationship-wheel-controls) {
-  height: auto;
-  aspect-ratio: auto;
-  overflow: visible;
-}
-
-.relationship-wheel-controls__swatch {
-  display: inline-block;
-  width: var(--space-4);
-  height: var(--space-1);
-  border-radius: var(--radius-pill);
-  flex: none;
-}
 .sky-wheel-synastry {
   --synastry-inner-glyph: var(--chart-glyph);
   --filter-synastry-inner-glyph: var(--chart-glyph-filter);
-}
-.chart-fullscreen-wheel-wrap:has(.relationship-wheel-controls) {
-  overflow: auto;
-}
-.chart-fullscreen-overlay:has(.relationship-wheel-controls) {
-  max-height: inherit;
-}
-.chart-shell--fullscreen:has(.relationship-wheel-controls) {
-  max-height: none;
-}
-
-.relationship-wheel-viewport {
-  container-type: inline-size;
-  width: 100%;
-  min-width: 0;
-  max-height: var(--chart-size);
-  overflow: auto;
-}
-.relationship-wheel-viewport > .sky-wheel,
-.chart-frame .relationship-wheel-viewport > .sky-wheel {
-  width: var(--chart-relationship-canvas-width);
-  max-width: none;
-  height: auto;
-  margin-inline: auto;
-}
-.chart-shell--fullscreen:has(.relationship-wheel-controls),
-.chart-shell--fullscreen:has(.relationship-wheel-controls) .chart-frame,
-.chart-shell--fullscreen:has(.relationship-wheel-controls) .sky-wheel-shell {
-  width: 100%;
-  max-width: none;
-}
-.chart-shell--fullscreen .relationship-wheel-viewport {
-  max-height: none;
 }

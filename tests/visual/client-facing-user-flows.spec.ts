@@ -5910,36 +5910,68 @@ for (const theme of ["light", "dark"] as const) {
       await expectClientRouteLoads(page, "/#friends?tab=charts&chart=friend-nikki&view=synastry");
       const synastry = page.getByLabel("Nikki synastry chart wheel", { exact: true });
       await expectRelationshipWheelGeometry(page, "Nikki synastry chart wheel");
-      const glyphSizes = await synastry.evaluate(element => {
-        const viewport = element.querySelector(".relationship-wheel-viewport")!;
-        const viewportWidth = Math.min(viewport.getBoundingClientRect().width,
-          parseFloat(getComputedStyle(viewport).maxHeight));
-        return ["outer", "inner"].map(ring => ({
-          expected: viewportWidth / 648 * (ring === "outer" ? 26 : 22),
-          widths: [...element.querySelectorAll(`.planet-marker-${ring} .planet-glyph-image`)].map(glyph => glyph.getBoundingClientRect().width)
-        }));
-      });
-      for (const ring of glyphSizes) for (const width of ring.widths) {
-        expect(Math.abs(width - ring.expected), "crowded and isolated glyphs keep the normal on-screen size").toBeLessThan(0.2);
+      async function expectFitsPage(wheel: ReturnType<Page["locator"]>, rings: { selector: string; size: number }[]) {
+        await expect(wheel.locator("iframe, .relationship-wheel-viewport, .relationship-wheel-controls")).toHaveCount(0);
+        await expect(wheel.getByRole("tab", { name: /Bright|Monochrome/ })).toHaveCount(0);
+        const geometry = await wheel.evaluate((element, rings) => {
+          const svg = element.querySelector<SVGSVGElement>(".sky-wheel")!;
+          const bounds = svg.getBoundingClientRect();
+          const frame = svg.closest(".chart-frame")!.getBoundingClientRect();
+          return {
+            viewBox: svg.getAttribute("viewBox"), width: bounds.width, height: bounds.height,
+            fits: bounds.left >= frame.left - 1 && bounds.right <= frame.right + 1,
+            scrollRegions: [...element.querySelectorAll("*")].filter(node => {
+              const style = getComputedStyle(node);
+              return [style.overflowX, style.overflowY].some(value => ["auto", "scroll"].includes(value));
+            }).length,
+            glyphs: rings.map(ring => ({ expected: bounds.width / 648 * ring.size,
+              widths: [...element.querySelectorAll(ring.selector)].map(glyph => glyph.getBoundingClientRect().width) }))
+          };
+        }, rings);
+        expect(geometry.viewBox).toBe("-24 -24 648 648");
+        expect(Math.abs(geometry.width - geometry.height)).toBeLessThan(1);
+        expect(geometry.fits).toBe(true);
+        expect(geometry.scrollRegions).toBe(0);
+        for (const ring of geometry.glyphs) for (const size of ring.widths) {
+          expect(Math.abs(size - ring.expected), "glyphs retain their normal responsive size").toBeLessThan(0.2);
+        }
       }
+      const synastryRings = [
+        { selector: ".planet-marker-outer .planet-glyph-image", size: 26 },
+        { selector: ".planet-marker-inner .planet-glyph-image", size: 22 }
+      ];
+      await expectFitsPage(synastry, synastryRings);
       await expect(synastry.locator(".synastry-house-band--outer path")).toHaveCount(12);
       await expect(synastry.locator(".synastry-house-band--inner path")).toHaveCount(12);
-      await synastry.getByRole("tab", { name: "Bright", exact: true }).click();
-      await expect(synastry.getByLabel("Aspect color legend")).toBeVisible();
-      const swatch = synastry.locator(".relationship-wheel-controls__swatch").first();
+
+      // Find chart preferences through the site's existing menu, not on a profile.
+      await page.getByRole("button", { name: "Open menu" }).click();
+      await page.getByRole("menuitem", { name: /settings/i }).click();
+      const settings = page.getByRole("region", { name: "Astrology settings", exact: true });
+      await settings.getByRole("button", { name: "Bright", exact: true }).click();
+      await expect(settings.getByLabel("Aspect color legend")).toBeVisible();
+      const swatch = settings.locator(".settings-aspect-legend__swatch").first();
       await expect(swatch).toHaveCSS("background-color", "rgb(240, 165, 0)");
       expect((await swatch.boundingBox())!.width).toBeLessThan(40);
-      expect((await synastry.getByLabel("Aspect color legend").boundingBox())!.height).toBeLessThan(180);
-      const line = synastry.locator(".interchart-aspect-lines > g").first();
-      await expect(line).toHaveAttribute("style", /--aspect-bright-/);
+      await settings.getByRole("button", { name: "Monochrome", exact: true }).click();
+      await settings.getByRole("button", { name: "Composite glyph ring", exact: true }).click();
+      await expectNoHorizontalOverflow(page, "Chart preferences in site settings");
+      await page.reload();
+      await expect(settings.getByRole("button", { name: "Bright", exact: true })).toHaveAttribute("aria-pressed", "true");
+      await expect(settings.getByRole("button", { name: "Monochrome", exact: true })).toHaveAttribute("aria-pressed", "true");
+      await expect(settings.getByRole("button", { name: "Composite glyph ring", exact: true })).toHaveAttribute("aria-pressed", "false");
+      await page.screenshot({ path: testInfo.outputPath("chart-settings.png"), fullPage: true });
+
+      await expectClientRouteLoads(page, "/#friends?tab=charts&chart=friend-nikki&view=synastry");
+      await expect(synastry.locator(".interchart-aspect-lines > g").first()).toHaveAttribute("style", /--aspect-bright-/);
       await expectAspectInspector(synastry, "Refined synastry");
-      await page.evaluate(() => window.scrollTo(0, 0));
       await synastry.screenshot({ path: testInfo.outputPath("synastry.png") });
-      await expectNoHorizontalOverflow(page, "Synastry chart display controls");
+      await expectNoHorizontalOverflow(page, "Synastry chart");
       await page.getByRole("button", { name: "Full-screen chart", exact: true }).click();
       const dialog = page.getByRole("dialog");
       await expect(dialog.locator(".synastry-house-number")).toHaveCount(24);
-      await expect(dialog.getByRole("tab", { name: "Bright", exact: true })).toHaveAttribute("aria-selected", "true");
+      await expect(dialog.locator(".relationship-wheel-viewport, .relationship-wheel-controls")).toHaveCount(0);
+      expect((await dialog.locator(".sky-wheel").boundingBox())!.width).toBeGreaterThanOrEqual((await synastry.locator(".sky-wheel").boundingBox())!.width - 1);
       const synastryDialogBox = (await dialog.boundingBox())!;
       const synastryFooterBox = (await dialog.locator(".chart-fullscreen-footer").boundingBox())!;
       expect(synastryFooterBox.y + synastryFooterBox.height).toBeLessThan(synastryDialogBox.y + synastryDialogBox.height);
@@ -5947,32 +5979,29 @@ for (const theme of ["light", "dark"] as const) {
 
       await selectFriendDetailTab(page, "Composite");
       const composite = page.getByLabel(/Nikki and you composite chart wheel/i);
-      await expect(composite.locator(".wheel-glyph-ring")).toBeVisible();
-      await expect(composite.locator(".planet-label-group[transform*=scale]")).toHaveCount(0);
-      await expect(composite.locator(".aspect-lines > g").first()).toBeVisible();
-      await composite.getByRole("tab", { name: "Monochrome", exact: true }).click();
-      await expect(composite.locator(".sky-wheel")).toHaveClass(/sky-wheel--monochrome/);
-      await composite.getByRole("checkbox", { name: "Glyph ring" }).uncheck();
       await expect(composite.locator(".wheel-glyph-ring")).toHaveCount(0);
-      await page.reload();
-      await expect(composite.getByRole("checkbox", { name: "Glyph ring" })).not.toBeChecked();
-      await expect(composite.getByRole("tab", { name: "Monochrome", exact: true })).toHaveAttribute("aria-selected", "true");
-      await expect(composite.getByRole("tab", { name: "Bright", exact: true })).toHaveAttribute("aria-selected", "true");
-      await composite.getByRole("checkbox", { name: "Glyph ring" }).check();
-      await expect(composite.locator(".wheel-glyph-ring__band")).toHaveCSS("fill-opacity", "0.8");
+      await expect(composite.locator(".sky-wheel")).toHaveClass(/sky-wheel--monochrome/);
+      await expect(composite.locator(".planet-label-group[transform*=scale]")).toHaveCount(0);
+      await expectFitsPage(composite, [{ selector: ".planet-glyph-image", size: 26 }]);
+      await expect(composite.locator(".aspect-lines > g").first()).toBeVisible();
       await expectAspectInspector(composite, "Refined composite");
-      await page.evaluate(() => window.scrollTo(0, 0));
       await composite.screenshot({ path: testInfo.outputPath("composite.png") });
-      await expectNoHorizontalOverflow(page, "Composite chart display controls");
+      await expectNoHorizontalOverflow(page, "Composite chart");
       await page.getByRole("button", { name: "Full-screen chart", exact: true }).click();
       await expect(dialog.locator(".sky-wheel-composite")).toHaveClass(/sky-wheel--monochrome/);
+      expect((await dialog.locator(".sky-wheel").boundingBox())!.width).toBeGreaterThanOrEqual((await composite.locator(".sky-wheel").boundingBox())!.width - 1);
       const compositeDialogBox = (await dialog.boundingBox())!;
       const compositeFooterBox = (await dialog.locator(".chart-fullscreen-footer").boundingBox())!;
       expect(compositeFooterBox.y + compositeFooterBox.height).toBeLessThan(compositeDialogBox.y + compositeDialogBox.height);
       await dialog.screenshot({ path: testInfo.outputPath("composite-fullscreen.png") });
-      await dialog.getByRole("tab", { name: "Standard", exact: true }).click();
       await dialog.getByRole("button", { name: "Close full-screen chart" }).click();
-      await expect(composite.getByRole("tab", { name: "Standard", exact: true })).toHaveAttribute("aria-selected", "true");
+      await page.getByRole("button", { name: "Open menu" }).click();
+      await page.getByRole("menuitem", { name: /settings/i }).click();
+      await settings.getByRole("button", { name: "Composite glyph ring", exact: true }).click();
+      await settings.getByRole("button", { name: "Standard", exact: true }).click();
+      await expectClientRouteLoads(page, "/#friends?tab=charts&chart=friend-nikki&view=composite");
+      await expect(composite.locator(".wheel-glyph-ring__band")).toBeVisible();
+      await expect(composite.locator(".sky-wheel")).not.toHaveClass(/sky-wheel--monochrome/);
       await assertNoClientErrors();
     });
   }

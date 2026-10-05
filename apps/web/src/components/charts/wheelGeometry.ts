@@ -23,11 +23,6 @@ export const wheelViewBox = "-24 -24 648 648";
 export const angleAxisOuterPadding = 20;
 export const angleLabelOuterPadding = 20;
 
-export function relationshipWheelViewBox(outerRadius: number) {
-  const extra = Math.max(0, outerRadius - 284);
-  return `${-24 - extra} ${-24 - extra} ${648 + extra * 2} ${672 + extra * 2}`;
-}
-
 function normalizedAngle(value: number) {
   return ((value % 360) + 360) % 360;
 }
@@ -353,6 +348,60 @@ export function houseBoundedWheelMarkerLayouts<T>(
     }
   }
   return layouts;
+}
+
+/** Keep relationship wheels on the natal canvas without shrinking symbols.
+ * Prefer house-contained rows. If those rows would enlarge the wheel, spread
+ * labels around their fixed ring, as natal labels do. Ticks retain true longitude.
+ */
+export function fittedWheelMarkerLayouts<T>(
+  items: T[],
+  keyForItem: (item: T) => string,
+  longitudeForItem: (item: T) => number,
+  options: Parameters<typeof houseBoundedWheelMarkerLayouts<T>>[3]
+) {
+  const contained = houseBoundedWheelMarkerLayouts(items, keyForItem, longitudeForItem, options);
+  if ([...contained.values()].every(layout => layout.radius <= options.radius + 0.000001)) return contained;
+
+  const { radius, center, minimumSpacing, angleForLongitude } = options;
+  const entries = items.map(item => ({
+    key: keyForItem(item), longitude: normalizedAngle(longitudeForItem(item))
+  })).sort((a, b) => a.longitude - b.longitude || a.key.localeCompare(b.key));
+  const gap = 2 * Math.asin(Math.min(1, minimumSpacing / (2 * radius))) * 180 / Math.PI;
+  // Cut at the largest empty arc so a cluster across 0° stays together.
+  let start = 0;
+  let largestGap = 0;
+  entries.forEach((entry, index) => {
+    const distance = normalizedAngle(entries[(index + 1) % entries.length].longitude - entry.longitude);
+    if (distance > largestGap) { largestGap = distance; start = (index + 1) % entries.length; }
+  });
+  const ordered = [...entries.slice(start), ...entries.slice(0, start)];
+  const origin = ordered[0].longitude;
+  const blocks: { start: number; end: number; sum: number; count: number }[] = [];
+  ordered.forEach((entry, index) => {
+    blocks.push({ start: index, end: index, sum: normalizedAngle(entry.longitude - origin) - index * gap, count: 1 });
+    while (blocks.length > 1) {
+      const left = blocks[blocks.length - 2], right = blocks[blocks.length - 1];
+      if (left.sum / left.count <= right.sum / right.count) break;
+      blocks.splice(-2, 2, { start: left.start, end: right.end, sum: left.sum + right.sum, count: left.count + right.count });
+    }
+  });
+  // Leave one complete gap across the seam, including the densest supported chart.
+  const extent = 360 - ordered.length * gap;
+  const lower = -Math.max(0, (ordered.length - 1) * gap - normalizedAngle(ordered.at(-1)!.longitude - origin)) / 2;
+  blocks.forEach(block => {
+    const offset = Math.max(lower, Math.min(lower + extent, block.sum / block.count));
+    for (let index = block.start; index <= block.end; index += 1) {
+      const entry = ordered[index];
+      const visualAngle = normalizedAngle(angleForLongitude(origin + offset + index * gap));
+      contained.set(entry.key, {
+        angle: normalizedAngle(angleForLongitude(entry.longitude)), visualAngle,
+        marker: polarToCartesian(center, center, radius, visualAngle), radius, scale: 1,
+        sectorStartAngle: normalizedAngle(angleForLongitude(Math.floor(entry.longitude / 30) * 30))
+      });
+    }
+  });
+  return contained;
 }
 
 export function wheelMarkerLayouts<T>(
