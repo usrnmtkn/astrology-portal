@@ -513,6 +513,12 @@ function headingComparisonVariants(value: string) {
     .trim()
     .toLowerCase();
   const withoutMovementVerb = normalized
+    .replace(/\byour\s+/gu, "")
+    .replace(/\bconjunct\b/gu, "conjunction")
+    .replace(/\bopposite\b/gu, "opposition")
+    .replace(/\binconjunct\b/gu, "quincunx")
+    .replace(/\b(?:rx|retrograde)\s+(?=in\b)/gu, "")
+    .replace(/^the\s+(?=moon\b)/u, "")
     .replace(/\b(?:is\s+)?(?:currently\s+)?(?:moving|transiting)\b/gu, "")
     .replace(/\s+/gu, " ")
     .trim();
@@ -5820,5 +5826,71 @@ for (const [width, theme] of [[390, 'light'], [1440, 'dark']] as const) {
     await expect(personal).toContainText('QA recovered return opening.', { timeout: 30_000 });
     await expect(personal).toContainText('QA recovered return final sentence.');
     expect(attempts).toBe(2);
+  });
+}
+
+for (const width of [390, 1440]) for (const theme of ["light", "dark"] as const) {
+  test(`article titles render once across reader pages ${width} ${theme}`, async ({ page }) => {
+    test.setTimeout(120_000);
+    await page.setViewportSize({ width, height: 1000 });
+    const assertNoClientErrors = await expectNoClientErrors(page);
+    await seedClientState(page, { profile: true, friends: true, theme, preloadProfileNatalSky: true });
+    await expectClientRouteLoads(page, "/#you");
+    const cards = page.locator("button.updates-aspect-row:has(.updates-aspect-row__orb)");
+    await expect(cards.first()).toBeVisible({ timeout: 60_000 });
+    const titles = await cards.locator(".updates-aspect-row__title").allTextContents();
+    expect(titles.length).toBeGreaterThan(0);
+    let titleStyle: Record<string, string> | undefined;
+    for (const title of titles) {
+      await cards.filter({ has: page.getByText(title, { exact: true }) }).click();
+      const heading = page.locator("#you-transit-article-title");
+      await expect(heading).toHaveText(title);
+      // The generic section name must not repeat the personalized h1.
+      const genericTitle = title.replace(/\byour\s+/giu, "");
+      const escaped = genericTitle.replace(/[.*+?^${}()|[\]\\]/gu, "\\$&");
+      await expect(page.locator(".article-body-inner").getByRole("heading", { name: new RegExp(`^${escaped}$`, "i") })).toHaveCount(0);
+      await expectNoDuplicateArticleHeadings(page, title);
+      await expectSemanticArticleHeadingOrder(page, title);
+      await expect(page.locator(".article-body-inner p").first()).not.toBeEmpty();
+      const style = await heading.evaluate(element => {
+        const computed = getComputedStyle(element);
+        return Object.fromEntries(["font-family", "font-size", "font-weight", "line-height", "letter-spacing", "margin-top", "margin-bottom", "text-transform", "text-align"].map(property => [property, computed.getPropertyValue(property)]));
+      });
+      if (titleStyle) expect(style).toEqual(titleStyle);
+      else {
+        titleStyle = style;
+        await page.screenshot({ path: `test-results/article-title-once-${width}-${theme}.png`, fullPage: true });
+      }
+      await page.getByRole("button", { name: "Back to updates" }).click();
+      await expect(cards.first()).toBeVisible();
+    }
+
+    await selectYouNatalTab(page);
+    await page.getByRole("button", { name: "Mercury Rx in Capricorn", exact: true }).click();
+    await expect(page.locator("#you-transit-article-title")).toHaveText(/Mercury Rx in/);
+    await expectNoDuplicateArticleHeadings(page, "You retrograde placement");
+    await expectSemanticArticleHeadingOrder(page, "You retrograde placement");
+    await page.getByRole("button", { name: "Back to updates" }).click();
+    await page.getByRole("button", { name: /Ascendant in/ }).click();
+    await expect(page.locator("#you-transit-article-title")).toBeVisible();
+    await expectNoDuplicateArticleHeadings(page, "You natal placement");
+    await expectSemanticArticleHeadingOrder(page, "You natal placement");
+    await page.reload();
+    await expect(page.locator("#you-transit-article-title")).toBeVisible();
+    await expectNoDuplicateArticleHeadings(page, "You natal placement after reload");
+
+    await expectClientRouteLoads(page, "/#friends?tab=charts");
+    await page.getByRole("button", { name: "Open Nikki" }).click();
+    await selectFriendDetailTab(page, "Natal");
+    await page.getByLabel("Nikki big three").getByRole("button").first().click();
+    await expect(page.locator("#sky-detail-title")).toBeVisible();
+    await expectNoDuplicateArticleHeadings(page, "Friends natal placement");
+    await expectSemanticArticleHeadingOrder(page, "Friends natal placement");
+
+    await expectClientRouteLoads(page, "/#sky/placement/sun/cancer");
+    await expect(page.locator("#sky-detail-title")).toBeVisible();
+    await expectNoDuplicateArticleHeadings(page, "Sky placement");
+    await expectSemanticArticleHeadingOrder(page, "Sky placement");
+    await assertNoClientErrors();
   });
 }
