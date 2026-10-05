@@ -1690,17 +1690,21 @@
 
 /* Responsive: chart fullscreen controls */
 @media (max-width: 760px) {
+  .chart-fullscreen-modal-root .modal-positioner {
+    padding: var(--space-2);
+  }
   .chart-fullscreen-panel {
     width: min(100%, calc(100vw - var(--sp-2)));
-    max-height: calc(100svh - 16px);
+    height: var(--chart-dialog-mobile-height);
+    max-height: var(--chart-dialog-mobile-height);
     border-radius: var(--card-radius);
   }
 
   .chart-fullscreen-overlay {
     --chart-fullscreen-wheel-size: var(--ds-responsive-chart-fullscreen-wheel-size);
     --chart-fullscreen-rail-width: min(var(--chart-fullscreen-wheel-size), 100%);
-    min-height: calc(100svh - 16px);
-    padding: var(--sp-2) var(--mobile-edge-inset) var(--mobile-page-gutter);
+    min-height: 0;
+    padding: var(--sp-2) var(--space-2) var(--mobile-page-gutter);
     gap: var(--card-padding-sm);
   }
 

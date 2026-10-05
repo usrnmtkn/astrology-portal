@@ -1,5 +1,4 @@
-import { RelationshipWheelControls, useRelationshipWheelDisplay } from "./RelationshipWheelControls";
-import { RelationshipWheelViewport } from "./RelationshipWheelViewport";
+import { useRelationshipWheelDisplay } from "./useRelationshipWheelDisplay";
 import type { KeyboardEvent, MouseEvent } from "react";
 import { memo, useEffect, useId, useMemo, useRef, useState } from "react";
 import type { PlanetPosition } from "../../types";
@@ -19,8 +18,8 @@ import {
   inwardMarkerOffset,
   longitudeToChartAngle,
   polarToCartesian,
-  houseBoundedWheelMarkerLayouts,
-  relationshipWheelViewBox
+  fittedWheelMarkerLayouts,
+  wheelViewBox
 } from "./wheelGeometry";
 import {
   WheelPlanetGlyph,
@@ -149,26 +148,18 @@ export const SynastryWheel = memo(function SynastryWheel({
     return longitudeToChartAngle(longitude, ascendantLongitude, isNatalWheel);
   }
 
-  // Keep each glyph at its normal size. Add radial rows and move the house
-  // rings outward when a crowded sector needs more room.
-  const innerPlanetLayouts = useMemo(() => houseBoundedWheelMarkerLayouts(
+  // Use the natal canvas size. Crowded labels spread within the fixed rings;
+  // exact longitude ticks and aspect anchors remain unchanged.
+  const innerPlanetLayouts = useMemo(() => fittedWheelMarkerLayouts(
     innerPositions, position => position.planet, position => zodiacLongitude(position),
     { radius: 123, center, minimumSpacing: 33, rowSpacing: 54, glyphSize: 22,
       annotationOffset: synastryPlanetDegreeOffset, angleForLongitude }
   ), [innerPositions, ascendantLongitude, isNatalWheel]);
-  radius.innerPlanet = Math.max(123, ...[...innerPlanetLayouts.values()].map(layout => layout.radius));
-  radius.houseBandInner = Math.max(140, radius.innerPlanet + 17);
-  radius.houseBandMiddle = radius.houseBandInner + 22;
-  radius.houseBandOuter = radius.houseBandMiddle + 22;
-  const outerPlanetMinimumRadius = Math.max(220, radius.houseBandOuter + 36);
-  const outerPlanetLayouts = useMemo(() => houseBoundedWheelMarkerLayouts(
+  const outerPlanetLayouts = useMemo(() => fittedWheelMarkerLayouts(
     outerPositions, position => position.planet, position => zodiacLongitude(position),
-    { radius: outerPlanetMinimumRadius, center, minimumSpacing: 37.5, rowSpacing: 54,
+    { radius: 220, center, minimumSpacing: 37.5, rowSpacing: 54,
       glyphSize: 26, annotationOffset: synastryPlanetDegreeOffset, angleForLongitude }
-  ), [outerPositions, outerPlanetMinimumRadius, ascendantLongitude, isNatalWheel]);
-  radius.outerPlanet = Math.max(outerPlanetMinimumRadius, ...[...outerPlanetLayouts.values()].map(layout => layout.radius));
-  radius.signInner = Math.max(240, radius.outerPlanet + 20);
-  radius.outer = radius.signInner + 44;
+  ), [outerPositions, ascendantLongitude, isNatalWheel]);
   const houseLabelRadius = {
     outer: (radius.houseBandOuter + radius.houseBandMiddle) / 2,
     inner: (radius.houseBandMiddle + radius.houseBandInner) / 2
@@ -484,10 +475,9 @@ export const SynastryWheel = memo(function SynastryWheel({
       ref={wheelShellRef}
       className={`sky-wheel-shell sky-wheel-shell-synastry${inspectorEnabled ? " sky-wheel-shell--aspect-inspector" : ""}${focusedInspectorPoint ? " is-inspecting-aspects" : ""}`}
     >
-    <RelationshipWheelViewport outerRadius={radius.outer}>
     <svg
       className={`sky-wheel synastry-wheel sky-wheel-synastry${inspectorEnabled ? " sky-wheel--aspect-inspector" : ""}${focusedInspectorPoint ? " is-inspecting-aspects" : ""}`}
-      viewBox={relationshipWheelViewBox(radius.outer)}
+      viewBox={wheelViewBox}
       role="img"
       aria-label="Synastry chart with two rings"
       onClick={inspectorEnabled ? () => setFocusedInspectorPointId(null) : undefined}
@@ -714,12 +704,10 @@ export const SynastryWheel = memo(function SynastryWheel({
       <g className="planet-labels inner-planet-labels" aria-label="Inner chart planets">
         {innerPositions.map((position) => renderPlanet(position, "inner"))}
       </g>
-      <text x={center} y={626 + radius.outer - 284} className="chart-house-system-label">
+      <text x={center} y={626} className="chart-house-system-label">
         Whole-sign houses · angles exact
       </text>
     </svg>
-    </RelationshipWheelViewport>
-    <RelationshipWheelControls display={display} />
     {focusedInspectorPoint ? (
       <div className="aspect-inspector-summary" role="status" aria-live="polite">
         <div className="aspect-inspector-summary__head">

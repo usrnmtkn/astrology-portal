@@ -1,3 +1,4 @@
+import { RelationshipChartSettings } from "./RelationshipChartSettings";
 import type { AnimationPreference } from "../../hooks/usePageTransition";
 import {
   AppearanceToggle,
@@ -99,6 +100,7 @@ export function GuestSettingsView({
                 </div>
                 <HouseSignLabelToggle value={houseSignLabelStyle} onChange={onHouseSignLabelStyleChange} />
               </div>
+              <RelationshipChartSettings />
             </div>
           </div>
         </section>

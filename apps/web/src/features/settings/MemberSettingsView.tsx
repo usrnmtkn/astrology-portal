@@ -1,3 +1,4 @@
+import { RelationshipChartSettings } from "./RelationshipChartSettings";
 import type { AnimationPreference } from "../../hooks/usePageTransition";
 import { ChevronRight } from "lucide-react";
 import { lazy, useEffect, useState } from "react";
@@ -285,6 +286,7 @@ export function MemberSettingsView({
                 </div>
                 <HouseSignLabelToggle value={houseSignLabelStyle} onChange={onHouseSignLabelStyleChange} />
               </div>
+              <RelationshipChartSettings />
             </div>
           </div>
         </section>
