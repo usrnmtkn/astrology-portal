@@ -79,6 +79,8 @@ Before fixes, all four inventory integrity groups failed; the expanded parser re
 
 `qa-studio-inventory-performance.mts` runs in the required API command with 16,000 synthetic records (production baseline: 15,652), 201 inventory pages, and 100 warm requests for each operation at concurrency 1 and 5. Listing p95 was 19/88 ms; detail and late-page p95 were 1/2 ms. Cold handler startup was 45 ms. Existing 2-second detail and 5-second list targets in this audit were retained. Complete detail text and all row identities are asserted, not only timings.
 
+`qa-studio-save-performance.mts` additionally runs the actual generated-content mutation handler against SQL storage under `service_role`, with the real publication/version migrations. It verifies 200 complete save/readback cycles at concurrency 1 and 5, exact body/identity, advancing versions and unchanged draft status. Observed p95 was 2/6 ms, below the proposed 2-second save budget. The benchmark is also part of the required API command.
+
 These are actual handler + PGlite PostgreSQL-engine timings through an isolated PostgREST adapter. They exclude network, Auth, CDN, and independent database sessions. They do not establish a production latency SLO or production write throughput. Hosted publication concurrency tests separately use distinct PostgreSQL 17 sessions. No production load test was run.
 
 Observed Supabase edge logs from 2026-10-05 00:00–11:50 UTC: 3,450 successful generated-content reads (origin p95 458 ms, max 1,748 ms); 2,330 successful publication reads (p95 445 ms); 2,870 successful auth reads (p95 444 ms). One generated-content PATCH and two profile POSTs succeeded. That write sample is insufficient for a write-latency percentile. No edge 5xx was returned by the query; this does not certify Vercel handler availability. The 418 generated-content 401 responses are denials, not evidence to relax access control.
@@ -91,6 +93,6 @@ The security advisor also reports existing project-wide warnings: seven mutable-
 
 ## Evidence and limitations
 
-Local artifacts: `/private/tmp/studio-api-audit-20261005-baseline.log`, `studio-api-audit-20261005-final-api.log`, `studio-api-audit-20261005-browser.log`, `studio-api-audit-20261005-performance.json`, and `studio-api-audit-20261005-production.json` (all under `/private/tmp`). Failure reproductions: `studio-inventory-integrity-before.log` and `studio-parser-audit-before.log`.
+Local artifacts: `/private/tmp/studio-api-audit-20261005-baseline.log`, `studio-api-audit-20261005-final-api.log`, `studio-api-audit-20261005-browser.log`, `studio-api-audit-20261005-performance.json`, `studio-api-audit-20261005-save-performance.json`, and `studio-api-audit-20261005-production.json` (all under `/private/tmp`). Failure reproductions: `studio-inventory-integrity-before.log` and `studio-parser-audit-before.log`.
 
 No production content, approval, publication, database schema or access grant was mutated. No paid model calls were made. A source-test reference is not proof of a complete lifecycle; the test suite, SQL role probes, browser fixtures and live read-only observations are separate evidence. End-to-end production mutations and a production save-latency SLO remain unverified by design. Release SHA, hosted checks and post-deployment results belong in the PR.
