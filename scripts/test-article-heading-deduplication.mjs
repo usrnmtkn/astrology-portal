@@ -43,6 +43,31 @@ const overviewSections = dedupeArticleSectionHeadings([
 assert.equal(overviewSections[0].heading, "", "Section headings must not repeat a summary heading.");
 assert.equal(overviewSections[1].heading, "Practical notes", "Distinct headings after a summary must remain visible.");
 
+const aspectPoints = ["Sun", "Moon", "Mercury", "Venus", "Mars", "Jupiter", "Saturn", "Uranus", "Neptune", "Pluto", "Chiron", "Lilith", "North Node", "South Node", "Ascendant", "Descendant", "Midheaven", "Imum Coeli"];
+for (const point of aspectPoints) {
+  for (const [titleAspect, sectionAspect] of [["sextile", "Sextile"], ["square", "Square"], ["trine", "Trine"], ["conjunct", "Conjunction"], ["opposite", "Opposition"], ["inconjunct", "Quincunx"]]) {
+    const original = { heading: `Saturn ${sectionAspect} ${point}`, body: "Opening paragraph.\n\nFinal sentence.", role: "content" };
+    const result = dedupeArticleSectionHeadings([original], `Saturn ${titleAspect} your ${point}`);
+    assert.deepEqual(result, [{ ...original, heading: "" }], `${point} ${titleAspect}: suppress only the repeated heading.`);
+    assert.equal(original.heading, `Saturn ${sectionAspect} ${point}`, "Saved section data must remain untouched.");
+  }
+}
+
+const distinctHeadings = ["Saturn Trine Ascendant", "Saturn Sextile Descendant", "Saturn Sextile Riley’s Ascendant", "Your next step", "Their next step"];
+assert.deepEqual(
+  dedupeArticleSectionHeadings(distinctHeadings.map(heading => ({ heading })), "Saturn sextile your Ascendant").map(section => section.heading),
+  distinctHeadings,
+  "Different aspects, points, owners and non-astrology headings must remain visible."
+);
+assert.equal(dedupeArticleSectionHeadings([{ heading: "Sun in Aquarius" }], "Sun in Aquarius in your 9th house")[0].heading, "");
+assert.deepEqual(dedupeArticleSectionHeadings([], "Saturn sextile your Ascendant"), []);
+
+for (const title of ["Mercury Rx in Capricorn in the 10th house", "Mercury retrograde in Capricorn", "The Mercury in Capricorn"]) {
+  const source = [{ heading: "Mercury in Capricorn", body: "Complete placement passage." }, { heading: "Mercury in Aquarius", body: "Another placement." }];
+  assert.deepEqual(dedupeArticleSectionHeadings(source, title), [{ ...source[0], heading: "" }, source[1]]);
+}
+assert.equal(dedupeArticleSectionHeadings([{ heading: "Moon in Cancer" }], "The Moon in Cancer")[0].heading, "");
+
 assert.deepEqual(
   articleHeadingComparisonVariants("Mars moving through Alisa P's 1st house"),
   [
