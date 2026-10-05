@@ -7,6 +7,16 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
   test(`Astro 101 chapters and house lesson through actual reader API at ${width} ${theme}`, async ({ page, context }) => {
     await page.setViewportSize({ width, height: 1000 });
     await context.addInitScript(theme => localStorage.setItem('tldrastro:theme', theme), theme);
+    const signedIn = theme === 'dark';
+    if (signedIn) {
+      const user = { id: '11111111-1111-4111-8111-111111111111', aud: 'authenticated', role: 'authenticated', email: 'reader@example.test', app_metadata: { provider: 'email' }, user_metadata: { name: 'Fixture Reader' } };
+      const authKey = `sb-${new URL(process.env.VITE_SUPABASE_URL ?? 'https://visual-smoke.supabase.test').hostname.split('.')[0]}-auth-token`;
+      await context.addInitScript(({ user, authKey }) => {
+        localStorage.setItem('tldrastro:userProfile', JSON.stringify({ id: user.id, name: 'Fixture Reader', email: user.email, provider: 'email', sun: 'Aquarius', moon: 'Cancer', rising: 'Gemini', charts: [] }));
+        localStorage.setItem(authKey, JSON.stringify({ user, access_token: 'synthetic-token', refresh_token: 'synthetic-refresh', token_type: 'bearer', expires_at: 4102444800 }));
+      }, { user, authKey });
+      await context.route('**/auth/v1/**', route => route.fulfill({ json: user }));
+    }
     const errors: string[] = [];
     page.on('pageerror', error => errors.push(error.message));
     let retired = false;
@@ -23,8 +33,23 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
       expect(body).not.toContain(privateCanary);
       await route.fulfill({ status: response.status, contentType: 'application/json', body });
     });
-    await page.goto('/learn');
+    await page.goto('/#settings');
+    await expect(page.locator('.site-nav').getByRole('button', { name: 'Learn', exact: true, includeHidden: true })).toHaveCount(0);
+    await page.getByRole('button', { name: 'Open menu', exact: true }).click();
+    const menu = page.getByRole('menu', { name: 'Site menu' });
+    if (signedIn) {
+      await expect(menu.getByRole('menuitem', { name: 'Friends', exact: true })).toBeVisible();
+      const labels = await menu.getByRole('menuitem').allTextContents();
+      expect(labels.slice(labels.indexOf('Friends'), labels.indexOf('Friends') + 2)).toEqual(['Friends', 'Learn']);
+    }
+    await menu.getByRole('menuitem', { name: 'Learn', exact: true }).click();
+    await expect(page).toHaveURL(/\/learn$/);
+    await expect(menu).toHaveCount(0);
     await expect(page.locator('.learn-chapter__title')).toHaveCount(9);
+    await page.getByRole('button', { name: 'Open menu', exact: true }).click();
+    await expect(menu.getByRole('menuitem', { name: 'Learn', exact: true })).toHaveClass('active');
+    await page.screenshot({ path: `test-results/learn-overflow-${width}-${theme}.png` });
+    await page.keyboard.press('Escape');
     await page.getByRole('button', { name: 'QA chapter 1', exact: true }).click();
     await expect(page).toHaveURL(/\/learn\/astro-101\/qa-chapter-1$/);
     await expect(page.locator('.learn-lede')).toHaveText('QA opening 1.');
