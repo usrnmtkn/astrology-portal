@@ -4,11 +4,12 @@ import { test } from 'node:test';
 
 const env = { NODE_ENV: 'production', CONTENT_GENERATION_SECRET: 'platform-parser-fixture',
   SUPABASE_URL: 'https://platform-parser.invalid', VITE_SUPABASE_URL: 'https://platform-parser.invalid',
-  SUPABASE_SERVICE_ROLE_KEY: 'fixture' };
+  SUPABASE_SERVICE_ROLE_KEY: 'fixture', STUDIO_MEMORY_FEEDBACK_ENABLED: 'true' };
 Object.assign(process.env, env);
-const [reader, generated, personalized, publication] = await Promise.all([
+const [reader, generated, personalized, publication, memoryFeedback] = await Promise.all([
   import('../api/content-reader.ts'), import('../api/admin/generated-content.ts'),
-  import('../api/admin/user-generated-content.ts'), import('../api/admin/content-publication.ts')
+  import('../api/admin/user-generated-content.ts'), import('../api/admin/content-publication.ts'),
+  import('../api/admin/studio-memory-feedback.ts')
 ]);
 Object.assign(process.env, env);
 let calls = 0;
@@ -19,7 +20,8 @@ const routes = [
   { name: 'generated POST', handler: generated.default, method: 'POST', serverError: 500, admin: true },
   { name: 'generated PATCH', handler: generated.default, method: 'PATCH', serverError: 500, admin: true },
   { name: 'personalized PATCH', handler: personalized.default, method: 'PATCH', serverError: 500, admin: true },
-  { name: 'publication POST', handler: publication.default, method: 'POST', serverError: 500, admin: true }
+  { name: 'publication POST', handler: publication.default, method: 'POST', serverError: 500, admin: true },
+  { name: 'memory feedback POST', handler: memoryFeedback.default, method: 'POST', serverError: 500, admin: true }
 ];
 
 for (const route of routes) await test(`${route.name}: platform body parsing preserves client/server errors and denies writes`, async () => {
