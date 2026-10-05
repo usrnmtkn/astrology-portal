@@ -1,3 +1,4 @@
+import { calendarAspectRetrogradeOptions } from "../../web/src/content/calendarAspectRetrograde";
 import { useStudioCustomVariables } from "./studioCustomVariableClient";
 import { studioRequestTimeoutMs } from "./studioRequestPolicy";
 import { clearStudioEditorReturn, rememberStudioEditorReturn, studioEditorReturnContext } from "./studioEditorReturn";
@@ -9912,6 +9913,7 @@ export function GeneratedContentAdminDashboard() {
       : currentDraft.status === "ARCHIVED";
     const packageRecord = draftPackageRecord(currentDraft);
     const editablePackageRecord = draftEditablePackageRecord(currentDraft);
+    const aspectRetrogradeOptions = calendarAspectRetrogradeOptions(currentDraft.contentKey);
     const isSkyPlacementFrameTemplate = currentDraft.contentKey === skyPlacementFrameTemplateKey;
     const isExactNatalAspectDraft = currentDraft.contentKey.startsWith(natalAspectContentKeyPrefix);
     const skyPlacementTemplateOptions = skyPlacementCompositionOptions(effectivePackageRecord(currentDraft.sections));
@@ -11688,6 +11690,19 @@ export function GeneratedContentAdminDashboard() {
                 : "This is the exact editable phrase the fallback resolver reads. Saving updates the stored package value and its dashboard copy together."}</small>}
             </label>
           )}
+          {aspectRetrogradeOptions.map(({ field, label, description }) => (
+            <label className="admin-review-copy-editor studio-surface" key={field}>
+              <span>{label} <em className="admin-field-hint">Optional</em></span>
+              <StudioTextarea
+                aria-label={label}
+                value={String((isPackageDraft ? editablePackageRecord : currentDraft.sections)?.[field] ?? "")}
+                onChange={(event) => setDraft(isPackageDraft
+                  ? setPackageRecordField(currentDraft, field, event.target.value)
+                  : invalidateContentStudioReview({ ...currentDraft, sections: { ...currentDraft.sections, [field]: event.target.value } }))}
+              />
+              <small className="admin-field-hint">{description} Write the complete passage. Leave blank to use the default version. Save and publish with the rest of this aspect.</small>
+            </label>
+          ))}
           {showArticleStyleEditor && (
             <ArticleBlockStyleFields
               allowAdd

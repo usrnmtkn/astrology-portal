@@ -26,6 +26,7 @@ const lunarBlock = value => {
 const packageRecord = {
   ...strings(`contentKey content_role review_status body body_you body_they headline summary
     Body Headline Summary BodyA BodyB SignA SignB AspectType CalendarSourceKind ExactIngressCopy
+    RetrogradeBodyA RetrogradeBodyB RetrogradeBodyBoth
     Copy Template OverlayBody NewMoonArticle FullMoonArticle EventArticle FallbackArticle ModifierArticle NodeAxisArticle Article LilithArticle
     grammar_frame surface planet sign fromSign toSign oppositeSign axis nodeAxisPole precedence serving_precedence
     render_policy runtime_family runtime_key distribution_lane governance source_package
@@ -85,7 +86,7 @@ const edition = {
 };
 const sections = {
   horoscopeEdition: { ...strings('schema'), window: strings('period audience timeZone startsAt endsAt seasonSign'), passages: [strings('sign headline body')] },
-  ...strings(`body body_you body_they text tagline energy intention ritual
+  ...strings(`RetrogradeBodyA RetrogradeBodyB RetrogradeBodyBoth body body_you body_they text tagline energy intention ritual
     experience guidance note expanded_narrative natal_sign_story collective_shift house_integration
     home_scene meaning advice reading collective_reading intro kind hubTitle do dont gift shadow integration`),
   pull_quote: strings('text'), marie_advice: strings('text'),
