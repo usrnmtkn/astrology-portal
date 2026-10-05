@@ -106,6 +106,9 @@ function productionValidationContract(input) {
     }
     return { strategyId: "sky-placement", validationProfile: "sky-placement", register: "collective" };
   }
+  if (input?.surface === "friends" && event === "bond-effect") {
+    return { strategyId: "synastry", validationProfile: "synastry", register: "second_person" };
+  }
   if (input?.surface === "friends" && event.includes("transit")) {
     return { strategyId: "friends-transit", validationProfile: "friends-transit", register: "third_person" };
   }
@@ -241,7 +244,8 @@ function prepareProductionPreCallGateUnchecked(input, env = process.env) {
     evidence = { kind: "catalog", packet: catalog.packet, mapped: catalog.mapped };
     canonicalIds = catalog.mapped.canonicalIds;
     evidenceSurface = catalog.mapped.evidenceSurface;
-    governedPrompt = canary.selected ? catalogPrompt(catalog.packet) : "";
+    const bondDraft = input?.surface === "friends" && input?.eventType === "bond-effect";
+    governedPrompt = canary.selected || bondDraft ? catalogPrompt(catalog.packet) : "";
   }
 
   const phraseEvidence = phraseIsolation(canonicalIds, evidenceSurface);

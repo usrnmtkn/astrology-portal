@@ -2559,9 +2559,9 @@ export function createTransitSynastryRenderer(
     const timeClose = inlineWindow(timeOpen);
     const endpoint = endpointOwner === "reader"
       ? `your ${title(endpointPlanet)}`
-      : `their ${title(endpointPlanet)}`;
+      : `${otherName}'s ${title(endpointPlanet)}`;
     const activatedList = endpointOwner === "reader"
-      ? `their ${serialList(activatedPlanets.map(title))}`
+      ? `${otherName}'s ${serialList(activatedPlanets.map(title))}`
       : `your ${serialList(activatedPlanets.map(title))}`;
     const plural = activatedPlanets.length !== 1;
     const endpointReference = plural && endpointOwner === "friend"

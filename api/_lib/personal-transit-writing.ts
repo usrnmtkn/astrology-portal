@@ -18,7 +18,8 @@ import type { GenerationProvider } from "./provider-config.js";
 
 const allowedVariables = new Set(["Name", "untilDate", "aspectWord"]);
 // Owner direction: thread:01a10c91-1672-7511-becc-bf8ba3189ee0 (2026-10-05).
-export const friendTransitNamingRule = "Friend transit naming rule: Once the selected person is established by the page, section heading, or chart context, do not repeat {{Name}} or {{holder1}} inside transit titles or body copy. Use they/them/their for the friend's experience. In relationship transit copy, use you, they, their, and the two of you as needed for clarity. Titles such as Jupiter opposite {{Name}}'s Sun should become Jupiter opposite their Sun. Only use the person's name when pronouns would genuinely make the sentence ambiguous.";
+export const friendTransitNamingRule = "Friend personal transit naming rule: Once the selected person is established by the page, section heading, or chart context, do not repeat {{Name}} inside personal transit titles or body copy. Use they/them/their for the friend's experience. Only use the person's name when pronouns would genuinely make the sentence ambiguous. Between You Two relationship transits use their separate name-based rule.";
+export const bondTransitNamingRule = "Between You Two naming rule: Address the reader as you and identify the other person with {{holder1}}. Use singular verb agreement after the name. Natural they/them/their references may follow the name when clear. Use you and {{holder1}} or the two of you for the pair. Keep each audience passage fully authored; never convert it through automatic name/pronoun replacement.";
 const editorialNote = /\b(?:drafting note|todo|tbd|placeholder|for the writer|do not publish|internal only|details\.)\b/iu;
 const signName = /\b(?:aries|taurus|gemini|cancer|leo|virgo|libra|scorpio|sagittarius|capricorn|aquarius|pisces)\b/iu;
 const houseWord = /\b(?:1st|2nd|3rd|4th|5th|6th|7th|8th|9th|10th|11th|12th|house)\b/iu;
@@ -522,14 +523,14 @@ async function personalTransitWritingMemory(contact: PersonalTransitContact) {
 
 function youSlot(contact: PersonalTransitContact, preview: PersonalTransitPreview = {}) {
   if (contact.family === "bond-effect") {
-    return `Write the You passage for Friends > Transits > Between you two: transiting ${title(contact.transiting ?? "")} ${contact.aspect}. Second person to the reader. Describe this temporary relationship contact, not a standing natal trait. ${friendTransitNamingRule} ${placementScope(contact, preview)}`;
+    return `Write the You passage for Friends > Transits > Between you two: transiting ${title(contact.transiting ?? "")} ${contact.aspect}. Second person to the reader. Describe this temporary relationship contact, not a standing natal trait. ${bondTransitNamingRule} ${placementScope(contact, preview)}`;
   }
   return `Write the You passage for ${destinationLabel(contact)}. Second person. Temporary personal transit, not a natal trait. ${placementScope(contact, preview)} {{untilDate}} is allowed.`;
 }
 
 function friendSlot(contact: PersonalTransitContact, preview: PersonalTransitPreview = {}) {
   if (contact.family === "bond-effect") {
-    return `Write the Friend/they passage for the same Between you two card. The reader is still you; they/them/their refers to the other person. This can reverse who is doing what, as owner-approved bond-effect pairs do. It is not a pronoun swap of the You passage. ${friendTransitNamingRule} ${placementScope(contact, preview)}`;
+    return `Write the Friend/they passage for the same Between you two card. The reader is still you; {{holder1}} is the other person. This can reverse who is doing what, as owner-approved bond-effect pairs do. It is not a pronoun swap of the You passage. ${bondTransitNamingRule} ${placementScope(contact, preview)}`;
   }
   return `Write the Friend passage for the same destination using singular they/them/their. This is guidance for the person reading about their friend, not a pronoun swap of the You passage. ${friendTransitNamingRule} ${placementScope(contact, preview)} {{untilDate}} is allowed.`;
 }
@@ -635,7 +636,10 @@ function allowsSigns(contact: PersonalTransitContact) {
 
 export function knowledgeIdsFor(contact: PersonalTransitContact) {
   if (contact.family === "bond-effect") {
-    return [`planet/${contact.transiting}`];
+    const aspects = contact.aspect === "hard" ? ["square", "opposition"]
+      : contact.aspect === "soft" ? ["sextile", "trine"] : [contact.aspect];
+    return [`body/${contact.transiting?.replaceAll("-", "_")}`,
+      ...aspects.filter(Boolean).map((aspect) => `aspect/${aspect}`)];
   }
   if (contact.family === "aspect") {
     return [`transit-aspect/${contact.transiting}/${contact.natal}/${contact.aspect}`];

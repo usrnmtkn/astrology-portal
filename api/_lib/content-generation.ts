@@ -4692,6 +4692,34 @@ function loadCanonicalOwnerExampleRows() {
 }
 
 async function loadApprovedExamples(input: GenerateContentInput) {
+  if (input.surface === "friends" && input.eventType === "bond-effect") {
+    // Relationship cards need complete owner-authored relationship passages,
+    // not the natal default or truncated generated/approved examples.
+    const index = JSON.parse(readTextFile("packages/astro-knowledge/voice/tldr-astro/satori-writer/voice-index.json"));
+    const words = canonicalExampleWords(input.facts);
+    const examples = index.entries
+      .filter((entry: any) => entry.ownerAuthored === true
+        && entry.authorityClass === "owner_authored_final"
+        && entry.useAsPositiveVoiceEvidence === true
+        && entry.useAsNegativeEvidence !== true
+        && entry.surface === "relationship-astrology"
+        && entry.text.split(/\s+/u).length >= 35
+        && !entry.text.includes("?") && !/\b(?:2025|2026|Affirmation)\b/u.test(entry.text))
+      .map((entry: any) => ({ entry, score: [...canonicalExampleWords(entry.text)].filter(word => words.has(word)).length }))
+      .sort((a: any, b: any) => b.score - a.score || a.entry.sourceId.localeCompare(b.entry.sourceId))
+      .slice(0, 3);
+    if (examples.length < 3) throw new Error("No complete owner-authored relationship voice evidence is available.");
+    return examples.map(({ entry }: any) => ({
+      contentKey: entry.sourceId,
+      surface: input.surface,
+      mode: input.mode,
+      eventType: input.eventType,
+      targetDate: "",
+      headline: entry.sourcePath,
+      summary: "Adjacent relationship register; voice only, not target astrology facts.",
+      body: entry.text
+    }));
+  }
   const families = canonicalExampleFamilies(input);
   const register = canonicalExampleRegister(input);
   const needles = canonicalExampleWords({
@@ -5837,14 +5865,15 @@ function skyArticleTemplateSlotPrompt(
   input: GenerateSkyArticleTemplateSlotsInput,
   approvedExamples: ApprovedExample[]
 ) {
+  const personalTransit = input.surface === "you" || (input.surface === "friends" && input.eventType === "bond-effect");
   return [
     readTextFile("packages/astro-knowledge/voice/tldr-astro/style-guide.md"),
     "",
     "TASK",
-    input.surface === "you"
-      ? "Fill only the requested unfinished Personal Transit audience fields for one locked destination."
+    personalTransit
+      ? "Fill only the requested Personal Transit audience fields for one locked destination. Apply the owner's revision direction to existing fields when supplied."
       : "Fill only the requested unfinished fields in an owner-authored Sky article template.",
-    input.surface === "you"
+    personalTransit
       ? `Return reader-facing prose only. Do not save, approve, or publish.${
         typeof input.facts.placementScope === "string" && input.facts.placementScope.trim()
           ? ` ${input.facts.placementScope.trim()}`
@@ -5877,7 +5906,7 @@ function skyArticleTemplateSlotPrompt(
     "REQUESTED TEMPLATE FIELDS",
     JSON.stringify(input.requestedSlots, null, 2),
     "",
-    "IMMUTABLE OWNER TEMPLATE CONTEXT",
+    personalTransit ? "EXISTING AUDIENCE COPY TO REVISE ONLY AS DIRECTED" : "IMMUTABLE OWNER TEMPLATE CONTEXT",
     input.templateBody,
     "",
     "APPROVED TLDR ASTRO VOICE EXAMPLES",

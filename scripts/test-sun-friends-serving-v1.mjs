@@ -29,7 +29,7 @@ const protectedVenusMoonKey = "authored/transit-aspect/venus/moon/hard";
 const namingPath = "packages/astro-knowledge/review/friend-transit-pronouns-2026-10-05.json";
 const namingByKey = new Map(read(namingPath).edits.filter(edit => edit.field === "body_they").map(edit => [edit.contentKey, edit]));
 
-assert.equal(PACKAGE_VERSION, "v3-2026-10-05-friend-transit-pronouns");
+assert.equal(PACKAGE_VERSION, "v3-2026-10-05-between-you-two-names");
 assert.equal(approval.status, "owner_approved");
 assert.equal(approval.approvalLevel, "exact_owner_approved");
 assert.equal(approval.records.length, 27);
