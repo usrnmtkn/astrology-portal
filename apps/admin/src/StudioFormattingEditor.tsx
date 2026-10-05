@@ -1,6 +1,13 @@
 import { useEffect, useRef, useState } from 'react';
 import { EditorContent, useEditor, useEditorState } from '@tiptap/react';
-import StarterKit from '@tiptap/starter-kit';
+import { Bold as BoldExtension } from '@tiptap/extension-bold';
+import { Document } from '@tiptap/extension-document';
+import { HardBreak } from '@tiptap/extension-hard-break';
+import { Italic as ItalicExtension } from '@tiptap/extension-italic';
+import { BulletList, ListItem, ListKeymap, OrderedList } from '@tiptap/extension-list';
+import { Paragraph } from '@tiptap/extension-paragraph';
+import { Text } from '@tiptap/extension-text';
+import { Dropcursor, Gapcursor, UndoRedo } from '@tiptap/extensions';
 import { Markdown } from '@tiptap/markdown';
 import { Bold, Italic, List, ListOrdered, Undo2, Redo2 } from 'lucide-react';
 import { writingDocument, preserveWritingVariables } from '../../web/src/content/formattedText';
@@ -13,10 +20,11 @@ export default function StudioFormattingEditor({ value, label, maxLength, onChan
   const [initialContent] = useState(() => writingDocument(value));
   const lastValue = useRef(value);
   const editor = useEditor({
-    extensions: [StarterKit.configure({
-      heading: false, blockquote: false, code: false, codeBlock: false, horizontalRule: false,
-      link: false, strike: false, underline: false, trailingNode: false
-    }), Markdown],
+    // Keep the same enabled StarterKit extensions and their ordering without
+    // shipping the disabled heading, code, link and other editor features.
+    extensions: [BoldExtension, BulletList, Document, Dropcursor, Gapcursor,
+      HardBreak, UndoRedo, ItalicExtension, ListItem, ListKeymap, OrderedList,
+      Paragraph, Text, Markdown],
     content: initialContent,
     autofocus: 'start',
     editorProps: { attributes: { role: 'textbox', 'aria-label': `${label} formatted text`, 'aria-multiline': 'true', class: 'studio-formatted-writing' } },
