@@ -257,7 +257,13 @@ for(const period of ['daily','seasonal']){
   const request=writerFixture.requests.get(dailyRow.source_snapshot.horoscopeGeneration.active.responseId);
   assert(request,'Inspect the actual daily provider request');
   assert(request.input.includes(horoscopeEditorialPrompt(profile)),'The full saved daily profile reaches the writer');
-  assert(request.input.includes(HOROSCOPE_CONNECTED_READING_GUIDANCE));
+  assert(request.input.includes('Write a brief, nontechnical daily reading'));
+  assert(request.input.includes('omit numbered houses and technical explanations'));
+  assert(request.input.includes('Mention a planet or sign only when it helps the reader'));
+  assert(!request.input.includes(HOROSCOPE_CONNECTED_READING_GUIDANCE),'Daily must not also require an astrology explanation');
+  assert(!request.input.includes('Name the actual calculated planet and sign'));
+  assert(!request.input.includes('MONTHLY SPECIFICITY CONTRACT'));
+  assert(!request.input.includes('SEASONAL ARGUMENT REVIEW'));
   assert(request.input.includes(HOROSCOPE_PUBLICATION_TIMING_GUIDANCE));
   assert(request.input.includes(HOROSCOPE_OWNER_EDIT_GUIDANCE));
   assert(request.input.includes('FINISH THE NEW DRAFT USING THE SAVED EDITORIAL GUIDANCE'));
