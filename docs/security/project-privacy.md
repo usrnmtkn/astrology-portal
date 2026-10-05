@@ -1,8 +1,11 @@
 # Project privacy
 
-The source repository is private. A private repository does not make deployed
-JavaScript, static downloads, browser responses, or previous deployments private.
-Review these boundaries separately before every release.
+Verify the repository's current visibility before publishing source or QA
+evidence; do not assume it is private. A private repository does not make
+deployed JavaScript, static downloads, browser responses, or previous deployments
+private. Review these boundaries separately before every release. Keep detailed
+live operational findings in protected local storage unless their publication is
+explicitly authorized.
 
 Personal source documents live in protected storage. Four report references use
 neutral `private:report/…` identifiers and SHA-256 integrity checks. The server

@@ -69,27 +69,20 @@ Before fixes, all four inventory integrity groups failed; the expanded parser re
 | Existing full API baseline | Passed on main base, before repairs. Full repaired-head run and hosted evidence recorded in the release PR. |
 | Browser editing and reader | Passed: 17 fresh-build cases, desktop/mobile and light/dark; lunar ingress and Moon section edit/save/publish/reload, version conflicts, lost publication response, and invalid secondary-source recovery. All writes use isolated storage. |
 | Admin typecheck | Passed. |
-| Live production baseline | READY main deployment `dpl_BoXm1cmj7YyiUdXduAb5XhBchxLL`, SHA `80d60f32b2e6787e6d635c1d71db984f34961c07`; 19 bounded API probes passed. This is baseline evidence, not deployment of the repairs. |
-| Real owner Studio | Connected, 597 loaded rows; all three Cancer sections Live. Opening editor contains the complete 390-character saved passage. No save was performed. |
-| Database / reader integrity | All 4,088 non-marker live publication links match row identity, key, version, LIVE status and serving lane. Cancer opening/lived/turn public body hashes match the saved database bodies. |
-| All twelve Moon signs | Read-only database check found all 36 section sources. Cancer has three LIVE sources; the other 33 are DRAFT/reference and must not be promoted by QA. Existing all-sign isolated regressions test discovery/publication without changing these rows. |
-| Database role boundaries | Live publication/history/retirement RPC execution denied to anon/authenticated; service role allowed. Generated-content table CRUD denied to anon/authenticated. RLS enabled. Read-only transactions as anon and a synthetic authenticated identity saw zero profile rows. Isolated profile/publication tests exercise writes and cross-owner denial. |
 
 ## Performance and failure evidence
 
-`qa-studio-inventory-performance.mts` runs in the required API command with 16,000 synthetic records (production baseline: 15,652), 201 inventory pages, and 100 warm requests for each operation at concurrency 1 and 5. Listing p95 was 19/88 ms; detail and late-page p95 were 1/2 ms. Cold handler startup was 45 ms. Existing 2-second detail and 5-second list targets in this audit were retained. Complete detail text and all row identities are asserted, not only timings.
+`qa-studio-inventory-performance.mts` runs in the required API command with 16,000 synthetic records, 201 inventory pages, and 100 warm requests for each operation at concurrency 1 and 5. Listing p95 was 19/88 ms; detail and late-page p95 were 1/2 ms. Cold handler startup was 45 ms. Existing 2-second detail and 5-second list targets in this audit were retained. Complete detail text and all row identities are asserted, not only timings.
 
 `qa-studio-save-performance.mts` additionally runs the actual generated-content mutation handler against SQL storage under `service_role`, with the real publication/version migrations. It verifies 200 complete save/readback cycles at concurrency 1 and 5, exact body/identity, advancing versions and unchanged draft status. Observed p95 was 2/6 ms, below the proposed 2-second save budget. The benchmark is also part of the required API command.
 
 These are actual handler + PGlite PostgreSQL-engine timings through an isolated PostgREST adapter. They exclude network, Auth, CDN, and independent database sessions. They do not establish a production latency SLO or production write throughput. Hosted publication concurrency tests separately use distinct PostgreSQL 17 sessions. No production load test was run.
 
-Observed Supabase edge logs from 2026-10-05 00:00–11:50 UTC: 3,450 successful generated-content reads (origin p95 458 ms, max 1,748 ms); 2,330 successful publication reads (p95 445 ms); 2,870 successful auth reads (p95 444 ms). One generated-content PATCH and two profile POSTs succeeded. That write sample is insufficient for a write-latency percentile. No edge 5xx was returned by the query; this does not certify Vercel handler availability. The 418 generated-content 401 responses are denials, not evidence to relax access control.
 
 ## Dependencies and retained boundaries
 
-Inventory, drafts, review and publication use `generated_interpretations`, listing `studio_facts`, `content_publications`, and private version/publication receipt RPCs. Public consumers use the projected reader transport and publication revision/ledger. Feedback uses the protected Studio memory tables and review RPC. Profile persistence uses the authenticated ownership policies and normalization helper. The October 3 listing and October 4 profile-helper migrations are present in production; the corresponding SQL regressions pass in the API gate.
+Inventory, draft, review, publication and reader dependencies were traced through their existing schema, access checks and SQL regressions. Detailed live operational observations are retained in the local audit report.
 
-The security advisor also reports existing project-wide warnings: seven mutable-search-path trigger functions, public execution of 29 definer functions (predominantly social/report APIs), and disabled leaked-password protection. These warnings were not silently cleared or reported fixed. The relevant Studio mutation RPC grants were inspected directly and deny client roles; the public content revision function is a read-only dependency. Full social/billing security review and project-wide auth hardening remain outside this scoped CRUD repair. There were no ERROR-level advisor findings in the captured response.
 
 ## Existing bundle gate failure
 
@@ -101,6 +94,5 @@ The Moon reader regression exposed teardown failures after its copy and publicat
 
 ## Evidence and limitations
 
-Local artifacts: `/private/tmp/studio-api-audit-20261005-baseline.log`, `studio-api-audit-20261005-final-api.log`, `studio-api-audit-20261005-browser.log`, `studio-api-audit-20261005-performance.json`, `studio-api-audit-20261005-save-performance.json`, and `studio-api-audit-20261005-production.json` (all under `/private/tmp`). Failure reproductions: `studio-inventory-integrity-before.log` and `studio-parser-audit-before.log`.
 
-No production content, approval, publication, database schema or access grant was mutated. No paid model calls were made. A source-test reference is not proof of a complete lifecycle; the test suite, SQL role probes, browser fixtures and live read-only observations are separate evidence. End-to-end production mutations and a production save-latency SLO remain unverified by design. Release SHA, hosted checks and post-deployment results belong in the PR.
+Live operational details are retained locally rather than published in this repository. No production content, approval, publication, database schema or access grant was mutated. No paid model calls were made. A source-test reference is not proof of a complete lifecycle; the test suite, SQL role probes, browser fixtures and live read-only observations are separate evidence. End-to-end production mutations and a production save-latency SLO remain unverified by design. Release SHA, hosted checks and post-deployment results belong in the PR.
