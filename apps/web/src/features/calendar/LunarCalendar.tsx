@@ -1,3 +1,4 @@
+import { withCalendarAspectRetrograde } from "../../services/calendarAspectRetrogradeContent";
 import {PublishedMonthlyOverview} from './PublishedMonthlyOverview';
 import { CalendarPassageProse } from './CalendarPassageProse';
 import { calendarPassageRequestKeys, useCalendarPassages } from './useCalendarPassages';
@@ -926,11 +927,13 @@ export function liveCalendarEventContent(
 
     const calendarPublication = resolveCalendarAspectPublication({
       generatedContent, first, second, aspect: event.aspect,
+      firstMotion: event.fromMotion, secondMotion: event.toMotion,
       firstSign: event.fromSign ?? "", secondSign: event.toSign ?? ""
     });
     if (calendarPublication) return calendarPublication.content;
 
     const signedDraft = resolveSkyAspectGeneratedContent({ generatedContent, first, second, aspect: event.aspect,
+      firstMotion: event.fromMotion, secondMotion: event.toMotion,
       firstSign: event.fromSign ?? "", secondSign: event.toSign ?? "", targetDate: event.dateKey || event.startsAt.slice(0, 10) });
     if (signedDraft?.content.sourceSnapshot?.contentType === "owner-authored-sky-aspect") return signedDraft.content;
 
@@ -939,6 +942,7 @@ export function liveCalendarEventContent(
       first,
       second,
       aspect: event.aspect,
+      firstMotion: event.fromMotion, secondMotion: event.toMotion,
       firstSign: event.fromSign ?? "",
       secondSign: event.toSign ?? "",
       targetDate: event.dateKey || event.startsAt.slice(0, 10)
@@ -1285,6 +1289,7 @@ export function normalizeCalendarEventSurface(
     const calendarPublication = resolveCalendarAspectPublication({
       generatedContent: generatedContent ?? (content ? new Map([[content.contentKey, content]]) : new Map()),
       first, second, aspect: event.aspect,
+      firstMotion: event.fromMotion, secondMotion: event.toMotion,
       firstSign: event.fromSign ?? "", secondSign: event.toSign ?? ""
     });
     const bundledComposed = resolveComposedSkyCalendarCard({
@@ -1333,6 +1338,7 @@ export function normalizeCalendarEventSurface(
           first,
           second,
           aspect: event.aspect,
+          firstMotion: event.fromMotion, secondMotion: event.toMotion,
           firstSign: event.fromSign ?? "",
           secondSign: event.toSign ?? "",
           targetDate: event.dateKey || event.startsAt.slice(0, 10)
@@ -1351,6 +1357,7 @@ export function normalizeCalendarEventSurface(
       first,
       second,
       aspect: event.aspect,
+      firstMotion: event.fromMotion, secondMotion: event.toMotion,
       firstSign: event.fromSign ?? "",
       secondSign: event.toSign ?? "",
       targetDate: event.dateKey || event.startsAt.slice(0, 10)
@@ -1379,6 +1386,16 @@ export function normalizeCalendarEventSurface(
       };
     }
 
+    // Studio selections already include their motion version (and may combine
+    // both node poles). Only package-selected sources still need this overlay.
+    const usesPackageSource = selected === packageCandidates.signSpecific || selected === bundledComposed;
+    const selectedSource = usesPackageSource
+      ? selected.sourceKeys.map(key => generatedContent?.get(key) ?? (content?.contentKey === key ? content : undefined)).find(Boolean)
+      : undefined;
+    const motionCopy = selectedSource ? withCalendarAspectRetrograde(selectedSource, {
+      first, second, firstMotion: event.fromMotion, secondMotion: event.toMotion
+    }) : null;
+    const selectedBody = motionCopy && motionCopy !== selectedSource ? motionCopy.body : selected.body;
     return {
       surface: "calendar-event",
       status: selected.layer === "authored" ? "servable" : "partial",
@@ -1389,7 +1406,7 @@ export function normalizeCalendarEventSurface(
           layer: selected.layer,
           tier: selected.tier,
           sourceKeys: selected.sourceKeys,
-          body: selected.body
+          body: selectedBody
         },
         // Details only exists on composed two-part cards. Older single-body
         // copy renders exactly as it does today.

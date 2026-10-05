@@ -4351,6 +4351,8 @@ function generatedSkyAspectWritingSection(
     aspect: aspect.type,
     firstSign,
     secondSign,
+    firstMotion: skyAspectPosition(aspect.from, positions)?.motion,
+    secondMotion: skyAspectPosition(aspect.to, positions)?.motion,
     targetDate: generatedAt?.slice(0, 10)
   });
 
@@ -4383,7 +4385,9 @@ function approvedExactSkyAspectWritingSection(
         second: aspect.to,
         aspect: aspect.type,
         firstSign,
-        secondSign
+        secondSign,
+        firstMotion: skyAspectPosition(aspect.from, positions)?.motion,
+        secondMotion: skyAspectPosition(aspect.to, positions)?.motion
       })
     : null;
 
