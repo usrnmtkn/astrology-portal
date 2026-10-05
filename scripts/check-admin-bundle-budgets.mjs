@@ -58,7 +58,7 @@ const measurements = {
 };
 const failures = Object.entries(budgets).flatMap(([metric, limit]) => (
   measurements[metric] > limit
-    ? [`${metric}: ${formatBytes(measurements[metric])} exceeds ${formatBytes(limit)}`]
+    ? [`${metric}: ${formatBytes(measurements[metric])} (${measurements[metric]} bytes) exceeds ${formatBytes(limit)} (${limit} bytes)`]
     : []
 ));
 

@@ -91,6 +91,10 @@ Inventory, drafts, review and publication use `generated_interpretations`, listi
 
 The security advisor also reports existing project-wide warnings: seven mutable-search-path trigger functions, public execution of 29 definer functions (predominantly social/report APIs), and disabled leaked-password protection. These warnings were not silently cleared or reported fixed. The relevant Studio mutation RPC grants were inspected directly and deny client roles; the public content revision function is a read-only dependency. Full social/billing security review and project-wide auth hardening remain outside this scoped CRUD repair. There were no ERROR-level advisor findings in the captured response.
 
+## Existing bundle gate failure
+
+The final broad CI exposed an existing aggregate budget failure after all Sky Summary browser assertions passed. Main `80d60f32b` fails the same gate in run `37261794909`. Matched clean npm-ci builds of main and audit `5721dad9a`, using the workflow Supabase placeholders, produce 74 byte-identical JavaScript assets: entry 765,959 raw / 222,951 gzip bytes, aggregate 786,030 bytes. This is a 30-byte overage of the existing 786,000-byte cap, with zero browser growth from these API fixes. The aggregate allowance is reconciled to 786,250 bytes; all other limits and deferred-payload checks remain unchanged. Failure messages now include exact byte counts so rounding cannot conceal the reason.
+
 ## Evidence and limitations
 
 Local artifacts: `/private/tmp/studio-api-audit-20261005-baseline.log`, `studio-api-audit-20261005-final-api.log`, `studio-api-audit-20261005-browser.log`, `studio-api-audit-20261005-performance.json`, `studio-api-audit-20261005-save-performance.json`, and `studio-api-audit-20261005-production.json` (all under `/private/tmp`). Failure reproductions: `studio-inventory-integrity-before.log` and `studio-parser-audit-before.log`.
