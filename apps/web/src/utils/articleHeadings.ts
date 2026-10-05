@@ -14,7 +14,6 @@ function normalizedHeading(value: string) {
     .normalize("NFKD")
     .replace(/[’']/gu, "")
     .replace(/[^\p{L}\p{N}]+/gu, " ")
-    .replace(/\s+/gu, " ")
     .trim()
     .toLowerCase();
 }
@@ -29,26 +28,21 @@ export function articleHeadingComparisonVariants(value: string) {
   const withoutMovementVerb = normalized
     .replace(/\b(?:is\s+)?(?:currently\s+)?(?:moving|transiting)\b/gu, "")
     .replace(/\s+/gu, " ")
-    .trim();
+    .trim()
+    // Compare only complete aspect labels; named owners and prose stay distinct.
+    .replace(personalAspectHeading, (_heading, first: string, aspect: string, last: string) =>
+      `${first} ${aspect.replace(/^conjunct$/u, "conjunction").replace(/^opposite$/u, "opposition").replace(/^inconjunct$/u, "quincunx")} ${last}`);
   // Motion belongs in the page title; a generic placement section repeats it.
   const withoutPlacementQualifiers = withoutMovementVerb.replace(placementHeadingPrefix, "$1");
   const withoutTrailingHouse = withoutPlacementQualifiers
     .replace(/\s+(?:in\s+)?(?:(?:the|your)\s+)?\d{1,2}(?:st|nd|rd|th)?\s+house$/u, "")
     .trim();
-  // Personal transit titles add "your"; their authored section labels often do
-  // not. Match only complete aspect labels so distinct owners and prose labels
-  // retain their identity. This comparison never changes the displayed title.
-  const aspect = withoutMovementVerb.match(personalAspectHeading);
-  const withoutPersonalAspectLabel = aspect
-    ? `${aspect[1]} ${aspect[2].replace(/^conjunct$/u, "conjunction").replace(/^opposite$/u, "opposition").replace(/^inconjunct$/u, "quincunx")} ${aspect[3]}`
-    : "";
 
   return Array.from(new Set([
     normalized,
     withoutMovementVerb,
     withoutPlacementQualifiers,
-    withoutTrailingHouse,
-    withoutPersonalAspectLabel
+    withoutTrailingHouse
   ].filter(Boolean)));
 }
 
