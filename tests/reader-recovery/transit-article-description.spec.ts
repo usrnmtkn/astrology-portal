@@ -111,7 +111,7 @@ for (const theme of ["light", "dark"]) {
     await page.goto("/?date=2026-09-08#friends?tab=charts&chart=facts-friend&view=transits");
     const row = page.locator("button.friend-transit-row:has(.updates-aspect-row__orb)").first();
     await expect(row).toBeVisible({ timeout: 45_000 });
-    expect(await page.locator("button.friend-transit-row").allTextContents()).not.toEqual(expect.arrayContaining([expect.stringContaining("Example Friend")]));
+    expect(await page.locator("button.friend-transit-row:has(.updates-aspect-row__orb)").allTextContents()).not.toEqual(expect.arrayContaining([expect.stringContaining("Example Friend")]));
     const title = await row.locator(".updates-aspect-row__title").innerText();
     const expected = expectedIdentity(title, skies[0], friendNatal, "their");
     await expect(row).not.toContainText(expected);
@@ -124,6 +124,9 @@ for (const theme of ["light", "dark"]) {
     await page.getByRole("button", { name: "Close detail", exact: true }).click();
     const bond = page.locator("button.friend-transit-row").filter({ has: page.locator(".friend-bond-transit-activation") }).filter({ hasText: "Jupiter sextile your Pluto" }).first();
     await expect(bond).toBeVisible();
+    await expect(bond).toContainText("Example Friend");
+    const namedBond = page.locator("button.friend-transit-row:has(.friend-bond-transit-activation)").filter({ has: page.locator(".updates-aspect-row__title", { hasText: "Example Friend's" }) }).first();
+    await expect(namedBond).toBeVisible();
     const bondTitle = await bond.locator(".updates-aspect-row__title").innerText();
     const isReader = bondTitle.includes(" your ");
     await bond.click();

@@ -1,6 +1,6 @@
 {
   "schema": "tldrastro-approved-serving-projection/v1",
-  "packageVersion": "v3-2026-10-05-friend-transit-pronouns",
+  "packageVersion": "v3-2026-10-05-between-you-two-names",
   "policy": {
     "eligibleReviewStatuses": [
       "approved",
@@ -18,13 +18,13 @@
     "runtimeFilter": "defense-in-depth"
   },
   "manifest": {
-    "contentHash": "a036628199fd0205af51594f6e9442f1",
+    "contentHash": "721734ff905d63b380ba4b8165bde78f",
     "keyManifestHash": "36292cda909cae9694622edcb73d286a",
     "keyCount": 9271
   },
   "lineage": {
     "file": "approved-serving-lineage-v1.json",
-    "sha256": "a9beaf346ec396e1fd34d0f464332866ba828e067066019e94d3f8333bd8ac23",
+    "sha256": "64a87639c63a6e598e6edd7b6c5ee986785838a54b6b0b80774e30ca35ea5a04",
     "count": 9812,
     "emissionCount": 9888,
     "exactSourceMatchCount": 8770

@@ -217,10 +217,12 @@ function mapLegacyIdentifier(legacyIdentifier, context = {}) {
 
   const canonicalCandidate = rawBase.replace(/^canonical:/u, "");
   if (canonicalCandidate.includes("/") && indexIds().has(canonicalCandidate)) {
+    const bondMechanism = context.surface === "friends" && slug(context.eventType) === "bond-effect"
+      && /^(?:body|aspect)\//u.test(canonicalCandidate);
     return {
       legacyIdentifier,
       canonicalIds: [canonicalCandidate],
-      targetUsages: ["primary"],
+      targetUsages: [bondMechanism ? "mechanism-reference" : "primary"],
       mappingBasis: "already-canonical"
     };
   }
@@ -481,6 +483,7 @@ function mapLegacyIdentifier(legacyIdentifier, context = {}) {
 function evidenceSurfaceForInput(input) {
   const event = slug(input?.eventType || input?.facts?.type);
   if (input?.surface === "sky") return "sky";
+  if (input?.surface === "friends" && event === "bond-effect") return "friends-synastry";
   if (input?.surface === "friends" && event.includes("transit")) return "you-transit";
   if (input?.surface === "you" && event.includes("transit")) return "you-transit";
   if (["you", "natal"].includes(input?.surface) && event.includes("natal")) return "you-natal";

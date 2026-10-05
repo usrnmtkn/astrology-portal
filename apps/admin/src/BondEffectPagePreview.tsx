@@ -235,7 +235,7 @@ export default function BondEffectPagePreview({
   const openingYou = fillNamedSlots(youText, { holder1: friendName.trim() || "Name" }).trim();
   const openingThey = fillNamedSlots(theyText, { holder1: friendName.trim() || "Name" }).trim();
   const opening = audience === "you" ? openingYou : openingThey;
-  const headline = bondEffectPageHeadline(transitingPlanet, transitAspect, natalPoint, audience);
+  const headline = bondEffectPageHeadline(transitingPlanet, transitAspect, natalPoint, audience, friendName);
   const openingKey = onContactChange ? bondEffectExactContentKey(transitingPlanet, transitAspect) : contentKey;
   const activationTitle = bondActivationHeadline(natalPoint, activationAspect, friendName, friendPoint);
   const fact = bondCalculatedFactLine({

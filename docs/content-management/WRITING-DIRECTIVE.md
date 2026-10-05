@@ -313,16 +313,29 @@ The app should never pay a writer to rediscover astrology it already knows.
 The knowledge base supplies the meaning. The writing engine supplies the
 reader experience.
 
-## Friend transit naming (owner direction, 2026-10-05)
+## Friend personal transit naming (owner direction, 2026-10-05)
 
 Once the selected person is established by the page, section heading, or chart
 context, do not repeat `{{Name}}` inside transit titles or body copy. Use
-`they/them/their` for the friend's experience. In relationship transit copy,
-use `you`, `they`, `their`, and `the two of you` as needed for clarity. Titles
-such as `Jupiter opposite {{Name}}'s Sun` become `Jupiter opposite their Sun`.
+`they/them/their` for the friend's personal-transit experience.
 Only use the person's name when pronouns would genuinely make the sentence
 ambiguous. The same rule applies in Content Studio and in the app.
 
-This direction supersedes the name-required rule for Friends personal transit
-and Between You Two card writing. It does not change naming on other surfaces.
+This direction applies to Friends personal transits. The later owner correction
+below supersedes its original application to Between You Two.
 Source: [owner task](thread:01a10c91-1672-7511-becc-bf8ba3189ee0).
+
+## Between You Two naming restoration (later owner correction, 2026-10-05)
+
+After reviewing the pronoun-conversion grammar errors, the owner directed:
+“please put the name back” and requested the identified sentence repairs and
+editorial revisions. Relationship transit titles and astrology lines name the
+friend; authored openings use `{{holder1}}` with singular verb agreement.
+Natural pronouns may follow where the reference is clear. The pair remains
+`you and {{holder1}}` or `the two of you`.
+
+Restore whole original sentences when repairing the conversion. Do not perform
+global name/pronoun substitutions in authored paragraphs. Preserve the supplied
+Saturn sextile and Jupiter opposition improvements while restoring their name
+references. Personal transit pronouns remain governed by the preceding rule.
+Source: [owner correction in the same task](thread:01a10c91-1672-7511-becc-bf8ba3189ee0).

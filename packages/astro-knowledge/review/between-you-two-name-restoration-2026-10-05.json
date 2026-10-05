@@ -1,0 +1,1655 @@
+{
+  "schema": "tldrastro-owner-directed-copy-update-v1",
+  "date": "2026-10-05",
+  "sourceUri": "thread:01a10c91-1672-7511-becc-bf8ba3189ee0",
+  "scope": "Between You Two relationship transit openings, titles, and calculated astrology lines. Personal friend transits retain their existing pronoun rule.",
+  "ownerInstruction": "please put the name back",
+  "context": "The owner requested restoration of person-name phrasing after the audit identified grammar damage from the prior pronoun conversion, and separately requested eight editorial revisions.",
+  "method": "Restore original name-slot sentences from the pre-conversion source. Preserve the owner-supplied Saturn sextile and Jupiter opposition revisions with a name slot restored. Keep saved Studio overrides and all publication states. Editorial rewrites are tracked separately.",
+  "edits": [
+    {
+      "contentKey": "fallback-hook/bond-effect-soft/moon",
+      "field": "body_you",
+      "beforeSha256": "cf99b14e2fdd52232010447391cf1d4577e8c40a6991dbffcb690d1984c5c53a",
+      "afterSha256": "2d106e7f40a30a9ed5cd5884b4ca8151a2df9d1abd014fbc5bdeec6956002d7b"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-soft/moon",
+      "field": "body_they",
+      "beforeSha256": "5507f6159fd811c97bf03bd80c8c186d5f1ecb57cb9aa4f22a93a7c357fbd936",
+      "afterSha256": "2c47d5d574221b9d43b902b3f882bb424858c297695f5f35f081e4ebc7c2101a"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-hard/moon",
+      "field": "body_you",
+      "beforeSha256": "fed126c212e8d068d2b589fa16ca87399fbe8ae1024f982a7c47216a7fa59d8c",
+      "afterSha256": "a0f25fa8ecdc6e7ab55a4921120884d22921989f50f9b579c48ce088d06506b8"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-hard/moon",
+      "field": "body_they",
+      "beforeSha256": "36b64d2edb311cba181f598ff6c49cb0efbabe1bae62f468d9e0547d6f7baeac",
+      "afterSha256": "cfbbdf593223433752144825f70b1bb3a4e9f41ecc644766d9b7b83a779d9828"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-soft/sun",
+      "field": "body_you",
+      "beforeSha256": "c1a66002803c077fac43b31f9008c230ae730a38d354552e8c4138c6db914494",
+      "afterSha256": "6bfd23a1ec2a7f29830ba84c1734ddb1bdb76c3afcfb39a263cfd66288b81a6e"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-soft/sun",
+      "field": "body_they",
+      "beforeSha256": "6a392b55a1b8ba0e5b8f7df4703b0937dbf22ceb1978213229e6bf60c8bc5c86",
+      "afterSha256": "0a1451a1452011666e42ce19881befcd8078bc6c3827532efae71bf35ee1d457"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-hard/sun",
+      "field": "body_you",
+      "beforeSha256": "ebe0412e72e1c8a930f341652a0222ec985d0bc86388674a8f7f2d31baeba9d0",
+      "afterSha256": "982baf8656f31fc31efc8a3a7db79a50450c76929e5d56eb1cb334862f2fff9f"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-hard/sun",
+      "field": "body_they",
+      "beforeSha256": "1cc2db90940e6a68df266fa77de2a8ee06ab93b525e988719446eec5d4b31973",
+      "afterSha256": "964425fbd6f6994846df9596a964e1046bea105f1c96caadc262069d3a5ba939"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-soft/mercury",
+      "field": "body_you",
+      "beforeSha256": "5d0fb50d84726c8de3f0f2791b006be51b86533772d8d450bfac4470b6af7934",
+      "afterSha256": "bd3bd4d1ea428d69409f8de4cf19b0c6824e709a59429bfc36f4d245dc458f0e"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-soft/mercury",
+      "field": "body_they",
+      "beforeSha256": "ed4ed646cbc01dbb809a3a12679d5f3207b78c74133c4da31a613b541bf4eaed",
+      "afterSha256": "67e4d8a00cbd48ba42e20672cbb9f5c82afbcd3cb2a3e1c3cacb1910b3c6978a"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-hard/mercury",
+      "field": "body_you",
+      "beforeSha256": "fc04f267219cc7cdbac2e0a3614b73b3bc4ef9bbc002c962aafe8bfe8c3c92a9",
+      "afterSha256": "ce531338cee144c26563eb103838eb2c59d9a8e090d825419beddff6ad011070"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-hard/mercury",
+      "field": "body_they",
+      "beforeSha256": "e61391e576a4a9e33f3092fb4df1c7fbecfdfc44e390fad3c0617a846112e9ed",
+      "afterSha256": "5c8e518d86f24a54ee5a0ec3886ce524d04659076734501759a602450b0ac672"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-soft/venus",
+      "field": "body_you",
+      "beforeSha256": "283e032639d096642fd0022bb7c08a9832df8b7c1ac94eb6e0fecdb1e90ffb27",
+      "afterSha256": "d8f139e100ba8670c50d27d14da56fc8c067cac71331e2f444c6ec3094c5e372"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-soft/venus",
+      "field": "body_they",
+      "beforeSha256": "aae07ff8c6b03730ce3e497834a2b1ddece038e53df15931a2020d5c520bbdf2",
+      "afterSha256": "39b62cff2e898916b3ec5ab0529642677594a3d74dc18bf5d26ce603edef7188"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-hard/venus",
+      "field": "body_you",
+      "beforeSha256": "883a0cfafcc763057ae1d6afd2ded269da8071b6563deded583d138c017e9d86",
+      "afterSha256": "1df5fe1816dde5867629ef73e9fe93f4a49c46cdb83fd3ef3cdda5d7f6c07449"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-hard/venus",
+      "field": "body_they",
+      "beforeSha256": "03b923eadaf8d898b989a2103fc6ec157d89ea3c9fbfdcad5a67d8a2fa516b5c",
+      "afterSha256": "d203f489706b3822de66d77b98eb6435aaaabf3a054736776bc019a233827a71"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-soft/mars",
+      "field": "body_you",
+      "beforeSha256": "d7470fe45aab8e7702696050cabebbb486801c97073a15ac5c9fd010c713f75f",
+      "afterSha256": "5b5bbea69bfdc2732280ca8d03498c34e2e3d1e1f32da78cb6f3bb3080f2d8a1"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-soft/mars",
+      "field": "body_they",
+      "beforeSha256": "d7470fe45aab8e7702696050cabebbb486801c97073a15ac5c9fd010c713f75f",
+      "afterSha256": "5b5bbea69bfdc2732280ca8d03498c34e2e3d1e1f32da78cb6f3bb3080f2d8a1"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-hard/mars",
+      "field": "body_you",
+      "beforeSha256": "b9f49a13db932c4463e5be33f378d47c80a0ef234fcfefa132c8ab96f83b60b8",
+      "afterSha256": "e3277888d31f0e323c46782160b75353fa51e090a4fe2907914aa1f9c7b5d150"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-hard/mars",
+      "field": "body_they",
+      "beforeSha256": "c761bfd06ab396e2f6a78ab08065af704f0f8313b429a6b05d60b9468693d84a",
+      "afterSha256": "1fac69083fb07175f374ccee66c2a905c96f3e0c0916ed8085e79c3cb25e18ae"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-soft/jupiter",
+      "field": "body_you",
+      "beforeSha256": "a695f22602fbab824657480942d5a2ab5464475bab2cc6aae239b7c732ba242e",
+      "afterSha256": "33b8de2c6415c36d16a4286199aa01d059531e3c39bb8441719cfdf32dd7663d"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-soft/jupiter",
+      "field": "body_they",
+      "beforeSha256": "72b5393049bc97616ddaf2a2d93f26ad7709cfb24faef9d5f9b6b9e92584a06d",
+      "afterSha256": "f033e6914e916e4b27c510d04c7b68b4044df1dc8e21b84fb40471b81faa476c"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-hard/jupiter",
+      "field": "body_you",
+      "beforeSha256": "a37fc59816049d2b542c11e215c3c46d317b10475e731d99b7fe5da347dd45c3",
+      "afterSha256": "bf71230d4c7edd4b006643730a1f10f718869e1b8eef4101a63a785b52e6e542"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-hard/jupiter",
+      "field": "body_they",
+      "beforeSha256": "83fdc9526b4ec7accbf07a4d74859f4dae222f3bad6e75d032b7c83d49e1dfa5",
+      "afterSha256": "ff87ed186b27fdeb8086904e8acbc1b06989674ce08e25e50c63c10a27b302fe"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-soft/saturn",
+      "field": "body_you",
+      "beforeSha256": "94e2def4a1096947b714e3ec7dc2ef2d84e356c3eeeba2ca1b2509ba2ebbe52a",
+      "afterSha256": "99d211d3e7ad504d83d4e2196b74d61d69057934e30e51af5df22a93ac8f37f0"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-soft/saturn",
+      "field": "body_they",
+      "beforeSha256": "8d1ce99034fb57c46bf9ba5c15d81275273716aa7fcedd00de15fd97cfb34477",
+      "afterSha256": "430da2f4f94560205420b654be0d5f80dd7df6a3113cc5ff47d56396f190fdd6"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-hard/saturn",
+      "field": "body_you",
+      "beforeSha256": "082f4b405d0bbe08dfdeb604646152beeabedf28aa937484a44f9b41fb42a3b2",
+      "afterSha256": "acbfbf298c9dd7662c81fae7107ed1473da876b76c641987a8ce07bc2b75d4b8"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-hard/saturn",
+      "field": "body_they",
+      "beforeSha256": "49581c0023a73de23e85edcee17c6491bc91073f2a56845e4e6874373b080b53",
+      "afterSha256": "50938b59bd119c9d31bb4c32d8eb62bd521b8a19e2a939fa235ff178f7996c44"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-soft/uranus",
+      "field": "body_you",
+      "beforeSha256": "33f2ce4763dd9d89b0c748d25470115625d552c4734f9e60b4a1cf2f6195e9a7",
+      "afterSha256": "763a08e2186dbc432ac12e8e203625864c61882c31639c0b3dc66c1e877982b3"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-soft/uranus",
+      "field": "body_they",
+      "beforeSha256": "0539b1f0add8f3a62d12651117d17374e74a088ab190c1c89e523cda8d2a430c",
+      "afterSha256": "0d2b38f12565131cfc6661bbaa7e4e1b976a5f5a916c70db13a3ca1a5f9d85d5"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-hard/uranus",
+      "field": "body_you",
+      "beforeSha256": "343eae67ec9f20a1bb7e71fcc6e87f1363f489615f2701b8b5300e60ee65a519",
+      "afterSha256": "cb11772a933412fb09808529fcd3034864a4ee896349bc4f4dc1b11d924f865b"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-hard/uranus",
+      "field": "body_they",
+      "beforeSha256": "e5e1ddf5741abdce6011acecbb41227464af83debf25b1ff58f3cfbf3739b711",
+      "afterSha256": "e54fb5f91c08428bb5e25408970dcb81edee040fbec75214c5c9e7f359efc486"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-soft/neptune",
+      "field": "body_you",
+      "beforeSha256": "c3154ba1a11dfe908e71f89496622c8d148c55c25e416e660a85099175642439",
+      "afterSha256": "be0566570ae568c5ae32523dced4b9a0e42596345491da270c8a10d2378021fd"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-soft/neptune",
+      "field": "body_they",
+      "beforeSha256": "7038ab8dd2c20992faebe8598bd9d88a59dd63dd3f6b946da2741eaa45dc33b7",
+      "afterSha256": "e24ebd19c9275412af80132b8533a8316a42f345e3cc3941f6d32906ccb3fb0a"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-hard/neptune",
+      "field": "body_you",
+      "beforeSha256": "6977462ac1239ad73e7ac258929deb0df946020576aa202416d5657465e31b05",
+      "afterSha256": "9c482b1dbbe6d46c7b3acb8ff8ac4153fa2416278e4fa8d8f0c656f85dfb5d9a"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-hard/neptune",
+      "field": "body_they",
+      "beforeSha256": "def26dc66ff17caf0e8a4ebe3e301c237bd4c56a493ad15d0cab0585bfab54f4",
+      "afterSha256": "a55db32e30c38e29d904f3861759d80be5dbd084c65cae37b878d01096e20782"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-soft/pluto",
+      "field": "body_you",
+      "beforeSha256": "a9221353a52c1cc027facef866705323c4e0e9e4500702449973d4c8574a8ab4",
+      "afterSha256": "22935df8a8363384afea80990c12dcd7bf270d7ec54e70450fedfabb5bb051e4"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-soft/pluto",
+      "field": "body_they",
+      "beforeSha256": "a7260f94925f83e05a102bf008fca7136a48429f3a31b7c538eba9d0e14022c8",
+      "afterSha256": "76bd3a908d863f04058fea444102d49cfb5a3bca1a5ef256f0cdced56d5482c6"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-hard/pluto",
+      "field": "body_you",
+      "beforeSha256": "085697a0cad0221d5575cae05587254d3b1127c828a0919153f9b8d3467e639f",
+      "afterSha256": "8cdfb3e0996388e9071db69f75bffbea69f397df4763d86da15adb7fa5fad7ce"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-hard/pluto",
+      "field": "body_they",
+      "beforeSha256": "f3b8fd37e11f96fb449ec454b2dfe0e7e57c1051d3940eff766c17a15334cd10",
+      "afterSha256": "f66495a5519f8e830c5f73f3ebf60ca412f4c6d956d7913b6dde51c7ffe60df5"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-soft/chiron",
+      "field": "body_you",
+      "beforeSha256": "72765e7e6b4cf9066436f8be6fafb427a8c6109cec10a2e675cda7f65b9cb347",
+      "afterSha256": "355faefae0750b94616f0c6f06fbe8a97f57591540ee82b465eef7cb5da9aeba"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-soft/chiron",
+      "field": "body_they",
+      "beforeSha256": "1436caddaca359df53871dabd373f87bc88c6d246e9ad69a9d97f21495f6625d",
+      "afterSha256": "0d08938fc56975c832214c15bd9e6f7deefdc48d52cb6232112b0c0989d87898"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-hard/chiron",
+      "field": "body_you",
+      "beforeSha256": "741ab2f25de9d1d6c3bb9977fb61d77ad42b9c3f7f0800fa66c22adce8df7dd1",
+      "afterSha256": "579b12b02b874cc9d4ce33a3bce20e938883322e61ff56d17bcb7c10ea6449b2"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-hard/chiron",
+      "field": "body_they",
+      "beforeSha256": "13bfd61dc84fe478a00c9ffb765c1e5f5e0236865d36eb823db806c2edc16530",
+      "afterSha256": "b2a5b34b1146ef8ec99939164ca7817b977833838edfc931073596b4e1c16355"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-soft/north-node",
+      "field": "body_you",
+      "beforeSha256": "066e4f32e60a130f87d1d7b97ffde18222428203752e8cd682dd309ecea384b3",
+      "afterSha256": "25d4670303dec913fc2053683f6b889c64f5b57772894d27651b0947ebd602d6"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-soft/north-node",
+      "field": "body_they",
+      "beforeSha256": "790efa2da19f0643757b610d65353c80d5f3fb3179cf28ea7390fe7ea12d076b",
+      "afterSha256": "8e9beb1fa009e390f4197054cd9c94a3069ab1e39dab3265c8a0468a9c178e99"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-hard/north-node",
+      "field": "body_you",
+      "beforeSha256": "cc77a016cd86aafb812fb18ab8d10489df77c670902c497382208d93cad32f5f",
+      "afterSha256": "a839e180d3af9978f599b63c9493a1ea30f4defc0f98fafb6812bf26bf1be9b5"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-hard/north-node",
+      "field": "body_they",
+      "beforeSha256": "095de81f9fb8ad7c71653e8b0e372cc7fde5d6e45b05244a4930418077aad79a",
+      "afterSha256": "49f37d0487c3bd2d994d62693f9f5a5bd96a51d8e99ecdb585f2088037ecdfaf"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-soft/south-node",
+      "field": "body_you",
+      "beforeSha256": "8ce3d1db441a227225e20e62f32f56818849d5f23f874ba3b3075251f98635a9",
+      "afterSha256": "83bddc0f177b8b2c6267bd19c08aa4757bcdd8d79e0ab988e36e45ec65bbc4bd"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-soft/south-node",
+      "field": "body_they",
+      "beforeSha256": "ba5362c1edbd14e5a71adce9bd21b34bd15e77fb26fabdc925e28fe0ad9eb2b8",
+      "afterSha256": "41dddd2413c2ff1bb3d08b5d62e745aaa5a2dc12b2471a25f6abec46786cb9da"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-hard/south-node",
+      "field": "body_you",
+      "beforeSha256": "8c5ea015bf59050c1005912a188d0def1ef2e7a56cdd6f6586257323ab0fedbf",
+      "afterSha256": "05dda2e2aa48d27635a04834b2a29a514664004641ae8bbd402c551fbb0ec255"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-hard/south-node",
+      "field": "body_they",
+      "beforeSha256": "27460972de8549e102f69f2c46af7e1882263e4b0af49ed05b43743dfba53882",
+      "afterSha256": "f461ce8507648977ee008dc6ab491b4bc5a315076c320b1369d74adec6a45126"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-soft/lilith",
+      "field": "body_you",
+      "beforeSha256": "83bcbcc6db8ea081d221e170cb3f3b21df4e4c2395b5100c901bd4db5f81795a",
+      "afterSha256": "949d3467da756ba359b6aa465212bdf711fad2251b894a228e89a797d084a50f"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-soft/lilith",
+      "field": "body_they",
+      "beforeSha256": "1a1ed858d5356088b27c703ee17e0d1a5ac5e240a1d11813ec0cb517fca0c16d",
+      "afterSha256": "1652122a45e903c71876eade17f4e7e02eb184fcb6de67aca528c9a94f37fd59"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-hard/lilith",
+      "field": "body_you",
+      "beforeSha256": "6adad002cf69ed6b921383231d8feadfe0d7b1a08be7023ba1f25dc9318ed8a1",
+      "afterSha256": "9b97e08a83b90fc8d2adae5b56afda5ee79cb835af68f9eed1b8516fd7ae9569"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-hard/lilith",
+      "field": "body_they",
+      "beforeSha256": "9dc3c90dfee839fa4cfd7751a7de3b0c9ca2b4e089ebd5989c0648cb90fe1949",
+      "afterSha256": "3415e0fe5f1a85ec371ae9f18a15ad9f8965dea7541edb492a12ead04344de59"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-soft/moon/variant-2",
+      "field": "body_you",
+      "beforeSha256": "443aa0f5a464471661d8fea7b06e025f4c402025c663111d5009535265b62049",
+      "afterSha256": "e729a313dd1f3321940b9a1e5c9f445e5640ae03d088d40868a9c74388efadb3"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-soft/moon/variant-2",
+      "field": "body_they",
+      "beforeSha256": "3f2d45478a282d1338fc0fcd12a2be11e0b50ee66a8cf4e0913a58d18e45ef5d",
+      "afterSha256": "84235731490b1aee91de6a9520184b432165a0433baf0e884f1173100f0f45c8"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-soft/moon/variant-3",
+      "field": "body_you",
+      "beforeSha256": "206429a260cfd07a8aa887d00034805591edab7dea37d2d36c705419d0c8a1c5",
+      "afterSha256": "0bb42c8093bcaa8c17df890b768f01907ebeb76336aae89b768151d8f1f8b79c"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-soft/moon/variant-3",
+      "field": "body_they",
+      "beforeSha256": "206429a260cfd07a8aa887d00034805591edab7dea37d2d36c705419d0c8a1c5",
+      "afterSha256": "0bb42c8093bcaa8c17df890b768f01907ebeb76336aae89b768151d8f1f8b79c"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-hard/moon/variant-2",
+      "field": "body_you",
+      "beforeSha256": "81cf750d045c59d3b08346c9676e6f948bb352d73004b0b66d6937c2df93808e",
+      "afterSha256": "ec7719a20309c97f0737440caf016f6d1d0d9b7a65a01ffcae92d8f0bd19ae2d"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-hard/moon/variant-2",
+      "field": "body_they",
+      "beforeSha256": "480cda701d1bd4c9befb024db0cbae30d7cf2a55560e98e61d3a0b00b81b498d",
+      "afterSha256": "bec1c9d182bc92f5b7eb06c865b198ff6eba15da607874eac7bafaaa8ca282d9"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-hard/moon/variant-3",
+      "field": "body_you",
+      "beforeSha256": "0f2cb77429fbdb5b4e774e995106f044ef62065623ee2c0178dd5749239ec007",
+      "afterSha256": "7ef36b66c1743af11664ed257133ce3c89feaaf8c953a16e98bef2d0a35fac23"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-hard/moon/variant-3",
+      "field": "body_they",
+      "beforeSha256": "acc250e9de9f1be50883ee1bbf7b2269fe033b1832f1534486c59727cc9fb750",
+      "afterSha256": "69b2ba46f3599a1c5618d0276a5f3e77913883f1ae2d5ca262cb9f233cf30423"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-soft/sun/variant-2",
+      "field": "body_you",
+      "beforeSha256": "ce27daebec92a24cbee5a28c8620d053267faef9c2967564b58fb5780ae61b05",
+      "afterSha256": "8ffa1d13ed5340abf9ffd9e32225983826f023582a21fb4c4e63199f3f19e951"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-soft/sun/variant-2",
+      "field": "body_they",
+      "beforeSha256": "80f98ad2dc4e01ebbf85efa55d396c14b541bd64beaeb9e1e0404a167b33366c",
+      "afterSha256": "cdd6d96d9b9f77979a5d814c5a7ba13d14cccb997b2ab98bf602cfcc059ab446"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-soft/sun/variant-3",
+      "field": "body_you",
+      "beforeSha256": "073989633ec57ec7cf743373d01a208506094763b86fe48b8bde31a160d2a26d",
+      "afterSha256": "45cbf320c7efd183462a10d5435e9667128b366ae676475e7c36f34abdacd8e0"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-soft/sun/variant-3",
+      "field": "body_they",
+      "beforeSha256": "073989633ec57ec7cf743373d01a208506094763b86fe48b8bde31a160d2a26d",
+      "afterSha256": "45cbf320c7efd183462a10d5435e9667128b366ae676475e7c36f34abdacd8e0"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-hard/sun/variant-2",
+      "field": "body_you",
+      "beforeSha256": "d61e5f20fb1959fe385b55e15d99fefce0a7058b7fd2c8963ae54079686ac99b",
+      "afterSha256": "2363acf44f7e2cccb1cc3b57fd495fa1ef4a39be54dbc6e5e053212207af68da"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-hard/sun/variant-2",
+      "field": "body_they",
+      "beforeSha256": "5e51bee093ff730408854a36b25562412e85c6e0b46b696c37c97e33630ad580",
+      "afterSha256": "eb8508c655be4005212487ce248ee2eb86f74ef0c39e0a225b148220dbaf8915"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-hard/sun/variant-3",
+      "field": "body_you",
+      "beforeSha256": "7e697a4d253311118cd68dbbc0353c2064e3c4b8614cfb7e78dae842b82352f2",
+      "afterSha256": "d16946f79819c85220695d2617d2746edc0508d659a8305cf8feaedfda4e9424"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-hard/sun/variant-3",
+      "field": "body_they",
+      "beforeSha256": "1db89848e0e9f2589c35f02e19b47abe2751c613fd954e7d538cc380c5113ce8",
+      "afterSha256": "96bcb9554829dc962ac1209b87c834938307b748eebc5c5ffb67431abf1cc48a"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-soft/mercury/variant-2",
+      "field": "body_you",
+      "beforeSha256": "91367359091cf2252bb249e3359fd96ac7c915d134c4bb2b7573b9c5cb324bd9",
+      "afterSha256": "aec3b07514c0bf1e3f89e1710cc2fb85277ff3531dcbda65e06fd49e111b9803"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-soft/mercury/variant-2",
+      "field": "body_they",
+      "beforeSha256": "7363ee6cae982bbe52185a8a378f468ee62dc3f1b1b4d3df9a553825b72a71b1",
+      "afterSha256": "195eb4dff8ff228ae5b30005f8411e14242f7775793b685555b46629d629ad8e"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-soft/mercury/variant-3",
+      "field": "body_you",
+      "beforeSha256": "7cfb44deb85a92d92157910b7d78df3e5f95d8e55df4846ebe231b8c98ad651c",
+      "afterSha256": "dff7ed4d724beaf5006dde765848015a856b17eec34e3b128a55e7ffcb90ae22"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-soft/mercury/variant-3",
+      "field": "body_they",
+      "beforeSha256": "00a34178b48d37fd70dac2e403df620afa8b25c500b4063d206305e206080c14",
+      "afterSha256": "3599c968a4a1d3b157d42235a3277019c98eba16c9595e61a4123e380e6f412d"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-hard/mercury/variant-2",
+      "field": "body_you",
+      "beforeSha256": "48272d3200d32a99db27a0f32b054b1aa0cdef6d3864316e84f935d3cb28c95b",
+      "afterSha256": "1f03f774189adb18c040cc57b518d664ba6774b799d412d74ac223bbd20aa539"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-hard/mercury/variant-2",
+      "field": "body_they",
+      "beforeSha256": "47d70d3bb0fe76fef26d0a24eda566d65bafe1555927570f4dde0b2fd7c66236",
+      "afterSha256": "a13359f5f0b48b7fe0faa67cd40a7df8014c79295adbee137caf87d6f6932efa"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-hard/mercury/variant-3",
+      "field": "body_you",
+      "beforeSha256": "c855733bbb0cef57d2d6d60dec659692193ba86cfa9790cf483f7c906493055c",
+      "afterSha256": "71d693fd5eac93f703a29dac0bd86f7177799463365b85e715cb08b34f5274cf"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-hard/mercury/variant-3",
+      "field": "body_they",
+      "beforeSha256": "10578693fbc9069e1141f986103a11425191c5c4be01520c99968d12855c519c",
+      "afterSha256": "7aa5d1dcf485fab91db7e35d8eb6b804f82c794995805a86ac3179e95f5c2603"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-soft/venus/variant-2",
+      "field": "body_you",
+      "beforeSha256": "fa1c13f554cc3053a9b5991652d37780411339a72e92e7b0560eed5974b8f1da",
+      "afterSha256": "58d28a33618a541ba72f53cf3a7f61d48ef6d136665709660e94ab7b9fa3ac04"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-soft/venus/variant-2",
+      "field": "body_they",
+      "beforeSha256": "dceaa42649762341f6f07ea139c08bf94b77234a5b2d2d671b7dbd10d72c9214",
+      "afterSha256": "b092f7f2965365084c2198c0d2bc04570f3698f57771cc902fe2edef614ad3f9"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-soft/venus/variant-3",
+      "field": "body_you",
+      "beforeSha256": "093685b966ecd8ad5f61de6ec26444567305402fe5e3a55b72cdc4c9c17261ae",
+      "afterSha256": "a280d4ee7090f2b5d918439371bf53c697cd4f83115645ee0c7b3390b85a5a1b"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-soft/venus/variant-3",
+      "field": "body_they",
+      "beforeSha256": "093685b966ecd8ad5f61de6ec26444567305402fe5e3a55b72cdc4c9c17261ae",
+      "afterSha256": "a280d4ee7090f2b5d918439371bf53c697cd4f83115645ee0c7b3390b85a5a1b"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-hard/venus/variant-2",
+      "field": "body_you",
+      "beforeSha256": "f165c57ef87b8e149552213249eca21827c0d2b7d371f933c3e44f48aa0fc68a",
+      "afterSha256": "7610f8699ca04c63cde64889cef9d18ca6f8c5d7e44b63fd804c097d82248276"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-hard/venus/variant-2",
+      "field": "body_they",
+      "beforeSha256": "635729e862baca1c80631332e6e11deaed1e486bb3df1bb33f0a53e99806adcb",
+      "afterSha256": "92ffa9e714bf3c07733c012b4aca4ebbcdaecd8b3f7df5789eda9ac0c291ae23"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-hard/venus/variant-3",
+      "field": "body_you",
+      "beforeSha256": "1c79c0bb80e270dbd96a7beeda8cb185656c8ce105e81854680b3c464aeaef50",
+      "afterSha256": "4fb2c8c2b1c1eb1e671e96420e74b3bd1cc6531cf5e5a2e72337ffcd2a85e8c8"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-hard/venus/variant-3",
+      "field": "body_they",
+      "beforeSha256": "7c5c5b93df0f09c8188f8620425f27ac0b25b2d663b27e35c11cc4ce03721250",
+      "afterSha256": "8238b4a994875520503d50df4bc92cfbb488fd043171079e3b18b2ae44a8fc19"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-soft/mars/variant-2",
+      "field": "body_you",
+      "beforeSha256": "93d22b80567642fdbe7c9d166b3925b1edec4991f6230ee814902c4ff7afcb04",
+      "afterSha256": "e905e7f1b5fd5e067e976fdbd0646f121fbb9faab873b4d4eab5f4d307b56ae1"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-soft/mars/variant-2",
+      "field": "body_they",
+      "beforeSha256": "93d22b80567642fdbe7c9d166b3925b1edec4991f6230ee814902c4ff7afcb04",
+      "afterSha256": "e905e7f1b5fd5e067e976fdbd0646f121fbb9faab873b4d4eab5f4d307b56ae1"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-soft/mars/variant-3",
+      "field": "body_you",
+      "beforeSha256": "d8a766848102508271e88d63b342a070f0bd3aa4e43c5fe9953c19de6f4c7faa",
+      "afterSha256": "74a810515d9b4d062e21862b0dddd3f0ccef4121e1447880d5fec31cdf93ed45"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-soft/mars/variant-3",
+      "field": "body_they",
+      "beforeSha256": "d8a766848102508271e88d63b342a070f0bd3aa4e43c5fe9953c19de6f4c7faa",
+      "afterSha256": "74a810515d9b4d062e21862b0dddd3f0ccef4121e1447880d5fec31cdf93ed45"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-hard/mars/variant-2",
+      "field": "body_you",
+      "beforeSha256": "16b6c084697b8a2b8e757cdfe1586ce138abebde9fcffac4b5675d0d78711810",
+      "afterSha256": "2d27ec470c2c0902ca7ee6717167162525a8cf73ec3889023e64ba08ffb92c42"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-hard/mars/variant-2",
+      "field": "body_they",
+      "beforeSha256": "782deaee07f761f4fb90dace8345e58bbae6d272ee8fefc925dde5d8b95d3b3b",
+      "afterSha256": "c49584a298dcd802ca84b66f65f4452b68f9591f4d27d7cacb36d18cfdeef527"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-hard/mars/variant-3",
+      "field": "body_you",
+      "beforeSha256": "92233a9db54cc77def792cb82fd494c9f3a5ce8fdfaf32c73240cb09ee474767",
+      "afterSha256": "b295f5b8b62be336355867342e5ddd545ccb87613fc98e6914052cc357b3111d"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-hard/mars/variant-3",
+      "field": "body_they",
+      "beforeSha256": "92233a9db54cc77def792cb82fd494c9f3a5ce8fdfaf32c73240cb09ee474767",
+      "afterSha256": "b295f5b8b62be336355867342e5ddd545ccb87613fc98e6914052cc357b3111d"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-soft/jupiter/variant-2",
+      "field": "body_you",
+      "beforeSha256": "c94199450d657c243180ad50aaed2bf0eb5742333ec077f8b45281a0397e4f1b",
+      "afterSha256": "ca148bc17b5650bf44df8338f678f17182c4703c228eadcb12227321f7cc983a"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-soft/jupiter/variant-2",
+      "field": "body_they",
+      "beforeSha256": "e95bb3707a8208ccf12db60d4040dbc8f7c8959efdaf40244e24ee566552b51f",
+      "afterSha256": "8081dbbabf61676b7270948633237cf79e925e8e9a962d18a984a951663ff07a"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-soft/jupiter/variant-3",
+      "field": "body_you",
+      "beforeSha256": "342428a86c63df96aa595e6bd925fd471de109cf51deb09e7678a22777ce71e5",
+      "afterSha256": "14d421ae8eb2757ec1f9c4c74adb0dca3cfd3dd41d799b731822b2963703dd7c"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-soft/jupiter/variant-3",
+      "field": "body_they",
+      "beforeSha256": "747f9220d59f75ea76d0101cf2014d01ee73812e6d4230c74b6e4f87a2458798",
+      "afterSha256": "3c3a805fbe2c225ada1749d320a022743eb5b60c749aefc2f5d72119f78ca917"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-hard/jupiter/variant-2",
+      "field": "body_you",
+      "beforeSha256": "32790ac546beafc31137c5cfb899e284bda4a4ae345bec611ce19f9492590001",
+      "afterSha256": "d6f35918dcdfaab458d70e5ecd4694dc55404146e032cf69d27773a2444fd35e"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-hard/jupiter/variant-2",
+      "field": "body_they",
+      "beforeSha256": "9cdc319d752aa02ae4ff0cdb3e444797fbce4e221343c354a189b303b848e2b8",
+      "afterSha256": "e9b9d46a143af572027b031ba90ed9777969de31a8ab6d17fb241c97d2304381"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-hard/jupiter/variant-3",
+      "field": "body_you",
+      "beforeSha256": "9fc7688e8d38a13bff548e900d031ecae5ee4dd508945702fdaf80bb44c66b5b",
+      "afterSha256": "93b6301ea45340f1afb1037ccbbde574dfd1736bb8d8885b90312f5644a1640b"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-hard/jupiter/variant-3",
+      "field": "body_they",
+      "beforeSha256": "6f8d9d86b8cde2b1a5f6eb6f441d9df021873290634e5e1c1ddf2e33c4a6dc5b",
+      "afterSha256": "0f44680070d7eb7b6702165621026d139e48fb5c254cf20461eb8a054db5157a"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-soft/saturn/variant-2",
+      "field": "body_you",
+      "beforeSha256": "01d847935810dcff9478b02f0be44a7db7a2a7d1226f39a2839b8f1189581136",
+      "afterSha256": "088ce07cd4165e5198394f2f110fba36d8fe0d3086671ddcd4d54c0dfee46a38"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-soft/saturn/variant-2",
+      "field": "body_they",
+      "beforeSha256": "01d847935810dcff9478b02f0be44a7db7a2a7d1226f39a2839b8f1189581136",
+      "afterSha256": "088ce07cd4165e5198394f2f110fba36d8fe0d3086671ddcd4d54c0dfee46a38"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-soft/saturn/variant-3",
+      "field": "body_you",
+      "beforeSha256": "4a06b06c8826a8f1b43e908bcdf342b86595ce7e545b5f466fe89d1029f3be6b",
+      "afterSha256": "ba07e48d2bf12cd56cf7e71d9cb21c48cabc2198ebaab6bf64bad2917faaf7a7"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-soft/saturn/variant-3",
+      "field": "body_they",
+      "beforeSha256": "d599ba650923ff0820bfd55bcd9313842b94ac487db29a0c1f4b70bf58e77286",
+      "afterSha256": "3607bb2142f41d18634dee658f2f61a09f53ee1f56414b9afbd72f843fd5cc07"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-hard/saturn/variant-2",
+      "field": "body_you",
+      "beforeSha256": "7b9fde77488bb23e4b69178fd9ca346805398c08021398446d0bd9601b1a9ca4",
+      "afterSha256": "f19c0877303d1b6e61cfdb225a10d0bf262bc82a7bfdc65b5ef1b55b4a9f7a1b"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-hard/saturn/variant-2",
+      "field": "body_they",
+      "beforeSha256": "10adbfccca0d3168a3d807f924f12c9d2a5670fab64a97c76bbc6a528a5e809f",
+      "afterSha256": "2c32ca03abd44b3c9464fa88bb10c910e16dd52f0fa3431ab2ad25886e88d00f"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-hard/saturn/variant-3",
+      "field": "body_you",
+      "beforeSha256": "fc887444a2952d2658d73578594f1aace6300334ff40c41860d57f3d2cd1ac31",
+      "afterSha256": "2718389c442f58ed54f2e4085aff1e42fd1a0c1da192430f3466520eafccce63"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-hard/saturn/variant-3",
+      "field": "body_they",
+      "beforeSha256": "14672b9eefffaea76ac624055f688cd9c6437396aa872fb296b523a05bc0b8c7",
+      "afterSha256": "2631fbebe4cf86efce8c709affd3b1399b81b5de4fe4ed9c2dbd88af3e811bf8"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-soft/uranus/variant-2",
+      "field": "body_you",
+      "beforeSha256": "9132af2f43a0544c0e338b5749d0d30d1820feacf031c203f4fb21c227ee9b66",
+      "afterSha256": "6f77010459cd0a17deb11d28a90af85896af008af6ee4596ad9d23adae9caf3c"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-soft/uranus/variant-2",
+      "field": "body_they",
+      "beforeSha256": "9132af2f43a0544c0e338b5749d0d30d1820feacf031c203f4fb21c227ee9b66",
+      "afterSha256": "6f77010459cd0a17deb11d28a90af85896af008af6ee4596ad9d23adae9caf3c"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-hard/uranus/variant-2",
+      "field": "body_you",
+      "beforeSha256": "5913f415f153a5fbb353af28eea687e180c8c4cbaa3b755b7d3f3531a3a83c1c",
+      "afterSha256": "9b6883b07c2352f00b116693f1e1f2474afd4494fb6a885ccd3f618ff85dc75d"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-hard/uranus/variant-2",
+      "field": "body_they",
+      "beforeSha256": "0c4dbab1e7e3e9c5bcdd81c2292c4901fb73983ca918cbb9213dbad8a69e34c5",
+      "afterSha256": "a97404fb7eb3b2d339361b28ca51f98b153ecc70a02bdd814b64af95d839285f"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-hard/uranus/variant-3",
+      "field": "body_you",
+      "beforeSha256": "970becc626d2a838f7b422865fd29661412bccea242e651073816ea6a15471a9",
+      "afterSha256": "a8c6cdd21d73b740d7564db414da70fef64a06571035e5d55a4622ff479633e1"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-hard/uranus/variant-3",
+      "field": "body_they",
+      "beforeSha256": "5fecf9a80896ee358d631317e492a6cf92c0dcc97fcb83e2f904b1092a93737e",
+      "afterSha256": "ccfeab783eec21d6cf7190d5f18bd2b89166d14cccecc39600138350e7523bb1"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-soft/neptune/variant-2",
+      "field": "body_you",
+      "beforeSha256": "a0a63122bba898afcdbb219af22fcb80974739ad8c4f9a72df7acaeba46a84d2",
+      "afterSha256": "3815c0f152f2744fc8872abcad404f7661e826cbb6b77766dabf5b44ca6c7675"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-soft/neptune/variant-2",
+      "field": "body_they",
+      "beforeSha256": "3deea855d4417089bbacde0ce84a021e1d499dde820a8c22f6a9d36e29ea1c73",
+      "afterSha256": "3dd72c844579ac55c48c0c4bf30a9391f21017825daf97ec426c2f2ba385d057"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-soft/neptune/variant-3",
+      "field": "body_you",
+      "beforeSha256": "62ef895b06605af967a05da4df52b87be38cf4e22a39951371fed58c31b338ab",
+      "afterSha256": "62a069cb856ca6085ae7ea6d5dab3f696187b7524e4f5797a146b81fbf7ad2c9"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-soft/neptune/variant-3",
+      "field": "body_they",
+      "beforeSha256": "e672f74860d8708cc56b4de9911ab7d2cfe4b83ce603b7f8d5cdfc697f561316",
+      "afterSha256": "e25347b11f53840cc322bd40a1cb2e11aaff26e3ee8854d396e43a753cfbbd54"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-hard/neptune/variant-2",
+      "field": "body_you",
+      "beforeSha256": "0a39dd56e0e90c52bc89239e9ba3233abddcf9b38dc98635adb7bf670cca2e41",
+      "afterSha256": "584c5b09e5ec041a1b387b47b1c2071a9f16790253c07f448b140838096ab58b"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-hard/neptune/variant-2",
+      "field": "body_they",
+      "beforeSha256": "665c63df6bc1e9d8c77b79be21003a89cbf19199d49e51eb6029e5ce3be5277c",
+      "afterSha256": "b51e8b51a8e14ce8a7aadab8f03ef7f4db0578778132e9d44d85ac13ec360d35"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-hard/neptune/variant-3",
+      "field": "body_you",
+      "beforeSha256": "57c30aa3735deb0505a81298c02fef6c89216508aac1689b9a36413d1ec8b678",
+      "afterSha256": "c22b027d691053f0a5b7fdf035cddb6388c90bc5639f0a6028f51540181e7499"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-hard/neptune/variant-3",
+      "field": "body_they",
+      "beforeSha256": "75ccc1bc83dbb56e3726352b0ca385046c165384272c4543f623dcfee5ac242a",
+      "afterSha256": "e06a53683dc608c5a7410b6a00a92cb2dcf588de0f1de72d05582905119497b8"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-soft/pluto/variant-2",
+      "field": "body_you",
+      "beforeSha256": "5ede74828dcfeea30fdcd2ae3eaebbb1ae6454ff25565993cb418a43a7d97855",
+      "afterSha256": "844af69adaf15eb03805ae06cb6febb73b2e9134b7d8ccbc5465a996aa0b6bcf"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-soft/pluto/variant-2",
+      "field": "body_they",
+      "beforeSha256": "dfa33e2279599f7ea518de24f10a95e06ac3a7811cad4c577baa3ab28b82bb40",
+      "afterSha256": "2a29ecfcf6703f8cd2ce55644a9db206c307475f9436bfb1540158ded5a01dd9"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-soft/pluto/variant-3",
+      "field": "body_you",
+      "beforeSha256": "20e5eab12939591cb5617a4ec37d850788f6d9bc7996c098c082cfdaaedf3a30",
+      "afterSha256": "28d9ae07258d9f1151da76b477c4eb9bea9146a1320ad9302c0ba0c53e9931e8"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-soft/pluto/variant-3",
+      "field": "body_they",
+      "beforeSha256": "8af1cfcfe498f147279cb1da13743d2e7fd3cb2a31aeca49d1b49dc4d5875447",
+      "afterSha256": "af60d2523e18c09bb7efaab1edcd8855bbc693e9312195088f36d43559104c6b"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-hard/pluto/variant-2",
+      "field": "body_they",
+      "beforeSha256": "ac6ff1ce9b07300ec226490364192bb94336d648009e0697cf1004123a022cdd",
+      "afterSha256": "e4b8dc90b90a50f93526a48e94ae0796f1a058435b6ddf386a2b58e2c1f55383"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-hard/pluto/variant-3",
+      "field": "body_you",
+      "beforeSha256": "8425d477c02289769dda6533c32d1bc8474eb462e0af8f697588ce805862dfe6",
+      "afterSha256": "ffdcb93f589fc73e7ac66f380a520ade2d595ce64a604fe33989719537091044"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-hard/pluto/variant-3",
+      "field": "body_they",
+      "beforeSha256": "73f6e21a758939a5c62262af19fb9d535399784769f1e94a38d3ef1715ea14a7",
+      "afterSha256": "ad6f2b25d453dc1c0f5cfab4b0be76ae5136edd5fa1a897b08f12ab637e831a5"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-soft/chiron/variant-2",
+      "field": "body_you",
+      "beforeSha256": "9169c6cc0dca55d3886febd4e1e80bf177b30602813094ae3d05e7b8b1f8df3d",
+      "afterSha256": "189538ee99f62e53fcfe58c56d7d369151b89e8c59da9f4f296d4dd8e6400c4a"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-soft/chiron/variant-2",
+      "field": "body_they",
+      "beforeSha256": "fa0a50aa425fe1c4be76cd9df94060eeb1b5a9f6b64c46bf500f9bd261823cef",
+      "afterSha256": "35dfab3a05322cbd9899e471f1c0e8b62ab8e25ec127c3481a19c132a3b00c96"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-soft/chiron/variant-3",
+      "field": "body_you",
+      "beforeSha256": "12b97a2475866b18a7c92f2572603c09764672b2c68202cd7c35e60ac233ddf3",
+      "afterSha256": "85a349100b7651d93ceb5a7a16e405a39b25a480e192dee57d56e002525b549b"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-soft/chiron/variant-3",
+      "field": "body_they",
+      "beforeSha256": "b49ddfcb8f85a91685dacd251bf646f0a1c93943f8d318a03b76cc87269b4845",
+      "afterSha256": "63cc649db2b63cecb515b1030664bf79703e1a9b30b32c4e6748d716b118664e"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-hard/chiron/variant-2",
+      "field": "body_you",
+      "beforeSha256": "053df328bf39f5f8d80b865e975abe9fa9543389906f46a79025afc8afb7c4dd",
+      "afterSha256": "e87637436436641afd0745cb021411424039659aedeac81a7f95b1108b35e9b9"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-hard/chiron/variant-2",
+      "field": "body_they",
+      "beforeSha256": "c159f571a8f882944aa6b059af6539fd300011467239a3379603c38423a413cb",
+      "afterSha256": "8fe3eab16a7cdf4160e2b10ec9acc3fc3bcd6973a01193627ca6e9012a4a159e"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-hard/chiron/variant-3",
+      "field": "body_you",
+      "beforeSha256": "7eb1e265f85233fe6905c9648370ae7de155837bb89984df4e3a432b37dce4ec",
+      "afterSha256": "fece2a5a10921504f37b194f245ded073cd59ca713b7a85f3608d9385e6f78c4"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-hard/chiron/variant-3",
+      "field": "body_they",
+      "beforeSha256": "335c7aefb53eb7ae0236b1a78768c9d9b3d86c949ce54a838580ee68ea761694",
+      "afterSha256": "af516b099883a16b533e87a12c1bc6793f53439e974b173fff13ad4a32c58705"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-soft/north-node/variant-2",
+      "field": "body_you",
+      "beforeSha256": "fa0cdc0593599750f6099b8c4ccfed1d8a9533337e49c5129dee582e66711caa",
+      "afterSha256": "070d6caf0e125a5d8951208a1c55796eded86d8d70d503178a8be6c2fa0abab5"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-soft/north-node/variant-2",
+      "field": "body_they",
+      "beforeSha256": "dfa9937be02d619ed65565329242d67b77fdfe3a1ba5a575b349d5ceb7002162",
+      "afterSha256": "87efc6feac026a461188e4372096d5bc3796bda1d01b6a2027cae31134303089"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-soft/north-node/variant-3",
+      "field": "body_you",
+      "beforeSha256": "4e24c03bebdba549d271900ad577092d12f055f439100b086d166810e9f80c19",
+      "afterSha256": "d80dfaedda200f4c947d1ffe3edf14fe940e6745bb4ed53c65d527d52e063919"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-soft/north-node/variant-3",
+      "field": "body_they",
+      "beforeSha256": "af6685b266d9b978b32e996785b748900804eebb2e296b13b24b419271a0de96",
+      "afterSha256": "08fceed97ac9218a45be606acc56ca57b75b13337b0b0854e7a0dfedb4b41e27"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-hard/north-node/variant-2",
+      "field": "body_you",
+      "beforeSha256": "b132f44a2fa6f8353d741e64e43be7be3dd1a5c182042341ae927dfc860d608b",
+      "afterSha256": "daeab4185a6b9c8febcc0005b694b4921deb58d6375aeb1370a659212b776687"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-hard/north-node/variant-2",
+      "field": "body_they",
+      "beforeSha256": "12b5d177fd8efd597dd5703c51254331afdca69232dab0846df8ed3273d23f33",
+      "afterSha256": "382c9a566a0c92973027ec2134496a2172e76ba30a7d4adcd7e07b4d52ff9063"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-hard/north-node/variant-3",
+      "field": "body_you",
+      "beforeSha256": "c7c3c6cfa58e8f023ef389ea69baa8696f70edc0513b8b01d21c8cacd132e84d",
+      "afterSha256": "11502f03faab57bdc3dbbbc495b3ddc041eb082cbfafca9e46d787ef7a98743c"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-hard/north-node/variant-3",
+      "field": "body_they",
+      "beforeSha256": "b5e78028e5011f2a5e4c1f52d30821f419c660f866a810547c9982f697051de5",
+      "afterSha256": "a87e37f55becf70eb7fc9372aa42d2aeeb701bf8f0ef32690b8ae74c15da5949"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-soft/south-node/variant-2",
+      "field": "body_you",
+      "beforeSha256": "87a0710b06a1a89d2a22086987812afe730f15b8d9ece6af417005a6a2549293",
+      "afterSha256": "195f55312e27a0d5372e2f37b0cb394fb5eaf1465b01a6df357e0db70386f9a9"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-soft/south-node/variant-2",
+      "field": "body_they",
+      "beforeSha256": "51c02de120e5b6aa38886da5895a7ce9baab03460b4f1d5c52ad9e14be784a70",
+      "afterSha256": "b8d925a58dcbb186702a28f0e17b9982ec52c756b982924c964692ec7c132e13"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-soft/south-node/variant-3",
+      "field": "body_you",
+      "beforeSha256": "c595fd0ec2ae2a07b0e3363c6201704b0e833d9784737314d1a5366c0086f6c6",
+      "afterSha256": "1aaf37552544c38d8f24bf4b17707fb28f61fc38f2b02e8cbc95f5ea0ece2da8"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-soft/south-node/variant-3",
+      "field": "body_they",
+      "beforeSha256": "8a263f0b72ce4858adbeebd53cacb394ddafe084a0f995e32b23a39f2a38642c",
+      "afterSha256": "a70f5a357a173f732c42647dbbbceff1c243d43e7273bf42af5c9663a8657979"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-hard/south-node/variant-2",
+      "field": "body_you",
+      "beforeSha256": "9f5019fa2f11d92729f81b3e9e416c28fc466029060dce8ce0bdd92c0eafa350",
+      "afterSha256": "9f4f1c6fa70d522ffb7649fed18523a435913282f9aabae3e0d0f2981f4228c2"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-hard/south-node/variant-2",
+      "field": "body_they",
+      "beforeSha256": "e9ef13f503616ccf3bc8bb4a3adf8205c184eb1e85d6d5abe26e728d58b6a561",
+      "afterSha256": "799360c70ced6d293aedc5546523ed54cee3aae7d67b66191a802cd83bf9fc5e"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-hard/south-node/variant-3",
+      "field": "body_you",
+      "beforeSha256": "eabb3126d84eccdf8125a2c4144597bd6c7662e9e5c6855f76213f9fb102a5df",
+      "afterSha256": "92f36e1a3c149202ab5a9e63291200a77ebdc7840c7c292d1c779fb852601ef7"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-hard/south-node/variant-3",
+      "field": "body_they",
+      "beforeSha256": "b68def524af93abf09eae6ed67a9210146ce9190cb7339477c08d71c407f602f",
+      "afterSha256": "a389a5083931eef587979893e36bf901d5daffad08a587dd4d8eee3e45faf45c"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-soft/lilith/variant-2",
+      "field": "body_you",
+      "beforeSha256": "b05105cd53815bf46afa6a2d7a6515ff7736110e720d782e595b52a10a653124",
+      "afterSha256": "580ed51735f9e268843d1a39807c91f2a0649d94e0c9dcac05e9878eea00d173"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-soft/lilith/variant-2",
+      "field": "body_they",
+      "beforeSha256": "ccbd5951766db6f20f235d66acde274bed6729a631458d711ae03086bcfe3b86",
+      "afterSha256": "d02fb34ce795eb6a0ce571f6c5a09d413613647f17f6ec23beab773d2395e574"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-soft/lilith/variant-3",
+      "field": "body_you",
+      "beforeSha256": "f5d54100c5fa1fe6fab3b7fa8bcc2ad4cc18a133c62fbfbf247b78c7154b2c84",
+      "afterSha256": "5c4dc6987aeb287b22a9749ce2dbdc7cc960f2dc44ce5d0daba2aad02e406262"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-soft/lilith/variant-3",
+      "field": "body_they",
+      "beforeSha256": "bda8ebba513bc7d465f25c3464d03a232118b9b9f0271ebf4e830a11935e7af5",
+      "afterSha256": "3d8d8cfc8198ce37cfeba7ec3248bf436a58ea820729c7c4084cedbe0e575b4a"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-hard/lilith/variant-2",
+      "field": "body_you",
+      "beforeSha256": "4d30f5e26c6b61a3b2b4887871130702426c08f3b1981a6d9b6d0c5d450b8e37",
+      "afterSha256": "090a094d20498d78aa4574cb119520dce105b6f08d1a001bae4bee36a6d990a7"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-hard/lilith/variant-2",
+      "field": "body_they",
+      "beforeSha256": "b8486d675c118ef6af7556a1be60546e3af684551d779adbe45ab242f21ce729",
+      "afterSha256": "6a69f9c6e4ed46188cef31c6bfc91a3708c8e58d66755026b0d20f8a829d9b59"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-hard/lilith/variant-3",
+      "field": "body_they",
+      "beforeSha256": "425005306b61b90e4d2287513daf183aa112ea824a30530d1fed3c085345d3a0",
+      "afterSha256": "ff32ca79e76b9bc3cb44d19b69d986fb1b3c6ff6bcd2e9643819d64cd135c05a"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-conjunction/sun",
+      "field": "body_you",
+      "beforeSha256": "925b6a5988bae9ed5578a2e7d9f0b51f42220bfa3cb9e296679b113d04639cf4",
+      "afterSha256": "fde8d62e25772abd7c0774474261c9507ed5ec8a4bdc0a7f354afd6d9fb0f3fb"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-conjunction/sun",
+      "field": "body_they",
+      "beforeSha256": "1dfea40aefbaf4e3e329bd643964c97539aa3a76b7fdf3fa4dfe512605fc37ac",
+      "afterSha256": "0d4756d6b90480776fcef82305c81d93a687814576944b4c00a26c5bb83f5cfc"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-sextile/sun",
+      "field": "body_you",
+      "beforeSha256": "240357a0ba9c713202ca26c5692dd9538011a2d6f7a57311881958a071d83992",
+      "afterSha256": "5440457563c4b2fe10ce3a359a90cd8ce5cf7838cd6672fc8683587c8652405e"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-sextile/sun",
+      "field": "body_they",
+      "beforeSha256": "240357a0ba9c713202ca26c5692dd9538011a2d6f7a57311881958a071d83992",
+      "afterSha256": "5440457563c4b2fe10ce3a359a90cd8ce5cf7838cd6672fc8683587c8652405e"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-trine/sun",
+      "field": "body_you",
+      "beforeSha256": "066079b052a5f026dc66903085de634b624037a9990781cf755b11e44e0e506f",
+      "afterSha256": "a3031d6f0a8341dbb57a74a50ad84c9f20ac33c87d2dcca02c11eb0388169880"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-trine/sun",
+      "field": "body_they",
+      "beforeSha256": "651b5fba4828a982aeb506ac2b957cae39113bbdd7368ce746d3409bce4ed6b3",
+      "afterSha256": "be948b966ddc47f3e3eea5396d037916f4b3daa47aca7ad0db946d8a99a62a77"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-square/sun",
+      "field": "body_you",
+      "beforeSha256": "98b5301104f97b32f293de9caeb25b3431964dfd3f36e42b39ac276b473c39e1",
+      "afterSha256": "9c3f5661fc5f7263b77462afc2cb99c9cd6ac6ae997ffea79411fc1c6b594366"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-square/sun",
+      "field": "body_they",
+      "beforeSha256": "7e9b05cdc80a88fa5a08aa64ab9cf7138bb53ccdc41b99227be070c9a4c163a9",
+      "afterSha256": "9478fae5bbafd96af3dc2d68acd6848df6c36f3f9dff6366e8975f20d922f37a"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-opposition/sun",
+      "field": "body_you",
+      "beforeSha256": "fa3563fd63962ac14f7d103d4a414e52b49bc024f431639fc53c561867c26515",
+      "afterSha256": "2443362ed707cffffbd99aebdee9f4995501a0e0fecb25949fee3812111edee8"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-opposition/sun",
+      "field": "body_they",
+      "beforeSha256": "4c27180ac2ace42cd7cd202b2a1630009b99c7b7cc62387a995fdbe53025e689",
+      "afterSha256": "47175f81b10ed32c6c3eb4ec78862d52c3721b13e5e0cfb20e32e6d082b07220"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-conjunction/moon",
+      "field": "body_you",
+      "beforeSha256": "365f3bc7fb9618ac54b41984e83f0cb7a124bca3bd9f018b4ede762e0e8b1991",
+      "afterSha256": "7e597c0b1bbe3219723df1c223f2ad4a9e4c490e27c5cf0bc24cbc5b21443bdd"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-conjunction/moon",
+      "field": "body_they",
+      "beforeSha256": "63d2715683d68f3417d3e17b406a7be23771603668557811427c9977346304bb",
+      "afterSha256": "4a899e11f2ec3b56b8a3f7de227accf58edebd04a1d53f38c033bbef22110a44"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-sextile/moon",
+      "field": "body_you",
+      "beforeSha256": "cc86eb9c50841e622f3082defc4de3bd1ee71a318841f3a86d9e85c3d08ff86c",
+      "afterSha256": "1b2c0d14e51bf5f4016e21781388219034aef2c90ab81cecdb3a16a29fb9e67f"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-sextile/moon",
+      "field": "body_they",
+      "beforeSha256": "7cb575677d3bb5facbfb27518df8b501edc1814a5fbb5c72e07c453020c6f7a8",
+      "afterSha256": "9994b0d0b950f65d3644d6c18a5ce5c224145129ebc2b77d179abdaeda35af64"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-trine/moon",
+      "field": "body_you",
+      "beforeSha256": "0c23dd055d4d8c769341518a484a8cd9f1f214aa7025500a0495996e6287b9e1",
+      "afterSha256": "0e019f4bcfc04e125e2d0f6d9e2481a19e2bac7ab0fdacdca2cf8364bfcd6d85"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-trine/moon",
+      "field": "body_they",
+      "beforeSha256": "5beadb168ff8a915280053ee9789298c0fe68f9e696dc64aa78a931f4bda8ad3",
+      "afterSha256": "2c80006fc16e3fe09c990e56b976bfe3fab9e9eb233efe1a3c1a1472b98e9688"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-square/moon",
+      "field": "body_you",
+      "beforeSha256": "94fb7934d5cd1d9e34447017a709226bcef51e332e52a2c006c71650646eb736",
+      "afterSha256": "7bdc4e5126eadc9791085073170dc6728423e642a4b4b171c5903db08768b05b"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-square/moon",
+      "field": "body_they",
+      "beforeSha256": "09fd4b970f593145d2a0b2fb1a8186b042fcea563785d49c6fafd777da48fe9c",
+      "afterSha256": "029b51f78373efb581e8ac8e5ccbadc4d69406a4a49e8ca48d7397e00ebab00f"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-opposition/moon",
+      "field": "body_you",
+      "beforeSha256": "7531e621556c425b72d87ce7e9eca1bca2d07a96f809f73dac16321a4cc85ac5",
+      "afterSha256": "9c3634009be5d325705f94faf3dcd9f561504d08a9b2dec4faa98f5010691a55"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-opposition/moon",
+      "field": "body_they",
+      "beforeSha256": "3906bc745815e271f236f77dab8a39d38a0c66777d975a410f31c8d61534851c",
+      "afterSha256": "12330428087861a9d864eb68ae578217939a0496514146995f96b0b0e31ac8f2"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-conjunction/mercury",
+      "field": "body_you",
+      "beforeSha256": "4a820244a0e4b08d504d312e3b249ec64faa4b09d6223b27d39b8310dd438db1",
+      "afterSha256": "a923d79776e4d8ba702491eb82e929257851258477558f37eb524f49b1786813"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-conjunction/mercury",
+      "field": "body_they",
+      "beforeSha256": "ff1c830fcb98dd7185a540ee3a5fa31bae80083bd7d046dd88a22e6439e106c3",
+      "afterSha256": "0487d72876499ff686884c4ee3d154af20b308fefad512bea627559304b274d1"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-sextile/mercury",
+      "field": "body_you",
+      "beforeSha256": "1d941577404bcc39e3845d330e7c89051a4ae115e171f7636711536766d6e696",
+      "afterSha256": "2d4263d25455d79a82e19aebc25d598201cdbcf62f47437eae465d0586599f3c"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-sextile/mercury",
+      "field": "body_they",
+      "beforeSha256": "f60ecf6fdc00751e33906ae3b11b5e24e6b9a47658b98e055014846b7a6042e3",
+      "afterSha256": "5c441640e951dde644826ddee3f9625fda92f57f824645e59a530935bda7e9f9"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-trine/mercury",
+      "field": "body_you",
+      "beforeSha256": "a7bb982b7e4303f6330a0ed5beeca093f4ee0d3855e34d562b26bff6d15fe143",
+      "afterSha256": "65bba46ef3c1c81051547411f05beaadda74d1865ebf604362f5d72ab58dde37"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-trine/mercury",
+      "field": "body_they",
+      "beforeSha256": "ba2a97f68b4bdd42edb2a3b49f85770ae61c42f8f83fe1f3fb4c12a26558a968",
+      "afterSha256": "9417ba0ba1f5a823792fd0e056982477188bdc0880a00e18ebbc27fcc8f80d15"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-square/mercury",
+      "field": "body_you",
+      "beforeSha256": "c8ed822bb85a0b29deece108c9842966fb07f78650e8f22f9310dc897720ddfa",
+      "afterSha256": "2044e29d75d448470b0f5e9fe97629cbcccb12265010ef7a2f633055b9e06f55"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-square/mercury",
+      "field": "body_they",
+      "beforeSha256": "2df447e51eac63892d58fdf5a3973a38e820d95bf94523ac0e34fd8e829961fc",
+      "afterSha256": "f87a2de1225a39799034cc5dfadc142487612aee4caa8370907f2186a7727869"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-opposition/mercury",
+      "field": "body_you",
+      "beforeSha256": "35afb4fd61d71e1ae28d39a91685d87dbd408d2d6b2afc722017e7c8cdfb68e5",
+      "afterSha256": "d17148044f78f4ded8dbc99691a85b35d701e43ec9fd63ad8f0b987abdcfa0f3"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-opposition/mercury",
+      "field": "body_they",
+      "beforeSha256": "8ffde03e9f845220fbc6de7f482de64250a9544c46940cbb8c8581ea60fb6a2b",
+      "afterSha256": "6eeaf3493509409988dc3bc021f6bfb4ec5e7866fe8cea14df4cbb34bd5bb407"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-conjunction/venus",
+      "field": "body_you",
+      "beforeSha256": "dbb3b06b3443d981d3eff04d34d6d21cbb3b9fe0d42813e8d0ca14f4b1fba04a",
+      "afterSha256": "2585a1aa539334e3eb3774bfe11e1642774680292b27e3389924791c71159563"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-conjunction/venus",
+      "field": "body_they",
+      "beforeSha256": "83303c944a1dfaaa025c615993ed855bbd1483e0b10009369440587d84ea274f",
+      "afterSha256": "ba5232a203ac82dcee11946ef2c5584ba5dcfd0da567e1bc2036dca32e2ea27a"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-sextile/venus",
+      "field": "body_you",
+      "beforeSha256": "061056ea98e715e01da73b0d9044e6c39bc7ef12855879923583ff4264636a8d",
+      "afterSha256": "e51a9e6a487ab91ace6e3dc89f8de2babed248ca7b8379c05765c9799eb489ee"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-sextile/venus",
+      "field": "body_they",
+      "beforeSha256": "39b4c71c218f279fa5283c0656fab4ed3c54dee99dd067a35f03d493bb2697b6",
+      "afterSha256": "3c1f024d1ec5d38cbe9987c89beb4f5a6389d168f7ef9109c6fdb8d27b9dc8e8"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-trine/venus",
+      "field": "body_you",
+      "beforeSha256": "11db31f9f333549af196ae69237d09a57efbcc80ce53e64b076de2367a265ff6",
+      "afterSha256": "2376bf96ed668cb6b5c4608fe398f6c518ccd58701d0a1e56c85303855df87a3"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-trine/venus",
+      "field": "body_they",
+      "beforeSha256": "cfde7055dc4e4c6927adaf0160e0daf0002515fc68331b12e73f7ba23499e0ed",
+      "afterSha256": "1c00f2293bc80ecbc93fbc89692314a2cc01f70184fb35a8cf83f0505fa2d486"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-square/venus",
+      "field": "body_you",
+      "beforeSha256": "b714d0dad7d1936bf49c72d8d243ec9e7169808ff6abdbc7ed929a871cb92f21",
+      "afterSha256": "a0be407c4fb43052bd4b423dec6aa6ece972dcfd05e8c561410ed3c448566336"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-square/venus",
+      "field": "body_they",
+      "beforeSha256": "b7c54e9d445a6c214d59f9c0b34ffc4d945d468d632bb3f4d67a91dcfcfa78d4",
+      "afterSha256": "48d079e59b74c90fcfce03258262b8da5a55a501830290afbf817b720c890278"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-opposition/venus",
+      "field": "body_you",
+      "beforeSha256": "2bdd945df67d12826bdbc2fd4c5c602152c40ec6ae7d5883ac6a28516dbb74ff",
+      "afterSha256": "0e37fd683da66ffedbd02b45f27e454df233123301a9ff9e30945199da7a8705"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-opposition/venus",
+      "field": "body_they",
+      "beforeSha256": "2bdd945df67d12826bdbc2fd4c5c602152c40ec6ae7d5883ac6a28516dbb74ff",
+      "afterSha256": "0e37fd683da66ffedbd02b45f27e454df233123301a9ff9e30945199da7a8705"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-conjunction/mars",
+      "field": "body_you",
+      "beforeSha256": "69f035441130d9a19a8f8e870a9450bb7dd51a9d045cff78184e09278a262ea6",
+      "afterSha256": "021fb428e5d21ee289c221aa12367ecc51804931057f6fa8d1c48ad08dcc1569"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-conjunction/mars",
+      "field": "body_they",
+      "beforeSha256": "69f035441130d9a19a8f8e870a9450bb7dd51a9d045cff78184e09278a262ea6",
+      "afterSha256": "021fb428e5d21ee289c221aa12367ecc51804931057f6fa8d1c48ad08dcc1569"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-sextile/mars",
+      "field": "body_you",
+      "beforeSha256": "2ab34826883b9f3fb18108ed8c062d1551a9ea66ff968e9016700d838822e0ea",
+      "afterSha256": "d840449e715013b0e4532af54f6c471ed1be94b02491583321957f4561b82322"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-sextile/mars",
+      "field": "body_they",
+      "beforeSha256": "2ab34826883b9f3fb18108ed8c062d1551a9ea66ff968e9016700d838822e0ea",
+      "afterSha256": "d840449e715013b0e4532af54f6c471ed1be94b02491583321957f4561b82322"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-trine/mars",
+      "field": "body_you",
+      "beforeSha256": "fa9b742c3c905144819f5ac90a86b5d430a9c211fbfe05feb615af358ef89393",
+      "afterSha256": "3cd8d223db449e522c81299aebd1349ed383b33bb156e45baca214c893e4611c"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-trine/mars",
+      "field": "body_they",
+      "beforeSha256": "fa9b742c3c905144819f5ac90a86b5d430a9c211fbfe05feb615af358ef89393",
+      "afterSha256": "3cd8d223db449e522c81299aebd1349ed383b33bb156e45baca214c893e4611c"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-square/mars",
+      "field": "body_you",
+      "beforeSha256": "6a0636640b142eba5ea3ec4681ff3eb255ab99c6f5e4753390653f1723299f84",
+      "afterSha256": "af0936789fb9df3f745b46d724651d559c9123672f65f060272125996a2b67d0"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-square/mars",
+      "field": "body_they",
+      "beforeSha256": "685b112792a0c3aab40434da775f024626067ad9c87ee80c9d2e0df7b85e4d46",
+      "afterSha256": "1880cc63b0879d0e14664f6b1919f1ee7e830a4fd873c62660d21deee707e99b"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-opposition/mars",
+      "field": "body_you",
+      "beforeSha256": "1b6a8e765d9f34f1498e051df4a8b1543ed9fdfbb30de80b0909dacbbf808ad2",
+      "afterSha256": "bd5e2944e3903b770baeaf00579a791bb9722dc84e2fb246ca10bf8bb87f5024"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-opposition/mars",
+      "field": "body_they",
+      "beforeSha256": "1b6a8e765d9f34f1498e051df4a8b1543ed9fdfbb30de80b0909dacbbf808ad2",
+      "afterSha256": "bd5e2944e3903b770baeaf00579a791bb9722dc84e2fb246ca10bf8bb87f5024"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-conjunction/jupiter",
+      "field": "body_you",
+      "beforeSha256": "d824a54c29f4e3d4cdababe91e0ba5904f27ac4c583a948beb6574e2ea54e448",
+      "afterSha256": "3e089389e5c6c84fb99ea3b007409dffa1d68b8a90d6e992cd95f451ce5d6202"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-conjunction/jupiter",
+      "field": "body_they",
+      "beforeSha256": "cfe205a0ed5f541485795125c0670e8b1f855f78a2852469f4dc53108a5864d0",
+      "afterSha256": "614f3924d057e801cf0ad9c8c6ded04b22d469ec66c9c61dbd8f75b412323281"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-sextile/jupiter",
+      "field": "body_you",
+      "beforeSha256": "b7cb61e337b7bd83d353b69daf610418d9692a5132341055ac9e8092618585fb",
+      "afterSha256": "f284b74570996d4e48d8a454e977eda14a1c34e404e6c91657cd880d39c296f0"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-sextile/jupiter",
+      "field": "body_they",
+      "beforeSha256": "bcf0bbf2264736134e9fe2fd123d75c722b44ef5cff05d876081fff2f80606ce",
+      "afterSha256": "dc4ea7b712b8d1322081f1a329c5976b7acc95a720a010877b20ae68a81efb9e"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-trine/jupiter",
+      "field": "body_you",
+      "beforeSha256": "651d3942e7f8e29eefd8ec32734c1ef704af68f1602eb3b172285179c058eb70",
+      "afterSha256": "8b016c04eeda770ad11be4e17404977c060a43afc95082187b846db6032208aa"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-trine/jupiter",
+      "field": "body_they",
+      "beforeSha256": "2a6150f709aa2bbc7e2ebb83d2a2714701bd3405e23abdd34eab73094c0a5bae",
+      "afterSha256": "c808f57a24da37ec7c696dc3d1ddd7732187d0300247c99c32346e47bcf65d99"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-square/jupiter",
+      "field": "body_you",
+      "beforeSha256": "1f93629c0d5d6a3f193a8bbeed0e24b9072a27a2086aa5bfa00ad0cc247b4583",
+      "afterSha256": "abcfc96fea198b75d9435d073215e9202f8ba9dd5f86de1ee41f018c9c9e4b8c"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-square/jupiter",
+      "field": "body_they",
+      "beforeSha256": "cdda2abc1db60c0f7e710b56e1f4ba429a007af0aa2c6b0ce291a02df807a548",
+      "afterSha256": "6ac9ab0f5fb014e2268140adb9d3876a949b666bd00110eea07aad9810c7f459"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-opposition/jupiter",
+      "field": "body_you",
+      "beforeSha256": "60a58f81f7e93540a57c6fb722a6b693e710facc39156d98bd3dacb1c2e7d50a",
+      "afterSha256": "ecc2aa678fb020199a1a6ff36a33e0b28aee6c035ca751b726ffcd6eb5b1cc2d"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-opposition/jupiter",
+      "field": "body_they",
+      "beforeSha256": "57fc76dc896ba4e26aad4ee65fd32e9d9fbf7d0bac1bbb93305dbdd2aaa7d180",
+      "afterSha256": "54303f1c0a19558ac0539b02019eed756b5566488f3dc3d54d735d6ca24ebf35"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-conjunction/saturn",
+      "field": "body_you",
+      "beforeSha256": "8bf091d9907923eb4c5d8276aaa1c792996d49ba03e2bba26619316116496025",
+      "afterSha256": "7f5da03fc34666aef54ff649b18582e2612cb5e92d09c8dc37c652411b4136b5"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-conjunction/saturn",
+      "field": "body_they",
+      "beforeSha256": "e0d66826cc61e9d8ae63384ed1e428eaf61a0a8badc98f05c0cdf2f902ca31ca",
+      "afterSha256": "f2dbaecdcfcbf842a6953952cb6e7f6ed0c2eac3bcd31ed34b026a4d8aaf3b54"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-sextile/saturn",
+      "field": "body_you",
+      "beforeSha256": "5cc6345d0b9682acb79238ff4fadc3d28d1e21aa2a333eea4e3e4e49089b6c72",
+      "afterSha256": "5e2232793559beef12f0855aa3aaf0cf4cd0006a83dd42a2cdf93cd19b6dd8ef"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-sextile/saturn",
+      "field": "body_they",
+      "beforeSha256": "5cc6345d0b9682acb79238ff4fadc3d28d1e21aa2a333eea4e3e4e49089b6c72",
+      "afterSha256": "5e2232793559beef12f0855aa3aaf0cf4cd0006a83dd42a2cdf93cd19b6dd8ef"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-trine/saturn",
+      "field": "body_you",
+      "beforeSha256": "47f65b963a7ab397e153b18020d1fbbf94292f0547df1300255ac19bd40a2bad",
+      "afterSha256": "2679d534e868d7b29a995f74cd15ca96ebc57397b8db3a6584b54dc1fce302f1"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-trine/saturn",
+      "field": "body_they",
+      "beforeSha256": "6cb08ed91ab33b1b2899e636d190f5a02ba39261f6de90ab5766d9f2eb25a0a4",
+      "afterSha256": "46cc8706297a20c470595e3082eb97aa84286f93817624e2d7fab1c2f9961174"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-square/saturn",
+      "field": "body_you",
+      "beforeSha256": "4d2289f9978f610c9590cce04478648120ebce38535e89fd1059a15873015622",
+      "afterSha256": "09645fe95c2d5dc9b9c4ad53ec5f0134de2c2feb745902c4a794d2b04d20fbd1"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-square/saturn",
+      "field": "body_they",
+      "beforeSha256": "cf5656774bc989c0f01dcb2a553908c27ba27bf6187e4db5e641eed0ee1cec5f",
+      "afterSha256": "4040583ae7c247feb7da0667399f97053e8a56939ef5f7eba7b62237027773bc"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-opposition/saturn",
+      "field": "body_you",
+      "beforeSha256": "67503938033ece08341a5d975766cd92e75ef55aa433f58cc2514b5a15acb30a",
+      "afterSha256": "477166c1900097caa5d9c31fa3b59f15856b0b1f7369decafa2cb36646b860ed"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-opposition/saturn",
+      "field": "body_they",
+      "beforeSha256": "11be27a6d19b509278cf290b2ee0df55c42d5539be506fda20b60efd4b02d7bd",
+      "afterSha256": "22fead630bd1f815333ce5028eba3b47f83fb49461a5d86cd4ee19c5e8f0edb0"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-conjunction/uranus",
+      "field": "body_you",
+      "beforeSha256": "775d1b68f736ec2f0dff4337bcbc957dd0d67a9812628e591bbce75e3bfb4bd2",
+      "afterSha256": "8d9658dadd83366107168d3d01b0807b6cf93b8838f5fd8c03aaa790fa59149a"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-conjunction/uranus",
+      "field": "body_they",
+      "beforeSha256": "81cafa92e73c5b2d53f05d042feb700c33d65cdbcd02e18e6b1c9b16daa25817",
+      "afterSha256": "2de90ae602a9599d60da1cb63b76883509c06a18059136fb094928da60532739"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-sextile/uranus",
+      "field": "body_you",
+      "beforeSha256": "4a5b63791c1a1d3b31777bfaba3a08633d8cd6453ac2135d15e9574c61231864",
+      "afterSha256": "fcb1e1188371b26e88f2dcffdfc9add6f0b2cda4c07f415c8d49fbe8210cd117"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-sextile/uranus",
+      "field": "body_they",
+      "beforeSha256": "4a5b63791c1a1d3b31777bfaba3a08633d8cd6453ac2135d15e9574c61231864",
+      "afterSha256": "fcb1e1188371b26e88f2dcffdfc9add6f0b2cda4c07f415c8d49fbe8210cd117"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-trine/uranus",
+      "field": "body_you",
+      "beforeSha256": "0d9385ffe3e118039e3fd2921ad4b23f9d5bca163ddff269eecfd24297dbe600",
+      "afterSha256": "13f67d914bb1072704df135b49d471d45ec5777e8901d5e45f9bb9e28e81eec1"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-trine/uranus",
+      "field": "body_they",
+      "beforeSha256": "e7ecdf42bb967c9b948891d531b4512dd524e312ba876a14dd3e4ed54638fbf6",
+      "afterSha256": "83ab55e69ed047ba118dbd121979f9301fb9c55f0d873035bd4a14a2ffff1f59"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-square/uranus",
+      "field": "body_you",
+      "beforeSha256": "3db9dd7aab93ec13a38f332ab262bd1dbc5688ff0c244d3d518710ab6af0d200",
+      "afterSha256": "b1db438ab859663c0b3f5112ce82e29cffb2d436a5e7ab20d533187fe46e09db"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-square/uranus",
+      "field": "body_they",
+      "beforeSha256": "38458bb1f1a23a9b1471477f0148eec994c66ac9e52a91f534cbe7555c92ce10",
+      "afterSha256": "e0d7b9a1e2e43ace7d90f694cb85fc4bb784e4ac4ae2042f4a78051df8e47cda"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-opposition/uranus",
+      "field": "body_you",
+      "beforeSha256": "502594b8c0208a7dd2573010cce331530ad296c67a82ec852e75e9653bd14a37",
+      "afterSha256": "0d0ae6554560df2dd1e81a71d0ca13b0e66a198ec1acee8225282a86715f4cf9"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-opposition/uranus",
+      "field": "body_they",
+      "beforeSha256": "79ed41c7cb0d3c55ac12930a790262187c400efa9298c9aecf28bb06979ffc9a",
+      "afterSha256": "a640c08d468df16935ebc6f805b5c901288fe035d9c4192dca3da875d4f472d1"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-conjunction/neptune",
+      "field": "body_you",
+      "beforeSha256": "b6d9eef1e498272870770f2dc8cae98715c2a1808992dc02a779b204ed72ee18",
+      "afterSha256": "b6108aa3fb060fd72b4df5a602c15e80c43facf3ef2334b78091e6c6645de2a6"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-conjunction/neptune",
+      "field": "body_they",
+      "beforeSha256": "ccf9974e2287253d64325b99f3c33a8f60a1c24dfee3b3c71ce6af00dba84808",
+      "afterSha256": "2e8af48ce2c7b753b712e1186b4dab8c0721b5d24be5ea89867027f58162be57"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-sextile/neptune",
+      "field": "body_you",
+      "beforeSha256": "40e43a01fce0fb4e8d069a9dff0beeeb61cf81877f9d5896123e22a8398af2f7",
+      "afterSha256": "0513ab7b0ffab330a15f0e85dbd87803f6b4895f442dd939e72adc840f1fe21e"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-sextile/neptune",
+      "field": "body_they",
+      "beforeSha256": "1dd3a97a30e7f98047d1cf0df20397f8e428b8f8324fdae1744fb6472f8824ad",
+      "afterSha256": "b6b336cd700130eaccb7aada6a244f64df0edd140115b2abf86d7aed7597444d"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-trine/neptune",
+      "field": "body_you",
+      "beforeSha256": "2d50fa3ac204f7cd15c06a289d64518937586f947b8909fa64bf09e02589d523",
+      "afterSha256": "9557ad1308dd852e424b5b3d7ad4ae15f0e63930565f9f6e11cf42ec37e3b395"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-trine/neptune",
+      "field": "body_they",
+      "beforeSha256": "9cefd74dfd2c8b842a9c1aee6adb4a055014dfa85397aaa6dd3e664de1a6e1be",
+      "afterSha256": "f4c6e23d7119449b90a2014ec72badb888b3e284a5d67e1fb0c363ecd06524c8"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-square/neptune",
+      "field": "body_you",
+      "beforeSha256": "50313ae571c644ab7faa99f7d31d8a9a29b3401c060450604681ebfa63ada655",
+      "afterSha256": "7cc00f7a6781c3e753fb34f5a339d5a125c32106ccd2a7efc7b1f6ffb1540584"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-square/neptune",
+      "field": "body_they",
+      "beforeSha256": "ec70c4adb2ead37a24adddd67bbd6764130cd07283eaf097b3e7fff4150cbb6f",
+      "afterSha256": "28aef9654b739634818417a4f35ac7cbfc36d3371412653f7f5eb26238ea7ef8"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-opposition/neptune",
+      "field": "body_you",
+      "beforeSha256": "014f56a0c37ce5f0b103d90896dbf13dceddbd975cb9d24cf2c5b8543b7969a4",
+      "afterSha256": "552d8e9603e385877dc2019a9246e59eb3afb9cf891c390cc7cbc0c48d4dfd1e"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-opposition/neptune",
+      "field": "body_they",
+      "beforeSha256": "2646387e11adb2f858b6d65d87b24da36fc2192a23a6b2525688e55e30a0951a",
+      "afterSha256": "edae737d738ed9403648087f35ad931b10df530674e6714d30982291b636c688"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-conjunction/pluto",
+      "field": "body_you",
+      "beforeSha256": "c6986fd10a034b2cb469874e76a8b055ced6fe6ee60ff21dde7f62cc9ff0aa2d",
+      "afterSha256": "6a595b6da4825047fca4369e5231b163c48706c91d988236707a60248f4028ca"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-conjunction/pluto",
+      "field": "body_they",
+      "beforeSha256": "95763d8b31118f119bb97bfc4fb7abba0963b0e4231cc4946be6c57f965031c0",
+      "afterSha256": "1071ddc09274e8d018ce41d140fa3d55fc8f5a444687b7bba4382422925b8c3d"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-sextile/pluto",
+      "field": "body_you",
+      "beforeSha256": "f9c6c8ba8ba4a1995802920c6dcefd1a601d954b3aa43a063fa4253a60a29583",
+      "afterSha256": "375d39817e9491d1068706430042353242f47f2095e1b90efcceb502df4697f2"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-sextile/pluto",
+      "field": "body_they",
+      "beforeSha256": "ca6dc1c6009247b0c7cca7964138209d4d63aaab9580735ad937009eb4cddf26",
+      "afterSha256": "ea9dabbc4a2c7d7748c1c50e2a2e377142b7996515a2643224e591296ad2497b"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-trine/pluto",
+      "field": "body_you",
+      "beforeSha256": "46bf99a9be4efeb2248a5ef518b94dab68ad29371f93473375ce2172cc3a552b",
+      "afterSha256": "3d0221388c9a05a7c75312f22eb1ae808b1621062f083729a412a28ee2327cde"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-trine/pluto",
+      "field": "body_they",
+      "beforeSha256": "387b8a40b7494c1d9166850ce85b85f6c5cf9a761994800297f3d3167027003f",
+      "afterSha256": "bbf04aa990d01b9b7f02188a1b978c0b06c1e43ccada7033e01a4ea64166bccc"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-square/pluto",
+      "field": "body_you",
+      "beforeSha256": "0a044d2d524bbefffb681bb7ded92581ad5adcf96e8e629a2d47f097c9a5943c",
+      "afterSha256": "e263e395c894e128628667aa016856920afa3add6f18d59e488480f9b6f9cff4"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-square/pluto",
+      "field": "body_they",
+      "beforeSha256": "6b763d38120c63a412999faa8488c689a95c90187fd35c172a6f634c3616a201",
+      "afterSha256": "502e25c2fbba475915c6ba7355f0bfa33900ffcaa26a5d591927a6c8235ff1b4"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-opposition/pluto",
+      "field": "body_you",
+      "beforeSha256": "1dc9e2c098c1eb7409fda6694f3f21a9dc1907a36c2267b593be38452279cd0b",
+      "afterSha256": "be67933265b0635d87bccd2c99bbcb6643411a499e6a14ef445197d374b03162"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-opposition/pluto",
+      "field": "body_they",
+      "beforeSha256": "600dea1c31d0cdf130a3ef8054a32b951c9b23e167d35887abea7565e2c3cde1",
+      "afterSha256": "581d797bf53d6ee9cebc32f9195aeea4e51bfce869b8651af8d2ab697c825545"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-conjunction/chiron",
+      "field": "body_you",
+      "beforeSha256": "d7bd9e0913dc7602161c23f5c3cb6cbbd3c2c67ce9fb30f31bdc44e525adb6a1",
+      "afterSha256": "f4a9cb215bf727fb3a7dcc0ea5fa00cfc89fc8849a21475dd4ca86fad7f561c7"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-conjunction/chiron",
+      "field": "body_they",
+      "beforeSha256": "c556bd3adeecd517d13bd3618f0196bcc535bbea8c841869a09a1d94fa61f77e",
+      "afterSha256": "0b4312cdca65fa5a1fc04cf8e4320d1aab272eb4a8cc9c3cd0a217a7c53379f4"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-sextile/chiron",
+      "field": "body_you",
+      "beforeSha256": "3334728ddd030cecd90c32dac72eb6783c849a70b391c7927d645e42316c9ce4",
+      "afterSha256": "86afbcb0d09678ed390ee385b818dfad1760ce3d5639d3e257b47c24e1e4595c"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-sextile/chiron",
+      "field": "body_they",
+      "beforeSha256": "5a52e3b4cd32702683a06aaa4e7a63362a03267bc36a55af24ead2542f9754aa",
+      "afterSha256": "ef24795f90195866e78408d7dcc65e2000f485a49dda0a57b0d1ef3d0d0b08f6"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-trine/chiron",
+      "field": "body_you",
+      "beforeSha256": "8c2d103ba8dadb97f6ac921c0e5e171dfbc9c9d61d23a50104972f5654eb382c",
+      "afterSha256": "1faacdbe83680198abc962d1c534c213f71bc993b2e37331aa82b6f0dd7b7550"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-trine/chiron",
+      "field": "body_they",
+      "beforeSha256": "d0b87051967e6dfa16964a35ff25703f4a2fbb6753df1d0bdfc1783e088c6284",
+      "afterSha256": "9584cfd398de7ef3436ec8ca7ef236a932dc8887c0c10797d4ffdad260b7ad47"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-square/chiron",
+      "field": "body_you",
+      "beforeSha256": "6526d560bdba4becbec2886030c4682cd94602679fe2e72c37f94f8b06e91c77",
+      "afterSha256": "fbc04806d7e40f1120e0d71e4a421f07fb56b32f3a494645ee2e71c8e3a8fa1f"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-square/chiron",
+      "field": "body_they",
+      "beforeSha256": "ce09ff10880bc85619db504a0cca11d01ba4d6c8c0a231dc00f260310592274f",
+      "afterSha256": "9f1a3cb4cac706c81f866daddd2b05b4628a908aec1b47d32ffb2e0258fa9210"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-opposition/chiron",
+      "field": "body_you",
+      "beforeSha256": "9a6965f5de175fb70ee4837c4f30e140575d82c825c80a3ff9a460145e1e4989",
+      "afterSha256": "b3b1b2a273b78aeedfcba148672ec452c9f617d1b141a2c7ed286ee435a41533"
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-opposition/chiron",
+      "field": "body_they",
+      "beforeSha256": "e265566f429785dad66c55979c9aeca70349fd56423bc880711d62e2b56b8a32",
+      "afterSha256": "469899e8249df904ad56f0b458d2960541b637652d8dc0b70bb4d1b82096954f"
+    }
+  ]
+}

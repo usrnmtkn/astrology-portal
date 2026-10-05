@@ -32,7 +32,8 @@ assert.equal(parsePersonalTransitContact({ planet: "mars", house: "11", sign: "v
 assert.equal(parsePersonalTransitContact({ contentKey: "fallback-hook/bond-effect-conjunction/chiron" }).contentKey, "fallback-hook/bond-effect-conjunction/chiron");
 assert.equal(parsePersonalTransitContact({ contentKey: "fallback-hook/bond-effect-conjunction/chiron" }).family, "bond-effect");
 assert.equal(parsePersonalTransitContact({ contentKey: "fallback-hook/bond-effect-hard/neptune/variant-2" }).aspect, "hard");
-assert.deepEqual(knowledgeIdsFor(parsePersonalTransitContact({ contentKey: "fallback-hook/bond-effect-conjunction/chiron" })), ["planet/chiron"]);
+assert.deepEqual(knowledgeIdsFor(parsePersonalTransitContact({ contentKey: "fallback-hook/bond-effect-conjunction/chiron" })), ["body/chiron", "aspect/conjunction"]);
+assert.deepEqual(knowledgeIdsFor(parsePersonalTransitContact({ contentKey: "fallback-hook/bond-effect-hard/north-node/variant-2" })), ["body/north_node", "aspect/square", "aspect/opposition"]);
 assert.throws(() => parsePersonalTransitContact({ transiting: "sun", natal: "sun", aspect: "quincunx" }), /Friends bond-effect write-up/u);
 assert.deepEqual(missingPersonalTransitAudiences({ you: "", friend: "saved" }), ["you"]);
 assert.deepEqual(missingPersonalTransitAudiences({ you: "saved", friend: "saved" }), []);

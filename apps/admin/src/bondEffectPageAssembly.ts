@@ -220,8 +220,9 @@ export function parseFriendsActivationParam(value: string | null | undefined) {
   return { friendPoint: friendToken, aspect };
 }
 
-export function bondEffectPageHeadline(planet: string, aspect: string, natalPoint: string, audience: "you" | "they" = "you") {
-  return `${fallbackHookWords(planet)} ${aspectTechnicalVerb(aspect)} ${audience === "they" ? "their" : "your"} ${fallbackHookWords(natalPoint)}`;
+export function bondEffectPageHeadline(planet: string, aspect: string, natalPoint: string, audience: "you" | "they" = "you", friendName = "Name") {
+  const possessive = audience === "they" ? `${friendName.trim() || "Name"}'s` : "your";
+  return `${fallbackHookWords(planet)} ${aspectTechnicalVerb(aspect)} ${possessive} ${fallbackHookWords(natalPoint)}`;
 }
 
 export function bondActivationHeadline(

@@ -3588,8 +3588,8 @@ ${passHook}`;
       sextile: "sextile"
     };
     const timeClose = inlineWindow(timeOpen);
-    const endpoint = endpointOwner === "reader" ? `your ${title7(endpointPlanet)}` : `their ${title7(endpointPlanet)}`;
-    const activatedList = endpointOwner === "reader" ? `their ${serialList(activatedPlanets.map(title7))}` : `your ${serialList(activatedPlanets.map(title7))}`;
+    const endpoint = endpointOwner === "reader" ? `your ${title7(endpointPlanet)}` : `${otherName}'s ${title7(endpointPlanet)}`;
+    const activatedList = endpointOwner === "reader" ? `${otherName}'s ${serialList(activatedPlanets.map(title7))}` : `your ${serialList(activatedPlanets.map(title7))}`;
     const plural = activatedPlanets.length !== 1;
     const endpointReference = plural && endpointOwner === "friend" ? `their ${title7(endpointPlanet)}` : "it";
     const closing = `${transitRef(transiting, sign).replace(/^./, (char) => char.toUpperCase())} is ${relation[aspect] ?? aspectAdj} ${endpoint}${timeClose ? ` ${timeClose}` : ""}, activating the connection${plural ? "s" : ""} ${endpointReference} makes with ${activatedList}.`;
@@ -6482,7 +6482,7 @@ function skyV4FieldValue(source, path) {
 }
 
 // apps/web/src/content/fallbackArchitectureV3/resolver/index.browser.ts
-var PACKAGE_VERSION = "v3-2026-10-05-friend-transit-pronouns";
+var PACKAGE_VERSION = "v3-2026-10-05-between-you-two-names";
 function stablePackageValue(value) {
   if (Array.isArray(value)) {
     return value.map(stablePackageValue);
