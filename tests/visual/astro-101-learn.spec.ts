@@ -1,9 +1,12 @@
 import { expect, test } from "@playwright/test";
 
-test("Learn hub is reachable from primary navigation", async ({ page }) => {
+test("Learn hub is reachable from the overflow menu", async ({ page }) => {
   await page.goto("/");
-  await page.getByRole("navigation", { name: "Primary navigation" }).getByRole("button", { name: "Learn" }).click();
+  await expect(page.getByRole("navigation", { name: "Primary navigation" }).getByRole("button", { name: "Learn" })).toHaveCount(0);
+  await page.getByRole("button", { name: "Open menu" }).click();
+  await page.getByRole("menuitem", { name: "Learn", exact: true }).click();
   await expect(page).toHaveURL(/\/learn\/?$/);
+  await expect(page.getByRole("menu", { name: "Site menu" })).toHaveCount(0);
   await expect(page.getByRole("heading", { name: "Astro 101", level: 1 })).toBeVisible({ timeout: 60_000 });
 });
 
@@ -77,11 +80,14 @@ test("Learn article uses the full desktop navigation", async ({ page }) => {
   const primaryNav = page.getByRole("navigation", { name: "Primary navigation" });
   await expect(primaryNav).toBeVisible();
   await expect(primaryNav.getByRole("button", { name: "Sky" })).toBeVisible();
-  await expect(primaryNav.getByRole("button", { name: "Learn" })).toBeVisible();
+  await expect(primaryNav.getByRole("button", { name: "Learn" })).toHaveCount(0);
   await expect(page.getByRole("button", { name: "Back to Astro 101" })).toBeVisible();
   await expect(page.getByRole("button", { name: "Back to Astro 101" })).toContainText("Back");
   await expect(page.getByRole("button", { name: "Toggle theme" })).toBeVisible();
   await expect(page.getByRole("button", { name: "Open menu" })).toBeVisible();
+  await page.getByRole("button", { name: "Open menu" }).click();
+  await expect(page.getByRole("menuitem", { name: "Learn", exact: true })).toHaveClass("active");
+  await page.keyboard.press("Escape");
 
   await page.goto("/learn/houses/2");
   await expect(page.locator(".learn-article-page")).toBeVisible({ timeout: 60_000 });

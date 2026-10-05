@@ -14296,10 +14296,6 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
                 <span>Calendar</span>
               </button>
               <button className={mode === "horoscopes" ? "active" : ""} type="button" onClick={() => navigateToPortalMode("horoscopes")}><Sparkles size={18} aria-hidden="true" /><span>Horoscopes</span></button>
-              <button className={mode === "learn" ? "active" : ""} type="button" onFocus={preloadLearnExperience} onPointerEnter={preloadLearnExperience} onClick={() => navigateToPortalMode("learn")}>
-                <BookOpen size={18} aria-hidden="true" />
-                <span>Learn</span>
-              </button>
               {userProfile && (
                 <>
                   <button
@@ -14564,11 +14560,28 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
                       </span>
                     )}
                   </button>
-                  <button className={mode === "account" ? "active" : ""} type="button" role="menuitem" onClick={() => { setSelectedSkyDetail(null); navigateToPortalMode("account"); setMenuOpen(false); }}>
-                    <User size={20} aria-hidden="true" />
-                    <span>Account</span>
-                  </button>
                 </>
+              )}
+              <button
+                className={mode === "learn" ? "active" : ""}
+                type="button"
+                role="menuitem"
+                onFocus={preloadLearnExperience}
+                onPointerEnter={preloadLearnExperience}
+                onClick={() => {
+                  setSelectedSkyDetail(null);
+                  navigateToPortalMode("learn");
+                  setMenuOpen(false);
+                }}
+              >
+                <BookOpen size={20} aria-hidden="true" />
+                <span>Learn</span>
+              </button>
+              {userProfile && (
+                <button className={mode === "account" ? "active" : ""} type="button" role="menuitem" onClick={() => { setSelectedSkyDetail(null); navigateToPortalMode("account"); setMenuOpen(false); }}>
+                  <User size={20} aria-hidden="true" />
+                  <span>Account</span>
+                </button>
               )}
               <button className={mode === "settings" ? "active" : ""} type="button" role="menuitem" onClick={() => { setSelectedSkyDetail(null); navigateToPortalMode("settings"); setMenuOpen(false); }}>
                 <Settings size={20} aria-hidden="true" />
