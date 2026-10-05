@@ -136,10 +136,13 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
    await expect(page.locator(".sky-detail-article")).not.toContainText("Synthetic Moon section");
    expect(errors).toEqual([]);
   } finally {
-   // Reader hydration can still be reading the fixture after the last assertion.
-   // Drain those routes before terminating their API process; the context guard
-   // continues to block any later API request from reaching real storage.
-   try { await page.unrouteAll({ behavior: "wait" }); } finally { store.close(); }
+   // Stop reader hydration while its isolated API is still available, then
+   // drain both routing layers before terminating the fixture process.
+   try {
+    await page.goto("about:blank");
+    await page.unrouteAll({ behavior: "wait" });
+    await page.context().unrouteAll({ behavior: "wait" });
+   } finally { store.close(); }
   }
  });
 }

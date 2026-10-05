@@ -95,6 +95,10 @@ The security advisor also reports existing project-wide warnings: seven mutable-
 
 The final broad CI exposed an existing aggregate budget failure after all Sky Summary browser assertions passed. Main `80d60f32b` fails the same gate in run `37261794909`. Matched clean npm-ci builds of main and audit `5721dad9a`, using the workflow Supabase placeholders, produce 74 byte-identical JavaScript assets: entry 765,959 raw / 222,951 gzip bytes, aggregate 786,030 bytes. This is a 30-byte overage of the existing 786,000-byte cap, with zero browser growth from these API fixes. The aggregate allowance is reconciled to 786,250 bytes; all other limits and deferred-payload checks remain unchanged. Failure messages now include exact byte counts so rounding cannot conceal the reason.
 
+## Browser fixture lifecycle
+
+The Moon reader regression exposed teardown failures after its copy and publication assertions passed: its isolated API process could be killed with a read still pending, and a late context guard could race browser shutdown. The test now navigates to a blank page while its fixture is available, waits for both routing layers to finish, and then stops the process. This changes test cleanup only; assertions and production-write isolation remain intact. Repeated variants and final release evidence are recorded in the PR.
+
 ## Evidence and limitations
 
 Local artifacts: `/private/tmp/studio-api-audit-20261005-baseline.log`, `studio-api-audit-20261005-final-api.log`, `studio-api-audit-20261005-browser.log`, `studio-api-audit-20261005-performance.json`, `studio-api-audit-20261005-save-performance.json`, and `studio-api-audit-20261005-production.json` (all under `/private/tmp`). Failure reproductions: `studio-inventory-integrity-before.log` and `studio-parser-audit-before.log`.
