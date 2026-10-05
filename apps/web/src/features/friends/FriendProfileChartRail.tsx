@@ -35,6 +35,7 @@ type FriendProfileChartRailProps = {
   onComparisonSelect: (id: string) => void;
   onComparisonToggle: () => void;
   onNatalViewModeChange: (mode: FriendNatalChartViewMode) => void;
+  onOpenFullscreen: (mode: "synastry" | "composite") => void;
   outerInitials: string;
   relationshipComparisonSky: WheelSky | null;
   synastryAspects: InterChartAspectLine[];
@@ -59,6 +60,7 @@ export function FriendProfileChartRail({
   onComparisonSelect,
   onComparisonToggle,
   onNatalViewModeChange,
+  onOpenFullscreen,
   outerInitials,
   relationshipComparisonSky,
   synastryAspects,
@@ -69,6 +71,11 @@ export function FriendProfileChartRail({
       className="relationship-detail-left friend-detail-chart-column friend-detail-chart-rail chart-layout__visual"
       aria-label={chartIsEvent ? "Event chart" : "Relationship chart"}
     >
+      {(activeTab === "synastry" && natalSky && relationshipComparisonSky) || (activeTab === "composite" && compositeSky) ? (
+        <button type="button" className="social-secondary-button" onClick={() => onOpenFullscreen(activeTab as "synastry" | "composite")}>
+          Full-screen chart
+        </button>
+      ) : null}
       {activeTab === "natal" && natalSky ? (
         <div className="friend-synastry-wheel-shell">
           <FriendNatalViewControl

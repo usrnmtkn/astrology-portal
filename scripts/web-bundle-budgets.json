@@ -1,8 +1,8 @@
 {
-  "appBootGzipBytes": 461000,
+  "appBootGzipBytes": 464500,
   "appChunkGzipBytes": 180000,
-  "readerBootGzipBytes": 514100,
-  "readerInitialCssGzipBytes": 54000,
+  "readerBootGzipBytes": 518350,
+  "readerInitialCssGzipBytes": 54750,
   "largestJavaScriptGzipBytes": 520000,
   "friendsWorkspaceChunkGzipBytes": 16500,
   "skyDetailChunkGzipBytes": 6000,
@@ -12,9 +12,10 @@
   "transitFallbackChunkGzipBytes": 390000,
   "relationshipFallbackChunkGzipBytes": 230000,
   "signupChunkGzipBytes": 4300,
-  "totalCssGzipBytes": 115000,
-  "totalJavaScriptGzipBytes": 3523100,
+  "totalCssGzipBytes": 116000,
+  "totalJavaScriptGzipBytes": 3525850,
   "_rationale": {
+    "relationshipChartRecovery20261005": "The requested synastry/composite controls, full-size row packing and scrolling add shared chart code and theme tokens. Separate npm-ci builds of main dfe6c5c08 and feature 005cf0a8a with identical visual-smoke Supabase placeholders, natal aspect patterns enabled and phone auth disabled measure app boot 460632 to 463889 (+3257), reader boot 513940 to 517890 (+3950), startup CSS 53308 to 54001 (+693), aggregate CSS 114597 to 115556 (+959), aggregate JS 3523075 to 3525250 (+2175), and shared Memory CSS 28951 to 29199 (+248), all gzip bytes. Allocate 3500/4250/750/1000/2750/300 bytes above the respective prior caps. No dependencies or prose are added; individual chunk, lazy-loading and runtime-performance checks stay unchanged. The apparent signup increase disappeared when the local phone-auth environment matched CI, so its cap is unchanged. See docs/qa/relationship-chart-design-recovery.md.",
     "weeklyRequiredVocabulary20261004": "Matched isolated npm-ci builds against main 1bef7c639 with identical browser-workflow Supabase placeholders measure aggregate JavaScript 3522498 to 3522810 gzip bytes (+312) and deferred horoscope editor 11299 to 11663 (+364). Exact-head CI measures aggregate 3522917 and editor 11662. Allocate 500 aggregate bytes and 200 editor-cap bytes above the prior limits and headroom, leaving at least 183 and 137 measured bytes. Required Weekly wording warnings remain deferred; reader startup, CSS, other chunk, memory graph, dependency and runtime-performance limits stay unchanged. No reader prose or paid generation is added. See docs/qa/horoscope-weekly-vocabulary.md.",
     "moonPlacementDiscovery20261003": "Matched isolated npm-ci builds against main 2fd8c427aa1f85b66269055ce690454f3142da1c with the visual-smoke Supabase placeholders measure aggregate JavaScript 3520196 to 3520531 gzip bytes (+335) across the same 220 files. The complete three-section Moon preview and library discovery stay in the deferred Content Studio route. Allocate 500 aggregate gzip bytes above the prior limit. Reader startup, individual chunks, CSS, memory graph, dependencies and runtime performance limits stay unchanged. No reader prose is added. See docs/qa/moon-sky-writeups.md. Integration with main 8857bc7ef preserves its separate 500-byte horoscope-variable allocation and adds the measured Moon allowance, for a combined cap of 3521250 bytes. The combined build measures 3520761 aggregate gzip bytes; startup and all other limits remain unchanged. Integration with main dbadf218c retains its separate Calendar allocation and adds the original 500-byte Moon allowance, for a combined aggregate cap of 3521750. Other limits remain unchanged.",
     "seasonalDepthPunctuation20261001": "The owner-required punctuation gate adds correction/recovery controls to the deferred horoscope editor and shared seasonal prompt guidance. Separate npm-ci builds of main a6defcb224 and implementation ccfe3d894 with identical browser-fixture Supabase placeholders measure 3,519,432 versus 3,519,877 aggregate gzip bytes (+445), and 10,262 versus 10,652 horoscope-editor bytes (+390). Allocate 500 aggregate bytes and 300 editor-cap bytes above the existing limits/headroom, leaving 373 and 148 measured bytes respectively. Reader startup, CSS, all other individual chunks, memory graph and runtime-performance limits remain unchanged. No dependencies or reader prose are added. The standalone admin budget passes unchanged. See docs/content-management/horoscope-writing-studio.md.",
@@ -93,7 +94,7 @@
     "horoscopeStartupRecovery20261003": "Allow 500 additional bytes for the deferred horoscope editor and 600 aggregate JavaScript bytes for per-sign interrupted-request controls, safe remaining-sign selection and bounded startup recovery. The first fresh fixture-environment build measures 11,299 bytes for the editor and 3,522,050 aggregate bytes. Reader boot, CSS, dependencies and all other chunk limits stay unchanged. See docs/qa/horoscope-startup-recovery.md; final measurements belong in the release PR."
   },
   "memoryGraphJavaScriptGzipBytes": 64000,
-  "memoryGraphCssGzipBytes": 29150,
+  "memoryGraphCssGzipBytes": 29450,
   "horoscopeReaderChunkGzipBytes": 3900,
   "horoscopeEditorChunkGzipBytes": 11800
 }

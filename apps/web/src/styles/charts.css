@@ -31,6 +31,51 @@
   overflow: visible;
 }
 
+.wheel-glyph-ring__band {
+  fill: var(--surface);
+}
+
+.sky-wheel--monochrome .wheel-glyph-ring__band {
+  fill-opacity: var(--chart-monochrome-glyph-ring-opacity);
+}
+
+.wheel-glyph-ring__edge {
+  fill: none;
+  stroke: var(--chart-line);
+  stroke-width: var(--chart-glyph-ring-line-width);
+}
+
+.sky-wheel.sky-wheel--monochrome .wheel-paper {
+  fill: var(--chart-monochrome-paper);
+}
+
+.sky-wheel.sky-wheel--monochrome .sign-band {
+  stroke: var(--ink);
+}
+
+.sky-wheel.sky-wheel--monochrome .zodiac-wheel__sign-label {
+  fill: var(--surface);
+}
+
+.sky-wheel.sky-wheel--monochrome .zodiac-wheel__sign-icon image {
+  filter: var(--chart-inverse-glyph-filter);
+}
+
+.sky-wheel.sky-wheel--monochrome .sign-band-dividers line {
+  stroke: var(--surface);
+}
+
+.sky-wheel.sky-wheel--monochrome:not(.sky-wheel--bright-aspects) .aspect-lines line {
+  stroke: var(--chart-degree-label);
+  stroke-width: var(--chart-monochrome-aspect-width);
+  stroke-dasharray: var(--chart-monochrome-aspect-dash);
+  opacity: var(--chart-monochrome-aspect-opacity);
+}
+
+.sky-wheel.sky-wheel--monochrome:not(.sky-wheel--bright-aspects) .aspect-endpoint {
+  fill: var(--chart-degree-label);
+}
+
 .friend-wheel .sky-wheel {
   max-width: 100%;
 }
@@ -634,17 +679,19 @@
   stroke-width: 1;
 }
 
-.sky-wheel-synastry .synastry-base-rings circle:nth-child(3),
-.sky-wheel-synastry .synastry-base-rings circle:nth-child(4) {
-  stroke: color-mix(in srgb, var(--chart-line) 76%, transparent);
+.sky-wheel-synastry .synastry-inner-glyph-band path {
+  fill: var(--transit-wheel-band-fill);
+  stroke: none;
 }
 
-.sky-wheel-synastry .synastry-house-band-guides circle {
-  fill: none;
-  stroke: color-mix(in srgb, var(--chart-line) 42%, transparent);
-  stroke-width: 0.7;
-  opacity: 0.42;
-  vector-effect: non-scaling-stroke;
+.sky-wheel-synastry .synastry-house-band path {
+  fill: var(--surface);
+  stroke: var(--chart-line);
+  stroke-width: var(--chart-synastry-house-ring-line-width);
+}
+
+.sky-wheel-synastry .synastry-house-band--inner path {
+  fill: var(--surface-2);
 }
 
 .sky-wheel-synastry .wheel-sectors line {
@@ -678,19 +725,11 @@
 
 .sky-wheel-synastry .synastry-house-number {
   font-family: var(--font-label);
+  font-size: var(--chart-degree-size);
   font-weight: var(--weight-medium);
   letter-spacing: 0;
-  fill: var(--wheel-label);
-  opacity: 0.5;
-}
-
-.sky-wheel-synastry .synastry-house-number--outer {
-  opacity: 0.48;
-}
-
-.sky-wheel-synastry .synastry-house-number--inner {
-  fill: color-mix(in srgb, var(--synastry-inner-glyph) 42%, var(--wheel-label));
-  opacity: 0.5;
+  fill: var(--ink);
+  opacity: 1;
 }
 
 .sky-wheel-synastry .planet-marker-outer .planet-glyph,
@@ -714,7 +753,7 @@
 }
 
 .sky-wheel-synastry .interchart-aspect-lines line {
-  stroke-width: var(--synastry-aspect-line-width);
+  stroke-width: var(--aspect-line-width);
   opacity: max(var(--aspect-line-opacity), var(--synastry-aspect-line-opacity-min));
 }
 
@@ -734,14 +773,6 @@
 :is(.theme-dark, [data-theme="dark"]) .sky-wheel-synastry .wheel-sectors line {
   stroke: var(--wheel-soft);
   opacity: 0.42;
-}
-
-:is(.theme-dark, [data-theme="dark"]) .sky-wheel-synastry .synastry-house-number {
-  opacity: 0.62;
-}
-
-:is(.theme-dark, [data-theme="dark"]) .sky-wheel-synastry .synastry-house-number--inner {
-  fill: color-mix(in srgb, var(--synastry-inner-glyph) 54%, var(--wheel-label));
 }
 
 .chart-fullscreen-panel {
@@ -1079,4 +1110,103 @@
   color: var(--ink);
   font-weight: var(--weight-medium);
   min-width: 0;
+}
+
+/* Recovered relationship-wheel presentation, scoped away from natal/transit. */
+:is(.sky-wheel-composite, .sky-wheel-synastry) .aspect-endpoint {
+  fill: var(--aspect-line-stroke, var(--aspect-muted));
+  stroke: none;
+  pointer-events: none;
+}
+:is(.sky-wheel-composite, .sky-wheel-synastry) .aspect-lines .aspect-line-hard line,
+.sky-wheel-synastry .interchart-aspect-lines .aspect-line-hard line {
+  mix-blend-mode: normal;
+}
+.sky-wheel-composite .wheel-sectors line {
+  stroke-dasharray: var(--chart-sector-dash);
+  opacity: var(--chart-sector-opacity);
+}
+
+.relationship-wheel-controls {
+  display: grid;
+  gap: var(--space-2);
+  width: 100%;
+  padding: var(--space-3);
+  font-family: var(--font-label);
+  font-size: var(--text-meta-size);
+  font-weight: var(--weight-regular);
+  line-height: var(--leading-meta);
+  color: var(--ink);
+}
+.relationship-wheel-controls__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+.relationship-wheel-controls__legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-3);
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+.relationship-wheel-controls__legend li {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  font: inherit;
+}
+.chart-shell:has(.relationship-wheel-controls),
+.chart-frame:has(.relationship-wheel-controls) {
+  height: auto;
+  aspect-ratio: auto;
+  overflow: visible;
+}
+
+.relationship-wheel-controls__swatch {
+  display: inline-block;
+  width: var(--space-4);
+  height: var(--space-1);
+  border-radius: var(--radius-pill);
+  flex: none;
+}
+.sky-wheel-synastry {
+  --synastry-inner-glyph: var(--chart-glyph);
+  --filter-synastry-inner-glyph: var(--chart-glyph-filter);
+}
+.chart-fullscreen-wheel-wrap:has(.relationship-wheel-controls) {
+  overflow: auto;
+}
+.chart-fullscreen-overlay:has(.relationship-wheel-controls) {
+  max-height: inherit;
+}
+.chart-shell--fullscreen:has(.relationship-wheel-controls) {
+  max-height: none;
+}
+
+.relationship-wheel-viewport {
+  container-type: inline-size;
+  width: 100%;
+  min-width: 0;
+  max-height: var(--chart-size);
+  overflow: auto;
+}
+.relationship-wheel-viewport > .sky-wheel,
+.chart-frame .relationship-wheel-viewport > .sky-wheel {
+  width: var(--chart-relationship-canvas-width);
+  max-width: none;
+  height: auto;
+  margin-inline: auto;
+}
+.chart-shell--fullscreen:has(.relationship-wheel-controls),
+.chart-shell--fullscreen:has(.relationship-wheel-controls) .chart-frame,
+.chart-shell--fullscreen:has(.relationship-wheel-controls) .sky-wheel-shell {
+  width: 100%;
+  max-width: none;
+}
+.chart-shell--fullscreen .relationship-wheel-viewport {
+  max-height: none;
 }
