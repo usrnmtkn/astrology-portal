@@ -38,7 +38,7 @@ async function prepare(page: Page, theme: string, unknownFriendBirthTime = false
     }));
     for (const record of records) localStorage.setItem(record.cacheKey, JSON.stringify({ ...record, schema, verifiedAt: new Date().toISOString() }));
     localStorage.setItem("tldrastro:manualCharts:article-facts-qa", JSON.stringify([{
-      id: "facts-friend", ownerUserId: "article-facts-qa", chartType: "person", displayName: "Alisa P", firstName: "Alisa",
+      id: "facts-friend", ownerUserId: "article-facts-qa", chartType: "person", displayName: "Example Friend", firstName: "Example",
       relationshipType: "friend", birthDate: "1988-04-03", birthTime: unknownFriendBirthTime ? null : "09:15", birthTimeUnknown: unknownFriendBirthTime,
       birthPlace: location.label, birthLocation: location, natalChart: { ...friendNatal, birthTimeKnown: !unknownFriendBirthTime },
       createdAt: "2026-09-01T12:00:00Z", updatedAt: "2026-09-01T12:00:00Z", syncStatus: "local"
@@ -50,7 +50,7 @@ async function prepare(page: Page, theme: string, unknownFriendBirthTime = false
 const signs = ["Aries", "Taurus", "Gemini", "Cancer", "Leo", "Virgo", "Libra", "Scorpio", "Sagittarius", "Capricorn", "Aquarius", "Pisces"];
 const ordinal = (house: number) => `${house}${house === 1 ? "st" : house === 2 ? "nd" : house === 3 ? "rd" : "th"}`;
 function expectedIdentity(title: string, sky: SkySnapshot, natalChart: SkySnapshot, owner = "your") {
-  const match = title.match(/^(.+?) (conjunction|conjunct|opposition|opposite|square|trine|sextile) (?:your |Alisa P's )?(.+)$/)!;
+  const match = title.match(/^(.+?) (conjunction|conjunct|opposition|opposite|square|trine|sextile) (?:your |their )?(.+)$/)!;
   expect(match, `Unrecognized calculated title: ${title}`).toBeTruthy();
   const transit = sky.positions.find(position => position.planet === match[1])!;
   const target = natalChart.positions.find(position => position.planet === match[3])!;
@@ -109,8 +109,9 @@ for (const theme of ["light", "dark"]) {
     await page.goto("/?date=2026-09-08#friends?tab=charts&chart=facts-friend&view=transits");
     const row = page.locator("button.friend-transit-row:has(.updates-aspect-row__orb)").first();
     await expect(row).toBeVisible({ timeout: 45_000 });
+    expect(await page.locator("button.friend-transit-row").allTextContents()).not.toEqual(expect.arrayContaining([expect.stringContaining("Example Friend")]));
     const title = await row.locator(".updates-aspect-row__title").innerText();
-    const expected = expectedIdentity(title, skies[0], friendNatal, "Alisa P's");
+    const expected = expectedIdentity(title, skies[0], friendNatal, "their");
     await expect(row).not.toContainText(expected);
     await row.click();
     const footer = page.getByLabel("Transit details", { exact: true });
@@ -124,7 +125,7 @@ for (const theme of ["light", "dark"]) {
     const bondTitle = await bond.locator(".updates-aspect-row__title").innerText();
     const isReader = bondTitle.includes(" your ");
     await bond.click();
-    await expect(footer).toHaveText(expectedIdentity(bondTitle, skies[0], isReader ? natal : friendNatal, isReader ? "your" : "Alisa P's"));
+    await expect(footer).toHaveText(expectedIdentity(bondTitle, skies[0], isReader ? natal : friendNatal, isReader ? "your" : "their"));
     await verifyFooter(page, footer, theme, "bond");
     const reading = page.locator('.sky-detail-page:has(.article-section__eyebrow)');
     await expect(reading).toBeVisible();
@@ -175,7 +176,7 @@ test("Unknown birth time keeps the article's signs without inventing houses", as
   await expect(row).toBeVisible({ timeout: 45_000 });
   await row.click();
   const footer = page.getByLabel("Transit details", { exact: true });
-  await expect(footer).toContainText(/in [A-Z][a-z]+ is .+ Alisa P's natal/);
+  await expect(footer).toContainText(/in [A-Z][a-z]+ is .+ their natal/);
   await expect(footer).not.toContainText(/house|undefined|null|NaN/);
   await verifyFooter(page, footer, "light", "unknown-time");
 });

@@ -81,7 +81,7 @@ const joseCard = renderer.renderBondTransit({
   sign: "aries",
   window: "Until November 13"
 });
-assert.equal(joseCard.headline, "Saturn sextile Jose's Mars");
+assert.equal(joseCard.headline, "Saturn sextile their Mars");
 assert.equal(joseCard.parts.length, 2);
 const saturnSextileEffect = sourceRows.hookRows.find(
   (row) => row.contentKey === "fallback-hook/bond-effect-sextile/saturn"
@@ -93,7 +93,7 @@ assert.equal(
 );
 assert.equal(
   joseCard.parts[1],
-  "Saturn in Aries is sextile Jose's Mars through November 13, activating the connections his Mars makes with your Moon, your Midheaven, and your Lilith."
+  "Saturn in Aries is sextile their Mars through November 13, activating the connections their Mars makes with your Moon, Midheaven, and Lilith."
 );
 
 const chrisGroups = groupBondTransitActivations([
@@ -153,7 +153,7 @@ assert.equal(
 );
 assert.equal(
   chrisCard.parts[1],
-  "Saturn in Aries is square your Venus through November 13, activating the connections it makes with Chris's Mercury, Saturn, and Midheaven."
+  "Saturn in Aries is square your Venus through November 13, activating the connections it makes with their Mercury, Saturn, and Midheaven."
 );
 assert.doesNotMatch(chrisCard.headline, /connection/iu);
 assert.doesNotMatch(chrisCard.body, /aspect(?:s|ing)? (?:to|the) connection/iu);
@@ -171,7 +171,7 @@ const single = renderer.renderBondTransit({
 });
 assert.equal(
   single.parts[1],
-  "Saturn in Aries is sextile Jose's Mars through November 13, activating the connection it makes with your Moon."
+  "Saturn in Aries is sextile their Mars through November 13, activating the connection it makes with your Moon."
 );
 assert.equal(
   single.parts[0],

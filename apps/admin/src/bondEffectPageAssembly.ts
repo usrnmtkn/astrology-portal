@@ -42,7 +42,7 @@ export function friendsTransitCardDestinations(query: string) {
 }
 
 const contactSearchStopwords = new Set([
-  "a", "an", "the", "your", "you", "natal", "compatibility", "effect", "between", "two", "aspect", "to"
+  "a", "an", "the", "your", "you", "their", "they", "natal", "compatibility", "effect", "between", "two", "aspect", "to"
 ]);
 
 const contactSearchPoints = new Set<string>([...transitNatalPlanets, ...transitNatalPoints]);
@@ -220,8 +220,8 @@ export function parseFriendsActivationParam(value: string | null | undefined) {
   return { friendPoint: friendToken, aspect };
 }
 
-export function bondEffectPageHeadline(planet: string, aspect: string, natalPoint: string) {
-  return friendsTransitReaderTitle(planet, aspect, natalPoint);
+export function bondEffectPageHeadline(planet: string, aspect: string, natalPoint: string, audience: "you" | "they" = "you") {
+  return `${fallbackHookWords(planet)} ${aspectTechnicalVerb(aspect)} ${audience === "they" ? "their" : "your"} ${fallbackHookWords(natalPoint)}`;
 }
 
 export function bondActivationHeadline(
@@ -241,15 +241,17 @@ export function bondCalculatedFactLine(input: {
   aspect: string;
   natalPoint: string;
   natalSign: string;
+  audience?: "you" | "they";
 }) {
   const house = houseOrdinal(input.transitHouse);
+  const possessive = input.audience === "they" ? "their" : "your";
   const transiting = [
     fallbackHookWords(input.planet),
     input.transitSign ? `in ${fallbackHookWords(input.transitSign)}` : "",
-    house ? `in your ${house} house` : ""
+    house ? `in ${possessive} ${house} house` : ""
   ].filter(Boolean).join(" ");
   const natal = [
-    "your natal",
+    `${possessive} natal`,
     fallbackHookWords(input.natalPoint),
     input.natalSign ? `in ${fallbackHookWords(input.natalSign)}` : ""
   ].filter(Boolean).join(" ");

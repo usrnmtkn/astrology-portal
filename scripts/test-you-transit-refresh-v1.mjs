@@ -33,8 +33,10 @@ const source = read(sourcePath);
 const bundled = read(bundledPath);
 const sunAscAuthority = read(sunAscAuthorityPath);
 const venusMoonAuthority = read(venusMoonAuthorityPath);
+const namingRevision = read("packages/astro-knowledge/review/friend-transit-pronouns-2026-10-05.json");
+const namingEdits = new Map(namingRevision.edits.filter((edit) => edit.field === "body_they").map((edit) => [edit.contentKey, edit]));
 
-assert.equal(PACKAGE_VERSION, "v3-2026-09-24-calculated-repeat-contacts");
+assert.equal(PACKAGE_VERSION, "v3-2026-10-05-friend-transit-pronouns");
 assert.equal(candidates.status, "ready_for_owner_directed_batch_promotion");
 assert.equal(candidates.count, 376);
 assert.equal(review.status, "clear");
@@ -60,8 +62,18 @@ assert.equal(sha256(fs.readFileSync(path.join(root, reviewPath), "utf8")), autho
 
 const sourceRows = source.authoredCards.filter((row) => String(row.contentKey ?? "").startsWith("authored/transit-aspect/"));
 const bundledRows = bundled.authoredCards.filter((row) => String(row.contentKey ?? "").startsWith("authored/transit-aspect/"));
-assert.equal(sourceRows.length, 378);
-assert.equal(bundledRows.length, 378);
+assert.equal(sourceRows.length, 384);
+assert.equal(bundledRows.length, 384);
+for (const rows of [sourceRows, bundledRows]) {
+  assert.equal(rows.filter((row) => typeof row.body_you === "string").length, 378);
+  const friendOnlyRows = rows.filter((row) => typeof row.body_you !== "string");
+  assert.equal(friendOnlyRows.length, 6);
+  for (const row of friendOnlyRows) {
+    assert.equal(row.body_they_authorship, "owner_supplied");
+    assert.equal(typeof row.body, "undefined", `${row.contentKey}: friend-only copy must not become a You fallback.`);
+    assert.equal(sha256(row.body_they), namingEdits.get(row.contentKey)?.afterSha256);
+  }
+}
 const sourceByKey = new Map(sourceRows.map((row) => [row.contentKey, row]));
 const bundledByKey = new Map(bundledRows.map((row) => [row.contentKey, row]));
 const candidateByKey = new Map(candidates.records.map((record) => [record.contentKey, record]));
@@ -97,12 +109,14 @@ for (const record of candidates.records) {
   assert.equal(sourceRow.body_you_approval?.approvalLevel, "owner_directed_perspective_adaptation_batch");
   assert.equal(sourceRow.body_you_approval?.payloadSha256, record.proposedBodyYouSha256);
   assert.equal(sourceRow.body_you_approval?.semanticAuthoritySha256, record.sourceBodyTheySha256);
-  assert.equal(sourceRow.body_they, record.sourceBodyThey, `${record.contentKey}: Friends semantic authority changed.`);
-  assert.equal(sha256(sourceRow.body_they), record.sourceBodyTheySha256);
+  const namingEdit = namingEdits.get(record.contentKey);
+  assert.equal(namingEdit?.beforeSha256, record.sourceBodyTheySha256, `${record.contentKey}: original Friends authority must remain verified.`);
+  assert.equal(sha256(record.sourceBodyThey), record.sourceBodyTheySha256);
+  assert.equal(sha256(sourceRow.body_they), namingEdit.afterSha256, `${record.contentKey}: only the owner-directed naming revision may replace Friends copy.`);
   if (typeof sourceRow.body === "string") assert.equal(sourceRow.body, sourceRow.body_you, `${record.contentKey}: source body/body_you drift.`);
 
   assert.equal(bundledRow.body_you, record.proposedBodyYou, `${record.contentKey}: bundled You copy drifted.`);
-  assert.equal(bundledRow.body_they, record.sourceBodyThey, `${record.contentKey}: bundled Friends copy drifted.`);
+  assert.equal(sha256(bundledRow.body_they), namingEdit.afterSha256, `${record.contentKey}: bundled Friends copy drifted.`);
   if (typeof bundledRow.body === "string") assert.equal(bundledRow.body, bundledRow.body_you, `${record.contentKey}: bundled body/body_you drift.`);
   assert.doesNotMatch(sourceRow.body_you, /\{\{Name\}\}/u, `${record.contentKey}: You copy contains {{Name}}.`);
   assert.doesNotMatch(sourceRow.body_you, /(?:^|[.!?]\s+|\n\n)You\s+(?:is|has|does|was)\b/u, `${record.contentKey}: bad You grammar.`);
@@ -122,9 +136,9 @@ assert.equal(typeof venusMoon.body_they, "undefined");
 assert.equal(candidateByKey.has(protectedVenusMoon), false);
 
 const explicitFriends = sourceRows.filter((row) => typeof row.body_they === "string" && row.body_they.trim());
-assert.equal(explicitFriends.length, 377);
+assert.equal(explicitFriends.length, 383);
 assert.equal(explicitFriends.filter((row) => String(row.contentKey).startsWith("authored/transit-aspect/sun/")).length, 27);
-assert.equal(explicitFriends.filter((row) => !String(row.contentKey).startsWith("authored/transit-aspect/sun/")).length, 350);
+assert.equal(explicitFriends.filter((row) => !String(row.contentKey).startsWith("authored/transit-aspect/sun/")).length, 356);
 assert.equal(sourceRows.filter((row) => typeof row.body === "string" && typeof row.body_you === "string" && row.body !== row.body_you).length, 0);
 
 const sunMidheaven = sourceByKey.get("authored/transit-aspect/sun/midheaven/hard");

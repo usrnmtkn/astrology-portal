@@ -38,7 +38,7 @@ assert.ok(
 );
 assert.equal(
   friendVoiceFromReaderCopy("Someone keeps cheering you up.", "Sofia"),
-  "Someone keeps cheering Sofia up.",
+  "Someone keeps cheering them up.",
   "Object-position reader references in phrasal verbs must use the friend object form."
 );
 
@@ -81,12 +81,8 @@ const neptuneHardRow = transitAspectRows.find(
 );
 assert.ok(neptuneHardRow, "The Neptune-Neptune hard card must remain in the authored library.");
 
-const neptuneFriendBody = friendVoiceFromReaderCopy(neptuneHardRow.body_you, "Nikki");
-assert.match(
-  neptuneFriendBody,
-  /^The achievements that used to satisfy them may stop satisfying them\./u,
-  "Fallback object-position reader references should render with the correct friend pronoun."
-);
+const neptuneFriendBody = friendVoiceFromReaderCopy("The achievements that used to satisfy you may stop satisfying you.", "Nikki");
+assert.equal(neptuneFriendBody, "The achievements that used to satisfy them may stop satisfying them.");
 assert.doesNotMatch(
   neptuneFriendBody,
   /\bsatisf(?:y|ies|ied|ying)\s+they\b/iu,
