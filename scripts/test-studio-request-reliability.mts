@@ -44,7 +44,7 @@ try {
       options!.signal!.addEventListener('abort', () => reject(new DOMException('aborted', 'AbortError')));
     })) as typeof fetch;
     const pending = requestStudioJson('/api/admin/generated-content', 'fixture', { method });
-    const rejected = assert.rejects(pending, method === 'GET' ? /no changes were submitted/ : /save has not been confirmed/);
+    const rejected = assert.rejects(pending, method === 'GET' ? /editor text is unchanged/ : /save has not been confirmed/);
     expire();
     await rejected;
     globalThis.setTimeout = originalTimeout;
