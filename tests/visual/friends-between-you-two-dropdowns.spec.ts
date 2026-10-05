@@ -196,6 +196,8 @@ test("Saved relationship copy uses the selected name in both preview audiences a
     await expect(map.getByRole("button", { name: "Edit Friend opening", exact: true })).toHaveText(`${opening.replaceAll("{{holder1}}", "Name")} Friend view.`);
     await map.getByLabel("Preview friend name").fill("Example Friend");
     await expect(map.getByRole("button", { name: "Edit Friend opening", exact: true })).toContainText("Example Friend wants the bigger version");
+    await expect(map).toContainText("Jupiter in Libra in Example Friend's 5th house is opposite their natal Sun in Gemini.");
+    await expect(map).not.toContainText("Only use their name when pronouns would make the sentence ambiguous.");
     await map.getByLabel("Opening audience").selectOption("you");
     await expect(map.getByRole("heading", { level: 3, name: "Jupiter opposite your Sun" })).toBeVisible();
     await map.getByLabel("Opening audience").selectOption("they");

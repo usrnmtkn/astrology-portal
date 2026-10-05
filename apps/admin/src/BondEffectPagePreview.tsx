@@ -245,7 +245,8 @@ export default function BondEffectPagePreview({
     aspect: transitAspect,
     natalPoint,
     natalSign,
-    audience
+    audience,
+    friendName
   });
   const loadedSynastry = synastry.load;
   const synastryYou = loadedSynastry
@@ -278,7 +279,7 @@ export default function BondEffectPagePreview({
       </Grid>
       <fieldset className="admin-metadata-fields" aria-label="Between you two transit">
         <legend>Between you two</legend>
-        <p className="admin-field-hint">The selected person is already established. Use you, they, their, and the two of you in titles and copy. Only use their name when pronouns would make the sentence ambiguous.</p>
+        <p className="admin-field-hint">Address the reader as you and use the friend's name for the other person. Natural pronouns may follow when clear. Use the two of you for the pair.</p>
         <label>
           <span>Opening</span>
           <AdminSelect aria-label="Opening audience" value={audience} onChange={(event) => setAudience(event.target.value as "you" | "they")}>
@@ -397,7 +398,7 @@ export default function BondEffectPagePreview({
                     <Fact title="Transiting planet comes from the selected contact">{titleFromKey(transitingPlanet)}</Fact>
                     {" "}
                     <Fact title="Aspect comes from the selected contact">{aspectTechnicalVerb(transitAspect)}</Fact>
-                    {audience === "they" ? " their " : " your "}
+                    {audience === "they" ? ` ${friendName.trim() || "Name"}'s ` : " your "}
                     <Fact title="Natal point comes from the selected chart example">{titleFromKey(natalPoint)}</Fact>
                   </p>
                 </div>

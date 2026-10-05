@@ -243,16 +243,18 @@ export function bondCalculatedFactLine(input: {
   natalPoint: string;
   natalSign: string;
   audience?: "you" | "they";
+  friendName?: string;
 }) {
   const house = houseOrdinal(input.transitHouse);
   const possessive = input.audience === "they" ? "their" : "your";
+  const namedPossessive = input.audience === "they" ? `${input.friendName?.trim() || "Name"}'s` : "your";
   const transiting = [
     fallbackHookWords(input.planet),
     input.transitSign ? `in ${fallbackHookWords(input.transitSign)}` : "",
-    house ? `in ${possessive} ${house} house` : ""
+    house ? `in ${namedPossessive} ${house} house` : ""
   ].filter(Boolean).join(" ");
   const natal = [
-    `${possessive} natal`,
+    `${house ? possessive : namedPossessive} natal`,
     fallbackHookWords(input.natalPoint),
     input.natalSign ? `in ${fallbackHookWords(input.natalSign)}` : ""
   ].filter(Boolean).join(" ");
