@@ -1,5 +1,4 @@
-import { RelationshipWheelControls, useRelationshipWheelDisplay } from "./RelationshipWheelControls";
-import { RelationshipWheelViewport } from "./RelationshipWheelViewport";
+import { useRelationshipWheelDisplay } from "./useRelationshipWheelDisplay";
 import type { CSSProperties, KeyboardEvent, MouseEvent, ReactNode } from "react";
 import { memo, useEffect, useId, useMemo, useRef, useState } from "react";
 import type { PlanetPosition, SkySnapshot } from "../../types";
@@ -23,13 +22,12 @@ import {
   chartHouseLabelGeometry,
   chartHouseLabelRadiusFactor,
   chartSignLabelGeometry,
-  houseBoundedWheelMarkerLayouts,
+  fittedWheelMarkerLayouts,
   wheelMarkerLayouts,
   inwardMarkerOffset,
   longitudeToChartAngle,
   polarToCartesian,
-  wheelViewBox,
-  relationshipWheelViewBox
+  wheelViewBox
 } from "./wheelGeometry";
 
 export type HouseSignLabelStyle = "text" | "glyph";
@@ -471,7 +469,7 @@ export const SkyWheel = memo(function SkyWheel({
       })
     );
   }, [aspects, positions]);
-  const planetLayouts = useMemo(() => refinedLayout ? houseBoundedWheelMarkerLayouts(
+  const planetLayouts = useMemo(() => refinedLayout ? fittedWheelMarkerLayouts(
     positions,
     (position) => position.planet,
     (position) => zodiacLongitude(position),
@@ -516,11 +514,6 @@ export const SkyWheel = memo(function SkyWheel({
       maxMarkerRadius: radius.outer + 30
     }
   ), [transitPositions, ascendantLongitude, isAscendantAnchored]);
-  if (refinedLayout) {
-    radius.planet = Math.max(218, ...[...planetLayouts.values()].map(layout => Math.hypot(layout.marker.x - center, layout.marker.y - center)));
-    radius.signInner = Math.max(240, radius.planet + 22);
-    radius.outer = radius.signInner + 44;
-  }
   const signLabelRadius = (radius.outer + radius.signInner) / 2;
   const signDividerInnerRadius = radius.signInner - 2;
   const signDividerOuterRadius = radius.outer;
@@ -794,7 +787,7 @@ export const SkyWheel = memo(function SkyWheel({
 
     return "idle";
   }
-  const activeWheelViewBox = hasTransitOverlay ? "-76 -76 752 752" : refinedLayout ? relationshipWheelViewBox(radius.outer) : wheelViewBox;
+  const activeWheelViewBox = hasTransitOverlay ? "-76 -76 752 752" : wheelViewBox;
 
   return (
     <>
@@ -802,7 +795,6 @@ export const SkyWheel = memo(function SkyWheel({
         ref={wheelShellRef}
         className={`sky-wheel-shell sky-wheel-shell-${variant}${inspectorEnabled ? " sky-wheel-shell--aspect-inspector" : ""}${focusedInspectorPoint ? " is-inspecting-aspects" : ""}`}
       >
-        <RelationshipWheelViewport outerRadius={radius.outer} enabled={refinedLayout}>
         <svg
           className={`sky-wheel sky-wheel-${variant}${appearance === "monochrome" ? " sky-wheel--monochrome" : ""}${aspectColorMode === "bright" ? " sky-wheel--bright-aspects" : ""}${hasTransitOverlay ? " sky-wheel-transit-overlay" : ""}${inspectorEnabled ? " sky-wheel--aspect-inspector" : ""}${focusedInspectorPoint ? " is-inspecting-aspects" : ""}`}
           viewBox={activeWheelViewBox}
@@ -1195,13 +1187,11 @@ export const SkyWheel = memo(function SkyWheel({
           })}
         </g>
         {!hasTransitOverlay ? (
-          <text x={center} y={626 + (refinedLayout ? radius.outer - 284 : 0)} className="chart-house-system-label">
+          <text x={center} y={626} className="chart-house-system-label">
             Houses: Whole Sign
           </text>
         ) : null}
         </svg>
-        </RelationshipWheelViewport>
-        {refinedLayout ? <RelationshipWheelControls display={display} composite /> : null}
         {aspectInspectorControls}
         {focusedInspectorPoint ? (
           <div className="aspect-inspector-summary" role="status" aria-live="polite">

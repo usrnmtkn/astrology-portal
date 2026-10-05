@@ -1223,6 +1223,8 @@
   --auth-card-padding: clamp(calc(var(--space-7) - var(--space-1) / 2), 5vw, 44px);
   --auth-card-radius: calc(var(--card-radius) + 8px);
   --input-inner-radius: calc(var(--input-radius) - 2px);
+  --chart-dialog-height: min(960px, calc(100svh - 28px));
+  --chart-dialog-mobile-height: calc(100svh - 16px);
   --chart-dialog-padding: clamp(calc(var(--space-4) + var(--space-1) / 2), 3vw, calc(var(--space-7) - var(--space-1) / 2));
   --chart-dialog-top-padding: clamp(var(--space-1), 1vh, var(--space-3));
   --chart-mobile-safe-padding: calc(env(safe-area-inset-top, 0px) + calc(var(--space-3) + var(--space-1) / 2)) max(var(--space-5), env(safe-area-inset-left, 0px)) calc(var(--space-3) + var(--space-1) / 2);
@@ -1660,8 +1662,8 @@
   --calendar-switch-off: var(--calendar-chip);
 }
 
-/* Evaluate the shared canvas formula where its calculated per-wheel expansion
-   is supplied. Full-screen space reveals more of the same-size canvas. */
-.relationship-wheel-viewport {
-  --chart-relationship-canvas-width: calc(min(100cqw, var(--chart-size)) * var(--relationship-wheel-expansion, 1));
+/* Resolve the responsive wheel limit on the dialog's canvas, where the
+   inherited full-screen size and the available container dimensions exist. */
+.chart-shell--fullscreen {
+  --chart-fullscreen-canvas-size: min(100cqw, 100cqh, var(--chart-fullscreen-wheel-size));
 }

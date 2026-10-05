@@ -280,7 +280,7 @@
   .app-shell.mode-friends .friend-detail-chart-rail .friend-synastry-wheel-shell,
   .app-shell.mode-friends .friend-detail-chart-rail .friend-wheel,
   .app-shell.mode-friends .friend-detail-chart-rail .sky-wheel-shell,
-  .app-shell.mode-friends .friend-detail-chart-rail :is(.sky-wheel, svg):not(.relationship-wheel-viewport > svg) {
+  .app-shell.mode-friends .friend-detail-chart-rail :is(.sky-wheel, svg) {
     max-width: var(--shared-chart-size);
     width: 100%;
   }

@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { houseBoundedWheelMarkerLayouts } from '../apps/web/src/components/charts/wheelGeometry.ts';
+import { fittedWheelMarkerLayouts, houseBoundedWheelMarkerLayouts } from '../apps/web/src/components/charts/wheelGeometry.ts';
 const normalized = angle => ((angle % 360) + 360) % 360;
 function layout(longitudes, radius = 218, rotation = 0) {
   return houseBoundedWheelMarkerLayouts(longitudes.map((longitude, i) => ({ key: String(i), longitude })), item => item.key, item => item.longitude, {
@@ -94,3 +94,34 @@ const span = points => {
 };
 assert.ok(span([...stellium.values()].slice(1)) < span(loose.values()), 'a crowded group occupies less space without shrinking its glyphs');
 console.log('Wheel layout: tighter clusters, house containment, glyph separation, cusps, dense houses, rotations and 300 irregular charts passed.');
+
+// Page-fitting mode keeps the natal canvas even when a sector has no room for
+// another full-size row. Exact ticks are unchanged and displayed glyphs separate.
+for (const radius of [123, 218, 220]) for (let rotation = 0; rotation < 360; rotation += 17) {
+  for (const longitudes of [Array(22).fill(0), [358,359,0,1,2,3], [309,311,314,319,323,45],
+    Array.from({length:22}, (_, i) => (i * 137.5) % 360)]) {
+    const items = longitudes.map((longitude, index) => ({ key: String(index), longitude }));
+    const result = fittedWheelMarkerLayouts(items, item => item.key, item => item.longitude, {
+      radius, minimumRadius: radius === 218 ? 142 : radius, center:300,
+      minimumSpacing: radius === 123 ? 33 : 37.5, rowSpacing:54,
+      glyphSize:radius === 123 ? 22 : 26, annotationOffset:22,
+      angleForLongitude:longitude => longitude + rotation
+    });
+    const boxes=[];
+    result.forEach((point,key) => {
+      assert.equal(point.scale,1,'fitting the page never shrinks a glyph');
+      assert.ok(point.radius <= radius + 1e-6,'all markers fit inside their fixed ring');
+      assert.equal(point.angle,normalized(longitudes[Number(key)] + rotation),'tick and aspect coordinates remain exact');
+      const angle=point.visualAngle*Math.PI/180;
+      const half=radius===123?11:13;
+      boxes.push({key,x:point.marker.x,y:point.marker.y,hw:half,hh:half});
+      boxes.push({key,x:300+Math.cos(angle)*(point.radius-22),y:300-Math.sin(angle)*(point.radius-22),hw:12,hh:6});
+    });
+    boxes.forEach((a,i)=>boxes.slice(i+1).forEach(b=>{
+      if(a.key===b.key)return;
+      assert.ok(Math.abs(a.x-b.x)>=a.hw+b.hw-1e-6 || Math.abs(a.y-b.y)>=a.hh+b.hh-1e-6,
+        `fixed-ring glyphs and annotations separate at radius ${radius}, rotation ${rotation}`);
+    }));
+  }
+}
+console.log('Page-fitting wheels: fixed rings, full-size glyphs and exact ticks passed through all rotations.');
