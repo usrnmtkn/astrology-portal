@@ -24,7 +24,7 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
       const rows = await readStudioFeedback({ key: url.searchParams.get('contentKey') ?? undefined, offset, limit: 50 });
       return sendAdminJson(res, 200, { ok: true, enabled: true, rows, offset, hasMore: rows.length === 50, fetchedAt: new Date().toISOString() });
     }
-    const body: any = (req as any).body ?? await readAdminJsonBody(req);
+    const body = await readAdminJsonBody<any>(req);
     if (!body || Array.isArray(body) || Object.keys(body).some(k => !['id','version','status','scope','reason'].includes(k))
       || !/^[0-9a-f-]{36}$/i.test(body.id ?? '') || !Number.isInteger(body.version) || body.version < 1
       || !['active','retired'].includes(body.status) || !['passage','family','sky'].includes(body.scope)

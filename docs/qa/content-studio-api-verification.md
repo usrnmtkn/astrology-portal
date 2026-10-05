@@ -222,3 +222,16 @@ reader display, computed table typography, empty search results and light/dark
 mobile/desktop layouts. Browser write tests use isolated storage, including when
 testing deployed assets. Existing reader prose and computed ingress timing are
 unchanged.
+
+## October 5 route and source-integrity audit
+
+The required API command now includes the complete protected-route access matrix,
+paginated virtual-source integrity, and a bounded 16,000-row inventory benchmark.
+New admin handlers must be classified in `config/content-studio-api-routes.json`.
+The matrix executes declared methods with anonymous, ordinary and expired sessions;
+it does not replace each route's positive CRUD/publication regression.
+
+Virtual inventory sources must respect state filters and must never replace a saved
+source that appeared on an earlier page or was filtered out. A failed or truncated
+saved-key lookup must remain an error. The audit and verification limits are recorded
+in [the October 5 report](content-studio-api-audit-2026-10-05.md).

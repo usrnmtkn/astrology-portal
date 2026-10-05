@@ -2,7 +2,7 @@ import type { IncomingMessage, ServerResponse } from "node:http";
 import { URL } from "node:url";
 import { requireContentAdmin } from "../_lib/admin-auth.js";
 import { AdminHttpError, adminErrorMessage, adminErrorStatus, adminFetchJson, adminStorageRows, sendAdminJson, sendAdminMethodNotAllowed } from "../_lib/admin-http.js";
-import { postgrestContentKeyPrefixAnd } from "../_lib/postgrest-content-key-prefix.js";
+import { postgrestContentKeyPrefixAnd, postgrestQuotedValue } from "../_lib/postgrest-content-key-prefix.js";
 import { studioListingRow, type StudioListingFacts } from "../_lib/studio-listing-facts.js";
 
 const inventoryColumns = [
@@ -67,11 +67,15 @@ function encodeCursor(row: { id?: unknown; updated_at?: unknown }) {
 }
 
 function decodeCursor(value: string) {
-  const parsed = JSON.parse(Buffer.from(value, "base64url").toString("utf8")) as { id?: unknown; updatedAt?: unknown };
-  if (typeof parsed.id !== "string" || typeof parsed.updatedAt !== "string") {
+  try {
+    const parsed = JSON.parse(Buffer.from(value, "base64url").toString("utf8")) as { id?: unknown; updatedAt?: unknown };
+    if (!parsed || typeof parsed.id !== "string" || !/^[a-zA-Z0-9_-]+$/u.test(parsed.id)
+      || typeof parsed.updatedAt !== "string" || !/^\d{4}-\d{2}-\d{2}T[\d:.]+(?:Z|[+-]\d{2}:\d{2})$/u.test(parsed.updatedAt)
+      || !Number.isFinite(Date.parse(parsed.updatedAt))) throw new Error("Invalid cursor");
+    return { id: parsed.id, updatedAt: parsed.updatedAt };
+  } catch {
     throw new AdminHttpError(400, "cursor is invalid.");
   }
-  return { id: parsed.id, updatedAt: parsed.updatedAt };
 }
 
 // A list row keeps the small facts the Studio classifies and groups by, and leaves the copy behind.
@@ -175,6 +179,9 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
         : encodeCursor(rows.at(-1) ?? {})
       : null;
     const pageIsComplete = !nextCursor;
+    // Collect virtual sources separately. The final page alone cannot establish
+    // that a source is unsaved: its saved row may be on a prior page or filtered out.
+    const starters: Array<Record<string, unknown>> = [];
     const {
       LUNAR_JOURNAL_PREFIX,
       isLunarJournalContentKey,
@@ -207,7 +214,7 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
         : lunarJournalPackageRecords;
       for (const record of records) {
         if (savedKeys.has(record.contentKey)) continue;
-        rows.push(inventoryView ? lunarJournalInventoryRow(record) : lunarJournalDetailRow(record));
+        starters.push(inventoryView ? lunarJournalInventoryRow(record) : lunarJournalDetailRow(record));
       }
     }
     const prefixIsSeasonTransition = contentKeyPrefix === CALENDAR_SEASON_TRANSITION_PREFIX
@@ -226,7 +233,7 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
         : calendarSeasonTransitionPackageRecords;
       for (const record of records) {
         if (savedKeys.has(record.contentKey)) continue;
-        rows.push(inventoryView ? calendarSeasonTransitionInventoryRow(record) : calendarSeasonTransitionDetailRow(record));
+        starters.push(inventoryView ? calendarSeasonTransitionInventoryRow(record) : calendarSeasonTransitionDetailRow(record));
       }
     }
     const moonPrefix = "authored/calendar-moon-transition/";
@@ -237,7 +244,7 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
       const records = requestedMoonKeys.length ? calendarMoonIngressPackageRecords.filter(record => requestedMoonKeys.includes(record.contentKey)) : calendarMoonIngressPackageRecords;
       for (const record of records) {
         if (savedKeys.has(record.contentKey)) continue;
-        rows.push(inventoryView ? calendarMoonIngressInventoryRow(record) : calendarMoonIngressDetailRow(record));
+        starters.push(inventoryView ? calendarMoonIngressInventoryRow(record) : calendarMoonIngressDetailRow(record));
       }
     }
     if (!id && pageIsComplete) {
@@ -247,9 +254,33 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
         const requested = contentKeys.includes(record.contentKey) || contentKey === record.contentKey
           || Boolean(contentKeyPrefix && record.contentKey.startsWith(contentKeyPrefix));
         if (!requested || savedKeys.has(record.contentKey)) continue;
-        rows.push(inventoryView ? calendarTransitionPhraseInventoryRow(record) : calendarTransitionPhraseDetailRow(record));
+        starters.push(inventoryView ? calendarTransitionPhraseInventoryRow(record) : calendarTransitionPhraseDetailRow(record));
       }
     }
+    const eligibleStarters = [...new Map(starters.filter(row =>
+      (status === "all" || row.status === status)
+      && (!surface || row.surface === surface)
+      && (!mode || row.mode === mode)
+      && (visibility !== "editorial" || row.lane === "serving" && (status !== "all" || row.status !== "ARCHIVED"))
+      && scope !== "compatibility"
+    ).map(row => [String(row.content_key), row])).values()];
+    const savedKeys = new Set(rows.map(row => String(row.content_key)));
+    // Bounded, indexed key-only reads preserve saved source precedence across
+    // every page and state, without transferring or scanning full documents.
+    for (let offset = 0; offset < eligibleStarters.length; offset += 80) {
+      const keys = eligibleStarters.slice(offset, offset + 80).map(row => String(row.content_key));
+      const presenceParams = new URLSearchParams({ select: "content_key", content_key: `in.(${keys.map(postgrestQuotedValue).join(",")})`, limit: "1000" });
+      const presence = await adminFetchJson(`${url}/rest/v1/generated_interpretations?${presenceParams}`, { headers: storageHeaders() });
+      if (!presence.ok) throw new AdminHttpError(502, "Content storage could not verify saved sources.");
+      const existing = adminStorageRows<{ content_key?: unknown }>(presence.payload);
+      // More than one revision may exist per key. Never interpret a truncated
+      // or malformed existence result as permission to resurrect the original.
+      if (existing.length >= 1000 || existing.some(row => typeof row.content_key !== "string" || !keys.includes(row.content_key))) {
+        throw new AdminHttpError(502, "Content storage could not verify complete saved sources.");
+      }
+      for (const row of existing) savedKeys.add(String(row.content_key));
+    }
+    for (const starter of eligibleStarters) if (!savedKeys.has(String(starter.content_key))) rows.push(starter as typeof rows[number]);
     sendAdminJson(res, 200, { ok: true, rows, nextCursor });
   } catch (error) {
     sendAdminJson(res, adminErrorStatus(error), {

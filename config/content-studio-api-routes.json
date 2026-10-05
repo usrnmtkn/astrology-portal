@@ -1,0 +1,314 @@
+{
+  "schema": "tldr-studio-api-qa/v1",
+  "routes": [
+    {
+      "path": "/api/admin/aspect-pattern-fixtures",
+      "file": "api/admin/aspect-pattern-fixtures.ts",
+      "methods": [
+        "GET"
+      ],
+      "access": "public-fixture"
+    },
+    {
+      "path": "/api/admin/aspect-pattern-writeups",
+      "file": "api/admin/aspect-pattern-writeups.ts",
+      "methods": [
+        "GET",
+        "POST",
+        "PATCH"
+      ],
+      "access": "owner"
+    },
+    {
+      "path": "/api/admin/calendar-feed-events",
+      "file": "api/admin/calendar-feed-events.ts",
+      "methods": [
+        "GET",
+        "PATCH",
+        "POST"
+      ],
+      "access": "owner"
+    },
+    {
+      "path": "/api/admin/calendar-lunation-writing",
+      "file": "api/admin/calendar-lunation-writing.ts",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "access": "owner"
+    },
+    {
+      "path": "/api/admin/content-coverage",
+      "file": "api/admin/content-coverage.ts",
+      "methods": [
+        "GET"
+      ],
+      "access": "owner"
+    },
+    {
+      "path": "/api/admin/content-facts",
+      "file": "api/admin/content-facts.ts",
+      "methods": [
+        "POST"
+      ],
+      "access": "owner"
+    },
+    {
+      "path": "/api/admin/content-history",
+      "file": "api/admin/content-history.ts",
+      "methods": [
+        "GET"
+      ],
+      "access": "owner"
+    },
+    {
+      "path": "/api/admin/content-live-status",
+      "file": "api/admin/content-live-status.ts",
+      "methods": [
+        "POST"
+      ],
+      "access": "owner"
+    },
+    {
+      "path": "/api/admin/content-publication",
+      "file": "api/admin/content-publication.ts",
+      "methods": [
+        "POST"
+      ],
+      "access": "owner"
+    },
+    {
+      "path": "/api/admin/content-review-events",
+      "file": "api/admin/content-review-events.ts",
+      "methods": [
+        "GET"
+      ],
+      "access": "owner"
+    },
+    {
+      "path": "/api/admin/content-source-repair-decisions",
+      "file": "api/admin/content-source-repair-decisions.ts",
+      "methods": [
+        "POST"
+      ],
+      "access": "owner"
+    },
+    {
+      "path": "/api/admin/content-unresolved-resolutions",
+      "file": "api/admin/content-unresolved-resolutions.ts",
+      "methods": [
+        "POST"
+      ],
+      "access": "owner"
+    },
+    {
+      "path": "/api/admin/content-unresolved",
+      "file": "api/admin/content-unresolved.ts",
+      "methods": [
+        "GET"
+      ],
+      "access": "owner"
+    },
+    {
+      "path": "/api/admin/friend-report-test-cleanup",
+      "file": "api/admin/friend-report-test-cleanup.ts",
+      "methods": [
+        "POST"
+      ],
+      "access": "owner"
+    },
+    {
+      "path": "/api/admin/generated-content-inventory",
+      "file": "api/admin/generated-content-inventory.ts",
+      "methods": [
+        "GET"
+      ],
+      "access": "owner"
+    },
+    {
+      "path": "/api/admin/generated-content",
+      "file": "api/admin/generated-content.ts",
+      "methods": [
+        "POST",
+        "PATCH",
+        "GET",
+        "DELETE"
+      ],
+      "access": "owner"
+    },
+    {
+      "path": "/api/admin/generated-report-feedback",
+      "file": "api/admin/generated-report-feedback.ts",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "access": "owner"
+    },
+    {
+      "path": "/api/admin/horoscope-writing",
+      "file": "api/admin/horoscope-writing.ts",
+      "methods": [
+        "POST"
+      ],
+      "access": "owner"
+    },
+    {
+      "path": "/api/admin/lunation-writing",
+      "file": "api/admin/lunation-writing.ts",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "access": "owner"
+    },
+    {
+      "path": "/api/admin/memory-graph",
+      "file": "api/admin/memory-graph.ts",
+      "methods": [
+        "GET"
+      ],
+      "access": "owner"
+    },
+    {
+      "path": "/api/admin/natal-placement-preview",
+      "file": "api/admin/natal-placement-preview.ts",
+      "methods": [
+        "POST"
+      ],
+      "access": "owner"
+    },
+    {
+      "path": "/api/admin/package-source",
+      "file": "api/admin/package-source.ts",
+      "methods": [
+        "GET"
+      ],
+      "access": "owner"
+    },
+    {
+      "path": "/api/admin/personal-transit-writing",
+      "file": "api/admin/personal-transit-writing.ts",
+      "methods": [
+        "POST"
+      ],
+      "access": "owner"
+    },
+    {
+      "path": "/api/admin/prepopulate-content",
+      "file": "api/admin/prepopulate-content.ts",
+      "methods": [
+        "POST"
+      ],
+      "access": "owner"
+    },
+    {
+      "path": "/api/admin/report-fulfillment",
+      "file": "api/admin/report-fulfillment.ts",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "access": "owner"
+    },
+    {
+      "path": "/api/admin/review-records-fast",
+      "file": "api/admin/review-records-fast.ts",
+      "methods": [
+        "GET"
+      ],
+      "access": "owner"
+    },
+    {
+      "path": "/api/admin/review-records",
+      "file": "api/admin/review-records.ts",
+      "methods": [
+        "GET"
+      ],
+      "access": "owner"
+    },
+    {
+      "path": "/api/admin/sky-article-facts",
+      "file": "api/admin/sky-article-facts.ts",
+      "methods": [
+        "GET"
+      ],
+      "access": "owner"
+    },
+    {
+      "path": "/api/admin/sky-article-template-slots",
+      "file": "api/admin/sky-article-template-slots.ts",
+      "methods": [
+        "POST"
+      ],
+      "access": "owner"
+    },
+    {
+      "path": "/api/admin/sky-article-writing",
+      "file": "api/admin/sky-article-writing.ts",
+      "methods": [
+        "POST"
+      ],
+      "access": "owner"
+    },
+    {
+      "path": "/api/admin/sky-draft-writing",
+      "file": "api/admin/sky-draft-writing.ts",
+      "methods": [
+        "POST"
+      ],
+      "access": "owner"
+    },
+    {
+      "path": "/api/admin/sky-fallback-variant-preview",
+      "file": "api/admin/sky-fallback-variant-preview.ts",
+      "methods": [
+        "POST"
+      ],
+      "access": "owner"
+    },
+    {
+      "path": "/api/admin/sky-review-horizon",
+      "file": "api/admin/sky-review-horizon.ts",
+      "methods": [
+        "GET"
+      ],
+      "access": "owner"
+    },
+    {
+      "path": "/api/admin/sky-v4-preview",
+      "file": "api/admin/sky-v4-preview.ts",
+      "methods": [
+        "POST"
+      ],
+      "access": "owner"
+    },
+    {
+      "path": "/api/admin/studio-memory-feedback",
+      "file": "api/admin/studio-memory-feedback.ts",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "access": "owner"
+    },
+    {
+      "path": "/api/admin/transit-natal-preview",
+      "file": "api/admin/transit-natal-preview.ts",
+      "methods": [
+        "POST"
+      ],
+      "access": "owner"
+    },
+    {
+      "path": "/api/admin/user-generated-content",
+      "file": "api/admin/user-generated-content.ts",
+      "methods": [
+        "GET",
+        "PATCH"
+      ],
+      "access": "owner"
+    }
+  ]
+}
