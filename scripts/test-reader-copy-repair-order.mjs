@@ -33,9 +33,12 @@ const browserFallback = fs.readFileSync(new URL("../apps/web/src/content/fallbac
 const transitRows = transit.authoredCards.filter((row) => row.contentKey.startsWith("authored/transit-"));
 const exactTransitRows = transitRows.filter((row) => row.approval?.approvalLevel === "exact_owner_approved");
 const legacyTransitRows = transitRows.filter((row) => transitReaderTier(row) === "legacy-reviewed");
-assert.equal(transitRows.length, 1589);
-assert.equal(exactTransitRows.length, 25);
+assert.equal(transitRows.length, 1595);
+assert.equal(exactTransitRows.length, 31);
 assert.equal(legacyTransitRows.length, 1564);
+const suppliedFriendRows = exactTransitRows.filter((row) => row.body_they_authorship === "owner_supplied");
+assert.equal(suppliedFriendRows.length, 6);
+assert.ok(suppliedFriendRows.every((row) => typeof row.body_they === "string" && row.body_they.length > 0 && row.body_you === undefined));
 assert.ok(exactTransitRows.every((row) => isGovernedReaderEligible(row)));
 assert.ok(legacyTransitRows.every((row) => isGovernedReaderEligible(row)));
 

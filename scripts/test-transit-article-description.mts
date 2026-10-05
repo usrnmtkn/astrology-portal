@@ -5,8 +5,8 @@ const transit = { transitPlanet: "Lilith", transitSign: "Capricorn", natalPoint:
 const chart = { ascendant: "Gemini", birthTimeKnown: true };
 assert.equal(transitArticleDescription(transit, chart, "trine"),
   "Lilith in Capricorn in your 8th house is trine your natal North Node in Virgo in your 4th house.");
-assert.equal(transitArticleDescription({ ...transit, natalHouse: 8 }, { ...chart, ascendant: "Aquarius" }, "trine", "Alisa P"),
-  "Lilith in Capricorn in Alisa P's 12th house is trine Alisa P's natal North Node in Virgo in Alisa P's 8th house.");
+assert.equal(transitArticleDescription({ ...transit, natalHouse: 8 }, { ...chart, ascendant: "Aquarius" }, "trine", "Example Friend"),
+  "Lilith in Capricorn in their 12th house is trine their natal North Node in Virgo in their 8th house.");
 for (const unreliable of [null, { ...chart, birthTimeKnown: false }, { ascendant: "Gemini" }]) {
   const text = transitArticleDescription(transit, unreliable, "trine");
   assert.equal(text, "Lilith in Capricorn is trine your natal North Node in Virgo.");
