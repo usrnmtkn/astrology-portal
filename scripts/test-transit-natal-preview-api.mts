@@ -53,6 +53,36 @@ try {
  publications=[{content_key:'authored/transit-aspect/pluto/venus/hard',state:'invalid-unrelated-publication'}];
  assert.deepEqual((await request()).rendered,baseline,'Unrelated documents and publication records are not retrieved');
  rows=[];publications=[];
+ // A live composition has no authored soft/hard row to copy. The same handler
+ // must expose the complete reusable reading for both independent audiences.
+ const saturn={planet:'saturn',aspect:'trine',natalPoint:'descendant',draftStarter:true};
+ assert.equal((await request({...saturn,draftStarter:'true'})).code,400);
+ const starter=(await request(saturn)).starter;
+ assert.equal(starter.contentKey,'authored/transit-aspect/saturn/descendant/trine');
+ assert.match(starter.body_you,/^Until \{\{untilDate\}\}, Saturn is trining your natal Descendant\./);
+ assert.match(starter.body_you,/handshakes upgrade to commitments cleanly now\.$/);
+ assert.match(starter.body_they,/trining their natal Descendant\./);
+ assert.match(starter.body_they,/Good arrangements formalize cleanly for them now\.$/);
+ assert.equal(starter.sources.you.length,1);
+ assert.equal(starter.sources.you[0].sources.length,3);
+ assert.ok(starter.sources.you[0].sources.every((ref:any)=>ref.publication.origin==='package'));
+ assert.deepEqual((await request({...saturn,sign:'aries',window:'until March 9',voice:'QA Person',pass:2,variant:3,isRetrograde:true})).starter,starter,'Three-part drafts cannot freeze an example sign, name, date, or repeat pass');
+ const effectKey='fallback-hook/transit-effect-soft/saturn/descendant';
+ const {servingPackageRecords:starterRecords}=await import('../api/_lib/content-live-status.ts');
+ const effect=starterRecords.get(effectKey)!;
+ rows=[{id,content_key:effectKey,status:'LIVE',lane:'serving',provider:'tldrastro-fallback-architecture-v3',updated_at:stamp,body:'Synthetic current published effect.',sections:{packageRecord:{...effect,body_you:'Synthetic current published effect.'}}}];
+ publications=[{content_key:effectKey,state:'live',revision:7,row_id:id,row_updated_at:stamp,updated_at:stamp}];
+ const liveStarter=(await request(saturn)).starter;
+ assert.match(liveStarter.body_you,/Synthetic current published effect\.$/);
+ assert.equal(liveStarter.body_they,starter.body_they);
+ assert.ok(liveStarter.sources.you[0].sources.some((ref:any)=>ref.publication.revision===7));
+ rows[0].status='DRAFT';
+ assert.ok(!(await request(saturn)).starter.body_you.includes('Synthetic current published effect.'),'Draft source edits are not reader starters');
+ publications[0].state='retired';
+ assert.ok(!(await request(saturn)).starter.body_you.includes('handshakes upgrade'),'A retired source cannot be recovered as starter copy');
+ rows=[];publications=[];
+ assert.deepEqual((await request(saturn)).starter,starter,'Starter resolution cannot change reader state');
+ failStorage=true;assert.equal((await request(saturn)).code,503);failStorage=false;
  rows=[{id,content_key:key,status:'DRAFT',lane:'serving',provider:'tldrastro-fallback-architecture-v3',updated_at:stamp,body:'Synthetic unapproved draft.',sections:{packageRecord:{...source,body_you:'Synthetic unapproved draft.'}}}];
  assert.deepEqual((await request()).rendered,baseline);
  rows[0]={...rows[0],status:'LIVE',body:'Synthetic published transit preview fixture.',sections:{packageRecord:{...source,body_you:'Synthetic published transit preview fixture.'}}};

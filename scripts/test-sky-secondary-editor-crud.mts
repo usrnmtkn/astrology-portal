@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { mock } from "node:test";
 import { Readable } from "node:stream";
-import { readGeneratedContentRows, saveGeneratedContentDraft } from "../apps/admin/src/generatedContentClient.ts";
+import { readGeneratedContentRows, requestStudioJson, saveGeneratedContentDraft } from "../apps/admin/src/generatedContentClient.ts";
 import { skyPlacementSourceRecords } from "../api/_lib/sky-placement-sources.ts";
 process.env.NODE_ENV = "test";
 process.env.CONTENT_GENERATION_SECRET = "secondary-editor-test";
@@ -16,14 +16,14 @@ const stored: any[] = [{ id: "secondary-row", content_key: key, status: "DRAFT",
   updated_at: "2026-09-01T00:00:00.000Z", sections: { packageRecord: baseline },
   source_snapshot: { sourcePackage: baseline.source_package, content_role: baseline.content_role }, facts: { fallbackArchitectureV3: true } }];
 let writes = 0;
-let responseOverride: (() => Response) | null = null;
 let loseSaveResponse = false;
+let responseOverride: ((init: RequestInit) => Response | Promise<Response>) | null = null;
 let requestedVersions: unknown[] = [];
 const originalFetch = globalThis.fetch;
 globalThis.fetch = async (input, init = {}) => {
   const address = String(input);
   if (address.startsWith("/api/")) {
-    if (responseOverride) return responseOverride();
+    if (responseOverride) return responseOverride(init);
     const req: any = Readable.from(init.body ? [String(init.body)] : []);
     req.method = init.method ?? "GET"; req.url = address; req.headers = init.headers;
     if (req.method === "PATCH") requestedVersions.push(JSON.parse(String(init.body)).expectedUpdatedAt);
@@ -90,5 +90,25 @@ try {
   assert.equal(pages, 126, "Secondary loaders must not stop at the old 125-page catalog cutoff.");
   responseOverride = () => Response.json({ ok: true, rows: [], nextCursor: "repeated" });
   await assert.rejects(() => readGeneratedContentRows("/api/admin/generated-content", "secondary-editor-test"), /invalid pagination cursor/);
-  console.log("Secondary Sky editor contracts passed: actual-handler load/save/reopen/stale edits; malformed responses, receipts and pagination.");
+  mock.timers.reset();
+  mock.timers.enable({ apis: ["setTimeout"] });
+  responseOverride = init => new Promise((_resolve, reject) => {
+    assert(!("readOnly" in init), "Client-only request intent must not be forwarded to fetch.");
+    init.signal?.addEventListener("abort", () => reject(new DOMException("Aborted", "AbortError")), { once: true });
+  });
+  for (const options of [{}, { method: "POST", readOnly: true }]) {
+    const pending = assert.rejects(requestStudioJson("/api/admin/transit-natal-preview", "secondary-editor-test", options), error => {
+      assert.match((error as Error).message, /could not finish loading.*editor text is unchanged/u);
+      assert.doesNotMatch((error as Error).message, /save has not been confirmed|Reload/u);
+      return true;
+    });
+    mock.timers.tick(10_000);
+    await pending;
+  }
+  for (const method of ["POST", "PATCH", "DELETE"]) {
+    const pending = assert.rejects(requestStudioJson("/api/admin/generated-content", "secondary-editor-test", { method }), /save has not been confirmed/u);
+    mock.timers.tick(45_000);
+    await pending;
+  }
+  console.log("Secondary Sky editor contracts passed: actual-handler load/save/reopen/stale edits; malformed responses, receipts, pagination and separate read/write timeout recovery.");
 } finally { mock.timers.reset(); globalThis.fetch = originalFetch; }

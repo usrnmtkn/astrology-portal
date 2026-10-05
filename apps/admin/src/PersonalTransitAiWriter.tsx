@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { AdminDisclosureSummary } from "./AdminNativeControls";
 import { StudioButton, StudioTextarea } from "./StudioControls";
 import { adminCredentialHeaders, adminSecretStorageKey } from "./adminSecret";
@@ -56,6 +56,9 @@ export default function PersonalTransitAiWriter({
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [status, setStatus] = useState("");
+  const requestVersion = useRef(0);
+  const currentText = useRef({ youText, friendText });
+  useEffect(() => { currentText.current = { youText, friendText }; }, [youText, friendText]);
 
   useEffect(() => {
     setInstruction("");
@@ -66,15 +69,21 @@ export default function PersonalTransitAiWriter({
     setError("");
     setStatus("");
     setAudience("both");
+    setBusy(false);
+    // A response for a closed editor or a previous destination cannot update this one.
+    return () => { requestVersion.current++; };
   }, [contentKey, sign, transitHouse, natalHouse]);
 
   const request = async (action: "generate" | "next-missing" | "recheck") => {
     if (busy || disabled) return;
+    const version = ++requestVersion.current;
+    const isCurrent = () => version === requestVersion.current;
     setBusy(true);
     setError("");
     setStatus("");
     try {
       const credential = await contentStudioCredential();
+      if (!isCurrent()) return;
       if (!credential) throw new Error("Content Studio owner access is unavailable. Reload and sign in again before generating.");
       const response = await fetch("/api/admin/personal-transit-writing", {
         method: "POST",
@@ -99,6 +108,7 @@ export default function PersonalTransitAiWriter({
           })
       });
       const payload = await response.json().catch(() => ({}));
+      if (!isCurrent()) return;
       if (!response.ok || !payload?.ok) {
         throw new Error(typeof payload?.error === "string" ? payload.error : "No draft was returned.");
       }
@@ -127,17 +137,23 @@ export default function PersonalTransitAiWriter({
       const nextFriend = typeof payload.friendDraft === "string" ? payload.friendDraft : "";
       setYouDraft(nextYou);
       setFriendDraft(nextFriend);
-      if (nextYou) onUseYou(nextYou);
-      if (nextFriend) onUseFriend(nextFriend);
+      // The owner can keep typing during generation. Keep those newer edits and
+      // leave the suggestion available for an explicit Use action instead.
+      const youChanged = currentText.current.youText !== youText;
+      const friendChanged = currentText.current.friendText !== friendText;
+      if (nextYou && !youChanged) onUseYou(nextYou);
+      if (nextFriend && !friendChanged) onUseFriend(nextFriend);
       const preserved = Array.isArray(payload.preservedAudiences) ? payload.preservedAudiences.join(" and ") : "";
       const memoryNote = selected ? ` Memory Map attached ${selected} correction${selected === 1 ? "" : "s"}.` : "";
-      setStatus(preserved
+      setStatus((nextYou && youChanged) || (nextFriend && friendChanged)
+        ? `Suggestions are ready. Your edits made during generation were kept. Use a suggestion only if you want to replace the corresponding field.${memoryNote}`
+        : preserved
         ? `Copied into this exact contact. Existing ${preserved} copy was left in the editor.${memoryNote}`
         : `Copied into this exact contact's You and Friend fields. Save keeps a draft. Approve & publish stays separate.${memoryNote}`);
     } catch (reason) {
-      setError(reason instanceof Error ? reason.message : "Writing failed. Existing writing was not changed.");
+      if (isCurrent()) setError(reason instanceof Error ? reason.message : "Writing failed. Existing writing was not changed.");
     } finally {
-      setBusy(false);
+      if (isCurrent()) setBusy(false);
     }
   };
 
@@ -168,7 +184,6 @@ export default function PersonalTransitAiWriter({
       {onOpenNext && <StudioButton type="button" disabled={disabled || busy} onClick={() => void request("next-missing")}>Next missing write-up</StudioButton>}
       {youDraft && <StudioButton type="button" disabled={disabled || busy} onClick={() => { onUseYou(youDraft); setYouDraft(""); }}>Use You draft</StudioButton>}
       {friendDraft && <StudioButton type="button" disabled={disabled || busy} onClick={() => { onUseFriend(friendDraft); setFriendDraft(""); }}>Use Friend draft</StudioButton>}
-      {(youDraft || friendDraft) && <StudioButton type="button" disabled={busy} onClick={() => { setYouDraft(""); setFriendDraft(""); setChecks([]); setError(""); }}>Discard</StudioButton>}
     </div>
     <p className="admin-field-hint">Current audience request: {audience === "both" ? "You and Friend. Missing fields are filled first; if both already have starter copy and no exact write-up is saved, Generate drafts both" : audience === "you" ? "You only" : "Friend only"}.</p>
     {busy && <p role="status">Writing a private suggestion. Saved copy is unchanged.</p>}
@@ -188,6 +203,13 @@ export default function PersonalTransitAiWriter({
       <StudioTextarea formatting={false} value={friendDraft} readOnly aria-label="AI Friend suggestion" />
       <small className="admin-field-hint">Use Friend draft copies this suggestion into the Friend field only.</small>
     </label>}
+    {(youDraft || friendDraft) && <div>
+      <p className="admin-field-hint">Suggestions are read-only. Edit your writing in the You and Friend fields. Clearing suggestions keeps that writing.</p>
+      <StudioButton type="button" disabled={busy} onClick={() => {
+        setYouDraft(""); setFriendDraft(""); setChecks([]); setMemoryCount(0); setError("");
+        setStatus("AI suggestions cleared. Your You and Friend writing is unchanged.");
+      }}>Clear AI suggestions</StudioButton>
+    </div>}
   </details>;
 }
 

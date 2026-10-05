@@ -113,7 +113,7 @@ export function transitExactPassageState(contentKey: string, payload: unknown): 
   const detail = !exists
     ? (situation
       ? "No write-up is saved for this six-part situation yet. The editor below is for this sign and both houses only; the three-part aspect write-up is not copied or changed."
-      : "No write-up is saved for this exact contact yet. The editor below is for this aspect only; shared fallback writing is not copied or changed.")
+      : "No separate write-up is saved for this aspect yet. The reader preview shows the current website writing. Open this aspect to start a draft from the available writing.")
     : savedStatus === "DRAFT" ? "A draft is saved for this contact. It does not appear in the reader preview until reviewed and published."
     : savedStatus === "ARCHIVED" || savedStatus === "RETIRED" ? "This aspect-specific passage is archived or retired. Opening it does not restore or publish it."
     : savedStatus === "REVIEWED" ? "The aspect-specific passage has been reviewed. Review alone does not publish it."

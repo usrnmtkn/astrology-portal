@@ -4,7 +4,7 @@ import { requireContentAdmin } from "../_lib/admin-auth.js";
 import { AdminHttpError, adminFetchJson, readAdminJsonBody, sendAdminJson, sendAdminMethodNotAllowed } from "../_lib/admin-http.js";
 import { loadLocalWebEnv } from "../_lib/local-env.js";
 import { postgrestContentKeyPrefixAnd, postgrestQuotedValue } from "../_lib/postgrest-content-key-prefix.js";
-import { renderTransitNatalPreview, transitNatalPlanets, transitNatalSigns, transitNatalAspects, transitNatalPoints, transitNatalHouses } from "../../apps/admin/src/transitNatalSources.js";
+import { renderTransitNatalPreview, transitNatalExactContentKey, transitNatalPlanets, transitNatalSigns, transitNatalAspects, transitNatalPoints, transitNatalHouses } from "../../apps/admin/src/transitNatalSources.js";
 import { packageFallbackArchitectureV3CoreRows } from "../../apps/web/src/services/fallbackArchitectureV3CorePackaging.js";
 import { publicationAllowsContent, publicationLedgerKey, validContentPublication, type ContentPublication } from "../../apps/web/src/content/contentPublicationState.js";
 import type { GeneratedContentRow } from "../../apps/web/src/services/generatedContent.js";
@@ -23,6 +23,7 @@ const manifest = require("../../apps/web/src/content/fallbackArchitectureV3/bund
 export function normalizeTransitNatalPreviewInput(value: unknown) {
   if (!value || typeof value !== "object" || Array.isArray(value)) throw new AdminHttpError(400, "Choose a transit and natal point.");
   const input = value as Record<string, any>;
+  if (input.draftStarter !== undefined && typeof input.draftStarter !== "boolean") throw new AdminHttpError(400, "Invalid draft request.");
   const hasSign = input.sign === undefined || input.sign === "" || transitNatalSigns.includes(input.sign);
   if (!transitNatalPlanets.includes(input.planet) || !hasSign
     || !transitNatalAspects.includes(input.aspect) || !transitNatalPoints.includes(input.natalPoint)
@@ -35,6 +36,7 @@ export function normalizeTransitNatalPreviewInput(value: unknown) {
   if (input.isRetrograde !== undefined && typeof input.isRetrograde !== "boolean") throw new AdminHttpError(400, "Invalid motion.");
   if (input.window !== undefined && (typeof input.window !== "string" || !input.window.trim() || input.window.length > 160 || /[<>{}]/u.test(input.window))) throw new AdminHttpError(400, "Invalid timing label.");
   return { planet: input.planet, sign: transitNatalSigns.includes(input.sign) ? input.sign : "", aspect: input.aspect, natalPoint: input.natalPoint, voice: input.voice || "you",
+    ...(input.draftStarter === true ? { draftStarter: true } : {}),
     ...(input.pass !== undefined ? { pass: input.pass as number } : {}),
     ...(input.variant !== undefined ? { variant: input.variant as number } : {}),
     ...(input.isRetrograde !== undefined ? { isRetrograde: input.isRetrograde as boolean } : {}),
@@ -94,6 +96,31 @@ function previewScopeFilter(input: ReturnType<typeof normalizeTransitNatalPrevie
     ...prefixes.map(prefix => `and${postgrestContentKeyPrefixAnd(prefix)}`)].join(",")})`;
 }
 
+/** Reuse the reader's complete assembly without freezing a preview date or person into a reusable draft. */
+export function renderTransitNatalDraftStarter(input: ReturnType<typeof normalizeTransitNatalPreviewInput>, rows: GeneratedContentRow[] = [], publications: ContentPublication[] = []) {
+  const contentKey = transitNatalExactContentKey(input);
+  if (!contentKey) throw new AdminHttpError(400, "This transit has no separate write-up.");
+  const situation = contentKey.split("/").length === 8;
+  const context = {
+    planet: input.planet, natalPoint: input.natalPoint, aspect: input.aspect,
+    sign: situation ? input.sign : "",
+    ...(situation ? { transitHouse: input.transitHouse, natalHouse: input.natalHouse } : {}),
+    window: "Until {{untilDate}}"
+  };
+  const render = (voice: string) => {
+    try { return renderTransitNatalPreviewState({ ...context, voice }, rows, publications); }
+    catch (error) {
+      if (error instanceof Error && /SOURCE_GAP|No reader-eligible/.test(error.message)) return null;
+      throw error;
+    }
+  };
+  const you = render("you"), friend = render("{{Name}}");
+  return {
+    contentKey, body_you: you?.body ?? "", body_they: friend?.body ?? "",
+    sources: { you: you?.paragraphs ?? [], friend: friend?.paragraphs ?? [] }
+  };
+}
+
 async function readRows(base: string, headers: Record<string, string>, table: string, filters: Record<string, string>) {
   const rows: any[] = [];
   for (let offset = 0; offset < 20000; offset += 1000) {
@@ -121,7 +148,9 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
       readRows(base, headers, "content_publications", { select: "content_key,state,revision,row_id,row_updated_at,updated_at", or: scope, order: "content_key.asc" })
     ]);
     if (!publications.every(validContentPublication)) throw new AdminHttpError(503, "Publication status could not be verified.");
-    sendAdminJson(res, 200, { ok: true, rendered: renderTransitNatalPreviewState(input, rows, publications) });
+    sendAdminJson(res, 200, input.draftStarter
+      ? { ok: true, starter: renderTransitNatalDraftStarter(input, rows, publications) }
+      : { ok: true, rendered: renderTransitNatalPreviewState(input, rows, publications) });
   } catch (error) {
     // A genuine source gap is an ordinary empty preview, not a browser network error.
     if (error instanceof Error && /SOURCE_GAP|No reader-eligible/.test(error.message)) return sendAdminJson(res, 200, { ok: false, error: error.message });
