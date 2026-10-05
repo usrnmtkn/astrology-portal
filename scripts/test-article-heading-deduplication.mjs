@@ -4,7 +4,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import {
-  articleHeadingComparisonVariants,
+  articleHeadingComparisonKey,
   dedupeArticleSectionHeadings
 } from "../apps/web/src/utils/articleHeadings.ts";
 
@@ -68,14 +68,11 @@ for (const title of ["Mercury Rx in Capricorn in the 10th house", "Mercury retro
 }
 assert.equal(dedupeArticleSectionHeadings([{ heading: "Moon in Cancer" }], "The Moon in Cancer")[0].heading, "");
 
-assert.deepEqual(
-  articleHeadingComparisonVariants("Mars moving through Alisa P's 1st house"),
-  [
-    "mars moving through alisa ps 1st house",
-    "mars through alisa ps 1st house",
-    "mars through alisa ps"
-  ]
+assert.equal(
+  articleHeadingComparisonKey("Mars moving through Alisa P's 1st house"),
+  "mars through alisa ps"
 );
+assert.equal(articleHeadingComparisonKey(" \t…\n "), "");
 
 assert.match(
   skyDetailArticleSource,
