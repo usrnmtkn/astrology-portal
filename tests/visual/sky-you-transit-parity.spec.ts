@@ -69,7 +69,8 @@ for (const [day, hour, width, theme] of [
   const article = page.locator(".you-transit-article");
   await expect(article).toContainText("You may be offered a role that feels slightly ahead");
   await expect(article).toContainText("learn from what happens next.");
-  const youParagraphs = await article.locator(".article-section").filter({ has: page.getByRole("heading", { name: "Sun Conjunction North Node", exact: true }) }).locator("p").allTextContents();
+  await expect(article.getByRole("heading", { name: "Sun Conjunction North Node", exact: true })).toHaveCount(0);
+  const youParagraphs = await article.locator(".article-section").filter({ has: page.getByText(skyParagraphs[0], { exact: true }) }).locator("p").allTextContents();
   // Sky groups both ends of the nodal axis. You opens the selected North Node
   // contact, whose complete two-paragraph fixture must still match exactly.
   expect(youParagraphs).toHaveLength(2);
