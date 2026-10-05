@@ -1,7 +1,6 @@
 import type { TransitItem } from "../App";
 import type { SkySnapshot } from "../types";
 import { wholeSignHouseForSign } from "./chartMath";
-import { possessiveName } from "./personReferences";
 
 type TransitIdentity = Pick<TransitItem,
   "transitPlanet" | "transitSign" | "natalPoint" | "natalSign" | "natalHouse"
@@ -20,7 +19,7 @@ export function transitArticleDescription(
   aspectLabel: string,
   ownerName = "you"
 ) {
-  const owner = possessiveName(ownerName);
+  const owner = ownerName === "you" ? "your" : "their";
   const housesKnown = natalSky?.birthTimeKnown === true;
   // Current-location houses belong to the sky chart, not this person's chart.
   const transitHouse = housesKnown && transit.transitSign

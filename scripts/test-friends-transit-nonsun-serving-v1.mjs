@@ -33,8 +33,10 @@ const source = read(sourcePath);
 const bundled = read(bundledPath);
 const templates = read("apps/web/src/content/fallbackArchitectureV3/templates/fallback-templates-v3.json");
 const fallbackRows = read("apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json");
+const namingPath = "packages/astro-knowledge/review/friend-transit-pronouns-2026-10-05.json";
+const namingByKey = new Map(read(namingPath).edits.filter(edit => edit.field === "body_they").map(edit => [edit.contentKey, edit]));
 
-assert.equal(PACKAGE_VERSION, "v3-2026-09-24-calculated-repeat-contacts");
+assert.equal(PACKAGE_VERSION, "v3-2026-10-05-friend-transit-pronouns");
 assert.equal(authorization.schema, "tldrastro-bounded-owner-batch-authorization-v1");
 assert.equal(authorization.type, BOUNDED_OWNER_BATCH_AUTHORIZATION_TYPE);
 assert.equal(authorization.authority, "owner");
@@ -62,10 +64,12 @@ assert.equal(authorizationByKey.has(protectedContentKey), false, "The protected 
 const sourceNonSun = source.authoredCards.filter((row) => (
   String(row.contentKey ?? "").startsWith("authored/transit-aspect/")
   && !String(row.contentKey).startsWith("authored/transit-aspect/sun/")
+  && row.body_they_authorship !== "owner_supplied"
 ));
 const bundledNonSun = bundled.authoredCards.filter((row) => (
   String(row.contentKey ?? "").startsWith("authored/transit-aspect/")
   && !String(row.contentKey).startsWith("authored/transit-aspect/sun/")
+  && row.body_they_authorship !== "owner_supplied"
 ));
 assert.equal(sourceNonSun.length, 351);
 assert.equal(bundledNonSun.length, 351);
@@ -91,22 +95,23 @@ for (const row of authorizedSource) {
   });
   assert.equal(assertServingAuthorized(governed), true);
 
-  assert.equal(row.body_they, approved.body_they, `${row.contentKey}: source Friends copy drifted.`);
-  assert.equal(row.body_they_sha256, member.payloadSha256, `${row.contentKey}: source Friends hash drifted.`);
-  assert.equal(sha256(row.body_they), member.payloadSha256);
+  const naming = namingByKey.get(row.contentKey);
+  assert.equal(naming.beforeSha256, member.payloadSha256, "The naming revision must descend from the approved passage.");
+  assert.equal(row.body_they_sha256, naming.afterSha256, `${row.contentKey}: source Friends hash drifted.`);
+  assert.equal(sha256(row.body_they), naming.afterSha256);
   assert.equal(row.body_they_review_status, "approved");
   assert.equal(row.body_they_authorship, "independent_friend_authoring");
-  assert.equal(row.body_they_approved_via, authorizationPath);
-  assert.equal(row.body_they_approval?.approvalLevel, "exact_owner_approved");
-  assert.equal(row.body_they_approval?.recordPath, authorizationPath);
-  assert.equal(row.body_they_approval?.payloadSha256, member.payloadSha256);
-  assert.equal(row.body_they_approval?.approvedAt, "2026-09-03");
+  assert.equal(row.body_they_approved_via, namingPath);
+  assert.equal(row.body_they_approval?.approvalLevel, "owner_directed_copy_update");
+  assert.equal(row.body_they_approval?.recordPath, namingPath);
+  assert.equal(row.body_they_approval?.payloadSha256, naming.afterSha256);
+  assert.equal(row.body_they_approval?.approvedAt, "2026-10-05");
   assert.ok(row.source_keys?.includes(authorizationPath));
 
   const shipped = authorizedBundled.find((candidate) => candidate.contentKey === row.contentKey);
   assert.ok(shipped, `${row.contentKey}: missing bundled row.`);
-  assert.equal(shipped.body_they, approved.body_they, `${row.contentKey}: bundled Friends copy drifted.`);
-  assert.equal(sha256(shipped.body_they), member.payloadSha256, `${row.contentKey}: bundled Friends hash drifted.`);
+  assert.equal(shipped.body_they, row.body_they, `${row.contentKey}: bundled Friends copy drifted.`);
+  assert.equal(sha256(shipped.body_they), naming.afterSha256, `${row.contentKey}: bundled Friends hash drifted.`);
 }
 
 const protectedSource = sourceNonSun.find((row) => row.contentKey === protectedContentKey);
@@ -140,7 +145,8 @@ const rendered = renderer.renderTransitAspect({
   voice: "Alisa P",
   window: "until September 30"
 });
-const expectedRendered = representative.body_they
+const currentRepresentative = source.authoredCards.find(row => row.contentKey === representative.contentKey);
+const expectedRendered = currentRepresentative.body_they
   .replaceAll("{{Name}}", "Alisa P")
   .replaceAll("{{aspectWord}}", aspectWord)
   .replaceAll("{{untilDate}}", "September 30");
@@ -161,9 +167,9 @@ try {
   assert.equal(row.status, "LIVE");
   assert.equal(row.lane, "serving");
   assert.equal(row.review_state, null);
-  assert.equal(row.sections.body_they, representative.body_they);
-  assert.equal(row.sections.packageRecord.body_they, representative.body_they);
-  assert.equal(row.sections.packageRecord.body_they_approval.recordPath, authorizationPath);
+  assert.equal(row.sections.body_they, currentRepresentative.body_they);
+  assert.equal(row.sections.packageRecord.body_they, currentRepresentative.body_they);
+  assert.equal(row.sections.packageRecord.body_they_approval.recordPath, namingPath);
 
   execFileSync(process.execPath, [
     path.join(root, "scripts/materialize-fallback-architecture-v3-dashboard-rows.mjs"),

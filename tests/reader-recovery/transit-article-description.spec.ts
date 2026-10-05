@@ -3,6 +3,7 @@ import { getAstrodienstSky } from "../../apps/web/src/services/ephemeris";
 import { natalSkySnapshotCacheKey, skySnapshotCacheKey, VERIFIED_SKY_CACHE_SCHEMA } from "../../apps/web/src/services/verifiedSkyCache";
 import type { SkySnapshot } from "../../apps/web/src/types";
 import { bundledPublications } from "../helpers/bundled-publications";
+import fs from "node:fs";
 
 const location = { label: "New York, NY", latitude: 40.7128, longitude: -74.006, timeZone: "America/New_York" };
 const birth = new Date("1978-09-01T16:00:00Z");
@@ -18,7 +19,7 @@ test.beforeAll(async () => {
   for (const date of dates) skies.push(await getAstrodienstSky(location, new Date(`${date}T12:00:00Z`)));
 });
 
-async function prepare(page: Page, theme: string, unknownFriendBirthTime = false) {
+async function prepare(page: Page, theme: string, unknownFriendBirthTime = false, selectedFriendNatal = friendNatal) {
   // Isolated QA profile and locally calculated ephemerides; never mutate a live account.
   await page.route("https://tldrastro-api-27165565299.us-central1.run.app/**", route => route.fulfill({ status: 503, json: {} }));
   await page.route("**/api/**", route => route.fulfill({ status: 503, json: {} }));
@@ -26,6 +27,7 @@ async function prepare(page: Page, theme: string, unknownFriendBirthTime = false
   await bundledPublications(page);
   const records = [
     { cacheKey: natalSkySnapshotCacheKey(location, birth), snapshot: natal },
+    { cacheKey: natalSkySnapshotCacheKey(location, friendBirth), snapshot: selectedFriendNatal },
     ...skies.map((snapshot, index) => ({ cacheKey: skySnapshotCacheKey(location, dates[index]), snapshot }))
   ];
   await page.addInitScript(({ theme, location, records, friendNatal, schema, unknownFriendBirthTime }) => {
@@ -38,19 +40,19 @@ async function prepare(page: Page, theme: string, unknownFriendBirthTime = false
     }));
     for (const record of records) localStorage.setItem(record.cacheKey, JSON.stringify({ ...record, schema, verifiedAt: new Date().toISOString() }));
     localStorage.setItem("tldrastro:manualCharts:article-facts-qa", JSON.stringify([{
-      id: "facts-friend", ownerUserId: "article-facts-qa", chartType: "person", displayName: "Alisa P", firstName: "Alisa",
+      id: "facts-friend", ownerUserId: "article-facts-qa", chartType: "person", displayName: "Example Friend", firstName: "Example",
       relationshipType: "friend", birthDate: "1988-04-03", birthTime: unknownFriendBirthTime ? null : "09:15", birthTimeUnknown: unknownFriendBirthTime,
       birthPlace: location.label, birthLocation: location, natalChart: { ...friendNatal, birthTimeKnown: !unknownFriendBirthTime },
       createdAt: "2026-09-01T12:00:00Z", updatedAt: "2026-09-01T12:00:00Z", syncStatus: "local"
     }]));
-  }, { theme, location, records, friendNatal, schema: VERIFIED_SKY_CACHE_SCHEMA, unknownFriendBirthTime });
+  }, { theme, location, records, friendNatal: selectedFriendNatal, schema: VERIFIED_SKY_CACHE_SCHEMA, unknownFriendBirthTime });
   await page.emulateMedia({ reducedMotion: "reduce" });
 }
 
 const signs = ["Aries", "Taurus", "Gemini", "Cancer", "Leo", "Virgo", "Libra", "Scorpio", "Sagittarius", "Capricorn", "Aquarius", "Pisces"];
 const ordinal = (house: number) => `${house}${house === 1 ? "st" : house === 2 ? "nd" : house === 3 ? "rd" : "th"}`;
 function expectedIdentity(title: string, sky: SkySnapshot, natalChart: SkySnapshot, owner = "your") {
-  const match = title.match(/^(.+?) (conjunction|conjunct|opposition|opposite|square|trine|sextile) (?:your |Alisa P's )?(.+)$/)!;
+  const match = title.match(/^(.+?) (conjunction|conjunct|opposition|opposite|square|trine|sextile) (?:your |their )?(.+)$/)!;
   expect(match, `Unrecognized calculated title: ${title}`).toBeTruthy();
   const transit = sky.positions.find(position => position.planet === match[1])!;
   const target = natalChart.positions.find(position => position.planet === match[3])!;
@@ -109,8 +111,9 @@ for (const theme of ["light", "dark"]) {
     await page.goto("/?date=2026-09-08#friends?tab=charts&chart=facts-friend&view=transits");
     const row = page.locator("button.friend-transit-row:has(.updates-aspect-row__orb)").first();
     await expect(row).toBeVisible({ timeout: 45_000 });
+    expect(await page.locator("button.friend-transit-row").allTextContents()).not.toEqual(expect.arrayContaining([expect.stringContaining("Example Friend")]));
     const title = await row.locator(".updates-aspect-row__title").innerText();
-    const expected = expectedIdentity(title, skies[0], friendNatal, "Alisa P's");
+    const expected = expectedIdentity(title, skies[0], friendNatal, "their");
     await expect(row).not.toContainText(expected);
     await row.click();
     const footer = page.getByLabel("Transit details", { exact: true });
@@ -124,7 +127,7 @@ for (const theme of ["light", "dark"]) {
     const bondTitle = await bond.locator(".updates-aspect-row__title").innerText();
     const isReader = bondTitle.includes(" your ");
     await bond.click();
-    await expect(footer).toHaveText(expectedIdentity(bondTitle, skies[0], isReader ? natal : friendNatal, isReader ? "your" : "Alisa P's"));
+    await expect(footer).toHaveText(expectedIdentity(bondTitle, skies[0], isReader ? natal : friendNatal, isReader ? "your" : "their"));
     await verifyFooter(page, footer, theme, "bond");
     const reading = page.locator('.sky-detail-page:has(.article-section__eyebrow)');
     await expect(reading).toBeVisible();
@@ -175,7 +178,35 @@ test("Unknown birth time keeps the article's signs without inventing houses", as
   await expect(row).toBeVisible({ timeout: 45_000 });
   await row.click();
   const footer = page.getByLabel("Transit details", { exact: true });
-  await expect(footer).toContainText(/in [A-Z][a-z]+ is .+ Alisa P's natal/);
+  await expect(footer).toContainText(/in [A-Z][a-z]+ is .+ their natal/);
   await expect(footer).not.toContainText(/house|undefined|null|NaN/);
   await verifyFooter(page, footer, "light", "unknown-time");
 });
+
+// Explicit editorial fixtures: one synthetic natal point places each approved
+// passage on the actual reader route. The tests above separately verify real
+// ephemeris-derived charts, factual identity and responsive presentation.
+const ownerPassages = JSON.parse(fs.readFileSync("apps/web/src/content/fallbackArchitectureV3/source-rows/transit-synastry-rows-v1.json", "utf8"))
+  .authoredCards.filter((row: any) => row.body_they_authorship === "owner_supplied");
+for (const passage of ownerPassages) {
+  const [, , transiting, point, aspect] = passage.contentKey.split("/");
+  test(`Owner passage survives reader navigation and reload: ${transiting}/${point}/${aspect}`, async ({ page }) => {
+    const transit = skies[0].positions.find(position => position.planet.toLowerCase() === transiting)!;
+    const natalPoint = friendNatal.positions.find(position => position.planet.toLowerCase() === point)!;
+    const longitude = ((transit.longitude ?? signs.indexOf(transit.sign) * 30 + transit.degree) + (aspect === "opposition" ? 180 : aspect === "square" ? 90 : 0)) % 360;
+    const fixture = { ...friendNatal, positions: friendNatal.positions.map(position => position === natalPoint
+      ? { ...position, longitude, sign: signs[Math.floor(longitude / 30)], degree: longitude % 30 }
+      : position) };
+    await prepare(page, "light", false, fixture);
+    await page.goto("/?date=2026-09-08#friends?tab=charts&chart=facts-friend&view=transits");
+    const label = `${transit.planet} ${aspect === "conjunction" ? "conjunct" : aspect === "opposition" ? "opposite" : aspect} ${natalPoint.planet}`;
+    const row = page.locator("button.friend-transit-row:has(.updates-aspect-row__orb)").filter({ has: page.getByText(label, { exact: true }) });
+    await expect(row).toBeVisible({ timeout: 45_000 });
+    await expect(row).not.toContainText("Example Friend");
+    await row.click();
+    const article = page.locator(".sky-detail-page");
+    await expect(article).toContainText(passage.body_they);
+    await page.reload();
+    await expect(article).toContainText(passage.body_they);
+  });
+}

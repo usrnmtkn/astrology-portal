@@ -312,3 +312,17 @@ translation; em dashes; "whether".
 The app should never pay a writer to rediscover astrology it already knows.
 The knowledge base supplies the meaning. The writing engine supplies the
 reader experience.
+
+## Friend transit naming (owner direction, 2026-10-05)
+
+Once the selected person is established by the page, section heading, or chart
+context, do not repeat `{{Name}}` inside transit titles or body copy. Use
+`they/them/their` for the friend's experience. In relationship transit copy,
+use `you`, `they`, `their`, and `the two of you` as needed for clarity. Titles
+such as `Jupiter opposite {{Name}}'s Sun` become `Jupiter opposite their Sun`.
+Only use the person's name when pronouns would genuinely make the sentence
+ambiguous. The same rule applies in Content Studio and in the app.
+
+This direction supersedes the name-required rule for Friends personal transit
+and Between You Two card writing. It does not change naming on other surfaces.
+Source: [owner task](thread:01a10c91-1672-7511-becc-bf8ba3189ee0).

@@ -48,7 +48,8 @@ lib.authoredCards.push(...lunationEclipseSections.authoredCards);
 lib.authoredCards.push(...lunationEclipseHouseLayers.authoredCards);
 lib.authoredCards.push(...skyArticleV1.authoredCards);
 rowsFile.hookRows.push(...lunationBlend.hookRows);
-rowsFile.hookRows.push(...bondLanguagePass2.rows);
+// Match the shipped package: current source rows supersede the historical pass.
+rowsFile.hookRows.unshift(...bondLanguagePass2.rows);
 rowsFile.hookRows.push(...skyArticleV1.hookRows);
 rowsFile.hookRows.push(...skyAspectPhrasebookV1.hookRows);
 rowsFile.hookRows.push(...pairDailyFramesV1.rows);
@@ -284,48 +285,26 @@ const FRIEND_REPORTED_SUBJECT_YOU = /\b(tell|tells|told|show|shows|showed|remind
 const FRIEND_PREPOSITION_OBJECT_YOU = /\b(around|for|to|with|without|at|from|of|about|through|toward|towards|against|between|among|by|beside|behind|under|over|in|inside|outside|into|onto|off|near|within)\s+you\b/gi;
 const FRIEND_VERB_OBJECT_YOU = /\b(find|finds|found|finding|help|helps|helped|helping|give|gives|gave|giving|pull|pulls|pulled|pulling|support|supports|supported|supporting|affect|affects|affected|affecting|remind|reminds|reminded|reminding|satisfy|satisfies|satisfied|satisfying|cheer|cheers|cheered|cheering|ask|asks|asked|asking|tell|tells|told|telling|leave|leaves|left|leaving|show|shows|showed|showing|make|makes|made|making|let|lets|letting|keep|keeps|kept|keeping|cost|costs|costing|teach|teaches|taught|teaching|push|pushes|pushed|pushing|hold|holds|held|holding|stop|stops|stopped|stopping)\s+you\b/gi;
 
-function possessiveDisplayName(name) {
-  return `${name}'s`;
-}
-
-export function friendVoiceFromReaderCopy(body, name) {
-  let named = false;
-  const namePossessive = possessiveDisplayName(name);
-  const nameForPossessive = (source) => {
-    if (named) return /^[A-Z]/.test(source) ? "Their" : "their";
-    named = true;
-    return namePossessive;
-  };
-  const nameForContraction = (verb) => {
-    if (named) return `they${verb}`;
-    named = true;
-    return `${name} ${verb === "'re" ? "is" : verb === "'ve" ? "has" : verb === "'ll" ? "will" : "would"}`;
-  };
-  const nameForObject = () => {
-    const objectReference = named ? "them" : name;
-    named = true;
-    return objectReference;
-  };
+export function friendVoiceFromReaderCopy(body, _name) {
 
   let rendered = body
     .replace(/\byourself\b/gi, "themselves")
     .replace(/\byourselves\b/gi, "themselves")
     .replace(/\byours\b/gi, "theirs")
     .replace(/\byou('re|’re|'ve|’ve|'ll|’ll|'d|’d)\b/gi, (_, verb) => (
-      nameForContraction(verb.toLowerCase().replace("’", "'"))
+      `they${verb.toLowerCase().replace("’", "'")}`
     ))
-    .replace(/\byour\b/gi, (source) => nameForPossessive(source))
+    .replace(/\byour\b/gi, (source) => /^[A-Z]/.test(source) ? "Their" : "their")
     .replace(
       FRIEND_REPORTED_SUBJECT_YOU,
       (_, governor, auxiliary) => `${governor} they ${auxiliary}`
     )
-    .replace(FRIEND_PREPOSITION_OBJECT_YOU, (_, governor) => `${governor} ${nameForObject()}`)
-    .replace(FRIEND_VERB_OBJECT_YOU, (_, governor) => `${governor} ${nameForObject()}`)
+    .replace(FRIEND_PREPOSITION_OBJECT_YOU, (_, governor) => `${governor} them`)
+    .replace(FRIEND_VERB_OBJECT_YOU, (_, governor) => `${governor} them`)
     .replace(/\byou\b/gi, (source) => (/^[A-Z]/.test(source) ? "They" : "they"));
 
   rendered = rendered.replace(FRIEND_IMPERATIVE, (_, prefix, verb) => {
-    const subject = named ? "They" : name;
-    named = true;
+    const subject = "They";
     const normalizedVerb = verb.toLowerCase();
 
     if (normalizedVerb === "don't" || normalizedVerb === "do not") {
@@ -335,7 +314,7 @@ export function friendVoiceFromReaderCopy(body, name) {
     return `${prefix}${subject} should ${normalizedVerb}`;
   });
 
-  return rendered;
+  return rendered.replace(/(^|[.!?]\s+|\n+)they\b/g, "$1They");
 }
 const card = (k) => cards.get(k) ?? null;
 const skyArticles = [...cards.values()].filter((candidate) => candidate.contentKey.startsWith("sky-article/"));
@@ -619,7 +598,7 @@ function renderTransitHouseReference({ planet, house, sign, window: win, voice =
       const partSourceKeys = [[intro.contentKey], [synth.contentKey]];
       const headline = v === "you"
         ? `${title(planet)} moving through your ${ordinal(house)} house`
-        : `${title(planet)} moving through ${voice}'s ${ordinal(house)} house`;
+        : `${title(planet)} moving through their ${ordinal(house)} house`;
       // Retrograde overlay: revise-not-redo framing appended when the engine flags Rx during the crossing.
       if (isRetrograde) {
         const retroKey = `fallback-hook/transit-house-retro-overlay/${planet}`;
@@ -675,7 +654,7 @@ function renderTransitAspectReference({ transiting, natal, aspect, variant, pass
   // voice: "you" (reader) or a friend's display name. The authored library is reader-voice,
   // so friend view renders fallback-only in authored friend-voice rows (never pronoun swaps).
   const v = voice === "you" ? "you" : "they";
-  const otherPoss = v === "they" ? `${voice}'s` : null;
+  const otherPoss = v === "they" ? "their" : null;
   const g = GROUP[aspect] ?? aspect; // accepts group names directly
   // Owner rulings 2026-07-27/28: Lilith renders on conjunction/opposition only (Walker canon);
   // node cards are conjunction-focused. Other contacts raise SOURCE_GAP and the surface hides.
@@ -724,10 +703,10 @@ function renderTransitAspectReference({ transiting, natal, aspect, variant, pass
       const untilDate = win ? String(win).replace(/^until\s+/i, "") : null;
       const readerBody = c.body_you ?? c.body;
       // An empty exact overlay must not hide the serving family card.
-      if (!readerBody) continue;
+      if (v === "you" ? !readerBody : !c.body_they && !readerBody) continue;
       let aBody = v === "you"
         ? readerBody
-        : fillKeep(c.body_they ?? friendVoiceFromReaderCopy(readerBody, voice), { Name: voice });
+        : fillKeep(c.body_they ?? friendVoiceFromReaderCopy(readerBody ?? "", voice), { Name: voice });
       aBody = aBody.replace(/\{\{aspectWord\}\}/g, AW[aspect] ?? aspect);
       aBody = untilDate ? aBody.replace(/\{\{untilDate\}\}/g, untilDate) : aBody.replace(/ until \{\{untilDate\}\}/g, "");
       const contributions = [{ text: aBody, keys: [c.contentKey], start: 0 }];
@@ -753,7 +732,7 @@ function renderTransitAspectReference({ transiting, natal, aspect, variant, pass
       }
       const authoredHeadline = v === "you"
         ? (c.headline || "")
-        : `${title(transiting)} ${aspect} ${voice}'s ${title(natal)}`;
+        : `${title(transiting)} ${{ conjunction: "conjunct", opposition: "opposite" }[aspect] ?? aspect} their ${title(natal)}`;
       const passHook = pass ? hookVoice(`fallback-hook/transit-pass/${pass}`, v) : null;
       if (passHook) { contributions.push({ text: passHook, keys: [`fallback-hook/transit-pass/${pass}`], start: aBody.length }); aBody = `${aBody}\n\n${passHook}`; }
       return { ...passageSources(aBody, contributions, (key) => passageSource(card(key) ?? hooks.get(key), v), v === "you" && c.headline ? [passageSource(c, v, "headline")] : []), headline: authoredHeadline, body: aBody, parts: aBody.split("\n\n"), templateKey: "authored/transit-aspect", contentKey: c.contentKey, provenanceTier: transitReaderTier(c) ?? undefined };
@@ -2230,13 +2209,13 @@ function renderBondTransitReference({ transiting, aspect, endpointPlanet, endpoi
   const timeClose = inlineWindow(timeOpen);
   const endpoint = endpointOwner === "reader"
     ? `your ${title(endpointPlanet)}`
-    : `${otherName}'s ${title(endpointPlanet)}`;
+    : `their ${title(endpointPlanet)}`;
   const activatedList = endpointOwner === "reader"
-    ? `${otherName}'s ${serialList(activatedPlanets.map(title))}`
-    : serialList(activatedPlanets.map((planet) => `your ${title(planet)}`));
+    ? `their ${serialList(activatedPlanets.map(title))}`
+    : `your ${serialList(activatedPlanets.map(title))}`;
   const plural = activatedPlanets.length !== 1;
   const endpointReference = plural && endpointOwner === "friend"
-    ? `${friendPossessivePronoun || "their"} ${title(endpointPlanet)}`
+    ? `their ${title(endpointPlanet)}`
     : "it";
   const closing = `${transitRef(transiting, sign).replace(/^./, (char) => char.toUpperCase())} is ${relation[aspect] ?? aspectAdj} ${endpoint}${timeClose ? ` ${timeClose}` : ""}, activating the connection${plural ? "s" : ""} ${endpointReference} makes with ${activatedList}.`;
   const paras = [effect, closing];

@@ -1167,7 +1167,7 @@ const fallbackStyleGuide = [
   "- Do not use these words or phrases in reader-facing copy: themes, energy, activates, integration, life area, the gift is, the work is, these are not just background circumstances, has to be understood alongside, care out loud.",
   "- For natal placements, do not define the planet, sign, and house in a fixed textbook sequence. Start with what the placement does in a person, then make the sign, house, retrograde condition, ruler, and aspects matter only when they explain real behavior.",
   "- For empty houses, do not open by saying there are no planets in the house. Start with the sign on the cusp and what that looks like in real life. Use the ruler to show where the house becomes easier to recognize through concrete choices, events, or timing.",
-  "- For friend chart copy, use the friend's name naturally once, then use pronouns. Default to they, their, and them unless provided otherwise.",
+  "- For friend transit cards where the page, section, or chart already identifies the person, use they/them/their without repeating the name in titles or body copy. Relationship transit cards use you, they, their, and the two of you. Use the name only to resolve genuine ambiguity. Other friend chart copy may establish the name once, then use pronouns.",
   "- Keep natal aspects separate from the placement body unless explicitly asked to weave them in.",
   "- Do not call out backend distinctions in user-facing copy, such as \"this is not a permanent trait,\" \"source-backed,\" or \"authored from approved material.\"",
   "- Translate source symbolism into concrete human experience.",

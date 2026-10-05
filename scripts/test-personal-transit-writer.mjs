@@ -49,14 +49,14 @@ const checks = personalTransitReviewChecks({
   siblings: [{ contentKey: "authored/transit-aspect/sun/sun/trine", you: "You may defend a plan in Aries.", friend: "" }]
 });
 assert(checks.some((item) => item.code === "unexpected-sign"));
-assert(checks.some((item) => item.code === "missing-name"));
+assert(!checks.some((item) => item.code === "missing-name"));
 assert(checks.some((item) => item.code === "near-identical-sibling"));
 assert(!personalTransitReviewChecks({
   you: "{{holder1}} takes longer to reply than you expected.",
   friend: "You take longer to reply than {{holder1}} expected.",
   family: "bond-effect"
 }).some((item) => item.code === "unknown-variable" || item.code === "missing-name" || item.code === "missing-holder"));
-assert(personalTransitReviewChecks({
+assert(!personalTransitReviewChecks({
   you: "A reply takes longer than you expected.",
   family: "bond-effect"
 }).some((item) => item.code === "missing-holder"));

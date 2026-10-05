@@ -17,6 +17,8 @@ import {
 import type { GenerationProvider } from "./provider-config.js";
 
 const allowedVariables = new Set(["Name", "untilDate", "aspectWord"]);
+// Owner direction: thread:01a10c91-1672-7511-becc-bf8ba3189ee0 (2026-10-05).
+export const friendTransitNamingRule = "Friend transit naming rule: Once the selected person is established by the page, section heading, or chart context, do not repeat {{Name}} or {{holder1}} inside transit titles or body copy. Use they/them/their for the friend's experience. In relationship transit copy, use you, they, their, and the two of you as needed for clarity. Titles such as Jupiter opposite {{Name}}'s Sun should become Jupiter opposite their Sun. Only use the person's name when pronouns would genuinely make the sentence ambiguous.";
 const editorialNote = /\b(?:drafting note|todo|tbd|placeholder|for the writer|do not publish|internal only|details\.)\b/iu;
 const signName = /\b(?:aries|taurus|gemini|cancer|leo|virgo|libra|scorpio|sagittarius|capricorn|aquarius|pisces)\b/iu;
 const houseWord = /\b(?:1st|2nd|3rd|4th|5th|6th|7th|8th|9th|10th|11th|12th|house)\b/iu;
@@ -166,15 +168,9 @@ export function personalTransitReviewChecks(input: {
     for (const name of variablesIn(text)) {
       if (!licensed.has(name)) checks.push({ code: "unknown-variable", audience, detail: `Contains {{${name}}}, which is not a supported variable for this destination.` });
     }
-    if (isBond && !variablesIn(text).has("holder1")) {
-      checks.push({ code: "missing-holder", audience, detail: "Friends Between you two copy should use {{holder1}} for the other person." });
-    }
   }
   if (!isBond && input.you?.trim() && variablesIn(input.you).has("Name")) {
     checks.push({ code: "name-in-you", audience: "you", detail: "You copy should not use {{Name}}." });
-  }
-  if (!isBond && input.friend?.trim() && !variablesIn(input.friend).has("Name")) {
-    checks.push({ code: "missing-name", audience: "friend", detail: "Friend copy should use {{Name}} for the person being read." });
   }
   if (input.you?.trim() && input.friend?.trim() && pronounSwap(input.you, input.friend)) {
     checks.push({ code: "pronoun-swap", audience: "friend", detail: "Friend copy looks like a pronoun swap of the You passage." });
@@ -526,16 +522,16 @@ async function personalTransitWritingMemory(contact: PersonalTransitContact) {
 
 function youSlot(contact: PersonalTransitContact, preview: PersonalTransitPreview = {}) {
   if (contact.family === "bond-effect") {
-    return `Write the You passage for Friends > Transits > Between you two: transiting ${title(contact.transiting ?? "")} ${contact.aspect}. Second person to the reader. Temporary contact with {{holder1}}, not a standing natal trait. Use {{holder1}} for the other person. Do not use {{Name}}. ${placementScope(contact, preview)}`;
+    return `Write the You passage for Friends > Transits > Between you two: transiting ${title(contact.transiting ?? "")} ${contact.aspect}. Second person to the reader. Describe this temporary relationship contact, not a standing natal trait. ${friendTransitNamingRule} ${placementScope(contact, preview)}`;
   }
   return `Write the You passage for ${destinationLabel(contact)}. Second person. Temporary personal transit, not a natal trait. ${placementScope(contact, preview)} {{untilDate}} is allowed.`;
 }
 
 function friendSlot(contact: PersonalTransitContact, preview: PersonalTransitPreview = {}) {
   if (contact.family === "bond-effect") {
-    return `Write the Friend/they passage for the same Between you two card. The reader is still you; {{holder1}} is the other person. This can reverse who is doing what, as owner-approved bond-effect pairs do. It is not a pronoun swap of the You passage. Use {{holder1}}. Do not use {{Name}}. ${placementScope(contact, preview)}`;
+    return `Write the Friend/they passage for the same Between you two card. The reader is still you; they/them/their refers to the other person. This can reverse who is doing what, as owner-approved bond-effect pairs do. It is not a pronoun swap of the You passage. ${friendTransitNamingRule} ${placementScope(contact, preview)}`;
   }
-  return `Write the Friend passage for the same destination. Address the reader about {{Name}} using singular they/them. This is guidance for the person reading about their friend, not a pronoun swap of the You passage. ${placementScope(contact, preview)} {{untilDate}} is allowed.`;
+  return `Write the Friend passage for the same destination using singular they/them/their. This is guidance for the person reading about their friend, not a pronoun swap of the You passage. ${friendTransitNamingRule} ${placementScope(contact, preview)} {{untilDate}} is allowed.`;
 }
 
 function personalTransitVoiceNotes(input: {

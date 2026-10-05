@@ -11634,7 +11634,7 @@ export function GeneratedContentAdminDashboard() {
               )}
               {isAuthoredTransitAspectDraft && (
                 <small className="admin-field-hint" id="transit-aspect-they-name-hint" role="note">
-                  Friends uses this complete third-person passage. Use <code>{"{{Name}}"}</code> where the person&apos;s name belongs. If this field is blank, the reader falls back to the legacy automatic conversion of the You passage.
+                  Friends uses this complete third-person passage. The selected person is already established by the page: use they, them, and their. Only use <code>{"{{Name}}"}</code> when pronouns would make the sentence ambiguous. If this field is blank, the reader falls back to the legacy automatic conversion of the You passage.
                 </small>
               )}
               <StudioTextarea

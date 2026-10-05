@@ -26,8 +26,10 @@ const rows = read("apps/web/src/content/fallbackArchitectureV3/source-rows/fallb
 const sha256 = (value) => createHash("sha256").update(value).digest("hex");
 const ascendantKey = "authored/transit-aspect/sun/ascendant/hard";
 const protectedVenusMoonKey = "authored/transit-aspect/venus/moon/hard";
+const namingPath = "packages/astro-knowledge/review/friend-transit-pronouns-2026-10-05.json";
+const namingByKey = new Map(read(namingPath).edits.filter(edit => edit.field === "body_they").map(edit => [edit.contentKey, edit]));
 
-assert.equal(PACKAGE_VERSION, "v3-2026-09-24-calculated-repeat-contacts");
+assert.equal(PACKAGE_VERSION, "v3-2026-10-05-friend-transit-pronouns");
 assert.equal(approval.status, "owner_approved");
 assert.equal(approval.approvalLevel, "exact_owner_approved");
 assert.equal(approval.records.length, 27);
@@ -51,12 +53,13 @@ for (const row of sourceSun) {
   const approved = approvedByKey.get(row.contentKey);
   assert.ok(approved, `${row.contentKey}: missing exact owner approval.`);
   const isOwnerPublishedOverride = row.contentKey === ascendantKey;
-  const expectedFriend = isOwnerPublishedOverride ? override.body_they : approved.body_they;
-  const expectedHash = isOwnerPublishedOverride ? sha256(override.body_they) : approved.body_they_sha256;
-  const expectedRecordPath = isOwnerPublishedOverride ? overridePath : approvalPath;
-  const expectedApprovalLevel = isOwnerPublishedOverride
-    ? "exact_owner_published_cms_revision"
-    : "exact_owner_approved";
+  const previousHash = isOwnerPublishedOverride ? sha256(override.body_they) : approved.body_they_sha256;
+  const naming = namingByKey.get(row.contentKey);
+  assert.equal(naming.beforeSha256, previousHash, "Naming revisions preserve their exact approved predecessor.");
+  const expectedFriend = row.body_they;
+  const expectedHash = naming.afterSha256;
+  const expectedRecordPath = namingPath;
+  const expectedApprovalLevel = "owner_directed_copy_update";
 
   assert.equal(row.body_they, expectedFriend, `${row.contentKey}: source Friends copy drifted.`);
   assert.equal(row.body_they_sha256, expectedHash, `${row.contentKey}: source Friends hash drifted.`);
@@ -76,6 +79,7 @@ for (const row of sourceSun) {
 const otherExplicit = source.authoredCards.filter((row) => (
   String(row.contentKey ?? "").startsWith("authored/transit-aspect/")
   && !String(row.contentKey).startsWith("authored/transit-aspect/sun/")
+  && row.body_they_authorship !== "owner_supplied"
   && typeof row.body_they === "string"
   && row.body_they.trim()
 ));
@@ -90,8 +94,8 @@ const ascSource = sourceSun.find((row) => row.contentKey === ascendantKey);
 const ascBundled = bundledSun.find((row) => row.contentKey === ascendantKey);
 assert.equal(ascSource.body_you, override.body_you, "Current owner-published Sun square Ascendant You copy must be preserved in package source.");
 assert.equal(ascBundled.body_you, override.body_you, "Current owner-published Sun square Ascendant You copy must be preserved in bundled serving copy.");
-assert.equal(ascSource.body_they, override.body_they, "Current owner-published Sun square Ascendant Friend copy must be preserved in package source.");
-assert.equal(ascBundled.body_they, override.body_they, "Current owner-published Sun square Ascendant Friend copy must be preserved in bundled serving copy.");
+assert.equal(sha256(ascSource.body_they), namingByKey.get(ascendantKey).afterSha256, "Current owner-published Sun square Ascendant Friend copy must be preserved in package source.");
+assert.equal(sha256(ascBundled.body_they), namingByKey.get(ascendantKey).afterSha256, "Current owner-published Sun square Ascendant Friend copy must be preserved in bundled serving copy.");
 
 const renderer = createTransitSynastryRenderer(bundled, templates, rows);
 const friendRendered = renderer.renderTransitAspect({
@@ -102,7 +106,7 @@ const friendRendered = renderer.renderTransitAspect({
   voice: "Alisa P",
   window: "until September 4"
 });
-const expectedFriend = override.body_they
+const expectedFriend = ascSource.body_they
   .replaceAll("{{Name}}", "Alisa P")
   .replaceAll("{{aspectWord}}", "square")
   .replaceAll("{{untilDate}}", "September 4");
@@ -134,8 +138,8 @@ try {
   const row = materialized.rows[0];
   assert.equal(row.status, "LIVE");
   assert.equal(row.lane, "serving");
-  assert.equal(row.sections?.body_they, override.body_they);
-  assert.equal(row.sections?.packageRecord?.body_they, override.body_they);
+  assert.equal(row.sections?.body_they, ascSource.body_they);
+  assert.equal(row.sections?.packageRecord?.body_they, ascSource.body_they);
   assert.equal(row.sections?.packageRecord?.body_you, override.body_you);
 } finally {
   fs.rmSync(materializedPath, { force: true });

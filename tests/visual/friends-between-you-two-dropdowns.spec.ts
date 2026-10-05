@@ -124,14 +124,14 @@ test("Between you two composition follows its own dropdowns", async ({ page }) =
   const map = page.getByRole("region", { name: "Between you two composition map" });
   const planet = map.getByLabel("Preview transiting planet", { exact: true });
   const aspect = map.getByLabel("Transit aspect", { exact: true });
-  await expect(map.getByRole("heading", { level: 3, name: "Chiron sextile your Sun" })).toBeVisible();
+  await expect(map.getByRole("heading", { level: 3, name: "Chiron sextile their Sun" })).toBeVisible();
   await expect(map).toContainText("Chiron sextile fixture opening.");
   await expect(planet).toHaveValue("chiron");
   await expect(aspect).toHaveValue("sextile");
 
   // Changing the planet must reload the map onto that pairing, keeping the aspect.
   await planet.selectOption("mars");
-  await expect(map.getByRole("heading", { level: 3, name: "Mars sextile your Sun" })).toBeVisible();
+  await expect(map.getByRole("heading", { level: 3, name: "Mars sextile their Sun" })).toBeVisible();
   await expect(map).toContainText("Mars sextile fixture opening.");
   await expect(map).not.toContainText("Chiron sextile fixture opening.");
   await expect(aspect).toHaveValue("sextile");
@@ -139,7 +139,7 @@ test("Between you two composition follows its own dropdowns", async ({ page }) =
   // Changing the aspect must do the same, and not leave the previous opening on
   // screen under the next click.
   await aspect.selectOption("trine");
-  await expect(map.getByRole("heading", { level: 3, name: "Mars trine your Sun" })).toBeVisible();
+  await expect(map.getByRole("heading", { level: 3, name: "Mars trine their Sun" })).toBeVisible();
   await expect(map).toContainText("Mars trine fixture opening.");
   await expect(map).not.toContainText("Mars sextile fixture opening.");
   await expect(planet).toHaveValue("mars");
@@ -183,4 +183,21 @@ test("Between you two map re-reads a passage the owner just saved", async ({ pag
   await expect(map).not.toContainText("Sun square Saturn fixture activation.");
 
   expect(errors).toEqual([]);
+});
+
+test("Saved relationship copy uses pronouns in both preview audiences after reload", async ({ page }) => {
+  const opening = "They want the bigger version of the plan while you are figuring out what it actually costs. The idea may be good. The disagreement starts around how much money, time, or effort the two of you can realistically give it.";
+  await isolate(page, { ...savedCopy, "fallback-hook/bond-effect-opposition/jupiter": opening });
+  await page.goto(`${workspacePath}&q=Jupiter+opposite+their+Sun`);
+  const map = page.getByRole("region", { name: "Between you two composition map" });
+  for (const afterReload of [false, true]) {
+    if (afterReload) await page.reload();
+    await expect(map.getByRole("heading", { level: 3, name: "Jupiter opposite their Sun" })).toBeVisible();
+    await expect(map.getByRole("button", { name: "Edit Friend opening", exact: true })).toHaveText(`${opening} Friend view.`);
+    await map.getByLabel("Preview friend name").fill("Example Friend");
+    await expect(map.getByRole("button", { name: "Edit Friend opening", exact: true })).not.toContainText("Example Friend");
+    await map.getByLabel("Opening audience").selectOption("you");
+    await expect(map.getByRole("heading", { level: 3, name: "Jupiter opposite your Sun" })).toBeVisible();
+    await map.getByLabel("Opening audience").selectOption("they");
+  }
 });

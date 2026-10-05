@@ -173,7 +173,7 @@ const counts = {
   sourceMaterial: sourceRows.fallbackSourceRows.length
 };
 
-assert.equal(PACKAGE_VERSION, "v3-2026-09-24-calculated-repeat-contacts");
+assert.equal(PACKAGE_VERSION, "v3-2026-10-05-friend-transit-pronouns");
 assert.ok(counts.authoredCards > 0, "Package must include authored transit/synastry cards.");
 assert.ok(counts.fallbackHooks > 0, "Package must include fallback hooks.");
 assert.ok(counts.vocabulary > 0, "Package must include vocabulary rows.");
@@ -290,7 +290,7 @@ const friendTransit = transitRenderer.renderTransitAspect({
   voice: "Sofia",
   window: "Until November 13"
 });
-assert.equal(friendTransit.headline, "Moon square Sofia's Venus");
+assert.equal(friendTransit.headline, "Moon square their Venus");
 assert.equal(friendTransit.contentKey, "authored/transit-aspect/moon/venus/hard");
 const approvedMoonVenusFriend = transitRows.authoredCards.find((row) => row.contentKey === "authored/transit-aspect/moon/venus/hard");
 assert.equal(typeof approvedMoonVenusFriend?.body_they, "string", "Moon-Venus hard must carry explicit owner-approved Friends copy.");
