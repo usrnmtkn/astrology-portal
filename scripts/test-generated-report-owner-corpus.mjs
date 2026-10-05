@@ -63,6 +63,27 @@ try {
       assert.ok(response.value.includes("three consecutive annual-report paragraphs"));
     }
     const kernel = api.prepareTransitReadingProductionKernel({ productionInput, role: "WRITER" });
+    const originalPolicy = process.env.GENERATED_REPORT_RELEASE_POLICY;
+    try {
+      process.env.GENERATED_REPORT_RELEASE_POLICY = "report-source-completion-v1";
+      const correctionReview = {
+        purpose: "transit-report-correction-review-v1", checked: true, passed: false,
+        factLockPassed: true, shapePassed: true, draftSha256: "a".repeat(64),
+        violations: [{ category: "banned_language", detail: "whether" }]
+      };
+      const correctionInput = { productionInput: { ...productionInput, mode: "in_depth" }, role: "REVIEWER", correctionReview };
+      const diagnostic = api.prepareTransitReadingProductionKernel(correctionInput);
+      assert.deepEqual(diagnostic.draftValidation, correctionReview, "The kernel must retain the failed state, not claim a passing validation.");
+      for (const change of [{ role: "WRITER" }, { draftValidated: true }, { productionInput },
+        { correctionReview: { ...correctionReview, factLockPassed: false } }]) {
+        assert.throws(() => api.prepareTransitReadingProductionKernel({ ...correctionInput, ...change }), /CORRECTION_REVIEW_INVALID/);
+      }
+      process.env.GENERATED_REPORT_RELEASE_POLICY = "strict";
+      assert.throws(() => api.prepareTransitReadingProductionKernel(correctionInput), /CORRECTION_REVIEW_INVALID/);
+    } finally {
+      if (originalPolicy === undefined) delete process.env.GENERATED_REPORT_RELEASE_POLICY;
+      else process.env.GENERATED_REPORT_RELEASE_POLICY = originalPolicy;
+    }
     const before = calls;
     kernel.ownerVoice[0].text += " invented candidate";
     await assert.rejects(api.callGovernedTransitReadingModel({ kernel, provider: "fixture", model: "fixture", prompt: "test", schemaName: "fixture", schema: {} }), /EVIDENCE_INVALID/);

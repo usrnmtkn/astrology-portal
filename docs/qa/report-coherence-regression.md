@@ -22,6 +22,23 @@ single correction. Returning after only the first validator hides known failures
 until the correction allowance has been consumed. Terminal diagnostics retain
 validation failures and the final draft hash.
 
+### Collect editorial feedback before the single correction
+
+A complete initial candidate that passes fact, register, length and prose-integrity
+checks but fails only `banned_language` can receive a combined editorial review.
+The review request explicitly records failed lexical validation and is bound to
+the exact draft hash. It is diagnostic permission only: even a passing judge
+cannot release that candidate. The single correction receives both the lexical
+violations and the supported editorial findings. The corrected draft must pass
+all deterministic checks and its own final review before saving.
+
+This is restricted to You/Friends `in_depth` reports under the existing delivery
+policy and combined reviewer. Fact, register, shape, mixed and malformed failures
+remain blocked before review. There are still at most two writer and two reviewer
+calls. A worker deadline resumes existing checkpoints; terminal failure does not
+start another quality cycle. Existing held jobs require an explicitly bounded
+recovery and are never marked ready from the old review.
+
 ## Calculations and review transport
 
 Daily submission waits for the selected contacts' Swiss Ephemeris calculations at
@@ -40,6 +57,8 @@ limits, review thresholds and source-evidence requirements are unchanged.
 ## Focused checks (no provider calls)
 
 - `node scripts/test-transit-source-completion.mjs`
+- `node scripts/test-production-precall-gate.mjs`
+- `node scripts/test-generated-report-owner-corpus.mjs`
 - `node --import tsx scripts/test-report-validation-feedback.mts`
 - `node --import tsx scripts/test-transit-report-prose-integrity.mts`
 - `node --import tsx scripts/test-transit-reading-source-citations.mts`
@@ -53,11 +72,11 @@ privacy, typecheck, build and actual reader-delivery checks still apply.
 ## Release limits
 
 Transport tests and deterministic fixture passes do not establish writing
-quality. The most recent private real-generation check stopped after its bounded
-correction, before a judge call. It exposed the early-return validation problem
-fixed here. There has not yet been a successful real end-to-end generation after
-that final change. No candidate should be labeled approved or production-verified
-on the strength of offline fixture verdicts.
+quality. The correction-order repair still requires separately authorized real
+verification against a frozen report case, followed by saved-copy retrieval and
+browser inspection. No candidate should be labeled approved or production-verified
+on the strength of offline fixture verdicts. Existing held reports do not become
+ready merely because this code is deployed.
 
 The old fragment composer is retired, not replaced with newly approved source
 prose. Historical rows retain their provenance. New source prose requires its

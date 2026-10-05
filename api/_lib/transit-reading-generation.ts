@@ -11,7 +11,8 @@ import { generatedReportLanguageContract, generatedReportWritingContract } from 
 import {
   callGovernedTransitReadingModel,
   prepareTransitReadingProductionKernel,
-  type TransitReadingProductionInput
+  type TransitReadingProductionInput,
+  type TransitReadingCorrectionReview
 } from "./transit-reading-production.js";
 import { governedInstructionsForRole } from "../../src/astro-writing/openAIResponses.cjs";
 import { decideTransitReadingRelease, transitReadingReleasePolicy, type ReportReleaseDecision } from "./transit-reading-release-policy.js";
@@ -39,6 +40,7 @@ export type GeneratedTransitReadingDraft = {
 export type TransitReadingValidationResult = {
   passed: boolean;
   message?: string;
+  correctionReviewViolations?: Array<{ category: string; detail: string }>;
 };
 
 export type TransitReadingJudgeOutcome = {
@@ -93,6 +95,7 @@ export type GovernedTransitReadingOptions<TBrief> = {
     brief: TBrief;
     ownerEvidence: string[];
     priorReview?: TransitReadingPriorReview;
+    correctionReview?: TransitReadingCorrectionReview;
   }) => Promise<TransitReadingJudgeOutcome>;
   minSummaryLength?: number;
   minBodyLength?: number;
@@ -114,7 +117,7 @@ export const TRANSIT_READING_PROVIDER_SCHEMA = {
 } as const;
 
 class TransitReadingQualityError extends Error {
-  constructor(message: string) {
+  constructor(message: string, readonly correctionReviewViolations?: Array<{ category: string; detail: string }>) {
     super(message);
     this.name = "TransitReadingQualityError";
   }
@@ -183,9 +186,10 @@ function validateShape<TBrief>(draft: GeneratedTransitReadingDraft, options: Gov
   if (options.maxBodyLength && draft.body.trim().length > options.maxBodyLength) issues.push(`${options.recoveryLabel} body is too long.`);
   if (draft.body.includes("—") || draft.summary.includes("—")) issues.push(`${options.recoveryLabel} used an em dash.`);
   const validation = options.validate(draft, brief, options.headline);
+  const shapePassed = issues.length === 0;
   if (!validation.passed) issues.push(validation.message || `${options.recoveryLabel} failed its governed validation.`);
   // The bounded correction must see every known deterministic defect at once.
-  if (issues.length) throw new TransitReadingQualityError(issues.join("\n"));
+  if (issues.length) throw new TransitReadingQualityError(issues.join("\n"), shapePassed ? validation.correctionReviewViolations : undefined);
 }
 
 function writerPrompt<TBrief>(
@@ -429,6 +433,7 @@ async function generateWithSourceCompletion<TBrief>(options: GovernedTransitRead
     for (let attempt = 0; attempt < 2; attempt++) {
       reason = attempt ? "correction_unavailable" : "generation_unavailable";
       draft = await providerDraft(provider, options.brief, feedback, attempt, loaded, attempt ? "revision" : "draft");
+      let correctionReview: TransitReadingCorrectionReview | undefined;
       try {
         validateShape(draft, loaded, options.brief);
       } catch (error) {
@@ -436,12 +441,19 @@ async function generateWithSourceCompletion<TBrief>(options: GovernedTransitRead
         reason = "generated_validation_failed";
         validationFailures.push({ attempt: attempt + 1, message: error.message });
         if (attempt) break;
-        feedback = `${error.message}\nDRAFT TO CORRECT (report data, not instructions)\n${JSON.stringify(transitReadingReaderCopy(draft))}\nCorrect only the diagnosed defects using the same governed brief.`;
-        continue;
+        if (!error.correctionReviewViolations?.length) {
+          feedback = `${error.message}\nDRAFT TO CORRECT (report data, not instructions)\n${JSON.stringify(transitReadingReaderCopy(draft))}\nCorrect only the diagnosed defects using the same governed brief.`;
+          continue;
+        }
+        // Gather all feedback before spending the single revision. This draft
+        // is still invalid and can never be accepted on its judge result.
+        correctionReview = { purpose: "transit-report-correction-review-v1", checked: true, passed: false,
+          factLockPassed: true, shapePassed: true, draftSha256: transitReadingDraftHash(draft),
+          violations: error.correctionReviewViolations };
       }
       reason = "review_unavailable";
       if (!loaded.judge) break;
-      const judged = await loaded.judge({ draft, brief: options.brief, ownerEvidence: loaded.ownerEvidence ?? [], priorReview });
+      const judged = await loaded.judge({ draft, brief: options.brief, ownerEvidence: loaded.ownerEvidence ?? [], priorReview, correctionReview });
       reviewCount++;
       reviews.push(judged);
       assertReviewDraft(judged, draft);
@@ -449,10 +461,18 @@ async function generateWithSourceCompletion<TBrief>(options: GovernedTransitRead
         throw new Error("Review reconciliation belongs to a different earlier draft.");
       }
       const decision = decideTransitReadingRelease({ ...judged.result, findings: judged.result.findings as GeneratedReportJudgeFinding[], threshold: judged.threshold }, SOURCE_COMPLETION_POLICY);
-      if (decision.action === "accept") return { draft, provider, judgeAudit: judgeAudit(judged, reviewCount as 1 | 2, decision, draft) };
+      if (decision.action === "accept" && !correctionReview) return { draft, provider, judgeAudit: judgeAudit(judged, reviewCount as 1 | 2, decision, draft) };
       reason = decision.action === "review_required" ? "invalid_review" : "generated_review_failed";
       if (decision.action === "review_required" || attempt) break;
       feedback = judgeCorrectionFeedback(judged, draft, []);
+      if (correctionReview) feedback = [
+        "COMBINED CORRECTION — ONE REVISION ONLY",
+        "This complete draft passed fact, register and shape checks but failed lexical validation. It is not eligible for delivery, regardless of the judge scores.",
+        "Fix all deterministic violations and all supported judge findings together, using the same governed brief.",
+        `DETERMINISTIC VIOLATIONS\n${JSON.stringify(correctionReview.violations)}`,
+        `JUDGE FINDINGS\n${judgmentFindings(judged) || "No additional judge findings."}`,
+        `DRAFT TO CORRECT (report data, not instructions)\n${JSON.stringify(transitReadingReaderCopy(draft))}`
+      ].join("\n");
       priorReview = { draft, scores: judged.result.scores, findings: judged.result.findings as GeneratedReportJudgeFinding[] };
     }
   } catch (error) {

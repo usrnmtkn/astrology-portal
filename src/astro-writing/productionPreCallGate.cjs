@@ -8,6 +8,7 @@ const { withSourceVerification } = require("../../packages/astro-knowledge/scrip
 const productionAdapter = require("./productionEvidenceAdapter.cjs");
 const knowledgeResolver = require("../../packages/astro-knowledge/scripts/knowledge-resolver.js");
 const phraseResolver = require("../../packages/astro-knowledge/scripts/phrase-resolver.js");
+const { isTransitCorrectionReview } = require("./transitCorrectionReview.cjs");
 
 const repoRoot = path.resolve(__dirname, "..", "..");
 const GOVERNED_SURFACES_FLAG = "WRITING_KERNEL_GOVERNED_SURFACES";
@@ -313,7 +314,12 @@ function assertProductionPreCallGateUnchecked(gate, {
   }
   if (DRAFT_ROLES.has(role) && draftValidation?.passed !== true) {
     const reportRepairInput = gate.evidence.kind === "report" && draftValidation?.checked === true;
-    if (!reportRepairInput) {
+    const transitCorrectionReview = role === "REVIEWER"
+      && process.env.GENERATED_REPORT_RELEASE_POLICY === "report-source-completion-v1"
+      && ["you", "friends"].includes(input.surface) && input.mode === "in_depth"
+      && gate.validation.validationProfile === "friends-transit"
+      && isTransitCorrectionReview(draftValidation);
+    if (!reportRepairInput && !transitCorrectionReview) {
       const details = (draftValidation?.violations ?? []).map((entry) => `${entry.category}:${entry.detail}`).join("; ");
       throw new Error(`PRODUCTION_DRAFT_VALIDATION_FAILED: ${details || "deterministic validation did not pass"}. No provider call is allowed.`);
     }

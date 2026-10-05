@@ -181,7 +181,7 @@ const judgeRuntime = read("api/_lib/transit-reading-judge.ts");
 assert.doesNotMatch(judgeRuntime, /callOpenAIResponses\s*\(/u, "Generated report judge may not open a direct provider path.");
 assert.doesNotMatch(judgeRuntime, /api\.anthropic\.com/u, "Generated report judge may not open a direct Claude path.");
 assert.match(judgeRuntime, /role: "REVIEWER"/u);
-assert.match(judgeRuntime, /draftValidated: true/u);
+assert.match(judgeRuntime, /draftValidated: !input\.correctionReview/u);
 assert.match(judgeRuntime, /callGovernedTransitReadingModel/u);
 
 const productionRuntime = read("api/_lib/transit-reading-production.ts");
