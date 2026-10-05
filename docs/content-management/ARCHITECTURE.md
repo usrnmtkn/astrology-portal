@@ -471,6 +471,30 @@ eclipse > lunation > station > headliner > standard > quiet
 
 Quiet weeks fall back to `renderWeeklyMoon`.
 
+Calendar aspect editors also offer optional complete retrograde passages alongside
+the existing default. `RetrogradeBodyA`, `RetrogradeBodyB`, and
+`RetrogradeBodyBoth` refer to the bodies in the saved content key, so reversing an
+event's display order cannot swap the passages. The editor offers only the
+app's foreground Rx planets; Sun, Moon and background-motion points do not gain
+Rx fields. Two retrograde planets require the explicit both-planets version.
+
+Package rows save these fields in `sections.packageDraft` and publish them into
+`sections.packageRecord` through the existing version-checked Sign Off workflow.
+Manually authored sign-specific rows use the same fields in `sections`. Public
+projection includes the published fields, never package proposals or history.
+The original default body and its review history remain intact. Empty versions,
+unknown motion and unmatched motion combinations select the existing default;
+there is no automatic rewriting, concatenation or content generation.
+
+The Calendar adapter and shared Studio Sky selectors receive event-time motion
+facts and choose the version only after the existing source and publication
+gates have selected an eligible aspect. General versus sign-specific source
+precedence stays the same. The full passage reaches the card and event detail.
+`scripts/test-calendar-aspect-retrograde.mts` covers actual save/reopen/publication,
+the public reader loader, exact copy, reversal, default fallback and invalid or
+stale writes. `tests/visual/calendar-aspect-retrograde.spec.ts` exercises the
+editor and reader with isolated storage on mobile/desktop in both themes.
+
 ## 11. Worked example: Aquarius Full Moon for Gemini rising
 
 | Output movement | Content source | Computed fact |

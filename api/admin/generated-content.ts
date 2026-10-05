@@ -506,6 +506,7 @@ function setPackageValueAt(record: Record<string, unknown>, path: string, value:
 }
 
 function isEditablePackageCopyPath(path: string, packageRecord?: Record<string, unknown>) {
+  if (libs().calendarAspectRetrogradeOptions(String(packageRecord?.contentKey ?? "")).some(option => option.field === path)) return true;
   if (libs().isSkyEvergreenSource(packageRecord) && (path === "ingress" || path.startsWith("ingress."))) return true;
   if (libs().isSkyEvergreenSource(packageRecord) && libs().skyEvergreenEditableFields(packageRecord).some((field: { path: string }) => field.path === path)) return true;
   const studioPaths = Array.isArray(packageRecord?.studio_editable_fields)
@@ -571,6 +572,10 @@ function validateFallbackArchitectureV3Copy(row: ExistingGeneratedContentRow, pa
   editableFields.push(["body_they", sections.body_they, record.body_they]);
   const packageDraft = isRecord(sections.packageDraft) ? sections.packageDraft : null;
   const proposedRecord = packageDraft ?? (isRecord(sections.packageRecord) ? sections.packageRecord : record);
+  validateAspectRetrogradeCopy(row.content_key, proposedRecord);
+  for (const field of libs().calendarAspectRetrogradeFields) {
+    editableFields.push([field, proposedRecord[field], record[field]]);
+  }
   const retainedMirrors: Record<string, unknown> = {
     headline: row.headline ?? "",
     summary: row.summary ?? "",
@@ -1203,6 +1208,11 @@ function validateWriteBody(body: Record<string, unknown>) {
   try { libs().assertCleanReaderCopy(body); } catch (error) {
     throw new GeneratedContentRequestError((error as Error).message);
   }
+  if (isRecord(body.sections)) {
+    for (const record of [body.sections, body.sections.packageRecord, body.sections.packageDraft]) {
+      if (isRecord(record)) validateAspectRetrogradeCopy(typeof body.contentKey === "string" ? body.contentKey : null, record);
+    }
+  }
   for (const field of ["id", "contentKey", "surface", "mode", "eventType", "status", "headline", "summary", "body", "reviewStatus", "sourceLifecycleAction", "editorialNotes", "promptVersion", "provider", "model", "reviewerNotes", "expectedUpdatedAt", "ownerAction"]) {
     if (body[field] !== undefined && typeof body[field] !== "string") throw new GeneratedContentRequestError(`${field} must be a string.`);
   }
@@ -1231,6 +1241,16 @@ function validateWriteBody(body: Record<string, unknown>) {
   if (body.status === "LIVE" && body.reviewState) throw new GeneratedContentRequestError("Published content cannot retain a review hold.", 409);
 }
 
+function validateAspectRetrogradeCopy(contentKey: string | null, record: Record<string, unknown>) {
+  const allowed = contentKey === null ? null : new Set(libs().calendarAspectRetrogradeOptions(contentKey).map(option => option.field));
+  for (const field of libs().calendarAspectRetrogradeFields) {
+    if (!Object.hasOwn(record, field)) continue;
+    if (typeof record[field] !== "string") throw new GeneratedContentRequestError(`${field} must be a string.`);
+    if (allowed && !allowed.has(field)) throw new GeneratedContentRequestError(`${field} does not apply to this aspect.`);
+    if (/\{\{|\}\}/u.test(record[field] as string)) throw new GeneratedContentRequestError("Retrograde versions contain complete prose, without template variables.");
+  }
+}
+
 function normalizeArticleHoroscopes<T extends Record<string, any>>(row: T, previous:Record<string,any>|null=null): T {
   assertHoroscopeRow(row,{enforcePunctuation:true,previous});
   try { return libs().separateArticleHoroscopeRow(row); }
@@ -1251,6 +1271,8 @@ function assertReaderEligiblePublication(row: Record<string, any>) {
   try { libs().assertCleanReaderCopy(row); } catch (error) {
     throw new GeneratedContentRequestError((error as Error).message, 409);
   }
+  const aspectSections = isRecord(row.sections) ? row.sections : {};
+  validateAspectRetrogradeCopy(row.content_key, isRecord(aspectSections.packageRecord) ? aspectSections.packageRecord : aspectSections);
   if ((row.lane ?? "serving") !== "serving") throw new GeneratedContentRequestError("Published content must use the serving lane.", 409);
   if (row.review_state) throw new GeneratedContentRequestError("Published content cannot retain a review hold.", 409);
   const admissionIssue = libs().packagePublicationAdmissionIssue(row);

@@ -1,4 +1,5 @@
 import { isContentRetired } from "../content/contentPublicationState.js";
+import { withCalendarAspectRetrograde } from "./calendarAspectRetrogradeContent.js";
 import { isReaderFacingCopy } from "../content/readerSafety.js";
 import type { LiveGeneratedContent } from "./generatedContent";
 import { skyAspectContentKey, skyAspectInstanceContentKey, slugContentPart } from "./generatedContentKeys.js";
@@ -65,6 +66,8 @@ type ResolveSkyAspectContentOptions = {
   aspect: string;
   firstSign: string;
   secondSign: string;
+  firstMotion?: string | null;
+  secondMotion?: string | null;
   targetDate?: string | null;
 };
 
@@ -302,7 +305,9 @@ export function resolveSkyAspectContentStudioExact(options: ResolveSkyAspectCont
   const expected = normalizedContentStudioExactSkyAspectFacts(options);
   if (!expected) return null;
 
-  const primary = contentStudioExactRow(options.generatedContent, expected);
+  const baseline = contentStudioExactRow(options.generatedContent, expected);
+  const selected = baseline ? withCalendarAspectRetrograde(baseline.content, options) : null;
+  const primary = baseline && selected ? { body: selected === baseline.content ? baseline.body : selected.body, content: selected } : null;
   if (!primary) return null;
 
   if (expected.a === "north-node") {
@@ -316,10 +321,14 @@ export function resolveSkyAspectContentStudioExact(options: ResolveSkyAspectCont
       : null;
 
     if (south) {
+      const southContent = withCalendarAspectRetrograde(south.content, {
+        first: "south-node", second: expected.b,
+        secondMotion: canonicalContentStudioExactSkyPoint(options.first) === expected.b ? options.firstMotion : options.secondMotion
+      });
       return {
         body: [
           `North Node (${expected.aspect}): ${primary.body}`,
-          `South Node (${southAspect}): ${south.body}`
+          `South Node (${southAspect}): ${southContent === south.content ? south.body : southContent.body}`
         ].join("\n\n"),
         content: primary.content
       };
@@ -369,7 +378,8 @@ export function resolveSkyAspectGeneratedContent(options: ResolveSkyAspectConten
   for (const identity of [exact, expected]) {
     const exactContent = identity ? options.generatedContent.get(signedStudioAspectKey(identity)) : null;
     if (identity && exactContent && generatedSkyAspectCardPassesBoundary(exactContent, identity)) {
-      return { body: skyAspectBody(exactContent), content: exactContent, pairSource: identity.pairSource };
+      const selected = withCalendarAspectRetrograde(exactContent, options);
+      return { body: selected === exactContent ? skyAspectBody(exactContent) : selected.body, content: selected, pairSource: identity.pairSource };
     }
   }
   const content = skyAspectContentKeysFromExpected(expected, options.targetDate)
@@ -382,9 +392,10 @@ export function resolveSkyAspectGeneratedContent(options: ResolveSkyAspectConten
     return null;
   }
 
+  const selected = withCalendarAspectRetrograde(content, options);
   return {
-    body: skyAspectBody(content),
-    content,
+    body: selected === content ? skyAspectBody(content) : selected.body,
+    content: selected,
     pairSource: expected.pairSource
   };
 }
