@@ -1201,7 +1201,7 @@ async function expectRelationshipWheelGeometry(page: Page, label: string) {
         ));
       const houses = Array.from(element.querySelectorAll(".synastry-house-number"))
         .map((house) => ({
-          adjusted: house.getAttribute("data-collision-adjusted") === "true",
+          ring: house.classList.contains("synastry-house-number--outer") ? "outer" : "inner",
           point: { x: numberAttr(house, "x"), y: numberAttr(house, "y") }
         }))
         .filter((house) => Number.isFinite(house.point.x) && Number.isFinite(house.point.y));
@@ -1217,13 +1217,15 @@ async function expectRelationshipWheelGeometry(page: Page, label: string) {
       });
 
       return {
-        adjusted: houses.filter((house) => house.adjusted).length,
+        radii: ["outer", "inner"].map(ring => houses.filter(house => house.ring === ring).map(house => Math.hypot(house.point.x - center, house.point.y - center))),
         degreeMin: nearest.length ? Math.min(...nearest.map((item) => item.degree)) : Number.POSITIVE_INFINITY,
         tickMin: nearest.length ? Math.min(...nearest.map((item) => item.tick)) : Number.POSITIVE_INFINITY
       };
     };
 
     return {
+      signInnerRadius: Number(element.querySelector(".synastry-base-rings circle:nth-child(2)")?.getAttribute("r")),
+      scaledGlyphs: element.querySelectorAll(".planet-label-group[transform*=scale]").length,
       outerTicks: element.querySelectorAll(".synastry-planet-tick--outer").length,
       innerTicks: element.querySelectorAll(".synastry-planet-tick--inner").length,
       outer: radiusStats(".planet-marker-outer .planet-label-group"),
@@ -1237,12 +1239,16 @@ async function expectRelationshipWheelGeometry(page: Page, label: string) {
   expect(geometry.outer.count, `${label} renders outer glyphs`).toBeGreaterThanOrEqual(10);
   expect(geometry.inner.count, `${label} renders inner glyphs`).toBeGreaterThanOrEqual(10);
   expect(geometry.outer.min, `${label} outer glyphs stay outside the inner ring`).toBeGreaterThanOrEqual(180);
-  expect(geometry.outer.max, `${label} outer glyphs stay inside the zodiac band`).toBeLessThanOrEqual(240);
+  expect(geometry.outer.max, `${label} outer glyphs stay inside the zodiac band`).toBeLessThan(geometry.signInnerRadius);
+  expect(geometry.scaledGlyphs, `${label} never shrinks crowded glyphs`).toBe(0);
   expect(geometry.inner.min, `${label} inner glyphs stay outside the aspect well`).toBeGreaterThanOrEqual(108);
-  expect(geometry.inner.max, `${label} inner glyphs stay inside the inner ring`).toBeLessThanOrEqual(180);
-  expect(geometry.outer.spread, `${label} outer glyph cluster lanes stay bounded`).toBeLessThanOrEqual(56);
-  expect(geometry.inner.spread, `${label} inner glyph cluster lanes stay bounded`).toBeLessThanOrEqual(72);
-  expect(geometry.houses.adjusted, `${label} marks house labels that were moved away from degree collisions`).toBeGreaterThanOrEqual(1);
+  expect(geometry.inner.max, `${label} inner glyphs stay inside the inner house ring`).toBeLessThan(Math.min(...geometry.houses.radii[1]));
+  expect(geometry.outer.min, `${label} outer glyphs clear the outer house ring`).toBeGreaterThan(Math.max(...geometry.houses.radii[0]));
+  for (const radii of geometry.houses.radii) {
+    expect(radii, `${label} has twelve numbers in each house ring`).toHaveLength(12);
+    expect(Math.max(...radii) - Math.min(...radii), `${label} keeps house numbers centered on one circle`).toBeLessThan(0.01);
+  }
+  expect(Math.min(...geometry.houses.radii[0]), `${label} puts person 1 houses outside person 2 houses`).toBeGreaterThan(Math.max(...geometry.houses.radii[1]));
   expect(geometry.houses.degreeMin, `${label} keeps house labels clear of planet degree text`).toBeGreaterThanOrEqual(9);
   expect(geometry.houses.tickMin, `${label} keeps house labels clear of degree tick lines`).toBeGreaterThanOrEqual(6);
 }
@@ -1274,7 +1280,10 @@ async function expectAspectInspector(
   const point = wheel.locator(`[data-inspector-point-id="${resolvedPointId}"]`);
 
   await expect(point, `${label} exposes the selected aspect point`).toHaveCount(1);
-  await point.click();
+  // A displaced label and its exact-degree tick can have empty space at the
+  // group's center. Click the visible glyph's hit area, as a reader would.
+  const glyphTarget = point.locator(".planet-hit-area");
+  await (await glyphTarget.count() ? glyphTarget : point).click();
   await expect(point, `${label} marks the selected point`).toHaveClass(/aspect-inspector-point--selected/);
   await expect(wheel.locator(".aspect-inspector-summary"), `${label} opens an inspector summary`).toBeVisible();
   await expect(wheel.locator(".aspect-inspector-line"), `${label} highlights at least one configured aspect`).not.toHaveCount(0);
@@ -1966,16 +1975,12 @@ test.describe("client-facing user flow case studies", () => {
       synastryWheel,
       "Nikki synastry wheel"
     );
-    const synastryInnerBand = synastryWheel.locator(".synastry-inner-planet-band");
-    await expect(synastryInnerBand, "Synastry inner wheel has a distinct background band").toBeVisible();
-    const synastryInnerBandBackground = await synastryInnerBand.evaluate((element) => ({
-      opacity: getComputedStyle(element).opacity,
-      stroke: getComputedStyle(element).stroke
-    }));
-    await expect(
-      synastryInnerBandBackground,
-      "Synastry inner wheel matches the transit outer-wheel background"
-    ).toEqual(transitOuterBandBackground);
+    const synastryInnerBand = synastryWheel.locator(".synastry-inner-glyph-band path");
+    await expect(synastryInnerBand, "Synastry inner glyph band covers twelve sectors").toHaveCount(12);
+    await expect(synastryInnerBand.first(), "Synastry retains the transit band color").toHaveCSS("fill", transitOuterBandBackground.stroke);
+    await expect(synastryWheel.locator(".synastry-house-band--outer path")).toHaveCount(12);
+    await expect(synastryWheel.locator(".synastry-house-band--inner path")).toHaveCount(12);
+    await expectRelationshipWheelGeometry(page, "Nikki synastry chart wheel");
 
     await selectFriendDetailTab(page, "Composite");
     await expectAspectInspector(
@@ -5893,4 +5898,82 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"] as const)
     await expectSemanticArticleHeadingOrder(page, "Sky placement");
     await assertNoClientErrors();
   });
+}
+
+for (const theme of ["light", "dark"] as const) {
+  for (const width of [1440, 390]) {
+    test(`recovered relationship chart design ${theme} ${width}`, async ({ page }, testInfo) => {
+      test.setTimeout(90_000);
+      const assertNoClientErrors = await expectNoClientErrors(page);
+      await page.setViewportSize({ width, height: 1000 });
+      await seedClientState(page, { profile: true, friends: true, preloadProfileNatalSky: true, theme });
+      await expectClientRouteLoads(page, "/#friends?tab=charts&chart=friend-nikki&view=synastry");
+      const synastry = page.getByLabel("Nikki synastry chart wheel", { exact: true });
+      await expectRelationshipWheelGeometry(page, "Nikki synastry chart wheel");
+      const glyphSizes = await synastry.evaluate(element => {
+        const viewport = element.querySelector(".relationship-wheel-viewport")!;
+        const viewportWidth = Math.min(viewport.getBoundingClientRect().width,
+          parseFloat(getComputedStyle(viewport).maxHeight));
+        return ["outer", "inner"].map(ring => ({
+          expected: viewportWidth / 648 * (ring === "outer" ? 26 : 22),
+          widths: [...element.querySelectorAll(`.planet-marker-${ring} .planet-glyph-image`)].map(glyph => glyph.getBoundingClientRect().width)
+        }));
+      });
+      for (const ring of glyphSizes) for (const width of ring.widths) {
+        expect(Math.abs(width - ring.expected), "crowded and isolated glyphs keep the normal on-screen size").toBeLessThan(0.2);
+      }
+      await expect(synastry.locator(".synastry-house-band--outer path")).toHaveCount(12);
+      await expect(synastry.locator(".synastry-house-band--inner path")).toHaveCount(12);
+      await synastry.getByRole("tab", { name: "Bright", exact: true }).click();
+      await expect(synastry.getByLabel("Aspect color legend")).toBeVisible();
+      const swatch = synastry.locator(".relationship-wheel-controls__swatch").first();
+      await expect(swatch).toHaveCSS("background-color", "rgb(240, 165, 0)");
+      expect((await swatch.boundingBox())!.width).toBeLessThan(40);
+      expect((await synastry.getByLabel("Aspect color legend").boundingBox())!.height).toBeLessThan(180);
+      const line = synastry.locator(".interchart-aspect-lines > g").first();
+      await expect(line).toHaveAttribute("style", /--aspect-bright-/);
+      await expectAspectInspector(synastry, "Refined synastry");
+      await page.evaluate(() => window.scrollTo(0, 0));
+      await synastry.screenshot({ path: testInfo.outputPath("synastry.png") });
+      await expectNoHorizontalOverflow(page, "Synastry chart display controls");
+      await page.getByRole("button", { name: "Full-screen chart", exact: true }).click();
+      const dialog = page.getByRole("dialog");
+      await expect(dialog.locator(".synastry-house-number")).toHaveCount(24);
+      await expect(dialog.getByRole("tab", { name: "Bright", exact: true })).toHaveAttribute("aria-selected", "true");
+      const synastryDialogBox = (await dialog.boundingBox())!;
+      const synastryFooterBox = (await dialog.locator(".chart-fullscreen-footer").boundingBox())!;
+      expect(synastryFooterBox.y + synastryFooterBox.height).toBeLessThan(synastryDialogBox.y + synastryDialogBox.height);
+      await dialog.getByRole("button", { name: "Close full-screen chart" }).click();
+
+      await selectFriendDetailTab(page, "Composite");
+      const composite = page.getByLabel(/Nikki and you composite chart wheel/i);
+      await expect(composite.locator(".wheel-glyph-ring")).toBeVisible();
+      await expect(composite.locator(".planet-label-group[transform*=scale]")).toHaveCount(0);
+      await expect(composite.locator(".aspect-lines > g").first()).toBeVisible();
+      await composite.getByRole("tab", { name: "Monochrome", exact: true }).click();
+      await expect(composite.locator(".sky-wheel")).toHaveClass(/sky-wheel--monochrome/);
+      await composite.getByRole("checkbox", { name: "Glyph ring" }).uncheck();
+      await expect(composite.locator(".wheel-glyph-ring")).toHaveCount(0);
+      await page.reload();
+      await expect(composite.getByRole("checkbox", { name: "Glyph ring" })).not.toBeChecked();
+      await expect(composite.getByRole("tab", { name: "Monochrome", exact: true })).toHaveAttribute("aria-selected", "true");
+      await expect(composite.getByRole("tab", { name: "Bright", exact: true })).toHaveAttribute("aria-selected", "true");
+      await composite.getByRole("checkbox", { name: "Glyph ring" }).check();
+      await expect(composite.locator(".wheel-glyph-ring__band")).toHaveCSS("fill-opacity", "0.8");
+      await expectAspectInspector(composite, "Refined composite");
+      await page.evaluate(() => window.scrollTo(0, 0));
+      await composite.screenshot({ path: testInfo.outputPath("composite.png") });
+      await expectNoHorizontalOverflow(page, "Composite chart display controls");
+      await page.getByRole("button", { name: "Full-screen chart", exact: true }).click();
+      await expect(dialog.locator(".sky-wheel-composite")).toHaveClass(/sky-wheel--monochrome/);
+      const compositeDialogBox = (await dialog.boundingBox())!;
+      const compositeFooterBox = (await dialog.locator(".chart-fullscreen-footer").boundingBox())!;
+      expect(compositeFooterBox.y + compositeFooterBox.height).toBeLessThan(compositeDialogBox.y + compositeDialogBox.height);
+      await dialog.screenshot({ path: testInfo.outputPath("composite-fullscreen.png") });
+      await dialog.getByRole("tab", { name: "Standard", exact: true }).click();
+      await dialog.getByRole("button", { name: "Close full-screen chart" }).click();
+      await expect(composite.getByRole("tab", { name: "Standard", exact: true })).toHaveAttribute("aria-selected", "true");
+      await assertNoClientErrors();
+    });
+  }
 }

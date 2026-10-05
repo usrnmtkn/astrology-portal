@@ -2760,6 +2760,7 @@ export function ManualChartsPanel({
                 }}
                 onComparisonToggle={() => setRelationshipComparisonPickerOpen((current) => !current)}
                 onNatalViewModeChange={setFriendNatalChartViewMode}
+                onOpenFullscreen={setRelationshipChartFullscreenMode}
                 outerInitials={profileInitials(selectedChart.displayName, selectedChart.displayName)}
                 relationshipComparisonSky={relationshipComparisonSky}
                 synastryAspects={selectedSynastryAspectLines}

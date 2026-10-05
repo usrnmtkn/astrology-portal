@@ -1,3 +1,5 @@
+import { RelationshipWheelControls, useRelationshipWheelDisplay } from "./RelationshipWheelControls";
+import { RelationshipWheelViewport } from "./RelationshipWheelViewport";
 import type { KeyboardEvent, MouseEvent } from "react";
 import { memo, useEffect, useId, useMemo, useRef, useState } from "react";
 import type { PlanetPosition } from "../../types";
@@ -7,7 +9,7 @@ import {
   zodiacAssetHref,
   zodiacSignIconFiles
 } from "./chartAssets";
-import { aspectLineClass, aspectLineStyle } from "./chartAspectLines";
+import { aspectLineClass, aspectLineStyle, type AspectColorMode } from "./chartAspectLines";
 import {
   angleAxisOuterPadding,
   angleLabelOuterPadding,
@@ -17,8 +19,8 @@ import {
   inwardMarkerOffset,
   longitudeToChartAngle,
   polarToCartesian,
-  wheelMarkerLayouts,
-  wheelViewBox
+  houseBoundedWheelMarkerLayouts,
+  relationshipWheelViewBox
 } from "./wheelGeometry";
 import {
   WheelPlanetGlyph,
@@ -39,16 +41,8 @@ import {
 const angleIconSize = 34;
 const signIconSize = 27;
 const longSignIconSize = 29;
-const synastryClusterTangentSpacing = 30;
-const relationshipClusterTangentLimit = 40;
 const synastryPlanetHitAreaRadius = 14;
-const relationshipOuterClusterRadialOffsets = [0, 16, -12, 30, -24, 42, -34];
-const relationshipInnerClusterRadialOffsets = [0, -14, 14, -28, 28, -40, 40];
-
-type ChartPoint = {
-  x: number;
-  y: number;
-};
+const synastryPlanetDegreeOffset = 22;
 
 type InspectorPoint = {
   id: string;
@@ -91,6 +85,7 @@ type SynastryWheelProps = {
   aspectInspector?: boolean;
   outerLabel?: string;
   innerLabel?: string;
+  aspectColorMode?: AspectColorMode;
 };
 
 export const SynastryWheel = memo(function SynastryWheel({
@@ -106,24 +101,22 @@ export const SynastryWheel = memo(function SynastryWheel({
   houseSignLabelStyle = "text",
   aspectInspector = false,
   outerLabel = "Outer chart",
-  innerLabel = "Inner chart"
+  innerLabel = "Inner chart",
+  aspectColorMode: colorModeOverride
 }: SynastryWheelProps) {
+  const display = useRelationshipWheelDisplay();
+  const aspectColorMode = colorModeOverride ?? display.aspectColorMode;
   const center = 300;
   const radius = {
     outer: 284,
     signInner: 240,
-    outerHouse: 226,
-    outerPlanet: 202,
-    innerRingOuter: 176,
-    innerRingInner: 110,
-    innerPlanet: 140,
-    innerHouse: 158,
-    aspect: 64,
-    inner: 28
-  };
-  const houseLabelRadius = {
-    outer: radius.innerRingOuter + 18,
-    inner: radius.innerRingOuter - 12
+    outerPlanet: 220,
+    houseBandOuter: 184,
+    houseBandMiddle: 162,
+    houseBandInner: 140,
+    innerPlanet: 123,
+    innerPlanetBandInner: 84,
+    aspect: 78
   };
   const isNatalWheel = typeof ascendantLongitude === "number";
   const ascendantSignIndex = ascendant ? signs.indexOf(ascendant) : -1;
@@ -156,6 +149,31 @@ export const SynastryWheel = memo(function SynastryWheel({
     return longitudeToChartAngle(longitude, ascendantLongitude, isNatalWheel);
   }
 
+  // Keep each glyph at its normal size. Add radial rows and move the house
+  // rings outward when a crowded sector needs more room.
+  const innerPlanetLayouts = useMemo(() => houseBoundedWheelMarkerLayouts(
+    innerPositions, position => position.planet, position => zodiacLongitude(position),
+    { radius: 123, center, minimumSpacing: 33, rowSpacing: 54, glyphSize: 22,
+      annotationOffset: synastryPlanetDegreeOffset, angleForLongitude }
+  ), [innerPositions, ascendantLongitude, isNatalWheel]);
+  radius.innerPlanet = Math.max(123, ...[...innerPlanetLayouts.values()].map(layout => layout.radius));
+  radius.houseBandInner = Math.max(140, radius.innerPlanet + 17);
+  radius.houseBandMiddle = radius.houseBandInner + 22;
+  radius.houseBandOuter = radius.houseBandMiddle + 22;
+  const outerPlanetMinimumRadius = Math.max(220, radius.houseBandOuter + 36);
+  const outerPlanetLayouts = useMemo(() => houseBoundedWheelMarkerLayouts(
+    outerPositions, position => position.planet, position => zodiacLongitude(position),
+    { radius: outerPlanetMinimumRadius, center, minimumSpacing: 37.5, rowSpacing: 54,
+      glyphSize: 26, annotationOffset: synastryPlanetDegreeOffset, angleForLongitude }
+  ), [outerPositions, outerPlanetMinimumRadius, ascendantLongitude, isNatalWheel]);
+  radius.outerPlanet = Math.max(outerPlanetMinimumRadius, ...[...outerPlanetLayouts.values()].map(layout => layout.radius));
+  radius.signInner = Math.max(240, radius.outerPlanet + 20);
+  radius.outer = radius.signInner + 44;
+  const houseLabelRadius = {
+    outer: (radius.houseBandOuter + radius.houseBandMiddle) / 2,
+    inner: (radius.houseBandMiddle + radius.houseBandInner) / 2
+  };
+
   const signLabelRadius = (radius.outer + radius.signInner) / 2;
   const wheelClipId = `wheel-clip-${useId().replace(/:/g, "")}`;
   const signLabelPathPrefix = `${wheelClipId}-sign-label`;
@@ -181,7 +199,7 @@ export const SynastryWheel = memo(function SynastryWheel({
     angleForLongitude,
     center,
     radius: radius.outer + angleLabelOuterPadding
-  }), [ascendantLongitude, midheavenLongitude, isNatalWheel]);
+  }), [ascendantLongitude, midheavenLongitude, isNatalWheel, radius.outer]);
   const signLabels = useMemo(() => chartSignLabelGeometry({
     angleForLongitude,
     center,
@@ -191,8 +209,8 @@ export const SynastryWheel = memo(function SynastryWheel({
   const interAspectPairs = useMemo(() => interAspects.map((aspect) => ({
     ...aspect,
     className: aspectLineClass(aspect.type),
-    lineStyle: aspectLineStyle(aspect.type, aspect.orb)
-  })), [interAspects]);
+    lineStyle: aspectLineStyle(aspect.type, aspect.orb, aspectColorMode, true)
+  })), [interAspects, aspectColorMode]);
   const inspectorEnabled = aspectInspector;
   const [focusedInspectorPointId, setFocusedInspectorPointId] = useState<string | null>(null);
   const wheelShellRef = useRef<HTMLElement | null>(null);
@@ -346,9 +364,9 @@ export const SynastryWheel = memo(function SynastryWheel({
       .map((aspect) => ({
         ...aspect,
         label: aspectLegendLabel(aspect.type),
-        lineStyle: inspectorLineStyle(aspect.type, aspect.orb, "exact")
+        lineStyle: inspectorLineStyle(aspect.type, aspect.orb, "exact", aspectColorMode, true)
       }));
-  }, [focusedInspectorPoint, inspectorAspects]);
+  }, [focusedInspectorPoint, inspectorAspects, aspectColorMode]);
   useEffect(() => {
     if (!inspectorEnabled || !focusedInspectorPointId) {
       return;
@@ -390,169 +408,23 @@ export const SynastryWheel = memo(function SynastryWheel({
 
     return "idle";
   }
-  const interAspectRadius = radius.aspect + 8;
-  const outerPlanetLayouts = useMemo(() => wheelMarkerLayouts(
-    outerPositions,
-    (position) => position.planet,
-    (position) => angleForLongitude(zodiacLongitude(position)),
-    {
-      baseRadius: radius.outerPlanet,
-      center,
-      clusterThreshold: 6,
-      maxClusterSpan: 22,
-      clusterTangentSpacing: synastryClusterTangentSpacing,
-      maxClusterTangentOffset: relationshipClusterTangentLimit,
-      useClusterLane: true,
-      radialOffsets: relationshipOuterClusterRadialOffsets,
-      minMarkerRadius: radius.innerRingOuter + 10,
-      maxMarkerRadius: radius.signInner - 14
-    }
-  ), [outerPositions, ascendantLongitude, isNatalWheel]);
-  const innerPlanetLayouts = useMemo(() => wheelMarkerLayouts(
-    innerPositions,
-    (position) => position.planet,
-    (position) => angleForLongitude(zodiacLongitude(position)),
-    {
-      baseRadius: radius.innerPlanet,
-      center,
-      clusterThreshold: 6,
-      maxClusterSpan: 22,
-      clusterTangentSpacing: synastryClusterTangentSpacing,
-      maxClusterTangentOffset: relationshipClusterTangentLimit,
-      useClusterLane: true,
-      radialOffsets: relationshipInnerClusterRadialOffsets,
-      minMarkerRadius: radius.innerRingInner + 12,
-      maxMarkerRadius: radius.innerRingOuter - 12
-    }
-  ), [innerPositions, ascendantLongitude, isNatalWheel]);
-  const planetCollisionGeometry = useMemo(() => {
-    function collisionItems(positions: PlanetPosition[], ring: "outer" | "inner") {
-      const isOuter = ring === "outer";
-      const layouts = isOuter ? outerPlanetLayouts : innerPlanetLayouts;
-      const baseRadius = isOuter ? radius.outerPlanet : radius.innerPlanet;
-      const tickInnerRadius = isOuter ? radius.signInner - 17 : radius.innerRingOuter - 17;
-      const tickOuterRadius = isOuter ? radius.signInner - 5 : radius.innerRingOuter - 5;
-      const degreeDistance = isOuter ? 19 : 18;
-
-      return positions.map((position) => {
-        const angle = angleForLongitude(zodiacLongitude(position));
-        const marker = layouts.get(position.planet)?.marker ?? point(angle, baseRadius);
-        const degreeOffset = inwardMarkerOffset(center, marker, degreeDistance);
-
-        return {
-          degree: {
-            x: marker.x + degreeOffset.x,
-            y: marker.y + degreeOffset.y
-          },
-          tick: {
-            start: point(angle, tickInnerRadius),
-            end: point(angle, tickOuterRadius)
-          }
-        };
-      });
-    }
-
-    return {
-      outer: collisionItems(outerPositions, "outer"),
-      inner: collisionItems(innerPositions, "inner")
-    };
-  }, [outerPositions, innerPositions, outerPlanetLayouts, innerPlanetLayouts, ascendantLongitude, isNatalWheel]);
-
-  function distanceToSegment(pointToCheck: ChartPoint, start: ChartPoint, end: ChartPoint) {
-    const dx = end.x - start.x;
-    const dy = end.y - start.y;
-    const lengthSquared = dx * dx + dy * dy;
-
-    if (lengthSquared === 0) {
-      return Math.hypot(pointToCheck.x - start.x, pointToCheck.y - start.y);
-    }
-
-    const progress = Math.max(0, Math.min(1, ((pointToCheck.x - start.x) * dx + (pointToCheck.y - start.y) * dy) / lengthSquared));
-    const projected = {
-      x: start.x + progress * dx,
-      y: start.y + progress * dy
-    };
-
-    return Math.hypot(pointToCheck.x - projected.x, pointToCheck.y - projected.y);
-  }
-
-  function adjustedHouseLabels(
-    labels: typeof outerHouseLabels,
-    ring: "outer" | "inner"
-  ) {
-    const collisions = planetCollisionGeometry[ring];
-    const baseRadius = ring === "outer" ? houseLabelRadius.outer : houseLabelRadius.inner;
-    const minRadius = ring === "outer" ? radius.innerRingOuter + 10 : radius.innerRingInner + 20;
-    const maxRadius = ring === "outer" ? radius.signInner - 24 : radius.innerRingOuter - 8;
-    const radialOffsets = ring === "outer" ? [0, -18, 18, -30, 30, -10, 10] : [0, -16, 12, -28, 24, -8, 8];
-    const tangentOffsets = [0, -14, 14, -24, 24];
-
-    function score(candidate: ChartPoint) {
-      return collisions.reduce((total, collision) => {
-        const degreeDistance = Math.hypot(candidate.x - collision.degree.x, candidate.y - collision.degree.y);
-        const tickDistance = distanceToSegment(candidate, collision.tick.start, collision.tick.end);
-        const degreeOverlap = Math.max(0, 21 - degreeDistance);
-        const tickOverlap = Math.max(0, 15 - tickDistance);
-
-        return total + degreeOverlap * degreeOverlap + tickOverlap * tickOverlap;
-      }, 0);
-    }
-
-    return labels.map((label) => {
-      const candidates = radialOffsets.flatMap((radialOffset) => {
-        const candidateRadius = Math.max(minRadius, Math.min(maxRadius, baseRadius + radialOffset));
-        const radialPoint = point(label.angle, candidateRadius);
-        const tangentRad = ((label.angle + 90) * Math.PI) / 180;
-
-        return tangentOffsets.map((tangentOffset) => ({
-          x: radialPoint.x + Math.cos(tangentRad) * tangentOffset,
-          y: radialPoint.y - Math.sin(tangentRad) * tangentOffset
-        }));
-      });
-      const best = candidates.reduce((bestCandidate, candidate) => {
-        const candidateScore = score(candidate);
-
-        if (candidateScore < bestCandidate.score) {
-          return { point: candidate, score: candidateScore };
-        }
-
-        return bestCandidate;
-      }, { point: { x: label.x, y: label.y }, score: score({ x: label.x, y: label.y }) });
-      const adjustedDistance = Math.hypot(best.point.x - label.x, best.point.y - label.y);
-
-      return {
-        ...label,
-        x: best.point.x,
-        y: best.point.y,
-        collisionAdjusted: adjustedDistance > 0.5
-      };
-    });
-  }
-  const adjustedOuterHouseLabels = useMemo(
-    () => adjustedHouseLabels(outerHouseLabels, "outer"),
-    [outerHouseLabels, planetCollisionGeometry, houseLabelRadius.outer]
-  );
-  const adjustedInnerHouseLabels = useMemo(
-    () => adjustedHouseLabels(innerHouseLabels, "inner"),
-    [innerHouseLabels, planetCollisionGeometry, houseLabelRadius.inner]
-  );
+  const interAspectRadius = radius.aspect;
 
   function renderPlanet(position: PlanetPosition, ring: "outer" | "inner") {
     const angle = angleForLongitude(zodiacLongitude(position));
     const layout = ring === "outer" ? outerPlanetLayouts.get(position.planet) : innerPlanetLayouts.get(position.planet);
     const baseRadius = ring === "outer" ? radius.outerPlanet : radius.innerPlanet;
     const truePoint = point(angle, baseRadius);
-    const rawMarker = layout?.marker ?? point(angle, baseRadius);
-    const marker = rawMarker;
+    const marker = layout?.marker ?? point(angle, baseRadius);
     const tickInner = ring === "outer"
-      ? point(angle, radius.signInner - 17)
-      : point(angle, radius.innerRingOuter - 17);
+      ? point(angle, radius.signInner - 6)
+      : point(angle, radius.houseBandInner - 6);
     const tickOuter = ring === "outer"
-      ? point(angle, radius.signInner - 5)
-      : point(angle, radius.innerRingOuter - 5);
-    const degreeOffset = inwardMarkerOffset(center, marker, ring === "outer" ? 19 : 18);
+      ? point(angle, radius.signInner)
+      : point(angle, radius.houseBandInner);
+    const degreeOffset = inwardMarkerOffset(center, marker, synastryPlanetDegreeOffset);
     const markerDelta = Math.hypot(marker.x - truePoint.x, marker.y - truePoint.y);
-    const hasDisplacement = Boolean(layout && (layout.clusterSize > 1 || markerDelta > 0.5));
+    const hasDisplacement = markerDelta > 0.5;
     const inspectorPointId = synastryInspectorPointId(ring, position.planet);
     const inspectorState = inspectorPointState(inspectorPointId);
     const chartLabel = ring === "outer" ? outerLabel : innerLabel;
@@ -598,7 +470,7 @@ export const SynastryWheel = memo(function SynastryWheel({
         />
         <g className={`planet-label-group wheel-placement${hasDisplacement ? " planet-label-group--displaced" : ""}`} transform={`translate(${marker.x.toFixed(2)} ${marker.y.toFixed(2)})`}>
           <circle cx={0} cy={0} r={synastryPlanetHitAreaRadius} className="planet-hit-area" />
-          <WheelPlanetGlyph position={position} yOffset={-4} />
+          <WheelPlanetGlyph position={position} yOffset={0} size={ring === "outer" ? 26 : 22} />
           <text x={degreeOffset.x.toFixed(2)} y={degreeOffset.y.toFixed(2)} className="planet-degree wheel-placement__degree">
             {formatWheelDegree(position)}
           </text>
@@ -612,9 +484,10 @@ export const SynastryWheel = memo(function SynastryWheel({
       ref={wheelShellRef}
       className={`sky-wheel-shell sky-wheel-shell-synastry${inspectorEnabled ? " sky-wheel-shell--aspect-inspector" : ""}${focusedInspectorPoint ? " is-inspecting-aspects" : ""}`}
     >
+    <RelationshipWheelViewport outerRadius={radius.outer}>
     <svg
       className={`sky-wheel synastry-wheel sky-wheel-synastry${inspectorEnabled ? " sky-wheel--aspect-inspector" : ""}${focusedInspectorPoint ? " is-inspecting-aspects" : ""}`}
-      viewBox={wheelViewBox}
+      viewBox={relationshipWheelViewBox(radius.outer)}
       role="img"
       aria-label="Synastry chart with two rings"
       onClick={inspectorEnabled ? () => setFocusedInspectorPointId(null) : undefined}
@@ -627,53 +500,24 @@ export const SynastryWheel = memo(function SynastryWheel({
           <path key={`${sign}-label-path`} id={`${signLabelPathPrefix}-${sign}`} d={path} />
         ))}
       </defs>
-      <circle
-        className="synastry-inner-planet-band"
-        cx={center}
-        cy={center}
-        r={(radius.innerRingOuter + radius.innerRingInner) / 2}
-        aria-hidden="true"
-      />
+      <g className="synastry-inner-glyph-band" aria-hidden="true">
+        {signs.map((sign, index) => (
+          <path key={sign} d={annularSectorPath(angleForLongitude(index * 30), angleForLongitude(index * 30 + 30), radius.houseBandInner, radius.innerPlanetBandInner)} />
+        ))}
+      </g>
       <circle className="sign-band" cx={center} cy={center} r={(radius.outer + radius.signInner) / 2} />
       <g className="wheel-rings synastry-base-rings">
         <circle cx={center} cy={center} r={radius.outer} />
         <circle cx={center} cy={center} r={radius.signInner} />
-        <circle cx={center} cy={center} r={radius.innerRingOuter} />
-        <circle cx={center} cy={center} r={radius.innerRingInner} />
-        <circle cx={center} cy={center} r={radius.aspect} className="faint" />
-        <circle cx={center} cy={center} r={radius.inner} />
-      </g>
-      <g className="synastry-house-band-guides" aria-hidden="true">
-        <circle cx={center} cy={center} r={radius.outerHouse + 10} />
-        <circle cx={center} cy={center} r={radius.outerHouse - 10} />
-        <circle cx={center} cy={center} r={radius.innerHouse + 10} />
-        <circle cx={center} cy={center} r={radius.innerHouse - 10} />
+        <circle cx={center} cy={center} r={radius.innerPlanetBandInner} className="faint" />
       </g>
       <g className="wheel-sectors">
         {signs.map((sign, index) => {
           const a = angleForLongitude((isNatalWheel ? wholeHouseStartLongitude : 0) + index * 30);
           const outer = point(a, radius.signInner);
-          const inner = point(a, radius.innerRingInner);
+          const inner = point(a, radius.innerPlanetBandInner);
           return <line key={sign} x1={inner.x} y1={inner.y} x2={outer.x} y2={outer.y} />;
         })}
-      </g>
-      <g className="synastry-ring-zebra synastry-ring-zebra-outer" aria-hidden="true">
-        {signs.map((sign, index) => (
-          <path
-            key={`outer-zebra-${sign}`}
-            className={index % 2 === 0 ? "zebra-even" : "zebra-odd"}
-            d={annularSectorPath(angleForLongitude(index * 30), angleForLongitude(index * 30 + 30), radius.signInner - 3, radius.innerRingOuter + 3)}
-          />
-        ))}
-      </g>
-      <g className="synastry-ring-zebra synastry-ring-zebra-inner" aria-hidden="true">
-        {signs.map((sign, index) => (
-          <path
-            key={`inner-zebra-${sign}`}
-            className={index % 2 === 0 ? "zebra-even" : "zebra-odd"}
-            d={annularSectorPath(angleForLongitude(index * 30), angleForLongitude(index * 30 + 30), radius.innerRingOuter - 3, radius.innerRingInner + 3)}
-          />
-        ))}
       </g>
       <g className="sign-band-dividers" clipPath={`url(#${wheelClipId})`}>
         {signs.map((sign, index) => {
@@ -702,7 +546,7 @@ export const SynastryWheel = memo(function SynastryWheel({
               <g
                 key={id}
                 className={`${className} ${normalizeAspectType(type)}${isSelectedAspect ? " aspect-inspector-line" : ""}`}
-                style={isSelectedAspect ? selectedInspectorLineStyle(type, orb, "exact") : lineStyle}
+                style={isSelectedAspect ? selectedInspectorLineStyle(type, orb, "exact", aspectColorMode, true) : lineStyle}
                 data-from-point-id={fromPointId}
                 data-to-point-id={toPointId}
               >
@@ -710,6 +554,8 @@ export const SynastryWheel = memo(function SynastryWheel({
                   <line className="aspect-inspector-line-backdrop" x1={a.x} y1={a.y} x2={b.x} y2={b.y} />
                 ) : null}
                 <line x1={a.x} y1={a.y} x2={b.x} y2={b.y} />
+                <circle className="aspect-endpoint" cx={a.x} cy={a.y} r={1.6} />
+                <circle className="aspect-endpoint" cx={b.x} cy={b.y} r={1.6} />
               </g>
             );
           })}
@@ -738,29 +584,43 @@ export const SynastryWheel = memo(function SynastryWheel({
           })()}
         </g>
       )}
+      <g className="synastry-house-bands" aria-hidden="true">
+        {(["outer", "inner"] as const).map(ring => (
+          <g key={ring} className={`synastry-house-band synastry-house-band--${ring}`}>
+            {signs.map((sign, index) => (
+              <path
+                key={sign}
+                d={annularSectorPath(
+                  angleForLongitude(index * 30), angleForLongitude(index * 30 + 30),
+                  ring === "outer" ? radius.houseBandOuter : radius.houseBandMiddle,
+                  ring === "outer" ? radius.houseBandMiddle : radius.houseBandInner
+                )}
+              />
+            ))}
+          </g>
+        ))}
+      </g>
       <g className="house-labels synastry-house-labels synastry-outer-house-labels" aria-label={ascendant ? "Outer chart whole sign houses" : "Outer chart natural house labels"}>
-        {adjustedOuterHouseLabels.map(({ house, x, y, ariaLabel, collisionAdjusted }) => (
+        {outerHouseLabels.map(({ house, x, y, ariaLabel }) => (
           <text
             key={house}
             x={x}
             y={y}
-            className={`zodiac-house-number zodiac-wheel__house-label synastry-house-number synastry-house-number--outer${collisionAdjusted ? " synastry-house-number--collision-adjusted" : ""}`}
+            className="zodiac-house-number zodiac-wheel__house-label synastry-house-number synastry-house-number--outer"
             aria-label={`Outer chart ${ariaLabel}`}
-            data-collision-adjusted={collisionAdjusted ? "true" : undefined}
           >
             {house}
           </text>
         ))}
       </g>
       <g className="house-labels synastry-house-labels synastry-inner-house-labels" aria-label={innerAscendant ? "Inner chart whole sign houses" : "Inner chart natural house labels"}>
-        {adjustedInnerHouseLabels.map(({ house, x, y, ariaLabel, collisionAdjusted }) => (
+        {innerHouseLabels.map(({ house, x, y, ariaLabel }) => (
           <text
             key={house}
             x={x}
             y={y}
-            className={`zodiac-house-number zodiac-wheel__house-label synastry-house-number synastry-house-number--inner${collisionAdjusted ? " synastry-house-number--collision-adjusted" : ""}`}
+            className="zodiac-house-number zodiac-wheel__house-label synastry-house-number synastry-house-number--inner"
             aria-label={`Inner chart ${ariaLabel}`}
-            data-collision-adjusted={collisionAdjusted ? "true" : undefined}
           >
             {house}
           </text>
@@ -854,10 +714,12 @@ export const SynastryWheel = memo(function SynastryWheel({
       <g className="planet-labels inner-planet-labels" aria-label="Inner chart planets">
         {innerPositions.map((position) => renderPlanet(position, "inner"))}
       </g>
-      <text x={center} y={626} className="chart-house-system-label">
+      <text x={center} y={626 + radius.outer - 284} className="chart-house-system-label">
         Whole-sign houses · angles exact
       </text>
     </svg>
+    </RelationshipWheelViewport>
+    <RelationshipWheelControls display={display} />
     {focusedInspectorPoint ? (
       <div className="aspect-inspector-summary" role="status" aria-live="polite">
         <div className="aspect-inspector-summary__head">

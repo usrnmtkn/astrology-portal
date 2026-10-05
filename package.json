@@ -153,7 +153,7 @@
     "test:chart-time": "node --experimental-strip-types scripts/test-chart-time.mjs",
     "test:manual-chart-form": "node scripts/test-manual-chart-form.mjs",
     "test:friend-chart-model": "node scripts/test-friend-chart-model.mjs",
-    "test:synastry-wheel": "node scripts/test-synastry-wheel-render.mjs",
+    "test:synastry-wheel": "node scripts/test-synastry-wheel-render.mjs && node --import tsx scripts/test-wheel-marker-layout.mjs",
     "test:friend-placement-tables": "node scripts/test-friend-placement-tables-render.mjs",
     "test:guest-settings": "node scripts/test-guest-settings-render.mjs",
     "test:member-settings": "node scripts/test-member-settings-render.mjs",

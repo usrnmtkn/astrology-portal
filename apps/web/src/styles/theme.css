@@ -143,6 +143,28 @@
   --transit-wheel-glyph-filter: var(--chart-glyph-filter);
   --transit-wheel-band-fill: color-mix(in srgb, var(--bg) 84%, var(--ink) 8%);
   --transit-wheel-band-stroke: color-mix(in srgb, var(--chart-line) 64%, var(--bg) 36%);
+  /* Relationship wheel appearance from the archived design preview. */
+  --aspect-line-width-base: 0.9;
+  --aspect-line-width-orb: 0.45;
+  --aspect-line-width-selected: 1.8;
+  --aspect-line-backdrop-width-selected: 3.8;
+  --chart-sector-dash: 2 5;
+  --chart-sector-opacity: 0.45;
+  --chart-glyph-ring-line-width: 0.8;
+  --chart-synastry-house-ring-line-width: 0.8;
+  --chart-monochrome-aspect-dash: 4 5;
+  --chart-monochrome-aspect-width: 0.9;
+  --chart-monochrome-aspect-opacity: 0.58;
+  --chart-monochrome-glyph-ring-opacity: 0.8;
+  --aspect-bright-conjunction: #f0a500;
+  --aspect-bright-opposition: #2878ff;
+  --aspect-bright-square: #f45252;
+  --aspect-bright-trine: #4faa65;
+  --aspect-bright-sextile: #a847ff;
+  --aspect-bright-quincunx: #f4e844;
+  --aspect-bright-minor: #a19889;
+  --chart-inverse-glyph-filter: brightness(0) invert(1);
+  --chart-monochrome-paper: #f5f5f3;
   --chart-house-label-radius-factor: 0.48;
   --chart-house-label-size: 13px;
   --chart-sign-label-size: 14px;
@@ -1472,6 +1494,8 @@
   --filter-synastry-outer-glyph: brightness(0) saturate(100%) invert(95%) sepia(6%) saturate(91%) hue-rotate(18deg) brightness(104%) contrast(90%);
   --filter-retrograde-glyph: brightness(0) saturate(100%) invert(67%) sepia(44%) saturate(1361%) hue-rotate(209deg) brightness(101%) contrast(101%);
   --filter-synastry-inner-glyph: brightness(0) saturate(100%) invert(1) opacity(0.48);
+  --chart-inverse-glyph-filter: brightness(0);
+  --chart-monochrome-paper: #181818;
   --synastry-inner-glyph: var(--color-muted);
   --color-dig-good: #84c57c;
   --color-dig-good-bg: rgba(110, 180, 100, 0.16);
@@ -1634,4 +1658,10 @@
   --calendar-card-tag-fg: var(--calendar-kind-station-fg);
   --calendar-card-tag-on: var(--calendar-kind-station-list);
   --calendar-switch-off: var(--calendar-chip);
+}
+
+/* Evaluate the shared canvas formula where its calculated per-wheel expansion
+   is supplied. Full-screen space reveals more of the same-size canvas. */
+.relationship-wheel-viewport {
+  --chart-relationship-canvas-width: calc(min(100cqw, var(--chart-size)) * var(--relationship-wheel-expansion, 1));
 }
