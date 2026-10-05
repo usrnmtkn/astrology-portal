@@ -118,3 +118,25 @@ Rerun the full API gate, four Compatibility browser journeys, typecheck,
 CSS/token audit and bundle/privacy checks on the integrated version. Exact-head
 CI and deployed-main verification belong in the release PR evidence; the
 historical October 3 results above do not substitute for those checks.
+
+
+Final matched standalone builds on the October 5 base measure 768,011 raw /
+223,589 gzip entry bytes and 770,310 aggregate gzip bytes. The integrated feature
+measures 773,530 / 224,835 / 771,575: +5,519 / +1,246 / +1,265. Main already exceeds
+its raw-entry cap by 1,761 bytes. Reconcile raw entry/largest to 774,000, retain
+225,000 entry gzip, and preserve main's 786,000 aggregate ceiling without a new
+aggregate allowance. Web aggregate remains within its original feature allocation.
+
+The full local Content Studio API gate and all four fresh-build Compatibility
+browser cases passed after integration, as did typecheck, CSS/token audit,
+reader-copy boundary, web bundle and repository/public-output privacy checks.
+
+A later required update to main `0e8b3e98a` preserves the merged manual-transit
+writing and preview recovery behavior. Independent builds with the same installed
+dependencies and CI configuration measure baseline entry raw/gzip/aggregate at
+768,671 / 223,857 / 770,906 and the combined feature at
+774,190 / 225,253 / 772,290 (+5,519 / +1,396 / +1,384). The latest main already
+exceeds its raw/gzip entry caps by 421 / 107 bytes. Reconcile the combined entry
+limits to 774,500 raw and 225,500 gzip, retaining the 786,000 aggregate cap.
+Preserve main's 750-byte web allocation and the original 1,500-byte Compatibility
+allocation, for a combined web aggregate ceiling of 3,544,750 bytes.
