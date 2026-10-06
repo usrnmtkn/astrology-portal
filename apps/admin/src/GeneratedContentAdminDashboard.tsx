@@ -1,6 +1,7 @@
 import { calendarAspectRetrogradeOptions } from "../../web/src/content/calendarAspectRetrograde";
 import { useStudioCustomVariables } from "./studioCustomVariableClient";
 import { studioRequestTimeoutMs } from "./studioRequestPolicy";
+import { compatibilityAspectPoints, compatibilityAspectTypes, compatibilityAspectKey, compatibilityAspectFromSearch, compatibilityAspectSearchText, compatibilityAspectSourceDraft, type CompatibilityAspectSelection } from "./compatibilityAspectSources";
 import { clearStudioEditorReturn, rememberStudioEditorReturn, studioEditorReturnContext } from "./studioEditorReturn";
 import type { HouseTransitEditorSource } from "./HouseTransitWriteupEditor";
 import { ZODIAC_SEASON_SOURCE_STARTERS, isZodiacSeasonSourceKey } from "../../web/src/content/fallbackArchitectureV3/resolver/zodiacSeasonVariables.mjs";
@@ -2016,6 +2017,7 @@ function compatibilityVisibleSearchText(row: AdminGeneratedContentRow) {
   const identity = compatibilityBrowseIdentityForRow(row);
   return [
     visibleRowSearchText(row),
+    compatibilityAspectSearchText(row.content_key),
     identity?.title,
     identity?.detail,
     identity ? `${identity.planet} ${identity.readerSign} ${identity.friendSign}` : ""
@@ -3272,6 +3274,14 @@ export function GeneratedContentAdminDashboard() {
   const [compatibilityPlanetFilter, setCompatibilityPlanetFilter] = useState<AdminArticlePointFilter>("all");
   const [compatibilitySort, setCompatibilitySort] = useState<AdminCompatibilitySort>("updated-desc");
   const [compatibilityQuery, setCompatibilityQuery] = useState("");
+  const [compatibilityAspectSelection, setCompatibilityAspectSelection] = useState<CompatibilityAspectSelection | null>(null);
+  const compatibilityAspectFormRef = useRef<HTMLElement>(null);
+  const compatibilityAspectRequestRef = useRef(0);
+  useEffect(() => {
+    if (!compatibilityAspectSelection) return;
+    compatibilityAspectFormRef.current?.scrollIntoView({ block: "center" });
+    compatibilityAspectFormRef.current?.querySelector("select")?.focus();
+  }, [Boolean(compatibilityAspectSelection)]);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(() => new Set());
   const [bulkStatus, setBulkStatus] = useState<GeneratedContentStatus>("REVIEWED");
   const [selectedRowId, setSelectedRowId] = useState<string | null>(null);
@@ -6590,6 +6600,49 @@ export function GeneratedContentAdminDashboard() {
     scrollEditorToTop();
   }
 
+  function showCompatibilityAspectCreator() {
+    setIsCreateMenuOpen(false);
+    setCompatibilityAspectSelection(compatibilityAspectFromSearch(compatibilityQuery));
+  }
+
+  async function openCompatibilityAspect() {
+    if (!compatibilityAspectSelection) return;
+    const selection = compatibilityAspectSelection;
+    const contentKey = compatibilityAspectKey(selection);
+    if (!contentKey) return;
+    const requestId = ++compatibilityAspectRequestRef.current;
+    const originatingHash = window.location.hash;
+    setIsLoading(true);
+    try {
+      // Check both chart orders against the saved inventory, including rows that
+      // have not reached the paginated list. Never overwrite an existing passage.
+      const reverseKey = compatibilityAspectKey({ ...selection, first: selection.second, second: selection.first })!;
+      const keys = [...new Set([contentKey, reverseKey])];
+      const result = await adminJsonRequest<{ rows: AdminGeneratedContentRow[] }>(studioInventoryDocumentsPath(keys), secret);
+      if (!Array.isArray(result.rows) || result.rows.some(row => !keys.includes(row.content_key))) {
+        throw new Error("Could not check existing aspect content. Try again.");
+      }
+      if (requestId !== compatibilityAspectRequestRef.current || originatingHash !== window.location.hash) return;
+      const existing = keys.flatMap(key => result.rows.filter(row => row.content_key === key))
+        .find(row => row.status !== "ARCHIVED") ?? result.rows[0];
+      if (existing) {
+        if (!await openRow(existing)) return;
+        setMessage("Opened the saved aspect content. Its two fields follow the planet order shown in the editor.");
+      } else {
+        setSelectedRowId(null);
+        setEditorSourceRow(null);
+        setCompositionEditorContext(null);
+        setEditorSaveError("");
+        rememberSavedDraft(compatibilityAspectSourceDraft(selection));
+        setMessage("New aspect content opened. Save draft keeps your writing; Save & publish makes the complete revision live.");
+        scrollEditorToTop();
+      }
+      setCompatibilityAspectSelection(null);
+    } catch (error) {
+      if (requestId === compatibilityAspectRequestRef.current && originatingHash === window.location.hash) setMessage(dashboardErrorMessage(error));
+    } finally { setIsLoading(false); }
+  }
+
   function handleCompatibilityCreateAction(kind: AdminCompatibilityCreateKind) {
     if (document.activeElement instanceof HTMLElement && !editorRef.current?.contains(document.activeElement)) {
       editorReturnFocusRef.current = document.activeElement;
@@ -7062,10 +7115,10 @@ export function GeneratedContentAdminDashboard() {
             },
             {
               key: "content",
-              label: calendarPlanetaryWorkspaceActive ? "Add planetary write-up" : calendarAspectWorkspaceActive ? "Add aspect write-up" : "Create content row",
-              description: calendarPlanetaryWorkspaceActive ? "Write for the selected planet and sign" : calendarAspectWorkspaceActive ? "Write for the selected planets and signs" : "Add a saved row to the library",
+              label: activePage === "compatibility" ? "Add aspect content" : calendarPlanetaryWorkspaceActive ? "Add planetary write-up" : calendarAspectWorkspaceActive ? "Add aspect write-up" : "Create content row",
+              description: activePage === "compatibility" ? "Write for two planets or points and an exact aspect" : calendarPlanetaryWorkspaceActive ? "Write for the selected planet and sign" : calendarAspectWorkspaceActive ? "Write for the selected planets and signs" : "Add a saved row to the library",
               icon: BookOpenText,
-              onSelect: () => calendarPlanetaryWorkspaceActive ? void openSelectedCalendarPlanetaryWriteup() : calendarAspectWorkspaceActive ? void openSelectedCalendarAspect() : handleCreateAction("content", "Create content row opened.")
+              onSelect: () => activePage === "compatibility" ? showCompatibilityAspectCreator() : calendarPlanetaryWorkspaceActive ? void openSelectedCalendarPlanetaryWriteup() : calendarAspectWorkspaceActive ? void openSelectedCalendarAspect() : handleCreateAction("content", "Create content row opened.")
             },
             {
               key: "vocabulary",
@@ -7642,6 +7695,10 @@ export function GeneratedContentAdminDashboard() {
                 <span className="admin-field-hint">{filteredCompatibilityRows.length} of {compatibilityRows.length} rows</span>
               </div>
               <div className="admin-new-actions" aria-label="Compatibility shortcuts">
+                <StudioButton type="button" onClick={showCompatibilityAspectCreator} disabled={isLoading || hasAccessIssue || hasLoadFailure}>
+                  <Plus size={16} aria-hidden="true" />
+                  Add aspect content
+                </StudioButton>
                 <StudioButton type="button" onClick={() => navigateAdminPage("knowledge", new URLSearchParams({ section: "friends", q: "pair-daily" }))}>
                   <Users size={16} aria-hidden="true" />
                   Daily between you two
@@ -7665,6 +7722,33 @@ export function GeneratedContentAdminDashboard() {
               </div>
             </section>
             {renderCompatibilityFilters()}
+            {compatibilityAspectSelection && (
+              <section className={surfaceSection} aria-label="Add compatibility aspect content" ref={compatibilityAspectFormRef}>
+                <p>Choose the planet or point in each chart and the aspect between them.</p>
+                <div className="admin-filter-form admin-filter-form--three">
+                  {([
+                    ["first", "Your planet or point", compatibilityAspectPoints],
+                    ["aspect", "Compatibility aspect", compatibilityAspectTypes],
+                    ["second", "Friend’s planet or point", compatibilityAspectPoints]
+                  ] as const).map(([field, label, options]) => (
+                    <label key={field}>
+                      <span>{label}</span>
+                      <AdminSelect aria-label={label} value={compatibilityAspectSelection[field]} disabled={isLoading}
+                        onChange={event => setCompatibilityAspectSelection({ ...compatibilityAspectSelection, [field]: event.target.value })}>
+                        <option value="">Choose {field === "aspect" ? "aspect" : "planet or point"}</option>
+                        {options.map(value => <option key={value} value={value}>{titleFromKey(value)}</option>)}
+                      </AdminSelect>
+                    </label>
+                  ))}
+                </div>
+                <div className="admin-toolbar-actions">
+                  <StudioButton type="button" className="admin-primary-button" disabled={isLoading || !compatibilityAspectKey(compatibilityAspectSelection)} onClick={() => void openCompatibilityAspect()}>
+                    {isLoading ? "Checking saved content…" : "Open aspect editor"}
+                  </StudioButton>
+                  <StudioButton type="button" onClick={() => { compatibilityAspectRequestRef.current += 1; setCompatibilityAspectSelection(null); }}>Cancel</StudioButton>
+                </div>
+              </section>
+            )}
             <section className="admin-workbench admin-review-workspace">
               {renderEditor()}
               <aside className="admin-list-panel" aria-label="Compatibility rows">
@@ -7679,6 +7763,10 @@ export function GeneratedContentAdminDashboard() {
                           : `Current filters: ${compatibilitySections.find((section) => section.key === compatibilitySectionFilter)?.label ?? "All compatibility"}, ${compatibilityStatusFilter === "all" ? "all statuses" : contentStatusLabel(compatibilityStatusFilter)}, ${compatibilityPlanetFilter === "all" ? "all planets" : titleFromKey(compatibilityPlanetFilter)}${compatibilityQuery.trim() ? `, search “${compatibilityQuery.trim()}”` : ""}.`}
                       </p>
                       <div className="admin-toolbar-actions">
+                        <StudioButton type="button" className="admin-primary-button" onClick={showCompatibilityAspectCreator} disabled={isLoading || hasAccessIssue || hasLoadFailure}>
+                          <Plus size={16} aria-hidden="true" />
+                          Add aspect content
+                        </StudioButton>
                         <StudioButton type="button" onClick={clearCompatibilityFilters}>
                           Clear Compatibility filters
                         </StudioButton>
@@ -9933,6 +10021,9 @@ export function GeneratedContentAdminDashboard() {
     const aspectRetrogradeOptions = calendarAspectRetrogradeOptions(currentDraft.contentKey);
     const isSkyPlacementFrameTemplate = currentDraft.contentKey === skyPlacementFrameTemplateKey;
     const isExactNatalAspectDraft = currentDraft.contentKey.startsWith(natalAspectContentKeyPrefix);
+    const isCompatibilityAspectDraft = currentDraft.contentKey.startsWith("fallback-hook/synastry-pair/");
+    const compatibilityAspectMissingCopy = isCompatibilityAspectDraft
+      && !["body_you", "body_they"].every(field => packageFieldString(currentDraft, field).trim());
     const skyPlacementTemplateOptions = skyPlacementCompositionOptions(effectivePackageRecord(currentDraft.sections));
     const skyFallbackEditor = skyFallbackWorkspace(currentDraft.contentKey, currentDraft.sections);
     const skyFallbackContentIdentity = skyFallbackIdentity(currentDraft.contentKey);
@@ -10035,7 +10126,15 @@ export function GeneratedContentAdminDashboard() {
           displayTitle: fallbackHookDisplayTitle(currentDraft.contentKey) ?? undefined
         })
       : null;
-    const fallbackEditorGuidance = baseFallbackEditorGuidance && skyFallbackContentIdentity
+    const fallbackEditorGuidance = baseFallbackEditorGuidance && isCompatibilityAspectDraft
+      ? {
+          ...baseFallbackEditorGuidance,
+          bodyYouLabel: "You",
+          bodyTheyLabel: "Friend / They",
+          bodyYouHint: `For the reader with ${titleFromKey(currentDraft.contentKey.split("/")[2])}. {{holder2}} becomes the other person's name.`,
+          bodyTheyHint: `For the reader with ${titleFromKey(currentDraft.contentKey.split("/")[3])}. {{holder1}} becomes the other person's name.`
+        }
+      : baseFallbackEditorGuidance && skyFallbackContentIdentity
       ? {
           ...baseFallbackEditorGuidance,
           area: skyFallbackContentIdentity.groupLabel,
@@ -10514,7 +10613,14 @@ export function GeneratedContentAdminDashboard() {
       { field: "otherSign", label: "Friend sign", value: compatibilityDraftFriendSign, options: natalPlacementSigns }
     ];
     const authoringBrief = isNewDraft
-      ? isCompatibilityCardDraft
+      ? isCompatibilityAspectDraft
+        ? {
+            eyebrow: "Creating reader-facing copy",
+            title: "Compatibility aspect",
+            description: "Write both perspectives for this aspect. Save a draft at any time; publish when both passages are ready.",
+            required: "You and Friend / They passages"
+          }
+        : isCompatibilityCardDraft
         ? {
             eyebrow: "Creating reader-facing copy",
             title: "Compatibility card",
@@ -10639,7 +10745,7 @@ export function GeneratedContentAdminDashboard() {
     const signedAspectTitle = currentDraft.id || selectedRow?.id.startsWith("package:") || currentDraft.sections?.packageOriginalRecord
       ? calendarAspectSignedTitle(currentDraft.contentKey)
       : null;
-    const editorHeading = isManualCalendarEventDraft ? `${currentDraft.id ? "Edit" : "Write"} ${currentDraft.headline}` : lunarIdentity?.family === "Lunar ingresses" ? `Edit ${lunarIdentity.title}` : signedAspectTitle ? `Edit ${signedAspectTitle}` : !currentDraft.id && currentDraft.sourceSnapshot?.authoringSource === "admin-dashboard-calendar-aspect" ? `Write ${calendarAspectSignedTitle(currentDraft.contentKey)}` : !currentDraft.id && currentDraft.contentKey.startsWith("authored/calendar-weekly-moon/") ? `New leftover write-up · ${lunarIdentity?.title ?? "Moon-sign leftover"}` : isSkySummaryDraft || selectedRow?.id.startsWith("package:") ? `Edit ${currentDraft.headline}` : currentDraft.id
+    const editorHeading = isCompatibilityAspectDraft ? `${currentDraft.id ? "Edit" : "Write"} ${currentDraft.headline || fallbackHookEditorTitle}` : isManualCalendarEventDraft ? `${currentDraft.id ? "Edit" : "Write"} ${currentDraft.headline}` : lunarIdentity?.family === "Lunar ingresses" ? `Edit ${lunarIdentity.title}` : signedAspectTitle ? `Edit ${signedAspectTitle}` : !currentDraft.id && currentDraft.sourceSnapshot?.authoringSource === "admin-dashboard-calendar-aspect" ? `Write ${calendarAspectSignedTitle(currentDraft.contentKey)}` : !currentDraft.id && currentDraft.contentKey.startsWith("authored/calendar-weekly-moon/") ? `New leftover write-up · ${lunarIdentity?.title ?? "Moon-sign leftover"}` : isSkySummaryDraft || selectedRow?.id.startsWith("package:") ? `Edit ${currentDraft.headline}` : currentDraft.id
       ? isVocabularyDraft
         ? "Edit phrase"
         : compatibilityIdentity
@@ -12310,8 +12416,8 @@ export function GeneratedContentAdminDashboard() {
                 await saveDraft(isSkyArticleTemplate ? "DRAFT" : isCmsSurfaceDraft || isManualCalendarEventDraft ? "LIVE" : isAstro101Draft && currentDraft.status !== "LIVE" ? "DRAFT" : undefined);
               }
             })()}
-            disabled={isLoading || unchangedSkySource || Boolean(compiledSkyArticleEdition) || !compatibilityNewDraftReady || (isManualCalendarEventDraft && !currentDraft.body.trim()) || (isCmsSurfaceDraft && (!cmsCanSignOff || !publishReady)) || (packageWillPublishOnSave && (natalAspectMissingCopy || transitNatalMissingCopy)) || (!isNewDraft && !draftHasUnsavedChanges && !packageWillPublishOnSave && !packageCanApproveRevision && !((isCmsSurfaceDraft || isManualCalendarEventDraft) && currentDraft.status !== "LIVE"))}
-            title={packageWillPublishOnSave && (natalAspectMissingCopy || transitNatalMissingCopy) ? "Write the passage before publishing." : !compatibilityNewDraftReady ? "Complete the Compatibility identity and copy." : undefined}
+            disabled={isLoading || unchangedSkySource || Boolean(compiledSkyArticleEdition) || !compatibilityNewDraftReady || (isManualCalendarEventDraft && !currentDraft.body.trim()) || (isCmsSurfaceDraft && (!cmsCanSignOff || !publishReady)) || ((packageCanApproveRevision || packageWillPublishOnSave) && compatibilityAspectMissingCopy) || (packageWillPublishOnSave && (natalAspectMissingCopy || transitNatalMissingCopy)) || (!isNewDraft && !draftHasUnsavedChanges && !packageWillPublishOnSave && !packageCanApproveRevision && !((isCmsSurfaceDraft || isManualCalendarEventDraft) && currentDraft.status !== "LIVE"))}
+            title={compatibilityAspectMissingCopy && (packageCanApproveRevision || packageWillPublishOnSave) ? "Write both You and Friend / They passages before publishing." : packageWillPublishOnSave && (natalAspectMissingCopy || transitNatalMissingCopy) ? "Write the passage before publishing." : !compatibilityNewDraftReady ? "Complete the Compatibility identity and copy." : undefined}
           >
             <Save size={16} aria-hidden="true" />
             {isSkyArticleTemplate ? "Save template" : isAstro101Draft

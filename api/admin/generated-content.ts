@@ -697,6 +697,14 @@ function validateFallbackArchitectureV3Copy(row: ExistingGeneratedContentRow, pa
         && field.endsWith("body_they")
         && slot === "{{Name}}";
       if (isAllowedFriendName) continue;
+      // A new synastry document has no original wording to inherit slots from.
+      // License only holders actually supplied by that reader direction.
+      if (row.content_key.startsWith("fallback-hook/synastry-pair/") && /(?:^|\.)(?:body|body_you|body_they)$/u.test(field)) {
+        const holder = field.endsWith("body_they") ? "holder1" : "holder2";
+        const allowed = ["holder1", "holder2", "holder1Poss", "holder2Poss", "holder1PossCap", "holder2PossCap",
+          `${holder}Subject`, `${holder}Object`, `${holder}PronounPoss`];
+        if (allowed.includes(slot.slice(2, -2))) continue;
+      }
       if (isLicensedPersonalTransitPlaceholder(row.content_key, slot)) continue;
       if (!originalSlots.has(slot) && !inheritedFriendSlots.has(slot)) {
         throw new GeneratedContentRequestError(`${field} contains unresolved placeholder ${slot} that was not in the package original.`, 400);

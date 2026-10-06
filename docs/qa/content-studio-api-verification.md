@@ -52,6 +52,9 @@ privacy hook, and the full API command above remains required before merging.
   bundled catalog entry. Synastry publication requires both chart directions.
   The roundtrip test checks the complete source bytes, rendered wording, and
   the owner-action receipt; synthetic fixtures never change production copy.
+- Compatibility's [missing-aspect creator](compatibility-aspect-creation.md)
+  covers search discovery, chart-order lookup, partial drafts, holder variables,
+  reload, publication, and both reader directions against the actual handler.
 - Staged New Moon / Full Moon sign macros (including Aquarius New Moon, absent
   from the approved bundle) must save, reopen and publish through the actual
   handler, then hydrate the shipped resolver and Calendar Day reading without
