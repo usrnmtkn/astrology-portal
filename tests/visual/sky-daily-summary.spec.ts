@@ -36,8 +36,8 @@ test("debility card counts traditional detriment and fall under the sky today ca
   const heading = debility.getByRole("heading", { level: 3, name: "Things may take more effort right now" });
   await expect(heading).toBeVisible();
   await expect(debility.locator(".sky-today-ledger__head p")).toHaveCount(0);
-  await expect(debility.getByTestId("effort-count-statement")).toHaveText("Two out of the seven classical planets are currently in detriment or fall");
-  await expect(debility.getByRole("link")).toHaveText(["Mars in Cancer", "Saturn Rx in Aries"]);
+  await expect(debility.getByTestId("effort-count-statement")).toHaveText("Two of the seven classical planets are currently in detriment or fall");
+  await expect(debility.getByRole("link")).toHaveText(["Mars in Cancer", "Saturn retrograde in Aries"]);
   await expect(debility).toContainText("in detriment or fall");
   const headingType = await heading.evaluate(el => {
     const style = getComputedStyle(el);
@@ -120,10 +120,10 @@ for (const theme of ["light", "dark"] as const) {
       await expect(debilityHeading).toBeVisible();
       await expect(debility.locator(".sky-today-ledger__head p")).toHaveCount(0);
       const countStatement = debility.getByTestId("effort-count-statement");
-      await expect(countStatement).toHaveText(/^(One|Two|Three|Four|Five|Six|Seven) out of the seven classical planets (is|are) currently in detriment or fall$/);
+      await expect(countStatement).toHaveText(/^(One|Two|Three|Four|Five|Six|Seven) of the seven classical planets (is|are) currently in detriment or fall$/);
       const debilitatedCount = ["Zero", "One", "Two", "Three", "Four", "Five", "Six", "Seven"].indexOf((await countStatement.innerText()).split(" ")[0]);
       await expect(debility.getByRole("link")).toHaveCount(debilitatedCount);
-      await expect(debility.getByRole("link", { name: "Read about Saturn Rx in Aries" })).toBeVisible();
+      await expect(debility.getByRole("link", { name: "Read about Saturn retrograde in Aries" })).toBeVisible();
       await expect(debility).toContainText("in detriment or fall");
       const headingOrder = await page.evaluate(() => Array.from(document.querySelectorAll("h1, h2, h3, h4, h5, h6"), node => ({
         level: Number(node.tagName.slice(1)),
