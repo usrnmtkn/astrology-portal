@@ -61,6 +61,13 @@ export function assembleSkyDebilityCopy(
       errors.push("The complete interpretation does not match every qualifying placement.");
     const allPlacementKeys = placements.map(row => skyDebilityPlacementId(row.planet, row.sign));
     slots.planetList = joinSkyDebilityList(skyDebilityPlacementLinks(allPlacementKeys, placements, "reading").map(link => link.text), "and");
+    for (const dignity of ["detriment", "fall"] as const) {
+      const qualifying = placements.filter(row => planetSignDebilities(row.planet, row.sign).includes(dignity));
+      slots[`${dignity}Count`] = String(qualifying.length);
+      slots[`${dignity}PlanetList`] = joinSkyDebilityList(skyDebilityPlacementLinks(
+        qualifying.map(row => skyDebilityPlacementId(row.planet, row.sign)), qualifying, "reading"
+      ).map(link => link.text), "and") || "none";
+    }
     const paragraphTemplates = interpretation.body.split(/\n\s*\n/u);
     if (errors.length) return { ...output, hiddenReason: "missing-or-invalid-wording", interpretationKey: interpretation.contentKey,
       openingHook: interpretation.headline ?? "", paragraphTemplates, allPlacementKeys };

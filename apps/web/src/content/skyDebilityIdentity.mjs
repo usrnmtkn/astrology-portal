@@ -1,7 +1,7 @@
 import { DIGNITY_SIGNS, TRADITIONAL_DIGNITY_PLANETS, planetSignDebilities, traditionalSkyDebilities } from "../services/planetSignDignity.mjs";
 
 export const SKY_DEBILITY_INTERPRETATION_PREFIX = "cms/sky-debility/reading/";
-export const skyDebilityInterpretationSlots = ["count", "total", "countWord", "totalWord", "countVerb", "planetWord", "planetReference", "planetList"];
+export const skyDebilityInterpretationSlots = ["count", "total", "countWord", "totalWord", "countVerb", "planetWord", "planetReference", "planetList", "detrimentCount", "fallCount", "detrimentPlanetList", "fallPlanetList"];
 const normalize = (value) => typeof value === "string" ? value.trim().toLowerCase() : "";
 
 /** An exact combination, never a planet count or a date-based copy rotation. */
