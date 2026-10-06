@@ -13,6 +13,7 @@ export type SkyDebilityDisplayPart = {
 export type SkyDebilityDisplayPosition = { planet: string; sign: string; motion?: BodyMotion };
 export type SkyDebilityPlacementLink = { text: string; href: string; separator?: string };
 const normalized = (value: string) => value.trim().toLowerCase();
+const placementListSlots = new Set(["planetList", "detrimentPlanetList", "fallPlanetList"]);
 
 /** Calculated qualifying keys come from the assembler. Motion must match the
  * exact planet/sign snapshot; missing motion is never guessed. */
@@ -57,7 +58,7 @@ export function emphasizeSkyDebilityCount(parts: readonly SkyDebilityDisplayPart
     }
     const delimiter = /[.:]/u.exec(part.text);
     if (!delimiter) continue;
-    if (remaining.size || delimiter[0] === ":" && (parts[end + 1]?.slot !== "planetList" || !/^:\s*$/u.test(part.text.slice(delimiter.index)))) return [...parts];
+    if (remaining.size || delimiter[0] === ":" && (!placementListSlots.has(parts[end + 1]?.slot ?? "") || !/^:\s*$/u.test(part.text.slice(delimiter.index)))) return [...parts];
     const boundary = delimiter.index + (delimiter[0] === "." ? 1 : 0);
     const prefix = parts.slice(start, end).map(value => ({ ...value, emphasized: true }));
     if (boundary) prefix.push({ ...part, text: part.text.slice(0, boundary), emphasized: true });
@@ -67,12 +68,15 @@ export function emphasizeSkyDebilityCount(parts: readonly SkyDebilityDisplayPart
   return [...parts];
 }
 
-/** Reader and Studio share this presentation. Only the declared planetList
- * slot becomes links; every authored word and editor source is preserved. */
+/** Reader and Studio link only declared calculated placement lists, preserving
+ * authored wording, category membership, conjunctions, and editor sources. */
 export function presentSkyDebilityParts(parts: readonly SkyDebilityDisplayPart[], links: readonly SkyDebilityPlacementLink[]): SkyDebilityDisplayPart[] {
   const highlighted = emphasizeSkyDebilityCount(parts);
   return highlighted.flatMap((part, index): SkyDebilityDisplayPart[] => {
-    if (part.slot !== "planetList" || !links.length) return [part];
+    if (!placementListSlots.has(part.slot ?? "") || !links.length) return [part];
+    if (part.slot !== "planetList") return part.text.split(/(,? and |, )/u).map(text => ({
+      ...part, text, href: links.find(link => link.text === text)?.href
+    }));
     if (highlighted[index - 1]?.slot === "planetList") return [];
     return links.flatMap((link, i) => [
       ...(i ? [{ text: link.separator ?? ", ", slot: "planetList", kind: "grammar" as const }] : []),
