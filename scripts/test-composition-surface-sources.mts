@@ -1,5 +1,7 @@
 import { isRetiredCompositionKey } from "../apps/web/src/content/fallbackArchitectureV3/resolver/retiredCompositions.mjs";
 import assert from "node:assert/strict";
+import { skyWriteupContextForRow, skyWriteupSubjectTypeForRow } from "../apps/admin/src/skyWriteupRelations";
+import { skyFallbackIdentity } from "../apps/admin/src/skyFallbackWorkspace";
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
@@ -15,13 +17,19 @@ try {
   const maps = buildCompositionMap(rows);
   const coverage = new Set(writingSurfaceSourceMap.flatMap((surface) => compositionSourcesForSurface(surface.id, rows, maps).map((row) => row.content_key)));
   const hooks = rows.filter((row) => row.content_key.startsWith("fallback-hook/"));
-  // General planet meanings remain in the knowledge archive; they are no longer
-  // editable ingredients of a natal introduction. Keep this exclusion bounded.
-  const archivedPlanetMeanings = hooks.filter((row) => row.content_key.startsWith("fallback-hook/planet-lived/"));
-  assert.deepEqual(archivedPlanetMeanings.map((row) => row.content_key.split("/").at(-1)).sort(), ["jupiter", "mars", "moon", "neptune", "pluto", "saturn", "uranus"]);
-  const archiveKeys = new Set(archivedPlanetMeanings.map((row) => row.content_key));
-  for (const row of hooks.filter((row) => !isRetiredCompositionKey(row.content_key) && !archiveKeys.has(row.content_key))) assert.ok(coverage.has(row.content_key), `${row.content_key} needs a surface Composition Map contract`);
-  for (const row of archivedPlanetMeanings) assert.equal(coverage.has(row.content_key), false, `${row.content_key} must not return as an introduction source`);
+  const planetMeanings = hooks.filter((row) => row.content_key.startsWith("fallback-hook/planet-lived/"));
+  assert.deepEqual(planetMeanings.map((row) => row.content_key.split("/").at(-1)).sort(), ["jupiter", "mars", "moon", "neptune", "pluto", "saturn", "uranus"]);
+  for (const row of hooks.filter((row) => !isRetiredCompositionKey(row.content_key))) assert.ok(coverage.has(row.content_key), `${row.content_key} needs a surface Composition Map contract`);
+  for (const row of planetMeanings) {
+    const planet = row.content_key.split("/")[2];
+    const mislabeled = { ...row, headline: "Shared source", facts: { planet: "sun", sign: "aries" } };
+    assert.deepEqual(skyWriteupContextForRow(mislabeled), { planet, sign: null });
+    assert.equal(skyWriteupSubjectTypeForRow(mislabeled), "planet");
+    assert.equal(skyFallbackIdentity(row.content_key)?.typeLabel, "Sky planet meaning");
+    assert.equal(skyFallbackIdentity(`fallback-hook/natal/planet-intro/${planet}`), null);
+    assert.ok(compositionSourcesForSurface("sky-placement-detail", rows, maps).includes(row), `${row.content_key} belongs to Sky Placement`);
+    assert.equal(compositionSourcesForSurface("natal-placement-detail", rows, maps).includes(row), false, `${row.content_key} must not return as a natal introduction source`);
+  }
   for (const row of hooks.filter((row) => isRetiredCompositionKey(row.content_key))) assert.equal(coverage.has(row.content_key), false);
   for (const [surface, key] of [
     ["personal-transit-house", "authored/transit-house-intro/mars/1"],

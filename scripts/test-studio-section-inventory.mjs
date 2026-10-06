@@ -45,6 +45,7 @@ assert.deepEqual(calendarWriteups.prefixes, [...STUDIO_LUNAR_CALENDAR_PREFIXES])
 const skyWriteups = studioInventoryQuery({ page: "skyWriteups" });
 assert.deepEqual(skyWriteups.prefixes, [...STUDIO_SKY_WRITEUP_PREFIXES]);
 for (const key of [
+  "fallback-hook/planet-lived/saturn", "fallback-hook/planet-lived/neptune",
   "sky/article-template/sun/virgo", "sky/article-edition/jupiter/leo",
   "sky/placement/mercury/virgo/retrograde", "sky/article/sun/virgo",
   "sky-article-template/sun/virgo", "sky-article/mercury/virgo",
@@ -53,6 +54,11 @@ for (const key of [
 ]) {
   assert.ok(skyWriteups.prefixes.some(prefix => key.startsWith(prefix)),
     `Sky inventory must load its supported source key ${key}`);
+}
+const natalChart = studioInventoryQuery({ page: "content", categoryFilter: "Natal Chart" });
+assert.ok(natalChart.prefixes.includes("fallback-hook/natal/planet-intro/"));
+for (const key of ["fallback-hook/planet-lived/saturn", "fallback-hook/planet-lived/neptune"]) {
+  assert.equal(natalChart.prefixes.some(prefix => key.startsWith(prefix)), false);
 }
 for (const view of ["house-transits", "transits-to-natal"]) {
   assert.deepEqual(studioInventoryQuery({ page: "skyWriteups", skyWriteupWorkspaceView: view }),

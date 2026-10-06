@@ -27,6 +27,7 @@ export const STUDIO_HOUSE_TRANSIT_PREFIXES = [
 ] as const;
 
 export const STUDIO_SKY_WRITEUP_PREFIXES = [
+  "fallback-hook/planet-lived/",
   "sky-placement/",
   "sky-article",
   "sky/article",
@@ -51,6 +52,7 @@ export const STUDIO_PLANETARY_STATION_PREFIXES = ["sky.station.", "sky.retrograd
 export const STUDIO_NATAL_ASPECT_PREFIXES = ["fallback-hook/natal-aspect-lived/"] as const;
 
 export const STUDIO_NATAL_CHART_PREFIXES = [
+  "fallback-hook/natal/planet-intro/",
   "fallback-hook/natal-you-placement-",
   "fallback-template/natal.planet-in-sign",
   "fallback-hook/natal-core/"

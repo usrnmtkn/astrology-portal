@@ -8652,3 +8652,65 @@ for (const [width, theme] of [[1440, "light"], [1440, "dark"], [390, "light"], [
     await noErrors();
   });
 }
+
+
+for (const [width, theme] of [[1440, "light"], [390, "dark"]] as const) {
+  test(`Planet lived sources belong to Sky Placement and stay out of Natal Chart ${width} ${theme}`, async ({ page }) => {
+    test.setTimeout(120_000);
+    const noErrors = await expectNoBrowserErrors(page);
+    const writes: Array<{ method: string; payload: Record<string, unknown> }> = [];
+    const planets = ["jupiter", "mars", "moon", "neptune", "pluto", "saturn", "uranus"];
+    const sourceRows = planets.map((planet, index) => {
+      const key = `fallback-hook/planet-lived/${planet}`;
+      const source = servingPackageRecords.get(key)!;
+      return { ...generatedContentRows[0], id: `bbbbbbbb-bbbb-bbbb-bbbb-${String(index + 1).padStart(12, "0")}`,
+        content_key: key, headline: `${planet} meaning`, body: String(source.body), summary: "", surface: "natal", mode: "in_depth",
+        status: "LIVE", lane: "reference", review_state: "fallback-system-reference", block_type: "fallback_hook",
+        provider: "tldrastro-fallback-architecture-v3", facts: { fallbackArchitectureV3: true },
+        source_snapshot: { sourcePackage: "tldrastro-fallback-architecture-v3", review_status: source.review_status },
+        sections: { packageRecord: source }, updated_at: "2026-10-06T12:00:00.000Z" };
+    });
+    await seedAdminApi(page, { generatedRows: width === 1440 ? sourceRows : [], useGeneratedContentHandler: true,
+      compositionCatalog: sourceRows.map(row => ({ content_key: row.content_key, headline: row.headline, role: "fallback_hook" })),
+      onGeneratedContentWrite: write => { writes.push(write); } });
+    await page.setViewportSize({ width, height: 1000 });
+    await page.addInitScript(value => localStorage.setItem("tldrastro:studio-theme", value), theme);
+    await expectAdminRouteLoads(page, "/admin/content#exact-content?category=Natal+Chart&planet=saturn&sign=aries");
+    const natal = page.getByRole("region", { name: "Find natal chart source writing" });
+    await expect(natal).toContainText("fallback-hook/natal/planet-intro/saturn");
+    await expect(natal).not.toContainText("fallback-hook/planet-lived/");
+    if (width === 390) await page.getByRole("button", { name: "Open Content Studio navigation", exact: true }).click();
+    await page.getByRole("navigation", { name: "Content operations" }).getByRole("button", { name: "Sky Write-ups", exact: true }).click();
+    const library = page.getByRole("complementary", { name: "Sky write-up rows" });
+    for (const planet of planets) await expect(library.locator(".admin-content-row").filter({ hasText: `fallback-hook/planet-lived/${planet}` })).toHaveCount(1);
+    await page.getByLabel("Sky placement planet or point").selectOption("saturn");
+    await page.getByLabel("Sky placement zodiac sign").selectOption("aries");
+    for (const motion of ["direct", "retrograde"]) {
+      await page.getByLabel("Sky write-up motion").selectOption(motion);
+      await expect(library.locator(".admin-content-row")).toHaveCount(1);
+      await expect(library).toContainText("Saturn · Planet lived");
+    }
+    const open = () => library.locator(".admin-content-row").getByRole("button", { name: "Edit", exact: true }).click();
+    await open();
+    const editor = page.getByRole("dialog", { name: "Generated content editor" });
+    const body = editor.locator('[data-sky-field="body"]');
+    await expect(editor.getByLabel("Content key", { exact: true })).toHaveValue("fallback-hook/planet-lived/saturn");
+    await expect(body).toHaveValue(sourceRows.find(row => row.content_key.endsWith("/saturn"))!.body);
+    const edited = "Synthetic Saturn Sky source opening. Complete Saturn Sky source ending.";
+    await body.fill(edited);
+    const draftSave = editor.getByRole("button", { name: "Save draft", exact: true });
+    if (await draftSave.isVisible()) await draftSave.click();
+    else await editor.getByRole("button", { name: "Save", exact: true }).click();
+    await expect(editor.locator(".admin-editor-save-state")).toContainText(/Draft saved|All changes saved/);
+    await editor.getByRole("button", { name: "Close", exact: true }).click();
+    await page.reload();
+    await page.getByLabel("Search Sky write-ups").fill("fallback-hook/planet-lived/saturn");
+    await open();
+    await expect(body).toHaveValue(edited);
+    await editor.getByRole("button", { name: "Close", exact: true }).click();
+    await expectNoHorizontalOverflow(page, `Sky planet lived ${width} ${theme}`);
+    const saturn = sourceRows.find(row => row.content_key.endsWith("/saturn"))!;
+    expect(writes.some(write => write.payload.contentKey === saturn.content_key || write.payload.id === saturn.id)).toBe(true);
+    await noErrors();
+  });
+}

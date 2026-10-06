@@ -1,5 +1,14 @@
 # Natal planet introductions
 
+Content Studio keeps `fallback-hook/planet-lived/{planet}` in **Sky Write-ups →
+Sky Placement**, labelled **Planet lived**. The seven existing sources (Moon,
+Mars, Jupiter, Saturn, Uranus, Neptune, and Pluto) remain editable across sign
+and motion filters, including packaged sources with no saved Studio row yet.
+Their complete source copy and publication state are preserved. These keys are
+excluded from Natal Chart inventory and the natal composition map; natal short
+introductions use the dedicated keys below. An already-open browser tab must
+reload after deployment to receive changed Studio navigation.
+
 Natal placement compositions select `fallback-hook/natal/planet-intro/{planet}`
 for the optional `planetIntro` slot in both You and Friend views. Content Studio's
 Natal Chart source cards, preview dependencies, template variable links, and
