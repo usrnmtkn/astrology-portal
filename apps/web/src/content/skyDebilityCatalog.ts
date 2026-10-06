@@ -5,8 +5,9 @@ import { SKY_DEBILITY_INTERPRETATION_PREFIX, skyDebilityInterpretationField, sky
 
 export const SKY_DEBILITY_KEY_PREFIX = "cms/sky-debility/";
 
-// Retain existing keys and saved overrides. Count-first copy uses separate
-// explanation sentences, not the older signConditionOne/Many fragments.
+// October 6 owner direction: shorten every shared version and retain the
+// supplied detriment/fall definitions. Existing exact readings and saved older
+// templates keep their complete wording and separate explanation sources.
 export const skyDebilityDefaults = {
   titleLead: "Without",
   titleSoft: "their tools",
@@ -16,8 +17,9 @@ export const skyDebilityDefaults = {
   one: "{count} of {total} planets is in detriment or fall. It does not have access to its usual tools.",
   many: "{count} of {total} planets are in detriment or fall. They do not have access to their usual tools.",
   openingHook: "Things may take more effort right now",
-  experienceTemplate: "You may {livedExperienceList}. {situationList} can take more out of you than you expected.",
-  contextTemplate: "{countWord} out of the {totalWord} classical planets {countVerb} currently in detriment or fall: {planetList}. {dignityExplanationSentence} With {planetReference} involved, you may notice that it takes more effort to {planetFunctionList}. It may help to {responseList}.",
+  experienceTemplate: "You may {livedExperienceList}.",
+  contextTemplate: "{countWord} of the {totalWord} classical planets {countVerb} currently in detriment or fall: {dignityPlacementList}. {dignityExplanationSentence}",
+  dignityDefinition: "A planet is in detriment when it is in the sign opposite one it rules. A planet is in fall when it is opposite the sign of its exaltation. In both cases, it has to work differently to do what usually comes more easily.",
   dignityExplanationOne: "This means it is moving through {signTitle}, a sign that makes it harder for it to do its usual work.",
   dignityExplanationMany: "This means they are moving through signs that make it harder for them to do their usual work.",
   signConditionOne: "is in {signTitle}, a sign that complicates",
@@ -36,8 +38,9 @@ const fieldMeta: Record<SkyDebilityTemplateName, { label: string; allowedSlots: 
   one: { label: "Legacy one-planet wording", allowedSlots: ["count", "total"] },
   many: { label: "Legacy several-planet wording", allowedSlots: ["count", "total"] },
   openingHook: { label: "Heading", allowedSlots: [] },
-  experienceTemplate: { label: "Experience paragraph template", allowedSlots: ["livedExperienceList", "situationList"] },
-  contextTemplate: { label: "Context and response paragraph template", allowedSlots: ["countWord", "totalWord", "countVerb", "planetList", "dignityExplanationSentence", "planetReference", "planetFunctionList", "responseList"] },
+  experienceTemplate: { label: "Experience paragraph template", allowedSlots: ["livedExperienceList"] },
+  contextTemplate: { label: "Dignity explanation paragraph template", allowedSlots: ["countWord", "totalWord", "countVerb", "dignityPlacementList", "dignityExplanationSentence"] },
+  dignityDefinition: { label: "Detriment and fall definitions", allowedSlots: [] },
   dignityExplanationOne: { label: "One-planet detriment or fall explanation", allowedSlots: ["signTitle"] },
   dignityExplanationMany: { label: "Multiple-planet detriment or fall explanation", allowedSlots: [] },
   signConditionOne: { label: "One-planet connecting phrase", allowedSlots: ["signTitle"] },
@@ -66,12 +69,16 @@ export function isSkyDebilityKey(key: string) { return key.startsWith(SKY_DEBILI
 export function skyDebilityField(key: string) { return byKey.get(key) ?? skyDebilityInterpretationField(key); }
 export function skyDebilityExampleOrder(body: string) { return body.split(",").map(value => value.trim()); }
 export function skyDebilityLegacyContext(body: string) { return body.includes("{signConditionClause}"); }
+export function skyDebilityClassifiedContext(body: string) { return body.includes("{dignityPlacementList}"); }
 export function skyDebilityTemplateSlots(key: string, body: string): readonly string[] {
   // An existing owner-edited legacy paragraph keeps its complete contract.
   // Never combine an older connector override with a new explanation sentence.
-  return key === `${SKY_DEBILITY_KEY_PREFIX}contextTemplate` && skyDebilityLegacyContext(body)
-    ? ["planetList", "signConditionClause", "planetFunctionList", "responseList"]
-    : skyDebilityField(key)?.allowedSlots ?? [];
+  if (key === `${SKY_DEBILITY_KEY_PREFIX}experienceTemplate` && body.includes("{situationList}")) return ["livedExperienceList", "situationList"];
+  if (key === `${SKY_DEBILITY_KEY_PREFIX}contextTemplate`) {
+    if (skyDebilityLegacyContext(body)) return ["planetList", "signConditionClause", "planetFunctionList", "responseList"];
+    if (!skyDebilityClassifiedContext(body)) return ["countWord", "totalWord", "countVerb", "planetList", "dignityExplanationSentence", "planetReference", "planetFunctionList", "responseList"];
+  }
+  return skyDebilityField(key)?.allowedSlots ?? [];
 }
 
 export function skyDebilityTemplateErrors(key: string, body: string, headline?: string | null): string[] {
@@ -90,7 +97,7 @@ export function skyDebilityTemplateErrors(key: string, body: string, headline?: 
     if (slots.filter(value => value === slot).length !== 1) errors.push(`Keep exactly one {${slot}} slot.`);
   }
   if (!body.trim()) errors.push("Keep wording in this field.");
-  if (/\/dignityExplanation(One|Many)$/u.test(key) && /[<>]/u.test(body)) errors.push("Use plain wording, not markup.");
+  if (/\/(dignityExplanation(One|Many)|dignityDefinition)$/u.test(key) && /[<>]/u.test(body)) errors.push("Use plain wording, not markup.");
   if (key.includes("/placement/") || /\/signCondition(One|Many)$/u.test(key)) {
     if (/[.!?;:,]$/u.test(body.trim())) errors.push("Leave final punctuation to the paragraph template.");
     if (/[\r\n]/u.test(body)) errors.push("Keep this phrase on one line.");

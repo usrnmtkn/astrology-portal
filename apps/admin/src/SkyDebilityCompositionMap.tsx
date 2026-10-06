@@ -28,7 +28,7 @@ export function SkyDebilityCompositionMap({ composition, read, onSelectSource, b
   const [view, setView] = useState<View>("reading");
   const [variable, setVariable] = useState<string | null>(null);
   const { copy } = composition;
-  const links = skyDebilityPlacementLinks(copy.allPlacementKeys, positions, copy.interpretationKey ? "reading" : "compact");
+  const links = skyDebilityPlacementLinks(copy.allPlacementKeys, positions, copy.interpretationKey || copy.classifiedContext ? "reading" : "compact");
   const readingParts = copy.paragraphTemplates.map(text => presentSkyDebilityParts(skyDebilityTemplateParts(text, copy.slots), links));
   const mappedParts = composition.paragraphs.map(parts => presentSkyDebilityParts(parts, links));
   const textOf = (parts: readonly SkyDebilityDisplayPart[]) => parts.map(part => part.text).join("");
@@ -68,7 +68,7 @@ export function SkyDebilityCompositionMap({ composition, read, onSelectSource, b
   }
   const sourceKeys = [...new Set((variable ? composition.slots[variable] ?? [] : []).flatMap(part => part.sourceKey ? [part.sourceKey] : []))];
   if (variable === "signConditionClause" && !sourceKeys.length) sourceKeys.push(skyDebilityTemplateKey(copy.allPlacementKeys.length === 1 ? "signConditionOne" : "signConditionMany"));
-  if (variable === "dignityExplanationSentence" && !sourceKeys.length) sourceKeys.push(skyDebilityTemplateKey(copy.allPlacementKeys.length === 1 ? "dignityExplanationOne" : "dignityExplanationMany"));
+  if (variable === "dignityExplanationSentence" && !sourceKeys.length) sourceKeys.push(skyDebilityTemplateKey(copy.classifiedContext ? "dignityDefinition" : copy.allPlacementKeys.length === 1 ? "dignityExplanationOne" : "dignityExplanationMany"));
   const oneKey = copy.legacyContext ? "signConditionOne" : "dignityExplanationOne";
   const manyKey = copy.legacyContext ? "signConditionMany" : "dignityExplanationMany";
   const branchLabel = copy.legacyContext ? "connecting phrase" : "explanation";
@@ -108,20 +108,23 @@ export function SkyDebilityCompositionMap({ composition, read, onSelectSource, b
       </div>
       {view === "template" && variable && <section className="admin-editor-guidance" aria-label="Selected template variable" aria-live="polite">
         <h4>{`{${variable}}`}</h4>
-        <p>{variable === "planetList" && links.length ? links.map(link => link.text).join(", ") : copy.slots[variable] ?? "No value for this example. Choose qualifying placements to inspect the contributing wording."}</p>
-        {variable === "planetList" && <p>Each qualifying planet appears once as an inline link with its calculated sign. Rx appears inside the link only when that planet is retrograde. Direct motion has no extra marker.</p>}
+        <p>{variable === "planetList" && links.length ? links.map(link => link.text).join(", ") : variable === "dignityPlacementList" && copy.slots[variable]
+          ? textOf(presentSkyDebilityParts([{ text: copy.slots[variable], slot: variable, kind: "fact" }], links))
+          : copy.slots[variable] ?? "Choose qualifying placements to inspect this variable."}</p>
+        {variable === "planetList" && <p>Links include calculated signs and any retrograde motion.</p>}
         {sourceKeys.length ? sourceKeys.map(key => <p key={key}><strong>{skyDebilityField(key)?.label}</strong><br />{editLink(key, read(key) ?? "Missing wording", key.includes("/placement/"))}</p>)
-          : <p>This value is calculated from the selected example, rather than authored in a wording field.</p>}
+          : <p>This value is calculated from the selected example.</p>}
       </section>}
     </StudioTabs>
     <details className="admin-workspace-details">
       <summary>Sources and selection rules</summary>
-      <p>Selected branch: {copy.interpretationKey ? "complete interpretation for the exact qualifying placements and motion" : copy.allPlacementKeys.length === 0 ? "card hidden" : `${copy.allPlacementKeys.length === 1 ? "one-planet" : "multiple-planet"} ${branchLabel}`}.</p>
+      <p>Selected branch: {copy.interpretationKey ? "complete interpretation" : copy.allPlacementKeys.length === 0 ? "card hidden" : `${copy.allPlacementKeys.length === 1 ? "one-planet" : "multiple-planet"} ${branchLabel}`}.</p>
       <p>Selected matched examples: {copy.selectedPlacementKeys.length ? copy.selectedPlacementKeys.map(placementLabel).join(", ") : "none"}.</p>
-      {copy.omittedExamplePlacementKeys.length > 0 && <p>{copy.omittedExamplePlacementKeys.map(placementLabel).join(", ")} remain in the count, planetary functions, and inline links. Their experiences, situations, and responses are not among the three selected examples.</p>}
+      {copy.omittedExamplePlacementKeys.length > 0 && <p>{copy.omittedExamplePlacementKeys.map(placementLabel).join(", ")} remain in the count and inline links. Their experiences are not among the three selected examples.</p>}
       {!copy.interpretationKey && <>
-        <p>Experiences and situations use “or”; responses and functions use “and”. The inline placement links are comma-separated. {editLink(skyDebilityTemplateKey("exampleOrder"), "Edit example order")}.</p>
-        <p>{editLink(skyDebilityTemplateKey(oneKey), `Edit one-planet ${branchLabel}`)} · {editLink(skyDebilityTemplateKey(manyKey), `Edit multiple-planet ${branchLabel}`)}</p>
+        <p>Experiences use “or”. Every qualifying placement appears in the explanation. {editLink(skyDebilityTemplateKey("exampleOrder"), "Edit example order")}.</p>
+        {copy.classifiedContext ? <p>{editLink(skyDebilityTemplateKey("dignityDefinition"), "Edit detriment and fall definitions")}</p>
+          : <p>{editLink(skyDebilityTemplateKey(oneKey), `Edit one-planet ${branchLabel}`)} · {editLink(skyDebilityTemplateKey(manyKey), `Edit multiple-planet ${branchLabel}`)}</p>}
       </>}
       {copy.requiredKeys.map(key => <p key={key}>{editLink(key, skyDebilityField(key)?.label ?? key)}</p>)}
     </details>

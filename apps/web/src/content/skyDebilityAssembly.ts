@@ -2,7 +2,7 @@ import {
   DIGNITY_FRAMEWORK, TRADITIONAL_DIGNITY_PLANETS, planetSignDebilities,
   type TraditionalSkyDebilities
 } from "../services/planetSignDignity.mjs";
-import { skyDebilityExampleOrder, skyDebilityField, skyDebilityLegacyContext, skyDebilityTemplateErrors } from "./skyDebilityCatalog.js";
+import { skyDebilityClassifiedContext, skyDebilityExampleOrder, skyDebilityField, skyDebilityLegacyContext, skyDebilityTemplateErrors } from "./skyDebilityCatalog.js";
 import { skyDebilityPhraseKey, skyDebilityPhraseNames, skyDebilityPhraseSet, skyDebilityPlacementId } from "./skyDebilityPhrases.js";
 import { skyDebilityInterpretationErrors, skyDebilityInterpretationPlacements } from "./skyDebilityInterpretation.js";
 import { skyDebilityPlacementLinks } from "./skyDebilityPresentation.js";
@@ -40,7 +40,7 @@ export function assembleSkyDebilityCopy(
     visible: false, hiddenReason: "", openingHook: "", titleLead: "", titleSoft: "",
     countLabel: "", countUnit: slots.planetWord, body: "", paragraphs: [] as string[],
     paragraphTemplates: [] as string[],
-    accessibleName: "", slots, errors, requiredKeys, legacyContext: false, interpretationKey: "",
+    accessibleName: "", slots, errors, requiredKeys, legacyContext: false, classifiedContext: false, interpretationKey: "",
     selectedPlacementKeys: [] as string[], allPlacementKeys: [] as string[], omittedExamplePlacementKeys: [] as string[]
   };
   if (snapshot.framework !== DIGNITY_FRAMEWORK || snapshot.traditionalCount !== 7 || snapshot.knownCount !== 7) {
@@ -78,9 +78,10 @@ export function assembleSkyDebilityCopy(
       paragraphTemplates, paragraphs, body: paragraphs.join("\n\n") };
   }
 
-  function required(key: string) {
-    requiredKeys.push(key);
+  function required(key: string, used = true) {
     const value = read(key);
+    if (!used) return value?.trim() ?? "";
+    requiredKeys.push(key);
     if (typeof value !== "string") { errors.push(`${key}: Missing or unavailable wording.`); return ""; }
     errors.push(...skyDebilityTemplateErrors(key, value).map(issue => `${key}: ${issue}`));
     return value.trim();
@@ -93,8 +94,11 @@ export function assembleSkyDebilityCopy(
   const contextTemplate = field("contextTemplate");
   const order = skyDebilityExampleOrder(field("exampleOrder"));
   output.legacyContext = skyDebilityLegacyContext(contextTemplate);
+  output.classifiedContext = skyDebilityClassifiedContext(contextTemplate);
   if (snapshot.count === 1) slots.signTitle = snapshot.planets[0].sign;
-  if (output.legacyContext) {
+  if (output.classifiedContext) {
+    slots.dignityExplanationSentence = field("dignityDefinition");
+  } else if (output.legacyContext) {
     const connector = field(snapshot.count === 1 ? "signConditionOne" : "signConditionMany");
     slots.signConditionClause = snapshot.count === 1 ? connector.replace(/\{signTitle\}/gu, () => slots.signTitle) : connector;
   } else {
@@ -106,7 +110,12 @@ export function assembleSkyDebilityCopy(
   const canonicalOrder = TRADITIONAL_DIGNITY_PLANETS as readonly string[];
   const rows = [...snapshot.planets].sort((a, b) => canonicalOrder.indexOf(a.planet) - canonicalOrder.indexOf(b.planet)).map(row => {
     if (!skyDebilityPhraseSet(row.planet, row.sign)) errors.push(`${row.planet} in ${row.sign}: Missing placement phrase set.`);
-    const phrases = Object.fromEntries(skyDebilityPhraseNames.map(name => [name, required(skyDebilityPhraseKey(row.planet, row.sign, name))])) as Record<typeof skyDebilityPhraseNames[number], string>;
+    const phraseSlots = { livedExperienceClause: "livedExperienceList", situationPhrase: "situationList", planetFunctionVerbPhrase: "planetFunctionList", responseClause: "responseList" };
+    const phrases = Object.fromEntries(skyDebilityPhraseNames.map(name => {
+      const key = skyDebilityPhraseKey(row.planet, row.sign, name);
+      const used = [experienceTemplate, contextTemplate].some(template => template.includes(`{${phraseSlots[name]}}`));
+      return [name, required(key, used)];
+    })) as Record<typeof skyDebilityPhraseNames[number], string>;
     return { ...row, ...phrases, placementKey: skyDebilityPlacementId(row.planet, row.sign) };
   });
   const examples = [...rows].sort((a, b) => order.indexOf(a.planet) - order.indexOf(b.planet)).slice(0, 3);
@@ -121,6 +130,14 @@ export function assembleSkyDebilityCopy(
   const planetList = joinSkyDebilityList(rows.map(row => row.planet === "Sun" || row.planet === "Moon" ? `the ${row.planet}` : row.planet), "and");
   slots.planetList = output.legacyContext ? capitalize(planetList) : planetList;
   slots.planetFunctionList = joinSkyDebilityList(rows.map(row => row.planetFunctionVerbPhrase), "and");
+  // Exclusive groups prevent Mercury in Pisces appearing twice. Membership
+  // comes from the shared lookup; this is list grammar, not interpretation.
+  slots.dignityPlacementList = ["detriment", "fall", "detriment and fall"].flatMap(condition => {
+    const group = rows.filter(row => planetSignDebilities(row.planet, row.sign).join(" and ") === condition);
+    if (!group.length) return [];
+    const names = skyDebilityPlacementLinks(group.map(row => row.placementKey), [], "reading").map(link => link.text);
+    return [`${joinSkyDebilityList(names, "and")} ${group.length === 1 ? "is" : "are"} in ${condition}`];
+  }).join("; ");
   const fill = (template: string) => template.replace(/\{([^{}]+)\}/gu, (_, name: string) => slots[name]);
   const paragraphs = [fill(experienceTemplate), fill(contextTemplate)];
   return { ...output, visible: true, openingHook: heading, titleLead: heading,

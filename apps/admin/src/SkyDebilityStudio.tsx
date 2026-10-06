@@ -16,14 +16,15 @@ import {
 } from "../../web/src/services/planetSignDignity.mjs";
 import type { SummaryCompositionRow } from "./skySummaryComposition";
 
-const templateNames = ["openingHook", "experienceTemplate", "contextTemplate", "dignityExplanationOne", "dignityExplanationMany", "exampleOrder", "countLabel", "countUnit", "signConditionOne", "signConditionMany"];
+const templateNames = ["openingHook", "experienceTemplate", "contextTemplate", "dignityDefinition", "dignityExplanationOne", "dignityExplanationMany", "exampleOrder", "countLabel", "countUnit", "signConditionOne", "signConditionMany"];
 const templateGuidance: Record<string, string> = {
-  contextTemplate: "Edit the count-first explanation and response paragraph here. The count statement is emphasized. The planetList variable inserts inline links with each calculated sign and any Rx marker. Your placement wording supplies the functions and responses.",
-  dignityExplanationOne: "A complete sentence for one qualifying planet. Keep {signTitle} so its calculated sign is named. Include the sentence's final punctuation.",
-  dignityExplanationMany: "A complete sentence for several qualifying planets, explaining detriment or fall in everyday terms. Include the sentence's final punctuation.",
-  signConditionOne: "Preserved for older saved paragraph templates containing {signConditionClause}. The count-first template uses the one-planet explanation instead. Keep {signTitle}.",
-  signConditionMany: "Preserved for older saved paragraph templates containing {signConditionClause}. The count-first template uses the multiple-planet explanation instead.",
-  exampleOrder: "Use all seven planet names once, separated by commas. This order selects examples only; it does not change the count or dignity."
+  contextTemplate: "The count is highlighted. {dignityPlacementList} links each placement once and names its motion and dignity.",
+  dignityDefinition: "Definitions follow the placements. Include final punctuation.",
+  dignityExplanationOne: "Legacy explanation. Keep {signTitle} and final punctuation.",
+  dignityExplanationMany: "Legacy explanation. Include final punctuation.",
+  signConditionOne: "Legacy {signConditionClause}. Keep {signTitle}.",
+  signConditionMany: "Legacy {signConditionClause}.",
+  exampleOrder: "List all seven planets once, separated by commas. This selects examples only."
 };
 const rowSignature = (row?: SummaryCompositionRow) => JSON.stringify([row?.id, row?.updated_at, row?.status, row?.body]);
 
