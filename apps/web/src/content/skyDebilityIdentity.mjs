@@ -44,12 +44,18 @@ export function skyDebilityInterpretationPlacements(key) {
 
 export function skyDebilityInterpretationErrors(key, body, headline) {
   const errors = [];
-  if (!skyDebilityInterpretationPlacements(key)) errors.push("Choose a complete, valid qualifying combination.");
+  const placements = skyDebilityInterpretationPlacements(key);
+  if (!placements) errors.push("Choose a complete, valid qualifying combination.");
   const slots = [...body.matchAll(/\{([^{}]+)\}/gu)].map(match => match[1]);
   if (!body.trim()) errors.push("Write the complete interpretation.");
   if (/[{}]/u.test(body.replace(/\{[^{}]+\}/gu, "")) || body.includes("{{") || body.includes("}}")) errors.push("Use matching single braces for calculated facts.");
   if (slots.some(slot => !skyDebilityInterpretationSlots.includes(slot))) errors.push("Use only calculated fact variables in a complete interpretation.");
-  if (slots.filter(slot => slot === "planetList").length !== 1) errors.push("Keep exactly one {planetList} variable so every qualifying placement is shown.");
+  const allLists = slots.filter(slot => slot === "planetList").length;
+  const categoryLists = placements && ["detriment", "fall"].every(dignity => {
+    const count = slots.filter(slot => slot === `${dignity}PlanetList`).length;
+    return count <= 1 && (count === 1 || !placements.some(row => planetSignDebilities(row.planet, row.sign).includes(dignity)));
+  });
+  if (allLists !== 1 && !(allLists === 0 && categoryLists)) errors.push("Include {planetList} once, or each applicable {detrimentPlanetList} and {fallPlanetList} once, so every qualifying placement is shown.");
   if (/[<>]/u.test(body)) errors.push("Use plain text, not markup.");
   if (headline !== undefined && (!headline?.trim() || /[{}<>\r\n]/u.test(headline))) errors.push("Give the complete card a plain-text heading without variables.");
   return errors;

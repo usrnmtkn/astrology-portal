@@ -57,7 +57,7 @@ for (let i = 0; i < copy.paragraphs.length; i++) {
 assert.deepEqual(links.map(link => link.text), ["the Sun in Libra", "Venus retrograde in Scorpio", "Saturn retrograde in Aries"]);
 assert.equal(copy.slots.planetList, "the Sun in Libra, Venus retrograde in Scorpio, and Saturn retrograde in Aries");
 assert.deepEqual(skyDebilityPlacementLinks(copy.allPlacementKeys, positions).map(link => link.text), ["Sun in Libra", "Venus Rx in Scorpio", "Saturn Rx in Aries"], "Existing cards keep their approved compact presentation.");
-const breakdown = "Fixture opening.\n\n{count} of {total}: {planetList}. Detriment ({detrimentCount}): {detrimentPlanetList}. Fall ({fallCount}): {fallPlanetList}.\n\nFixture ending.";
+const breakdown = "Fixture opening.\n\n{count} of {total}. Detriment ({detrimentCount}): {detrimentPlanetList}. Fall ({fallCount}): {fallPlanetList}.\n\nFixture ending.";
 for (const [input, expected] of [
   [positions, ["3", "1", "2", "Venus retrograde in Scorpio", "the Sun in Libra and Saturn retrograde in Aries"]],
   [change("Mercury", { sign: "Pisces" }), ["4", "2", "3", "Mercury in Pisces and Venus retrograde in Scorpio", "the Sun in Libra, Mercury in Pisces, and Saturn retrograde in Aries"]],
@@ -72,11 +72,14 @@ for (const [input, expected] of [
   assert.equal(resolved.visible, true);
   assert.deepEqual(["count", "detrimentCount", "fallCount", "detrimentPlanetList", "fallPlanetList"].map(name => resolved.slots[name]), expected);
   assert.doesNotMatch(resolved.body, /[{}]|undefined/);
+  const applicableOnly = breakdown.replace(resolved.slots.detrimentCount === "0" ? "{detrimentPlanetList}" : resolved.slots.fallCount === "0" ? "{fallPlanetList}" : "not-present", "none");
+  assert.deepEqual(skyDebilityInterpretationErrors(nextKey, applicableOnly), []);
   assert.deepEqual(buildSkyDebilityComposition(nextSnapshot, () => null, next).paragraphs.map(skyDebilityMappedText), resolved.paragraphs);
   const presented = presentSkyDebilityParts(skyDebilityTemplateParts(resolved.paragraphTemplates[1], resolved.slots), skyDebilityPlacementLinks(resolved.allPlacementKeys, input, "reading"));
   assert.equal(presented.map(part => part.text).join(""), resolved.paragraphs[1]);
-  assert.equal(presented.filter(part => part.href).length, Number(expected[0]), "Category lists do not duplicate the placement links.");
+  assert.equal(presented.filter(part => part.href).length, Number(expected[1]) + Number(expected[2]), "Every named category placement is linked, including a placement in both categories.");
 }
+for (const bad of [breakdown.replace("{fallPlanetList}", ""), breakdown.replace("{detrimentPlanetList}", ""), breakdown + " {fallPlanetList}"]) assert.ok(skyDebilityInterpretationErrors(key, bad).length);
 for (const status of ["DRAFT", "REVIEWED", "ARCHIVED"] as const) assert.equal(resolveSkyDebilityCopy(new Map([[key, { ...row, status }]]), snapshot, positions).interpretationKey, "");
 for (const input of [change("Moon", { sign: "Scorpio" }), change("Venus", { motion: "direct" })]) {
   assert.equal(resolveSkyDebilityCopy(content, traditionalSkyDebilities(input), input).interpretationKey, "");

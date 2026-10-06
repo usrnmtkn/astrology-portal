@@ -134,7 +134,7 @@ export function SkyDebilityStudio({ rows, onEdit, busy }: {
 
     <details className="admin-workspace-details">
       <AdminDisclosureSummary>Complete interpretation for these placements</AdminDisclosureSummary>
-      <p>Write the heading and complete card together. This version applies only when every qualifying planet, sign, and motion matches the preview. Include {"{planetList}"} once for the calculated placement links; the remaining paragraphs can follow the interpretation.</p>
+      <p>Write the heading and complete card together. This version applies only when every qualifying planet, sign, and motion matches the preview. Use {"{planetList}"} once, or use {"{detrimentPlanetList}"} and {"{fallPlanetList}"} for the applicable categories. Each list displays the calculated placements as links.</p>
       <p>{interpretationRow ? <ContentLiveStatusBadge row={interpretationRow} /> : "No complete interpretation is saved for this combination. The existing phrase template supplies the reader card."}</p>
       {interpretationRow?.inventory_only && <p role="status">Saved interpretation is loading.</p>}
       <StudioButton type="button" disabled={busy || !interpretationKey || interpretationRow?.inventory_only} onClick={() => {

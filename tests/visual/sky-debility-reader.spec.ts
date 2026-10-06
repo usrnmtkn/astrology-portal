@@ -66,7 +66,7 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) test(`co
   const fields = { surface: "sky", mode: "card", status: "LIVE", lane: "serving", review_state: null, headline: "Fixture interpretation for October", summary: "", sections: null,
     source_snapshot: { contentType: "mustache-template", contentSystem: "cms-surface-override", allowedSlots: ["planetList", "countWord", "totalWord", "countVerb", "detrimentCount", "fallCount", "detrimentPlanetList", "fallPlanetList"] }, updated_at: "2026-10-05T12:00:00.000Z" };
   const october = { ...fields, id: "october-fixture", content_key: "cms/sky-debility/reading/sun-libra-direct__venus-scorpio-retrograde__saturn-aries-retrograde",
-    body: "October fixture opening stays complete.\n\n{countWord} out of the {totalWord} classical planets {countVerb} currently in detriment or fall. Detriment ({detrimentCount}): {detrimentPlanetList}. Fall ({fallCount}): {fallPlanetList}.\n\n{planetList}. October fixture ending stays complete." };
+    body: "October fixture opening stays complete.\n\n{countWord} of the {totalWord} classical planets {countVerb} currently in detriment or fall: {detrimentPlanetList} is in detriment; {fallPlanetList} are in fall.\n\nOctober fixture ending stays complete." };
   const september = { ...fields, id: "september-fixture", content_key: "cms/sky-debility/reading/venus-scorpio-direct__mars-cancer-direct__saturn-aries-retrograde", headline: "Fixture interpretation for September",
     body: "September fixture opening stays complete.\n\n{planetList}.\n\nSeptember fixture ending stays complete." };
   let rows = [october, september];
@@ -86,17 +86,18 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) test(`co
   await expect(card).toContainText("October fixture ending stays complete.");
   await expect(card).not.toContainText("September fixture");
   const count = card.locator("mark.content-highlight");
-  await expect(count).toHaveText(`${highlightedCountStatement}.`);
+  await expect(count).toHaveText(highlightedCountStatement.replace(" out of ", " of "));
   await expect(count.getByRole("link")).toHaveCount(0);
-  await expect(card).toContainText("Fall (2): the Sun in Libra and Saturn retrograde in Aries.");
+  await expect(card).toContainText("the Sun in Libra and Saturn retrograde in Aries are in fall.");
   expect(await count.evaluate(el => getComputedStyle(el).backgroundImage)).toContain("linear-gradient");
-  await expect(card.getByRole("link")).toHaveText(["the Sun in Libra", "Venus retrograde in Scorpio", "Saturn retrograde in Aries"]);
+  await expect(card.getByRole("link")).toHaveText(["Venus retrograde in Scorpio", "the Sun in Libra", "Saturn retrograde in Aries"]);
+  for (const link of await card.getByRole("link").all()) expect(await link.evaluate(el => getComputedStyle(el).textDecorationLine)).toContain("underline");
   await expect(card.getByRole("heading", { level: 3 })).toHaveText(october.headline);
   await expectEffortCardSpacing(card);
   expect(await card.evaluate(el => el.scrollWidth - el.clientWidth)).toBeLessThanOrEqual(1);
   await page.reload();
   await expect(card).toContainText("October fixture ending stays complete.", { timeout: 60_000 });
-  await expect(count).toHaveText(`${highlightedCountStatement}.`);
+  await expect(count).toHaveText(highlightedCountStatement.replace(" out of ", " of "));
   await card.screenshot({ path: `test-results/effort-complete-${width}-${theme}.png` });
   // A known published reading with unavailable body stays unavailable.
   rows = []; revision++;
