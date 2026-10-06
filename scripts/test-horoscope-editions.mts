@@ -6,6 +6,7 @@ import {store} from '../tests/helpers/sky-article-save-api.mts';
 import {readerRouteResponse} from '../tests/helpers/content-reader-route.mjs';
 import {horoscopeCivilWindow,prepareHoroscopeBrief} from '../api/_lib/horoscope-editions';
 import {emptyHoroscopeEdition,horoscopeEditionBody,horoscopeEditionKey,horoscopeEditionAt,validateHoroscopeEdition,HOROSCOPE_SIGNS} from '../apps/web/src/content/horoscopeEditions.mjs';
+import {prepareHoroscopeWriting,writeHoroscopeSign} from '../src/astro-writing/horoscopeWriting.mjs';
 
 const briefUrl='/api/admin/generated-content?horoscopeBrief=true&period=weekly&date=2026-09-24&timeZone=America/New_York';
 const deployment=JSON.parse(readFileSync(new URL('../vercel.json',import.meta.url),'utf8'));
@@ -25,6 +26,35 @@ assert.equal(brief.signs.length,12);
 // Two seasons and both sides of the date line use the same calculation functions
 // as Calendar. Check direct Swiss positions on either side of each ingress.
 const ephemeris=await import('../apps/web/src/services/ephemeris');
+// Weekly must receive the same calculated major planetary aspects as the
+// longer periods. Check the authenticated handler, direct Swiss geometry and
+// final writer input, without dispatching a paid request.
+for(const [date,timeZone] of [['2026-10-05','America/New_York'],['2026-12-21','Pacific/Kiritimati']]){
+ const response=await store.invoke('GET',undefined,`/api/admin/generated-content?horoscopeBrief=true&period=weekly&date=${date}&timeZone=${timeZone}`);
+ assert.equal(response.status,200,JSON.stringify(response.payload));
+ const packet=response.payload,aspects=packet.brief.events.filter((e:any)=>e.type==='aspect');
+ assert(aspects.length,'Weekly is not limited to Moon movements and lunations');
+ assert(packet.brief.coverage.includes('Exact major aspects between the Sun and planets are included.'));
+ for(const event of aspects){
+  assert(!event.planets.includes('Moon'),'This change does not add routine lunar aspects');
+  assert(event.startsAt>=packet.brief.window.startsAt&&event.startsAt<packet.brief.window.endsAt);
+  const sky=await ephemeris.getAstrodienstSky({label:'Fixture',latitude:0,longitude:0,timeZone},new Date(event.startsAt),{includeTransitWindows:false});
+  assert.equal(sky.calculationProvenance?.actualEphemeris,'swiss');
+  const longitude=(planet:string)=>{const p=sky.positions.find(p=>p.planet===planet)!;return HOROSCOPE_SIGNS.indexOf(p.sign.toLowerCase())*30+p.degree;};
+  const delta=Math.abs(longitude(event.planets[0])-longitude(event.planets[1]));
+  const expected=({conjunction:0,sextile:60,square:90,trine:120,opposition:180} as any)[event.aspect];
+  assert(Math.abs(Math.min(delta,360-delta)-expected)<0.05,`${event.title} must be exact at the supplied instant`);
+ }
+ const edition=emptyHoroscopeEdition(packet.brief.window);
+ const prepared=prepareHoroscopeWriting({sections:{horoscopeEdition:edition},facts:{horoscopeBrief:packet},source_snapshot:{}});
+ const stop=new Error('Unbilled writer boundary');let request:any;
+ await assert.rejects(writeHoroscopeSign(prepared,'aries',{approvedPlanHash:prepared.planHash,approvalReference:'fixture:weekly-major-aspects',writerClient:async(value:any)=>{request=value;throw stop;}}),error=>error===stop);
+ assert(request);
+ for(const event of aspects)assert(request.input.includes(event.id),`Writer must receive ${event.title}, not merely the brief API`);
+ assert.deepEqual(request.schema.required,['headline','body'],'Weekly does not acquire a Monthly TLDR or synthesis step');
+ const daily=await prepareHoroscopeBrief(new URL(`http://localhost/?period=daily&date=${date}&timeZone=${timeZone}`));
+ assert(daily.brief.events.every((e:any)=>e.type!=='aspect'),'Daily coverage is unchanged');
+}
 for(const [date,timeZone] of [['2026-09-24','America/New_York'],['2026-12-25','Pacific/Kiritimati']]){
  const packet=await prepareHoroscopeBrief(new URL(`http://localhost/?period=weekly&date=${date}&timeZone=${timeZone}`));
  const location={label:'Test geocentric',latitude:0,longitude:0,timeZone};
