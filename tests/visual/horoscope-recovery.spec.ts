@@ -4,8 +4,8 @@ import path from 'node:path';
 import {routeStudioInventoryApi} from '../helpers/studio-inventory-route';
 import {emptyHoroscopeEdition,horoscopeEditionBody,horoscopeEditionKey} from '../../apps/web/src/content/horoscopeEditions.mjs';
 
-async function fixture(page:Page,missing=1,unknown=false,period='weekly'){
-  const child=fork(path.resolve('tests/helpers/sky-article-save-api.mts'),[],{env:{...process.env,ZODIAC_TEMPLATE_FIXTURE:'1',HOROSCOPE_WRITER_FIXTURE:'1'},execArgv:['--import','tsx'],stdio:['ignore','pipe','pipe','ipc']});
+async function fixture(page:Page,missing=1,unknown=false,period='weekly',session=false){
+  const child=fork(path.resolve('tests/helpers/sky-article-save-api.mts'),[],{env:{...process.env,ZODIAC_TEMPLATE_FIXTURE:'1',HOROSCOPE_WRITER_FIXTURE:'1',...(session?{STUDIO_SESSION_FIXTURE:'1'}:{})},execArgv:['--import','tsx'],stdio:['ignore','pipe','pipe','ipc']});
   let sequence=0,stderr='';const pending=new Map<number,{resolve:(v:any)=>void;reject:(e:Error)=>void}>();
   child.stderr?.on('data',value=>stderr+=value);
   const ready=new Promise<void>((resolve,reject)=>{child.on('message',(message:any)=>{if(message.ready)return resolve();const task=pending.get(message.id);if(task){pending.delete(message.id);message.error?task.reject(new Error(message.error)):task.resolve(message.result);}});child.on('exit',code=>{const error=new Error(`Fixture exited ${code}: ${stderr}`);reject(error);pending.forEach(task=>task.reject(error));});});
@@ -35,11 +35,11 @@ async function fixture(page:Page,missing=1,unknown=false,period='weekly'){
       if(body.action==='diagnose'&&state.failDiagnosis){state.failDiagnosis=false;await route.fulfill({status:503,json:{ok:false,error:'Fixture diagnosis unavailable.'}});return true;}
       if(body.action==='poll'&&state.failPoll){state.failPoll=false;await route.fulfill({status:503,json:{ok:false,error:'Fixture connection interrupted.'}});return true;}
       if(body.action==='poll'&&state.conflictPoll){state.conflictPoll=false;expect((await action('poll')).status).toBe(200);}
-      const result=await call({method:'writing',body});
-      if(body.action==='poll'&&state.holdPoll){state.holdPoll=false;state.held=true;await new Promise<void>(resolve=>{state.release=resolve;});}
+      const result=await call({method:'writing',body,...(session?{headers:route.request().headers()}:{})});
+      if(body.action==='poll'&&state.holdPoll&&result.status<300){state.holdPoll=false;state.held=true;await new Promise<void>(resolve=>{state.release=resolve;});}
       await route.fulfill({status:result.status,json:result.payload}).catch(()=>{});return true;
     }});
-    await page.addInitScript(()=>localStorage.setItem('tldrastro:contentAdminSecret','calendar-api-fixture'));
+    if(!session)await page.addInitScript(()=>localStorage.setItem('tldrastro:contentAdminSecret','calendar-api-fixture'));
     const open=async()=>{await page.goto('/admin/content#horoscopes');const studio=page.getByRole('region',{name:'Horoscope editions'});await studio.getByText(/^Continue a saved edition/).click();await studio.locator('.admin-horoscope-saved button').first().click();return studio;};
     return {child,call,latest,action,state,open,original:edition};
   }catch(error){child.kill();throw error;}
@@ -389,3 +389,77 @@ test('A legacy start with no dispatched request recovers after reload without re
   expect((await f.call({method:'writer-state'})).calls).toBe(1);
  }finally{f.child.kill();}
 });
+
+const sessionToken=(version:string)=>`eyJhbGciOiJIUzI1NiJ9.${Buffer.from(JSON.stringify({sub:'fixture-owner',version})).toString('base64url')}.signature`;
+async function useOwnerSession(page:Page,f:Awaited<ReturnType<typeof fixture>>){
+ const key=`sb-${new URL(process.env.VITE_SUPABASE_URL!).hostname.split('.')[0]}-auth-token`;
+ const initial=sessionToken('initial'),renewed=sessionToken('renewed');
+ const session={access_token:initial,refresh_token:'fixture-refresh',expires_at:Math.floor(Date.now()/1000)+3600,user:{id:'fixture-owner'}};
+ await page.addInitScript(({key,session})=>localStorage.setItem(key,JSON.stringify(session)),{key,session});
+ const auth={refreshes:0,fail:false};
+ await page.route('**/auth/v1/**',async route=>{
+  if(route.request().url().includes('/token?')){
+   auth.refreshes++;
+   if(auth.fail){await route.fulfill({status:400,json:{error:'invalid_grant'}});return;}
+   await f.call({method:'auth-state',body:{token:renewed}});
+   // The real token response may have expires_in without expires_at.
+   await route.fulfill({json:{...session,access_token:renewed,refresh_token:'fixture-rotated',expires_at:undefined,expires_in:3600}});return;
+  }
+  await route.fulfill({json:session.user});
+ });
+ await f.call({method:'auth-state',body:{token:initial}});
+ return {key,initial,renewed,auth};
+}
+
+for(const [width,theme] of [[390,'dark'],[1440,'light']] as const){
+ test(`Owner session renewal keeps generation and rejection working ${width} ${theme}`,async({page})=>{
+  await page.setViewportSize({width,height:1000});await page.addInitScript(theme=>localStorage.setItem('tldrastro:studio-theme',theme),theme);
+  const f=await fixture(page,3,false,'weekly',true);try{
+   const s=await useOwnerSession(page,f);await f.action('poll');const studio=await f.open();
+   await studio.getByRole('checkbox',{name:'I approve this writing plan for generation.'}).check();
+   await f.call({method:'writer-state',body:{pendingPolls:2}});
+   // The server rejects a stale JWT before the handler can touch storage.
+   await f.call({method:'auth-state',body:{token:s.renewed}});
+   f.state.holdPoll=true;
+   await studio.getByRole('button',{name:'Generate missing readings',exact:true}).click();
+   await expect.poll(()=>f.state.held).toBe(true);
+   expect(s.auth.refreshes).toBe(1);
+   // Deliver the real cross-tab renewal event while the active request waits.
+   // The dashboard adopts the token; this must not abort the horoscope loop.
+   await page.evaluate(key=>window.dispatchEvent(new StorageEvent('storage',{key,newValue:localStorage.getItem(key)})),s.key);
+   f.state.release();
+   await expect(studio.getByRole('status')).toHaveText('All readings are saved and ready to review.');
+   const recovered=await f.latest();expect(recovered.source_snapshot.horoscopeGeneration.active).toBeNull();
+   expect(recovered.sections.horoscopeEdition.passages.slice(0,9)).toEqual(f.original.passages.slice(0,9));
+   const complete=await f.latest();expect((await f.call({method:'writer-state'})).calls).toBe(3);
+   // Expire the session before reject-all; rejection must archive exact copy.
+   await page.evaluate(key=>{const value=JSON.parse(localStorage.getItem(key)!);value.expires_at=1;localStorage.setItem(key,JSON.stringify(value));},s.key);
+   page.once('dialog',dialog=>dialog.accept());await studio.getByRole('button',{name:'Reject all drafts',exact:true}).click();
+   await expect(studio.getByRole('status').filter({hasText:'Rejected all drafts.'})).toBeVisible();
+   await expect(studio.getByRole('checkbox',{name:'I approve this writing plan for generation.'})).toBeEnabled();
+   const rejected=await f.latest();expect(rejected.sections.horoscopeEdition.passages.every((p:any)=>!p.body)).toBe(true);
+   expect(rejected.source_snapshot.horoscopeGeneration.rejections.at(-1).passages).toEqual(complete.sections.horoscopeEdition.passages);
+   expect((await f.call({method:'writer-state'})).calls).toBe(3);expect(s.auth.refreshes).toBe(2);
+   await page.reload();await f.open();await expect(studio.getByText('12 readings still need drafts',{exact:false})).toBeVisible();
+   await page.screenshot({path:`test-results/horoscope-auth-recovery-${width}-${theme}.png`,fullPage:true});
+  }finally{f.child.kill();}
+ });
+ test(`Owner session failure clears progress and preserves the saved request ${width} ${theme}`,async({page})=>{
+  await page.setViewportSize({width,height:1000});await page.addInitScript(theme=>localStorage.setItem('tldrastro:studio-theme',theme),theme);
+  const f=await fixture(page,1,false,'weekly',true);try{
+   const s=await useOwnerSession(page,f);const studio=await f.open();const before=await f.latest();
+   s.auth.fail=true;await f.call({method:'auth-state',body:{token:s.renewed}});
+   await studio.getByRole('button',{name:'Check saved progress',exact:true}).click();
+   await expect(studio.getByRole('alert')).toContainText('Sign in with the owner account');
+   await expect(studio.getByRole('status').filter({hasText:'Checking saved progress'})).toHaveCount(0);
+   await expect(studio.getByRole('button',{name:'Check saved progress',exact:true})).toBeEnabled();
+   await expect(studio.getByRole('link',{name:'Sign in to Content Studio'})).toHaveAttribute('href',new RegExp(encodeURIComponent(before.id)));
+   expect(await f.latest()).toEqual(before);expect((await f.call({method:'writer-state'})).calls).toBe(1);
+   // After sign-in is restored, the same saved response is recovered, no POST to AI.
+   s.auth.fail=false;await studio.getByRole('button',{name:'Check saved progress',exact:true}).click();
+   await expect(studio.getByRole('status')).toHaveText('All readings are saved and ready to review.');
+   expect((await f.call({method:'writer-state'})).calls).toBe(1);
+   await page.screenshot({path:`test-results/horoscope-auth-restored-${width}-${theme}.png`,fullPage:true});
+  }finally{f.child.kill();}
+ });
+}

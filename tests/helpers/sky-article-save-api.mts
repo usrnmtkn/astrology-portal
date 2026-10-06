@@ -43,6 +43,11 @@ globalThis.fetch = async (input: any, options: any = {}) => {
  const operation = await store.publication(input, options); if (operation) return operation;
  const reader = await readerRouteResponse(input, options); if (reader) return reader;
  const url = new URL(String(input));
+ if (process.env.STUDIO_SESSION_FIXTURE === '1' && url.pathname === '/auth/v1/user') {
+   return options.headers?.authorization === `Bearer ${sessionFixture.token}`
+     ? Response.json({id:'fixture-owner',app_metadata:{role:'admin'}})
+     : Response.json({message:'Invalid JWT'},{status:401});
+ }
  if (url.origin !== 'https://calendar-api.invalid') throw new Error('Fixture refuses external storage');
  if (process.env.LUNAR_WRITER_FIXTURE === '1' && url.pathname === '/rest/v1/studio_writing_feedback') return Response.json([]);
  if (url.pathname === '/rest/v1/content_publications') return Response.json(fixturePublications([...store.rows.values()]));
@@ -88,8 +93,9 @@ export function seedLegacyMonthlyPlanFailure(id:string){
  generation.lastError=failure;generation.failures=[...(generation.failures??[]),failure];generation.active=null;
  return structuredClone(row);
 }
-export async function invokeHoroscopeWriting(body:any,secret='calendar-api-fixture') {
- const req=Readable.from([JSON.stringify(body)]);Object.assign(req,{method:'POST',headers:{authorization:`Bearer ${secret}`}});
+export const sessionFixture={token:''};
+export async function invokeHoroscopeWriting(body:any,secret='calendar-api-fixture',headers?:Record<string,string>) {
+ const req=Readable.from([JSON.stringify(body)]);Object.assign(req,{method:'POST',headers:headers??{authorization:`Bearer ${secret}`}});
  let result:any;const res={statusCode:200,setHeader(){},end(value:string){result={status:this.statusCode,payload:JSON.parse(value)};}};
  await horoscopeWriter(req as any,res as any);return result;
 }
@@ -123,8 +129,9 @@ export function installHoroscopeWriterFixture(){
  };
 }
 if(process.env.HOROSCOPE_WRITER_FIXTURE==='1')installHoroscopeWriterFixture();
-if (process.send) process.on('message', async ({ id, method, body, url }: any) => {
+if (process.send) process.on('message', async ({ id, method, body, url, headers }: any) => {
  try {
+  if(method==='auth-state'){sessionFixture.token=body.token;process.send!({id,result:{ok:true}});return;}
   if (method === 'writer-state') {
     for(const key of ['pendingPolls','terminalNext','unknownNext','nextResult','startResult'] as const)if(body?.[key]!==undefined)(writerFixture as any)[key]=body[key];
     process.send!({id,result:{calls:writerFixture.calls,polls:writerFixture.polls,responseIds:[...writerFixture.requests.keys()]}});return;
@@ -155,7 +162,7 @@ if (process.send) process.on('message', async ({ id, method, body, url }: any) =
     const res:any={statusCode:200,setHeader(){},end(raw:string){this.payload=JSON.parse(raw);}};
     await handler(req,res);process.send!({id,result:{status:res.statusCode,payload:res.payload}});return;
   }
-  if (method === 'writing') { process.send!({id,result:await invokeHoroscopeWriting(body)});return; }
+  if (method === 'writing') { process.send!({id,result:await invokeHoroscopeWriting(body,undefined,headers)});return; }
   if (method === 'reader') { const response = await readerRouteResponse('/api/content-reader',{method:'POST',body:JSON.stringify(body)}); process.send!({id,result:{status:response.status,payload:await response.json()}}); return; }
   process.send!({ id, result: method === 'rows' ? [...store.rows.values()] : await store.invoke(method, body, url) });
  }

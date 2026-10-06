@@ -8,6 +8,7 @@ const { default: inventory } = await import('../api/admin/generated-content-inve
 const { default: content } = await import('../api/admin/generated-content.ts');
 const { default: publication } = await import('../api/admin/content-publication.ts');
 const { default: liveStatus } = await import('../api/admin/content-live-status.ts');
+const { default: horoscopeWriting } = await import('../api/admin/horoscope-writing.ts');
 Object.assign(process.env, env);
 const originalFetch = globalThis.fetch;
 const originalTimeout = globalThis.setTimeout;
@@ -28,7 +29,7 @@ async function invoke(handler: typeof inventory, method = 'GET') {
   return res;
 }
 try {
-  for (const [name, handler, method] of [['inventory', inventory, 'GET'], ['save', content, 'PATCH'], ['publication', publication, 'POST'], ['status', liveStatus, 'POST']] as const) {
+  for (const [name, handler, method] of [['inventory', inventory, 'GET'], ['save', content, 'PATCH'], ['publication', publication, 'POST'], ['status', liveStatus, 'POST'], ['horoscope writing/rejection', horoscopeWriting, 'POST']] as const) {
     await test(`${name}: auth service failure is 503, never a write or an access-denied response`, async () => {
       authResponse = async () => Response.json({ message: 'Unavailable' }, { status: 503 });
       const res = await invoke(handler, method);
@@ -39,7 +40,9 @@ try {
     });
     await test(`${name}: rejected credentials remain 401`, async () => {
       authResponse = async () => Response.json({ message: 'Invalid JWT' }, { status: 401 });
-      assert.equal((await invoke(handler, method)).statusCode, 401);
+      const res = await invoke(handler, method);
+      assert.equal(res.statusCode, 401);
+      assert.equal(res.payload.authFailure, 'content_admin_unauthorized', 'This marker guarantees rejection before storage or provider calls.');
       assert.equal(storageCalls, 0);
     });
   }

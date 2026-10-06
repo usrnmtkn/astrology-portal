@@ -519,3 +519,32 @@ writing and request history. It still never starts paid generation.
 The original production exception was not retained, so its exact infrastructure
 cause remains unverified. New records retain the failed lifecycle stage, status,
 safe error category and time. See the [startup recovery acceptance record](../qa/horoscope-startup-recovery.md).
+
+## Horoscope session renewal and recovery (2026-10-06)
+
+Horoscope operations resolve the current owner session before each request,
+including result polling, rejection and saving. A token rotation for the same
+owner must not abort the generation loop or reopen the editor. An account
+change still stops work. The server remains responsible for token verification
+and owner authorization on every request.
+
+Session refreshes share a promise within the tab and the installed Supabase
+client's storage lock across tabs. Refresh writes include a new expiry derived
+from `expires_in` when necessary and cannot overwrite a newer sign-in or restore
+a signed-out session. Refresh transport failures have deadlines and remain
+separate from rejected credentials.
+
+One authentication retry is allowed only after the server's explicit
+`content_admin_unauthorized` marker from `requireContentAdmin`, before storage
+or provider dispatch. It uses a renewed token and the same request body and
+version. Unmarked failures, timeouts and lost responses never authorize replay.
+A rejected session stops background polling, clears the progress message and
+links to sign-in with the saved edition as the return destination. Checking
+saved progress after sign-in retrieves the existing response.
+
+Regressions cover the real authorization handler, current-token selection,
+refresh concurrency and expiry, denied accounts, no replay after uncertain
+responses, a batch continuing through token rotation, exact reject-all history,
+and saved-response recovery after failed renewal. Browser mutation tests use
+isolated storage and provider fixtures. They do not authorize paid generation
+or establish writing quality.
