@@ -2,6 +2,7 @@
   "schemaVersion": 1,
   "authorityIndex": "tldr-astro-phrasebank/TLDR-WRITING-AUTHORITY-INDEX.md",
   "sources": [
+    {"path": "docs/writing/RHETORICAL_PATTERN_PROTECTIONS.md", "kind": "rule", "role": "October 6 scoped owner amendment: material rhetorical blockers, meaningful contrast and source preservation"},
     { "path": "AGENTS.md", "kind": "rule", "role": "Project instructions" },
     { "path": "skills/tldr-astro-writer/SKILL.md", "kind": "rule", "role": "Writing guidance" },
     { "path": ".agents/skills/satori-writer/SKILL.md", "kind": "rule", "role": "Writing guidance" },
@@ -31,6 +32,7 @@
     }
   ],
   "qualifications": [
+    {"source": "docs/writing/RHETORICAL_PATTERN_PROTECTIONS.md", "targets": ["docs/writing/WRITING_RULE_RECONCILIATION_OWNER_RULING_2026-08-25.md", "docs/writing/AI_GENERATION_RELIABILITY.md", "docs/writing/BANNED_PATTERNS.md", "tldr-astro-phrasebank/TLDR-WRITING-AUTHORITY-INDEX.md"]},
     {
       "source": "docs/writing/WRITING_RULE_RECONCILIATION_OWNER_RULING_2026-08-25.md",
       "targets": [
@@ -50,6 +52,7 @@
     }
   ],
   "requiredContext": [
+    "docs/writing/RHETORICAL_PATTERN_PROTECTIONS.md",
     "docs/writing/WRITING_RULE_RECONCILIATION_OWNER_RULING_2026-08-25.md",
     "docs/writing/AI_GENERATION_RELIABILITY.md"
   ]

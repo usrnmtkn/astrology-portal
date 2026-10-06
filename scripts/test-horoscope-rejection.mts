@@ -51,12 +51,20 @@ for(const period of ['daily','weekly','seasonal'] as const){
  const plan=await invokeHoroscopeWriting({action:'prepare',id:row.id,expectedUpdatedAt:row.updated_at});assert.equal(plan.status,200);
  const generation=await invokeHoroscopeWriting({action:'generate',id:row.id,expectedUpdatedAt:row.updated_at,sign:'aries',approvedPlanHash:plan.payload.plan.planHash});assert.equal(generation.status,202,JSON.stringify(generation.payload));row=generation.payload.rows[0];
  assert.equal((await action('all')).status,409,'An active replacement cannot be discarded');
- const polled=await invokeHoroscopeWriting({action:'poll',id:row.id,expectedUpdatedAt:row.updated_at});assert.equal(polled.status,200);row=polled.payload.rows[0];
- assert([...writerFixture.requests.values()].at(-1).input.includes('Fixture latest instructions.'),'Replacement requests use the latest saved instructions');
- assert(row.sections.horoscopeEdition.passages.find((p:any)=>p.sign==='aries').body.includes('complete aries fixture opening'));
+ const advance=async(action:string,expectedStatus:number)=>{const result=await invokeHoroscopeWriting({action,id:row.id,expectedUpdatedAt:row.updated_at});assert.equal(result.status,expectedStatus,JSON.stringify(result.payload));row=result.payload.rows[0];};
+ await advance('poll',period==='seasonal'?202:200);
+ if(period==='seasonal'){
+  while(row.source_snapshot.horoscopeGeneration.active){const active=row.source_snapshot.horoscopeGeneration.active;const r=await invokeHoroscopeWriting({action:active.state==='ready'?'continue':'poll',id:row.id,expectedUpdatedAt:row.updated_at});assert([200,202].includes(r.status),JSON.stringify(r.payload));row=r.payload.rows[0];}
+  const prose=[...writerFixture.requests.values()].findLast((r:any)=>r.sign==='aries'&&r.input.includes('COMPACT SEASONAL DEVELOPMENT PLAN'));
+  assert(prose.input.includes('Fixture latest instructions.'),'Private replacement writer uses latest saved instructions');
+  assert.equal(row.sections.horoscopeEdition.passages.find((p:any)=>p.sign==='aries').body,'','Private candidate cannot replace a rejected reader draft');
+ }else{
+  assert([...writerFixture.requests.values()].at(-1).input.includes('Fixture latest instructions.'),'Replacement requests use the latest saved instructions');
+  assert(row.sections.horoscopeEdition.passages.find((p:any)=>p.sign==='aries').body.includes('complete aries fixture opening'));
+ }
  const beforeAll=structuredClone(row),beforeVersion=row.updated_at;
  const reset=await action('all');assert.equal(reset.status,200,JSON.stringify(reset.payload));row=reset.payload.rows[0];
- assert.equal(writerFixture.calls,calls+1,'Resetting all drafts adds no billed call');
+ assert.equal(writerFixture.calls,calls+(period==='seasonal'?6:1),'Resetting all drafts adds no billed call');
  assert(row.sections.horoscopeEdition.passages.every((p:any)=>!p.body&&!p.headline));
  assert.deepEqual(row.sections.horoscopeEdition.window,edition.window);
  assert.deepEqual(row.source_snapshot.studioWritingProfile,profileResult.payload.profile);

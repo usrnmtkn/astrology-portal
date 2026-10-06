@@ -1,11 +1,12 @@
 import { GeneratedRowWriteConflict, confirmedGeneratedRowWrite } from "./generated-row-writes.js";
 import { studioArticleWritingMemory } from './studio-article-memory.js';
-import { transitReadingOwnerVoice, transitReadingOwnerVoicePrompt } from "./transit-reading-owner-voice.js";
+import { transitReadingOwnerVoice, transitReadingOwnerVoicePrompt, transitReadingVoiceContext } from "./transit-reading-owner-voice.js";
 import fs from "node:fs";
 import path from "node:path";
 import { contentGenerationProvider } from "./provider-config.js";
 import { generatedReportWritingContract } from "./transit-reading-writing-contract.js";
 import { REVIEW_FIELDS } from "../../src/astro-writing/canonicalInstructions.mjs";
+import { RHETORICAL_LABELS, RHETORICAL_WRITER_POLICY, rhetoricalReviewContract, validateRhetoricalReview, rhetoricalDecision } from '../../src/astro-writing/rhetoricalPatterns.mjs';
 import { COLD_REVIEW_SCHEMA, REVIEW_SCHEMA } from "../../src/astro-writing/reviewDraft.mjs";
 import { MEANING_PLAN_SCHEMA } from "../../src/astro-writing/resolveAstrology.mjs";
 import { generatedApprovalState, markPipelineReady } from "../../src/astro-writing/approvalGovernance.mjs";
@@ -1579,7 +1580,7 @@ function sceneLockRules() {
     "- Stay inside the chosen scene.",
     "- Do not list alternate meanings.",
     "- Do not name more than two life areas.",
-    "- Do not use a sentence with three or more options joined by commas or or.",
+    "- Let meaning determine the number of examples. Reject decorative triples, but retain three factual categories when all three are necessary.",
     "- The first sentence must work without astrology knowledge.",
     "- Use astrology only after the human situation is clear.",
     "- Advice must be one specific action.",
@@ -2307,7 +2308,7 @@ function editorialRewriteInstruction(failures: EditorialFailure[]) {
     "Reject this draft. Rewrite it around one direct, useful human problem.",
     failedCodes.has("FIRST_SENTENCE_TOO_ASTROLOGICAL") ? "Rewrite the first sentence so it names a plain situation. Do not start with astrology mechanics. Do not make it poetic, mystical, or self-help." : "",
     failedCodes.has("SUMMARY_LISTS_TOPICS") ? "The summary lists categories instead of naming one specific situation. Choose one concrete situation." : "",
-    failedCodes.has("KEYWORD_LISTING") ? "It lists possible meanings instead of choosing one scene. Pick one concrete situation and write only that. Do not include more than two abstract life areas. Do not use a sentence with three or more options joined by commas or or." : "",
+    failedCodes.has("KEYWORD_LISTING") ? "It lists possible meanings instead of choosing one scene. Pick one concrete situation and write only that. Do not include more than two abstract life areas. Let meaning determine the number of examples. Reject decorative triples, but retain three factual categories when all three are necessary." : "",
     failedCodes.has("TIME_LORD_NOT_USED_AS_SCENE_FILTER") ? "Reject this draft. The time lord was used as a topic list instead of a scene filter. Use the time lord to choose one ordinary life scene, then write only that scene. Do not explain every meaning of the time lord." : "",
     failedCodes.has("TECHNICAL_ASTROLOGY_IN_MAIN_COPY") ? "Reject this draft. The main card teaches astrology mechanics. Rewrite the main card as lived guidance only, with no time lord, profection, natal, house, transit-to-natal, or aspect terms. Put the astrology explanation only in astrologyDrilldown." : "",
     failedCodes.has("UNSUPPORTED_EXTERNAL_SCENE") ? "Reject this draft. It invented an external event that is not in the facts. Rewrite the main card as an internal state, body signal, decision point, or task friction that still fits if no one says or does anything obvious." : "",
@@ -4531,7 +4532,7 @@ function buildPrompt(input: GenerateContentInput, approvedExamples: ApprovedExam
     return [
       friendTransitReadingPrompt({ brief, headline }),
       generatedReportWritingContract(),
-      transitReadingOwnerVoicePrompt(transitReadingOwnerVoice(input.facts, "friends")),
+      transitReadingOwnerVoicePrompt(transitReadingOwnerVoice(input.facts, "friends"), transitReadingVoiceContext(input.facts, "friends")),
       qualityFeedback ? `QUALITY_FEEDBACK_FROM_PRIOR_DRAFT\n${qualityFeedback}` : ""
     ].filter(Boolean).join("\n\n");
   }
@@ -5029,7 +5030,8 @@ export function evaluateEditorialCoherence(
     addEditorialFailure(
       failures,
       "SUMMARY_LISTS_TOPICS",
-      "The summary lists multiple life areas or topics instead of naming one specific situation."
+      "Possible topic list: review its function in the complete passage; required factual categories may remain.",
+      "warning"
     );
   }
 
@@ -5037,7 +5039,8 @@ export function evaluateEditorialCoherence(
     addEditorialFailure(
       failures,
       "KEYWORD_LISTING",
-      "The copy lists possible meanings instead of choosing one concrete pressure point."
+      "Possible keyword list: punctuation or item count cannot decide whether the items carry necessary meaning.",
+      "warning"
     );
   }
 
@@ -5165,7 +5168,10 @@ export function evaluateEditorialCoherence(
     });
   }
 
-  const score = Math.max(0, 100 - failures.reduce((total, failure) => total + (failure.severity === "fail" ? 18 : 8), 0));
+  // These count-based signals cannot indirectly block a legitimate list by
+  // lowering the aggregate score. The independent semantic judge decides.
+  const score = Math.max(0, 100 - failures.filter(failure=>!['SUMMARY_LISTS_TOPICS','KEYWORD_LISTING'].includes(failure.code))
+    .reduce((total, failure) => total + (failure.severity === "fail" ? 18 : 8), 0));
   const passed = !failures.some((failure) => failure.severity === "fail") && score >= 70;
 
   return {
@@ -5305,7 +5311,9 @@ type CanonicalReviewViolation = {
   reason: string;
   revision_instruction: string;
 };
-type CanonicalReview = Record<string, CanonicalReviewCheck> & {
+type CanonicalReview = {
+  [key: string]: unknown;
+  cold_rendered_prose: CanonicalReviewCheck;
   decision: "PASS" | "REVISE";
   violations: CanonicalReviewViolation[];
 };
@@ -5436,6 +5444,7 @@ async function reviewGeneratedContentWithOpenAI({
   const { response, payload } = await callOpenAIResponses({
     apiKey,
     role: "REVIEWER",
+    taskInstructions: rhetoricalReviewContract(deterministicReaderCopy(draft)),
     request: {
       model,
       input: JSON.stringify({
@@ -5473,16 +5482,23 @@ async function reviewGeneratedContentWithOpenAI({
   const contextualReview = JSON.parse(output) as CanonicalReview;
   if (!["PASS", "REVISE"].includes(contextualReview.decision)) throw new Error("OpenAI review returned an invalid PASS-or-REVISE decision.");
   for (const field of REVIEW_FIELDS) {
-    if (!["PASS", "FAIL"].includes(contextualReview[field]?.status) || typeof contextualReview[field]?.reason !== "string") {
+    const check = contextualReview[field] as CanonicalReviewCheck | undefined;
+    if (!check || !["PASS", "FAIL"].includes(check.status) || typeof check.reason !== "string") {
       throw new Error(`OpenAI review omitted strict result for ${field}.`);
     }
   }
+  const rhetoric = validateRhetoricalReview((contextualReview as unknown as {rhetoric:unknown}).rhetoric, deterministicReaderCopy(draft));
+  const rhetoricResult = rhetoricalDecision(rhetoric);
   const contextualViolations = contextualReview.violations.filter((item) => item.category !== "cold_rendered_prose");
+  const rhetoricalViolations = rhetoric.findings.map(f => ({category:f.label,severity:RHETORICAL_LABELS.some(label=>label===f.label)?'blocking' as const:'nonblocking' as const,location:f.field,text:f.quote,
+    reason:`${f.reason} ${f.readerConsequence} ${f.meaningTest}`,paragraph:f.paragraph,
+    revision_instruction:'Regenerate the affected prose from supported meaning, preserving owner sources and factual boundaries.'}));
+  if(rhetoricResult === 'evaluation_unavailable') throw new ContentGenerationQualityError('Rhetorical evaluation is indeterminate; no prose admission.');
   return {
     ...contextualReview,
     cold_rendered_prose: coldReview.cold_rendered_prose,
-    decision: contextualReview.decision,
-    violations: [...coldReview.violations, ...contextualViolations]
+    decision: rhetoricResult === 'pass' ? contextualReview.decision : 'REVISE',
+    violations: [...coldReview.violations, ...contextualViolations, ...rhetoricalViolations]
   };
 }
 
@@ -5731,7 +5747,7 @@ export async function generateWithClaude(input: GenerateContentInput): Promise<S
   let lastDraft: StoredGeneratedContent | null = null;
 
   for (let attempt = 0; attempt < 2; attempt += 1) {
-    const legacyPrompt = buildPrompt(input, approvedExamples, qualityFeedback);
+    const legacyPrompt = `${buildPrompt(input, approvedExamples, qualityFeedback)}\n\n${RHETORICAL_WRITER_POLICY}`;
     const writerPrompt = productionGate.governedPromptEnabled
       ? `${legacyPrompt}\n\nGOVERNED KNOWLEDGE EVIDENCE\n${productionGate.governedPrompt}`
       : legacyPrompt;
@@ -5868,6 +5884,7 @@ function skyArticleTemplateSlotPrompt(
   const personalTransit = input.surface === "you" || (input.surface === "friends" && input.eventType === "bond-effect");
   return [
     readTextFile("packages/astro-knowledge/voice/tldr-astro/style-guide.md"),
+    RHETORICAL_WRITER_POLICY,
     "",
     "TASK",
     personalTransit

@@ -1,4 +1,5 @@
 "use strict";
+const { RHETORICAL_WRITER_POLICY } = require("../../../src/astro-writing/rhetoricalPatterns.cjs");
 
 const crypto = require("crypto");
 const fs = require("fs");
@@ -414,6 +415,7 @@ function renderModelInput(packet) {
   const bodyGate = skeletonGates[packet.target.skeleton] || skeletonGates["consequence-close"];
   return [
     "You are writing one unapproved Daily At-a-Glance candidate for TLDR Astro.",
+    RHETORICAL_WRITER_POLICY,
     "",
     "Return one headline and one body. Write once. Do not return options, analysis, explanations, or a source map.",
     "The owner passages below establish register and sentence movement only. Do not copy their astrology, dates, subjects, or scenarios. The verified facts are the complete astrology boundary for this key; invent no additional astrology.",

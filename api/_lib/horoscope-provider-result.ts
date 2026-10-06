@@ -1,6 +1,8 @@
 import {createHash} from 'node:crypto';
 import {MONTHLY_HOROSCOPE_FORMAT,composeMonthlyHoroscopeDraft} from '../../src/astro-writing/monthlyHoroscopeFormat.mjs';
 import {isMonthlySynthesisVersion,MonthlySynthesisValidationError,validateMonthlySynthesis} from '../../src/astro-writing/monthlyHoroscopeSynthesis.mjs';
+import {SEASONAL_WORKFLOW,validateSeasonalDevelopmentPlan} from '../../src/astro-writing/seasonalDevelopmentPlan.mjs';
+import {SEASONAL_REVIEW_FORMAT,validateSeasonalEditorialReview} from '../../src/astro-writing/seasonalEditorialReview.mjs';
 
 // Keep provider diagnostics in the private edition receipt, without logging
 // prompts, partial reader copy, refusal text or arbitrary provider messages.
@@ -33,6 +35,8 @@ export function readHoroscopeProviderResult(payload:any,{format=null,facts=null}
     const text=payload.output.filter((item:any)=>item.type==='message').flatMap((item:any)=>item.content??[])
       .filter((item:any)=>item.type==='output_text').map((item:any)=>item.text).join('');
     const value=JSON.parse(text);
+    if(format===SEASONAL_WORKFLOW)return validateSeasonalDevelopmentPlan(value,facts.catalog,facts.passages);
+    if(format===SEASONAL_REVIEW_FORMAT)return validateSeasonalEditorialReview(value,facts.draft);
     if(isMonthlySynthesisVersion(format))return validateMonthlySynthesis(value,facts);
     const monthly=format===MONTHLY_HOROSCOPE_FORMAT;
     if(!value||Array.isArray(value)||Object.keys(value).some(k=>!(monthly?['headline','tldr','body']:['headline','body']).includes(k))
@@ -41,6 +45,10 @@ export function readHoroscopeProviderResult(payload:any,{format=null,facts=null}
     if(monthly)composeMonthlyHoroscopeDraft(value);
     return value as {headline:string;body:string;tldr?:string};
   }catch(error){
+    if(format===SEASONAL_WORKFLOW||format===SEASONAL_REVIEW_FORMAT){
+      diagnostic.validationCode=typeof (error as any)?.code==='string'?(error as any).code:'invalid_structured_result';
+      fail(format===SEASONAL_WORKFLOW?'invalid_seasonal_plan':'invalid_seasonal_review',format===SEASONAL_WORKFLOW?'The Seasonal plan is incomplete or references unsupported evidence. No prose request was started.':'The editorial report did not reference the exact saved draft. The original writing is preserved.');
+    }
     if(isMonthlySynthesisVersion(format))diagnostic.validationCode=error instanceof MonthlySynthesisValidationError?error.code:'invalid_json';
     fail(isMonthlySynthesisVersion(format)?'invalid_synthesis':'invalid_reading',isMonthlySynthesisVersion(format)?'The monthly plan was incomplete or contained an unsupported event. No prose request was started.':'The writer returned an incomplete or unreadable draft.');
   }

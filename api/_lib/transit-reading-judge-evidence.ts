@@ -1,4 +1,5 @@
 import { transitReadingReaderCopy } from "./transit-reading-reader-copy.js";
+import {PROSE_PATTERN_LABELS,RHETORICAL_LABELS} from '../../src/astro-writing/rhetoricalPatterns.mjs';
 import { GENERATED_REPORT_JUDGE_CATEGORIES, GENERATED_REPORT_JUDGE_FINDING_CATEGORIES,
   type GeneratedReportJudgeFinding, type GeneratedReportJudgeScores, type GeneratedReportJudgeCategory } from "./transit-reading-judge-rules.js";
 
@@ -10,6 +11,7 @@ export class GeneratedReportJudgeEvidenceError extends Error {
 }
 
 export function findingScoreCategory(category: GeneratedReportJudgeFinding["category"]) {
+  if(PROSE_PATTERN_LABELS.includes(category)) return 'natural_language' as const;
   if (GENERATED_REPORT_JUDGE_CATEGORIES.includes(category as keyof GeneratedReportJudgeScores)) return category as keyof GeneratedReportJudgeScores;
   const blockingScores: Partial<Record<GeneratedReportJudgeFinding["category"], keyof GeneratedReportJudgeScores>> = {
     over_specification: "factual_traceability", unsupported_interpretation: "factual_traceability",
@@ -22,6 +24,7 @@ export function generatedReportJudgeEvidenceContract(sourcePointers = false, dia
   return [
   "DIAGNOSTIC EVIDENCE CONTRACT",
   "Every finding must diagnose a defect, quote its exact reader-visible wording in draftQuote, and explain why it fails the supplied rubric. Do not propose replacement prose.",
+  "CORRECTIO, TRICOLON, PURPLE_PROSE and the related prose-pattern labels map to natural_language. For the three specific rhetorical labels include the complete containing paragraph verbatim in finding (or contextQuote when the scoped schema supplies it), the material reader consequence and the precision/removal/plain-language test. A fragment or punctuation match is insufficient.",
   "Copy draftQuote as one contiguous substring of a single reader-visible field, preserving its exact punctuation and whitespace. Never shorten it with an ellipsis, join separate sentences or paragraphs, or paraphrase. For a defect spanning passages, quote one exact passage and identify the other location in finding; use separate findings when they diagnose separate defects." + (sourcePointers ? "" : " Apply the same exact-substring rule to sourceQuote."),
   sourcePointers
     ? "When comparing a claim with its source, set sourcePath to the exact RFC 6901 JSON pointer of a nonempty string in GOVERNED BRIEF. The application attaches that complete original string verbatim; do not return sourceQuote or recreate the source passage in your output. In finding, explain the specific difference between the claim and the selected source. Selecting a real path does not establish that the claim is supported or contradicted. If no supplied passage supports the claim, use null and name the missing support in finding. Style-only findings may also use null."
@@ -30,7 +33,7 @@ export function generatedReportJudgeEvidenceContract(sourcePointers = false, dia
   "In each comparison difference, explain the shared local prose function and why the comparison applies across the labeled formats. Historical function tags are context, not mandatory target structure. A complete forecast may demonstrate opening, development, turn, and close within one passage. Do not reject direct language simply because a selected annual passage ends observationally. For owner_language, name and quote the applicable supplied owner rule in finding and explain its context; do not use that category to bypass the owner_voice comparison requirement.",
   "Necessary reference to a TLDR topic is not itself narrative repetition. Identify the repeated conclusion that adds no explanation or consequence. An explanation within supplied meaning and life domains is not an invented event. A transit end date or retrograde theme does not establish that a specific opportunity will recur.",
   ...(diagnosticScores ? ["Scores are diagnostic observations only, with no delivery floor. Do not invent a finding to explain a score or change a score to force rejection. A category name does not establish a delivery defect."] : [
-    "Scores must agree with findings: a category with a defect cannot score 4. Map over_specification and unsupported_interpretation to factual_traceability; unsupported_timing to astrology_chronology; narrative_repetition to interpretive_movement; owner_language to owner_voice. Other findings map to their own score category.",
+    "Scores must agree with findings: a category with a defect cannot score 4. Map over_specification and unsupported_interpretation to factual_traceability; unsupported_timing to astrology_chronology; narrative_repetition to interpretive_movement; owner_language to owner_voice; rhetorical and related prose-pattern labels to natural_language. Other findings map to their own score category.",
     "For any score below a release floor, include a finding with concrete draft evidence. Do not lower a score merely to manufacture agreement: reconsider the finding against the source and rubric first. Do not invent a flaw to fill a category."
   ])
   ].join("\n");
@@ -63,6 +66,12 @@ export function assertGeneratedReportDiagnosticEvidence(value: unknown, input: {
       || typeof finding.finding !== "string" || !finding.finding.trim()) return fail("malformed finding.");
     if (typeof finding.draftQuote !== "string" || !finding.draftQuote.trim()
       || !fields.some(field => field.includes(finding.draftQuote!))) return fail("draftQuote does not occur in reader-visible copy.");
+    if(RHETORICAL_LABELS.some(label=>label===finding.category)) {
+      const contextQuote=(finding as GeneratedReportJudgeFinding & {contextQuote?:string}).contextQuote;
+      const paragraphs=fields.flatMap(field=>field.split(/\n\s*\n/u));
+      if(!paragraphs.some(paragraph=>paragraph.includes(finding.draftQuote!)
+        && (contextQuote===paragraph || finding.finding.includes(paragraph)))) return fail('rhetorical finding lacks its complete containing paragraph.');
+    }
     if (!input.diagnosticScores && payload.scores[findingScoreCategory(finding.category)] === 4) return fail("finding contradicts a perfect category score.");
     if (!Array.isArray(finding.ownerComparisons)) return fail("ownerComparisons must be an array.");
     if (finding.category === "owner_voice" && !finding.ownerComparisons.length) return fail("owner_voice lacks eligible comparison evidence.");

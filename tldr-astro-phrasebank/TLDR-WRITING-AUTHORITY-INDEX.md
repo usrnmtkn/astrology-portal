@@ -47,6 +47,8 @@ Each of these binds on its surface and postdates the standard.
 
 **All surfaces**
 
+- `docs/writing/RHETORICAL_PATTERN_PROTECTIONS.md` (2026-10-06) — scoped owner amendment: material CORRECTIO, TRICOLON and PURPLE_PROSE failures block generated-prose admission after complete-passage semantic review; meaningful contrast, necessary factual lists, useful imagery and approved source text remain protected.
+
 - `TLDR-REGISTER-PER-SURFACE-RULING-OWNER.md` (2026-08-09) — which register applies where. Resolve the rendered surface before choosing a voice.
 - `TLDR-REPORT-LIVED-PROSE-STANDARD-OWNER.md` (2026-08-10) — astrology sentence to lived consequence, plus its four dated amendments: the announcement clarification, `real` as generator filler, and the translation-required ruling with the Mars in Aries exemplar.
 - `TLDR-AUTHOR-FROM-MECHANISM-RULING-OWNER.md` (2026-08-13) — author from AstrologySupport and source constraints, never by paraphrasing existing candidate or serving prose.

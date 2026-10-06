@@ -44,26 +44,35 @@ for(const period of ['daily','weekly','monthly','seasonal'] as const){
    r=await action('poll');assert.equal(r.status,202);row=r.payload.rows[0];
    r=await action('continue');assert.equal(r.status,202,JSON.stringify(r.payload));row=r.payload.rows[0];
   }
+  if(period==='seasonal'){
+   while(row.source_snapshot.horoscopeGeneration.active.phase!=='prose'||row.source_snapshot.horoscopeGeneration.active.state!=='running'){
+    const active=row.source_snapshot.horoscopeGeneration.active; r=await action(active.state==='ready'?'continue':'poll');assert.equal(r.status,202,JSON.stringify(r.payload));row=r.payload.rows[0];
+   }
+  }
   const request=writerFixture.requests.get(row.source_snapshot.horoscopeGeneration.active.responseId);
   assert(request);
   assertHoroscopeRequestEvidence(request.input,['primaryOwnerVoiceSources','supportingOwnerVoiceSources']);
-  if(period==='seasonal')assert.equal(request.input.split(SEASONAL_SOURCE_PRIORITY).length-1,1,'Seasonal source priority remains intact');
+  if(period==='seasonal')assert(request.input.includes('COMPACT SEASONAL DEVELOPMENT PLAN'));
   for(const name of HOROSCOPE_RUN_PROMPT_VARIABLES)assert(!request.input.includes(`{{${name}}}`));
   assert(!request.input.includes('supplied when the writing run is prepared'),'Preview labels never reach the provider');
   const sources=(name:string)=>JSON.parse(request.input.match(new RegExp(`(?:^|\\n)${name}\\n([^\\n]+)\\n\\n`))[1]);
   const primary=sources('primaryOwnerVoiceSources'),supporting=sources('supportingOwnerVoiceSources');
-  assert.equal(primary.length,period==='monthly'?4:3);
+  if(period==='seasonal')assert(primary.length>=1,'Relevant evidence has no artificial minimum');else assert.equal(primary.length,period==='monthly'?4:3);
   for(const p of [...primary,...supporting]){
-   assert(p.text.trim());assert(p.id);assert.equal(p.sourceRecordSha256,hash(p.text));
+   assert(p.text.trim());assert(p.id);assert.equal(p.sourceRecordSha256??p.textSha256,hash(p.text));
    assert.equal(request.input.split(JSON.stringify(p.text).slice(1,-1)).length-1,1,'Each complete owner passage is supplied once');
   }
   assert.equal(request.input.split(comparison).length-1,1,'Complete comparison appears once');
   assert.equal(request.input.split(correction).length-1,1,'Saved scoped correction appears once');
   assert(request.input.includes('SELECTED OWNER CORRECTIONS\n['));
-  const facts=sources('CALCULATED FACTS');assert.equal(facts.window.period,period);
+  const facts=sources(period==='seasonal'?'GOVERNED SEASONAL FACTS':'CALCULATED FACTS');assert.equal(facts.window.period,period);
   if(sign==='overview')assert(!facts.risingSign&&!facts.house&&!facts.signs);
-  else assert.equal(facts.risingSign,sign);
+  else assert.equal(period==='seasonal'?facts.audience:facts.risingSign,sign);
   assert.deepEqual(row.source_snapshot.studioWritingProfile.profile,profile,'Assembly never changes saved instructions');
+  if(period==='seasonal'){
+   while(row.source_snapshot.horoscopeGeneration.active){const active=row.source_snapshot.horoscopeGeneration.active;r=await action(active.state==='ready'?'continue':'poll');assert([200,202].includes(r.status),JSON.stringify(r.payload));row=r.payload.rows[0];}
+   assert.equal(row.seasonalEditorialRun.status,'accepted');assert.equal(row.sections.horoscopeEdition.passages.find((p:any)=>p.sign===sign).body,'');continue;
+  }
   r=await action('poll');assert.equal(r.status,200,JSON.stringify(r.payload));row=r.payload.rows[0];
   assert.equal(row.status,'DRAFT');assert.equal(row.source_snapshot.horoscopeGeneration.readings[sign].version,'horoscope-writer/v17');
  }

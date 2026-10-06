@@ -3,9 +3,11 @@ import {buildHoroscopePromptVariables} from './horoscopePromptVariables.mjs';
 import {horoscopeOverviewHeadline} from '../../apps/web/src/content/horoscopeEditions.mjs';
 import {HOROSCOPE_PUNCTUATION_RULE,SEASONAL_FACT_RELATIONSHIPS,SEASONAL_SOURCE_PRIORITY} from './horoscopeEditorialConstraints.mjs';
 import {MONTHLY_SYNTHESIS_SLOT} from './monthlyHoroscopeSynthesis.mjs';
+import {buildSeasonalDraftInput} from './seasonalDraftInput.mjs';
 
 /** Audience is shared; direct address follows the owner's complete collective essays. */
 export function buildHoroscopeOverviewInput({context,task,target,engineFacts,argumentOutline,writingProfile}) {
+  if(engineFacts?.window?.period==='seasonal')return buildSeasonalDraftInput({context,task,engineFacts,argumentOutline,writingProfile});
   const {developments,seasonalMeaning,relationalContext,signs,risingSign,house,...facts}=engineFacts;
   const seasonal=facts.window.period==='seasonal';
   const primaryIds=new Set(context.primaryRegisterPassages.map(p=>p.id));

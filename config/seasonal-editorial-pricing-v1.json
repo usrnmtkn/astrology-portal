@@ -1,0 +1,13 @@
+{
+  "schema": "seasonal-editorial-pricing/v1",
+  "verifiedAt": "2026-10-05",
+  "currency": "USD",
+  "unit": "per_million_tokens",
+  "serviceTier": "default",
+  "sources": ["https://developers.openai.com/api/docs/pricing", "https://developers.openai.com/api/docs/models/gpt-5.6-terra"],
+  "models": {
+    "gpt-5.6-sol": {"input": 4, "cachedInput": 0.4, "cacheWrite": 5, "output": 20},
+    "gpt-5.6-terra": {"input": 2, "cachedInput": 0.2, "cacheWrite": 2.5, "output": 12}
+  },
+  "note": "Calculated standard token cost from exact reported usage, not an account invoice. Long context above 272000 input tokens doubles input rates and multiplies output rates by 1.5. Retain raw usage and actual service tier for reconciliation."
+}

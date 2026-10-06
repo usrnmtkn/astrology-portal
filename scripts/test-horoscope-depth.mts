@@ -59,25 +59,35 @@ for(const [date,timeZone] of [['2026-10-01','America/New_York'],['2027-03-02','A
  const created=await store.invoke('POST',{contentKey:horoscopeEditionKey(edition.window),surface:'sky',mode:'article',eventType:'horoscope-edition',provider:'manual-admin',status:'DRAFT',lane:'serving',headline:'Depth fixture',body:horoscopeEditionBody(edition),sections:{horoscopeEdition:edition},facts:{horoscopeBrief:packet},sourceSnapshot:{}});
  assert.equal(created.status,200,JSON.stringify(created.payload));let row=created.payload.rows[0];
  const plan=await invokeHoroscopeWriting({action:'prepare',id:row.id,expectedUpdatedAt:row.updated_at});assert.equal(plan.status,200);
- const generated=await invokeHoroscopeWriting({action:'generate',id:row.id,expectedUpdatedAt:row.updated_at,sign:'aquarius',approvedPlanHash:plan.payload.plan.planHash});assert.equal(generated.status,202);row=generated.payload.rows[0];
- const input=writerFixture.requests.get(row.source_snapshot.horoscopeGeneration.active.responseId).input;
- const routed=JSON.parse(input.match(/PERIOD DEVELOPMENTS[^\n]*\n([^\n]+)\n\n/)![1]);
- assert.deepEqual(routed.relationships,prepared.entries.find((e:any)=>e.sign==='aquarius').developments.relationships);
- const facts=JSON.parse(input.match(/CALCULATED FACTS\n([^\n]+)\n\n/)![1]);assert(!facts.relationalContext,'Do not pay for duplicate relational packets');
- assert(input.includes('Develop their relationships rather than touring isolated planetary topics'));assertHoroscopeRequestEvidence(input);assert(input.includes(HOROSCOPE_PUNCTUATION_RULE));
- const polled=await invokeHoroscopeWriting({action:'poll',id:row.id,expectedUpdatedAt:row.updated_at});assert.equal(polled.status,200);row=polled.payload.rows[0];
- const shared=await invokeHoroscopeWriting({action:'generate',id:row.id,expectedUpdatedAt:row.updated_at,sign:'overview',approvedPlanHash:plan.payload.plan.planHash});assert.equal(shared.status,202);row=shared.payload.rows[0];
- const sharedInput=writerFixture.requests.get(row.source_snapshot.horoscopeGeneration.active.responseId).input;
- const essays=JSON.parse(sharedInput.match(/COMPLETE SEASONAL OWNER PROSE EVIDENCE\n([^\n]+)\n\n/)![1]);
- assert.equal(essays.length,3);
- for(const essay of essays){
-  assert.equal(essay.seasonalVoiceRole,'primary argument and voice');
-  assert.equal(sharedInput.split(JSON.stringify(essay.text).slice(1,-1)).length-1,1);
-  assert.equal(essay.text,fs.readFileSync(essay.sourcePath,'utf8').slice(essay.provenance.start,essay.provenance.end));
+ for(const audience of ['aquarius','overview']){
+  const act=async(action:string,extra:any={})=>{const r=await invokeHoroscopeWriting({action,id:row.id,expectedUpdatedAt:row.updated_at,...extra});if(r.payload.rows?.[0])row=r.payload.rows[0];return r;};
+  const generated=await act('generate',{sign:audience,approvedPlanHash:plan.payload.plan.planHash});assert.equal(generated.status,202,JSON.stringify(generated.payload));
+  const planning=writerFixture.requests.get(row.source_snapshot.horoscopeGeneration.active.responseId).input;
+  const catalog=JSON.parse(planning).governedFacts;
+  const originalRelationships=prepared.entries.find((e:any)=>e.sign===audience).developments.relationships;
+  assert.equal(catalog.relationships.snapshots.length,originalRelationships.snapshots.length);
+  for(const snapshot of catalog.relationships.snapshots){
+   const source=originalRelationships.snapshots.find((s:any)=>s.at===snapshot.at);
+   assert.deepEqual(snapshot.aspects,source.aspects);assert.deepEqual(snapshot.configurations,source.configurations);assert.deepEqual(snapshot.rulers,source.rulers);
+   for(const p of snapshot.positions){const original=source.positions.find((x:any)=>x.planet===p.planet);for(const key of Object.keys(p))assert.deepEqual(p[key],original[key]);}
+  }
+  assert(!catalog.relationalContext,'One relationship catalog, without the raw duplicate');
+  while(row.source_snapshot.horoscopeGeneration.active.phase!=='prose'){const active=row.source_snapshot.horoscopeGeneration.active;assert.equal((await act(active.state==='ready'?'continue':'poll')).status,202);}
+  assert.equal((await act('continue')).status,202);
+  const input=writerFixture.requests.get(row.source_snapshot.horoscopeGeneration.active.responseId).input;
+  assertHoroscopeRequestEvidence(input);
+  const facts=JSON.parse(input.split('GOVERNED SEASONAL FACTS\n')[1].split('\n\n')[0]);
+  assert(facts.events.length<catalog.events.length,'Only planned events reach prose');
+  for(const event of facts.events)assert.deepEqual(event,catalog.events.find((e:any)=>e.id===event.id));
+  for(const snapshot of facts.relationships.snapshots)assert.deepEqual(snapshot,catalog.relationships.snapshots.find((s:any)=>s.at===snapshot.at));
+  if(audience==='overview')for(const p of Object.values(facts.placements) as any[])assert.equal(p.house,null);
+  const essays=JSON.parse(input.split('SELECTED COMPLETE OWNER PASSAGES\n')[1].split('\n\n')[0]);
+  assert(essays.length>=1,'No irrelevant evidence quota');
+  for(const essay of essays){assert(fs.readFileSync(essay.sourcePath,'utf8').includes(essay.text));assert.equal(input.split(JSON.stringify(essay.text).slice(1,-1)).length-1,1);}
+  while(row.source_snapshot.horoscopeGeneration.active){const active=row.source_snapshot.horoscopeGeneration.active;const result=await act(active.state==='ready'?'continue':'poll');assert([200,202].includes(result.status),JSON.stringify(result.payload));}
+  assert.equal(row.sections.horoscopeEdition.passages.find((p:any)=>p.sign===audience).body,'');
  }
- assert(sharedInput.includes('Write from inside a recognizable human experience.'));assertHoroscopeRequestEvidence(sharedInput);
- assert(sharedInput.includes('One shared reading for people of all signs.'));
- assert.equal((await invokeHoroscopeWriting({action:'poll',id:row.id,expectedUpdatedAt:row.updated_at})).status,200);
+
 }
 assert(configurations>0,'Real calculations exercise the configuration path');
 for(const dash of ['\u2014','&mdash;','&#8212;','&#x2014;','&#X0002014;'])for(const field of ['headline','body'])assert.equal(horoscopePunctuationFindings({[field]:`Fixture ${dash} text`}).length,1);

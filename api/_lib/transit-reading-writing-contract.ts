@@ -1,11 +1,12 @@
 import fs from "node:fs";
 import { DEFAULT_BANNED, NEGATION_PIVOT_PAGE_CAP, STOCK_TROPES } from "../../src/astro-writing/validateCopy.mjs";
 import { WRITING_POLICY_DATA } from "../../src/astro-writing/policyData.generated.mjs";
+import { RHETORICAL_WRITER_POLICY } from '../../src/astro-writing/rhetoricalPatterns.mjs';
 
 export const GENERATED_REPORT_WRITING_CONTRACT_PATH = "tldr-astro-phrasebank/TLDR-GENERATED-REPORT-BREADTH-AND-VOICE-V1.md";
 
 export function generatedReportWritingContract() {
-  return fs.readFileSync(GENERATED_REPORT_WRITING_CONTRACT_PATH, "utf8");
+  return `${fs.readFileSync(GENERATED_REPORT_WRITING_CONTRACT_PATH, "utf8")}\n\n${RHETORICAL_WRITER_POLICY}`;
 }
 
 // Use the validator's current policy rather than maintaining a second list in

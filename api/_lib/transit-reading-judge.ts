@@ -27,8 +27,8 @@ import { generatedReportJudgeRubric, GENERATED_REPORT_JUDGE_PACKET_CONTRACT } fr
 import { assertReportReviewReconciliation, reportReviewReconciliationPrompt, RECONCILED_REPORT_JUDGE_SCHEMA,
   type TransitReadingPriorReview } from "./transit-reading-review-reconciliation.js";
 
-export const GENERATED_REPORT_JUDGE_ADAPTER_VERSION = "generated-report-judge-adapter-v1.12";
-export const EVIDENCE_DELIVERY_JUDGE_VERSION = "generated-report-judge-adapter-v2.0-candidate";
+export const GENERATED_REPORT_JUDGE_ADAPTER_VERSION = "generated-report-judge-adapter-v1.13-rhetorical-patterns";
+export const EVIDENCE_DELIVERY_JUDGE_VERSION = "generated-report-judge-adapter-v2.1-rhetorical-patterns-candidate";
 export const GENERATED_REPORT_JUDGE_ADAPTER_PATH = "tldr-astro-phrasebank/TLDR-GENERATED-REPORT-JUDGE-ADAPTER-V1-OWNER.md";
 const REPORT_OWNER_REVIEW_EVIDENCE_PATH = "tldr-astro-phrasebank/TLDR-REPORT-OWNER-REVIEW-EVIDENCE-2026-08-11.md";
 

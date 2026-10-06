@@ -2,6 +2,7 @@ import { createHash } from "node:crypto";
 import { GeneratedReportJudgeEvidenceError, assertGeneratedReportJudgeEvidence } from "./transit-reading-judge-evidence.js";
 import { generatedReportWritingContract, GENERATED_REPORT_WRITING_CONTRACT_PATH } from "./transit-reading-writing-contract.js";
 import type { GeneratedReportJudgeFinding } from "./transit-reading-judge-rules.js";
+import { RHETORICAL_LABELS, RHETORICAL_JUDGE_POLICY } from '../../src/astro-writing/rhetoricalPatterns.mjs';
 
 // Selected by the owner-delegated September 23 decision. Inactive until verified.
 export const EVIDENCE_DELIVERY_POLICY = "report-evidence-delivery-v2";
@@ -58,7 +59,9 @@ export function reportDeliveryReviewContract() {
     "For explicit_owner_rule select ruleId and explain the matched construction and its context in ruleApplication. Runtime supplies the exact whole rule and verifies its narrow candidate wording. Literal use allowed by the rule, unrelated wording, and a style preference must not be relabeled as a prohibition. The registry deliberately does not make every use of asking, real, or stable a ban. SourceGap explains why the exception does not apply. Other editorial comparisons remain advisory.",
     "SCOPED OWNER PROHIBITIONS (exact source instructions; only their documented scope applies)",
     JSON.stringify(reportDeliveryOwnerRules().map(({ trigger: _trigger, ...rule }) => rule)),
-    "Return exactly the supplied schema. Runtime computes delivery independently from diagnostic scores. A validated citation establishes identity, not semantic correctness; the review can still be wrong."
+    "Return exactly the supplied schema. Runtime computes delivery independently from diagnostic scores. A validated citation establishes identity, not semantic correctness; the review can still be wrong.",
+    RHETORICAL_JUDGE_POLICY,
+    "October 6 owner amendment: CORRECTIO, TRICOLON and PURPLE_PROSE are separate material semantic blockers, independent of diagnostic scores. For these three categories set delivery:null (they are not factual defects or regex registry rules). Runtime handles their blocking status separately. In finding include the exact complete containing paragraph, material reader consequence and precision/removal/plain-language test. This exception does not make other editorial observations delivery blockers."
   ].join("\n");
 }
 
@@ -87,5 +90,6 @@ export function assertReportDeliveryEvidence(value: unknown, input: Parameters<t
 }
 
 export function isReportDeliveryBlocker(finding: GeneratedReportJudgeFinding) {
-  return finding.delivery !== null && finding.delivery !== undefined;
+  return RHETORICAL_LABELS.some(label => label === finding.category)
+    || (finding.delivery !== null && finding.delivery !== undefined);
 }

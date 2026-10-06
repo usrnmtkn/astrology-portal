@@ -57,11 +57,13 @@ async function main() {
       candidates.push({ sample: i + 1, candidate, raw: w.raw, writerUsage: w.usage, responseId: w.responseId, lint, judge: judged });
       process.stdout.write(`${key} sample ${i + 1}: judge=${judged.score} dims=${judged.dimScore}/7 lint=${lint.passed}\n`);
     }
-    const ranked = candidates.slice().sort((a, b) => (b.judge.score - a.judge.score) || (b.judge.dimScore - a.judge.dimScore) || ((b.lint.passed ? 1 : 0) - (a.lint.passed ? 1 : 0)));
+    const ranked = candidates.filter(entry=>entry.candidate && entry.lint.passed && entry.judge.rhetoricDecision==='pass')
+      .sort((a, b) => (b.judge.score - a.judge.score) || (b.judge.dimScore - a.judge.dimScore));
     const winner = ranked[0];
     fs.writeFileSync(path.join(packageRoot, outDir, `${slug}.candidates.json`), JSON.stringify(candidates, null, 1));
-    fs.writeFileSync(path.join(packageRoot, outDir, `${slug}.winner.json`), JSON.stringify({ key, advisoryOnly: true, winner: winner.candidate, judge: winner.judge, lint: winner.lint }, null, 1));
-    results.push({ key, winnerScore: winner.judge.score, winnerDims: winner.judge.dimScore, samples });
+    fs.writeFileSync(path.join(packageRoot, outDir, `${slug}.winner.json`), JSON.stringify({ key, advisoryOnly: true,
+      status:winner?'owner_review_pending':'quality_exhausted',winner:winner?.candidate??null,judge:winner?.judge??null,lint:winner?.lint??null }, null, 1));
+    results.push({ key, status:winner?'owner_review_pending':'quality_exhausted',winnerScore:winner?.judge.score??null,winnerDims:winner?.judge.dimScore??null,samples });
   }
   const totals = { schemaVersion: 1, mode: "judged-best-of-n", samplesPerKey: samples, keys: results, note: "Winners are unapproved candidates for the owner sitting. GR-003: judge scores rank; they never approve." };
   fs.writeFileSync(path.join(packageRoot, outDir, "selection-summary.json"), JSON.stringify(totals, null, 1));

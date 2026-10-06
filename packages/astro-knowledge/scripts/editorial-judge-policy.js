@@ -1,12 +1,16 @@
 "use strict";
 
-function editorialGate({ score, disagreement = false, contractViolation = false, exactApprovedGold = false } = {}) {
+function editorialGate({ score, disagreement = false, contractViolation = false, exactApprovedGold = false, rhetoricalBlocked = false } = {}) {
   if (exactApprovedGold) {
     return {
       gate: "auto-publish",
       recommendation: "approved-exact-match",
       approvalSource: "approved-exact-match"
     };
+  }
+
+  if (rhetoricalBlocked) {
+    return { gate: "regenerate", recommendation: "regenerate-rhetorical-pattern", approvalSource: "owner-rhetorical-policy" };
   }
 
   if (disagreement) {

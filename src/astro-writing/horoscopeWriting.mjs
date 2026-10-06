@@ -23,6 +23,7 @@ import {loadMonthlyHoroscopeEvidence} from './monthlyHoroscopeEvidence.mjs';
 
 const root=fileURLToPath(new URL('../../',import.meta.url));
 export const horoscopeWritingVersion='horoscope-writer/v17';
+export const horoscopeWritingVersionFor=period=>period==='seasonal'?'horoscope-writer/v19-seasonal-editorial':horoscopeWritingVersion;
 const digest=value=>createHash('sha256').update(typeof value==='string'?value:horoscopeCanonicalJson(value)).digest('hex');
 const repositorySources=new Map();
 const preparedPlans=new Map();
@@ -155,16 +156,18 @@ export function prepareHoroscopeWriting(row,{studioCorrections=[],feedbackReceip
     return {sign:rising,house,seasonalMeaning:overview?seasonalMeaning:seasonalMeaningForRising(seasonalMeaning,rising,sources.houses),anchor:{planet,sign},developments,domain:domain.plainTranslation,outline:savedOutline||argumentInput.thesis,
       argumentOutline,meaningInput,plan,contextOptions,validationCorrections:context.corrections,sourceIds:context.sameFamilyExamples.map(e=>e.id)};
   });
-  const planHash=digest({version:horoscopeWritingVersion,window:edition.window,writingProfile,sourceHash,
+  const planHash=digest({version:horoscopeWritingVersionFor(edition.window.period),window:edition.window,writingProfile,sourceHash,
     feedbackReceipt,brief,entries:entries.map(e=>({sign:e.sign,outline:e.argumentOutline,developments:e.developments,seasonalMeaning:e.seasonalMeaning}))});
   const prepared={edition,brief,writingProfile,entries,planHash,sources:sources.hashes,sourceHash,seasonalMeaning,feedbackReceipt};
   if(preparedPlans.size>=4)preparedPlans.delete(preparedPlans.keys().next().value);preparedPlans.set(cacheKey,prepared);return prepared;
 }
 
 export function horoscopePlanPreview(prepared) {
-  return {version:horoscopeWritingVersion,planHash:prepared.planHash,sourceHash:prepared.sourceHash,window:prepared.edition.window,
+  const writerCalls=prepared.edition.passages.filter(p=>!p.headline.trim()&&!p.body.trim()).length;
+  return {version:horoscopeWritingVersionFor(prepared.edition.window.period),planHash:prepared.planHash,sourceHash:prepared.sourceHash,window:prepared.edition.window,
     readings:prepared.entries.map(e=>({sign:e.sign,anchor:e.anchor,house:e.house,domain:e.domain,outline:e.outline,
-      argument:e.argumentOutline,developments:e.developments,seasonalMeaning:e.seasonalMeaning,sourceIds:e.sourceIds})),writerCalls:prepared.edition.passages.filter(p=>!p.headline.trim()&&!p.body.trim()).length,
+      argument:e.argumentOutline,developments:e.developments,seasonalMeaning:e.seasonalMeaning,sourceIds:e.sourceIds})),writerCalls,
+    ...(prepared.edition.window.period==='seasonal'?{planningCalls:writerCalls*3,editorialReviewCalls:writerCalls*6,maximumPaidCalls:writerCalls*30}:{}),
     synthesisCalls:prepared.edition.window.period==='monthly'&&prepared.edition.passages.some(p=>!p.headline.trim()&&!p.body.trim())?1:0};
 }
 
@@ -187,7 +190,7 @@ export async function writeHoroscopeSign(prepared,sign,{approvedPlanHash,writerC
   if(typeof headline!=='string'||!headline.trim()||headline.length>200||typeof body!=='string'||!body.trim()||body.length>20000)throw new Error('The writer returned an incomplete reading.');
   const lint=validateHoroscopeReading({sign,headline,body},prepared.brief,{ownerCorrections:result.context.corrections});
   return {headline,body,lint,status:lint.passed?"owner-review-pending":"human-review-required",report:result.report,
-    receipt:{version:horoscopeWritingVersion,planHash:prepared.planHash,sign,sourceHash:prepared.sourceHash,sourceIds:entry.sourceIds,
+    receipt:{version:horoscopeWritingVersionFor(prepared.edition.window.period),planHash:prepared.planHash,sign,sourceHash:prepared.sourceHash,sourceIds:entry.sourceIds,
       seasonalMeaning:entry.seasonalMeaning,profileHash:digest(prepared.writingProfile),argumentHash:approved.approvedOutlineHash,feedback:prepared.feedbackReceipt,
       bodyHash:digest({headline,body}),ownerApproved:false,promotionAuthorized:false}};
 }
