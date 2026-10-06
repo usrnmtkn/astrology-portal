@@ -43,7 +43,6 @@ import {
   transitSynastryFallbackRendererV3
 } from "../../content/fallbackArchitectureV3Runtime";
 import {
-  fullDetailReaderFacingCopy,
   isReaderFacingCopy
 } from "../../content/readerSafety";
 import { isDisplayRetrograde } from "../../services/astrologyDisplay";
@@ -628,21 +627,15 @@ export function ManualChartsPanel({
       (activation) => transitOrbValue(activation)
     );
 
-    // First card per transiting planet + exact aspect keeps the exact row; later cards
-    // rotate to the family lane via duplicateIndex so no two cards on one view repeat the
-    // same effect paragraph. Legacy soft/hard fallback rows keep their deterministic
-    // rotation for nodes, Lilith, and missing exact units.
+    // Select exact authored copy consistently. Family variants apply only when
+    // the exact aspect has no eligible record; repetition never replaces it.
     const groupCounts = new Map<string, number>();
-    const exactAspectCounts = new Map<string, number>();
     const friendPossessivePronoun = ownerDisplayPronouns(friendName, friendPronouns).possessiveAdjective;
 
     return groups.flatMap((group) => {
       const familyKey = `${group.transiting}:${bondEffectFamily(group.transiting, group.aspect)}`;
       const indexInGroup = groupCounts.get(familyKey) ?? 0;
       groupCounts.set(familyKey, indexInGroup + 1);
-      const exactAspectKey = `${group.transiting}:${group.aspect}`;
-      const duplicateIndex = exactAspectCounts.get(exactAspectKey) ?? 0;
-      exactAspectCounts.set(exactAspectKey, duplicateIndex + 1);
       const baseVariant = (stableTransitCopyVariant(friendName, familyKey) ?? 1) - 1;
       const variantSlot = ((baseVariant + indexInGroup) % 3) + 1;
       const timingRange = personalTransitPackageWindow(group.activation, generatedAt);
@@ -660,7 +653,6 @@ export function ManualChartsPanel({
             ? normalizeContentIdPart(group.activation.transitSign)
             : undefined,
           variant: variantSlot === 1 ? undefined : variantSlot,
-          duplicateIndex,
           window: timingRange
         });
 
@@ -675,9 +667,9 @@ export function ManualChartsPanel({
           transitPlanet: group.activation.transitPlanet,
           transitSign: group.activation.transitSign ?? "",
           timingRange,
-          body: fullDetailReaderFacingCopy(rendered.parts) ?? "",
+          body: rendered.parts.join("\n\n"),
           effectBody: rendered.parts[0] ?? "",
-          activationBody: fullDetailReaderFacingCopy(rendered.parts.slice(1)) ?? ""
+          activationBody: rendered.parts.slice(1).join("\n\n")
         }];
       } catch (error) {
         if (error instanceof FallbackV3SourceGapError) {

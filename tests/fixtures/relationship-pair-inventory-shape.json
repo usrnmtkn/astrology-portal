@@ -1,0 +1,1675 @@
+[
+  {
+    "content_key": "fallback-hook/bond-effect-conjunction/saturn",
+    "sections": {
+      "packageRecord": {
+        "body_you": "Synthetic body_you test passage.",
+        "body_they": "Synthetic body_they test passage."
+      },
+      "dashboardEditHistory": []
+    }
+  },
+  {
+    "content_key": "fallback-hook/bond-effect-hard/chiron/variant-2",
+    "sections": {
+      "packageRecord": {
+        "body_you": "Synthetic body_you test passage.",
+        "body_they": "Synthetic body_they test passage."
+      },
+      "dashboardEditHistory": []
+    }
+  },
+  {
+    "content_key": "fallback-hook/bond-effect-hard/jupiter",
+    "sections": {
+      "packageRecord": {
+        "body_you": "Synthetic body_you test passage.",
+        "body_they": "Synthetic body_they test passage."
+      },
+      "dashboardEditHistory": []
+    }
+  },
+  {
+    "content_key": "fallback-hook/bond-effect-hard/jupiter/variant-2",
+    "sections": {
+      "packageRecord": {
+        "body_you": "Synthetic body_you test passage.",
+        "body_they": "Synthetic body_they test passage."
+      },
+      "dashboardEditHistory": []
+    }
+  },
+  {
+    "content_key": "fallback-hook/bond-effect-hard/lilith/variant-2",
+    "sections": {
+      "packageRecord": {
+        "body_you": "Synthetic body_you test passage.",
+        "body_they": "Synthetic body_they test passage."
+      },
+      "dashboardEditHistory": []
+    }
+  },
+  {
+    "content_key": "fallback-hook/bond-effect-hard/mercury/variant-2",
+    "sections": {
+      "packageRecord": {
+        "body_you": "Synthetic body_you test passage.",
+        "body_they": "Synthetic body_they test passage."
+      },
+      "dashboardEditHistory": []
+    }
+  },
+  {
+    "content_key": "fallback-hook/bond-effect-hard/moon",
+    "sections": {
+      "packageRecord": {
+        "body_you": "Synthetic body_you test passage.",
+        "body_they": "Synthetic body_they test passage."
+      },
+      "dashboardEditHistory": []
+    }
+  },
+  {
+    "content_key": "fallback-hook/bond-effect-hard/moon/variant-2",
+    "sections": {
+      "packageRecord": {
+        "body_you": "Synthetic body_you test passage.",
+        "body_they": "Synthetic body_they test passage."
+      },
+      "dashboardEditHistory": []
+    }
+  },
+  {
+    "content_key": "fallback-hook/bond-effect-hard/mercury/variant-3",
+    "sections": {
+      "packageRecord": {
+        "body_you": "Synthetic body_you test passage.",
+        "body_they": "Synthetic body_they test passage."
+      },
+      "packageDraft": {
+        "body_you": "Synthetic body_you test passage.",
+        "body_they": "Synthetic body_they test passage."
+      },
+      "dashboardEditHistory": [
+        {
+          "versionId": "draft-20261005225213321",
+          "packageDraft": {
+            "body_you": "Synthetic body_you test passage.",
+            "body_they": "Synthetic body_they test passage."
+          }
+        },
+        {
+          "versionId": "draft-20261005232056571",
+          "packageDraft": {
+            "body_you": "Synthetic body_you test passage.",
+            "body_they": "Synthetic body_they test passage."
+          }
+        },
+        {
+          "versionId": "draft-20261005235117885",
+          "packageDraft": {
+            "body_you": "Synthetic body_you test passage.",
+            "body_they": "Synthetic body_they test passage."
+          }
+        }
+      ]
+    }
+  },
+  {
+    "content_key": "fallback-hook/bond-effect-hard/neptune/variant-2",
+    "sections": {
+      "packageRecord": {
+        "body_you": "Synthetic body_you test passage.",
+        "body_they": "Synthetic body_they test passage."
+      },
+      "dashboardEditHistory": []
+    }
+  },
+  {
+    "content_key": "fallback-hook/bond-effect-hard/neptune/variant-3",
+    "sections": {
+      "packageRecord": {
+        "body_you": "Synthetic body_you test passage.",
+        "body_they": "Synthetic body_they test passage."
+      },
+      "dashboardEditHistory": []
+    }
+  },
+  {
+    "content_key": "fallback-hook/bond-effect-hard/north-node/variant-3",
+    "sections": {
+      "packageRecord": {
+        "body_you": "Synthetic body_you test passage.",
+        "body_they": "Synthetic body_they test passage."
+      },
+      "packageDraft": {
+        "body_you": "Synthetic body_you test passage.",
+        "body_they": "Synthetic body_they test passage."
+      },
+      "dashboardEditHistory": [
+        {
+          "versionId": "draft-20261005225212714",
+          "packageDraft": {
+            "body_you": "Synthetic body_you test passage.",
+            "body_they": "Synthetic body_they test passage."
+          }
+        },
+        {
+          "versionId": "draft-20261005232055811",
+          "packageDraft": {
+            "body_you": "Synthetic body_you test passage.",
+            "body_they": "Synthetic body_they test passage."
+          }
+        },
+        {
+          "versionId": "draft-20261005235116708",
+          "packageDraft": {
+            "body_you": "Synthetic body_you test passage.",
+            "body_they": "Synthetic body_they test passage."
+          }
+        }
+      ]
+    }
+  },
+  {
+    "content_key": "fallback-hook/bond-effect-hard/saturn",
+    "sections": {
+      "packageRecord": {
+        "body_you": "Synthetic body_you test passage.",
+        "body_they": "Synthetic body_they test passage."
+      },
+      "dashboardEditHistory": []
+    }
+  },
+  {
+    "content_key": "fallback-hook/bond-effect-hard/south-node/variant-2",
+    "sections": {
+      "packageRecord": {
+        "body_you": "Synthetic body_you test passage.",
+        "body_they": "Synthetic body_they test passage."
+      },
+      "dashboardEditHistory": []
+    }
+  },
+  {
+    "content_key": "fallback-hook/bond-effect-hard/south-node/variant-3",
+    "sections": {
+      "packageRecord": {
+        "body_you": "Synthetic body_you test passage.",
+        "body_they": "Synthetic body_they test passage."
+      },
+      "dashboardEditHistory": []
+    }
+  },
+  {
+    "content_key": "fallback-hook/bond-effect-hard/sun/variant-3",
+    "sections": {
+      "packageRecord": {
+        "body_you": "Synthetic body_you test passage.",
+        "body_they": "Synthetic body_they test passage."
+      },
+      "dashboardEditHistory": []
+    }
+  },
+  {
+    "content_key": "fallback-hook/bond-effect-hard/venus",
+    "sections": {
+      "packageRecord": {
+        "body_you": "Synthetic body_you test passage.",
+        "body_they": "Synthetic body_they test passage."
+      },
+      "dashboardEditHistory": []
+    }
+  },
+  {
+    "content_key": "fallback-hook/bond-effect-hard/venus/variant-2",
+    "sections": {
+      "packageRecord": {
+        "body_you": "Synthetic body_you test passage.",
+        "body_they": "Synthetic body_they test passage."
+      },
+      "dashboardEditHistory": []
+    }
+  },
+  {
+    "content_key": "fallback-hook/bond-effect-hard/venus/variant-3",
+    "sections": {
+      "packageRecord": {
+        "body_you": "Synthetic body_you test passage.",
+        "body_they": "Synthetic body_they test passage."
+      },
+      "dashboardEditHistory": []
+    }
+  },
+  {
+    "content_key": "fallback-hook/bond-effect-opposition/chiron",
+    "sections": {
+      "packageRecord": {
+        "body_you": "Synthetic body_you test passage.",
+        "body_they": "Synthetic body_they test passage."
+      },
+      "dashboardEditHistory": []
+    }
+  },
+  {
+    "content_key": "fallback-hook/bond-effect-opposition/mars",
+    "sections": {
+      "packageRecord": {
+        "body_you": "Synthetic body_you test passage.",
+        "body_they": "Synthetic body_they test passage."
+      },
+      "dashboardEditHistory": []
+    }
+  },
+  {
+    "content_key": "fallback-hook/bond-effect-opposition/venus",
+    "sections": {
+      "packageRecord": {
+        "body_you": "Synthetic body_you test passage.",
+        "body_they": "Synthetic body_they test passage."
+      },
+      "dashboardEditHistory": []
+    }
+  },
+  {
+    "content_key": "fallback-hook/bond-effect-sextile/neptune",
+    "sections": {
+      "packageRecord": {
+        "body_you": "Synthetic body_you test passage.",
+        "body_they": "Synthetic body_they test passage."
+      },
+      "dashboardEditHistory": []
+    }
+  },
+  {
+    "content_key": "fallback-hook/bond-effect-soft/lilith",
+    "sections": {
+      "packageRecord": {
+        "body_you": "Synthetic body_you test passage.",
+        "body_they": "Synthetic body_they test passage."
+      },
+      "dashboardEditHistory": []
+    }
+  },
+  {
+    "content_key": "fallback-hook/bond-effect-soft/mars/variant-2",
+    "sections": {
+      "packageRecord": {
+        "body_you": "Synthetic body_you test passage.",
+        "body_they": "Synthetic body_they test passage."
+      },
+      "dashboardEditHistory": []
+    }
+  },
+  {
+    "content_key": "fallback-hook/bond-effect-soft/mercury/variant-3",
+    "sections": {
+      "packageRecord": {
+        "body_you": "Synthetic body_you test passage.",
+        "body_they": "Synthetic body_they test passage."
+      },
+      "dashboardEditHistory": []
+    }
+  },
+  {
+    "content_key": "fallback-hook/bond-effect-soft/neptune",
+    "sections": {
+      "packageRecord": {
+        "body_you": "Synthetic body_you test passage.",
+        "body_they": "Synthetic body_they test passage."
+      },
+      "dashboardEditHistory": []
+    }
+  },
+  {
+    "content_key": "fallback-hook/bond-effect-soft/north-node",
+    "sections": {
+      "packageRecord": {
+        "body_you": "Synthetic body_you test passage.",
+        "body_they": "Synthetic body_they test passage."
+      },
+      "dashboardEditHistory": []
+    }
+  },
+  {
+    "content_key": "fallback-hook/bond-effect-soft/north-node/variant-3",
+    "sections": {
+      "packageRecord": {
+        "body_you": "Synthetic body_you test passage.",
+        "body_they": "Synthetic body_they test passage."
+      },
+      "dashboardEditHistory": []
+    }
+  },
+  {
+    "content_key": "fallback-hook/bond-effect-soft/pluto/variant-2",
+    "sections": {
+      "packageRecord": {
+        "body_you": "Synthetic body_you test passage.",
+        "body_they": "Synthetic body_they test passage."
+      },
+      "dashboardEditHistory": []
+    }
+  },
+  {
+    "content_key": "fallback-hook/bond-effect-soft/south-node/variant-3",
+    "sections": {
+      "packageRecord": {
+        "body_you": "Synthetic body_you test passage.",
+        "body_they": "Synthetic body_they test passage."
+      },
+      "dashboardEditHistory": []
+    }
+  },
+  {
+    "content_key": "fallback-hook/bond-effect-soft/sun/variant-2",
+    "sections": {
+      "packageRecord": {
+        "body_you": "Synthetic body_you test passage.",
+        "body_they": "Synthetic body_they test passage."
+      },
+      "dashboardEditHistory": []
+    }
+  },
+  {
+    "content_key": "fallback-hook/bond-effect-soft/sun/variant-3",
+    "sections": {
+      "packageRecord": {
+        "body_you": "Synthetic body_you test passage.",
+        "body_they": "Synthetic body_they test passage."
+      },
+      "dashboardEditHistory": []
+    }
+  },
+  {
+    "content_key": "fallback-hook/bond-effect-soft/venus",
+    "sections": {
+      "packageRecord": {
+        "body_you": "Synthetic body_you test passage.",
+        "body_they": "Synthetic body_they test passage."
+      },
+      "dashboardEditHistory": []
+    }
+  },
+  {
+    "content_key": "fallback-hook/bond-effect-square/moon",
+    "sections": {
+      "packageRecord": {
+        "body_you": "Synthetic body_you test passage.",
+        "body_they": "Synthetic body_they test passage."
+      },
+      "dashboardEditHistory": []
+    }
+  },
+  {
+    "content_key": "fallback-hook/bond-effect-square/saturn",
+    "sections": {
+      "packageRecord": {
+        "body_you": "Synthetic body_you test passage.",
+        "body_they": "Synthetic body_they test passage."
+      },
+      "dashboardEditHistory": []
+    }
+  },
+  {
+    "content_key": "fallback-hook/bond-effect-trine/chiron",
+    "sections": {
+      "packageRecord": {
+        "body_you": "Synthetic body_you test passage.",
+        "body_they": "Synthetic body_they test passage."
+      },
+      "dashboardEditHistory": []
+    }
+  },
+  {
+    "content_key": "fallback-hook/bond-effect-trine/mars",
+    "sections": {
+      "packageRecord": {
+        "body_you": "Synthetic body_you test passage.",
+        "body_they": "Synthetic body_they test passage."
+      },
+      "dashboardEditHistory": []
+    }
+  },
+  {
+    "content_key": "fallback-hook/bond-effect-trine/moon",
+    "sections": {
+      "packageRecord": {
+        "body_you": "Synthetic body_you test passage.",
+        "body_they": "Synthetic body_they test passage."
+      },
+      "dashboardEditHistory": []
+    }
+  },
+  {
+    "content_key": "fallback-hook/bond-effect-trine/saturn",
+    "sections": {
+      "packageRecord": {
+        "body_you": "Synthetic body_you test passage.",
+        "body_they": "Synthetic body_they test passage."
+      },
+      "dashboardEditHistory": []
+    }
+  },
+  {
+    "content_key": "fallback-hook/bond-effect-trine/uranus",
+    "sections": {
+      "packageRecord": {
+        "body_you": "Synthetic body_you test passage.",
+        "body_they": "Synthetic body_they test passage."
+      },
+      "dashboardEditHistory": []
+    }
+  },
+  {
+    "content_key": "fallback-hook/bond-effect-trine/venus",
+    "sections": {
+      "packageRecord": {
+        "body_you": "Synthetic body_you test passage.",
+        "body_they": "Synthetic body_they test passage."
+      },
+      "dashboardEditHistory": []
+    }
+  },
+  {
+    "content_key": "fallback-hook/bond-effect-hard/uranus",
+    "sections": {
+      "packageRecord": {
+        "body_you": "Synthetic body_you test passage.",
+        "body_they": "Synthetic body_they test passage."
+      },
+      "dashboardEditHistory": []
+    }
+  },
+  {
+    "content_key": "fallback-hook/bond-effect-hard/saturn/variant-2",
+    "sections": {
+      "packageRecord": {
+        "body_you": "Synthetic body_you test passage.",
+        "body_they": "Synthetic body_they test passage."
+      },
+      "dashboardEditHistory": []
+    }
+  },
+  {
+    "content_key": "fallback-hook/bond-effect-soft/mars/variant-3",
+    "sections": {
+      "packageRecord": {
+        "body_you": "Synthetic body_you test passage.",
+        "body_they": "Synthetic body_they test passage."
+      },
+      "dashboardEditHistory": []
+    }
+  },
+  {
+    "content_key": "fallback-hook/bond-effect-soft/mercury",
+    "sections": {
+      "packageRecord": {
+        "body_you": "Synthetic body_you test passage.",
+        "body_they": "Synthetic body_they test passage."
+      },
+      "dashboardEditHistory": []
+    }
+  },
+  {
+    "content_key": "fallback-hook/bond-effect-soft/uranus/variant-3",
+    "sections": {
+      "packageRecord": {
+        "body_you": "Synthetic body_you test passage.",
+        "body_they": "Synthetic body_they test passage."
+      },
+      "dashboardEditHistory": []
+    }
+  },
+  {
+    "content_key": "fallback-hook/bond-effect-soft/neptune/variant-2",
+    "sections": {
+      "packageRecord": {
+        "body_you": "Synthetic body_you test passage.",
+        "body_they": "Synthetic body_they test passage."
+      },
+      "dashboardEditHistory": []
+    }
+  },
+  {
+    "content_key": "fallback-hook/bond-effect-soft/lilith/variant-2",
+    "sections": {
+      "packageRecord": {
+        "body_you": "Synthetic body_you test passage.",
+        "body_they": "Synthetic body_they test passage."
+      },
+      "dashboardEditHistory": []
+    }
+  },
+  {
+    "content_key": "fallback-hook/bond-effect-sextile/venus",
+    "sections": {
+      "packageRecord": {
+        "body_you": "Synthetic body_you test passage.",
+        "body_they": "Synthetic body_they test passage."
+      },
+      "dashboardEditHistory": []
+    }
+  },
+  {
+    "content_key": "fallback-hook/bond-effect-sextile/uranus",
+    "sections": {
+      "packageRecord": {
+        "body_you": "Synthetic body_you test passage.",
+        "body_they": "Synthetic body_they test passage."
+      },
+      "dashboardEditHistory": []
+    }
+  },
+  {
+    "content_key": "fallback-hook/bond-effect-square/jupiter",
+    "sections": {
+      "packageRecord": {
+        "body_you": "Synthetic body_you test passage.",
+        "body_they": "Synthetic body_they test passage."
+      },
+      "dashboardEditHistory": []
+    }
+  },
+  {
+    "content_key": "fallback-hook/bond-effect-hard/mars/variant-3",
+    "sections": {
+      "packageRecord": {
+        "body_you": "Synthetic body_you test passage.",
+        "body_they": "Synthetic body_they test passage."
+      },
+      "dashboardEditHistory": []
+    }
+  },
+  {
+    "content_key": "fallback-hook/bond-effect-soft/jupiter",
+    "sections": {
+      "packageRecord": {
+        "body_you": "Synthetic body_you test passage.",
+        "body_they": "Synthetic body_they test passage."
+      },
+      "dashboardEditHistory": []
+    }
+  },
+  {
+    "content_key": "fallback-hook/bond-effect-opposition/saturn",
+    "sections": {
+      "packageRecord": {
+        "body_you": "Synthetic body_you test passage.",
+        "body_they": "Synthetic body_they test passage."
+      },
+      "dashboardEditHistory": []
+    }
+  },
+  {
+    "content_key": "fallback-hook/bond-effect-conjunction/mars",
+    "sections": {
+      "packageRecord": {
+        "body_you": "Synthetic body_you test passage.",
+        "body_they": "Synthetic body_they test passage."
+      },
+      "dashboardEditHistory": []
+    }
+  },
+  {
+    "content_key": "fallback-hook/bond-effect-hard/sun",
+    "sections": {
+      "packageRecord": {
+        "body_you": "Synthetic body_you test passage.",
+        "body_they": "Synthetic body_they test passage."
+      },
+      "dashboardEditHistory": []
+    }
+  },
+  {
+    "content_key": "fallback-hook/bond-effect-soft/saturn/variant-3",
+    "sections": {
+      "packageRecord": {
+        "body_you": "Synthetic body_you test passage.",
+        "body_they": "Synthetic body_they test passage."
+      },
+      "dashboardEditHistory": []
+    }
+  },
+  {
+    "content_key": "fallback-hook/bond-effect-hard/pluto",
+    "sections": {
+      "packageRecord": {
+        "body_you": "Synthetic body_you test passage.",
+        "body_they": "Synthetic body_they test passage."
+      },
+      "dashboardEditHistory": []
+    }
+  },
+  {
+    "content_key": "fallback-hook/bond-effect-hard/chiron/variant-3",
+    "sections": {
+      "packageRecord": {
+        "body_you": "Synthetic body_you test passage.",
+        "body_they": "Synthetic body_they test passage."
+      },
+      "dashboardEditHistory": []
+    }
+  },
+  {
+    "content_key": "fallback-hook/bond-effect-soft/neptune/variant-3",
+    "sections": {
+      "packageRecord": {
+        "body_you": "Synthetic body_you test passage.",
+        "body_they": "Synthetic body_they test passage."
+      },
+      "dashboardEditHistory": []
+    }
+  },
+  {
+    "content_key": "fallback-hook/bond-effect-opposition/jupiter",
+    "sections": {
+      "packageRecord": {
+        "body_you": "Synthetic body_you test passage.",
+        "body_they": "Synthetic body_they test passage."
+      },
+      "dashboardEditHistory": []
+    }
+  },
+  {
+    "content_key": "fallback-hook/bond-effect-hard/north-node",
+    "sections": {
+      "packageRecord": {
+        "body_you": "Synthetic body_you test passage.",
+        "body_they": "Synthetic body_they test passage."
+      },
+      "dashboardEditHistory": []
+    }
+  },
+  {
+    "content_key": "fallback-hook/bond-effect-hard/sun/variant-2",
+    "sections": {
+      "packageRecord": {
+        "body_you": "Synthetic body_you test passage.",
+        "body_they": "Synthetic body_they test passage."
+      },
+      "dashboardEditHistory": []
+    }
+  },
+  {
+    "content_key": "fallback-hook/bond-effect-soft/jupiter/variant-3",
+    "sections": {
+      "packageRecord": {
+        "body_you": "Synthetic body_you test passage.",
+        "body_they": "Synthetic body_they test passage."
+      },
+      "dashboardEditHistory": []
+    }
+  },
+  {
+    "content_key": "fallback-hook/bond-effect-hard/moon/variant-3",
+    "sections": {
+      "packageRecord": {
+        "body_you": "Synthetic body_you test passage.",
+        "body_they": "Synthetic body_they test passage."
+      },
+      "dashboardEditHistory": []
+    }
+  },
+  {
+    "content_key": "fallback-hook/bond-effect-opposition/sun",
+    "sections": {
+      "packageRecord": {
+        "body_you": "Synthetic body_you test passage.",
+        "body_they": "Synthetic body_they test passage."
+      },
+      "dashboardEditHistory": []
+    }
+  },
+  {
+    "content_key": "fallback-hook/bond-effect-soft/chiron/variant-3",
+    "sections": {
+      "packageRecord": {
+        "body_you": "Synthetic body_you test passage.",
+        "body_they": "Synthetic body_they test passage."
+      },
+      "dashboardEditHistory": []
+    }
+  },
+  {
+    "content_key": "fallback-hook/bond-effect-soft/moon",
+    "sections": {
+      "packageRecord": {
+        "body_you": "Synthetic body_you test passage.",
+        "body_they": "Synthetic body_they test passage."
+      },
+      "dashboardEditHistory": []
+    }
+  },
+  {
+    "content_key": "fallback-hook/bond-effect-hard/mercury",
+    "sections": {
+      "packageRecord": {
+        "body_you": "Synthetic body_you test passage.",
+        "body_they": "Synthetic body_they test passage."
+      },
+      "dashboardEditHistory": []
+    }
+  },
+  {
+    "content_key": "fallback-hook/bond-effect-opposition/moon",
+    "sections": {
+      "packageRecord": {
+        "body_you": "Synthetic body_you test passage.",
+        "body_they": "Synthetic body_they test passage."
+      },
+      "dashboardEditHistory": []
+    }
+  },
+  {
+    "content_key": "fallback-hook/bond-effect-hard/pluto/variant-2",
+    "sections": {
+      "packageRecord": {
+        "body_you": "Synthetic body_you test passage.",
+        "body_they": "Synthetic body_they test passage."
+      },
+      "dashboardEditHistory": []
+    }
+  },
+  {
+    "content_key": "fallback-hook/bond-effect-soft/sun",
+    "sections": {
+      "packageRecord": {
+        "body_you": "Synthetic body_you test passage.",
+        "body_they": "Synthetic body_they test passage."
+      },
+      "dashboardEditHistory": []
+    }
+  },
+  {
+    "content_key": "fallback-hook/bond-effect-square/venus",
+    "sections": {
+      "packageRecord": {
+        "body_you": "Synthetic body_you test passage.",
+        "body_they": "Synthetic body_they test passage."
+      },
+      "dashboardEditHistory": []
+    }
+  },
+  {
+    "content_key": "fallback-hook/bond-effect-hard/uranus/variant-2",
+    "sections": {
+      "packageRecord": {
+        "body_you": "Synthetic body_you test passage.",
+        "body_they": "Synthetic body_they test passage."
+      },
+      "dashboardEditHistory": []
+    }
+  },
+  {
+    "content_key": "fallback-hook/bond-effect-soft/uranus",
+    "sections": {
+      "packageRecord": {
+        "body_you": "Synthetic body_you test passage.",
+        "body_they": "Synthetic body_they test passage."
+      },
+      "dashboardEditHistory": []
+    }
+  },
+  {
+    "content_key": "fallback-hook/bond-effect-soft/pluto",
+    "sections": {
+      "packageRecord": {
+        "body_you": "Synthetic body_you test passage.",
+        "body_they": "Synthetic body_they test passage."
+      },
+      "dashboardEditHistory": []
+    }
+  },
+  {
+    "content_key": "fallback-hook/bond-effect-hard/uranus/variant-3",
+    "sections": {
+      "packageRecord": {
+        "body_you": "Synthetic body_you test passage.",
+        "body_they": "Synthetic body_they test passage."
+      },
+      "packageDraft": {
+        "body_you": "Synthetic body_you test passage.",
+        "body_they": "Synthetic body_they test passage."
+      },
+      "dashboardEditHistory": [
+        {
+          "versionId": "draft-20261005225214059",
+          "packageDraft": {
+            "body_you": "Synthetic body_you test passage."
+          }
+        },
+        {
+          "versionId": "draft-20261005225334165",
+          "packageDraft": {
+            "body_you": "Synthetic body_you test passage.",
+            "body_they": "Synthetic body_they test passage."
+          }
+        },
+        {
+          "versionId": "draft-20261005232057796",
+          "packageDraft": {
+            "body_you": "Synthetic body_you test passage.",
+            "body_they": "Synthetic body_they test passage."
+          }
+        },
+        {
+          "versionId": "draft-20261005235119594",
+          "packageDraft": {
+            "body_you": "Synthetic body_you test passage.",
+            "body_they": "Synthetic body_they test passage."
+          }
+        }
+      ]
+    }
+  },
+  {
+    "content_key": "fallback-hook/bond-effect-sextile/saturn",
+    "sections": {
+      "packageRecord": {
+        "body_you": "Synthetic body_you test passage.",
+        "body_they": "Synthetic body_they test passage."
+      },
+      "dashboardEditHistory": []
+    }
+  },
+  {
+    "content_key": "fallback-hook/bond-effect-trine/jupiter",
+    "sections": {
+      "packageRecord": {
+        "body_you": "Synthetic body_you test passage.",
+        "body_they": "Synthetic body_they test passage."
+      },
+      "dashboardEditHistory": []
+    }
+  },
+  {
+    "content_key": "fallback-hook/bond-effect-soft/chiron",
+    "sections": {
+      "packageRecord": {
+        "body_you": "Synthetic body_you test passage.",
+        "body_they": "Synthetic body_they test passage."
+      },
+      "dashboardEditHistory": []
+    }
+  },
+  {
+    "content_key": "fallback-hook/bond-effect-soft/mercury/variant-2",
+    "sections": {
+      "packageRecord": {
+        "body_you": "Synthetic body_you test passage.",
+        "body_they": "Synthetic body_they test passage."
+      },
+      "dashboardEditHistory": []
+    }
+  },
+  {
+    "content_key": "fallback-hook/bond-effect-soft/venus/variant-2",
+    "sections": {
+      "packageRecord": {
+        "body_you": "Synthetic body_you test passage.",
+        "body_they": "Synthetic body_they test passage."
+      },
+      "dashboardEditHistory": []
+    }
+  },
+  {
+    "content_key": "fallback-hook/bond-effect-soft/south-node",
+    "sections": {
+      "packageRecord": {
+        "body_you": "Synthetic body_you test passage.",
+        "body_they": "Synthetic body_they test passage."
+      },
+      "dashboardEditHistory": []
+    }
+  },
+  {
+    "content_key": "fallback-hook/bond-effect-square/neptune",
+    "sections": {
+      "packageRecord": {
+        "body_you": "Synthetic body_you test passage.",
+        "body_they": "Synthetic body_they test passage."
+      },
+      "dashboardEditHistory": []
+    }
+  },
+  {
+    "content_key": "fallback-hook/bond-effect-soft/lilith/variant-3",
+    "sections": {
+      "packageRecord": {
+        "body_you": "Synthetic body_you test passage.",
+        "body_they": "Synthetic body_they test passage."
+      },
+      "dashboardEditHistory": []
+    }
+  },
+  {
+    "content_key": "fallback-hook/bond-effect-soft/moon/variant-3",
+    "sections": {
+      "packageRecord": {
+        "body_you": "Synthetic body_you test passage.",
+        "body_they": "Synthetic body_they test passage."
+      },
+      "dashboardEditHistory": []
+    }
+  },
+  {
+    "content_key": "fallback-hook/bond-effect-soft/south-node/variant-2",
+    "sections": {
+      "packageRecord": {
+        "body_you": "Synthetic body_you test passage.",
+        "body_they": "Synthetic body_they test passage."
+      },
+      "dashboardEditHistory": []
+    }
+  },
+  {
+    "content_key": "fallback-hook/bond-effect-soft/north-node/variant-2",
+    "sections": {
+      "packageRecord": {
+        "body_you": "Synthetic body_you test passage.",
+        "body_they": "Synthetic body_they test passage."
+      },
+      "dashboardEditHistory": []
+    }
+  },
+  {
+    "content_key": "fallback-hook/bond-effect-soft/uranus/variant-2",
+    "sections": {
+      "packageRecord": {
+        "body_you": "Synthetic body_you test passage.",
+        "body_they": "Synthetic body_they test passage."
+      },
+      "dashboardEditHistory": []
+    }
+  },
+  {
+    "content_key": "fallback-hook/bond-effect-trine/neptune",
+    "sections": {
+      "packageRecord": {
+        "body_you": "Synthetic body_you test passage.",
+        "body_they": "Synthetic body_they test passage."
+      },
+      "dashboardEditHistory": []
+    }
+  },
+  {
+    "content_key": "fallback-hook/bond-effect-soft/venus/variant-3",
+    "sections": {
+      "packageRecord": {
+        "body_you": "Synthetic body_you test passage.",
+        "body_they": "Synthetic body_they test passage."
+      },
+      "dashboardEditHistory": []
+    }
+  },
+  {
+    "content_key": "fallback-hook/bond-effect-trine/sun",
+    "sections": {
+      "packageRecord": {
+        "body_you": "Synthetic body_you test passage.",
+        "body_they": "Synthetic body_they test passage."
+      },
+      "dashboardEditHistory": []
+    }
+  },
+  {
+    "content_key": "fallback-hook/bond-effect-square/chiron",
+    "sections": {
+      "packageRecord": {
+        "body_you": "Synthetic body_you test passage.",
+        "body_they": "Synthetic body_they test passage."
+      },
+      "dashboardEditHistory": []
+    }
+  },
+  {
+    "content_key": "fallback-hook/bond-effect-square/mars",
+    "sections": {
+      "packageRecord": {
+        "body_you": "Synthetic body_you test passage.",
+        "body_they": "Synthetic body_they test passage."
+      },
+      "dashboardEditHistory": []
+    }
+  },
+  {
+    "content_key": "fallback-hook/bond-effect-conjunction/chiron",
+    "sections": {
+      "packageRecord": {
+        "body_you": "Synthetic body_you test passage.",
+        "body_they": "Synthetic body_they test passage."
+      },
+      "dashboardEditHistory": []
+    }
+  },
+  {
+    "content_key": "fallback-hook/bond-effect-conjunction/jupiter",
+    "sections": {
+      "packageRecord": {
+        "body_you": "Synthetic body_you test passage.",
+        "body_they": "Synthetic body_they test passage."
+      },
+      "dashboardEditHistory": []
+    }
+  },
+  {
+    "content_key": "fallback-hook/bond-effect-conjunction/mercury",
+    "sections": {
+      "packageRecord": {
+        "body_you": "Synthetic body_you test passage.",
+        "body_they": "Synthetic body_they test passage."
+      },
+      "dashboardEditHistory": []
+    }
+  },
+  {
+    "content_key": "fallback-hook/bond-effect-conjunction/sun",
+    "sections": {
+      "packageRecord": {
+        "body_you": "Synthetic body_you test passage.",
+        "body_they": "Synthetic body_they test passage."
+      },
+      "dashboardEditHistory": []
+    }
+  },
+  {
+    "content_key": "fallback-hook/bond-effect-conjunction/venus",
+    "sections": {
+      "packageRecord": {
+        "body_you": "Synthetic body_you test passage.",
+        "body_they": "Synthetic body_they test passage."
+      },
+      "dashboardEditHistory": []
+    }
+  },
+  {
+    "content_key": "fallback-hook/bond-effect-hard/jupiter/variant-3",
+    "sections": {
+      "packageRecord": {
+        "body_you": "Synthetic body_you test passage.",
+        "body_they": "Synthetic body_they test passage."
+      },
+      "dashboardEditHistory": []
+    }
+  },
+  {
+    "content_key": "fallback-hook/bond-effect-hard/lilith",
+    "sections": {
+      "packageRecord": {
+        "body_you": "Synthetic body_you test passage.",
+        "body_they": "Synthetic body_they test passage."
+      },
+      "dashboardEditHistory": []
+    }
+  },
+  {
+    "content_key": "fallback-hook/bond-effect-hard/lilith/variant-3",
+    "sections": {
+      "packageRecord": {
+        "body_you": "Synthetic body_you test passage.",
+        "body_they": "Synthetic body_they test passage."
+      },
+      "dashboardEditHistory": []
+    }
+  },
+  {
+    "content_key": "fallback-hook/bond-effect-hard/pluto/variant-3",
+    "sections": {
+      "packageRecord": {
+        "body_you": "Synthetic body_you test passage.",
+        "body_they": "Synthetic body_they test passage."
+      },
+      "dashboardEditHistory": []
+    }
+  },
+  {
+    "content_key": "fallback-hook/bond-effect-hard/mars",
+    "sections": {
+      "packageRecord": {
+        "body_you": "Synthetic body_you test passage.",
+        "body_they": "Synthetic body_they test passage."
+      },
+      "dashboardEditHistory": []
+    }
+  },
+  {
+    "content_key": "fallback-hook/bond-effect-hard/neptune",
+    "sections": {
+      "packageRecord": {
+        "body_you": "Synthetic body_you test passage.",
+        "body_they": "Synthetic body_they test passage."
+      },
+      "dashboardEditHistory": []
+    }
+  },
+  {
+    "content_key": "fallback-hook/bond-effect-hard/south-node",
+    "sections": {
+      "packageRecord": {
+        "body_you": "Synthetic body_you test passage.",
+        "body_they": "Synthetic body_they test passage."
+      },
+      "dashboardEditHistory": []
+    }
+  },
+  {
+    "content_key": "fallback-hook/bond-effect-soft/pluto/variant-3",
+    "sections": {
+      "packageRecord": {
+        "body_you": "Synthetic body_you test passage.",
+        "body_they": "Synthetic body_they test passage."
+      },
+      "dashboardEditHistory": []
+    }
+  },
+  {
+    "content_key": "fallback-hook/bond-effect-opposition/mercury",
+    "sections": {
+      "packageRecord": {
+        "body_you": "Synthetic body_you test passage.",
+        "body_they": "Synthetic body_they test passage."
+      },
+      "dashboardEditHistory": []
+    }
+  },
+  {
+    "content_key": "fallback-hook/bond-effect-soft/chiron/variant-2",
+    "sections": {
+      "packageRecord": {
+        "body_you": "Synthetic body_you test passage.",
+        "body_they": "Synthetic body_they test passage."
+      },
+      "dashboardEditHistory": []
+    }
+  },
+  {
+    "content_key": "fallback-hook/bond-effect-opposition/uranus",
+    "sections": {
+      "packageRecord": {
+        "body_you": "Synthetic body_you test passage.",
+        "body_they": "Synthetic body_they test passage."
+      },
+      "dashboardEditHistory": []
+    }
+  },
+  {
+    "content_key": "fallback-hook/bond-effect-soft/saturn",
+    "sections": {
+      "packageRecord": {
+        "body_you": "Synthetic body_you test passage.",
+        "body_they": "Synthetic body_they test passage."
+      },
+      "dashboardEditHistory": []
+    }
+  },
+  {
+    "content_key": "fallback-hook/bond-effect-square/mercury",
+    "sections": {
+      "packageRecord": {
+        "body_you": "Synthetic body_you test passage.",
+        "body_they": "Synthetic body_they test passage."
+      },
+      "dashboardEditHistory": []
+    }
+  },
+  {
+    "content_key": "fallback-hook/bond-effect-sextile/jupiter",
+    "sections": {
+      "packageRecord": {
+        "body_you": "Synthetic body_you test passage.",
+        "body_they": "Synthetic body_they test passage."
+      },
+      "dashboardEditHistory": []
+    }
+  },
+  {
+    "content_key": "fallback-hook/bond-effect-sextile/sun",
+    "sections": {
+      "packageRecord": {
+        "body_you": "Synthetic body_you test passage.",
+        "body_they": "Synthetic body_they test passage."
+      },
+      "dashboardEditHistory": []
+    }
+  },
+  {
+    "content_key": "fallback-hook/bond-effect-soft/mars",
+    "sections": {
+      "packageRecord": {
+        "body_you": "Synthetic body_you test passage.",
+        "body_they": "Synthetic body_they test passage."
+      },
+      "dashboardEditHistory": []
+    }
+  },
+  {
+    "content_key": "fallback-hook/bond-effect-soft/moon/variant-2",
+    "sections": {
+      "packageRecord": {
+        "body_you": "Synthetic body_you test passage.",
+        "body_they": "Synthetic body_they test passage."
+      },
+      "dashboardEditHistory": []
+    }
+  },
+  {
+    "content_key": "fallback-hook/bond-effect-square/uranus",
+    "sections": {
+      "packageRecord": {
+        "body_you": "Synthetic body_you test passage.",
+        "body_they": "Synthetic body_they test passage."
+      },
+      "dashboardEditHistory": []
+    }
+  },
+  {
+    "content_key": "fallback-hook/bond-effect-sextile/chiron",
+    "sections": {
+      "packageRecord": {
+        "body_you": "Synthetic body_you test passage.",
+        "body_they": "Synthetic body_they test passage."
+      },
+      "dashboardEditHistory": [
+        {
+          "versionId": "draft-20260919050543727",
+          "packageDraft": {
+            "body_you": "Synthetic body_you test passage.",
+            "body_they": "Synthetic body_they test passage."
+          }
+        },
+        {
+          "versionId": "draft-20260919050544381",
+          "packageDraft": {}
+        }
+      ]
+    }
+  },
+  {
+    "content_key": "fallback-hook/bond-effect-sextile/mercury",
+    "sections": {
+      "packageRecord": {
+        "body_you": "Synthetic body_you test passage.",
+        "body_they": "Synthetic body_they test passage."
+      },
+      "dashboardEditHistory": []
+    }
+  },
+  {
+    "content_key": "fallback-hook/bond-effect-square/pluto",
+    "sections": {
+      "packageRecord": {
+        "body_you": "Synthetic body_you test passage.",
+        "body_they": "Synthetic body_they test passage."
+      },
+      "dashboardEditHistory": []
+    }
+  },
+  {
+    "content_key": "fallback-hook/bond-effect-square/sun",
+    "sections": {
+      "packageRecord": {
+        "body_you": "Synthetic body_you test passage.",
+        "body_they": "Synthetic body_they test passage."
+      },
+      "dashboardEditHistory": []
+    }
+  },
+  {
+    "content_key": "fallback-hook/bond-effect-hard/saturn/variant-3",
+    "sections": {
+      "packageRecord": {
+        "body_you": "Synthetic body_you test passage.",
+        "body_they": "Synthetic body_they test passage."
+      },
+      "dashboardEditHistory": []
+    }
+  },
+  {
+    "content_key": "fallback-hook/bond-effect-conjunction/moon",
+    "sections": {
+      "packageRecord": {
+        "body_you": "Synthetic body_you test passage.",
+        "body_they": "Synthetic body_they test passage."
+      },
+      "dashboardEditHistory": []
+    }
+  },
+  {
+    "content_key": "fallback-hook/bond-effect-soft/saturn/variant-2",
+    "sections": {
+      "packageRecord": {
+        "body_you": "Synthetic body_you test passage.",
+        "body_they": "Synthetic body_they test passage."
+      },
+      "dashboardEditHistory": []
+    }
+  },
+  {
+    "content_key": "fallback-hook/bond-effect-hard/chiron",
+    "sections": {
+      "packageRecord": {
+        "body_you": "Synthetic body_you test passage.",
+        "body_they": "Synthetic body_they test passage."
+      },
+      "dashboardEditHistory": []
+    }
+  },
+  {
+    "content_key": "fallback-hook/bond-effect-sextile/pluto",
+    "sections": {
+      "packageRecord": {
+        "body_you": "Synthetic body_you test passage.",
+        "body_they": "Synthetic body_they test passage."
+      },
+      "dashboardEditHistory": []
+    }
+  },
+  {
+    "content_key": "fallback-hook/bond-effect-hard/mars/variant-2",
+    "sections": {
+      "packageRecord": {
+        "body_you": "Synthetic body_you test passage.",
+        "body_they": "Synthetic body_they test passage."
+      },
+      "dashboardEditHistory": []
+    }
+  },
+  {
+    "content_key": "fallback-hook/bond-effect-conjunction/neptune",
+    "sections": {
+      "packageRecord": {
+        "body_you": "Synthetic body_you test passage.",
+        "body_they": "Synthetic body_they test passage."
+      },
+      "dashboardEditHistory": []
+    }
+  },
+  {
+    "content_key": "fallback-hook/bond-effect-sextile/moon",
+    "sections": {
+      "packageRecord": {
+        "body_you": "Synthetic body_you test passage.",
+        "body_they": "Synthetic body_they test passage."
+      },
+      "dashboardEditHistory": [
+        {
+          "versionId": "draft-20260918041019214",
+          "packageDraft": {
+            "body_you": "Synthetic body_you test passage.",
+            "body_they": "Synthetic body_they test passage."
+          }
+        },
+        {
+          "versionId": "draft-20260918041020153",
+          "packageDraft": {}
+        }
+      ]
+    }
+  },
+  {
+    "content_key": "fallback-hook/bond-effect-opposition/neptune",
+    "sections": {
+      "packageRecord": {
+        "body_you": "Synthetic body_you test passage.",
+        "body_they": "Synthetic body_they test passage."
+      },
+      "dashboardEditHistory": []
+    }
+  },
+  {
+    "content_key": "fallback-hook/bond-effect-soft/jupiter/variant-2",
+    "sections": {
+      "packageRecord": {
+        "body_you": "Synthetic body_you test passage.",
+        "body_they": "Synthetic body_they test passage."
+      },
+      "dashboardEditHistory": []
+    }
+  },
+  {
+    "content_key": "fallback-hook/bond-effect-conjunction/uranus",
+    "sections": {
+      "packageRecord": {
+        "body_you": "Synthetic body_you test passage.",
+        "body_they": "Synthetic body_they test passage."
+      },
+      "dashboardEditHistory": []
+    }
+  },
+  {
+    "content_key": "fallback-hook/bond-effect-opposition/pluto",
+    "sections": {
+      "packageRecord": {
+        "body_you": "Synthetic body_you test passage.",
+        "body_they": "Synthetic body_they test passage."
+      },
+      "dashboardEditHistory": []
+    }
+  },
+  {
+    "content_key": "fallback-hook/bond-effect-trine/mercury",
+    "sections": {
+      "packageRecord": {
+        "body_you": "Synthetic body_you test passage.",
+        "body_they": "Synthetic body_they test passage."
+      },
+      "dashboardEditHistory": [
+        {
+          "versionId": "draft-20260918040304837",
+          "packageDraft": {
+            "body_you": "Synthetic body_you test passage.",
+            "body_they": "Synthetic body_they test passage."
+          }
+        },
+        {
+          "versionId": "draft-20260918040305435",
+          "packageDraft": {}
+        }
+      ]
+    }
+  },
+  {
+    "content_key": "fallback-hook/bond-effect-trine/pluto",
+    "sections": {
+      "packageRecord": {
+        "body_you": "Synthetic body_you test passage.",
+        "body_they": "Synthetic body_they test passage."
+      },
+      "packageDraft": {
+        "body_you": "Synthetic body_you test passage.",
+        "body_they": "Synthetic body_they test passage."
+      },
+      "dashboardEditHistory": [
+        {
+          "versionId": "draft-20261005225214335",
+          "packageDraft": {
+            "body_you": "Synthetic body_you test passage."
+          }
+        },
+        {
+          "versionId": "draft-20261005225334441",
+          "packageDraft": {
+            "body_you": "Synthetic body_you test passage.",
+            "body_they": "Synthetic body_they test passage."
+          }
+        },
+        {
+          "versionId": "draft-20261005232058124",
+          "packageDraft": {
+            "body_you": "Synthetic body_you test passage.",
+            "body_they": "Synthetic body_they test passage."
+          }
+        },
+        {
+          "versionId": "draft-20261005235120303",
+          "packageDraft": {
+            "body_you": "Synthetic body_you test passage.",
+            "body_they": "Synthetic body_they test passage."
+          }
+        }
+      ]
+    }
+  },
+  {
+    "content_key": "fallback-hook/bond-effect-hard/north-node/variant-2",
+    "sections": {
+      "packageRecord": {
+        "body_you": "Synthetic body_you test passage.",
+        "body_they": "Synthetic body_they test passage."
+      },
+      "packageDraft": {
+        "body_you": "Synthetic body_you test passage.",
+        "body_they": "Synthetic body_they test passage."
+      },
+      "dashboardEditHistory": [
+        {
+          "versionId": "draft-20261005225213026",
+          "packageDraft": {
+            "body_you": "Synthetic body_you test passage.",
+            "body_they": "Synthetic body_they test passage."
+          }
+        },
+        {
+          "versionId": "draft-20261005232056237",
+          "packageDraft": {
+            "body_you": "Synthetic body_you test passage.",
+            "body_they": "Synthetic body_they test passage."
+          }
+        },
+        {
+          "versionId": "draft-20261005235117312",
+          "packageDraft": {
+            "body_you": "Synthetic body_you test passage.",
+            "body_they": "Synthetic body_they test passage."
+          }
+        }
+      ]
+    }
+  },
+  {
+    "content_key": "fallback-hook/bond-effect-conjunction/pluto",
+    "sections": {
+      "packageRecord": {
+        "body_you": "Synthetic body_you test passage.",
+        "body_they": "Synthetic body_they test passage."
+      },
+      "packageDraft": {
+        "body_you": "Synthetic body_you test passage.",
+        "body_they": "Synthetic body_they test passage."
+      },
+      "dashboardEditHistory": [
+        {
+          "versionId": "draft-20261005225213602",
+          "packageDraft": {
+            "body_you": "Synthetic body_you test passage."
+          }
+        },
+        {
+          "versionId": "draft-20261005225333861",
+          "packageDraft": {
+            "body_you": "Synthetic body_you test passage.",
+            "body_they": "Synthetic body_they test passage."
+          }
+        },
+        {
+          "versionId": "draft-20261005232057023",
+          "packageDraft": {
+            "body_you": "Synthetic body_you test passage.",
+            "body_they": "Synthetic body_they test passage."
+          }
+        },
+        {
+          "versionId": "draft-20261005235118449",
+          "packageDraft": {
+            "body_you": "Synthetic body_you test passage.",
+            "body_they": "Synthetic body_they test passage."
+          }
+        }
+      ]
+    }
+  },
+  {
+    "content_key": "fallback-hook/bond-effect-sextile/chiron",
+    "sections": {
+      "packageRecord": {
+        "body_you": "Synthetic body_you test passage.",
+        "body_they": "Synthetic body_they test passage."
+      },
+      "packageDraft": {
+        "body_you": "Synthetic body_you test passage.",
+        "body_they": "Synthetic body_they test passage."
+      },
+      "dashboardEditHistory": [
+        {
+          "versionId": "draft-20260919050543727",
+          "packageDraft": {
+            "body_you": "Synthetic body_you test passage.",
+            "body_they": "Synthetic body_they test passage."
+          }
+        },
+        {
+          "versionId": "draft-20260919050544381",
+          "packageDraft": {}
+        },
+        {
+          "versionId": "draft-20261005232057390",
+          "packageDraft": {
+            "body_you": "Synthetic body_you test passage.",
+            "body_they": "Synthetic body_they test passage."
+          }
+        },
+        {
+          "versionId": "draft-20261005235119022",
+          "packageDraft": {
+            "body_you": "Synthetic body_you test passage.",
+            "body_they": "Synthetic body_they test passage."
+          }
+        }
+      ]
+    }
+  },
+  {
+    "content_key": "fallback-hook/bond-effect-sextile/mars",
+    "sections": {
+      "packageRecord": {
+        "body_you": "Synthetic body_you test passage.",
+        "body_they": "Synthetic body_they test passage."
+      },
+      "packageDraft": {
+        "body_you": "Synthetic body_you test passage.",
+        "body_they": "Synthetic body_they test passage."
+      },
+      "dashboardEditHistory": [
+        {
+          "versionId": "draft-20261005225214590",
+          "packageDraft": {
+            "body_you": "Synthetic body_you test passage.",
+            "body_they": "Synthetic body_they test passage."
+          }
+        },
+        {
+          "versionId": "draft-20261005232058495",
+          "packageDraft": {
+            "body_you": "Synthetic body_you test passage.",
+            "body_they": "Synthetic body_they test passage."
+          }
+        },
+        {
+          "versionId": "draft-20261005232532595",
+          "packageDraft": {
+            "body_you": "Synthetic body_you test passage.",
+            "body_they": "Synthetic body_they test passage."
+          }
+        },
+        {
+          "versionId": "draft-20261005235120761",
+          "packageDraft": {
+            "body_you": "Synthetic body_you test passage.",
+            "body_they": "Synthetic body_they test passage."
+          }
+        }
+      ]
+    }
+  }
+]

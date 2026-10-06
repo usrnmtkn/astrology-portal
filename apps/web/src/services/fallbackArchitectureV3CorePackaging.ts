@@ -105,9 +105,10 @@ export function packageAuthoredCardFromRow(row: GeneratedContentRow): AuthoredCa
 export function packageHookRowFromRow(row: GeneratedContentRow): HookRow | null {
   const record = packageRecord(row);
   const { role, reviewStatus } = generatedRowPackageRole(row);
+  const directionalRelationship = row.content_key.startsWith("fallback-hook/bond-effect-");
   const recordBody = stringFrom(record.body);
-  const recordBodyYou = stringFrom(record.body_you);
-  const recordBodyThey = stringFrom(record.body_they);
+  const recordBodyYou = directionalRelationship ? (typeof record.body_you === "string" ? record.body_you : "") : stringFrom(record.body_you);
+  const recordBodyThey = directionalRelationship ? (typeof record.body_they === "string" ? record.body_they : "") : stringFrom(record.body_they);
 
   // An explicitly empty canonical revision carries the current publication
   // identity. Dropping it would make the bundled article eligible again.
@@ -116,7 +117,7 @@ export function packageHookRowFromRow(row: GeneratedContentRow): HookRow | null 
     && record.studio_version_status === "approved-serving-revision";
   const ingressRevision = record.studio_version_status === "approved-serving-revision"
     && isRecord(record.ingress) && record.ingress.enabled === true;
-  if (!recordBody && !recordBodyYou && !recordBodyThey && !canonicalRevision && !ingressRevision) {
+  if (!recordBody && !recordBodyYou && !recordBodyThey && !canonicalRevision && !ingressRevision && !directionalRelationship) {
     return null;
   }
 

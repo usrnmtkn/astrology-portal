@@ -1423,6 +1423,51 @@ function normalizeAspect(input) {
   return map[k] ?? null;
 }
 
+// apps/web/src/content/fallbackArchitectureV3/resolver/relationshipTemplate.mjs
+function relationshipTemplatePair(row) {
+  const read = (publicField, storedField) => {
+    const publicValue = row?.[publicField];
+    const storedValue = row?.[storedField];
+    if (publicValue !== void 0 && storedValue !== void 0 && publicValue !== storedValue) {
+      throw new Error(`Conflicting relationship fields: ${publicField}/${storedField}`);
+    }
+    return publicValue ?? storedValue;
+  };
+  return { you: read("you", "body_you"), friend: read("friend", "body_they") };
+}
+function missingRelationshipPerspectives(row) {
+  const pair = relationshipTemplatePair(row);
+  return ["you", "friend"].filter((audience) => typeof pair[audience] !== "string" || !pair[audience].trim());
+}
+function interpolateRelationshipTemplate(template, variables) {
+  if (typeof template !== "string") throw new Error("Missing relationship template.");
+  return template.replace(/\{\{\s*([^}]+?)\s*\}\}/gu, (_token, name) => {
+    if (!Object.hasOwn(variables, name) || typeof variables[name] !== "string") {
+      throw new Error(`Missing relationship variable: ${name}`);
+    }
+    return variables[name];
+  });
+}
+function resolveRelationshipTemplate(row, audience, variables) {
+  if (audience !== "you" && audience !== "friend") throw new Error("Unknown relationship perspective.");
+  const missing = missingRelationshipPerspectives(row);
+  if (missing.length) throw new Error(`Incomplete relationship pair: ${missing.join(", ")}`);
+  return interpolateRelationshipTemplate(relationshipTemplatePair(row)[audience], variables);
+}
+function resolveBondEffect(hooks, { transiting, aspect, family, variant, endpointOwner, otherName }, SourceGapError2) {
+  const exactKey = `fallback-hook/bond-effect-${aspect}/${transiting}`;
+  const variantKey = variant ? `fallback-hook/bond-effect-${family}/${transiting}/variant-${variant}` : null;
+  const familyKey = `fallback-hook/bond-effect-${family}/${transiting}`;
+  const contentKey = [exactKey, variantKey, familyKey].find((key) => key && hooks.get(key));
+  if (!contentKey) throw new SourceGapError2(`SOURCE_GAP: bond transit ${transiting}/${aspect}`);
+  try {
+    const effect = resolveRelationshipTemplate(hooks.get(contentKey), endpointOwner === "reader" ? "you" : "friend", { holder1: otherName });
+    return { contentKey, effect };
+  } catch (error) {
+    throw new SourceGapError2(`SOURCE_GAP: ${contentKey}: ${error.message}`);
+  }
+}
+
 // apps/web/src/content/fallbackArchitectureV3/resolver/transitAspectSourcePriority.mjs
 var situationSigns = /* @__PURE__ */ new Set([
   "aries",
@@ -3561,7 +3606,6 @@ ${passHook}`;
     friendPossessivePronoun,
     sign,
     variant,
-    duplicateIndex,
     window: win
   }) {
     if (!endpointPlanet || !["reader", "friend"].includes(endpointOwner) || !activatedPlanets?.length) {
@@ -3569,14 +3613,14 @@ ${passHook}`;
     }
     const g = GROUP[aspect] ?? aspect;
     const family = g === "soft" || g === "conjunction" && !HEAVY.has(transiting) ? "soft" : "hard";
-    const exactEffectKey = `fallback-hook/bond-effect-${aspect}/${transiting}`;
-    const variantEffectKey = variant ? `fallback-hook/bond-effect-${family}/${transiting}/variant-${variant}` : null;
-    const familyEffectKey = `fallback-hook/bond-effect-${family}/${transiting}`;
-    const effectCandidates = duplicateIndex && duplicateIndex > 0 ? [variantEffectKey, familyEffectKey, exactEffectKey] : [exactEffectKey, variantEffectKey, familyEffectKey];
-    const effectKey = effectCandidates.find((key) => Boolean(key && hooks.get(key)?.body_you)) ?? familyEffectKey;
-    const effectRow = hooks.get(effectKey);
-    const authoredEffect = endpointOwner === "reader" ? effectRow?.body_you : effectRow?.body_they ?? effectRow?.body_you;
-    const effect = authoredEffect?.replaceAll("{{holder1}}'s", `${otherName}'s`).replaceAll("{{holder1}}", otherName);
+    const { contentKey: effectKey, effect } = resolveBondEffect(hooks, {
+      transiting,
+      aspect,
+      family,
+      variant,
+      endpointOwner,
+      otherName
+    }, SourceGapError);
     const aspectAdj = vocab.get(`fallback-vocab/aspect-adj/${aspect}`)?.body;
     if (!effect || !aspectAdj) throw new SourceGapError(`SOURCE_GAP: bond transit ${transiting}/${aspect} (${family})`);
     const timeOpen = win ?? WINDOW_ASPECT[transiting] ?? "Currently";
@@ -3594,7 +3638,7 @@ ${passHook}`;
     const endpointReference = plural && endpointOwner === "friend" ? `their ${title7(endpointPlanet)}` : "it";
     const closing = `${transitRef(transiting, sign).replace(/^./, (char) => char.toUpperCase())} is ${relation[aspect] ?? aspectAdj} ${endpoint}${timeClose ? ` ${timeClose}` : ""}, activating the connection${plural ? "s" : ""} ${endpointReference} makes with ${activatedList}.`;
     const paras = [effect, closing];
-    const body = paras.join("\n\n").trim();
+    const body = paras.join("\n\n");
     if (/\{\{/.test(body)) throw new SourceGapError(`SOURCE_GAP: bond transit ${transiting}/${aspect} unresolved slot`);
     const HL = { conjunction: "conjunct", opposition: "opposite" };
     const headline = `${title7(transiting)} ${HL[aspect] ?? aspect} ${endpoint}`;
@@ -6482,7 +6526,7 @@ function skyV4FieldValue(source, path) {
 }
 
 // apps/web/src/content/fallbackArchitectureV3/resolver/index.browser.ts
-var PACKAGE_VERSION = "v3-2026-10-05-between-you-two-names";
+var PACKAGE_VERSION = "v3-2026-10-05-relationship-template-integrity";
 function stablePackageValue(value) {
   if (Array.isArray(value)) {
     return value.map(stablePackageValue);

@@ -1,3 +1,4 @@
+import { resolveBondEffect } from "./relationshipTemplate.mjs";
 import { prioritizeExactTransitSources, transitAspectSituationKey } from "./transitAspectSourcePriority.mjs";
 import { bindStudioVariableReference } from "../../studioCustomVariables.mjs";
 import { resolveZodiacSeasonVariables, zodiacSeasonVariableNames } from "./zodiacSeasonVariables.mjs";
@@ -2168,34 +2169,16 @@ function renderSkyAspectCardReference({ a, b, aspect, aSign, bSign, dateLine }) 
 // card by swapping perspective (never by editing this output). ----
 // facts: transiting, aspect (transit's aspect TO the contact), planetA (reader's), planetB
 // (friend's), natalAspect (the synastry aspect between A and B), otherName, sign?, window?
-function renderBondTransitReference({ transiting, aspect, endpointPlanet, endpointOwner, activatedPlanets, otherName, friendPossessivePronoun, sign, variant, duplicateIndex, window: win }) {
+function renderBondTransitReference({ transiting, aspect, endpointPlanet, endpointOwner, activatedPlanets, otherName, friendPossessivePronoun, sign, variant, window: win }) {
   if (!endpointPlanet || !["reader", "friend"].includes(endpointOwner) || !activatedPlanets?.length) {
     throw new SourceGapError(`SOURCE_GAP: bond transit ${transiting}/${aspect} missing endpoint facts`);
   }
   const HEAVY = new Set(["saturn", "uranus", "neptune", "pluto", "chiron"]);
   const g = GROUP[aspect] ?? aspect;
   const family = g === "soft" || (g === "conjunction" && !HEAVY.has(transiting)) ? "soft" : "hard";
-  // Exact aspect copy wins the first card. Later cards on the same view sharing this
-  // transiting planet + exact aspect rotate to the family lane so no two cards repeat
-  // the same effect paragraph. Legacy soft/hard rows remain the fallback lane for
-  // nodes, Lilith, missing exact rows, and their repeat-viewer variant rotation.
-  const exactEffectKey = `fallback-hook/bond-effect-${aspect}/${transiting}`;
-  const variantEffectKey = variant
-    ? `fallback-hook/bond-effect-${family}/${transiting}/variant-${variant}`
-    : null;
-  const familyEffectKey = `fallback-hook/bond-effect-${family}/${transiting}`;
-  const effectCandidates = duplicateIndex && duplicateIndex > 0
-    ? [variantEffectKey, familyEffectKey, exactEffectKey]
-    : [exactEffectKey, variantEffectKey, familyEffectKey];
-  const effectKey = effectCandidates.find((key) => key && hooks.get(key)?.body_you)
-    ?? familyEffectKey;
-  const effectRow = hooks.get(effectKey);
-  const authoredEffect = endpointOwner === "reader"
-    ? effectRow?.body_you
-    : effectRow?.body_they ?? effectRow?.body_you;
-  const effect = authoredEffect
-    ?.replaceAll("{{holder1}}'s", `${otherName}'s`)
-    .replaceAll("{{holder1}}", otherName);
+  const { contentKey: effectKey, effect } = resolveBondEffect(hooks, {
+    transiting, aspect, family, variant, endpointOwner, otherName
+  }, SourceGapError);
   const aspectAdj = vocab.get(`fallback-vocab/aspect-adj/${aspect}`)?.body;
   if (!effect || !aspectAdj) throw new SourceGapError(`SOURCE_GAP: bond transit ${transiting}/${aspect} (${family})`);
   const timeOpen = win ?? WINDOW_ASPECT[transiting] ?? "Currently";
@@ -2219,7 +2202,7 @@ function renderBondTransitReference({ transiting, aspect, endpointPlanet, endpoi
     : "it";
   const closing = `${transitRef(transiting, sign).replace(/^./, (char) => char.toUpperCase())} is ${relation[aspect] ?? aspectAdj} ${endpoint}${timeClose ? ` ${timeClose}` : ""}, activating the connection${plural ? "s" : ""} ${endpointReference} makes with ${activatedList}.`;
   const paras = [effect, closing];
-  const body = paras.join("\n\n").trim();
+  const body = paras.join("\n\n");
   if (/\{\{/.test(body)) throw new SourceGapError(`SOURCE_GAP: bond transit ${transiting}/${aspect} unresolved slot`);
   const HL = { conjunction: "conjunct", opposition: "opposite" };
   const headline = `${title(transiting)} ${HL[aspect] ?? aspect} ${endpoint}`;

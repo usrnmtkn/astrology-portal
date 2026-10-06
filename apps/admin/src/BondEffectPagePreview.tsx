@@ -1,3 +1,4 @@
+import { interpolateRelationshipTemplate } from "../../web/src/content/fallbackArchitectureV3/resolver/relationshipTemplate.mjs";
 import { useEffect, useState } from "react";
 import { AdminDisclosureSummary, AdminSelect } from "./AdminNativeControls";
 import { PageLoading } from "../../web/src/components/PageLoading";
@@ -232,9 +233,15 @@ export default function BondEffectPagePreview({
   if (!contact && !onContactChange) return null;
 
   const openingField = audience === "you" ? "body_you" : "body_they";
-  const openingYou = fillNamedSlots(youText, { holder1: friendName.trim() || "Name" }).trim();
-  const openingThey = fillNamedSlots(theyText, { holder1: friendName.trim() || "Name" }).trim();
-  const opening = audience === "you" ? openingYou : openingThey;
+  let openingYou = "";
+  let openingThey = "";
+  let openingError = "";
+  try {
+    openingYou = interpolateRelationshipTemplate(youText, { holder1: friendName.trim() || "Name" });
+    openingThey = interpolateRelationshipTemplate(theyText, { holder1: friendName.trim() || "Name" });
+  } catch (error) {
+    openingError = error instanceof Error ? error.message : "The saved template could not be resolved.";
+  }
   const headline = bondEffectPageHeadline(transitingPlanet, transitAspect, natalPoint, audience, friendName);
   const openingKey = onContactChange ? bondEffectExactContentKey(transitingPlanet, transitAspect) : contentKey;
   const activationTitle = bondActivationHeadline(natalPoint, activationAspect, friendName, friendPoint);
@@ -373,6 +380,7 @@ export default function BondEffectPagePreview({
         <StudioButton type="button" disabled={!synastryKey} onClick={() => openActivation("body_they")}>Open Friend activation</StudioButton>
       </div>
       <StudioTabs label="Friends composition views" value={view} onValueChange={setView} tabs={views.map((item) => ({ value: item.id, label: item.label }))}>
+        {openingError && <p role="alert">{openingError}</p>}
         <div className="admin-composition-variable-legend" aria-label="Composition color key">
           <span className="variable-fact" data-variable-color="1">Calculated fact</span>
           <span className="variable-hook" data-variable-color="2">Authored hook</span>
@@ -403,7 +411,7 @@ export default function BondEffectPagePreview({
                   </p>
                 </div>
                 <div className="admin-composition-preview-field field-body">
-                  <Text size="meta" tone="secondary">Opening · They</Text>
+                  <Text size="meta" tone="secondary">Transit hits their chart</Text>
                   <p>
                     <Passage ariaLabel="Edit Friend opening" kind="copy" onClick={() => onOpenSource(openingKey, "Between you two opening", "body_they")}>
                       {openingThey || "No Friend opening saved. Select to write this section."}
@@ -411,7 +419,7 @@ export default function BondEffectPagePreview({
                   </p>
                 </div>
                 <div className="admin-composition-preview-field field-body">
-                  <Text size="meta" tone="secondary">Opening · You</Text>
+                  <Text size="meta" tone="secondary">Transit hits your chart</Text>
                   <p>
                     <Passage ariaLabel="Edit You opening" kind="copy" onClick={() => onOpenSource(openingKey, "Between you two opening", "body_you")}>
                       {openingYou || "No You opening saved. Select to write this section."}
@@ -485,8 +493,12 @@ export default function BondEffectPagePreview({
                 <StudioButton type="button" className="admin-composition-variable variable-copy" data-variable-color="3" onClick={() => openOpening()} aria-label="Edit opening">
                   Opening
                 </StudioButton>
-                <code className="admin-sky-section-reference">{`${openingKey}#${openingField}`}</code>
-                <p className="admin-composition-source-copy">{opening || "Empty · skipped"}</p>
+                <Text size="meta" tone="secondary">Transit hits your chart</Text>
+                <code className="admin-sky-section-reference">{`${openingKey}#body_you`}</code>
+                <p className="admin-composition-source-copy">{youText || "Missing you perspective."}</p>
+                <Text size="meta" tone="secondary">Transit hits their chart</Text>
+                <code className="admin-sky-section-reference">{`${openingKey}#body_they`}</code>
+                <p className="admin-composition-source-copy">{theyText || "Missing friend perspective."}</p>
               </li>
             </ol>
             <ol aria-label="What this activates template order">
@@ -515,7 +527,10 @@ export default function BondEffectPagePreview({
             <article className="admin-composition-source-card" aria-label="Between you two opening source">
               <strong>Between you two</strong>
               <small>Opening row for the transiting contact</small>
-              <p className="admin-composition-source-copy">{openingThey || openingYou || "No writing saved for this section."}</p>
+              <Text size="meta" tone="secondary">Transit hits your chart</Text>
+              <p className="admin-composition-source-copy">{openingYou || "Missing you perspective."}</p>
+              <Text size="meta" tone="secondary">Transit hits their chart</Text>
+              <p className="admin-composition-source-copy">{openingThey || "Missing friend perspective."}</p>
               <StudioButton type="button" onClick={() => openOpening()}>Edit opening</StudioButton>
               <details className={`${containedDisclosure} admin-workspace-details`}>
                 <AdminDisclosureSummary>Source details</AdminDisclosureSummary>

@@ -1,6 +1,6 @@
 {
   "schema": "tldrastro-approved-serving-projection/v1",
-  "packageVersion": "v3-2026-10-05-between-you-two-names",
+  "packageVersion": "v3-2026-10-05-relationship-template-integrity",
   "policy": {
     "eligibleReviewStatuses": [
       "approved",
@@ -24,7 +24,7 @@
   },
   "lineage": {
     "file": "approved-serving-lineage-v1.json",
-    "sha256": "338522b5ba4aa4291e049a483771a60016e3311c82d5141ad3ded6b723e85d47",
+    "sha256": "cb2422c5f4134cc70a098294ba98df4d1600746d565852699f4cf35fcda1e23e",
     "count": 9812,
     "emissionCount": 9888,
     "exactSourceMatchCount": 8770
