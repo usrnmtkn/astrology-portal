@@ -51,7 +51,7 @@ test("complete interpretation has its own heading, exact identity, draft save, a
   const body = page.getByRole("textbox", { name: "Complete interpretation", exact: true });
   await expect(heading).toHaveValue("");
   await heading.fill("Complete fixture heading");
-  const wording = "Complete fixture opening.\n\n{planetList}. Detriment ({detrimentCount}): {detrimentPlanetList}. Fall ({fallCount}): {fallPlanetList}.\n\nComplete fixture ending.";
+  const wording = "Complete fixture opening.\n\n{countWord} out of the {totalWord} classical planets {countVerb} currently in detriment or fall. {planetList}. Detriment ({detrimentCount}): {detrimentPlanetList}. Fall ({fallCount}): {fallPlanetList}.\n\nComplete fixture ending.";
   await body.fill(wording);
   await page.getByRole("button", { name: /^Save draft(?: & return)?$/ }).click();
   await expect.poll(() => stored[0]?.body).toBe(wording);
@@ -66,6 +66,7 @@ test("complete interpretation has its own heading, exact identity, draft save, a
   await expect(reading).toContainText("Complete fixture opening.");
   await expect(reading).toContainText("Complete fixture ending.");
   await expect(reading).toContainText("Detriment (1): Venus in Scorpio. Fall (2): Mars in Cancer and Saturn retrograde in Aries.");
+  await expect(reading.getByTestId("effort-count-statement")).toHaveText(`${highlightedCountStatement}.`);
   await expect(reading.getByRole("heading")).toHaveText("Complete fixture heading");
   await studio.getByRole("tab", { name: "Composition map", exact: true }).click();
   await studio.getByLabel("Mapped effort summary", { exact: true }).getByRole("button", { name: "Edit Complete card for these placements" }).first().click();
