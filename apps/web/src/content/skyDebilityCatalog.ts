@@ -1,6 +1,7 @@
 import type { SkySummaryField } from "./skyDailySummaryCatalog";
 import { TRADITIONAL_DIGNITY_PLANETS } from "../services/planetSignDignity.mjs";
 import { skyDebilityPhraseKey, skyDebilityPhraseNames, skyDebilityPhraseSets } from "./skyDebilityPhrases.js";
+import { SKY_DEBILITY_INTERPRETATION_PREFIX, skyDebilityInterpretationField, skyDebilityInterpretationErrors } from "./skyDebilityInterpretation.js";
 
 export const SKY_DEBILITY_KEY_PREFIX = "cms/sky-debility/";
 
@@ -62,7 +63,7 @@ export const skyDebilityFields: SkySummaryField[] = [
 ];
 const byKey = new Map(skyDebilityFields.map(field => [field.key, field]));
 export function isSkyDebilityKey(key: string) { return key.startsWith(SKY_DEBILITY_KEY_PREFIX); }
-export function skyDebilityField(key: string) { return byKey.get(key); }
+export function skyDebilityField(key: string) { return byKey.get(key) ?? skyDebilityInterpretationField(key); }
 export function skyDebilityExampleOrder(body: string) { return body.split(",").map(value => value.trim()); }
 export function skyDebilityLegacyContext(body: string) { return body.includes("{signConditionClause}"); }
 export function skyDebilityTemplateSlots(key: string, body: string): readonly string[] {
@@ -73,8 +74,9 @@ export function skyDebilityTemplateSlots(key: string, body: string): readonly st
     : skyDebilityField(key)?.allowedSlots ?? [];
 }
 
-export function skyDebilityTemplateErrors(key: string, body: string): string[] {
+export function skyDebilityTemplateErrors(key: string, body: string, headline?: string | null): string[] {
   if (!isSkyDebilityKey(key)) return [];
+  if (key.startsWith(SKY_DEBILITY_INTERPRETATION_PREFIX)) return skyDebilityInterpretationErrors(key, body, headline);
   const field = skyDebilityField(key);
   if (!field) return ["Unknown effort-summary field."];
   const allowedSlots = skyDebilityTemplateSlots(key, body);

@@ -4,8 +4,11 @@ import {
 } from "../services/planetSignDignity.mjs";
 import { skyDebilityExampleOrder, skyDebilityField, skyDebilityLegacyContext, skyDebilityTemplateErrors } from "./skyDebilityCatalog.js";
 import { skyDebilityPhraseKey, skyDebilityPhraseNames, skyDebilityPhraseSet, skyDebilityPlacementId } from "./skyDebilityPhrases.js";
+import { skyDebilityInterpretationErrors, skyDebilityInterpretationPlacements } from "./skyDebilityInterpretation.js";
+import { skyDebilityPlacementLinks } from "./skyDebilityPresentation.js";
 
 export type SkyDebilityCopyReader = (key: string) => string | null | undefined;
+export type SkyDebilityInterpretation = { contentKey: string; headline: string | null; body: string };
 const numberWords = ["zero", "one", "two", "three", "four", "five", "six", "seven"] as const;
 const capitalize = (text: string) => text ? text[0].toUpperCase() + text.slice(1) : text;
 export function skyDebilitySlots(snapshot: TraditionalSkyDebilities) {
@@ -27,7 +30,8 @@ export function joinSkyDebilityList(parts: readonly string[], conjunction: "and"
 /** One deterministic assembler for the reader and every Studio view. */
 export function assembleSkyDebilityCopy(
   snapshot: TraditionalSkyDebilities,
-  read: SkyDebilityCopyReader = key => skyDebilityField(key)?.body
+  read: SkyDebilityCopyReader = key => skyDebilityField(key)?.body,
+  interpretation?: SkyDebilityInterpretation
 ) {
   const slots: Record<string, string> = skyDebilitySlots(snapshot);
   const errors: string[] = [];
@@ -36,7 +40,7 @@ export function assembleSkyDebilityCopy(
     visible: false, hiddenReason: "", openingHook: "", titleLead: "", titleSoft: "",
     countLabel: "", countUnit: slots.planetWord, body: "", paragraphs: [] as string[],
     paragraphTemplates: [] as string[],
-    accessibleName: "", slots, errors, requiredKeys, legacyContext: false,
+    accessibleName: "", slots, errors, requiredKeys, legacyContext: false, interpretationKey: "",
     selectedPlacementKeys: [] as string[], allPlacementKeys: [] as string[], omittedExamplePlacementKeys: [] as string[]
   };
   if (snapshot.framework !== DIGNITY_FRAMEWORK || snapshot.traditionalCount !== 7 || snapshot.knownCount !== 7) {
@@ -48,6 +52,24 @@ export function assembleSkyDebilityCopy(
     return { ...output, hiddenReason: "invalid-sky", errors: ["The qualifying placements do not match the shared dignity lookup."] };
   }
   if (snapshot.count === 0) return { ...output, hiddenReason: "no-qualifying-planets" };
+
+  if (interpretation) {
+    requiredKeys.push(interpretation.contentKey);
+    errors.push(...skyDebilityInterpretationErrors(interpretation.contentKey, interpretation.body, interpretation.headline));
+    const placements = skyDebilityInterpretationPlacements(interpretation.contentKey) ?? [];
+    if (placements.length !== snapshot.count || placements.some(row => !snapshot.planets.some(value => value.planet === row.planet && value.sign === row.sign)))
+      errors.push("The complete interpretation does not match every qualifying placement.");
+    const allPlacementKeys = placements.map(row => skyDebilityPlacementId(row.planet, row.sign));
+    slots.planetList = joinSkyDebilityList(skyDebilityPlacementLinks(allPlacementKeys, placements, "reading").map(link => link.text), "and");
+    const paragraphTemplates = interpretation.body.split(/\n\s*\n/u);
+    if (errors.length) return { ...output, hiddenReason: "missing-or-invalid-wording", interpretationKey: interpretation.contentKey,
+      openingHook: interpretation.headline ?? "", paragraphTemplates, allPlacementKeys };
+    const paragraphs = paragraphTemplates.map(text => text.replace(/\{([^{}]+)\}/gu, (_, name: string) => slots[name]));
+    return { ...output, visible: true, interpretationKey: interpretation.contentKey,
+      openingHook: interpretation.headline!, titleLead: interpretation.headline!, accessibleName: interpretation.headline!,
+      countLabel: `${slots.count} of ${slots.total}`, allPlacementKeys, selectedPlacementKeys: allPlacementKeys,
+      paragraphTemplates, paragraphs, body: paragraphs.join("\n\n") };
+  }
 
   function required(key: string) {
     requiredKeys.push(key);

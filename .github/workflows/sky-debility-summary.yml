@@ -51,7 +51,7 @@ jobs:
       - name: Rebuild and verify fallback integrity indexes
         run: npm run build:fallback-manifest && git diff --exit-code
       - name: All placement sets, counts, grammar and publication states
-        run: node --import tsx scripts/test-sky-debility-copy.mts
+        run: node --import tsx scripts/test-sky-debility-copy.mts && node --import tsx scripts/test-sky-debility-interpretation.mts
       - name: Source-map parity and exact field routing across all combinations
         run: node --import tsx scripts/test-sky-debility-composition.mts
       - name: Inline links, count emphasis, motion changes and all presentation states

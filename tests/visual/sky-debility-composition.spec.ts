@@ -39,6 +39,38 @@ const style = (element: HTMLElement) => {
   const value = getComputedStyle(element);
   return Object.fromEntries(["fontFamily", "fontSize", "fontWeight", "lineHeight", "letterSpacing"].map(key => [key, value[key as any]]));
 };
+
+test("complete interpretation has its own heading, exact identity, draft save, and reload", async ({ page }) => {
+  const stored: any[] = [];
+  await mockStudio(page, stored);
+  await page.goto("/#sky-writeups?view=daily-summary");
+  const studio = page.getByTestId("sky-debility-studio");
+  await studio.getByText("Complete interpretation for these placements", { exact: true }).click();
+  await studio.getByRole("button", { name: "Write complete interpretation", exact: true }).click();
+  const heading = page.getByRole("textbox", { name: "Card heading", exact: true });
+  const body = page.getByRole("textbox", { name: "Complete interpretation", exact: true });
+  await expect(heading).toHaveValue("");
+  await heading.fill("Complete fixture heading");
+  const wording = "Complete fixture opening.\n\n{planetList}.\n\nComplete fixture ending.";
+  await body.fill(wording);
+  await page.getByRole("button", { name: /^Save draft(?: & return)?$/ }).click();
+  await expect.poll(() => stored[0]?.body).toBe(wording);
+  expect(stored[0].content_key).toBe("cms/sky-debility/reading/venus-scorpio-direct__mars-cancer-direct__saturn-aries-retrograde");
+  expect(stored[0].status).toBe("DRAFT");
+  await page.goto("/#sky-writeups?view=daily-summary");
+  await page.reload();
+  const reading = studio.getByLabel("Complete effort summary", { exact: true });
+  await expect(reading).toContainText("Complete fixture opening.");
+  await expect(reading).toContainText("Complete fixture ending.");
+  await expect(reading.getByRole("heading")).toHaveText("Complete fixture heading");
+  await studio.getByRole("tab", { name: "Composition map", exact: true }).click();
+  await studio.getByLabel("Mapped effort summary", { exact: true }).getByRole("button", { name: "Edit Complete card for these placements" }).first().click();
+  await expect(body).toHaveValue(wording);
+  await body.fill("Missing the complete fact list.");
+  await expect(page.getByRole("button", { name: "Save & publish", exact: true })).toBeDisabled();
+  await body.fill(wording);
+  await expect(page.getByRole("button", { name: "Save & publish", exact: true })).toBeEnabled();
+});
 for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
   test(`complete template and clickable map ${width} ${theme}`, async ({ page }) => {
     const stored: any[] = [];

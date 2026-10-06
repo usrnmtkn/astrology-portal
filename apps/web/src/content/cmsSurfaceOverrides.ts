@@ -6,6 +6,8 @@ import {
 } from "../services/generatedContent";
 import type { TemplateSlotValues } from "../services/templateInterpolation";
 import { skyDebilityFields } from "./skyDebilityCatalog";
+import { skyDebilityInterpretationKey } from "./skyDebilityInterpretation";
+import type { SkyDebilityDisplayPosition } from "./skyDebilityPresentation";
 
 export type CmsGeneratedContentMap = ReadonlyMap<string, LiveGeneratedContent>;
 
@@ -20,7 +22,10 @@ function keyPart(value: string | number | null | undefined) {
 
 export const cmsSurfaceKeys = {
   retrogradeSummary: () => ["cms/sky-retrograde-summary"],
-  skyDebility: () => skyDebilityFields.map(field => field.key),
+  skyDebility: (positions: readonly SkyDebilityDisplayPosition[] = []) => {
+    const key = skyDebilityInterpretationKey(positions);
+    return [...(key ? [key] : []), ...skyDebilityFields.map(field => field.key)];
+  },
   soulRoadmap: (sun: string, moon: string, path: string) => [
     `cms/soul-roadmap/${keyPart(sun)}/${keyPart(moon)}/${keyPart(path)}`,
     "cms/soul-roadmap/template"

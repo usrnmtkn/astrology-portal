@@ -1,4 +1,4 @@
-import { assembleSkyDebilityCopy, type SkyDebilityCopyReader } from "../../web/src/content/skyDebilityAssembly.js";
+import { assembleSkyDebilityCopy, type SkyDebilityCopyReader, type SkyDebilityInterpretation } from "../../web/src/content/skyDebilityAssembly.js";
 import { skyDebilityField } from "../../web/src/content/skyDebilityCatalog.js";
 import { skyDebilityPhraseKey, skyDebilityPhraseSet, type SkyDebilityPhraseName } from "../../web/src/content/skyDebilityPhrases.js";
 import type { TraditionalSkyDebilities } from "../../web/src/services/planetSignDignity.mjs";
@@ -31,17 +31,25 @@ function template(text: string, sourceKey: string, slots: Record<string, SkyDebi
 
 /** Editor-only source map over the production assembler. A captured source
  * snapshot feeds both; every field must match byte-for-byte or fail closed. */
-export function buildSkyDebilityComposition(snapshot: TraditionalSkyDebilities, read: SkyDebilityCopyReader = key => skyDebilityField(key)?.body) {
+export function buildSkyDebilityComposition(snapshot: TraditionalSkyDebilities, read: SkyDebilityCopyReader = key => skyDebilityField(key)?.body, interpretation?: SkyDebilityInterpretation) {
   const sources = new Map<string, string | null | undefined>();
   const capturedRead: SkyDebilityCopyReader = key => {
     if (!sources.has(key)) sources.set(key, read(key));
     return sources.get(key);
   };
-  const copy = assembleSkyDebilityCopy(snapshot, capturedRead);
+  const copy = assembleSkyDebilityCopy(snapshot, capturedRead, interpretation);
   const empty = { copy, sources, slots: {} as Record<string, SkyDebilityMappedPart[]>, heading: [] as SkyDebilityMappedPart[],
     countLabel: [] as SkyDebilityMappedPart[], countUnit: [] as SkyDebilityMappedPart[], paragraphs: [] as SkyDebilityMappedPart[][],
     errors: [] as string[] };
   if (!copy.visible) return empty;
+  if (copy.interpretationKey) {
+    const sourceKey = copy.interpretationKey;
+    sources.set(sourceKey, interpretation!.body);
+    const slots: Record<string, SkyDebilityMappedPart[]> = Object.fromEntries(Object.entries(copy.slots).map(([slot, text]) => [slot, [{ text, slot, kind: "fact" as const }]]));
+    return { ...empty, slots,
+      heading: [{ text: copy.openingHook, kind: "template" as const, sourceKey }],
+      paragraphs: copy.paragraphTemplates.map(text => template(text, sourceKey, slots)) };
+  }
   const body = (key: string) => (capturedRead(key) ?? "").trim();
   const sourceFor = (placementKey: string) => {
     const [planet, sign] = placementKey.split("/");

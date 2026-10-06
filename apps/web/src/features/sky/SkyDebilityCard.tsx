@@ -9,9 +9,9 @@ export function SkyDebilityCard({ generatedContent, positions }: {
   positions: readonly SkyDebilityDisplayPosition[];
 }) {
   const snapshot = traditionalSkyDebilities(positions);
-  const copy = resolveSkyDebilityCopy(generatedContent, snapshot);
+  const copy = resolveSkyDebilityCopy(generatedContent, snapshot, positions);
   if (!copy.visible) return null;
-  const links = skyDebilityPlacementLinks(copy.allPlacementKeys, positions);
+  const links = skyDebilityPlacementLinks(copy.allPlacementKeys, positions, copy.interpretationKey ? "reading" : "compact");
   return (
     <section className="sky-today-ledger sky-debility-ledger" aria-label={copy.accessibleName}>
       <header className="sky-today-ledger__head">

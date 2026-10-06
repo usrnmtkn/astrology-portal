@@ -28,7 +28,7 @@ export function SkyDebilityCompositionMap({ composition, read, onSelectSource, b
   const [view, setView] = useState<View>("reading");
   const [variable, setVariable] = useState<string | null>(null);
   const { copy } = composition;
-  const links = skyDebilityPlacementLinks(copy.allPlacementKeys, positions);
+  const links = skyDebilityPlacementLinks(copy.allPlacementKeys, positions, copy.interpretationKey ? "reading" : "compact");
   const readingParts = copy.paragraphTemplates.map(text => presentSkyDebilityParts(skyDebilityTemplateParts(text, copy.slots), links));
   const mappedParts = composition.paragraphs.map(parts => presentSkyDebilityParts(parts, links));
   const textOf = (parts: readonly SkyDebilityDisplayPart[]) => parts.map(part => part.text).join("");
@@ -57,6 +57,9 @@ export function SkyDebilityCompositionMap({ composition, read, onSelectSource, b
   function rawTemplate(name: string) {
     const key = skyDebilityTemplateKey(name);
     const text = body(name);
+    return rawTextTemplate(key, text);
+  }
+  function rawTextTemplate(key: string, text: string) {
     const slots = Object.fromEntries(skyDebilityTemplateTokens(text).map(slot => [slot, `{${slot}}`]));
     return <SkyDebilityInline parts={emphasizeSkyDebilityCount(skyDebilityTemplateParts(text, slots))}
       renderText={part => part.slot ? <a href="#sky-writeups?view=daily-summary" className="admin-composition-variable admin-template-reader-variable variable-copy"
@@ -85,9 +88,11 @@ export function SkyDebilityCompositionMap({ composition, read, onSelectSource, b
           <span>{hasUnsaved ? "Unsaved working preview" : "Working preview"} · example placements</span></div>
         <div className="admin-template-reader-copy">
           {view === "template" ? <section className="admin-composition-preview-field field-body" aria-label="Full effort summary template" data-testid="sky-debility-full-template">
-            <h4>{rawTemplate("openingHook")}</h4>
-            <p>{rawTemplate("experienceTemplate")}</p>
-            <p>{rawTemplate("contextTemplate")}</p>
+            <h4>{copy.interpretationKey ? editLink(copy.interpretationKey, copy.openingHook) : rawTemplate("openingHook")}</h4>
+            {copy.interpretationKey ? copy.paragraphTemplates.map((text, index) => <p key={index}>{rawTextTemplate(copy.interpretationKey, text)}</p>) : <>
+              <p>{rawTemplate("experienceTemplate")}</p>
+              <p>{rawTemplate("contextTemplate")}</p>
+            </>}
           </section> : !copy.visible ? <div role="status">
             {copy.hiddenReason === "no-qualifying-planets" ? <p>The reader card is hidden when no planets qualify. The Full template tab is still available for editing.</p>
               : <><p>This example cannot be assembled until the writing below is corrected.</p>{copy.errors.map(error => <p key={error}>{error}</p>)}</>}
@@ -111,11 +116,13 @@ export function SkyDebilityCompositionMap({ composition, read, onSelectSource, b
     </StudioTabs>
     <details className="admin-workspace-details">
       <summary>Sources and selection rules</summary>
-      <p>Selected branch: {copy.allPlacementKeys.length === 0 ? "card hidden" : `${copy.allPlacementKeys.length === 1 ? "one-planet" : "multiple-planet"} ${branchLabel}`}.</p>
+      <p>Selected branch: {copy.interpretationKey ? "complete interpretation for the exact qualifying placements and motion" : copy.allPlacementKeys.length === 0 ? "card hidden" : `${copy.allPlacementKeys.length === 1 ? "one-planet" : "multiple-planet"} ${branchLabel}`}.</p>
       <p>Selected matched examples: {copy.selectedPlacementKeys.length ? copy.selectedPlacementKeys.map(placementLabel).join(", ") : "none"}.</p>
       {copy.omittedExamplePlacementKeys.length > 0 && <p>{copy.omittedExamplePlacementKeys.map(placementLabel).join(", ")} remain in the count, planetary functions, and inline links. Their experiences, situations, and responses are not among the three selected examples.</p>}
-      <p>Experiences and situations use “or”; responses and functions use “and”. The inline placement links are comma-separated. {editLink(skyDebilityTemplateKey("exampleOrder"), "Edit example order")}.</p>
-      <p>{editLink(skyDebilityTemplateKey(oneKey), `Edit one-planet ${branchLabel}`)} · {editLink(skyDebilityTemplateKey(manyKey), `Edit multiple-planet ${branchLabel}`)}</p>
+      {!copy.interpretationKey && <>
+        <p>Experiences and situations use “or”; responses and functions use “and”. The inline placement links are comma-separated. {editLink(skyDebilityTemplateKey("exampleOrder"), "Edit example order")}.</p>
+        <p>{editLink(skyDebilityTemplateKey(oneKey), `Edit one-planet ${branchLabel}`)} · {editLink(skyDebilityTemplateKey(manyKey), `Edit multiple-planet ${branchLabel}`)}</p>
+      </>}
       {copy.requiredKeys.map(key => <p key={key}>{editLink(key, skyDebilityField(key)?.label ?? key)}</p>)}
     </details>
   </section>;
