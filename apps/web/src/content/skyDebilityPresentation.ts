@@ -43,23 +43,28 @@ export function skyDebilityTemplateParts(template: string, slots: Readonly<Recor
   });
 }
 
-/** Emphasis follows the count tokens and their colon, not English wording or
- * a particular count. Unknown/custom structures retain their wording. */
+/** Emphasize the calculated count through its sentence-ending period, or up
+ * to the colon before a placement list. Preserve all wording and source keys. */
 export function emphasizeSkyDebilityCount(parts: readonly SkyDebilityDisplayPart[]): SkyDebilityDisplayPart[] {
   const start = parts.findIndex(part => part.slot === "countWord");
-  const end = parts.findIndex((part, index) => index > start && part.slot === "planetList");
-  if (start < 0 || end <= start) return [...parts];
-  const countSlots = new Set(["countWord", "totalWord", "countVerb"]);
-  const span = parts.slice(start, end);
-  if ([...countSlots].some(slot => !span.some(part => part.slot === slot))
-    || span.some(part => part.slot && !countSlots.has(part.slot))) return [...parts];
-  const last = span.at(-1)!;
-  const delimiter = /:\s*$/u.exec(last.text);
-  if (last.slot || !delimiter) return [...parts];
-  const prefix = span.slice(0, -1).map(part => ({ ...part, emphasized: true }));
-  const finalText = last.text.slice(0, delimiter.index);
-  if (finalText) prefix.push({ ...last, text: finalText, emphasized: true });
-  return [...parts.slice(0, start), ...prefix, { ...last, text: delimiter[0] }, ...parts.slice(end)];
+  if (start < 0) return [...parts];
+  const remaining = new Set(["countWord", "totalWord", "countVerb"]);
+  for (let end = start; end < parts.length; end++) {
+    const part = parts[end];
+    if (part.slot) {
+      if (!remaining.delete(part.slot)) return [...parts];
+      continue;
+    }
+    const delimiter = /[.:]/u.exec(part.text);
+    if (!delimiter) continue;
+    if (remaining.size || delimiter[0] === ":" && (parts[end + 1]?.slot !== "planetList" || !/^:\s*$/u.test(part.text.slice(delimiter.index)))) return [...parts];
+    const boundary = delimiter.index + (delimiter[0] === "." ? 1 : 0);
+    const prefix = parts.slice(start, end).map(value => ({ ...value, emphasized: true }));
+    if (boundary) prefix.push({ ...part, text: part.text.slice(0, boundary), emphasized: true });
+    const suffix = part.text.slice(boundary);
+    return [...parts.slice(0, start), ...prefix, ...(suffix ? [{ ...part, text: suffix }] : []), ...parts.slice(end + 1)];
+  }
+  return [...parts];
 }
 
 /** Reader and Studio share this presentation. Only the declared planetList

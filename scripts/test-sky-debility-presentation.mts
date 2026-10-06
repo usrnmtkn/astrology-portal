@@ -56,6 +56,10 @@ function verify(selected: Record<string, string>) {
         }
       }
     }
+    const sentenceTemplate = "{countWord} out of the {totalWord} classical planets {countVerb} currently in detriment or fall. Fixture explanation remains plain.";
+    const sentence = presentSkyDebilityParts(skyDebilityTemplateParts(sentenceTemplate, copy.slots), links);
+    assert.equal(textOf(sentence.filter(part => part.emphasized)), `${copy.slots.countWord} out of the seven classical planets ${copy.slots.countVerb} currently in detriment or fall.`);
+    assert.equal(textOf(sentence), sentenceTemplate.replace(/\{([^{}]+)\}/gu, (_, name) => copy.slots[name]));
     presentations++;
   }
 }
@@ -91,6 +95,20 @@ const custom = presentSkyDebilityParts(customMap.paragraphs[1], links);
 assert.equal(textOf(custom), textOf(presentSkyDebilityParts(skyDebilityTemplateParts(customTemplate, customMap.copy.slots), links)));
 assert.equal(textOf(custom.filter(part => part.emphasized)), "Three out of the seven classical planets are in detriment or fall");
 assert(custom.some(part => part.sourceKey === "cms/sky-debility/contextTemplate"));
+
+const countSentence = "{countWord} out of the {totalWord} classical planets {countVerb} currently in detriment or fall.";
+const standaloneTemplate = `Fixture prefix. ${countSentence} Fall ({fallCount}): {fallPlanetList}.`;
+const standaloneParts = skyDebilityTemplateParts(standaloneTemplate, { ...copy.slots, fallCount: "2", fallPlanetList: "Mars in Cancer and Saturn retrograde in Aries" }).map(part => ({ ...part, sourceKey: "fixture-source" }));
+const standalone = presentSkyDebilityParts(standaloneParts, links);
+assert.equal(textOf(standalone), textOf(standaloneParts));
+assert.equal(textOf(standalone.filter(part => part.emphasized)), `${highlightedCountStatement}.`);
+assert(standalone.every(part => part.sourceKey === "fixture-source"));
+for (const template of [countSentence.replace("{totalWord}", "seven"), countSentence.replace("{countVerb}", "{planetReference}"), countSentence.replace("{countWord}", "{countWord}."), countSentence.slice(0, -1)]) {
+  const parts = skyDebilityTemplateParts(template, copy.slots);
+  const presented = presentSkyDebilityParts(parts, links);
+  assert.equal(textOf(presented), textOf(parts));
+  assert.equal(presented.some(part => part.emphasized), false);
+}
 
 // Actual React card markup: heading only, two body paragraphs and one inline list.
 const html = renderToStaticMarkup(createElement(SkyDebilityCard, { positions: original }));
