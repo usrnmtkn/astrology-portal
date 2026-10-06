@@ -20,6 +20,7 @@ import {SEASONAL_MEANING_BANK,resolveSeasonalMeaning,seasonalMeaningForRising} f
 import {loadSeasonalHoroscopeEvidence} from './seasonalHoroscopeEvidence.mjs';
 import {loadSeasonalArgumentEvidence} from './seasonalArgumentEvidence.mjs';
 import {loadMonthlyHoroscopeEvidence} from './monthlyHoroscopeEvidence.mjs';
+import {HOROSCOPE_RHETORICAL_REVIEW} from './horoscopeRhetoricalReview.mjs';
 
 const root=fileURLToPath(new URL('../../',import.meta.url));
 export const horoscopeWritingVersion='horoscope-writer/v17';
@@ -156,7 +157,7 @@ export function prepareHoroscopeWriting(row,{studioCorrections=[],feedbackReceip
     return {sign:rising,house,seasonalMeaning:overview?seasonalMeaning:seasonalMeaningForRising(seasonalMeaning,rising,sources.houses),anchor:{planet,sign},developments,domain:domain.plainTranslation,outline:savedOutline||argumentInput.thesis,
       argumentOutline,meaningInput,plan,contextOptions,validationCorrections:context.corrections,sourceIds:context.sameFamilyExamples.map(e=>e.id)};
   });
-  const planHash=digest({version:horoscopeWritingVersionFor(edition.window.period),window:edition.window,writingProfile,sourceHash,
+  const planHash=digest({version:horoscopeWritingVersionFor(edition.window.period),...(edition.window.period!=='seasonal'?{reviewVersion:HOROSCOPE_RHETORICAL_REVIEW}:{}),window:edition.window,writingProfile,sourceHash,
     feedbackReceipt,brief,entries:entries.map(e=>({sign:e.sign,outline:e.argumentOutline,developments:e.developments,seasonalMeaning:e.seasonalMeaning}))});
   const prepared={edition,brief,writingProfile,entries,planHash,sources:sources.hashes,sourceHash,seasonalMeaning,feedbackReceipt};
   if(preparedPlans.size>=4)preparedPlans.delete(preparedPlans.keys().next().value);preparedPlans.set(cacheKey,prepared);return prepared;
@@ -164,7 +165,7 @@ export function prepareHoroscopeWriting(row,{studioCorrections=[],feedbackReceip
 
 export function horoscopePlanPreview(prepared) {
   const writerCalls=prepared.edition.passages.filter(p=>!p.headline.trim()&&!p.body.trim()).length;
-  return {version:horoscopeWritingVersionFor(prepared.edition.window.period),planHash:prepared.planHash,sourceHash:prepared.sourceHash,window:prepared.edition.window,
+  return {version:horoscopeWritingVersionFor(prepared.edition.window.period),...(prepared.edition.window.period!=='seasonal'?{reviewVersion:HOROSCOPE_RHETORICAL_REVIEW,reviewCalls:writerCalls}:{}),planHash:prepared.planHash,sourceHash:prepared.sourceHash,window:prepared.edition.window,
     readings:prepared.entries.map(e=>({sign:e.sign,anchor:e.anchor,house:e.house,domain:e.domain,outline:e.outline,
       argument:e.argumentOutline,developments:e.developments,seasonalMeaning:e.seasonalMeaning,sourceIds:e.sourceIds})),writerCalls,
     ...(prepared.edition.window.period==='seasonal'?{planningCalls:writerCalls*3,editorialReviewCalls:writerCalls*6,maximumPaidCalls:writerCalls*30}:{}),

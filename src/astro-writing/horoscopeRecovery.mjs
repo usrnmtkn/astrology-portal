@@ -10,5 +10,5 @@ export function horoscopeStartupRecovery(operation, now = Date.now()) {
 }
 
 export function horoscopePendingReadings(edition, generation) {
-  return edition.passages.filter(p => !p.headline.trim() && !p.body.trim() && !generation?.heldRequests?.[p.sign]);
+  return edition.passages.filter(p => !p.headline.trim() && !p.body.trim() && !generation?.heldRequests?.[p.sign] && !generation?.candidateHolds?.[p.sign]);
 }

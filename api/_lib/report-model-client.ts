@@ -1,3 +1,4 @@
+import { RHETORICAL_WRITER_POLICY, RHETORICAL_JUDGE_POLICY } from "../../src/astro-writing/rhetoricalPatterns.mjs";
 import { reportFulfillmentConfig } from "./report-fulfillment-config.js";
 import { assertOpenAiStrictResponseSchema, ReportProviderSchemaError } from "./report-provider-schema.js";
 import { assertReportProductionKernel, type ReportProductionKernel } from "./report-production-gate.js";
@@ -253,7 +254,9 @@ export const callReportCalibrationModel: ReportModelCall = callReportModel;
  */
 export const callProductionReportModel: ReportModelCall = async <T>(input) => {
   assertReportProductionKernel(input.productionKernel);
-  return callReportModel<T>(input);
+  if(input.productionKernel!.role === "COLD_REVIEWER")return callReportModel<T>(input);
+  const policy=input.productionKernel!.role === "REVIEWER" ? RHETORICAL_JUDGE_POLICY : RHETORICAL_WRITER_POLICY;
+  return callReportModel<T>({...input,prompt:input.prompt.includes(policy)?input.prompt:`${input.prompt}\n\n${policy}`});
 };
 
 function responseRetryPrompt(prompt: string, reason: string, retryNumber: number) {

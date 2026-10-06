@@ -769,14 +769,6 @@ function hasBannedPhrase(text: string, phrase: string) {
 function badAiGenerationFlags(text: string) {
   const flags: string[] = [];
 
-  if (/\bnot\b.{0,80}\bbut\b/i.test(text)) {
-    flags.push("not X but Y construction");
-  }
-
-  if (/\bnot\b.{0,80}\binstead\b/i.test(text)) {
-    flags.push("contrast-reveal construction");
-  }
-
   if (/\b(the harder pattern is|the difficult part is|the shadow is|the gift is|the lesson is)\b/i.test(text)) {
     flags.push("formula scaffold");
   }

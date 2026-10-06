@@ -58,6 +58,10 @@ export function assertHoroscopeRow(row: Record<string,any>, {enforcePunctuation=
   if (!String(row.content_key ?? '').startsWith(HOROSCOPE_EDITION_PREFIX)) return;
   try {
     const edition = validateHoroscopeEdition(row.sections?.horoscopeEdition,row.status === 'LIVE');
+    for(const passage of edition.passages){
+      const held=row.source_snapshot?.horoscopeGeneration?.candidateHolds?.[passage.sign];
+      if(held&&(row.status==='LIVE'||passage.headline===held.candidate.headline&&passage.body===held.candidate.body))throw new Error(`${passage.sign}: This generated reading is held for prose review. Edit or reject its saved candidate before continuing.`);
+    }
     // Keep paid drafts editable and let the remaining signs finish. Publication
     // always checks current text, including imports with no generation receipt.
     if(row.status==='LIVE')for(const passage of edition.passages){

@@ -59,7 +59,7 @@
     "beats": [
       {"n": 1, "beat": "collective hook", "does": "the pair's core energy as a felt collective statement, with the tone", "source": "data/pairs blend", "example": "Belief is carrying a lot of weight right now, and mostly it serves us."},
       {"n": 2, "beat": "aspect line", "does": "name the aspect and what it does to us, element-matched", "source": "aspect nature + element of planets/signs", "example": "With the Leo Sun trine Neptune in Aries, compassion and imagination wash over us before logic can sober us up."},
-      {"n": 3, "beat": "concrete triad", "does": "three DISTINCT lived things (no two overlapping) that show the effect", "source": "authored per pair", "example": "A cause, a song, or a piece of art hits us long before anyone needs to argue for it."},
+      {"n": 3, "beat": "concrete evidence", "does": "the lived example or examples needed to show the effect; no required count and no extra item added for rhythm", "source": "authored per pair", "example": "A cause, a song, or a piece of art hits us long before anyone needs to argue for it."},
       {"n": 4, "beat": "two-planet actors", "does": "each planet-in-sign does its thing", "source": "sign layer (planet-in-sign behavior)", "example": "Leo gives the vision a human heart; Neptune in Aries insists it's worth fighting for."},
       {"n": 5, "beat": "the shift in us", "does": "how the collective changes now", "source": "data/pairs harmonious", "example": "We are quicker to trust now, readier to give up our own ground for something larger."},
       {"n": 6, "beat": "both faces", "does": "name the gift and the shadow together", "source": "harmonious + hard", "example": "Beautiful instincts, and a nice distraction from looking too closely at the math."},

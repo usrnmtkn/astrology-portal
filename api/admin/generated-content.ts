@@ -3015,6 +3015,18 @@ async function updateGeneratedContent(req: IncomingMessage) {
     patch.source_snapshot = separatedArticle.source_snapshot;
   }
   const generation = existing.source_snapshot?.horoscopeGeneration;
+  if (editsHoroscopeEdition && generation?.candidateHolds) {
+    const candidateHolds={...generation.candidateHolds}, resolutions=[...(generation.candidateResolutions??[])];
+    for(const [sign,held] of Object.entries(generation.candidateHolds) as [string,any][]){
+      const corrected=separatedArticle.sections?.horoscopeEdition?.passages?.find((p:any)=>p.sign===sign);
+      if(!corrected?.headline.trim()||!corrected?.body.trim())continue;
+      if(corrected.headline===held.candidate.headline&&corrected.body===held.candidate.body)throw new GeneratedContentRequestError('Edit the held reading before saving it, or reject it to request a replacement. The original and review findings are kept.',422);
+      delete candidateHolds[sign];
+      resolutions.push({sign,operationId:held.operation.id,resolution:'owner_edited',resolvedAt:new Date().toISOString(),ownerApproved:false});
+    }
+    patch.source_snapshot={...separatedArticle.source_snapshot,horoscopeGeneration:{...generation,candidateHolds,candidateResolutions:resolutions,
+      lastError:generation.lastError?.operation?.phase==='review'&&!candidateHolds[generation.lastError.operation.sign]?null:generation.lastError}};
+  }
   if (editsHoroscopeEdition && generation?.lastError?.code === 'required_punctuation') {
     const sign = generation.lastError.operation?.sign;
     const corrected = separatedArticle.sections?.horoscopeEdition?.passages?.find((p:any) => p.sign === sign);
@@ -3022,7 +3034,8 @@ async function updateGeneratedContent(req: IncomingMessage) {
     // The validated text resolves this hold. Generation history remains server-owned.
     if (corrected?.headline.trim() && corrected?.body.trim()
       && (corrected.headline !== previous?.headline || corrected.body !== previous?.body)) {
-      patch.source_snapshot = { ...separatedArticle.source_snapshot, horoscopeGeneration: { ...generation, lastError: null } };
+      const updatedSnapshot=(patch.source_snapshot??separatedArticle.source_snapshot) as Record<string,any>;
+      patch.source_snapshot = { ...updatedSnapshot, horoscopeGeneration: { ...(updatedSnapshot.horoscopeGeneration??generation), lastError: null } };
     }
   }
   const editsImportedHoroscopes = /^sky\/article-(?:template|edition)\//u.test(existing.content_key)

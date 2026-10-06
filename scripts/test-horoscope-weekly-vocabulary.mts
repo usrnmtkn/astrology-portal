@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import {store,installHoroscopeWriterFixture,invokeHoroscopeWriting,writerFixture} from '../tests/helpers/sky-article-save-api.mts';
+import {store,installHoroscopeWriterFixture,invokeHoroscopeWritingWithReview as invokeHoroscopeWriting,writerFixture} from '../tests/helpers/sky-article-save-api.mts';
 import {prepareHoroscopeBrief} from '../api/_lib/horoscope-editions';
 import {horoscopeVocabularyFindings,WEEKLY_REQUIRED_VOCABULARY_RULE} from '../src/astro-writing/horoscopeEditorialConstraints.mjs';
 import {emptyHoroscopeEdition,horoscopeEditionBody,horoscopeEditionKey} from '../apps/web/src/content/horoscopeEditions.mjs';

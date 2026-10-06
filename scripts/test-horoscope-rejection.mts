@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import fs,{globSync} from 'node:fs';
 import {createHash,createHmac} from 'node:crypto';
-import {store,installHoroscopeWriterFixture,invokeHoroscopeWriting,writerFixture} from '../tests/helpers/sky-article-save-api.mts';
+import {store,installHoroscopeWriterFixture,invokeHoroscopeWritingWithReview as invokeHoroscopeWriting,writerFixture} from '../tests/helpers/sky-article-save-api.mts';
 import {emptyHoroscopeEdition,horoscopeEditionKey,horoscopeEditionBody,horoscopeCanonicalJson} from '../apps/web/src/content/horoscopeEditions.mjs';
 import {defaultHoroscopeProfile} from '../src/astro-writing/horoscopeWritingProfiles.mjs';
 installHoroscopeWriterFixture();

@@ -93,11 +93,12 @@ assert.throws(()=>openAIResponses.governedInstructionsForRole('WRITER',{
 assert.match(generate, /effectiveRulePrompt\(baseInstructions, \{ surface, family \}\)/u);
 assert.match(revise, /filter\(\(entry\) => entry\.severity === "blocking"\)/u);
 assert.match(revise, /effectiveRulePrompt\(baseInstructions, \{ surface, family \}\)/u);
-assert.match(review, /MODEL REVIEW GOVERNANCE: Every model-authored editorial finding is advisory evidence for the owner/u);
+assert.match(review, /rhetoricalReviewContract/u);
 assert.match(review, /\.map\(advisoryModelViolation\)/u);
 assert.match(review, /decision: blocking \? "REVISE" : "PASS"/u);
 assert.match(review, /filter\(\(item\) => item\.severity === "blocking"\)/u);
 assert.match(pipeline, /const lint = governValidationResult\(rawLint, \{ surface, family \}\);/u);
 assert.match(pipeline, /advisoryCategories/u);
 
+assert.equal(governValidationResult({violations:[{category:'TRICOLON',detail:'Lexical signal only'}]}).passed,true);
 console.log("Effective writing-rule runtime integration passed: deterministic blocking tiers govern revision; model and voice findings remain owner-review advisories across provider boundaries.");

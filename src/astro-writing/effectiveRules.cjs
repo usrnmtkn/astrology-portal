@@ -115,7 +115,7 @@ function renderEffectiveRulesForPrompt(input = {}) {
     `# Effective TLDR Astro writing rules (${REGISTRY.registryId})`,
     `Surface: ${surface}`,
     "",
-    "## Blocking mechanical boundaries",
+    "## Blocking boundaries (rhetorical patterns require semantic evidence)",
     render(blocking),
     "",
     "## Editorial guidance (reported to the owner; never a model quality verdict)",

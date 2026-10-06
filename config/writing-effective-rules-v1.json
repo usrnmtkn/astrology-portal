@@ -4,10 +4,31 @@
   "unknownRuleTier": "advisory",
   "ownerGate": {
     "authority": "owner-only",
-    "modelJudges": "advisory-only",
+    "modelJudges": "advisory-except-contextual-rhetorical-patterns",
     "generatedCopyStatus": "needs_review"
   },
   "rules": [
+    {
+      "id": "contextual-rhetorical-patterns-v1",
+      "surface": [
+        "all"
+      ],
+      "introducedAt": "2026-10-06",
+      "supersedes": [],
+      "tier": "blocking",
+      "ownerAuthority": {
+        "sourceId": "owner-directive:contextual-rhetorical-patterns-2026-10-06",
+        "sourcePath": "docs/writing/RHETORICAL_PATTERN_PROTECTIONS.md",
+        "decisionDate": "2026-10-06"
+      },
+      "prompt": true,
+      "promptText": "Meaning determines rhetorical form. Reject material performative self-correction (CORRECTIO), padded parallel threes (TRICOLON), and decorative abstraction (PURPLE_PROSE) only after semantic review of the complete passage. Preserve meaningful contrast, necessary precision, factual lists and functional imagery. No automatic regex or counting verdict. No automatic rewrite of owner sources.",
+      "findingCategories": [
+        "CORRECTIO",
+        "TRICOLON",
+        "PURPLE_PROSE"
+      ]
+    },
     {
       "id": "owner-passage-first-v2",
       "surface": ["all"],
@@ -237,7 +258,7 @@
         "decisionDate": "2026-08-25"
       },
       "prompt": true,
-      "promptText": "Use plain, natural owner-supported language. Style bans, corpus vocabulary rarity, cadence, cleverness, permission language, and other voice signals are reported for owner review; they do not become machine quality verdicts.",
+      "promptText": "Use plain, natural owner-supported language. Style bans, corpus vocabulary rarity, cadence, cleverness, permission language, and other voice signals are reported for owner review; they do not become machine quality verdicts. The October 6 contextual CORRECTIO, TRICOLON and PURPLE_PROSE rule is the narrow exception; those evidenced semantic findings block.",
       "findingCategories": ["em_dash", "en_dash", "ascii_only", "banned_language", "editorial_word_policy", "stock_trope", "vague_outcome_clause", "relationship_container_metaphor", "negation_pivot_cap", "structural_spine_vocabulary", "spine_scaffold_grammar"],
       "enforcementIds": ["global+VC-016+DG+SM-output-bans", "DG-R2-register", "DG-R16-owner-reserved-construction", "OWNER-TEST-specificity", "OWNER-TEST-specificity-batch"],
       "enforcementIdPrefixes": ["global-BAN-", "VC-016-minus-pronouns-BAN-", "SM-DG-5-BAN-", "SM-DG-6-BAN-", "DG-R1-BAN-", "DG-R5-BAN-", "DG-R6-BAN-", "DG-R15-BAN-", "DG-R16-BAN-"]

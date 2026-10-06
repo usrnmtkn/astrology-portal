@@ -86,7 +86,7 @@ function storageOrder(row:any) {
  return ordered(row);
 }
 export function fixtureMonthlySynthesis(facts:any){return {thesis:'The synthetic monthly concern develops across the supplied facts.',stories:facts.planetaryArcs.filter((arc:any)=>arc.developmentIds.length>=2).slice(0,2).map((arc:any)=>({planet:arc.planet,humanConcern:'A connected synthetic concern.',development:arc.developmentIds.slice(0,2).map((factId:string,i:number)=>({factId,changes:`The synthetic concern changes at step ${i+1}.`}))})),readingMovement:'Follow each connected concern and its changes.',endingChange:'The reader understands the synthetic concern differently.'};}
-export const writerFixture={calls:0,polls:0,pendingPolls:0,terminalNext:false,failNext:false,unknownNext:false,rejectSeasonalVoice:false,nextResult:null as any,startResult:null as any,requests:new Map<string,any>()};
+export const writerFixture={calls:0,reviewCalls:0,reviewRequests:new Map<string,any>(),polls:0,pendingPolls:0,rejectSeasonalVoice:false,terminalNext:false,failNext:false,unknownNext:false,nextResult:null as any,nextReviewResult:null as any,startResult:null as any,requests:new Map<string,any>()};
 export function fixtureMonthlyContext(facts:any){
  const plan=fixtureMonthlySynthesis(facts);
  const mars=plan.stories.find((s:any)=>s.planet==='mars');
@@ -109,6 +109,18 @@ export async function invokeHoroscopeWriting(body:any,secret='calendar-api-fixtu
  let result:any;const res={statusCode:200,setHeader(){},end(value:string){result={status:this.statusCode,payload:JSON.parse(value)};}};
  await horoscopeWriter(req as any,res as any);return result;
 }
+// Existing prose/fact suites finish the added stage explicitly through the API.
+// Recovery/admission suites use invokeHoroscopeWriting directly to inspect each
+// boundary and its total cost. Review calls are counted separately, never hidden.
+export async function invokeHoroscopeWritingWithReview(body:any,secret='calendar-api-fixture',headers?:Record<string,string>){
+ let result=await invokeHoroscopeWriting(body,secret,headers);
+ const row=result.payload?.rows?.[0];
+ if(result.status===202&&row?.source_snapshot?.horoscopeGeneration?.active?.workflow?.startsWith('horoscope-review/')){
+   result=await invokeHoroscopeWriting({action:'continue',id:row.id,expectedUpdatedAt:row.updated_at},secret,headers);
+   if(result.status===202){const current=result.payload.rows[0];result=await invokeHoroscopeWriting({action:'poll',id:current.id,expectedUpdatedAt:current.updated_at},secret,headers);}
+ }
+ return result;
+}
 export function installHoroscopeWriterFixture(){
  process.env.HOROSCOPE_EDITORIAL_FIXTURE='1';
  process.env.OPENAI_API_KEY='synthetic-test-only';process.env.STUDIO_MEMORY_FEEDBACK_ENABLED='false';
@@ -118,23 +130,29 @@ export function installHoroscopeWriterFixture(){
    if(!url.startsWith('https://api.openai.com/'))return storageFetch(input,options);
    if(url==='https://api.openai.com/v1/responses'&&options.method==='POST'){
      if(![...store.rows.values()].some(row=>row.source_snapshot?.horoscopeGeneration?.active?.requestHash))throw new Error('No durable request reservation before provider call');
-     writerFixture.calls++;
+     const request=JSON.parse(options.body),review=request.instructions.startsWith('SHARED SEMANTIC RHETORICAL REVIEW');
+     if(review)writerFixture.reviewCalls++;else writerFixture.calls++;
      if(writerFixture.unknownNext){writerFixture.unknownNext=false;throw new Error('Fixture connection lost');}
      if(writerFixture.failNext){writerFixture.failNext=false;return Response.json({error:{code:'insufficient_quota',message:'Fixture quota'}},{status:429});}
-     const request=JSON.parse(options.body);
      if(!request.background||!request.instructions||!request.text?.format?.schema)throw new Error('Missing real governed provider request');
-     const sign=request.text.format.schema.required.includes('stories')?'overview':request.input.includes('AUDIENCE AND SCOPE\nOne shared reading')?'overview':request.input.match(/"risingSign":"([a-z]+)"/)?.[1]??[...request.input.matchAll(/"audience":"([a-z]+)"/g)].find(m=>!['rising','collective'].includes(m[1]))?.[1]??request.input.match(/AUDIENCE\n([a-z]+)\n/)?.[1];
+     const sign=review?JSON.parse(request.input).evidence.engineFacts.risingSign:request.text.format.schema.required.includes('stories')?'overview':request.input.includes('AUDIENCE AND SCOPE\nOne shared reading')?'overview':request.input.match(/"risingSign":"([a-z]+)"/)?.[1]??[...request.input.matchAll(/"audience":"([a-z]+)"/g)].find(m=>!['rising','collective'].includes(m[1]))?.[1]??request.input.match(/AUDIENCE\n([a-z]+)\n/)?.[1];
      if(!sign)throw new Error('No calculated rising sign supplied');
-     const id=`resp_fixture_${writerFixture.calls}`;
-     writerFixture.requests.set(id,{...request,sign});
+     const id=review?`resp_review_fixture_${writerFixture.reviewCalls}`:`resp_fixture_${writerFixture.calls}`;
+     (review?writerFixture.reviewRequests:writerFixture.requests).set(id,{...request,sign});
      if(writerFixture.startResult){const result=writerFixture.startResult;writerFixture.startResult=null;return Response.json({id,...result});}
      return Response.json({id,status:'queued'});
    }
-   const id=url.split('/').at(-1)!,request=writerFixture.requests.get(id);
+   const cancel=url.endsWith('/cancel');
+   const id=url.split('/').at(cancel?-2:-1)!,request=writerFixture.requests.get(id)??writerFixture.reviewRequests.get(id);
    if(!request)throw new Error('Unrecognized fixture response');writerFixture.polls++;
+   if(cancel)return Response.json({id,status:'cancelled'});
    if(writerFixture.pendingPolls>0){writerFixture.pendingPolls--;return Response.json({id,status:'in_progress'});}
    if(writerFixture.nextResult){const result=writerFixture.nextResult;writerFixture.nextResult=null;return Response.json({id,...result});}
    if(writerFixture.terminalNext){writerFixture.terminalNext=false;return Response.json({id,status:'failed',error:{message:'Fixture provider could not finish this reading.'}});}
+   if(request.instructions.startsWith('SHARED SEMANTIC RHETORICAL REVIEW')){
+     if(writerFixture.nextReviewResult){const value=writerFixture.nextReviewResult;writerFixture.nextReviewResult=null;return Response.json({id,...value});}
+     return Response.json({id,status:'completed',usage:{input_tokens:60,output_tokens:10},output:[{type:'message',content:[{type:'output_text',text:JSON.stringify({checks:['CORRECTIO','TRICOLON','PURPLE_PROSE'].map(label=>({label,outcome:'pass',reason:'Synthetic transport fixture.'})),findings:[]})}]}]});
+   }
    if(request.instructions.startsWith('SEASONAL PRIVATE EDITORIAL AUTHORITY')){
      const input=JSON.parse(request.input),required=request.text.format.schema.required;
      let value:any;
@@ -170,8 +188,8 @@ if (process.send) process.on('message', async ({ id, method, body, url, headers 
  try {
   if(method==='auth-state'){sessionFixture.token=body.token;process.send!({id,result:{ok:true}});return;}
   if (method === 'writer-state') {
-    for(const key of ['pendingPolls','terminalNext','unknownNext','nextResult','startResult','rejectSeasonalVoice'] as const)if(body?.[key]!==undefined)(writerFixture as any)[key]=body[key];
-    process.send!({id,result:{calls:writerFixture.calls,polls:writerFixture.polls,responseIds:[...writerFixture.requests.keys()]}});return;
+    for(const key of ['pendingPolls','terminalNext','unknownNext','nextResult','nextReviewResult','startResult','rejectSeasonalVoice'] as const)if(body?.[key]!==undefined)(writerFixture as any)[key]=body[key];
+    process.send!({id,result:{calls:writerFixture.calls,reviewCalls:writerFixture.reviewCalls,polls:writerFixture.polls,responseIds:[...writerFixture.requests.keys()]}});return;
   }
   if (method === 'interrupted-horoscope-start') {
     const row=store.rows.get(body.id),generation=row.source_snapshot.horoscopeGeneration;

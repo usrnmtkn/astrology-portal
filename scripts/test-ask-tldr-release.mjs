@@ -43,6 +43,7 @@ const factLock = verifyAskTldrFactLock({ output: writerOutput, evidence: governe
 const judgeRequest = buildAskTldrJudgeRequest({ writerRequest, writerOutput, evidence: governed.evidence, receipt, factLock });
 const scores = Object.fromEntries(ASK_TLDR_JUDGE_CATEGORIES.map((category) => [category, 4]));
 const judge = validateAskTldrJudgeOutput(judgeRequest, {
+  rhetoric: { checks: ['CORRECTIO','TRICOLON','PURPLE_PROSE'].map(label => ({label,outcome:'pass',reason:'Synthetic review fixture.'})), findings: [] },
   scores,
   timingApplicability: { applicable: true, reason: "The answer uses an upcoming exact transit and names the timing." },
   findings: []

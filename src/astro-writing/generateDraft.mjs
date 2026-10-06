@@ -235,7 +235,11 @@ export async function generateDraft({
     instructions: effectiveRulePrompt(baseInstructions, { surface, family }),
     input: buildDraftInput({ plan, context, task, target: resolvedTarget, family, register, surface, familyContext, engineFacts, argumentSource, argumentOutline, spine, writingProfile }),
     schema: resolvedSchema,
-    ...(seasonalPreparation?{seasonalPreparation}:{})
+    ...(seasonalPreparation?{seasonalPreparation}:{}),
+    ...(family==='horoscope'?{reviewEvidence:{
+      ownerExamples:context.sameFamilyExamples,corrections:context.corrections,
+      writingProfile,argumentOutline,engineFacts
+    }}:{})
   });
   if (!value || typeof value !== "object") throw new Error("Writer returned no structured draft.");
   const readerValue = family==='horoscope' && engineFacts?.risingSign==='overview' && engineFacts?.window?.period==='monthly'

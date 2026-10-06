@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+const { RHETORICAL_WRITER_POLICY, RHETORICAL_JUDGE_POLICY } = require("../../../src/astro-writing/rhetoricalPatterns.cjs");
 //
 // Generate-then-lint harness for collective sky-aspect cards.
 //
@@ -1013,7 +1014,7 @@ async function generateWithConfig(prompt, config, { temperature, beforeProviderC
         model: config.model,
         max_tokens: 1500,
         temperature: temp,
-        messages: [{ role: "user", content: prompt }]
+        messages: [{ role: "user", content: `${prompt}\n\n${config.role === "judge" ? RHETORICAL_JUDGE_POLICY : RHETORICAL_WRITER_POLICY}` }]
       })
     });
     const payload = await response.json();
@@ -1171,7 +1172,7 @@ async function runCardPipeline({
         });
         result.gate = result.judge.gate; // human-review | regenerate (model verdicts are advisory)
 
-        if (result.judge.score === 2) {
+        if (result.judge.score === 2 && !result.judge.blocking) {
           const originalJudge = result.judge;
           const reason = originalJudge.why || originalJudge.verdict;
           repair.fired = true;

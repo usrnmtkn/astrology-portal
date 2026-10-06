@@ -10,11 +10,14 @@ import {horoscopePunctuationFindings} from '../../src/astro-writing/horoscopeEdi
 import {assertHoroscopeRow} from './horoscope-editions.js';
 import {AdminHttpError} from './admin-http.js';
 import {HoroscopeProviderFailure,readHoroscopeProviderResult} from './horoscope-provider-result.js';
+import {HOROSCOPE_RHETORICAL_REVIEW} from '../../src/astro-writing/horoscopeRhetoricalReview.mjs';
+import {queueHoroscopeReview} from './horoscope-rhetorical-operation.js';
 
 const hash=(value:any)=>createHash('sha256').update(horoscopeCanonicalJson(value)).digest('hex');
 class Captured extends Error { constructor(public request:any){super('Prepared canonical writer request.');} }
 
-/** Two bounded, resumable stages. Poll retrieves only; continue dispatches the approved prose stage. */
+/** The saved planning/prose stages. New runs queue an independent prose check;
+ * legacy operations retain their original contract. Poll only retrieves. */
 export async function monthlyHoroscopeOperation({action,row:initialRow,persist,prepared,apiKey,actor}:any) {
   let row=initialRow,operation=row.source_snapshot?.horoscopeGeneration?.active;
   if(action==='recover')operation=row.source_snapshot.horoscopeGeneration.lastError.operation;
@@ -44,6 +47,7 @@ export async function monthlyHoroscopeOperation({action,row:initialRow,persist,p
       row=await persist({source_snapshot:{...row.source_snapshot,horoscopeGeneration:{...generation,active:null,lastError:failure,failures:[...(generation.failures??[]),failure]}}});
       return {status:422,payload:{ok:false,error:failure.message,rows:[row]}};
     }
+    if(operation.reviewVersion===HOROSCOPE_RHETORICAL_REVIEW)return queueHoroscopeReview({row,persist,operation,candidate:value,receipt});
     const edition={...row.sections.horoscopeEdition,passages:row.sections.horoscopeEdition.passages.map((p:any)=>p.sign==='overview'?{...p,...value}:p)};
     const patch={status:'DRAFT',sections:{...row.sections,horoscopeEdition:edition},body:horoscopeEditionBody(edition),source_snapshot:{...row.source_snapshot,horoscopeGeneration:{...row.source_snapshot.horoscopeGeneration,active:null,lastError:null,readings:{...row.source_snapshot.horoscopeGeneration.readings,overview:receipt}}}};
     assertHoroscopeRow({...row,...patch});row=await persist(patch);
@@ -60,7 +64,7 @@ export async function monthlyHoroscopeOperation({action,row:initialRow,persist,p
     }
     if(typeof payload.id!=='string'||!/^resp_[A-Za-z0-9_-]+$/u.test(payload.id))throw new AdminHttpError(502,'The writer did not confirm a response ID. Check saved progress before continuing.');
     operation={...operation,responseId:payload.id,state:'running'};await saveOperation();
-    return ['queued','in_progress'].includes(payload.status)?pending():await complete(payload);
+    return ['queued','in_progress'].includes(String(payload.status))?pending():await complete(payload);
   };
   try{
     if(action==='generate'){
@@ -76,6 +80,7 @@ export async function monthlyHoroscopeOperation({action,row:initialRow,persist,p
       const reusable=previous?.workflow===MONTHLY_SYNTHESIS_VERSION&&previous?.synthesisReceipt?.planHash===prepared.planHash?previous.synthesisReceipt:null;
       if(reusable)applyMonthlySynthesis(draftRequest.input,reusable.brief,synthesisFacts);
       operation={id,workflow:MONTHLY_SYNTHESIS_VERSION,sign:'overview',planHash:prepared.planHash,actor,phase:'synthesis',state:'starting',responseId:null,
+        reviewVersion:HOROSCOPE_RHETORICAL_REVIEW,reviewEvidence:draftRequest.reviewEvidence,
         startedAt:new Date().toISOString(),draftRequest,synthesisFacts,synthesisReceipt:reusable,outputFormat:MONTHLY_SYNTHESIS_VERSION,
         // Synthesis already did the month-wide planning. Extra-high reasoning
         // consumed nearly the whole shared 12k reasoning/output budget in a

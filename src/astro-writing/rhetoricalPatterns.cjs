@@ -26,7 +26,8 @@ Use separate labels CORRECTIO, TRICOLON and PURPLE_PROSE. Keep useful overlappin
 Only material semantic failures block generation admission. A lexical signal is not a verdict. Each failure must identify exact reader wording, its complete containing paragraph, the rhetorical operation, its material reader consequence and the context-sensitive precision/removal/plain-language test. Missing evidence is indeterminate, not PASS. These findings never change source meaning, revoke owner-source approval or authorize publication.`;
 
 const object = properties => ({type:"object",additionalProperties:false,required:Object.keys(properties),properties});
-const string = {type:"string",minLength:1};
+// Nonempty evidence is enforced by validateRhetoricalReview for every provider.
+const string = {type:"string"};
 const RHETORICAL_REVIEW_SCHEMA = object({
   checks: {type:"array",items:object({label:{type:"string",enum:[...RHETORICAL_LABELS]},outcome:{type:"string",enum:["pass","fail","indeterminate"]},reason:string})},
   findings: {type:"array",items:object({label:{type:"string",enum:[...PROSE_PATTERN_LABELS]},field:string,quote:string,paragraph:string,reason:string,readerConsequence:string,meaningTest:string})}

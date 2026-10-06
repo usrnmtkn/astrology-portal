@@ -93,6 +93,7 @@ const finalized = finalizeAskTldrCalibration({
   writerValue,
   judgeValue: {
     scores: judgeScores,
+    rhetoric: {checks:['CORRECTIO','TRICOLON','PURPLE_PROSE'].map(label=>({label,outcome:'pass',reason:'Synthetic fixture.'})),findings:[]},
     timingApplicability: { applicable: true, reason: "The answer uses an upcoming exact transit and names the timing." },
     findings: []
   }
@@ -115,6 +116,7 @@ const badFacts = finalizeAskTldrCalibration({
   writerValue: { ...writerValue, answer: writerValue.answer.replace("September 18", "September 16") },
   judgeValue: {
     scores: judgeScores,
+    rhetoric: {checks:['CORRECTIO','TRICOLON','PURPLE_PROSE'].map(label=>({label,outcome:'pass',reason:'Synthetic fixture.'})),findings:[]},
     timingApplicability: { applicable: true, reason: "fixture" },
     findings: []
   }
