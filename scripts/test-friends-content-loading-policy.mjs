@@ -306,6 +306,12 @@ const pairDailyFrames = readJson("source-rows/pair-daily-frames-v1.json").rows;
 const pairDailyClauses = readJson("source-rows/pair-daily-clauses-v1.json").rows;
 const canonicalRows = [...sourceRows, ...pairDailyFrames, ...pairDailyClauses];
 const canonicalRowBytes = new Set(canonicalRows.map((row) => JSON.stringify(row)));
+// Deferred downloads omit these three editor-only fields. All prose, eligibility,
+// and other fields must still match one complete canonical row exactly.
+const deferredCanonicalRowBytes = new Set(canonicalRows.map((row) => {
+  const { note, notes, source_migration, ...readerFields } = row;
+  return JSON.stringify(readerFields);
+}));
 const deferredRows = readJson("bundled-deferred-core-rows-v3.json").hookRows;
 const sharedPlacementRows = readJson("bundled-shared-placement-rows-v3.json").hookRows;
 const relationshipRows = readJson("bundled-relationship-hook-rows-v3.json").hookRows;
@@ -315,14 +321,30 @@ const partitionRows = [
   ["relationship", relationshipRows]
 ];
 
-for (const [partition, rows] of partitionRows) {
-  for (const row of rows) {
-    assert.ok(
-      canonicalRowBytes.has(JSON.stringify(row)),
-      `${partition}:${row.contentKey} must remain byte-identical to a canonical source row.`
-    );
-  }
+function assertCanonicalPartitionRow(partition, row) {
+  const expected = partition === "deferred" ? deferredCanonicalRowBytes : canonicalRowBytes;
+  assert.ok(
+    expected.has(JSON.stringify(row)),
+    `${partition}:${row.contentKey} must preserve the complete canonical reader row; only deferred editor annotations may be omitted.`
+  );
 }
+for (const [partition, rows] of partitionRows) {
+  for (const row of rows) assertCanonicalPartitionRow(partition, row);
+}
+
+// The revised comparison must still catch text drift, changed approval, leaked
+// annotations, and a missing source; it is not a key-only existence check.
+const introduction = deferredRows.find(row => row.contentKey === "fallback-hook/planet-intro/sun");
+assert.ok(introduction, "The annotated natal introduction must exercise deferred projection.");
+for (const mutation of [
+  { ...introduction, body_you: "Changed reader text." },
+  { ...introduction, body_they: "Changed reader text." },
+  { ...introduction, review_status: "unreviewed" },
+  { ...introduction, note: "Editor-only annotation." },
+  { ...introduction, contentKey: "fallback-hook/missing-source" }
+]) assert.throws(() => assertCanonicalPartitionRow("deferred", mutation), assert.AssertionError);
+assert.throws(() => assertCanonicalPartitionRow("shared-placement", introduction), assert.AssertionError,
+  "Other partitions must not inherit the deferred annotation exception.");
 
 const deferredKeys = new Set(deferredRows.map((row) => row.contentKey));
 const sharedPlacementKeys = new Set(sharedPlacementRows.map((row) => row.contentKey));
