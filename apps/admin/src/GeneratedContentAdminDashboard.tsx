@@ -6533,8 +6533,8 @@ export function GeneratedContentAdminDashboard() {
           source_snapshot: { ...existing.source_snapshot, allowedSlots: field.allowedSlots } };
         setRows(rows => [current, ...rows.filter(row => row.id !== current.id)]);
         const opened = await openRow(current);
-        if (opened && initialBody !== undefined) setDraft(previous => previous ? { ...previous, body: initialBody,
-          sourceSnapshot: { ...previous.sourceSnapshot, ...(candidateReceipt ? { suppliedBank: candidateReceipt } : {}) }
+        if (opened) setDraft(previous => previous ? { ...previous, ...(initialBody !== undefined ? { body: initialBody } : {}),
+          sourceSnapshot: { ...previous.sourceSnapshot, allowedSlots: field.allowedSlots, ...(candidateReceipt ? { suppliedBank: candidateReceipt } : {}) }
         } : previous);
       } else {
         const { importedSkySummary, skySummaryImportProvenance } = await import("./skySummaryImportedCopy");

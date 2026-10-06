@@ -57,6 +57,9 @@ test("complete interpretation has its own heading, exact identity, draft save, a
   await expect.poll(() => stored[0]?.body).toBe(wording);
   expect(stored[0].content_key).toBe("cms/sky-debility/reading/venus-scorpio-direct__mars-cancer-direct__saturn-aries-retrograde");
   expect(stored[0].status).toBe("DRAFT");
+  // Existing saved cards may predate the category slots. Reopening must refresh
+  // the allowed facts after loading the full saved document, not before it.
+  stored[0].source_snapshot.allowedSlots = ["planetList"];
   await page.goto("/#sky-writeups?view=daily-summary");
   await page.reload();
   const reading = studio.getByLabel("Complete effort summary", { exact: true });
@@ -67,11 +70,13 @@ test("complete interpretation has its own heading, exact identity, draft save, a
   await studio.getByRole("tab", { name: "Composition map", exact: true }).click();
   await studio.getByLabel("Mapped effort summary", { exact: true }).getByRole("button", { name: "Edit Complete card for these placements" }).first().click();
   await expect(body).toHaveValue(wording);
-  expect(stored[0].source_snapshot.allowedSlots).toEqual(expect.arrayContaining(["detrimentCount", "fallCount", "detrimentPlanetList", "fallPlanetList"]));
   await body.fill("Missing the complete fact list.");
   await expect(page.getByRole("button", { name: "Save & publish", exact: true })).toBeDisabled();
   await body.fill(wording);
   await expect(page.getByRole("button", { name: "Save & publish", exact: true })).toBeEnabled();
+  await page.getByRole("button", { name: /^Save draft(?: & return)?$/ }).click();
+  await expect.poll(() => stored[0].source_snapshot.allowedSlots).toEqual(expect.arrayContaining(["detrimentCount", "fallCount", "detrimentPlanetList", "fallPlanetList"]));
+  expect(stored[0].body).toBe(wording);
 });
 for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
   test(`complete template and clickable map ${width} ${theme}`, async ({ page }) => {
