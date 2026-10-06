@@ -91,7 +91,7 @@ assert.equal(skipped?.hasStudioDraft, true);
 
 assert.match(ui, /Between you two/u);
 assert.match(ui, /Copied into this exact contact/u);
-assert.match(ui, /if \(nextYou\) onUseYou\(nextYou\)/u);
+assert.match(ui, /if \(nextYou && !youChanged\) onUseYou\(nextYou\)/u);
 assert.match(ui, /Run writing checks/u);
 assert.match(ui, /Use You draft/u);
 assert.match(ui, /Use Friend draft/u);

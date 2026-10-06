@@ -1,7 +1,7 @@
 import { studioApiStore } from "../helpers/studio-api-store";
 import { readerResponse } from '../helpers/reader-response';
 import { emptyHousePreviewApi } from "../helpers/empty-house-preview-api";
-import { normalizeTransitNatalPreviewInput, renderTransitNatalPreviewState } from "../../api/admin/transit-natal-preview";
+import { normalizeTransitNatalPreviewInput, renderTransitNatalDraftStarter, renderTransitNatalPreviewState } from "../../api/admin/transit-natal-preview";
 import { approveNatalAspectStudioCopy } from "../../api/_lib/content-studio-approval";
 import { contentLiveStatuses, servingPackageRecords, type LiveStatusRow } from "../../api/_lib/content-live-status";
 import { expect, test, type Locator, type Page } from "@playwright/test";
@@ -2601,6 +2601,59 @@ test.describe("content dashboard admin user flow case studies", () => {
     return finder.getByRole("button", { name: new RegExp(`^(Edit|Edit live|Write) ${title}$`) });
   }
 
+  function transitPreviewResponse(input: ReturnType<typeof normalizeTransitNatalPreviewInput>) {
+    return input.draftStarter
+      ? { ok: true, starter: renderTransitNatalDraftStarter(input) }
+      : { ok: true, rendered: renderTransitNatalPreviewState(input) };
+  }
+
+  for (const [width, theme] of [[1440, "light"], [390, "dark"]] as const) test(`Transit composed website copy opens as an editable draft ${width} ${theme}`, async ({ page }) => {
+    const writes: Array<{ method: string; payload: Record<string, unknown> }> = [];
+    const selection = { planet: "saturn", aspect: "trine", natalPoint: "descendant" };
+    const starter = renderTransitNatalDraftStarter(normalizeTransitNatalPreviewInput(selection));
+    const baseline = renderTransitNatalPreviewState(normalizeTransitNatalPreviewInput(selection));
+    let starterRequests = 0;
+    await page.setViewportSize({ width, height: 1000 });
+    await seedAdminApi(page, { generatedRows: [], onGeneratedContentWrite: write => writes.push(write) });
+    await page.route("**/api/content-reader", route => route.fulfill({ json: readerResponse([]) }));
+    await page.route("**/api/admin/transit-natal-preview", async route => {
+      const input = normalizeTransitNatalPreviewInput(route.request().postDataJSON());
+      if (input.draftStarter) starterRequests++;
+      await route.fulfill({ json: input.draftStarter
+        ? { ok: true, starter: renderTransitNatalDraftStarter(input) }
+        : { ok: true, rendered: renderTransitNatalPreviewState(input) } });
+    });
+    await page.addInitScript(value => localStorage.setItem("tldrastro:studio-theme", value), theme);
+    const url = "/admin/content#sky-writeups?view=transits-to-natal&transit=saturn&aspect=trine&natal=descendant";
+    await expectAdminRouteLoads(page, url);
+    await expect(page.locator(".admin-dashboard")).toHaveAttribute("data-studio-theme", theme);
+    const preview = page.getByRole("region", { name: "Effective transit to natal reader preview" });
+    const editor = page.getByRole("dialog", { name: "Generated content editor" });
+    await expect(preview).toContainText(baseline.body);
+    await expect(preview).toContainText("This reading is available on the website through shared writing");
+    await preview.getByRole("button", { name: "Edit this copy", exact: true }).click();
+    await expect(editor.getByLabel("Reader phrase · You", { exact: true })).toHaveValue(starter.body_you);
+    await expect(editor.getByLabel("Reader phrase · They", { exact: true })).toHaveValue(starter.body_they);
+    await expect(editor).not.toContainText("No write-up is saved");
+    expect(writes).toHaveLength(0);
+    await expectNoHorizontalOverflow(page, "Saturn composed starter");
+    await mkdir(adminScreenshotDir, { recursive: true });
+    await editor.getByLabel("Reader phrase · You", { exact: true }).scrollIntoViewIfNeeded();
+    await editor.screenshot({ path: path.join(adminScreenshotDir, `saturn-composed-starter-${width}-${theme}.png`) });
+    const edited = "Synthetic saved Saturn trine opening.\n\nSynthetic saved Saturn trine ending.";
+    await editor.getByLabel("Reader phrase · You", { exact: true }).fill(edited);
+    await editor.getByRole("button", { name: "Save", exact: true }).click();
+    await expect.poll(() => writes.length).toBe(1);
+    await closeGeneratedEditor(page);
+    await page.reload();
+    await expect(preview).toContainText(baseline.body);
+    await preview.getByRole("button", { name: "Edit this copy", exact: true }).click();
+    await expect(editor.getByLabel("Reader phrase · You", { exact: true })).toHaveValue(edited);
+    await expect(editor.getByLabel("Reader phrase · They", { exact: true })).toHaveValue(starter.body_they);
+    expect(starterRequests).toBe(1);
+    expect(writes).toHaveLength(1);
+  });
+
   for (const [width, theme] of [[1440, "light"], [1440, "dark"], [390, "light"], [390, "dark"]] as const) test(`Transit exact editor isolates sibling aspects ${width} ${theme}`, async ({ page }) => {
     page.on("dialog", dialog => { dialog.accept().catch(() => undefined); });
     const noErrors = await expectNoBrowserErrors(page);
@@ -2615,7 +2668,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     }] });
     await page.route('**/api/content-reader', route => route.fulfill({ json: readerResponse([]) }));
     await page.route("**/api/admin/transit-natal-preview", async route => {
-      await route.fulfill({ json: { ok: true, rendered: renderTransitNatalPreviewState(normalizeTransitNatalPreviewInput(route.request().postDataJSON())) } });
+      await route.fulfill({ json: transitPreviewResponse(normalizeTransitNatalPreviewInput(route.request().postDataJSON())) });
     });
     await page.addInitScript(value => localStorage.setItem("tldrastro:theme", value), theme);
     await expectAdminRouteLoads(page, "/admin/content#sky-writeups?view=transits-to-natal&transit=sun&sign=virgo&aspect=trine&natal=sun");
@@ -2696,7 +2749,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     });
     await page.route('**/api/content-reader', route => route.fulfill({ json: readerResponse([]) }));
     await page.route("**/api/admin/transit-natal-preview", async route => {
-      await route.fulfill({ json: { ok: true, rendered: renderTransitNatalPreviewState(normalizeTransitNatalPreviewInput(route.request().postDataJSON())) } });
+      await route.fulfill({ json: transitPreviewResponse(normalizeTransitNatalPreviewInput(route.request().postDataJSON())) });
     });
     await expectAdminRouteLoads(page, "/admin/content#sky-writeups?view=transits-to-natal&transit=sun&sign=virgo&transitHouse=3&aspect=square&natal=sun&natalHouse=3");
     const editor = page.getByRole("dialog", { name: "Generated content editor" });
@@ -2726,6 +2779,120 @@ test.describe("content dashboard admin user flow case studies", () => {
     await noErrors();
   });
 
+  function syntheticSaturnDraft() {
+    const contentKey = "authored/transit-aspect/saturn/descendant/trine";
+    const record = { contentKey, content_role: "full_copy", grammar_frame: "complete_sentence", surface: "transit-aspect", reader_only: true,
+      render_policy: "personal-transit-exact-v1", review_status: "needs_review", body: "Synthetic existing You draft.",
+      body_you: "Synthetic existing You draft.", body_they: "{{Name}} has a synthetic existing Friend draft." };
+    return { id: "qa-saturn-manual-draft", content_key: contentKey, surface: "you", mode: "in_depth", status: "DRAFT", lane: "reference",
+      block_type: "fallback_hook", event_type: "fallback-hook", headline: "Saturn trine your Descendant", summary: "", body: record.body,
+      sections: { packageRecord: record }, facts: { fallbackArchitectureV3: true }, provider: "tldrastro-fallback-architecture-v3", updated_at: now };
+  }
+
+  for (const [width, theme] of [[1440, "light"], [390, "dark"]] as const) test(`Personal Transit clears AI suggestions and recovers preview without losing manual writing ${width} ${theme}`, async ({ page }) => {
+    test.setTimeout(90_000);
+    const noErrors = await expectNoBrowserErrors(page);
+    const writes: Array<{ method: string; payload: Record<string, unknown> }> = [];
+    const aiRequests: Record<string, unknown>[] = [];
+    let stallPreview = false;
+    let previewRequests = 0;
+    await page.setViewportSize({ width, height: 1000 });
+    await seedAdminApi(page, { generatedRows: [syntheticSaturnDraft()], useGeneratedContentHandler: true,
+      onGeneratedContentWrite: write => { writes.push(write); }, onPersonalTransitWrite: payload => aiRequests.push(payload) });
+    await page.route("**/api/content-reader", route => route.fulfill({ json: readerResponse([]) }));
+    await page.route("**/api/admin/transit-natal-preview", async route => {
+      previewRequests++;
+      if (stallPreview) return; // Exercise the real client deadline, with no response from the read.
+      await route.fulfill({ json: transitPreviewResponse(normalizeTransitNatalPreviewInput(route.request().postDataJSON())) });
+    });
+    await page.addInitScript(value => localStorage.setItem("tldrastro:studio-theme", value), theme);
+    const url = "/admin/content#sky-writeups?view=transits-to-natal&transit=saturn&aspect=trine&natal=descendant";
+    await expectAdminRouteLoads(page, url);
+    await expect(page.locator(".admin-dashboard")).toHaveAttribute("data-studio-theme", theme);
+    const preview = page.getByRole("region", { name: "Effective transit to natal reader preview" });
+    await preview.getByRole("button", { name: "Edit this copy", exact: true }).click();
+    const editor = page.getByRole("dialog", { name: "Generated content editor" });
+    const you = editor.getByLabel("Reader phrase · You", { exact: true });
+    const friend = editor.getByLabel("Reader phrase · They", { exact: true });
+    await editor.getByRole("button", { name: "Generate You + Friend draft", exact: true }).click();
+    await expect(editor.getByLabel("AI You suggestion")).toHaveValue("Synthetic You draft for the selected contact.");
+    const manualYou = "Until {{untilDate}}, this is the synthetic manual You opening.\n\nSynthetic middle paragraph.\n\nSynthetic final You sentence stays complete.";
+    const manualFriend = "Until {{untilDate}}, {{Name}} has the synthetic manual Friend opening.\n\nSynthetic Friend middle paragraph.\n\nSynthetic final Friend sentence stays complete.";
+    await you.fill(manualYou);
+    await friend.fill(manualFriend);
+    await editor.getByRole("button", { name: "Clear AI suggestions", exact: true }).click();
+    await expect(editor.getByLabel("AI You suggestion")).toHaveCount(0);
+    await expect(editor.getByLabel("AI Friend suggestion")).toHaveCount(0);
+    await expect(editor).toContainText("AI suggestions cleared. Your You and Friend writing is unchanged.");
+    await expect(you).toHaveValue(manualYou);
+    await expect(friend).toHaveValue(manualFriend);
+    expect(writes).toHaveLength(0);
+    expect(aiRequests).toHaveLength(1);
+    await expectNoHorizontalOverflow(page, "Clear AI suggestions");
+    await mkdir(adminScreenshotDir, { recursive: true });
+    await editor.screenshot({ path: path.join(adminScreenshotDir, `saturn-clear-ai-${width}-${theme}.png`) });
+    stallPreview = true;
+    await editor.getByRole("button", { name: /^Save(?: draft)?$/, exact: true }).click();
+    await expect.poll(() => writes.length).toBe(1);
+    await expect(editor).toContainText(/Draft saved|All changes saved/);
+    await expect(preview.getByRole("alert")).toContainText("could not finish loading", { timeout: 15_000 });
+    await expect(preview).not.toContainText("a save has not been confirmed");
+    await expect(you).toHaveValue(manualYou);
+    await expect(friend).toHaveValue(manualFriend);
+    await closeGeneratedEditor(page);
+    const beforeRetry = previewRequests;
+    stallPreview = false;
+    await preview.getByRole("button", { name: "Retry reader preview", exact: true }).click();
+    await expect(preview.getByRole("heading", { level: 4 })).toHaveText("Saturn trine your Descendant");
+    expect(previewRequests).toBe(beforeRetry + 1);
+    expect(writes).toHaveLength(1);
+    expect(aiRequests).toHaveLength(1);
+    await page.reload();
+    await preview.getByRole("button", { name: "Edit this copy", exact: true }).click();
+    await expect(you).toHaveValue(manualYou);
+    await expect(friend).toHaveValue(manualFriend);
+    await expect(editor.getByLabel("AI You suggestion")).toHaveCount(0);
+    await expect(editor).toContainText(/Draft saved|All changes saved/);
+    expect(writes).toHaveLength(1);
+    expect(writes[0].payload.reviewStatus).toBe("needs_review");
+    expect((writes[0].payload.sections as any).packageDraft).toMatchObject({ body_you: manualYou, body_they: manualFriend });
+    await noErrors();
+  });
+
+  test("Personal Transit late AI response preserves edits made during generation", async ({ page }) => {
+    const noErrors = await expectNoBrowserErrors(page);
+    const writes: unknown[] = [];
+    await seedAdminApi(page, { generatedRows: [syntheticSaturnDraft()], onGeneratedContentWrite: write => { writes.push(write); } });
+    await page.route("**/api/content-reader", route => route.fulfill({ json: readerResponse([]) }));
+    await page.route("**/api/admin/transit-natal-preview", route => route.fulfill({ json: transitPreviewResponse(normalizeTransitNatalPreviewInput(route.request().postDataJSON())) }));
+    let release!: () => void;
+    const pending = new Promise<void>(resolve => { release = resolve; });
+    await page.route("**/api/admin/personal-transit-writing", async route => {
+      await pending;
+      await route.fulfill({ json: { ok: true, saved: false, published: false, approved: false,
+        youDraft: "Synthetic delayed You suggestion.", friendDraft: "Synthetic delayed Friend suggestion.", checks: [] } });
+    });
+    await expectAdminRouteLoads(page, "/admin/content#sky-writeups?view=transits-to-natal&transit=saturn&aspect=trine&natal=descendant");
+    await page.getByRole("region", { name: "Effective transit to natal reader preview" }).getByRole("button", { name: "Edit this copy", exact: true }).click();
+    const editor = page.getByRole("dialog", { name: "Generated content editor" });
+    await editor.getByRole("button", { name: "Generate You + Friend draft", exact: true }).click();
+    await expect(editor).toContainText("Writing a private suggestion");
+    const you = editor.getByLabel("Reader phrase · You", { exact: true });
+    const friend = editor.getByLabel("Reader phrase · They", { exact: true });
+    await you.fill("Synthetic newer manual You writing.");
+    await friend.fill("Synthetic newer manual Friend writing.");
+    release();
+    await expect(editor.getByLabel("AI You suggestion")).toHaveValue("Synthetic delayed You suggestion.");
+    await expect(editor).toContainText("Your edits made during generation were kept");
+    await expect(you).toHaveValue("Synthetic newer manual You writing.");
+    await expect(friend).toHaveValue("Synthetic newer manual Friend writing.");
+    await editor.getByRole("button", { name: "Clear AI suggestions", exact: true }).click();
+    await expect(you).toHaveValue("Synthetic newer manual You writing.");
+    await expect(friend).toHaveValue("Synthetic newer manual Friend writing.");
+    expect(writes).toHaveLength(0);
+    await noErrors();
+  });
+
   for (const [width, theme] of [[1440, "light"], [1440, "dark"], [390, "light"], [390, "dark"]] as const) test(`canonical Personal Transit Studio preview ${width} ${theme}`, async ({ page }) => {
     test.setTimeout(60_000);
     page.on("dialog", dialog => { dialog.accept().catch(() => undefined); });
@@ -2747,7 +2914,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     })] });
     await page.route('**/api/content-reader', (route) => route.fulfill({ json: readerResponse([]) }));
     await page.route("**/api/admin/transit-natal-preview", async (route) => {
-      try { await route.fulfill({ json: { ok: true, rendered: renderTransitNatalPreviewState(normalizeTransitNatalPreviewInput(route.request().postDataJSON())) } }); }
+      try { await route.fulfill({ json: transitPreviewResponse(normalizeTransitNatalPreviewInput(route.request().postDataJSON())) }); }
       catch (error) { await route.fulfill({ json: { error: String(error) } }); }
     });
     await page.addInitScript((theme) => localStorage.setItem("tldrastro:theme", theme), theme);
@@ -2810,11 +2977,12 @@ test.describe("content dashboard admin user flow case studies", () => {
     await page.getByLabel("Transit to natal aspect", { exact: true }).selectOption("opposition");
     await transitWriteupButton(exactEditor, "Sun opposition your South Node").click();
     await expect(editor.getByLabel("Content key", { exact: true })).toHaveValue("authored/transit-aspect/sun/south-node/opposition");
-    await expect(editor.getByLabel("Reader phrase · You", { exact: true })).toHaveValue("");
-    await expect(editor.getByLabel("Reader phrase · They", { exact: true })).toHaveValue("");
+    await expect(editor.getByLabel("Reader phrase · You", { exact: true })).toHaveValue(/the Sun is opposing your natal South Node/);
+    await expect(editor.getByLabel("Reader phrase · They", { exact: true })).toHaveValue(/the Sun is opposing \{\{Name\}\}'s natal South Node/);
     const candidate = "A synthetic complete opening for the exact transit.\n\nA synthetic complete ending for the exact transit.";
     const friend = "{{Name}} may find a synthetic complete opening for the exact transit.\n\nA synthetic complete ending for the exact transit.";
     await editor.getByLabel("Reader phrase · You", { exact: true }).fill(candidate);
+    await editor.getByLabel("Reader phrase · They", { exact: true }).fill("");
     await expect(editor.getByRole("button", { name: "Approve & publish", exact: true })).toBeDisabled();
     await editor.getByLabel("Reader phrase · They", { exact: true }).fill(friend);
     await editor.getByRole("button", { name: "Approve & publish", exact: true }).click();
@@ -2857,8 +3025,8 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expect(editor).toHaveCount(0);
     await transitWriteupButton(exactEditor, "Lilith trine your North Node").click();
     await expect(editor.getByRole("heading", { level: 2 })).toHaveText("Write Lilith trine your North Node");
-    await expect(editor.getByLabel("Reader phrase · You", { exact: true })).toHaveValue("");
-    await expect(editor.getByText(/No write-up is saved for this exact contact yet/)).toBeVisible();
+    await expect(editor.getByLabel("Reader phrase · You", { exact: true })).toHaveValue(/Say the true thing while it comes out clean/);
+    await expect(editor.getByText(/You and Friend below start from the shared fallback currently in the preview/)).toBeVisible();
     await expect(editor.getByRole("button", { name: "Revert to package original", exact: true })).toHaveCount(0);
     await expectNoHorizontalOverflow(page, "Lilith exact draft");
     await editor.screenshot({ path: path.join(adminScreenshotDir, `lilith-new-draft-${width}-${theme}.png`) });
@@ -2877,8 +3045,8 @@ test.describe("content dashboard admin user flow case studies", () => {
     await page.route('**/api/content-reader', route => route.fulfill({ json: readerResponse([]) }));
     await page.route("**/api/admin/transit-natal-preview", async route => {
       const input = normalizeTransitNatalPreviewInput(route.request().postDataJSON());
-      expect(input.voice).toBe("{{Name}}");
-      await route.fulfill({ json: { ok: true, rendered: renderTransitNatalPreviewState(input) } });
+      if (!input.draftStarter) expect(input.voice).toBe("{{Name}}");
+      await route.fulfill({ json: transitPreviewResponse(input) });
     });
     await page.addInitScript(theme => localStorage.setItem("tldrastro:theme", theme), theme);
     await expectAdminRouteLoads(page, "/admin/content#sky-writeups?view=transits-to-natal&transit=lilith&sign=capricorn&transitHouse=8&aspect=trine&natal=north-node&natalHouse=4&audience=friends");
@@ -2931,7 +3099,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     await page.route("**/api/admin/transit-natal-preview", async route => {
       const input = normalizeTransitNatalPreviewInput(route.request().postDataJSON());
       inputs.push(input);
-      await route.fulfill({ json: { ok: true, rendered: renderTransitNatalPreviewState(input) } });
+      await route.fulfill({ json: transitPreviewResponse(input) });
     });
     await page.addInitScript(theme => localStorage.setItem("tldrastro:theme", theme), theme);
     await expectAdminRouteLoads(page, "/admin/content#sky-writeups?view=transits-to-natal&transit=neptune&sign=aries&transitHouse=8&aspect=opposition&natal=sun&natalHouse=4&audience=friends&variant=1&pass=2&retrograde=true&window=until+October+4");
@@ -3021,7 +3189,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     await seedAdminApi(page, { onGeneratedContentWrite: write => writes.push(write), generatedRows: [] });
     await page.route('**/api/content-reader', route => route.fulfill({ json: readerResponse([]) }));
     await page.route("**/api/admin/transit-natal-preview", async route => {
-      await route.fulfill({ json: { ok: true, rendered: renderTransitNatalPreviewState(normalizeTransitNatalPreviewInput(route.request().postDataJSON())) } });
+      await route.fulfill({ json: transitPreviewResponse(normalizeTransitNatalPreviewInput(route.request().postDataJSON())) });
     });
     await expectAdminRouteLoads(page, "/admin/content#sky-writeups?view=transits-to-natal&transit=mars&aspect=sextile&natal=north-node");
     const finder = page.getByRole("region", { name: "Personal Transits source finder" });
@@ -3062,6 +3230,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     let release: (() => Promise<void>) | undefined;
     await page.route("**/api/admin/transit-natal-preview", async route => {
       const input = normalizeTransitNatalPreviewInput(route.request().postDataJSON());
+      if (input.draftStarter) { await route.fulfill({ json: transitPreviewResponse(input) }); return; }
       const rendered = renderTransitNatalPreviewState(input);
       if (input.variant === 4) { release = () => route.fulfill({ json: { ok: true, rendered } }).catch(() => {}); return; }
       await route.fulfill({ json: input.variant === 2 ? { ok: true, rendered: { body: rendered.body, paragraphs: [] } } : { ok: true, rendered } });
@@ -8381,7 +8550,7 @@ for (const [width, theme] of [[1440, 'light'], [1440, 'dark'], [390, 'light'], [
     await seedAdminApi(page, { generatedRows: [] });
     await page.route('**/api/admin/transit-natal-preview', async route => {
       const input = normalizeTransitNatalPreviewInput(route.request().postDataJSON());
-      await route.fulfill({ json: { ok: true, rendered: renderTransitNatalPreviewState(input) } });
+      await route.fulfill({ json: transitPreviewResponse(input) });
     });
     await page.addInitScript(theme => localStorage.setItem('tldrastro:theme', theme), theme);
     await expectAdminRouteLoads(page, `/admin/content#sky-writeups?view=transits-to-natal${width === 390 ? '&audience=friends' : ''}`);

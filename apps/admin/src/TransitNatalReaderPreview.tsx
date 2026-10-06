@@ -134,7 +134,7 @@ export default function TransitNatalReaderPreview({ selection, voice, secret, on
     onServingPreview?.(null);
     void (async () => {
       const result = await requestStudioJson("/api/admin/transit-natal-preview", secret, {
-        method: "POST", signal: controller.signal, body: identity
+        method: "POST", readOnly: true, signal: controller.signal, body: identity
       });
       if (cancelled) return;
       const preview = result.rendered as Preview;
@@ -182,7 +182,7 @@ export default function TransitNatalReaderPreview({ selection, voice, secret, on
             {groups.some(group => group.sources.some(source => transitSourceEditScope(exactKey, source.contentKey).kind === "shared")) && <aside className="admin-field-hint">
               {exactKey ? (exactKey.split("/").length === 8
                 ? "The published preview is still using shared fallback writing. Write this six-part situation to start a separate save. A saved draft does not replace published reader copy."
-                : "The published preview is still using shared fallback writing. Edit this copy to start a write-up for this aspect only. A saved draft does not replace published reader copy.") : "This preview includes shared fallback writing. There is no independent write-up key for this contact; shared source changes can affect other readings."}
+                : "This reading is available on the website through shared writing. Edit this copy opens the existing wording as a separate draft for this aspect. Save keeps a draft; Approve & publish makes your version live.") : "This preview includes shared fallback writing. There is no independent write-up key for this contact; shared source changes can affect other readings."}
             </aside>}
             {exactKey && onOpenExact && <StudioButton type="button" onClick={onOpenExact}>{exactKey.split("/").length === 8 ? "Write this six-part situation" : "Edit this copy"}</StudioButton>}
             {incompleteContext && <p role="status" className="admin-field-hint">This preview needs a timing label in Reading preview options. The app supplies calculated timing. The published source is available to edit below.</p>}
@@ -195,7 +195,10 @@ export default function TransitNatalReaderPreview({ selection, voice, secret, on
             </Fragment>)}
           </div>
         </article>
-      ) : <p role="alert">{state.error}</p>}
+      ) : <div>
+        <p role="alert">{state.error}</p>
+        <StudioButton type="button" onClick={() => setRevision(value => value + 1)}>Retry reader preview</StudioButton>
+      </div>}
     </section>
   );
 }

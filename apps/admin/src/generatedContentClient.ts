@@ -20,9 +20,12 @@ class StudioRequestError extends Error {
   constructor(message: string, readonly saveUncertain: boolean) { super(message); }
 }
 
-async function request(path: string, secret: string, options: RequestInit = {}) {
+type StudioRequestOptions = RequestInit & { readOnly?: boolean };
+
+async function request(path: string, secret: string, options: StudioRequestOptions = {}) {
+  const { readOnly = /^(GET|HEAD)$/iu.test(options.method ?? "GET"), ...fetchOptions } = options;
   const method = (options.method ?? "GET").toUpperCase();
-  const isWrite = ["POST", "PATCH", "DELETE"].includes(method);
+  const isWrite = !readOnly && ["POST", "PATCH", "DELETE"].includes(method);
   const controller = new AbortController();
   const abort = () => controller.abort();
   options.signal?.addEventListener("abort", abort, { once: true });
@@ -30,7 +33,7 @@ async function request(path: string, secret: string, options: RequestInit = {}) 
   const timer = setTimeout(abort, studioRequestTimeoutMs(path, method));
   try {
     const response = await fetch(path, {
-      ...options, cache: "no-store", signal: controller.signal,
+      ...fetchOptions, cache: "no-store", signal: controller.signal,
       headers: { "content-type": "application/json", ...adminCredentialHeaders(secret) }
     });
     const payload: unknown = await response.json();
@@ -44,7 +47,7 @@ async function request(path: string, secret: string, options: RequestInit = {}) 
     if (error instanceof StudioRequestError) throw error;
     if (controller.signal.aborted) throw new StudioRequestError(isWrite
       ? "Content Studio request was interrupted. Reload before retrying; a save has not been confirmed."
-      : "Loading content was interrupted. Try again; no changes were submitted.", isWrite);
+      : "This content could not finish loading. Try again; your editor text is unchanged.", isWrite);
     throw new StudioRequestError(error instanceof SyntaxError
       ? "Content Studio did not receive JSON from its API. Reload to verify the saved state before retrying."
       : error instanceof Error ? error.message : "Content Studio could not connect. Reload before retrying.", isWrite);

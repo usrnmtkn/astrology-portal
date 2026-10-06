@@ -36,7 +36,7 @@ import {
   studioInventoryRequestPath,
   type StudioInventoryQuery
 } from "./studioSectionInventory";
-import { readStudioContentDocument, studioInventoryDocumentPath, studioInventoryDocumentsPath } from "./generatedContentClient";
+import { readStudioContentDocument, requestStudioJson, studioInventoryDocumentPath, studioInventoryDocumentsPath } from "./generatedContentClient";
 import type { StudioListingFacts } from "../../../api/_lib/studio-listing-facts";
 import { isContentStudioReferenceSource } from "../../web/src/content/contentStudioSourceRole";
 import {
@@ -8561,10 +8561,27 @@ export function GeneratedContentAdminDashboard() {
         starter = transitNatalStarterCopy(rowHasCopy && starterRecord ? starterRecord : starterPayload.packageSource);
         if (starter.body_you.trim() || starter.body_they.trim()) break;
       }
+      // Some live readings are assembled from several hooks, with no authored
+      // soft/hard row. Ask the same reader resolver for a reusable starter.
+      let starterSources: unknown;
+      if (!starter.body_you.trim() && !starter.body_they.trim()) {
+        const response = await requestStudioJson("/api/admin/transit-natal-preview", secret, {
+          readOnly: true,
+          method: "POST", body: JSON.stringify({ ...selection, draftStarter: true })
+        });
+        if (requestId !== sourceOpenRequestRef.current || finderTransitNatalExactKey() !== key) return;
+        const resolved = objectRecord(response.starter);
+        if (!resolved || resolved.contentKey !== key || typeof resolved.body_you !== "string" || typeof resolved.body_they !== "string") {
+          throw new Error("The current reading could not be loaded into this draft. Try opening it again.");
+        }
+        starter = { body_you: resolved.body_you, body_they: resolved.body_they };
+        starterSources = resolved.sources;
+      }
       if (!(draft && draft.contentKey !== key) && !confirmSkyEditorNavigation()) return;
       setSelectedRowId(null);
       setCompositionEditorContext(null);
       const nextDraft = transitNatalExactSourceDraft(selection, starter);
+      if (starterSources) Object.assign(nextDraft.sourceSnapshot, { transitStarter: { method: "reader-resolver", sources: starterSources } });
       rememberSavedDraft(nextDraft);
       setMessage(key.split("/").length === 8
         ? (starter.body_you.trim()
