@@ -12,7 +12,7 @@
       "point-explainer": 2,
       "sky-placement": 1,
       "sky-placement-archive": 1,
-      "transit-aspect": 378,
+      "transit-aspect": 384,
       "transit-aspect-insert": 2,
       "transit-event": 1,
       "transit-house": 108,
@@ -31,7 +31,7 @@
       "sky-lunation": 50,
       "sky-placement": 1,
       "sky-placement-archive": 1,
-      "transit-aspect": 378,
+      "transit-aspect": 384,
       "transit-aspect-insert": 2,
       "transit-event": 1,
       "transit-house": 108,
@@ -41,7 +41,7 @@
       "you|friends": 1092
     },
     "displayCountExplained": 2766,
-    "distinctKeys": 2765,
+    "distinctKeys": 2771,
     "duplicateSkyArticleDisplayEntries": 2,
     "migratedInWave1": 0,
     "pointExplainers": {
@@ -51,25 +51,17 @@
     }
   },
   "compositionSlots": {
-    "authorityResolved": 7,
-    "authorityResolvedSlotIds": [
-      "canonical-slot/natal/planet-intro/jupiter",
-      "canonical-slot/natal/planet-intro/mars",
-      "canonical-slot/natal/planet-intro/moon",
-      "canonical-slot/natal/planet-intro/neptune",
-      "canonical-slot/natal/planet-intro/pluto",
-      "canonical-slot/natal/planet-intro/saturn",
-      "canonical-slot/natal/planet-intro/uranus"
-    ],
+    "authorityResolved": 0,
+    "authorityResolvedSlotIds": [],
     "conflicts": 0,
     "total": 1428
   },
   "counts": {
     "byBucket": {
-      "AUTHORITY_RESOLVED": 357,
+      "AUTHORITY_RESOLVED": 358,
       "AUTO_MERGE_EXACT": 60,
       "AUTO_MERGE_NORMALIZED": 0,
-      "COMPOSED_ONLY": 2144,
+      "COMPOSED_ONLY": 2143,
       "OWNER_DECISION_REQUIRED": 0,
       "SINGLE_SOURCE": 0,
       "SOURCE_GAP": 345
@@ -93,8 +85,8 @@
         "gap": 487
       },
       "you": {
-        "authored": 351,
-        "composed": 2207,
+        "authored": 352,
+        "composed": 2206,
         "gap": 348
       }
     },
@@ -161,8 +153,8 @@
       "gap": 487
     },
     "you": {
-      "authored": 351,
-      "composed": 2207,
+      "authored": 352,
+      "composed": 2206,
       "gap": 348
     }
   },
@@ -216,10 +208,10 @@
   ],
   "schema": "tldr-astro-canonical-content-migration-report/v1",
   "sourceReachability": {
-    "canonicalUnit": 429,
-    "compositionIngredient": 24,
-    "eligibleExactRows": 492,
-    "explicitAllowlist": 39,
+    "canonicalUnit": 430,
+    "compositionIngredient": 17,
+    "eligibleExactRows": 493,
+    "explicitAllowlist": 46,
     "failures": 0,
     "original371": {
       "canonicalUnit": 403,

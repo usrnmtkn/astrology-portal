@@ -100603,6 +100603,326 @@
    "word_count": 256,
    "runtime_family": "natal-you-placement-sign-final",
    "runtime_key": "uranus|scorpio"
+  },
+  {
+   "contentKey": "fallback-hook/natal/planet-intro/sun",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "The Sun is your core identity. It shows what you are here to build, and where you need to be seen.",
+   "body_they": "The Sun is their core identity. It shows what they are here to build, and where they need to be seen.",
+   "review_status": "approved_reuse",
+   "source_keys": [
+    "fallback-hook/planet-intro/sun",
+    "fallback-vocab/planet-topic/sun",
+    "cc/planet/sun/function"
+   ],
+   "note": "Drafted by Claude from the cited source meanings; approve by reading the rendered paragraph. | plain-language pass applied",
+   "approved_via": "owner chat review 2026-07-21",
+   "surface": "natal",
+   "source_migration": {
+    "sourceKey": "fallback-hook/planet-intro/sun",
+    "sourceRevision": "1d8045f1794aff90045e3a7715b1ba40f98ff254",
+    "bodyYouSha256": "4c04ad56c0d408029d5ccdf5361f7c1423fdf37be42630ebf26f33bcbd4cb8ee",
+    "bodyTheySha256": "bf658f48295e41a5fb67416023e2a3b3ba5436e3e4662c295e017f95709444de",
+    "reason": "Natal-only source identity; complete existing approved introduction reused without text changes."
+   }
+  },
+  {
+   "contentKey": "fallback-hook/natal/planet-intro/moon",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "The Moon is where your emotions and instincts live. It shapes what makes you feel safe, and how you comfort yourself.",
+   "body_they": "The Moon is where their emotions and instincts live. It shapes what makes them feel safe, and how they comfort themselves.",
+   "review_status": "approved_reuse",
+   "source_keys": [
+    "fallback-hook/planet-intro/moon",
+    "fallback-vocab/planet-topic/moon",
+    "cc/planet/moon/function"
+   ],
+   "note": "Drafted by Claude from the cited source meanings; approve by reading the rendered paragraph. | plain-language pass applied",
+   "approved_via": "owner chat review 2026-07-21",
+   "surface": "natal",
+   "source_migration": {
+    "sourceKey": "fallback-hook/planet-intro/moon",
+    "sourceRevision": "1d8045f1794aff90045e3a7715b1ba40f98ff254",
+    "bodyYouSha256": "4a5434943b55312e26a63748f16fa2134cbd9ef4f6abc57cd633f98838358a41",
+    "bodyTheySha256": "558999eca6c6cbd61ab4d19fd5ad03869ea7b29b434925d5b407f30946437752",
+    "reason": "Natal-only source identity; complete existing approved introduction reused without text changes."
+   }
+  },
+  {
+   "contentKey": "fallback-hook/natal/planet-intro/mercury",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "Mercury is how your mind works. It shapes the way you think, talk, and take in information.",
+   "body_they": "Mercury is how their mind works. It shapes the way they think, talk, and take in information.",
+   "review_status": "approved_reuse",
+   "source_keys": [
+    "fallback-hook/planet-intro/mercury",
+    "fallback-vocab/planet-topic/mercury",
+    "cc/planet/mercury/function"
+   ],
+   "note": "Drafted by Claude from the cited source meanings; approve by reading the rendered paragraph. | plain-language pass applied",
+   "approved_via": "owner chat review 2026-07-21",
+   "surface": "natal",
+   "source_migration": {
+    "sourceKey": "fallback-hook/planet-intro/mercury",
+    "sourceRevision": "1d8045f1794aff90045e3a7715b1ba40f98ff254",
+    "bodyYouSha256": "735ff98449526c342c2923d761fc915c094381fe696008367dfb4f29554179c3",
+    "bodyTheySha256": "4f9e2562477ed464c7c9f787d78122e39cf283fe964a94de0b2c0e3a0f11f8b2",
+    "reason": "Natal-only source identity; complete existing approved introduction reused without text changes."
+   }
+  },
+  {
+   "contentKey": "fallback-hook/natal/planet-intro/venus",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "Venus is what you love and enjoy. It shapes your taste, your pleasures, and what you value.",
+   "body_they": "Venus is what they love and enjoy. It shapes their taste, their pleasures, and what they value.",
+   "review_status": "approved_reuse",
+   "source_keys": [
+    "fallback-hook/planet-intro/venus",
+    "fallback-vocab/planet-topic/venus",
+    "cc/planet/venus/function"
+   ],
+   "note": "Drafted by Claude from the cited source meanings; approve by reading the rendered paragraph. | plain-language pass applied",
+   "approved_via": "owner chat review 2026-07-21",
+   "surface": "natal",
+   "source_migration": {
+    "sourceKey": "fallback-hook/planet-intro/venus",
+    "sourceRevision": "1d8045f1794aff90045e3a7715b1ba40f98ff254",
+    "bodyYouSha256": "5f4f7f2e28c873842363a5364796f26fdfdd1b8f87fabd1ed338c999bd3a2508",
+    "bodyTheySha256": "468623b45e83164137fed9a3678e7e8b0810430133e06d4c76955c669ff3d625",
+    "reason": "Natal-only source identity; complete existing approved introduction reused without text changes."
+   }
+  },
+  {
+   "contentKey": "fallback-hook/natal/planet-intro/mars",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "Mars is your drive. It is how you assert yourself and go after what you want.",
+   "body_they": "Mars is their drive. It is how they assert themselves and go after what they want.",
+   "review_status": "approved_reuse",
+   "source_keys": [
+    "fallback-hook/planet-intro/mars",
+    "fallback-vocab/planet-topic/mars",
+    "cc/planet/mars/function"
+   ],
+   "note": "Drafted by Claude from the cited source meanings; approve by reading the rendered paragraph. | plain-language pass applied",
+   "approved_via": "owner chat review 2026-07-21",
+   "surface": "natal",
+   "source_migration": {
+    "sourceKey": "fallback-hook/planet-intro/mars",
+    "sourceRevision": "1d8045f1794aff90045e3a7715b1ba40f98ff254",
+    "bodyYouSha256": "ec0395324e6867d272ffed8cc46e14bb2b4a60f1a27a85e68a999ee8c2206a96",
+    "bodyTheySha256": "35ff124e90bacb3672f3615eec8e04266da02a54b7c5462709e3efbecc0ebe33",
+    "reason": "Natal-only source identity; complete existing approved introduction reused without text changes."
+   }
+  },
+  {
+   "contentKey": "fallback-hook/natal/planet-intro/jupiter",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "Jupiter is where you grow. It shapes what you believe in and where life expands for you.",
+   "body_they": "Jupiter is where they grow. It shapes what they believe in and where life expands for them.",
+   "review_status": "approved_reuse",
+   "source_keys": [
+    "fallback-hook/planet-intro/jupiter",
+    "fallback-vocab/planet-topic/jupiter",
+    "cc/planet/jupiter/function"
+   ],
+   "note": "Drafted by Claude from the cited source meanings; approve by reading the rendered paragraph. | plain-language pass applied",
+   "approved_via": "owner chat review 2026-07-21",
+   "surface": "natal",
+   "source_migration": {
+    "sourceKey": "fallback-hook/planet-intro/jupiter",
+    "sourceRevision": "1d8045f1794aff90045e3a7715b1ba40f98ff254",
+    "bodyYouSha256": "0a5baaa418ef7ce6365f09154cc874ec841eb8c4f9ee794be88e52f93358b23d",
+    "bodyTheySha256": "91fffb13fd304e3e4f7d61bbf495c32120d75c094b3745f3622bb1310db5f826",
+    "reason": "Natal-only source identity; complete existing approved introduction reused without text changes."
+   }
+  },
+  {
+   "contentKey": "fallback-hook/natal/planet-intro/saturn",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "Saturn is where life asks for structure. It brings discipline, limits, and lessons that take time.",
+   "body_they": "Saturn is where life asks for structure. It brings discipline, limits, and lessons that take time.",
+   "review_status": "approved_reuse",
+   "source_keys": [
+    "fallback-hook/planet-intro/saturn",
+    "fallback-vocab/planet-topic/saturn",
+    "cc/planet/saturn/function"
+   ],
+   "note": "Drafted by Claude from the cited source meanings; approve by reading the rendered paragraph. | plain-language pass applied",
+   "approved_via": "owner chat review 2026-07-21",
+   "surface": "natal",
+   "source_migration": {
+    "sourceKey": "fallback-hook/planet-intro/saturn",
+    "sourceRevision": "1d8045f1794aff90045e3a7715b1ba40f98ff254",
+    "bodyYouSha256": "76b51add1b808f6c92da358f4491578937973b2cca62d1b84f78e122155d0eb8",
+    "bodyTheySha256": "76b51add1b808f6c92da358f4491578937973b2cca62d1b84f78e122155d0eb8",
+    "reason": "Natal-only source identity; complete existing approved introduction reused without text changes."
+   }
+  },
+  {
+   "contentKey": "fallback-hook/natal/planet-intro/uranus",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "Uranus is where you break the rules. It brings disruption, change, and the urge to be free.",
+   "body_they": "Uranus is where they break the rules. It brings disruption, change, and the urge to be free.",
+   "review_status": "approved_reuse",
+   "source_keys": [
+    "fallback-hook/planet-intro/uranus",
+    "fallback-vocab/planet-topic/uranus",
+    "cc/planet/uranus/function"
+   ],
+   "note": "Drafted by Claude from the cited source meanings; approve by reading the rendered paragraph. | plain-language pass applied",
+   "approved_via": "owner chat review 2026-07-21",
+   "surface": "natal",
+   "source_migration": {
+    "sourceKey": "fallback-hook/planet-intro/uranus",
+    "sourceRevision": "1d8045f1794aff90045e3a7715b1ba40f98ff254",
+    "bodyYouSha256": "5324a39ace6db33357c8aca3a96cfe81c3b271ef4b8fd2f2c54b88e46d8d4a14",
+    "bodyTheySha256": "58a398b783b082b9edbb14a9d7e2fb5f2af53751e12629ba67d77ecce8830144",
+    "reason": "Natal-only source identity; complete existing approved introduction reused without text changes."
+   }
+  },
+  {
+   "contentKey": "fallback-hook/natal/planet-intro/neptune",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "Neptune is where you dream. It blurs the line between what is real and what you imagine.",
+   "body_they": "Neptune is where they dream. It blurs the line between what is real and what they imagine.",
+   "review_status": "approved_reuse",
+   "source_keys": [
+    "fallback-hook/planet-intro/neptune",
+    "fallback-vocab/planet-topic/neptune",
+    "cc/planet/neptune/function"
+   ],
+   "note": "Drafted by Claude from the cited source meanings; approve by reading the rendered paragraph. | plain-language pass applied",
+   "approved_via": "owner chat review 2026-07-21",
+   "surface": "natal",
+   "source_migration": {
+    "sourceKey": "fallback-hook/planet-intro/neptune",
+    "sourceRevision": "1d8045f1794aff90045e3a7715b1ba40f98ff254",
+    "bodyYouSha256": "3207703bbd50b7d340816ffd3876133b6d1ec9e849c5ea4242c39b54d5add182",
+    "bodyTheySha256": "b19de8a5e6077ee05de1d59b53c0ed70e128a75621941d7995ff936a1c340967",
+    "reason": "Natal-only source identity; complete existing approved introduction reused without text changes."
+   }
+  },
+  {
+   "contentKey": "fallback-hook/natal/planet-intro/pluto",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "Pluto is where change runs deep. It deals in power, depth, and slow transformation.",
+   "body_they": "Pluto is where change runs deep. It deals in power, depth, and slow transformation.",
+   "review_status": "approved_reuse",
+   "source_keys": [
+    "fallback-hook/planet-intro/pluto",
+    "fallback-vocab/planet-topic/pluto",
+    "cc/planet/pluto/function"
+   ],
+   "note": "Drafted by Claude from the cited source meanings; approve by reading the rendered paragraph. | plain-language pass applied",
+   "approved_via": "owner chat review 2026-07-21",
+   "surface": "natal",
+   "source_migration": {
+    "sourceKey": "fallback-hook/planet-intro/pluto",
+    "sourceRevision": "1d8045f1794aff90045e3a7715b1ba40f98ff254",
+    "bodyYouSha256": "5069a8d0b7be2aba5acd98ce042b83601dfac618465988757cdc201727d9bdb8",
+    "bodyTheySha256": "5069a8d0b7be2aba5acd98ce042b83601dfac618465988757cdc201727d9bdb8",
+    "reason": "Natal-only source identity; complete existing approved introduction reused without text changes."
+   }
+  },
+  {
+   "contentKey": "fallback-hook/natal/planet-intro/chiron",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "Chiron is the old sore spot. It marks the insecurities you carry, and where repair happens over time.",
+   "body_they": "Chiron is the old sore spot. It marks the insecurities they carry, and where repair happens over time.",
+   "review_status": "approved_reuse",
+   "source_keys": [
+    "fallback-hook/planet-intro/chiron",
+    "fallback-vocab/planet-topic/chiron",
+    "cc/planet/chiron/function"
+   ],
+   "note": "Drafted by Claude from the cited source meanings; approve by reading the rendered paragraph. | plain-language pass applied",
+   "approved_via": "owner chat review 2026-07-21",
+   "surface": "natal",
+   "source_migration": {
+    "sourceKey": "fallback-hook/planet-intro/chiron",
+    "sourceRevision": "1d8045f1794aff90045e3a7715b1ba40f98ff254",
+    "bodyYouSha256": "e7b9224812d6f5de15785e40c49f434d011a315b1b2838920adc580e01b250a6",
+    "bodyTheySha256": "c4cc47e1838cf78102cea12b902e364244acfce27cb6c282e52e8e1bee160522",
+    "reason": "Natal-only source identity; complete existing approved introduction reused without text changes."
+   }
+  },
+  {
+   "contentKey": "fallback-hook/natal/planet-intro/north-node",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "The North Node is your growth edge. It points at what is unfamiliar but calls to you anyway.",
+   "body_they": "The North Node is their growth edge. It points at what is unfamiliar but calls to them anyway.",
+   "review_status": "approved_reuse",
+   "source_keys": [
+    "fallback-hook/planet-intro/north-node",
+    "fallback-vocab/planet-topic/north-node",
+    "cc/planet/north-node/function"
+   ],
+   "note": "Drafted by Claude from the cited source meanings; approve by reading the rendered paragraph. | plain-language pass applied",
+   "approved_via": "owner chat review 2026-07-21",
+   "surface": "natal",
+   "source_migration": {
+    "sourceKey": "fallback-hook/planet-intro/north-node",
+    "sourceRevision": "1d8045f1794aff90045e3a7715b1ba40f98ff254",
+    "bodyYouSha256": "a558af38cd985035ed45216617192ede90b659f44e6d522643c223d4b11285be",
+    "bodyTheySha256": "46a86a84a742f5ad992602197a33bb77e937da4f66c6a56475f1a44389b94c33",
+    "reason": "Natal-only source identity; complete existing approved introduction reused without text changes."
+   }
+  },
+  {
+   "contentKey": "fallback-hook/natal/planet-intro/south-node",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "The South Node is your comfort zone. It holds the familiar strengths you can always fall back on.",
+   "body_they": "The South Node is their comfort zone. It holds the familiar strengths they can always fall back on.",
+   "review_status": "approved_reuse",
+   "source_keys": [
+    "fallback-hook/planet-intro/south-node",
+    "fallback-vocab/planet-topic/south-node",
+    "cc/planet/south-node/function"
+   ],
+   "note": "Drafted by Claude from the cited source meanings; approve by reading the rendered paragraph. | plain-language pass applied",
+   "approved_via": "owner chat review 2026-07-21",
+   "surface": "natal",
+   "source_migration": {
+    "sourceKey": "fallback-hook/planet-intro/south-node",
+    "sourceRevision": "1d8045f1794aff90045e3a7715b1ba40f98ff254",
+    "bodyYouSha256": "a38ab3c65d51c5b4ac265e95a4fa1a41e2176330eb33c71439bb5aafd21b358c",
+    "bodyTheySha256": "09128ec7436a419ada5ca0343cfa6c132d07aa70ab72127067acc9617e00513c",
+    "reason": "Natal-only source identity; complete existing approved introduction reused without text changes."
+   }
+  },
+  {
+   "contentKey": "fallback-hook/natal/planet-intro/lilith",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "Lilith is the untamed part. She marks what you were shamed out of, and what comes back stronger once you stop apologizing for it.",
+   "body_they": "Lilith is the untamed part. She marks what they were shamed out of, and what comes back stronger once they stop apologizing for it.",
+   "review_status": "approved_reuse",
+   "notes": "Black Moon Lilith rows (full-surface extension, chat 2026-07-22).",
+   "approved_via": "owner sign-off (finish queue), chat 2026-07-22",
+   "surface": "natal",
+   "source_keys": [
+    "fallback-hook/planet-intro/lilith"
+   ],
+   "source_migration": {
+    "sourceKey": "fallback-hook/planet-intro/lilith",
+    "sourceRevision": "1d8045f1794aff90045e3a7715b1ba40f98ff254",
+    "bodyYouSha256": "b1ddb325378917cc2df9d3eb636b07e2dd10da55eb49088dd2a906d34cff6c63",
+    "bodyTheySha256": "27b1f4e01655f736da05d0b68805c9bbe46f6dde5b22c4a1ae3ab441984b56a2",
+    "reason": "Natal-only source identity; complete existing approved introduction reused without text changes."
+   }
   }
  ]
 }

@@ -1143,7 +1143,7 @@ function createFallbackRenderer(templatesFile, rowsFile, publication = {}) {
       signNeed: getVocab(`fallback-vocab/sign-need/${sign}`, voice, opts2),
       planetVerb: getVocab(`fallback-vocab/planet-verb/${planet}`, voice, opts2),
       signAdverb: getVocab(`fallback-vocab/sign-adverb/${sign}`, voice, opts2),
-      planetIntro: getReaderLivedRow(`fallback-hook/planet-lived/${planet}`, voice, opts2)?.body ?? getHook(`fallback-hook/planet-intro/${planet}`, voice, opts2),
+      planetIntro: getHook(`fallback-hook/natal/planet-intro/${planet}`, voice, opts2),
       planetBest: getHook(`fallback-hook/planet-best/${planet}`, voice, opts2),
       placementSentences: getHook(`fallback-hook/placement-sentence/${planet}/${sign}`, voice, opts2),
       placementGerundText: getVocabList(`fallback-vocab/placement-gerund/${planet}/${sign}`, voice, opts2).join(", or ") || null
@@ -6526,7 +6526,7 @@ function skyV4FieldValue(source, path) {
 }
 
 // apps/web/src/content/fallbackArchitectureV3/resolver/index.browser.ts
-var PACKAGE_VERSION = "v3-2026-10-05-relationship-template-integrity";
+var PACKAGE_VERSION = "v3-2026-10-06-natal-planet-introductions";
 function stablePackageValue(value) {
   if (Array.isArray(value)) {
     return value.map(stablePackageValue);

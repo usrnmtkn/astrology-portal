@@ -12,7 +12,7 @@ const resolverSourceFamilies: Record<string, string[]> = {
   signNeed: ["fallback-vocab/sign-need/"],
   planetExcess: ["fallback-vocab/planet-excess/"],
   planetBest: ["fallback-hook/planet-best/"],
-  planetIntro: ["fallback-hook/planet-lived/", "fallback-hook/planet-intro/"],
+  planetIntro: ["fallback-hook/natal/planet-intro/"],
   placementSentences: ["fallback-hook/placement-sentence/"],
   placementGerundText: ["fallback-vocab/placement-gerund/"],
   modifierSentences: ["fallback-template/natal.modifier."],

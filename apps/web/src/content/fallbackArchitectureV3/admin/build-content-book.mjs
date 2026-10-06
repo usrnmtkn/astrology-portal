@@ -21,7 +21,7 @@ const lib = JSON.parse(fs.readFileSync(path.join(here, "../source-rows/transit-s
 const SECTIONS = [
   ["Your authored cards (verbatim)", k => k.startsWith("authored/") || k.startsWith("sky-article/"),
    "These are your own write-ups. They show to readers word for word, and always win over generated copy."],
-  ["Natal: planet meanings", k => /^fallback-hook\/(planet-intro|planet-best|natal-core)\//.test(k) || /^fallback-vocab\/planet-(topic|core|excess|productive|verb)\//.test(k)],
+  ["Natal: planet meanings", k => /^fallback-hook\/(natal\/planet-intro|planet-intro|planet-best|natal-core)\//.test(k) || /^fallback-vocab\/planet-(topic|core|excess|productive|verb)\//.test(k)],
   ["Natal: planet in sign", k => k.startsWith("fallback-hook/placement-sentence/")],
   ["Natal: planet in house", k => k.startsWith("fallback-hook/placement-house-sentence/") || k.startsWith("fallback-hook/house-meaning/")],
   ["Natal: angles (Rising, MC, DC, IC)", k => k.startsWith("fallback-hook/angle-")],

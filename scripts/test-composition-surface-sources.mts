@@ -15,7 +15,13 @@ try {
   const maps = buildCompositionMap(rows);
   const coverage = new Set(writingSurfaceSourceMap.flatMap((surface) => compositionSourcesForSurface(surface.id, rows, maps).map((row) => row.content_key)));
   const hooks = rows.filter((row) => row.content_key.startsWith("fallback-hook/"));
-  for (const row of hooks.filter((row) => !isRetiredCompositionKey(row.content_key))) assert.ok(coverage.has(row.content_key), `${row.content_key} needs a surface Composition Map contract`);
+  // General planet meanings remain in the knowledge archive; they are no longer
+  // editable ingredients of a natal introduction. Keep this exclusion bounded.
+  const archivedPlanetMeanings = hooks.filter((row) => row.content_key.startsWith("fallback-hook/planet-lived/"));
+  assert.deepEqual(archivedPlanetMeanings.map((row) => row.content_key.split("/").at(-1)).sort(), ["jupiter", "mars", "moon", "neptune", "pluto", "saturn", "uranus"]);
+  const archiveKeys = new Set(archivedPlanetMeanings.map((row) => row.content_key));
+  for (const row of hooks.filter((row) => !isRetiredCompositionKey(row.content_key) && !archiveKeys.has(row.content_key))) assert.ok(coverage.has(row.content_key), `${row.content_key} needs a surface Composition Map contract`);
+  for (const row of archivedPlanetMeanings) assert.equal(coverage.has(row.content_key), false, `${row.content_key} must not return as an introduction source`);
   for (const row of hooks.filter((row) => isRetiredCompositionKey(row.content_key))) assert.equal(coverage.has(row.content_key), false);
   for (const [surface, key] of [
     ["personal-transit-house", "authored/transit-house-intro/mars/1"],
@@ -23,6 +29,8 @@ try {
     ["friends-pair-daily", "fallback-hook/pair-daily/opener"],
     ["friends-transits-between-you-two", "fallback-hook/bond-effect-sextile/chiron"],
     ["natal-placement-detail", "fallback-hook/natal-you-placement-sign-final/uranus/scorpio"],
+    ["natal-placement-detail", "fallback-hook/natal/planet-intro/saturn"],
+    ["natal-placement-detail", "fallback-hook/natal/planet-intro/neptune"],
     ["natal-empty-house", "fallback-hook/empty-house-explainer/base"],
     ["sky-placement-detail", "fallback-hook/sky-placement-frame/jupiter"]
   ]) {

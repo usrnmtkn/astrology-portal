@@ -163,12 +163,6 @@ export default function NatalPlacementSourceFinder({ house, isLoading, motion, o
     if (source.key.startsWith("fallback-template/natal.planet-in-sign/") && !rows.some((row) => row.content_key === source.key)) {
       source = { ...source, key: "fallback-template/natal.planet-in-sign" };
     }
-    if (source.key.startsWith("fallback-hook/planet-intro/")) {
-      const preferredKey = source.key.replace("/planet-intro/", "/planet-lived/");
-      if (rows.some((row) => row.content_key === preferredKey)) {
-        source = { ...source, key: preferredKey, scope: `Preferred You-view introduction for ${titleFromKey(planet)} when the shared sign assembly is used.` };
-      }
-    }
     if (source.key.includes("/natal-you-placement-house-final/")) {
       const preferredKey = source.key.replace("/natal-you-placement-house-final/", "/placement-house-lived/");
       if (!rows.some((row) => row.content_key === source.key) && rows.some((row) => row.content_key === preferredKey)) source = { ...source, key: preferredKey };

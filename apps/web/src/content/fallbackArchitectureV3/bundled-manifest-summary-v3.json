@@ -1,14 +1,14 @@
 {
-  "packageVersion": "v3-2026-10-05-relationship-template-integrity",
-  "contentHash": "d67bed55c94f49c94ca540874e95da65",
-  "keyManifestHash": "36292cda909cae9694622edcb73d286a",
-  "keyCount": 9271,
+  "packageVersion": "v3-2026-10-06-natal-planet-introductions",
+  "contentHash": "f68fdc790659293d6d68572b94fa8e29",
+  "keyManifestHash": "9db18966aa21a24241ad8de4133ba6f6",
+  "keyCount": 9285,
   "runtimeCapability": "sky-placement-on-demand-v1",
   "partitions": {
     "core": {
-      "contentHash": "38f0a44e98e7ac0a5804f2f44a790e5e",
-      "keyManifestHash": "30157ffda2c3afc12f7111b381456a2d",
-      "keyCount": 7478
+      "contentHash": "7ddefa3a0a75df365fe5ecc0cb2a95aa",
+      "keyManifestHash": "3497a6f17c029a55fda85c8bacc6d1a1",
+      "keyCount": 7492
     },
     "skyPlacement": {
       "contentHash": "f0ce2ff66b616deae515f6a0032a3406",

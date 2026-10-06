@@ -189,12 +189,8 @@ function sourceSlotId(sourceKey) {
 
 function placementSignSlots(body, sign) {
   const slots = [];
-  const introLived = `fallback-hook/planet-lived/${body}`;
-  const introShort = `fallback-hook/planet-intro/${body}`;
-  if (hookRows.has(introLived) || hookRows.has(introShort)) {
-    addExistingSlot(slots, `canonical-slot/natal/planet-intro/${body}`, introLived, "planetIntro");
-    addSlotCandidate(`canonical-slot/natal/planet-intro/${body}`, introShort, "planetIntro");
-  }
+  const natalIntro = `fallback-hook/natal/planet-intro/${body}`;
+  addExistingSlot(slots, `canonical-slot/natal/planet-intro/${body}`, natalIntro, "planetIntro");
   for (const [role, key] of [
     ["planetTopic", `fallback-vocab/planet-topic/${body}`],
     ["planetExcess", `fallback-vocab/planet-excess/${body}`],

@@ -5151,6 +5151,30 @@ test.describe("client-facing user flow case studies", () => {
     await assertNoClientErrors();
   });
 
+  for (const [width, theme] of [[1440, "light"], [390, "dark"]] as const) {
+    test(`natal reader uses dedicated planet introductions ${width} ${theme}`, async ({ page }) => {
+      const noErrors = await expectNoClientErrors(page);
+      await page.setViewportSize({ width, height: 1000 });
+      await seedClientState(page, { profile: true, profileBirthDate: "1997-01-01", profileBirthTime: "12:00 PM", preloadProfileNatalSky: true, theme });
+      await expectClientRouteLoads(page, "/#you");
+      await selectYouNatalTab(page);
+      for (const [planet, sign] of [["Saturn", "Aries"], ["Neptune", "Capricorn"]]) {
+        const source = fallbackSourceRowsV3.hookRows.find(row => row.contentKey === `fallback-hook/natal/planet-intro/${planet.toLowerCase()}`)!;
+        const shared = fallbackSourceRowsV3.hookRows.find(row => row.contentKey === `fallback-hook/planet-lived/${planet.toLowerCase()}`)!;
+        await page.getByRole("button", { name: `${planet} in ${sign}`, exact: true }).click();
+        const article = page.getByRole("region", { name: new RegExp(`^${planet} in ${sign} in the`) });
+        await expect(article).toContainText(source.body_you!);
+        await expect(article).not.toContainText(shared.body!);
+        await page.reload();
+        await expect(article).toContainText(source.body_you!);
+        await article.screenshot({ path: `test-results/natal-reader-${planet.toLowerCase()}-${width}-${theme}.png` });
+        await page.getByRole("button", { name: "Back to updates" }).click();
+        await selectYouNatalTab(page);
+      }
+      await noErrors();
+    });
+  }
+
   test("content QA flags directional copy in You ascendant placement detail", async ({ page }) => {
     const assertNoClientErrors = await expectNoClientErrors(page);
 

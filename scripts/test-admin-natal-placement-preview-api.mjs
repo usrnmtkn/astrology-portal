@@ -54,7 +54,7 @@ const jupiterLeoRetrograde = renderNatalPlacementPreview(normalizeNatalPlacement
   planet: "jupiter",
   sign: "leo"
 }));
-assert.match(jupiterLeoRetrograde.body, /Jupiter describes what gets bigger/u);
+assert.match(jupiterLeoRetrograde.body, /Jupiter is where you grow/u);
 assert.match(jupiterLeoRetrograde.body, /Warmth spills out of you/u);
 assert.match(jupiterLeoRetrograde.body, /Your Jupiter is in your 3rd house/u);
 assert.match(jupiterLeoRetrograde.body, /Jupiter is retrograde in the birth chart/u);
@@ -88,7 +88,7 @@ const reviewedOnlyState = renderNatalPlacementPreviewState(normalizeNatalPlaceme
   sign: "leo"
 }));
 assert.doesNotMatch(reviewedOnlyState.rendered.body, new RegExp(reviewedOnlyMarker, "u"));
-assert.match(reviewedOnlyState.rendered.body, /Jupiter describes what gets bigger/u);
+assert.match(reviewedOnlyState.rendered.body, /Jupiter is where you grow/u);
 assert.deepEqual(reviewedOnlyState.appliedOverrideKeys, []);
 assert.deepEqual(reviewedOnlyState.ignoredOverrides, [{
   contentKey: "fallback-hook/placement-sentence/jupiter/leo",
@@ -143,7 +143,7 @@ const referenceLaneState = renderNatalPlacementPreviewState(normalizeNatalPlacem
   sign: "leo"
 }));
 assert.doesNotMatch(referenceLaneState.rendered.body, /REFERENCE LANE MUST NOT RENDER/u);
-assert.match(referenceLaneState.rendered.body, /Jupiter describes what gets bigger/u);
+assert.match(referenceLaneState.rendered.body, /Jupiter is where you grow/u);
 assert.deepEqual(referenceLaneState.ignoredOverrides, [{
   contentKey: "fallback-hook/placement-sentence/jupiter/leo",
   reason: "not-serving"
@@ -172,7 +172,7 @@ const staleKeyState = renderNatalPlacementPreviewState(normalizeNatalPlacementPr
   sign: "leo"
 }));
 assert.doesNotMatch(staleKeyState.rendered.body, /UNINSTALLED EXACT COPY MUST NOT RENDER/u);
-assert.match(staleKeyState.rendered.body, /Jupiter describes what gets bigger/u);
+assert.match(staleKeyState.rendered.body, /Jupiter is where you grow/u);
 assert.deepEqual(staleKeyState.ignoredOverrides, [{
   contentKey: "fallback-hook/natal-you-placement-complete-final/jupiter/leo/3/not-installed",
   reason: "not-current-package-key"
