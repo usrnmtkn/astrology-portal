@@ -24,10 +24,10 @@
   },
   "lineage": {
     "file": "approved-serving-lineage-v1.json",
-    "sha256": "816bb1fed8ad2a74ca63f803f973565b0a657e1e87d2f96a6e1a44b0456dbb92",
+    "sha256": "5349396b43fbcf73808180334f92abdd7851cd8fb9a6d3f411a80694387be188",
     "count": 9826,
     "emissionCount": 9902,
-    "exactSourceMatchCount": 8784
+    "exactSourceMatchCount": 7663
   },
   "partitions": {
     "skyCore": {

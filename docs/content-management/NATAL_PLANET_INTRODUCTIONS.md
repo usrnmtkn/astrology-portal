@@ -84,7 +84,12 @@ planet/point introductions: Sun, Moon, Mercury, Venus, Mars, Jupiter, Saturn,
 Uranus, Neptune, Pluto, Chiron, Lilith, North Node, and South Node. Each uses
 `fallback-hook/natal/planet-intro/{planet}` in the Studio source card, preview
 dependencies, and composed reader paragraph. The generated package preserves
-each complete source record and includes its key in the publication manifest.
+every reader and eligibility field and includes each key in the publication
+manifest. Deferred hooks omit only editor annotations (`note`, `notes`, and
+`source_migration`) from browser downloads; complete authoring sources, migration
+receipts, and source hashes remain available to Studio and the lineage index.
+This keeps the new natal sources within the existing bundle-size limit without
+changing any reader wording or increasing the budget.
 
 The audit covers 8,112 placement cases across all twelve signs, no house or each
 of twelve houses, supported motions, and You/Friend voices. Node, browser-source,

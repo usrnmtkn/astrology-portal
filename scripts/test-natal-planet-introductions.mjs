@@ -20,7 +20,8 @@ const manifest = read("bundled-manifest-v3.json");
 assert.equal(intros.length, originalIntros.length, "Every existing planet introduction needs a natal-owned source.");
 assert.ok(intros.length >= 14);
 for (const row of intros) {
-  assert.deepEqual(bundled.hookRows.find(candidate => candidate.contentKey === row.contentKey), row, `${row.contentKey}: shipped source differs from the approved source`);
+  const { note, notes, source_migration, ...readerRecord } = row;
+  assert.deepEqual(bundled.hookRows.find(candidate => candidate.contentKey === row.contentKey), readerRecord, `${row.contentKey}: shipped reader fields differ from the approved source`);
   assert.ok(manifest.keys.includes(`hook:${row.contentKey}`), `${row.contentKey}: absent from publication/source manifest`);
   const original = originalIntros.find(old => old.contentKey === row.source_keys[0]);
   assert.ok(original, `${row.contentKey}: missing original source provenance`);

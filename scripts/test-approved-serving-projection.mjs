@@ -109,6 +109,16 @@ assert.ok(sourcePending.length > 0, "fixture must prove pending variants exist i
 assert.equal(projectedPending.length, 0, "pending variants must not enter the serving projection");
 
 const runtime = fs.readFileSync(path.join(repoRoot, "apps/web/src/content/fallbackArchitectureV3Runtime.ts"), "utf8");
+const authoringHooks = new Map(JSON.parse(fs.readFileSync(path.join(packageRoot, "source-rows/fallback-source-rows-v3.json"), "utf8")).hookRows.map(row => [row.contentKey, row]));
+const deferredHooks = JSON.parse(fs.readFileSync(path.join(packageRoot, "bundled-deferred-core-rows-v3.json"), "utf8")).hookRows;
+for (const row of deferredHooks) {
+  const original = authoringHooks.get(row.contentKey);
+  assert.ok(original, `${row.contentKey}: complete authoring source must remain available`);
+  const { note, notes, source_migration, ...readerFields } = original;
+  assert.deepEqual(row, readerFields, `${row.contentKey}: only editor annotations may leave the reader projection`);
+  const receipt = lineage.entries.find(entry => entry.contentKey === row.contentKey);
+  assert.ok(receipt.authoringSources.some(source => source.sourceRowSha256 === canonicalSha256(original)), `${row.contentKey}: lineage must retain the full original source hash`);
+}
 assert.match(runtime, /approvedServingProjectionV1/);
 assert.match(runtime, /pendingRowsPresent !== false/);
 
