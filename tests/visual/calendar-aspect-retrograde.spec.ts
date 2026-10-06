@@ -2,8 +2,7 @@ import { test, expect } from '@playwright/test';
 import { studioApiStore } from '../helpers/studio-api-store';
 import { routeStudioInventoryApi } from '../helpers/studio-inventory-route';
 import { bundledPublications } from '../helpers/bundled-publications';
-import { readerResponse } from '../helpers/reader-response';
-import { calendarRxFixture, calendarRxKey, calendarDefaultBody, calendarRxBody } from '../helpers/calendar-rx-fixture';
+import { calendarRxFixture, calendarDefaultBody, calendarRxBody } from '../helpers/calendar-rx-fixture';
 
 for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
   test(`Calendar optional Rx version preserves the default ${theme} ${width}`, async ({ page }) => {
@@ -13,6 +12,8 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
     page.on('pageerror', error => errors.push(error.message));
     let failSave = false;
     try {
+      // Isolate the publication plane before Studio can seed a reader cache.
+      await bundledPublications(page);
       await page.setViewportSize({ width, height: 1000 });
       await page.addInitScript(theme => {
         localStorage.setItem('tldrastro:contentAdminSecret', 'calendar-api-fixture');
@@ -73,9 +74,12 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
 
       await page.unroute('**/api/**');
       await bundledPublications(page);
+      await page.route('**/api/content-publications', async route => route.fulfill({ json: {
+        schema: 'tldr-publications/v1', publications: await store.call({ method: 'publications' })
+      } }));
       await page.route('**/api/content-reader', async route => {
-        const keys = route.request().postDataJSON().keys ?? [];
-        await route.fulfill({ json: readerResponse(keys.includes(calendarRxKey) ? [live] : []) });
+        const result = await store.call({ method: 'POST', url: '/api/content-reader', body: route.request().postDataJSON() });
+        await route.fulfill({ status: result.status, json: result.payload });
       });
       await page.clock.setFixedTime(new Date('2026-10-05T16:00:00Z'));
       await page.goto('/?date=2026-10-05#calendar?view=day&date=2026-10-05');
