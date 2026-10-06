@@ -12462,7 +12462,7 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
     const currentSkyContentKeys = [
       ...new Set([
         ...cmsSurfaceKeys.retrogradeSummary(),
-        ...cmsSurfaceKeys.skyDebility(),
+        ...cmsSurfaceKeys.skyDebility(sky?.positions ?? []),
         ...(sky?.moonEvent ? lunationReaderContentKeys({startsAt:sky.moonEvent.occursAt,sign:sky.moonEvent.sign,title:sky.moonEvent.name}) : [])
       ])
     ];

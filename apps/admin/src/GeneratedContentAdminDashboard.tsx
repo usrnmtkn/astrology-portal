@@ -23,6 +23,7 @@ import { isDynamicTransitNatalExactKey } from "../../web/src/content/transitNata
 import { isTransitNatalFamilyKey, isTransitNatalSituationKey, packagedTransitOpenMode, transitNatalLiveServingSource } from "./transitNatalEditorScope";
 import { currentSkySummaryWording, skyDailySummaryFields, skySummaryTemplateErrors, type SkySummaryField } from "../../web/src/content/skyDailySummaryCatalog";
 import { SKY_DEBILITY_KEY_PREFIX, skyDebilityFields, skyDebilityTemplateErrors } from "../../web/src/content/skyDebilityCatalog";
+import { SKY_DEBILITY_INTERPRETATION_PREFIX } from "../../web/src/content/skyDebilityInterpretation";
 import { refreshContentPublications } from "../../web/src/services/contentPublications";
 import { installContentPublications, isContentRetired, subscribeToContentPublications, validContentPublication } from "../../web/src/content/contentPublicationState";
 import { recoverContentStudioCopy } from "./contentStudioCopyRecovery";
@@ -6539,7 +6540,7 @@ export function GeneratedContentAdminDashboard() {
         const { importedSkySummary, skySummaryImportProvenance } = await import("./skySummaryImportedCopy");
         const nextDraft: AdminDraft = {
           id: null, contentKey: field.key, surface: "sky", mode: "card", status: "DRAFT",
-          headline: field.label, summary: "", body: initialBody ?? (field.body || importedSkySummary(field.key) || ""), lane: "serving", reviewState: "EDITORIAL_REVIEW_REQUIRED",
+          headline: field.key.startsWith(SKY_DEBILITY_INTERPRETATION_PREFIX) ? "" : field.label, summary: "", body: initialBody ?? (field.body || importedSkySummary(field.key) || ""), lane: "serving", reviewState: "EDITORIAL_REVIEW_REQUIRED",
           blockType: "essay", promptVersion: "cms-surface-template-v1", sections: null, facts: null, reviewerNotes: "",
           sourceSnapshot: {
             contentType: "mustache-template", contentSystem: "cms-surface-override", contentLevel: "owner-authored",
@@ -10273,6 +10274,7 @@ export function GeneratedContentAdminDashboard() {
       : [];
     const isSkySummaryDraft = currentDraft.contentKey.startsWith("cms/sky-daily-summary/")
       || currentDraft.contentKey.startsWith("cms/sky-debility/");
+    const isCompleteEffortDraft = currentDraft.contentKey.startsWith(SKY_DEBILITY_INTERPRETATION_PREFIX);
     const summaryBuiltin = [...skyDailySummaryFields, ...skyDebilityFields].find(field => field.key === currentDraft.contentKey);
     const matchesBuiltinSummary = Boolean(summaryBuiltin?.body && currentDraft.body.trim() === summaryBuiltin.body.trim());
     const editorStatusRow = { id: currentDraft.id ?? (matchesBuiltinSummary ? `builtin:${currentDraft.contentKey}` : selectedRow?.id.startsWith("package:") ? selectedRow.id : null), updated_at: currentDraft.updatedAt };
@@ -10287,7 +10289,7 @@ export function GeneratedContentAdminDashboard() {
       body: currentDraft.body
     });
     cmsTemplateValidation.errors.push(...skySummaryTemplateErrors(currentDraft.contentKey, currentDraft.body));
-    cmsTemplateValidation.errors.push(...skyDebilityTemplateErrors(currentDraft.contentKey, currentDraft.body));
+    cmsTemplateValidation.errors.push(...skyDebilityTemplateErrors(currentDraft.contentKey, currentDraft.body, currentDraft.headline));
     const cmsCanSignOff = !isCmsSurfaceDraft || cmsTemplateValidation.errors.length === 0;
     const cmsReaderEligible = isCmsSurfaceDraft
       && currentDraft.status === "LIVE"
@@ -10671,7 +10673,7 @@ export function GeneratedContentAdminDashboard() {
                 }
       : null;
     const lunarIdentity = lunarContentIdentity(currentDraft.contentKey);
-    const headlineFieldLabel = isSkySummaryDraft ? "Editor name" : lunarIdentity ? "Editor name" : fallbackEditorGuidance?.headlineLabel
+    const headlineFieldLabel = isCompleteEffortDraft ? "Card heading" : isSkySummaryDraft ? "Editor name" : lunarIdentity ? "Editor name" : fallbackEditorGuidance?.headlineLabel
       ?? (isAstro101Draft
         ? "Card title"
         : isVocabularyDraft
@@ -10699,7 +10701,7 @@ export function GeneratedContentAdminDashboard() {
               : isTemplateDraft
                 ? "Template purpose (optional)"
                 : "TL;DR / summary");
-    const bodyFieldLabel = isManualCalendarEventDraft ? "Event write-up" : isReferenceDraft ? "Source text" : isSkySummaryDraft ? "Summary wording" : lunarIdentity?.family === "Moon transition phrases" ? "Transition phrase" : lunarIdentity?.family === "Lunar ingresses" ? "Lunar ingress passage" : lunarIdentity?.family === "Season transitions" ? "Season transition passage" : lunarIdentity ? "Full lunar passage" : isYouOnlyNatalExactDraft
+    const bodyFieldLabel = isCompleteEffortDraft ? "Complete interpretation" : isManualCalendarEventDraft ? "Event write-up" : isReferenceDraft ? "Source text" : isSkySummaryDraft ? "Summary wording" : lunarIdentity?.family === "Moon transition phrases" ? "Transition phrase" : lunarIdentity?.family === "Lunar ingresses" ? "Lunar ingress passage" : lunarIdentity?.family === "Season transitions" ? "Season transition passage" : lunarIdentity ? "Full lunar passage" : isYouOnlyNatalExactDraft
       ? "You view exact copy"
       : isVocabularyDraft && isPackageDraft
       ? vocabularyHasTheyVersion ? "You version" : "Variable value"
@@ -10749,7 +10751,7 @@ export function GeneratedContentAdminDashboard() {
     const signedAspectTitle = currentDraft.id || selectedRow?.id.startsWith("package:") || currentDraft.sections?.packageOriginalRecord
       ? calendarAspectSignedTitle(currentDraft.contentKey)
       : null;
-    const editorHeading = isCompatibilityAspectDraft ? `${currentDraft.id ? "Edit" : "Write"} ${currentDraft.headline || fallbackHookEditorTitle}` : isManualCalendarEventDraft ? `${currentDraft.id ? "Edit" : "Write"} ${currentDraft.headline}` : lunarIdentity?.family === "Lunar ingresses" ? `Edit ${lunarIdentity.title}` : signedAspectTitle ? `Edit ${signedAspectTitle}` : !currentDraft.id && currentDraft.sourceSnapshot?.authoringSource === "admin-dashboard-calendar-aspect" ? `Write ${calendarAspectSignedTitle(currentDraft.contentKey)}` : !currentDraft.id && currentDraft.contentKey.startsWith("authored/calendar-weekly-moon/") ? `New leftover write-up · ${lunarIdentity?.title ?? "Moon-sign leftover"}` : isSkySummaryDraft || selectedRow?.id.startsWith("package:") ? `Edit ${currentDraft.headline}` : currentDraft.id
+    const editorHeading = isCompleteEffortDraft ? "Edit complete effort interpretation" : isCompatibilityAspectDraft ? `${currentDraft.id ? "Edit" : "Write"} ${currentDraft.headline || fallbackHookEditorTitle}` : isManualCalendarEventDraft ? `${currentDraft.id ? "Edit" : "Write"} ${currentDraft.headline}` : lunarIdentity?.family === "Lunar ingresses" ? `Edit ${lunarIdentity.title}` : signedAspectTitle ? `Edit ${signedAspectTitle}` : !currentDraft.id && currentDraft.sourceSnapshot?.authoringSource === "admin-dashboard-calendar-aspect" ? `Write ${calendarAspectSignedTitle(currentDraft.contentKey)}` : !currentDraft.id && currentDraft.contentKey.startsWith("authored/calendar-weekly-moon/") ? `New leftover write-up · ${lunarIdentity?.title ?? "Moon-sign leftover"}` : isSkySummaryDraft || selectedRow?.id.startsWith("package:") ? `Edit ${currentDraft.headline}` : currentDraft.id
       ? isVocabularyDraft
         ? "Edit phrase"
         : compatibilityIdentity
@@ -11666,7 +11668,7 @@ export function GeneratedContentAdminDashboard() {
                 {fallbackEditorGuidance && <small className="admin-field-hint">{fallbackEditorGuidance.headlineHint}</small>}
                 {isVocabularyDraft && <small className="admin-field-hint">{isPackageDraft ? "This label helps editors find the phrase. The stable source key remains unchanged." : "This is the human name editors see in the table. New rows use it to generate the internal key."}</small>}
                 {isAstro101Draft && <small className="admin-field-hint">Title on the Learn hub card and at the top of the article.</small>}
-                {!fallbackEditorGuidance && !isVocabularyDraft && !isAstro101Draft && !isAuthoredPackageCard && <small className="admin-field-hint">{isSkySummaryDraft || lunarIdentity || isTemplateDraft || isFallbackHookDraft ? "Editor-facing name used to find this source in Content Studio." : "Title shown to readers."}</small>}
+                {!fallbackEditorGuidance && !isVocabularyDraft && !isAstro101Draft && !isAuthoredPackageCard && <small className="admin-field-hint">{!isCompleteEffortDraft && (isSkySummaryDraft || lunarIdentity || isTemplateDraft || isFallbackHookDraft) ? "Editor-facing name used to find this source in Content Studio." : "Title shown to readers."}</small>}
               </label>
               {isAstro101Draft && (
                 <>

@@ -215,6 +215,35 @@ await test('education astro-101 rows can publish; natal sample rows cannot', asy
   assert.deepEqual(writes, []);
 });
 
+await test('complete effort interpretations save intact and enforce fact slots at publication', async () => {
+  const contentKey = 'cms/sky-debility/reading/sun-libra-direct__venus-scorpio-retrograde__saturn-aries-retrograde';
+  const sourceSnapshot = { contentSystem: 'cms-surface-override', allowedSlots: ['count','total','countWord','totalWord','countVerb','planetWord','planetReference','planetList'] };
+  const body = 'Fixture opening retained in full.\n\n{planetList}.\n\nFixture final sentence retained in full.';
+  reset([]);
+  const created = await invoke('POST', { rows: [{ ...writeBody(contentKey), mode: 'card', headline: 'Complete fixture heading', body, sourceSnapshot }] });
+  assert.equal(created.status, 200, JSON.stringify(created));
+  const saved = [...rows.values()][0];
+  assert.equal(saved.body, body);
+  assert.equal(saved.status, 'DRAFT');
+  const published = await invoke('PATCH', { id: saved.id, status: 'LIVE', lane: 'serving', reviewState: null });
+  assert.equal(published.status, 200, JSON.stringify(published));
+  const opened = await invoke('GET', undefined, { query: `?id=${saved.id}&status=all&visibility=all` });
+  assert.equal(opened.status, 200, JSON.stringify(opened));
+  assert.equal(opened.rows[0].body, body);
+  const version = rows.get(saved.id).updated_at;
+  const edited = await invoke('PATCH', { id: saved.id, body: `${body}\n\nFixture revision.`, status: 'DRAFT' });
+  assert.equal(edited.status, 200, JSON.stringify(edited));
+  const writesBeforeConflict = writes.length;
+  assert.equal((await invoke('PATCH', { id: saved.id, expectedUpdatedAt: version, body: 'Stale fixture.' })).status, 409);
+  assert.equal(writes.length, writesBeforeConflict);
+  for (const invalid of [{ body: 'Missing fact list.' }, { headline: '' }, { body: `${body} {responseList}` }]) {
+    reset([{ ...baseline, content_key: contentKey, headline: 'Complete fixture heading', body, source_snapshot: sourceSnapshot }]);
+    const result = await invoke('PATCH', { id: baseline.id, ...invalid, status: 'LIVE', lane: 'serving', reviewState: null });
+    assert.ok(result.status >= 400, JSON.stringify(result));
+    assert.deepEqual(writes, []);
+  }
+});
+
 await test('unauthorized requests never reach storage', async () => {
   for (const method of ['GET', 'POST', 'PATCH', 'DELETE']) {
     reset(); assert.equal((await invoke(method, writeBody(), { secret: 'incorrect' })).status, 401); assert.deepEqual(writes, []);

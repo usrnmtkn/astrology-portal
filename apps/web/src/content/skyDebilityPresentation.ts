@@ -11,13 +11,13 @@ export type SkyDebilityDisplayPart = {
   emphasized?: boolean;
 };
 export type SkyDebilityDisplayPosition = { planet: string; sign: string; motion?: BodyMotion };
-export type SkyDebilityPlacementLink = { text: string; href: string };
+export type SkyDebilityPlacementLink = { text: string; href: string; separator?: string };
 const normalized = (value: string) => value.trim().toLowerCase();
 
 /** Calculated qualifying keys come from the assembler. Motion must match the
  * exact planet/sign snapshot; missing motion is never guessed. */
-export function skyDebilityPlacementLinks(keys: readonly string[], positions: readonly SkyDebilityDisplayPosition[] = []): SkyDebilityPlacementLink[] {
-  return keys.map(key => {
+export function skyDebilityPlacementLinks(keys: readonly string[], positions: readonly SkyDebilityDisplayPosition[] = [], style: "compact" | "reading" = "compact"): SkyDebilityPlacementLink[] {
+  return keys.map((key, index) => {
     const [planetKey, signKey] = key.split("/");
     const planet = TRADITIONAL_DIGNITY_PLANETS.find(value => normalized(value) === planetKey);
     const sign = DIGNITY_SIGNS.find(value => normalized(value) === signKey);
@@ -27,7 +27,11 @@ export function skyDebilityPlacementLinks(keys: readonly string[], positions: re
     // Never display an impossible Sun/Moon Rx marker, even for invalid input.
     const motion = planet !== "Sun" && planet !== "Moon" && position?.motion
       && isDisplayRetrograde({ planet, motion: position.motion }) ? "retrograde" : undefined;
-    return { text: skyPlacementLinkLabel(planet, sign, motion), href: `#sky/placement/${encodeURIComponent(planetKey)}/${encodeURIComponent(signKey)}` };
+    const text = style === "reading"
+      ? `${planet === "Sun" || planet === "Moon" ? "the " : ""}${planet}${motion ? " retrograde" : ""} in ${sign}`
+      : skyPlacementLinkLabel(planet, sign, motion);
+    const separator = style === "reading" && index === keys.length - 1 ? keys.length === 2 ? " and " : ", and " : ", ";
+    return { text, separator, href: `#sky/placement/${encodeURIComponent(planetKey)}/${encodeURIComponent(signKey)}` };
   });
 }
 
@@ -66,7 +70,7 @@ export function presentSkyDebilityParts(parts: readonly SkyDebilityDisplayPart[]
     if (part.slot !== "planetList" || !links.length) return [part];
     if (highlighted[index - 1]?.slot === "planetList") return [];
     return links.flatMap((link, i) => [
-      ...(i ? [{ text: ", ", slot: "planetList", kind: "grammar" as const }] : []),
+      ...(i ? [{ text: link.separator ?? ", ", slot: "planetList", kind: "grammar" as const }] : []),
       { ...link, slot: "planetList", kind: "fact" as const }
     ]);
   });

@@ -3,7 +3,8 @@ import { StudioButton, StudioTextarea } from "./StudioControls";
 import { AdminDisclosureSummary, AdminSelect } from "./AdminNativeControls";
 import ContentLiveStatusBadge from "./ContentLiveStatus";
 import type { SkySummaryField } from "../../web/src/content/skyDailySummaryCatalog";
-import { skyDebilityFields, skyDebilityLegacyNames, skyDebilityTemplateErrors, skyDebilityTemplateSlots } from "../../web/src/content/skyDebilityCatalog";
+import { skyDebilityField, skyDebilityLegacyNames, skyDebilityTemplateErrors, skyDebilityTemplateSlots } from "../../web/src/content/skyDebilityCatalog";
+import { skyDebilityInterpretationKey } from "../../web/src/content/skyDebilityInterpretation";
 import { SkyDebilityCompositionMap } from "./SkyDebilityCompositionMap";
 import { buildSkyDebilityComposition } from "./skyDebilityComposition";
 import {
@@ -40,7 +41,7 @@ export function SkyDebilityStudio({ rows, onEdit, busy }: {
   const activeEditor = useRef<HTMLElement>(null);
   const submitted = useRef(new Map<string, { body: string; signature: string }>());
   const savedRow = (key: string) => rows.find(row => row.content_key === key);
-  const fieldByKey = (key: string) => skyDebilityFields.find(field => field.key === key)!;
+  const fieldByKey = (key: string) => skyDebilityField(key)!;
   const savedBody = (key: string) => savedRow(key)?.body ?? fieldByKey(key)?.body;
   const read = (key: string) => Object.prototype.hasOwnProperty.call(drafts, key) ? drafts[key] : savedBody(key);
   const previewPositions = TRADITIONAL_DIGNITY_PLANETS.map(planet => ({
@@ -50,7 +51,11 @@ export function SkyDebilityStudio({ rows, onEdit, busy }: {
     motion: previewMotion[planet] ?? "direct" as const
   }));
   const snapshot = traditionalSkyDebilities(previewPositions);
-  const composition = buildSkyDebilityComposition(snapshot, read);
+  const interpretationKey = skyDebilityInterpretationKey(previewPositions);
+  const interpretationRow = interpretationKey ? savedRow(interpretationKey) : undefined;
+  const composition = buildSkyDebilityComposition(snapshot, read, interpretationRow && !interpretationRow.inventory_only ? {
+    contentKey: interpretationKey!, headline: interpretationRow.headline ?? null, body: read(interpretationKey!) ?? ""
+  } : undefined);
   const hasUnsaved = Object.entries(drafts).some(([key, value]) => value !== savedBody(key));
   const selected = skyDebilityPhraseSets.find(row => skyDebilityPlacementId(row.planetTitle, row.signTitle) === placement)!;
 
@@ -76,6 +81,7 @@ export function SkyDebilityStudio({ rows, onEdit, busy }: {
   }, [rows]);
   function selectSource(key: string) {
     if (busy || !fieldByKey(key)) return;
+    if (key === interpretationKey) { onEdit(fieldByKey(key)); return; }
     setActiveKey(key);
     if (key.includes("/placement/")) setPlacement(key.split("/placement/")[1].split("/").slice(0, 2).join("/"));
     if (key === activeKey) {
@@ -125,6 +131,16 @@ export function SkyDebilityStudio({ rows, onEdit, busy }: {
     </header>
 
     <SkyDebilityCompositionMap composition={composition} read={read} onSelectSource={selectSource} busy={busy} hasUnsaved={hasUnsaved} positions={previewPositions} />
+
+    <details className="admin-workspace-details">
+      <AdminDisclosureSummary>Complete interpretation for these placements</AdminDisclosureSummary>
+      <p>Write the heading and complete card together. This version applies only when every qualifying planet, sign, and motion matches the preview. Include {"{planetList}"} once for the calculated placement links; the remaining paragraphs can follow the interpretation.</p>
+      <p>{interpretationRow ? <ContentLiveStatusBadge row={interpretationRow} /> : "No complete interpretation is saved for this combination. The existing phrase template supplies the reader card."}</p>
+      {interpretationRow?.inventory_only && <p role="status">Saved interpretation is loading.</p>}
+      <StudioButton type="button" disabled={busy || !interpretationKey || interpretationRow?.inventory_only} onClick={() => {
+        if (interpretationKey) onEdit(fieldByKey(interpretationKey));
+      }}>{interpretationRow ? "Edit complete interpretation" : "Write complete interpretation"}</StudioButton>
+    </details>
 
     {activeKey && <section ref={activeEditor} className="admin-editor-guidance" aria-label="Selected composition source" data-testid="sky-debility-selected-source">
       <header className="admin-section-heading-row"><h4>Selected source</h4><StudioButton type="button" onClick={() => setActiveKey(null)}>Close source editor</StudioButton></header>

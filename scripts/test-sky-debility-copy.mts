@@ -22,7 +22,7 @@ const words = ["Zero", "One", "Two", "Three", "Four", "Five", "Six", "Seven"];
 assert.equal(skyDebilityPhraseSets.length, 18);
 assert.equal(new Set(skyDebilityContentKeys()).size, skyDebilityFields.length);
 assert.equal(skyDebilityFields.length, 87);
-assert.match(readFileSync(new URL("../apps/web/src/content/cmsSurfaceOverrides.ts", import.meta.url), "utf8"), /skyDebility:\s*\(\) => skyDebilityFields\.map\(field => field\.key\)/u);
+assert.match(readFileSync(new URL("../apps/web/src/content/cmsSurfaceOverrides.ts", import.meta.url), "utf8"), /skyDebilityFields\.map\(field => field\.key\)/u);
 for (const key of [oneKey, manyKey, connectorKey, "cms/sky-debility/signConditionMany"]) assert.ok(skyDebilityContentKeys().includes(key));
 for (const field of skyDebilityFields) assert.deepEqual(skyDebilityTemplateErrors(field.key, field.body), [], field.key);
 for (const planet of TRADITIONAL_DIGNITY_PLANETS) for (const sign of DIGNITY_SIGNS) {

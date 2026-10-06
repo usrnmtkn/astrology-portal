@@ -194,7 +194,7 @@ function assertValidCmsTemplate({
     body: body ?? ""
   });
   validation.errors.push(...libs().skySummaryTemplateErrors(contentKey ?? "", body ?? ""));
-  validation.errors.push(...libs().skyDebilityTemplateErrors(contentKey ?? "", body ?? ""));
+  validation.errors.push(...libs().skyDebilityTemplateErrors(contentKey ?? "", body ?? "", headline ?? ""));
   if (validation.errors.length > 0) {
     throw new Error(`CMS template cannot be published: ${validation.errors.join(" ")}`);
   }

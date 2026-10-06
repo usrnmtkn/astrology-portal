@@ -9,7 +9,7 @@ import type { LiveGeneratedContent } from "../../web/src/services/generatedConte
 export type SummaryCompositionRow = {
   id?: string; updated_at?: string | null;
   content_key: string; body?: string | null; status: string; lane?: string | null;
-  sections?: unknown; summary?: string | null;
+  sections?: unknown; summary?: string | null; headline?: string | null;
   review_state?: string | null; inventory_only?: boolean; source_snapshot?: Record<string, unknown> | null;
 };
 export type SummaryCompositionDraft = { contentKey: string; body: string };

@@ -3,6 +3,8 @@ import { contentPublication, publicationAllowsContent } from "./contentPublicati
 import { skyDebilityField, skyDebilityFields } from "./skyDebilityCatalog.js";
 import { assembleSkyDebilityCopy } from "./skyDebilityAssembly.js";
 import type { TraditionalSkyDebilities } from "../services/planetSignDignity.mjs";
+import { skyDebilityInterpretationKey } from "./skyDebilityInterpretation.js";
+import type { SkyDebilityDisplayPosition } from "./skyDebilityPresentation";
 export { skyDebilitySlots } from "./skyDebilityAssembly.js";
 
 export function skyDebilityContentKeys() { return skyDebilityFields.map(field => field.key); }
@@ -21,6 +23,20 @@ function savedCopy(content: CmsGeneratedContentMap | undefined, key: string) {
   // A draft does not replace this owner-approved shipped baseline.
   return skyDebilityField(key)?.body;
 }
-export function resolveSkyDebilityCopy(content: CmsGeneratedContentMap | undefined, snapshot: TraditionalSkyDebilities) {
+export function resolveSkyDebilityCopy(content: CmsGeneratedContentMap | undefined, snapshot: TraditionalSkyDebilities, positions: readonly SkyDebilityDisplayPosition[] = []) {
+  const key = skyDebilityInterpretationKey(positions);
+  if (key) {
+    const publication = contentPublication(key);
+    const row = content?.get(key);
+    if (publication || row?.status === "LIVE") {
+      // A published exact reading is indivisible. Missing/stale/retired copy
+      // must never bring back the old paragraph or another combination's text.
+      if (publication?.state === "retired" || !row || row.status !== "LIVE"
+        || !publicationAllowsContent(key, row.id, row.updatedAt)) {
+        return { ...assembleSkyDebilityCopy(snapshot), visible: false, hiddenReason: "unavailable-published-interpretation", interpretationKey: key };
+      }
+      return assembleSkyDebilityCopy(snapshot, undefined, { contentKey: key, headline: row.headline, body: row.body });
+    }
+  }
   return assembleSkyDebilityCopy(snapshot, key => savedCopy(content, key));
 }

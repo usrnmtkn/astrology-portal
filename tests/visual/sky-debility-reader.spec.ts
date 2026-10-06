@@ -1,6 +1,7 @@
 import { expect, test } from "@playwright/test";
 import { linkedThreePlanetContext, highlightedCountStatement } from "../fixtures/sky-effort-count-first";
 import { expectEffortCardSpacing } from "./sky-debility-layout";
+import { bundledPublications } from "../helpers/bundled-publications";
 
 // The actual ephemeris supplies sign and motion at the regression instant.
 for (const width of [390, 1440]) for (const theme of ["light", "dark"]) test(`inline effort paragraph ${width} ${theme}`, async ({ page }) => {
@@ -55,4 +56,44 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) test(`in
   await card.screenshot({ path: `test-results/effort-reader-inline-${width}-${theme}.png` });
   await paragraphs.nth(1).getByRole("link", { name: "Read about Saturn Rx in Aries", exact: true }).click();
   await expect(page).toHaveURL(/#sky\/placement\/saturn\/aries$/);
+});
+
+for (const width of [390, 1440]) for (const theme of ["light", "dark"]) test(`complete effort reading follows the actual sky ${width} ${theme}`, async ({ page }) => {
+  await page.setViewportSize({ width, height: 1000 });
+  await page.clock.setFixedTime(new Date("2026-10-05T16:00:00.000Z"));
+  await page.addInitScript(theme => localStorage.setItem("tldrastro:theme", theme), theme);
+  await bundledPublications(page);
+  const fields = { surface: "sky", mode: "card", status: "LIVE", lane: "serving", review_state: null, headline: "Fixture interpretation for October", summary: "", sections: null,
+    source_snapshot: { contentType: "mustache-template", contentSystem: "cms-surface-override", allowedSlots: ["planetList"] }, updated_at: "2026-10-05T12:00:00.000Z" };
+  const october = { ...fields, id: "october-fixture", content_key: "cms/sky-debility/reading/sun-libra-direct__venus-scorpio-retrograde__saturn-aries-retrograde",
+    body: "October fixture opening stays complete.\n\n{planetList}.\n\nOctober fixture ending stays complete." };
+  const september = { ...fields, id: "september-fixture", content_key: "cms/sky-debility/reading/venus-scorpio-direct__mars-cancer-direct__saturn-aries-retrograde", headline: "Fixture interpretation for September",
+    body: "September fixture opening stays complete.\n\n{planetList}.\n\nSeptember fixture ending stays complete." };
+  let rows = [october, september];
+  let revision = 1;
+  await page.route("**/content-studio-last-known-good.json", route => route.fulfill({ json: {
+    schema: "content-studio-last-known-good-v2", rowCount: rows.length, rows,
+    publications: [october, september].map(row => ({ content_key: row.content_key, state: "live", revision, row_id: row.id, row_updated_at: row.updated_at, updated_at: row.updated_at }))
+  } }));
+  await page.route("**/api/calendar?**", route => route.fulfill({ json: { ok: true, calendar: { days: [] } } }));
+  const card = page.locator(".sky-debility-ledger:visible").first();
+  await page.goto("http://127.0.0.1:4298/?date=2026-09-17#sky");
+  await expect(card).toContainText("September fixture opening stays complete.", { timeout: 60_000 });
+  await expect(card).toContainText("September fixture ending stays complete.");
+  await expect(card.getByRole("link")).toHaveCount(3);
+  await page.goto("http://127.0.0.1:4298/?date=2026-10-05#sky");
+  await expect(card).toContainText("October fixture opening stays complete.", { timeout: 60_000 });
+  await expect(card).toContainText("October fixture ending stays complete.");
+  await expect(card).not.toContainText("September fixture");
+  await expect(card.getByRole("link")).toHaveText(["the Sun in Libra", "Venus retrograde in Scorpio", "Saturn retrograde in Aries"]);
+  await expect(card.getByRole("heading", { level: 3 })).toHaveText(october.headline);
+  await expectEffortCardSpacing(card);
+  expect(await card.evaluate(el => el.scrollWidth - el.clientWidth)).toBeLessThanOrEqual(1);
+  await page.reload();
+  await expect(card).toContainText("October fixture ending stays complete.", { timeout: 60_000 });
+  await card.screenshot({ path: `test-results/effort-complete-${width}-${theme}.png` });
+  // A known published reading with unavailable body stays unavailable.
+  rows = []; revision++;
+  await page.reload();
+  await expect(page.locator(".sky-debility-ledger")).toHaveCount(0, { timeout: 30_000 });
 });
