@@ -23,7 +23,7 @@ async function fixture(page:Page,missing=1,unknown=false,period='weekly',session
     const action=async(action:string,extra:any={})=>{const row=await latest();return call({method:'writing',body:{action,id,expectedUpdatedAt:row.updated_at,...extra}});};
     const plan=await action('prepare');expect(plan.status).toBe(200);
     if(unknown)await call({method:'writer-state',body:{unknownNext:true}});
-    const start=await action('generate',{sign:edition.passages[12-missing].sign,approvedPlanHash:plan.payload.plan.planHash});expect(start.status).toBe(unknown?200:202);
+    const start=period==='seasonal'?await call({method:'legacy-seasonal-request',body:{id,sign:edition.passages[12-missing].sign,approvedPlanHash:plan.payload.plan.planHash}}):await action('generate',{sign:edition.passages[12-missing].sign,approvedPlanHash:plan.payload.plan.planHash});expect(start.status).toBe(unknown?200:202);
     if(unknown)await call({method:'interrupted-horoscope-start',body:{id}});
     const state={failPoll:false,failRead:false,failDiagnosis:false,conflictPoll:false,holdPoll:false,held:false,release:()=>{}};
     await routeStudioInventoryApi(page,{call:async(message)=>{
@@ -235,7 +235,8 @@ for(const [width,theme] of [[390,'dark'],[1440,'light']] as const){
    await page.screenshot({path:`test-results/horoscope-legacy-failure-${width}-${theme}.png`,fullPage:true});
   }finally{f.child.kill();}
  });
- test(`Seasonal failure retries only one sign and preserves the selected date ${width} ${theme}`,async({page})=>{
+ test(`Legacy Seasonal failure starts one private staged run and preserves the selected date ${width} ${theme}`,async({page})=>{
+  test.setTimeout(120000);
   await page.setViewportSize({width,height:1000});await page.addInitScript(theme=>localStorage.setItem('tldrastro:studio-theme',theme),theme);
   const f=await fixture(page,12,false,'seasonal');try{
    const studio=await f.open();
@@ -255,17 +256,20 @@ for(const [width,theme] of [[390,'dark'],[1440,'light']] as const){
    await expect(studio.getByLabel('I approve this writing plan for generation.')).not.toBeChecked();
    expect((await f.call({method:'writer-state'})).calls).toBe(1);
    await studio.getByLabel('I approve this writing plan for generation.').check();
-   await expect(studio.getByText('Retry only Aries with one new paid AI request. Saved readings are kept.',{exact:true})).toBeVisible();
+   await expect(studio.getByText('Up to 30 paid AI requests, bounded at 3 plans and 3 prose candidates per reading, with independent evaluations. Accepted candidates remain private for inspection.',{exact:true})).toBeVisible();
    await studio.getByRole('button',{name:'Retry Aries',exact:true}).click();
-   await expect(studio.getByRole('status')).toContainText('1/12 readings are saved.');
+   await expect.poll(async()=> (await f.latest()).source_snapshot.horoscopeGeneration.editorialRuns?.aries?.status,{timeout:95000}).toBe('accepted');
    await expect(studio.getByRole('alert')).toHaveCount(0);
    const row=await f.latest();expect(row.id).toBe(failed.id);expect(row.status).toBe('DRAFT');
    expect(row.source_snapshot.horoscopeGeneration.failures).toEqual(failed.source_snapshot.horoscopeGeneration.failures);
-   expect(row.sections.horoscopeEdition.passages[0].body).toBe('You can read the complete aries fixture opening.\n\nYour saved fixture ends here.');
+   expect(row.sections.horoscopeEdition.passages[0].body).toBe('');
+   expect(Object.keys(row.source_snapshot.horoscopeGeneration.editorialRuns)).toEqual(['aries']);
    expect(row.sections.horoscopeEdition.passages.slice(1)).toEqual(f.original.passages.slice(1));
-   expect((await f.call({method:'writer-state'})).calls).toBe(2);
+   expect((await f.call({method:'writer-state'})).calls).toBe(7); // One pre-upgrade request plus six independent stages.
    await studio.getByRole('button',{name:'3 · Review',exact:true}).click();
-   await expect(studio.getByLabel('Complete reading')).toHaveValue(row.sections.horoscopeEdition.passages[0].body);
+   await expect(studio.getByLabel('Complete reading')).toHaveValue('');
+   await studio.getByText('Seasonal generation record',{exact:true}).click();
+   await expect(studio.getByLabel('Private accepted Seasonal candidate')).toHaveValue(/Your saved fixture ends here\./);
    expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
    await page.screenshot({path:`test-results/horoscope-seasonal-retry-${width}-${theme}.png`,fullPage:true});
   }finally{f.child.kill();}
@@ -317,7 +321,7 @@ for(const [width,theme] of [[390,'dark'],[1440,'light']] as const){
    await expect(studio.getByRole('button',{name:'Generate missing readings',exact:true})).toBeDisabled();
    expect((await f.call({method:'writer-state'})).calls).toBe(1);
    // An existing request on a newly opened edition also catches up without a click.
-   const plan=await f.action('prepare');expect((await f.action('generate',{sign:'gemini',approvedPlanHash:plan.payload.plan.planHash})).status).toBe(202);
+   const plan=await f.action('prepare');expect((await f.call({method:'legacy-seasonal-request',body:{id:(await f.latest()).id,sign:'gemini',approvedPlanHash:plan.payload.plan.planHash}})).status).toBe(202);
    await studio.getByRole('button',{name:'Back to editions',exact:true}).click();
    await studio.getByText(/^Continue a saved edition/).click();await studio.locator('.admin-horoscope-saved button').first().click();
    // Opening retrieves the saved row asynchronously. Start the idle interval

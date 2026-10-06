@@ -1,9 +1,10 @@
 import { createHash } from "node:crypto";
+import {RHETORICAL_LABELS,RELATED_PROSE_LABELS} from '../../src/astro-writing/rhetoricalPatterns.mjs';
 import { transitReadingReaderCopy } from "./transit-reading-reader-copy.js";
 import { GENERATED_REPORT_JUDGE_CATEGORIES, type GeneratedReportJudgeCategory } from "./transit-reading-judge-rules.js";
 import type { ReportModelUsage } from "./report-model-client.js";
 
-export const SCOPED_REVIEW_VERSION = "generated-report-scoped-review-v1.8";
+export const SCOPED_REVIEW_VERSION = "generated-report-scoped-review-v1.9-rhetorical-patterns";
 export const SCOPED_REVIEW_SCHEMAS = {
   facts: "tldr_generated_report_facts_judge",
   writing: "tldr_generated_report_writing_judge"
@@ -19,7 +20,7 @@ export const REVIEW_CATEGORIES: Record<TransitReadingReviewScope, readonly Gener
 };
 export const REVIEW_FINDINGS = {
   facts: [...FACT_REVIEW_CATEGORIES, "over_specification", "unsupported_interpretation", "unsupported_timing"],
-  writing: [...WRITING_REVIEW_CATEGORIES, "narrative_repetition", "owner_language"]
+  writing: [...WRITING_REVIEW_CATEGORIES, "narrative_repetition", "owner_language", ...RHETORICAL_LABELS, ...RELATED_PROSE_LABELS]
 } as const;
 
 // Experimental opt-in only. Production remains on the current combined gate

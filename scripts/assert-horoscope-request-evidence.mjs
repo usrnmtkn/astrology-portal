@@ -1,9 +1,25 @@
 import assert from 'node:assert/strict';
+import {createHash} from 'node:crypto';
 
 // Inspect the provider-bound request, not just the selected primary source list.
 export function assertHoroscopeRequestEvidence(input, additionalLabels=[]) {
   assert(!input.includes('register-gold:sky-placement:saturn-capricorn-v3'));
   assert(!input.includes('Saturn stands at the threshold where a choice becomes a consequence.'));
+  if(input.includes('COMPACT SEASONAL DEVELOPMENT PLAN\n')) {
+    const passages=['SELECTED COMPLETE OWNER PASSAGES','SELECTED SUPPORTING OWNER PASSAGE',...additionalLabels].flatMap(label=>{
+      const match=input.match(new RegExp(`${label}\\n([^\\n]+)\\n\\n`,'u'));
+      return match?JSON.parse(match[1]):[];
+    });
+    assert(passages.length>=(input.includes('SCOPED REJECTED OWNER EVIDENCE')?1:3)&&passages.length<=5);
+    assert.equal(new Set(passages.map(p=>p.textSha256)).size,passages.length);
+    for(const p of passages){
+      assert.equal(createHash('sha256').update(p.text).digest('hex'),p.textSha256);
+      assert.equal(input.split(JSON.stringify(p.text).slice(1,-1)).length-1,1,'Complete selected source appears once');
+    }
+    assert(!input.includes('SHARED FIVE-ROLE EVIDENCE\n'),'Full retrieval packet stays outside drafting');
+    assert(!input.includes('CURRENT OWNER CORRECTIONS\n'),'Correction history stays outside drafting');
+    return;
+  }
   const packet=JSON.parse(input.match(/SHARED FIVE-ROLE EVIDENCE\n([^\n]+)\n\n/u)[1]);
   const passages=new Map();
   for(const label of ['COMPLETE OWNER COLLECTIVE ESSAYS — PRIMARY PROSE EVIDENCE','SUPPORTING OWNER PASSAGES','COMPLETE SEASONAL OWNER PROSE EVIDENCE',...additionalLabels]){

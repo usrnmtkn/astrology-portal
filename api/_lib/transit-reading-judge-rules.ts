@@ -1,3 +1,4 @@
+import {RHETORICAL_LABELS,RELATED_PROSE_LABELS} from '../../src/astro-writing/rhetoricalPatterns.mjs';
 export const GENERATED_REPORT_JUDGE_CATEGORIES = [
   "astrology_chronology",
   "factual_traceability",
@@ -20,9 +21,9 @@ export const GENERATED_REPORT_JUDGE_HARD_GATES = [
 
 export type GeneratedReportJudgeCategory = typeof GENERATED_REPORT_JUDGE_CATEGORIES[number];
 export const GENERATED_REPORT_JUDGE_BLOCKING_FINDINGS = [
-  "over_specification", "narrative_repetition", "unsupported_interpretation", "unsupported_timing", "owner_language"
+  "over_specification", "narrative_repetition", "unsupported_interpretation", "unsupported_timing", "owner_language", ...RHETORICAL_LABELS
 ] as const;
-export const GENERATED_REPORT_JUDGE_FINDING_CATEGORIES = [...GENERATED_REPORT_JUDGE_CATEGORIES, ...GENERATED_REPORT_JUDGE_BLOCKING_FINDINGS] as const;
+export const GENERATED_REPORT_JUDGE_FINDING_CATEGORIES = [...GENERATED_REPORT_JUDGE_CATEGORIES, ...GENERATED_REPORT_JUDGE_BLOCKING_FINDINGS, ...RELATED_PROSE_LABELS] as const;
 export type GeneratedReportJudgeScores = Record<GeneratedReportJudgeCategory, number>;
 export type GeneratedReportJudgeFinding = {
   category: typeof GENERATED_REPORT_JUDGE_FINDING_CATEGORIES[number];

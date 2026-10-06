@@ -19,7 +19,7 @@ for (const key of GENERATED_REPORT_JUDGE_CATEGORIES) {
   assert.equal(decide({ ...scores, [key]: 2.5 }, [finding(key)]).action, "review_required", "No fractional score laundering");
 }
 for (const key of GENERATED_REPORT_JUDGE_BLOCKING_FINDINGS) {
-  const scoreKey = key === "unsupported_timing" ? "astrology_chronology" : key === "owner_language" ? "owner_voice" : key === "narrative_repetition" ? "interpretive_movement" : "factual_traceability";
+  const scoreKey = ["CORRECTIO", "TRICOLON", "PURPLE_PROSE"].includes(key) ? "natural_language" : key === "unsupported_timing" ? "astrology_chronology" : key === "owner_language" ? "owner_voice" : key === "narrative_repetition" ? "interpretive_movement" : "factual_traceability";
   assert.equal(decide({ ...perfect(), [scoreKey]: 3 }, [finding(key)]).action, "correct", key);
 }
 const mixed = decide({ ...perfect(), owner_voice: 3, interpretive_movement: 2 }, [finding("owner_voice"), finding("interpretive_movement")]);

@@ -845,6 +845,7 @@ const writerClient = async ({ stage, instructions, input }) => {
   };
 };
 const reviewValue = (decision) => ({
+  rhetoric: { checks: ['CORRECTIO','TRICOLON','PURPLE_PROSE'].map(label => ({label,outcome:'pass',reason:'Injected non-rhetorical regression fixture.'})), findings: [] },
   ...Object.fromEntries(REVIEW_FIELDS.map((field) => [field, {
     status: "PASS",
     reason: "No defect found for this check."

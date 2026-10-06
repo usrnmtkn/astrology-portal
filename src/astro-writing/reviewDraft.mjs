@@ -10,6 +10,7 @@ import {
   governValidationResult
 } from "./effectiveRuleGovernance.mjs";
 import { validateCopy } from "./validateCopy.mjs";
+import { RHETORICAL_LABELS, RHETORICAL_REVIEW_SCHEMA, rhetoricalReviewContract, validateRhetoricalReview, rhetoricalDecision } from './rhetoricalPatterns.mjs';
 
 const CHECK_RESULT_SCHEMA = Object.freeze({
   type: "object",
@@ -38,11 +39,12 @@ const VIOLATION_SCHEMA = Object.freeze({
 export const REVIEW_SCHEMA = Object.freeze({
   type: "object",
   additionalProperties: false,
-  required: [...REVIEW_FIELDS, "decision", "violations"],
+  required: [...REVIEW_FIELDS, "decision", "violations", "rhetoric"],
   properties: Object.fromEntries([
     ...REVIEW_FIELDS.map((field) => [field, CHECK_RESULT_SCHEMA]),
     ["decision", { type: "string", enum: ["PASS", "REVISE"] }],
-    ["violations", { type: "array", items: VIOLATION_SCHEMA }]
+    ["violations", { type: "array", items: VIOLATION_SCHEMA }],
+    ["rhetoric", RHETORICAL_REVIEW_SCHEMA]
   ])
 });
 
@@ -268,6 +270,9 @@ export async function reviewDraft({
     );
     return {
       ...mechanical,
+      rhetoric: null,
+      rhetoricDecision: 'not_run',
+      semanticAdmission: 'not_evaluated',
       cold_rendered_prose: { status: "FAIL", reason: missingColdReview.reason },
       decision: mechanical.decision,
       violations: [...mechanical.violations, missingColdReview],
@@ -287,18 +292,24 @@ export async function reviewDraft({
   const modelReview = await modelClient({
     stage: "review",
     role: "REVIEWER",
-    instructions: `${effectiveRulePrompt(canonicalAstrologyReviewInstructions, { surface, family })}\n\nMODEL REVIEW GOVERNANCE: Every model-authored editorial finding is advisory evidence for the owner. Do not claim approval authority, and do not use severity to authorize an automatic rewrite.`,
-    input: JSON.stringify({ plan, family, register, surface, draft }, null, 2),
+    instructions: `${effectiveRulePrompt(canonicalAstrologyReviewInstructions, { surface, family })}\n\n${rhetoricalReviewContract(draft)}`,
+    input: JSON.stringify({ plan, family, register, surface, draft, ownerComparisons: context?.examples ?? [] }, null, 2),
     schema: REVIEW_SCHEMA
   });
   validateModelReview(modelReview);
+  const rhetoric = validateRhetoricalReview(modelReview.rhetoric, draft);
+  const rhetoricDecision = rhetoricalDecision(rhetoric);
+  const rhetoricViolations = rhetoric.findings.map(f => ({category:f.label,severity:RHETORICAL_LABELS.includes(f.label)?'blocking':'nonblocking',location:f.field,text:f.quote,
+    reason:`${f.reason} ${f.readerConsequence} ${f.meaningTest}`,paragraph:f.paragraph,
+    revision_instruction:'Regenerate the affected prose from its supported meaning; do not alter owner evidence or astrology.'}));
   const advisoryModelViolations = modelReview.violations
     .filter((item) => item.category !== "cold_rendered_prose")
     .map(advisoryModelViolation);
   const mergedViolations = [...new Map([
     ...mechanical.violations,
     ...coldModelReview.violations.map(advisoryModelViolation),
-    ...advisoryModelViolations
+    ...advisoryModelViolations,
+    ...rhetoricViolations
   ].map((item) => [`${item.category}|${item.location}|${item.reason}`, item])).values()];
   const failed = new Set(mergedViolations.map((item) => canonicalCategory(item.category)));
   const checks = Object.fromEntries(REVIEW_FIELDS.map((field) => [field, {
@@ -313,7 +324,9 @@ export async function reviewDraft({
   const blocking = mergedViolations.some((item) => item.severity === "blocking");
   return {
     ...checks,
-    decision: blocking ? "REVISE" : "PASS",
+    decision: blocking || rhetoricDecision !== 'pass' ? "REVISE" : "PASS",
+    rhetoric,
+    rhetoricDecision,
     violations: mergedViolations,
     required_revisions: mergedViolations
       .filter((item) => item.severity === "blocking")

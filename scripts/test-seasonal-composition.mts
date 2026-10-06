@@ -1,0 +1,46 @@
+import assert from 'node:assert/strict';
+import {store,editorialFixtureRows,installHoroscopeWriterFixture,invokeHoroscopeWriting,writerFixture} from '../tests/helpers/sky-article-save-api.mts';
+import {prepareHoroscopeBrief} from '../api/_lib/horoscope-editions';
+import {emptyHoroscopeEdition,horoscopeEditionBody,horoscopeEditionKey} from '../apps/web/src/content/horoscopeEditions.mjs';
+installHoroscopeWriterFixture();
+const packet=await prepareHoroscopeBrief(new URL('http://localhost/?period=seasonal&date=2026-10-05&timeZone=America/New_York'));
+const edition=emptyHoroscopeEdition(packet.brief.window);
+let response=await store.invoke('POST',{contentKey:horoscopeEditionKey(edition.window),surface:'sky',mode:'article',eventType:'horoscope-edition',provider:'manual-admin',status:'DRAFT',lane:'serving',headline:'Synthetic Seasonal architecture test',body:horoscopeEditionBody(edition),sections:{horoscopeEdition:edition},facts:{horoscopeBrief:packet},sourceSnapshot:{}});
+assert.equal(response.status,200);let row=response.payload.rows[0];
+const originalSections=structuredClone(row.sections),originalBody=row.body;
+const action=async(action:string,extra:any={})=>{const r=await invokeHoroscopeWriting({action,id:row.id,expectedUpdatedAt:row.updated_at,...extra});if(r.payload.rows?.[0])row=r.payload.rows[0];return r;};
+response=await action('prepare');const planHash=response.payload.plan.planHash;
+assert.equal(response.payload.plan.maximumPaidCalls,response.payload.plan.writerCalls*30);
+response=await action('generate',{sign:'taurus',approvedPlanHash:planHash});assert.equal(response.status,202,JSON.stringify(response.payload));
+const id=row.source_snapshot.horoscopeGeneration.active.id;
+assert.equal((await action('continue')).status,409,'No duplicate dispatch while a stage is in flight');
+for(let i=0;i<20&&row.source_snapshot.horoscopeGeneration.active;i++){
+ const active=row.source_snapshot.horoscopeGeneration.active;
+ response=await action(active.state==='ready'?'continue':'poll');
+ assert([200,202].includes(response.status),JSON.stringify(response.payload));
+ assert.deepEqual(row.sections,originalSections,'Neither failed nor accepted candidates enter edition fields');assert.equal(row.body,originalBody);
+}
+const run=editorialFixtureRows.get(id).state;
+assert.equal(run.status,'accepted');assert.equal(run.counts.calls,6);assert.equal(run.counts.prose,1);assert.equal(writerFixture.calls,6);
+assert.equal(run.artifacts.filter((a:any)=>a.kind==='plan_review_evaluation').length,1);
+assert.equal(run.artifacts.filter((a:any)=>a.kind==='voice_evaluation').length,1);
+assert.equal(run.artifacts.filter((a:any)=>a.kind==='meaning_evaluation').length,1);
+const reserved=run.artifacts.filter((a:any)=>a.kind==='call_reserved');
+const writer=reserved.find((a:any)=>a.value.stage==='prose').value.request;
+const voice=reserved.find((a:any)=>a.value.stage==='voice').value.request;
+const meaning=reserved.find((a:any)=>a.value.stage==='meaning').value.request;
+assert.notEqual(writer.config.model,voice.config.model);assert.notEqual(writer.config.model,meaning.config.model);
+assert(writer.input.includes('SCOPED REJECTED OWNER EVIDENCE'));assert(!voice.input.includes('startingSituation'));
+assert(!meaning.input.includes('Synthetic owner comparison.'),'Meaning evaluator cannot see voice verdict');
+assert.equal(JSON.parse(voice.input).candidateHash,JSON.parse(meaning.input).candidateHash);
+assert(!JSON.stringify(row.source_snapshot).includes('Synthetic underlying concern.'),'Private plan stays out of serving-row metadata');
+const inspect=await action('inspect',{sign:'taurus'});assert.equal(inspect.status,200);assert.equal(inspect.payload.rows[0].seasonalEditorialRun.acceptedCandidate.hash,run.acceptedCandidate.hash);
+assert.equal(writerFixture.calls,6,'Inspection never generates');
+assert.equal((await action('generate',{sign:'taurus',approvedPlanHash:planHash})).status,409,'Reload cannot reset the budget or overwrite an inspection candidate');
+assert.equal((await invokeHoroscopeWriting({action:'inspect',id:row.id,sign:'taurus',expectedUpdatedAt:row.updated_at},'wrong-secret')).status,401);
+// Unknown dispatch stays reserved in private storage; polling cannot buy a replay.
+writerFixture.unknownNext=true;response=await action('generate',{sign:'cancer',approvedPlanHash:planHash});assert(response.status>=500);
+row=store.rows.get(row.id);const unknownId=row.source_snapshot.horoscopeGeneration.active.id;const calls=writerFixture.calls;
+response=await action('poll');assert.equal(response.status,202);assert.equal(writerFixture.calls,calls);
+assert.equal(editorialFixtureRows.get(unknownId).state.status,'starting');assert.deepEqual(row.sections,originalSections);
+console.log('PASS Seasonal API: six independently staged calls, plan gate before prose, private storage, source/evaluation identity, no reader writes, inspection/reload/auth, duplicate and unknown-dispatch protection.');

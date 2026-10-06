@@ -19,6 +19,10 @@ import {MONTHLY_HOROSCOPE_FORMAT,composeMonthlyHoroscopeDraft} from '../../src/a
 import {isMonthlySynthesisVersion} from '../../src/astro-writing/monthlyHoroscopeSynthesis.mjs';
 import {monthlyHoroscopeOperation} from '../_lib/monthly-horoscope-operation.js';
 import {horoscopeStartupRecovery} from '../../src/astro-writing/horoscopeRecovery.mjs';
+import {seasonalHoroscopeOperation} from '../_lib/seasonal-horoscope-operation.js';
+import {SEASONAL_WORKFLOW} from '../../src/astro-writing/seasonalDevelopmentPlan.mjs';
+import {seasonalEditorialOperation} from '../_lib/seasonal-editorial-operation.js';
+import {SEASONAL_EDITORIAL_WORKFLOW} from '../../src/astro-writing/seasonalEditorialAdapter.mjs';
 loadLocalWebEnv();
 export const maxDuration=300;
 const hash=(v:unknown)=>createHash('sha256').update(JSON.stringify(v)).digest('hex');
@@ -32,7 +36,7 @@ export default async function handler(req:IncomingMessage,res:ServerResponse) {
   const actor=(await getContentAdminPrincipal(req))!;
   try {
     const input=await readAdminJsonBody<Record<string,any>>(req);
-    if(!['prepare','generate','continue','poll','release','reject','diagnose'].includes(input.action)||typeof input.id!=='string'||!input.id
+    if(!['prepare','generate','continue','poll','release','reject','diagnose','inspect'].includes(input.action)||typeof input.id!=='string'||!input.id
       ||typeof input.expectedUpdatedAt!=='string'||Object.keys(input).some(k=>!['action','id','expectedUpdatedAt','sign','approvedPlanHash','acknowledgeUnknownOutcome'].includes(k)))throw new AdminHttpError(400,'Choose a saved edition and a writing action.');
     const {url,headers}=studioStorage();
     const read=await adminFetchJson(`${url}?${new URLSearchParams({id:`eq.${input.id}`,select:'*',limit:'1'})}`,{headers});
@@ -50,6 +54,12 @@ export default async function handler(req:IncomingMessage,res:ServerResponse) {
       row=saved[0];return row;
     };
     let operation=row.source_snapshot?.horoscopeGeneration?.active;
+    if(input.action==='inspect'||['poll','continue'].includes(input.action)&&operation?.workflow===SEASONAL_EDITORIAL_WORKFLOW){
+      if(row.sections.horoscopeEdition.window.period!=='seasonal')throw new AdminHttpError(400,'Private editorial inspection is Seasonal only.');
+      const result=await seasonalEditorialOperation({action:input.action,row,persist,sign:input.sign,apiKey:process.env.OPENAI_API_KEY,actor});
+      return sendAdminJson(res,result.status,result.payload);
+    }
+    if(input.action==='release'&&operation?.workflow===SEASONAL_EDITORIAL_WORKFLOW)throw new AdminHttpError(409,'This bounded Seasonal run must be inspected; releasing it cannot reset its paid attempt budget.');
     let dispatchAttempted=false;
     let stage='prepare';
     const diagnostic=(error:unknown)=>({stage,status:adminErrorStatus(error),
@@ -79,7 +89,7 @@ export default async function handler(req:IncomingMessage,res:ServerResponse) {
       const response=await responses.storedWritingResponse({apiKey:process.env.OPENAI_API_KEY,responseId:failed.operation.responseId});
       if(!response.ok)throw new AdminHttpError(503,'The saved writer response is unavailable. The failed request and saved readings are kept.');
       const payload=await response.json();
-      try{readHoroscopeProviderResult(payload,{format:failed.operation.outputFormat,facts:failed.operation.synthesisFacts});}
+      try{readHoroscopeProviderResult(payload,{format:failed.operation.outputFormat,facts:failed.operation.validationFacts??failed.operation.synthesisFacts});}
       catch(error){if(error instanceof HoroscopeProviderFailure)return sendAdminJson(res,200,{ok:true,failure:{code:error.code,message:error.message,diagnostic:error.diagnostic}});throw error;}
       return sendAdminJson(res,200,{ok:true,failure:{code:'completed_response',message:'The saved response is complete. Your edition is unchanged; this result needs further review before another request is started.',diagnostic:horoscopeProviderDiagnostic(payload)}});
     }
@@ -144,6 +154,11 @@ export default async function handler(req:IncomingMessage,res:ServerResponse) {
       &&isMonthlySynthesisVersion(failed.operation?.workflow)&&failed.operation.phase==='synthesis'&&failed.operation.responseId;
     if(input.action==='poll'&&!operation&&!recoverMonthlyPlan) return sendAdminJson(res,200,{ok:true,rows:[row],pending:false});
     const apiKey=process.env.OPENAI_API_KEY;
+    if(['poll','continue'].includes(input.action)&&operation?.workflow===SEASONAL_WORKFLOW){
+      if(!apiKey)throw new AdminHttpError(503,'The horoscope writer is not connected.');
+      const result=await seasonalHoroscopeOperation({action:input.action,row,persist,apiKey,actor});
+      return sendAdminJson(res,result.status,result.payload);
+    }
     if(['poll','continue'].includes(input.action)&&isMonthlySynthesisVersion(operation?.workflow)){
       if(!apiKey)throw new AdminHttpError(503,'The horoscope writer is not connected. Restore its server API key to continue.');
       const result=await monthlyHoroscopeOperation({action:input.action,row,persist,apiKey,actor});
@@ -220,6 +235,10 @@ export default async function handler(req:IncomingMessage,res:ServerResponse) {
     if(planHash!==prepared.planHash)throw new AdminHttpError(409,'The writing plan or its sources changed. Review the current plan before generating.');
     if(prepared.edition.window.period==='monthly'){
       const result=await monthlyHoroscopeOperation({action:'generate',row,persist,prepared,apiKey,actor});
+      return sendAdminJson(res,result.status,result.payload);
+    }
+    if(prepared.edition.window.period==='seasonal'){
+      const result=await seasonalEditorialOperation({action:'generate',row,persist,prepared,sign,apiKey,actor});
       return sendAdminJson(res,result.status,result.payload);
     }
     const config=provider.normalizeProviderConfig({},'writer');

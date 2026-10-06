@@ -2,6 +2,7 @@ import {seasonalEvidenceInput,seasonalSharedEvidence,sharedEvidenceWithPassageRe
 import {buildHoroscopeOverviewInput} from './horoscopeOverviewInput.mjs';
 import {HOROSCOPE_PUNCTUATION_RULE,WEEKLY_REQUIRED_VOCABULARY_RULE,SEASONAL_FACT_RELATIONSHIPS,SEASONAL_SOURCE_PRIORITY} from './horoscopeEditorialConstraints.mjs';
 import {buildHoroscopePromptVariables} from './horoscopePromptVariables.mjs';
+import {buildSeasonalDraftInput} from './seasonalDraftInput.mjs';
 import {HOROSCOPE_SIGNS,horoscopeSignLabel,horoscopeOverviewHeadline} from '../../apps/web/src/content/horoscopeEditions.mjs';
 
 export {HOROSCOPE_EDITORIAL_AUTHORITY} from './canonicalInstructions.mjs';
@@ -22,6 +23,7 @@ export function horoscopeDraftSchema(sign,window) {
 }
 
 export function buildHoroscopeDraftInput({plan,context,task,target,engineFacts,argumentOutline,spine,writingProfile}) {
+  if(engineFacts?.window?.period==='seasonal')return buildSeasonalDraftInput({context,task,engineFacts,argumentOutline,writingProfile});
   if(engineFacts?.risingSign==='overview')return buildHoroscopeOverviewInput({plan,context,task,target,engineFacts,argumentOutline,spine,writingProfile});
   const {developments,seasonalMeaning,relationalContext,...calculatedFacts}=engineFacts??{};
   const seasonal=writingProfile?.profile?.period==='seasonal';

@@ -227,12 +227,15 @@ export async function generateDraft({
   const baseInstructions = family === 'horoscope' ? HOROSCOPE_EDITORIAL_AUTHORITY : isCardWritingSurface({ surface, family })
     ? candidateCardAstrologyWritingInstructions
     : canonicalAstrologyWritingInstructions;
+  const seasonalPreparation=family==='horoscope'&&engineFacts?.window?.period==='seasonal'
+    ? {context,task,engineFacts,argumentOutline,writingProfile}:null;
   const value = await modelClient({
     stage: "draft",
     role,
     instructions: effectiveRulePrompt(baseInstructions, { surface, family }),
     input: buildDraftInput({ plan, context, task, target: resolvedTarget, family, register, surface, familyContext, engineFacts, argumentSource, argumentOutline, spine, writingProfile }),
-    schema: resolvedSchema
+    schema: resolvedSchema,
+    ...(seasonalPreparation?{seasonalPreparation}:{})
   });
   if (!value || typeof value !== "object") throw new Error("Writer returned no structured draft.");
   const readerValue = family==='horoscope' && engineFacts?.risingSign==='overview' && engineFacts?.window?.period==='monthly'

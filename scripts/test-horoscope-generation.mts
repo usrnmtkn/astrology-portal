@@ -3,7 +3,7 @@ import {loadSeasonalArgumentEvidence,SEASONAL_ARGUMENT_MANIFEST} from '../src/as
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import {createHash} from 'node:crypto';
-import {store,installHoroscopeWriterFixture,invokeHoroscopeWriting,writerFixture} from '../tests/helpers/sky-article-save-api.mts';
+import {store,editorialFixtureRows,installHoroscopeWriterFixture,invokeHoroscopeWriting,writerFixture} from '../tests/helpers/sky-article-save-api.mts';
 import {emptyHoroscopeEdition,horoscopeEditionBody,horoscopeEditionKey,horoscopeEditionAt,canonicalHoroscopeTimeZone,horoscopeCanonicalJson} from '../apps/web/src/content/horoscopeEditions.mjs';
 import {validateHoroscopeReading} from '../src/astro-writing/horoscopeValidation.mjs';
 import {prepareHoroscopeBrief} from '../api/_lib/horoscope-editions';
@@ -309,91 +309,92 @@ const cases=[
  {payload:{status:'failed',error:{code:'credit_balance_exhausted',message:'PRIVATE provider billing details'}},code:'api_credits'},
  {payload:{status:'failed',error:{code:'invalid_api_key',message:'PRIVATE credential details'}},code:'api_credentials'},
  {payload:{status:'completed',output:[{type:'message',content:[{type:'refusal',refusal:'PRIVATE refusal'}]}]},code:'refused'},
- {payload:{status:'completed',output:[partial]},code:'invalid_reading'},
- {payload:{status:'completed',output:[{type:'message',content:[{type:'output_text',text:JSON.stringify({headline:'Fixture',body:' '})}]}]},code:'invalid_reading'},
+ {payload:{status:'completed',output:[partial]},code:'invalid_seasonal_plan'},
+ {payload:{status:'completed',output:[{type:'message',content:[{type:'output_text',text:JSON.stringify({headline:'Fixture',body:' '})}]}]},code:'invalid_seasonal_plan'},
 ];
-for(const immediate of [false,true])for(const scenario of cases){
- const calls=writerFixture.calls;
- if(immediate)writerFixture.startResult=scenario.payload;
- let failed=await seasonalAction('generate',{sign:'aries',approvedPlanHash:seasonalPlan.payload.plan.planHash});
- if(!immediate){assert.equal(failed.status,202);seasonalRow=failed.payload.rows[0];writerFixture.nextResult=scenario.payload;failed=await seasonalAction('poll');}
- assert.equal(failed.status,422,JSON.stringify(failed.payload));seasonalRow=failed.payload.rows[0];
- const generation=seasonalRow.source_snapshot.horoscopeGeneration;
- assert.equal(generation.active,null);assert.equal(generation.lastError.code,scenario.code);
- assert.equal(generation.lastError.operation.sign,'aries');assert(generation.lastError.operation.responseId);
- assert.equal(generation.lastError.diagnostic.status,scenario.payload.status);
- assert.equal(generation.lastError.diagnostic.outputCharacters,scenario.payload.output?.includes(partial)?partial.content[0].text.length:scenario.code==='invalid_reading'?JSON.stringify({headline:'Fixture',body:' '}).length:0);
- if(scenario.code==='output_limit'){assert.equal(generation.lastError.diagnostic.incompleteReason,'max_output_tokens');assert.equal(generation.lastError.diagnostic.usage.reasoningTokens,11990);}
- assert.doesNotMatch(JSON.stringify(generation.lastError),/PRIVATE/,'Do not store provider messages or partial prose in the failure receipt');
- assert.deepEqual(seasonalRow.sections.horoscopeEdition,seasonalEdition);
- assert.equal(seasonalRow.status,'DRAFT');
- if(!immediate){
-  const before=structuredClone(store.rows.get(seasonalRow.id));writerFixture.nextResult=scenario.payload;
-  const inspected=await seasonalAction('diagnose');assert.equal(inspected.status,200);assert.equal(inspected.payload.failure.code,scenario.code);
-  assert.deepEqual(store.rows.get(seasonalRow.id),before,'Diagnosis is read-only and cannot change dates, prose, version or failure history');
-  assert.equal((await invokeHoroscopeWriting({action:'diagnose',id:seasonalRow.id,expectedUpdatedAt:'stale'})).status,409);
- }
- assert.equal((await seasonalAction('poll')).status,200);assert.equal((await seasonalAction('prepare')).status,200);
- assert.equal(writerFixture.calls,calls+1,'Inspection and recovery never automatically restart failed provider calls');
+const pristineSeasonal=structuredClone(store.rows.get(seasonalRow.id));
+let syntheticRunSequence=700;
+function freshSeasonalFixture(){
+ seasonalRow={...structuredClone(pristineSeasonal),id:`00000000-0000-4000-8000-${String(++syntheticRunSequence).padStart(12,'0')}`};
+ store.rows.set(seasonalRow.id,seasonalRow);
 }
-const failures=structuredClone(seasonalRow.source_snapshot.horoscopeGeneration.failures);assert.equal(failures.length,16);
-const retried=await seasonalAction('generate',{sign:'aries',approvedPlanHash:seasonalPlan.payload.plan.planHash});assert.equal(retried.status,202);seasonalRow=retried.payload.rows[0];
-const recovered=await seasonalAction('poll');assert.equal(recovered.status,200);seasonalRow=recovered.payload.rows[0];
-assert.deepEqual(seasonalRow.source_snapshot.horoscopeGeneration.failures,failures,'Successful retry preserves earlier failures');
-assert.equal(seasonalRow.source_snapshot.horoscopeGeneration.lastError,null);
-assert.equal(seasonalRow.sections.horoscopeEdition.passages.filter((p:any)=>p.body).length,1);
-assert.equal(seasonalRow.status,'DRAFT');
+for(const immediate of [false,true])for(const scenario of cases){
+ freshSeasonalFixture();
+ const calls=writerFixture.calls;
+ let result:any;
+ for(let iteration=0;iteration<7;iteration++){
+  const active=seasonalRow.source_snapshot.horoscopeGeneration?.active;
+  const action=active?(active.state==='ready'?'continue':'poll'):'generate';
+  if(immediate&&action!=='poll')writerFixture.startResult=scenario.payload;
+  if(!immediate&&action==='poll')writerFixture.nextResult=scenario.payload;
+  result=await seasonalAction(action,action==='generate'?{sign:'aries',approvedPlanHash:seasonalPlan.payload.plan.planHash}:{});
+  assert([202,422].includes(result.status),JSON.stringify(result.payload));seasonalRow=result.payload.rows[0];
+  if(result.status===422)break;
+ }
+ assert.equal(result.status,422);
+ const generation=seasonalRow.source_snapshot.horoscopeGeneration;
+ const run=editorialFixtureRows.get(generation.editorialRuns.aries.id).state;
+ assert.equal(generation.active,null);assert(['provider_failed','quality_exhausted'].includes(generation.lastError.code));
+ const receipts=run.artifacts.filter((a:any)=>a.kind==='model_response');
+ assert.equal(receipts.at(-1).value.payload.status,scenario.payload.status);
+ if(scenario.code==='output_limit'){assert.equal(receipts[0].value.payload.incomplete_details.reason,'max_output_tokens');assert.equal(receipts[0].value.usage.output_tokens_details.reasoning_tokens,11990);}
+ assert.doesNotMatch(JSON.stringify(generation),/PRIVATE (?:partial text|provider error|provider billing details|credential details|refusal)/);
+ assert.deepEqual(seasonalRow.sections.horoscopeEdition,seasonalEdition);assert.equal(seasonalRow.status,'DRAFT');
+ const before=structuredClone(store.rows.get(seasonalRow.id));
+ const inspected=await seasonalAction('inspect',{sign:'aries'});assert.equal(inspected.status,200);
+ assert.deepEqual(store.rows.get(seasonalRow.id),before,'Private inspection is read-only');
+ assert.equal((await seasonalAction('generate',{sign:'aries',approvedPlanHash:seasonalPlan.payload.plan.planHash})).status,409,'A terminal run cannot silently reset its budget');
+ assert.equal(writerFixture.calls-calls,scenario.payload.status==='completed'?3:1);
+}
+freshSeasonalFixture();
 // All twelve actual seasonal provider inputs carry the three matching complete units.
 const seasonalSources=loadSeasonalHoroscopeEvidence((file:string)=>fs.readFileSync(file,'utf8'));
 const preferredEssays=loadSeasonalArgumentEvidence((file:string)=>fs.readFileSync(file,'utf8'));
 const packaged=new Set(fs.globSync(JSON.parse(fs.readFileSync('vercel.json','utf8')).functions['api/admin/horoscope-writing.ts'].includeFiles));
 for(const file of [SEASONAL_ARGUMENT_MANIFEST,...preferredEssays.map(p=>p.sourcePath)])assert(packaged.has(file),file);
 const callsBefore=writerFixture.calls;
-for(const sign of seasonalEdition.passages.slice(1).map(p=>p.sign)){
+for(const sign of seasonalEdition.passages.map(p=>p.sign)){
  const generated=await seasonalAction('generate',{sign,approvedPlanHash:seasonalPlan.payload.plan.planHash});
  assert.equal(generated.status,202,JSON.stringify(generated.payload));seasonalRow=generated.payload.rows[0];
- const polled=await seasonalAction('poll');assert.equal(polled.status,200);seasonalRow=polled.payload.rows[0];
+ while(seasonalRow.source_snapshot.horoscopeGeneration.active){
+  const active=seasonalRow.source_snapshot.horoscopeGeneration.active;
+  const result=await seasonalAction(active.state==='ready'?'continue':'poll');
+  assert([200,202].includes(result.status),JSON.stringify(result.payload));seasonalRow=result.payload.rows[0];
+ }
 }
-assert.equal(writerFixture.calls-callsBefore,11,'One call per missing sign, no judge or rewrite requests');
+assert.equal(writerFixture.calls-callsBefore,72,'Six synthetic calls per sign: mechanism, plan, plan review, draft and two independent reviews');
 assert.equal(seasonalRow.status,'DRAFT');
 for(const reading of seasonalEdition.passages){
- const request:any=[...writerFixture.requests.values()].reverse().find((r:any)=>r.sign===reading.sign&&r.input.includes('COMPLETE SEASONAL OWNER PROSE EVIDENCE'));
+ const request:any=[...writerFixture.requests.values()].reverse().find((r:any)=>r.sign===reading.sign&&r.input.includes('COMPACT SEASONAL DEVELOPMENT PLAN')&&r.text.format.schema.required.includes('body'));
  assert(request,`Missing seasonal provider request for ${reading.sign}`);
  assertHoroscopeRequestEvidence(request.input);
- const meaning=JSON.parse(request.input.match(/ZODIAC SEASON AND LEARNING AXIS — INTERPRETIVE SOURCES\n([^\n]+)\n\n/)[1]);
+ const facts=JSON.parse(request.input.split('GOVERNED SEASONAL FACTS\n')[1].split('\n\n')[0]);
+ const meaning=facts.seasonalMeaning;
  assert.equal(meaning.seasonSign,'virgo');assert.equal(meaning.oppositeSign,'pisces');
  assert.equal(meaning.risingSign,reading.sign);assert.equal(meaning.sources.length,2);
  assert.deepEqual(meaning,seasonalPlan.payload.plan.readings.find((r:any)=>r.sign===reading.sign).seasonalMeaning);
- assert.deepEqual(meaning,seasonalRow.source_snapshot.horoscopeGeneration.readings[reading.sign].seasonalMeaning);
- assert(!request.input.match(/CALCULATED FACTS\n([^\n]+)/)[1].includes('learning-axis'));
- assert(request.input.includes('include its supplied calendar date naturally on first mention'));
- assert(!request.input.includes('numeric dates belong in the separately rendered'));
- const passages=JSON.parse(request.input.match(/COMPLETE SEASONAL OWNER PROSE EVIDENCE\n([^\n]+)\n\n/)[1]);
- assert.equal(passages.length,6);
- assert.deepEqual(new Set(passages.slice(0,3).map((p:any)=>p.id)),new Set(preferredEssays.map(p=>p.id)));
+ const privateRun=editorialFixtureRows.get(seasonalRow.source_snapshot.horoscopeGeneration.editorialRuns[reading.sign].id).state;
+ const receipt=privateRun.artifacts.find((a:any)=>a.kind==='call_reserved'&&a.value.stage==='prose').value.request.contextReceipt;
+ const passages=JSON.parse(request.input.split('SELECTED COMPLETE OWNER PASSAGES\n')[1].split('\n\n')[0]);
+ assert(passages.length>=1,'Relevant complete units, without a quota');
  for(const passage of passages){
-  const primary=passage.seasonalVoiceRole==='primary argument and voice';
-  if(!primary)assert.equal(passage.horoscopeAudienceSign,reading.sign);
   assert.equal(passage.text,[...preferredEssays,...seasonalSources].find(p=>p.id===passage.id)?.text);
-  assert.equal(passage.sourceRecordSha256,createHash('sha256').update(passage.text).digest('hex'));
-  const serialized=JSON.stringify(passage.text).slice(1,-1);
-  assert.equal(request.input.split(serialized).length-1,1,passage.id+' must reach the writer exactly once');
+  assert.equal(passage.textSha256,createHash('sha256').update(passage.text).digest('hex'));
+  assert.equal(request.input.split(JSON.stringify(passage.text).slice(1,-1)).length-1,1);
  }
- assert(request.input.includes('Write from inside a recognizable human experience.'));
- assert(request.input.includes('primary voice references'));
- assert(request.input.includes('Never use an em dash'));
+ assert(request.input.includes('Write from a recognizable situation'));
+ assert(request.input.includes('No em dashes'));
  assert(request.instructions.includes(HOROSCOPE_EDITORIAL_AUTHORITY));
  assert(!request.instructions.includes('SPINE QUALITY GATES'));
  assert(!request.instructions.includes('NEGATION-PIVOT CAP'));
  assert(!request.instructions.includes('at least two short imperatives'));
  assert(request.instructions.includes('factual-safety-v1'));
  assert(request.input.includes(horoscopeEditorialPrompt(seasonalProfile)));
- assert(request.input.includes('FINISH THE NEW DRAFT USING THE SAVED EDITORIAL GUIDANCE'));
+ assert(!request.input.includes('FINISH THE NEW DRAFT USING THE SAVED EDITORIAL GUIDANCE'));
  assert(!request.input.includes('These complete owner weekly sign readings'));
- const receipt=seasonalRow.source_snapshot.horoscopeGeneration.readings[reading.sign];
- assert.deepEqual(receipt.sourceIds,passages.map((p:any)=>p.id));
- assert.equal(receipt.profileHash,createHash('sha256').update(horoscopeCanonicalJson(seasonalProfileSaved.payload.profile)).digest('hex'));
- assert.equal(receipt.ownerApproved,false);
+ assert.equal(receipt.fullProfileSha256,seasonalProfileSaved.payload.profile.sha256);
+ assert.equal(privateRun.ownerApproved,false);
+ assert.equal(seasonalRow.sections.horoscopeEdition.passages.find((p:any)=>p.sign===reading.sign).body,'');
 }
 // Profile edits do not rewrite existing bodies or silently replace edition snapshots.
 const bodiesBefore=structuredClone(seasonalRow.sections);

@@ -16,6 +16,22 @@ The export is a reproducible configuration snapshot. Its hash detects edits afte
 
 ## Writer integration
 
+Seasonal writer v19 uses a private editorial controller: evidence retrieval,
+astrology mechanism, development plan, plan validation, prose, deterministic
+fact checks, separate owner-voice and meaning evaluations, and bounded regeneration
+at the responsible stage. It permits at most three prose candidates and three
+plans, with a thirty-call ceiling per reading. The disclosed ceiling includes
+reviews and bounded invalid-review retries; a clean pass uses six calls.
+
+Passing candidates remain in private storage for owner inspection. Failed or
+exhausted runs never fill the edition's reading fields. Content Studio displays
+the exact evidence, plans, original candidates, checks and routing after reload.
+The prose instructions are unchanged. See [Seasonal editorial pipeline](../writing/SEASONAL_COMPOSITION_PIPELINE.md)
+for storage, recovery and the quality proof still required before broader rollout.
+Daily, Weekly, Monthly and other surfaces retain their existing paths. The earlier
+notes below describe shared history; their fixed evidence floors and advisory-only
+review descriptions do not govern the new Seasonal controller.
+
 Writer v11 sends the horoscope editorial authority and shared factual/source
 boundaries as its system instructions. It does not also send the generic Sky
 article spine, sentence-length quotas, negation-pivot cap or mandatory imperative

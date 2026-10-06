@@ -1,0 +1,13 @@
+export const RHETORICAL_PATTERN_VERSION: string;
+export const RHETORICAL_LABELS: readonly ['CORRECTIO','TRICOLON','PURPLE_PROSE'];
+export const RELATED_PROSE_LABELS: readonly ['POLISHED_ASTROLOGY_PROSE','ABSTRACT_MECHANISM','GENERIC_ASTROLOGY','GENERIC_ADVICE','VAGUE_CAUSALITY','KEYWORD_STACK','STACCATO_AI_PROSE','HOUSE_STYLE_PHRASE_REPETITION'];
+export const PROSE_PATTERN_LABELS: readonly string[];
+export const RHETORICAL_WRITER_POLICY: string;
+export const RHETORICAL_JUDGE_POLICY: string;
+export const RHETORICAL_REVIEW_SCHEMA: Record<string,unknown>;
+export type RhetoricalReview = {checks:Array<{label:string;outcome:'pass'|'fail'|'indeterminate';reason:string}>;findings:Array<{label:string;field:string;quote:string;paragraph:string;reason:string;readerConsequence:string;meaningTest:string}>};
+export function textFields(candidate:unknown):Record<string,string>;
+export function validateRhetoricalReview(review:unknown,candidate:unknown):RhetoricalReview;
+export function rhetoricalDecision(review:RhetoricalReview):'pass'|'regenerate'|'evaluation_unavailable';
+export function rhetoricalReviewContract(candidate:unknown):string;
+export function rhetoricalSignals(candidate:unknown):Array<{label:string;field:string;quote:string;offset:number;advisory:true;requiresSemanticReview:true}>;

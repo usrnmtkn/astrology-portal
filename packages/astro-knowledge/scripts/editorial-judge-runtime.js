@@ -4,6 +4,7 @@ const crypto = require("crypto");
 const fs = require("fs");
 const path = require("path");
 const { generateJudge, judgeConfig } = require("./generate-sky-aspect-cards.js");
+const {RHETORICAL_PATTERN_VERSION,rhetoricalReviewContract,validateRhetoricalReview,rhetoricalDecision}=require('../../../src/astro-writing/rhetoricalPatterns.cjs');
 
 const auditRoot = path.join(__dirname, "..", "out", "editorial-judge-audit");
 const auditPath = path.join(auditRoot, "verdicts.jsonl");
@@ -76,7 +77,17 @@ async function runJudgeSamples({
   calibration = false
 }) {
   const injected = typeof judgeFn === "function";
-  let outboundPrompt = prompt;
+  let candidate;
+  try {candidate=JSON.parse(content);} catch {candidate={body:String(content)};}
+  // Placement objects may carry astrology identifiers and provenance beside
+  // the prose. Those metadata strings cannot support a rhetorical finding.
+  if(candidate && typeof candidate==='object' && !Array.isArray(candidate)) {
+    const readerFields=new Set(['headline','title','tagline','summary','tldr','body','hook','lived','turn','moves','sections','action','timing','do','dont']);
+    candidate=Object.fromEntries(Object.entries(candidate).filter(([field])=>readerFields.has(field)));
+  }
+  const completePrompt=`${prompt}\n\n${rhetoricalReviewContract(candidate)}`;
+  let outboundPrompt = completePrompt;
+  let reviewedCandidate = candidate;
   let privacyMode = "injected-test";
   let redactionCount = 0;
   let config = { provider: "injected", model: "injected", temperature };
@@ -86,9 +97,10 @@ async function runJudgeSamples({
     privacyMode = privacyPolicy();
     config = { ...judgeConfig(context.modelSurface || context.surface || "default"), temperature };
     if (privacyMode === "redact") {
-      const redacted = redactText(prompt);
+      const redacted = redactText(completePrompt);
       outboundPrompt = redacted.text;
       redactionCount = redacted.replacements;
+      reviewedCandidate=JSON.parse(redactText(JSON.stringify(candidate)).text);
     }
   }
 
@@ -101,7 +113,24 @@ async function runJudgeSamples({
   const count = Math.max(1, Number(samples) || 1);
   const verdicts = [];
   for (let i = 0; i < count; i += 1) {
-    verdicts.push(parseVerdict(await fn(outboundPrompt, { ...context, content })));
+    const raw=await fn(outboundPrompt, { ...context, content });
+    const verdict=parseVerdict(raw);
+    try {
+      const parsed=typeof raw==='string'?JSON.parse(raw.match(/\{[\s\S]*\}/u)?.[0]??'null'):raw;
+      const rhetoric=validateRhetoricalReview(parsed?.rhetoric,reviewedCandidate);
+      const decision=rhetoricalDecision(rhetoric);
+      verdict.rhetoric=rhetoric;
+      if(decision==='regenerate'){
+        verdict.score=1;verdict.verdict='off-voice';
+        verdict.failedChecks=[...(verdict.failedChecks??[]),...rhetoric.findings.map(f=>f.label)];
+        verdict.why=[verdict.why,...rhetoric.findings.map(f=>`${f.label}: ${f.reason}`)].filter(Boolean).join(' ');
+      } else if(decision==='evaluation_unavailable') {
+        verdict.contractViolation=true;verdict.contractIssues=[...(verdict.contractIssues??[]),'rhetorical_review_indeterminate'];
+      }
+    } catch(error) {
+      verdict.contractViolation=true;verdict.contractIssues=[...(verdict.contractIssues??[]),error.message];
+    }
+    verdicts.push(verdict);
   }
 
   const scores = verdicts.map((verdict) => normalizeScore(verdict.score)).sort((a, b) => a - b);
@@ -109,13 +138,16 @@ async function runJudgeSamples({
   const chosen = verdicts.find((verdict) => normalizeScore(verdict.score) === median) || verdicts[0];
   const disagreement = new Set(scores).size > 1 || new Set(verdicts.map((verdict) => verdict.verdict || "")).size > 1;
   const contractViolation = verdicts.some((verdict) => verdict.contractViolation);
+  const rhetoricalBlocked = verdicts.some(verdict => verdict.rhetoric && rhetoricalDecision(verdict.rhetoric) === 'regenerate');
   const contractIssues = [...new Set(verdicts.flatMap((verdict) => Array.isArray(verdict.contractIssues) ? verdict.contractIssues : []))];
   const audit = {
     schemaVersion: 1,
     recordedAt: new Date().toISOString(),
-    promptVersion: promptVersion || `${rubricVersion}:prompt-v1`,
+    promptVersion: `${promptVersion || `${rubricVersion}:prompt-v1`}:${RHETORICAL_PATTERN_VERSION}`,
     rubricVersion,
-    promptSha256: sha256(prompt),
+    promptSha256: sha256(completePrompt),
+    outboundPromptSha256: sha256(outboundPrompt),
+    rhetoricalPolicyVersion: RHETORICAL_PATTERN_VERSION,
     rubricSha256: sha256(rubric),
     contentSha256: sha256(content),
     provider: config.provider,
@@ -137,10 +169,12 @@ async function runJudgeSamples({
       failedChecks: Array.isArray(verdict.failedChecks) ? verdict.failedChecks : [],
       contractViolation: Boolean(verdict.contractViolation),
       contractIssues: Array.isArray(verdict.contractIssues) ? verdict.contractIssues : [],
+      rhetoric: verdict.rhetoric ?? null,
       outputSha256: sha256(JSON.stringify(verdict))
     })),
     disagreement,
     contractViolation,
+    rhetoricalBlocked,
     contractIssues,
     privacyMode,
     redactionCount,
@@ -151,7 +185,13 @@ async function runJudgeSamples({
 
   return {
     ...chosen,
-    score: median,
+    score: rhetoricalBlocked ? 1 : median,
+    rhetoricalBlocked,
+    ...(rhetoricalBlocked ? {
+      verdict:'off-voice',
+      failedChecks:[...new Set(verdicts.flatMap(verdict=>verdict.failedChecks??[]))],
+      why:verdicts.filter(verdict=>verdict.rhetoric && rhetoricalDecision(verdict.rhetoric)==='regenerate').map(verdict=>verdict.why).join(' ')
+    } : {}),
     samples: count,
     disagreement,
     contractViolation,

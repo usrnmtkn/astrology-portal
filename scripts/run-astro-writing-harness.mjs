@@ -29,6 +29,8 @@ import offlineProviderConfig from "../src/astro-writing/offlineProviderConfig.cj
 import openAIResponses from "../src/astro-writing/openAIResponses.cjs";
 import { prepareLunationWriting, lunationWritingTarget } from "../src/astro-writing/lunationWriting.mjs";
 import { lunationDigest } from "../src/astro-writing/lunationWritingFacts.mjs";
+import { prepareHoroscopeWriting } from "../src/astro-writing/horoscopeWriting.mjs";
+import { emptyHoroscopeEdition } from "../apps/web/src/content/horoscopeEditions.mjs";
 
 const { callGeminiInteractions } = geminiInteractions;
 const { readLocalProviderKeys } = localProviderKeys;
@@ -62,6 +64,7 @@ function outputText(payload) {
 
 async function providerResponse({ request, config, apiKeys }) {
   const { stage, role, instructions, input, schema } = request;
+  if(String(input).includes('[SEASONAL_DEVELOPMENT_PLAN_REQUIRED_BEFORE_PROSE]'))throw new Error('Complete and attach engineFacts.seasonalDevelopmentPlan before authorizing a Seasonal prose call. Preparation made no paid call.');
   if (!instructions) throw new Error(`Harness ${role} call omitted its canonical instruction contract.`);
   if (config.provider === "gemini") {
     const structuredInput = `${input}\n\nOUTPUT JSON SCHEMA\n${JSON.stringify(schema, null, 2)}`;
@@ -117,7 +120,9 @@ function modelClient(config, apiKeys, forceRole = null) {
 const requestPath = argValue("--request");
 const outputPath = argValue("--out");
 const transmittedPacketPath = argValue("--packet-out");
-if (!requestPath || !outputPath) throw new Error("Usage: node scripts/run-astro-writing-harness.mjs --request request.json --out result.json [--writing-profile saved-profile.json] [--authorize-live]");
+const preparationOnly = process.argv.includes("--prepare-only");
+if (preparationOnly && process.argv.includes("--authorize-live")) throw new Error("Choose preparation only or an authorized live call, not both.");
+if (!requestPath || !outputPath) throw new Error("Usage: node scripts/run-astro-writing-harness.mjs --request request.json --out result.json [--writing-profile saved-profile.json] [--prepare-only | --authorize-live]");
 
 const request = JSON.parse(fs.readFileSync(path.resolve(requestPath), "utf8"));
 const lunationPreparation = request.family === 'lunations' ? prepareLunationWriting(request) : null;
@@ -206,7 +211,20 @@ const sceneEvidence = sceneEvidenceForTarget({
   sceneNounLexicon: matrixSceneNounLexicon(matrixEvidenceRows),
   plan: await resolveAstrology(request.meaningInput)
 });
-const contextOptions = lunationPreparation?.contextOptions ?? {
+// Use Studio's complete seasonal evidence selection. Other periods retain their
+// existing harness behavior; this repair does not change their evidence priority.
+if (request.family === 'horoscope' && request.engineFacts?.window?.period === 'seasonal'
+  && !Array.isArray(request.horoscopeSourceRows)) {
+  throw new Error('Export the current shared seasonal source rows before preparing a seasonal horoscope; an explicit empty array records no overrides.');
+}
+const horoscopePreparation = request.family === 'horoscope' && request.engineFacts?.window?.period === 'seasonal' ? prepareHoroscopeWriting({
+  sections: { horoscopeEdition: emptyHoroscopeEdition(request.engineFacts?.window) },
+  facts: { horoscopeBrief: { brief: request.engineFacts } },
+  source_snapshot: { studioWritingProfile: request.writingProfile }
+}, { seasonalSourceRows: request.horoscopeSourceRows ?? [] }) : null;
+const horoscopeEntry = horoscopePreparation?.entries.find(entry => entry.sign === request.engineFacts?.risingSign);
+if (horoscopePreparation && !horoscopeEntry) throw new Error('A horoscope request requires its calculated audience sign.');
+const contextOptions = horoscopeEntry?.contextOptions ?? lunationPreparation?.contextOptions ?? {
   examples, matrixExamples, matrixArgumentCandidates: matrixRoleEvidence.argument_candidate,
   matrixEvidenceAvailableCount: matrixExamples.length,
   relevantOwnerPassagesAvailableCount: relevantOwnerEvidence.counts.selected,
@@ -248,22 +266,47 @@ if (willDraft) {
     process.exit(0);
   }
 }
-if (willDraft && !process.argv.includes("--authorize-live")) {
+if (willDraft && !preparationOnly && !process.argv.includes("--authorize-live")) {
   throw new Error("No billed call was made. Pass --authorize-live only after explicit owner authorization.");
 }
 const writerConfig = willDraft ? normalizeProviderConfig(request.models?.writer, "writer") : null;
-const apiKeys = willDraft ? readLocalProviderKeys(repoRoot) : {};
-for (const config of willDraft ? [writerConfig] : []) {
+const apiKeys = willDraft && !preparationOnly ? readLocalProviderKeys(repoRoot) : {};
+for (const config of willDraft && !preparationOnly ? [writerConfig] : []) {
   const keyName = config.provider === "gemini" ? "GEMINI_API_KEY" : "OPENAI_API_KEY";
   if (!apiKeys[keyName]) throw new Error(`${keyName} is not configured in apps/web/.env.local.`);
 }
-const writerClient = willDraft ? modelClient(writerConfig, apiKeys) : null;
-const result = await runWritingPipeline({
+const preparationStop = new Error('PREPARED_WITHOUT_PROVIDER_DISPATCH');
+let preparedRequest = null;
+const preparationClient = async value => { preparedRequest = value; throw preparationStop; };
+preparationClient.billed = false;
+const writerClient = willDraft ? preparationOnly ? preparationClient : modelClient(writerConfig, apiKeys) : null;
+let result;
+try {
+result = await runWritingPipeline({
   ...request,
   ...contextOptions,
+  ...(horoscopeEntry ? { engineFacts: {
+    ...request.engineFacts,
+    anchor: horoscopeEntry.anchor, house: horoscopeEntry.house,
+    developments: horoscopeEntry.developments, seasonalMeaning: horoscopeEntry.seasonalMeaning
+  } } : {}),
   argumentSource: request.argumentSource,
   writerClient
 });
+} catch (error) {
+  if (error !== preparationStop) throw error;
+  writePrivateJson(outputPath, {
+    status: 'prepared-not-dispatched', draft: null, dispatched: false,
+    requestSha256: lunationDigest(preparedRequest), request: preparedRequest,
+    writerConfig, approvedArgumentOutline: request.approvedArgumentOutline,
+    profile: request.writingProfile ? studioWritingProfileReceipt(request.writingProfile) : null,
+    sourceHash: horoscopePreparation?.sourceHash ?? null,
+    report: { drafted: 0, writerCalls: 0, billedCalls: 0, proseModelGateCalls: 0 },
+    ownerApproved: false, promotionAuthorized: false, canonical: false
+  });
+  console.log(JSON.stringify({ status: 'prepared-not-dispatched', billedCalls: 0, requestSha256: lunationDigest(preparedRequest) }));
+  process.exit(0);
+}
 if (lunationPreparation) result.preparation = { ...lunationPreparation.receipt,
   evidence: lunationPreparation.context, engineFacts: request.engineFacts };
 if (result.report && writerClient?.lastUsage) result.report.modelUsage = writerClient.lastUsage;

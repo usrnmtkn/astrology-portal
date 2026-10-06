@@ -5,7 +5,7 @@ import {resolveSeasonalMeaning,seasonalMeaningForRising,SEASONAL_MEANING_BANK} f
 import {seasonalDateFindings} from '../src/astro-writing/horoscopeSeasonalDates.mjs';
 import {validateHoroscopeReading} from '../src/astro-writing/horoscopeValidation.mjs';
 import {HOROSCOPE_SIGNS,emptyHoroscopeEdition,horoscopeEditionKey,horoscopeEditionBody} from '../apps/web/src/content/horoscopeEditions.mjs';
-import {store,installHoroscopeWriterFixture,invokeHoroscopeWriting,writerFixture} from '../tests/helpers/sky-article-save-api.mts';
+import {store,editorialFixtureRows,installHoroscopeWriterFixture,invokeHoroscopeWriting,writerFixture} from '../tests/helpers/sky-article-save-api.mts';
 const packaged=new Set(fs.globSync(JSON.parse(fs.readFileSync('vercel.json','utf8')).functions['api/admin/horoscope-writing.ts'].includeFiles));
 assert(packaged.has(SEASONAL_MEANING_BANK),'The deployed writer must include the actual source bank.');
 const bank=JSON.parse(fs.readFileSync(SEASONAL_MEANING_BANK,'utf8'));
@@ -59,13 +59,15 @@ assert.equal(writerFixture.calls,0);source.sections.packageDraft.body=originalSo
 let generated=await act('generate',{sign:'aries',approvedPlanHash:changed.payload.plan.planHash});assert.equal(generated.status,202);row=generated.payload.rows[0];
 // A saved response retains the source snapshot from its request, even after a later source edit.
 source.updated_at='2026-10-01T01:00:00Z';source.sections.packageDraft.body='Later synthetic source, for future plans.';
-generated=await act('poll');assert.equal(generated.status,200);row=generated.payload.rows[0];
-assert.equal(row.source_snapshot.horoscopeGeneration.readings.aries.seasonalMeaning.sources[1].body,originalSource.sections.packageDraft.body);
-assert.equal(row.status,'DRAFT');assert.equal(writerFixture.calls,1);
+while(row.source_snapshot.horoscopeGeneration.active){generated=await act(row.source_snapshot.horoscopeGeneration.active.state==='ready'?'continue':'poll');assert([200,202].includes(generated.status),JSON.stringify(generated.payload));row=generated.payload.rows[0];}
+const privateRun=editorialFixtureRows.get(row.source_snapshot.horoscopeGeneration.editorialRuns.aries.id).state;
+assert.equal(privateRun.input.template.seasonalPreparation.engineFacts.seasonalMeaning.sources[1].body,originalSource.sections.packageDraft.body);
+assert.equal(row.status,'DRAFT');assert.equal(writerFixture.calls,6);
+assert.equal(row.sections.horoscopeEdition.passages.find((p:any)=>p.sign==='aries').body,'');
 const request:any=[...writerFixture.requests.values()][0];assert(request.input.includes(originalSource.sections.packageDraft.body.replaceAll('\n','\\n')));
 const actualFetch=globalThis.fetch;
 globalThis.fetch=async(input:any,init:any)=>String(input).includes('content_key=in.')?Response.json({error:'fixture read failure'},{status:503}):actualFetch(input,init);
-assert.equal((await act('prepare')).status,502);assert.equal(writerFixture.calls,1);globalThis.fetch=actualFetch;
+assert.equal((await act('prepare')).status,502);assert.equal(writerFixture.calls,6);globalThis.fetch=actualFetch;
 
 // Explicit synthetic instants test date-line conversion, event association and year boundaries.
 const dateBrief={window:{period:'seasonal',timeZone:'America/New_York',startsAt:'2026-09-01T00:00:00Z',endsAt:'2026-10-20T00:00:00Z'},positions:[{planet:'Sun',sign:'libra'}],events:[

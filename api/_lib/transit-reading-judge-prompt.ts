@@ -1,6 +1,7 @@
 import { loadVersionedReportPrompt, REPORT_JUDGE_BASELINE_PROMPT_PATH,
   REPORT_JUDGE_FOUNDATION_PROMPT_PATH, REPORT_JUDGE_PREVIOUS_PROMPT_PATH,
   REPORT_JUDGE_PROMPT_PATH } from "./report-prompt-versions.js";
+import {RHETORICAL_JUDGE_POLICY} from '../../src/astro-writing/rhetoricalPatterns.mjs';
 
 export const GENERATED_REPORT_JUDGE_RUBRIC_PATHS = [
   REPORT_JUDGE_BASELINE_PROMPT_PATH, REPORT_JUDGE_FOUNDATION_PROMPT_PATH,
@@ -19,6 +20,8 @@ export function generatedReportJudgeRubric() {
 }
 
 export const GENERATED_REPORT_JUDGE_PACKET_CONTRACT = [
+  RHETORICAL_JUDGE_POLICY,
+  'For CORRECTIO, TRICOLON and PURPLE_PROSE use category as the exact label, draftQuote as an exact span, and location as its reader-field path. In finding include the complete containing paragraph, material reader consequence and precision/removal/plain-language test. These are blocking owner rules; they map to natural_language for scoring. Related prose labels remain available and may overlap. Do not diagnose on punctuation or isolated fragments.',
   "ROLE: GENERATED REPORT REVIEWER",
   "Evaluate the supplied report against the complete approved report rubric and its short-report adapter. Do not presume a defect; return an empty findings array when no defect is supported.",
   "The rubric layers below are in chronological order; later amendments and the short-report adapter govern their stated scope. Premium output-contract sections are omitted because this call uses the short-report response schema below. No card-review instructions apply.",

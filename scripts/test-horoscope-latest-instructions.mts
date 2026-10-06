@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import {store,installHoroscopeWriterFixture,invokeHoroscopeWriting,writerFixture} from '../tests/helpers/sky-article-save-api.mts';
+import {store,editorialFixtureRows,installHoroscopeWriterFixture,invokeHoroscopeWriting,writerFixture} from '../tests/helpers/sky-article-save-api.mts';
 import {prepareHoroscopeBrief} from '../api/_lib/horoscope-editions';
 import {emptyHoroscopeEdition,horoscopeEditionBody,horoscopeEditionKey} from '../apps/web/src/content/horoscopeEditions.mjs';
 import {defaultHoroscopeProfile,horoscopeEditorialPrompt} from '../src/astro-writing/horoscopeWritingProfiles.mjs';
@@ -40,15 +40,21 @@ for(const period of ['daily','weekly','monthly','seasonal'] as const){
  const repeated=await action('prepare');assert.equal(repeated.status,200);assert.equal(repeated.payload.rows[0].updated_at,row.updated_at,'No write when already current');
  const started=await action('generate',{sign,approvedPlanHash:refreshed.payload.plan.planHash});assert.equal(started.status,202,JSON.stringify(started.payload));row=started.payload.rows[0];
  const active=structuredClone(row.source_snapshot.horoscopeGeneration.active);
- assert((period==='monthly'?active.draftRequest:writerFixture.requests.get(active.responseId)).input.includes(horoscopeEditorialPrompt(second.profile)));
+ assert((period==='monthly'?active.draftRequest:period==='seasonal'?editorialFixtureRows.get(active.id).state.input.template:writerFixture.requests.get(active.responseId)).input.includes(horoscopeEditorialPrompt(second.profile)));
  const third=await saveProfile(second,`Future ${period} guidance.`);
  const pinned=await action('prepare');assert.equal(pinned.status,200);
  assert.equal(pinned.payload.rows[0].updated_at,row.updated_at);
  assert.deepEqual(store.rows.get(row.id).source_snapshot.horoscopeGeneration.active,active);
  assert.deepEqual(store.rows.get(row.id).source_snapshot.studioWritingProfile,second,'An in-flight request retains its original instructions');
+ if(period==='seasonal'){
+  while(row.source_snapshot.horoscopeGeneration.active){const a=row.source_snapshot.horoscopeGeneration.active;const step=await action(a.state==='ready'?'continue':'poll');assert([200,202].includes(step.status),JSON.stringify(step.payload));row=step.payload.rows[0];}
+  const run=editorialFixtureRows.get(active.id).state;assert.equal(run.status,'accepted');assert.equal(writerFixture.calls,calls+6);
+  assert(run.input.template.input.includes(horoscopeEditorialPrompt(second.profile)));assert(!run.input.template.input.includes(horoscopeEditorialPrompt(third.profile)));
+  assert.deepEqual(row.sections,original.sections,'Seasonal inspection candidates do not alter saved reader content');continue;
+ }
  if(period==='monthly'){let step=await action('poll');assert.equal(step.status,202);row=step.payload.rows[0];step=await action('continue');assert.equal(step.status,202);row=step.payload.rows[0];assert(writerFixture.requests.get(row.source_snapshot.horoscopeGeneration.active.responseId).input.includes(horoscopeEditorialPrompt(second.profile)));}
  const completed=await action('poll');assert.equal(completed.status,200,JSON.stringify(completed.payload));row=completed.payload.rows[0];
- assert.equal(writerFixture.calls,calls+(period==='monthly'?2:1),'Polling never regenerates');
+ assert.equal(writerFixture.calls,calls+(period==='monthly'?2:period==='seasonal'?3:1),'Polling never regenerates');
  assert.equal(row.source_snapshot.horoscopeGeneration.readings[sign].profileHash,active.receipt.profileHash);
  if(period!=='monthly')assert.deepEqual(row.sections.horoscopeEdition.passages.at(-1),preserved);
  const rejected=await action('reject',{sign});assert.equal(rejected.status,200);row=rejected.payload.rows[0];
@@ -56,7 +62,7 @@ for(const period of ['daily','weekly','monthly','seasonal'] as const){
  assert.deepEqual(row.source_snapshot.horoscopeGeneration.rejections.at(-1).writingProfile,second);
  const beforeFailure=structuredClone(row),fetch=globalThis.fetch;
  globalThis.fetch=async(input:any,options:any)=>String(input).includes('studio-writing-profile')?new Response('{}',{status:503}):fetch(input,options);
- try{assert.equal((await action('prepare')).status,502);assert.deepEqual(store.rows.get(row.id),beforeFailure);assert.equal(writerFixture.calls,calls+(period==='monthly'?2:1));}
+ try{assert.equal((await action('prepare')).status,502);assert.deepEqual(store.rows.get(row.id),beforeFailure);assert.equal(writerFixture.calls,calls+(period==='monthly'?2:period==='seasonal'?3:1));}
  finally{globalThis.fetch=fetch;}
  await saveProfile(third,`Next ${period} guidance.`);
  let raced=false;
@@ -70,7 +76,7 @@ for(const period of ['daily','weekly','monthly','seasonal'] as const){
   assert.equal((await action('prepare')).status,409);assert(raced);
   assert.equal(store.rows.get(row.id).headline,'Newer owner edit');
   assert.deepEqual(store.rows.get(row.id).source_snapshot.studioWritingProfile,third);
-  assert.equal(writerFixture.calls,calls+(period==='monthly'?2:1));
+  assert.equal(writerFixture.calls,calls+(period==='monthly'?2:period==='seasonal'?3:1));
  }finally{globalThis.fetch=fetch;}
 }
 // A long-form profile edit must not change the Weekly plan or assembled request.

@@ -7,10 +7,11 @@ const repoRoot = path.resolve(packageRoot, "..", "..");
 const { loadLocalEnv } = require("./daily-glance-writer-runtime.js");
 const { canonicalAstrologyReviewInstructions } = require("../../../src/astro-writing/canonicalInstructions.cjs");
 const { callOpenAIResponses } = require("../../../src/astro-writing/openAIResponses.cjs");
+const { rhetoricalReviewContract, validateRhetoricalReview, rhetoricalDecision } = require('../../../src/astro-writing/rhetoricalPatterns.cjs');
 
 const JUDGE_MODEL = "gpt-5.6-terra";
 const JUDGE_REASONING_EFFORT = "low";
-const RUBRIC_VERSION = "daily-glance-voice-v2:boundary-discipline+median3";
+const RUBRIC_VERSION = "daily-glance-voice-v3:rhetorical-patterns+median3";
 const evalSetPath = path.join(packageRoot, "review", "daily-glance-judge-calibration-set-v1.json");
 const calibrationReportPath = path.join(packageRoot, "review", `daily-glance-judge-calibration-report-terra-${new Date().toISOString().slice(0, 10)}.json`);
 const operatingModePath = path.join(packageRoot, "review", "daily-glance-judge-operating-mode-v1.json");
@@ -53,7 +54,8 @@ function buildJudgePrompt(candidate, key) {
     "## GOOD (owner-approved, exact wording)", ...golds.map((g, i) => `### Good ${i + 1}\n${fmt(g)}`), "",
     "## REJECTED (owner rejected as flat / not her voice)", ...negs.map((g, i) => `### Rejected ${i + 1}\n${fmt(g)}`), "",
     `## CANDIDATE (key: ${key})`, fmt(candidate), "",
-    "Return only the JSON verdict."
+    rhetoricalReviewContract({headline:candidate.headline,body:candidate.body}),
+    "Include the separate rhetoric receipt in the JSON verdict. General voice scores remain advisory; only the three material rhetorical failures have the new blocking policy."
   ].join("\n");
 }
 
@@ -71,7 +73,7 @@ async function callJudge(prompt) {
       model: JUDGE_MODEL,
       input: prompt,
       reasoning: { effort: JUDGE_REASONING_EFFORT },
-      max_output_tokens: 700
+      max_output_tokens: 2200
     }
   });
   if (!response.ok) throw new Error(`judge http ${response.status}: ${JSON.stringify(payload).slice(0, 300)}`);
@@ -106,9 +108,17 @@ function judgeOperatingMode() {
   return JSON.parse(fs.readFileSync(operatingModePath, "utf8"));
 }
 
-async function judgeCandidate(candidate, key, samples = 1) {
+async function judgeCandidate(candidate, key, samples = 1, {judgeFn = callJudge} = {}) {
   const prompt = buildJudgePrompt(candidate, key);
-  const runs = await Promise.all(Array.from({ length: Math.max(1, samples) }, () => callJudge(prompt)));
+  const runs = await Promise.all(Array.from({ length: Math.max(1, samples) }, () => judgeFn(prompt)));
+  const rhetoricalReviews = runs.map(run=>{
+    try {
+      const review=validateRhetoricalReview(run.verdict.rhetoric,{headline:candidate.headline,body:candidate.body});
+      return {review,decision:rhetoricalDecision(review),error:null};
+    } catch(error) {return {review:null,decision:'evaluation_unavailable',error:error.message};}
+  });
+  const rhetoricDecision = rhetoricalReviews.some(r=>r.decision==='evaluation_unavailable') ? 'evaluation_unavailable'
+    : rhetoricalReviews.some(r=>r.decision==='regenerate') ? 'regenerate' : 'pass';
   const scores = runs.map((r) => Number(r.verdict.score) || 1).sort((a, b) => a - b);
   const median = scores[Math.floor((scores.length - 1) / 2)];
   const primary = runs.find((r) => Number(r.verdict.score) === median) || runs[0];
@@ -129,6 +139,10 @@ async function judgeCandidate(candidate, key, samples = 1) {
     estimatedCostUsd: Number(estimateTerraCost(usage).toFixed(6)),
     responseCount: runs.length,
     advisoryOnly: true,
+    // Only the legacy score is advisory. This independent semantic receipt
+    // controls eligibility without rehabilitating the demoted general judge.
+    rhetoricDecision,
+    rhetoricalReviews,
     operatingMode: judgeOperatingMode().mode
   };
 }

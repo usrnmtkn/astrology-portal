@@ -1,4 +1,5 @@
 import { transitReportEditorialReviewGuide } from "./transit-report-editorial-guide.js";
+import {RHETORICAL_JUDGE_POLICY} from '../../src/astro-writing/rhetoricalPatterns.mjs';
 import { createHash } from "node:crypto";
 import fs from "node:fs";
 import { REPORT_JUDGE_THRESHOLD, reportFulfillmentConfig } from "./report-fulfillment-config.js";
@@ -81,6 +82,7 @@ export function scopedReviewRules(scope: TransitReadingReviewScope) {
     excerpt(GENERATED_REPORT_WRITING_CONTRACT_PATH, "- `unsupported_interpretation`", "- `owner_language`")
   ].join("\n\n");
   return [
+    RHETORICAL_JUDGE_POLICY,
     excerpt(baseline, "## Compare voice directly\n", "## Interpretive-movement applicability\n"),
     excerpt(baseline, "3. `lived_experience`", "## Scale\n"), scale,
     excerpt(cold, "### Lens 1: cold rendered prose\n", "### Lens 2: astrology and factual accuracy\n"),
