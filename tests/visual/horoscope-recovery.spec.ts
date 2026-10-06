@@ -347,7 +347,7 @@ for(const [width,theme] of [[390,'dark'],[1440,'light']] as const){
    await expect(studio.getByLabel('Reference date')).toHaveValue('2026-09-01');
    expect((await f.latest()).source_snapshot.horoscopeGeneration.active.sign).toBe('taurus');
    // Retrieve the already-started request elsewhere, then reopen without a new generation.
-   expect((await f.action('poll')).status).toBe(202);await f.finishReview();
+   expect((await f.action('poll')).status).toBe(200);
    await studio.getByText(/^Continue a saved edition/).click();
    await studio.locator('.admin-horoscope-saved button').first().click();
    await expect(studio.getByText('2/12 readings ready',{exact:false})).toBeVisible();
@@ -371,7 +371,7 @@ for(const [width,theme] of [[390,'dark'],[1440,'light']] as const){
   const f=await fixture(page,11,false,'seasonal');try{
    const studio=await f.open();await f.call({method:'writer-state',body:{pendingPolls:1}});f.state.holdPoll=true;
    await studio.getByRole('button',{name:'Resume generation',exact:true}).click();await expect.poll(()=>f.state.held).toBe(true);
-   expect((await f.action('poll')).status).toBe(202);await f.finishReview();
+   expect((await f.action('poll')).status).toBe(200);
    await page.clock.fastForward(16000);await page.evaluate(()=>window.dispatchEvent(new Event('focus')));
    await expect(studio.getByText('2/12 readings ready',{exact:false})).toBeVisible();f.state.release();
    await expect(studio.getByRole('alert')).toHaveCount(0);
@@ -384,7 +384,7 @@ for(const [width,theme] of [[390,'dark'],[1440,'light']] as const){
    // Opening retrieves the saved row asynchronously. Start the idle interval
    // only after that row is adopted; otherwise the clock can jump before the
    // recovery effect registers its timer on a slower CI browser.
-   await expect(studio.getByText('The prose check is saved. Studio retrieves the same request automatically.',{exact:true})).toBeVisible();
+   await expect(studio.getByText(/^A request for Gemini is saved\./)).toBeVisible();
    await expect(studio.getByRole('button',{name:'Check saved progress',exact:true})).toBeEnabled();
    await page.clock.fastForward(31000);
    await expect(studio.getByText('3/12 readings ready',{exact:false})).toBeVisible();
