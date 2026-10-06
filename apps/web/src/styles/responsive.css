@@ -668,14 +668,14 @@
     color: var(--bg);
   }
 
-  :is(.mode-guest, .mode-member, .mode-profile, .mode-friends, .mode-settings, .mode-account, .mode-calendar, .mode-learn, .mode-detail) .brand-word {
+  :is(.mode-guest, .mode-member, .mode-profile, .mode-friends, .mode-settings, .mode-account, .mode-calendar, .mode-horoscopes, .mode-learn, .mode-detail) .brand-word {
     display: inline-flex;
     color: var(--ink);
     font-size: var(--text-wordmark);
     letter-spacing: var(--tracking-tight);
   }
 
-  :is(.mode-guest, .mode-member, .mode-profile, .mode-friends, .mode-settings, .mode-account, .mode-calendar, .mode-learn, .mode-detail) .nav-pill {
+  :is(.mode-guest, .mode-member, .mode-profile, .mode-friends, .mode-settings, .mode-account, .mode-calendar, .mode-horoscopes, .mode-learn, .mode-detail) .nav-pill {
     align-items: center;
     gap: calc(var(--space-2) + var(--space-1) / 2);
     padding: 0 calc(var(--space-5) + var(--space-1) / 2) 0 var(--space-2);
