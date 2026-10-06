@@ -4,7 +4,7 @@ import { assembleSkyDebilityCopy } from "../apps/web/src/content/skyDebilityAsse
 import { skyDebilityField } from "../apps/web/src/content/skyDebilityCatalog.ts";
 import { skyDebilityPhraseKey, skyDebilityPhraseSets } from "../apps/web/src/content/skyDebilityPhrases.ts";
 import { DIGNITY_SIGNS, TRADITIONAL_DIGNITY_PLANETS, planetSignDebilities, traditionalSkyDebilities } from "../apps/web/src/services/planetSignDignity.mjs";
-import { approvedThreePlanetContext } from "../tests/fixtures/sky-effort-count-first.ts";
+import { approvedThreePlanetContext } from "../tests/fixtures/sky-effort-short.ts";
 
 const snapshot = (selected: Record<string, string> = {}) => traditionalSkyDebilities(TRADITIONAL_DIGNITY_PLANETS.map(planet => ({ planet,
   sign: selected[planet] ?? DIGNITY_SIGNS.find(sign => !planetSignDebilities(planet, sign).length)! })));
@@ -26,11 +26,11 @@ function verify(selected: Record<string, string>) {
       assert.equal(skyDebilityMappedText(result.slots[slot]), result.copy.slots[slot]);
       assert.ok(result.slots[slot].every(part => part.kind === "fact" && !part.sourceKey));
     }
-    assert.ok(result.paragraphs[1].some(part => part.sourceKey === `cms/sky-debility/dignityExplanation${sky.count === 1 ? "One" : "Many"}`));
-    for (const key of result.copy.selectedPlacementKeys) for (const name of ["livedExperienceClause", "situationPhrase", "responseClause"] as const)
+    assert.ok(result.paragraphs[1].some(part => part.sourceKey === "cms/sky-debility/dignityDefinition"));
+    for (const key of result.copy.selectedPlacementKeys) for (const name of ["livedExperienceClause"] as const)
       assert.ok(result.paragraphs.flat().some(part => part.sourceKey === `cms/sky-debility/placement/${key}/${name}`));
     for (const key of result.copy.omittedExamplePlacementKeys) {
-      assert.ok(result.paragraphs.flat().some(part => part.sourceKey === `cms/sky-debility/placement/${key}/planetFunctionVerbPhrase`));
+      assert.ok(!result.paragraphs.flat().some(part => part.sourceKey === `cms/sky-debility/placement/${key}/planetFunctionVerbPhrase`));
       assert.ok(!result.paragraphs.flat().some(part => part.sourceKey === `cms/sky-debility/placement/${key}/responseClause`));
     }
   } else assert.deepEqual(result.paragraphs, []);
@@ -60,17 +60,17 @@ assert.equal(custom.paragraphs[1][0].sourceKey, contextKey);
 assert.equal(custom.copy.legacyContext, true);
 const one = buildSkyDebilityComposition(snapshot({ Saturn: "Aries" }));
 assert.deepEqual(one.errors, []);
-assert.ok(one.paragraphs[1].some(part => part.text === "Aries" && part.kind === "fact" && !part.sourceKey));
-assert.ok(one.paragraphs[1].some(part => part.sourceKey === "cms/sky-debility/dignityExplanationOne"));
-const editedExplanation = buildSkyDebilityComposition(snapshot({ Saturn: "Aries" }), edits({ "cms/sky-debility/dignityExplanationOne": "For this example the calculated sign is {signTitle}." }));
+assert.ok(one.paragraphs[1].some(part => part.text === "Saturn in Aries is in fall" && part.kind === "fact" && !part.sourceKey));
+assert.ok(one.paragraphs[1].some(part => part.sourceKey === "cms/sky-debility/dignityDefinition"));
+const editedExplanation = buildSkyDebilityComposition(snapshot({ Saturn: "Aries" }), edits({ "cms/sky-debility/dignityDefinition": "A saved definition fixture." }));
 assert.deepEqual(editedExplanation.errors, []);
-assert.ok(editedExplanation.copy.body.includes("For this example the calculated sign is Aries."));
+assert.ok(editedExplanation.copy.body.includes("A saved definition fixture."));
 const reordered = buildSkyDebilityComposition(snapshot({ Mercury: "Pisces", Venus: "Scorpio", Mars: "Cancer", Saturn: "Aries" }), edits({
   "cms/sky-debility/exampleOrder": "Saturn, Venus, Mars, Mercury, Moon, Sun, Jupiter"
 }));
 assert.deepEqual(reordered.errors, []);
 assert.deepEqual(reordered.copy.selectedPlacementKeys, ["saturn/aries", "venus/scorpio", "mars/cancer"]);
-for (const missing of [null, ""]) for (const key of [venusKey, "cms/sky-debility/dignityExplanationMany"]) {
+for (const missing of [null, ""]) for (const key of [venusKey, "cms/sky-debility/dignityDefinition"]) {
   const gap = buildSkyDebilityComposition(original, edits({ [key]: missing }));
   assert.equal(gap.copy.visible, false);
   assert.equal(gap.paragraphs.length, 0);

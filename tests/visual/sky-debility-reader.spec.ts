@@ -1,5 +1,5 @@
 import { expect, test } from "@playwright/test";
-import { linkedThreePlanetContext, highlightedCountStatement } from "../fixtures/sky-effort-count-first";
+import { linkedThreePlanetContext, highlightedCountStatement } from "../fixtures/sky-effort-short";
 import { expectEffortCardSpacing } from "./sky-debility-layout";
 import { bundledPublications } from "../helpers/bundled-publications";
 
@@ -36,7 +36,10 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) test(`in
   await expect(emphasis).toHaveText(highlightedCountStatement);
   await expect(emphasis.getByRole("link")).toHaveCount(0);
   await expect(card.getByRole("link")).toHaveCount(3);
-  await expect(paragraphs.nth(1).getByRole("link")).toHaveText(["Venus in Scorpio", "Mars in Cancer", "Saturn Rx in Aries"]);
+  for (const link of await card.getByRole("link").all()) expect(await link.evaluate(el => getComputedStyle(el).textDecorationLine)).toContain("underline");
+  await expect(card).not.toContainText("It may help to");
+  await expect(card).not.toContainText("can take more out of you");
+  await expect(paragraphs.nth(1).getByRole("link")).toHaveText(["Venus in Scorpio", "Mars in Cancer", "Saturn retrograde in Aries"]);
   for (const placement of ["venus/scorpio", "mars/cancer", "saturn/aries"])
     await expect(paragraphs.nth(1).locator(`a[href="#sky/placement/${placement}"]`)).toBeVisible();
   const typography = await emphasis.evaluate(el => {
@@ -54,7 +57,7 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) test(`in
   expect(typography.wrapping).toBe("clone");
   expect(await card.evaluate(el => el.scrollWidth - el.clientWidth)).toBeLessThanOrEqual(1);
   await card.screenshot({ path: `test-results/effort-reader-inline-${width}-${theme}.png` });
-  await paragraphs.nth(1).getByRole("link", { name: "Read about Saturn Rx in Aries", exact: true }).click();
+  await paragraphs.nth(1).getByRole("link", { name: "Read about Saturn retrograde in Aries", exact: true }).click();
   await expect(page).toHaveURL(/#sky\/placement\/saturn\/aries$/);
 });
 

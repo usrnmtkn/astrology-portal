@@ -11,7 +11,7 @@ export function SkyDebilityCard({ generatedContent, positions }: {
   const snapshot = traditionalSkyDebilities(positions);
   const copy = resolveSkyDebilityCopy(generatedContent, snapshot, positions);
   if (!copy.visible) return null;
-  const links = skyDebilityPlacementLinks(copy.allPlacementKeys, positions, copy.interpretationKey ? "reading" : "compact");
+  const links = skyDebilityPlacementLinks(copy.allPlacementKeys, positions, copy.interpretationKey || copy.classifiedContext ? "reading" : "compact");
   return (
     <section className="sky-today-ledger sky-debility-ledger" aria-label={copy.accessibleName}>
       <header className="sky-today-ledger__head">

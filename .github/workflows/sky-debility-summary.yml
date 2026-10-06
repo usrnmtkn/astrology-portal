@@ -12,7 +12,7 @@ on:
       - 'scripts/test-sky-debility*'
       - 'tests/visual/sky-debility-*.spec.ts'
       - 'tests/visual/sky-debility-layout.ts'
-      - 'tests/fixtures/sky-effort-count-first.ts'
+      - 'tests/fixtures/sky-effort-*.ts'
       - 'playwright.sky-debility*.config.ts'
       - '.github/workflows/sky-debility-summary.yml'
   push:
@@ -28,7 +28,7 @@ on:
       - 'scripts/test-sky-debility*'
       - 'tests/visual/sky-debility-*.spec.ts'
       - 'tests/visual/sky-debility-layout.ts'
-      - 'tests/fixtures/sky-effort-count-first.ts'
+      - 'tests/fixtures/sky-effort-*.ts'
       - 'playwright.sky-debility*.config.ts'
       - '.github/workflows/sky-debility-summary.yml'
 permissions:

@@ -13,7 +13,7 @@ export type SkyDebilityDisplayPart = {
 export type SkyDebilityDisplayPosition = { planet: string; sign: string; motion?: BodyMotion };
 export type SkyDebilityPlacementLink = { text: string; href: string; separator?: string };
 const normalized = (value: string) => value.trim().toLowerCase();
-const placementListSlots = new Set(["planetList", "detrimentPlanetList", "fallPlanetList"]);
+const placementListSlots = new Set(["planetList", "detrimentPlanetList", "fallPlanetList", "dignityPlacementList"]);
 
 /** Calculated qualifying keys come from the assembler. Motion must match the
  * exact planet/sign snapshot; missing motion is never guessed. */
@@ -74,6 +74,10 @@ export function presentSkyDebilityParts(parts: readonly SkyDebilityDisplayPart[]
   const highlighted = emphasizeSkyDebilityCount(parts);
   return highlighted.flatMap((part, index): SkyDebilityDisplayPart[] => {
     if (!placementListSlots.has(part.slot ?? "") || !links.length) return [part];
+    if (part.slot === "dignityPlacementList") return part.text.split(/(,? and |, |; | is in | are in )/u).map(text => {
+      const link = links.find(value => value.text.replace(" retrograde in ", " in ") === text);
+      return { ...part, text: link?.text ?? text, href: link?.href };
+    });
     if (part.slot !== "planetList") return part.text.split(/(,? and |, )/u).map(text => ({
       ...part, text, href: links.find(link => link.text === text)?.href
     }));

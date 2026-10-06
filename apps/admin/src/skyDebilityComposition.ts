@@ -69,6 +69,7 @@ export function buildSkyDebilityComposition(snapshot: TraditionalSkyDebilities, 
     count: facts("count"), total: facts("total"), planetWord: facts("planetWord"),
     countWord: facts("countWord"), totalWord: facts("totalWord"),
     countVerb: facts("countVerb"), planetReference: facts("planetReference"),
+    dignityPlacementList: facts("dignityPlacementList"),
     livedExperienceList: list(copy.selectedPlacementKeys.map(key => phrase(key, "livedExperienceClause")), "or", "livedExperienceList"),
     situationList: capitalize(list(copy.selectedPlacementKeys.map(key => phrase(key, "situationPhrase")), "or", "situationList")),
     responseList: list(copy.selectedPlacementKeys.map(key => phrase(key, "responseClause")), "and", "responseList"),
@@ -76,7 +77,7 @@ export function buildSkyDebilityComposition(snapshot: TraditionalSkyDebilities, 
     planetList: copy.legacyContext ? capitalize(planetList) : planetList
   };
   if (snapshot.count === 1) slots.signTitle = facts("signTitle");
-  const sentenceKey = skyDebilityTemplateKey(copy.legacyContext
+  const sentenceKey = skyDebilityTemplateKey(copy.classifiedContext ? "dignityDefinition" : copy.legacyContext
     ? snapshot.count === 1 ? "signConditionOne" : "signConditionMany"
     : snapshot.count === 1 ? "dignityExplanationOne" : "dignityExplanationMany");
   slots[copy.legacyContext ? "signConditionClause" : "dignityExplanationSentence"] = template(body(sentenceKey), sentenceKey, slots);

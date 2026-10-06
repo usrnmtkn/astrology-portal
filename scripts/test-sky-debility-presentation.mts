@@ -8,7 +8,7 @@ import { buildSkyDebilityComposition } from "../apps/admin/src/skyDebilityCompos
 import { SkyDebilityCard } from "../apps/web/src/features/sky/SkyDebilityCard.tsx";
 import { presentSkyDebilityParts, skyDebilityPlacementLinks, skyDebilityTemplateParts, type SkyDebilityDisplayPart } from "../apps/web/src/content/skyDebilityPresentation.ts";
 import { DIGNITY_SIGNS, TRADITIONAL_DIGNITY_PLANETS, planetSignDebilities, traditionalSkyDebilities } from "../apps/web/src/services/planetSignDignity.mjs";
-import { linkedThreePlanetContext, highlightedCountStatement } from "../tests/fixtures/sky-effort-count-first.ts";
+import { linkedThreePlanetContext, highlightedCountStatement } from "../tests/fixtures/sky-effort-short.ts";
 
 // Use the web app's automatic JSX transform for the actual React card below:
 // npx tsx --tsconfig apps/web/tsconfig.json scripts/test-sky-debility-presentation.mts
@@ -36,23 +36,23 @@ function verify(selected: Record<string, string>) {
       assert(!markup.includes(`${snapshot.count} of 7`));
       headingOnlyCoverage.add(snapshot.count);
     }
-    const links = skyDebilityPlacementLinks(copy.allPlacementKeys, skyPositions);
+    const links = skyDebilityPlacementLinks(copy.allPlacementKeys, skyPositions, "reading");
     assert.equal(links.length, snapshot.count);
     for (const [index, template] of copy.paragraphTemplates.entries()) {
       const reader = presentSkyDebilityParts(skyDebilityTemplateParts(template, copy.slots), links);
       const mapped = presentSkyDebilityParts(map.paragraphs[index], links);
       assert.equal(textOf(reader), textOf(mapped), "All formatted map and reader paragraphs must agree");
-      assert.deepEqual(reader.filter(part => part.href).map(({ text, href }) => ({ text, href })), index === 1 ? links : []);
+      assert.deepEqual(reader.filter(part => part.href).map(({ text, href }) => ({ text, href })).sort((a, b) => a.href!.localeCompare(b.href!)), index === 1 ? links.map(({ text, href }) => ({ text, href })).sort((a, b) => a.href.localeCompare(b.href)) : []);
       if (index === 0) assert.equal(textOf(reader), copy.paragraphs[0], "The complete experience paragraph is unchanged");
       else {
-        assert.equal(textOf(reader.filter(part => part.emphasized)), `${copy.slots.countWord} out of the seven classical planets ${snapshot.count === 1 ? "is" : "are"} currently in detriment or fall`);
+        assert.equal(textOf(reader.filter(part => part.emphasized)), `${copy.slots.countWord} of the seven classical planets ${snapshot.count === 1 ? "is" : "are"} currently in detriment or fall`);
         assert.equal(reader.filter(part => part.href).length, snapshot.count, "Include every qualifying planet, not just the three examples");
         assert.equal(new Set(reader.filter(part => part.href).map(part => part.href)).size, snapshot.count);
         for (const link of links) {
           const key = link.href.split("/placement/")[1];
           const position = skyPositions.find(row => `${row.planet.toLowerCase()}/${row.sign.toLowerCase()}` === key)!;
           const rx = motion === "retrograde" && !["Sun", "Moon"].includes(position.planet);
-          assert.equal(link.text, `${position.planet}${rx ? " Rx" : ""} in ${position.sign}`);
+          assert.equal(link.text, `${["Sun", "Moon"].includes(position.planet) ? "the " : ""}${position.planet}${rx ? " retrograde" : ""} in ${position.sign}`);
         }
       }
     }
@@ -77,7 +77,7 @@ assert.deepEqual([...headingOnlyCoverage].sort(), [1, 2, 3, 4, 5, 6, 7]);
 
 const original = positions({ Venus: "Scorpio", Mars: "Cancer", Saturn: "Aries" }).map(row => ({ ...row, motion: row.planet === "Saturn" ? "retrograde" as const : "direct" as const }));
 const snapshot = traditionalSkyDebilities(original), copy = assembleSkyDebilityCopy(snapshot);
-const links = skyDebilityPlacementLinks(copy.allPlacementKeys, original);
+const links = skyDebilityPlacementLinks(copy.allPlacementKeys, original, "reading");
 const display = presentSkyDebilityParts(skyDebilityTemplateParts(copy.paragraphTemplates[1], copy.slots), links);
 assert.equal(textOf(display), linkedThreePlanetContext);
 assert.equal(textOf(display.filter(part => part.emphasized)), highlightedCountStatement);
@@ -101,7 +101,7 @@ const standaloneTemplate = `Fixture prefix. ${countSentence} Fall ({fallCount}):
 const standaloneParts = skyDebilityTemplateParts(standaloneTemplate, { ...copy.slots, fallCount: "2", fallPlanetList: "Mars in Cancer and Saturn retrograde in Aries" }).map(part => ({ ...part, sourceKey: "fixture-source" }));
 const standalone = presentSkyDebilityParts(standaloneParts, links);
 assert.equal(textOf(standalone), textOf(standaloneParts));
-assert.equal(textOf(standalone.filter(part => part.emphasized)), `${highlightedCountStatement}.`);
+assert.equal(textOf(standalone.filter(part => part.emphasized)), `${highlightedCountStatement.replace(" of ", " out of ")}.`);
 assert(standalone.every(part => part.sourceKey === "fixture-source"));
 for (const template of [countSentence.replace("{totalWord}", "seven"), countSentence.replace("{countVerb}", "{planetReference}"), countSentence.replace("{countWord}", "{countWord}."), countSentence.slice(0, -1)]) {
   const parts = skyDebilityTemplateParts(template, copy.slots);
@@ -116,7 +116,7 @@ assert.equal((html.match(/href="#sky\/placement\//gu) ?? []).length, 3);
 assert.equal((html.match(/<p>/gu) ?? []).length, 2);
 assert(html.includes(`${highlightedCountStatement}</mark>: `));
 assert(html.includes('<mark class="content-highlight"'));
-assert(html.includes("Saturn Rx in Aries</a>"));
+assert(html.includes("Saturn retrograde in Aries</a>"));
 assert.equal(renderToStaticMarkup(createElement(SkyDebilityCard, { positions: positions({}) })), "");
 assert.equal(renderToStaticMarkup(createElement(SkyDebilityCard, { positions: original.slice(1) })), "");
 console.log(JSON.stringify({ result: "passed", combinations, directAndRetrogradePresentations: presentations, countCoverage: [...countCoverage].sort(), headingOnlyCoverage: [...headingOnlyCoverage].sort(), exactOwnerDisplay: true, inlineLinksOnly: true, sourceMapParity: true }, null, 2));

@@ -249,6 +249,43 @@ await test('complete effort interpretations save intact and enforce fact slots a
   assert.deepEqual(rows.get(baseline.id).source_snapshot.allowedSlots, sourceSnapshot.allowedSlots);
 });
 
+await test('short effort templates and definitions create, publish, reopen, and reach the reader', async () => {
+  const { skyDebilityField } = await import('../apps/web/src/content/skyDebilityCatalog.ts');
+  const { resolveSkyDebilityCopy } = await import('../apps/web/src/content/skyDebilityCopy.ts');
+  const { traditionalSkyDebilities } = await import('../apps/web/src/services/planetSignDignity.mjs');
+  reset([]);
+  for (const name of ['experienceTemplate', 'contextTemplate', 'dignityDefinition']) {
+    const contentKey = `cms/sky-debility/${name}`;
+    const field = skyDebilityField(contentKey);
+    const body = name === 'dignityDefinition' ? 'Saved definition fixture.' : field.body;
+    const created = await invoke('POST', { rows: [{ ...writeBody(contentKey), mode: 'card', body,
+      sourceSnapshot: { contentSystem: 'cms-surface-override', allowedSlots: field.allowedSlots } }] });
+    assert.equal(created.status, 200, JSON.stringify(created));
+    const saved = [...rows.values()].find(row => row.content_key === contentKey);
+    assert.equal((await invoke('PATCH', { id: saved.id, status: 'LIVE', lane: 'serving', reviewState: null })).status, 200);
+    const opened = await invoke('GET', undefined, { query: `?id=${saved.id}&status=all&visibility=all` });
+    assert.equal(opened.rows[0].body, body);
+    const before = writes.length;
+    assert.equal((await invoke('PATCH', { id: saved.id, body: 'Stale fixture.', expectedUpdatedAt: '2000-01-01T00:00:00Z' })).status, 409);
+    assert.equal(writes.length, before);
+  }
+  const content = new Map([...rows.values()].map(row => [row.content_key, { ...row, updatedAt: row.updated_at }]));
+  const sky = traditionalSkyDebilities([
+    { planet: 'Sun', sign: 'Aries' }, { planet: 'Moon', sign: 'Taurus' }, { planet: 'Mercury', sign: 'Pisces' },
+    { planet: 'Venus', sign: 'Scorpio' }, { planet: 'Mars', sign: 'Cancer' }, { planet: 'Jupiter', sign: 'Cancer' }, { planet: 'Saturn', sign: 'Capricorn' }
+  ]);
+  const copy = resolveSkyDebilityCopy(content, sky);
+  assert.equal(copy.visible, true);
+  assert.equal(copy.paragraphs.length, 2);
+  assert.equal(copy.paragraphs[1], 'Three of the seven classical planets are currently in detriment or fall: Venus in Scorpio is in detriment; Mars in Cancer is in fall; Mercury in Pisces is in detriment and fall. Saved definition fixture.');
+  const context = [...rows.values()].find(row => row.content_key.endsWith('/contextTemplate'));
+  const beforeInvalid = writes.length;
+  const invalid = await invoke('PATCH', { id: context.id, body: context.body.replace('{dignityPlacementList}', ''), status: 'LIVE' });
+  assert.ok(invalid.status >= 400, JSON.stringify(invalid));
+  assert.match(invalid.error, /CMS template cannot be published/u);
+  assert.equal(writes.length, beforeInvalid);
+});
+
 await test('unauthorized requests never reach storage', async () => {
   for (const method of ['GET', 'POST', 'PATCH', 'DELETE']) {
     reset(); assert.equal((await invoke(method, writeBody(), { secret: 'incorrect' })).status, 401); assert.deepEqual(writes, []);
