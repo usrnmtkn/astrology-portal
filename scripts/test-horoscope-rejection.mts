@@ -14,7 +14,7 @@ for(const period of ['daily','weekly','seasonal'] as const){
  assert.equal(prepared.status,200,JSON.stringify(prepared.payload));
  const packet={brief:prepared.payload.brief,signature:prepared.payload.signature};
  // A correctly signed legacy brief has narrower event coverage.
- packet.brief.events=packet.brief.events.filter((e:any)=>e.type!=='ingress');
+ packet.brief.events=packet.brief.events.filter((e:any)=>e.type!=='ingress'&&(period!=='weekly'||e.type!=='aspect'));
  packet.signature=createHmac('sha256',process.env.SUPABASE_SERVICE_ROLE_KEY!).update('horoscope-brief/v1\n'+horoscopeCanonicalJson(packet.brief)).digest('hex');
  const edition=emptyHoroscopeEdition(packet.brief.window);
  edition.passages=edition.passages.map(p=>({...p,headline:`Fixture ${p.sign}`,body:`Fixture ${p.sign} complete opening.\n\nFixture complete ending.`}));
@@ -72,6 +72,10 @@ for(const period of ['daily','weekly','seasonal'] as const){
  const freshPlan=await invokeHoroscopeWriting({action:'prepare',id:row.id,expectedUpdatedAt:row.updated_at});assert.equal(freshPlan.status,200);
  assert.notEqual(freshPlan.payload.plan.planHash,plan.payload.plan.planHash,'Reset requires a fresh plan approval');
  if(period!=='daily')assert(row.facts.horoscopeBrief.brief.events.some((e:any)=>e.type==='ingress'),'All-draft reset refreshes old event coverage');
+ if(period==='weekly'){
+  assert(row.facts.horoscopeBrief.brief.events.some((e:any)=>e.type==='aspect'),'Regenerating a legacy Weekly edition acquires major planetary aspects');
+  assert.deepEqual(history[1].facts,beforeAll.facts,'Historical facts stay exact when the next plan gains aspects');
+ }
  // A concurrent edit between read and PATCH wins over the reset.
  store.rows.set(row.id,beforeAll);row=beforeAll;
  const transport=globalThis.fetch;

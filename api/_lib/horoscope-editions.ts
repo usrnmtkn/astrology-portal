@@ -41,7 +41,8 @@ export async function prepareHoroscopeBrief(url: URL) {
     startsAt = new Date(transit.transitStart).toISOString(); endsAt = new Date(transit.transitEnd).toISOString();
   }
   const window = validateHoroscopeWindow({period,audience:period==='monthly'?'collective':'rising',timeZone,startsAt,endsAt,...(period === 'seasonal' ? {seasonSign:sun.sign.toLowerCase()} : {})});
-  const calculatedEvents = (await getHoroscopeCalendarRangeEvents(location,new Date(startsAt),new Date(endsAt),{includeAspects:['monthly','seasonal'].includes(period)}))
+  const includeAspects = ['weekly','monthly','seasonal'].includes(period);
+  const calculatedEvents = (await getHoroscopeCalendarRangeEvents(location,new Date(startsAt),new Date(endsAt),{includeAspects}))
     .filter(event => event.startsAt >= startsAt && event.startsAt < endsAt);
   const relationalContext = period==='seasonal' ? await getHoroscopeRelationalContext(new Date(startsAt),sun.sign,calculatedEvents) : undefined;
   const events = calculatedEvents
@@ -49,7 +50,7 @@ export async function prepareHoroscopeBrief(url: URL) {
       title:event.title,...(event.type==='aspect'?{planets:event.planets,aspect:event.aspect,toSign:event.toSign,fromMotion:event.fromMotion,toMotion:event.toMotion}:{}),fromSign:event.fromSign ?? null,direction:event.direction ?? null}));
   const positions = sky.positions.map(position => ({planet:position.planet,sign:position.sign,degree:position.degree,motion:position.motion}));
   const brief = {schema:'horoscope-brief/v1',window,referenceDate,calculatedAt:sky.generatedAt,provenance:sky.calculationProvenance,
-    coverage:`Positions at the reference instant; calculated lunations, stations and planetary ingresses within the period. ${['monthly','seasonal'].includes(period)?'Exact major aspects between the Sun and planets are included.':'Exact aspects are not included.'} ${relationalContext?relationalContext.coverage:'Lunar aspects and multi-planet configurations are not included.'} An event time describes the sky event, not a guaranteed personal event.`,positions,events,...(relationalContext?{relationalContext}:{}),
+    coverage:`Positions at the reference instant; calculated lunations, stations and planetary ingresses within the period. ${includeAspects?'Exact major aspects between the Sun and planets are included.':'Exact aspects are not included.'} ${relationalContext?relationalContext.coverage:'Lunar aspects and multi-planet configurations are not included.'} An event time describes the sky event, not a guaranteed personal event.`,positions,events,...(relationalContext?{relationalContext}:{}),
     signs:HOROSCOPE_SIGNS.map(sign => ({sign,houses:positions.map(position => ({planet:position.planet,house:((HOROSCOPE_SIGNS.indexOf(position.sign.toLowerCase())-HOROSCOPE_SIGNS.indexOf(sign)+12)%12)+1}))}))};
   return {ok:true,brief,signature:signature(brief)};
 }
