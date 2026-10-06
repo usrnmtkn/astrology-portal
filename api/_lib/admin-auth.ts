@@ -127,7 +127,7 @@ export async function isContentAdminAuthorized(req: IncomingMessage, fetchImpl: 
 export async function requireContentAdmin(req: IncomingMessage, res: ServerResponse) {
   if (await isContentAdminAuthorized(req)) return true;
   const unavailable = contentAdminVerificationUnavailable(req);
-  sendAdminJson(res, unavailable ? 503 : 401, { ok: false, error: unavailable
+  sendAdminJson(res, unavailable ? 503 : 401, { ok: false, authFailure: unavailable ? "content_admin_verification_unavailable" : "content_admin_unauthorized", error: unavailable
     ? "Content Studio sign-in verification is temporarily unavailable. Try again; no changes were submitted."
     : "Unauthorized." });
   return false;

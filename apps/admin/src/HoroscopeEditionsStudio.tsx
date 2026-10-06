@@ -1,7 +1,9 @@
 import {lazy,Suspense,useEffect,useRef,useState} from 'react';
 import {AdminDisclosureSummary} from './AdminNativeControls';
 import {StudioButton,StudioInput,StudioTextarea} from './StudioControls';
-import {adminCredentialHeaders} from './adminSecret';
+import {fetchWithOwnerSession,ownerSignInMessage} from './ownerSessionRequest';
+import {ownerCredentialIdentity} from './ownerSession';
+import {studioSignInHref} from '../../web/src/services/studioAuthReturn';
 import {horoscopeEditionReaderHref} from './adminReaderDestinations';
 import {PageLoading} from '../../web/src/components/PageLoading';
 import {FormattedProse} from '../../web/src/components/FormattedProse';
@@ -21,7 +23,7 @@ const stepLabels = ['Dates','Generate','Review','Publish'];
 const stepTitles = ['Choose your horoscopes','Generate your drafts','Review each reading','Publish your horoscopes'];
 async function request(secret:string,url:string,body?:unknown,method='POST',signal?:AbortSignal) {
   const timeout=AbortSignal.timeout(60000);
-  const response = await fetch(url,{method:body ? method:'GET',headers:{...adminCredentialHeaders(secret),'content-type':'application/json'},cache:'no-store',signal:signal?AbortSignal.any([signal,timeout]):timeout,...(body ? {body:JSON.stringify(body)}:{})});
+  const response = await fetchWithOwnerSession(url,secret,{method:body ? method:'GET',headers:{'content-type':'application/json'},cache:'no-store',signal:signal?AbortSignal.any([signal,timeout]):timeout,...(body ? {body:JSON.stringify(body)}:{})});
   const data = await response.json().catch(()=>({ok:false,error:'The server response could not be read.'}));
   if (!response.ok || data.ok !== true) throw Object.assign(new Error(data.error ?? 'The edition could not be loaded.'),{rows:data.rows,status:response.status});
   return data;
@@ -57,7 +59,11 @@ export default function HoroscopeEditionsStudio({secret,requestedEditionId}:{sec
   useEffect(()=>{setPlan(null);setPlanApproved(false);},[draft?.window.startsAt,draft?.window.endsAt,draft?.window.timeZone,outlines]);
   const dirty=Boolean(draft && (!saved || horoscopeCanonicalJson(draft)!==horoscopeCanonicalJson(saved.sections.horoscopeEdition) || horoscopeCanonicalJson(outlines)!==horoscopeCanonicalJson(saved.source_snapshot?.horoscopeOutlines ?? {}) || horoscopeCanonicalJson(profile)!==horoscopeCanonicalJson(saved.source_snapshot?.studioWritingProfile ?? null) || horoscopeCanonicalJson(editorialImport)!==horoscopeCanonicalJson(saved.source_snapshot?.editorialImport ?? null)));
   async function load() {setLoading(true);try {const data=await request(secret,endpoint+'?horoscopeEditions=true');if(!Array.isArray(data.rows))throw new Error('The edition list could not be read.');for(const row of data.rows)validateHoroscopeEdition(row.sections?.horoscopeEdition);if(mounted.current)setRows(data.rows);}catch(reason){if(mounted.current)setError((reason as Error).message);}finally{if(mounted.current)setLoading(false);}}
-  useEffect(()=>{mounted.current=true;void load();return()=>{mounted.current=false;stop.current=true;operation.current?.abort();};},[secret]);
+  const credentialIdentity=ownerCredentialIdentity(secret);
+  useEffect(()=>{mounted.current=true;return()=>{mounted.current=false;stop.current=true;operation.current?.abort();};},[]);
+  // Token renewal for the same owner must not cancel a running batch. A real
+  // account change stops work; each request also checks its original identity.
+  useEffect(()=>{void load();return()=>{stop.current=true;operation.current?.abort();operation.current=null;running.current=false;setBusy(false);setChecking(false);setProgress('');};},[credentialIdentity]);
   useEffect(()=>{if(!dirty)return;const warn=(event:BeforeUnloadEvent)=>event.preventDefault();window.addEventListener('beforeunload',warn);return()=>window.removeEventListener('beforeunload',warn);},[dirty]);
   const mayReplace=()=>!dirty || window.confirm('Discard the unsaved changes to this edition?');
   function adopt(row:any) {
@@ -125,7 +131,7 @@ export default function HoroscopeEditionsStudio({secret,requestedEditionId}:{sec
   useEffect(()=>{
     if(requestedEditionId)void open({id:requestedEditionId},true);
     return()=>{if(opening.current){opening.current.abort();setBusy(false);}};
-  },[secret,requestedEditionId]);
+  },[credentialIdentity,requestedEditionId]);
   async function prepare() {
     if(!mayReplace())return;setBusy(true);setError('');setMessage('');
     try {
@@ -249,6 +255,7 @@ export default function HoroscopeEditionsStudio({secret,requestedEditionId}:{sec
   }
   function recoveryUnavailable(reason:any,controller:AbortController){
     if(!isCurrent(controller))return;
+    setMessage('');
     if(recoverable(reason))setMessage('Studio could not check saved progress yet. Your saved readings are kept. Check saved progress again when the connection returns.');
     else setError(reason.message);
   }
@@ -314,8 +321,9 @@ export default function HoroscopeEditionsStudio({secret,requestedEditionId}:{sec
   const generation=saved?.source_snapshot?.horoscopeGeneration,active=generation?.active;
   const heldSigns=Object.keys(generation?.heldRequests??{});
   const available=draft?horoscopePendingReadings(draft,generation).length:0;
+  const needsSignIn=error===ownerSignInMessage;
   useEffect(()=>{
-    if(step!=='generate'||!active&&!needsSync||dirty||instructions||checking||busy&&!running.current)return;
+    if(needsSignIn||step!=='generate'||!active&&!needsSync||dirty||instructions||checking||busy&&!running.current)return;
     // A backgrounded tab or an interrupted poll must not leave the last known
     // request on screen forever. Only retrieve it; never start another writer.
     const sync=(returning=false)=>{
@@ -326,7 +334,7 @@ export default function HoroscopeEditionsStudio({secret,requestedEditionId}:{sec
     const onReturn=()=>sync(true),timer=window.setInterval(()=>sync(),15000);
     window.addEventListener('focus',onReturn);window.addEventListener('pageshow',onReturn);document.addEventListener('visibilitychange',onReturn);
     return()=>{window.clearInterval(timer);window.removeEventListener('focus',onReturn);window.removeEventListener('pageshow',onReturn);document.removeEventListener('visibilitychange',onReturn);};
-  },[step,active,needsSync,dirty,instructions,checking,busy,saved]);
+  },[step,active,needsSync,dirty,instructions,checking,busy,saved,needsSignIn]);
   const lastFailure=generation?.lastError,failedSign=lastFailure?.operation?.sign;
   const punctuationHold=lastFailure?.code==='required_punctuation'?lastFailure:null;
   function editPunctuation(){
@@ -362,7 +370,7 @@ export default function HoroscopeEditionsStudio({secret,requestedEditionId}:{sec
       <p>{step==='setup'?'Create daily or weekly sign readings, a monthly overview for everyone, or a zodiac-season introduction with twelve sign readings.':step==='generate'?'Check the writing plan, then let AI write the drafts using your saved instructions.':step==='edit'?'Read one passage at a time. Make any changes, then continue to the next reading.':isPublished?'This edition is ready to read in the app.':'Review the complete edition below. Publishing makes the complete edition available in the app.'}</p>
     </header>
     {step!=='setup'&&draft&&<div className="admin-horoscope-summary"><span>{horoscopeSignLabel(draft.window.period)} · {horoscopeWindowLabel(draft.window)}</span><span>{draft.window.timeZone.replaceAll('_',' ')} · {complete}/{total} readings ready{dirty?' · Unsaved changes':''}</span></div>}
-    {error&&(typeof error==='string'?<p role="alert">{error}</p>:step==='generate'&&<details className="admin-workspace-details"><AdminDisclosureSummary>Previous attempt</AdminDisclosureSummary><p>{error.previous}</p></details>)}{message&&<p role="status">{message}</p>}
+    {error&&(typeof error==='string'?<p role="alert">{error}{needsSignIn&&<> <a href={studioSignInHref('/admin/content#horoscopes'+(saved?.id?'?edition='+encodeURIComponent(saved.id):''))}>Sign in to Content Studio</a></>}</p>:step==='generate'&&<details className="admin-workspace-details"><AdminDisclosureSummary>Previous attempt</AdminDisclosureSummary><p>{error.previous}</p></details>)}{message&&<p role="status">{message}</p>}
     {punctuationHold&&step==='generate'&&<StudioButton className="admin-primary-button" disabled={locked} onClick={editPunctuation}>Edit punctuation</StudioButton>}
     {step==='setup'?<>
       <div className="admin-horoscope-periods" role="group" aria-label="Edition period">{HOROSCOPE_PERIODS.map(p=><StudioButton key={p} aria-pressed={period===p} disabled={busy} onClick={()=>setPeriod(p)}>{horoscopeSignLabel(p)}</StudioButton>)}</div>
