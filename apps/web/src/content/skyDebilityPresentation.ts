@@ -31,7 +31,7 @@ export function skyDebilityPlacementLinks(keys: readonly string[], positions: re
       ? `${planet === "Sun" || planet === "Moon" ? "the " : ""}${planet}${motion ? " retrograde" : ""} in ${sign}`
       : skyPlacementLinkLabel(planet, sign, motion);
     const separator = style === "reading" && index === keys.length - 1 ? keys.length === 2 ? " and " : ", and " : ", ";
-    return { text, separator, href: `#sky/placement/${encodeURIComponent(planetKey)}/${encodeURIComponent(signKey)}` };
+    return { text, ...(style === "reading" ? { separator } : {}), href: `#sky/placement/${encodeURIComponent(planetKey)}/${encodeURIComponent(signKey)}` };
   });
 }
 

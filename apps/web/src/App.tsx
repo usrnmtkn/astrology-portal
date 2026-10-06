@@ -201,7 +201,7 @@ import type { WeeklyHoroscopeAssembly, WeeklyHoroscopeReading } from "./services
 import { assertLunationBodyMatchesEventSky, lunationBlendFacts } from "./services/lunationEphemerisFacts";
 import { reportLiveOmittedSections } from "./services/conditionalSectionReviewReporter";
 import { SKY_BODY_ORDER, skyBodyOrderIndex, transitToNatalOrbLimit } from "./astrologyConfig";
-import { SkyDebilityCard } from "./features/sky/SkyDebilityCard";
+const SkyDebilityCard = lazy(() => import("./features/sky/SkyDebilityCard").then(module => ({ default: module.SkyDebilityCard })));
 import {
   SkyPlacementList,
   SkyPlacementListSkeleton,
@@ -16324,7 +16324,7 @@ function SkyCards({
           </span>
         </button>
       </section>
-      <SkyDebilityCard generatedContent={generatedContent} positions={sky.positions} />
+      <Suspense fallback={null}><SkyDebilityCard generatedContent={generatedContent} positions={sky.positions} /></Suspense>
 
     </>
   );
