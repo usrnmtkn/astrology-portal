@@ -79,6 +79,10 @@ const planets = skyPlacementBodies;
 const signs = skyPlacementSigns;
 const planetSet = new Set<string>(planets);
 const signSet = new Set<string>(signs);
+export function isSkyPlanetLivedKey(key: string) {
+  const planet = key.match(/^fallback-hook\/planet-lived\/([^/]+)$/u)?.[1];
+  return Boolean(planet && planetSet.has(planet));
+}
 const signOrder = [...signs];
 const standardPlanetSet = new Set([
   "sun",
@@ -199,6 +203,9 @@ export function skyWriteupSubjectTypeForRow(row: SkyWriteupRelationRow): SkyWrit
 }
 
 function skyWriteupContextForRowUncached(row: SkyWriteupRelationRow): SkyWriteupContext | null {
+  // This shared planet source belongs to every sign and motion, regardless of
+  // older imported natal metadata or the wording of its headline.
+  if (isSkyPlanetLivedKey(row.content_key)) return { planet: row.content_key.split("/")[2], sign: null };
   const keyParts = keyPlacementParts(row.content_key);
   const lunationKeyParts = row.content_key.toLowerCase().match(/^authored\/sky-lunation-macro\/(?:new-moon|full-moon)\/([^/]+)$/u);
   const isLunationLike = /(?:^|[./-])lunation(?:[./-]|$)/iu.test(row.content_key)

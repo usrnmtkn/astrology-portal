@@ -15,6 +15,10 @@ const skyRows = [
 for (const row of skyRows) {
   assert.equal(isSkyWriteupContentRow(row), true, `${row.content_key} must stay in Sky Write-ups`);
 }
+for (const planet of ["jupiter", "mars", "moon", "neptune", "pluto", "saturn", "uranus"]) {
+  assert.equal(isSkyWriteupContentRow({ content_key: `fallback-hook/planet-lived/${planet}` }), true);
+  assert.equal(isSkyWriteupContentRow({ content_key: `fallback-hook/natal/planet-intro/${planet}` }), false);
+}
 
 assert.equal(isSkyWriteupContentRow({
   content_key: "article/manual/boundaries-and-belonging",

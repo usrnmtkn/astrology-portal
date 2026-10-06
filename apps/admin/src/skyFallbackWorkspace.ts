@@ -1,4 +1,5 @@
 import { memoByString } from "./derivedCache";
+import { isSkyPlanetLivedKey } from "./skyWriteupRelations";
 // @ts-ignore Shared canonical layout validation and ordered section fields.
 import { isSkyEvergreenSource, skyEvergreenEditableFields, skyEvergreenFields, SKY_EVERGREEN_SECTIONS_PATH } from "../../web/src/content/fallbackArchitectureV3/resolver/skyEvergreenSections.mjs";
 export type SkyFallbackField = {
@@ -121,6 +122,16 @@ function ordinalHouse(value: string) {
 
 function skyFallbackIdentityUncached(contentKey: string): SkyFallbackIdentity | null {
   const parts = contentKey.split("/").filter(Boolean);
+
+  if (isSkyPlanetLivedKey(contentKey)) {
+    return {
+      title: `${words(parts[2])} · Planet lived`,
+      typeLabel: "Sky planet meaning",
+      description: `Shared ${words(parts[2])} source writing for Sky placements across signs and motions.`,
+      groupKey: "supporting",
+      groupLabel: "Sky Placement source writing"
+    };
+  }
 
   if (contentKey.startsWith("sky-placement/article/") && parts.length === 4) {
     return {

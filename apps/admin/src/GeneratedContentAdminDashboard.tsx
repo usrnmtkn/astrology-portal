@@ -97,6 +97,7 @@ import {
   type SkyArticleHousePassage
 } from "../../web/src/content/skyArticleTemplateCompiler";
 import {
+  isSkyPlanetLivedKey,
   relatedAspectPassages,
   relatedHousePassages,
   relatedLunationHoroscopes,
@@ -3485,19 +3486,20 @@ export function GeneratedContentAdminDashboard() {
     [visibleRows]
   );
   const skyWriteupRows = useMemo(
-    () => visibleRows.filter(isSkyWriteupLibraryRow).sort((left, right) => {
+    () => [...visibleRows, ...compositionRows.filter(row => row.id.startsWith("package:")
+      && isSkyPlanetLivedKey(row.content_key))].filter(isSkyWriteupLibraryRow).sort((left, right) => {
       const leftIsLunation = Boolean(skyLunationContextForRow(left));
       const rightIsLunation = Boolean(skyLunationContextForRow(right));
       return Number(leftIsLunation) - Number(rightIsLunation)
         || rowTitle(left).localeCompare(rowTitle(right));
     }),
-    [visibleRows]
+    [visibleRows, compositionRows]
   );
   const filteredSkyWriteupRows = useMemo(() => sortPlacementRows(skyWriteupRows.filter((row) => (
     (skyPlacementBody === "all" || skyWriteupContextForRow(row)?.planet === skyPlacementBody)
-    && (skyPlacementSign === "all" || skyWriteupContextForRow(row)?.sign === skyPlacementSign || /^sky-placement\/retrograde\/[^/]+$/.test(row.content_key))
+    && (skyPlacementSign === "all" || skyWriteupContextForRow(row)?.sign === skyPlacementSign || isSkyPlanetLivedKey(row.content_key) || /^sky-placement\/retrograde\/[^/]+$/.test(row.content_key))
     && (skyWriteupSubjectFilter === "all" || skyWriteupSubjectTypeForRow(row) === skyWriteupSubjectFilter)
-    && (skyWriteupMotionFilter === "all" || /^sky-placement\/article\//u.test(row.content_key)
+    && (skyWriteupMotionFilter === "all" || isSkyPlanetLivedKey(row.content_key) || /^sky-placement\/article\//u.test(row.content_key)
       || (skyMoonWriteupSection(row.content_key) && skyWriteupMotionFilter === "direct") || contentMotion(row) === skyWriteupMotionFilter)
     && (skyWriteupDestinationFilter === "all" || contentDestinations(row).has(skyWriteupDestinationFilter))
     && matchesAdminSearch(skyWriteupSearchText(row), skyWriteupQuery)
