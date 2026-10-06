@@ -227,6 +227,49 @@ assert.throws(() => {
 }, /PRODUCTION_DRAFT_VALIDATION_FAILED/u);
 assert.equal(billedCalls, 0, "a deterministic failure must block before billing");
 
+// A lexical-only transit candidate can be diagnosed before the single rewrite,
+// but this exception cannot admit facts, shape, register or unrelated products.
+const previousReleasePolicy = process.env.GENERATED_REPORT_RELEASE_POLICY;
+try {
+  process.env.GENERATED_REPORT_RELEASE_POLICY = "report-source-completion-v1";
+  const correctionReview = {
+    purpose: "transit-report-correction-review-v1", checked: true, passed: false,
+    factLockPassed: true, shapePassed: true, draftSha256: "a".repeat(64),
+    violations: [{ category: "banned_language", detail: "whether" }]
+  };
+  for (const surface of ["you", "friends"]) {
+    const input = { contentKey: `${surface}-transit-correction-fixture`, surface,
+      mode: "in_depth", eventType: `${surface}-transit-to-natal`, facts: {},
+      knowledgeIds: ["transit-natal-saturn-square-sun"] };
+    const gate = gateModule.prepareProductionPreCallGate(input, {});
+    const check = (draftValidation, role = "REVIEWER") => gateModule.assertProductionPreCallGate(gate, { role, input, draftValidation });
+    assert.doesNotThrow(() => check(correctionReview));
+    assert.equal(correctionReview.passed, false, "review permission must not promote the draft");
+    for (const change of [
+      { purpose: "other" }, { checked: false }, { factLockPassed: false },
+      { shapePassed: false }, { draftSha256: "not-a-hash" }, { violations: [] },
+      { violations: [{ category: "banned_language", detail: " " }] },
+      { violations: [{ category: "fact_lock", detail: "unsupported transit" }] },
+      { violations: [...correctionReview.violations, { category: "register", detail: "wrong perspective" }] }
+    ]) assert.throws(() => check({ ...correctionReview, ...change }), /PRODUCTION_DRAFT_VALIDATION_FAILED/u);
+    assert.throws(() => check(correctionReview, "COLD_REVIEWER"), /PRODUCTION_DRAFT_VALIDATION_FAILED/u);
+    process.env.GENERATED_REPORT_RELEASE_POLICY = "strict";
+    assert.throws(() => check(correctionReview), /PRODUCTION_DRAFT_VALIDATION_FAILED/u);
+    process.env.GENERATED_REPORT_RELEASE_POLICY = "report-source-completion-v1";
+    const feedInput = { ...input, mode: "feed" };
+    const feedGate = gateModule.prepareProductionPreCallGate(feedInput, {});
+    assert.throws(() => gateModule.assertProductionPreCallGate(feedGate, {
+      role: "REVIEWER", input: feedInput, draftValidation: correctionReview
+    }), /PRODUCTION_DRAFT_VALIDATION_FAILED/u);
+  }
+  assert.throws(() => gateModule.assertProductionPreCallGate(first, {
+    role: "REVIEWER", input: skyInput, draftValidation: correctionReview
+  }), /PRODUCTION_DRAFT_VALIDATION_FAILED/u);
+} finally {
+  if (previousReleasePolicy === undefined) delete process.env.GENERATED_REPORT_RELEASE_POLICY;
+  else process.env.GENERATED_REPORT_RELEASE_POLICY = previousReleasePolicy;
+}
+
 const telemetryLines = [];
 const originalConsoleInfo = console.info;
 console.info = (...args) => telemetryLines.push(args.join(" "));

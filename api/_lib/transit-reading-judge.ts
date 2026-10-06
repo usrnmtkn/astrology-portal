@@ -1,7 +1,7 @@
 import { transitReportEditorialReviewGuide } from "./transit-report-editorial-guide.js";
 import { GENERATED_REPORT_JUDGE_SCHEMA } from "./transit-reading-judge-schema.js";
 import { judgeScopedGeneratedTransitReading } from "./transit-reading-scoped-judge.js";
-import { transitReadingReviewMode } from "./transit-reading-review-contract.js";
+import { transitReadingReviewMode, transitReadingDraftHash } from "./transit-reading-review-contract.js";
 import { transitReadingReaderCopy } from "./transit-reading-reader-copy.js";
 import { assertGeneratedReportJudgeEvidence, generatedReportJudgeEvidenceContract } from "./transit-reading-judge-evidence.js";
 import { reportJudgeSourcePointerSchema, resolveReportJudgeSourcePointers } from "./transit-reading-source-citations.js";
@@ -21,13 +21,14 @@ import {
 import {
   callGovernedTransitReadingModel,
   prepareTransitReadingProductionKernel,
+  type TransitReadingCorrectionReview,
   type TransitReadingProductionInput
 } from "./transit-reading-production.js";
 import { generatedReportJudgeRubric, GENERATED_REPORT_JUDGE_PACKET_CONTRACT } from "./transit-reading-judge-prompt.js";
 import { assertReportReviewReconciliation, reportReviewReconciliationPrompt, RECONCILED_REPORT_JUDGE_SCHEMA,
   type TransitReadingPriorReview } from "./transit-reading-review-reconciliation.js";
 
-export const GENERATED_REPORT_JUDGE_ADAPTER_VERSION = "generated-report-judge-adapter-v1.12";
+export const GENERATED_REPORT_JUDGE_ADAPTER_VERSION = "generated-report-judge-adapter-v1.13";
 export const EVIDENCE_DELIVERY_JUDGE_VERSION = "generated-report-judge-adapter-v2.0-candidate";
 export const GENERATED_REPORT_JUDGE_ADAPTER_PATH = "tldr-astro-phrasebank/TLDR-GENERATED-REPORT-JUDGE-ADAPTER-V1-OWNER.md";
 const REPORT_OWNER_REVIEW_EVIDENCE_PATH = "tldr-astro-phrasebank/TLDR-REPORT-OWNER-REVIEW-EVIDENCE-2026-08-11.md";
@@ -55,6 +56,7 @@ export function judgePrompt(input: {
   draft: GeneratedTransitReadingDraft;
   ownerEvidence: string[];
   priorReview?: TransitReadingPriorReview;
+  correctionReview?: TransitReadingCorrectionReview;
 }) {
   const evidenceDelivery = transitReadingReleasePolicy() === EVIDENCE_DELIVERY_POLICY;
   const approvedFeedback = input.ownerEvidence.length
@@ -78,6 +80,10 @@ export function judgePrompt(input: {
     "Return the diagnostic fields required by the supplied schema, including reconciliation when requested. Do not return a verdict, overall score, replacement sentence, rewrite, or suggested prose.",
     generatedReportJudgeEvidenceContract(true, evidenceDelivery),
     "",
+    "DETERMINISTIC VALIDATION STATE",
+    input.correctionReview
+      ? `Correction review only. Fact, register and shape checks passed; lexical validation FAILED. This draft cannot be delivered. Collect all other supported findings now so the one revision addresses them together. Do not treat the known lexical violations as evidence that unrelated categories are poor.\n${JSON.stringify(input.correctionReview)}`
+      : "Deterministic fact and writing validation passed; this establishes neither prose quality nor semantic correctness.",
     "GOVERNED BRIEF",
     JSON.stringify(input.brief),
     "",
@@ -98,10 +104,17 @@ export async function judgeGeneratedTransitReading(input: {
   productionInput: TransitReadingProductionInput;
   ownerEvidence?: string[];
   priorReview?: TransitReadingPriorReview;
+  correctionReview?: TransitReadingCorrectionReview;
 }) {
+  if (input.correctionReview && (input.priorReview || input.correctionReview.draftSha256 !== transitReadingDraftHash(input.draft))) {
+    throw new Error("Correction review must match the initial candidate draft.");
+  }
   const policy = transitReadingReleasePolicy();
   const evidenceDelivery = policy === EVIDENCE_DELIVERY_POLICY;
-  if (transitReadingReviewMode() === "scoped") return judgeScopedGeneratedTransitReading(input);
+  if (transitReadingReviewMode() === "scoped") {
+    if (input.correctionReview) throw new Error("Lexical correction review requires the combined reviewer.");
+    return judgeScopedGeneratedTransitReading(input);
+  }
   const config = reportFulfillmentConfig();
   const provider = config.judgeProvider;
   const model = config.judgeModel;
@@ -109,7 +122,8 @@ export async function judgeGeneratedTransitReading(input: {
   const kernel = prepareTransitReadingProductionKernel({
     productionInput: input.productionInput,
     role: "REVIEWER",
-    draftValidated: true
+    draftValidated: !input.correctionReview,
+    correctionReview: input.correctionReview
   });
   const evidenceInput = { ...input, ownerComparisonSet: kernel.ownerVoice };
   const validateEvidence = evidenceDelivery ? assertReportDeliveryEvidence : assertGeneratedReportJudgeEvidence;

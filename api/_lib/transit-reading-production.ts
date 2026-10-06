@@ -3,6 +3,7 @@ import { SCOPED_REVIEW_SCHEMAS, type TransitReadingReviewScope } from "./transit
 import { transitReadingReleasePolicy } from "./transit-reading-release-policy.js";
 import { EVIDENCE_DELIVERY_POLICY } from "./transit-reading-delivery-evidence.js";
 import { SOURCE_COMPLETION_POLICY } from "./transit-reading-source-completion.js";
+import { isTransitCorrectionReview } from "../../src/astro-writing/transitCorrectionReview.cjs";
 import { transitReadingOwnerVoice, transitReadingOwnerVoicePrompt, assertTransitReadingOwnerVoice, transitReadingVoiceContext } from "./transit-reading-owner-voice.js";
 import {
   callReportCalibrationModel,
@@ -32,12 +33,22 @@ export type TransitReadingDraftValidation = {
   violations: [];
 };
 
+export type TransitReadingCorrectionReview = {
+  purpose: "transit-report-correction-review-v1";
+  checked: true;
+  passed: false;
+  factLockPassed: true;
+  shapePassed: true;
+  draftSha256: string;
+  violations: Array<{ category: string; detail: string }>;
+};
+
 export type TransitReadingProductionKernel = {
   input: TransitReadingProductionInput;
   gate: ReturnType<typeof prepareProductionPreCallGate>;
   role: TransitReadingProductionRole;
   ownerVoice: ReturnType<typeof transitReadingOwnerVoice>;
-  draftValidation: TransitReadingDraftValidation | null;
+  draftValidation: TransitReadingDraftValidation | TransitReadingCorrectionReview | null;
 };
 
 function productionGateInput(input: TransitReadingProductionInput): TransitReadingProductionInput {
@@ -56,11 +67,17 @@ export function prepareTransitReadingProductionKernel(input: {
   productionInput: TransitReadingProductionInput;
   role: TransitReadingProductionRole;
   draftValidated?: boolean;
+  correctionReview?: TransitReadingCorrectionReview;
 }): TransitReadingProductionKernel {
   if (!input.productionInput.knowledgeIds.length) {
     throw new Error(`TRANSIT_READING_PRODUCTION_EVIDENCE_MISSING: ${input.productionInput.contentKey}. No provider call is allowed.`);
   }
-  if (input.role === "REVIEWER" && input.draftValidated !== true) {
+  if (input.correctionReview && (input.role !== "REVIEWER" || input.draftValidated === true
+    || input.productionInput.mode !== "in_depth"
+    || transitReadingReleasePolicy() !== SOURCE_COMPLETION_POLICY || !isTransitCorrectionReview(input.correctionReview))) {
+    throw new Error("TRANSIT_READING_CORRECTION_REVIEW_INVALID: only a fact-checked lexical correction candidate may be diagnosed.");
+  }
+  if (input.role === "REVIEWER" && input.draftValidated !== true && !input.correctionReview) {
     throw new Error("TRANSIT_READING_REVIEW_VALIDATION_REQUIRED: deterministic validation must pass before the judge can run.");
   }
   const normalizedInput = productionGateInput(input.productionInput);
@@ -71,7 +88,7 @@ export function prepareTransitReadingProductionKernel(input: {
     ownerVoice: transitReadingOwnerVoice(normalizedInput.facts, normalizedInput.surface),
     role: input.role,
     draftValidation: input.role === "REVIEWER"
-      ? { checked: true, passed: true, violations: [] }
+      ? input.correctionReview ?? { checked: true, passed: true, violations: [] }
       : null
   };
 }

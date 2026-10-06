@@ -18,6 +18,8 @@ const bundle = await build({
     export { listReportLibrary, loadGeneratedReportById } from './apps/web/src/services/reportLibrary.ts';
     export { GeneratedReportArticle } from './apps/web/src/components/reports/ReportLibraryView.tsx';
     export { GENERATED_REPORT_JUDGE_CATEGORIES } from './api/_lib/transit-reading-judge-rules.ts';
+    export { judgeGeneratedTransitReading } from './api/_lib/transit-reading-judge.ts';
+    export { transitReadingDraftHash } from './api/_lib/transit-reading-review-contract.ts';
     export { prepareSourceCompletion } from './api/_lib/transit-reading-source-completion.ts';
     export { ReportProviderUnavailableError, REPORT_PROVIDER_UNAVAILABLE_MESSAGE } from './api/_lib/report-provider-availability.ts';
     export { assertSavedTransitReading } from './api/_lib/transit-reading-reader-copy.ts';
@@ -175,7 +177,7 @@ function fixture(kind, scenario) {
         assert(!input.prompt.includes(output.summary),'Discarded transport alias must never be reviewed');
         const draftSha256=scoped ? input.prompt.match(/DRAFT_SHA256: ([a-f0-9]{64})/)[1] : null;
         if(input.schemaName==='tldr_generated_report_facts_judge') return {value:{draftSha256,scores:{astrology_chronology:4,factual_traceability:4},findings:[]},provider:input.provider,model:input.model,usage:{inputTokens:10,outputTokens:5,totalTokens:15}};
-        const failed=['rejected','invalid-judge-evidence'].includes(scenario) || (['correction','cleanup'].includes(scenario) && judgeCalls===(scoped?2:1));
+        const failed=['rejected','invalid-judge-evidence'].includes(scenario) || (['correction','cleanup','combined-correction','combined-correction-yield'].includes(scenario) && judgeCalls===(scoped?2:1));
         const scores=Object.fromEntries(api.GENERATED_REPORT_JUDGE_CATEGORIES.filter(key=>!scoped||!['astrology_chronology','factual_traceability'].includes(key)).map(key=>[key,4]));
         if (evidenceDelivery) {
           const advisory = {category:'owner_voice',location:'body',finding:'Advisory style sentinel',draftQuote:submitted.body.slice(0,30),sourcePath:null,sourceQuote:null,
@@ -212,6 +214,14 @@ function fixture(kind, scenario) {
       }
       let body=output.body;
       if(scenario==='initial-validation-exhausted') body='Incomplete.';
+      if (['combined-correction','combined-correction-yield','lexical-only','lexical-remains','lexical-and-fact'].includes(scenario)) {
+        if (writerCalls === 1 || scenario === 'lexical-remains') body += ' They can ask whether the plan has changed.';
+        if (scenario === 'lexical-and-fact' && writerCalls === 1) body += ' Jupiter is in the 12th house.';
+        if (writerCalls === 2) {
+          assert(input.prompt.includes('banned_language'));
+          if (scenario.startsWith('combined-correction')) assert(input.prompt.includes('Synthetic diagnostic'));
+        }
+      }
       if(scenario==='cleanup' && writerCalls===2) body=body.replace('Avoiding the conversation','Questioning whether to have the conversation');
       return {value:{...output,body},provider:input.provider,model:input.model,responseId:`writer-${writerCalls}`};
     },

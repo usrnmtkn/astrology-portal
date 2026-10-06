@@ -94,7 +94,11 @@ export function validateGeneratedReading(
     register: "third_person"
   });
   if (!writingValidation.passed) issues.push(`Friends reading failed writing validation: ${writingValidation.violations.map((issue: { category?: string; detail?: string }) => `${issue.category ?? "rule"}: ${issue.detail ?? "failed"}`).join("; ")}`);
-  return issues.length ? { passed: false, message: issues.join("\n") } : { passed: true };
+  const correctionReviewViolations = factLock.passed && writingValidation.violations.length > 0
+    && writingValidation.violations.every((issue: { category?: string; detail?: string }) => issue.category === "banned_language" && Boolean(issue.detail?.trim()))
+    ? writingValidation.violations.map((issue: { category: string; detail: string }) => ({ category: issue.category, detail: issue.detail }))
+    : undefined;
+  return issues.length ? { passed: false, message: issues.join("\n"), correctionReviewViolations } : { passed: true };
 }
 
 function productionInputForLocked(locked: ReturnType<typeof friendTransitReadingRequestLock>): TransitReadingProductionInput {
@@ -130,14 +134,15 @@ async function generateReading(locked: ReturnType<typeof friendTransitReadingReq
     loadOwnerEvidence,
     sourceCompletion: () => prepareSourceCompletion(locked.brief, locked.headline),
       sourceOnly,
-    judge: ({ draft, brief: governedBrief, ownerEvidence: approvedEvidence, priorReview }) => judgeGeneratedTransitReading({
+    judge: ({ draft, brief: governedBrief, ownerEvidence: approvedEvidence, priorReview, correctionReview }) => judgeGeneratedTransitReading({
       surface: "friends",
       reportKind: "friend_transit_reading",
       brief: governedBrief,
       draft,
       productionInput,
       ownerEvidence: approvedEvidence,
-      priorReview
+      priorReview,
+      correctionReview
     }),
     minSummaryLength: 40,
     minBodyLength: 180,

@@ -10,8 +10,25 @@ const outputDirIndex = process.argv.indexOf('--browser-fixture-dir');
 const outputDir = outputDirIndex < 0 ? null : process.argv[outputDirIndex + 1];
 if (outputDir) fs.mkdirSync(outputDir, { recursive: true });
 let cases = 0;
+// The correction-review permission belongs to one exact initial candidate.
+{
+  const f = fixture('friends', 'first-pass');
+  globalThis.reportDeliveryFixture = f;
+  const correctionReview = { purpose: 'transit-report-correction-review-v1', checked: true, passed: false,
+    factLockPassed: true, shapePassed: true, draftSha256: '0'.repeat(64),
+    violations: [{category:'banned_language',detail:'whether'}] };
+  const input = { surface: 'friends', reportKind: 'friend_transit_reading', brief: f.friendBrief,
+    draft: f.output, correctionReview };
+  await assert.rejects(api.judgeGeneratedTransitReading(input), /must match the initial candidate/);
+  correctionReview.draftSha256 = api.transitReadingDraftHash(f.output);
+  await assert.rejects(api.judgeGeneratedTransitReading({ ...input, priorReview: {draft:f.output,scores:{},findings:[]} }), /must match the initial candidate/);
+  process.env.GENERATED_REPORT_REVIEW_MODE = 'scoped';
+  try { await assert.rejects(api.judgeGeneratedTransitReading(input), /combined reviewer/); }
+  finally { process.env.GENERATED_REPORT_REVIEW_MODE = 'combined'; }
+  assert.deepEqual(f.calls, {writer:0,judge:0}, 'Invalid diagnostic review permissions stop before provider dispatch');
+}
 for (const kind of ['day', 'week', 'friends']) for (const scenario of [
-  'first-pass', 'correction', 'rejected', 'cleanup', 'invalid-judge-evidence', 'initial-writer-outage',
+  'first-pass', 'correction', 'combined-correction', 'combined-correction-yield', 'lexical-only', 'lexical-remains', 'lexical-and-fact', 'rejected', 'cleanup', 'invalid-judge-evidence', 'initial-writer-outage',
   'initial-judge-outage', 'initial-validation-exhausted', 'missing-source', 'save-error', 'empty-save',
   'completion-error', 'checkpoint-error', 'yield', 'historical-held', 'oversized-review', 'explicit-retry'
 ]) {
@@ -51,20 +68,20 @@ for (const kind of ['day', 'week', 'friends']) for (const scenario of [
   if (scenario === 'explicit-retry') job.checkpoint_attempt = 2;
   const realNow = Date.now;
   let elapsed = 0;
-  if (scenario === 'yield') {
+  if (['yield', 'combined-correction-yield'].includes(scenario)) {
     Date.now = () => realNow() + elapsed;
-    f.call = async input => { const result = await originalCall(input); if (!input.schemaName.includes('judge')) elapsed = 200_000; return result; };
+    f.call = async input => { const result = await originalCall(input); if (scenario === 'yield' ? !input.schemaName.includes('judge') : input.schemaName.includes('judge')) elapsed = 200_000; return result; };
   }
   try { await run({ workerId: 'report-test', jobId: queue.job.id, admin: f.admin }); }
   finally { Date.now = realNow; }
-  if (scenario === 'yield') {
+  if (['yield', 'combined-correction-yield'].includes(scenario)) {
     assert.equal(job.state, 'retry');
     assert.equal(f.rows.user_generated_interpretations[0].body, '');
     f.call = originalCall;
     await run({ workerId: 'report-resume', jobId: job.id, admin: f.admin });
   }
   const row = f.rows.user_generated_interpretations[0];
-  const success = ['first-pass', 'correction', 'yield', 'explicit-retry'].includes(scenario);
+  const success = ['first-pass', 'correction', 'combined-correction', 'combined-correction-yield', 'lexical-only', 'lexical-and-fact', 'yield', 'explicit-retry'].includes(scenario);
   assert.equal(row.source_snapshot.reportDelivery, undefined, 'No failure path may publish source assembly');
   assert.notEqual(row.provider, 'source');
   if (success) {
@@ -109,6 +126,16 @@ for (const kind of ['day', 'week', 'friends']) for (const scenario of [
       await run({ workerId: 'no-new-quality-cycle', jobId: job.id, admin: f.admin });
       assert.deepEqual(f.calls, calls, 'A held review does not start an automatic spending loop');
     }
+  }
+  if (['combined-correction','combined-correction-yield','lexical-only'].includes(scenario)) {
+    assert.deepEqual(f.calls, {writer:2,judge:2});
+    assert.deepEqual(f.prompts.map(p=>p.judge), [false,true,false,true], 'Review all findings before spending the only rewrite');
+    assert.match(f.prompts[1].prompt, /lexical validation FAILED/);
+    assert.match(f.prompts[3].prompt, /Deterministic fact and writing validation passed/);
+  }
+  if (scenario === 'lexical-remains') assert.deepEqual(f.calls, {writer:2,judge:1}, 'A passing judge never waives remaining lexical failures');
+  if (scenario === 'lexical-and-fact') {
+    assert.deepEqual(f.prompts.map(p=>p.judge), [false,false,true], 'Fact failures cannot enter the lexical-only review path');
   }
   assert(f.calls.writer <= 2 && f.calls.judge <= 2);
   if (scenario === 'historical-held' || scenario === 'missing-source') assert.deepEqual(f.calls, {writer:0,judge:0});
