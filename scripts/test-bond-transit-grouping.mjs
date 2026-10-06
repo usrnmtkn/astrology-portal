@@ -81,7 +81,7 @@ const joseCard = renderer.renderBondTransit({
   sign: "aries",
   window: "Until November 13"
 });
-assert.equal(joseCard.headline, "Saturn sextile their Mars");
+assert.equal(joseCard.headline, "Saturn sextile Jose's Mars");
 assert.equal(joseCard.parts.length, 2);
 const saturnSextileEffect = sourceRows.hookRows.find(
   (row) => row.contentKey === "fallback-hook/bond-effect-sextile/saturn"
@@ -93,7 +93,7 @@ assert.equal(
 );
 assert.equal(
   joseCard.parts[1],
-  "Saturn in Aries is sextile their Mars through November 13, activating the connections their Mars makes with your Moon, Midheaven, and Lilith."
+  "Saturn in Aries is sextile Jose's Mars through November 13, activating the connections their Mars makes with your Moon, Midheaven, and Lilith."
 );
 
 const chrisGroups = groupBondTransitActivations([
@@ -153,7 +153,7 @@ assert.equal(
 );
 assert.equal(
   chrisCard.parts[1],
-  "Saturn in Aries is square your Venus through November 13, activating the connections it makes with their Mercury, Saturn, and Midheaven."
+  "Saturn in Aries is square your Venus through November 13, activating the connections it makes with Chris's Mercury, Saturn, and Midheaven."
 );
 assert.doesNotMatch(chrisCard.headline, /connection/iu);
 assert.doesNotMatch(chrisCard.body, /aspect(?:s|ing)? (?:to|the) connection/iu);
@@ -171,7 +171,7 @@ const single = renderer.renderBondTransit({
 });
 assert.equal(
   single.parts[1],
-  "Saturn in Aries is sextile their Mars through November 13, activating the connection it makes with your Moon."
+  "Saturn in Aries is sextile Jose's Mars through November 13, activating the connection it makes with your Moon."
 );
 assert.equal(
   single.parts[0],
@@ -334,8 +334,7 @@ assert.deepEqual(
   "Ranking must put slow planets first, then tighter orbs; the Moon ranks last."
 );
 
-// Duplicate effect bodies: two cards sharing transiting planet + exact aspect must not
-// repeat the same effect paragraph. duplicateIndex > 0 rotates to the family lane.
+// Repeated cards retain the exact authored template; position cannot replace it.
 const firstSaturnSquare = renderer.renderBondTransit({
   transiting: "saturn",
   aspect: "square",
@@ -361,10 +360,10 @@ const secondSaturnSquare = renderer.renderBondTransit({
   duplicateIndex: 1,
   window: "Until November 13"
 });
-assert.notEqual(
+assert.equal(
   firstSaturnSquare.parts[0],
   secondSaturnSquare.parts[0],
-  "Cards sharing a transiting planet and exact aspect must rotate the effect body."
+  "Cards sharing an exact authored source must preserve it regardless of display order."
 );
 
-console.log("bond transit grouping passed: directional effects, friend-name substitution, mutual row, separate endpoints, both-endpoint dedupe, ranking, and duplicate rotation");
+console.log("bond transit grouping passed: directional effects, friend-name substitution, mutual row, separate endpoints, both-endpoint dedupe, ranking, and exact-source preservation");

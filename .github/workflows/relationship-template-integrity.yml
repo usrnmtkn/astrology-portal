@@ -1,0 +1,36 @@
+name: Relationship template integrity
+on:
+  pull_request:
+    paths:
+      - 'apps/admin/src/**'
+      - 'apps/web/src/content/fallbackArchitectureV3/**'
+      - 'apps/web/src/features/friends/**'
+      - 'apps/web/src/services/fallbackArchitectureV3CorePackaging.ts'
+      - 'scripts/*relationship-template*'
+      - 'tests/fixtures/relationship-pair-inventory-shape.json'
+      - 'tests/visual/relationship-template-integrity.spec.ts'
+      - '.github/workflows/relationship-template-integrity.yml'
+      - 'package.json'
+  push:
+    branches: [main, fix/between-two-template-integrity]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  exact-templates:
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build:knowledge
+      - name: Verify synthetic byte preservation and the full pair audit
+        run: npm run test:relationship-template-integrity
+      - run: npx playwright install --with-deps chromium
+      - name: Verify rendered revision selection with isolated synthetic storage
+        run: npx playwright test tests/visual/relationship-template-integrity.spec.ts --workers=1

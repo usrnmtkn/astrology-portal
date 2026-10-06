@@ -1,4 +1,5 @@
 import { fallbackHookWords } from "./fallbackHookTitle";
+import { missingRelationshipPerspectives } from "../../web/src/content/fallbackArchitectureV3/resolver/relationshipTemplate.mjs";
 import { transitNatalAspects, transitNatalPlanets, transitNatalPoints, transitNatalSharedFallbackKey } from "./transitNatalSources";
 
 export type BondEffectContact = {
@@ -276,4 +277,39 @@ export function synastryBodiesFromPayload(payload: unknown) {
     : typeof row?.content_key === "string" ? row.content_key : "";
   if (!you.trim() && !they.trim()) return null;
   return { contentKey, body_you: you, body_they: they };
+}
+
+/** Version selection is explicit; fields never come from different revisions. */
+export function bondEffectVersionsFromPayload(payload: unknown) {
+  if (!isRecord(payload)) return [];
+  const row = Array.isArray(payload.rows) && isRecord(payload.rows[0]) ? payload.rows[0] : null;
+  const sections = row && isRecord(row.sections) ? row.sections : null;
+  const versions: Array<{
+    versionId: string; label: string; contentKey: string; rowId: string | null;
+    updatedAt: string | null; body_you: string; body_they: string; missing: string[];
+  }> = [];
+  const add = (value: unknown, versionId: string, label: string, updatedAt: unknown) => {
+    if (!isRecord(value)) return;
+    versions.push({
+      versionId, label,
+      contentKey: typeof row?.content_key === "string" ? row.content_key : String(value.contentKey ?? ""),
+      rowId: typeof row?.id === "string" ? row.id : null,
+      updatedAt: typeof updatedAt === "string" ? updatedAt : null,
+      body_you: typeof value.body_you === "string" ? value.body_you : "",
+      body_they: typeof value.body_they === "string" ? value.body_they : "",
+      missing: missingRelationshipPerspectives(value)
+    });
+  };
+  if (row) {
+    add(sections?.packageDraft, "draft", "Current saved draft", row.updated_at);
+    add(sections?.packageRecord, "published", "Stored baseline", row.published_at);
+    const history = sections?.dashboardEditHistory;
+    if (Array.isArray(history)) for (const item of [...history].reverse()) {
+      if (isRecord(item) && typeof item.versionId === "string") {
+        add(isRecord(item.packageDraft) ? item.packageDraft : {}, item.versionId, `Saved revision · ${String(item.editedAt ?? item.versionId)}`, item.editedAt);
+      }
+    }
+    // An existing but incomplete saved document must not borrow a package field.
+  } else add(payload.packageSource, "package", "Packaged source", null);
+  return versions;
 }

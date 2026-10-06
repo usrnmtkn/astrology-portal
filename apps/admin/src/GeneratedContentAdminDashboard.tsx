@@ -1438,6 +1438,10 @@ function packageEditorialNotesForDraft(draft: AdminDraft) {
 }
 
 function packageFieldString(draft: AdminDraft, key: string) {
+  if (draft.contentKey.startsWith("fallback-hook/bond-effect-") && ["body_you", "body_they"].includes(key)) {
+    const selected = draftPackageProposal(draft) ?? draftPackageRecord(draft);
+    return typeof selected[key] === "string" ? selected[key] as string : "";
+  }
   const sections = objectRecord(draft.sections);
   const proposalValue = draftPackageProposal(draft)?.[key];
   const sectionValue = sections?.[key];
@@ -10229,11 +10233,11 @@ export function GeneratedContentAdminDashboard() {
       && !isContinuousSkyPackage
       && (typeof editablePackageRecord.body_you === "string"
         || typeof objectRecord(currentDraft.sections)?.body_you === "string"
-        || isExactTransitReturnDraft);
+        || isExactTransitReturnDraft || isBondEffectDraft);
     const showPackageBodyThey = isPackageDraft
       && !isVocabularyDraft
       && !isExactTransitReturnDraft
-      && (isAuthoredTransitAspectDraft
+      && (isAuthoredTransitAspectDraft || isBondEffectDraft
         || typeof editablePackageRecord.body_they === "string"
         || typeof objectRecord(currentDraft.sections)?.body_they === "string");
     const isYouOnlyNatalExactDraft = categoryFilter === "Natal Chart"

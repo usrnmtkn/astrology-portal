@@ -36,7 +36,7 @@ const fallbackRows = read("apps/web/src/content/fallbackArchitectureV3/source-ro
 const namingPath = "packages/astro-knowledge/review/friend-transit-pronouns-2026-10-05.json";
 const namingByKey = new Map(read(namingPath).edits.filter(edit => edit.field === "body_they").map(edit => [edit.contentKey, edit]));
 
-assert.equal(PACKAGE_VERSION, "v3-2026-10-05-between-you-two-names");
+assert.equal(PACKAGE_VERSION, "v3-2026-10-05-relationship-template-integrity");
 assert.equal(authorization.schema, "tldrastro-bounded-owner-batch-authorization-v1");
 assert.equal(authorization.type, BOUNDED_OWNER_BATCH_AUTHORIZATION_TYPE);
 assert.equal(authorization.authority, "owner");

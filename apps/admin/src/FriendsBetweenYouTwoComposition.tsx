@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { PageLoading } from "../../web/src/components/PageLoading";
 import BondEffectPagePreview from "./BondEffectPagePreview";
-import { friendsActivationParam, friendsTransitCardDestinations, friendsTransitCompositionQuery, friendsTransitReaderTitle, parseFriendsActivationParam, synastryBodiesFromPayload } from "./bondEffectPageAssembly";
+import { friendsActivationParam, friendsTransitCardDestinations, friendsTransitCompositionQuery, friendsTransitReaderTitle, parseFriendsActivationParam, bondEffectVersionsFromPayload } from "./bondEffectPageAssembly";
+import { AdminSelect } from "./AdminNativeControls";
 import { readStudioContentDocument } from "./generatedContentClient";
 import { subscribeToContentUpdates } from "../../web/src/services/contentUpdateSignal";
 import { StudioButton } from "./StudioControls";
@@ -26,7 +27,9 @@ export default function FriendsBetweenYouTwoComposition({
   const destinations = friendsTransitCardDestinations(friendsTransitCompositionQuery(query));
   const activation = parseFriendsActivationParam(activationQuery);
   const openingKey = destinations.betweenYouTwoOpeningKey;
-  const [opening, setOpening] = useState<{ you: string; they: string } | null>(null);
+  const [versions, setVersions] = useState<ReturnType<typeof bondEffectVersionsFromPayload>>([]);
+  const [versionId, setVersionId] = useState("");
+  const opening = versions.find(version => version.versionId === versionId) ?? versions[0];
   // Saving a passage does not change the selection, so without this the map keeps
   // showing the copy it read before the edit while the reader already has the new one.
   const [revision, setRevision] = useState(0);
@@ -36,7 +39,7 @@ export default function FriendsBetweenYouTwoComposition({
 
   useEffect(() => {
     if (!openingKey) {
-      setOpening(null);
+      setVersions([]);
       setError(null);
       setBusy(false);
       return;
@@ -45,21 +48,22 @@ export default function FriendsBetweenYouTwoComposition({
     const controller = new AbortController();
     setBusy(true);
     setError(null);
-    setOpening(null);
+    setVersions([]);
+    setVersionId("");
     void (async () => {
       try {
         const payload = await readStudioContentDocument(openingKey, secret, { signal: controller.signal });
         if (cancelled) return;
-        const bodies = synastryBodiesFromPayload(payload);
-        if (!bodies) {
-          setOpening(null);
+        const available = bondEffectVersionsFromPayload(payload);
+        if (!available.length) {
+          setVersions([]);
           setError("The opening row is not saved yet. Open the opening to write it.");
           return;
         }
-        setOpening({ you: bodies.body_you, they: bodies.body_they });
+        setVersions(available);
       } catch (caught) {
         if (cancelled) return;
-        setOpening(null);
+        setVersions([]);
         setError(caught instanceof Error ? caught.message : "The opening could not be loaded.");
       } finally {
         if (!cancelled) setBusy(false);
@@ -84,10 +88,17 @@ export default function FriendsBetweenYouTwoComposition({
           </StudioButton>
         </p>
       ) : null}
+      {versions.length > 0 && <label>
+        Opening version
+        <AdminSelect aria-label="Opening version" value={opening?.versionId ?? ""} onChange={event => setVersionId(event.target.value)}>
+          {versions.map(version => <option key={version.versionId} value={version.versionId}>{version.label}</option>)}
+        </AdminSelect>
+      </label>}
+      {opening?.missing.length ? <p role="alert">Incomplete relationship pair: missing {opening.missing.join(" and ")} perspective. No other version is substituted.</p> : null}
       <BondEffectPagePreview
         contentKey={openingKey}
-        youText={opening?.you ?? ""}
-        theyText={opening?.they ?? ""}
+        youText={opening?.body_you ?? ""}
+        theyText={opening?.body_they ?? ""}
         secret={secret}
         previewNatalPoint={destinations.contact?.natalPoint}
         previewFriendPoint={activation?.friendPoint}
