@@ -76,13 +76,13 @@ export function SkyDebilityCompositionMap({ composition, read, onSelectSource, b
   return <section className="admin-template-reader-drilldown admin-sky-summary-composition studio-surface" aria-label="Effort summary composition map">
     <header className="admin-section-heading-row"><div>
       <h4>Full card and composition map</h4>
-      <p>Read the complete card, inspect its source wording, or read the full template with variables. These views use the same selected examples and working copy.</p>
+      <p>Read the card, inspect its sources, or edit the template. All views share this working copy.</p>
     </div></header>
     <StudioTabs label="Effort summary views" tabs={views} value={view} onValueChange={value => { setView(value); setVariable(null); }}>
       {view === "map" && <div className="admin-composition-variable-legend" aria-label="Effort composition key">
         <span className="variable-fact">Calculated example</span><span className="variable-copy">Placement wording: click to edit</span><span>Connecting words: click to edit the template</span>
       </div>}
-      {view === "template" && <p>Click a variable to see what supplies it. Click the surrounding wording to edit that template. This is a reference view, not another saved copy.</p>}
+      {view === "template" && <p>Click a variable to inspect its source or surrounding wording to edit the template.</p>}
       <div className="admin-template-reader-surface" data-testid="sky-debility-preview">
         <div className="admin-composition-preview-chrome"><span>{view === "template" ? "Full template" : "Full card"}</span>
           <span>{hasUnsaved ? "Unsaved working preview" : "Working preview"} · example placements</span></div>
