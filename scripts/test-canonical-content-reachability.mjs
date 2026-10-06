@@ -10,7 +10,7 @@ const index = readJson("packages/astro-knowledge/canonical-content/index/canonic
 const report = readJson("packages/astro-knowledge/canonical-content/review/natal-wave-1-migration-report.json");
 const allowlist = readJson("packages/astro-knowledge/canonical-content/review/natal-wave-1-source-allowlist.json");
 
-assert.equal(report.sourceReachability.eligibleExactRows, 492);
+assert.equal(report.sourceReachability.eligibleExactRows, 493);
 assert.equal(report.sourceReachability.failures, 0);
 assert.deepEqual(report.sourceReachability.original371, {
   total: 420,
@@ -27,9 +27,9 @@ assert.equal(
   )).length,
   39
 );
-assert.equal(index.sourceManifest.authoredStoreInventory.distinctKeys, 2765);
+assert.equal(index.sourceManifest.authoredStoreInventory.distinctKeys, 2771);
 assert.equal(index.sourceManifest.authoredStoreInventory.migratedInWave1, 0);
-assert.equal(index.sourceManifest.authoredStoreInventory.entries.length, 2765);
+assert.equal(index.sourceManifest.authoredStoreInventory.entries.length, 2771);
 assert.equal(report.authoredStoreInventory.careerNatalAdjacent.count, 15);
 assert.equal(report.authoredStoreInventory.pointExplainers.count, 2);
 
@@ -39,4 +39,4 @@ for (const entry of semanticExclusions) {
   assert.match(entry.evidence, /fallbackArchitectureV3Runtime\.ts:610-613/u);
 }
 
-console.log("Canonical source reachability passed: 492 eligible exact rows classified; 39 routed composite overrides explicitly classified; legacy exact-row cohort fully reconciled; 2,765 authored keys inventoried without migration.");
+console.log("Canonical source reachability passed: 493 eligible exact rows classified; 39 routed composite overrides explicitly classified; legacy exact-row cohort fully reconciled; 2,771 authored keys inventoried without migration.");

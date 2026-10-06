@@ -352,8 +352,7 @@ export function createFallbackRenderer(templatesFile: TemplatesFile, rowsFile: R
       signNeed: getVocab(`fallback-vocab/sign-need/${sign}`, voice, opts),
       planetVerb: getVocab(`fallback-vocab/planet-verb/${planet}`, voice, opts),
       signAdverb: getVocab(`fallback-vocab/sign-adverb/${sign}`, voice, opts),
-      planetIntro: getReaderLivedRow(`fallback-hook/planet-lived/${planet}`, voice, opts)?.body
-        ?? getHook(`fallback-hook/planet-intro/${planet}`, voice, opts),
+      planetIntro: getHook(`fallback-hook/natal/planet-intro/${planet}`, voice, opts),
       planetBest: getHook(`fallback-hook/planet-best/${planet}`, voice, opts),
       placementSentences: getHook(`fallback-hook/placement-sentence/${planet}/${sign}`, voice, opts),
       placementGerundText: getVocabList(`fallback-vocab/placement-gerund/${planet}/${sign}`, voice, opts).join(", or ") || null,

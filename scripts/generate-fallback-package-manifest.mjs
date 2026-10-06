@@ -313,6 +313,14 @@ function isSkyCoreHook(row) {
   ].some((prefix) => row.contentKey.startsWith(prefix));
 }
 
+function deferredReaderHook(row) {
+  // Editorial annotations and migration receipts stay in the authoring source
+  // and generated lineage. Readers need the complete prose and eligibility
+  // fields, but do not consume these editor-only fields.
+  const { note: _note, notes: _notes, source_migration: _migration, ...reader } = row;
+  return reader;
+}
+
 function isRelationshipAuthoredCard(row) {
   const contentKey = String(row?.contentKey ?? "");
   return [
@@ -511,7 +519,7 @@ const deferredCoreRows = {
       && !isSharedPlacementHook(row)
       && !isRelationshipHook(row)
     ))
-  ]),
+  ]).map(deferredReaderHook),
   vocabularyRows: [],
   dailyGlanceVariants
 };

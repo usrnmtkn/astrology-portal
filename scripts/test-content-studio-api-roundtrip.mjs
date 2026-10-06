@@ -1643,3 +1643,51 @@ try {
   globalThis.fetch = storedFetch;
   await publicationDb.close();
 }
+
+// Natal introduction keys have their own saved drafts and publications. The
+// actual loader must pass edits into the shipped resolver for both audiences.
+for (const [planet, sign] of [['saturn', 'aries'], ['neptune', 'capricorn']]) {
+  const key = `fallback-hook/natal/planet-intro/${planet}`;
+  const original = receiptCatalog.get(key);
+  assert.ok(original, key);
+  const draft = transitNatalPackagedSourceDraft(original, key);
+  assert.equal(draft.surface, 'natal');
+  const created = await invokeApi('POST', '/api/admin/generated-content', {
+    ...draft, id: undefined, eventType: 'fallback-hook', reviewStatus: 'needs_review'
+  });
+  assert.equal(created.status, 200, JSON.stringify(created.payload));
+  assert.equal(row.status, 'DRAFT');
+  assert.deepEqual(row.sections.packageOriginalRecord, original);
+  const copyYou = `Synthetic ${planet} natal opening. Complete You ending.`;
+  const copyThey = `Synthetic ${planet} natal Friend opening. Complete Friend ending.`;
+  const saved = await invokeApi('PATCH', '/api/admin/generated-content', {
+    id: row.id, expectedUpdatedAt: row.updated_at, reviewStatus: 'needs_review',
+    sections: { ...row.sections, packageDraft: { ...row.sections.packageRecord, body_you: copyYou, body_they: copyThey } }
+  });
+  assert.equal(saved.status, 200, JSON.stringify(saved.payload));
+  const reopened = await invokeApi('GET', `/api/admin/generated-content?status=all&visibility=all&contentKey=${encodeURIComponent(key)}`);
+  assert.equal(reopened.payload.rows[0].sections.packageDraft.body_you, copyYou);
+  const before = structuredClone(row);
+  const stale = await invokeApi('PATCH', '/api/admin/generated-content', {
+    id: row.id, expectedUpdatedAt: '2000-01-01T00:00:00Z', body: 'Stale natal edit.'
+  });
+  assert.equal(stale.status, 409);
+  assert.deepEqual(row, before);
+  const published = await invokeApi('PATCH', '/api/admin/generated-content', {
+    id: row.id, expectedUpdatedAt: row.updated_at, ownerAction: 'approve-package-revision'
+  });
+  assert.equal(published.status, 200, JSON.stringify(published.payload));
+  assert.deepEqual(row.sections.packageOriginalRecord, original);
+  globalThis.fetch = async (input, init) => String(input).includes('/rpc/content_runtime_revision')
+    ? Response.json(row.updated_at) : normalFetch(input, init);
+  try {
+    const bundle = await runtime.loadFallbackArchitectureV3DashboardBundle();
+    assert.equal(bundle.rowsFile.hookRows.find(record => record.contentKey === key)?.body_you, copyYou);
+    runtime.installFallbackArchitectureV3Bundle(bundle);
+    for (const [voice, expected] of [['you', copyYou], ['QA Friend', copyThey]]) {
+      const rendered = runtime.fallbackRendererV3.renderNatalPlacement({ planet, sign, voice });
+      assert.ok(rendered.body.startsWith(expected), `${key}/${voice}: complete published natal intro reaches the actual reader`);
+    }
+  } finally { globalThis.fetch = normalFetch; }
+}
+console.log('PASS: natal-only Saturn and Neptune introductions create, reopen, edit, reject stale writes, publish and hydrate both reader audiences.');

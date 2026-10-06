@@ -1,6 +1,6 @@
 {
   "schema": "tldrastro-approved-serving-projection/v1",
-  "packageVersion": "v3-2026-10-05-relationship-template-integrity",
+  "packageVersion": "v3-2026-10-06-natal-planet-introductions",
   "policy": {
     "eligibleReviewStatuses": [
       "approved",
@@ -18,16 +18,16 @@
     "runtimeFilter": "defense-in-depth"
   },
   "manifest": {
-    "contentHash": "d67bed55c94f49c94ca540874e95da65",
-    "keyManifestHash": "36292cda909cae9694622edcb73d286a",
-    "keyCount": 9271
+    "contentHash": "f68fdc790659293d6d68572b94fa8e29",
+    "keyManifestHash": "9db18966aa21a24241ad8de4133ba6f6",
+    "keyCount": 9285
   },
   "lineage": {
     "file": "approved-serving-lineage-v1.json",
-    "sha256": "cb2422c5f4134cc70a098294ba98df4d1600746d565852699f4cf35fcda1e23e",
-    "count": 9812,
-    "emissionCount": 9888,
-    "exactSourceMatchCount": 8770
+    "sha256": "5349396b43fbcf73808180334f92abdd7851cd8fb9a6d3f411a80694387be188",
+    "count": 9826,
+    "emissionCount": 9902,
+    "exactSourceMatchCount": 7663
   },
   "partitions": {
     "skyCore": {
@@ -37,7 +37,7 @@
     },
     "deferredCore": {
       "file": "bundled-deferred-core-rows-v3.json",
-      "hookRows": 1614
+      "hookRows": 1628
     },
     "sharedPlacement": {
       "file": "bundled-shared-placement-rows-v3.json",

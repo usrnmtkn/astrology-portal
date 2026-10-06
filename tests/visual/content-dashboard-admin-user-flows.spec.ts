@@ -868,7 +868,7 @@ async function seedAdminApi(
           // a fabricated LIVE row cannot prove successful publication.
           const store = await studioApiStore(apiGeneratedContentRows);
           try {
-            const result = await store.call({ method: "PATCH", body: payload });
+            const result = await store.call({ method, body: payload });
             for (const saved of await store.call({ method: "rows" })) {
               const index = apiGeneratedContentRows.findIndex(row => row.id === saved.id);
               if (index >= 0) apiGeneratedContentRows[index] = saved;
@@ -5652,7 +5652,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     const planetIntroRow = {
       ...generatedContentRows[0],
       id: "qa-sun-planet-intro",
-      content_key: "fallback-hook/planet-intro/sun",
+      content_key: "fallback-hook/natal/planet-intro/sun",
       headline: "Sun introduction",
       summary: "Reviewed opening for the Sun.",
       body: "The Sun describes identity, purpose, and the need to create.",
@@ -6142,7 +6142,7 @@ test("surface maps select source families and manage repeated edits across theme
   test.setTimeout(90_000);
   const assertNoBrowserErrors = await expectNoBrowserErrors(page);
   const writes: Array<{ method: string; payload: Record<string, unknown> }> = [];
-  const key = "fallback-hook/planet-intro/uranus";
+  const key = "fallback-hook/natal/planet-intro/uranus";
   const row = {
     ...generatedContentRows[0], id: "qa-map-uranus", content_key: key,
     headline: "Uranus introduction", body: "QA introduction used by the source manager.",
@@ -6157,7 +6157,7 @@ test("surface maps select source families and manage repeated edits across theme
   await page.getByLabel("Search surfaces and systems").fill("natal placement detail");
   const manager = page.getByRole("region", { name: "Manage composition sources" });
   await expect(manager.getByLabel("Selected composition source")).toHaveValue(row.id);
-  await manager.getByLabel("Source family").selectOption("fallback-hook/planet-intro");
+  await manager.getByLabel("Source family").selectOption("fallback-hook/natal");
   await manager.getByLabel("Selected composition source").selectOption(alternate.id);
   await expect(manager.getByLabel("Selected composition source").locator("option:checked")).toContainText(alternate.headline);
   await expect(manager.locator(".admin-composition-source-card > strong")).toHaveCount(0);
@@ -8571,5 +8571,84 @@ for (const [width, theme] of [[1440, 'light'], [1440, 'dark'], [390, 'light'], [
     await expect(preview.locator('.admin-natal-source-card-copy > p')).toHaveText(expected.paragraphs.map(p => p.text));
     await expectNoHorizontalOverflow(page, 'Personal Transit timing preview');
     await preview.screenshot({ path: `test-results/personal-transit-preview-${width}-${theme}.png` });
+  });
+}
+
+for (const [width, theme] of [[1440, "light"], [1440, "dark"], [390, "light"], [390, "dark"]] as const) {
+  test(`Natal planet introductions use separate sources and persist edits ${width} ${theme}`, async ({ page }) => {
+    test.setTimeout(120_000);
+    const noErrors = await expectNoBrowserErrors(page);
+    const writes: Array<{ method: string; payload: Record<string, unknown> }> = [];
+    const selections = [{ planet: "saturn", sign: "aries" }, { planet: "neptune", sign: "capricorn" }] as const;
+    const keys = [...new Set(selections.flatMap(({ planet, sign }) => natalPlacementResolverDependencyKeys(planet, sign)))];
+    const sourceRows = natalPlacementPackageSources(keys).map((record, index) => ({
+      ...generatedContentRows[0], id: `aaaaaaaa-aaaa-aaaa-aaaa-${String(index + 1).padStart(12, "0")}`,
+      content_key: record.contentKey, surface: "natal", mode: "in_depth", status: "LIVE", lane: "serving", review_state: null,
+      provider: "tldrastro-fallback-architecture-v3", event_type: "fallback-hook", headline: record.contentKey,
+      summary: "", body: record.body_you ?? record.body ?? "",
+      block_type: record.content_role === "template" ? "fallback_template" : record.content_role === "vocabulary" ? "vocabulary_phrase" : "fallback_hook",
+      facts: { fallbackArchitectureV3: true },
+      source_snapshot: { sourcePackage: "tldrastro-fallback-architecture-v3", review_status: record.review_status },
+      sections: { packageRecord: record }, updated_at: "2026-10-06T12:00:00.000Z"
+    }));
+    // A fresh deployment has packaged natal intros but no saved natal intro rows.
+    const savedRows = width === 1440 && theme === "light"
+      ? sourceRows.filter(row => !row.content_key.startsWith("fallback-hook/natal/planet-intro/"))
+      : sourceRows;
+    await seedAdminApi(page, { generatedRows: savedRows, useGeneratedContentHandler: true, onGeneratedContentWrite: write => { writes.push(write); } });
+    await page.route("**/api/admin/natal-placement-preview", async route => {
+      const state = renderNatalPlacementPreviewState(normalizeNatalPlacementPreviewInput(route.request().postDataJSON()));
+      await route.fulfill({ json: { ok: true, ...state } });
+    });
+    await page.setViewportSize({ width, height: 1000 });
+    await page.addInitScript(value => localStorage.setItem("tldrastro:studio-theme", value), theme);
+    for (const { planet, sign } of selections) {
+      const name = planet === "saturn" ? "Saturn" : "Neptune";
+      const key = `fallback-hook/natal/planet-intro/${planet}`;
+      const original = sourceRows.find(row => row.content_key === key)!.sections.packageRecord;
+      await expectAdminRouteLoads(page, `/admin/content#exact-content?category=Natal+Chart&planet=${planet}&sign=${sign}`);
+      const card = page.locator(".admin-natal-source-card").filter({ has: page.getByRole("heading", { name: `${name} introduction`, exact: true }) });
+      const preview = page.locator(".admin-natal-reader-preview");
+      await expect(card.getByText(key, { exact: true })).toBeVisible();
+      await expect(card).not.toContainText(`fallback-hook/planet-lived/${planet}`);
+      await expect(preview).toContainText(String(original.body_you));
+      if (!savedRows.some(row => row.content_key === key)) {
+        await card.getByRole("button", { name: "Load and edit", exact: true }).click();
+        const editor = page.getByRole("dialog", { name: "Generated content editor" });
+        await expect(editor.getByLabel("Content key", { exact: true })).toHaveValue(key);
+        await expect(editor.locator('[data-sky-field="body_you"]')).toHaveValue(String(original.body_you));
+        await expect(editor.locator('[data-sky-field="body_they"]')).toHaveValue(String(original.body_they));
+        await editor.getByRole("button", { name: "Save", exact: true }).click();
+        await expect.poll(() => writes.some(write => write.payload.contentKey === key)).toBe(true);
+        await expect(editor.getByText("All changes saved", { exact: true })).toBeVisible();
+        await editor.getByRole("button", { name: "Close", exact: true }).click();
+        await page.reload();
+      }
+      const you = card.getByLabel(`${name} introduction: You copy`);
+      const friend = card.getByLabel(`${name} introduction: Friend copy`);
+      await expect(you).toBeVisible();
+      const updated = `Synthetic ${name} natal opening. Complete ${name} natal ending.`;
+      const updatedFriend = `Synthetic ${name} Friend natal opening. Complete ${name} Friend natal ending.`;
+      await you.fill(updated);
+      await friend.fill(updatedFriend);
+      await card.getByRole("button", { name: "Save draft", exact: true }).click();
+      await expect(card).toContainText("Draft saved.");
+      await expect(preview).toContainText(String(original.body_you));
+      await page.reload();
+      await expect(you).toHaveValue(updated);
+      await expect(friend).toHaveValue(updatedFriend);
+      await card.getByRole("button", { name: "Save & publish", exact: true }).click();
+      await expect(card).toContainText("Published. The reader preview will refresh.");
+      await expect(preview).toContainText(updated);
+      await preview.getByRole("button", { name: "Friend", exact: true }).click();
+      await expect(preview).toContainText(updatedFriend);
+      await page.reload();
+      await expect(you).toHaveValue(updated);
+      await expect(preview).toContainText(updated);
+      await expectNoHorizontalOverflow(page, `Natal introduction ${planet} ${width} ${theme}`);
+      await card.screenshot({ path: path.join(adminScreenshotDir, `natal-introduction-${planet}-${width}-${theme}.png`) });
+    }
+    expect(writes.length).toBeGreaterThanOrEqual(4);
+    await noErrors();
   });
 }

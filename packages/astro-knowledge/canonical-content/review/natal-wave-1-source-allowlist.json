@@ -28,6 +28,13 @@
       "expectedUnitCount": 12,
       "disposition": "intentionally-uncovered-runtime-object",
       "evidence": "apps/web/src/content/fallbackArchitectureV3Runtime.ts:610-613 states that the package covers Ascendant and Midheaven while IC remains intentionally uncovered."
+    },
+    {
+      "entryType": "source-row-family",
+      "sourceKeyPrefix": "fallback-hook/planet-lived/",
+      "expectedSourceCount": 7,
+      "disposition": "general-planet-meaning-outside-natal-introductions",
+      "evidence": "docs/content-management/NATAL_PLANET_INTRODUCTIONS.md: The natal intro slot now uses natal/planet-intro sources. Original planet-lived records remain unchanged for their existing knowledge-matrix lineage and non-natal uses."
     }
   ]
 }

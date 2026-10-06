@@ -4,7 +4,7 @@ export function transitNatalPackagedSourceDraft(source: Record<string, unknown>,
     throw new Error("The packaged source could not be verified.");
   }
   return {
-    reviewerNotes: "", id: null, contentKey, surface: "you" as const, mode: "in_depth" as const,
+    reviewerNotes: "", id: null, contentKey, surface: contentKey.startsWith("fallback-hook/natal/") ? "natal" as const : "you" as const, mode: "in_depth" as const,
     status: "DRAFT" as const, lane: "reference" as const, blockType: "fallback_hook" as const,
     headline: typeof source.headline === "string" ? source.headline : contentKey,
     summary: "", body: String(source.body_you ?? source.body ?? source.body_they ?? ""),

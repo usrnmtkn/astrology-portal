@@ -162,8 +162,7 @@ export function natalPlacementResolverDependencyKeys(
     `fallback-hook/natal-you-placement-sign-final/${planet}/${sign}`,
     `fallback-hook/placement-sign-lived/${planet}/${sign}`,
     `fallback-hook/sign-lived/${sign}`,
-    `fallback-hook/planet-lived/${planet}`,
-    `fallback-hook/planet-intro/${planet}`,
+    `fallback-hook/natal/planet-intro/${planet}`,
     `fallback-hook/planet-best/${planet}`,
     `fallback-hook/placement-sentence/${planet}/${sign}`,
     `fallback-vocab/planet-topic/${planet}`,
@@ -241,7 +240,7 @@ export function natalPlacementSourceGroups(
     description: "Edit the complete sign passage or the shared variables below. A published complete passage takes priority over the shared sign assembly.",
     sources: [
       { key: `fallback-hook/natal-you-placement-sign-final/${planet}/${sign}`, label: `Complete ${planetLabel} in ${signLabel} passage`, scope: `When published, this complete You-view passage replaces the shared sign assembly across every house.` },
-      { key: `fallback-hook/planet-intro/${planet}`, label: `${planetLabel} introduction`, scope: `Used by every natal ${planetLabel} placement.` },
+      { key: `fallback-hook/natal/planet-intro/${planet}`, label: `${planetLabel} introduction`, scope: `Used by every natal ${planetLabel} placement.` },
       { key: `fallback-vocab/planet-verb/${planet}`, label: `${planetLabel} action phrase`, scope: `Used by every natal ${planetLabel} sign placement.` },
       { key: `fallback-vocab/sign-adverb/${sign}`, label: `${signLabel} style phrase`, scope: `Used by every natal placement in ${signLabel}.` },
       { key: `fallback-vocab/sign-need/${sign}`, label: `${signLabel} need`, scope: `Used by every natal placement in ${signLabel}.` },

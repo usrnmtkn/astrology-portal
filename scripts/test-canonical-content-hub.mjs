@@ -67,8 +67,8 @@ for (const perspective of ["you", "they"]) {
     index.counts.total
   );
 }
-assert.equal(index.counts.byPerspectiveMode.you.authored, 351);
-assert.equal(index.counts.byPerspectiveMode.they.authored, 0);
+assert.equal(index.counts.byPerspectiveMode.you.authored, 352);
+assert.equal(index.counts.byPerspectiveMode.they.authored, 60);
 assert.equal(index.counts.byKind["angle-sign"], 24);
 assert.equal(index.counts.byKind.aspect, 938);
 assert.equal(index.units.some((unit) => unit.identity.unitId === "natal/placement-sign/part-of-fortune/scorpio"), true);
@@ -81,7 +81,10 @@ assert.equal(index.units.some((unit) => unit.identity.unitId.startsWith("natal/a
 assert.equal(new Set(index.slots.map((slot) => slot.slotId)).size, index.slots.length);
 assert.equal(index.slots.filter((slot) => !slot.authoritySourceKey).length, 0);
 assert.equal(index.slots.filter((slot) => slot.reconciliationBucket === "OWNER_DECISION_REQUIRED").length, 0);
-assert.equal(report.compositionSlots.authorityResolved, 7);
+assert.equal(report.compositionSlots.authorityResolved, 0);
+const natalIntroSlots = index.slots.filter((slot) => slot.authoritySourceKey.startsWith("fallback-hook/natal/planet-intro/"));
+assert.equal(natalIntroSlots.length, 14);
+assert.equal(index.slots.some((slot) => slot.authoritySourceKey.startsWith("fallback-hook/planet-lived/")), false);
 
 // NO_PENDING_RENDER: candidates never carry render eligibility and never replace canonical content.
 for (const unit of index.units) {

@@ -245,8 +245,7 @@ function renderNatalPlacementReference(facts, opts = {}) {
     signNeed: getVocab(`fallback-vocab/sign-need/${sign}`, voice, { allowUnreviewed }),
     planetVerb: getVocab(`fallback-vocab/planet-verb/${planet}`, voice, { allowUnreviewed }),
     signAdverb: getVocab(`fallback-vocab/sign-adverb/${sign}`, voice, { allowUnreviewed }),
-    planetIntro: getReaderLivedRow(`fallback-hook/planet-lived/${planet}`, voice, { allowUnreviewed })?.body
-      ?? getHook(`fallback-hook/planet-intro/${planet}`, voice, { allowUnreviewed }),
+    planetIntro: getHook(`fallback-hook/natal/planet-intro/${planet}`, voice, { allowUnreviewed }),
     planetBest: getHook(`fallback-hook/planet-best/${planet}`, facts.voice === "you" ? "you" : "they", { allowUnreviewed }),
     placementSentences: getHook(`fallback-hook/placement-sentence/${planet}/${sign}`, voice, { allowUnreviewed }),
     placementGerundText: getVocabList(`fallback-vocab/placement-gerund/${planet}/${sign}`, voice, { allowUnreviewed }).join(", or ") || null,
