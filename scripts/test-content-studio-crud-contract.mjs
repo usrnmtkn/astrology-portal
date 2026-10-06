@@ -217,8 +217,8 @@ await test('education astro-101 rows can publish; natal sample rows cannot', asy
 
 await test('complete effort interpretations save intact and enforce fact slots at publication', async () => {
   const contentKey = 'cms/sky-debility/reading/sun-libra-direct__venus-scorpio-retrograde__saturn-aries-retrograde';
-  const sourceSnapshot = { contentSystem: 'cms-surface-override', allowedSlots: ['count','total','countWord','totalWord','countVerb','planetWord','planetReference','planetList'] };
-  const body = 'Fixture opening retained in full.\n\n{planetList}.\n\nFixture final sentence retained in full.';
+  const sourceSnapshot = { contentSystem: 'cms-surface-override', allowedSlots: ['count','total','countWord','totalWord','countVerb','planetWord','planetReference','planetList','detrimentCount','fallCount','detrimentPlanetList','fallPlanetList'] };
+  const body = 'Fixture opening retained in full.\n\n{planetList}. Detriment ({detrimentCount}): {detrimentPlanetList}. Fall ({fallCount}): {fallPlanetList}.\n\nFixture final sentence retained in full.';
   reset([]);
   const created = await invoke('POST', { rows: [{ ...writeBody(contentKey), mode: 'card', headline: 'Complete fixture heading', body, sourceSnapshot }] });
   assert.equal(created.status, 200, JSON.stringify(created));
