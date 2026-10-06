@@ -302,3 +302,20 @@ test('canvas sampling reaches the end of long sources and related details preser
   assert(detail.connections.some(edge=>edge.target.id===suggested.target && edge.terms.length>=3));
   assert.equal(sha256(detail.body),detail.bodySha256);
 });
+
+test('rhetorical protections retain complete evidence, narrow qualifications and deployed source packaging', () => {
+  const sourcePath = 'docs/writing/RHETORICAL_PATTERN_PROTECTIONS.md';
+  const index = buildMemoryIndex({ root: process.cwd() });
+  const records = index.records.filter(record => record.path === sourcePath);
+  assert(records.length > 0);
+  const retrieved = records.map(record => memoryDetail(index, record.id));
+  const complete = retrieved.map(record => record.body).join('\n');
+  for (const phrase of ['CORRECTIO', 'TRICOLON', 'PURPLE_PROSE', 'plain-language replacement', 'meaningful contrast', 'independent prose check']) assert(complete.includes(phrase), phrase);
+  for (const detail of retrieved) {
+    assert.equal(detail.bodySha256, sha256(detail.body));
+    assert.equal(detail.sourceSha256, sha256(fs.readFileSync(sourcePath)));
+  }
+  const config = JSON.parse(fs.readFileSync('config/agent-memory-sources-v1.json', 'utf8'));
+  assert(config.requiredContext.includes(sourcePath));
+  assert(config.qualifications.some(item => item.source === sourcePath && item.targets.includes('docs/writing/WRITING_RULE_RECONCILIATION_OWNER_RULING_2026-08-25.md')));
+});

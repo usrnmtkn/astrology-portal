@@ -92,6 +92,7 @@ const goodResult = await runPreparedAskTldrAnswerCalibration({
         responseId: "judge-1",
         value: {
           scores: perfectScores,
+          rhetoric: {checks:["CORRECTIO","TRICOLON","PURPLE_PROSE"].map(label=>({label,outcome:"pass",reason:"Injected transport fixture; not semantic calibration."})),findings:[]},
           timingApplicability: { applicable: true, reason: "The answer uses an upcoming exact transit and names its timing." },
           findings: []
         }

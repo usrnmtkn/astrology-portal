@@ -1,3 +1,4 @@
+import { RHETORICAL_REVIEW_SCHEMA, validateRhetoricalReview, rhetoricalDecision, rhetoricalReviewContract, type RhetoricalReview } from "../../src/astro-writing/rhetoricalPatterns.mjs";
 import { createHash } from "node:crypto";
 import type { AskTldrGovernedFactor } from "./ask-tldr-governed-evidence.js";
 import type { AskTldrVoiceEvidenceReceipt } from "./ask-tldr-voice-receipt.js";
@@ -27,6 +28,7 @@ export type AskTldrJudgeFinding = {
 };
 
 export type AskTldrJudgeResult = {
+  rhetoric: RhetoricalReview;
   scores: AskTldrJudgeScores;
   timingApplicability: { applicable: boolean; reason: string };
   overall: number;
@@ -44,6 +46,7 @@ export type AskTldrJudgeRequest = {
   ownerPassageIds: string[];
   timingApplicable: boolean;
   requestSha256: string;
+  readerAnswer: string;
 };
 
 export const ASK_TLDR_JUDGE_SCORE_FLOORS: Record<AskTldrJudgeCategory, number> = {
@@ -119,8 +122,9 @@ function judgeOutputSchema(timingApplicable: boolean) {
   return {
     type: "object",
     additionalProperties: false,
-    required: ["scores", "timingApplicability", "findings"],
+    required: ["scores", "timingApplicability", "findings", "rhetoric"],
     properties: {
+      rhetoric: RHETORICAL_REVIEW_SCHEMA,
       scores: {
         type: "object",
         additionalProperties: false,
@@ -173,7 +177,8 @@ export function buildAskTldrJudgeRequest(input: {
   const requestWithoutHash = {
     schema: "ask-tldr-judge-request.v1" as const,
     runtimeEnabled: false as const,
-    instructions: judgeInstructions(),
+    instructions: `${judgeInstructions()}\n\n${rhetoricalReviewContract({answer:input.writerOutput.answer})}`,
+    readerAnswer: input.writerOutput.answer,
     input: [
       "USER QUESTION",
       words(input.receipt.question.text),
@@ -233,9 +238,10 @@ export function buildAskTldrJudgeRequest(input: {
 export function validateAskTldrJudgeOutput(request: AskTldrJudgeRequest, value: unknown): AskTldrJudgeResult {
   const root = record(value);
   if (!root) throw new Error("ASK_TLDR_JUDGE_OUTPUT_OBJECT_REQUIRED");
-  if (JSON.stringify(Object.keys(root).sort()) !== JSON.stringify(["findings", "scores", "timingApplicability"].sort())) {
+  if (JSON.stringify(Object.keys(root).sort()) !== JSON.stringify(["findings", "scores", "timingApplicability", "rhetoric"].sort())) {
     throw new Error("ASK_TLDR_JUDGE_OUTPUT_KEYS_INVALID");
   }
+  const rhetoric = validateRhetoricalReview(root.rhetoric,{answer:request.readerAnswer});
   const rawScores = record(root.scores);
   if (!rawScores || JSON.stringify(Object.keys(rawScores).sort()) !== JSON.stringify([...ASK_TLDR_JUDGE_CATEGORIES].sort())) {
     throw new Error("ASK_TLDR_JUDGE_SCORE_KEYS_INVALID");
@@ -288,10 +294,11 @@ export function validateAskTldrJudgeOutput(request: AskTldrJudgeRequest, value: 
   const overall = applicableCategories.reduce((sum, category) => sum + (scores[category] as number), 0) / (4 * applicableCategories.length);
   const floorsPassed = applicableCategories.every((category) => (scores[category] as number) >= ASK_TLDR_JUDGE_SCORE_FLOORS[category]);
   return {
+    rhetoric,
     scores,
     timingApplicability: { applicable: request.timingApplicable, reason: words(applicability.reason) },
     overall,
-    verdict: floorsPassed && overall >= ASK_TLDR_JUDGE_OVERALL_FLOOR ? "pass" : "below_threshold",
+    verdict: floorsPassed && overall >= ASK_TLDR_JUDGE_OVERALL_FLOOR && rhetoricalDecision(rhetoric) === "pass" ? "pass" : "below_threshold",
     findings
   };
 }

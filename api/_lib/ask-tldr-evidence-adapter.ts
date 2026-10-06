@@ -190,7 +190,7 @@ export function askTldrEvidenceFromPersonalTiming(
     const hit = record(entry.hit);
     return hit ? [{ ...hit, timingBoost: sourceFacts(entry) }] : [];
   });
-  const rawHits = [...boosted, ...records(timing.topTransits)];
+  const rawHits: FactRecord[] = [...boosted, ...records(timing.topTransits)];
   const seenHits = new Set<string>();
   const active = rawHits.flatMap((hit) => {
     const id = words(hit.id);

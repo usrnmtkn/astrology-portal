@@ -62,6 +62,7 @@ assert.ok(request.requestSha256);
 
 const scores = Object.fromEntries(ASK_TLDR_JUDGE_CATEGORIES.map((category) => [category, 4]));
 const passing = validateAskTldrJudgeOutput(request, {
+  rhetoric: { checks: ['CORRECTIO','TRICOLON','PURPLE_PROSE'].map(label => ({label,outcome:'pass',reason:'Synthetic review fixture.'})), findings: [] },
   scores,
   timingApplicability: { applicable: true, reason: "The answer uses an upcoming exact transit and names its timing." },
   findings: []
@@ -70,6 +71,7 @@ assert.equal(passing.verdict, "pass");
 assert.equal(passing.overall, 1);
 
 const voiceBelowFloor = validateAskTldrJudgeOutput(request, {
+  rhetoric: { checks: ['CORRECTIO','TRICOLON','PURPLE_PROSE'].map(label => ({label,outcome:'pass',reason:'Synthetic review fixture.'})), findings: [] },
   scores: { ...scores, owner_voice: ASK_TLDR_JUDGE_SCORE_FLOORS.owner_voice - 1 },
   timingApplicability: { applicable: true, reason: "The answer uses upcoming transit timing." },
   findings: [{
@@ -83,6 +85,7 @@ const voiceBelowFloor = validateAskTldrJudgeOutput(request, {
 assert.equal(voiceBelowFloor.verdict, "below_threshold");
 
 assert.throws(() => validateAskTldrJudgeOutput(request, {
+  rhetoric: { checks: ['CORRECTIO','TRICOLON','PURPLE_PROSE'].map(label => ({label,outcome:'pass',reason:'Synthetic review fixture.'})), findings: [] },
   scores: { ...scores, astrology_fidelity: 2 },
   timingApplicability: { applicable: true, reason: "Temporal evidence is used." },
   findings: [{
@@ -95,6 +98,7 @@ assert.throws(() => validateAskTldrJudgeOutput(request, {
 }), /ASK_TLDR_JUDGE_FINDING_EVIDENCE_REQUIRED/u);
 
 assert.throws(() => validateAskTldrJudgeOutput(request, {
+  rhetoric: { checks: ['CORRECTIO','TRICOLON','PURPLE_PROSE'].map(label => ({label,outcome:'pass',reason:'Synthetic review fixture.'})), findings: [] },
   scores: { ...scores, owner_voice: 2 },
   timingApplicability: { applicable: true, reason: "Temporal evidence is used." },
   findings: [{
@@ -115,3 +119,12 @@ assert.throws(() => buildAskTldrJudgeRequest({
 }), /ASK_TLDR_JUDGE_FACT_LOCK_MUST_PASS/u);
 
 console.log("Ask TLDR judge contract passed: the reviewer cannot self-declare pass, findings must cite the correct evidence lane, and deterministic owner-set score floors decide release quality.");
+
+for (const label of ['CORRECTIO','TRICOLON','PURPLE_PROSE']) {
+ const paragraph=request.readerAnswer.split(/\n\s*\n/u)[0];
+ const rhetoric={checks:['CORRECTIO','TRICOLON','PURPLE_PROSE'].map(item=>({label:item,outcome:item===label?'fail':'pass',reason:'Synthetic contract fixture.'})),findings:[{label,field:'answer',quote:paragraph,paragraph,reason:'Synthetic operation.',readerConsequence:'Synthetic loss of meaning.',meaningTest:'Synthetic test in complete context.'}]};
+ const input={scores,timingApplicability:{applicable:true,reason:'Synthetic'},findings:[],rhetoric};
+ assert.equal(validateAskTldrJudgeOutput(request,input).verdict,'below_threshold');
+ rhetoric.findings[0].paragraph='Absent from the answer.';
+ assert.throws(()=>validateAskTldrJudgeOutput(request,input),/unsupported_finding/);
+}

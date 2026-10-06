@@ -2,7 +2,7 @@ import {assertHoroscopeRequestEvidence} from './assert-horoscope-request-evidenc
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import SwissEph from 'swisseph-wasm';
-import {store,installHoroscopeWriterFixture,invokeHoroscopeWriting,writerFixture} from '../tests/helpers/sky-article-save-api.mts';
+import {store,installHoroscopeWriterFixture,invokeHoroscopeWritingWithReview as invokeHoroscopeWriting,writerFixture} from '../tests/helpers/sky-article-save-api.mts';
 import {prepareHoroscopeBrief} from '../api/_lib/horoscope-editions';
 import {prepareHoroscopeWriting} from '../src/astro-writing/horoscopeWriting.mjs';
 import {horoscopeAspectFindings} from '../src/astro-writing/horoscopeAspectClaims.mjs';

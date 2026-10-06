@@ -1,3 +1,4 @@
+import { RHETORICAL_REVIEW_SCHEMA, validateRhetoricalReview, rhetoricalDecision, rhetoricalReviewContract, type RhetoricalReview } from "../../src/astro-writing/rhetoricalPatterns.mjs";
 import { readPrivateReportDocument } from "./private-report-documents.mjs";
 import fs from "node:fs";
 import type { ReportDraft, ReportGenerationPayload } from "./report-generation.ts";
@@ -31,6 +32,7 @@ export const REPORT_JUDGE_RELEASE_QUALITY_FLOORS = {
 export type ReportJudgeCategory = typeof REPORT_JUDGE_CATEGORIES[number];
 export type ReportJudgeScores = Record<ReportJudgeCategory, number | null>;
 export type ReportJudgeResult = {
+  rhetoric: RhetoricalReview;
   scores: ReportJudgeScores;
   applicability: { interpretive_movement: "applicable" | "not_applicable"; reason: string };
   overall: number;
@@ -75,8 +77,9 @@ export function reportOverviewSentenceContract(
 }
 
 export const REPORT_JUDGE_SCHEMA = {
-  type: "object", additionalProperties: false, required: ["scores", "applicability", "overall", "verdict", "findings"],
+  type: "object", additionalProperties: false, required: ["scores", "applicability", "overall", "verdict", "findings", "rhetoric"],
   properties: {
+    rhetoric: RHETORICAL_REVIEW_SCHEMA,
     scores: {
       type: "object", additionalProperties: false, required: [...REPORT_JUDGE_CATEGORIES],
       properties: Object.fromEntries(REPORT_JUDGE_CATEGORIES.map((category) => [category, category === "interpretive_movement"
@@ -131,6 +134,7 @@ export async function judgeReportUnit(input: {
     ...target,
     prompt: [
       prompt.text,
+      rhetoricalReviewContract(input.draft),
       `CANONICAL_PROMPT\n${input.payload.canonicalOwnerPrompt.text}`,
       `LIVED_PROSE_STANDARD\n${input.payload.livedProseStandard.text}`,
       `NO_CLEVERNESS_TAX_OWNER_RULING\n${input.payload.noClevernessRuling.text}`,
@@ -156,6 +160,7 @@ export async function judgeReportUnit(input: {
       reportProductionValidation(validatorIssues)
     )
   });
+  const rhetoric = validateRhetoricalReview(response.value.rhetoric,input.draft);
   const movementApplicable = reportDraftMovementApplicable(input.draft);
   const scores: ReportJudgeScores = {
     ...response.value.scores,
@@ -191,7 +196,7 @@ export async function judgeReportUnit(input: {
         : "The complete unit contains fewer than two substantive prose paragraphs."
     },
     overall,
-    verdict: overviewSentenceContract.passed
+    verdict: overviewSentenceContract.passed && rhetoricalDecision(rhetoric) === "pass"
       ? reportJudgeReleaseVerdict(scores, input.threshold, movementApplicable)
       : "below_threshold" as const
   };

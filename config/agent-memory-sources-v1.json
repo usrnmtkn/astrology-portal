@@ -32,7 +32,7 @@
     }
   ],
   "qualifications": [
-    {"source": "docs/writing/RHETORICAL_PATTERN_PROTECTIONS.md", "targets": ["docs/writing/WRITING_RULE_RECONCILIATION_OWNER_RULING_2026-08-25.md", "docs/writing/AI_GENERATION_RELIABILITY.md", "docs/writing/BANNED_PATTERNS.md", "tldr-astro-phrasebank/TLDR-WRITING-AUTHORITY-INDEX.md"]},
+    {"source": "docs/writing/RHETORICAL_PATTERN_PROTECTIONS.md", "targets": ["docs/writing/WRITING_RULE_RECONCILIATION_OWNER_RULING_2026-08-25.md", "docs/writing/AI_GENERATION_RELIABILITY.md", "docs/writing/BANNED_PATTERNS.md", "tldr-astro-phrasebank/TLDR-WRITING-AUTHORITY-INDEX.md", "skills/tldr-astro-writer/SKILL.md", ".agents/skills/satori-writer/SKILL.md", "docs/writing/WRITING_PIPELINE_V3.md"]},
     {
       "source": "docs/writing/WRITING_RULE_RECONCILIATION_OWNER_RULING_2026-08-25.md",
       "targets": [

@@ -304,6 +304,7 @@ const runtimeJudge = await judgeReportUnit({
     runtimePrompt = input.prompt;
     return {
       value: {
+        rhetoric: { checks: ['CORRECTIO','TRICOLON','PURPLE_PROSE'].map(label => ({label,outcome:'pass',reason:'Synthetic review fixture.'})), findings: [] },
         scores: { ...runtimeScores, natural_language: 4, syntax_variety: 3 },
         applicability: { interpretive_movement: "not_applicable", reason: "MODEL_REPORTED_VALUE_IS_NOT_AUTHORITY" },
         overall: 0,
@@ -334,6 +335,7 @@ for (const category of ["owner_voice", "natural_language"]) {
     threshold: 0.85,
     callModel: async () => ({
       value: {
+        rhetoric: { checks: ['CORRECTIO','TRICOLON','PURPLE_PROSE'].map(label => ({label,outcome:'pass',reason:'Synthetic review fixture.'})), findings: [] },
         scores: belowReleaseFloorScores,
         applicability: { interpretive_movement: "applicable", reason: "FIXTURE_ONLY" },
         overall: 1,
@@ -368,6 +370,7 @@ await judgeReportUnit({
     candidateRuntimePrompt = input.prompt;
     return {
       value: {
+        rhetoric: { checks: ['CORRECTIO','TRICOLON','PURPLE_PROSE'].map(label => ({label,outcome:'pass',reason:'Synthetic review fixture.'})), findings: [] },
         scores: Object.fromEntries(REPORT_JUDGE_CATEGORIES.map((category) => [category, 4])),
         applicability: { interpretive_movement: "applicable", reason: "FIXTURE_ONLY" },
         overall: 1,
@@ -390,6 +393,7 @@ const shortJudge = await judgeReportUnit({
   threshold: 0.85,
   callModel: async () => ({
     value: {
+        rhetoric: { checks: ['CORRECTIO','TRICOLON','PURPLE_PROSE'].map(label => ({label,outcome:'pass',reason:'Synthetic review fixture.'})), findings: [] },
       scores: { ...runtimeScores, natural_language: 4, interpretive_movement: 0 },
       applicability: { interpretive_movement: "applicable", reason: "MODEL_REPORTED_VALUE_IS_NOT_AUTHORITY" },
       overall: 0,

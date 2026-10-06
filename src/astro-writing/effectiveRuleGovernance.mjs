@@ -1,3 +1,4 @@
+import { RHETORICAL_LABELS } from "./rhetoricalPatterns.mjs";
 import {
   renderEffectiveRulesForPrompt,
   tierForFindingCategory
@@ -22,7 +23,8 @@ export function governValidationResult(result, context = {}) {
   const advisoryFindings = [...(result?.advisories ?? [])];
 
   for (const finding of result?.violations ?? []) {
-    const governanceTier = findingGovernanceTier(finding.category, context);
+    // Deterministic signals cannot establish a semantic rhetorical verdict.
+    const governanceTier = RHETORICAL_LABELS.includes(finding.category) ? "advisory" : findingGovernanceTier(finding.category, context);
     if (governanceTier === "blocking") {
       blockingViolations.push({ ...finding, governanceTier });
     } else {
@@ -42,7 +44,7 @@ export function governValidationResult(result, context = {}) {
     advisories: advisoryFindings,
     governance: {
       authority: "owner-only",
-      modelJudges: "advisory-only",
+      modelJudges: "advisory-except-contextual-rhetorical-patterns",
       blockingViolationCount: blockingViolations.length,
       advisoryFindingCount: advisoryFindings.length
     }

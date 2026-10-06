@@ -7,6 +7,7 @@ const {
   HOROSCOPE_EDITORIAL_AUTHORITY,
   coldRenderedProseReviewInstructions
 } = require("./canonicalInstructions.cjs");
+const { RHETORICAL_JUDGE_POLICY } = require("./rhetoricalPatterns.cjs");
 const { renderEffectiveRulesForPrompt } = require("./effectiveRules.cjs");
 const { assertProductionPreCallGate } = require("./productionPreCallGate.cjs");
 
@@ -14,7 +15,7 @@ const CARD_REVIEWER_V3_CANDIDATE_INSTRUCTIONS = `ROLE: TLDR ASTRO CARD JUDGE V3 
 
 This role is calibration-only and is not active in production. Apply only the supplied CARD-surface rubric and same-surface comparison evidence. Return findings only. Never return a verdict, severity, score, or replacement prose.`;
 
-const ROLES = new Set(["MEANING_PLANNER", "WRITER", "COLD_REVIEWER", "REVIEWER", "REVISER", "CARD_WRITER_V3", "CARD_REVISER_V3", "CARD_REVIEWER_V3"]);
+const ROLES = new Set(["MEANING_PLANNER", "WRITER", "COLD_REVIEWER", "REVIEWER", "RHETORICAL_REVIEWER", "REVISER", "CARD_WRITER_V3", "CARD_REVISER_V3", "CARD_REVIEWER_V3"]);
 const EFFECTIVE_RULE_ROLES = new Set(["WRITER", "REVIEWER", "REVISER", "CARD_WRITER_V3", "CARD_REVISER_V3"]);
 // Seasonal-only architecture roles. Existing role instructions are unchanged.
 const SEASONAL_ROLES = new Set(['SEASONAL_MECHANISM','SEASONAL_PLANNER','SEASONAL_PLAN_REVIEWER','SEASONAL_VOICE_REVIEWER','SEASONAL_MEANING_REVIEWER']);
@@ -26,7 +27,8 @@ function instructionsForRole(role, taskInstructions = "", {surface = "", family 
     return taskInstructions.trim()?`${authority}\n\n${taskInstructions.trim()}`:authority;
   }
   if (!ROLES.has(role)) throw new Error(`Unknown astrology prose role: ${role}`);
-  const canonical = role === "MEANING_PLANNER" && family === "horoscope" && surface === "horoscopes"
+  const canonical = role === 'RHETORICAL_REVIEWER' ? RHETORICAL_JUDGE_POLICY
+    : role === "MEANING_PLANNER" && family === "horoscope" && surface === "horoscopes"
     ? "HOROSCOPE SYNTHESIS AUTHORITY: Build a private editorial plan from governed calculated facts before reader prose. Return only the planning schema. Planning is not reader copy, positive voice evidence, a quality verdict or owner approval. Do not invent facts or personal biography."
     : role === "WRITER" && family === "horoscope" && surface === "horoscopes"
     ? HOROSCOPE_EDITORIAL_AUTHORITY
@@ -75,7 +77,7 @@ function governedInstructionsForRole(role, {
   const resolvedSurface = surface || (role.startsWith("CARD_") ? "card" : "generic");
   const effectiveRules = renderEffectiveRulesForPrompt({ surface: resolvedSurface, family }).trim();
   const reviewerGovernance = role === "REVIEWER"
-    ? "MODEL REVIEW GOVERNANCE: Every model-authored editorial finding is advisory evidence for the owner. Do not claim approval authority, and do not use severity to authorize an automatic rewrite."
+    ? "MODEL REVIEW GOVERNANCE: Model editorial findings are advisory except the three evidenced contextual rhetorical-pattern blockers. Do not claim approval authority, and do not use severity to authorize an automatic rewrite."
     : "";
   const base = [canonical, effectiveRules, reviewerGovernance].filter(Boolean).join("\n\n");
   return taskInstructions.trim() ? `${base}\n\n${taskInstructions.trim()}` : base;

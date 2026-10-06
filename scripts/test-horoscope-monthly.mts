@@ -2,7 +2,7 @@ import {assertHoroscopeRequestEvidence} from './assert-horoscope-request-evidenc
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import {createHash} from 'node:crypto';
-import {store,installHoroscopeWriterFixture,invokeHoroscopeWriting,writerFixture,fixtureMonthlySynthesis,fixtureMonthlyContext,seedLegacyMonthlyPlanFailure} from '../tests/helpers/sky-article-save-api.mts';
+import {store,installHoroscopeWriterFixture,invokeHoroscopeWritingWithReview as invokeHoroscopeWriting,writerFixture,fixtureMonthlySynthesis,fixtureMonthlyContext,seedLegacyMonthlyPlanFailure} from '../tests/helpers/sky-article-save-api.mts';
 import {readerRouteResponse} from '../tests/helpers/content-reader-route.mjs';
 import {horoscopeCivilWindow,prepareHoroscopeBrief} from '../api/_lib/horoscope-editions';
 import {emptyHoroscopeEdition,validateHoroscopeEdition,horoscopeEditionBody,horoscopeEditionKey,horoscopeEditionAt,HOROSCOPE_SIGNS} from '../apps/web/src/content/horoscopeEditions.mjs';

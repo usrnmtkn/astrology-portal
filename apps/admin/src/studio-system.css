@@ -699,6 +699,8 @@ body:has(.admin-dashboard) { margin: 0; }
 #root .admin-dashboard .admin-horoscope-plan { padding: var(--workspace-panel-inset); border: var(--border-width-thin) solid var(--workspace-line); border-radius: var(--workspace-control-radius); }
 #root .admin-dashboard .admin-horoscope-outline { white-space: pre-wrap; }
 #root .admin-dashboard .admin-horoscope-actions { display: grid; gap: var(--workspace-field-gap); }
+/* Keep held-draft findings and their edit/reject actions unobscured on mobile. */
+#root .admin-dashboard .admin-horoscope-held-actions { position: static; }
 #root .admin-dashboard .admin-horoscope-actions > .admin-toolbar-actions { justify-content: space-between; }
 #root .admin-dashboard .admin-horoscope-actions > .admin-primary-button { justify-self: end; }
 #root .admin-dashboard .admin-horoscope-decision-actions { margin-inline-start: auto; justify-content: flex-end; }

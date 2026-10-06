@@ -1,3 +1,4 @@
+import { RHETORICAL_WRITER_POLICY } from "../../src/astro-writing/rhetoricalPatterns.mjs";
 import { createHash } from "node:crypto";
 import type { AskTldrGovernedFactor } from "./ask-tldr-governed-evidence.js";
 import {
@@ -226,7 +227,7 @@ export function buildAskTldrWriterRequest(input: {
   const requestWithoutHash = {
     schema: "ask-tldr-writer-request.v1" as const,
     runtimeEnabled: false as const,
-    instructions: writerInstructions(input.packet),
+    instructions: `${writerInstructions(input.packet)}\n\n${RHETORICAL_WRITER_POLICY}`,
     input: writerInput(input.packet, input.receipt, eligibleEvidence),
     outputSchema: outputSchema(evidenceIds, primary.id),
     evidenceIds,

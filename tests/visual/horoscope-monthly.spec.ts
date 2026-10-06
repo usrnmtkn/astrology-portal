@@ -66,7 +66,7 @@ for(const [width,theme] of [[390,'light'],[390,'dark'],[1440,'light'],[1440,'dar
    expect((await call({method:'writer-state'})).calls).toBe(0);
    await expect(studio.getByRole('button',{name:'Generate overview',exact:true})).toBeDisabled();
    await studio.getByLabel('I approve this writing plan for generation.').check();
-   await expect(studio.getByText('Up to 2 paid AI requests: one plan, then one draft. Matching saved plans are reused.')).toBeVisible();
+   await expect(studio.getByText('Up to 3 paid AI requests: one plan, one draft, and one prose check. Matching saved plans are reused. No automatic rewrites or paid retries. You approve the final wording.')).toBeVisible();
    {
     // Recover a completed plan rejected by the older single-planet validator.
     // The real handler must retrieve it without another planning/prose charge.

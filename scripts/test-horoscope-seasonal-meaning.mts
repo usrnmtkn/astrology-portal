@@ -5,7 +5,7 @@ import {resolveSeasonalMeaning,seasonalMeaningForRising,SEASONAL_MEANING_BANK} f
 import {seasonalDateFindings} from '../src/astro-writing/horoscopeSeasonalDates.mjs';
 import {validateHoroscopeReading} from '../src/astro-writing/horoscopeValidation.mjs';
 import {HOROSCOPE_SIGNS,emptyHoroscopeEdition,horoscopeEditionKey,horoscopeEditionBody} from '../apps/web/src/content/horoscopeEditions.mjs';
-import {store,editorialFixtureRows,installHoroscopeWriterFixture,invokeHoroscopeWriting,writerFixture} from '../tests/helpers/sky-article-save-api.mts';
+import {store,editorialFixtureRows,installHoroscopeWriterFixture,invokeHoroscopeWritingWithReview as invokeHoroscopeWriting,writerFixture} from '../tests/helpers/sky-article-save-api.mts';
 const packaged=new Set(fs.globSync(JSON.parse(fs.readFileSync('vercel.json','utf8')).functions['api/admin/horoscope-writing.ts'].includeFiles));
 assert(packaged.has(SEASONAL_MEANING_BANK),'The deployed writer must include the actual source bank.');
 const bank=JSON.parse(fs.readFileSync(SEASONAL_MEANING_BANK,'utf8'));
