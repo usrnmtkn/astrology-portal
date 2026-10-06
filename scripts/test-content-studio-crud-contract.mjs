@@ -242,6 +242,11 @@ await test('complete effort interpretations save intact and enforce fact slots a
     assert.ok(result.status >= 400, JSON.stringify(result));
     assert.deepEqual(writes, []);
   }
+  reset([{ ...baseline, content_key: contentKey, headline: 'Complete fixture heading', body: '{planetList}.', source_snapshot: { ...sourceSnapshot, allowedSlots: ['planetList'] } }]);
+  const refreshed = await invoke('PATCH', { id: baseline.id, expectedUpdatedAt: baseline.updated_at, body, sourceSnapshot, status: 'LIVE', lane: 'serving', reviewState: null });
+  assert.equal(refreshed.status, 200, JSON.stringify(refreshed));
+  assert.equal(rows.get(baseline.id).body, body);
+  assert.deepEqual(rows.get(baseline.id).source_snapshot.allowedSlots, sourceSnapshot.allowedSlots);
 });
 
 await test('unauthorized requests never reach storage', async () => {
