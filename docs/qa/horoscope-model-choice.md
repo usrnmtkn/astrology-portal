@@ -61,3 +61,28 @@ Gemini requires server-only `GEMINI_API_KEY`; Claude requires server-only
 `ANTHROPIC_API_KEY`. Configure both Preview and Production before the release.
 The catalog names explicit API models and does not claim equivalent output,
 speed or price between providers. There is no automatic provider fallback.
+
+## Browser payload
+
+The browser imports only the display catalog, never the server provider configuration
+module. Independent matched builds against main `d23f3ce1f` measure the deferred
+horoscope editor at 13,083 and 13,706 gzip bytes (+623), with aggregate JavaScript
+at 3,545,650 and 3,546,243 bytes (+593). The old editor cap was already 283 bytes
+below main. Its reconciled 13,800-byte cap covers the existing overage and the
+requested selector; startup, aggregate, CSS and other chunk caps stay unchanged.
+
+## Existing unrelated browser failures
+
+On 2026-10-07, an independently installed, unchanged checkout of main
+`d23f3ce1f` reproduces both failures seen in the feature CI:
+
+- `client-facing-user-flows.spec.ts`, “signed-in user can edit current location
+  from settings”: the test expects one `.settings-row`, but the current settings
+  surface renders four.
+- `content-dashboard-admin-user-flows.spec.ts`, “Personal Transit preview
+  explains missing timing”: its route fixture calls `transitPreviewResponse`
+  outside that helper's scope, causing a `ReferenceError` before the response.
+
+These are recorded baseline failures, not passing acceptance checks. The model
+selector does not change either surface or fixture. Its three actual-handler
+browser scenarios and the existing horoscope recovery scenarios pass separately.

@@ -2,11 +2,8 @@ import provider from './offlineProviderConfig.cjs';
 
 // Deliberately scoped to horoscope prose. Planning and independent review keep
 // their existing models; saved operations always retain their captured config.
-export const HOROSCOPE_WRITERS = Object.freeze([
-  {id:'current',label:'Current writer',provider:'openai',model:'gpt-5.6-sol',key:'OPENAI_API_KEY'},
-  {id:'gemini',label:'Gemini 3.1 Pro (preview)',provider:'gemini',model:'gemini-3.1-pro-preview',key:'GEMINI_API_KEY'},
-  {id:'claude',label:'Claude Sonnet 5.5',provider:'anthropic',model:'claude-sonnet-5-5',key:'ANTHROPIC_API_KEY'}
-]);
+import {HOROSCOPE_WRITERS} from './horoscopeWriterCatalog.mjs';
+export {HOROSCOPE_WRITERS} from './horoscopeWriterCatalog.mjs';
 
 export function horoscopeWriterConfig(choice='current',period='weekly') {
   const selected=HOROSCOPE_WRITERS.find(writer=>writer.id===choice);

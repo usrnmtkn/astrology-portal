@@ -1,12 +1,5 @@
-export type HoroscopeWriterChoice = 'current' | 'gemini' | 'claude';
-export type HoroscopeWriter = {
-  id: HoroscopeWriterChoice;
-  label: string;
-  provider: 'openai' | 'gemini' | 'anthropic';
-  model: string;
-  key: string;
-};
-export const HOROSCOPE_WRITERS: readonly HoroscopeWriter[];
+import type {HoroscopeWriterChoice, HoroscopeWriter} from './horoscopeWriterCatalog.mjs';
+export {HOROSCOPE_WRITERS, type HoroscopeWriterChoice, type HoroscopeWriter} from './horoscopeWriterCatalog.mjs';
 export function horoscopeWriterConfig(choice?: HoroscopeWriterChoice, period?: string): {
   provider: HoroscopeWriter['provider']; model: string; maxOutputTokens: number;
   reasoningEffort?: string; thinkingLevel?: string;

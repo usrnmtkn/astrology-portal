@@ -15,7 +15,7 @@ import {browserTimeZone} from '../../web/src/services/timezones';
 import type {LocationInput} from '../../web/src/types';
 import {horoscopePunctuationFindings,horoscopeVocabularyFindings} from '../../../src/astro-writing/horoscopeEditorialConstraints.mjs';
 import {horoscopePendingReadings} from '../../../src/astro-writing/horoscopeRecovery.mjs';
-import {HOROSCOPE_WRITERS} from '../../../src/astro-writing/horoscopeWriterModels.mjs';
+import {HOROSCOPE_WRITERS} from '../../../src/astro-writing/horoscopeWriterCatalog.mjs';
 const SeasonalGenerationDetails=lazy(()=>import('./SeasonalGenerationDetails').then(module=>({default:module.SeasonalGenerationDetails})));
 const WritingProfiles=lazy(()=>import('./HoroscopeWritingStudio'));
 const endpoint = '/api/admin/generated-content';
