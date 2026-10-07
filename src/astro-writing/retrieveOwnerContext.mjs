@@ -1,3 +1,4 @@
+import {weeklyEvidenceMatch} from "./weeklyOwnerEvidence.mjs";
 import { selectOwnerCorrectionPairs } from "./selectOwnerCorrectionPairs.mjs";
 import { normalizeOwnerEvidence, ownerEvidencePolicyFor, OwnerEvidencePreconditionError } from "./ownerEvidencePolicy.mjs";
 import { buildSharedEvidencePacket } from "./sharedEvidenceIndex.mjs";
@@ -42,6 +43,8 @@ function registerFamilyMatchesTarget(entry, plan, contentFamily) {
 
 export function retrieveOwnerContext(plan, {
   examples = [],
+  retrievalQuery = null,
+  rejectedExamples = [],
   matrixExamples = [],
   reviewedMeaningExamples = [],
   matrixArgumentCandidates = [],
@@ -91,7 +94,7 @@ export function retrieveOwnerContext(plan, {
     .map((entry, index) => ({
       entry,
       index,
-      score: overlapScore(entry, plan) + (preferredKeys.has(entry.contentKey) ? 1000 : 0)
+      score: retrievalQuery ? weeklyEvidenceMatch(entry,retrievalQuery).score : overlapScore(entry, plan) + (preferredKeys.has(entry.contentKey) ? 1000 : 0)
     }))
     .sort((a, b) => b.score - a.score || a.index - b.index)
     .map(({ entry }) => entry);
@@ -120,7 +123,7 @@ export function retrieveOwnerContext(plan, {
     relevantOwnerPassagesAvailableCount ?? 0
   );
   const add = (entry, sourceLimit) => {
-    if (selectedSameFamily.includes(entry)) return false;
+    if (selectedSameFamily.includes(entry) || (retrievalQuery && selectedSameFamily.some(e=>e.text===entry.text))) return false;
     const sourceKey = entry.sourceFamily === "owner-locked-lilith-v5-placement"
       ? entry.contentKey
       : entry.sourcePath ?? entry.source ?? entry.contentKey ?? entry.id;
@@ -188,6 +191,11 @@ export function retrieveOwnerContext(plan, {
         && entry.eventType === plan.eventType)))
     : [];
   const context = {
+    rejectedExamples,
+    ...(retrievalQuery?{retrievalSelection:{query:retrievalQuery,
+      eligible:rankedExamples.map(e=>({id:e.id,sourcePath:e.sourcePath,sourceRecordSha256:e.sourceRecordSha256,
+        selected:selectedSameFamily.includes(e),primary:primaryRegisterPassages.includes(e),...weeklyEvidenceMatch(e,retrievalQuery)})),
+      excluded:normalizedExamples.filter(e=>!eligibleExamples.includes(e)).map(e=>({id:e.id,sourcePath:e.sourcePath,reason:"Outside the approved surface/register/authority policy or explicitly excluded."}))}}:{}),
     examples: [...selectedMatrix, ...selectedSameFamily, ...selectedRegisterGold, ...selectedScenes],
     reviewedMeaningExamples: selectedReviewedMeaning,
     knowledgeMatrixExamples: selectedMatrix,

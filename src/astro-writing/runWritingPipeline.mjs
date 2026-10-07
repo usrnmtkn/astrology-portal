@@ -44,6 +44,8 @@ export function failedRetrievalResult({ plan, context, argumentOutline, spine, e
 export async function runWritingPipeline({
   meaningInput,
   examples,
+  retrievalQuery = null,
+  rejectedExamples = [],
   matrixExamples = [],
   reviewedMeaningExamples = [],
   matrixArgumentCandidates = [],
@@ -120,6 +122,8 @@ export async function runWritingPipeline({
   try {
     context = retrieveOwnerContext(plan, {
       examples,
+      retrievalQuery,
+      rejectedExamples,
       matrixExamples,
       reviewedMeaningExamples,
       matrixArgumentCandidates,
