@@ -9,8 +9,9 @@ import {listStudioWritingProfiles} from '../_lib/studio-writing-profiles.js';
 import {activeStudioFeedback,studioFeedbackEnabled,feedbackHash} from '../_lib/studio-memory-feedback.js';
 import {prepareHoroscopeWriting,horoscopePlanPreview,writeHoroscopeSign,horoscopeWritingVersion} from '../../src/astro-writing/horoscopeWriting.mjs';
 import {horoscopeEditionBody,horoscopeReadingSigns,horoscopeCanonicalJson} from '../../apps/web/src/content/horoscopeEditions.mjs';
-import responses from '../../src/astro-writing/openAIResponses.cjs';
-import provider from '../../src/astro-writing/offlineProviderConfig.cjs';
+import {horoscopeWriterConfig,horoscopeWriterOptions,isHoroscopeResponseId} from '../../src/astro-writing/horoscopeWriterModels.mjs';
+import {buildHoroscopeProviderRequest} from '../_lib/horoscope-provider-codecs.js';
+import {startHoroscopeResponse,storedHoroscopeResponse} from '../_lib/horoscope-provider.js';
 import {HoroscopeProviderFailure,horoscopeProviderDiagnostic,readHoroscopeProviderResult} from '../_lib/horoscope-provider-result.js';
 import {loadHoroscopeSeasonalSources} from '../_lib/horoscope-seasonal-sources.js';
 import {validateHoroscopeReading} from '../../src/astro-writing/horoscopeValidation.mjs';
@@ -39,7 +40,8 @@ export default async function handler(req:IncomingMessage,res:ServerResponse) {
   try {
     const input=await readAdminJsonBody<Record<string,any>>(req);
     if(!['prepare','generate','continue','poll','release','reject','diagnose','inspect'].includes(input.action)||typeof input.id!=='string'||!input.id
-      ||typeof input.expectedUpdatedAt!=='string'||Object.keys(input).some(k=>!['action','id','expectedUpdatedAt','sign','approvedPlanHash','acknowledgeUnknownOutcome'].includes(k)))throw new AdminHttpError(400,'Choose a saved edition and a writing action.');
+      ||typeof input.expectedUpdatedAt!=='string'||Object.keys(input).some(k=>!['action','id','expectedUpdatedAt','sign','approvedPlanHash','acknowledgeUnknownOutcome','writerChoice'].includes(k)))throw new AdminHttpError(400,'Choose a saved edition and a writing action.');
+    if(input.writerChoice!==undefined&&(input.action!=='prepare'||!horoscopeWriterOptions(process.env).some((writer:any)=>writer.id===input.writerChoice)))throw new AdminHttpError(400,'Choose a supported writing model while preparing the plan.');
     const {url,headers}=studioStorage();
     const read=await adminFetchJson(`${url}?${new URLSearchParams({id:`eq.${input.id}`,select:'*',limit:'1'})}`,{headers});
     if(!read.ok)throw new AdminHttpError(502,'The saved edition could not be read.');
@@ -56,6 +58,7 @@ export default async function handler(req:IncomingMessage,res:ServerResponse) {
       row=saved[0];return row;
     };
     let operation=row.source_snapshot?.horoscopeGeneration?.active;
+    if(input.writerChoice!==undefined&&operation)throw new AdminHttpError(409,'Finish the saved request before changing its writing model.');
     if(input.action==='inspect'||['poll','continue'].includes(input.action)&&operation?.workflow===SEASONAL_EDITORIAL_WORKFLOW){
       if(row.sections.horoscopeEdition.window.period!=='seasonal')throw new AdminHttpError(400,'Private editorial inspection is Seasonal only.');
       const result=await seasonalEditorialOperation({action:input.action,row,persist,sign:input.sign,apiKey:process.env.OPENAI_API_KEY,actor});
@@ -88,8 +91,7 @@ export default async function handler(req:IncomingMessage,res:ServerResponse) {
       const failed=row.source_snapshot?.horoscopeGeneration?.lastError;
       if(!operation&&isHoroscopeReview(failed?.operation))return sendAdminJson(res,200,{ok:true,failure:{code:failed.code,message:failed.message,diagnostic:failed.review?.diagnostic??null}});
       if(operation||!failed?.operation?.responseId)throw new AdminHttpError(409,'There is no finished failed request to inspect. Check saved progress to retrieve any running request.');
-      if(!process.env.OPENAI_API_KEY)throw new AdminHttpError(503,'The horoscope writer is not connected. Restore its server API key to inspect this reading.');
-      const response=await responses.storedWritingResponse({apiKey:process.env.OPENAI_API_KEY,responseId:failed.operation.responseId});
+      const response=await storedHoroscopeResponse({operation:failed.operation});
       if(!response.ok)throw new AdminHttpError(503,'The saved writer response is unavailable. The failed request and saved readings are kept.');
       const payload=await response.json();
       try{readHoroscopeProviderResult(payload,{format:failed.operation.outputFormat,facts:failed.operation.validationFacts??failed.operation.synthesisFacts});}
@@ -145,7 +147,7 @@ export default async function handler(req:IncomingMessage,res:ServerResponse) {
       }
       if(!operation||Date.now()-Date.parse(operation.startedAt)<310000||input.acknowledgeUnknownOutcome!==true)throw new AdminHttpError(409,'Wait for the in-flight request, then acknowledge its unknown outcome before releasing it.');
       if(operation.responseId){
-        const response=await responses.storedWritingResponse({apiKey:process.env.OPENAI_API_KEY,responseId:operation.responseId,cancel:true});
+        const response=await storedHoroscopeResponse({operation,cancel:true});
         const result:any=await response.json();
         if(!response.ok||!['cancelled','failed','incomplete'].includes(result.status))throw new AdminHttpError(409,'This request could not be cancelled, or has already completed. Resume generation to retrieve its result.');
       }
@@ -179,7 +181,6 @@ export default async function handler(req:IncomingMessage,res:ServerResponse) {
     }
     if(input.action==='continue')throw new AdminHttpError(409,'Check saved progress before continuing this reading.');
     if(input.action==='poll'&&!recoverMonthlyPlan) {
-      if(!apiKey)throw new AdminHttpError(503,'The horoscope writer is not connected. Restore its server API key to retrieve this reading.');
       if(!operation.responseId){
         const recovery=horoscopeStartupRecovery(operation);
         if(recovery==='waiting')return sendAdminJson(res,202,{ok:true,rows:[row],pending:true});
@@ -195,7 +196,7 @@ export default async function handler(req:IncomingMessage,res:ServerResponse) {
         }
         throw new AdminHttpError(409,'This request cannot be retrieved yet. Check saved progress before retrying.');
       }
-      const response=await responses.storedWritingResponse({apiKey,responseId:operation.responseId});
+      const response=await storedHoroscopeResponse({operation});
       const payload:any=await response.json();
       if(!response.ok)throw new AdminHttpError(503,'The writer result is temporarily unavailable. Resume to retrieve the same request.');
       if(['queued','in_progress'].includes(payload.status))return sendAdminJson(res,202,{ok:true,rows:[row],pending:true});
@@ -220,15 +221,20 @@ export default async function handler(req:IncomingMessage,res:ServerResponse) {
     // A new plan always adopts the latest saved instructions. In-flight requests
     // and their historical receipts stay pinned to the instructions they used.
     let writingRow=row;
+    if(input.writerChoice!==undefined&&input.writerChoice!==(row.source_snapshot?.horoscopeWriterChoice??'current'))writingRow={...writingRow,source_snapshot:{...writingRow.source_snapshot,horoscopeWriterChoice:input.writerChoice}};
     if(!operation){
       const profiles=await listStudioWritingProfiles(params=>adminFetchJson(`${url}?${params}`,{headers}));
       const latest=profiles.find(p=>p.profile.period===row.sections.horoscopeEdition.window.period);
       if(latest?.id&&horoscopeCanonicalJson(latest)!==horoscopeCanonicalJson(row.source_snapshot?.studioWritingProfile??null)){
-        writingRow={...row,source_snapshot:{...row.source_snapshot,studioWritingProfile:latest}};
+        writingRow={...writingRow,source_snapshot:{...writingRow.source_snapshot,studioWritingProfile:latest}};
       }
     }
     const seasonalSourceRows=await loadHoroscopeSeasonalSources(row.facts?.horoscopeBrief?.brief);
-    const prepared=prepareHoroscopeWriting(writingRow,{feedbackReceipt,seasonalSourceRows});
+    const writerChoice=writingRow.source_snapshot?.horoscopeWriterChoice??'current';
+    const writerConfig=horoscopeWriterConfig(writerChoice,row.sections.horoscopeEdition.window.period);
+    const writerModels=horoscopeWriterOptions(process.env);
+    const writerAvailable=writerModels.find((writer:any)=>writer.id===writerChoice)?.available;
+    const prepared=prepareHoroscopeWriting(writingRow,{feedbackReceipt,seasonalSourceRows,writerSelection:writerChoice==='current'?null:writerConfig});
     if(recoverMonthlyPlan){
       if(prepared.planHash!==failed.operation.planHash||prepared.edition.passages.some((p:any)=>p.headline.trim()||p.body.trim()))throw new AdminHttpError(409,'The saved plan uses earlier instructions or content. Review the current writing plan before generating. Your saved readings are kept.');
       if(!apiKey)throw new AdminHttpError(503,'The horoscope writer is not connected. Restore its server API key to retrieve this plan.');
@@ -240,9 +246,9 @@ export default async function handler(req:IncomingMessage,res:ServerResponse) {
         await persist({source_snapshot:writingRow.source_snapshot});
         if(horoscopeCanonicalJson(row.source_snapshot)!==horoscopeCanonicalJson(writingRow.source_snapshot))throw new AdminHttpError(502,'The latest writing instructions could not be confirmed. Reopen this edition before continuing.');
       }
-      return sendAdminJson(res,200,{ok:true,rows:[row],plan:horoscopePlanPreview(prepared),configured:Boolean(apiKey)});
+      return sendAdminJson(res,200,{ok:true,rows:[row],plan:{...horoscopePlanPreview(prepared),writerChoice,writerModel:writerConfig.model,writerModels},configured:writerAvailable});
     }
-    if(!apiKey)throw new AdminHttpError(503,'The horoscope writer is not connected. Configure the server OpenAI API key, then retry.');
+    if(!writerAvailable)throw new AdminHttpError(503,'The selected writing model or its review connection is unavailable. No replacement model was used.');
     const sign=input.sign;
     if(!horoscopeReadingSigns(prepared.edition).includes(sign))throw new AdminHttpError(400,'Choose a reading.');
     if(row.source_snapshot?.horoscopeGeneration?.heldRequests?.[sign])throw new AdminHttpError(409,'This reading has an interrupted request with an unknown outcome. Continue the other readings or explicitly release this request before retrying.');
@@ -259,7 +265,7 @@ export default async function handler(req:IncomingMessage,res:ServerResponse) {
       const result=await seasonalEditorialOperation({action:'generate',row,persist,prepared,sign,apiKey,actor});
       return sendAdminJson(res,result.status,result.payload);
     }
-    const config=provider.normalizeProviderConfig({},'writer');
+    const config=writerConfig;
     if(!operation) {
       const entry=prepared.entries.find((e:any)=>e.sign===sign);
       operation={id:randomUUID(),sign,planHash,startedAt:new Date().toISOString(),actor,config,responseId:null,state:'starting',
@@ -270,7 +276,7 @@ export default async function handler(req:IncomingMessage,res:ServerResponse) {
     }
     let payload:any;
     const writerClient=Object.assign(async({role,instructions,input:prompt,schema,reviewEvidence}:any)=>{
-        const request={...provider.buildProviderRequest({config:operation.config,role:'writer',input:prompt,schema}),background:true,store:true};
+        const request=buildHoroscopeProviderRequest({config:operation.config,role,input:prompt,schema,instructions});
         operation={...operation,requestHash:hash({request,instructions}),reviewEvidence};
         // Finish prompt/evidence preparation before reserving. One conditional
         // save contains the complete identity; a failed save never dispatches.
@@ -280,20 +286,20 @@ export default async function handler(req:IncomingMessage,res:ServerResponse) {
         await persist({source_snapshot:{...writingRow.source_snapshot,horoscopeGeneration:{...generation,active:operation,lastError:null,
           failures:legacy&&!failures.some((failure:any)=>failure.operation?.id===legacy.operation?.id)?[...failures,legacy]:failures}}});
         stage='dispatch';dispatchAttempted=true;
-        const {response,payload:result}=await responses.startStoredWritingResponse({apiKey,role,request,governedInstructions:instructions,surface:'horoscopes',family:'horoscope',fetchImpl:(url:any,options:any)=>fetch(url,{...options,signal:AbortSignal.timeout(25000)})});
+        const {response,payload:result}=await startHoroscopeResponse({config:operation.config,role,request,instructions,context:{editionId:row.id,operationId:operation.id,requestHash:operation.requestHash}});
         payload=result;
         if(!response.ok) {
           if(response.status>=400&&response.status<500)readHoroscopeProviderResult({...payload,status:'failed'},{format:operation.outputFormat});
           throw new AdminHttpError(503,'The writer request outcome is unknown. Reopen this edition before retrying.');
         }
-        if(typeof payload.id!=='string'||!/^resp_[A-Za-z0-9_-]+$/u.test(payload.id))throw new AdminHttpError(502,'The writer did not confirm a response ID. Reopen this edition before retrying.');
+        if(!isHoroscopeResponseId(operation.config,payload.id))throw new AdminHttpError(502,'The writer did not confirm a response ID. Reopen this edition before retrying.');
         operation={...operation,responseId:payload.id,state:'running'};
         stage='save_response';
         await persist({source_snapshot:{...row.source_snapshot,horoscopeGeneration:{...row.source_snapshot.horoscopeGeneration,active:operation}}});
       
       if(['queued','in_progress'].includes(payload.status))throw new Pending();
       return readHoroscopeProviderResult(payload,{format:operation.outputFormat});
-    },{provider:'openai',model:operation.config.model,reasoningEffort:operation.config.reasoningEffort,billed:input.action==='generate'});
+    },{provider:operation.config.provider,model:operation.config.model,reasoningEffort:operation.config.reasoningEffort,billed:input.action==='generate'});
     try {
       const result=await writeHoroscopeSign(prepared,sign,{approvedPlanHash:planHash,writerClient,approvalReference:`horoscope-generation/${row.id}/${operation.id}`});
       const edition={...prepared.edition,passages:prepared.edition.passages.map((p:any)=>p.sign===sign?{...p,headline:result.headline,body:result.body}:p)};

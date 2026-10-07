@@ -1,3 +1,4 @@
+import {isHoroscopeResponseId} from '../horoscopeWriterModels.mjs';
 import {digest,assertManifest} from './evidenceRegistry.mjs';
 import {validateEvaluation,evaluationDecision} from './evaluation.mjs';
 
@@ -63,7 +64,7 @@ export function reserveEditorialCall(run,request) {
   appendArtifact(run,'call_reserved',run.pending);run.status='starting';
 }
 export function confirmEditorialCall(run,responseId) {
-  if(!run.pending||!/^resp_[A-Za-z0-9_-]+$/u.test(responseId))throw new Error('invalid_editorial_response_id');
+  if(!run.pending||!isHoroscopeResponseId(run.pending.request?.config,responseId))throw new Error('invalid_editorial_response_id');
   if(run.pending.responseId&&run.pending.responseId!==responseId)throw new Error('editorial_response_id_changed');
   run.pending.responseId=responseId;run.status='running';
 }

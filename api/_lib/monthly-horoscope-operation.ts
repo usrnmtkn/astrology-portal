@@ -1,6 +1,9 @@
 import {createHash,randomUUID} from 'node:crypto';
 import responses from '../../src/astro-writing/openAIResponses.cjs';
 import provider from '../../src/astro-writing/offlineProviderConfig.cjs';
+import {isHoroscopeResponseId} from '../../src/astro-writing/horoscopeWriterModels.mjs';
+import {buildHoroscopeProviderRequest} from './horoscope-provider-codecs.js';
+import {startHoroscopeResponse,storedHoroscopeResponse} from './horoscope-provider.js';
 import {writeHoroscopeSign,horoscopeWritingVersion} from '../../src/astro-writing/horoscopeWriting.mjs';
 import {MONTHLY_HOROSCOPE_FORMAT,composeMonthlyHoroscopeDraft} from '../../src/astro-writing/monthlyHoroscopeFormat.mjs';
 import {MONTHLY_SYNTHESIS_VERSION,MONTHLY_SYNTHESIS_INSTRUCTIONS,monthlySynthesisFacts,monthlySynthesisSchema,applyMonthlySynthesis} from '../../src/astro-writing/monthlyHoroscopeSynthesis.mjs';
@@ -54,15 +57,16 @@ export async function monthlyHoroscopeOperation({action,row:initialRow,persist,p
     return {status:200,payload:{ok:true,rows:[row],pending:false}};
   };
   const dispatch=async(input:string,instructions:string,schema:any)=>{
-    const request={...provider.buildProviderRequest({config:operation.config,role:'writer',input,schema}),background:true,store:true};
-    operation={...operation,state:'starting',responseId:null,requestHash:hash({request,instructions}),startedAt:new Date().toISOString()};
+    const role=operation.phase==='synthesis'?'MEANING_PLANNER':'WRITER';
+    const request=buildHoroscopeProviderRequest({config:operation.config,role,input,schema,instructions});
+    operation={...operation,state:'starting',responseId:null,providerResult:null,requestHash:hash({request,instructions}),startedAt:new Date().toISOString()};
     await saveOperation(); // CAS reservation precedes each potentially billed request.
-    const {response,payload}=await responses.startStoredWritingResponse({apiKey,role:operation.phase==='synthesis'?'MEANING_PLANNER':'WRITER',request,governedInstructions:instructions,surface:'horoscopes',family:'horoscope',fetchImpl:(url:any,options:any)=>fetch(url,{...options,signal:AbortSignal.timeout(25000)})});
+    const {response,payload}=await startHoroscopeResponse({config:operation.config,role,request,instructions,context:{editionId:row.id,operationId:operation.id,requestHash:operation.requestHash}});
     if(!response.ok){
       if(response.status>=400&&response.status<500)readHoroscopeProviderResult({...payload,status:'failed'},{format:operation.outputFormat,facts:operation.synthesisFacts});
       throw new AdminHttpError(503,'The request outcome is unknown. Check saved progress before continuing; a duplicate request will not be started.');
     }
-    if(typeof payload.id!=='string'||!/^resp_[A-Za-z0-9_-]+$/u.test(payload.id))throw new AdminHttpError(502,'The writer did not confirm a response ID. Check saved progress before continuing.');
+    if(!isHoroscopeResponseId(operation.config,payload.id))throw new AdminHttpError(502,'The writer did not confirm a response ID. Check saved progress before continuing.');
     operation={...operation,responseId:payload.id,state:'running'};await saveOperation();
     return ['queued','in_progress'].includes(String(payload.status))?pending():await complete(payload);
   };
@@ -86,7 +90,7 @@ export async function monthlyHoroscopeOperation({action,row:initialRow,persist,p
         // consumed nearly the whole shared 12k reasoning/output budget in a
         // failed prose request. Keep the model and cost ceiling; use medium
         // effort for new drafts only. Stored operations retain their config.
-        draftConfig:provider.normalizeProviderConfig({reasoningEffort:'medium',maxOutputTokens:12000},'writer'),config:provider.normalizeProviderConfig({reasoningEffort:'medium',maxOutputTokens:6000},'writer'),
+        draftConfig:prepared.writerSelection??provider.normalizeProviderConfig({reasoningEffort:'medium',maxOutputTokens:12000},'writer'),config:provider.normalizeProviderConfig({reasoningEffort:'medium',maxOutputTokens:6000},'writer'),
         validationCorrections:entry.validationCorrections,receipt:{version:horoscopeWritingVersion,outputFormat:MONTHLY_HOROSCOPE_FORMAT,planHash:prepared.planHash,sign:'overview',sourceHash:prepared.sourceHash,sourceIds:entry.sourceIds,profileHash:hash(prepared.writingProfile),argumentHash:entry.argumentOutline.outlineHash,feedback:prepared.feedbackReceipt,ownerApproved:false,promotionAuthorized:false}};
       const generation=row.source_snapshot?.horoscopeGeneration??{};
       const previousFailure=generation.lastError;
@@ -104,7 +108,7 @@ export async function monthlyHoroscopeOperation({action,row:initialRow,persist,p
     }
     if(operation.state==='ready')return pending(); // Checking progress never starts the next paid stage.
     if(!operation.responseId)throw new AdminHttpError(409,'The current request has no confirmed response ID. Wait, then check saved progress.');
-    const response=await responses.storedWritingResponse({apiKey,responseId:operation.responseId});
+    const response=await storedHoroscopeResponse({operation});
     if(!response.ok)throw new AdminHttpError(503,'The saved result is temporarily unavailable. Check saved progress to retrieve the same request.');
     const payload=await response.json();return ['queued','in_progress'].includes(payload.status)?pending():await complete(payload);
   }catch(error){

@@ -1,6 +1,6 @@
 import {randomUUID} from 'node:crypto';
-import responses from '../../src/astro-writing/openAIResponses.cjs';
-import provider from '../../src/astro-writing/offlineProviderConfig.cjs';
+import {buildHoroscopeProviderRequest} from './horoscope-provider-codecs.js';
+import {startHoroscopeResponse,storedHoroscopeResponse} from './horoscope-provider.js';
 import {writeHoroscopeSign} from '../../src/astro-writing/horoscopeWriting.mjs';
 import {newEditorialRun,prepareEditorialStep,reserveEditorialCall,confirmEditorialCall,completeEditorialCall} from '../../src/astro-writing/editorial/controller.mjs';
 import {seasonalEditorialAdapter,seasonalEditorialModels,SEASONAL_EDITORIAL_WORKFLOW} from '../../src/astro-writing/seasonalEditorialAdapter.mjs';
@@ -14,7 +14,7 @@ export async function seasonalEditorialOperation({action,row:initialRow,persist,
   const save=async()=>{run=await storage.save(previous,run,row.id);previous=structuredClone(run);};
   const reflect=async()=>{
     const terminal=!['ready','starting','running'].includes(run.status);
-    const ref={id:run.id,sign:run.target.sign,workflow:SEASONAL_EDITORIAL_WORKFLOW,phase:run.stage,state:run.status,
+    const ref={id:run.id,sign:run.target.sign,workflow:SEASONAL_EDITORIAL_WORKFLOW,phase:run.stage,state:run.status,writerModel:run.models.prose.model,
       responseId:run.pending?.responseId??null,requestHash:run.pending?.requestHash??null,startedAt:run.pending?.startedAt??new Date().toISOString()};
     row=await persist({source_snapshot:{...row.source_snapshot,horoscopeGeneration:{...g(),active:terminal?null:ref,
       editorialRuns:{...g().editorialRuns,[run.target.sign]:{id:run.id,status:run.status}},
@@ -33,7 +33,7 @@ export async function seasonalEditorialOperation({action,row:initialRow,persist,
     const entry=prepared.entries.find((e:any)=>e.sign===sign);
     const seasonalRejectionTargetKeys=[`horoscope-plan/${row.id}/${sign}`,`horoscope-opening-plan/${row.id}/${sign}`];
     const input={template,brief:prepared.brief,validationCorrections:entry.validationCorrections,seasonalRejectionTargetKeys,rejections:rejections??await loadSeasonalRejections(seasonalRejectionTargetKeys)};
-    run=newEditorialRun({id,target:{sign,window:prepared.edition.window,editionId:row.id},input,models:seasonalEditorialModels(),authorization:{reference:`authenticated-seasonal-plan/${prepared.planHash}`,actor}});
+    run=newEditorialRun({id,target:{sign,window:prepared.edition.window,editionId:row.id},input,models:{...seasonalEditorialModels(),...(prepared.writerSelection?{prose:prepared.writerSelection}:{})},authorization:{reference:`authenticated-seasonal-plan/${prepared.planHash}`,actor}});
     await storage.create(run,row.id);previous=structuredClone(run);
   }else{
     const id=action==='inspect'?g().editorialRuns?.[sign]?.id:g().active?.id??g().editorialRuns?.[sign]?.id;
@@ -49,7 +49,7 @@ export async function seasonalEditorialOperation({action,row:initialRow,persist,
       if(run.status==='starting'&&Date.now()-Date.parse(run.pending.startedAt)>310000){run.status='dispatch_unknown';await save();await reflect();}
       return reply();
     }
-    const response=await responses.storedWritingResponse({apiKey,responseId:run.pending.responseId});
+    const response=await storedHoroscopeResponse({operation:run.pending});
     if(!response.ok)throw new AdminHttpError(503,'The saved Seasonal response is temporarily unavailable.');
     const payload=await response.json();
     if(['queued','in_progress'].includes(payload.status))return reply();
@@ -61,9 +61,8 @@ export async function seasonalEditorialOperation({action,row:initialRow,persist,
   const request=step.request;
   reserveEditorialCall(run,request);await save();await reflect();
   try{
-    const result=await responses.startStoredWritingResponse({apiKey,role:request.role,
-      request:{...provider.buildProviderRequest({config:request.config,role:request.role==='WRITER'?'writer':'judge',stage:request.stage,input:request.input,schema:request.schema}),background:true,store:true},
-      governedInstructions:request.instructions,surface:'horoscopes',family:'horoscope',fetchImpl:(url:any,options:any)=>fetch(url,{...options,signal:AbortSignal.timeout(25000)})});
+    const result=await startHoroscopeResponse({config:request.config,role:request.role,request:buildHoroscopeProviderRequest(request),instructions:request.instructions,
+      context:{editionId:row.id,operationId:run.id,requestHash:run.pending.requestHash,seasonalRunId:run.id}});
     if(!result.response.ok){
       // An explicit HTTP rejection is recorded, not retried as a fresh charge.
       await completeEditorialCall(run,{...result.payload,status:'failed'},adapter);await save();await reflect();return reply();
