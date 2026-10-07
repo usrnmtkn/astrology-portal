@@ -1,5 +1,6 @@
 import { withCalendarAspectRetrograde } from "../../services/calendarAspectRetrogradeContent";
 import {PublishedMonthlyOverview} from './PublishedMonthlyOverview';
+import { calendarWeeklyDayParagraphs } from './calendarWeeklyPresentation';
 import { CalendarPassageProse } from './CalendarPassageProse';
 import { calendarPassageRequestKeys, useCalendarPassages } from './useCalendarPassages';
 import { calendarMoonResolvedByDate, packagedWeeklyMoon, moonWritingForDay, calendarMoonCycleFallbackPiece } from './calendarMoonSources';
@@ -2800,6 +2801,7 @@ export function LunarCalendar({
     ? lunarDayFor(selectedDay, calendar.events)
     : null;
   const assembledPassages = useCalendarPassages(calendar, (viewMode === "month" ? calendar?.days ?? [] : selectedWeekDays).map(day => day.dateKey), selectedDateKey || currentDateKey, location, generatedContent, moonContentRetry);
+  const weeklyDayParagraphs = calendarWeeklyDayParagraphs(assembledPassages.weekly?.body, selectedWeekDays, zone);
   const selectedAssembledPassage = selectedDay ? assembledPassages.daily.get(selectedDay.dateKey) : undefined;
   const monthlyOverview = useMemo(() => {
     if (viewMode !== "month" || !calendar) return null;
@@ -2985,7 +2987,7 @@ export function LunarCalendar({
           {!readingReady && (readingState === "loading"
             ? <PageLoading compact message="Loading this week’s readings…" />
             : <PageLoadError message="This week’s readings could not load." onRetry={retryCalendarContent} />)}
-          {readingReady && assembledPassages.weekly && <section className="lunar-month-overview" aria-label="Weekly overview"><CalendarPassageProse text={assembledPassages.weekly.body} /></section>}
+          {readingReady && assembledPassages.weekly && !weeklyDayParagraphs && <section className="calendar-day-group" aria-label="Weekly overview"><div className="calendar-day-group__blurb"><CalendarPassageProse text={assembledPassages.weekly.body} /></div></section>}
           {assembledPassages.loading && <PageLoading compact message="Loading published passages…" />}
           {assembledPassages.error && <PageLoadError message="Published passages could not load." onRetry={retryCalendarContent} />}
           {readingReady && !assembledPassages.loading && !assembledPassages.error && <CalendarDayGroupList label={`Day-by-day astrology for ${weeklyRangeLabel}`}>
@@ -3011,7 +3013,7 @@ export function LunarCalendar({
               return (
                 <CalendarDayGroup
                   dateKey={day.dateKey}
-                  guidanceKey={moonPieces[0]?.contentKey}
+                  guidanceKey={weeklyDayParagraphs?.has(day.dateKey) ? assembledPassages.weekly?.contentKey : moonPieces[0]?.contentKey}
                   isSelected={day.dateKey === selectedDateKey}
                   isToday={day.dateKey === currentDateKey}
                   key={day.dateKey}
@@ -3019,8 +3021,8 @@ export function LunarCalendar({
                   numberClass={monthDiscClassName(phase, day.dateKey === currentDateKey, false, isExactQuarterMoonDay(day), day.dateKey === selectedDateKey, isEclipseDay(day))}
                   onOpenEvent={() => handleSelectDate(day.dateKey)}
                   onSelectDay={() => handleSelectDate(day.dateKey)}
-                  paragraphs={assembledPassages.daily.get(day.dateKey)?.paragraphs ?? copy.paragraphs}
-                  prompt={assembledPassages.daily.has(day.dateKey) ? undefined : copy.prompt}
+                  paragraphs={weeklyDayParagraphs?.get(day.dateKey) ?? assembledPassages.daily.get(day.dateKey)?.paragraphs ?? copy.paragraphs}
+                  prompt={weeklyDayParagraphs?.has(day.dateKey) || assembledPassages.daily.has(day.dateKey) ? undefined : copy.prompt}
                   rows={buildCalendarDayGroupRows({
                     day,
                     previousDay,
