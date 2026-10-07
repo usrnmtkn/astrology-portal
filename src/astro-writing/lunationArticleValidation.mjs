@@ -1,8 +1,9 @@
 import {validateCopy} from './validateCopy.mjs';
 import {governValidationResult} from './effectiveRuleGovernance.mjs';
+import {withLunationVocabularyFindings} from './lunationEditorialConstraints.mjs';
 
 export function validateLunationArticle(value,facts) {
-  const lint=governValidationResult(validateCopy(value,{family:'lunation-article',surface:'lunation-article',register:'second_person',requiredFields:['headline','body']}),{family:'lunation-article',surface:'lunation-article'});
+  const lint=withLunationVocabularyFindings(governValidationResult(validateCopy(value,{family:'lunation-article',surface:'lunation-article',register:'second_person',requiredFields:['headline','body']}),{family:'lunation-article',surface:'lunation-article'}),value);
   const violations=[...lint.violations],text=`${value.headline}\n${value.body}`;
   const fail=detail=>violations.push({category:'lunation_fact_boundary',detail,governanceTier:'blocking'});
   if(!facts.event.eclipseType&&/\b(?:this|the current) (?:solar |lunar )?eclipse\b/iu.test(text))fail('This event is not a verified eclipse.');

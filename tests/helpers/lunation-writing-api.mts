@@ -8,8 +8,9 @@ const {default:handler}=await import('../../api/admin/lunation-writing');
 Object.assign(process.env,env);
 export const rows=new Map<string,any>();
 export const feedbackFixture={rows:[] as any[],fail:false};
+export const storageFixture={beforePatch:null as null|(()=>unknown)};
 rows.set('shared-guidance-fixture',{id:'shared-guidance-fixture',content_key:LUNATION_PROFILE_KEY,mode:'article',target_date:null,status:'DRAFT',lane:'reference',body:'',summary:'',updated_at:'2026-09-27T00:00:00Z',source_snapshot:{revision:1},sections:{writingProfile:{...defaultLunationProfile(),voiceGuidance:'Synthetic shared guidance marker. Develop a thought through its consequence.'}}});
-export const providerFixture={calls:0,polls:0,requests:[] as any[],fail:false,pending:false,pollFailures:0,terminalStatus:''};
+export const providerFixture={calls:0,polls:0,requests:[] as any[],fail:false,pending:false,pollFailures:0,terminalStatus:'',draft:null as null|{headline:string,body:string}};
 const matches=(row:any,params:URLSearchParams)=>[...params].every(([key,value])=>{
   if(['select','order','limit'].includes(key))return true;
   if(value==='is.null')return row[key]==null;
@@ -27,10 +28,11 @@ globalThis.fetch=async(input:any,options:any={})=>{
     }
     providerFixture.polls++;
     if(providerFixture.pollFailures>0){providerFixture.pollFailures--;return Response.json({error:'Synthetic retrieval outage'},{status:503});}
-    return Response.json(providerFixture.terminalStatus?{status:providerFixture.terminalStatus}:providerFixture.pending?{status:'in_progress'}:{status:'completed',usage:{output_tokens:20},output:[{type:'message',content:[{type:'output_text',text:JSON.stringify({headline:'Synthetic lunar article',body:'You can explore this synthetic possibility. A practical change may give you something specific to consider.\n\nYou can return to the conversation with a clearer question.'})}]}]});
+    return Response.json(providerFixture.terminalStatus?{status:providerFixture.terminalStatus}:providerFixture.pending?{status:'in_progress'}:{status:'completed',usage:{output_tokens:20},output:[{type:'message',content:[{type:'output_text',text:JSON.stringify(providerFixture.draft??{headline:'Synthetic lunar article',body:'You can explore this synthetic possibility. A practical change may give you something specific to consider.\n\nYou can return to the conversation with a clearer question.'})}]}]});
   }
   if(url.origin===env.SUPABASE_URL&&url.pathname==='/rest/v1/studio_writing_feedback')return feedbackFixture.fail?Response.json({}, {status:503}):Response.json(feedbackFixture.rows.filter(row=>url.searchParams.get('target_keys')===`cs.{${row.target_keys[0]}}`));
   if(url.origin!==env.SUPABASE_URL||url.pathname!=='/rest/v1/generated_interpretations')throw new Error(`External request refused: ${url.origin}${url.pathname}`);
+  if(options.method==='PATCH'&&storageFixture.beforePatch){const beforePatch=storageFixture.beforePatch;storageFixture.beforePatch=null;beforePatch();}
   const found=[...rows.values()].filter(r=>matches(r,url.searchParams));
   if(!options.method||options.method==='GET')return Response.json(found);
   // jsonb round-trips do not preserve object insertion order.
