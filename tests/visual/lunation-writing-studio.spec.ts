@@ -150,8 +150,9 @@ for(const width of [390,1440])for(const theme of ['light','dark'] as const){
       await page.getByRole('region',{name:'Saved lunation drafts',exact:true}).getByRole('button',{name:'Full Moon in Aries',exact:true}).click();
       await workspace.getByText('Rejected drafts (1)',{exact:true}).click();
       await workspace.getByText(/^Synthetic lunar article · /).click();
-      await expect(workspace.getByLabel('Rejected article',{exact:true})).toHaveValue(edit);
-      await expect(workspace.getByText(rejectionReason,{exact:true})).toBeVisible();
+      const rejectedHistory=workspace.locator('details').filter({has:page.getByText('Rejected drafts (1)',{exact:true})});
+      await expect(rejectedHistory.getByLabel('Rejected article',{exact:true})).toHaveValue(edit);
+      await expect(rejectedHistory.getByText(rejectionReason,{exact:true})).toBeVisible();
       await expect(workspace.getByRole('button',{name:'Regenerate draft',exact:true})).toBeDisabled();
       await workspace.getByRole('checkbox',{name:'I’ve reviewed this writing plan.'}).check();
       await workspace.getByRole('button',{name:'Regenerate draft',exact:true}).click();
