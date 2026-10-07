@@ -11,9 +11,10 @@ import { sceneEvidenceForTarget } from './sceneEvidence.mjs';
 import { matrixSceneNounLexicon } from './matrixEvidenceIndex.mjs';
 import { loadPhraseEvidenceIndex } from './phraseEvidence.mjs';
 import { assertLunationWritingFacts, lunationDigest } from './lunationWritingFacts.mjs';
+import { LUNATION_EDITORIAL_AUTHORITY } from './lunationEditorialConstraints.mjs';
 
 const root = fileURLToPath(new URL('../../', import.meta.url));
-export const lunationWritingVersion = 'calendar-lunation-writer/v1';
+export const lunationWritingVersion = 'calendar-lunation-writer/v2';
 export const lunationWritingTarget = Object.freeze({ surface: 'calendar-lunation', route: 'calendar',
   renderer: 'renderLunationMacro', contentKeyFamily: 'authored/sky-lunation-macro', temporality: 'current_sky', voiceMode: 'second_person' });
 
@@ -93,7 +94,7 @@ export function prepareLunationWriting({ engineFacts, argumentInput, preferredOw
   try { assertPositiveOwnerEvidenceContext(context, { family: 'lunations' }); } catch (error) {
     if (error.code !== 'OWNER_EVIDENCE_ROLE_MISSING' || error.detail?.role !== 'argument') throw error;
   }
-  const receipt = { version: lunationWritingVersion, contentKey: engineFacts.contentKey,
+  const receipt = { version: lunationWritingVersion, editorialAuthorityHash: lunationDigest(LUNATION_EDITORIAL_AUTHORITY), contentKey: engineFacts.contentKey,
     calculatedFactsHash: plan.calculatedFactsHash, outlineHash: argumentOutline.outlineHash, sources: hashes,
     sourceIds: context.sameFamilyExamples.map(e => e.sourceId),
     correctionsHash: lunationDigest(privateCorrections), correctionsCount: privateCorrections.length,

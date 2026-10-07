@@ -11,7 +11,8 @@ import {retrieveOwnerContext} from './retrieveOwnerContext.mjs';
 import {assertPositiveOwnerEvidenceContext} from './ownerEvidencePolicy.mjs';
 import {loadPhraseEvidenceIndex} from './phraseEvidence.mjs';
 import {runWritingPipeline} from './runWritingPipeline.mjs';
-import {LUNATION_ARTICLE_PROTOCOL_VERSION,lunationArticleGuidance} from './lunationArticleInput.mjs';
+import {LUNATION_ARTICLE_PROTOCOL_VERSION,lunationArticleGuidance,lunationArticleOpeningDate} from './lunationArticleInput.mjs';
+import {LUNATION_EDITORIAL_AUTHORITY} from './lunationEditorialConstraints.mjs';
 
 // Storage may reorder any JSON object. Arrays and exact source text retain order.
 export const lunationArticleHash = value => createHash('sha256').update(typeof value === 'string' ? value : JSON.stringify(value, (_key, item) =>
@@ -27,6 +28,7 @@ export function prepareLunationArticle(facts,direction='',{writingProfile=null,p
     ||!['new-moon','full-moon'].includes(facts.event?.phase)||!facts.event?.startsAt
     ||!Array.isArray(facts.positions)||!Array.isArray(facts.rulers)) throw new Error('Verified lunation facts are required.');
   const sign=facts.event.sign.toLowerCase(),phase=facts.event.phase;
+  const openingDate=lunationArticleOpeningDate(facts.event);
   const sources=[];
   const read=name=>{const text=fs.readFileSync(root+name,'utf8');sources.push({path:name,sha256:lunationArticleHash(text)});return text;};
   const lines=name=>read(name).split(/\r?\n/u).filter(Boolean).map(JSON.parse);
@@ -71,10 +73,10 @@ export function prepareLunationArticle(facts,direction='',{writingProfile=null,p
     reviewedMeaningExamples:[phaseMeaning,signMeaning].map(e=>({id:e.id,planet:'moon',sign,status:e.status,text:Object.values(e.slots).join('\n'),
       sourcePath:doctrinePath,sourceKind:'reviewed-doctrine',ownerAuthored:false,ownerApproved:false,reviewNote:e.review_note}))};
   const argumentInput={thesis:direction.trim().replace(/\s+/gu,' ')||`Develop ${facts.event.title} from the ${phase==='full-moon'?'Sun–Moon opposition':'Sun–Moon conjunction'} and its calculated rulers.`,
-    transit_job:`Explain this ${facts.event.eclipseType?facts.event.eclipseType+' eclipse':phase} through the supplied event-time astrology: ${eventMeaning.map(e=>`${e.planet} in ${e.sign}: ${e.meaning}`).join(' ')}`,
-    recognition:`Show a recognizable possibility grounded in ${signMeaning.slots.embodied_guidance}`,
-    complication:`Develop the consequence of ${signMeaning.slots.care_prompt} without inventing another person's hidden motive.`,
-    response:`Let the response follow from the complication and ${phaseMeaning.slots.phase_action}; allow mixed feelings and an unresolved outcome.`,
+    transit_job:`Open the body with ${openingDate} and ${facts.event.title}, then explain the phase and signs before developing human implications. Use the supplied event-time astrology: ${eventMeaning.map(e=>`${e.planet} in ${e.sign}: ${e.meaning}`).join(' ')}`,
+    recognition:`Choose a meaningful possibility from the event's relationships. Sign context: ${signMeaning.slots.embodied_guidance}. This supplies meaning, not a compulsory opening scene.`,
+    complication:`Use the calculated ruler condition and relevant contacts to develop the interpretation. Sign context: ${signMeaning.slots.care_prompt}. Treat this as one possible implication, not a compulsory thesis or a lesson to repeat. Do not invent another person's hidden motive.`,
+    response:`Let the response follow the developed interpretation. Phase context: ${phaseMeaning.slots.phase_action}. Do not copy this source instruction into a stock ending or require a sequence of commands; allow mixed feelings and an unresolved outcome.`,
     scope_guard:`One collective article for ${facts.event.startsAt}; no personal houses, invented history, or unsupplied future timing.`,
     scope_breadth:{broad_mechanism:phaseMeaning.slots.cycle_role,chosen_expression:`${phase} in ${sign}, interpreted through the full event chart`,
       other_valid_expressions:['A change in what someone wants to begin or continue','A choice about participation supported by the event meanings','Recognition of a competing need supported by the Sun–Moon relationship']}};
@@ -82,7 +84,7 @@ export function prepareLunationArticle(facts,direction='',{writingProfile=null,p
   const context=retrieveOwnerContext(plan,{...contextOptions,contentFamily:family,register:'second_person'});
   try{assertPositiveOwnerEvidenceContext(context,{family});}catch(error){if(error.code!=='OWNER_EVIDENCE_ROLE_MISSING'||error.detail?.role!=='argument')throw error;}
   const voiceSelection=context.sameFamilyExamples.map(e=>({id:e.id,sha256:lunationArticleHash(e.text)}));
-  const planHash=lunationArticleHash({version:LUNATION_ARTICLE_PROTOCOL_VERSION,protocol:lunationArticleGuidance,facts,outline,sources,voiceSelection,writingProfile,feedbackReceipt});
+  const planHash=lunationArticleHash({version:LUNATION_ARTICLE_PROTOCOL_VERSION,protocol:lunationArticleGuidance,editorialAuthority:LUNATION_EDITORIAL_AUTHORITY,facts,outline,sources,voiceSelection,writingProfile,feedbackReceipt});
   return {writingProfile,feedbackReceipt,facts,eventMeaning,meaningInput,argumentInput,outline,contextOptions,context,sources,planHash,direction,
     preview:{planHash,title:facts.event.title,event:facts.event,positions:facts.positions,rulers:facts.rulers,contacts:facts.contacts,
       argument:outline,writingProfile,corrections:privateCorrections,voiceSources:context.sameFamilyExamples.map(e=>({id:e.id,text:e.text,sourcePath:e.sourcePath})),protocol:lunationArticleGuidance}};

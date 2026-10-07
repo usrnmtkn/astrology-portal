@@ -18,9 +18,19 @@ loadLocalWebEnv();
 export const maxDuration=300;
 const prefix='studio-lunation/';
 class Pending extends Error {}
-async function prepareSharedArticle(facts:any,direction:string) {
+async function prepareSharedArticle(facts:any,direction:string,rejections:any[]=[]) {
   const [writingProfile,feedback]=await Promise.all([loadLunarProfile(),lunarFeedback(datedLunationContentKey(facts.event),'lunation-article')]);
   if(!writingProfile.id)throw new AdminHttpError(409,'Save the shared writing guidance before preparing a dated article.');
+  if(!Array.isArray(rejections))throw new AdminHttpError(409,'The saved rejection history needs review before drafting.');
+  for(const entry of rejections){
+    if(!entry.id||entry.targetKey!==datedLunationContentKey(facts.event)||typeof entry.reason!=='string'||!entry.reason.trim()
+      ||typeof entry.headline!=='string'||typeof entry.body!=='string'||!entry.body.trim()
+      ||entry.passageHash!==hash({headline:entry.headline,body:entry.body}))throw new AdminHttpError(409,'The saved rejection history needs review before drafting.');
+    const bad=`${entry.headline}\n\n${entry.body}`;
+    feedback.corrections.push({id:`lunation-rejection-${entry.id}`,contentKey:entry.targetKey,family:'lunation-article',bad,
+      owner_reason:entry.reason,originalSha256:hash(bad),positive_evidence_revoked:true,source_uri:entry.sourceUri});
+    feedback.receipt.push({id:`lunation-rejection-${entry.id}`,version:1,sha256:hash(entry)});
+  }
   return prepareLunationArticle(facts,direction,{writingProfile,privateCorrections:feedback.corrections,feedbackReceipt:feedback.receipt});
 }
 
@@ -45,7 +55,7 @@ export default async function handler(req:IncomingMessage,res:ServerResponse) {
       return sendAdminJson(res,200,{ok:true,rows});
     }
     const input=await readAdminJsonBody<Record<string,any>>(req,96000);
-    const allowed:Record<string,string[]>={prepare:['action','month','timeZone','eventId','direction'],review:['action','id','expectedUpdatedAt','direction'],generate:['action','id','expectedUpdatedAt','approvedPlanHash'],poll:['action','id','expectedUpdatedAt'],save:['action','id','expectedUpdatedAt','headline','body'],release:['action','id','expectedUpdatedAt','acknowledgeUnknownOutcome'],stage:['action','id','expectedUpdatedAt']};
+    const allowed:Record<string,string[]>={prepare:['action','month','timeZone','eventId','direction'],review:['action','id','expectedUpdatedAt','direction'],reject:['action','id','expectedUpdatedAt','reason'],generate:['action','id','expectedUpdatedAt','approvedPlanHash'],poll:['action','id','expectedUpdatedAt'],save:['action','id','expectedUpdatedAt','headline','body'],release:['action','id','expectedUpdatedAt','acknowledgeUnknownOutcome'],stage:['action','id','expectedUpdatedAt']};
     if(!allowed[input.action]||Object.keys(input).some(k=>!allowed[input.action].includes(k)))throw new AdminHttpError(400,'Choose a supported lunation writing action.');
     if(input.action==='prepare') {
       if(typeof input.month!=='string'||typeof input.timeZone!=='string'||typeof input.eventId!=='string'||typeof input.direction!=='string'||input.direction.length>6000)throw new AdminHttpError(400,'Choose an event and keep the writing direction under 6,000 characters.');
@@ -77,6 +87,26 @@ export default async function handler(req:IncomingMessage,res:ServerResponse) {
     const state=()=>row.source_snapshot.lunationWriting;
     const persistState=async(value:Record<string,unknown>,patch:Record<string,unknown>={})=>persist({...patch,source_snapshot:{...row.source_snapshot,lunationWriting:{...state(),...value}}});
     let operation=state().active;
+    if(input.action==='reject') {
+      if(operation)throw new AdminHttpError(409,'Retrieve or release the running request before rejecting this draft.');
+      if(typeof input.reason!=='string'||!input.reason.trim()||input.reason.length>6000)throw new AdminHttpError(400,'Enter a reason for rejection under 6,000 characters.');
+      if(!row.body.trim())throw new AdminHttpError(409,'This draft is already empty. Review its plan to generate a replacement.');
+      const {rejections=[],...previousWriting}=state();
+      if(!Array.isArray(rejections))throw new AdminHttpError(409,'The saved rejection history needs review before drafting.');
+      const id=randomUUID(),entry={id,rejectedAt:new Date().toISOString(),rejectedBy:actor,reason:input.reason,
+        targetKey:datedLunationContentKey(row.facts.lunationArticle.event),sourceUri:`studio-lunation/${row.id}/rejections/${id}`,
+        updatedAt:row.updated_at,headline:row.headline,body:row.body,passageHash:hash({headline:row.headline,body:row.body}),
+        facts:row.facts,writing:previousWriting};
+      const history=[...rejections,entry];
+      // Prepare first. One conditional write archives the exact draft and opens
+      // the next plan together; failed preparation or a race leaves it intact.
+      const prepared=await prepareSharedArticle(row.facts.lunationArticle,state().direction,history);
+      await persistState({rejections:history,planHash:prepared.planHash,preview:prepared.preview,active:null,
+        receipt:null,lint:null,lastError:null,ownerApproved:false,promotionAuthorized:false},
+        {headline:row.facts.lunationArticle.event.title,body:'',review_state:'owner-review-required'});
+      if(row.body!==''||hash(state().rejections)!==hash(history)||state().planHash!==prepared.planHash)throw new AdminHttpError(502,'The rejection save could not be confirmed. Reopen this draft before continuing.');
+      return sendAdminJson(res,200,{ok:true,rows:[row]});
+    }
     if(input.action==='stage') {
       if(operation||!row.body.trim())throw new AdminHttpError(409,'Save a complete article before opening its reader draft.');
       const contentKey=datedLunationContentKey(row.facts.lunationArticle.event);
@@ -100,7 +130,7 @@ export default async function handler(req:IncomingMessage,res:ServerResponse) {
     if(input.action==='review') {
       if(operation||row.body.trim())throw new AdminHttpError(409,'This draft already contains writing or has a running request.');
       if(typeof input.direction!=='string'||input.direction.length>6000)throw new AdminHttpError(400,'Keep the writing direction under 6,000 characters.');
-      const prepared=await prepareSharedArticle(row.facts.lunationArticle,input.direction);
+      const prepared=await prepareSharedArticle(row.facts.lunationArticle,input.direction,state().rejections);
       await persistState({direction:input.direction,planHash:prepared.planHash,preview:prepared.preview});
       return sendAdminJson(res,200,{ok:true,rows:[row]});
     }
@@ -140,7 +170,7 @@ export default async function handler(req:IncomingMessage,res:ServerResponse) {
     }
     if(operation)throw new AdminHttpError(409,'A draft is already running. Retrieve its result before starting another.');
     if(row.body.trim())throw new AdminHttpError(409,'This draft already contains writing. Edit the saved article; generation will not replace it.');
-    const prepared=await prepareSharedArticle(row.facts.lunationArticle,state().direction);
+    const prepared=await prepareSharedArticle(row.facts.lunationArticle,state().direction,state().rejections);
     if(input.approvedPlanHash!==prepared.planHash||state().planHash!==prepared.planHash)throw new AdminHttpError(409,'The writing sources or plan changed. Select Update writing plan, review it again, then choose Generate draft.');
     const config=provider.normalizeProviderConfig({},'writer');
     operation={id:randomUUID(),startedAt:new Date().toISOString(),actor,responseId:null,config,planHash:prepared.planHash,

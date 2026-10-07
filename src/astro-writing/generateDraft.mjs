@@ -15,6 +15,7 @@ import { buildHoroscopeDraftInput, horoscopeDraftSchema, HOROSCOPE_EDITORIAL_AUT
 import { buildLunationDraftInput, LUNATION_DRAFT_SCHEMA } from './lunationDraftInput.mjs';
 import { assertLunationWritingFacts } from './lunationWritingFacts.mjs';
 import {composeMonthlyHoroscopeDraft} from './monthlyHoroscopeFormat.mjs';
+import { LUNATION_EDITORIAL_AUTHORITY } from './lunationEditorialConstraints.mjs';
 
 export const PLACEMENT_DRAFT_SCHEMA = Object.freeze({
   type: "object",
@@ -220,11 +221,12 @@ export async function generateDraft({
     : family === "slow-mover-article"
       ? SLOW_MOVER_ARTICLE_DRAFT_SCHEMA
       : PLACEMENT_DRAFT_SCHEMA);
-  // Horoscope profiles and complete owner readings own prose behavior. The
+  // Horoscope and lunar profiles plus owner readings own prose behavior. The
   // generic article prompt includes incompatible Sky spines, example quotas,
   // sentence-length rules and mandatory imperatives. Appending an exception
   // still sends those competing instructions to the writer.
-  const baseInstructions = family === 'horoscope' ? HOROSCOPE_EDITORIAL_AUTHORITY : isCardWritingSurface({ surface, family })
+  const baseInstructions = ['lunations', 'lunation-article'].includes(family) ? LUNATION_EDITORIAL_AUTHORITY
+    : family === 'horoscope' ? HOROSCOPE_EDITORIAL_AUTHORITY : isCardWritingSurface({ surface, family })
     ? candidateCardAstrologyWritingInstructions
     : canonicalAstrologyWritingInstructions;
   const seasonalPreparation=family==='horoscope'&&engineFacts?.window?.period==='seasonal'

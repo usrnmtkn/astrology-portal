@@ -43,11 +43,27 @@ for(const month of ['2026-08','2026-09']){
     assert.equal((await action('generate',{approvedPlanHash:row.source_snapshot.lunationWriting.planHash})).status,409);
     assert.equal((await action('save',{headline:'Race',body:'Must not replace in-flight copy'})).status,409);
     const prompt=providerFixture.requests.at(-1).input;
+    const instructions=providerFixture.requests.at(-1).instructions;
+    assert(instructions.includes('LUNAR EDITORIAL AUTHORITY'));
+    assert(instructions.includes('REQUIRED LUNAR WORDING'));
+    assert(instructions.includes('CORRECTIO'));
+    assert(!instructions.includes('SPINE QUALITY GATES'));
+    assert(!instructions.includes('LONG-FORM SENTENCE ARCHITECTURE'));
+    assert(prompt.includes('A sequence of ordinary actions is not an insight.'));
     assert(prompt.includes('Do not add astrology to a prewritten piece of advice.'));
     assert(prompt.includes('Replace abstract conclusions with the thought they skip.'));
     assert(prompt.includes('Solar eclipses use New Moon logic; lunar eclipses use Full Moon logic.'));
     assert(prompt.includes('OWNER CORRECTIONS'));
     assert(prompt.includes('Synthetic shared guidance marker.'));
+    const expectedDates:Record<string,string>={
+      '2026-08-12':'August 12th, 2026','2026-08-28':'August 28th, 2026',
+      '2026-09-11':'September 10th, 2026','2026-09-26':'September 26th, 2026'
+    };
+    const openingDate=expectedDates[event.startsAt.slice(0,10)];
+    assert(openingDate,`Missing test expectation for ${event.startsAt}`);
+    assert(prompt.includes(`Begin the first body sentence with "On **${openingDate}**, "`));
+    assert(prompt.includes(`and name ${event.title} in that sentence.`));
+    assert(!prompt.includes('The separate editor header owns exact dates and times.'));
     assert(row.source_snapshot.lunationWriting.active.writingProfile.id);
     providerFixture.pending=true;
     const waiting=await action('poll');assert.equal(waiting.status,202);assert.equal(waiting.payload.pending,true);
@@ -108,6 +124,22 @@ feedbackFixture.fail=false;
 const corrected=await call('generate',{approvedPlanHash:fresh.source_snapshot.lunationWriting.planHash});
 assert.equal(corrected.status,202,JSON.stringify(corrected));
 assert(providerFixture.requests.at(-1).input.includes(feedbackFixture.rows[0].owner_reason));
+fresh=corrected.payload.rows[0];
+providerFixture.draft={headline:'Synthetic lunar article',body:'Synthetic whether output.'};
+const callsBeforePoll=providerFixture.calls;
+const vocabularyPoll=await call('poll');
+assert.equal(vocabularyPoll.status,200);
+fresh=vocabularyPoll.payload.rows[0];
+assert.equal(fresh.body,providerFixture.draft.body);
+assert.equal(fresh.source_snapshot.lunationWriting.lint.passed,false);
+assert(fresh.source_snapshot.lunationWriting.lint.violations.some((f:any)=>f.category==='lunation_required_vocabulary'));
+assert.equal(providerFixture.calls,callsBeforePoll,'A prohibited word does not trigger a paid rewrite.');
+assert.equal(fresh.source_snapshot.lunationWriting.receipt.ownerApproved,false);
+const vocabularySave=await call('save',{headline:fresh.headline,body:'Synthetic corrected output.'});
+assert.equal(vocabularySave.status,200);
+fresh=vocabularySave.payload.rows[0];
+assert(!fresh.source_snapshot.lunationWriting.lint.violations.some((f:any)=>f.category==='lunation_required_vocabulary'));
+providerFixture.draft=null;
 // Factual findings must survive the handoff and be rechecked after reader-editor changes.
 let invalid=[...rows.values()].find(row=>row.facts?.lunationArticle?.event.startsAt.startsWith('2026-09-26'));
 const wrongCopy={headline:'Aries Full Moon',body:'With the Sun in Aries, you may want more room for a personal ambition. You can ask how a change in your availability would affect a shared plan.'};
@@ -129,6 +161,11 @@ try{
   const forged=await generalStore.invoke('PATCH',{id:invalidReader.id,status:'LIVE',sourceSnapshot:{contentSystem:'cms-surface-override',allowedSlots:[]},facts:{lunationArticle:{positions:[{planet:'Sun',sign:'Aries'}]}}});
   assert.equal(forged.status,422,JSON.stringify(forged));
   const correctedBody=wrongCopy.body.replace('Sun in Aries','Sun in Libra');
+  for(const field of ['headline','summary','body']){
+    const prohibited=await generalStore.invoke('PATCH',{id:invalidReader.id,headline:'Synthetic title',summary:'',body:correctedBody,[field]:'Synthetic WHETHER fixture.',status:'LIVE'});
+    assert.equal(prohibited.status,422,JSON.stringify(prohibited));
+    assert.match(prohibited.payload.error,/Remove “whether”/);
+  }
   const fixed=await generalStore.invoke('PATCH',{id:invalidReader.id,body:correctedBody,status:'LIVE'});
   assert.equal(fixed.status,200,JSON.stringify(fixed));
   assert.equal(fixed.payload.rows[0].body,correctedBody);

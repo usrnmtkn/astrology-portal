@@ -548,3 +548,75 @@ responses, a batch continuing through token rotation, exact reject-all history,
 and saved-response recovery after failed renewal. Browser mutation tests use
 isolated storage and provider fixtures. They do not authorize paid generation
 or establish writing quality.
+
+## Lunar opening and vocabulary correction (2026-10-07)
+
+Scope: Calendar Write-ups, dated lunar articles and reusable lunar readings.
+The owner rejected the Libra New Moon draft, especially its opening and use of
+`whether`, and requested a prompt or core correction. The subsequent explicit
+direction was: "I want to start with the dates." This supersedes the earlier
+proposal to open with a direct thought and any scene-first or opener-variety
+direction for dated lunar articles.
+Authority: [owner task](thread:01a11719-433f-7300-908e-8c19c58e9e0c).
+The complete rejection and exact reason remain in private Studio feedback.
+
+The lunar writer previously inherited the general placement prompt's scene
+requirements, standalone pull-quote, imperative strategy and unhedged close.
+`lunationEditorialAuthority.cjs` now owns a lunar-specific instruction prefix
+shared by the pipeline and the actual provider adapter. Event meaning remains
+governed; sign-level care instructions no longer prescribe the whole argument.
+Dated articles begin with the full calculated local date in bold and the named
+event and sign, then explain the phase and signs before human implications.
+New Moons develop the conjunction and traditional ruler; Full Moons develop the
+whole opposition, both signs and their traditional rulers. Later paragraphs add
+reasons, distinctions and consequences rather than repeating one lesson.
+The owner-supplied ingress example informs this order only, not lunar facts,
+wording, duration, or voice authority. The accompanying ingress and season
+drafts do not impose scene hooks, twelve sign readings or ingress end dates on
+lunar articles.
+
+`lunationArticleOpeningDate` formats the verified instant in the selected time
+zone and supplies the exact opening date to the writer. The old instruction
+reserving dates for the editor header is removed. Tests cover midnight and year
+boundaries and the real New/Full Moon and eclipse provider requests. Reusable
+sign readings remain date-free in storage; the app supplies occurrence dates.
+Their opening establishes the phase and sign.
+
+The explicit lunar `whether` constraint checks generated titles, summaries,
+body text and journal questions. Other voice judgments remain with the owner.
+Candidates retain their exact text and findings for editing; no automatic paid
+rewrite occurs. Dated publication rechecks the final reader fields. Updated
+instruction hashes invalidate old writing-plan approval.
+
+The shared Studio voice, phase and date guidance was saved as revision 3 and
+verified after reload; reader-scope guidance was unchanged. Local prompt, actual-handler,
+publication and source-preservation regressions use synthetic provider results.
+These checks do not demonstrate improved prose. Repository core changes require
+release separately from saved guidance; no new article was generated or approved.
+
+## Dated lunar rejection and regeneration (2026-10-07)
+
+The owner requested a Reject / Regenerate control in the
+[same lunar task](thread:01a11719-433f-7300-908e-8c19c58e9e0c).
+The dated workspace now accepts an explicit rejection reason. It prepares a
+fresh plan with current shared guidance, private feedback and this event's
+rejections before a single version-checked save archives the original and
+clears the editable draft. Failed preparation and stale writes preserve the
+saved writing. Rejection itself makes no provider request.
+
+`source_snapshot.lunationWriting.rejections` retains complete titles and
+bodies, hashes, reasons, actors, source versions, facts, prior plans and provider
+receipts in the existing private draft row. Its history is visible in the
+editor and enters subsequent requests only as event-scoped correction evidence.
+It is separate from `studio_writing_feedback`; this action does not copy private
+prose into repository memory, grant positive voice authority, approve wording,
+or change an existing reader entry. The dated writer binds the rejection
+receipts into its plan hash. A new explicit plan review and Regenerate draft
+action start one paid request; reload and progress checks retrieve that request.
+
+The actual-handler regression is `scripts/test-lunation-rejection.mts`, included
+in the full Content Studio API gate. It checks exact history, correction input,
+fresh guidance, invalid and concurrent requests, repeated rejection and request
+counts with isolated storage and provider fixtures. The lunar browser regression
+covers the controls, unsaved edits, cancellation, history/reload and regeneration
+in both themes and widths. These checks do not judge generated prose quality.
