@@ -61,6 +61,8 @@ export function buildHoroscopeDraftInput({plan,context,task,target,engineFacts,a
     `REGISTER REFERENCE\n${JSON.stringify(context.registerGoldExamples)}`,
     `AVAILABLE OWNER LINES\n${JSON.stringify(seasonal||variables.active?context.sharedEvidencePacket.roles.phrase.map(e=>({evidenceRef:e.id})):context.phraseExamples)}`,
     ...(!variables.uses('ownerCorrections')?[`CURRENT OWNER CORRECTIONS\n${JSON.stringify(context.corrections)}`]:[]),
+    ...(context.rejectedExamples?.length?[`REJECTED READINGS — NEGATIVE EVIDENCE FOR THIS EDITION AND SIGN ONLY\n${JSON.stringify(context.rejectedExamples)}`,
+      'These complete readings were rejected by the owner. Do not use them as positive examples. No unstated rejection reason or global rule may be inferred.']:[]),
     ...(['daily','weekly','seasonal'].includes(writingProfile?.profile?.period)?[
       'FINISH THE NEW DRAFT USING THE SAVED EDITORIAL GUIDANCE\nBefore returning this new draft, read its complete thought against the saved Voice and Structure instructions above and the selected owner examples. Apply that guidance while composing: resolve unclear imagery, an abstract substitute for the actual concern, or examples that split the focus when the saved instructions call for those changes. Keep the astrology and calculated timing intact. This is part of writing this draft, not a separate review call, a model approval, or permission to change saved readings or owner evidence. Return the reading only, without a checklist, score or explanation of the edits.'
     ]:[]),

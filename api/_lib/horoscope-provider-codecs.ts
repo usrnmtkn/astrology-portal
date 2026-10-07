@@ -1,6 +1,13 @@
 import provider from '../../src/astro-writing/offlineProviderConfig.cjs';
 import responses from '../../src/astro-writing/openAIResponses.cjs';
 
+/** Exact request body, excluding credentials. OpenAI's final instructions are
+ * attached by its shared transport; the other codecs attach theirs above. */
+export function horoscopeProviderRequestSnapshot({config,role,request,instructions}:any) {
+  return config.provider==='openai'?{...request,instructions:responses.governedInstructionsForRole(role,
+    {governedInstructions:instructions,surface:'horoscopes',family:'horoscope'})}:structuredClone(request);
+}
+
 /** Provider transports receive the same complete governed instructions/input. */
 export function buildHoroscopeProviderRequest({config,role='WRITER',stage='writing',input,schema,instructions}:any) {
   const system=responses.governedInstructionsForRole(role,{governedInstructions:instructions,surface:'horoscopes',family:'horoscope'});

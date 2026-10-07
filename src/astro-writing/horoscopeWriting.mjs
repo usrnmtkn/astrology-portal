@@ -1,3 +1,5 @@
+import {horoscopeEvidenceReceipt} from './horoscopeEvidenceReceipt.mjs';
+import {loadWeeklyOwnerEvidence,WEEKLY_EVIDENCE_VERSION} from './weeklyOwnerEvidence.mjs';
 import fs from 'node:fs';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
@@ -24,7 +26,7 @@ import {HOROSCOPE_RHETORICAL_REVIEW} from './horoscopeRhetoricalReview.mjs';
 
 const root=fileURLToPath(new URL('../../',import.meta.url));
 export const horoscopeWritingVersion='horoscope-writer/v17';
-export const horoscopeWritingVersionFor=period=>period==='seasonal'?'horoscope-writer/v19-seasonal-editorial':horoscopeWritingVersion;
+export const horoscopeWritingVersionFor=period=>period==='seasonal'?'horoscope-writer/v19-seasonal-editorial':period==='weekly'?'horoscope-writer/v20-weekly-evidence':horoscopeWritingVersion;
 const digest=value=>createHash('sha256').update(typeof value==='string'?value:horoscopeCanonicalJson(value)).digest('hex');
 const repositorySources=new Map();
 const preparedPlans=new Map();
@@ -47,6 +49,11 @@ function loadSources(period) {
     &&(weeklyForecastSign(e)||['article paragraph','published article opening excerpt','published article body excerpt'].includes(e.structuralFunction))
     &&typeof e.text==='string'&&e.text.trim().length>=80)
     .map(e=>({...e,id:e.sourceId,contentKey:e.sourceId,family:e.surface,horoscopeAudienceSign:weeklyForecastSign(e),horoscopePeriod:weeklyForecastSign(e)?'weekly':null,register:/\b(?:you|your)\b/iu.test(e.text)?'second_person':'collective',sourceRecordSha256:digest(e.text)}));
+  if(period==='weekly'){
+    // Replace paragraph fragments with complete sections from every governed Weekly source.
+    examples.splice(0,examples.length,...loadWeeklyOwnerEvidence(read,voice),
+      ...loadSeasonalHoroscopeEvidence(read,{includeOverviews:true}),...loadMonthlyHoroscopeEvidence(read));
+  }
   // The seasonal adapter resolves complete units in the existing governed corpus.
   // Other surfaces retain their own evidence pool and selection behavior.
   if(['seasonal','monthly'].includes(period))examples.push(...loadSeasonalHoroscopeEvidence(read,{includeOverviews:true}));
@@ -85,7 +92,8 @@ export function prepareHoroscopeWriting(row,{studioCorrections=[],feedbackReceip
   const sources=loadSources(edition.window.period),writingProfile=profileFor(row,edition);
   const seasonalMeaning=resolveSeasonalMeaning(brief,sources.seasonalBank,seasonalSourceRows);
   const sourceHash=seasonalMeaning?digest({repository:sources.sha256,seasonalMeaning:seasonalMeaning.sha256}):sources.sha256;
-  const cacheKey=digest({...(writerSelection?{writerSelection}:{}),brief,writingProfile,outlines:row.source_snapshot?.horoscopeOutlines??{},feedbackReceipt,studioCorrections,sourceHash});
+  const rejectedReadings=edition.window.period==='weekly'?row.source_snapshot?.horoscopeGeneration?.rejections??[]:[];
+  const cacheKey=digest({...(edition.window.period==='weekly'?{rejectedReadings}:{}),...(writerSelection?{writerSelection}:{}),brief,writingProfile,outlines:row.source_snapshot?.horoscopeOutlines??{},feedbackReceipt,studioCorrections,sourceHash});
   if(preparedPlans.has(cacheKey))return {...preparedPlans.get(cacheKey),edition};
   const planet=edition.window.period==='daily'?'moon':'sun';
   const anchor=brief.positions.find(p=>String(p.planet).toLowerCase()===planet);
@@ -96,9 +104,9 @@ export function prepareHoroscopeWriting(row,{studioCorrections=[],feedbackReceip
   const correctedVoice={...sources.voice,entries:withoutOwnerRejectedEvidence(sources.voice.entries,corrections)};
   const primaryPeriod=edition.window.period==='seasonal'?'seasonal':edition.window.period==='monthly'?'monthly':'weekly';
   const allowedPrimaryPeriods=edition.window.period==='monthly'?new Set(['monthly','seasonal']):new Set([primaryPeriod]);
-  const examples=withoutOwnerRejectedEvidence(sources.examples,corrections).filter(e=>!e.horoscopeAudienceSign||allowedPrimaryPeriods.has(e.horoscopePeriod));
+  const examples=withoutOwnerRejectedEvidence(sources.examples,corrections).filter(e=>edition.window.period==='weekly'||!e.horoscopeAudienceSign||allowedPrimaryPeriods.has(e.horoscopePeriod));
   const relevant=ownerRelevantEvidenceFromVoiceIndex(correctedVoice,{planet,sign});
-  const relevantSelected=relevant.selected.filter(e=>['weekly-astrology','sky-season','sky-lunation','sky-article-longform','sky-article-reference'].includes(e.family));
+  const relevantSelected=relevant.selected.filter(e=>edition.window.period!=='weekly'&&['weekly-astrology','sky-season','sky-lunation','sky-article-longform','sky-article-reference'].includes(e.family));
   const evidence=ownerApprovedMatrixRoleEvidenceForTarget(sources.matrix,{planet,sign,eventType:null,surface:'horoscopes'});
 
   const targetMatrix=sources.matrix.filter(e=>String(e.planet).toLowerCase()===planet&&String(e.sign).toLowerCase()===sign);
@@ -132,16 +140,23 @@ export function prepareHoroscopeWriting(row,{studioCorrections=[],feedbackReceip
     const scenes=sceneEvidenceForTarget({approvedExamples:targetApproved,matrixEvidenceRows:targetMatrix,registerExamples:targetExamples,sceneNounLexicon:sources.sceneLexicon,plan});
     const reviewedMeaningExamples=[{id:meaning.id,planet,sign,status:meaning.status,text:meaning.collective_shift,sourcePath:meaning.sourcePath,sourceKind:'reviewed-doctrine',ownerAuthored:false,ownerApproved:false,reviewNote:meaning.review_note}];
     const exactMatrix=evidence.meaning.filter(e=>!String(e.contentKey).includes('/houseactivations/')||String(e.contentKey).includes(`/houseactivations/${rising}|`));
-    const signForecasts=examples.filter(e=>overview?e.horoscopeAudienceSign==='overview':e.horoscopeAudienceSign&&e.horoscopeAudienceSign!=='overview'&&(primaryPeriod!=='seasonal'||e.horoscopeAudienceSign===rising));
+    const signForecasts=examples.filter(e=>overview?e.horoscopeAudienceSign==='overview':e.horoscopeAudienceSign&&e.horoscopeAudienceSign!=='overview'&&(edition.window.period!=='weekly'||e.horoscopePeriod==='weekly')&&(primaryPeriod!=='seasonal'||e.horoscopeAudienceSign===rising));
     const seasonal=edition.window.period==='seasonal';
     const primary=seasonal?examples.filter(e=>e.seasonalArgumentPrimary):signForecasts;
     // These explicit owner assignments supersede generic topical snippets for
     // Seasonal only. Keep complete same-audience readings as supporting examples.
     const proseExamples=seasonal?[...primary,...(overview?[]:signForecasts)]:[...examples,...relevantSelected];
-    const relevantCount=seasonal?proseExamples.filter(e=>e.planet===planet||e.sign===sign).length:relevantSelected.length;
-    const contextOptions={reviewedMeaningExamples,examples:proseExamples,matrixExamples:exactMatrix,matrixArgumentCandidates:evidence.argument_candidate,
+    const retrievalQuery=edition.window.period==='weekly'?{version:WEEKLY_EVIDENCE_VERSION,
+      humanSituation:[savedOutline,...periodDomains].filter(Boolean).join('\n'),
+      mechanism:JSON.stringify([...developments.events,...developments.background]),surface:'weekly',register:'second_person'}:null;
+    const relevantCount=edition.window.period==='weekly'?0:seasonal?proseExamples.filter(e=>e.planet===planet||e.sign===sign).length:relevantSelected.length;
+    const lastRejection=[...rejectedReadings].reverse().find(r=>r.passages?.some(p=>p.sign===rising));
+    const rejectedPassage=lastRejection?.passages.find(p=>p.sign===rising);
+    const rejectedExamples=rejectedPassage?[{...rejectedPassage,sourceId:lastRejection.id,rejectedAt:lastRejection.rejectedAt,
+      scope:"same edition and sign only",role:"negative evidence; never imitate",reason:lastRejection.reason??null}]:[];
+    const contextOptions={reviewedMeaningExamples,retrievalQuery,rejectedExamples,examples:proseExamples,matrixExamples:exactMatrix,matrixArgumentCandidates:evidence.argument_candidate,
       matrixEvidenceAvailableCount:exactMatrix.length,relevantOwnerPassagesAvailableCount:relevantCount,
-      ownerPassageRelevanceTier:seasonal?'owner-selected-seasonal':relevant.tier,sceneExamples:scenes.selected,samePlanetSignSceneAvailableCount:scenes.counts.samePlanetSignSceneAvailable,
+      ownerPassageRelevanceTier:edition.window.period==='weekly'?'none':seasonal?'owner-selected-seasonal':relevant.tier,sceneExamples:scenes.selected,samePlanetSignSceneAvailableCount:scenes.counts.samePlanetSignSceneAvailable,
       sceneEvidenceInventoryCounts:scenes.counts,corrections,phraseEvidence:sources.phrases,
       primaryRegisterContentKeys:primary.map(e=>e.contentKey),requirePrimaryRegister:true,
       includeAllPrimaryRegisterPassages:edition.window.period==='monthly'&&overview,
@@ -155,10 +170,10 @@ export function prepareHoroscopeWriting(row,{studioCorrections=[],feedbackReceip
       if(error.code!=='OWNER_EVIDENCE_ROLE_MISSING'||error.detail?.role!=='argument')throw error;
     }
     return {sign:rising,house,seasonalMeaning:overview?seasonalMeaning:seasonalMeaningForRising(seasonalMeaning,rising,sources.houses),anchor:{planet,sign},developments,domain:domain.plainTranslation,outline:savedOutline||argumentInput.thesis,
-      argumentOutline,meaningInput,plan,contextOptions,validationCorrections:context.corrections,sourceIds:context.sameFamilyExamples.map(e=>e.id)};
+      argumentOutline,meaningInput,plan,contextOptions,ownerContext:context,validationCorrections:context.corrections,sourceIds:context.sameFamilyExamples.map(e=>e.id)};
   });
   const planHash=digest({...(writerSelection?{writerSelection}:{}),version:horoscopeWritingVersionFor(edition.window.period),...(edition.window.period!=='seasonal'?{reviewVersion:HOROSCOPE_RHETORICAL_REVIEW}:{}),window:edition.window,writingProfile,sourceHash,
-    feedbackReceipt,brief,entries:entries.map(e=>({sign:e.sign,outline:e.argumentOutline,developments:e.developments,seasonalMeaning:e.seasonalMeaning}))});
+    feedbackReceipt,...(edition.window.period==='weekly'?{rejectedReadings}:{}),brief,entries:entries.map(e=>({sign:e.sign,outline:e.argumentOutline,developments:e.developments,seasonalMeaning:e.seasonalMeaning}))});
   const prepared={edition,brief,writingProfile,entries,writerSelection,planHash,sources:sources.hashes,sourceHash,seasonalMeaning,feedbackReceipt};
   if(preparedPlans.size>=4)preparedPlans.delete(preparedPlans.keys().next().value);preparedPlans.set(cacheKey,prepared);return prepared;
 }
@@ -167,7 +182,8 @@ export function horoscopePlanPreview(prepared) {
   const writerCalls=prepared.edition.passages.filter(p=>!p.headline.trim()&&!p.body.trim()).length;
   return {version:horoscopeWritingVersionFor(prepared.edition.window.period),...(prepared.edition.window.period!=='seasonal'?{reviewVersion:HOROSCOPE_RHETORICAL_REVIEW,reviewCalls:writerCalls}:{}),planHash:prepared.planHash,sourceHash:prepared.sourceHash,window:prepared.edition.window,
     readings:prepared.entries.map(e=>({sign:e.sign,anchor:e.anchor,house:e.house,domain:e.domain,outline:e.outline,
-      argument:e.argumentOutline,developments:e.developments,seasonalMeaning:e.seasonalMeaning,sourceIds:e.sourceIds})),writerCalls,
+      argument:e.argumentOutline,developments:e.developments,seasonalMeaning:e.seasonalMeaning,sourceIds:e.sourceIds,
+      ...(prepared.edition.window.period==='weekly'?{ownerEvidence:horoscopeEvidenceReceipt(e.ownerContext,prepared.writingProfile)}:{})})),writerCalls,
     ...(prepared.edition.window.period==='seasonal'?{planningCalls:writerCalls*3,editorialReviewCalls:writerCalls*6,maximumPaidCalls:writerCalls*30}:{}),
     synthesisCalls:prepared.edition.window.period==='monthly'&&prepared.edition.passages.some(p=>!p.headline.trim()&&!p.body.trim())?1:0};
 }
@@ -192,6 +208,7 @@ export async function writeHoroscopeSign(prepared,sign,{approvedPlanHash,writerC
   const lint=validateHoroscopeReading({sign,headline,body},prepared.brief,{ownerCorrections:result.context.corrections});
   return {headline,body,lint,status:lint.passed?"owner-review-pending":"human-review-required",report:result.report,
     receipt:{version:horoscopeWritingVersionFor(prepared.edition.window.period),planHash:prepared.planHash,sign,sourceHash:prepared.sourceHash,sourceIds:entry.sourceIds,
+      ...(result.draft.ownerEvidence?{ownerEvidence:result.draft.ownerEvidence}:{}),
       seasonalMeaning:entry.seasonalMeaning,profileHash:digest(prepared.writingProfile),argumentHash:approved.approvedOutlineHash,feedback:prepared.feedbackReceipt,
       bodyHash:digest({headline,body}),ownerApproved:false,promotionAuthorized:false}};
 }

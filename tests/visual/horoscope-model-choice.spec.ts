@@ -36,7 +36,7 @@ async function fixture(page:Page,missing=1){
   }catch(error){child.kill();throw error;}
 }
 
-for(const [width,theme,choice] of [[1440,'light','gemini'],[390,'dark','claude']] as const){
+for(const [width,theme,choice] of [[1440,'light','gemini'],[390,'dark','claude'],[1440,'dark','gemini'],[390,'light','claude']] as const){
  test(`Choose and recover horoscope model ${choice} ${width} ${theme}`,async({page})=>{
   test.setTimeout(90000);
   await page.setViewportSize({width,height:1000});await page.addInitScript(theme=>localStorage.setItem('tldrastro:studio-theme',theme),theme);
@@ -53,6 +53,16 @@ for(const [width,theme,choice] of [[1440,'light','gemini'],[390,'dark','claude']
     expect((await f.latest()).sections.horoscopeEdition).toEqual(f.original);
     await page.reload();await f.open();await expect(selector).toHaveValue(choice);await expect(selector).toBeEnabled();
     expect((await f.call({method:'writer-state'})).calls).toBe(0);
+    await studio.getByRole('group',{name:'Writing plans by sign'}).getByRole('button',{name:'Pisces',exact:true}).click();
+    await studio.getByText('Writing evidence for this plan',{exact:true}).click();
+    const evidence=studio.locator('details').filter({has:page.locator('summary',{hasText:'Writing evidence for this plan'})}).last();
+    await evidence.getByText('primary owner passage · 1',{exact:true}).click();
+    const completeSource=await evidence.getByLabel('Complete source passage 1',{exact:true}).inputValue();
+    expect(completeSource.length).toBeGreaterThan(100);
+    const referenceStyle=await studio.getByText('Writing instructions · optional',{exact:true}).evaluate(el=>{const s=getComputedStyle(el);return [s.fontFamily,s.fontSize,s.fontWeight,s.lineHeight,s.letterSpacing];});
+    expect(await studio.getByText('Writing evidence for this plan',{exact:true}).evaluate(el=>{const s=getComputedStyle(el);return [s.fontFamily,s.fontSize,s.fontWeight,s.lineHeight,s.letterSpacing];})).toEqual(referenceStyle);
+    await page.screenshot({path:`test-results/weekly-evidence-${width}-${theme}.png`,fullPage:true});
+    await studio.getByText('Writing evidence for this plan',{exact:true}).click();
     f.state.holdPoll=true;
     await studio.getByLabel('I approve this writing plan for generation.').check();
     await studio.getByRole('button',{name:'Generate missing readings',exact:true}).click();
@@ -67,6 +77,7 @@ for(const [width,theme,choice] of [[1440,'light','gemini'],[390,'dark','claude']
     if(await resume.isVisible())await resume.click();
     await expect.poll(async()=>(await f.latest()).sections.horoscopeEdition.passages.at(-1).body,{timeout:35000}).toContain('Your saved fixture ends here.');
     const saved=await f.latest();expect(saved.sections.horoscopeEdition.passages.slice(0,-1)).toEqual(f.original.passages.slice(0,-1));
+    expect(saved.source_snapshot.horoscopeGeneration.readings.pisces.ownerEvidence.passages[0].text).toBe(completeSource);
     expect(saved.status).toBe('DRAFT');expect(saved.source_snapshot.horoscopeGeneration.readings.pisces.config.provider).toBe(choice==='gemini'?'gemini':'anthropic');
     expect((await f.call({method:'writer-state'}))).toMatchObject({calls:1,reviewCalls:1});
     expect((await f.call({method:'provider-state'})).requests).toHaveLength(1);
@@ -74,6 +85,11 @@ for(const [width,theme,choice] of [[1440,'light','gemini'],[390,'dark','claude']
     await studio.getByRole('group',{name:'Readings by sign'}).getByRole('button',{name:/Pisces/}).click();
     await expect(studio.getByLabel('Complete reading')).toHaveValue('You can read the complete pisces fixture opening.\n\nYour saved fixture ends here.');
     await expect(studio.getByText(/^Original draft model:/)).toContainText(choice==='gemini'?'gemini-3.1-pro-preview':'claude-sonnet-5-5');
+    await studio.getByText('Writing evidence used',{exact:true}).click();
+    await studio.getByText('primary owner passage · 1',{exact:true}).click();
+    await expect(studio.getByLabel('Complete source passage 1',{exact:true})).toHaveValue(completeSource);
+    await studio.getByText('Exact writer input',{exact:true}).click();
+    await expect(studio.getByLabel('Exact writer input',{exact:true})).toHaveValue((saved.source_snapshot.horoscopeGeneration.readings.pisces.ownerEvidence.providerRequest.input??saved.source_snapshot.horoscopeGeneration.readings.pisces.ownerEvidence.providerRequest.messages[0].content));
     expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
   }finally{f.child.kill();}
  });
