@@ -2,9 +2,75 @@ import { expect, test } from "@playwright/test";
 import { mkdir } from "node:fs/promises";
 import { readFileSync } from "node:fs";
 import { bundledPublications } from "../helpers/bundled-publications";
+import { readerResponse } from '../helpers/reader-response';
+import { calendarPassageRecord } from '../../apps/web/src/features/calendar/calendarPassageTemplates';
 import { watchBrowserErrors } from "./qaRuntimeGuards";
 
 const output = "test-results/calendar-ui-qa";
+
+const weeklyDates = ['2026-10-04', '2026-10-05', '2026-10-06', '2026-10-07', '2026-10-08', '2026-10-09', '2026-10-10'];
+const weeklyLabels = ['Sunday, October 4, 2026', 'Monday, October 5, 2026', 'Tuesday, October 6, 2026', 'Wednesday, October 7, 2026', 'Thursday, October 8, 2026', 'Friday, October 9, 2026', 'Saturday, October 10, 2026'];
+
+for (const theme of ['light', 'dark'] as const) for (const width of [390, 1440]) {
+  test(`Weekly published passages keep the day-card layout ${theme} ${width}`, async ({ page }) => {
+    test.setTimeout(120_000);
+    const errors: string[] = [];
+    page.on('pageerror', error => errors.push(error.message));
+    await page.setViewportSize({ width, height: 1000 });
+    await page.clock.setFixedTime(new Date('2026-10-07T16:00:00Z'));
+    await bundledPublications(page);
+    await page.addInitScript(theme => {
+      localStorage.setItem('tldrastro:theme', theme);
+      localStorage.setItem('tldrastro:selectedLocation', JSON.stringify({ label: 'QA reference', latitude: 0, longitude: 0, timeZone: 'America/New_York' }));
+    }, theme);
+    const key = 'calendar-passage/weekly/2026-10-04/America%2FNew_York';
+    const bodies = weeklyDates.map(date => [`Synthetic weekly opening ${date}.`, `Complete weekly ending ${date}.`]);
+    bodies[6].push('[Read more](?date=2026-10-10#sky/lunation/2026-10-10/libra)');
+    let body = weeklyLabels.map((label, index) => [label, ...bodies[index]].join('\n\n')).join('\n\n');
+    await page.route('**/api/content-reader', route => {
+      const keys: string[] = route.request().postDataJSON().keys ?? [];
+      const record = { ...calendarPassageRecord(key, body), review_status: 'approved' };
+      return route.fulfill({ json: readerResponse(keys.includes(key) ? [{
+        id: 'qa-weekly-layout', content_key: key, updated_at: '2026-10-07T12:00:00Z', status: 'LIVE', surface: 'sky', mode: 'feed', event_type: 'calendar-passage',
+        provider: 'tldrastro-fallback-architecture-v3', body, sections: { packageRecord: record },
+        source_snapshot: { sourcePackage: 'tldrastro-fallback-architecture-v3', content_role: 'full_copy', review_status: 'approved' }
+      }] : []) });
+    });
+    await page.goto('/?date=2026-10-07#calendar?view=day&date=2026-10-07');
+    await page.getByRole('tab', { name: 'Week', exact: true }).click();
+    const week = page.getByRole('tabpanel', { name: 'Week', exact: true });
+    for (let load = 0; load < 2; load++) {
+      await expect(week.locator('.calendar-day-group')).toHaveCount(7);
+      await expect(week.getByRole('region', { name: 'Weekly overview', exact: true })).toHaveCount(0);
+      for (const [index, date] of weeklyDates.entries()) {
+        const card = week.locator(`#calendar-day-group-${date}`);
+        await expect(card.locator('.calendar-day-group__blurb p')).toHaveText(bodies[index].map(text => text.startsWith('[Read more]') ? 'Read more' : text));
+        await expect(week.getByText(bodies[index][0], { exact: true })).toHaveCount(1);
+        expect(await card.evaluate(node => getComputedStyle(node).backgroundColor)).not.toBe('rgba(0, 0, 0, 0)');
+      }
+      await expect(week.getByRole('link', { name: 'Read more', exact: true })).toHaveAttribute('href', '/?date=2026-10-10#sky/lunation/2026-10-10/libra');
+      expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1)).toBe(true);
+      if (load === 0) await page.reload();
+    }
+    await mkdir(output, { recursive: true });
+    await page.screenshot({ path: `${output}/weekly-cards-${theme}-${width}.png` });
+    await week.getByRole('button', { name: '7 Wednesday · Today', exact: true }).click();
+    await expect(page.getByRole('dialog', { name: 'Day slideout' })).toBeVisible();
+    await page.getByRole('dialog', { name: 'Day slideout' }).getByRole('button', { name: 'Close', exact: true }).click();
+    await page.getByRole('button', { name: 'Next week', exact: true }).click();
+    await expect(week.locator('#calendar-day-group-2026-10-11')).toBeVisible();
+    await expect(week.getByText(bodies[0][0], { exact: true })).toHaveCount(0);
+    await page.getByRole('button', { name: 'Previous week', exact: true }).click();
+    await expect(week.getByText(bodies[0][0], { exact: true })).toBeVisible();
+    // A custom overview with no exact day headings must retain every paragraph.
+    body = 'Complete custom weekly opening.\n\nComplete custom weekly ending.';
+    await page.reload();
+    const overview = week.getByRole('region', { name: 'Weekly overview', exact: true });
+    await expect(overview.locator('p')).toHaveText(body.split('\n\n'));
+    await expect(overview).toHaveClass('calendar-day-group');
+    expect(errors).toEqual([]);
+  });
+}
 
 const jupiterLilithBody = JSON.parse(readFileSync("packages/astro-knowledge/data/transits/jupiter-trine-lilith.json", "utf8")).readerCopy.body as string;
 
