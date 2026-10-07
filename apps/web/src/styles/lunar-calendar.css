@@ -3544,6 +3544,14 @@ button.calendar-reading__toggle {
   justify-content: space-between;
   width: 100%;
   padding-top: var(--lunar-space-4);
+}
+
+.calendar-stoic-card__cta > :last-child {
+  margin-left: auto;
+}
+
+.calendar-stoic-card__meta,
+.calendar-stoic-card__cta {
   color: var(--calendar-tertiary);
   font-family: var(--font-body);
   font-size: var(--calendar-row-meta);
