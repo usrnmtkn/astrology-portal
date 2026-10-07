@@ -1,3 +1,4 @@
+import {horoscopeEvidenceReceipt,assertHoroscopeEvidenceDelivered} from './horoscopeEvidenceReceipt.mjs';
 import {buildLunationArticleInput,LUNATION_ARTICLE_SCHEMA} from "./lunationArticleInput.mjs";
 import { candidateCardAstrologyWritingInstructions, canonicalAstrologyWritingInstructions } from "./canonicalInstructions.mjs";
 import {
@@ -231,16 +232,25 @@ export async function generateDraft({
     : canonicalAstrologyWritingInstructions;
   const seasonalPreparation=family==='horoscope'&&engineFacts?.window?.period==='seasonal'
     ? {context,task,engineFacts,argumentOutline,writingProfile}:null;
+  const input=buildDraftInput({ plan, context, task, target: resolvedTarget, family, register, surface, familyContext, engineFacts, argumentSource, argumentOutline, spine, writingProfile });
+  const ownerEvidence=family==='horoscope'&&engineFacts?.window?.period==='weekly'
+    ?assertHoroscopeEvidenceDelivered(horoscopeEvidenceReceipt(context,writingProfile),input):null;
+  const instructions=effectiveRulePrompt(baseInstructions, { surface, family });
   const value = await modelClient({
     stage: "draft",
     role,
-    instructions: effectiveRulePrompt(baseInstructions, { surface, family }),
-    input: buildDraftInput({ plan, context, task, target: resolvedTarget, family, register, surface, familyContext, engineFacts, argumentSource, argumentOutline, spine, writingProfile }),
+    instructions,
+    input,
+    ...(ownerEvidence?{ownerEvidence}:{}),
     schema: resolvedSchema,
     ...(seasonalPreparation?{seasonalPreparation}:{}),
     ...(family==='horoscope'?{reviewEvidence:{
       ownerExamples:context.sameFamilyExamples,corrections:context.corrections,
-      writingProfile,argumentOutline,engineFacts
+      writingProfile,argumentOutline,engineFacts,
+      // Complete texts already travel in ownerExamples and writingProfile.
+      // Carry provenance without duplicating the corpus in the paid review input.
+      ...(ownerEvidence?{rejectedExamples:context.rejectedExamples??[],ownerEvidence:{version:ownerEvidence.version,route:ownerEvidence.route,
+        inputSha256:ownerEvidence.inputSha256,passages:ownerEvidence.passages.map(({id,sourcePath,sha256,role})=>({id,sourcePath,sha256,role}))}}: {})
     }}:{})
   });
   if (!value || typeof value !== "object") throw new Error("Writer returned no structured draft.");
@@ -248,6 +258,7 @@ export async function generateDraft({
     ? composeMonthlyHoroscopeDraft(value) : value;
   return attachGenerationMetadata({
     ...unapprovedDraft(readerValue),
+    ...(ownerEvidence?{ownerEvidence:{...ownerEvidence,assembledRequest:{instructions,input,schema:resolvedSchema}}}:{}),
     argumentOutline,
     argumentOutlineHash: argumentOutline.approvedOutlineHash,
     contentSpineId: spine.id,

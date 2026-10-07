@@ -7,10 +7,10 @@ import {studioStorage} from '../_lib/sky-studio-sources.js';
 import {assertHoroscopeRow,prepareHoroscopeBrief} from '../_lib/horoscope-editions.js';
 import {listStudioWritingProfiles} from '../_lib/studio-writing-profiles.js';
 import {activeStudioFeedback,studioFeedbackEnabled,feedbackHash} from '../_lib/studio-memory-feedback.js';
-import {prepareHoroscopeWriting,horoscopePlanPreview,writeHoroscopeSign,horoscopeWritingVersion} from '../../src/astro-writing/horoscopeWriting.mjs';
+import {prepareHoroscopeWriting,horoscopePlanPreview,writeHoroscopeSign,horoscopeWritingVersionFor} from '../../src/astro-writing/horoscopeWriting.mjs';
 import {horoscopeEditionBody,horoscopeReadingSigns,horoscopeCanonicalJson} from '../../apps/web/src/content/horoscopeEditions.mjs';
 import {horoscopeWriterConfig,horoscopeWriterOptions,isHoroscopeResponseId} from '../../src/astro-writing/horoscopeWriterModels.mjs';
-import {buildHoroscopeProviderRequest} from '../_lib/horoscope-provider-codecs.js';
+import {buildHoroscopeProviderRequest,horoscopeProviderRequestSnapshot} from '../_lib/horoscope-provider-codecs.js';
 import {startHoroscopeResponse,storedHoroscopeResponse} from '../_lib/horoscope-provider.js';
 import {HoroscopeProviderFailure,horoscopeProviderDiagnostic,readHoroscopeProviderResult} from '../_lib/horoscope-provider-result.js';
 import {loadHoroscopeSeasonalSources} from '../_lib/horoscope-seasonal-sources.js';
@@ -285,12 +285,14 @@ export default async function handler(req:IncomingMessage,res:ServerResponse) {
         reviewVersion:HOROSCOPE_RHETORICAL_REVIEW,
         outputFormat:prepared.edition.window.period==='monthly'?MONTHLY_HOROSCOPE_FORMAT:null,
         validationCorrections:entry.validationCorrections,
-        receipt:{version:horoscopeWritingVersion,outputFormat:prepared.edition.window.period==='monthly'?MONTHLY_HOROSCOPE_FORMAT:null,planHash,sign,sourceHash:prepared.sourceHash,sourceIds:entry.sourceIds,seasonalMeaning:entry.seasonalMeaning,profileHash:hash(prepared.writingProfile),argumentHash:entry.argumentOutline.outlineHash,feedback:prepared.feedbackReceipt,ownerApproved:false,promotionAuthorized:false}};
+        receipt:{version:horoscopeWritingVersionFor(prepared.edition.window.period),outputFormat:prepared.edition.window.period==='monthly'?MONTHLY_HOROSCOPE_FORMAT:null,planHash,sign,sourceHash:prepared.sourceHash,sourceIds:entry.sourceIds,seasonalMeaning:entry.seasonalMeaning,profileHash:hash(prepared.writingProfile),argumentHash:entry.argumentOutline.outlineHash,feedback:prepared.feedbackReceipt,ownerApproved:false,promotionAuthorized:false}};
     }
     let payload:any;
-    const writerClient=Object.assign(async({role,instructions,input:prompt,schema,reviewEvidence}:any)=>{
+    const writerClient=Object.assign(async({role,instructions,input:prompt,schema,reviewEvidence,ownerEvidence}:any)=>{
         const request=buildHoroscopeProviderRequest({config:operation.config,role,input:prompt,schema,instructions});
-        operation={...operation,requestHash:hash({request,instructions}),reviewEvidence};
+        const providerRequest=ownerEvidence?horoscopeProviderRequestSnapshot({config:operation.config,role,request,instructions}):null;
+        operation={...operation,requestHash:hash({request,instructions}),reviewEvidence,
+          ...(ownerEvidence?{receipt:{...operation.receipt,ownerEvidence:{...ownerEvidence,providerRequest,providerRequestHash:hash(providerRequest)}}}: {})};
         // Finish prompt/evidence preparation before reserving. One conditional
         // save contains the complete identity; a failed save never dispatches.
         stage='reserve';
@@ -316,7 +318,7 @@ export default async function handler(req:IncomingMessage,res:ServerResponse) {
     try {
       const result=await writeHoroscopeSign(prepared,sign,{approvedPlanHash:planHash,writerClient,approvalReference:`horoscope-generation/${row.id}/${operation.id}`});
       const edition={...prepared.edition,passages:prepared.edition.passages.map((p:any)=>p.sign===sign?{...p,headline:result.headline,body:result.body}:p)};
-      const receipt={...result.receipt,outputFormat:operation.outputFormat,operationId:operation.id,responseId:operation.responseId,requestHash:operation.requestHash,config:operation.config,usage:payload?.usage??null,completedAt:new Date().toISOString(),lint:result.lint,report:result.report};
+      const receipt={...result.receipt,...(operation.receipt.ownerEvidence?{ownerEvidence:operation.receipt.ownerEvidence}:{}),outputFormat:operation.outputFormat,operationId:operation.id,responseId:operation.responseId,requestHash:operation.requestHash,config:operation.config,usage:payload?.usage??null,completedAt:new Date().toISOString(),lint:result.lint,report:result.report};
       if(horoscopePunctuationFindings(result).length)return await holdForPunctuation({headline:result.headline,body:result.body},receipt);
       if(operation.reviewVersion===HOROSCOPE_RHETORICAL_REVIEW){
         const reviewed=await queueHoroscopeReview({row,persist,operation,candidate:{headline:result.headline,body:result.body},receipt});

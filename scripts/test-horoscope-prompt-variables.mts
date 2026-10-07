@@ -74,7 +74,7 @@ for(const period of ['daily','weekly','monthly','seasonal'] as const){
    assert.equal(row.seasonalEditorialRun.status,'accepted');assert.equal(row.sections.horoscopeEdition.passages.find((p:any)=>p.sign===sign).body,'');continue;
   }
   r=await action('poll');assert.equal(r.status,200,JSON.stringify(r.payload));row=r.payload.rows[0];
-  assert.equal(row.status,'DRAFT');assert.equal(row.source_snapshot.horoscopeGeneration.readings[sign].version,'horoscope-writer/v17');
+  assert.equal(row.status,'DRAFT');assert.equal(row.source_snapshot.horoscopeGeneration.readings[sign].version,period==='weekly'?'horoscope-writer/v20-weekly-evidence':'horoscope-writer/v17');
  }
 }
 console.log('PASS horoscope run variables: actual-handler save and generation across all periods, complete exact evidence once, scoped comparisons/corrections, audience-safe facts, strict expansion and unchanged saved profiles. Injected provider only.');
