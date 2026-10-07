@@ -189,9 +189,17 @@ const alternativeProviders=process.env.HOROSCOPE_ALTERNATIVE_PROVIDERS_FIXTURE==
 if (process.send) process.on('message', async ({ id, method, body, url, headers }: any) => {
  try {
   if(method==='provider-state'&&alternativeProviders){
-    for(const key of ['claudeDelay','claudeError','geminiError'] as const)if(body?.[key]!==undefined)(alternativeProviders as any)[key]=body[key];
+    for(const key of ['claudeDelay','claudeError','geminiError','geminiDelay','geminiInterrupted','geminiRetrievalError'] as const)if(body?.[key]!==undefined)(alternativeProviders as any)[key]=body[key];
     if(body?.missingGemini)delete process.env.GEMINI_API_KEY;
-    process.send!({id,result:{requests:alternativeProviders.requests.map(({provider,request}:any)=>({provider,model:request.model}))}});return;
+    process.send!({id,result:{geminiGets:alternativeProviders.geminiGets,requests:alternativeProviders.requests.map(({provider,request}:any)=>({provider,model:request.model}))}});return;
+  }
+  if(method==='legacy-gemini-request'){
+    const row=store.rows.get(body.id),active=row.source_snapshot.horoscopeGeneration.active;
+    if(active?.config?.provider!=='gemini')throw new Error('Fixture requires an active Gemini request');
+    delete active.config.transport;delete active.providerResult;
+    active.responseId='v1_synthetic_legacy';
+    if(body.expired)active.startedAt=new Date(Date.now()-311000).toISOString();
+    process.send!({id,result:structuredClone(row)});return;
   }
   if(method==='auth-state'){sessionFixture.token=body.token;process.send!({id,result:{ok:true}});return;}
   if (method === 'writer-state') {

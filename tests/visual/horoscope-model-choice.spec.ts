@@ -4,7 +4,7 @@ import path from 'node:path';
 import {routeStudioInventoryApi} from '../helpers/studio-inventory-route';
 import {emptyHoroscopeEdition,horoscopeEditionBody,horoscopeEditionKey} from '../../apps/web/src/content/horoscopeEditions.mjs';
 
-async function fixture(page:Page){
+async function fixture(page:Page,missing=1){
   const child=fork(path.resolve('tests/helpers/sky-article-save-api.mts'),[],{
     env:{...process.env,HOROSCOPE_WRITER_FIXTURE:'1',HOROSCOPE_ALTERNATIVE_PROVIDERS_FIXTURE:'1'},
     execArgv:['--import','tsx'],stdio:['ignore','pipe','pipe','ipc']});
@@ -19,7 +19,7 @@ async function fixture(page:Page){
     await ready;
     const facts=await call({method:'GET',url:'/api/admin/generated-content?horoscopeBrief=true&period=weekly&date=2026-10-07&timeZone=America%2FNew_York'});
     expect(facts.status).toBe(200);const {brief,signature}=facts.payload,edition=emptyHoroscopeEdition(brief.window);
-    for(const p of edition.passages.slice(0,-1)){p.headline=`Saved ${p.sign}`;p.body=`Existing ${p.sign} opening.\n\nExisting ${p.sign} final sentence.`;}
+    for(const p of edition.passages.slice(0,-missing)){p.headline=`Saved ${p.sign}`;p.body=`Existing ${p.sign} opening.\n\nExisting ${p.sign} final sentence.`;}
     const created=await call({method:'POST',body:{contentKey:horoscopeEditionKey(edition.window),surface:'sky',mode:'article',eventType:'horoscope-edition',provider:'manual-admin',status:'DRAFT',lane:'serving',headline:'Synthetic model choice edition',body:horoscopeEditionBody(edition),sections:{horoscopeEdition:edition},facts:{horoscopeBrief:{brief,signature}},sourceSnapshot:{}}});
     expect(created.status).toBe(200);const id=created.payload.rows[0].id;
     const latest=async()=>(await call({method:'rows'})).find((row:any)=>row.id===id);
@@ -32,7 +32,7 @@ async function fixture(page:Page){
     }});
     await page.addInitScript(()=>localStorage.setItem('tldrastro:contentAdminSecret','calendar-api-fixture'));
     const open=async()=>{await page.goto('/admin/content#horoscopes');const studio=page.getByRole('region',{name:'Horoscope editions'});await studio.getByText(/^Continue a saved edition/).click();await studio.getByRole('button',{name:/Synthetic model choice edition/}).click();return studio;};
-    return {child,call,latest,state,open,original:edition};
+    return {child,call,latest,state,open,original:edition,id};
   }catch(error){child.kill();throw error;}
 }
 
@@ -86,5 +86,54 @@ test('Unavailable provider is visible but cannot be selected',async({page})=>{
     await expect(selector).toBeEnabled();await expect(selector.locator('option[value="gemini"]')).toHaveAttribute('disabled','');
     await expect(studio.getByText('Gemini 3.1 Pro (preview) needs its server API connection.')).toBeVisible();
     await expect(selector).toHaveValue('current');expect((await f.call({method:'writer-state'})).calls).toBe(0);
+  }finally{f.child.kill();}
+});
+
+
+test('Legacy Gemini retrieval failure holds only that sign and the rest completes',async({page})=>{
+  const f=await fixture(page,2);try{
+    await f.call({method:'provider-state',body:{geminiDelay:1500,geminiRetrievalError:true}});
+    const studio=await f.open();
+    await studio.getByRole('combobox',{name:'Writing model'}).selectOption('gemini');
+    f.state.holdPoll=true;
+    await studio.getByLabel('I approve this writing plan for generation.').check();
+    await studio.getByRole('button',{name:'Generate missing readings',exact:true}).click();
+    await expect.poll(async()=>(await f.latest()).source_snapshot.horoscopeGeneration.active?.responseId).toBeTruthy();
+    await f.call({method:'legacy-gemini-request',body:{id:f.id}});
+    f.state.holdPoll=false;
+    await expect(studio.getByText(/^Aquarius was interrupted before its response could be confirmed/)).toBeVisible();
+    // Still the same batch, with no manual resume between Aquarius and Pisces.
+    await expect.poll(async()=>(await f.latest()).sections.horoscopeEdition.passages.at(-1).body,{timeout:35000}).toContain('Your saved fixture ends here.');
+    const row=await f.latest();
+    expect(row.source_snapshot.horoscopeGeneration.heldRequests.aquarius.responseId).toBe('v1_synthetic_legacy');
+    expect(row.sections.horoscopeEdition.passages.slice(0,-2)).toEqual(f.original.passages.slice(0,-2));
+    expect(row.sections.horoscopeEdition.passages.at(-2).body).toBe('');
+    expect((await f.call({method:'writer-state'})).calls).toBe(2);
+    expect((await f.call({method:'provider-state'})).geminiGets).toBe(1);
+    await page.reload();await f.open();
+    await expect(studio.getByRole('button',{name:'Allow retry for Aquarius'})).toBeVisible();
+    expect((await f.call({method:'writer-state'})).calls).toBe(2);
+  }finally{f.child.kill();}
+});
+
+test('Release interrupted Gemini request succeeds despite the Google cancellation error',async({page})=>{
+  const f=await fixture(page);try{
+    await f.call({method:'provider-state',body:{geminiDelay:1500,geminiRetrievalError:true}});
+    const studio=await f.open();
+    await studio.getByRole('combobox',{name:'Writing model'}).selectOption('gemini');
+    f.state.holdPoll=true;
+    await studio.getByLabel('I approve this writing plan for generation.').check();
+    await studio.getByRole('button',{name:'Generate missing readings',exact:true}).click();
+    await expect.poll(async()=>(await f.latest()).source_snapshot.horoscopeGeneration.active?.responseId).toBeTruthy();
+    await f.call({method:'legacy-gemini-request',body:{id:f.id,expired:true}});
+    await page.reload();await f.open();
+    page.once('dialog',dialog=>dialog.accept());
+    await studio.getByRole('button',{name:'Release interrupted request',exact:true}).click();
+    await expect(studio.getByRole('status')).toHaveText('Interrupted request released. Review the plan before starting another request.');
+    const row=await f.latest();expect(row.source_snapshot.horoscopeGeneration.active).toBeNull();
+    expect(row.source_snapshot.horoscopeGeneration.lastInterrupted.responseId).toBe('v1_synthetic_legacy');
+    expect(row.source_snapshot.horoscopeGeneration.lastInterrupted.outcome).toBe('unknown');
+    expect(row.sections.horoscopeEdition).toEqual(f.original);
+    expect((await f.call({method:'writer-state'})).calls).toBe(1);
   }finally{f.child.kill();}
 });

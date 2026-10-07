@@ -149,7 +149,11 @@ export default async function handler(req:IncomingMessage,res:ServerResponse) {
       if(operation.responseId){
         const response=await storedHoroscopeResponse({operation,cancel:true});
         const result:any=await response.json();
-        if(!response.ok||!['cancelled','failed','incomplete'].includes(result.status))throw new AdminHttpError(409,'This request could not be cancelled, or has already completed. Resume generation to retrieve its result.');
+        // This known retrieval failure also prevents Google cancellation. The
+        // explicit aged-request acknowledgment above permits release as unknown,
+        // never a claim of cancellation and never an automatic replacement call.
+        const unavailableGemini=operation.config?.provider==='gemini'&&result.error?.code==='gemini_retrieval_authentication';
+        if(!unavailableGemini&&(!response.ok||!['cancelled','failed','incomplete'].includes(result.status)))throw new AdminHttpError(409,'This request could not be cancelled, or has already completed. Resume generation to retrieve its result.');
       }
       if(isHoroscopeReview(operation)){
         const result=await horoscopeRhetoricalOperation({action:'release',row,persist,apiKey:process.env.OPENAI_API_KEY});
@@ -198,6 +202,15 @@ export default async function handler(req:IncomingMessage,res:ServerResponse) {
       }
       const response=await storedHoroscopeResponse({operation});
       const payload:any=await response.json();
+      if(payload?.error?.code==='gemini_retrieval_authentication'){
+        const generation=row.source_snapshot.horoscopeGeneration;
+        const interrupted={...operation,interruptedAt:new Date().toISOString(),outcome:'unknown',
+          diagnostic:{code:'gemini_retrieval_authentication'},
+          message:'Google could not retrieve this saved Gemini request because of an authentication error. The request may have been billed. It is kept here without an automatic retry; the other readings can continue.'};
+        await persist({source_snapshot:{...row.source_snapshot,horoscopeGeneration:{...generation,active:null,
+          interruptions:[...(generation.interruptions??[]),interrupted],heldRequests:{...generation.heldRequests,[operation.sign]:interrupted}}}});
+        return sendAdminJson(res,200,{ok:true,rows:[row],pending:false,recovery:'uncertain'});
+      }
       if(!response.ok)throw new AdminHttpError(503,'The writer result is temporarily unavailable. Resume to retrieve the same request.');
       if(['queued','in_progress'].includes(payload.status))return sendAdminJson(res,202,{ok:true,rows:[row],pending:true});
       let value;

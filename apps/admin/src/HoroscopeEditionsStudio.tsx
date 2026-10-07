@@ -308,7 +308,19 @@ export default function HoroscopeEditionsStudio({secret,requestedEditionId}:{sec
         const next=active?.sign??retrying??missing.sign;
         setSign(next);
         setProgress(`${['synthesis','planning'].includes(active?.phase)?'Planning':active?.phase==='review'?'Reviewing':'Writing'} ${horoscopeSignLabel(next)} · ${row.sections.horoscopeEdition.passages.filter((p:any)=>p.body.trim()&&p.headline.trim()).length}/${row.sections.horoscopeEdition.passages.length} saved`);
-        const data=await request(secret,'/api/admin/horoscope-writing',{action:active?(active.state==='ready'?'continue':'poll'):'generate',id:row.id,expectedUpdatedAt:row.updated_at,...(!active?{sign:next,approvedPlanHash:plan.planHash}:{})},'POST',controller.signal);
+        let data;
+        try{
+          data=await request(secret,'/api/admin/horoscope-writing',{action:active?(active.state==='ready'?'continue':'poll'):'generate',id:row.id,expectedUpdatedAt:row.updated_at,...(!active?{sign:next,approvedPlanHash:plan.planHash}:{})},'POST',controller.signal);
+        }catch(reason){
+          if((reason as any).status===409&&active?.state==='running'){
+            const refreshed=await readSaved(row.id,controller.signal);
+            if(!isCurrent(controller))return;
+            const {horoscopeStreamCheckpointOnly}=await import('../../../src/astro-writing/horoscopeStreamCheckpoint.mjs');
+            if(!isCurrent(controller))return;
+            if(horoscopeStreamCheckpointOnly(row,refreshed)){row=refreshed;retain(row);continue;}
+          }
+          throw reason;
+        }
         if(!isCurrent(controller))return;
         const updated=data.rows?.[0];if(!updated||updated.id!==row.id)throw new Error('The generation result could not be confirmed. Reopen the saved edition.');
         row=updated;retain(row);
