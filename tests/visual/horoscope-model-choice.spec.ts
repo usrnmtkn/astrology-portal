@@ -45,6 +45,8 @@ for(const [width,theme,choice] of [[1440,'light','gemini'],[390,'dark','claude']
     await expect(selector).toHaveValue('current');await expect(selector).toBeEnabled();
     await expect(selector.locator('option')).toHaveText(['Current writer','Gemini 3.1 Pro (preview)','Claude Sonnet 5.5']);
     await studio.getByLabel('I approve this writing plan for generation.').check();
+    await selector.evaluate(element=>element.scrollIntoView({block:'center'}));
+    await selector.click();await selector.press('Escape');
     await selector.selectOption(choice);
     await expect(studio.getByRole('status')).toHaveText('Writing model saved. Review the plan before generating.');
     await expect(studio.getByLabel('I approve this writing plan for generation.')).not.toBeChecked();
@@ -56,7 +58,8 @@ for(const [width,theme,choice] of [[1440,'light','gemini'],[390,'dark','claude']
     await studio.getByRole('button',{name:'Generate missing readings',exact:true}).click();
     await expect(selector).toBeDisabled();await expect(studio.getByText(/^Saved request:/)).toContainText(choice==='gemini'?'gemini-3.1-pro-preview':'claude-sonnet-5-5');
     await page.reload();await f.open();await expect(selector).toBeDisabled();await expect(selector).toHaveValue(choice);
-    await page.screenshot({path:`test-results/horoscope-model-${choice}-${width}-${theme}.png`,fullPage:true});
+    await selector.evaluate(element=>element.scrollIntoView({block:'center'}));
+    await page.screenshot({path:`test-results/horoscope-model-${choice}-${width}-${theme}.png`,fullPage:width>600});
     f.state.holdPoll=false;
     // Reload deliberately pauses the rest of the batch. Resume the saved
     // request, including its existing independent review, without a new writer.
