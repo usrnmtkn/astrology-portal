@@ -3,6 +3,7 @@ import { createApiStore } from '../tests/helpers/calendar-review-api.mjs';
 import { calendarPassageKey, calendarPassageIdentity, calendarPassageRecord, renderCalendarPassage, calendarPassageErrors, resolveCalendarPassage } from '../apps/web/src/features/calendar/calendarPassageTemplates.ts';
 import { calendarTimingBody } from '../apps/web/src/features/calendar/calendarTimingTemplates.ts';
 import { isReaderServableGeneratedContentRow } from '../apps/web/src/content/generatedContentEligibility.ts';
+import { calendarWeeklyDayParagraphs } from '../apps/web/src/features/calendar/calendarWeeklyPresentation.ts';
 
 import { publishedPassageSources, calendarStudioMoonSources } from '../apps/admin/src/calendarPassageSources.ts';
 
@@ -14,6 +15,18 @@ assert.equal(calendarPassageIdentity('calendar-passage/weekly/2026-09-28/UTC'), 
 assert.equal(calendarPassageIdentity('calendar-passage/monthly/2026-09-28/UTC'), null);
 assert.equal(calendarPassageIdentity('calendar-passage/weekly/2026-09-27/UTC')?.period, 'weekly');
 assert.equal(calendarPassageIdentity('calendar-passage/monthly/2026-09-01/UTC')?.period, 'monthly');
+const weeklyDates = ['2026-10-04', '2026-10-05', '2026-10-06', '2026-10-07', '2026-10-08', '2026-10-09', '2026-10-10'];
+const weeklyLabels = ['Sunday, October 4, 2026', 'Monday, October 5, 2026', 'Tuesday, October 6, 2026', 'Wednesday, October 7, 2026', 'Thursday, October 8, 2026', 'Friday, October 9, 2026', 'Saturday, October 10, 2026'];
+const weeklyDays = weeklyDates.map(dateKey => ({ dateKey, date: `${dateKey}T23:00:00Z` }));
+const weeklyBodies = weeklyDates.map(date => [`Exact opening ${date}.`, `**Complete ending ${date}.**`, '[Read more](?date=2026-10-10#sky/lunation/2026-10-10/libra)']);
+const weeklyBody = weeklyLabels.map((label, index) => [label, ...weeklyBodies[index]].join('\n\n')).join('\n\n');
+assert.deepEqual(calendarWeeklyDayParagraphs(weeklyBody, weeklyDays, 'America/New_York'), new Map(weeklyDates.map((date, index) => [date, weeklyBodies[index]])));
+// Never partially extract, silently drop a custom introduction, or guess at mismatched dates.
+for (const body of ['Custom complete overview.', `Introduction.\n\n${weeklyBody}`, weeklyBody.replace(weeklyLabels[2], weeklyLabels[1]), weeklyBody.replace(weeklyLabels[0], 'Sunday, October 11, 2026'), weeklyBody.slice(0, weeklyBody.indexOf(weeklyLabels[6]))]) {
+  assert.equal(calendarWeeklyDayParagraphs(body, weeklyDays, 'America/New_York'), null);
+}
+assert.equal(calendarWeeklyDayParagraphs(weeklyBody, weeklyDays, 'Pacific/Auckland'), null);
+assert.equal(calendarWeeklyDayParagraphs(weeklyBody, weeklyDays.slice(1), 'America/New_York'), null);
 assert.equal(renderCalendarPassage('{{moonSign}}: {{moonWriteup}}', { moonSign: {text:'Test sign',kind:'fact'}, moonWriteup:{text:'Complete synthetic passage.',kind:'copy'} }), 'Test sign: Complete synthetic passage.');
 assert.equal(renderCalendarPassage('{{moonWriteup}}', {}), null);
 assert.equal(renderCalendarPassage('{{#sunSummary}}{{sunSummary}}{{/sunSummary}}\n\nComplete synthetic passage.', {}), 'Complete synthetic passage.');
