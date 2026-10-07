@@ -115,3 +115,25 @@ test('Legacy Gemini retrieval failure holds only that sign and the rest complete
     expect((await f.call({method:'writer-state'})).calls).toBe(2);
   }finally{f.child.kill();}
 });
+
+test('Release interrupted Gemini request succeeds despite the Google cancellation error',async({page})=>{
+  const f=await fixture(page);try{
+    await f.call({method:'provider-state',body:{geminiDelay:1500,geminiRetrievalError:true}});
+    const studio=await f.open();
+    await studio.getByRole('combobox',{name:'Writing model'}).selectOption('gemini');
+    f.state.holdPoll=true;
+    await studio.getByLabel('I approve this writing plan for generation.').check();
+    await studio.getByRole('button',{name:'Generate missing readings',exact:true}).click();
+    await expect.poll(async()=>(await f.latest()).source_snapshot.horoscopeGeneration.active?.responseId).toBeTruthy();
+    await f.call({method:'legacy-gemini-request',body:{id:f.id,expired:true}});
+    await page.reload();await f.open();
+    page.once('dialog',dialog=>dialog.accept());
+    await studio.getByRole('button',{name:'Release interrupted request',exact:true}).click();
+    await expect(studio.getByRole('status')).toHaveText('Interrupted request released. Review the plan before starting another request.');
+    const row=await f.latest();expect(row.source_snapshot.horoscopeGeneration.active).toBeNull();
+    expect(row.source_snapshot.horoscopeGeneration.lastInterrupted.responseId).toBe('v1_synthetic_legacy');
+    expect(row.source_snapshot.horoscopeGeneration.lastInterrupted.outcome).toBe('unknown');
+    expect(row.sections.horoscopeEdition).toEqual(f.original);
+    expect((await f.call({method:'writer-state'})).calls).toBe(1);
+  }finally{f.child.kill();}
+});

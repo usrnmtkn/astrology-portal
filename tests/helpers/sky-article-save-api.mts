@@ -198,6 +198,7 @@ if (process.send) process.on('message', async ({ id, method, body, url, headers 
     if(active?.config?.provider!=='gemini')throw new Error('Fixture requires an active Gemini request');
     delete active.config.transport;delete active.providerResult;
     active.responseId='v1_synthetic_legacy';
+    if(body.expired)active.startedAt=new Date(Date.now()-311000).toISOString();
     process.send!({id,result:structuredClone(row)});return;
   }
   if(method==='auth-state'){sessionFixture.token=body.token;process.send!({id,result:{ok:true}});return;}

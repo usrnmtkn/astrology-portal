@@ -27,7 +27,9 @@ newer owner edits and cannot resurrect an ended request.
 For older background requests affected by the exact Google retrieval error,
 the handler holds the uncertain request and returns control to the batch. Other
 signs can continue. The blocked sign needs an explicit retry acknowledgment;
-its potentially billed request remains in the history. This does not recover
+its potentially billed request remains in the history. The aged-request Release
+action also accepts this known retrieval failure after explicit acknowledgment,
+archives the outcome as unknown, and starts no replacement request. This does not recover
 text that Google cannot return.
 
 Validation uses isolated storage and native provider-shaped fixtures, with no

@@ -149,7 +149,11 @@ export default async function handler(req:IncomingMessage,res:ServerResponse) {
       if(operation.responseId){
         const response=await storedHoroscopeResponse({operation,cancel:true});
         const result:any=await response.json();
-        if(!response.ok||!['cancelled','failed','incomplete'].includes(result.status))throw new AdminHttpError(409,'This request could not be cancelled, or has already completed. Resume generation to retrieve its result.');
+        // This known retrieval failure also prevents Google cancellation. The
+        // explicit aged-request acknowledgment above permits release as unknown,
+        // never a claim of cancellation and never an automatic replacement call.
+        const unavailableGemini=operation.config?.provider==='gemini'&&result.error?.code==='gemini_retrieval_authentication';
+        if(!unavailableGemini&&(!response.ok||!['cancelled','failed','incomplete'].includes(result.status)))throw new AdminHttpError(409,'This request could not be cancelled, or has already completed. Resume generation to retrieve its result.');
       }
       if(isHoroscopeReview(operation)){
         const result=await horoscopeRhetoricalOperation({action:'release',row,persist,apiKey:process.env.OPENAI_API_KEY});

@@ -166,6 +166,19 @@ for(let attempts=0;latest(legacyId).source_snapshot.horoscopeGeneration.active&&
 assert(latest(legacyId).sections.horoscopeEdition.passages.find((p:any)=>p.sign==='taurus').body.includes('Your saved fixture ends here.'));
 assert.equal(writerFixture.calls,chargedBefore+1);
 assert(latest(legacyId).source_snapshot.horoscopeGeneration.heldRequests.aries);
+// Release must also work before a poll has moved the request to a hold.
+const releaseRow=latest(legacyId),held=releaseRow.source_snapshot.horoscopeGeneration.heldRequests.aries;
+releaseRow.source_snapshot.horoscopeGeneration.active={...held,startedAt:'2026-01-01T00:00:00Z'};
+delete releaseRow.source_snapshot.horoscopeGeneration.heldRequests.aries;
+store.rows.set(legacyId,releaseRow);
+const releaseCalls=writerFixture.calls;
+assert.equal((await action(legacyId,'release')).status,409,'Unknown outcome still requires acknowledgment');
+const released=await action(legacyId,'release',{acknowledgeUnknownOutcome:true});
+assert.equal(released.status,200,JSON.stringify(released.payload));
+assert.equal(latest(legacyId).source_snapshot.horoscopeGeneration.active,null);
+assert.equal(latest(legacyId).source_snapshot.horoscopeGeneration.lastInterrupted.responseId,held.responseId);
+assert.equal(latest(legacyId).source_snapshot.horoscopeGeneration.lastInterrupted.outcome,'unknown');
+assert.equal(writerFixture.calls,releaseCalls,'Releasing a blocked Gemini request never regenerates');
 
 const interruptedId=await create('weekly','2027-01-04');
 const interruptedPlan=await action(interruptedId,'prepare',{writerChoice:'gemini'});
