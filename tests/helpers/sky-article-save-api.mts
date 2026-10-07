@@ -184,8 +184,15 @@ export function installHoroscopeWriterFixture(){
  };
 }
 if(process.env.HOROSCOPE_WRITER_FIXTURE==='1')installHoroscopeWriterFixture();
+const alternativeProviders=process.env.HOROSCOPE_ALTERNATIVE_PROVIDERS_FIXTURE==='1'
+ ? (await import('./horoscope-provider-fixture.mts')).installAlternativeHoroscopeProviders():null;
 if (process.send) process.on('message', async ({ id, method, body, url, headers }: any) => {
  try {
+  if(method==='provider-state'&&alternativeProviders){
+    for(const key of ['claudeDelay','claudeError','geminiError'] as const)if(body?.[key]!==undefined)(alternativeProviders as any)[key]=body[key];
+    if(body?.missingGemini)delete process.env.GEMINI_API_KEY;
+    process.send!({id,result:{requests:alternativeProviders.requests.map(({provider,request}:any)=>({provider,model:request.model}))}});return;
+  }
   if(method==='auth-state'){sessionFixture.token=body.token;process.send!({id,result:{ok:true}});return;}
   if (method === 'writer-state') {
     for(const key of ['pendingPolls','terminalNext','unknownNext','nextResult','nextReviewResult','startResult','rejectSeasonalVoice'] as const)if(body?.[key]!==undefined)(writerFixture as any)[key]=body[key];

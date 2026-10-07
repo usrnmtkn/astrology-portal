@@ -24,6 +24,7 @@ export class HoroscopeProviderFailure extends Error {
 export function readHoroscopeProviderResult(payload:any,{format=null,facts=null}:{format?:string|null;facts?:any}={}) {
   const diagnostic=horoscopeProviderDiagnostic(payload);
   const fail=(code:string,message:string):never=>{throw new HoroscopeProviderFailure(code,message+' Saved readings are kept. Review the writing plan before trying again.',diagnostic);};
+  if(['claude_connection_interrupted','claude_checkpoint_unavailable'].includes(diagnostic.errorCode??''))fail('provider_failed','Claude’s response could not be recovered. The request may have been billed; it was not automatically repeated.');
   if(diagnostic.errorCode==='credit_balance_exhausted')throw new HoroscopeProviderFailure('api_credits','The AI writer has run out of API credits. Replenish the connected OpenAI API balance, then retry this reading. Saved readings are kept.',diagnostic);
   if(['insufficient_quota','billing_hard_limit_reached','billing_not_active'].includes(diagnostic.errorCode??''))throw new HoroscopeProviderFailure('api_credits','The writing API has reached its billing or usage limit. Check the connected OpenAI API account and available credits, then retry this reading. Saved readings are kept.',diagnostic);
   if(['invalid_api_key','authentication_error'].includes(diagnostic.errorCode??''))throw new HoroscopeProviderFailure('api_credentials','The writing API could not authenticate. Restore its server API connection, then retry this reading. Saved readings are kept.',diagnostic);

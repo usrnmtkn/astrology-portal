@@ -1,5 +1,5 @@
 import {lazy,Suspense,useEffect,useRef,useState} from 'react';
-import {AdminDisclosureSummary} from './AdminNativeControls';
+import {AdminDisclosureSummary,AdminSelect} from './AdminNativeControls';
 import {StudioButton,StudioInput,StudioTextarea} from './StudioControls';
 import {fetchWithOwnerSession,ownerSignInMessage} from './ownerSessionRequest';
 import {ownerCredentialIdentity} from './ownerSession';
@@ -15,6 +15,7 @@ import {browserTimeZone} from '../../web/src/services/timezones';
 import type {LocationInput} from '../../web/src/types';
 import {horoscopePunctuationFindings,horoscopeVocabularyFindings} from '../../../src/astro-writing/horoscopeEditorialConstraints.mjs';
 import {horoscopePendingReadings} from '../../../src/astro-writing/horoscopeRecovery.mjs';
+import {HOROSCOPE_WRITERS} from '../../../src/astro-writing/horoscopeWriterCatalog.mjs';
 const SeasonalGenerationDetails=lazy(()=>import('./SeasonalGenerationDetails').then(module=>({default:module.SeasonalGenerationDetails})));
 const WritingProfiles=lazy(()=>import('./HoroscopeWritingStudio'));
 const endpoint = '/api/admin/generated-content';
@@ -87,8 +88,8 @@ export default function HoroscopeEditionsStudio({secret,requestedEditionId}:{sec
     const next:Step=row.status==='LIVE'?'publish':row.source_snapshot?.horoscopeGeneration?.active||(edition.window.period==='seasonal'?pendingReadings(edition,row.source_snapshot?.horoscopeGeneration).length:edition.passages.some(p=>!p.headline.trim()&&!p.body.trim()))?'generate':'edit';
     setStep(next);return next;
   }
-  async function loadPlan(row:any,controller?:AbortController) {
-    const data=await request(secret,'/api/admin/horoscope-writing',{action:'prepare',id:row.id,expectedUpdatedAt:row.updated_at},'POST',controller?.signal);
+  async function loadPlan(row:any,controller?:AbortController,writerChoice?:string) {
+    const data=await request(secret,'/api/admin/horoscope-writing',{action:'prepare',id:row.id,expectedUpdatedAt:row.updated_at,...(writerChoice?{writerChoice}:{})},'POST',controller?.signal);
     // Preparation may save the latest profile. Keep its confirmed row version
     // for generation and failure recovery instead of sending the old timestamp.
     const updated=data.rows?.[0];
@@ -98,6 +99,13 @@ export default function HoroscopeEditionsStudio({secret,requestedEditionId}:{sec
     if(updated){retain(updated);setProfile(updated.source_snapshot?.studioWritingProfile??null);}
     setPlan(data.plan);setConfigured(data.configured);setPlanApproved(false);setError(failure?{previous:failure}:'');
     return failure;
+  }
+  async function changeWriter(writerChoice:string) {
+    if(!saved||busy||dirty||saved.source_snapshot?.horoscopeGeneration?.active)return;
+    setBusy(true);setError('');setMessage('');setPlanApproved(false);
+    try{await loadPlan(saved,undefined,writerChoice);setMessage('Writing model saved. Review the plan before generating.');}
+    catch(reason){setPlan(null);setError((reason as Error).message);}
+    finally{setBusy(false);}
   }
   async function savedFailureMessage(row:any,signal?:AbortSignal) {
     const generation=row.source_snapshot?.horoscopeGeneration,failed=generation?.lastError;
@@ -420,6 +428,15 @@ export default function HoroscopeEditionsStudio({secret,requestedEditionId}:{sec
       </details>
     </>:draft&&passage&&<>
       {step==='generate'?<>
+        <label className="admin-review-copy-editor"><span>Writing model</span>
+          <AdminSelect aria-label="Writing model" aria-describedby="horoscope-writer-help" value={saved?.source_snapshot?.horoscopeWriterChoice??'current'}
+            disabled={locked||Boolean(active)||!plan} onChange={event=>void changeWriter(event.target.value)}>
+            {(plan?.writerModels??HOROSCOPE_WRITERS).map((writer:any)=><option key={writer.id} value={writer.id} disabled={writer.available===false}>{writer.label}{writer.available===false?' · Not connected':''}</option>)}
+          </AdminSelect>
+        </label>
+        <p id="horoscope-writer-help" className="admin-field-hint">Applies to new drafts in this edition. Your saved writing instructions and examples are used with every model. Planning and review keep their current models. API charges depend on the model you choose.</p>
+        {active&&<p>Saved request: {active.writerModel??active.writerOperation?.config?.model??active.draftConfig?.model??active.config?.model??plan?.writerModel??HOROSCOPE_WRITERS.find(writer=>writer.id===(saved?.source_snapshot?.horoscopeWriterChoice??'current'))?.model}. Finish this request before changing models.</p>}
+        {plan?.writerModels?.filter((writer:any)=>writer.available===false).map((writer:any)=><p key={writer.id} className="admin-field-hint">{writer.unavailableReason}</p>)}
         {heldSigns.map(heldSign=><div key={heldSign} role="note"><p>{horoscopeSignLabel(heldSign)} was interrupted before its response could be confirmed. This reading is held to prevent a duplicate charge. The other readings can continue; saved writing is kept.</p><StudioButton disabled={locked} onClick={()=>void release(heldSign)}>Allow retry for {horoscopeSignLabel(heldSign)}</StudioButton></div>)}
         <details className="admin-workspace-details"><AdminDisclosureSummary>Writing instructions · optional</AdminDisclosureSummary>
           <p>Using {profile?.id?`your saved ${draft.window.period} instructions, revision ${profile.revision}`:`the ${draft.window.period} starter instructions`}. You can use these as they are.</p>
@@ -458,6 +475,7 @@ export default function HoroscopeEditionsStudio({secret,requestedEditionId}:{sec
       </>:step==='edit'?<>
         <div className="admin-horoscope-signs" role="group" aria-label="Readings by sign">{draft.passages.map(p=><StudioButton key={p.sign} aria-pressed={sign===p.sign} onClick={()=>setSign(p.sign)}>{horoscopeSignLabel(p.sign)}{p.body.trim()&&p.headline.trim()?' ✓':''}</StudioButton>)}</div>
         <p>Reading {signIndex+1} of {total} · {horoscopeSignLabel(sign)}</p>
+        {generation?.readings?.[sign]?.config?.model&&<p className="admin-field-hint">Original draft model: {generation.readings[sign].config.model}</p>}
         {saved?.status==='DRAFT'&&<div className="admin-toolbar-actions"><StudioButton disabled={locked||!passage.headline.trim()&&!passage.body.trim()} onClick={()=>void reject(sign)}>Reject this reading</StudioButton></div>}
         {!passage.body&&<p>{draft.window.period==='seasonal'&&generation?.editorialRuns?.[sign]?'A private Seasonal run is available below for inspection.':`No reading for ${horoscopeSignLabel(sign)} yet. Return to Generate or write it below.`}</p>}
         {(generation?.readings?.[sign]?.lint?.violations??[]).filter((issue:any)=>issue.category!=='horoscope_required_vocabulary').map((issue:any,index:number)=><p role="note" key={index}>Original AI draft check: {issue.detail}</p>)}
