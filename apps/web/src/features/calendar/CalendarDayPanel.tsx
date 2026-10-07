@@ -259,7 +259,8 @@ export function CalendarDayPanel({
               const isSeason = (card.kind ?? calendarKindFromEvent(card.event)) === "season";
               const wide = isSeason || (!isSeason && rest.length % 2 === 1 && rest.at(-1) === card);
 
-              if (loading) return <StoicCardSkeleton key={card.event.id} wide={wide} moon={kind === "moon"} title={card.title} excerpt={card.excerpt} meta={card.meta} />;
+              const metaBelowTitle = card.event.type === "aspect";
+              if (loading) return <StoicCardSkeleton key={card.event.id} wide={wide} moon={kind === "moon"} title={card.title} excerpt={card.excerpt} meta={card.meta} metaBelowTitle={metaBelowTitle} />;
 
               return (
                 <button
@@ -273,10 +274,11 @@ export function CalendarDayPanel({
                   <span className="calendar-stoic-card__copy">
                     <CalendarKindLabel event={card.event} kind={kind} />
                     <strong>{card.title}</strong>
+                    {metaBelowTitle ? <time className="calendar-stoic-card__meta" dateTime={card.event.startsAt}>{card.meta}</time> : null}
                   </span>
                   {card.excerpt ? <FormattedProse className="calendar-stoic-card__excerpt" text={card.excerpt} /> : null}
                   <span className="calendar-stoic-card__cta">
-                    <span>{card.meta}</span>
+                    {metaBelowTitle ? null : <span>{card.meta}</span>}
                     {card.isKey ? <span className="calendar-stoic-card__key">⭐ Key</span> : null}
                     <ChevronRight size={16} aria-hidden="true" />
                   </span>
