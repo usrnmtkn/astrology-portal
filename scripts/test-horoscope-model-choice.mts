@@ -198,7 +198,7 @@ await assert.rejects(readGeminiStream(new Response('data: {"event_type":"interac
 console.log('Gemini stream completion, bounded failure, legacy hold, batch continuation and no automatic replay passed.');
 
 // Only a result checkpoint may refresh the active batch automatically.
-const {horoscopeStreamCheckpointOnly}=await import('../src/astro-writing/horoscopeRecovery.mjs');
+const {horoscopeStreamCheckpointOnly}=await import('../src/astro-writing/horoscopeStreamCheckpoint.mjs');
 const beforeCheckpoint={id:'edition',updated_at:'first',status:'DRAFT',body:'Saved owner text',source_snapshot:{profile:'saved',horoscopeGeneration:{active:{id:'operation',requestHash:'hash',state:'running',config:horoscopeWriterConfig('gemini'),responseId:'gemini_saved'}}}};
 const afterCheckpoint=structuredClone(beforeCheckpoint) as any;
 afterCheckpoint.updated_at='second';afterCheckpoint.source_snapshot.horoscopeGeneration.active.providerResult={id:'gemini_saved',status:'completed'};

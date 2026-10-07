@@ -14,7 +14,7 @@ import {HoroscopeLocation} from '../../web/src/features/horoscopes/HoroscopeLoca
 import {browserTimeZone} from '../../web/src/services/timezones';
 import type {LocationInput} from '../../web/src/types';
 import {horoscopePunctuationFindings,horoscopeVocabularyFindings} from '../../../src/astro-writing/horoscopeEditorialConstraints.mjs';
-import {horoscopePendingReadings,horoscopeStreamCheckpointOnly} from '../../../src/astro-writing/horoscopeRecovery.mjs';
+import {horoscopePendingReadings} from '../../../src/astro-writing/horoscopeRecovery.mjs';
 import {HOROSCOPE_WRITERS} from '../../../src/astro-writing/horoscopeWriterCatalog.mjs';
 const SeasonalGenerationDetails=lazy(()=>import('./SeasonalGenerationDetails').then(module=>({default:module.SeasonalGenerationDetails})));
 const WritingProfiles=lazy(()=>import('./HoroscopeWritingStudio'));
@@ -315,6 +315,8 @@ export default function HoroscopeEditionsStudio({secret,requestedEditionId}:{sec
           if((reason as any).status===409&&active?.state==='running'){
             const refreshed=await readSaved(row.id,controller.signal);
             if(!isCurrent(controller))return;
+            const {horoscopeStreamCheckpointOnly}=await import('../../../src/astro-writing/horoscopeStreamCheckpoint.mjs');
+            if(!isCurrent(controller))return;
             if(horoscopeStreamCheckpointOnly(row,refreshed)){row=refreshed;retain(row);continue;}
           }
           throw reason;
@@ -447,7 +449,7 @@ export default function HoroscopeEditionsStudio({secret,requestedEditionId}:{sec
         <p id="horoscope-writer-help" className="admin-field-hint">Applies to new drafts in this edition. Your saved writing instructions and examples are used with every model. Planning and review keep their current models. API charges depend on the model you choose.</p>
         {active&&<p>Saved request: {active.writerModel??active.writerOperation?.config?.model??active.draftConfig?.model??active.config?.model??plan?.writerModel??HOROSCOPE_WRITERS.find(writer=>writer.id===(saved?.source_snapshot?.horoscopeWriterChoice??'current'))?.model}. Finish this request before changing models.</p>}
         {plan?.writerModels?.filter((writer:any)=>writer.available===false).map((writer:any)=><p key={writer.id} className="admin-field-hint">{writer.unavailableReason}</p>)}
-        {heldSigns.map(heldSign=><div key={heldSign} role="note"><p>{horoscopeSignLabel(heldSign)} was interrupted before its response could be confirmed. This reading is held to prevent a duplicate charge. The other readings can continue; saved writing is kept.</p>{generation.heldRequests[heldSign].diagnostic?.code==='gemini_retrieval_authentication'&&<p>Google could not retrieve the saved Gemini response. This request will not be repeated unless you allow a retry.</p>}<StudioButton disabled={locked} onClick={()=>void release(heldSign)}>Allow retry for {horoscopeSignLabel(heldSign)}</StudioButton></div>)}
+        {heldSigns.map(heldSign=><div key={heldSign} role="note"><p>{horoscopeSignLabel(heldSign)} was interrupted before its response could be confirmed. This reading is held to prevent a duplicate charge. The other readings can continue; saved writing is kept.</p><StudioButton disabled={locked} onClick={()=>void release(heldSign)}>Allow retry for {horoscopeSignLabel(heldSign)}</StudioButton></div>)}
         <details className="admin-workspace-details"><AdminDisclosureSummary>Writing instructions · optional</AdminDisclosureSummary>
           <p>Using {profile?.id?`your saved ${draft.window.period} instructions, revision ${profile.revision}`:`the ${draft.window.period} starter instructions`}. You can use these as they are.</p>
           <StudioButton disabled={busy} onClick={()=>setInstructions(!instructions)}>{instructions?'Close writing instructions':'Edit writing instructions'}</StudioButton>

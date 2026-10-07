@@ -42,8 +42,10 @@ new paid model calls:
 - Legacy HTTP 400: exactly one retrieval, held sign preserved, next sign saved,
   no automatic replay, and late result cannot resurrect the held operation.
 - Rendered Studio: model selection, reload/resume, saved prose preservation,
-  provider availability, and automatic continuation past the held sign.
-- Full Content Studio API contract, typecheck, CSS audit and privacy scans.
+  provider availability, automatic continuation past the held sign, and explicit
+  release when the legacy Gemini cancellation endpoint cannot confirm an outcome.
+- Full Content Studio API contract, typecheck, CSS audit, bundle budget and
+  privacy scans. The checkpoint comparison loads only during conflict recovery.
 
 Release evidence and exact tested revisions belong in the PR. Rendered browser
 checks use the actual handlers with synthetic storage and model responses;

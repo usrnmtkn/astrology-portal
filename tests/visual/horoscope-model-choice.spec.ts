@@ -101,7 +101,7 @@ test('Legacy Gemini retrieval failure holds only that sign and the rest complete
     await expect.poll(async()=>(await f.latest()).source_snapshot.horoscopeGeneration.active?.responseId).toBeTruthy();
     await f.call({method:'legacy-gemini-request',body:{id:f.id}});
     f.state.holdPoll=false;
-    await expect(studio.getByText('Google could not retrieve the saved Gemini response. This request will not be repeated unless you allow a retry.')).toBeVisible();
+    await expect(studio.getByText(/^Aquarius was interrupted before its response could be confirmed/)).toBeVisible();
     // Still the same batch, with no manual resume between Aquarius and Pisces.
     await expect.poll(async()=>(await f.latest()).sections.horoscopeEdition.passages.at(-1).body,{timeout:35000}).toContain('Your saved fixture ends here.');
     const row=await f.latest();
