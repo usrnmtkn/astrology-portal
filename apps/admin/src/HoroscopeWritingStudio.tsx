@@ -188,3 +188,5 @@ export default function HoroscopeWritingStudio({ secret, initialPeriod = 'weekly
     {loading ? <PageLoading message="Loading writing profiles…" /> : error ? <><p role="alert">{error}</p><StudioButton onClick={() => setAttempt(value => value + 1)}>Retry loading profiles</StudioButton></> : profiles.map(profile => <div key={profile.profile.period} hidden={profile.profile.period !== period}><ProfileEditor initial={profile} secret={secret} onSaved={next => setProfiles(current => current.map(entry => entry.profile.period === next.profile.period ? next : entry))} /></div>)}
   </section>;
 }
+
+export {default as HoroscopeGenerationDetails} from './HoroscopeGenerationDetails';

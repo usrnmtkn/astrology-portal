@@ -35,6 +35,6 @@ export function assertHoroscopeEvidenceDelivered(receipt,input) {
   const present=text=>input.includes(text)||input.includes(JSON.stringify(text).slice(1,-1));
   if(!receipt.passages.length||receipt.passages.some(p=>hash(p.text)!==p.sha256||!present(p.text)))throw new Error('A complete selected owner passage is missing from the writer input.');
   if(receipt.savedCorrections&&!present(receipt.savedCorrections))throw new Error('Saved owner corrections are missing from the writer input.');
-  for(const e of receipt.rejectedExamples)if(!present(e.body))throw new Error('A scoped rejected reading is missing from the writer input.');
+  for(const e of receipt.rejectedExamples)if(!e.body?.trim()||!present(e.body))throw new Error('A scoped rejected reading is missing from the writer input.');
   return {...receipt,inputSha256:hash(input),delivery:'verified in assembled writer input'};
 }
