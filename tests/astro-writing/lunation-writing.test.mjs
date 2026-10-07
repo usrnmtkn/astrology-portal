@@ -4,6 +4,32 @@ import { lunationDigest, lunationDraftFactFindings } from '../../src/astro-writi
 import { approveArgumentOutline } from '../../src/astro-writing/argumentGate.mjs';
 import { runWritingPipeline } from '../../src/astro-writing/runWritingPipeline.mjs';
 import { assertSurfaceRegisterContract } from '../../src/astro-writing/surfaceRegisterContract.mjs';
+import { lunationVocabularyFindings, LUNATION_EDITORIAL_AUTHORITY } from '../../src/astro-writing/lunationEditorialConstraints.mjs';
+import responses from '../../src/astro-writing/openAIResponses.cjs';
+import { canonicalAstrologyWritingInstructions, HOROSCOPE_EDITORIAL_AUTHORITY } from '../../src/astro-writing/canonicalInstructions.mjs';
+import { lunationArticleOpeningDate } from '../../src/astro-writing/lunationArticleInput.mjs';
+
+// The opening follows the selected zone, including a different day or year from UTC.
+for (const [startsAt,timeZone,expected] of [
+  ['2026-10-26T04:11:00Z','America/Los_Angeles','October 25th, 2026'],
+  ['2026-10-26T04:11:00Z','America/New_York','October 26th, 2026'],
+  ['2027-01-01T01:00:00Z','America/New_York','December 31st, 2026'],
+  ['2027-01-01T01:00:00Z','Asia/Tokyo','January 1st, 2027'],
+  ['2026-08-12T12:00:00Z','UTC','August 12th, 2026'],
+  ['2026-08-23T12:00:00Z','UTC','August 23rd, 2026']
+]) assert.equal(lunationArticleOpeningDate({startsAt,timeZone}),expected);
+for (const event of [
+  {startsAt:'2026-10-26T04:11:00Z'},
+  {startsAt:'2026-10-26T04:11:00Z',timeZone:'invalid'},
+  {startsAt:'invalid',timeZone:'UTC'}
+]) assert.throws(()=>lunationArticleOpeningDate(event));
+
+for (const [family,surface] of [['lunations','calendar-lunation'],['lunation-article','lunation-article']]) {
+  assert.equal(responses.instructionsForRole('WRITER','',{family,surface}),LUNATION_EDITORIAL_AUTHORITY);
+  assert.throws(()=>responses.governedInstructionsForRole('WRITER',{family,surface,governedInstructions:canonicalAstrologyWritingInstructions}),/canonical role instructions/);
+}
+assert.equal(responses.instructionsForRole('WRITER'),canonicalAstrologyWritingInstructions);
+assert.equal(responses.instructionsForRole('WRITER','',{family:'horoscope',surface:'horoscopes'}),HOROSCOPE_EDITORIAL_AUTHORITY);
 
 // Calculation outputs are test fixtures only. Production packets use the ephemeris.
 function request(kind = 'new-moon', sign = 'libra') {
@@ -28,8 +54,15 @@ const writer = async call => {
   assert.deepEqual(call.schema.required, ['body','journalPrompt']);
   assert.ok(call.input.includes('OWNER LUNATION PASSAGES'));
   assert.ok(call.input.includes('CURRENT OWNER CORRECTIONS'));
+  assert.ok(call.input.includes('Reusable sign readings stay date-free'));
+  assert.ok(!call.input.includes('DATED ARTICLE OPENING'));
   assert.ok(!call.input.includes('SPINE QUALITY GATES'));
   assert.ok(!call.input.includes('CARD WRITER SEVEN-PASS CHAIN'));
+  assert.ok(call.instructions.includes('LUNAR EDITORIAL AUTHORITY'));
+  assert.ok(call.instructions.includes('REQUIRED LUNAR WORDING'));
+  assert.ok(call.instructions.includes('CORRECTIO'));
+  assert.ok(!call.instructions.includes('SPINE QUALITY GATES'));
+  assert.ok(!call.instructions.includes('LONG-FORM SENTENCE ARCHITECTURE'));
   return { body: 'Synthetic body for pipeline verification.', journalPrompt: 'Synthetic journal question?' };
 };
 writer.billed = false;
@@ -97,6 +130,24 @@ assert.throws(() => assertSurfaceRegisterContract({ ...lunationWritingTarget, co
 assert.throws(() => assertSurfaceRegisterContract({ ...lunationWritingTarget, surface: 'calendar', renderer: 'renderSkyAspectCard' },
   { register: 'second_person' }), /voice_mode_mismatch/u);
 assert.equal(calls, 2);
+// Reader fields are checked independently of historical evidence and metadata.
+for (const field of ['headline','summary','body','journalPrompt']) {
+  for (const word of ['whether','Whether','WHETHER','&#119;hether','wh&#x65;ther','whe\u200bther']) {
+    const findings = lunationVocabularyFindings({ [field]: `Synthetic ${word} fixture.` });
+    assert.equal(findings.length, 1);
+    assert.equal(findings[0].field, field);
+    assert.equal(findings[0].governanceTier, 'blocking');
+  }
+}
+assert.deepEqual(lunationVocabularyFindings({body:'Synthetic whetherlike token.',source:'whether',argumentOutline:{thesis:'whether'}}),[]);
+const vocabularyInput=request(),vocabularyPrepared=prepareLunationWriting(vocabularyInput);
+const vocabularyOutline=approveArgumentOutline(vocabularyPrepared.argumentOutline,{exactOwnerRuling:'Synthetic test approval.'});
+const vocabularyResult=await runWritingPipeline({...pipelineInput(vocabularyInput,vocabularyPrepared),approvedArgumentOutline:vocabularyOutline,
+  argumentSource:{contentKey:'test-vocabulary',sourcePath:'test',ownerApproved:true,authority:'owner-approved-test-plan',opening:vocabularyOutline.thesis,close:vocabularyOutline.intention_or_reflection},
+  writerClient:Object.assign(async()=>({body:'Synthetic body.',journalPrompt:'Synthetic whether question?'}),{billed:false})});
+assert(vocabularyResult.report.failureCategories.includes('lunation_required_vocabulary'));
+assert.equal(vocabularyResult.draft.journalPrompt,'Synthetic whether question?','A failed candidate is retained without an automatic rewrite.');
+assert.equal(vocabularyResult.draft.ownerApproved,false);
 const facts = request().engineFacts;
 assert.equal(lunationDraftFactFindings({ body: 'New Moon in Libra', journalPrompt: 'Synthetic question?' }, facts).length, 0);
 for (const body of ['New Moon in Aries', 'October 21 at 8:25', 'Your 7th house', 'The Moon at 18 degrees']) {

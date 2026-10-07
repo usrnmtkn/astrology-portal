@@ -8,7 +8,7 @@ const typography=(element:Element)=>{
 };
 for(const width of [390,1440])for(const theme of ['light','dark'] as const){
   test(`Lunation writer saves and recovers its draft at ${width} ${theme}`,async({page})=>{
-    test.setTimeout(180000);
+    test.setTimeout(240000);
     const inventory=await studioApiStore([]),writer=await studioApiStore([],{lunationWriting:true});
     const errors:string[]=[];page.on('pageerror',error=>errors.push(error.message));
     const disabledDuringPoll:boolean[]=[];
@@ -129,6 +129,38 @@ for(const width of [390,1440])for(const theme of ['light','dark'] as const){
       await page.getByRole('region',{name:'Saved lunation drafts',exact:true}).getByRole('button',{name:'Synthetic lunar article',exact:true}).click();
       await expect(page.getByLabel('Full article',{exact:true})).toHaveValue(edit);
       await expect(page.getByRole('button',{name:'Generate draft',exact:true})).toHaveCount(0);
+      const beforeRejection=(await writer.call({method:'provider'})).calls;
+      await workspace.getByRole('button',{name:'Reject & regenerate',exact:true}).click();
+      await expect(workspace.getByRole('button',{name:'Reject draft & update plan',exact:true})).toBeDisabled();
+      await expect(workspace.getByLabel('Reason for rejection',{exact:true})).toBeFocused();
+      await workspace.getByRole('button',{name:'Cancel rejection',exact:true}).click();
+      await expect(workspace.getByLabel('Full article',{exact:true})).toHaveValue(edit);
+      await workspace.getByLabel('Full article',{exact:true}).fill(edit+' Unsaved edit.');
+      await expect(workspace.getByRole('button',{name:'Reject & regenerate',exact:true})).toBeDisabled();
+      await workspace.getByLabel('Full article',{exact:true}).fill(edit);
+      await workspace.getByRole('button',{name:'Reject & regenerate',exact:true}).click();
+      const rejectionReason='Synthetic correction: begin with the calculated date and explain both signs.';
+      await workspace.getByLabel('Reason for rejection',{exact:true}).fill(rejectionReason);
+      await page.screenshot({path:`test-results/lunation-reject-${width}-${theme}.png`,fullPage:true});
+      await workspace.getByRole('button',{name:'Reject draft & update plan',exact:true}).click();
+      await expect(workspace.getByText('Draft rejected and preserved. Review the updated plan, then select Regenerate draft.',{exact:true})).toBeVisible();
+      await expect(workspace.getByRole('button',{name:'Regenerate draft',exact:true})).toBeDisabled();
+      expect((await writer.call({method:'provider'})).calls).toBe(beforeRejection);
+      await page.reload();
+      await page.getByRole('region',{name:'Saved lunation drafts',exact:true}).getByRole('button',{name:'Full Moon in Aries',exact:true}).click();
+      await workspace.getByText('Rejected drafts (1)',{exact:true}).click();
+      await workspace.getByText(/^Synthetic lunar article · /).click();
+      await expect(workspace.getByLabel('Rejected article',{exact:true})).toHaveValue(edit);
+      await expect(workspace.getByText(rejectionReason,{exact:true})).toBeVisible();
+      await expect(workspace.getByRole('button',{name:'Regenerate draft',exact:true})).toBeDisabled();
+      await workspace.getByRole('checkbox',{name:'I’ve reviewed this writing plan.'}).check();
+      await workspace.getByRole('button',{name:'Regenerate draft',exact:true}).click();
+      await expect(workspace.getByLabel('Full article',{exact:true})).toHaveValue(body,{timeout:30000});
+      expect((await writer.call({method:'provider'})).calls).toBe(beforeRejection+1);
+      expect((await writer.call({method:'provider'})).requests.at(-1).input).toContain(rejectionReason);
+      await workspace.getByLabel('Full article',{exact:true}).fill(edit);
+      await workspace.getByRole('button',{name:'Save draft',exact:true}).click();
+      await expect(workspace.getByText('Draft saved.',{exact:true})).toBeVisible();
       expect(await page.evaluate(()=>document.documentElement.scrollWidth<=window.innerWidth+1)).toBe(true);
       await page.getByRole('button',{name:'Open reader draft',exact:true}).click();
       const dialog=page.getByRole('dialog');await expect(dialog).toBeVisible();

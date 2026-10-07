@@ -8,6 +8,7 @@ const {
   coldRenderedProseReviewInstructions
 } = require("./canonicalInstructions.cjs");
 const { RHETORICAL_JUDGE_POLICY } = require("./rhetoricalPatterns.cjs");
+const { LUNATION_EDITORIAL_AUTHORITY } = require("./lunationEditorialAuthority.cjs");
 const { renderEffectiveRulesForPrompt } = require("./effectiveRules.cjs");
 const { assertProductionPreCallGate } = require("./productionPreCallGate.cjs");
 
@@ -28,6 +29,9 @@ function instructionsForRole(role, taskInstructions = "", {surface = "", family 
   }
   if (!ROLES.has(role)) throw new Error(`Unknown astrology prose role: ${role}`);
   const canonical = role === 'RHETORICAL_REVIEWER' ? RHETORICAL_JUDGE_POLICY
+    : role === "WRITER" && ((family === "lunation-article" && surface === "lunation-article")
+      || (family === "lunations" && surface === "calendar-lunation"))
+    ? LUNATION_EDITORIAL_AUTHORITY
     : role === "MEANING_PLANNER" && family === "horoscope" && surface === "horoscopes"
     ? "HOROSCOPE SYNTHESIS AUTHORITY: Build a private editorial plan from governed calculated facts before reader prose. Return only the planning schema. Planning is not reader copy, positive voice evidence, a quality verdict or owner approval. Do not invent facts or personal biography."
     : role === "WRITER" && family === "horoscope" && surface === "horoscopes"

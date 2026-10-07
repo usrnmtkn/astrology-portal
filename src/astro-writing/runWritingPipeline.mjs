@@ -9,6 +9,7 @@ import { getContentSpine, assertContentSpine } from "./spineRegistry.mjs";
 import { assertPositiveOwnerEvidenceContext, OwnerEvidencePreconditionError } from "./ownerEvidencePolicy.mjs";
 import { assertSurfaceRegisterContract } from "./surfaceRegisterContract.mjs";
 import { assertLunationWritingFacts, lunationDraftFactFindings } from "./lunationWritingFacts.mjs";
+import { withLunationVocabularyFindings } from './lunationEditorialConstraints.mjs';
 
 export function failedRetrievalResult({ plan, context, argumentOutline, spine, error }) {
   return {
@@ -205,7 +206,9 @@ export async function runWritingPipeline({
       : []
   });
   if (family === 'lunations') rawLint.violations.push(...lunationDraftFactFindings(draft, engineFacts));
-  const lint = governValidationResult(rawLint, { surface, family });
+  const governedLint = governValidationResult(rawLint, { surface, family });
+  const lint = ['lunations', 'lunation-article'].includes(family)
+    ? withLunationVocabularyFindings(governedLint, draft) : governedLint;
   const billedCalls = writerClient?.billed === true ? 1 : writerClient?.billed === false ? 0 : null;
   const failureCategories = [...new Set(lint.violations.map((item) => item.category))];
   const advisoryCategories = [...new Set(lint.advisories.map((item) => item.category).filter(Boolean))];
