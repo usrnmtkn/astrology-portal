@@ -22,3 +22,5 @@ export function horoscopeWindowLabel(window:HoroscopeWindow):string;
 
 export function horoscopeReadingSigns(edition:HoroscopeEdition):string[];
 export function horoscopeOverviewHeadline(window:HoroscopeWindow):string;
+
+export function horoscopeRejectionPassage(rejection: any, sign: string): {sign: string; headline: string; body: string} | null;

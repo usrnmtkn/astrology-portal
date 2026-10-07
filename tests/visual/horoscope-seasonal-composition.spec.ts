@@ -58,3 +58,42 @@ for(const [width,theme,exhausted] of [[390,'light',false],[1440,'dark',false],[3
   }finally{child.kill();}
  });
 }
+
+for(const [width,theme] of [[390,'light'],[390,'dark'],[1440,'light'],[1440,'dark']] as const){
+ test(`Legacy Seasonal receipt remains complete after reload ${width} ${theme}`,async({page})=>{
+  const child=fork(path.resolve('tests/helpers/sky-article-save-api.mts'),[],{env:{...process.env,HOROSCOPE_WRITER_FIXTURE:'1'},execArgv:['--import','tsx'],stdio:['ignore','pipe','pipe','ipc']});
+  let sequence=0;const pending=new Map<number,any>();
+  const ready=new Promise<void>((resolve,reject)=>{child.on('message',(m:any)=>{if(m.ready)return resolve();const task=pending.get(m.id);if(task){pending.delete(m.id);m.error?task.reject(new Error(m.error)):task.resolve(m.result);}});child.on('exit',code=>reject(new Error(`Fixture exited ${code}`)));});
+  const call=(m:any)=>new Promise<any>((resolve,reject)=>{const id=++sequence;pending.set(id,{resolve,reject});child.send({...m,id});});
+  try{
+   await ready;
+   const facts=await call({method:'GET',url:'/api/admin/generated-content?horoscopeBrief=true&period=seasonal&date=2026-10-05&timeZone=America/New_York'});
+   const edition=emptyHoroscopeEdition(facts.payload.brief.window);
+   edition.passages=edition.passages.map(p=>({...p,headline:'Saved fixture',body:'Saved opening.\n\nSaved final sentence.'}));
+   const originalDraft={headline:'Original fixture',body:'Original opening.\n\nOriginal final sentence.'};
+   const details={developmentPlan:{opening:'Complete original plan',ending:'Complete original plan ending'},sourceIds:['fixture/source'],structuralReview:{status:'needs_review',findings:['Keep complete finding']},unknownLegacyField:{retain:'Complete legacy detail'}};
+   const result=await call({method:'POST',body:{contentKey:horoscopeEditionKey(edition.window),surface:'sky',mode:'article',eventType:'horoscope-edition',provider:'manual-admin',status:'DRAFT',lane:'serving',headline:'Legacy receipt fixture',body:horoscopeEditionBody(edition),sections:{horoscopeEdition:edition},facts:{horoscopeBrief:{brief:facts.payload.brief,signature:facts.payload.signature}},sourceSnapshot:{horoscopeGeneration:{readings:{aries:{originalDraft,...details}}}}}});
+   expect(result.status).toBe(200);const saved=result.payload.rows[0];
+   await routeStudioInventoryApi(page,{call,answer:async(route,url)=>{
+    if(url.pathname!=='/api/admin/horoscope-writing')return false;
+    const r=await call({method:'writing',body:route.request().postDataJSON()});await route.fulfill({status:r.status,json:r.payload});return true;
+   }});
+   await page.setViewportSize({width,height:1000});
+   await page.addInitScript(theme=>{localStorage.setItem('tldrastro:contentAdminSecret','calendar-api-fixture');localStorage.setItem('tldrastro:studio-theme',theme);},theme);
+   const studio=page.getByRole('region',{name:'Horoscope editions'});
+   for(let visit=0;visit<2;visit++){
+    if(visit)await page.reload();else await page.goto('/admin/content#horoscopes');
+    await studio.getByText(/^Continue a saved edition/).click();await studio.getByRole('button',{name:/Legacy receipt fixture/}).click();
+    await studio.getByRole('button',{name:/^Aries/}).click();
+    await studio.getByText('Seasonal generation record',{exact:true}).click();
+    await expect(studio.getByLabel('Original Seasonal writer draft')).toHaveValue(`${originalDraft.headline}\n\n${originalDraft.body}`);
+    expect(JSON.parse(await studio.getByLabel('Complete Seasonal generation details').inputValue())).toEqual(details);
+    await expect(studio.getByLabel('Complete reading')).toHaveValue('Saved opening.\n\nSaved final sentence.');
+    expect((await call({method:'rows'})).find((r:any)=>r.id===saved.id)).toEqual(saved);
+    expect((await call({method:'writer-state'})).calls).toBe(0);
+    expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+    await page.screenshot({path:`test-results/legacy-receipt-${width}-${theme}.png`,fullPage:true});
+   }
+  }finally{child.kill();}
+ });
+}

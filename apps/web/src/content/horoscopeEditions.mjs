@@ -96,3 +96,13 @@ export function horoscopeWindowLabel(window) {
   const last = format.format(new Date(Date.parse(window.endsAt) - 1));
   return first === last ? first : `${first} – ${last}`;
 }
+
+/** A held writer candidate was never copied into the edition. Recover it only
+ * from this rejection's own saved generation, never from the current draft. */
+export function horoscopeRejectionPassage(rejection, sign) {
+  const passage = rejection.passages?.find(p => p.sign === sign);
+  if (!passage) return null;
+  if (passage.body?.trim()) return passage;
+  const candidate = rejection.generation?.candidateHolds?.[sign]?.candidate;
+  return candidate?.body?.trim() ? {sign, headline:candidate.headline, body:candidate.body} : null;
+}

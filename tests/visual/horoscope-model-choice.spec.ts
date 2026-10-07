@@ -20,7 +20,7 @@ async function fixture(page:Page,missing=1){
     const facts=await call({method:'GET',url:'/api/admin/generated-content?horoscopeBrief=true&period=weekly&date=2026-10-07&timeZone=America%2FNew_York'});
     expect(facts.status).toBe(200);const {brief,signature}=facts.payload,edition=emptyHoroscopeEdition(brief.window);
     for(const p of edition.passages.slice(0,-missing)){p.headline=`Saved ${p.sign}`;p.body=`Existing ${p.sign} opening.\n\nExisting ${p.sign} final sentence.`;}
-    const created=await call({method:'POST',body:{contentKey:horoscopeEditionKey(edition.window),surface:'sky',mode:'article',eventType:'horoscope-edition',provider:'manual-admin',status:'DRAFT',lane:'serving',headline:'Synthetic model choice edition',body:horoscopeEditionBody(edition),sections:{horoscopeEdition:edition},facts:{horoscopeBrief:{brief,signature}},sourceSnapshot:{}}});
+    const created=await call({method:'POST',body:{contentKey:horoscopeEditionKey(edition.window),surface:'sky',mode:'article',eventType:'horoscope-edition',provider:'manual-admin',status:'DRAFT',lane:'serving',headline:'Synthetic model choice edition',body:horoscopeEditionBody(edition),sections:{horoscopeEdition:edition},facts:{horoscopeBrief:{brief,signature}},sourceSnapshot:{horoscopeGeneration:{rejections:[{id:'held-private-fixture',scope:'pisces',rejectedAt:'2026-10-06T12:00:00Z',passages:[{sign:'pisces',headline:'',body:''}],generation:{candidateHolds:{pisces:{candidate:{headline:'Held private title',body:'Held private opening.\n\nHeld private final sentence.'}}}}}]}}}});
     expect(created.status).toBe(200);const id=created.payload.rows[0].id;
     const latest=async()=>(await call({method:'rows'})).find((row:any)=>row.id===id);
     const state={holdPoll:false};
@@ -58,6 +58,11 @@ for(const [width,theme,choice] of [[1440,'light','gemini'],[390,'dark','claude']
     const evidence=studio.locator('details').filter({has:page.locator('summary',{hasText:'Writing evidence for this plan'})}).last();
     await evidence.getByText('primary owner passage · 1',{exact:true}).click();
     const completeSource=await evidence.getByLabel('Complete source passage 1',{exact:true}).inputValue();
+    await evidence.getByText('Corrections and rejected readings',{exact:true}).click();
+    expect(JSON.parse(await evidence.getByLabel('Complete corrections and rejected readings').inputValue()).rejectedReadings[0].body).toBe('Held private opening.\n\nHeld private final sentence.');
+    await studio.getByText('Rejected drafts',{exact:true}).click();
+    await studio.locator('summary').filter({hasText:/^Pisces ·/}).click();
+    await expect(studio.getByLabel('Rejected Pisces reading')).toHaveValue('Held private title\n\nHeld private opening.\n\nHeld private final sentence.');
     expect(completeSource.length).toBeGreaterThan(100);
     const referenceStyle=await studio.getByText('Writing instructions · optional',{exact:true}).evaluate(el=>{const s=getComputedStyle(el);return [s.fontFamily,s.fontSize,s.fontWeight,s.lineHeight,s.letterSpacing];});
     expect(await studio.getByText('Writing evidence for this plan',{exact:true}).evaluate(el=>{const s=getComputedStyle(el);return [s.fontFamily,s.fontSize,s.fontWeight,s.lineHeight,s.letterSpacing];})).toEqual(referenceStyle);
@@ -89,7 +94,7 @@ for(const [width,theme,choice] of [[1440,'light','gemini'],[390,'dark','claude']
     await studio.getByText('primary owner passage · 1',{exact:true}).click();
     await expect(studio.getByLabel('Complete source passage 1',{exact:true})).toHaveValue(completeSource);
     await studio.getByText('Exact writer input',{exact:true}).click();
-    await expect(studio.getByLabel('Exact writer input',{exact:true})).toHaveValue((saved.source_snapshot.horoscopeGeneration.readings.pisces.ownerEvidence.providerRequest.input??saved.source_snapshot.horoscopeGeneration.readings.pisces.ownerEvidence.providerRequest.messages[0].content));
+    expect(JSON.parse(await studio.getByLabel('Exact writer request',{exact:true}).inputValue())).toEqual(saved.source_snapshot.horoscopeGeneration.readings.pisces.ownerEvidence.providerRequest);
     expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
   }finally{f.child.kill();}
  });

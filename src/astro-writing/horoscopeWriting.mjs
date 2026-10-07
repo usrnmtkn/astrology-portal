@@ -4,7 +4,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {createHash} from 'node:crypto';
-import {HOROSCOPE_SIGNS,horoscopeReadingSigns,validateHoroscopeEdition,horoscopeCanonicalJson} from '../../apps/web/src/content/horoscopeEditions.mjs';
+import {HOROSCOPE_SIGNS,horoscopeRejectionPassage,horoscopeReadingSigns,validateHoroscopeEdition,horoscopeCanonicalJson} from '../../apps/web/src/content/horoscopeEditions.mjs';
 import {defaultHoroscopeProfile,validateHoroscopeProfile} from './horoscopeWritingProfiles.mjs';
 import {buildMeaningPlan} from './buildMeaningPlan.mjs';
 import {buildArgumentOutline,approveArgumentOutline} from './argumentGate.mjs';
@@ -26,7 +26,7 @@ import {HOROSCOPE_RHETORICAL_REVIEW} from './horoscopeRhetoricalReview.mjs';
 
 const root=fileURLToPath(new URL('../../',import.meta.url));
 export const horoscopeWritingVersion='horoscope-writer/v17';
-export const horoscopeWritingVersionFor=period=>period==='seasonal'?'horoscope-writer/v19-seasonal-editorial':period==='weekly'?'horoscope-writer/v20-weekly-evidence':horoscopeWritingVersion;
+export const horoscopeWritingVersionFor=period=>period==='seasonal'?'horoscope-writer/v19-seasonal-editorial':period==='weekly'?'horoscope-writer/v21-weekly-rejections':horoscopeWritingVersion;
 const digest=value=>createHash('sha256').update(typeof value==='string'?value:horoscopeCanonicalJson(value)).digest('hex');
 const repositorySources=new Map();
 const preparedPlans=new Map();
@@ -150,8 +150,8 @@ export function prepareHoroscopeWriting(row,{studioCorrections=[],feedbackReceip
       humanSituation:[savedOutline,...periodDomains].filter(Boolean).join('\n'),
       mechanism:JSON.stringify([...developments.events,...developments.background]),surface:'weekly',register:'second_person'}:null;
     const relevantCount=edition.window.period==='weekly'?0:seasonal?proseExamples.filter(e=>e.planet===planet||e.sign===sign).length:relevantSelected.length;
-    const lastRejection=[...rejectedReadings].reverse().find(r=>r.passages?.some(p=>p.sign===rising));
-    const rejectedPassage=lastRejection?.passages.find(p=>p.sign===rising);
+    const lastRejection=[...rejectedReadings].reverse().find(r=>horoscopeRejectionPassage(r,rising));
+    const rejectedPassage=lastRejection?horoscopeRejectionPassage(lastRejection,rising):null;
     const rejectedExamples=rejectedPassage?[{...rejectedPassage,sourceId:lastRejection.id,rejectedAt:lastRejection.rejectedAt,
       scope:"same edition and sign only",role:"negative evidence; never imitate",reason:lastRejection.reason??null}]:[];
     const contextOptions={reviewedMeaningExamples,retrievalQuery,rejectedExamples,examples:proseExamples,matrixExamples:exactMatrix,matrixArgumentCandidates:evidence.argument_candidate,
