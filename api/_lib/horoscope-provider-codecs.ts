@@ -6,7 +6,8 @@ export function buildHoroscopeProviderRequest({config,role='WRITER',stage='writi
   const system=responses.governedInstructionsForRole(role,{governedInstructions:instructions,surface:'horoscopes',family:'horoscope'});
   if(config.provider==='gemini')return {model:config.model,input,system_instruction:system,
     generation_config:{thinking_level:config.thinkingLevel,max_output_tokens:config.maxOutputTokens},
-    response_format:{type:'text',mime_type:'application/json',schema},background:true,store:true};
+    response_format:{type:'text',mime_type:'application/json',schema},
+    ...(config.transport==='checkpointed-stream/v1'?{background:false,stream:true}:{background:true}),store:true};
   if(config.provider==='anthropic')return {model:config.model,system,messages:[{role:'user',content:input}],
     max_tokens:config.maxOutputTokens,thinking:{type:'adaptive'},
     output_config:{effort:config.reasoningEffort,format:{type:'json_schema',schema}},stream:true};
@@ -31,6 +32,50 @@ export function normalizeGeminiResult(payload:any) {
     usage:{input_tokens:usage.total_input_tokens??usage.input_tokens??null,
       output_tokens:usage.total_output_tokens??usage.output_tokens??null,
       output_tokens_details:{reasoning_tokens:usage.total_thought_tokens??null},provider_usage:usage}};
+}
+
+/** Read the original Gemini stream to completion. Lifecycle events omit steps,
+ * so collect only model-output text deltas and require an explicit terminal event. */
+export async function readGeminiStream(response:Response,id:string) {
+  if(!response.ok)return {...normalizeGeminiResult(await response.json()),id};
+  if(!response.body)throw new Error('missing_gemini_stream');
+  const reader=response.body.getReader(),decoder=new TextDecoder(),steps=new Map<number,any>();
+  let buffer='',bytes=0,terminal=false,interaction:any={},failure:any=null;
+  const event=(block:string)=>{
+    const data=block.split('\n').filter(line=>line.startsWith('data:')).map(line=>line.slice(5).trim()).join('\n');
+    if(!data)return;
+    const value=JSON.parse(data);
+    if(value.event_type==='error'){failure=value.error??value;terminal=true;return;}
+    if(value.event_type==='interaction.created')interaction={...value.interaction};
+    if(value.event_type==='step.start'){
+      if(!Number.isSafeInteger(value.index)||steps.has(value.index))throw new Error('invalid_gemini_step');
+      steps.set(value.index,structuredClone(value.step));
+    }
+    if(value.event_type==='step.delta'&&value.delta?.type==='text'&&!value.delta.thought){
+      const step=steps.get(value.index);
+      if(!step)throw new Error('invalid_gemini_text_sequence');
+      if(step.type==='model_output'){
+        step.content??=[];step.content.push({type:'text',text:value.delta.text??''});
+      }
+    }
+    if(value.event_type==='interaction.completed'){
+      if(interaction.id&&value.interaction?.id&&interaction.id!==value.interaction.id)throw new Error('gemini_stream_identity_changed');
+      interaction={...interaction,...value.interaction};terminal=true;
+    }
+  };
+  try{
+    while(true){
+      const next=await reader.read();if(next.done)break;
+      bytes+=next.value.length;if(bytes>2_000_000)throw new Error('gemini_stream_too_large');
+      buffer+=decoder.decode(next.value,{stream:true});buffer=buffer.replace(/\r\n/gu,'\n');
+      let boundary:number;while((boundary=buffer.indexOf('\n\n'))>=0){event(buffer.slice(0,boundary));buffer=buffer.slice(boundary+2);}
+    }
+    buffer+=decoder.decode();if(buffer.trim())event(buffer);
+    if(!terminal)throw new Error('interrupted_gemini_stream');
+    return {...normalizeGeminiResult({...interaction,status:failure?'failed':interaction.status,
+      ...(failure?{error:failure}:{}),steps:[...steps.entries()].sort(([a],[b])=>a-b).map(([,step])=>step)}),
+      id,provider_response_id:interaction.id??null};
+  }finally{await reader.cancel().catch(()=>{});reader.releaseLock();}
 }
 
 export function normalizeClaudeResult(message:any,id:string) {

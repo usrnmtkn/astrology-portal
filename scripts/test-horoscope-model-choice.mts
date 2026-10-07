@@ -1,11 +1,11 @@
 import assert from 'node:assert/strict';
 import {store,editorialFixtureRows,installHoroscopeWriterFixture,invokeHoroscopeWriting,writerFixture} from '../tests/helpers/sky-article-save-api.mts';
-import {installAlternativeHoroscopeProviders} from '../tests/helpers/horoscope-provider-fixture.mts';
+import {installAlternativeHoroscopeProviders,geminiStreamFixture} from '../tests/helpers/horoscope-provider-fixture.mts';
 import {emptyHoroscopeEdition,horoscopeEditionBody,horoscopeEditionKey} from '../apps/web/src/content/horoscopeEditions.mjs';
 import {horoscopeWriterConfig} from '../src/astro-writing/horoscopeWriterModels.mjs';
-import {buildHoroscopeProviderRequest,readClaudeStream,normalizeClaudeResult,normalizeGeminiResult} from '../api/_lib/horoscope-provider-codecs';
+import {buildHoroscopeProviderRequest,readClaudeStream,readGeminiStream,normalizeClaudeResult,normalizeGeminiResult} from '../api/_lib/horoscope-provider-codecs';
 import responses from '../src/astro-writing/openAIResponses.cjs';
-import {claudeRequestId,saveClaudeResult,storedHoroscopeResponse} from '../api/_lib/horoscope-provider';
+import {claudeRequestId,geminiRequestId,saveHoroscopeStreamResult,storedHoroscopeResponse} from '../api/_lib/horoscope-provider';
 
 installHoroscopeWriterFixture();
 const transport=installAlternativeHoroscopeProviders();
@@ -100,13 +100,16 @@ process.env.GEMINI_API_KEY='synthetic-gemini-test-only';
 
 // Failure, cancellation and unknown-output recovery stay charge-safe.
 transport.geminiError=true;
-let result=await action(id,'generate',{sign:'aries',approvedPlanHash:unavailable.payload.plan.planHash});assert.equal(result.status,422);
-transport.geminiError=false;
+let result=await action(id,'generate',{sign:'aries',approvedPlanHash:unavailable.payload.plan.planHash});assert.equal(result.status,202);
+await new Promise(resolve=>setTimeout(resolve,30));
+result=await action(id,'poll');assert.equal(result.status,422);
+transport.geminiError=false;transport.geminiDelay=100;
 result=await action(id,'generate',{sign:'taurus',approvedPlanHash:unavailable.payload.plan.planHash});assert.equal(result.status,202);
 let row=latest(id);row.source_snapshot.horoscopeGeneration.active.startedAt='2026-01-01T00:00:00Z';store.rows.set(id,row);
 result=await action(id,'release',{acknowledgeUnknownOutcome:true});assert.equal(result.status,200,JSON.stringify(result.payload));
 assert.equal(latest(id).source_snapshot.horoscopeGeneration.active,null);
 
+transport.geminiDelay=10;
 const claudePlan=await action(id,'prepare',{writerChoice:'claude'});transport.claudeError=true;
 await action(id,'generate',{sign:'gemini',approvedPlanHash:claudePlan.payload.plan.planHash});
 await new Promise(resolve=>setTimeout(resolve,30));
@@ -115,7 +118,7 @@ assert.equal(latest(id).source_snapshot.horoscopeGeneration.lastError.diagnostic
 transport.claudeError=false;
 const failedOperation=latest(id).source_snapshot.horoscopeGeneration.lastError.operation;
 const resultBefore=structuredClone(latest(id));
-await saveClaudeResult({editionId:id,operationId:failedOperation.id,requestHash:failedOperation.requestHash},{id:failedOperation.responseId,status:'completed',output:[]});
+await saveHoroscopeStreamResult({editionId:id,operationId:failedOperation.id,requestHash:failedOperation.requestHash},{id:failedOperation.responseId,status:'completed',output:[]});
 assert.deepEqual(latest(id),resultBefore,'A late response cannot resurrect an ended operation');
 
 const responseId=claudeRequestId('synthetic-op','synthetic-hash');
@@ -126,3 +129,68 @@ assert.equal(normalizeClaudeResult({stop_reason:'end_turn',stop_details:{type:'r
 await assert.rejects(readClaudeStream(new Response('event: message_start\ndata: {"type":"message_start","message":{"content":[]}}\n\n'),responseId),/interrupted_claude_stream/);
 assert.equal(normalizeGeminiResult({status:'completed',steps:[{type:'thought',summary:[{type:'text',text:'secret'}]},{type:'model_output',content:[{type:'text',text:'reader'}]}]}).output[0].content[0].text,'reader');
 console.log('Horoscope model choices: native transports, four periods, saved selection, pinned requests, review isolation, failure and no-replay checks passed.');
+
+// Stream lifecycle, final-only output, interrupted stream and no provider GET.
+const streamed=await readGeminiStream(geminiStreamFixture('Synthetic café 🌙 ending.'),'gemini_local');
+assert.equal(streamed.output[0].content[0].text,'Synthetic café 🌙 ending.');
+assert.equal(streamed.provider_response_id,'v1_synthetic');
+assert.equal(streamed.usage.output_tokens_details.reasoning_tokens,30);
+assert.equal(transport.geminiGets,0,'New Gemini requests never retrieve via the broken Google GET path');
+await assert.rejects(readGeminiStream(new Response('data: {"event_type":"interaction.created","interaction":{"id":"v1_test"}}\n\n'),'gemini_local'),/interrupted_gemini_stream/);
+const staleGemini={config:horoscopeWriterConfig('gemini'),responseId:geminiRequestId('op','hash'),startedAt:'2026-01-01T00:00:00Z'};
+assert.equal((await (await storedHoroscopeResponse({operation:staleGemini})).json()).error.code,'gemini_checkpoint_unavailable');
+
+// Upgrade recovery: preserve a possibly billed legacy background request while
+// unblocking the rest of the batch. Polling must never create another writer.
+const legacyId=await create('weekly','2026-12-07');
+const legacyPlan=await action(legacyId,'prepare',{writerChoice:'gemini'});
+transport.geminiDelay=100;
+await action(legacyId,'generate',{sign:'aries',approvedPlanHash:legacyPlan.payload.plan.planHash});
+const legacyRow=latest(legacyId),legacyOp=legacyRow.source_snapshot.horoscopeGeneration.active;
+delete legacyOp.config.transport;legacyOp.responseId='v1_legacy_accepted';
+store.rows.set(legacyId,legacyRow);transport.geminiRetrievalError=true;
+const chargedBefore=writerFixture.calls,heldResult=await action(legacyId,'poll');
+assert.equal(heldResult.status,200,JSON.stringify(heldResult.payload));
+assert.equal(heldResult.payload.pending,false);
+assert.equal(latest(legacyId).source_snapshot.horoscopeGeneration.active,null);
+assert.equal(latest(legacyId).source_snapshot.horoscopeGeneration.heldRequests.aries.responseId,'v1_legacy_accepted');
+assert.equal(writerFixture.calls,chargedBefore);
+assert.equal((await action(legacyId,'generate',{sign:'aries',approvedPlanHash:legacyPlan.payload.plan.planHash})).status,409);
+// A late checkpoint cannot overwrite the hold or resurrect the abandoned call.
+await new Promise(resolve=>setTimeout(resolve,120));
+assert.equal(latest(legacyId).source_snapshot.horoscopeGeneration.active,null);
+transport.geminiDelay=10;
+const restPlan=await action(legacyId,'prepare');
+assert.equal((await action(legacyId,'generate',{sign:'taurus',approvedPlanHash:restPlan.payload.plan.planHash})).status,202);
+for(let attempts=0;latest(legacyId).source_snapshot.horoscopeGeneration.active&&attempts<40;attempts++)await step(legacyId);
+assert(latest(legacyId).sections.horoscopeEdition.passages.find((p:any)=>p.sign==='taurus').body.includes('Your saved fixture ends here.'));
+assert.equal(writerFixture.calls,chargedBefore+1);
+assert(latest(legacyId).source_snapshot.horoscopeGeneration.heldRequests.aries);
+
+const interruptedId=await create('weekly','2027-01-04');
+const interruptedPlan=await action(interruptedId,'prepare',{writerChoice:'gemini'});
+transport.geminiInterrupted=true;
+await action(interruptedId,'generate',{sign:'aries',approvedPlanHash:interruptedPlan.payload.plan.planHash});
+await new Promise(resolve=>setTimeout(resolve,30));
+const beforeInterruptedPoll=writerFixture.calls;
+assert.equal((await action(interruptedId,'poll')).status,422);
+assert.equal(latest(interruptedId).source_snapshot.horoscopeGeneration.lastError.diagnostic.errorCode,'gemini_connection_interrupted');
+assert.equal(latest(interruptedId).sections.horoscopeEdition.passages[0].body,'');
+await action(interruptedId,'poll');await action(interruptedId,'prepare');
+assert.equal(writerFixture.calls,beforeInterruptedPoll,'An interrupted stream cannot replay on poll or reopen');
+transport.geminiInterrupted=false;
+const streamError=await readGeminiStream(new Response('data: {"event_type":"error","error":{"code":"server_error"}}\n\n'),'gemini_local');
+assert.equal(streamError.status,'failed');assert.equal(streamError.error.code,'server_error');
+await assert.rejects(readGeminiStream(new Response('data: {"event_type":"interaction.created","interaction":{"id":"v1_first"}}\n\ndata: {"event_type":"interaction.completed","interaction":{"id":"v1_other","status":"completed"}}\n\n'),'gemini_local'),/gemini_stream_identity_changed/);
+console.log('Gemini stream completion, bounded failure, legacy hold, batch continuation and no automatic replay passed.');
+
+// Only a result checkpoint may refresh the active batch automatically.
+const {horoscopeStreamCheckpointOnly}=await import('../src/astro-writing/horoscopeRecovery.mjs');
+const beforeCheckpoint={id:'edition',updated_at:'first',status:'DRAFT',body:'Saved owner text',source_snapshot:{profile:'saved',horoscopeGeneration:{active:{id:'operation',requestHash:'hash',state:'running',config:horoscopeWriterConfig('gemini'),responseId:'gemini_saved'}}}};
+const afterCheckpoint=structuredClone(beforeCheckpoint) as any;
+afterCheckpoint.updated_at='second';afterCheckpoint.source_snapshot.horoscopeGeneration.active.providerResult={id:'gemini_saved',status:'completed'};
+assert(horoscopeStreamCheckpointOnly(beforeCheckpoint,afterCheckpoint));
+for(const mutate of [(row:any)=>row.body='Newer owner edit',(row:any)=>row.source_snapshot.profile='new instructions',(row:any)=>row.source_snapshot.horoscopeGeneration.active.id='replacement',(row:any)=>row.status='LIVE',(row:any)=>row.source_snapshot.horoscopeGeneration.active.providerResult.id='different']){
+ const changed=structuredClone(afterCheckpoint);mutate(changed);
+ assert.equal(horoscopeStreamCheckpointOnly(beforeCheckpoint,changed),false);
+}
