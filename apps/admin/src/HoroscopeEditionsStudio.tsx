@@ -298,7 +298,7 @@ export default function HoroscopeEditionsStudio({secret,requestedEditionId}:{sec
       // Coalesce manual/focus checks with the running loop. Aborting it here
       // used to discard the owner's approval for the remaining Weekly signs.
       checkBatch.current=true;lastSync.current=Date.now();
-      setMessage('Checking saved progress. Your approved Weekly batch will continue automatically.');return;
+      setMessage('Checking saved progress. Generation will continue automatically.');return;
     }
     stop.current=true;const controller=beginOperation();running.current=false;lastSync.current=Date.now();
     setBusy(true);setChecking(true);setProgress('');setError('');setMessage('Checking saved progress…');

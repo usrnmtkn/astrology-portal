@@ -254,8 +254,33 @@ for(let i=0;current.source_snapshot.horoscopeGeneration.active&&i<10;i++){
     assert.equal(writerFixture.calls,calls);assert.equal(writerFixture.reviewCalls,reviews,'Opening a saved review cannot start its paid check');
   }
   const request=current.source_snapshot.horoscopeGeneration.active.state==='ready'?'continue':'poll';
-  if(request==='continue')assert.equal(horoscopeWeeklyBatchRecovery(current,current,{action:request,sign,planHash}),false,'Never repeat an unconfirmed review POST');
-  previous=current;await new Promise(resolve=>setTimeout(resolve,30));await action(batchId,request);current=await fullRead();
+  previous=current;
+  if(request==='continue'){
+    const originalFetch=globalThis.fetch,reviews=writerFixture.reviewCalls;
+    const exactRead=(input:any,options:any)=>new URL(String(input)).searchParams.get('id')===`eq.${batchId}`&&(!options?.method||options.method==='GET');
+    try{
+      globalThis.fetch=async(input:any,options:any)=>{if(exactRead(input,options))throw new DOMException('Synthetic storage timeout','AbortError');return originalFetch(input,options);};
+      assert.equal((await action(batchId,request)).status,504);
+    }finally{globalThis.fetch=originalFetch;}
+    assert.deepEqual(latest(batchId),current);assert.equal(writerFixture.reviewCalls,reviews,'A failed initial read cannot dispatch a review');
+    assert(horoscopeWeeklyBatchRecovery(current,current,{action:request,sign,planHash}),'An unchanged, unreserved review can retry its conditional reservation');
+    for(const mutate of [
+      (row:any)=>row.source_snapshot.horoscopeGeneration.active.phase='draft',
+      (row:any)=>row.source_snapshot.horoscopeGeneration.active.responseId='resp_uncertain',
+      (row:any)=>row.source_snapshot.horoscopeGeneration.active.requestHash='already-reserved',
+      (row:any)=>row.sections.horoscopeEdition.passages[1].body='New owner text',
+    ]){const changed=structuredClone(current);mutate(changed);assert.equal(horoscopeWeeklyBatchRecovery(current,changed,{action:request,sign,planHash}),false);}
+    // Both handlers read the same ready version before either can reserve it.
+    // Only the compare-and-swap winner may dispatch the paid reviewer.
+    let readers=0,release!:()=>void;const barrier=new Promise<void>(resolve=>release=resolve);
+    try{
+      globalThis.fetch=async(input:any,options:any)=>{const response=await originalFetch(input,options);if(exactRead(input,options)){if(++readers===2)release();await barrier;}return response;};
+      const results=await Promise.all([action(batchId,request),action(batchId,request)]);
+      assert.deepEqual(results.map(result=>result.status).sort(),[202,409]);
+    }finally{globalThis.fetch=originalFetch;}
+    assert.equal(writerFixture.reviewCalls,reviews+1,'Concurrent reservation attempts dispatch exactly one paid review');
+  }else{await new Promise(resolve=>setTimeout(resolve,30));await action(batchId,request);}
+  current=await fullRead();
   assert(horoscopeWeeklyBatchRecovery(previous,current,{action:request,sign,planHash}),`Reconcile saved ${request} transition ${i}: ${previous.source_snapshot.horoscopeGeneration.active?.phase??'writer'} -> ${current.source_snapshot.horoscopeGeneration.active?.phase??'saved'}`);
   for(const mutate of [
     (row:any)=>row.source_snapshot.horoscopeWriterChoice='claude',

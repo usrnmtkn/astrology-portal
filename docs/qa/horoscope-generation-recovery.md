@@ -37,6 +37,16 @@ of cancelling it. A transient connection failure reconciles the exact saved
 operation, draft review or completed candidate before continuing. Newer owner
 edits, changed facts, instructions, model or rejection history invalidate this
 continuation. An unchanged row never permits replaying an unconfirmed paid POST.
+An unchanged ready prose check is the narrow exception: it has no response ID
+or request hash, and its version and complete candidate remain identical.
+Its conditional ready-to-starting save must succeed before any reviewer call.
+After a transient storage timeout, the client may retry that reservation; two
+concurrent handlers reading the same version produce one dispatch and one
+conflict. A running, uncertain, failed or released request is never restarted.
+The actual-handler regression injects an initial storage timeout and races both
+reservations; desktop/light and mobile/dark browser flows inject the timeout
+before completing all twelve signs with exact writer/reviewer call counts.
+
 Polling an existing response has no 120-poll client cutoff. Ready stages proceed
 immediately; unchanged pending responses wait between reads. Connection recovery
 uses a bounded delay up to 30 seconds without repeating paid requests.

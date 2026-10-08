@@ -4,7 +4,8 @@ const stable=value=>Array.isArray(value)?value.map(stable):value&&typeof value==
 
 // Reconcile only the operation this approved Weekly batch just sent. Changes to
 // instructions, model, facts, another passage or rejection history revoke consent.
-// An unconfirmed POST is never sent again merely because storage is unchanged.
+// Unconfirmed writer starts cannot replay. An unreserved review is protected
+// by the handler's conditional ready->starting save before any provider call.
 export function horoscopeWeeklyBatchRecovery(previous,current,{action,sign,planHash}) {
   if(previous?.id!==current?.id||current?.status!=='DRAFT'
     ||current?.sections?.horoscopeEdition?.window?.period!=='weekly')return false;
@@ -16,7 +17,11 @@ export function horoscopeWeeklyBatchRecovery(previous,current,{action,sign,planH
     if(next.sign!==sign||next.planHash!==planHash)return false;
     if(old){
       if(next.id===old.id){
-        if(action==='continue'&&next.state==='ready')return false;
+        if(action==='continue'&&next.state==='ready'){
+          if(old.phase!=='review'||old.state!=='ready'
+            ||old.responseId||next.responseId||old.requestHash||next.requestHash
+            ||previous.updated_at!==current.updated_at)return false;
+        }
         const fixed=operation=>{
           const copy=structuredClone(operation);
           for(const key of ['state','responseId','requestHash','startedAt','providerResult','startupDiagnostic'])delete copy[key];
