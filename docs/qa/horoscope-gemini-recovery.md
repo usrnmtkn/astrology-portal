@@ -50,3 +50,26 @@ new paid model calls:
 Release evidence and exact tested revisions belong in the PR. Rendered browser
 checks use the actual handlers with synthetic storage and model responses;
 they are not evidence of a fresh live Gemini generation or editorial quality.
+
+## Gemini stream trailer repair
+
+Google's [streaming examples](https://ai.google.dev/gemini-api/docs/streaming)
+terminate a completed interaction with `event: done` and `data: [DONE]`. The
+original parser tried to decode this non-JSON sentinel and discarded the complete
+response through its generic interrupted-connection fallback. Its simulated
+provider omitted the trailer, so passing those tests did not establish protocol
+compatibility. Replaying the documented framing reproduces that exception.
+
+The parser now recognizes the sentinel only after an explicit terminal event.
+A lone or premature marker still fails. All native Gemini provider fixtures
+include the documented trailer, including split CRLF/UTF-8 chunks. Regressions
+preserve completed text, provider identity and usage; an error followed by the
+marker remains a failure. The actual-handler and browser tests exercise this
+framing through draft persistence and batch continuation, without paid calls.
+
+One owner-authorized live diagnostic used synthetic input and a 128-token output
+limit. Its original response confirmed the same `[DONE]` framing. The deliberately
+small limit returned an incomplete interaction, which the corrected parser
+preserved as incomplete with its usage instead of throwing. This checks live
+protocol compatibility, not successful full-horoscope generation. The diagnostic
+was not retried; its raw response remains in protected local storage.

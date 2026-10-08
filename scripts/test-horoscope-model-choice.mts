@@ -132,11 +132,23 @@ console.log('Horoscope model choices: native transports, four periods, saved sel
 
 // Stream lifecycle, final-only output, interrupted stream and no provider GET.
 const streamed=await readGeminiStream(geminiStreamFixture('Synthetic café 🌙 ending.'),'gemini_local');
+assert.equal(streamed.status,'completed','The documented [DONE] trailer must not discard a completed response');
 assert.equal(streamed.output[0].content[0].text,'Synthetic café 🌙 ending.');
 assert.equal(streamed.provider_response_id,'v1_synthetic');
+assert.equal(streamed.usage.output_tokens,40);
 assert.equal(streamed.usage.output_tokens_details.reasoning_tokens,30);
 assert.equal(transport.geminiGets,0,'New Gemini requests never retrieve via the broken Google GET path');
 await assert.rejects(readGeminiStream(new Response('data: {"event_type":"interaction.created","interaction":{"id":"v1_test"}}\n\n'),'gemini_local'),/interrupted_gemini_stream/);
+// The framing marker alone is not a successful model completion, even if a
+// completion event follows it. No partial output may be admitted as a draft.
+for(const suffix of ['', '\n\ndata: {"event_type":"interaction.completed","interaction":{"status":"completed"}}\n\n']){
+  await assert.rejects(readGeminiStream(new Response('event: done\ndata: [DONE]'+suffix),'gemini_local'),/interrupted_gemini_stream/);
+}
+const noTrailingBlank=await readGeminiStream(new Response('data: {"event_type":"interaction.completed","interaction":{"id":"v1_done","status":"completed"}}\n\nevent: done\ndata: [DONE]'),'gemini_local');
+assert.equal(noTrailingBlank.status,'completed');assert.equal(noTrailingBlank.provider_response_id,'v1_done');
+const limitedStream=await readGeminiStream(new Response('data: {"event_type":"interaction.completed","interaction":{"id":"v1_limited","status":"incomplete","usage":{"total_output_tokens":3,"total_thought_tokens":121}}}\n\nevent: done\ndata: [DONE]\n\n'),'gemini_local');
+assert.equal(limitedStream.status,'incomplete','A completed stream does not imply a completed model response');
+assert.equal(limitedStream.usage.output_tokens,3);assert.equal(limitedStream.usage.output_tokens_details.reasoning_tokens,121);
 const staleGemini={config:horoscopeWriterConfig('gemini'),responseId:geminiRequestId('op','hash'),startedAt:'2026-01-01T00:00:00Z'};
 assert.equal((await (await storedHoroscopeResponse({operation:staleGemini})).json()).error.code,'gemini_checkpoint_unavailable');
 
@@ -192,7 +204,7 @@ assert.equal(latest(interruptedId).sections.horoscopeEdition.passages[0].body,''
 await action(interruptedId,'poll');await action(interruptedId,'prepare');
 assert.equal(writerFixture.calls,beforeInterruptedPoll,'An interrupted stream cannot replay on poll or reopen');
 transport.geminiInterrupted=false;
-const streamError=await readGeminiStream(new Response('data: {"event_type":"error","error":{"code":"server_error"}}\n\n'),'gemini_local');
+const streamError=await readGeminiStream(new Response('data: {"event_type":"error","error":{"code":"server_error"}}\n\nevent: done\ndata: [DONE]\n\n'),'gemini_local');
 assert.equal(streamError.status,'failed');assert.equal(streamError.error.code,'server_error');
 await assert.rejects(readGeminiStream(new Response('data: {"event_type":"interaction.created","interaction":{"id":"v1_first"}}\n\ndata: {"event_type":"interaction.completed","interaction":{"id":"v1_other","status":"completed"}}\n\n'),'gemini_local'),/gemini_stream_identity_changed/);
 console.log('Gemini stream completion, bounded failure, legacy hold, batch continuation and no automatic replay passed.');

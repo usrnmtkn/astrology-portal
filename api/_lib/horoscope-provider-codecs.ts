@@ -51,6 +51,12 @@ export async function readGeminiStream(response:Response,id:string) {
   const event=(block:string)=>{
     const data=block.split('\n').filter(line=>line.startsWith('data:')).map(line=>line.slice(5).trim()).join('\n');
     if(!data)return;
+    // Google's SSE trailer is a sentinel, not JSON. It cannot substitute for
+    // interaction.completed/error, so the terminal-event check still applies.
+    if(data==='[DONE]'){
+      if(!terminal)throw new Error('interrupted_gemini_stream');
+      return;
+    }
     const value=JSON.parse(data);
     if(value.event_type==='error'){failure=value.error??value;terminal=true;return;}
     if(value.event_type==='interaction.created')interaction={...value.interaction};
