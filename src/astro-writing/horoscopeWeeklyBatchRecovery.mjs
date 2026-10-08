@@ -54,7 +54,7 @@ export function horoscopeWeeklyBatchRecovery(previous,current,{action,sign,planH
   }
   const normalize=row=>{
     const copy=structuredClone(row),generation=copy.source_snapshot.horoscopeGeneration??{};
-    delete copy.updated_at;delete generation.active;
+    delete copy.updated_at;delete generation.active;delete copy.source_snapshot.horoscopeStorageWriteId;
     // Starting a retry archives the previous failure once and clears lastError.
     if(action==='generate'){
       const legacy=before.lastError;

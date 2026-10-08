@@ -272,3 +272,37 @@ startup including CSS changes from 513,798 to 513,797 bytes (-1). Allocate
 200 bytes above the previous 10,800-byte editor cap. Startup, aggregate, CSS
 and every other chunk limit remain unchanged. All 20 Monthly/recovery browser
 cases pass, including fresh failures, reopen/reload history and explicit retry.
+
+## Weekly storage acknowledgement recovery
+
+Weekly generation checkpoints request only `id,updated_at` from a conditional
+storage write. The complete edition, source evidence and rejected drafts remain
+stored unchanged; the response does not echo that large document for every save.
+The database timestamp is used rather than assuming the proposed client version.
+
+Each save has a unique `source_snapshot.horoscopeStorageWriteId`. When an
+acknowledgement is lost, the same handler reads the complete row and requires
+both that identity and exact document equality (apart from the database timestamp)
+before continuing. A changed owner field or a competing reservation stops the
+operation. If storage still contains the exact prior version, one conditional
+storage retry is allowed using the same write ID. This cannot replay a provider
+call. Read/write deadlines are bounded at 30 seconds, including response bodies.
+
+Batch and stream recovery ignore only this transport receipt in addition to
+their existing permitted transitions. All existing instruction, model, fact,
+passage, review and rejection identity checks remain enforced. Monthly, Daily
+and Seasonal checkpoint writes retain their existing implementation.
+
+The actual-handler model-choice regression injects committed saves with lost
+headers or body acknowledgements, an uncommitted save, loss while storing the
+review response ID, concurrent reservations, a newer owner edit, unavailable
+readback and persistent storage failure. A large synthetic history is preserved
+byte-for-byte. The browser's complete twelve-sign Weekly flow loses storage
+acknowledgements at review reservation, response-ID storage and final admission,
+as well as its existing browser-response failures. It verifies exact request
+counts and all saved passages after reload using isolated provider/storage
+fixtures. These tests incur no model charges and do not prove live prose quality.
+
+An older request with an unknown provider outcome is not reset by this repair.
+Without a confirmed response ID it remains held for explicit owner handling;
+deployment does not authorize a paid retry or publication.

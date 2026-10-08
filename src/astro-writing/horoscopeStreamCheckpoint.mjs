@@ -8,6 +8,7 @@ export function horoscopeStreamCheckpointOnly(previous, current) {
   if(before.config?.provider!=='anthropic'&&!(before.config?.provider==='gemini'&&before.config.transport==='checkpointed-stream/v1'))return false;
   const normalize=row=>{
     const copy=structuredClone(row);delete copy.updated_at;
+    delete copy.source_snapshot.horoscopeStorageWriteId;
     delete copy.source_snapshot.horoscopeGeneration.active.providerResult;
     return copy;
   };

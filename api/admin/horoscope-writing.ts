@@ -26,6 +26,7 @@ import {seasonalEditorialOperation} from '../_lib/seasonal-editorial-operation.j
 import {SEASONAL_EDITORIAL_WORKFLOW} from '../../src/astro-writing/seasonalEditorialAdapter.mjs';
 import {HOROSCOPE_RHETORICAL_REVIEW} from '../../src/astro-writing/horoscopeRhetoricalReview.mjs';
 import {isHoroscopeReview,queueHoroscopeReview,horoscopeRhetoricalOperation} from '../_lib/horoscope-rhetorical-operation.js';
+import {persistWeeklyHoroscope,horoscopeStorageTimeoutMs} from '../_lib/horoscope-storage-confirmation.js';
 loadLocalWebEnv();
 export const maxDuration=300;
 const hash=(v:unknown)=>createHash('sha256').update(JSON.stringify(v)).digest('hex');
@@ -43,7 +44,7 @@ export default async function handler(req:IncomingMessage,res:ServerResponse) {
       ||typeof input.expectedUpdatedAt!=='string'||Object.keys(input).some(k=>!['action','id','expectedUpdatedAt','sign','approvedPlanHash','acknowledgeUnknownOutcome','writerChoice'].includes(k)))throw new AdminHttpError(400,'Choose a saved edition and a writing action.');
     if(input.writerChoice!==undefined&&(input.action!=='prepare'||!horoscopeWriterOptions(process.env).some((writer:any)=>writer.id===input.writerChoice)))throw new AdminHttpError(400,'Choose a supported writing model while preparing the plan.');
     const {url,headers}=studioStorage();
-    const read=await adminFetchJson(`${url}?${new URLSearchParams({id:`eq.${input.id}`,select:'*',limit:'1'})}`,{headers});
+    const read=await adminFetchJson(`${url}?${new URLSearchParams({id:`eq.${input.id}`,select:'*',limit:'1'})}`,{headers},horoscopeStorageTimeoutMs);
     if(!read.ok)throw new AdminHttpError(502,'The saved edition could not be read.');
     let row:any=adminStorageRows(read.payload)[0];
     if(!row)throw new AdminHttpError(404,'Edition not found.');
@@ -51,6 +52,9 @@ export default async function handler(req:IncomingMessage,res:ServerResponse) {
     if(!row.content_key?.startsWith('horoscope/')||row.status!=='DRAFT')throw new AdminHttpError(409,'Open an editable horoscope draft.');
     assertHoroscopeRow(row);
     const persist=async(patch:Record<string,unknown>)=>{
+      if(row.sections.horoscopeEdition.window.period==='weekly'&&!['prepare','reject'].includes(input.action)){
+        row=await persistWeeklyHoroscope({url,headers,row,patch});return row;
+      }
       const result=await adminFetchJson(`${url}?${new URLSearchParams({id:`eq.${row.id}`,updated_at:`eq.${row.updated_at}`})}`,{method:'PATCH',headers:{...headers,prefer:'return=representation'},body:JSON.stringify({...patch,updated_at:nextVersion(row.updated_at)})});
       if(!result.ok)throw new AdminHttpError(502,'The save could not be confirmed. Reopen this edition before continuing.');
       const saved:any[]=adminStorageRows(result.payload);
