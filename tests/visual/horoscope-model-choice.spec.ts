@@ -23,12 +23,16 @@ async function fixture(page:Page,missing=1){
     const created=await call({method:'POST',body:{contentKey:horoscopeEditionKey(edition.window),surface:'sky',mode:'article',eventType:'horoscope-edition',provider:'manual-admin',status:'DRAFT',lane:'serving',headline:'Synthetic model choice edition',body:horoscopeEditionBody(edition),sections:{horoscopeEdition:edition},facts:{horoscopeBrief:{brief,signature}},sourceSnapshot:{horoscopeGeneration:{rejections:[{id:'held-private-fixture',scope:'pisces',rejectedAt:'2026-10-06T12:00:00Z',passages:[{sign:'pisces',headline:'',body:''}],generation:{candidateHolds:{pisces:{candidate:{headline:'Held private title',body:'Held private opening.\n\nHeld private final sentence.'}}}}}]}}}});
     expect(created.status).toBe(200);const id=created.payload.rows[0].id;
     const latest=async()=>(await call({method:'rows'})).find((row:any)=>row.id===id);
-    const state={holdPoll:false,holdReview:false,longReview:false,loseWriterStart:false,loseReviewStart:false,loseReviewSave:false,reviewHeld:false,checks:0};
+    const state={holdPoll:false,holdReview:false,longReview:false,loseWriterStart:false,loseReviewStart:false,loseReviewSave:false,failReviewReservation:false,reservationFailures:0,reviewHeld:false,checks:0};
     await routeStudioInventoryApi(page,{call,answer:async(route,url)=>{
       if(url.pathname!=='/api/admin/horoscope-writing')return false;
       const body=route.request().postDataJSON();
       if(body.action==='poll'&&state.holdPoll){await route.fulfill({status:202,json:{ok:true,pending:true,rows:[await latest()]}});return true;}
       const active=(await latest()).source_snapshot?.horoscopeGeneration?.active;
+      if(body.action==='continue'&&active?.phase==='review'&&active.state==='ready'&&state.failReviewReservation){
+        state.failReviewReservation=false;state.reservationFailures++;
+        await route.fulfill({status:504,json:{ok:false,error:'Synthetic storage timeout before review reservation.'}});return true;
+      }
       if(body.action==='poll'&&active?.phase==='review'&&state.holdReview){state.reviewHeld=true;await route.fulfill({status:202,json:{ok:true,pending:true,rows:[await latest()]}});return true;}
       if(body.action==='continue'&&active?.phase==='review'&&state.longReview){state.longReview=false;await call({method:'writer-state',body:{pendingPolls:125}});}
       const result=await call({method:'writing',body});
@@ -63,7 +67,7 @@ for(const [width,theme] of [[1440,'light'],[390,'dark']] as const){
     await expect.poll(async()=>Boolean((await f.latest()).source_snapshot.horoscopeGeneration.active?.providerResult)).toBe(true);
     expect((await f.call({method:'writing',body:{action:'poll',id:f.id,expectedUpdatedAt:(await f.latest()).updated_at}})).status).toBe(422);
     await f.call({method:'provider-state',body:{geminiInterrupted:false}});
-    f.state.holdReview=true;f.state.longReview=true;f.state.loseWriterStart=true;f.state.loseReviewStart=true;f.state.loseReviewSave=true;
+    f.state.holdReview=true;f.state.longReview=true;f.state.loseWriterStart=true;f.state.loseReviewStart=true;f.state.loseReviewSave=true;f.state.failReviewReservation=true;
     const studio=await f.open();
     expect(Object.hasOwn(await f.latest(),'studio_facts')).toBe(true);
     await expect(studio.getByText(/Up to 24 paid AI requests/)).toBeVisible();
@@ -85,6 +89,7 @@ for(const [width,theme] of [[1440,'light'],[390,'dark']] as const){
     expect((await f.call({method:'writer-state'}))).toMatchObject({calls:13,reviewCalls:12});
     expect((await f.call({method:'provider-state'})).requests).toHaveLength(13);
     expect(f.state.checks).toBeGreaterThan(125);
+    expect(f.state.reservationFailures).toBe(1);
     await page.reload();await f.open();
     await expect(studio.getByText('12/12 readings ready',{exact:false})).toBeVisible();
     expect((await f.latest()).sections.horoscopeEdition).toEqual(saved.sections.horoscopeEdition);
