@@ -46,7 +46,7 @@ async function fixture(page:Page,missing=1){
 }
 
 for(const [width,theme] of [[1440,'light'],[390,'dark']] as const){
- test(`Gemini Weekly retry continues all twelve through long review and lost acknowledgements ${width} ${theme}`,async({page})=>{
+ test(`Gemini Weekly retry continues all twelve with real row projections, long review and lost acknowledgements ${width} ${theme}`,async({page})=>{
   test.setTimeout(180000);
   await page.setViewportSize({width,height:1000});
   await page.addInitScript(theme=>{
@@ -65,6 +65,7 @@ for(const [width,theme] of [[1440,'light'],[390,'dark']] as const){
     await f.call({method:'provider-state',body:{geminiInterrupted:false}});
     f.state.holdReview=true;f.state.longReview=true;f.state.loseWriterStart=true;f.state.loseReviewStart=true;f.state.loseReviewSave=true;
     const studio=await f.open();
+    expect(Object.hasOwn(await f.latest(),'studio_facts')).toBe(true);
     await expect(studio.getByText(/Up to 24 paid AI requests/)).toBeVisible();
     const retry=studio.getByRole('button',{name:'Retry Aries and continue',exact:true});
     await expect(retry).toBeDisabled();

@@ -3239,7 +3239,13 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
     }
     if (new URL(req.url ?? "/", "http://localhost").searchParams.get("horoscopeEditions") === "true") {
       if (req.method !== "GET") throw new AdminHttpError(405, "Use GET to list horoscope editions.");
-      const result = await studioVariableStorage(new URLSearchParams({content_key:"like.horoscope/*",mode:"eq.article",select:"*",order:"updated_at.desc",limit:"30"}));
+      const id=new URL(req.url!,"http://localhost").searchParams.get('id');
+      // Recovery compares the complete document returned by horoscope-writing.
+      // The generic detail projection omits storage fields and falsely looks
+      // like an outside edit after a provider checkpoint advances updated_at.
+      const params=new URLSearchParams({content_key:"like.horoscope/*",mode:"eq.article",select:"*",order:"updated_at.desc",limit:id?'1':'30'});
+      if(id)params.set('id',`eq.${id}`);
+      const result = await studioVariableStorage(params);
       if (!result.ok || !Array.isArray(result.payload)) throw new AdminHttpError(502, "Horoscope editions could not load.");
       sendJson(res, 200, {ok:true,rows:result.payload});
       return;
