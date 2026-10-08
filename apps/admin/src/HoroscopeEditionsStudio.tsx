@@ -347,7 +347,8 @@ export default function HoroscopeEditionsStudio({secret,requestedEditionId}:{sec
           if(!isCurrent(controller))return;
           if(reconcile&&recoverable(reason)){
             const refreshed=await readBatch();if(!isCurrent(controller)||!refreshed)return;
-            if(reconcile(row,refreshed,{action,sign:next,planHash:plan.planHash})){
+            if(((reason as any).status!==409||refreshed.updated_at!==row.updated_at)
+              &&reconcile(row,refreshed,{action,sign:next,planHash:plan.planHash})){
               row=refreshed;retain(row);retrying=null;
               if((reason as any).status===409){setMessage('');continue;}
               setMessage('Connection interrupted. Continuing from the saved request automatically.');
