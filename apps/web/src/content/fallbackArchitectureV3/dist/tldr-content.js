@@ -1423,6 +1423,26 @@ function normalizeAspect(input) {
   return map[k] ?? null;
 }
 
+// apps/web/src/content/fallbackArchitectureV3/resolver/mercuryReturnReader.mjs
+var MERCURY_RETURN_CONTACT_KEY = "authored/transit-aspect/mercury/mercury/conjunction";
+function mercuryReturnCopy(row, voice, window, SourceGapError2) {
+  const audience = voice === void 0 || voice === "you" ? "you" : "they";
+  const field2 = audience === "you" ? "body_you" : "body_they";
+  const source = row[field2];
+  if (typeof source !== "string" || !source.trim()) {
+    throw new SourceGapError2(`SOURCE_GAP: Mercury return missing ${field2}`);
+  }
+  const untilDate = typeof window === "string" ? window.replace(/^until\s+/i, "").trim() : "";
+  if (source.includes("{{untilDate}}") && !untilDate) {
+    throw new SourceGapError2("SOURCE_GAP: Mercury return missing calculated end date");
+  }
+  const body = source.replaceAll("{{untilDate}}", () => untilDate);
+  if (/\{\{|\}\}/u.test(body)) {
+    throw new SourceGapError2("SOURCE_GAP: Mercury return unresolved placeholder");
+  }
+  return { body, audience, field: field2 };
+}
+
 // apps/web/src/content/fallbackArchitectureV3/resolver/relationshipTemplate.mjs
 function relationshipTemplatePair(row) {
   const read = (publicField, storedField) => {
@@ -2571,7 +2591,22 @@ ${passHook}`;
       window: win ?? WINDOW_ASPECT[transiting] ?? "Currently"
     };
   }
-  function renderTransitReturn({ planet }) {
+  function renderTransitReturn({ planet, voice, window }) {
+    if (planet === "mercury" && (voice !== void 0 || window !== void 0)) {
+      const exact = card(MERCURY_RETURN_CONTACT_KEY);
+      if (exact) {
+        const { body, audience, field: field2 } = mercuryReturnCopy(exact, voice, window, SourceGapError);
+        return {
+          ...result(exact, "authored/transit-return"),
+          body,
+          parts: [body],
+          ...passageSources(body, [{ text: body, keys: [exact.contentKey] }], () => passageSource(exact, audience, field2))
+        };
+      }
+      if (transitLib.authoredCards.some((row) => row.contentKey === MERCURY_RETURN_CONTACT_KEY)) {
+        throw new SourceGapError("SOURCE_GAP: Mercury return exact source is not reader eligible");
+      }
+    }
     const c = card(`authored/transit-return/${planet}`);
     if (!c) throw new SourceGapError(`SOURCE_GAP: no return card for ${planet}`);
     return { ...result(c, "authored/transit-return"), ...passageSources(c.body, [{ text: c.body, keys: [c.contentKey] }], () => passageSource(c, "you", "body")) };
@@ -6526,7 +6561,7 @@ function skyV4FieldValue(source, path) {
 }
 
 // apps/web/src/content/fallbackArchitectureV3/resolver/index.browser.ts
-var PACKAGE_VERSION = "v3-2026-10-06-natal-planet-introductions";
+var PACKAGE_VERSION = "v3-2026-10-08-mercury-return-reader";
 function stablePackageValue(value) {
   if (Array.isArray(value)) {
     return value.map(stablePackageValue);

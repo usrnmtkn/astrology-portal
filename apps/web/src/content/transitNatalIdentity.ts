@@ -25,6 +25,7 @@ export function isDynamicTransitNatalExactKey(contentKey: string) {
       && isEligibleTransitReturn(parts[2], parts[2], "conjunction");
   }
   if (parts[1] !== "transit-aspect") return false;
+  if (contentKey === "authored/transit-aspect/mercury/mercury/conjunction") return true;
   if (parts.length === 5) return isTransitAspectContactKey(parts);
   if (parts.length !== 8) return false;
   return isTransitAspectContactKey(parts.slice(0, 5))

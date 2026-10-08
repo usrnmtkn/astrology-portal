@@ -114,7 +114,7 @@ export type TransitPassageParagraph = { text: string; sources: TransitPassageSou
 
 type TransitPreviewRenderer = {
   renderTransitAspect: (facts: TransitNatalReadingContext & { transiting: string; natal: string; aspect: string; sign: string; voice: string; transitHouse?: string; natalHouse?: string }) => TransitPreviewResult;
-  renderTransitReturn: (facts: { planet: string }) => TransitPreviewResult;
+  renderTransitReturn: (facts: { planet: string; voice?: string; window?: string }) => TransitPreviewResult;
 };
 type TransitPreviewResult = { headline: string; parts: string[]; templateKey: string; contentKey?: string; sourceKeys?: string[]; paragraphSources?: TransitPassageParagraph[]; headlineSources?: TransitPassageSource[] };
 
@@ -126,7 +126,7 @@ export function transitNatalLabel(selection: Pick<TransitNatalSelection, "planet
 /** Preview selection is delegated to the shipped reader resolver, never assembled in Studio. */
 export function renderTransitNatalPreview(selection: TransitNatalReadingContext & Pick<TransitNatalSelection, "planet" | "sign" | "aspect" | "natalPoint" | "transitHouse" | "natalHouse">, renderer: TransitPreviewRenderer, voice = "you") {
   const rendered = isEligibleTransitReturn(selection.planet, selection.natalPoint, selection.aspect)
-    ? renderer.renderTransitReturn({ planet: selection.planet })
+    ? renderer.renderTransitReturn({ planet: selection.planet, ...(selection.planet === "mercury" ? { voice, window: selection.window } : {}) })
     : renderer.renderTransitAspect({
       transiting: selection.planet,
       natal: selection.natalPoint,
@@ -157,7 +157,7 @@ export function renderTransitNatalPreview(selection: TransitNatalReadingContext 
 export type TransitNatalResolvedSource = { key: string; text: string };
 
 export function transitNatalContactContentKey(selection: Pick<TransitNatalSelection, "planet" | "natalPoint" | "aspect">) {
-  const key = isEligibleTransitReturn(selection.planet, selection.natalPoint, selection.aspect)
+  const key = isEligibleTransitReturn(selection.planet, selection.natalPoint, selection.aspect) && selection.planet !== "mercury"
     ? `authored/transit-return/${selection.planet}`
     : `authored/transit-aspect/${selection.planet}/${selection.natalPoint}/${selection.aspect}`;
   return isDynamicTransitNatalExactKey(key) ? key : null;
@@ -260,7 +260,8 @@ export function transitNatalExactSourceDraft(
       headline,
       content_role: "full_copy", grammar_frame: "complete_sentence", surface: isReturn ? "transit-return" : "transit-aspect",
       body: you, ...(!isReturn ? { body_you: you, body_they: they } : {}),
-      requiredSlots: ["aspectWord", "untilDate"], optionalSlots: ["Name"],
+      requiredSlots: contentKey === "authored/transit-aspect/mercury/mercury/conjunction" ? ["untilDate"] : ["aspectWord", "untilDate"],
+      optionalSlots: contentKey === "authored/transit-aspect/mercury/mercury/conjunction" ? [] : ["Name"],
       reader_only: true, render_policy: "personal-transit-exact-v1", review_status: "needs_review"
     } },
     facts: {

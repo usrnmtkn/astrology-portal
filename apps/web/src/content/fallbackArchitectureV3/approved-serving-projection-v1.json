@@ -1,6 +1,6 @@
 {
   "schema": "tldrastro-approved-serving-projection/v1",
-  "packageVersion": "v3-2026-10-06-natal-planet-introductions",
+  "packageVersion": "v3-2026-10-08-mercury-return-reader",
   "policy": {
     "eligibleReviewStatuses": [
       "approved",
@@ -24,7 +24,7 @@
   },
   "lineage": {
     "file": "approved-serving-lineage-v1.json",
-    "sha256": "5349396b43fbcf73808180334f92abdd7851cd8fb9a6d3f411a80694387be188",
+    "sha256": "cad9b7788d3f1d48a2831f477362c4ba16108f0e20cf2550fd7d09303891a2a5",
     "count": 9826,
     "emissionCount": 9902,
     "exactSourceMatchCount": 7663
