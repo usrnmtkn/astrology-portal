@@ -232,6 +232,13 @@ await action(batchId,'generate',{sign,approvedPlanHash:planHash});
 let current=latest(batchId);
 assert(horoscopeWeeklyBatchRecovery(previous,current,{action:'generate',sign,planHash}));
 for(let i=0;current.source_snapshot.horoscopeGeneration.active&&i<10;i++){
+  if(current.source_snapshot.horoscopeGeneration.active.phase==='review'){
+    const before=JSON.stringify(latest(batchId)),calls=writerFixture.calls,reviews=writerFixture.reviewCalls;
+    const reopened=await action(batchId,'prepare');
+    assert.equal(reopened.status,200);assert.equal(reopened.payload.plan.planHash,planHash);
+    assert.equal(JSON.stringify(latest(batchId)),before,'Preparing the remaining plan preserves the saved request and candidate');
+    assert.equal(writerFixture.calls,calls);assert.equal(writerFixture.reviewCalls,reviews,'Opening a saved review cannot start its paid check');
+  }
   const request=current.source_snapshot.horoscopeGeneration.active.state==='ready'?'continue':'poll';
   if(request==='continue')assert.equal(horoscopeWeeklyBatchRecovery(current,current,{action:request,sign,planHash}),false,'Never repeat an unconfirmed review POST');
   previous=current;await new Promise(resolve=>setTimeout(resolve,30));await action(batchId,request);current=latest(batchId);

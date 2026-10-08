@@ -145,7 +145,7 @@ export default function HoroscopeEditionsStudio({secret,requestedEditionId}:{sec
       row=await readSaved(row.id,controller.signal);if(controller.signal.aborted)return;
       const next=adopt(row);
       // Library links read only; preparing a writing plan remains explicit.
-      if(!fromLink&&next==='generate'&&!row.source_snapshot?.horoscopeGeneration?.active)await loadPlan(row);
+      if(!fromLink&&next==='generate'&&(!row.source_snapshot?.horoscopeGeneration?.active||row.sections.horoscopeEdition.window.period==='weekly'))await loadPlan(row);
     }catch(reason){if(!controller.signal.aborted)setError((reason as Error).message);}
     finally{if(opening.current===controller){opening.current=null;if(!controller.signal.aborted)setBusy(false);}}
   }
@@ -217,7 +217,9 @@ export default function HoroscopeEditionsStudio({secret,requestedEditionId}:{sec
   function isCurrent(controller:AbortController){return mounted.current&&operation.current===controller&&!controller.signal.aborted;}
   function savedStageMessage(active:any){
     if(active?.workflow==='seasonal-editorial/v2')return `Private Seasonal ${active.phase.replaceAll('_',' ')}: ${active.state}. Saved candidates remain outside the edition.`;
-    if(active?.phase==='review'&&active?.workflow?.startsWith('horoscope-review/'))return active.state==='ready'?'Draft saved. Resume generation to run its approved prose check.':'The prose check is saved. Studio retrieves the same request automatically.';
+    if(active?.phase==='review'&&active?.workflow?.startsWith('horoscope-review/'))return active.state==='ready'
+      ?running.current?'Draft saved. Starting its approved prose check…':'Draft saved. Resume generation to run its approved prose check.'
+      :'The prose check is saved. Studio retrieves the same request automatically.';
     if(active?.state!=='ready')return null;
     if(active.phase==='planning')return 'Development plan saved. Resume generation to write the reading without another planning charge.';
     if(active.phase==='draft')return 'Original draft saved and checked. Resume generation for its separate advisory review.';
@@ -241,6 +243,7 @@ export default function HoroscopeEditionsStudio({secret,requestedEditionId}:{sec
     if(active){
       setStep('generate');setSign(active.sign);
       setMessage(savedStageMessage(active)?'':(active.responseId?`${count}/${edition.passages.length} readings are saved. ${horoscopeSignLabel(active.sign)} is still processing. Studio checks automatically; you can also check now or return to your editions.`:'Waiting for request confirmation. Studio checks automatically without sending another request.'));
+      if(edition.window.period==='weekly')return loadPlan(row,controller);
       return;
     }
     if(edition.window.period==='seasonal'?!pendingReadings(edition,row.source_snapshot?.horoscopeGeneration).length:!edition.passages.some((p:any)=>!p.headline.trim()&&!p.body.trim())){
@@ -414,6 +417,9 @@ export default function HoroscopeEditionsStudio({secret,requestedEditionId}:{sec
   const heldSigns=Object.keys(generation?.heldRequests??{});
   const candidateHolds=Object.entries(generation?.candidateHolds??{}) as [string,any][];
   const available=draft?pendingReadings(draft,generation).length:0;
+  const remainingAfterActive=draft&&active?pendingReadings(draft,generation).filter((p:any)=>p.sign!==active.sign).length:0;
+  const weeklyResume=draft?.window.period==='weekly'&&remainingAfterActive>0;
+  const resumeCalls=2*remainingAfterActive+(active?.phase==='review'?(active.state==='ready'?1:0):(active?.reviewVersion?1:0));
   const needsSignIn=error===ownerSignInMessage;
   useEffect(()=>{
     if(needsSignIn||step!=='generate'||!active&&!needsSync||dirty||instructions||checking||busy&&!running.current)return;
@@ -520,17 +526,19 @@ export default function HoroscopeEditionsStudio({secret,requestedEditionId}:{sec
         </>}
         {draft.window.period==='weekly'&&planEntry?.ownerEvidence&&<Suspense fallback={<p>Loading writing evidence…</p>}><HoroscopeGenerationDetails view="evidence" receipt={planEntry.ownerEvidence}/></Suspense>}
         {active&&<p>{savedStageMessage(active)??`A request for ${horoscopeSignLabel(active.sign)} is saved. Studio checks for its result automatically. You can pause or return to your editions while it finishes.`}</p>}
+        {weeklyResume&&!plan&&!busy&&<StudioButton disabled={needsSync||dirty} onClick={()=>void reviewPlan()}>Review plan for remaining readings</StudioButton>}
         {complete+empty<total&&<p>{total-complete-empty} partially written readings need your edits in Review. Your existing text will be kept.</p>}
+        {weeklyResume&&plan&&!busy&&<p>{planApproved?'Finish the saved request, then continue through the remaining signs.':`Resume generation finishes only ${horoscopeSignLabel(active.sign)}. Approve the plan to continue through the other ${remainingAfterActive} readings too.`} Up to {resumeCalls} additional paid AI requests. No automatic rewrites or paid retries.</p>}
         {progress&&<p role="status">{progress}</p>}
         <progress aria-label="Drafts saved" value={complete} max={total}/>
         <footer className={`admin-writing-savebar admin-horoscope-actions${candidateHolds.length?' admin-horoscope-held-actions':''}`}>
-          {plan&&!active&&available>0&&!dirty&&<label><input type="checkbox" checked={planApproved} disabled={locked} onChange={e=>setPlanApproved(e.target.checked)}/> I approve this writing plan for generation.</label>}
+          {plan&&(!active||weeklyResume)&&available>0&&!dirty&&<label><input type="checkbox" checked={planApproved} disabled={busy||needsSync} onChange={e=>setPlanApproved(e.target.checked)}/> I approve this writing plan for generation.</label>}
           {!configured&&plan&&<p role="alert">AI writing is unavailable. Configure the writer before generating, or write the readings yourself.</p>}
           <p>{checking?'Retrieving your saved request. This does not start another generation.':needsSync?'Paused. Check saved progress before continuing; completed readings are kept.':busy?'Each completed reading is saved automatically.':active?'Continue the saved request without starting it again.':empty===0?'Your drafts are ready to review.':available===0?'The remaining readings need attention above. Edit or reject a saved draft, or resolve an interrupted request.':dirty||!plan?'Prepare the current writing plan to continue.':!planApproved?`Check the plan approval box to ${retrySign?'retry':'continue'}.`:'Ready to generate the missing readings.'}</p>
           {plan&&!active&&available>0&&<p>{draft.window.period==='seasonal'?`Up to ${(retrySign?1:available)*30} paid AI requests, bounded at 3 plans and 3 prose candidates per reading, with independent evaluations. Accepted candidates remain private for inspection.`:draft.window.period==='monthly'?'Up to 3 paid AI requests: one plan, one draft, and one prose check. Matching saved plans are reused.':`Up to ${2*(retrySign&&draft.window.period!=='weekly'?1:available)} paid AI requests: one draft and one prose check per reading.`}{draft.window.period!=='seasonal'&&' No automatic rewrites or paid retries. You approve the final wording.'}</p>}
           <div className="admin-toolbar-actions"><StudioButton disabled={busy&&!running.current&&!checking} onClick={()=>void moveTo('setup')}>Back to editions</StudioButton><div className="admin-toolbar-actions admin-horoscope-decision-actions">{rejectAllButton}
             <StudioButton disabled={!saved||dirty||checking||busy&&!running.current} onClick={()=>void checkProgress()}>{checking?'Checking saved progress…':'Check saved progress'}</StudioButton>
-            {busy&&running.current?<StudioButton className="admin-primary-button" onClick={pauseGeneration}>Pause generation</StudioButton>:empty===0&&!active?<StudioButton className="admin-primary-button" disabled={busy||needsSync} onClick={()=>void moveTo('edit')}>Continue to review</StudioButton>:!active&&(dirty||!plan)?<StudioButton className="admin-primary-button" disabled={busy||needsSync||saved?.status==='LIVE'} onClick={()=>void reviewPlan()}>Review writing plan</StudioButton>:<StudioButton className="admin-primary-button" disabled={busy||needsSync||dirty||!saved||saved.status==='LIVE'||(!active&&(!available||!planApproved||!configured))} onClick={()=>void generate()}>{active?'Resume generation':retrySign?`Retry ${horoscopeSignLabel(retrySign)}${draft.window.period==='weekly'&&available>1?' and continue':''}`:empty===total?`Generate ${total===1?'overview':`${total} drafts`}`:'Generate missing readings'}</StudioButton>}
+            {busy&&running.current?<StudioButton className="admin-primary-button" onClick={pauseGeneration}>Pause generation</StudioButton>:empty===0&&!active?<StudioButton className="admin-primary-button" disabled={busy||needsSync} onClick={()=>void moveTo('edit')}>Continue to review</StudioButton>:!active&&(dirty||!plan)?<StudioButton className="admin-primary-button" disabled={busy||needsSync||saved?.status==='LIVE'} onClick={()=>void reviewPlan()}>Review writing plan</StudioButton>:<StudioButton className="admin-primary-button" disabled={busy||needsSync||dirty||!saved||saved.status==='LIVE'||(!active&&(!available||!planApproved||!configured))} onClick={()=>void generate()}>{active?weeklyResume&&planApproved?'Resume remaining readings':'Resume generation':retrySign?`Retry ${horoscopeSignLabel(retrySign)}${draft.window.period==='weekly'&&available>1?' and continue':''}`:empty===total?`Generate ${total===1?'overview':`${total} drafts`}`:'Generate missing readings'}</StudioButton>}
           </div></div>
           {active&&active.workflow!=='seasonal-editorial/v2'&&Date.now()-Date.parse(active.startedAt)>=310000&&<StudioButton disabled={busy||needsSync} onClick={()=>void release()}>Release interrupted request</StudioButton>}
         </footer>
