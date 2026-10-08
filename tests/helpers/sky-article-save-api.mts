@@ -40,6 +40,7 @@ const matches = (row: any, params: URLSearchParams) => [...params].every(([field
  throw new Error(`Unmodeled storage filter ${field}=${value}`);
 });
 export const editorialFixtureRows=new Map<string,any>();
+const horoscopeStorageFaults={remaining:[] as string[],lost:[] as string[]};
 globalThis.fetch = async (input: any, options: any = {}) => {
  const operation = await store.publication(input, options); if (operation) return operation;
  const reader = await readerRouteResponse(input, options); if (reader) return reader;
@@ -73,7 +74,17 @@ globalThis.fetch = async (input: any, options: any = {}) => {
  if (options.method === 'DELETE') { found.forEach(row => store.rows.delete(row.id)); return Response.json(found); }
  const patch = JSON.parse(String(options.body));
  if (options.method === 'PATCH') {
-  const updated = found.map(row => storageOrder({ ...row, ...patch, updated_at: nextVersion() })); updated.forEach(row => store.rows.set(row.id, row)); return Response.json(updated);
+  const updated = found.map(row => storageOrder({ ...row, ...patch, updated_at: nextVersion() })); updated.forEach(row => store.rows.set(row.id, row));
+  const columns=url.searchParams.get('select');
+  const response=Response.json(!columns||columns==='*'?updated:updated.map(row=>Object.fromEntries(Object.entries(row).filter(([key])=>columns.split(',').includes(key)))));
+  const generation=patch.source_snapshot?.horoscopeGeneration,active=generation?.active;
+  const stage=active?.phase==='review'?(active.state==='starting'?'reservation':active.responseId?'review-id':null)
+    :generation?.active===null&&Object.keys(generation.readings??{}).length?'completion':null;
+  if(updated.length&&stage&&horoscopeStorageFaults.remaining.includes(stage)){
+    horoscopeStorageFaults.remaining=horoscopeStorageFaults.remaining.filter(value=>value!==stage);horoscopeStorageFaults.lost.push(stage);
+    Object.defineProperty(response,'json',{value:async()=>{throw new DOMException('Synthetic committed checkpoint lost its acknowledgement','AbortError');}});
+  }
+  return response;
  }
  if (options.method === 'POST') {
   if ([...store.rows.values()].some((r: any) => r.content_key === patch.content_key && r.mode === patch.mode && r.target_date == patch.target_date)) return Response.json({message: 'duplicate target'}, {status: 409});
@@ -190,6 +201,10 @@ const alternativeProviders=process.env.HOROSCOPE_ALTERNATIVE_PROVIDERS_FIXTURE==
  ? (await import('./horoscope-provider-fixture.mts')).installAlternativeHoroscopeProviders():null;
 if (process.send) process.on('message', async ({ id, method, body, url, headers }: any) => {
  try {
+  if(method==='storage-state'){
+    if(body?.lose)horoscopeStorageFaults.remaining=[...body.lose];
+    process.send!({id,result:structuredClone(horoscopeStorageFaults)});return;
+  }
   if(method==='provider-state'&&alternativeProviders){
     for(const key of ['claudeDelay','claudeError','geminiError','geminiDelay','geminiInterrupted','geminiRetrievalError'] as const)if(body?.[key]!==undefined)(alternativeProviders as any)[key]=body[key];
     if(body?.missingGemini)delete process.env.GEMINI_API_KEY;

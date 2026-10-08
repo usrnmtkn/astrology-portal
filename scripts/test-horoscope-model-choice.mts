@@ -272,11 +272,21 @@ for(let i=0;current.source_snapshot.horoscopeGeneration.active&&i<10;i++){
     ]){const changed=structuredClone(current);mutate(changed);assert.equal(horoscopeWeeklyBatchRecovery(current,changed,{action:request,sign,planHash}),false);}
     // Both handlers read the same ready version before either can reserve it.
     // Only the compare-and-swap winner may dispatch the paid reviewer.
-    let readers=0,release!:()=>void;const barrier=new Promise<void>(resolve=>release=resolve);
+    let readers=0,lostReservation=false,release!:()=>void;const barrier=new Promise<void>(resolve=>release=resolve);
     try{
-      globalThis.fetch=async(input:any,options:any)=>{const response=await originalFetch(input,options);if(exactRead(input,options)){if(++readers===2)release();await barrier;}return response;};
+      globalThis.fetch=async(input:any,options:any)=>{
+        const response=await originalFetch(input,options);
+        if(exactRead(input,options)){if(++readers===2)release();await barrier;}
+        if(options?.method==='PATCH'&&!lostReservation&&JSON.parse(options.body).source_snapshot?.horoscopeGeneration?.active?.state==='starting'
+          &&(await response.clone().json()).length===1){
+          lostReservation=true;
+          Object.defineProperty(response,'json',{value:async()=>{throw new DOMException('Synthetic winning reservation lost acknowledgement','AbortError');}});
+        }
+        return response;
+      };
       const results=await Promise.all([action(batchId,request),action(batchId,request)]);
       assert.deepEqual(results.map(result=>result.status).sort(),[202,409]);
+      assert(lostReservation,'Exercise a lost database acknowledgement while two handlers race');
     }finally{globalThis.fetch=originalFetch;}
     assert.equal(writerFixture.reviewCalls,reviews+1,'Concurrent reservation attempts dispatch exactly one paid review');
   }else{await new Promise(resolve=>setTimeout(resolve,30));await action(batchId,request);}
@@ -295,3 +305,72 @@ assert(current.sections.horoscopeEdition.passages[0].body);
 const changed=structuredClone(current);changed.sections.horoscopeEdition.passages[0].body='Owner changed the just-completed candidate';
 assert.equal(horoscopeWeeklyBatchRecovery(previous,changed,{action:'poll',sign,planHash}),false);
 console.log('Approved Weekly recovery preserves context and never replays an unconfirmed paid request.');
+
+// The storage PATCH itself can commit and lose its response body. A browser-level
+// lost response does not exercise this boundary. Run the real handler with both
+// sides of that failure, then retrieve and save the very same review.
+const confirmationId=await create('weekly','2027-02-01');
+const confirmationPlan=await action(confirmationId,'prepare',{writerChoice:'gemini'});
+await action(confirmationId,'generate',{sign:'aries',approvedPlanHash:confirmationPlan.payload.plan.planHash});
+for(let i=0;latest(confirmationId).source_snapshot.horoscopeGeneration.active.phase!=='review'&&i<10;i++)await step(confirmationId);
+const readyReview=latest(confirmationId);
+assert.equal(readyReview.source_snapshot.horoscopeGeneration.active.state,'ready');
+readyReview.source_snapshot.syntheticHistory='complete retained evidence '.repeat(250000);
+for(const scenario of ['reservation-body','reservation-network','uncommitted','late-commit','response-id','newer-edit','unavailable-readback','persistent-storage-failure']){
+  store.rows.set(confirmationId,structuredClone(readyReview));
+  const baseFetch=globalThis.fetch,reviews=writerFixture.reviewCalls,writers=writerFixture.calls;
+  let injected=0,patches=0,readbacks=0,delayedWrite:any=null;const writeIds:string[]=[];
+  try{
+    globalThis.fetch=async(input:any,options:any={})=>{
+      const url=new URL(String(input)),target=url.searchParams.get('id')===`eq.${confirmationId}`;
+      if(target&&options.method==='PATCH'){
+        const patch=JSON.parse(options.body),active=patch.source_snapshot?.horoscopeGeneration?.active;
+        patches++;writeIds.push(patch.source_snapshot.horoscopeStorageWriteId);
+        assert.equal(url.searchParams.get('select'),'id,updated_at','Checkpoints return only a compact acknowledgement');
+        if(delayedWrite){await baseFetch(...delayedWrite);delayedWrite=null;}
+        const fail=active?.phase==='review'&&active.state===(scenario==='response-id'?'running':'starting')
+          &&(!injected||scenario==='persistent-storage-failure');
+        if(fail){
+          injected++;
+          if(scenario==='late-commit'){delayedWrite=[input,options];throw new DOMException('Synthetic save still committing','AbortError');}
+          if(scenario==='uncommitted'||scenario==='persistent-storage-failure')throw new DOMException('Synthetic uncommitted storage timeout','AbortError');
+          const response=await baseFetch(input,options);
+          assert((await response.clone().text()).length<200,'Large evidence must not be echoed in the save acknowledgement');
+          if(scenario==='newer-edit'){
+            const edited=latest(confirmationId);edited.body='Newer owner edit must survive.';
+            edited.updated_at=new Date(Date.parse(edited.updated_at)+1).toISOString();store.rows.set(confirmationId,edited);
+          }
+          if(scenario==='reservation-network')throw new DOMException('Synthetic committed save lost before headers','AbortError');
+          Object.defineProperty(response,'json',{value:async()=>{throw new DOMException('Synthetic committed save lost during body read','AbortError');}});
+          return response;
+        }
+      }
+      if(target&&injected&&(!options.method||options.method==='GET')){
+        readbacks++;
+        if(scenario==='unavailable-readback')throw new DOMException('Synthetic confirmation read timeout','AbortError');
+      }
+      return baseFetch(input,options);
+    };
+    const result=await action(confirmationId,'continue');
+    assert.equal(result.status,scenario==='newer-edit'?409:scenario==='unavailable-readback'||scenario==='persistent-storage-failure'?504:202,scenario);
+    assert.equal(writerFixture.calls,writers,'Storage confirmation must never regenerate the writer');
+    const blocked=['newer-edit','unavailable-readback','persistent-storage-failure'].includes(scenario);
+    assert.equal(writerFixture.reviewCalls,reviews+(blocked?0:1),scenario+': dispatch only after proving the reservation');
+    assert(injected&&readbacks,scenario+': hit the actual storage boundary');
+    if(scenario==='uncommitted'||scenario==='late-commit'||scenario==='persistent-storage-failure'){
+      assert.equal(writeIds[0],writeIds[1],'A storage retry uses the exact original write identity');
+      if(scenario==='persistent-storage-failure')assert.equal(patches,2,'Storage retry is bounded');
+    }
+    if(scenario==='newer-edit')assert.equal(latest(confirmationId).body,'Newer owner edit must survive.');
+  }finally{globalThis.fetch=baseFetch;}
+  if(['newer-edit','unavailable-readback','persistent-storage-failure'].includes(scenario))continue;
+  const reviewId=latest(confirmationId).source_snapshot.horoscopeGeneration.active.responseId;
+  assert(reviewId);
+  for(let i=0;latest(confirmationId).source_snapshot.horoscopeGeneration.active&&i<10;i++)await step(confirmationId);
+  const saved=latest(confirmationId);
+  assert.equal(saved.source_snapshot.horoscopeGeneration.readings.aries.rhetoricalReview.responseId,reviewId);
+  assert.deepEqual(saved.sections.horoscopeEdition.passages[0],{sign:'aries',...readyReview.source_snapshot.horoscopeGeneration.active.candidate});
+  assert.equal(saved.source_snapshot.syntheticHistory,readyReview.source_snapshot.syntheticHistory);
+  assert.equal(writerFixture.reviewCalls,reviews+1,'Recovery retrieves the same paid review');
+}
+console.log('Committed and uncommitted storage timeouts preserve complete evidence, newer edits and single review dispatch.');
