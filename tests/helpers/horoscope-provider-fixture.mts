@@ -75,7 +75,9 @@ export function geminiStreamFixture(text:string,id='v1_synthetic',model='gemini-
     {event_type:'step.delta',index:1,delta:{type:'text',text}},
     {event_type:'step.stop',index:1},
     {event_type:'interaction.completed',interaction:{id,model,status:'completed',usage:{total_input_tokens:100,total_output_tokens:40,total_thought_tokens:30}}}];
-  const encoded=new TextEncoder().encode(events.map(value=>`event: ${value.event_type}\r\ndata: ${JSON.stringify(value)}\r\n\r\n`).join(''));
+  // Wire framing from https://ai.google.dev/gemini-api/docs/streaming:
+  // the final "done" event contains a non-JSON [DONE] marker.
+  const encoded=new TextEncoder().encode(events.map(value=>`event: ${value.event_type}\r\ndata: ${JSON.stringify(value)}\r\n\r\n`).join('')+'event: done\r\ndata: [DONE]\r\n\r\n');
   // Deliberately split UTF-8, event JSON and CRLF boundaries across chunks.
   return new Response(new ReadableStream({start(controller){for(let i=0;i<encoded.length;i+=7)controller.enqueue(encoded.slice(i,i+7));controller.close();}}),{headers:{'content-type':'text/event-stream'}});
 }
