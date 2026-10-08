@@ -18,7 +18,7 @@ export function horoscopeWeeklyBatchRecovery(previous,current,{action,sign,planH
     if(old){
       if(next.id===old.id){
         if(action==='continue'&&next.state==='ready'){
-          if(old.phase!=='review'||next.phase!=='review'||old.state!=='ready'
+          if(old.phase!=='review'||old.state!=='ready'
             ||old.responseId||next.responseId||old.requestHash||next.requestHash
             ||previous.updated_at!==current.updated_at)return false;
         }
