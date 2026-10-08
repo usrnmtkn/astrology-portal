@@ -9,6 +9,37 @@ editor on Generate and could ask for a writing plan after every reading was read
 
 ## Behavior
 
+### Weekly batch continuation
+
+An explicitly approved Weekly batch continues through all remaining available
+signs, including after **Retry [sign] and continue**. The displayed cost covers
+every remaining reading. This Weekly behavior supersedes single-sign retry for
+Weekly only; Daily, Monthly and Seasonal retry scopes are unchanged.
+
+Within that approval, manual/focus progress checks join the running loop instead
+of cancelling it. A transient connection failure reconciles the exact saved
+operation, draft review or completed candidate before continuing. Newer owner
+edits, changed facts, instructions, model or rejection history invalidate this
+continuation. An unchanged row never permits replaying an unconfirmed paid POST.
+Polling an existing response has no 120-poll client cutoff. Ready stages proceed
+immediately; unchanged pending responses wait between reads. Connection recovery
+uses a bounded delay up to 30 seconds without repeating paid requests.
+
+Explicit Pause, leaving the edition, reload, and account changes still end local
+batch consent. Reopening alone cannot authorize new signs. Terminal provider
+failures still need attention; this does not guarantee that an external provider
+will complete every request. Existing saved text and review holds remain intact.
+
+`horoscope-model-choice.spec.ts` covers a failed Gemini attempt followed by a
+single approved retry that completes all twelve signs, 125 pending review polls,
+lost review-start and review-save acknowledgements, a progress check during the
+run, exact call counts, persisted text after reload, and explicit pause. It uses
+the real handlers with synthetic providers and isolated storage, on desktop/light
+and mobile/dark. It proves continuation, not live model availability or prose quality.
+
+The following original recovery behavior applies outside an actively approved
+Weekly batch.
+
 - Generate provides **Check saved progress**, including during a browser poll.
 - Checking cancels only the superseded browser operation. It reads the current
   saved edition and retrieves an existing provider response by its saved ID.

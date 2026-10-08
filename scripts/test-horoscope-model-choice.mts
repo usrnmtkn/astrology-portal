@@ -6,6 +6,7 @@ import {horoscopeWriterConfig} from '../src/astro-writing/horoscopeWriterModels.
 import {buildHoroscopeProviderRequest,readClaudeStream,readGeminiStream,normalizeClaudeResult,normalizeGeminiResult} from '../api/_lib/horoscope-provider-codecs';
 import responses from '../src/astro-writing/openAIResponses.cjs';
 import {claudeRequestId,geminiRequestId,saveHoroscopeStreamResult,storedHoroscopeResponse} from '../api/_lib/horoscope-provider';
+import {horoscopeWeeklyBatchRecovery} from '../src/astro-writing/horoscopeWeeklyBatchRecovery.mjs';
 
 installHoroscopeWriterFixture();
 const transport=installAlternativeHoroscopeProviders();
@@ -219,3 +220,32 @@ for(const mutate of [(row:any)=>row.body='Newer owner edit',(row:any)=>row.sourc
  const changed=structuredClone(afterCheckpoint);mutate(changed);
  assert.equal(horoscopeStreamCheckpointOnly(beforeCheckpoint,changed),false);
 }
+
+// Lost browser acknowledgements may reconcile only this approved Weekly work.
+// Exercise the real writer/checkpoint/review/save transitions, not invented rows.
+const batchId=await create('weekly','2026-11-02');
+const batchPlan=await action(batchId,'prepare',{writerChoice:'gemini'});
+const planHash=batchPlan.payload.plan.planHash,sign='aries';
+let previous=latest(batchId);
+assert.equal(horoscopeWeeklyBatchRecovery(previous,previous,{action:'generate',sign,planHash}),false,'An unchanged row cannot authorize replaying a lost paid POST');
+await action(batchId,'generate',{sign,approvedPlanHash:planHash});
+let current=latest(batchId);
+assert(horoscopeWeeklyBatchRecovery(previous,current,{action:'generate',sign,planHash}));
+for(let i=0;current.source_snapshot.horoscopeGeneration.active&&i<10;i++){
+  const request=current.source_snapshot.horoscopeGeneration.active.state==='ready'?'continue':'poll';
+  if(request==='continue')assert.equal(horoscopeWeeklyBatchRecovery(current,current,{action:request,sign,planHash}),false,'Never repeat an unconfirmed review POST');
+  previous=current;await new Promise(resolve=>setTimeout(resolve,30));await action(batchId,request);current=latest(batchId);
+  assert(horoscopeWeeklyBatchRecovery(previous,current,{action:request,sign,planHash}),`Reconcile saved ${request} transition ${i}: ${previous.source_snapshot.horoscopeGeneration.active?.phase??'writer'} -> ${current.source_snapshot.horoscopeGeneration.active?.phase??'saved'}`);
+  for(const mutate of [
+    (row:any)=>row.source_snapshot.horoscopeWriterChoice='claude',
+    (row:any)=>row.source_snapshot.horoscopeOutlines={aries:'New owner plan'},
+    (row:any)=>row.sections.horoscopeEdition.passages[1].body='New owner edit',
+    (row:any)=>row.facts.newer='changed facts',
+    (row:any)=>row.source_snapshot.horoscopeGeneration.rejections=[{id:'new rejection'}],
+    (row:any)=>row.status='LIVE',
+  ]){const changed=structuredClone(current);mutate(changed);assert.equal(horoscopeWeeklyBatchRecovery(previous,changed,{action:request,sign,planHash}),false);}
+}
+assert(current.sections.horoscopeEdition.passages[0].body);
+const changed=structuredClone(current);changed.sections.horoscopeEdition.passages[0].body='Owner changed the just-completed candidate';
+assert.equal(horoscopeWeeklyBatchRecovery(previous,changed,{action:'poll',sign,planHash}),false);
+console.log('Approved Weekly recovery preserves context and never replays an unconfirmed paid request.');
