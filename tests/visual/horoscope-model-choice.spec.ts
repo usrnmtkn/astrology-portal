@@ -94,6 +94,57 @@ for(const [width,theme] of [[1440,'light'],[390,'dark']] as const){
  });
 }
 
+for(const [width,theme,reviewStarted] of [[1440,'light',false],[390,'dark',true]] as const){
+ test(`Reopened Gemini Aries ${reviewStarted?'running':'ready'} review can resume all twelve with explicit remaining-plan approval`,async({page})=>{
+  test.setTimeout(120000);
+  await page.setViewportSize({width,height:1000});
+  await page.addInitScript(theme=>{
+    localStorage.setItem('tldrastro:studio-theme',theme);
+    const timeout=window.setTimeout.bind(window);
+    window.setTimeout=((fn:any,delay?:number,...args:any[])=>timeout(fn,delay===3000?20:delay,...args)) as typeof window.setTimeout;
+  },theme);
+  const f=await fixture(page,12);try{
+    const act=async(action:string,extra={})=>f.call({method:'writing',body:{action,id:f.id,expectedUpdatedAt:(await f.latest()).updated_at,...extra}});
+    const prepared=await act('prepare',{writerChoice:'gemini'});
+    await act('generate',{sign:'aries',approvedPlanHash:prepared.payload.plan.planHash});
+    await expect.poll(async()=>Boolean((await f.latest()).source_snapshot.horoscopeGeneration.active?.providerResult)).toBe(true);
+    await act('poll');
+    const ready=(await f.latest()).source_snapshot.horoscopeGeneration.active;
+    expect(ready).toMatchObject({phase:'review',state:'ready',sign:'aries'});
+    const candidate=ready.candidate;
+    if(reviewStarted)await act('continue');
+    f.state.holdReview=true;
+    const before=await f.call({method:'writer-state'}),studio=await f.open();
+    const approval=studio.getByLabel('I approve this writing plan for generation.');
+    await expect(approval).toBeVisible();await expect(approval).not.toBeChecked();
+    await expect(studio.getByText(/Resume generation finishes only Aries/)).toContainText('other 11 readings');
+    await expect(studio.getByText(/additional paid AI requests/)).toContainText(`Up to ${reviewStarted?22:23} additional paid AI requests`);
+    expect((await f.call({method:'writer-state'}))).toMatchObject({calls:before.calls,reviewCalls:before.reviewCalls});
+    await expect(approval).toBeEnabled();
+    await page.screenshot({path:`test-results/weekly-gemini-resume-plan-${width}-${theme}.png`,fullPage:true});
+    await approval.check();
+    await studio.getByRole('button',{name:'Resume remaining readings',exact:true}).click();
+    await expect.poll(()=>f.state.reviewHeld).toBe(true);
+    await expect(studio.getByRole('button',{name:'Pause generation',exact:true})).toBeVisible();
+    await expect(studio.getByText(/Draft saved\. Resume generation/)).toHaveCount(0);
+    f.state.holdReview=false;
+    await expect(studio.getByText('All readings are saved and ready to review.',{exact:true})).toBeVisible({timeout:90000});
+    const saved=await f.latest();
+    expect(saved.status).toBe('DRAFT');expect(saved.source_snapshot.horoscopeGeneration.active).toBeNull();
+    expect(saved.sections.horoscopeEdition.passages[0]).toMatchObject(candidate);
+    expect(saved.sections.horoscopeEdition.passages.every((p:any)=>p.body.includes(`complete ${p.sign} fixture opening`))).toBe(true);
+    expect((await f.call({method:'writer-state'}))).toMatchObject({calls:12,reviewCalls:12});
+    expect((await f.call({method:'provider-state'})).requests).toHaveLength(12);
+    await page.reload();await f.open();
+    await expect(studio.getByText('12/12 readings ready',{exact:false})).toBeVisible();
+    expect((await f.latest()).sections.horoscopeEdition).toEqual(saved.sections.horoscopeEdition);
+    expect((await f.call({method:'writer-state'}))).toMatchObject({calls:12,reviewCalls:12});
+    expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+    await page.screenshot({path:`test-results/weekly-gemini-resumed-${width}-${theme}.png`,fullPage:true});
+  }finally{f.child.kill();}
+ });
+}
+
 test('Explicit pause ends Weekly batch consent while the saved Gemini request remains recoverable',async({page})=>{
   const f=await fixture(page,2);try{
     const studio=await f.open();await studio.getByRole('combobox',{name:'Writing model'}).selectOption('gemini');

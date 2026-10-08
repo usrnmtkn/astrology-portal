@@ -40,6 +40,35 @@ and mobile/dark. It proves continuation, not live model availability or prose qu
 The following original recovery behavior applies outside an actively approved
 Weekly batch.
 
+### Reopening a Weekly request during its prose check
+
+Opening or recovering an active Weekly request prepares the remaining writing
+plan without dispatching a writer or reviewer. The plan approval checkbox is
+available beside the saved request. Without that approval, **Resume generation**
+finishes only the saved sign. With approval, **Resume remaining readings**
+continues the same request and then writes the other available signs. The cost
+display excludes requests already dispatched and includes an unstarted prose
+check. Opening through a Content Library link remains read-only; preparing its
+plan is explicit. The running ready-review message says it is starting the
+approved check instead of incorrectly asking the operator to resume again.
+
+The actual-handler regression prepares a plan during ready and running review
+states and asserts an unchanged stored row, stable plan hash, and zero new model
+calls. Browser regressions reopen a saved Gemini Aries draft at both states,
+approve the remaining plan, complete all twelve signs, preserve the original
+Aries candidate, count exactly twelve writers and twelve reviewers, and verify
+persistence after reload. Explicit Pause still ends batch consent. These tests
+use synthetic providers and isolated storage; they do not prove that twelve live
+Gemini requests completed.
+
+When investigating a reported stall, compare the open tab's script asset with
+the current production HTML before attributing the failure to the deployed
+client. Verify the writer receipt, review receipt, saved passage, active request
+and next-sign dispatch independently. A completed writer and reviewer with no
+next-sign dispatch is a continuation failure, not evidence of a model timeout.
+Preserve detailed operational records privately. Refresh an idle stale tab only
+after checking for unsaved edits and in-flight requests.
+
 - Generate provides **Check saved progress**, including during a browser poll.
 - Checking cancels only the superseded browser operation. It reads the current
   saved edition and retrieves an existing provider response by its saved ID.
