@@ -130,7 +130,7 @@ export default function HoroscopeEditionsStudio({secret,requestedEditionId}:{sec
     }
   }
   async function readSaved(id:string,signal?:AbortSignal) {
-    const data=await request(secret,endpoint+'?'+new URLSearchParams({id}),undefined,'GET',signal);
+    const data=await request(secret,endpoint+'?'+new URLSearchParams({horoscopeEditions:'true',id}),undefined,'GET',signal);
     const row=data.rows?.[0];
     if(row?.id!==id)throw Object.assign(new Error('This saved edition is unavailable. Refresh the edition list.'),{status:404});
     validateHoroscopeEdition(row.sections?.horoscopeEdition);return row;

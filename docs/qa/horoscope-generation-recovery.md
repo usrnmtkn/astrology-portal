@@ -9,6 +9,22 @@ editor on Generate and could ask for a writing plan after every reading was read
 
 ## Behavior
 
+### Complete documents during recovery
+
+Generation returns the complete stored row. Recovery now reads the same shape
+through `generated-content?horoscopeEditions=true&id=...`, restricted to one
+horoscope edition. The generic content-detail endpoint deliberately projects a
+subset of storage columns; using it for an exact recovery comparison made a
+provider checkpoint look like an unrelated edit and stopped an approved batch.
+The comparison remains strict. This repair does not ignore changed owner text,
+instructions, facts, review state, or unknown storage fields.
+
+The actual-handler fixture honors storage column projection and includes
+nullable storage metadata. API coverage proves the former detail response
+fails the comparison and the scoped complete response preserves it through
+writer, review and save transitions. Browser coverage exercises that same
+projection during lost acknowledgements and all twelve sign transitions.
+
 ### Weekly batch continuation
 
 An explicitly approved Weekly batch continues through all remaining available

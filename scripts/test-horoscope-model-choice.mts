@@ -225,11 +225,25 @@ for(const mutate of [(row:any)=>row.body='Newer owner edit',(row:any)=>row.sourc
 // Exercise the real writer/checkpoint/review/save transitions, not invented rows.
 const batchId=await create('weekly','2026-11-02');
 const batchPlan=await action(batchId,'prepare',{writerChoice:'gemini'});
+// Real storage projects detail columns. Generation uses select=*; recovery must
+// return the same complete document, including nullable storage-only fields.
+const detail=await store.invoke('GET',undefined,`/api/admin/generated-content?id=${batchId}`);
+assert(!Object.hasOwn(detail.payload.rows[0],'studio_facts'),'The fixture must honor the detail projection');
+const fullRead=async()=>{
+  const result=await store.invoke('GET',undefined,`/api/admin/generated-content?horoscopeEditions=true&id=${batchId}`);
+  assert.equal(result.status,200);assert.equal(result.payload.rows.length,1);
+  assert.deepEqual(result.payload.rows[0],latest(batchId));return result.payload.rows[0];
+};
+await fullRead();
+const outsideEdition=await store.invoke('GET',undefined,'/api/admin/generated-content?horoscopeEditions=true&id=live-sun-virgo');
+assert.deepEqual(outsideEdition.payload.rows,[],'Scoped recovery cannot return another content family');
 const planHash=batchPlan.payload.plan.planHash,sign='aries';
 let previous=latest(batchId);
 assert.equal(horoscopeWeeklyBatchRecovery(previous,previous,{action:'generate',sign,planHash}),false,'An unchanged row cannot authorize replaying a lost paid POST');
 await action(batchId,'generate',{sign,approvedPlanHash:planHash});
-let current=latest(batchId);
+let current=await fullRead();
+const projectedRecovery=await store.invoke('GET',undefined,`/api/admin/generated-content?id=${batchId}`);
+assert.equal(horoscopeWeeklyBatchRecovery(previous,projectedRecovery.payload.rows[0],{action:'generate',sign,planHash}),false,'The former detail route reproduces the false outside-edit stop');
 assert(horoscopeWeeklyBatchRecovery(previous,current,{action:'generate',sign,planHash}));
 for(let i=0;current.source_snapshot.horoscopeGeneration.active&&i<10;i++){
   if(current.source_snapshot.horoscopeGeneration.active.phase==='review'){
@@ -241,7 +255,7 @@ for(let i=0;current.source_snapshot.horoscopeGeneration.active&&i<10;i++){
   }
   const request=current.source_snapshot.horoscopeGeneration.active.state==='ready'?'continue':'poll';
   if(request==='continue')assert.equal(horoscopeWeeklyBatchRecovery(current,current,{action:request,sign,planHash}),false,'Never repeat an unconfirmed review POST');
-  previous=current;await new Promise(resolve=>setTimeout(resolve,30));await action(batchId,request);current=latest(batchId);
+  previous=current;await new Promise(resolve=>setTimeout(resolve,30));await action(batchId,request);current=await fullRead();
   assert(horoscopeWeeklyBatchRecovery(previous,current,{action:request,sign,planHash}),`Reconcile saved ${request} transition ${i}: ${previous.source_snapshot.horoscopeGeneration.active?.phase??'writer'} -> ${current.source_snapshot.horoscopeGeneration.active?.phase??'saved'}`);
   for(const mutate of [
     (row:any)=>row.source_snapshot.horoscopeWriterChoice='claude',

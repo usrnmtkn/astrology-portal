@@ -66,7 +66,9 @@ globalThis.fetch = async (input: any, options: any = {}) => {
  if (!options.method || options.method === 'GET') {
   if (url.searchParams.get('order')?.startsWith('updated_at.desc')) found.sort((a: any, b: any) => b.updated_at.localeCompare(a.updated_at));
   const offset = Number(url.searchParams.get('offset') ?? 0);
-  return Response.json(found.slice(offset, offset + Number(url.searchParams.get('limit') ?? found.length)));
+  const selected=found.slice(offset, offset + Number(url.searchParams.get('limit') ?? found.length));
+  const columns=url.searchParams.get('select');
+  return Response.json(!columns||columns==='*'?selected:selected.map(row=>Object.fromEntries(Object.entries(row).filter(([key])=>columns.split(',').includes(key)))));
  }
  if (options.method === 'DELETE') { found.forEach(row => store.rows.delete(row.id)); return Response.json(found); }
  const patch = JSON.parse(String(options.body));
@@ -76,7 +78,7 @@ globalThis.fetch = async (input: any, options: any = {}) => {
  if (options.method === 'POST') {
   if ([...store.rows.values()].some((r: any) => r.content_key === patch.content_key && r.mode === patch.mode && r.target_date == patch.target_date)) return Response.json({message: 'duplicate target'}, {status: 409});
   const timestamp = nextVersion();
-  const created = storageOrder({ ...patch, id: patch.content_key.startsWith('horoscope/') ? `00000000-0000-4000-8000-${String(store.rows.size).padStart(12,'0')}` : `new-${store.rows.size}`, updated_at: timestamp, created_at: timestamp }); store.rows.set(created.id, created); return Response.json([created]);
+  const created = storageOrder({ ...(patch.content_key.startsWith('horoscope/')?{created_by:null,openai_response_id:null,error:null,studio_facts:null}:{}),...patch, id: patch.content_key.startsWith('horoscope/') ? `00000000-0000-4000-8000-${String(store.rows.size).padStart(12,'0')}` : `new-${store.rows.size}`, updated_at: timestamp, created_at: timestamp }); store.rows.set(created.id, created); return Response.json([created]);
  }
  throw new Error(`Unexpected storage method ${options.method}`);
 };
