@@ -310,7 +310,7 @@ export default async function handler(req:IncomingMessage,res:ServerResponse) {
         await persist({source_snapshot:{...writingRow.source_snapshot,horoscopeGeneration:{...generation,active:operation,lastError:null,
           failures:legacy&&!failures.some((failure:any)=>failure.operation?.id===legacy.operation?.id)?[...failures,legacy]:failures}}});
         stage='dispatch';dispatchAttempted=true;
-        const {response,payload:result}=await startHoroscopeResponse({config:operation.config,role,request,instructions,context:{editionId:row.id,operationId:operation.id,requestHash:operation.requestHash,...(reservedStreamId?{deadline:invocationDeadline}:{})}});
+        const {response,payload:result}=await startHoroscopeResponse({config:operation.config,role,request,instructions,context:{editionId:row.id,operationId:operation.id,requestHash:operation.requestHash,...(reservedStreamId?{deadline:invocationDeadline,weekly:true}:{})}});
         payload=result;
         if(!response.ok) {
           if(response.status>=400&&response.status<500)readHoroscopeProviderResult({...payload,status:'failed'},{format:operation.outputFormat});
