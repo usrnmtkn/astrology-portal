@@ -516,6 +516,16 @@
   font-variant-numeric: tabular-nums;
 }
 
+/* Degree-and-minute personal orbs need their measured width, rather than the
+   narrow single-number slot used by the other aspect surfaces. */
+.updates-aspect-row--personal:has(> .updates-aspect-row__glyphs) {
+  grid-template-columns: minmax(0, 1fr) max-content;
+}
+
+.updates-aspect-row--personal > .updates-aspect-row__meta {
+  width: auto;
+}
+
 .active-chart-pattern-row {
   cursor: default;
 }

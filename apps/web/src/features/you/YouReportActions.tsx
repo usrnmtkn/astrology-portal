@@ -64,6 +64,7 @@ function reconcileAction(current: ReportAction, item: ReportLibraryItem | null):
 export function YouReportActions({
   accountId,
   accountRecovery,
+  dailyAspectsReady = true,
   dailyHoroscopeAssembly,
   dailyUpdateSummary,
   weeklyHoroscopeAssembly,
@@ -71,6 +72,7 @@ export function YouReportActions({
 }: {
   accountId: string | null | undefined;
   accountRecovery?: YouAccountRecovery;
+  dailyAspectsReady?: boolean;
   dailyHoroscopeAssembly?: DailyHoroscopeAssembly | null;
   dailyUpdateSummary?: PersonalTimingSummary | null;
   weeklyHoroscopeAssembly?: WeeklyHoroscopeAssembly | null;
@@ -146,6 +148,7 @@ export function YouReportActions({
   async function createReport(reportWindow: YouTransitReportWindow) {
     const brief = reportWindow === "day" ? dayBrief : weekBrief;
     if (!brief || session.status !== "ready" || !session.userId) return;
+    if (reportWindow === "day" && !dailyAspectsReady) return;
     const requestScope = scope;
     ++requestVersion.current;
     const setAction = reportWindow === "day" ? setDayAction : setWeekAction;
@@ -212,7 +215,7 @@ export function YouReportActions({
       <h3>Day and week reports</h3>
       <p>Your day and week readings stay in Reports while they are being prepared and after they are ready.</p>
       <div className="you-report-actions__buttons">
-        {reportButton("day", dayAction, Boolean(dayBrief))}
+        {reportButton("day", dayAction, Boolean(dayBrief) && dailyAspectsReady)}
         {reportButton("week", weekAction, Boolean(weekBrief))}
       </div>
       {session.status === "error" ? (

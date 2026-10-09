@@ -5268,7 +5268,9 @@ test("Chiron Jupiter owner revision renders its complete opening and ending", as
     facts: { content_role: "full_copy", review_status: "approved" },
     source_snapshot: { content_role: "full_copy", review_status: "approved", sourcePackage: "tldrastro-fallback-architecture-v3" },
     sections: { packageRecord: { contentKey: copy.contentKey, content_role: "full_copy", review_status: "approved", body_you: copy.body_you, body_they: copy.body_they } } };
-  await seedClientState(page, { profile: true, profileBirthDate: "1978-09-01", preloadProfileNatalSky: true, now: "2026-09-07T14:27:30.000Z", generatedInterpretations: [row] });
+  // Swiss Ephemeris puts this natal contact's retrograde exact pass on Oct 5.
+  // The daily list no longer promotes it throughout the broad active interval.
+  await seedClientState(page, { profile: true, profileBirthDate: "1978-09-01", preloadProfileNatalSky: true, now: "2026-10-05T16:00:00.000Z", generatedInterpretations: [row] });
   await page.route("**/rest/v1/rpc/content_runtime_revision", route => route.fulfill({ json: row.updated_at }));
   let releaseCopy!: () => void;
   const contentReady = new Promise<void>(resolve => { releaseCopy = resolve; });
@@ -5282,8 +5284,9 @@ test("Chiron Jupiter owner revision renders its complete opening and ending", as
   });
   await expectClientRouteLoads(page, "/#you");
   await page.getByRole("tab", { name: /updates|transits/i }).click();
-  const card = page.getByRole("button", { name: /^Chiron challenging growth/ }).first();
+  const card = page.getByRole("button", { name: /^Chiron square your Jupiter/ }).first();
   await expect(card).toBeVisible({ timeout: 30_000 });
+  await expect(card).toContainText("Exact Oct 5, 2026");
   await card.click();
   const detail = page.getByRole("region", { name: "Chiron square your Jupiter", exact: true });
   await expect(detail).toBeVisible();

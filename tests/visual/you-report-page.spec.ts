@@ -59,6 +59,46 @@ async function prepare(page: Page, theme: string, signedIn = true) {
   });
 }
 
+test("day report waits for daily aspect calculations before enabling submission", async ({ page }) => {
+  test.setTimeout(90_000);
+  await prepare(page, "light");
+  await page.route("**/rest/v1/user_generated_interpretations**", route => route.fulfill({ json: [] }));
+  let requests = 0;
+  await page.route("**/api/you-report-request", route => {
+    requests += 1;
+    return route.fulfill({ status: 202, json: { status: "queued" } });
+  });
+  await page.addInitScript(() => {
+    const NativeWorker = window.Worker;
+    let released = false;
+    const pending: Array<() => void> = [];
+    (window as any).__releaseDailyPeakCalculation = () => {
+      released = true;
+      pending.splice(0).forEach(send => send());
+    };
+    window.Worker = class extends NativeWorker {
+      postMessage(message: any, options?: any) {
+        if (message.kind === "natal-daily-peaks" && !released) {
+          pending.push(() => super.postMessage(message, options));
+          return;
+        }
+        super.postMessage(message, options);
+      }
+    };
+  });
+  await page.goto("/#you");
+  await expect(page.getByText("Calculating daily aspect peaks…", { exact: true })).toBeVisible({ timeout: 60_000 });
+  const create = page.getByRole("button", { name: "Create day report", exact: true });
+  await expect(create).toBeVisible();
+  await expect(create).toBeDisabled();
+  expect(requests).toBe(0);
+  await page.evaluate(() => (window as any).__releaseDailyPeakCalculation());
+  await expect(create).toBeEnabled({ timeout: 60_000 });
+  await create.click();
+  await expect(page.getByText("Your day report is being prepared.", { exact: false })).toBeVisible();
+  expect(requests).toBe(1);
+});
+
 for (const viewport of [{ name: "desktop", width: 1440, height: 1000 }, { name: "mobile", width: 390, height: 844 }]) {
   for (const theme of ["light", "dark"]) {
     for (const signedIn of [true, false]) {
@@ -174,6 +214,7 @@ for (const viewport of [{ name: "desktop", width: 1440, height: 1000 }, { name: 
       expect(readings.length).toBeGreaterThan(0);
       expect(readings.length).toBeLessThanOrEqual(4);
       expect(brief.approvedReaderText.sourceGaps).toBeUndefined();
+      let contactsOutsideNoon = 0;
       for (const reading of readings) {
         const fact = brief.technicalEvidence.qualifyingTransits.find((transit: { id: string }) => transit.id === reading.transitId);
         expect(fact).toBeTruthy();
@@ -182,13 +223,31 @@ for (const viewport of [{ name: "desktop", width: 1440, height: 1000 }, { name: 
         await cards.filter({ hasText: title }).first().click();
         const article = page.locator(".you-transit-article-page");
         await expect(article).toBeVisible();
-        // Report timing replaces the card's estimated date with a calculated,
-        // year-qualified date. Verify that fact separately, then compare every
-        // word of the source passage outside those date substitutions.
+        // Full-day highlights can peak outside the noon orb. Keep the selected
+        // day reference while verifying the actual contact used for timing,
+        // then compare every source word outside date substitutions.
         expect(fact.calculation.status).toBe("calculated");
         const referenceAt = Date.parse(fact.calculation.referenceAt);
-        expect(Date.parse(fact.calculation.currentStart)).toBeLessThanOrEqual(referenceAt);
-        expect(Date.parse(fact.calculation.currentEnd)).toBeGreaterThanOrEqual(referenceAt);
+        expect(referenceAt).toBe(Date.parse("2026-09-13T16:00:00Z"));
+        const contactAt = Date.parse(fact.calculation.contactReferenceAt);
+        const currentStart = Date.parse(fact.calculation.currentStart);
+        const currentEnd = Date.parse(fact.calculation.currentEnd);
+        expect(currentStart).toBeLessThanOrEqual(contactAt);
+        expect(currentEnd).toBeGreaterThanOrEqual(contactAt);
+        if (fact.calculation.exactOnSelectedDay) {
+          const localDate = new Intl.DateTimeFormat("en-CA", {
+            year: "numeric", month: "2-digit", day: "2-digit", timeZone: fact.calculation.timeZone
+          });
+          expect(localDate.format(new Date(contactAt))).toBe(localDate.format(new Date(referenceAt)));
+          expect(fact.calculation.exactPasses.some((pass: { exactAt: string }) =>
+            Math.abs(Date.parse(pass.exactAt) - contactAt) < 2_000)).toBe(true);
+        } else {
+          expect(contactAt).toBe(referenceAt);
+        }
+        if (currentStart > referenceAt || currentEnd < referenceAt) {
+          expect(fact.calculation.exactOnSelectedDay).toBe(true);
+          contactsOutsideNoon += 1;
+        }
         expect(fact.window).toBe(`Until ${new Intl.DateTimeFormat("en-US", {
           month: "long", day: "numeric", year: "numeric", timeZone: fact.calculation.timeZone
         }).format(new Date(fact.calculation.currentEnd))}`);
@@ -197,6 +256,7 @@ for (const viewport of [{ name: "desktop", width: 1440, height: 1000 }, { name: 
         expect(normalizeDates(rendered)).toContain(normalizeDates(reading.body));
         await article.getByRole("button", { name: /Back/ }).click();
       }
+      expect(contactsOutsideNoon).toBeGreaterThan(0);
       expect(errors).toEqual([]);
       expect(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth + 1)).toBe(false);
       await page.screenshot({ path: test.info().outputPath(`daily-source-handoff-${viewport.name}-${theme}.png`) });

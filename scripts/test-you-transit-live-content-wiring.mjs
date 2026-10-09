@@ -13,7 +13,7 @@ assert.match(page, /generatedContentParagraphs\(/u);
 assert.match(page, /generatedContentSections\(generated\)/u);
 assert.match(app, /generatedContent: savedGeneratedContent/u);
 assert.match(app, /if \(nextContent\.has\(contentKey\)\) \{\s+continue;/u);
-assert.match(app, /const readerAspectRows = aspectRows\.map/u,
+assert.match(app, /const readerAspectRows = \[\.\.\.dailyAspectGroups, \.\.\.backgroundAspectGroups\]\.map/u,
   "Calculated transit rows remain visible when prose is unavailable.");
 assert.equal((app.match(/const Row = detailAvailable \? "button" : "article"/gu) ?? []).length, 2,
   "Both aspect and house transit rows without detail are static facts, never empty article links.");

@@ -1,11 +1,13 @@
 import { transitToNatalOrbLimit } from "../astrologyConfig";
 import type { NatalTransitTiming } from "./ephemeris";
+import { personalDayBounds, type PersonalDailyPeak } from "./personalDailyTransits";
 
 export type ReportTransit = {
   id: string; transitPlanet: string; natalPoint: string; aspect: string;
   natalLongitude?: number; aspectDegrees?: number; natalSign: string;
   transitSign?: string; natalHouse?: number; transitHouse?: number;
   orb: string; direction?: string; timeZone?: string;
+  dailyPeak?: PersonalDailyPeak;
 };
 type Calculate = typeof import("./ephemeris").natalTransitTimingFor;
 
@@ -21,13 +23,16 @@ export async function preparePersonalReportTiming<T extends ReportTransit>(
   }).format(new Date(date));
   const resolved = await Promise.all(transits.map(async transit => {
     const orbDegrees = transitToNatalOrbLimit(transit.transitPlanet);
+    const bounds = personalDayBounds(reference, timeZone);
+    const event = transit.dailyPeak?.exactToday.find(iso => Date.parse(iso) >= bounds.start.getTime() && Date.parse(iso) < bounds.end.getTime());
+    const contactReference = event ? new Date(event) : reference;
     const timing: NatalTransitTiming | null = Number.isFinite(transit.natalLongitude)
       && Number.isFinite(transit.aspectDegrees) && orbDegrees > 0
-      ? await compute(transit.transitPlanet, transit.natalLongitude!, reference, {
+      ? await compute(transit.transitPlanet, transit.natalLongitude!, contactReference, {
         aspectDegrees: transit.aspectDegrees, presentationDegrees: orbDegrees, timeZone
       }) : null;
-    const continuous = timing && Date.parse(timing.currentStart) <= reference.getTime()
-      && Date.parse(timing.currentEnd) >= reference.getTime() ? timing : null;
+    const continuous = timing && Date.parse(timing.currentStart) <= contactReference.getTime()
+      && Date.parse(timing.currentEnd) >= contactReference.getTime() ? timing : null;
     if (!continuous) {
       // The source renderer inserts its window as an end date. A reference-day
       // label here would silently turn "On" into a false "Until" claim.
@@ -44,6 +49,7 @@ export async function preparePersonalReportTiming<T extends ReportTransit>(
         house: transit.natalHouse ?? null, transitHouse: transit.transitHouse ?? null,
         direction: transit.direction ?? null, window,
         calculation: { engine: "swiss-ephemeris", referenceAt: reference.toISOString(), timeZone,
+          contactReferenceAt: contactReference.toISOString(), exactOnSelectedDay: Boolean(event),
           orbDegrees, status: continuous ? "calculated" : "end_date_unavailable",
           currentStart: continuous?.currentStart ?? null, currentEnd: continuous?.currentEnd ?? null,
           exactPasses: continuous.exactPasses.map(pass => ({ ...pass,
