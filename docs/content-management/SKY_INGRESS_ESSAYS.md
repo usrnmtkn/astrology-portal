@@ -11,6 +11,8 @@ Each format has its own saved workspace, so switching does not replace the other
 format's saved writing. Fixed owner templates are unchanged.
 Each new edition key includes its visit's entry date, so a retrograde return in
 the same year cannot replace the earlier visit's article.
+Passage-scoped correction memory retains that date too. A correction for one
+visit cannot affect another visit unless the owner explicitly widens its scope.
 
 The executable contract is
 [`skyIngressEssay.mjs`](../../apps/web/src/content/skyIngressEssay.mjs).

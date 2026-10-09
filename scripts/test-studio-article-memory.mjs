@@ -1,7 +1,8 @@
 import assert from 'node:assert/strict';
-import { reviseSkyArticleEdition, skyArticleEditableFields } from '../apps/web/src/content/skyArticleTemplateCompiler.ts';
+import { compileSkyArticleEdition, reviseSkyArticleEdition, skyArticleEditableFields } from '../apps/web/src/content/skyArticleTemplateCompiler.ts';
+import { skyIngressEssayFields, SKY_INGRESS_ESSAY_TEMPLATE } from '../apps/web/src/content/skyIngressEssay.mjs';
 import { activeStudioFeedback, selectStudioFeedback } from '../api/_lib/studio-memory-feedback.ts';
-import { studioArticleWritingMemory } from '../api/_lib/studio-article-memory.ts';
+import { studioArticleWritingMemory, studioArticleWritingMemoryKey } from '../api/_lib/studio-article-memory.ts';
 import { withStudioFeedback } from '../api/_lib/studio-memory-graph.ts';
 import { db, edition, id, initial, store, persist, review } from '../tests/helpers/studio-article-memory-store.mjs';
 try{
@@ -27,6 +28,12 @@ try{
   assert.equal(graph.records[0].register,'sky-article');assert(graph.records[0].body.includes('Synthetic complete house ending'));
   assert.equal(selectStudioFeedback([active],'sky.placement.base.saturn.aries').receipt.selected.length,0);
   assert.equal(selectStudioFeedback([active],'sky-article/saturn/pisces/2023').receipt.selected.length,0);
+  const ingressIdentity={planet:'saturn',sign:'aries',facts:{entryYear:2026,articleFormat:'ingress-essay-v2',validFrom:'2026-02-13'}};
+  const visitKey=studioArticleWritingMemoryKey(ingressIdentity);
+  assert.equal(visitKey,'sky-article/saturn/aries/2026/2026-02-13');
+  assert.equal(selectStudioFeedback([{...active,content_key:visitKey}],visitKey).receipt.selected.length,1);
+  assert.equal(selectStudioFeedback([{...active,content_key:visitKey}],`${visitKey.slice(0,-10)}2026-10-25`).receipt.selected.length,0);
+  assert.throws(()=>studioArticleWritingMemoryKey({...ingressIdentity,facts:{entryYear:2026,articleFormat:'ingress-essay-v2'}}),/calculated visit date/);
   assert.equal(selectStudioFeedback([{...active,scope:'sky',family:'sky-placement',content_key:'sky.placement.base.sun.leo'}],edition.contentKey).receipt.selected.length,0);
   const packet=await studioArticleWritingMemory({planet:'saturn',sign:'aries',facts:{entryYear:2026}});
   assert(packet.receipt.selected.length>=1);
@@ -59,6 +66,34 @@ try{
   const legacyEvidence=(await db.query('select * from studio_memory_feedback where source_row_id=$1',[legacy.id])).rows[0];
   assert.equal(JSON.parse(legacyEvidence.after_text).close,'Synthetic complete ending.');assert(!legacyEvidence.after_text.includes('PRIVATE NOTE'));
   await review(active,'retired');assert.equal((await activeStudioFeedback()).length,0);
+  // Dated ingress edits travel through the actual save, SQL capture and approval path.
+  const dated=await compileSkyArticleEdition({format:'ingress-essay-v2',planet:'saturn',sign:'aries',entryYear:2026,
+    templateKey:edition.templateKey,templateBody:SKY_INGRESS_ESSAY_TEMPLATE,validFrom:'2026-02-13',validTo:'2028-04-11',
+    transitStartInstant:'2026-02-14T00:00:00Z',transitEndInstant:'2028-04-12T00:00:00Z',
+    slotValues:Object.fromEntries(skyIngressEssayFields.map(({name})=>[name,`Synthetic complete ${name}.`])),
+    tldr:'Synthetic dated summary.',housePassages:[]});
+  const datedRow={...initial,id:'55555555-5555-4555-8555-555555555555',content_key:dated.contentKey,
+    headline:dated.headline,summary:dated.tldr,body:dated.body,sections:{skyArticleEdition:dated}};
+  store.rows.set(datedRow.id,datedRow);await persist(datedRow,true);
+  const datedFields=skyArticleEditableFields(dated);datedFields.tldr='Synthetic revised dated summary.';
+  const datedRevision=await reviseSkyArticleEdition(dated,datedFields);
+  const datedSave=await store.invoke('PATCH',{id:datedRow.id,ownerAction:'save-sky-article-edition-revision',sections:{skyArticleEdition:datedRevision}});
+  assert.equal(datedSave.status,200,JSON.stringify(datedSave));
+  const datedEvidence=(await db.query('select * from studio_memory_feedback where source_row_id=$1',[datedRow.id])).rows[0];
+  assert.equal(datedEvidence.content_key,visitKey);
+  assert.equal((await review(datedEvidence)).statusCode,409);
+  const datedApproval=await store.invoke('PATCH',{id:datedRow.id,ownerAction:'approve-sky-article-edition'});
+  assert.equal(datedApproval.status,200,JSON.stringify(datedApproval));
+  assert.equal((await review(datedEvidence)).statusCode,200);
+  const datedPacket=await studioArticleWritingMemory(ingressIdentity);
+  assert(datedPacket.prompt.includes('Synthetic revised dated summary.'));
+  const laterPacket=await studioArticleWritingMemory({...ingressIdentity,facts:{...ingressIdentity.facts,validFrom:'2026-10-25'}});
+  assert(!laterPacket.prompt.includes('Synthetic revised dated summary.'));
+  for(const key of [visitKey,visitKey.replace('sky-article/','sky-article-revision/'),edition.contentKey]) {
+    assert.equal((await db.query('select studio_article_memory_key($1) as key',[key])).rows[0].key,key.replace('sky-article-revision/','sky-article/'));
+  }
+  assert.equal((await db.query("select studio_article_memory_key('sky-article/saturn/aries/2026/extra') as key")).rows[0].key,null);
+  for(const role of ['anon','authenticated']){await db.exec(`set role ${role}`);await assert.rejects(db.query('select studio_article_memory_key($1)',[visitKey]),/permission denied/);await db.exec('reset role');}
   for(const role of ['anon','authenticated']){await db.exec(`set role ${role}`);await assert.rejects(db.query("select studio_article_memory_fields('{}')"),/permission denied/);await db.exec('reset role');}
   globalThis.fetch=async()=>{throw new Error('Synthetic memory outage')};
   await assert.rejects(studioArticleWritingMemory({planet:'saturn',sign:'aries',facts:{entryYear:2026}}),/Storage request failed/);
