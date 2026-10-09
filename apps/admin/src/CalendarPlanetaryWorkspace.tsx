@@ -3,7 +3,7 @@ import { AdminSelect } from "./AdminNativeControls";
 import { StudioButton } from "./StudioControls";
 import ContentLiveStatusBadge from "./ContentLiveStatus";
 import type { AdminGeneratedContentRow } from "./GeneratedContentAdminDashboard";
-import { calendarPlanets, calendarPlanetarySigns, calendarPlanetaryIdentity, calendarPlanetaryTitle,
+import { calendarPlanets, calendarPlanetarySigns, calendarPlanetaryListIdentity, calendarPlanetaryTitle,
   calendarPlanetaryDraft, planetaryName, type CalendarPlanetaryKind, type CalendarPlanetarySelection } from "./calendarPlanetarySources";
 
 export default function CalendarPlanetaryWorkspace({ kind, rows, selection, onSelection, busy, onOpen, onEdit, editor }: {
@@ -13,14 +13,14 @@ export default function CalendarPlanetaryWorkspace({ kind, rows, selection, onSe
 }) {
   const label = kind === "ingress" ? "Planetary ingresses" : "Planetary stations";
   const entries = rows.flatMap(row => {
-    const identity = calendarPlanetaryIdentity(row.content_key);
+    const identity = calendarPlanetaryListIdentity(row.content_key);
     return identity?.kind === kind && (!selection.planet || identity.planet === selection.planet)
       && (!selection.sign || !identity.sign || identity.sign === selection.sign)
       && (kind === "ingress" || identity.direction === selection.direction) ? [{ row, identity }] : [];
   }).sort((a, b) => a.row.content_key.localeCompare(b.row.content_key));
   return <section className="admin-template-page" aria-label={label}>
     <p>{kind === "ingress" ? "Edit the write-ups shown when a planet enters a sign. Sun season readings and Moon ingresses have their own tabs."
-      : "Edit the write-ups shown when a planet stations retrograde or direct. These describe the turning point, rather than the entire retrograde period."}</p>
+      : "Edit station write-ups and retrograde-period passages. General planet readings and sign-specific writing are listed together."}</p>
     <div className="admin-review-filter-grid studio-surface">
       <label><span>Planet or point</span><AdminSelect aria-label="Planet or point" value={selection.planet} onChange={event => onSelection({ ...selection, planet: event.target.value })}>
         <option value="">All planets and points</option>{calendarPlanets.map(planet => <option key={planet} value={planet}>{planetaryName(planet)}</option>)}

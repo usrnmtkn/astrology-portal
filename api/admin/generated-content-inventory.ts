@@ -1,3 +1,4 @@
+import { studioScopeStorageFilter } from "../../apps/admin/src/studioContentScope.js";
 import type { IncomingMessage, ServerResponse } from "node:http";
 import { URL } from "node:url";
 import { requireContentAdmin } from "../_lib/admin-auth.js";
@@ -104,6 +105,7 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
     const status = requestUrl.searchParams.get("status") ?? "all";
     const surface = requestUrl.searchParams.get("surface");
     const scope = requestUrl.searchParams.get("scope") ?? "all";
+    const scopeFilter = studioScopeStorageFilter(scope);
     const cursor = requestUrl.searchParams.get("cursor");
     const mode = requestUrl.searchParams.get("mode");
     const view = requestUrl.searchParams.get("view") ?? (id || contentKey || contentKeys.length ? "detail" : "inventory");
@@ -127,13 +129,13 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
       : boundedLimit(requestUrl.searchParams.get("limit"), 50, 200);
     const params = new URLSearchParams({
       select: (inventoryView ? inventoryColumns : detailColumns).join(","),
-      order: scope === "compatibility" ? "id.asc" : "updated_at.desc,id.desc",
+      order: scopeFilter ? "id.asc" : "updated_at.desc,id.desc",
       limit: String(limit)
     });
     if (id) {
       params.set("id", `eq.${id}`);
-    } else if (scope === "compatibility") {
-      params.set("or", "(content_key.like.compatibility.*,content_key.like.compatibility/*,content_key.like.authored/compat-*,content_key.like.fallback-hook/friends*,content_key.like.fallback-hook/relationship*,content_key.like.fallback-hook/synastry*,content_key.like.fallback-hook/compat-*)");
+    } else if (scopeFilter) {
+      params.set("or", scopeFilter);
       if (cursor) params.set("id", `gt.${cursor}`);
     } else if (visibility === "editorial") {
       params.set("lane", "eq.serving");
@@ -141,7 +143,7 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
     }
     if (!id && status !== "all") params.set("status", `eq.${status}`);
     if (!id && surface) params.set("surface", `eq.${surface}`);
-    if (!id && scope !== "compatibility" && cursor) {
+    if (!id && !scopeFilter && cursor) {
       const decoded = decodeCursor(cursor);
       params.set("updated_at", `lte.${decoded.updatedAt}`);
       params.set("or", `(updated_at.lt.${decoded.updatedAt},and(updated_at.eq.${decoded.updatedAt},id.lt.${decoded.id}))`);
@@ -174,7 +176,7 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
       return { ...document, inventory_only: false };
     });
     const nextCursor = !id && rows.length === limit
-      ? scope === "compatibility"
+      ? scopeFilter
         ? String(rows.at(-1)?.id ?? "")
         : encodeCursor(rows.at(-1) ?? {})
       : null;
@@ -262,7 +264,7 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
       && (!surface || row.surface === surface)
       && (!mode || row.mode === mode)
       && (visibility !== "editorial" || row.lane === "serving" && (status !== "all" || row.status !== "ARCHIVED"))
-      && scope !== "compatibility"
+      && !scopeFilter
     ).map(row => [String(row.content_key), row])).values()];
     const savedKeys = new Set(rows.map(row => String(row.content_key)));
     // Bounded, indexed key-only reads preserve saved source precedence across

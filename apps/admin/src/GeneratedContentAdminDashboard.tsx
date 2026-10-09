@@ -1,3 +1,4 @@
+import { isStudioCompatibilityRow, isStudioCompositeRow } from "./studioContentScope";
 import { calendarAspectRetrogradeOptions } from "../../web/src/content/calendarAspectRetrograde";
 import { useStudioCustomVariables } from "./studioCustomVariableClient";
 import { studioRequestTimeoutMs } from "./studioRequestPolicy";
@@ -1890,16 +1891,7 @@ function matchesFallbackLibrarySearch(contentKey: string, haystack: string, sear
 }
 
 function isCompatibilityRow(row: AdminGeneratedContentRow) {
-  const contentKey = row.content_key.toLowerCase();
-  return contentKey.startsWith("compatibility.")
-    || contentKey.startsWith("compatibility/")
-    || contentKey.startsWith("authored/compat-")
-    || row.event_type === "friends.compatibility.planet-card"
-    || row.block_type === "compatibility_planet_card"
-    || /^fallback-hook\/(?:friends|relationship|synastry)[./-]/.test(contentKey)
-    || contentKey.startsWith("fallback-hook/pair-daily/")
-    || contentKey.startsWith("vocab/relationship/")
-    || contentKey.startsWith("slot-template/compatibility/");
+  return isStudioCompatibilityRow(row);
 }
 
 function compatibilitySectionForRow(row: AdminGeneratedContentRow): AdminCompatibilitySectionFilter {
@@ -2754,7 +2746,7 @@ function sectionsText(value: unknown) {
 }
 
 function isCompositeRelationshipRow(row: AdminGeneratedContentRow | AdminReviewRecord) {
-  return row.surface === "composite" || rowContentKey(row).includes("composite") || rowBlockType(row) === "composite_aspect";
+  return isStudioCompositeRow({ content_key: rowContentKey(row), surface: row.surface, block_type: rowBlockType(row) });
 }
 
 function relationshipTypeCopy(row: AdminGeneratedContentRow, type: string) {
@@ -3553,8 +3545,8 @@ export function GeneratedContentAdminDashboard() {
       });
   }, [compatibilityRows, compatibilitySectionFilter, compatibilityStatusFilter, compatibilityPlanetFilter, compatibilitySort, compatibilityQuery]);
   const compositeRows = useMemo(
-    () => visibleRows.filter(isCompositeRelationshipRow),
-    [visibleRows]
+    () => rows.filter(row => !isRetiredAdminRow(row) && isCompositeRelationshipRow(row)),
+    [rows]
   );
   const hookCatalogItems = useMemo<HookCatalogItem[]>(() => [
     ...fallbackHookDefinitions.map((definition) => ({

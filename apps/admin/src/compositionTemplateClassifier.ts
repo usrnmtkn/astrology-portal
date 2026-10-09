@@ -4,6 +4,7 @@ export type CompositionTemplateCandidateRow = {
   content_key: string;
   sections: unknown;
   source_snapshot?: unknown;
+  listing_facts?: { source?: Record<string, unknown>; packageRecord?: Record<string, unknown> } | null;
 };
 
 function objectRecord(value: unknown): Record<string, unknown> | null {
@@ -18,8 +19,8 @@ function text(value: unknown) {
 
 function rowRole(row: CompositionTemplateCandidateRow) {
   const sections = objectRecord(row.sections);
-  const packageRole = text(objectRecord(sections?.packageRecord)?.content_role);
-  const snapshotRole = text(objectRecord(row.source_snapshot)?.content_role);
+  const packageRole = text(objectRecord(sections?.packageRecord)?.content_role ?? row.listing_facts?.packageRecord?.content_role);
+  const snapshotRole = text(objectRecord(row.source_snapshot)?.content_role ?? row.listing_facts?.source?.content_role);
   return packageRole || snapshotRole;
 }
 

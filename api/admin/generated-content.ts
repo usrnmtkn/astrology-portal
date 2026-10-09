@@ -1,3 +1,4 @@
+import { studioScopeStorageFilter } from "../../apps/admin/src/studioContentScope.js";
 import { calendarPassageIdentity, calendarPassageErrors, calendarPassageVariables } from '../../src/calendar-writing/passageContract.js';
 import { handleStudioVariables, StudioVariableError, snapshotStudioVariables, assertStudioVariablePublication } from "../_lib/studio-variables.js";
 import { handleStudioWritingProfiles } from "../_lib/studio-writing-profiles.js";
@@ -1557,11 +1558,12 @@ async function listGeneratedContent(req: IncomingMessage) {
   const endDate = requestUrl.searchParams.get("endDate");
   const visibility = requestUrl.searchParams.get("visibility") ?? "all";
   const scope = requestUrl.searchParams.get("scope") ?? "all";
+  const scopeFilter = studioScopeStorageFilter(scope);
   const cursor = requestUrl.searchParams.get("cursor");
   const view = requestUrl.searchParams.get("view") ?? "detail";
   if (!["detail", "inventory"].includes(view)) throw new GeneratedContentRequestError("view must be detail or inventory.");
   const inventoryView = view === "inventory" && !id && !contentKey && contentKeys.length === 0;
-  const supportsUpdatedCursor = !id && scope !== "compatibility" && !startDate && !endDate;
+  const supportsUpdatedCursor = !id && !scopeFilter && !startDate && !endDate;
   const offset = supportsUpdatedCursor ? 0 : Math.max(Number(requestUrl.searchParams.get("offset") ?? "0"), 0);
   const selectColumns = inventoryView ? generatedContentInventorySelectColumns() : generatedContentDetailSelectColumns();
   const limit = inventoryView
@@ -1569,28 +1571,15 @@ async function listGeneratedContent(req: IncomingMessage) {
     : boundedGeneratedContentLimit(requestUrl.searchParams.get("limit"));
   const params = new URLSearchParams({
     select: selectColumns.join(","),
-    order: scope === "compatibility" ? "id.asc" : startDate || endDate ? "target_date.asc.nullslast,id.desc" : "updated_at.desc,id.desc",
+    order: scopeFilter ? "id.asc" : startDate || endDate ? "target_date.asc.nullslast,id.desc" : "updated_at.desc,id.desc",
     limit: id ? "1" : String(limit),
     offset: id ? "0" : String(offset)
   });
 
   if (id) {
     params.set("id", `eq.${id}`);
-  } else if (scope === "compatibility") {
-    const compatibilityFilters = [
-      "content_key.like.compatibility.%",
-      "content_key.like.compatibility/%",
-      "content_key.like.authored/compat-%",
-      "content_key.like.fallback-hook/friends%",
-      "content_key.like.fallback-hook/relationship%",
-      "content_key.like.fallback-hook/synastry%",
-      "content_key.like.fallback-hook/pair-daily/%",
-      "content_key.like.vocab/relationship/%",
-      "content_key.like.slot-template/compatibility/%",
-      "event_type.eq.friends.compatibility.planet-card",
-      "block_type.eq.compatibility_planet_card"
-    ];
-    params.set("or", `(${compatibilityFilters.join(",")})`);
+  } else if (scopeFilter) {
+    params.set("or", scopeFilter);
     if (cursor) params.set("id", `gt.${cursor}`);
   } else if (visibility === "editorial") {
     params.set("lane", "eq.serving");
@@ -3295,7 +3284,7 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
       const scope = requestUrl.searchParams.get("scope") ?? "all";
       const hasDateRange = Boolean(requestUrl.searchParams.get("startDate") || requestUrl.searchParams.get("endDate"));
       const nextCursor = rows.length === requestLimit
-        ? scope === "compatibility"
+        ? Boolean(studioScopeStorageFilter(scope))
           ? rows.at(-1)?.id ?? null
           : hasDateRange
             ? null

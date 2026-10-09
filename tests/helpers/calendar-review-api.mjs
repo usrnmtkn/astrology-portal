@@ -38,6 +38,15 @@ export async function createApiStore(initial = fixtures, storeOptions = {}) {
   const nextVersion = () => new Date(Date.now() + ++versionSequence).toISOString();
   const matches = (row, params) => [...params].every(([field, value]) => {
     if (["select", "order", "limit", "offset", "on_conflict"].includes(field)) return true;
+    if (field === "or") {
+      const cursor = /^\(updated_at\.lt\.([^,]+),and\(updated_at\.eq\.[^,]+,id\.lt\.([^()]+)\)\)$/.exec(value);
+      if (cursor) return row.updated_at < cursor[1] || row.updated_at === cursor[1] && row.id < cursor[2];
+      if (!/^\([^()]+\)$/.test(value)) throw new Error(`Unmodeled OR filter ${value}`);
+      return value.slice(1, -1).split(',').some(term => {
+        const separator = term.indexOf('.');
+        return matches(row, new URLSearchParams([[term.slice(0, separator), term.slice(separator + 1)]]));
+      });
+    }
     if (field === "and") {
       const prefix = /^\(content_key\.gte\."([^"]+)",content_key\.lt\."([^"]+)"\)$/.exec(value);
       if (!prefix) throw new Error(`Unmodeled prefix ${value}`);
@@ -51,7 +60,13 @@ export async function createApiStore(initial = fixtures, storeOptions = {}) {
       if (value.startsWith('gt.')) return actual > value.slice(3);
       throw new Error(`Unmodeled horoscope window filter ${field}=${value}`);
     }
-    if (field === 'content_key' && /^like\.[^*%]+\*$/u.test(value)) return String(row.content_key ?? '').startsWith(value.slice(5, -1));
+    if (field === 'content_key' && value.startsWith('like.')) {
+      const pattern = value.slice(5).split(/[*%]/).map(part => part.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('.*');
+      return new RegExp(`^${pattern}$`).test(String(row.content_key ?? ''));
+    }
+    if (value.startsWith("neq.")) return String(row[field] ?? "") !== value.slice(4);
+    if (value.startsWith("gt.")) return row[field] > value.slice(3);
+    if (value.startsWith("lte.")) return row[field] <= value.slice(4);
     if (value === "is.null") return row[field] == null;
     if (value.startsWith("eq.")) return String(row[field] ?? "") === value.slice(3);
     if (value.startsWith("in.(")) return value.slice(4, -1).split(",").map(v => v.replaceAll('"', '')).includes(String(row[field]));
@@ -67,7 +82,19 @@ export async function createApiStore(initial = fixtures, storeOptions = {}) {
     if (url.origin !== env.SUPABASE_URL || url.pathname !== "/rest/v1/generated_interpretations") throw new Error(`Unexpected test storage request ${url.origin}${url.pathname}`);
     const found = [...rows.values()].filter(row => matches(row, url.searchParams));
     const method = options.method ?? "GET";
-    if (method === "GET") return Response.json(found);
+    if (method === "GET") {
+      const order = (url.searchParams.get('order') ?? '').split(',').filter(Boolean);
+      found.sort((a, b) => {
+        for (const term of order) {
+          const [field, direction] = term.split('.');
+          const result = String(a[field] ?? '').localeCompare(String(b[field] ?? '')) * (direction === 'desc' ? -1 : 1);
+          if (result) return result;
+        }
+        return 0;
+      });
+      const offset = Number(url.searchParams.get('offset') ?? 0);
+      return Response.json(found.slice(offset, offset + Number(url.searchParams.get('limit') ?? found.length)));
+    }
     const patch = JSON.parse(String(options.body));
     if (method === "POST") {
       const created = { ...patch, id: storeOptions.uuidIds ? randomUUID() : `revision-${++sequence}`, updated_at: nextVersion(), created_at: new Date().toISOString() };
