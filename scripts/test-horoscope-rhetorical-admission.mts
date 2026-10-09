@@ -7,6 +7,7 @@ import {emptyHoroscopeEdition,horoscopeEditionBody,horoscopeEditionKey} from '..
 import {horoscopePendingReadings} from '../src/astro-writing/horoscopeRecovery.mjs';
 import {HOROSCOPE_RHETORICAL_REVIEW,LEGACY_HOROSCOPE_RHETORICAL_REVIEW,horoscopeReviewHash} from '../src/astro-writing/horoscopeRhetoricalReview.mjs';
 
+import {horoscopeWeeklyBatchRecovery} from '../src/astro-writing/horoscopeWeeklyBatchRecovery.mjs';
 installHoroscopeWriterFixture();
 const deployment=JSON.parse(fs.readFileSync('vercel.json','utf8'));
 const packaged=new Set(fs.globSync(deployment.functions['api/admin/horoscope-writing.ts'].includeFiles));
@@ -56,10 +57,19 @@ assert.equal(writerFixture.reviewRequests.get(reviewId).max_output_tokens,6000);
 assert.equal(writerFixture.reviewRequests.get(reviewId).model,'gpt-5.6-terra');
 writerFixture.pendingPolls=1;await action('poll');
 assert.equal(generation().active.responseId,reviewId);assert.equal(writerFixture.reviewCalls,1);
+const beforeUnavailable=structuredClone(row);
 writerFixture.nextResult=providerResult({});
 assert.equal((await action('poll')).status,200);
 assert.equal(generation().active,null);assert.equal(generation().candidateHolds.aries.code,'rhetorical_review_unavailable');
 assert.deepEqual(generation().candidateHolds.aries.candidate,ready.candidate);
+assert(horoscopeWeeklyBatchRecovery(beforeUnavailable,row,{action:'poll',sign:'aries',planHash:plan.planHash}),'A lost acknowledgement of a saved technical review hold must not pause the other signs');
+for(const mutate of [
+ (r:any)=>r.source_snapshot.horoscopeGeneration.candidateHolds.aries.candidate.body+=' Unrelated change.',
+ (r:any)=>r.sections.horoscopeEdition.passages[1].body='Newer owner writing.',
+ (r:any)=>r.source_snapshot.horoscopeGeneration.failures.pop(),
+ (r:any)=>r.source_snapshot.horoscopeGeneration.lastError=null,
+]){const changed=structuredClone(row);mutate(changed);assert.equal(horoscopeWeeklyBatchRecovery(beforeUnavailable,changed,{action:'poll',sign:'aries',planHash:plan.planHash}),false);}
+
 assert.equal((await action('generate',{sign:'aries',approvedPlanHash:plan.planHash})).status,409);
 assert(!horoscopePendingReadings(row.sections.horoscopeEdition,generation()).some((p:any)=>p.sign==='aries'));
 
@@ -91,7 +101,8 @@ assert(!generation().candidateHolds.gemini);assert(generation().candidateHolds.a
 assert.equal(generation().candidateResolutions.at(-1).resolution,'owner_edited');assert.equal(row.status,'DRAFT');
 assert.equal(writerFixture.calls+writerFixture.reviewCalls,beforePaid);
 
-await draft('cancer');writerFixture.unknownNext=true;await action('continue');
+await draft('cancer');const beforeUnconfirmed=structuredClone(row);writerFixture.unknownNext=true;await action('continue');
+assert(horoscopeWeeklyBatchRecovery(beforeUnconfirmed,row,{action:'continue',sign:'cancer',planHash:plan.planHash}),'A saved unconfirmed review hold can be reconciled without repeating it');
 assert.equal(generation().candidateHolds.cancer.code,'rhetorical_review_interrupted');
 const unknownCalls=writerFixture.calls+writerFixture.reviewCalls;await action('poll');
 assert.equal(writerFixture.calls+writerFixture.reviewCalls,unknownCalls);
