@@ -1423,6 +1423,23 @@ function normalizeAspect(input) {
   return map[k] ?? null;
 }
 
+// apps/web/src/content/fallbackArchitectureV3/resolver/mercuryReturnReader.mjs
+var MERCURY_RETURN_CONTACT_KEY = "authored/transit-aspect/mercury/mercury/conjunction";
+function mercuryReturnCopy(row, field2, window, SourceGapError2) {
+  const fail2 = (reason) => {
+    throw new SourceGapError2(`SOURCE_GAP: Mercury return ${reason}`);
+  };
+  const source = row[field2];
+  if (typeof source !== "string" || !source.trim()) {
+    fail2(`missing ${field2}`);
+  }
+  const body = source.replaceAll("{{untilDate}}", () => typeof window === "string" && window.replace(/^until\s+/i, "").trim() || fail2("missing calculated end date"));
+  if (/\{\{|\}\}/u.test(body)) {
+    fail2("unresolved placeholder");
+  }
+  return body;
+}
+
 // apps/web/src/content/fallbackArchitectureV3/resolver/relationshipTemplate.mjs
 function relationshipTemplatePair(row) {
   const read = (publicField, storedField) => {
@@ -2571,10 +2588,22 @@ ${passHook}`;
       window: win ?? WINDOW_ASPECT[transiting] ?? "Currently"
     };
   }
-  function renderTransitReturn({ planet }) {
-    const c = card(`authored/transit-return/${planet}`);
+  function renderTransitReturn({ planet, voice, window }) {
+    let c;
+    let audience = "you", field2 = "body";
+    if (planet === "mercury" && (voice !== void 0 || window !== void 0)) {
+      c = card(MERCURY_RETURN_CONTACT_KEY);
+      if (c) {
+        audience = voice === void 0 || voice === "you" ? "you" : "they";
+        field2 = `body_${audience}`;
+        c = { ...c, body: mercuryReturnCopy(c, field2, window, SourceGapError) };
+      } else if (transitLib.authoredCards.some((row) => row.contentKey === MERCURY_RETURN_CONTACT_KEY)) {
+        throw new SourceGapError(`SOURCE_GAP: ineligible ${MERCURY_RETURN_CONTACT_KEY}`);
+      }
+    }
+    c ||= card(`authored/transit-return/${planet}`);
     if (!c) throw new SourceGapError(`SOURCE_GAP: no return card for ${planet}`);
-    return { ...result(c, "authored/transit-return"), ...passageSources(c.body, [{ text: c.body, keys: [c.contentKey] }], () => passageSource(c, "you", "body")) };
+    return { ...result(c, "authored/transit-return"), ...passageSources(c.body, [{ text: c.body, keys: [c.contentKey] }], () => passageSource(c, audience, field2)) };
   }
   function renderCompat({ planet, signA, signB, otherName }) {
     const sub = (s) => s.replace(/\{\{other_name\}\}/g, otherName);
@@ -5197,9 +5226,9 @@ var PLACEMENT_LUNAR_EVENT_TYPES = Object.freeze([
   "solar-eclipse",
   "lunar-eclipse"
 ]);
-var CONTINUOUS_OWNER_APPROVED_KEYS = new Set(sky_v4_continuous_120_owner_approval_v1_default.approved_keys);
-var READER_COPY_OWNER_APPROVED_KEYS = new Set(sky_v4_reader_copy_280_owner_approval_v1_default.approved_keys);
-var READER_COPY_SERVING_KEYS = new Set(sky_v4_reader_copy_280_owner_approval_v1_default.approved_keys);
+var CONTINUOUS_OWNER_APPROVED_KEYS = /* @__PURE__ */ new Set(sky_v4_continuous_120_owner_approval_v1_default.approved_keys);
+var READER_COPY_OWNER_APPROVED_KEYS = /* @__PURE__ */ new Set(sky_v4_reader_copy_280_owner_approval_v1_default.approved_keys);
+var READER_COPY_SERVING_KEYS = /* @__PURE__ */ new Set(sky_v4_reader_copy_280_owner_approval_v1_default.approved_keys);
 var SKY_V4_CONFIGURATION_TYPES = /* @__PURE__ */ new Set(["template", "overlay-settings"]);
 var SKY_V4_OVERLAY_DEFAULTS = Object.freeze({
   contextualTransitOverlaysEnabled: true,
@@ -6526,7 +6555,7 @@ function skyV4FieldValue(source, path) {
 }
 
 // apps/web/src/content/fallbackArchitectureV3/resolver/index.browser.ts
-var PACKAGE_VERSION = "v3-2026-10-06-natal-planet-introductions";
+var PACKAGE_VERSION = "v3-2026-10-08-mercury-return-reader";
 function stablePackageValue(value) {
   if (Array.isArray(value)) {
     return value.map(stablePackageValue);

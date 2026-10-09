@@ -7855,7 +7855,7 @@ function personalTransitPackageSection(
     isEligibleTransitReturn(returnPlanet, transit.natalPoint, normalizedAspect)
   ) {
     try {
-      const renderedReturn = transitSynastryFallbackRendererV3.renderTransitReturn({ planet: returnPlanet });
+      const renderedReturn = transitSynastryFallbackRendererV3.renderTransitReturn({ planet: returnPlanet, voice, window: returnPlanet === "mercury" ? transit.reportWindowLabel ?? personalTransitPackageWindow(transit, generatedAt) : undefined });
       const returnBody = fullDetailReaderFacingCopy(renderedReturn.parts) ?? "";
 
       if (returnBody && isReaderFacingCopy(returnBody)) {

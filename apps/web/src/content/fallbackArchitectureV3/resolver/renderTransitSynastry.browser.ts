@@ -1,3 +1,4 @@
+import { MERCURY_RETURN_CONTACT_KEY, mercuryReturnCopy } from "./mercuryReturnReader.mjs";
 import { resolveBondEffect } from "./relationshipTemplate.mjs";
 import { prioritizeExactTransitSources, transitAspectSituationKey } from "./transitAspectSourcePriority.mjs";
 import { bindStudioVariableRenderer } from "../../studioCustomVariables.mjs";
@@ -1213,10 +1214,23 @@ export function createTransitSynastryRenderer(
     };
   }
 
-  function renderTransitReturn({ planet }: { planet: string }): TransitRenderResult {
-    const c = card(`authored/transit-return/${planet}`);
+  function renderTransitReturn({ planet, voice, window }: { planet: string; voice?: string; window?: string }): TransitRenderResult {
+    let c: AuthoredCard | null | undefined;
+    let audience = "you", field = "body";
+    // Exact personal Mercury copy; planet-only callers retain the existing return contract.
+    if (planet === "mercury" && (voice !== undefined || window !== undefined)) {
+      c = card(MERCURY_RETURN_CONTACT_KEY);
+      if (c) {
+        audience = voice === undefined || voice === "you" ? "you" : "they";
+        field = `body_${audience}`;
+        c = { ...c, body: mercuryReturnCopy(c, field, window, SourceGapError) };
+      } else if (transitLib.authoredCards.some(row => row.contentKey === MERCURY_RETURN_CONTACT_KEY)) {
+        throw new SourceGapError(`SOURCE_GAP: ineligible ${MERCURY_RETURN_CONTACT_KEY}`);
+      }
+    }
+    c ||= card(`authored/transit-return/${planet}`);
     if (!c) throw new SourceGapError(`SOURCE_GAP: no return card for ${planet}`);
-    return { ...result(c, "authored/transit-return"), ...passageSources(c.body, [{ text: c.body, keys: [c.contentKey] }], () => passageSource(c, "you", "body")) };
+    return { ...result(c, "authored/transit-return"), ...passageSources(c.body, [{ text: c.body, keys: [c.contentKey] }], () => passageSource(c, audience, field)) };
   }
 
   function renderCompat({ planet, signA, signB, otherName }: CompatFacts): TransitRenderResult {
