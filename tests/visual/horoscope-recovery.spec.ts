@@ -475,6 +475,49 @@ async function useOwnerSession(page:Page,f:Awaited<ReturnType<typeof fixture>>){
 }
 
 for(const [width,theme] of [[390,'dark'],[1440,'light']] as const){
+ test(`Owner session bootstrap loads editions without a stale sign-in warning ${width} ${theme}`,async({page})=>{
+  await page.setViewportSize({width,height:1000});await page.addInitScript(theme=>localStorage.setItem('tldrastro:studio-theme',theme),theme);
+  const f=await fixture(page,1,false,'weekly',true,false);
+  try{
+   const s=await useOwnerSession(page,f);const before=await f.latest();
+   const listRequests:{authenticated:boolean;status:number}[]=[];
+   // Exercise the actual document handler with browser headers. The inventory
+   // fixture's default service credential used to hide anonymous startup reads.
+   await page.route('**/api/admin/generated-content?horoscopeEditions=true',async route=>{
+    const headers=route.request().headers();
+    const result=await f.call({method:'document-request',url:'/api/admin/generated-content?horoscopeEditions=true',headers});
+    listRequests.push({authenticated:!!headers.authorization,status:result.status});
+    await route.fulfill({status:result.status,json:result.payload});
+   });
+   await page.goto('/admin/content#horoscopes');
+   const studio=page.getByRole('region',{name:'Horoscope editions'});
+   await expect(studio.getByRole('heading',{name:'Choose your horoscopes'})).toBeVisible();
+   await expect(studio.getByText('Continue a saved edition (1)',{exact:true})).toBeVisible();
+   await expect(studio.getByRole('alert')).toHaveCount(0);
+   expect(listRequests.every(request=>request.authenticated&&request.status===200)).toBe(true);
+   await page.reload();
+   await expect(studio.getByText('Continue a saved edition (1)',{exact:true})).toBeVisible();
+   await expect(studio.getByRole('alert')).toHaveCount(0);
+   expect(listRequests.length).toBeGreaterThanOrEqual(2);
+   expect(listRequests.every(request=>request.authenticated&&request.status===200)).toBe(true);
+   // A real authentication failure must remain visible and recover on a
+   // successful explicit refresh, without opening an edition to clear it.
+   await studio.getByText('Continue a saved edition (1)',{exact:true}).click();
+   s.auth.fail=true;await f.call({method:'auth-state',body:{token:'revoked-fixture-token'}});
+   await studio.getByRole('button',{name:'Refresh editions',exact:true}).click();
+   await expect(studio.getByRole('alert')).toContainText('Sign in with the owner account');
+   await expect(studio.getByRole('link',{name:'Sign in to Content Studio'})).toBeVisible();
+   s.auth.fail=false;
+   await studio.getByRole('button',{name:'Refresh editions',exact:true}).click();
+   await expect(studio.getByRole('button',{name:'Refresh editions',exact:true})).toBeEnabled();
+   expect(listRequests.at(-1)?.status).toBe(200);
+   await expect(studio.getByRole('alert')).toHaveCount(0);
+   await expect(studio.locator('.admin-horoscope-saved button')).toHaveCount(1);
+   expect(await f.latest()).toEqual(before);
+   expect(await f.call({method:'writer-state'})).toMatchObject({calls:0,reviewCalls:0});
+   await page.screenshot({path:`test-results/horoscope-session-bootstrap-${width}-${theme}.png`,fullPage:true});
+  }finally{f.child.kill();}
+ });
  test(`Owner session renewal keeps generation and rejection working ${width} ${theme}`,async({page})=>{
   await page.setViewportSize({width,height:1000});await page.addInitScript(theme=>localStorage.setItem('tldrastro:studio-theme',theme),theme);
   const f=await fixture(page,3,false,'weekly',true);try{
