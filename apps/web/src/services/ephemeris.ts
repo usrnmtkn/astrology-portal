@@ -15,6 +15,8 @@ import { debugInfoForZonedDateTime } from "./timezones.js";
 import { assertCanonicalSkyPoints } from "./canonicalSkyAspectProfile.js";
 import { memoizeSwissCalculation } from "./swissCalculationCache.js";
 import { traditionalSignRulers } from "../content/skySunSeason.js";
+import { transitAspectDefinitions } from "../astrologyConfig.js";
+import { PERSONAL_DAILY_ORB, personalDayBounds, personalTransitId, type PersonalDailyPeak } from "./personalDailyTransits.js";
 
 const signs = [
   ["Aries", "♈"],
@@ -2204,7 +2206,9 @@ function refineResidualPass(
       lowerResidual = midpointResidual;
     }
   }
-  return new Date((lower.getTime() + upper.getTime()) / 2);
+  // Keep the crossing side at millisecond resolution. Rounding downward can
+  // assign an exact midnight event to the preceding civil day.
+  return upper;
 }
 
 function scanResidualPasses(
@@ -2218,7 +2222,7 @@ function scanResidualPasses(
   let previousDate = start;
   let previous = residualsAt(previousDate);
   const stepMs = Math.max(60 * 60_000, stepDays * 86_400_000);
-  for (let time = start.getTime() + stepMs; time <= end.getTime(); time += stepMs) {
+  for (let time = Math.min(start.getTime() + stepMs, end.getTime()); previousDate < end; time = Math.min(time + stepMs, end.getTime())) {
     const currentDate = new Date(time);
     const current = residualsAt(currentDate);
     current.forEach((residual, branch) => {
@@ -2361,6 +2365,71 @@ export function natalTransitTimingFor(
     if (natalTransitTimingCache.get(key) === pending) natalTransitTimingCache.delete(key);
   });
   return pending;
+}
+
+/** Personal daily events are searched across the whole local date, independently
+ * of the noon-orb inventory. This retains an early/late Moon contact even when
+ * it has already left (or has not yet entered) the noon display orb. */
+export async function natalDailyTransitPeaksFor(
+  transitingPlanets: string[],
+  natalTargets: Array<{ planet: string; longitude: number }>,
+  referenceAt: string,
+  timeZone: string
+): Promise<PersonalDailyPeak[]> {
+  const reference = new Date(referenceAt);
+  const { dateKey, start, end, recentStart } = personalDayBounds(reference, timeZone);
+  const swe = await getSwissEph();
+  const result: PersonalDailyPeak[] = [];
+  for (const planet of transitingPlanets) {
+    const planetId = skyPointPlanetId(swe, planet === "South Node" ? "North Node" : planet);
+    if (planetId === null) continue;
+    // Each sample is shared by every natal target/aspect for this body.
+    const longitudes = new Map<number, number>();
+    const longitudeAt = (date: Date) => {
+      const time = date.getTime();
+      if (!longitudes.has(time)) longitudes.set(time, exactPlanetLongitude(swe, planetId, date));
+      return longitudes.get(time)!;
+    };
+    const speed = Math.abs(exactPlanetSpeed(swe, planetId, reference));
+    for (const target of natalTargets) {
+      if (!Number.isFinite(target.longitude)) continue;
+      const natalLongitude = normalizeDegrees(target.longitude + (planet === "South Node" ? 180 : 0));
+      for (const aspect of transitAspectDefinitions) {
+        if (/lilith/i.test(target.planet) && ![0, 180].includes(aspect.exact)) continue;
+        const residualsAt = (date: Date) => {
+          const directed = shortestAngleDistance(longitudeAt(date) - natalLongitude);
+          return aspect.exact === 0 || aspect.exact === 180
+            ? [shortestAngleDistance(directed - aspect.exact)]
+            : [shortestAngleDistance(directed - aspect.exact), shortestAngleDistance(directed + aspect.exact)];
+        };
+        const orbAt = (date: Date) => Math.min(...residualsAt(date).map(Math.abs));
+        const orbDegrees = orbAt(reference);
+        const dailyPasses = scanResidualPasses(residualsAt, start, end, 1 / 8)
+          .filter(date => date >= start && date < end);
+        if (!dailyPasses.length && orbDegrees > PERSONAL_DAILY_ORB) continue;
+        const change = orbAt(addDays(reference, 1 / 24)) - orbDegrees;
+        const direction = Math.abs(change) < 1e-8 ? "stationary" : change < 0 ? "applying" : "separating";
+        // Only search the current tight contact for the nearest pass. A future
+        // retrograde return after leaving orb cannot make a separating contact
+        // appear to be applying or keep it in the daily list for months.
+        const step = Math.max(1 / 24, Math.min(1, 0.25 / Math.max(speed, 0.002)));
+        const contactStart = orbDegrees <= PERSONAL_DAILY_ORB
+          ? findResidualBoundary(residualsAt, PERSONAL_DAILY_ORB, reference, -1, step, 400) : start;
+        const contactEnd = orbDegrees <= PERSONAL_DAILY_ORB
+          ? findResidualBoundary(residualsAt, PERSONAL_DAILY_ORB, reference, 1, step, 400) : end;
+        const passes = scanResidualPasses(residualsAt,
+          new Date(Math.max(contactStart.getTime(), recentStart.getTime())), contactEnd, step);
+        const allPasses = [...passes, ...dailyPasses].sort((a, b) => a.getTime() - b.getTime());
+        result.push({
+          id: personalTransitId(planet, aspect.type, target.planet), referenceAt, dateKey, timeZone,
+          orbDegrees, direction, exactToday: dailyPasses.map(date => date.toISOString()),
+          previousExactAt: allPasses.filter(date => date <= reference).at(-1)?.toISOString() ?? null,
+          nextExactAt: allPasses.find(date => date > reference)?.toISOString() ?? null
+        });
+      }
+    }
+  }
+  return result;
 }
 
 function skyAspectPresentationOrb(aspect: SkyAspectRecord) {

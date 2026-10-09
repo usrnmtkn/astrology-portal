@@ -97,6 +97,20 @@ test('real repository search finds the documented replacement and excludes empty
   assert.deepEqual(index.sources.filter(source => !packaged.has(source.path)).map(source => source.path), []);
 });
 
+test('personal daily peak policy has complete searchable text and task provenance', () => {
+  const index = buildMemoryIndex({ root: process.cwd() });
+  const rule = queryMemory(index, { query: 'Personal daily aspect peaks', phrase: true, kind: 'rule' }).records.find(record => record.path === 'AGENTS.md');
+  assert(rule);
+  const detail = memoryDetail(index, rule.id);
+  for (const phrase of ['entire civil day', 'within 1°', 'previous two local dates', 'four distinct events', 'full multi-pass', 'thread:01a120fd-4144-7933-ab58-e9a5a2a762e9']) assert(detail.body.includes(phrase));
+  assert.equal(detail.bodySha256, sha256(detail.body));
+  assert.equal(detail.sourceSha256, sha256(fs.readFileSync('AGENTS.md')));
+  const note = index.records.find(record => record.metadata.id === 'personal-daily-aspect-peaks-2026-10-09');
+  assert(note);
+  assert.equal(note.status, 'unverified');
+  assert.equal(note.writerPacketEligible, false);
+});
+
 test('cross-surface date rule and owner task provenance are retrievable in deployed sources', () => {
   const index = buildMemoryIndex({ root: process.cwd() });
   const rule = queryMemory(index, { query: 'Cross-surface event dates and placement windows', phrase: true, kind: 'rule' }).records

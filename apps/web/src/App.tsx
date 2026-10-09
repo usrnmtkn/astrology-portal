@@ -1,3 +1,5 @@
+import { comparePersonalDailyTransits, personalDailyPriority, personalDailyPeakLabel, precisePersonalOrb, type PersonalDailyPeak } from "./services/personalDailyTransits";
+import { usePersonalDailyPeaks, usePersonalTransitSeries } from "./services/usePersonalDailyTransits";
 import { CalendarDaySkeleton } from "./features/calendar/CalendarDaySkeleton";
 import {
   defaultLocation, selectedLocationStorageKey, isLocationInput, dateInputValue, dateFromInput,
@@ -511,6 +513,7 @@ export type TransitItem = {
   stationNearNatal?: boolean;
   timing?: NatalTransitTiming | null;
   reportWindowLabel?: string;
+  dailyPeak?: PersonalDailyPeak;
   knowledgeIds?: string[];
   arc: number[];
   note: string;
@@ -521,6 +524,8 @@ export type TransitItem = {
 };
 
 type NatalTransitTiming = {
+  currentStart?: string;
+  currentEnd?: string;
   group: "this-week" | "this-season" | "undercurrent";
   phase: "building" | "exact" | "fading";
   engagementStart: string;
@@ -5889,13 +5894,19 @@ function transitAspectOrb(definition: (typeof transitAspectDefinitions)[number],
   return isSunHorizonContact ? baseOrb + sunriseOrb : baseOrb;
 }
 
-function buildNatalTransitItems(transitPositions: PlanetPosition[], natalPositions: PlanetPosition[], sunriseOrb = DEFAULT_SUNRISE_ORB_DEGREES, timeZone?: string): TransitItem[] {
+function personalTransitLongitude(position: PlanetPosition) {
+  return typeof position.longitude === "number" && Number.isFinite(position.longitude) ? position.longitude : zodiacLongitude(position);
+}
+
+function buildNatalTransitItems(transitPositions: PlanetPosition[], natalPositions: PlanetPosition[], sunriseOrb = DEFAULT_SUNRISE_ORB_DEGREES, timeZone?: string, dailyPeaks: PersonalDailyPeak[] = []): TransitItem[] {
+  const peaks = new Map(dailyPeaks.map(peak => [peak.id, peak]));
   return transitPositions.flatMap((transitPosition) => (
     natalPositions.flatMap((natalPosition) => {
-      const separation = angularDistance(zodiacLongitude(transitPosition), zodiacLongitude(natalPosition));
+      const separation = angularDistance(personalTransitLongitude(transitPosition), personalTransitLongitude(natalPosition));
       const aspect = transitAspectDefinitions
         .map((definition) => ({ ...definition, orbValue: Math.abs(separation - definition.exact) }))
-        .filter((definition) => definition.orbValue <= transitAspectOrb(definition, transitPosition, natalPosition, sunriseOrb))
+        .filter((definition) => definition.orbValue <= transitAspectOrb(definition, transitPosition, natalPosition, sunriseOrb)
+          || peaks.get(`${transitPosition.planet}-${definition.type}-${natalPosition.planet}`.toLowerCase().replace(/\s+/g, "-"))?.exactToday.length)
         .sort((first, second) => first.orbValue - second.orbValue)[0];
 
       if (!aspect) {
@@ -5904,8 +5915,8 @@ function buildNatalTransitItems(transitPositions: PlanetPosition[], natalPositio
 
       const id = `${transitPosition.planet}-${aspect.type}-${natalPosition.planet}`.toLowerCase().replace(/\s+/g, "-");
       const elevatedSlowTransit = isElevatedSlowTransit(transitPosition.planet, natalPosition.planet, aspect.orbValue);
-      const transitLongitude = zodiacLongitude(transitPosition);
-      const natalLongitude = zodiacLongitude(natalPosition);
+      const transitLongitude = personalTransitLongitude(transitPosition);
+      const natalLongitude = personalTransitLongitude(natalPosition);
       const geometry = natalTransitGeometry(
         transitLongitude,
         natalLongitude,
@@ -5942,6 +5953,7 @@ function buildNatalTransitItems(transitPositions: PlanetPosition[], natalPositio
         transitHouse: transitPosition.house,
         orb: formatOrb(aspect.orbValue),
         direction: geometry.direction,
+        dailyPeak: peaks.get(id),
         currentSpeed: typeof transitPosition.speed === "number" ? transitPosition.speed : undefined,
         exactOffsetDays: geometry.exactOffsetDays,
         natalLongitude,
@@ -6045,6 +6057,18 @@ function dedupeTransitAxisContacts<T extends TransitItem>(transits: T[]) {
   });
 
   return deduped;
+}
+
+function groupPersonalTransitContacts<T extends TransitItem>(transits: T[]) {
+  const groups = new Map<string, T[]>();
+  for (const transit of transits) {
+    const key = transitAxisDuplicateKey(transit) || transit.id;
+    const group = groups.get(key) || [];
+    group.push(transit);
+    groups.set(key, group);
+  }
+  return [...groups.values()].map(group => group.sort((first, second) =>
+    (transitAxisPriority[first.natalPoint] ?? 99) - (transitAxisPriority[second.natalPoint] ?? 99)));
 }
 
 function transitOrbValue(transit: TransitItem) {
@@ -7820,10 +7844,6 @@ function dailyTransitQualifies(transit: TransitItem) {
   return transitOrbValue(transit) <= gate;
 }
 
-function dailyHeadlinerTransit(transit: TransitItem) {
-  return dailyOuterTransitPlanets.has(normalizeContentIdPart(transit.transitPlanet))
-    && transitOrbValue(transit) <= 1;
-}
 
 function dailyCalendarPhaseKey(phase: string) {
   const normalized = phase.toLowerCase();
@@ -11209,7 +11229,7 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
     targetLocation: personalTimingLocation
   });
 
-  const personalTransitTimingActive = isProfileMode || Boolean(skyDetailRoutePath?.startsWith("sky/placement/"));
+  const personalTransitTimingActive = Boolean(skyDetailRoutePath?.startsWith("sky/placement/"));
   useEffect(() => {
     const birthDate = primaryProfileChart ? validChartBirthDate(primaryProfileChart) : "";
     const candidates = profileTransits
@@ -17247,25 +17267,7 @@ function ProfileView({
     }
   }, [fallbackArchitectureV3Version, transitCopyLoading]);
 
-  useEffect(() => {
-    setTransitArticle((current) => {
-      if (!current) return current;
-      const transit = transitItems.find((item) => personalTransitGeneratedContentKey(item, targetDate) === current.id);
-      if (!transit) return current;
-      const normalized = normalizePersonalTransitSurface(transit, targetDate);
-      if (!normalizedSurfaceHasReaderDetail(normalized)) return null;
-      const sections = normalized.sections.map((section, index) => ({
-        heading: current.sections[index]?.heading || section.heading || current.title,
-        tldr: "",
-        body: taggedSectionBody(section)
-      }));
-      const generated = personalTransitGeneratedContent.get(current.id) ?? null;
-      const description = transitArticleDescription(transit, natalSky, transitAspectTechnicalVerb(transit.aspect));
-      if (JSON.stringify(sections) === JSON.stringify(current.sections)
-        && generated === current.generatedContent && description === current.transitDescription) return current;
-      return { ...current, sections, generatedContent: generated, transitDescription: description };
-    });
-  }, [fallbackArchitectureV3Version, natalSky, personalTransitGeneratedContent, targetDate, transitItems]);
+  useEffect(() => { setTransitArticle(null); }, [targetDate, currentSky?.location.timeZone]);
 
   const [activePlacementRouteId, setActivePlacementRouteId] = useState<string | null>(null);
   const [weeklyHoroscopeAssembly, setWeeklyHoroscopeAssembly] = useState<WeeklyHoroscopeAssembly | null>(null);
@@ -17500,14 +17502,41 @@ function ProfileView({
   const natalAspectPatternStatus = showNatalAspectPatterns
     ? natalAspectPatternReaderStatus(showNatalAspectPatterns, natalSky, !natalSky, natalAspectPatternLoadStatus)
     : undefined;
-  const qualifyingDailyTransits = dedupeSameBeatPersonalTransits(
-    rankTransitsByLifeAreaFocus(transitItems, lifeAreaFocus),
-    targetDate
-  )
-    .filter(dailyTransitQualifies)
-    .sort((first, second) => transitOrbValue(first) - transitOrbValue(second));
-  const dailyIsHeadliner = qualifyingDailyTransits.some(dailyHeadlinerTransit);
-  const aspectRows = qualifyingDailyTransits.slice(0, dailyIsHeadliner ? 3 : 4);
+  const dailyPeakFacts = usePersonalDailyPeaks(currentSky && natalSky && !currentSkyLoading ? {
+    planets: currentSky.positions.map(position => position.planet),
+    targets: natalTransitTargets(natalSky, !unknownBirthTime).map(position => ({ planet: position.planet, longitude: personalTransitLongitude(position) })),
+    referenceAt: currentSky.generatedAt,
+    timeZone: currentSky.location.timeZone || "UTC"
+  } : null);
+  const personalContacts = currentSky && natalSky && dailyPeakFacts.status === "ready"
+    ? buildNatalTransitItems(currentSky.positions, natalTransitTargets(natalSky, !unknownBirthTime), DEFAULT_SUNRISE_ORB_DEGREES,
+      currentSky.location.timeZone, dailyPeakFacts.peaks).map(contact => ({
+        ...transitItems.find(item => item.id === contact.id), ...contact
+      }))
+    : [];
+  const dailyGroups = groupPersonalTransitContacts(rankTransitsByLifeAreaFocus(personalContacts, lifeAreaFocus)
+    .filter(contact => personalDailyPriority(contact.dailyPeak) !== null)
+    .sort(comparePersonalDailyTransits)).slice(0, 4);
+  const dailyGroupKeys = new Set(dailyGroups.map(group => transitAxisDuplicateKey(group[0]) || group[0].id));
+  const backgroundGroups = groupPersonalTransitContacts(rankTransitsByLifeAreaFocus(personalContacts, lifeAreaFocus)
+    .filter(contact => contact.term === "long" && !dailyGroupKeys.has(transitAxisDuplicateKey(contact) || contact.id)))
+    .slice(0, 4);
+  const seriesTimings = usePersonalTransitSeries([...dailyGroups, ...backgroundGroups].map(group => group[0]),
+    currentSky?.generatedAt || targetDate, currentSky?.location.timeZone || "UTC");
+  const withSeries = (group: TransitItem[]) => group.map(contact => {
+    const timing = seriesTimings.get(group[0].id);
+    return {
+      ...contact, timing,
+      reportWindowLabel: timing?.currentEnd
+        ? `Until ${new Intl.DateTimeFormat("en-US", { month: "long", day: "numeric", year: "numeric", timeZone: timing.timeZone || "UTC" }).format(new Date(timing.currentEnd))}`
+        : undefined
+    };
+  });
+  const dailyAspectGroups = dailyGroups.map(withSeries);
+  const backgroundAspectGroups = backgroundGroups.map(withSeries);
+  const aspectRows = dailyAspectGroups.map(group => group[0]);
+  const qualifyingDailyTransits = aspectRows;
+  const dailyIsHeadliner = aspectRows.some(transit => Boolean(transit.dailyPeak?.exactToday.length));
   const natalAspectPatternTimingOverrides = activationTimingOverridesForTransits(natalAspectPatternItems, aspectRows, targetDate);
   const updateTransitAspectLines = currentSky && natalSky
     ? transitWheelAspectLines(currentSky, natalSky, aspectRows, !unknownBirthTime)
@@ -17661,29 +17690,39 @@ function ProfileView({
       />
     );
   }) : [];
-  const readerAspectRows = aspectRows.map((transit) => {
+  const readerAspectRows = [...dailyAspectGroups, ...backgroundAspectGroups].map((group, index) => {
+    const transit = group[0];
+    const background = index >= dailyAspectGroups.length;
     const personalizedContentKey = personalTransitGeneratedContentKey(transit, targetDate);
     const normalizedTransit = normalizePersonalTransitSurface(transit, targetDate);
     const savedGeneratedContent = personalTransitGeneratedContent.get(personalizedContentKey) ?? null;
-    const detailAvailable = normalizedSurfaceHasReaderDetail(normalizedTransit)
-      || hasReaderFacingGeneratedCopy(savedGeneratedContent);
+    const detailAvailable = Boolean(transit.timing) && (group.some(contact => normalizedSurfaceHasReaderDetail(normalizePersonalTransitSurface(contact, targetDate)))
+      || group.length === 1 && hasReaderFacingGeneratedCopy(savedGeneratedContent));
     // Missing prose must not erase a calculated transit or imply a quiet day.
-    return { normalizedTransit, personalizedContentKey, savedGeneratedContent, transit, detailAvailable };
+    return { normalizedTransit, personalizedContentKey, savedGeneratedContent, transit, detailAvailable, group, background };
   });
+  const personalAspectArticles = new Map<string, YouTransitArticle>();
   const updateAspectRows = readerAspectRows.map(({
     detailAvailable,
     normalizedTransit,
     personalizedContentKey,
     savedGeneratedContent,
-    transit
+    transit, group, background
   }) => {
-    const rowSummary = transitCardPreview(normalizedSurfacePreview(normalizedTransit));
+    const rowSummary = transit.timing ? transitCardPreview(normalizedSurfacePreview(normalizedTransit)) : "";
     const lifeAreaTags = transit.natalHouse
       ? houseLifeAreaKeywords(transit.natalHouse)
       : [];
-    const isBackgroundUpdate = transit.significance === "low priority" || transitOrbValue(transit) >= 6;
+    const isBackgroundUpdate = background;
     const timing = transitItemTimingDisplay(transit, targetDate);
-    const title = `${transit.transitPlanet} ${transit.aspect} your ${transit.natalPoint}`;
+    const title = group.map(contact => `${contact.transitPlanet} ${contact.aspect} your ${contact.natalPoint}`).join(" · ");
+    const peakLabel = transit.dailyPeak ? personalDailyPeakLabel(transit.dailyPeak) : null;
+    const currentRange = transit.timing?.currentStart && transit.timing.currentEnd
+      ? formatEditorialDateRange(new Date(transit.timing.currentStart), new Date(transit.timing.currentEnd),
+        exactDateFromInput(targetDate, transitEventTimeZone(transit)) || new Date(targetDate), transitEventTimeZone(transit)) : null;
+    const dateLabel = !background && peakLabel ? peakLabel
+      : currentRange ? `Current contact: ${currentRange}` : peakLabel || (transit.timing === null ? "Dates unavailable" : "Calculating dates…");
+    const orbLabel = precisePersonalOrb(transit.dailyPeak?.orbDegrees ?? transitOrbValue(transit));
     const transitSeries = transit.timing && transit.timing.exactPasses.length > 1
       ? { index: transit.timing.passIndex, count: transit.timing.exactPasses.length }
       : null;
@@ -17691,40 +17730,44 @@ function ProfileView({
       label: `Pass ${index + 1}`,
       value: formatEditorialDate(new Date(pass.exactAt), true, transitEventTimeZone(transit))
     })) ?? [];
-    const articleSections = normalizedTransit.sections.map((section) => ({
-      heading: section.heading || title,
+    const articleSections = group.flatMap(contact => normalizePersonalTransitSurface(contact, targetDate).sections.map((section) => ({
+      heading: section.heading || `${contact.transitPlanet} ${contact.aspect} your ${contact.natalPoint}`,
       tldr: "",
       body: taggedSectionBody(section)
-    }));
+    })));
+    const article: YouTransitArticle = {
+      id: `personal-aspect:${group.map(contact => contact.id).join(":")}`,
+      pills: { durationLabel: dateLabel, labels: [
+        ...(transitSeries ? [{ label: `Pass ${transitSeries.index} of ${transitSeries.count}` }] : []),
+        ...(lifeAreaTags.length ? [
+          { label: transit.term === "long" ? "Long-term" : "Short-term", tone: "term" as const },
+          ...lifeAreaTags.map((label) => ({ label, tone: "muted" as const }))
+        ] : [])
+      ] },
+      title,
+      glyph: pointGlyph(transit.transitPlanet),
+      // The authored aspect package declares headline + body, not TLDR.
+      // The collapsed-row preview must not be promoted into another slot.
+      subtitle: "",
+      summary: "",
+      sections: articleSections,
+      generatedContent: group.length === 1 ? savedGeneratedContent : null,
+      transitDescription: transitArticleDescription(transit, natalSky, transitAspectTechnicalVerb(transit.aspect)),
+      meta: [
+        ...(peakLabel ? [{ label: "Timing", value: peakLabel }] : []),
+        ...(currentRange ? [{ label: "Current contact", value: currentRange }] : []),
+        ...passDateMeta,
+        ...(transit.timing ? [{ label: "Full transit series", value: timing.rangeLabel }] : []),
+        { label: "Orb at daily reference", value: orbLabel },
+        { label: "Natal point", value: transit.natalPoint }
+      ]
+    };
+    if (detailAvailable) personalAspectArticles.set(article.id, article);
     const openArticle = () => {
       transitionPage(() => {
         setSelectedTransitId(transit.id);
         setActivePlacementRouteId(null);
-        setTransitArticle({
-          id: personalizedContentKey,
-          pills: { durationLabel: timing.durationLabel, labels: [
-            ...(transitSeries ? [{ label: `Pass ${transitSeries.index} of ${transitSeries.count}` }] : []),
-            ...(lifeAreaTags.length ? [
-              { label: transit.term === "long" ? "Long-term" : "Short-term", tone: "term" as const },
-              ...lifeAreaTags.map((label) => ({ label, tone: "muted" as const }))
-            ] : [])
-          ] },
-          title,
-          glyph: pointGlyph(transit.transitPlanet),
-          // The authored aspect package declares headline + body, not TLDR.
-          // The collapsed-row preview must not be promoted into another slot.
-          subtitle: "",
-          summary: "",
-          sections: articleSections,
-          generatedContent: savedGeneratedContent,
-          transitDescription: transitArticleDescription(transit, natalSky, transitAspectTechnicalVerb(transit.aspect)),
-          meta: [
-            ...passDateMeta,
-            { label: "Duration", value: timing.rangeLabel },
-            { label: "Orb", value: wholeDegreeOrb(transitOrbValue(transit)) },
-            { label: "Natal point", value: transit.natalPoint }
-          ]
-        });
+        setTransitArticle(article);
       });
     };
 
@@ -17732,7 +17775,7 @@ function ProfileView({
     return (
       <Row
         type={detailAvailable ? "button" : undefined}
-        className={`updates-aspect-row${isBackgroundUpdate ? " updates-aspect-row--background" : ""}`}
+        className={`updates-aspect-row updates-aspect-row--personal${isBackgroundUpdate ? " updates-aspect-row--background" : ""}`}
         key={transit.id}
         onClick={detailAvailable ? openArticle : undefined}
       >
@@ -17743,19 +17786,28 @@ function ProfileView({
           <span className="updates-aspect-row__title">
             {title}
           </span>
-          <span className="updates-aspect-row__meta-line" aria-label={timing.label}>
-            <span>{timing.rangeLabel}</span>
+          <span className="updates-aspect-row__meta-line" aria-label={dateLabel}>
+            <span>{dateLabel}</span>
           </span>
           {rowSummary ? <span className="updates-aspect-row__description transit-card-preview">{rowSummary}</span> : null}
-              <CardReadMore />
+          {detailAvailable ? <CardReadMore /> : null}
         </span>
-        <span className="updates-aspect-row__meta" aria-label={`${timing.label}, ${transit.orb} orb`}>
+        <span className="updates-aspect-row__meta" aria-label={`${dateLabel}, ${orbLabel} orb at daily reference`}>
           <span className="updates-aspect-row__dot" aria-hidden="true" />
-          <span className="updates-aspect-row__orb">{wholeDegreeOrb(transitOrbValue(transit))}</span>
+          <span className="updates-aspect-row__orb">{orbLabel}</span>
         </span>
       </Row>
     );
   });
+  const personalArticleRevision = JSON.stringify([...personalAspectArticles]);
+  useEffect(() => {
+    const articles = new Map<string, YouTransitArticle>(JSON.parse(personalArticleRevision));
+    setTransitArticle(current => {
+      if (!current?.id.startsWith("personal-aspect:")) return current;
+      const next = articles.get(current.id) ?? null;
+      return JSON.stringify(current) === JSON.stringify(next) ? current : next;
+    });
+  }, [personalArticleRevision]);
   const dailyMoon = currentSky?.positions.find((position) => position.planet === "Moon") ?? null;
   const dailyMoonDriver = currentSky && natalSky
     ? dailyGlanceDriver(currentSky, natalSky, unknownBirthTime)
@@ -18243,6 +18295,7 @@ function ProfileView({
     specialSections: dailySpecialSections.slice(0, 2),
     ...readDailyReportSources(),
     prepareReportSources: async () => {
+      if (dailyPeakFacts.status !== "ready") throw new Error("Daily aspect timing is not ready. Wait for it to finish or retry the calculation before requesting a report.");
       const timeZone = currentSky?.location.timeZone || "UTC";
       const reference = exactDateFromInput(targetDate, timeZone);
       if (!reference) throw new Error("The report date could not be calculated.");
@@ -18259,7 +18312,7 @@ function ProfileView({
       targetDate,
       localNoon: true,
       headliner: dailyIsHeadliner,
-      areaCap: dailyIsHeadliner ? 3 : 4,
+      areaCap: 4,
       contentReviewFlags: dailySpecialSections.flatMap((section) => section.reviewFlags ?? []),
       qualifyingTransits: qualifyingDailyTransits.map((transit) => ({
         id: transit.id,
@@ -18408,7 +18461,12 @@ function ProfileView({
         profileName={profile.name}
         setupStepsLeft={setupStepsLeft}
         showNatalSignatures={showNatalSignatures}
-        aspectRows={updateAspectRows}
+        aspectRows={updateAspectRows.slice(0, dailyAspectGroups.length)}
+        backgroundAspectRows={updateAspectRows.slice(dailyAspectGroups.length)}
+        dailyAspectsLoading={dailyPeakFacts.status === "loading"}
+        dailyAspectsReady={dailyPeakFacts.status === "ready"}
+        dailyAspectsError={dailyPeakFacts.status === "error"}
+        onRetryDailyAspects={dailyPeakFacts.retry}
         signatureBody={signatureBody}
         signatureTitle={signatureTitle}
         signaturesReady={signaturesReady}

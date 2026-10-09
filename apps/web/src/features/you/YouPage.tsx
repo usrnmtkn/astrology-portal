@@ -113,6 +113,11 @@ export type YouPageProps = {
   accountRecovery?: YouAccountRecovery;
   onArticleNavigate?: (update: () => void) => void;
   aspectRows: ReactNode[];
+  backgroundAspectRows?: ReactNode[];
+  dailyAspectsLoading?: boolean;
+  dailyAspectsReady?: boolean;
+  dailyAspectsError?: boolean;
+  onRetryDailyAspects?: () => void;
   bigThreeRows: ReactNode[];
   dailyHoroscopeAssembly?: DailyHoroscopeAssembly | null;
   dailyUpdateSummary?: PersonalTimingSummary | null;
@@ -534,6 +539,11 @@ function YouUpdatesTab({
   accountId,
   accountRecovery,
   aspectRows,
+  backgroundAspectRows = [],
+  dailyAspectsLoading = false,
+  dailyAspectsReady = true,
+  dailyAspectsError = false,
+  onRetryDailyAspects,
   dailyHoroscopeAssembly,
   dailyUpdateSummary,
   weeklyHoroscopeAssembly,
@@ -551,6 +561,11 @@ function YouUpdatesTab({
   accountId: string | null | undefined;
   accountRecovery?: YouAccountRecovery;
   aspectRows: ReactNode[];
+  backgroundAspectRows?: ReactNode[];
+  dailyAspectsLoading?: boolean;
+  dailyAspectsReady?: boolean;
+  dailyAspectsError?: boolean;
+  onRetryDailyAspects?: () => void;
   dailyHoroscopeAssembly?: DailyHoroscopeAssembly | null;
   dailyUpdateSummary?: PersonalTimingSummary | null;
   weeklyHoroscopeAssembly?: WeeklyHoroscopeAssembly | null;
@@ -679,11 +694,29 @@ function YouUpdatesTab({
           <button type="button" onClick={onCreateChart}>Add current city →</button>
         </section>
       )}
+      {hasSavedCurrentCity && dailyAspectsLoading ? <PageLoading compact message="Calculating daily aspect peaks…" /> : null}
+      {hasSavedCurrentCity && dailyAspectsError ? (
+        <section className="you-empty-card" aria-label="Daily aspects unavailable">
+          <p>Daily aspect timing could not be calculated.</p>
+          <button type="button" onClick={onRetryDailyAspects}>Try again</button>
+        </section>
+      ) : null}
+      {hasSavedCurrentCity && !transitsLoading && !dailyAspectsLoading && dailyAspectsReady && !dailyAspectsError && aspectRows.length === 0 ? (
+        <p className="daily-horoscope-summary__secondary">No daily aspect highlights for {transitDateLabel}.</p>
+      ) : null}
       {hasSavedCurrentCity && aspectRows.length > 0 && (
         <div className="updates-aspect-list" aria-label="Areas of your life">
           {aspectRows}
         </div>
       )}
+      {hasSavedCurrentCity && backgroundAspectRows.length > 0 ? (
+        <>
+          <span className="eyebrow section-label">Long-term transits</span>
+          <div className="updates-aspect-list" aria-label="Long-term transits">
+            {backgroundAspectRows}
+          </div>
+        </>
+      ) : null}
       {hasSavedCurrentCity && standaloneTransitRows.length > 0 && (
         <>
           <span className="eyebrow section-label">House transits</span>
@@ -692,7 +725,7 @@ function YouUpdatesTab({
           </div>
         </>
       )}
-      {hasSavedCurrentCity && !transitsLoading && aspectRows.length === 0 && standaloneTransitRows.length === 0 && (
+      {hasSavedCurrentCity && !transitsLoading && !dailyAspectsLoading && dailyAspectsReady && !dailyAspectsError && aspectRows.length === 0 && backgroundAspectRows.length === 0 && standaloneTransitRows.length === 0 && (
         <section className="you-empty-card" aria-label="Transit setup">
           <span>Updates</span>
           <h3>No major updates are active for {transitDateLabel}.</h3>
@@ -967,7 +1000,9 @@ function YouTransitArticlePage({
       const sourceTag = contentSourceQaTag(section.sourceTag) || contentSourceQaTag(section.tldr);
       const bodyParagraphs = articleParagraphs(section.body)
         .filter((paragraph, paragraphIndex) => !(paragraphIndex === 0 && sourceTag && paragraph === sourceTag))
-        .filter((paragraph) => !isDuplicateArticleCopy(paragraph, seenCopy));
+        // Axis cards retain both complete source units, even when an authored
+        // paragraph occurs in each. Deduplication must not edit either unit.
+        .filter((paragraph) => displayArticle.id.startsWith("personal-aspect:") || !isDuplicateArticleCopy(paragraph, seenCopy));
       const displayTldr = tldr && !contentSourceQaTag(section.tldr) && !isDuplicateArticleCopy(tldr, seenCopy) ? tldr : "";
 
       return {
@@ -1010,7 +1045,10 @@ function YouTransitArticlePage({
     sections: aspectSections.filter((section) => section.group === group.id)
   })).filter((group) => group.sections.length > 0);
   const hasReadableBody = Boolean(displaySummary || displayIntroParagraphs.length || sections.length);
-  const passKeyDates = displayArticle.meta.filter((row) => /^Pass \d+$/u.test(row.label) && cleanArticleText(row.value));
+  const passKeyDates = displayArticle.meta.filter((row) => (
+    /^Pass \d+$/u.test(row.label)
+    || displayArticle.id.startsWith("personal-aspect:") && ["Current contact", "Full transit series"].includes(row.label)
+  ) && cleanArticleText(row.value));
   const eyebrowLabel = articleEyebrowLabel(displayArticle.title, displayArticle.meta);
   const eyebrowGlyphs = articleEyebrowGlyphs(displayArticle);
   const headerDateRange = cleanArticleText(
@@ -1183,6 +1221,11 @@ export function YouPage({
   accountId,
   accountRecovery,
   aspectRows,
+  backgroundAspectRows = [],
+  dailyAspectsLoading = false,
+  dailyAspectsReady = true,
+  dailyAspectsError = false,
+  onRetryDailyAspects,
   bigThreeRows,
   dailyHoroscopeAssembly,
   dailyUpdateSummary,
@@ -1377,6 +1420,11 @@ export function YouPage({
               accountId={accountId}
               accountRecovery={accountRecovery}
               aspectRows={aspectRows}
+              backgroundAspectRows={backgroundAspectRows}
+              dailyAspectsLoading={dailyAspectsLoading}
+              dailyAspectsReady={dailyAspectsReady}
+              dailyAspectsError={dailyAspectsError}
+              onRetryDailyAspects={onRetryDailyAspects}
               dailyHoroscopeAssembly={dailyHoroscopeAssembly}
               dailyUpdateSummary={dailyUpdateSummary}
               weeklyHoroscopeAssembly={weeklyHoroscopeAssembly}

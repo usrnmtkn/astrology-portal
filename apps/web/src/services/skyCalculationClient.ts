@@ -175,6 +175,15 @@ export function natalTransitTimingForOffMainThread(
   return requestCalculation({ kind: "natal-transit-timing", args });
 }
 
+export function natalDailyTransitPeaksForOffMainThread(
+  ...args: Parameters<typeof import("./ephemeris.js").natalDailyTransitPeaksFor>
+): ReturnType<typeof import("./ephemeris.js").natalDailyTransitPeaksFor> {
+  if (typeof Worker === "undefined") {
+    return loadEphemerisForNonBrowserRuntime().then(({ natalDailyTransitPeaksFor }) => natalDailyTransitPeaksFor(...args));
+  }
+  return requestCalculation({ kind: "natal-daily-peaks", args });
+}
+
 export function preloadSwissEphemerisOffMainThread(): Promise<void> {
   if (typeof Worker === "undefined") {
     return loadEphemerisForNonBrowserRuntime().then(({ preloadSwissEphemeris }) => (

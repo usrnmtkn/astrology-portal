@@ -1,3 +1,4 @@
+import { transitAspectDefinitions } from "../astrologyConfig.ts";
 import type { ManualChart } from "./manualCharts";
 import type { InterChartAspectLine } from "../components/charts/Wheels";
 import type { PlanetPosition, SkySnapshot } from "../types";
@@ -49,13 +50,7 @@ export const zodiacSignGlyphs: Record<string, string> = {
   Pisces: "♓"
 };
 
-export const transitAspectDefinitions = [
-  { type: "conjunction", exact: 0, orb: 4 },
-  { type: "sextile", exact: 60, orb: 3 },
-  { type: "square", exact: 90, orb: 4 },
-  { type: "trine", exact: 120, orb: 4 },
-  { type: "opposition", exact: 180, orb: 4 }
-] as const;
+export { transitAspectDefinitions } from "../astrologyConfig.ts";
 
 const signElementMap: Record<string, "Fire" | "Earth" | "Air" | "Water"> = {
   Aries: "Fire",

@@ -85,3 +85,11 @@ export function transitToNatalOrbLimit(body: string, direction?: string) {
 
   return cutoff.default ?? Math.max(cutoff.applying ?? 0, cutoff.separating ?? 0);
 }
+
+export const transitAspectDefinitions = [
+  { type: "conjunction", exact: 0, orb: 4 },
+  { type: "sextile", exact: 60, orb: 3 },
+  { type: "square", exact: 90, orb: 4 },
+  { type: "trine", exact: 120, orb: 4 },
+  { type: "opposition", exact: 180, orb: 4 }
+] as const;

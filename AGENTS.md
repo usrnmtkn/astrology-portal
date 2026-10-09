@@ -352,6 +352,43 @@ or alternate aspect-card classes without explicit product approval.
   that checks more than one date against a direct ephemeris calculation. Mocks
   and fallback engines must be explicit and confined to tests or development.
 
+### Personal daily aspect peaks
+
+The You daily aspect list follows calculated peaks for the selected local day.
+Search the entire civil day (including 23/25-hour DST dates), not only the noon
+snapshot. Rank exact contacts that day first, then applying contacts within 1°,
+then separating contacts still within 1° whose last exact contact was within
+the previous two local dates. Show up to four distinct events; do not fill empty
+daily slots with wide or old separating transits. Each retrograde exact pass is
+a separate dated peak. A later return must not relabel a separating contact as
+applying, and entering orb does not guarantee an exact contact.
+
+Group equivalent contacts to opposite ends of the Ascendant/Descendant,
+MC/IC and nodal axes into one card/slot. Preserve each available complete source
+unit in its detail; do not splice their prose together. Wider slow contacts
+remain separate long-term context, capped at four grouped cards.
+
+Daily card metadata shows the verified exact date and applying/separating phase
+where applicable. Display orbs in degrees and minutes (or <1′), never a rounded
+whole-degree zero that implies exactness. Long-term cards show the current
+continuous contact; full multi-pass series ranges and exact passes belong in
+detail. No broad series span, search horizon or speed extrapolation establishes
+daily prominence or a verified exact date. Keep date-slotted prose behind its
+calculated timing and preserve source wording. Missing calculations require an
+honest loading/error state and retry, not a fabricated date or empty-day claim.
+
+Keep full-day contacts in report evidence even when they fall outside the noon
+orb: use the verified event as the contact reference and retain the selected
+day's reference separately. Block report submission while daily facts are not
+ready. Prose source ownership and paid-generation rules are unchanged. This
+policy is scoped to You's daily aspect cards; Sky, Calendar, weekly readings,
+the Moon daily summary and Friends keep their own selection contracts.
+
+Owner requested this update and durable rule on 2026-10-09 in
+`thread:01a120fd-4144-7933-ab58-e9a5a2a762e9`. The 1° gate, two-date separating
+limit and four-card caps are explicit implementation parameters. See
+`docs/qa/personal-daily-aspect-peaks.md` for verification and limitations.
+
 ### Cross-surface event dates and placement windows
 
 When changing placement or event timing, audit every consumer of the changed

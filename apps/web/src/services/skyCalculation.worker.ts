@@ -9,6 +9,7 @@ import {
   getLunarCalendarWeek,
   getMatchingNewMoonForFullMoon,
   natalTransitTimingFor,
+  natalDailyTransitPeaksFor,
   preloadSwissEphemeris
 } from "./ephemeris.js";
 
@@ -25,6 +26,7 @@ type SkyCalculationRequest =
   | { id: number; kind: "lunar-calendar-week"; args: Parameters<typeof getLunarCalendarWeek> }
   | { id: number; kind: "matching-new-moon"; args: Parameters<typeof getMatchingNewMoonForFullMoon> }
   | { id: number; kind: "natal-transit-timing"; args: Parameters<typeof natalTransitTimingFor> }
+  | { id: number; kind: "natal-daily-peaks"; args: Parameters<typeof natalDailyTransitPeaksFor> }
   | { id: number; kind: "placement-sky"; includeAspectLists?: boolean; location: LocationInput; planet: string; sign: string; date: string }
   | { id: number; kind: "placement-transit-facts"; planet: string; sign: string; date: string; timeZone: string }
   | { id: number; kind: "preload" };
@@ -56,6 +58,8 @@ async function calculate(request: SkyCalculationRequest) {
       return getMatchingNewMoonForFullMoon(...request.args);
     case "natal-transit-timing":
       return natalTransitTimingFor(...request.args);
+    case "natal-daily-peaks":
+      return natalDailyTransitPeaksFor(...request.args);
     case "preload":
       await preloadSwissEphemeris();
       return null;

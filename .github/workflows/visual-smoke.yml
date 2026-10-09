@@ -420,6 +420,9 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run build:knowledge
+      - name: Verify personal daily peak calculations
+        if: matrix.shard == 1
+        run: npm run test:transit-pass-engine
       - run: npx playwright install --with-deps chromium
       - name: Run Calendar, learning, and date consistency screens
         run: >-
@@ -440,6 +443,7 @@ jobs:
           tests/visual/sky-placement-visit-timeline.spec.ts
           tests/visual/swisseph-web-data-parity.spec.ts
           tests/visual/you-loading-performance.spec.ts
+          tests/visual/personal-daily-aspects.spec.ts
           tests/visual/friends-authenticated-loading-diagnostic.spec.ts
           tests/visual/body-paragraph-type.spec.ts
       - name: Upload reader surface artifacts
