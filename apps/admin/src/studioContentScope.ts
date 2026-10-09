@@ -7,19 +7,19 @@ import { STUDIO_SKY_WRITEUP_PREFIXES, STUDIO_TEMPLATE_PREFIXES, STUDIO_VOCABULAR
 const templateMetadata = [
   ...["lunar", "lunation", "moon-phase", "moon-sign", "eclipse", "new-moon", "full-moon", "cms/calendar-day"].map(part => `content_key.like.*${part}*`),
   "block_type.eq.template", "block_type.eq.fallback_template",
-  "source_snapshot->>content_role.eq.template", "sections->packageRecord->>content_role.eq.template"
+  "studio_facts->source->>content_role.eq.template", "studio_facts->packageRecord->>content_role.eq.template"
 ];
 const fallbackMetadata = [
   "block_type.eq.fallback_template", "block_type.eq.fallback_hook", "prompt_version.eq.fallback-hook-template-v1",
   ...["contentRole", "content_role", "sourceRole", "source_role", "role", "contentType", "content_type", "type"]
-    .flatMap(field => ["fallback-hook", "fallback_hook", "template"].map(role => `source_snapshot->>${field}.ilike.${role}`)),
-  ...["fallback-hook", "fallback_hook", "template"].map(role => `sections->packageRecord->>content_role.ilike.${role}`)
+    .flatMap(field => ["fallback-hook", "fallback_hook", "template"].map(role => `studio_facts->source->>${field}.ilike.${role}`)),
+  ...["fallback-hook", "fallback_hook", "template"].map(role => `studio_facts->packageRecord->>content_role.ilike.${role}`)
 ];
 const vocabularyMetadata = [
   "block_type.eq.vocabulary_phrase", "event_type.eq.vocab", "prompt_version.eq.vocab-v1", "prompt_version.eq.tagline-v1",
   ...["contentRole", "content_role", "sourceRole", "source_role", "role", "contentType", "content_type", "type", "bucket", "targetContentFamily"]
-    .flatMap(field => ["vocab", "vocabulary"].map(role => `source_snapshot->>${field}.ilike.${role}`)),
-  "sections->packageRecord->>content_role.ilike.vocabulary"
+    .flatMap(field => ["vocab", "vocabulary"].map(role => `studio_facts->source->>${field}.ilike.${role}`)),
+  "studio_facts->packageRecord->>content_role.ilike.vocabulary"
 ];
 function metadataOutsidePrefixes(conditions: readonly string[], prefixes: readonly string[]) {
   return `(and(or(${[...new Set(conditions)].join(",")}),${[...new Set(prefixes)].map(prefix => `content_key.not.like.${prefix}*`).join(",")}))`;

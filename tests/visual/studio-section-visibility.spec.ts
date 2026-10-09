@@ -73,9 +73,15 @@ for(const section of sections) test(`Direct section entry includes saved ingredi
   const store=await setup(page);
   try {
     await page.goto(`/admin/content#${section.hash}`);
-    for(const key of section.keys) await expect(page.getByText(key,{exact:true}).first()).toBeVisible();
+    for(const key of section.keys) {
+      if(section.hash==='templates') await page.getByRole('textbox',{name:'Search templates',exact:true}).fill(key);
+      await expect(page.getByText(key,{exact:true}).first()).toBeVisible();
+    }
     await page.reload();
-    for(const key of section.keys) await expect(page.getByText(key,{exact:true}).first()).toBeVisible();
+    for(const key of section.keys) {
+      if(section.hash==='templates') await page.getByRole('textbox',{name:'Search templates',exact:true}).fill(key);
+      await expect(page.getByText(key,{exact:true}).first()).toBeVisible();
+    }
     expect(await store.call({method:'rows'})).toEqual(sectionFixtures);
   }finally{await page.unrouteAll({behavior:'ignoreErrors'});await page.context().unrouteAll({behavior:'ignoreErrors'});await page.close();store.close();}
 });
