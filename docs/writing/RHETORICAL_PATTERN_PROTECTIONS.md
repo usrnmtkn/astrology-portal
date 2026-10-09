@@ -53,3 +53,47 @@ A material finding or unusable review keeps the exact original candidate and rec
 The older fulfillment-report judge and inactive Ask judge now require the same complete rhetorical receipt; perfect numerical scores cannot override a material finding. Missing or unsupported evidence cannot pass. The inactive Ask runtime remains inactive. Cold report review remains isolated. The legacy Claude Sky writer receives the policy, and the Sky instruction no longer demands exactly three examples. Historical example wording remains unchanged. Blanket not/but and not/instead rejection heuristics are removed; contextual review handles performative correction.
 
 These changes verify dispatch, evidence integrity and recovery, not the model's literary discrimination. No paid calibration or owner-content regeneration is part of deployment. Existing saved profiles and reader copy are unchanged.
+
+## Avoid AI writing patterns — October 9 owner amendment
+
+Authority: the owner's explicit request to add “Editorial Rule: Avoid AI Writing Patterns” to the writing engine on October 9, 2026. The complete attachment, including its repeated explanations, is preserved privately with SHA-256 `9ae3a2cb50479eb6d73c53f880ac68251e78c597483a9fc169af45692e376029`. This section records the operational rule; it is not reader prose or a positive voice exemplar. It extends the October 6 policy for all generated surfaces that share that policy, without changing existing approved writing or saved voice profiles.
+
+Write with clarity, specificity and emotional precision. The reader should recognize an experience, not have to decipher the language describing it. Artificial self-correction, decorative triples and ornate imagery remain subject to their precision, removal and plain-language tests. Each necessary element of a three-part construction may remain.
+
+### Atmosphere and stock language
+
+Review phrase families rather than isolated words or only exact matches:
+
+- quiet tension, resentment, frustration, confidence, knowing or power;
+- subtle shift, reminder, tension or undercurrent;
+- gentle reminder, invitation, nudge or unfolding;
+- soft power, resistance or landing, and softening into;
+- unspoken expectations, tension or agreement;
+- uncomfortable truth, realization or awareness;
+- deeper truth, understanding, connection or knowing;
+- inner landscape, knowing, truth or compass; and
+- emotional weight, the weight of expectations or what remains unsaid.
+
+Identify the behavior causing resentment or the expectation and its effect. The surrounding paragraph may already supply that meaning; do not repeat it merely to explain the adjective. A quiet morning, quiet house or someone becoming quiet during an argument can describe literal information.
+
+Inspect vague change and revelation (something shifting, stirring, changing or coming to the surface; what is ready to emerge; a deeper truth revealed); generic emotional instructions (hold or create space, give yourself permission, allow yourself to, it's okay to, honor your needs, lean into discomfort, embrace the unknown); abstract movement (navigate this energy, move through this season, step into your power, find alignment); manufactured profundity (the truth is, here's the thing, at its core, what matters most); and spiritualized conclusions (trust the process, honor your journey). Replace language that contributes no specific meaning with the actual circumstances, behavior, decisions and consequences.
+
+### Planetary personification
+
+“The Moon asks,” “Saturn reminds,” “Venus invites,” “Mercury encourages” and “the cosmos wants” cannot replace interpretation. Explain the astrology through recognizable experience. Planetary personification may remain when it adds genuine narrative meaning and the passage explains the astrological influence. Do not apply a blanket planet-plus-verb ban.
+
+### Two flag levels and revision
+
+**HARD FLAG — REWRITE** requires a complete-passage semantic finding: a stock spiritual or psychological expression contributes no specific meaning; generic personification replaces explanation; a decorative tricolon contains redundant elements; a reversal manufactures emphasis without a necessary distinction; or an abstract metaphor obscures the subject.
+
+**REVIEW FLAG — CHECK CONTEXT** applies to atmospheric adjectives, abstract terms such as energy, truth, space, weight, shift and transformation, potentially useful figurative language, triples with necessary distinct information, and emotional descriptions whose behavior may be explained elsewhere. Never reject solely because a word or phrase appears. The lexical helper returns advisory review signals only. No lexical hit establishes a hard flag, and no absence of hits establishes a pass.
+
+Revision examines the situation, behavior, consequence and insight. Do not force all four into every sentence. Do not invent errands, forms or appointments to simulate specificity or add a sentence explaining what the example already showed. Preserve natural rhythm, emotional complexity and the writer's individual voice. Do not replace poetic clichés with clinical explanations or repetitive formulas. The owner's final rule is: “Specificity creates emotional depth. Decorative language cannot substitute for it.”
+
+### Runtime, saved requests and verification
+
+The shared writer and independent judge receive the same context-sensitive standard. The existing three-label receipt remains compatible: `CORRECTIO` diagnoses artificial reversals, `TRICOLON` diagnoses redundant triples, and `PURPLE_PROSE` also diagnoses atmosphere, stock language and planetary personification when they substitute for observation. Keep overlapping `GENERIC_ADVICE` or `GENERIC_ASTROLOGY` diagnoses where appropriate; those related labels alone do not become new blockers. Each hard finding still needs exact reader wording, its complete paragraph, a material consequence and a contextual test identifying the missing meaning. A review signal alone is not a failed check. Existing bounded regeneration and horoscope hold behavior remain as documented above; this amendment adds no calls or publication authority.
+
+New plans use `rhetorical-patterns/v2-2026-10-09`. Already saved October 6 horoscope prose stages and reviews retain their frozen instructions and receipt schema; already running writers with that review contract still receive their originally authorized review. Neither deployment nor polling silently upgrades, skips or repeats that paid stage. The generated CommonJS instruction artifact must be rebuilt alongside the shared module.
+
+`tests/astro-writing/fixtures/ai-writing-patterns.mjs` separates exact owner-supplied examples from synthetic contextual controls across nine surface sets. It covers empty atmosphere, vague revelation, stock advice, personification, unlisted decoration, literal language and context that earns a potentially flagged phrase. Hidden-label calibration retains false acceptance, false rejection and invalid-evaluation accounting. Provider-bound request and actual-handler tests use injected responses, including saved-review recovery. These tests prove rule delivery, evidence handling and routing; they do not establish improved writing or a calibrated model judge. No paid generation, private corpus transfer or rewrite of existing content is part of this rule addition.

@@ -9,9 +9,9 @@ import { RHETORICAL_WRITER_POLICY, RHETORICAL_JUDGE_POLICY } from './rhetoricalP
 
 export const HOROSCOPE_EDITORIAL_AUTHORITY = 'HOROSCOPE EDITORIAL AUTHORITY: For this horoscope, the saved Content Studio Voice and Structure instructions and complete primary owner readings govern cadence, opening, paragraph movement and ending over general long-form style preferences. Short sentences, fragments, questions, lists, commands and early astrology are available when they serve the thought; none is a compulsory pattern or a blanket voice failure. Do not impose a medium/long-sentence quota, a natal adaptation narrative, a fixed transit-definition-examples-advice sequence, or a compulsory advice ending. The shared factual boundaries, source integrity, declared register, output schema and exact owner publication approval still apply. Historical owner writing is prose evidence, never current astrology or personal biography. This call drafts one reading for its declared audience; complete-edition comparison is an owner review.' + '\n\n' + RHETORICAL_WRITER_POLICY;
 
-export const CANONICAL_WRITING_INSTRUCTIONS_VERSION = "tldr-astro-writing-v8-rhetorical-patterns-2026-10-06";
+export const CANONICAL_WRITING_INSTRUCTIONS_VERSION = "tldr-astro-writing-v9-ai-patterns-2026-10-09";
 export const CARD_WRITING_INSTRUCTIONS_VERSION = "tldr-astro-card-writing-v3-owner-standard-candidate-2026-08-09";
-export const CANONICAL_REVIEWER_INSTRUCTIONS_VERSION = "tldr-astro-editorial-gate-v5-rhetorical-patterns-2026-10-06";
+export const CANONICAL_REVIEWER_INSTRUCTIONS_VERSION = "tldr-astro-editorial-gate-v6-ai-patterns-2026-10-09";
 
 export const COLD_RENDERED_PROSE_RULE = `Read the copy cold, rendered, and line by line as prose. Judge the final text exactly as a
 reader would encounter it in the product. Do not use the prompt, source notes, astrology

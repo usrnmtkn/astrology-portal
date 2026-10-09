@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "authorityIndex": "tldr-astro-phrasebank/TLDR-WRITING-AUTHORITY-INDEX.md",
   "sources": [
-    {"path": "docs/writing/RHETORICAL_PATTERN_PROTECTIONS.md", "kind": "rule", "role": "October 6 scoped owner amendment: material rhetorical blockers, meaningful contrast and source preservation"},
+    {"path": "docs/writing/RHETORICAL_PATTERN_PROTECTIONS.md", "kind": "rule", "role": "October 6 and 9 owner amendments: contextual AI-pattern blockers, review-only lexical signals and source preservation"},
     { "path": "AGENTS.md", "kind": "rule", "role": "Project instructions" },
     { "path": "skills/tldr-astro-writer/SKILL.md", "kind": "rule", "role": "Writing guidance" },
     { "path": ".agents/skills/satori-writer/SKILL.md", "kind": "rule", "role": "Writing guidance" },

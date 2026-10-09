@@ -13,7 +13,7 @@ import {horoscopePunctuationFindings} from '../../src/astro-writing/horoscopeEdi
 import {assertHoroscopeRow} from './horoscope-editions.js';
 import {AdminHttpError} from './admin-http.js';
 import {HoroscopeProviderFailure,readHoroscopeProviderResult} from './horoscope-provider-result.js';
-import {HOROSCOPE_RHETORICAL_REVIEW} from '../../src/astro-writing/horoscopeRhetoricalReview.mjs';
+import {HOROSCOPE_RHETORICAL_REVIEW,supportedHoroscopeReview} from '../../src/astro-writing/horoscopeRhetoricalReview.mjs';
 import {queueHoroscopeReview} from './horoscope-rhetorical-operation.js';
 
 const hash=(value:any)=>createHash('sha256').update(horoscopeCanonicalJson(value)).digest('hex');
@@ -50,7 +50,7 @@ export async function monthlyHoroscopeOperation({action,row:initialRow,persist,p
       row=await persist({source_snapshot:{...row.source_snapshot,horoscopeGeneration:{...generation,active:null,lastError:failure,failures:[...(generation.failures??[]),failure]}}});
       return {status:422,payload:{ok:false,error:failure.message,rows:[row]}};
     }
-    if(operation.reviewVersion===HOROSCOPE_RHETORICAL_REVIEW)return queueHoroscopeReview({row,persist,operation,candidate:value,receipt});
+    if(supportedHoroscopeReview(operation.reviewVersion))return queueHoroscopeReview({row,persist,operation,candidate:value,receipt});
     const edition={...row.sections.horoscopeEdition,passages:row.sections.horoscopeEdition.passages.map((p:any)=>p.sign==='overview'?{...p,...value}:p)};
     const patch={status:'DRAFT',sections:{...row.sections,horoscopeEdition:edition},body:horoscopeEditionBody(edition),source_snapshot:{...row.source_snapshot,horoscopeGeneration:{...row.source_snapshot.horoscopeGeneration,active:null,lastError:null,readings:{...row.source_snapshot.horoscopeGeneration.readings,overview:receipt}}}};
     assertHoroscopeRow({...row,...patch});row=await persist(patch);
