@@ -397,10 +397,9 @@ try{
    assert.equal(reserved.responseId,geminiRequestId(reserved.id,reserved.requestHash),'Receipt exists BEFORE paid dispatch');preDispatchReceipts++;
   }
   const response=await baseLargeFetch(input,options);
-  if(location.endsWith('/rpc/checkpoint_weekly_horoscope')){
+  if(location.endsWith('/rpc/checkpoint_weekly_horoscope')||location.endsWith('/rpc/checkpoint_weekly_provider_result')){
    checkpoints++;assert((await response.clone().text()).length<200);
-   const changes=JSON.parse(options.body).p_changes;
-   if(!lostNativeResult&&changes.some((c:any)=>c.path.at(-1)==='providerResult')){
+   if(!lostNativeResult&&location.endsWith('/rpc/checkpoint_weekly_provider_result')){
     lostNativeResult=true;Object.defineProperty(response,'json',{value:async()=>{throw new DOMException('Synthetic native result lost acknowledgement','AbortError');}});
    }
   }
@@ -417,6 +416,29 @@ assert.equal(writerFixture.calls,writersBeforeLarge+12);assert.equal(writerFixtu
 assert.equal(latest(largeId).source_snapshot.syntheticRetainedHistory,large.source_snapshot.syntheticRetainedHistory);
 assert.equal(latest(largeId).status,'DRAFT');
 console.log(`Large-history 12-sign run passed: ${checkpoints} compact saves, largest upload ${maxCheckpointBytes} bytes, no paid retries.`);
+
+// The completed provider response must be saved even when downloading the
+// full edition is unavailable. A lost ACK is recovered by the same idempotent
+// result request, without fetching history or dispatching a model.
+const nativeRow=latest(largeId),nativeOperation={id:'native-read-outage',requestHash:'native-hash',responseId:'gemini_native_test',state:'running',config:{provider:'gemini'}};
+nativeRow.source_snapshot.horoscopeGeneration.active=nativeOperation;store.rows.set(largeId,nativeRow);
+const nativePayload={id:nativeOperation.responseId,status:'completed',output:[]};
+const nativeBase=globalThis.fetch;let nativeRequests=0;
+try{
+ globalThis.fetch=async(input:any,options:any={})=>{
+  assert(String(input).endsWith('/rpc/checkpoint_weekly_provider_result'),'Result capture must not download history');nativeRequests++;
+  const response=await nativeBase(input,options);
+  if(nativeRequests===1)throw new DOMException('Synthetic committed ACK lost','AbortError');
+  return response;
+ };
+ const context={weekly:true,provider:'gemini',editionId:largeId,operationId:nativeOperation.id,requestHash:nativeOperation.requestHash};
+ await assert.rejects(saveHoroscopeStreamResult(context,nativePayload));
+ const version=latest(largeId).updated_at;
+ await saveHoroscopeStreamResult(context,nativePayload);
+ assert.equal(latest(largeId).updated_at,version,'Duplicate receipt does not write again');
+ assert.deepEqual(latest(largeId).source_snapshot.horoscopeGeneration.active.providerResult,nativePayload);
+ assert.equal(nativeRequests,2);assert.equal(writerFixture.calls,writersBeforeLarge+12);
+}finally{globalThis.fetch=nativeBase;}
 
 // A lost response after retiring an expired legacy start must continue other
 // signs, but cannot authorize replay of that sign or absorb unrelated edits.

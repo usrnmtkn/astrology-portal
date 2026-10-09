@@ -21,6 +21,17 @@ const failed=(id:string,code:string)=>({id,status:'failed',error:{code},output:[
  * rejection, another stage, a replacement request, or an owner's newer prose. */
 export async function saveHoroscopeStreamResult(context:any,payload:any) {
   const provider=context.provider??'anthropic';
+  if(context.weekly){
+    const {url,headers}=studioStorage();
+    const remaining=context.deadline?context.deadline-Date.now()-1000:horoscopeStorageTimeoutMs;
+    if(remaining<=0)throw new Error('provider_checkpoint_deadline');
+    const saved=await adminFetchJson(url.replace(/generated_interpretations$/u,'rpc/checkpoint_weekly_provider_result'),{
+      method:'POST',headers,body:JSON.stringify({p_id:context.editionId,p_operation_id:context.operationId,
+        p_request_hash:context.requestHash,p_provider:provider,p_response_id:payload.id,p_result:payload})
+    },Math.min(horoscopeStorageTimeoutMs,remaining));
+    if(!saved.ok||!['saved','already_saved','obsolete'].includes(saved.payload as string))throw new AdminHttpError(502,'Provider result checkpoint was not confirmed.');
+    return;
+  }
   for(let attempt=0;attempt<3;attempt++){
     // Stop retrying before the invocation is terminated. Weekly storage also
     // bounds each read and write by this same invocation deadline.
@@ -83,8 +94,11 @@ export async function startHoroscopeResponse({config,role,request,instructions,c
         payload=await (gemini?readGeminiStream:readClaudeStream)(response,id);
       }catch{payload=failed(id,gemini?'gemini_connection_interrupted':'claude_connection_interrupted');}
       // Storage retries cannot incur another provider charge.
-      for(let attempt=0;attempt<3;attempt++)try{await saveHoroscopeStreamResult(checkpointContext,payload);return;}catch{}
-      console.error('horoscope_result_checkpoint_failed',{operationId:context.operationId,provider:config.provider});
+      let storageFailure:any;
+      for(let attempt=0;attempt<3;attempt++)try{await saveHoroscopeStreamResult(checkpointContext,payload);return;}catch(error){storageFailure=error;}
+      console.error('horoscope_result_checkpoint_failed',{operationId:context.operationId,provider:config.provider,
+        status:storageFailure instanceof AdminHttpError?storageFailure.statusCode:null,
+        deadlineExpired:Date.now()>=checkpointContext.deadline});
     })();
     background(work);
     return {response:jsonResponse({},202),payload:{id,status:'in_progress'}};

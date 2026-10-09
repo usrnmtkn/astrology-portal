@@ -52,6 +52,15 @@ globalThis.fetch = async (input: any, options: any = {}) => {
      : Response.json({message:'Invalid JWT'},{status:401});
  }
  if (url.origin !== 'https://calendar-api.invalid') throw new Error('Fixture refuses external storage');
+ if(url.pathname==='/rest/v1/rpc/checkpoint_weekly_provider_result'){
+  const input=JSON.parse(options.body),row=store.rows.get(input.p_id),active=row?.source_snapshot?.horoscopeGeneration?.active;
+  if(!row||row.status!=='DRAFT'||row.sections?.horoscopeEdition?.window?.period!=='weekly'
+   ||active?.id!==input.p_operation_id||active?.requestHash!==input.p_request_hash||active?.config?.provider!==input.p_provider
+   ||active?.responseId!==input.p_response_id||active?.state!=='running')return Response.json('obsolete');
+  if(active.providerResult)return Response.json('already_saved');
+  const next=structuredClone(row);next.source_snapshot.horoscopeGeneration.active.providerResult=input.p_result;next.updated_at=nextVersion();
+  store.rows.set(row.id,storageOrder(next));return Response.json('saved');
+ }
  if(url.pathname==='/rest/v1/rpc/checkpoint_weekly_horoscope'){
   const input=JSON.parse(options.body),row=store.rows.get(input.p_id);
   if(!row||row.updated_at!==input.p_expected_updated_at||row.status!=='DRAFT'||row.sections?.horoscopeEdition?.window?.period!=='weekly')return Response.json([]);
