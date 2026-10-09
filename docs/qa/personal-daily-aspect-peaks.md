@@ -116,6 +116,25 @@ files. The aggregate allowance increases by 3,500 bytes to 3,557,250, leaving
 limits are unchanged; `qa:bundle` passes. Dependency versions and source prose remain unchanged. Exact measurements are retained in
 `test-results/daily-peaks-bundle-comparison.json`.
 
+Integration on main `57d503a62e68e7a400946b67544633d34681f86a` repeats
+those matched independent installs and builds. Current main measures 3,555,179
+aggregate gzip bytes, already 1,429 above its unchanged limit; the integrated
+feature measures 3,558,253 (+3,074) across the same 224 JavaScript files. The
+combined ceiling is 3,558,750: the original 3,500-byte feature allocation plus
+1,500 bytes for the measured existing main growth, leaving 497 bytes. Startup,
+individual chunk, CSS, lazy-loading and runtime limits remain unchanged. All
+six fresh-build browser cases and the public asset privacy scan pass on this
+integrated source revision. Final exact-head CI results belong to the PR.
+
+After the Calendar release lands at main
+`5a224d011f418206dff2dc9a7233a71c6e2dca61`, matched independent builds measure
+3,558,418 aggregate gzip bytes on main and 3,561,634 on the integrated feature
+(+3,216), both across 225 files. Main is already 4,668 bytes over its unchanged
+aggregate cap. Reconcile that inherited growth with a 5,000-byte allowance plus
+the original 3,500-byte feature allocation: 3,562,250 combined, with 616 bytes
+headroom. All other caps remain unchanged. This supersedes the preceding
+integration ceiling without increasing this feature's allocation.
+
 ## Release request
 
 The owner requested “please merge and push live” in the same task on October 9.
