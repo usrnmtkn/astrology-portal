@@ -5801,7 +5801,9 @@ export function GeneratedContentAdminDashboard() {
       throw new Error(`Could not load the full content document for ${row.content_key}.`);
     }
     signal?.throwIfAborted();
-    setRows((current) => mergeContentInventory(current.filter((candidate) => candidate.id !== row.id || row.id === hydrated.id), [hydrated]));
+    setRows((current) => row.id === hydrated.id
+      ? mergeContentDocuments(current, [hydrated])
+      : mergeContentInventory(current.filter((candidate) => candidate.id !== row.id), [hydrated]));
     return hydrated;
   }
 
@@ -8207,7 +8209,7 @@ export function GeneratedContentAdminDashboard() {
                 pageSize={compositeReviewPageSize}
                 resetKey={`${compositeRows.length}:${compositeRows[0]?.id ?? ""}:${compositeRows.at(-1)?.id ?? ""}`}
               >
-                {(visibleCompositeRows) => <Suspense fallback={<PageLoading label="Loading saved writing" />}>{visibleCompositeRows.map((row) => (
+                {(visibleCompositeRows) => <Suspense fallback={<PageLoading message="Loading saved writing" />}>{visibleCompositeRows.map((row) => (
                 <CompositeReviewCard key={row.id} row={row} title={rowTitle(row)}
                   status={`${contentStatusLabel(row.status)} / ${tierForRow(row)}`}
                   onLoad={(item, signal) => hydrateGeneratedContentRow(item, false, false, signal)}

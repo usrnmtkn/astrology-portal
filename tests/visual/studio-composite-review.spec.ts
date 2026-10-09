@@ -39,6 +39,8 @@ for (const theme of ['light', 'dark']) for (const width of [1440, 390]) {
       await expect(card).toContainText('Final shared fixture sentence.');
       await expect(card).toContainText('Friendship fixture opening.');
       await expect(card).toContainText('Final friendship fixture sentence.');
+      await expect(card.locator('.admin-variable-source-prose').first()).toHaveCSS('white-space', 'pre-wrap');
+      await expect(card.locator('.admin-dependency-map-grid > article').first()).toHaveCSS('display', 'grid');
       await card.getByRole('button', { name: 'Edit', exact: true }).click();
       await expect(page.getByRole('textbox', { name: 'Full passage / body', exact: true })).toHaveValue(row.body);
       await page.reload();
@@ -73,5 +75,34 @@ test('a displayed saved revision cannot borrow the package Live badge', async ({
     await expect(page.getByLabel('Saved revision', { exact: true })).toHaveText('Draft');
     await expect(page.getByLabel('Package baseline', { exact: true })).toHaveText('Live');
     expect(requested).toContain(row.id);
+  } finally { store.close(); }
+});
+
+test('loading composite documents preserves inventory order and the selected page', async ({ page }) => {
+  const rows = Array.from({ length: 12 }, (_, index) => ({ id: `composite-page-${index}`, content_key: `composite.fixture-${index}`, surface: 'composite', mode: 'feed', status: 'DRAFT', lane: 'serving', review_state: null, headline: `Composite page fixture ${index}`, body: `Complete fixture ${index}. Final sentence ${index}.`, sections: {}, source_snapshot: {}, updated_at: '2026-10-09T12:00:00Z' }));
+  const store = await createApiStore(rows);
+  await page.addInitScript(() => localStorage.setItem('tldrastro:contentAdminSecret', 'calendar-api-fixture'));
+  await page.route('**/api/admin/**', async route => {
+    const url = new URL(route.request().url());
+    if (url.pathname === '/api/admin/generated-content-inventory' && url.searchParams.has('id')) {
+      const result = await store.invoke('GET', undefined, url.pathname + url.search);
+      return route.fulfill({ status: result.status, json: result.payload });
+    }
+    if (url.pathname === '/api/admin/generated-content-inventory') return route.fulfill({ json: { ok: true, rows: rows.map(row => ({ ...row, body: '', inventory_only: true })), nextCursor: null } });
+    return route.fulfill({ json: { ok: true, rows: [], statuses: [], nextCursor: null } });
+  });
+  try {
+    await page.goto('/admin/content#composite-review');
+    const cards = page.locator('.admin-template-card');
+    await expect(cards).toHaveCount(10);
+    await expect(cards.first()).toContainText('Final sentence 0.');
+    await expect(cards.last()).toContainText('Final sentence 9.');
+    await expect(cards.locator('h3')).toHaveText(rows.slice(0, 10).map(row => row.headline));
+    const pagination = page.getByRole('navigation', { name: 'Composite Review pagination' });
+    await pagination.getByRole('button', { name: 'Next', exact: true }).click();
+    await expect(cards).toHaveCount(2);
+    await expect(cards.first()).toContainText('Final sentence 10.');
+    await expect(cards.last()).toContainText('Final sentence 11.');
+    await expect(pagination).toContainText('Showing 11–12 of 12');
   } finally { store.close(); }
 });

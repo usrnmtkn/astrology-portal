@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { compositeRelationshipCopy } from "../../web/src/content/compositeRelationshipCopy";
 import type { AdminGeneratedContentRow } from "./GeneratedContentAdminDashboard";
 import { StudioButton } from "./StudioControls";
+import { Grid, Stack } from "./studio-ds/primitives";
 
 const relationshipTypes = ["romantic", "friendship", "family", "coworkers", "creative", "exes", "complicated"];
 
@@ -42,18 +43,18 @@ export default function CompositeReviewCard({ row, title, status, onLoad, onEdit
       : <p role="status">Loading saved writing…</p>
       : <>
         <section className="admin-template-rendered-preview" aria-label="Single voice fallback">
-          <p>{row.body || row.summary || "No shared meaning is saved yet."}</p>
+          <p className="admin-variable-source-prose">{row.body || row.summary || "No shared meaning is saved yet."}</p>
         </section>
-        <div className="admin-dependency-map-grid">
+        <Grid className="admin-dependency-map-grid">
           {relationshipTypes.map(type => {
             const copy = compositeRelationshipCopy(row.sections, type);
-            return <article key={type}>
+            return <Stack as="article" gap="sm" key={type}>
               <span>{type}{type === "romantic" ? " / gated" : ""}</span>
               <strong>{copy ? "Authored" : "Falls back"}</strong>
-              <p>{copy || "Uses the single-voice composite bank for this relationship type."}</p>
-            </article>;
+              <p className="admin-variable-source-prose">{copy || "Uses the single-voice composite bank for this relationship type."}</p>
+            </Stack>;
           })}
-        </div>
+        </Grid>
       </>}
   </article>;
 }

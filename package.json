@@ -150,7 +150,7 @@
     "test:natal-aspect-pattern-unknown-time": "node scripts/test-natal-aspect-pattern-unknown-time.mjs",
     "test:phone-auth": "node --experimental-strip-types scripts/test-phone-auth-normalization.mjs",
     "pretest:relationship-composite": "npm run build:knowledge",
-    "test:relationship-composite": "node --experimental-strip-types scripts/test-relationship-composite.mjs && node scripts/test-composite-writeups-render.mjs",
+    "test:relationship-composite": "node --experimental-strip-types scripts/test-relationship-composite.mjs && node --import tsx scripts/test-composite-writeups-render.mjs",
     "test:friends-routing": "node --experimental-strip-types scripts/test-friends-routing.mjs",
     "test:chart-time": "node --experimental-strip-types scripts/test-chart-time.mjs",
     "test:manual-chart-form": "node scripts/test-manual-chart-form.mjs",

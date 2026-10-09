@@ -10,6 +10,9 @@ assert.doesNotThrow(() => validateGeneratedContentQuality(copy, input), 'Lexical
 assert.ok(sharedGenerationReviewSignals(copy, input).some(signal => signal.includes('perform')));
 assert.ok(sharedGenerationReviewSignals(copy, input).some(signal => signal.includes('em dash')));
 assert.equal(evaluateEditorialCoherence(copy, input).passed, true, 'Advisory findings cannot accumulate into a failing score.');
+const sceneReview = evaluateEditorialCoherence({ ...copy, summary: 'Synthetic.', body: 'Fixture.' }, { ...input, facts: { timeLord: 'Mars' } });
+assert.equal(sceneReview.failures.find(failure => failure.code === 'TIME_LORD_NOT_USED_AS_SCENE_FILTER')?.severity, 'warning');
+assert.equal(sceneReview.passed, true, 'An ordinary-scene preference is not evidence of a false astrology claim.');
 assert.throws(() => validateGeneratedContentQuality({ ...copy, body: '' }, input), /body is missing/);
 assert.throws(() => validateGeneratedContentQuality({ ...copy, body: 'This entry is currently in review.' }, input), /disallowed phrase/);
 const natal: GenerateContentInput = { ...input, surface: 'natal', eventType: 'natal-aspect', facts: { type: 'natal-aspect' } };

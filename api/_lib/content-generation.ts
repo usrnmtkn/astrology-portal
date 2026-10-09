@@ -4970,7 +4970,7 @@ export function evaluateEditorialCoherence(
 
   // Presentation and lexical heuristics remain owner-review signals. Only
   // unsupported facts can block here; semantic rhetoric uses its own receipt.
-  const factCodes = new Set(["UNSUPPORTED_EXTERNAL_SCENE", "TIME_LORD_NOT_USED_AS_SCENE_FILTER"]);
+  const factCodes = new Set(["UNSUPPORTED_EXTERNAL_SCENE"]);
   failures.forEach(failure => { if (!factCodes.has(failure.code)) failure.severity = "warning"; });
   const blocking = failures.filter(failure => failure.severity === "fail");
   const score = Math.max(0, 100 - blocking.length * 18);
