@@ -1,4 +1,5 @@
 import { expect, test, type Locator, type Page } from "@playwright/test";
+import { normalizeTransitNatalPreviewInput, renderTransitNatalDraftStarter, renderTransitNatalPreviewState } from "../../api/admin/transit-natal-preview";
 
 test.use({ serviceWorkers: "block" });
 
@@ -34,6 +35,12 @@ async function isolate(page: Page, theme = "light") {
   }, theme);
   await page.route("**/api/**", async route => {
     const url = new URL(route.request().url());
+    if (url.pathname === "/api/admin/transit-natal-preview") {
+      const input = normalizeTransitNatalPreviewInput(route.request().postDataJSON());
+      return route.fulfill({ json: input.draftStarter
+        ? { ok: true, starter: renderTransitNatalDraftStarter(input) }
+        : { ok: true, rendered: renderTransitNatalPreviewState(input) } });
+    }
     let rows: typeof fixtureRows = [];
     if ((url.pathname.endsWith("/generated-content") || url.pathname.endsWith("/generated-content-inventory")) && route.request().method() === "GET") {
       const keys = [...url.searchParams.getAll("contentKeys").flatMap(value => value.split(",")), url.searchParams.get("contentKey") ?? ""].filter(Boolean);
@@ -178,6 +185,7 @@ test("placement filters keep the composition, keyword results, advanced filters 
   await expect(personal.getByRole("heading", { level: 3, name: "Saturn square your Moon", exact: true })).toBeVisible();
   const editor = page.getByRole("dialog", { name: "Generated content editor" });
   await expect(editor).toBeVisible();
+  await expect(editor.getByLabel("Content key", { exact: true })).toHaveValue("authored/transit-aspect/saturn/moon/square/aries/1/4");
   await editor.getByRole("button", { name: "Close", exact: true }).click();
   await expect(editor).toHaveCount(0);
   const query = new URLSearchParams(new URL(page.url()).hash.split("?")[1]);

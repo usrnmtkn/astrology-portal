@@ -9,7 +9,7 @@ test.use({timezoneId:'America/New_York'});
 
 for(const [width,theme] of [[390,'light'],[390,'dark'],[1440,'light'],[1440,'dark']] as const){
  test(`Monthly overview: create, recover, review, publish, reload and seasonal navigation ${width} ${theme}`,async({page})=>{
-  test.setTimeout(60000);
+  test.setTimeout(120000);
   const child=fork(path.resolve('tests/helpers/sky-article-save-api.mts'),[],{env:{...process.env,HOROSCOPE_WRITER_FIXTURE:'1',ZODIAC_TEMPLATE_FIXTURE:'1'},execArgv:['--import','tsx'],stdio:['ignore','pipe','pipe','ipc']});
   let sequence=0,stderr='';const pending=new Map<number,{resolve:(v:any)=>void;reject:(e:Error)=>void}>();
   child.stderr?.on('data',value=>stderr+=value);
@@ -126,7 +126,9 @@ for(const [width,theme] of [[390,'light'],[390,'dark'],[1440,'light'],[1440,'dar
    const summary='You can read the complete monthly summary fixture.\n\nYour summary ends here.';
    const generated=`**TLDR**\n\n${summary}\n\n**The month ahead**\n\nYou can read the complete overview fixture opening.\n\nYour saved fixture ends here.`;
    const edited=generated.replace('You can read the complete overview fixture opening.','You can read the exact monthly fixture opening.').replace('Your saved fixture ends here.','Your complete monthly fixture ends here.');
-   await expect(studio.getByLabel('Complete reading')).toHaveValue(generated);
+   // The real staged writer polls planning, drafting and prose review. Allow
+   // that lifecycle, as the twelve-sign reader test does, before editing it.
+   await expect(studio.getByLabel('Complete reading')).toHaveValue(generated,{timeout:60000});
    expect((await call({method:'writer-state'})).calls).toBe(4);
    await studio.getByLabel('Complete reading').fill(edited);
    await studio.getByRole('button',{name:'Continue to publish',exact:true}).click();

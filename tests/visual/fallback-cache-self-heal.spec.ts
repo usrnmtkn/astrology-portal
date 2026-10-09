@@ -1,4 +1,6 @@
 import { expect, test } from "@playwright/test";
+import type { IncomingMessage, ServerResponse } from "node:http";
+import skyHandler from "../../api/sky";
 
 const cacheKey = "tldrastro:fallbackArchitectureV3:dashboardBundle";
 const versionKey = "tldrastro:fallbackArchitectureV3:dashboardBundleVersion";
@@ -6,6 +8,14 @@ const staleJupiterHook = "Someone just took the stage without asking if they wer
 const currentJupiterArticle = "With Jupiter moving through Leo, confidence, visibility, recognition, and the desire to make something larger all increase";
 
 test("an old Jupiter/Lilith package cache self-heals to the bundled package", async ({ page }) => {
+  // Exercise a content-store outage with working calculated facts. A static
+  // preview otherwise answers /api/sky with HTML and leaks ledger reads to DNS.
+  await page.route("**/api/sky?**", async route => {
+    const response = { statusCode: 200, body: "", setHeader() {}, end(body: string) { this.body = body; } };
+    await skyHandler({ method: "GET", url: route.request().url() } as IncomingMessage, response as unknown as ServerResponse);
+    await route.fulfill({ status: response.statusCode, contentType: "application/json", body: response.body });
+  });
+  await page.route("**/rest/v1/**", route => route.fulfill({ status: 503, json: { message: "Synthetic content-store outage." } }));
   await page.route('**/api/content-reader', async (route) => {
     await route.fulfill({
       status: 503,

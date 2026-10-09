@@ -11882,10 +11882,12 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
 
     let cancelled = false;
     fallbackDashboardHydrationRequestedRef.current = true;
-    void loadFallbackArchitectureV3DashboardBundle()
+    const scope = mode === "calendar" ? "sky" : "all";
+    void loadFallbackArchitectureV3DashboardBundle(scope)
       .then((bundle) => {
         if (cancelled) return;
-        installFallbackArchitectureV3Bundle(bundle);
+        if (scope === "sky") installSkyCoreFallbackArchitectureV3Bundle(bundle);
+        else installFallbackArchitectureV3Bundle(bundle);
         setFallbackArchitectureV3Version((version) => version + 1);
         // A first empty response adds no copy. Removing an installed overlay
         // still invalidates an open article, including after retirement.

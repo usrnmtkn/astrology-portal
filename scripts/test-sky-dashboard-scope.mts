@@ -88,7 +88,12 @@ Object.assign(globalThis, {
 });
 try {
   const qa = await import(pathToFileURL(file).href);
-  const sky = await qa.loadFallbackArchitectureV3DashboardBundle('sky');
+  const [sky, sameSky] = await Promise.all([
+    qa.loadFallbackArchitectureV3DashboardBundle('sky'),
+    qa.loadFallbackArchitectureV3DashboardBundle('sky')
+  ]);
+  assert.equal(queries.length, 1, 'Concurrent mounts must share one paginated inventory load');
+  assert.equal(sky, sameSky);
   const all = await qa.loadFallbackArchitectureV3DashboardBundle();
   assert.deepEqual(queries.map(data => data.map((row: any) => row.content_key)), [[skyKey, stationKey], [skyKey, personalKey, stationKey]]);
   assert(sky && all);
@@ -113,6 +118,40 @@ try {
   assert.equal(qa.readCachedFallbackArchitectureV3Bundle(), null);
   assert.equal(qa.readCachedFallbackArchitectureV3Bundle('sky'), null);
   assert.equal(qa.readCachedFallbackArchitectureV3Bundle('sky-list'), null);
+  let releaseLedger!: () => void;
+  (globalThis as any).publicationWait = new Promise<void>(resolve => { releaseLedger = resolve; });
+  const beforeLedger = queries.length;
+  const beforePublication = qa.loadFallbackArchitectureV3DashboardBundle('sky');
+  qa.installContentPublications([{content_key: 'qa/unrelated-publication', state: 'live', revision: 1,
+    row_id: null, row_updated_at: null, updated_at: '2026-10-09T00:00:00Z'}]);
+  const afterPublication = qa.loadFallbackArchitectureV3DashboardBundle('sky');
+  releaseLedger();
+  await Promise.all([beforePublication, afterPublication]);
+  Reflect.deleteProperty(globalThis, 'publicationWait');
+  assert.equal(queries.length, beforeLedger + 1, 'Ledger hydration must not split one inventory load into two');
+  qa.clearCachedFallbackArchitectureV3Bundle();
+  const normalReturns = Query.prototype.returns;
+  const releases: Array<() => void> = [];
+  Query.prototype.returns = async function () {
+    await new Promise<void>(resolve => releases.push(resolve));
+    return normalReturns.call(this);
+  };
+  const untilHeld = async (count: number) => {
+    for (let tick = 0; releases.length < count && tick < 100; tick++) await new Promise(resolve => setTimeout(resolve, 0));
+    assert.equal(releases.length, count);
+  };
+  try {
+    const older = qa.loadFallbackArchitectureV3DashboardBundle('sky');
+    await untilHeld(1);
+    qa.clearCachedFallbackArchitectureV3Bundle('sky');
+    const newer = qa.loadFallbackArchitectureV3DashboardBundle('sky');
+    await untilHeld(2);
+    releases[0](); await older;
+    assert.equal(qa.readCachedFallbackArchitectureV3Bundle('sky'), null, 'Invalidated pending work cannot refill the cache');
+    releases[1](); await newer;
+    assert(qa.readCachedFallbackArchitectureV3Bundle('sky'), 'An old completion cannot remove the replacement request');
+    qa.clearCachedFallbackArchitectureV3Bundle();
+  } finally { Query.prototype.returns = normalReturns; }
   const originalTimeout = AbortSignal.timeout;
   let deadlines = 0;
   AbortSignal.timeout = (ms: number) => { deadlines++; return originalTimeout(ms); };

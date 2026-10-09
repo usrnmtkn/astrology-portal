@@ -3,7 +3,7 @@ import { loadReaderRows } from "./readerContentClient";
 import { packageAuthoredCardFromRow, packageHookRowFromRow, packageVocabRowFromRow, packageTemplateRowFromRow, packageFallbackArchitectureV3CoreRows } from "./fallbackArchitectureV3CorePackaging";
 // @ts-ignore Exact owner-requested source versions, shared with package materialization.
 import { correctedReaderSummary } from "../content/fallbackArchitectureV3/readerSummaryReferenceCorrections.mjs";
-import { publicationLedgerReady, publicationAllowsContent, contentPublication, contentPublicationRecords } from "../content/contentPublicationState";
+import { publicationLedgerReady, publicationAllowsContent, contentPublication, contentPublicationRecords, contentPublicationGeneration } from "../content/contentPublicationState";
 import { refreshContentPublications } from "./contentPublications";
 import { isGeneratedContentReaderBoundaryAllowed, isReaderServableGeneratedContentRow, isEmergencyFloorContentKey, generatedRowPackageRole } from "../content/generatedContentEligibility";
 export { isGeneratedContentReaderBoundaryAllowed, isReaderServableGeneratedContentRow } from "../content/generatedContentEligibility";
@@ -1046,9 +1046,15 @@ function sortGeneratedRowsNewestFirst(rows: GeneratedContentRow[]) {
 }
 
 type DashboardScope = "all" | "sky" | "sky-list";
+const pendingDashboardBundles = new Map<DashboardScope, {
+  generation: number;
+  promise: Promise<FallbackArchitectureV3Bundle | null>;
+}>();
 const dashboardCacheKey = (key: string, scope: DashboardScope) => scope === "all" ? key : `${key}:${scope}`;
 
 export function clearCachedFallbackArchitectureV3Bundle(scope?: DashboardScope) {
+  if (scope) pendingDashboardBundles.delete(scope);
+  else pendingDashboardBundles.clear();
   if (typeof window === "undefined") {
     return;
   }
@@ -1320,6 +1326,27 @@ async function loadContentStudioLastKnownGoodCompatibilityBundle() {
 
 export async function loadFallbackArchitectureV3DashboardBundle(scope: DashboardScope = "all"): Promise<FallbackArchitectureV3Bundle | null> {
   await refreshContentPublications();
+  const pending = pendingDashboardBundles.get(scope);
+  if (pending?.generation === contentPublicationGeneration) return pending.promise;
+  // React remounts and content refreshes can overlap. Share only active work for
+  // the same source partition and publication generation; failures remain retryable.
+  const entry = {
+    generation: contentPublicationGeneration,
+    promise: Promise.resolve(null) as Promise<FallbackArchitectureV3Bundle | null>
+  };
+  entry.promise = readFallbackArchitectureV3DashboardBundle(scope, () => (
+    pendingDashboardBundles.get(scope) === entry && entry.generation === contentPublicationGeneration
+  )).finally(() => {
+    if (pendingDashboardBundles.get(scope) === entry) pendingDashboardBundles.delete(scope);
+  });
+  pendingDashboardBundles.set(scope, entry);
+  return entry.promise;
+}
+
+async function readFallbackArchitectureV3DashboardBundle(
+  scope: DashboardScope,
+  canCache: () => boolean
+): Promise<FallbackArchitectureV3Bundle | null> {
   const supabase = await getSupabaseClient();
   const cached = readCachedFallbackArchitectureV3Bundle(scope);
 
@@ -1360,10 +1387,10 @@ export async function loadFallbackArchitectureV3DashboardBundle(scope: Dashboard
   }
   const bundle = packageFallbackArchitectureV3CoreRows(rows, currentCoreManifest);
   if (!bundle) {
-    clearCachedFallbackArchitectureV3Bundle(scope);
+    if (canCache()) clearCachedFallbackArchitectureV3Bundle(scope);
     return null;
   }
-  cacheFallbackArchitectureV3Bundle(dashboardVersion || fallbackArchitectureV3DashboardVersionFromRows(rows), bundle, scope);
+  if (canCache()) cacheFallbackArchitectureV3Bundle(dashboardVersion || fallbackArchitectureV3DashboardVersionFromRows(rows), bundle, scope);
   return bundle;
 
 }

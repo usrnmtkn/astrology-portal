@@ -200,7 +200,7 @@ jobs:
       - run: npm run build:knowledge
       - run: npx playwright install --with-deps chromium
       - name: Run Content Studio admin user flows
-        run: npx playwright test -c playwright.config.ts --fully-parallel --workers=1 --shard=${{ matrix.shard }}/4 tests/visual/content-dashboard-admin-user-flows.spec.ts tests/visual/calendar-review-queue-api.spec.ts tests/visual/studio-publication-recovery.spec.ts tests/visual/review-queue-workflow.spec.ts tests/visual/calendar-aspect-create.spec.ts tests/visual/compatibility-aspect-create.spec.ts tests/visual/calendar-aspect-retrograde.spec.ts tests/visual/calendar-planetary-studio.spec.ts tests/visual/content-publication-offline.spec.ts tests/visual/content-studio-reader-destinations.spec.ts tests/visual/content-studio-needs-attention.spec.ts tests/visual/studio-dedicated-editor-routing.spec.ts tests/visual/studio-formatting-publication.spec.ts tests/visual/astro-101-reader-recovery.spec.ts tests/visual/calendar-subscriptions.spec.ts
+        run: npx playwright test -c playwright.config.ts --fully-parallel --workers=1 --shard=${{ matrix.shard }}/4 tests/visual/content-dashboard-admin-user-flows.spec.ts tests/visual/calendar-review-queue-api.spec.ts tests/visual/studio-publication-recovery.spec.ts tests/visual/review-queue-workflow.spec.ts tests/visual/calendar-aspect-create.spec.ts tests/visual/compatibility-aspect-create.spec.ts tests/visual/calendar-aspect-retrograde.spec.ts tests/visual/calendar-planetary-studio.spec.ts tests/visual/content-publication-offline.spec.ts tests/visual/content-studio-reader-destinations.spec.ts tests/visual/content-studio-needs-attention.spec.ts tests/visual/studio-dedicated-editor-routing.spec.ts tests/visual/studio-inventory-loading.spec.ts tests/visual/studio-formatting-publication.spec.ts tests/visual/astro-101-reader-recovery.spec.ts tests/visual/calendar-subscriptions.spec.ts
       - name: Upload Content Studio flow artifacts
         if: always()
         uses: actions/upload-artifact@v6
@@ -268,7 +268,7 @@ jobs:
         if: matrix.shard == 1
         run: node scripts/test-calendar-moon-ingress-reader.mjs && node --import tsx scripts/test-calendar-surface-events.mjs && node --import tsx scripts/test-calendar-api-timezone-anchor.mjs
       - name: Verify placement reader refresh stability
-        run: npx playwright test -c playwright.config.ts --workers=1 --shard=${{ matrix.shard }}/2 tests/visual/sky-placement-retrograde.spec.ts tests/visual/sky-composable-reader.spec.ts tests/visual/sky-placement-stability.spec.ts tests/visual/sky-placement-publication-hydration.spec.ts tests/visual/sky-placement-hydration-boundary.spec.ts tests/visual/sky-moon-publication-reader.spec.ts tests/visual/article-navigation-stability.spec.ts tests/visual/sky-you-transit-parity.spec.ts tests/visual/calendar-day-summary.spec.ts tests/visual/calendar-content-retention.spec.ts tests/visual/calendar-reading-stability.spec.ts tests/visual/calendar-current-season.spec.ts tests/visual/sky-placement-dates.spec.ts tests/visual/placement-visit-dates.spec.ts tests/visual/sky-placement-key-dates.spec.ts
+        run: npx playwright test -c playwright.config.ts --workers=1 --shard=${{ matrix.shard }}/2 tests/visual/sky-placement-retrograde.spec.ts tests/visual/sky-composable-reader.spec.ts tests/visual/sky-placement-stability.spec.ts tests/visual/sky-placement-publication-hydration.spec.ts tests/visual/sky-placement-hydration-boundary.spec.ts tests/visual/sky-moon-publication-reader.spec.ts tests/visual/article-navigation-stability.spec.ts tests/visual/sky-you-transit-parity.spec.ts tests/visual/calendar-day-summary.spec.ts tests/visual/calendar-content-retention.spec.ts tests/visual/calendar-reading-stability.spec.ts tests/visual/calendar-api-loading.spec.ts tests/visual/calendar-current-season.spec.ts tests/visual/sky-placement-dates.spec.ts tests/visual/placement-visit-dates.spec.ts tests/visual/sky-placement-key-dates.spec.ts
       - name: Upload Sky placement reader artifacts
         if: always()
         uses: actions/upload-artifact@v6
@@ -341,7 +341,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        suite: [studio-style, studio-web-entry, studio-variables, sky-article, horoscope-writing, horoscope-reader, lunation-studio]
+        suite: [studio-style, studio-web-entry, studio-variables, sky-article, horoscope-writing, lunation-studio]
     env:
       VITE_SUPABASE_URL: https://visual-smoke.supabase.test
       VITE_SUPABASE_ANON_KEY: visual-smoke-placeholder
@@ -363,6 +363,39 @@ jobs:
         uses: actions/upload-artifact@v6
         with:
           name: studio-preview-suite-results-${{ matrix.suite }}
+          path: test-results/
+          if-no-files-found: ignore
+
+  # The complete Horoscope editor/reader journeys outgrew one serial job.
+  # Shard by test while retaining one worker and every per-action deadline.
+  horoscope-reader:
+    needs: scope
+    if: needs.scope.outputs.studio == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2, 3]
+    env:
+      VITE_SUPABASE_URL: https://visual-smoke.supabase.test
+      VITE_SUPABASE_ANON_KEY: visual-smoke-placeholder
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build:knowledge
+      - run: npx playwright install --with-deps chromium
+      - name: Run Horoscope editor and reader journeys
+        run: npx playwright test -c playwright.horoscope-reader.config.ts --fully-parallel --workers=1 --shard=${{ matrix.shard }}/3
+      - name: Upload Horoscope artifacts
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: horoscope-reader-results-${{ matrix.shard }}
           path: test-results/
           if-no-files-found: ignore
 

@@ -130,6 +130,8 @@ for (const scenario of [
           return ['fontFamily', 'fontSize', 'fontWeight', 'lineHeight', 'letterSpacing', 'marginTop', 'marginBottom', 'textTransform', 'textAlign'].map(key => css[key as keyof CSSStyleDeclaration]);
         };
         const loadingTitleStyle = await day.locator('.calendar-sky-card__title').evaluate(typography);
+        await expect(day.locator('.calendar-sky-card__title .card-skeleton-text__measure')).toContainText(`Moon in ${scenario.sign}`);
+        const loadingHeader = await day.locator('.calendar-sky-card__lockup').boundingBox();
         release(); gate = null;
         await expect(day.locator('.calendar-sky-card__body')).toHaveAttribute('aria-busy', 'false', { timeout: 60_000 });
         const heading = day.getByRole('heading', { level: 2 }).first();
@@ -137,6 +139,8 @@ for (const scenario of [
         await expect(day.locator('[data-guidance-key]')).toContainText('Synthetic saved Moon opening.');
         await expect(day.locator('[data-guidance-key]')).toContainText('Synthetic saved Moon final sentence.');
         expect(await heading.evaluate(typography)).toEqual(loadingTitleStyle);
+        const readyHeader = await day.locator('.calendar-sky-card__lockup').boundingBox();
+        expect(Math.abs(readyHeader!.height - loadingHeader!.height), 'Known header geometry must not jump when prose becomes ready').toBeLessThanOrEqual(1);
         const paints = await page.evaluate(() => (window as any).__moonPaints);
         expect(paints.titles).toEqual([await heading.textContent()]);
         expect(paints.passages).toHaveLength(1);

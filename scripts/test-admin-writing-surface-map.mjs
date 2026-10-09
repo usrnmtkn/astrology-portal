@@ -136,7 +136,8 @@ assert.match(dashboardSource, /createNatalPlacementOverride/u, "A missing exact 
 const natalPreviewSource = fs.readFileSync(path.join(repoRoot, "apps/admin/src/NatalPlacementReaderPreview.tsx"), "utf8");
 assert.match(natalPreviewSource, /\/api\/admin\/natal-placement-preview/u, "The natal preview must render behind an admin API boundary instead of shipping the content corpus to the browser.");
 assert.match(natalPreviewSource, /What a friend sees/u);
-assert.match(natalPreviewSource, /separate third-person source writing/u, "The natal editor must explain that Friends copy is composed from separately editable sources.");
+assert.match(natalPreviewSource, /Use the edit action under a section to open its source\./u, "The natal editor must explain how to edit each rendered section's source.");
+assert.match(natalPreviewSource, /onOpenSource\(contentKey, sectionLabel, contentKey\.startsWith/u, "Each rendered natal section must open its own source, including Friend copy.");
 assert.match(natalPreviewSource, /Create exact override/u);
 assert.match(dashboardSource, /You view exact copy/u, "You-only exact natal overrides must be labeled honestly in the editor.");
 assert.match(dashboardSource, /Friend view copy/u, "Dual-voice natal sources must expose a user-friendly Friends field.");
@@ -203,7 +204,7 @@ for (const [label, source] of [
 assert.match(appSource, /subscribeToContentUpdates/u, "The reader app must refresh when Content Studio publishes or demotes a row.");
 assert.doesNotMatch(appSource, /void generatedContent;[\s\S]{0,300}retrogradeSummaryFallback/u, "The Sky retrograde summary must not ignore Content Studio content.");
 assert.match(appSource, /cmsSurfaceKeys\.retrogradeSummary\(\)/u, "The Sky retrograde summary must resolve its governed CMS surface.");
-assert.match(appSource, /cmsSurfaceKeys\.skyDebility\(\)/u, "The Sky Without their tools card must load its governed CMS templates.");
+assert.match(appSource, /cmsSurfaceKeys\.skyDebility\(sky\?\.positions \?\? \[\]\)/u, "The Sky Without their tools card must load its governed CMS templates for the calculated positions.");
 assert.match(appSource, /SkyDebilityCard/u, "The Sky Without their tools card must render under The sky today.");
 
 console.log(`Admin writing surface map passed: ${surfaceIds.size} writing surfaces and systems have explicit editorial status.`);

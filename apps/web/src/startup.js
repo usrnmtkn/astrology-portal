@@ -37,6 +37,7 @@ const reloadReaderRouteOnce = () => {
 
 const showStartupMessage = (failed = false) => {
   if (!startup?.isConnected) return;
+  if (failed) clearTimeout(timeout);
   startup.setAttribute("role", failed ? "alert" : "status");
   startup.setAttribute("aria-busy", String(!failed));
   const message = startup.querySelector("[data-startup-message]");

@@ -164,13 +164,16 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"] as const)
       await page.evaluate(({ manifest, version }) => {
         localStorage.setItem("tldrastro:selectedLocation", JSON.stringify({ label: "New York, NY", latitude: 40.7128, longitude: -74.006, timeZone: "America/New_York" }));
         // An old reader can already have cached this revision without the new key.
-        localStorage.setItem("tldrastro:fallbackArchitectureV3:dashboardBundle", JSON.stringify({
+        const cached = JSON.stringify({
           schema: "fallback-architecture-v3-dashboard-overlay-cache-v8",
           runtimeCapability: manifest.runtimeCapability, bundledPackageVersion: manifest.packageVersion,
           dashboardVersion: version,
           bundle: { transitLib: { authoredCards: [{ contentKey: "authored/transit-house-intro/sun/1", content_role: "full_copy", review_status: "approved", body: "Synthetic previous cache entry." }] }, rowsFile: { hookRows: [], vocabularyRows: [] }, templatesFile: { templates: [] } }
-        }));
+        });
+        localStorage.setItem("tldrastro:fallbackArchitectureV3:dashboardBundle", cached);
+        localStorage.setItem("tldrastro:fallbackArchitectureV3:dashboardBundle:sky", cached);
         localStorage.setItem("tldrastro:fallbackArchitectureV3:dashboardBundleVersion", String(version));
+        localStorage.setItem("tldrastro:fallbackArchitectureV3:dashboardBundleVersion:sky", String(version));
       }, { manifest, version: Date.parse(published.updated_at) });
       await page.goto("/?date=2027-02-06#calendar?view=day&date=2027-02-06");
       const guidance = page.locator(`[data-guidance-key="${lunationKey}"]`);
@@ -178,7 +181,8 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"] as const)
       await expect(guidance.locator("p")).toHaveText([paragraphs[0]], { timeout: 30_000 });
       await guidance.getByRole("button", { name: "Read more", exact: true }).click();
       await expect(guidance.locator("p")).toHaveText(paragraphs);
-      await expect.poll(() => page.evaluate(() => JSON.parse(localStorage.getItem("tldrastro:fallbackArchitectureV3:dashboardBundle") ?? "null")?.schema)).toBe("fallback-architecture-v3-dashboard-overlay-cache-v9");
+      await expect.poll(() => page.evaluate(() => JSON.parse(localStorage.getItem("tldrastro:fallbackArchitectureV3:dashboardBundle:sky") ?? "null")?.schema)).toBe("fallback-architecture-v3-dashboard-overlay-cache-v9");
+      expect(await page.evaluate(() => JSON.parse(localStorage.getItem("tldrastro:fallbackArchitectureV3:dashboardBundle") ?? "null")?.schema)).toBe("fallback-architecture-v3-dashboard-overlay-cache-v8");
       await expect(page.locator("html")).toHaveAttribute("data-theme", theme);
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
       await page.screenshot({ path: `test-results/lunation-reader-${width}-${theme}.png`, fullPage: true });

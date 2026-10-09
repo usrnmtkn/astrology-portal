@@ -38,7 +38,7 @@ import {
   getLunarCalendarRangeEventsOffMainThread as getLunarCalendarRangeEvents,
   getLunarCalendarWeekOffMainThread as getLunarCalendarWeek
 } from "../../services/skyCalculationClient";
-import { getLunarCalendarFromApi } from "../../services/calendarApi";
+import { getLunarCalendarFromApi, getLunarCalendarRangeEventsFromApi } from "../../services/calendarApi";
 import {
   fallbackArchitectureV3AuthoredContentForKey,
   generatedContentParagraphs,
@@ -83,7 +83,7 @@ import type { LocationInput } from "../../types";
 import { calendarEventGeneratedContentKeys, calendarContentRequestResolved, type CalendarContentRequest } from "./calendarContentKeys";
 import {resolveLunationReaderSource} from '../../content/lunationReaderSource';
 import { calendarDayMoonWriting, calendarLunationMacroKey, calendarMoonWritingParagraphs, calendarMoonWritingSequenceWithoutRepeat, type CalendarMoonWritingPiece } from "./calendarDayMoonReading";
-import { calendarDateKeyDistance, calendarMoonCycleFactsForDays, type CalendarMoonCycleFacts } from "./calendarMoonCycle";
+import { calendarDateKeyDistance, calendarLunarDayNumber, calendarMoonCycleFactsForDays, type CalendarMoonCycleFacts } from "./calendarMoonCycle";
 import { resolveCalendarMoonFallback } from "./calendarMoonFallback";
 import { calendarMoonPhaseCopy } from "./calendarMoonPhaseCopy";
 import { calendarTransitionPhraseKeys } from "./calendarTransitionPhrases";
@@ -359,6 +359,14 @@ async function loadCalendarData(
   } catch {
     return loadCalendar(location, anchor, { detail });
   }
+}
+
+async function loadSeasonEvents(location: LocationInput, start: Date, end: Date) {
+  if (enableCalendarApi) {
+    try { return await getLunarCalendarRangeEventsFromApi(location, start, end); }
+    catch { /* The offline calculation owns recovery when the API is unavailable. */ }
+  }
+  return getLunarCalendarRangeEvents(location, start, end);
 }
 
 function todayKey(timeZone: string) {
@@ -1865,19 +1873,6 @@ function lunationDiscClass(event: LunarCalendarEvent) {
   return "is-waxing";
 }
 
-function lunarDayFor(day: LunarCalendarDay, events: LunarCalendarEvent[]) {
-  const selectedTime = new Date(day.date).getTime();
-  const previousNewMoon = events
-    .filter((event) => event.type === "lunation" && event.title.startsWith("New Moon") && new Date(event.startsAt).getTime() <= selectedTime + 86_400_000)
-    .sort((first, second) => new Date(second.startsAt).getTime() - new Date(first.startsAt).getTime())[0];
-
-  if (!previousNewMoon) {
-    return Math.max(1, Math.round((day.illumination / 100) * 15));
-  }
-
-  return Math.max(1, Math.min(30, Math.floor((selectedTime - new Date(previousNewMoon.startsAt).getTime()) / 86_400_000) + 1));
-}
-
 function seasonLunarArc(day: LunarCalendarDay, events: LunarCalendarEvent[], timeZone: string) {
   const window = sunIngressSeasonWindow(day.dateKey, events);
   if (!window) return null;
@@ -2338,10 +2333,11 @@ export function LunarCalendar({
 
     let cancelled = false;
 
-    getLunarCalendarMonth(
+    loadCalendarData(
       location,
+      "month",
       monthAnchorFromDateKey(selectedDateKey, location.timeZone || "UTC"),
-      { detail: "full" }
+      "full"
     )
       .then((nextSelectedCalendar) => {
         if (!cancelled) {
@@ -2385,7 +2381,7 @@ export function LunarCalendar({
     // fast first paint. Fetch only the season's lunation/station feed so the
     // season chip can still name its New and Full Moon without calculating an
     // additional 42-day visual calendar.
-    getLunarCalendarRangeEvents(
+    loadSeasonEvents(
       location,
       new Date(seasonStartsAt),
       new Date(seasonEndsAt)
@@ -2798,7 +2794,7 @@ export function LunarCalendar({
         : "");
   const selectedMoonSign = readingDay?.moonSign ?? selectedDay?.moonSign ?? "";
   const selectedLunarDayNumber = selectedDay && calendar
-    ? lunarDayFor(selectedDay, calendar.events)
+    ? calendarLunarDayNumber(selectedDay, [...(calendar.cycleEvents ?? []), ...calendar.events])
     : null;
   const assembledPassages = useCalendarPassages(calendar, (viewMode === "month" ? calendar?.days ?? [] : selectedWeekDays).map(day => day.dateKey), selectedDateKey || currentDateKey, location, generatedContent, moonContentRetry);
   const weeklyDayParagraphs = calendarWeeklyDayParagraphs(assembledPassages.weekly?.body, selectedWeekDays, zone);

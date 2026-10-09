@@ -6,6 +6,12 @@ import {routeStudioInventoryApi} from '../helpers/studio-inventory-route';
 import {HOROSCOPE_SIGNS,emptyHoroscopeEdition,horoscopeEditionKey,horoscopeEditionBody} from '../../apps/web/src/content/horoscopeEditions.mjs';
 import {READER_ROW_SCHEMA} from '../../apps/web/src/content/readerRowSchema.mjs';
 
+// The complete edition journey repeatedly returns the actual saved writing
+// evidence. Playwright duplicates those large routed bodies into its action
+// trace (>1 GB per journey), exhausting the worker while packaging artifacts.
+// Retain the stage/failure screenshots and every handler and browser assertion.
+test.use({trace:'off'});
+
 test('New reader uses device time zone and saves a manual override',async({browser,baseURL})=>{
  const context=await browser.newContext({baseURL,timezoneId:'Asia/Kathmandu'});
  try {
@@ -27,6 +33,10 @@ test('New reader uses device time zone and saves a manual override',async({brows
 
 for(const [width,theme] of [[390,'light'],[390,'dark'],[1440,'light'],[1440,'dark']] as const){
  test(`Twelve-sign edition editor to reader ${width} ${theme}`,async({page})=>{
+  // This complete journey performs two twelve-sign generation cycles, twelve
+  // saved edits, publication, reader reloads, retirement and outage recovery.
+  // Keep per-action budgets unchanged while allowing the suite's total budget.
+  test.setTimeout(180000);
   const child=fork(path.resolve('tests/helpers/sky-article-save-api.mts'),[],{env:{...process.env,ZODIAC_TEMPLATE_FIXTURE:'1',HOROSCOPE_WRITER_FIXTURE:'1'},execArgv:['--import','tsx'],stdio:['ignore','pipe','pipe','ipc']});
   let sequence=0,stderr='';const pending=new Map<number,{resolve:(v:any)=>void;reject:(e:Error)=>void}>();
   child.stderr?.on('data',value=>stderr+=value);

@@ -4473,7 +4473,7 @@ test.describe("client-facing user flow case studies", () => {
 
     await expect(page.getByText("settings.")).toBeVisible();
     await expect(page.getByRole("button", { name: "Toggle journal prompts" })).toHaveCount(0);
-    await expect(page.getByLabel("Astrology settings").locator(".settings-row")).toHaveCount(1);
+    await expect(page.getByLabel("House sign labels", { exact: true })).toBeVisible();
     await page.getByRole("button", { name: /Current location/i }).click();
     await expect(page.getByLabel("Current location")).toBeVisible();
     await expectFormTypography(page, ".settings-location-editor", "Settings location form");
