@@ -59,6 +59,46 @@ async function prepare(page: Page, theme: string, signedIn = true) {
   });
 }
 
+test("day report waits for daily aspect calculations before enabling submission", async ({ page }) => {
+  test.setTimeout(90_000);
+  await prepare(page, "light");
+  await page.route("**/rest/v1/user_generated_interpretations**", route => route.fulfill({ json: [] }));
+  let requests = 0;
+  await page.route("**/api/you-report-request", route => {
+    requests += 1;
+    return route.fulfill({ status: 202, json: { status: "queued" } });
+  });
+  await page.addInitScript(() => {
+    const NativeWorker = window.Worker;
+    let released = false;
+    const pending: Array<() => void> = [];
+    (window as any).__releaseDailyPeakCalculation = () => {
+      released = true;
+      pending.splice(0).forEach(send => send());
+    };
+    window.Worker = class extends NativeWorker {
+      postMessage(message: any, options?: any) {
+        if (message.kind === "natal-daily-peaks" && !released) {
+          pending.push(() => super.postMessage(message, options));
+          return;
+        }
+        super.postMessage(message, options);
+      }
+    };
+  });
+  await page.goto("/#you");
+  await expect(page.getByText("Calculating daily aspect peaks…", { exact: true })).toBeVisible({ timeout: 60_000 });
+  const create = page.getByRole("button", { name: "Create day report", exact: true });
+  await expect(create).toBeVisible();
+  await expect(create).toBeDisabled();
+  expect(requests).toBe(0);
+  await page.evaluate(() => (window as any).__releaseDailyPeakCalculation());
+  await expect(create).toBeEnabled({ timeout: 60_000 });
+  await create.click();
+  await expect(page.getByText("Your day report is being prepared.", { exact: false })).toBeVisible();
+  expect(requests).toBe(1);
+});
+
 for (const viewport of [{ name: "desktop", width: 1440, height: 1000 }, { name: "mobile", width: 390, height: 844 }]) {
   for (const theme of ["light", "dark"]) {
     for (const signedIn of [true, false]) {

@@ -145,3 +145,19 @@ dependencies, privacy hooks and retired-history guard. The Visual smoke reader
 suite now runs the daily peak browser cases; its first shard also runs the
 transit pass-engine calculations. CI, merge SHA and production verification
 are recorded with the release PR, rather than inferred from these local checks.
+
+The release browser checks found a report-button readiness race: the brief was
+available before daily peak facts had finished. The day action now stays
+disabled until those facts are ready, with a matching submission guard; saved
+reports remain readable. A held-worker regression checks the disabled state,
+then releases the calculation and confirms exactly one synthetic request.
+Both auth-callback restore paths pass with the same verified session.
+
+The owner-copy browser fixture now uses the independently calculated Chiron
+square natal Jupiter retrograde peak on October 5, 2026 at 17:26:50 UTC for its
+September 1, 1978 noon New York chart. It opens the precise aspect label and
+retains all complete opening and ending assertions after delayed hydration.
+The narrow Calendar test was also corrected to expect July 2026's five rows:
+main already omits weeks containing no date in the selected month. Calendar
+rendering and selection were not changed. All five targeted cases pass from a
+fresh preview build.

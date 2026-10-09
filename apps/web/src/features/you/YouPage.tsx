@@ -628,6 +628,7 @@ function YouUpdatesTab({
         <YouReportActions
           accountId={accountId}
           accountRecovery={accountRecovery}
+          dailyAspectsReady={dailyAspectsReady}
           dailyHoroscopeAssembly={dailyHoroscopeAssembly}
           dailyUpdateSummary={dailyUpdateSummary}
           weeklyHoroscopeAssembly={weeklyHoroscopeAssembly}
