@@ -6,6 +6,12 @@ import {routeStudioInventoryApi} from '../helpers/studio-inventory-route';
 import {HOROSCOPE_SIGNS,emptyHoroscopeEdition,horoscopeEditionKey,horoscopeEditionBody} from '../../apps/web/src/content/horoscopeEditions.mjs';
 import {READER_ROW_SCHEMA} from '../../apps/web/src/content/readerRowSchema.mjs';
 
+// The complete edition journey repeatedly returns the actual saved writing
+// evidence. Playwright duplicates those large routed bodies into its action
+// trace (>1 GB per journey), exhausting the worker while packaging artifacts.
+// Retain the stage/failure screenshots and every handler and browser assertion.
+test.use({trace:'off'});
+
 test('New reader uses device time zone and saves a manual override',async({browser,baseURL})=>{
  const context=await browser.newContext({baseURL,timezoneId:'Asia/Kathmandu'});
  try {
