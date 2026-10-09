@@ -1,5 +1,6 @@
 import { isStudioCompatibilityRow, isStudioCompositeRow } from "./studioContentScope";
 import { calendarAspectRetrogradeOptions } from "../../web/src/content/calendarAspectRetrograde";
+import { isSkyIngressEssay, SKY_INGRESS_ESSAY_FORMAT, skyIngressEssayFields, type SkyArticleFormat } from "../../web/src/content/skyIngressEssay.mjs";
 import { useStudioCustomVariables } from "./studioCustomVariableClient";
 import { studioRequestTimeoutMs } from "./studioRequestPolicy";
 import { compatibilityAspectPoints, compatibilityAspectTypes, compatibilityAspectKey, compatibilityAspectFromSearch, compatibilityAspectSearchText, compatibilityAspectSourceDraft, type CompatibilityAspectSelection } from "./compatibilityAspectSources";
@@ -89,6 +90,7 @@ import {
   reviseSkyArticleEdition,
   skyArticleEditableFields,
   skyArticleEditionFieldChanges,
+  skyArticleEditionContentKey,
   skyArticleEditionRecord,
   skyArticleTemplatePlaceholders,
   type CompiledSkyArticleEdition,
@@ -566,6 +568,10 @@ type HookCatalogItem =
 type AdminLoadState = "idle" | "loading" | "loaded" | "accessDenied" | "error";
 
 type SkyArticleEditionFacts = {
+  articleFormat?: SkyArticleFormat;
+  eventCoverage?: { start: string; end: string; complete: boolean };
+  nasa?: { status: string; scope: string };
+  nasaExplanatoryText?: { status: string; title?: string; sourceUrl?: string };
   schema: "tldrastro-sky-article-engine-facts-v1";
   calculationSource: string;
   generatedAt: string;
@@ -581,6 +587,7 @@ type SkyArticleEditionFacts = {
 };
 
 type SkyArticleEditionForm = {
+  format: SkyArticleFormat;
   referenceDate: string;
   facts: SkyArticleEditionFacts | null;
   tldr: string;
@@ -2188,8 +2195,8 @@ function skyArticleRevisionBaseForDraft(draft: AdminDraft) {
     ?? compiledSkyArticleEditionForDraft(draft);
 }
 
-function skyArticleWorkspaceContentKey(facts: Pick<SkyArticleEditionFacts, "planet" | "sign" | "entryYear">) {
-  return `sky-article-workspace/${facts.planet}/${facts.sign}/${facts.entryYear}`;
+function skyArticleWorkspaceContentKey(facts: Pick<SkyArticleEditionFacts, "planet" | "sign" | "entryYear" | "validFrom">, format?: SkyArticleFormat) {
+  return `sky-article-workspace/${facts.planet}/${facts.sign}/${facts.entryYear}${isSkyIngressEssay(format) ? `/${format}/${facts.validFrom}` : ""}`;
 }
 
 function skyArticleWorkspaceForm(row: AdminGeneratedContentRow | undefined) {
@@ -4211,7 +4218,8 @@ export function GeneratedContentAdminDashboard() {
           setSkyArticleEditionForm((current) => current ? { ...current, saveState: "saving" } : current);
           const workspace = {
             schema: "tldrastro-sky-article-workspace-v1",
-            targetContentKey: `sky-article/${facts.planet}/${facts.sign}/${facts.entryYear}`,
+            format: form.format,
+            targetContentKey: skyArticleEditionContentKey({ ...facts, format: form.format }),
             templateKey: templateRow.content_key.replace(/^sky-article-template\//u, "sky/article-template/"),
             referenceDate: form.referenceDate,
             facts,
@@ -4227,7 +4235,7 @@ export function GeneratedContentAdminDashboard() {
             sections: { skyArticleWorkspace: workspace },
             reviewState: "owner-review-required"
           } : {
-            contentKey: skyArticleWorkspaceContentKey(facts),
+            contentKey: skyArticleWorkspaceContentKey(facts, form.format),
             surface: "sky",
             mode: "article",
             status: "DRAFT",
@@ -4351,6 +4359,14 @@ export function GeneratedContentAdminDashboard() {
       page === "skyWriteups" && skyWriteupWorkspaceTabs.some(tab => tab.value === view)
         ? view as SkyWriteupWorkspaceView : "catalog"
     );
+    if (page === "skyWriteups" && search !== null) {
+      setSkyWriteupQuery(search);
+      setSkyPlacementBody("all");
+      setSkyPlacementSign("all");
+      setSkyWriteupSubjectFilter("all");
+      setSkyWriteupMotionFilter("all");
+      setSkyWriteupDestinationFilter("all");
+    }
     setFocusSunSummaries(params.get("section") === "sun");
     setCalendarWriteupWorkspaceView(page === "calendarWriteups" && calendarWriteupWorkspaceTabs.some(tab => tab.value === view) ? view as CalendarWriteupWorkspaceView : "daily-sky");
     setTransitReadingContext(page === "skyWriteups" && view === "transits-to-natal" ? {
@@ -4862,21 +4878,26 @@ export function GeneratedContentAdminDashboard() {
   async function loadSkyArticleEditionFacts(templateRow: AdminGeneratedContentRow) {
     const planet = skyArticleTemplatePlanet(templateRow);
     if (!planet || !skyArticleEditionForm) return;
+    const editorSession = editorSessionRef.current;
     setIsLoading(true);
     try {
       const payload = await adminJsonRequest<{ ok: boolean; facts: SkyArticleEditionFacts }>(
-        `/api/admin/sky-article-facts?planet=${encodeURIComponent(planet)}&date=${encodeURIComponent(skyArticleEditionForm.referenceDate)}`,
+        `/api/admin/sky-article-facts?planet=${encodeURIComponent(planet)}&date=${encodeURIComponent(skyArticleEditionForm.referenceDate)}&format=${skyArticleEditionForm.format}`,
         secret
       );
-      const workspaceInventoryRow = rows.find((row) => row.content_key === skyArticleWorkspaceContentKey(payload.facts));
+      if (editorSession !== editorSessionRef.current) return;
+      const templateSign = templateRow.content_key.split("/").at(-1);
+      if (isSkyIngressEssay(skyArticleEditionForm.format) && ![payload.facts.sign, "ingress"].includes(templateSign ?? "")) throw new Error("This date belongs to a different sign. Open the template for the calculated placement.");
+      const workspaceInventoryRow = rows.find((row) => row.content_key === skyArticleWorkspaceContentKey(payload.facts, skyArticleEditionForm.format));
       const workspaceRow = workspaceInventoryRow ? await hydrateGeneratedContentRow(workspaceInventoryRow) : null;
+      if (editorSession !== editorSessionRef.current) return;
       const workspace = skyArticleWorkspaceForm(workspaceRow ?? undefined);
       workspaceAutosaveRowRef.current = workspaceRow;
       const authoredSource = rows.find((row) => row.content_key === `sky/article-edition/${payload.facts.planet}/${payload.facts.sign}`);
       setSkyArticleEditionForm((current) => current ? {
         ...current,
         facts: payload.facts,
-        tldr: workspace?.tldr ?? authoredSource?.summary?.trim() ?? current.tldr,
+        tldr: workspace?.tldr ?? (isSkyIngressEssay(current.format) ? current.tldr : authoredSource?.summary?.trim() ?? current.tldr),
         slotValues: { ...current.slotValues, ...(workspace?.slotValues ?? {}), ...payload.facts.slotValues },
         workspaceId: workspace?.row.id ?? null,
         saveState: workspace ? "saved" : "idle"
@@ -4891,6 +4912,7 @@ export function GeneratedContentAdminDashboard() {
 
   async function generateSkyArticleEditionSlots(templateRow: AdminGeneratedContentRow) {
     const form = skyArticleEditionForm;
+    const editorSession = editorSessionRef.current;
     if (!form?.facts) {
       setMessage("Load calculated edition facts before generating unfinished fields.");
       return;
@@ -4908,10 +4930,12 @@ export function GeneratedContentAdminDashboard() {
         method: "POST",
         body: JSON.stringify({
           templateId: templateRow.id,
+          format: form.format,
           referenceDate: form.referenceDate,
           existingSlotValues: form.slotValues
         })
       });
+      if (editorSession !== editorSessionRef.current) return;
       setSkyArticleEditionForm((current) => {
         if (!current) return current;
         const slotValues = { ...current.slotValues };
@@ -4949,7 +4973,7 @@ export function GeneratedContentAdminDashboard() {
     const context = { planet: facts.planet, sign: facts.sign };
     // Compiling reads each passage's copy, and the list carries only headlines, so the approved
     // sources are loaded first. Compiling without them would publish an article missing its houses.
-    const relationCandidates = [
+    const relationCandidates = isSkyIngressEssay(form.format) ? [] : [
       ...relatedHousePassages(rows, context).map((passage) => passage.row),
       ...relatedAspectPassages(rows, context)
     ].filter((row) => isApprovedSkyRelationRow(row) && row.inventory_only);
@@ -4990,6 +5014,7 @@ export function GeneratedContentAdminDashboard() {
     setIsLoading(true);
     try {
       const edition = await compileSkyArticleEdition({
+        format: form.format,
         templateBody: templateRow.body ?? "",
         templateSections: templateRow.sections,
         templateKey: templateRow.content_key.replace(/^sky-article-template\//u, "sky/article-template/"),
@@ -5862,6 +5887,7 @@ export function GeneratedContentAdminDashboard() {
       reviewOpen: false
     } : null);
     setSkyArticleEditionForm(isSkyArticleTemplateRow(row) ? {
+      format: SKY_INGRESS_ESSAY_FORMAT,
       referenceDate: new Date().toISOString().slice(0, 10),
       facts: null,
       tldr: "",
@@ -10298,7 +10324,8 @@ export function GeneratedContentAdminDashboard() {
     const savedHoroscopeText = [selectedRow?.body, savedHoroscopeSections?.heading, savedHoroscopeSections?.introduction,
       ...(Array.isArray(savedHoroscopeSections?.passages) ? savedHoroscopeSections.passages.map((passage: {body?:string}) => passage.body) : [])].filter(Boolean).join("\n\n");
     const skyArticleTemplateFields = isSkyArticleTemplate && selectedRow
-      ? skyArticleTemplatePlaceholders(savedHoroscopeText).filter((placeholder) => placeholder.name !== "risingBlocks")
+      ? isSkyIngressEssay(skyArticleEditionForm?.format) ? [...skyIngressEssayFields]
+        : skyArticleTemplatePlaceholders(savedHoroscopeText).filter((placeholder) => placeholder.name !== "risingBlocks")
       : [];
     const skyArticleEditionFacts = skyArticleEditionForm?.facts ?? null;
     const skyArticleEditionContext = skyArticleEditionFacts
@@ -10314,8 +10341,12 @@ export function GeneratedContentAdminDashboard() {
       ? relatedAspectPassages(rows, skyArticleEditionContext).filter(isApprovedSkyRelationRow).length
       : 0;
     const skyArticleEditionMissingTemplateFields = skyArticleTemplateFields.filter((field) => (
-      !Object.prototype.hasOwnProperty.call(skyArticleEditionForm?.slotValues ?? {}, field.name)
+      !(isSkyIngressEssay(skyArticleEditionForm?.format) && ["priorOccurrenceSection", "otherDatesSection"].includes(field.name)) &&
+      (isSkyIngressEssay(skyArticleEditionForm?.format)
+        ? !skyArticleEditionForm?.slotValues[field.name]?.trim()
+        : !Object.prototype.hasOwnProperty.call(skyArticleEditionForm?.slotValues ?? {}, field.name))
     ));
+    const skyArticleNeedsHouses = !isSkyIngressEssay(skyArticleEditionForm?.format);
     const updateVocabularySection = (nextSection: AdminVocabularySection) => {
       setDraft({
         ...currentDraft,
@@ -11328,8 +11359,9 @@ export function GeneratedContentAdminDashboard() {
                   <p className="admin-eyebrow">Executable article template</p>
                   <h3>Create a complete edition</h3>
                   <p>
-                    The template remains non-serving. Content Studio combines its fixed prose with calculated residency facts,
-                    edition-specific fields, twelve approved house horoscopes, and approved natal-aspect passages.
+                    {skyArticleNeedsHouses
+                      ? "Combine the saved template with calculated residency facts, edition fields and twelve approved house horoscopes."
+                      : "Write a dated ingress essay with When, What, Takeaway, an overview, major transits and a close. Prior occurrences and other dates are optional. House horoscopes remain a separate companion."}
                   </p>
                 </div>
                 <div>
@@ -11342,6 +11374,20 @@ export function GeneratedContentAdminDashboard() {
                   </p>
                 </div>
               </header>
+              <label className="admin-title-field">
+                <span>Article format</span>
+                <AdminSelect aria-label="Sky article format" value={skyArticleEditionForm.format} disabled={isLoading} onChange={(event) => {
+                  if (hasPendingArticleChanges() && !window.confirm("Discard unsaved changes before switching article formats?")) return;
+                  editorSessionRef.current += 1;
+                  skyArticleWorkspaceAutosaveSequenceRef.current += 1;
+                  workspaceAutosaveRowRef.current = null;
+                  setSkyArticleEditionForm({ format: event.target.value as SkyArticleFormat, referenceDate: skyArticleEditionForm.referenceDate,
+                    facts: null, tldr: "", slotValues: {}, slotGeneration: null, factBlockedSlots: [], saveState: "idle", workspaceId: null });
+                }}>
+                  <option value={SKY_INGRESS_ESSAY_FORMAT}>Ingress essay · October 9 format</option>
+                  <option value="saved-template">Saved article template and horoscopes</option>
+                </AdminSelect>
+              </label>
               <div className="admin-sky-edition-facts-row">
                 <label className="admin-title-field">
                   <span>Reference date</span>
@@ -11379,15 +11425,19 @@ export function GeneratedContentAdminDashboard() {
                   <dl className="admin-hook-pattern-list">
                     <div><dt>Calculated placement</dt><dd>{titleFromKey(skyArticleEditionFacts.planet)} in {titleFromKey(skyArticleEditionFacts.sign)}</dd></div>
                     <div><dt>Validity window</dt><dd>{skyArticleEditionFacts.validFrom} through {skyArticleEditionFacts.validTo}</dd></div>
-                    <div><dt>House coverage</dt><dd>{skyArticleEditionHouseCoverage}/12 approved</dd></div>
-                    <div><dt>Aspect passages</dt><dd>{skyArticleEditionAspectCount} approved</dd></div>
+                    {skyArticleNeedsHouses && <div><dt>House coverage</dt><dd>{skyArticleEditionHouseCoverage}/12 approved</dd></div>}
+                    {skyArticleNeedsHouses && <div><dt>Aspect passages</dt><dd>{skyArticleEditionAspectCount} approved</dd></div>}
+                    {skyArticleEditionFacts.eventCoverage && <div><dt>Event search</dt><dd>{skyArticleEditionFacts.eventCoverage.complete ? "Complete visit" : "Partial visit"}: {skyArticleEditionFacts.eventCoverage.start} to {skyArticleEditionFacts.eventCoverage.end}</dd></div>}
+                    {skyArticleEditionFacts.nasa && <div><dt>NASA/JPL comparison</dt><dd>{skyArticleEditionFacts.nasa.status}. {skyArticleEditionFacts.nasa.scope}</dd></div>}
+                    {skyArticleEditionFacts.nasaExplanatoryText && <div><dt>NASA astronomy reference</dt><dd>{skyArticleEditionFacts.nasaExplanatoryText.status}
+                      {skyArticleEditionFacts.nasaExplanatoryText.sourceUrl && <> · <a href={skyArticleEditionFacts.nasaExplanatoryText.sourceUrl} target="_blank" rel="noreferrer">{skyArticleEditionFacts.nasaExplanatoryText.title ?? "Source"}</a></>}</dd></div>}
                   </dl>
                   <section className="admin-hook-detail-section" aria-label="Article completion checklist">
                     <p className="admin-eyebrow">Publication checklist</p>
                     <ul>
                       <li>{skyArticleEditionForm.tldr.trim() ? "✓" : "○"} Explicit TL;DR</li>
                       <li>{skyArticleEditionMissingTemplateFields.length === 0 ? "✓" : "○"} Article fields ({skyArticleTemplateFields.length - skyArticleEditionMissingTemplateFields.length}/{skyArticleTemplateFields.length})</li>
-                      <li>{skyArticleEditionHouseCoverage === 12 ? "✓" : "○"} House passages ({skyArticleEditionHouseCoverage}/12)</li>
+                      {skyArticleNeedsHouses && <li>{skyArticleEditionHouseCoverage === 12 ? "✓" : "○"} House passages ({skyArticleEditionHouseCoverage}/12)</li>}
                       <li>✓ Calculated residency facts</li>
                     </ul>
                   </section>
@@ -11401,7 +11451,7 @@ export function GeneratedContentAdminDashboard() {
                       Generate unfinished fields
                     </StudioButton>
                     <p className="admin-field-hint">
-                      Explicit action only. Sends this approved template, calculated facts, and unfinished field names to the configured writing provider. Fixed owner prose is never rewritten.
+                      Sends the selected format, calculated facts, and unfinished fields to the writing provider. Review the generated draft before publication.
                     </p>
                   </div>
                   {skyArticleEditionForm.slotGeneration && (
@@ -11449,7 +11499,7 @@ export function GeneratedContentAdminDashboard() {
                             placeholder={placeholder.description || `Write the ${placeholder.name} edition passage.`}
                           />
                           {placeholder.description && <small className="admin-field-hint">{placeholder.description}</small>}
-                          {!engineOwned && skyArticleEditionForm.slotValues[placeholder.name] === undefined && (
+                          {!engineOwned && (skyArticleNeedsHouses || ["priorOccurrenceSection", "otherDatesSection"].includes(placeholder.name)) && skyArticleEditionForm.slotValues[placeholder.name] === undefined && (
                             <StudioButton type="button" onClick={() => setSkyArticleEditionForm({
                               ...skyArticleEditionForm,
                               slotValues: { ...skyArticleEditionForm.slotValues, [placeholder.name]: "" },
@@ -11467,8 +11517,8 @@ export function GeneratedContentAdminDashboard() {
                       className="admin-primary-button"
                       type="button"
                       onClick={() => void createSkyArticleEdition(selectedRow)}
-                      disabled={isLoading || skyArticleEditionHouseCoverage < 12 || !skyArticleEditionForm.tldr.trim() || skyArticleEditionMissingTemplateFields.length > 0}
-                      title={skyArticleEditionHouseCoverage < 12
+                      disabled={isLoading || (skyArticleNeedsHouses && skyArticleEditionHouseCoverage < 12) || !skyArticleEditionForm.tldr.trim() || skyArticleEditionMissingTemplateFields.length > 0}
+                      title={skyArticleNeedsHouses && skyArticleEditionHouseCoverage < 12
                         ? "All 12 approved house horoscopes are required before compilation."
                         : !skyArticleEditionForm.tldr.trim()
                           ? "Write the edition TL;DR before compilation."

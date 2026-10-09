@@ -79,7 +79,7 @@ const metadata = {
   ownerApproval: { ...booleans('approved'), ...strings('action contentKey templateKey templateHash fixedProseHash compiledHash') }
 };
 const edition = {
-  ...strings('schema body compiledHash compiledMarkdown contentKey fixedProseHash headline planet sign templateHash templateKey tldr transitEndInstant transitStartInstant validFrom validTo'),
+  ...strings('schema format body compiledHash compiledMarkdown contentKey fixedProseHash headline planet sign templateHash templateKey tldr transitEndInstant transitStartInstant validFrom validTo'),
   ...numbers('entryYear'), articleSections: [section],
   housePassages: [{ ...strings('body contentKey risingSign'), ...numbers('house') }],
   aspectPassages: [strings('aspect body contentKey natalPoint')]

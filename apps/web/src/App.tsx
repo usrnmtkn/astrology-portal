@@ -1,6 +1,7 @@
 import { comparePersonalDailyTransits, personalDailyPriority, personalDailyPeakLabel, precisePersonalOrb, type PersonalDailyPeak } from "./services/personalDailyTransits";
 import { usePersonalDailyPeaks, usePersonalTransitSeries } from "./services/usePersonalDailyTransits";
 import { CalendarDaySkeleton } from "./features/calendar/CalendarDaySkeleton";
+import { skyIngressEssayReaderSection } from "./content/skyIngressEssayReader";
 import {
   defaultLocation, selectedLocationStorageKey, isLocationInput, dateInputValue, dateFromInput,
   isDateInputValue, transitDateFromUrl, getInitialTransitDate, skyDateTimeFromInput, getInitialLocation
@@ -5218,7 +5219,7 @@ function exactSkyPlacementRisingHoroscopes(
 function normalizeSkyPlacementSurface(
   position: PlanetPosition,
   duration?: string | null,
-  _generatedContent?: GeneratedContentMap,
+  generatedContent?: GeneratedContentMap,
   beats: SkyWritingAspectBeat[] = [],
   generatedAt = new Date().toISOString(),
   _topperContext?: {
@@ -5236,7 +5237,11 @@ function normalizeSkyPlacementSurface(
     aspectFacts?: SkySnapshot["placementAspectFacts"];
   }
 ): NormalizedSkyPlacementArticle {
-  const fallbackSection = skyPlacementWritingSection(position, duration, beats, generatedAt, articleOptions);
+  const ingressSection = articleOptions?.articleMode !== "archive" && !isFallbackOnlySkyPlacementPreview()
+    ? skyIngressEssayReaderSection(generatedContent?.values() ?? [], {
+      activeInstant: generatedAt, planet: normalizeContentIdPart(position.planet), sign: normalizeContentIdPart(position.sign)
+    }) : null;
+  const fallbackSection = ingressSection ?? skyPlacementWritingSection(position, duration, beats, generatedAt, articleOptions);
   const sections = fallbackSection ? [fallbackSection] : [];
   const protectedSections = sections.map((section) => {
     if (!section.risingHoroscopes?.length) return section;
@@ -5418,7 +5423,8 @@ function currentSkyPlacementDetailArticle({
     } : undefined,
     glyph: detailGlyphForPlacement(position),
     kicker: placementDetailKicker(position, activeAspects),
-    title: isRetrograde ? fallbackTitle : placementSection?.heading || fallbackTitle,
+    title: isRetrograde && !placementSection?.sourceKeys.includes("compiled-sky-article-edition-v2")
+      ? fallbackTitle : placementSection?.heading || fallbackTitle,
     meta: [
       articleMode === "archive" ? null : formatPlacementPosition(position).toUpperCase(),
       isRegistryArticle || isContinuousFallback ? null : effectiveTransitRangeLabel

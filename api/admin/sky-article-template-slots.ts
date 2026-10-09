@@ -10,6 +10,7 @@ import {
   unfinishedSkyArticleTemplateSlots
 } from "../_lib/sky-article-template-slots.js";
 import { skyArticleTemplatePlaceholders } from "../../apps/web/src/content/skyArticleTemplateCompiler.js";
+import { isSkyIngressEssay, SKY_INGRESS_ESSAY_TEMPLATE, skyIngressEssayFields, type SkyArticleFormat } from "../../apps/web/src/content/skyIngressEssay.mjs";
 
 loadLocalWebEnv();
 
@@ -27,6 +28,7 @@ type TemplateRow = {
 };
 
 type RequestBody = {
+  format?: SkyArticleFormat;
   templateId?: string;
   referenceDate?: string;
   existingSlotValues?: Record<string, unknown>;
@@ -99,6 +101,7 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
 
   try {
     const body = await readAdminJsonBody<RequestBody>(req, 256_000);
+    if (body.format !== undefined && body.format !== "saved-template" && !isSkyIngressEssay(body.format)) throw new AdminHttpError(400, "Unsupported article format.");
     if (typeof body.templateId !== "string" || !body.templateId.trim()) throw new AdminHttpError(400, "templateId is required.");
     if (body.provider !== undefined && !["openai", "claude", "anthropic"].includes(body.provider)) throw new AdminHttpError(400, "Invalid provider.");
     if (body.voiceNotes !== undefined && typeof body.voiceNotes !== "string") throw new AdminHttpError(400, "voiceNotes must be text.");
@@ -110,9 +113,13 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
     const template = await loadApprovedTemplate(body.templateId.trim());
     const planet = templatePlanet(template);
     if (!planet) throw new Error("The selected template does not identify one Sky planet.");
-    const facts = await calculateSkyArticleEditionFacts(instant, planet);
-    const completeTemplate = articleTemplateWithHoroscopes(template.body ?? "", template.sections);
-    const placeholders = skyArticleTemplatePlaceholders(completeTemplate)
+    const ingress = isSkyIngressEssay(body.format);
+    const facts = await calculateSkyArticleEditionFacts(instant, planet, body.format);
+    if (ingress && "nasa" in facts && facts.nasa.status === "disagreement") throw new AdminHttpError(422, "Swiss and NASA/JPL positions disagree. Resolve the calculation evidence before writing.");
+    const templateSign = template.content_key.split("/").at(-1);
+    if (ingress && ![facts.sign, "ingress"].includes(templateSign ?? "")) throw new AdminHttpError(422, "The reference date is in a different sign. Open the template for the calculated placement.");
+    const completeTemplate = ingress ? SKY_INGRESS_ESSAY_TEMPLATE : articleTemplateWithHoroscopes(template.body ?? "", template.sections);
+    const placeholders = ingress ? [...skyIngressEssayFields] : skyArticleTemplatePlaceholders(completeTemplate)
       .filter((placeholder) => placeholder.name !== "risingBlocks")
       .map((placeholder) => ({ ...placeholder,
         description: (template.source_snapshot?.editorialImport as {slotDescriptions?: Record<string, string[]>} | undefined)?.slotDescriptions?.[placeholder.name]?.join("\n") || placeholder.description
@@ -123,8 +130,11 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
       calculatedSlotValues: facts.slotValues,
       existingSlotValues
     });
-    const blockedSlots = unfinished.filter(skyArticleTemplateSlotNeedsAdditionalFacts);
-    const requestedSlots = unfinished.filter((slot) => !skyArticleTemplateSlotNeedsAdditionalFacts(slot));
+    const needsFacts = (slot: { name: string; description?: string }) => ingress
+      ? slot.name === "priorOccurrenceSection" || (slot.name === "majorTransitSections" && !("events" in facts && facts.events.some(event => event.type === "aspect")))
+      : skyArticleTemplateSlotNeedsAdditionalFacts(slot);
+    const blockedSlots = unfinished.filter(needsFacts);
+    const requestedSlots = unfinished.filter((slot) => !needsFacts(slot));
     if (!requestedSlots.length) {
       sendAdminJson(res, 200, {
         ok: true,
