@@ -47,9 +47,15 @@ try {
     const reopened = await store.invoke('GET', undefined, `/api/admin/generated-content?contentKeys=${draft.contentKey}`);
     assert.equal(reopened.payload.rows[0].body, body);
     const query = studioInventoryQuery({ page: 'calendarWriteups', calendarWriteupWorkspaceView: kind === 'ingress' ? 'planetary-ingresses' : 'planetary-stations' });
-    const inventory = await store.invoke('GET', undefined, studioInventoryRequestPath(query, 100));
-    assert.equal(inventory.status, 200, JSON.stringify(inventory.payload));
-    assert.ok(inventory.payload.rows.some((entry: any) => entry.content_key === draft.contentKey));
+    const inventoryRows: any[] = [];
+    // Studio requests each prefix separately. Sending the entire prefix list
+    // tests only the first fast-inventory prefix and can conceal omissions.
+    for (const prefix of query.prefixes) {
+      const inventory = await store.invoke('GET', undefined, studioInventoryRequestPath({ ...query, prefixes: [prefix] }, 80));
+      assert.equal(inventory.status, 200, JSON.stringify(inventory.payload));
+      inventoryRows.push(...inventory.payload.rows);
+    }
+    assert.ok(inventoryRows.some(entry => entry.content_key === draft.contentKey));
     const published = await store.invoke('PATCH', { id: row.id, expectedUpdatedAt: row.updated_at, status: 'LIVE', lane: 'serving', reviewState: null, sourceSnapshot: { ...draft.sourceSnapshot, review_status: 'approved' } });
     assert.equal(published.status, 200, JSON.stringify(published.payload));
     row = published.payload.rows[0];
