@@ -4971,10 +4971,6 @@ export function GeneratedContentAdminDashboard() {
       setMessage("Load calculated edition facts before compiling the article.");
       return;
     }
-    if (form.saveState !== "saved") {
-      setMessage("Wait for the article draft to finish saving before compilation.");
-      return;
-    }
     const context = { planet: facts.planet, sign: facts.sign };
     // Compiling reads each passage's copy, and the list carries only headlines, so the approved
     // sources are loaded first. Compiling without them would publish an article missing its houses.
@@ -11529,9 +11525,7 @@ export function GeneratedContentAdminDashboard() {
                           ? "Write the edition TL;DR before compilation."
                           : skyArticleEditionMissingTemplateFields.length > 0
                             ? `Complete or deliberately leave blank: ${skyArticleEditionMissingTemplateFields.map((field) => field.name).join(", ")}.`
-                          : skyArticleEditionForm.saveState !== "saved"
-                            ? "Wait for the article draft to finish saving before compilation."
-                            : "Compile a non-serving edition draft."}
+                          : "Compile a non-serving edition draft."}
                     >
                       <Plus size={16} aria-hidden="true" />
                       Compile edition draft
