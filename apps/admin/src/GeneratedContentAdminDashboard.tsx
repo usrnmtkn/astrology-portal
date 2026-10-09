@@ -4971,6 +4971,10 @@ export function GeneratedContentAdminDashboard() {
       setMessage("Load calculated edition facts before compiling the article.");
       return;
     }
+    if (form.saveState !== "saved") {
+      setMessage("Wait for the article draft to finish saving before compilation.");
+      return;
+    }
     const context = { planet: facts.planet, sign: facts.sign };
     // Compiling reads each passage's copy, and the list carries only headlines, so the approved
     // sources are loaded first. Compiling without them would publish an article missing its houses.
@@ -5083,7 +5087,7 @@ export function GeneratedContentAdminDashboard() {
       if (!saved) throw new Error("The compiled edition was not returned by the content API.");
       setRows((current) => [saved, ...current.filter((row) => row.id !== saved.id)]);
       setSkyArticleEditionForm(null);
-      openRow(saved);
+      await openRow(saved);
       setMessage(`${edition.contentKey} compiled as a non-serving draft. Review the exact result before approving it.`);
     } catch (error) {
       setMessage(error instanceof Error ? error.message : "Could not compile the Sky article edition.");
@@ -11518,14 +11522,16 @@ export function GeneratedContentAdminDashboard() {
                       className="admin-primary-button"
                       type="button"
                       onClick={() => void createSkyArticleEdition(selectedRow)}
-                      disabled={isLoading || (skyArticleNeedsHouses && skyArticleEditionHouseCoverage < 12) || !skyArticleEditionForm.tldr.trim() || skyArticleEditionMissingTemplateFields.length > 0}
+                      disabled={isLoading || skyArticleEditionForm.saveState !== "saved" || (skyArticleNeedsHouses && skyArticleEditionHouseCoverage < 12) || !skyArticleEditionForm.tldr.trim() || skyArticleEditionMissingTemplateFields.length > 0}
                       title={skyArticleNeedsHouses && skyArticleEditionHouseCoverage < 12
                         ? "All 12 approved house horoscopes are required before compilation."
                         : !skyArticleEditionForm.tldr.trim()
                           ? "Write the edition TL;DR before compilation."
                           : skyArticleEditionMissingTemplateFields.length > 0
                             ? `Complete or deliberately leave blank: ${skyArticleEditionMissingTemplateFields.map((field) => field.name).join(", ")}.`
-                          : "Compile a non-serving edition draft."}
+                          : skyArticleEditionForm.saveState !== "saved"
+                            ? "Wait for the article draft to finish saving before compilation."
+                            : "Compile a non-serving edition draft."}
                     >
                       <Plus size={16} aria-hidden="true" />
                       Compile edition draft

@@ -30,7 +30,9 @@ for (const [width, theme] of [[390, 'light'], [1440, 'dark']] as const) {
   try {
    await ready;
    const errors: string[] = [];
+   const dialogs: string[] = [];
    page.on('pageerror', error => errors.push(error.message));
+   page.on('dialog', async dialog => { dialogs.push(dialog.message()); await dialog.dismiss(); });
    await page.setViewportSize({ width, height: 1000 });
    await page.addInitScript(theme => { localStorage.setItem('tldrastro:contentAdminSecret', 'calendar-api-fixture'); localStorage.setItem('tldrastro:studio-theme', theme); }, theme);
    await routeStudioInventoryApi(page, { call, answer: async (route, url) => {
@@ -76,6 +78,12 @@ for (const [width, theme] of [[390, 'light'], [1440, 'dark']] as const) {
    await expect(compiled.getByText('House passages', { exact: true })).toHaveCount(0);
    await expect(compiled.getByText('House horoscopes', { exact: true })).toHaveCount(0);
    await expect(compiled).not.toContainText('twelve house horoscopes');
+   await page.reload();
+   await page.getByLabel('Search Sky write-ups').fill(edition.content_key);
+   await page.getByRole('row').filter({ hasText: edition.content_key }).getByRole('button', { name: 'Edit', exact: true }).click();
+   await expect(compiled).toBeVisible();
+   await expect(editor.getByLabel('Sky article general copy', { exact: true })).toHaveValue(/Synthetic closingBody final sentence\./);
+   expect(dialogs).toEqual([]);
    expect(errors).toEqual([]);
    await editor.screenshot({ path: `test-results/sky-ingress-essay-${width}-${theme}.png` });
   } finally { child.kill(); rmSync(temporary, { recursive: true, force: true }); }
