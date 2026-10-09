@@ -11544,7 +11544,7 @@ export function GeneratedContentAdminDashboard() {
                 </div>
                 <strong>{compiledSkyArticleEdition.validFrom} through {compiledSkyArticleEdition.validTo}</strong>
               </div>
-              <p>This saved row contains no unresolved placeholders and includes all twelve house horoscopes. It remains dark until you use the explicit approval action below.</p>
+              <p>This saved article contains no unresolved placeholders. Review it before publication.</p>
               <div className="admin-hook-detail-section">
                 <strong>TL;DR</strong>
                 <p>{compiledSkyArticleEdition.tldr}</p>
@@ -11553,8 +11553,10 @@ export function GeneratedContentAdminDashboard() {
                 <div><dt>Template</dt><dd>{compiledSkyArticleEdition.templateKey}</dd></div>
                 <div><dt>Template hash</dt><dd><code>{compiledSkyArticleEdition.templateHash.slice(0, 12)}</code></dd></div>
                 <div><dt>Compiled hash</dt><dd><code>{compiledSkyArticleEdition.compiledHash.slice(0, 12)}</code></dd></div>
-                <div><dt>House horoscopes</dt><dd>{compiledSkyArticleEdition.housePassages.length}/12</dd></div>
-                <div><dt>Aspect passages</dt><dd>{compiledSkyArticleEdition.aspectPassages.length}</dd></div>
+                {!isSkyIngressEssay(compiledSkyArticleEdition.format) && <>
+                  <div><dt>House horoscopes</dt><dd>{compiledSkyArticleEdition.housePassages.length}/12</dd></div>
+                  <div><dt>Aspect passages</dt><dd>{compiledSkyArticleEdition.aspectPassages.length}</dd></div>
+                </>}
               </dl>
               {skyArticleEditor && (
                 <div className="admin-sky-article-editor" aria-label="Edit Sky article">
@@ -11602,7 +11604,7 @@ export function GeneratedContentAdminDashboard() {
                     />
                   </label>
 
-                  <details className={`${containedDisclosure} admin-workspace-details admin-sky-related-group admin-diagnostics-details`}>
+                  {!isSkyIngressEssay(compiledSkyArticleEdition.format) && <details className={`${containedDisclosure} admin-workspace-details admin-sky-related-group admin-diagnostics-details`}>
                     <AdminDisclosureSummary>
                       <span>House passages</span>
                       <strong>{skyArticleEditor.fields.housePassages.length}/12 complete</strong>
@@ -11619,7 +11621,7 @@ export function GeneratedContentAdminDashboard() {
                         </label>
                       ))}
                     </div>
-                  </details>
+                  </details>}
 
                   {skyArticleEditor.fields.aspectPassages.length > 0 && (
                     <details className={`${containedDisclosure} admin-workspace-details admin-sky-related-group admin-diagnostics-details`}>

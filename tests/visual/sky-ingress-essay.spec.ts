@@ -71,6 +71,11 @@ for (const [width, theme] of [[390, 'light'], [1440, 'dark']] as const) {
    expect(edition.sections.skyArticleEdition.housePassages).toEqual([]);
    expect(edition.body).toContain('Synthetic closingBody final sentence.');
    expect(rows.find((row: any) => row.content_key === 'sky/article-template/sun/libra').body).toBe('# Immutable synthetic owner article\n\n{{entryDate}}');
+   const compiled = editor.getByRole('region', { name: 'Compiled Sky article edition', exact: true });
+   await expect(compiled).toBeVisible();
+   await expect(compiled.getByText('House passages', { exact: true })).toHaveCount(0);
+   await expect(compiled.getByText('House horoscopes', { exact: true })).toHaveCount(0);
+   await expect(compiled).not.toContainText('twelve house horoscopes');
    expect(errors).toEqual([]);
    await editor.screenshot({ path: `test-results/sky-ingress-essay-${width}-${theme}.png` });
   } finally { child.kill(); rmSync(temporary, { recursive: true, force: true }); }
