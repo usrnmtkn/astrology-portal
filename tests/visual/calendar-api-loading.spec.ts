@@ -5,6 +5,52 @@ import skyHandler from '../../api/sky';
 import { bundledPublications } from '../helpers/bundled-publications';
 import { readerResponse } from '../helpers/reader-response';
 
+for (const width of [390, 1440]) for (const theme of ['light', 'dark'] as const) {
+  test(`Calendar route retains a styled loader before its stylesheet arrives ${width} ${theme}`, async ({ page }) => {
+    test.setTimeout(90_000);
+    await page.setViewportSize({ width, height: 1000 });
+    await page.clock.setFixedTime(new Date('2026-10-02T16:00:00Z'));
+    await page.emulateMedia({ colorScheme: theme });
+    await page.addInitScript(theme => {
+      localStorage.setItem('tldrastro:theme', theme);
+      localStorage.setItem('tldrastro:selectedLocation', JSON.stringify({ label: 'Synthetic New York', latitude: 40.7128, longitude: -74.006, timeZone: 'America/New_York' }));
+    }, theme);
+    await bundledPublications(page);
+    const errors: string[] = [];
+    page.on('pageerror', error => errors.push(error.message));
+    await page.route(/\/api\/(calendar|sky)\?/, async route => {
+      const url = new URL(route.request().url());
+      const recorder = { statusCode: 200, body: '', setHeader() {}, end(body: string) { this.body = body; } };
+      await (url.pathname === '/api/calendar' ? calendarHandler : skyHandler)(
+        { method: 'GET', url: url.href } as IncomingMessage, recorder as unknown as ServerResponse);
+      await route.fulfill({ status: recorder.statusCode, contentType: 'application/json', body: recorder.body });
+    });
+    let release = () => {};
+    const gate = new Promise<void>(resolve => { release = resolve; });
+    let held = false;
+    await page.route(/\/assets\/CalendarRoute-[^/]+\.css(?:\?|$)/, async route => {
+      held = true; await gate; await route.continue();
+    });
+    try {
+      await page.goto('/?date=2026-10-02#calendar?view=day&date=2026-10-02', { waitUntil: 'domcontentloaded' });
+      await expect.poll(() => held).toBe(true);
+      const loader = page.getByRole('status', { name: 'Loading calendar…', exact: true });
+      await expect(loader).toBeVisible();
+      expect(await loader.evaluate(el => getComputedStyle(el).display)).toBe('grid');
+      // Calendar cards depend on the held stylesheet and must not paint unstyled.
+      await expect(page.locator('.calendar-day-panel')).toHaveCount(0);
+      expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+      await page.screenshot({ path: `test-results/calendar-route-loader-${width}-${theme}.png` });
+      release();
+      const day = page.getByLabel('Selected lunar day', { exact: true });
+      await expect(day.locator('.calendar-sky-card__body')).toHaveAttribute('aria-busy', 'false', { timeout: 60_000 });
+      await expect(day.getByRole('button', { name: 'Mercury squares Mars', exact: true })).toBeVisible();
+      expect(errors).toEqual([]);
+      expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+    } finally { release(); }
+  });
+}
+
 for (const offlineRange of [false, true]) test(`Calendar loads complete facts with ${offlineRange ? 'local range recovery' : 'no calculation-engine download'}`, async ({ page }) => {
   test.setTimeout(90_000);
   await page.setViewportSize({width: 390, height: 844});
