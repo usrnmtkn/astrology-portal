@@ -3654,6 +3654,10 @@ button.calendar-reading__toggle {
   gap: var(--calendar-stack-gap);
 }
 
+.calendar-slideout .calendar-day-events__grid {
+  grid-template-columns: minmax(0, 1fr);
+}
+
 .calendar-stoic-card.is-wide {
   grid-column: 1 / -1;
   min-height: 0;
