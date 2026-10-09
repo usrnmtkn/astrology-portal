@@ -1,7 +1,7 @@
 # Content Studio audit repairs
 
 Repair PR: [#1188](https://github.com/usrnmtkn/astrology-portal/pull/1188).
-Integration baseline: `62460b456` (main, including the section-inventory repair).
+Integration baseline: `9fbedf2fd` (main, including the section-inventory and horoscope edition-loading repairs).
 Exact final test and deployment revisions belong to the PR validation record; local fixture results do not establish a production release.
 
 ## Corrected behavior
@@ -28,9 +28,9 @@ The repeated branch-push and PR API checks are intentional release requirements 
 
 Both checkouts have independent `npm ci` installations and use the same CI Supabase placeholders. Web builds enable natal aspect patterns. Composite Review loads as a deferred module.
 
-- Main standalone Studio: 782,242 raw / 227,862 gzip entry bytes; 785,944 aggregate gzip bytes across 78 files. Main already exceeds the original entry ceilings.
-- Repair standalone Studio: 781,189 raw / 227,480 gzip entry bytes, within the unchanged entry ceilings; 786,879 aggregate gzip bytes across 79 files (+935). The aggregate allowance increases by 500 bytes; entry, graph, CSS and dependency limits stay unchanged.
-- Main web aggregate: 3,552,061 gzip bytes across 225 files; Sky detail chunk 5,970 bytes. Repair web: 3,554,486 gzip bytes across 228 files (+2,425); Sky detail chunk 6,025 bytes (+55). The bounded allocation is 1,000 aggregate bytes and 100 Sky-detail bytes above the existing limits; startup and other surface limits remain unchanged.
+- Main standalone Studio: 782,242 raw / 227,861 gzip entry bytes; 786,018 aggregate gzip bytes across 78 files. Main already exceeds the original entry ceilings.
+- Repair standalone Studio: 781,189 raw / 227,484 gzip entry bytes, within the unchanged entry ceilings; 786,864 aggregate gzip bytes across 79 files (+846). The aggregate allowance increases by 500 bytes; entry, graph, CSS and dependency limits stay unchanged.
+- Main web aggregate: 3,552,107 gzip bytes across 225 files; Sky detail chunk 5,969 bytes. Repair web: 3,554,406 gzip bytes across 228 files (+2,299); Sky detail chunk 6,027 bytes (+58). The bounded allocation is 750 aggregate bytes and 100 Sky-detail bytes above the existing limits; startup and other surface limits remain unchanged.
 
 ## Release verification
 
