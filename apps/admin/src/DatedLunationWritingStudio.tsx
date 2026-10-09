@@ -27,9 +27,12 @@ export default function DatedLunationWritingStudio({secret,dirtyRef,onOpenConten
   const [rows,setRows]=useState<Row[]>([]),[row,setRow]=useState<Row|null>(null);
   const [direction,setDirection]=useState(''),[headline,setHeadline]=useState(''),[body,setBody]=useState('');
   const [rejecting,setRejecting]=useState(false),[rejectionReason,setRejectionReason]=useState('');
-  const [approved,setApproved]=useState(false),[busy,setBusy]=useState(false),[error,setError]=useState(''),[message,setMessage]=useState('');
+  const [busy,setBusy]=useState(false),[error,setError]=useState(''),[message,setMessage]=useState('');
+  const [eventId,setEventId]=useState('');
   const operation=useRef(false);
   const selectedDraft=useRef<HTMLElement>(null);
+  const draftList=useRef<HTMLElement>(null);
+  const [focusList,setFocusList]=useState(0);
   const progress=useRef<HTMLDivElement>(null),article=useRef<HTMLTextAreaElement>(null);
   const [focusDraft,setFocusDraft]=useState(0);
   const [pollRetry,setPollRetry]=useState(0),[elapsed,setElapsed]=useState(0);
@@ -39,12 +42,12 @@ export default function DatedLunationWritingStudio({secret,dirtyRef,onOpenConten
   const dirty=proseChanged||!!row&&direction!==writing?.direction;
   const unsaved=dirty||rejecting&&!!rejectionReason;
   const rejections=writing?.rejections??[];
-  const generateLabel=rejections.length?'Regenerate draft':'Generate draft';
+  const generateLabel=rejections.length?'Regenerate draft':'Create draft';
   dirtyRef.current=unsaved||busy;
   useEffect(()=>()=>{dirtyRef.current=false;},[dirtyRef]);
   useEffect(()=>{if(!unsaved)return;const warn=(event:BeforeUnloadEvent)=>event.preventDefault();window.addEventListener('beforeunload',warn);return()=>window.removeEventListener('beforeunload',warn);},[unsaved]);
   function accept(next:Row) {
-    setRow(next);setHeadline(next.headline);setBody(next.body);setDirection(next.source_snapshot.lunationWriting.direction);setApproved(false);
+    setRow(next);setHeadline(next.headline);setBody(next.body);setDirection(next.source_snapshot.lunationWriting.direction);
     setRejecting(false);setRejectionReason('');
     setRows(current=>[next,...current.filter(r=>r.id!==next.id)]);
   }
@@ -76,7 +79,7 @@ export default function DatedLunationWritingStudio({secret,dirtyRef,onOpenConten
     const timer=window.setTimeout(()=>{
       void request(secret,undefined,`?${new URLSearchParams({month,timeZone:zone})}`,controller.signal)
         .then(result=>{
-          if(!Array.isArray(result.events))throw new Error('The event list could not be loaded. Select Refresh events to try again.');
+          if(!Array.isArray(result.events))throw new Error('The event list could not be loaded. Try loading events again.');
           if(!controller.signal.aborted)setEvents(result.events);
         })
         .catch(reason=>{if(!controller.signal.aborted)setEventsError(reason.message);})
@@ -85,6 +88,11 @@ export default function DatedLunationWritingStudio({secret,dirtyRef,onOpenConten
     return()=>{controller.abort();window.clearTimeout(timer);};
   },[secret,month,zone,eventReload]);
   useEffect(()=>{if(focusDraft){selectedDraft.current?.focus();selectedDraft.current?.scrollIntoView({block:'start'});}},[focusDraft]);
+  useEffect(()=>{if(focusList){draftList.current?.focus();draftList.current?.scrollIntoView({block:'start'});}},[focusList]);
+  function backToDrafts() {
+    if(busy||unsaved&&!window.confirm('Discard the unsaved changes to this draft?'))return;
+    opening.current?.abort();setRow(null);setRejecting(false);setRejectionReason('');setError('');setMessage('');setFocusList(value=>value+1);
+  }
   const opening=useRef<AbortController|null>(null);
   useEffect(()=>()=>opening.current?.abort(),[]);
   async function open(next:Pick<Row,'id'>) {
@@ -145,49 +153,107 @@ export default function DatedLunationWritingStudio({secret,dirtyRef,onOpenConten
     progress.current?.focus();progress.current?.scrollIntoView({block:'center'});
     return()=>window.clearInterval(timer);
   },[writing?.active?.id]);
-  useEffect(()=>{if(focusArticle){article.current?.focus();article.current?.scrollIntoView({block:'center'});}},[focusArticle]);
+  useEffect(()=>{if(focusArticle){article.current?.focus({preventScroll:true});selectedDraft.current?.scrollIntoView({block:'start'});}},[focusArticle]);
   const filteredEvents=events.filter(e=>kind==='all'||(kind==='eclipses'?!!e.eclipseType:!e.eclipseType&&e.phase===kind));
+  const selectedEvent=filteredEvents.find(event=>event.id===eventId)??filteredEvents[0];
+  const existingEvent=selectedEvent&&rows.some(saved=>saved.facts.lunationArticle.event.id===selectedEvent.id);
   const plan=writing?.preview;
   const notesChanged=!!row&&direction!==writing?.direction;
+  async function stage() {
+    if(!row)return;
+    const result=await request(secret,{action:'stage',id:row.id,expectedUpdatedAt:row.updated_at});
+    await onOpenContent(result.contentKey);
+    setMessage(result.existing?'Opened the existing reader entry. Its saved writing was preserved.':'Copied the complete article to a reader draft. Review and publish it in the content editor.');
+  }
+  const editor=<>
+    <label><span>Article title</span><StudioInput value={headline} disabled={busy} onChange={e=>setHeadline(e.target.value)} maxLength={200} /></label>
+    <label><span>Full article</span><StudioTextarea ref={article} value={body} disabled={busy} onChange={e=>setBody(e.target.value)} rows={18} maxLength={40000} /></label>
+  </>;
   return <section className="admin-template-page" aria-label="Lunation writing">
     <header className="admin-composition-detail-header"><div><h2>Dated articles &amp; eclipses</h2>
-      <p>Choose a Moon or eclipse below, review its writing plan, then generate your article. Your saved writing guidance and lunar examples are included automatically.</p></div></header>
-    <StudioButton disabled={busy} onClick={onEditGuidance}>Edit shared writing guidance</StudioButton>
-    {!row&&error&&<p role="alert">{error}</p>}
-    <section className="studio-surface admin-editor-guidance" aria-label="Choose a lunation">
-      <Stack gap="md"><h3>1. Choose a Moon or eclipse</h3><Grid className="admin-form-grid">
-        <label><span>Month</span><StudioInput type="month" value={month} disabled={busy} onChange={e=>setMonth(e.target.value)} /></label>
-        <label><span>Time zone</span><StudioInput value={zone} disabled={busy} onChange={e=>setZone(e.target.value)} /></label>
-        <label><span>Event type</span><AdminSelect value={kind} disabled={busy} onChange={e=>setKind(e.target.value)}>
-          <option value="all">All lunations</option><option value="new-moon">New Moons</option><option value="full-moon">Full Moons</option><option value="eclipses">Eclipses</option>
-        </AdminSelect></label>
-      </Grid>
-      {eventsLoading&&<p role="status">Finding this month’s Moons and eclipses…</p>}
-      {eventsError&&<p role="alert">{eventsError}</p>}
-      {!eventsLoading&&!eventsError&&filteredEvents.map(event=><div className="admin-review-status-bar" key={event.id}>
-        <StudioButton className="admin-primary-button" disabled={busy||unsaved} onClick={()=>void run(async()=>{
-          const result=await request(secret,{action:'prepare',month,timeZone:zone,eventId:event.id,direction:''});accept(result.rows[0]);
-          setFocusDraft(value=>value+1);
-          setMessage(result.existing?'Opened your saved draft.':'Writing plan ready. Review it below, then choose Generate draft.');
-        })}>{rows.some(saved=>saved.facts.lunationArticle.event.id===event.id)?'Open':'Write'} {event.title}</StudioButton>
-        <Text size="meta">{displayTime(event)} · {event.timeZone}</Text>
-      </div>)}
-      {!filteredEvents.length&&!eventsLoading&&!eventsError&&<Text>No matching events in this month. Choose another month or select All lunations.</Text>}
-      <StudioButton disabled={busy||eventsLoading} onClick={()=>setEventReload(value=>value+1)}>Refresh events</StudioButton>
-      {dirty&&<Text>Save your current draft before opening another event.</Text>}
-      </Stack>
-    </section>
-    {row&&<section ref={selectedDraft} tabIndex={-1} className="studio-surface admin-editor-guidance" aria-label="Selected lunation draft"><Stack gap="md">
-      <h3>{row.facts.lunationArticle.event.title}</h3><Text size="meta">{displayTime(row.facts.lunationArticle.event)} · {row.facts.lunationArticle.event.timeZone}</Text>
-      {!writing.active&&error&&<p role="alert">{error}</p>}
-      {!writing.active&&message&&<p role="status">{message}</p>}
-      {!writing.active&&<Text>{row.body?'3. Edit and save your article, or reject it to prepare a replacement. Open the reader draft when you are ready to review and publish.':`2. Review the plan below, check “I’ve reviewed this writing plan,” then choose ${generateLabel}. Adding a writing direction is optional.`}</Text>}
-      {writing.lastError&&writing.lastError!==error&&<p role="alert">{writing.lastError}</p>}
-      {!row.body&&!writing.active&&<>
-        <label><span>Writing direction (optional)</span><StudioTextarea value={direction} disabled={busy} maxLength={6000} onChange={e=>{setDirection(e.target.value);setApproved(false);}} placeholder="Describe the emphasis you want this article to explore." /></label>
-        <StudioButton disabled={busy} onClick={()=>void run(()=>act('review',{direction}))}>Update writing plan</StudioButton>
-      </>}
-      {plan&&<details className="admin-workspace-details" open={!row.body&&!writing.active}>
+      {!row&&<p>Create a draft for a Moon or eclipse, or open one you have already saved.</p>}</div></header>
+    {!row?<>
+      {error&&<p role="alert">{error}</p>}
+      <section ref={draftList} tabIndex={-1} className="studio-surface admin-editor-guidance" aria-label="Choose a lunation">
+        <Stack gap="md"><h3>Create a new draft</h3><Grid className="admin-form-grid">
+          <label><span>Month</span><StudioInput type="month" value={month} disabled={busy} onChange={e=>setMonth(e.target.value)} /></label>
+          <label><span>Time zone</span><StudioInput value={zone} disabled={busy} onChange={e=>setZone(e.target.value)} /></label>
+          <label><span>Event type</span><AdminSelect value={kind} disabled={busy} onChange={e=>setKind(e.target.value)}>
+            <option value="all">All lunations</option><option value="new-moon">New Moons</option><option value="full-moon">Full Moons</option><option value="eclipses">Eclipses</option>
+          </AdminSelect></label>
+        </Grid>
+        {eventsLoading&&<p role="status">Finding this month’s Moons and eclipses…</p>}
+        {eventsError&&<><p role="alert">{eventsError}</p><StudioButton disabled={busy} onClick={()=>setEventReload(value=>value+1)}>Try loading events again</StudioButton></>}
+        {!eventsLoading&&!eventsError&&selectedEvent&&<>
+          <label><span>Moon or eclipse</span><AdminSelect value={selectedEvent.id} disabled={busy} onChange={e=>setEventId(e.target.value)}>
+            {filteredEvents.map(event=><option key={event.id} value={event.id}>{event.title}</option>)}
+          </AdminSelect></label>
+          <Text size="meta">{displayTime(selectedEvent)} · {selectedEvent.timeZone}</Text>
+          <StudioButton className="admin-primary-button" disabled={busy} onClick={()=>void run(async()=>{
+            const result=await request(secret,{action:'prepare',month,timeZone:zone,eventId:selectedEvent.id,direction:''});accept(result.rows[0]);
+            setFocusDraft(value=>value+1);
+          })}>{existingEvent?'Open saved draft':'Create new draft'}</StudioButton>
+          {!existingEvent&&<Text size="meta">First, review the writing plan. Generation starts only when you choose Create draft.</Text>}
+        </>}
+        {!filteredEvents.length&&!eventsLoading&&!eventsError&&<Text>No matching events in this month. Choose another month or select All lunations.</Text>}
+        </Stack>
+      </section>
+      <section className="studio-surface admin-editor-guidance" aria-label="Saved lunation drafts">
+        <Stack gap="md"><h3>Saved drafts</h3>
+          {error&&<StudioButton disabled={busy} onClick={()=>void run(refresh)}>Try loading drafts again</StudioButton>}
+          {!rows.length&&<Text>No drafts yet. Choose a Moon or eclipse above to get started.</Text>}
+          {rows.map(saved=><div className="admin-review-status-bar" key={saved.id}><StudioButton disabled={busy} onClick={()=>open(saved)}>{saved.headline}</StudioButton>
+            <Text size="meta">{displayTime(saved.facts.lunationArticle.event)} · {saved.source_snapshot.lunationWriting.active?'Writing in progress':saved.body?'Draft ready':saved.source_snapshot.lunationWriting.rejections?.length?'Ready to regenerate':'Plan ready'}</Text></div>)}
+        </Stack>
+      </section>
+      <details className="admin-workspace-details"><AdminDisclosureSummary>Writing settings</AdminDisclosureSummary>
+        <div className="admin-toolbar-actions"><StudioButton disabled={busy} onClick={onEditGuidance}>Edit shared writing guidance</StudioButton>
+          <StudioButton disabled={busy} onClick={()=>void run(refresh)}>Refresh saved drafts</StudioButton></div>
+      </details>
+    </>:<>
+      <StudioButton disabled={busy} onClick={backToDrafts}>Back to drafts</StudioButton>
+      <section ref={selectedDraft} tabIndex={-1} className="studio-surface admin-editor-guidance" aria-label="Selected lunation draft"><Stack gap="md">
+        <h3>{row.facts.lunationArticle.event.title}</h3><Text size="meta">{displayTime(row.facts.lunationArticle.event)} · {row.facts.lunationArticle.event.timeZone}</Text>
+        {!writing.active&&error&&<p role="alert">{error}</p>}
+        {!writing.active&&message&&<p role="status">{message}</p>}
+        {writing.lastError&&writing.lastError!==error&&<p role="alert">{writing.lastError}</p>}
+        {!row.body&&!writing.active&&plan&&<>
+          <Text>{rejections.length?'Your feedback is saved. Review the replacement plan below.':'Review the writing plan below.'} {generateLabel} approves this plan and starts one paid writing request.</Text>
+          <StudioButton className="admin-primary-button" disabled={busy||proseChanged&&!notesChanged} onClick={()=>void run(()=>notesChanged?act('review',{direction}):act('generate',{approvedPlanHash:plan.planHash}))}>{notesChanged?'Update writing plan':generateLabel}</StudioButton>
+          {notesChanged&&<Text>Update the plan with your changes before creating the draft.</Text>}
+          {proseChanged&&<Text>Save your manual draft below to keep your writing.</Text>}
+          <details className="admin-workspace-details"><AdminDisclosureSummary>Adjust writing direction</AdminDisclosureSummary>
+            <label><span>Writing direction (optional)</span><StudioTextarea formatting={false} value={direction} disabled={busy} maxLength={6000} onChange={e=>setDirection(e.target.value)} placeholder="Describe the emphasis you want this article to explore." /></label>
+          </details>
+        </>}
+        {row.body&&!writing.active&&!rejecting&&<>
+          <Text>Your draft is ready. Edit it below, or reject it and prepare a replacement.</Text>
+          <div className="admin-toolbar-actions">
+            {dirty?<StudioButton className="admin-primary-button" disabled={busy||notesChanged||!headline.trim()} onClick={()=>void run(()=>act('save',{headline,body}))}>Save draft</StudioButton>
+              :<StudioButton className="admin-primary-button" disabled={busy||!row.body.trim()} onClick={()=>void run(stage)}>Review &amp; publish</StudioButton>}
+            <StudioButton disabled={busy||dirty} onClick={()=>setRejecting(true)}>Reject &amp; regenerate</StudioButton>
+          </div>
+          {dirty&&<Text>Save your edits before rejecting so the complete draft is preserved.</Text>}
+        </>}
+        {rejecting&&!writing.active&&<>
+          <label><span>Reason for rejection</span><StudioTextarea formatting={false} autoFocus required value={rejectionReason} disabled={busy} rows={5} maxLength={6000} onChange={e=>setRejectionReason(e.target.value)} /></label>
+          <Text>Your original draft will be kept. Next, review the replacement plan before starting a new draft.</Text>
+          <div className="admin-toolbar-actions"><StudioButton className="admin-primary-button" disabled={busy||dirty||!rejectionReason.trim()} onClick={()=>void run(()=>act('reject',{reason:rejectionReason}))}>Review replacement plan</StudioButton>
+            <StudioButton disabled={busy} onClick={()=>{setRejecting(false);setRejectionReason('');}}>Cancel</StudioButton></div>
+        </>}
+      {writing.active&&<div ref={progress} tabIndex={-1} aria-label="Article generation progress"><Stack gap="sm">
+        <p role="status">{error?'Progress checks paused.':writing.active.responseId?'Writing your new draft…':'Confirming your writing request…'}</p>
+        <Text>{writing.active.responseId?'Your new draft is being written. It will appear here automatically. You can leave and return without starting it again.':'Your writing request is awaiting confirmation. Use Check again to check its saved status before retrying generation.'}</Text>
+        <Text size="meta">Elapsed time: {Math.floor(elapsed/60)}m {elapsed%60}s. {error||!writing.active.responseId?'Use Check again to check the saved request.':'Checking automatically. This can take several minutes.'}</Text>
+        {error&&<p role="alert">{error}</p>}
+        {(error||!writing.active.responseId)&&<StudioButton disabled={busy} onClick={()=>void run(async()=>{
+          await refresh();setPollRetry(value=>value+1);
+        })}>Check again</StudioButton>}
+        {!writing.active.responseId&&Date.now()-Date.parse(writing.active.startedAt)>310000&&<StudioButton disabled={busy} onClick={()=>{
+          if(window.confirm('The previous request may have been billed. Release it only if you accept that its outcome is unknown.'))void run(()=>act('release',{acknowledgeUnknownOutcome:true}));
+        }}>Release interrupted request</StudioButton>}
+      </Stack></div>}
+      {plan&&!writing.active&&!rejecting&&<details className="admin-workspace-details" open={!row.body}>
         <AdminDisclosureSummary>Writing plan and sources</AdminDisclosureSummary>
         <Stack gap="sm">
           {['thesis','transit_job','recognition','complication','response','scope_guard'].map(key=><p key={key}>{plan.argument[key]}</p>)}
@@ -201,62 +267,21 @@ export default function DatedLunationWritingStudio({secret,dirtyRef,onOpenConten
           <details><AdminDisclosureSummary>Your writing examples</AdminDisclosureSummary>{plan.voiceSources.map((source:any)=><blockquote key={source.id}><p>{source.text}</p><cite>{source.id}</cite></blockquote>)}</details>
         </Stack>
       </details>}
-      {!row.body&&!writing.active&&<>
-        <label><input type="checkbox" checked={approved} disabled={busy||notesChanged} onChange={e=>setApproved(e.target.checked)} /> I’ve reviewed this writing plan.</label>
-        <Text size="meta">{generateLabel} makes one paid writing request using the configured model.</Text>
-        <StudioButton className="admin-primary-button" disabled={busy||!approved||dirty} onClick={()=>void run(()=>act('generate',{approvedPlanHash:plan.planHash}))}>{generateLabel}</StudioButton>
-        {proseChanged&&<Text>Save your article edits to keep this writing. Generation will not replace saved writing.</Text>}
-      </>}
-      {writing.active&&<div ref={progress} tabIndex={-1} aria-label="Article generation progress"><Stack gap="sm">
-        <p role="status">{error?'Progress checks paused.':writing.active.responseId?'Writing your article…':'Confirming your writing request…'}</p>
-        <Text>{writing.active.responseId?'Your request is saved. You can leave this page and return; Studio will retrieve the same draft without starting another generation.':'Your writing request is awaiting confirmation. Use Check again to check its saved status before retrying generation.'}</Text>
-        <Text size="meta">Elapsed time: {Math.floor(elapsed/60)}m {elapsed%60}s. {error||!writing.active.responseId?'Use Check again to check the saved request.':'Checking automatically. This can take several minutes.'}</Text>
-        {error&&<p role="alert">{error}</p>}
-        {(error||!writing.active.responseId)&&<StudioButton disabled={busy} onClick={()=>void run(async()=>{
-          await refresh();setPollRetry(value=>value+1);
-        })}>Check again</StudioButton>}
-        {!writing.active.responseId&&Date.now()-Date.parse(writing.active.startedAt)>310000&&<StudioButton disabled={busy} onClick={()=>{
-          if(window.confirm('The previous request may have been billed. Release it only if you accept that its outcome is unknown.'))void run(()=>act('release',{acknowledgeUnknownOutcome:true}));
-        }}>Release interrupted request</StudioButton>}
-      </Stack></div>}
-      {!writing.active&&<>
-      <label><span>Article title</span><StudioInput value={headline} disabled={busy||rejecting} onChange={e=>setHeadline(e.target.value)} maxLength={200} /></label>
-      <label><span>Full article</span><StudioTextarea ref={article} value={body} disabled={busy||rejecting||!!writing.active} onChange={e=>setBody(e.target.value)} rows={18} maxLength={40000} /></label>
-      {!!row.body.trim()&&<>
-        {!rejecting?<><StudioButton disabled={busy||dirty} onClick={()=>setRejecting(true)}>Reject &amp; regenerate</StudioButton>
-          {dirty&&<Text>Save your edits before rejecting so the complete draft is preserved.</Text>}</>:<Stack gap="sm">
-          <label><span>Reason for rejection</span><StudioTextarea formatting={false} autoFocus required value={rejectionReason} disabled={busy} rows={3} maxLength={6000} onChange={e=>setRejectionReason(e.target.value)} /></label>
-          <Text>The complete saved draft and your reason will stay in Rejected drafts and guide the next plan for this event. Review that plan before starting a paid replacement.</Text>
-          <div className="admin-toolbar-actions"><StudioButton disabled={busy||dirty||!rejectionReason.trim()} onClick={()=>void run(()=>act('reject',{reason:rejectionReason}))}>Reject draft &amp; update plan</StudioButton>
-            <StudioButton disabled={busy} onClick={()=>{setRejecting(false);setRejectionReason('');}}>Cancel rejection</StudioButton></div>
-        </Stack>}
-      </>}
-      {writing.lint?.violations?.length>0&&<div role="alert"><Text>Correct these errors before publishing:</Text><ul>{writing.lint.violations.map((v:any,i:number)=><li key={i}>{v.detail}</li>)}</ul></div>}
-      <StudioButton disabled={busy||!!writing.active||unsaved||!row.body.trim()} onClick={()=>void run(async()=>{
-        const result=await request(secret,{action:'stage',id:row.id,expectedUpdatedAt:row.updated_at});
-        const key=result.contentKey;
-        await onOpenContent(key);
-        setMessage(result.existing?'Opened the existing reader entry. Its saved writing was preserved.':'Copied the complete article to a reader draft. Review and publish it in the content editor.');
-      })}>Open reader draft</StudioButton>
-      <Text size="meta">The first opening copies your saved article into the content editor for review. Later openings preserve that editor’s changes. Publishing there updates the matching Calendar preview and full article together.</Text>
-      <StudioButton disabled={busy||!!writing.active||!dirty||notesChanged||!headline.trim()} onClick={()=>void run(()=>act('save',{headline,body}))}>Save draft</StudioButton>
-      </>}
-      {rejections.length>0&&<details className="admin-workspace-details">
+        {!writing.active&&!rejecting&&(row.body?editor:<details className="admin-workspace-details">
+          <AdminDisclosureSummary>Write or paste a draft instead</AdminDisclosureSummary><Stack gap="md">{editor}
+            <StudioButton className={proseChanged?'admin-primary-button':undefined} disabled={busy||!proseChanged||notesChanged||!headline.trim()} onClick={()=>void run(()=>act('save',{headline,body}))}>Save draft</StudioButton>
+          </Stack></details>)}
+        {!writing.active&&!rejecting&&writing.lint?.violations?.length>0&&<div role="alert"><Text>Correct these errors before publishing:</Text><ul>{writing.lint.violations.map((v:any,i:number)=><li key={i}>{v.detail}</li>)}</ul></div>}
+      {!writing.active&&!rejecting&&rejections.length>0&&<details className="admin-workspace-details">
         <AdminDisclosureSummary>Rejected drafts ({rejections.length})</AdminDisclosureSummary>
-        <Text>Saved with their original writing plans and request records. These drafts stay out of reader content and serve only as correction evidence for this event.</Text>
+        <Text>Previous versions are kept here with your reasons for rejection.</Text>
         {[...rejections].reverse().map((entry:any)=><details key={entry.id} className="admin-workspace-details">
           <AdminDisclosureSummary>{entry.headline} · {new Date(entry.rejectedAt).toLocaleString()}</AdminDisclosureSummary>
           <Text>{entry.reason}</Text>
           <label><span>Rejected article</span><StudioTextarea formatting={false} readOnly rows={10} value={entry.body} /></label>
         </details>)}
       </details>}
-    </Stack></section>}
-    <section className="studio-surface admin-editor-guidance" aria-label="Saved lunation drafts">
-      <Stack gap="sm"><h3>Saved drafts</h3><StudioButton disabled={busy} onClick={()=>void run(refresh)}>Refresh saved drafts</StudioButton>
-        {!rows.length&&<Text>No lunation drafts saved yet. Choose an event above to start.</Text>}
-        {rows.map(saved=><div className="admin-review-status-bar" key={saved.id}><StudioButton disabled={busy} onClick={()=>open(saved)}>{saved.headline}</StudioButton>
-          <Text size="meta">{displayTime(saved.facts.lunationArticle.event)} · {saved.source_snapshot.lunationWriting.active?'Writing in progress':'Draft'}</Text></div>)}
-      </Stack>
-    </section>
+      </Stack></section>
+    </>}
   </section>;
 }

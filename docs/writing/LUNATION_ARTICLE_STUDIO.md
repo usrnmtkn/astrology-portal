@@ -14,19 +14,31 @@ The dated view is `/admin/content#calendar-writeups?view=lunation-writing&writin
 old `view=lunations` links resolve to this view.
 
 1. Choose a month and time zone. Calculated events load automatically.
-2. Select **Write Full Moon in Aries**, or the corresponding event button.
-   An existing workspace shows **Open** and preserves its saved text.
-3. Review the prepared writing plan, check **I've reviewed this writing plan**,
-   and select **Generate draft**. Writing direction is optional.
-4. Edit and save the result. **Open reader draft** takes it to the content editor
-   for review and publication.
+2. Choose the **Moon or eclipse**, then select **Create new draft**.
+   An existing workspace shows **Open saved draft** and preserves its saved text.
+3. Review the prepared writing plan and select **Create draft**. This explicit
+   action approves the displayed plan and starts one paid request. Optional
+   changes live under **Adjust writing direction**; update the plan after editing.
+4. Edit and **Save draft**, or select **Review & publish** to open the content
+   editor. This handoff does not publish the article.
+
+The list and selected draft are separate screens. **Back to drafts** returns to
+the chooser and saved list; unsaved changes require confirmation. **Writing
+settings** contains shared guidance and the saved-list refresh control.
+
+To replace saved writing, select **Reject & regenerate**, enter a reason, and
+choose **Review replacement plan**. The original stays in **Rejected drafts**.
+Review the replacement plan, then select **Regenerate draft** to start one new
+request. Rejecting alone never starts generation. While writing, the focused
+progress screen hides the old text and plan. Returning to the saved draft resumes
+the same request; completion opens its persisted result.
 
 New Moons, Full Moons, solar eclipses and lunar eclipses are supported.
-**Edit shared writing guidance** opens the same saved profile used by reusable
+**Writing settings → Edit shared writing guidance** opens the same saved profile used by reusable
 readings. The reusable view retains the argument editor, journal question and
 exact-key saved corrections. See [the reusable writer](CALENDAR_LUNATION_WRITER.md).
 
-**Open reader draft** copies a saved dated article into the normal content
+**Review & publish** copies a saved dated article into the normal content
 editor the first time. Existing reader edits are preserved on subsequent opens.
 The server checks the saved workspace version and applies the shared reader-copy and CMS-template validation before inserting a draft. This action neither approves nor
 publishes wording. The handoff preserves check findings. Publication recalculates
@@ -81,7 +93,7 @@ Nested object keys are consistently ordered before hashing; database JSON key
 order alone cannot change the fingerprint. Array order and exact text still matter.
 
 Generation calls the configured writing model only after the owner reviews the
-plan and chooses Generate draft. A version-checked reservation precedes the
+plan and chooses Create draft or Regenerate draft. A version-checked reservation precedes the
 request. The Responses API result ID is saved and reused by polling, including
 after navigating away. An unknown interrupted request cannot immediately retry
 or replace a saved article. Manual saves preserve exact text and use version
