@@ -1,6 +1,6 @@
 import { isEligibleTransitReturn } from "../../web/src/services/transitReturns.js";
 import { fullDetailReaderFacingCopy, isReaderFacingCopy } from "../../web/src/content/readerSafety.js";
-import { isDynamicTransitNatalExactKey, transitAspectSituationKey } from "../../web/src/content/transitNatalIdentity.js";
+import { MERCURY_RETURN_CONTACT_KEY, isDynamicTransitNatalExactKey, transitAspectSituationKey } from "../../web/src/content/transitNatalIdentity.js";
 export const transitNatalPlanets = [
   "sun",
   "moon",
@@ -126,7 +126,7 @@ export function transitNatalLabel(selection: Pick<TransitNatalSelection, "planet
 /** Preview selection is delegated to the shipped reader resolver, never assembled in Studio. */
 export function renderTransitNatalPreview(selection: TransitNatalReadingContext & Pick<TransitNatalSelection, "planet" | "sign" | "aspect" | "natalPoint" | "transitHouse" | "natalHouse">, renderer: TransitPreviewRenderer, voice = "you") {
   const rendered = isEligibleTransitReturn(selection.planet, selection.natalPoint, selection.aspect)
-    ? renderer.renderTransitReturn({ planet: selection.planet, ...(selection.planet === "mercury" ? { voice, window: selection.window } : {}) })
+    ? renderer.renderTransitReturn({ planet: selection.planet, voice, window: selection.planet === "mercury" ? selection.window : undefined })
     : renderer.renderTransitAspect({
       transiting: selection.planet,
       natal: selection.natalPoint,
@@ -235,7 +235,7 @@ export function transitNatalExactSourceDraft(
   const contentKey = transitNatalExactContentKey(selection);
   if (!contentKey) throw new Error("This transit aspect is not supported by the reader.");
   const isReturn = contentKey.startsWith("authored/transit-return/");
-  const isMercuryReturn = contentKey === "authored/transit-aspect/mercury/mercury/conjunction";
+  const isMercuryReturn = contentKey === MERCURY_RETURN_CONTACT_KEY;
   const you = typeof starter.body_you === "string" ? starter.body_you : "";
   const they = typeof starter.body_they === "string" ? starter.body_they : "";
   const headline = isReturn

@@ -1425,22 +1425,22 @@ function normalizeAspect(input) {
 
 // apps/web/src/content/fallbackArchitectureV3/resolver/mercuryReturnReader.mjs
 var MERCURY_RETURN_CONTACT_KEY = "authored/transit-aspect/mercury/mercury/conjunction";
-function mercuryReturnCopy(row, voice = "you", window, SourceGapError2) {
-  const audience = voice === "you" ? "you" : "they";
-  const field2 = `body_${audience}`;
+function mercuryReturnCopy(row, field2, window, SourceGapError2) {
+  const fail2 = (reason) => {
+    throw new SourceGapError2(`SOURCE_GAP: ${reason}`);
+  };
   const source = row[field2];
   if (typeof source !== "string" || !source.trim()) {
-    throw new SourceGapError2(`SOURCE_GAP: Mercury return missing ${field2}`);
+    fail2(`missing ${field2}`);
   }
-  const body = source.replaceAll("{{untilDate}}", () => {
+  const body = source.replace(/\{\{untilDate\}\}/g, () => {
     const untilDate = typeof window === "string" ? window.replace(/^until\s+/i, "").trim() : "";
-    if (!untilDate) throw new SourceGapError2("SOURCE_GAP: Mercury return missing calculated end date");
-    return untilDate;
+    return untilDate || fail2("missing calculated end date");
   });
   if (/\{\{|\}\}/u.test(body)) {
-    throw new SourceGapError2("SOURCE_GAP: Mercury return unresolved placeholder");
+    fail2("unresolved placeholder");
   }
-  return { body, audience, field: field2 };
+  return body;
 }
 
 // apps/web/src/content/fallbackArchitectureV3/resolver/relationshipTemplate.mjs
@@ -2592,24 +2592,20 @@ ${passHook}`;
     };
   }
   function renderTransitReturn({ planet, voice, window }) {
+    let c = card(`authored/transit-return/${planet}`);
+    let audience = "you", field2 = "body";
     if (planet === "mercury" && (voice !== void 0 || window !== void 0)) {
       const exact = card(MERCURY_RETURN_CONTACT_KEY);
       if (exact) {
-        const { body, audience, field: field2 } = mercuryReturnCopy(exact, voice, window, SourceGapError);
-        return {
-          ...result(exact, "authored/transit-return"),
-          body,
-          parts: [body],
-          ...passageSources(body, [{ text: body, keys: [exact.contentKey] }], () => passageSource(exact, audience, field2))
-        };
-      }
-      if (transitLib.authoredCards.some((row) => row.contentKey === MERCURY_RETURN_CONTACT_KEY)) {
+        audience = voice === void 0 || voice === "you" ? "you" : "they";
+        field2 = `body_${audience}`;
+        c = { ...exact, body: mercuryReturnCopy(exact, field2, window, SourceGapError) };
+      } else if (transitLib.authoredCards.some((row) => row.contentKey === MERCURY_RETURN_CONTACT_KEY)) {
         throw new SourceGapError(`SOURCE_GAP: ineligible ${MERCURY_RETURN_CONTACT_KEY}`);
       }
     }
-    const c = card(`authored/transit-return/${planet}`);
     if (!c) throw new SourceGapError(`SOURCE_GAP: no return card for ${planet}`);
-    return { ...result(c, "authored/transit-return"), ...passageSources(c.body, [{ text: c.body, keys: [c.contentKey] }], () => passageSource(c, "you", "body")) };
+    return { ...result(c, "authored/transit-return"), ...passageSources(c.body, [{ text: c.body, keys: [c.contentKey] }], () => passageSource(c, audience, field2)) };
   }
   function renderCompat({ planet, signA, signB, otherName }) {
     const sub = (s) => s.replace(/\{\{other_name\}\}/g, otherName);

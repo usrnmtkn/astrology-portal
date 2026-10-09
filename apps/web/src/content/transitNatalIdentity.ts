@@ -2,6 +2,9 @@ import { isEligibleTransitReturn } from "./fallbackArchitectureV3/resolver/trans
 // @ts-expect-error Shared ESM; the resolver folder is excluded from app tsc.
 import { transitAspectSituationKey } from "./fallbackArchitectureV3/resolver/transitAspectSourcePriority.mjs";
 
+import { MERCURY_RETURN_CONTACT_KEY } from "./fallbackArchitectureV3/resolver/mercuryReturnReader.mjs";
+export { MERCURY_RETURN_CONTACT_KEY };
+
 const transitBodies = new Set(["sun", "moon", "mercury", "venus", "mars", "jupiter", "saturn", "uranus", "neptune", "pluto", "chiron", "north-node", "south-node", "lilith"]);
 const natalPoints = new Set([...transitBodies, "ascendant", "descendant", "midheaven", "imum-coeli"]);
 const aspects = new Set(["conjunction", "opposition", "square", "trine", "sextile"]);
@@ -25,7 +28,7 @@ export function isDynamicTransitNatalExactKey(contentKey: string) {
       && isEligibleTransitReturn(parts[2], parts[2], "conjunction");
   }
   if (parts[1] !== "transit-aspect") return false;
-  if (contentKey === "authored/transit-aspect/mercury/mercury/conjunction") return true;
+  if (contentKey === MERCURY_RETURN_CONTACT_KEY) return true;
   if (parts.length === 5) return isTransitAspectContactKey(parts);
   if (parts.length !== 8) return false;
   return isTransitAspectContactKey(parts.slice(0, 5))
