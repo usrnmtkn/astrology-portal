@@ -1,7 +1,7 @@
 import { comparePersonalDailyTransits, personalDailyPriority, personalDailyPeakLabel, precisePersonalOrb, type PersonalDailyPeak } from "./services/personalDailyTransits";
 import { usePersonalDailyPeaks, usePersonalTransitSeries } from "./services/usePersonalDailyTransits";
 import { CalendarDaySkeleton } from "./features/calendar/CalendarDaySkeleton";
-import { skyIngressEssayReaderSection } from "./content/skyIngressEssayReader";
+import { skyIngressEssayPublicationKeys, skyIngressEssayReaderSection } from "./content/skyIngressEssayReader";
 import {
   defaultLocation, selectedLocationStorageKey, isLocationInput, dateInputValue, dateFromInput,
   isDateInputValue, transitDateFromUrl, getInitialTransitDate, skyDateTimeFromInput, getInitialLocation
@@ -19,7 +19,7 @@ import { skySummaryEventPlacements } from "./content/skySummaryEventPlacements";
 import type { ArticlePillData } from "./components/ArticlePills";
 import { articleHistoryChangeEvent, pushArticleUrl, returnToArticleParent } from "./services/articleNavigation";
 import { CardReadMore } from "./components/CardReadMore";
-import { isContentRetired, contentPublication } from "./content/contentPublicationState";
+import { isContentRetired, contentPublication, contentPublicationRecords } from "./content/contentPublicationState";
 import { personalTransitPublicationIdentity } from "./services/personalTransitPublication";
 import { installPersonalTransitFallbackArchitectureV3Bundle } from "./content/fallbackArchitectureV3Runtime";
 import { prepareSkyPlacementSources, skyPlacementPublicationIdentity } from "./services/skyPlacementHydration";
@@ -12193,7 +12193,10 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
           commitResolvedSkyDetail(personalizedSkyPlacementDetail(detail, profileNatalSky?.ascendant ?? userProfile?.rising,
             skyPlacementPersonalizationTransits, skyDate));
         };
-        const baseContent = await loadSkyDetailContent(placementSky, availableDetailContent, [], loadLiveGeneratedContentForKeys);
+        const ingressKeys = routePosition && placementSign ? skyIngressEssayPublicationKeys(contentPublicationRecords(), {
+          planet: normalizeContentIdPart(routePosition.planet), sign: normalizeContentIdPart(placementSign)
+        }) : [];
+        const baseContent = await loadSkyDetailContent(placementSky, availableDetailContent, ingressKeys, loadLiveGeneratedContentForKeys);
         const timelinePosition = placementSky.positions.find((candidate) => (
           routePlanet && skyRoutePartMatches(candidate.planet, routePlanet)
         )) ?? routePosition;

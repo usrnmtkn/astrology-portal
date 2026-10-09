@@ -77,6 +77,9 @@ complete edition hashes. Public projection exposes the article format and exact
 reader fields, without private instructions or receipts. Sky selects an approved
 dated ingress essay only during its calculated visit. Otherwise its existing
 placement reading remains in place. No runtime model writes reader content.
+The reader discovers dated edition keys in the publication ledger and loads
+their exact rows before showing the article. Compiled editions do not depend
+on the separate fallback-package cache.
 
 Verification: `node --import tsx scripts/test-sky-ingress-studio.mts`, the existing
 compiler and slot tests, `npm run test:content-studio-api`, both application builds,

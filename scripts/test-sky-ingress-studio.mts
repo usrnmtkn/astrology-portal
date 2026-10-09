@@ -3,7 +3,7 @@ import { Readable } from "node:stream";
 import SwissEph from "swisseph-wasm";
 import { compileSkyArticleEdition, assertCompiledSkyArticleEdition, reviseSkyArticleEdition, skyArticleEditableFields, skyArticleEditionContentKey } from "../apps/web/src/content/skyArticleTemplateCompiler.ts";
 import { SKY_INGRESS_ESSAY_FORMAT, skyIngressEssayFields } from "../apps/web/src/content/skyIngressEssay.mjs";
-import { skyIngressEssayReaderSection } from "../apps/web/src/content/skyIngressEssayReader.ts";
+import { skyIngressEssayPublicationKeys, skyIngressEssayReaderSection } from "../apps/web/src/content/skyIngressEssayReader.ts";
 import { projectReaderRow } from "../apps/web/src/content/readerRowProjection.mjs";
 import { isGeneratedContentReaderBoundaryAllowed } from "../apps/web/src/content/generatedContentEligibility.ts";
 import { skyArticleEditionFactsFromSnapshot, ingressTimeLabel } from "../api/_lib/sky-article-facts.ts";
@@ -127,6 +127,16 @@ try {
   assert(!JSON.stringify(projected).includes("requestUrl"), "Private fact receipts must not enter reader payloads");
   const candidate = { id, contentKey: edition.contentKey, status: "LIVE", sections: projected.sections, sourceSnapshot: projected.source_snapshot };
   const context = { activeInstant: "2026-10-09T12:00:00Z", planet: "sun", sign: "libra" };
+  const publication = { content_key: edition.contentKey, state: "live" as const, row_id: id,
+    row_updated_at: "2026-10-09T00:00:00Z", updated_at: "2026-10-09T00:00:00Z", revision: 1 };
+  assert.deepEqual(skyIngressEssayPublicationKeys([
+    publication, { ...publication, content_key: "sky-article/sun/libra/2025/2025-09-22" },
+    { ...publication, content_key: "sky-article/sun/libra/2026" },
+    { ...publication, content_key: "sky-article/venus/libra/2026/2026-10-25" },
+    { ...publication, content_key: "sky-article/sun/scorpio/2026/2026-10-23" },
+    { ...publication, content_key: "sky-article/sun/libra/2024/2024-09-22", state: "retired" },
+    { ...publication, content_key: "sky-article/sun/libra/2023/2023-09-22", row_id: null }
+  ], context), [edition.contentKey, "sky-article/sun/libra/2025/2025-09-22"]);
   const reading = skyIngressEssayReaderSection([candidate], context);
   assert.equal(reading?.body, edition.body);
   assert.equal(reading?.tldr, edition.tldr);

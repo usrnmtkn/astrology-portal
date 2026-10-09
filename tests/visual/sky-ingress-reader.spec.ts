@@ -36,7 +36,15 @@ for (const [width, theme] of [[390, 'light'], [1440, 'dark']] as const) {
   } }));
   await page.route('**/rest/v1/**', route => route.fulfill({ json: [] }));
   await page.route('**/api/content-publications', route => route.fulfill({ json: { schema: 'tldr-publications/v1', publications } }));
-  await page.route('**/api/content-reader', route => route.fulfill({ json: readerResponse([row], publications) }));
+  let exactEditionRequests = 0;
+  await page.route('**/api/content-reader', route => {
+   const query = route.request().postDataJSON();
+   // Never hand the article to unrelated aspect/package requests. Its key
+   // must be discovered from the publication ledger and explicitly fetched.
+   const requested = query.keys?.includes(row.content_key) === true;
+   if (requested) exactEditionRequests++;
+   return route.fulfill({ json: readerResponse(requested ? [row] : [], publications) });
+  });
   await page.route('**/api/calendar?**', route => route.fulfill({ json: { ok: true, calendar: { days: [] } } }));
   const errors: string[] = []; page.on('pageerror', error => errors.push(error.message));
   await page.goto('/?date=2026-10-09#sky/placement/sun/libra');
@@ -49,8 +57,11 @@ for (const [width, theme] of [[390, 'light'], [1440, 'dark']] as const) {
    await expect(article).not.toContainText('priorOccurrenceSection');
   };
   await assertComplete();
+  expect(exactEditionRequests).toBeGreaterThan(0);
+  const beforeReload = exactEditionRequests;
   await page.reload();
   await assertComplete();
+  expect(exactEditionRequests).toBeGreaterThan(beforeReload);
   expect(errors).toEqual([]);
   await page.screenshot({ path: `test-results/sky-ingress-reader-${width}-${theme}.png`, fullPage: true });
  });
