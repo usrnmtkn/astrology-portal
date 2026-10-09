@@ -81,7 +81,7 @@ export default function HoroscopeEditionsStudio({secret,requestedEditionId}:{sec
     if(!secret)return;
     const signal=(listRequest.current=new AbortController()).signal;setLoading(true);
     try{
-      const data=await request(secret,endpoint+'?horoscopeEditions=true',undefined,'GET',signal);
+      const data=await request(secret,endpoint+'?horoscopeEditions=true&editionInventory=true',undefined,'GET',signal);
       if(!Array.isArray(data.rows))throw new Error('The edition list could not be read.');
       for(const row of data.rows)validateHoroscopeEdition(row.sections?.horoscopeEdition);
       if(!signal.aborted)setRows(data.rows);
@@ -165,7 +165,7 @@ export default function HoroscopeEditionsStudio({secret,requestedEditionId}:{sec
     finally{if(opening.current===controller){opening.current=null;if(!controller.signal.aborted)setBusy(false);}}
   }
   useEffect(()=>{
-    if(requestedEditionId)void open({id:requestedEditionId},true);
+    if(secret&&requestedEditionId)void open({id:requestedEditionId},true);
     return()=>{if(opening.current){opening.current.abort();setBusy(false);}};
   },[credentialIdentity,requestedEditionId]);
   async function prepare() {
@@ -174,8 +174,9 @@ export default function HoroscopeEditionsStudio({secret,requestedEditionId}:{sec
       const params=new URLSearchParams({horoscopeBrief:'true',period,date,timeZone:zone});
       const [facts,profiles]=await Promise.all([request(secret,endpoint+'?'+params),request(secret,endpoint+'?writingProfiles=true')]);
       const edition=emptyHoroscopeEdition(facts.brief.window);
-      const matching=await request(secret,endpoint+'?'+new URLSearchParams({contentKey:horoscopeEditionKey(edition.window),mode:'article'}));
+      const matching=await request(secret,endpoint+'?'+new URLSearchParams({horoscopeEditions:'true',contentKey:horoscopeEditionKey(edition.window)}));
       let row=matching.rows?.[0]??rows.find(row=>isHoroscopeEditionKey(row.content_key,edition.window)&&horoscopeCanonicalJson(row.sections?.horoscopeEdition?.window)===horoscopeCanonicalJson(edition.window));
+      if(row?.inventory_only)row=await readSaved(row.id);
       if(!row){
         const result=await request(secret,endpoint,{
           contentKey:horoscopeEditionKey(edition.window),surface:'sky',mode:'article',eventType:'horoscope-edition',provider:'manual-admin',model:'manual',targetDate:null,

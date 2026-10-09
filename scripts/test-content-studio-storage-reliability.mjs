@@ -54,10 +54,38 @@ assert.deepEqual(detail.payload.rows, [{ ...saved, inventory_only: false }]);
 globalThis.fetch = async () => Response.json({ error: 'Unavailable' }, { status: 503 });
 assert.equal((await inventory(`&id=${saved.id}`, fastInventoryHandler)).statusCode, 502);
 
+// Lists must not download every edition's accumulated provider evidence. Only
+// an explicit open returns the full document needed by recovery comparisons.
+const horoscope = {...saved, content_key:'horoscope/weekly/fixture', mode:'article', status:'DRAFT',
+  headline:'Synthetic weekly edition', sections:{horoscopeEdition:{window:{period:'weekly'},passages:[]}},
+  source_snapshot:{history:'Complete synthetic evidence. '.repeat(700_000)}, studio_facts:null};
+globalThis.fetch = async input => {
+  const query = new URL(String(input)).searchParams;
+  assert.equal(query.get('mode'),'eq.article');
+  const columns=query.get('select');
+  return Response.json([columns==='*'?horoscope:Object.fromEntries(columns.split(',').map(key=>[key,horoscope[key]]))]);
+};
+const legacyList=await inventory('&horoscopeEditions=true');
+assert.equal(legacyList.statusCode,200);
+assert.equal(typeof legacyList.payload.rows[0].source_snapshot?.history,'string','Already-open clients still expect complete edition documents');
+assert.deepEqual(legacyList.payload.rows,[horoscope]);
+const editionList=await inventory('&horoscopeEditions=true&editionInventory=true');
+assert.equal(editionList.statusCode,200);
+assert.equal(editionList.payload.rows[0].source_snapshot,undefined,'A list must exclude large generation history at the storage query');
+assert.equal(editionList.payload.rows[0].inventory_only,true,'A list row must never be treated as an editable full document');
+assert.deepEqual(editionList.payload.rows[0].sections,horoscope.sections);
+assert.ok(JSON.stringify(editionList.payload).length<2000);
+for(const query of [`id=${saved.id}`,`contentKey=${horoscope.content_key}`,`id=${saved.id}&editionInventory=true`]) {
+  const opened=await inventory(`&horoscopeEditions=true&${query}`);
+  assert.equal(opened.statusCode,200);
+  assert.deepEqual(opened.payload.rows,[horoscope],'An explicit open retains every original field and byte');
+}
+assert.equal((await inventory('&horoscopeEditions=true&contentKey=other/family')).statusCode,400);
+
 // Headers arrive immediately, but the body stalls. The storage deadline must
 // cover both phases. Shorten only that deadline in this isolated test process.
 const realTimeout = globalThis.setTimeout;
-globalThis.setTimeout = (callback, delay, ...args) => realTimeout(callback, delay === 8000 ? 20 : delay, ...args);
+globalThis.setTimeout = (callback, delay, ...args) => realTimeout(callback, delay === 8000 ? 20 : delay === 30000 ? 80 : delay, ...args);
 try {
   let aborted = false;
   globalThis.fetch = async (_input, { signal }) => new Response(new ReadableStream({
@@ -72,6 +100,13 @@ try {
   }));
   assert.equal((await inventory()).statusCode, 504, 'A stalled response body must hit the storage timeout');
   assert.equal(aborted, true);
+  const boundedOpen=await inventory(`&horoscopeEditions=true&id=${saved.id}`);
+  assert.equal(boundedOpen.statusCode,504,'The longer full-document deadline remains bounded');
+  assert.match(boundedOpen.payload.error,/30 seconds/);
+  globalThis.fetch = async () => new Response(new ReadableStream({
+    start(controller) { realTimeout(()=>{controller.enqueue(new TextEncoder().encode('[]'));controller.close();},40); }
+  }));
+  assert.equal((await inventory(`&horoscopeEditions=true&id=${saved.id}`)).statusCode,200,'A full edition may take longer than the short inventory deadline');
 } finally { globalThis.setTimeout = realTimeout; }
 
 const cursor = { updatedAt: '2026-09-02T11:00:00.000Z', id: 'page-a' };
