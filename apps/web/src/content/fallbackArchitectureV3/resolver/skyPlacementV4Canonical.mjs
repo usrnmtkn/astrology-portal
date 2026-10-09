@@ -36,9 +36,10 @@ const PLACEMENT_LUNAR_EVENT_TYPES = Object.freeze([
   "new-moon", "full-moon", "solar-eclipse", "lunar-eclipse"
 ]);
 
-const CONTINUOUS_OWNER_APPROVED_KEYS = new Set(continuousOwnerApproval.approved_keys);
-const READER_COPY_OWNER_APPROVED_KEYS = new Set(readerCopyOwnerApproval.approved_keys);
-const READER_COPY_SERVING_KEYS = new Set(readerCopyOwnerApproval.approved_keys);
+// Retain this data index with its governance consumers; omit an unused allocation.
+const CONTINUOUS_OWNER_APPROVED_KEYS = /* @__PURE__ */ new Set(continuousOwnerApproval.approved_keys);
+const READER_COPY_OWNER_APPROVED_KEYS = /* @__PURE__ */ new Set(readerCopyOwnerApproval.approved_keys);
+const READER_COPY_SERVING_KEYS = /* @__PURE__ */ new Set(readerCopyOwnerApproval.approved_keys);
 const SKY_V4_CONFIGURATION_TYPES = new Set(["template", "overlay-settings"]);
 
 export const SKY_V4_OVERLAY_DEFAULTS = Object.freeze({
