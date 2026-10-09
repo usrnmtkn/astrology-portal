@@ -6,7 +6,7 @@ import { build } from "esbuild";
 // one job reproduces background enrichment queued before a route change.
 const names = ["getAstrodienstSky", "getSkyPlacementSnapshot", "getSkyPlacementTransitFacts",
   "getLunarCalendarMonth", "getLunarCalendarRangeEvents", "getLunarCalendarWeek",
-  "getMatchingNewMoonForFullMoon", "natalTransitTimingFor", "preloadSwissEphemeris"];
+  "getMatchingNewMoonForFullMoon", "natalTransitTimingFor", "natalDailyTransitPeaksFor", "preloadSwissEphemeris"];
 const output = await build({
   entryPoints: ["apps/web/src/services/skyCalculation.worker.ts"], bundle: true,
   write: false, platform: "node", format: "cjs",
@@ -59,4 +59,10 @@ assert.equal(replies[4].ok, false);
 assert.equal(replies[4].error, "fixture calculation failure");
 assert.equal(replies[5].value, JSON.stringify({ name: "getLunarCalendarWeek", args: ["2027-01-12", "Asia/Tokyo"] }));
 assert.equal(replies[6].ok, true);
+const dailyArgs = [["Moon"], [{ planet: "Sun", longitude: 120 }], "2026-10-09T16:00:00Z", "America/New_York"];
+receive!({ data: { id: 8, kind: "natal-transit-timing", args: ["optional-series"] } });
+receive!({ data: { id: 9, kind: "natal-daily-peaks", args: dailyArgs } });
+while (scheduled.length) await scheduled.shift()!();
+assert.deepEqual(replies.slice(-2).map(reply => reply.id), [9, 8], "Visible daily peaks precede optional full-series timing.");
+assert.equal(replies.at(-2)?.value, JSON.stringify({ name: "natalDailyTransitPeaksFor", args: dailyArgs }));
 console.log("PASS: Calendar facts precede full Sky details and optional natal timing; request identity, inputs, serial execution and recovery are preserved.");
