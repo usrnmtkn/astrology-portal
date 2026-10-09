@@ -28,7 +28,7 @@ async function request(secret:string,url:string,body?:unknown,method='POST',sign
   const timeout=AbortSignal.timeout(60000);
   const response = await fetchWithOwnerSession(url,secret,{method:body ? method:'GET',headers:{'content-type':'application/json'},cache:'no-store',signal:signal?AbortSignal.any([signal,timeout]):timeout,...(body ? {body:JSON.stringify(body)}:{})});
   const data = await response.json().catch(()=>({ok:false,error:'The server response could not be read.'}));
-  if (!response.ok || data.ok !== true) throw Object.assign(new Error(data.error ?? 'The edition could not be loaded.'),{rows:data.rows,status:response.status});
+  if (!response.ok || data.ok !== true) throw Object.assign(new Error(data.error ?? 'The edition could not be loaded.'),{rows:data.rows,status:response.status,dispatchNotStarted:data.dispatchNotStarted===true});
   return data;
 }
 const recoverable=(reason:any)=>!reason?.status||[408,409,429].includes(reason.status)||reason.status>=500;
@@ -351,7 +351,8 @@ export default function HoroscopeEditionsStudio({secret,requestedEditionId}:{sec
           if(reconcile&&recoverable(reason)){
             const refreshed=await readBatch();if(!isCurrent(controller)||!refreshed)return;
             if(((reason as any).status!==409||refreshed.updated_at!==row.updated_at)
-              &&reconcile(row,refreshed,{action,sign:next,planHash:plan.planHash})){
+              &&(reconcile(row,refreshed,{action,sign:next,planHash:plan.planHash})
+                ||action==='generate'&&(reason as any).dispatchNotStarted===true&&horoscopeCanonicalJson(row)===horoscopeCanonicalJson(refreshed))){
               row=refreshed;retain(row);retrying=null;
               if((reason as any).status===409){setMessage('');continue;}
               setMessage('Connection interrupted. Continuing from the saved request automatically.');

@@ -67,7 +67,7 @@ for(const [width,theme] of [[1440,'light'],[390,'dark']] as const){
     await expect.poll(async()=>Boolean((await f.latest()).source_snapshot.horoscopeGeneration.active?.providerResult)).toBe(true);
     expect((await f.call({method:'writing',body:{action:'poll',id:f.id,expectedUpdatedAt:(await f.latest()).updated_at}})).status).toBe(422);
     await f.call({method:'provider-state',body:{geminiInterrupted:false}});
-    await f.call({method:'storage-state',body:{lose:['reservation','review-id','completion']}});
+    await f.call({method:'storage-state',body:{lose:['reservation','review-id','completion'],failWriterReservations:2}});
     f.state.holdReview=true;f.state.longReview=true;f.state.loseWriterStart=true;f.state.loseReviewStart=true;f.state.loseReviewSave=true;f.state.failReviewReservation=true;
     const studio=await f.open();
     expect(Object.hasOwn(await f.latest(),'studio_facts')).toBe(true);
@@ -92,6 +92,7 @@ for(const [width,theme] of [[1440,'light'],[390,'dark']] as const){
     expect(f.state.checks).toBeGreaterThan(125);
     expect(f.state.reservationFailures).toBe(1);
     expect((await f.call({method:'storage-state'})).lost).toEqual(['reservation','review-id','completion']);
+    expect((await f.call({method:'storage-state'})).failWriterReservations).toBe(0);
     await page.reload();await f.open();
     await expect(studio.getByText('12/12 readings ready',{exact:false})).toBeVisible();
     expect((await f.latest()).sections.horoscopeEdition).toEqual(saved.sections.horoscopeEdition);

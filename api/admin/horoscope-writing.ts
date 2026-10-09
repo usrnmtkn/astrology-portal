@@ -11,7 +11,7 @@ import {prepareHoroscopeWriting,horoscopePlanPreview,writeHoroscopeSign,horoscop
 import {horoscopeEditionBody,horoscopeReadingSigns,horoscopeCanonicalJson} from '../../apps/web/src/content/horoscopeEditions.mjs';
 import {horoscopeWriterConfig,horoscopeWriterOptions,isHoroscopeResponseId} from '../../src/astro-writing/horoscopeWriterModels.mjs';
 import {buildHoroscopeProviderRequest,horoscopeProviderRequestSnapshot} from '../_lib/horoscope-provider-codecs.js';
-import {startHoroscopeResponse,storedHoroscopeResponse} from '../_lib/horoscope-provider.js';
+import {startHoroscopeResponse,storedHoroscopeResponse,horoscopeStreamId} from '../_lib/horoscope-provider.js';
 import {HoroscopeProviderFailure,horoscopeProviderDiagnostic,readHoroscopeProviderResult} from '../_lib/horoscope-provider-result.js';
 import {loadHoroscopeSeasonalSources} from '../_lib/horoscope-seasonal-sources.js';
 import {validateHoroscopeReading} from '../../src/astro-writing/horoscopeValidation.mjs';
@@ -35,6 +35,7 @@ class Pending extends Error {}
 
 /** Each start reserves one saved sign. Poll only retrieves its durable provider ID. */
 export default async function handler(req:IncomingMessage,res:ServerResponse) {
+  const invocationDeadline=Date.now()+285000;
   if(req.method!=='POST')return sendAdminMethodNotAllowed(res,['POST']);
   if(!await requireContentAdmin(req,res))return;
   const actor=(await getContentAdminPrincipal(req))!;
@@ -297,6 +298,10 @@ export default async function handler(req:IncomingMessage,res:ServerResponse) {
         const providerRequest=ownerEvidence?horoscopeProviderRequestSnapshot({config:operation.config,role,request,instructions}):null;
         operation={...operation,requestHash:hash({request,instructions}),reviewEvidence,
           ...(ownerEvidence?{receipt:{...operation.receipt,ownerEvidence:{...ownerEvidence,providerRequest,providerRequestHash:hash(providerRequest)}}}: {})};
+        // Native streams already have a stable local ID. Save it atomically with
+        // the reservation, before dispatch. No second write races the result.
+        const reservedStreamId=prepared.edition.window.period==='weekly'?horoscopeStreamId(operation):null;
+        if(reservedStreamId)operation={...operation,responseId:reservedStreamId,state:'running'};
         // Finish prompt/evidence preparation before reserving. One conditional
         // save contains the complete identity; a failed save never dispatches.
         stage='reserve';
@@ -305,7 +310,7 @@ export default async function handler(req:IncomingMessage,res:ServerResponse) {
         await persist({source_snapshot:{...writingRow.source_snapshot,horoscopeGeneration:{...generation,active:operation,lastError:null,
           failures:legacy&&!failures.some((failure:any)=>failure.operation?.id===legacy.operation?.id)?[...failures,legacy]:failures}}});
         stage='dispatch';dispatchAttempted=true;
-        const {response,payload:result}=await startHoroscopeResponse({config:operation.config,role,request,instructions,context:{editionId:row.id,operationId:operation.id,requestHash:operation.requestHash}});
+        const {response,payload:result}=await startHoroscopeResponse({config:operation.config,role,request,instructions,context:{editionId:row.id,operationId:operation.id,requestHash:operation.requestHash,...(reservedStreamId?{deadline:invocationDeadline}:{})}});
         payload=result;
         if(!response.ok) {
           if(response.status>=400&&response.status<500)readHoroscopeProviderResult({...payload,status:'failed'},{format:operation.outputFormat});
@@ -314,7 +319,7 @@ export default async function handler(req:IncomingMessage,res:ServerResponse) {
         if(!isHoroscopeResponseId(operation.config,payload.id))throw new AdminHttpError(502,'The writer did not confirm a response ID. Reopen this edition before retrying.');
         operation={...operation,responseId:payload.id,state:'running'};
         stage='save_response';
-        await persist({source_snapshot:{...row.source_snapshot,horoscopeGeneration:{...row.source_snapshot.horoscopeGeneration,active:operation}}});
+        if(!reservedStreamId)await persist({source_snapshot:{...row.source_snapshot,horoscopeGeneration:{...row.source_snapshot.horoscopeGeneration,active:operation}}});
       
       if(['queued','in_progress'].includes(payload.status))throw new Pending();
       return readHoroscopeProviderResult(payload,{format:operation.outputFormat});
@@ -352,11 +357,12 @@ export default async function handler(req:IncomingMessage,res:ServerResponse) {
           return sendAdminJson(res,200,{ok:true,rows:[row],pending:false,recovery:'uncertain'});
         }catch{/* A conflict or unavailable storage is reconciled by the client. */}
       }
+      if(!dispatchAttempted&&stage==='reserve')Object.assign(error as object,{dispatchNotStarted:true});
       throw error;
     }
   }catch(error) {
     if((error as any)?.code==='SEASONAL_MEANING_UNAVAILABLE')return sendAdminJson(res,409,{ok:false,error:(error as Error).message});
     const status=adminErrorStatus(error);
-    return sendAdminJson(res,status,{ok:false,error:error instanceof AdminHttpError?error.message:'Generation could not complete. Reopen the edition to recover its saved progress; no reading was published.'});
+    return sendAdminJson(res,status,{ok:false,...((error as any)?.dispatchNotStarted?{dispatchNotStarted:true}:{}),error:error instanceof AdminHttpError?error.message:'Generation could not complete. Reopen the edition to recover its saved progress; no reading was published.'});
   }
 }
