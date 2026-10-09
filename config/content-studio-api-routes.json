@@ -30,6 +30,15 @@
       "access": "owner"
     },
     {
+      "path": "/api/admin/calendar-daily-writing",
+      "file": "api/admin/calendar-daily-writing.ts",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "access": "owner"
+    },
+    {
       "path": "/api/admin/calendar-lunation-writing",
       "file": "api/admin/calendar-lunation-writing.ts",
       "methods": [

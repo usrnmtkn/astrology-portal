@@ -135,6 +135,10 @@
       "includeFiles": "{node_modules/swisseph-wasm/wasm/*,{api/_lib,artifacts,config,src/*-writing,packages/*/{generated,scripts,data,config,reference,voice,sources/authored/owner-author-book},apps/web/*/content,tldr-astro-phrasebank,data/writing}/**/*.{*js,json,jsonl,md,ts}}",
       "maxDuration": 300
     },
+    "api/admin/calendar-daily-writing.ts": {
+      "includeFiles": "node_modules/swisseph-wasm/wasm/*",
+      "maxDuration": 300
+    },
     "api/**/*.ts": {
       "includeFiles": "{api/_lib,artifacts,config,src/astro-writing,packages/astro-knowledge/{generated,scripts,data,config,reference,voice,sources/authored/owner-author-book},apps/web/{public/content,src/content},tldr-astro-phrasebank}/**/*.{cjs,js,json,md,mjs,ts}"
     }
