@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import {applyCheckpointFixture} from '../tests/helpers/horoscope-checkpoint-fixture.mts';
 import {store,editorialFixtureRows,installHoroscopeWriterFixture,invokeHoroscopeWriting,writerFixture} from '../tests/helpers/sky-article-save-api.mts';
 import {installAlternativeHoroscopeProviders,geminiStreamFixture} from '../tests/helpers/horoscope-provider-fixture.mts';
 import {emptyHoroscopeEdition,horoscopeEditionBody,horoscopeEditionKey} from '../apps/web/src/content/horoscopeEditions.mjs';
@@ -277,7 +278,7 @@ for(let i=0;current.source_snapshot.horoscopeGeneration.active&&i<10;i++){
       globalThis.fetch=async(input:any,options:any)=>{
         const response=await originalFetch(input,options);
         if(exactRead(input,options)){if(++readers===2)release();await barrier;}
-        if(options?.method==='PATCH'&&!lostReservation&&JSON.parse(options.body).source_snapshot?.horoscopeGeneration?.active?.state==='starting'
+        if(String(input).endsWith('/rpc/checkpoint_weekly_horoscope')&&!lostReservation&&JSON.parse(options.body).p_changes.some((c:any)=>c.path.at(-1)==='state'&&c.value==='starting')
           &&(await response.clone().json()).length===1){
           lostReservation=true;
           Object.defineProperty(response,'json',{value:async()=>{throw new DOMException('Synthetic winning reservation lost acknowledgement','AbortError');}});
@@ -322,11 +323,12 @@ for(const scenario of ['reservation-body','reservation-network','uncommitted','l
   let injected=0,patches=0,readbacks=0,delayedWrite:any=null;const writeIds:string[]=[];
   try{
     globalThis.fetch=async(input:any,options:any={})=>{
-      const url=new URL(String(input)),target=url.searchParams.get('id')===`eq.${confirmationId}`;
-      if(target&&options.method==='PATCH'){
-        const patch=JSON.parse(options.body),active=patch.source_snapshot?.horoscopeGeneration?.active;
+      const url=new URL(String(input)),rpc=url.pathname.endsWith('/rpc/checkpoint_weekly_horoscope'),request=options.body?JSON.parse(options.body):null;
+      const target=rpc?request.p_id===confirmationId:url.searchParams.get('id')===`eq.${confirmationId}`;
+      if(target&&rpc){
+        const patch=applyCheckpointFixture(latest(confirmationId),request.p_changes),active=patch.source_snapshot?.horoscopeGeneration?.active;
         patches++;writeIds.push(patch.source_snapshot.horoscopeStorageWriteId);
-        assert.equal(url.searchParams.get('select'),'id,updated_at','Checkpoints return only a compact acknowledgement');
+        assert(Buffer.byteLength(options.body)<10000,'A checkpoint must not upload accumulated evidence');
         if(delayedWrite){await baseFetch(...delayedWrite);delayedWrite=null;}
         const fail=active?.phase==='review'&&active.state===(scenario==='response-id'?'running':'starting')
           &&(!injected||scenario==='persistent-storage-failure');
@@ -374,3 +376,53 @@ for(const scenario of ['reservation-body','reservation-network','uncommitted','l
   assert.equal(writerFixture.reviewCalls,reviews+1,'Recovery retrieves the same paid review');
 }
 console.log('Committed and uncommitted storage timeouts preserve complete evidence, newer edits and single review dispatch.');
+
+// The old transport resent the complete accumulated history at every checkpoint.
+// Refuse large storage uploads while running the real native stream/handler path
+// through ALL 12 signs; exact owner/source text is retained, never truncated.
+const largeId=await create('weekly','2027-03-01');
+const largePlan=(await action(largeId,'prepare',{writerChoice:'gemini'})).payload.plan.planHash;
+const large=latest(largeId);large.source_snapshot.syntheticRetainedHistory='Complete synthetic preserved evidence. '.repeat(450000);store.rows.set(largeId,large);
+const baseLargeFetch=globalThis.fetch,writersBeforeLarge=writerFixture.calls,reviewsBeforeLarge=writerFixture.reviewCalls;
+let maxCheckpointBytes=0,checkpoints=0,preDispatchReceipts=0,lostNativeResult=false;
+try{
+ globalThis.fetch=async(input:any,options:any={})=>{
+  const location=String(input);
+  if(location.startsWith('https://calendar-api.invalid/')&&options.body){
+   const bytes=Buffer.byteLength(options.body);maxCheckpointBytes=Math.max(maxCheckpointBytes,bytes);
+   assert(bytes<1_000_000,'Transport cannot resend the full archive');
+  }
+  if(location.includes('generativelanguage.googleapis.com')){
+   const reserved=latest(largeId).source_snapshot.horoscopeGeneration.active;
+   assert.equal(reserved.responseId,geminiRequestId(reserved.id,reserved.requestHash),'Receipt exists BEFORE paid dispatch');preDispatchReceipts++;
+  }
+  const response=await baseLargeFetch(input,options);
+  if(location.endsWith('/rpc/checkpoint_weekly_horoscope')){
+   checkpoints++;assert((await response.clone().text()).length<200);
+   const changes=JSON.parse(options.body).p_changes;
+   if(!lostNativeResult&&changes.some((c:any)=>c.path.at(-1)==='providerResult')){
+    lostNativeResult=true;Object.defineProperty(response,'json',{value:async()=>{throw new DOMException('Synthetic native result lost acknowledgement','AbortError');}});
+   }
+  }
+  return response;
+ };
+ for(const passage of large.sections.horoscopeEdition.passages){
+  const result=await action(largeId,'generate',{sign:passage.sign,approvedPlanHash:largePlan});assert.equal(result.status,202,JSON.stringify(result.payload));
+  for(let i=0;latest(largeId).source_snapshot.horoscopeGeneration.active&&i<20;i++)await step(largeId);
+  assert(latest(largeId).sections.horoscopeEdition.passages.find((p:any)=>p.sign===passage.sign).body);
+ }
+}finally{globalThis.fetch=baseLargeFetch;}
+assert.equal(preDispatchReceipts,12);assert(lostNativeResult);assert(checkpoints>=60);
+assert.equal(writerFixture.calls,writersBeforeLarge+12);assert.equal(writerFixture.reviewCalls,reviewsBeforeLarge+12);
+assert.equal(latest(largeId).source_snapshot.syntheticRetainedHistory,large.source_snapshot.syntheticRetainedHistory);
+assert.equal(latest(largeId).status,'DRAFT');
+console.log(`Large-history 12-sign run passed: ${checkpoints} compact saves, largest upload ${maxCheckpointBytes} bytes, no paid retries.`);
+
+// A lost response after retiring an expired legacy start must continue other
+// signs, but cannot authorize replay of that sign or absorb unrelated edits.
+const expired=structuredClone(large);expired.source_snapshot.horoscopeGeneration={active:{id:'expired-synthetic',sign:'aries',planHash:largePlan,state:'starting',requestHash:'synthetic-reservation',responseId:null,startedAt:'2026-01-01T00:00:00Z'}};
+store.rows.set(largeId,expired);
+const expiredHoldResult=await action(largeId,'poll');assert.equal(expiredHoldResult.status,200);
+assert(horoscopeWeeklyBatchRecovery(expired,expiredHoldResult.payload.rows[0],{action:'poll',sign:'aries',planHash:largePlan}));
+const editedHeld=structuredClone(expiredHoldResult.payload.rows[0]);editedHeld.summary='Unrelated newer owner edit';
+assert.equal(horoscopeWeeklyBatchRecovery(expired,editedHeld,{action:'poll',sign:'aries',planHash:largePlan}),false);

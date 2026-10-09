@@ -1,3 +1,4 @@
+import {applyCheckpointFixture} from '../tests/helpers/horoscope-checkpoint-fixture.mts';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import {store,installHoroscopeWriterFixture,invokeHoroscopeWriting,writerFixture} from '../tests/helpers/sky-article-save-api.mts';
@@ -109,8 +110,8 @@ await action('continue');await action('poll');
 // A failed response-ID acknowledgement retries storage, never review dispatch.
 await draft('scorpio');const originalFetch=globalThis.fetch;let failedSave=false;
 globalThis.fetch=async(input:any,options:any={})=>{
- if(!failedSave&&String(input).startsWith('https://calendar-api.invalid/')&&options.method==='PATCH'){
-  const patch=JSON.parse(options.body);if(patch.source_snapshot?.horoscopeGeneration?.active?.phase==='review'&&patch.source_snapshot.horoscopeGeneration.active.responseId){failedSave=true;return Response.json({message:'Synthetic storage outage'},{status:503});}
+ if(!failedSave&&String(input).endsWith('/rpc/checkpoint_weekly_horoscope')){
+  const patch=applyCheckpointFixture(store.rows.get(row.id),JSON.parse(options.body).p_changes);if(patch.source_snapshot?.horoscopeGeneration?.active?.phase==='review'&&patch.source_snapshot.horoscopeGeneration.active.responseId){failedSave=true;return Response.json({message:'Synthetic storage outage'},{status:503});}
  }
  return originalFetch(input,options);
 };
