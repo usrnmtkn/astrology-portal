@@ -1,4 +1,5 @@
 import { GeneratedRowWriteConflict, confirmedGeneratedRowWrite } from "./generated-row-writes.js";
+import { isSkyIngressEssay, SKY_INGRESS_ESSAY_INSTRUCTIONS } from "../../apps/web/src/content/skyIngressEssay.mjs";
 import { studioArticleWritingMemory } from './studio-article-memory.js';
 import { transitReadingOwnerVoice, transitReadingOwnerVoicePrompt, transitReadingVoiceContext } from "./transit-reading-owner-voice.js";
 import fs from "node:fs";
@@ -5923,7 +5924,9 @@ function skyArticleTemplateSlotPrompt(
     approvedExamplesPrompt(approvedExamples),
     "",
     "EXTRA VOICE NOTES",
-    input.voiceNotes ?? "None."
+    input.voiceNotes ?? "None.",
+    ...(input.surface !== "you" && input.surface !== "friends" && isSkyIngressEssay(input.facts.articleFormat)
+      ? [SKY_INGRESS_ESSAY_INSTRUCTIONS] : [])
   ].join("\n");
 }
 
@@ -6016,6 +6019,7 @@ export async function generateSkyArticleTemplateSlots(
     const parsed = JSON.parse(outputText) as { slotValues?: unknown };
     return {
       slotValues: validateSkyArticleTemplateSlotValues(parsed.slotValues, input.requestedSlots, {
+        ingressEssay: isSkyIngressEssay(input.facts.articleFormat),
         licensedVariables: input.licensedVariables
       }),
       responseId: typedPayload.id,
@@ -6070,6 +6074,7 @@ export async function generateSkyArticleTemplateSlots(
   if (!toolInput) throw new Error("Claude response did not include template slot values.");
   return {
     slotValues: validateSkyArticleTemplateSlotValues(toolInput.slotValues, input.requestedSlots, {
+      ingressEssay: isSkyIngressEssay(input.facts.articleFormat),
       licensedVariables: input.licensedVariables
     }),
     responseId: payload.id,

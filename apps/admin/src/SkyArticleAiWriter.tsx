@@ -71,7 +71,7 @@ export default function SkyArticleAiWriter({ planet, sign, field, currentText, d
 
   const openDatedArticleGenerator = () => {
     const templateKey = `sky/article-template/${planet}/${sign}`;
-    window.location.hash = `#articles?q=${encodeURIComponent(templateKey)}`;
+    window.location.hash = `#sky-writeups?q=${encodeURIComponent(templateKey)}`;
   };
 
   return <details className="admin-workspace-details">

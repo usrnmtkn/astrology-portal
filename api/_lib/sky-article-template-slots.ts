@@ -27,7 +27,7 @@ export function unfinishedSkyArticleTemplateSlots(input: {
 export function validateSkyArticleTemplateSlotValues(
   value: unknown,
   requestedSlots: SkyArticleTemplateSlot[],
-  options: { licensedVariables?: readonly string[] } = {}
+  options: { licensedVariables?: readonly string[]; ingressEssay?: boolean } = {}
 ) {
   if (!value || typeof value !== "object" || Array.isArray(value)) {
     throw new Error("The writing provider did not return template slot values.");
@@ -46,6 +46,10 @@ export function validateSkyArticleTemplateSlotValues(
   const missing: string[] = [];
   for (const name of requestedNames) {
     const raw = (value as Record<string, unknown>)[name];
+    if (options.ingressEssay && ["priorOccurrenceSection", "otherDatesSection"].includes(name) && typeof raw === "string" && !raw.trim()) {
+      result[name] = "";
+      continue;
+    }
     if (typeof raw !== "string" || !raw.trim()) {
       missing.push(name);
       continue;
@@ -57,6 +61,7 @@ export function validateSkyArticleTemplateSlotValues(
     if (body.includes("—")) {
       throw new Error(`The writing provider used an em dash in ${name}.`);
     }
+    if (options.ingressEssay && /[–;]/u.test(body)) throw new Error(`The writing provider used an en dash or semicolon in ${name}.`);
     if (/\bwhether\b/iu.test(body)) {
       throw new Error(`The writing provider used the banned word whether in ${name}.`);
     }

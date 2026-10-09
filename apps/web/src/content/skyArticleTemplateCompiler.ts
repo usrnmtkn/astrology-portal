@@ -1,3 +1,5 @@
+import { isSkyIngressEssay, SKY_INGRESS_ESSAY_TEMPLATE, type SkyArticleFormat } from "./skyIngressEssay.mjs";
+
 export const SKY_ARTICLE_TEMPLATE_SCHEMA = "tldrastro-sky-article-template-v1";
 export const SKY_ARTICLE_EDITION_SCHEMA = "tldrastro-sky-article-edition-v2";
 export const SKY_ARTICLE_COMPILER_VERSION = "sky-article-template-compiler-v2";
@@ -28,6 +30,7 @@ export type SkyArticleSection = {
 };
 
 export type CompileSkyArticleEditionInput = {
+  format?: SkyArticleFormat;
   aspectPassages?: SkyArticleAspectPassage[];
   entryYear: number;
   housePassages: SkyArticleHousePassage[];
@@ -45,6 +48,7 @@ export type CompileSkyArticleEditionInput = {
 };
 
 export type CompiledSkyArticleEdition = {
+  format?: SkyArticleFormat;
   articleSections: SkyArticleSection[];
   aspectPassages: SkyArticleAspectPassage[];
   body: string;
@@ -294,8 +298,7 @@ export async function reviseSkyArticleEdition(
   const compiledMarkdown = compactBlankLines([
     `# ${headline}`,
     body,
-    "## Horoscopes",
-    passageMarkdown({ housePassages })
+    ...(housePassages.length ? ["## Horoscopes", passageMarkdown({ housePassages })] : [])
   ].join("\n\n"));
   const compiledHash = await sha256(JSON.stringify({ tldr, compiledMarkdown, housePassages, aspectPassages }));
 
@@ -355,7 +358,7 @@ function assertEditionInput(input: CompileSkyArticleEditionInput) {
 
   const houses = new Set(input.housePassages.map((passage) => passage.house));
   const missingHouses = Array.from({ length: 12 }, (_, index) => index + 1).filter((house) => !houses.has(house));
-  if (missingHouses.length) {
+  if (missingHouses.length && !isSkyIngressEssay(input.format)) {
     throw new Error(`Sky article edition is missing house horoscopes: ${missingHouses.join(", ")}.`);
   }
   for (const passage of input.housePassages) {
@@ -371,7 +374,24 @@ async function sha256(value: string) {
   return [...new Uint8Array(digest)].map((byte) => byte.toString(16).padStart(2, "0")).join("");
 }
 
+export function skyArticleEditionContentKey(input: Pick<CompileSkyArticleEditionInput, "planet" | "sign" | "entryYear" | "validFrom" | "format">) {
+  const base = `sky-article/${input.planet}/${input.sign}/${input.entryYear}`;
+  return isSkyIngressEssay(input.format) ? `${base}/${input.validFrom}` : base;
+}
+
 export async function compileSkyArticleEdition(input: CompileSkyArticleEditionInput): Promise<CompiledSkyArticleEdition> {
+  const ingress = isSkyIngressEssay(input.format);
+  if (ingress) {
+    const optional = new Set(["priorOccurrenceSection", "otherDatesSection"]);
+    const missing = skyArticleTemplatePlaceholders(SKY_INGRESS_ESSAY_TEMPLATE).filter(({ name }) => !optional.has(name) && !input.slotValues[name]?.trim());
+    if (missing.length) throw new Error(`Ingress essay requires complete fields: ${missing.map(({ name }) => name).join(", ")}.`);
+    // The companion remains separate. Never append inherited house copy merely
+    // because the selected source template contains an older horoscope section.
+    input = { ...input, templateBody: SKY_INGRESS_ESSAY_TEMPLATE, templateSections: undefined,
+      housePassages: [], aspectPassages: [], slotValues: {
+        priorOccurrenceSection: "", otherDatesSection: "", ...input.slotValues
+      } };
+  }
   const { articleHoroscopeSection, articleTemplateWithHoroscopes } = await import("./skyArticleHoroscopes.mjs");
   const horoscopeSection = articleHoroscopeSection(input.templateSections);
   if (horoscopeSection?.passages.length) {
@@ -426,7 +446,8 @@ export async function compileSkyArticleEdition(input: CompileSkyArticleEditionIn
 
   return {
     schema: SKY_ARTICLE_EDITION_SCHEMA,
-    contentKey: `sky-article/${input.planet}/${input.sign}/${input.entryYear}`,
+    ...(ingress ? { format: input.format } : {}),
+    contentKey: skyArticleEditionContentKey(input),
     templateKey: input.templateKey,
     templateHash: await sha256(normalizeNewlines(articleTemplateWithHoroscopes(input.templateBody, input.templateSections))),
     fixedProseHash: await sha256(templateBody),
@@ -493,8 +514,11 @@ export function assertCompiledSkyArticleEdition(value: unknown) {
     throw new Error("Sky article edition contains unresolved template placeholders.");
   }
   const houses = new Set(edition.housePassages.map((passage) => passage.house));
-  if (houses.size !== 12 || Array.from({ length: 12 }, (_, index) => index + 1).some((house) => !houses.has(house))) {
+  if (!isSkyIngressEssay(edition.format) && (houses.size !== 12 || Array.from({ length: 12 }, (_, index) => index + 1).some((house) => !houses.has(house)))) {
     throw new Error("Sky article edition must contain approved horoscopes for all 12 houses.");
+  }
+  if (isSkyIngressEssay(edition.format) && (edition.housePassages.length || edition.aspectPassages.length)) {
+    throw new Error("Ingress essay companions must remain separate from the article.");
   }
   return edition;
 }

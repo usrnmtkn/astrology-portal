@@ -3522,6 +3522,35 @@ function findSkyPlacementResidencyAspects(
   return events.sort((first, second) => first.startsAt.localeCompare(second.startsAt));
 }
 
+/** Exact, bounded evidence for the dated ingress writer, using the same Swiss
+ * roots as Sky and Calendar. A long residency is explicitly a partial search. */
+export async function getSkyIngressArticleEvents(planet: string, start: Date, end: Date, timeZone: string) {
+  const swe = await getSwissEph();
+  const subject = placementPlanet(swe, planet);
+  const searchEnd = new Date(Math.min(end.getTime(), start.getTime() + 366 * 86_400_000));
+  const complete = searchEnd.getTime() === end.getTime();
+  const followThroughEnd = new Date(searchEnd.getTime() + (complete ? 30 : 0) * 86_400_000);
+  const aspects = findSkyPlacementResidencyAspects(swe, start, searchEnd, timeZone, subject.planet);
+  const other = await getHoroscopeCalendarRangeEvents({ ...defaultLocation, timeZone }, start, followThroughEnd);
+  const events = [...aspects, ...other.filter(event => event.type !== "aspect" && event.planet !== "Moon")]
+    .filter(event => Date.parse(event.startsAt) >= start.getTime() && Date.parse(event.startsAt) < followThroughEnd.getTime())
+    .sort((a, b) => a.startsAt.localeCompare(b.startsAt));
+  return {
+    eventCoverage: { start: start.toISOString(), end: searchEnd.toISOString(), complete,
+      followThroughEnd: followThroughEnd.toISOString(), recurrenceSearch: "not-performed" },
+    events: events.map(event => ({ ...event,
+      period: Date.parse(event.startsAt) >= end.getTime() ? "after-ingress-window" : "during-ingress-window",
+      participants: (event.planets ?? (event.type === "lunation" ? ["Sun", "Moon"] : event.planet ? [event.planet] : [])).map(name => {
+        const point = name === "Moon" ? { planetId: swe.SE_MOON, longitudeOffset: 0 } : placementPlanet(swe, name);
+        const instant = new Date(event.startsAt);
+        const longitude = normalizeDegrees(exactPlanetLongitude(swe, point.planetId, instant) + point.longitudeOffset);
+        return { planet: name, longitude, sign: exactPlanetSign(swe, point.planetId, instant, point.longitudeOffset),
+          degree: longitude % 30, motion: exactPlanetSpeed(swe, point.planetId, instant) < 0 ? "retrograde" : "direct" };
+      })
+    }))
+  };
+}
+
 function rankPlacementEvents(events: LunarCalendarEvent[], planet: string) {
   const bodyPriority = ["Pluto", "Neptune", "Uranus", "Saturn", "Jupiter", "Mars", "Venus", "Mercury", "Sun"];
   const aspectPriority = ["conjunction", "opposition", "square", "trine", "sextile"];

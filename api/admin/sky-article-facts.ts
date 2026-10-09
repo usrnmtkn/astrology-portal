@@ -4,6 +4,7 @@ import { requireContentAdmin } from "../_lib/admin-auth.js";
 import { AdminHttpError, adminErrorMessage, adminErrorStatus, sendAdminJson, sendAdminMethodNotAllowed } from "../_lib/admin-http.js";
 import { loadLocalWebEnv } from "../_lib/local-env.js";
 import { calculateSkyArticleEditionFacts } from "../_lib/sky-article-facts.js";
+import { isSkyIngressEssay } from "../../apps/web/src/content/skyIngressEssay.mjs";
 
 loadLocalWebEnv();
 
@@ -33,7 +34,9 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
     const referenceDate = requestUrl.searchParams.get("date") ?? new Date().toISOString().slice(0, 10);
     if (!planet) throw new AdminHttpError(400, "planet is required.");
     const referenceInstant = validReferenceDate(referenceDate);
-    sendAdminJson(res, 200, { ok: true, facts: await calculateSkyArticleEditionFacts(referenceInstant, planet) });
+    const format = requestUrl.searchParams.get("format") ?? "saved-template";
+    if (format !== "saved-template" && !isSkyIngressEssay(format)) throw new AdminHttpError(400, "Unsupported article format.");
+    sendAdminJson(res, 200, { ok: true, facts: await calculateSkyArticleEditionFacts(referenceInstant, planet, format) });
   } catch (error) {
     sendAdminJson(res, adminErrorStatus(error), {
       ok: false,

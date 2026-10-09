@@ -11,6 +11,7 @@ export async function createStudioMemoryDb() {
     ); grant all on public.generated_interpretations to service_role;`);
   await db.exec(readFileSync(new URL('../../apps/web/supabase/migrations/20260911152710_studio_memory_feedback.sql', import.meta.url), 'utf8'));
   await db.exec(readFileSync(new URL('../../apps/web/supabase/migrations/20260911212849_studio_article_memory_feedback.sql', import.meta.url), 'utf8'));
+  await db.exec(readFileSync(new URL('../../apps/web/supabase/migrations/20261009160410_studio_ingress_visit_memory.sql', import.meta.url), 'utf8'));
   return db;
 }
 
