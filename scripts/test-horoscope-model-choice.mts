@@ -13,6 +13,9 @@ installHoroscopeWriterFixture();
 const transport=installAlternativeHoroscopeProviders();
 // Transports must not summarize, truncate or substitute the saved prompt and
 // evidence. Validate byte preservation independently of provider fixture prose.
+const nativeRequest=buildHoroscopeProviderRequest({config:horoscopeWriterConfig('gemini'),input:'Synthetic input',instructions:responses.governedInstructionsForRole('WRITER',{surface:'horoscopes',family:'horoscope'}),schema:{type:'object'}});
+assert.equal(nativeRequest.background,true,'New Gemini runs must survive server termination through provider background execution');
+assert.equal(nativeRequest.stream,undefined,'New runs must not depend on a local stream worker');
 const exactInput='Complete synthetic instructions\n\nComplete synthetic owner evidence\n\nFinal evidence sentence.';
 const exactInstructions=responses.governedInstructionsForRole('WRITER',{surface:'horoscopes',family:'horoscope',taskInstructions:'Exact synthetic profile.'});
 const schema={type:'object',properties:{body:{type:'string'}},required:['body'],additionalProperties:false};
@@ -102,9 +105,7 @@ process.env.GEMINI_API_KEY='synthetic-gemini-test-only';
 
 // Failure, cancellation and unknown-output recovery stay charge-safe.
 transport.geminiError=true;
-let result=await action(id,'generate',{sign:'aries',approvedPlanHash:unavailable.payload.plan.planHash});assert.equal(result.status,202);
-await new Promise(resolve=>setTimeout(resolve,30));
-result=await action(id,'poll');assert.equal(result.status,422);
+let result=await action(id,'generate',{sign:'aries',approvedPlanHash:unavailable.payload.plan.planHash});assert.equal(result.status,422,'A rejected background creation is reported immediately');
 transport.geminiError=false;transport.geminiDelay=100;
 result=await action(id,'generate',{sign:'taurus',approvedPlanHash:unavailable.payload.plan.planHash});assert.equal(result.status,202);
 let row=latest(id);row.source_snapshot.horoscopeGeneration.active.startedAt='2026-01-01T00:00:00Z';store.rows.set(id,row);
@@ -139,7 +140,7 @@ assert.equal(streamed.output[0].content[0].text,'Synthetic café 🌙 ending.');
 assert.equal(streamed.provider_response_id,'v1_synthetic');
 assert.equal(streamed.usage.output_tokens,40);
 assert.equal(streamed.usage.output_tokens_details.reasoning_tokens,30);
-assert.equal(transport.geminiGets,0,'New Gemini requests never retrieve via the broken Google GET path');
+assert(transport.geminiGets>0,'Background requests must recover through the provider ID, without a local stream worker');
 await assert.rejects(readGeminiStream(new Response('data: {"event_type":"interaction.created","interaction":{"id":"v1_test"}}\n\n'),'gemini_local'),/interrupted_gemini_stream/);
 // The framing marker alone is not a successful model completion, even if a
 // completion event follows it. No partial output may be admitted as a draft.
@@ -151,7 +152,7 @@ assert.equal(noTrailingBlank.status,'completed');assert.equal(noTrailingBlank.pr
 const limitedStream=await readGeminiStream(new Response('data: {"event_type":"interaction.completed","interaction":{"id":"v1_limited","status":"incomplete","usage":{"total_output_tokens":3,"total_thought_tokens":121}}}\n\nevent: done\ndata: [DONE]\n\n'),'gemini_local');
 assert.equal(limitedStream.status,'incomplete','A completed stream does not imply a completed model response');
 assert.equal(limitedStream.usage.output_tokens,3);assert.equal(limitedStream.usage.output_tokens_details.reasoning_tokens,121);
-const staleGemini={config:horoscopeWriterConfig('gemini'),responseId:geminiRequestId('op','hash'),startedAt:'2026-01-01T00:00:00Z'};
+const staleGemini={config:{...horoscopeWriterConfig('gemini'),transport:'checkpointed-stream/v1'},responseId:geminiRequestId('op','hash'),startedAt:'2026-01-01T00:00:00Z'};
 assert.equal((await (await storedHoroscopeResponse({operation:staleGemini})).json()).error.code,'gemini_checkpoint_unavailable');
 
 // Upgrade recovery: preserve a possibly billed legacy background request while
@@ -213,7 +214,7 @@ console.log('Gemini stream completion, bounded failure, legacy hold, batch conti
 
 // Only a result checkpoint may refresh the active batch automatically.
 const {horoscopeStreamCheckpointOnly}=await import('../src/astro-writing/horoscopeStreamCheckpoint.mjs');
-const beforeCheckpoint={id:'edition',updated_at:'first',status:'DRAFT',body:'Saved owner text',source_snapshot:{profile:'saved',horoscopeGeneration:{active:{id:'operation',requestHash:'hash',state:'running',config:horoscopeWriterConfig('gemini'),responseId:'gemini_saved'}}}};
+const beforeCheckpoint={id:'edition',updated_at:'first',status:'DRAFT',body:'Saved owner text',source_snapshot:{profile:'saved',horoscopeGeneration:{active:{id:'operation',requestHash:'hash',state:'running',config:{...horoscopeWriterConfig('gemini'),transport:'checkpointed-stream/v1'},responseId:'gemini_saved'}}}};
 const afterCheckpoint=structuredClone(beforeCheckpoint) as any;
 afterCheckpoint.updated_at='second';afterCheckpoint.source_snapshot.horoscopeGeneration.active.providerResult={id:'gemini_saved',status:'completed'};
 assert(horoscopeStreamCheckpointOnly(beforeCheckpoint,afterCheckpoint));
@@ -378,13 +379,13 @@ for(const scenario of ['reservation-body','reservation-network','uncommitted','l
 console.log('Committed and uncommitted storage timeouts preserve complete evidence, newer edits and single review dispatch.');
 
 // The old transport resent the complete accumulated history at every checkpoint.
-// Refuse large storage uploads while running the real native stream/handler path
+// Refuse large storage uploads while running the stored background/handler path
 // through ALL 12 signs; exact owner/source text is retained, never truncated.
 const largeId=await create('weekly','2027-03-01');
 const largePlan=(await action(largeId,'prepare',{writerChoice:'gemini'})).payload.plan.planHash;
 const large=latest(largeId);large.source_snapshot.syntheticRetainedHistory='Complete synthetic preserved evidence. '.repeat(450000);store.rows.set(largeId,large);
 const baseLargeFetch=globalThis.fetch,writersBeforeLarge=writerFixture.calls,reviewsBeforeLarge=writerFixture.reviewCalls;
-let maxCheckpointBytes=0,checkpoints=0,preDispatchReceipts=0,lostNativeResult=false;
+let maxCheckpointBytes=0,checkpoints=0,preDispatchReceipts=0;
 try{
  globalThis.fetch=async(input:any,options:any={})=>{
   const location=String(input);
@@ -392,16 +393,14 @@ try{
    const bytes=Buffer.byteLength(options.body);maxCheckpointBytes=Math.max(maxCheckpointBytes,bytes);
    assert(bytes<1_000_000,'Transport cannot resend the full archive');
   }
-  if(location.includes('generativelanguage.googleapis.com')){
+  if(location.includes('generativelanguage.googleapis.com')&&options.method==='POST'){
    const reserved=latest(largeId).source_snapshot.horoscopeGeneration.active;
-   assert.equal(reserved.responseId,geminiRequestId(reserved.id,reserved.requestHash),'Receipt exists BEFORE paid dispatch');preDispatchReceipts++;
+   assert.equal(reserved.state,'starting');assert(reserved.requestHash,'Request is reserved BEFORE paid dispatch');assert.equal(reserved.responseId,null);preDispatchReceipts++;
   }
   const response=await baseLargeFetch(input,options);
   if(location.endsWith('/rpc/checkpoint_weekly_horoscope')||location.endsWith('/rpc/checkpoint_weekly_provider_result')){
    checkpoints++;assert((await response.clone().text()).length<200);
-   if(!lostNativeResult&&location.endsWith('/rpc/checkpoint_weekly_provider_result')){
-    lostNativeResult=true;Object.defineProperty(response,'json',{value:async()=>{throw new DOMException('Synthetic native result lost acknowledgement','AbortError');}});
-   }
+   assert(!location.endsWith('/rpc/checkpoint_weekly_provider_result'),'New Gemini runs do not need a local stream checkpoint');
   }
   return response;
  };
@@ -411,7 +410,7 @@ try{
   assert(latest(largeId).sections.horoscopeEdition.passages.find((p:any)=>p.sign===passage.sign).body);
  }
 }finally{globalThis.fetch=baseLargeFetch;}
-assert.equal(preDispatchReceipts,12);assert(lostNativeResult);assert(checkpoints>=60);
+assert.equal(preDispatchReceipts,12);assert(checkpoints>=60);
 assert.equal(writerFixture.calls,writersBeforeLarge+12);assert.equal(writerFixture.reviewCalls,reviewsBeforeLarge+12);
 assert.equal(latest(largeId).source_snapshot.syntheticRetainedHistory,large.source_snapshot.syntheticRetainedHistory);
 assert.equal(latest(largeId).status,'DRAFT');
@@ -448,3 +447,14 @@ const expiredHoldResult=await action(largeId,'poll');assert.equal(expiredHoldRes
 assert(horoscopeWeeklyBatchRecovery(expired,expiredHoldResult.payload.rows[0],{action:'poll',sign:'aries',planHash:largePlan}));
 const editedHeld=structuredClone(expiredHoldResult.payload.rows[0]);editedHeld.summary='Unrelated newer owner edit';
 assert.equal(horoscopeWeeklyBatchRecovery(expired,editedHeld,{action:'poll',sign:'aries',planHash:largePlan}),false);
+
+const backgroundOperation={config:horoscopeWriterConfig('gemini'),responseId:'v1_existing_result',startedAt:'2026-01-01T00:00:00Z'};
+let reads=0;
+const recovered=await storedHoroscopeResponse({operation:backgroundOperation,fetchImpl:async(url:any,options:any)=>{
+ assert.equal(url,'https://generativelanguage.googleapis.com/v1beta/interactions/v1_existing_result');
+ assert.equal(options.method,undefined);reads++;
+ return Response.json({id:'v1_existing_result',status:'completed',steps:[{type:'model_output',content:[{type:'text',text:'Complete synthetic response.'}]}]});
+}});
+assert.equal((await recovered.json()).output[0].content[0].text,'Complete synthetic response.');assert.equal(reads,1);
+await assert.rejects(storedHoroscopeResponse({operation:backgroundOperation,fetchImpl:async()=>Response.json({id:'v1_wrong_result',status:'completed',steps:[]})}),/does not match/);
+console.log('Provider-stored results survive the former local checkpoint deadline; wrong identities cannot be admitted.');

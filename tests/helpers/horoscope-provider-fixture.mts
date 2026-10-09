@@ -6,7 +6,7 @@ export function installAlternativeHoroscopeProviders() {
   process.env.GEMINI_API_KEY='synthetic-gemini-test-only';
   process.env.ANTHROPIC_API_KEY='synthetic-anthropic-test-only';
   const base=globalThis.fetch;
-  const requests:any[]=[],gemini=new Map<string,string>();
+  const requests:any[]=[],gemini=new Map<string,string>(),failedGemini=new Set<string>();
   const state={requests,claudeDelay:10,claudeError:false,geminiError:false,geminiDelay:10,geminiInterrupted:false,geminiRetrievalError:false,geminiGets:0};
   const converted=(request:any,provider:string)=>({model:request.model,
     instructions:provider==='gemini'?request.system_instruction:request.system,
@@ -25,7 +25,7 @@ export function installAlternativeHoroscopeProviders() {
         assert.equal(request.background,request.stream?false:true);
         if(state.geminiError)return Response.json({error:{status:'PERMISSION_DENIED'}},{status:403});
         const result=await base('https://api.openai.com/v1/responses',{method:'POST',body:JSON.stringify(converted(request,'gemini'))});
-        const payload=await result.json();const id='v1_gemini_'+payload.id;gemini.set(id,payload.id);
+        const payload=await result.json();const id='v1_gemini_'+payload.id;gemini.set(id,payload.id);if(state.geminiInterrupted)failedGemini.add(id);
         if(request.stream){
           await new Promise(resolve=>setTimeout(resolve,state.geminiDelay));
           if(state.geminiInterrupted)throw new Error('Synthetic lost Gemini stream');
@@ -35,9 +35,10 @@ export function installAlternativeHoroscopeProviders() {
         return Response.json({id,status:'in_progress',model:request.model});
       }
       state.geminiGets++;
-      if(state.geminiRetrievalError)return Response.json({error:{code:'invalid_request',message:'Multiple authentication credentials received. Please pass only one.'}},{status:400});
+      if(state.geminiRetrievalError&&url.includes('legacy'))return Response.json({error:{code:'invalid_request',message:'Multiple authentication credentials received. Please pass only one.'}},{status:400});
       const cancel=url.endsWith('/cancel'),id=url.split('/').at(cancel?-2:-1)!;
       const original=gemini.get(id);assert(original,'Unknown Gemini fixture request');
+      if(failedGemini.has(id))return Response.json({id,status:'failed',error:{code:'gemini_connection_interrupted'}});
       const response=await base(`https://api.openai.com/v1/responses/${original}${cancel?'/cancel':''}`,options);
       const payload=await response.json();
       return Response.json({id,status:payload.status,steps:[{type:'thought',summary:[{type:'text',text:'Do not use private thought text.'}]},{type:'model_output',content:[{type:'text',text:text(payload)}]}],

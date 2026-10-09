@@ -314,7 +314,7 @@ export default function HoroscopeEditionsStudio({secret,requestedEditionId}:{sec
       // Coalesce manual/focus checks with the running loop. Aborting it here
       // used to discard the owner's approval for the remaining Weekly signs.
       checkBatch.current=true;lastSync.current=Date.now();
-      setMessage('Checking saved progress. Generation will continue automatically.');return;
+      setMessage('Checking saved progress…');return;
     }
     stop.current=true;const controller=beginOperation();running.current=false;lastSync.current=Date.now();
     setBusy(true);setChecking(true);setProgress('');setError('');setMessage('Checking saved progress…');
@@ -334,7 +334,7 @@ export default function HoroscopeEditionsStudio({secret,requestedEditionId}:{sec
           try{return await readSaved(row.id,controller.signal);}
           catch(reason){
             if(!recoverable(reason)||(reason as any).status===409)throw reason;
-            setMessage('Connection interrupted. Studio will check the saved request again automatically.');
+            setMessage('Connection interrupted. Continuing from the saved request automatically.');
             await waitForPoll(controller.signal,Math.min(30000,3000*++connectionFailures));
           }
         }
@@ -497,7 +497,7 @@ export default function HoroscopeEditionsStudio({secret,requestedEditionId}:{sec
     {visibleError&&(typeof visibleError==='string'?<p role="alert">{visibleError}{needsSignIn&&<> <a href={studioSignInHref('/admin/content#horoscopes'+(saved?.id?'?edition='+encodeURIComponent(saved.id):''))}>Sign in to Content Studio</a></>}</p>:step==='generate'&&<details className="admin-workspace-details"><AdminDisclosureSummary>Previous attempt</AdminDisclosureSummary><p>{visibleError.previous}</p></details>)}{message&&<p role="status">{message}</p>}
     {punctuationHold&&step==='generate'&&<StudioButton className="admin-primary-button" disabled={locked} onClick={editPunctuation}>Edit punctuation</StudioButton>}
     {candidateHolds.map(([heldSign,held])=><section key={heldSign} aria-label={`${horoscopeSignLabel(heldSign)} prose review`}>
-      <h3>{horoscopeSignLabel(heldSign)} needs a prose edit</h3><p>{held.message}</p>
+      <h3>{horoscopeSignLabel(heldSign)} {held.code==='rhetorical_pattern'?'needs a prose edit':'prose check did not finish'}</h3><p>{held.message}</p>
       {(held.review?.rhetoric?.findings??[]).map((finding:any,index:number)=><div key={index}><strong>{finding.label}</strong><blockquote>{finding.quote}</blockquote><p>{finding.reason} {finding.readerConsequence}</p></div>)}
       <StudioButton disabled={locked} onClick={()=>editHeldCandidate(heldSign,held)}>Edit saved {horoscopeSignLabel(heldSign)} draft</StudioButton>
       <StudioButton disabled={locked} onClick={()=>void reject(heldSign)}>Reject {horoscopeSignLabel(heldSign)} draft</StudioButton>

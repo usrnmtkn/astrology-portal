@@ -75,6 +75,8 @@ for(const [width,theme] of [[390,'dark'],[1440,'light']] as const){
    expect(saved.sections.horoscopeEdition.passages[10].body).toBe('');
    expect((await f.call({method:'writer-state'}))).toMatchObject({calls:2,reviewCalls:2});
    await expect(studio.getByRole('region',{name:'Aquarius prose review'})).toContainText('CORRECTIO');
+   await expect(studio.getByRole('heading',{level:3,name:'Aquarius needs a prose edit'})).toBeVisible();
+   await expect(studio.getByRole('heading',{name:/prose check did not finish/})).toHaveCount(0);
    await expect(studio.getByRole('group',{name:'Writing plans by sign'})).toHaveCount(0);
    await expect(studio.getByText('1 reading still needs a draft. Existing writing is kept.',{exact:true})).toHaveCount(0);
    await expect(studio.locator('footer')).toHaveCSS('position','static');

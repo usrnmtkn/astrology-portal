@@ -23,7 +23,7 @@ async function fixture(page:Page,missing=1){
     const created=await call({method:'POST',body:{contentKey:horoscopeEditionKey(edition.window),surface:'sky',mode:'article',eventType:'horoscope-edition',provider:'manual-admin',status:'DRAFT',lane:'serving',headline:'Synthetic model choice edition',body:horoscopeEditionBody(edition),sections:{horoscopeEdition:edition},facts:{horoscopeBrief:{brief,signature}},sourceSnapshot:{horoscopeGeneration:{rejections:[{id:'held-private-fixture',scope:'pisces',rejectedAt:'2026-10-06T12:00:00Z',passages:[{sign:'pisces',headline:'',body:''}],generation:{candidateHolds:{pisces:{candidate:{headline:'Held private title',body:'Held private opening.\n\nHeld private final sentence.'}}}}}]}}}});
     expect(created.status).toBe(200);const id=created.payload.rows[0].id;
     const latest=async()=>(await call({method:'rows'})).find((row:any)=>row.id===id);
-    const state={holdPoll:false,holdReview:false,longReview:false,loseWriterStart:false,loseReviewStart:false,loseReviewSave:false,failReviewReservation:false,reservationFailures:0,reviewHeld:false,checks:0};
+    const state={holdPoll:false,holdReview:false,longReview:false,loseWriterStart:false,loseReviewStart:false,loseReviewSave:false,loseReviewHold:false,failReviewReservation:false,reservationFailures:0,reviewHeld:false,checks:0};
     await routeStudioInventoryApi(page,{call,answer:async(route,url)=>{
       if(url.pathname!=='/api/admin/horoscope-writing')return false;
       const body=route.request().postDataJSON();
@@ -39,8 +39,10 @@ async function fixture(page:Page,missing=1){
       if(body.action==='poll'&&active?.phase==='review')state.checks++;
       const lostStart=body.action==='continue'&&active?.phase==='review'&&state.loseReviewStart;
       const lostSave=body.action==='poll'&&active?.phase==='review'&&result.status===200&&state.loseReviewSave;
+      const lostHold=result.payload.held===true&&state.loseReviewHold;
+      if(lostHold)state.loseReviewHold=false;
       const lostWriter=body.action==='generate'&&result.status===202&&state.loseWriterStart;
-      if(lostStart||lostSave||lostWriter){if(lostStart)state.loseReviewStart=false;if(lostSave)state.loseReviewSave=false;if(lostWriter)state.loseWriterStart=false;await route.fulfill({status:503,json:{ok:false,error:'Synthetic lost acknowledgement after save.'}});return true;}
+      if(lostStart||lostSave||lostWriter||lostHold){if(lostStart)state.loseReviewStart=false;if(lostSave)state.loseReviewSave=false;if(lostWriter)state.loseWriterStart=false;await route.fulfill({status:503,json:{ok:false,error:'Synthetic lost acknowledgement after save.'}});return true;}
       await route.fulfill({status:result.status,json:result.payload});return true;
     }});
     await page.addInitScript(()=>localStorage.setItem('tldrastro:contentAdminSecret','calendar-api-fixture'));
@@ -64,7 +66,7 @@ for(const [width,theme] of [[1440,'light'],[390,'dark']] as const){
     const prepare=await f.call({method:'writing',body:{action:'prepare',id:f.id,expectedUpdatedAt:(await f.latest()).updated_at,writerChoice:'gemini'}});
     await f.call({method:'provider-state',body:{geminiInterrupted:true}});
     await f.call({method:'writing',body:{action:'generate',id:f.id,expectedUpdatedAt:(await f.latest()).updated_at,sign:'aries',approvedPlanHash:prepare.payload.plan.planHash}});
-    await expect.poll(async()=>Boolean((await f.latest()).source_snapshot.horoscopeGeneration.active?.providerResult)).toBe(true);
+    await expect.poll(async()=>Boolean((await f.latest()).source_snapshot.horoscopeGeneration.active?.responseId)).toBe(true);
     expect((await f.call({method:'writing',body:{action:'poll',id:f.id,expectedUpdatedAt:(await f.latest()).updated_at}})).status).toBe(422);
     await f.call({method:'provider-state',body:{geminiInterrupted:false}});
     await f.call({method:'storage-state',body:{lose:['reservation','review-id','completion'],failWriterReservations:2}});
@@ -116,7 +118,7 @@ for(const [width,theme,reviewStarted] of [[1440,'light',false],[390,'dark',true]
     const act=async(action:string,extra={})=>f.call({method:'writing',body:{action,id:f.id,expectedUpdatedAt:(await f.latest()).updated_at,...extra}});
     const prepared=await act('prepare',{writerChoice:'gemini'});
     await act('generate',{sign:'aries',approvedPlanHash:prepared.payload.plan.planHash});
-    await expect.poll(async()=>Boolean((await f.latest()).source_snapshot.horoscopeGeneration.active?.providerResult)).toBe(true);
+    await expect.poll(async()=>Boolean((await f.latest()).source_snapshot.horoscopeGeneration.active?.responseId)).toBe(true);
     await act('poll');
     const ready=(await f.latest()).source_snapshot.horoscopeGeneration.active;
     expect(ready).toMatchObject({phase:'review',state:'ready',sign:'aries'});
@@ -268,7 +270,7 @@ test('Legacy Gemini retrieval failure holds only that sign and the rest complete
     expect(row.sections.horoscopeEdition.passages.slice(0,-2)).toEqual(f.original.passages.slice(0,-2));
     expect(row.sections.horoscopeEdition.passages.at(-2).body).toBe('');
     expect((await f.call({method:'writer-state'})).calls).toBe(2);
-    expect((await f.call({method:'provider-state'})).geminiGets).toBe(1);
+    expect((await f.call({method:'provider-state'})).geminiGets).toBeGreaterThanOrEqual(2);
     await page.reload();await f.open();
     await expect(studio.getByRole('button',{name:'Allow retry for Aquarius'})).toBeVisible();
     expect((await f.call({method:'writer-state'})).calls).toBe(2);
@@ -296,3 +298,45 @@ test('Release interrupted Gemini request succeeds despite the Google cancellatio
     expect((await f.call({method:'writer-state'})).calls).toBe(1);
   }finally{f.child.kill();}
 });
+
+for(const [width,theme] of [[1440,'light'],[1440,'dark'],[390,'light'],[390,'dark']] as const){
+ test(`Interrupted review acknowledgement keeps Gemini batch moving ${width} ${theme}`,async({page})=>{
+  test.setTimeout(90000);
+  await page.setViewportSize({width,height:1000});
+  await page.addInitScript(theme=>{
+   localStorage.setItem('tldrastro:studio-theme',theme);
+   const timeout=window.setTimeout.bind(window);
+   window.setTimeout=((fn:any,delay?:number,...args:any[])=>timeout(fn,delay===3000?20:delay,...args)) as typeof window.setTimeout;
+  },theme);
+  const f=await fixture(page,2);try{
+   await f.call({method:'writer-state',body:{nextReviewResult:{status:'completed',output:[]}}});
+   f.state.loseReviewHold=true;
+   const studio=await f.open();
+   await studio.getByRole('combobox',{name:'Writing model'}).selectOption('gemini');
+   const style=(el:Element)=>{const s=getComputedStyle(el);return [s.fontFamily,s.fontSize,s.fontWeight,s.lineHeight,s.letterSpacing,s.marginTop,s.marginBottom,s.textTransform,s.textAlign];};
+   const headingStyle=await studio.getByRole('heading',{level:3,name:/writing plan$/}).evaluate(style);
+   await studio.getByLabel('I approve this writing plan for generation.').check();
+   await studio.getByRole('button',{name:'Generate missing readings',exact:true}).click();
+   const heldHeading=studio.getByRole('heading',{level:3,name:'Aquarius prose check did not finish',exact:true});
+   await expect(heldHeading).toBeVisible();
+   await expect(studio.getByText('11/12 readings ready',{exact:false})).toBeVisible();
+   await expect(studio.getByRole('button',{name:'Pause generation',exact:true})).toHaveCount(0);
+   expect(f.state.loseReviewHold).toBe(false);
+   expect(await heldHeading.evaluate(style)).toEqual(headingStyle);
+   await expect(studio.getByRole('heading',{level:2,name:'Generate your drafts'})).toBeVisible();
+   await expect(studio.getByRole('heading',{name:/needs a prose edit/})).toHaveCount(0);
+   const saved=await f.latest(),hold=saved.source_snapshot.horoscopeGeneration.candidateHolds.aquarius;
+   expect(saved.status).toBe('DRAFT');expect(hold.code).toBe('rhetorical_review_unavailable');
+   expect(saved.sections.horoscopeEdition.passages.slice(0,-2)).toEqual(f.original.passages.slice(0,-2));
+   expect(saved.sections.horoscopeEdition.passages.at(-1).body).toContain('complete pisces fixture opening');
+   expect((await f.call({method:'writer-state'}))).toMatchObject({calls:2,reviewCalls:2});
+   await page.reload();await f.open();await expect(heldHeading).toBeVisible();
+   await page.screenshot({path:`test-results/gemini-review-interrupted-status-${width}-${theme}.png`,fullPage:true});
+   await studio.getByRole('button',{name:'Edit saved Aquarius draft',exact:true}).click();
+   await expect(studio.getByLabel('Complete reading')).toHaveValue(hold.candidate.body);
+   expect((await f.call({method:'writer-state'}))).toMatchObject({calls:2,reviewCalls:2});
+   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+   await page.screenshot({path:`test-results/gemini-review-interrupted-${width}-${theme}.png`,fullPage:true});
+  }finally{f.child.kill();}
+ });
+}

@@ -11,7 +11,7 @@ export function horoscopeWriterConfig(choice='current',period='weekly') {
   if(selected.id==='current')return provider.normalizeProviderConfig(
     ['monthly','seasonal'].includes(period)?{reasoningEffort:'medium',maxOutputTokens:12000}:{},'writer');
   return {provider:selected.provider,model:selected.model,maxOutputTokens:12000,
-    ...(selected.provider==='gemini'?{thinkingLevel:'medium',transport:'checkpointed-stream/v1'}:{reasoningEffort:'medium'})};
+    ...(selected.provider==='gemini'?{thinkingLevel:'medium',transport:'stored-interaction/v2'}:{reasoningEffort:'medium'})};
 }
 
 export function horoscopeWriterOptions(env) {

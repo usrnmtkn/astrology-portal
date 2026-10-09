@@ -81,8 +81,8 @@ export async function startHoroscopeResponse({config,role,request,instructions,c
   if(config.provider==='anthropic'||config.provider==='gemini'){
     const gemini=config.provider==='gemini';
     const id=(gemini?geminiRequestId:claudeRequestId)(context.operationId,context.requestHash);
-    // Gemini's stored Interactions retrieval currently rejects valid auth keys.
-    // Capture the original stream locally, as for Claude. Never repeat it on poll.
+    // Keep the original transport for previously reserved Gemini stream calls.
+    // New Gemini calls use provider-stored background interactions above.
     const work=(async()=>{
       const checkpointContext={...context,provider:config.provider,deadline:context.deadline??Date.now()+280000};
       let payload;
@@ -130,6 +130,7 @@ export async function storedHoroscopeResponse({operation,cancel=false,fetchImpl=
       &&payload.error.message==='Multiple authentication credentials received. Please pass only one.'){
       return jsonResponse({id,status:'failed',error:{code:'gemini_retrieval_authentication'}},424);
     }
+    if(response.ok&&payload?.id!==id)throw new AdminHttpError(502,'The retrieved writer result does not match the saved request.');
     return jsonResponse(normalizeGeminiResult(payload),response.status);
   }
   return responses.storedWritingResponse({apiKey,responseId:id,cancel,fetchImpl});

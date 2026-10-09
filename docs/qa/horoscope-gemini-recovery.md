@@ -1,5 +1,40 @@
 # Gemini horoscope recovery
 
+## Current background recovery
+
+New requests use `stored-interaction/v2`: a Gemini background interaction with
+`store: true` and no stream. The reserved operation retains Google's interaction
+ID; subsequent polls retrieve that same result. Completion no longer depends on
+a local function consuming and checkpointing a stream before its deadline.
+The selected model, full instructions, output limit and independent reviewer
+remain unchanged. Previously reserved `checkpointed-stream/v1` requests retain
+their captured transport; an uncertain call is never redispatched on poll.
+
+This follows Google's [background execution contract](https://ai.google.dev/gemini-api/docs/background-execution).
+The earlier retrieval authentication failure described below was rechecked with
+read-only requests against an already-created diagnostic interaction. Both
+revision-pinned and default retrieval returned the saved incomplete response.
+No new generation was used for that check. This confirms retrieval availability
+for that request, not completion of a new live twelve-sign edition.
+
+A retrieved result must identify the saved interaction. Transient retrieval
+failures remain read-only; the existing batch recovery checks the saved request
+again without repeating the writer. Local stream deadlines apply only to older
+stream operations and Claude. An acknowledgement lost after saving a prose-review
+hold now reconciles the exact operation, candidate, receipt and appended failure
+before continuing other signs. Newer writing, changed evidence and unrelated
+history still stop automatic continuation. Technical review holds are labeled
+as unfinished checks; completed editorial findings retain the prose-edit label.
+
+Actual-handler and fresh-browser fixtures cover twelve native background drafts,
+separate reviews, interrupted acknowledgements, long pending reviews, explicit
+pause/reload, technical holds and continued later signs. They assert dispatch
+counts, original text preservation and unpublished status. Source assertions
+alone are not release evidence; live database availability and the deployed main
+revision must also be checked and any unverified acceptance criteria reported.
+
+## Earlier stream workaround (historical)
+
 The Gemini Interactions API accepted background requests but returned HTTP 400
 `invalid_request` on retrieval with a single authentication credential. The
 application converted that response into a retryable 503. Repeated polling

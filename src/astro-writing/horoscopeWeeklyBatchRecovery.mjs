@@ -12,7 +12,7 @@ export function horoscopeWeeklyBatchRecovery(previous,current,{action,sign,planH
   const before=previous.source_snapshot?.horoscopeGeneration??{};
   const after=current.source_snapshot?.horoscopeGeneration??{};
   const old=before.active,next=after.active;
-  let completed=false,held=false;
+  let completed=false,held=false,candidateHeld=false;
   if(next){
     if(next.sign!==sign||next.planHash!==planHash)return false;
     if(old){
@@ -56,7 +56,25 @@ export function horoscopeWeeklyBatchRecovery(previous,current,{action,sign,planH
       held=Boolean(interruptedAt)&&outcome==='unknown'&&canonical(reserved)===canonical(old)
         &&canonical(after.interruptions?.at(-1))===canonical(interruption);
     }
-    if(!completed&&!held)return false;
+    const candidateHold=after.candidateHolds?.[sign];
+    if(old?.phase==='review'&&candidateHold&&!before.candidateHolds?.[sign]){
+      const saved=candidateHold.operation;
+      const fixed=operation=>{
+        const copy=structuredClone(operation);
+        for(const key of ['state','responseId','requestHash','startedAt'])delete copy[key];
+        return copy;
+      };
+      candidateHeld=Boolean(saved&&candidateHold.failedAt)
+        &&['rhetorical_pattern','rhetorical_review_unavailable','rhetorical_review_interrupted'].includes(candidateHold.code)
+        &&canonical(fixed(saved))===canonical(fixed(old))
+        &&(!old.responseId||old.responseId===saved.responseId)
+        &&(!old.requestHash||old.requestHash===saved.requestHash)
+        &&canonical(candidateHold.candidate)===canonical(old.candidate)
+        &&canonical(candidateHold.receipt)===canonical(old.receipt)
+        &&canonical(after.failures?.at(-1))===canonical(candidateHold)
+        &&canonical(after.lastError)===canonical(candidateHold);
+    }
+    if(!completed&&!held&&!candidateHeld)return false;
   }
   const normalize=row=>{
     const copy=structuredClone(row),generation=copy.source_snapshot.horoscopeGeneration??{};
@@ -77,6 +95,14 @@ export function horoscopeWeeklyBatchRecovery(previous,current,{action,sign,planH
     if(held&&generation.heldRequests?.[sign]){
       delete generation.heldRequests[sign];if(!Object.keys(generation.heldRequests).length)delete generation.heldRequests;
       generation.interruptions.pop();if(!generation.interruptions.length)delete generation.interruptions;
+    }
+    if(candidateHeld&&generation.candidateHolds?.[sign]){
+      delete generation.candidateHolds[sign];if(!Object.keys(generation.candidateHolds).length)delete generation.candidateHolds;
+      generation.failures.pop();if(!generation.failures.length)delete generation.failures;
+      // The hold replaces only this operation's last error. Other history and
+      // all reader text must still match before continuing the approved batch.
+      if(before.lastError===undefined)delete generation.lastError;
+      else generation.lastError=structuredClone(before.lastError);
     }
     if(generation.lastError==null)delete generation.lastError;
     copy.source_snapshot.horoscopeGeneration=generation;
