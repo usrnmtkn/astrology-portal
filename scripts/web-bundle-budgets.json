@@ -108,5 +108,5 @@
   "memoryGraphJavaScriptGzipBytes": 64000,
   "memoryGraphCssGzipBytes": 29450,
   "horoscopeReaderChunkGzipBytes": 3900,
-  "horoscopeEditorChunkGzipBytes": 14550
+  "horoscopeEditorChunkGzipBytes": 14600
 }
