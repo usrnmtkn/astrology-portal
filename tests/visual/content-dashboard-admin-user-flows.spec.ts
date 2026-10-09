@@ -8610,7 +8610,8 @@ for (const [width, theme] of [[1440, "light"], [1440, "dark"], [390, "light"], [
       await expectAdminRouteLoads(page, `/admin/content#exact-content?category=Natal+Chart&planet=${planet}&sign=${sign}`);
       const card = page.locator(".admin-natal-source-card").filter({ has: page.getByRole("heading", { name: `${name} introduction`, exact: true }) });
       const preview = page.locator(".admin-natal-reader-preview");
-      await expect(card.getByText(key, { exact: true })).toBeVisible();
+      await expect(card.locator('code')).toHaveText(key);
+      await expect(card.locator('code')).toBeVisible();
       await expect(card).not.toContainText(`fallback-hook/planet-lived/${planet}`);
       await expect(preview).toContainText(String(original.body_you));
       if (!savedRows.some(row => row.content_key === key)) {
