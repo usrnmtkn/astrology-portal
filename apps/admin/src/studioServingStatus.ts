@@ -8,12 +8,8 @@ export function studioServingStatusRow(
   savedRow: StudioServingStatusSource | undefined,
   contentKey: string
 ) {
-  if (
-    savedRow?.id
-    && !savedRow.id.startsWith("package:")
-    && (savedRow.status ?? "").toUpperCase() === "LIVE"
-  ) {
-    return savedRow;
-  }
+  // The badge describes the displayed saved revision. A published package
+  // baseline must never lend its Live status to different, inactive wording.
+  if (savedRow?.id) return savedRow;
   return { id: `package:${contentKey}` };
 }

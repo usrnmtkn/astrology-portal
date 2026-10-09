@@ -4,6 +4,7 @@ import { calendarPassageKey, calendarPassageIdentity, calendarPassageRecord, ren
 import { calendarTimingBody } from '../apps/web/src/features/calendar/calendarTimingTemplates.ts';
 import { isReaderServableGeneratedContentRow } from '../apps/web/src/content/generatedContentEligibility.ts';
 import { calendarWeeklyDayParagraphs } from '../apps/web/src/features/calendar/calendarWeeklyPresentation.ts';
+import { calendarEditablePassage } from '../apps/web/src/features/calendar/calendarPassageAssembly.ts';
 
 import { publishedPassageSources, calendarStudioMoonSources } from '../apps/admin/src/calendarPassageSources.ts';
 
@@ -29,6 +30,17 @@ assert.equal(calendarWeeklyDayParagraphs(weeklyBody, weeklyDays, 'Pacific/Auckla
 assert.equal(calendarWeeklyDayParagraphs(weeklyBody, weeklyDays.slice(1), 'America/New_York'), null);
 assert.equal(renderCalendarPassage('{{moonSign}}: {{moonWriteup}}', { moonSign: {text:'Test sign',kind:'fact'}, moonWriteup:{text:'Complete synthetic passage.',kind:'copy'} }), 'Test sign: Complete synthetic passage.');
 assert.equal(renderCalendarPassage('{{moonWriteup}}', {}), null);
+const collidingFacts = {
+  sunSign: {text:'Libra',kind:'fact' as const}, moonSign: {text:'Libra',kind:'fact' as const}, nextMoonSign: {text:'Libra',kind:'fact' as const},
+  moonWriteup: {text:'Once the Moon enters Libra, the dated passage continues.\n\nComplete ending in Libra.',kind:'copy' as const}
+};
+assert.equal(calendarEditablePassage('{{moonWriteup}}', collidingFacts), collidingFacts.moonWriteup.text, 'Expansion must not guess a Sun token inside Moon copy');
+assert.equal(calendarEditablePassage('{{moonSign}}\n\n{{moonWriteup}}', collidingFacts), '{{moonSign}}\n\n'+collidingFacts.moonWriteup.text, 'Explicit fact tokens remain explicit');
+const weeklyExpansion = calendarEditablePassage('{{sundayWriteup}}\n\n{{mondayWriteup}}', {
+  ...collidingFacts, sundayWriteup:collidingFacts.moonWriteup, mondayWriteup:{text:'Monday keeps its own Libra wording.',kind:'copy'}
+});
+assert.equal(weeklyExpansion, collidingFacts.moonWriteup.text+'\n\nMonday keeps its own Libra wording.');
+assert.equal(calendarEditablePassage('{{moonWriteup}}', {...collidingFacts, moonWriteup:{text:'Moon: {{moonSign}}. Complete ending.',kind:'copy'}}), 'Moon: {{moonSign}}. Complete ending.');
 assert.equal(renderCalendarPassage('{{#sunSummary}}{{sunSummary}}{{/sunSummary}}\n\nComplete synthetic passage.', {}), 'Complete synthetic passage.');
 assert.ok(calendarPassageErrors('{{imaginary}}').length);
 assert.equal(calendarTimingBody('lastFullDay', { moonSign:'First',nextMoonSign:'Second' }), 'The Moon spends the entire day in First before it enters Second tomorrow.');

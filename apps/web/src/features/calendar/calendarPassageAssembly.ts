@@ -65,15 +65,10 @@ export function calendarPeriodPassageValues(period: CalendarPassagePeriod, conte
   }
   return values;
 }
-/** Expands existing prose for one date, keeping calculated facts as named variables. */
+/** Expand complete copy for this date. Preserve explicit tokens; rendered words
+ * cannot identify their source fact (the Sun and Moon may share a sign). */
 export function calendarEditablePassage(body: string, values: Record<string, CalendarOverviewValue>) {
   return body.replace(/\{\{\s*(\w+)\s*\}\}/gu, (token, name) => {
-    let text = values[name]?.kind === 'copy' ? values[name].text : undefined;
-    if (!text) return token;
-    for (const [key, value] of Object.entries(values).filter(([, value]) => value.kind === 'fact' && value.text.length > 1 && value.text !== 'yes').sort((a, b) => b[1].text.length - a[1].text.length)) {
-      const escaped = value.text.replace(/[.*+?^${}()|[\]\\]/gu, '\\$&');
-      text = text.replace(new RegExp(`(?<![\\w{])${escaped}(?![\\w}])`, 'gu'), `{{${key}}}`);
-    }
-    return text;
+    return values[name]?.kind === 'copy' && values[name].text ? values[name].text : token;
   });
 }

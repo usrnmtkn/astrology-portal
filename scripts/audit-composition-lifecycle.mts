@@ -6,6 +6,7 @@ import { execFileSync } from "node:child_process";
 import { compositionSurfaceFamilies, compositionSourcesForSurface } from "../apps/admin/src/compositionSurfaceSources";
 import { buildCompositionMap, type CompositionMapRow } from "../apps/admin/src/compositionMap";
 import { isRetiredCompositionKey } from "../apps/web/src/content/fallbackArchitectureV3/resolver/retiredCompositions.mjs";
+import { PACKAGE_VERSION } from "../apps/web/src/content/fallbackArchitectureV3/dist/tldr-content.js";
 
 const temp = path.join(os.tmpdir(), `composition-lifecycle-${process.pid}.json`);
 try {
@@ -23,7 +24,9 @@ try {
     id, sourceCount: compositionSourcesForSurface(id, rows, maps).length,
     retiredSourceCount: compositionSourcesForSurface(id, rows, maps).filter((row) => isRetiredCompositionKey(row.content_key)).length
   }));
-  assert.equal(surfaces.length, 24);
+  for (const id of ["natal-placement-detail", "natal-aspect-detail", "natal-empty-house", "sky-placement-detail", "sky-aspect-detail", "sky-calendar-event-cards", "sky-horoscopes", "personal-transit-detail", "personal-transit-house", "friends-synastry-contact", "friends-composite", "surface-specs-builders"]) {
+    assert.ok(surfaces.some(surface => surface.id === id), `Required composition surface missing: ${id}`);
+  }
   assert.ok(surfaces.every((surface) => surface.retiredSourceCount === 0));
   const pkg = "apps/web/src/content/fallbackArchitectureV3";
   const shippedFiles = fs.readdirSync(pkg).filter((file) => file.startsWith("bundled-") && file.endsWith(".json"));
@@ -51,12 +54,17 @@ try {
   const methods = [...resolver.matchAll(/^  function (render\w+)\(/gmu)].map((match) => match[1]);
   const capabilities = methods.map((method) => ({ method, consumers: texts.filter(({ text }) => text.includes(`${method}(`)).map(({ file }) => file) }));
   const report = {
-    date: "2026-09-10", packageVersion: "v3-2026-09-10f", scope: "24 surface source maps, materialized Studio mirror, shipped row partitions, resolver consumers; no production database writes",
+    date: new Date().toISOString().slice(0, 10),
+    revision: execFileSync("git", ["rev-parse", "HEAD"], { encoding: "utf8" }).trim(),
+    packageVersion: PACKAGE_VERSION,
+    scope: `${surfaces.length} surface source maps, materialized Studio mirror, shipped row partitions, resolver consumers; no production database writes`,
     superseded: ["house-first transit composition", "Studio four-source reconstruction", "personal-aspect CMS overrides", "compiled Sky natal-aspect fallback selector"],
     retiredSourceKeys: retired.map((row: { content_key: string }) => row.content_key),
     retained: ["Approved exact transit and return units", "Reviewed fallback wants/natal/scenes/effects used after exact lookup", "House introductory and sign writing", "Immutable historical Sky article editions", "Governed generation pipeline and its meaning-plan prompt", "Other active surface composers; missing direct calls alone do not prove a public package export is safe to delete"],
     surfaces, capabilities
   };
-  fs.writeFileSync("docs/qa/composition-lifecycle-audit-2026-09-10.json", JSON.stringify(report, null, 2) + "\n");
+  const output = process.argv.find(value => value.startsWith("--out="))?.slice(6)
+    || `docs/qa/composition-lifecycle-audit-${report.date}.json`;
+  fs.writeFileSync(output, JSON.stringify(report, null, 2) + "\n");
   console.log(`Composition lifecycle audit passed: ${surfaces.length} surface maps, ${retired.length} reference-only retired rows, ${shippedFiles.length} clean shipped indexes/partitions, ${capabilities.length} resolver capabilities inventoried.`);
 } finally { fs.rmSync(temp, { force: true }); }

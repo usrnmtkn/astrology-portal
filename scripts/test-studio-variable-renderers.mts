@@ -17,7 +17,7 @@ const template = '{{myOpening}}';
 const ingress = { version: 5, enabled: true, sources: {}, modules: [{ id: 'main', label: 'Main', template: '{{myOpening}}', required: true, enabled: true, motion: 'all', duration: 'all', timing: 'all' }] };
 const rowData = JSON.parse(fs.readFileSync(`${root}/source-rows/fallback-source-rows-v3.json`, 'utf8'));
 const moon = rowData.hookRows.find((row: any) => row.contentKey === 'fallback-hook/moon-void');
-moon.body_you = template; moon._studioVariables = [binding];
+moon.body_you = template + ' Next sign: {{nextSign}}.'; moon._studioVariables = [binding];
 const templates = JSON.parse(fs.readFileSync(`${root}/templates/fallback-templates-v3.json`, 'utf8'));
 for (const key of ['fallback-template/natal.angle-in-sign', 'fallback-template/compat.cross-sign']) {
   const row = templates.templates.find((item: any) => item.contentKey === key);
@@ -44,7 +44,9 @@ for (const renderer of renderers) {
   assert.equal(renderer.natal.renderNatalAngle({ angle: 'ascendant', sign: 'virgo', voice: 'you' }).body, 'Fixture Virgo value.');
   assert.equal(renderer.natal.renderNatalAngle({ angle: 'ascendant', sign: 'aries', voice: 'you' }).body, 'Fixture shared value.', 'No context leaks between renders');
   assert.equal(renderer.transit.renderCompat({ planet: 'sun', signA: 'virgo', signB: 'pisces', otherName: 'Fixture' }).body, 'Fixture Sun in Virgo value.');
-  assert.equal(renderer.transit.renderVoidOfCourse({ sign: 'virgo', nextSign: 'libra' }).body, 'Fixture Virgo value.');
+  assert.equal(renderer.transit.renderVoidOfCourse({ sign: 'virgo', nextSign: 'libra' }).body, 'Fixture Virgo value. Next sign: libra.');
+  assert.equal(renderer.transit.renderVoidOfCourse({ sign: 'virgo', nextSign: 'scorpio' }).body, 'Fixture Virgo value. Next sign: scorpio.', 'Same sign must not reuse another render\'s calculated next sign');
+  assert.equal(renderer.transit.renderVoidOfCourse({ sign: 'virgo', nextSign: 'libra' }).body, 'Fixture Virgo value. Next sign: libra.', 'Returning to an earlier context remains exact');
   const updated = structuredClone(corpus);
   const article = updated.content.continuous.find((row: any) => row.contentKey === 'sky-placement/article/sun/virgo');
   article.placementArticle = template; article.placementArticleDirect = ''; article.placementArticleRetrograde = ''; article._studioVariables = [binding];

@@ -214,6 +214,7 @@ function isStandaloneDignityParagraph(value, tokenIndex) {
 // apps/web/src/content/studioCustomVariables.mjs
 var VARIABLE_SIGNS = "aries taurus gemini cancer leo virgo libra scorpio sagittarius capricorn aquarius pisces".split(" ");
 var VARIABLE_PLANETS = "sun moon mercury venus mars jupiter saturn uranus neptune pluto chiron lilith north-node south-node".split(" ");
+var studioVariableTokens = (value) => [...new Set([...String(value ?? "").matchAll(/\{\{\s*([A-Za-z][A-Za-z0-9_]*)\s*\}\}/gu)].map((match) => match[1]))];
 var object = (value) => value && typeof value === "object" && !Array.isArray(value);
 var normalize = (value, allowed) => typeof value === "string" && allowed.includes(value.trim().toLowerCase()) ? value.trim().toLowerCase() : "";
 var title2 = (value) => String(value ?? "").trim().toLowerCase().split(/[ -]+/u).filter(Boolean).map((word) => word[0].toUpperCase() + word.slice(1)).join(" ");
@@ -270,6 +271,14 @@ function mapStudioVariableCopy(record2, map) {
   else if (object(record2.ingress?.modules)) result.ingress = { ...record2.ingress, modules: Object.fromEntries(Object.entries(record2.ingress.modules).map(([key, value]) => [key, typeof value === "string" ? map(value) : value])) };
   return result;
 }
+function studioRecordVariableNames(record2) {
+  const names3 = /* @__PURE__ */ new Set();
+  mapStudioVariableCopy(record2, (copy) => {
+    studioVariableTokens(copy).forEach((name) => names3.add(name));
+    return copy;
+  });
+  return [...names3];
+}
 function resolveStudioVariableCopy(copy, bindings = [], context = {}, deferredNames = []) {
   const indexed = new Map(bindings.filter((item) => !item?.builtin && typeof item?.id === "string").map((item) => [item.name, item]));
   return String(copy ?? "").replace(/\{\{\s*([A-Za-z][A-Za-z0-9_]*)\s*\}\}/gu, (token2, name) => {
@@ -293,11 +302,12 @@ function resolveStudioVariableRecord(record2, context = {}, deferredNames = []) 
 }
 function bindStudioVariableRenderer(renderer, create, collections) {
   if (!collections.some((rows) => rows.some((row) => row?._studioVariables?.length))) return renderer;
+  const dependencies = [...new Set(collections.flatMap((rows) => rows.flatMap(studioRecordVariableNames)))];
   const cache = /* @__PURE__ */ new Map();
   return Object.fromEntries(Object.entries(renderer).map(([key, render]) => [key, typeof render !== "function" ? render : (...args) => {
     const context = object(args[0]) ? args[0] : {};
     const selection = studioVariableContext(context);
-    const cacheKey = `${selection.planet}/${selection.sign}`;
+    const cacheKey = JSON.stringify([selection, dependencies.map((name) => calculatedStudioVariableValue(name, context))]);
     if (!cache.has(cacheKey)) {
       const resolved = collections.map((rows) => rows.map((row) => resolveStudioVariableRecord(row, context)));
       if (cache.size >= 24) cache.delete(cache.keys().next().value);
@@ -6555,7 +6565,7 @@ function skyV4FieldValue(source, path) {
 }
 
 // apps/web/src/content/fallbackArchitectureV3/resolver/index.browser.ts
-var PACKAGE_VERSION = "v3-2026-10-08-mercury-return-reader";
+var PACKAGE_VERSION = "v3-2026-10-09-studio-variable-context";
 function stablePackageValue(value) {
   if (Array.isArray(value)) {
     return value.map(stablePackageValue);

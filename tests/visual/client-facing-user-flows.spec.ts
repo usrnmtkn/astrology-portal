@@ -2192,6 +2192,39 @@ test.describe("client-facing user flow case studies", () => {
 
   for (const theme of ["light", "dark"] as const) {
     for (const width of [1440, 390]) {
+      test(`saved composite relationship variants reach cards and details ${theme} ${width}`, async ({ page }) => {
+        await page.setViewportSize({ width, height: 1000 });
+        const body = 'Shared composite fixture opening. Final shared composite fixture sentence.';
+        const friendship = 'Friendship composite fixture opening.\n\nFinal friendship composite fixture sentence.';
+        const romantic = 'Romantic composite fixture opening. Final romantic composite fixture sentence.';
+        const creative = 'Creative composite fixture opening. Final creative composite fixture sentence.';
+        await seedClientState(page, { profile: true, friends: true, theme, generatedInterpretations: [{
+          id: 'composite-sun-browser-fixture', content_key: 'composite.sun', surface: 'composite', mode: 'feed', status: 'LIVE', lane: 'serving', review_state: null,
+          headline: 'Synthetic composite Sun', body, summary: '', updated_at: '2026-10-09T12:00:00Z', provider: 'manual-admin', source_snapshot: {}, facts: {},
+          sections: { byRelationshipType: { friendship: { body: friendship }, romantic: { summary: romantic }, creative: { copy: creative } } }
+        }] });
+        await expectClientRouteLoads(page, '/#friends?tab=charts&chart=friend-nikki&view=composite');
+        const pane = page.locator('.friend-tab-pane[aria-label="Composite"]');
+        for (const [relationshipType, expected] of [['friend', friendship], ['partner', romantic], ['business', creative], ['family', body]]) {
+          if (relationshipType !== 'friend') {
+            await page.evaluate(type => {
+              const key = 'tldrastro:manualCharts:qa-flow-user';
+              const charts = JSON.parse(localStorage.getItem(key)!);
+              charts.find((chart: any) => chart.id === 'friend-nikki').relationshipType = type;
+              localStorage.setItem(key, JSON.stringify(charts));
+            }, relationshipType);
+            await page.reload();
+          }
+          const placement = pane.locator('button.placement-table-row').filter({ hasText: expected.split('\n')[0] });
+          await expect(placement).toBeVisible({ timeout: 60_000 });
+          await expect(placement).toContainText(expected.split('\n').at(-1)!);
+          await placement.click();
+          const article = page.locator('.sky-detail-article');
+          await expect(article).toContainText(expected.split('\n')[0]);
+          await expect(article).toContainText(expected.split('\n').at(-1)!);
+          await page.getByRole('button', { name: 'Close detail', exact: true }).click();
+        }
+      });
       test(`composite write-ups open complete details ${theme} ${width}`, async ({ page }) => {
         const assertNoClientErrors = await expectNoClientErrors(page);
         await page.setViewportSize({ width, height: 1000 });

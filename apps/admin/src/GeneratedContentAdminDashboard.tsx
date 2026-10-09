@@ -246,6 +246,7 @@ import { memoByObject, naturalCollator } from "./derivedCache";
 // route is served by @tldr/web, which lazy-loads this component and never ran
 // apps/admin/src/main.tsx, so anything imported only there was missing in prod.
 
+const CompositeReviewCard = lazy(() => import("./CompositeReviewCard"));
 const TransitNatalReaderPreview = lazy(() => import("./TransitNatalReaderPreview"));
 const TransitNatalPreviewOptions = lazy(() => import("./TransitNatalReaderPreview").then(module => ({ default: module.TransitNatalPreviewOptions })));
 const TransitNatalExactSourceAction = lazy(() => import("./TransitNatalReaderPreview").then(module => ({ default: module.TransitNatalExactSourceAction })));
@@ -907,7 +908,6 @@ const compatibilitySortOptions: Array<{ key: AdminCompatibilitySort; label: stri
   { key: "status", label: "Status" },
   { key: "source", label: "Source class" }
 ];
-const relationshipTypes = ["romantic", "friendship", "family", "coworkers", "creative", "exes", "complicated"];
 function adminHashForPage(page: AdminDashboardPage, params?: URLSearchParams) {
   const query = params?.toString();
   return `#${adminPageHashKeys[page]}${query ? `?${query}` : ""}`;
@@ -2758,19 +2758,6 @@ function isCompositeRelationshipRow(row: AdminGeneratedContentRow | AdminReviewR
   return isStudioCompositeRow({ content_key: rowContentKey(row), surface: row.surface, block_type: rowBlockType(row) });
 }
 
-function relationshipTypeCopy(row: AdminGeneratedContentRow, type: string) {
-  if (!row.sections || typeof row.sections !== "object") return "";
-  const sections = row.sections as Record<string, unknown>;
-  const byType = sections.byRelationshipType;
-  if (!byType || typeof byType !== "object") return "";
-  const value = (byType as Record<string, unknown>)[type];
-  if (typeof value === "string") return value;
-  if (value && typeof value === "object") {
-    const objectValue = value as Record<string, unknown>;
-    return String(objectValue.body ?? objectValue.summary ?? objectValue.copy ?? "");
-  }
-  return "";
-}
 
 type PendingStudioPublication = { id: string; expectedUpdatedAt: string; ownerAction: "approve-package-revision" | "publish-sky-article-edition-revision" };
 const pendingPublicationStorageKey = "tldr-studio-pending-publication-v1";
@@ -8220,33 +8207,12 @@ export function GeneratedContentAdminDashboard() {
                 pageSize={compositeReviewPageSize}
                 resetKey={`${compositeRows.length}:${compositeRows[0]?.id ?? ""}:${compositeRows.at(-1)?.id ?? ""}`}
               >
-                {(visibleCompositeRows) => <>{visibleCompositeRows.map((row) => (
-                <article className="admin-template-card" key={row.id}>
-                  <div className="admin-section-heading-row">
-                    <div>
-                      <p className="admin-eyebrow">{contentStatusLabel(row.status)} / {tierForRow(row)}</p>
-                      <h3>{rowTitle(row)}</h3>
-                      <code>{row.content_key}</code>
-                    </div>
-                    <StudioButton type="button" onClick={() => openRow(row)}>Edit</StudioButton>
-                  </div>
-                  <section className="admin-template-rendered-preview" aria-label="Single voice fallback">
-                    <p>{row.body || row.summary || "No shared meaning is saved yet."}</p>
-                  </section>
-                  <div className="admin-dependency-map-grid">
-                    {relationshipTypes.map((type) => {
-                      const copy = relationshipTypeCopy(row, type);
-                      return (
-                        <article key={type}>
-                          <span>{type}{type === "romantic" ? " / gated" : ""}</span>
-                          <strong>{copy ? "Authored" : "Falls back"}</strong>
-                          <p>{copy || "Uses the single-voice composite bank for this relationship type."}</p>
-                        </article>
-                      );
-                    })}
-                  </div>
-                </article>
-                ))}</>}
+                {(visibleCompositeRows) => <Suspense fallback={<PageLoading label="Loading saved writing" />}>{visibleCompositeRows.map((row) => (
+                <CompositeReviewCard key={row.id} row={row} title={rowTitle(row)}
+                  status={`${contentStatusLabel(row.status)} / ${tierForRow(row)}`}
+                  onLoad={(item, signal) => hydrateGeneratedContentRow(item, false, false, signal)}
+                  onEdit={(item) => { void openRow(item); }} />
+                ))}</Suspense>}
               </AdminPaginatedCollection>
             </div>
           </section>

@@ -36,7 +36,7 @@ const venusMoonAuthority = read(venusMoonAuthorityPath);
 const namingRevision = read("packages/astro-knowledge/review/friend-transit-pronouns-2026-10-05.json");
 const namingEdits = new Map(namingRevision.edits.filter((edit) => edit.field === "body_they").map((edit) => [edit.contentKey, edit]));
 
-assert.equal(PACKAGE_VERSION, "v3-2026-10-08-mercury-return-reader");
+assert.equal(PACKAGE_VERSION, "v3-2026-10-09-studio-variable-context");
 assert.equal(candidates.status, "ready_for_owner_directed_batch_promotion");
 assert.equal(candidates.count, 376);
 assert.equal(review.status, "clear");
