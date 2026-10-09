@@ -27,6 +27,9 @@ test('New reader uses device time zone and saves a manual override',async({brows
 
 for(const [width,theme] of [[390,'light'],[390,'dark'],[1440,'light'],[1440,'dark']] as const){
  test(`Twelve-sign edition editor to reader ${width} ${theme}`,async({page})=>{
+  // Several real staged generation/rejection cycles exceed the default
+  // single-interaction timeout even with the isolated provider fixture.
+  test.setTimeout(120000);
   const child=fork(path.resolve('tests/helpers/sky-article-save-api.mts'),[],{env:{...process.env,ZODIAC_TEMPLATE_FIXTURE:'1',HOROSCOPE_WRITER_FIXTURE:'1'},execArgv:['--import','tsx'],stdio:['ignore','pipe','pipe','ipc']});
   let sequence=0,stderr='';const pending=new Map<number,{resolve:(v:any)=>void;reject:(e:Error)=>void}>();
   child.stderr?.on('data',value=>stderr+=value);

@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { Readable } from "node:stream";
-import { readStudioInventoryPages, STUDIO_INVENTORY_PAGE_SIZE, STUDIO_INVENTORY_MAX_PAGES } from "../apps/admin/src/studioInventoryPagination.ts";
+import { readStudioInventoryPages, studioInventoryPageSize, STUDIO_INVENTORY_PAGE_SIZE, STUDIO_INVENTORY_MAX_PAGES } from "../apps/admin/src/studioInventoryPagination.ts";
 import { studioInventoryQuery, studioInventoryRequestPath } from "../apps/admin/src/studioSectionInventory.ts";
 
 // Exercise the actual inventory handler and the client pager together. The
@@ -18,24 +18,27 @@ const fixtureRows = Array.from({ length: 10_081 }, (_, i) => ({
 }));
 const originalFetch = globalThis.fetch;
 let storageReads = 0;
+const requestedLimits = [];
 globalThis.fetch = async input => {
   const url = new URL(String(input));
   assert.equal(url.origin, "https://inventory-pagination.invalid");
   assert.equal(url.pathname, "/rest/v1/generated_interpretations");
-  assert.equal(url.searchParams.get("limit"), String(STUDIO_INVENTORY_PAGE_SIZE));
+  const limit = Number(url.searchParams.get("limit"));
+  requestedLimits.push(limit);
+  assert.ok(limit <= 400, "Compact inventory pages remain bounded");
   assert.equal(url.searchParams.get("order"), "updated_at.desc,id.desc");
   assert.ok(!url.searchParams.get("select").split(",").includes("body"));
   const id = url.searchParams.get("or")?.match(/id\.lt\.([^)]*)/u)?.[1];
   if (id) assert.equal(url.searchParams.get("updated_at"), "lte.2026-09-21T00:00:00Z");
   const offset = id ? fixtureRows.findIndex(row => row.id === id) + 1 : 0;
   storageReads++;
-  return Response.json(fixtureRows.slice(offset, offset + STUDIO_INVENTORY_PAGE_SIZE));
+  return Response.json(fixtureRows.slice(offset, offset + limit));
 };
 const query = studioInventoryQuery({ page: "content", categoryFilter: "Calendar Aspects", showReferenceRows: true });
-async function request(cursor) {
+async function request(cursor, limit = studioInventoryPageSize(cursor)) {
   const req = Readable.from([]);
   req.method = "GET";
-  req.url = studioInventoryRequestPath({ ...query, prefixes: ["sky.aspect."] }, STUDIO_INVENTORY_PAGE_SIZE, cursor);
+  req.url = studioInventoryRequestPath({ ...query, prefixes: ["sky.aspect."] }, limit, cursor);
   req.headers = { "x-content-generation-secret": "inventory-pagination-fixture" };
   const res = { statusCode: 0, setHeader() {}, end(body) { this.payload = JSON.parse(body); } };
   await handler(req, res);
@@ -49,10 +52,20 @@ try {
     loaded.push(...rows);
     if (complete) completions++;
   });
-  assert.equal(storageReads, 127, "The client must continue past the former 125-page cutoff");
+  assert.equal(storageReads, 27, "A large catalog must not require hundreds of sequential requests");
+  assert.equal(requestedLimits[0], 80, "Keep the first page quick to display");
+  assert.ok(requestedLimits.slice(1).every(limit => limit === 400));
   assert.deepEqual(loaded.map(row => row.id), fixtureRows.map(row => row.id));
   assert.ok(loaded.every(row => row.inventory_only && row.body === null));
   assert.equal(completions, 1);
+  // An older server can still return smaller pages during a rolling deployment.
+  storageReads = 0;
+  const legacyRows = [];
+  await readStudioInventoryPages(cursor => request(cursor, STUDIO_INVENTORY_PAGE_SIZE), rows => legacyRows.push(...rows));
+  assert.equal(storageReads, 127, "The client must continue past the former 125-page cutoff");
+  assert.deepEqual(legacyRows.map(row => row.id), fixtureRows.map(row => row.id));
+  const capped = await request(null, 10_000);
+  assert.equal(capped.rows.length, 400, "The handler must bound untrusted requested limits");
 } finally { globalThis.fetch = originalFetch; }
 
 for (const cursor of ["repeat", "", 42, {}]) {

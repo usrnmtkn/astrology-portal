@@ -40,9 +40,15 @@ const previousSupabaseUrl = process.env.SUPABASE_URL;
 const previousSupabaseKey = process.env.SUPABASE_PUBLISHABLE_KEY;
 const previousViteSupabaseUrl = process.env.VITE_SUPABASE_URL;
 const previousViteSupabaseKey = process.env.VITE_SUPABASE_PUBLISHABLE_KEY;
+const previousViteSupabaseAnonKey = process.env.VITE_SUPABASE_ANON_KEY;
 const previousAdminEmails = process.env.CONTENT_ADMIN_EMAILS;
 
 try {
+  // Build-time browser configuration must not leak into the server-config
+  // fixture. Browser-project precedence is exercised explicitly below.
+  delete process.env.VITE_SUPABASE_URL;
+  delete process.env.VITE_SUPABASE_PUBLISHABLE_KEY;
+  delete process.env.VITE_SUPABASE_ANON_KEY;
   assert.equal(normalizeAdminSecret(" production-admin-secret "), "production-admin-secret");
   assert.equal(normalizeAdminSecret("CONTENT_GENERATION_SECRET=production-admin-secret"), "production-admin-secret");
   assert.equal(normalizeAdminSecret("export CONTENT_GENERATION_SECRET='production-admin-secret'"), "production-admin-secret");
@@ -174,6 +180,8 @@ try {
   else process.env.VITE_SUPABASE_URL = previousViteSupabaseUrl;
   if (previousViteSupabaseKey === undefined) delete process.env.VITE_SUPABASE_PUBLISHABLE_KEY;
   else process.env.VITE_SUPABASE_PUBLISHABLE_KEY = previousViteSupabaseKey;
+  if (previousViteSupabaseAnonKey === undefined) delete process.env.VITE_SUPABASE_ANON_KEY;
+  else process.env.VITE_SUPABASE_ANON_KEY = previousViteSupabaseAnonKey;
   if (previousAdminEmails === undefined) delete process.env.CONTENT_ADMIN_EMAILS;
   else process.env.CONTENT_ADMIN_EMAILS = previousAdminEmails;
 }

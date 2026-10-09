@@ -19,6 +19,12 @@ import {
   watchBrowserErrors
 } from "./qaRuntimeGuards";
 
+function transitPreviewResponse(input: ReturnType<typeof normalizeTransitNatalPreviewInput>) {
+  return input.draftStarter
+    ? { ok: true, starter: renderTransitNatalDraftStarter(input) }
+    : { ok: true, rendered: renderTransitNatalPreviewState(input) };
+}
+
 const adminScreenshotDir = path.join("test-results", "content-dashboard-admin-flow");
 const unresolvedQueueSource = JSON.parse(readFileSync(path.join(process.cwd(), "packages/astro-knowledge/generated/content-unresolved-queue-v1.json"), "utf8")) as {
   count: number;
@@ -2601,12 +2607,6 @@ test.describe("content dashboard admin user flow case studies", () => {
     return finder.getByRole("button", { name: new RegExp(`^(Edit|Edit live|Write) ${title}$`) });
   }
 
-  function transitPreviewResponse(input: ReturnType<typeof normalizeTransitNatalPreviewInput>) {
-    return input.draftStarter
-      ? { ok: true, starter: renderTransitNatalDraftStarter(input) }
-      : { ok: true, rendered: renderTransitNatalPreviewState(input) };
-  }
-
   for (const [width, theme] of [[1440, "light"], [390, "dark"]] as const) test(`Transit composed website copy opens as an editable draft ${width} ${theme}`, async ({ page }) => {
     const writes: Array<{ method: string; payload: Record<string, unknown> }> = [];
     const selection = { planet: "saturn", aspect: "trine", natalPoint: "descendant" };
@@ -2978,7 +2978,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     await transitWriteupButton(exactEditor, "Sun opposition your South Node").click();
     await expect(editor.getByLabel("Content key", { exact: true })).toHaveValue("authored/transit-aspect/sun/south-node/opposition");
     await expect(editor.getByLabel("Reader phrase · You", { exact: true })).toHaveValue(/the Sun is opposing your natal South Node/);
-    await expect(editor.getByLabel("Reader phrase · They", { exact: true })).toHaveValue(/the Sun is opposing \{\{Name\}\}'s natal South Node/);
+    await expect(editor.getByLabel("Reader phrase · They", { exact: true })).toHaveValue(renderTransitNatalDraftStarter(normalizeTransitNatalPreviewInput({ planet: "sun", natalPoint: "south-node", aspect: "opposition" })).body_they);
     const candidate = "A synthetic complete opening for the exact transit.\n\nA synthetic complete ending for the exact transit.";
     const friend = "{{Name}} may find a synthetic complete opening for the exact transit.\n\nA synthetic complete ending for the exact transit.";
     await editor.getByLabel("Reader phrase · You", { exact: true }).fill(candidate);
@@ -3251,7 +3251,8 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expect(preview.locator(".admin-natal-source-card-copy > p")).toHaveText(expected.paragraphs.map(p => p.text));
     await page.getByLabel("Transit copy variant").selectOption("2");
     await expect(preview.getByRole("alert")).toContainText("source links could not be verified");
-    await expect(preview.getByRole("button")).toHaveCount(0);
+    await expect(preview.locator("[data-transit-source-key]")).toHaveCount(0);
+    await expect(preview.getByRole("button", { name: "Retry reader preview", exact: true })).toBeVisible();
     await page.route("**/api/admin/generated-content-inventory?**", async route => {
       if (new URL(route.request().url()).searchParams.get("contentKey")) await route.fulfill({ json: { ok: true, rows: null } });
       else await route.fallback();
@@ -5748,7 +5749,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     await introRow.click();
     variableDetails = variableGuide.getByRole("region", { name: "Planet intro variable details" });
     await expect(variableDetails).toContainText("introductory sentences");
-    await expect(variableDetails).toContainText("fallback-hook/planet-intro/sun");
+    await expect(variableDetails).toContainText(planetIntroRow.content_key);
     await expect(variableDetails).not.toContainText("The Sun describes identity, purpose, and the need to create.");
     await variableDetails.getByRole("button", { name: "All variables" }).click();
 
@@ -5774,7 +5775,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     await variableGuide.locator(".admin-variables-rail-row", { hasText: "{{planetIntro}}" }).click();
 
     variableDetails = variableGuide.getByRole("region", { name: "Planet intro variable details" });
-    await expect(variableDetails).toContainText("fallback-hook/planet-intro/sun");
+    await expect(variableDetails).toContainText(planetIntroRow.content_key);
     await expect(variableDetails.getByRole("navigation", { name: "Variable path" })).toContainText("Planet Intro");
     await expectNoHorizontalOverflow(page, "Variable detail in the mobile rail");
     await variableDetails.locator(".admin-variable-source-row", { hasText: "Sun introduction" }).click();
@@ -5789,7 +5790,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expect(variableGuide).toBeHidden();
     await expect(variableDetails).toBeHidden();
     await expect(page.getByRole("dialog")).toHaveCount(1);
-    await expect(editor.getByLabel("Content key")).toHaveValue("fallback-hook/planet-intro/sun");
+    await expect(editor.getByLabel("Content key")).toHaveValue(planetIntroRow.content_key);
     await expect(editor.getByLabel("Reader copy")).toHaveValue("The Sun describes identity, purpose, and the need to create.");
     await assertNoBrowserErrors();
   });

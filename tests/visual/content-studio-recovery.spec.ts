@@ -220,11 +220,21 @@ test('reader startup keeps its guarded reload and manual recovery', async ({ pag
   await mockStudio(page);
   let missing = true;
   let documents = 0;
+  await page.addInitScript(() => {
+    const key = "qa:startup-document";
+    sessionStorage.setItem(key, String(Number(sessionStorage.getItem(key) || 0) + 1));
+  });
   page.on('request', request => { if (request.isNavigationRequest() && request.frame() === page.mainFrame()) documents++; });
   await page.route('**/App-*.js', route => missing ? route.abort('failed') : route.continue());
   await page.goto('/#sky', { waitUntil: 'commit' });
+  // The first failure can announce an alert just before the guarded reload.
+  // Wait for that replacement document to fail before enabling recovery.
+  await expect.poll(() => page.evaluate(() => Number(sessionStorage.getItem("qa:startup-document")))).toBe(2);
   await expect(page.locator('#app-startup')).toHaveAttribute('role', 'alert');
+  await expect(page.locator('#app-startup button')).toBeVisible();
   expect(documents).toBe(2);
+  await page.waitForTimeout(12_500);
+  await expect(page.locator('#app-startup')).toHaveAttribute('role', 'alert');
   missing = false;
   await page.locator('#app-startup button').click();
   await expect(page.locator('.topbar')).toBeVisible({ timeout: 15000 });

@@ -5,7 +5,7 @@ import {routeStudioInventoryApi} from '../helpers/studio-inventory-route';
 import {emptyHoroscopeEdition,horoscopeEditionBody,horoscopeEditionKey} from '../../apps/web/src/content/horoscopeEditions.mjs';
 
 async function fixture(page:Page,missing=1,unknown=false,period='weekly',session=false,startWriting=true){
-  const child=fork(path.resolve('tests/helpers/sky-article-save-api.mts'),[],{env:{...process.env,ZODIAC_TEMPLATE_FIXTURE:'1',HOROSCOPE_WRITER_FIXTURE:'1',...(session?{STUDIO_SESSION_FIXTURE:'1'}:{})},execArgv:['--import','tsx'],stdio:['ignore','pipe','pipe','ipc']});
+  const child=fork(path.resolve('tests/helpers/sky-article-save-api.mts'),[],{env:{...process.env,ZODIAC_TEMPLATE_FIXTURE:'1',HOROSCOPE_WRITER_FIXTURE:'1',...(session?{STUDIO_SESSION_FIXTURE:'1',VITE_SUPABASE_URL:process.env.VITE_SUPABASE_URL||'https://visual-smoke.supabase.test',VITE_SUPABASE_PUBLISHABLE_KEY:'fixture-publishable-key'}:{})},execArgv:['--import','tsx'],stdio:['ignore','pipe','pipe','ipc']});
   let sequence=0,stderr='';const pending=new Map<number,{resolve:(v:any)=>void;reject:(e:Error)=>void}>();
   child.stderr?.on('data',value=>stderr+=value);
   const ready=new Promise<void>((resolve,reject)=>{child.on('message',(message:any)=>{if(message.ready)return resolve();const task=pending.get(message.id);if(task){pending.delete(message.id);message.error?task.reject(new Error(message.error)):task.resolve(message.result);}});child.on('exit',code=>{const error=new Error(`Fixture exited ${code}: ${stderr}`);reject(error);pending.forEach(task=>task.reject(error));});});
@@ -39,7 +39,7 @@ async function fixture(page:Page,missing=1,unknown=false,period='weekly',session
     if(unknown)await call({method:'interrupted-horoscope-start',body:{id}});
     const state={failPoll:false,failRead:false,failDiagnosis:false,conflictPoll:false,holdPoll:false,held:false,release:()=>{}};
     await routeStudioInventoryApi(page,{call:async(message)=>{
-      if(state.failRead&&message.method==='GET'&&message.url?.includes('?id='))return {status:503,payload:{ok:false,error:'Fixture connection unavailable.'}};
+      if(state.failRead&&message.method==='GET'&&message.url&&new URL(message.url,'http://fixture').searchParams.has('id'))return {status:503,payload:{ok:false,error:'Fixture connection unavailable.'}};
       return call(message);
     },answer:async(route,url)=>{
       if(url.pathname!=='/api/admin/horoscope-writing')return false;
@@ -455,7 +455,7 @@ test('A legacy start with no dispatched request recovers after reload without re
 
 const sessionToken=(version:string)=>`eyJhbGciOiJIUzI1NiJ9.${Buffer.from(JSON.stringify({sub:'fixture-owner',version})).toString('base64url')}.signature`;
 async function useOwnerSession(page:Page,f:Awaited<ReturnType<typeof fixture>>){
- const key=`sb-${new URL(process.env.VITE_SUPABASE_URL!).hostname.split('.')[0]}-auth-token`;
+ const key=`sb-${new URL(process.env.VITE_SUPABASE_URL||'https://visual-smoke.supabase.test').hostname.split('.')[0]}-auth-token`;
  const initial=sessionToken('initial'),renewed=sessionToken('renewed');
  const session={access_token:initial,refresh_token:'fixture-refresh',expires_at:Math.floor(Date.now()/1000)+3600,user:{id:'fixture-owner'}};
  await page.addInitScript(({key,session})=>localStorage.setItem(key,JSON.stringify(session)),{key,session});
@@ -476,6 +476,7 @@ async function useOwnerSession(page:Page,f:Awaited<ReturnType<typeof fixture>>){
 
 for(const [width,theme] of [[390,'dark'],[1440,'light']] as const){
  test(`Owner session renewal keeps generation and rejection working ${width} ${theme}`,async({page})=>{
+  test.setTimeout(120_000);
   await page.setViewportSize({width,height:1000});await page.addInitScript(theme=>localStorage.setItem('tldrastro:studio-theme',theme),theme);
   const f=await fixture(page,3,false,'weekly',true);try{
    const s=await useOwnerSession(page,f);await f.action('poll');await f.finishReview();const studio=await f.open();

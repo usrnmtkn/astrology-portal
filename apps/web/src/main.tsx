@@ -107,15 +107,8 @@ async function startApp() {
     return;
   }
 
-  // Start Calendar's worker before importing/evaluating App. A dynamic client
-  // import discovered alongside App can wait behind its main-thread work and
-  // postpone the large ephemeris downloads on a cold mobile visit.
-  if (/^#\/?calendar(?:[/?]|$)/u.test(window.location.hash)) {
-    await import("./services/skyCalculationClient").then(({ preloadSwissEphemerisOffMainThread }) => {
-      // Wait only for the small client module, never for the calculation assets.
-      void preloadSwissEphemerisOffMainThread().catch(() => {});
-    }).catch(() => { /* The active route owns its error and retry state. */ });
-  }
+  // Calendar requests server facts first. Start its calculation worker only
+  // when the API fails, so healthy visits do not compete with a WASM download.
   const appModulePromise = import("./App");
   const callbackUrl = new URL(window.location.href);
   if (callbackUrl.searchParams.has("code") || /(?:^#|&)(?:access_token|error|error_code)=/u.test(callbackUrl.hash)) {

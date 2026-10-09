@@ -123,7 +123,7 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
       throw new AdminHttpError(400, "surface is not a valid generated-content surface.");
     }
     const limit = id ? 1 : inventoryView
-      ? boundedLimit(requestUrl.searchParams.get("limit"), 50, 80)
+      ? boundedLimit(requestUrl.searchParams.get("limit"), 50, 400)
       : boundedLimit(requestUrl.searchParams.get("limit"), 50, 200);
     const params = new URLSearchParams({
       select: (inventoryView ? inventoryColumns : detailColumns).join(","),
