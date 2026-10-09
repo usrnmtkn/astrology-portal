@@ -235,6 +235,7 @@ export function transitNatalExactSourceDraft(
   const contentKey = transitNatalExactContentKey(selection);
   if (!contentKey) throw new Error("This transit aspect is not supported by the reader.");
   const isReturn = contentKey.startsWith("authored/transit-return/");
+  const isMercuryReturn = contentKey === "authored/transit-aspect/mercury/mercury/conjunction";
   const you = typeof starter.body_you === "string" ? starter.body_you : "";
   const they = typeof starter.body_they === "string" ? starter.body_they : "";
   const headline = isReturn
@@ -260,8 +261,8 @@ export function transitNatalExactSourceDraft(
       headline,
       content_role: "full_copy", grammar_frame: "complete_sentence", surface: isReturn ? "transit-return" : "transit-aspect",
       body: you, ...(!isReturn ? { body_you: you, body_they: they } : {}),
-      requiredSlots: contentKey === "authored/transit-aspect/mercury/mercury/conjunction" ? ["untilDate"] : ["aspectWord", "untilDate"],
-      optionalSlots: contentKey === "authored/transit-aspect/mercury/mercury/conjunction" ? [] : ["Name"],
+      requiredSlots: isMercuryReturn ? ["untilDate"] : ["aspectWord", "untilDate"],
+      optionalSlots: isMercuryReturn ? [] : ["Name"],
       reader_only: true, render_policy: "personal-transit-exact-v1", review_status: "needs_review"
     } },
     facts: {

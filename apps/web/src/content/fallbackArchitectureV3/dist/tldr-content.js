@@ -1425,18 +1425,18 @@ function normalizeAspect(input) {
 
 // apps/web/src/content/fallbackArchitectureV3/resolver/mercuryReturnReader.mjs
 var MERCURY_RETURN_CONTACT_KEY = "authored/transit-aspect/mercury/mercury/conjunction";
-function mercuryReturnCopy(row, voice, window, SourceGapError2) {
-  const audience = voice === void 0 || voice === "you" ? "you" : "they";
-  const field2 = audience === "you" ? "body_you" : "body_they";
+function mercuryReturnCopy(row, voice = "you", window, SourceGapError2) {
+  const audience = voice === "you" ? "you" : "they";
+  const field2 = `body_${audience}`;
   const source = row[field2];
   if (typeof source !== "string" || !source.trim()) {
     throw new SourceGapError2(`SOURCE_GAP: Mercury return missing ${field2}`);
   }
-  const untilDate = typeof window === "string" ? window.replace(/^until\s+/i, "").trim() : "";
-  if (source.includes("{{untilDate}}") && !untilDate) {
-    throw new SourceGapError2("SOURCE_GAP: Mercury return missing calculated end date");
-  }
-  const body = source.replaceAll("{{untilDate}}", () => untilDate);
+  const body = source.replaceAll("{{untilDate}}", () => {
+    const untilDate = typeof window === "string" ? window.replace(/^until\s+/i, "").trim() : "";
+    if (!untilDate) throw new SourceGapError2("SOURCE_GAP: Mercury return missing calculated end date");
+    return untilDate;
+  });
   if (/\{\{|\}\}/u.test(body)) {
     throw new SourceGapError2("SOURCE_GAP: Mercury return unresolved placeholder");
   }
@@ -2604,7 +2604,7 @@ ${passHook}`;
         };
       }
       if (transitLib.authoredCards.some((row) => row.contentKey === MERCURY_RETURN_CONTACT_KEY)) {
-        throw new SourceGapError("SOURCE_GAP: Mercury return exact source is not reader eligible");
+        throw new SourceGapError(`SOURCE_GAP: ineligible ${MERCURY_RETURN_CONTACT_KEY}`);
       }
     }
     const c = card(`authored/transit-return/${planet}`);

@@ -1088,7 +1088,7 @@ function renderTransitReturnReference({ planet, voice, window }) {
           ...passageSources(body, [{ text: body, keys: [exact.contentKey] }], () => passageSource(exact, audience, field)) };
       }
       if (lib.authoredCards.some(row => row.contentKey === MERCURY_RETURN_CONTACT_KEY)) {
-        throw new SourceGapError("SOURCE_GAP: Mercury return exact source is not reader eligible");
+      throw new SourceGapError(`SOURCE_GAP: ineligible ${MERCURY_RETURN_CONTACT_KEY}`);
       }
     }
   const c = card(`authored/transit-return/${planet}`);
