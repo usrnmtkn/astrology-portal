@@ -38,7 +38,16 @@ import {
 if (process.argv.includes("--live")) throw new Error("Use calibrate-report-judge-v3.mjs for the separately authorized live run.");
 
 const manifest = JSON.parse(fs.readFileSync(new URL("./fixtures/report-judge-complete-unit-regressions-v3.json", import.meta.url), "utf8"));
-const facts = JSON.parse(fs.readFileSync(manifest.factsSourcePath, "utf8"));
+const factsText = fs.readFileSync(manifest.factsSourcePath, "utf8");
+assert.equal(sha256(factsText), manifest.factsSourceSha256, "Reference-unit composition facts drifted.");
+const facts = JSON.parse(factsText);
+assert.equal(facts.fixtureProvenance.kind, "reference_unit_composition_cases");
+// Reference attribution is tested against its own fixed input packet. Do not
+// rewrite the unrelated routing fixture's fictional dates or restore a chart.
+assert.notEqual(manifest.factsSourcePath, "scripts/fixtures/synthetic-report-frozen-facts.json");
+for (const position of [...facts.natal.positions, ...Object.values(facts.natal.angles)]) {
+  assert.deepEqual(Object.keys(position).sort(), ["house", "point"]);
+}
 const judgeV3 = fs.readFileSync(REPORT_JUDGE_BASELINE_PROMPT_PATH, "utf8");
 const critiqueV3 = fs.readFileSync(REPORT_CRITIQUE_BASELINE_PROMPT_PATH, "utf8");
 const judgeV32 = fs.readFileSync(REPORT_JUDGE_FOUNDATION_PROMPT_PATH, "utf8");
@@ -477,6 +486,15 @@ for (const fixture of [...manifest.pairs, ...manifest.findingLevelFixtures]) {
   assert.equal(payload.livedProseStandard.sourcePath, "tldr-astro-phrasebank/TLDR-REPORT-LIVED-PROSE-STANDARD-OWNER.md");
   const unitFacts = completeUnitFacts({ manifest, fixture, scopedFacts: payload.frozenFacts, fullFacts: facts });
   factRows.push(...assertFixtureFactCompleteness({ manifest, fixture, unit: positive, unitFacts }));
+  // The packet builder must preserve supplied facts, never replace them with
+  // the manifest's expected values to make attribution checks pass.
+  const wrongFacts = structuredClone(facts);
+  wrongFacts.slowTransitArcs.forEach((arc) => {
+    arc.passes.forEach((pass) => { pass.exactAt = "2030-01-01T00:00:00Z"; });
+  });
+  const wrongPacket = completeUnitFacts({ manifest, fixture, scopedFacts: payload.frozenFacts, fullFacts: wrongFacts });
+  assert.throws(() => assertFixtureFactCompleteness({ manifest, fixture, unit: positive, unitFacts: wrongPacket }),
+    { code: "ERR_ASSERTION" }, `${fixture.id} must reject changed source dates.`);
   assert.deepEqual(verifyReportFactLock({ body: positive, sections: [] }, unitFacts).issues, [], `${fixture.id} positive must match scoped facts.`);
   assert.deepEqual(verifyReportFactLock({ body: negative, sections: [] }, unitFacts).issues, [], `${fixture.id} negative must preserve scoped facts.`);
   const numberedPositive = numberedCompleteUnit(manifest, positive);
