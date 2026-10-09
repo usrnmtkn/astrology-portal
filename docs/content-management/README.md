@@ -163,6 +163,13 @@ scripts/
 
 ## Content Studio access
 
+New Moon and Full Moon generation reads the matching complete saved lunar
+passage and the Sun sign's Season write-ups as writing references. Latest saved
+revisions take precedence over their original source; missing/invalid lunar
+writing stops preparation. These references are separate from calculated event
+facts and never approve or publish a generated draft. See the
+[lunar writing source contract](../writing/LUNATION_ARTICLE_STUDIO.md#sources-persistence-and-cost).
+
 For editable daily, weekly and seasonal AI instructions, see [Horoscope writing in Content Studio](horoscope-writing-studio.md). The AI Writing workspace saves profiles and exports them into the governed writing harness.
 
 Content Studio uses the existing signed-in TLDR Astro owner session. The Admin

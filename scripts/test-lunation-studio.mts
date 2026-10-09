@@ -6,6 +6,8 @@ import publication from '../api/admin/content-publication';
 import {calculateLunarWritingFacts} from '../api/_lib/calendar-lunation-studio';
 import {defaultLunationProfile,emptyLunationWorkspace,LUNATION_ARGUMENT_FIELDS} from '../src/astro-writing/lunationWritingProfile.mjs';
 import {lunationDigest} from '../src/astro-writing/lunationWritingFacts.mjs';
+import {lunarSavedWritingFixtures} from '../tests/helpers/lunar-saved-writing-fixture.mjs';
+for(const row of lunarSavedWritingFixtures())store.rows.set(row.id,row);
 
 const storageFetch=globalThis.fetch;
 let calls=0,polls=0,feedbackDown=false,unknown=false,modelInput='';
@@ -47,7 +49,7 @@ for(const action of ['publish','retire'])assert.equal((await invoke({action,id:s
 assert.equal((await store.invoke('PATCH',{id:saved.row.id,status:'LIVE'})).status,400);
 assert.equal((await store.invoke('DELETE',{id:saved.row.id})).status,400);
 let plan=await invoke({action:'prepare',...target,expectedUpdatedAt:saved.row.updated_at});assert.equal(plan.status,200,JSON.stringify(plan));
-assert.equal(plan.plan.facts.event.sign,'libra');assert.equal(plan.plan.facts.event.kind,'new-moon');assert.equal(plan.plan.ownerPassages.length,6);assert.equal(calls,0);
+assert.equal(plan.plan.facts.event.sign,'libra');assert.equal(plan.plan.facts.event.kind,'new-moon');assert.equal(plan.plan.ownerPassages.length,6+plan.plan.savedWriting.references.length);assert.equal(calls,0);
 store.rows.set(saved.row.id,{...saved.row,sections:{...saved.row.sections,approvedPlan:{outlineHash:plan.plan.outline.outlineHash,callAuthorization:{outlineHash:plan.plan.outline.outlineHash},sourceUri:'thread:synthetic-prior-approval',exactOwnerRuling:'Synthetic explicit approval of this exact plan and one writer call.'}}});
 assert.equal((await invoke({action:'prepare',...target,expectedUpdatedAt:saved.row.updated_at})).plan.previouslyApproved,true);
 const full=await calculateLunarWritingFacts({...workspace,phase:'full-moon',sign:'aries',contentKey:'authored/sky-lunation-macro/full-moon/aries',referenceDate:'2026-09-26'});
@@ -60,7 +62,7 @@ assert.equal((await invoke({action:'generate',...target,expectedUpdatedAt:saved.
 plan=await invoke({action:'prepare',...target,expectedUpdatedAt:saved.row.updated_at});
 const generate={action:'generate',...target,expectedUpdatedAt:saved.row.updated_at,approvedPlanHash:plan.plan.planHash,authorizeWriterCall:true};
 const race=await Promise.all([invoke(generate),invoke(generate)]);assert.deepEqual(race.map(r=>r.status).sort(),[202,409]);assert.equal(calls,1);
-saved=race.find(r=>r.status===202)!;assert.match(modelInput,/Synthetic Studio guidance marker/);assert.ok(!JSON.stringify(saved.row).includes('synthetic-provider-only'));
+saved=race.find(r=>r.status===202)!;assert.match(modelInput,/Synthetic Studio guidance marker/);assert(modelInput.includes(JSON.stringify(lunarSavedWritingFixtures().find(r=>r.content_key===workspace.contentKey).body)));assert.equal(saved.row.sections.lunationRun.active.savedWriting.references[0].contentKey,workspace.contentKey);assert.ok(!JSON.stringify(saved.row).includes('synthetic-provider-only'));
 assert.equal((await invoke({...generate,expectedUpdatedAt:saved.row.updated_at})).status,409);
 assert.equal((await invoke({action:'save',...target,workspace,expectedUpdatedAt:saved.row.updated_at})).status,409);
 saved=await invoke({action:'poll',...target,expectedUpdatedAt:saved.row.updated_at});assert.equal(saved.status,200,JSON.stringify(saved));assert.equal(polls,1);assert.equal(calls,1);

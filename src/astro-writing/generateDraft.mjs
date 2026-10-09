@@ -130,8 +130,8 @@ export function buildDraftInput({
   writingProfile = null
 }) {
   if (family === 'horoscope') return buildHoroscopeDraftInput({plan,context,task,target,engineFacts,argumentOutline,spine,writingProfile});
-  if (family === 'lunation-article') return buildLunationArticleInput({plan,context,task,target,engineFacts,argumentOutline,spine,writingProfile});
-  if (family === 'lunations') return buildLunationDraftInput({plan,context,task,target,engineFacts,argumentOutline,spine,writingProfile});
+  if (family === 'lunation-article') return buildLunationArticleInput({plan,context,task,target,engineFacts,argumentOutline,spine,writingProfile,familyContext});
+  if (family === 'lunations') return buildLunationDraftInput({plan,context,task,target,engineFacts,argumentOutline,spine,writingProfile,familyContext});
   const sections = [
     `TASK\n${String(task ?? "Write one TLDR Astro passage.").trim()}`,
     ...(writingProfile ? [`CONTENT STUDIO EDITORIAL INSTRUCTIONS\n${resolveStudioWritingProfile(writingProfile).prompt}\nThese editorial instructions do not replace the fact boundary, evidence requirements, output schema or owner approval.`] : []),

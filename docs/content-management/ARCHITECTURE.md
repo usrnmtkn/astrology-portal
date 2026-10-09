@@ -9,6 +9,17 @@ writing guide.
 
 ## 1. System boundaries
 
+For dated and reusable lunar generation, `api/_lib/lunar-saved-writing.ts`
+loads the exact phase/sign's saved lunar passage and the calculated Sun sign's
+Calendar season passages. `src/astro-writing/lunationSavedWriting.mjs` preserves
+their complete text and provenance in a distinct writing-reference packet.
+Saved drafts supersede live references for authoring; archived sources never
+fall back to older originals. Reader publication remains a separate boundary.
+The packet enters both lunar provider requests through `familyContext`, not
+the calculated facts. Plan hashes and persisted operation snapshots retain
+source identity across review, dispatch, polling and completion. This does not
+change Horoscope profile sources or reader resolver selection.
+
 TLDR Astro has two content planes that must remain separate, followed by a UI
 layer that renders their result.
 
