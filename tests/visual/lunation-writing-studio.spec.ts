@@ -70,6 +70,9 @@ for(const width of [390,1440])for(const theme of ['light','dark'] as const){
       await expect(workspace.getByRole('region',{name:'Saved lunation drafts',exact:true})).toHaveCount(0);
       await expect(workspace.locator('button.admin-primary-button:visible:enabled')).toHaveCount(1);
       expect((await writer.call({method:'provider'})).calls).toBe(0);
+      await workspace.getByText('Your writing examples',{exact:true}).click();
+      await expect(workspace.getByText('Synthetic saved full-moon aries opening.\n\nSynthetic complete full-moon aries ending.',{exact:true})).toBeVisible();
+      await workspace.getByText('Your writing examples',{exact:true}).click();
       await workspace.getByText('Adjust writing direction',{exact:true}).click();
       await workspace.getByLabel('Writing direction (optional)',{exact:true}).fill('Develop a concrete consequence with emotional nuance.');
       await workspace.getByRole('button',{name:'Update writing plan',exact:true}).click();

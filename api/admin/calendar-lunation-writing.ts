@@ -97,7 +97,7 @@ export default async function handler(req:IncomingMessage,res:ServerResponse) {
     operation={id:randomUUID(),state:'starting',responseId:null,startedAt:new Date().toISOString(),actor,planHash:prepared.planHash,outlineHash:prepared.prepared.argumentOutline.outlineHash,
       approvalReference:inherited?previousApproval.sourceUri:`studio-lunation-plan/${row.id}/${row.updated_at}`,
       approvalRuling:inherited?previousApproval.exactOwnerRuling:'I approve this exact plan and one writer call.',
-      facts:prepared.facts,profile:{id:prepared.profile.id,revision:prepared.profile.revision,sha256:prepared.profile.sha256},feedback:prepared.feedback.receipt,config:provider.normalizeProviderConfig({},'writer')};
+      facts:prepared.facts,savedWriting:prepared.savedWriting,profile:{id:prepared.profile.id,revision:prepared.profile.revision,sha256:prepared.profile.sha256},feedback:prepared.feedback.receipt,config:provider.normalizeProviderConfig({},'writer')};
     let captured:any;
     const capture=Object.assign(async(value:any)=>{captured=value;throw new Captured();},{billed:false});
     try{await runStudioLunation(prepared,workspace,capture,operation.approvalReference,operation.approvalRuling);}catch(error){if(!(error instanceof Captured))throw error;}

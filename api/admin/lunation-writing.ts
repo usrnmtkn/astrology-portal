@@ -11,6 +11,7 @@ import {prepareLunationArticle,writeLunationArticle,lunationArticleHash as hash}
 import {LUNATION_ARTICLE_PROTOCOL_VERSION} from '../../src/astro-writing/lunationArticleInput.mjs';
 import {validateLunationArticle} from '../../src/astro-writing/lunationArticleValidation.mjs';
 import {loadLunarProfile,lunarFeedback} from '../_lib/calendar-lunation-studio.js';
+import {loadLunarSavedWriting} from '../_lib/lunar-saved-writing.js';
 import {datedLunationContentKey} from '../../apps/web/src/content/lunationArticleIdentity.js';
 import responses from '../../src/astro-writing/openAIResponses.cjs';
 import provider from '../../src/astro-writing/offlineProviderConfig.cjs';
@@ -19,7 +20,7 @@ export const maxDuration=300;
 const prefix='studio-lunation/';
 class Pending extends Error {}
 async function prepareSharedArticle(facts:any,direction:string,rejections:any[]=[]) {
-  const [writingProfile,feedback]=await Promise.all([loadLunarProfile(),lunarFeedback(datedLunationContentKey(facts.event),'lunation-article')]);
+  const [writingProfile,feedback,savedWriting]=await Promise.all([loadLunarProfile(),lunarFeedback(datedLunationContentKey(facts.event),'lunation-article'),loadLunarSavedWriting(facts.event,facts.positions)]);
   if(!writingProfile.id)throw new AdminHttpError(409,'Save the shared writing guidance before preparing a dated article.');
   if(!Array.isArray(rejections))throw new AdminHttpError(409,'The saved rejection history needs review before drafting.');
   for(const entry of rejections){
@@ -31,7 +32,7 @@ async function prepareSharedArticle(facts:any,direction:string,rejections:any[]=
       owner_reason:entry.reason,originalSha256:hash(bad),positive_evidence_revoked:true,source_uri:entry.sourceUri});
     feedback.receipt.push({id:`lunation-rejection-${entry.id}`,version:1,sha256:hash(entry)});
   }
-  return prepareLunationArticle(facts,direction,{writingProfile,privateCorrections:feedback.corrections,feedbackReceipt:feedback.receipt});
+  return prepareLunationArticle(facts,direction,{writingProfile,privateCorrections:feedback.corrections,feedbackReceipt:feedback.receipt,savedWriting});
 }
 
 export default async function handler(req:IncomingMessage,res:ServerResponse) {
@@ -175,6 +176,7 @@ export default async function handler(req:IncomingMessage,res:ServerResponse) {
     const config=provider.normalizeProviderConfig({},'writer');
     operation={id:randomUUID(),startedAt:new Date().toISOString(),actor,responseId:null,config,planHash:prepared.planHash,
       version:LUNATION_ARTICLE_PROTOCOL_VERSION,sourceHashes:prepared.sources,sourceIds:prepared.context.sameFamilyExamples.map((e:any)=>e.id),
+      savedWriting:prepared.savedWriting,
       writingProfile:prepared.writingProfile,feedback:{selected:prepared.feedbackReceipt,scope:datedLunationContentKey(row.facts.lunationArticle.event)}};
     await persistState({active:operation,lastError:null});
     let dispatched=false;

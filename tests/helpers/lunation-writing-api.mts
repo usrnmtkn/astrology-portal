@@ -2,11 +2,13 @@ import {defaultLunationProfile,LUNATION_PROFILE_KEY} from '../../src/astro-writi
 import {Readable} from 'node:stream';
 import {fileURLToPath} from 'node:url';
 import {randomUUID} from 'node:crypto';
+import {lunarSavedWritingFixtures} from './lunar-saved-writing-fixture.mjs';
 const env={NODE_ENV:'test',CONTENT_GENERATION_SECRET:'calendar-api-fixture',SUPABASE_URL:'https://lunation-test.invalid',SUPABASE_SERVICE_ROLE_KEY:'test-only',OPENAI_API_KEY:'test-only',STUDIO_MEMORY_FEEDBACK_ENABLED:'false'};
 Object.assign(process.env,env);
 const {default:handler}=await import('../../api/admin/lunation-writing');
 Object.assign(process.env,env);
 export const rows=new Map<string,any>();
+for(const row of lunarSavedWritingFixtures())rows.set(row.id,row);
 export const feedbackFixture={rows:[] as any[],fail:false};
 export const storageFixture={beforePatch:null as null|(()=>unknown)};
 rows.set('shared-guidance-fixture',{id:'shared-guidance-fixture',content_key:LUNATION_PROFILE_KEY,mode:'article',target_date:null,status:'DRAFT',lane:'reference',body:'',summary:'',updated_at:'2026-09-27T00:00:00Z',source_snapshot:{revision:1},sections:{writingProfile:{...defaultLunationProfile(),voiceGuidance:'Synthetic shared guidance marker. Develop a thought through its consequence.'}}});

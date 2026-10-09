@@ -2,6 +2,7 @@ import horoscopeWriter from '../../api/admin/horoscope-writing';
 import {applyCheckpointFixture} from './horoscope-checkpoint-fixture.mts';
 import {Readable} from 'node:stream';
 import {readFileSync} from 'node:fs';
+import {lunarSavedWritingFixtures} from './lunar-saved-writing-fixture.mjs';
 import { readerRouteResponse, fixturePublications } from './content-reader-route.mjs';
 import { servingPackageRecords } from "../../api/_lib/content-live-status";
 // Actual handler, isolated storage, realistic latest-first/limit-one reads.
@@ -25,6 +26,7 @@ const template = structuredClone(servingPackageRecords.get('fallback-template/na
 template.body = 'Fixture {{signTitle}}. TARGET';
 const templateRow = {...structuredClone(live), id: 'fixture-natal-template', content_key: template.contentKey, surface: 'natal', event_type: 'fallback-template', block_type: 'fallback_template', headline: 'Fixture sign-aware template', body: template.body, sections: {packageRecord: template}, source_snapshot: {sourcePackage: 'tldrastro-fallback-architecture-v3', content_role: 'template'}};
 export const store = await createApiStore(process.env.SKY_SAVE_FIXTURE ? JSON.parse(readFileSync(process.env.SKY_SAVE_FIXTURE, 'utf8')) : process.env.ZODIAC_TEMPLATE_FIXTURE ? [templateRow] : [revision, live]);
+if(process.env.LUNAR_WRITER_FIXTURE==='1')for(const row of lunarSavedWritingFixtures())store.rows.set(row.id,row);
 let versionSequence = 0;
 const nextVersion = () => new Date(Date.now() + ++versionSequence).toISOString();
 const matches = (row: any, params: URLSearchParams) => [...params].every(([field, value]) => {
