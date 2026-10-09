@@ -8,13 +8,21 @@ import { buildSync } from "esbuild";
 const fixture = buildSync({
   stdin: {
     contents: `
-      import { StrictMode } from "react";
+      import { StrictMode, useLayoutEffect } from "react";
       import { createRoot } from "react-dom/client";
       import { flushSync } from "react-dom";
       import { useMinimumLoading } from "./apps/web/src/hooks/useMinimumLoading";
       let root;
+      let commitAdvance = 0;
       function Probe({ loading, minimum }) {
         const pending = useMinimumLoading(loading, minimum);
+        useLayoutEffect(() => {
+          if (!commitAdvance) return;
+          const now = performance.now.bind(performance);
+          const advance = commitAdvance;
+          commitAdvance = 0;
+          performance.now = () => now() + advance;
+        });
         return <output>{String(pending)}</output>;
       }
       window.probe = {
@@ -22,6 +30,7 @@ const fixture = buildSync({
           root ??= createRoot(document.getElementById("root"));
           flushSync(() => root.render(<StrictMode><Probe loading={loading} minimum={minimum} /></StrictMode>));
         },
+        advanceOnNextCommit(ms) { commitAdvance = ms; },
         unmount() { flushSync(() => root.unmount()); root = null; }
       };
     `,
@@ -69,6 +78,33 @@ test("a slow response resolves immediately once data arrives", () => withProbe(a
   await page.clock.runFor(400);
   assert.equal(await pending(), "true");
   await render(false);
+  assert.equal(await pending(), "false");
+}));
+
+test("a hold expires when the commit crosses its deadline before the passive effect", () => withProbe(async (page, render, pending) => {
+  await render(true);
+  await page.clock.runFor(100);
+  // Model a busy commit without a wall-clock sleep: render sees 100ms, then
+  // layout work advances the monotonic clock before the hook's effect runs.
+  await page.evaluate(() => (window as any).probe.advanceOnNextCommit(200));
+  await render(false);
+  assert.equal(await pending(), "false");
+}));
+
+test("an early timer wakeup retains the minimum and schedules the remaining hold", () => withProbe(async (page, render, pending) => {
+  await render(true);
+  await page.clock.runFor(100);
+  await page.evaluate(() => {
+    const schedule = window.setTimeout.bind(window);
+    window.setTimeout = ((callback: TimerHandler, delay?: number, ...args: any[]) => {
+      window.setTimeout = schedule;
+      return schedule(callback, Math.max(0, (delay ?? 0) - 1), ...args);
+    }) as typeof window.setTimeout;
+  });
+  await render(false);
+  await page.clock.runFor(179);
+  assert.equal(await pending(), "true");
+  await page.clock.runFor(1);
   assert.equal(await pending(), "false");
 }));
 
