@@ -33,6 +33,7 @@ export const STUDIO_SKY_WRITEUP_PREFIXES = [
   "sky/article",
   "sky/placement/",
   "sky/station/",
+  "authored/sky-placement/",
   "authored/sky-lunation-macro/",
   "fallback-hook/sky-placement-lived/",
   "fallback-hook/sky-placement-hook/moon/",
@@ -47,7 +48,7 @@ export const STUDIO_CALENDAR_ASPECT_PREFIXES = [
 ] as const;
 
 export const STUDIO_PLANETARY_INGRESS_PREFIXES = ["sky.ingress.", "sky-ingress-", "sky-mercury-", "sky-venus-", "sky-mars-", "sky-jupiter-", "sky-saturn-", "sky-uranus-", "sky-neptune-", "sky-pluto-", "sky-chiron-", "sky-lilith-", "ms/ingress/", "fallback-hook/sky.ingress"] as const;
-export const STUDIO_PLANETARY_STATION_PREFIXES = ["sky.station.", "sky.retrograde.", "fallback-hook/sky.retrograde/", "fallback-hook/sky.station/"] as const;
+export const STUDIO_PLANETARY_STATION_PREFIXES = ["authored/station/", "sky.station.", "sky.retrograde.", "sky-retrograde-", "ms/retrograde/", "fallback-hook/sky.retrograde/", "fallback-hook/sky.station/"] as const;
 
 export const STUDIO_NATAL_ASPECT_PREFIXES = ["fallback-hook/natal-aspect-lived/"] as const;
 
@@ -74,6 +75,14 @@ export const STUDIO_LUNAR_CALENDAR_PREFIXES = [
   "transit-fallback/"
 ] as const;
 
+// Template browsing includes lunar templates and template-role rows stored in
+// authored/fallback families, not only keys named "template".
+export const STUDIO_TEMPLATE_PREFIXES = [
+  "slot-template/", "fallback-template/", "fallback-hook/", "authored/week-opener/",
+  ...STUDIO_LUNAR_CALENDAR_PREFIXES
+] as const;
+export const STUDIO_VOCABULARY_PREFIXES = ["vocab/", "vocab.", "fallback-vocab/", "guide-phrase/"] as const;
+
 export const STUDIO_DAILY_PREFIXES = [
   "fallback-hook/daily-headline/",
   "fallback-hook/daily-body/",
@@ -89,7 +98,7 @@ export const STUDIO_FRIENDS_SECTION_PREFIXES = [
 ] as const;
 
 export type StudioInventoryVisibility = "editorial" | "all";
-export type StudioInventoryScope = "all" | "compatibility";
+export type StudioInventoryScope = "all" | "compatibility" | "composite";
 
 export type StudioInventoryQuery = {
   visibility: StudioInventoryVisibility;
@@ -138,7 +147,10 @@ export function studioInventoryQuery(route: StudioInventoryRoute): StudioInvento
   if (route.page === "content" && (!route.categoryFilter || route.categoryFilter === "all")) {
     return catalogQuery(catalogVisibility);
   }
-  if (route.page === "compatibility" || route.page === "compositeByType") {
+  if (route.page === "compositeByType") {
+    return { visibility: "all", scope: "composite", prefixes: [], mode: null, catalog: false };
+  }
+  if (route.page === "compatibility") {
     return { visibility: "all", scope: "compatibility", prefixes: [], mode: null, catalog: false };
   }
   if (route.page === "astro101") return prefixesQuery(STUDIO_ASTRO_101_PREFIXES);
@@ -179,25 +191,18 @@ export function studioInventoryQuery(route: StudioInventoryRoute): StudioInvento
   if (route.page === "knowledge" && route.betweenYouTwoWorkspace) {
     return prefixesQuery(STUDIO_BETWEEN_YOU_TWO_PREFIXES);
   }
-  if (route.page === "knowledge" && route.fallbackSectionFilter === "friends") {
-    return prefixesQuery(STUDIO_FRIENDS_SECTION_PREFIXES);
-  }
   if (route.page === "knowledge" && route.fallbackSectionFilter === "daily") {
     return prefixesQuery(STUDIO_DAILY_PREFIXES);
   }
   if (route.page === "knowledge" && route.fallbackSectionFilter === "lunar-calendar") {
     return prefixesQuery(STUDIO_LUNAR_CALENDAR_PREFIXES);
   }
-  if (route.page === "knowledge" && route.fallbackSectionFilter === "you") {
-    return prefixesQuery([...STUDIO_NATAL_CHART_PREFIXES, ...STUDIO_NATAL_ASPECT_PREFIXES]);
-  }
-  if (route.page === "knowledge" && route.fallbackSectionFilter === "sky") {
-    return prefixesQuery([...STUDIO_SKY_WRITEUP_PREFIXES, ...STUDIO_CALENDAR_ASPECT_PREFIXES]);
-  }
-  if (route.page === "knowledge") return prefixesQuery(["fallback-hook/", "house-horoscope-core/", "authored/calendar-weekly-moon/"]);
-  if (route.page === "vocabulary") return prefixesQuery(["vocab/", "fallback-vocab/"]);
-  if (route.page === "slotDictionary") return prefixesQuery(["slot-template/"]);
-  if (route.page === "templates") return prefixesQuery(["fallback-template/", "slot-template/"]);
+  // Fallback section membership also uses the row's surface, not just its key.
+  // The writing-workspace prefixes exclude reusable ingredients in these lists.
+  if (route.page === "knowledge") return prefixesQuery(["fallback-hook/", "fallback-template/", "house-horoscope-core/", "authored/calendar-weekly-moon/"]);
+  if (route.page === "vocabulary") return prefixesQuery(STUDIO_VOCABULARY_PREFIXES);
+  if (route.page === "slotDictionary") return prefixesQuery([...STUDIO_TEMPLATE_PREFIXES, ...STUDIO_VOCABULARY_PREFIXES]);
+  if (route.page === "templates") return prefixesQuery(STUDIO_TEMPLATE_PREFIXES);
   if (route.page === "compositionMap" || route.page === "hooks") return catalogQuery("all");
   return catalogQuery(catalogVisibility);
 }

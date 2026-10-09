@@ -35,9 +35,9 @@ export function isSkyWriteupContentRow(row: ArticleWorkspaceRow) {
   return row.block_type === "sky_placement"
     || row.block_type === "sky_article"
     || /^sky\.placement\./u.test(key)
-    || /^sky[/-](?:placement|article)[/-]/u.test(key)
+    || /^sky[/-](?:placement|article|station)[/-]/u.test(key)
     || /^sky-article\//u.test(key)
-    || /^authored\/sky-lunation-macro\//u.test(key);
+    || /^authored\/sky-(?:lunation-macro|placement)\//u.test(key);
 }
 
 export type ArticleAppDestination = {
