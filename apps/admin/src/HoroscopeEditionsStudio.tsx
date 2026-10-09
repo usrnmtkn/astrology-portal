@@ -334,7 +334,7 @@ export default function HoroscopeEditionsStudio({secret,requestedEditionId}:{sec
           try{return await readSaved(row.id,controller.signal);}
           catch(reason){
             if(!recoverable(reason)||(reason as any).status===409)throw reason;
-            setMessage('Connection interrupted. Studio will check the saved request again automatically.');
+            setMessage('Connection interrupted. Continuing from the saved request automatically.');
             await waitForPoll(controller.signal,Math.min(30000,3000*++connectionFailures));
           }
         }
