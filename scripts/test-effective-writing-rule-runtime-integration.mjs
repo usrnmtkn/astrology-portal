@@ -97,7 +97,7 @@ assert.match(review, /rhetoricalReviewContract/u);
 assert.match(review, /\.map\(advisoryModelViolation\)/u);
 assert.match(review, /decision: blocking \? "REVISE" : "PASS"/u);
 assert.match(review, /filter\(\(item\) => item\.severity === "blocking"\)/u);
-assert.match(pipeline, /const lint = governValidationResult\(rawLint, \{ surface, family \}\);/u);
+assert.match(pipeline, /const governedLint = governValidationResult\(rawLint, \{ surface, family \}\);/u);
 assert.match(pipeline, /advisoryCategories/u);
 
 assert.equal(governValidationResult({violations:[{category:'TRICOLON',detail:'Lexical signal only'}]}).passed,true);

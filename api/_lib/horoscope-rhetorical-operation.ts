@@ -1,21 +1,21 @@
 import {randomUUID} from 'node:crypto';
 import responses from '../../src/astro-writing/openAIResponses.cjs';
 import provider from '../../src/astro-writing/offlineProviderConfig.cjs';
-import {HOROSCOPE_RHETORICAL_REVIEW,HOROSCOPE_REVIEW_SCHEMA,HOROSCOPE_REVIEW_INSTRUCTIONS,horoscopeReviewInput,horoscopeReviewHash,readHoroscopeReview} from '../../src/astro-writing/horoscopeRhetoricalReview.mjs';
+import {supportedHoroscopeReview,horoscopeReviewPolicy,HOROSCOPE_REVIEW_SCHEMA,HOROSCOPE_REVIEW_INSTRUCTIONS,horoscopeReviewInput,horoscopeReviewHash,readHoroscopeReview} from '../../src/astro-writing/horoscopeRhetoricalReview.mjs';
 import {HOROSCOPE_STARTUP_DEADLINE_MS} from '../../src/astro-writing/horoscopeRecovery.mjs';
 import {horoscopeEditionBody} from '../../apps/web/src/content/horoscopeEditions.mjs';
 import {AdminHttpError} from './admin-http.js';
 import {assertHoroscopeRow} from './horoscope-editions.js';
 import {horoscopeProviderDiagnostic} from './horoscope-provider-result.js';
 
-export const isHoroscopeReview=(operation:any)=>operation?.workflow===HOROSCOPE_RHETORICAL_REVIEW;
+export const isHoroscopeReview=(operation:any)=>supportedHoroscopeReview(operation?.workflow);
 
 /** Persist the completed writer response before any review dispatch. Old requests
  * without this version never acquire a new paid stage during retrieval. */
 export async function queueHoroscopeReview({row,persist,operation,candidate,receipt}:any){
-  const instructions=responses.governedInstructionsForRole('RHETORICAL_REVIEWER',{taskInstructions:HOROSCOPE_REVIEW_INSTRUCTIONS,surface:'horoscopes',family:'horoscope'});
+  const instructions=`${horoscopeReviewPolicy(operation.reviewVersion)}\n\n${HOROSCOPE_REVIEW_INSTRUCTIONS}`;
   const input=horoscopeReviewInput(candidate,operation.reviewEvidence);
-  const review={id:randomUUID(),workflow:HOROSCOPE_RHETORICAL_REVIEW,phase:'review',state:'ready',sign:operation.sign,
+  const review={id:randomUUID(),workflow:operation.reviewVersion,phase:'review',state:'ready',sign:operation.sign,
     startedAt:new Date().toISOString(),actor:operation.actor,planHash:operation.planHash,candidate,receipt,candidateHash:horoscopeReviewHash(candidate),
     evidenceHash:horoscopeReviewHash(operation.reviewEvidence),config:provider.normalizeProviderConfig({maxOutputTokens:6000},'judge'),
     reviewRequest:{input,instructions,schema:HOROSCOPE_REVIEW_SCHEMA},responseId:null,writerOperation:operation};

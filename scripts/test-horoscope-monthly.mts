@@ -1,3 +1,6 @@
+import policyHistory from '../src/astro-writing/rhetoricalPatternHistory.cjs';
+import {HOROSCOPE_EDITORIAL_AUTHORITY} from '../src/astro-writing/canonicalInstructions.mjs';
+import {LEGACY_HOROSCOPE_RHETORICAL_REVIEW} from '../src/astro-writing/horoscopeRhetoricalReview.mjs';
 import {assertHoroscopeRequestEvidence} from './assert-horoscope-request-evidence.mjs';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
@@ -81,10 +84,16 @@ assert.equal(row.source_snapshot.horoscopeGeneration.active.state,'ready');
 assert.equal(row.sections.horoscopeEdition.passages[0].body,'');
 const synthesis=structuredClone(row.source_snapshot.horoscopeGeneration.active.synthesisReceipt);
 await action('poll');assert.equal(writerFixture.calls,1,'Polling a ready synthesis must not charge for prose');
+// Resume a saved monthly synthesis whose future prose request was frozen before the rule update.
+const frozenMonthly=store.rows.get(row.id)!.source_snapshot.horoscopeGeneration.active;
+frozenMonthly.reviewVersion=LEGACY_HOROSCOPE_RHETORICAL_REVIEW;
+frozenMonthly.draftRequest.instructions=frozenMonthly.draftRequest.instructions.replace(HOROSCOPE_EDITORIAL_AUTHORITY,policyHistory.LEGACY_HOROSCOPE_WRITER_POLICY);
 result=await action('continue');assert.equal(result.status,202);row=result.payload.rows[0];
 assert.equal(writerFixture.calls,2);
 assert.equal((await action('continue')).status,409,'A second continue cannot launch a duplicate prose request');
 const request=writerFixture.requests.get(row.source_snapshot.horoscopeGeneration.active.responseId);
+assert(request.instructions.startsWith(policyHistory.LEGACY_HOROSCOPE_WRITER_POLICY));
+assert(!request.instructions.includes('AVOID AI WRITING PATTERNS'));
 assert.deepEqual(request.reasoning,{effort:'medium'},'Monthly prose must not inherit the general extra-high reasoning budget');
 assert.equal(request.max_output_tokens,12000,'The response-limit repair does not raise the per-request output ceiling');
 assert.equal(request.model,plannerRequest.model,'Planning and drafting keep the selected writer model');
@@ -141,8 +150,10 @@ for(const passage of supporting)assert.equal(request.input.split(JSON.stringify(
 const registerEntries=shared.entries.filter((e:any)=>e.role==='register'&&e.completePassageRef);
 assert(registerEntries.length>=3);assert(registerEntries.every((e:any)=>!Object.hasOwn(e,'text')));
 const facts=JSON.parse(request.input.match(/CALCULATED FACTS\n([^\n]+)\n\n/)[1]);assert.equal(facts.window.audience,'collective');assert(!facts.house&&!facts.risingSign&&!facts.signs);
+// The old writer must still receive its originally authorized independent check.
 writerFixture.pendingPolls=1;result=await action('poll');assert.equal(result.status,202);row=result.payload.rows[0];
 result=await action('poll');assert.equal(result.status,200,JSON.stringify(result.payload));row=result.payload.rows[0];
+assert.equal(row.source_snapshot.horoscopeGeneration.readings.overview.rhetoricalReview.version,LEGACY_HOROSCOPE_RHETORICAL_REVIEW);
 assert.equal(writerFixture.calls,2);assert.equal(row.status,'DRAFT');assert.equal(row.sections.horoscopeEdition.passages[0].headline,'October 2026 Overview');
 assert.equal(row.source_snapshot.horoscopeGeneration.readings.overview.ownerApproved,false);
 assert.equal(row.source_snapshot.horoscopeGeneration.readings.overview.outputFormat,MONTHLY_HOROSCOPE_FORMAT);

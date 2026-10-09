@@ -8,6 +8,7 @@ const {
   coldRenderedProseReviewInstructions
 } = require("./canonicalInstructions.cjs");
 const { RHETORICAL_JUDGE_POLICY } = require("./rhetoricalPatterns.cjs");
+const { LEGACY_RHETORICAL_JUDGE_POLICY, LEGACY_HOROSCOPE_WRITER_POLICY } = require("./rhetoricalPatternHistory.cjs");
 const { LUNATION_EDITORIAL_AUTHORITY } = require("./lunationEditorialAuthority.cjs");
 const { renderEffectiveRulesForPrompt } = require("./effectiveRules.cjs");
 const { assertProductionPreCallGate } = require("./productionPreCallGate.cjs");
@@ -72,7 +73,13 @@ function governedInstructionsForRole(role, {
   const canonical = instructionsForRole(role, "", {surface, family});
   const supplied = String(governedInstructions ?? "").trim();
   if (supplied) {
-    if (!supplied.startsWith(canonical)) {
+    // Already saved horoscope prose stages and checks retain their exact policy.
+    // New requests always receive the current canonical prefix.
+    const legacyPrefix = role === 'RHETORICAL_REVIEWER' ? LEGACY_RHETORICAL_JUDGE_POLICY
+      : role === 'WRITER' ? LEGACY_HOROSCOPE_WRITER_POLICY : null;
+    const frozenHoroscopeRequest = surface === 'horoscopes' && family === 'horoscope'
+      && legacyPrefix && supplied.startsWith(`${legacyPrefix}\n\n`);
+    if (!supplied.startsWith(canonical) && !frozenHoroscopeRequest) {
       throw new Error("Governed astrology instructions must preserve the canonical role instructions as their prefix.");
     }
     return taskInstructions.trim() ? `${supplied}\n\n${taskInstructions.trim()}` : supplied;

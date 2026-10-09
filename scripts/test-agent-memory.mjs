@@ -310,12 +310,14 @@ test('rhetorical protections retain complete evidence, narrow qualifications and
   assert(records.length > 0);
   const retrieved = records.map(record => memoryDetail(index, record.id));
   const complete = retrieved.map(record => record.body).join('\n');
-  for (const phrase of ['CORRECTIO', 'TRICOLON', 'PURPLE_PROSE', 'plain-language replacement', 'meaningful contrast', 'independent prose check']) assert(complete.includes(phrase), phrase);
+  for (const phrase of ['CORRECTIO', 'TRICOLON', 'PURPLE_PROSE', 'plain-language replacement', 'meaningful contrast', 'independent prose check', 'October 9 owner amendment', 'HARD FLAG', 'REVIEW FLAG', 'Planetary personification', 'rhetorical-patterns/v2-2026-10-09']) assert(complete.includes(phrase), phrase);
   for (const detail of retrieved) {
     assert.equal(detail.bodySha256, sha256(detail.body));
     assert.equal(detail.sourceSha256, sha256(fs.readFileSync(sourcePath)));
   }
   const config = JSON.parse(fs.readFileSync('config/agent-memory-sources-v1.json', 'utf8'));
+  const search = queryMemory(index, {query:'Planetary personification',kind:'rule'});
+  assert(search.records.some(record=>record.path===sourcePath));
   assert(config.requiredContext.includes(sourcePath));
   assert(config.qualifications.some(item => item.source === sourcePath && item.targets.includes('docs/writing/WRITING_RULE_RECONCILIATION_OWNER_RULING_2026-08-25.md')));
 });
