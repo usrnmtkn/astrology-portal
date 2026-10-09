@@ -5,6 +5,7 @@ import { compileSkyArticleEdition, assertCompiledSkyArticleEdition, reviseSkyArt
 import { SKY_INGRESS_ESSAY_FORMAT, skyIngressEssayFields } from "../apps/web/src/content/skyIngressEssay.mjs";
 import { skyIngressEssayReaderSection } from "../apps/web/src/content/skyIngressEssayReader.ts";
 import { projectReaderRow } from "../apps/web/src/content/readerRowProjection.mjs";
+import { isGeneratedContentReaderBoundaryAllowed } from "../apps/web/src/content/generatedContentEligibility.ts";
 import { skyArticleEditionFactsFromSnapshot, ingressTimeLabel } from "../api/_lib/sky-article-facts.ts";
 import { skyIngressNasaReceipt } from "../api/_lib/sky-ingress-nasa.ts";
 
@@ -117,9 +118,12 @@ try {
     tldr: "Synthetic separate summary.", housePassages: [] }), /requires complete fields/);
   const approval = { approved: true, action: "approve-sky-article-edition", contentKey: edition.contentKey,
     templateKey: edition.templateKey, templateHash: edition.templateHash, fixedProseHash: edition.fixedProseHash, compiledHash: edition.compiledHash };
-  const projected = projectReaderRow({ id, content_key: edition.contentKey, status: "LIVE", updated_at: "2026-10-09T00:00:00Z",
+  const projected = projectReaderRow({ id, content_key: edition.contentKey, status: "LIVE", lane: "serving", event_type: "sky-article-edition", updated_at: "2026-10-09T00:00:00Z",
     sections: { skyArticleEdition: edition }, source_snapshot: { ownerApproval: approval, engineFacts: facts } });
   assert.equal(projected.sections.skyArticleEdition.format, SKY_INGRESS_ESSAY_FORMAT);
+  assert.equal(isGeneratedContentReaderBoundaryAllowed(projected), true);
+  assert.equal(isGeneratedContentReaderBoundaryAllowed({ ...projected, status: "DRAFT" }), false);
+  assert.equal(isGeneratedContentReaderBoundaryAllowed({ ...projected, source_snapshot: {} }), false);
   assert(!JSON.stringify(projected).includes("requestUrl"), "Private fact receipts must not enter reader payloads");
   const candidate = { id, contentKey: edition.contentKey, status: "LIVE", sections: projected.sections, sourceSnapshot: projected.source_snapshot };
   const context = { activeInstant: "2026-10-09T12:00:00Z", planet: "sun", sign: "libra" };
