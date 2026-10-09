@@ -231,13 +231,22 @@ try {
     // Model a transport that ignores abort and never settles.
     return new Promise(() => {});
   };
-  const started = performance.now();
-  await assert.rejects(() => getLunarCalendarFromApi({
-    label: "New York City", latitude: 40.7128, longitude: -74.006,
-    timeZone: "America/New_York"
-  }, "week", new Date("2026-08-24T16:00:00Z"), "basic"), { name: "TimeoutError" });
-  assert.ok(stalledSignal.aborted, "A stalled API must be aborted so local calculation can take over.");
-  assert.ok(performance.now() - started < 4_000, "An unresponsive API cannot block fallback indefinitely.");
+  const originalSetTimeout = globalThis.setTimeout;
+  try {
+    // Exercise expiry without waiting eight real seconds. The browser regression
+    // separately verifies a healthy cold response beyond the old 2.5s cutoff.
+    globalThis.setTimeout = (callback, delay, ...args) => {
+      assert.equal(delay, 8_000, "Calendar uses the bounded shared reader deadline.");
+      return originalSetTimeout(callback, 0, ...args);
+    };
+    await assert.rejects(() => getLunarCalendarFromApi({
+      label: "New York City", latitude: 40.7128, longitude: -74.006,
+      timeZone: "America/New_York"
+    }, "week", new Date("2026-08-24T16:00:00Z"), "basic"), { name: "TimeoutError" });
+    assert.ok(stalledSignal.aborted, "A stalled API must be aborted so local calculation can take over.");
+  } finally {
+    globalThis.setTimeout = originalSetTimeout;
+  }
 } finally {
   globalThis.fetch = originalFetch;
 }

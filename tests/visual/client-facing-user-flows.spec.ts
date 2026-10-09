@@ -3,6 +3,7 @@ import { expect, test, type Locator, type Page } from "@playwright/test";
 import { bundledPublications } from "../helpers/bundled-publications";
 import { observeArticleTransitions, expectAnimatedArticleNavigation } from "./qaArticleTransitions";
 import { readFileSync } from "node:fs";
+import { LUNAR_JOURNAL_ENTRIES, lunarJournalSkyParagraphs } from "../../apps/web/src/features/calendar/lunarJournal";
 import { mkdir } from "node:fs/promises";
 import path from "node:path";
 import {
@@ -2518,7 +2519,8 @@ test.describe("client-facing user flow case studies", () => {
       has: page.getByRole("button", { name: /^Last Quarter Moon in Taurus / })
     });
     await expect(lastQuarterTaurus).toHaveCount(1);
-    await expect(lastQuarterTaurus.locator(".calendar-day-group__excerpt")).toHaveCount(0);
+    const quarter = LUNAR_JOURNAL_ENTRIES.find(entry => entry.type === "lastq" && entry.sign === "Taurus")!;
+    await expect(lastQuarterTaurus.locator(".calendar-day-group__excerpt")).toHaveText(lunarJournalSkyParagraphs(quarter.blocks));
     await expect(page.locator("#calendar-day-group-2026-08-05 .calendar-day-group__blurb")).toBeVisible();
     await expect(lastQuarterTaurus).not.toContainText("The waning Moon carries things out");
     await expect(weeklyEvents.getByRole("button", { name: /^Venus enters Libra / })).toBeVisible();
@@ -2600,7 +2602,8 @@ test.describe("client-facing user flow case studies", () => {
       has: page.getByRole("button", { name: /First Quarter Moon in Scorpio/ })
     });
     await expect(firstQuarterEvent).toHaveCount(1);
-    await expect(firstQuarterEvent.locator(".calendar-day-group__excerpt")).toHaveCount(0);
+    const quarter = LUNAR_JOURNAL_ENTRIES.find(entry => entry.type === "firstq" && entry.sign === "Scorpio")!;
+    await expect(firstQuarterEvent.locator(".calendar-day-group__excerpt")).toHaveText(lunarJournalSkyParagraphs(quarter.blocks));
     const firstQuarterDay = page.locator(".calendar-day-group").filter({ has: firstQuarterEvent });
     await expect(firstQuarterDay.locator(".calendar-day-group__blurb")).toBeVisible();
     await expect(firstQuarterEvent).not.toContainText(

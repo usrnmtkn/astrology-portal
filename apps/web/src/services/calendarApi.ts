@@ -67,7 +67,10 @@ export async function getLunarCalendarFromApi(
     }
 
     return payload.calendar;
-  }, { timeoutMs: 2_500 });
+  // Cold week/month reads share the reader deadline with Sky and season reads.
+  // A shorter timer can discard a healthy response and download the local
+  // ephemeris while the same calculated calendar is already arriving.
+  });
 }
 
 // Seasonal milestones use the same server calculation as the local fallback,

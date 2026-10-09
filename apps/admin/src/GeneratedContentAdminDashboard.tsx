@@ -5801,7 +5801,7 @@ export function GeneratedContentAdminDashboard() {
       throw new Error(`Could not load the full content document for ${row.content_key}.`);
     }
     signal?.throwIfAborted();
-    setRows((current) => row.id === hydrated.id
+    setRows((current) => row.id === hydrated.id && current.some((candidate) => candidate.id === row.id)
       ? mergeContentDocuments(current, [hydrated])
       : mergeContentInventory(current.filter((candidate) => candidate.id !== row.id), [hydrated]));
     return hydrated;

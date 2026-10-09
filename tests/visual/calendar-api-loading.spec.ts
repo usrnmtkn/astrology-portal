@@ -72,8 +72,11 @@ for (const offlineRange of [false, true]) test(`Calendar loads complete facts wi
     if (offlineRange && url.searchParams.get('mode') === 'range') {
       await route.fulfill({status: 503, json: {ok: false, error: 'Synthetic outage'}}); return;
     }
-    // A cold mobile request may queue for longer than the fast week lookup.
-    if (url.searchParams.get('mode') === 'range') await new Promise(resolve => setTimeout(resolve, 3000));
+    // Both cold week and season requests can exceed the former 2.5s cutoff.
+    // Healthy responses must finish without launching the local engine.
+    if (url.pathname === '/api/calendar' && (!offlineRange || url.searchParams.get('mode') === 'range')) {
+      await new Promise(resolve => setTimeout(resolve, 3000));
+    }
     const recorder = {statusCode: 200, body: '', setHeader() {}, end(body: string) {this.body = body;}};
     const handler = url.pathname === '/api/calendar' ? calendarHandler : skyHandler;
     await handler({method: 'GET', url: url.href} as IncomingMessage, recorder as unknown as ServerResponse);
