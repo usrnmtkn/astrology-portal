@@ -164,3 +164,8 @@ responses; no paid generation or production content edits are needed.
 
 Implementation and local verification do not establish production deployment
 or the quality of an actual provider-generated article.
+
+The reusable editor imports browser-safe field and content-key identity from
+`lunationWritingIdentity.mjs`; server editorial rules remain in the writer, and
+the effective guidance reaches the editor through its authenticated API. The
+admin bundle guard checks this boundary without raising size limits.

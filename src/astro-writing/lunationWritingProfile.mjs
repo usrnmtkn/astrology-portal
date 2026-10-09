@@ -1,11 +1,7 @@
 import { LUNATION_ARGUMENT_GUIDANCE, LUNATION_REQUIRED_VOCABULARY } from './lunationEditorialConstraints.mjs';
 /** Editor guidance, never reader copy or evidence of approval. */
-export const LUNATION_PROFILE_KEY = 'studio-writing-profile/calendar/lunations';
-export const LUNATION_WORKSPACE_PREFIX = 'studio-writing-profile/calendar/lunation/';
-export const LUNATION_PROFILE_FIELDS = ['voiceGuidance', 'phaseContext', 'scopeGuidance', 'factsAndLinks'];
-export const LUNATION_ARGUMENT_FIELDS = ['thesis','phase_context','sign_meaning','recognition','intention_or_reflection','journal_focus','scope_guard'];
-export const LUNATION_SIGNS = ['aries','taurus','gemini','cancer','leo','virgo','libra','scorpio','sagittarius','capricorn','aquarius','pisces'];
-export const LUNATION_PHASES = ['new-moon','full-moon'];
+import {LUNATION_PROFILE_KEY,LUNATION_WORKSPACE_PREFIX,LUNATION_PROFILE_FIELDS,LUNATION_ARGUMENT_FIELDS,LUNATION_SIGNS,LUNATION_PHASES,lunationContentKey} from './lunationWritingIdentity.mjs';
+export {LUNATION_PROFILE_KEY,LUNATION_WORKSPACE_PREFIX,LUNATION_PROFILE_FIELDS,LUNATION_ARGUMENT_FIELDS,LUNATION_SIGNS,LUNATION_PHASES,lunationContentKey};
 export function defaultLunationProfile() {
   return {schema:'calendar-lunation-writing-profile/v1',
     voiceGuidance: `Use complete, eligible owner passages for vocabulary, sentence movement and tone. ${LUNATION_ARGUMENT_GUIDANCE} Name the subject of an intention or reflection clearly. Do not impose a scene quota, standalone pull-quote, sequence of commands or closing slogan. ${LUNATION_REQUIRED_VOCABULARY} Other voice and structure judgments remain with the owner.`,
@@ -21,10 +17,6 @@ export function validateLunationProfile(value) {
 export function lunationEditorialPrompt(value) {
   const profile=validateLunationProfile(value);
   return LUNATION_PROFILE_FIELDS.map(field=>`${field}\n${profile[field]}`).join('\n\n');
-}
-export function lunationContentKey(phase,sign) {
-  if (!LUNATION_PHASES.includes(phase) || !LUNATION_SIGNS.includes(sign)) throw new Error('Choose a New or Full Moon and a zodiac sign.');
-  return `authored/sky-lunation-macro/${phase}/${sign}`;
 }
 export function emptyLunationWorkspace(phase,sign) {
   return {contentKey:lunationContentKey(phase,sign),phase,sign,referenceDate:'',timeZone:'America/New_York',
