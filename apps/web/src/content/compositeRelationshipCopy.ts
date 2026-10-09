@@ -7,7 +7,7 @@ const record = (value: unknown): Record<string, unknown> | null =>
 export function compositeRelationshipCopy(sections: unknown, type: string) {
   const variants = record(record(sections)?.byRelationshipType);
   const value = variants?.[type];
-  if (typeof value === "string") return value;
+  if (typeof value === "string") return value.trim() ? value : "";
   const variant = record(value);
   if (!variant) return "";
   for (const field of ["body", "summary", "copy"]) {
@@ -24,4 +24,3 @@ export function compositeReaderRelationshipCopy(sections: unknown, relationshipT
   if (type === "romantic" && !isExplicitRomanticRelationship(relationshipType)) return "";
   return compositeRelationshipCopy(sections, type);
 }
-

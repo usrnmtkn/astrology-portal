@@ -39,8 +39,10 @@ try {
     friendship: { body: "Friendship fixture opening.\n\nFinal friendship fixture sentence." },
     romantic: { summary: "Romantic fixture opening. Final romantic fixture sentence." },
     creative: { copy: "Creative fixture opening. Final creative fixture sentence." },
-    family: "Family fixture opening. Final family fixture sentence.",
-    coworkers: { experience: "Legacy experience.", advice: "Legacy advice.", astro: "Legacy facts." }
+    family: "  Family fixture opening. Final family fixture sentence.\n",
+    coworkers: { experience: "Legacy experience.", advice: "Legacy advice.", astro: "Legacy facts." },
+    exes: " \n\t ",
+    complicated: { body: " \n ", summary: "Complete complicated fixture." }
   };
   const fixture = { id: "composite-variant-fixture", content_key: key, surface: "composite", mode: "feed", event_type: "composite-aspect", status: "DRAFT", lane: "serving", review_state: null,
     headline: "Composite fixture", body: fullBody, summary: "Shared fixture summary.", sections: { byRelationshipType: variants }, source_snapshot: {}, facts: {}, provider: "manual-admin", updated_at: "2026-09-08T00:00:00Z" };
@@ -65,7 +67,7 @@ try {
     assert.equal(publicRow.sections.privateReview, undefined);
     assert.deepEqual(publicRow.sections.byRelationshipType, variants, "The actual reader boundary must retain saved variant fields.");
     const content = new Map([[key, { id: publicRow.id, contentKey: key, body: publicRow.body, summary: publicRow.summary, sections: publicRow.sections, sourceSnapshot: publicRow.source_snapshot, updatedAt: publicRow.updated_at }]]);
-    for (const [relationshipType, expected] of [["friend", variants.friendship.body], ["romantic", variants.romantic.summary], ["business", variants.creative.copy], ["family", variants.family], ["coworker", "Legacy experience.\n\nLegacy advice.\n\nLegacy facts."], [null, fullBody]]) {
+    for (const [relationshipType, expected] of [["friend", variants.friendship.body], ["romantic", variants.romantic.summary], ["business", variants.creative.copy], ["family", variants.family], ["coworker", "Legacy experience.\n\nLegacy advice.\n\nLegacy facts."], ["ex", fullBody], ["situationship", variants.complicated.summary], [null, fullBody]]) {
       const resolved = runtime.normalizeCompositeAspectSurface(aspect, content, relationshipType);
       assert.equal(resolved.sections[0].body, expected, `Reader relationship mapping: ${relationshipType}`);
     }

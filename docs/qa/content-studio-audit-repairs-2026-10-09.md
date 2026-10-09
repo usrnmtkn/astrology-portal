@@ -29,9 +29,11 @@ The repeated branch-push and PR API checks are intentional release requirements 
 Both checkouts have independent `npm ci` installations and use the same CI Supabase placeholders. Web builds enable natal aspect patterns. Composite Review loads as a deferred module.
 
 - Main standalone Studio: 782,242 raw / 227,862 gzip entry bytes; 785,944 aggregate gzip bytes across 78 files. Main already exceeds the original entry ceilings.
-- Repair standalone Studio: 781,189 raw / 227,487 gzip entry bytes, within the unchanged entry ceilings; 786,829 aggregate gzip bytes across 79 files (+885). The aggregate allowance increases by 500 bytes; entry, graph, CSS and dependency limits stay unchanged.
-- Main web aggregate: 3,552,061 gzip bytes across 225 files; Sky detail chunk 5,970 bytes. Repair web: 3,554,455 gzip bytes across 228 files (+2,394); Sky detail chunk 6,027 bytes (+57). The bounded allocation is 750 aggregate bytes and 100 Sky-detail bytes above the existing limits; startup and other surface limits remain unchanged.
+- Repair standalone Studio: 781,189 raw / 227,480 gzip entry bytes, within the unchanged entry ceilings; 786,879 aggregate gzip bytes across 79 files (+935). The aggregate allowance increases by 500 bytes; entry, graph, CSS and dependency limits stay unchanged.
+- Main web aggregate: 3,552,061 gzip bytes across 225 files; Sky detail chunk 5,970 bytes. Repair web: 3,554,486 gzip bytes across 228 files (+2,425); Sky detail chunk 6,025 bytes (+55). The bounded allocation is 1,000 aggregate bytes and 100 Sky-detail bytes above the existing limits; startup and other surface limits remain unchanged.
 
 ## Release verification
 
 The required unfiltered API gate must pass locally and on the exact PR head. Fresh-build browser evidence uses synthetic content and isolated API storage. Deployment verification must name a READY main revision and distinguish deployed-frontend fixture tests from read-only checks of actual saved owner content. A draft PR or a healthy endpoint is not a live-release claim.
+
+The broader `npm run test:content` also exposed an existing report-calibration mismatch: the deliberately fictional privacy fixture disagrees with the older complete-unit packet. `test-report-judge-v3.mjs` reproduces the same failure on untouched main `62460b456` with protected references provisioned. This is an unresolved full-suite failure, not a defect introduced by these repairs. Protected owner text and the privacy fixture remain unchanged.

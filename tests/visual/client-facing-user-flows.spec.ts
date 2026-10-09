@@ -2201,7 +2201,7 @@ test.describe("client-facing user flow case studies", () => {
         await seedClientState(page, { profile: true, friends: true, theme, generatedInterpretations: [{
           id: 'composite-sun-browser-fixture', content_key: 'composite.sun', surface: 'composite', mode: 'feed', status: 'LIVE', lane: 'serving', review_state: null,
           headline: 'Synthetic composite Sun', body, summary: '', updated_at: '2026-10-09T12:00:00Z', provider: 'manual-admin', source_snapshot: {}, facts: {},
-          sections: { byRelationshipType: { friendship: { body: friendship }, romantic: { summary: romantic }, creative: { copy: creative } } }
+          sections: { byRelationshipType: { friendship: { body: friendship }, romantic: { summary: romantic }, creative: { copy: creative }, family: ' \n\t ' } }
         }] });
         await expectClientRouteLoads(page, '/#friends?tab=charts&chart=friend-nikki&view=composite');
         const pane = page.locator('.friend-tab-pane[aria-label="Composite"]');

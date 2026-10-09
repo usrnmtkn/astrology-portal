@@ -3,7 +3,7 @@ import { createApiStore } from '../helpers/calendar-review-api.mjs';
 
 for (const theme of ['light', 'dark']) for (const width of [1440, 390]) {
   test(`Composite Review loads complete saved writing ${theme} ${width}`, async ({ page }) => {
-    const row = { id: 'composite-review-fixture', content_key: 'composite-mars-trine-pluto', surface: 'composite', mode: 'feed', status: 'DRAFT', lane: 'serving', review_state: null, headline: 'Saved composite fixture', summary: '', body: 'Shared fixture opening.\n\nFinal shared fixture sentence.', sections: { byRelationshipType: { friendship: { body: 'Friendship fixture opening.\n\nFinal friendship fixture sentence.' }, romantic: { body: 'Romantic fixture only.' } } }, source_snapshot: {}, facts: {}, updated_at: '2026-10-09T12:00:00Z', provider: 'manual-admin' };
+    const row = { id: 'composite-review-fixture', content_key: 'composite-mars-trine-pluto', surface: 'composite', mode: 'feed', status: 'DRAFT', lane: 'serving', review_state: null, headline: 'Saved composite fixture', summary: '', body: 'Shared fixture opening.\n\nFinal shared fixture sentence.', sections: { byRelationshipType: { friendship: { body: 'Friendship fixture opening.\n\nFinal friendship fixture sentence.' }, romantic: { body: 'Romantic fixture only.' }, exes: ' \n\t ' } }, source_snapshot: {}, facts: {}, updated_at: '2026-10-09T12:00:00Z', provider: 'manual-admin' };
     const store = await createApiStore([row]);
     let failDetail = theme === 'light' && width === 1440;
     let releaseDetail!: () => void;
@@ -41,6 +41,7 @@ for (const theme of ['light', 'dark']) for (const width of [1440, 390]) {
       await expect(card).toContainText('Final friendship fixture sentence.');
       await expect(card.locator('.admin-variable-source-prose').first()).toHaveCSS('white-space', 'pre-wrap');
       await expect(card.locator('.admin-dependency-map-grid > article').first()).toHaveCSS('display', 'grid');
+      await expect(card.locator('.admin-dependency-map-grid > article').filter({ has: page.getByText('exes', { exact: true }) })).toContainText('Falls back');
       await card.getByRole('button', { name: 'Edit', exact: true }).click();
       await expect(page.getByRole('textbox', { name: 'Full passage / body', exact: true })).toHaveValue(row.body);
       await page.reload();
