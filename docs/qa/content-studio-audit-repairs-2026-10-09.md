@@ -1,7 +1,7 @@
 # Content Studio audit repairs
 
 Repair PR: [#1188](https://github.com/usrnmtkn/astrology-portal/pull/1188).
-Integration baseline: `9fbedf2fd` (main, including the section-inventory and horoscope edition-loading repairs).
+Integration baseline: `25fd2c1e3` (main, including section inventory, horoscope edition loading and Calendar API/loading repairs).
 Exact final test and deployment revisions belong to the PR validation record; local fixture results do not establish a production release.
 
 ## Corrected behavior
@@ -31,9 +31,9 @@ The repeated branch-push and PR API checks are intentional release requirements 
 
 Both checkouts have independent `npm ci` installations and use the same CI Supabase placeholders. Web builds enable natal aspect patterns. Composite Review loads as a deferred module.
 
-- Main standalone Studio: 782,242 raw / 227,861 gzip entry bytes; 786,018 aggregate gzip bytes across 78 files. Main already exceeds the original entry ceilings.
+- Main standalone Studio: 782,242 raw / 227,861 gzip entry bytes; 786,018 aggregate gzip bytes across 78 files. Current main's entry ceilings are retained.
 - Repair standalone Studio: 781,189 raw / 227,484 gzip entry bytes, within the unchanged entry ceilings; 786,864 aggregate gzip bytes across 79 files (+846). The aggregate allowance increases by 500 bytes; entry, graph, CSS and dependency limits stay unchanged.
-- Main web aggregate: 3,552,107 gzip bytes across 225 files; Sky detail chunk 5,969 bytes. Repair web: 3,554,406 gzip bytes across 228 files (+2,299); Sky detail chunk 6,027 bytes (+58). The bounded allocation is 750 aggregate bytes and 100 Sky-detail bytes above the existing limits; startup and other surface limits remain unchanged.
+- Main web aggregate: 3,552,051 gzip bytes across 225 files; Sky detail chunk 5,965 bytes. Repair web: 3,554,523 gzip bytes across 228 files (+2,472); Sky detail chunk 6,027 bytes (+62). The bounded allocation is 850 aggregate bytes and 100 Sky-detail bytes above the existing limits; startup and other surface limits remain unchanged.
 
 ## Release verification
 
@@ -41,4 +41,4 @@ The required unfiltered API gate must pass locally and on the exact PR head. Fre
 
 The broader `npm run test:content` exposed an existing report-calibration mismatch, reproduced on untouched main `62460b456`: the complete-unit judge used the general routing fixture's deliberately fictional dates. The judge now reads `report-judge-reference-unit-facts.json`, containing only the attribution dates and point/house associations already recorded in its public claim manifest. This is a composition fixture, not a calculated natal chart; it contains no identity, birth inputs, signs, degrees or longitudes. The input is fixed independently of runtime packet assembly, hash checked by both judge entry points, and tested against byte-locked reference units. Changing input dates still fails. Protected owner text, historical calibration artifacts and the general routing/privacy fixture remain unchanged. No live calibration is run or authorized.
 
-The follow-up full run passes that report gate and exposed the Sky-detail Node/Vite setup failure, also repaired above. A sequential diagnostic sweep executed all 113 commands in the content and post-content scripts. After the focused Sky-detail repair, 28 other commands still fail. Each reproduces the same first failure on independently installed, untouched main `9fbedf2fd`. They include historical copy/approval hash drift, old UI source-pattern checks, a relative-import test-loader failure, and stale inventory/writing-harness artifacts. No protected prose, approval record, historical hash or failing assertion is changed to clear these failures. This is **not a green full-content-suite result**; the protected local comparison records the exact commands and paired failures. These require a separate source-provenance and test-contract reconciliation before a clean full-suite claim.
+The follow-up full run passes that report gate and exposed the Sky-detail Node/Vite setup failure, also repaired above. A sequential diagnostic sweep executed all 113 commands in the content and post-content scripts. After the focused Sky-detail repair, 28 other commands still fail. Each reproduces the same first failure on independently installed, untouched main `9fbedf2fd`, and all 28 failures were reproduced again after advancing that baseline to `25fd2c1e3`. They include historical copy/approval hash drift, old UI source-pattern checks, a relative-import test-loader failure, and stale inventory/writing-harness artifacts. No protected prose, approval record, historical hash or failing assertion is changed to clear these failures. This is **not a green full-content-suite result**; the protected local comparison records the exact commands and paired failures. These require a separate source-provenance and test-contract reconciliation before a clean full-suite claim.
