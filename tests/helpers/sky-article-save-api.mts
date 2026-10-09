@@ -1,4 +1,5 @@
 import horoscopeWriter from '../../api/admin/horoscope-writing';
+import {applyCheckpointFixture} from './horoscope-checkpoint-fixture.mts';
 import {Readable} from 'node:stream';
 import {readFileSync} from 'node:fs';
 import { readerRouteResponse, fixturePublications } from './content-reader-route.mjs';
@@ -40,7 +41,7 @@ const matches = (row: any, params: URLSearchParams) => [...params].every(([field
  throw new Error(`Unmodeled storage filter ${field}=${value}`);
 });
 export const editorialFixtureRows=new Map<string,any>();
-const horoscopeStorageFaults={remaining:[] as string[],lost:[] as string[]};
+const horoscopeStorageFaults={remaining:[] as string[],lost:[] as string[],failWriterReservations:0};
 globalThis.fetch = async (input: any, options: any = {}) => {
  const operation = await store.publication(input, options); if (operation) return operation;
  const reader = await readerRouteResponse(input, options); if (reader) return reader;
@@ -51,6 +52,24 @@ globalThis.fetch = async (input: any, options: any = {}) => {
      : Response.json({message:'Invalid JWT'},{status:401});
  }
  if (url.origin !== 'https://calendar-api.invalid') throw new Error('Fixture refuses external storage');
+ if(url.pathname==='/rest/v1/rpc/checkpoint_weekly_horoscope'){
+  const input=JSON.parse(options.body),row=store.rows.get(input.p_id);
+  if(!row||row.updated_at!==input.p_expected_updated_at||row.status!=='DRAFT'||row.sections?.horoscopeEdition?.window?.period!=='weekly')return Response.json([]);
+  const updated=storageOrder({...applyCheckpointFixture(row,input.p_changes),updated_at:nextVersion()});
+  if(horoscopeStorageFaults.failWriterReservations>0&&updated.source_snapshot?.horoscopeGeneration?.active?.state==='running'&&!updated.source_snapshot.horoscopeGeneration.active.phase){
+    horoscopeStorageFaults.failWriterReservations--;return Response.json({error:'Synthetic reservation outage'},{status:503});
+  }
+  store.rows.set(row.id,updated);
+  const response=Response.json([{id:row.id,updated_at:updated.updated_at}]);
+  const generation=updated.source_snapshot?.horoscopeGeneration,active=generation?.active;
+  const stage=active?.phase==='review'?(active.state==='starting'?'reservation':active.responseId?'review-id':null)
+    :generation?.active===null&&Object.keys(generation.readings??{}).length?'completion':null;
+  if(stage&&horoscopeStorageFaults.remaining.includes(stage)){
+    horoscopeStorageFaults.remaining=horoscopeStorageFaults.remaining.filter(value=>value!==stage);horoscopeStorageFaults.lost.push(stage);
+    Object.defineProperty(response,'json',{value:async()=>{throw new DOMException('Synthetic committed checkpoint lost its acknowledgement','AbortError');}});
+  }
+  return response;
+ }
  if(url.pathname==='/rest/v1/studio_editorial_runs'){
   const found=[...editorialFixtureRows.values()].filter(row=>matches(row,url.searchParams));
   if(!options.method||options.method==='GET')return Response.json(found);
@@ -202,6 +221,7 @@ const alternativeProviders=process.env.HOROSCOPE_ALTERNATIVE_PROVIDERS_FIXTURE==
 if (process.send) process.on('message', async ({ id, method, body, url, headers }: any) => {
  try {
   if(method==='storage-state'){
+   if(body?.failWriterReservations!==undefined)horoscopeStorageFaults.failWriterReservations=body.failWriterReservations;
     if(body?.lose)horoscopeStorageFaults.remaining=[...body.lose];
     process.send!({id,result:structuredClone(horoscopeStorageFaults)});return;
   }

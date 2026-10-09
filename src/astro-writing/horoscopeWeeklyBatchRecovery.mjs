@@ -12,7 +12,7 @@ export function horoscopeWeeklyBatchRecovery(previous,current,{action,sign,planH
   const before=previous.source_snapshot?.horoscopeGeneration??{};
   const after=current.source_snapshot?.horoscopeGeneration??{};
   const old=before.active,next=after.active;
-  let completed=false;
+  let completed=false,held=false;
   if(next){
     if(next.sign!==sign||next.planHash!==planHash)return false;
     if(old){
@@ -41,8 +41,8 @@ export function horoscopeWeeklyBatchRecovery(previous,current,{action,sign,planH
       }
     }else if(action!=='generate')return false;
   }else{
-    // Only an exact saved review candidate can advance to another sign after a
-    // lost acknowledgement. A failure, release or unknown outcome needs recovery.
+    // Advance only after the exact candidate was saved, or the same interrupted
+    // request was put on hold. Holding a request never authorizes its replay.
     const receipt=after.readings?.[sign],passage=current.sections.horoscopeEdition.passages.find(p=>p.sign===sign);
     completed=old?.phase==='review'&&Boolean(receipt?.rhetoricalReview?.responseId)
       &&receipt?.operationId===old.receipt?.operationId
@@ -50,7 +50,13 @@ export function horoscopeWeeklyBatchRecovery(previous,current,{action,sign,planH
       &&receipt.rhetoricalReview.candidateHash===old.candidateHash
       &&receipt.rhetoricalReview.evidenceHash===old.evidenceHash
       &&passage?.headline===old.candidate?.headline&&passage?.body===old.candidate?.body;
-    if(!completed)return false;
+    const interruption=after.heldRequests?.[sign];
+    if(old&&interruption&&before.heldRequests?.[sign]===undefined){
+      const {interruptedAt,outcome,...reserved}=interruption;
+      held=Boolean(interruptedAt)&&outcome==='unknown'&&canonical(reserved)===canonical(old)
+        &&canonical(after.interruptions?.at(-1))===canonical(interruption);
+    }
+    if(!completed&&!held)return false;
   }
   const normalize=row=>{
     const copy=structuredClone(row),generation=copy.source_snapshot.horoscopeGeneration??{};
@@ -67,6 +73,10 @@ export function horoscopeWeeklyBatchRecovery(previous,current,{action,sign,planH
       delete copy.body;
       copy.sections.horoscopeEdition.passages=copy.sections.horoscopeEdition.passages.filter(p=>p.sign!==sign);
       if(generation.readings){delete generation.readings[sign];if(!Object.keys(generation.readings).length)delete generation.readings;}
+    }
+    if(held&&generation.heldRequests?.[sign]){
+      delete generation.heldRequests[sign];if(!Object.keys(generation.heldRequests).length)delete generation.heldRequests;
+      generation.interruptions.pop();if(!generation.interruptions.length)delete generation.interruptions;
     }
     if(generation.lastError==null)delete generation.lastError;
     copy.source_snapshot.horoscopeGeneration=generation;

@@ -1,3 +1,4 @@
+import {applyCheckpointFixture} from '../tests/helpers/horoscope-checkpoint-fixture.mts';
 import {loadWeeklyOwnerEvidence} from '../src/astro-writing/weeklyOwnerEvidence.mjs';
 import {assertHoroscopeRequestEvidence} from './assert-horoscope-request-evidence.mjs';
 import {loadSeasonalArgumentEvidence,SEASONAL_ARGUMENT_MANIFEST} from '../src/astro-writing/seasonalArgumentEvidence.mjs';
@@ -155,8 +156,8 @@ result=await store.invoke('PATCH',{id:row.id,expectedUpdatedAt:row.updated_at,se
 const beforeReservation=structuredClone(row),fixtureFetch=globalThis.fetch;
 let reservations=0;
 globalThis.fetch=async(input:any,options:any={})=>{
- if(options.method==='PATCH'&&String(input).startsWith('https://calendar-api.invalid/')){
-  const patch=JSON.parse(options.body),active=patch.source_snapshot?.horoscopeGeneration?.active;
+ if(String(input).endsWith('/rpc/checkpoint_weekly_horoscope')){
+  const patch=applyCheckpointFixture(store.rows.get(row.id),JSON.parse(options.body).p_changes),active=patch.source_snapshot?.horoscopeGeneration?.active;
   if(active){assert(active.requestHash,'A reservation must already contain the completed request identity');reservations++;}
  }
  return fixtureFetch(input,options);
@@ -185,11 +186,11 @@ assert.equal(writerFixture.calls,callsAfterUnknown+1,'Release never calls the pr
 // A failed reservation cannot leave a half-prepared operation or call the provider.
 const beforeFailedReservation=structuredClone(row),callsBeforeReservation=writerFixture.calls;
 globalThis.fetch=async(input:any,options:any={})=>{
- if(options.method==='PATCH'&&String(input).startsWith('https://calendar-api.invalid/'))return Response.json({message:'Fixture storage unavailable'},{status:503});
+ if(String(input).endsWith('/rpc/checkpoint_weekly_horoscope'))return Response.json({message:'Fixture storage unavailable'},{status:503});
  return fixtureFetch(input,options);
 };
 result=await action('generate',{sign:'aries',approvedPlanHash:planHash});assert.equal(result.status,502);globalThis.fetch=fixtureFetch;
-assert.deepEqual(store.rows.get(row.id),beforeFailedReservation);assert.equal(writerFixture.calls,callsBeforeReservation);
+assert.equal(result.payload.dispatchNotStarted,true,'An explicit unbilled failure can safely continue');assert.deepEqual(store.rows.get(row.id),beforeFailedReservation);assert.equal(writerFixture.calls,callsBeforeReservation);
 
 // Legacy pre-dispatch reservations recover without a paid retry or manual release.
 row.source_snapshot.horoscopeGeneration.active={id:'legacy-pre-dispatch',sign:'aries',state:'starting',startedAt:new Date().toISOString(),responseId:null};
@@ -210,7 +211,7 @@ result=await action('release',{sign:'aries',acknowledgeUnknownOutcome:true});ass
 // If only the response-ID save fails, retry storage once and retrieve the same response.
 let failedResponseSave=false;
 globalThis.fetch=async(input:any,options:any={})=>{
- if(options.method==='PATCH'&&String(input).startsWith('https://calendar-api.invalid/')&&JSON.parse(options.body).source_snapshot?.horoscopeGeneration?.active?.responseId&&!failedResponseSave){failedResponseSave=true;return Response.json({},{status:503});}
+ if(String(input).endsWith('/rpc/checkpoint_weekly_horoscope')&&JSON.parse(options.body).p_changes.some((c:any)=>c.path.at(-1)==='responseId'&&c.value)&&!failedResponseSave){failedResponseSave=true;return Response.json({},{status:503});}
  return fixtureFetch(input,options);
 };
 result=await action('generate',{sign:'aries',approvedPlanHash:planHash});assert.equal(result.status,202,JSON.stringify(result.payload));globalThis.fetch=fixtureFetch;
@@ -222,7 +223,7 @@ row.body=horoscopeEditionBody(row.sections.horoscopeEdition);
 store.rows.set(row.id,structuredClone(row));
 let newerRow:any=null;
 globalThis.fetch=async(input:any,options:any={})=>{
- if(!newerRow&&options.method==='PATCH'&&String(input).startsWith('https://calendar-api.invalid/')&&JSON.parse(options.body).source_snapshot?.horoscopeGeneration?.active?.responseId){
+ if(!newerRow&&String(input).endsWith('/rpc/checkpoint_weekly_horoscope')&&JSON.parse(options.body).p_changes.some((c:any)=>c.path.at(-1)==='responseId'&&c.value)){
   newerRow=structuredClone(store.rows.get(row.id));newerRow.updated_at=new Date(Date.now()+60000).toISOString();
   newerRow.summary='Concurrent owner edit is preserved.';store.rows.set(row.id,newerRow);
  }
