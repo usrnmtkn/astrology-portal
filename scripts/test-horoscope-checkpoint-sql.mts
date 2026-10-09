@@ -16,6 +16,7 @@ try{
     create function public.test_checkpoint_version() returns trigger language plpgsql as $$ begin new.updated_at=greatest(clock_timestamp(),old.updated_at+interval '1 microsecond');return new;end;$$;
     create trigger test_checkpoint_version before update on public.generated_interpretations for each row execute function public.test_checkpoint_version();`);
   await db.exec(readFileSync(new URL('../apps/web/supabase/migrations/20261009114231_weekly_horoscope_checkpoint_deltas.sql',import.meta.url),'utf8'));
+  await db.exec(readFileSync(new URL('../apps/web/supabase/migrations/20261009124036_weekly_native_result_checkpoint.sql',import.meta.url),'utf8'));
   const original={source_snapshot:{history:'Synthetic retained evidence. '.repeat(650000),horoscopeGeneration:{active:null,failures:[]}},
     sections:{horoscopeEdition:{window:{period:'weekly'},passages:[]}},body:'Synthetic original passage.'};
   await db.query("insert into generated_interpretations values($1,clock_timestamp(),'DRAFT','horoscope/weekly/synthetic',$2,$3,$4)",[id,original.body,original.sections,original.source_snapshot]);
@@ -25,11 +26,12 @@ try{
   for(const role of ['anon','authenticated']){
     await db.exec(`set role ${role}`);
     await assert.rejects(save(await Promise.resolve({id,updated_at:'2026-01-01T00:00:00Z'}),[]),(e:any)=>e.code==='42501');
+    await assert.rejects(db.query('select checkpoint_weekly_provider_result($1,$2,$3,$4,$5,$6)',[id,'x','x','gemini','x',{id:'x'}]),(e:any)=>e.code==='42501');
     await db.exec('reset role');
   }
   await db.exec('set role service_role');
   let row=await read();const old=row;
-  const operation={id:'synthetic-operation',responseId:'gemini_synthetic',state:'running'};
+  const operation={id:'synthetic-operation',requestHash:'synthetic-hash',responseId:'gemini_synthetic',state:'running',config:{provider:'gemini'}};
   let patch={source_snapshot:{...row.source_snapshot,horoscopeGeneration:{active:operation,failures:[]},horoscopeStorageWriteId:'synthetic-write'}};
   let changes=horoscopeStorageChanges(row,patch);
   assert(JSON.stringify(changes).length<1000,'The retained history never crosses the checkpoint request');
@@ -37,6 +39,18 @@ try{
   row=await read();assert.notEqual(row.updated_at,old.updated_at);
   assert.deepEqual(row.source_snapshot,patch.source_snapshot);
   assert.deepEqual(await save(old,changes),[],'A lost acknowledgement cannot admit a second CAS write');
+  const capture=async(overrides:any={})=>{
+    const args={operationId:operation.id,requestHash:operation.requestHash,provider:'gemini',responseId:operation.responseId,result:{id:operation.responseId,status:'completed',output:[]},...overrides};
+    return (await db.query<any>('select checkpoint_weekly_provider_result($1,$2,$3,$4,$5,$6) as outcome',[id,args.operationId,args.requestHash,args.provider,args.responseId,args.result])).rows[0].outcome;
+  };
+  for(const mismatch of [{operationId:'replaced'},{requestHash:'different'},{provider:'anthropic'},{responseId:'different',result:{id:'different'}}])assert.equal(await capture(mismatch),'obsolete');
+  assert.deepEqual(await read(),row,'Mismatched responses do not alter any saved fields');
+  assert.equal(await capture(),'saved');row=await read();
+  assert.equal(row.source_snapshot.history,original.source_snapshot.history);
+  assert.deepEqual(row.sections,original.sections);assert.equal(row.body,original.body);
+  assert.equal(await capture(),'already_saved');assert.deepEqual(await read(),row,'Lost-ACK retry is idempotent');
+  assert.equal(await capture({result:{id:operation.responseId,status:'failed'}}),'already_saved');assert.deepEqual(await read(),row,'A later failure cannot replace the completed result');
+  await assert.rejects(capture({result:{id:'wrong'}}));assert.deepEqual(await read(),row);
   const beforeCompletion=row;
   const nextSnapshot={...row.source_snapshot,horoscopeGeneration:{active:null,failures:[{reason:'synthetic retained failure'}]}};
   delete nextSnapshot.horoscopeStorageWriteId;
@@ -56,8 +70,10 @@ try{
     [{path:['body'],op:'set',value:'Must roll back'}, {path:['status'],op:'delete'}],
   ]){await assert.rejects(save(row,invalid));assert.deepEqual(await read(),row,'Invalid changes are atomic');}
   await db.query("update generated_interpretations set status='LIVE' where id=$1",[id]);
+  assert.equal(await capture(),'obsolete');
   row=await read();assert.deepEqual(await save(row,[{path:['body'],op:'set',value:'Must not change live copy'}]),[]);
   await db.query("update generated_interpretations set status='DRAFT',sections=jsonb_set(sections,'{horoscopeEdition,window,period}','\"monthly\"') where id=$1",[id]);
   row=await read();assert.deepEqual(await save(row,[]),[]);
+  assert.equal(await capture(),'obsolete');
   console.log('PASS PostgreSQL checkpoint SQL: >17MB retained history, compact deltas/receipts, exact CAS, append/delete/null, atomic invalid-write rollback, service-only invoker access and Weekly DRAFT isolation.');
 }finally{await db.close();}

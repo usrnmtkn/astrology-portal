@@ -13,9 +13,14 @@ original row. Only the service role can execute this invoker-security function;
 it admits Weekly DRAFT horoscope rows and cannot publish them.
 
 Native stream IDs are deterministic and saved with the reservation before a
-provider call begins. The background result uses the same acknowledged storage
-path, a unique write identity, exact readback, and a deadline bounded by the
-original function invocation. Storage retries cannot dispatch provider calls.
+provider call begins. The background result uses `checkpoint_weekly_provider_result`
+to save only the response, without first downloading the edition's history.
+The database locks the row and checks the operation, request hash, provider and
+response identity. Repeating a save after a lost acknowledgement preserves the
+first result; a late response cannot replace a released or newer request.
+Storage retries remain bounded by the original invocation and cannot dispatch
+provider calls. Diagnostics report storage status and deadline expiry without
+logging the response body.
 
 The browser can repeat a failed reservation only when the server explicitly
 confirms dispatch never started and a fresh read shows the entire row unchanged.
@@ -29,7 +34,9 @@ outcomes require explicit release and approval before a replacement request.
 - `scripts/test-horoscope-checkpoint-sql.mts` executes the migration in isolated
   PostgreSQL (PGlite), including >17 MB retained history, compact receipts, stale
   versions, append/delete/null changes, invalid-write rollback, role permissions,
-  and Weekly DRAFT isolation. It is part of `test:content-studio-api`.
+  and Weekly DRAFT isolation. Native result checks also cover mismatched request
+  identities, lost acknowledgements, and completed-result preservation. It is
+  part of `test:content-studio-api`.
 - The actual writer/review handler regression completes all twelve synthetic
   signs with >17 MB history, an upload ceiling, and a lost native-result save
   acknowledgement. It checks exact history and provider request counts.
