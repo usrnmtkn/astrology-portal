@@ -17,13 +17,21 @@ export function useMinimumLoading(isLoading: boolean, minimumMs = MINIMUM_SKELET
     setCycle({ loading: isLoading, until: isLoading ? performance.now() + minimumMs : cycle.until });
   }
 
-  useEffect(() => {
-    if (isLoading) return;
-    const remaining = cycle.until - performance.now();
-    if (remaining <= 0) return;
-    const timer = setTimeout(() => tick(value => value + 1), Math.ceil(remaining));
-    return () => clearTimeout(timer);
-  }, [isLoading, cycle.until]);
+  const pending = isLoading || performance.now() < cycle.until;
 
-  return isLoading || performance.now() < cycle.until;
+  useEffect(() => {
+    if (isLoading || !pending) return;
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    const release = () => {
+      const remaining = cycle.until - performance.now();
+      // The commit may have crossed the deadline since render. Always refresh
+      // that pending render, and reschedule a timer that wakes slightly early.
+      if (remaining <= 0) tick(value => value + 1);
+      else timer = setTimeout(release, Math.ceil(remaining));
+    };
+    release();
+    return () => clearTimeout(timer);
+  }, [isLoading, cycle.until, pending]);
+
+  return pending;
 }
