@@ -475,6 +475,51 @@ async function useOwnerSession(page:Page,f:Awaited<ReturnType<typeof fixture>>){
 }
 
 for(const [width,theme] of [[390,'dark'],[1440,'light']] as const){
+ test(`Saved edition links and date lookup preserve access after storage failure ${width} ${theme}`,async({page})=>{
+  await page.setViewportSize({width,height:1000});await page.addInitScript(theme=>localStorage.setItem('tldrastro:studio-theme',theme),theme);
+  const f=await fixture(page,1,false,'weekly',true,false);
+  try{
+   await useOwnerSession(page,f);const before=await f.latest();
+   const requests:{authenticated:boolean;status:number}[]=[];let failLookup=false;
+   await page.route('**/api/admin/generated-content?horoscopeEditions=true*',async route=>{
+    const url=new URL(route.request().url()),headers=route.request().headers();
+    const result=failLookup&&url.searchParams.has('contentKey')
+     ?{status:504,payload:{ok:false,error:'Content storage did not respond within 30 seconds.'}}
+     :await f.call({method:'document-request',url:url.pathname+url.search,headers});
+    requests.push({authenticated:!!headers.authorization,status:result.status});
+    if(result.status===200&&!url.searchParams.has('id')&&!url.searchParams.has('contentKey')){
+     expect(url.searchParams.get('editionInventory')).toBe('true');
+     expect(result.payload.rows[0].inventory_only).toBe(true);
+     expect(result.payload.rows[0].source_snapshot).toBeUndefined();
+    }
+    await route.fulfill({status:result.status,json:result.payload});
+   });
+   await page.goto(`/admin/content#horoscopes?edition=${before.id}`);
+   const studio=page.getByRole('region',{name:'Horoscope editions'});
+   await expect(studio.getByText('11/12 readings ready',{exact:false})).toBeVisible();
+   await expect(studio.getByRole('alert')).toHaveCount(0);
+   expect(requests.every(request=>request.authenticated&&request.status===200)).toBe(true);
+   await studio.getByRole('button',{name:'Back to editions',exact:true}).click();
+   await studio.getByLabel('Reference date').fill('2026-09-24');
+   failLookup=true;
+   await studio.getByRole('button',{name:'Continue to writing plan',exact:true}).click();
+   await expect(studio.getByRole('alert')).toContainText('Content storage did not respond');
+   await expect(studio.getByRole('link',{name:'Sign in to Content Studio'})).toHaveCount(0);
+   await expect(studio.getByRole('button',{name:'Continue to writing plan',exact:true})).toBeEnabled();
+   failLookup=false;
+   await studio.getByRole('button',{name:'Continue to writing plan',exact:true}).click();
+   await expect(studio.getByText('11/12 readings ready',{exact:false})).toBeVisible();
+   await expect(studio.getByRole('alert')).toHaveCount(0);
+   await studio.getByRole('button',{name:'3 · Review',exact:true}).click();
+   await expect(studio.getByLabel('Complete reading')).toHaveValue(f.original.passages[0].body);
+   await page.reload();
+   await expect(studio.getByText('11/12 readings ready',{exact:false})).toBeVisible();
+   expect((await f.latest()).sections).toEqual(before.sections);
+   expect((await f.latest()).source_snapshot).toEqual(before.source_snapshot);
+   expect(await f.call({method:'writer-state'})).toMatchObject({calls:0,reviewCalls:0});
+   await page.screenshot({path:`test-results/horoscope-open-storage-${width}-${theme}.png`,fullPage:true});
+  }finally{f.child.kill();}
+ });
  test(`Owner session bootstrap loads editions without a stale sign-in warning ${width} ${theme}`,async({page})=>{
   await page.setViewportSize({width,height:1000});await page.addInitScript(theme=>localStorage.setItem('tldrastro:studio-theme',theme),theme);
   const f=await fixture(page,1,false,'weekly',true,false);
@@ -483,9 +528,10 @@ for(const [width,theme] of [[390,'dark'],[1440,'light']] as const){
    const listRequests:{authenticated:boolean;status:number}[]=[];
    // Exercise the actual document handler with browser headers. The inventory
    // fixture's default service credential used to hide anonymous startup reads.
-   await page.route('**/api/admin/generated-content?horoscopeEditions=true',async route=>{
-    const headers=route.request().headers();
-    const result=await f.call({method:'document-request',url:'/api/admin/generated-content?horoscopeEditions=true',headers});
+   await page.route('**/api/admin/generated-content?horoscopeEditions=true*',async route=>{
+    const headers=route.request().headers(),url=new URL(route.request().url());
+    expect(url.searchParams.get('editionInventory')).toBe('true');
+    const result=await f.call({method:'document-request',url:url.pathname+url.search,headers});
     listRequests.push({authenticated:!!headers.authorization,status:result.status});
     await route.fulfill({status:result.status,json:result.payload});
    });

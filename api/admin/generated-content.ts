@@ -37,19 +37,19 @@ function libs(): ContentLibraries {
 const adminStorageTimeoutMs = 8_000;
 
 class AdminStorageTimeoutError extends Error {
-  constructor() {
-    super(`Content storage did not respond within ${adminStorageTimeoutMs / 1000} seconds.`);
+  constructor(timeoutMs = adminStorageTimeoutMs) {
+    super(`Content storage did not respond within ${timeoutMs / 1000} seconds.`);
     this.name = "AdminStorageTimeoutError";
   }
 }
 
-async function adminStorageFetch(input: string, init: RequestInit = {}) {
+async function adminStorageFetch(input: string, init: RequestInit = {}, timeoutMs = adminStorageTimeoutMs) {
   const controller = new AbortController();
   let timedOut = false;
   const timeout = setTimeout(() => {
     timedOut = true;
     controller.abort();
-  }, adminStorageTimeoutMs);
+  }, timeoutMs);
 
   try {
     const response = await fetch(input, { ...init, signal: controller.signal });
@@ -62,7 +62,7 @@ async function adminStorageFetch(input: string, init: RequestInit = {}) {
     });
     return { ok: response.ok, status: response.status, headers: response.headers, payload };
   } catch (error) {
-    if (timedOut) throw new AdminStorageTimeoutError();
+    if (timedOut) throw new AdminStorageTimeoutError(timeoutMs);
     throw error;
   } finally {
     clearTimeout(timeout);
@@ -3228,15 +3228,25 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
     }
     if (new URL(req.url ?? "/", "http://localhost").searchParams.get("horoscopeEditions") === "true") {
       if (req.method !== "GET") throw new AdminHttpError(405, "Use GET to list horoscope editions.");
-      const id=new URL(req.url!,"http://localhost").searchParams.get('id');
+      const query=new URL(req.url!,"http://localhost").searchParams;
+      const id=query.get('id'),contentKey=query.get('contentKey');
+      if(contentKey&&!/^horoscope\/[a-zA-Z0-9_./+-]+$/u.test(contentKey))throw new AdminHttpError(400,'Choose a horoscope edition.');
+      const detail=Boolean(id||contentKey);
+      const inventoryOnly=!detail&&query.get('editionInventory')==='true';
       // Recovery compares the complete document returned by horoscope-writing.
       // The generic detail projection omits storage fields and falsely looks
       // like an outside edit after a provider checkpoint advances updated_at.
-      const params=new URLSearchParams({content_key:"like.horoscope/*",mode:"eq.article",select:"*",order:"updated_at.desc",limit:id?'1':'30'});
+      // Browsing needs no provider history, prompt snapshots or duplicate body.
+      // Opt in so already-open clients still receive complete documents.
+      // Project in storage, before transferring and parsing the result.
+      const params=new URLSearchParams({content_key:contentKey?`eq.${contentKey}`:"like.horoscope/*",mode:"eq.article",
+        select:inventoryOnly?'id,content_key,headline,status,sections,updated_at':'*',order:"updated_at.desc",limit:detail?'1':'30'});
       if(id)params.set('id',`eq.${id}`);
-      const result = await studioVariableStorage(params);
+      // Full saved documents retain the writer's bounded read budget. They can
+      // contain many complete historical requests; opening must not truncate them.
+      const result = await adminStorageFetch(`${supabaseUrl()}/rest/v1/generated_interpretations?${params}`,{headers:adminHeaders()},detail?30_000:adminStorageTimeoutMs);
       if (!result.ok || !Array.isArray(result.payload)) throw new AdminHttpError(502, "Horoscope editions could not load.");
-      sendJson(res, 200, {ok:true,rows:result.payload});
+      sendJson(res, 200, {ok:true,rows:inventoryOnly?result.payload.map(row=>({...row,inventory_only:true})):result.payload});
       return;
     }
     if (new URL(req.url ?? "/", "http://localhost").searchParams.get("writingProfiles") === "true") {
