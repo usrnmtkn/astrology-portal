@@ -7,19 +7,20 @@ import {Stack,Grid,Text} from './studio-ds/primitives';
 type Event={id:string;sign:string;title:string;startsAt:string;phase:string;eclipseType:string|null;timeZone:string};
 type Row={id:string;headline:string;body:string;updated_at:string;facts:{lunationArticle:{event:Event}};source_snapshot:{lunationWriting:any}};
 class WritingRequestError extends Error {
-  constructor(message:string,readonly rows:Row[]=[]){super(message);}
+  constructor(message:string,readonly rows:Row[]=[],readonly code:string=''){super(message);}
 }
 const endpoint='/api/admin/lunation-writing';
 async function request(secret:string,body?:unknown,query='',signal?:AbortSignal) {
   const response=await fetch(endpoint+query,{method:body?'POST':'GET',headers:{...adminCredentialHeaders(secret),'content-type':'application/json'},
     cache:'no-store',signal:signal?AbortSignal.any([signal,AbortSignal.timeout(90000)]):AbortSignal.timeout(90000),...(body?{body:JSON.stringify(body)}:{})});
   const payload=await response.json().catch(()=>null);
-  if(!response.ok||!payload?.ok)throw new WritingRequestError(payload?.error??'The lunation request could not be confirmed. Refresh saved drafts before retrying.',Array.isArray(payload?.rows)?payload.rows:[]);
+  if(!response.ok||!payload?.ok)throw new WritingRequestError(payload?.error??'The lunation request could not be confirmed. Refresh saved drafts before retrying.',Array.isArray(payload?.rows)?payload.rows:[],payload?.code??'');
   return payload;
 }
 const displayTime=(event:Event)=>new Intl.DateTimeFormat('en-US',{timeZone:event.timeZone,dateStyle:'full',timeStyle:'short'}).format(new Date(event.startsAt));
 
 export default function DatedLunationWritingStudio({secret,dirtyRef,onOpenContent,onEditGuidance,requestedDraftId}:{secret:string;dirtyRef:{current:boolean};onOpenContent:(key:string)=>Promise<void>;onEditGuidance:()=>void;requestedDraftId?:string|null}) {
+  const [planNeedsRefresh,setPlanNeedsRefresh]=useState(false);
   const [month,setMonth]=useState(()=>{const today=new Date();return `${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}`;});
   const [zone,setZone]=useState(()=>Intl.DateTimeFormat().resolvedOptions().timeZone||'America/New_York');
   const [kind,setKind]=useState(()=>{const phase=new URLSearchParams(window.location.hash.split('?')[1]??'').get('phase');return phase&&['new-moon','full-moon'].includes(phase)?phase:'all';}),[events,setEvents]=useState<Event[]>([]);
@@ -47,13 +48,14 @@ export default function DatedLunationWritingStudio({secret,dirtyRef,onOpenConten
   useEffect(()=>()=>{dirtyRef.current=false;},[dirtyRef]);
   useEffect(()=>{if(!unsaved)return;const warn=(event:BeforeUnloadEvent)=>event.preventDefault();window.addEventListener('beforeunload',warn);return()=>window.removeEventListener('beforeunload',warn);},[unsaved]);
   function accept(next:Row) {
+    setPlanNeedsRefresh(false);
     setRow(next);setHeadline(next.headline);setBody(next.body);setDirection(next.source_snapshot.lunationWriting.direction);
     setRejecting(false);setRejectionReason('');
     setRows(current=>[next,...current.filter(r=>r.id!==next.id)]);
   }
   async function run(work:()=>Promise<void>) {
     if(operation.current)return;operation.current=true;setBusy(true);setError('');setMessage('');
-    try{await work();}catch(reason){setError((reason as Error).message);}finally{operation.current=false;setBusy(false);}
+    try{await work();}catch(reason){if(reason instanceof WritingRequestError&&reason.code==='lunation_plan_changed')setPlanNeedsRefresh(true);setError((reason as Error).message);}finally{operation.current=false;setBusy(false);}
   }
   async function refresh() {
     const result=await request(secret);setRows(result.rows);
@@ -219,7 +221,7 @@ export default function DatedLunationWritingStudio({secret,dirtyRef,onOpenConten
         {writing.lastError&&writing.lastError!==error&&<p role="alert">{writing.lastError}</p>}
         {!row.body&&!writing.active&&plan&&<>
           <Text>{rejections.length?'Your feedback is saved. Review the replacement plan below.':'Review the writing plan below.'} {generateLabel} approves this plan and starts one paid writing request.</Text>
-          <StudioButton className="admin-primary-button" disabled={busy||proseChanged&&!notesChanged} onClick={()=>void run(()=>notesChanged?act('review',{direction}):act('generate',{approvedPlanHash:plan.planHash}))}>{notesChanged?'Update writing plan':generateLabel}</StudioButton>
+          <StudioButton className="admin-primary-button" disabled={busy||proseChanged&&!notesChanged&&!planNeedsRefresh} onClick={()=>void run(()=>notesChanged||planNeedsRefresh?act('review',{direction}):act('generate',{approvedPlanHash:plan.planHash}))}>{notesChanged||planNeedsRefresh?'Update writing plan':generateLabel}</StudioButton>
           {notesChanged&&<Text>Update the plan with your changes before creating the draft.</Text>}
           {proseChanged&&<Text>Save your manual draft below to keep your writing.</Text>}
           <details className="admin-workspace-details"><AdminDisclosureSummary>Adjust writing direction</AdminDisclosureSummary>

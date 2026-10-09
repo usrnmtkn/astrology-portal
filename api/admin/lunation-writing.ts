@@ -172,7 +172,7 @@ export default async function handler(req:IncomingMessage,res:ServerResponse) {
     if(operation)throw new AdminHttpError(409,'A draft is already running. Retrieve its result before starting another.');
     if(row.body.trim())throw new AdminHttpError(409,'This draft already contains writing. Edit the saved article; generation will not replace it.');
     const prepared=await prepareSharedArticle(row.facts.lunationArticle,state().direction,state().rejections);
-    if(input.approvedPlanHash!==prepared.planHash||state().planHash!==prepared.planHash)throw new AdminHttpError(409,'The writing sources or plan changed. Select Update writing plan, review it again, then choose Generate draft.');
+    if(input.approvedPlanHash!==prepared.planHash||state().planHash!==prepared.planHash)return sendAdminJson(res,409,{ok:false,code:'lunation_plan_changed',error:'Your saved writing or guidance changed. Update the writing plan to review the current sources before generating.'});
     const config=provider.normalizeProviderConfig({},'writer');
     operation={id:randomUUID(),startedAt:new Date().toISOString(),actor,responseId:null,config,planHash:prepared.planHash,
       version:LUNATION_ARTICLE_PROTOCOL_VERSION,sourceHashes:prepared.sources,sourceIds:prepared.context.sameFamilyExamples.map((e:any)=>e.id),

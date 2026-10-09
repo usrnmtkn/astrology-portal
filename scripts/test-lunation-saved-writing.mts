@@ -29,7 +29,7 @@ assert(!plan.argument.transit_job.includes('We turn toward fairness'));
 const oldHash=plan.planHash;
 source.sections={packageDraft:{contentKey:sourceKey,body:'Synthetic newly saved opening.\n\nSynthetic newly saved complete ending.'}};
 source.status='DRAFT';source.updated_at='2026-10-09T14:00:00Z';
-assert.equal((await act('generate',{approvedPlanHash:oldHash})).status,409);assert.equal(providerFixture.calls,0);
+const stale=await act('generate',{approvedPlanHash:oldHash});assert.equal(stale.status,409);assert.equal(stale.payload.code,'lunation_plan_changed');assert.equal(providerFixture.calls,0);
 row=(await act('review',{direction:''})).payload.rows[0];plan=row.source_snapshot.lunationWriting.preview;
 assert.equal(plan.savedWriting.references[0].body,source.sections.packageDraft.body);
 assert.notEqual(plan.planHash,oldHash);

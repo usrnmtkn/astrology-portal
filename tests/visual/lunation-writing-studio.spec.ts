@@ -76,6 +76,14 @@ for(const width of [390,1440])for(const theme of ['light','dark'] as const){
       await workspace.getByText('Adjust writing direction',{exact:true}).click();
       await workspace.getByLabel('Writing direction (optional)',{exact:true}).fill('Develop a concrete consequence with emotional nuance.');
       await workspace.getByRole('button',{name:'Update writing plan',exact:true}).click();
+      await expect(workspace.getByRole('button',{name:'Create draft',exact:true})).toBeEnabled();
+      await writer.call({method:'source-edit',body:{key:'authored/sky-lunation-macro/full-moon/aries',body:'Synthetic current saved source opening.\n\nSynthetic current saved source ending.'}});
+      await workspace.getByRole('button',{name:'Create draft',exact:true}).click();
+      await expect(workspace.getByRole('alert')).toContainText('saved writing or guidance changed');
+      expect((await writer.call({method:'provider'})).calls).toBe(0);
+      await expect(workspace.locator('button.admin-primary-button:visible:enabled')).toHaveText('Update writing plan');
+      await workspace.getByRole('button',{name:'Update writing plan',exact:true}).click();
+      await expect(workspace.getByRole('button',{name:'Create draft',exact:true})).toBeEnabled();
       await expect(workspace.getByText('Writing plan updated.',{exact:true})).toBeVisible();
       await workspace.getByText('Write or paste a draft instead',{exact:true}).click();
       await workspace.getByLabel('Full article',{exact:true}).fill('An unsaved manual draft must not be overwritten.');

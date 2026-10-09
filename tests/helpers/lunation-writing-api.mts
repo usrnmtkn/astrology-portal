@@ -52,6 +52,11 @@ globalThis.fetch=async(input:any,options:any={})=>{
 export async function invoke(method:string,body?:unknown,url='/api/admin/lunation-writing',secret='calendar-api-fixture') {
   if(method==='rows')return [...rows.values()];
   if(method==='provider'){Object.assign(providerFixture,body??{});return providerFixture;}
+  if(method==='source-edit'){
+    const input=body as {key:string;body:string},row=[...rows.values()].find(r=>r.content_key===input.key);
+    if(!row||!input.key.startsWith('authored/sky-lunation-macro/')||typeof input.body!=='string')throw new Error('Choose an existing synthetic lunar source.');
+    Object.assign(row,{body:input.body,updated_at:new Date(Date.now()+1).toISOString()});return row;
+  }
   const req=Readable.from(body===undefined?[]:[JSON.stringify(body)]);
   Object.assign(req,{method,url,headers:{authorization:`Bearer ${secret}`}});
   const endpoint=url.startsWith('/api/admin/calendar-lunation-writing')?(await import('../../api/admin/calendar-lunation-writing')).default:handler;
