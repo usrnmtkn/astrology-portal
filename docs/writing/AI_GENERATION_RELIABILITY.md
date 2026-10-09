@@ -182,9 +182,11 @@ review are separate evidence; no new paid sample is implied by this repair.
 
 Content Studio > Calendar Write-ups > New & Full Moons & Eclipses opens the
 Dated articles & eclipses view by default. Events load for the chosen month and
-time zone. Each event has a Write/Open action leading directly to its saved
-writing plan. The owner reviews that plan before the single paid Generate draft
-request; existing writing is never overwritten by opening an event. Reusable
+time zone. The October 9 workflow simplifies this to one event selector and
+Create new draft / Open saved draft action leading to a focused workspace.
+The owner reviews the displayed plan, then explicitly chooses Create draft or
+Regenerate draft to approve that plan and start one paid request. Existing
+writing is never overwritten by opening an event. Reusable
 sign readings and shared guidance remain available in the adjacent tab.
 
 `lunationArticleHash` orders nested object keys before hashing so a PostgreSQL
@@ -210,10 +212,11 @@ live model quality or authorize a paid sample or publication of owner content.
 
 Background result polling must not toggle the editor's foreground busy state.
 Doing so repeatedly disables and re-enables controls while a valid stored
-request is still running. Show a stable progress panel beside the generation
-action, elapsed time, and the fact that reopening retrieves the same request.
-Keep the empty article editor hidden until the request finishes; completion
-loads the persisted body and focuses the article field for review.
+request is still running. Show a stable progress panel, elapsed time, and the
+fact that reopening retrieves the same request. Hide generation controls, old
+draft history and the article editor while writing; Back to drafts stays
+available. Completion loads the persisted body and focuses the article field
+without scrolling past the draft's review and regeneration actions.
 
 Transient retrieval failures pause polling with an explicit same-request retry.
 Terminal provider failures must reconcile the returned saved row, including
@@ -611,8 +614,10 @@ editor and enters subsequent requests only as event-scoped correction evidence.
 It is separate from `studio_writing_feedback`; this action does not copy private
 prose into repository memory, grant positive voice authority, approve wording,
 or change an existing reader entry. The dated writer binds the rejection
-receipts into its plan hash. A new explicit plan review and Regenerate draft
-action start one paid request; reload and progress checks retrieve that request.
+receipts into its plan hash. The October 9 simplified flow uses Review replacement
+plan to save the rejection, then Regenerate draft to explicitly approve that
+displayed plan and start one paid request. Reload and progress checks retrieve
+that same request. Rejected drafts stays collapsed outside active writing.
 
 The actual-handler regression is `scripts/test-lunation-rejection.mts`, included
 in the full Content Studio API gate. It checks exact history, correction input,
