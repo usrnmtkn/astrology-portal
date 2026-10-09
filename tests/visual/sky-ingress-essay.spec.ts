@@ -4,6 +4,7 @@ import { mkdtempSync, writeFileSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { routeStudioInventoryApi } from '../helpers/studio-inventory-route';
+import { skyIngressEssayFields } from '../../apps/web/src/content/skyIngressEssay.mjs';
 
 for (const [width, theme] of [[390, 'light'], [1440, 'dark']] as const) {
  test(`Ingress essay draft saves, reopens and compiles without a horoscope companion at ${width} ${theme}`, async ({ page }) => {
@@ -36,6 +37,7 @@ for (const [width, theme] of [[390, 'light'], [1440, 'dark']] as const) {
     if (url.pathname !== '/api/admin/sky-article-facts') return false;
     expect(url.searchParams.get('format')).toBe('ingress-essay-v2');
     await route.fulfill({ json: { ok: true, facts: { schema: 'tldrastro-sky-article-engine-facts-v1', articleFormat: 'ingress-essay-v2',
+      templateFields: skyIngressEssayFields,
       calculationSource: 'synthetic browser fixture', generatedAt: '2026-10-09T12:00:00Z', referenceTimeZone: 'America/New_York',
       planet: 'sun', sign: 'libra', entryYear: 2026, validFrom: '2026-09-22', validTo: '2026-10-23',
       transitStartInstant: '2026-09-23T00:05:14Z', transitEndInstant: '2026-10-23T09:37:57Z',
@@ -50,6 +52,7 @@ for (const [width, theme] of [[390, 'light'], [1440, 'dark']] as const) {
    await expect(editor.getByLabel('Sky article format')).toHaveValue('ingress-essay-v2');
    await editor.getByRole('button', { name: 'Load calculated facts', exact: true }).click();
    await expect(editor.getByLabel('Template field when', { exact: true })).toHaveValue(/8:05 PM ET/);
+   await expect(editor.getByText(skyIngressEssayFields.find(field => field.name === 'overviewBody')!.description, { exact: true })).toBeVisible();
    for (const field of ['what', 'takeaway', 'overviewHeading', 'overviewBody', 'majorTransitSections', 'closingHeading', 'closingBody']) {
     await editor.getByLabel(`Template field ${field}`, { exact: true }).fill(`Synthetic ${field} opening.\n\nSynthetic ${field} final sentence.`);
    }

@@ -45,6 +45,9 @@ It records the exact reference instant, calculated visit bounds, time zone,
 engine/version/flags, retrieval time and event-search coverage. In a multi-visit
 residency, the essay covers the visit containing the reference instant.
 Times use `8:05 PM ET` with `America/New_York` daylight-saving conversion.
+The authenticated response also supplies the complete field guidance to Studio.
+It is saved with the workspace and excluded from public JavaScript and reader
+payloads; compilation validates field names from the shared template.
 
 The event packet includes major aspects involving the selected body and Calendar
 ingresses, lunations and stations. Participants are calculated at each exact

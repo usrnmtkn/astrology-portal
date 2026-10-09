@@ -1,6 +1,6 @@
 import { isStudioCompatibilityRow, isStudioCompositeRow } from "./studioContentScope";
 import { calendarAspectRetrogradeOptions } from "../../web/src/content/calendarAspectRetrograde";
-import { isSkyIngressEssay, SKY_INGRESS_ESSAY_FORMAT, skyIngressEssayFields, type SkyArticleFormat } from "../../web/src/content/skyIngressEssay.mjs";
+import { isSkyIngressEssay, SKY_INGRESS_ESSAY_FORMAT, type SkyArticleFormat } from "../../web/src/content/skyIngressEssay.mjs";
 import { useStudioCustomVariables } from "./studioCustomVariableClient";
 import { studioRequestTimeoutMs } from "./studioRequestPolicy";
 import { compatibilityAspectPoints, compatibilityAspectTypes, compatibilityAspectKey, compatibilityAspectFromSearch, compatibilityAspectSearchText, compatibilityAspectSourceDraft, type CompatibilityAspectSelection } from "./compatibilityAspectSources";
@@ -569,6 +569,7 @@ type AdminLoadState = "idle" | "loading" | "loaded" | "accessDenied" | "error";
 
 type SkyArticleEditionFacts = {
   articleFormat?: SkyArticleFormat;
+  templateFields?: { name: string; description: string }[];
   eventCoverage?: { start: string; end: string; complete: boolean };
   nasa?: { status: string; scope: string };
   nasaExplanatoryText?: { status: string; title?: string; sourceUrl?: string };
@@ -10324,7 +10325,7 @@ export function GeneratedContentAdminDashboard() {
     const savedHoroscopeText = [selectedRow?.body, savedHoroscopeSections?.heading, savedHoroscopeSections?.introduction,
       ...(Array.isArray(savedHoroscopeSections?.passages) ? savedHoroscopeSections.passages.map((passage: {body?:string}) => passage.body) : [])].filter(Boolean).join("\n\n");
     const skyArticleTemplateFields = isSkyArticleTemplate && selectedRow
-      ? isSkyIngressEssay(skyArticleEditionForm?.format) ? [...skyIngressEssayFields]
+      ? isSkyIngressEssay(skyArticleEditionForm?.format) ? skyArticleEditionForm.facts?.templateFields ?? []
         : skyArticleTemplatePlaceholders(savedHoroscopeText).filter((placeholder) => placeholder.name !== "risingBlocks")
       : [];
     const skyArticleEditionFacts = skyArticleEditionForm?.facts ?? null;

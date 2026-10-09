@@ -49,6 +49,7 @@ try {
   const factsResult = await invoke(factsHandler, "GET", baseUrl);
   assert.equal(factsResult.status, 200, JSON.stringify(factsResult));
   const facts = factsResult.facts;
+  assert.deepEqual(facts.templateFields, skyIngressEssayFields, "Authenticated facts carry complete authoring guidance");
   assert.equal(facts.slotValues.articleTitle, "Libra Season 2026");
   assert.match(facts.slotValues.when, /September 22, 2026 at 8:05 PM ET/);
   assert.match(facts.slotValues.when, /October 23, 2026 at 5:37 AM ET/);

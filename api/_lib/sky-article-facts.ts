@@ -1,5 +1,5 @@
 const defaultTimeZone = "America/New_York";
-import { isSkyIngressEssay, type SkyArticleFormat } from "../../apps/web/src/content/skyIngressEssay.mjs";
+import { isSkyIngressEssay, skyIngressEssayFields, type SkyArticleFormat } from "../../apps/web/src/content/skyIngressEssay.mjs";
 import { planetSignDignity } from "../../apps/web/src/services/planetSignDignity.mjs";
 
 type SkyArticleFactsSnapshot = {
@@ -77,7 +77,7 @@ export function skyArticleEditionFactsFromSnapshot(snapshot: SkyArticleFactsSnap
     schema: "tldrastro-sky-article-engine-facts-v1",
     calculationSource: "local Swiss Ephemeris sign-residency calculation",
     generatedAt: snapshot.generatedAt,
-    ...(isSkyIngressEssay(format) ? { articleFormat: format, calculationProvenance: snapshot.calculationProvenance,
+    ...(isSkyIngressEssay(format) ? { articleFormat: format, templateFields: skyIngressEssayFields, calculationProvenance: snapshot.calculationProvenance,
       retrievedAt: new Date().toISOString(), request: { planet, referenceInstant: snapshot.generatedAt, timeZone } } : {}),
     referenceTimeZone: timeZone,
     planet,
