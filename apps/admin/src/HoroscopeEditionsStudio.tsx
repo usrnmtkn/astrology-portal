@@ -78,16 +78,15 @@ export default function HoroscopeEditionsStudio({secret,requestedEditionId}:{sec
     listRequest.current?.abort();setListError('');
     // The dashboard adopts the owner session asynchronously after mounting.
     // Do not turn that initial empty credential into a sign-in failure.
-    if(!secret.trim()){setLoading(false);return;}
-    const controller=new AbortController();listRequest.current=controller;setLoading(true);
-    const current=()=>!controller.signal.aborted;
+    if(!secret)return;
+    const signal=(listRequest.current=new AbortController()).signal;setLoading(true);
     try{
-      const data=await request(secret,endpoint+'?horoscopeEditions=true',undefined,'GET',controller.signal);
+      const data=await request(secret,endpoint+'?horoscopeEditions=true',undefined,'GET',signal);
       if(!Array.isArray(data.rows))throw new Error('The edition list could not be read.');
       for(const row of data.rows)validateHoroscopeEdition(row.sections?.horoscopeEdition);
-      if(current())setRows(data.rows);
-    }catch(reason){if(current())setListError((reason as Error).message);}
-    finally{if(current())setLoading(false);}
+      if(!signal.aborted)setRows(data.rows);
+    }catch(reason){if(!signal.aborted)setListError((reason as Error).message);}
+    finally{if(!signal.aborted)setLoading(false);}
   }
   const credentialIdentity=ownerCredentialIdentity(secret);
   useEffect(()=>{mounted.current=true;return()=>{mounted.current=false;stop.current=true;operation.current?.abort();};},[]);
