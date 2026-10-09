@@ -3,6 +3,7 @@ import type { IncomingMessage, ServerResponse } from 'node:http';
 import calendarHandler from '../../api/calendar';
 import skyHandler from '../../api/sky';
 import { bundledPublications } from '../helpers/bundled-publications';
+import { readerResponse } from '../helpers/reader-response';
 
 for (const offlineRange of [false, true]) test(`Calendar loads complete facts with ${offlineRange ? 'local range recovery' : 'no calculation-engine download'}`, async ({ page }) => {
   test.setTimeout(90_000);
@@ -53,4 +54,56 @@ for (const offlineRange of [false, true]) test(`Calendar loads complete facts wi
   expect(errors).toEqual([]);
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
   await page.screenshot({path: `test-results/calendar-api-${offlineRange ? 'recovery' : 'healthy'}.png`, fullPage: true});
+});
+
+for (const scenario of [
+  { date: '2026-10-09', timeZone: 'America/New_York', latitude: 40.7128, longitude: -74.006, noon: '16:00:00.000Z', sun: 'Libra', offline: false },
+  { date: '2026-11-01', timeZone: 'America/New_York', latitude: 40.7128, longitude: -74.006, noon: '17:00:00.000Z', sun: 'Scorpio', offline: false },
+  { date: '2026-03-08', timeZone: 'Asia/Tokyo', latitude: 35.6762, longitude: 139.6503, noon: '03:00:00.000Z', sun: 'Pisces', offline: false },
+  { date: '2026-10-09', timeZone: 'America/New_York', latitude: 40.7128, longitude: -74.006, noon: '16:00:00.000Z', sun: 'Libra', offline: true }
+]) test(`Published Calendar passage uses ${scenario.offline ? 'offline recovery' : 'API facts'} on ${scenario.date} in ${scenario.timeZone}`, async ({ page }) => {
+  test.setTimeout(90_000);
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.clock.setFixedTime(new Date(`${scenario.date}T12:00:00Z`));
+  await bundledPublications(page);
+  await page.addInitScript(location => localStorage.setItem('tldrastro:selectedLocation', JSON.stringify(location)), {
+    label: 'Synthetic passage location', latitude: scenario.latitude, longitude: scenario.longitude, timeZone: scenario.timeZone
+  });
+  const row = { id: 'qa-published-passage', content_key: 'calendar-passage/daily/shared',
+    body: 'Synthetic passage under {{sunSign}}.\n\nComplete synthetic ending.', status: 'LIVE', lane: 'serving',
+    review_state: null, surface: 'sky', mode: 'in_depth', provider: 'manual', updated_at: '2026-01-01T00:00:00Z' };
+  await page.route('**/api/content-reader', route => {
+    const query = route.request().postDataJSON();
+    const matches = (!query.keys || query.keys.includes(row.content_key)) && (!query.ids || query.ids.includes(row.id))
+      && (!query.prefix || row.content_key.startsWith(query.prefix)) && (!query.provider || query.provider === row.provider);
+    return route.fulfill({ json: readerResponse(matches ? [row] : []) });
+  });
+  const requests: URL[] = [], errors: string[] = [];
+  page.on('request', request => requests.push(new URL(request.url())));
+  page.on('pageerror', error => errors.push(error.message));
+  await page.route(/\/api\/(calendar|sky)\?/, async route => {
+    const url = new URL(route.request().url());
+    if (scenario.offline && url.pathname === '/api/sky' && url.searchParams.get('detail') === 'core') {
+      return route.fulfill({ status: 503, json: { ok: false, error: 'Synthetic passage API outage' } });
+    }
+    const recorder = { statusCode: 200, body: '', setHeader() {}, end(body: string) { this.body = body; } };
+    const handler = url.pathname === '/api/calendar' ? calendarHandler : skyHandler;
+    await handler({ method: 'GET', url: url.href } as IncomingMessage, recorder as unknown as ServerResponse);
+    return route.fulfill({ status: recorder.statusCode, contentType: 'application/json', body: recorder.body });
+  });
+  await page.goto(`/?date=${scenario.date}#calendar?view=day&date=${scenario.date}`);
+  const day = page.getByLabel('Selected lunar day', { exact: true });
+  await expect(day).toContainText(`Synthetic passage under ${scenario.sun}.`, { timeout: 60_000 });
+  await expect(day).toContainText('Complete synthetic ending.');
+  const cores = requests.filter(url => url.pathname === '/api/sky' && url.searchParams.get('detail') === 'core');
+  expect(cores).toHaveLength(7);
+  expect(new Set(cores.map(url => url.searchParams.get('at'))).size).toBe(7);
+  expect(cores.every(url => url.searchParams.get('at')?.endsWith(scenario.noon)
+    && url.searchParams.get('timeZone') === scenario.timeZone)).toBe(true);
+  expect(requests.some(url => url.pathname.startsWith('/wasm/'))).toBe(scenario.offline);
+  await page.reload();
+  await expect(day).toContainText(`Synthetic passage under ${scenario.sun}.`, { timeout: 60_000 });
+  await expect(day).toContainText('Complete synthetic ending.');
+  expect(requests.some(url => url.pathname.startsWith('/wasm/'))).toBe(scenario.offline);
+  expect(errors).toEqual([]);
 });

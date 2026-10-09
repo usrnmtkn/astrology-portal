@@ -3,7 +3,7 @@ import { useEffect, useMemo, useState } from 'react';
 import type { LocationInput, SkySnapshot } from '../../types';
 import type { LunarCalendarMonth } from '../../services/ephemeris';
 import type { LiveGeneratedContent } from '../../services/generatedContent';
-import { getAstrodienstSkyOffMainThread } from '../../services/skyCalculationClient';
+import { getSkyOnlineFirst } from '../../services/skyApi';
 import { zonedDateTimeToUtc } from '../../services/timezones';
 import { calendarPassageKey, resolveCalendarPassage } from './calendarPassageTemplates';
 import { calendarDailyPassageValues, calendarPassageDate, calendarPeriodPassageValues } from './calendarPassageAssembly';
@@ -22,7 +22,7 @@ export function useCalendarPassages(calendar: LunarCalendarMonth | null, dates: 
   useEffect(() => {
     if (!key) return;
     let cancelled = false;
-    void Promise.all(dates.map(async date => [date, await getAstrodienstSkyOffMainThread(location, zonedDateTimeToUtc(date, '12:00 PM', timeZone), { includeTransitWindows: false })] as const))
+    void Promise.all(dates.map(async date => [date, await getSkyOnlineFirst(location, zonedDateTimeToUtc(date, '12:00 PM', timeZone), false)] as const))
       .then(rows => { if (!cancelled) setState({ key, skies: new Map(rows) }); })
       .catch(() => { if (!cancelled) setState({ key, error: true }); });
     return () => { cancelled = true; };
