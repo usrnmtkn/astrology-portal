@@ -290,6 +290,12 @@ if (process.send) process.on('message', async ({ id, method, body, url, headers 
     process.send!({id,result:row});return;
   }
   if(method==='legacy-monthly-plan-failure'){process.send!({id,result:seedLegacyMonthlyPlanFailure(body.id)});return;}
+  if (method === 'daily-writing') {
+    const handler = (await import('../../api/admin/calendar-daily-writing')).default;
+    const req:any=Readable.from([JSON.stringify(body)]);req.method='POST';req.url='/api/admin/calendar-daily-writing';req.headers={'x-content-generation-secret':'calendar-api-fixture'};
+    const res:any={statusCode:200,setHeader(){},end(raw:string){this.payload=JSON.parse(raw);}};
+    await handler(req,res);process.send!({id,result:{status:res.statusCode,payload:res.payload}});return;
+  }
   if (method === 'lunar-writing') {
     const handler = (await import('../../api/admin/calendar-lunation-writing')).default;
     const req:any=Readable.from([JSON.stringify(body)]);req.method='POST';req.url='/api/admin/calendar-lunation-writing';req.headers={'x-content-generation-secret':'calendar-api-fixture'};

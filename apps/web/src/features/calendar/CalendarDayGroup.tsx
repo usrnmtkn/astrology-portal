@@ -14,6 +14,7 @@ export type CalendarDayGroupRow = {
   title: string;
   meta?: string;
   excerpt?: string;
+  paragraphs?: string[];
   event?: LunarCalendarEvent;
 };
 
@@ -78,6 +79,9 @@ export function CalendarDayGroup({
                 {row.meta ? <small>{row.meta}</small> : <span />}
               </button>
               {row.excerpt ? <FormattedProse className="calendar-day-group__excerpt" text={row.excerpt} /> : null}
+              {row.paragraphs?.map((paragraph, index) => (
+                <FormattedProse key={`${row.id}-paragraph-${index}`} className="calendar-day-group__excerpt" text={paragraph} />
+              ))}
             </div>
           ))}
         </div>

@@ -255,6 +255,7 @@ const SkyDailySummaryStudio = lazy(() => import("./SkyDailySummaryStudio").then(
 const SkyDebilityStudio = lazy(() => import("./SkyDebilityStudio").then(module => ({ default: module.SkyDebilityStudio })));
 const CalendarSubscriptionEvents = lazy(() => import("./CalendarSubscriptionEvents"));
 const LunarCalendarWorkspace = lazy(() => import("./LunarCalendarWorkspace"));
+const CalendarDailyWritingStudio = lazy(() => import("./CalendarDailyWritingStudio"));
 const LunationWritingStudio = lazy(() => import("./LunationWritingStudio"));
 const CompositionMapWorkspace = lazy(() => import("./CompositionMapWorkspace"));
 const SkyPlacementComposition = lazy(() => import("./SkyPlacementComposition"));
@@ -379,9 +380,10 @@ type AdminWritingSurfaceMapPayload = {
 type AdminArticlePointFilter = "all" | "sun" | "moon" | "mercury" | "venus" | "mars" | "jupiter" | "saturn" | "uranus" | "neptune" | "pluto" | "other";
 type AdminSkyWriteupSubjectFilter = "all" | "planet" | "angle" | "point";
 type SkyWriteupWorkspaceView = "daily-summary" | "catalog" | "transits-to-natal" | "house-transits";
-type CalendarWriteupWorkspaceView = SkyForecastPeriod | "season-transitions" | "season-writeups" | "moon-transition-phrases" | "subscription-events" | "lunar-ingresses" | "lunation-writing" | "planetary-ingresses" | "planetary-stations";
+type CalendarWriteupWorkspaceView = SkyForecastPeriod | "daily-writing" | "season-transitions" | "season-writeups" | "moon-transition-phrases" | "subscription-events" | "lunar-ingresses" | "lunation-writing" | "planetary-ingresses" | "planetary-stations";
 const calendarWriteupWorkspaceTabs: { value: CalendarWriteupWorkspaceView; label: string }[] = [
   { value: "daily-sky", label: "Daily Sky" },
+  { value: "daily-writing", label: "Daily writing" },
   { value: "weekly-sky", label: "Weekly Sky" },
   { value: "monthly-sky", label: "Monthly Sky" },
   { value: "lunation-writing", label: "New & Full Moons & Eclipses" },
@@ -3250,6 +3252,7 @@ export function GeneratedContentAdminDashboard() {
   const [skyWriteupWorkspaceView, setSkyWriteupWorkspaceView] = useState<SkyWriteupWorkspaceView>("catalog");
   const [focusSunSummaries, setFocusSunSummaries] = useState(false);
   const subscriptionEventDirtyRef = useRef(false);
+  const dailyWritingDirtyRef = useRef(false);
   const lunationWritingDirtyRef = useRef(false);
   const [calendarWriteupWorkspaceView, setCalendarWriteupWorkspaceView] = useState<CalendarWriteupWorkspaceView>("daily-sky");
   const [transitReadingContext, setTransitReadingContext] = useState<import("./transitNatalSources").TransitNatalReadingContext>({});
@@ -4410,7 +4413,7 @@ export function GeneratedContentAdminDashboard() {
 
   function hasPendingArticleChanges() {
     return Boolean(
-      subscriptionEventDirtyRef.current || lunationWritingDirtyRef.current
+      subscriptionEventDirtyRef.current || lunationWritingDirtyRef.current || dailyWritingDirtyRef.current
       || skyArticleEditor && skyArticleEditor.saveState !== "saved"
       || skyArticleEditionForm && ["unsaved", "saving", "error"].includes(skyArticleEditionForm.saveState)
     );
@@ -7111,7 +7114,7 @@ export function GeneratedContentAdminDashboard() {
             href: item.page ? adminHashForPage(item.page) : undefined,
             onSelect: item.page ? () => navigateAdminPage(item.page as AdminDashboardPage) : undefined
           }))}
-          createActions={["aiWriting", "horoscopes"].includes(activePage) || activePage === "calendarWriteups" && calendarWriteupWorkspaceView === "lunation-writing" ? [] : activePage === "variables" ? [{ key: "variable", label: "Create variable", description: "Name, write, and tag your own variable", icon: KeyRound, onSelect: () => { setVariableCreateRequest(value => value + 1); setIsCreateMenuOpen(false); } }] : [
+          createActions={["aiWriting", "horoscopes"].includes(activePage) || activePage === "calendarWriteups" && ["lunation-writing", "daily-writing"].includes(calendarWriteupWorkspaceView) ? [] : activePage === "variables" ? [{ key: "variable", label: "Create variable", description: "Name, write, and tag your own variable", icon: KeyRound, onSelect: () => { setVariableCreateRequest(value => value + 1); setIsCreateMenuOpen(false); } }] : [
             {
               key: "article",
               label: "Create article",
@@ -7428,6 +7431,7 @@ export function GeneratedContentAdminDashboard() {
             <StudioTabs label="Calendar Write-ups workspaces" value={calendarWriteupWorkspaceView}
               tabs={calendarWriteupWorkspaceTabs}
               onValueChange={view => navigateAdminPage("calendarWriteups", new URLSearchParams({ view }))}>
+              {calendarWriteupWorkspaceView === "daily-writing" && <Suspense fallback={<PageLoading message="Loading daily writing…" />}><CalendarDailyWritingStudio secret={secret} dirtyRef={dailyWritingDirtyRef} /></Suspense>}
               {calendarWriteupWorkspaceView === "subscription-events" && <Suspense fallback={<PageLoading message="Loading subscription events…" />}><CalendarSubscriptionEvents secret={secret} dirtyRef={subscriptionEventDirtyRef} /></Suspense>}
               {calendarWriteupWorkspaceView === "lunation-writing" && <Suspense fallback={<PageLoading message="Loading lunar writing…" />}><LunationWritingStudio key={requestedLunationId ?? "lunar-workspace"} secret={secret} dirtyRef={lunationWritingDirtyRef} requestedDraftId={requestedLunationId}
                 library={<LunarCalendarWorkspace scope="lunations" rows={rows} query={query} onQuery={setQuery} isLoading={isLoading || loadState !== "loaded"}
