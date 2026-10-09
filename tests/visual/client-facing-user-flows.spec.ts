@@ -3364,7 +3364,12 @@ test.describe("client-facing user flow case studies", () => {
     await expectNoHorizontalOverflow(page, "Narrow mobile Calendar");
 
     await page.getByRole("tab", { name: "Month" }).click();
-    await expect(page.locator(".lunar-calendar-day")).toHaveCount(42);
+    // July 2026 fits five Sunday-first weeks; omit wholly out-of-month weeks.
+    const monthDays = page.locator(".lunar-calendar-day");
+    await expect(monthDays).toHaveCount(35);
+    await expect(page.locator(".lunar-calendar-day:not(.is-outside)")).toHaveCount(31);
+    await expect(monthDays.first()).toHaveAttribute("data-calendar-date", "2026-06-28");
+    await expect(monthDays.last()).toHaveAttribute("data-calendar-date", "2026-08-01");
     await expect(page.locator(".calendar-month-chip").first()).toBeVisible({ timeout: 60_000 });
     const mobileMonthMetrics = await page.evaluate(() => {
       const day = document.querySelector(".lunar-calendar-day")?.getBoundingClientRect();
