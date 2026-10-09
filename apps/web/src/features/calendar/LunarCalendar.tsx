@@ -3054,6 +3054,11 @@ export function LunarCalendar({
             </div>
             <div className="lunar-calendar-grid">
               {calendar.days.map((day, index) => {
+                const weekStart = index - (index % 7);
+                if (!calendar.days.slice(weekStart, weekStart + 7).some((weekDay) => weekDay.inMonth)) {
+                  return null;
+                }
+
                 const isSelected = selectedDateKey === day.dateKey;
                 const isToday = day.dateKey === currentDateKey;
                 const dayPhase = calendarPhaseLabelForDay(day, calendar.days);
