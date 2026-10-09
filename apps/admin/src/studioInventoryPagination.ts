@@ -1,6 +1,11 @@
-// The inventory API caps pages at 80 rows. Page through its cursor, including
-// catalogs larger than the former 125-page / 10,000-row cutoff.
+// Show a small first page quickly, then amortize network latency with larger
+// compact pages. Always follow the cursor, including older servers with an
+// 80-row cap and catalogs beyond the former 10,000-row cutoff.
 export const STUDIO_INVENTORY_PAGE_SIZE = 80;
+export const STUDIO_INVENTORY_CONTINUATION_PAGE_SIZE = 400;
+export const studioInventoryPageSize = (cursor: string | null) => cursor
+  ? STUDIO_INVENTORY_CONTINUATION_PAGE_SIZE
+  : STUDIO_INVENTORY_PAGE_SIZE;
 export const STUDIO_INVENTORY_MAX_PAGES = 2_000;
 
 export async function readStudioInventoryPages<T>(

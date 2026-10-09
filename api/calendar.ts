@@ -2,6 +2,7 @@ import type { IncomingMessage, ServerResponse } from "node:http";
 import {
   getLunarCalendarMonth,
   getLunarCalendarWeek,
+  getLunarCalendarRangeEvents,
   type LunarCalendarDetailLevel
 } from "../apps/web/src/services/ephemeris.js";
 import { zonedDateTimeToUtc } from "../apps/web/src/services/timezones.js";
@@ -74,6 +75,21 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
 
   try {
     const requestUrl = new URL(req.url ?? "/api/calendar", "http://localhost");
+    if (requestUrl.searchParams.get("mode") === "range") {
+      const location = parseLocation(requestUrl);
+      const start = new Date(requestUrl.searchParams.get("start") ?? "");
+      const end = new Date(requestUrl.searchParams.get("end") ?? "");
+      const duration = end.getTime() - start.getTime();
+      if (!Number.isFinite(duration) || duration <= 0 || duration > 40 * 86_400_000) {
+        throw new Error("Calendar event range must span between zero and 40 days.");
+      }
+      if (Math.abs(location.latitude) > 90 || Math.abs(location.longitude) > 180) {
+        throw new Error("Calendar API requires valid latitude and longitude.");
+      }
+      const events = await getLunarCalendarRangeEvents(location, start, end);
+      sendJson(res, 200, { ok: true, mode: "range", start: start.toISOString(), end: end.toISOString(), events });
+      return;
+    }
     const mode = parseMode(requestUrl.searchParams.get("mode"));
     const detail = parseDetail(requestUrl.searchParams.get("detail"));
     const location = parseLocation(requestUrl);

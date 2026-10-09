@@ -63,6 +63,14 @@ export function calendarDateKeyDistance(fromKey: string, toKey: string) {
   return Math.round((to - from) / 86_400_000);
 }
 
+/** Illumination cannot establish lunar age: waxing and waning share values. */
+export function calendarLunarDayNumber(day: Pick<LunarCalendarDay, "dateKey">, events: LunarCalendarEvent[]) {
+  const previous = events.filter(event => event.type === "lunation" && /^New Moon/i.test(event.title)
+    && event.dateKey <= day.dateKey).sort((a, b) => b.dateKey.localeCompare(a.dateKey))[0];
+  const elapsed = previous ? calendarDateKeyDistance(previous.dateKey, day.dateKey) : null;
+  return elapsed !== null && elapsed >= 0 && elapsed < 30 ? elapsed + 1 : null;
+}
+
 function isPrincipalLunation(event: LunarCalendarEvent) {
   if (event.type !== "lunation") return false;
   if (event.eclipseType) return true;

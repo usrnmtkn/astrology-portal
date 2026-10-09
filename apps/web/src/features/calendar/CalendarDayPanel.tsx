@@ -2,7 +2,7 @@ import { CalendarPassageProse } from './CalendarPassageProse';
 import { useId, useState } from "react";
 import { useMinimumLoading } from "../../hooks/useMinimumLoading";
 import { useSkeletonGeometry } from "../../hooks/useSkeletonGeometry";
-import { LoadingStatus, SkeletonBar } from "../../components/CardSkeleton";
+import { LoadingStatus, SkeletonBar, SkeletonText } from "../../components/CardSkeleton";
 import { StoicCardSkeleton, SeasonTransitRowSkeleton } from "./CalendarDaySkeleton";
 import { FormattedProse } from "../../components/FormattedProse";
 import { ChevronRight } from "lucide-react";
@@ -212,15 +212,15 @@ export function CalendarDayPanel({
             {isToday ? <span className="calendar-sky-card__today">Today</span> : null}
           </p>
           <div className="calendar-sky-card__lockup">
-            {!loading && contentState !== "error" && phaseEmoji ? <span className="calendar-sky-card__visual" aria-hidden="true">{phaseEmoji}</span> : null}
+            {contentState !== "error" && phaseEmoji ? <span className="calendar-sky-card__visual" aria-hidden="true">{loading ? <SkeletonBar title /> : phaseEmoji}</span> : null}
             <div className="calendar-sky-card__copy">
-              {loading ? <div className="calendar-sky-card__title" aria-hidden="true"><SkeletonBar title /></div>
+              {loading ? <div className="calendar-sky-card__title" aria-hidden="true"><SkeletonText>{title}</SkeletonText></div>
                 : contentState !== "error" ? <h2 className="calendar-sky-card__title">{title}</h2> : null}
-              <p className="calendar-sky-card__meta">
-                {loading ? <span aria-hidden="true"><SkeletonBar short /></span> : contentState !== "error" ? <>{elementTag ? (
-                  <span className={`calendar-sky-card__element ${elementClass ?? ""}`}>{elementTag}</span>
+              <p className="calendar-sky-card__meta" aria-hidden={loading || undefined}>
+                {contentState !== "error" ? <>{elementTag ? (
+                  <span className={`calendar-sky-card__element ${elementClass ?? ""}`}>{loading ? <SkeletonText>{elementTag}</SkeletonText> : elementTag}</span>
                 ) : null}
-                {metaLine ? <span>{metaLine}</span> : null}
+                {metaLine ? <span>{loading ? <SkeletonText>{metaLine}</SkeletonText> : metaLine}</span> : null}
                 </> : null}
               </p>
             </div>

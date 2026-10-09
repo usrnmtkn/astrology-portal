@@ -62,9 +62,13 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
     await expect(table.getByRole("row").filter({ hasText: `Moon in Cancer · ${labels[index]}` })).toHaveCount(1);
    }
    await expect(table).not.toContainText("sky-placement/article/moon/cancer");
-   await expect(table.getByRole("row").filter({ has: page.getByRole("button", { name: "Edit", exact: true }) })).toHaveCount(3);
+   // The shared, sign-independent Moon source remains discoverable beside the three write-up sections.
+   const editableRows = table.getByRole("row").filter({ has: page.getByRole("button", { name: "Edit", exact: true }) });
+   await expect(editableRows.filter({ hasText: "fallback-hook/planet-lived/moon" })).toHaveCount(1);
+   await expect(editableRows).toHaveCount(4);
    await page.getByLabel("Sky write-up motion").selectOption("direct");
-   await expect(table.getByRole("row").filter({ has: page.getByRole("button", { name: "Edit", exact: true }) })).toHaveCount(3);
+   await expect(editableRows.filter({ hasText: "fallback-hook/planet-lived/moon" })).toHaveCount(1);
+   await expect(editableRows).toHaveCount(4);
    await expect(map.locator(".admin-template-reader-copy .admin-eyebrow")).toHaveText(["Headline", ...labels]);
    await expect(map.getByRole("heading")).toHaveText("Moon in Cancer");
    const labelStyles = await map.locator(".admin-template-reader-copy .admin-eyebrow").evaluateAll(elements => elements.map(element => {

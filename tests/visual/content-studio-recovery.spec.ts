@@ -1,8 +1,9 @@
 import { expect, test, type Page } from "@playwright/test";
 import { readFileSync } from "node:fs";
+import { studioListingFacts, studioListingRow } from "../../api/_lib/studio-listing-facts";
 
 // Exercise the real saved inventory, rather than an empty dashboard fixture.
-const inventory = JSON.parse(readFileSync(new URL("../../apps/web/public/content-studio-last-known-good.json", import.meta.url), "utf8")).rows as Array<{ id: string; content_key: string }>;
+const inventory = JSON.parse(readFileSync(new URL("../../apps/web/public/content-studio-last-known-good.json", import.meta.url), "utf8")).rows as Array<Record<string, unknown> & { id: string; content_key: string }>;
 // Recovery includes two deliberate failures, backoff, and the complete paged inventory.
 // Keep it within the existing 15-second reader/Studio readiness budget.
 const recoveryReadiness = { timeout: 15_000 };
@@ -15,9 +16,18 @@ async function mockStudio(page: Page, malformedStatus = false) {
     const data: any = { ok: true, rows: [], statuses: [], nextCursor: null };
     if (url.pathname.endsWith("/generated-content") || url.pathname.endsWith("/generated-content-inventory")) {
       const cursor = Number(url.searchParams.get("cursor") ?? 0);
-      const key = url.searchParams.get("contentKeys");
-      data.rows = key ? inventory.filter(row => key.split(",").includes(row.content_key)) : inventory.slice(cursor, cursor + 400);
-      if (!key && cursor + 400 < inventory.length) data.nextCursor = String(cursor + 400);
+      const keys = [...url.searchParams.getAll("contentKeys"), ...url.searchParams.getAll("contentKey")].flatMap(key => key.split(","));
+      const id = url.searchParams.get("id");
+      const prefix = url.searchParams.get("contentKeyPrefix");
+      if (id || keys.length) data.rows = inventory.filter(row => id ? row.id === id : keys.includes(row.content_key));
+      else {
+        // Match the real compact, prefix-filtered list contract instead of sending
+        // the complete document catalog again for every requested prefix.
+        const rows = prefix ? inventory.filter(row => row.content_key.startsWith(prefix)) : inventory;
+        const limit = Number(url.searchParams.get("limit") || 400);
+        data.rows = rows.slice(cursor, cursor + limit).map(row => studioListingRow(row, studioListingFacts(row)));
+        if (cursor + limit < rows.length) data.nextCursor = String(cursor + limit);
+      }
     }
     if (url.pathname.endsWith("/content-live-status")) {
       const input = route.request().postDataJSON();
@@ -220,11 +230,21 @@ test('reader startup keeps its guarded reload and manual recovery', async ({ pag
   await mockStudio(page);
   let missing = true;
   let documents = 0;
+  await page.addInitScript(() => {
+    const key = "qa:startup-document";
+    sessionStorage.setItem(key, String(Number(sessionStorage.getItem(key) || 0) + 1));
+  });
   page.on('request', request => { if (request.isNavigationRequest() && request.frame() === page.mainFrame()) documents++; });
   await page.route('**/App-*.js', route => missing ? route.abort('failed') : route.continue());
   await page.goto('/#sky', { waitUntil: 'commit' });
+  // The first failure can announce an alert just before the guarded reload.
+  // Wait for that replacement document to fail before enabling recovery.
+  await expect.poll(() => page.evaluate(() => Number(sessionStorage.getItem("qa:startup-document")))).toBe(2);
   await expect(page.locator('#app-startup')).toHaveAttribute('role', 'alert');
+  await expect(page.locator('#app-startup button')).toBeVisible();
   expect(documents).toBe(2);
+  await page.waitForTimeout(12_500);
+  await expect(page.locator('#app-startup')).toHaveAttribute('role', 'alert');
   missing = false;
   await page.locator('#app-startup button').click();
   await expect(page.locator('.topbar')).toBeVisible({ timeout: 15000 });

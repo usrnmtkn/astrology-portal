@@ -1,5 +1,6 @@
 // Isolated handler + PostgreSQL-engine benchmark. No remote transport or credentials.
 import assert from 'node:assert/strict';
+import { studioInventoryPageSize } from '../apps/admin/src/studioInventoryPagination';
 import { PGlite } from '@electric-sql/pglite';
 import { Readable } from 'node:stream';
 import { writeFileSync } from 'node:fs';
@@ -46,7 +47,15 @@ try {
     cursor=result.nextCursor;
   }while(cursor);
   assert.equal(ids.size,count);assert.equal(pages,201);
-  const cases=[{name:'inventory',params:{limit:'80'},budgetMs:5000},{name:'detail',params:{id:'00008000-0000-4000-8000-000000000000'},budgetMs:2000},
+  const progressiveIds = new Set<string>(); let progressiveCursor: string | null = null; let progressivePages = 0;
+  do {
+    const result = await request({limit: String(studioInventoryPageSize(progressiveCursor)), ...(progressiveCursor ? {cursor: progressiveCursor} : {})});
+    progressivePages++;
+    for (const row of result.rows) { assert.ok(!progressiveIds.has(row.id)); progressiveIds.add(row.id); assert.equal(row.body, null); }
+    progressiveCursor = result.nextCursor;
+  } while (progressiveCursor);
+  assert.deepEqual(progressiveIds, ids); assert.equal(progressivePages, 41);
+  const cases=[{name:'inventory',params:{limit:'80'},budgetMs:5000},{name:'continuation inventory',params:{limit:'400'},budgetMs:5000},{name:'detail',params:{id:'00008000-0000-4000-8000-000000000000'},budgetMs:2000},
     {name:'late inventory page',params:{limit:'80',cursor:Buffer.from(JSON.stringify({id:'00008000-0000-4000-8000-000000000000',updatedAt:'2026-01-01T00:01:20.000000Z'})).toString('base64url')},budgetMs:5000}];
   for(const scenario of cases)for(const concurrency of [1,5]){
     const timings:number[]=[];
@@ -54,7 +63,7 @@ try {
     timings.sort((a,b)=>a-b);const p95Ms=timings[94];assert.ok(p95Ms<=scenario.budgetMs);
     results.push({operation:scenario.name,concurrency,samples:timings.length,p95Ms:Math.round(p95Ms),maximumMs:Math.round(timings.at(-1)!),budgetMs:scenario.budgetMs});
   }
-  const report={rows:count,pages,queries,coldHandlerMs:Math.round(coldMs),results,limitations:'PGlite engine with an isolated PostgREST adapter; no network/Auth/CDN latency, no independent database sessions, no production load. Save latency is measured separately by existing mutation tests and production observations.'};
+  const report={rows:count,pages,progressivePages,queries,coldHandlerMs:Math.round(coldMs),results,limitations:'PGlite engine with an isolated PostgREST adapter; no network/Auth/CDN latency, no independent database sessions, no production load. Save latency is measured separately by existing mutation tests and production observations.'};
   if(process.env.STUDIO_QA_REPORT)writeFileSync(process.env.STUDIO_QA_REPORT,JSON.stringify(report,null,2)+'\n');
   console.log(JSON.stringify(report,null,2));
 }finally{await db.close();}

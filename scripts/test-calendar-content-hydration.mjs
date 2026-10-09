@@ -573,12 +573,12 @@ assert.match(
 );
 assert.match(
   calendarSource,
-  /paragraphs=\{copy\.paragraphs\}[\s\S]*?rows=\{buildCalendarDayGroupRows/u,
+  /paragraphs=\{weeklyDayParagraphs\?\.get\(day\.dateKey\) \?\? assembledPassages\.daily\.get\(day\.dateKey\)\?\.paragraphs \?\? copy\.paragraphs\}[\s\S]*?rows=\{buildCalendarDayGroupRows/u,
   "Weekly Moon-in-sign guidance must render before that day's aspects and movements."
 );
 assert.match(
   calendarSource,
-  /paragraphs=\{copy\.paragraphs\}[\s\S]*?includeSurfaceEvents: true/u,
+  /paragraphs=\{weeklyDayParagraphs\?\.get\(day\.dateKey\) \?\? assembledPassages\.daily\.get\(day\.dateKey\)\?\.paragraphs \?\? copy\.paragraphs\}[\s\S]*?includeSurfaceEvents: true/u,
   "Weekly guidance must remain visible when the day also has an event description."
 );
 assert.doesNotMatch(
