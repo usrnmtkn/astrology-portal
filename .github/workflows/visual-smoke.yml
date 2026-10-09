@@ -341,7 +341,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        suite: [studio-style, studio-web-entry, studio-variables, sky-article, horoscope-writing, horoscope-reader, lunation-studio]
+        suite: [studio-style, studio-web-entry, studio-variables, sky-article, horoscope-writing, lunation-studio]
     env:
       VITE_SUPABASE_URL: https://visual-smoke.supabase.test
       VITE_SUPABASE_ANON_KEY: visual-smoke-placeholder
@@ -363,6 +363,39 @@ jobs:
         uses: actions/upload-artifact@v6
         with:
           name: studio-preview-suite-results-${{ matrix.suite }}
+          path: test-results/
+          if-no-files-found: ignore
+
+  # The complete Horoscope editor/reader journeys outgrew one serial job.
+  # Shard by test while retaining one worker and every per-action deadline.
+  horoscope-reader:
+    needs: scope
+    if: needs.scope.outputs.studio == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2, 3]
+    env:
+      VITE_SUPABASE_URL: https://visual-smoke.supabase.test
+      VITE_SUPABASE_ANON_KEY: visual-smoke-placeholder
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build:knowledge
+      - run: npx playwright install --with-deps chromium
+      - name: Run Horoscope editor and reader journeys
+        run: npx playwright test -c playwright.horoscope-reader.config.ts --fully-parallel --workers=1 --shard=${{ matrix.shard }}/3
+      - name: Upload Horoscope artifacts
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: horoscope-reader-results-${{ matrix.shard }}
           path: test-results/
           if-no-files-found: ignore
 
