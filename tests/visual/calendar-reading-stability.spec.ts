@@ -1,6 +1,58 @@
 import { expect, test } from '@playwright/test';
 import { bundledPublications } from '../helpers/bundled-publications';
 import { readerResponse } from '../helpers/reader-response';
+import { LUNAR_JOURNAL_ENTRIES, lunarJournalSkyParagraphs } from '../../apps/web/src/features/calendar/lunarJournal';
+
+for (const scenario of [
+  { date: '2026-10-18', type: 'firstq', sign: 'Capricorn', label: 'First Quarter Moon in Capricorn' },
+  { date: '2026-10-03', type: 'lastq', sign: 'Cancer', label: 'Last Quarter Moon in Cancer' }
+]) for (const width of [390, 1440]) for (const published of [false, true]) {
+  test(`Calendar keeps complete quarter writing ${scenario.date} ${width} ${published ? 'published' : 'bundled'}`, async ({ page }) => {
+    test.setTimeout(120_000);
+    const theme = width === 390 ? 'dark' : 'light';
+    const entry = LUNAR_JOURNAL_ENTRIES.find(entry => entry.type === scenario.type && entry.sign === scenario.sign)!;
+    const key = entry.contentKey;
+    const paragraphs = published
+      ? ['Synthetic saved quarter opening.', 'Synthetic saved quarter middle paragraph.', 'Synthetic saved quarter final paragraph.']
+      : lunarJournalSkyParagraphs(entry.blocks);
+    await page.setViewportSize({ width, height: 1000 });
+    await page.clock.setFixedTime(new Date('2026-10-09T16:00:00Z'));
+    await page.emulateMedia({ colorScheme: theme });
+    await page.addInitScript(theme => {
+      localStorage.setItem('tldrastro:theme', theme);
+      localStorage.setItem('tldrastro:selectedLocation', JSON.stringify({ label: 'New York, NY', latitude: 40.7128, longitude: -74.006, timeZone: 'America/New_York' }));
+    }, theme);
+    await bundledPublications(page);
+    if (published) await page.route('**/api/content-reader', async route => {
+      const keys: string[] = route.request().postDataJSON().keys ?? [];
+      await route.fulfill({ json: readerResponse(keys.includes(key) ? [{
+        id: 'calendar-quarter-fixture', content_key: key, body: paragraphs.join('\n\n'), status: 'LIVE', lane: 'serving',
+        surface: 'sky', mode: 'in_depth', provider: 'manual', updated_at: '2026-10-09T12:00:00Z',
+        source_snapshot: { content_role: 'full_copy', review_status: 'approved_reuse' }
+      }] : []) });
+    });
+    const errors: string[] = [];
+    page.on('pageerror', error => errors.push(error.message));
+    await page.goto(`/?date=${scenario.date}#calendar?view=month&date=${scenario.date}`);
+    for (const view of ['Month', 'Week']) {
+      await page.getByRole('tab', { name: view, exact: true }).click();
+      const group = page.locator(`#calendar-day-group-${scenario.date}`);
+      const quarter = group.locator('.calendar-day-group__block').filter({ has: page.getByRole('button', { name: new RegExp(scenario.label) }) });
+      for (const reloaded of [false, true]) {
+        if (reloaded) await page.reload();
+        await expect(page.getByRole('tab', { name: view, exact: true })).toHaveAttribute('aria-selected', 'true');
+        await expect(quarter.locator('.calendar-day-group__excerpt')).toHaveText(paragraphs, { timeout: 60_000 });
+        if (scenario.type === 'firstq') {
+          // Swiss Ephemeris puts a late ingress on the same date. The quarter
+          // write-up must coexist with that separate Moon passage.
+          await expect(group.locator('.calendar-day-group__blurb')).toContainText('You may notice the change more tomorrow than tonight.');
+        }
+      }
+      if (view === 'Month') await group.screenshot({ path: `test-results/calendar-quarter-${scenario.date}-${width}-${published ? 'published' : 'bundled'}.png` });
+    }
+    expect(errors).toEqual([]);
+  });
+}
 
 for (const width of [390, 1440]) {
   test(`Calendar keeps its loaded day through repeated route and background checks ${width}`, async ({ page }) => {

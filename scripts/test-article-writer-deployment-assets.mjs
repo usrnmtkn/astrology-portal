@@ -22,6 +22,7 @@ for (const endpoint of [
   "api/admin/horoscope-writing.ts",
   "api/admin/lunation-writing.ts",
   "api/admin/calendar-lunation-writing.ts",
+  "api/admin/calendar-daily-writing.ts",
 ]) {
   const rule = deployment.functions?.[endpoint];
   assert.ok(rule && typeof rule.includeFiles === "string", `${endpoint} needs an explicit Vercel includeFiles rule.`);

@@ -137,6 +137,7 @@ import {
 import {
   journalTypeForEvent,
   lunarJournalSkyBlurbs,
+  lunarJournalSkyParagraphs,
   lunarJournalSkyPrompt,
   resolveLunarJournal
 } from "./lunarJournal";
@@ -1738,7 +1739,8 @@ function buildCalendarDayGroupRows({
   includeSurfaceEvents,
   showMoonRow,
   natalMoonSign,
-  seasonExcerpt
+  seasonExcerpt,
+  generatedContent
 }: {
   day: LunarCalendarDay;
   previousDay?: LunarCalendarDay | null;
@@ -1748,6 +1750,7 @@ function buildCalendarDayGroupRows({
   showMoonRow: boolean;
   natalMoonSign?: string | null;
   seasonExcerpt?: string;
+  generatedContent?: Map<string, LiveGeneratedContent> | null;
 }): CalendarDayGroupRow[] {
   const rows: CalendarDayGroupRow[] = [];
   const seasonStart = daySeasonStart(day);
@@ -1802,12 +1805,18 @@ function buildCalendarDayGroupRows({
     : monthAgendaEvents(day);
 
   for (const event of events) {
+    const journalType = journalTypeForEvent(event);
+    const quarterJournal = journalType === "firstq" || journalType === "lastq"
+      ? resolveLunarJournal(event, generatedContent)
+      : null;
     rows.push({
       id: event.id,
       kind: calendarKindFromEvent(event),
       glyph: eventGlyphText(event),
       title: calendarMotionTitle(event).replace(/ retrograde$/i, " Rx"),
       meta: formatCompactEventTime(event.startsAt, zone),
+      // Keep the event's complete write-up alongside the day's Moon passage.
+      paragraphs: quarterJournal ? lunarJournalSkyParagraphs(quarterJournal.blocks) : undefined,
       event
     });
   }
@@ -3027,7 +3036,8 @@ export function LunarCalendar({
                     includeSurfaceEvents: true,
                     showMoonRow: !hasLunation,
                     natalMoonSign,
-                    seasonExcerpt: copy.seasonExcerpt
+                    seasonExcerpt: copy.seasonExcerpt,
+                    generatedContent
                   })}
                   weekday={formatWeekdayLong(day, zone)}
                 />
@@ -3293,7 +3303,8 @@ export function LunarCalendar({
                     includeSurfaceEvents: false,
                     showMoonRow: isQuarterMoonLabel(phase) && !hasLunation,
                     natalMoonSign,
-                    seasonExcerpt: copy.seasonExcerpt
+                    seasonExcerpt: copy.seasonExcerpt,
+                    generatedContent
                   })}
                     weekday={formatWeekdayLong(day, zone)}
                   />
