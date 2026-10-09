@@ -839,7 +839,7 @@ export function ManualChartsPanel({
     aspect: { from: string; to: string; type: string; orb: number },
     generatedContent?: GeneratedContentMap
   ) {
-    return normalizeCompositeAspectSurface(aspect, generatedContent).sections
+    return normalizeCompositeAspectSurface(aspect, generatedContent, relationshipComparisonIsSelf ? selectedChart?.relationshipType : null).sections
       .map((section) => section.body).join("\n\n");
   }
 
@@ -847,7 +847,7 @@ export function ManualChartsPanel({
     return socialPlacementRows(sky).map((row) => {
       const normalized = normalizeCompositePlacementSurface({
         planet: row.label, sign: row.sign, house: row.house
-      }, generatedContent);
+      }, generatedContent, relationshipComparisonIsSelf ? selectedChart?.relationshipType : null);
       const description = normalized.sections.map((section) => section.body).join("\n\n");
       return { ...row, description, detailAvailable: Boolean(description) };
     });
@@ -1212,7 +1212,7 @@ export function ManualChartsPanel({
     selectedCompositeSky
       ? compositePlacementRows(selectedCompositeSky, relationshipGeneratedContent)
       : []
-  ), [compositeContentRegistryVersion, relationshipGeneratedContent, selectedCompositeSky]);
+  ), [compositeContentRegistryVersion, relationshipGeneratedContent, selectedCompositeSky, relationshipComparisonIsSelf, selectedChart?.relationshipType]);
   const selectedCompositeViewGroups = useMemo<FriendCompositeAspectGroup[]>(() => (
     selectedCompositeAspectGroups.map((group) => ({
       key: group.key,

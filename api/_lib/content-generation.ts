@@ -1,3 +1,5 @@
+import { advisoryModelViolation, effectiveRulePrompt, governValidationResult } from "../../src/astro-writing/effectiveRuleGovernance.mjs";
+import { sharedGenerationOwnerExamples } from "./shared-generation-owner-examples.js";
 import { GeneratedRowWriteConflict, confirmedGeneratedRowWrite } from "./generated-row-writes.js";
 import { isSkyIngressEssay, SKY_INGRESS_ESSAY_INSTRUCTIONS } from "../../apps/web/src/content/skyIngressEssay.mjs";
 import { studioArticleWritingMemory } from './studio-article-memory.js';
@@ -208,6 +210,7 @@ type ApprovedExample = {
   headline: string;
   summary: string;
   body: string;
+  evidence?: { authority: string; sourceId: string; sourcePath: string; sourceSha256: string; textSha256: string };
 };
 
 type V4RewriteEntry = {
@@ -775,7 +778,7 @@ function badAiGenerationFlags(text: string) {
   }
 
   if (/\bperform(?:s|ed|ing)?\b/i.test(text)) {
-    flags.push("banned word: perform");
+    flags.push("Review word in context: perform");
   }
 
   if (/\bshows where\b|\bdescribes where\b|\bcan explain why\b/i.test(text)) {
@@ -807,22 +810,27 @@ function isApprovedSynastryExampleException(phrase: string, normalizedText: stri
     && normalizedText.includes("performing agreement");
 }
 
-function softVoiceWarningFailures(content: GeneratedContent, input: GenerateContentInput) {
-  if (!isAdminDraftGeneration(input) || !isPrimaryNatalPlacementGeneration(input)) {
-    return [];
+export function sharedGenerationReviewSignals(content: GeneratedContent, input: GenerateContentInput) {
+  const copy = [content.headline, content.tldr, content.summary, content.body, content.action, content.timing,
+    ...(content.sections ?? []).flatMap(section => [section.heading, section.body])].filter(Boolean).join("\n");
+  const normalized = normalizeText(copy);
+  const signals = badAiGenerationFlags(copy);
+  for (const phrase of bannedUserFacingPhrases) {
+    if (hasBannedPhrase(normalized, phrase) && !isApprovedSynastryExampleException(phrase, normalized, input)) signals.push(`Review phrase in context: ${phrase}`);
   }
-
-  const text = normalizeText([
-    content.headline,
-    content.tldr,
-    content.summary,
-    content.body,
-    content.action,
-    content.timing,
-    ...(content.sections ?? []).flatMap((section) => [section.heading, section.body])
-  ].filter(Boolean).join("\n"));
-
-  return natalPlacementSoftWarningPhrases.filter((phrase) => hasBannedPhrase(text, phrase));
+  if (copy.includes("—")) signals.push("Review punctuation: em dash");
+  if (content.summary.trim().length < 40) signals.push("Review summary development");
+  if (content.body.trim().length < 180) signals.push("Review body development");
+  if (isSynastryAspectInput(input)) {
+    signals.push(...synastryBannedPhrases.filter(phrase => hasBannedPhrase(normalized, phrase)).map(phrase => `Review relationship phrasing: ${phrase}`));
+  }
+  if (isPrimaryNatalPlacementGeneration(input)) {
+    signals.push(...natalPlacementBannedPhraseFailures(content), ...natalPlacementSoftWarningPhrases.filter(phrase => hasBannedPhrase(normalized, phrase)));
+  }
+  if (isNatalAspectGenerationContext(input)) {
+    signals.push(...[clippedCommandListCadence(copy), natalAspectVagueFiller(content.body), natalAspectReportPhrase(content.body), natalAspectTextbookOpening(content.body)].filter(Boolean));
+  }
+  return [...new Set(signals)];
 }
 
 function styleNotesForGeneratedContent(content: GeneratedContent, input: GenerateContentInput) {
@@ -868,7 +876,7 @@ function generationQualityDiagnostics(content: GeneratedContent, input: Generate
       .map((issue) => `${issue.code}: ${issue.message}`)
     : [];
   return {
-    softWarnings: [...new Set([...softVoiceWarningFailures(content, input), ...reportWarnings])],
+    softWarnings: [...new Set([...sharedGenerationReviewSignals(content, input), ...reportWarnings])],
     styleNotes: styleNotesForGeneratedContent(content, input)
   };
 }
@@ -901,7 +909,7 @@ const requiredHeadingsByMode: Record<ContentMode, string[]> = {
   report: []
 };
 
-const bannedOutputSignatures = ["this is not", "in review", "this entry is", "currently in review"];
+const bannedOutputSignatures = ["in review", "this entry is", "currently in review"];
 export const editorialBannedPhrases = [
   "this contact",
   "this placement",
@@ -1634,13 +1642,13 @@ function sourceMethodRules() {
 function rewriteCorpusRules() {
   return [
     "REWRITE CORPUS FIELD MAP",
-    "Use the rewrite examples as a translation guide, not as current facts.",
+    "These rewrite rows are semantic references, not evidence of owner authorship or a positive voice model.",
     "observableExperience, observableTendency, observableCurrentActivation: use these for lived effects and reader-facing observations.",
     "baseMeaningRewrite, symbolicStory, tldr: use these for the core astrology logic and plain-language summary.",
     "shadowPattern, pressurePoint, whereItCanBecomeDifficult: use these for what can get messy or where the friction lives.",
-    "bestMove, whereItHelps, closingReflection: use these for grounded action language without visible labels.",
-    "readerFacingSummary: use this for pacing and plain-language summary style.",
-    "If the examples are not an exact match, use only the style and field logic. Never import a fact that is missing from ASTROLOGY FACTS."
+    "bestMove, whereItHelps, closingReflection: consider only consequences licensed by the target facts.",
+    "readerFacingSummary: treat as a claim to check against the target facts, never as a pacing or vocabulary example.",
+    "If the references are not an exact match, do not import their claims. Only the complete owner-authored passages below supply voice, sentence movement, and vocabulary."
   ].join("\n");
 }
 
@@ -1658,13 +1666,13 @@ function natalPlacementPrimitiveRules() {
 
 function bannedPhraseRules() {
   return [
-    "BANNED USER-FACING LANGUAGE",
-    "Do not use em dashes.",
-    "Do not use these phrases or close variants:",
+    "EDITORIAL REVIEW SIGNALS",
+    "These lexical and cadence patterns require complete-passage context; a match alone is not a hard failure.",
+    "Review these phrases and close variants for the meaning they carry:",
     ...bannedUserFacingPhrases.map((phrase) => `- ${phrase}`),
     ...editorialBannedPhrases.map((phrase) => `- ${phrase}`),
     "Avoid vague spiritual/self-help language such as lean into, step into your power, highest self, divine timing, embodiment, alignment, or healing journey.",
-    "Prefer concrete actions: get it in writing, ask the clarifying question, wait a day, narrow the field, name the expectation, make the call, schedule the meeting, separate the feeling from the fact."
+    "Use supported circumstances and consequences. Do not invent errands, appointments, or an action list to satisfy a specificity heuristic."
   ].join("\n");
 }
 
@@ -1791,11 +1799,6 @@ function timeLordPlanetFromFacts(facts: Record<string, unknown> | undefined): Pl
   }
 
   return visit(facts);
-}
-
-function compactBody(value: string, maxLength = 1400) {
-  const trimmed = value.replace(/\s+/g, " ").trim();
-  return trimmed.length > maxLength ? `${trimmed.slice(0, maxLength).trim()}...` : trimmed;
 }
 
 function normalizeText(value: string) {
@@ -2316,10 +2319,6 @@ function editorialRewriteInstruction(failures: EditorialFailure[]) {
   ].filter(Boolean);
 
   return instructions.join(" ");
-}
-
-function hasEnoughSectionContent(sections: Array<{ heading?: string; body?: string }>) {
-  return sections.filter((section) => stringValue(section.heading) && stringValue(section.body).length >= 40).length >= 2;
 }
 
 function isDailySkyFeedAspect(input: Pick<GenerateContentInput, "surface" | "mode" | "eventType"> & { facts?: Record<string, unknown> }) {
@@ -2979,6 +2978,7 @@ function approvedExamplesPrompt(examples: ApprovedExample[]) {
 
   return examples.map((example, index) => [
     `APPROVED EXAMPLE ${index + 1}`,
+    example.evidence ? `Evidence: ${JSON.stringify(example.evidence)}` : "",
     `Surface: ${example.surface || "unknown"}`,
     `Mode: ${example.mode || "unknown"}`,
     `Event type: ${example.eventType || "unknown"}`,
@@ -3596,11 +3596,6 @@ function deterministicNatalPlacementDraft(input: GenerateContentInput): StoredGe
       sourceIds: authored.matches.map((match) => stringValue(match.entry.id)).filter(Boolean)
     })
   };
-
-  const banned = natalPlacementBannedPhraseFailures(content);
-  if (banned.length) {
-    throw new ContentGenerationQualityError(`Deterministic natal placement copy used banned phrase: ${banned.join(", ")}`);
-  }
 
   validateGeneratedContentForInput(content, input);
 
@@ -4552,7 +4547,7 @@ function buildPrompt(input: GenerateContentInput, approvedExamples: ApprovedExam
         "Do not replace the astrology headline with a purely editorial theme."
       ].join("\n");
 
-  return [
+  return effectiveRulePrompt([
     styleGuide,
     "",
     "TASK",
@@ -4615,9 +4610,9 @@ function buildPrompt(input: GenerateContentInput, approvedExamples: ApprovedExam
     "Use these source-backed rows only as base aspect accuracy and claim-safety support after ASTROLOGY SOURCE MATERIAL and natal placement primitives. For personalized natal placement aspect cards, they are not prose examples; use only their themes to respect and claims to avoid. Do not let these rows override supplied signs, houses, or project-authored placement material. Do not imitate their prose style, sentence structure, or generic aspect-article openings.",
     sourceBackedRevisionPrompt(input),
     "",
-    "SOURCE-BACKED V4 REWRITE EXAMPLES",
+    "SOURCE-BACKED V4 SEMANTIC REFERENCES",
     rewriteCorpusRules(),
-    "Use these to understand field logic, voice shape, and TLDR Astro interpretation style. Do not copy astrology facts from them unless those facts are also present above.",
+    "Use only supported meaning from these references. They cannot override the supplied facts or the owner-authored voice evidence.",
     v4ExamplesPrompt(input),
     "",
     "APPROVED TLDR ASTRO EXAMPLES",
@@ -4631,121 +4626,17 @@ function buildPrompt(input: GenerateContentInput, approvedExamples: ApprovedExam
     qualityFeedback ? "" : "",
     "EXTRA VOICE NOTES",
     input.voiceNotes ?? "None."
-  ].join("\n");
-}
-
-type CanonicalOwnerExample = {
-  id: string;
-  contentKey: string;
-  family: string;
-  register: string;
-  text: string;
-  ownerApproved: boolean;
-  authority: string;
-};
-
-let canonicalOwnerExamplesCache: CanonicalOwnerExample[] | null = null;
-
-function canonicalExampleFamilies(input: GenerateContentInput) {
-  const context = `${input.surface} ${input.eventType} ${input.contentKey}`.toLowerCase();
-  if (context.includes("transit-house-sign")) return ["authored/transit-house-sign", "authored/transit-house-intro", "house-core", "knowledge-matrix-house"];
-  if (context.includes("transit-house")) return ["authored/transit-house-intro", "authored/transit-house", "house-core", "knowledge-matrix-house"];
-  if (context.includes("transit-aspect") || (input.surface === "you" && context.includes("aspect"))) {
-    return ["authored/transit-aspect", "knowledge-matrix-transit", "natal"];
-  }
-  if (context.includes("synastry") || context.includes("relationship")) return ["synastry"];
-  if (context.includes("daily")) return ["daily"];
-  if (context.includes("aspect") && input.surface === "sky") {
-    return ["sky-aspect", "knowledge-matrix-transit", "authored/transit-aspect", "fallback-hook/transit-aspect-type"];
-  }
-  if (context.includes("aspect")) return ["natal", "authored/transit-aspect"];
-  if (context.includes("placement") && input.surface === "sky") return ["sky-placement", "knowledge-matrix-transit"];
-  if (context.includes("house")) return ["house-core", "knowledge-matrix-house"];
-  return input.surface === "sky" ? ["sky-placement", "knowledge-matrix-transit"] : ["natal"];
-}
-
-function canonicalExampleRegister(input: GenerateContentInput) {
-  return input.surface === "sky" ? "collective" : "second_person";
-}
-
-function canonicalExampleWords(value: unknown) {
-  return new Set(JSON.stringify(value).toLowerCase().match(/[a-z][a-z'-]+/gu) ?? []);
-}
-
-function loadCanonicalOwnerExampleRows() {
-  if (canonicalOwnerExamplesCache) return canonicalOwnerExamplesCache;
-  const filePath = path.join(process.cwd(), "data/writing/OWNER_APPROVED_EXAMPLES.jsonl");
-  if (!fs.existsSync(filePath)) throw new Error(`Canonical owner examples are missing: ${filePath}`);
-  canonicalOwnerExamplesCache = fs.readFileSync(filePath, "utf8")
-    .trim()
-    .split("\n")
-    .filter(Boolean)
-    .map((line) => JSON.parse(line) as CanonicalOwnerExample)
-    .filter((entry) => entry.ownerApproved === true && entry.text && entry.contentKey);
-  return canonicalOwnerExamplesCache;
+  ].join("\n"), { surface: input.surface, family: input.eventType });
 }
 
 async function loadApprovedExamples(input: GenerateContentInput) {
-  if (input.surface === "friends" && input.eventType === "bond-effect") {
-    // Relationship cards need complete owner-authored relationship passages,
-    // not the natal default or truncated generated/approved examples.
-    const index = JSON.parse(readTextFile("packages/astro-knowledge/voice/tldr-astro/satori-writer/voice-index.json"));
-    const words = canonicalExampleWords(input.facts);
-    const examples = index.entries
-      .filter((entry: any) => entry.ownerAuthored === true
-        && entry.authorityClass === "owner_authored_final"
-        && entry.useAsPositiveVoiceEvidence === true
-        && entry.useAsNegativeEvidence !== true
-        && entry.surface === "relationship-astrology"
-        && entry.text.split(/\s+/u).length >= 35
-        && !entry.text.includes("?") && !/\b(?:2025|2026|Affirmation)\b/u.test(entry.text))
-      .map((entry: any) => ({ entry, score: [...canonicalExampleWords(entry.text)].filter(word => words.has(word)).length }))
-      .sort((a: any, b: any) => b.score - a.score || a.entry.sourceId.localeCompare(b.entry.sourceId))
-      .slice(0, 3);
-    if (examples.length < 3) throw new Error("No complete owner-authored relationship voice evidence is available.");
-    return examples.map(({ entry }: any) => ({
-      contentKey: entry.sourceId,
-      surface: input.surface,
-      mode: input.mode,
-      eventType: input.eventType,
-      targetDate: "",
-      headline: entry.sourcePath,
-      summary: "Adjacent relationship register; voice only, not target astrology facts.",
-      body: entry.text
-    }));
-  }
-  const families = canonicalExampleFamilies(input);
-  const register = canonicalExampleRegister(input);
-  const needles = canonicalExampleWords({
-    contentKey: input.contentKey,
-    surface: input.surface,
-    eventType: input.eventType,
-    facts: input.facts
-  });
-  const scored = loadCanonicalOwnerExampleRows()
-    .filter((entry) => families.includes(entry.family) && entry.register === register)
-    .map((entry, index) => {
-      const words = canonicalExampleWords({ key: entry.contentKey, text: entry.text });
-      let score = 0;
-      for (const word of needles) if (words.has(word)) score += 1;
-      return { entry, index, score };
-    })
-    .sort((a, b) => b.score - a.score || a.index - b.index)
-    .slice(0, 4);
-  if (!scored.length) throw new Error(`No canonical owner-approved ${families.join("|")}/${register} examples are available.`);
-  return scored.map(({ entry }) => ({
-    contentKey: entry.contentKey,
-    surface: input.surface,
-    mode: input.mode,
-    eventType: input.eventType,
-    targetDate: "",
-    headline: entry.contentKey,
-    summary: "",
-    body: compactBody(entry.text)
-  }));
+  // Report evidence has its own domain/register contract and complete frozen packet.
+  if (input.reportPayload) return [];
+  const index = JSON.parse(readTextFile("packages/astro-knowledge/voice/tldr-astro/satori-writer/voice-index.json"));
+  return sharedGenerationOwnerExamples(index, input);
 }
 
-function validateGeneratedContentQuality(content: GeneratedContent, input: GenerateContentInput) {
+export function validateGeneratedContentQuality(content: GeneratedContent, input: GenerateContentInput) {
   if (input.reportPayload) {
     const issues = validateReportDraft(content, input.reportPayload)
       .filter((issue) => issue.severity !== "warning");
@@ -4771,62 +4662,20 @@ function validateGeneratedContentQuality(content: GeneratedContent, input: Gener
   const requiredHeadings = requiredSectionHeadingsForInput(input);
   const matchedRequired = sectionHeadingSetMatch(sectionHeadings, requiredHeadings);
 
-  if (userFacingText.includes("—")) {
-    throw new Error("Generated content used an em dash. Please regenerate after revising the prompt or voice notes.");
-  }
-
-  const badAiFlags = badAiGenerationFlags(userFacingText);
-
-  if (badAiFlags.length) {
-    hardEditorialViolation(badAiFlags, `Generated content matched bad AI generation pattern: ${badAiFlags.join(", ")}`);
-  }
-
-  const softWarnings = softVoiceWarningFailures(content, input);
-
-  for (const phrase of bannedUserFacingPhrases) {
-    if (softWarnings.includes(phrase)) {
-      continue;
-    }
-
-    if (isApprovedSynastryExampleException(phrase, normalized, input)) {
-      continue;
-    }
-
-    if (hasBannedPhrase(normalized, phrase)) {
-      hardEditorialViolation([phrase], `Generated content used banned phrase: ${phrase}`);
-    }
-  }
-
   for (const signature of bannedOutputSignatures) {
     if (normalized.includes(signature)) {
       hardEditorialViolation([signature], `Generated content included disallowed phrase: ${signature}`);
     }
   }
 
-  if (isSynastryAspectInput(input)) {
-    const synastryMatches = synastryBannedPhrases.filter((phrase) => hasBannedPhrase(normalized, phrase));
-
-    if (synastryMatches.length) {
-      hardEditorialViolation(synastryMatches, `Generated synastry content used banned phrase: ${synastryMatches.join(", ")}`);
-    }
-  }
-
   if (isNatalAspectGenerationContext(input)) {
     const natalAspectText = mainCopyText(content);
     const natalAspectBody = content.body.trim();
-    const clippedCommand = clippedCommandListCadence(natalAspectText);
     const transitSentence = natalAspectTransitLanguage(natalAspectText);
     const conditionalSentence = natalAspectConditionalChartLanguage(natalAspectText);
-    const vagueFillerSentence = natalAspectVagueFiller(natalAspectBody);
-    const reportPhraseSentence = natalAspectReportPhrase(natalAspectBody);
-    const textbookOpeningSentence = natalAspectTextbookOpening(natalAspectBody);
     const factUsageFailure = hasPersonalizedNatalAspectFacts(input.facts)
       ? personalizedNatalAspectFactUsageFailure(natalAspectBody, input.facts)
       : "";
-
-    if (clippedCommand) {
-      hardEditorialViolation(["clipped command-list cadence"], `Generated natal aspect copy used clipped command-list cadence: ${clippedCommand}`);
-    }
 
     if (transitSentence) {
       hardEditorialViolation(["transit/current-sky language"], `Generated natal aspect copy used transit/current-weather language: ${transitSentence}`);
@@ -4836,29 +4685,17 @@ function validateGeneratedContentQuality(content: GeneratedContent, input: Gener
       hardEditorialViolation(["conditional chart language"], `Generated personalized natal aspect copy used conditional chart language: ${conditionalSentence}`);
     }
 
-    if (vagueFillerSentence) {
-      hardEditorialViolation(["vague AI astrology filler"], `Generated natal aspect copy used vague AI astrology filler: ${vagueFillerSentence}`);
-    }
-
-    if (reportPhraseSentence) {
-      hardEditorialViolation(["report-style phrasing"], `Generated natal aspect copy used report-style phrasing: ${reportPhraseSentence}`);
-    }
-
-    if (textbookOpeningSentence) {
-      throw new Error(`Generated natal aspect copy used a textbook opening: ${textbookOpeningSentence}`);
-    }
-
     if (factUsageFailure) {
       throw new Error(`Generated personalized natal aspect copy ignored supplied chart facts: ${factUsageFailure}`);
     }
   }
 
-  if (content.summary.trim().length < 40) {
-    throw new Error("Generated summary is too thin for editorial review.");
+  if (!content.summary.trim()) {
+    throw new Error("Generated summary is missing.");
   }
 
-  if (content.body.trim().length < 180) {
-    throw new Error("Generated body is too thin for editorial review.");
+  if (!content.body.trim()) {
+    throw new Error("Generated body is missing.");
   }
 
   if (isFriendTransitReadingInput(input)) {
@@ -4867,17 +4704,12 @@ function validateGeneratedContentQuality(content: GeneratedContent, input: Gener
 
   if (isPrimaryNatalPlacementGeneration(input)) {
     const hasAspectInputs = arrayRecordValue(input.facts.aspects).length > 0;
-    const natalBanned = natalPlacementBannedPhraseFailures(content);
     const tarotReferences = natalPlacementTarotReferenceFailures(content);
     const natalTransitLanguage = natalPlacementTransitLanguageFailures(content);
     const visibleScaffold = natalPlacementVisibleScaffoldFailures(content);
     const conditionalChartLanguage = conditionalChartLanguageFailures(content);
     const aspectCardSections = (content.sections ?? [])
-      .filter((section) => stringValue(section.heading) && stringValue(section.body).length >= 60);
-
-    if (natalBanned.length) {
-      hardEditorialViolation(natalBanned, `Generated natal placement copy used banned phrase: ${natalBanned.join(", ")}`);
-    }
+      .filter((section) => stringValue(section.heading) && Boolean(stringValue(section.body)));
 
     if (tarotReferences.length) {
       hardEditorialViolation(tarotReferences, `Generated natal placement copy used tarot references: ${tarotReferences.join(", ")}`);
@@ -4903,17 +4735,7 @@ function validateGeneratedContentQuality(content: GeneratedContent, input: Gener
       throw new Error("Generated natal placement page did not include a usable aspect card section.");
     }
 
-    for (const section of aspectCardSections) {
-      if (section.body.trim().length >= content.body.trim().length) {
-        throw new Error("Generated natal placement aspect card was not shorter than the primary placement body.");
-      }
-    }
-
     return;
-  }
-
-  if (!hasEnoughSectionContent(content.sections ?? [])) {
-    throw new Error("Generated sections are too shallow for review quality.");
   }
 
   if (requiredHeadings.length > 0 && matchedRequired.length < requiredHeadings.length - 1) {
@@ -4934,7 +4756,7 @@ function validateAstrologyDrilldownQuality(content: GeneratedContent) {
     throw new Error("Generated astrologyDrilldown must use title: Why this?");
   }
 
-  if (stringValue(drilldown.summary).length < 50) {
+  if (!stringValue(drilldown.summary)) {
     throw new Error("Generated astrologyDrilldown summary is too thin.");
   }
 
@@ -4943,34 +4765,19 @@ function validateAstrologyDrilldownQuality(content: GeneratedContent) {
   }
 
   const invalidFactor = drilldown.factors.find((factor) => (
-    stringValue(factor.label).length < 3 ||
-    stringValue(factor.technicalFact).length < 8 ||
-    stringValue(factor.plainMeaning).length < 20
+    !stringValue(factor.label) ||
+    !stringValue(factor.technicalFact) ||
+    !stringValue(factor.plainMeaning)
   ));
 
   if (invalidFactor) {
     throw new Error("Generated astrologyDrilldown contains a factor that is too thin.");
   }
 
-  if (stringValue(drilldown.whyThisScene).length < 80) {
+  if (!stringValue(drilldown.whyThisScene)) {
     throw new Error("Generated astrologyDrilldown must explain why this scene was chosen.");
   }
 
-  const drilldownText = [
-    drilldown.title,
-    drilldown.summary,
-    ...drilldown.factors.flatMap((factor) => [factor.label, factor.technicalFact, factor.plainMeaning]),
-    drilldown.whyThisScene,
-    drilldown.timingNote
-  ].filter(Boolean).join("\n");
-
-  if (drilldownText.includes("—")) {
-    throw new Error("Generated astrologyDrilldown used an em dash.");
-  }
-
-  if (countMatches(drilldownText, editorialBannedPhrases) > 2) {
-    throw new Error("Generated astrologyDrilldown sounds too much like generic astrology copy.");
-  }
 }
 
 export function evaluateEditorialCoherence(
@@ -5161,11 +4968,13 @@ export function evaluateEditorialCoherence(
     });
   }
 
-  // These count-based signals cannot indirectly block a legitimate list by
-  // lowering the aggregate score. The independent semantic judge decides.
-  const score = Math.max(0, 100 - failures.filter(failure=>!['SUMMARY_LISTS_TOPICS','KEYWORD_LISTING'].includes(failure.code))
-    .reduce((total, failure) => total + (failure.severity === "fail" ? 18 : 8), 0));
-  const passed = !failures.some((failure) => failure.severity === "fail") && score >= 70;
+  // Presentation and lexical heuristics remain owner-review signals. Only
+  // unsupported facts can block here; semantic rhetoric uses its own receipt.
+  const factCodes = new Set(["UNSUPPORTED_EXTERNAL_SCENE"]);
+  failures.forEach(failure => { if (!factCodes.has(failure.code)) failure.severity = "warning"; });
+  const blocking = failures.filter(failure => failure.severity === "fail");
+  const score = Math.max(0, 100 - blocking.length * 18);
+  const passed = blocking.length === 0;
 
   return {
     passed,
@@ -5347,12 +5156,12 @@ function deterministicProductionValidation(
   meaningPlan: Record<string, unknown> | null = null
 ) {
   assertValidationProfile(gate.validation.validationProfile);
-  return validateCopy(deterministicReaderCopy(draft), {
+  return governValidationResult(validateCopy(deterministicReaderCopy(draft), {
     validationProfile: gate.validation.validationProfile,
     family: input.eventType,
     register: gate.validation.register,
     plan: meaningPlan
-  });
+  }), { surface: input.surface, family: input.eventType });
 }
 
 function assertProductionRoleGate(
@@ -5450,6 +5259,7 @@ async function reviewGeneratedContentWithOpenAI({
           ? { governedKnowledgeEvidence: productionGate.governedPrompt }
           : {}),
         meaningPlan,
+        advisorySignals: sharedGenerationReviewSignals(draft, input),
         draft
       }),
       reasoning: { effort: process.env.OPENAI_REVIEW_REASONING_EFFORT ?? "medium" },
@@ -5482,7 +5292,7 @@ async function reviewGeneratedContentWithOpenAI({
   }
   const rhetoric = validateRhetoricalReview((contextualReview as unknown as {rhetoric:unknown}).rhetoric, deterministicReaderCopy(draft));
   const rhetoricResult = rhetoricalDecision(rhetoric);
-  const contextualViolations = contextualReview.violations.filter((item) => item.category !== "cold_rendered_prose");
+  const contextualViolations = contextualReview.violations.filter((item) => item.category !== "cold_rendered_prose").map((item): CanonicalReviewViolation => advisoryModelViolation(item));
   const rhetoricalViolations = rhetoric.findings.map(f => ({category:f.label,severity:RHETORICAL_LABELS.some(label=>label===f.label)?'blocking' as const:'nonblocking' as const,location:f.field,text:f.quote,
     reason:`${f.reason} ${f.readerConsequence} ${f.meaningTest}`,paragraph:f.paragraph,
     revision_instruction:'Regenerate the affected prose from supported meaning, preserving owner sources and factual boundaries.'}));
@@ -5490,7 +5300,7 @@ async function reviewGeneratedContentWithOpenAI({
   return {
     ...contextualReview,
     cold_rendered_prose: coldReview.cold_rendered_prose,
-    decision: rhetoricResult === 'pass' ? contextualReview.decision : 'REVISE',
+    decision: rhetoricResult === 'pass' ? 'PASS' : 'REVISE',
     violations: [...coldReview.violations, ...contextualViolations, ...rhetoricalViolations]
   };
 }

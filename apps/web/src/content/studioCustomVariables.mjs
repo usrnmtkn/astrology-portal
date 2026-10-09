@@ -126,11 +126,14 @@ export function resolveStudioVariableRecord(record, context = {}, deferredNames 
 /** Resolve each publication's own frozen values for this render's calculated context. */
 export function bindStudioVariableRenderer(renderer, create, collections) {
   if (!collections.some(rows => rows.some(row => row?._studioVariables?.length))) return renderer;
+  // The resolved view includes calculated tokens as well as custom values.
+  // Planet/sign alone cannot identify dates, next signs, motion, or other facts.
+  const dependencies = [...new Set(collections.flatMap(rows => rows.flatMap(studioRecordVariableNames)))];
   const cache = new Map();
   return Object.fromEntries(Object.entries(renderer).map(([key, render]) => [key, typeof render !== "function" ? render : (...args) => {
     const context = object(args[0]) ? args[0] : {};
     const selection = studioVariableContext(context);
-    const cacheKey = `${selection.planet}/${selection.sign}`;
+    const cacheKey = JSON.stringify([selection, dependencies.map(name => calculatedStudioVariableValue(name, context))]);
     if (!cache.has(cacheKey)) {
       const resolved = collections.map(rows => rows.map(row => resolveStudioVariableRecord(row, context)));
       if (cache.size >= 24) cache.delete(cache.keys().next().value);

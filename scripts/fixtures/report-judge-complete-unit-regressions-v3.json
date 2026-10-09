@@ -10,7 +10,8 @@
     "description": "One judge call for each positive and negative in four score-level pairs, plus one critique call for the single-sentence finding-level fixture. No retries without new authorization."
   },
   "purpose": "Calibration-only complete-unit pairs for proposed report judge v3. Positive units are extracted verbatim from owner-authored reference reports. Negative units are unapproved mechanical degradations and must never become positive voice evidence or reader-facing copy.",
-  "factsSourcePath": "scripts/fixtures/synthetic-report-frozen-facts.json",
+  "factsSourcePath": "scripts/fixtures/report-judge-reference-unit-facts.json",
+  "factsSourceSha256": "58b59a750d91dbe16b594666d0cabf450a701227ee926ff14d48c364e5089236",
   "completeUnitParagraphIndexing": {
     "convention": "zero_based_supplied_indices",
     "marker": "[PARAGRAPH_INDEX={index}]",

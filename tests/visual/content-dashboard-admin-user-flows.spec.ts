@@ -6218,6 +6218,12 @@ test("composition map loads a package-only hook before opening its editable star
   await page.getByLabel("Search surfaces and systems").fill("natal placement detail");
   const manager = page.getByRole("region", { name: "Manage composition sources" });
   await expect(manager).toContainText("Your freedom comes from knowing what has power over you well enough to choose differently.");
+  const completeCopy = [record.body_you ?? record.body ?? record.text, record.body_they]
+    .filter((text, index, values): text is string => typeof text === "string" && Boolean(text) && values.indexOf(text) === index);
+  await expect(manager.locator(".admin-composition-source-copy")).toHaveText(completeCopy);
+  await page.reload();
+  await page.getByLabel("Search surfaces and systems").fill("natal placement detail");
+  await expect(manager.locator(".admin-composition-source-copy")).toHaveText(completeCopy);
   await manager.getByRole("button", { name: "Edit selected source" }).click();
   await expect(page.getByRole("dialog", { name: "Generated content editor" }).getByLabel("Content key")).toHaveValue(key);
 });

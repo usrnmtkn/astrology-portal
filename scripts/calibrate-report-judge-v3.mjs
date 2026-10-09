@@ -75,7 +75,9 @@ const manifest = JSON.parse(manifestText);
 const judgeText = activeJudgePrompt.text;
 const critiqueText = activeCritiquePrompt.text;
 const livedProseText = read(livedProsePath);
-const facts = JSON.parse(read(manifest.factsSourcePath));
+const factsText = read(manifest.factsSourcePath);
+assert.equal(sha256(factsText), manifest.factsSourceSha256, "Reference-unit composition facts drifted.");
+const facts = JSON.parse(factsText);
 
 for (const [name, document] of [["judge", judgeText], ["critique", critiqueText]]) {
   assert.match(document, /^\*\*Status:\*\* `owner_approved`$/mu, `${name} v3 is not owner-approved.`);

@@ -1,0 +1,245 @@
+{
+  "fixtureProvenance": {
+    "kind": "reference_unit_composition_cases",
+    "description": "Minimal semantic cases for the unchanged complete-unit report references. Attribution dates and point/house associations are the already-recorded claims in report-judge-complete-unit-regressions-v3.json. These are composition-test inputs, not an ephemeris calculation or a natal chart; there are no birth inputs, identities, signs, degrees or longitudes. General routing continues to use synthetic-report-frozen-facts.json and calculation integration uses synthetic_report_2026.json.",
+    "createdOn": "2026-10-09",
+    "sourceManifestPath": "scripts/fixtures/report-judge-complete-unit-regressions-v3.json"
+  },
+  "reportHorizon": "12_months",
+  "startsAt": "2026-02-18T12:00:00Z",
+  "endsAt": "2027-02-18T12:00:00Z",
+  "natal": {
+    "positions": [
+      {
+        "point": "Jupiter",
+        "house": 3
+      },
+      {
+        "point": "Moon",
+        "house": 6
+      },
+      {
+        "point": "Mercury",
+        "house": 10
+      },
+      {
+        "point": "Saturn",
+        "house": 4
+      }
+    ],
+    "angles": {
+      "Midheaven": {
+        "point": "Midheaven",
+        "house": 10
+      }
+    }
+  },
+  "slowTransitArcs": [
+    {
+      "id": "saturn-trine-jupiter",
+      "transitPlanet": "Saturn",
+      "natalPoint": "Jupiter",
+      "natalHouse": 3,
+      "aspect": "trine",
+      "isReturn": false,
+      "passCount": 1,
+      "passes": [
+        {
+          "exactAt": "2026-02-22T00:00:00Z",
+          "motion": "direct"
+        }
+      ]
+    },
+    {
+      "id": "neptune-trine-jupiter",
+      "transitPlanet": "Neptune",
+      "natalPoint": "Jupiter",
+      "natalHouse": 3,
+      "aspect": "trine",
+      "isReturn": false,
+      "passCount": 1,
+      "passes": [
+        {
+          "exactAt": "2026-02-26T00:00:00Z",
+          "motion": "direct"
+        }
+      ]
+    },
+    {
+      "id": "uranus-square-sun",
+      "transitPlanet": "Uranus",
+      "natalPoint": "Sun",
+      "natalHouse": 9,
+      "aspect": "square",
+      "isReturn": false,
+      "passCount": 1,
+      "passes": [
+        {
+          "exactAt": "2026-04-14T00:00:00Z",
+          "motion": "direct"
+        }
+      ]
+    },
+    {
+      "id": "jupiter-square-pluto",
+      "transitPlanet": "Jupiter",
+      "natalPoint": "Pluto",
+      "natalHouse": 5,
+      "aspect": "square",
+      "isReturn": false,
+      "passCount": 1,
+      "passes": [
+        {
+          "exactAt": "2026-05-01T00:00:00Z",
+          "motion": "direct"
+        }
+      ]
+    },
+    {
+      "id": "jupiter-trine-uranus",
+      "transitPlanet": "Jupiter",
+      "natalPoint": "Uranus",
+      "natalHouse": 6,
+      "aspect": "trine",
+      "isReturn": false,
+      "passCount": 1,
+      "passes": [
+        {
+          "exactAt": "2026-05-14T00:00:00Z",
+          "motion": "direct"
+        }
+      ]
+    },
+    {
+      "id": "saturn-sextile-ascendant",
+      "transitPlanet": "Saturn",
+      "natalPoint": "Ascendant",
+      "natalHouse": 1,
+      "aspect": "sextile",
+      "isReturn": false,
+      "passCount": 3,
+      "passes": [
+        {
+          "exactAt": "2026-05-19T00:00:00Z",
+          "motion": "direct"
+        },
+        {
+          "exactAt": "2026-10-06T00:00:00Z",
+          "motion": "retrograde"
+        },
+        {
+          "exactAt": "2027-02-10T00:00:00Z",
+          "motion": "direct"
+        }
+      ]
+    },
+    {
+      "id": "jupiter-conjunction-jupiter",
+      "transitPlanet": "Jupiter",
+      "natalPoint": "Jupiter",
+      "natalHouse": 3,
+      "aspect": "conjunction",
+      "isReturn": true,
+      "passCount": 1,
+      "passes": [
+        {
+          "exactAt": "2026-07-04T00:00:00Z",
+          "motion": "direct"
+        }
+      ]
+    },
+    {
+      "id": "jupiter-square-moon",
+      "transitPlanet": "Jupiter",
+      "natalPoint": "Moon",
+      "natalHouse": 6,
+      "aspect": "square",
+      "isReturn": false,
+      "passCount": 1,
+      "passes": [
+        {
+          "exactAt": "2026-08-27T00:00:00Z",
+          "motion": "direct"
+        }
+      ]
+    },
+    {
+      "id": "jupiter-opposition-midheaven",
+      "transitPlanet": "Jupiter",
+      "natalPoint": "Midheaven",
+      "natalHouse": 9,
+      "aspect": "opposition",
+      "isReturn": false,
+      "passCount": 1,
+      "passes": [
+        {
+          "exactAt": "2026-09-15T00:00:00Z",
+          "motion": "direct"
+        }
+      ]
+    },
+    {
+      "id": "jupiter-opposition-mars",
+      "transitPlanet": "Jupiter",
+      "natalPoint": "Mars",
+      "natalHouse": 9,
+      "aspect": "opposition",
+      "isReturn": false,
+      "passCount": 2,
+      "passes": [
+        {
+          "exactAt": "2026-10-20T00:00:00Z",
+          "motion": "direct"
+        },
+        {
+          "exactAt": "2027-02-05T00:00:00Z",
+          "motion": "retrograde"
+        }
+      ]
+    }
+  ],
+  "lunarEvents": [
+    {
+      "id": "lunar-eclipse-2026-03-03",
+      "kind": "lunar_eclipse",
+      "subtype": "total",
+      "occursAt": "2026-03-03T00:00:00Z",
+      "natalHouse": 4,
+      "natalContacts": [
+        {
+          "natalPoint": "Saturn",
+          "natalHouse": 4,
+          "aspect": "conjunction"
+        }
+      ]
+    },
+    {
+      "id": "solar-eclipse-2026-08-12",
+      "kind": "solar_eclipse",
+      "subtype": "total",
+      "occursAt": "2026-08-12T00:00:00Z",
+      "natalHouse": 3,
+      "natalContacts": [
+        {
+          "natalPoint": "Uranus",
+          "natalHouse": 6,
+          "aspect": "square"
+        }
+      ]
+    },
+    {
+      "id": "lunar-eclipse-2026-08-28",
+      "kind": "lunar_eclipse",
+      "subtype": "partial",
+      "occursAt": "2026-08-28T00:00:00Z",
+      "natalHouse": 10,
+      "natalContacts": [
+        {
+          "natalPoint": "Mercury",
+          "natalHouse": 10,
+          "aspect": "conjunction"
+        }
+      ]
+    }
+  ]
+}

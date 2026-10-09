@@ -1,3 +1,4 @@
+import { studioServingStatusRow } from "../apps/admin/src/studioServingStatus";
 import assert from "node:assert/strict";
 import { execFileSync } from "node:child_process";
 import { readFileSync } from "node:fs";
@@ -114,6 +115,8 @@ publications = [];
 dbRows[0].sections.packageDraft = { ...macro, body: "QA unsent revised macro." };
 assert.equal((await request(["qa-virgo"])).statuses[0].label, "Not live");
 assert.equal((await request([`package:${key}`])).statuses[0].label, "Live");
+assert.equal((await request([studioServingStatusRow(dbRows[0], key).id])).statuses[0].label, "Not live", "A saved revision must not inherit its different package baseline status.");
+assert.equal((await request([studioServingStatusRow(undefined, key).id])).statuses[0].label, "Live", "The package badge remains available when no saved revision is displayed.");
 const safe = { id: "safe", content_key: "cms/qa/exact", status: "LIVE", lane: "serving", body: "QA reader passage.", provider: "manual-admin" };
 assert.equal(contentLiveStatuses([safe])[0].live, true);
 const astro101 = {

@@ -1,5 +1,6 @@
 import { comparePersonalDailyTransits, personalDailyPriority, personalDailyPeakLabel, precisePersonalOrb, type PersonalDailyPeak } from "./services/personalDailyTransits";
 import { usePersonalDailyPeaks, usePersonalTransitSeries } from "./services/usePersonalDailyTransits";
+import { compositeReaderRelationshipCopy } from "./content/compositeRelationshipCopy";
 import { CalendarDaySkeleton } from "./features/calendar/CalendarDaySkeleton";
 import { skyIngressEssayPublicationKeys, skyIngressEssayReaderSection } from "./content/skyIngressEssayReader";
 import {
@@ -10115,94 +10116,23 @@ function relationshipTypeLabel(value?: string) {
   return value === "event" ? "Event" : relationshipContextLabel(value);
 }
 
-type PhrasebankCompositeRelationshipType =
-  | "romantic"
-  | "friendship"
-  | "family"
-  | "coworkers"
-  | "creative"
-  | "exes"
-  | "complicated";
-
-function phrasebankCompositeRelationshipType(value?: string | null): PhrasebankCompositeRelationshipType {
-  const normalized = normalizeRelationshipContextKey(value);
-  const phrasebankMap: Record<ReturnType<typeof normalizeRelationshipContextKey>, PhrasebankCompositeRelationshipType> = {
-    friend: "friendship",
-    acquaintance: "friendship",
-    "romantic-partner": "romantic",
-    ex: "exes",
-    situationship: "complicated",
-    family: "family",
-    coworker: "coworkers",
-    business: "coworkers",
-    "teacher-mentor": "coworkers",
-    "employer-manager": "coworkers",
-    "roommate-neighbor": "friendship"
-  };
-
-  return phrasebankMap[normalized] ?? "friendship";
-}
-
-function compositeRelationshipTypeSection(
-  generated: LiveGeneratedContent | null,
-  relationshipType?: string | null
-) {
-  const sections = generated?.sections;
-
-  if (!sections || typeof sections !== "object" || Array.isArray(sections)) {
-    return null;
-  }
-
-  const byRelationshipType = (sections as Record<string, unknown>).byRelationshipType;
-
-  if (!byRelationshipType || typeof byRelationshipType !== "object" || Array.isArray(byRelationshipType)) {
-    return null;
-  }
-
-  const typeKey = phrasebankCompositeRelationshipType(relationshipType);
-  const safeTypeKey = typeKey === "romantic" && !isExplicitRomanticRelationship(relationshipType)
-    ? "friendship"
-    : typeKey;
-  const variant = (byRelationshipType as Record<string, unknown>)[safeTypeKey];
-
-  if (!variant || typeof variant !== "object" || Array.isArray(variant)) {
-    return null;
-  }
-
-  return variant as Record<string, unknown>;
-}
-
-function compositeRelationshipTypeParagraphs(
-  generated: LiveGeneratedContent | null,
-  relationshipType?: string | null
-) {
-  const variant = compositeRelationshipTypeSection(generated, relationshipType);
-
-  if (!variant) {
-    return [];
-  }
-
-  return readerFacingParagraphs([
-    typeof variant.experience === "string" ? variant.experience : "",
-    typeof variant.advice === "string" ? variant.advice : "",
-    typeof variant.astro === "string" ? `The astro: ${variant.astro}.` : ""
-  ]);
-}
-
 function sourceGroundedCompositeSection({
   contentKeys,
   heading,
+  relationshipType,
   generatedContent
 }: {
   contentKeys: string[];
   heading: string;
   generatedContent?: GeneratedContentMap;
+  relationshipType?: string | null;
 }): NormalizedCompositeSection | null {
   if (contentKeys.some(isContentRetired)) return null;
   for (const key of contentKeys) {
     const generated = generatedContent ? liveGeneratedContent(generatedContent, key) : null;
     const paragraphs = generatedContentParagraphs(generated);
-    const body = paragraphs.length ? paragraphs.join("\n\n") : generated?.summary;
+    const body = compositeReaderRelationshipCopy(generated?.sections, relationshipType)
+      || (paragraphs.length ? paragraphs.join("\n\n") : generated?.summary);
     if (body) return {
       slot: "composite-meaning", required: true, layer: "generated",
       tier: "generated", sourceKeys: [key], heading, body
@@ -10230,13 +10160,14 @@ function sourceGroundedCompositeSection({
   };
 }
 
-function normalizeCompositeAspectSurface(aspect: { from: string; to: string; type: string; orb?: number | null }, generatedContent?: GeneratedContentMap): NormalizedCompositeArticle {
+function normalizeCompositeAspectSurface(aspect: { from: string; to: string; type: string; orb?: number | null }, generatedContent?: GeneratedContentMap, relationshipType?: string | null): NormalizedCompositeArticle {
   const contentKeys = relationshipAspectContentKeys(aspect.from, aspect.type, aspect.to, "composite")
     .filter((key) => key.startsWith("composite"));
   const sourceGroundedSection = sourceGroundedCompositeSection({
     contentKeys,
     heading: `Composite ${aspect.from} ${titleCase(aspect.type)} ${aspect.to}`,
-    generatedContent
+    generatedContent,
+    relationshipType
   });
   const sections = sourceGroundedSection ? [sourceGroundedSection] : [];
 
@@ -10247,12 +10178,13 @@ function normalizeCompositeAspectSurface(aspect: { from: string; to: string; typ
   };
 }
 
-function normalizeCompositePlacementSurface(position: { planet: string; sign: string; house?: number | null }, generatedContent?: GeneratedContentMap): NormalizedCompositeArticle {
+function normalizeCompositePlacementSurface(position: { planet: string; sign: string; house?: number | null }, generatedContent?: GeneratedContentMap, relationshipType?: string | null): NormalizedCompositeArticle {
   const contentKeys = compositePlacementContentKeys(position.planet, position.sign, position.house);
   const sourceGroundedSection = sourceGroundedCompositeSection({
     contentKeys,
     heading: `Composite ${position.planet} in ${position.sign}`,
-    generatedContent
+    generatedContent,
+    relationshipType
   });
   const sections = sourceGroundedSection ? [sourceGroundedSection] : [];
 

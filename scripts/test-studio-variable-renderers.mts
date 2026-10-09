@@ -17,11 +17,12 @@ const template = '{{myOpening}}';
 const ingress = { version: 5, enabled: true, sources: {}, modules: [{ id: 'main', label: 'Main', template: '{{myOpening}}', required: true, enabled: true, motion: 'all', duration: 'all', timing: 'all' }] };
 const rowData = JSON.parse(fs.readFileSync(`${root}/source-rows/fallback-source-rows-v3.json`, 'utf8'));
 const moon = rowData.hookRows.find((row: any) => row.contentKey === 'fallback-hook/moon-void');
-moon.body_you = template; moon._studioVariables = [binding];
+moon.body_you = template + ' Next sign: {{nextSign}}.'; moon._studioVariables = [binding];
 const templates = JSON.parse(fs.readFileSync(`${root}/templates/fallback-templates-v3.json`, 'utf8'));
 for (const key of ['fallback-template/natal.angle-in-sign', 'fallback-template/compat.cross-sign']) {
   const row = templates.templates.find((item: any) => item.contentKey === key);
-  row.body = template; if ('body_you' in row) row.body_you = template; if ('body_they' in row) row.body_they = template;
+  const copy = key === 'fallback-template/compat.cross-sign' ? template + ' {{otherName}}.' : template;
+  row.body = copy; if ('body_you' in row) row.body_you = copy; if ('body_they' in row) row.body_they = copy;
   row.requiredSlots = ['myOpening']; row._studioVariables = [binding];
 }
 const outfile = join(tmpdir(), `studio-variables-renderers-${process.pid}.mjs`);
@@ -43,8 +44,11 @@ const renderers = [{ natal: nodeFallback, transit: nodeTransit, sky: renderSkyV4
 for (const renderer of renderers) {
   assert.equal(renderer.natal.renderNatalAngle({ angle: 'ascendant', sign: 'virgo', voice: 'you' }).body, 'Fixture Virgo value.');
   assert.equal(renderer.natal.renderNatalAngle({ angle: 'ascendant', sign: 'aries', voice: 'you' }).body, 'Fixture shared value.', 'No context leaks between renders');
-  assert.equal(renderer.transit.renderCompat({ planet: 'sun', signA: 'virgo', signB: 'pisces', otherName: 'Fixture' }).body, 'Fixture Sun in Virgo value.');
-  assert.equal(renderer.transit.renderVoidOfCourse({ sign: 'virgo', nextSign: 'libra' }).body, 'Fixture Virgo value.');
+  assert.equal(renderer.transit.renderCompat({ planet: 'sun', signA: 'virgo', signB: 'pisces', otherName: 'Fixture' }).body, 'Fixture Sun in Virgo value. Fixture.');
+  assert.equal(renderer.transit.renderCompat({ planet: 'sun', signA: 'virgo', signB: 'pisces', otherName: 'Second' }).body, 'Fixture Sun in Virgo value. Second.', 'A frozen variable cache must not retain another chart holder name');
+  assert.equal(renderer.transit.renderVoidOfCourse({ sign: 'virgo', nextSign: 'libra' }).body, 'Fixture Virgo value. Next sign: libra.');
+  assert.equal(renderer.transit.renderVoidOfCourse({ sign: 'virgo', nextSign: 'scorpio' }).body, 'Fixture Virgo value. Next sign: scorpio.', 'Same sign must not reuse another render\'s calculated next sign');
+  assert.equal(renderer.transit.renderVoidOfCourse({ sign: 'virgo', nextSign: 'libra' }).body, 'Fixture Virgo value. Next sign: libra.', 'Returning to an earlier context remains exact');
   const updated = structuredClone(corpus);
   const article = updated.content.continuous.find((row: any) => row.contentKey === 'sky-placement/article/sun/virgo');
   article.placementArticle = template; article.placementArticleDirect = ''; article.placementArticleRetrograde = ''; article._studioVariables = [binding];

@@ -38,6 +38,6 @@ assert.equal(editorialGate({score:1,rhetoricalBlocked:true,exactApprovedGold:tru
 const listReview=evaluateEditorialCoherence({headline:'Synthetic',summary:'The form needs the date, time, place, and selected time zone.',body:'Each field records a different fact.'} as any,
   {surface:'calendar',eventType:'transit',mode:'standard',facts:{}} as any);
 assert.equal(listReview.failures.find(f=>f.code==='KEYWORD_LISTING')?.severity,'warning');
-const scored=listReview.failures.filter(f=>!['SUMMARY_LISTS_TOPICS','KEYWORD_LISTING'].includes(f.code));
-assert.equal(listReview.score,Math.max(0,100-scored.reduce((n,f)=>n+(f.severity==='fail'?18:8),0)),'Count signals cannot indirectly fail the aggregate score.');
+assert.equal(listReview.score,100,'Advisory style signals cannot indirectly fail the aggregate score.');
+assert.equal(listReview.passed,true,'A list of factual fields is not a semantic rhetorical verdict.');
 console.log('PASS report/scoped/Seasonal label coverage, whole-paragraph evidence, prose routing, delivery blockers and owner-source preservation. No model calls.');

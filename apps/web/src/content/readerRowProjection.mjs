@@ -84,7 +84,11 @@ const edition = {
   housePassages: [{ ...strings('body contentKey risingSign'), ...numbers('house') }],
   aspectPassages: [strings('aspect body contentKey natalPoint')]
 };
+const relationshipVariant = value => typeof value === 'string' ? value
+  : project(value, strings('body summary copy experience advice astro'));
 const sections = {
+  byRelationshipType: Object.fromEntries(['romantic', 'friendship', 'family', 'coworkers', 'creative', 'exes', 'complicated']
+    .map(type => [type, relationshipVariant])),
   horoscopeEdition: { ...strings('schema'), window: strings('period audience timeZone startsAt endsAt seasonSign'), passages: [strings('sign headline body')] },
   ...strings(`RetrogradeBodyA RetrogradeBodyB RetrogradeBodyBoth body body_you body_they text tagline energy intention ritual
     experience guidance note expanded_narrative natal_sign_story collective_shift house_integration
