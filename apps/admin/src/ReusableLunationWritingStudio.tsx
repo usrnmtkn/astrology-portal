@@ -3,7 +3,8 @@ import {StudioButton,StudioInput,StudioTabs,StudioTextarea} from './StudioContro
 import {AdminDisclosureSummary,AdminSelect} from './AdminNativeControls';
 import {adminCredentialHeaders} from './adminSecret';
 import {PageLoading} from '../../web/src/components/PageLoading';
-import {LUNATION_SIGNS,LUNATION_PHASES,LUNATION_PROFILE_FIELDS,LUNATION_ARGUMENT_FIELDS,lunationContentKey,type LunationProfile} from '../../../src/astro-writing/lunationWritingProfile.mjs';
+import {LUNATION_SIGNS,LUNATION_PHASES,LUNATION_PROFILE_FIELDS,LUNATION_ARGUMENT_FIELDS,lunationContentKey} from '../../../src/astro-writing/lunationWritingIdentity.mjs';
+import type {LunationProfile} from '../../../src/astro-writing/lunationWritingProfile.mjs';
 
 const endpoint='/api/admin/calendar-lunation-writing';
 const labels:Record<string,string>={voiceGuidance:'Voice and clarity',phaseContext:'New & Full Moon context',scopeGuidance:'Reader and intention',factsAndLinks:'Dates, variables and links',thesis:'Central thought',phase_context:'Lunar phase context',sign_meaning:'Meaning of the sign',recognition:'What the reader might recognize',intention_or_reflection:'Intention or reflection',journal_focus:'Journal focus',scope_guard:'What this reading must not assume'};

@@ -13,6 +13,7 @@ import {loadPhraseEvidenceIndex} from './phraseEvidence.mjs';
 import {runWritingPipeline} from './runWritingPipeline.mjs';
 import {LUNATION_ARTICLE_PROTOCOL_VERSION,lunationArticleGuidance,lunationArticleOpeningDate} from './lunationArticleInput.mjs';
 import {LUNATION_EDITORIAL_AUTHORITY} from './lunationEditorialConstraints.mjs';
+import {LUNAR_SAVED_WRITING_GUIDANCE} from './lunationSavedWriting.mjs';
 
 // Storage may reorder any JSON object. Arrays and exact source text retain order.
 export const lunationArticleHash = value => createHash('sha256').update(typeof value === 'string' ? value : JSON.stringify(value, (_key, item) =>
@@ -23,7 +24,7 @@ const family='lunation-article';
 const target={surface:family,route:'calendar',renderer:'LunationWritingStudio',contentKeyFamily:'studio-lunation',temporality:'current_sky',voiceMode:'second_person'};
 
 /** No provider or storage mutation. Complete source hashes bind the owner's plan action. */
-export function prepareLunationArticle(facts,direction='',{writingProfile=null,privateCorrections=[],feedbackReceipt=[]}={}) {
+export function prepareLunationArticle(facts,direction='',{writingProfile=null,privateCorrections=[],feedbackReceipt=[],savedWriting=null}={}) {
   if(facts?.schema!=='lunation-article-facts/v1'||facts.provenance?.actualEphemeris!=='swiss'
     ||!['new-moon','full-moon'].includes(facts.event?.phase)||!facts.event?.startsAt
     ||!Array.isArray(facts.positions)||!Array.isArray(facts.rulers)) throw new Error('Verified lunation facts are required.');
@@ -73,9 +74,9 @@ export function prepareLunationArticle(facts,direction='',{writingProfile=null,p
     reviewedMeaningExamples:[phaseMeaning,signMeaning].map(e=>({id:e.id,planet:'moon',sign,status:e.status,text:Object.values(e.slots).join('\n'),
       sourcePath:doctrinePath,sourceKind:'reviewed-doctrine',ownerAuthored:false,ownerApproved:false,reviewNote:e.review_note}))};
   const argumentInput={thesis:direction.trim().replace(/\s+/gu,' ')||`Develop ${facts.event.title} from the ${phase==='full-moon'?'Sun–Moon opposition':'Sun–Moon conjunction'} and its calculated rulers.`,
-    transit_job:`Open the body with ${openingDate} and ${facts.event.title}, then explain the phase and signs before developing human implications. Use the supplied event-time astrology: ${eventMeaning.map(e=>`${e.planet} in ${e.sign}: ${e.meaning}`).join(' ')}`,
-    recognition:`Choose a meaningful possibility from the event's relationships. Sign context: ${signMeaning.slots.embodied_guidance}. This supplies meaning, not a compulsory opening scene.`,
-    complication:`Use the calculated ruler condition and relevant contacts to develop the interpretation. Sign context: ${signMeaning.slots.care_prompt}. Treat this as one possible implication, not a compulsory thesis or a lesson to repeat. Do not invent another person's hidden motive.`,
+    transit_job:`Open the body with ${openingDate} and ${facts.event.title}, then explain the phase and signs before developing human implications. Use the supplied event-time astrology: ${eventMeaning.map(e=>`${e.planet} in ${e.sign}`).join('; ')}.`,
+    recognition:savedWriting?.references.length?`Draw on the language and ideas in your saved writing: ${savedWriting.references.map(r=>r.title).join('; ')}. Develop elements that fit this event; preserve the complete originals as references.`:`Choose a meaningful possibility from the event's relationships. Sign context: ${signMeaning.slots.embodied_guidance}. This supplies meaning, not a compulsory opening scene.`,
+    complication:`Use the calculated ruler condition and relevant contacts to develop the interpretation beyond the saved reference. Do not force one stock lesson or invent another person's hidden motive.`,
     response:`Let the response follow the developed interpretation. Phase context: ${phaseMeaning.slots.phase_action}. Do not copy this source instruction into a stock ending or require a sequence of commands; allow mixed feelings and an unresolved outcome.`,
     scope_guard:`One collective article for ${facts.event.startsAt}; no personal houses, invented history, or unsupplied future timing.`,
     scope_breadth:{broad_mechanism:phaseMeaning.slots.cycle_role,chosen_expression:`${phase} in ${sign}, interpreted through the full event chart`,
@@ -84,10 +85,10 @@ export function prepareLunationArticle(facts,direction='',{writingProfile=null,p
   const context=retrieveOwnerContext(plan,{...contextOptions,contentFamily:family,register:'second_person'});
   try{assertPositiveOwnerEvidenceContext(context,{family});}catch(error){if(error.code!=='OWNER_EVIDENCE_ROLE_MISSING'||error.detail?.role!=='argument')throw error;}
   const voiceSelection=context.sameFamilyExamples.map(e=>({id:e.id,sha256:lunationArticleHash(e.text)}));
-  const planHash=lunationArticleHash({version:LUNATION_ARTICLE_PROTOCOL_VERSION,protocol:lunationArticleGuidance,editorialAuthority:LUNATION_EDITORIAL_AUTHORITY,facts,outline,sources,voiceSelection,writingProfile,feedbackReceipt});
-  return {writingProfile,feedbackReceipt,facts,eventMeaning,meaningInput,argumentInput,outline,contextOptions,context,sources,planHash,direction,
+  const planHash=lunationArticleHash({version:LUNATION_ARTICLE_PROTOCOL_VERSION,protocol:lunationArticleGuidance,savedWritingGuidance:LUNAR_SAVED_WRITING_GUIDANCE,savedWriting,editorialAuthority:LUNATION_EDITORIAL_AUTHORITY,facts,outline,sources,voiceSelection,writingProfile,feedbackReceipt});
+  return {writingProfile,feedbackReceipt,savedWriting,facts,eventMeaning,meaningInput,argumentInput,outline,contextOptions,context,sources,planHash,direction,
     preview:{planHash,title:facts.event.title,event:facts.event,positions:facts.positions,rulers:facts.rulers,contacts:facts.contacts,
-      argument:outline,writingProfile,corrections:privateCorrections,voiceSources:context.sameFamilyExamples.map(e=>({id:e.id,text:e.text,sourcePath:e.sourcePath})),protocol:lunationArticleGuidance}};
+      argument:outline,writingProfile,savedWriting,corrections:privateCorrections,voiceSources:[...(savedWriting?.references??[]).map(r=>({id:`${r.title} · ${r.contentKey}`,text:r.body,sourcePath:r.contentKey})),...context.sameFamilyExamples.map(e=>({id:e.id,text:e.text,sourcePath:e.sourcePath}))],protocol:lunationArticleGuidance}};
 }
 
 export async function writeLunationArticle(prepared,{approvedPlanHash,approvalReference,writerClient}) {
@@ -97,6 +98,6 @@ export async function writeLunationArticle(prepared,{approvedPlanHash,approvalRe
     authority:'owner-approved-writing-plan',opening:approved.thesis,tension:approved.complication,development:approved.recognition,close:approved.response};
   return runWritingPipeline({...prepared.contextOptions,meaningInput:prepared.meaningInput,argumentInput:prepared.argumentInput,
     approvedArgumentOutline:approved,argumentSource,family,surface:family,register:'second_person',target,
-    writingProfile:prepared.writingProfile,engineFacts:{...prepared.facts,governedEventMeanings:prepared.eventMeaning},
+    writingProfile:prepared.writingProfile,engineFacts:{...prepared.facts,governedEventMeanings:prepared.eventMeaning},familyContext:{savedLunarWriting:prepared.savedWriting},
     task:`Write the complete ${prepared.facts.event.title} article for owner review. ${prepared.direction}`,writerClient});
 }

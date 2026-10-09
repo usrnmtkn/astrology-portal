@@ -2,11 +2,13 @@ import {defaultLunationProfile,LUNATION_PROFILE_KEY} from '../../src/astro-writi
 import {Readable} from 'node:stream';
 import {fileURLToPath} from 'node:url';
 import {randomUUID} from 'node:crypto';
+import {lunarSavedWritingFixtures} from './lunar-saved-writing-fixture.mjs';
 const env={NODE_ENV:'test',CONTENT_GENERATION_SECRET:'calendar-api-fixture',SUPABASE_URL:'https://lunation-test.invalid',SUPABASE_SERVICE_ROLE_KEY:'test-only',OPENAI_API_KEY:'test-only',STUDIO_MEMORY_FEEDBACK_ENABLED:'false'};
 Object.assign(process.env,env);
 const {default:handler}=await import('../../api/admin/lunation-writing');
 Object.assign(process.env,env);
 export const rows=new Map<string,any>();
+for(const row of lunarSavedWritingFixtures())rows.set(row.id,row);
 export const feedbackFixture={rows:[] as any[],fail:false};
 export const storageFixture={beforePatch:null as null|(()=>unknown)};
 rows.set('shared-guidance-fixture',{id:'shared-guidance-fixture',content_key:LUNATION_PROFILE_KEY,mode:'article',target_date:null,status:'DRAFT',lane:'reference',body:'',summary:'',updated_at:'2026-09-27T00:00:00Z',source_snapshot:{revision:1},sections:{writingProfile:{...defaultLunationProfile(),voiceGuidance:'Synthetic shared guidance marker. Develop a thought through its consequence.'}}});
@@ -50,6 +52,11 @@ globalThis.fetch=async(input:any,options:any={})=>{
 export async function invoke(method:string,body?:unknown,url='/api/admin/lunation-writing',secret='calendar-api-fixture') {
   if(method==='rows')return [...rows.values()];
   if(method==='provider'){Object.assign(providerFixture,body??{});return providerFixture;}
+  if(method==='source-edit'){
+    const input=body as {key:string;body:string},row=[...rows.values()].find(r=>r.content_key===input.key);
+    if(!row||!input.key.startsWith('authored/sky-lunation-macro/')||typeof input.body!=='string')throw new Error('Choose an existing synthetic lunar source.');
+    Object.assign(row,{body:input.body,updated_at:new Date(Date.now()+1).toISOString()});return row;
+  }
   const req=Readable.from(body===undefined?[]:[JSON.stringify(body)]);
   Object.assign(req,{method,url,headers:{authorization:`Bearer ${secret}`}});
   const endpoint=url.startsWith('/api/admin/calendar-lunation-writing')?(await import('../../api/admin/calendar-lunation-writing')).default:handler;

@@ -7,6 +7,8 @@ import {lunationDigest} from '../../src/astro-writing/lunationWritingFacts.mjs';
 import {prepareLunationWriting,lunationWritingTarget} from '../../src/astro-writing/lunationWriting.mjs';
 import {approveArgumentOutline} from '../../src/astro-writing/argumentGate.mjs';
 import {runWritingPipeline} from '../../src/astro-writing/runWritingPipeline.mjs';
+import {loadLunarSavedWriting} from './lunar-saved-writing.js';
+import {LUNAR_SAVED_WRITING_GUIDANCE} from '../../src/astro-writing/lunationSavedWriting.mjs';
 
 export const workspaceKey=(phase:string,sign:string)=>{lunationContentKey(phase,sign);return `${LUNATION_WORKSPACE_PREFIX}${phase}/${sign}`;};
 export async function lunarStorage(params:URLSearchParams,options:RequestInit={}) {
@@ -80,19 +82,20 @@ export async function prepareStudioLunation(workspace:any,engineFacts?:any) {
   const [profile,feedback,facts]=await Promise.all([loadLunarProfile(),lunarFeedback(workspace.contentKey),engineFacts??calculateLunarWritingFacts(workspace)]);
   if(!profile.id)throw new AdminHttpError(409,'Save the writing guidance before preparing a draft.');
   const prepared=prepareLunationWriting({engineFacts:facts,argumentInput:workspace.argumentInput,preferredOwnerSourceIds:workspace.preferredOwnerSourceIds??[],privateCorrections:feedback.corrections});
+  const savedWriting=await loadLunarSavedWriting(facts.event);
   prepared.receipt.feedbackStorage='private-studio/explicit-writing-feedback';
-  const planHash=lunationDigest({receipt:prepared.receipt,profile:profile.sha256,feedback:feedback.receipt,approach:lunationArticleGuidance});
-  return {prepared,profile,feedback,facts,planHash};
+  const planHash=lunationDigest({receipt:prepared.receipt,profile:profile.sha256,feedback:feedback.receipt,approach:lunationArticleGuidance,savedWriting,savedWritingGuidance:LUNAR_SAVED_WRITING_GUIDANCE});
+  return {prepared,profile,feedback,facts,planHash,savedWriting};
 }
 export function lunarPlanPreview(value:any) {
   return {planHash:value.planHash,outline:value.prepared.argumentOutline,facts:value.facts,profile:value.profile,
-    ownerPassages:value.prepared.context.sameFamilyExamples,meaning:value.prepared.context.reviewedMeaningExamples,
+    ownerPassages:[...value.savedWriting.references.map((r:any)=>({sourceId:`${r.title} · ${r.contentKey}`,sourcePath:r.contentKey,sourceSha256:r.bodySha256,text:r.body})),...value.prepared.context.sameFamilyExamples],meaning:value.prepared.context.reviewedMeaningExamples,savedWriting:value.savedWriting,
     corrections:value.feedback.rows,receipt:value.prepared.receipt};
 }
 export function runStudioLunation(value:any,workspace:any,writerClient:any,approvalReference:string,approvalRuling='I approve this exact plan and one writer call.') {
   const outline=approveArgumentOutline(value.prepared.argumentOutline,{exactOwnerRuling:approvalRuling});
   return runWritingPipeline({...value.prepared.contextOptions,meaningInput:value.prepared.meaningInput,argumentInput:workspace.argumentInput,
-    engineFacts:value.facts,writingProfile:value.profile,family:'lunations',surface:'calendar-lunation',register:'second_person',target:lunationWritingTarget,
+    engineFacts:value.facts,familyContext:{savedLunarWriting:value.savedWriting},writingProfile:value.profile,family:'lunations',surface:'calendar-lunation',register:'second_person',target:lunationWritingTarget,
     task:'Write this New or Full Moon body and journal question for owner review.',approvedArgumentOutline:outline,
     argumentSource:{contentKey:approvalReference,sourcePath:approvalReference,ownerApproved:true,authority:'owner-approved-lunation-plan',opening:outline.thesis,tension:outline.sign_meaning,development:outline.recognition,close:outline.intention_or_reflection},writerClient});
 }
