@@ -151,7 +151,9 @@ for(const width of [390,1440])for(const theme of ['light','dark'] as const){
       await workspace.getByText('Rejected drafts (1)',{exact:true}).click();
       await workspace.getByText(/^Synthetic lunar article · /).click();
       await expect(workspace.getByLabel('Rejected article',{exact:true})).toHaveValue(edit);
-      await expect(workspace.getByText(rejectionReason,{exact:true})).toBeVisible();
+      // The writing plan can repeat the correction; verify the saved history entry itself.
+      const rejectedDraft=workspace.getByLabel('Rejected article',{exact:true}).locator('xpath=ancestor::details[1]');
+      await expect(rejectedDraft.getByText(rejectionReason,{exact:true})).toBeVisible();
       await expect(workspace.getByRole('button',{name:'Regenerate draft',exact:true})).toBeDisabled();
       await workspace.getByRole('checkbox',{name:'I’ve reviewed this writing plan.'}).check();
       await workspace.getByRole('button',{name:'Regenerate draft',exact:true}).click();
