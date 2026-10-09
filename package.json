@@ -215,7 +215,7 @@
     "qa:reader-lighthouse": "node scripts/qa-reader-lighthouse.mjs",
     "test:relationship-template-integrity": "node --import tsx scripts/test-relationship-template-integrity.mts && node scripts/audit-relationship-template-pairs.mjs",
     "test:natal-planet-introductions": "node --import tsx scripts/test-natal-planet-introductions.mjs",
-    "test:rhetorical-patterns": "node tests/astro-writing/rhetorical-patterns.test.mjs && node --import tsx scripts/test-rhetorical-review-integration.mts && node --import tsx scripts/test-report-provider-schemas.mjs && node --import tsx scripts/test-report-rhetorical-admission.mts && node --import tsx scripts/test-ask-tldr-judge.mjs"
+    "test:rhetorical-patterns": "node tests/astro-writing/rhetorical-patterns.test.mjs && node tests/astro-writing/ai-writing-patterns.test.mjs && node --import tsx scripts/test-rhetorical-review-integration.mts && node --import tsx scripts/test-report-provider-schemas.mjs && node --import tsx scripts/test-report-rhetorical-admission.mts && node --import tsx scripts/test-ask-tldr-judge.mjs"
   },
   "optionalDependencies": {
     "@esbuild/linux-x64": "^0.27.7",

@@ -10,4 +10,4 @@ export function textFields(candidate:unknown):Record<string,string>;
 export function validateRhetoricalReview(review:unknown,candidate:unknown):RhetoricalReview;
 export function rhetoricalDecision(review:RhetoricalReview):'pass'|'regenerate'|'evaluation_unavailable';
 export function rhetoricalReviewContract(candidate:unknown):string;
-export function rhetoricalSignals(candidate:unknown):Array<{label:string;field:string;quote:string;offset:number;advisory:true;requiresSemanticReview:true}>;
+export function rhetoricalSignals(candidate:unknown):Array<{label:string;pattern:string;field:string;quote:string;offset:number;severity:'review';advisory:true;requiresSemanticReview:true}>;

@@ -24,7 +24,7 @@ import {seasonalHoroscopeOperation} from '../_lib/seasonal-horoscope-operation.j
 import {SEASONAL_WORKFLOW} from '../../src/astro-writing/seasonalDevelopmentPlan.mjs';
 import {seasonalEditorialOperation} from '../_lib/seasonal-editorial-operation.js';
 import {SEASONAL_EDITORIAL_WORKFLOW} from '../../src/astro-writing/seasonalEditorialAdapter.mjs';
-import {HOROSCOPE_RHETORICAL_REVIEW} from '../../src/astro-writing/horoscopeRhetoricalReview.mjs';
+import {HOROSCOPE_RHETORICAL_REVIEW,supportedHoroscopeReview} from '../../src/astro-writing/horoscopeRhetoricalReview.mjs';
 import {isHoroscopeReview,queueHoroscopeReview,horoscopeRhetoricalOperation} from '../_lib/horoscope-rhetorical-operation.js';
 import {persistWeeklyHoroscope,horoscopeStorageTimeoutMs} from '../_lib/horoscope-storage-confirmation.js';
 loadLocalWebEnv();
@@ -225,7 +225,7 @@ export default async function handler(req:IncomingMessage,res:ServerResponse) {
       const lint=validateHoroscopeReading({sign:operation.sign,...value},row.facts.horoscopeBrief.brief,{ownerCorrections:operation.validationCorrections??[]});
       const receipt={...operation.receipt,bodyHash:createHash('sha256').update(horoscopeCanonicalJson(value)).digest('hex'),operationId:operation.id,responseId:operation.responseId,requestHash:operation.requestHash,config:operation.config,usage:payload.usage??null,completedAt:new Date().toISOString(),lint};
       if(horoscopePunctuationFindings(value).length)return await holdForPunctuation(value,receipt);
-      if(operation.reviewVersion===HOROSCOPE_RHETORICAL_REVIEW){
+      if(supportedHoroscopeReview(operation.reviewVersion)){
         const result=await queueHoroscopeReview({row,persist,operation,candidate:value,receipt});
         return sendAdminJson(res,result.status,result.payload);
       }
@@ -329,7 +329,7 @@ export default async function handler(req:IncomingMessage,res:ServerResponse) {
       const edition={...prepared.edition,passages:prepared.edition.passages.map((p:any)=>p.sign===sign?{...p,headline:result.headline,body:result.body}:p)};
       const receipt={...result.receipt,...(operation.receipt.ownerEvidence?{ownerEvidence:operation.receipt.ownerEvidence}:{}),outputFormat:operation.outputFormat,operationId:operation.id,responseId:operation.responseId,requestHash:operation.requestHash,config:operation.config,usage:payload?.usage??null,completedAt:new Date().toISOString(),lint:result.lint,report:result.report};
       if(horoscopePunctuationFindings(result).length)return await holdForPunctuation({headline:result.headline,body:result.body},receipt);
-      if(operation.reviewVersion===HOROSCOPE_RHETORICAL_REVIEW){
+      if(supportedHoroscopeReview(operation.reviewVersion)){
         const reviewed=await queueHoroscopeReview({row,persist,operation,candidate:{headline:result.headline,body:result.body},receipt});
         return sendAdminJson(res,reviewed.status,reviewed.payload);
       }

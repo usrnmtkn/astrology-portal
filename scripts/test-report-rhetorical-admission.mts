@@ -9,7 +9,7 @@ const payload=assembleReportGenerationPayload({reportId:'00000000-0000-0000-0000
 const draft={headline:'Synthetic check',body:'First synthetic sentence. Second synthetic sentence.',sections:[]};
 const receipt=(label?:string)=>({checks:RHETORICAL_LABELS.map(item=>({label:item,outcome:item===label?'fail':'pass',reason:'Synthetic contract fixture.'})),findings:label?[{label,field:'body',quote:'Second synthetic sentence.',paragraph:draft.body,reason:'Synthetic rhetorical operation.',readerConsequence:'Synthetic loss of meaning.',meaningTest:'Synthetic complete-context test.'}]:[]});
 async function judge(rhetoric:any){return judgeReportUnit({payload,draft,validatorResults:[],threshold:.85,callModel:(async input=>{
- assert(input.prompt.includes(draft.body));assert(input.prompt.includes('CORRECTIO'));assert(input.schema.required.includes('rhetoric'));
+ assert(input.prompt.includes(draft.body));assert(input.prompt.includes('CORRECTIO'));assert(input.prompt.includes('AVOID AI WRITING PATTERNS'));assert(input.prompt.includes('REVIEW FLAG — CHECK CONTEXT'));assert(input.schema.required.includes('rhetoric'));
  return {value:{scores:Object.fromEntries(REPORT_JUDGE_CATEGORIES.map(c=>[c,4])),applicability:{interpretive_movement:'not_applicable',reason:'Synthetic'},overall:1,verdict:'pass',findings:[],rhetoric},model:'fixture',provider:'fixture',usage:{inputTokens:0,outputTokens:0,totalTokens:0}};
 }) as any});}
 assert.equal((await judge(receipt())).result.verdict,'pass');
