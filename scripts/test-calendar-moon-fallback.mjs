@@ -198,7 +198,7 @@ const laterToday = resolveCalendarMoonFallback({
 }, {});
 assert.equal(
   laterToday?.body,
-  "The Moon starts the day in Scorpio and enters Sagittarius at 12:41 PM EDT. Something that has been sitting under the surface may be harder to ignore early on. By afternoon, it can be easier to stop circling the same problem and decide what you want to do next."
+  "Something that has been sitting under the surface may be harder to ignore early on. By afternoon, it can be easier to stop circling the same problem and decide what you want to do next."
 );
 assert.doesNotMatch(laterToday?.body ?? "", /mood may shift|from trust, privacy/);
 

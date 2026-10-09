@@ -151,9 +151,7 @@ for (const scenario of [
     await expect(card).toBeVisible({ timeout: 90_000 });
     await expect(card.locator('.calendar-stoic-card__excerpt')).toHaveText(expected);
     const guidance = page.getByRole('region', { name: 'Moon guidance', exact: true });
-    await expect(guidance).toContainText(scenario.zone === 'America/New_York'
-      ? 'The Moon starts the day in Capricorn and enters Aquarius at 1:14 PM'
-      : 'The Moon enters Aquarius at 2:14 AM');
+    await expect(guidance).toHaveText(expected);
     await expect(guidance).not.toContainText('before it enters Aquarius tomorrow');
     expect(await card.locator('.calendar-stoic-card__excerpt').evaluate(el => ({
       clipped: el.scrollHeight > el.clientHeight + 1, clamp: getComputedStyle(el).webkitLineClamp
