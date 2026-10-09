@@ -1078,19 +1078,20 @@ function renderSkyHoroscopeReference({ risingSign, events = [] }) {
 }
 
 function renderTransitReturnReference({ planet, voice, window }) {
-  let c = card(`authored/transit-return/${planet}`);
+  let c;
   let audience = "you", field = "body";
   // Exact personal Mercury copy; planet-only callers retain the existing return contract.
   if (planet === "mercury" && (voice !== undefined || window !== undefined)) {
-    const exact = card(MERCURY_RETURN_CONTACT_KEY);
-    if (exact) {
+    c = card(MERCURY_RETURN_CONTACT_KEY);
+    if (c) {
       audience = voice === undefined || voice === "you" ? "you" : "they";
       field = `body_${audience}`;
-      c = { ...exact, body: mercuryReturnCopy(exact, field, window, SourceGapError) };
+      c = { ...c, body: mercuryReturnCopy(c, field, window, SourceGapError) };
     } else if (lib.authoredCards.some(row => row.contentKey === MERCURY_RETURN_CONTACT_KEY)) {
       throw new SourceGapError(`SOURCE_GAP: ineligible ${MERCURY_RETURN_CONTACT_KEY}`);
     }
   }
+  c ||= card(`authored/transit-return/${planet}`);
   if (!c) throw new SourceGapError(`SOURCE_GAP: no return card for ${planet}`);
   return { ...result(c, "authored/transit-return"), ...passageSources(c.body, [{ text: c.body, keys: [c.contentKey] }], () => passageSource(c, audience, field)) };
 }
