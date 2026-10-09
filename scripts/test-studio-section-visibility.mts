@@ -3,10 +3,11 @@ import { readFileSync } from 'node:fs';
 import { createApiStore } from '../tests/helpers/calendar-review-api.mjs';
 import { sectionFixtures } from '../tests/helpers/studio-section-fixtures.mjs';
 import { studioListingFacts, studioListingRow } from '../api/_lib/studio-listing-facts.ts';
-import { studioInventoryQuery, studioInventoryRequestPath } from '../apps/admin/src/studioSectionInventory.ts';
+import { studioInventoryQuery, studioInventoryRequestPath, studioInventoryPasses } from '../apps/admin/src/studioSectionInventory.ts';
 import { calendarPlanetaryListIdentity, calendarPlanetaryIdentity, calendarPlanetaryTitle } from '../apps/admin/src/calendarPlanetarySources.ts';
 import { isCompositionTemplateRow } from '../apps/admin/src/compositionTemplateClassifier.ts';
 import { isSkyWriteupContentRow } from '../apps/admin/src/articleWorkspace.ts';
+import { calendarTransitionPhraseKeys } from '../apps/web/src/features/calendar/calendarTransitionPhraseIdentity.ts';
 import { isStudioCompatibilityRow, isStudioCompositeRow } from '../apps/admin/src/studioContentScope.ts';
 
 const extra = Array.from({length:83}, (_,i) => ({...sectionFixtures[0], id:`20000000-0000-4000-8000-${String(i).padStart(12,'0')}`, content_key:`compatibility.fixture.${i}`}));
@@ -31,6 +32,43 @@ try {
       assert.deepEqual(result.map(row=>row.id).sort(), fixtures.filter(predicate).map(row=>row.id).sort(), `${endpoint} ${scope} must return all members exactly once`);
       const denied = await store.invoke('GET', undefined, `/api/admin/${endpoint}?scope=${scope}`, 'invalid');
       assert.equal(denied.status, 401);
+    }
+  }
+  for (const endpoint of ['generated-content-inventory', 'generated-content']) {
+    for (const [route, expected] of [
+      [{page:'skyWriteups'}, ['custom/sky-article']],
+      [{page:'templates'}, ['custom/template-role', 'custom/template-block', 'custom/package-template', 'custom/lunar-source']],
+      [{page:'vocabulary'}, ['custom/vocabulary-role']],
+      [{page:'knowledge'}, ['custom/fallback-prompt']],
+      [{page:'slotDictionary'}, ['custom/template-role', 'custom/vocabulary-role']]
+    ] as const) {
+      const query = studioInventoryQuery(route);
+      const passes = studioInventoryPasses(query);
+      assert.ok(passes.at(-1)?.scope.endsWith('-types'));
+      const found: any[] = [];
+      for (const pass of passes) {
+        let cursor: string | null = null;
+        const seen = new Set<string>();
+        do {
+          const path = studioInventoryRequestPath(pass, 2, cursor).replace('generated-content-inventory', endpoint);
+          const result = await store.invoke('GET', undefined, path);
+          assert.equal(result.status, 200, JSON.stringify(result.payload));
+          found.push(...result.payload.rows);
+          cursor = result.payload.nextCursor;
+          if(cursor) {assert.ok(!seen.has(cursor));seen.add(cursor);}
+        } while(cursor);
+      }
+      for (const key of expected) assert.equal(found.filter(row=>row.content_key===key).length, 1, `${endpoint} ${route.page}: ${key}`);
+      const supplemental = await store.invoke('GET', undefined, studioInventoryRequestPath(passes.at(-1)!,80).replace('generated-content-inventory',endpoint));
+      assert.ok(supplemental.payload.rows.every(row=>!query.prefixes.some(prefix=>row.content_key.startsWith(prefix))), 'Metadata pass excludes already fetched key families');
+      assert.ok(!supplemental.payload.rows.some(row=>row.content_key==='unrelated/fixture'));
+      const denied = await store.invoke('GET', undefined, studioInventoryRequestPath(passes.at(-1)!,80).replace('generated-content-inventory',endpoint),'invalid');
+      assert.equal(denied.status,401);
+    }
+  }
+  for (const key of calendarTransitionPhraseKeys) {
+    for (const route of [{page:'templates'}, {page:'calendarWriteups'}, {page:'calendarWriteups', calendarWriteupWorkspaceView:'moon-transition-phrases'}]) {
+      assert.ok(studioInventoryQuery(route).prefixes.some(prefix=>key.startsWith(prefix)), `Timing phrase coverage: ${key}`);
     }
   }
   const query = studioInventoryQuery({page:'calendarWriteups', calendarWriteupWorkspaceView:'planetary-stations'});

@@ -1,4 +1,4 @@
-import { transitAspectDefinitions } from "../astrologyConfig.ts";
+import { transitAspectDefinitions } from "../astrologyConfig.js";
 import type { ManualChart } from "./manualCharts";
 import type { InterChartAspectLine } from "../components/charts/Wheels";
 import type { PlanetPosition, SkySnapshot } from "../types";
@@ -50,7 +50,7 @@ export const zodiacSignGlyphs: Record<string, string> = {
   Pisces: "♓"
 };
 
-export { transitAspectDefinitions } from "../astrologyConfig.ts";
+export { transitAspectDefinitions } from "../astrologyConfig.js";
 
 const signElementMap: Record<string, "Fire" | "Earth" | "Air" | "Water"> = {
   Aries: "Fire",

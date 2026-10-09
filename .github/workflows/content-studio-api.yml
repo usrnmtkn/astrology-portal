@@ -19,7 +19,8 @@ jobs:
     timeout-minutes: 15
     services:
       postgres:
-        image: postgres:17.6
+        # Docker's official mirror avoids Docker Hub pull limits on shared runners.
+        image: public.ecr.aws/docker/library/postgres:17.6
         env:
           POSTGRES_PASSWORD: local-test-only
         ports:

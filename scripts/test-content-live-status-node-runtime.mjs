@@ -3,7 +3,7 @@ import { execFileSync } from "node:child_process";
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
-import { transform } from "esbuild";
+import { build, transform } from "esbuild";
 import ts from "typescript";
 
 // Vercel emits separate JavaScript modules. A bundled test or tsx loader can
@@ -49,6 +49,13 @@ try {
   // only once Node loads the emitted modules.
   await emit("api/admin/generated-content-libraries.ts");
   await emit("api/content-publications.ts");
+  await emit("api/admin/review-records.ts");
+  // Keep the shared chart module's emitted imports unchanged. Rewriting its
+  // specifiers masks missing-source failures in the deployed review handler.
+  await build({
+    entryPoints: ["apps/web/src/services/chartMath.ts", "apps/web/src/astrologyConfig.ts"],
+    outdir: output, outbase: root, bundle: false, platform: "node", format: "esm", target: "node22", logLevel: "silent"
+  });
   const result = execFileSync(process.execPath, ["--input-type=module", "-e", `
     import assert from "node:assert/strict";
     const { skySummaryTemplateErrors } = await import("./apps/web/src/content/skyDailySummaryCatalog.js");
@@ -74,6 +81,9 @@ try {
     const { default: ledgerHandler } = await import("./api/content-publications.js");
     await ledgerHandler({ headers: {}, method: "POST" }, response);
     assert.equal(response.statusCode, 405, "Public ledger must start in plain Node before handling requests");
+    const { default: reviewHandler } = await import("./api/admin/review-records.js");
+    await reviewHandler({ headers: {}, method: "GET" }, response);
+    assert.equal(response.statusCode, 401, "Review records must load their emitted calculation dependencies before authorization");
     console.log("PASS: production-style Node ESM starts Content Live Status and reaches authorization");
   `], { cwd: output, encoding: "utf8", env: { PATH: process.env.PATH }, timeout: 30_000 });
   process.stdout.write(result);

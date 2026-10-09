@@ -12,7 +12,8 @@ const keys = [
   'composite.aspect.sun.trine.moon', 'fixture/surface-only', 'fixture/relationship-block',
   'fallback-hook/custom-natal-ingredient', 'fallback-template/fixture', 'vocab/planet/fixture',
   'authored/week-opener/new-moon', 'fallback-hook/empty-house/bridge-template/standard',
-  'vocab.legacy-fixture', 'guide-phrase/fixture', 'unrelated/fixture'
+  'vocab.legacy-fixture', 'guide-phrase/fixture', 'unrelated/fixture',
+  'custom/sky-article', 'custom/template-role', 'custom/template-block', 'custom/fallback-prompt', 'custom/package-template', 'custom/vocabulary-role', 'custom/lunar-source'
 ];
 export const sectionFixtures = keys.map((key, index) => ({
   id: `10000000-0000-4000-8000-${String(index + 1).padStart(12, '0')}`, content_key: key,
@@ -23,4 +24,12 @@ export const sectionFixtures = keys.map((key, index) => ({
   block_type: key.includes('compatibility-block') ? 'compatibility_planet_card' : key.includes('relationship-block') ? 'composite_aspect' : key.startsWith('vocab/') ? 'vocab' : key.startsWith('fallback-hook/') ? 'fallback_hook' : key.includes('template/') ? 'fallback_template' : 'calendar_event',
   sections: {}, source_snapshot: key.includes('week-opener/') || key.includes('bridge-template/') ? {content_role:'template'} : {}, facts: {}, flags: [],
   created_at: '2026-10-01T00:00:00.000Z', updated_at: '2026-10-09T00:00:00.000Z'
-})).map(row => ({...row, studio_facts:studioListingFacts(row)}));
+})).map(row => {
+  if (row.content_key === 'custom/sky-article') row.block_type = 'sky_article';
+  if (row.content_key === 'custom/template-role') row.source_snapshot = {content_role:'template'};
+  if (row.content_key === 'custom/template-block') row.block_type = 'template';
+  if (row.content_key === 'custom/fallback-prompt') {row.prompt_version = 'fallback-hook-template-v1'; row.surface='natal';}
+  if (row.content_key === 'custom/package-template') row.sections = {packageRecord:{content_role:'template'}};
+  if (row.content_key === 'custom/vocabulary-role') {row.provider='tldrastro-fallback-architecture-v3';row.source_snapshot={content_role:'vocabulary'};}
+  return {...row, studio_facts:studioListingFacts(row)};
+});

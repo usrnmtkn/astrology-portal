@@ -63,19 +63,25 @@ for (const width of [390,1440]) for (const theme of ['light','dark']) {
 const sections = [
   {hash:'compatibility',keys:['vocab/relationship/fixture','slot-template/compatibility/fixture','fallback-hook/pair-daily/fixture','fixture/compatibility-event','fixture/compatibility-block']},
   {hash:'composite-review',keys:['composite.aspect.sun.trine.moon','fixture/surface-only','fixture/relationship-block']},
-  {hash:'sky-writeups',keys:['sky/station/venus/retrograde/scorpio','authored/sky-placement/venus/scorpio']},
-  {hash:'templates',keys:['authored/week-opener/new-moon','fallback-hook/empty-house/bridge-template/standard']},
-  {hash:'vocabulary',keys:['vocab.legacy-fixture','guide-phrase/fixture']},
-  {hash:'slots',keys:['vocab/planet/fixture','fallback-template/fixture','fallback-hook/custom-natal-ingredient']},
-  {hash:'fallback-hooks?section=you',keys:['fallback-hook/custom-natal-ingredient']}
+  {hash:'sky-writeups',keys:['sky/station/venus/retrograde/scorpio','authored/sky-placement/venus/scorpio','custom/sky-article']},
+  {hash:'templates',keys:['authored/week-opener/new-moon','fallback-hook/empty-house/bridge-template/standard','custom/template-role','custom/template-block','custom/package-template','custom/lunar-source']},
+  {hash:'vocabulary',keys:['vocab.legacy-fixture','guide-phrase/fixture','custom/vocabulary-role']},
+  {hash:'slots',keys:['custom/template-role','custom/vocabulary-role','vocab/planet/fixture','fallback-template/fixture','fallback-hook/custom-natal-ingredient']},
+  {hash:'fallback-hooks?section=you',keys:['custom/fallback-prompt','fallback-hook/custom-natal-ingredient']}
 ];
 for(const section of sections) test(`Direct section entry includes saved ingredients: ${section.hash}`,async({page})=>{
   const store=await setup(page);
   try {
     await page.goto(`/admin/content#${section.hash}`);
-    for(const key of section.keys) await expect(page.getByText(key,{exact:true}).first()).toBeVisible();
+    for(const key of section.keys) {
+      if(section.hash==='templates') await page.getByRole('textbox',{name:'Search templates',exact:true}).fill(key);
+      await expect(page.getByText(key,{exact:true}).first()).toBeVisible();
+    }
     await page.reload();
-    for(const key of section.keys) await expect(page.getByText(key,{exact:true}).first()).toBeVisible();
+    for(const key of section.keys) {
+      if(section.hash==='templates') await page.getByRole('textbox',{name:'Search templates',exact:true}).fill(key);
+      await expect(page.getByText(key,{exact:true}).first()).toBeVisible();
+    }
     expect(await store.call({method:'rows'})).toEqual(sectionFixtures);
   }finally{await page.unrouteAll({behavior:'ignoreErrors'});await page.context().unrouteAll({behavior:'ignoreErrors'});await page.close();store.close();}
 });
