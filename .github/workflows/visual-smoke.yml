@@ -400,6 +400,7 @@ jobs:
           tests/visual/calendar-lunation-preview.spec.ts
           tests/visual/calendar-moon-editor.spec.ts
           tests/visual/calendar-lunar-ingresses.spec.ts
+          tests/visual/calendar-ingress-reading.spec.ts
           tests/visual/calendar-transition-phrases.spec.ts
           tests/visual/calendar-season-writeups.spec.ts
           tests/visual/event-date-consistency.spec.ts
