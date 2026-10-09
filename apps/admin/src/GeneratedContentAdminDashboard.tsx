@@ -38,6 +38,7 @@ import {
   studioInventoryQuery,
   studioInventoryQueryKey,
   studioInventoryRequestPath,
+  studioInventoryPasses,
   type StudioInventoryQuery
 } from "./studioSectionInventory";
 import { readStudioContentDocument, requestStudioJson, studioInventoryDocumentPath, studioInventoryDocumentsPath } from "./generatedContentClient";
@@ -2936,15 +2937,14 @@ async function loadAllGeneratedContentRows(
   signal?: AbortSignal
 ) {
   const allRows: AdminGeneratedContentRow[] = [];
-  const prefixPages: Array<string | null> = query.prefixes.length ? query.prefixes : [null];
+  const passes = studioInventoryPasses(query);
   let lastEmitAt = 0;
 
-  for (let prefixIndex = 0; prefixIndex < prefixPages.length; prefixIndex += 1) {
-    const prefix = prefixPages[prefixIndex];
+  for (let passIndex = 0; passIndex < passes.length; passIndex += 1) {
     await readStudioInventoryPages<AdminGeneratedContentRow>(
       (cursor) => loadGeneratedContentPage(
         studioInventoryRequestPath(
-          prefix ? { ...query, prefixes: [prefix] } : { ...query, prefixes: [] },
+          passes[passIndex],
           studioInventoryPageSize(cursor),
           cursor
         ),
@@ -2953,7 +2953,7 @@ async function loadAllGeneratedContentRows(
       ),
       (pageRows, prefixComplete) => {
         allRows.push(...pageRows);
-        const complete = prefixComplete && prefixIndex === prefixPages.length - 1;
+        const complete = prefixComplete && passIndex === passes.length - 1;
         const now = Date.now();
         if (complete || lastEmitAt === 0 || now - lastEmitAt >= 600) {
           lastEmitAt = now;

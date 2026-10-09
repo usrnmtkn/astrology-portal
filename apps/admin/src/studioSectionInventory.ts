@@ -60,6 +60,7 @@ export const STUDIO_NATAL_CHART_PREFIXES = [
 ] as const;
 
 export const STUDIO_LUNAR_CALENDAR_PREFIXES = [
+  "authored/calendar-timing/",
   "authored/calendar-weekly-moon/",
   "authored/calendar-moon-continuation-summary/",
   "authored/calendar-moon-context/",
@@ -81,6 +82,7 @@ export const STUDIO_TEMPLATE_PREFIXES = [
   "slot-template/", "fallback-template/", "fallback-hook/", "authored/week-opener/",
   ...STUDIO_LUNAR_CALENDAR_PREFIXES
 ] as const;
+export const STUDIO_FALLBACK_PREFIXES = ["fallback-hook/", "fallback-template/", "house-horoscope-core/", "authored/calendar-weekly-moon/"] as const;
 export const STUDIO_VOCABULARY_PREFIXES = ["vocab/", "vocab.", "fallback-vocab/", "guide-phrase/"] as const;
 
 export const STUDIO_DAILY_PREFIXES = [
@@ -98,7 +100,7 @@ export const STUDIO_FRIENDS_SECTION_PREFIXES = [
 ] as const;
 
 export type StudioInventoryVisibility = "editorial" | "all";
-export type StudioInventoryScope = "all" | "compatibility" | "composite";
+export type StudioInventoryScope = "all" | "compatibility" | "composite" | "sky-types" | "template-types" | "fallback-types" | "slot-types" | "vocabulary-types";
 
 export type StudioInventoryQuery = {
   visibility: StudioInventoryVisibility;
@@ -106,6 +108,7 @@ export type StudioInventoryQuery = {
   prefixes: string[];
   mode: string | null;
   catalog: boolean;
+  supplementalScope?: StudioInventoryScope;
 };
 
 export type StudioInventoryRoute = {
@@ -120,11 +123,12 @@ export type StudioInventoryRoute = {
   showRetiredRows?: boolean;
 };
 
-function prefixesQuery(prefixes: readonly string[], visibility: StudioInventoryVisibility = "all"): StudioInventoryQuery {
+function prefixesQuery(prefixes: readonly string[], visibility: StudioInventoryVisibility = "all", supplementalScope?: StudioInventoryScope): StudioInventoryQuery {
   return {
     visibility,
     scope: "all",
     prefixes: [...prefixes],
+    ...(supplementalScope ? { supplementalScope } : {}),
     mode: null,
     catalog: false
   };
@@ -173,7 +177,7 @@ export function studioInventoryQuery(route: StudioInventoryRoute): StudioInvento
     return prefixesQuery(STUDIO_HOUSE_TRANSIT_PREFIXES);
   }
   if (route.page === "calendarWriteups") {
-    if (route.calendarWriteupWorkspaceView === "moon-transition-phrases") return prefixesQuery(["authored/calendar-moon-continuation-summary/", "authored/calendar-moon-context/"]);
+    if (route.calendarWriteupWorkspaceView === "moon-transition-phrases") return prefixesQuery(["authored/calendar-timing/", "authored/calendar-moon-continuation-summary/", "authored/calendar-moon-context/"]);
     if (route.calendarWriteupWorkspaceView === "planetary-ingresses") return prefixesQuery(STUDIO_PLANETARY_INGRESS_PREFIXES);
     if (route.calendarWriteupWorkspaceView === "planetary-stations") return prefixesQuery(STUDIO_PLANETARY_STATION_PREFIXES);
     return prefixesQuery(STUDIO_LUNAR_CALENDAR_PREFIXES);
@@ -187,7 +191,7 @@ export function studioInventoryQuery(route: StudioInventoryRoute): StudioInvento
   if (route.page === "skyWriteups" && route.skyWriteupWorkspaceView === "daily-summary") {
     return prefixesQuery(["cms/sky-daily-summary/", "cms/sky-debility/"]);
   }
-  if (route.page === "skyWriteups") return prefixesQuery(STUDIO_SKY_WRITEUP_PREFIXES);
+  if (route.page === "skyWriteups") return prefixesQuery(STUDIO_SKY_WRITEUP_PREFIXES, "all", "sky-types");
   if (route.page === "knowledge" && route.betweenYouTwoWorkspace) {
     return prefixesQuery(STUDIO_BETWEEN_YOU_TWO_PREFIXES);
   }
@@ -199,10 +203,10 @@ export function studioInventoryQuery(route: StudioInventoryRoute): StudioInvento
   }
   // Fallback section membership also uses the row's surface, not just its key.
   // The writing-workspace prefixes exclude reusable ingredients in these lists.
-  if (route.page === "knowledge") return prefixesQuery(["fallback-hook/", "fallback-template/", "house-horoscope-core/", "authored/calendar-weekly-moon/"]);
-  if (route.page === "vocabulary") return prefixesQuery(STUDIO_VOCABULARY_PREFIXES);
-  if (route.page === "slotDictionary") return prefixesQuery([...STUDIO_TEMPLATE_PREFIXES, ...STUDIO_VOCABULARY_PREFIXES]);
-  if (route.page === "templates") return prefixesQuery(STUDIO_TEMPLATE_PREFIXES);
+  if (route.page === "knowledge") return prefixesQuery(STUDIO_FALLBACK_PREFIXES, "all", "fallback-types");
+  if (route.page === "vocabulary") return prefixesQuery(STUDIO_VOCABULARY_PREFIXES, "all", "vocabulary-types");
+  if (route.page === "slotDictionary") return prefixesQuery([...STUDIO_TEMPLATE_PREFIXES, ...STUDIO_VOCABULARY_PREFIXES], "all", "slot-types");
+  if (route.page === "templates") return prefixesQuery(STUDIO_TEMPLATE_PREFIXES, "all", "template-types");
   if (route.page === "compositionMap" || route.page === "hooks") return catalogQuery("all");
   return catalogQuery(catalogVisibility);
 }
@@ -212,6 +216,7 @@ export function studioInventoryQueryKey(query: StudioInventoryQuery) {
     query.catalog ? "catalog" : "section",
     query.visibility,
     query.scope,
+    query.supplementalScope ?? "",
     query.mode ?? "",
     ...query.prefixes
   ].join("|");
@@ -229,4 +234,13 @@ export function studioInventoryRequestPath(query: StudioInventoryQuery, pageSize
   for (const prefix of query.prefixes) params.append("contentKeyPrefix", prefix);
   if (cursor) params.set("cursor", cursor);
   return `/api/admin/generated-content-inventory?${params}`;
+}
+
+/** Prefix passes retain virtual starters; the final metadata pass finds older/custom keys. */
+export function studioInventoryPasses(query: StudioInventoryQuery): StudioInventoryQuery[] {
+  const passes = query.prefixes.length
+    ? query.prefixes.map(prefix => ({ ...query, prefixes: [prefix] }))
+    : [{ ...query, prefixes: [] }];
+  if (query.supplementalScope) passes.push({ ...query, scope: query.supplementalScope, prefixes: [], supplementalScope: undefined });
+  return passes;
 }

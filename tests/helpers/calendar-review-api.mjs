@@ -26,6 +26,49 @@ export const fixtures = process.env.CALENDAR_REVIEW_FIXTURE
   };
 });
 
+export function matchesStoredInventory(row, params) {
+  const splitTerms = value => {
+    const terms = []; let depth = 0, start = 0;
+    for (let i = 0; i < value.length; i++) {
+      if (value[i] === '(') depth++;
+      if (value[i] === ')') depth--;
+      if (value[i] === ',' && depth === 0) { terms.push(value.slice(start, i)); start = i + 1; }
+    }
+    terms.push(value.slice(start)); return terms;
+  };
+  const condition = term => {
+    const group = /^(and|or)\((.*)\)$/.exec(term);
+    if (group) return splitTerms(group[2])[group[1] === 'and' ? 'every' : 'some'](condition);
+    const separator = term.indexOf('.');
+    return matchesStoredInventory(row, new URLSearchParams([[term.slice(0, separator), term.slice(separator + 1)]]));
+  };
+  return [...params].every(([field, value]) => {
+    if (["select", "order", "limit", "offset", "on_conflict"].includes(field)) return true;
+    if (field === "and" && /^\(content_key\.gte\."/.test(value)) {
+      const prefix = /^\(content_key\.gte\."([^"]+)",content_key\.lt\."([^"]+)"\)$/.exec(value);
+      if (!prefix) throw new Error(`Unmodeled prefix ${value}`);
+      return row.content_key >= prefix[1] && row.content_key < prefix[2];
+    }
+    if (field === 'or' || field === 'and') return condition(`${field}${value}`);
+    const actual = field.split(/->>?/).reduce((part, key) => part?.[key], row);
+    if (value.startsWith('not.')) return !matchesStoredInventory(row, new URLSearchParams([[field, value.slice(4)]]));
+    const like = /^(i?like)\.(.*)$/.exec(value);
+    if (like) {
+      if (actual == null) return false;
+      const pattern = like[2].split(/[*%]/).map(part => part.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('.*');
+      return new RegExp(`^${pattern}$`, like[1] === 'ilike' ? 'i' : '').test(String(actual));
+    }
+    if (value.startsWith("neq.")) return String(actual ?? "") !== value.slice(4);
+    if (value.startsWith("gt.")) return actual > value.slice(3);
+    if (value.startsWith("lt.")) return actual < value.slice(3);
+    if (value.startsWith("lte.")) return actual <= value.slice(4);
+    if (value === "is.null") return actual == null;
+    if (value.startsWith("eq.")) return String(actual ?? "") === value.slice(3);
+    if (value.startsWith("in.(")) return value.slice(4, -1).split(",").map(v => v.replaceAll('"', '')).includes(String(actual));
+    throw new Error(`Unmodeled storage filter ${field}=${value}`);
+  });
+}
+
 export async function createApiStore(initial = fixtures, storeOptions = {}) {
   const env = { NODE_ENV: "test", CONTENT_GENERATION_SECRET: "calendar-api-fixture", SUPABASE_URL: "https://calendar-api.invalid", SUPABASE_SERVICE_ROLE_KEY: "calendar-api-fixture-key" };
   Object.assign(process.env, env);
@@ -36,42 +79,6 @@ export async function createApiStore(initial = fixtures, storeOptions = {}) {
   let sequence = 0;
   let versionSequence = 0;
   const nextVersion = () => new Date(Date.now() + ++versionSequence).toISOString();
-  const matches = (row, params) => [...params].every(([field, value]) => {
-    if (["select", "order", "limit", "offset", "on_conflict"].includes(field)) return true;
-    if (field === "or") {
-      const cursor = /^\(updated_at\.lt\.([^,]+),and\(updated_at\.eq\.[^,]+,id\.lt\.([^()]+)\)\)$/.exec(value);
-      if (cursor) return row.updated_at < cursor[1] || row.updated_at === cursor[1] && row.id < cursor[2];
-      if (!/^\([^()]+\)$/.test(value)) throw new Error(`Unmodeled OR filter ${value}`);
-      return value.slice(1, -1).split(',').some(term => {
-        const separator = term.indexOf('.');
-        return matches(row, new URLSearchParams([[term.slice(0, separator), term.slice(separator + 1)]]));
-      });
-    }
-    if (field === "and") {
-      const prefix = /^\(content_key\.gte\."([^"]+)",content_key\.lt\."([^"]+)"\)$/.exec(value);
-      if (!prefix) throw new Error(`Unmodeled prefix ${value}`);
-      return row.content_key >= prefix[1] && row.content_key < prefix[2];
-    }
-    if (field.startsWith('sections->horoscopeEdition->window->>')) {
-      const actual = row.sections?.horoscopeEdition?.window?.[field.split('->>').at(-1)];
-      if (typeof actual !== 'string') return false;
-      if (value.startsWith('eq.')) return actual === value.slice(3);
-      if (value.startsWith('lte.')) return actual <= value.slice(4);
-      if (value.startsWith('gt.')) return actual > value.slice(3);
-      throw new Error(`Unmodeled horoscope window filter ${field}=${value}`);
-    }
-    if (field === 'content_key' && value.startsWith('like.')) {
-      const pattern = value.slice(5).split(/[*%]/).map(part => part.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('.*');
-      return new RegExp(`^${pattern}$`).test(String(row.content_key ?? ''));
-    }
-    if (value.startsWith("neq.")) return String(row[field] ?? "") !== value.slice(4);
-    if (value.startsWith("gt.")) return row[field] > value.slice(3);
-    if (value.startsWith("lte.")) return row[field] <= value.slice(4);
-    if (value === "is.null") return row[field] == null;
-    if (value.startsWith("eq.")) return String(row[field] ?? "") === value.slice(3);
-    if (value.startsWith("in.(")) return value.slice(4, -1).split(",").map(v => v.replaceAll('"', '')).includes(String(row[field]));
-    throw new Error(`Unmodeled storage filter ${field}=${value}`);
-  });
   globalThis.fetch = async (input, options = {}) => {
     const operation = await publication(input, options);
     if (operation) return operation;
@@ -80,7 +87,7 @@ export async function createApiStore(initial = fixtures, storeOptions = {}) {
     const url = new URL(String(input));
     if (url.origin === env.SUPABASE_URL && url.pathname === "/rest/v1/content_publications" && (!options.method || options.method === "GET")) return Response.json([...new Map([...fixturePublications([...rows.values()]), ...await publication.publications()].map(row => [row.content_key,row])).values()]);
     if (url.origin !== env.SUPABASE_URL || url.pathname !== "/rest/v1/generated_interpretations") throw new Error(`Unexpected test storage request ${url.origin}${url.pathname}`);
-    const found = [...rows.values()].filter(row => matches(row, url.searchParams));
+    const found = [...rows.values()].filter(row => matchesStoredInventory(row, url.searchParams));
     const method = options.method ?? "GET";
     if (method === "GET") {
       const order = (url.searchParams.get('order') ?? '').split(',').filter(Boolean);
