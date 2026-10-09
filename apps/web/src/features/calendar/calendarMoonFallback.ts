@@ -80,31 +80,15 @@ function signChangeSentence(facts: CalendarMoonCycleFacts, transition: string, l
   const time = facts.nextMoonSignEntryTime;
   const hour = ingressHour(facts);
   if (!facts.nextMoonSign || !time || hour == null) return null;
-  if (hour < 6) {
-    return joinParts(
-      calendarTimingBody('earlyIngress', { ...facts }, lookup),
-      transition
-    );
-  }
-  if (hour < 11) {
-    return joinParts(
-      calendarTimingBody('morningIngress', { ...facts }, lookup),
-      transition
-    );
-  }
-  if (hour < 15) {
-    return joinParts(
-      calendarTimingBody('middayIngress', { ...facts }, lookup),
-      transition
-    );
-  }
-  if (hour < 20) {
-    return joinParts(
-      calendarTimingBody('eveningIngress', { ...facts }, lookup),
-      transition
-    );
-  }
-  return joinParts(calendarTimingBody('lateIngress', { ...facts }, lookup), calendarMoonContextBody("lateIngress", lookup));
+  // Day and Week already display the calculated ingress and time in their
+  // event rows. Keep the selected passage intact instead of introducing it
+  // with another sentence announcing the same ingress.
+  const passage = hour < 20 ? transition : calendarMoonContextBody("lateIngress", lookup);
+  if (passage) return passage;
+  // Preserve the timing-only fallback when no transition passage is available.
+  const timing = hour < 6 ? 'earlyIngress' : hour < 11 ? 'morningIngress'
+    : hour < 15 ? 'middayIngress' : hour < 20 ? 'eveningIngress' : 'lateIngress';
+  return calendarTimingBody(timing, { ...facts }, lookup);
 }
 
 function hasExactLunarEvent(facts: CalendarMoonCycleFacts) {
