@@ -437,7 +437,7 @@ export default function HoroscopeEditionsStudio({secret,requestedEditionId}:{sec
     // Recover active requests as before. Idle Weeklies check only the version
     // first, preserving approval and avoiding unchanged large-history reads.
     const sync=async(returning=false)=>{
-      if(inFlight||document.visibilityState==='hidden'||Date.now()-lastSync.current<(running.current?(returning?15000:60000):returning?3000:30000))return;
+      if(inFlight||document.visibilityState==='hidden'||Date.now()-lastSync.current<(serverRunning?3000:running.current?(returning?15000:60000):returning?3000:30000))return;
       if(serverRunning){
         inFlight=true;lastSync.current=Date.now();
         try{const row=await readSaved(saved.id,controller.signal);if(!controller.signal.aborted){retain(row);if(row.source_snapshot?.horoscopeGeneration?.batch?.status!=='running')await checkProgress();}}
@@ -454,7 +454,9 @@ export default function HoroscopeEditionsStudio({secret,requestedEditionId}:{sec
       }catch{/* A background read never erases saved state or replays a request. */}
       finally{inFlight=false;}
     };
-    const onReturn=()=>void sync(true),timer=window.setInterval(()=>void sync(),15000);
+    // The server owns generation; the open editor only reads its progress.
+    // Keep active batches responsive without increasing idle edition polling.
+    const onReturn=()=>void sync(true),timer=window.setInterval(()=>void sync(),serverRunning?3000:15000);
     window.addEventListener('focus',onReturn);window.addEventListener('pageshow',onReturn);document.addEventListener('visibilitychange',onReturn);
     return()=>{controller.abort();window.clearInterval(timer);window.removeEventListener('focus',onReturn);window.removeEventListener('pageshow',onReturn);document.removeEventListener('visibilitychange',onReturn);};
   },[secret,step,draft?.window.period,saved,active,needsSync,dirty,instructions,busy,checking,needsSignIn]);

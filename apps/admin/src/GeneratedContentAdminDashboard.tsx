@@ -1,3 +1,4 @@
+import { articleLibraryKind, articleReaderHref, standaloneArticleKind, type ArticleLibraryKind } from "../../../src/shared/articleLibrary";
 import { isStudioCompatibilityRow, isStudioCompositeRow } from "./studioContentScope";
 import { calendarAspectRetrogradeOptions } from "../../web/src/content/calendarAspectRetrograde";
 import { isSkyIngressEssay, SKY_INGRESS_ESSAY_FORMAT, type SkyArticleFormat } from "../../web/src/content/skyIngressEssay.mjs";
@@ -718,7 +719,7 @@ const vocabularySections: Array<{ key: AdminVocabularySection; label: string; de
 ];
 
 const adminPageHashKeys: Record<AdminDashboardPage, string> = {
-  articles: "articles",
+  articles: "articles-guides",
   astro101: "astro-101",
   skyWriteups: "sky-writeups",
   calendarWriteups: "calendar-writeups",
@@ -749,6 +750,7 @@ const adminPageByHashKey = {
   ...Object.fromEntries(
     Object.entries(adminPageHashKeys).map(([page, hashKey]) => [hashKey, page])
   ),
+  articles: "articles",
   home: "reviewQueue",
   review: "reviewQueue",
   "app-behavior": "reviewQueue",
@@ -787,7 +789,7 @@ const primaryAdminNavItems: AdminNavItem[] = [
   { page: "skyWriteups", label: "Sky Write-ups", icon: Moon, group: "Write" },
   { page: "calendarWriteups", label: "Calendar Write-ups", icon: CalendarDays, group: "Write" },
   { page: "content", label: "Calendar Aspects", icon: CalendarDays, key: "calendar-aspects", category: "Calendar Aspects", group: "Write" },
-  { page: "articles", label: "Articles", icon: FileText, group: "Write" },
+  { page: "articles", label: "Articles & Guides", icon: FileText, group: "Write" },
   { page: "astro101", label: "Astro 101", icon: BookOpen, group: "Write" },
   { page: "compatibility", label: "Compatibility", icon: Users, group: "Write" },
   { page: "compositeByType", label: "Composite Review", icon: Users, group: "Write" },
@@ -952,7 +954,7 @@ function parseAdminHash() {
 
 function adminPageTitle(activePage: AdminDashboardPage) {
   switch (activePage) {
-    case "articles": return "Articles";
+    case "articles": return "Articles & Guides";
     case "astro101": return "Astro 101";
     case "skyWriteups": return "Sky Write-ups";
     case "calendarWriteups": return "Calendar Write-ups";
@@ -988,7 +990,7 @@ type AdminBreadcrumbItem = {
 
 function adminPageBreadcrumbItems(activePage: AdminDashboardPage): AdminBreadcrumbItem[] {
   switch (activePage) {
-    case "articles": return [{ label: "Admin", page: "reviewQueue" }, { label: "Write", page: "content" }, { label: "Articles" }];
+    case "articles": return [{ label: "Admin", page: "reviewQueue" }, { label: "Write", page: "content" }, { label: "Articles & Guides" }];
     case "astro101": return [{ label: "Admin", page: "reviewQueue" }, { label: "Write", page: "content" }, { label: "Astro 101" }];
     case "skyWriteups": return [{ label: "Admin", page: "reviewQueue" }, { label: "Write", page: "content" }, { label: "Sky write-ups" }];
     case "calendarWriteups": return [{ label: "Admin", page: "reviewQueue" }, { label: "Write", page: "content" }, { label: "Calendar write-ups" }];
@@ -1020,7 +1022,7 @@ function adminPageBreadcrumbItems(activePage: AdminDashboardPage): AdminBreadcru
 function adminPageDescription(activePage: AdminDashboardPage) {
   switch (activePage) {
     case "articles":
-      return "Write and manage standalone articles.";
+      return "Write dated Sky articles and standalone guides. Published writing is available in Articles & Guides in the app.";
     case "astro101":
       return "Manage Astro 101 education pages served on /learn.";
     case "skyWriteups":
@@ -1253,11 +1255,7 @@ function isPassiveReferenceAdminRow(row: AdminGeneratedContentRow) {
 }
 
 function isArticleLibraryRow(row: AdminGeneratedContentRow) {
-  return row.mode === "article"
-    && row.lane === "serving"
-    && !isSkyWriteupContentRow(row)
-    && !isAstro101ContentRow(row)
-    && !isRetiredAdminRow(row);
+  return Boolean(articleLibraryKind(row)) && !isAstro101ContentRow(row) && !isRetiredAdminRow(row);
 }
 
 function isAstro101LibraryRow(row: AdminGeneratedContentRow) {
@@ -3247,7 +3245,7 @@ export function GeneratedContentAdminDashboard() {
   const [surfaceAreaFilter, setSurfaceAreaFilter] = useState<WritingSurfaceAreaFilter>("all");
   const [surfaceStatusFilter, setSurfaceStatusFilter] = useState<WritingSurfaceStatusFilter>("all");
   const [vocabularyCategory, setVocabularyCategory] = useState<AdminVocabularyCategoryFilter>("planets");
-  const [articleStatusFilter, setArticleStatusFilter] = useState<GeneratedContentStatus | "all">("LIVE");
+  const [articleStatusFilter, setArticleStatusFilter] = useState<GeneratedContentStatus | "all">("all");
   const [articlePointFilter, setArticlePointFilter] = useState<AdminArticlePointFilter>("all");
   const [skyPlacementBody, setSkyPlacementBody] = useState("all");
   const [skyPlacementSign, setSkyPlacementSign] = useState("all");
@@ -3281,6 +3279,7 @@ export function GeneratedContentAdminDashboard() {
   const houseTransitEditorDrafts = useRef(new Map<string, { row?: AdminGeneratedContentRow; draft: AdminDraft; source: HouseTransitEditorSource; kind: HouseTransitSource["id"] }>());
   const houseTransitCloseGuard = useRef<(() => boolean) | null>(null);
   const [transitNatalSourceBodies, setTransitNatalSourceBodies] = useState<Map<string, string>>(() => new Map());
+  const [articleKindFilter, setArticleKindFilter] = useState<ArticleLibraryKind | "all">("all");
   const [articleContentSystemFilter, setArticleContentSystemFilter] = useState<AdminContentSystemFilter>("all");
   const [articleQuery, setArticleQuery] = useState("");
   const [astro101Query, setAstro101Query] = useState("");
@@ -3454,6 +3453,7 @@ export function GeneratedContentAdminDashboard() {
       || (showRetiredRows && isRetiredAdminRow(row))
       || isCompositionPage(activePage)
       || (activePage === "skyWriteups" && isSkyWriteupLibraryRow(row))
+      || (activePage === "articles" && isArticleLibraryRow(row))
       || !isPassiveReferenceAdminRow(row))
     && !row.id.startsWith("package:")
     && !row.content_key.startsWith("studio-variable/")
@@ -3518,11 +3518,12 @@ export function GeneratedContentAdminDashboard() {
     [skyWriteupRows]
   );
   const filteredArticleRows = useMemo(() => articleRows.filter((row) => {
-    return (articleStatusFilter === "all" || row.status === articleStatusFilter)
+    return (articleKindFilter === "all" || articleLibraryKind(row) === articleKindFilter)
+      && (articleStatusFilter === "all" || row.status === articleStatusFilter)
       && (articlePointFilter === "all" || articlePointForRow(row) === articlePointFilter)
       && (articleContentSystemFilter === "all" || contentSystemForRole(contentRoleForRecord(row)) === articleContentSystemFilter)
       && matchesAdminSearch(visibleRowSearchText(row), articleQuery);
-  }), [articleRows, articleStatusFilter, articlePointFilter, articleContentSystemFilter, articleQuery]);
+  }), [articleRows, articleKindFilter, articleStatusFilter, articlePointFilter, articleContentSystemFilter, articleQuery]);
   const filteredAstro101Rows = useMemo(() => astro101Rows.filter((row) => (
     matchesAdminSearch(visibleRowSearchText(row), astro101Query)
   )), [astro101Query, astro101Rows]);
@@ -4373,6 +4374,13 @@ export function GeneratedContentAdminDashboard() {
       page === "skyWriteups" && skyWriteupWorkspaceTabs.some(tab => tab.value === view)
         ? view as SkyWriteupWorkspaceView : "catalog"
     );
+    if (page === "articles" && search !== null) {
+      setArticleQuery(search);
+      setArticleStatusFilter("all");
+      setArticleKindFilter("all");
+      setArticlePointFilter("all");
+      setArticleContentSystemFilter("all");
+    }
     if (page === "skyWriteups" && search !== null) {
       setSkyWriteupQuery(search);
       setSkyPlacementBody("all");
@@ -6360,7 +6368,7 @@ export function GeneratedContentAdminDashboard() {
     }
   }
 
-  function handleCreateAction(page: AdminDashboardPage, nextMessage: string, calendarSign?: string) {
+  function handleCreateAction(page: AdminDashboardPage, nextMessage: string, calendarSign?: string, articleKind: "article" | "guide" = "article") {
     const isCalendarWriteup = page === "knowledge" && lunarWorkspaceActive;
     if (isCalendarWriteup && !calendarSign) {
       setIsCreateMenuOpen(false);
@@ -6378,7 +6386,7 @@ export function GeneratedContentAdminDashboard() {
     if (page === "articles") {
       setDraft({
         id: null,
-        contentKey: "article/manual/new-row",
+        contentKey: `article/${articleKind === "guide" ? "guide" : "manual"}/${crypto.randomUUID()}`,
         surface: "sky",
         mode: "article",
         status: "DRAFT",
@@ -6393,7 +6401,7 @@ export function GeneratedContentAdminDashboard() {
         facts: null,
         reviewerNotes: "",
         sourceSnapshot: {
-          contentType: "authored-article",
+          contentType: articleKind === "guide" ? "standalone-guide" : "authored-article",
           contentSystem: "authored",
           content_role: "authored-content",
           contentLevel: "owner-authored",
@@ -7697,9 +7705,14 @@ export function GeneratedContentAdminDashboard() {
               </div>
               <StudioButton type="button" onClick={() => handleCreateAction("articles", "New article draft started.")}>
                 <Plus size={16} aria-hidden="true" />
-                New Article
+                New article
               </StudioButton>
             </section>
+            <div className="admin-surface-actions" aria-label="Article and guide tools">
+              <StudioButton type="button" onClick={() => handleCreateAction("articles", "New guide draft started.", undefined, "guide")}>New guide</StudioButton>
+              <a className="admin-source-action" href="#articles-guides?q=sky%2Farticle-template%2F">Dated Sky article templates</a>
+              <a className="admin-source-action" href="/#articles">Open Articles &amp; Guides in the app</a>
+            </div>
             {renderArticleFilters()}
             <section className="admin-workbench admin-review-workspace">
               {renderEditor()}
@@ -9438,10 +9451,13 @@ export function GeneratedContentAdminDashboard() {
   function renderArticleFilters() {
     return (
       <AdminFilterBar
-        activeFilterCount={[articleStatusFilter !== "all", articlePointFilter !== "all", articleContentSystemFilter !== "all"].filter(Boolean).length}
+        activeFilterCount={[articleKindFilter !== "all", articleStatusFilter !== "all", articlePointFilter !== "all", articleContentSystemFilter !== "all"].filter(Boolean).length}
         label="Article filters" searchLabel="Search articles" query={articleQuery}
         onQueryChange={setArticleQuery} placeholder="Search by title, surface, kind, or content key"
         filters={<>
+          <label><span>Type</span><AdminSelect aria-label="Article or guide type" value={articleKindFilter} onChange={event => setArticleKindFilter(event.target.value as typeof articleKindFilter)}>
+            <option value="all">All</option><option value="sky">Sky articles</option><option value="guide">Guides</option><option value="article">Articles</option>
+          </AdminSelect></label>
           <label>
             <span>Status</span>
             <AdminSelect aria-label="Article status" value={articleStatusFilter} onChange={(event) => setArticleStatusFilter(event.target.value as GeneratedContentStatus | "all")}>
@@ -9466,7 +9482,8 @@ export function GeneratedContentAdminDashboard() {
           <StudioButton
             type="button"
             onClick={() => {
-              setArticleStatusFilter("LIVE");
+              setArticleStatusFilter("all");
+              setArticleKindFilter("all");
               setArticlePointFilter("all");
               setArticleContentSystemFilter("all");
               setArticleQuery("");
@@ -10020,6 +10037,7 @@ export function GeneratedContentAdminDashboard() {
 
     const isVocabularyDraft = draftIsVocabulary(currentDraft);
     const isArticleDraft = draftIsArticle(currentDraft);
+    const isStandaloneArticleDraft = Boolean(standaloneArticleKind(currentDraft.contentKey));
     const isAstro101Draft = isAstro101ContentRow({ content_key: currentDraft.contentKey, facts: currentDraft.facts });
     const astro101Blocks = astro101BlocksFromSections(currentDraft.sections);
     const astro101Intro = astro101IntroFromSections(currentDraft.sections);
@@ -12469,6 +12487,10 @@ export function GeneratedContentAdminDashboard() {
               {isVocabularyDraft && isPackageDraft && <p className="admin-field-hint">Package role: <code>{packageRole || "vocabulary"}</code></p>}
                           </div>
             </details>
+            {standaloneArticleKind(currentDraft.contentKey) && <section className={surfaceSection} aria-label="Article reader destination">
+              <p>Readers find published writing in Articles &amp; Guides.</p>
+              {currentDraft.id && currentDraft.status === "LIVE" && <a className="admin-source-action" href={articleReaderHref(currentDraft.contentKey)}>Read in app</a>}
+            </section>}
             {isArticleDraft && (
               <section className={`${surfaceSection} admin-display-source-panel`} aria-label="Article content system">
                 <Stack gap="sm">
@@ -12531,10 +12553,10 @@ export function GeneratedContentAdminDashboard() {
                 const saved = draftHasUnsavedChanges || !selectedRow ? await saveDraft() : selectedRow;
                 if (saved) await approvePackageRevision(saved);
               } else {
-                await saveDraft(isSkyArticleTemplate ? "DRAFT" : isCmsSurfaceDraft || isManualCalendarEventDraft ? "LIVE" : isAstro101Draft && currentDraft.status !== "LIVE" ? "DRAFT" : undefined);
+                await saveDraft(isSkyArticleTemplate ? "DRAFT" : isCmsSurfaceDraft || isManualCalendarEventDraft || isStandaloneArticleDraft ? "LIVE" : isAstro101Draft && currentDraft.status !== "LIVE" ? "DRAFT" : undefined);
               }
             })()}
-            disabled={isLoading || unchangedSkySource || Boolean(compiledSkyArticleEdition) || !compatibilityNewDraftReady || (isManualCalendarEventDraft && !currentDraft.body.trim()) || (isCmsSurfaceDraft && (!cmsCanSignOff || !publishReady)) || ((packageCanApproveRevision || packageWillPublishOnSave) && compatibilityAspectMissingCopy) || (packageWillPublishOnSave && (natalAspectMissingCopy || transitNatalMissingCopy)) || (!isNewDraft && !draftHasUnsavedChanges && !packageWillPublishOnSave && !packageCanApproveRevision && !((isCmsSurfaceDraft || isManualCalendarEventDraft) && currentDraft.status !== "LIVE"))}
+            disabled={isLoading || unchangedSkySource || (isStandaloneArticleDraft && (!currentDraft.headline.trim() || !currentDraft.body.trim())) || Boolean(compiledSkyArticleEdition) || !compatibilityNewDraftReady || (isManualCalendarEventDraft && !currentDraft.body.trim()) || (isCmsSurfaceDraft && (!cmsCanSignOff || !publishReady)) || ((packageCanApproveRevision || packageWillPublishOnSave) && compatibilityAspectMissingCopy) || (packageWillPublishOnSave && (natalAspectMissingCopy || transitNatalMissingCopy)) || (!isNewDraft && !draftHasUnsavedChanges && !packageWillPublishOnSave && !packageCanApproveRevision && !((isCmsSurfaceDraft || isManualCalendarEventDraft || isStandaloneArticleDraft) && currentDraft.status !== "LIVE"))}
             title={compatibilityAspectMissingCopy && (packageCanApproveRevision || packageWillPublishOnSave) ? "Write both You and Friend / They passages before publishing." : packageWillPublishOnSave && (natalAspectMissingCopy || transitNatalMissingCopy) ? "Write the passage before publishing." : !compatibilityNewDraftReady ? "Complete the Compatibility identity and copy." : undefined}
           >
             <Save size={16} aria-hidden="true" />
@@ -12542,7 +12564,7 @@ export function GeneratedContentAdminDashboard() {
               ? currentDraft.status === "LIVE" ? "Save changes" : "Save draft"
               : isGuidedHeldReview
               ? "Save held draft"
-              : isCmsSurfaceDraft || isManualCalendarEventDraft || packageCanApproveRevision || unchangedSkySource
+              : isCmsSurfaceDraft || isManualCalendarEventDraft || isStandaloneArticleDraft || packageCanApproveRevision || unchangedSkySource
                 ? "Save & publish"
                 : packageHasProposal
                 ? "Save draft"
@@ -12550,11 +12572,11 @@ export function GeneratedContentAdminDashboard() {
                   ? "Save & publish"
                   : "Save"}
           </StudioButton>
-          {(isCmsSurfaceDraft || isManualCalendarEventDraft || isPackageDraft && packageCanApproveRevision || unchangedSkySource) && (
+          {(isCmsSurfaceDraft || isManualCalendarEventDraft || isStandaloneArticleDraft || isPackageDraft && packageCanApproveRevision || unchangedSkySource) && (
             <StudioButton
               className="admin-secondary-button"
               type="button"
-              onClick={() => void saveDraft(isCmsSurfaceDraft || isManualCalendarEventDraft ? "DRAFT" : undefined)}
+              onClick={() => void saveDraft(isCmsSurfaceDraft || isManualCalendarEventDraft || isStandaloneArticleDraft ? "DRAFT" : undefined)}
               disabled={isLoading || unchangedSkySource || (!isNewDraft && !draftHasUnsavedChanges)}
               title="Keep this revision Not live."
             >
