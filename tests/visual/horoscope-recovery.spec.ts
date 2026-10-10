@@ -622,3 +622,65 @@ for(const [width,theme] of [[390,'dark'],[1440,'light']] as const){
   }finally{f.child.kill();}
  });
 }
+
+for(const recovery of ['focus','idle','release-conflict'] as const){
+ test(`Stale Weekly holds recover through ${recovery} without repeating a paid request`,async({page})=>{
+  await page.clock.install();
+  const f=await fixture(page,1,false,'weekly',false,false);try{
+   await f.call({method:'writer-state',body:{unknownNext:true}});
+   const plan=await f.action('prepare');
+   expect((await f.action('generate',{sign:'pisces',approvedPlanHash:plan.payload.plan.planHash})).status).toBe(200);
+   const studio=await f.open();
+   await expect(studio.getByRole('button',{name:'Allow retry for Pisces',exact:true})).toBeEnabled();
+   const before=await f.latest(),calls=await f.call({method:'writer-state'});
+   // Another client completes the authorized release; this tab is still stale.
+   expect((await f.action('release',{sign:'pisces',acknowledgeUnknownOutcome:true})).status).toBe(200);
+   if(recovery==='release-conflict'){
+    page.once('dialog',dialog=>dialog.accept());
+    await studio.getByRole('button',{name:'Allow retry for Pisces',exact:true}).click();
+   }else if(recovery==='focus'){
+    await page.clock.fastForward(3100);await page.evaluate(()=>window.dispatchEvent(new Event('focus')));
+   }else await page.clock.fastForward(31000);
+   await expect(studio.getByRole('button',{name:'Allow retry for Pisces',exact:true})).toHaveCount(0);
+   await expect(studio.getByLabel('Writing model',{exact:true})).toBeEnabled();
+   await expect(studio.getByLabel('I approve this writing plan for generation.')).not.toBeChecked();
+   await expect(studio.getByText('1 reading still needs a draft. Existing writing is kept.',{exact:true})).toBeVisible();
+   await expect(studio.getByRole('alert')).toHaveCount(0);
+   const after=await f.latest();
+   expect(after.sections).toEqual(before.sections);expect(after.status).toBe('DRAFT');
+   expect(after.source_snapshot.horoscopeGeneration.interruptions).toHaveLength(before.source_snapshot.horoscopeGeneration.interruptions.length+1);
+   expect(await f.call({method:'writer-state'})).toEqual(calls);
+  }finally{f.child.kill();}
+ });
+}
+
+test('Unchanged Weekly version preserves approval and dirty edits survive external changes',async({page})=>{
+ await page.clock.install();
+ const f=await fixture(page,1,false,'weekly',false,false);try{
+  const studio=await f.open();
+  const approval=studio.getByLabel('I approve this writing plan for generation.');
+  await approval.check();
+  const versionResponse=page.waitForResponse(response=>response.url().includes('editionVersion=true'));
+  await page.clock.fastForward(31000);expect((await versionResponse).status()).toBe(200);
+  await expect(approval).toBeChecked();
+  await studio.getByRole('button',{name:'3 · Review',exact:true}).click();
+  const prose=studio.getByLabel('Complete reading');await prose.fill('Synthetic local unsaved owner edit.');
+  expect((await f.action('reject',{sign:'aries'})).status).toBe(200);
+  await page.clock.fastForward(31000);await page.evaluate(()=>window.dispatchEvent(new Event('focus')));
+  await expect(prose).toHaveValue('Synthetic local unsaved owner edit.');
+  expect((await f.call({method:'writer-state'}))).toMatchObject({calls:0,reviewCalls:0});
+ }finally{f.child.kill();}
+});
+
+test('A stale Weekly Reject refreshes the current edition without replaying the rejection',async({page})=>{
+ const f=await fixture(page,1,false,'weekly',false,false);try{
+  const studio=await f.open();await studio.getByRole('button',{name:'3 · Review',exact:true}).click();
+  expect((await f.action('reject',{sign:'aries'})).status).toBe(200);
+  page.once('dialog',dialog=>dialog.accept());await studio.getByRole('button',{name:'Reject all drafts',exact:true}).click();
+  await expect(studio.getByText('10/12 readings ready',{exact:false})).toBeVisible();
+  await expect(studio.getByRole('alert')).toHaveCount(0);
+  const after=await f.latest();expect(after.source_snapshot.horoscopeGeneration.rejections).toHaveLength(1);
+  expect(after.sections.horoscopeEdition.passages.slice(1)).toEqual(f.original.passages.slice(1));
+  expect((await f.call({method:'writer-state'}))).toMatchObject({calls:0,reviewCalls:0});
+ }finally{f.child.kill();}
+});

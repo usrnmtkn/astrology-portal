@@ -53,7 +53,7 @@ export default async function handler(req:IncomingMessage,res:ServerResponse) {
     if(!row.content_key?.startsWith('horoscope/')||row.status!=='DRAFT')throw new AdminHttpError(409,'Open an editable horoscope draft.');
     assertHoroscopeRow(row);
     const persist=async(patch:Record<string,unknown>)=>{
-      if(row.sections.horoscopeEdition.window.period==='weekly'&&!['prepare','reject'].includes(input.action)){
+      if(row.sections.horoscopeEdition.window.period==='weekly'){
         row=await persistWeeklyHoroscope({url,headers,row,patch});return row;
       }
       const result=await adminFetchJson(`${url}?${new URLSearchParams({id:`eq.${row.id}`,updated_at:`eq.${row.updated_at}`})}`,{method:'PATCH',headers:{...headers,prefer:'return=representation'},body:JSON.stringify({...patch,updated_at:nextVersion(row.updated_at)})});
@@ -137,7 +137,8 @@ export default async function handler(req:IncomingMessage,res:ServerResponse) {
       assertHoroscopeRow({...row,...patch});await persist(patch);
       if(horoscopeCanonicalJson(row.sections)!==horoscopeCanonicalJson(patch.sections)
         ||horoscopeCanonicalJson(row.facts)!==horoscopeCanonicalJson(patch.facts)
-        ||horoscopeCanonicalJson(row.source_snapshot)!==horoscopeCanonicalJson(patch.source_snapshot))throw new AdminHttpError(502,'The exact reset could not be confirmed. Reopen this edition before continuing.');
+        ||horoscopeCanonicalJson(row.source_snapshot)!==horoscopeCanonicalJson({...patch.source_snapshot,
+          ...(original.window.period==='weekly'?{horoscopeStorageWriteId:row.source_snapshot.horoscopeStorageWriteId}:{})}))throw new AdminHttpError(502,'The exact reset could not be confirmed. Reopen this edition before continuing.');
       return sendAdminJson(res,200,{ok:true,rows:[row]});
     }
     if(input.action==='release') {
@@ -262,7 +263,8 @@ export default async function handler(req:IncomingMessage,res:ServerResponse) {
     if(input.action==='prepare'){
       if(writingRow!==row){
         await persist({source_snapshot:writingRow.source_snapshot});
-        if(horoscopeCanonicalJson(row.source_snapshot)!==horoscopeCanonicalJson(writingRow.source_snapshot))throw new AdminHttpError(502,'The latest writing instructions could not be confirmed. Reopen this edition before continuing.');
+        if(horoscopeCanonicalJson(row.source_snapshot)!==horoscopeCanonicalJson({...writingRow.source_snapshot,
+          ...(row.sections.horoscopeEdition.window.period==='weekly'?{horoscopeStorageWriteId:row.source_snapshot.horoscopeStorageWriteId}:{})}))throw new AdminHttpError(502,'The latest writing instructions could not be confirmed. Reopen this edition before continuing.');
       }
       return sendAdminJson(res,200,{ok:true,rows:[row],plan:{...horoscopePlanPreview(prepared),writerChoice,writerModel:writerConfig.model,writerModels},configured:writerAvailable});
     }

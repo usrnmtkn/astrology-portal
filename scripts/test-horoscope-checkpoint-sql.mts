@@ -6,20 +6,22 @@ import {horoscopeStorageChanges} from '../api/_lib/horoscope-storage-delta.js';
 // Real PostgreSQL SQL, isolated in memory. No provider or production writes.
 const db=new PGlite();
 const id='aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa';
-const read=async()=> (await db.query<any>('select id,updated_at::text,content_key,status,body,sections,source_snapshot from generated_interpretations where id=$1',[id])).rows[0];
+const read=async()=> (await db.query<any>('select id,updated_at::text,content_key,status,body,sections,source_snapshot,facts,review_state,reviewed_at from generated_interpretations where id=$1',[id])).rows[0];
 const save=async(row:any,changes:any)=> (await db.query<any>('select id,updated_at::text from checkpoint_weekly_horoscope($1,$2,$3)',[row.id,row.updated_at,changes])).rows;
 try{
   await db.exec(`create role anon; create role authenticated; create role service_role bypassrls;
-    create table public.generated_interpretations(id uuid primary key,updated_at timestamptz not null,status text,content_key text,body text,sections jsonb,source_snapshot jsonb);
+    create table public.generated_interpretations(id uuid primary key,updated_at timestamptz not null,status text,content_key text,body text,sections jsonb,source_snapshot jsonb,facts jsonb,review_state text,reviewed_at timestamptz);
     alter table public.generated_interpretations enable row level security;
     grant all on public.generated_interpretations to service_role;
     create function public.test_checkpoint_version() returns trigger language plpgsql as $$ begin new.updated_at=greatest(clock_timestamp(),old.updated_at+interval '1 microsecond');return new;end;$$;
     create trigger test_checkpoint_version before update on public.generated_interpretations for each row execute function public.test_checkpoint_version();`);
   await db.exec(readFileSync(new URL('../apps/web/supabase/migrations/20261009114231_weekly_horoscope_checkpoint_deltas.sql',import.meta.url),'utf8'));
   await db.exec(readFileSync(new URL('../apps/web/supabase/migrations/20261009124036_weekly_native_result_checkpoint.sql',import.meta.url),'utf8'));
+  await db.exec(readFileSync(new URL('../apps/web/supabase/migrations/20261010042007_weekly_rejection_checkpoint.sql',import.meta.url),'utf8'));
   const original={source_snapshot:{history:'Synthetic retained evidence. '.repeat(650000),horoscopeGeneration:{active:null,failures:[]}},
     sections:{horoscopeEdition:{window:{period:'weekly'},passages:[]}},body:'Synthetic original passage.'};
-  await db.query("insert into generated_interpretations values($1,clock_timestamp(),'DRAFT','horoscope/weekly/synthetic',$2,$3,$4)",[id,original.body,original.sections,original.source_snapshot]);
+  await db.query("insert into generated_interpretations(id,updated_at,status,content_key,body,sections,source_snapshot) values($1,clock_timestamp(),'DRAFT','horoscope/weekly/synthetic',$2,$3,$4)",[id,original.body,original.sections,original.source_snapshot]);
+  await db.query("update generated_interpretations set facts='{}',review_state='needs_review',reviewed_at=clock_timestamp() where id=$1",[id]);
   const definition=(await db.query<any>("select prosecdef,proconfig from pg_proc where oid='public.checkpoint_weekly_horoscope(uuid,timestamptz,jsonb)'::regprocedure")).rows[0];
   assert.equal(definition.prosecdef,false);
   assert.deepEqual(definition.proconfig,['search_path=""']);
@@ -61,8 +63,20 @@ try{
   assert.deepEqual(row.source_snapshot,nextSnapshot);assert.deepEqual(row.sections,nextSections);assert.equal(row.body,'Synthetic saved draft.');
   assert.equal(row.source_snapshot.history,original.source_snapshot.history);
   assert.deepEqual(await save(beforeCompletion,[{path:['body'],op:'set',value:'Stale overwrite.'}]),[]);
+  const beforeRejection=row;
+  const rejectedSnapshot={...row.source_snapshot,horoscopeGeneration:{...row.source_snapshot.horoscopeGeneration,
+    rejections:[{passages:row.sections.horoscopeEdition.passages,facts:row.facts}]}};
+  changes=horoscopeStorageChanges(row,{source_snapshot:rejectedSnapshot,sections:{...row.sections,horoscopeEdition:{...row.sections.horoscopeEdition,passages:[]}},body:'',facts:{refreshed:true},review_state:null,reviewed_at:null});
+  assert(JSON.stringify(changes).length<2000,'Rejection transports the new archive, not retained history');
+  await save(row,changes);row=await read();
+  assert.deepEqual(row.source_snapshot,rejectedSnapshot);assert.equal(row.source_snapshot.history,original.source_snapshot.history);
+  assert.deepEqual(row.facts,{refreshed:true});assert.equal(row.body,'');assert.equal(row.review_state,null);assert.equal(row.reviewed_at,null);
+  assert.deepEqual(await save(beforeRejection,changes),[],'Replayed rejection cannot reset a newer version');
   for(const invalid of [
     [{path:['status'],op:'set',value:'LIVE'}],
+    [{path:['review_state'],op:'set',value:'approved'}],
+    [{path:['reviewed_at'],op:'set',value:'2026-01-01'}],
+    [{path:['facts'],op:'set',value:null}],
     [{path:['source_snapshot','missing','child'],op:'set',value:true}],
     [{path:['source_snapshot'],op:'set',value:null}],
     [{path:['sections','horoscopeEdition','window','period'],op:'set',value:'monthly'}],

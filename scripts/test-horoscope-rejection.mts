@@ -21,7 +21,22 @@ for(const period of ['daily','weekly','seasonal'] as const){
  const receipts=Object.fromEntries(edition.passages.map(p=>[p.sign,{bodyHash:'old-fixture',lint:{violations:[{detail:'Previous fixture diagnostic'}]}}]));
  const created=await store.invoke('POST',{contentKey:horoscopeEditionKey(edition.window),surface:'sky',mode:'article',eventType:'horoscope-edition',provider:'manual-admin',status:'DRAFT',lane:'serving',headline:'Rejection fixture',body:horoscopeEditionBody(edition),sections:{horoscopeEdition:edition},facts:{horoscopeBrief:packet},sourceSnapshot:{horoscopeOutlines:{aries:'Previous private outline',taurus:'Keep this outline'},horoscopeGeneration:{readings:receipts},editorialImport:{originalSource:'PRIVATE ORIGINAL IMPORT'}}});
  assert.equal(created.status,200,JSON.stringify(created.payload));let row=created.payload.rows[0];
+ if(period==='weekly'){
+  row.source_snapshot.retainedEvidence='Synthetic retained history. '.repeat(650000);
+  row.review_state='needs_review';row.reviewed_at='2026-01-01T00:00:00Z';store.rows.set(row.id,row);
+ }
  const original=structuredClone(row),calls=writerFixture.calls;
+ const checkpointBodies:any[]=[];const originalTransport=globalThis.fetch;let loseRejectionAck=period==='weekly';
+ globalThis.fetch=async(input:any,options:any)=>{
+  if(period==='weekly'&&options?.method==='PATCH'&&String(input).includes('updated_at='))throw new Error('Full Weekly document PATCH is not a reliable rejection transport');
+  if(String(input).includes('/rpc/checkpoint_weekly_horoscope'))checkpointBodies.push(JSON.parse(options.body));
+  const response=await originalTransport(input,options);
+  if(loseRejectionAck&&String(input).includes('/rpc/checkpoint_weekly_horoscope')){
+   loseRejectionAck=false;
+   Object.defineProperty(response,'json',{value:async()=>{throw new DOMException('Synthetic lost rejection acknowledgement','AbortError');}});
+  }
+  return response;
+ };
  const action=(sign:string,extra:any={})=>invokeHoroscopeWriting({action:'reject',id:row.id,expectedUpdatedAt:row.updated_at,sign,...extra});
  assert.equal((await invokeHoroscopeWriting({action:'reject',id:row.id,expectedUpdatedAt:row.updated_at,sign:'all'},'wrong')).status,401);
  assert.equal((await action('invalid')).status,400);
@@ -46,8 +61,10 @@ for(const period of ['daily','weekly','seasonal'] as const){
  assert.deepEqual(history[0].facts,original.facts);assert.deepEqual(history[0].generation.readings,receipts);
  assert.deepEqual(history[0].editorialImport,original.source_snapshot.editorialImport);
  assert.equal((await action('aries')).status,409);
+ const checkpointTransport=globalThis.fetch;globalThis.fetch=originalTransport;
  const protectedSave=await store.invoke('PATCH',{id:row.id,expectedUpdatedAt:row.updated_at,sourceSnapshot:{...row.source_snapshot,horoscopeGeneration:null}});
  assert.equal(protectedSave.status,200);row=protectedSave.payload.rows[0];assert.deepEqual(row.source_snapshot.horoscopeGeneration.rejections,history,'Generic saves cannot erase rejection history');
+ globalThis.fetch=checkpointTransport;
  const plan=await invokeHoroscopeWriting({action:'prepare',id:row.id,expectedUpdatedAt:row.updated_at});assert.equal(plan.status,200);
  const generation=await invokeHoroscopeWriting({action:'generate',id:row.id,expectedUpdatedAt:row.updated_at,sign:'aries',approvedPlanHash:plan.payload.plan.planHash});assert.equal(generation.status,202,JSON.stringify(generation.payload));row=generation.payload.rows[0];
  assert.equal((await action('all')).status,409,'An active replacement cannot be discarded');
@@ -84,11 +101,17 @@ for(const period of ['daily','weekly','seasonal'] as const){
   assert(row.facts.horoscopeBrief.brief.events.some((e:any)=>e.type==='aspect'),'Regenerating a legacy Weekly edition acquires major planetary aspects');
   assert.deepEqual(history[1].facts,beforeAll.facts,'Historical facts stay exact when the next plan gains aspects');
  }
- // A concurrent edit between read and PATCH wins over the reset.
+ if(period==='weekly'){
+  assert.equal(row.source_snapshot.retainedEvidence,original.source_snapshot.retainedEvidence);
+  assert.equal(row.review_state,null);assert.equal(row.reviewed_at,null);
+  assert(checkpointBodies.length>0);assert(checkpointBodies.every(body=>!JSON.stringify(body).includes(original.source_snapshot.retainedEvidence)));
+ }
+ globalThis.fetch=originalTransport;
+ // A concurrent edit between read and checkpoint wins over the reset.
  store.rows.set(row.id,beforeAll);row=beforeAll;
  const transport=globalThis.fetch;
  globalThis.fetch=async(input:any,options:any)=>{
-  if(options?.method==='PATCH'&&String(input).includes('updated_at='))store.rows.set(row.id,{...row,updated_at:new Date(Date.now()+10000).toISOString()});
+  if(options?.method==='PATCH'&&String(input).includes('updated_at=')||String(input).includes('/rpc/checkpoint_weekly_horoscope'))store.rows.set(row.id,{...row,updated_at:new Date(Date.now()+10000).toISOString()});
   return transport(input,options);
  };
  try{assert.equal((await action('all')).status,409);assert.deepEqual(store.rows.get(row.id).sections,beforeAll.sections);}finally{globalThis.fetch=transport;}

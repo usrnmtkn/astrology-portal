@@ -3231,6 +3231,8 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
       if (req.method !== "GET") throw new AdminHttpError(405, "Use GET to list horoscope editions.");
       const query=new URL(req.url!,"http://localhost").searchParams;
       const id=query.get('id'),contentKey=query.get('contentKey');
+      const versionOnly=query.get('editionVersion')==='true';
+      if(versionOnly&&!id)throw new AdminHttpError(400,'Choose a saved edition to check.');
       if(contentKey&&!/^horoscope\/[a-zA-Z0-9_./+-]+$/u.test(contentKey))throw new AdminHttpError(400,'Choose a horoscope edition.');
       const detail=Boolean(id||contentKey);
       const inventoryOnly=!detail&&query.get('editionInventory')==='true';
@@ -3241,7 +3243,7 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
       // Opt in so already-open clients still receive complete documents.
       // Project in storage, before transferring and parsing the result.
       const params=new URLSearchParams({content_key:contentKey?`eq.${contentKey}`:"like.horoscope/*",mode:"eq.article",
-        select:inventoryOnly?'id,content_key,headline,status,sections,updated_at':'*',order:"updated_at.desc",limit:detail?'1':'30'});
+        select:versionOnly?'id,updated_at':inventoryOnly?'id,content_key,headline,status,sections,updated_at':'*',order:"updated_at.desc",limit:detail?'1':'30'});
       if(id)params.set('id',`eq.${id}`);
       // Full saved documents retain the writer's bounded read budget. They can
       // contain many complete historical requests; opening must not truncate them.
