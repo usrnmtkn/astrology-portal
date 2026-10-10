@@ -590,6 +590,7 @@ type SkyArticleEditionFacts = {
 };
 
 type SkyArticleEditionForm = {
+  writingDirection: string;
   format: SkyArticleFormat;
   referenceDate: string;
   facts: SkyArticleEditionFacts | null;
@@ -2210,6 +2211,8 @@ function skyArticleWorkspaceForm(row: AdminGeneratedContentRow | undefined) {
   return {
     row,
     tldr,
+    writingDirection: typeof workspace.writingDirection === "string" ? workspace.writingDirection : "",
+    slotGeneration: objectRecord(workspace.slotGeneration) as SkyArticleEditionForm["slotGeneration"],
     slotValues: Object.fromEntries(Object.entries(slotValues ?? {}).filter((entry): entry is [string, string] => typeof entry[1] === "string"))
   };
 }
@@ -4194,7 +4197,7 @@ export function GeneratedContentAdminDashboard() {
     const authoredSlotValues = Object.entries(form.slotValues).filter(([name, value]) => (
       !Object.prototype.hasOwnProperty.call(facts.slotValues, name) && value.trim()
     ));
-    if (form.saveState === "idle" && !form.workspaceId && !workspaceAutosaveRowRef.current && !form.tldr.trim() && authoredSlotValues.length === 0) return;
+    if (form.saveState === "idle" && !form.workspaceId && !workspaceAutosaveRowRef.current && !form.tldr.trim() && !form.writingDirection.trim() && authoredSlotValues.length === 0) return;
 
     const editorSession = editorSessionRef.current;
     const sequence = ++skyArticleWorkspaceAutosaveSequenceRef.current;
@@ -4212,6 +4215,8 @@ export function GeneratedContentAdminDashboard() {
             referenceDate: form.referenceDate,
             facts,
             tldr: form.tldr,
+            writingDirection: form.writingDirection,
+            slotGeneration: form.slotGeneration,
             slotValues: form.slotValues
           };
           const persistedWorkspaceRow = workspaceAutosaveRowRef.current;
@@ -4268,7 +4273,7 @@ export function GeneratedContentAdminDashboard() {
     }, 900);
 
     return () => window.clearTimeout(timeout);
-  }, [secret, selectedRow, skyArticleEditionForm?.facts, skyArticleEditionForm?.tldr, skyArticleEditionForm?.slotValues, skyArticleEditionForm?.workspaceId]);
+  }, [secret, selectedRow, skyArticleEditionForm?.facts, skyArticleEditionForm?.tldr, skyArticleEditionForm?.writingDirection, skyArticleEditionForm?.slotGeneration, skyArticleEditionForm?.slotValues, skyArticleEditionForm?.workspaceId]);
 
   function persistBetweenYouTwoRoute(nextQuery: string, nextActivate = friendsActivationQuery) {
     setQuery(nextQuery);
@@ -4885,6 +4890,8 @@ export function GeneratedContentAdminDashboard() {
       setSkyArticleEditionForm((current) => current ? {
         ...current,
         facts: payload.facts,
+        writingDirection: workspace?.writingDirection ?? current.writingDirection,
+        slotGeneration: workspace?.slotGeneration ?? null,
         tldr: workspace?.tldr ?? (isSkyIngressEssay(current.format) ? current.tldr : authoredSource?.summary?.trim() ?? current.tldr),
         slotValues: { ...current.slotValues, ...(workspace?.slotValues ?? {}), ...payload.facts.slotValues },
         workspaceId: workspace?.row.id ?? null,
@@ -4920,7 +4927,8 @@ export function GeneratedContentAdminDashboard() {
           templateId: templateRow.id,
           format: form.format,
           referenceDate: form.referenceDate,
-          existingSlotValues: form.slotValues
+          existingSlotValues: form.slotValues,
+          voiceNotes: form.writingDirection
         })
       });
       if (editorSession !== editorSessionRef.current) return;
@@ -5877,6 +5885,7 @@ export function GeneratedContentAdminDashboard() {
       reviewOpen: false
     } : null);
     setSkyArticleEditionForm(isSkyArticleTemplateRow(row) ? {
+      writingDirection: "",
       format: SKY_INGRESS_ESSAY_FORMAT,
       referenceDate: new Date().toISOString().slice(0, 10),
       facts: null,
@@ -11351,7 +11360,7 @@ export function GeneratedContentAdminDashboard() {
                   skyArticleWorkspaceAutosaveSequenceRef.current += 1;
                   workspaceAutosaveRowRef.current = null;
                   setSkyArticleEditionForm({ format: event.target.value as SkyArticleFormat, referenceDate: skyArticleEditionForm.referenceDate,
-                    facts: null, tldr: "", slotValues: {}, slotGeneration: null, factBlockedSlots: [], saveState: "idle", workspaceId: null });
+                    facts: null, tldr: "", writingDirection: "", slotValues: {}, slotGeneration: null, factBlockedSlots: [], saveState: "idle", workspaceId: null });
                 }}>
                   <option value={SKY_INGRESS_ESSAY_FORMAT}>Ingress essay · October 9 format</option>
                   <option value="saved-template">Saved article template and horoscopes</option>
@@ -11374,6 +11383,7 @@ export function GeneratedContentAdminDashboard() {
                       referenceDate: event.target.value,
                       facts: null,
                       tldr: "",
+                      writingDirection: "",
                       slotValues: {},
                       slotGeneration: null,
                       factBlockedSlots: [],
@@ -11410,6 +11420,21 @@ export function GeneratedContentAdminDashboard() {
                       <li>✓ Calculated residency facts</li>
                     </ul>
                   </section>
+                  <label className="admin-review-copy-editor">
+                    <span>Writing direction</span>
+                    <StudioTextarea
+                      aria-label="Sky article writing direction"
+                      value={skyArticleEditionForm.writingDirection}
+                      disabled={isLoading}
+                      onChange={(event) => setSkyArticleEditionForm({
+                        ...skyArticleEditionForm,
+                        writingDirection: event.target.value,
+                        saveState: "unsaved"
+                      })}
+                      placeholder="Add the approved outline, selected transits and editorial direction for this edition."
+                    />
+                    <small className="admin-field-hint">Saved with this draft and sent to the writer. These notes stay out of the compiled article.</small>
+                  </label>
                   <div className="admin-toolbar-actions">
                     <StudioButton
                       type="button"
@@ -11420,7 +11445,7 @@ export function GeneratedContentAdminDashboard() {
                       Generate unfinished fields
                     </StudioButton>
                     <p className="admin-field-hint">
-                      Sends the selected format, calculated facts, and unfinished fields to the writing provider. Review the generated draft before publication.
+                      Sends the selected format, calculated facts, writing direction and unfinished fields to the writing provider. Review the generated draft before publication.
                     </p>
                   </div>
                   {skyArticleEditionForm.slotGeneration && (
