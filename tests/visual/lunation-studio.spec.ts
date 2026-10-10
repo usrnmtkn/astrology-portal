@@ -17,13 +17,21 @@ for(const [width,theme] of [[390,'light'],[390,'dark'],[1440,'light'],[1440,'dar
    await page.setViewportSize({width,height:1000});
    await page.addInitScript(theme=>{localStorage.setItem('tldrastro:contentAdminSecret','calendar-api-fixture');localStorage.setItem('tldrastro:studio-theme',theme);},theme);
    await routeStudioInventoryApi(page,{call,answer:async(route,url)=>{if(url.pathname==='/api/admin/lunation-writing'){await route.fulfill({json:url.searchParams.has('month')?{ok:true,events:[]}:{ok:true,rows:[]}});return true;}if(url.pathname!=='/api/admin/calendar-lunation-writing')return false;const result=await call({method:'lunar-writing',body:route.request().postDataJSON()});await route.fulfill({status:result.status,json:result.payload});return true;}});
+   // Exercise cold lazy loading before interacting with the nested tab strip.
+   await page.route('**/DatedLunationWritingStudio-*.js',async route=>{await new Promise(resolve=>setTimeout(resolve,500));await route.continue();});
    await page.goto('/admin/content#ai-writing');
    const style=(element:any)=>element.evaluate((el:HTMLElement)=>{const s=getComputedStyle(el);return [s.fontFamily,s.fontSize,s.fontWeight,s.lineHeight,s.letterSpacing,s.margin,s.textTransform,s.textAlign];});
    const analogue=page.getByRole('heading',{name:'Weekly instructions',exact:true});await expect(analogue).toBeVisible();const headingStyle=await style(analogue);
    if(width<720)await page.getByRole('button',{name:'Open Content Studio navigation',exact:true}).click();
    await page.getByRole('button',{name:'Calendar Write-ups',exact:true}).click();
    const tab=page.getByRole('tab',{name:'New & Full Moons & Eclipses',exact:true});await expect(tab).toBeVisible();await tab.click();
-   await page.getByRole('tab',{name:'Reusable sign readings',exact:true}).click();
+   // The tab strip appears before the default lazy workspace. Wait until its
+   // layout has loaded so it cannot move under the pointer during the click.
+   await expect(page.getByRole('heading',{name:'Dated articles & eclipses',exact:true})).toBeVisible();
+   const reusableTab=page.getByRole('tab',{name:'Reusable sign readings',exact:true});
+   await reusableTab.click();
+   await expect(reusableTab).toHaveAttribute('aria-selected','true');
+   await expect(page).toHaveURL(/writing=reusable/);
    const editor=page.getByRole('region',{name:'New and Full Moon writing'});
    await expect(editor.getByRole('heading',{name:'New Moon in Aries',level:2})).toBeVisible();
    expect(await style(editor.getByRole('heading',{level:2}))).toEqual(headingStyle);
