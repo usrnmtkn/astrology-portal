@@ -98,7 +98,7 @@ const adminPages = [
   { nav: "Unresolved Content", title: "Unresolved Content", breadcrumb: "Admin / Publish / Unresolved content", hash: "unresolved-content" },
   { nav: "Content Library", title: "Content Library", breadcrumb: "Admin / Write / Content library", hash: "exact-content" },
   { nav: "Sky Write-ups", title: "Sky Write-ups", breadcrumb: "Admin / Write / Sky write-ups", hash: "sky-writeups" },
-  { nav: "Articles", title: "Articles", breadcrumb: "Admin / Write / Articles", hash: "articles" },
+  { nav: "Articles & Guides", title: "Articles & Guides", breadcrumb: "Admin / Write / Articles & Guides", hash: "articles-guides" },
   { nav: "Astro 101", title: "Astro 101", breadcrumb: "Admin / Write / Astro 101", hash: "astro-101" },
   { nav: "Compatibility", title: "Compatibility", breadcrumb: "Admin / Write / Compatibility", hash: "compatibility" },
   { nav: "Composite Review", title: "Composite Review", breadcrumb: "Admin / Write / Composite review", hash: "composite-review" },
@@ -2016,17 +2016,17 @@ test.describe("content dashboard admin user flow case studies", () => {
 
     await expectAdminRouteLoads(page, "/admin/content#home");
     await expectAdminHeader(page, "Review Queue", "Admin / Publish / Review queue");
-    await page.getByRole("navigation", { name: "Content operations" }).getByRole("button", { name: "Articles" }).click();
-    await expectAdminHeader(page, "Articles", "Admin / Write / Articles");
-    await expect(page).toHaveURL(/\/admin\/content#articles$/);
+    await page.getByRole("navigation", { name: "Content operations" }).getByRole("button", { name: "Articles & Guides" }).click();
+    await expectAdminHeader(page, "Articles & Guides", "Admin / Write / Articles & Guides");
+    await expect(page).toHaveURL(/\/admin\/content#articles-guides$/);
 
     await page.goBack();
     await expectAdminHeader(page, "Review Queue", "Admin / Publish / Review queue");
     await expect(page).toHaveURL(/\/admin\/content(?:#home)?$/);
 
     await page.goForward();
-    await expectAdminHeader(page, "Articles", "Admin / Write / Articles");
-    await expect(page).toHaveURL(/\/admin\/content#articles$/);
+    await expectAdminHeader(page, "Articles & Guides", "Admin / Write / Articles & Guides");
+    await expect(page).toHaveURL(/\/admin\/content#articles-guides$/);
 
     await assertNoBrowserErrors();
   });
@@ -2084,7 +2084,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expect(page.getByRole("button", { name: "Create" })).toBeFocused();
     await openCreateMenu(page);
     await createArticle.click({ force: true });
-    await expectAdminHeader(page, "Articles", "Admin / Write / Articles");
+    await expectAdminHeader(page, "Articles & Guides", "Admin / Write / Articles & Guides");
     await expect(page.locator(".admin-review-workspace, .admin-workbench").first()).toBeVisible();
 
     await openAdminCreateMenuHost(page);
@@ -2134,13 +2134,14 @@ test.describe("content dashboard admin user flow case studies", () => {
       await expect(createAction).toBeVisible();
       await createAction.click({ force: true });
       const editor = page.locator(".admin-editor-panel");
+      const expectedContentKey = createCase.action === "Create article" ? /^article\/manual\/[a-f0-9-]{36}$/u : createCase.contentKey;
       await expect(editor.getByRole("heading", { name: createCase.editorHeading })).toBeVisible();
       await expectFormShellDoesNotOverlap(editor, `${createCase.action} desktop editor`);
       if (createCase.phraseEditor) {
         await fillAdminEditorField(editor, "Phrase title", `${createCase.action} QA row`);
         await fillAdminEditorField(editor, "Reusable phrase", `${createCase.action} body copy for the dashboard admin save contract.`);
       } else {
-        await expect(editor.getByLabel("Content key")).toHaveValue(createCase.contentKey);
+        await expect(editor.getByLabel("Content key")).toHaveValue(expectedContentKey);
         if (createCase.action === "Create content row") {
           await expect(editor.getByText("Title / headline", { exact: true })).toBeVisible();
           await expect(editor.getByText("TL;DR / summary", { exact: true })).toBeVisible();
@@ -2156,14 +2157,14 @@ test.describe("content dashboard admin user flow case studies", () => {
       await expectFormShellDoesNotOverlap(editor, `${createCase.action} mobile editor`);
       await expectNoHorizontalOverflow(page, `${createCase.action} mobile editor`);
       await page.setViewportSize({ width: 1280, height: 900 });
-      await editor.getByRole("button", { name: "Save" }).evaluate((element) => {
+      await editor.getByRole("button", { name: createCase.action === "Create article" ? "Save draft" : "Save", exact: true }).evaluate((element) => {
         (element as HTMLButtonElement).click();
       });
 
       await expect.poll(() => writes.at(-1)).toMatchObject({
         method: "POST",
         payload: {
-          contentKey: createCase.contentKey,
+          contentKey: typeof expectedContentKey === "string" ? expectedContentKey : expect.stringMatching(expectedContentKey),
           eventType: createCase.eventType,
           blockType: createCase.blockType
         }
@@ -3392,16 +3393,16 @@ test.describe("content dashboard admin user flow case studies", () => {
     await seedAdminApi(page);
     await expectAdminRouteLoads(page, "/admin/content#articles");
 
-    await expectAdminHeader(page, "Articles", "Admin / Write / Articles");
+    await expectAdminHeader(page, "Articles & Guides", "Admin / Write / Articles & Guides");
     const articleFilters = page.locator("section[aria-label='Article filters']");
     await expect(articleFilters).toBeVisible();
-    await expect(articleFilters.getByLabel("Article status")).toHaveValue("LIVE");
+    await expect(articleFilters.getByLabel("Article status")).toHaveValue("all");
     await expect(articleFilters.getByLabel("Article planet or point")).toHaveValue("all");
     await expect(articleFilters.getByLabel("Article content system")).toHaveValue("all");
 
     await articleFilters.getByLabel("Article planet or point").selectOption("sun");
     await expect(page.locator(".admin-content-row", { hasText: "article/manual/sun-in-cancer" })).toHaveCount(1);
-    await expect(page.getByRole("heading", { name: "Articles", level: 1, exact: true })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Articles & Guides", level: 1, exact: true })).toBeVisible();
 
     await articleFilters.getByLabel("Search articles").fill("cancer");
     await expect(page.locator(".admin-content-row", { hasText: "Understanding the Sun in Cancer" }).first()).toBeVisible();

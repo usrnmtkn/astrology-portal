@@ -1,3 +1,4 @@
+import { articleLibraryPrefixes } from "../src/shared/articleLibrary.js";
 import { createHash } from "node:crypto";
 import { SKY_SEASON_FALLBACK_PREFIX } from "../apps/web/src/content/skySeasonFallback.js";
 import { calendarPassageIdentity } from '../src/calendar-writing/passageContract.js';
@@ -44,7 +45,7 @@ async function readQuery(req: IncomingMessage): Promise<Query> {
   if (value.scope !== undefined && !['sky', 'sky-list'].includes(String(value.scope))) throw new QueryError('Invalid scope.');
   if (value.vocabularyOnly !== undefined && value.vocabularyOnly !== true) throw new QueryError('Invalid vocabulary scope.');
   if (value.provider !== undefined && !providers.has(String(value.provider))) throw new QueryError('Invalid provider.');
-  if (value.prefix !== undefined && !['authored/compat-pair/', 'education/astro-101/'].includes(String(value.prefix))) throw new QueryError('Invalid prefix.');
+  if (value.prefix !== undefined && !['authored/compat-pair/', 'education/astro-101/', ...articleLibraryPrefixes].includes(String(value.prefix))) throw new QueryError('Invalid prefix.');
   if (value.afterId !== undefined && (typeof value.afterId !== 'string' || !uuid.test(value.afterId))) throw new QueryError('Invalid cursor.');
   if (value.targetDate !== undefined && (typeof value.targetDate !== 'string' || !/^\d{4}-\d{2}-\d{2}$/u.test(value.targetDate) || !Number.isFinite(Date.parse(value.targetDate)))) throw new QueryError('Invalid target date.');
   if (value.latestVersion !== undefined && (value.latestVersion !== true || !value.provider)) throw new QueryError('Invalid version query.');

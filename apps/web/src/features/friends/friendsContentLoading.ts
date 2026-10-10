@@ -1,6 +1,7 @@
 import type { FriendProfileTab } from "./friendsRouting";
 
 type FriendsContentLoadingMode =
+  | "articles"
   | "horoscopes"
   | "guest"
   | "member"
@@ -30,7 +31,7 @@ export function shouldHydrateFallbackDashboardContent({
   friendNatalContentRequested,
   friendRelationshipContentRequests
 }: Pick<FriendsContentLoadingState, "mode" | "friendNatalContentRequested" | "friendRelationshipContentRequests">) {
-  if (mode === "learn") return false;
+  if (mode === "learn" || mode === "articles") return false;
   if (mode !== "friends") return true;
 
   // Keep the bare Friends list fast, but once a reader opens any Friend detail
@@ -53,7 +54,7 @@ export function shouldLoadDeferredFallbackContent({
   skyPlacementPersonalizationRequested = false
 }: FriendsContentLoadingState) {
   if (skyPlacementPersonalizationRequested) return true;
-  if (mode === "guest" || mode === "member" || mode === "learn") return false;
+  if (mode === "guest" || mode === "member" || mode === "learn" || mode === "articles") return false;
   if (mode !== "friends") return true;
 
   return friendNatalContentRequested || friendRelationshipContentRequests.has("transits");
