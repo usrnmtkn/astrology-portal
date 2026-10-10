@@ -3145,7 +3145,8 @@ async function updateGeneratedContent(req: IncomingMessage) {
     method: "PATCH",
     headers: {
       ...adminHeaders(),
-      ...(patch.status === "LIVE" && body.status === "LIVE" ? { "x-content-publication-action": "publish" } : {}),
+      ...(patch.status === "LIVE" && (body.status === "LIVE" || body.ownerAction === "approve-sky-article-edition")
+        ? { "x-content-publication-action": "publish" } : {}),
       prefer: "return=representation"
     },
     body: JSON.stringify(patch)
