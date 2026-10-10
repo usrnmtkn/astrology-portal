@@ -112,7 +112,7 @@ The browser regression holds App's download and requires both Calendar modules
 to start independently. Existing cold-load ceilings, complete-reading checks,
 stylesheet loading and failure/recovery checks remain unchanged.
 
-The release branch incorporates main through `d4b0f5fe7`. Natal placement and
+The earlier integration incorporated main through `d4b0f5fe7`. Natal placement and
 aspect regressions now use the existing **Back to natal chart** accessible
 label; transit article assertions retain **Back to updates**. No navigation
 behavior or reader wording changed in this follow-up.
