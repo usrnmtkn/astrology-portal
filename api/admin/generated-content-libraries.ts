@@ -1,3 +1,4 @@
+export { approvedSkySeasonFallback, SKY_SEASON_FALLBACK_PREFIX } from "../../apps/web/src/content/skySeasonFallback.js";
 export { calendarAspectRetrogradeOptions, calendarAspectRetrogradeFields } from '../../apps/web/src/content/calendarAspectRetrograde.js';
 export { calendarTimingTemplates } from '../../apps/web/src/features/calendar/calendarTimingTemplates.js';
 export { STUDIO_VARIABLE_PREFIX, resolveStudioVariableCopy } from "../../apps/web/src/content/studioCustomVariables.mjs";

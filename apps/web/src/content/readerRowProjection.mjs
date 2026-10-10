@@ -76,7 +76,7 @@ const metadata = {
   studioWritingCheck: strings('reviewPolicy contentKey bodyHash'),
   studioPairSourceRevision: strings('bodyHash id'),
   calendarAspectPublication: strings('schema action contentKey sourceBaselineSha256 copySha256 approvedAt'),
-  ownerApproval: { ...booleans('approved'), ...strings('action contentKey templateKey templateHash fixedProseHash compiledHash') }
+  ownerApproval: { ...booleans('approved'), ...strings('action contentKey templateKey templateHash fixedProseHash compiledHash activeStart activeEnd') }
 };
 const edition = {
   ...strings('schema format body compiledHash compiledMarkdown contentKey fixedProseHash headline planet sign templateHash templateKey tldr transitEndInstant transitStartInstant validFrom validTo'),
@@ -102,6 +102,7 @@ const sections = {
   lunarJournal: { blocks: [lunarBlock] },
   calendarOverview: strings('weeklyOverview weeklyIntegration monthlyOverview monthlyIntegration seasonOverview lunarOverview transitOverview seasonOpening planetaryHighlights newMoonOverview fullMoonOverview lunationConnection'),
   packageRecord, skyArticleEdition: edition,
+  seasonFallback: strings('schema body sign entry exit seasonStart seasonEnd'),
   articleHoroscopes: { ...strings('schema heading introduction'), passages: [{ ...strings('risingSign heading body'), ...numbers('house') }] }
 };
 const rowContract = {
