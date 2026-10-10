@@ -5,6 +5,7 @@ import crypto from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { effectiveRulePrompt } from "../../src/astro-writing/effectiveRuleGovernance.mjs";
 import {
   buildMeaningPlan,
   buildArgumentOutline,
@@ -158,8 +159,11 @@ assert.ok(voiceContract.includes("CODEX INSTRUCTION (owner-designated canonical 
 assert.ok(voiceContract.includes("# Marie voice bank (gold-standard reference)"));
 assert.equal(
   sha256(longFormVoiceStandard),
-  "8ac0a55bfe7b542204d08595ef13cf2ca49bc92c1f8734a230b5d2249c04afbe",
-  "The owner-supplied long-form voice standard must remain byte-for-byte intact."
+  // Independently reproduced from the first clean-history version at
+  // 2a598375838e527aae6cdafb7e9621b9257613ab. The pre-cleanup assertion was
+  // 8ac0a55bfe7b542204d08595ef13cf2ca49bc92c1f8734a230b5d2249c04afbe.
+  "0346f9c9d43aa8f6df1db6baee91dddca7f52822f3d2792b6a4d3a8b1d3f7de6",
+  "The clean-history owner-supplied long-form voice standard must remain byte-for-byte intact."
 );
 for (const required of [
   "A paragraph composed mostly of 4–12 word sentences is a voice failure.",
@@ -280,6 +284,13 @@ const allOwnerCorrections = [...new Map(
   [...corrections, ...minedOwnerFeedback].map((entry) => [entry.bad.trim().toLowerCase(), entry])
 ).values()];
 assert.equal(allOwnerCorrections.length, 73, "The pair selector must receive all 73 deduplicated owner corrections.");
+// August 25's owner ruling keeps prose diagnoses visible for owner review.
+// These fixtures may block only for the factual/rendering categories below;
+// the contextual rhetorical receipt is tested separately.
+const correctionIntegrityCategories = new Set([
+  "example_proves_astrology", "invented_motive", "sign_house_separation",
+  "register_consistency", "placeholder_integrity", "vague_action_object"
+]);
 for (const fixture of corrections) {
   for (const field of ["bad", "corrected", "category", "why", "family", "rule"]) assert.ok(fixture[field], `Correction fixture missing ${field}.`);
   const review = await reviewDraft({
@@ -291,7 +302,10 @@ for (const fixture of corrections) {
     surfaceStrategy: resolveSurfaceStrategy({ explicitStrategy: "sky-placement" }),
     requiredFields: ["body"]
   });
-  assert.equal(review.decision, "REVISE", `Known bad fixture must be rejected: ${fixture.category}`);
+  for (const violation of review.violations) {
+    assert.equal(violation.severity, correctionIntegrityCategories.has(violation.category) ? "blocking" : "nonblocking");
+  }
+  assert.equal(review.decision, review.violations.some(violation => correctionIntegrityCategories.has(violation.category)) ? "REVISE" : "PASS");
   assert.ok(review.violations.some((violation) => violation.category === fixture.category), `Fixture must retain category ${fixture.category}.`);
   const correctedLint = validateCopy(fixture.corrected, {
     validationProfile: "shared-only",
@@ -527,7 +541,8 @@ const venusLibraSceneEvidence = sceneEvidenceForTarget({
   }
 });
 assert.equal(matrixSceneCatalog.primary.length, 41, "Higher-governance matrix scene inventory must remain 41 unique rows.");
-assert.equal(servingSceneCatalog.length, 57, "Approved serving scene inventory must include the current V15 natal rows, the approved Lilith fourth-house passages, and the released Batch 2A Venus/Saturn row that qualify as scene evidence.");
+assert.equal(servingSceneCatalog.length, 73, "Approved serving scene inventory must include the current natal, empty-house, transit and Sky rows (also 73 on the pre-repair main revision).");
+assert.ok(servingSceneCatalog.every(entry => entry.ownerApproved === true && entry.useAsSceneEvidence === true && entry.useAsPositiveVoiceEvidence === false));
 for (const contentKey of [
   "fallback-hook/natal-you-placement-complete-final/lilith/aries/4",
   "fallback-hook/natal-you-placement-complete-final/lilith/gemini/4",
@@ -792,7 +807,9 @@ for (const leaked of [
 let writerCallCount = 0;
 const writerClient = async ({ stage, instructions, input }) => {
   assert.equal(stage, "draft");
-  assert.equal(instructions, canonicalAstrologyWritingInstructions);
+  const family = input.match(/CONTENT FAMILY\n([^\n]+)/u)?.[1];
+  assert.ok(family);
+  assert.equal(instructions, effectiveRulePrompt(canonicalAstrologyWritingInstructions, { surface: "sky-placement-page", family }));
   assert.match(input, /OWNER-APPROVED ARGUMENT OUTLINE/u);
   assert.match(input, /RECORDED STRUCTURAL SPINE/u);
   assert.match(input, /SHARED FIVE-ROLE EVIDENCE PACKET/u);
@@ -1507,7 +1524,9 @@ const inconsistentReviewer = await reviewDraft({
     };
   }
 });
-assert.equal(inconsistentReviewer.decision, "REVISE", "Any reviewer field marked REVISE must block PASS.");
+assert.equal(inconsistentReviewer.decision, "PASS", "An advisory voice finding cannot override the owner's effective enforcement boundary.");
+assert.equal(inconsistentReviewer.voice_match.status, "FAIL");
+assert.ok(inconsistentReviewer.violations.some(entry => entry.category === "voice_match" && entry.severity === "nonblocking"));
 
 const coldFailureReview = await reviewDraft({
   draft: {
@@ -1622,11 +1641,17 @@ assert.ok(negativeCapricornLint.violations.some((entry) => entry.category === "s
 const verticalSlice = evaluateLilithVerticalSlice({ gold, negatives });
 assert.equal(gold.length, 12);
 assert.equal(negatives.length, 8);
-assert.equal(verticalSlice.passed, true);
+// Keep the original all-blocking calibration honest after the owner's
+// advisory-only ruling; no historical fixture or approval is rewritten.
+assert.equal(verticalSlice.passed, false);
 assert.equal(verticalSlice.goldPassed, 12);
-assert.equal(verticalSlice.negativePassed, 8);
+assert.equal(verticalSlice.negativePassed, 4);
 assert.equal(verticalSlice.falsePositives, 0);
-assert.equal(verticalSlice.falseNegatives, 0);
+assert.equal(verticalSlice.falseNegatives, 4);
+assert.ok(verticalSlice.negativeResults.every(result => result.missed.length === 0), "Every original diagnosis must remain visible.");
+assert.deepEqual(verticalSlice.negativeResults.filter(result => result.actual === "PASS").map(result => result.fixtureId), [
+  "neg-pisces-well", "neg-taurus-tagline", "neg-gemini-advocacy", "neg-virgo-clinical"
+]);
 const liveSemanticReport = JSON.parse(read("packages/astro-knowledge/review/writing-harness-v2/lilith-live-semantic-review-eval.json"));
 assert.equal(liveSemanticReport.callCount, 20);
 assert.equal(liveSemanticReport.model, "gpt-5.6-terra");
@@ -1680,7 +1705,7 @@ for (const file of directCallFiles) {
   assert.ok(source.includes("callOpenAIResponses"), `${file} must use the canonical Responses wrapper.`);
   assert.ok(!source.includes("api.openai.com/v1/responses"), `${file} may not bypass the canonical Responses wrapper.`);
 }
-const { callOpenAIResponses, instructionsForRole } = await import("../../src/astro-writing/openAIResponses.cjs").then((module) => module.default);
+const { callOpenAIResponses, instructionsForRole, governedInstructionsForRole } = await import("../../src/astro-writing/openAIResponses.cjs").then((module) => module.default);
 assert.equal(instructionsForRole("WRITER"), canonicalAstrologyWritingInstructions);
 assert.equal(instructionsForRole("CARD_WRITER_V3"), candidateCardAstrologyWritingInstructions);
 assert.equal(instructionsForRole("CARD_REVISER_V3"), candidateCardAstrologyWritingInstructions);
@@ -1698,7 +1723,8 @@ await callOpenAIResponses({
     return { json: async () => ({ id: "test-response" }), ok: true, status: 200 };
   }
 });
-assert.equal(capturedWrapperBody.instructions, canonicalAstrologyReviewInstructions);
+assert.equal(capturedWrapperBody.instructions, governedInstructionsForRole("REVIEWER"));
+assert.ok(capturedWrapperBody.instructions.startsWith(canonicalAstrologyReviewInstructions));
 await assert.rejects(() => callOpenAIResponses({
   apiKey: "test-key",
   role: "WRITER",
@@ -1708,7 +1734,13 @@ const apiGeneration = read("api/_lib/content-generation.ts");
 assert.ok(apiGeneration.includes("reviewGeneratedContentWithOpenAI"), "Application generation must run a separate review pass.");
 assert.ok(apiGeneration.includes('role: "COLD_REVIEWER"'), "Application generation must run the isolated cold-rendered-prose pass.");
 assert.ok(apiGeneration.includes("renderedGeneratedCopy(draft)"), "The cold pass must receive rendered copy rather than drafting context.");
-assert.ok(apiGeneration.includes("data/writing/OWNER_APPROVED_EXAMPLES.jsonl"), "Application generation must retrieve from canonical owner-approved evidence.");
+assert.ok(apiGeneration.includes('import { sharedGenerationOwnerExamples } from "./shared-generation-owner-examples.js"'));
+assert.ok(apiGeneration.includes("sharedGenerationOwnerExamples(index, input)"), "Application generation must call the scoped owner-evidence selector.");
+const sharedOwnerExamples = read("api/_lib/shared-generation-owner-examples.ts");
+assert.ok(sharedOwnerExamples.includes('entry.authorityClass === "owner_authored_final"'));
+assert.ok(sharedOwnerExamples.includes("entry.ownerAuthored === true"));
+assert.ok(sharedOwnerExamples.includes("entry.ownerApproved === true"));
+assert.ok(!apiGeneration.includes("data/writing/OWNER_APPROVED_EXAMPLES.jsonl"), "Serving approval alone must not be used as proof of owner authorship.");
 assert.ok(!apiGeneration.includes('status: "in.(LIVE,REVIEWED)"'), "Generic generated LIVE/REVIEWED rows must not be treated as owner voice.");
 assert.ok(apiGeneration.includes('status: "DRAFT"'), "Generated application prose must remain DRAFT until owner approval.");
 assert.ok(!apiGeneration.includes("previous_response_id"), "No call may rely on prior-response instruction persistence.");

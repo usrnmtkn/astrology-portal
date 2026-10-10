@@ -29,7 +29,7 @@ try{
  r.installPersonalTransitFallbackArchitectureV3Bundle((await r.preparePersonalTransitSources()).bundle);
  for(const voice of ['you','QA Friend']){
   const expected=record[voice==='you'?'body_you':'body_they'];
-  assert.equal(personal(voice),expected.replaceAll('{{untilDate}}','October 10'),'Actual app computes date and forwards perspective');
+  assert.equal(personal(voice),expected.replaceAll('{{untilDate}}','October 10, 2026'),'Actual app computes date and forwards perspective');
   assert.equal(personal(voice,{reportWindowLabel:'until November 2'}),expected.replaceAll('{{untilDate}}','November 2'),'Report date override is forwarded');
  }
  state='retired';revision++;

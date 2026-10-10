@@ -342,9 +342,14 @@
       "evidence": [
         {
           "sourceId": "authored:transit-aspect/moon/north-node/conjunction",
-          "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/transit-synastry-rows-v1.json",
-          "selector": "authoredCards[contentKey=authored/transit-aspect/moon/north-node/conjunction]",
-          "field": "body_you",
+          "sourcePath": "packages/astro-knowledge/review/transit-aspect-you-refresh-candidates-2026-09-04.json",
+          "selector": "records[contentKey=authored/transit-aspect/moon/north-node/conjunction]",
+          "field": "priorBodyYou",
+          "snapshot": {
+            "sourceSha256": "c8b6b1b0d2a71024deb54460c4591babdf381b27c380e403029a34af0eb6eb58",
+            "fieldSha256": "c57ee40d4f87375db5c50b2f74cff2800c1b33bf83beb8d80669be6a0a782e4e",
+            "supersessionRecord": "packages/astro-knowledge/review/transit-aspect-you-refresh-376-owner-live-2026-09-04.json"
+          },
           "evidenceRole": "supporting-reference",
           "match": "includes",
           "text": "You may also feel unexpectedly protective of a plan you have barely admitted you want.",

@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 
+import { priorYouTransitBody } from "./lib/you-transit-approval-history.mjs";
 import assert from "node:assert/strict";
 import crypto from "node:crypto";
 import fs from "node:fs";
@@ -23,7 +24,7 @@ const expected = {
 const row = source.authoredCards.find((candidate) => candidate.contentKey === contentKey);
 assert.ok(row, "The exact Jupiter trine Descendant source row must exist.");
 const record = readJson(recordPath);
-assert.deepEqual(record.payload, { headline: row.headline, body_you: row.body_you });
+assert.deepEqual(record.payload, { headline: row.headline, body_you: priorYouTransitBody(row) });
 assert.equal(
   crypto.createHash("sha256").update(JSON.stringify(record.payload)).digest("hex"),
   row.approval.payloadSha256,
@@ -37,6 +38,9 @@ const facts = {
   sign: "leo",
   window: "Until September 2"
 };
+// The August passage remains exact historical evidence. September's explicit
+// field-level approval is the current serving authority, including its slots.
+expected.body = row.body_you.replaceAll("{{aspectWord}}", "trine").replaceAll("{{untilDate}}", "September 2");
 const browserRenderer = createTransitSynastryRenderer(source, templates, rows);
 
 for (const [label, rendered] of [

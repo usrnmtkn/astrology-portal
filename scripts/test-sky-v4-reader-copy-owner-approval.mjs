@@ -1,3 +1,4 @@
+import { assertSkyV4SourceIntegrity } from "./lib/sky-v4-source-integrity.mjs";
 import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
 import { execFileSync } from "node:child_process";
@@ -21,7 +22,7 @@ const valueAt = (source, dottedPath) => dottedPath
   .split(".")
   .reduce((current, segment) => current?.[segment], source);
 
-assert.equal(createHash("sha256").update(canonicalBytes).digest("hex"), SKY_V4_CANONICAL_JSON_SHA256);
+assertSkyV4SourceIntegrity(canonicalBytes, SKY_V4_CANONICAL_JSON_SHA256);
 assert.equal(approval.approved_keys.length, 280);
 assert.equal(new Set(approval.approved_keys).size, 280);
 assert.equal(records.length, 305);

@@ -7765,6 +7765,7 @@ function personalTransitPackageWindow(transit: TransitItem, generatedAt: string)
     const endLabel = new Intl.DateTimeFormat("en-US", {
       month: "long",
       day: "numeric",
+      year: "numeric",
       timeZone: transitEventTimeZone(transit)
     }).format(window.end);
 

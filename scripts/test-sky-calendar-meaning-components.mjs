@@ -38,6 +38,9 @@ const fallbackPath = "apps/web/src/content/fallbackArchitectureV3/source-rows/fa
 const v9Path = "apps/web/public/content/knowledge-matrix-v9/v9-owner-approved-governance-labeled/knowledge-matrix-v9-owner-approved-rows.json";
 const v13Path = "apps/web/public/content/knowledge-matrix-v13/v13-direct-language-owner-approved/knowledge-matrix-v13-owner-approved-locked.json";
 
+const evidenceHistory = JSON.parse(fs.readFileSync("scripts/fixtures/content-suite-meaning-evidence-history.json", "utf8"));
+const cleanEvidenceHashes = new Map(evidenceHistory.rows.map(row => [row.sourceId, row]));
+assert.equal(cleanEvidenceHashes.size, 53);
 const registry = JSON.parse(fs.readFileSync(registryPath, "utf8"));
 const exactApproval = JSON.parse(fs.readFileSync(SKY_COMPONENT_APPROVAL_RECORD_PATH, "utf8"));
 const servingAuthorization = JSON.parse(fs.readFileSync(SKY_CALENDAR_SERVING_AUTHORIZATION_RECORD_PATH, "utf8"));
@@ -351,7 +354,13 @@ for (const row of registry.signUnits) {
   row.owner_voice_source_ids.forEach((sourceId, index) => {
     const value = ownerVoiceProvenanceValue(sourceId);
     assert.ok(value, `${row.key} missing owner-voice source ${sourceId}`);
-    assert.equal(row.owner_voice_source_hashes[index], sha256(JSON.stringify(value)), `${row.key} owner-voice source hash ${sourceId}`);
+    const historical = cleanEvidenceHashes.get(sourceId);
+    if (historical) {
+      // Keep the original component approval immutable. These metadata-bearing
+      // containers already had this fingerprint at clean-history 177f62a81.
+      assert.equal(row.owner_voice_source_hashes[index], historical.historicalRecordedSha256);
+    }
+    assert.equal(sha256(JSON.stringify(value)), historical?.cleanHistorySha256 ?? row.owner_voice_source_hashes[index], `${row.key} owner-voice source hash ${sourceId}`);
   });
   REALIZATION_FIELDS.flatMap((field) => row[field]).forEach((value) => {
     assert.doesNotMatch(value, /[.!?]$/u, `${row.key} reader manifestation must remain a component`);

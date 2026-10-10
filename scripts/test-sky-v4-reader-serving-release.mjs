@@ -1,3 +1,4 @@
+import { assertSkyV4SourceIntegrity } from "./lib/sky-v4-source-integrity.mjs";
 import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
 import fs from "node:fs";
@@ -12,7 +13,7 @@ const canonicalUrl = new URL("../apps/web/src/content/fallbackArchitectureV3/aut
 const corpusBytes = fs.readFileSync(canonicalUrl);
 const corpus = JSON.parse(corpusBytes);
 const bundled = JSON.parse(fs.readFileSync(new URL("../apps/web/src/content/fallbackArchitectureV3/bundled-initial-reader-rows-v3.json", import.meta.url)));
-assert.equal(createHash("sha256").update(corpusBytes).digest("hex"), SKY_V4_CANONICAL_JSON_SHA256);
+assertSkyV4SourceIntegrity(corpusBytes, SKY_V4_CANONICAL_JSON_SHA256);
 assert.equal(assertSkyV4ReaderCopyServingRelease(corpus).expected_serving_records, 280);
 
 const records = skyV4ContentStudioRecords(corpus);

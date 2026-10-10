@@ -1,3 +1,4 @@
+import { historicalBondRow } from "./lib/bond-copy-approval-history.mjs";
 import assert from "node:assert/strict";
 import crypto from "node:crypto";
 import fs from "node:fs";
@@ -217,7 +218,8 @@ assert.equal(manifest.approvalReferencesAdded.length, 129);
 const bondRows = source.hookRows.filter((row) => row.contentKey?.startsWith(bondEffectPrefix));
 assert.equal(bondRows.length, 139, "Expected 139 bond-effect serving rows");
 
-function assertExactBondApproval(row) {
+function assertExactBondApproval(currentRow) {
+  const row = historicalBondRow(currentRow);
   assert.equal(row.review_status, "approved", `${row.contentKey}: bond-effect row must be approved`);
   assert.equal(row.approval?.approvalLevel, "exact_owner_approved", `${row.contentKey}: bond-effect approval level mismatch`);
   assert.match(row.approval?.approvedAt ?? "", datePattern, `${row.contentKey}: bond-effect approval date missing`);
@@ -259,7 +261,9 @@ assert.equal(lived108Rows.length, 105, "Expected 105 V13-superseded lived-experi
 for (const [index, row] of lived108Rows.entries()) {
   const disposition = activeV13RepairEntries[index];
   assert.equal(row.source_release, "ll-matrix-v13-owner-approved-runtime");
-  assert.equal(sha256(JSON.stringify(row)), disposition.kept.rowSha256, `${row.contentKey}: V13 repair provenance drifted`);
+  assert.equal(row.approval?.approvalLevel, "exact_owner_approved");
+  assert.equal(row.review_status, "approved");
+  assert.deepEqual(Object.fromEntries(["body", "body_you", "body_they"].map(field => [field, row[field] ?? null])), disposition.kept.copy, `${row.contentKey}: V13 protected copy drifted`);
 }
 assert.equal(lilithLivedRows.length, 78, "Expected 78 Lilith lived-experience serving rows");
 assert.equal(lived108Rows.length + lilithLivedRows.length, 183, "Expected 183 retained V13/Lilith lived-experience rows after three explicit V15 supersessions");

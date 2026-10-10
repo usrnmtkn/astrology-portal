@@ -27,8 +27,13 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
     await expect(section).toContainText('Exact · July 25 and September 15, 2026');
     await expect(section).toContainText('Strong feeling can become more trustworthy');
     await expect(section).toContainText('the story that was easiest to sell.');
-    const destination = '#sky/aspect/neptune/sextile/pluto/at/2026-07-25T05%3A26%3A37.999Z';
-    await expect(card).toHaveAttribute('href', destination);
+    const destination = (await card.getAttribute('href'))!;
+    const prefix = '#sky/aspect/neptune/sextile/pluto/at/';
+    expect(destination).toMatch(/^#sky\/aspect\/neptune\/sextile\/pluto\/at\//);
+    // The numerical solver resolves the same pass to adjacent milliseconds
+    // across WASM platforms; preserve the identity and verified UTC second.
+    const exactAt = Date.parse(decodeURIComponent(destination.slice(prefix.length)));
+    expect(Math.abs(exactAt - Date.parse('2026-07-25T05:26:38.000Z'))).toBeLessThanOrEqual(1);
     await expect(card.locator('h4')).toHaveCount(1);
     expect(await card.evaluate(el => getComputedStyle(el).textDecorationLine)).toBe('none');
     await card.scrollIntoViewIfNeeded();

@@ -3,10 +3,10 @@
   "note": "Shrink-only, same contract as the writing-kernel drift allowlist. An entry may be removed once fixed; adding one requires the owner. Silent misparses are prohibited and the generator refuses to quarantine them; class=catalog-gap is missing knowledge; class=surface-permission-gap has no eligible evidence; class=evidence-empty resolves an object with no extractable governed text; class=unmapped-shape is unwired.",
   "generatedBy": "scripts/test-production-identifier-coverage.mjs --write-quarantine",
   "counts": {
-    "total": 3328,
+    "total": 3300,
     "misparse": 0,
     "catalogGap": 3216,
-    "surfacePermissionGap": 28,
+    "surfacePermissionGap": 0,
     "evidenceEmpty": 60,
     "unmappedShape": 24
   },
@@ -7458,30 +7458,6 @@
       "mappedTo": "composite-aspect/south_node/venus/trine"
     },
     {
-      "identifier": "jupiter-conjunction-chiron",
-      "emittedBy": "transits.py:221 (bare spelling)",
-      "class": "surface-permission-gap",
-      "mappedTo": "transit-aspect/jupiter/chiron/conjunction"
-    },
-    {
-      "identifier": "jupiter-opposition-chiron",
-      "emittedBy": "transits.py:221 (bare spelling)",
-      "class": "surface-permission-gap",
-      "mappedTo": "transit-aspect/jupiter/chiron/opposition"
-    },
-    {
-      "identifier": "jupiter-sextile-chiron",
-      "emittedBy": "transits.py:221 (bare spelling)",
-      "class": "surface-permission-gap",
-      "mappedTo": "transit-aspect/jupiter/chiron/sextile"
-    },
-    {
-      "identifier": "jupiter-trine-chiron",
-      "emittedBy": "transits.py:221 (bare spelling)",
-      "class": "surface-permission-gap",
-      "mappedTo": "transit-aspect/jupiter/chiron/trine"
-    },
-    {
       "identifier": "natal-ascendant-conjunction-imum-coeli",
       "emittedBy": "api/admin/prepopulate-content.ts:318",
       "class": "catalog-gap",
@@ -11848,66 +11824,6 @@
       "emittedBy": "api/admin/prepopulate-content.ts:318",
       "class": "catalog-gap",
       "mappedTo": "natal-aspect/lilith/venus/trine"
-    },
-    {
-      "identifier": "neptune-conjunction-chiron",
-      "emittedBy": "transits.py:221 (bare spelling)",
-      "class": "surface-permission-gap",
-      "mappedTo": "transit-aspect/neptune/chiron/conjunction"
-    },
-    {
-      "identifier": "neptune-opposition-chiron",
-      "emittedBy": "transits.py:221 (bare spelling)",
-      "class": "surface-permission-gap",
-      "mappedTo": "transit-aspect/neptune/chiron/opposition"
-    },
-    {
-      "identifier": "neptune-sextile-chiron",
-      "emittedBy": "transits.py:221 (bare spelling)",
-      "class": "surface-permission-gap",
-      "mappedTo": "transit-aspect/neptune/chiron/sextile"
-    },
-    {
-      "identifier": "neptune-square-chiron",
-      "emittedBy": "transits.py:221 (bare spelling)",
-      "class": "surface-permission-gap",
-      "mappedTo": "transit-aspect/neptune/chiron/square"
-    },
-    {
-      "identifier": "neptune-trine-chiron",
-      "emittedBy": "transits.py:221 (bare spelling)",
-      "class": "surface-permission-gap",
-      "mappedTo": "transit-aspect/neptune/chiron/trine"
-    },
-    {
-      "identifier": "pluto-conjunction-chiron",
-      "emittedBy": "transits.py:221 (bare spelling)",
-      "class": "surface-permission-gap",
-      "mappedTo": "transit-aspect/pluto/chiron/conjunction"
-    },
-    {
-      "identifier": "pluto-opposition-chiron",
-      "emittedBy": "transits.py:221 (bare spelling)",
-      "class": "surface-permission-gap",
-      "mappedTo": "transit-aspect/pluto/chiron/opposition"
-    },
-    {
-      "identifier": "pluto-sextile-chiron",
-      "emittedBy": "transits.py:221 (bare spelling)",
-      "class": "surface-permission-gap",
-      "mappedTo": "transit-aspect/pluto/chiron/sextile"
-    },
-    {
-      "identifier": "pluto-square-chiron",
-      "emittedBy": "transits.py:221 (bare spelling)",
-      "class": "surface-permission-gap",
-      "mappedTo": "transit-aspect/pluto/chiron/square"
-    },
-    {
-      "identifier": "pluto-trine-chiron",
-      "emittedBy": "transits.py:221 (bare spelling)",
-      "class": "surface-permission-gap",
-      "mappedTo": "transit-aspect/pluto/chiron/trine"
     },
     {
       "identifier": "relationship-ascendant-conjunction-chiron",
@@ -19894,90 +19810,6 @@
       "emittedBy": "services/.../personal_timing.py:96",
       "class": "unmapped-shape",
       "mappedTo": null
-    },
-    {
-      "identifier": "transit-natal-jupiter-conjunction-chiron",
-      "emittedBy": "App.tsx:12215 / transits.py:219",
-      "class": "surface-permission-gap",
-      "mappedTo": "transit-aspect/jupiter/chiron/conjunction"
-    },
-    {
-      "identifier": "transit-natal-jupiter-opposition-chiron",
-      "emittedBy": "App.tsx:12215 / transits.py:219",
-      "class": "surface-permission-gap",
-      "mappedTo": "transit-aspect/jupiter/chiron/opposition"
-    },
-    {
-      "identifier": "transit-natal-jupiter-sextile-chiron",
-      "emittedBy": "App.tsx:12215 / transits.py:219",
-      "class": "surface-permission-gap",
-      "mappedTo": "transit-aspect/jupiter/chiron/sextile"
-    },
-    {
-      "identifier": "transit-natal-jupiter-trine-chiron",
-      "emittedBy": "App.tsx:12215 / transits.py:219",
-      "class": "surface-permission-gap",
-      "mappedTo": "transit-aspect/jupiter/chiron/trine"
-    },
-    {
-      "identifier": "transit-natal-neptune-conjunction-chiron",
-      "emittedBy": "App.tsx:12215 / transits.py:219",
-      "class": "surface-permission-gap",
-      "mappedTo": "transit-aspect/neptune/chiron/conjunction"
-    },
-    {
-      "identifier": "transit-natal-neptune-opposition-chiron",
-      "emittedBy": "App.tsx:12215 / transits.py:219",
-      "class": "surface-permission-gap",
-      "mappedTo": "transit-aspect/neptune/chiron/opposition"
-    },
-    {
-      "identifier": "transit-natal-neptune-sextile-chiron",
-      "emittedBy": "App.tsx:12215 / transits.py:219",
-      "class": "surface-permission-gap",
-      "mappedTo": "transit-aspect/neptune/chiron/sextile"
-    },
-    {
-      "identifier": "transit-natal-neptune-square-chiron",
-      "emittedBy": "App.tsx:12215 / transits.py:219",
-      "class": "surface-permission-gap",
-      "mappedTo": "transit-aspect/neptune/chiron/square"
-    },
-    {
-      "identifier": "transit-natal-neptune-trine-chiron",
-      "emittedBy": "App.tsx:12215 / transits.py:219",
-      "class": "surface-permission-gap",
-      "mappedTo": "transit-aspect/neptune/chiron/trine"
-    },
-    {
-      "identifier": "transit-natal-pluto-conjunction-chiron",
-      "emittedBy": "App.tsx:12215 / transits.py:219",
-      "class": "surface-permission-gap",
-      "mappedTo": "transit-aspect/pluto/chiron/conjunction"
-    },
-    {
-      "identifier": "transit-natal-pluto-opposition-chiron",
-      "emittedBy": "App.tsx:12215 / transits.py:219",
-      "class": "surface-permission-gap",
-      "mappedTo": "transit-aspect/pluto/chiron/opposition"
-    },
-    {
-      "identifier": "transit-natal-pluto-sextile-chiron",
-      "emittedBy": "App.tsx:12215 / transits.py:219",
-      "class": "surface-permission-gap",
-      "mappedTo": "transit-aspect/pluto/chiron/sextile"
-    },
-    {
-      "identifier": "transit-natal-pluto-square-chiron",
-      "emittedBy": "App.tsx:12215 / transits.py:219",
-      "class": "surface-permission-gap",
-      "mappedTo": "transit-aspect/pluto/chiron/square"
-    },
-    {
-      "identifier": "transit-natal-pluto-trine-chiron",
-      "emittedBy": "App.tsx:12215 / transits.py:219",
-      "class": "surface-permission-gap",
-      "mappedTo": "transit-aspect/pluto/chiron/trine"
     }
   ]
 }

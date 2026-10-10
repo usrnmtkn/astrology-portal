@@ -2,6 +2,7 @@
 
 const fs = require("fs");
 const path = require("path");
+const { createHash } = require("crypto");
 
 const packageRoot = path.resolve(__dirname, "..");
 const repoRoot = path.resolve(packageRoot, "..", "..");
@@ -119,17 +120,40 @@ function verifyEvidence(evidence) {
   const source = readJson(absolute);
   const llMatch = evidence.selector.match(/^rows\[key=(.+)\]$/u);
   const authoredMatch = evidence.selector.match(/^authoredCards\[contentKey=(.+)\]$/u);
+  const snapshotMatch = evidence.selector.match(/^records\[contentKey=(.+)\]$/u);
   const row = llMatch
     ? (source.rows || []).find((entry) => entry.key === llMatch[1])
     : authoredMatch
       ? (source.authoredCards || []).find((entry) => entry.contentKey === authoredMatch[1])
-      : null;
-  if (!llMatch && !authoredMatch) {
+      : snapshotMatch
+        ? (source.records || []).find((entry) => entry.contentKey === snapshotMatch[1])
+        : null;
+  if (!llMatch && !authoredMatch && !snapshotMatch) {
     return { passed: false, reason: `Unsupported evidence selector ${evidence.selector}` };
   }
-  if (!row) return { passed: false, reason: `Missing evidence row ${llMatch?.[1] || authoredMatch?.[1]}` };
+  if (!row) return { passed: false, reason: `Missing evidence row ${llMatch?.[1] || authoredMatch?.[1] || snapshotMatch?.[1]}` };
   const evidenceField = evidence.field || "copy";
   const sourceText = row[evidenceField];
+  if (snapshotMatch) {
+    // Historical passages support an existing doctrine grant only. They cannot
+    // confer approval or turn superseded wording into a current writer source.
+    if (evidence.evidenceRole !== "supporting-reference" || evidenceField !== "priorBodyYou") {
+      return { passed: false, reason: `Historical evidence ${evidence.sourceId} must remain supporting-reference only` };
+    }
+    const digest = value => createHash("sha256").update(value).digest("hex");
+    const snapshot = evidence.snapshot;
+    const recordPath = snapshot?.supersessionRecord && path.join(repoRoot, snapshot.supersessionRecord);
+    if (!recordPath || !fs.existsSync(recordPath)) return { passed: false, reason: `Missing supersession record for ${evidence.sourceId}` };
+    const supersession = readJson(recordPath);
+    if (supersession.authority !== "owner" || supersession.decision !== "approve"
+      || supersession.sourceRecordPath !== evidence.sourcePath
+      || supersession.sourceRecordSha256 !== snapshot.sourceSha256
+      || digest(fs.readFileSync(absolute)) !== snapshot.sourceSha256
+      || typeof sourceText !== "string" || digest(sourceText) !== snapshot.fieldSha256
+      || row.priorBodyYouSha256 !== snapshot.fieldSha256) {
+      return { passed: false, reason: `Historical evidence hash or supersession drifted for ${evidence.sourceId}` };
+    }
+  }
   const evidenceMatches = evidence.match === "includes"
     ? sourceText?.includes(evidence.text)
     : sourceText === evidence.text;
