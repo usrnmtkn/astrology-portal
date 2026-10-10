@@ -67,7 +67,6 @@ export function NatalInsightReading({ topic, sky, birthTimeKnown, subjectId, aud
 }) {
   const known = natalInsightBirthTimeKnown(sky, birthTimeKnown);
   return <>
-    {topic === "approach" && known && <div className="natal-reading-intro"><p className="natal-reading-measure">{audience === "you" ? "Read in three parts: your rising sign, the planet that rules it, and your Sun." : "Read in three parts: their rising sign, the planet that rules it, and their Sun."}</p></div>}
     {!known && <div className="natal-insight-time-note"><p>Birth time is needed to include houses and angles in this reading.</p></div>}
     <NatalInsightInterpretation topic={topic} sky={sky} birthTimeKnown={known} subjectId={subjectId} audience={audience} />
     <div className="natal-reading-guide-wrap"><div className="natal-reading-measure"><NatalInsightGuide topic={topic} untimed={!known} /></div></div>

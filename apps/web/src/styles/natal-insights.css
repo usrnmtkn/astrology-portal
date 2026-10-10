@@ -103,8 +103,6 @@
   text-wrap: pretty;
   overflow-wrap: anywhere;
 }
-.natal-reading-intro { padding-inline: var(--report-section-padding); }
-.natal-reading-intro .natal-reading-measure { margin-inline: auto; }
 .natal-insight-reading__section {
   padding: var(--space-10) var(--report-section-padding);
 }
@@ -163,7 +161,6 @@
 
 @media (max-width: 720px) {
   .natal-reading-header,
-  .natal-reading-intro,
   .natal-insight-reading__section,
   .natal-reading-guide-wrap,
   .natal-insight-time-note,
