@@ -5,6 +5,7 @@ import { build } from "esbuild";
 // Execute the real worker transport with explicit calculation fixtures. Holding
 // one job reproduces background enrichment queued before a route change.
 const names = ["getAstrodienstSky", "getSkyPlacementSnapshot", "getSkyPlacementTransitFacts",
+  "getRetrogradeHistory",
   "getLunarCalendarMonth", "getLunarCalendarRangeEvents", "getLunarCalendarWeek",
   "getMatchingNewMoonForFullMoon", "natalTransitTimingFor", "natalDailyTransitPeaksFor", "preloadSwissEphemeris"];
 const output = await build({
@@ -96,4 +97,9 @@ for (const failInitialization of [false, true]) {
   assert(coldReplies.every(reply => reply.ok === !failInitialization));
   assert.deepEqual(calls, failInitialization ? [] : ["getLunarCalendarWeek", "getAstrodienstSky"]);
 }
-console.log("PASS: Calendar facts precede full Sky details and optional natal timing; request identity, inputs, serial execution and recovery are preserved.");
+receive!({ data: { id: 10, kind: "retrograde-history", planet: "venus", sign: "scorpio", date: "2026-10-03T12:00:00Z" } });
+receive!({ data: { id: 11, kind: "lunar-calendar-week", args: ["2026-10-03", "America/New_York"] } });
+while (scheduled.length) await scheduled.shift()!();
+assert.deepEqual(replies.slice(-2).map(reply => reply.id), [11, 10], "Visible Calendar facts precede optional retrograde history.");
+assert.equal(replies.at(-1)?.value, JSON.stringify({ name: "getRetrogradeHistory", args: [{ planet: "venus", sign: "scorpio", referenceDate: "2026-10-03T12:00:00.000Z" }] }));
+console.log("PASS: Calendar facts precede full Sky details, optional natal timing and retrograde history; request identity, inputs, serial execution and recovery are preserved.");

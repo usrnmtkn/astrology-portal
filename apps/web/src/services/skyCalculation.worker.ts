@@ -4,6 +4,7 @@ import {
   getAstrodienstSky,
   getSkyPlacementSnapshot,
   getSkyPlacementTransitFacts,
+  getRetrogradeHistory,
   getLunarCalendarMonth,
   getLunarCalendarRangeEvents,
   getLunarCalendarWeek,
@@ -29,6 +30,7 @@ type SkyCalculationRequest =
   | { id: number; kind: "natal-daily-peaks"; args: Parameters<typeof natalDailyTransitPeaksFor> }
   | { id: number; kind: "placement-sky"; includeAspectLists?: boolean; location: LocationInput; planet: string; sign: string; date: string }
   | { id: number; kind: "placement-transit-facts"; planet: string; sign: string; date: string; timeZone: string }
+  | { id: number; kind: "retrograde-history"; planet: string; sign: string; date: string }
   | { id: number; kind: "preload" };
 
 type SkyCalculationResponse =
@@ -42,6 +44,8 @@ let draining = false;
 
 async function calculate(request: SkyCalculationRequest) {
   switch (request.kind) {
+    case "retrograde-history":
+      return getRetrogradeHistory({ planet: request.planet, sign: request.sign, referenceDate: new Date(request.date) });
     case "sky":
       return getAstrodienstSky(request.location, new Date(request.date), request.options);
     case "placement-transit-facts":
@@ -100,7 +104,7 @@ async function drainCalculations() {
 
 self.addEventListener("message", (event: MessageEvent<SkyCalculationRequest>) => {
   const request = event.data;
-  const queue = request.kind === "natal-transit-timing" ? backgroundQueue
+  const queue = request.kind === "natal-transit-timing" || request.kind === "retrograde-history" ? backgroundQueue
     : request.kind === "sky" && request.options?.includeTransitWindows ? detailQueue
     : foregroundQueue;
   queue.push(request);

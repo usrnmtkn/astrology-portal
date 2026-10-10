@@ -189,3 +189,12 @@ All 21 fresh-build loading and recovery browser cases passed locally. At
 6,491–6,501 ms for complete readings; at 1440px, they measured 4,790–4,800 ms
 and 6,366–6,386 ms. These are local throttled measurements, not production
 latency claims.
+
+The subsequent main update `42d9e15a0` adds shared retrograde-history facts.
+Integration preserves its optional background worker queue and tests, both
+article detail types, and its API regression in the full Studio command.
+Matched standalone builds measure main's entry at 791,375 raw bytes and the
+combined entry at 793,866 raw / 231,224 gzip bytes. Final entry allowances are
+794,000 raw / 231,350 gzip bytes. Combined aggregate gzip is 790,204 bytes,
+within the existing natal allowance of 801,000. These measurements supersede
+the earlier entry figures; the runtime deadlines remain unchanged.

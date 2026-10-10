@@ -1,5 +1,6 @@
 import { NatalReadingPage } from "../../components/charts/NatalReadingPage";
 import { FormattedProse } from "../../components/FormattedProse";
+import { RetrogradeHistoryDisclosure, type RetrogradeHistoryContext } from "../../components/RetrogradeHistory";
 import { ArticlePills, type ArticlePillData } from "../../components/ArticlePills";
 import { SkyMechanics, TransitFacts } from "../../components/ArticleFacts";
 import { ChevronLeft } from "lucide-react";
@@ -83,6 +84,7 @@ export type SkyPersonalizedPlacement = {
 
 export type SkyDetail = {
   natalReading?: boolean;
+  retrogradeHistoryContext?: RetrogradeHistoryContext;
   placementFactsPending?: boolean;
   pills?: ArticlePillData;
   transitDescription?: string;
@@ -696,6 +698,7 @@ export function SkyDetailArticle({
                 </aside>
               ) : null}
               <SkyMechanics caption={detail.mechanicsCaption} />
+              {detail.retrogradeHistoryContext && <RetrogradeHistoryDisclosure context={detail.retrogradeHistoryContext} />}
               {drilldown ? (
                 <details className="sky-detail-drilldown">
                   <summary>{drilldown.title || "Why this?"}</summary>

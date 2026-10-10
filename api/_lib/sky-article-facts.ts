@@ -108,12 +108,14 @@ export function ingressTimeLabel(instant: string) {
 
 /** Use the same packaged Swiss engine as the reader and astrology facts API. */
 export async function calculateSkyArticleEditionFacts(referenceInstant: Date, requestedPlanet: string, format?: SkyArticleFormat) {
-  const { defaultLocation, getAstrodienstSky, getSkyIngressArticleEvents } = await import("../../apps/web/src/services/ephemeris.js");
+  const { defaultLocation, getAstrodienstSky, getSkyIngressArticleEvents, getRetrogradeHistory } = await import("../../apps/web/src/services/ephemeris.js");
   const snapshot = await getAstrodienstSky(defaultLocation, referenceInstant, {
     includeDailyEvents: false,
     includeTransitWindows: true
   });
-  const facts = skyArticleEditionFactsFromSnapshot(snapshot, requestedPlanet, format);
+  const placementFacts = skyArticleEditionFactsFromSnapshot(snapshot, requestedPlanet, format);
+  const retrogradeHistory = await getRetrogradeHistory({ planet: placementFacts.planet, sign: placementFacts.sign, referenceDate: referenceInstant });
+  const facts = { ...placementFacts, retrogradeHistory };
   if (!isSkyIngressEssay(format)) return facts;
   const { skyIngressNasaReceipt, skyIngressNasaExplanation } = await import("./sky-ingress-nasa.js");
   const events = await getSkyIngressArticleEvents(facts.planet, new Date(facts.transitStartInstant), new Date(facts.transitEndInstant), defaultTimeZone);

@@ -5734,6 +5734,7 @@ function skyArticleTemplateSlotPrompt(
       : "Returned fields must not contain {{ or }} placeholders.",
     "Return one value for every requested field and no other fields.",
     "Do not invent dates, aspect hits, historical events, quotations, or astronomical facts.",
+    "If retrogradeHistoryIncluded is true, retrogradeHistory proves only the most recent completed retrograde through its named sign and, separately, the most recent path within its degree tolerance. Use its full cycle and in-sign segment dates precisely. The degree reference is the current cycle's retrograde-start station. This is not proof of a prior ingress, aspect recurrence, repeated life experience, or world event. Do not invent historical context or imply causation. Missing matches are unknown outside the stated coverage.",
     "Use only ASTROLOGY FACTS, GOVERNED KNOWLEDGE EVIDENCE, and the immutable template context.",
     "The result is an owner-review draft. It is not approved and cannot serve by itself.",
     "",
