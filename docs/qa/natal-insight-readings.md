@@ -7,8 +7,12 @@ opening-sentence emphasis, and a shaded section for the planetary ruler.
 
 ## Content and editing
 
-In Content Studio, the Natal Deeper Insights entries in the writing-surface
-map link to the shared guide/title, topic templates, and reusable passages.
+In Content Studio, **Natal Chart → Deeper insights** contains the seven shared
+guides, the You/Friends templates and untimed variants, and a saved-writing
+selector for reusable passages. These records are excluded from Articles.
+Opening a guide from the writing-surface map also returns to this workspace.
+The selected tab survives reload; opening a saved record preserves its key,
+complete wording and publication state.
 These are ordinary editable `generated_interpretations` rows. Templates select
 complete passages from calculated chart facts; they do not generate prose.
 The guide is available through **Read the guide** below the reading.
@@ -47,6 +51,7 @@ deployment status.
 | Omit unreliable houses/angles and retain supported untimed readings | untimed natal insights |
 | Hide drafts and recover independently from guide/reading load errors | shared natal insight drafts; natal guides; natal topic page |
 | Edit and reload shared guides, templates, and passages | `content-dashboard-admin-user-flows.spec.ts`: natal insights Studio; shared natal insight templates |
+| Find all seven guides under Natal Chart, exclude them from Articles, and save/reopen the existing records in both themes and widths | natal guides belong in Natal Chart |
 | Discover a saved chart, create/reopen a private draft, edit and reload | manual natal authoring; personalized natal write-up |
 | Enforce ownership, chart/version identity, idempotency, complete text, and stale-edit protection in actual handlers | `scripts/test-natal-insight-authoring.mts`; Content Studio CRUD contract |
 | Resolve all supported composition fixtures without excerpting passages | `npm run test:natal-insights` |

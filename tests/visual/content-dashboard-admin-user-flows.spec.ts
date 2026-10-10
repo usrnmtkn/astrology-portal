@@ -1,5 +1,5 @@
 import { natalAuthoringUser, natalAuthoringChart, natalAuthoringFixtures } from "../helpers/natal-authoring-fixture";
-import { natalInsightSharedFixtureRows } from "../helpers/natal-insight-shared-fixture";
+import { natalInsightGuideFixtureRows, natalInsightSharedFixtureRows } from "../helpers/natal-insight-shared-fixture";
 import { natalInsightTopics, natalInsightContentKey } from "../../apps/web/src/content/natalInsightCatalog";
 import { studioApiStore } from "../helpers/studio-api-store";
 import { readerResponse } from '../helpers/reader-response';
@@ -8767,6 +8767,72 @@ for (const [width, theme] of [[1440, "light"], [390, "dark"]] as const) {
   });
 }
 
+for (const theme of ["light", "dark"] as const) for (const width of [1440, 390]) {
+  test(`natal guides belong in Natal Chart and preserve saved writing (${theme}, ${width}px)`, async ({ page }, testInfo) => {
+    test.setTimeout(180_000);
+    const assertNoBrowserErrors = await expectNoBrowserErrors(page);
+    await page.setViewportSize({ width, height: 1000 });
+    await page.addInitScript(value => localStorage.setItem("tldrastro:studio-theme", value), theme);
+    const guides = natalInsightGuideFixtureRows("DRAFT");
+    const sources = natalInsightSharedFixtureRows("DRAFT");
+    const ordinary = { ...guides[0], id: "ordinary-article", content_key: "article/manual/fixture", headline: "Ordinary article fixture", surface: "sky" };
+    const writes: Array<{ method: string; payload: Record<string, unknown> }> = [];
+    await seedAdminApi(page, { generatedRows: [...guides, ...sources, ordinary], useGeneratedContentHandler: true, onGeneratedContentWrite: write => { writes.push(write); } });
+    await expectAdminRouteLoads(page, "/admin/content#articles");
+    if (width === 390) await page.getByRole("region", { name: "Article filters", exact: true }).getByRole("button", { name: /^Filters/ }).click();
+    await page.getByLabel("Article status", { exact: true }).selectOption("all");
+    await expect(page.getByText(ordinary.headline, { exact: true })).toBeVisible();
+    for (const guide of guides) await expect(page.getByText(guide.headline, { exact: true })).toHaveCount(0);
+    if (width === 390) await page.getByRole("button", { name: "Open Content Studio navigation" }).click();
+    await page.getByRole("navigation", { name: "Content operations" }).getByRole("button", { name: "Natal Chart", exact: true }).click();
+    await page.getByRole("tab", { name: "Deeper insights", exact: true }).click();
+    await expect(page).toHaveURL(/category=Natal\+Chart.*view=deeper-insights/);
+    const workspace = page.getByRole("region", { name: "Deeper insights writing", exact: true });
+    await expect(workspace.locator("article h4")).toHaveText(guides.map(guide => guide.headline));
+    await expect(workspace.locator("h3")).toHaveText(["Deeper insights", "Saved writing"]);
+    await expect(page.getByRole("heading", { level: 2, name: "Natal chart writing" })).toHaveCount(1);
+    await expectStudioRole(page, workspace.locator("h3, h4"), "section", "Natal insight headings use existing Studio section typography");
+    await expectStudioTypography(page, "Natal insight workspace");
+    await expectNoHorizontalOverflow(page, "Natal insight workspace");
+    await page.screenshot({ path: testInfo.outputPath("natal-insight-workspace.png"), fullPage: true });
+    const editor = page.locator(".admin-editor-panel");
+    for (const guide of guides) {
+      const card = workspace.locator("article", { has: page.getByRole("heading", { name: guide.headline, exact: true }) });
+      await card.getByRole("button", { name: "Edit shared guide and title", exact: true }).click();
+      await expect(editor.getByLabel("Content key")).toHaveValue(guide.content_key);
+      await expect(editor.getByLabel("Article body")).toHaveValue(guide.body);
+      const edited = guide.body + "\n\nComplete edited fixture ending.";
+      await fillAdminEditorField(editor, "Article body", edited);
+      await editor.getByRole("button", { name: "Save draft", exact: true }).click();
+      await expect(editor.getByLabel("Reader status", { exact: true })).toHaveText("Inactive");
+      await editor.getByRole("button", { name: "Close", exact: true }).click();
+      await page.reload();
+      await expect(page.getByRole("tab", { name: "Deeper insights", exact: true })).toHaveAttribute("aria-selected", "true");
+      await card.getByRole("button", { name: "Edit shared guide and title", exact: true }).click();
+      await expect(editor.getByLabel("Article body")).toHaveValue(edited);
+      await expect(editor.getByLabel("Article title")).toHaveValue(guide.headline);
+      await editor.getByRole("button", { name: "Close", exact: true }).click();
+      const saved = writes.filter(write => write.payload.contentKey === guide.content_key);
+      expect(saved).toHaveLength(1);
+      expect(saved[0]).toMatchObject({ method: "PATCH", payload: { id: guide.id, body: edited, status: "DRAFT", lane: "serving", expectedUpdatedAt: expect.any(String) } });
+    }
+    const emotional = workspace.locator("article", { has: page.getByRole("heading", { name: "Emotional needs", exact: true }) });
+    await emotional.getByText("Reading templates and variants", { exact: true }).click();
+    for (const [audience, label] of [["you", "You"], ["they", "Friends"]]) {
+      await emotional.getByRole("button", { name: `Edit ${label} reading template`, exact: true }).click();
+      const template = sources.find(row => row.content_key === `cms/natal-insight/${audience}/emotional-needs/reading`)!;
+      await expect(editor.getByLabel("Article body")).toHaveValue(template.body);
+      await editor.getByRole("button", { name: "Close", exact: true }).click();
+    }
+    const passage = sources.find(row => row.content_key === "cms/natal-insight/passage/ruler-placement/you/mars/leo")!;
+    await workspace.getByLabel("Guide, template, or passage").selectOption(passage.content_key);
+    await workspace.getByRole("button", { name: "Edit saved writing", exact: true }).click();
+    await expect(editor.getByLabel("Article body")).toHaveValue(passage.body);
+    expect(writes).toHaveLength(7);
+    await assertNoBrowserErrors();
+  });
+}
+
 for (const untimed of [false, true]) {
   test(`natal insights Studio edits shared guides through the actual handler (${untimed ? "without birth time" : "all seven topics"})`, async ({ page }) => {
     test.setTimeout(180_000);
@@ -8775,6 +8841,13 @@ for (const untimed of [false, true]) {
     await seedAdminApi(page, { generatedRows: [], useGeneratedContentHandler: true, onGeneratedContentWrite: write => { writes.push(write); } });
     for (const topic of natalInsightTopics.filter(topic => !untimed || topic.id === "approach")) {
       const openSection = async () => {
+        if (!untimed) {
+          await expectAdminRouteLoads(page, "/admin/content#exact-content?category=Natal+Chart&view=deeper-insights");
+          const card = page.getByRole("region", { name: "Deeper insights writing", exact: true }).locator("article")
+            .filter({ has: page.getByRole("heading", { name: new RegExp(`^(Shared )?${topic.title.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}$`) }) });
+          await card.getByRole("button", { name: "Edit shared guide and title", exact: true }).click();
+          return;
+        }
         await expectAdminRouteLoads(page, "/admin/content#surface-map");
         await page.getByRole("group", { name: "Filter surfaces by area" }).getByRole("button", { name: "You", exact: true }).click();
         const card = page.locator(".admin-surface-card", { hasText: `Natal Deeper insights: ${topic.title}` });

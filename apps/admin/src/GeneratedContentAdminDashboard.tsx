@@ -130,7 +130,8 @@ import {
   skyPlacementFrameTemplateKey,
   skyFallbackWorkspace
 } from "./skyFallbackWorkspace";
-import { articleAppDestination, isAstro101ContentRow, isSkyWriteupContentRow } from "./articleWorkspace";
+import { articleAppDestination, isAstro101ContentRow, isNatalInsightContentRow, isSkyWriteupContentRow } from "./articleWorkspace";
+import type { NatalChartWritingView } from "./NatalPlacementSourceFinder";
 import {
   ASTRO_101_KIND_LABELS,
   ASTRO_101_KINDS,
@@ -1253,6 +1254,7 @@ function isArticleLibraryRow(row: AdminGeneratedContentRow) {
     && row.lane === "serving"
     && !isSkyWriteupContentRow(row)
     && !isAstro101ContentRow(row)
+    && !isNatalInsightContentRow(row)
     && !isRetiredAdminRow(row);
 }
 
@@ -2682,6 +2684,8 @@ function contentCategoryForRow(row: AdminGeneratedContentRow | AdminReviewRecord
   const surface = "content_key" in row ? row.surface : row.surface;
   const blockType = "content_key" in row ? row.block_type : row.blockType;
 
+  if (isNatalInsightContentRow({ content_key: contentKey })) return "Natal Chart";
+
   if (isCalendarAspectContentRow(row)) return "Calendar Aspects";
 
   if (
@@ -3211,6 +3215,7 @@ export function GeneratedContentAdminDashboard() {
   const [natalPlacementSign, setNatalPlacementSign] = useState<NatalPlacementSign | "">("");
   const [natalPlacementHouse, setNatalPlacementHouse] = useState<NatalPlacementHouse | "">("");
   const [natalPlacementMotion, setNatalPlacementMotion] = useState<NatalPlacementMotion>("direct");
+  const [natalChartWritingView, setNatalChartWritingView] = useState<NatalChartWritingView>("placements");
   const [natalSourcesLoading, setNatalSourcesLoading] = useState(false);
   const [natalAspectFirst, setNatalAspectFirst] = useState("");
   const [natalAspectName, setNatalAspectName] = useState("");
@@ -4353,6 +4358,7 @@ export function GeneratedContentAdminDashboard() {
     setNatalPlacementSign(page === "content" && natalSign && natalPlacementSigns.includes(natalSign) ? natalSign : "");
     setNatalPlacementHouse(page === "content" && natalHouse && natalPlacementHouses.includes(natalHouse) ? natalHouse : "");
     setNatalPlacementMotion(page === "content" && natalMotion && natalPlacementMotions.includes(natalMotion) ? natalMotion : "direct");
+    setNatalChartWritingView(page === "content" && (view === "empty-houses" || view === "deeper-insights") ? view : "placements");
     setNatalAspectFirst(page === "content" && category === "Natal Aspects" ? natalAspectFirstParam : "");
     setNatalAspectName(page === "content" && category === "Natal Aspects" ? natalAspectNameParam : "");
     setNatalAspectSecond(page === "content" && category === "Natal Aspects" ? natalAspectSecondParam : "");
@@ -6642,7 +6648,7 @@ export function GeneratedContentAdminDashboard() {
       const existing = result.rows.find(row => row.status !== "ARCHIVED") ?? result.rows[0];
       if (existing) {
         if (!await openRow(existing)) return;
-        navigateAdminPage("content", undefined, { keepEditorOpen: true });
+        navigateAdminPage("content", new URLSearchParams({ category: "Natal Chart", view: "deeper-insights" }), { keepEditorOpen: true });
         setMessage("Opened the saved section wording. Save draft keeps your edits; Save & publish updates the app.");
       } else {
         createCmsStarter(surfaceItem, starter);
@@ -6658,7 +6664,9 @@ export function GeneratedContentAdminDashboard() {
     surfaceItem: WritingSurfaceMapItem,
     starter: NonNullable<WritingSurfaceAdminAccess["cmsStarters"]>[number]
   ) {
-    if (!navigateAdminPage("content", undefined, { keepEditorOpen: true })) return;
+    const params = starter.contentKey.startsWith("cms/natal-insight/")
+      ? new URLSearchParams({ category: "Natal Chart", view: "deeper-insights" }) : undefined;
+    if (!navigateAdminPage("content", params, { keepEditorOpen: true })) return;
     setSelectedRowId(null);
     setEditorSourceRow(null);
     setCompositionEditorContext(null);
@@ -8453,6 +8461,16 @@ export function GeneratedContentAdminDashboard() {
     return (
       <Suspense fallback={<PageLoading message="Loading natal placement finder…" />}>
         <NatalPlacementSourceFinder
+          view={natalChartWritingView}
+          onViewChange={view => {
+            const { params } = parseAdminHash();
+            params.set("category", "Natal Chart");
+            params.set("view", view);
+            navigateAdminPage("content", params);
+          }}
+          insightSurfaces={writingSurfaces}
+          insightAccess={writingSurfaceAccess}
+          onOpenInsight={(surface, starter) => void openCmsStarter(surface, starter)}
           house={natalPlacementHouse}
           isLoading={isLoading || natalSourcesLoading}
           motion={natalPlacementMotion}
