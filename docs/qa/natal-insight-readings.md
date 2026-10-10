@@ -71,8 +71,10 @@ until the formatter is ready, so saved Markdown is never displayed as raw text.
 Bundle checks explicitly reject these modules in the startup graphs. Both
 Studio forms use the shared `surfaceSection` container.
 
-Independent `npm ci` builds compare main `a1e2ed368` with this feature. Both
-use the visual-smoke Supabase placeholders. The feature measurements below use
+Independent `npm ci` web builds compare main `a1e2ed368` with this feature.
+The Studio comparison was refreshed against main `6d7e6ca7f` after integration;
+its successor `d4b0f5fe7` changes only the API and tests. Both comparisons use
+identical visual-smoke Supabase placeholders. Web feature measurements include
 the browser fixture's enabled natal-aspect flag. Figures are gzip bytes except
 the explicitly marked raw entry measurement.
 
@@ -85,12 +87,47 @@ the explicitly marked raw entry measurement.
 | Deferred Sky detail | 6,022 | 6,221 | 6,400 |
 | Deferred signup | 4,287 | 4,388 | 4,450 |
 | Deferred horoscope editor | 14,589 | 14,614 | 14,700 |
-| Studio entry, raw | 785,164 | 787,062 | 787,500 |
-| Studio entry, gzip | 228,691 | 229,268 | 229,500 |
-| All Studio JavaScript | 789,400 | 798,572 | 799,000 |
+| Studio entry, raw | 787,556 | 789,454 | 789,750 |
+| Studio entry, gzip | 229,253 | 229,826 | 230,000 |
+| All Studio JavaScript | 789,998 | 799,100 | 799,500 |
 
 These allowances account for feature code and changed shared imports; they are
 not performance improvements. No dependency, reader prose corpus, or runtime
 deadline changed. Remaining budgets and the forbidden-content checks stay in
 place. The existing first-paint formatting, slow-loading, complete-content and
 Studio save/reload checks still apply.
+
+## Integration follow-up, October 10
+
+The release branch incorporates main through `d4b0f5fe7`. Natal placement and
+aspect regressions now use the existing **Back to natal chart** accessible
+label; transit article assertions retain **Back to updates**. No navigation
+behavior or reader wording changed in this follow-up.
+
+Fresh-build local checks on the integrated reader passed:
+
+- 43 natal reader and Studio cases, including complete paragraphs, both
+  audiences, all seven topics, unknown birth time, errors, draft exclusion,
+  guide editing and template/passage save-and-reopen.
+- 10 previously failing client/Sky cases after main's hydration, eligible
+  fixture and solver-rounding repairs.
+- 3 previously failing reader-recovery cases, including complete Lilith/Pluto
+  writing and the closing transit placement descriptions.
+- The unchanged Calendar cold-loading contract: six uncached samples across
+  mobile and desktop with throttled networking. Controls completed within
+  5,670 ms (6,000 ms cap), and complete reading within 7,260 ms (7,500 ms cap).
+
+The complete content suite now passes after the main-branch repairs. The
+unfiltered Content Studio API suite passed after the first integration and is
+rerun with main's additional Sky publication test before release. Exact final
+revision and hosted results belong in the PR; a local pass does not establish
+that the feature is deployed.
+
+Main itself measures above its Studio entry and aggregate limits. The natal
+entry delta remains 1,898 raw bytes after integration. The updated caps above
+reconcile that inherited baseline while retaining all deferred-content checks
+and every runtime deadline. No content is shortened to reduce the build.
+
+Saved writing was also inspected using a private local snapshot and fictional
+charts. That preview does not change database publication state. Its data and
+screenshots remain outside the public repository.

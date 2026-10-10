@@ -4649,7 +4649,7 @@ test.describe("client-facing user flow case studies", () => {
     await expect(page.locator("#you-transit-article-title")).toContainText("Sun in Aquarius in the 11th house");
     await expectNoDuplicateArticleHeadings(page, "You natal placement detail");
 
-    await page.getByRole("button", { name: "Back to updates" }).click();
+    await page.getByRole("button", { name: "Back to natal chart" }).click();
     await expect(page.getByRole("region", { name: "You", exact: true })).toBeVisible();
     await assertNoClientErrors();
   });
@@ -4670,16 +4670,16 @@ test.describe("client-facing user flow case studies", () => {
     await aspect.click();
     await expect(page.locator("#you-transit-article-title")).toHaveText(aspectName);
     await expect(page).toHaveURL(/\/aspect\//);
-    await expectAnimatedArticleNavigation(page, () => page.getByRole("button", { name: "Back to updates" }).click(), aspectName);
+    await expectAnimatedArticleNavigation(page, () => page.getByRole("button", { name: "Back to natal chart" }).click(), aspectName);
     await expect(page).toHaveURL(parentUrl);
     await expect(page.locator("#you-transit-article-title")).toHaveText(parentTitle);
     await expectAnimatedArticleNavigation(page, () => page.goForward(), parentTitle);
     await expect(page.locator("#you-transit-article-title")).toHaveText(aspectName);
     await page.reload();
     await expect(page.locator("#you-transit-article-title")).toHaveText(aspectName);
-    await page.getByRole("button", { name: "Back to updates" }).click();
+    await page.getByRole("button", { name: "Back to natal chart" }).click();
     await expect(page.locator("#you-transit-article-title")).toHaveText(parentTitle);
-    await page.getByRole("button", { name: "Back to updates" }).click();
+    await page.getByRole("button", { name: "Back to natal chart" }).click();
     await expect(page).toHaveURL(rootUrl);
     await expect(page.locator("#you-transit-article-title")).toHaveCount(0);
   });
@@ -5212,7 +5212,7 @@ test.describe("client-facing user flow case studies", () => {
         await page.reload();
         await expect(article).toContainText(source.body_you!);
         await article.screenshot({ path: `test-results/natal-reader-${planet.toLowerCase()}-${width}-${theme}.png` });
-        await page.getByRole("button", { name: "Back to updates" }).click();
+        await page.getByRole("button", { name: "Back to natal chart" }).click();
         await selectYouNatalTab(page);
       }
       await noErrors();
@@ -5227,7 +5227,7 @@ test.describe("client-facing user flow case studies", () => {
     await selectYouNatalTab(page);
 
     await page.getByRole("button", { name: /Ascendant in/ }).click();
-    await expect(page.getByRole("button", { name: "Back to updates" })).toBeVisible();
+    await expect(page.getByRole("button", { name: "Back to natal chart" })).toBeVisible();
     await expectNoDuplicateArticleHeadings(page, "You ascendant placement detail");
     await expectReaderFacingCopy(page.getByRole("region", { name: /Ascendant in/ }), "You ascendant placement fallback detail", 80);
     await assertNoClientErrors();
@@ -5946,7 +5946,7 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"] as const)
     await expect(page.locator("#you-transit-article-title")).toHaveText(/Mercury Rx in/);
     await expectNoDuplicateArticleHeadings(page, "You retrograde placement");
     await expectSemanticArticleHeadingOrder(page, "You retrograde placement");
-    await page.getByRole("button", { name: "Back to updates" }).click();
+    await page.getByRole("button", { name: "Back to natal chart" }).click();
     await page.getByRole("button", { name: /Ascendant in/ }).click();
     await expect(page.locator("#you-transit-article-title")).toBeVisible();
     await expectNoDuplicateArticleHeadings(page, "You natal placement");
