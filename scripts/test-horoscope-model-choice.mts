@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import {decodeWeeklyHistoryRow} from '../api/_lib/horoscope-history-storage';
 import {applyCheckpointFixture} from '../tests/helpers/horoscope-checkpoint-fixture.mts';
 import {store,editorialFixtureRows,installHoroscopeWriterFixture,invokeHoroscopeWriting,writerFixture} from '../tests/helpers/sky-article-save-api.mts';
 import {installAlternativeHoroscopeProviders,geminiStreamFixture} from '../tests/helpers/horoscope-provider-fixture.mts';
@@ -51,7 +52,7 @@ const create=async(period:string,date:string)=>{
   const result=await store.invoke('POST',{contentKey:horoscopeEditionKey(edition.window),surface:'sky',mode:'article',eventType:'horoscope-edition',provider:'manual-admin',status:'DRAFT',lane:'serving',headline:'Synthetic model-selection edition',body:horoscopeEditionBody(edition),sections:{horoscopeEdition:edition},facts:{horoscopeBrief:{brief,signature}},sourceSnapshot:{horoscopeOutlines:{}}});
   assert.equal(result.status,200,JSON.stringify(result.payload));return result.payload.rows[0].id;
 };
-const latest=(id:string)=>structuredClone(store.rows.get(id));
+const latest=(id:string)=>decodeWeeklyHistoryRow(structuredClone(store.rows.get(id)));
 const action=(id:string,action:string,extra:any={})=>invokeHoroscopeWriting({action,id,expectedUpdatedAt:latest(id).updated_at,...extra});
 const step=async(id:string)=>{
   await new Promise(resolve=>setTimeout(resolve,15));
