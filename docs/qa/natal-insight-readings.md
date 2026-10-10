@@ -99,6 +99,19 @@ Studio save/reload checks still apply.
 
 ## Integration follow-up, October 10
 
+The final release check exposed a Calendar cold-load regression on the hosted
+runner. Direct Calendar visits now receive HTML module-preload hints for App,
+CalendarRoute and LunarCalendar's static dependencies. This removes their
+serial code-discovery delay without changing the JavaScript startup graph,
+calculation assets, reading selection or approved prose. Other routes retain
+their existing hints. Deferred content and the calculation worker are not
+preloaded by this change.
+
+The startup contract checks route scope and excludes dynamic dependencies.
+The browser regression holds App's download and requires both Calendar modules
+to start independently. Existing cold-load ceilings, complete-reading checks,
+stylesheet loading and failure/recovery checks remain unchanged.
+
 The release branch incorporates main through `d4b0f5fe7`. Natal placement and
 aspect regressions now use the existing **Back to natal chart** accessible
 label; transit article assertions retain **Back to updates**. No navigation
