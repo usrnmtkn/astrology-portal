@@ -340,3 +340,23 @@ for(const [width,theme] of [[1440,'light'],[1440,'dark'],[390,'light'],[390,'dar
   }finally{f.child.kill();}
  });
 }
+
+test('A stale model choice reloads the current Weekly plan without overwriting another client',async({page})=>{
+ const f=await fixture(page);try{
+  const studio=await f.open(),selector=studio.getByRole('combobox',{name:'Writing model'});
+  await expect(selector).toBeEnabled();
+  const newer=await f.call({method:'writing',body:{action:'prepare',id:f.id,expectedUpdatedAt:(await f.latest()).updated_at,writerChoice:'claude'}});
+  expect(newer.status).toBe(200);
+  await selector.selectOption('gemini');
+  await expect(selector).toHaveValue('claude');await expect(selector).toBeEnabled();
+  await expect(studio.getByRole('alert')).toHaveCount(0);
+  await expect(studio.getByLabel('I approve this writing plan for generation.')).not.toBeChecked();
+  expect((await f.latest()).source_snapshot.horoscopeWriterChoice).toBe('claude');
+  expect((await f.call({method:'provider-state'})).requests).toEqual([]);
+  expect((await f.latest()).sections.horoscopeEdition).toEqual(f.original);
+  // An explicit choice on the refreshed version remains available.
+  await selector.selectOption('gemini');await expect(studio.getByRole('status')).toContainText('Writing model saved');
+  await expect(selector).toHaveValue('gemini');
+  expect((await f.call({method:'provider-state'})).requests).toEqual([]);
+ }finally{f.child.kill();}
+});

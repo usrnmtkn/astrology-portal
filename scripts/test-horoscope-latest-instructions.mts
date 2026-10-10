@@ -67,7 +67,7 @@ for(const period of ['daily','weekly','monthly','seasonal'] as const){
  await saveProfile(third,`Next ${period} guidance.`);
  let raced=false;
  globalThis.fetch=async(input:any,options:any)=>{
-  if(!raced&&options?.method==='PATCH'&&new URL(String(input)).searchParams.get('id')===`eq.${row.id}`){
+  if(!raced&&(options?.method==='PATCH'&&new URL(String(input)).searchParams.get('id')===`eq.${row.id}`||String(input).includes('/rpc/checkpoint_weekly_horoscope'))){
    raced=true;store.rows.set(row.id,{...structuredClone(row),headline:'Newer owner edit',updated_at:new Date(Date.parse(row.updated_at)+1000).toISOString()});
   }
   return fetch(input,options);

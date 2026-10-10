@@ -120,7 +120,7 @@ export default function HoroscopeEditionsStudio({secret,requestedEditionId}:{sec
     if(!saved||busy||dirty||saved.source_snapshot?.horoscopeGeneration?.active)return;
     setBusy(true);setError('');setMessage('');setPlanApproved(false);
     try{await loadPlan(saved,undefined,writerChoice);setMessage('Writing model saved. Review the plan before generating.');}
-    catch(reason){setPlan(null);setError((reason as Error).message);}
+    catch(reason){setPlan(null);await recoverActionConflict(reason);}
     finally{setBusy(false);}
   }
   async function savedFailureMessage(row:any,signal?:AbortSignal) {
@@ -292,7 +292,9 @@ export default function HoroscopeEditionsStudio({secret,requestedEditionId}:{sec
           row=await readSaved(row.id,controller.signal);
         }
       }
-      const failureMessage=await showRecovered(row,controller);
+      let failureMessage;
+      try{failureMessage=await showRecovered(row,controller);}
+      catch(reason){if((reason as any).status===409)continue;throw reason;}
       if(isCurrent(controller)){
         const terminal=row.source_snapshot?.horoscopeGeneration?.lastError;
         if(terminal&&terminal.failedAt!==previousFailure)setError(failureMessage||terminal.message);
@@ -307,6 +309,16 @@ export default function HoroscopeEditionsStudio({secret,requestedEditionId}:{sec
     setMessage('');
     if(recoverable(reason))setMessage('Studio could not check saved progress yet. Your saved readings are kept. Check saved progress again when the connection returns.');
     else setError(reason.message);
+  }
+  async function recoverActionConflict(reason:any){
+    // Reconcile a stale operation without replaying its mutation. An owner edit
+    // remains local; automatic recovery may only replace a clean document.
+    if(reason?.status!==409||!saved||dirty){setError(reason.message);return;}
+    const controller=beginOperation();setChecking(true);setPlanApproved(false);
+    setError('');setMessage('Loading the current saved edition…');
+    try{await recoverGeneration(saved,controller);}
+    catch(error){recoveryUnavailable(error,controller);}
+    finally{endOperation(controller);}
   }
   async function checkProgress(){
     if(!saved||dirty||checking||(busy||operation.current)&&!running.current)return;
@@ -408,7 +420,7 @@ export default function HoroscopeEditionsStudio({secret,requestedEditionId}:{sec
   async function release(heldSign?:string){
     const isReview=saved?.source_snapshot?.horoscopeGeneration?.active?.phase==='review';
     if(!saved||!window.confirm(isReview?'Stop this prose check and keep its draft for editing? It may already have been billed. No replacement request will be started.':`The interrupted ${heldSign?horoscopeSignLabel(heldSign)+' ':''}request may have been billed. Allow a new paid request for this reading?`))return;
-    setBusy(true);setError('');try{const data=await request(secret,'/api/admin/horoscope-writing',{action:'release',id:saved.id,expectedUpdatedAt:saved.updated_at,acknowledgeUnknownOutcome:true,...(heldSign?{sign:heldSign}:{})});retain(data.rows[0]);await loadPlan(data.rows[0]);setMessage('Interrupted request released. Review the plan before starting another request.');setPlanApproved(false);}catch(reason){setError((reason as Error).message);}finally{setBusy(false);}
+    setBusy(true);setError('');try{const data=await request(secret,'/api/admin/horoscope-writing',{action:'release',id:saved.id,expectedUpdatedAt:saved.updated_at,acknowledgeUnknownOutcome:true,...(heldSign?{sign:heldSign}:{})});retain(data.rows[0]);await loadPlan(data.rows[0]);setMessage('Interrupted request released. Review the plan before starting another request.');setPlanApproved(false);}catch(reason){await recoverActionConflict(reason);}finally{setBusy(false);}
   }
   async function reject(target:string){
     if(!saved||locked||saved.status!=='DRAFT')return;
@@ -422,7 +434,7 @@ export default function HoroscopeEditionsStudio({secret,requestedEditionId}:{sec
       retain(row,true);setPacket(row.facts.horoscopeBrief);setStep('generate');if(all)setSign(row.sections.horoscopeEdition.passages[0].sign);
       setMessage(`Rejected ${label}. The previous writing is in Rejected drafts. Review the new plan, then generate replacements.`);
       await loadPlan(row);
-    }catch(reason){setError((reason as Error).message);}finally{setBusy(false);}
+    }catch(reason){await recoverActionConflict(reason);}finally{setBusy(false);}
   }
   const readingSigns=draft?.passages.map(p=>p.sign)??[];
   const total=readingSigns.length;
@@ -441,18 +453,28 @@ export default function HoroscopeEditionsStudio({secret,requestedEditionId}:{sec
   const visibleError=error||(step==='setup'?listError:'');
   const needsSignIn=visibleError===ownerSignInMessage;
   useEffect(()=>{
-    if(needsSignIn||step!=='generate'||!active&&!needsSync||dirty||instructions||checking||busy&&!running.current)return;
-    // A backgrounded tab or an interrupted poll must not leave the last known
-    // request on screen forever. Only retrieve it; never start another writer.
-    const sync=(returning=false)=>{
-      if(document.visibilityState==='hidden')return;
-      const age=Date.now()-lastSync.current;
-      if(age>=(running.current?(returning?15000:60000):returning?3000:30000))void checkProgress();
+    const idle=!active&&!needsSync;
+    if(!secret||!saved||needsSignIn||step!=='generate'||dirty||instructions||checking||busy&&!running.current||idle&&(draft?.window.period!=='weekly'||busy))return;
+    const controller=new AbortController();let inFlight=false;
+    // Recover active requests as before. Idle Weeklies check only the version
+    // first, preserving approval and avoiding unchanged large-history reads.
+    const sync=async(returning=false)=>{
+      if(inFlight||document.visibilityState==='hidden'||Date.now()-lastSync.current<(running.current?(returning?15000:60000):returning?3000:30000))return;
+      if(!idle){void checkProgress();return;}
+      inFlight=true;lastSync.current=Date.now();
+      try{
+        const data=await request(secret,endpoint+'?'+new URLSearchParams({horoscopeEditions:'true',id:saved.id,editionVersion:'true'}),undefined,'GET',controller.signal);
+        if(controller.signal.aborted)return;
+        const row=data.rows?.[0];
+        if(row?.id!==saved.id||typeof row.updated_at!=='string')return;
+        if(row.updated_at!==saved.updated_at)await checkProgress();
+      }catch{/* A background read never erases saved state or replays a request. */}
+      finally{inFlight=false;}
     };
-    const onReturn=()=>sync(true),timer=window.setInterval(()=>sync(),15000);
+    const onReturn=()=>void sync(true),timer=window.setInterval(()=>void sync(),15000);
     window.addEventListener('focus',onReturn);window.addEventListener('pageshow',onReturn);document.addEventListener('visibilitychange',onReturn);
-    return()=>{window.clearInterval(timer);window.removeEventListener('focus',onReturn);window.removeEventListener('pageshow',onReturn);document.removeEventListener('visibilitychange',onReturn);};
-  },[step,active,needsSync,dirty,instructions,checking,busy,saved,needsSignIn]);
+    return()=>{controller.abort();window.clearInterval(timer);window.removeEventListener('focus',onReturn);window.removeEventListener('pageshow',onReturn);document.removeEventListener('visibilitychange',onReturn);};
+  },[secret,step,draft?.window.period,saved,active,needsSync,dirty,instructions,busy,checking,needsSignIn]);
   const lastFailure=generation?.lastError,failedSign=lastFailure?.operation?.sign;
   const punctuationHold=lastFailure?.code==='required_punctuation'?lastFailure:null;
   function editPunctuation(){

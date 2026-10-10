@@ -97,6 +97,14 @@ const payload=()=>({contentKey:horoscopeEditionKey(edition.window),surface:'sky'
 let saved=await store.invoke('POST',payload());
 assert.equal(saved.status,200,JSON.stringify(saved.payload));
 let row=saved.payload.rows[0];
+const versionUrl=`/api/admin/generated-content?horoscopeEditions=true&editionVersion=true&id=${row.id}`;
+assert.equal((await store.invoke('GET',undefined,versionUrl,'wrong')).status,401);
+assert.equal((await store.invoke('GET',undefined,'/api/admin/generated-content?horoscopeEditions=true&editionVersion=true')).status,400);
+const beforeVersionRead=structuredClone(row);
+const version=await store.invoke('GET',undefined,versionUrl);
+assert.equal(version.status,200);
+assert.deepEqual(version.payload.rows,[{id:row.id,updated_at:row.updated_at}],'Idle checks exclude all saved prose, facts and provider history');
+assert.deepEqual(store.rows.get(row.id),beforeVersionRead,'Version check is read-only');
 assert.equal((await store.invoke('PATCH',{id:row.id,status:'LIVE',expectedUpdatedAt:row.updated_at})).status,422,'Incomplete editions cannot publish');
 edition={...edition,passages:HOROSCOPE_SIGNS.map(sign=>({sign,headline:`Fixture ${sign} headline`,body:`Fixture ${sign} opening.\n\nFixture ${sign} final sentence.  `}))};
 assert.throws(()=>validateHoroscopeEdition({...edition,passages:edition.passages.map(()=>edition.passages[0])}),/one headline/);
