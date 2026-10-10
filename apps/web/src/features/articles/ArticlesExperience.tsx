@@ -6,7 +6,6 @@ import { loadReaderRows } from "../../services/readerContentClient";
 import { subscribeToContentUpdates, subscribeToContentRevalidation } from "../../services/contentUpdateSignal";
 import type { GeneratedContentRow } from "../../services/generatedContent";
 import { articleKeyFromHash, articleLibraryKind, articleLibraryPrefixes, articleReaderHref, type ArticleLibraryKind } from "../../../../../src/shared/articleLibrary";
-import "./articles.css";
 
 const labels = { article: "Article", guide: "Guide", sky: "Sky article" };
 function readable(row: GeneratedContentRow) {
@@ -82,7 +81,7 @@ export default function ArticlesExperience() {
         </select></label>
       </div>
       {filtered.length ? <ul className="articles-library-list">{filtered.map(row => <li key={row.content_key}><a className="learn-sheet articles-library-card" href={articleReaderHref(row.content_key)}>
-        <span className="learn-kicker">{labels[articleLibraryKind(row)!]}</span><h2>{row.headline}</h2>
+        <span className="learn-kicker">{labels[articleLibraryKind(row)!]}</span><h2 className="learn-chapter__title">{row.headline}</h2>
         {row.summary && <FormattedProse text={row.summary} />}<ChevronRight aria-hidden="true" size={20} />
       </a></li>)}</ul> : <p role="status">{rows.length ? "No articles match these filters." : "No articles or guides are published yet."}</p>}
     </div>}
