@@ -20,6 +20,7 @@ import { skySummaryEventPlacements } from "./content/skySummaryEventPlacements";
 import type { ArticlePillData } from "./components/ArticlePills";
 import { articleHistoryChangeEvent, pushArticleUrl, returnToArticleParent } from "./services/articleNavigation";
 import { CardReadMore } from "./components/CardReadMore";
+import { NavigationPill } from "./components/NavigationPill";
 import { isContentRetired, contentPublication, contentPublicationRecords } from "./content/contentPublicationState";
 import { personalTransitPublicationIdentity } from "./services/personalTransitPublication";
 import { installPersonalTransitFallbackArchitectureV3Bundle } from "./content/fallbackArchitectureV3Runtime";
@@ -14243,7 +14244,7 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
     <main onClick={selectedSkyDetail ? navigateSkyArticle : undefined} className={`app-shell theme-${theme} mode-${selectedSkyDetail ? "detail" : mode} ${sunriseOrbEnabled ? "sunrise-orb-enabled" : "sunrise-orb-disabled"} ${dyslexiaFriendlyFont ? "dyslexia-font-enabled" : "dyslexia-font-disabled"} ${isSignupMode ? "auth-mode" : ""}`}>
       {!isSignupMode && (
         <header className="topbar">
-          <div className="nav-pill">
+          <NavigationPill>
             <button
               className="brand-dot"
               type="button"
@@ -14271,7 +14272,7 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
                 <span>Calendar</span>
               </button>
               <button className={mode === "horoscopes" ? "active" : ""} type="button" onClick={() => navigateToPortalMode("horoscopes")}><Sparkles size={18} aria-hidden="true" /><span>Horoscopes</span></button>
-              <button className={mode === "articles" ? "active" : ""} type="button" onClick={() => navigateToPortalMode("articles")}><BookOpen size={18} aria-hidden="true" /><span>Articles &amp; Guides</span></button>
+              <button className={mode === "articles" ? "active" : ""} type="button" onClick={() => navigateToPortalMode("articles")}><BookOpen size={18} aria-hidden="true" /><span>Guide</span></button>
               {userProfile && (
                 <>
                   <button
@@ -14303,7 +14304,7 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
                 </>
               )}
             </nav>
-          </div>
+          </NavigationPill>
 
         <div className="topbar-actions">
           {showTransitDateControls && (
@@ -14538,7 +14539,7 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
                   </button>
                 </>
               )}
-              <button className={mode === "articles" ? "active" : ""} type="button" role="menuitem" onClick={() => { navigateToPortalMode("articles"); setMenuOpen(false); }}><BookOpen size={20} aria-hidden="true" /><span>Articles &amp; Guides</span></button>
+              <button className={mode === "articles" ? "active" : ""} type="button" role="menuitem" onClick={() => { navigateToPortalMode("articles"); setMenuOpen(false); }}><BookOpen size={20} aria-hidden="true" /><span>Guide</span></button>
               <button
                 className={mode === "learn" ? "active" : ""}
                 type="button"

@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { getAuthAccount, signOutAuth } from "../../services/auth";
+import { NavigationPill } from "../NavigationPill";
 
 export type ReportTheme = "light" | "dark";
 
@@ -108,7 +109,7 @@ export function ReportTopNavigation({
 
   return (
     <header className="topbar report-topbar">
-      <div className="nav-pill">
+      <NavigationPill>
         <button className="brand-dot" type="button" aria-label="Home" onClick={() => goToAppRoute("sky")}>
           <Asterisk size={18} aria-hidden="true" />
         </button>
@@ -133,7 +134,7 @@ export function ReportTopNavigation({
             <span>Friends</span>
           </button>
         </nav>
-      </div>
+      </NavigationPill>
 
       <div className="topbar-actions">
         <button
