@@ -1,6 +1,6 @@
 import { useEffect, useId, useRef, useState, type ReactNode } from 'react';
 import { calendarPassageVariables } from '../../../src/calendar-writing/passageContract';
-import type { CalendarOverviewValue } from '../../web/src/features/calendar/calendarOverviewResolve';
+import type { CalendarOverviewValue } from '../../../src/shared/features/calendar/calendarOverviewResolve';
 import { calendarVariableColor } from './calendarOverviewTemplate';
 import { StudioButton, StudioTextarea } from './StudioControls';
 

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { AdminDisclosureSummary, AdminSelect } from "./AdminNativeControls";
 import { StudioButton, StudioInput } from "./StudioControls";
-import { PageLoading } from "../../web/src/components/PageLoading";
+import { PageLoading } from "../../../src/shared/components/PageLoading";
 import type { CustomVariable } from "./studioCustomVariableClient";
 import { studioVariableValue } from "../../web/src/content/studioCustomVariables.mjs";
 

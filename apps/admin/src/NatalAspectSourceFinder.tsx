@@ -1,5 +1,5 @@
 import { StudioButton } from "./StudioControls";
-import { PageLoading } from "../../web/src/components/PageLoading";
+import { PageLoading } from "../../../src/shared/components/PageLoading";
 import { AdminSelect } from "./AdminNativeControls";
 import { MetricCard } from "./studio-ds/patterns";
 import { Grid, Stack, Text } from "./studio-ds/primitives";

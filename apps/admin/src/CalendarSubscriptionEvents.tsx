@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { StudioButton, StudioInput, StudioTextarea, StudioStatusBadge } from "./StudioControls";
 import { adminCredentialHeaders } from "./adminSecret";
-import { calendarFeedCategories, type CalendarFeedEvent, type CalendarFeedEventRecord } from "../../web/src/features/calendar/calendarSubscription";
+import { calendarFeedCategories, type CalendarFeedEvent, type CalendarFeedEventRecord } from "../../../src/shared/features/calendar/calendarSubscription";
 
 const emptyEvent = (): CalendarFeedEvent => ({ title: "", description: "", start: "", end: "", allDay: false, category: "key", url: "" });
 const categoryLabels: Record<CalendarFeedEvent["category"], string> = { lunations: "New & Full Moons", "moon-signs": "Moon sign changes", seasons: "Season changes", ingresses: "Planet ingresses", retrogrades: "Retrograde stations", key: "Key events", weekly: "Weekly forecasts", aspects: "All aspects" };

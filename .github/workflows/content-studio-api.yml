@@ -37,6 +37,8 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
+      - name: Verify Studio and shared module boundaries
+        run: npm run qa:admin-boundary
       - name: Verify CRUD, publication, storage and actual reader contracts
         run: npm run test:content-studio-api
       - name: Verify publication races with distinct PostgreSQL sessions

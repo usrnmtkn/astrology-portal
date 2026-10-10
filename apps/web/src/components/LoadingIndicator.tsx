@@ -1,6 +1,2 @@
-import "../styles/loading.css";
-
-/** Decorative only; the parent owns the accessible status and readiness. */
-export function LoadingIndicator({ compact = false }: { compact?: boolean }) {
-  return <span className={`loading-spinner${compact ? " loading-spinner--compact" : ""}`} aria-hidden="true" />;
-}
+// Compatibility export; shared implementation is used by both reader and Studio.
+export * from "../../../../src/shared/components/LoadingIndicator.js";

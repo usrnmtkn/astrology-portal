@@ -112,7 +112,7 @@
     "test:auth-access": "node scripts/test-auth-account-isolation.mjs && node scripts/test-report-auth-identity.mjs",
     "qa:bundle": "node scripts/check-web-bundle-budgets.mjs",
     "qa:form-typography": "node scripts/run-form-typography-audit.mjs",
-    "qa:admin-boundary": "node scripts/audit-admin-web-boundaries.mjs && npm run guard:dev-ports",
+    "qa:admin-boundary": "node scripts/test-admin-web-boundaries.mjs && node scripts/audit-admin-web-boundaries.mjs && npm run guard:dev-ports",
     "qa:ephemeris:horizons": "TLDR_ASTRO_VERIFY_PROVIDER_COMMAND='node scripts/providers/nasa-horizons-provider.mjs' node scripts/verify-astrology-integrity.mjs --allow-reference-gaps --summary",
     "qa:ephemeris:release-gate": "node scripts/check-ephemeris-release-gate.mjs",
     "qa:2026-engine-facts": "node scripts/verify-2026-engine-facts.mjs",
@@ -217,6 +217,9 @@
     "test:natal-planet-introductions": "node --import tsx scripts/test-natal-planet-introductions.mjs",
     "test:rhetorical-patterns": "node tests/astro-writing/rhetorical-patterns.test.mjs && node tests/astro-writing/ai-writing-patterns.test.mjs && node --import tsx scripts/test-rhetorical-review-integration.mts && node --import tsx scripts/test-report-provider-schemas.mjs && node --import tsx scripts/test-report-rhetorical-admission.mts && node --import tsx scripts/test-ask-tldr-judge.mjs",
     "test:personal-daily-transits": "node scripts/test-personal-daily-transits.mjs"
+  },
+  "overrides": {
+    "@tiptap/markdown": { "marked": "18.0.13" }
   },
   "optionalDependencies": {
     "@esbuild/linux-x64": "^0.27.7",

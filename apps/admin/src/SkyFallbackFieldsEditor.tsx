@@ -5,7 +5,7 @@ import { skyRetrogradeBodies, type SkyPlacementSelection } from "./skyPlacementA
 import SkyPlacementVariableKey, { SkyVariableText } from "./SkyPlacementVariableKey";
 import SkyPlacementArticleVariables from "./SkyPlacementArticleVariables";
 import SkyArticleAiWriter from "./SkyArticleAiWriter";
-import { PageLoading } from "../../web/src/components/PageLoading";
+import { PageLoading } from "../../../src/shared/components/PageLoading";
 // @ts-ignore Shared article-token validator used by publishing and readers.
 import { isSkyPlacementArticleField, skyPlacementArticleVariableIssues, skyPlacementArticlePhraseNames } from "../../web/src/content/fallbackArchitectureV3/resolver/skyPlacementArticleVariables.mjs";
 import SkyPhraseCompositionEditor from "./SkyPhraseCompositionEditor";

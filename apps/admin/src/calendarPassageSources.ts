@@ -1,7 +1,7 @@
 import { publishedSkySummaryContent } from './skySummaryComposition';
 import type { CalendarPreviewRow } from './calendarPreviewModel';
 import type { LiveGeneratedContent } from '../../web/src/services/generatedContent';
-import { createCalendarMoonSources } from '../../web/src/features/calendar/calendarMoonSourcesCore';
+import { createCalendarMoonSources } from '../../../src/shared/features/calendar/calendarMoonSourcesCore';
 import { lunationReaderContentKeys } from '../../web/src/content/lunationArticleIdentity';
 import { isGovernedReaderEligible } from '../../web/src/content/fallbackArchitectureV3/resolver/readerEligibility.browser';
 import { contentPublication, publicationAllowsContent } from '../../web/src/content/contentPublicationState';

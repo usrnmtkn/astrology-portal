@@ -1,4 +1,4 @@
-import { calendarOverviewWriting as sharedCalendarOverviewWriting } from "../../web/src/features/calendar/calendarOverviewResolve";
+import { calendarOverviewWriting as sharedCalendarOverviewWriting } from "../../../src/shared/features/calendar/calendarOverviewResolve";
 import { skyForecastTemplates, type SkyForecastPeriod } from "./skyForecastTemplates";
 
 export type CalendarOverviewStarter = { action: string; value: string };

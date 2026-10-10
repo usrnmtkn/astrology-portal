@@ -3,7 +3,7 @@ import { StudioButton } from "./StudioControls";
 import { AlertCircle, RefreshCw } from "lucide-react";
 import { AdminDisclosureSummary } from "./AdminNativeControls";
 import { studioShellAttributes } from "./studioTheme";
-import { PageLoading } from "../../web/src/components/PageLoading";
+import { PageLoading } from "../../../src/shared/components/PageLoading";
 
 export function AdminPageError({ detail, onRetry, recoveryHref }: {
   detail: string;

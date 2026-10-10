@@ -2,7 +2,7 @@ import {useEffect,useState} from 'react';
 import {StudioButton,StudioInput,StudioTabs,StudioTextarea} from './StudioControls';
 import {AdminDisclosureSummary} from './AdminNativeControls';
 import {adminCredentialHeaders} from './adminSecret';
-import {PageLoading} from '../../web/src/components/PageLoading';
+import {PageLoading} from '../../../src/shared/components/PageLoading';
 const labels:Record<string,string>={instructions:'Writer instructions',calendarExamples:'Calendar references',bookExamples:'Book references',rejectedExamples:'Rejected writing and owner corrections',outputGuidance:'Length and output'};
 async function request(secret:string,body:any,signal?:AbortSignal){
   const response=await fetch('/api/admin/calendar-daily-writing',{method:'POST',headers:{...adminCredentialHeaders(secret),'content-type':'application/json'},body:JSON.stringify(body),signal:signal?AbortSignal.any([signal,AbortSignal.timeout(90000)]):AbortSignal.timeout(90000)});

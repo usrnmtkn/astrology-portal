@@ -6,7 +6,7 @@ import { AdminSelect, AdminDisclosureSummary } from './AdminNativeControls';
 import { AdminPaginatedCollection } from './AdminPaginatedCollection';
 import { compositionVariableColors } from './CompositionVariableKey';
 import { decodeStudioVariableCatalog, filterStudioVariables, matchingVariableSources, type StudioVariable, type StudioVariableCatalog } from './studioVariableCatalog';
-import { PageLoading } from '../../web/src/components/PageLoading';
+import { PageLoading } from '../../../src/shared/components/PageLoading';
 
 const kindLabels = { readonly: 'Calculated fact', editable: 'Reusable phrase', unmapped: 'Internal token' };
 

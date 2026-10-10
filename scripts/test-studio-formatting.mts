@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import './test-studio-markdown-parser.mjs';
 import React from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { FormattedProse } from '../apps/web/src/components/FormattedProse';

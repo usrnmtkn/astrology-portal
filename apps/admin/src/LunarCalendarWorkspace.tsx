@@ -1,4 +1,4 @@
-import { FormattedProse } from "../../web/src/components/FormattedProse";
+import { FormattedProse } from "../../../src/shared/components/FormattedProse";
 import { StudioTabs, StudioButton, StudioInput } from "./StudioControls";
 import { AdminDisclosureSummary, AdminSelect } from "./AdminNativeControls";
 import { MetricCard } from "./studio-ds/patterns";
@@ -8,7 +8,7 @@ import { lazy, Suspense, useEffect, useMemo, useRef, useState, type ReactNode } 
 import type { CompositionMapRow } from './compositionMap';
 import { dropSupersededPackageStarters } from './contentStudioState';
 import { lunarContentIdentity, lunarSigns, lunarWorkspaceFamilyOrder, lunarWorkspaceJobs, lunarWorkspaceSelectionFromQuery } from './lunarCalendarContent';
-import { PageLoading } from '../../web/src/components/PageLoading';
+import { PageLoading } from '../../../src/shared/components/PageLoading';
 const MoonTransitionPhraseWorkspace = lazy(() => import("./MoonTransitionPhraseWorkspace"));
 import SeasonTransitionWorkspace from './SeasonTransitionWorkspace';
 const CompositionMapWorkspace = lazy(() => import('./CompositionMapWorkspace'));

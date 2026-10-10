@@ -4,7 +4,7 @@ import { Fragment, lazy, Suspense, useEffect, useState } from "react";
 import { renderTransitNatalPreview, transitNatalExactContentKey, type TransitNatalSelection, type TransitNatalReadingContext, type TransitPassageSource } from "./transitNatalSources";
 import { subscribeToContentUpdates } from "../../web/src/services/contentUpdateSignal";
 import { readStudioContentDocument, requestStudioJson } from "./generatedContentClient";
-import { PageLoading } from "../../web/src/components/PageLoading";
+import { PageLoading } from "../../../src/shared/components/PageLoading";
 
 import ContentLiveStatusBadge from "./ContentLiveStatus";
 import { Stack, Text } from "./studio-ds/primitives";

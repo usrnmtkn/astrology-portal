@@ -7,7 +7,7 @@ import { fileURLToPath } from "node:url";
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const startup = fs.readFileSync(path.join(repoRoot, "apps/web/src/startup.js"), "utf8");
-const boundary = fs.readFileSync(path.join(repoRoot, "apps/web/src/components/PageLoading.tsx"), "utf8");
+const boundary = fs.readFileSync(path.join(repoRoot, "src/shared/components/PageLoading.tsx"), "utf8");
 const vercel = fs.readFileSync(path.join(repoRoot, "vercel.json"), "utf8");
 
 for (const source of [startup, boundary]) {
