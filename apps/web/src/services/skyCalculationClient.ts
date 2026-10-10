@@ -1,4 +1,10 @@
 import type { LocationInput, SkySnapshot } from "../types.js";
+import type { RetrogradeHistory } from "./retrogradeHistory.js";
+
+export function getRetrogradeHistoryOffMainThread(planet: string, sign: string, referenceDate: Date): Promise<RetrogradeHistory> {
+  if (typeof Worker === "undefined") return loadEphemerisForNonBrowserRuntime().then(({ getRetrogradeHistory }) => getRetrogradeHistory({ planet, sign, referenceDate }));
+  return requestCalculation({ kind: "retrograde-history", planet, sign, date: referenceDate.toISOString() });
+}
 import type {
   SkyCalculationOptions,
   LunarCalendarEvent,

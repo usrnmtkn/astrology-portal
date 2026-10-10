@@ -11,6 +11,7 @@ import {
 } from "../_lib/sky-article-template-slots.js";
 import { skyArticleTemplatePlaceholders } from "../../apps/web/src/content/skyArticleTemplateCompiler.js";
 import { isSkyIngressEssay, SKY_INGRESS_ESSAY_TEMPLATE, skyIngressEssayFields, type SkyArticleFormat } from "../../apps/web/src/content/skyIngressEssay.mjs";
+import { hasVerifiedSameSignHistory } from "../../apps/web/src/services/retrogradeHistory.js";
 
 loadLocalWebEnv();
 
@@ -28,6 +29,7 @@ type TemplateRow = {
 };
 
 type RequestBody = {
+  includeRetrogradeHistory?: boolean;
   format?: SkyArticleFormat;
   templateId?: string;
   referenceDate?: string;
@@ -101,6 +103,7 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
 
   try {
     const body = await readAdminJsonBody<RequestBody>(req, 256_000);
+    if (body.includeRetrogradeHistory !== undefined && typeof body.includeRetrogradeHistory !== "boolean") throw new AdminHttpError(400, "includeRetrogradeHistory must be a boolean.");
     if (body.format !== undefined && body.format !== "saved-template" && !isSkyIngressEssay(body.format)) throw new AdminHttpError(400, "Unsupported article format.");
     if (typeof body.templateId !== "string" || !body.templateId.trim()) throw new AdminHttpError(400, "templateId is required.");
     if (body.provider !== undefined && !["openai", "claude", "anthropic"].includes(body.provider)) throw new AdminHttpError(400, "Invalid provider.");
@@ -130,8 +133,9 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
       calculatedSlotValues: facts.slotValues,
       existingSlotValues
     });
+    const includeHistory = body.includeRetrogradeHistory === true && hasVerifiedSameSignHistory(facts.retrogradeHistory);
     const needsFacts = (slot: { name: string; description?: string }) => ingress
-      ? slot.name === "priorOccurrenceSection" || (slot.name === "majorTransitSections" && !("events" in facts && facts.events.some(event => event.type === "aspect")))
+      ? (slot.name === "priorOccurrenceSection" && !includeHistory) || (slot.name === "majorTransitSections" && !("events" in facts && facts.events.some(event => event.type === "aspect")))
       : skyArticleTemplateSlotNeedsAdditionalFacts(slot);
     const blockedSlots = unfinished.filter(needsFacts);
     const requestedSlots = unfinished.filter((slot) => !needsFacts(slot));
@@ -143,7 +147,7 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
         facts,
         generation: null,
         message: blockedSlots.length
-          ? "The remaining fields require governed dates, aspects, or historical source facts and were not sent to the model."
+          ? "The remaining fields need additional verified facts or selected retrograde history and were not sent to the model."
           : "There are no unfinished AI-eligible template fields."
       });
       return;
@@ -154,7 +158,8 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
       templateBody: completeTemplate,
       planet: facts.planet,
       sign: facts.sign,
-      facts,
+      facts: { ...facts, retrogradeHistory: includeHistory ? facts.retrogradeHistory : undefined,
+        retrogradeHistoryIncluded: includeHistory },
       requestedSlots,
       provider: body.provider,
       voiceNotes: body.voiceNotes
@@ -165,6 +170,7 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
       blockedSlots,
       facts,
       generation: {
+        retrogradeHistory: includeHistory ? facts.retrogradeHistory : null,
         provider: generation.provider,
         model: generation.model,
         responseId: generation.responseId ?? null,

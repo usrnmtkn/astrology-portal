@@ -17,6 +17,43 @@ import { memoizeSwissCalculation } from "./swissCalculationCache.js";
 import { traditionalSignRulers } from "../content/skySunSeason.js";
 import { transitAspectDefinitions } from "../astrologyConfig.js";
 import { PERSONAL_DAILY_ORB, personalDayBounds, personalTransitId, type PersonalDailyPeak } from "./personalDailyTransits.js";
+import { calculateRetrogradeHistory, retrogradeHistoryPlanets, type RetrogradeHistory } from "./retrogradeHistory.js";
+
+const retrogradeHistoryCache: RetrogradeHistory[] = [];
+
+/** One history receipt for Studio, Sky and Calendar. Dates remain UTC instants;
+ * consumers format them in their chosen time zone. Cache only successful,
+ * complete calculations and bound retained cycles. */
+export async function getRetrogradeHistory(input: { planet: string; referenceDate: Date; sign?: string }): Promise<RetrogradeHistory> {
+  const planet = input.planet.trim().toLowerCase();
+  if (!(retrogradeHistoryPlanets as readonly string[]).includes(planet)) {
+    return calculateRetrogradeHistory(input, () => { throw new Error("Unsupported retrograde planet."); });
+  }
+  const swe = await getSwissEph();
+  const { planetId } = placementPlanet(swe, planet);
+  const returnedFlags = new Set<number>();
+  const sample = (time: number) => {
+    const date = new Date(time);
+    const jd = swe.julday(date.getUTCFullYear(), date.getUTCMonth() + 1, date.getUTCDate(), utcHour(date));
+    const result = calculateSwissUt(swe, jd, planetId, swe.SEFLG_SWIEPH | swe.SEFLG_SPEED);
+    returnedFlags.add(result.returnedFlags);
+    return { longitude: result.values[0], speed: result.values[3] };
+  };
+  const sign = input.sign?.trim().toLowerCase();
+  const time = input.referenceDate.getTime();
+  // With no explicit sign, let the calculation select the reference-day sign;
+  // never reuse Scorpio's answer merely because the same cycle is now in Libra.
+  const cached = sign && retrogradeHistoryCache.find(receipt => receipt.planet === planet && receipt.sign === sign
+    && receipt.current && time >= Date.parse(receipt.current.retrograde.instant) && time < Date.parse(receipt.current.direct.instant));
+  if (cached) return structuredClone(cached);
+  const history = calculateRetrogradeHistory(input, sample);
+  if (returnedFlags.size) history.calculationProvenance = astrologyCalculationProvenance(returnedFlags);
+  if (history.status === "ready") {
+    retrogradeHistoryCache.push(structuredClone(history));
+    if (retrogradeHistoryCache.length > 48) retrogradeHistoryCache.shift();
+  }
+  return history;
+}
 
 const signs = [
   ["Aries", "♈"],

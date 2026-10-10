@@ -1,6 +1,8 @@
 import { isStudioCompatibilityRow, isStudioCompositeRow } from "./studioContentScope";
 import { calendarAspectRetrogradeOptions } from "../../web/src/content/calendarAspectRetrograde";
 import { isSkyIngressEssay, SKY_INGRESS_ESSAY_FORMAT, type SkyArticleFormat } from "../../web/src/content/skyIngressEssay.mjs";
+import { RetrogradeHistoryFacts } from "../../../src/shared/components/RetrogradeHistory";
+import { hasVerifiedSameSignHistory, type RetrogradeHistory } from "../../web/src/services/retrogradeHistory";
 import { useStudioCustomVariables } from "./studioCustomVariableClient";
 import { studioRequestTimeoutMs } from "./studioRequestPolicy";
 import { compatibilityAspectPoints, compatibilityAspectTypes, compatibilityAspectKey, compatibilityAspectFromSearch, compatibilityAspectSearchText, compatibilityAspectSourceDraft, type CompatibilityAspectSelection } from "./compatibilityAspectSources";
@@ -570,6 +572,7 @@ type HookCatalogItem =
 type AdminLoadState = "idle" | "loading" | "loaded" | "accessDenied" | "error";
 
 type SkyArticleEditionFacts = {
+  retrogradeHistory?: RetrogradeHistory;
   articleFormat?: SkyArticleFormat;
   templateFields?: { name: string; description: string }[];
   eventCoverage?: { start: string; end: string; complete: boolean };
@@ -590,6 +593,8 @@ type SkyArticleEditionFacts = {
 };
 
 type SkyArticleEditionForm = {
+  includeRetrogradeHistory?: boolean;
+  retrogradeGenerations?: NonNullable<SkyArticleEditionForm["slotGeneration"]>[];
   rejectedGeneration: Record<string, unknown> | null;
   generationError: string | null;
   writingDirection: string;
@@ -599,6 +604,7 @@ type SkyArticleEditionForm = {
   tldr: string;
   slotValues: Record<string, string>;
   slotGeneration: {
+    retrogradeHistory?: RetrogradeHistory | null;
     provider: string;
     model: string;
     responseId: string | null;
@@ -2216,6 +2222,10 @@ function skyArticleWorkspaceForm(row: AdminGeneratedContentRow | undefined) {
     rejectedGeneration: objectRecord(workspace.rejectedGeneration),
     generationError: typeof workspace.generationError === "string" ? workspace.generationError : null,
     writingDirection: typeof workspace.writingDirection === "string" ? workspace.writingDirection : "",
+    includeRetrogradeHistory: workspace.includeRetrogradeHistory === true,
+    retrogradeGenerations: Array.isArray(workspace.retrogradeGenerations)
+      ? workspace.retrogradeGenerations as NonNullable<SkyArticleEditionForm["slotGeneration"]>[]
+      : objectRecord(workspace.slotGeneration)?.retrogradeHistory ? [workspace.slotGeneration as NonNullable<SkyArticleEditionForm["slotGeneration"]>] : [],
     slotGeneration: objectRecord(workspace.slotGeneration) as SkyArticleEditionForm["slotGeneration"],
     slotValues: Object.fromEntries(Object.entries(slotValues ?? {}).filter((entry): entry is [string, string] => typeof entry[1] === "string"))
   };
@@ -4223,6 +4233,8 @@ export function GeneratedContentAdminDashboard() {
             facts,
             tldr: form.tldr,
             writingDirection: form.writingDirection,
+            includeRetrogradeHistory: form.includeRetrogradeHistory === true,
+            retrogradeGenerations: form.retrogradeGenerations ?? [],
             generationError: form.generationError,
             rejectedGeneration: form.rejectedGeneration,
             slotGeneration: form.slotGeneration,
@@ -4282,7 +4294,7 @@ export function GeneratedContentAdminDashboard() {
     }, 900);
 
     return () => window.clearTimeout(timeout);
-  }, [secret, selectedRow, skyArticleEditionForm?.facts, skyArticleEditionForm?.tldr, skyArticleEditionForm?.writingDirection, skyArticleEditionForm?.generationError, skyArticleEditionForm?.rejectedGeneration, skyArticleEditionForm?.slotGeneration, skyArticleEditionForm?.slotValues, skyArticleEditionForm?.workspaceId]);
+  }, [secret, selectedRow, skyArticleEditionForm?.facts, skyArticleEditionForm?.tldr, skyArticleEditionForm?.writingDirection, skyArticleEditionForm?.includeRetrogradeHistory, skyArticleEditionForm?.retrogradeGenerations, skyArticleEditionForm?.generationError, skyArticleEditionForm?.rejectedGeneration, skyArticleEditionForm?.slotGeneration, skyArticleEditionForm?.slotValues, skyArticleEditionForm?.workspaceId]);
 
   function persistBetweenYouTwoRoute(nextQuery: string, nextActivate = friendsActivationQuery) {
     setQuery(nextQuery);
@@ -4902,6 +4914,8 @@ export function GeneratedContentAdminDashboard() {
         generationError: workspace?.generationError ?? null,
         rejectedGeneration: workspace?.rejectedGeneration ?? null,
         writingDirection: workspace?.writingDirection ?? current.writingDirection,
+        includeRetrogradeHistory: hasVerifiedSameSignHistory(payload.facts.retrogradeHistory) && (workspace?.includeRetrogradeHistory ?? false),
+        retrogradeGenerations: workspace?.retrogradeGenerations ?? [],
         slotGeneration: workspace?.slotGeneration ?? null,
         tldr: workspace?.tldr ?? (isSkyIngressEssay(current.format) ? current.tldr : authoredSource?.summary?.trim() ?? current.tldr),
         slotValues: { ...current.slotValues, ...(workspace?.slotValues ?? {}), ...payload.facts.slotValues },
@@ -4940,7 +4954,8 @@ export function GeneratedContentAdminDashboard() {
           format: form.format,
           referenceDate: form.referenceDate,
           existingSlotValues: form.slotValues,
-          voiceNotes: form.writingDirection
+          voiceNotes: form.writingDirection,
+          includeRetrogradeHistory: form.includeRetrogradeHistory === true
         })
       });
       if (editorSession !== editorSessionRef.current) return;
@@ -4954,7 +4969,10 @@ export function GeneratedContentAdminDashboard() {
           ...current,
           facts: payload.facts,
           slotValues: { ...slotValues, ...payload.facts.slotValues },
-          slotGeneration: payload.generation,
+          slotGeneration: payload.generation ?? current.slotGeneration,
+          retrogradeGenerations: payload.generation?.retrogradeHistory
+            ? [...(current.retrogradeGenerations ?? []), payload.generation]
+            : current.retrogradeGenerations,
           rejectedGeneration: null,
           factBlockedSlots: payload.blockedSlots ?? []
         };
@@ -5078,6 +5096,8 @@ export function GeneratedContentAdminDashboard() {
                 fixedProseHash: edition.fixedProseHash,
                 compiledHash: edition.compiledHash,
                 engineFacts: facts,
+                retrogradeHistoryIncluded: form.includeRetrogradeHistory === true,
+                retrogradeGenerations: form.retrogradeGenerations ?? [],
                 slotGeneration: form.slotGeneration
               },
               lane: "reference",
@@ -11409,6 +11429,8 @@ export function GeneratedContentAdminDashboard() {
                       rejectedGeneration: null,
                       slotValues: {},
                       slotGeneration: null,
+                      includeRetrogradeHistory: false,
+                      retrogradeGenerations: [],
                       factBlockedSlots: [],
                       saveState: "idle",
                       workspaceId: null
@@ -11434,6 +11456,17 @@ export function GeneratedContentAdminDashboard() {
                     {skyArticleEditionFacts.nasaExplanatoryText && <div><dt>NASA astronomy reference</dt><dd>{skyArticleEditionFacts.nasaExplanatoryText.status}
                       {skyArticleEditionFacts.nasaExplanatoryText.sourceUrl && <> · <a href={skyArticleEditionFacts.nasaExplanatoryText.sourceUrl} target="_blank" rel="noreferrer">{skyArticleEditionFacts.nasaExplanatoryText.title ?? "Source"}</a></>}</dd></div>}
                   </dl>
+                  {skyArticleEditionFacts.retrogradeHistory && <details className="retrograde-history">
+                    <summary>Previous retrograde</summary>
+                    <RetrogradeHistoryFacts history={skyArticleEditionFacts.retrogradeHistory} timeZone={skyArticleEditionFacts.referenceTimeZone} />
+                    <label>
+                      <input type="checkbox" checked={skyArticleEditionForm.includeRetrogradeHistory === true}
+                        disabled={isLoading || !hasVerifiedSameSignHistory(skyArticleEditionFacts.retrogradeHistory)}
+                        onChange={event => setSkyArticleEditionForm({ ...skyArticleEditionForm, includeRetrogradeHistory: event.target.checked, saveState: "unsaved" })} />
+                      Include retrograde history in generation
+                    </label>
+                    <p className="admin-field-hint">Saves these calculated dates with the draft. Historical world events require separate sources.</p>
+                  </details>}
                   <section className="admin-hook-detail-section" aria-label="Article completion checklist">
                     <p className="admin-eyebrow">Publication checklist</p>
                     <ul>
@@ -11491,7 +11524,7 @@ export function GeneratedContentAdminDashboard() {
                   )}
                   {skyArticleEditionForm.factBlockedSlots.length > 0 && (
                     <p className="admin-field-hint">
-                      Not sent to the model because they require governed dates, aspects, or historical sources: {skyArticleEditionForm.factBlockedSlots.map((slot) => slot.name).join(", ")}.
+                      Not sent to the model because they need additional verified facts or selected retrograde history: {skyArticleEditionForm.factBlockedSlots.map((slot) => slot.name).join(", ")}.
                     </p>
                   )}
                   <label className="admin-review-copy-editor">
