@@ -14,7 +14,7 @@ The preceding release reproduced 28 content-command failures on both its head an
 
 ## Regression maintenance
 
-Tests now follow the current inventory pagination, reader transport, cache schema, review queue, source precedence, exact aspect selection, and natal-owned introduction routing. Three TS dependency graphs use `tsx` rather than Node's incomplete native strip-types loading. Transit composition assertions compare the complete current approved passage and its source key.
+Tests now follow the current inventory pagination, reader transport, cache schema, review queue, source precedence, exact aspect selection, and natal-owned introduction routing. The content lifecycle consistently uses the existing `tsx` loader for TypeScript dependency graphs instead of Node's incomplete native strip-types loading. Transit composition assertions compare the complete current approved passage and its source key.
 
 Browser fixtures use calculated contacts eligible under the October 9 daily-peak policy. They retain the four-card cap and axis grouping. Recovery waits for personal-aspect cards after an intentionally delayed calculation worker. The lunar editor waits for close/focus restoration before its scroll assertion. Placement deep links tolerate at most one millisecond of ephemeris solver rounding and still verify the exact clicked route and date. Forecast grouping waits for calculation hydration.
 

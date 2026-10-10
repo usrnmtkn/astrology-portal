@@ -79,7 +79,7 @@ for (const [day, hour, width, theme] of [
   expect(skyParagraphs).toHaveLength(3);
   expect(skyParagraphs.slice(0, 2)).toEqual(youParagraphs);
   expect(skyParagraphs[2]).toContain("opposing your natal South Node");
-  await expect(article.locator(".article-section").filter({ has: article.getByRole("heading", { name: "Sun opposition your South Node", exact: true }) }).locator("p")).toHaveText([skyParagraphs[2]]);
+  await expect(article.locator(".article-section").filter({ has: page.getByRole("heading", { name: "Sun opposition your South Node", exact: true }) }).locator("p")).toHaveText([skyParagraphs[2]]);
   expect(errors).toEqual([]);
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });

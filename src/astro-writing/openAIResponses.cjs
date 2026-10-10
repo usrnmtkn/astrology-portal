@@ -191,6 +191,10 @@ async function startStoredNativeWritingResponse({provider, apiKey, role, request
   if (role === "WRITER" && JSON.stringify(provider === "gemini" ? request.input : request.messages).includes("[SEASONAL_DEVELOPMENT_PLAN_REQUIRED_BEFORE_PROSE]")) {
     throw new Error("Complete the separate Seasonal development plan before dispatching prose.");
   }
+  if (provider === "gemini" && (request.store !== true || !(request.background === true || request.background === false && request.stream === true))) {
+    throw new Error("A stored Gemini writing request needs persistence or its reserved stream transport.");
+  }
+  if (provider === "anthropic" && request.stream !== true) throw new Error("A stored Claude writing request needs its reserved stream transport.");
   const headers = nativeWritingHeaders(provider, apiKey);
   return fetchImpl(NATIVE_WRITING_ENDPOINTS[provider], {method:"POST", headers, body:JSON.stringify(request), signal});
 }

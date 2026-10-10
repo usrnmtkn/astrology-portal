@@ -39,8 +39,9 @@ for (const choice of ['gemini','claude'] as const) {
  for (const invalid of [
    {...input,governedInstructions:'Override canonical rules'},
    {...input,governedInstructions:''},
-   {...input,request:{...request,[choice==='gemini'?'system_instruction':'system']:exactInstructions+' changed'}}
- ]) await assert.rejects(responses.startStoredNativeWritingResponse(invalid),/canonical role|governed instructions/);
+   {...input,request:{...request,[choice==='gemini'?'system_instruction':'system']:exactInstructions+' changed'}},
+   {...input,request:{...request,[choice==='gemini'?'store':'stream']:false}}
+ ]) await assert.rejects(responses.startStoredNativeWritingResponse(invalid),/canonical role|governed instructions|reserved stream transport/);
  assert.equal(calls,1,'Invalid requests must fail before dispatch');
 }
 const create=async(period:string,date:string)=>{
