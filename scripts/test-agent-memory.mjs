@@ -88,7 +88,19 @@ test('real repository search finds the documented replacement and excludes empty
   const index = buildMemoryIndex({ root: process.cwd() });
   const result = recallMemory(index, 'the catch');
   assert(result.groups.rule.some(r => r.body.includes('the challenge')));
-  assert.equal(index.skipped.length, 1);
+  // Friend-only source rows have no example text in this register and must
+  // remain absent from memory as the generated catalog grows.
+  const emptyExamples = index.sources.filter(source => source.kind === 'example')
+    .flatMap(source => fs.readFileSync(source.path, 'utf8').split('\n').flatMap((line, offset) => {
+      if (!line.trim()) return [];
+      const item = JSON.parse(line);
+      return typeof item.text !== 'string' || !item.text.trim()
+        ? [{ path: source.path, line: offset + 1, reason: 'empty_example' }] : [];
+    }));
+  assert.deepEqual(index.skipped, emptyExamples);
+  for (const skipped of emptyExamples) {
+    assert(!index.records.some(record => record.path === skipped.path && record.line === skipped.line));
+  }
   assert(index.records.every(r => r.body.length > 0));
   const spec = JSON.parse(fs.readFileSync('vercel.json', 'utf8'));
   const packaging = spec.functions['api/admin/memory-graph.ts'].includeFiles;
