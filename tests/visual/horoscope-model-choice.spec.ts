@@ -51,6 +51,40 @@ async function fixture(page:Page,missing=1){
   }catch(error){child.kill();throw error;}
 }
 
+test('Repeated Gemini reservation timeouts stop visibly without a paid call, then all four remaining readings can finish',async({page})=>{
+ test.setTimeout(120000);
+ await page.addInitScript(()=>{
+  const timeout=window.setTimeout.bind(window);
+  window.setTimeout=((fn:any,delay?:number,...args:any[])=>timeout(fn,delay===3000||delay===6000?10:delay,...args)) as typeof window.setTimeout;
+ });
+ const f=await fixture(page,4);try{
+  const studio=await f.open();await studio.getByLabel('Writing model',{exact:true}).selectOption('gemini');
+  await expect(studio.getByText(/This batch covers all 4 remaining readings/)).toBeVisible();
+  await f.call({method:'storage-state',body:{failWriterReservations:1000}});
+  const original=await f.latest();
+  await studio.getByLabel('I approve this writing plan for generation.').check();
+  await studio.getByRole('button',{name:'Generate missing readings',exact:true}).click();
+  await expect(studio.getByRole('alert')).toContainText('Generation stopped because saved progress could not be confirmed');
+  await expect(studio.getByRole('button',{name:'Pause generation',exact:true})).toHaveCount(0);
+  await expect(studio.getByText(/^Writing (Aries|Taurus|Gemini|Cancer|Leo|Virgo|Libra|Scorpio|Sagittarius|Capricorn|Aquarius|Pisces) ·/)).toHaveCount(0);
+  await expect(studio.getByRole('button',{name:'Generate missing readings',exact:true})).toBeDisabled();
+  expect(await f.latest()).toEqual(original);
+  expect(await f.call({method:'writer-state'})).toMatchObject({calls:0,reviewCalls:0});
+  expect((await f.call({method:'storage-state'})).failWriterReservations).toBe(994);
+  await f.call({method:'storage-state',body:{failWriterReservations:0}});
+  await studio.getByRole('button',{name:'Check saved progress',exact:true}).click();
+  await studio.getByLabel('I approve this writing plan for generation.').check();
+  await studio.getByRole('button',{name:'Generate missing readings',exact:true}).click();
+  await expect(studio.getByText('All readings are saved and ready to review.',{exact:true})).toBeVisible({timeout:60000});
+  const completed=await f.latest();
+  expect(completed.sections.horoscopeEdition.passages.slice(0,8)).toEqual(f.original.passages.slice(0,8));
+  expect(completed.sections.horoscopeEdition.passages.every((p:any)=>p.body)).toBe(true);
+  expect(await f.call({method:'writer-state'})).toMatchObject({calls:4,reviewCalls:4});
+  await page.reload();await f.open();await expect(studio.getByText('12/12 readings ready',{exact:false})).toBeVisible();
+  expect((await f.latest()).sections).toEqual(completed.sections);expect(completed.status).toBe('DRAFT');
+ }finally{f.child.kill();}
+});
+
 for(const [width,theme] of [[1440,'light'],[390,'dark']] as const){
  test(`Gemini Weekly retry continues all twelve with real row projections, long review and lost acknowledgements ${width} ${theme}`,async({page})=>{
   test.setTimeout(180000);

@@ -67,7 +67,9 @@ globalThis.fetch = async (input: any, options: any = {}) => {
   const input=JSON.parse(options.body),row=store.rows.get(input.p_id);
   if(!row||row.updated_at!==input.p_expected_updated_at||row.status!=='DRAFT'||row.sections?.horoscopeEdition?.window?.period!=='weekly')return Response.json([]);
   const updated=storageOrder({...applyCheckpointFixture(row,input.p_changes),updated_at:nextVersion()});
-  if(horoscopeStorageFaults.failWriterReservations>0&&updated.source_snapshot?.horoscopeGeneration?.active?.state==='running'&&!updated.source_snapshot.horoscopeGeneration.active.phase){
+  const writerReservation=updated.source_snapshot?.horoscopeGeneration?.active;
+  if(horoscopeStorageFaults.failWriterReservations>0&&writerReservation&&!writerReservation.phase
+    &&writerReservation.id!==row.source_snapshot?.horoscopeGeneration?.active?.id){
     horoscopeStorageFaults.failWriterReservations--;return Response.json({error:'Synthetic reservation outage'},{status:503});
   }
   store.rows.set(row.id,updated);

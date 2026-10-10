@@ -18,13 +18,16 @@ try{
   await db.exec(readFileSync(new URL('../apps/web/supabase/migrations/20261009114231_weekly_horoscope_checkpoint_deltas.sql',import.meta.url),'utf8'));
   await db.exec(readFileSync(new URL('../apps/web/supabase/migrations/20261009124036_weekly_native_result_checkpoint.sql',import.meta.url),'utf8'));
   await db.exec(readFileSync(new URL('../apps/web/supabase/migrations/20261010042007_weekly_rejection_checkpoint.sql',import.meta.url),'utf8'));
+  await db.exec(readFileSync(new URL('../apps/web/supabase/migrations/20261010053723_weekly_checkpoint_deadlines.sql',import.meta.url),'utf8'));
   const original={source_snapshot:{history:'Synthetic retained evidence. '.repeat(650000),horoscopeGeneration:{active:null,failures:[]}},
     sections:{horoscopeEdition:{window:{period:'weekly'},passages:[]}},body:'Synthetic original passage.'};
   await db.query("insert into generated_interpretations(id,updated_at,status,content_key,body,sections,source_snapshot) values($1,clock_timestamp(),'DRAFT','horoscope/weekly/synthetic',$2,$3,$4)",[id,original.body,original.sections,original.source_snapshot]);
   await db.query("update generated_interpretations set facts='{}',review_state='needs_review',reviewed_at=clock_timestamp() where id=$1",[id]);
   const definition=(await db.query<any>("select prosecdef,proconfig from pg_proc where oid='public.checkpoint_weekly_horoscope(uuid,timestamptz,jsonb)'::regprocedure")).rows[0];
   assert.equal(definition.prosecdef,false);
-  assert.deepEqual(definition.proconfig,['search_path=""']);
+  assert.deepEqual(definition.proconfig,['search_path=""','statement_timeout=25s']);
+  const providerConfig=(await db.query<any>("select proconfig from pg_proc where oid='public.checkpoint_weekly_provider_result(uuid,text,text,text,text,jsonb)'::regprocedure")).rows[0].proconfig;
+  assert.deepEqual(providerConfig,['search_path=""','statement_timeout=25s']);
   for(const role of ['anon','authenticated']){
     await db.exec(`set role ${role}`);
     await assert.rejects(save(await Promise.resolve({id,updated_at:'2026-01-01T00:00:00Z'}),[]),(e:any)=>e.code==='42501');
@@ -89,5 +92,24 @@ try{
   await db.query("update generated_interpretations set status='DRAFT',sections=jsonb_set(sections,'{horoscopeEdition,window,period}','\"monthly\"') where id=$1",[id]);
   row=await read();assert.deepEqual(await save(row,[]),[]);
   assert.equal(await capture(),'obsolete');
+  // The former fixture had no generated listing column or private audit
+  // trigger. Those are part of a real checkpoint, not optional test overhead.
+  await db.exec('reset role');
+  await db.exec(readFileSync(new URL('../apps/web/supabase/migrations/20260919180000_generated_content_studio_listing_facts.sql',import.meta.url),'utf8'));
+  await db.exec(readFileSync(new URL('../apps/web/supabase/migrations/20260922002101_content_studio_private_versions.sql',import.meta.url),'utf8'));
+  await db.exec(readFileSync(new URL('../apps/web/supabase/migrations/20261010054825_studio_version_duplicate_precheck.sql',import.meta.url),'utf8'));
+  const nestedHistory=Array.from({length:1000},(_,i)=>({id:`history-${i}`,operation:{receipt:{evidence:{input:`Synthetic evidence ${i}. `.repeat(1800)}}}}));
+  const large={horoscopeGeneration:{active:null,rejections:nestedHistory}};
+  assert(Buffer.byteLength(JSON.stringify(large))>40_000_000);
+  await db.query("update generated_interpretations set sections=$2,source_snapshot=$3 where id=$1",[id,original.sections,large]);
+  row=await read();const beforeAudited=row;
+  await db.exec('set role service_role');
+  await save(row,horoscopeStorageChanges(row,{source_snapshot:{...large,horoscopeGeneration:{...large.horoscopeGeneration,active:operation},horoscopeStorageWriteId:'audited-large-save'}}));
+  row=await read();assert.deepEqual(row.source_snapshot.horoscopeGeneration.rejections,nestedHistory);
+  assert.deepEqual(await save(beforeAudited,[]),[]);
+  await db.exec('reset role');
+  const audit=(await db.query<any>('select original_row from project_privacy.studio_row_versions where row_id=$1 and row_updated_at=$2',[id,row.updated_at])).rows;
+  assert.equal(audit.length,1);assert.deepEqual(audit[0].original_row.source_snapshot,row.source_snapshot);
   console.log('PASS PostgreSQL checkpoint SQL: >17MB retained history, compact deltas/receipts, exact CAS, append/delete/null, atomic invalid-write rollback, service-only invoker access and Weekly DRAFT isolation.');
+  console.log('PASS Weekly checkpoint deadlines: scoped 25s RPC budgets and >40MB nested history with real generated listing facts and immutable private audit capture.');
 }finally{await db.close();}
