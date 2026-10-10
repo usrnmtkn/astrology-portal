@@ -341,8 +341,8 @@ export default function HoroscopeEditionsStudio({secret,requestedEditionId}:{sec
     try {
       let calls=0,connectionFailures=0;
       const connectionFailure=()=>{
-        if(++connectionFailures>=3)throw Object.assign(new Error('Generation stopped because saved progress could not be confirmed. Your readings are kept. Check saved progress to continue.'),{batchStopped:true});
-        setMessage('Connection interrupted. Checking saved progress before continuing the batch.');
+        if(++connectionFailures>=3)throw Object.assign(new Error('Generation paused. Check saved progress to continue. Your readings are kept.'),{batchStopped:true});
+        setMessage('Connection interrupted. Checking saved progress…');
         return 3000*connectionFailures;
       };
       const reconcile=continueWeekly?(await import('../../../src/astro-writing/horoscopeWeeklyBatchRecovery.mjs')).horoscopeWeeklyBatchRecovery:null;
@@ -547,7 +547,7 @@ export default function HoroscopeEditionsStudio({secret,requestedEditionId}:{sec
             {(plan?.writerModels??HOROSCOPE_WRITERS).map((writer:any)=><option key={writer.id} value={writer.id} disabled={writer.available===false}>{writer.label}{writer.available===false?' · Not connected':''}</option>)}
           </AdminSelect>
         </label>
-        <p id="horoscope-writer-help" className="admin-field-hint">Applies to new drafts in this edition. Your saved writing instructions and examples are used with every model. Planning and review keep their current models. API charges depend on the model you choose.</p>
+        <p id="horoscope-writer-help" className="admin-field-hint">Used for new drafts with your saved instructions and examples. Planning and review use their existing models. Costs vary by model.</p>
         {active&&<p>Saved request: {active.writerModel??active.writerOperation?.config?.model??active.draftConfig?.model??active.config?.model??plan?.writerModel??HOROSCOPE_WRITERS.find(writer=>writer.id===(saved?.source_snapshot?.horoscopeWriterChoice??'current'))?.model}. Finish this request before changing models.</p>}
         {plan?.writerModels?.filter((writer:any)=>writer.available===false).map((writer:any)=><p key={writer.id} className="admin-field-hint">{writer.unavailableReason}</p>)}
         {heldSigns.map(heldSign=><div key={heldSign} role="note"><p>{horoscopeSignLabel(heldSign)} was interrupted before its response could be confirmed. This reading is held to prevent a duplicate charge. The other readings can continue; saved writing is kept.</p><StudioButton disabled={locked} onClick={()=>void release(heldSign)}>Allow retry for {horoscopeSignLabel(heldSign)}</StudioButton></div>)}
