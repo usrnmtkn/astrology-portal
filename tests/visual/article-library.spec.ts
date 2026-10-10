@@ -75,6 +75,13 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
       } });
       await page.goto('/admin/content#articles'); // Saved links keep working.
       await expect(page.getByRole('heading', { name: 'Articles & Guides', exact: true })).toBeVisible();
+      const collectionLink = page.getByRole('link', { name: 'Open Articles & Guides in the app', exact: true });
+      await expect(collectionLink).toHaveAttribute('href', '/#articles');
+      await expect(collectionLink).toHaveAttribute('target', '_blank');
+      const [collectionPage] = await Promise.all([page.waitForEvent('popup'), collectionLink.click()]);
+      await expect(collectionPage).toHaveURL(/\/#articles$/u);
+      await expect(collectionPage.getByRole('heading', { name: 'Articles & Guides', exact: true })).toBeVisible();
+      await collectionPage.close();
       await expect(page.getByRole('row').filter({ hasText: 'sky/article-template/venus/scorpio' })).toBeVisible();
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
       await page.screenshot({ path: `test-results/articles-studio-${width}-${theme}.png`, fullPage: true, animations: 'disabled' });
