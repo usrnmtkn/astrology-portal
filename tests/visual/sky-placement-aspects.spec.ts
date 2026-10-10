@@ -51,10 +51,19 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
   });
 }
 
-test('main summary still includes exact aspects', async ({ page }) => {
+test('main summary still includes exact aspects when the Sky API is unavailable', async ({ page }) => {
+  test.setTimeout(90_000);
   await page.clock.setFixedTime(new Date('2026-09-08T04:06:00Z'));
-  await page.route('**/api/calendar?**', route => route.fulfill({ json: { ok: true, calendar: { days: [{ dateKey: '2026-09-08', events: [{ id: 'test-exact', type: 'aspect', planets: ['Moon', 'Mercury'], aspect: 'sextile', startsAt: '2026-09-08T10:00:00Z', dateKey: '2026-09-08' }] }] } } }));
+  // A healthy deployed Sky response already contains dailyEvents and correctly
+  // skips the calendar request. Explicitly select the fallback this fixture tests.
+  await page.route('**/api/sky?**', route => route.fulfill({ status: 503, json: { error: 'Synthetic Sky API outage' } }));
+  let calendarRequests = 0;
+  await page.route('**/api/calendar?**', route => {
+    calendarRequests += 1;
+    return route.fulfill({ json: { ok: true, calendar: { days: [{ dateKey: '2026-09-08', events: [{ id: 'test-exact', type: 'aspect', planets: ['Moon', 'Mercury'], aspect: 'sextile', startsAt: '2026-09-08T10:00:00Z', dateKey: '2026-09-08' }] }] } } });
+  });
   await page.goto('/#sky');
   await expect(page.getByLabel('Daily sky summary')).toContainText('Moon sextiles Mercury is exact today.', {timeout:60000});
+  expect(calendarRequests).toBeGreaterThan(0);
   await expect(page.locator('.aspect-section')).toHaveCount(0);
 });
