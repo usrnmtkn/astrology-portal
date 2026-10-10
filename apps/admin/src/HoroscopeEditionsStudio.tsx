@@ -453,12 +453,14 @@ export default function HoroscopeEditionsStudio({secret,requestedEditionId}:{sec
   const visibleError=error||(step==='setup'?listError:'');
   const needsSignIn=visibleError===ownerSignInMessage;
   useEffect(()=>{
-    if(!secret||needsSignIn||step!=='generate'||draft?.window.period!=='weekly'||!saved||active||needsSync||dirty||instructions||busy||checking)return;
+    const idle=!active&&!needsSync;
+    if(!secret||!saved||needsSignIn||step!=='generate'||dirty||instructions||checking||busy&&!running.current||idle&&(draft?.window.period!=='weekly'||busy))return;
     const controller=new AbortController();let inFlight=false;
-    // Idle holds can be resolved in another tab. Check only the version first:
-    // unchanged editions must retain plan approval and avoid large history reads.
+    // Recover active requests as before. Idle Weeklies check only the version
+    // first, preserving approval and avoiding unchanged large-history reads.
     const sync=async(returning=false)=>{
-      if(inFlight||document.visibilityState==='hidden'||Date.now()-lastSync.current<(returning?3000:30000))return;
+      if(inFlight||document.visibilityState==='hidden'||Date.now()-lastSync.current<(running.current?(returning?15000:60000):returning?3000:30000))return;
+      if(!idle){void checkProgress();return;}
       inFlight=true;lastSync.current=Date.now();
       try{
         const data=await request(secret,endpoint+'?'+new URLSearchParams({horoscopeEditions:'true',id:saved.id,editionVersion:'true'}),undefined,'GET',controller.signal);
@@ -473,19 +475,6 @@ export default function HoroscopeEditionsStudio({secret,requestedEditionId}:{sec
     window.addEventListener('focus',onReturn);window.addEventListener('pageshow',onReturn);document.addEventListener('visibilitychange',onReturn);
     return()=>{controller.abort();window.clearInterval(timer);window.removeEventListener('focus',onReturn);window.removeEventListener('pageshow',onReturn);document.removeEventListener('visibilitychange',onReturn);};
   },[secret,step,draft?.window.period,saved,active,needsSync,dirty,instructions,busy,checking,needsSignIn]);
-  useEffect(()=>{
-    if(needsSignIn||step!=='generate'||!active&&!needsSync||dirty||instructions||checking||busy&&!running.current)return;
-    // A backgrounded tab or an interrupted poll must not leave the last known
-    // request on screen forever. Only retrieve it; never start another writer.
-    const sync=(returning=false)=>{
-      if(document.visibilityState==='hidden')return;
-      const age=Date.now()-lastSync.current;
-      if(age>=(running.current?(returning?15000:60000):returning?3000:30000))void checkProgress();
-    };
-    const onReturn=()=>sync(true),timer=window.setInterval(()=>sync(),15000);
-    window.addEventListener('focus',onReturn);window.addEventListener('pageshow',onReturn);document.addEventListener('visibilitychange',onReturn);
-    return()=>{window.clearInterval(timer);window.removeEventListener('focus',onReturn);window.removeEventListener('pageshow',onReturn);document.removeEventListener('visibilitychange',onReturn);};
-  },[step,active,needsSync,dirty,instructions,checking,busy,saved,needsSignIn]);
   const lastFailure=generation?.lastError,failedSign=lastFailure?.operation?.sign;
   const punctuationHold=lastFailure?.code==='required_punctuation'?lastFailure:null;
   function editPunctuation(){
