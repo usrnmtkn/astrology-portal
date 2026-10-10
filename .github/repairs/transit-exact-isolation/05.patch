@@ -1,0 +1,112 @@
+diff --git a/scripts/test-transit-natal-editor-scope.mjs b/scripts/test-transit-natal-editor-scope.mjs
+new file mode 100644
+index 0000000000000000000000000000000000000000..870a0e07a9baf9b5480301e07f24060f15707ea4
+--- /dev/null
++++ b/scripts/test-transit-natal-editor-scope.mjs
+@@ -0,0 +1,49 @@
++import assert from "node:assert/strict";
++import { transitSourceEditScope, transitExactPassageState } from "../apps/admin/src/transitNatalEditorScope.ts";
++
++// Identity-shaped synthetic keys only. This tests editing scope, not chart support
++// or availability of approved reader copy for every combination.
++const planets = ["sun", "moon", "mercury", "venus", "mars", "jupiter", "saturn", "uranus", "neptune", "pluto", "chiron", "north-node", "south-node", "lilith"];
++const points = [...planets, "ascendant", "midheaven", "descendant", "imum-coeli"];
++const aspects = ["conjunction", "opposition", "square", "trine", "sextile"];
++let contacts = 0;
++for (const planet of planets) for (const natal of points) for (const aspect of aspects) {
++  const exact = `authored/transit-aspect/${planet}/${natal}/${aspect}`;
++  for (const audience of ["you", "they"]) {
++    assert.equal(transitSourceEditScope(exact, exact).kind, "exact", audience);
++    assert.equal(transitSourceEditScope(exact, `${exact}/2`).kind, "exact-variant");
++    assert.equal(transitSourceEditScope(exact, `${exact}-other`).kind, "shared");
++    for (const other of aspects.filter(candidate => candidate !== aspect)) {
++      assert.equal(transitSourceEditScope(exact, `authored/transit-aspect/${planet}/${natal}/${other}`).kind, "shared");
++    }
++    for (const group of ["soft", "hard", "any"]) {
++      assert.equal(transitSourceEditScope(exact, `authored/transit-aspect/${planet}/${natal}/${group}`).kind, "shared");
++      assert.equal(transitSourceEditScope(exact, `authored/transit-aspect/${planet}/${natal}/${group}/2`).kind, "shared");
++    }
++    contacts++;
++  }
++}
++const key = "authored/transit-aspect/sun/sun/sextile";
++assert.match(transitSourceEditScope(key, "authored/transit-aspect/sun/sun/soft").explanation, /trines and sextiles/);
++assert.match(transitSourceEditScope(key, "authored/transit-aspect/sun/sun/hard").explanation, /squares and oppositions/);
++assert.equal(transitSourceEditScope(null, key).kind, "shared");
++assert.equal(transitSourceEditScope(key, "fallback-hook/transit-effect-soft/sun").kind, "shared");
++assert.equal(transitSourceEditScope("authored/transit-return/mars", "authored/transit-return/mars").kind, "exact");
++assert.equal(transitSourceEditScope("authored/transit-return/mars", "authored/transit-return/venus").kind, "shared");
++
++assert.equal(transitExactPassageState(key, { rows: [] }).exists, false);
++assert.equal(transitExactPassageState(key, { rows: [], packageSource: { contentKey: key, body_you: "Synthetic package passage." } }).exists, true);
++for (const status of ["DRAFT", "LIVE", "REVIEWED", "ARCHIVED", "RETIRED", "ERROR", "unknown"]) {
++  const payload = { rows: [{ id: "synthetic-row", content_key: key, status, updated_at: "2026-01-01T00:00:00Z" }], packageSource: null };
++  const before = structuredClone(payload);
++  const state = transitExactPassageState(key, payload);
++  assert.equal(state.exists, true);
++  assert.equal(state.savedStatus, status.toUpperCase());
++  assert.deepEqual(payload, before, "Reading editor state must not mutate any saved data");
++  if (status === "DRAFT") assert.match(state.detail, /not used.*until reviewed and published/);
++  if (status === "LIVE") assert.match(state.detail, /source actually in use/);
++}
++for (const payload of [null, [], {}, { rows: "bad" }, { rows: [null] }, { rows: [{ id: "x", content_key: `${key}/wrong` }] }, { rows: [{ id: "", content_key: key }] }, { rows: [], packageSource: { contentKey: "wrong", body: "Synthetic" } }, { rows: [], packageSource: { contentKey: key, body: " " } }, { rows: [{ id: "x", content_key: key }, { id: "y", content_key: key }] }]) {
++  assert.throws(() => transitExactPassageState(key, payload), /could not be verified/);
++}
++console.log(`Transit editor scope passed: ${contacts} identity/audience cases; exact/variant/shared boundaries; saved-state validation; no data mutations.`);
+diff --git a/scripts/test-transit-natal-preview-api.mts b/scripts/test-transit-natal-preview-api.mts
+index 2e4f19e92be49ed53478d045fb61be996ee2d6f8..38f15f422e66e36537fede89a01752057b276b8c 100644
+--- a/scripts/test-transit-natal-preview-api.mts
++++ b/scripts/test-transit-natal-preview-api.mts
+@@ -122,3 +122,39 @@
+ assert.equal(transitNatalExactContentKey({planet:'sun',natalPoint:'lilith',aspect:'square'}),null);
+ for(const key of ['authored/transit-return/pluto','authored/transit-return/sun/extra','authored/transit-aspect/sun/sun/conjunction','authored/transit-aspect/sun/fake/square','authored/transit-aspect/sun/moon/hard','cms/personal-transit-aspect/sun/south-node/opposition'])assert.equal(isDynamicTransitNatalExactKey(key),false,key);
+ console.log('PASS new exact personal-transit and return sources, draft exclusion, retirement, and valid identities.');
++
++// Exercise the actual published-overlay resolver used by the HTTP handler.
++// Keep all writes synthetic and in memory: no production database is contacted.
++for (const pair of [{planet:'sun',natalPoint:'sun'}, {planet:'mars',natalPoint:'moon'}, {planet:'saturn',natalPoint:'mercury'}] as const) {
++ const aspects=['trine','sextile','square','opposition'] as const;
++ const exactRows=aspects.map((aspect,index)=>{
++  const draft=transitNatalExactSourceDraft({...pair,aspect});
++  const you=`Synthetic ${pair.planet} ${aspect} You opening.\n\nSynthetic ${aspect} You ending.`;
++  const friend=`Synthetic ${pair.planet} ${aspect} {{Name}} opening.\n\nSynthetic ${aspect} Friend ending.`;
++  return {id:`bbbbbbbb-bbbb-bbbb-bbbb-00000000000${index+1}`,content_key:draft.contentKey,provider:'tldrastro-fallback-architecture-v3',status:'LIVE',lane:'serving',updated_at:stamp,body:you,
++   sections:{packageRecord:{...draft.sections.packageRecord,body:you,body_you:you,body_they:friend,review_status:'approved'}},
++   facts:{...draft.facts,review_status:'approved'},source_snapshot:{...draft.sourceSnapshot,review_status:'approved'}};
++ });
++ const pub=exactRows.map((row,index)=>({content_key:row.content_key,state:'live',revision:index+1,row_id:row.id,row_updated_at:stamp,updated_at:stamp}));
++ for (const voice of ['you','QA Friend']) for (const aspect of aspects) for (const context of [{},{variant:2},{pass:2,variant:3}]) {
++  const facts=normalizeTransitNatalPreviewInput({...pair,aspect,voice,sign:'capricorn',...context});
++  const before=renderTransitNatalPreviewState(facts,exactRows as any,pub as any);
++  assert.equal(before.sourceKeys[0],`authored/transit-aspect/${pair.planet}/${pair.natalPoint}/${aspect}`);
++  assert.match(before.body,new RegExp(`Synthetic ${pair.planet} ${aspect} ${voice==='you'?'You':'QA Friend'} opening`));
++  const changedRows=structuredClone(exactRows), changed=changedRows.find(row=>row.content_key.endsWith(`/${aspect}`))!;
++  const field=voice==='you'?'body_you':'body_they';
++  changed.sections.packageRecord[field]=`Synthetic isolated ${aspect} revision.`;
++  const after=renderTransitNatalPreviewState(facts,changedRows as any,pub as any);
++  assert.match(after.body,new RegExp(`Synthetic isolated ${aspect} revision`));
++  for (const sibling of aspects.filter(value=>value!==aspect)) {
++   const siblingFacts=normalizeTransitNatalPreviewInput({...pair,aspect:sibling,voice,sign:'capricorn',...context});
++   assert.deepEqual(renderTransitNatalPreviewState(siblingFacts,changedRows as any,pub as any),renderTransitNatalPreviewState(siblingFacts,exactRows as any,pub as any),'An exact source change cannot leak into another aspect');
++  }
++  const otherVoice=normalizeTransitNatalPreviewInput({...pair,aspect,voice:voice==='you'?'QA Friend':'you',sign:'capricorn',...context});
++  assert.deepEqual(renderTransitNatalPreviewState(otherVoice,changedRows as any,pub as any),renderTransitNatalPreviewState(otherVoice,exactRows as any,pub as any),'You and Friend fields must remain independent');
++  const unpublished=structuredClone(changedRows);unpublished.find(row=>row.content_key===changed.content_key)!.status='DRAFT';
++  let draftResult;try{draftResult=renderTransitNatalPreviewState(facts,unpublished as any,pub as any);}catch(error){assert.match(String(error),/SOURCE_GAP|No reader-eligible/);}
++  assert.ok(!draftResult?.body.includes(`Synthetic isolated ${aspect} revision`),'A saved draft must not appear in published preview');
++ }
++}
++console.log('PASS actual transit preview overlay: exact trine/sextile/square/opposition isolation, three planet pairs, both voices, draft exclusion and variant/pass contexts.');
+diff --git a/scripts/test-you-transit-refresh-v1.mjs b/scripts/test-you-transit-refresh-v1.mjs
+index 0c7d5214d0b8b4fc1f94584778b46b0a47b5e3aa..c0b1826ec340198d5099864621aa80c097c09115 100644
+--- a/scripts/test-you-transit-refresh-v1.mjs
++++ b/scripts/test-you-transit-refresh-v1.mjs
+@@ -34,7 +34,7 @@
+ const sunAscAuthority = read(sunAscAuthorityPath);
+ const venusMoonAuthority = read(venusMoonAuthorityPath);
+ 
+-assert.equal(PACKAGE_VERSION, "v3-2026-09-15-custom-variables");
++assert.equal(PACKAGE_VERSION, "v3-2026-09-17-transit-exact-isolation");
+ assert.equal(candidates.status, "ready_for_owner_directed_batch_promotion");
+ assert.equal(candidates.count, 376);
+ assert.equal(review.status, "clear");

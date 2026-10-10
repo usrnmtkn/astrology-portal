@@ -1,0 +1,43 @@
+diff --git a/apps/admin/src/GeneratedContentAdminDashboard.tsx b/apps/admin/src/GeneratedContentAdminDashboard.tsx
+index 3371824ec64dff9dfa6b5a98e4960b6ac400631f..5ecfef627ea81511cdea339bf06a6ede47e5ca46 100644
+--- a/apps/admin/src/GeneratedContentAdminDashboard.tsx
++++ b/apps/admin/src/GeneratedContentAdminDashboard.tsx
+@@ -7356,7 +7356,7 @@
+       setSelectedRowId(null);
+       setCompositionEditorContext(null);
+       setDraft(transitNatalExactSourceDraft(selection));
+-      setMessage("No exact passage is saved for this combination. This is a new blank draft. To change the current reading, close this draft and use Edit selected source beneath the reader preview.");
++      setMessage("No exact passage is saved for this combination. This is a new blank aspect-specific draft. Write, review, and publish it to replace shared fallback writing for this contact only. Existing shared sources are unchanged.");
+       scrollEditorToTop();
+     } catch (error) {
+       if (requestId !== sourceOpenRequestRef.current || window.location.hash !== originatingHash) return;
+@@ -7400,8 +7400,8 @@
+             <p className="admin-eyebrow">{friendsTransitAudience ? "Friends Transits · Active for {{Name}}" : "Personal Transits workspace"}</p>
+             <h3>{selection ? transitNatalLabel(selection) : "Find a Personal Transit write-up"}</h3>
+             <p>{friendsTransitAudience
+-              ? "This is the editor for Friends > Transits > Active for {{Name}}. The preview uses the Friends reader resolver and its approved Friend View Copy. Open the selected source to edit that passage."
+-              : "Choose the current placement and the natal point it contacts. The preview uses the same approved transit writing as Sky and You. Open the selected source to edit the complete passage."}</p>
++              ? "This is the editor for Friends > Transits > Active for {{Name}}. The preview uses the Friends reader resolver and its approved Friend View Copy. Use the aspect-specific editor for a separate passage; shared sources are advanced edits."
++              : "Choose the current placement and the natal point it contacts. The preview uses the same approved transit writing as Sky and You. Use the aspect-specific editor for a separate passage; shared sources are advanced edits."}</p>
+             <p><strong>Editable lifecycle:</strong> Save creates or updates a passage. Archive removes it from active use; Restore reopens it as a draft.</p>
+           </div>
+           {selection && <code>transit/{selection.planet}-{selection.sign}-{selection.transitHouse}h/{selection.aspect}/{selection.natalPoint}-{selection.natalHouse}h</code>}
+@@ -7452,13 +7452,15 @@
+           </label>
+         </div>
+ 
++        {selection && transitNatalExactContentKey(selection) && <Suspense fallback={<p role="status">Checking the exact passage…</p>}><TransitNatalExactSourceAction
++          contentKey={transitNatalExactContentKey(selection)!} secret={secret} disabled={isLoading} onOpen={() => void openExactTransitNatalSource(selection)} /></Suspense>}
++
+         <Suspense fallback={null}><TransitNatalPreviewOptions context={transitReadingContext} onChange={updateTransitReadingContext} /></Suspense>
+ 
+         {!selection && <p className="admin-natal-placement-prompt">Choose all six values to preview the write-up and open its exact source rows.</p>}
+         {selection && <Suspense fallback={<p role="status">Loading reader preview…</p>}><TransitNatalReaderPreview secret={secret} selection={selection} voice={friendsTransitAudience ? "{{Name}}" : "you"} onOpenSource={(key, label, field) => void openContentKeyRow(key, label, key.startsWith("fallback-template/"), field)} /></Suspense>}
+-        {selection && <p className="admin-field-hint">Edit selected source changes the writing shown above. A new exact passage replaces fallback writing only after you write, review, and publish it. Signs and houses are calculated separately.</p>}
+-        {selection && transitNatalExactContentKey(selection) && <Suspense fallback={<p role="status">Checking the exact passage…</p>}><TransitNatalExactSourceAction
+-          contentKey={transitNatalExactContentKey(selection)!} secret={secret} disabled={isLoading} onOpen={() => void openExactTransitNatalSource(selection)} /></Suspense>}
++        {selection && <p className="admin-field-hint">The reader preview uses eligible published writing, not saved drafts. Aspect-specific passages keep separate contacts independent. Shared source edits affect every reading that uses them. Signs and houses are calculated separately.</p>}
++
+       </section>
+     );
+   }
