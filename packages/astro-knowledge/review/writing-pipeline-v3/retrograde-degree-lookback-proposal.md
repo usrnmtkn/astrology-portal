@@ -5,6 +5,12 @@ Part of the approved fast-mover spine: **no**
 Implemented: **no**  
 Used by the Venus in Libra writer packet: **no**
 
+Related implementation, October 10, 2026: the separately approved
+[shared retrograde history](../../../../docs/content-management/SKY_INGRESS_ESSAYS.md#shared-retrograde-history)
+uses a same-sign search plus an independent degree comparison anchored to the
+retrograde-start station. It does not implement this original moving-current-degree
+proposal or approve the schematic reader wording below.
+
 ## What it would add
 
 An optional, engine-fact history line connecting the current degree to the most recent
@@ -36,4 +42,3 @@ Schematic example only; the values below are placeholders, not asserted ephemeri
 
 This example also proposes new reader-facing wording. Neither the rule nor the wording is
 approved. Both require a separate owner ruling before any engine or template implementation.
-

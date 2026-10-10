@@ -175,6 +175,30 @@ try {
       residencyPasses: [{ entryDate: "2026-10-25T10:00:00Z", exitDate: "2026-12-04T10:00:00Z" }] }] }, "venus", SKY_INGRESS_ESSAY_FORMAT);
   assert.equal(visit.validFrom, "2026-10-25");
   assert.equal(visit.referenceTimeZone, "America/New_York");
+  // The same server calculation is visible in the editor and rechecked before
+  // writing. Client-supplied historical facts are never accepted as evidence.
+  template.content_key = "sky/article-template/venus/scorpio";
+  rejectWriterCopy = false;
+  const venusResult = await invoke(factsHandler, "GET", "/api/admin/sky-article-facts?planet=venus&date=2026-10-10&format=ingress-essay-v2");
+  assert.equal(venusResult.status, 200);
+  assert.equal(venusResult.facts.retrogradeHistory.sameSign.retrograde.instant.slice(0, 10), "2018-10-05");
+  const generationRequest = { templateId: id, referenceDate: "2026-10-10", format: SKY_INGRESS_ESSAY_FORMAT, provider: "openai" };
+  const withoutHistory = await invoke(slotsHandler, "POST", "/api/admin/sky-article-template-slots", generationRequest);
+  assert.equal(withoutHistory.status, 200, JSON.stringify(withoutHistory));
+  assert(withoutHistory.blockedSlots.some((slot: any) => slot.name === "priorOccurrenceSection"));
+  assert.doesNotMatch(prompts.at(-1)!, /2018-10-05T19:04/);
+  const withHistory = await invoke(slotsHandler, "POST", "/api/admin/sky-article-template-slots", { ...generationRequest, includeRetrogradeHistory: true });
+  assert.equal(withHistory.status, 200, JSON.stringify(withHistory));
+  assert(!withHistory.blockedSlots.some((slot: any) => slot.name === "priorOccurrenceSection"));
+  assert(requested.includes("priorOccurrenceSection"));
+  assert.match(prompts.at(-1)!, /2018-10-05T19:04/);
+  assert.match(prompts.at(-1)!, /not proof of a prior ingress/);
+  assert.deepEqual(withHistory.facts.retrogradeHistory, venusResult.facts.retrogradeHistory);
+  assert.deepEqual(withHistory.generation.retrogradeHistory, venusResult.facts.retrogradeHistory, "The generation keeps its exact receipt even if the editor later reloads different facts");
+  assert.equal(withoutHistory.generation.retrogradeHistory, null);
+  const beforeInvalid = prompts.length;
+  assert.equal((await invoke(slotsHandler, "POST", "/api/admin/sky-article-template-slots", { ...generationRequest, includeRetrogradeHistory: "yes" })).status, 400);
+  assert.equal(prompts.length, beforeInvalid);
   globalThis.fetch = async () => Response.json({ signature: { source: "Synthetic NASA response" }, result: "$$SOE\n2026-Oct-09, , 191.5, 0.1,\n$$EOE" });
   assert.equal((await skyIngressNasaReceipt("sun", context.activeInstant, 191.5)).status, "matched");
   assert.equal((await skyIngressNasaReceipt("sun", context.activeInstant, 191)).status, "disagreement");

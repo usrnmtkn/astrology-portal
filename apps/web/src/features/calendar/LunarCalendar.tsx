@@ -3350,6 +3350,7 @@ export function LunarCalendar({
           onClose={() => setReadingEvent(null)}
           natalSun={natalSunSign}
           timeCity={location.label.split(",")[0]?.trim() || location.label}
+          timeZone={zone}
           onJournalPrompt={showJournalPrompts ? (text, options) => {
             setJournalPrompt(text);
             setCheckInTarot(Boolean(options?.tarot));

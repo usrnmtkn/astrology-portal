@@ -1,0 +1,43 @@
+/* Same disclosure heading role as Sky's existing Why this? facts. */
+.retrograde-history {
+  border-top: var(--border-width-thin) solid var(--line);
+  padding-top: var(--space-5);
+  margin-block: var(--space-5);
+}
+.retrograde-history > summary {
+  cursor: pointer;
+  color: var(--ink);
+  font-family: var(--font-display);
+  font-size: var(--type-h2-size);
+  font-weight: var(--weight-medium);
+  line-height: var(--leading-h2);
+  letter-spacing: var(--tracking-tight);
+}
+.retrograde-history-facts {
+  display: grid;
+  gap: var(--space-4);
+  margin-block: var(--space-4);
+  color: var(--ink);
+}
+.retrograde-history-facts > div, .retrograde-history-facts dd {
+  display: grid;
+  gap: var(--space-2);
+}
+.retrograde-history-facts dd > span {
+  display: block;
+}
+.retrograde-history-facts dt {
+  font-family: var(--font-ui);
+  font-size: var(--text-body);
+  font-weight: var(--weight-medium);
+  line-height: var(--leading-body);
+  letter-spacing: var(--tracking-normal);
+}
+.retrograde-history-facts dd, .retrograde-history p {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: var(--text-body);
+  font-weight: var(--weight-regular);
+  line-height: var(--leading-body);
+  letter-spacing: var(--tracking-body);
+}

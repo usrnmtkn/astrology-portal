@@ -1,4 +1,5 @@
 import { FormattedProse } from "../../components/FormattedProse";
+import { RetrogradeHistoryDisclosure } from "../../components/RetrogradeHistory";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useState } from "react";
 import type { LunarCalendarEvent } from "../../services/ephemeris";
@@ -199,6 +200,7 @@ export function CalendarEventReading({
   kind,
   natalSun,
   timeCity,
+  timeZone = "UTC",
   showJournalPrompts,
   backLabel,
   onClose,
@@ -215,6 +217,7 @@ export function CalendarEventReading({
   element?: string;
   natalSun?: string | null;
   timeCity?: string;
+  timeZone?: string;
   showJournalPrompts?: boolean;
   backLabel?: string;
   onClose: () => void;
@@ -282,6 +285,11 @@ export function CalendarEventReading({
             />
           ))
           : paragraphs.filter(Boolean).map((text) => <FormattedProse key={text.slice(0, 48)} text={text} />)}
+        {event.type === "station" && event.planet && event.sign && <RetrogradeHistoryDisclosure context={{
+          planet: event.planet, sign: event.sign, timeZone,
+          referenceDate: new Date(Date.parse(event.retrogradeStart ?? event.startsAt)
+            + (event.retrogradeStart || event.direction === "retrograde" ? 60_000 : -60_000)).toISOString()
+        }} />}
         {canReadArticle && article ? (
           <button className="calendar-reading__article-card" onClick={onReadArticle} type="button">
             <span className="calendar-reading__article-icon" aria-hidden="true" />

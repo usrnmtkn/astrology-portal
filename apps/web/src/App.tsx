@@ -5456,6 +5456,10 @@ function currentSkyPlacementDetailArticle({
           timeZone: locationTimeZone || position.transitTimeZone || "UTC"
         }
       : undefined,
+    retrogradeHistoryContext: articleMode === "current" && isRetrograde ? {
+      planet: position.planet, sign: position.sign, referenceDate: generatedAt,
+      timeZone: locationTimeZone || position.transitTimeZone || "UTC"
+    } : undefined,
     retrograde: isRetrograde,
     plainBody: displayArticleSections.length === 0
       && normalized.sections.some((section) => section.layer === "authored"),
