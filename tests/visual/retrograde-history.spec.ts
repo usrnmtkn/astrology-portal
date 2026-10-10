@@ -55,6 +55,7 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
         localStorage.setItem("tldrastro:contentAdminSecret", "calendar-api-fixture");
         localStorage.setItem("tldrastro:selectedLocation", JSON.stringify({ label: "New York", latitude: 40.7, longitude: -74, timeZone: "America/New_York" }));
       }, theme);
+      await bundledPublications(page);
       let generated = false;
       await routeStudioInventoryApi(page, { call: store.call, answer: async (route, url) => {
         if (url.pathname === "/api/admin/sky-article-facts") {
@@ -83,7 +84,7 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
         await page.getByRole("button", { name: "Load calculated facts", exact: true }).click();
         await page.getByText("Previous retrograde", { exact: true }).click();
       };
-      await page.goto("/admin/content#sky-writeups?q=sky%2Farticle-template%2Fvenus%2Fscorpio");
+      await page.goto(`/admin/content#${width === 390 ? "sky-writeups" : "articles-guides"}?q=sky%2Farticle-template%2Fvenus%2Fscorpio`);
       await openEditor();
       const editor = page.getByRole("dialog");
       await assertFacts(editor.locator(".retrograde-history"));

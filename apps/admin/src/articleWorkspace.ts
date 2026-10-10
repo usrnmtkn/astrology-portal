@@ -1,3 +1,4 @@
+import { articleLibraryPrefixes } from "../../../src/shared/articleLibrary";
 import { astro101ResolvedReaderPath, isAstro101ContentKey } from "../../web/src/content/astro101";
 import { skyMoonWriteupSection } from "./skyMoonWriteup";
 import { isSkyPlanetLivedKey } from "./skyWriteupRelations";
@@ -73,6 +74,10 @@ export function articleAppDestination(row: ArticleWorkspaceRow): ArticleAppDesti
       label: learnPath,
       state: "connected"
     };
+  }
+
+  if (articleLibraryPrefixes.some(prefix => row.content_key.startsWith(prefix))) {
+    return { detail: "Published writing is available in Articles & Guides in the app.", label: "Articles & Guides", state: "connected" };
   }
 
   if (explicitDestination) {

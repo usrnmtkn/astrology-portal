@@ -57,16 +57,16 @@ assert.deepEqual(articleAppDestination({
 assert.equal(articleAppDestination({
   content_key: "article/manual/published",
   status: "LIVE"
-}).state, "unconnected");
+}).state, "connected");
 
 assert.deepEqual(articleAppDestination({
   content_key: "article/manual/connected",
   status: "LIVE",
   source_snapshot: { appDestination: "Learn / Astrology basics" }
 }), {
-  detail: "The article declares Learn / Astrology basics as its reader destination.",
-  label: "Learn / Astrology basics",
+  detail: "Published writing is available in Articles & Guides in the app.",
+  label: "Articles & Guides",
   state: "connected"
 });
 
-console.log("Admin Articles workspace tests passed: Sky write-ups are excluded and app destinations are explicit.");
+console.log("Admin Articles workspace tests passed: Sky write-up sources remain recognizable and the article library has a reader destination.");

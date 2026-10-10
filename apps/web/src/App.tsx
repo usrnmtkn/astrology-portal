@@ -414,7 +414,7 @@ import {
 import { compactCityLabel } from "./utils/locationLabels";
 
 type FriendRelationshipContentTab = Exclude<FriendProfileTab, "natal">;
-type PortalMode = AccountMode | "horoscopes" | "member" | "profile" | "friends" | "calendar" | "account" | "settings" | "learn";
+type PortalMode = AccountMode | "horoscopes" | "member" | "profile" | "friends" | "calendar" | "account" | "settings" | "learn" | "articles";
 type TransitTerm = "short" | "long";
 type TransitDirection = "applying" | "separating";
 type UiTheme = "light" | "dark";
@@ -2384,8 +2384,8 @@ const lifeAreaFocusAstrology: Record<LifeAreaFocus, {
   growth: { houses: [9, 11, 1], planets: ["Jupiter", "Sun", "Saturn", "North Node"], aspects: ["conjunction", "trine", "sextile", "square"] },
   spirituality: { houses: [12, 9, 8], planets: ["Neptune", "Jupiter", "Moon", "Pluto"], aspects: ["conjunction", "trine", "sextile", "opposition"] }
 };
-const portalModes: PortalMode[] = ["horoscopes", "guest", "member", "profile", "friends", "calendar", "account", "settings", "learn"];
-const authenticatedPortalModes: PortalMode[] = ["horoscopes", "member", "profile", "friends", "calendar", "account", "settings", "learn"];
+const portalModes: PortalMode[] = ["horoscopes", "guest", "member", "profile", "friends", "calendar", "account", "settings", "learn", "articles"];
+const authenticatedPortalModes: PortalMode[] = ["horoscopes", "member", "profile", "friends", "calendar", "account", "settings", "learn", "articles"];
 
 function isPortalMode(value: unknown): value is PortalMode {
   return typeof value === "string" && portalModes.includes(value as PortalMode);
@@ -2432,11 +2432,14 @@ function portalModeFromHashPath(path: string): PortalMode | null {
       return "horoscopes";
     case "calendar":
       return "calendar";
+    case "articles":
+      return "articles";
     case "account":
       return "account";
     case "settings":
       return "settings";
     default:
+      if (path.startsWith("articles/")) return "articles";
       if (path.startsWith("sky/")) {
         return "member";
       }
@@ -2482,6 +2485,8 @@ function portalHashForMode(mode: PortalMode) {
       return "horoscopes";
     case "calendar":
       return "calendar";
+    case "articles":
+      return "articles";
     case "account":
       return "account";
     case "settings":
@@ -10723,6 +10728,8 @@ const CalendarRoute = lazy(() =>
 );
 
 
+const ArticlesExperience = lazy(() => import("./features/articles/ArticlesExperience"));
+
 const loadLearnExperience = () => import("./features/learn/LearnExperience");
 const preloadLearnExperience = () => {
   void loadLearnExperience();
@@ -11064,7 +11071,7 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
   const isSignupMode = mode === "profile" && (!userProfile || signInRequested || Boolean(studioReturnPath));
   const isFriendsMode = mode === "friends";
   const isCalendarMode = mode === "calendar";
-  const isLearnMode = mode === "learn" || mode === "horoscopes";
+  const isLearnMode = mode === "learn" || mode === "horoscopes" || mode === "articles";
   const isProfileMode = mode === "profile" || mode === "account" || mode === "settings";
   const usesFullPageLayout = isProfileMode || isFriendsMode || isCalendarMode || isLearnMode;
   const activeSunriseOrbDegrees = DEFAULT_SUNRISE_ORB_DEGREES;
@@ -14264,6 +14271,7 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
                 <span>Calendar</span>
               </button>
               <button className={mode === "horoscopes" ? "active" : ""} type="button" onClick={() => navigateToPortalMode("horoscopes")}><Sparkles size={18} aria-hidden="true" /><span>Horoscopes</span></button>
+              <button className={mode === "articles" ? "active" : ""} type="button" onClick={() => navigateToPortalMode("articles")}><BookOpen size={18} aria-hidden="true" /><span>Articles &amp; Guides</span></button>
               {userProfile && (
                 <>
                   <button
@@ -14530,6 +14538,7 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
                   </button>
                 </>
               )}
+              <button className={mode === "articles" ? "active" : ""} type="button" role="menuitem" onClick={() => { navigateToPortalMode("articles"); setMenuOpen(false); }}><BookOpen size={20} aria-hidden="true" /><span>Articles &amp; Guides</span></button>
               <button
                 className={mode === "learn" ? "active" : ""}
                 type="button"
@@ -14847,6 +14856,7 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
                 />
               )}
               {mode === "horoscopes" && <HoroscopeReader defaultSign={profileNatalSky?.ascendant ?? userProfile?.rising} sunSign={profileNatalSky?.positions.find(position => position.planet === "Sun")?.sign ?? userProfile?.sun} location={hasLocationPreference ? location : undefined} />}
+              {mode === "articles" && <Suspense fallback={<PageLoading message="Loading articles and guides…" />}><ArticlesExperience /></Suspense>}
               {mode === "learn" && (
                 <LearnRoute>
                   <Suspense fallback={<PageLoading message="Loading Astro 101…" />}>

@@ -309,7 +309,7 @@ jobs:
         run: |
           npx playwright test -c playwright.sky-studio.config.ts
           npx playwright test -c playwright.sky-forecast.config.ts tests/visual/calendar-template-preview.spec.ts tests/visual/calendar-season-transitions.spec.ts tests/visual/sky-forecast-studio.spec.ts
-          npx playwright test -c playwright.config.ts --workers=1 tests/visual/calendar-passage-editor.spec.ts tests/visual/retrograde-history.spec.ts
+          npx playwright test -c playwright.config.ts --workers=1 tests/visual/calendar-passage-editor.spec.ts tests/visual/retrograde-history.spec.ts tests/visual/article-library.spec.ts
       - name: Enforce Content Studio bundle size and deferred editor boundaries
         if: matrix.phase == 'studio'
         run: node scripts/check-admin-bundle-budgets.mjs
