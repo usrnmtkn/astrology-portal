@@ -4,11 +4,10 @@ import { traditionalSignRulers } from "../content/skySunSeason";
 import { wholeSignHouseForSign } from "./chartMath";
 import { resolveCmsSurfaceOverride, type CmsGeneratedContentMap } from "../content/cmsSurfaceOverrides";
 import type { TemplateSlotValues } from "./templateInterpolation";
+import { natalInsightBirthTimeKnown } from "./natalInsightNavigation";
+export { natalInsightBirthTimeKnown } from "./natalInsightNavigation";
 
 type PassageSelection = { slot: string; key: string; contextualKey?: string; slots?: TemplateSlotValues };
-export function natalInsightBirthTimeKnown(sky: SkySnapshot | null | undefined, birthTimeKnown: boolean) {
-  return birthTimeKnown && !!sky && sky.birthTimeKnown !== false && natalInsightSigns.some(sign => sign === sky.ascendant);
-}
 export type NatalInsightCompositionPlan = {
   templateKey: string; passages: PassageSelection[]; slots: TemplateSlotValues;
   unavailable: "birth-time" | "chart-facts" | null;

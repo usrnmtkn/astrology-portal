@@ -1,6 +1,4 @@
 import { isStudioCompatibilityRow, isStudioCompositeRow } from "./studioContentScope";
-import { NatalReadingAuthoring } from "./NatalReadingAuthoring";
-import { PersonalizedReadingEditor } from "./PersonalizedReadingEditor";
 import { calendarAspectRetrogradeOptions } from "../../web/src/content/calendarAspectRetrograde";
 import { isSkyIngressEssay, SKY_INGRESS_ESSAY_FORMAT, type SkyArticleFormat } from "../../web/src/content/skyIngressEssay.mjs";
 import { useStudioCustomVariables } from "./studioCustomVariableClient";
@@ -248,6 +246,8 @@ import { memoByObject, naturalCollator } from "./derivedCache";
 // route is served by @tldr/web, which lazy-loads this component and never ran
 // apps/admin/src/main.tsx, so anything imported only there was missing in prod.
 
+const NatalReadingAuthoring = lazy(() => import("./NatalReadingAuthoring").then(module => ({ default: module.NatalReadingAuthoring })));
+const PersonalizedReadingEditor = lazy(() => import("./PersonalizedReadingEditor").then(module => ({ default: module.PersonalizedReadingEditor })));
 const CompositeReviewCard = lazy(() => import("./CompositeReviewCard"));
 const TransitNatalReaderPreview = lazy(() => import("./TransitNatalReaderPreview"));
 const TransitNatalPreviewOptions = lazy(() => import("./TransitNatalReaderPreview").then(module => ({ default: module.TransitNatalPreviewOptions })));
@@ -8319,14 +8319,14 @@ export function GeneratedContentAdminDashboard() {
               </div>
               <span className="ui-pill admin-status">{userRows.length} user rows</span>
             </section>
-            <NatalReadingAuthoring secret={secret} beforeOpen={closeEditor} onOpen={saved => {
+            <Suspense fallback={<PageLoading message="Loading natal writing tools…" />}><NatalReadingAuthoring secret={secret} beforeOpen={closeEditor} onOpen={saved => {
               setUserRows(current => [saved as AdminUserGeneratedContentRow, ...current.filter(item => item.id !== saved.id)]);
               setEditingUserRowId(saved.id);
             }} />
             {userRows.filter(row => row.id === editingUserRowId).map(row => <PersonalizedReadingEditor key={row.id} row={row} secret={secret}
               onStateChange={state => { personalizedEditorState.current = state; }}
               onSaved={saved => setUserRows(current => current.map(item => item.id === saved.id ? { ...item, ...saved, status: saved.status as GeneratedContentStatus } : item))}
-              onClose={() => setEditingUserRowId(null)} />)}
+              onClose={() => setEditingUserRowId(null)} />)}</Suspense>
             <div className="admin-content-table-scroll">
               <AdminDataTable label="User content" columns={["Content", "User", "Subject", "Surface", "Status", "Updated"]} className="admin-user-content-table">
 

@@ -2,11 +2,10 @@ import { comparePersonalDailyTransits, personalDailyPriority, personalDailyPeakL
 import { usePersonalDailyPeaks, usePersonalTransitSeries } from "./services/usePersonalDailyTransits";
 import { compositeReaderRelationshipCopy } from "./content/compositeRelationshipCopy";
 import { NatalInsightsSection } from "./components/charts/NatalInsightsSection";
-import { NatalInsightReading } from "./components/charts/NatalInsightReading";
-import { natalInsightFromHash } from "./services/natalInsightReading";
+import { DeferredNatalInsightReading as NatalInsightReading } from "./components/charts/DeferredNatalInsightReading";
+import { natalInsightFromHash, natalInsightBirthTimeKnown } from "./services/natalInsightNavigation";
 import type { NatalInsightId } from "./content/natalInsightCatalog";
 import { natalInsightTitle } from "./content/natalInsightTitle";
-import { natalInsightBirthTimeKnown } from "./services/natalInsightComposition";
 import { CalendarDaySkeleton } from "./features/calendar/CalendarDaySkeleton";
 import { skyIngressEssayPublicationKeys, skyIngressEssayReaderSection } from "./content/skyIngressEssayReader";
 import {

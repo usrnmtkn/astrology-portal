@@ -1,7 +1,7 @@
-import { NatalInsightReading } from "../../components/charts/NatalInsightReading";
+import { DeferredNatalInsightReading as NatalInsightReading } from "../../components/charts/DeferredNatalInsightReading";
 import { natalInsightTopics, type NatalInsightId } from "../../content/natalInsightCatalog";
 import { natalInsightTitle } from "../../content/natalInsightTitle";
-import { natalInsightBirthTimeKnown } from "../../services/natalInsightComposition";
+import { natalInsightBirthTimeKnown } from "../../services/natalInsightNavigation";
 import { transitArticleDescription } from "../../services/transitArticleDescription";
 import { PageLoading, PageLoadError } from "../../components/PageLoading";
 import { FriendDetail } from "./FriendDetail";

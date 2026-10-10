@@ -149,7 +149,10 @@ const failures = Object.entries(budgets).flatMap(([metric, limit]) => {
 });
 
 const formattingChunks = javaScriptFiles.filter(item => /\/(?:studio-rich-text|writing-markdown|FormattedWritingContent)-/u.test(item.file));
-for (const [name, item] of [['Horoscope reader', horoscopeReaderItem], ['Horoscope editor', horoscopeEditorItem]]) {
+const natalReaderItem = javaScriptFiles.find(item => /\/NatalInsightReading-/u.test(item.file));
+const natalAuthoringItem = javaScriptFiles.find(item => /\/NatalReadingAuthoring-/u.test(item.file));
+const natalEditorItem = javaScriptFiles.find(item => /\/PersonalizedReadingEditor-/u.test(item.file));
+for (const [name, item] of [['Horoscope reader', horoscopeReaderItem], ['Horoscope editor', horoscopeEditorItem], ['Natal reader', natalReaderItem], ['Natal authoring', natalAuthoringItem], ['Personalized editor', natalEditorItem]]) {
   if (!item) failures.push(`${name} deferred chunk is missing.`);
   else if (bootFiles.has(item.file)) failures.push(`${name} must remain deferred from reader startup.`);
 }

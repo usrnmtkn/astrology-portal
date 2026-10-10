@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { StudioButton, StudioTextarea } from "./StudioControls";
 import { requestStudioJson } from "./generatedContentClient";
+import { surfaceSection } from "./studio-ds/recipes";
 
 export type PersonalizedReadingRow = {
   id: string; content_key: string; body: string | null; status: string; updated_at?: string | null;
@@ -40,7 +41,7 @@ export function PersonalizedReadingEditor({ row, secret, onSaved, onClose, onSta
       setReloadRequired(true);
     } finally { setBusy(false); }
   }
-  return <section className="admin-template-page" aria-label="Edit personalized reading">
+  return <section className={surfaceSection} aria-label="Edit personalized reading">
     <h3>Edit personalized reading</h3>
     <p className="admin-content-row-key"><code>{row.content_key}</code></p>
     <label className="admin-field-wide">Full write-up<StudioTextarea disabled={busy} value={body} onChange={event => { setBody(event.target.value); setSaved(false); }} rows={18} /></label>

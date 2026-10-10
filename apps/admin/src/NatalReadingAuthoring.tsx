@@ -1,6 +1,7 @@
 import { useState } from "react";
 import type { LocationInput, SkySnapshot } from "../../web/src/types";
 import { natalInsightTopics, type NatalInsightId } from "../../web/src/content/natalInsightCatalog";
+import { surfaceSection } from "./studio-ds/recipes";
 import { natalInsightFacts } from "../../web/src/services/natalInsightReading";
 import { natalSnapshotWithBirthTimeReliability } from "../../web/src/services/birthTimeReliability";
 import { validChartBirthDate, validChartBirthTime } from "../../web/src/services/chartProfile";
@@ -76,7 +77,7 @@ export function NatalReadingAuthoring({ secret, beforeOpen, onOpen }: {
     });
   }
   const facts = sky && selected ? natalInsightFacts(topic, sky, selected.birthTimeKnown) : null;
-  return <section className="admin-template-page" aria-label="Write a natal reading">
+  return <section className={surfaceSection} aria-label="Write a natal reading">
     <h3>Write a natal reading</h3>
     <p>Choose a saved reader and chart, then write one complete reading for each topic.</p>
     <form onSubmit={event => { event.preventDefault(); void search(); }}>

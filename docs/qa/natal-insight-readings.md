@@ -62,3 +62,35 @@ Scan staged source and the rebuilt web assets with the project privacy guard.
 After an authorized release, repeat the affected reader and Studio journeys on
 the deployed main revision before calling the feature live. Publication of the
 saved writing remains a separate owner action.
+
+## Loading and bundle verification
+
+The reading, formatting parser, chart-authoring form, and private editor load
+only when their route or action is opened. The reader shows a loading state
+until the formatter is ready, so saved Markdown is never displayed as raw text.
+Bundle checks explicitly reject these modules in the startup graphs. Both
+Studio forms use the shared `surfaceSection` container.
+
+Independent `npm ci` builds compare main `a1e2ed368` with this feature. Both
+use the visual-smoke Supabase placeholders. The feature measurements below use
+the browser fixture's enabled natal-aspect flag. Figures are gzip bytes except
+the explicitly marked raw entry measurement.
+
+| Measurement | Main | Feature | Ceiling |
+| --- | ---: | ---: | ---: |
+| Web startup JavaScript | 465,004 | 468,988 | 469,250 |
+| Web startup including CSS | 518,958 | 523,556 | 524,000 |
+| All web JavaScript | 3,559,319 | 3,578,261 | 3,579,000 |
+| All web CSS | 115,547 | 116,161 | 116,250 |
+| Deferred Sky detail | 6,022 | 6,221 | 6,400 |
+| Deferred signup | 4,287 | 4,388 | 4,450 |
+| Deferred horoscope editor | 14,589 | 14,614 | 14,700 |
+| Studio entry, raw | 785,164 | 787,062 | 787,500 |
+| Studio entry, gzip | 228,691 | 229,268 | 229,500 |
+| All Studio JavaScript | 789,400 | 798,572 | 799,000 |
+
+These allowances account for feature code and changed shared imports; they are
+not performance improvements. No dependency, reader prose corpus, or runtime
+deadline changed. Remaining budgets and the forbidden-content checks stay in
+place. The existing first-paint formatting, slow-loading, complete-content and
+Studio save/reload checks still apply.

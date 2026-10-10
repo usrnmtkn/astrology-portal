@@ -69,23 +69,6 @@ export const writingSurfaceSourceRoleLabels: Record<WritingSurfaceSource["role"]
 };
 
 export const writingSurfaceSourceMap: WritingSurfaceMapItem[] = [
-  ...natalInsightTopics.map((topic): WritingSurfaceMapItem => ({
-    id: `natal-insight-${topic.id}`,
-    surface: `Natal Deeper insights: ${topic.title}`,
-    area: "Natal",
-    status: "normalized",
-    requiredSlots: ["headline", "body"],
-    visibleLayerOrder: ["source-grounded"],
-    currentRenderPath: "Topic links below Empty Houses open a dedicated reading on both You and Friends, with the shared guide available below it. An exact-chart private reading takes precedence; otherwise calculated facts select published shared passages and a topic template.",
-    risk: "Every selected template and passage must be Live and review-clear. Unknown birth times use Sun and Moon for Approach and exclude house-based readings. Rulers use traditional rulership and whole-sign houses. A published ruler passage for the source house replaces the general planet/sign passage; its destination-house interpretation remains separate. Aspects, house occupants, and a full condition assessment are not synthesized.",
-    nextAction: "Edit shared guide and title opens the same saved guide and heading used on both You and Friends. Approach has a separate shared guide without birth time. Edit topic templates, house-specific ruler passages, and house connections separately. Use Users for an optional private reading that replaces the shared composition for one exact chart.",
-    sources: [
-      { label: "NatalInsightsSection.tsx", path: "apps/web/src/components/charts/NatalInsightsSection.tsx", role: "renderer" },
-      { label: "Shared section guide (You and Friends)", path: `generated_interpretations:cms/natal-insight/you/${topic.id}`, role: "stored-source" },
-      { label: "Topic templates", path: `generated_interpretations:cms/natal-insight/{you|they}/${topic.id}/reading`, role: "stored-source" },
-      { label: "Chart-matched passages", path: "generated_interpretations:cms/natal-insight/passage/*", role: "stored-source" }
-    ]
-  })),
   {
     id: "friends-compatibility-planet-cards",
     surface: "Friends Compatibility: Planet Comparison Cards",
@@ -523,7 +506,24 @@ export const writingSurfaceSourceMap: WritingSurfaceMapItem[] = [
       { label: "build_synastry_web_bundle.py", path: "tldr-astro-phrasebank/tests/build_synastry_web_bundle.py", role: "spec" },
       { label: "build_natal_source_grounded_bundle.py", path: "tldr-astro-phrasebank/tests/build_natal_source_grounded_bundle.py", role: "spec" }
     ]
-  }
+  },
+  ...natalInsightTopics.map((topic): WritingSurfaceMapItem => ({
+    id: `natal-insight-${topic.id}`,
+    surface: `Natal Deeper insights: ${topic.title}`,
+    area: "Natal",
+    status: "normalized",
+    requiredSlots: ["headline", "body"],
+    visibleLayerOrder: ["source-grounded"],
+    currentRenderPath: "Topic links below Empty Houses open a dedicated reading on both You and Friends, with the shared guide available below it. An exact-chart private reading takes precedence; otherwise calculated facts select published shared passages and a topic template.",
+    risk: "Every selected template and passage must be Live and review-clear. Unknown birth times use Sun and Moon for Approach and exclude house-based readings. Rulers use traditional rulership and whole-sign houses. A published ruler passage for the source house replaces the general planet/sign passage; its destination-house interpretation remains separate. Aspects, house occupants, and a full condition assessment are not synthesized.",
+    nextAction: "Edit shared guide and title opens the same saved guide and heading used on both You and Friends. Approach has a separate shared guide without birth time. Edit topic templates, house-specific ruler passages, and house connections separately. Use Users for an optional private reading that replaces the shared composition for one exact chart.",
+    sources: [
+      { label: "NatalInsightsSection.tsx", path: "apps/web/src/components/charts/NatalInsightsSection.tsx", role: "renderer" },
+      { label: "Shared section guide (You and Friends)", path: `generated_interpretations:cms/natal-insight/you/${topic.id}`, role: "stored-source" },
+      { label: "Topic templates", path: `generated_interpretations:cms/natal-insight/{you|they}/${topic.id}/reading`, role: "stored-source" },
+      { label: "Chart-matched passages", path: "generated_interpretations:cms/natal-insight/passage/*", role: "stored-source" }
+    ]
+  }))
 ];
 
 /**

@@ -47,7 +47,4 @@ export async function natalInsightReadingKey(topic: NatalInsightId, sky: SkySnap
   return `natal-insight/${audience === "friend" ? "they" : "you"}/${topic}/${fingerprint}`;
 }
 
-export function natalInsightFromHash(hash: string): NatalInsightId | null {
-  const id = hash.match(/^#you\/insight\/([^/?]+)$/u)?.[1];
-  return natalInsightTopics.find(topic => topic.id === id)?.id ?? null;
-}
+export { natalInsightFromHash } from "./natalInsightNavigation";
