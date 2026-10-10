@@ -18,21 +18,21 @@ export function RetrogradeHistoryFacts({ history, timeZone }: { history: Retrogr
   }
   const date = (instant: string) => new Intl.DateTimeFormat("en-US", { timeZone, year: "numeric", month: "short", day: "numeric", hour: "numeric", minute: "2-digit", timeZoneName: "short" }).format(new Date(instant));
   const station = (value: RetrogradeStation) => `${date(value.instant)} · ${value.degree.toFixed(2)}° ${title(value.sign)}`;
+  const fact = (label: string, value: string, key?: string) => <span key={key}><span className="retrograde-history-label">{label}</span>{value}</span>;
   const cycle = (value: RetrogradeCycle) => <>
-    <span>Retrograde station: {station(value.retrograde)}</span>
-    <span>Direct station: {station(value.direct)}</span>
-    {value.segments.filter(segment => segment.sign === history.sign).map(segment => <span key={segment.start}>
-      Retrograde in {title(segment.sign)}: {date(segment.start)} to {date(segment.end)}
-    </span>)}
+    {fact("Retrograde station", station(value.retrograde))}
+    {fact("Direct station", station(value.direct))}
+    {value.segments.filter(segment => segment.sign === history.sign).map(segment =>
+      fact(`Retrograde in ${title(segment.sign)}`, `${date(segment.start)} to ${date(segment.end)}`, segment.start))}
   </>;
   return <dl className="retrograde-history-facts">
     {history.current && <div><dt>Current cycle</dt><dd>{cycle(history.current)}</dd></div>}
     <div><dt>Previous retrograde in {title(history.sign ?? "")}</dt><dd>{history.sameSign ? cycle(history.sameSign) : "No earlier complete cycle found within the searched dates."}</dd></div>
     <div><dt>Degree comparison · within 4° of the start station</dt><dd>{history.degreeMatch ? <>
       {cycle(history.degreeMatch.cycle)}
-      <span>{history.degreeMatch.exact ? "Exact crossing" : `Closest approach: ${history.degreeMatch.distanceDegrees.toFixed(2)}° away`} · {date(history.degreeMatch.closestInstant)}</span>
+      {fact(history.degreeMatch.exact ? "Exact crossing" : `Closest approach: ${history.degreeMatch.distanceDegrees.toFixed(2)}° away`, date(history.degreeMatch.closestInstant))}
     </> : "No earlier complete cycle found within 4° in the searched dates."}</dd></div>
-    {history.coverage && <div><dt>Search coverage</dt><dd>{date(history.coverage.start)} to {date(history.coverage.end)} · {history.coverage.completedCycles} complete earlier cycles checked. Dates shown in {timeZone}.</dd></div>}
+    {history.coverage && <div className="retrograde-history-coverage"><dt>Search coverage</dt><dd>{date(history.coverage.start)} to {date(history.coverage.end)} · {history.coverage.completedCycles} complete earlier cycles checked. Dates shown in {timeZone}.</dd></div>}
   </dl>;
 }
 

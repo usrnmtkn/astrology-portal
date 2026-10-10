@@ -17,6 +17,24 @@ async function assertFacts(panel: Locator) {
   ]);
   // No heading levels are introduced inside the existing article hierarchy.
   await expect(panel.locator("h1,h2,h3,h4,h5,h6")).toHaveCount(0);
+  const cards = panel.locator(".retrograde-history-facts > div:not(.retrograde-history-coverage)");
+  await expect(cards).toHaveCount(3);
+  for (const card of await cards.all()) {
+    const layout = await card.evaluate(element => {
+      const style = getComputedStyle(element);
+      const bounds = element.getBoundingClientRect();
+      return {
+        border: parseFloat(style.borderTopWidth), radius: parseFloat(style.borderRadius),
+        padding: parseFloat(style.paddingLeft), background: style.backgroundColor,
+        fits: element.scrollWidth <= element.clientWidth && bounds.left >= 0 && bounds.right <= innerWidth
+      };
+    });
+    expect(layout.border).toBeGreaterThan(0);
+    expect(layout.radius).toBeGreaterThan(0);
+    expect(layout.padding).toBeGreaterThan(0);
+    expect(layout.background).not.toBe("rgba(0, 0, 0, 0)");
+    expect(layout.fits).toBe(true);
+  }
   const styles = await panel.locator("summary").evaluate(element => {
     const style = getComputedStyle(element);
     const probe = document.createElement("span");
@@ -30,6 +48,16 @@ async function assertFacts(panel: Locator) {
     probe.remove(); return matches;
   });
   for (const [property, actual, expected] of styles) expect(actual, property).toBe(expected);
+  const labelStyles = await panel.locator(".retrograde-history-label").first().evaluate(element => {
+    const probe = document.createElement("span");
+    probe.style.cssText = "font-family:var(--font-body);font-size:var(--text-meta-size);font-weight:var(--weight-regular);line-height:var(--leading-meta);letter-spacing:var(--tracking-body)";
+    element.append(probe);
+    const actual = getComputedStyle(element), expected = getComputedStyle(probe);
+    const keys = ["fontFamily", "fontSize", "fontWeight", "lineHeight", "letterSpacing"] as const;
+    const matches = keys.map(key => [key, actual[key], expected[key]]);
+    probe.remove(); return matches;
+  });
+  for (const [property, actual, expected] of labelStyles) expect(actual, property).toBe(expected);
 }
 
 for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
