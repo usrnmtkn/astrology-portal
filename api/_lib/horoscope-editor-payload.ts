@@ -5,8 +5,8 @@ const operation=(value:any)=>pick(value,['id','sign','workflow','phase','state',
 const receipt=(value:any)=>value?{...pick(value,['operationId','responseId','config','lint','completedAt','bodyHash','rhetoricalReview']),hasOwnerEvidence:Boolean(value.ownerEvidence)}:value;
 const failure=(value:any)=>value?{...pick(value,['code','message','diagnostic','candidate','review','failedAt']),operation:operation(value.operation),receipt:receipt(value.receipt)}:value;
 const map=(values:any,project:(v:any)=>any)=>Object.fromEntries(Object.entries(values??{}).map(([key,value])=>[key,project(value)]));
-/** A transport view only. Complete requests, receipts and history remain in the
- * saved row. Editor writes never round-trip this projection into server history. */
+/** A transport view of the decoded row. Complete requests, receipts and history
+ * remain in lossless server storage. Editor writes never round-trip this view. */
 export function horoscopeEditorRow(row:any){
   if(row?.sections?.horoscopeEdition?.window?.period!=='weekly')return row;
   const snapshot=row.source_snapshot??{},generation=snapshot.horoscopeGeneration;

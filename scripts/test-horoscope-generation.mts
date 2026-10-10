@@ -3,6 +3,7 @@ import {loadWeeklyOwnerEvidence} from '../src/astro-writing/weeklyOwnerEvidence.
 import {assertHoroscopeRequestEvidence} from './assert-horoscope-request-evidence.mjs';
 import {loadSeasonalArgumentEvidence,SEASONAL_ARGUMENT_MANIFEST} from '../src/astro-writing/seasonalArgumentEvidence.mjs';
 import assert from 'node:assert/strict';
+import {decodeWeeklyHistoryRow} from '../api/_lib/horoscope-history-storage';
 import fs from 'node:fs';
 import {createHash} from 'node:crypto';
 import {store,editorialFixtureRows,installHoroscopeWriterFixture,invokeHoroscopeWritingWithReview as invokeHoroscopeWriting,writerFixture} from '../tests/helpers/sky-article-save-api.mts';
@@ -193,7 +194,7 @@ globalThis.fetch=async(input:any,options:any={})=>{
  return fixtureFetch(input,options);
 };
 result=await action('generate',{sign:'aries',approvedPlanHash:planHash});assert.equal(result.status,502);globalThis.fetch=fixtureFetch;
-assert.equal(result.payload.dispatchNotStarted,true,'An explicit unbilled failure can safely continue');assert.deepEqual(store.rows.get(row.id),beforeFailedReservation);assert.equal(writerFixture.calls,callsBeforeReservation);
+assert.equal(result.payload.dispatchNotStarted,true,'An explicit unbilled failure can safely continue');assert.deepEqual(decodeWeeklyHistoryRow(store.rows.get(row.id)),beforeFailedReservation);assert.equal(writerFixture.calls,callsBeforeReservation);
 
 // Legacy pre-dispatch reservations recover without a paid retry or manual release.
 row.source_snapshot.horoscopeGeneration.active={id:'legacy-pre-dispatch',sign:'aries',state:'starting',startedAt:new Date().toISOString(),responseId:null};

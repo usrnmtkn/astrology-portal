@@ -1,4 +1,5 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
+import {decodeWeeklyHistoryRow} from './horoscope-history-storage.js';
 
 export const defaultAdminJsonBodyLimitBytes = 256 * 1024;
 export const defaultAdminUpstreamTimeoutMs = 8_000;
@@ -92,7 +93,8 @@ export function adminStorageRows<T extends object = Record<string, unknown>>(pay
   if (!Array.isArray(payload) || payload.some((row) => !row || typeof row !== "object" || Array.isArray(row))) {
     throw new AdminHttpError(502, "Storage returned invalid rows. Reload to verify the saved state before retrying.");
   }
-  return payload as T[];
+  try{return payload.map(decodeWeeklyHistoryRow) as T[];}
+  catch{throw new AdminHttpError(502,'Saved Weekly history could not be verified. Existing writing is preserved.');}
 }
 
 export async function adminFetch(

@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import {decodeWeeklyHistoryRow} from '../api/_lib/horoscope-history-storage';
 import {store,editorialFixtureRows,installHoroscopeWriterFixture,invokeHoroscopeWritingWithReview as invokeHoroscopeWriting,writerFixture} from '../tests/helpers/sky-article-save-api.mts';
 import {prepareHoroscopeBrief} from '../api/_lib/horoscope-editions';
 import {emptyHoroscopeEdition,horoscopeEditionBody,horoscopeEditionKey} from '../apps/web/src/content/horoscopeEditions.mjs';
@@ -62,7 +63,7 @@ for(const period of ['daily','weekly','monthly','seasonal'] as const){
  assert.deepEqual(row.source_snapshot.horoscopeGeneration.rejections.at(-1).writingProfile,second);
  const beforeFailure=structuredClone(row),fetch=globalThis.fetch;
  globalThis.fetch=async(input:any,options:any)=>String(input).includes('studio-writing-profile')?new Response('{}',{status:503}):fetch(input,options);
- try{assert.equal((await action('prepare')).status,502);assert.deepEqual(store.rows.get(row.id),beforeFailure);assert.equal(writerFixture.calls,calls+(period==='monthly'?2:period==='seasonal'?3:1));}
+ try{assert.equal((await action('prepare')).status,502);assert.deepEqual(decodeWeeklyHistoryRow(store.rows.get(row.id)),beforeFailure);assert.equal(writerFixture.calls,calls+(period==='monthly'?2:period==='seasonal'?3:1));}
  finally{globalThis.fetch=fetch;}
  await saveProfile(third,`Next ${period} guidance.`);
  let raced=false;

@@ -1,5 +1,6 @@
 import horoscopeWriter from '../../api/admin/horoscope-writing';
 import {applyCheckpointFixture} from './horoscope-checkpoint-fixture.mts';
+import {decodeWeeklyHistoryRow} from '../../api/_lib/horoscope-history-storage';
 import {Readable} from 'node:stream';
 import {readFileSync} from 'node:fs';
 import {lunarSavedWritingFixtures} from './lunar-saved-writing-fixture.mjs';
@@ -75,7 +76,7 @@ globalThis.fetch = async (input: any, options: any = {}) => {
   }
   store.rows.set(row.id,updated);
   const response=Response.json([{id:row.id,updated_at:updated.updated_at}]);
-  const generation=updated.source_snapshot?.horoscopeGeneration,active=generation?.active;
+  const generation=decodeWeeklyHistoryRow(updated).source_snapshot?.horoscopeGeneration,active=generation?.active;
   const stage=active?.phase==='review'?(active.state==='starting'?'reservation':active.responseId?'review-id':null)
     :generation?.active===null&&Object.keys(generation.readings??{}).length?'completion':null;
   if(stage&&horoscopeStorageFaults.remaining.includes(stage)){
