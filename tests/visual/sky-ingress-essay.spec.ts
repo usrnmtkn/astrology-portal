@@ -44,6 +44,12 @@ for (const [width, theme] of [[390, 'light'], [1440, 'dark']] as const) {
      expect(request.voiceNotes).toBe(writingDirection);
      expect(request.existingSlotValues.overviewBody).toBeUndefined();
      generationCalls += 1;
+     if (generationCalls === 1) {
+      await route.fulfill({ status: 500, json: { ok: false, error: 'Synthetic writer failure remains available for diagnosis.' } });
+      return true;
+     }
+     // A real model response can exceed the old generic ten-second read deadline.
+     await new Promise(resolve => setTimeout(resolve, 11_000));
      await route.fulfill({ json: { ok: true, facts: articleFacts, slotValues: { what: 'Synthetic generated what.' }, blockedSlots: [],
       generation: { provider: 'fixture', model: 'isolated', responseId: 'synthetic-response', generatedAt: '2026-10-09T12:00:00Z', requestedSlots: ['what'] } } });
      return true;
@@ -75,8 +81,18 @@ for (const [width, theme] of [[390, 'light'], [1440, 'dark']] as const) {
    await editor.getByRole('button', { name: 'Load calculated facts', exact: true }).click();
    await expect(editor.getByLabel('Sky article writing direction')).toHaveValue(writingDirection);
    await editor.getByRole('button', { name: 'Generate unfinished fields', exact: true }).click();
-   await expect(editor.getByLabel('Template field what', { exact: true })).toHaveValue('Synthetic generated what.');
-   expect(generationCalls).toBe(1);
+   const builder = editor.getByRole('region', { name: 'Create an article edition from this template', exact: true });
+   await expect(builder.getByRole('alert')).toHaveText('/api/admin/sky-article-template-slots failed with HTTP 500: Synthetic writer failure remains available for diagnosis.');
+   await expect(editor.getByText('Draft saved automatically', { exact: true })).toBeVisible();
+   await page.reload();
+   await page.getByRole('row').filter({ hasText: 'sky/article-template/sun/libra' }).getByRole('button', { name: 'Edit', exact: true }).click();
+   await editor.getByRole('button', { name: 'Load calculated facts', exact: true }).click();
+   await expect(builder.getByRole('alert')).toHaveText('/api/admin/sky-article-template-slots failed with HTTP 500: Synthetic writer failure remains available for diagnosis.');
+   expect(generationCalls).toBe(1); // Reload must never replay a paid request.
+   await editor.getByRole('button', { name: 'Generate unfinished fields', exact: true }).click();
+   await expect(builder.getByRole('alert')).toHaveCount(0);
+   await expect(editor.getByLabel('Template field what', { exact: true })).toHaveValue('Synthetic generated what.', { timeout: 20_000 });
+   expect(generationCalls).toBe(2);
    for (const field of ['what', 'takeaway', 'overviewHeading', 'overviewBody', 'majorTransitSections', 'closingHeading', 'closingBody']) {
     await editor.getByLabel(`Template field ${field}`, { exact: true }).fill(`Synthetic ${field} opening.\n\nSynthetic ${field} final sentence.`);
    }
@@ -98,6 +114,7 @@ for (const [width, theme] of [[390, 'light'], [1440, 'dark']] as const) {
    expect(JSON.stringify(edition.sections.skyArticleEdition)).not.toContain(writingDirection);
    const workspace = rows.find((row: any) => row.event_type === 'sky-article-edition-workspace');
    expect(workspace.sections.skyArticleWorkspace.writingDirection).toBe(writingDirection);
+   expect(workspace.sections.skyArticleWorkspace.generationError).toBeNull();
    expect(workspace.sections.skyArticleWorkspace.slotGeneration.responseId).toBe('synthetic-response');
    expect(edition.sections.skyArticleEdition.housePassages).toEqual([]);
    expect(edition.body).toContain('Synthetic closingBody final sentence.');
