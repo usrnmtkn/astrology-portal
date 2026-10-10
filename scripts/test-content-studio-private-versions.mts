@@ -18,6 +18,7 @@ try {
   await db.query('insert into generated_interpretations values($1,$2,$3,$4,$5)', [id, 'cms/test/history', original, { dashboardEditHistory: history }, '2026-09-21T18:00:00.123456Z']);
   const before = (await db.query('select to_jsonb(g) as row from generated_interpretations g')).rows[0].row;
   await db.exec(fs.readFileSync('apps/web/supabase/migrations/20260922002101_content_studio_private_versions.sql', 'utf8'));
+  await db.exec(fs.readFileSync('apps/web/supabase/migrations/20261010054825_studio_version_duplicate_precheck.sql', 'utf8'));
   assert.deepEqual((await db.query('select to_jsonb(g) as row from generated_interpretations g')).rows[0].row, before, 'Backfill must not rewrite source data or its timestamp');
   assert.deepEqual((await db.query('select original_row from project_privacy.studio_row_versions')).rows[0].original_row, before);
   await db.exec('set role service_role');
@@ -26,6 +27,10 @@ try {
   assert.equal(first.length, 25);
   const last: any = (await db.query('select content_studio_row_history($1,$2) as history', [id, first.at(-1).versionId])).rows[0].history;
   assert.equal(last.length, 6, 'History beyond the inline 25-entry cap survives');
+  await db.exec('reset role');
+  assert.equal(Number((await db.query('select last_value from project_privacy.studio_row_versions_version_id_seq')).rows[0].last_value),31,
+    'Each edit inserts only its new version; duplicate OLD snapshots must not allocate storage before conflict handling');
+  await db.exec('set role service_role');
   assert.equal(last.at(-1).row.body, original);
   assert.deepEqual(last.at(-1).row.sections.dashboardEditHistory, history);
   assert.equal(Date.parse(last.at(-1).rowUpdatedAt), Date.parse('2026-09-21T18:00:00.123456Z'));
