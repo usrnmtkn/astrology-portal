@@ -3,7 +3,7 @@ import { createRoot } from "react-dom/client";
 import "./studio-system.css";
 import { GeneratedContentAdminDashboard } from "./GeneratedContentAdminDashboard";
 import { setupAdminReaderLinkTargets } from "./adminReaderLinks";
-import { PageLoadBoundary } from "../../web/src/components/PageLoading";
+import { PageLoadBoundary } from "../../../src/shared/components/PageLoading";
 import { AdminPageError, AdminPageLoading } from "./AdminPageError";
 
 const ContentCoverageDashboard = lazy(() => import("./ContentCoverageDashboard"));

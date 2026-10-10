@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
-import { FormattedProse } from '../../web/src/components/FormattedProse';
-import { PageLoading } from '../../web/src/components/PageLoading';
+import { FormattedProse } from '../../../src/shared/components/FormattedProse';
+import { PageLoading } from '../../../src/shared/components/PageLoading';
 import { calendarTransitionPhrases, calendarTransitionPhraseKeys } from './calendarTransitionPhraseCatalog';
 import { AdminSelect } from './AdminNativeControls';
 import { StudioButton, StudioInput } from './StudioControls';

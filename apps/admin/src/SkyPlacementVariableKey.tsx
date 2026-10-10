@@ -2,7 +2,7 @@ import { ZODIAC_SEASON_VARIABLES, zodiacSeasonSourceKey } from "../../web/src/co
 import { useEffect, useRef, useState } from "react";
 import { compositionVariableColors } from "./CompositionVariableKey";
 import { StudioButton } from "./StudioControls";
-import { PageLoading } from "../../web/src/components/PageLoading";
+import { PageLoading } from "../../../src/shared/components/PageLoading";
 import { AdminDataTable } from "./AdminBrowseComponents";
 import { AdminDisclosureSummary } from "./AdminNativeControls";
 import {

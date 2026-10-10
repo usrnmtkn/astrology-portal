@@ -1,4 +1,4 @@
-import { CalendarPassageProse } from '../../web/src/features/calendar/CalendarPassageProse';
+import { CalendarPassageProse } from '../../../src/shared/features/calendar/CalendarPassageProse';
 import { lunarContentIdentity } from './lunarCalendarContent';
 import { useEffect, useMemo, useState } from 'react';
 import { StudioButton, StudioInput } from './StudioControls';
@@ -10,11 +10,11 @@ import { calendarPreviewSourceKeys, type CalendarPreviewRow } from './calendarPr
 import { requestStudioJson, studioInventoryDocumentPath } from './generatedContentClient';
 import { announceContentUpdate, subscribeToContentUpdates } from '../../web/src/services/contentUpdateSignal';
 import { zonedDateTimeToUtc } from '../../web/src/services/timezones';
-import { calendarLocalDateKey } from '../../web/src/features/calendar/calendarPhaseLabel';
-import { calendarEventGeneratedContentKeys } from '../../web/src/features/calendar/calendarContentKeys';
+import { calendarLocalDateKey } from '../../../src/shared/features/calendar/calendarPhaseLabel';
+import { calendarEventGeneratedContentKeys } from '../../../src/shared/features/calendar/calendarContentKeys';
 import { calendarStudioMoonSources, publishedPassageSources } from './calendarPassageSources';
-import { calendarPassageKey, calendarPassageRecord, renderCalendarPassage, calendarPassageErrors, type CalendarPassagePeriod } from '../../web/src/features/calendar/calendarPassageTemplates';
-import { calendarPassageDate, calendarPeriodPassageValues, calendarEditablePassage } from '../../web/src/features/calendar/calendarPassageAssembly';
+import { calendarPassageKey, calendarPassageRecord, renderCalendarPassage, calendarPassageErrors, type CalendarPassagePeriod } from '../../../src/shared/features/calendar/calendarPassageTemplates';
+import { calendarPassageDate, calendarPeriodPassageValues, calendarEditablePassage } from '../../../src/shared/features/calendar/calendarPassageAssembly';
 import { isContentRetired } from '../../web/src/content/contentPublicationState';
 import { refreshContentPublications } from '../../web/src/services/contentPublications';
 import type { SkyForecastPeriod } from './skyForecastTemplates';

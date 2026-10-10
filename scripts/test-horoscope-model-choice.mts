@@ -346,11 +346,11 @@ for(const scenario of ['reservation-body','reservation-network','uncommitted','l
       const target=rpc?request.p_id===confirmationId:url.searchParams.get('id')===`eq.${confirmationId}`;
       if(target&&rpc){
         const patch=applyCheckpointFixture(latest(confirmationId),request.p_changes),active=patch.source_snapshot?.horoscopeGeneration?.active;
-        patches++;writeIds.push(patch.source_snapshot.horoscopeStorageWriteId);
+        const targetStage=active?.phase==='review'&&active.state===(scenario==='response-id'?'running':'starting');
+        if(targetStage){patches++;writeIds.push(patch.source_snapshot.horoscopeStorageWriteId);}
         assert(Buffer.byteLength(options.body)<10000,'A checkpoint must not upload accumulated evidence');
         if(delayedWrite){await baseFetch(...delayedWrite);delayedWrite=null;}
-        const fail=active?.phase==='review'&&active.state===(scenario==='response-id'?'running':'starting')
-          &&(!injected||scenario==='persistent-storage-failure');
+        const fail=targetStage&&(!injected||scenario==='persistent-storage-failure');
         if(fail){
           injected++;
           if(scenario==='late-commit'){delayedWrite=[input,options];throw new DOMException('Synthetic save still committing','AbortError');}

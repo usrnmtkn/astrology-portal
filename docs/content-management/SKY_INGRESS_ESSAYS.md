@@ -113,8 +113,9 @@ History verification: `npm run test:retrograde-history`, the authenticated
 `tests/visual/retrograde-history.spec.ts` (fresh reader build, isolated saved
 drafts, desktop/mobile, light/dark, reload, error/retry and cross-surface dates).
 
-Acceptance record (October 10): feature changes on `73a7822c0`, branch
-`codex/shared-retrograde-history-20261010`; local implementation before preview verification.
+Acceptance record (October 10): initial feature commit `16d284cdd` on
+`73a7822c0`, branch `codex/shared-retrograde-history-20261010`,
+[release PR #1205](https://github.com/usrnmtkn/astrology-portal/pull/1205).
 All write/generation tests use isolated storage and synthetic provider responses.
 No production content or paid generation was used.
 
@@ -125,8 +126,17 @@ No production content or paid generation was used.
 | Sky and Calendar share dates, respect timezone, load on demand and recover from errors | Passed: the same four browser cases cover mobile/desktop, light/dark, retry, reload and empty states. |
 | Existing complete article text and publication remain intact | Passed: two ingress-reader browser cases plus ingress-publication and dated-season-fallback regressions. |
 | Types, builds, design tokens and bundle boundaries | Passed: typecheck, both builds, CSS audit and both bundle guards. Matched clean-main builds measure +5,050 app gzip bytes. Standalone Studio grows by 2,676 gzip bytes before the final date-reset change; its final CI-configured build measures 793,389 aggregate gzip bytes. The budget files record the explicit allowance. |
-| Full unfiltered Content Studio API gate | Blocked: the run on the preceding `d8f757921` base reached `test-report-rhetorical-admission.mts`, then stopped because protected report evidence is absent. Related feature/handler and new-main tests pass on `73a7822c0`; they do not substitute for the full gate. |
-| Production deployment and live saved content | Unverified: this change has not been committed or deployed. |
+| Full unfiltered Content Studio API gate | Passed on `16d284cdd`: [hosted run 38064240354](https://github.com/usrnmtkn/astrology-portal/actions/runs/38064240354), including protected report evidence and native PostgreSQL checks. Local runs stop at the absent private report fixture. Integration revisions require their own complete hosted gate. |
+| Deployed reader and live saved content | Passed on the `16d284cdd` protected preview: the published Venus article and October 3 Calendar station show identical current and prior-Scorpio history, with no browser errors. Preview Studio requires its own owner sign-in; production release verification remains pending. |
+
+Integration with main `4f5f92f79` preserves its shared-component boundary: the
+history display now lives in `src/shared/components/RetrogradeHistory.tsx`, with
+a compatibility export from the reader path. The worker-scheduling fixture now
+includes the history export and verifies that visible Calendar facts precede
+optional historical calculations. The complete performance-contract stage,
+four fresh history browser cases, typecheck, design-token and shared-boundary
+audits pass after integration. No generation or publication behavior changes
+are introduced by these integration repairs.
 
 ## Publication and reader
 

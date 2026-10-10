@@ -19,7 +19,7 @@ const calendarSource = fs.readFileSync(path.join(
 ), "utf8");
 const phaseLabelSource = fs.readFileSync(path.join(
   repoRoot,
-  "apps/web/src/features/calendar/calendarPhaseLabel.ts"
+  "src/shared/features/calendar/calendarPhaseLabel.ts"
 ), "utf8");
 const ephemerisSource = fs.readFileSync(path.join(
   repoRoot,

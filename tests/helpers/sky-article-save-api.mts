@@ -35,6 +35,7 @@ const matches = (row: any, params: URLSearchParams) => [...params].every(([field
   const actual = row.sections?.horoscopeEdition?.window?.[field.split('->>').at(-1)!];
   return typeof actual === 'string' && (value.startsWith('lte.') ? actual <= value.slice(4) : value.startsWith('gt.') ? actual > value.slice(3) : value.startsWith('eq.') ? actual === value.slice(3) : false);
  }
+ if(field==='source_snapshot->horoscopeGeneration->batch->>status')return row.source_snapshot?.horoscopeGeneration?.batch?.status===value.slice(3);
  if (value === 'is.null') return row[field] == null;
  if (value.startsWith('like.')) return String(row[field] ?? '').startsWith(value.slice(5).replace(/\*$/u, ''));
  if (value.startsWith('eq.')) return String(row[field] ?? '') === value.slice(3);

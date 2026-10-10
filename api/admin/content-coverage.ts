@@ -82,8 +82,35 @@ function buildCoverage() {
   const transitSource = readJson("apps/web/src/content/fallbackArchitectureV3/source-rows/transit-synastry-rows-v1.json");
   const transitRows = (Array.isArray(transitSource.authoredCards) ? transitSource.authoredCards : [])
     .filter((row: Record<string, unknown>) => String(row.contentKey ?? "").startsWith("authored/transit-aspect/"));
-  const personalReady = transitRows.filter((row: Record<string, unknown>) => nonblank(row.body_you)).length;
-  const friendsReady = transitRows.filter((row: Record<string, unknown>) => nonblank(row.body_they)).length;
+  // Required identities come from independent approval records, never from the
+  // presence of a body in the corpus being checked. A deleted row must still be
+  // reported, while a perspective that was intentionally omitted is not a gap.
+  const requiredTransitKeys = (id: string): Set<string> => {
+    const sources = authorityById.get(id)?.coverageIdentities;
+    if (!Array.isArray(sources) || !sources.length) throw new Error(`Missing coverage identities: ${id}`);
+    const keys = new Set<string>();
+    for (const source of sources) {
+      const record = readJson(source.path);
+      const records = source.collection ? record[source.collection] : [record];
+      if (!Array.isArray(records) || !records.length) throw new Error(`Invalid coverage identities: ${id}`);
+      for (const member of records) {
+        if (source.field && member.field !== source.field) continue;
+        if (!nonblank(member.contentKey)) throw new Error(`Invalid transit identity: ${id}`);
+        // A source may also authorize other families (for example bond copy).
+        if (!member.contentKey.startsWith("authored/transit-aspect/")) continue;
+        keys.add(member.contentKey);
+      }
+    }
+    if (keys.size !== authorityById.get(id)?.expected?.nonblank) throw new Error(`Incomplete coverage identities: ${id}`);
+    return keys;
+  };
+  const personalRequired = requiredTransitKeys("personal-transit-you");
+  const friendsRequired = requiredTransitKeys("personal-transit-friends");
+  const readyKeys = (required: Set<string>, field: string) => new Set<string>(transitRows
+    .filter((row: Record<string, unknown>) => required.has(String(row.contentKey)) && nonblank(row[field]))
+    .map((row: Record<string, unknown>) => String(row.contentKey))).size;
+  const personalReady = readyKeys(personalRequired, "body_you");
+  const friendsReady = readyKeys(friendsRequired, "body_they");
   const sunFriendsReady = transitRows.filter((row: Record<string, unknown>) => (
     String(row.contentKey ?? "").startsWith("authored/transit-aspect/sun/") && nonblank(row.body_they)
   )).length;
@@ -107,8 +134,8 @@ function buildCoverage() {
       "personal-transits",
       "Personal Transits · You",
       personalReady,
-      transitRows.length,
-      `${personalReady}/${transitRows.length} canonical transit rows contain You copy.`,
+      personalRequired.size,
+      `${personalReady}/${personalRequired.size} required canonical transit rows contain You copy.`,
       "transit-synastry-rows-v1.json",
       authorityFor("personal-transit-you")
     ),
@@ -116,7 +143,7 @@ function buildCoverage() {
       "friends-transits",
       "Friends Transits",
       friendsReady,
-      transitRows.length,
+      friendsRequired.size,
       `${friendsOwnerLive.count ?? 0} non-Sun Friends rows are covered by the Sep 3 owner-live batch; ${sunFriendsReady} Sun rows currently contain Friends copy.`,
       "transit-synastry-rows-v1.json + transit-aspect-friends-nonsun-350-owner-live-2026-09-03.json",
       authorityFor("personal-transit-friends")
@@ -176,8 +203,8 @@ function buildCoverage() {
     },
     coverage,
     notes: {
-      friendsIntentionalGap: friendsReady < transitRows.length
-        ? `${transitRows.length - friendsReady} canonical Friends transit row currently has no body_they.`
+      friendsIntentionalGap: friendsReady < friendsRequired.size
+        ? `${friendsRequired.size - friendsReady} required Friends transit rows currently have no body_they.`
         : null,
       unresolvedReasonCounts: unresolved.reasonCounts ?? {},
   unresolvedWorkload: unresolved.workload ?? {},

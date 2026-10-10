@@ -1,7 +1,7 @@
 import { isStudioCompatibilityRow, isStudioCompositeRow } from "./studioContentScope";
 import { calendarAspectRetrogradeOptions } from "../../web/src/content/calendarAspectRetrograde";
 import { isSkyIngressEssay, SKY_INGRESS_ESSAY_FORMAT, type SkyArticleFormat } from "../../web/src/content/skyIngressEssay.mjs";
-import { RetrogradeHistoryFacts } from "../../web/src/components/RetrogradeHistory";
+import { RetrogradeHistoryFacts } from "../../../src/shared/components/RetrogradeHistory";
 import { hasVerifiedSameSignHistory, type RetrogradeHistory } from "../../web/src/services/retrogradeHistory";
 import { useStudioCustomVariables } from "./studioCustomVariableClient";
 import { studioRequestTimeoutMs } from "./studioRequestPolicy";
@@ -18,7 +18,7 @@ import { ArticleBlockStyleFields } from "./ArticleBlockStyleFields";
 import { AdminDisclosureSummary, AdminSelect } from "./AdminNativeControls";
 import { getStudioPalette, getStudioTheme, saveStudioPalette, saveStudioTheme, studioShellAttributes } from "./studioTheme";
 import { AdminContentTable, AdminDataTable, AdminFilterBar } from "./AdminBrowseComponents";
-import { PageLoading } from "../../web/src/components/PageLoading";
+import { PageLoading } from "../../../src/shared/components/PageLoading";
 import { readStudioInventoryPages, studioInventoryPageSize } from "./studioInventoryPagination";
 import { reviewWorkBucket, skyWritingIssues } from "../../web/src/content/contentReviewReadiness";
 import { transitNatalContactFromFields, transitNatalContactReady, transitNatalContactContentKey, transitNatalExactContentKey, transitNatalExactSourceDraft, transitNatalSharedFallbackKey, transitNatalStarterCopy } from "./transitNatalSources";
@@ -44,7 +44,7 @@ import {
   type StudioInventoryQuery
 } from "./studioSectionInventory";
 import { readStudioContentDocument, requestStudioJson, studioInventoryDocumentPath, studioInventoryDocumentsPath } from "./generatedContentClient";
-import type { StudioListingFacts } from "../../../api/_lib/studio-listing-facts";
+import type { StudioListingFacts } from "../../../src/shared/studio-listing-facts";
 import { isContentStudioReferenceSource } from "../../web/src/content/contentStudioSourceRole";
 import {
   ArrowLeft,

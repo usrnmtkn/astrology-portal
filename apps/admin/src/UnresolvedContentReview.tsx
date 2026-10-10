@@ -4,7 +4,7 @@ import { AdminDisclosureSummary } from "./AdminNativeControls";
 import { useEffect, useState } from "react";
 import { adminCredentialHeaders } from "./adminSecret";
 import { AdminPaginatedCollection } from "./AdminPaginatedCollection";
-import { PageLoading } from "../../web/src/components/PageLoading";
+import { PageLoading } from "../../../src/shared/components/PageLoading";
 
 export type UnresolvedContentItem = {
   id: string;
