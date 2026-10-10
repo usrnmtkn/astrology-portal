@@ -1,4 +1,10 @@
 import assert from "node:assert/strict";
+import fs from "node:fs";
+import { studioRequestTimeoutMs } from "../apps/admin/src/studioRequestPolicy.ts";
+const deploymentConfig = JSON.parse(fs.readFileSync(new URL("../vercel.json", import.meta.url), "utf8"));
+assert.equal(deploymentConfig.functions["api/admin/sky-article-template-slots.ts"].maxDuration, 300);
+assert.equal(studioRequestTimeoutMs("/api/admin/sky-article-template-slots", "POST"), 305_000);
+assert.equal(studioRequestTimeoutMs("/api/admin/sky-article-facts?date=2026-10-09", "GET"), 10_000);
 import { Readable } from "node:stream";
 import SwissEph from "swisseph-wasm";
 import { compileSkyArticleEdition, assertCompiledSkyArticleEdition, reviseSkyArticleEdition, skyArticleEditableFields, skyArticleEditionContentKey } from "../apps/web/src/content/skyArticleTemplateCompiler.ts";
