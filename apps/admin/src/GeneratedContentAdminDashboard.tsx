@@ -590,6 +590,7 @@ type SkyArticleEditionFacts = {
 };
 
 type SkyArticleEditionForm = {
+  rejectedGeneration: Record<string, unknown> | null;
   generationError: string | null;
   writingDirection: string;
   format: SkyArticleFormat;
@@ -2212,6 +2213,7 @@ function skyArticleWorkspaceForm(row: AdminGeneratedContentRow | undefined) {
   return {
     row,
     tldr,
+    rejectedGeneration: objectRecord(workspace.rejectedGeneration),
     generationError: typeof workspace.generationError === "string" ? workspace.generationError : null,
     writingDirection: typeof workspace.writingDirection === "string" ? workspace.writingDirection : "",
     slotGeneration: objectRecord(workspace.slotGeneration) as SkyArticleEditionForm["slotGeneration"],
@@ -2790,14 +2792,16 @@ class AdminRequestError extends Error {
   path: string;
   method: string;
   details: string;
+  payload: unknown;
 
-  constructor(message: string, options: { status: number; path: string; method: string; details?: string }) {
+  constructor(message: string, options: { status: number; path: string; method: string; details?: string; payload?: unknown }) {
     super(message);
     this.name = "AdminRequestError";
     this.status = options.status;
     this.path = options.path;
     this.method = options.method;
     this.details = options.details ?? "";
+    this.payload = options.payload;
   }
 }
 
@@ -2877,7 +2881,8 @@ async function adminJsonRequest<T>(path: string, secret: string, options: Reques
       status: response.status,
       path,
       method,
-      details
+      details,
+      payload
     });
   }
 
@@ -4219,6 +4224,7 @@ export function GeneratedContentAdminDashboard() {
             tldr: form.tldr,
             writingDirection: form.writingDirection,
             generationError: form.generationError,
+            rejectedGeneration: form.rejectedGeneration,
             slotGeneration: form.slotGeneration,
             slotValues: form.slotValues
           };
@@ -4276,7 +4282,7 @@ export function GeneratedContentAdminDashboard() {
     }, 900);
 
     return () => window.clearTimeout(timeout);
-  }, [secret, selectedRow, skyArticleEditionForm?.facts, skyArticleEditionForm?.tldr, skyArticleEditionForm?.writingDirection, skyArticleEditionForm?.generationError, skyArticleEditionForm?.slotGeneration, skyArticleEditionForm?.slotValues, skyArticleEditionForm?.workspaceId]);
+  }, [secret, selectedRow, skyArticleEditionForm?.facts, skyArticleEditionForm?.tldr, skyArticleEditionForm?.writingDirection, skyArticleEditionForm?.generationError, skyArticleEditionForm?.rejectedGeneration, skyArticleEditionForm?.slotGeneration, skyArticleEditionForm?.slotValues, skyArticleEditionForm?.workspaceId]);
 
   function persistBetweenYouTwoRoute(nextQuery: string, nextActivate = friendsActivationQuery) {
     setQuery(nextQuery);
@@ -4894,6 +4900,7 @@ export function GeneratedContentAdminDashboard() {
         ...current,
         facts: payload.facts,
         generationError: workspace?.generationError ?? null,
+        rejectedGeneration: workspace?.rejectedGeneration ?? null,
         writingDirection: workspace?.writingDirection ?? current.writingDirection,
         slotGeneration: workspace?.slotGeneration ?? null,
         tldr: workspace?.tldr ?? (isSkyIngressEssay(current.format) ? current.tldr : authoredSource?.summary?.trim() ?? current.tldr),
@@ -4948,6 +4955,7 @@ export function GeneratedContentAdminDashboard() {
           facts: payload.facts,
           slotValues: { ...slotValues, ...payload.facts.slotValues },
           slotGeneration: payload.generation,
+          rejectedGeneration: null,
           factBlockedSlots: payload.blockedSlots ?? []
         };
       });
@@ -4960,7 +4968,9 @@ export function GeneratedContentAdminDashboard() {
     } catch (error) {
       const generationError = dashboardErrorMessage(error);
       if (editorSession === editorSessionRef.current) {
-        setSkyArticleEditionForm((current) => current ? { ...current, generationError } : current);
+        setSkyArticleEditionForm((current) => current ? { ...current, generationError,
+          rejectedGeneration: objectRecord(objectRecord(error instanceof AdminRequestError ? error.payload : null)?.rejectedGeneration) ?? current.rejectedGeneration
+        } : current);
       }
       setMessage(generationError);
     } finally {
@@ -5895,6 +5905,7 @@ export function GeneratedContentAdminDashboard() {
     } : null);
     setSkyArticleEditionForm(isSkyArticleTemplateRow(row) ? {
       generationError: null,
+      rejectedGeneration: null,
       writingDirection: "",
       format: SKY_INGRESS_ESSAY_FORMAT,
       referenceDate: new Date().toISOString().slice(0, 10),
@@ -11370,7 +11381,7 @@ export function GeneratedContentAdminDashboard() {
                   skyArticleWorkspaceAutosaveSequenceRef.current += 1;
                   workspaceAutosaveRowRef.current = null;
                   setSkyArticleEditionForm({ format: event.target.value as SkyArticleFormat, referenceDate: skyArticleEditionForm.referenceDate,
-                    facts: null, tldr: "", writingDirection: "", generationError: null, slotValues: {}, slotGeneration: null, factBlockedSlots: [], saveState: "idle", workspaceId: null });
+                    facts: null, tldr: "", writingDirection: "", generationError: null, rejectedGeneration: null, slotValues: {}, slotGeneration: null, factBlockedSlots: [], saveState: "idle", workspaceId: null });
                 }}>
                   <option value={SKY_INGRESS_ESSAY_FORMAT}>Ingress essay · October 9 format</option>
                   <option value="saved-template">Saved article template and horoscopes</option>
@@ -11395,6 +11406,7 @@ export function GeneratedContentAdminDashboard() {
                       tldr: "",
                       writingDirection: "",
                       generationError: null,
+                      rejectedGeneration: null,
                       slotValues: {},
                       slotGeneration: null,
                       factBlockedSlots: [],
@@ -11461,6 +11473,16 @@ export function GeneratedContentAdminDashboard() {
                   </div>
                   {skyArticleEditionForm.generationError && (
                     <p className="admin-page-notice" role="alert">{skyArticleEditionForm.generationError}</p>
+                  )}
+                  {skyArticleEditionForm.rejectedGeneration && (
+                    <details>
+                      <summary>Returned draft needs correction</summary>
+                      <p className="admin-field-hint">Review this returned text. These fields are separate from the article fields below.</p>
+                      <p className="admin-field-hint">{String(skyArticleEditionForm.rejectedGeneration.provider ?? "")} / {String(skyArticleEditionForm.rejectedGeneration.model ?? "")}</p>
+                      {Object.entries(objectRecord(skyArticleEditionForm.rejectedGeneration.slotValues) ?? {}).filter((entry): entry is [string, string] => typeof entry[1] === "string").map(([name, value]) => (
+                        <label key={name}>{name}<textarea aria-label={`Returned draft ${name}`} readOnly value={value} /></label>
+                      ))}
+                    </details>
                   )}
                   {skyArticleEditionForm.slotGeneration && (
                     <p className="admin-field-hint">

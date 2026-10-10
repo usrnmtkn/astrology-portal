@@ -28,6 +28,7 @@ const template = { id, content_key: "sky/article-template/sun/libra", event_type
   body: "# Immutable owner template\n\nSynthetic complete original writing. {{legacyField}}" };
 let prompts: string[] = [];
 let requested: string[] = [];
+let rejectWriterCopy = false;
 const originalFetch = globalThis.fetch;
 async function invoke(handler: any, method: string, url: string, body?: unknown, authorized = true) {
   const req = Object.assign(Readable.from(body ? [JSON.stringify(body)] : []), { method, url,
@@ -46,7 +47,8 @@ try {
       const request = JSON.parse(String(init.body)); prompts.push(request.input);
       requested = request.text.format.schema.properties.slotValues.required;
       return Response.json({ id: "synthetic-ingress-response", output_text: JSON.stringify({ slotValues:
-        Object.fromEntries(requested.map(name => [name, "Synthetic complete draft field."])) }) });
+        Object.fromEntries(requested.map(name => [name, rejectWriterCopy && name === "majorTransitSections"
+          ? "Synthetic draft; punctuation needs correction." : "Synthetic complete draft field."])) }) });
     }
     throw new Error(`Unexpected test network destination: ${new URL(String(url)).origin}`);
   };
@@ -105,6 +107,21 @@ try {
   });
   assert.equal(mismatch.status, 422);
   assert.equal(prompts.length, 1, "Mismatched templates never spend a writing call");
+  rejectWriterCopy = true;
+  const rejected = await invoke(slotsHandler, "POST", "/api/admin/sky-article-template-slots", {
+    templateId: id, referenceDate: "2026-10-09", format: SKY_INGRESS_ESSAY_FORMAT, provider: "openai",
+    existingSlotValues: { what: "Synthetic existing owner field." }
+  });
+  assert.equal(rejected.status, 422);
+  assert.equal(rejected.ok, false);
+  assert.match(rejected.error, /en dash or semicolon in majorTransitSections/);
+  assert.equal(rejected.slotValues, undefined, "Rejected copy must not be admitted as article fields");
+  assert.equal(rejected.rejectedGeneration.slotValues.majorTransitSections, "Synthetic draft; punctuation needs correction.");
+  assert.equal(rejected.rejectedGeneration.slotValues.what, undefined, "Existing owner fields are never returned for replacement");
+  assert.equal(rejected.rejectedGeneration.responseId, "synthetic-ingress-response");
+  assert.equal(rejected.rejectedGeneration.provider, "openai");
+  assert(rejected.rejectedGeneration.generation_metadata);
+  rejectWriterCopy = false;
 
   const slots = Object.fromEntries(skyIngressEssayFields.map(({ name }) => [name, `Synthetic ${name} complete text.`]));
   Object.assign(slots, facts.slotValues, { majorTransitSections: "## Synthetic transit\n\nComplete first sentence.\n\nComplete final sentence.",

@@ -2,7 +2,7 @@ import { articleTemplateWithHoroscopes } from "../../apps/web/src/content/skyArt
 import type { IncomingMessage, ServerResponse } from "node:http";
 import { AdminHttpError, adminErrorStatus, adminFetchJson, adminStorageRows, readAdminJsonBody, sendAdminJson, sendAdminMethodNotAllowed } from "../_lib/admin-http.js";
 import { requireContentAdmin } from "../_lib/admin-auth.js";
-import { generateSkyArticleTemplateSlots } from "../_lib/content-generation.js";
+import { generateSkyArticleTemplateSlots, RejectedSkyArticleDraftError } from "../_lib/content-generation.js";
 import { loadLocalWebEnv } from "../_lib/local-env.js";
 import { calculateSkyArticleEditionFacts } from "../_lib/sky-article-facts.js";
 import {
@@ -175,6 +175,10 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
       }
     });
   } catch (error) {
+    if (error instanceof RejectedSkyArticleDraftError) {
+      sendAdminJson(res, 422, { ok: false, error: error.message, rejectedGeneration: error.candidate });
+      return;
+    }
     sendAdminJson(res, adminErrorStatus(error), {
       ok: false,
       error: error instanceof Error ? error.message : "Unknown Sky article template slot error."
