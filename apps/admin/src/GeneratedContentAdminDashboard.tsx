@@ -7703,16 +7703,16 @@ export function GeneratedContentAdminDashboard() {
               <div>
                 <span className="admin-field-hint">{filteredArticleRows.length} of {articleRows.length} articles</span>
               </div>
-              <StudioButton type="button" onClick={() => handleCreateAction("articles", "New article draft started.")}>
-                <Plus size={16} aria-hidden="true" />
-                New article
-              </StudioButton>
+              <div className="admin-surface-actions" aria-label="Article and guide tools">
+                <StudioButton type="button" onClick={() => handleCreateAction("articles", "New article draft started.")}>
+                  <Plus size={16} aria-hidden="true" />
+                  New article
+                </StudioButton>
+                <StudioButton type="button" onClick={() => handleCreateAction("articles", "New guide draft started.", undefined, "guide")}>New guide</StudioButton>
+                <a className="admin-source-action" href="#articles-guides?q=sky%2Farticle-template%2F">Dated Sky article templates</a>
+                <a className="admin-source-action" data-reader-navigation="collection" href="/#articles">Open Articles &amp; Guides in the app</a>
+              </div>
             </section>
-            <div className="admin-surface-actions" aria-label="Article and guide tools">
-              <StudioButton type="button" onClick={() => handleCreateAction("articles", "New guide draft started.", undefined, "guide")}>New guide</StudioButton>
-              <a className="admin-source-action" href="#articles-guides?q=sky%2Farticle-template%2F">Dated Sky article templates</a>
-              <a className="admin-source-action" data-reader-navigation="collection" href="/#articles">Open Articles &amp; Guides in the app</a>
-            </div>
             {renderArticleFilters()}
             <section className="admin-workbench admin-review-workspace">
               {renderEditor()}
