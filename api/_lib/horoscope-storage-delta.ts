@@ -17,7 +17,8 @@ export function horoscopeStorageChanges(previous:any,patch:any):HoroscopeStorage
   };
   for(const key of Object.keys(patch)){
     if(key==='status'&&patch.status==='DRAFT')continue;
-    if(!['source_snapshot','sections','body'].includes(key))throw new Error('unsupported_horoscope_checkpoint_field');
+    if(['review_state','reviewed_at'].includes(key)&&patch[key]!==null)throw new Error('unsupported_horoscope_checkpoint_review');
+    if(!['source_snapshot','sections','body','facts','review_state','reviewed_at'].includes(key))throw new Error('unsupported_horoscope_checkpoint_field');
     visit(previous[key],patch[key],[key]);
   }
   return changes;
