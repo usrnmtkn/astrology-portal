@@ -1,8 +1,12 @@
+import { natalInsightTopics, natalInsightSlotGroups } from "../../web/src/content/natalInsightCatalog.ts";
 import { isRetiredCompositionKey } from "../../web/src/content/fallbackArchitectureV3/resolver/retiredCompositions.mjs";
 import type { CompositionMapRow, CompositionMapTemplate } from "./compositionMap";
 
 // Key contracts, not the imported row's surface label (many natal hooks are labelled Sky).
 export const compositionSurfaceFamilies: Record<string, RegExp> = {
+  ...Object.fromEntries(natalInsightTopics.map(topic => [
+    `natal-insight-${topic.id}`, new RegExp(`^cms/natal-insight/(?:(?:you|they)/${topic.id}(?:/reading(?:/untimed)?${topic.id === "approach" ? "|/untimed" : ""})?$|passage/(?:${[...new Set((["you", "friend"] as const).flatMap(audience => [false, true].flatMap(untimed => Object.values(natalInsightSlotGroups(topic.id, untimed, audience)))))].join("|")})/)`)
+  ])),
   "friends-compatibility-planet-cards": /^(?:authored\/compat-pair\/|fallback-(?:hook|template)\/friends[.]compatibility)/,
   "friends-compatibility-exact-dynamics": /^(?:authored\/compat-|fallback-hook\/(?:compat-domain|element-pattern|synastry-|bond-effect)|fallback-template\/friends[.]compatibility)/,
   "friends-synastry-contact": /^(?:synastry\/|fallback-hook\/(?:synastry-|bond-effect)|fallback-template\/synastry[.])/,

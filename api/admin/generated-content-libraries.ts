@@ -58,3 +58,5 @@ export const skyV4OwnerApprovedReaderCopyKeys = new Set(skyV4ReaderCopyOwnerAppr
 export const skyV4ServingReleasedReaderCopyKeys = skyV4ReaderCopyServingRelease.serving_enabled === true
   ? skyV4OwnerApprovedReaderCopyKeys
   : new Set<string>();
+
+export { isNatalInsightContentKey } from "../../apps/web/src/content/natalInsightCatalog.js";

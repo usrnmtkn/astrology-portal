@@ -25,6 +25,7 @@ import {
 import { MetricCard } from "./studio-ds/patterns";
 import { Grid, Stack, Text } from "./studio-ds/primitives";
 import { metricGrid } from "./studio-ds/recipes";
+import NatalInsightSourceFinder, { type NatalInsightSourceProps } from "./NatalInsightSourceFinder";
 
 type PreviewRow = {
   id?: string | null;
@@ -38,7 +39,9 @@ type PreviewRow = {
   summary: string | null;
 };
 
-type Props = {
+type Props = NatalInsightSourceProps & {
+  view: NatalChartWritingView;
+  onViewChange: (view: NatalChartWritingView) => void;
   house: NatalPlacementHouse | "";
   isLoading: boolean;
   onCreateOverride: (contentKey: string, label: string, body: string) => void;
@@ -54,7 +57,7 @@ type Props = {
   sign: NatalPlacementSign | "";
 };
 
-type NatalChartWritingView = "placements" | "empty-houses";
+export type NatalChartWritingView = "placements" | "empty-houses" | "deeper-insights";
 
 type EmptyHouseSourceGroup = {
   id: string;
@@ -116,8 +119,7 @@ function emptyHouseSourceScope(key: string) {
   return "Reusable empty-house source writing.";
 }
 
-export default function NatalPlacementSourceFinder({ house, isLoading, motion, onCreateOverride, onDirtyChange, onSaveSource, onOpenSource, onOpenEmptyHouseCompositions, onSelectionChange, planet, rows, secret, sign }: Props) {
-  const [view, setView] = useState<NatalChartWritingView>("placements");
+export default function NatalPlacementSourceFinder({ house, isLoading, motion, onCreateOverride, onDirtyChange, onSaveSource, onOpenSource, onOpenEmptyHouseCompositions, onSelectionChange, planet, rows, secret, sign, view, onViewChange, insightSurfaces, insightAccess, onOpenInsight }: Props) {
   const [emptyHouse, setEmptyHouse] = useState(1);
   const [emptyHouseSign, setEmptyHouseSign] = useState("aries");
   const [emptyHouseRulerHouse, setEmptyHouseRulerHouse] = useState(2);
@@ -225,13 +227,14 @@ export default function NatalPlacementSourceFinder({ house, isLoading, motion, o
       <StudioTabs
         label="Natal Chart writing areas"
         value={view}
-        onValueChange={setView}
+        onValueChange={onViewChange}
         tabs={[
           { value: "placements", label: "Planet placements" },
-          { value: "empty-houses", label: "Empty houses" }
+          { value: "empty-houses", label: "Empty houses" },
+          { value: "deeper-insights", label: "Deeper insights" }
         ] as const}
       >
-        {view === "placements" ? <>
+        {view === "deeper-insights" ? <NatalInsightSourceFinder insightSurfaces={insightSurfaces} insightAccess={insightAccess} onOpenInsight={onOpenInsight} rows={rows} isLoading={isLoading} onOpenSource={onOpenSource} /> : view === "placements" ? <>
           {fullSelectionComplete && (
             <div className="admin-natal-placement-finder-heading">
               <StudioButton type="button" onClick={() => openContextualReaderHref(readerHref)}

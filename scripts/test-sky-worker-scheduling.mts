@@ -66,6 +66,37 @@ receive!({ data: { id: 9, kind: "natal-daily-peaks", args: dailyArgs } });
 while (scheduled.length) await scheduled.shift()!();
 assert.deepEqual(replies.slice(-2).map(reply => reply.id), [9, 8], "Visible daily peaks precede optional full-series timing.");
 assert.equal(replies.at(-2)?.value, JSON.stringify({ name: "natalDailyTransitPeaksFor", args: dailyArgs }));
+
+// A cold Sky request can start the engine download before Calendar mounts.
+// Choose the next calculation after initialization, when foreground work is known.
+for (const failInitialization of [false, true]) {
+  let onMessage: typeof receive;
+  let finishInitialization!: () => void;
+  const initializing = new Promise<void>(resolve => { finishInitialization = resolve; });
+  const jobs: Array<() => Promise<void>> = [];
+  const coldReplies: typeof replies = [];
+  const calls: string[] = [];
+  vm.runInNewContext(output.outputFiles[0].text, {
+    setTimeout: (callback: () => Promise<void>) => { jobs.push(callback); },
+    self: { addEventListener: (_kind: string, callback: typeof receive) => { onMessage = callback; },
+      postMessage: (message: (typeof replies)[number]) => { coldReplies.push(message); } },
+    calculateFixture: async (name: string, args: unknown[]) => {
+      await initializing;
+      if (failInitialization) throw new Error("Engine unavailable");
+      if (name !== "preloadSwissEphemeris") calls.push(name);
+      return JSON.stringify({ name, args });
+    }
+  });
+  onMessage!({ data: { id: 1, kind: "sky", location: { label: "Fixture" }, date: "2026-07-16T12:00:00Z", options: { includeTransitWindows: true } } });
+  const coldStart = jobs.shift()!();
+  onMessage!({ data: { id: 2, kind: "lunar-calendar-week", args: ["2026-07-16", "UTC"] } });
+  finishInitialization();
+  await coldStart;
+  while (jobs.length) await jobs.shift()!();
+  assert.deepEqual(coldReplies.map(reply => reply.id), [2, 1], "Cold initialization must not lock in the slower Sky job ahead of queued Calendar facts");
+  assert(coldReplies.every(reply => reply.ok === !failInitialization));
+  assert.deepEqual(calls, failInitialization ? [] : ["getLunarCalendarWeek", "getAstrodienstSky"]);
+}
 receive!({ data: { id: 10, kind: "retrograde-history", planet: "venus", sign: "scorpio", date: "2026-10-03T12:00:00Z" } });
 receive!({ data: { id: 11, kind: "lunar-calendar-week", args: ["2026-10-03", "America/New_York"] } });
 while (scheduled.length) await scheduled.shift()!();

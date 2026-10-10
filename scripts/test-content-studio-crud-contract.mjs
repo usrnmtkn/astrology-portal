@@ -56,7 +56,7 @@ globalThis.fetch = async (input, init = {}) => {
         if (init.headers.prefer?.includes('ignore-duplicates')) continue;
         if (!init.headers.prefer?.includes('merge-duplicates')) return Response.json({ message: 'duplicate key' }, { status: 409 });
       }
-      const row = { lane: 'serving', review_state: null, target_date: null, updated_at: `2026-09-10T13:00:0${++sequence}Z`, ...existing, ...incoming, id: existing?.id ?? `qa-created-${sequence}` };
+      const row = { lane: 'serving', review_state: null, target_date: null, updated_at: new Date(Date.UTC(2026, 8, 10, 13, 0, ++sequence)).toISOString(), ...existing, ...incoming, id: existing?.id ?? `qa-created-${sequence}` };
       rows.set(row.id, row); saved.push(row);
     }
     return Response.json(saved);
@@ -365,4 +365,88 @@ await test('missing caller versions cannot overwrite, publish, archive, delete o
   assert.equal(deleted.status, 400); assert.equal(deleted.code, 'VERSION_REQUIRED'); assert.deepEqual(writes, []);
   reset(); const batch = await invoke('POST', { rows: [writeBody()] }, { versioned: false });
   assert.equal(batch.status, 400); assert.equal(batch.code, 'VERSION_REQUIRED'); assert.deepEqual(writes, []);
+});
+
+await test('all natal insight sections preserve distinct audience copy through CRUD and publication', async () => {
+  const { natalInsightTopics, natalInsightContentKey } = await import('../apps/web/src/content/natalInsightCatalog.ts');
+  reset([]);
+  for (const topic of natalInsightTopics) for (const audience of ['you', 'friend']) {
+    const key = natalInsightContentKey(topic.id, audience);
+    const sourceSnapshot = { contentSystem: 'cms-surface-override', contentType: 'mustache-template', allowedSlots: ['ownerName'] };
+    const content = { ...writeBody(key), surface: 'natal', mode: 'card', headline: `${audience} ${topic.title}`, body: `Opening for {{ownerName}}.\n\nComplete ${topic.id} passage.`, sourceSnapshot };
+    const created = await invoke('POST', content);
+    assert.equal(created.status, 200, JSON.stringify(created));
+    const row = created.rows[0];
+    const read = await invoke('GET', undefined, { query: `?id=${row.id}` });
+    assert.equal(read.rows[0].body, content.body);
+    const invalid = await invoke('PATCH', { id: row.id, status: 'LIVE', body: 'Unknown {{missingTopic}}' });
+    assert.notEqual(invalid.status, 200);
+    assert.equal(rows.get(row.id).status, 'DRAFT');
+    const published = await invoke('PATCH', { id: row.id, status: 'LIVE', body: content.body, lane: 'serving', reviewState: null });
+    assert.equal(published.status, 200, JSON.stringify(published));
+    const reopened = await invoke('GET', undefined, { query: `?id=${row.id}` });
+    assert.equal(reopened.rows[0].body, content.body);
+    assert.equal(reopened.rows[0].headline, content.headline);
+    assert.equal(reopened.rows[0].status, 'LIVE');
+  }
+  assert.equal(rows.size, 14);
+});
+
+await test('natal insight publication exception does not admit arbitrary personalized or sample rows', async () => {
+  for (const key of ['cms/natal-insight/you/not-a-topic', 'cms/natal-insight/you/approach/person', 'sample-natal-insight', 'natal/person/placement']) {
+    reset([]);
+    const result = await invoke('POST', { ...writeBody(key), surface: 'natal', mode: 'card', status: 'LIVE', lane: 'serving', reviewState: null });
+    assert.equal(result.status, 400);
+    assert.deepEqual(writes, []);
+  }
+});
+
+await test('shared unknown-time guide has an editable title and independent publication state', async () => {
+  reset([]);
+  const key = 'cms/natal-insight/you/approach/untimed';
+  const content = { ...writeBody(key), surface: 'natal', mode: 'article', headline: 'Saved Sun and Moon heading',
+    body: 'Complete untimed fixture guide.', sourceSnapshot: { contentSystem: 'cms-surface-override', contentType: 'mustache-template', allowedSlots: [] } };
+  const created = await invoke('POST', content);
+  assert.equal(created.status, 200, JSON.stringify(created));
+  const published = await invoke('PATCH', { id: created.rows[0].id, status: 'LIVE', lane: 'serving', reviewState: null });
+  assert.equal(published.status, 200, JSON.stringify(published));
+  const reopened = await invoke('GET', undefined, { query: `?id=${created.rows[0].id}` });
+  assert.equal(reopened.rows[0].body, content.body);
+  assert.equal(reopened.rows[0].headline, content.headline);
+});
+
+await test('house-specific ruler passages can be edited without changing the general placement', async () => {
+  const base = 'cms/natal-insight/passage/ruler-placement/you/venus/aquarius';
+  const scoped = 'cms/natal-insight/passage/ruler-placement/you/2/venus/aquarius';
+  reset([]);
+  const make = key => ({ ...writeBody(key), surface: 'natal', mode: 'article', body: '**Complete fixture opening.** Complete fixture ending.',
+    sourceSnapshot: { contentSystem: 'cms-surface-override', contentType: 'mustache-template', allowedSlots: [] } });
+  const original = await invoke('POST', make(base));
+  const created = await invoke('POST', make(scoped));
+  assert.equal(created.status, 200, JSON.stringify(created));
+  const changed = '**Revised fixture opening.** House-specific fixture ending.';
+  const updated = await invoke('PATCH', { id: created.rows[0].id, body: changed, status: 'LIVE', lane: 'serving', reviewState: null });
+  assert.equal(updated.status, 200, JSON.stringify(updated));
+  assert.equal(rows.get(original.rows[0].id).body, make(base).body);
+  assert.equal(rows.get(created.rows[0].id).body, changed);
+});
+
+await test('shared natal reading templates and passages preserve drafts and can publish only valid slots', async () => {
+  const { natalInsightSharedFixtureRows } = await import('../tests/helpers/natal-insight-shared-fixture.ts');
+  reset([]);
+  for (const fixture of natalInsightSharedFixtureRows('DRAFT')) {
+    const input = { ...writeBody(fixture.content_key), surface: 'natal', mode: 'article', headline: fixture.headline, body: fixture.body, sourceSnapshot: fixture.source_snapshot };
+    const created = await invoke('POST', input);
+    assert.equal(created.status, 200, fixture.content_key + JSON.stringify(created));
+    const row = created.rows[0];
+    assert.equal(row.status, 'DRAFT');
+    const saved = await invoke('GET', undefined, { query: `?id=${row.id}` });
+    assert.equal(saved.rows[0].body, fixture.body);
+    const invalid = await invoke('PATCH', { id: row.id, status: 'LIVE', body: '{{unsupportedNatalSlot}}' });
+    assert.notEqual(invalid.status, 200);
+    assert.equal(rows.get(row.id).body, fixture.body);
+    const published = await invoke('PATCH', { id: row.id, status: 'LIVE', body: fixture.body, lane: 'serving', reviewState: null });
+    assert.equal(published.status, 200, fixture.content_key + JSON.stringify(published));
+  }
+  assert.equal(rows.size, 472);
 });

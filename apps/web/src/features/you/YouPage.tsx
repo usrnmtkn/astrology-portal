@@ -1,3 +1,4 @@
+import { NatalReadingPage } from "../../components/charts/NatalReadingPage";
 import { FormattedProse } from "../../components/FormattedProse";
 import { ArticlePills, type ArticlePillData } from "../../components/ArticlePills";
 import { TransitFacts } from "../../components/ArticleFacts";
@@ -25,6 +26,7 @@ import { dedupeArticleSectionHeadings } from "../../utils/articleHeadings";
 import type { WeeklyHoroscopeAssembly } from "../../services/weeklyHoroscope";
 import { canonicalNatalAspectsForSnapshot } from "../../services/natalAspectFacts";
 import { updateYouTabUrl, youTabFromUrl, type YouTab } from "./youRouting";
+import { articleHistoryChangeEvent } from "../../services/articleNavigation";
 import { YouReportActions, type YouAccountRecovery } from "./YouReportActions";
 
 type NatalChartViewMode = "circle" | "table";
@@ -72,6 +74,9 @@ export type DailyHoroscopeAssembly = {
 };
 
 export type YouTransitArticle = {
+  readerBody?: ReactNode;
+  natalReading?: boolean;
+  requiresTransitSources?: boolean;
   pills?: ArticlePillData;
   transitDescription?: string;
   id: string;
@@ -128,6 +133,7 @@ export type YouPageProps = {
   elementalSummaryLabel: string;
   elementalSummarySentence: string;
   emptyHouseRows: ReactNode[];
+  natalInsights?: ReactNode;
   hasSavedBirthDetails: boolean;
   hasSavedCurrentCity: boolean;
   natalSky: SkySnapshot | null;
@@ -426,6 +432,7 @@ function YouNatalTab({
   elementalSummaryLabel,
   elementalSummarySentence,
   emptyHouseRows,
+  natalInsights,
   natalAspectPatternItems,
   natalAspectPatternStatus,
   onOpenNatalAspectPatternDetail,
@@ -438,6 +445,7 @@ function YouNatalTab({
   elementalSummaryLabel: string;
   elementalSummarySentence: string;
   emptyHouseRows: ReactNode[];
+  natalInsights?: ReactNode;
   natalAspectPatternItems?: NatalAspectPatternReaderItem[];
   natalAspectPatternStatus?: NatalAspectPatternsSectionStatus;
   onOpenNatalAspectPatternDetail: (item: NatalAspectPatternReaderItem, nestedItems: NatalAspectPatternReaderItem[]) => void;
@@ -497,7 +505,7 @@ function YouNatalTab({
           </div>
         </>
       )}
-
+      {natalInsights}
     </div>
   );
 }
@@ -1045,7 +1053,7 @@ function YouTransitArticlePage({
     ...group,
     sections: aspectSections.filter((section) => section.group === group.id)
   })).filter((group) => group.sections.length > 0);
-  const hasReadableBody = Boolean(displaySummary || displayIntroParagraphs.length || sections.length);
+  const hasReadableBody = Boolean(displayArticle.readerBody || displaySummary || displayIntroParagraphs.length || sections.length);
   const passKeyDates = displayArticle.meta.filter((row) => (
     /^Pass \d+$/u.test(row.label)
     || displayArticle.id.startsWith("personal-aspect:") && ["Current contact", "Full transit series"].includes(row.label)
@@ -1058,6 +1066,8 @@ function YouTransitArticlePage({
       return label === "date range" || label === "duration";
     })?.value
   );
+
+  if (displayArticle.natalReading) return <NatalReadingPage title={displayArticle.title} onClose={onClose} backLabel={backAriaLabel}>{displayArticle.readerBody}</NatalReadingPage>;
 
   return (
     <section
@@ -1098,9 +1108,10 @@ function YouTransitArticlePage({
 
           {hasReadableBody ? <hr className="article-rule" /> : null}
 
-          {displaySummary || displayIntroParagraphs.length || mainSections.length ? (
+          {displayArticle.readerBody || displaySummary || displayIntroParagraphs.length || mainSections.length ? (
           <div className="article-body-card sky-detail-body">
             <div className="article-body-inner">
+              {displayArticle.readerBody && <div className="article-section sky-detail-section sky-detail-plain-section">{displayArticle.readerBody}</div>}
               {displayArticle.lensHint ? (
                 <aside className="article-lens-hint" aria-label={displayArticle.lensHintLabel ?? "Placement lens"}>
                   {typeof displayArticle.lensHint === "string" ? <p>{cleanArticleText(displayArticle.lensHint)}</p> : displayArticle.lensHint}
@@ -1237,6 +1248,7 @@ export function YouPage({
   elementalSummaryLabel,
   elementalSummarySentence,
   emptyHouseRows,
+  natalInsights,
   hasSavedBirthDetails,
   hasSavedCurrentCity,
   natalAspectPatternItems,
@@ -1284,10 +1296,12 @@ export function YouPage({
 
     window.addEventListener("popstate", syncProfileTab);
     window.addEventListener("hashchange", syncProfileTab);
+    window.addEventListener(articleHistoryChangeEvent, syncProfileTab);
 
     return () => {
       window.removeEventListener("popstate", syncProfileTab);
       window.removeEventListener("hashchange", syncProfileTab);
+      window.removeEventListener(articleHistoryChangeEvent, syncProfileTab);
     };
   }, []);
 
@@ -1355,8 +1369,8 @@ export function YouPage({
     ? <PageLoadError message="The transit readings could not load. Please try again." onRetry={onRetryTransitCopy} />
     : transitCopyLoading ? <PageLoading message="Loading transit readings…" /> : null;
   if (transitArticle && onCloseTransitArticle) {
-    if (transitSourceFeedback) return transitSourceFeedback;
-    return <YouTransitArticlePage article={transitArticle} onClose={onCloseTransitArticle} />;
+    if (transitSourceFeedback && transitArticle.requiresTransitSources !== false) return transitSourceFeedback;
+    return <YouTransitArticlePage article={transitArticle} onClose={onCloseTransitArticle} backAriaLabel={transitArticle.requiresTransitSources === false ? "Back to natal chart" : "Back to updates"} />;
   }
 
   return (
@@ -1403,6 +1417,7 @@ export function YouPage({
               elementalSummaryLabel={elementalSummaryLabel}
               elementalSummarySentence={elementalSummarySentence}
               emptyHouseRows={emptyHouseRows}
+              natalInsights={natalInsights}
               natalAspectPatternItems={natalAspectPatternItems}
               natalAspectPatternStatus={natalAspectPatternStatus}
               onOpenNatalAspectPatternDetail={(item, nestedItems) => {

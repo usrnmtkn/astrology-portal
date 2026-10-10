@@ -1,6 +1,11 @@
 import { comparePersonalDailyTransits, personalDailyPriority, personalDailyPeakLabel, precisePersonalOrb, type PersonalDailyPeak } from "./services/personalDailyTransits";
 import { usePersonalDailyPeaks, usePersonalTransitSeries } from "./services/usePersonalDailyTransits";
 import { compositeReaderRelationshipCopy } from "./content/compositeRelationshipCopy";
+import { NatalInsightsSection } from "./components/charts/NatalInsightsSection";
+import { DeferredNatalInsightReading as NatalInsightReading } from "./components/charts/DeferredNatalInsightReading";
+import { natalInsightFromHash, natalInsightBirthTimeKnown } from "./services/natalInsightNavigation";
+import type { NatalInsightId } from "./content/natalInsightCatalog";
+import { natalInsightTitle } from "./content/natalInsightTitle";
 import { CalendarDaySkeleton } from "./features/calendar/CalendarDaySkeleton";
 import { skyIngressEssayPublicationKeys, skyIngressEssayReaderSection } from "./content/skyIngressEssayReader";
 import {
@@ -740,6 +745,9 @@ type CalendarContentCacheEntry = {
 };
 
 export type YouTransitArticle = {
+  readerBody?: ReactNode;
+  natalReading?: boolean;
+  requiresTransitSources?: boolean;
   pills?: ArticlePillData;
   transitDescription?: string;
   id: string;
@@ -2441,7 +2449,7 @@ function portalModeFromHashPath(path: string): PortalMode | null {
         return "member";
       }
 
-      if (path.startsWith("you/placement/")) {
+      if (path.startsWith("you/placement/") || path.startsWith("you/insight/")) {
         return "profile";
       }
 
@@ -4306,6 +4314,7 @@ function natalAspectDetailArticle(
   const resolvedSummary = resolvedBody[0] ?? "";
 
   return {
+    requiresTransitSources: false,
     id: contentKey,
     title,
     glyph: pointGlyph(aspect.from),
@@ -7327,6 +7336,7 @@ function emptyHouseDetailArticle(
   const paragraphs = normalized.sections.map((section) => taggedSectionBody(section));
 
   return {
+    requiresTransitSources: false,
     id: `empty-house-${house}-${normalizeContentIdPart(sign || "unknown")}`,
     title,
     glyph: sign ? zodiacSignGlyphs[sign] ?? "○" : "○",
@@ -15893,6 +15903,7 @@ function natalPlacementDetailArticle(
     : [];
 
   return {
+    requiresTransitSources: false,
     id: natalPlacementRouteId(position),
     pills: {
       dignity: ownerContext ? dignitiesFor(position.planet, position.sign, "they") : placementDignity(position),
@@ -17206,14 +17217,16 @@ function ProfileView({
   useEffect(() => {
     const identity = personalTransitPublicationIdentity();
     if (identity !== articlePublicationIdentity.current) {
-      // Includes house and weekly articles, whose IDs are not individual transits.
-      // Reopening resolves the current source rather than retaining a retired body.
+      // Includes house and weekly transit articles, whose IDs are not individual
+      // transits. Natal readings resolve their own sources and must stay open.
       articlePublicationIdentity.current = identity;
-      setTransitArticle(null);
+      setTransitArticle(current => current?.requiresTransitSources === false ? current : null);
     }
   }, [fallbackArchitectureV3Version, transitCopyLoading]);
 
-  useEffect(() => { setTransitArticle(null); }, [targetDate, currentSky?.location.timeZone]);
+  useEffect(() => {
+    setTransitArticle(current => current?.requiresTransitSources === false ? current : null);
+  }, [targetDate, currentSky?.location.timeZone]);
 
   const [activePlacementRouteId, setActivePlacementRouteId] = useState<string | null>(null);
   const [weeklyHoroscopeAssembly, setWeeklyHoroscopeAssembly] = useState<WeeklyHoroscopeAssembly | null>(null);
@@ -17518,8 +17531,28 @@ function ProfileView({
       updatePlacementRouteUrl(placementId, historyMode);
     });
   };
+  const insightArticle = (id: NatalInsightId): YouTransitArticle => ({
+    id: `natal-insight-${id}`, requiresTransitSources: false, natalReading: true,
+    title: natalInsightTitle(id, "you", generatedContent, profile.name, natalInsightBirthTimeKnown(natalSky, !unknownBirthTime)),
+    subtitle: "", summary: "", sections: [], meta: [], plainBody: true,
+    readerBody: natalSky ? <NatalInsightReading key={`${profile.id}/${id}`} topic={id} sky={natalSky} birthTimeKnown={!unknownBirthTime} subjectId={profile.id} /> : null
+  });
+  const openNatalInsight = (id: NatalInsightId) => transitionPage(() => {
+    setActivePlacementRouteId(null);
+    setTransitArticle(insightArticle(id));
+    const url = new URL(window.location.href);
+    url.hash = `you/insight/${id}`;
+    pushArticleUrl(url);
+  });
   useEffect(() => {
     function syncPlacementRoute() {
+      const topic = natalInsightFromHash(window.location.hash);
+      if (topic && natalSky) {
+        setActivePlacementRouteId(null);
+        setTransitArticle(insightArticle(topic));
+        return;
+      }
+      setTransitArticle(current => current?.id.startsWith("natal-insight-") ? null : current);
       const routeId = placementRouteIdFromUrl();
       const routePosition = placementPositionByRouteId(routeId);
 
@@ -18378,6 +18411,7 @@ function ProfileView({
         elementalSummaryLabel={elementalSummary.label}
         elementalSummarySentence={elementalSummary.sentence}
         emptyHouseRows={emptyHouseRows}
+        natalInsights={natalSky ? <NatalInsightsSection birthTimeKnown={natalInsightBirthTimeKnown(natalSky, !unknownBirthTime)} generatedContent={generatedContent} ownerName={profile.name} onOpenTopic={openNatalInsight} /> : null}
         hasSavedBirthDetails={hasSavedBirthDetails}
         hasSavedCurrentCity={hasSavedCurrentCity}
         currentSky={currentSky}
@@ -18394,9 +18428,16 @@ function ProfileView({
         onCloseTransitArticle={() => {
           if (returnToArticleParent()) return;
           transitionPage(() => {
+            const natalArticle = transitArticle?.requiresTransitSources === false;
             setActivePlacementRouteId(null);
             setTransitArticle(null);
             updatePortalModeUrl("profile", "push");
+            if (natalArticle) {
+              const url = new URL(window.location.href);
+              url.hash = "you?tab=chart";
+              window.history.replaceState(window.history.state, "", url);
+              window.dispatchEvent(new Event(articleHistoryChangeEvent));
+            }
           });
         }}
         personalTimingSummary={personalTimingSummary}

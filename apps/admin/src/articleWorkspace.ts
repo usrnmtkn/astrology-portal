@@ -29,6 +29,10 @@ export function isAstro101ContentRow(row: Pick<ArticleWorkspaceRow, "content_key
   return slug.startsWith("/learn/");
 }
 
+export function isNatalInsightContentRow(row: Pick<ArticleWorkspaceRow, "content_key">) {
+  return row.content_key.startsWith("cms/natal-insight/");
+}
+
 export function isSkyWriteupContentRow(row: ArticleWorkspaceRow) {
   const key = row.content_key.toLowerCase();
   if (skyMoonWriteupSection(key) || isSkyPlanetLivedKey(key)) return true;

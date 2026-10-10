@@ -1,3 +1,5 @@
+import { natalInsightTopics, natalInsightGuideKey, natalInsightTemplateKey, natalInsightTemplateSlots } from "../../web/src/content/natalInsightCatalog.ts";
+
 export type WritingLayer = "source-grounded" | "generated" | "madlib-fallback";
 export type WritingSurfaceStatus = "normalized" | "partial" | "not-normalized";
 
@@ -504,7 +506,24 @@ export const writingSurfaceSourceMap: WritingSurfaceMapItem[] = [
       { label: "build_synastry_web_bundle.py", path: "tldr-astro-phrasebank/tests/build_synastry_web_bundle.py", role: "spec" },
       { label: "build_natal_source_grounded_bundle.py", path: "tldr-astro-phrasebank/tests/build_natal_source_grounded_bundle.py", role: "spec" }
     ]
-  }
+  },
+  ...natalInsightTopics.map((topic): WritingSurfaceMapItem => ({
+    id: `natal-insight-${topic.id}`,
+    surface: `Natal Deeper insights: ${topic.title}`,
+    area: "Natal",
+    status: "normalized",
+    requiredSlots: ["headline", "body"],
+    visibleLayerOrder: ["source-grounded"],
+    currentRenderPath: "Topic links below Empty Houses open a dedicated reading on both You and Friends, with the shared guide available below it. An exact-chart private reading takes precedence; otherwise calculated facts select published shared passages and a topic template.",
+    risk: "Every selected template and passage must be Live and review-clear. Unknown birth times use Sun and Moon for Approach and exclude house-based readings. Rulers use traditional rulership and whole-sign houses. A published ruler passage for the source house replaces the general planet/sign passage; its destination-house interpretation remains separate. Aspects, house occupants, and a full condition assessment are not synthesized.",
+    nextAction: "Edit shared guide and title opens the same saved guide and heading used on both You and Friends. Approach has a separate shared guide without birth time. Edit topic templates, house-specific ruler passages, and house connections separately. Use Users for an optional private reading that replaces the shared composition for one exact chart.",
+    sources: [
+      { label: "NatalInsightsSection.tsx", path: "apps/web/src/components/charts/NatalInsightsSection.tsx", role: "renderer" },
+      { label: "Shared section guide (You and Friends)", path: `generated_interpretations:cms/natal-insight/you/${topic.id}`, role: "stored-source" },
+      { label: "Topic templates", path: `generated_interpretations:cms/natal-insight/{you|they}/${topic.id}/reading`, role: "stored-source" },
+      { label: "Chart-matched passages", path: "generated_interpretations:cms/natal-insight/passage/*", role: "stored-source" }
+    ]
+  }))
 ];
 
 /**
@@ -513,6 +532,23 @@ export const writingSurfaceSourceMap: WritingSurfaceMapItem[] = [
  * admin test fails when a reader surface is added without an editorial route.
  */
 export const writingSurfaceAdminAccess: Record<string, WritingSurfaceAdminAccess> = {
+  ...Object.fromEntries(natalInsightTopics.map(topic => [`natal-insight-${topic.id}`, {
+    readerLocation: `You or Friends > Natal > Deeper insights > ${topic.title}`,
+    editability: "editable",
+    routes: [{ label: "Edit shared passages", hash: `#exact-content?q=${encodeURIComponent("cms/natal-insight/passage/")}`, purpose: "reader-copy", note: "All twelve signs and house contexts are editable shared drafts. Publishing a passage makes it eligible for charts that match its facts." },
+      { label: "Edit a private chart reading", hash: "#users", purpose: "reader-copy", note: "An optional exact-chart reading replaces the shared composition for that chart only." }],
+    cmsStarters: [
+      { label: "Edit shared guide and title", contentKey: natalInsightGuideKey(topic.id), surface: "natal" as const,
+        headline: topic.title, allowedSlots: [] },
+      ...(topic.id === "approach" ? [{ label: "Edit shared guide without birth time", contentKey: natalInsightGuideKey(topic.id, true), surface: "natal" as const,
+        headline: "Sun & Moon", allowedSlots: [] }] : []),
+      ...(["you", "friend"] as const).flatMap(audience => [
+      { label: audience === "you" ? "Edit You reading template" : "Edit Friends reading template", contentKey: natalInsightTemplateKey(topic.id, audience), surface: "natal" as const,
+        headline: audience === "friend" && "friendTitle" in topic ? topic.friendTitle : topic.title, allowedSlots: natalInsightTemplateSlots },
+      ...(topic.id === "approach" ? [{ label: audience === "you" ? "Edit You template without birth time" : "Edit Friends template without birth time", contentKey: natalInsightTemplateKey(topic.id, audience, true), surface: "natal" as const,
+        headline: "Sun & Moon", allowedSlots: natalInsightTemplateSlots }] : [])
+    ])]
+  } satisfies WritingSurfaceAdminAccess])),
   "friends-compatibility-planet-cards": {
     readerLocation: "Friends > Compatibility > planet comparison cards",
     editability: "editable",

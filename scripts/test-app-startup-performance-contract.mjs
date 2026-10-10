@@ -16,12 +16,20 @@ const bundle = {
     facadeModuleId: "/repo/apps/web/src/App.tsx", dynamicImports: ["assets/article.js"]
   }),
   "assets/react.js": chunk("assets/react.js", ["assets/app.js"]),
-  "assets/article.js": chunk("assets/article.js", [])
+  "assets/article.js": chunk("assets/article.js", []),
+  "assets/calendar-route.js": chunk("assets/calendar-route.js", ["assets/react.js"], {
+    facadeModuleId: "/repo/apps/web/src/routes/CalendarRoute.tsx"
+  }),
+  "assets/calendar-view.js": chunk("assets/calendar-view.js", ["assets/react.js"], {
+    facadeModuleId: "/repo/apps/web/src/features/calendar/LunarCalendar.tsx", dynamicImports: ["assets/article.js"]
+  })
 };
 const [hint] = preloadPlugin.transformIndexHtml.handler("", { bundle });
 for (const [pathname, hash, expected] of [
   ["/", "#sky", 2], ["/", "#/sky/", 2], ["/", "#sky/placement/sun/virgo", 0],
-  ["/admin/content", "#sky", 0], ["/", "#calendar", 0], ["/", "#you", 0]
+  ["/admin/content", "#sky", 0], ["/", "#calendar", 4], ["/", "#you", 0],
+  ["/", "#/calendar?view=day&date=2026-09-20", 4], ["/admin/content", "#calendar", 0],
+  ["/", "#calendars", 0]
 ]) {
   const links = [];
   runInNewContext(hint.children, { location: { pathname, hash }, document: {

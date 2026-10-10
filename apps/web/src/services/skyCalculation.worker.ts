@@ -74,12 +74,19 @@ async function calculate(request: SkyCalculationRequest) {
 // Those details still precede optional natal timing, which can enqueue dozens
 // of jobs. Yield between jobs so route changes can enter the foreground queue.
 async function drainCalculations() {
-  const request = foregroundQueue.shift() ?? detailQueue.shift() ?? backgroundQueue.shift();
-  if (!request) {
+  if (!foregroundQueue.length && !detailQueue.length && !backgroundQueue.length) {
     draining = false;
     return;
   }
+  // Initialization can take seconds on a cold visit. Leave requests queued
+  // while the engine downloads so newly arrived Calendar work keeps priority.
+  let initializationFailed = false;
+  let initializationError: unknown;
+  try { await preloadSwissEphemeris(); }
+  catch (error) { initializationFailed = true; initializationError = error; }
+  const request = (foregroundQueue.shift() ?? detailQueue.shift() ?? backgroundQueue.shift())!;
   try {
+    if (initializationFailed) throw initializationError;
     const value = await calculate(request);
     const response: SkyCalculationResponse = { id: request.id, ok: true, value };
     self.postMessage(response);

@@ -1,3 +1,4 @@
+import { findNatalInsightReaders, natalInsightCharts, openNatalInsightDraft } from "../_lib/natal-insight-authoring.js";
 // @ts-ignore Shared reader-copy boundary.
 import { assertCleanReaderCopy } from "../../apps/web/src/content/editorialCopyBoundary.mjs";
 import type { IncomingMessage, ServerResponse } from "node:http";
@@ -22,7 +23,7 @@ type UserGeneratedContentPatch = {
 
 const surfaces = new Set<UserGeneratedContentSurface>(["sky", "you", "natal", "synastry", "composite", "relationship", "friends", "year_ahead"]);
 const statuses = new Set<UserGeneratedContentStatus>(["DRAFT", "REVIEWED", "LIVE", "ARCHIVED", "ERROR"]);
-const selectColumns = "id,user_id,subject_type,subject_id,content_key,surface,mode,status,event_type,target_date,provider,model,headline,summary,body,error,updated_at,created_at";
+const selectColumns = "facts,id,user_id,subject_type,subject_id,content_key,surface,mode,status,event_type,target_date,provider,model,headline,summary,body,error,updated_at,created_at";
 
 function requireEnv(name: string) {
   const value = process.env[name];
@@ -45,6 +46,12 @@ function adminHeaders() {
     authorization: `Bearer ${key}`,
     "content-type": "application/json"
   };
+}
+
+async function readPrivateRows(table: string, params: URLSearchParams) {
+  const response = await adminFetchJson(`${supabaseUrl()}/rest/v1/${table}?${params}`, { headers: adminHeaders() });
+  if (!response.ok || !Array.isArray(response.payload)) throw new AdminHttpError(502, "Private chart data could not be loaded.");
+  return response.payload;
 }
 
 function validDate(value: string | null) {
@@ -127,6 +134,10 @@ async function updateUserGeneratedContent(req: IncomingMessage) {
     if (body[field] !== undefined && typeof body[field] !== "string") throw new AdminHttpError(400, `${field} must be a string.`);
   }
 
+  if (body.status === "LIVE") {
+    const existing = await readPrivateRows("user_generated_interpretations", new URLSearchParams({ select: "id,content_key,body", id: `eq.${body.id}`, limit: "1" }));
+    if (existing[0]?.content_key?.startsWith("natal-insight/") && !(body.body ?? existing[0].body ?? "").trim()) throw new AdminHttpError(400, "Write the complete reading before publishing it.");
+  }
   try { assertCleanReaderCopy(body); } catch (error) { throw new AdminHttpError(400, (error as Error).message); }
   const row: Record<string, unknown> = { updated_at: new Date().toISOString() };
   if (body.status) row.status = body.status;
@@ -159,12 +170,31 @@ async function updateUserGeneratedContent(req: IncomingMessage) {
 
 export default async function handler(req: IncomingMessage, res: ServerResponse) {
   if (!await requireContentAdmin(req, res)) return;
-  if (req.method !== "GET" && req.method !== "PATCH") {
-    sendAdminMethodNotAllowed(res, ["GET", "PATCH"]);
+  if (req.method !== "GET" && req.method !== "PATCH" && req.method !== "POST") {
+    sendAdminMethodNotAllowed(res, ["GET", "PATCH", "POST"]);
     return;
   }
 
   try {
+    if (req.method === "GET") {
+      const params = new URL(req.url ?? "/", "http://localhost").searchParams;
+      if (params.get("view") === "readers") {
+        sendAdminJson(res, 200, { ok: true, readers: await findNatalInsightReaders(params.get("query") ?? "", readPrivateRows) });
+        return;
+      }
+      if (params.get("view") === "charts") {
+        sendAdminJson(res, 200, { ok: true, charts: await natalInsightCharts(params.get("userId") ?? "", readPrivateRows) });
+        return;
+      }
+    }
+    if (req.method === "POST") {
+      const input = await readAdminJsonBody(req, 256_000);
+      if (!input || typeof input !== "object" || Array.isArray(input)) throw new AdminHttpError(400, "Request body must be an object.");
+      const rows = await openNatalInsightDraft(input, readPrivateRows, supabaseUrl(), adminHeaders(), selectColumns);
+      assertStoredRows(rows);
+      sendAdminJson(res, 200, { ok: true, rows });
+      return;
+    }
     if (req.method === "PATCH") {
       sendAdminJson(res, 200, { ok: true, rows: await updateUserGeneratedContent(req) });
       return;

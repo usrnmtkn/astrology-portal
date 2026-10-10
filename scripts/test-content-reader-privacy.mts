@@ -17,9 +17,17 @@ const row: any = { id, updated_at: version, content_key: 'cms/test/exact', surfa
   sections: { sections: [{ heading: 'Fixture', body: text, privateNotes: privateText }],
     packageOriginalRecord: { body: privateText }, packageDraft: { body: privateText },
     dashboardEditHistory: [{ body: privateText }], arbitraryFutureField: privateText },
-  source_snapshot: { contentType: 'manual', editorialImport: { text: privateText }, internalNotes: privateText },
+  source_snapshot: { contentType: 'manual', editorialImport: { text: privateText, sourceText: 'A long-term legacy is part of this example.' },
+    previousGuideRevision: { sourceSnapshot: { reviewStatus: 'superseded', sourceText: privateText } },
+    previousFullRulesVersion: { source_snapshot: { sourceType: 'legacy', sourceText: privateText } }, internalNotes: privateText },
   facts: { privateBirthRecord: privateText }, reviewer_notes: privateText };
 const initial = structuredClone(row);
+assert.equal(readerRowIsEligible({ ...row, sections: {} }), true, 'Historical prose and review records cannot classify the current approved version as obsolete');
+for (const source_snapshot of [
+  { ...row.source_snapshot, sourceType: 'legacy' },
+  { ...row.source_snapshot, review_status: 'needs_review' },
+  { ...row.source_snapshot, content_role: 'source_material' }
+]) assert.equal(readerRowIsEligible({ ...row, sections: {}, source_snapshot }), false, 'Active serving controls still exclude unavailable content');
 let stored = [row];
 let ledger: any[] = [{ content_key: publicationLedgerKey, state: 'live', revision: 1, row_id: null, row_updated_at: null, updated_at: version },
   { content_key: row.content_key, state: 'live', revision: 1, row_id: id, row_updated_at: version, updated_at: version }];

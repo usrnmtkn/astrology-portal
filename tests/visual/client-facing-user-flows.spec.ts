@@ -1,3 +1,5 @@
+import { studioApiStore } from "../helpers/studio-api-store";
+import { natalInsightTopics, natalInsightContentKey } from "../../apps/web/src/content/natalInsightCatalog";
 import { readerResponse } from '../helpers/reader-response';
 import { expect, test, type Locator, type Page } from "@playwright/test";
 import { bundledPublications } from "../helpers/bundled-publications";
@@ -4647,7 +4649,7 @@ test.describe("client-facing user flow case studies", () => {
     await expect(page.locator("#you-transit-article-title")).toContainText("Sun in Aquarius in the 11th house");
     await expectNoDuplicateArticleHeadings(page, "You natal placement detail");
 
-    await page.getByRole("button", { name: "Back to updates" }).click();
+    await page.getByRole("button", { name: "Back to natal chart" }).click();
     await expect(page.getByRole("region", { name: "You", exact: true })).toBeVisible();
     await assertNoClientErrors();
   });
@@ -4668,16 +4670,16 @@ test.describe("client-facing user flow case studies", () => {
     await aspect.click();
     await expect(page.locator("#you-transit-article-title")).toHaveText(aspectName);
     await expect(page).toHaveURL(/\/aspect\//);
-    await expectAnimatedArticleNavigation(page, () => page.getByRole("button", { name: "Back to updates" }).click(), aspectName);
+    await expectAnimatedArticleNavigation(page, () => page.getByRole("button", { name: "Back to natal chart" }).click(), aspectName);
     await expect(page).toHaveURL(parentUrl);
     await expect(page.locator("#you-transit-article-title")).toHaveText(parentTitle);
     await expectAnimatedArticleNavigation(page, () => page.goForward(), parentTitle);
     await expect(page.locator("#you-transit-article-title")).toHaveText(aspectName);
     await page.reload();
     await expect(page.locator("#you-transit-article-title")).toHaveText(aspectName);
-    await page.getByRole("button", { name: "Back to updates" }).click();
+    await page.getByRole("button", { name: "Back to natal chart" }).click();
     await expect(page.locator("#you-transit-article-title")).toHaveText(parentTitle);
-    await page.getByRole("button", { name: "Back to updates" }).click();
+    await page.getByRole("button", { name: "Back to natal chart" }).click();
     await expect(page).toHaveURL(rootUrl);
     await expect(page.locator("#you-transit-article-title")).toHaveCount(0);
   });
@@ -5210,7 +5212,7 @@ test.describe("client-facing user flow case studies", () => {
         await page.reload();
         await expect(article).toContainText(source.body_you!);
         await article.screenshot({ path: `test-results/natal-reader-${planet.toLowerCase()}-${width}-${theme}.png` });
-        await page.getByRole("button", { name: "Back to updates" }).click();
+        await page.getByRole("button", { name: "Back to natal chart" }).click();
         await selectYouNatalTab(page);
       }
       await noErrors();
@@ -5225,7 +5227,7 @@ test.describe("client-facing user flow case studies", () => {
     await selectYouNatalTab(page);
 
     await page.getByRole("button", { name: /Ascendant in/ }).click();
-    await expect(page.getByRole("button", { name: "Back to updates" })).toBeVisible();
+    await expect(page.getByRole("button", { name: "Back to natal chart" })).toBeVisible();
     await expectNoDuplicateArticleHeadings(page, "You ascendant placement detail");
     await expectReaderFacingCopy(page.getByRole("region", { name: /Ascendant in/ }), "You ascendant placement fallback detail", 80);
     await assertNoClientErrors();
@@ -5944,7 +5946,7 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"] as const)
     await expect(page.locator("#you-transit-article-title")).toHaveText(/Mercury Rx in/);
     await expectNoDuplicateArticleHeadings(page, "You retrograde placement");
     await expectSemanticArticleHeadingOrder(page, "You retrograde placement");
-    await page.getByRole("button", { name: "Back to updates" }).click();
+    await page.getByRole("button", { name: "Back to natal chart" }).click();
     await page.getByRole("button", { name: /Ascendant in/ }).click();
     await expect(page.locator("#you-transit-article-title")).toBeVisible();
     await expectNoDuplicateArticleHeadings(page, "You natal placement");
@@ -6074,4 +6076,378 @@ for (const theme of ["light", "dark"] as const) {
       await assertNoClientErrors();
     });
   }
+}
+
+for (const theme of ["light", "dark"] as const) {
+  for (const viewport of [{ width: 1440, height: 1000 }, { width: 390, height: 844 }]) {
+    test(`natal deeper insights opens private topic pages below empty houses (${theme}, ${viewport.width}px)`, async ({ page }, testInfo) => {
+      test.setTimeout(120_000);
+      await page.setViewportSize(viewport);
+      await seedClientState(page, { profile: true, friends: true, theme, pageAnimations: "off" });
+      await seedSignedInSession(page);
+      const keys: string[] = [];
+      await page.route("**/rest/v1/user_generated_interpretations*", route => {
+        const url = new URL(route.request().url());
+        const key = url.searchParams.get("content_key")?.replace(/^eq\./, "") ?? "";
+        if (!key.startsWith("natal-insight/")) return route.fulfill({ json: [] });
+        keys.push(key);
+        expect(url.searchParams.get("subject_type")).toBe("eq.natal_summary");
+        expect(url.searchParams.get("status")).toBe("eq.LIVE");
+        expect(url.searchParams.get("user_id")).toBe(`eq.${fixtureUserId}`);
+        const audience = key.includes("/they/") ? "friend" : "you";
+        return route.fulfill({ json: [{ id: `private-${audience}`, content_key: key, status: "LIVE", surface: "natal", mode: "article",
+          body: `The saved ${audience} reading, first paragraph.\n\nThe complete second paragraph remains here.`, updated_at: "2026-10-06T00:00:00Z" }] });
+      });
+      for (const audience of ["you", "friend"] as const) {
+        await expectClientRouteLoads(page, audience === "you" ? "/#you?tab=chart" : "/#friends?tab=charts&chart=friend-nikki&view=natal");
+        const section = page.getByRole("region", { name: "Deeper insights", exact: true });
+        await expect(section).toBeVisible();
+        const empty = page.getByLabel(audience === "you" ? "Empty houses" : "Nikki empty houses", { exact: true });
+        await expect(empty).toBeVisible();
+        expect((await section.boundingBox())!.y).toBeGreaterThanOrEqual((await empty.boundingBox())!.y + (await empty.boundingBox())!.height);
+        await expect(section.getByRole("button")).toHaveCount(7);
+        await expect(section.locator("details,summary,.planet-placement-list")).toHaveCount(0);
+        expect(await section.evaluate(element => {
+          const properties = ["fontFamily", "fontSize", "fontWeight", "lineHeight", "letterSpacing", "textTransform", "textAlign", "marginTop", "marginBottom"] as const;
+          const label = element.querySelector("h2")!;
+          const reference = [...element.parentElement!.children].find(node => node.matches(".section-label"))!;
+          return properties.filter(property => getComputedStyle(label)[property] !== getComputedStyle(reference)[property]);
+        })).toEqual([]);
+        await section.screenshot({ path: testInfo.outputPath(`${audience}-navigation.png`), animations: "disabled" });
+        await section.locator('[data-insight="emotional-needs"]').focus();
+        await page.keyboard.press("Enter");
+        const reading = page.locator(".natal-insight-reading");
+        await expect(page.getByRole("heading", { name: "Emotional needs", exact: true })).toBeVisible();
+        await expect(reading.locator("p")).toHaveCount(2);
+        await expect(reading).toContainText(`The saved ${audience} reading`);
+        await expectNoHorizontalOverflow(page, `${audience} topic page`);
+        await page.screenshot({ path: testInfo.outputPath(`${audience}-article.png`), animations: "disabled" });
+        await page.reload();
+        await expect(reading).toContainText("The complete second paragraph remains here.");
+        await page.getByRole("button", { name: audience === "you" ? "Back to natal chart" : "Close detail" }).click();
+        await expect(section).toBeVisible();
+      }
+      expect(keys.some(key => /^natal-insight\/you\/emotional-needs\/[a-f0-9]{64}$/.test(key))).toBe(true);
+      expect(keys.some(key => /^natal-insight\/they\/emotional-needs\/[a-f0-9]{64}$/.test(key))).toBe(true);
+    });
+  }
+}
+
+for (const theme of ["light", "dark"] as const) for (const width of [1440, 390]) {
+  test(`natal topic page handles empty draft error and direct-link back (${theme}, ${width}px)`, async ({ page }, testInfo) => {
+    await page.setViewportSize({ width, height: 1000 });
+    await seedClientState(page, { profile: true, theme, pageAnimations: "off" });
+    await seedSignedInSession(page);
+    let mode: "draft" | "error" | "empty" = "draft";
+    await page.route("**/rest/v1/user_generated_interpretations*", route => {
+      if (!new URL(route.request().url()).searchParams.get("content_key")?.includes("natal-insight/")) return route.fulfill({ json: [] });
+      if (mode === "error") return route.fulfill({ status: 503, json: { message: "Synthetic unavailable storage" } });
+      return route.fulfill({ json: mode === "empty" ? [] : [{ id: "private-draft", status: "DRAFT", body: "This draft must stay hidden." }] });
+    });
+    // A transit service failure must not block a directly opened natal topic.
+    await page.route("**/api/content-reader", async route => {
+      const body = route.request().postDataJSON();
+      if (mode === "error" && body?.keys?.some((key: string) => key.startsWith("cms/natal-insight/"))) {
+        return route.fulfill({ status: 503, json: { error: "Synthetic insight storage error" } });
+      }
+      if (body?.surfaces?.includes("you")) return route.fulfill({ status: 503, json: { error: "Synthetic transit error" } });
+      return route.fallback();
+    });
+    await expectClientRouteLoads(page, "/#you/insight/emotional-needs");
+    await expect(page.getByRole("heading", { name: "Emotional needs", exact: true })).toBeVisible();
+    await expect(page.locator(".natal-insight-reading")).toContainText("A personalized reading for this chart is not available yet.");
+    await expect(page.getByText("This draft must stay hidden.", { exact: true })).toHaveCount(0);
+    await expect(page.locator(".natal-insight-reading h2, .natal-insight-reading h3")).toHaveCount(0);
+    await expectNoHorizontalOverflow(page, "Empty natal topic");
+    await page.screenshot({ path: testInfo.outputPath("empty-topic.png") });
+    mode = "error";
+    await page.reload();
+    await expect(page.getByText("This reading could not load.", { exact: true })).toBeVisible();
+    mode = "empty";
+    await page.getByRole("button", { name: "Try again", exact: true }).click();
+    await expect(page.locator(".natal-insight-reading")).toContainText("A personalized reading for this chart is not available yet.");
+    await page.getByRole("button", { name: "Back to natal chart", exact: true }).click();
+    await expect(page.getByRole("region", { name: "Deeper insights", exact: true })).toBeVisible();
+  });
+}
+import { natalInsightSharedFixtureRows, natalInsightGuideFixtureRows } from "../helpers/natal-insight-shared-fixture";
+
+for (const theme of ["light", "dark"] as const) for (const width of [960, 390]) {
+  test(`untimed natal insights use Sun and Moon on You and Friends (${theme}, ${width}px)`, async ({ page }, testInfo) => {
+    test.setTimeout(120_000);
+    await page.setViewportSize({ width, height: 1000 });
+    const guides = natalInsightGuideFixtureRows().map(row => ({ ...row,
+      headline: row.content_key.endsWith("/approach") ? "Your Rising Sign & Chart Ruler" : row.headline
+    }));
+    await seedClientState(page, { profile: true, friends: true, theme, pageAnimations: "off", generatedInterpretations: [...natalInsightSharedFixtureRows(), ...guides] });
+    await seedSignedInSession(page);
+    await page.route("**/rest/v1/user_generated_interpretations*", route => route.fulfill({ json: [] }));
+    await page.addInitScript(() => {
+      const profile = JSON.parse(localStorage.getItem("tldrastro:userProfile")!);
+      profile.charts[0].birthTimeUnknown = true;
+      profile.charts[0].birthTime = "Time unknown";
+      localStorage.setItem("tldrastro:userProfile", JSON.stringify(profile));
+      const key = `tldrastro:manualCharts:${profile.id}`;
+      const friends = JSON.parse(localStorage.getItem(key)!);
+      friends[0].birthTimeUnknown = true;
+      friends[0].birthTime = "Time unknown";
+      // Keep stale angles in the fixture to prove the time flag takes precedence.
+      localStorage.setItem(key, JSON.stringify(friends));
+    });
+    for (const audience of ["you", "friend"]) {
+      await expectClientRouteLoads(page, audience === "you" ? "/#you?tab=chart" : "/#friends?tab=charts&chart=friend-nikki&view=natal");
+      await expect(page.locator('[data-insight="approach"]')).toHaveText("Sun & Moon");
+      await page.locator('[data-insight="approach"]').click();
+      await expect(page.getByRole("heading", { name: "Sun & Moon", exact: true })).toBeVisible();
+      await expect(page.getByText("Birth time is needed to include houses and angles in this reading.", { exact: true })).toBeVisible();
+      const reading = page.locator(".natal-insight-reading");
+      await expect(reading.locator("h2")).toHaveCount(2);
+      expect(await reading.locator("h2").allTextContents()).toEqual([
+        expect.stringMatching(/^Sun in /), expect.stringMatching(/^Moon in /)
+      ]);
+      await expect(page.getByRole("heading", { name: "Your Rising Sign & Chart Ruler", exact: true })).toHaveCount(0);
+      await expect(page.locator(".natal-insight-guide")).toHaveCount(0);
+      await expectNoHorizontalOverflow(page, "Untimed natal insight");
+      await page.screenshot({ path: testInfo.outputPath(`untimed-${audience}.png`), fullPage: true });
+    }
+  });
+}
+
+for (const theme of ["light", "dark"] as const) for (const width of [960, 390]) {
+  test(`shared natal insights compose full pages for You and Friends (${theme}, ${width}px)`, async ({ page }, testInfo) => {
+    test.setTimeout(120_000);
+    await page.setViewportSize({ width, height: 1000 });
+    const guides = natalInsightGuideFixtureRows().map(row => ({ ...row,
+      headline: `Saved ${row.headline}`,
+      body: `Complete ${row.content_key.split("/").at(-1)} guide opening.\n\nComplete ${row.content_key.split("/").at(-1)} guide ending.`
+    }));
+    const sharedRows = natalInsightSharedFixtureRows();
+    const contextualRows = sharedRows.filter(row => row.content_key.includes("/ruler-placement/")).flatMap(row =>
+      [1, 2, 4, 5, 6, 10].map(house => {
+        const parts = row.content_key.split("/");
+        const audience = parts[4] === "you" ? "you" : "friend";
+        parts.splice(5, 0, String(house));
+        return { ...row, id: `${row.id}-house-${house}`, content_key: parts.join("/"),
+          body: `**Complete ${audience} contextual ruler opening.** This fixture applies to source house ${house}. Its final sentence stays editable.` };
+      }));
+    const rows = [...sharedRows, ...contextualRows, ...guides];
+    await seedClientState(page, { profile: true, friends: true, theme, pageAnimations: "off", generatedInterpretations: rows });
+    await seedSignedInSession(page);
+    await page.route("**/rest/v1/user_generated_interpretations*", route => route.fulfill({ json: [] }));
+    for (const audience of ["you", "friend"]) {
+      await expectClientRouteLoads(page, audience === "you" ? "/#you?tab=chart" : "/#friends?tab=charts&chart=friend-nikki&view=natal");
+      for (const topic of ["approach", "emotional-needs", "home-belonging", "creativity-pleasure", "style-expression", "money-resources", "work-direction"]) {
+        const title = guides.find(row => row.content_key.endsWith(`/${topic}`))!.headline;
+        await expect(page.locator(`[data-insight="${topic}"]`)).toHaveText(title);
+        await page.locator(`[data-insight="${topic}"]`).click();
+        await expect(page.getByRole("heading", { name: title, exact: true })).toBeVisible();
+        const article = page.locator(".natal-insight-reading");
+        const guide = page.locator(".natal-insight-guide");
+        await page.getByText("Read the guide", { exact: true }).click();
+        await expect(guide.getByRole("heading")).toHaveCount(0);
+        await expect(page.getByText("How this reading works", { exact: true })).toHaveCount(0);
+        await expect(guide).toContainText(`Complete ${topic} guide opening.`);
+        await expect(guide).toContainText(`Complete ${topic} guide ending.`);
+        await expect(guide.getByRole("listitem")).toHaveCount(0);
+        await expect(guide.locator("p")).toHaveCount(2);
+        await expect(article).toContainText(`${audience === "you" ? "You" : "They"} can read the complete ${topic}`);
+        expect(await guide.evaluate(el => Boolean(el.closest("details")?.open))).toBe(true);
+        if (topic === "approach" && audience === "you" && width === 960) {
+          // A transit-date update must not tear down a natal reading or close
+          // the guide the reader has already opened.
+          const disclosure = page.locator(".natal-reading-guide-disclosure");
+          await disclosure.evaluate(el => el.setAttribute("data-qa-instance", "open-guide"));
+          await page.locator(".sky-header-date-button").click();
+          await page.getByRole("gridcell", { name: "Friday, July 17, 2026", exact: true }).click();
+          await expect(page).toHaveURL(/[?&]date=2026-07-17(?:&|#|$)/u);
+          await expect(page.locator(".sky-header-date-button")).toHaveAttribute("aria-label", /Viewing transits for Fri, Jul 17/u);
+          await expect(disclosure).toHaveAttribute("data-qa-instance", "open-guide");
+          await expect(disclosure).toHaveJSProperty("open", true);
+          await expect(article).toContainText("Its final sentence stays editable.");
+        }
+        await expect(article).toContainText("Its final sentence stays editable.");
+        await expect(article).not.toContainText("{{");
+        if (["approach", "home-belonging", "creativity-pleasure", "money-resources", "work-direction"].includes(topic)) {
+          await expect(article).toContainText(`Complete ${audience} `);
+          await expect(article).toContainText("connection through");
+        }
+        if (topic === "work-direction") for (const house of [2, 6, 10]) {
+          await expect(article).toContainText(`Complete ${audience} house ${house} to`);
+          await expect(article).toContainText(`This fixture applies to source house ${house}.`);
+        }
+        if (topic === "money-resources") await expect(article).toContainText("This fixture applies to source house 2.");
+        if (topic === "home-belonging") await expect(article).toContainText("This fixture applies to source house 4.");
+        const headings = article.locator("h2:not(.sr-only), h3");
+        await expect(headings.first()).toBeVisible();
+        if (["home-belonging", "creativity-pleasure", "money-resources"].includes(topic)) {
+          const labels = await headings.allTextContents();
+          expect(labels[0]).toMatch(/^\w+ on the (4th|5th|2nd) house$/);
+          expect(labels[1]).toMatch(/^(Sun|Moon|Mercury|Venus|Mars|Jupiter|Saturn) in \w+, \d+(st|nd|rd|th) house$/);
+
+          expect(await headings.evaluateAll(elements => elements.slice(0, 2).map(e => e.tagName))).toEqual(["H2", "H2"]);
+        }
+        if (topic === "work-direction") {
+          expect(await article.locator("h2").allTextContents()).toEqual(["Public role · 10th house", "Daily work · 6th house", "Money & resources · 2nd house"]);
+          expect(await article.locator("h3").allTextContents()).toEqual(expect.arrayContaining([
+            expect.stringMatching(/^\w+ on the 10th house$/),
+            expect.stringMatching(/^\w+ on the 6th house$/),
+            expect.stringMatching(/^\w+ on the 2nd house$/)
+          ]));
+        }
+        // Saved-chart hydration can briefly reload the reading independently of
+        // its guide. Measure the populated surface, with the same bounded retry
+        // as the reader assertions, instead of racing a one-shot DOM snapshot.
+        await expect(async () => {
+          const type = await guide.locator("p").first().evaluate(el => {
+            const style = getComputedStyle(el);
+            const reference = document.querySelector(".natal-reading-prose p");
+            if (!reference) throw new Error("The reading must retain its narrative paragraphs");
+            const expected = getComputedStyle(reference);
+            const props = ["fontFamily", "fontSize", "fontWeight", "lineHeight", "textTransform", "textAlign", "letterSpacing"] as const;
+            return Object.fromEntries(props.map(p => [p, [style[p], expected[p]]]));
+          });
+          for (const [property, values] of Object.entries(type)) expect(values[0], property).toBe(values[1]);
+        }).toPass({ timeout: 15_000 });
+        for (const paragraph of await article.locator(".natal-reading-prose p").all()) {
+          await expect(paragraph.locator("strong")).toHaveCount(1);
+          expect(await paragraph.evaluate(el => el.firstElementChild?.tagName === "STRONG" && el.firstElementChild.nextSibling?.nodeType === Node.TEXT_NODE)).toBe(true);
+        }
+        if (topic === "approach") {
+          await expect(article.locator("h2")).toHaveCount(3);
+          await expect(article.locator(".natal-reading-label")).toHaveText(["01 · Rising sign", "02 · chart ruler", "03 · Sun sign"]);
+          await expect(article.locator(".natal-insight-reading__section--band")).toHaveCount(1);
+          await expect(page.locator(".natal-reading-article svg, .natal-reading-article img, .natal-reading-article hr")).toHaveCount(0);
+          await expect(page.locator(".topbar")).toBeVisible();
+          await expect(page.locator(".natal-reading-page .floating-back-button")).toBeVisible();
+          await page.evaluate(() => document.fonts.ready);
+          const styles = await article.evaluate(el => {
+            const props = (node: Element) => {
+              const s = getComputedStyle(node);
+              return {family:s.fontFamily,size:s.fontSize,weight:s.fontWeight,leading:s.lineHeight,tracking:s.letterSpacing,color:s.color};
+            };
+            // Compare with the established article components outside the reading
+            // so a page-local font or theme override cannot pass as a shared token.
+            const reference = document.createElement("div");
+            reference.innerHTML = '<article class="article-card"><h1 class="article-title">Title</h1><div class="article-section"><p>Body</p></div><p class="section-label">Label</p></article>';
+            reference.hidden = true;
+            document.body.append(reference);
+            const band = el.querySelector(".natal-insight-reading__section--band")!;
+            const link = el.querySelector("a")!;
+            const probe = document.createElement("div");
+            probe.style.background = "var(--surface-2)";
+            probe.style.color = "var(--card-title-color)";
+            probe.style.fontFamily = "var(--font-display)";
+            probe.style.fontSize = "var(--article-h2-size)";
+            probe.style.fontWeight = "var(--weight-medium)";
+            probe.style.lineHeight = "var(--leading-h2)";
+            probe.style.letterSpacing = "var(--tracking-title)";
+            reference.append(probe);
+            const paper = getComputedStyle(el.closest("article")!), refPaper = getComputedStyle(reference.querySelector("article")!);
+            const actual = {body:props(el.querySelector(".natal-reading-prose p")!),title:props(document.querySelector(".natal-reading-header h1")!),heading:props(el.querySelector("h2")!),label:props(el.querySelector(".natal-reading-label")!),band:getComputedStyle(band).backgroundColor,paper:paper.backgroundColor,radius:paper.borderRadius};
+            const expected = {body:props(reference.querySelector(".article-section p")!),title:props(reference.querySelector("h1")!),heading:props(probe),label:props(reference.querySelector(".section-label")!),band:getComputedStyle(probe).backgroundColor,paper:refPaper.backgroundColor,radius:refPaper.borderRadius};
+            const result = {actual,expected,lead:props(el.querySelector("strong")!),link:{line:getComputedStyle(link).textDecorationLine,thickness:getComputedStyle(link).textDecorationThickness},padding:getComputedStyle(band).paddingLeft,bodyBackground:getComputedStyle(document.body).backgroundImage};
+            reference.remove();
+            return result;
+          });
+          expect(styles.actual).toEqual(styles.expected);
+          expect(styles.actual.title.family).toContain("Newsreader");
+          expect(styles.actual.label.family).toContain("Geist Mono");
+          expect(styles.lead.weight).toBe("500");
+          expect(styles.lead.color).toBe(styles.actual.title.color);
+          expect(styles.bodyBackground).not.toBe("none");
+          if (width === 390) expect(styles.padding).toBe("24px");
+          expect(styles.link).toEqual({line:"underline",thickness:"1px"});
+          await page.getByText("Read the guide", { exact: true }).click();
+          await page.evaluate(() => window.scrollTo(0, 0));
+          await page.screenshot({ path: testInfo.outputPath(`approach-${audience}.png`), fullPage: true });
+        }
+        if (topic === "home-belonging" && audience === "you") await page.screenshot({ path: testInfo.outputPath("home-structure.png"), fullPage: true });
+        await expect(article.locator(".planet-placement-list,details")).toHaveCount(0);
+        await expectNoHorizontalOverflow(page, "Shared natal essay");
+        await page.getByRole("button", { name: audience === "you" ? "Back to natal chart" : "Close detail" }).click();
+      }
+    }
+    await expectClientRouteLoads(page, "/#you/insight/emotional-needs");
+    await page.reload();
+    await expect(page.locator(".natal-insight-reading")).toContainText("You can read the complete emotional-needs");
+    await expect(page.locator(".natal-insight-guide")).toContainText("Complete emotional-needs guide ending.");
+    const signLink = page.locator(".natal-insight-reading h2 a").first();
+    const destination = await signLink.getAttribute("href");
+    await signLink.click();
+    await expect(page).toHaveURL(new RegExp(`${destination}$`));
+    await expect(page.locator(".learn-article-page")).toBeVisible();
+    await page.goBack();
+    await expect(page.locator(".natal-insight-reading")).toContainText("You can read the complete emotional-needs");
+  });
+}
+
+test("shared natal insight drafts remain hidden on the reader page", async ({ page }) => {
+  await seedClientState(page, { profile: true, pageAnimations: "off", generatedInterpretations: [...natalInsightSharedFixtureRows("DRAFT"), ...natalInsightGuideFixtureRows()] });
+  await seedSignedInSession(page);
+  await page.route("**/rest/v1/user_generated_interpretations*", route => route.fulfill({ json: [] }));
+  await expectClientRouteLoads(page, "/#you/insight/emotional-needs");
+  await expect(page.locator(".natal-insight-reading")).toContainText("A personalized reading for this chart is not available yet.");
+  await expect(page.locator(".natal-insight-reading")).not.toContainText("complete emotional-needs");
+  await expect(page.locator(".natal-insight-guide")).toContainText("Complete emotional-needs guide ending.");
+});
+
+test("natal guides respect publication and recover independently of private readings", async ({ page }) => {
+  let mode: "draft" | "live" | "error" = "draft";
+  await seedClientState(page, { profile: true, pageAnimations: "off" });
+  await seedSignedInSession(page);
+  await page.route("**/rest/v1/user_generated_interpretations*", route => route.fulfill({ status: 503, json: { error: "Private reading unavailable" } }));
+  await page.route("**/api/content-reader", route => mode === "error"
+    ? route.fulfill({ status: 503, json: { error: "Guide unavailable" } })
+    : route.fulfill({ json: readerResponse(natalInsightGuideFixtureRows(mode === "draft" ? "DRAFT" : "LIVE")) }));
+  await expectClientRouteLoads(page, "/#you/insight/emotional-needs");
+  await expect(page.getByText("This reading could not load.", { exact: true })).toBeVisible();
+  await expect(page.getByText("Loading the guide…", { exact: true })).toHaveCount(0);
+  await expect(page.locator(".natal-insight-guide")).toHaveCount(0);
+  mode = "error";
+  await page.reload();
+  await expect(page.getByText("The guide could not load.", { exact: true })).toBeVisible();
+  mode = "live";
+  await page.getByRole("button", { name: "Try loading the guide again", exact: true }).click();
+  await expect(page.locator(".natal-insight-guide")).toContainText("Complete emotional-needs guide ending.");
+  await expect(page.getByText("This reading could not load.", { exact: true })).toBeVisible();
+});
+
+for (const theme of ["light", "dark"] as const) for (const width of [1440, 390]) {
+  test(`approved natal insight passages remain complete (${theme}, ${width}px)`, async ({ page }, testInfo) => {
+    test.setTimeout(120_000);
+    await page.setViewportSize({ width, height: 1000 });
+    const rows = natalInsightSharedFixtureRows();
+    const source = (key: string, field: string) => {
+      const row = fallbackSourceRowsV3.hookRows.find(row => row.contentKey === key) as Record<string, any>;
+      expect(row?.review_status).toBe("approved");
+      expect(row?.[field]).toBeTruthy();
+      return String(row[field]);
+    };
+    for (const row of rows) {
+      if (row.content_key.startsWith("cms/natal-insight/passage/emotional-needs/")) {
+        const sign = row.content_key.split("/").at(-1);
+        row.body = `{{#insightIsYou}}${source(`fallback-hook/natal-you-placement-sign-final/moon/${sign}`, "body")}{{/insightIsYou}}{{^insightIsYou}}${source(`fallback-hook/placement-sentence/moon/${sign}`, "body_they")}{{/insightIsYou}}`;
+      }
+    }
+    await seedClientState(page, { profile: true, friends: true, theme, pageAnimations: "off", generatedInterpretations: rows });
+    await seedSignedInSession(page);
+    await page.route("**/rest/v1/user_generated_interpretations*", route => route.fulfill({ json: [] }));
+    for (const audience of ["you", "friend"]) {
+      await expectClientRouteLoads(page, audience === "you" ? "/#you?tab=chart" : "/#friends?tab=charts&chart=friend-nikki&view=natal");
+      await page.locator('[data-insight="emotional-needs"]').click();
+      const article = page.locator(".natal-insight-reading");
+      const heading = article.locator("h2").first();
+      await expect(heading).toHaveText(/^Moon in /);
+      const sign = (await heading.innerText()).replace('Moon in ', '').toLowerCase();
+      const expected = source(audience === "you" ? `fallback-hook/natal-you-placement-sign-final/moon/${sign}` : `fallback-hook/placement-sentence/moon/${sign}`, audience === "you" ? "body" : "body_they");
+      const expectedParagraphs = expected.split(/\n\n+/);
+      expect((await article.locator(".natal-reading-prose p").allTextContents()).slice(0, expectedParagraphs.length)).toEqual(expectedParagraphs);
+      await expect(article).not.toContainText("A workable day can make room for both.");
+      await expect(article).not.toContainText("{{");
+      await expectNoHorizontalOverflow(page, "Complete natal source passage");
+      await page.screenshot({ path: testInfo.outputPath(`${audience}-approved-emotional-needs.png`), fullPage: true });
+      await page.reload();
+      await expect.poll(async () => (await article.locator(".natal-reading-prose p").allTextContents()).slice(0, expectedParagraphs.length)).toEqual(expectedParagraphs);
+    }
+  });
 }

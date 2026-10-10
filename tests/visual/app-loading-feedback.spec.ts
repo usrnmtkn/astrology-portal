@@ -211,6 +211,27 @@ for (const view of ["weekly", "week"]) test(`Calendar ${view} waits for authored
   await expect(page.locator(".lunar-calendar-loading")).toHaveCount(0);
 });
 
+test("direct Calendar starts route and view downloads before App finishes", async ({ page }) => {
+  let release!: () => void;
+  const held = new Promise<void>(resolve => { release = resolve; });
+  const downloads = new Set<string>();
+  page.on("request", request => {
+    const path = new URL(request.url()).pathname;
+    if (/\/assets\/(?:CalendarRoute|LunarCalendar)-.*\.js$/.test(path)) {
+      downloads.add(path.match(/\/assets\/(\w+)-/)![1]);
+    }
+  });
+  await page.route(/\/assets\/App-.*\.js$/, async route => {
+    await held;
+    await route.continue().catch(() => {});
+  });
+  try {
+    await page.goto("/#calendar?view=day&date=2026-09-20", { waitUntil: "domcontentloaded" });
+    await expect.poll(() => [...downloads].sort()).toEqual(["CalendarRoute", "LunarCalendar"]);
+  } finally { release(); }
+  await expect(dayGuidance(page).locator("p").first()).toBeVisible({ timeout: 20_000 });
+});
+
 test("Calendar cold mobile and desktop deliver controls and complete reading within budgets", async ({ browser }) => {
   test.setTimeout(120_000);
   for (const width of [390, 1440]) {

@@ -1,3 +1,4 @@
+import { NatalReadingPage } from "../../components/charts/NatalReadingPage";
 import { FormattedProse } from "../../components/FormattedProse";
 import { RetrogradeHistoryDisclosure, type RetrogradeHistoryContext } from "../../components/RetrogradeHistory";
 import { ArticlePills, type ArticlePillData } from "../../components/ArticlePills";
@@ -82,6 +83,7 @@ export type SkyPersonalizedPlacement = {
 };
 
 export type SkyDetail = {
+  natalReading?: boolean;
   retrogradeHistoryContext?: RetrogradeHistoryContext;
   placementFactsPending?: boolean;
   pills?: ArticlePillData;
@@ -560,6 +562,8 @@ export function SkyDetailArticle({
       </div>
     </section>
   ) : null;
+
+  if (detail.natalReading) return <NatalReadingPage audience="friend" title={detail.title} onClose={onClose} backLabel="Close detail">{detail.body}</NatalReadingPage>;
 
   return (
     <section

@@ -131,6 +131,7 @@ for (const key of initialChunks) {
     failures.push(`Horoscope edition editor must remain deferred from Content Studio startup: ${file}`);
   }
   if (key === 'src/CalendarPlanetaryWorkspace.tsx') failures.push(`Planetary Calendar workspace must remain deferred: ${file}`);
+  if (['src/NatalReadingAuthoring.tsx', 'src/PersonalizedReadingEditor.tsx'].includes(key)) failures.push(`Natal writing tools must remain deferred from Studio startup: ${file}`);
   if (file?.endsWith(".js") && fs.readFileSync(path.join(distRoot, file), "utf8").includes("Sky variable key")) {
     failures.push(`Sky variable reference must remain deferred: ${file}`);
   }

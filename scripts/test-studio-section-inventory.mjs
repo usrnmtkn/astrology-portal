@@ -57,6 +57,9 @@ for (const key of [
 }
 const natalChart = studioInventoryQuery({ page: "content", categoryFilter: "Natal Chart" });
 assert.ok(natalChart.prefixes.includes("fallback-hook/natal/planet-intro/"));
+for (const key of ["cms/natal-insight/you/approach", "cms/natal-insight/they/work-direction/reading", "cms/natal-insight/passage/home-belonging/aries"]) {
+  assert.ok(natalChart.prefixes.some(prefix => key.startsWith(prefix)), `Natal Chart must load ${key}`);
+}
 for (const key of ["fallback-hook/planet-lived/saturn", "fallback-hook/planet-lived/neptune"]) {
   assert.equal(natalChart.prefixes.some(prefix => key.startsWith(prefix)), false);
 }

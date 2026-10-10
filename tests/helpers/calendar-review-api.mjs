@@ -72,7 +72,9 @@ export function matchesStoredInventory(row, params) {
 export async function createApiStore(initial = fixtures, storeOptions = {}) {
   const env = { NODE_ENV: "test", CONTENT_GENERATION_SECRET: "calendar-api-fixture", SUPABASE_URL: "https://calendar-api.invalid", SUPABASE_SERVICE_ROLE_KEY: "calendar-api-fixture-key" };
   Object.assign(process.env, env);
-  const { default: handler } = await import(process.env.CALENDAR_TEST_HANDLER ?? "../../api/admin/generated-content.ts");
+  const chartFixtures = process.env.STUDIO_CHART_FIXTURE ? JSON.parse(readFileSync(process.env.STUDIO_CHART_FIXTURE, "utf8")) : {};
+  const privateStore = process.env.STUDIO_PERSONALIZED === "true";
+  const { default: handler } = await import(privateStore ? "../../api/admin/user-generated-content.ts" : process.env.CALENDAR_TEST_HANDLER ?? "../../api/admin/generated-content.ts");
   Object.assign(process.env, env);
   const rows = new Map(initial.map(row => [row.id, structuredClone(row)]));
   const publication = publicationRpcFixture(() => [...rows.values()], saved => { for (const row of saved) rows.set(row.id, row); });
@@ -86,7 +88,10 @@ export async function createApiStore(initial = fixtures, storeOptions = {}) {
     if (reader) return reader;
     const url = new URL(String(input));
     if (url.origin === env.SUPABASE_URL && url.pathname === "/rest/v1/content_publications" && (!options.method || options.method === "GET")) return Response.json([...new Map([...fixturePublications([...rows.values()]), ...await publication.publications()].map(row => [row.content_key,row])).values()]);
-    if (url.origin !== env.SUPABASE_URL || url.pathname !== "/rest/v1/generated_interpretations") throw new Error(`Unexpected test storage request ${url.origin}${url.pathname}`);
+    if (privateStore && url.origin === env.SUPABASE_URL && ["/rest/v1/user_profiles", "/rest/v1/manual_charts"].includes(url.pathname) && (!options.method || options.method === "GET")) {
+      return Response.json((chartFixtures[url.pathname.split("/").at(-1)] ?? []).filter(row => matchesStoredInventory(row, url.searchParams)));
+    }
+    if (url.origin !== env.SUPABASE_URL || url.pathname !== (privateStore ? "/rest/v1/user_generated_interpretations" : "/rest/v1/generated_interpretations")) throw new Error(`Unexpected test storage request ${url.origin}${url.pathname}`);
     const found = [...rows.values()].filter(row => matchesStoredInventory(row, url.searchParams));
     const method = options.method ?? "GET";
     if (method === "GET") {
@@ -104,7 +109,8 @@ export async function createApiStore(initial = fixtures, storeOptions = {}) {
     }
     const patch = JSON.parse(String(options.body));
     if (method === "POST") {
-      const created = { ...patch, id: storeOptions.uuidIds ? randomUUID() : `revision-${++sequence}`, updated_at: nextVersion(), created_at: new Date().toISOString() };
+      if (privateStore && patch.id && rows.has(patch.id)) return Response.json([]);
+      const created = { ...patch, id: privateStore && patch.id ? patch.id : storeOptions.uuidIds ? randomUUID() : `revision-${++sequence}`, updated_at: nextVersion(), created_at: new Date().toISOString() };
       rows.set(created.id, created);
       return Response.json([created]);
     }

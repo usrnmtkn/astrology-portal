@@ -199,6 +199,9 @@ export function socialPlacementRows(sky: SkySnapshot | null): SocialPlacementRow
 
   return socialPlacementOrder.flatMap((point) => {
     if (point === "Ascendant") {
+      // Unknown-time snapshots deliberately omit angles. Do not reconstruct an
+      // empty Ascendant row that the natal reader would try to interpret.
+      if (sky.birthTimeKnown === false || !sky.ascendant) return [];
       return [{
         id: "Ascendant",
         glyph: pointGlyph("Ascendant"),
@@ -210,7 +213,7 @@ export function socialPlacementRows(sky: SkySnapshot | null): SocialPlacementRow
       }];
     }
 
-    if (point === "Midheaven" && typeof sky.midheavenLongitude === "number") {
+    if (point === "Midheaven" && sky.birthTimeKnown !== false && sky.midheaven && typeof sky.midheavenLongitude === "number") {
       return [{
         id: "Midheaven",
         glyph: "MC",

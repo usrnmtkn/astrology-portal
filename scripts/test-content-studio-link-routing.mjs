@@ -88,6 +88,9 @@ assert.deepEqual(
 );
 
 assert.equal(readerDestinationPolicyBySurface["natal-placement-detail"].mode, "exact-context");
+for (const surface of trackedSurfaceIds.filter(id => id.startsWith("natal-insight-"))) {
+  assert.equal(readerDestinationPolicyBySurface[surface].mode, "context-required", "Natal topic templates require a selected chart before offering a reader destination.");
+}
 assert.equal(readerDestinationPolicyBySurface["sky-placement-detail"].mode, "exact-context");
 assert.equal(readerDestinationPolicyBySurface["sky-aspect-detail"].mode, "exact-context");
 assert.equal(readerDestinationPolicyBySurface["generated-reports"].mode, "exact-context");
