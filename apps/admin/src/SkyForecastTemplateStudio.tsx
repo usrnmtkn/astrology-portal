@@ -1,7 +1,7 @@
 import { lazy, Suspense, type ReactNode } from "react";
 import type { CalendarTemplatePreviewProps } from "./CalendarTemplatePreview";
 import { StudioButton } from "./StudioControls";
-import { PageLoading } from "../../web/src/components/PageLoading";
+import { PageLoading } from "../../../src/shared/components/PageLoading";
 import { skyForecastTemplates, type SkyForecastPeriod } from "./skyForecastTemplates";
 
 const CalendarPassageEditor = lazy(() => import("./CalendarPassageEditor"));

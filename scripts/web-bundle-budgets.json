@@ -15,6 +15,7 @@
   "totalCssGzipBytes": 116250,
   "totalJavaScriptGzipBytes": 3581000,
   "_rationale": {
+    "natalSharedBoundaryIntegration20261010": "Matched independent npm-ci builds with identical CI Supabase values and the natal-aspect flag measure the unchanged HoroscopeEditionsStudio source at 48399 raw / 14897 gzip bytes on main 4f5f92f79 and 48441 raw / 14924 gzip after integrating natal shared dependencies (+42 raw / +27 gzip). Allocate 50 bytes to this deferred chunk, leaving 26 bytes. Entry/startup, total JavaScript, CSS, dependency and runtime limits remain unchanged. The natal formatter follows main's shared implementation boundary; no horoscope source or reader prose changes.",
     "natalStudioLocation20261010": "Move shared natal guides out of Articles into the existing deferred Natal Chart finder. The tab, saved-writing selector and existing-editor links add 764 aggregate gzip bytes against the preceding integrated build (3579734 to 3580498). Allocate 1000 aggregate bytes, leaving 502 measured bytes. No reader copy, dependency, CSS, startup graph or runtime deadline changes; all individual chunk and startup limits remain unchanged. See docs/qa/natal-insight-readings.md.",
     "natalDatedSkyIntegration20261010": "Integrating released main 73a7822c0 into the natal branch increases the identical visual-smoke build from 3579001 to 3579734 aggregate gzip bytes (+733). Preserve main's separate 1000-byte startup, 25-byte signup and 500-byte standalone Studio allowances. Allocate 750 additional aggregate web bytes for the combined released Sky fallback and natal feature, leaving 266 measured bytes. Calendar's HTML preload hints do not change the JavaScript graph or its payload. No reader prose, dependency, deferred boundary or runtime-performance limit changes; this records integration cost, not a performance improvement.",
     "weeklyIdleRecovery20261010": "Matched independently installed builds against main ec4afa760, using identical visual-smoke Supabase placeholders and natal aspect patterns enabled, measure a deferred horoscope editor of 14593 and 14806 gzip bytes (+213), with aggregate JavaScript 3560023 and 3560145 (+122) across the same 228 chunks. Consolidating idle and active refresh removed duplicate listeners before measurement. Allocate 300 bytes to the editor ceiling for version-only idle refresh and stale-action reconciliation, leaving 94 measured bytes. Aggregate, reader startup, CSS, all other chunk and runtime-performance limits remain unchanged. No dependencies or reader prose change. See docs/qa/weekly-idle-recovery.md.",
@@ -117,5 +118,5 @@
   "memoryGraphJavaScriptGzipBytes": 64000,
   "memoryGraphCssGzipBytes": 29450,
   "horoscopeReaderChunkGzipBytes": 3900,
-  "horoscopeEditorChunkGzipBytes": 14900
+  "horoscopeEditorChunkGzipBytes": 14950
 }

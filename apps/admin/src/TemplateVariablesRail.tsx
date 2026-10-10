@@ -8,7 +8,7 @@ import type { CompositionMapRow, CompositionPreviewOptions } from "./composition
 import type { TemplateVariableReference } from "./templateVariableReference";
 import { templateVariableSourceCandidates, templateVariableSourceKeyPrefixes } from "./templateVariableSources";
 import { TemplateVariableReviewPanels, readableCopy, type TemplateVariableSourceRow } from "./TemplateVariableReviewPanels";
-import { PageLoading } from "../../web/src/components/PageLoading";
+import { PageLoading } from "../../../src/shared/components/PageLoading";
 
 const TemplateReaderDrilldown = lazy(() => import("./TemplateReaderDrilldown"));
 

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { PageLoading } from "../../web/src/components/PageLoading";
+import { PageLoading } from "../../../src/shared/components/PageLoading";
 import BondEffectPagePreview from "./BondEffectPagePreview";
 import { friendsActivationParam, friendsTransitCardDestinations, friendsTransitCompositionQuery, friendsTransitReaderTitle, parseFriendsActivationParam, bondEffectVersionsFromPayload } from "./bondEffectPageAssembly";
 import { AdminSelect } from "./AdminNativeControls";

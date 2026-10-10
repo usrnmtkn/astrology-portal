@@ -8,7 +8,7 @@ import { AlertTriangle, ArrowLeft, CheckCircle2, RefreshCw } from "lucide-react"
 import { useEffect, useMemo, useState } from "react";
 import { adminCredentialHeaders, adminSecretStorageKey, normalizeAdminSecret } from "./adminSecret";
 import { AdminAccessGate } from "./AdminStudioPrimitives";
-import { PageLoading } from "../../web/src/components/PageLoading";
+import { PageLoading } from "../../../src/shared/components/PageLoading";
 import { isPublishedButUnwired, type ContentWiringRow } from "./contentWiringStatus";
 import { loadOwnerSessionAccessToken, watchOwnerSessionAccessToken } from "./ownerSession";
 

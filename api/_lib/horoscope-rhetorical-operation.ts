@@ -57,9 +57,14 @@ export async function horoscopeRhetoricalOperation({action,row:initialRow,persis
     if(operation.state!=='ready'||operation.responseId||operation.requestHash)throw new AdminHttpError(409,'This prose check has already started. Check saved progress to retrieve it.');
     const {input,instructions,schema}=operation.reviewRequest;
     const request={...provider.buildProviderRequest({config:operation.config,role:'judge',systemInstruction:null,input,schema}),background:true,store:true};
-    operation={...operation,state:'starting',requestHash:horoscopeReviewHash({request,instructions}),startedAt:new Date().toISOString()};
+    operation={...operation,state:'reserved',requestHash:horoscopeReviewHash({request,instructions}),startedAt:new Date().toISOString()};
     await save(); // A stale or failed reservation must never dispatch.
+    let dispatchAttempted=false;
     try{
+      // The first checkpoint is a recoverable reservation, not evidence of a
+      // paid dispatch. Only a separately confirmed dispatch fence can send.
+      operation={...operation,state:'starting'};await save();
+      dispatchAttempted=true;
       const {response,payload}=await responses.startStoredWritingResponse({apiKey,role:'RHETORICAL_REVIEWER',request,governedInstructions:instructions,surface:'horoscopes',family:'horoscope',fetchImpl:(url:any,options:any)=>fetch(url,{...options,signal:AbortSignal.timeout(25000)})});
       if(!response.ok){
         if(response.status>=400&&response.status<500)return await hold('rhetorical_review_unavailable','The prose check could not start. The original draft is kept for editing or rejection.',{diagnostic:horoscopeProviderDiagnostic(payload)});
@@ -69,6 +74,7 @@ export async function horoscopeRhetoricalOperation({action,row:initialRow,persis
       operation={...operation,state:'running',responseId:payload.id};await save();
       return ['queued','in_progress'].includes(String(payload.status))?pending():await complete(payload);
     }catch(error){
+      if(!dispatchAttempted)throw error;
       // Save a returned ID once more if its first storage acknowledgement failed.
       // If the handler dies, the reserved starting state is recovered by poll.
       if(operation.responseId){await save();return pending();}
@@ -76,6 +82,10 @@ export async function horoscopeRhetoricalOperation({action,row:initialRow,persis
     }
   }
   if(operation.state==='ready')return pending();
+  if(operation.state==='reserved'){
+    if(Date.now()-Date.parse(operation.startedAt)<HOROSCOPE_STARTUP_DEADLINE_MS)return pending();
+    operation={...operation,state:'ready',requestHash:null};await save();return pending();
+  }
   if(!operation.responseId){
     if(Date.now()-Date.parse(operation.startedAt)<HOROSCOPE_STARTUP_DEADLINE_MS)return pending();
     return hold('rhetorical_review_interrupted','The prose check was interrupted before confirmation. Its original draft is kept. No automatic retry will be made.');

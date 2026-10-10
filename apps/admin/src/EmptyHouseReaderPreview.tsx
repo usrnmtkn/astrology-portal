@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { StudioButton } from "./StudioControls";
-import { PageLoading } from "../../web/src/components/PageLoading";
+import { PageLoading } from "../../../src/shared/components/PageLoading";
 import { subscribeToContentPublications } from "../../web/src/content/contentPublicationState";
 import { adminCredentialHeaders } from "./adminSecret";
 import { Stack, Text } from "./studio-ds/primitives";

@@ -16,7 +16,7 @@ assert.match(inventory, /authored\/lunar-journal\//u);
 assert.match(inventory, /authored\/calendar-season-transition\//u);
 // List rows are marked as documents-not-loaded by the shared listing projection.
 assert.match(api, /studioListingRow\(row, /u);
-assert.match(fs.readFileSync("api/_lib/studio-listing-facts.ts", "utf8"), /inventory_only: true/u);
+assert.match(fs.readFileSync("src/shared/studio-listing-facts.ts", "utf8"), /inventory_only: true/u);
 assert.match(api, /postgrestContentKeyPrefixAnd/u);
 assert.match(inventory, /\/api\/admin\/generated-content-inventory\?/u);
 assert.match(dashboard, /\/api\/admin\/generated-content-inventory\?/u);

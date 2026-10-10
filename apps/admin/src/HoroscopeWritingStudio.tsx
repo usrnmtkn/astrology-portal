@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { AdminDisclosureSummary } from "./AdminNativeControls";
 import { StudioButton, StudioTabs, StudioTextarea } from "./StudioControls";
 import { adminCredentialHeaders } from "./adminSecret";
-import { PageLoading } from "../../web/src/components/PageLoading";
+import { PageLoading } from "../../../src/shared/components/PageLoading";
 import { HOROSCOPE_PERIODS, HOROSCOPE_PROFILE_FIELDS, HOROSCOPE_PROFILE_FIELD_LIMIT, HOROSCOPE_PROMPT_VARIABLES, horoscopeEditorialPreview, validateHoroscopeProfile, type HoroscopePeriod, type HoroscopeProfile, type SavedHoroscopeProfile } from "../../../src/astro-writing/horoscopeWritingProfiles.mjs";
 
 const endpoint = "/api/admin/generated-content?writingProfiles=true";

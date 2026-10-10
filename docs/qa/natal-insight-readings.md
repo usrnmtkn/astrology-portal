@@ -149,3 +149,43 @@ and every runtime deadline. No content is shortened to reduce the build.
 Saved writing was also inspected using a private local snapshot and fictional
 charts. That preview does not change database publication state. Its data and
 screenshots remain outside the public repository.
+
+### Shared-code integration and Studio entry measurement
+
+Integration with main `4f5f92f79` keeps the common writing renderer in
+`src/shared/components/FormattedWritingContent.tsx`. The reader's old import
+path remains a compatibility export. Natal opening emphasis and inline links
+use that shared implementation; a rendered regression checks both paragraphs
+and the unchanged default formatting. The natal authoring form also imports
+the shared chart types. Both the new Weekly API tests and the natal authoring
+tests remain in the unfiltered API command.
+
+The earlier hosted Sky Summary Studio job passed all 58 browser cases and
+then failed its entry-size check. Independent `npm ci` builds with identical
+CI Supabase placeholders measure main's Studio entry at 787,643 raw / 229,286
+gzip bytes and the integrated natal entry at 790,134 raw / 230,142 gzip bytes.
+The entry allowance now covers the measured natal feature: 790,250 raw and
+230,250 gzip bytes. Total Studio JavaScript is 787,492 gzip bytes, under its
+unchanged aggregate limit. Runtime deadlines and deferred-content checks remain
+unchanged.
+
+With the same web configuration, the unchanged Horoscope Editions editor
+measures 14,897 gzip bytes on main and 14,924 with the natal shared dependencies.
+Its deferred-chunk allowance is 14,950 bytes. All other web limits stay fixed.
+These are measured size allowances, not claims of a performance improvement.
+Final test results and their exact revision belong in the release PR.
+
+The subsequent hosted cold-Calendar trace showed that a full Sky job claimed
+the worker before engine initialization finished. Calendar requests arriving
+during that download could not take their existing foreground priority. The
+worker now waits for initialization before choosing from its queues. It still
+starts only for a requested local calculation, retains the same calculation
+inputs, and returns initialization failures with each request's identity.
+The regression reproduces the cold Sky-first arrival order, checks Calendar
+completion first, and covers failed initialization. The 6,000 ms controls and
+7,500 ms complete-reading limits are unchanged.
+All 21 fresh-build loading and recovery browser cases passed locally. At
+390px, three uncached samples measured 4,804–4,842 ms for controls and
+6,491–6,501 ms for complete readings; at 1440px, they measured 4,790–4,800 ms
+and 6,366–6,386 ms. These are local throttled measurements, not production
+latency claims.

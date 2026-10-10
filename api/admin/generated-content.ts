@@ -1,3 +1,6 @@
+import {isDeepStrictEqual} from 'node:util';
+import {persistWeeklyHoroscope} from '../_lib/horoscope-storage-confirmation.js';
+import {horoscopeEditorPayload} from '../_lib/horoscope-editor-payload.js';
 import { studioScopeStorageFilter } from "../../apps/admin/src/studioContentScope.js";
 import { calendarPassageIdentity, calendarPassageErrors, calendarPassageVariables } from '../../src/calendar-writing/passageContract.js';
 import { handleStudioVariables, StudioVariableError, snapshotStudioVariables, assertStudioVariablePublication } from "../_lib/studio-variables.js";
@@ -1126,7 +1129,9 @@ function serviceRoleKey() {
   return requireEnv("SUPABASE_SERVICE_ROLE_KEY");
 }
 
+const horoscopeEditorResponses=new WeakSet<ServerResponse>();
 function sendJson(res: ServerResponse, status: number, body: unknown) {
+  if(horoscopeEditorResponses.has(res))body=horoscopeEditorPayload(body);
   res.statusCode = status;
   res.setHeader("content-type", "application/json");
   res.setHeader("cache-control", "no-store");
@@ -2388,7 +2393,7 @@ async function updateGeneratedContent(req: IncomingMessage) {
   if (body.expectedUpdatedAt !== existing.updated_at) {
     throw new GeneratedContentRequestError("This content changed after the editor was opened. Reload the row before saving so a newer edit is not overwritten.", 409);
   }
-  if (existing.content_key.startsWith('horoscope/') && existing.source_snapshot?.horoscopeGeneration?.active) {
+  if (existing.content_key.startsWith('horoscope/') && (existing.source_snapshot?.horoscopeGeneration?.active||existing.source_snapshot?.horoscopeGeneration?.batch?.status==='running')) {
     throw new GeneratedContentRequestError('A horoscope reading is running. Resume generation before editing or publishing this edition.', 409);
   }
   if (existing.content_key.startsWith("studio-lunation/")) throw new GeneratedContentRequestError("Manage dated drafts in Calendar Write-ups → New & Full Moons & Eclipses.");
@@ -2952,7 +2957,7 @@ async function updateGeneratedContent(req: IncomingMessage) {
   if (body.sourceSnapshot !== undefined) {
     patch.source_snapshot = body.sourceSnapshot;
     if (existing.content_key.startsWith('horoscope/') && existing.source_snapshot?.horoscopeGeneration) {
-      patch.source_snapshot = { ...(isRecord(body.sourceSnapshot) ? body.sourceSnapshot : {}), horoscopeGeneration: existing.source_snapshot.horoscopeGeneration };
+      patch.source_snapshot = { ...existing.source_snapshot, ...(isRecord(body.sourceSnapshot) ? body.sourceSnapshot : {}), horoscopeGeneration: existing.source_snapshot.horoscopeGeneration };
     }
   }
 
@@ -3153,6 +3158,17 @@ async function updateGeneratedContent(req: IncomingMessage) {
   await assertZodiacSeasonPublication({ ...existing, ...patch });
   if (patch.status === "LIVE") await assertStudioVariablePublication(v3PackageRecord({ ...existing, ...patch }), studioVariableStorage);
 
+  // Weekly editors send only editable fields. A compact, versioned checkpoint
+  // retains the complete server-owned history without returning it through PATCH.
+  if(existing.sections?.horoscopeEdition?.window?.period==='weekly'&&existing.status==='DRAFT'&&patch.status!=='LIVE'){
+    const changed=Object.fromEntries(Object.entries(patch).filter(([key,value])=>key!=='updated_at'&&!isDeepStrictEqual(value,existing[key])));
+    if(Object.keys(changed).every(key=>['sections','source_snapshot','body','facts','review_state','reviewed_at','status'].includes(key))
+      &&(changed.review_state===undefined||changed.review_state===null)&&(changed.reviewed_at===undefined||changed.reviewed_at===null)){
+      const saved=await persistWeeklyHoroscope({url:`${supabaseUrl()}/rest/v1/generated_interpretations`,headers:adminHeaders(),row:existing,patch:changed});
+      return [saved];
+    }
+  }
+
   const updateParams = new URLSearchParams();
   updateParams.set("id", `eq.${body.id}`);
   const expectedUpdatedAt = body.expectedUpdatedAt;
@@ -3197,7 +3213,7 @@ async function deleteGeneratedContent(req: IncomingMessage) {
   if (!existing) {
     throw new GeneratedContentRequestError("Content row was not found.", 404);
   }
-  if (existing.content_key.startsWith('horoscope/') && existing.source_snapshot?.horoscopeGeneration?.active) {
+  if (existing.content_key.startsWith('horoscope/') && (existing.source_snapshot?.horoscopeGeneration?.active||existing.source_snapshot?.horoscopeGeneration?.batch?.status==='running')) {
     throw new GeneratedContentRequestError('A horoscope reading is running. Retrieve or release that request before deleting the edition.', 409);
   }
   if (existing.content_key.startsWith("studio-lunation/")) throw new GeneratedContentRequestError("Manage dated drafts in Calendar Write-ups → New & Full Moons & Eclipses.");
@@ -3235,6 +3251,7 @@ async function deleteGeneratedContent(req: IncomingMessage) {
 }
 
 export default async function handler(req: IncomingMessage, res: ServerResponse) {
+  if(new URL(req.url??"/","http://localhost").searchParams.get("horoscopeEditor")==="true")horoscopeEditorResponses.add(res);
   if (!await requireContentAdmin(req, res)) return;
 
   try {

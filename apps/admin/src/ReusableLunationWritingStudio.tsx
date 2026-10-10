@@ -2,7 +2,7 @@ import {useEffect,useState} from 'react';
 import {StudioButton,StudioInput,StudioTabs,StudioTextarea} from './StudioControls';
 import {AdminDisclosureSummary,AdminSelect} from './AdminNativeControls';
 import {adminCredentialHeaders} from './adminSecret';
-import {PageLoading} from '../../web/src/components/PageLoading';
+import {PageLoading} from '../../../src/shared/components/PageLoading';
 import {LUNATION_SIGNS,LUNATION_PHASES,LUNATION_PROFILE_FIELDS,LUNATION_ARGUMENT_FIELDS,lunationContentKey} from '../../../src/astro-writing/lunationWritingIdentity.mjs';
 import type {LunationProfile} from '../../../src/astro-writing/lunationWritingProfile.mjs';
 

@@ -24,6 +24,11 @@
       "resolver": "apps/web/src/content/fallbackArchitectureV3Runtime.ts",
       "readerDestinations": ["You · Personal Transit detail/card"],
       "expected": { "rows": 378, "nonblank": 378 },
+      "coverageIdentities": [
+        { "path": "packages/astro-knowledge/review/transit-aspect-you-refresh-376-owner-live-2026-09-04.json", "collection": "members" },
+        { "path": "packages/astro-knowledge/review/transit-aspect-sun-ascendant-hard-owner-published-2026-09-03.json" },
+        { "path": "packages/astro-knowledge/review/transit-aspect-venus-moon-hard-owner-published-2026-09-02.json" }
+      ],
       "failurePolicy": "Keep canonical source/bundle byte-aligned; a database override may win only when reader-eligible."
     },
     {
@@ -35,7 +40,10 @@
       "servingSource": "apps/web/src/content/fallbackArchitectureV3/bundled-transit-core-authored-cards-v3.json",
       "resolver": "apps/web/src/content/fallbackArchitectureV3Runtime.ts",
       "readerDestinations": ["Friends · Transits"],
-      "expected": { "rows": 378, "nonblank": 377, "intentionalBlank": "authored/transit-aspect/venus/moon/hard" },
+      "expected": { "rows": 384, "nonblank": 383, "intentionalBlank": "authored/transit-aspect/venus/moon/hard" },
+      "coverageIdentities": [
+        { "path": "packages/astro-knowledge/review/friend-transit-pronouns-2026-10-05.json", "collection": "edits", "field": "body_they" }
+      ],
       "failurePolicy": "Do not synthesize Friends prose for the intentional blank. Database overrides require the same LIVE/serving/null-review-state gate."
     },
     {

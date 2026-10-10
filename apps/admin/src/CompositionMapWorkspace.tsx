@@ -21,7 +21,7 @@ import {
   type WritingSurfaceCmsStarter,
   type WritingSurfaceMapItem
 } from "./writingSurfaceSourceMap";
-import { PageLoading } from "../../web/src/components/PageLoading";
+import { PageLoading } from "../../../src/shared/components/PageLoading";
 import { MetricCard } from "./studio-ds/patterns";
 import { Grid, Stack, Text } from "./studio-ds/primitives";
 import { containedDisclosure, metricGrid } from "./studio-ds/recipes";

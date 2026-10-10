@@ -19,7 +19,7 @@ const read = (relativePath) => fs.readFileSync(path.join(repoRoot, relativePath)
 await build({
   bundle: true,
   define: { "import.meta.env": "{}" },
-  entryPoints: [path.join(repoRoot, "apps/web/src/features/calendar/calendarContentKeys.ts")],
+  entryPoints: [path.join(repoRoot, "src/shared/features/calendar/calendarContentKeys.ts")],
   format: "esm",
   logLevel: "silent",
   outfile: bundleFile,

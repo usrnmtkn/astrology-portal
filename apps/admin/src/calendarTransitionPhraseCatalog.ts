@@ -1,7 +1,7 @@
-import { calendarTimingTemplates, type CalendarTimingKind } from '../../web/src/features/calendar/calendarTimingTemplates.js';
-import { calendarTransitionPhraseKeys, calendarTransitionPhraseForKey, type CalendarMoonContextKind } from '../../web/src/features/calendar/calendarTransitionPhraseIdentity.js';
-import { calendarMoonContextPhrases } from '../../web/src/features/calendar/calendarTransitionPhrases.js';
-import { moonContinuationSummaries, moonContinuationOnFirstQuarter } from '../../web/src/features/calendar/moonContinuationSummaries.js';
+import { calendarTimingTemplates, type CalendarTimingKind } from '../../../src/shared/features/calendar/calendarTimingTemplates.js';
+import { calendarTransitionPhraseKeys, calendarTransitionPhraseForKey, type CalendarMoonContextKind } from '../../../src/shared/features/calendar/calendarTransitionPhraseIdentity.js';
+import { calendarMoonContextPhrases } from '../../../src/shared/features/calendar/calendarTransitionPhrases.js';
+import { moonContinuationSummaries, moonContinuationOnFirstQuarter } from '../../../src/shared/features/calendar/moonContinuationSummaries.js';
 export { calendarTransitionPhraseKeys };
 export const calendarTransitionPhrases = calendarTransitionPhraseKeys.map(key => {
   const identity = calendarTransitionPhraseForKey(key)!;

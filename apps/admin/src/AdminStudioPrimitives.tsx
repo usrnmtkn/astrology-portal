@@ -1,6 +1,6 @@
 import { StudioButton } from "./StudioControls";
 import { AlertTriangle, BarChart3, Plus, type LucideIcon } from "lucide-react";
-import { PageLoading } from "../../web/src/components/PageLoading";
+import { PageLoading } from "../../../src/shared/components/PageLoading";
 import { lazy, Suspense, useEffect, useRef, type ComponentProps, type KeyboardEvent } from "react";
 
 export type AdminBreadcrumb = {

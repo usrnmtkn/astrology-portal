@@ -1,5 +1,5 @@
 import { useState } from "react";
-import type { LocationInput, SkySnapshot } from "../../web/src/types";
+import type { LocationInput, SkySnapshot } from "../../../src/shared/types";
 import { natalInsightTopics, type NatalInsightId } from "../../web/src/content/natalInsightCatalog";
 import { surfaceSection } from "./studio-ds/recipes";
 import { natalInsightFacts } from "../../web/src/services/natalInsightReading";

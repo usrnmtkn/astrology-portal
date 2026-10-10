@@ -1,5 +1,5 @@
 import { getAstrodienstSkyOffMainThread, getLunarCalendarMonthOffMainThread, getLunarCalendarWeekOffMainThread } from "../../web/src/services/skyCalculationClient";
-import type { SkySnapshot } from "../../web/src/types";
+import type { SkySnapshot } from "../../../src/shared/types";
 import type { LunarCalendarDay, LunarCalendarEvent } from "../../web/src/services/ephemeris";
 import type { SkyForecastPeriod } from "./skyForecastTemplates";
 

@@ -1,9 +1,9 @@
-import { calendarTransitionPhraseKeys, calendarMoonContextBody, calendarFirstQuarterContinuationKey, type CalendarMoonContextKind } from "../../web/src/features/calendar/calendarTransitionPhrases";
+import { calendarTransitionPhraseKeys, calendarMoonContextBody, calendarFirstQuarterContinuationKey, type CalendarMoonContextKind } from "../../../src/shared/features/calendar/calendarTransitionPhrases";
 import type { CalendarPreviewCalculation } from "./calendarPreviewCalculation";
 import { skyForecastTemplates, type SkyForecastPeriod } from "./skyForecastTemplates";
 import { lunarContentIdentity } from "./lunarCalendarContent";
 import { publishedSkySummaryContent, type SummaryCompositionRow } from "./skySummaryComposition";
-import { calendarSunSummary } from "../../web/src/features/calendar/calendarDaySummary";
+import { calendarSunSummary } from "../../../src/shared/features/calendar/calendarDaySummary";
 import {
   calendarPreviewSeasons,
   calendarPreviewSign,
@@ -11,18 +11,18 @@ import {
   calendarTemplateSegments,
   calendarContextualVariableNames,
   type CalendarOverviewValue
-} from "../../web/src/features/calendar/calendarOverviewResolve";
+} from "../../../src/shared/features/calendar/calendarOverviewResolve";
 import { skyDailySummaryParts } from "../../web/src/content/skyDailySummary";
 import { isReaderServableGeneratedContentRow } from "../../web/src/content/generatedContentEligibility";
 import { isGovernedReaderEligible } from "../../web/src/content/fallbackArchitectureV3/resolver/readerEligibility.browser";
-import { calendarMoonCycleFactsForDays, type CalendarMoonCycleFacts } from "../../web/src/features/calendar/calendarMoonCycle";
-import { resolveCalendarMoonFallback } from "../../web/src/features/calendar/calendarMoonFallback";
-import { calendarMoonPhaseCopy } from "../../web/src/features/calendar/calendarMoonPhaseCopy";
-import { calendarLunationMacroKey } from "../../web/src/features/calendar/calendarDayMoonReading";
-import { calendarLocalDateKey } from "../../web/src/features/calendar/calendarPhaseLabel";
-import { moonContinuationSummaryKey, moonContinuationSummaryForSign } from "../../web/src/features/calendar/moonContinuationSummaries";
-import { calendarSeasonTransitionForSurface, calendarSeasonTransitionWhen, calendarSeasonTransitionKeyForSurface, calendarSeasonTransitionKeys } from "../../web/src/features/calendar/calendarSeasonTransitions";
-import { moonSignTransitionKey, moonSignTransitionForPair } from "../../web/src/features/calendar/moonSignTransitions";
+import { calendarMoonCycleFactsForDays, type CalendarMoonCycleFacts } from "../../../src/shared/features/calendar/calendarMoonCycle";
+import { resolveCalendarMoonFallback } from "../../../src/shared/features/calendar/calendarMoonFallback";
+import { calendarMoonPhaseCopy } from "../../../src/shared/features/calendar/calendarMoonPhaseCopy";
+import { calendarLunationMacroKey } from "../../../src/shared/features/calendar/calendarDayMoonReading";
+import { calendarLocalDateKey } from "../../../src/shared/features/calendar/calendarPhaseLabel";
+import { moonContinuationSummaryKey, moonContinuationSummaryForSign } from "../../../src/shared/features/calendar/moonContinuationSummaries";
+import { calendarSeasonTransitionForSurface, calendarSeasonTransitionWhen, calendarSeasonTransitionKeyForSurface, calendarSeasonTransitionKeys } from "../../../src/shared/features/calendar/calendarSeasonTransitions";
+import { moonSignTransitionKey, moonSignTransitionForPair } from "../../../src/shared/features/calendar/moonSignTransitions";
 import { lunarSigns } from "./lunarCalendarContent";
 
 export type CalendarPreviewRow = SummaryCompositionRow & { id: string; facts?: Record<string, unknown> | null; sections?: unknown; previewBody?: string };

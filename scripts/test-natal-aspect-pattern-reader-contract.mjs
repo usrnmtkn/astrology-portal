@@ -24,7 +24,7 @@ const service = read("apps/web/src/services/natalAspectPatterns.ts");
 const serverPatternAdapter = read("api/_lib/aspect-patterns.ts");
 const adminPatternPreview = read("api/admin/aspect-pattern-writeups.ts");
 const patternEngine = read("packages/astro-knowledge/engine/aspect-patterns/index.js");
-const types = read("apps/web/src/types.ts");
+const types = read("src/shared/types.ts");
 const styles = read("apps/web/src/styles/cards.css");
 const webPackage = JSON.parse(read("apps/web/package.json"));
 

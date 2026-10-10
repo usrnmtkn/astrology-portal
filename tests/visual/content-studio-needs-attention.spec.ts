@@ -1,6 +1,38 @@
 import { expect, test } from "@playwright/test";
+import { execFileSync } from 'node:child_process';
 
 // Keep this flow in the standard admin smoke run so the actionable queue and its internal navigation cannot drift.
+for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
+  test(`Governed coverage excludes intentional omissions and detects missing writing ${width} ${theme}`, async ({ page }) => {
+    const payload = (missing = false) => JSON.parse(execFileSync(process.execPath,
+      ['--import', 'tsx', 'tests/helpers/content-coverage-api.mjs', ...(missing ? ['--missing-required'] : [])], { encoding: 'utf8' }));
+    const complete = payload(), missing = payload(true);
+    let current = complete;
+    await page.setViewportSize({ width, height: 1000 });
+    await page.addInitScript(theme => {
+      localStorage.setItem('tldrastro:contentAdminSecret', 'coverage-browser-fixture');
+      localStorage.setItem('tldrastro:studio-theme', theme);
+    }, theme);
+    const errors: string[] = [];
+    page.on('pageerror', error => errors.push(error.message));
+    await page.route('**/api/**', route => route.fulfill({ json: new URL(route.request().url()).pathname === '/api/admin/content-coverage'
+      ? current : { ok: true, rows: [], nextCursor: null, statuses: [] } }));
+    await page.goto('/admin/content/coverage?view=attention');
+    await expect(page.getByRole('region', { name: 'No required content attention' })).toBeVisible();
+    await expect(page.getByText('Personal Transits · You', { exact: true })).toHaveCount(0);
+    await expect(page.getByText('Friends Transits', { exact: true })).toHaveCount(0);
+    await page.goto('/admin/content/coverage');
+    await expect(page.locator('#personal-transits')).toContainText('378 / 378');
+    await expect(page.locator('#friends-transits')).toContainText('383 / 383');
+    await expect(page.getByText('Friends coverage has a visible gap', { exact: true })).toHaveCount(0);
+    current = missing;
+    await page.goto('/admin/content/coverage?view=attention');
+    await expect(page.getByText('Personal Transits · You', { exact: true })).toBeVisible();
+    await expect(page.getByRole('region', { name: 'Required coverage gaps' })).toContainText('1 required coverage item is missing.');
+    expect(errors).toEqual([]);
+  });
+}
+
 test.describe("Content Studio Needs attention", () => {
   test("shows only actionable required work and keeps actions inside Studio", async ({ page }) => {
     await page.addInitScript(() => {

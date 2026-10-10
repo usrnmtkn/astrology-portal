@@ -1,6 +1,6 @@
 import { lazy, Suspense, useEffect, useMemo, useRef, useState } from 'react';
-import { FormattedProse } from '../../web/src/components/FormattedProse';
-import { PageLoading } from '../../web/src/components/PageLoading';
+import { FormattedProse } from '../../../src/shared/components/FormattedProse';
+import { PageLoading } from '../../../src/shared/components/PageLoading';
 import { AdminSelect } from './AdminNativeControls';
 import { StudioButton, StudioInput, StudioTabs } from './StudioControls';
 import { dropSupersededPackageStarters } from './contentStudioState';

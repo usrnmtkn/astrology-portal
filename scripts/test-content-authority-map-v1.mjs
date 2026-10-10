@@ -66,11 +66,11 @@ const transitSource = readJson("apps/web/src/content/fallbackArchitectureV3/sour
 const transitBundle = readJson("apps/web/src/content/fallbackArchitectureV3/bundled-transit-core-authored-cards-v3.json");
 const transitRows = transitSource.authoredCards.filter((row) => String(row.contentKey ?? "").startsWith("authored/transit-aspect/"));
 const bundledTransitRows = transitBundle.authoredCards.filter((row) => String(row.contentKey ?? "").startsWith("authored/transit-aspect/"));
-assert.equal(transitRows.length, 378, "Canonical transit authority must contain 378 rows.");
-assert.equal(new Set(transitRows.map((row) => row.contentKey)).size, 378, "Canonical transit keys must be unique.");
-assert.equal(bundledTransitRows.length, 378, "Bundled transit serving projection must contain 378 rows.");
+assert.equal(transitRows.length, 384, "Canonical transit authority must contain 384 rows.");
+assert.equal(new Set(transitRows.map((row) => row.contentKey)).size, 384, "Canonical transit keys must be unique.");
+assert.equal(bundledTransitRows.length, 384, "Bundled transit serving projection must contain 384 rows.");
 assert.equal(transitRows.filter((row) => nonblank(row.body_you)).length, 378, "You transit coverage must stay 378/378.");
-assert.equal(transitRows.filter((row) => nonblank(row.body_they)).length, 377, "Friends transit explicit copy coverage must stay 377/378 until the intentional gap is resolved.");
+assert.equal(transitRows.filter((row) => nonblank(row.body_they)).length, 383, "Friends transit coverage includes the six owner-supplied Friends-only passages and preserves the intentional blank.");
 const blankFriends = transitRows.filter((row) => !nonblank(row.body_they)).map((row) => row.contentKey);
 assert.deepEqual(blankFriends, ["authored/transit-aspect/venus/moon/hard"], "Only the governed Venus/Moon Friends gap may be blank.");
 const bundledTransitByKey = new Map(bundledTransitRows.map((row) => [row.contentKey, row]));
@@ -84,7 +84,7 @@ for (const row of transitRows) {
 const friendsOwnerLive = readJson("packages/astro-knowledge/review/transit-aspect-friends-nonsun-350-owner-live-2026-09-03.json");
 assert.equal(Number(friendsOwnerLive.count), 350, "Non-Sun Friends owner-live authority must remain 350 rows.");
 const sunFriends = transitRows.filter((row) => String(row.contentKey).startsWith("authored/transit-aspect/sun/") && nonblank(row.body_they));
-assert.equal(sunFriends.length, 27, "Sun Friends authority must remain 27 rows; 350 + 27 = 377 explicit Friends passages.");
+assert.equal(sunFriends.length, 27, "Sun Friends authority must remain 27 rows; 350 + 27 + 6 owner-supplied passages = 383 explicit Friends passages.");
 
 const exactSky = readJson("packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-04-held-trines-33/current-owner-payloads.json");
 assert.equal(Number(exactSky.rowCount), 248, "Exact Sky authority must contain 248 payloads.");
@@ -122,11 +122,13 @@ assert.equal(Number(unresolved.count), unresolved.items.length, "Unresolved queu
 assert.equal(Object.values(unresolved.reasonCounts ?? {}).reduce((sum, value) => sum + Number(value), 0), unresolved.items.length, "Unresolved reason counts must sum to item count.");
 
 const generatedContentSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/services/generatedContent.ts"), "utf8");
-assert.match(generatedContentSource, /\.eq\("status", "LIVE"\)[\s\S]{0,180}\.eq\("lane", "serving"\)[\s\S]{0,180}\.is\("review_state", null\)/u, "Reader database hydration must require LIVE + serving + null review_state.");
+const eligibilitySource = fs.readFileSync(path.join(repoRoot, "apps/web/src/content/generatedContentEligibility.ts"), "utf8");
+assert.match(generatedContentSource, /isReaderServableGeneratedContentRow/u, "Reader hydration must use the shared eligibility contract.");
+assert.match(eligibilitySource, /row\.status !== "LIVE" \|\| row\.lane !== "serving" \|\| row\.review_state/u, "Reader eligibility must retain LIVE + serving + no review hold.");
 
 console.log(JSON.stringify({
   authorityFamilies: map.families.length,
-  transit: { rows: 378, you: 378, friends: 377, intentionalFriendsBlank: blankFriends[0] },
+  transit: { rows: 384, you: 378, friends: 383, intentionalFriendsBlank: blankFriends[0] },
   skyExact: { rows: 248, payloadSetSha256: exactSky.payloadSetSha256 },
   skyV4: { continuous: 120, lunarContext: 40 },
   jupiterLeo: { ownerApprovedHousePassages: 12 },
