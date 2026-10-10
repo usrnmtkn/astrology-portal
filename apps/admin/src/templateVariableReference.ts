@@ -1,4 +1,5 @@
 import { ZODIAC_SEASON_VARIABLES, supportsZodiacSeasonVariables } from "../../web/src/content/fallbackArchitectureV3/resolver/zodiacSeasonVariables.mjs";
+import { natalInsightFactSlots } from "../../web/src/content/natalInsightCatalog";
 export type TemplateVariableRequirement = "Required" | "Optional" | "Runtime";
 
 export type TemplateVariableReference = {
@@ -17,6 +18,34 @@ type VariableDefinition = Pick<TemplateVariableReference, "meaning" | "example" 
 };
 
 const variableDefinitions: Record<string, VariableDefinition> = {
+  insightIsYou: {
+    meaning: "True on You readings; false on Friends readings. Selects complete, separately authored audience passages without rewriting pronouns.",
+    example: "{{#insightIsYou}}You passage{{/insightIsYou}}{{^insightIsYou}}Friends passage{{/insightIsYou}}",
+    source: "Calculated natal reading audience", sourceKind: "runtime"
+  },
+  ...Object.fromEntries(natalInsightFactSlots.map(name => [name, {
+    meaning: name.endsWith("RulerHouseName") ? "The whole-sign house occupied by this topic's traditional ruling planet."
+      : name.endsWith("RulerSignName") ? "The zodiac sign occupied by this topic's traditional ruling planet."
+      : name.endsWith("RulerName") ? "The traditional planet that rules the sign on this topic's house."
+      : "The calculated zodiac sign named in this reading's heading. Work uses separate 10th, 6th and 2nd-house facts.",
+    example: name.endsWith("RulerHouseName") ? "10th house" : name.endsWith("RulerName") ? "Mercury" : "Virgo",
+    source: "Calculated natal chart fact", sourceKind: "runtime" as const
+  }])),
+  ...Object.fromEntries(["insightPrimary", "insightSunPurpose", "insightMoonNeeds", "insightVenusStyle", "insightCreativity", "insightResources", "insightDailyWork", "insightMidheaven", "insightRulerSign", "insightRulerHouse", "insightDailyWorkRuler", "insightDailyWorkConnection", "insightResourcesRuler", "insightResourcesConnection"].map(name => [name, {
+    meaning: "Complete editorial passage selected from the natal chart. Open its source to edit the prose.", example: "The selected saved passage, in full", source: "Natal insight passage library", sourceKind: "saved-copy" as const
+  }])),
+  insightRulerSign: { meaning: "Complete passage for the traditional ruler's specific planet and sign, written for this audience.", example: "Venus in Virgo or Mars in Virgo: different saved paragraphs", source: "Natal ruler placement library", sourceKind: "saved-copy" },
+  insightRulerHouse: { meaning: "Complete passage connecting the topic's source house to the house occupied by its ruler.", example: "Fourth-house ruler in the tenth: home connected with public responsibilities", source: "Natal house connection library", sourceKind: "saved-copy" },
+  insightDailyWorkRuler: { meaning: "Complete sixth-house ruler's planet/sign passage, selected independently from the tenth-house ruler.", example: "The complete sixth-house ruler placement passage", source: "Natal ruler placement library", sourceKind: "saved-copy" },
+  insightResourcesRuler: { meaning: "Complete second-house ruler's planet/sign passage, selected independently from the other work houses.", example: "The complete second-house ruler placement passage", source: "Natal ruler placement library", sourceKind: "saved-copy" },
+  insightDailyWorkConnection: { meaning: "Complete passage connecting everyday work in the sixth house with the house occupied by its ruler.", example: "Sixth-house ruler in the second: daily effort connected with resources", source: "Natal house connection library", sourceKind: "saved-copy" },
+  insightResourcesConnection: { meaning: "Complete passage connecting resources in the second house with the house occupied by its ruler.", example: "Second-house ruler in the sixth: resources connected with everyday work", source: "Natal house connection library", sourceKind: "saved-copy" },
+  subject: { meaning: "Lowercase subject pronoun for this audience.", example: "you or they", source: "Calculated viewer context" },
+  Subject: { meaning: "Subject pronoun at the start of a sentence.", example: "You or They", source: "Calculated viewer context" },
+  Possessive: { meaning: "Possessive pronoun at the start of a sentence.", example: "Your or Their", source: "Calculated viewer context" },
+  object: { meaning: "Object pronoun for this audience.", example: "you or them", source: "Calculated viewer context" },
+  anchor: { meaning: "The Ascendant or house whose traditional ruler is being followed.", example: "your fourth house", source: "Calculated chart fact" },
+  rulerName: { meaning: "The traditional ruling planet of the selected natal sign.", example: "Mercury or The Moon", source: "Calculated chart fact" },
   zodiacSeason: { meaning: "Full editable season prose for the current sign. Compatibility uses the reader's first sign.", example: "The complete prose saved in that sign's Zodiac season source", source: "Shared sign season source", sourceKind: "saved-copy" },
   zodiacSeasonPolarAxis: { meaning: "Full editable prose about the current sign's season and its opposite sign. Compatibility uses the reader's first sign.", example: "The complete prose saved in that sign's Zodiac season polar axis source", source: "Shared sign season polar axis source", sourceKind: "saved-copy" },
   possessive: {

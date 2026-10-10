@@ -234,6 +234,9 @@ let contentRoleContractCache: {
 } | null = null;
 
 function isSampleOnlyRow(surface?: GeneratedContentSurface, contentKey?: string) {
+  // Only enumerated shared natal templates and passages are globally publishable.
+  // Personalized natal readings and sample keys retain the existing restriction.
+  if (surface === "natal" && libs().isNatalInsightContentKey(contentKey)) return false;
   return Boolean(surface && personalizedSampleSurfaces.has(surface)) || Boolean(contentKey?.startsWith("sample-"));
 }
 

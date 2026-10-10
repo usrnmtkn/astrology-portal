@@ -1,3 +1,6 @@
+import { natalAuthoringUser, natalAuthoringChart, natalAuthoringFixtures } from "../helpers/natal-authoring-fixture";
+import { natalInsightSharedFixtureRows } from "../helpers/natal-insight-shared-fixture";
+import { natalInsightTopics, natalInsightContentKey } from "../../apps/web/src/content/natalInsightCatalog";
 import { studioApiStore } from "../helpers/studio-api-store";
 import { readerResponse } from '../helpers/reader-response';
 import { emptyHousePreviewApi } from "../helpers/empty-house-preview-api";
@@ -6281,6 +6284,47 @@ test("Chiron transit recovers stale save versions and keeps conflicting edits vi
   await expect(editor.getByRole("alert")).toBeVisible();
 });
 
+test("natal correction drafts stay editable and unpublished after reload", async ({ page }) => {
+  test.setTimeout(120_000);
+  const keys = [
+    "cms/natal-insight/passage/ruler-placement/you/2/venus/aquarius",
+    "cms/natal-insight/passage/ruler-placement/you/2/moon/libra",
+    "cms/natal-insight/passage/ruler-placement/they/2/venus/aquarius",
+    "cms/natal-insight/passage/ruler-placement/they/2/moon/libra",
+    "cms/natal-insight/revision/2026-10-09/you/work-direction",
+    "cms/natal-insight/revision/2026-10-09/you/money-resources"
+  ];
+  const rows = keys.map((key, index) => ({
+    id: `natal-correction-${index}`, content_key: key, surface: "natal", mode: "article", status: "DRAFT",
+    event_type: "natal-insight-shared", lane: "serving", review_state: "EDITORIAL_REVIEW_REQUIRED",
+    target_date: null, block_type: "essay", headline: `Synthetic natal correction ${index}`, summary: "",
+    body: `**Synthetic opening ${index}.** The complete synthetic final sentence remains editable.`,
+    sections: {}, facts: {}, updated_at: "2026-10-09T00:00:00Z", created_at: "2026-10-09T00:00:00Z",
+    source_snapshot: { contentType: "mustache-template", contentSystem: "cms-surface-override", content_role: "full_copy", allowedSlots: [] }
+  }));
+  const writes: Array<{ method: string; payload: Record<string, unknown> }> = [];
+  await seedAdminApi(page, { generatedRows: rows, useGeneratedContentHandler: true, onGeneratedContentWrite: write => { writes.push(write); } });
+  const editor = page.locator(".admin-editor-panel");
+  for (const row of rows) {
+    await expectAdminRouteLoads(page, `/admin/content#exact-content?q=${encodeURIComponent(row.content_key)}`);
+    await page.getByLabel("Search content").fill(row.content_key);
+    const open = async () => page.locator(".admin-content-row", { hasText: row.content_key }).getByRole("button", { name: "Edit", exact: true }).click();
+    await open();
+    await expect(editor.getByLabel("Article body")).toHaveValue(row.body);
+    const changed = row.body + " A synthetic saved ending.";
+    await fillAdminEditorField(editor, "Article body", changed);
+    await editor.getByRole("button", { name: "Save draft", exact: true }).click();
+    await expect(editor.getByLabel("Reader status", { exact: true })).toHaveText("Inactive");
+    await editor.getByRole("button", { name: "Close", exact: true }).click();
+    await page.reload();
+    await open();
+    await expect(editor.getByLabel("Article body")).toHaveValue(changed);
+    await editor.getByRole("button", { name: "Close", exact: true }).click();
+  }
+  expect(writes).toHaveLength(6);
+  expect(writes.every(write => write.method === "PATCH" && write.payload.status === "DRAFT" && rows.some(row => row.id === write.payload.id))).toBe(true);
+});
+
 for (const width of [1440, 390]) {
   test(`Calendar Live filters agree with reader status at ${width}px`, async ({ page }) => {
     await page.setViewportSize({ width, height: 1000 });
@@ -8720,5 +8764,252 @@ for (const [width, theme] of [[1440, "light"], [390, "dark"]] as const) {
     const saturn = sourceRows.find(row => row.content_key.endsWith("/saturn"))!;
     expect(writes.some(write => write.payload.contentKey === saturn.content_key || write.payload.id === saturn.id)).toBe(true);
     await noErrors();
+  });
+}
+
+for (const untimed of [false, true]) {
+  test(`natal insights Studio edits shared guides through the actual handler (${untimed ? "without birth time" : "all seven topics"})`, async ({ page }) => {
+    test.setTimeout(180_000);
+    const assertNoBrowserErrors = await expectNoBrowserErrors(page);
+    const writes: Array<{ method: string; payload: Record<string, unknown> }> = [];
+    await seedAdminApi(page, { generatedRows: [], useGeneratedContentHandler: true, onGeneratedContentWrite: write => { writes.push(write); } });
+    for (const topic of natalInsightTopics.filter(topic => !untimed || topic.id === "approach")) {
+      const openSection = async () => {
+        await expectAdminRouteLoads(page, "/admin/content#surface-map");
+        await page.getByRole("group", { name: "Filter surfaces by area" }).getByRole("button", { name: "You", exact: true }).click();
+        const card = page.locator(".admin-surface-card", { hasText: `Natal Deeper insights: ${topic.title}` });
+        await card.getByRole("button", { name: untimed ? "Edit shared guide without birth time" : "Edit shared guide and title", exact: true }).click();
+      };
+      await openSection();
+      const editor = page.locator(".admin-editor-panel");
+      const key = `${natalInsightContentKey(topic.id, "you")}${untimed ? "/untimed" : ""}`;
+      await expect(editor.getByLabel("Content key")).toHaveValue(key);
+      const headline = untimed ? "Saved Sun & Moon title" : `Shared ${topic.title}`;
+      const body = `Opening paragraph for both reader pages.\n\nThe complete second paragraph for ${topic.id} stays editable.`;
+      await fillAdminEditorField(editor, "Article title", headline);
+      await fillAdminEditorField(editor, "Article body", "Unavailable {{missingTopic}}");
+      await expect(editor.getByRole("button", { name: "Save & publish", exact: true })).toBeDisabled();
+      await fillAdminEditorField(editor, "Article body", body);
+      await editor.getByRole("button", { name: "Save draft", exact: true }).click();
+      await expect(editor.getByLabel("Reader status", { exact: true })).toHaveText("Draft");
+      await editor.getByRole("button", { name: "Close", exact: true }).click();
+      await openSection();
+      await expect(editor.getByLabel("Article title")).toHaveValue(headline);
+      await expect(editor.getByLabel("Article body")).toHaveValue(body);
+      await editor.getByRole("button", { name: "Save & publish", exact: true }).click();
+      await expect(editor.getByLabel("Reader status", { exact: true })).toHaveText("Live");
+      await editor.getByRole("button", { name: "Close", exact: true }).click();
+      await openSection();
+      await expect(editor.getByLabel("Article title")).toHaveValue(headline);
+      await expect(editor.getByLabel("Article body")).toHaveValue(body);
+      await expect(editor.getByLabel("Reader status", { exact: true })).toHaveText("Live");
+      await editor.getByRole("button", { name: "Close", exact: true }).click();
+      const saved = writes.filter(write => write.payload.contentKey === key);
+      expect(saved.map(write => write.method)).toEqual(["POST", "PATCH"]);
+      expect(saved[1].payload).toMatchObject({ headline, body, status: "LIVE", lane: "serving", reviewState: null, expectedUpdatedAt: expect.any(String) });
+    }
+    await assertNoBrowserErrors();
+  });
+}
+
+for (const theme of ["light", "dark"] as const) for (const width of [1440, 390]) {
+  test(`personalized natal write-up saves and reopens through the private handler (${theme}, ${width}px)`, async ({ page }, testInfo) => {
+    test.setTimeout(120_000);
+    await seedAdminApi(page);
+    await page.setViewportSize({ width, height: 1000 });
+    await page.addInitScript(value => localStorage.setItem("tldrastro:studio-theme", value), theme);
+    const initial = { id: "private-topic-qa", content_key: `natal-insight/you/emotional-needs/${"a".repeat(64)}`,
+      user_id: "synthetic-reader", subject_type: "natal_summary", subject_id: "synthetic-chart", surface: "natal", mode: "article",
+      status: "DRAFT", body: "Original complete fixture opening.\n\nOriginal fixture ending.", updated_at: "2026-10-06T00:00:00.000Z" };
+    const store = await studioApiStore([initial], { personalized: true });
+    try {
+      await page.route("**/api/admin/user-generated-content**", async route => {
+        const result = await store.call({ method: route.request().method(), url: new URL(route.request().url()).pathname,
+          body: route.request().method() === "PATCH" ? route.request().postDataJSON() : undefined });
+        await route.fulfill({ status: result.status, json: result.payload });
+      });
+      await expectAdminRouteLoads(page, "/admin/content#users");
+      await page.getByRole("button", { name: "Edit write-up", exact: true }).click();
+      const editor = page.getByRole("region", { name: "Edit personalized reading", exact: true });
+      await expect(editor.getByLabel("Full write-up")).toHaveValue(initial.body);
+      const body = "Edited complete fixture opening.\n\nEdited fixture ending preserved verbatim.";
+      await editor.getByLabel("Full write-up").fill(body);
+      // Navigating away must not discard a private edit without confirmation.
+      page.once("dialog", dialog => dialog.dismiss());
+      await editor.getByRole("button", { name: "Close editor" }).click();
+      await expect(editor).toBeVisible();
+      await editor.getByLabel("Status", { exact: true }).selectOption("LIVE");
+      await editor.getByRole("button", { name: "Save reading", exact: true }).click();
+      await expect(editor.getByRole("status")).toHaveText("Reading saved.");
+      const saved = (await store.call({ method: "GET", url: "/api/admin/user-generated-content" })).payload.rows[0];
+      expect(saved).toMatchObject({ body, status: "LIVE", user_id: initial.user_id, content_key: initial.content_key });
+      await page.reload();
+      await page.getByRole("button", { name: "Edit write-up", exact: true }).click();
+      await expect(editor.getByLabel("Full write-up")).toHaveValue(body);
+      await expect(editor.getByLabel("Status", { exact: true })).toHaveValue("LIVE");
+      await expectNoHorizontalOverflow(page, "Private reading editor");
+      await expectStudioTypography(page, "Private reading editor");
+      await editor.screenshot({ path: testInfo.outputPath("private-editor.png") });
+      // An edit made elsewhere after opening wins; the stale editor retains its text.
+      const newer = "Another editor's complete saved fixture.";
+      const changed = await store.call({ method: "PATCH", url: "/api/admin/user-generated-content", body: {
+        id: initial.id, expectedUpdatedAt: saved.updated_at, body: newer } });
+      expect(changed.status).toBe(200);
+      await editor.getByLabel("Full write-up").fill("Unsaved competing fixture.");
+      await editor.getByRole("button", { name: "Save reading", exact: true }).click();
+      await expect(editor.getByRole("alert")).toContainText("changed in another editor");
+      await expect(editor.getByRole("button", { name: "Save reading", exact: true })).toBeDisabled();
+      await expect(editor.getByLabel("Full write-up")).toHaveValue("Unsaved competing fixture.");
+      expect((await store.call({ method: "GET", url: "/api/admin/user-generated-content" })).payload.rows[0].body).toBe(newer);
+    } finally { store.close(); }
+  });
+}
+
+for (const theme of ["light", "dark"] as const) for (const width of [1440, 390]) {
+  test(`manual natal authoring discovers a chart and creates a topic (${theme}, ${width}px)`, async ({ page }, testInfo) => {
+    await seedAdminApi(page);
+    await page.setViewportSize({ width, height: 1000 });
+    await page.addInitScript(value => localStorage.setItem("tldrastro:studio-theme", value), theme);
+    const store = await studioApiStore([], { personalized: true, chartFixtures: natalAuthoringFixtures });
+    try {
+      await page.route("**/api/admin/user-generated-content**", async route => {
+        const url = new URL(route.request().url());
+        const result = await store.call({ method: route.request().method(), url: url.pathname + url.search,
+          body: route.request().method() === "GET" ? undefined : route.request().postDataJSON() });
+        await route.fulfill({ status: result.status, json: result.payload });
+      });
+      await expectAdminRouteLoads(page, "/admin/content#users");
+      const authoring = page.getByRole("region", { name: "Write a natal reading", exact: true });
+      await expect(authoring.getByRole("heading", { level: 3 })).toHaveText("Write a natal reading");
+      await authoring.screenshot({ path: testInfo.outputPath("empty-authoring.png") });
+      await authoring.getByLabel("Find a reader", { exact: true }).fill("Synthetic");
+      await authoring.getByRole("button", { name: "Find reader", exact: true }).click();
+      await authoring.getByRole("combobox", { name: "Reader", exact: true }).selectOption(natalAuthoringUser);
+      await authoring.getByRole("combobox", { name: "Chart", exact: true }).selectOption(natalAuthoringChart);
+      await authoring.getByRole("combobox", { name: "Topic", exact: true }).selectOption("emotional-needs");
+      await authoring.getByText("Chart facts for this topic", { exact: true }).click();
+      await expect(authoring).toContainText("Moon in Cancer");
+      await authoring.getByRole("button", { name: "Open topic write-up", exact: true }).click();
+      const editor = page.getByRole("region", { name: "Edit personalized reading", exact: true });
+      await expect(editor.getByLabel("Full write-up")).toHaveValue("");
+      const body = "Manually authored synthetic opening.\n\nComplete private reading's final sentence.";
+      await editor.getByLabel("Full write-up").fill(body);
+      await editor.getByRole("combobox", { name: "Status", exact: true }).selectOption("LIVE");
+      await editor.getByRole("button", { name: "Save reading", exact: true }).click();
+      await expect(editor.getByRole("status")).toHaveText("Reading saved.");
+      await expectNoHorizontalOverflow(page, "Manual natal authoring");
+      await expectStudioTypography(page, "Manual natal authoring");
+      const headings = await page.locator("h1,h2,h3").allTextContents();
+      expect(headings.indexOf("Write a natal reading")).toBeLessThan(headings.indexOf("Edit personalized reading"));
+      await authoring.screenshot({ path: testInfo.outputPath("populated-authoring.png") });
+      await page.reload();
+      await page.getByRole("button", { name: "Edit write-up", exact: true }).click();
+      await expect(editor.getByLabel("Full write-up")).toHaveValue(body);
+      const rows = (await store.call({ method: "GET", url: "/api/admin/user-generated-content" })).payload.rows;
+      expect(rows).toHaveLength(1);
+      expect(rows[0]).toMatchObject({ user_id: natalAuthoringUser, subject_id: natalAuthoringChart, status: "LIVE", body });
+    } finally { store.close(); }
+  });
+}
+
+test("manual natal authoring calculates the reader's own chart before opening a reading", async ({ page }) => {
+  await seedAdminApi(page);
+  const store = await studioApiStore([], { personalized: true, chartFixtures: natalAuthoringFixtures });
+  try {
+    await page.route("**/api/admin/user-generated-content**", async route => {
+      const url = new URL(route.request().url());
+      const result = await store.call({ method: route.request().method(), url: url.pathname + url.search,
+        body: route.request().method() === "GET" ? undefined : route.request().postDataJSON() });
+      await route.fulfill({ status: result.status, json: result.payload });
+    });
+    await expectAdminRouteLoads(page, "/admin/content#users");
+    const authoring = page.getByRole("region", { name: "Write a natal reading", exact: true });
+    await authoring.getByLabel("Find a reader", { exact: true }).fill("Synthetic");
+    await authoring.getByRole("button", { name: "Find reader", exact: true }).click();
+    await authoring.getByRole("combobox", { name: "Reader", exact: true }).selectOption(natalAuthoringUser);
+    await authoring.getByRole("combobox", { name: "Chart", exact: true }).selectOption(natalAuthoringUser);
+    const open = authoring.getByRole("button", { name: "Open topic write-up", exact: true });
+    await expect(open).toBeEnabled();
+    await authoring.getByText("Chart facts for this topic", { exact: true }).click();
+    await expect(authoring).toContainText("Sun in Aries");
+    await open.click();
+    const editor = page.getByRole("region", { name: "Edit personalized reading", exact: true });
+    await expect(editor.getByLabel("Full write-up")).toHaveValue("");
+    await editor.getByLabel("Full write-up").fill("Synthetic own-chart manual reading.");
+    await editor.getByRole("combobox", { name: "Status", exact: true }).selectOption("LIVE");
+    await editor.getByRole("button", { name: "Save reading", exact: true }).click();
+    await expect(editor.getByRole("status")).toHaveText("Reading saved.");
+    await page.reload();
+    await page.getByRole("button", { name: "Edit write-up", exact: true }).click();
+    await expect(editor.getByLabel("Full write-up")).toHaveValue("Synthetic own-chart manual reading.");
+    const row = (await store.call({ method: "GET", url: "/api/admin/user-generated-content" })).payload.rows[0];
+    expect(row).toMatchObject({ user_id: natalAuthoringUser, subject_id: natalAuthoringUser, status: "LIVE", facts: { birthTimeKnown: true } });
+    expect(row.content_key).toMatch(/^natal-insight\/you\/approach\/[a-f0-9]{64}$/);
+  } finally { store.close(); }
+});
+
+for (const width of [1440, 390]) {
+  test(`shared natal insight templates and passages remain editable after reload (${width}px)`, async ({ page }) => {
+    test.setTimeout(120_000);
+    await page.setViewportSize({ width, height: 1000 });
+    const rows = natalInsightSharedFixtureRows("DRAFT");
+    const writes: Array<{ method: string; payload: Record<string, unknown> }> = [];
+    await seedAdminApi(page, { generatedRows: rows, useGeneratedContentHandler: true, onGeneratedContentWrite: write => { writes.push(write); } });
+    await expectAdminRouteLoads(page, "/admin/content#surface-map");
+    await page.getByRole("group", { name: "Filter surfaces by area" }).getByRole("button", { name: "You", exact: true }).click();
+    const card = page.locator(".admin-surface-card", { hasText: "Natal Deeper insights: Emotional needs" });
+    await card.getByRole("button", { name: "Edit You reading template", exact: true }).click();
+    const editor = page.locator(".admin-editor-panel");
+    const template = rows.find(row => row.content_key === "cms/natal-insight/you/emotional-needs/reading")!;
+    await expect(editor.getByLabel("Content key")).toHaveValue(template.content_key);
+    await expect(editor.getByLabel("Article body")).toHaveValue(template.body);
+    const templateBody = "{{insightPrimary}}\n\n{{insightSunPurpose}}\n\nAn edited complete template ending.";
+    await fillAdminEditorField(editor, "Article body", templateBody);
+    await editor.getByRole("button", { name: "Save draft", exact: true }).click();
+    await expect(editor.getByLabel("Reader status", { exact: true })).toHaveText("Inactive");
+    await editor.getByRole("button", { name: "Close", exact: true }).click();
+    const passageKey = "cms/natal-insight/passage/ruler-placement/you/venus/virgo";
+    const openSource = async (key: string) => {
+      await expectAdminRouteLoads(page, `/admin/content#exact-content?q=${encodeURIComponent(key)}`);
+      await page.getByLabel("Search content").fill(key);
+      await page.locator(".admin-content-row", { hasText: key }).getByRole("button", { name: "Edit", exact: true }).click();
+    };
+    await openSource(passageKey);
+    const passageBody = "An edited Venus in Virgo ruler passage.\n\nThe whole ending remains here.";
+    await fillAdminEditorField(editor, "Article body", passageBody);
+    await editor.getByRole("button", { name: "Save draft", exact: true }).click();
+    await expect(editor.getByLabel("Reader status", { exact: true })).toHaveText("Inactive");
+    await editor.getByRole("button", { name: "Close", exact: true }).click();
+    await page.reload();
+    await openSource(passageKey);
+    await expect(editor.getByLabel("Article body")).toHaveValue(passageBody);
+    await editor.getByRole("button", { name: "Close", exact: true }).click();
+    await openSource(template.content_key);
+    await expect(editor.getByLabel("Article body")).toHaveValue(templateBody);
+
+    await editor.getByRole("button", { name: "Close", exact: true }).click();
+    const connectionKey = "cms/natal-insight/passage/house-connection/they/4/10";
+    const connectionBody = "Their private life connects to public responsibilities through {{rulerName}}. The complete revised ending remains editable.";
+    await openSource(connectionKey);
+    await fillAdminEditorField(editor, "Article body", connectionBody);
+    await editor.getByRole("button", { name: "Save draft", exact: true }).click();
+    await expect(editor.getByLabel("Reader status", { exact: true })).toHaveText("Inactive");
+    await editor.getByRole("button", { name: "Close", exact: true }).click();
+    const workKey = "cms/natal-insight/you/work-direction/reading";
+    await openSource(workKey);
+    const workBody = rows.find(row => row.content_key === workKey)!.body + "\n\nComplete edited work ending.";
+    await fillAdminEditorField(editor, "Article body", workBody);
+    await editor.getByRole("button", { name: "Save draft", exact: true }).click();
+    await expect(editor.getByLabel("Reader status", { exact: true })).toHaveText("Inactive");
+    await editor.getByRole("button", { name: "Close", exact: true }).click();
+    await page.reload();
+    await openSource(connectionKey);
+    await expect(editor.getByLabel("Article body")).toHaveValue(connectionBody);
+    await editor.getByRole("button", { name: "Close", exact: true }).click();
+    await openSource(workKey);
+    await expect(editor.getByLabel("Article body")).toHaveValue(workBody);
+    await expectNoHorizontalOverflow(page, "Shared natal Studio draft");
+    expect(writes.length).toBe(4);
+    expect(writes.every(write => write.method === "PATCH" && write.payload.status === "DRAFT")).toBe(true);
   });
 }

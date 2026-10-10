@@ -1,0 +1,173 @@
+.natal-insights-section,
+.natal-insights-list {
+  display: grid;
+  gap: var(--card-list-gap);
+  min-width: 0;
+}
+
+.natal-insights-section > .section-label {
+  margin: 0;
+  color: var(--muted);
+  font-family: var(--label-eyebrow-font-family);
+  font-size: var(--label-eyebrow-font-size);
+  font-weight: var(--label-eyebrow-font-weight);
+  line-height: var(--label-eyebrow-line-height);
+  letter-spacing: var(--label-eyebrow-tracking);
+  text-transform: uppercase;
+}
+
+.natal-insight {
+  border: var(--border-width-thin) solid var(--card-border);
+  border-radius: var(--card-radius);
+  background: var(--card-bg);
+  box-shadow: var(--card-shadow);
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--card-header-gap);
+  padding: var(--card-padding);
+  cursor: pointer;
+  width: 100%;
+  text-align: left;
+}
+
+.natal-insight:focus-visible {
+  outline: var(--border-width-thin) solid var(--focus-ring);
+  outline-offset: var(--space-1);
+}
+
+.natal-insight__title {
+  margin: 0;
+  color: var(--card-title-color);
+  font-family: var(--font-display);
+  font-size: var(--text-card-title);
+  font-weight: var(--weight-medium);
+  letter-spacing: var(--tracking-title);
+  line-height: var(--leading-title);
+  overflow-wrap: anywhere;
+}
+
+.natal-insight > svg {
+  flex-shrink: 0;
+  width: var(--text-body);
+  height: var(--text-body);
+  color: var(--card-title-color);
+}
+
+
+/* The editorial layout lives inside the shared article shell. Typography,
+   navigation, surfaces and both themes come from the app's existing roles. */
+.natal-reading-page {
+  font-family: var(--font-body);
+  font-size: var(--text-body);
+  font-weight: var(--weight-regular);
+  line-height: var(--leading-body);
+  letter-spacing: var(--tracking-body);
+}
+.natal-reading-article {
+  padding: 0;
+  overflow: hidden;
+}
+.natal-reading-header {
+  padding: var(--report-hero-padding) var(--report-section-padding) var(--space-7);
+}
+.natal-reading-measure {
+  max-width: var(--container-prose);
+  margin-inline: auto;
+}
+.natal-reading-page p,
+.natal-reading-page li {
+  color: var(--card-body-color);
+  font-family: var(--font-body);
+  font-size: var(--text-body);
+  font-weight: var(--weight-regular);
+  line-height: var(--leading-body);
+  letter-spacing: var(--tracking-body);
+  text-align: left;
+}
+.natal-reading-page p { margin: 0 0 var(--space-6); }
+.natal-reading-page p:last-child { margin-bottom: 0; }
+.natal-reading-page .natal-reading-label {
+  margin: 0 0 var(--space-5);
+  color: var(--muted);
+  font-family: var(--label-eyebrow-font-family);
+  font-size: var(--label-eyebrow-font-size);
+  font-weight: var(--label-eyebrow-font-weight);
+  line-height: var(--label-eyebrow-line-height);
+  letter-spacing: var(--label-eyebrow-tracking);
+  text-transform: uppercase;
+}
+.natal-reading-header h1 {
+  text-align: left;
+  text-wrap: pretty;
+  overflow-wrap: anywhere;
+}
+.natal-reading-intro { padding-inline: var(--report-section-padding); }
+.natal-reading-intro .natal-reading-measure { margin-inline: auto; }
+.natal-insight-reading__section {
+  padding: var(--space-10) var(--report-section-padding);
+}
+.natal-insight-reading__section--band { background: var(--surface-2); }
+.natal-insight-reading__section--group { padding-bottom: 0; }
+.natal-insight-reading__section:not(.natal-insight-reading__section--band) + .natal-insight-reading__section:not(.natal-insight-reading__section--band) {
+  padding-top: 0;
+}
+.natal-insight-reading__section--group + .natal-insight-reading__section { margin-top: var(--space-8); }
+.natal-insight-reading__section :is(h2, h3) {
+  margin: 0 0 var(--space-5);
+  color: var(--card-title-color);
+  font-family: var(--font-display);
+  font-size: var(--article-h2-size);
+  font-weight: var(--weight-medium);
+  line-height: var(--leading-h2);
+  letter-spacing: var(--tracking-title);
+  overflow-wrap: anywhere;
+}
+.natal-reading-page .natal-reading-subtitle {
+  color: var(--muted);
+  margin-top: 0;
+  margin-bottom: var(--space-6);
+}
+.natal-reading-prose strong {
+  color: var(--card-title-color);
+  font-weight: var(--weight-medium);
+}
+.natal-reading-page a,
+.natal-reading-guide-disclosure summary {
+  color: inherit;
+  text-decoration: underline;
+  text-decoration-thickness: var(--border-width-thin);
+  text-underline-offset: var(--space-1);
+}
+.natal-reading-page :is(a, button, summary):focus-visible {
+  outline: var(--border-width-thin) solid var(--focus-ring);
+  outline-offset: var(--space-1);
+}
+.natal-reading-guide-disclosure summary {
+  font-family: var(--font-label);
+  font-size: var(--text-button-size);
+  font-weight: var(--weight-medium);
+  line-height: var(--leading-label);
+  cursor: pointer;
+  list-style: none;
+}
+.natal-reading-guide-disclosure summary::-webkit-details-marker { display: none; }
+.natal-reading-guide-wrap { padding: 0 var(--report-section-padding) var(--space-10); }
+.natal-insight-guide { padding-top: var(--space-7); }
+.natal-reading-page .formatted-prose-list { padding-left: var(--space-6); }
+.natal-insight-time-note,
+.natal-reading-article > [role],
+.natal-reading-guide-wrap [role] { padding: var(--space-7) var(--report-section-padding); }
+.natal-insight-reading > p { padding: var(--space-7) var(--report-section-padding); }
+
+@media (max-width: 720px) {
+  .natal-reading-header,
+  .natal-reading-intro,
+  .natal-insight-reading__section,
+  .natal-reading-guide-wrap,
+  .natal-insight-time-note,
+  .natal-reading-article > [role],
+  .natal-reading-guide-wrap [role],
+  .natal-insight-reading > p { padding-inline: var(--space-6); }
+}

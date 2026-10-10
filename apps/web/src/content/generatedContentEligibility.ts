@@ -118,10 +118,15 @@ export function isReaderServableGeneratedContentRow(
   const store = facts.tldrStore && typeof facts.tldrStore === "object"
     ? facts.tldrStore as Record<string, unknown>
     : null;
+  // Import receipts and prior versions preserve exact prose, including words
+  // such as "legacy". They describe history, not the current serving state.
+  // Keep all active metadata and explicit flags in the eligibility check.
+  const { editorialImport: _importReceipt, previousGuideRevision: _guideHistory,
+    previousFullRulesVersion: _rulesHistory, ...activeSnapshot } = row.source_snapshot ?? {};
   const metadataText = [
     row.content_key,
     row.provider,
-    JSON.stringify(row.source_snapshot ?? {}),
+    JSON.stringify(activeSnapshot),
     JSON.stringify(facts ?? {}),
     ...(Array.isArray(row.flags) ? row.flags : [])
   ].join(" ").toLowerCase();

@@ -143,12 +143,14 @@ export async function loadUserGeneratedInterpretation({
   subjectType,
   subjectId,
   contentKey,
-  targetDate
+  targetDate,
+  throwOnError = false
 }: {
   subjectType: UserGeneratedSubjectType;
   subjectId: string;
   contentKey: string;
   targetDate?: string;
+  throwOnError?: boolean;
 }) {
   const supabase = await getSupabaseClient();
 
@@ -160,6 +162,7 @@ export async function loadUserGeneratedInterpretation({
   const userId = sessionData.session?.user.id;
 
   if (sessionError || !userId) {
+    if (throwOnError && sessionError) throw sessionError;
     if (sessionError) {
       console.warn("Personalized generated content could not confirm the signed-in user.", sessionError);
     }
@@ -183,6 +186,7 @@ export async function loadUserGeneratedInterpretation({
   const { data, error } = await query.returns<UserGeneratedContentRow[]>();
 
   if (error) {
+    if (throwOnError) throw error;
     console.warn("Personalized generated content failed to load.", error);
     return null;
   }

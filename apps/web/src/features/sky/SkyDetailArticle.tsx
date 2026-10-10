@@ -1,3 +1,4 @@
+import { NatalReadingPage } from "../../components/charts/NatalReadingPage";
 import { FormattedProse } from "../../components/FormattedProse";
 import { ArticlePills, type ArticlePillData } from "../../components/ArticlePills";
 import { SkyMechanics, TransitFacts } from "../../components/ArticleFacts";
@@ -81,6 +82,7 @@ export type SkyPersonalizedPlacement = {
 };
 
 export type SkyDetail = {
+  natalReading?: boolean;
   placementFactsPending?: boolean;
   pills?: ArticlePillData;
   transitDescription?: string;
@@ -558,6 +560,8 @@ export function SkyDetailArticle({
       </div>
     </section>
   ) : null;
+
+  if (detail.natalReading) return <NatalReadingPage audience="friend" title={detail.title} onClose={onClose} backLabel="Close detail">{detail.body}</NatalReadingPage>;
 
   return (
     <section
