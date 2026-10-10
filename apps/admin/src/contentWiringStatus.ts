@@ -97,7 +97,8 @@ function isSourceMaterial(row: ContentWiringRow) {
 }
 
 function isKnownRenderedKey(contentKey: string) {
-  return Boolean(calendarPlanetaryIdentity(contentKey))
+  return contentKey.startsWith("sky-season-fallback/")
+    || Boolean(calendarPlanetaryIdentity(contentKey))
     || contentKey.startsWith("education/astro-101/")
     || contentKey.startsWith("sky.placement.")
     || contentKey.startsWith("sky.aspect.")
