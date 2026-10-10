@@ -7,10 +7,11 @@ import {emptyHoroscopeEdition,horoscopeEditionBody,horoscopeEditionKey} from '..
 import {runHoroscopeWriting} from '../api/admin/horoscope-writing';
 import {runWeeklyHoroscopeBatch} from '../api/_lib/horoscope-batch';
 import {horoscopeEditorRow} from '../api/_lib/horoscope-editor-payload';
+import {decodeWeeklyHistoryRow} from '../api/_lib/horoscope-history-storage';
 
 installHoroscopeWriterFixture();
 const transport=installAlternativeHoroscopeProviders();
-const latest=(id:string)=>structuredClone(store.rows.get(id));
+const latest=(id:string)=>decodeWeeklyHistoryRow(structuredClone(store.rows.get(id)));
 const action=(id:string,action:string,extra:any={})=>runHoroscopeWriting({action,id,expectedUpdatedAt:latest(id).updated_at,...extra},'synthetic-owner');
 async function create(date:string){
  const facts=await store.invoke('GET',undefined,`/api/admin/generated-content?horoscopeBrief=true&period=weekly&date=${date}&timeZone=America%2FNew_York`);
@@ -25,11 +26,19 @@ async function approve(id:string){
 }
 const worker=(id:string,maxSteps=100)=>runWeeklyHoroscopeBatch(id,{maxSteps,wait:async()=>{}});
 const id=await create('2026-10-05');
+// Reproduce an old edition's nested history before running the real handlers.
+// Generation, editor retrieval, manual saves and reload must see the full text;
+// database checkpoint writes must keep it encoded throughout all twelve signs.
+const retainedHistory={code:'synthetic_previous_failure',message:'Saved historical evidence',
+  diagnostic:{previous:Array.from({length:42},(_,i)=>({index:i,request:'Synthetic exact history. '.repeat(44000)}))}};
+const seeded=latest(id);seeded.source_snapshot.horoscopeGeneration={failures:[retainedHistory]};store.rows.set(id,seeded);
 assert.equal((await action(id,'start-batch',{approvedPlanHash:'invented'})).status,409);
 await approve(id);
 // No browser advance call: stop a worker after the writer has been reserved,
 // then construct a fresh worker. Stored authorization covers all twelve signs.
 await worker(id,1);
+assert(Buffer.byteLength(JSON.stringify(store.rows.get(id)))<2_000_000,'Database row stays small after legacy history conversion');
+assert.deepEqual(latest(id).source_snapshot.horoscopeGeneration.failures,[retainedHistory]);
 assert(latest(id).source_snapshot.horoscopeGeneration.active);
 assert.equal((await action(id,'pause-batch')).status,200);
 const calls=transport.requests.length;
@@ -42,6 +51,8 @@ assert.equal(generation.batch.status,'complete');assert.equal(generation.batch.a
 assert(row.sections.horoscopeEdition.passages.every((p:any)=>p.body.trim()&&p.headline.trim()));
 assert.equal(transport.requests.length,12);assert.equal(writerFixture.reviewCalls,12);
 assert.equal(row.status,'DRAFT');assert.equal(row.published_at??null,null);
+assert.deepEqual(generation.failures,[retainedHistory],'Every original history field survives the complete batch');
+assert(Buffer.byteLength(JSON.stringify(store.rows.get(id)))<2_000_000);
 await worker(id);assert.equal(transport.requests.length,12,'Completed batches never dispatch again');
 assert.equal((await invokeHoroscopeWriting({action:'start-batch',id,expectedUpdatedAt:row.updated_at,batchId:'forged'})).status,400);
 // Multi-megabyte history never crosses the editor transport or its save request.

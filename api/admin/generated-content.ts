@@ -1,6 +1,7 @@
 import {isDeepStrictEqual} from 'node:util';
 import {persistWeeklyHoroscope} from '../_lib/horoscope-storage-confirmation.js';
 import {horoscopeEditorPayload} from '../_lib/horoscope-editor-payload.js';
+import {decodeWeeklyHistoryRow,encodeWeeklyHistory} from '../_lib/horoscope-history-storage.js';
 import { studioScopeStorageFilter } from "../../apps/admin/src/studioContentScope.js";
 import { calendarPassageIdentity, calendarPassageErrors, calendarPassageVariables } from '../../src/calendar-writing/passageContract.js';
 import { handleStudioVariables, StudioVariableError, snapshotStudioVariables, assertStudioVariablePublication } from "../_lib/studio-variables.js";
@@ -63,7 +64,8 @@ async function adminStorageFetch(input: string, init: RequestInit = {}, timeoutM
       if (response.ok) throw new GeneratedContentRequestError("Content storage returned invalid JSON. Reload the row before retrying.", 502);
       return null;
     });
-    return { ok: response.ok, status: response.status, headers: response.headers, payload };
+    return { ok: response.ok, status: response.status, headers: response.headers,
+      payload:Array.isArray(payload)?payload.map(decodeWeeklyHistoryRow):payload };
   } catch (error) {
     if (timedOut) throw new AdminStorageTimeoutError(timeoutMs);
     throw error;
@@ -3178,7 +3180,8 @@ async function updateGeneratedContent(req: IncomingMessage) {
         ? { "x-content-publication-action": "publish" } : {}),
       prefer: "return=representation"
     },
-    body: JSON.stringify(patch)
+    body: JSON.stringify(existing.sections?.horoscopeEdition?.window?.period==='weekly'&&patch.source_snapshot
+      ?{...patch,source_snapshot:encodeWeeklyHistory(patch.source_snapshot)}:patch)
   });
   const payload = response.payload;
 

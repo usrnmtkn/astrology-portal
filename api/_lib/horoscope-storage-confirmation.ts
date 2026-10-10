@@ -2,6 +2,7 @@ import {randomUUID} from 'node:crypto';
 import {isDeepStrictEqual} from 'node:util';
 import {AdminHttpError,adminFetchJson,adminStorageRows} from './admin-http.js';
 import {horoscopeStorageChanges} from './horoscope-storage-delta.js';
+import {encodeWeeklyHistory,retainWeeklyStorageRow,weeklyStoredRow} from './horoscope-history-storage.js';
 
 // A Weekly edition carries complete evidence and rejected drafts. Returning that
 // document on every checkpoint can lose the acknowledgement of a committed save.
@@ -16,9 +17,17 @@ export async function persistWeeklyHoroscope({url,headers,row,patch,deadline}:an
   const snapshot=patch.source_snapshot??row.source_snapshot;
   const source_snapshot={...snapshot,horoscopeStorageWriteId:randomUUID()};
   const proposed={...row,...patch,source_snapshot};
-  const write={...patch,source_snapshot};
+  const write={...patch,source_snapshot:encodeWeeklyHistory(source_snapshot)};
+  const stored=weeklyStoredRow(row);
   const endpoint=url.replace(/generated_interpretations$/u,'rpc/checkpoint_weekly_horoscope');
-  const request={p_id:row.id,p_expected_updated_at:row.updated_at,p_changes:horoscopeStorageChanges(row,write)};
+  // A first conversion replaces generation once, rather than rebuilding a
+  // legacy 47MB JSONB document for every removed history field.
+  const conversion=Boolean(write.source_snapshot.horoscopeGeneration?.historyArchive)&&!stored.source_snapshot?.horoscopeGeneration?.historyArchive;
+  const changes=conversion?[
+    {path:['source_snapshot','horoscopeGeneration'],op:'set',value:write.source_snapshot.horoscopeGeneration},
+    ...horoscopeStorageChanges({...stored,source_snapshot:{...stored.source_snapshot,horoscopeGeneration:write.source_snapshot.horoscopeGeneration}},write)
+  ]:horoscopeStorageChanges(stored,write);
+  const request={p_id:row.id,p_expected_updated_at:row.updated_at,p_changes:changes};
   const conflict=()=>new AdminHttpError(409,'This edition changed during generation. Reopen it; newer edits were preserved.');
   const sameDocument=(a:any,b:any)=>{
     const left={...a},right={...b};delete left.updated_at;delete right.updated_at;
@@ -34,7 +43,7 @@ export async function persistWeeklyHoroscope({url,headers,row,patch,deadline}:an
       if(!result.ok)throw new AdminHttpError(502,'The save could not be confirmed. Check saved progress before continuing.');
       const saved:any[]=adminStorageRows(result.payload);
       if(saved.length===1&&saved[0].id===row.id&&typeof saved[0].updated_at==='string'&&saved[0].updated_at!==row.updated_at){
-        return {...proposed,updated_at:saved[0].updated_at};
+        return retainWeeklyStorageRow({...proposed,updated_at:saved[0].updated_at},{...stored,...write,updated_at:saved[0].updated_at});
       }
       failure=conflict();
     }catch(error){failure=error;}

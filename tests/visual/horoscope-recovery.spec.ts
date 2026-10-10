@@ -1,4 +1,5 @@
 import {test,expect,type Page} from '@playwright/test';
+import {decodeWeeklyHistoryRow} from '../../api/_lib/horoscope-history-storage';
 import {fork} from 'node:child_process';
 import path from 'node:path';
 import {routeStudioInventoryApi} from '../helpers/studio-inventory-route';
@@ -19,7 +20,7 @@ async function fixture(page:Page,missing=1,unknown=false,period='weekly',session
     edition.passages.forEach((p:any,index:number)=>{if(index<12-missing){p.headline=`Saved ${p.sign} headline`;p.body=`Existing ${p.sign} opening.\n\nExisting ${p.sign} final sentence.`;}});
     const created=await call({method:'POST',body:{contentKey:horoscopeEditionKey(edition.window),surface:'sky',mode:'article',eventType:'horoscope-edition',provider:'manual-admin',targetDate:null,status:'DRAFT',lane:'serving',reviewState:null,headline:'Synthetic recovery edition',body:horoscopeEditionBody(edition),sections:{horoscopeEdition:edition},facts:{horoscopeBrief:{brief,signature}},sourceSnapshot:{horoscopeOutlines:{}}}});
     expect(created.status).toBe(200);const id=created.payload.rows[0].id;
-    const latest=async()=>(await call({method:'rows'})).find((row:any)=>row.id===id);
+    const latest=async()=>decodeWeeklyHistoryRow((await call({method:'rows'})).find((row:any)=>row.id===id));
     const action=async(action:string,extra:any={})=>{const row=await latest();return call({method:'writing',body:{action,id,expectedUpdatedAt:row.updated_at,...extra}});};
     // Simulate another approved client finishing only the saved review. Never
     // start another writer or hide review dispatch inside a progress check.
