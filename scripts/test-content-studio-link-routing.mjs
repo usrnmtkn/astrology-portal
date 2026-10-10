@@ -72,6 +72,7 @@ for (const href of [
   "/#sky",
   "/#friends",
   "/#calendar",
+  "/#articles",
   "/admin/content",
   "/admin/content/coverage",
   "https://example.com"
@@ -104,6 +105,17 @@ const literalHrefPattern = /href\s*=\s*["'`]([^"'`]+)["'`]/gu;
 // Authentication routes are not reader landing pages: the access gate sends
 // the owner to sign in, and the reader app's session then unlocks the Studio.
 const authenticationHrefs = new Set(["/?auth=login"]);
+// Collection navigation has an explicit label and purpose separate from a
+// record's View in app action. This marker cannot admit arbitrary app roots.
+function isCollectionNavigation(tag, href) {
+  return href === "/#articles"
+    && /\bdata-reader-navigation="collection"/u.test(tag)
+    && />\s*Open Articles &amp; Guides in the app\s*<\/a>/u.test(tag);
+}
+assert.equal(isCollectionNavigation('<a data-reader-navigation="collection" href="/#articles">Open Articles &amp; Guides in the app</a>', '/#articles'), true);
+assert.equal(isCollectionNavigation('<a href="/#articles">View in app</a>', '/#articles'), false);
+assert.equal(isCollectionNavigation('<a data-reader-navigation="collection" href="/#articles">View in app</a>', '/#articles'), false);
+assert.equal(isCollectionNavigation('<a data-reader-navigation="collection" href="/#calendar">Open Articles &amp; Guides in the app</a>', '/#calendar'), false);
 
 for (const filePath of adminSourceFiles) {
   const source = fs.readFileSync(filePath, "utf8");
@@ -122,6 +134,10 @@ for (const filePath of adminSourceFiles) {
   for (const match of source.matchAll(literalHrefPattern)) {
     const href = match[1];
     if (authenticationHrefs.has(href)) continue;
+    const tagStart = source.lastIndexOf("<a ", match.index);
+    const tagEnd = source.indexOf("</a>", match.index);
+    const tag = source.slice(tagStart, tagEnd + 4);
+    if (tagStart >= 0 && tagEnd >= 0 && !tag.slice(0, tag.indexOf("href")).includes(">") && isCollectionNavigation(tag, href)) continue;
     if (isReaderAppHref(href) && !isContextualReaderHref(href)) {
       contextlessLiteralReaderLinks.push(`${relative}: ${href}`);
     }
