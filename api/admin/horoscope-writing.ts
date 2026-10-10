@@ -150,10 +150,22 @@ export async function runHoroscopeWriting(input:Record<string,any>,actor:string,
       }
       const targets=new Set(selected.map((p:any)=>p.sign));
       const {rejections=[],...previousGeneration}=generation;
+      // A Weekly rejection archives the selected writing and its complete
+      // receipts. Existing failure/interruption histories stay in generation;
+      // copying them and every other sign into each rejection grows the row
+      // on every recovery, even when rejecting a single empty held passage.
+      const selectedRecords=(records:any)=>Object.fromEntries(Object.entries(records??{}).filter(([sign])=>targets.has(sign)));
+      const rejectedGeneration=original.window.period==='weekly'?{
+        readings:selectedRecords(generation.readings),candidateHolds:selectedRecords(generation.candidateHolds),
+        heldRequests:selectedRecords(generation.heldRequests),
+        ...(targets.has(generation.lastError?.operation?.sign)?{lastError:generation.lastError}:{}),
+        historyReference:{updatedAt:row.updated_at,rejections:rejections.length,
+          failures:(generation.failures??[]).length,interruptions:(generation.interruptions??[]).length}
+      }:previousGeneration;
       const rejected={id:randomUUID(),rejectedAt:new Date().toISOString(),rejectedBy:actor,scope:input.sign,
         reason:'Rejected in Content Studio to prepare a fresh draft.',updatedAt:row.updated_at,
         passages:selected,passagesHash:createHash('sha256').update(horoscopeCanonicalJson(selected)).digest('hex'),facts:row.facts,writingProfile:snapshot.studioWritingProfile??null,
-        outlines:snapshot.horoscopeOutlines??{},editorialImport:snapshot.editorialImport??null,generation:previousGeneration};
+        outlines:snapshot.horoscopeOutlines??{},editorialImport:snapshot.editorialImport??null,generation:rejectedGeneration};
       const edition={...original,passages:original.passages.map((p:any)=>targets.has(p.sign)?{...p,headline:'',body:''}:p)};
       const patch={status:'DRAFT',review_state:null,reviewed_at:null,sections:{...row.sections,horoscopeEdition:edition},body:horoscopeEditionBody(edition),
         facts:{...row.facts,horoscopeBrief:packet},source_snapshot:{...snapshot,studioWritingProfile:profile,

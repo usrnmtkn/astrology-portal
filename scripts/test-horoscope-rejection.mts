@@ -23,6 +23,8 @@ for(const period of ['daily','weekly','seasonal'] as const){
  assert.equal(created.status,200,JSON.stringify(created.payload));let row=created.payload.rows[0];
  if(period==='weekly'){
   row.source_snapshot.retainedEvidence='Synthetic retained history. '.repeat(650000);
+  row.source_snapshot.horoscopeGeneration.failures=[{operation:{sign:'taurus'},evidence:'Synthetic unrelated failed evidence. '.repeat(100000)}];
+  row.source_snapshot.horoscopeGeneration.interruptions=[{sign:'gemini',evidence:'Synthetic unrelated interrupted evidence. '.repeat(100000)}];
   row.review_state='needs_review';row.reviewed_at='2026-01-01T00:00:00Z';store.rows.set(row.id,row);
  }
  const original=structuredClone(row),calls=writerFixture.calls;
@@ -58,7 +60,16 @@ for(const period of ['daily','weekly','seasonal'] as const){
  let history=row.source_snapshot.horoscopeGeneration.rejections;
  assert.deepEqual(history[0].passages,[edition.passages.find(p=>p.sign==='aries')]);
  assert.equal(history[0].passagesHash,createHash('sha256').update(horoscopeCanonicalJson(history[0].passages)).digest('hex'));
- assert.deepEqual(history[0].facts,original.facts);assert.deepEqual(history[0].generation.readings,receipts);
+ assert.deepEqual(history[0].facts,original.facts);assert.deepEqual(history[0].generation.readings,period==='weekly'?{aries:receipts.aries}:receipts);
+ if(period==='weekly'){
+  const savedGeneration=row.source_snapshot.horoscopeGeneration,oldGeneration=original.source_snapshot.horoscopeGeneration;
+  assert.deepEqual(savedGeneration.failures,oldGeneration.failures);
+  assert.deepEqual(savedGeneration.interruptions,oldGeneration.interruptions);
+  assert.deepEqual(history[0].generation.historyReference,{updatedAt:original.updated_at,rejections:0,failures:1,interruptions:1});
+  assert.equal(history[0].generation.failures,undefined);
+  assert.equal(history[0].generation.interruptions,undefined);
+  assert(checkpointBodies.every(body=>JSON.stringify(body).length<250000),'A one-sign rejection cannot resend other signs or accumulated history');
+ }
  assert.deepEqual(history[0].editorialImport,original.source_snapshot.editorialImport);
  assert.equal((await action('aries')).status,409);
  const checkpointTransport=globalThis.fetch;globalThis.fetch=originalTransport;
