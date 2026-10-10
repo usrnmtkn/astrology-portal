@@ -3135,6 +3135,19 @@ async function updateGeneratedContent(req: IncomingMessage) {
     });
   }
 
+  if (body.status === "LIVE" && String(existing.content_key).startsWith(libs().SKY_SEASON_FALLBACK_PREFIX)) {
+    const row = { ...existing, ...patch };
+    const visit = row.sections?.seasonFallback;
+    patch.source_snapshot = { ...row.source_snapshot, review_status: "approved", ownerApproved: true, promotionAuthorized: true,
+      ownerApproval: { approved: true, action: "approve-sky-season-fallback", contentKey: row.content_key,
+        approvedAt: new Date().toISOString(), source: "content-studio-explicit-action",
+        activeStart: visit?.seasonStart, activeEnd: visit?.seasonEnd,
+        copySha256: createHash("sha256").update(JSON.stringify([row.headline, row.summary, row.body])).digest("hex") } };
+    if (!libs().approvedSkySeasonFallback({ ...row, source_snapshot: patch.source_snapshot })) {
+      throw new GeneratedContentRequestError("A dated fallback needs a valid visit and matching approval before publication.", 409);
+    }
+  }
+
   Object.assign(patch, await validatedLunationPublication({ ...existing, ...patch }));
   assertReaderEligiblePublication({ ...existing, ...patch });
   await assertZodiacSeasonPublication({ ...existing, ...patch });

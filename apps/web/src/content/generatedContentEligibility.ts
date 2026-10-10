@@ -2,6 +2,7 @@ import { isReaderFacingCopy } from "./readerSafety.js";
 import { horoscopeEditionFromRow } from './horoscopeEditions.mjs';
 import { skyArticleEditionRecord, hasExactSkyArticleOwnerApproval } from "./skyArticleTemplateCompiler.js";
 import { isSkyIngressEssay } from "./skyIngressEssay.mjs";
+import { approvedSkySeasonFallback, SKY_SEASON_FALLBACK_PREFIX } from "./skySeasonFallback.js";
 type GeneratedContentRow = { content_key: string; provider?: string | null; source_snapshot?: Record<string, unknown> | null; facts?: Record<string, unknown> | null; flags?: string[] | null };
 function isRecord(value: unknown): value is Record<string, unknown> { return Boolean(value) && typeof value === "object" && !Array.isArray(value); }
 
@@ -189,6 +190,7 @@ export function isReaderServableGeneratedContentRow(
 type GeneratedContentReaderBoundaryRow = { content_key: string; event_type?: string | null; surface?: string | null;
   source_snapshot?: Record<string, unknown> | null; sections?: unknown; status?: string | null; lane?: string | null; review_state?: string | null };
 export function isGeneratedContentReaderBoundaryAllowed(row: GeneratedContentReaderBoundaryRow) {
+  if (row.content_key.startsWith(SKY_SEASON_FALLBACK_PREFIX)) return Boolean(approvedSkySeasonFallback(row));
   // Dated ingress editions have a separate explicit authoring and approval
   // contract. Keep legacy placement workspaces excluded from this reader path.
   if (row.event_type === "sky-article-edition") {

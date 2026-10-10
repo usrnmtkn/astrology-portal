@@ -90,6 +90,8 @@ export type LiveGeneratedContent = {
   judgeGate?: string | null;
   model: string | null;
   updatedAt: string;
+  lane?: string | null;
+  reviewState?: string | null;
   status?: "DRAFT" | "REVIEWED" | "LIVE" | "ARCHIVED" | "ERROR" | string;
 };
 
@@ -596,6 +598,8 @@ function fromRow(
     contentKey: row.content_key,
     surface: row.surface,
     status: row.status ?? undefined,
+    lane: row.lane,
+    reviewState: row.review_state,
     mode: row.mode,
     eventType: row.event_type,
     targetDate: row.target_date,

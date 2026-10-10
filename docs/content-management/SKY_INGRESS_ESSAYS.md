@@ -89,3 +89,10 @@ compiler and slot tests, `npm run test:content-studio-api`, both application bui
 and the fresh browser flow. Synthetic tests cover authenticated handlers, Swiss
 event roots, actual provider-request assembly without paid calls, preserved fields,
 optional sections, separated companions, exact reader projection, expiry and DST.
+
+Dated Moon, Lilith and node assemblies use `sky-season-fallback/{season}/{planet}/{sign}/{entry-date}`.
+They retain their approved source wording and original format. Save & publish records
+exact-copy approval and the calculated active interval. The reader discovers these
+keys from the same publication ledger, admits only approved live rows, and selects
+the matching half-open visit interval. An ingress essay takes priority if both exist.
+Private source copies and editorial receipts remain excluded from reader payloads.
