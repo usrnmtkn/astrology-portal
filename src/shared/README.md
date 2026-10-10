@@ -5,6 +5,8 @@ location control, authentication return contract and inventory types here.
 The former paths re-export these implementations for existing consumers. Do not
 copy a component back into either application or import an API handler for its
 types. Node-consumed compatibility exports use explicit `.js` extensions.
+The local TypeScript configuration preserves the automatic React JSX runtime
+for server rendering tools that do not load either application's Vite config.
 
 `npm run qa:admin-boundary` checks static imports, re-exports and dynamic imports
 from this directory and Studio. Shared code may use the existing root writing
