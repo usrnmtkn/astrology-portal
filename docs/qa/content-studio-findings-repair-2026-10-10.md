@@ -30,11 +30,15 @@ is respected; it does not mean those remaining bridges have been removed.
 
 ## Bundle measurement
 
-Matched standalone Studio builds using the visual-smoke public configuration
+Matched standalone Studio builds against base `d8f757921` using the visual-smoke public configuration
 measure 790,221 aggregate gzip bytes before parser consolidation and 778,178
 afterward. The unchanged 790,250-byte limit leaves 12,072 bytes of headroom.
 The initial entry remains approximately 229.3 kB gzip. Aggregate savings include
 deferred code and do not establish a faster initial page load.
+
+After integration with main `73a7822c0`, the combined build measures 778,666
+aggregate gzip bytes. That main revision independently sets a 790,750-byte
+limit; this repair does not change it and leaves 12,084 bytes of headroom.
 
 The reader already used Marked 18.0.13; Tiptap Markdown 3.31.3 independently
 required Marked 17. The scoped override and exact reader pin share 18.0.13.
