@@ -64,7 +64,7 @@ test('Repeated Gemini reservation timeouts stop visibly without a paid call, the
   const original=await f.latest();
   await studio.getByLabel('I approve this writing plan for generation.').check();
   await studio.getByRole('button',{name:'Generate missing readings',exact:true}).click();
-  await expect(studio.getByRole('alert')).toContainText('Generation stopped because saved progress could not be confirmed');
+  await expect(studio.getByRole('alert')).toContainText('Generation paused. Check saved progress to continue.');
   await expect(studio.getByRole('button',{name:'Pause generation',exact:true})).toHaveCount(0);
   await expect(studio.getByText(/^Writing (Aries|Taurus|Gemini|Cancer|Leo|Virgo|Libra|Scorpio|Sagittarius|Capricorn|Aquarius|Pisces) ·/)).toHaveCount(0);
   await expect(studio.getByRole('button',{name:'Generate missing readings',exact:true})).toBeDisabled();
