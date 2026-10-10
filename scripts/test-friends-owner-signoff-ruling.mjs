@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 
+import { priorYouTransitBody } from "./lib/you-transit-approval-history.mjs";
 import assert from "node:assert/strict";
 import crypto from "node:crypto";
 import fs from "node:fs";
@@ -115,9 +116,15 @@ function historicalWording(row, field) {
   ) {
     return undefined;
   }
+  if (field === "body_you" || (field === "body" && row.body === row.body_you)) {
+    const prior = priorYouTransitBody(row);
+    return field === "body_you" && addedYouFields.has(row.contentKey) ? undefined : prior;
+  }
   return row[field];
 }
 
+const addedYouFields = new Set(readJson("scripts/fixtures/content-suite-you-field-history.json").addedBodyYouKeys);
+assert.equal(addedYouFields.size, 103);
 const readerPayload = targetRows.map((row) => [
   row.contentKey,
   Object.fromEntries(wordingFields.filter((field) => row[field] !== undefined).map((field) => [

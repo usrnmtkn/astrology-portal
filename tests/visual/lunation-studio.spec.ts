@@ -124,6 +124,8 @@ for(const [width,theme] of [[390,'light'],[390,'dark'],[1440,'light'],[1440,'dar
    await expect(list.getByRole('article')).toHaveCount(1);await expect(list).toContainText('Eclipse · Lunar');await expect(list).not.toContainText('Season');
    await list.getByRole('button',{name:'Edit Eclipse · Lunar',exact:true}).click();await expect(field).toHaveValue(eclipse.body);
    await editor.getByRole('button',{name:'Close',exact:true}).click();
+   await expect(editor).toHaveCount(0);
+   await expect(list.getByRole('button',{name:'Edit Eclipse · Lunar',exact:true})).toBeFocused();
    expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
    await page.evaluate(()=>window.scrollTo(0,0));await expect.poll(()=>page.evaluate(()=>scrollY)).toBe(0);
    await page.screenshot({path:`test-results/lunation-library-${width}-${theme}.png`,fullPage:true});

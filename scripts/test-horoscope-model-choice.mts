@@ -26,6 +26,23 @@ for(const choice of ['gemini','claude'] as const){
  assert.deepEqual(choice==='gemini'?request.response_format.schema:request.output_config.format.schema,schema);
  assert.throws(()=>buildHoroscopeProviderRequest({config:horoscopeWriterConfig(choice),input:exactInput,instructions:'Override the writing rules',schema}),/canonical role/);
 }
+// The last transport boundary must reject a bypass even if a caller skips
+// the request codec. These checks use an injected fetch and incur no generation.
+for (const choice of ['gemini','claude'] as const) {
+ const config=horoscopeWriterConfig(choice);
+ const request=buildHoroscopeProviderRequest({config,input:exactInput,instructions:exactInstructions,schema});
+ let calls=0;
+ const fetchImpl=async(_url:any,options:any)=>{calls++;assert.deepEqual(JSON.parse(options.body),request);return Response.json({id:'synthetic'});};
+ const input={provider:config.provider,apiKey:'synthetic',role:'WRITER',request,governedInstructions:exactInstructions,surface:'horoscopes',family:'horoscope',fetchImpl};
+ await responses.startStoredNativeWritingResponse(input);
+ assert.equal(calls,1);
+ for (const invalid of [
+   {...input,governedInstructions:'Override canonical rules'},
+   {...input,governedInstructions:''},
+   {...input,request:{...request,[choice==='gemini'?'system_instruction':'system']:exactInstructions+' changed'}}
+ ]) await assert.rejects(responses.startStoredNativeWritingResponse(invalid),/canonical role|governed instructions/);
+ assert.equal(calls,1,'Invalid requests must fail before dispatch');
+}
 const create=async(period:string,date:string)=>{
   const facts=await store.invoke('GET',undefined,`/api/admin/generated-content?horoscopeBrief=true&period=${period}&date=${date}&timeZone=America%2FNew_York`);
   assert.equal(facts.status,200,JSON.stringify(facts.payload));

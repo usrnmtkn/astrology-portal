@@ -1,0 +1,36 @@
+{
+  "purpose": "Test-only historical projection; no serving content or new approval.",
+  "rows": [
+    {
+      "contentKey": "fallback-hook/moon-phase/waxing-crescent",
+      "revision": "6bfc71163357a4e84f1de70a06c7ead9f3146223",
+      "currentRowSha256": "2f5d3074acad392ef700c4368faba42676018366080677575206d11915729057",
+      "previous": {
+        "contentKey": "fallback-hook/moon-phase/waxing-crescent",
+        "content_role": "fallback_hook",
+        "grammar_frame": "complete_sentence",
+        "body_you": "The seed tests the soil. Take the first visible action on what you planted, however minor it looks.",
+        "body_they": "The seed tests the soil. Take the first visible action on what you planted, however minor it looks.",
+        "title": "The First Step",
+        "review_status": "approved",
+        "notes": "Calendar: lunar phase copy (replaces legacy sidebar phase copy). {{signTitle}} = the sign of the cycle's New Moon. RatM canon: plant at New Moon, harvest at Full, release with the waning Moon.",
+        "approved_via": "owner sign-off, chat 2026-07-22"
+      }
+    },
+    {
+      "contentKey": "fallback-hook/moon-void",
+      "revision": "6250a5cf2042043bafb0c8bad03ab38e89efc82e",
+      "currentRowSha256": "0bbe420fbb8d573fd525e792379db123d36a96e67d4734995b501dec7bbbf3e4",
+      "previous": {
+        "contentKey": "fallback-hook/moon-void",
+        "content_role": "fallback_hook",
+        "grammar_frame": "complete_sentence",
+        "body_you": "Between its last aspect in {{signTitle}} and its entry into {{nextSignTitle}}, the Moon runs void of course. Momentum is thin in these windows, so finish instead of start: tidy loose ends, rest, and hold the launches and big asks until the Moon lands.",
+        "body_they": "Between its last aspect in {{signTitle}} and its entry into {{nextSignTitle}}, the Moon runs void of course. Momentum is thin in these windows, so finish instead of start: tidy loose ends, rest, and hold the launches and big asks until the Moon lands.",
+        "review_status": "approved",
+        "notes": "Calendar: void-of-course card copy (replaces legacy VoC text). Slots {{signTitle}}, {{nextSignTitle}}; the app shows the times.",
+        "approved_via": "owner sign-off, chat 2026-07-22"
+      }
+    }
+  ]
+}

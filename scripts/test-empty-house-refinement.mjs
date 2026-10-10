@@ -3,7 +3,7 @@
 import assert from "node:assert/strict";
 import crypto from "node:crypto";
 import fs from "node:fs";
-import { stripTypeScriptTypes } from "node:module";
+import * as browserSourceModule from "../apps/web/src/content/fallbackArchitectureV3/resolver/renderFallback.browser.ts";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import {
@@ -33,9 +33,6 @@ const originalFriendFlags = readJson("packages/astro-knowledge/review/empty-hous
 const friendCorrections = readJson("packages/astro-knowledge/review/empty-house-v14/body-they-corrections.json");
 const friendDecisionAid = readJson("packages/astro-knowledge/review/empty-house-v14/body-they-decision-aid.json");
 const appSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/App.tsx"), "utf8");
-const browserSourcePath = path.join(packageDir, "resolver/renderFallback.browser.ts");
-const browserSource = stripTypeScriptTypes(fs.readFileSync(browserSourcePath, "utf8"), { mode: "transform" });
-const browserSourceModule = await import(`data:text/javascript;base64,${Buffer.from(browserSource).toString("base64")}`);
 
 const prefix = "fallback-hook/empty-house/";
 const signs = [

@@ -47,22 +47,34 @@ assert.equal(phrasebook.hookRows.filter((row) => row.contentKey.startsWith("fall
 assert.equal(approvedJupiterNeptune.status, "LIVE");
 
 assert.equal(Object.keys(ownerAspectSource).length, 225);
-assert.equal(exactTransitRecords.length, 248);
+// The catalog now includes the later complete Sky aspect expansion.
+assert.equal(exactTransitRecords.length, 439);
 assert.ok(exactTransitRecords.every((record) => record.status === "LIVE"));
 assert.ok(exactTransitRecords.every((record) => record.readerCopy?.summary && record.readerCopy?.body));
 assert.equal(
   skyAspectVoice.lockedPrinciple,
   "The astrology should explain why the event unfolds the way it does, while the prose shows what that looks like in ordinary life. The best version does both."
 );
+const collectiveRelease = readJson("../packages/astro-knowledge/review/sky-calendar-collective-approved-2026-09-07/current-owner-payloads.json");
+const collectiveApproval = readJson("../packages/astro-knowledge/review/sky-calendar-collective-approved-2026-09-07/owner-serving-authorization.json");
+assert.equal(collectiveApproval.authority, "owner");
+assert.equal(collectiveApproval.decision, "approve");
+assert.ok(collectiveApproval.capabilities.includes("serving"));
 for (const [id, approval] of exactSkyApprovals) {
   assert.equal(approval.authority, "owner", `${id}: exact approval authority`);
   assert.equal(approval.decision, "approve", `${id}: exact approval decision`);
   assert.equal(approval.approvalLevel, "exact_owner_approved", `${id}: exact approval level`);
   assert.ok(approval.capabilities.includes("serving"), `${id}: serving capability`);
   assert.equal(sha256(approval.body), approval.bodySha256, `${id}: approval body hash`);
+  const live = exactTransitRecords.find((record) => record.id === id);
+  const key = `sky.${live.transiting}.${live.aspect}.${live.other}`;
+  const later = collectiveRelease.payloads[key];
+  assert.ok(later, `${id}: later collective approval required`);
+  assert.equal(sha256(JSON.stringify(later.payload)), later.sha256);
+  assert.match(live.readerCopy.approvedVia, /sky-calendar-collective-approved-2026-09-07/);
   assert.equal(
-    exactTransitRecords.find((record) => record.id === id)?.readerCopy?.body,
-    approval.body,
+    live.readerCopy.body,
+    later.payload.body,
     `${id}: live transit body must equal exact owner-approved body`
   );
 }
@@ -179,11 +191,8 @@ for (const row of canonicalMatrix.aspects) {
   }
 }
 assert.equal(canonicalPhrasebookCount, 11);
-assert.equal(canonicalExactCount, 8);
-assert.deepEqual(canonicalSourceGaps, [
-  "moon|sextile|chiron|pisces|taurus",
-  "moon|conjunction|north-node|pisces|aquarius"
-]);
+assert.equal(canonicalExactCount, 10);
+assert.deepEqual(canonicalSourceGaps, []);
 
 const appSource = fs.readFileSync(new URL("../apps/web/src/App.tsx", import.meta.url), "utf8");
 const adminSource = fs.readFileSync(new URL("../apps/admin/src/GeneratedContentAdminDashboard.tsx", import.meta.url), "utf8");
@@ -204,16 +213,16 @@ assert.doesNotMatch(appSource, /layer: "authored",[\s\S]{0,120}tier: "generated-
 assert.doesNotMatch(appSource, /if \(!aspect \|\| normalizeSkyAspectSurface\(/u);
 assert.doesNotMatch(appSource, /if \(mode === "sky" && !normalizedSkySurface\?\.sections\.length\)/u);
 assert.doesNotMatch(appSource, /\.filter\(\(\{ normalized \}\) => normalized\.sections\.length > 0\)/u);
-assert.match(appSource, /const sourceGapAspectRows = isRegistryArticle/u);
-assert.match(appSource, /heading: "Aspects shaping this transit"/u);
+assert.match(appSource, /sections: \[\.\.\.displayArticleSections, \.\.\.inSignAspectSections\]/u);
+assert.match(appSource, /rows: inSignAspectSections\.length[\s\S]*relatedAspectRows\.filter/u);
 assert.doesNotMatch(appSource, /All calculated aspects/u);
 assert.doesNotMatch(appSource, /Facts only/u);
 assert.match(adminSource, /type AdminContentSystemFilter = "all" \| "authored" \| "generated" \| "fallback"/u);
 assert.match(adminSource, /sourceContentType === "sky-aspect-card"/u);
 assert.match(adminSource, /case "generated-content":[\s\S]*label: "Generated content"/u);
 assert.match(adminSource, /if \(role === "generated-content" \|\| role === "legacy-generated"\) return "generated"/u);
-assert.match(adminSource, /if \(status === "LIVE"\) return "Published"/u);
-assert.match(adminSource, /Published maps to LIVE and means reader-eligible within this provenance system/u);
+assert.match(adminSource, /if \(status === "LIVE"\) return "Live"/u);
+assert.match(adminSource, /Published is a status\. Authored, generated, and fallback are provenance systems/u);
 assert.match(adminSurfaceMap, /visibleLayerOrder: \["source-grounded", "generated", "madlib-fallback"\],[\s\S]*reviewed sign-specific copy first/u);
 assert.doesNotMatch(adminSurfaceMap, /finally the general fallback frame/u);
 

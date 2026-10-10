@@ -171,7 +171,40 @@ async function storedWritingResponse({apiKey,responseId,cancel=false,fetchImpl=g
   });
 }
 
+// Stored non-OpenAI transports share the same instruction boundary. Request
+// construction and storage checkpoints remain with their existing adapters.
+const NATIVE_WRITING_ENDPOINTS = Object.freeze({
+  gemini: "https://generativelanguage.googleapis.com/v1beta/interactions",
+  anthropic: "https://api.anthropic.com/v1/messages"
+});
+function nativeWritingHeaders(provider, apiKey) {
+  if (!Object.hasOwn(NATIVE_WRITING_ENDPOINTS, provider) || !apiKey) throw new Error("A supported writing provider and server API key are required.");
+  return provider === "gemini"
+    ? {"content-type":"application/json", "x-goog-api-key":apiKey, "Api-Revision":"2026-05-20"}
+    : {"content-type":"application/json", "x-api-key":apiKey, "anthropic-version":"2023-06-01"};
+}
+async function startStoredNativeWritingResponse({provider, apiKey, role, request, governedInstructions, surface, family, signal, fetchImpl=globalThis.fetch}) {
+  if (!governedInstructions?.trim()) throw new Error("A stored writing request needs its governed instructions.");
+  const canonical = governedInstructionsForRole(role, {governedInstructions, surface, family});
+  const system = provider === "gemini" ? request?.system_instruction : request?.system;
+  if (system !== canonical) throw new Error("Provider request must preserve the exact governed instructions.");
+  if (role === "WRITER" && JSON.stringify(provider === "gemini" ? request.input : request.messages).includes("[SEASONAL_DEVELOPMENT_PLAN_REQUIRED_BEFORE_PROSE]")) {
+    throw new Error("Complete the separate Seasonal development plan before dispatching prose.");
+  }
+  const headers = nativeWritingHeaders(provider, apiKey);
+  return fetchImpl(NATIVE_WRITING_ENDPOINTS[provider], {method:"POST", headers, body:JSON.stringify(request), signal});
+}
+async function storedNativeWritingResponse({provider, apiKey, responseId, cancel=false, signal, fetchImpl=globalThis.fetch}) {
+  if (provider !== "gemini" || !/^[A-Za-z0-9_-]{1,512}$/u.test(responseId ?? "")) throw new Error("A confirmed stored Gemini response is required.");
+  const {"content-type": _contentType, ...headers} = nativeWritingHeaders(provider, apiKey);
+  return fetchImpl(`${NATIVE_WRITING_ENDPOINTS[provider]}/${encodeURIComponent(responseId)}${cancel?"/cancel":""}`, {
+    ...(cancel?{method:"POST"}:{}), headers, signal
+  });
+}
+
 module.exports = {
+  startStoredNativeWritingResponse,
+  storedNativeWritingResponse,
   startStoredWritingResponse,
   storedWritingResponse,
   CARD_REVIEWER_V3_CANDIDATE_INSTRUCTIONS,

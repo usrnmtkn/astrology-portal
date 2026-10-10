@@ -91,8 +91,8 @@ assert.match(
 );
 assert.match(
   appSource,
-  /const isContinuousFallback = placementSection\?\.sourceKeys\.includes\("sky-placement-continuous-v2"\)[\s\S]*isRegistryArticle \|\| isContinuousFallback \? null : effectiveTransitRangeLabel[\s\S]*duration: isFallbackOnlyPreview[\s\S]*fallbackDateLine \?\? effectiveTransitRangeLabel \?\? undefined[\s\S]*isRegistryArticle \|\| isContinuousFallback[\s\S]*\? undefined[\s\S]*: effectiveTransitRangeLabel \?\? undefined/u,
-  "Continuous fallback pages must not repeat the transit range in detail metadata or duration."
+  /const isContinuousFallback = placementSection\?\.sourceKeys\.includes\("sky-placement-continuous-v2"\)[\s\S]*isRegistryArticle \|\| isContinuousFallback \? null : effectiveTransitRangeLabel[\s\S]*duration: isRetrograde \? transitRangeLabel \?\? undefined : articleMode === "current"\s*\? effectiveTransitRangeLabel \?\? undefined\s*: isFallbackOnlyPreview[\s\S]*fallbackDateLine \?\? effectiveTransitRangeLabel \?\? undefined[\s\S]*isRegistryArticle \|\| isContinuousFallback[\s\S]*\? undefined[\s\S]*: effectiveTransitRangeLabel \?\? undefined/u,
+  "Current placement duration must use the calculated visit; archived continuous prose must not repeat its range."
 );
 assert.doesNotMatch(
   JSON.stringify(skyArticleV1),

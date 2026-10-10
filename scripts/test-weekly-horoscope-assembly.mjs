@@ -1096,14 +1096,16 @@ try {
     /Saturn square your Venus/iu.test(aspect.driverLabel)
   ));
   assert.ok(saturnVenusAspect, "The supporting Saturn-Venus aspect must remain available.");
-  assert.doesNotMatch(
-    separatedAspectWeek.horoscope.body,
-    /You may feel lonely even next to people who love you/u,
+  const currentSaturnVenus = JSON.parse(fs.readFileSync(new URL("../apps/web/src/content/fallbackArchitectureV3/source-rows/transit-synastry-rows-v1.json", import.meta.url), "utf8")).authoredCards.find(row => row.contentKey === "authored/transit-aspect/saturn/venus/square");
+  const currentAspectOpening = currentSaturnVenus.body_you.split("\n\n")[0];
+  assert.equal(
+    separatedAspectWeek.horoscope.body.includes(currentAspectOpening),
+    false,
     "Aspect copy must not be appended to the lunation horoscope."
   );
-  assert.match(
-    saturnVenusAspect.body,
-    /You may feel lonely even next to people who love you/u,
+  assert.equal(
+    saturnVenusAspect.body.split("\n\n")[0],
+    currentAspectOpening,
     "Aspect copy must render in its own standalone card."
   );
 

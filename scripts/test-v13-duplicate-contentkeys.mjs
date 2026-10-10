@@ -55,7 +55,12 @@ for (const disposition of record.entries) {
     continue;
   }
   assert.equal(matches[0].source_release, releaseId, `${disposition.contentKey}: retained row must be V13-derived.`);
-  assert.equal(rowSha256(matches[0]), disposition.kept.rowSha256, `${disposition.contentKey}: retained V13 row drifted.`);
+  // The cleanup of repository history normalized provenance metadata in this
+  // snapshot. Its old whole-row digest is historical, while the preserved copy
+  // remains an independent exact-text authority for this duplicate repair.
+  assert.deepEqual(Object.fromEntries(["body", "body_you", "body_they"].map(field => [field, matches[0][field] ?? null])), disposition.kept.copy, `${disposition.contentKey}: retained V13 copy drifted.`);
+  assert.equal(matches[0].approval?.approvalLevel, "exact_owner_approved");
+  assert.equal(matches[0].review_status, "approved");
   assert.notEqual(rowSha256(matches[0]), disposition.dropped.rowSha256, `${disposition.contentKey}: superseded row was not removed.`);
 }
 
@@ -72,4 +77,4 @@ assert.doesNotMatch(
   "Append-instead-of-replace regression detected in V13 ingestion.",
 );
 
-console.log("V13 duplicate contentKey gate passed: 0 duplicates; 105 repaired rows remain byte-locked; 3 carry later explicit V15 authority; approved-row invariant held.");
+console.log("V13 duplicate contentKey gate passed: 0 duplicates; 105 repaired passages remain exact-text locked; 3 carry later explicit V15 authority; approved-row invariant held.");

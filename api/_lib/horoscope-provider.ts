@@ -8,7 +8,6 @@ import {seasonalEditorialStorage} from './seasonal-editorial-storage.js';
 import {normalizeGeminiResult,readClaudeStream,readGeminiStream} from './horoscope-provider-codecs.js';
 import {persistWeeklyHoroscope,horoscopeStorageTimeoutMs} from './horoscope-storage-confirmation.js';
 
-const GEMINI='https://generativelanguage.googleapis.com/v1beta/interactions';
 const keyFor=(config:any)=>process.env[config?.provider==='gemini'?'GEMINI_API_KEY':config?.provider==='anthropic'?'ANTHROPIC_API_KEY':'OPENAI_API_KEY'];
 export const claudeRequestId=(operationId:string,requestHash:string)=>`claude_${createHash('sha256').update(`${operationId}:${requestHash}`).digest('hex')}`;
 export const geminiRequestId=(operationId:string,requestHash:string)=>`gemini_${createHash('sha256').update(`${operationId}:${requestHash}`).digest('hex')}`;
@@ -75,7 +74,8 @@ export async function startHoroscopeResponse({config,role,request,instructions,c
   const apiKey=keyFor(config);
   if(!apiKey)throw new AdminHttpError(503,'The selected writing model is not connected. No replacement model was used.');
   if(config.provider==='gemini'&&config.transport!=='checkpointed-stream/v1'){
-    const response=await fetchImpl(GEMINI,{method:'POST',headers:{'content-type':'application/json','x-goog-api-key':apiKey,'Api-Revision':'2026-05-20'},body:JSON.stringify(request),signal:AbortSignal.timeout(25000)});
+    const response=await responses.startStoredNativeWritingResponse({provider:config.provider,apiKey,role,request,governedInstructions:instructions,
+      surface:'horoscopes',family:'horoscope',fetchImpl,signal:AbortSignal.timeout(25000)});
     return {response,payload:normalizeGeminiResult(await response.json())};
   }
   if(config.provider==='anthropic'||config.provider==='gemini'){
@@ -87,10 +87,9 @@ export async function startHoroscopeResponse({config,role,request,instructions,c
       const checkpointContext={...context,provider:config.provider,deadline:context.deadline??Date.now()+280000};
       let payload;
       try{
-        const response=await fetchImpl(gemini?GEMINI:'https://api.anthropic.com/v1/messages',{method:'POST',
-          headers:gemini?{'content-type':'application/json','x-goog-api-key':apiKey,'Api-Revision':'2026-05-20'}:
-            {'content-type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01'},
-          body:JSON.stringify(request),signal:AbortSignal.timeout(Math.max(1,Math.min(240000,checkpointContext.deadline-Date.now()-45000)))});
+        const response=await responses.startStoredNativeWritingResponse({provider:config.provider,apiKey,role,request,governedInstructions:instructions,
+          surface:'horoscopes',family:'horoscope',fetchImpl,
+          signal:AbortSignal.timeout(Math.max(1,Math.min(240000,checkpointContext.deadline-Date.now()-45000)))});
         payload=await (gemini?readGeminiStream:readClaudeStream)(response,id);
       }catch{payload=failed(id,gemini?'gemini_connection_interrupted':'claude_connection_interrupted');}
       // Storage retries cannot incur another provider charge.
@@ -123,8 +122,8 @@ export async function storedHoroscopeResponse({operation,cancel=false,fetchImpl=
   const apiKey=keyFor(config);
   if(!apiKey)throw new AdminHttpError(503,'Restore this request’s model connection to retrieve its saved result.');
   if(config.provider==='gemini'){
-    const response=await fetchImpl(`${GEMINI}/${encodeURIComponent(id)}${cancel?'/cancel':''}`,{
-      ...(cancel?{method:'POST'}:{}),headers:{'x-goog-api-key':apiKey,'Api-Revision':'2026-05-20'},signal:AbortSignal.timeout(20000)});
+    const response=await responses.storedNativeWritingResponse({provider:'gemini',apiKey,responseId:id,cancel,
+      fetchImpl,signal:AbortSignal.timeout(20000)});
     const payload=await response.json();
     if(response.status===400&&payload?.error?.code==='invalid_request'
       &&payload.error.message==='Multiple authentication credentials received. Please pass only one.'){

@@ -1,3 +1,4 @@
+import { assertSkyV4SourceIntegrity } from "./lib/sky-v4-source-integrity.mjs";
 import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
 import fs from "node:fs";
@@ -27,7 +28,7 @@ const corpus = JSON.parse(bytes);
 const lower = (value) => String(value ?? "").trim().toLowerCase();
 const title = (value) => String(value ?? "").replace(/[-_]+/gu, " ").replace(/\b\w/gu, (letter) => letter.toUpperCase());
 
-assert.equal(createHash("sha256").update(bytes).digest("hex"), SKY_V4_CANONICAL_JSON_SHA256);
+assertSkyV4SourceIntegrity(bytes, SKY_V4_CANONICAL_JSON_SHA256);
 assert.equal(assertSkyV4CanonicalPackage(corpus), corpus);
 const continuousApproval = assertSkyV4ContinuousOwnerApproval(corpus);
 assert.equal(continuousApproval.approved_keys.length, 120);
