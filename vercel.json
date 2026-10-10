@@ -98,6 +98,7 @@
       "includeFiles": "{api/_lib,artifacts,config,src/astro-writing,packages/astro-knowledge/{generated,scripts,data,config,reference,voice,sources/authored/owner-author-book},apps/web/{public/content,src/content},tldr-astro-phrasebank,data/writing}/**/*.{*js,json,jsonl,md,ts}"
     },
     "api/admin/sky-article-template-slots.ts": {
+      "maxDuration": 300,
       "includeFiles": "{api/_lib,artifacts,config,src/astro-writing,packages/astro-knowledge/{generated,scripts,data,config,reference,voice,sources/authored/owner-author-book},apps/web/{public/content,src/content},tldr-astro-phrasebank,data/writing}/**/*.{*js,json,jsonl,md,ts}"
     },
     "api/admin/personal-transit-writing.ts": {

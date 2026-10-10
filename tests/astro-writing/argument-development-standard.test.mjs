@@ -86,7 +86,7 @@ for (const required of [
 
 assert.equal(
   CANONICAL_WRITING_INSTRUCTIONS_VERSION,
-  "tldr-astro-writing-v7-argument-developed-interpretation-2026-08-25"
+  "tldr-astro-writing-v9-ai-patterns-2026-10-09"
 );
 for (const required of [
   "ARGUMENT-DEVELOPED INTERPRETATION STANDARD",

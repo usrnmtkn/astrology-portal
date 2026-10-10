@@ -175,8 +175,8 @@ assert.match(
 );
 assert.equal(
   (manualChartsPanelSource.match(/acceptedOwnerApprovedTransitSections\(/gu) ?? []).length,
-  5,
-  "personal-transit pre-cap eligibility plus personal-transit and house-transit rows and detail sections must use the permanent gate"
+  7,
+  "pre-cap eligibility plus personal/house reader sections, availability, and open handlers must use the permanent gate"
 );
 assert.deepEqual(
   nodeRenderedSaturn.partSourceKeys?.at(-1),
@@ -193,11 +193,13 @@ assert.equal(
   0,
   "internal source-verification status must never be shown to a Friends reader"
 );
-assert.equal(
-  (friendTransitsTabSource.match(/\.filter\(\(transit\) => transit\.detailAvailable\)/gu) ?? []).length,
-  2,
-  "personal and house transit lists must omit rows without an eligible full detail section"
-);
+// Eligibility moved into the shared brief, before either the reader or report
+// consumes the lists. Its behavioral contract covers missing full details.
+const briefSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/features/friends/friendTransitsBrief.ts"), "utf8");
+assert.equal((briefSource.match(/\.transits\.filter\(personalTransitHasGenerationEvidence\)/gu) ?? []).length, 2);
+assert.match(briefSource, /return transit\.detailAvailable/u);
+assert.match(briefSource, /houseTransits\.filter\(\(transit\) => \(\s*transit\.detailAvailable/u);
+
 assert.match(
   manualChartsPanelSource,
   /acceptedOwnerApprovedTransitBody\(\s*card\.effectBody,\s*card\.effectContentKey,/u,

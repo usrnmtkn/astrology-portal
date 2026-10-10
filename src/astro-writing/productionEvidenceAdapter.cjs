@@ -4,6 +4,7 @@ const crypto = require("node:crypto");
 const {
   buildPacket,
   buildMultiTargetPacket,
+  resolve,
   loadIndex
 } = require("../../packages/astro-knowledge/scripts/knowledge-resolver.js");
 
@@ -172,7 +173,11 @@ function aspectTarget(kind, parts, legacyId, { ordered = false } = {}) {
 
 function transitTargets(parts, legacyIdentifier, { exactAllowed = true } = {}) {
   const exact = `transit-aspect/${canonicalBody(parts.left)}/${canonicalBody(parts.right)}/${parts.aspect}`;
-  if (exactAllowed && indexIds().has(exact)) {
+  // An exact serving-only passage is not writer evidence. Its presence must
+  // not mask the same governed body/aspect mechanism used before that passage
+  // was published. The resolver remains the authority for surface eligibility.
+  if (exactAllowed && indexIds().has(exact)
+    && resolve(exact, { surface: "you-transit", usage: "primary" }).records.length > 0) {
     return {
       canonicalIds: [assertParsedSubject(exact, legacyIdentifier)],
       targetUsages: ["primary"],

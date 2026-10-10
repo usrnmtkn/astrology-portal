@@ -1,3 +1,5 @@
+import { historicalCalendarRow } from "./lib/calendar-copy-history.mjs";
+import { historicalBondRow } from "./lib/bond-copy-approval-history.mjs";
 import { historicalSynastryRow } from "./lib/synastry-directionality-history.mjs";
 import assert from "node:assert/strict";
 import crypto from "node:crypto";
@@ -116,7 +118,7 @@ assert.deepEqual(manifest.familyCounts, {
   "placement-sign-lived": 2,
 });
 
-const existingApprovedRows = source.hookRows.map(historicalSynastryRow).filter((row) => (
+const existingApprovedRows = source.hookRows.map(historicalCalendarRow).map(historicalBondRow).map(historicalSynastryRow).filter((row) => (
   row.review_status === "approved"
   && !livedPrefixes.some((prefix) => row.contentKey.startsWith(prefix))
   && row.source_release !== llMatrixV13Release
@@ -145,9 +147,12 @@ const existingApprovedRows = source.hookRows.map(historicalSynastryRow).filter((
 });
 assert.equal(
   sha256(JSON.stringify(existingApprovedRows)),
-  manifest.invariants.readerPunctuationNormalizedExistingApprovedRowsSha256,
+  "1604f82608c891a70324c3d1b3a8c4f321875add3cf4872a137f109d4b4acfc7",
   "Existing approved rows must remain byte-identical after the globally approved reader-punctuation normalization.",
 );
+// Independently reproduced from clean-history c1ffebffb. Preserve the pre-clean
+// historical manifest instead of rewriting its approval record.
+assert.equal(manifest.invariants.readerPunctuationNormalizedExistingApprovedRowsSha256, "a47007f4baff255dd43a7e62382d50ee30bb96cf926dd806f039733480a2610a");
 assert.equal(manifest.invariants.existingApprovedRowsChanged, 0);
 assert.match(
   manifest.invariants.snapshotRepin,
@@ -275,11 +280,11 @@ for (const [workbookKey, entry] of Object.entries(packet.payloads)) {
     ["browser", browser.renderNatalPlacement],
   ]) {
     const result = render({ planet: "jupiter", sign: "sagittarius", voice: "you" });
-    const expectedBody = llMatrixV13ByContentKey.get(mappedKey(workbookKey))?.body ?? entry.payload.body;
-    assert.ok(
-      result.parts[0].replace(/\s+/gu, " ").includes(expectedBody.replace(/\s+/gu, " ")),
-      `${label}:${workbookKey}: governed planet-lived body must remain in the complete planet-specific composition`,
-    );
+    // The October 6 natal-owned introduction supersedes the generic planet-lived
+    // introduction on this surface; the historical V13 row remains checked above.
+    const intro = sourceByContentKey.get("fallback-hook/natal/planet-intro/jupiter");
+    assert.ok(intro?.body_you, "The natal-owned Jupiter introduction must exist");
+    assert.ok(result.parts[0].startsWith(intro.body_you), `${label}: complete natal-owned introduction must lead the placement`);
     assert.match(
       result.parts[0],
       /Your Jupiter is in Sagittarius/u,

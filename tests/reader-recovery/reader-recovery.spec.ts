@@ -1,23 +1,27 @@
 import { expect, test, type Page } from "@playwright/test";
 import { readerResponse } from '../helpers/reader-response';
-import { getAstrodienstSky } from "../../apps/web/src/services/ephemeris";
+import { getAstrodienstSky, natalDailyTransitPeaksFor } from "../../apps/web/src/services/ephemeris";
 import { natalSkySnapshotCacheKey, skySnapshotCacheKey, VERIFIED_SKY_CACHE_SCHEMA } from "../../apps/web/src/services/verifiedSkyCache";
 
 const location = { label: "New York, NY", latitude: 40.7128, longitude: -74.006, timeZone: "America/New_York" };
 const user = { id: "reader-qa", email: "reader@example.test", app_metadata: { provider: "email" }, user_metadata: {} };
 const profile = { ...user, name: "Reader QA", provider: "email", sun: "Capricorn", moon: "Pisces", rising: "Aries", currentLocation: location.label, currentLocationData: location,
-  charts: [{ id: "reader-chart", name: "Reader QA", type: "Birth chart", birthDate: "1990-01-01", birthTime: "12:00 PM", birthCity: location.label, birthLocation: location }] };
-const birth = new Date("1990-01-01T17:00:00Z");
+  charts: [{ id: "reader-chart", name: "Reader QA", type: "Birth chart", birthDate: "1990-01-02", birthTime: "12:00 PM", birthCity: location.label, birthLocation: location }] };
+const birth = new Date("1990-01-02T17:00:00Z");
 let cacheRecords: unknown[];
 test.beforeAll(async () => {
   const natal = await getAstrodienstSky(location, birth);
   const sky = await getAstrodienstSky(location, new Date("2026-11-27T12:00:00Z"));
-  // This future date gives the synthetic chart a calculated Lilith–Pluto square.
-  const squareSky = await getAstrodienstSky(location, new Date("2027-12-08T12:00:00Z"));
+  // The exact pass is December 7 in New York (December 8 UTC). The old
+  // December 8 noon fixture was already outside the selected-day 1° window.
+  const pluto = natal.positions.find(position => position.planet === "Pluto")!;
+  const peaks = await natalDailyTransitPeaksFor(["Lilith"], [{ planet: "Pluto", longitude: pluto.longitude }], "2027-12-07T17:00:00Z", location.timeZone);
+  expect(peaks.find(peak => peak.id === "lilith-square-pluto")?.exactToday).toHaveLength(1);
+  const squareSky = await getAstrodienstSky(location, new Date("2027-12-07T12:00:00Z"));
   cacheRecords = [
     { schema: VERIFIED_SKY_CACHE_SCHEMA, cacheKey: natalSkySnapshotCacheKey(location, birth), snapshot: natal },
     { schema: VERIFIED_SKY_CACHE_SCHEMA, cacheKey: skySnapshotCacheKey(location, "2026-11-27"), snapshot: sky },
-    { schema: VERIFIED_SKY_CACHE_SCHEMA, cacheKey: skySnapshotCacheKey(location, "2027-12-08"), snapshot: squareSky }
+    { schema: VERIFIED_SKY_CACHE_SCHEMA, cacheKey: skySnapshotCacheKey(location, "2027-12-07"), snapshot: squareSky }
   ];
 });
 
@@ -210,9 +214,8 @@ for (const mode of ["create", "login", "incomplete-birth-time"] as const) test(`
 
 test("Lilith Pluto writing survives the reader adapter and opens its complete interpretation", async ({ page }) => {
   await prepare(page);
-  await page.goto("/?date=2027-12-08#you");
-  // The synthetic chart ranks other transits ahead of this aspect in the
-  // primary cards. Its calculated factor remains available in this entry.
+  await page.goto("/?date=2027-12-07#you");
+  // A verified exact contact belongs in the selected local day.
   const entry = page.getByRole("button").filter({ has: page.getByText("Lilith challenging power", { exact: true }) });
   await expect(entry).toBeVisible({ timeout: 45_000 });
   await entry.click();

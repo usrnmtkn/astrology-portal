@@ -52,6 +52,18 @@ try {
   assert.equal(sky(timed, "2026-09-10T23:20:00Z"), you(timed, "2026-09-10"));
   assert.match(sky(timed, "2026-09-10T23:20:00Z"), /until September 12/u);
   assert.notEqual(sky(timed, "2026-09-10T23:20:00Z"), sky(northNode, "2026-09-10T23:20:00Z"), "Timing hydration must update the prose window.");
+  // You's verified daily-series adapter supplies an explicit year. Sky's shared
+  // package window must produce identical copy across midnight and year rollover.
+  for (const [end, timeZone, expectedDate] of [
+    ["2026-09-15T02:00:00Z", "America/New_York", "September 14, 2026"],
+    ["2027-01-01T02:00:00Z", "America/New_York", "December 31, 2026"],
+    ["2027-01-01T02:00:00Z", "UTC", "January 1, 2027"]
+  ]) {
+    const calculated = {...timed, timing: {...timed.timing, engagementEnd: end, currentEnd: end, timeZone}};
+    const daily = {...calculated, reportWindowLabel: `Until ${expectedDate}`};
+    assert.equal(sky(calculated, "2026-09-10T23:20:00Z"), you(daily, "2026-09-10"));
+    assert.ok(sky(calculated, "2026-09-10T23:20:00Z").includes(expectedDate));
+  }
   const key = "authored/transit-aspect/sun/north-node/conjunction";
   assert.ok(sky(northNode, "2026-09-10T23:20:00Z"));
   runtime.installContentPublications([{ content_key: key, state: "retired", revision: 1, row_id: null, row_updated_at: null, updated_at: "2026-09-10T00:00:00Z" }]);

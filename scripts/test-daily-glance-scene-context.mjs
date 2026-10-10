@@ -32,6 +32,19 @@ assert.ok(writerDirective.includes("Licensed vocabulary may be paraphrased natur
 
 const registryValidation = validateLicenseRegistry(registry);
 assert.deepEqual(registryValidation, { passed: true, errors: [], licenseCount: 6 });
+// A supporting reference survives an authorized wording revision without
+// turning the superseded passage into a new semantic grant.
+for (const mutate of [
+  evidence => { evidence.snapshot.fieldSha256 = "0".repeat(64); },
+  evidence => { evidence.snapshot.sourceSha256 = "0".repeat(64); },
+  evidence => { evidence.evidenceRole = "semantic-grant"; },
+  evidence => { evidence.field = "proposedBodyYou"; }
+]) {
+  const changed = structuredClone(registry);
+  const evidence = changed.licenses.find(license => license.licenseId === "scene-license/aspect/moon-conjunction-north-node/v1").evidence[0];
+  mutate(evidence);
+  assert.equal(validateLicenseRegistry(changed).passed, false, "Historical evidence must fail closed after tampering");
+}
 assert.ok(registry.licenses.every((license) => license.approval.status === "approved"));
 assert.ok(registry.licenses.every((license) => license.approval.inheritsSourceApproval === false));
 assert.ok(registry.licenses.every((license) => license.approval.ownerApproved === true));

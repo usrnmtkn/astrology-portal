@@ -614,7 +614,8 @@ async function expectBehindForecastGroupedByConcept(page: Page, label: string) {
   const behindForecast = page.getByRole("region", { name: "Behind this forecast" });
   await expect(behindForecast).toBeVisible();
   const forecastGroups = behindForecast.locator(".daily-behind-forecast__group");
-  expect(await forecastGroups.count(), `${label} is split into concept groups`).toBeGreaterThan(1);
+  // The Moon label can arrive before the daily aspect calculation finishes.
+  await expect.poll(() => forecastGroups.count(), { message: `${label} is split into concept groups`, timeout: 45_000 }).toBeGreaterThan(1);
   const groupLabels = await forecastGroups.getByRole("heading", { level: 3 }).allTextContents();
   expect(new Set(groupLabels.map((groupLabel) => groupLabel.toLocaleLowerCase())).size).toBe(groupLabels.length);
 

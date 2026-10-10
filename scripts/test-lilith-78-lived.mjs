@@ -1,4 +1,6 @@
 #!/usr/bin/env node
+import { historicalCalendarRow } from "./lib/calendar-copy-history.mjs";
+import { historicalBondRow } from "./lib/bond-copy-approval-history.mjs";
 import { historicalSynastryRow } from "./lib/synastry-directionality-history.mjs";
 
 import assert from "node:assert/strict";
@@ -75,7 +77,7 @@ const manifestByWorkbookKey = new Map(manifest.rows.map((row) => [row.workbookKe
 const lilithRows = source.hookRows.filter((row) => row.contentKey?.startsWith(destinationPrefix));
 assert.equal(lilithRows.length, 78, "Expected exactly 78 Lilith lived rows");
 
-const existingApprovedRows = source.hookRows.map(historicalSynastryRow).filter((row) => (
+const existingApprovedRows = source.hookRows.map(historicalCalendarRow).map(historicalBondRow).map(historicalSynastryRow).filter((row) => (
   row.review_status === "approved"
   && !row.contentKey?.startsWith(destinationPrefix)
   && row.source_release !== llMatrixV13Release
@@ -105,9 +107,12 @@ const existingApprovedRows = source.hookRows.map(historicalSynastryRow).filter((
 });
 assert.equal(
   sha256(JSON.stringify(existingApprovedRows)),
-  manifest.invariants.readerPunctuationNormalizedExistingApprovedRowsSha256,
+  "1604f82608c891a70324c3d1b3a8c4f321875add3cf4872a137f109d4b4acfc7",
   "All pre-existing approved rows must remain byte-identical after the globally approved reader-punctuation normalization.",
 );
+// Independently reproduced from clean-history c1ffebffb. Preserve the pre-clean
+// historical manifest instead of rewriting its approval record.
+assert.equal(manifest.invariants.readerPunctuationNormalizedExistingApprovedRowsSha256, "a47007f4baff255dd43a7e62382d50ee30bb96cf926dd806f039733480a2610a");
 assert.equal(manifest.invariants.existingApprovedRowsChanged, 0);
 assert.match(
   manifest.invariants.snapshotRepin,

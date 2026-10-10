@@ -592,6 +592,9 @@ type SkyArticleEditionFacts = {
 };
 
 type SkyArticleEditionForm = {
+  rejectedGeneration: Record<string, unknown> | null;
+  generationError: string | null;
+  writingDirection: string;
   format: SkyArticleFormat;
   referenceDate: string;
   facts: SkyArticleEditionFacts | null;
@@ -2212,6 +2215,10 @@ function skyArticleWorkspaceForm(row: AdminGeneratedContentRow | undefined) {
   return {
     row,
     tldr,
+    rejectedGeneration: objectRecord(workspace.rejectedGeneration),
+    generationError: typeof workspace.generationError === "string" ? workspace.generationError : null,
+    writingDirection: typeof workspace.writingDirection === "string" ? workspace.writingDirection : "",
+    slotGeneration: objectRecord(workspace.slotGeneration) as SkyArticleEditionForm["slotGeneration"],
     slotValues: Object.fromEntries(Object.entries(slotValues ?? {}).filter((entry): entry is [string, string] => typeof entry[1] === "string"))
   };
 }
@@ -2787,14 +2794,16 @@ class AdminRequestError extends Error {
   path: string;
   method: string;
   details: string;
+  payload: unknown;
 
-  constructor(message: string, options: { status: number; path: string; method: string; details?: string }) {
+  constructor(message: string, options: { status: number; path: string; method: string; details?: string; payload?: unknown }) {
     super(message);
     this.name = "AdminRequestError";
     this.status = options.status;
     this.path = options.path;
     this.method = options.method;
     this.details = options.details ?? "";
+    this.payload = options.payload;
   }
 }
 
@@ -2874,7 +2883,8 @@ async function adminJsonRequest<T>(path: string, secret: string, options: Reques
       status: response.status,
       path,
       method,
-      details
+      details,
+      payload
     });
   }
 
@@ -4198,7 +4208,7 @@ export function GeneratedContentAdminDashboard() {
     const authoredSlotValues = Object.entries(form.slotValues).filter(([name, value]) => (
       !Object.prototype.hasOwnProperty.call(facts.slotValues, name) && value.trim()
     ));
-    if (form.saveState === "idle" && !form.workspaceId && !workspaceAutosaveRowRef.current && !form.tldr.trim() && authoredSlotValues.length === 0) return;
+    if (form.saveState === "idle" && !form.workspaceId && !workspaceAutosaveRowRef.current && !form.tldr.trim() && !form.writingDirection.trim() && authoredSlotValues.length === 0) return;
 
     const editorSession = editorSessionRef.current;
     const sequence = ++skyArticleWorkspaceAutosaveSequenceRef.current;
@@ -4216,6 +4226,10 @@ export function GeneratedContentAdminDashboard() {
             referenceDate: form.referenceDate,
             facts,
             tldr: form.tldr,
+            writingDirection: form.writingDirection,
+            generationError: form.generationError,
+            rejectedGeneration: form.rejectedGeneration,
+            slotGeneration: form.slotGeneration,
             slotValues: form.slotValues
           };
           const persistedWorkspaceRow = workspaceAutosaveRowRef.current;
@@ -4272,7 +4286,7 @@ export function GeneratedContentAdminDashboard() {
     }, 900);
 
     return () => window.clearTimeout(timeout);
-  }, [secret, selectedRow, skyArticleEditionForm?.facts, skyArticleEditionForm?.tldr, skyArticleEditionForm?.slotValues, skyArticleEditionForm?.workspaceId]);
+  }, [secret, selectedRow, skyArticleEditionForm?.facts, skyArticleEditionForm?.tldr, skyArticleEditionForm?.writingDirection, skyArticleEditionForm?.generationError, skyArticleEditionForm?.rejectedGeneration, skyArticleEditionForm?.slotGeneration, skyArticleEditionForm?.slotValues, skyArticleEditionForm?.workspaceId]);
 
   function persistBetweenYouTwoRoute(nextQuery: string, nextActivate = friendsActivationQuery) {
     setQuery(nextQuery);
@@ -4895,6 +4909,10 @@ export function GeneratedContentAdminDashboard() {
       setSkyArticleEditionForm((current) => current ? {
         ...current,
         facts: payload.facts,
+        generationError: workspace?.generationError ?? null,
+        rejectedGeneration: workspace?.rejectedGeneration ?? null,
+        writingDirection: workspace?.writingDirection ?? current.writingDirection,
+        slotGeneration: workspace?.slotGeneration ?? null,
         tldr: workspace?.tldr ?? (isSkyIngressEssay(current.format) ? current.tldr : authoredSource?.summary?.trim() ?? current.tldr),
         slotValues: { ...current.slotValues, ...(workspace?.slotValues ?? {}), ...payload.facts.slotValues },
         workspaceId: workspace?.row.id ?? null,
@@ -4915,6 +4933,7 @@ export function GeneratedContentAdminDashboard() {
       setMessage("Load calculated edition facts before generating unfinished fields.");
       return;
     }
+    setSkyArticleEditionForm((current) => current ? { ...current, generationError: null } : current);
     setIsLoading(true);
     try {
       const payload = await adminJsonRequest<{
@@ -4930,7 +4949,8 @@ export function GeneratedContentAdminDashboard() {
           templateId: templateRow.id,
           format: form.format,
           referenceDate: form.referenceDate,
-          existingSlotValues: form.slotValues
+          existingSlotValues: form.slotValues,
+          voiceNotes: form.writingDirection
         })
       });
       if (editorSession !== editorSessionRef.current) return;
@@ -4945,6 +4965,7 @@ export function GeneratedContentAdminDashboard() {
           facts: payload.facts,
           slotValues: { ...slotValues, ...payload.facts.slotValues },
           slotGeneration: payload.generation,
+          rejectedGeneration: null,
           factBlockedSlots: payload.blockedSlots ?? []
         };
       });
@@ -4955,7 +4976,13 @@ export function GeneratedContentAdminDashboard() {
           : "There were no unfinished AI-eligible template fields."
       ));
     } catch (error) {
-      setMessage(error instanceof Error ? error.message : "Could not generate unfinished Sky article fields.");
+      const generationError = dashboardErrorMessage(error);
+      if (editorSession === editorSessionRef.current) {
+        setSkyArticleEditionForm((current) => current ? { ...current, generationError,
+          rejectedGeneration: objectRecord(objectRecord(error instanceof AdminRequestError ? error.payload : null)?.rejectedGeneration) ?? current.rejectedGeneration
+        } : current);
+      }
+      setMessage(generationError);
     } finally {
       setIsLoading(false);
     }
@@ -5887,6 +5914,9 @@ export function GeneratedContentAdminDashboard() {
       reviewOpen: false
     } : null);
     setSkyArticleEditionForm(isSkyArticleTemplateRow(row) ? {
+      generationError: null,
+      rejectedGeneration: null,
+      writingDirection: "",
       format: SKY_INGRESS_ESSAY_FORMAT,
       referenceDate: new Date().toISOString().slice(0, 10),
       facts: null,
@@ -11406,7 +11436,7 @@ export function GeneratedContentAdminDashboard() {
                   skyArticleWorkspaceAutosaveSequenceRef.current += 1;
                   workspaceAutosaveRowRef.current = null;
                   setSkyArticleEditionForm({ format: event.target.value as SkyArticleFormat, referenceDate: skyArticleEditionForm.referenceDate,
-                    facts: null, tldr: "", slotValues: {}, slotGeneration: null, factBlockedSlots: [], saveState: "idle", workspaceId: null });
+                    facts: null, tldr: "", writingDirection: "", generationError: null, rejectedGeneration: null, slotValues: {}, slotGeneration: null, factBlockedSlots: [], saveState: "idle", workspaceId: null });
                 }}>
                   <option value={SKY_INGRESS_ESSAY_FORMAT}>Ingress essay · October 9 format</option>
                   <option value="saved-template">Saved article template and horoscopes</option>
@@ -11429,6 +11459,9 @@ export function GeneratedContentAdminDashboard() {
                       referenceDate: event.target.value,
                       facts: null,
                       tldr: "",
+                      writingDirection: "",
+                      generationError: null,
+                      rejectedGeneration: null,
                       slotValues: {},
                       slotGeneration: null,
                       factBlockedSlots: [],
@@ -11465,6 +11498,21 @@ export function GeneratedContentAdminDashboard() {
                       <li>✓ Calculated residency facts</li>
                     </ul>
                   </section>
+                  <label className="admin-review-copy-editor">
+                    <span>Writing direction</span>
+                    <StudioTextarea
+                      aria-label="Sky article writing direction"
+                      value={skyArticleEditionForm.writingDirection}
+                      disabled={isLoading}
+                      onChange={(event) => setSkyArticleEditionForm({
+                        ...skyArticleEditionForm,
+                        writingDirection: event.target.value,
+                        saveState: "unsaved"
+                      })}
+                      placeholder="Add the approved outline, selected transits and editorial direction for this edition."
+                    />
+                    <small className="admin-field-hint">Saved with this draft and sent to the writer. These notes stay out of the compiled article.</small>
+                  </label>
                   <div className="admin-toolbar-actions">
                     <StudioButton
                       type="button"
@@ -11475,9 +11523,22 @@ export function GeneratedContentAdminDashboard() {
                       Generate unfinished fields
                     </StudioButton>
                     <p className="admin-field-hint">
-                      Sends the selected format, calculated facts, and unfinished fields to the writing provider. Review the generated draft before publication.
+                      Sends the selected format, calculated facts, writing direction and unfinished fields to the writing provider. Review the generated draft before publication.
                     </p>
                   </div>
+                  {skyArticleEditionForm.generationError && (
+                    <p className="admin-page-notice" role="alert">{skyArticleEditionForm.generationError}</p>
+                  )}
+                  {skyArticleEditionForm.rejectedGeneration && (
+                    <details>
+                      <summary>Returned draft needs correction</summary>
+                      <p className="admin-field-hint">Review this returned text. These fields are separate from the article fields below.</p>
+                      <p className="admin-field-hint">{String(skyArticleEditionForm.rejectedGeneration.provider ?? "")} / {String(skyArticleEditionForm.rejectedGeneration.model ?? "")}</p>
+                      {Object.entries(objectRecord(skyArticleEditionForm.rejectedGeneration.slotValues) ?? {}).filter((entry): entry is [string, string] => typeof entry[1] === "string").map(([name, value]) => (
+                        <label key={name}>{name}<textarea aria-label={`Returned draft ${name}`} readOnly value={value} /></label>
+                      ))}
+                    </details>
+                  )}
                   {skyArticleEditionForm.slotGeneration && (
                     <p className="admin-field-hint">
                       Drafted {skyArticleEditionForm.slotGeneration.requestedSlots.length} field{skyArticleEditionForm.slotGeneration.requestedSlots.length === 1 ? "" : "s"} with {skyArticleEditionForm.slotGeneration.provider} / {skyArticleEditionForm.slotGeneration.model}. Review every field before compilation.

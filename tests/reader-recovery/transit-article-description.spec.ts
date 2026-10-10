@@ -85,9 +85,15 @@ for (const theme of ["light", "dark"]) {
   test(`You transit article closes with both placements (${theme})`, async ({ page }) => {
     test.setTimeout(90_000);
     await prepare(page, theme);
+    // House cards can render before the calculation worker supplies daily aspects.
+    // Exercise that order so the test must wait for an actual aspect card.
+    await page.route("**/assets/skyCalculation.worker-*.js", async route => {
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      await route.continue();
+    });
     for (const [index, date] of dates.entries()) {
       await page.goto(`/?date=${date}#you`);
-      const row = page.locator("button.updates-aspect-row:has(.updates-aspect-row__title)").first();
+      const row = page.locator("button.updates-aspect-row--personal").first();
       await expect(row).toBeVisible({ timeout: 45_000 });
       const title = await row.locator(".updates-aspect-row__title").innerText();
       const expected = expectedIdentity(title, skies[index], natal);

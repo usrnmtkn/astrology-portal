@@ -5,6 +5,7 @@ import { createRequire } from "node:module";
 
 const require = createRequire(import.meta.url);
 const adapter = require("../src/astro-writing/productionEvidenceAdapter.cjs");
+const resolver = require("../packages/astro-knowledge/scripts/knowledge-resolver.js");
 const { deriveFromAxisPartner } = require("../src/astro-writing/axisDerivation.cjs");
 
 const skyPoints = [
@@ -115,6 +116,32 @@ for (const transiting of skyPoints) {
     }
   }
 }
+
+// Reader-only passages cannot displace eligible writer evidence or gain a
+// new surface permission merely because the exact object exists.
+const excludedExact = resolver.resolve("transit-aspect/mars/chiron/square", { surface: "you-transit", usage: "primary" });
+assert.equal(excludedExact.records.length, 0);
+assert.ok(excludedExact.excluded.some(record => record.reason === "surface-permission"));
+for (const legacyIdentifier of ["transit-natal-mars-square-chiron", "mars-square-chiron"]) {
+  const { mapped, packet } = adapter.buildProductionCatalogEvidence({
+    contentKey: "you-transit-v3-mars-square-chiron-2026-10-09",
+    surface: "you", mode: "in_depth", eventType: "you-transit-to-natal",
+    facts: { transit: { transitPlanet: "Mars", aspect: "square", natalPoint: "Chiron" } },
+    knowledgeIds: [legacyIdentifier]
+  });
+  assert.deepEqual(mapped.canonicalIds, ["body/mars", "aspect/square", "body/chiron"]);
+  assert.deepEqual(mapped.targetUsages, Array(3).fill("mechanism-reference"));
+  for (const target of packet.packets) {
+    assert.ok(target.evidence.length > 0);
+    assert.ok(target.evidence.every(record => record.usage === "mechanism-reference" && record.framingAllowed === false));
+    assert.ok(target.evidence.every(record => !record.surfacePermission.includes("serving-source-only")));
+  }
+}
+const eligibleExact = adapter.mapLegacyIdentifier("transit-natal-saturn-square-sun", {
+  surface: "you", evidenceSurface: "you-transit"
+});
+assert.deepEqual(eligibleExact.canonicalIds, ["transit-aspect/saturn/sun/square"]);
+assert.deepEqual(eligibleExact.targetUsages, ["primary"]);
 
 for (const legacyIdentifier of [
   "planetary-return-framework",

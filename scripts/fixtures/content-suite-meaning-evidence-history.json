@@ -1,0 +1,271 @@
+{
+  "purpose": "Test-only integrity mapping for evidence containers in the clean repository; no approval or serving effect. All 53 containers match their values at the component registry revision.",
+  "revision": "177f62a81",
+  "rows": [
+    {
+      "sourceId": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/placement-sign-lived/jupiter/aries",
+      "historicalRecordedSha256": "72972ccce314fbc5e054e6452354fa0d0420430ff8a9837ea8023d0afa10a3a8",
+      "cleanHistorySha256": "158f61497e9d27d43aad377bf9eb7f801ea171f4dc52212853407383b8cad59f"
+    },
+    {
+      "sourceId": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/placement-sign-lived/mars/taurus",
+      "historicalRecordedSha256": "83329b96ce1e5300b28c1769022d60047da0e704e55f095c0592ce0339a62916",
+      "cleanHistorySha256": "cf0930ceb5021a43cda0abbd7172463fcd230cd0bc1a379503d9e010a032544d"
+    },
+    {
+      "sourceId": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/placement-sign-lived/jupiter/gemini",
+      "historicalRecordedSha256": "e5a5c3ddd4f70863638ddb523cb1344dbdc74cf43900b2a6a4e9c6112e995a73",
+      "cleanHistorySha256": "df5938fb077ab8298996e888d5c16a9f5f7806b6acdef7a239a66b55bdb27f78"
+    },
+    {
+      "sourceId": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/placement-sign-lived/mars/cancer",
+      "historicalRecordedSha256": "6a70e8bd0e8123471cd85390093ca9edf40f033aace79ac4d8ed98433bb77ef2",
+      "cleanHistorySha256": "d8a1d55c7df495a5e802550d14991ba75852b7016c1d629bbea510451c0653cf"
+    },
+    {
+      "sourceId": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/placement-sign-lived/mars/leo",
+      "historicalRecordedSha256": "452ae918e2c73c87aaddb415748fd6f9b0d23667b3f4d029a353cec183cf80f6",
+      "cleanHistorySha256": "26c571ee70c30d79a37b91850b80a3c0042f215012b292ad4ade0a1ab9289973"
+    },
+    {
+      "sourceId": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/placement-sign-lived/mars/virgo",
+      "historicalRecordedSha256": "6823133e48389c4c6eea0cc5a3b9286b374682ec835b8b8209569559f80f1512",
+      "cleanHistorySha256": "f52fcfbd4fa13daeec873ddadcead5ca6c20f93f65a1247f9d657ec1b871148b"
+    },
+    {
+      "sourceId": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/placement-sign-lived/jupiter/libra",
+      "historicalRecordedSha256": "d4a947529855c45bb9a43ab1027a95454f8c1a9e7afbdae49d140914122c000e",
+      "cleanHistorySha256": "5897669ea2c6dac53ee3e7cd0976dab9363c64507a0265a4651ca2151cf36220"
+    },
+    {
+      "sourceId": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/placement-sign-lived/moon/scorpio",
+      "historicalRecordedSha256": "dee5b5d87e95d946b9e42fa8a7dd3ab1a19c7becc5415333794f07ee74f8e6e2",
+      "cleanHistorySha256": "94900fae8ffd2a2876361cdf5b5bac87113927c1de9af43c7b9b13f184a7a02e"
+    },
+    {
+      "sourceId": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/placement-sign-lived/moon/sagittarius",
+      "historicalRecordedSha256": "6b37221546da9e3e194352a0ff4109a95a1621f15b05aa6356a9c1c907eaba7a",
+      "cleanHistorySha256": "9bf99b6b79b1386917ad7b25f4da9a1101b195247f5b5d6c1bed19393639600a"
+    },
+    {
+      "sourceId": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/placement-sign-lived/jupiter/capricorn",
+      "historicalRecordedSha256": "394a299be23d55eef871ed0f0efe85c4b37a860b927bbfbd92890802fbf77b2d",
+      "cleanHistorySha256": "9ca7d804a1b9dd3b2311c6e95e23903c4fc69a09854960c9d99b289137afe224"
+    },
+    {
+      "sourceId": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/placement-sign-lived/moon/aquarius",
+      "historicalRecordedSha256": "915195d361c9a5bb87614f4d694f613dbddfff52c82ab70be9f380e56a9db82e",
+      "cleanHistorySha256": "cd51120b8d814359c4835b000c0f282bfe7efd3c863b997d71b06985a80bbba8"
+    },
+    {
+      "sourceId": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/placement-sign-lived/mars/pisces",
+      "historicalRecordedSha256": "5a739c35987c5f57d401893bff3325eb04d28ee4a05ff9f2db1abe4b9e2477ca",
+      "cleanHistorySha256": "d2f632c0493e5d7bec67398e2b94451a4849ea72e355159a0e5b4129f0b76714"
+    },
+    {
+      "sourceId": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/planet-lived/moon",
+      "historicalRecordedSha256": "1afba29f672c617f26c286cb589e5e51f0170b158a4ae3bb1f34cdf3ec1b023a",
+      "cleanHistorySha256": "f18a00aef2caa93c49541d3b951bd0e137f49c0e7a1598ace1538cf8c2d734fa"
+    },
+    {
+      "sourceId": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/placement-sign-lived/moon/aries",
+      "historicalRecordedSha256": "e1628fe5260f72fa02a61cb521104a5e206409048d232ec541ad2c9cc96b3412",
+      "cleanHistorySha256": "0ce441596467f938f2be6d0966afbcff428679b3b86a9c6bd465b7e7aa52ae78"
+    },
+    {
+      "sourceId": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/placement-sign-lived/moon/gemini",
+      "historicalRecordedSha256": "94fea140f19241daebca8ead4e1e3d084594e6132fdf3d19d9563cf9f66e6370",
+      "cleanHistorySha256": "5a5cf91551b581c47c5e0b85a282b0596ffc3f14b83aac2bbf36e49a59ce7027"
+    },
+    {
+      "sourceId": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/placement-sign-lived/moon/cancer",
+      "historicalRecordedSha256": "09c59de1342f4ae2d556f14461f1dd5c36cb2db3e045a51d5739f188524c0e0c",
+      "cleanHistorySha256": "157bd20a6eff3a9f666b0db235ded21410e5da307f4e229c3fc9b4c61bd85322"
+    },
+    {
+      "sourceId": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/placement-sign-lived/moon/virgo",
+      "historicalRecordedSha256": "9a22d877bc6e93e77344d9b7e36962f007ee7a2e50e525046456484b63dccf79",
+      "cleanHistorySha256": "71a988318c5482cc1299df06e93b861debbea0f05bc85481ad3367a2c4869965"
+    },
+    {
+      "sourceId": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/placement-sign-lived/moon/pisces",
+      "historicalRecordedSha256": "c8979d870ff57c3af33e2dbc83cdd5ae48f932c4aa97aee1294e5daaa21a4fe5",
+      "cleanHistorySha256": "51377ed298bd89dddc85bd2b4ea0e68781dcdbe7794406b37a8d97eb58ef1837"
+    },
+    {
+      "sourceId": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/placement-sign-lived/mercury/aries",
+      "historicalRecordedSha256": "0237fd88c302885a82be4afc5d3bdd2a9fa17712edf983a4aa37202e50c64de9",
+      "cleanHistorySha256": "b74fc91e367a9f712894e2a0394932836b66f6b545af1930df0ce00a28076e8b"
+    },
+    {
+      "sourceId": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/placement-sign-lived/mercury/gemini",
+      "historicalRecordedSha256": "d3c91e98afca692d2c012eb99dbbdc4102724551d2cd1d6163ceab91dc1ed093",
+      "cleanHistorySha256": "7f268d5e60f1cd8f0a708416810277f4da86541522dae047d0522aa55cf1d50e"
+    },
+    {
+      "sourceId": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/placement-sign-lived/mercury/leo",
+      "historicalRecordedSha256": "89200c889b77de5d3d6d03a8b843e6defa661b70c27769248276e7b919bafc01",
+      "cleanHistorySha256": "b4e22bf9efd346ba2dcc6e4e7c9682ae1d5fa700ad59fcecf66f0a5fe70c1ca7"
+    },
+    {
+      "sourceId": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/placement-sign-lived/mercury/pisces",
+      "historicalRecordedSha256": "64d75488fdbbfa69cd12df0e10fadce042aae87683e7116257ff71db5c5738e6",
+      "cleanHistorySha256": "fc3e89c344fea74732a6d9ef97d53926ece7e0fbe7060e0be651a3ab7b791193"
+    },
+    {
+      "sourceId": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/placement-sign-lived/venus/capricorn",
+      "historicalRecordedSha256": "874f74aed91207823207a8c5d4d874b6b94fd33d506ec5a395ad934399aacff5",
+      "cleanHistorySha256": "4caabb20989f1242be3078ab6d937aadaf400b58171a0b94d1fe1379e6165f59"
+    },
+    {
+      "sourceId": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/placement-sign-lived/venus/taurus",
+      "historicalRecordedSha256": "dde2d248f9ae9014c1c03d4532fe90732fdb65a938d16ee0ce7f2ecb359e37fa",
+      "cleanHistorySha256": "9f50af3ce852bea132295b7ab9f006014c7e3cd711af6795c98c4acb18de6ea6"
+    },
+    {
+      "sourceId": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/placement-sign-lived/venus/gemini",
+      "historicalRecordedSha256": "176e6d64edd1e1ccf2dd6e4da470e7120a3fcb30dfc333b236bf57c9192d6a5c",
+      "cleanHistorySha256": "2d932f076a0dc5a78ed4e1ee5d22cfc7b25fc78dd9e76c7b122f25f3e838d3aa"
+    },
+    {
+      "sourceId": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/placement-sign-lived/venus/leo",
+      "historicalRecordedSha256": "f0ab28aa653d457df05747c60f8f729ac88c8a41acf6b18149219e8cf4b73ca7",
+      "cleanHistorySha256": "64ad28401a8bd6016bf178cdec35106289b16b990d93b90bef847ea214edfa9b"
+    },
+    {
+      "sourceId": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/placement-sign-lived/venus/virgo",
+      "historicalRecordedSha256": "67a021bb7d4e97996c57c0b95714372dad144356ed6436142ea2402d98bde990",
+      "cleanHistorySha256": "b2abb184bc312bf1552d0ae7a3c4215490d6c4b27e7f431f7afed3fc80dd639f"
+    },
+    {
+      "sourceId": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/placement-sign-lived/venus/libra",
+      "historicalRecordedSha256": "1c821c2d9c6a740a3b65f5c13a2af5c94b0c94d95400dfcb7813ae497b8bd24b",
+      "cleanHistorySha256": "ef8e5750a8c452d4758a13528a54d98ac31fba139c2959d0975bbe2b6a70a441"
+    },
+    {
+      "sourceId": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/placement-sign-lived/venus/sagittarius",
+      "historicalRecordedSha256": "b5fee0562e0fea6b3030518e88907a77098a0ca14c9dc7b3aca56d802016a9e4",
+      "cleanHistorySha256": "2308b99acd8661d49b23ea0bfc864a87786ea4802f6b65b6a33eb5a1dab55aea"
+    },
+    {
+      "sourceId": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/planet-lived/mars",
+      "historicalRecordedSha256": "bd00fdc7f5a1fca11301267a301d2ee40e38ea77b7868cbc7f1b1a8554f01773",
+      "cleanHistorySha256": "df3f5dde7f93badd8fe74bb586e2febe55f80e84940b96a4b17e11a1dbb7d003"
+    },
+    {
+      "sourceId": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/placement-sign-lived/mars/aries",
+      "historicalRecordedSha256": "ae859686a38da4eaf2363e2c080c0b027e74de23766f617d125260962426126f",
+      "cleanHistorySha256": "719f7d613fe18a647437697324ec36c74fa0559671fd6da38c7129fe3853e4eb"
+    },
+    {
+      "sourceId": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/placement-sign-lived/mars/gemini",
+      "historicalRecordedSha256": "0be04b090c7fcce3670de327a1f2d6a95ccdbbe042681852d42413dc8f9f2187",
+      "cleanHistorySha256": "869f15f9918efc34c91763ba2dd86e3a7aad52f1d2078fac300c45be26d05a7d"
+    },
+    {
+      "sourceId": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/placement-sign-lived/mars/libra",
+      "historicalRecordedSha256": "382a3770451272b03f8fb084cd8b0aa3dae8d2c4da37e7cc43d7ebd1cec2958c",
+      "cleanHistorySha256": "cb961d1d4fad6057ace38a85b001a1014bfa87d4c9183668e9a913b07588f18b"
+    },
+    {
+      "sourceId": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/placement-sign-lived/mars/capricorn",
+      "historicalRecordedSha256": "bfcf38b2a4649dfab75b46e1540455e34106f6e1448421f273c8754f14625845",
+      "cleanHistorySha256": "8044b88a79dff9621e7518013ff290fef7453e64ca9b53ba03a467cfee625ea6"
+    },
+    {
+      "sourceId": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/planet-lived/jupiter",
+      "historicalRecordedSha256": "a02988cabd5b2561a5d02eb6ec4934fbf956123afee1f3f30f5a32af09055174",
+      "cleanHistorySha256": "5df27c90f5c43dbe295957e3583016dcde5a4b8cc997ca4a6064bda4dcf8888a"
+    },
+    {
+      "sourceId": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/planet-lived/saturn",
+      "historicalRecordedSha256": "8e95fbbd76d6c71119976611bfa32b70b11795faf4ad6cbd451602cc83fc1ef4",
+      "cleanHistorySha256": "a1d126c12de46299f8970fe8dd1ad6d4b0d9748022cb667ca0f0cae968d9f746"
+    },
+    {
+      "sourceId": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/placement-sign-lived/saturn/gemini",
+      "historicalRecordedSha256": "dc8e50574db21526e48e22d6b035e89902ebf7b07417613d18d41dabfd24a2ae",
+      "cleanHistorySha256": "f11976ec7182f829c91559d2155dcd271b02fd15feece705ef9a79fc693521fd"
+    },
+    {
+      "sourceId": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/placement-sign-lived/saturn/taurus",
+      "historicalRecordedSha256": "e62714c27f3ae326c39891724c3fdf96868b923777fe0255d6311a3f66167b67",
+      "cleanHistorySha256": "ebeadf627a19f56dde1bfa43538136a6a4c80fd161eb11ee87c82fbad7e61bda"
+    },
+    {
+      "sourceId": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/placement-sign-lived/saturn/sagittarius",
+      "historicalRecordedSha256": "c24a0129e78e1b2ef600fcbf1e95a95da630f19c792093382a1897a4b5e57836",
+      "cleanHistorySha256": "d08460640470ff4fa6e19d1d9f57e525ac0849a122c87adb8e11912ed78ee386"
+    },
+    {
+      "sourceId": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/planet-lived/uranus",
+      "historicalRecordedSha256": "1ee6d4bf3cf50ed156df2cb93656869b544ce5ae325b74cb80602d4a7771f3c4",
+      "cleanHistorySha256": "dc9e336db9e5d94758d1ca08f9e3c4947ce85ed93415f74a53990e7fc893815a"
+    },
+    {
+      "sourceId": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/placement-sign-lived/uranus/aries",
+      "historicalRecordedSha256": "3fc31839983c0a9db46769426c7542beb585799eebbabd7b4d494bbc6e814c38",
+      "cleanHistorySha256": "6183b8fda995a30171d1b37ada4eed7c3d6b0e5f44582193105eb20a232d9eae"
+    },
+    {
+      "sourceId": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/placement-sign-lived/uranus/gemini",
+      "historicalRecordedSha256": "291b086de9d78c55682911be838f729ecaf736e75884cad3852cd16ef7153503",
+      "cleanHistorySha256": "5590aff6ec57b4bb68251f7f24dad57ea1d4bebebfc00c8a0cc672cc2e713514"
+    },
+    {
+      "sourceId": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/placement-sign-lived/uranus/sagittarius",
+      "historicalRecordedSha256": "ee2d2aa8cee6ff4fadf947f69e08ac6806ea2e14d279e442b3e4d39d861ffbde",
+      "cleanHistorySha256": "a9590c73c1d4495a0f128ef05777069437e02c659328052de53f5a295923f266"
+    },
+    {
+      "sourceId": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/planet-lived/neptune",
+      "historicalRecordedSha256": "1237f1af509b36feecef741db7fb773ba53fcce10f30399ffe762e321ff620c4",
+      "cleanHistorySha256": "c303532f85e539fcb730579517fc695ee2d0e75e20f86cc7dde8c01f568acbce"
+    },
+    {
+      "sourceId": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/placement-sign-lived/neptune/aries",
+      "historicalRecordedSha256": "980e768db22a14fb5bd28cd3a98894beb992e4d63450221133c4c2db7bc41005",
+      "cleanHistorySha256": "139922d337ac24f9c2ffb806b9d8b9f34558dac1c9d1dc3660c2901a246457e7"
+    },
+    {
+      "sourceId": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/placement-sign-lived/neptune/gemini",
+      "historicalRecordedSha256": "e2a017f1917a1f4162da46cbab3604b2fb029b7f60f6a7151b061c04117c4cb2",
+      "cleanHistorySha256": "048ccbe0764b97d9707290b41a01354bdbeee6d7e8e060d9ec3219db2c0a7783"
+    },
+    {
+      "sourceId": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/placement-sign-lived/neptune/taurus",
+      "historicalRecordedSha256": "cdbfd6b52e7240725b80691e9ce2cba4d14b2814f3c3cbfb895aeeb66e9d2905",
+      "cleanHistorySha256": "a552b7dc69316ee39c21eeec75c8597086ced6b61c4a8cc7fc488b69e8a2cedc"
+    },
+    {
+      "sourceId": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/placement-sign-lived/neptune/leo",
+      "historicalRecordedSha256": "2e865f02ac87bd39d0532a7c6ac1bc8afd4eb4b467fdacae0d507ccaa58491ce",
+      "cleanHistorySha256": "23192e9c7e983755cde40f24b62c6b2626c268a356491bccb49c687eb05dd2c6"
+    },
+    {
+      "sourceId": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/placement-sign-lived/neptune/scorpio",
+      "historicalRecordedSha256": "a94a3431c25f7bb48dee0dcbc354dcc62f02451481788b1f7f18609f024a7e3f",
+      "cleanHistorySha256": "468eae0215488fbba97048d8710f87fe7cc78f8fb638188bb79ed908fee96285"
+    },
+    {
+      "sourceId": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/planet-lived/pluto",
+      "historicalRecordedSha256": "d6bfdad59241ab520718ca123cbeb834f44c6e4347a438dddc34410c502eb0e5",
+      "cleanHistorySha256": "ad0b54d3eeac6ba13210a83e1a7b8404d6b3bd8e500d54495dff83645aa1aca5"
+    },
+    {
+      "sourceId": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/placement-sign-lived/pluto/scorpio",
+      "historicalRecordedSha256": "34f90018f678363d3673ce43884220539861e92b3ec5415e9b36e7e7534acaf7",
+      "cleanHistorySha256": "7ae543c71caa395be8bd312ede2e74b9286e914623eeb645c4dfbc80ab9c4d48"
+    },
+    {
+      "sourceId": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/placement-sign-lived/pluto/taurus",
+      "historicalRecordedSha256": "9faea77b36867dc3f3adafa7344436577a3b353caab8177f6cf222f14aa102bc",
+      "cleanHistorySha256": "8e5318fcff19681309eaf0471ac07536ca9e1d14066eb58865b50475daf88afc"
+    },
+    {
+      "sourceId": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/placement-sign-lived/pluto/virgo",
+      "historicalRecordedSha256": "f8ffad517ffe6102610b065deb560255528c2ca1081bc3cdbfd677fb276a02bc",
+      "cleanHistorySha256": "c6cdabf5b45d005b9261744729d3f9393005a1514e3c9d7de7a4b5761a814bfd"
+    }
+  ]
+}

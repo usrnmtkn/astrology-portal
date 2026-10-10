@@ -323,15 +323,17 @@ const signedChironAspect = transitRenderer.renderTransitAspect({
   sign: "taurus",
   window: "Until July 30"
 });
-assert.match(
-  signedChironAspect.body,
-  /^The question of what it all means gets loud:/u
-);
-assert.match(
-  signedChironAspect.body,
-  /Chiron square your Jupiter until July 30 can make it hard to tell hope from avoidance for a while\./u
-);
+const currentChironYou = JSON.parse(fs.readFileSync(path.join(repoRoot, "apps/web/src/content/fallbackArchitectureV3/source-rows/transit-synastry-rows-v1.json"), "utf8")).authoredCards.find(row => row.contentKey === "authored/transit-aspect/chiron/jupiter/hard");
+assert.equal(signedChironAspect.body, currentChironYou.body_you.replaceAll("{{aspectWord}}", "square").replaceAll("{{untilDate}}", "July 30"));
 assert.doesNotMatch(signedChironAspect.body, /In plain terms:/u);
+
+function assertCompleteTransitInsert(result, index, contentKey, aspect, untilDate) {
+  const row = transitRows.authoredCards.find(row => row.contentKey === contentKey);
+  assert.ok(row?.body_you, `${contentKey}: approved You source must exist`);
+  const expected = row.body_you.replaceAll("{{aspectWord}}", aspect).replaceAll("{{untilDate}}", untilDate);
+  assert.equal(result.parts[index], expected, `${contentKey}: preserve the complete current approved passage`);
+  assert.deepEqual(result.partSourceKeys[index], [contentKey]);
+}
 
 const layeredVenusHouse = transitRenderer.renderTransitHouse({
   planet: "venus",
@@ -346,9 +348,7 @@ const layeredVenusHouse = transitRenderer.renderTransitHouse({
 assert.equal(layeredVenusHouse.templateKey, "authored/transit-house-layered");
 assert.equal(layeredVenusHouse.contentKey, "authored/transit-house-sign/venus/7/libra");
 assert.equal(layeredVenusHouse.parts.length, 3);
-assert.match(layeredVenusHouse.parts[2], /your natal Saturn/u);
-assert.match(layeredVenusHouse.parts[2], /squaring your natal Saturn/u);
-assert.match(layeredVenusHouse.parts[2], /until August 2\./u);
+assertCompleteTransitInsert(layeredVenusHouse, 2, "authored/transit-aspect/venus/saturn/hard", "square", "August 2");
 assert.doesNotMatch(layeredVenusHouse.body, /\{\{/u);
 
 const layeredSunHouse = transitRenderer.renderTransitHouse({
@@ -364,8 +364,7 @@ const layeredSunHouse = transitRenderer.renderTransitHouse({
 assert.equal(layeredSunHouse.templateKey, "authored/transit-house-layered");
 assert.equal(layeredSunHouse.contentKey, "authored/transit-house-sign/sun/1/aries");
 assert.equal(layeredSunHouse.parts.length, 3);
-assert.match(layeredSunHouse.parts[2], /squaring your natal Saturn/u);
-assert.match(layeredSunHouse.parts[2], /until August 2\./u);
+assertCompleteTransitInsert(layeredSunHouse, 2, "authored/transit-aspect/sun/saturn/hard", "square", "August 2");
 assert.match(layeredSunHouse.body, /month|weeks/u);
 
 const layeredMercuryHouse = transitRenderer.renderTransitHouse({
@@ -383,9 +382,7 @@ assert.equal(layeredMercuryHouse.templateKey, "authored/transit-house-layered");
 assert.equal(layeredMercuryHouse.contentKey, "authored/transit-house-sign/mercury/3/gemini");
 assert.equal(layeredMercuryHouse.parts.length, 4);
 assert.match(layeredMercuryHouse.parts[2], /revise rather than redo/u);
-assert.match(layeredMercuryHouse.parts[3], /trining your natal Moon/u);
-assert.match(layeredMercuryHouse.parts[3], /until August 2, 2026/u);
-assert.match(layeredMercuryHouse.parts[3], /Mercury in Gemini wants all the tabs open; your Moon guards/u);
+assertCompleteTransitInsert(layeredMercuryHouse, 3, "authored/transit-aspect/mercury/moon/soft", "trine", "August 2, 2026");
 assert.doesNotMatch(layeredMercuryHouse.parts[3], /In plain terms|through Until/u);
 assert.match(layeredMercuryHouse.body, /weeks/u);
 
@@ -399,11 +396,7 @@ const layeredJupiterWindow = transitRenderer.renderTransitHouse({
     window: "March 2027"
   }]
 });
-assert.match(
-  layeredJupiterWindow.parts[2],
-  /it is also trining your natal Sun until March 2027\./u
-);
-assert.doesNotMatch(layeredJupiterWindow.parts[2], /\bthrough March 2027\b/u);
+assertCompleteTransitInsert(layeredJupiterWindow, 2, "authored/transit-aspect/jupiter/sun/soft", "trine", "March 2027");
 
 const retiredEventMetaphors = /grinding against|tugging at|glaring at|crosstalking|trading notes with|feeding energy to/iu;
 assert.doesNotMatch(
@@ -421,9 +414,7 @@ const beneficConjunctionHouse = transitRenderer.renderTransitHouse({
     window: "July 30, 2026"
   }]
 });
-assert.match(beneficConjunctionHouse.parts[2], /sitting right on your natal North Node/u);
-assert.match(beneficConjunctionHouse.parts[2], /the growth tastes good/u);
-assert.doesNotMatch(beneficConjunctionHouse.parts[2], /Comfort lobbies against growth/u);
+assertCompleteTransitInsert(beneficConjunctionHouse, 2, "authored/transit-aspect/venus/north-node/conjunction", "conjunct", "July 30, 2026");
 
 const retrogradeHouseCases = [
   { planet: "mars", house: 1, sign: "aries", overlay: /drive turns inward and doubles back/u },
@@ -764,7 +755,7 @@ assert.match(
 );
 assert.match(
   appSource,
-  /const rowSummary = transitCardPreview\(normalizedSurfacePreview\(normalizedTransit\)\)/u,
+  /const rowSummary = transit\.timing \? transitCardPreview\(normalizedSurfacePreview\(normalizedTransit\)\) : ""/u,
   "Personal aspect-transit cards must use the truncated preview."
 );
 assert.match(
@@ -879,7 +870,7 @@ assert.match(
 );
 assert.match(
   generatedContentSource,
-  /fallbackArchitectureV3BundleCacheSchema = "fallback-architecture-v3-dashboard-overlay-cache-v7"/u,
+  /fallbackArchitectureV3BundleCacheSchema = "fallback-architecture-v3-dashboard-overlay-cache-v9"/u,
   "Dashboard cache payloads must carry an invalidatable schema."
 );
 assert.match(
@@ -894,12 +885,16 @@ assert.match(
 );
 assert.match(
   generatedContentSource,
-  /let cursorId: string \| null = null[\s\S]*?\.order\("id", \{ ascending: true \}\)[\s\S]*?if \(cursorId\) query = query\.gt\("id", cursorId\)/u,
-  "Dashboard hydration pagination must use a stable monotonic ID cursor."
+  /await loadReaderRows\(\{ provider: fallbackArchitectureV3Provider, \.\.\.\(scope !== "all"/u,
+  "Dashboard overlays must load through the governed reader transport."
 );
+const readerClientSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/services/readerContentClient.ts"), "utf8");
+assert.match(readerClientSource, /afterId && value\.nextCursor <= afterId/u, "Reader pagination must reject a non-advancing cursor");
+assert.match(readerClientSource, /afterId = value\.nextCursor/u);
+
 assert.match(
   generatedContentSource,
-  /\.rpc\("content_runtime_revision", \{ p_provider: fallbackArchitectureV3Provider \}\)[\s\S]*?currentCoreManifest = await loadFallbackArchitectureV3BundledCoreManifest\(\)[\s\S]*?packageFallbackArchitectureV3CoreRows\(rows, currentCoreManifest\)[\s\S]*?if \(!bundle\) \{[\s\S]*?clearCachedFallbackArchitectureV3Bundle\(\);[\s\S]*?return null;/u,
+  /\.rpc\("content_runtime_revision", \{ p_provider: fallbackArchitectureV3Provider \}\)[\s\S]*?currentCoreManifest = await loadFallbackArchitectureV3BundledCoreManifest\(\)[\s\S]*?packageFallbackArchitectureV3CoreRows\(rows, currentCoreManifest\)[\s\S]*?if \(!bundle\) \{[\s\S]*?clearCachedFallbackArchitectureV3Bundle\(scope\);[\s\S]*?return null;/u,
   "Core dashboard overlays must use runtime revision, bundled key topology, and fail closed when the overlay cannot be packaged."
 );
 

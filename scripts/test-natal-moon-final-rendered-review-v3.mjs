@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 
+import { assertCompatibilitySourceIntegrity } from "./lib/compatibility-source-integrity.mjs";
 import assert from "node:assert/strict";
 import crypto from "node:crypto";
 import fs from "node:fs";
@@ -26,9 +27,7 @@ assert.equal(review.counts.deterministicFailures, 0);
 assert.equal(review.counts.ownerReaderCopyVerdicts, 0);
 
 for (const source of readiness.sourceFiles) {
-  const bytes = fs.readFileSync(source.path);
-  assert.equal(bytes.length, source.byteLength, `${source.path} byte drift`);
-  assert.equal(sha256(bytes), source.sha256, `${source.path} hash drift`);
+  assertCompatibilitySourceIntegrity(source);
 }
 
 for (const row of review.signRows) {

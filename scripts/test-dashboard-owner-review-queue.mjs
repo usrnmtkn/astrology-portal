@@ -22,8 +22,10 @@ assert.match(
 );
 assert.match(
   dashboard,
-  /reviewQueueRows\.filter\(\(row\) => row\.status === status\)\.length/u,
-  "Review status counts must include generated_interpretations review rows."
+  /tableRows\.filter\(\(row\) => row\.status === status\)\.length/u,
+  "Review status counts must use the combined rows supplied to the current workflow view."
 );
 
+assert.match(dashboard, /renderReviewTable\(workflowReviewRows\)/u);
+assert.match(dashboard, /const workflowReviewRows = filteredReviewRows\.filter/u);
 console.log("Dashboard owner-review queue contract passed.");

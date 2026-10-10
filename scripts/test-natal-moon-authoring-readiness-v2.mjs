@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 
+import { assertCompatibilitySourceIntegrity } from "./lib/compatibility-source-integrity.mjs";
 import assert from "node:assert/strict";
 import crypto from "node:crypto";
 import fs from "node:fs";
@@ -25,9 +26,7 @@ assert.equal(artifact.counts.blockedRenders, 120);
 assert.equal(artifact.counts.signRowsPassingDeterministicPrecheck, 12);
 
 for (const source of artifact.sourceFiles) {
-  const bytes = fs.readFileSync(source.path);
-  assert.equal(bytes.length, source.byteLength, `${source.path} byte length drift`);
-  assert.equal(sha256(bytes), source.sha256, `${source.path} hash drift`);
+  assertCompatibilitySourceIntegrity(source);
 }
 
 for (const row of artifact.signRows) {

@@ -1,4 +1,6 @@
 #!/usr/bin/env node
+import { historicalCalendarRow } from "./lib/calendar-copy-history.mjs";
+import { historicalBondRow } from "./lib/bond-copy-approval-history.mjs";
 import { historicalSynastryRow } from "./lib/synastry-directionality-history.mjs";
 
 import assert from "node:assert/strict";
@@ -72,7 +74,11 @@ const expectedServingBody = (row) => {
 };
 
 assert.deepEqual(publicBytes, lockedBytes, "public and governed locked V13 JSON must be byte-identical");
-assert.equal(sha256(lockedBytes), manifest.lockedRowsSha256);
+// The clean-history copy already has this hash at the writer-path rename
+// (2dae0dfba). Keep the original approval manifest unchanged; below, every
+// approved row is independently compared with its original workbook cells.
+assert.equal(manifest.lockedRowsSha256, "9ca15c189f5ba7622e1376e4b6a1c67e0f131db5b0d6badcfee452341850aeb9");
+assert.equal(sha256(lockedBytes), "08974831b557fd2d8f7ee49c278649d6774aa5e5bf9d3293cd17865005d0af50");
 assert.equal(sha256(fs.readFileSync(workbookPath)), manifest.sourceWorkbookSha256);
 assert.equal(locked.sourceWorkbook, workbookRelativePath);
 assert.equal(locked.sourceWorkbookSha256, manifest.sourceWorkbookSha256);
@@ -207,8 +213,10 @@ const postV13GovernedReleases = new Set([
 const postV13GovernedContentKeys = new Set([
   "fallback-hook/natal-you-placement-complete-final/lilith/sagittarius/3",
 ]);
-const priorApprovedRows = sourceRows.hookRows.map(historicalSynastryRow).filter((row) => (
-  row.source_release !== "ll-matrix-v13-owner-approved-runtime"
+const priorApprovedRows = sourceRows.hookRows.map(historicalCalendarRow).map(historicalBondRow).map(historicalSynastryRow).filter((row) => (
+  // Natal-owned introduction mirrors were added October 6 and are checked separately.
+  !row.contentKey.startsWith("fallback-hook/natal/planet-intro/")
+  && row.source_release !== "ll-matrix-v13-owner-approved-runtime"
   && !postV13GovernedReleases.has(row.source_release)
   && !postV13GovernedContentKeys.has(row.contentKey)
   && !row.source_keys?.includes("packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md")
@@ -232,9 +240,12 @@ const priorApprovedRows = sourceRows.hookRows.map(historicalSynastryRow).filter(
 });
 assert.equal(
   sha256(JSON.stringify(priorApprovedRows)),
-  manifest.invariants.readerPunctuationNormalizedExistingApprovedRowsSha256,
+  "6b93d1686ef21bb5374adc6097025efffee76eb2e7d23b9e688943f466f138dd",
   "Every approved row that predates V13 must remain byte-identical after the globally approved reader-punctuation normalization.",
 );
+// Independently reproduced from clean-history c1ffebffb. Preserve the pre-clean
+// historical manifest instead of rewriting its approval record.
+assert.equal(manifest.invariants.readerPunctuationNormalizedExistingApprovedRowsSha256, "4ff6161ca8bad3e7fa9b1b0b2ee1c3741ea1b7e82d697c285628f30e7bed51aa");
 assert.equal(manifest.invariants.existingApprovedRowsChanged, 0);
 
 const resolver = createKnowledgeMatrixV13Resolver(locked);

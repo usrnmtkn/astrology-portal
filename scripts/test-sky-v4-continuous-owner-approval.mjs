@@ -1,3 +1,4 @@
+import { assertSkyV4SourceIntegrity } from "./lib/sky-v4-source-integrity.mjs";
 import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
 import { execFileSync } from "node:child_process";
@@ -18,7 +19,7 @@ const approval = assertSkyV4ContinuousOwnerApproval(corpus);
 const records = skyV4ContentStudioRecords(corpus);
 const approved = records.filter((row) => row.studio_content_type === "continuous-placement");
 
-assert.equal(createHash("sha256").update(canonicalBytes).digest("hex"), SKY_V4_CANONICAL_JSON_SHA256);
+assertSkyV4SourceIntegrity(canonicalBytes, SKY_V4_CANONICAL_JSON_SHA256);
 assert.equal(approval.approved_keys.length, 120);
 assert.equal(new Set(approval.approved_keys).size, 120);
 assert.deepEqual(approved.map((row) => row.contentKey), approval.approved_keys);

@@ -91,6 +91,31 @@ export type GeneratedSkyArticleTemplateSlots = {
   memoryReceipt?: NonNullable<Awaited<ReturnType<typeof studioArticleWritingMemory>>>["receipt"];
 };
 
+export class RejectedSkyArticleDraftError extends Error {
+  constructor(message: string, readonly candidate: GeneratedSkyArticleTemplateSlots) {
+    super(message);
+    this.name = "RejectedSkyArticleDraftError";
+  }
+}
+
+function finishSkyArticleSlots(raw: unknown, input: GenerateSkyArticleTemplateSlotsInput,
+  receipt: Omit<GeneratedSkyArticleTemplateSlots, "slotValues">): GeneratedSkyArticleTemplateSlots {
+  try {
+    return { ...receipt, slotValues: validateSkyArticleTemplateSlotValues(raw, input.requestedSlots, {
+      ingressEssay: isSkyIngressEssay(input.facts.articleFormat), licensedVariables: input.licensedVariables
+    }) };
+  } catch (error) {
+    if (!isSkyIngressEssay(input.facts.articleFormat)) throw error;
+    // Retain only requested text in a separate, unapproved candidate. Never admit
+    // rejected output as editable article fields or discard its provider receipt.
+    const requested = new Set(input.requestedSlots.map(slot => slot.name));
+    const slotValues = Object.fromEntries(Object.entries(raw && typeof raw === "object" && !Array.isArray(raw) ? raw : {})
+      .filter((entry): entry is [string, string] => requested.has(entry[0]) && typeof entry[1] === "string"));
+    throw new RejectedSkyArticleDraftError(error instanceof Error ? error.message : "The returned draft needs correction.",
+      { ...receipt, slotValues });
+  }
+}
+
 export type GeneratedAstrologyDraft = {
   headline: string;
   tldr?: string;
@@ -5827,11 +5852,7 @@ export async function generateSkyArticleTemplateSlots(
     const outputText = responseOutputText(typedPayload);
     if (!outputText) throw new Error("OpenAI response did not include template slot values.");
     const parsed = JSON.parse(outputText) as { slotValues?: unknown };
-    return {
-      slotValues: validateSkyArticleTemplateSlotValues(parsed.slotValues, input.requestedSlots, {
-        ingressEssay: isSkyIngressEssay(input.facts.articleFormat),
-        licensedVariables: input.licensedVariables
-      }),
+    return finishSkyArticleSlots(parsed.slotValues, input, {
       responseId: typedPayload.id,
       provider,
       model,
@@ -5844,7 +5865,7 @@ export async function generateSkyArticleTemplateSlots(
         reasoningEffort,
         sourceIds: approvedExamples.map((example) => example.contentKey)
       })
-    };
+    });
   }
 
   const apiKey = requireEnv("ANTHROPIC_API_KEY");
@@ -5882,11 +5903,7 @@ export async function generateSkyArticleTemplateSlots(
     content.type === "tool_use" && content.name === "tldr_astro_sky_article_template_slots"
   ))?.input;
   if (!toolInput) throw new Error("Claude response did not include template slot values.");
-  return {
-    slotValues: validateSkyArticleTemplateSlotValues(toolInput.slotValues, input.requestedSlots, {
-      ingressEssay: isSkyIngressEssay(input.facts.articleFormat),
-      licensedVariables: input.licensedVariables
-    }),
+  return finishSkyArticleSlots(toolInput.slotValues, input, {
     responseId: payload.id,
     provider,
     model,
@@ -5898,7 +5915,7 @@ export async function generateSkyArticleTemplateSlots(
       model,
       sourceIds: approvedExamples.map((example) => example.contentKey)
     })
-  };
+  });
 }
 
 export async function generateContent(input: GenerateContentInput): Promise<StoredGeneratedContent> {
