@@ -1,4 +1,4 @@
-import { natalInsightTopics, natalInsightSlotGroups } from "../../web/src/content/natalInsightCatalog";
+import { natalInsightTopics, natalInsightSlotGroups } from "../../web/src/content/natalInsightCatalog.ts";
 import { isRetiredCompositionKey } from "../../web/src/content/fallbackArchitectureV3/resolver/retiredCompositions.mjs";
 import type { CompositionMapRow, CompositionMapTemplate } from "./compositionMap";
 

@@ -1,3 +1,5 @@
+import { natalInsightTopics } from "../../web/src/content/natalInsightCatalog.ts";
+
 export type ReaderDestinationMode = "exact-context" | "context-required" | "not-reader";
 
 export type ReaderDestinationPolicy = {
@@ -14,6 +16,10 @@ export type ReaderDestinationPolicy = {
  * the UI must not fall back to an app landing page. `not-reader` is internal.
  */
 export const readerDestinationPolicyBySurface: Record<string, ReaderDestinationPolicy> = {
+  ...Object.fromEntries(natalInsightTopics.map(topic => [`natal-insight-${topic.id}`, {
+    mode: "context-required" as const,
+    reason: "Requires the selected reader or friend chart and topic; a shared passage does not identify one chart's complete reading."
+  }])),
   "friends-compatibility-planet-cards": {
     mode: "context-required",
     reason: "Requires the selected friend and comparison chart; a generic Friends link would lose the edited card context."

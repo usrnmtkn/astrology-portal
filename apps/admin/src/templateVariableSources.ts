@@ -1,5 +1,5 @@
 import type { TemplateVariableReference } from "./templateVariableReference";
-import { natalInsightTopics, natalInsightTemplateKey, natalInsightSlotGroups } from "../../web/src/content/natalInsightCatalog";
+import { natalInsightTopics, natalInsightTemplateKey, natalInsightSlotGroups } from "../../web/src/content/natalInsightCatalog.ts";
 
 // These prefixes mirror the keys requested by the fallback resolvers. They let
 // Content Studio take an editor from a template slot to the saved writing that

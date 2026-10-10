@@ -6251,6 +6251,19 @@ for (const theme of ["light", "dark"] as const) for (const width of [960, 390]) 
         await expect(guide.locator("p")).toHaveCount(2);
         await expect(article).toContainText(`${audience === "you" ? "You" : "They"} can read the complete ${topic}`);
         expect(await guide.evaluate(el => Boolean(el.closest("details")?.open))).toBe(true);
+        if (topic === "approach" && audience === "you" && width === 960) {
+          // A transit-date update must not tear down a natal reading or close
+          // the guide the reader has already opened.
+          const disclosure = page.locator(".natal-reading-guide-disclosure");
+          await disclosure.evaluate(el => el.setAttribute("data-qa-instance", "open-guide"));
+          await page.locator(".sky-header-date-button").click();
+          await page.getByRole("gridcell", { name: "Friday, July 17, 2026", exact: true }).click();
+          await expect(page).toHaveURL(/[?&]date=2026-07-17(?:&|#|$)/u);
+          await expect(page.locator(".sky-header-date-button")).toHaveAttribute("aria-label", /Viewing transits for Fri, Jul 17/u);
+          await expect(disclosure).toHaveAttribute("data-qa-instance", "open-guide");
+          await expect(disclosure).toHaveJSProperty("open", true);
+          await expect(article).toContainText("Its final sentence stays editable.");
+        }
         await expect(article).toContainText("Its final sentence stays editable.");
         await expect(article).not.toContainText("{{");
         if (["approach", "home-belonging", "creativity-pleasure", "money-resources", "work-direction"].includes(topic)) {

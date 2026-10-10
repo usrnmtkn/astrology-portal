@@ -1,5 +1,5 @@
 import { ZODIAC_SEASON_VARIABLES, supportsZodiacSeasonVariables } from "../../web/src/content/fallbackArchitectureV3/resolver/zodiacSeasonVariables.mjs";
-import { natalInsightFactSlots } from "../../web/src/content/natalInsightCatalog";
+import { natalInsightFactSlots } from "../../web/src/content/natalInsightCatalog.ts";
 export type TemplateVariableRequirement = "Required" | "Optional" | "Runtime";
 
 export type TemplateVariableReference = {

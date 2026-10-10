@@ -17213,14 +17213,16 @@ function ProfileView({
   useEffect(() => {
     const identity = personalTransitPublicationIdentity();
     if (identity !== articlePublicationIdentity.current) {
-      // Includes house and weekly articles, whose IDs are not individual transits.
-      // Reopening resolves the current source rather than retaining a retired body.
+      // Includes house and weekly transit articles, whose IDs are not individual
+      // transits. Natal readings resolve their own sources and must stay open.
       articlePublicationIdentity.current = identity;
-      setTransitArticle(null);
+      setTransitArticle(current => current?.requiresTransitSources === false ? current : null);
     }
   }, [fallbackArchitectureV3Version, transitCopyLoading]);
 
-  useEffect(() => { setTransitArticle(null); }, [targetDate, currentSky?.location.timeZone]);
+  useEffect(() => {
+    setTransitArticle(current => current?.requiresTransitSources === false ? current : null);
+  }, [targetDate, currentSky?.location.timeZone]);
 
   const [activePlacementRouteId, setActivePlacementRouteId] = useState<string | null>(null);
   const [weeklyHoroscopeAssembly, setWeeklyHoroscopeAssembly] = useState<WeeklyHoroscopeAssembly | null>(null);

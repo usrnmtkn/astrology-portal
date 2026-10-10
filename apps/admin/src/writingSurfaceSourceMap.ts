@@ -1,4 +1,4 @@
-import { natalInsightTopics, natalInsightGuideKey, natalInsightTemplateKey, natalInsightTemplateSlots } from "../../web/src/content/natalInsightCatalog";
+import { natalInsightTopics, natalInsightGuideKey, natalInsightTemplateKey, natalInsightTemplateSlots } from "../../web/src/content/natalInsightCatalog.ts";
 
 export type WritingLayer = "source-grounded" | "generated" | "madlib-fallback";
 export type WritingSurfaceStatus = "normalized" | "partial" | "not-normalized";
