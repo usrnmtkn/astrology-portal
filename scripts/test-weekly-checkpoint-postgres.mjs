@@ -19,7 +19,7 @@ try{
  grant all on generated_interpretations to service_role;
  create function update_test_version() returns trigger language plpgsql as $$ begin new.updated_at=greatest(clock_timestamp(),old.updated_at+interval '1 microsecond');return new;end;$$;
  create trigger update_test_version before update on generated_interpretations for each row execute function update_test_version();
- `+['20260919180000_generated_content_studio_listing_facts.sql','20260922002101_content_studio_private_versions.sql','20261010042007_weekly_rejection_checkpoint.sql','20261009124036_weekly_native_result_checkpoint.sql','20261010053723_weekly_checkpoint_deadlines.sql','20261010054825_studio_version_duplicate_precheck.sql','20261010060000_weekly_checkpoint_fast_compression.sql'].map(name=>readFileSync(`apps/web/supabase/migrations/${name}`,'utf8')).join('\n'));
+ `+['20260919180000_generated_content_studio_listing_facts.sql','20260922002101_content_studio_private_versions.sql','20261010042007_weekly_rejection_checkpoint.sql','20261009124036_weekly_native_result_checkpoint.sql','20261010053723_weekly_checkpoint_deadlines.sql','20261010054825_studio_version_duplicate_precheck.sql','20261010061107_weekly_checkpoint_fast_compression.sql'].map(name=>readFileSync(`apps/web/supabase/migrations/${name}`,'utf8')).join('\n'));
  const output=sql(database,`set default_toast_compression='pglz';
  insert into generated_interpretations values('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',clock_timestamp(),'DRAFT','horoscope/weekly/synthetic','Synthetic opening. Complete ending.',
  '{"horoscopeEdition":{"window":{"period":"weekly"},"passages":[]}}',

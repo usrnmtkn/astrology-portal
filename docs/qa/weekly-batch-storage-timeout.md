@@ -14,7 +14,13 @@ insert. Previously it offered both OLD and NEW full snapshots to ON CONFLICT on
 every checkpoint, including the already captured OLD version. The precheck
 avoids redundant snapshot storage work. The unique constraint remains the race
 guard; complete originals, hashes, immutable history and access controls stay
-intact. Neither migration rewrites existing content or archive rows.
+intact. None of these migrations rewrites existing content or archive rows.
+
+Weekly checkpoint transactions use lossless LZ4 for newly written source snapshots
+and archive versions. The database default and other transactions are unchanged.
+The native PostgreSQL 17.6 release test checks the actual compression method and
+exact retained text; the WASM test engine does not provide LZ4. Production support
+was separately verified before applying this function-scoped setting.
 
 Three consecutive connection failures without confirmed progress now stop the
 batch with a visible error. A successful response or a confirmed newer version
@@ -23,7 +29,9 @@ retry is introduced. The cost notice explicitly names the remaining batch size.
 
 ## Regression coverage
 
-- Real PostgreSQL checkpoint SQL with over 40 MB of synthetic nested history,
+- Native PostgreSQL 17.6 verifies lossless source/archive compression, exact retained
+  history, unchanged transaction defaults and idempotent result saves.
+- Checkpoint SQL in the isolated WASM engine with over 40 MB of synthetic nested history,
   the generated Studio listing column and the private audit trigger.
 - Exact-version conflicts, immutable audit history, permission boundaries,
   atomic rollback when archival fails, and unchanged original text.
