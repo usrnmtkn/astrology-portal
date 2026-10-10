@@ -1,7 +1,7 @@
 import { interpolateRelationshipTemplate } from "../../web/src/content/fallbackArchitectureV3/resolver/relationshipTemplate.mjs";
 import { useEffect, useState } from "react";
 import { AdminDisclosureSummary, AdminSelect } from "./AdminNativeControls";
-import { PageLoading } from "../../web/src/components/PageLoading";
+import { PageLoading } from "../../../src/shared/components/PageLoading";
 import { subscribeToContentUpdates } from "../../web/src/services/contentUpdateSignal";
 import { StudioButton, StudioInput, StudioTabs } from "./StudioControls";
 import { MetricCard } from "./studio-ds/patterns";

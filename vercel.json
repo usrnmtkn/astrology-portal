@@ -105,7 +105,7 @@
       "includeFiles": "{api/_lib,artifacts,config,src/astro-writing,packages/astro-knowledge/{generated,scripts,data,config,reference,voice,sources/authored/owner-author-book},apps/web/{public/content,src/content},tldr-astro-phrasebank,data/writing}/**/*.{*js,json,jsonl,md,ts}"
     },
     "api/admin/content-coverage.ts": {
-      "includeFiles": "{api/_lib/*.{js,ts},config/content-authority-map-v1.json,packages/astro-knowledge/{generated/content-unresolved-queue-v1.json,review/{transit*350*.json,sky-calendar-exact*/current-owner-payloads.json}},apps/web/src/content/fallbackArchitectureV3/**/*.json}"
+      "includeFiles": "{api/_lib/*.{js,ts},config/content-authority-map-v1.json,packages/astro-knowledge/{generated/content-unresolved-queue-v1.json,review/{transit*.json,friend-transit*.json,sky-calendar-exact*/current*}},apps/web/src/content/fallbackArchitectureV3/**/*.json}"
     },
     "api/admin/generated-content-inventory.ts": {
       "includeFiles": "api/_lib/**/*.{js,ts}"

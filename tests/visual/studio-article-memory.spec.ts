@@ -1,6 +1,7 @@
 import { test, expect } from '@playwright/test';
 import { fork } from 'node:child_process';
 import path from 'node:path';
+import { routeStudioInventoryApi } from '../helpers/studio-inventory-route';
 for (const width of [390,1440]) for (const colorScheme of ['light','dark'] as const) {
   test(`Article edit to memory ${width} ${colorScheme}`,async({page})=>{
     test.setTimeout(45000);
@@ -16,15 +17,13 @@ for (const width of [390,1440]) for (const colorScheme of ['light','dark'] as co
       await ready;await page.setViewportSize({width,height:1000});await page.emulateMedia({colorScheme});
       await page.addInitScript(()=>localStorage.setItem('tldrastro:contentAdminSecret','calendar-api-fixture'));
       const errors:string[]=[];page.on('pageerror',e=>errors.push(e.message));
-      await page.route('**/api/**',async route=>{
-        const request=route.request(),url=new URL(request.url());
-        if(url.pathname==='/api/admin/studio-memory-feedback'||url.pathname==='/api/admin/generated-content'&&request.method()!=='GET'){
-          const result=await call({method:request.method(),url:url.pathname+url.search,body:request.postData()?request.postDataJSON():null});
-          return route.fulfill({status:result.status,json:result.payload});
-        }
-        if(url.pathname==='/api/admin/generated-content')return route.fulfill({json:{ok:true,rows:await call({method:'rows'}),hasMore:false}});
-        return route.fulfill({json:{ok:true,rows:[],records:[],contentKeys:[],candidates:[],statuses:[],enabled:false}});
-      });
+      await routeStudioInventoryApi(page, { call, answer: async (route, url) => {
+        if (!['/api/admin/studio-memory-feedback', '/api/admin/content-live-status'].includes(url.pathname)) return false;
+        const request = route.request();
+        const result = await call({ method: request.method(), url: url.pathname + url.search, body: request.postData() ? request.postDataJSON() : null });
+        await route.fulfill({ status: result.status, json: result.payload });
+        return true;
+      } });
       await page.goto('/admin/content#exact-content');
       await page.evaluate(value=>document.documentElement.dataset.theme=value,colorScheme);
       await page.locator('.admin-content-row').getByRole('button',{name:'Edit',exact:true}).click();
@@ -45,7 +44,8 @@ for (const width of [390,1440]) for (const colorScheme of ['light','dark'] as co
       await expect(memory.getByRole('alert')).toContainText('Review the exact saved passage');
       await editor.getByRole('button',{name:'Review 1 change',exact:true}).click();
       await editor.getByRole('button',{name:'Publish changes',exact:true}).click();
-      await expect(page.getByText('sky-article/saturn/aries/2026 published with 1 reviewed change.',{exact:true})).toBeVisible();
+      await expect(page.getByText('The reviewed revision is published.',{exact:true})).toBeVisible();
+      expect((await call({method:'rows'})).find((row:any)=>row.content_key==='sky-article/saturn/aries/2026')?.status).toBe('LIVE');
       if (await memory.getAttribute('open') === null) await memory.locator('summary').first().click();
       await memory.getByRole('button',{name:'Use for future drafts',exact:true}).click();
       await expect(memory).toContainText('Used for future drafts');

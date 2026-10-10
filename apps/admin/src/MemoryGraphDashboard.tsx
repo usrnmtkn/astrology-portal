@@ -4,7 +4,7 @@ import { StudioButton, StudioInput } from "./StudioControls";
 import { memo, useEffect, useRef, useState } from 'react';
 import { MemoryGraph, type DocumentWithMemories } from '@supermemory/memory-graph';
 import { AdminAccessGate } from './AdminStudioPrimitives';
-import { PageLoading } from '../../web/src/components/PageLoading';
+import { PageLoading } from '../../../src/shared/components/PageLoading';
 import { adminCredentialHeaders, adminSecretStorageKey, normalizeAdminSecret } from './adminSecret';
 import { loadOwnerSessionAccessToken, ownerSessionStorageKey } from './ownerSession';
 

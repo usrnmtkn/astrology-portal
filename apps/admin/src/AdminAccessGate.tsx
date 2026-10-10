@@ -1,5 +1,5 @@
 import { StudioButton, StudioInput } from "./StudioControls";
-import { studioSignInHref } from "../../web/src/services/studioAuthReturn";
+import { studioSignInHref } from "../../../src/shared/services/studioAuthReturn";
 import { LogIn, RefreshCw } from "lucide-react";
 import type { KeyboardEvent } from "react";
 

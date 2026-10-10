@@ -1,6 +1,6 @@
-import { FormattedText, FormattedProse } from "../../web/src/components/FormattedProse";
+import { FormattedText, FormattedProse } from "../../../src/shared/components/FormattedProse";
 import { useEffect, useId, useMemo, useRef, useState } from "react";
-import { PageLoading } from "../../web/src/components/PageLoading";
+import { PageLoading } from "../../../src/shared/components/PageLoading";
 import { AdminSelect } from "./AdminNativeControls";
 import { StudioButton, StudioInput, StudioTabs } from "./StudioControls";
 import { lunarSigns, lunarContentIdentity } from "./lunarCalendarContent";

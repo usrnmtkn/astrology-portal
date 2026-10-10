@@ -1,6 +1,6 @@
 import {lazy,Suspense,useRef,useState,type ReactNode} from 'react';
 import {StudioTabs} from './StudioControls';
-import {PageLoading} from '../../web/src/components/PageLoading';
+import {PageLoading} from '../../../src/shared/components/PageLoading';
 const Reusable = lazy(()=>import('./ReusableLunationWritingStudio'));
 const Dated = lazy(()=>import('./DatedLunationWritingStudio'));
 export default function LunationWritingStudio({secret,dirtyRef,onOpenContent,library,requestedDraftId}:{secret:string;dirtyRef:{current:boolean};onOpenContent:(key:string)=>Promise<void>;library:ReactNode;requestedDraftId?:string|null}) {

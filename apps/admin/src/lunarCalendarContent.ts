@@ -1,7 +1,7 @@
-import { calendarTransitionPhraseForKey } from "../../web/src/features/calendar/calendarTransitionPhraseIdentity.js";
+import { calendarTransitionPhraseForKey } from "../../../src/shared/features/calendar/calendarTransitionPhraseIdentity.js";
 
 /** Editorial labels only: stable source keys and owner prose are never renamed. */
-import { calendarSeasonTransitionTitle } from "../../web/src/features/calendar/calendarSeasonTransitionTitle.js";
+import { calendarSeasonTransitionTitle } from "../../../src/shared/features/calendar/calendarSeasonTransitionTitle.js";
 
 export const lunarSigns = ['aries', 'taurus', 'gemini', 'cancer', 'leo', 'virgo', 'libra', 'scorpio', 'sagittarius', 'capricorn', 'aquarius', 'pisces'];
 

@@ -7,7 +7,7 @@ import assert from "node:assert/strict";
 import fs from "node:fs";
 import { PGlite } from "@electric-sql/pglite";
 
-const ts = fs.readFileSync("api/_lib/studio-listing-facts.ts", "utf8");
+const ts = fs.readFileSync("src/shared/studio-listing-facts.ts", "utf8");
 const sql = fs.readFileSync(
   "apps/web/supabase/migrations/20260919180000_generated_content_studio_listing_facts.sql",
   "utf8"

@@ -6,7 +6,7 @@ import { StudioButton, StudioInput, StudioTextarea } from "./StudioControls";
 import { SKY_PLACEMENT_PLANET_SIGN_INGRESS_TEMPLATE } from "../../web/src/content/fallbackArchitectureV3/resolver/skyPlacementPlanetSignTemplate.mjs";
 import { SKY_WRITING_LIBRARY_GROUPS, type SkyWritingLibraryComposition } from "./skyWritingLibrary";
 import SkyPlacementVariableKey, { SkyVariableText, type SkyVariableFacts } from "./SkyPlacementVariableKey";
-import { PageLoading } from "../../web/src/components/PageLoading";
+import { PageLoading } from "../../../src/shared/components/PageLoading";
 // @ts-ignore Pure shared article resolver, also used by publication and readers.
 import { skyPlacementArticleVariableSegments } from "../../web/src/content/fallbackArchitectureV3/resolver/skyPlacementArticleVariables.mjs";
 // @ts-ignore Calculated values have the existing article contract.

@@ -1,6 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { boundaryImports, withoutComments, allowedSharedDependency } from "./lib/admin-web-boundary.mjs";
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const webSrcRoot = path.join(repoRoot, "apps/web/src");
@@ -15,11 +16,6 @@ const allowedAdminBridgeFiles = new Set([
   "apps/web/src/App.tsx",
   "apps/web/src/main.tsx"
 ]);
-const allowedAdminSupportRoots = [
-  "apps/web/src/content/",
-  "apps/web/src/services/"
-];
-
 function toRepoPath(filePath) {
   return path.relative(repoRoot, filePath).split(path.sep).join("/");
 }
@@ -44,7 +40,7 @@ function walkFiles(root) {
 }
 
 function lineFindings(filePath, patterns, classify) {
-  const source = fs.readFileSync(filePath, "utf8");
+  const source = withoutComments(fs.readFileSync(filePath, "utf8"));
   const findings = [];
   source.split(/\r?\n/).forEach((line, index) => {
     for (const pattern of patterns) {
@@ -88,33 +84,27 @@ function publicAdminReferences() {
 }
 
 function adminPublicImports() {
-  const files = walkFiles(adminSrcRoot);
-  const importPattern = /^\s*import\s+(?:type\s+)?(?:.+?\s+from\s+)?["']([^"']+)["']/;
+  const files = [...walkFiles(adminSrcRoot), ...walkFiles(path.join(repoRoot, "src/shared"))];
   const findings = [];
 
   for (const filePath of files) {
     const source = fs.readFileSync(filePath, "utf8");
     const fromFile = toRepoPath(filePath);
-    source.split(/\r?\n/).forEach((line, index) => {
-      const match = line.match(importPattern);
-      if (!match) return;
-
-      const specifier = match[1];
+    boundaryImports(source, filePath).forEach(({ specifier, line }) => {
       if (!specifier.startsWith(".")) return;
 
       const resolvedPath = path.normalize(path.join(path.dirname(filePath), specifier));
       const repoResolved = toRepoPath(resolvedPath);
-      const isInternalAdmin = resolvedPath.startsWith(adminSrcRoot);
-      const isAllowedShared = allowedAdminSupportRoots.some((root) => repoResolved.startsWith(root));
-      const isCssImport = specifier.endsWith(".css");
+      const isInternalAdmin = fromFile.startsWith("apps/admin/src/") && repoResolved.startsWith("apps/admin/src/");
+      const isAllowedShared = allowedSharedDependency(repoResolved);
 
-      if (!isInternalAdmin && !isAllowedShared && !isCssImport) {
+      if (!isInternalAdmin && !isAllowedShared) {
         findings.push({
           file: fromFile,
-          line: index + 1,
-          text: line.trim(),
+          line,
+          text: specifier,
           status: "unexpected",
-          reason: `admin source imports non-admin web module "${specifier}"`
+          reason: `Studio/shared source imports outside its declared boundary "${specifier}"`
         });
       }
     });
@@ -185,7 +175,9 @@ const markdown = [
   "- Admin app source: `apps/admin/src`.",
   "- Dev server ports: public web must stay on `127.0.0.1:5173`; admin must stay on `127.0.0.1:5174`.",
   "- Allowed temporary bridges: `apps/web/src/App.tsx` and `apps/web/src/main.tsx`.",
-  "- Allowed admin support imports while extraction is in progress: `apps/web/src/content/*` and `apps/web/src/services/*`.",
+  "- Shared implementations: `src/shared/*`; existing domain contracts: `src/astro-writing/*` and `src/calendar-writing/*`.",
+  "- Temporary shared source dependencies: reader content, services, design-system styles, and the lunar journal index. These remain extraction work; they are not application UI imports.",
+  "- Static imports, re-exports and dynamic imports are checked in Studio and shared modules. Comments are not dependencies.",
   "",
   "## Unexpected Coupling",
   "",
