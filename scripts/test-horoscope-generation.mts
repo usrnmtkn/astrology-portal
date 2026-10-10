@@ -171,7 +171,10 @@ assert.equal(held.startupDiagnostic.code,'unexpected_error');assert(!JSON.string
 const callsAfterUnknown=writerFixture.calls;
 assert.equal((await action('generate',{sign:'aries',approvedPlanHash:planHash})).status,409);
 assert.equal((await action('poll')).status,200);assert.equal(writerFixture.calls,callsAfterUnknown);
-assert.equal((await action('reject',{sign:'all'})).status,409);
+const rejectedAroundHold=await action('reject',{sign:'all'});
+assert.equal(rejectedAroundHold.status,200);
+assert.deepEqual(rejectedAroundHold.payload.rows[0].source_snapshot.horoscopeGeneration.heldRequests.aries,held,'Rejecting writing never releases a possibly billed request');
+store.rows.set(row.id,structuredClone(row)); // Restore this isolated fixture for the independent continuation case.
 // The other sign completes while the unresolved request and earlier writing stay intact.
 result=await action('generate',{sign:'taurus',approvedPlanHash:planHash});assert.equal(result.status,202);row=result.payload.rows[0];
 result=await action('poll');assert.equal(result.status,200);row=result.payload.rows[0];

@@ -142,6 +142,10 @@
     },
     "api/**/*.ts": {
       "includeFiles": "{api/_lib,artifacts,config,src/astro-writing,packages/astro-knowledge/{generated,scripts,data,config,reference,voice,sources/authored/owner-author-book},apps/web/{public/content,src/content},tldr-astro-phrasebank}/**/*.{cjs,js,json,md,mjs,ts}"
+    },
+    "api/cron/run-horoscope-batches.ts": {
+      "includeFiles": "{node_modules/swisseph-wasm/wasm/*,{api/_lib,artifacts,config,src/*-writing,packages/*/{generated,scripts,data,config,reference,voice,sources/authored/owner*},apps/web/{public,src}/content,tldr-astro-phrasebank,data/writing}/**/*.{*js,json*,md,ts}}",
+      "maxDuration": 300
     }
   },
   "rewrites": [
@@ -182,6 +186,10 @@
     {
       "path": "/api/cron/run-you-report-jobs",
       "schedule": "*/5 * * * *"
+    },
+    {
+      "path": "/api/cron/run-horoscope-batches",
+      "schedule": "* * * * *"
     }
   ]
 }
