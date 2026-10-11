@@ -11483,7 +11483,7 @@ export function GeneratedContentAdminDashboard() {
                       {skyArticleEditionFacts.nasaExplanatoryText.sourceUrl && <> · <a href={skyArticleEditionFacts.nasaExplanatoryText.sourceUrl} target="_blank" rel="noreferrer">{skyArticleEditionFacts.nasaExplanatoryText.title ?? "Source"}</a></>}</dd></div>}
                   </dl>
                   {skyArticleEditionFacts.retrogradeHistory && <details className="retrograde-history">
-                    <summary>Previous retrograde</summary>
+                    <summary>Retrograde cycles</summary>
                     <RetrogradeHistoryFacts history={skyArticleEditionFacts.retrogradeHistory} timeZone={skyArticleEditionFacts.referenceTimeZone} />
                     <label>
                       <input type="checkbox" checked={skyArticleEditionForm.includeRetrogradeHistory === true}

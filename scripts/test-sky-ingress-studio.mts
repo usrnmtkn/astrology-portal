@@ -182,6 +182,9 @@ try {
   const venusResult = await invoke(factsHandler, "GET", "/api/admin/sky-article-facts?planet=venus&date=2026-10-10&format=ingress-essay-v2");
   assert.equal(venusResult.status, 200);
   assert.equal(venusResult.facts.retrogradeHistory.sameSign.retrograde.instant.slice(0, 10), "2018-10-05");
+  assert.equal(venusResult.facts.retrogradeHistory.nextSameSign.retrograde.instant.slice(0, 10), "2034-09-30");
+  assert.equal(venusResult.facts.retrogradeHistory.previousCrossing.instant.slice(0, 10), "2018-10-16");
+  assert(venusResult.facts.retrogradeHistory.nextSameSign.durationDays > 41);
   const generationRequest = { templateId: id, referenceDate: "2026-10-10", format: SKY_INGRESS_ESSAY_FORMAT, provider: "openai" };
   const withoutHistory = await invoke(slotsHandler, "POST", "/api/admin/sky-article-template-slots", generationRequest);
   assert.equal(withoutHistory.status, 200, JSON.stringify(withoutHistory));
@@ -193,6 +196,8 @@ try {
   assert(requested.includes("priorOccurrenceSection"));
   assert.match(prompts.at(-1)!, /2018-10-05T19:04/);
   assert.match(prompts.at(-1)!, /not proof of a prior ingress/);
+  assert.match(prompts.at(-1)!, /2034-09-30T19:36/);
+  assert.match(prompts.at(-1)!, /future calculation, not historical evidence/);
   assert.deepEqual(withHistory.facts.retrogradeHistory, venusResult.facts.retrogradeHistory);
   assert.deepEqual(withHistory.generation.retrogradeHistory, venusResult.facts.retrogradeHistory, "The generation keeps its exact receipt even if the editor later reloads different facts");
   assert.equal(withoutHistory.generation.retrogradeHistory, null);

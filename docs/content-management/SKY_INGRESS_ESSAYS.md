@@ -75,7 +75,7 @@ attachments remain outside Git and reader payloads.
 ### Shared retrograde history
 
 The October 10 shared-history scope adds `retrogradeHistory` to the calculated
-facts. In the article editor, open **Previous retrograde** after loading facts.
+facts. In the article editor, open **Retrograde cycles** after loading facts.
 Choose a reference date during the retrograde. **Include retrograde history in
 generation** sends the verified receipt to the writer and enables the ingress
 essay's optional `priorOccurrenceSection`. The server recalculates the receipt;
@@ -102,7 +102,7 @@ has an explicit state. Unavailable evidence never licenses an absolute
 "first ever" claim. The receipt establishes astronomical timing only; world
 events and personal or collective recurrence need separate evidence.
 
-Readers can expand **Previous retrograde** in an active retrograde's Sky article
+Readers can expand **Retrograde cycles** in an active retrograde's Sky article
 or Calendar station/passage detail. These views calculate on demand in the shared
 worker, reuse bounded cycle caches, and format the same UTC instants in the
 selected location's time zone. Studio uses its article's reference time zone.
@@ -137,6 +137,45 @@ optional historical calculations. The complete performance-contract stage,
 four fresh history browser cases, typecheck, design-token and shared-boundary
 audits pass after integration. No generation or publication behavior changes
 are introduced by these integration repairs.
+
+### Previous and next cycles (October 10 slideout update)
+
+`retrograde-history-v2` adds `nextSameSign`, `previousCrossing`, and
+`forwardCoverage` to the same shared receipt. The future match is the first
+complete later cycle with a retrograde segment in the selected sign. The
+previous crossing belongs specifically to `sameSign`, and is null when that
+cycle never crossed the current start-station longitude. It is distinct from
+the independently searched four-degree match.
+
+Each cycle includes calculated `signTransitions`, `durationDays`, and
+`daysInStationSign` (the cycle's retrograde-station sign). Durations are precise
+elapsed days; the Calendar comparison shows differences between civil dates
+in the selected time zone. No fixed eight-year formula or historical/future
+calendar supplies production facts.
+
+Retrograde station slideouts show open Previous and Next sections, a closed
+three-cycle comparison, and links to each selected local Calendar day. The
+previous card uses the exact retrograde crossing when available, otherwise the
+previous cycle's station with an explicit missing-crossing message. Missing
+cycles have no date link. Sky and Studio display the future cycle from the
+same receipt; saved older receipts explicitly request reloading calculated
+facts. Generation recalculates and retains the complete receipt as before.
+
+The owner supplied the two Venus-in-Scorpio paragraphs in
+`thread:01a12643-560b-7fc0-bbfc-2d928ed908ca` on October 10. Their complete source
+text, hashes, word counts and 2026 scope are retained in
+`apps/web/src/content/retrogradeCycleNarratives.json`. The next paragraph's
+sign-entry date is formatted from the calculated instant in the selected zone;
+other event copy is not invented. Existing event interpretation stays intact.
+The 440px panel, 28px spacing, 24px cards and explicitly requested detail type
+scale use shared theme tokens; other Calendar event types retain their layout.
+
+Verification adds all nine supported planets, independent future-cycle scanning,
+station/sign roots, the exact 2018 crossing, computed 2034 degrees, bounded
+future absence, alternate zones, both date links, retry, saved Studio receipts,
+and computed desktop/mobile typography in light/dark themes. The focused
+browser suite is `tests/visual/retrograde-history.spec.ts`; the actual writer
+handler regression is `scripts/test-sky-ingress-studio.mts`.
 
 ## Publication and reader
 

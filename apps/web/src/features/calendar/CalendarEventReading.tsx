@@ -1,3 +1,4 @@
+import { RetrogradeCycles } from "./RetrogradeCycles";
 import { FormattedProse } from "../../components/FormattedProse";
 import { RetrogradeHistoryDisclosure } from "../../components/RetrogradeHistory";
 import { ChevronLeft, ChevronRight } from "lucide-react";
@@ -244,6 +245,22 @@ export function CalendarEventReading({
   const articleTitle = article?.articleTitle || `${title.replace(/^The\s+/i, "")}, in full`;
   const orderedBlocks = orderJournalBlocks(journalBlocks, resolvedKind);
 
+  const isRetrogradeStation = event.type === "station" && event.direction === "retrograde" && !!event.planet && !!event.sign;
+  if (isRetrogradeStation) {
+    const heading = `${event.planet!.charAt(0).toUpperCase()}${event.planet!.slice(1)} stations retrograde in ${event.sign!.charAt(0).toUpperCase()}${event.sign!.slice(1)}`;
+    const date = new Date(event.startsAt);
+    const stationDate = new Intl.DateTimeFormat("en-US", { timeZone, weekday: "short", month: "short", day: "numeric", year: "numeric" }).format(date);
+    const stationTime = new Intl.DateTimeFormat("en-US", { timeZone, hour: "numeric", minute: "2-digit", timeZoneName: "short" }).format(date);
+    return <CalendarSlideout label="Event detail" onClose={onClose} className="calendar-slideout--retrograde" leading={<span className="retrograde-station-label">STATION</span>}>
+      <header className="retrograde-station-header">
+        <h2>{heading}</h2>
+        <p className="retrograde-station-date">{stationDate} · {stationTime}</p>
+        <div className="retrograde-station-copy">{paragraphs.filter(Boolean).map(text => <FormattedProse key={text} text={text} />)}</div>
+      </header>
+      <RetrogradeCycles key={`${event.planet}:${event.startsAt}`} context={{ planet: event.planet!, sign: event.sign!, timeZone,
+        referenceDate: new Date(Date.parse(event.startsAt) + 60_000).toISOString() }} />
+    </CalendarSlideout>;
+  }
   return (
     <CalendarSlideout
       label="Event detail"

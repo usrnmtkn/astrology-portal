@@ -1,0 +1,25 @@
+{
+  "source": "thread:01a12643-560b-7fc0-bbfc-2d928ed908ca",
+  "sourceDate": "2026-10-10",
+  "scope": "Owner-supplied Calendar slideout copy for the 2026 Venus retrograde in Scorpio. Dates remain calculated; this copy is not a planetary calendar.",
+  "planet": "venus",
+  "sign": "scorpio",
+  "referenceYear": 2026,
+  "previousBody": "Venus retrogrades in nearly the same place every eight years. This is the last day it stood where it stations today. Reflect back to that time: what you valued, who you were close to, and what felt unresolved may be worth revisiting now.",
+  "nextBody": "Venus returns to retrace this stretch of sky, stationing a little earlier in Scorpio and moving back into Libra on Oct 18.",
+  "nextBodyDate": {
+    "sign": "libra",
+    "month": 10,
+    "day": 18
+  },
+  "integrity": {
+    "previousBody": {
+      "sha256": "466a54dd49081ecd75945dbfccdea4ccbcf3be55a98d62c9b1824a9e9ae82fa2",
+      "wordCount": 43
+    },
+    "nextBody": {
+      "sha256": "07b5750e9795d2f2effe7a3ca0032f307eab3a6e43ee91fb9e2eaa222841951e",
+      "wordCount": 22
+    }
+  }
+}
