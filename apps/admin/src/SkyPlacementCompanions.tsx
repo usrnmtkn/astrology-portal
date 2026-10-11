@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import { isSkyIngressEssay } from "../../web/src/content/skyIngressEssay.mjs";
 import type { CompiledSkyArticleEdition } from "../../web/src/content/skyArticleTemplateCompiler";
 import { AdminDisclosureSummary, AdminSelect } from "./AdminNativeControls";
@@ -17,6 +18,33 @@ type Props<T extends Row> = {
   onEdit: (row: T) => void;
   title: (row: T) => string;
 };
+
+export function SkyPlacementWritingLinks() {
+  return <nav className="admin-surface-actions" aria-label="Find horoscope and aspect writing">
+    <a className="admin-source-action" href="#horoscopes">Daily, weekly, monthly &amp; seasonal horoscopes</a>
+    <a className="admin-source-action" href="#calendar-aspects">Sky &amp; Calendar aspects</a>
+    <a className="admin-source-action" href="#sky-writeups?view=transits-to-natal">Personal aspects</a>
+  </nav>;
+}
+
+export function SkyPlacementReusableSources({ open, children }: { open: boolean; children: ReactNode }) {
+  return <details className="admin-workspace-details" open={open}>
+    <AdminDisclosureSummary>Reusable writing and templates</AdminDisclosureSummary>
+    <p>Reusable sources are separate from the dated articles above. Empty sections here do not indicate missing published writing.</p>
+    {children}
+  </details>;
+}
+
+export function SkyPlacementUnwiredNotice({ rows }: { rows: { content_key: string }[] }) {
+  return <section className="admin-wiring-notice" aria-label="Published Sky write-ups not connected to the app">
+    <div>
+      <p className="admin-eyebrow">Not live</p>
+      <h3>{rows.length} approved write-ups have no reader call site</h3>
+      <p>These rows are reported separately from retired content. They are not safe-deletion candidates: publishing finished the editorial step, but the app integration was never completed.</p>
+    </div>
+    <code>{rows.slice(0, 3).map(row => row.content_key).join(" · ")}</code>
+  </section>;
+}
 
 export default function SkyPlacementCompanions<T extends Row>({ view, house, onHouse, houses, aspects, query, onQuery, onEdit, title }: Props<T>) {
   const passages = houses.filter(passage => passage.house === house);

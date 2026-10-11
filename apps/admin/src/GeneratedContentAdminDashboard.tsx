@@ -253,6 +253,9 @@ import { memoByObject, naturalCollator } from "./derivedCache";
 const SkyPlacementCompanions = lazy(() => import("./SkyPlacementCompanions"));
 const SkyArticleSourceDetails = lazy(() => import("./SkyPlacementCompanions").then(module => ({ default: module.SkyArticleSourceDetails })));
 const SkyPlacementEditorNav = lazy(() => import("./SkyPlacementCompanions").then(module => ({ default: module.SkyPlacementEditorNav })));
+const SkyPlacementWritingLinks = lazy(() => import("./SkyPlacementCompanions").then(module => ({ default: module.SkyPlacementWritingLinks })));
+const SkyPlacementReusableSources = lazy(() => import("./SkyPlacementCompanions").then(module => ({ default: module.SkyPlacementReusableSources })));
+const SkyPlacementUnwiredNotice = lazy(() => import("./SkyPlacementCompanions").then(module => ({ default: module.SkyPlacementUnwiredNotice })));
 const CompositeReviewCard = lazy(() => import("./CompositeReviewCard"));
 const TransitNatalReaderPreview = lazy(() => import("./TransitNatalReaderPreview"));
 const TransitNatalPreviewOptions = lazy(() => import("./TransitNatalReaderPreview").then(module => ({ default: module.TransitNatalPreviewOptions })));
@@ -7571,11 +7574,7 @@ export function GeneratedContentAdminDashboard() {
               </>
             ) : (
               <>
-                <nav className="admin-surface-actions" aria-label="Find horoscope and aspect writing">
-                  <a className="admin-source-action" href="#horoscopes">Daily, weekly, monthly &amp; seasonal horoscopes</a>
-                  <a className="admin-source-action" href="#calendar-aspects">Sky &amp; Calendar aspects</a>
-                  <a className="admin-source-action" href="#sky-writeups?view=transits-to-natal">Personal aspects</a>
-                </nav>
+                <Suspense fallback={null}><SkyPlacementWritingLinks /></Suspense>
                 <section className="studio-section admin-content-filters admin-sky-filters" aria-label="Sky write-up filters">
                   <div className="admin-review-filter-grid admin-filter-form admin-filter-form--three">
                     <label>
@@ -7669,14 +7668,7 @@ export function GeneratedContentAdminDashboard() {
                 {(skyPlacementBody === "all" || skyPlacementSign === "all") && <p className="admin-natal-placement-prompt">Choose a planet and zodiac sign above to preview and edit its complete write-up.</p>}
                 </section>
                 {publishedButUnwiredSkyRows.length > 0 && (
-                  <section className="admin-wiring-notice" aria-label="Published Sky write-ups not connected to the app">
-                    <div>
-                      <p className="admin-eyebrow">Not live</p>
-                      <h3>{publishedButUnwiredSkyRows.length} approved write-ups have no reader call site</h3>
-                      <p>These rows are reported separately from retired content. They are not safe-deletion candidates: publishing finished the editorial step, but the app integration was never completed.</p>
-                    </div>
-                    <code>{publishedButUnwiredSkyRows.slice(0, 3).map((row) => row.content_key).join(" · ")}</code>
-                  </section>
+                  <Suspense fallback={null}><SkyPlacementUnwiredNotice rows={publishedButUnwiredSkyRows} /></Suspense>
                 )}
                 <section className="admin-workbench admin-review-workspace">
                   {renderEditor()}
@@ -7695,11 +7687,10 @@ export function GeneratedContentAdminDashboard() {
                   </aside>
                 </section>
                 {secret.trim() && !hasAccessIssue && skyPlacementBody !== "all" && skyPlacementSign !== "all" && (
-                  <details className="admin-workspace-details" open={!filteredSkyWriteupRows.some(row => row.content_key.startsWith("sky-article/") || row.content_key.startsWith("sky/article-edition/"))}><AdminDisclosureSummary>Reusable writing and templates</AdminDisclosureSummary>
-                  <p>Reusable sources are separate from the dated articles above. Empty sections here do not indicate missing published writing.</p>
                   <Suspense fallback={<PageLoading message="Loading Composition Map…" />}>
+                  <SkyPlacementReusableSources open={!filteredSkyWriteupRows.some(row => row.content_key.startsWith("sky-article/") || row.content_key.startsWith("sky/article-edition/"))}>
                     <SkyPlacementComposition onEditField={(row, path, selection) => openRow(row as AdminGeneratedContentRow, null, path, selection)} rows={compositionRows} selection={{ planet: skyPlacementBody, sign: skyPlacementSign, motion: skyWriteupMotionFilter }} onEditRow={row => void openRow(row as AdminGeneratedContentRow)} onLoadRow={row => hydrateGeneratedContentRow(row as AdminGeneratedContentRow)} />
-                  </Suspense></details>
+                  </SkyPlacementReusableSources></Suspense>
                 )}
 
               </>
