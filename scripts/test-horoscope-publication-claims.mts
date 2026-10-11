@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import {store} from '../tests/helpers/sky-article-save-api.mts';
 import {readerRouteResponse} from '../tests/helpers/content-reader-route.mjs';
-import {createSeasonalPublicationFixture,seasonalClaimBodies,createMonthlyAspectPublicationFixture,monthlyAspectBody} from '../tests/helpers/horoscope-publication-fixture.mts';
+import {createSeasonalPublicationFixture,seasonalClaimBodies,createMonthlyAspectPublicationFixture,monthlyAspectBody,createWeeklyAspectPublicationFixture,weeklyAspectBodies} from '../tests/helpers/horoscope-publication-fixture.mts';
 import {horoscopeAspectFindings} from '../src/astro-writing/horoscopeAspectClaims.mjs';
 import {validateHoroscopeReading} from '../src/astro-writing/horoscopeValidation.mjs';
 import {horoscopeEditionBody} from '../apps/web/src/content/horoscopeEditions.mjs';
@@ -68,3 +68,40 @@ for(const bad of [
 }
 assert(horoscopeAspectFindings('Venus squares Pluto. This square can help you consider it.',{...monthlyBrief,events:[],relationalContext:undefined}).length);
 console.log('PASS monthly aspect publication: motion-qualified pairs and same-paragraph references, exact saved copy and receipts retained, false claims/dates/motions and unanchored references blocked.');
+
+const weekly=await createWeeklyAspectPublicationFixture(m=>store.invoke(m.method,m.body,m.url));
+assert.equal(weekly.status,200,JSON.stringify(weekly.payload));
+const weeklyRow=weekly.payload.rows[0],weeklyBrief=weeklyRow.facts.horoscopeBrief.brief;
+const wLive=await store.invoke('PATCH',{id:weeklyRow.id,expectedUpdatedAt:weeklyRow.updated_at,status:'LIVE'});
+assert.equal(wLive.status,200,JSON.stringify(wLive.payload));
+assert.equal(wLive.payload.rows[0].sections.horoscopeEdition.passages.length,12);
+assert.deepEqual(wLive.payload.rows[0].sections,weeklyRow.sections);
+assert.deepEqual(wLive.payload.rows[0].source_snapshot,weeklyRow.source_snapshot,'Historical receipt stays intact');
+const wRead=await readerRouteResponse('/api/content-reader',{method:'POST',body:JSON.stringify({ids:[weeklyRow.id]})});
+assert.equal(wRead.status,200);assert.equal((await wRead.json()).rows[0].body,weeklyRow.body);
+for(const [sign,body] of Object.entries(weeklyAspectBodies))assert.deepEqual(issues(sign,body,weeklyBrief),[],sign);
+for(const body of [
+ 'The conjunction between Mercury and retrograde Venus can inform your fixture.',
+ 'The Mercury–retrograde Venus conjunction can inform your fixture.',
+ 'Venus in your eleventh house of friends and groups, now retrograde, squares direct Mars in your eighth house of shared resources.'
+])assert.deepEqual(issues('capricorn',body,weeklyBrief),[],body);
+for(const [sign,bad] of [
+ ['cancer',weeklyAspectBodies.cancer.replace('retrograde Venus','direct Venus')],
+ ['cancer',weeklyAspectBodies.cancer.replace('Mercury forms','Retrograde Mercury forms')],
+ ['cancer',weeklyAspectBodies.cancer.replace('retrograde Venus','retrograde Jupiter')],
+ ['cancer',weeklyAspectBodies.cancer.replace('conjunction','opposition')],
+ ['cancer',weeklyAspectBodies.cancer.replace('with retrograde Venus in Scorpio','with a colleague')],
+ ['sagittarius',weeklyAspectBodies.sagittarius.replace('12th house','11th house')],
+ ['sagittarius',weeklyAspectBodies.sagittarius.replace('squares Mars','trines Mars')],
+ ['sagittarius',weeklyAspectBodies.sagittarius.replace('hidden things','hidden things and Mercury trines Jupiter')],
+ ['capricorn',weeklyAspectBodies.capricorn.replace('Retrograde Venus','Direct Venus')],
+ ['capricorn',weeklyAspectBodies.capricorn.replace('squares Mars','squares retrograde Mars')],
+ ['capricorn',weeklyAspectBodies.capricorn.replace('Retrograde Venus','Retrograde Venus, now direct,')],
+ ['capricorn',weeklyAspectBodies.capricorn.replace('Your weekly fixture ends here.','Mercury trines Jupiter. Your weekly fixture ends here.')]
+]){
+ assert(issues(sign,bad,weeklyBrief).length,`Invalid weekly claim accepted: ${bad}`);
+ const invalid=structuredClone(weeklyRow);invalid.sections.horoscopeEdition.passages.find((p:any)=>p.sign===sign).body=bad;invalid.body=horoscopeEditionBody(invalid.sections.horoscopeEdition);store.rows.set(invalid.id,invalid);
+ const denied=await store.invoke('PATCH',{id:invalid.id,expectedUpdatedAt:invalid.updated_at,status:'LIVE'});
+ assert.equal(denied.status,422);assert.equal(store.rows.get(invalid.id).status,'DRAFT');assert.equal(store.rows.get(invalid.id).body,invalid.body);
+}
+console.log('PASS weekly aspect publication: all 12 readings publish unchanged, prefix motions and house context checked, invalid planets/aspects/motions/houses still blocked.');

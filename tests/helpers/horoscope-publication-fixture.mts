@@ -30,3 +30,17 @@ export async function createMonthlyAspectPublicationFixture(call:(message:any)=>
  const readings={overview:{bodyHash:createHash('sha256').update(horoscopeCanonicalJson({headline:passage.headline,body:passage.body})).digest('hex'),lint:{version:'horoscope-facts/v6',violations:[{category:'horoscope_fact_boundary',detail:'Name both planets with each aspect so it can be checked against the calculated events.'}]}}};
  return call({method:'POST',body:{contentKey:horoscopeEditionKey(edition.window),surface:'sky',mode:'article',eventType:'horoscope-edition',provider:'manual-admin',status:'DRAFT',lane:'serving',headline:'Synthetic monthly publication',body:horoscopeEditionBody(edition),sections:{horoscopeEdition:edition},facts:{horoscopeBrief:{brief:packet.payload.brief,signature:packet.payload.signature}},sourceSnapshot:{horoscopeGeneration:{readings}}}});
 }
+
+export const weeklyAspectBodies:Record<string,string>={
+ cancer:'You can review the fixture. Mercury forms a conjunction with retrograde Venus in Scorpio on Tuesday. Your weekly fixture ends here.',
+ sagittarius:'You can review the fixture. Venus in your 12th house of hidden things squares Mars in your 9th house of beliefs on Saturday. Your weekly fixture ends here.',
+ capricorn:'You can review the fixture. Retrograde Venus in your 11th house of community squares Mars in your 8th house of shared resources on Saturday. Your weekly fixture ends here.'
+};
+export async function createWeeklyAspectPublicationFixture(call:(message:any)=>Promise<any>){
+ const packet=await call({method:'GET',url:'/api/admin/generated-content?horoscopeBrief=true&period=weekly&date=2026-10-05&timeZone=America/New_York'});
+ if(packet.status!==200)throw new Error('Fixture facts unavailable');
+ const edition=emptyHoroscopeEdition(packet.payload.brief.window);
+ for(const passage of edition.passages){passage.headline=`${passage.sign} weekly fixture`;passage.body=weeklyAspectBodies[passage.sign]??`You can read your ${passage.sign} weekly fixture opening. Your weekly fixture ends here.`;}
+ const readings=Object.fromEntries(edition.passages.map(p=>[p.sign,{bodyHash:createHash('sha256').update(horoscopeCanonicalJson({headline:p.headline,body:p.body})).digest('hex'),lint:{version:'horoscope-facts/v7',violations:weeklyAspectBodies[p.sign]?[{category:'horoscope_fact_boundary',detail:'Name both planets with each aspect so it can be checked against the calculated events.'}]:[]}}]));
+ return call({method:'POST',body:{contentKey:horoscopeEditionKey(edition.window),surface:'sky',mode:'article',eventType:'horoscope-edition',provider:'manual-admin',status:'DRAFT',lane:'serving',headline:'Synthetic weekly publication',body:horoscopeEditionBody(edition),sections:{horoscopeEdition:edition},facts:{horoscopeBrief:{brief:packet.payload.brief,signature:packet.payload.signature}},sourceSnapshot:{horoscopeGeneration:{readings}}}});
+}
