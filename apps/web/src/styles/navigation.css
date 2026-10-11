@@ -122,14 +122,13 @@ html[data-scrolled] .topbar {
 
 .site-nav {
   display: flex;
-  flex: 0 0 auto;
+  flex: none;
   align-items: center;
   gap: calc(var(--space-1) / 2);
 }
 
-.site-nav button {
+.site-nav button:not([hidden]) {
   display: inline-flex;
-  flex: 0 0 auto;
   align-items: center;
   gap: calc(var(--space-2) - var(--space-1) / 4);
   border: 0;
@@ -146,10 +145,6 @@ html[data-scrolled] .topbar {
   transition:
     background-color 160ms ease,
     color 160ms ease;
-}
-
-.site-nav button[hidden] {
-  display: none;
 }
 
 .site-nav button.active {

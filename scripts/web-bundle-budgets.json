@@ -1,7 +1,7 @@
 {
-  "appBootGzipBytes": 466250,
+  "appBootGzipBytes": 466550,
   "appChunkGzipBytes": 180000,
-  "readerBootGzipBytes": 520200,
+  "readerBootGzipBytes": 520600,
   "readerInitialCssGzipBytes": 54750,
   "largestJavaScriptGzipBytes": 520000,
   "friendsWorkspaceChunkGzipBytes": 16500,
@@ -12,9 +12,10 @@
   "transitFallbackChunkGzipBytes": 390000,
   "relationshipFallbackChunkGzipBytes": 230000,
   "signupChunkGzipBytes": 4325,
-  "totalCssGzipBytes": 116100,
+  "totalCssGzipBytes": 116150,
   "totalJavaScriptGzipBytes": 3566500,
   "_rationale": {
+    "stationaryHeaderNavigation20261010": "Matched builds with independent npm-ci dependencies on main 7ddf3fbc02fbaeebe13e85b1154003f33cbaffe0 and this feature, using identical visual-smoke Supabase placeholders, measure app boot 466053 to 466352 gzip bytes (+299), reader boot 520173 to 520485 (+312), and aggregate CSS 116097 to 116110 (+13). The shared measured-width header keeps complete navigation items stationary and transfers overflow to the existing menu. Simplifying the measurement removes 197 startup bytes from the initial implementation. Allocate 300 app-boot bytes, 400 reader-boot bytes and 50 aggregate CSS bytes above the previous ceilings, leaving 198, 115 and 40 measured bytes of headroom. The browser-fixture build with natal aspect patterns enabled also fits at 466366 and 520499 startup bytes. No dependencies or source prose are added. All other aggregate, individual chunk, loading and runtime-performance limits remain unchanged.",
     "sharedRetrogradeHistory20261010": "Matched independently npm-ci-installed builds of main 73a7822c0 and the shared-history feature, with identical visual-smoke Supabase placeholders and natal aspect patterns enabled, measure 3560985 and 3566035 aggregate JavaScript gzip bytes (+5050). The shared Swiss search, on-demand reader disclosure and saved Studio selection add no dependency or source prose. Allocate 4000 bytes above the existing aggregate ceiling, leaving 465 measured bytes. Reader startup, CSS, individual chunks, memory graph, forbidden payloads and runtime-performance limits remain unchanged. See docs/content-management/SKY_INGRESS_ESSAYS.md for acceptance evidence and the remaining full-suite fixture gap. Integration with main 4f5f92f79: independent npm-ci builds with identical visual-smoke configuration produce a 48399-byte deferred HoroscopeEditionsStudio chunk in both main and feature. Its complete code is identical after normalizing hashed import filenames; gzip changes from 14900 to 14901 bytes. Allocate 25 bytes to that deferred-chunk ceiling (14925 total), leaving 24 bytes of measured headroom. No horoscope code, reader startup or other allowance changes.",
     "weeklyIdleRecovery20261010": "Matched independently installed builds against main ec4afa760, using identical visual-smoke Supabase placeholders and natal aspect patterns enabled, measure a deferred horoscope editor of 14593 and 14806 gzip bytes (+213), with aggregate JavaScript 3560023 and 3560145 (+122) across the same 228 chunks. Consolidating idle and active refresh removed duplicate listeners before measurement. Allocate 300 bytes to the editor ceiling for version-only idle refresh and stale-action reconciliation, leaving 94 measured bytes. Aggregate, reader startup, CSS, all other chunk and runtime-performance limits remain unchanged. No dependencies or reader prose change. See docs/qa/weekly-idle-recovery.md.",
     "weeklyBatchRecovery20261008": "Matched independent npm-ci builds of main 109395adb and recovery 4b02ebfa7 with identical visual-smoke Supabase placeholders measure 3551592 and 3553105 aggregate JavaScript gzip bytes (+1513). The deferred horoscope editor grows from 13733 to 14184 (+451); the new dynamically imported recovery guard is 935 bytes. Allocate 2000 aggregate bytes and 650 editor bytes for approved Weekly batch reconciliation. No dependency, reader startup, content payload, CSS, memory graph or standalone admin budget changes. See docs/qa/horoscope-generation-recovery.md.",
