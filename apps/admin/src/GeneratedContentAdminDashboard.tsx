@@ -9746,7 +9746,7 @@ export function GeneratedContentAdminDashboard() {
                 ? lunation ? `${titleFromKey(placement.sign)} ${titleFromKey(lunation.kind)}`
                   : `${titleFromKey(placement.planet)} in ${titleFromKey(placement.sign)}${contentMotion(row) === "unspecified" ? "" : ` · ${titleFromKey(contentMotion(row))}`}`
                 : null;
-              const placementIdentity = placementLabel ? skyPlacementBrowseIdentity(row, placementLabel) : null;
+              const placementIdentity = skyPlacementBrowseIdentity(row, placementLabel ?? rowTitle(row));
               const displayTitle = moonSection ? `Moon in ${titleFromKey(moonSection.sign)} · ${moonSection.label}` : placementIdentity?.title ?? placementLabel ?? compatibilityIdentity?.title ?? rowTitle(row);
               const placementKind = placement ? row.content_key.startsWith("sky/article-template/") ? "Placement template"
                 : row.content_key.startsWith("sky/article-edition/") ? "Saved placement edition"
