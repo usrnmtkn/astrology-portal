@@ -35,10 +35,10 @@ export function SkyPlacementReusableSources({ open, children }: { open: boolean;
   </details>;
 }
 
-export function SkyPlacementUnwiredNotice({ rows }: { rows: { content_key: string }[] }) {
+export function SkyPlacementUnwiredNotice({ rows, statusLabel }: { rows: { content_key: string }[]; statusLabel: string }) {
   return <section className="admin-wiring-notice" aria-label="Published Sky write-ups not connected to the app">
     <div>
-      <p className="admin-eyebrow">Not live</p>
+      <p className="admin-eyebrow">{statusLabel}</p>
       <h3>{rows.length} approved write-ups have no reader call site</h3>
       <p>These rows are reported separately from retired content. They are not safe-deletion candidates: publishing finished the editorial step, but the app integration was never completed.</p>
     </div>

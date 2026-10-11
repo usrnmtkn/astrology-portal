@@ -7668,7 +7668,7 @@ export function GeneratedContentAdminDashboard() {
                 {(skyPlacementBody === "all" || skyPlacementSign === "all") && <p className="admin-natal-placement-prompt">Choose a planet and zodiac sign above to preview and edit its complete write-up.</p>}
                 </section>
                 {publishedButUnwiredSkyRows.length > 0 && (
-                  <Suspense fallback={null}><SkyPlacementUnwiredNotice rows={publishedButUnwiredSkyRows} /></Suspense>
+                  <Suspense fallback={null}><SkyPlacementUnwiredNotice rows={publishedButUnwiredSkyRows} statusLabel="Not live" /></Suspense>
                 )}
                 <section className="admin-workbench admin-review-workspace">
                   {renderEditor()}
