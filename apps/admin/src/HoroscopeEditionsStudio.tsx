@@ -82,19 +82,8 @@ export default function HoroscopeEditionsStudio({secret,requestedEditionId}:{sec
   useEffect(()=>{setPlan(null);setPlanApproved(false);},[draft?.window.startsAt,draft?.window.endsAt,draft?.window.timeZone,outlines]);
   const dirty=Boolean(draft && (!saved || horoscopeCanonicalJson(draft)!==horoscopeCanonicalJson(saved.sections.horoscopeEdition) || horoscopeCanonicalJson(outlines)!==horoscopeCanonicalJson(saved.source_snapshot?.horoscopeOutlines ?? {}) || horoscopeCanonicalJson(profile)!==horoscopeCanonicalJson(saved.source_snapshot?.studioWritingProfile ?? null) || horoscopeCanonicalJson(editorialImport)!==horoscopeCanonicalJson(saved.source_snapshot?.editorialImport ?? null)));
   const credentialIdentity=ownerCredentialIdentity(secret);
-  const [publication,setPublication]=useState<any>(null),[publicationAttempt,setPublicationAttempt]=useState(0);
-  useEffect(()=>{
-    setApproved(false);setPublication(null);
-    if(step!=='publish'||!saved||saved.status!=='DRAFT'||dirty)return;
-    const controller=new AbortController(),id=saved.id,updatedAt=saved.updated_at;
-    request(secret,'/api/admin/horoscope-writing',{action:'validate-publication',id,expectedUpdatedAt:updatedAt},'POST',controller.signal)
-      .then(data=>{
-        if(data.publication?.id!==id||data.publication?.updatedAt!==updatedAt||!Array.isArray(data.publication?.issues))throw new Error('The publication check could not be confirmed.');
-        if(!controller.signal.aborted)setPublication(data.publication);
-      })
-      .catch(reason=>{if(!controller.signal.aborted)setPublication({id,updatedAt,ready:false,issues:[],error:reason.message,status:reason.status});});
-    return()=>controller.abort();
-  },[step,saved?.id,saved?.updated_at,saved?.status,dirty,credentialIdentity,publicationAttempt]);
+  const [publication,setPublication]=useState<any>(null);
+  useEffect(()=>{setApproved(false);setPublication(null);},[step,saved?.id,saved?.updated_at,saved?.status,dirty,credentialIdentity]);
   const publicationCurrent=Boolean(publication&&saved&&publication.id===saved.id&&publication.updatedAt===saved.updated_at);
   const publicationReady=publicationCurrent&&publication?.ready===true&&publication.issues.length===0;
   async function load() {
@@ -605,7 +594,7 @@ export default function HoroscopeEditionsStudio({secret,requestedEditionId}:{sec
       </>:<>
         <Suspense fallback={<p role="status">Loading publication review…</p>}><HoroscopePublicationReview
           draft={draft} saved={saved} sign={sign} dirty={dirty} locked={locked} approved={approved} publication={publication}
-          onApprove={setApproved} onRetry={()=>setPublicationAttempt(value=>value+1)} onReload={()=>void open(saved,true)}
+          secret={secret} request={request} onCheck={setPublication} onApprove={setApproved} onReload={()=>void open(saved,true)}
           onEdit={affectedSign=>{setSign(affectedSign);setError('');setStep('edit');}}
           onBack={()=>void moveTo('edit')} onPublish={()=>void save(true)} onSetup={()=>void moveTo('setup')} rejectAllButton={rejectAllButton}
         /></Suspense>
