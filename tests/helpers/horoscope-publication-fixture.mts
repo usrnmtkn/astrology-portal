@@ -36,10 +36,19 @@ export const weeklyAspectBodies:Record<string,string>={
  sagittarius:'You can review the fixture. Venus in your 12th house of hidden things squares Mars in your 9th house of beliefs on Saturday. Your weekly fixture ends here.',
  capricorn:'You can review the fixture. Retrograde Venus in your 11th house of community squares Mars in your 8th house of shared resources on Saturday. Your weekly fixture ends here.'
 };
+// Exact owner-requested parser regressions; syntax examples, not voice evidence.
+export const weeklyAspectParserCases=[
+ {sign:'aries',body:'On Friday Mars, your ruling planet, trines Saturn in your sign.',planets:['mars','saturn'],aspect:'trine'},
+ {sign:'leo',body:'The same day the Sun, your ruling planet, sextiles Jupiter in your sign.',planets:['sun','jupiter'],aspect:'sextile'},
+ {sign:'gemini',body:'Mars in your 3rd house trines retrograde Saturn in your 11th house of friends and groups.',planets:['mars','saturn'],aspect:'trine'},
+ {sign:'sagittarius',body:'The Sun in your 11th house of friends sextiles Jupiter, your ruling planet, in your 9th house of beliefs.',planets:['sun','jupiter'],aspect:'sextile'},
+ {sign:'aquarius',body:'Mars in your 7th house of partners trines Saturn, your traditional ruler, in your 3rd house of conversations.',planets:['mars','saturn'],aspect:'trine'},
+ {sign:'scorpio',body:'On Friday Mars, your ruling planet, trines Saturn from your 10th house of career to your 6th house of daily work.',planets:['mars','saturn'],aspect:'trine'},
+ {sign:'taurus',body:'Venus, your ruling planet, is retrograde in your 7th house.',planets:[],aspect:null},
+ {sign:'aries',body:'Sunday’s First Quarter Moon in Capricorn lands in your 10th house.',planets:[],aspect:null}
+];
 export const weeklyRulerBodies:Record<string,string>={
- aries:'You can review the fixture. Mars, your ruling planet, trines Saturn in your sign on Friday. Your weekly fixture ends here.',
- leo:'You can review the fixture. Mars in your sign trines Saturn in your ninth house of study on Friday. Your weekly fixture ends here.',
- scorpio:'You can review the fixture. Mars, your traditional ruler, trines Saturn from your tenth house of career to your sixth house of daily work. Your weekly fixture ends here.',
+ ...Object.fromEntries([...new Set(weeklyAspectParserCases.map(c=>c.sign))].map(sign=>[sign,`You can review the fixture. ${weeklyAspectParserCases.filter(c=>c.sign===sign).map(c=>c.body).join(' ')} Your weekly fixture ends here.`])),
  pisces:'You can review the fixture. The Sun sextiles Jupiter, your traditional ruler, in your sixth house of daily work. Your weekly fixture ends here.'
 };
 export async function createWeeklyAspectPublicationFixture(call:(message:any)=>Promise<any>,rulerClaims=false){

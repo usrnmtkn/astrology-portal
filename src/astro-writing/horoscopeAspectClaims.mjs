@@ -1,6 +1,7 @@
 import {horoscopeEventsInWindow,horoscopeRelationSnapshots,horoscopeSampledAspects} from './horoscopeDevelopments.mjs';
 const bodies='Sun|Moon|Mercury|Venus|Mars|Jupiter|Saturn|Uranus|Neptune|Pluto';
-const terms='square[sd]?|trine[sd]?|sextile[sd]?|opposes?|opposition|conjunct(?:ion)?';
+const explicitTerms='square[sd]?|trine[sd]?|sextile[sd]?|opposes?|opposition|conjunct(?:ion)?';
+const terms=`${explicitTerms}|meets?`;
 const signs='Aries|Taurus|Gemini|Cancer|Leo|Virgo|Libra|Scorpio|Sagittarius|Capricorn|Aquarius|Pisces';
 const ordinals='1st|2nd|3rd|[4-9]th|1[0-2]th|first|second|third|fourth|fifth|sixth|seventh|eighth|ninth|tenth|eleventh|twelfth';
 // A short house gloss can separate a planet from its aspect. Never consume
@@ -12,6 +13,9 @@ const motionAside='(?:,\\s*(?:now\\s+)?(?:retrograde|direct)\\s*,)?';
 const rulerAside='(?:,\\s*your\\s+(?:ruling\\s+planet|(?:traditional\\s+)?ruler)\\s*,)?';
 const placement=`(?:\\s+(?:in|through)\\s+(?:${signs}|your sign))?`;
 const planet=`\\b(?:(?:retrograde|direct)\\s+)?(?:${bodies})${rulerAside}${placement}${house}${motionAside}`;
+// "Meet" is an aspect verb only with a planetary subject. Ordinary prose
+// about meeting friends or deadlines must not require a calculated aspect.
+const aspectMention=new RegExp(`\\b(?:${explicitTerms})\\b|${planet}\\s+meets?\\b`,'iu');
 const direct=`${planet}\\s+(?:(?:is|in|an?|exact|forms?|makes?)\\s+)*(?:${terms})\\s+(?:(?:to|with|the)\\s+)*${planet}`;
 const named=`(?:${terms})\\s+(?:between|of)\\s+(?:the\\s+)?${planet}\\s+(?:and|with)\\s+(?:the\\s+)?${planet}`;
 const paired=`${planet}(?:\\s*[-–—]\\s*|\\s+and\\s+)${planet}\\s+(?:${terms})`;
@@ -19,7 +23,7 @@ export const horoscopeAspectPattern=`(?:${direct}|${named}|${paired})`;
 export function horoscopeAspectClaim(text) {
   const planets=[...text.matchAll(new RegExp(`\\b(${bodies})\\b`,'giu'))].map(m=>m[1].toLowerCase());
   const word=text.match(new RegExp(`\\b(${terms})\\b`,'iu'))?.[1].toLowerCase();
-  const aspect=word?.startsWith('oppo')?'opposition':word?.startsWith('conjunct')?'conjunction':word?.replace(/[sd]$/u,'');
+  const aspect=word?.startsWith('oppo')?'opposition':/^(?:conjunct|meet)/u.test(word??'')?'conjunction':word?.replace(/[sd]$/u,'');
   const qualified=[...text.matchAll(new RegExp(`\\b(retrograde|direct)\\s+(${bodies})\\b`,'giu'))].map(m=>[m[2].toLowerCase(),m[1].toLowerCase()]);
   qualified.push(...[...text.matchAll(new RegExp(`\\b(${bodies})${rulerAside}${placement}${house},\\s*(?:now\\s+)?(retrograde|direct)\\s*,`,'giu'))].map(m=>[m[1].toLowerCase(),m[2].toLowerCase()]));
   const motions=Object.fromEntries(qualified);
@@ -64,7 +68,7 @@ export function horoscopeAspectFindings(text,brief) {
     return ' '.repeat(match.length);
   })).join('\n');
   if(/\b(?:grand trine|grand cross|yod|cazimi)\b/iu.test(text))findings.push('This brief does not calculate that configuration or cazimi boundary.');
-  if(!events.some(e=>e.type==='aspect')&&!sampled.length){if(new RegExp(`\\b(?:${terms})\\b`,'iu').test(checked))findings.push('Exact aspects are not included in this horoscope brief.');return findings;}
+  if(!events.some(e=>e.type==='aspect')&&!sampled.length){if(aspectMention.test(checked))findings.push('Exact aspects are not included in this horoscope brief.');return findings;}
   // Validate each explicit pair, including more than one pair in the same sentence.
   let previous=null;
   const remainder=checked.split('\n').map(sentence=>{
@@ -84,9 +88,9 @@ export function horoscopeAspectFindings(text,brief) {
       return ' '.repeat(match.length);
     });
     // A different named subject or unresolved aspect breaks the reference.
-    if((!found&&new RegExp(`\\b(?:${bodies}|${signs})\\b`,'iu').test(sentence))||new RegExp(`\\b(?:${terms})\\b`,'iu').test(rest))previous=null;
+    if((!found&&new RegExp(`\\b(?:${bodies}|${signs})\\b`,'iu').test(sentence))||aspectMention.test(rest))previous=null;
     return rest;
   }).join('\n');
-  if(new RegExp(`\\b(?:${terms})\\b`,'iu').test(remainder))findings.push('Name both planets with each aspect so it can be checked against the calculated events.');
+  if(aspectMention.test(remainder))findings.push('Name both planets with each aspect so it can be checked against the calculated events.');
   return findings;
 }

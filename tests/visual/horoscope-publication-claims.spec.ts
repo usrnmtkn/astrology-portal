@@ -94,7 +94,9 @@ for(const [width,theme] of [[390,'light'],[1440,'dark']] as const){
    }
    await expect(studio.getByRole('alert')).toContainText('Synthetic publication check unavailable.');await expect(approval).toBeDisabled();
    await studio.getByRole('button',{name:'Check publication again',exact:true}).click();
-   await expect(checks).toHaveCount(0);await expect(approval).toBeEnabled();await approval.check();
+   await expect(checks).toHaveCount(0);await expect(approval).toBeEnabled();
+   for(const [sign,body] of Object.entries(weeklyRulerBodies))await expect(studio.getByRole('region',{name:`${sign[0].toUpperCase()+sign.slice(1)} reading preview`})).toContainText(body);
+   await approval.check();
    await studio.getByRole('button',{name:'Publish edition',exact:true}).click();
    await expect(studio.getByRole('status')).toContainText('Published the complete edition.');
    const publishedRuler=(await call({method:'rows'})).find((r:any)=>r.id===ruler.id);
