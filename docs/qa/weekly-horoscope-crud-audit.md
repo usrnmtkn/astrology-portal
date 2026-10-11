@@ -15,8 +15,11 @@ provider requests or production publication are used for this audit.
   editions. Preserve original text and historical validation receipts.
 - Run a read-only, authenticated, version-checked publication preflight before
   owner approval. Show every affected sign with a direct route to its editor.
-  A failed or unavailable check cannot say the edition is ready. The final
+  A failed or unavailable check cannot say the edition is ready. The disabled
+  publication footer remains in document flow so it cannot cover repair controls. The final
   publication handler repeats validation and rejects stale writes.
+- Keep edition inventory responses lightweight: never fabricate draft metadata
+  on an inventory-only row. Reopening an edition retrieves its full document.
 
 ## Verification matrix
 

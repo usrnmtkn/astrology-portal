@@ -46,7 +46,9 @@ for(const [width,theme] of [[390,'light'],[390,'dark'],[1440,'light'],[1440,'dar
   try{
    await ready;const errors:string[]=[];page.on('pageerror',e=>errors.push(e.message));
    await page.setViewportSize({width,height:1000});
-   await page.clock.setFixedTime(new Date('2026-09-24T16:00:00Z'));
+   // Keep the selected historical date while time advances normally: a frozen
+   // Date.now prevents the editor's elapsed-time progress refresh from running.
+   await page.clock.install({time:new Date('2026-09-24T16:00:00Z')});
    await page.addInitScript(theme=>{localStorage.setItem('tldrastro:contentAdminSecret','calendar-api-fixture');localStorage.setItem('tldrastro:studio-theme',theme);localStorage.setItem('tldrastro:theme',theme);localStorage.setItem('tldrastro:selectedLocation',JSON.stringify({label:'Tokyo',latitude:35.68,longitude:139.76,timeZone:'Asia/Tokyo'}));},theme);
    let injectConflict=width===390&&theme==='light', failPrepare=injectConflict, failNextSave=false;
    const newerOutline='A newer writing outline from another editor. Stay with the calculated temporary emphasis and its house.';

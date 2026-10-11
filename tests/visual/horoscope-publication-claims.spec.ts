@@ -82,7 +82,9 @@ for(const [width,theme] of [[390,'light'],[1440,'dark']] as const){
    const checks=studio.getByRole('region',{name:'Publication checks'}),approval=studio.getByLabel('I have reviewed and approve the exact wording of every saved reading in this edition.');
    await expect(checks).toContainText('Aries:');await expect(checks).toContainText('Leo:');
    await expect(approval).toBeDisabled();await expect(studio.getByText('Ready to publish the complete edition.',{exact:true})).toHaveCount(0);
+   await expect(studio.locator('footer')).toHaveCSS('position','static');
    await checks.scrollIntoViewIfNeeded();await expect(checks).toBeVisible();
+   await checks.getByRole('button',{name:'Edit Aries reading',exact:true}).click({trial:true});
    await page.screenshot({path:`test-results/weekly-publication-issues-${width}-${theme}.png`,fullPage:true});
    for(const sign of ['aries','leo']){
     await checks.getByRole('button',{name:`Edit ${sign[0].toUpperCase()+sign.slice(1)} reading`,exact:true}).click();

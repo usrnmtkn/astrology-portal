@@ -34,7 +34,7 @@ async function fixture(page:Page,missing=1){
       await route.fulfill({status:result.status,json:result.payload});return true;
     }});
     await page.addInitScript(()=>localStorage.setItem('tldrastro:contentAdminSecret','calendar-api-fixture'));
-    const open=async()=>{await page.goto('/admin/content#horoscopes');await page.reload();const studio=page.getByRole('region',{name:'Horoscope editions'});await studio.getByText(/^Continue a saved edition/).click();await studio.getByRole('button',{name:/Synthetic model choice edition/}).click();return studio;};
+    const open=async()=>{await page.goto('/admin/content#horoscopes');await page.reload();const studio=page.getByRole('region',{name:'Horoscope editions'});await studio.getByText(/^Continue a saved edition/).click();await studio.locator('.admin-horoscope-saved button').filter({hasText:'October 5, 2026'}).click();return studio;};
     return {child,call,latest,state,open,original:edition,id};
   }catch(error){child.kill();throw error;}
 }

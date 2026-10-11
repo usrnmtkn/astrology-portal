@@ -223,6 +223,8 @@ test('Connection recovery retains the existing request and only prepares remaini
     const studio=await f.open();f.state.failPoll=true;
     await studio.getByRole('button',{name:'Resume generation',exact:true}).click();
     await expect(studio.getByRole('status')).toContainText('Aquarius is still processing');await expect(studio.getByRole('alert')).toHaveCount(0);
+    // Recovery displays the saved status before its plan read finishes.
+    await expect(studio.getByRole('button',{name:'Resume generation',exact:true})).toBeEnabled();
     f.state.failRead=true;await studio.getByRole('button',{name:'Check saved progress',exact:true}).click();
     await expect(studio.getByRole('status')).toContainText('Studio could not check saved progress yet');await expect(studio.getByRole('alert')).toHaveCount(0);
     f.state.failRead=false;await studio.getByRole('button',{name:'Check saved progress',exact:true}).click();
@@ -586,7 +588,7 @@ for(const [width,theme] of [[390,'dark'],[1440,'light']] as const){
    await page.evaluate(key=>window.dispatchEvent(new StorageEvent('storage',{key,newValue:localStorage.getItem(key)})),s.key);
    await f.call({method:'writer-state',body:{pendingPolls:0}});
    // The server batch keeps its approval while the browser renews its session.
-   await expect(studio.getByRole('status')).toHaveText('All readings are saved and ready to review.',{timeout:45000});
+   await expect(studio.getByRole('status').filter({hasText:'All readings are saved and ready to review.'})).toBeVisible({timeout:45000});
    const recovered=await f.latest();expect(recovered.source_snapshot.horoscopeGeneration.active).toBeNull();
    expect(recovered.sections.horoscopeEdition.passages.slice(0,9)).toEqual(f.original.passages.slice(0,9));
    const complete=await f.latest();expect((await f.call({method:'writer-state'})).calls).toBe(3);
