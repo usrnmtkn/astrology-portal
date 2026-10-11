@@ -25,6 +25,7 @@ async function fixture(page:Page,missing=1){
     const latest=async()=>(await call({method:'rows'})).find((row:any)=>row.id===id);
     const state={loseBatchStart:false};
     await routeStudioInventoryApi(page,{call,answer:async(route,url)=>{
+      if(url.pathname==='/api/content-reader'){const result=await call({method:'reader',body:route.request().postDataJSON()});await route.fulfill({status:result.status,json:result.payload});return true;}
       if(url.pathname!=='/api/admin/horoscope-writing')return false;
       const body=route.request().postDataJSON();
       const result=await call({method:'writing',body});
@@ -73,6 +74,27 @@ for(const [width,theme,choice] of [[1440,'light','gemini'],[390,'dark','gemini']
    await expect(studio.getByLabel('Complete source passage 1',{exact:true})).toHaveValue(saved.source_snapshot.horoscopeGeneration.readings.pisces.ownerEvidence.passages[0].text);
    expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
    await page.screenshot({path:`test-results/durable-weekly-${choice}-${width}-${theme}.png`,fullPage:true});
+   if(choice==='gemini'){
+    // Continue the same 12-sign batch through owner editing, save/reload,
+    // read-only preflight, exact-text publication and the public reader.
+    const edited=saved.sections.horoscopeEdition.passages.find((p:any)=>p.sign==='pisces').body+' You can read this saved manual addition.';
+    await studio.getByLabel('Complete reading').fill(edited);
+    await studio.getByRole('button',{name:'Save edition draft',exact:true}).click();
+    await expect(studio.getByRole('status')).toContainText('Saved edition draft.');
+    const approvedEdition=(await f.latest()).sections;
+    await f.open();await studio.getByRole('button',{name:'4 · Publish',exact:true}).click();
+    await expect(studio.getByRole('region',{name:'Pisces reading preview'})).toContainText(edited);
+    const approval=studio.getByLabel('I have reviewed and approve the exact wording of every saved reading in this edition.');
+    await expect(approval).toBeEnabled();await expect(approval).not.toBeChecked();await approval.check();
+    await studio.getByRole('button',{name:'Publish edition',exact:true}).click();
+    await expect(studio.getByRole('status')).toContainText('Published the complete edition.');
+    expect((await f.latest()).sections).toEqual(approvedEdition);
+    expect(await f.call({method:'writer-state'})).toMatchObject({calls:12,reviewCalls:12});
+    await page.clock.setFixedTime(new Date('2026-10-10T16:00:00Z'));
+    await page.goto(`/#horoscopes?edition=${f.id}&period=weekly&sign=pisces`);
+    await expect(page.getByRole('article',{name:'Pisces horoscope'})).toContainText(edited);
+    await page.reload();await expect(page.getByRole('article',{name:'Pisces horoscope'})).toContainText(edited);
+   }
   }finally{f.child.kill();}
  });
 }

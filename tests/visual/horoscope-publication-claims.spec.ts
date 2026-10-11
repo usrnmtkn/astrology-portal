@@ -2,13 +2,14 @@ import {test,expect} from '@playwright/test';
 import {fork} from 'node:child_process';
 import path from 'node:path';
 import {routeStudioInventoryApi} from '../helpers/studio-inventory-route';
-import {createSeasonalPublicationFixture,seasonalClaimBodies,createMonthlyAspectPublicationFixture,monthlyAspectBody,createWeeklyAspectPublicationFixture,weeklyAspectBodies} from '../helpers/horoscope-publication-fixture.mts';
+import {createSeasonalPublicationFixture,seasonalClaimBodies,createMonthlyAspectPublicationFixture,monthlyAspectBody,createWeeklyAspectPublicationFixture,weeklyAspectBodies,weeklyRulerBodies} from '../helpers/horoscope-publication-fixture.mts';
+import {horoscopeEditionBody} from '../../apps/web/src/content/horoscopeEditions.mjs';
 
 for(const [width,theme] of [[390,'light'],[1440,'dark']] as const){
  test(`Saved seasonal, monthly and weekly claims publish without rewriting ${width} ${theme}`,async({page})=>{
-  test.setTimeout(60000);
+  test.setTimeout(120000);
   const child=fork(path.resolve('tests/helpers/sky-article-save-api.mts'),[],{env:{...process.env,ZODIAC_TEMPLATE_FIXTURE:'1',HOROSCOPE_WRITER_FIXTURE:'1'},execArgv:['--import','tsx'],stdio:['ignore','pipe','pipe','ipc']});
-  let sequence=0,stderr='';const pending=new Map<number,{resolve:(v:any)=>void;reject:(e:Error)=>void}>();
+  let sequence=0,stderr='',failPreflight=false;const pending=new Map<number,{resolve:(v:any)=>void;reject:(e:Error)=>void}>();
   child.stderr?.on('data',v=>stderr+=v);
   const ready=new Promise<void>((resolve,reject)=>{child.on('message',(m:any)=>{if(m.ready)return resolve();const task=pending.get(m.id);if(task){pending.delete(m.id);m.error?task.reject(new Error(m.error)):task.resolve(m.result);}});child.on('exit',code=>{const error=new Error(`Fixture exited ${code}: ${stderr}`);reject(error);pending.forEach(t=>t.reject(error));});});
   const call=(m:any)=>new Promise<any>((resolve,reject)=>{const id=++sequence;pending.set(id,{resolve,reject});child.send({...m,id});});
@@ -17,7 +18,11 @@ for(const [width,theme] of [[390,'light'],[1440,'dark']] as const){
    await page.setViewportSize({width,height:1000});await page.clock.setFixedTime(new Date('2026-09-30T16:00:00Z'));
    await page.addInitScript(theme=>{localStorage.setItem('tldrastro:contentAdminSecret','calendar-api-fixture');localStorage.setItem('tldrastro:studio-theme',theme);localStorage.setItem('tldrastro:theme',theme);},theme);
    await routeStudioInventoryApi(page,{call,answer:async(route,url)=>{
-    if(url.pathname==='/api/admin/horoscope-writing')throw new Error('Publication must not generate or prepare replacement copy.');
+    if(url.pathname==='/api/admin/horoscope-writing'){
+     const body=route.request().postDataJSON();expect(body.action).toBe('validate-publication');
+     if(failPreflight){failPreflight=false;await route.fulfill({status:503,json:{ok:false,error:'Synthetic publication check unavailable.'}});return true;}
+     const r=await call({method:'writing',body});await route.fulfill({status:r.status,json:r.payload});return true;
+    }
     if(url.pathname==='/api/content-reader'){const r=await call({method:'reader',body:route.request().postDataJSON()});await route.fulfill({status:r.status,json:r.payload});return true;}return false;
    }});
    await page.goto('/admin/content#horoscopes');const studio=page.getByRole('region',{name:'Horoscope editions'});
@@ -67,6 +72,31 @@ for(const [width,theme] of [[390,'light'],[1440,'dark']] as const){
     await expect(passage).toContainText(body);await page.reload();await expect(passage).toContainText(body);
    }
    await page.screenshot({path:`test-results/weekly-publish-claims-${width}-${theme}.png`,fullPage:true});
+   const rulers=await createWeeklyAspectPublicationFixture(call,true);expect(rulers.status).toBe(200);let ruler=rulers.payload.rows[0];
+   const invalid=structuredClone(ruler.sections);
+   invalid.horoscopeEdition.passages.find((p:any)=>p.sign==='aries').body='You can review Mars squares Saturn.';
+   invalid.horoscopeEdition.passages.find((p:any)=>p.sign==='leo').body='You can review Saturn in your first house.';
+   const changed=await call({method:'PATCH',body:{id:ruler.id,expectedUpdatedAt:ruler.updated_at,sections:invalid,body:horoscopeEditionBody(invalid.horoscopeEdition)}});expect(changed.status).toBe(200);ruler=changed.payload.rows[0];
+   await page.goto(`/admin/content#horoscopes?edition=${ruler.id}`);
+   await studio.getByRole('button',{name:'4 · Publish',exact:true}).click();
+   const checks=studio.getByRole('region',{name:'Publication checks'}),approval=studio.getByLabel('I have reviewed and approve the exact wording of every saved reading in this edition.');
+   await expect(checks).toContainText('Aries:');await expect(checks).toContainText('Leo:');
+   await expect(approval).toBeDisabled();await expect(studio.getByText('Ready to publish the complete edition.',{exact:true})).toHaveCount(0);
+   await page.screenshot({path:`test-results/weekly-publication-issues-${width}-${theme}.png`,fullPage:true});
+   for(const sign of ['aries','leo']){
+    await checks.getByRole('button',{name:`Edit ${sign[0].toUpperCase()+sign.slice(1)} reading`,exact:true}).click();
+    await studio.getByLabel('Complete reading').fill(weeklyRulerBodies[sign]);
+    if(sign==='leo')failPreflight=true;
+    await studio.getByRole('button',{name:'4 · Publish',exact:true}).click();
+   }
+   await expect(studio.getByRole('alert')).toContainText('Synthetic publication check unavailable.');await expect(approval).toBeDisabled();
+   await studio.getByRole('button',{name:'Check publication again',exact:true}).click();
+   await expect(checks).toHaveCount(0);await expect(approval).toBeEnabled();await approval.check();
+   await studio.getByRole('button',{name:'Publish edition',exact:true}).click();
+   await expect(studio.getByRole('status')).toContainText('Published the complete edition.');
+   const publishedRuler=(await call({method:'rows'})).find((r:any)=>r.id===ruler.id);
+   expect(publishedRuler.sections).toEqual(rulers.payload.rows[0].sections);
+   expect((await call({method:'writer-state'})).calls).toBe(0);
   }finally{child.kill();}
  });
 }

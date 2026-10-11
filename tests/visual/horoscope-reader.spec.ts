@@ -245,7 +245,7 @@ for(const [width,theme] of [[390,'light'],[390,'dark'],[1440,'light'],[1440,'dar
     const facts=await call({method:'GET',url:`/api/admin/generated-content?horoscopeBrief=true&period=${period}&date=2026-09-25&timeZone=Asia/Tokyo`});
     expect(facts.status).toBe(200);
     const edition=emptyHoroscopeEdition(facts.payload.brief.window);
-    edition.passages=HOROSCOPE_SIGNS.map(sign=>({sign,headline:`Fixture ${period} ${sign}`,body:`Fixture ${period} opening.\n\nFixture ${period} complete ending.`}));
+    edition.passages=HOROSCOPE_SIGNS.map(sign=>({sign,headline:`Fixture ${period} ${sign}`,body:`Fixture ${period} opening. You can read this fixture.\n\nFixture ${period} complete ending.`}));
     const created=await call({method:'POST',body:{contentKey:horoscopeEditionKey(edition.window),surface:'sky',mode:'article',eventType:'horoscope-edition',provider:'manual-admin',model:'manual',status:'DRAFT',lane:'serving',headline:`Fixture ${period}`,body:horoscopeEditionBody(edition),sections:{horoscopeEdition:edition},facts:{horoscopeBrief:{brief:facts.payload.brief,signature:facts.payload.signature}}}});
     expect(created.status).toBe(200);
     const row=created.payload.rows[0];expect((await call({method:'PATCH',body:{id:row.id,expectedUpdatedAt:row.updated_at,status:'LIVE'}})).status).toBe(200);

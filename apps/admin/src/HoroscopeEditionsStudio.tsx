@@ -81,6 +81,22 @@ export default function HoroscopeEditionsStudio({secret,requestedEditionId}:{sec
   function retain(row:any,refreshContext=false){validateHoroscopeEdition(row.sections?.horoscopeEdition);lastSync.current=Date.now();setNeedsSync(false);setSaved(row);setDraft(row.sections.horoscopeEdition);setRows(current=>[row,...current.filter(r=>r.id!==row.id)]);setApproved(false);if(refreshContext){setOutlines(row.source_snapshot?.horoscopeOutlines??{});setProfile(row.source_snapshot?.studioWritingProfile??null);setEditorialImport(row.source_snapshot?.editorialImport??null);setPlan(null);setPlanApproved(false);}}
   useEffect(()=>{setPlan(null);setPlanApproved(false);},[draft?.window.startsAt,draft?.window.endsAt,draft?.window.timeZone,outlines]);
   const dirty=Boolean(draft && (!saved || horoscopeCanonicalJson(draft)!==horoscopeCanonicalJson(saved.sections.horoscopeEdition) || horoscopeCanonicalJson(outlines)!==horoscopeCanonicalJson(saved.source_snapshot?.horoscopeOutlines ?? {}) || horoscopeCanonicalJson(profile)!==horoscopeCanonicalJson(saved.source_snapshot?.studioWritingProfile ?? null) || horoscopeCanonicalJson(editorialImport)!==horoscopeCanonicalJson(saved.source_snapshot?.editorialImport ?? null)));
+  const credentialIdentity=ownerCredentialIdentity(secret);
+  const [publication,setPublication]=useState<any>(null),[publicationAttempt,setPublicationAttempt]=useState(0);
+  useEffect(()=>{
+    setApproved(false);setPublication(null);
+    if(step!=='publish'||!saved||saved.status!=='DRAFT'||dirty)return;
+    const controller=new AbortController(),id=saved.id,updatedAt=saved.updated_at;
+    request(secret,'/api/admin/horoscope-writing',{action:'validate-publication',id,expectedUpdatedAt:updatedAt},'POST',controller.signal)
+      .then(data=>{
+        if(data.publication?.id!==id||data.publication?.updatedAt!==updatedAt||!Array.isArray(data.publication?.issues))throw new Error('The publication check could not be confirmed.');
+        if(!controller.signal.aborted)setPublication(data.publication);
+      })
+      .catch(reason=>{if(!controller.signal.aborted)setPublication({id,updatedAt,ready:false,issues:[],error:reason.message,status:reason.status});});
+    return()=>controller.abort();
+  },[step,saved?.id,saved?.updated_at,saved?.status,dirty,credentialIdentity,publicationAttempt]);
+  const publicationCurrent=Boolean(publication&&saved&&publication.id===saved.id&&publication.updatedAt===saved.updated_at);
+  const publicationReady=publicationCurrent&&publication?.ready===true&&publication.issues.length===0;
   async function load() {
     listRequest.current?.abort();setListError('');
     // The dashboard adopts the owner session asynchronously after mounting.
@@ -95,7 +111,6 @@ export default function HoroscopeEditionsStudio({secret,requestedEditionId}:{sec
     }catch(reason){if(!signal.aborted)setListError((reason as Error).message);}
     finally{if(!signal.aborted)setLoading(false);}
   }
-  const credentialIdentity=ownerCredentialIdentity(secret);
   useEffect(()=>{mounted.current=true;return()=>{mounted.current=false;stop.current=true;operation.current?.abort();};},[]);
   // Token renewal for the same owner must not cancel a running batch. A real
   // account change stops work; each request also checks its original identity.
@@ -201,6 +216,7 @@ export default function HoroscopeEditionsStudio({secret,requestedEditionId}:{sec
     if(!draft)return;setBusy(true);setError('');setMessage('');
     try {
       const edition=validateHoroscopeEdition(draft,publish);
+      if(publish&&(!approved||dirty||!publicationReady))throw new Error('Check the saved edition and approve its exact wording before publishing.');
       const changed=edition.passages.filter(p=>publish||!saved?.sections?.horoscopeEdition?.passages?.some((old:any)=>old.sign===p.sign&&old.headline===p.headline&&old.body===p.body));
       for(const p of changed){const issue=horoscopePunctuationFindings(p)[0];if(issue)throw new Error(`${horoscopeSignLabel(p.sign)}: ${issue.detail}`);}
       const body=publish ? {id:saved.id,status:'LIVE',lane:'serving',reviewState:null,expectedUpdatedAt:saved.updated_at} : {
@@ -484,7 +500,7 @@ export default function HoroscopeEditionsStudio({secret,requestedEditionId}:{sec
       pauseGeneration();setStep('setup');setMessage(dirty?'Your unsaved edits are kept in this session. Return to Review to continue editing.':'Your edition is saved. Open it under Continue a saved edition to pick up where you left off.');return;
     }
     if(busy)return;
-    if(next==='publish') {if(complete!==total||active)return;if(dirty&&!await save())return;}
+    if(next==='publish') {if(complete!==total||active||serverRunning)return;if(dirty&&!await save())return;}
     setStep(next);
     if(next==='generate'&&!active&&empty>0&&(!plan||dirty))await reviewPlan();
   }
@@ -588,8 +604,11 @@ export default function HoroscopeEditionsStudio({secret,requestedEditionId}:{sec
         </footer>
       </>:<>
         {isPublished?<div className="admin-horoscope-actions"><a className="admin-primary-button" href={horoscopeEditionReaderHref(saved.id,draft.window.period,sign)} target="_blank" rel="noreferrer">Read published edition</a><StudioButton onClick={()=>void moveTo('setup')}>Create another edition</StudioButton></div>:<>
+          {!publicationCurrent&&<p role="status">Checking all saved readings before publication…</p>}
+          {publicationCurrent&&publication.error&&<div role="alert"><p>{publication.error}</p><StudioButton disabled={locked} onClick={()=>publication.status===409?void open(saved,true):setPublicationAttempt(value=>value+1)}>{publication.status===409?'Reload saved edition':'Check publication again'}</StudioButton></div>}
+          {publicationCurrent&&publication.issues.length>0&&<section aria-label="Publication checks"><h3>Readings that need attention</h3>{[...new Set<string|null>(publication.issues.map((issue:any)=>issue.sign))].map(affectedSign=><div key={affectedSign??'edition'}>{publication.issues.filter((issue:any)=>issue.sign===affectedSign).map((issue:any,index:number)=><p key={index}>{affectedSign?`${horoscopeSignLabel(affectedSign)}: `:''}{issue.detail}</p>)}{affectedSign&&<StudioButton disabled={locked} onClick={()=>{setSign(affectedSign);setError('');setStep('edit');}}>Edit {horoscopeSignLabel(affectedSign)} reading</StudioButton>}</div>)}</section>}
           {draft.passages.map(p=><section className="admin-hook-detail-section" key={p.sign} aria-label={`${horoscopeSignLabel(p.sign)} reading preview`}><h3>{horoscopeSignLabel(p.sign)}</h3><p>{p.headline}</p>{p.body?<div className="admin-copy-preview"><FormattedProse text={p.body}/></div>:<p>No reading written yet.</p>}</section>)}
-          <footer className="admin-writing-savebar admin-horoscope-actions"><label><input type="checkbox" checked={approved} disabled={locked||dirty||complete!==total||!saved||wordingIssues.length>0} onChange={e=>setApproved(e.target.checked)}/> I have reviewed and approve the exact wording of every saved reading in this edition.</label><p>{wordingIssues.length?`Edit prohibited wording in ${[...new Set(wordingIssues.map(issue=>horoscopeSignLabel(issue.sign)))].join(', ')} before publishing.`:approved?'Ready to publish the complete edition.':'Check the approval box when you are happy with the complete edition.'}</p><div className="admin-toolbar-actions"><StudioButton disabled={locked} onClick={()=>void moveTo('edit')}>Back to readings</StudioButton><div className="admin-toolbar-actions admin-horoscope-decision-actions">{rejectAllButton}<StudioButton className="admin-primary-button" disabled={locked||dirty||!approved||!saved||wordingIssues.length>0} onClick={()=>void save(true)}>Publish edition</StudioButton></div></div></footer>
+          <footer className="admin-writing-savebar admin-horoscope-actions"><label><input type="checkbox" checked={approved} disabled={locked||dirty||complete!==total||!saved||!publicationReady} onChange={e=>setApproved(e.target.checked)}/> I have reviewed and approve the exact wording of every saved reading in this edition.</label><p>{!publicationReady?'All readings must pass the publication checks above before approval.':approved?'Ready to publish the complete edition.':'Check the approval box when you are happy with the complete edition.'}</p><div className="admin-toolbar-actions"><StudioButton disabled={locked} onClick={()=>void moveTo('edit')}>Back to readings</StudioButton><div className="admin-toolbar-actions admin-horoscope-decision-actions">{rejectAllButton}<StudioButton className="admin-primary-button" disabled={locked||dirty||!approved||!saved||!publicationReady} onClick={()=>void save(true)}>Publish edition</StudioButton></div></div></footer>
         </>}
       </>}
       {step==='generate'&&draft.window.period==='seasonal'&&generation?.editorialRuns?.[sign]&&<Suspense fallback={<p>Loading Seasonal generation record…</p>}><HoroscopeGenerationDetails view="seasonal" run={privateRuns[generation.editorialRuns[sign].id]}/></Suspense>}

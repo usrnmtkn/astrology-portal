@@ -54,6 +54,29 @@ export async function prepareHoroscopeBrief(url: URL) {
     signs:HOROSCOPE_SIGNS.map(sign => ({sign,houses:positions.map(position => ({planet:position.planet,house:((HOROSCOPE_SIGNS.indexOf(position.sign.toLowerCase())-HOROSCOPE_SIGNS.indexOf(sign)+12)%12)+1}))}))};
   return {ok:true,brief,signature:signature(brief)};
 }
+/** Read-only preflight and the final write use the same current-copy checks. */
+export function horoscopePublicationIssues(row:Record<string,any>) {
+  const edition=validateHoroscopeEdition(row.sections?.horoscopeEdition);
+  const generation=row.source_snapshot?.horoscopeGeneration;
+  const issues:{sign:string|null;category:string;detail:string}[]=[];
+  if(generation?.active||generation?.batch?.status==='running')issues.push({sign:null,category:'generation_active',detail:'Pause generation and finish the saved request before publishing.'});
+  for(const passage of edition.passages) {
+    if(!passage.headline.trim()||!passage.body.trim()) {
+      issues.push({sign:passage.sign,category:'incomplete_reading',detail:'Save a headline and complete reading before publishing.'});continue;
+    }
+    if(generation?.candidateHolds?.[passage.sign])issues.push({sign:passage.sign,category:'prose_review',detail:'Edit or reject the saved candidate held for prose review.'});
+    const lint=validateHoroscopeReading(passage,row.facts.horoscopeBrief.brief);
+    const receipt=generation?.readings?.[passage.sign];
+    const bodyHash=createHash('sha256').update(horoscopeCanonicalJson({headline:passage.headline,body:passage.body})).digest('hex');
+    // Recompute current facts without mutating historical receipts. Other
+    // recorded checks still apply only to the exact text they reviewed.
+    const recorded=receipt?.bodyHash===bodyHash?receipt?.lint?.violations??[]:[];
+    for(const issue of [...lint.violations,...recorded.filter((issue:any)=>issue.category!=='horoscope_fact_boundary'||receipt?.lint?.version===horoscopeValidationVersion)]) {
+      if(!issues.some(existing=>existing.sign===passage.sign&&existing.detail===issue.detail))issues.push({sign:passage.sign,category:issue.category,detail:issue.detail});
+    }
+  }
+  return issues;
+}
 export function assertHoroscopeRow(row: Record<string,any>, {enforcePunctuation=false,previous=null}:{enforcePunctuation?:boolean;previous?:Record<string,any>|null}={}) {
   if (!String(row.content_key ?? '').startsWith(HOROSCOPE_EDITION_PREFIX)) return;
   try {
@@ -81,18 +104,9 @@ export function assertHoroscopeRow(row: Record<string,any>, {enforcePunctuation=
     if (JSON.stringify(edition.window) !== JSON.stringify(validateHoroscopeWindow(packet.brief.window))
       || !isHoroscopeEditionKey(row.content_key,edition.window) || row.surface !== 'sky' || row.mode !== 'article'
       || row.body !== horoscopeEditionBody(edition)) throw new Error('The edition must preserve its calculated dates, identity and complete passages.');
-    if(row.status==='LIVE'&&row.source_snapshot?.horoscopeGeneration) {
-      for(const passage of edition.passages) {
-        const lint=validateHoroscopeReading(passage,packet.brief);
-        const receipt=row.source_snapshot.horoscopeGeneration.readings?.[passage.sign];
-        const bodyHash=createHash('sha256').update(horoscopeCanonicalJson({headline:passage.headline,body:passage.body})).digest('hex');
-        // Preserve the original diagnostic receipt. Recomputed fact checks replace
-        // obsolete fact findings (e.g. a lunation compared with a snapshot Moon).
-        // Other recorded checks, including private owner corrections, still apply.
-        const recorded=receipt?.bodyHash===bodyHash?receipt?.lint?.violations??[]:[];
-        const issues=[...lint.violations,...recorded.filter((issue:any)=>issue.category!=='horoscope_fact_boundary'||receipt?.lint?.version===horoscopeValidationVersion)];
-        if(issues.length)throw new Error(`${passage.sign}: ${issues[0].detail} Edit this reading before publishing.`);
-      }
+    if(row.status==='LIVE') {
+      const issue=horoscopePublicationIssues(row)[0];
+      if(issue)throw new Error(`${issue.sign?issue.sign+': ':''}${issue.detail} Edit this reading before publishing.`);
     }
   } catch (error) {throw new AdminHttpError(422,(error as Error).message);}
 }

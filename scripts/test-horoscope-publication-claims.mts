@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import {store} from '../tests/helpers/sky-article-save-api.mts';
+import {store,invokeHoroscopeWriting} from '../tests/helpers/sky-article-save-api.mts';
 import {readerRouteResponse} from '../tests/helpers/content-reader-route.mjs';
 import {createSeasonalPublicationFixture,seasonalClaimBodies,createMonthlyAspectPublicationFixture,monthlyAspectBody,createWeeklyAspectPublicationFixture,weeklyAspectBodies} from '../tests/helpers/horoscope-publication-fixture.mts';
 import {horoscopeAspectFindings} from '../src/astro-writing/horoscopeAspectClaims.mjs';
@@ -105,3 +105,43 @@ for(const [sign,bad] of [
  assert.equal(denied.status,422);assert.equal(store.rows.get(invalid.id).status,'DRAFT');assert.equal(store.rows.get(invalid.id).body,invalid.body);
 }
 console.log('PASS weekly aspect publication: all 12 readings publish unchanged, prefix motions and house context checked, invalid planets/aspects/motions/houses still blocked.');
+
+const rulers=await createWeeklyAspectPublicationFixture(m=>store.invoke(m.method,m.body,m.url),true);
+assert.equal(rulers.status,200,JSON.stringify(rulers.payload));
+const rulerRow=rulers.payload.rows[0],rulerBrief=rulerRow.facts.horoscopeBrief.brief;
+for(const passage of rulerRow.sections.horoscopeEdition.passages)assert.deepEqual(issues(passage.sign,passage.body,rulerBrief),[],passage.sign);
+const rLive=await store.invoke('PATCH',{id:rulerRow.id,expectedUpdatedAt:rulerRow.updated_at,status:'LIVE'});
+assert.equal(rLive.status,200,JSON.stringify(rLive.payload));
+assert.deepEqual(rLive.payload.rows[0].sections,rulerRow.sections);
+assert.deepEqual(rLive.payload.rows[0].source_snapshot,rulerRow.source_snapshot);
+for(const [sign,bad] of [
+ ['aries','You can review Mars, your ruling planet, squares Saturn in your sign.'],
+ ['aries','You can review Mars in your sign trines Saturn.'],
+ ['aries','You can review Mars, your ruling planet and Jupiter, trines Saturn.'],
+ ['aries','You can review retrograde Mars, your ruling planet, trines Saturn.'],
+ ['scorpio','You can review Mars, your traditional ruler, trines Saturn from your sixth house of daily work to your tenth house of career.'],
+ ['scorpio','You can review Mars, your traditional ruler, trines Saturn from your tenth house of career to your fifth house of creativity.']
+])assert(issues(sign,bad,rulerBrief).length,`False qualified claim accepted: ${bad}`);
+console.log('PASS ruler-aside publication: all 12 readings preserved; personal-sign placements and both from/to houses checked independently.');
+
+// Imported/manual drafts receive the same current-copy checks as AI drafts.
+const manual=structuredClone(rulerRow);delete manual.source_snapshot.horoscopeGeneration;
+manual.sections.horoscopeEdition.passages.find((p:any)=>p.sign==='aries').body='You can review Mars squares Saturn.';
+manual.sections.horoscopeEdition.passages.find((p:any)=>p.sign==='leo').body='You can review Saturn in your first house.';
+manual.body=horoscopeEditionBody(manual.sections.horoscopeEdition);store.rows.set(manual.id,manual);
+const checkInput={action:'validate-publication',id:manual.id,expectedUpdatedAt:manual.updated_at};
+assert.equal((await invokeHoroscopeWriting(checkInput,'wrong')).status,401);
+assert.equal((await invokeHoroscopeWriting({...checkInput,expectedUpdatedAt:'2000-01-01T00:00:00Z'})).status,409);
+const beforeCheck=structuredClone(store.rows.get(manual.id));
+const checked=await invokeHoroscopeWriting(checkInput);
+assert.equal(checked.status,200,JSON.stringify(checked.payload));
+assert.equal(checked.payload.publication.ready,false);
+assert.deepEqual([...new Set(checked.payload.publication.issues.map((issue:any)=>issue.sign))],['aries','leo']);
+assert.deepEqual(store.rows.get(manual.id),beforeCheck,'Preflight never edits, publishes, refreshes a plan or dispatches AI');
+const invalidImport=await store.invoke('PATCH',{id:manual.id,expectedUpdatedAt:manual.updated_at,status:'LIVE'});
+assert.equal(invalidImport.status,422,'Missing AI metadata cannot bypass the factual check');
+assert.deepEqual(store.rows.get(manual.id),beforeCheck);
+store.rows.set(rulerRow.id,rulerRow);
+const clear=await invokeHoroscopeWriting(checkInput);
+assert.equal(clear.status,200);assert.equal(clear.payload.publication.ready,true);assert.deepEqual(clear.payload.publication.issues,[]);
+console.log('PASS publication preflight: all affected signs, owner authentication, current version, no mutation, and manual/imported fact enforcement.');
