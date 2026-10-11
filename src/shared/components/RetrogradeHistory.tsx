@@ -28,6 +28,7 @@ export function RetrogradeHistoryFacts({ history, timeZone }: { history: Retrogr
   return <dl className="retrograde-history-facts">
     {history.current && <div><dt>Current cycle</dt><dd>{cycle(history.current)}</dd></div>}
     <div><dt>Previous retrograde in {title(history.sign ?? "")}</dt><dd>{history.sameSign ? cycle(history.sameSign) : "No earlier complete cycle found within the searched dates."}</dd></div>
+    <div><dt>Next retrograde in {title(history.sign ?? "")}</dt><dd>{history.nextSameSign ? cycle(history.nextSameSign) : history.forwardCoverage ? "No later complete cycle found within the searched dates." : "Reload facts to see the next cycle."}</dd></div>
     <div><dt>Degree comparison · within 4° of the start station</dt><dd>{history.degreeMatch ? <>
       {cycle(history.degreeMatch.cycle)}
       {fact(history.degreeMatch.exact ? "Exact crossing" : `Closest approach: ${history.degreeMatch.distanceDegrees.toFixed(2)}° away`, date(history.degreeMatch.closestInstant))}
@@ -59,9 +60,9 @@ function HistoryDisclosure({ context }: { context: RetrogradeHistoryContext }) {
     return () => { current = false; };
   }, [open, history, planet, sign, referenceDate, attempt]);
   return <details className="retrograde-history" onToggle={event => setOpen(event.currentTarget.open)}>
-    <summary>Previous retrograde</summary>
+    <summary>Retrograde cycles</summary>
     {open && (history ? <RetrogradeHistoryFacts history={history} timeZone={context.timeZone} />
       : error ? <p role="alert">Retrograde history could not load. <button type="button" onClick={() => setAttempt(value => value + 1)}>Try again</button></p>
-        : <p role="status">Calculating previous retrogrades…</p>)}
+        : <p role="status">Calculating retrograde cycles…</p>)}
   </details>;
 }

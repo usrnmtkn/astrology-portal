@@ -319,6 +319,23 @@
   --leading-auth-title: 1.02;
   --leading-sky-quote: 1.2;
 
+  /* Owner-requested detail-panel roles (2026-10-10): 28 / 22 / 17px.
+     Reusable for event dialogs; the standard article scale stays unchanged. */
+  --type-dialog-title-size: 28px;
+  --type-disclosure-size: 22px;
+  --type-date-size: 17px;
+  --leading-dialog-title: 1.15;
+  --tracking-dialog-title: -0.015em;
+  --tracking-eyebrow-compact: 0.06em;
+  --detail-card-padding: calc(var(--space-5) + var(--lunar-space-2));
+  --detail-toolbar-overlap: calc(-1 * var(--space-4));
+  --detail-card-border: #e2e6ec;
+  --detail-divider: #dcdde2;
+  --detail-meta: #6e7685;
+  --detail-accent: #004b45;
+  --detail-table-band: #f5f7f9;
+  --detail-table-border: #edf0f4;
+  --detail-table-rule: #dde2e8;
   --type-display-size: clamp(34px, 8vw, 42px);
   --type-h1-size: clamp(30px, 4vw, 46px);
   --type-h2-size: clamp(20px, 2.4vw, 24px);
@@ -1432,6 +1449,14 @@
 
 .theme-dark,
 [data-theme="dark"] {
+  --detail-card-border: var(--color-line);
+  --detail-divider: var(--color-line);
+  --detail-meta: var(--color-muted);
+  --detail-accent: var(--ink);
+  --detail-table-band: var(--color-surface-2);
+  --detail-table-border: var(--color-line);
+  --detail-table-rule: var(--color-line-strong);
+
   --color-bg-warm: #16181b;
   --content-highlight-tint: rgba(205, 217, 116, 0.18);
   --color-paper: #16181b;

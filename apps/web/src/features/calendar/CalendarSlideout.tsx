@@ -8,8 +8,10 @@ export function CalendarSlideout({
   onClose,
   children,
   leading,
-  variant = "event"
+  variant = "event",
+  className = ""
 }: {
+  className?: string;
   labelledBy?: string;
   label: string;
   onClose: () => void;
@@ -39,7 +41,7 @@ export function CalendarSlideout({
   }, []);
 
   return createPortal(
-    <div className={`calendar-slideout calendar-slideout--${variant}`} data-screen-label={label}>
+    <div className={`calendar-slideout calendar-slideout--${variant} ${className}`} data-screen-label={label}>
       <button
         aria-label="Close overlay"
         className="calendar-slideout__scrim"

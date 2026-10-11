@@ -1,6 +1,6 @@
 /** Shared, factual retrograde history. All positions are supplied by the verified
  * Swiss adapter; this module contains no interpretation or historical calendars. */
-export const RETROGRADE_HISTORY_VERSION = "retrograde-history-v1";
+export const RETROGRADE_HISTORY_VERSION = "retrograde-history-v2";
 export const RETROGRADE_HISTORY_START = "1800-01-02T00:00:00.000Z";
 export const RETROGRADE_HISTORY_END = "2399-12-30T00:00:00.000Z";
 export const retrogradeHistoryPlanets = ["mercury", "venus", "mars", "jupiter", "saturn", "uranus", "neptune", "pluto", "chiron"] as const;
@@ -15,6 +15,10 @@ export type RetrogradeCycle = {
   retrograde: RetrogradeStation;
   direct: RetrogradeStation;
   segments: RetrogradeSegment[];
+  signTransitions: RetrogradeStation[];
+  /** Exact elapsed days; civil-day display is formatted in the selected zone. */
+  durationDays: number;
+  daysInStationSign: number;
 };
 export type RetrogradeHistory = {
   schema: typeof RETROGRADE_HISTORY_VERSION;
@@ -23,6 +27,10 @@ export type RetrogradeHistory = {
   status: "ready" | "not-retrograde" | "unsupported" | "out-of-range" | "incomplete-cycle";
   current?: RetrogradeCycle;
   sameSign?: RetrogradeCycle | null;
+  nextSameSign?: RetrogradeCycle | null;
+  /** Exact retrograde crossing in the previous same-sign cycle, or null. */
+  previousCrossing?: RetrogradeStation | null;
+  forwardCoverage?: RetrogradeHistory["coverage"];
   degreeMatch?: { cycle: RetrogradeCycle; closestInstant: string; distanceDegrees: number; exact: boolean } | null;
   referenceLongitude?: number;
   referenceBasis: "retrograde-start-station";
@@ -81,10 +89,14 @@ export function calculateRetrogradeHistory(input: { planet: string; referenceDat
       if (boundary < retrograde.longitude) points.push({ time: crossing(boundary), longitude: boundary });
     }
     points.push({ time: end, longitude: endLongitude });
-    return { retrograde, direct, segments: points.slice(0, -1).map((point, index) => ({
+    const segments = points.slice(0, -1).map((point, index) => ({
       sign: signs[Math.floor(normalize((point.longitude + points[index + 1].longitude) / 2) / 30)],
       start: new Date(point.time).toISOString(), end: new Date(points[index + 1].time).toISOString()
-    })) };
+    }));
+    return { retrograde, direct, segments, signTransitions: points.slice(1, -1).map(point => station(point.time)),
+      durationDays: (end - start) / DAY,
+      daysInStationSign: segments.filter(segment => segment.sign === retrograde.sign)
+        .reduce((days, segment) => days + (Date.parse(segment.end) - Date.parse(segment.start)) / DAY, 0) };
   };
   const boundary = (direction: -1 | 1) => {
     let previous = reference;
@@ -139,7 +151,33 @@ export function calculateRetrogradeHistory(input: { planet: string; referenceDat
     previousTime = time;
     previousSpeed = speed;
   }
-  return { ...base, sign, current, sameSign, degreeMatch, referenceLongitude,
+  const previousCrossing = sameSign && normalize(sameSign.retrograde.longitude - referenceLongitude)
+    <= normalize(sameSign.retrograde.longitude - sameSign.direct.longitude)
+    ? station(root(Date.parse(sameSign.retrograde.instant), Date.parse(sameSign.direct.instant), instant => {
+      const delta = ((checked(instant).longitude - sameSign.retrograde.longitude + 540) % 360) - 180;
+      return delta + normalize(sameSign.retrograde.longitude - referenceLongitude);
+    })) : null;
+  let nextSameSign: RetrogradeCycle | null = null;
+  let futureTime = Math.min(max, end + 60_000), futureSpeed = checked(futureTime).speed;
+  let retrogradeTime: number | null = null;
+  let futureCycles = 0;
+  while (futureTime < max && !nextSameSign) {
+    const time = Math.min(max, futureTime + step), speed = checked(time).speed;
+    if ((speed < 0) !== (futureSpeed < 0)) {
+      const stationTime = root(futureTime, time, instant => checked(instant).speed);
+      if (speed < 0) retrogradeTime = stationTime;
+      else if (retrogradeTime !== null) {
+        const candidate = cycle(retrogradeTime, stationTime);
+        futureCycles += 1;
+        if (candidate.segments.some(segment => segment.sign === sign)) nextSameSign = candidate;
+        retrogradeTime = null;
+      }
+    }
+    futureTime = time;
+    futureSpeed = speed;
+  }
+  return { ...base, sign, current, sameSign, nextSameSign, previousCrossing, degreeMatch, referenceLongitude,
+    forwardCoverage: { start: current.direct.instant, end: new Date(futureTime).toISOString(), completedCycles: futureCycles, reachedBoundary: futureTime === max },
     coverage: { start: new Date(previousTime).toISOString(), end: current.retrograde.instant, completedCycles, reachedBoundary: previousTime === min } };
 }
 

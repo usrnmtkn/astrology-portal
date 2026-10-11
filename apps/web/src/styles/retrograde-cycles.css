@@ -1,0 +1,146 @@
+/* The owner-specified event detail scale is scoped to this slideout. */
+.calendar-slideout--retrograde .calendar-slideout__panel {
+  padding: var(--lunar-space-28);
+  gap: var(--lunar-space-28);
+  font-family: var(--font-body);
+  font-kerning: normal;
+  text-rendering: optimizeLegibility;
+}
+.calendar-slideout--retrograde .calendar-slideout__toolbar {
+  position: static;
+  padding: 0;
+  margin-bottom: var(--detail-toolbar-overlap);
+}
+.calendar-slideout--retrograde .calendar-slideout__toolbar::before { content: none; }
+.calendar-slideout--retrograde .calendar-slideout__close {
+  width: var(--space-8);
+  height: var(--space-8);
+  background: var(--calendar-chip-on-canvas);
+}
+.retrograde-station-label {
+  margin-right: auto;
+  font-family: var(--font-label);
+  font-size: var(--type-hint-size);
+  letter-spacing: var(--tracking-eyebrow-compact);
+  color: var(--calendar-secondary);
+}
+.retrograde-station-header {
+  display: grid;
+  gap: var(--space-3);
+  padding-bottom: var(--lunar-space-28);
+  border-bottom: var(--border-width-thin) solid var(--detail-divider);
+}
+.retrograde-station-header h2 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: var(--type-dialog-title-size);
+  font-weight: var(--weight-regular);
+  line-height: var(--leading-dialog-title);
+  letter-spacing: var(--tracking-dialog-title);
+  text-wrap: balance;
+  color: var(--calendar-ink);
+}
+.retrograde-station-header p { margin: 0; }
+.retrograde-station-date {
+  font-size: var(--calendar-meta-size);
+  line-height: var(--leading-meta);
+  color: var(--calendar-secondary);
+}
+.retrograde-station-copy {
+  display: grid;
+  gap: var(--space-3);
+  font-size: var(--text-body);
+  line-height: var(--leading-description);
+  color: var(--calendar-copy);
+}
+.retrograde-station-copy p { line-height: inherit; }
+.retrograde-cycles { display: grid; gap: var(--lunar-space-28); min-width: 0; }
+.retrograde-cycles summary { cursor: pointer; list-style: none; }
+.retrograde-cycles summary::-webkit-details-marker { display: none; }
+.retrograde-cycles__section > summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  font-family: var(--font-display);
+  font-size: var(--type-disclosure-size);
+  font-weight: var(--weight-regular);
+  line-height: var(--leading-h2);
+  color: var(--calendar-ink);
+}
+.retrograde-cycles__chevron {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: var(--calendar-control-size-compact);
+  height: var(--calendar-control-size-compact);
+  border-radius: var(--radius-pill);
+  background: var(--calendar-chip-on-canvas);
+}
+.retrograde-cycles summary svg { width: var(--space-4); height: var(--space-4); flex: none; }
+.retrograde-cycles details[open] > summary > svg,
+.retrograde-cycles details[open] > summary > span > svg { transform: rotate(180deg); }
+.retrograde-cycles__card {
+  margin-top: var(--space-4);
+  padding: var(--detail-card-padding);
+  border: var(--border-width-thin) solid var(--detail-card-border);
+  border-radius: var(--calendar-card-radius);
+  background: var(--calendar-card);
+}
+.retrograde-cycles__card:not(details) { display: grid; gap: var(--space-3); }
+.retrograde-cycles__date {
+  font-size: var(--type-date-size);
+  font-weight: var(--weight-medium);
+  line-height: var(--leading-meta);
+  letter-spacing: var(--tracking-tight);
+  color: var(--calendar-ink);
+}
+.retrograde-cycles__meta {
+  display: block;
+  margin-top: var(--lunar-space-6);
+  font-size: var(--calendar-meta-size);
+  font-weight: var(--weight-regular);
+  line-height: var(--leading-meta);
+  letter-spacing: var(--tracking-body);
+  color: var(--detail-meta);
+}
+.retrograde-cycles p {
+  margin: 0;
+  font-size: var(--text-table-body-size);
+  line-height: var(--leading-description);
+  color: var(--calendar-copy);
+}
+.retrograde-cycles__open {
+  justify-self: end;
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--calendar-control-size-compact);
+  padding-inline: var(--space-4);
+  border-radius: var(--radius-pill);
+  background: var(--calendar-chip-on-canvas);
+  font-size: var(--calendar-meta-size);
+  color: var(--calendar-ink);
+  text-decoration: none;
+}
+.retrograde-cycles__compare > summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  font-size: var(--text-table-body-size);
+  font-weight: var(--weight-medium);
+  color: var(--calendar-ink);
+}
+.retrograde-cycles__compare > summary > svg { color: var(--calendar-secondary); }
+.retrograde-cycles__table-scroll { overflow-x: auto; margin-top: var(--space-4); }
+.retrograde-cycles table { width: 100%; border-collapse: collapse; font-size: var(--calendar-meta-size); line-height: var(--leading-meta); }
+.retrograde-cycles th, .retrograde-cycles td { text-align: right; vertical-align: top; padding: var(--space-2) var(--lunar-space-2); }
+.retrograde-cycles tr > :first-child { text-align: left; }
+.retrograde-cycles thead th { font-size: var(--text-table-body-size); font-weight: var(--weight-medium); }
+.retrograde-cycles thead span, .retrograde-cycles__degree { display: block; font-size: var(--calendar-meta-size); font-weight: var(--weight-regular); color: var(--detail-meta); }
+.retrograde-cycles tbody th { font-weight: var(--weight-regular); }
+.retrograde-cycles tbody tr { border-bottom: var(--lunar-space-2) dotted var(--detail-table-rule); }
+.retrograde-cycles__degree { white-space: nowrap; }
+.retrograde-cycles .is-current { color: var(--detail-accent); }
+.retrograde-cycles .is-current span { color: inherit; }
+.retrograde-cycles .retrograde-cycles__band { background: var(--detail-table-band); border-block: var(--border-width-thin) solid var(--detail-table-border); color: var(--detail-meta); }
