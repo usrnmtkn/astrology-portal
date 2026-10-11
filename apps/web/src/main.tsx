@@ -128,12 +128,6 @@ async function startApp() {
       // The mounted route owns import errors and recovery.
     });
   }
-  if (/^#\/?calendar(?:[/?]|$)/u.test(window.location.hash)) {
-    // Start both route downloads alongside App without importing calculation
-    // or prose eagerly. Module caching shares them with the mounted route.
-    void Promise.all([import("./routes/CalendarRoute"), import("./features/calendar/LunarCalendar")])
-      .catch(() => { /* The mounted route owns import errors and recovery. */ });
-  }
   const friendRoutePromise = prepareFriendProfileRoute(window.location.href);
   void friendRoutePromise.then(() => {
     if (!isFriendsHref(window.location.href)) return;
@@ -157,7 +151,10 @@ async function startApp() {
     await readerStylesPromise;
   }
 
-  const { App } = await appModulePromise;
+  const { App, preloadCalendarExperience } = await appModulePromise;
+  // Fetch the route and view together before React mounts, after the base
+  // stylesheet so Calendar's responsive controls retain their cascade order.
+  if (/^#\/?calendar(?:[/?]|$)/u.test(window.location.hash)) preloadCalendarExperience();
   // Prime the reader faces alongside content, without competing with App's download.
   for (const face of ['400 16px Newsreader', '500 16px "Geist Mono"']) {
     void document.fonts.load(face).catch(() => {});

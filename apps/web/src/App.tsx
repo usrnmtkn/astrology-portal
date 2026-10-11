@@ -10718,8 +10718,10 @@ const NatalAspectPatternActivationsSection = lazy(() =>
 const loadCalendarRoute = () => import("./routes/CalendarRoute");
 const HoroscopeReader = lazy(() => import("./features/horoscopes/HoroscopeReader"));
 const loadLunarCalendar = () => import("./features/calendar/LunarCalendar");
-const preloadCalendarExperience = () => {
-  void Promise.all([loadCalendarRoute(), loadLunarCalendar()]);
+export const preloadCalendarExperience = () => {
+  void Promise.all([loadCalendarRoute(), loadLunarCalendar()]).catch(() => {
+    // The mounted route owns import errors and recovery.
+  });
 };
 
 const CalendarRoute = lazy(() =>
