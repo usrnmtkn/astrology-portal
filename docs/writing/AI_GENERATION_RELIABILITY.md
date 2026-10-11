@@ -358,6 +358,16 @@ and reader eligibility, and rejects incorrect claims and stale writes. The
 matching fresh-build browser flow publishes and reloads the full saved reading
 using isolated storage and no model calls.
 
+Weekly publication also recognizes motion before a planet (for example,
+"conjunction with retrograde Venus") and a short numbered-house description
+between a planet and its aspect. Motion qualifiers remain checked against the
+calculated event; conflicting qualifiers and unsupported planets, aspects or
+houses still block publication. House descriptions cannot absorb another named
+planet, aspect or dated clause. Validator v8 supersedes obsolete factual
+findings without changing saved text or historical receipts. The publication
+regression covers a complete twelve-reading Weekly edition, its reader response,
+and phone/desktop publication and reload, with no generation calls.
+
 
 ## Seasonal relational depth and required punctuation (2026-10-01)
 
