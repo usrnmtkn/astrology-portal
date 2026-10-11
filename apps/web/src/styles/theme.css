@@ -989,6 +989,8 @@
   --table-row-bg: var(--card-bg);
   --table-row-border: var(--card-border);
   --table-row-gap: var(--sp-2);
+  /* Bounded table browsing, leaving surrounding page controls reachable. */
+  --table-scroll-max-height: min(60dvh, calc(var(--size-8) * 8));
   --chart-transit-degree-size: var(--chart-degree-size);
   --chart-synastry-house-label-size: var(--type-label-size);
   --chart-sun-glyph-size: calc(var(--chart-planet-glyph-size) * 1.02);

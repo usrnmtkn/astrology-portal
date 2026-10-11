@@ -688,7 +688,15 @@ body:has(.admin-dashboard) { margin: 0; }
 }
 
 /* Horoscope creation follows one active step and the shared Studio type scale. */
-#root .admin-dashboard :is(.admin-horoscope-wizard,.admin-horoscope-step-heading,.admin-horoscope-plan,.admin-horoscope-saved) { display: grid; gap: var(--workspace-panel-inset); }
+#root .admin-dashboard :is(.admin-horoscope-wizard,.admin-horoscope-step-heading,.admin-horoscope-plan) { display: grid; gap: var(--workspace-panel-inset); }
+#root .admin-dashboard .admin-horoscope-saved { max-height: var(--table-scroll-max-height); overflow: auto; scrollbar-gutter: stable; min-width: 0; }
+#root .admin-dashboard .admin-horoscope-saved table { min-width: var(--container-form); }
+#root .admin-dashboard .admin-horoscope-saved thead { position: sticky; top: 0; z-index: 1; }
+#root .admin-dashboard .admin-horoscope-saved th:not(:first-child) { width: var(--studio-table-details-width); }
+#root .admin-dashboard .admin-horoscope-saved tbody tr { border-bottom: var(--border-width-thin) solid var(--workspace-line); }
+#root .admin-dashboard .admin-horoscope-saved tbody tr:last-child { border-bottom: 0; }
+#root .admin-dashboard .admin-horoscope-saved td small { display: block; margin-top: var(--workspace-field-gap); }
+#root .admin-dashboard .admin-horoscope-saved td button { white-space: nowrap; }
 #root .admin-dashboard .admin-horoscope-steps { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: var(--workspace-field-gap); list-style: none; margin: 0; padding: 0; }
 #root .admin-dashboard .admin-horoscope-steps button { width: 100%; padding-inline: var(--workspace-control-inset); }
 #root .admin-dashboard .admin-horoscope-steps button[aria-current="step"] { background: var(--workspace-selected); color: var(--workspace-on-selected); border-color: var(--workspace-selected); }
