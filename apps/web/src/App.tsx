@@ -10715,7 +10715,11 @@ const NatalAspectPatternActivationsSection = lazy(() =>
   }))
 );
 
-const loadCalendarRoute = () => import("./routes/CalendarRoute");
+let calendarRoutePromise: Promise<typeof import("./routes/CalendarRoute")> | undefined;
+const loadCalendarRoute = () => calendarRoutePromise ??= import("./routes/CalendarRoute").catch(error => {
+  calendarRoutePromise = undefined;
+  throw error;
+});
 const HoroscopeReader = lazy(() => import("./features/horoscopes/HoroscopeReader"));
 const loadLunarCalendar = () => import("./features/calendar/LunarCalendar");
 export const preloadCalendarExperience = () => {

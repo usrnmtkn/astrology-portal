@@ -16,7 +16,9 @@ jobs:
   content-studio-api:
     # Validate the actual main revision too. A merge message is not test evidence.
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    # The full contract plus native PostgreSQL checks takes about 15 minutes.
+    # Allow runner variance without cancelling the final verification steps.
+    timeout-minutes: 20
     services:
       postgres:
         # Docker's official mirror avoids Docker Hub pull limits on shared runners.
