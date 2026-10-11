@@ -1,7 +1,6 @@
 import React from "react";
 import { createRoot } from "react-dom/client";
 import { loadYouPage } from "./features/you/youExperienceLoader";
-import { preloadCalendarExperience } from "./features/calendar/calendarExperienceLoader";
 import { PageLoading, PageLoadBoundary } from "./components/PageLoading";
 import { shouldPreloadInitialFriendCalculationRuntime } from "./features/friends/friendCalculationReadiness";
 import { preloadFriendsExperience } from "./features/friends/friendsExperienceLoader";
@@ -130,7 +129,10 @@ async function startApp() {
     });
   }
   if (/^#\/?calendar(?:[/?]|$)/u.test(window.location.hash)) {
-    preloadCalendarExperience();
+    // Start both route downloads alongside App without importing calculation
+    // or prose eagerly. Module caching shares them with the mounted route.
+    void Promise.all([import("./routes/CalendarRoute"), import("./features/calendar/LunarCalendar")])
+      .catch(() => { /* The mounted route owns import errors and recovery. */ });
   }
   const friendRoutePromise = prepareFriendProfileRoute(window.location.href);
   void friendRoutePromise.then(() => {

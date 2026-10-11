@@ -1,5 +1,4 @@
 import { lazy, Suspense } from "react";
-import { loadLunarCalendar } from "../features/calendar/calendarExperienceLoader";
 import type { ReactNode } from "react";
 import type { LocationInput, SkySnapshot } from "../types";
 import type { LunarCalendarEvent } from "../services/ephemeris";
@@ -10,7 +9,7 @@ import "../styles/lunar-calendar.css";
 import "../styles/calendar-subscribe.css";
 
 const LunarCalendar = lazy(() =>
-  loadLunarCalendar().then((module) => ({
+  import("../features/calendar/LunarCalendar").then((module) => ({
     default: module.LunarCalendar
   }))
 );
