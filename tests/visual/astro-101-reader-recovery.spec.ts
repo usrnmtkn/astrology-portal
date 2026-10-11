@@ -40,7 +40,7 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
     if (signedIn) {
       await expect(menu.getByRole('menuitem', { name: 'Friends', exact: true })).toBeVisible();
       const labels = await menu.getByRole('menuitem').allTextContents();
-      expect(labels.slice(labels.indexOf('Friends'), labels.indexOf('Friends') + 2)).toEqual(['Friends', 'Learn']);
+      expect(labels.slice(labels.indexOf('Friends'), labels.indexOf('Friends') + 3)).toEqual(['Friends', 'Guide', 'Learn']);
     }
     await menu.getByRole('menuitem', { name: 'Learn', exact: true }).click();
     await expect(page).toHaveURL(/\/learn$/);

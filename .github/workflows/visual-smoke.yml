@@ -446,6 +446,7 @@ jobs:
           tests/visual/personal-daily-aspects.spec.ts
           tests/visual/friends-authenticated-loading-diagnostic.spec.ts
           tests/visual/body-paragraph-type.spec.ts
+          tests/visual/header-navigation-overflow.spec.ts
       - name: Upload reader surface artifacts
         if: always()
         uses: actions/upload-artifact@v6

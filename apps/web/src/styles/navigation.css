@@ -69,8 +69,7 @@ html[data-scrolled] .topbar {
   height: var(--top-control-height);
   min-height: var(--top-control-height);
   max-width: calc(100vw - 210px);
-  overflow-x: auto;
-  scrollbar-width: none;
+  overflow: clip;
   border: var(--border-width-thin) solid var(--nav-border);
   border-radius: var(--nav-radius);
   background: var(--nav-surface);
@@ -83,10 +82,6 @@ html[data-scrolled] .topbar {
     border-color 320ms cubic-bezier(.4, 0, .2, 1),
     box-shadow 320ms cubic-bezier(.4, 0, .2, 1),
     color 320ms cubic-bezier(.4, 0, .2, 1);
-}
-
-.nav-pill::-webkit-scrollbar {
-  display: none;
 }
 
 .brand-dot {
@@ -127,11 +122,12 @@ html[data-scrolled] .topbar {
 
 .site-nav {
   display: flex;
+  flex: none;
   align-items: center;
   gap: calc(var(--space-1) / 2);
 }
 
-.site-nav button {
+.site-nav button:not([hidden]) {
   display: inline-flex;
   align-items: center;
   gap: calc(var(--space-2) - var(--space-1) / 4);
