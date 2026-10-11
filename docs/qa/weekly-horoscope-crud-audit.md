@@ -58,6 +58,23 @@ meeting prose outside aspect detection. Actual-handler regressions cover
 publication and refusal for a wrong pair, motion and event date. These syntax
 examples are test inputs, never positive writing evidence or serving content.
 
+The recovery follow-up fixes the batch connection-failure counter: a successful
+stage clears the streak and its stale error, and an explicit resume starts a
+fresh streak. Three consecutive retrieval failures still pause. The actual
+handler regression injects three separated outages, then three consecutive
+outages, resumes, and requires exactly twelve total drafts with no duplicate
+dispatch. Counter checkpoints use a fresh row version and retain the lease fence.
+
+Release-path checks also cover the guarded document reload without treating its
+expected destroyed execution context as a test failure. Deferred Studio history
+facts keep the entry bundle within its existing size cap. Direct Calendar links
+preload their route and view together; the existing cold-load budgets and local
+calculation assertions remain unchanged. Preload and render share the same route
+promise so a second import cannot bypass a stylesheet that is still loading.
+The API CI job has a twenty-minute overall deadline after a fifteen-minute run
+passed its API and database assertions but was cancelled during its last step;
+all test commands and application performance limits remain unchanged.
+
 Local/browser fixtures execute real handlers with isolated storage and provider
 transport fixtures. They do not establish production database latency or Gemini
 availability. Confirm the main-branch deployment SHA and READY status, then

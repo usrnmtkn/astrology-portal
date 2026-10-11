@@ -239,7 +239,16 @@ test('reader startup keeps its guarded reload and manual recovery', async ({ pag
   await page.goto('/#sky', { waitUntil: 'commit' });
   // The first failure can announce an alert just before the guarded reload.
   // Wait for that replacement document to fail before enabling recovery.
-  await expect.poll(() => page.evaluate(() => Number(sessionStorage.getItem("qa:startup-document")))).toBe(2);
+  await expect.poll(async () => {
+    try {
+      return await page.evaluate(() => Number(sessionStorage.getItem("qa:startup-document")));
+    } catch (error) {
+      // The intentional reload can destroy the first document mid-evaluation.
+      // Keep polling for document two; unrelated failures must still fail.
+      if (error instanceof Error && error.message.includes('Execution context was destroyed')) return 0;
+      throw error;
+    }
+  }).toBe(2);
   await expect(page.locator('#app-startup')).toHaveAttribute('role', 'alert');
   await expect(page.locator('#app-startup button')).toBeVisible();
   expect(documents).toBe(2);

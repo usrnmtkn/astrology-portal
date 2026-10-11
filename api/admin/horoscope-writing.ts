@@ -92,7 +92,7 @@ export async function runHoroscopeWriting(input:Record<string,any>,actor:string,
     if(['pause-batch','resume-batch'].includes(input.action)){
       if(!batch||row.sections.horoscopeEdition.window.period!=='weekly')throw new AdminHttpError(409,'No saved Weekly batch is available.');
       if(input.action==='resume-batch'&&batch.status!=='paused')throw new AdminHttpError(409,'Review a fresh plan to start another batch.');
-      await persist({source_snapshot:{...row.source_snapshot,horoscopeGeneration:{...row.source_snapshot.horoscopeGeneration,batch:{...batch,status:input.action==='pause-batch'?'paused':'running',error:null}}}});
+      await persist({source_snapshot:{...row.source_snapshot,horoscopeGeneration:{...row.source_snapshot.horoscopeGeneration,batch:{...batch,status:input.action==='pause-batch'?'paused':'running',error:null,...(input.action==='resume-batch'?{connectionFailures:0}:{})}}}});
       return reply(200,{ok:true,rows:[row]});
     }
 

@@ -265,6 +265,13 @@ test("Calendar cold mobile and desktop deliver controls and complete reading wit
           return { controls: end("controls"), reading: end("reading") };
         });
         samples.push(completedAt);
+        await test.info().attach(`calendar-cold-${width}-${sample}.json`, {
+          body: JSON.stringify(await page.evaluate(() => performance.getEntriesByType('resource').map(entry => {
+            const resource = entry as PerformanceResourceTiming;
+            return { path: new URL(resource.name).pathname, start: Math.round(resource.startTime), end: Math.round(resource.responseEnd), bytes: resource.transferSize };
+          }))),
+          contentType: 'application/json'
+        });
         expect(calculationDownloads.sort()).toEqual([
           expect.stringMatching(/^\/wasm\/[a-f0-9]{16}\/swisseph\.data$/),
           expect.stringMatching(/^\/wasm\/[a-f0-9]{16}\/swisseph\.wasm$/)
