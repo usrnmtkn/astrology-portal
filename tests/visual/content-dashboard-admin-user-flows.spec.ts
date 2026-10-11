@@ -2210,7 +2210,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expect(relatedPassages).toBeVisible();
     await expect(relatedPassages).toContainText("House horoscopes");
     await expect(relatedPassages).toContainText("Aspect passages");
-    await expect(relatedPassages.locator("details > summary > span")).toHaveText([
+    await expect(relatedPassages.locator(":scope > details > summary > span")).toHaveText([
       "Aspect passages",
       "House horoscopes"
     ]);
@@ -2330,7 +2330,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     const editor = page.locator(".admin-editor-panel");
     await expect(editor).toBeVisible();
     const relatedPassages = editor.getByRole("region", { name: "Related reader horoscope passages" });
-    await expect(relatedPassages.locator("details > summary > span")).toHaveText([
+    await expect(relatedPassages.locator(":scope > details > summary > span")).toHaveText([
       "Aspect passages",
       "House horoscopes"
     ]);
@@ -2550,7 +2550,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     const related = editor.getByRole("region", { name: "Related reader horoscope passages" });
     await expect(editor.getByLabel("Full lunar passage")).toHaveValue("Check the details without treating reality as a betrayal of the dream.");
     await expect(related.locator("dl > div", { hasText: "Eclipse" })).toContainText("Lunar eclipse");
-    await expect(related.locator("details > summary > span")).toHaveText([
+    await expect(related.locator(":scope > details > summary > span")).toHaveText([
       "Aspect passages",
       "Rising-sign horoscopes"
     ]);
@@ -3664,7 +3664,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expect(editor.getByLabel("CMS template preview")).toContainText("Your 2nd house begins in Taurus.");
     await editor.getByRole("button", { name: "Save draft", exact: true }).click();
     await expect(editor.getByText("Reader-facing CMS override")).toBeVisible();
-    await expect(editor.getByLabel("Reader status", { exact: true })).toHaveText("Inactive");
+    await expect(editor.getByLabel("Reader status", { exact: true })).toHaveText("Draft");
     await expect(editor.getByRole("button", { name: "Mark reviewed" })).toHaveCount(0);
     await expect(editor.getByRole("button", { name: "Save & publish", exact: true })).toBeEnabled();
     expect(cmsWrite?.method).toBe("POST");
@@ -4401,7 +4401,7 @@ test.describe("content dashboard admin user flow case studies", () => {
 
     const editor = page.getByRole("dialog", { name: "Generated content editor" });
     await expect(editor.getByLabel("Approval status")).toHaveText("Approved");
-    await expect(editor.getByLabel("Reader status", { exact: true })).toHaveText("Inactive");
+    await expect(editor.getByLabel("Reader status", { exact: true })).toHaveText("Draft");
     await expect(editor.getByText("Ready to publish", { exact: true })).toBeVisible();
     const publishButton = editor.getByRole("button", { name: "Save & publish" });
     await expect(publishButton).toBeEnabled();
@@ -4473,7 +4473,7 @@ test.describe("content dashboard admin user flow case studies", () => {
 
     const editor = page.getByRole("dialog", { name: "Generated content editor" });
     await expect(editor.getByLabel("Approval status")).toHaveText("Needs review");
-    await expect(editor.getByLabel("Reader status", { exact: true })).toHaveText("Inactive");
+    await expect(editor.getByLabel("Reader status", { exact: true })).toHaveText("Draft");
     await expect(editor.getByText("Draft saved", { exact: true })).toBeVisible();
     await expect(editor.getByLabel("Reader phrase · You")).toHaveValue("Approved revised You copy.");
     const publishRevisionButton = editor.getByRole("button", { name: "Save & publish" });
@@ -7381,7 +7381,7 @@ for (const theme of ['dark', 'light'] as const) {
       await aspectSummary.scrollIntoViewIfNeeded();
       await aspectSummary.focus();
       await page.keyboard.press('Enter');
-      const search = editor.getByLabel('Find an aspect passage', {exact:true});
+      const search = editor.getByLabel('Find a personal aspect', {exact:true});
       await expect(search).toBeVisible();
       await expect(search).toHaveCSS('border-top-width', '0px');
       await expect(editor.getByLabel('TL;DR / summary', {exact:true})).toHaveCSS('border-top-color', theme === 'dark' ? 'rgb(138, 143, 148)' : 'rgb(115, 115, 115)');
@@ -7403,8 +7403,12 @@ for (const theme of ['dark', 'light'] as const) {
       await expect(status.getByText('Live means eligible to appear.', {exact:false})).toBeHidden();
       await status.screenshot({path:`outputs/studio-style/review-rhythm-${theme}-${width}.png`});
       await related.locator('.admin-sky-related-group > summary').nth(1).click();
-      await expect(related.locator('.admin-sky-house-grid > article')).toHaveCount(12);
-      await related.locator('.admin-sky-house-grid').screenshot({path:`outputs/studio-style/house-rhythm-${theme}-${width}.png`});
+      const houses = related.getByRole('region', {name: 'House horoscopes', exact:true});
+      await expect(houses.getByLabel('Choose horoscope house')).toHaveValue('1');
+      await houses.getByLabel('Choose horoscope house').selectOption('10');
+      await expect(houses.getByLabel('Choose horoscope house')).toHaveValue('10');
+      await expect(houses).toContainText(/House 10/);
+      await houses.screenshot({path:`outputs/studio-style/house-rhythm-${theme}-${width}.png`});
       await editor.locator('.admin-editor-details > summary').click();
       const diagnostic = editor.locator('.admin-fallback-diagnostic-grid');
       await expect(diagnostic.locator('> div').first()).toHaveCSS('border-top-width', '0px');
@@ -7973,24 +7977,18 @@ for (const theme of ['dark', 'light'] as const) for (const width of [1440, 390])
     const editor = page.getByRole('dialog', { name: 'Generated content editor' });
     const related = editor.locator('.admin-sky-related-editor');
     await related.locator('.admin-sky-related-group > summary').nth(1).click();
-    const houses = related.locator('.admin-sky-house-grid');
-    const rows = houses.locator('> article');
-    await expect(rows).toHaveCount(12);
-    await expect(rows.first()).toContainText('1st House');
-    await expect(rows.last()).toContainText('12th House');
-    const boxes = await rows.evaluateAll(items => items.map(item => {
-      const box = item.getBoundingClientRect();
-      return { x: box.x, y: box.y, width: box.width, height: box.height };
-    }));
-    for (let i = 0; i < boxes.length; i++) {
-      expect(boxes[i].x).toBe(boxes[0].x);
-      expect(boxes[i].width).toBe(boxes[0].width);
-      expect(boxes[i].height).toBeGreaterThanOrEqual(44);
-      expect(boxes[i].height).toBeLessThanOrEqual(64);
-      if (i) expect(boxes[i].y).toBeCloseTo(boxes[i - 1].y + boxes[i - 1].height, 0);
-    }
-    await expect(rows.first()).toHaveCSS('border-radius', '0px');
-    await expect(rows.last()).toHaveCSS('border-bottom-width', '0px');
+    const houses = related.getByRole('region', { name: 'House horoscopes', exact: true });
+    const housePicker = houses.getByLabel('Choose horoscope house');
+    await expect(housePicker.locator('option')).toHaveText(Array.from({ length: 12 }, (_, index) => `House ${index + 1}`));
+    await expect(housePicker).toHaveValue('1');
+    await expect(houses).toContainText('No complete horoscope is saved for House 1.');
+    await housePicker.selectOption('12');
+    await expect(housePicker).toHaveValue('12');
+    await expect(houses).toContainText('No complete horoscope is saved for House 12.');
+    await expect(houses).not.toContainText('No complete horoscope is saved for House 1.');
+    await expect(houses.locator('details')).not.toHaveAttribute('open');
+    expect((await housePicker.boundingBox())!.height).toBeGreaterThanOrEqual(44);
+    await expectStudioTypography(page, 'Selected house horoscope');
     await houses.screenshot({ path: `outputs/studio-style/house-rows-${theme}-${width}.png` });
     await expectNoHorizontalOverflow(page, 'House coverage list');
     await expectFormShellDoesNotOverlap(editor, 'House coverage list');
