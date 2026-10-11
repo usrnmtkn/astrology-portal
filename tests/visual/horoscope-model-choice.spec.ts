@@ -1,4 +1,5 @@
 import {test,expect,type Page} from '@playwright/test';
+import {decodeWeeklyHistoryRow} from '../../api/_lib/horoscope-history-storage';
 import {fork} from 'node:child_process';
 import path from 'node:path';
 import {routeStudioInventoryApi} from '../helpers/studio-inventory-route';
@@ -22,9 +23,10 @@ async function fixture(page:Page,missing=1){
     for(const p of edition.passages.slice(0,-missing)){p.headline=`Saved ${p.sign}`;p.body=`Existing ${p.sign} opening.\n\nExisting ${p.sign} final sentence.`;}
     const created=await call({method:'POST',body:{contentKey:horoscopeEditionKey(edition.window),surface:'sky',mode:'article',eventType:'horoscope-edition',provider:'manual-admin',status:'DRAFT',lane:'serving',headline:'Synthetic model choice edition',body:horoscopeEditionBody(edition),sections:{horoscopeEdition:edition},facts:{horoscopeBrief:{brief,signature}},sourceSnapshot:{horoscopeGeneration:{rejections:[{id:'held-private-fixture',scope:'pisces',rejectedAt:'2026-10-06T12:00:00Z',passages:[{sign:'pisces',headline:'',body:''}],generation:{candidateHolds:{pisces:{candidate:{headline:'Held private title',body:'Held private opening.\n\nHeld private final sentence.'}}}}}]}}}});
     expect(created.status).toBe(200);const id=created.payload.rows[0].id;
-    const latest=async()=>(await call({method:'rows'})).find((row:any)=>row.id===id);
+    const latest=async()=>decodeWeeklyHistoryRow((await call({method:'rows'})).find((row:any)=>row.id===id));
     const state={loseBatchStart:false};
     await routeStudioInventoryApi(page,{call,answer:async(route,url)=>{
+      if(url.pathname==='/api/content-reader'){const result=await call({method:'reader',body:route.request().postDataJSON()});await route.fulfill({status:result.status,json:result.payload});return true;}
       if(url.pathname!=='/api/admin/horoscope-writing')return false;
       const body=route.request().postDataJSON();
       const result=await call({method:'writing',body});
@@ -32,7 +34,7 @@ async function fixture(page:Page,missing=1){
       await route.fulfill({status:result.status,json:result.payload});return true;
     }});
     await page.addInitScript(()=>localStorage.setItem('tldrastro:contentAdminSecret','calendar-api-fixture'));
-    const open=async()=>{await page.goto('/admin/content#horoscopes');await page.reload();const studio=page.getByRole('region',{name:'Horoscope editions'});await studio.getByText(/^Continue a saved edition/).click();await studio.getByRole('button',{name:/Synthetic model choice edition/}).click();return studio;};
+    const open=async()=>{await page.goto('/admin/content#horoscopes');await page.reload();const studio=page.getByRole('region',{name:'Horoscope editions'});await studio.getByText(/^Continue a saved edition/).click();await studio.locator('.admin-horoscope-saved button').filter({hasText:'October 5, 2026'}).click();return studio;};
     return {child,call,latest,state,open,original:edition,id};
   }catch(error){child.kill();throw error;}
 }
@@ -73,6 +75,27 @@ for(const [width,theme,choice] of [[1440,'light','gemini'],[390,'dark','gemini']
    await expect(studio.getByLabel('Complete source passage 1',{exact:true})).toHaveValue(saved.source_snapshot.horoscopeGeneration.readings.pisces.ownerEvidence.passages[0].text);
    expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
    await page.screenshot({path:`test-results/durable-weekly-${choice}-${width}-${theme}.png`,fullPage:true});
+   if(choice==='gemini'){
+    // Continue the same 12-sign batch through owner editing, save/reload,
+    // read-only preflight, exact-text publication and the public reader.
+    const edited=saved.sections.horoscopeEdition.passages.find((p:any)=>p.sign==='pisces').body+' You can read this saved manual addition.';
+    await studio.getByLabel('Complete reading').fill(edited);
+    await studio.getByRole('button',{name:'Save edition draft',exact:true}).click();
+    await expect(studio.getByRole('status')).toContainText('Saved edition draft.');
+    const approvedEdition=(await f.latest()).sections;
+    await f.open();await studio.getByRole('button',{name:'4 · Publish',exact:true}).click();
+    await expect(studio.getByRole('region',{name:'Pisces reading preview'})).toContainText(edited);
+    const approval=studio.getByLabel('I have reviewed and approve the exact wording of every saved reading in this edition.');
+    await expect(approval).toBeEnabled();await expect(approval).not.toBeChecked();await approval.check();
+    await studio.getByRole('button',{name:'Publish edition',exact:true}).click();
+    await expect(studio.getByRole('status')).toContainText('Published the complete edition.');
+    expect((await f.latest()).sections).toEqual(approvedEdition);
+    expect(await f.call({method:'writer-state'})).toMatchObject({calls:12,reviewCalls:12});
+    await page.clock.setFixedTime(new Date('2026-10-10T16:00:00Z'));
+    await page.goto(`/#horoscopes?edition=${f.id}&period=weekly&sign=pisces`);
+    await expect(page.getByRole('article',{name:'Pisces horoscope'})).toContainText(edited);
+    await page.reload();await expect(page.getByRole('article',{name:'Pisces horoscope'})).toContainText(edited);
+   }
   }finally{f.child.kill();}
  });
 }

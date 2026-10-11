@@ -5,12 +5,13 @@ const signs='Aries|Taurus|Gemini|Cancer|Leo|Virgo|Libra|Scorpio|Sagittarius|Capr
 const ordinals='1st|2nd|3rd|[4-9]th|1[0-2]th|first|second|third|fourth|fifth|sixth|seventh|eighth|ninth|tenth|eleventh|twelfth';
 // A short house gloss can separate a planet from its aspect. Never consume
 // another planet, aspect, placement, motion or dated clause as part of it.
-const glossStop=`${bodies}|${terms}|${signs}|retrograde|direct|now|is|in|through|on|at|with|between|exact|forms?|makes?|January|February|March|April|May|June|July|August|September|October|November|December|Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday`;
+const glossStop=`${bodies}|${terms}|${signs}|retrograde|direct|now|is|in|through|from|to|on|at|with|between|exact|forms?|makes?|January|February|March|April|May|June|July|August|September|October|November|December|Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday`;
 const glossWord=`(?!(?:${glossStop})\\b)[\\p{L}]+(?:[-’'][\\p{L}]+)*`;
 const house=`(?:\\s+in\\s+(?:your|the)\\s+(?:${ordinals})\\s+house(?:\\s+of(?:\\s+${glossWord}){1,8})?)?`;
 const motionAside='(?:,\\s*(?:now\\s+)?(?:retrograde|direct)\\s*,)?';
-const placement=`(?:\\s+(?:in|through)\\s+(?:${signs}))?`;
-const planet=`\\b(?:(?:retrograde|direct)\\s+)?(?:${bodies})${placement}${house}${motionAside}`;
+const rulerAside='(?:,\\s*your\\s+(?:ruling\\s+planet|(?:traditional\\s+)?ruler)\\s*,)?';
+const placement=`(?:\\s+(?:in|through)\\s+(?:${signs}|your sign))?`;
+const planet=`\\b(?:(?:retrograde|direct)\\s+)?(?:${bodies})${rulerAside}${placement}${house}${motionAside}`;
 const direct=`${planet}\\s+(?:(?:is|in|an?|exact|forms?|makes?)\\s+)*(?:${terms})\\s+(?:(?:to|with|the)\\s+)*${planet}`;
 const named=`(?:${terms})\\s+(?:between|of)\\s+(?:the\\s+)?${planet}\\s+(?:and|with)\\s+(?:the\\s+)?${planet}`;
 const paired=`${planet}(?:\\s*[-–—]\\s*|\\s+and\\s+)${planet}\\s+(?:${terms})`;
@@ -20,10 +21,29 @@ export function horoscopeAspectClaim(text) {
   const word=text.match(new RegExp(`\\b(${terms})\\b`,'iu'))?.[1].toLowerCase();
   const aspect=word?.startsWith('oppo')?'opposition':word?.startsWith('conjunct')?'conjunction':word?.replace(/[sd]$/u,'');
   const qualified=[...text.matchAll(new RegExp(`\\b(retrograde|direct)\\s+(${bodies})\\b`,'giu'))].map(m=>[m[2].toLowerCase(),m[1].toLowerCase()]);
-  qualified.push(...[...text.matchAll(new RegExp(`\\b(${bodies})${placement}${house},\\s*(?:now\\s+)?(retrograde|direct)\\s*,`,'giu'))].map(m=>[m[1].toLowerCase(),m[2].toLowerCase()]));
+  qualified.push(...[...text.matchAll(new RegExp(`\\b(${bodies})${rulerAside}${placement}${house},\\s*(?:now\\s+)?(retrograde|direct)\\s*,`,'giu'))].map(m=>[m[1].toLowerCase(),m[2].toLowerCase()]));
   const motions=Object.fromEntries(qualified);
   if(qualified.some(([body,motion])=>motions[body]!==motion))return null;
   return planets.length===2&&new Set(planets).size===2&&aspect?{planets,aspect,motions}:null;
+}
+// A pair can describe both houses after its second planet. Bind only the
+// explicit, adjacent "from ... house to ... house" construction, never prose
+// across another clause, planet or aspect. Keys are the numbered house offsets.
+export function horoscopeAspectHouseSubjects(sentence) {
+  const subjects=new Map();
+  const tail=new RegExp(`^\\s+from\\s+(?:your|the)\\s+(?<first>${ordinals})\\s+house(?:\\s+of(?:\\s+${glossWord}){1,8})?\\s+to\\s+(?:your|the)\\s+(?<second>${ordinals})\\s+house\\b`,'diu');
+  for(const match of sentence.matchAll(new RegExp(horoscopeAspectPattern,'giu'))) {
+    const claim=horoscopeAspectClaim(match[0]),end=match.index+match[0].length;
+    const houses=sentence.slice(end).match(tail);
+    if(!claim||!houses)continue;
+    const planets=[...match[0].matchAll(new RegExp(`\\b(${bodies})\\b`,'giu'))];
+    subjects.set(end+houses.indices.groups.first[0],match.index+planets[0].index);
+    subjects.set(end+houses.indices.groups.second[0],match.index+planets[1].index);
+  }
+  return subjects;
+}
+export function horoscopePersonalSignClaims(text) {
+  return [...text.matchAll(new RegExp(`\\b(${bodies})${rulerAside}\\s+(?:in|through)\\s+your sign\\b`,'giu'))].map(m=>m[1]);
 }
 export function supportsHoroscopeAspect(event,claim) {
   return Boolean(claim)&&event.type==='aspect'&&event.aspect===claim.aspect&&claim.planets.every(p=>event.planets?.some(v=>v.toLowerCase()===p))

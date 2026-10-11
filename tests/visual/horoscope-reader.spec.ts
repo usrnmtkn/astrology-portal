@@ -1,4 +1,5 @@
 import {test,expect} from '@playwright/test';
+import {decodeWeeklyHistoryRow} from '../../api/_lib/horoscope-history-storage';
 import {fork} from 'node:child_process';
 import path from 'node:path';
 import {createHash} from 'node:crypto';
@@ -35,8 +36,8 @@ for(const [width,theme] of [[390,'light'],[390,'dark'],[1440,'light'],[1440,'dar
  test(`Twelve-sign edition editor to reader ${width} ${theme}`,async({page})=>{
   // This complete journey performs two twelve-sign generation cycles, twelve
   // saved edits, publication, reader reloads, retirement and outage recovery.
-  // Keep per-action budgets unchanged while allowing the suite's total budget.
-  test.setTimeout(180000);
+  // Allow both durable server batches; each full batch has a bounded 120-second wait.
+  test.setTimeout(360000);
   const child=fork(path.resolve('tests/helpers/sky-article-save-api.mts'),[],{env:{...process.env,ZODIAC_TEMPLATE_FIXTURE:'1',HOROSCOPE_WRITER_FIXTURE:'1'},execArgv:['--import','tsx'],stdio:['ignore','pipe','pipe','ipc']});
   let sequence=0,stderr='';const pending=new Map<number,{resolve:(v:any)=>void;reject:(e:Error)=>void}>();
   child.stderr?.on('data',value=>stderr+=value);
@@ -45,15 +46,16 @@ for(const [width,theme] of [[390,'light'],[390,'dark'],[1440,'light'],[1440,'dar
   try{
    await ready;const errors:string[]=[];page.on('pageerror',e=>errors.push(e.message));
    await page.setViewportSize({width,height:1000});
-   await page.clock.setFixedTime(new Date('2026-09-24T16:00:00Z'));
+   // Keep the selected historical date while time advances normally: a frozen
+   // Date.now prevents the editor's elapsed-time progress refresh from running.
+   await page.clock.install({time:new Date('2026-09-24T16:00:00Z')});
    await page.addInitScript(theme=>{localStorage.setItem('tldrastro:contentAdminSecret','calendar-api-fixture');localStorage.setItem('tldrastro:studio-theme',theme);localStorage.setItem('tldrastro:theme',theme);localStorage.setItem('tldrastro:selectedLocation',JSON.stringify({label:'Tokyo',latitude:35.68,longitude:139.76,timeZone:'Asia/Tokyo'}));},theme);
-   let injectConflict=width===390&&theme==='light', failPrepare=injectConflict, generationCalls=0, failNextSave=false;
+   let injectConflict=width===390&&theme==='light', failPrepare=injectConflict, failNextSave=false;
    const newerOutline='A newer writing outline from another editor. Stay with the calculated temporary emphasis and its house.';
    await routeStudioInventoryApi(page,{call:async message=>{if(failNextSave&&message.method==='PATCH'&&(message.body as any)?.sections){failNextSave=false;return {status:503,payload:{ok:false,error:'Fixture save unavailable.'}};}return call(message);},answer:async(route,url)=>{if(url.pathname==='/api/admin/horoscope-writing'){
     const body=route.request().postDataJSON();
-    if(body.action==='generate')generationCalls++;
     if(failPrepare&&body.action==='prepare'){failPrepare=false;await route.fulfill({status:503,json:{ok:false,error:'Fixture plan preparation unavailable.'}});return true;}
-    if(injectConflict&&body.action==='generate'){
+    if(injectConflict&&body.action==='start-batch'){
      injectConflict=false;const current=(await call({method:'rows'})).find((row:any)=>row.id===body.id);
      const changed=await call({method:'PATCH',body:{id:current.id,expectedUpdatedAt:current.updated_at,sourceSnapshot:{...current.source_snapshot,horoscopeOutlines:{aries:newerOutline}}}});
      expect(changed.status).toBe(200);
@@ -93,7 +95,7 @@ for(const [width,theme] of [[390,'light'],[390,'dark'],[1440,'light'],[1440,'dar
    await expect(writingPlan.locator('h3')).toHaveText('Aries writing plan');
    await writingPlan.getByText('Full plan details',{exact:true}).click();
 
-   expect(generationCalls).toBe(0);
+   expect((await call({method:'writer-state'})).calls).toBe(0);
    expect(await studio.locator('h2').evaluate(el=>{const s=getComputedStyle(el);return[s.fontFamily,s.fontSize,s.fontWeight,s.lineHeight,s.letterSpacing,s.margin,s.textTransform,s.textAlign];})).toEqual(titleStyle);
    await expect(studio.locator('h2,h3')).toHaveText(['Generate your drafts','Aries writing plan']);
    expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
@@ -121,10 +123,10 @@ for(const [width,theme] of [[390,'light'],[390,'dark'],[1440,'light'],[1440,'dar
     await studio.getByLabel('I approve this writing plan for generation.').check();
     await studio.getByRole('button',{name:'Generate 12 drafts',exact:true}).click();
    }
-   await expect(studio.getByText('12/12 readings ready',{exact:false})).toBeVisible({timeout:60000});
+   await expect(studio.getByText('12/12 readings ready',{exact:false})).toBeVisible({timeout:120000});
    await expect(studio.getByLabel('Complete reading')).toBeVisible();
    await expect(studio.getByLabel('Complete reading')).toHaveValue(/Your saved fixture ends here/);
-   const callsBeforeRejection=generationCalls;
+   const callsBeforeRejection=(await call({method:'writer-state'})).calls;expect(callsBeforeRejection).toBe(12);
    const rejectedText='Fixture unsaved revision opening.\n\nFixture unsaved revision ending.';
    await studio.getByLabel('Complete reading').fill(rejectedText);
    page.once('dialog',dialog=>dialog.dismiss());
@@ -136,7 +138,7 @@ for(const [width,theme] of [[390,'light'],[390,'dark'],[1440,'light'],[1440,'dar
    await expect(studio.getByText('11/12 readings ready',{exact:false})).toBeVisible();
    await expect(studio.getByLabel('I approve this writing plan for generation.')).not.toBeChecked();
    await expect(studio.getByRole('button',{name:'Generate missing readings',exact:true})).toBeDisabled();
-   expect(generationCalls).toBe(callsBeforeRejection);
+   expect((await call({method:'writer-state'})).calls).toBe(callsBeforeRejection);
    await studio.getByText('Rejected drafts',{exact:true}).click();
    await studio.locator('details').filter({has:page.getByLabel('Rejected Aries reading',{exact:true})}).last().locator('summary').click();
    await expect(studio.getByLabel('Rejected Aries reading',{exact:true})).toHaveValue(new RegExp('Fixture unsaved revision ending\\.'));
@@ -147,13 +149,14 @@ for(const [width,theme] of [[390,'light'],[390,'dark'],[1440,'light'],[1440,'dar
    await studio.getByRole('button',{name:'Reject all drafts',exact:true}).click();
    await expect(studio.getByText('0/12 readings ready',{exact:false})).toBeVisible();
    await expect(studio.getByRole('button',{name:'Generate 12 drafts',exact:true})).toBeDisabled();
-   expect(generationCalls).toBe(callsBeforeRejection);
-   const resetRows=await call({method:'rows'}),reset=resetRows.find((row:any)=>row.content_key.startsWith('horoscope/'));
+   expect((await call({method:'writer-state'})).calls).toBe(callsBeforeRejection);
+   const resetRows=await call({method:'rows'}),reset=decodeWeeklyHistoryRow(resetRows.find((row:any)=>row.content_key.startsWith('horoscope/')));
    expect(reset.source_snapshot.horoscopeGeneration.rejections).toHaveLength(2);
    expect(reset.source_snapshot.horoscopeGeneration.rejections[0].passages[0].body).toBe(rejectedText);
    await studio.getByLabel('I approve this writing plan for generation.').check();
    await studio.getByRole('button',{name:'Generate 12 drafts',exact:true}).click();
-   await expect(studio.getByText('12/12 readings ready',{exact:false})).toBeVisible({timeout:60000});
+   await expect(studio.getByText('12/12 readings ready',{exact:false})).toBeVisible({timeout:120000});
+   expect(await call({method:'writer-state'})).toMatchObject({calls:24,reviewCalls:24});
    await expect(studio.getByLabel('Complete reading')).toHaveValue(/Your saved fixture ends here/);
    await studio.getByText('Writing outline · editor only',{exact:true}).click();
    await studio.getByLabel('Writing outline',{exact:true}).fill('PRIVATE OUTLINE fixture');
@@ -245,7 +248,7 @@ for(const [width,theme] of [[390,'light'],[390,'dark'],[1440,'light'],[1440,'dar
     const facts=await call({method:'GET',url:`/api/admin/generated-content?horoscopeBrief=true&period=${period}&date=2026-09-25&timeZone=Asia/Tokyo`});
     expect(facts.status).toBe(200);
     const edition=emptyHoroscopeEdition(facts.payload.brief.window);
-    edition.passages=HOROSCOPE_SIGNS.map(sign=>({sign,headline:`Fixture ${period} ${sign}`,body:`Fixture ${period} opening.\n\nFixture ${period} complete ending.`}));
+    edition.passages=HOROSCOPE_SIGNS.map(sign=>({sign,headline:`Fixture ${period} ${sign}`,body:`Fixture ${period} opening. You can read this fixture.\n\nFixture ${period} complete ending.`}));
     const created=await call({method:'POST',body:{contentKey:horoscopeEditionKey(edition.window),surface:'sky',mode:'article',eventType:'horoscope-edition',provider:'manual-admin',model:'manual',status:'DRAFT',lane:'serving',headline:`Fixture ${period}`,body:horoscopeEditionBody(edition),sections:{horoscopeEdition:edition},facts:{horoscopeBrief:{brief:facts.payload.brief,signature:facts.payload.signature}}}});
     expect(created.status).toBe(200);
     const row=created.payload.rows[0];expect((await call({method:'PATCH',body:{id:row.id,expectedUpdatedAt:row.updated_at,status:'LIVE'}})).status).toBe(200);

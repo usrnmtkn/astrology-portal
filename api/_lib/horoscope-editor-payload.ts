@@ -8,6 +8,7 @@ const map=(values:any,project:(v:any)=>any)=>Object.fromEntries(Object.entries(v
 /** A transport view of the decoded row. Complete requests, receipts and history
  * remain in lossless server storage. Editor writes never round-trip this view. */
 export function horoscopeEditorRow(row:any){
+  if(row?.inventory_only)return row;
   if(row?.sections?.horoscopeEdition?.window?.period!=='weekly')return row;
   const snapshot=row.source_snapshot??{},generation=snapshot.horoscopeGeneration;
   return {...row,source_snapshot:{...pick(snapshot,['horoscopeOutlines','studioWritingProfile','editorialImport','horoscopeWriterChoice']),

@@ -7,7 +7,7 @@ import {getContentAdminPrincipal,requireContentAdmin} from '../_lib/admin-auth.j
 import {loadLocalWebEnv} from '../_lib/local-env.js';
 import {AdminHttpError,adminFetchJson,adminStorageRows,readAdminJsonBody,sendAdminJson,sendAdminMethodNotAllowed,adminErrorStatus} from '../_lib/admin-http.js';
 import {studioStorage} from '../_lib/sky-studio-sources.js';
-import {assertHoroscopeRow,prepareHoroscopeBrief} from '../_lib/horoscope-editions.js';
+import {assertHoroscopeRow,prepareHoroscopeBrief,horoscopePublicationIssues} from '../_lib/horoscope-editions.js';
 import {listStudioWritingProfiles} from '../_lib/studio-writing-profiles.js';
 import {activeStudioFeedback,studioFeedbackEnabled,feedbackHash} from '../_lib/studio-memory-feedback.js';
 import {prepareHoroscopeWriting,horoscopePlanPreview,writeHoroscopeSign,horoscopeWritingVersionFor} from '../../src/astro-writing/horoscopeWriting.mjs';
@@ -58,7 +58,7 @@ export async function runHoroscopeWriting(input:Record<string,any>,actor:string,
   const invocationDeadline=deadline;
   const reply=(status:number,payload:any)=>({status,payload});
   try {
-    if(!['prepare','generate','continue','poll','release','reject','diagnose','inspect','start-batch','pause-batch','resume-batch','evidence'].includes(input.action)||typeof input.id!=='string'||!input.id
+    if(!['prepare','generate','continue','poll','release','reject','diagnose','inspect','start-batch','pause-batch','resume-batch','evidence','validate-publication'].includes(input.action)||typeof input.id!=='string'||!input.id
       ||typeof input.expectedUpdatedAt!=='string'||Object.keys(input).some(k=>!['action','id','expectedUpdatedAt','sign','approvedPlanHash','acknowledgeUnknownOutcome','writerChoice'].includes(k)))throw new AdminHttpError(400,'Choose a saved edition and a writing action.');
     if(input.writerChoice!==undefined&&(input.action!=='prepare'||!horoscopeWriterOptions(process.env).some((writer:any)=>writer.id===input.writerChoice)))throw new AdminHttpError(400,'Choose a supported writing model while preparing the plan.');
     const {url,headers}=studioStorage();
@@ -69,6 +69,10 @@ export async function runHoroscopeWriting(input:Record<string,any>,actor:string,
     if(row.updated_at!==input.expectedUpdatedAt)throw new AdminHttpError(409,'This edition changed. Reopen it before continuing.');
     if(!row.content_key?.startsWith('horoscope/')||(row.status!=='DRAFT'&&input.action!=='evidence'))throw new AdminHttpError(409,'Open an editable horoscope draft.');
     assertHoroscopeRow(row);
+    if(input.action==='validate-publication') {
+      const issues=horoscopePublicationIssues(row);
+      return reply(200,{ok:true,publication:{id:row.id,updatedAt:row.updated_at,ready:issues.length===0,issues}});
+    }
     const persist=async(patch:Record<string,unknown>)=>{
       if(row.sections.horoscopeEdition.window.period==='weekly'){
         row=await persistWeeklyHoroscope({url,headers,row,patch,deadline});return row;

@@ -97,6 +97,10 @@ const payload=()=>({contentKey:horoscopeEditionKey(edition.window),surface:'sky'
 let saved=await store.invoke('POST',payload());
 assert.equal(saved.status,200,JSON.stringify(saved.payload));
 let row=saved.payload.rows[0];
+const inventory=await store.invoke('GET',undefined,'/api/admin/generated-content?horoscopeEditions=true&editionInventory=true&horoscopeEditor=true');
+assert.equal(inventory.status,200);
+assert.equal(inventory.payload.rows[0].inventory_only,true);
+assert.equal(inventory.payload.rows[0].source_snapshot,undefined,'The compact editor must preserve the inventory-only row contract');
 const versionUrl=`/api/admin/generated-content?horoscopeEditions=true&editionVersion=true&id=${row.id}`;
 assert.equal((await store.invoke('GET',undefined,versionUrl,'wrong')).status,401);
 assert.equal((await store.invoke('GET',undefined,'/api/admin/generated-content?horoscopeEditions=true&editionVersion=true')).status,400);
@@ -106,7 +110,7 @@ assert.equal(version.status,200);
 assert.deepEqual(version.payload.rows,[{id:row.id,updated_at:row.updated_at}],'Idle checks exclude all saved prose, facts and provider history');
 assert.deepEqual(store.rows.get(row.id),beforeVersionRead,'Version check is read-only');
 assert.equal((await store.invoke('PATCH',{id:row.id,status:'LIVE',expectedUpdatedAt:row.updated_at})).status,422,'Incomplete editions cannot publish');
-edition={...edition,passages:HOROSCOPE_SIGNS.map(sign=>({sign,headline:`Fixture ${sign} headline`,body:`Fixture ${sign} opening.\n\nFixture ${sign} final sentence.  `}))};
+edition={...edition,passages:HOROSCOPE_SIGNS.map(sign=>({sign,headline:`Fixture ${sign} headline`,body:`You can read the fixture ${sign} opening.\n\nFixture ${sign} final sentence.  `}))};
 assert.throws(()=>validateHoroscopeEdition({...edition,passages:edition.passages.map(()=>edition.passages[0])}),/one headline/);
 const edited=await store.invoke('PATCH',{id:row.id,expectedUpdatedAt:row.updated_at,sections:{horoscopeEdition:edition},body:horoscopeEditionBody(edition),status:'DRAFT'});
 assert.equal(edited.status,200,JSON.stringify(edited.payload));
@@ -135,6 +139,20 @@ const revised=await store.invoke('PATCH',{id:row.id,expectedUpdatedAt:row.update
 assert.equal(revised.status,200,JSON.stringify(revised.payload));
 assert.equal(revised.payload.rows[0].status,'DRAFT','Editing cannot approve new wording in the same save');
 assert.equal((await read()).rows.length,0,'Editing removes the previous publication');
+row=revised.payload.rows[0];
+const republished=await store.invoke('PATCH',{id:row.id,expectedUpdatedAt:row.updated_at,status:'LIVE'});
+assert.equal(republished.status,200,JSON.stringify(republished.payload));row=republished.payload.rows[0];
+assert.equal((await store.invoke('DELETE',undefined,'/api/admin/generated-content?'+new URLSearchParams({id:row.id,expectedUpdatedAt:row.updated_at}))).status,409,'Live editions must be withdrawn before deletion');
+const archived=await store.invoke('PATCH',{id:row.id,expectedUpdatedAt:row.updated_at,status:'ARCHIVED'});
+assert.equal(archived.status,200,JSON.stringify(archived.payload));row=archived.payload.rows[0];
+assert.equal((await read()).rows.length,0,'Archiving withdraws the complete edition');
+assert.deepEqual(row.sections.horoscopeEdition,change,'Archive preserves complete owner text');
+const restored=await store.invoke('PATCH',{id:row.id,expectedUpdatedAt:row.updated_at,status:'DRAFT'});
+assert.equal(restored.status,200,JSON.stringify(restored.payload));row=restored.payload.rows[0];
+assert.deepEqual(row.sections.horoscopeEdition,change);assert.equal((await read()).rows.length,0);
+assert.equal((await store.invoke('DELETE',undefined,'/api/admin/generated-content?'+new URLSearchParams({id:row.id,expectedUpdatedAt:oldVersion}))).status,409,'Stale deletion cannot remove new edits');
+assert.equal((await store.invoke('DELETE',undefined,'/api/admin/generated-content?'+new URLSearchParams({id:row.id,expectedUpdatedAt:row.updated_at}))).status,200);
+assert.equal(store.rows.has(row.id),false);assert.equal((await read()).rows.length,0);
 console.log('PASS horoscope editions: calculated periods/DST/year boundary/solar ingress, actual-handler saves, exact text, complete publication, stale conflicts, signed facts and private-to-reader boundary');
 
 // Civil-day refresh is independent of whether an edition has been published.

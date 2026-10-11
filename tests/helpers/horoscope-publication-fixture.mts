@@ -36,11 +36,17 @@ export const weeklyAspectBodies:Record<string,string>={
  sagittarius:'You can review the fixture. Venus in your 12th house of hidden things squares Mars in your 9th house of beliefs on Saturday. Your weekly fixture ends here.',
  capricorn:'You can review the fixture. Retrograde Venus in your 11th house of community squares Mars in your 8th house of shared resources on Saturday. Your weekly fixture ends here.'
 };
-export async function createWeeklyAspectPublicationFixture(call:(message:any)=>Promise<any>){
- const packet=await call({method:'GET',url:'/api/admin/generated-content?horoscopeBrief=true&period=weekly&date=2026-10-05&timeZone=America/New_York'});
+export const weeklyRulerBodies:Record<string,string>={
+ aries:'You can review the fixture. Mars, your ruling planet, trines Saturn in your sign on Friday. Your weekly fixture ends here.',
+ leo:'You can review the fixture. Mars in your sign trines Saturn in your ninth house of study on Friday. Your weekly fixture ends here.',
+ scorpio:'You can review the fixture. Mars, your traditional ruler, trines Saturn from your tenth house of career to your sixth house of daily work. Your weekly fixture ends here.',
+ pisces:'You can review the fixture. The Sun sextiles Jupiter, your traditional ruler, in your sixth house of daily work. Your weekly fixture ends here.'
+};
+export async function createWeeklyAspectPublicationFixture(call:(message:any)=>Promise<any>,rulerClaims=false){
+ const packet=await call({method:'GET',url:`/api/admin/generated-content?horoscopeBrief=true&period=weekly&date=${rulerClaims?'2026-10-12':'2026-10-05'}&timeZone=America/New_York`});
  if(packet.status!==200)throw new Error('Fixture facts unavailable');
  const edition=emptyHoroscopeEdition(packet.payload.brief.window);
- for(const passage of edition.passages){passage.headline=`${passage.sign} weekly fixture`;passage.body=weeklyAspectBodies[passage.sign]??`You can read your ${passage.sign} weekly fixture opening. Your weekly fixture ends here.`;}
+ for(const passage of edition.passages){passage.headline=`${passage.sign} weekly fixture`;passage.body=(rulerClaims?weeklyRulerBodies:weeklyAspectBodies)[passage.sign]??`You can read your ${passage.sign} weekly fixture opening. Your weekly fixture ends here.`;}
  const readings=Object.fromEntries(edition.passages.map(p=>[p.sign,{bodyHash:createHash('sha256').update(horoscopeCanonicalJson({headline:p.headline,body:p.body})).digest('hex'),lint:{version:'horoscope-facts/v7',violations:weeklyAspectBodies[p.sign]?[{category:'horoscope_fact_boundary',detail:'Name both planets with each aspect so it can be checked against the calculated events.'}]:[]}}]));
  return call({method:'POST',body:{contentKey:horoscopeEditionKey(edition.window),surface:'sky',mode:'article',eventType:'horoscope-edition',provider:'manual-admin',status:'DRAFT',lane:'serving',headline:'Synthetic weekly publication',body:horoscopeEditionBody(edition),sections:{horoscopeEdition:edition},facts:{horoscopeBrief:{brief:packet.payload.brief,signature:packet.payload.signature}},sourceSnapshot:{horoscopeGeneration:{readings}}}});
 }
