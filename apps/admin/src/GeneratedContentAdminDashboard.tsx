@@ -4212,6 +4212,8 @@ export function GeneratedContentAdminDashboard() {
     return () => window.clearTimeout(timeout);
   }, [secret, skyArticleEditor?.baseEdition, skyArticleEditor?.fields, skyArticleEditor?.rowId]);
 
+  // A returned workspace ID is a save receipt, not an edit. Watching it
+  // schedules a duplicate write and makes the saved form dirty again.
   useEffect(() => {
     const form = skyArticleEditionForm;
     const templateRow = selectedRow;
@@ -4220,7 +4222,7 @@ export function GeneratedContentAdminDashboard() {
     const authoredSlotValues = Object.entries(form.slotValues).filter(([name, value]) => (
       !Object.prototype.hasOwnProperty.call(facts.slotValues, name) && value.trim()
     ));
-    if (form.saveState === "idle" && !form.workspaceId && !workspaceAutosaveRowRef.current && !form.tldr.trim() && !form.writingDirection.trim() && authoredSlotValues.length === 0) return;
+    if (form.saveState === "idle" && !workspaceAutosaveRowRef.current && !form.tldr.trim() && !form.writingDirection.trim() && authoredSlotValues.length === 0) return;
 
     const editorSession = editorSessionRef.current;
     const sequence = ++skyArticleWorkspaceAutosaveSequenceRef.current;
@@ -4300,7 +4302,7 @@ export function GeneratedContentAdminDashboard() {
     }, 900);
 
     return () => window.clearTimeout(timeout);
-  }, [secret, selectedRow, skyArticleEditionForm?.facts, skyArticleEditionForm?.tldr, skyArticleEditionForm?.writingDirection, skyArticleEditionForm?.includeRetrogradeHistory, skyArticleEditionForm?.retrogradeGenerations, skyArticleEditionForm?.generationError, skyArticleEditionForm?.rejectedGeneration, skyArticleEditionForm?.slotGeneration, skyArticleEditionForm?.slotValues, skyArticleEditionForm?.workspaceId]);
+  }, [secret, selectedRow, skyArticleEditionForm?.facts, skyArticleEditionForm?.tldr, skyArticleEditionForm?.writingDirection, skyArticleEditionForm?.includeRetrogradeHistory, skyArticleEditionForm?.retrogradeGenerations, skyArticleEditionForm?.generationError, skyArticleEditionForm?.rejectedGeneration, skyArticleEditionForm?.slotGeneration, skyArticleEditionForm?.slotValues]);
 
   function persistBetweenYouTwoRoute(nextQuery: string, nextActivate = friendsActivationQuery) {
     setQuery(nextQuery);

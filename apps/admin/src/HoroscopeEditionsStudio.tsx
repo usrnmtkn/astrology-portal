@@ -170,6 +170,9 @@ export default function HoroscopeEditionsStudio({secret,requestedEditionId}:{sec
     try{
       row=await readSaved(row.id,controller.signal);if(controller.signal.aborted)return;
       const next=adopt(row);
+      // Saved-edition actions open published writing in the editor. Opening it
+      // never changes its publication state or starts another generation.
+      if(!fromLink&&row.status==='LIVE')setStep('edit');
       // Library links read only; preparing a writing plan remains explicit.
       if(!fromLink&&next==='generate'&&row.source_snapshot?.horoscopeGeneration?.batch?.status!=='running'&&(!row.source_snapshot?.horoscopeGeneration?.active||row.sections.horoscopeEdition.window.period==='weekly'))await loadPlan(row);
     }catch(reason){if(!controller.signal.aborted)setError((reason as Error).message);}
@@ -521,7 +524,23 @@ export default function HoroscopeEditionsStudio({secret,requestedEditionId}:{sec
       <HoroscopeLocation value={{...place,timeZone:zone}} disabled={busy} onChange={next=>{setPlace(next);setZone(next.timeZone!);}}/>
       <footer className="admin-writing-savebar admin-horoscope-actions"><p>Next: review the writing plan before generating.</p><StudioButton className="admin-primary-button" disabled={busy||!date} onClick={()=>void prepare()}>{busy?'Preparing your edition…':'Continue to writing plan'}</StudioButton></footer>
       <details className="admin-workspace-details"><AdminDisclosureSummary>Continue a saved edition{rows.length?` (${rows.length})`:''}</AdminDisclosureSummary>
-        {loading?<PageLoading message="Loading horoscope editions…"/>:rows.length?<div className="admin-horoscope-saved">{rows.map(row=><StudioButton key={row.id} disabled={busy} onClick={()=>void open(row)}>{row.headline} · {horoscopeWindowLabel(row.sections.horoscopeEdition.window)} · {row.sections.horoscopeEdition.window.timeZone} · {row.status==='LIVE'?'Published':`${row.sections.horoscopeEdition.passages.filter((p:any)=>p.headline.trim()&&p.body.trim()).length}/${row.sections.horoscopeEdition.passages.length} drafted`}</StudioButton>)}</div>:<p>No saved editions yet. Start with the dates above.</p>}
+        {loading?<PageLoading message="Loading horoscope editions…"/>:rows.length?<div className="admin-content-table-scroll admin-horoscope-saved" role="region" aria-label="Saved horoscope editions" tabIndex={0}>
+          <table aria-label="Saved editions, newest first">
+            <thead><tr><th scope="col">Dates</th><th scope="col">Type</th><th scope="col">Status</th><th scope="col">Action</th></tr></thead>
+            <tbody>{[...rows].sort((a,b)=>b.sections.horoscopeEdition.window.startsAt.localeCompare(a.sections.horoscopeEdition.window.startsAt)||a.id.localeCompare(b.id)).map(row=>{
+              const edition=row.sections.horoscopeEdition,dates=horoscopeWindowLabel(edition.window);
+              const written=edition.passages.filter((p:any)=>p.headline.trim()&&p.body.trim()).length;
+              const status=row.status==='LIVE'?'Published':`${written}/${edition.passages.length} drafted`;
+              const action=row.status==='LIVE'||written===edition.passages.length?'Review / Edit':'Continue';
+              return <tr key={row.id}>
+                <td>{dates}<small>{edition.window.timeZone.replaceAll('_',' ')}</small></td>
+                <td>{horoscopeSignLabel(edition.window.period)}</td>
+                <td>{status}</td>
+                <td><StudioButton disabled={busy} aria-label={`${row.headline} · ${dates} · ${edition.window.timeZone} · ${status} · ${action}`} onClick={()=>void open(row)}>{action}</StudioButton></td>
+              </tr>;
+            })}</tbody>
+          </table>
+        </div>:<p>No saved editions yet. Start with the dates above.</p>}
         <StudioButton disabled={busy||loading} onClick={()=>void load()}>Refresh editions</StudioButton>
       </details>
     </>:draft&&passage&&<>

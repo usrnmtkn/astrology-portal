@@ -36,9 +36,11 @@ for (const [width, theme] of [[390, 'light'], [1440, 'dark']] as const) {
    await page.setViewportSize({ width, height: 1000 });
    await page.addInitScript(theme => { localStorage.setItem('tldrastro:contentAdminSecret', 'calendar-api-fixture'); localStorage.setItem('tldrastro:studio-theme', theme); }, theme);
    const writingDirection = 'Synthetic approved outline: keep the Saturn opposition as the central argument.';
-   let generationCalls = 0;
+   let generationCalls = 0, workspaceWrites = 0;
    let articleFacts: any;
-   await routeStudioInventoryApi(page, { call, answer: async (route, url) => {
+   await routeStudioInventoryApi(page, { call, onWrite: ({ body }) => {
+    if (body.sections?.skyArticleWorkspace) workspaceWrites += 1;
+   }, answer: async (route, url) => {
     if (url.pathname === '/api/admin/sky-article-template-slots') {
      const request = route.request().postDataJSON();
      expect(request.voiceNotes).toBe(writingDirection);
@@ -81,6 +83,11 @@ for (const [width, theme] of [[390, 'light'], [1440, 'dark']] as const) {
    await expect(editor.getByLabel('Template field when', { exact: true })).toHaveValue(/8:05 PM ET/);
    await expect(editor.getByText(skyIngressEssayFields.find(field => field.name === 'overviewBody')!.description, { exact: true })).toBeVisible();
    await editor.getByLabel('Sky article writing direction').fill(writingDirection);
+   await expect(editor.getByText('Draft saved automatically', { exact: true })).toBeVisible();
+   // Observe beyond the 900ms autosave debounce. A returned workspace ID must
+   // not schedule another write or make a saved draft dirty before reload.
+   await page.waitForTimeout(1200);
+   expect(workspaceWrites).toBe(1);
    await expect(editor.getByText('Draft saved automatically', { exact: true })).toBeVisible();
    await page.reload();
    await page.getByRole('row').filter({ hasText: 'sky/article-template/sun/libra' }).getByRole('button', { name: 'Edit', exact: true }).click();
