@@ -574,18 +574,18 @@ for(const [width,theme] of [[390,'dark'],[1440,'light']] as const){
   const f=await fixture(page,3,false,'weekly',true);try{
    const s=await useOwnerSession(page,f);await f.action('poll');await f.finishReview();const studio=await f.open();
    await studio.getByRole('checkbox',{name:'I approve this writing plan for generation.'}).check();
-   await f.call({method:'writer-state',body:{pendingPolls:2}});
+   await f.call({method:'writer-state',body:{pendingPolls:10000}});
    // The server rejects a stale JWT before the handler can touch storage.
    await f.call({method:'auth-state',body:{token:s.renewed}});
-   f.state.holdPoll=true;
    await studio.getByRole('button',{name:'Generate missing readings',exact:true}).click();
-   await expect.poll(()=>f.state.held).toBe(true);
+   await expect.poll(async()=>Boolean((await f.latest()).source_snapshot.horoscopeGeneration.active?.responseId)).toBe(true);
+   await expect(studio.getByText('Generating the approved batch. You can leave this page.',{exact:true})).toBeVisible();
    expect(s.auth.refreshes).toBe(1);
    // Deliver the real cross-tab renewal event while the active request waits.
    // The dashboard adopts the token; this must not abort the horoscope loop.
    await page.evaluate(key=>window.dispatchEvent(new StorageEvent('storage',{key,newValue:localStorage.getItem(key)})),s.key);
-   f.state.release();
-   // Two remaining drafts and their distinct review requests use real UI poll intervals.
+   await f.call({method:'writer-state',body:{pendingPolls:0}});
+   // The server batch keeps its approval while the browser renews its session.
    await expect(studio.getByRole('status')).toHaveText('All readings are saved and ready to review.',{timeout:45000});
    const recovered=await f.latest();expect(recovered.source_snapshot.horoscopeGeneration.active).toBeNull();
    expect(recovered.sections.horoscopeEdition.passages.slice(0,9)).toEqual(f.original.passages.slice(0,9));

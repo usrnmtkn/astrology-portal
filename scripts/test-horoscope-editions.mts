@@ -97,6 +97,10 @@ const payload=()=>({contentKey:horoscopeEditionKey(edition.window),surface:'sky'
 let saved=await store.invoke('POST',payload());
 assert.equal(saved.status,200,JSON.stringify(saved.payload));
 let row=saved.payload.rows[0];
+const inventory=await store.invoke('GET',undefined,'/api/admin/generated-content?horoscopeEditions=true&editionInventory=true&horoscopeEditor=true');
+assert.equal(inventory.status,200);
+assert.equal(inventory.payload.rows[0].inventory_only,true);
+assert.equal(inventory.payload.rows[0].source_snapshot,undefined,'The compact editor must preserve the inventory-only row contract');
 const versionUrl=`/api/admin/generated-content?horoscopeEditions=true&editionVersion=true&id=${row.id}`;
 assert.equal((await store.invoke('GET',undefined,versionUrl,'wrong')).status,401);
 assert.equal((await store.invoke('GET',undefined,'/api/admin/generated-content?horoscopeEditions=true&editionVersion=true')).status,400);
