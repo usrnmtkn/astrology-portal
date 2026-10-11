@@ -1,3 +1,4 @@
+import { skyPlacementBrowseIdentity } from "./skyPlacementBrowse";
 import { articleLibraryKind, articleReaderHref, standaloneArticleKind, type ArticleLibraryKind } from "../../../src/shared/articleLibrary";
 import { isStudioCompatibilityRow, isStudioCompositeRow } from "./studioContentScope";
 import { calendarAspectRetrogradeOptions } from "../../web/src/content/calendarAspectRetrograde";
@@ -249,6 +250,9 @@ import { memoByObject, naturalCollator } from "./derivedCache";
 // route is served by @tldr/web, which lazy-loads this component and never ran
 // apps/admin/src/main.tsx, so anything imported only there was missing in prod.
 
+const SkyPlacementCompanions = lazy(() => import("./SkyPlacementCompanions"));
+const SkyArticleSourceDetails = lazy(() => import("./SkyPlacementCompanions").then(module => ({ default: module.SkyArticleSourceDetails })));
+const SkyPlacementEditorNav = lazy(() => import("./SkyPlacementCompanions").then(module => ({ default: module.SkyPlacementEditorNav })));
 const CompositeReviewCard = lazy(() => import("./CompositeReviewCard"));
 const TransitNatalReaderPreview = lazy(() => import("./TransitNatalReaderPreview"));
 const TransitNatalPreviewOptions = lazy(() => import("./TransitNatalReaderPreview").then(module => ({ default: module.TransitNatalPreviewOptions })));
@@ -2717,10 +2721,6 @@ function contentCategoryForRow(row: AdminGeneratedContentRow | AdminReviewRecord
   return "all";
 }
 
-function housePassageAvailabilityLabel(availability: "Reader-ready" | "Source candidate") {
-  return availability === "Reader-ready" ? "Complete horoscope" : "Supporting passage";
-}
-
 function fallbackSectionForKey(key: string, surface?: string): Exclude<AdminFallbackHookSectionFilter, "all"> {
   if (key.startsWith("fallback-hook/daily-headline/") || key.startsWith("fallback-hook/daily-body/") || key.startsWith("fallback-hook/pair-daily/")) return "daily";
   if (key.startsWith("authored/calendar-weekly-moon/") || key.startsWith("authored/calendar-moon-continuation-summary/") || key.startsWith("authored/calendar-moon-transition/") || key.startsWith("authored/calendar-season-transition/") || key.startsWith("authored/lunar-journal/") || key.startsWith("authored/sky-lunation-macro/") || key.startsWith("cms/sky-daily-summary/sun/") || key.startsWith("cms/sky-daily-summary/moon/") || key.includes("lunar") || key.startsWith("lunation/") || key.startsWith("season/") || key.startsWith("season-arc/") || key.startsWith("transit-fallback/")) return "lunar-calendar";
@@ -3306,6 +3306,8 @@ export function GeneratedContentAdminDashboard() {
   const [dailyGlancePairSelector, setDailyGlancePairSelector] = useState<string | null>(null);
   const [skyWriteupParentId, setSkyWriteupParentId] = useState<string | null>(null);
   const [skyRelatedAspectQuery, setSkyRelatedAspectQuery] = useState("");
+  const [skyEditorSection, setSkyEditorSection] = useState<"article" | "houses" | "aspects">("article");
+  const [skyRelatedHouse, setSkyRelatedHouse] = useState(1);
   const [skyFallbackPreviewFacts, setSkyFallbackPreviewFacts] = useState<Record<string, string>>({});
   const [skyFallbackVariableTarget, setSkyFallbackVariableTarget] = useState("");
   const [skyWritingContext, setSkyWritingContext] = useState<{ fieldPath?: string; selection?: SkyPlacementSelection }>({});
@@ -5911,6 +5913,8 @@ export function GeneratedContentAdminDashboard() {
     setCompositionEditorContext(compositionContext);
     setSkyWritingContext({ fieldPath, selection: placementSelection ?? (activePage === "skyWriteups" ? { planet: skyPlacementBody, sign: skyPlacementSign, motion: skyWriteupMotionFilter } : undefined) });
     setSkyWriteupParentId(null);
+    setSkyEditorSection("article");
+    setSkyRelatedHouse(1);
     setSkyRelatedAspectQuery("");
     setSkyFallbackPreviewFacts({});
     setSkyFallbackVariableTarget("");
@@ -6294,7 +6298,7 @@ export function GeneratedContentAdminDashboard() {
     if (fieldPath) return;
     window.requestAnimationFrame(() => {
       window.requestAnimationFrame(() => {
-        const editorScroller = editorRef.current?.querySelector<HTMLElement>(".admin-post-editor") ?? editorRef.current;
+        const editorScroller = editorRef.current?.querySelector<HTMLElement>(".admin-post-editor:not([hidden])") ?? editorRef.current;
         editorScroller?.scrollTo({ top: 0, behavior: "auto" });
       });
     });
@@ -6336,7 +6340,6 @@ export function GeneratedContentAdminDashboard() {
     setSelectedRowId(parent.id);
     rememberSavedDraft(nextDraft);
     setSkyWriteupParentId(null);
-    setSkyRelatedAspectQuery("");
     scrollEditorToTop();
   }
 
@@ -7568,6 +7571,11 @@ export function GeneratedContentAdminDashboard() {
               </>
             ) : (
               <>
+                <nav className="admin-surface-actions" aria-label="Find horoscope and aspect writing">
+                  <a className="admin-source-action" href="#horoscopes">Daily, weekly, monthly &amp; seasonal horoscopes</a>
+                  <a className="admin-source-action" href="#calendar-aspects">Sky &amp; Calendar aspects</a>
+                  <a className="admin-source-action" href="#sky-writeups?view=transits-to-natal">Personal aspects</a>
+                </nav>
                 <section className="studio-section admin-content-filters admin-sky-filters" aria-label="Sky write-up filters">
                   <div className="admin-review-filter-grid admin-filter-form admin-filter-form--three">
                     <label>
@@ -7660,11 +7668,6 @@ export function GeneratedContentAdminDashboard() {
                   </div>
                 {(skyPlacementBody === "all" || skyPlacementSign === "all") && <p className="admin-natal-placement-prompt">Choose a planet and zodiac sign above to preview and edit its complete write-up.</p>}
                 </section>
-                {secret.trim() && !hasAccessIssue && skyPlacementBody !== "all" && skyPlacementSign !== "all" && (
-                  <Suspense fallback={<PageLoading message="Loading Composition Map…" />}>
-                    <SkyPlacementComposition onEditField={(row, path, selection) => openRow(row as AdminGeneratedContentRow, null, path, selection)} rows={compositionRows} selection={{ planet: skyPlacementBody, sign: skyPlacementSign, motion: skyWriteupMotionFilter }} onEditRow={row => void openRow(row as AdminGeneratedContentRow)} onLoadRow={row => hydrateGeneratedContentRow(row as AdminGeneratedContentRow)} />
-                  </Suspense>
-                )}
                 {publishedButUnwiredSkyRows.length > 0 && (
                   <section className="admin-wiring-notice" aria-label="Published Sky write-ups not connected to the app">
                     <div>
@@ -7691,6 +7694,14 @@ export function GeneratedContentAdminDashboard() {
                       )}
                   </aside>
                 </section>
+                {secret.trim() && !hasAccessIssue && skyPlacementBody !== "all" && skyPlacementSign !== "all" && (
+                  <details className="admin-workspace-details" open={!filteredSkyWriteupRows.some(row => row.content_key.startsWith("sky-article/") || row.content_key.startsWith("sky/article-edition/"))}><AdminDisclosureSummary>Reusable writing and templates</AdminDisclosureSummary>
+                  <p>Reusable sources are separate from the dated articles above. Empty sections here do not indicate missing published writing.</p>
+                  <Suspense fallback={<PageLoading message="Loading Composition Map…" />}>
+                    <SkyPlacementComposition onEditField={(row, path, selection) => openRow(row as AdminGeneratedContentRow, null, path, selection)} rows={compositionRows} selection={{ planet: skyPlacementBody, sign: skyPlacementSign, motion: skyWriteupMotionFilter }} onEditRow={row => void openRow(row as AdminGeneratedContentRow)} onLoadRow={row => hydrateGeneratedContentRow(row as AdminGeneratedContentRow)} />
+                  </Suspense></details>
+                )}
+
               </>
             )}
             </StudioTabs>
@@ -9735,14 +9746,15 @@ export function GeneratedContentAdminDashboard() {
                 ? lunation ? `${titleFromKey(placement.sign)} ${titleFromKey(lunation.kind)}`
                   : `${titleFromKey(placement.planet)} in ${titleFromKey(placement.sign)}${contentMotion(row) === "unspecified" ? "" : ` · ${titleFromKey(contentMotion(row))}`}`
                 : null;
-              const displayTitle = moonSection ? `Moon in ${titleFromKey(moonSection.sign)} · ${moonSection.label}` : placementLabel ?? compatibilityIdentity?.title ?? rowTitle(row);
+              const placementIdentity = placementLabel ? skyPlacementBrowseIdentity(row, placementLabel) : null;
+              const displayTitle = moonSection ? `Moon in ${titleFromKey(moonSection.sign)} · ${moonSection.label}` : placementIdentity?.title ?? placementLabel ?? compatibilityIdentity?.title ?? rowTitle(row);
               const placementKind = placement ? row.content_key.startsWith("sky/article-template/") ? "Placement template"
                 : row.content_key.startsWith("sky/article-edition/") ? "Saved placement edition"
                   : lunation ? "Lunation macro" : "Sky placement" : null;
               return {
                 id: row.id,
                 title: displayTitle,
-                kind: placementKind ?? (compatibilityIdentity ? `${compatibilityIdentity.detail} · ${rowTypeLabel(row)}` : rowTypeLabel(row)),
+                kind: placementIdentity?.kind ?? placementKind ?? (compatibilityIdentity ? `${compatibilityIdentity.detail} · ${rowTypeLabel(row)}` : rowTypeLabel(row)),
                 contentKey: row.content_key,
                 status: <ContentLiveStatusBadge row={row} />,
                 destination,
@@ -10328,6 +10340,7 @@ export function GeneratedContentAdminDashboard() {
       .map((passage) => passage.house)).size;
     const isSkyArticleTemplate = isSkyArticleTemplateRow(selectedRow);
     const compiledSkyArticleEdition = compiledSkyArticleEditionForDraft(currentDraft);
+    const hasSkyEditorNavigation = Boolean(compiledSkyArticleEdition && isSkyIngressEssay(compiledSkyArticleEdition.format) && skyWriteupContext && !skyLunationContext);
     const isSkyArticleSourceDraft = draftEventType(currentDraft) === "sky-article-edition-source";
     const skyArticleChanges = skyArticleEditor
       ? skyArticleEditionFieldChanges(skyArticleEditor.baseEdition, skyArticleEditor.fields)
@@ -10337,7 +10350,7 @@ export function GeneratedContentAdminDashboard() {
     const isCompleteEffortDraft = currentDraft.contentKey.startsWith(SKY_DEBILITY_INTERPRETATION_PREFIX);
     const summaryBuiltin = [...skyDailySummaryFields, ...skyDebilityFields].find(field => field.key === currentDraft.contentKey);
     const matchesBuiltinSummary = Boolean(summaryBuiltin?.body && currentDraft.body.trim() === summaryBuiltin.body.trim());
-    const editorStatusRow = { id: currentDraft.id ?? (matchesBuiltinSummary ? `builtin:${currentDraft.contentKey}` : selectedRow?.id.startsWith("package:") ? selectedRow.id : null), updated_at: currentDraft.updatedAt };
+    const editorStatusRow = { status: currentDraft.status, id: currentDraft.id ?? (matchesBuiltinSummary ? `builtin:${currentDraft.contentKey}` : selectedRow?.id.startsWith("package:") ? selectedRow.id : null), updated_at: currentDraft.updatedAt };
     const isCmsSurfaceDraft = currentDraft.sourceSnapshot?.contentSystem === "cms-surface-override" || currentDraft.contentKey.startsWith("cms/");
     const cmsAllowedSlots = Array.isArray(currentDraft.sourceSnapshot?.allowedSlots)
       ? currentDraft.sourceSnapshot.allowedSlots.filter((slot): slot is string => typeof slot === "string")
@@ -10972,8 +10985,12 @@ export function GeneratedContentAdminDashboard() {
               )}
             </div>
           </div>
+          {hasSkyEditorNavigation && <Suspense fallback={null}><SkyPlacementEditorNav section={skyEditorSection}
+            onSection={section => { setSkyEditorSection(section); scrollEditorToTop(); }}
+            onSkyAspects={() => navigateAdminPage("content", new URLSearchParams({ category: "Calendar Aspects", first: skyWriteupContext!.planet }))} /></Suspense>}
         </header>
-        <section className="admin-post-editor">
+        <section className="admin-post-editor" id={!hasSkyEditorNavigation || skyEditorSection === "article" ? "sky-placement-editor-content" : undefined} hidden={hasSkyEditorNavigation && skyEditorSection !== "article"}>
+
           {isPackageDraft && !skyFallbackEditor && <Suspense fallback={<PageLoading message="Loading variables…" />}><StudioVariableInsert variables={customVariableLibrary.variables} context={effectiveSkyFallback} disabled={isLoading} loading={customVariableLibrary.loading} error={customVariableLibrary.error} onRetry={customVariableLibrary.reload} onInsert={insertDraftToken} /></Suspense>}
 
           {guidedReviewKey === currentDraft.contentKey && (
@@ -11617,27 +11634,7 @@ export function GeneratedContentAdminDashboard() {
           )}
           {compiledSkyArticleEdition && (
             <section className="studio-surface studio-section admin-sky-edition-builder admin-fallback-diagnostic-panel" aria-label="Compiled Sky article edition">
-              <div className="admin-fallback-diagnostic-heading">
-                <div>
-                  <p className="admin-eyebrow">Compiled article edition</p>
-                  <h3>{compiledSkyArticleEdition.planet} in {compiledSkyArticleEdition.sign}</h3>
-                </div>
-                <strong>{compiledSkyArticleEdition.validFrom} through {compiledSkyArticleEdition.validTo}</strong>
-              </div>
-              <p>This saved article contains no unresolved placeholders. Review it before publication.</p>
-              <div className="admin-hook-detail-section">
-                <strong>TL;DR</strong>
-                <p>{compiledSkyArticleEdition.tldr}</p>
-              </div>
-              <dl className="admin-hook-pattern-list">
-                <div><dt>Template</dt><dd>{compiledSkyArticleEdition.templateKey}</dd></div>
-                <div><dt>Template hash</dt><dd><code>{compiledSkyArticleEdition.templateHash.slice(0, 12)}</code></dd></div>
-                <div><dt>Compiled hash</dt><dd><code>{compiledSkyArticleEdition.compiledHash.slice(0, 12)}</code></dd></div>
-                {!isSkyIngressEssay(compiledSkyArticleEdition.format) && <>
-                  <div><dt>House horoscopes</dt><dd>{compiledSkyArticleEdition.housePassages.length}/12</dd></div>
-                  <div><dt>Aspect passages</dt><dd>{compiledSkyArticleEdition.aspectPassages.length}</dd></div>
-                </>}
-              </dl>
+              <Suspense fallback={<PageLoading message="Loading article details…" />}><SkyArticleSourceDetails edition={compiledSkyArticleEdition} /></Suspense>
               {skyArticleEditor && (
                 <div className="admin-sky-article-editor" aria-label="Edit Sky article">
                   <header className="admin-sky-related-heading admin-fallback-diagnostic-heading">
@@ -12051,7 +12048,7 @@ export function GeneratedContentAdminDashboard() {
           {!skyWriteupContext && importedHoroscopeSections && <Suspense fallback={<PageLoading message="Loading horoscope fields…" />}>
             <ImportedArticleHoroscopesEditor sections={currentDraft.sections} onChange={sections => setDraft(invalidateContentStudioReview({...currentDraft, sections, status: "DRAFT", reviewState: "owner-review-required"}))} />
           </Suspense>}
-          {skyWriteupContext && selectedRow && (
+          {skyWriteupContext && selectedRow && !hasSkyEditorNavigation && (
             <SkyRelatedContainer className="admin-workspace-details admin-sky-related-editor admin-fallback-diagnostic-panel" aria-label="Related reader horoscope passages">
               {isSkyPlacementSource && <AdminDisclosureSummary>Aspects and horoscopes</AdminDisclosureSummary>}
               <header className="admin-sky-related-heading admin-fallback-diagnostic-heading">
@@ -12081,40 +12078,11 @@ export function GeneratedContentAdminDashboard() {
                   {" "}
                   <strong>{skyAspectPassages.length} rows</strong>
                 </AdminDisclosureSummary>
-                <label className="admin-sky-related-search">
-                  <span>Find an aspect passage</span>
-                  <div className="admin-search-input-shell">
-                    <Search size={15} aria-hidden="true" />
-                    <StudioInput
-                      aria-label="Find an aspect passage"
-                      value={skyRelatedAspectQuery}
-                      onChange={(event) => setSkyRelatedAspectQuery(event.target.value)}
-                      placeholder="Natal planet, aspect, title, or wording"
-                    />
-                  </div>
-                </label>
-                <div className="admin-sky-aspect-list admin-lunar-coverage-row-list">
-                  {filteredSkyAspectPassages.map((row) => (
-                    <article className="admin-sky-related-row admin-hook-detail-section" key={row.id}>
-                      <div>
-                        <strong>{rowTitle(row)}</strong>
-                        <code>{row.content_key}</code>
-                        <p>{row.body || "No aspect passage body saved."}</p>
-                      </div>
-                      <div className="admin-surface-actions">
-                        <StudioButton type="button" onClick={() => openRelatedSkyRow(selectedRow.id, row)}>
-                          Edit reusable source
-                        </StudioButton>
-
-                      </div>
-                    </article>
-                  ))}
-                  {!filteredSkyAspectPassages.length && (
-                    <p className="admin-empty">
-                      {skyAspectPassages.length ? "No aspect passages match this search." : "No natal-aspect passages are saved for this placement."}
-                    </p>
-                  )}
-                </div>
+                <Suspense fallback={<PageLoading message="Loading personal aspects…" />}>
+                  <SkyPlacementCompanions view="aspects" house={skyRelatedHouse} onHouse={setSkyRelatedHouse}
+                    houses={[]} aspects={filteredSkyAspectPassages} query={skyRelatedAspectQuery} onQuery={setSkyRelatedAspectQuery}
+                    title={row => rowTitle(row as AdminGeneratedContentRow)} onEdit={row => openRelatedSkyRow(selectedRow.id, row as AdminGeneratedContentRow)} />
+                </Suspense>
               </details>
 
               {importedHoroscopeSections ? (
@@ -12167,39 +12135,16 @@ export function GeneratedContentAdminDashboard() {
                     {" "}
                     <strong>{populatedSkyHouses}/12 complete</strong>
                   </AdminDisclosureSummary>
-                  <p className="admin-sky-related-help">
-                    Only complete, approved house horoscopes appear in the app.
-                  </p>
-                  <div className="admin-sky-house-grid admin-lunar-coverage-row-list">
-                    {Array.from({ length: 12 }, (_, index) => index + 1).map((house) => {
-                      const passages = skyHousePassages.filter((passage) => passage.house === house);
-                      return (
-                        <article key={house} className={`admin-hook-detail-section ${passages.length ? "has-passage" : "is-missing"}`}>
-                          <header className="admin-fallback-diagnostic-heading">
-                            <strong>{ordinalLabel(house)} House</strong>
-                            <span>{passages.length ? `${passages.length} field${passages.length === 1 ? "" : "s"}` : "Not saved"}</span>
-                          </header>
-                          {passages.map((passage) => (
-                            <div className="admin-sky-related-row admin-hook-detail-section" key={passage.row.id}>
-                              <div>
-                                <span>{passage.kind} · {housePassageAvailabilityLabel(passage.availability)}</span>
-                                <code>{passage.row.content_key}</code>
-                                <p>{passage.row.body || "No passage body saved."}</p>
-                              </div>
-                              <StudioButton type="button" onClick={() => openRelatedSkyRow(selectedRow.id, passage.row)}>
-                                Edit passage
-                              </StudioButton>
-                            </div>
-                          ))}
-                        </article>
-                      );
-                    })}
-                  </div>
+                  <Suspense fallback={<PageLoading message="Loading house horoscopes…" />}>
+                    <SkyPlacementCompanions view="houses" house={skyRelatedHouse} onHouse={setSkyRelatedHouse}
+                      houses={skyHousePassages} aspects={[]} query="" onQuery={setSkyRelatedAspectQuery}
+                      title={row => rowTitle(row as AdminGeneratedContentRow)} onEdit={row => openRelatedSkyRow(selectedRow.id, row as AdminGeneratedContentRow)} />
+                  </Suspense>
                 </details>
               )}
             </SkyRelatedContainer>
           )}
-          <details className="admin-editor-details" aria-label="Details">
+          <details className="admin-editor-details" aria-label="Details" hidden={hasSkyEditorNavigation && skyEditorSection !== "article"}>
             <AdminDisclosureSummary>
               <span>Details</span>
               <span className="admin-editor-details-summary">{editorDetailsSummary}</span>
@@ -12525,6 +12470,11 @@ export function GeneratedContentAdminDashboard() {
             </div>
           </details>
         </section>
+          {hasSkyEditorNavigation && skyWriteupContext && selectedRow && skyEditorSection !== "article" && <section className="admin-post-editor" id="sky-placement-editor-content"><Suspense fallback={<PageLoading message="Loading placement passages…" />}>
+            <SkyPlacementCompanions view={skyEditorSection} house={skyRelatedHouse} onHouse={setSkyRelatedHouse}
+              houses={skyHousePassages} aspects={filteredSkyAspectPassages} query={skyRelatedAspectQuery} onQuery={setSkyRelatedAspectQuery}
+              title={row => rowTitle(row as AdminGeneratedContentRow)} onEdit={row => openRelatedSkyRow(selectedRow.id, row as AdminGeneratedContentRow)} />
+          </Suspense></section>}
         {editorSaveError && <div className="admin-inline-warning" role="alert">{editorSaveError}</div>}
         {pendingPublication && publicationStatusButton(isLoading)}
         {!compiledSkyArticleEdition && <div className={`admin-toolbar-actions admin-editor-savebar studio-surface${isLoading ? " is-saving" : ""}`} aria-busy={isLoading}>
