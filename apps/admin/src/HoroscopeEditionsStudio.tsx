@@ -4,7 +4,6 @@ import {StudioButton,StudioInput,StudioTextarea} from './StudioControls';
 import {fetchWithOwnerSession,ownerSignInMessage} from './ownerSessionRequest';
 import {ownerCredentialIdentity} from './ownerSession';
 import {studioSignInHref} from '../../../src/shared/services/studioAuthReturn';
-import {horoscopeEditionReaderHref} from './adminReaderDestinations';
 import {PageLoading} from '../../../src/shared/components/PageLoading';
 import {FormattedProse} from '../../../src/shared/components/FormattedProse';
 import {announceContentUpdate} from '../../web/src/services/contentUpdateSignal';
@@ -17,6 +16,7 @@ import {horoscopePunctuationFindings,horoscopeVocabularyFindings} from '../../..
 import {horoscopePendingReadings} from '../../../src/astro-writing/horoscopeRecovery.mjs';
 import {HOROSCOPE_WRITERS} from '../../../src/astro-writing/horoscopeWriterCatalog.mjs';
 const HoroscopeGenerationDetails=lazy(()=>import('./HoroscopeWritingStudio').then(module=>({default:module.HoroscopeGenerationDetails})));
+const HoroscopePublicationReview=lazy(()=>import('./HoroscopePublicationReview'));
 const WritingProfiles=lazy(()=>import('./HoroscopeWritingStudio'));
 const endpoint = '/api/admin/generated-content';
 const steps = ['setup','generate','edit','publish'] as const;
@@ -603,13 +603,12 @@ export default function HoroscopeEditionsStudio({secret,requestedEditionId}:{sec
           <StudioButton disabled={locked||!dirty} onClick={()=>void save()}>Save edition draft</StudioButton>
         </footer>
       </>:<>
-        {isPublished?<div className="admin-horoscope-actions"><a className="admin-primary-button" href={horoscopeEditionReaderHref(saved.id,draft.window.period,sign)} target="_blank" rel="noreferrer">Read published edition</a><StudioButton onClick={()=>void moveTo('setup')}>Create another edition</StudioButton></div>:<>
-          {!publicationCurrent&&<p role="status">Checking all saved readings before publication…</p>}
-          {publicationCurrent&&publication.error&&<div role="alert"><p>{publication.error}</p><StudioButton disabled={locked} onClick={()=>publication.status===409?void open(saved,true):setPublicationAttempt(value=>value+1)}>{publication.status===409?'Reload saved edition':'Check publication again'}</StudioButton></div>}
-          {publicationCurrent&&publication.issues.length>0&&<section aria-label="Publication checks"><h3>Readings that need attention</h3>{[...new Set<string|null>(publication.issues.map((issue:any)=>issue.sign))].map(affectedSign=><div key={affectedSign??'edition'}>{publication.issues.filter((issue:any)=>issue.sign===affectedSign).map((issue:any,index:number)=><p key={index}>{affectedSign?`${horoscopeSignLabel(affectedSign)}: `:''}{issue.detail}</p>)}{affectedSign&&<StudioButton disabled={locked} onClick={()=>{setSign(affectedSign);setError('');setStep('edit');}}>Edit {horoscopeSignLabel(affectedSign)} reading</StudioButton>}</div>)}</section>}
-          {draft.passages.map(p=><section className="admin-hook-detail-section" key={p.sign} aria-label={`${horoscopeSignLabel(p.sign)} reading preview`}><h3>{horoscopeSignLabel(p.sign)}</h3><p>{p.headline}</p>{p.body?<div className="admin-copy-preview"><FormattedProse text={p.body}/></div>:<p>No reading written yet.</p>}</section>)}
-          <footer className="admin-writing-savebar admin-horoscope-actions"><label><input type="checkbox" checked={approved} disabled={locked||dirty||complete!==total||!saved||!publicationReady} onChange={e=>setApproved(e.target.checked)}/> I have reviewed and approve the exact wording of every saved reading in this edition.</label><p>{!publicationReady?'All readings must pass the publication checks above before approval.':approved?'Ready to publish the complete edition.':'Check the approval box when you are happy with the complete edition.'}</p><div className="admin-toolbar-actions"><StudioButton disabled={locked} onClick={()=>void moveTo('edit')}>Back to readings</StudioButton><div className="admin-toolbar-actions admin-horoscope-decision-actions">{rejectAllButton}<StudioButton className="admin-primary-button" disabled={locked||dirty||!approved||!saved||!publicationReady} onClick={()=>void save(true)}>Publish edition</StudioButton></div></div></footer>
-        </>}
+        <Suspense fallback={<p role="status">Loading publication review…</p>}><HoroscopePublicationReview
+          draft={draft} saved={saved} sign={sign} dirty={dirty} locked={locked} approved={approved} publication={publication}
+          onApprove={setApproved} onRetry={()=>setPublicationAttempt(value=>value+1)} onReload={()=>void open(saved,true)}
+          onEdit={affectedSign=>{setSign(affectedSign);setError('');setStep('edit');}}
+          onBack={()=>void moveTo('edit')} onPublish={()=>void save(true)} onSetup={()=>void moveTo('setup')} rejectAllButton={rejectAllButton}
+        /></Suspense>
       </>}
       {step==='generate'&&draft.window.period==='seasonal'&&generation?.editorialRuns?.[sign]&&<Suspense fallback={<p>Loading Seasonal generation record…</p>}><HoroscopeGenerationDetails view="seasonal" run={privateRuns[generation.editorialRuns[sign].id]}/></Suspense>}
       {generation?.rejections?.length>0&&<Suspense fallback={<p>Loading rejected drafts…</p>}><HoroscopeGenerationDetails view="rejections" rejections={generation.rejections} period={draft.window.period}/></Suspense>}

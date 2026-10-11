@@ -17,7 +17,7 @@ async function fixture(page:Page,missing=1,unknown=false,period='weekly',session
     expect(facts.status).toBe(200);const {brief,signature}=facts.payload;
     const edition=emptyHoroscopeEdition(brief.window);
     if(period==='seasonal')edition.passages=edition.passages.filter(p=>p.sign!=='overview'); // Existing saved editions.
-    edition.passages.forEach((p:any,index:number)=>{if(index<12-missing){p.headline=`Saved ${p.sign} headline`;p.body=`Existing ${p.sign} opening.\n\nExisting ${p.sign} final sentence.`;}});
+    edition.passages.forEach((p:any,index:number)=>{if(index<12-missing){p.headline=`Saved ${p.sign} headline`;p.body=`You can read the existing ${p.sign} opening.\n\nYour existing ${p.sign} final sentence.`;}});
     const created=await call({method:'POST',body:{contentKey:horoscopeEditionKey(edition.window),surface:'sky',mode:'article',eventType:'horoscope-edition',provider:'manual-admin',targetDate:null,status:'DRAFT',lane:'serving',reviewState:null,headline:'Synthetic recovery edition',body:horoscopeEditionBody(edition),sections:{horoscopeEdition:edition},facts:{horoscopeBrief:{brief,signature}},sourceSnapshot:{horoscopeOutlines:{}}}});
     expect(created.status).toBe(200);const id=created.payload.rows[0].id;
     const latest=async()=>decodeWeeklyHistoryRow((await call({method:'rows'})).find((row:any)=>row.id===id));
@@ -112,7 +112,8 @@ for(const [width,theme] of [[390,'dark'],[1440,'light']] as const){
    await expect(studio.getByRole('note')).toContainText('Remove “whether” from the body');
    const saved=await f.latest();expect(saved.sections.horoscopeEdition.passages.slice(0,11)).toEqual(f.original.passages.slice(0,11));
    await studio.getByRole('button',{name:'4 · Publish',exact:true}).click();
-   await expect(studio.getByText('Edit prohibited wording in Pisces before publishing.',{exact:true})).toBeVisible();
+   await expect(studio.getByRole('region',{name:'Publication checks'})).toContainText('Pisces: Remove “whether” from the body');
+   await expect(studio.getByRole('button',{name:'Edit Pisces reading',exact:true})).toBeVisible();
    await expect(studio.getByRole('button',{name:'Publish edition',exact:true})).toBeDisabled();
    await studio.getByRole('button',{name:'Back to readings',exact:true}).click();
    const corrected=original.replace('whether','if');await studio.getByLabel('Complete reading').fill(corrected);
