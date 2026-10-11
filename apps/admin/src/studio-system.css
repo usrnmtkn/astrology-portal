@@ -691,7 +691,7 @@ body:has(.admin-dashboard) { margin: 0; }
 #root .admin-dashboard :is(.admin-horoscope-wizard,.admin-horoscope-step-heading,.admin-horoscope-plan) { display: grid; gap: var(--workspace-panel-inset); }
 #root .admin-dashboard .admin-horoscope-saved { max-height: var(--table-scroll-max-height); overflow: auto; scrollbar-gutter: stable; min-width: 0; }
 #root .admin-dashboard .admin-horoscope-saved table { min-width: var(--container-form); }
-#root .admin-dashboard .admin-horoscope-saved thead { position: sticky; top: 0; z-index: 1; }
+#root .admin-dashboard .admin-horoscope-saved thead { position: sticky; top: 0; }
 #root .admin-dashboard .admin-horoscope-saved th:not(:first-child) { width: var(--studio-table-details-width); }
 #root .admin-dashboard .admin-horoscope-saved tbody tr { border-bottom: var(--border-width-thin) solid var(--workspace-line); }
 #root .admin-dashboard .admin-horoscope-saved tbody tr:last-child { border-bottom: 0; }
