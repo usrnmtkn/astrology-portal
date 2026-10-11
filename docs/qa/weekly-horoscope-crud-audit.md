@@ -48,6 +48,16 @@ invalid readings, show both errors together, and recover from a failed check.
 
 ## Limits and release evidence
 
+The October 11 parser follow-up retains all eight owner-specified syntax cases
+in `weeklyAspectParserCases`: six aspect sentences plus a retrograde status and
+a First Quarter Moon. Each aspect is matched to its calculated event; personal
+signs and paired houses are checked for the correct audience. Both base and
+inflected forms of meet, sextile, square, trine and oppose are exercised.
+Validator v10 recognizes meet/meets as conjunction while leaving ordinary
+meeting prose outside aspect detection. Actual-handler regressions cover
+publication and refusal for a wrong pair, motion and event date. These syntax
+examples are test inputs, never positive writing evidence or serving content.
+
 Local/browser fixtures execute real handlers with isolated storage and provider
 transport fixtures. They do not establish production database latency or Gemini
 availability. Confirm the main-branch deployment SHA and READY status, then

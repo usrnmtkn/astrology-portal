@@ -1,8 +1,9 @@
 import assert from 'node:assert/strict';
 import {store,invokeHoroscopeWriting} from '../tests/helpers/sky-article-save-api.mts';
 import {readerRouteResponse} from '../tests/helpers/content-reader-route.mjs';
-import {createSeasonalPublicationFixture,seasonalClaimBodies,createMonthlyAspectPublicationFixture,monthlyAspectBody,createWeeklyAspectPublicationFixture,weeklyAspectBodies} from '../tests/helpers/horoscope-publication-fixture.mts';
-import {horoscopeAspectFindings} from '../src/astro-writing/horoscopeAspectClaims.mjs';
+import {createSeasonalPublicationFixture,seasonalClaimBodies,createMonthlyAspectPublicationFixture,monthlyAspectBody,createWeeklyAspectPublicationFixture,weeklyAspectBodies,weeklyAspectParserCases} from '../tests/helpers/horoscope-publication-fixture.mts';
+import {horoscopeAspectFindings,horoscopeAspectPattern,horoscopeAspectClaim,supportsHoroscopeAspect} from '../src/astro-writing/horoscopeAspectClaims.mjs';
+import {horoscopeEventsInWindow,horoscopeHouse} from '../src/astro-writing/horoscopeDevelopments.mjs';
 import {validateHoroscopeReading} from '../src/astro-writing/horoscopeValidation.mjs';
 import {horoscopeEditionBody} from '../apps/web/src/content/horoscopeEditions.mjs';
 
@@ -109,6 +110,36 @@ console.log('PASS weekly aspect publication: all 12 readings publish unchanged, 
 const rulers=await createWeeklyAspectPublicationFixture(m=>store.invoke(m.method,m.body,m.url),true);
 assert.equal(rulers.status,200,JSON.stringify(rulers.payload));
 const rulerRow=rulers.payload.rows[0],rulerBrief=rulerRow.facts.horoscopeBrief.brief;
+for(const example of weeklyAspectParserCases){
+ const matches=[...example.body.matchAll(new RegExp(horoscopeAspectPattern,'giu'))];
+ assert.equal(matches.length,example.aspect?1:0,example.body);
+ if(example.aspect){
+  const claim=horoscopeAspectClaim(matches[0][0]);
+  assert.deepEqual(claim?.planets,example.planets,example.body);assert.equal(claim?.aspect,example.aspect,example.body);
+  assert(horoscopeEventsInWindow(rulerBrief).some((event:any)=>supportsHoroscopeAspect(event,claim)),`No calculated event matched: ${example.body}`);
+ }else assert.equal(horoscopeAspectClaim(example.body),null,example.body);
+ assert.deepEqual(issues(example.sign,example.body,rulerBrief),[],example.body);
+}
+for(const [sign,planet] of [['aries','Saturn'],['leo','Jupiter']]){
+ assert.equal(horoscopeHouse(rulerBrief.positions.find((p:any)=>p.planet===planet).sign,sign),1,'In your sign is the reader’s first house');
+}
+// Every requested verb form must resolve to a calculated pair, not disappear
+// from the fact check. The seasonal brief supplies all five aspect types.
+for(const [aspect,verbs] of Object.entries({conjunction:['meet','meets'],sextile:['sextile','sextiles'],square:['square','squares'],trine:['trine','trines'],opposition:['oppose','opposes']})){
+ const event=horoscopeEventsInWindow(brief).find((e:any)=>e.type==='aspect'&&e.aspect===aspect);
+ assert(event,`Missing calculated ${aspect} fixture`);
+ for(const verb of verbs){
+  const text=`${event.planets[0]}, your ruler, ${verb} ${event.planets[1]}.`;
+  const match=text.match(new RegExp(horoscopeAspectPattern,'iu'));
+  assert(match,`Unrecognized verb: ${verb}`);assert.equal(horoscopeAspectClaim(match[0])?.aspect,aspect);
+  assert.deepEqual(horoscopeAspectFindings(text,brief),[],text);
+ }
+}
+for(const text of ['You can meet your friends.','Your plan meets your needs.','The Sun in your first house can help you meet a deadline.'])assert.deepEqual(horoscopeAspectFindings(text,{...brief,events:[],relationalContext:undefined}),[],text);
+assert(horoscopeAspectFindings('Mercury, your ruler, meets a colleague.',weeklyBrief).length,'An incomplete planetary pair must remain visible');
+assert(horoscopeAspectFindings('Mercury meets Venus.',{...brief,events:[],relationalContext:undefined}).length,'Missing calculated aspects cannot authorize meets');
+assert.deepEqual(issues('overview','You can review Mercury, your ruler, meets retrograde Venus on October 6.',monthlyBrief),[]);
+assert(issues('overview','You can review Mercury, your ruler, meets retrograde Venus on October 20.',monthlyBrief).length,'Meets must retain event/date validation');
 for(const passage of rulerRow.sections.horoscopeEdition.passages)assert.deepEqual(issues(passage.sign,passage.body,rulerBrief),[],passage.sign);
 const rLive=await store.invoke('PATCH',{id:rulerRow.id,expectedUpdatedAt:rulerRow.updated_at,status:'LIVE'});
 assert.equal(rLive.status,200,JSON.stringify(rLive.payload));
@@ -123,6 +154,21 @@ for(const [sign,bad] of [
  ['scorpio','You can review Mars, your traditional ruler, trines Saturn from your tenth house of career to your fifth house of creativity.']
 ])assert(issues(sign,bad,rulerBrief).length,`False qualified claim accepted: ${bad}`);
 console.log('PASS ruler-aside publication: all 12 readings preserved; personal-sign placements and both from/to houses checked independently.');
+
+const meeting=structuredClone(weeklyRow),meetingPassage=meeting.sections.horoscopeEdition.passages.find((p:any)=>p.sign==='cancer');
+for(const [body,ready] of [
+ ['You can review Mercury, your ruler, meets retrograde Venus in Scorpio.',true],
+ ['You can review Mercury, your ruler, meets Mars.',false],
+ ['You can review Mercury, your ruler, meets direct Venus.',false]
+] as const){
+ meetingPassage.body=body;meeting.body=horoscopeEditionBody(meeting.sections.horoscopeEdition);store.rows.set(meeting.id,structuredClone(meeting));
+ const preflight=await invokeHoroscopeWriting({action:'validate-publication',id:meeting.id,expectedUpdatedAt:meeting.updated_at});
+ assert.equal(preflight.status,200);assert.equal(preflight.payload.publication.ready,ready,body);
+ const published=await store.invoke('PATCH',{id:meeting.id,expectedUpdatedAt:meeting.updated_at,status:'LIVE'});
+ assert.equal(published.status,ready?200:422,body);assert.equal(store.rows.get(meeting.id).body,meeting.body);
+ assert.equal(store.rows.get(meeting.id).status,ready?'LIVE':'DRAFT');
+}
+console.log('PASS exact eight parser examples, all base/inflected verbs, calculated event matching, and meets conjunction publication/refusal.');
 
 // Imported/manual drafts receive the same current-copy checks as AI drafts.
 const manual=structuredClone(rulerRow);delete manual.source_snapshot.horoscopeGeneration;
