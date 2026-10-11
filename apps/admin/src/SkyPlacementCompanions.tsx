@@ -22,7 +22,7 @@ export default function SkyPlacementCompanions<T extends Row>({ view, house, onH
   const passages = houses.filter(passage => passage.house === house);
   const complete = passages.filter(passage => passage.availability === "Reader-ready");
   const supporting = passages.filter(passage => passage.availability === "Source candidate");
-  const renderPassage = (row: T, label: string) => <article className="admin-hook-detail-section" key={row.id}>
+  const renderPassage = (row: T, label: string) => <article className="admin-sky-related-row admin-hook-detail-section" key={row.id}>
     <div className="admin-fallback-diagnostic-heading"><strong>{label}</strong><ContentLiveStatusBadge row={row} /></div>
     <p className="admin-copy-preview">{row.body || (row.inventory_only ? "Open this passage to load its saved writing." : "No writing saved.")}</p>
     <StudioButton onClick={() => onEdit(row)}>Edit {label.toLowerCase()}</StudioButton>
@@ -44,7 +44,7 @@ export default function SkyPlacementCompanions<T extends Row>({ view, house, onH
       </details>
     </> : <>
       <p>These passages describe this transiting planet's aspects to a reader's natal chart. Use Sky &amp; Calendar aspects for aspects between two planets in the sky.</p>
-      <label><span>Find a personal aspect</span><StudioInput type="search" aria-label="Find a personal aspect" value={query} onChange={event => onQuery(event.target.value)} placeholder="Search by natal planet, aspect, or wording" /></label>
+      <label className="admin-sky-related-search"><span>Find a personal aspect</span><div className="admin-search-input-shell"><StudioInput type="search" aria-label="Find a personal aspect" value={query} onChange={event => onQuery(event.target.value)} placeholder="Search by natal planet, aspect, or wording" /></div></label>
       {aspects.map(row => renderPassage(row, title(row)))}
       {!aspects.length && <p className="admin-empty">{query.trim() ? "No personal aspects match this search. Try another planet or clear the search." : "No personal aspect passages are saved for this planet."}</p>}
     </>}

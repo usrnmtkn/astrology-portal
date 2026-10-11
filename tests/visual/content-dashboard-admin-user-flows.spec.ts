@@ -2210,7 +2210,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expect(relatedPassages).toBeVisible();
     await expect(relatedPassages).toContainText("House horoscopes");
     await expect(relatedPassages).toContainText("Aspect passages");
-    await expect(relatedPassages.locator("details > summary > span")).toHaveText([
+    await expect(relatedPassages.locator(":scope > details > summary > span")).toHaveText([
       "Aspect passages",
       "House horoscopes"
     ]);
@@ -2330,7 +2330,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     const editor = page.locator(".admin-editor-panel");
     await expect(editor).toBeVisible();
     const relatedPassages = editor.getByRole("region", { name: "Related reader horoscope passages" });
-    await expect(relatedPassages.locator("details > summary > span")).toHaveText([
+    await expect(relatedPassages.locator(":scope > details > summary > span")).toHaveText([
       "Aspect passages",
       "House horoscopes"
     ]);
@@ -2550,7 +2550,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     const related = editor.getByRole("region", { name: "Related reader horoscope passages" });
     await expect(editor.getByLabel("Full lunar passage")).toHaveValue("Check the details without treating reality as a betrayal of the dream.");
     await expect(related.locator("dl > div", { hasText: "Eclipse" })).toContainText("Lunar eclipse");
-    await expect(related.locator("details > summary > span")).toHaveText([
+    await expect(related.locator(":scope > details > summary > span")).toHaveText([
       "Aspect passages",
       "Rising-sign horoscopes"
     ]);
@@ -7381,7 +7381,7 @@ for (const theme of ['dark', 'light'] as const) {
       await aspectSummary.scrollIntoViewIfNeeded();
       await aspectSummary.focus();
       await page.keyboard.press('Enter');
-      const search = editor.getByLabel('Find an aspect passage', {exact:true});
+      const search = editor.getByLabel('Find a personal aspect', {exact:true});
       await expect(search).toBeVisible();
       await expect(search).toHaveCSS('border-top-width', '0px');
       await expect(editor.getByLabel('TL;DR / summary', {exact:true})).toHaveCSS('border-top-color', theme === 'dark' ? 'rgb(138, 143, 148)' : 'rgb(115, 115, 115)');
@@ -7403,8 +7403,12 @@ for (const theme of ['dark', 'light'] as const) {
       await expect(status.getByText('Live means eligible to appear.', {exact:false})).toBeHidden();
       await status.screenshot({path:`outputs/studio-style/review-rhythm-${theme}-${width}.png`});
       await related.locator('.admin-sky-related-group > summary').nth(1).click();
-      await expect(related.locator('.admin-sky-house-grid > article')).toHaveCount(12);
-      await related.locator('.admin-sky-house-grid').screenshot({path:`outputs/studio-style/house-rhythm-${theme}-${width}.png`});
+      const houses = related.getByRole('region', {name: 'House horoscopes', exact:true});
+      await expect(houses.getByLabel('Choose horoscope house')).toHaveValue('1');
+      await houses.getByLabel('Choose horoscope house').selectOption('10');
+      await expect(houses.getByLabel('Choose horoscope house')).toHaveValue('10');
+      await expect(houses).toContainText(/House 10/);
+      await houses.screenshot({path:`outputs/studio-style/house-rhythm-${theme}-${width}.png`});
       await editor.locator('.admin-editor-details > summary').click();
       const diagnostic = editor.locator('.admin-fallback-diagnostic-grid');
       await expect(diagnostic.locator('> div').first()).toHaveCSS('border-top-width', '0px');
