@@ -3,7 +3,6 @@ import { articleLibraryKind, articleReaderHref, standaloneArticleKind, type Arti
 import { isStudioCompatibilityRow, isStudioCompositeRow } from "./studioContentScope";
 import { calendarAspectRetrogradeOptions } from "../../web/src/content/calendarAspectRetrograde";
 import { isSkyIngressEssay, SKY_INGRESS_ESSAY_FORMAT, type SkyArticleFormat } from "../../web/src/content/skyIngressEssay.mjs";
-import { RetrogradeHistoryFacts } from "../../../src/shared/components/RetrogradeHistory";
 import { hasVerifiedSameSignHistory, type RetrogradeHistory } from "../../web/src/services/retrogradeHistory";
 import { useStudioCustomVariables } from "./studioCustomVariableClient";
 import { studioRequestTimeoutMs } from "./studioRequestPolicy";
@@ -250,6 +249,7 @@ import { memoByObject, naturalCollator } from "./derivedCache";
 // route is served by @tldr/web, which lazy-loads this component and never ran
 // apps/admin/src/main.tsx, so anything imported only there was missing in prod.
 
+const RetrogradeHistoryFacts = lazy(() => import("../../../src/shared/components/RetrogradeHistory").then(module => ({ default: module.RetrogradeHistoryFacts })));
 const SkyPlacementCompanions = lazy(() => import("./SkyPlacementCompanions"));
 const SkyArticleSourceDetails = lazy(() => import("./SkyPlacementCompanions").then(module => ({ default: module.SkyArticleSourceDetails })));
 const SkyPlacementEditorNav = lazy(() => import("./SkyPlacementCompanions").then(module => ({ default: module.SkyPlacementEditorNav })));
@@ -11484,7 +11484,9 @@ export function GeneratedContentAdminDashboard() {
                   </dl>
                   {skyArticleEditionFacts.retrogradeHistory && <details className="retrograde-history">
                     <summary>Retrograde cycles</summary>
-                    <RetrogradeHistoryFacts history={skyArticleEditionFacts.retrogradeHistory} timeZone={skyArticleEditionFacts.referenceTimeZone} />
+                    <Suspense fallback={<PageLoading />}>
+                      <RetrogradeHistoryFacts history={skyArticleEditionFacts.retrogradeHistory} timeZone={skyArticleEditionFacts.referenceTimeZone} />
+                    </Suspense>
                     <label>
                       <input type="checkbox" checked={skyArticleEditionForm.includeRetrogradeHistory === true}
                         disabled={isLoading || !hasVerifiedSameSignHistory(skyArticleEditionFacts.retrogradeHistory)}

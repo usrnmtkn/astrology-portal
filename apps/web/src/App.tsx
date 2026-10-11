@@ -50,6 +50,7 @@ import { SkyReadingLayout, useSkyCardsSettled } from "./features/sky/SkyReadingL
 import { SkyRoute } from "./routes/SkyRoute";
 import { YouRoute } from "./routes/YouRoute";
 import { loadYouPage, readYouPage } from "./features/you/youExperienceLoader";
+import { loadCalendarRoute, preloadCalendarExperience } from "./features/calendar/calendarExperienceLoader";
 import type { YouPageProps } from "./features/you/YouPage";
 import { isStandaloneLearnPath } from "./content/learnRoutePath";
 import { refreshContentPublications } from "./services/contentPublications";
@@ -10715,12 +10716,7 @@ const NatalAspectPatternActivationsSection = lazy(() =>
   }))
 );
 
-const loadCalendarRoute = () => import("./routes/CalendarRoute");
 const HoroscopeReader = lazy(() => import("./features/horoscopes/HoroscopeReader"));
-const loadLunarCalendar = () => import("./features/calendar/LunarCalendar");
-const preloadCalendarExperience = () => {
-  void Promise.all([loadCalendarRoute(), loadLunarCalendar()]);
-};
 
 const CalendarRoute = lazy(() =>
   loadCalendarRoute().then((module) => ({

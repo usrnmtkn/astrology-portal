@@ -152,4 +152,40 @@ await action(changedWriter,'pause-batch');
 assert.equal((await action(changedWriter,'prepare',{writerChoice:'current'})).status,200);
 assert.equal(latest(changedWriter).source_snapshot.horoscopeGeneration.batch.status,'cancelled');
 assert.equal((await action(changedWriter,'resume-batch')).status,409);
+// Temporary retrieval failures separated by successful stages must not consume
+// the consecutive-failure limit for the whole twelve-sign batch.
+const intermittent=await create('2027-03-01');await approve(intermittent);
+await worker(intermittent,1);
+const beforeIntermittent=transport.requests.length,healthyFetch=globalThis.fetch;
+let retrievalUnavailable=false;
+globalThis.fetch=async(input:any,options:any={})=>{
+ const url=String(input);
+ if(retrievalUnavailable&&(!options.method||options.method==='GET')
+   &&(url.startsWith('https://generativelanguage.googleapis.com/')||url.startsWith('https://api.openai.com/v1/responses/')))
+  return Response.json({error:{message:'Synthetic temporary retrieval outage'}},{status:503});
+ return healthyFetch(input,options);
+};
+try{
+ for(let stage=0;stage<3;stage++){
+  retrievalUnavailable=true;
+  assert.equal((await worker(intermittent,1)).state,'running','An isolated retrieval failure leaves the batch running');
+  assert.equal(latest(intermittent).source_snapshot.horoscopeGeneration.batch.connectionFailures,1);
+  retrievalUnavailable=false;
+  await worker(intermittent,1);
+  assert.equal(latest(intermittent).source_snapshot.horoscopeGeneration.batch.connectionFailures,0,'A successful stage clears the connection-failure streak');
+  assert.equal(latest(intermittent).source_snapshot.horoscopeGeneration.batch.error,null);
+  await worker(intermittent,1);
+ }
+ retrievalUnavailable=true;
+ for(let failure=1;failure<=3;failure++){
+  assert.equal((await worker(intermittent,1)).state,failure===3?'paused':'running');
+  assert.equal(latest(intermittent).source_snapshot.horoscopeGeneration.batch.connectionFailures,failure);
+ }
+ assert.equal(transport.requests.length-beforeIntermittent,1,'Retrieval recovery never repeats a paid draft');
+ assert.equal((await action(intermittent,'resume-batch')).status,200);
+ assert.equal(latest(intermittent).source_snapshot.horoscopeGeneration.batch.connectionFailures,0,'Explicit resume starts a fresh connection-failure streak');
+ retrievalUnavailable=false;
+ assert.equal((await worker(intermittent)).state,'complete');
+ assert.equal(transport.requests.length-beforeIntermittent,11,'The resumed batch completes exactly twelve drafts overall');
+}finally{globalThis.fetch=healthyFetch;}
 console.log('PASS durable Weekly batch: twelve Gemini drafts and twelve checks without browser advancement; pause/resume, lease recovery, request bounds, compact edits, exact history, independent holds. No external requests.');

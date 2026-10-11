@@ -55,10 +55,19 @@ export async function runWeeklyHoroscopeBatch(id:string,{maxSteps=100,wait=()=>n
           status:result.status<500||failures>=3?'paused':'running'});
         return {state:row.source_snapshot.horoscopeGeneration.batch.status};
       }
+      let recoveredRow;
+      if(batch.connectionFailures){
+        // The limit is a consecutive transport-failure streak, not a lifetime
+        // total. Re-read after the handler's checkpoint to retain its result
+        // and respect an owner pause or a newer worker's lease.
+        row=await read();batch=row?.source_snapshot?.horoscopeGeneration?.batch;
+        if(batch?.status!=='running'||batch.lease?.id!==lease.id)return {state:'changed'};
+        recoveredRow=await saveBatch({...batch,connectionFailures:0,error:null});
+      }
       // Pending provider retrieval is free; it cannot send the next paid stage.
       // The saved approval explicitly authorizes the ready review and next sign.
       if(result.payload.pending){
-        row=result.payload.rows?.[0]??await read();batch=row.source_snapshot.horoscopeGeneration.batch;
+        row=recoveredRow??result.payload.rows?.[0]??await read();batch=row.source_snapshot.horoscopeGeneration.batch;
         const current=row.source_snapshot.horoscopeGeneration.active;
         if(current?.state==='running'&&Date.now()-Date.parse(current.startedAt)>20*60*1000){
           // Preserve the retrievable ID and candidate, but free the batch to

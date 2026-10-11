@@ -1,6 +1,7 @@
 import React from "react";
 import { createRoot } from "react-dom/client";
 import { loadYouPage } from "./features/you/youExperienceLoader";
+import { preloadCalendarExperience } from "./features/calendar/calendarExperienceLoader";
 import { PageLoading, PageLoadBoundary } from "./components/PageLoading";
 import { shouldPreloadInitialFriendCalculationRuntime } from "./features/friends/friendCalculationReadiness";
 import { preloadFriendsExperience } from "./features/friends/friendsExperienceLoader";
@@ -127,6 +128,9 @@ async function startApp() {
     void loadYouPage().catch(() => {
       // The mounted route owns import errors and recovery.
     });
+  }
+  if (/^#\/?calendar(?:[/?]|$)/u.test(window.location.hash)) {
+    preloadCalendarExperience();
   }
   const friendRoutePromise = prepareFriendProfileRoute(window.location.href);
   void friendRoutePromise.then(() => {
