@@ -531,6 +531,7 @@ export function loadFallbackArchitectureV3BundledSkyPlacementManifest() {
 
 const initialReaderBundle = readerEligibleBundle(snapshotBundle);
 let localDeferredReaderBundle: FallbackArchitectureV3Bundle | null = null;
+let localCalendarReaderBundle: FallbackArchitectureV3Bundle | null = null;
 let localEmptyHouseReaderBundle: FallbackArchitectureV3Bundle | null = null;
 let localRelationshipReaderBundle: FallbackArchitectureV3Bundle | null = null;
 let localLunationBookReaderBundle: FallbackArchitectureV3Bundle | null = null;
@@ -543,10 +544,6 @@ let dashboardSkyCoreReaderBundle: FallbackArchitectureV3Bundle | null = null;
 let dashboardPersonalTransitReaderBundle: FallbackArchitectureV3Bundle | null = null;
 let dashboardCompatibilityReaderBundle: FallbackArchitectureV3Bundle | null = null;
 let dashboardSkyPlacementReaderBundle: FallbackArchitectureV3Bundle | null = null;
-let deferredFallbackBundlePromise: Promise<boolean> | null = null;
-let emptyHouseFallbackBundlePromise: Promise<boolean> | null = null;
-let relationshipFallbackBundlePromise: Promise<boolean> | null = null;
-let lunationBookFallbackBundlePromise: Promise<boolean> | null = null;
 let skyPlacementFallbackBundlePromise: Promise<boolean> | null = null;
 export let fallbackRendererV3 = createAppFallbackRenderer(initialReaderBundle);
 export let transitSynastryFallbackRendererV3 = createAppTransitRenderer(initialReaderBundle);
@@ -600,7 +597,7 @@ function recomposeReaderBundle() {
   // Offline rows carry publication identities. Keep them underneath every live
   // overlay; mergeReaderBundles excludes rows superseded by the current ledger.
   const localCoreWithOffline = mergeReaderBundles(initialReaderBundle, lastKnownGoodReaderBundle);
-  const localCoreWithDeferred = mergeReaderBundles(localCoreWithOffline, localDeferredReaderBundle);
+  const localCoreWithDeferred = mergeReaderBundles(localCoreWithOffline, localDeferredReaderBundle ?? localCalendarReaderBundle);
   const localCoreWithEmptyHouses = mergeReaderBundles(localCoreWithDeferred, localEmptyHouseReaderBundle);
   const localCoreWithRelationships = mergeReaderBundles(localCoreWithEmptyHouses, localRelationshipReaderBundle);
   const localCoreWithLunationBook = mergeReaderBundles(localCoreWithRelationships, localLunationBookReaderBundle);
@@ -855,97 +852,74 @@ export function installSkyPlacementFallbackArchitectureV3Bundle(
   return manifest;
 }
 
+// All local domains share retry/coalescing behavior. A partial CMS overlay does
+// not establish local readiness, and a late import cannot replace a full load.
+function localBundleLoader(
+  read: () => Promise<FallbackArchitectureV3Bundle>,
+  isLoaded: () => boolean,
+  install: (bundle: FallbackArchitectureV3Bundle) => void
+) {
+  let pending: Promise<boolean> | null = null;
+  return async () => {
+    if (isLoaded()) return false;
+    pending ??= read().then(bundle => {
+      if (isLoaded()) return false;
+      install(readerEligibleBundle(bundle));
+      recomposeReaderBundle();
+      return true;
+    }).catch(error => { pending = null; throw error; });
+    return pending;
+  };
+}
+
 export function isDeferredFallbackArchitectureV3BundleLoaded() {
   return Boolean(localDeferredReaderBundle);
 }
 
-export async function loadDeferredFallbackArchitectureV3Bundle() {
-  if (localDeferredReaderBundle) {
-    return false;
-  }
-
-  deferredFallbackBundlePromise ??= import("./fallbackArchitectureV3DeferredBundle")
-    .then(({ deferredFallbackArchitectureV3Bundle }) => {
-      if (localDeferredReaderBundle) {
-        return false;
-      }
-
-      localDeferredReaderBundle = readerEligibleBundle(deferredFallbackArchitectureV3Bundle);
-      recomposeReaderBundle();
-      return true;
-    })
-    .catch((error) => {
-      deferredFallbackBundlePromise = null;
-      throw error;
-    });
-
-  return deferredFallbackBundlePromise;
+export function isCalendarFallbackArchitectureV3BundleLoaded() {
+  return Boolean(localCalendarReaderBundle || localDeferredReaderBundle);
 }
+
+export const loadCalendarFallbackArchitectureV3Bundle = localBundleLoader(
+  () => import("./fallbackArchitectureV3CalendarBundle").then(module => module.calendarFallbackArchitectureV3Bundle),
+  isCalendarFallbackArchitectureV3BundleLoaded,
+  bundle => { localCalendarReaderBundle = bundle; }
+);
+
+export const loadDeferredFallbackArchitectureV3Bundle = localBundleLoader(
+  () => import("./fallbackArchitectureV3DeferredBundle").then(module => module.deferredFallbackArchitectureV3Bundle),
+  isDeferredFallbackArchitectureV3BundleLoaded,
+  bundle => { localDeferredReaderBundle = bundle; }
+);
 
 export function isEmptyHouseFallbackArchitectureV3BundleLoaded() {
   return Boolean(localEmptyHouseReaderBundle);
 }
 
-export async function loadEmptyHouseFallbackArchitectureV3Bundle() {
-  if (localEmptyHouseReaderBundle) {
-    return false;
-  }
-
-  emptyHouseFallbackBundlePromise ??= import("./fallbackArchitectureV3EmptyHouseBundle")
-    .then(({ emptyHouseFallbackArchitectureV3Bundle }) => {
-      if (localEmptyHouseReaderBundle) {
-        return false;
-      }
-
-      localEmptyHouseReaderBundle = readerEligibleBundle(emptyHouseFallbackArchitectureV3Bundle);
-      recomposeReaderBundle();
-      return true;
-    })
-    .catch((error) => {
-      emptyHouseFallbackBundlePromise = null;
-      throw error;
-    });
-
-  return emptyHouseFallbackBundlePromise;
-}
+export const loadEmptyHouseFallbackArchitectureV3Bundle = localBundleLoader(
+  () => import("./fallbackArchitectureV3EmptyHouseBundle").then(module => module.emptyHouseFallbackArchitectureV3Bundle),
+  isEmptyHouseFallbackArchitectureV3BundleLoaded,
+  bundle => { localEmptyHouseReaderBundle = bundle; }
+);
 
 export function isRelationshipFallbackArchitectureV3BundleLoaded() {
   return Boolean(localRelationshipReaderBundle);
 }
 
-export async function loadRelationshipFallbackArchitectureV3Bundle() {
-  // The CMS core can be partial. Only this domain's local load establishes
-  // readiness; recomposeReaderBundle still applies eligible CMS overrides.
-  if (localRelationshipReaderBundle) {
-    return false;
-  }
+export const loadRelationshipFallbackArchitectureV3Bundle = localBundleLoader(
+  () => import("./fallbackArchitectureV3RelationshipBundle").then(module => module.relationshipFallbackArchitectureV3Bundle),
+  isRelationshipFallbackArchitectureV3BundleLoaded,
+  bundle => { localRelationshipReaderBundle = bundle; }
+);
 
-  relationshipFallbackBundlePromise ??= import("./fallbackArchitectureV3RelationshipBundle")
-    .then(({ relationshipFallbackArchitectureV3Bundle }) => {
-      if (localRelationshipReaderBundle) {
-        return false;
-      }
-
-      localRelationshipReaderBundle = readerEligibleBundle(relationshipFallbackArchitectureV3Bundle);
-      recomposeReaderBundle();
-      return true;
-    })
-    .catch((error) => {
-      relationshipFallbackBundlePromise = null;
-      throw error;
-    });
-
-  return relationshipFallbackBundlePromise;
-}
-
-export function isSkyPlacementFallbackArchitectureV3BundleLoaded() {
+export function isSkyPlacementFallbackArchitectureV3BundleLoaded(includeHouses = true) {
   // CMS overlays may contain only the selected list rows. They cannot prove
   // that the full local article/Calendar partition is ready.
-  return Boolean(loadedSkyV4ReaderRoute && localSkyPlacementReaderBundle && localSkyPlacementHouseReaderBundle);
+  return Boolean(loadedSkyV4ReaderRoute && localSkyPlacementReaderBundle && (!includeHouses || localSkyPlacementHouseReaderBundle));
 }
 
 export async function loadSkyPlacementFallbackArchitectureV3Bundle(includeHouses = true) {
-  if (loadedSkyV4ReaderRoute && localSkyPlacementReaderBundle && (!includeHouses || localSkyPlacementHouseReaderBundle)) return false;
+  if (isSkyPlacementFallbackArchitectureV3BundleLoaded(includeHouses)) return false;
   const placement = loadSkyPlacementListBundle();
   if (!includeHouses) return placement;
   skyPlacementHouseBundlePromise ??= import("./fallbackArchitectureV3SkyPlacementHouseBundle")
@@ -993,20 +967,8 @@ export function isLunationBookFallbackArchitectureV3BundleLoaded() {
   return Boolean(localLunationBookReaderBundle);
 }
 
-export async function loadLunationBookFallbackArchitectureV3Bundle() {
-  if (localLunationBookReaderBundle) return false;
-
-  lunationBookFallbackBundlePromise ??= import("./fallbackArchitectureV3LunationBookBundle")
-    .then(({ lunationBookFallbackArchitectureV3Bundle }) => {
-      if (localLunationBookReaderBundle) return false;
-      localLunationBookReaderBundle = readerEligibleBundle(lunationBookFallbackArchitectureV3Bundle);
-      recomposeReaderBundle();
-      return true;
-    })
-    .catch((error) => {
-      lunationBookFallbackBundlePromise = null;
-      throw error;
-    });
-
-  return lunationBookFallbackBundlePromise;
-}
+export const loadLunationBookFallbackArchitectureV3Bundle = localBundleLoader(
+  () => import("./fallbackArchitectureV3LunationBookBundle").then(module => module.lunationBookFallbackArchitectureV3Bundle),
+  isLunationBookFallbackArchitectureV3BundleLoaded,
+  bundle => { localLunationBookReaderBundle = bundle; }
+);

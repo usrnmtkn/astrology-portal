@@ -580,12 +580,15 @@ for (const file of listJsonFiles(path.join(repoRoot, "apps/web/src/content/fallb
   .filter((file) => /^bundled-.*\.json$/u.test(path.basename(file)))) {
   const j = readJson(file);
   if (!j) continue;
-  const rows = Array.isArray(j) ? j : (j.authoredCards ?? j.rows ?? j.entries ?? Object.values(j).find((v) => Array.isArray(v)) ?? []);
-  for (const [index, row] of rows.entries()) {
+  // A partition may contain hooks, cards and vocabulary together. Selecting
+  // only its first array silently loses the other source families.
+  const collections = Array.isArray(j) ? [[null, j]] : Object.entries(j).filter(([name, rows]) =>
+    ["authoredCards", "hookRows", "vocabularyRows", "templates", "rows", "entries"].includes(name) && Array.isArray(rows));
+  for (const [collection, rows] of collections) for (const [index, row] of rows.entries()) {
     if (!row || typeof row !== "object") continue;
     const key = String(row.contentKey ?? row.id ?? row.key ?? "");
     if (!key) continue;
-    const src = source(file, { store: "serving", nativeKey: key, rowKey: key, status: row.review_status ?? row.status ?? "serving", locator: { collection: Array.isArray(j) ? null : (j.authoredCards ? "authoredCards" : j.rows ? "rows" : j.entries ? "entries" : null), index } });
+    const src = source(file, { store: "serving", nativeKey: key, rowKey: key, status: row.review_status ?? row.status ?? "serving", locator: { collection, index } });
     const m = /transit-aspect\/([a-z_]+)\/([a-z_]+)\/([a-z]+)/.exec(key);
     if (m && body(m[1]) && body(m[2]) && aspect(m[3])) {
       record(ids.transitAspect(body(m[1]), body(m[2]), aspect(m[3])), "transit-aspect", src);

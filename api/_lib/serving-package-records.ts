@@ -10,6 +10,7 @@ const require = createRequire(import.meta.url);
 const readerPartitions = [
   require("../../apps/web/src/content/fallbackArchitectureV3/bundled-sky-core-rows-v3.json"),
   require("../../apps/web/src/content/fallbackArchitectureV3/bundled-deferred-core-rows-v3.json"),
+  require("../../apps/web/src/content/fallbackArchitectureV3/bundled-calendar-rows-v3.json"),
   require("../../apps/web/src/content/fallbackArchitectureV3/bundled-shared-placement-rows-v3.json"),
   require("../../apps/web/src/content/fallbackArchitectureV3/bundled-relationship-hook-rows-v3.json"),
   require("../../apps/web/src/content/fallbackArchitectureV3/bundled-empty-house-rows-v3.json"),

@@ -1,6 +1,7 @@
 import initial from "../../apps/web/src/content/fallbackArchitectureV3/bundled-initial-reader-rows-v3.json" with { type: "json" };
 import core from "../../apps/web/src/content/fallbackArchitectureV3/bundled-sky-core-rows-v3.json" with { type: "json" };
 import deferred from "../../apps/web/src/content/fallbackArchitectureV3/bundled-deferred-core-rows-v3.json" with { type: "json" };
+import calendar from "../../apps/web/src/content/fallbackArchitectureV3/bundled-calendar-rows-v3.json" with { type: "json" };
 import shared from "../../apps/web/src/content/fallbackArchitectureV3/bundled-shared-placement-rows-v3.json" with { type: "json" };
 import placements from "../../apps/web/src/content/fallbackArchitectureV3/bundled-sky-placement-rows-v3.json" with { type: "json" };
 import cards from "../../apps/web/src/content/fallbackArchitectureV3/bundled-sky-authored-cards-v3.json" with { type: "json" };
@@ -21,7 +22,7 @@ import { isReaderServableGeneratedContentRow } from "../../apps/web/src/content/
 
 const registry = createDomainRegistry(knowledge as any);
 const slug = (value: string) => value.trim().toLowerCase().replace(/\s+/gu, "-");
-const partitions = [initial, core, deferred, shared, placements, cards] as Record<string, any[]>[];
+const partitions = [initial, core, deferred, calendar, shared, placements, cards] as Record<string, any[]>[];
 const buckets = ["authoredCards", "hookRows", "vocabularyRows", "templates"] as const;
 export const calendarWeekCopyKeys = ["quiet", "standard", "headliner", "station", "new-moon", "full-moon"].map(key => `authored/week-opener/${key}`);
 

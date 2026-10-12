@@ -9,6 +9,7 @@ releases do not invalidate every content asset:
 - `fallback-content-core-*`
 - `fallback-content-sky-core-*`
 - `fallback-content-deferred-core-*`
+- `fallback-content-calendar-*`
 - `fallback-content-transit-*`
 - `fallback-content-relationships-*`
 - `fallback-content-sky-*`
@@ -16,11 +17,26 @@ releases do not invalidate every content asset:
 
 The small template core and the Sky-specific chunks are synchronous dependencies
 of `App`. The complementary natal core and transit snapshot are deferred on the
-initial Sky route and installed when You, Calendar, Friends, or another non-Sky
+initial Sky route and installed when You, Friends, or another personal-content
 route activates them. Relationship-authored cards and bond-language rows use a
 narrower second chunk requested only after Friends relationship content is
 requested. A dashboard-installed full package always wins a race with either
 local deferred bundle.
+
+Calendar requests a separate generated partition containing its complete Moon
+phase, void, season-marker and weekly Moon rows. Those rows are removed from the
+larger deferred files; the full loader includes the same partition for personal
+routes. Calendar's placement loader omits personalized house prose. The shared
+loader coalesces imports, retries failures, and preserves live overrides when a
+local import finishes later. Immutable lunation import checks run during manifest
+generation; runtime review and publication checks remain active.
+
+The browser gate rejects natal/transit/house content downloads on Calendar, and
+runtime parity covers all phases and signs, weekly variants, void pairs,
+placements, retrogrades and lunations before and after the full package loads.
+Content Studio loads at most three independent inventory prefixes concurrently;
+pages within each prefix remain sequential and results retain query order.
+Cancellation or a failed prefix aborts siblings and keeps the inventory incomplete.
 
 The Lunar Calendar stylesheet follows its lazy route instead of blocking the
 initial Sky render. Route-owned CSS must be imported by the route module so its
