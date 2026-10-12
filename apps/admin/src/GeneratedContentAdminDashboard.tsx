@@ -2947,13 +2947,8 @@ async function loadAllGeneratedContentRows(
   signal?: AbortSignal
 ) {
   let lastEmitAt = 0;
-  const inventoryRows = (rows: AdminGeneratedContentRow[]) => {
-    const unique = dedupeGeneratedContentRows(rows);
-    // Each UUID range has its own cursor. Restore the server's global order
-    // before consumers select the newest row for a content key.
-    return query.catalog ? unique.sort((a, b) => (b.updated_at ?? "").localeCompare(a.updated_at ?? "") || b.id.localeCompare(a.id)) : unique;
-  };
-  const allRows = await readStudioInventoryPasses(
+  let loadedRows: AdminGeneratedContentRow[] = [];
+  await readStudioInventoryPasses(
     studioInventoryPasses(query),
     (pass, cursor, requestSignal) => loadGeneratedContentPage(
       studioInventoryRequestPath(pass, studioInventoryPageSize(cursor), cursor), secret, requestSignal
@@ -2962,23 +2957,25 @@ async function loadAllGeneratedContentRows(
       const now = Date.now();
       if (complete || lastEmitAt === 0 || now - lastEmitAt >= 600) {
         lastEmitAt = now;
-        onPage?.(inventoryRows(rows), complete);
+        loadedRows = dedupeGeneratedContentRows(rows);
+        // Restore global timestamp/ID order after merging independent ranges.
+        if (query.catalog) loadedRows.sort((a, b) => (b.updated_at ?? "").localeCompare(a.updated_at ?? "") || b.id.localeCompare(a.id));
+        onPage?.(loadedRows, complete);
       }
     },
     signal
   );
-  return inventoryRows(allRows);
+  return loadedRows;
 }
 
 function dedupeGeneratedContentRows(rows: AdminGeneratedContentRow[]) {
-  const byId = new Map<string, AdminGeneratedContentRow>();
-  rows.forEach((row) => {
+  const seen = new Set<string>();
+  return dropSupersededPackageStarters(rows.filter(row => {
     const key = row.id || row.content_key;
-    if (!byId.has(key)) {
-      byId.set(key, row);
-    }
-  });
-  return dropSupersededPackageStarters([...byId.values()]);
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  }));
 }
 
 function assertRowsPayload<T>(payload: { rows?: T[] }, endpoint: string): T[] {
