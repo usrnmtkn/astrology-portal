@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" class="startup-artwork__poster" viewBox="0 0 128 128" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+  <g transform="translate(32 32)">
+    <circle r="18" />
+    <circle r="3" fill="currentColor" stroke="none" />
+  </g>
+  <g transform="translate(96 32)" opacity="0.45">
+    <path d="M9-18C-.9411-18-9-9.9411-9 0C-9 9.9411-.9411 18 9 18C-5 10-5-10 9-18Z" />
+  </g>
+  <g transform="translate(32 96)" opacity="0.7">
+    <circle r="18" />
+    <path d="M0-18V18M-18 0H18" />
+  </g>
+  <g transform="translate(96 96)" opacity="0.2">
+    <path d="M0-18V18M-15.5885-9L15.5885 9M-15.5885 9L15.5885-9" />
+  </g>
+</svg>

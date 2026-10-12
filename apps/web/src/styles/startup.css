@@ -8,7 +8,118 @@ body:has(#app-startup) {
   color: var(--ink);
 }
 
+body:has(#app-startup.app-startup) {
+  background: var(--startup-paper);
+}
+
 /* Contain the card's margins before the app's lazy root styles arrive. */
 #root:has(#app-startup) {
   display: flow-root;
+}
+
+/* Fill the first viewport; React replaces this shell as soon as it can render. */
+.app-startup[role="status"] {
+  width: 100%;
+  min-height: var(--startup-screen-height);
+  margin: 0;
+}
+
+.app-startup.app-loading {
+  gap: var(--startup-label-gap);
+}
+
+.app-startup [data-startup-message] {
+  font-size: var(--startup-label-size);
+  color: var(--startup-label);
+}
+
+.startup-artwork {
+  display: grid;
+  width: var(--startup-artwork-size);
+  height: var(--startup-artwork-size);
+  color: var(--startup-ink);
+}
+
+/* Only the bundled line-art asset uses this class; replacement Lotties keep
+   their exported colors unless they opt into this theme role. */
+.startup-linework__stroke {
+  stroke: var(--startup-ink);
+  stroke-width: var(--border-width-medium);
+  vector-effect: non-scaling-stroke;
+}
+
+.startup-linework__fill {
+  fill: var(--startup-ink);
+}
+
+.startup-artwork__poster,
+.startup-artwork__animation {
+  grid-area: 1 / 1;
+  width: 100%;
+  height: 100%;
+}
+
+.startup-artwork__animation {
+  visibility: hidden;
+}
+
+.startup-artwork[data-animation-ready] .startup-artwork__poster {
+  visibility: hidden;
+}
+
+.startup-artwork[data-animation-ready] .startup-artwork__animation {
+  visibility: visible;
+}
+
+.app-startup .app-loading__action {
+  justify-self: center;
+}
+
+.startup-moon {
+  display: none;
+  width: var(--startup-moon-size);
+  height: var(--startup-moon-size);
+}
+
+.app-startup[data-loader="moon"] .startup-artwork {
+  display: none;
+}
+
+.app-startup[data-loader="moon"] .startup-moon {
+  display: block;
+}
+
+.startup-moon__lit {
+  fill: var(--startup-moon-ink);
+}
+
+.startup-moon__outline {
+  stroke: var(--startup-moon-ink);
+  stroke-width: var(--startup-moon-stroke-width);
+}
+
+.startup-moon__shadow {
+  fill: var(--startup-paper);
+  transform: translateX(var(--startup-moon-shadow-static));
+}
+
+.app-startup[data-loader="moon"][aria-busy="true"] .startup-moon__shadow {
+  animation: startup-moon-phase var(--startup-moon-duration) var(--startup-moon-ease)
+    var(--startup-moon-start-delay) infinite alternate;
+}
+
+/* Recovery cards use the shared surface instead of the startup page color. */
+.app-startup[data-loader="moon"][role="alert"] .startup-moon__shadow {
+  fill: var(--surface);
+}
+
+@keyframes startup-moon-phase {
+  from { transform: translateX(var(--startup-moon-shadow-from)); }
+  to { transform: translateX(var(--startup-moon-shadow-to)); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .app-startup[data-loader="moon"][aria-busy="true"] .startup-moon__shadow {
+    animation: none;
+  }
 }

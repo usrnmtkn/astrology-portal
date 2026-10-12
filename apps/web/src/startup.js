@@ -58,6 +58,8 @@ window.addEventListener("unhandledrejection", () => showStartupMessage(true));
 window.addEventListener("error", (event) => {
   if (!startup?.isConnected) return;
   const script = event.target instanceof HTMLScriptElement ? event.target : null;
+  // Optional artwork must never trigger reader recovery or hide a healthy app.
+  if (script?.hasAttribute("data-startup-decoration")) return;
   if (script?.src.includes("/assets/") && reloadReaderRouteOnce()) return;
   if (script || event instanceof ErrorEvent) showStartupMessage(true);
 }, true);

@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" class="startup-moon" viewBox="0 0 48 48" width="48" height="48" aria-hidden="true">
+  <defs>
+    <clipPath id="startup-moon-disc">
+      <circle cx="24" cy="24" r="15" />
+    </clipPath>
+  </defs>
+  <g clip-path="url(#startup-moon-disc)">
+    <circle class="startup-moon__lit" cx="24" cy="24" r="15" />
+    <circle class="startup-moon__shadow" cx="24" cy="24" r="15.5" />
+  </g>
+  <circle class="startup-moon__outline" cx="24" cy="24" r="15" fill="none" />
+</svg>

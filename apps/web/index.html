@@ -12,8 +12,12 @@
   </head>
   <body>
     <div id="root">
-      <main id="app-startup" class="app-loading app-loading--centered" role="status" aria-live="polite" aria-busy="true">
-        <span class="loading-spinner" aria-hidden="true"></span>
+      <main id="app-startup" class="app-loading app-loading--centered app-startup" role="status" aria-live="polite" aria-busy="true">
+        <span class="startup-artwork" aria-hidden="true">
+          <!-- app-startup-poster -->
+          <span class="startup-artwork__animation"></span>
+        </span>
+        <!-- app-startup-moon -->
         <span data-startup-message>Loading TLDR Astro…</span>
         <button type="button" class="app-loading__action" hidden>Reload page</button>
         <noscript>Enable JavaScript to use TLDR Astro.</noscript>

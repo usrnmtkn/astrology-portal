@@ -104,6 +104,25 @@
   --loading-pulse-duration: 1.4s;
   --loading-pulse-opacity: 0.45;
   --loading-line-short-width: 72%;
+  --startup-artwork-size: calc(var(--size-5) * 2);
+  --startup-screen-height: 100svh;
+  /* Monochrome symbols; retain the earlier teal palette for local comparison. */
+  --startup-ink: #1c1f26;
+  --startup-brand-ink: #004b45;
+  --startup-paper: #eef0f3;
+  /* Owner-specified compact moon alternative; label is a loading UI caption. */
+  --startup-moon-size: var(--size-6);
+  --startup-moon-stroke-width: 1.25px;
+  --startup-moon-ink: #1c1f26;
+  --startup-label: #6e7685;
+  --startup-label-size: 14px;
+  --startup-label-gap: 22px;
+  --startup-moon-duration: 2.6s;
+  --startup-moon-ease: cubic-bezier(0.6, 0, 0.4, 1);
+  --startup-moon-start-delay: -1.3s;
+  --startup-moon-shadow-from: -31px;
+  --startup-moon-shadow-to: 31px;
+  --startup-moon-shadow-static: 8px;
   --bg: var(--color-bg-warm);
   --surface: var(--color-surface);
   --surface-2: var(--color-surface-2);
@@ -1451,6 +1470,11 @@
 
 .theme-dark,
 [data-theme="dark"] {
+  --startup-ink: #eceef2;
+  --startup-brand-ink: #d6f0eb;
+  --startup-paper: var(--bg);
+  --startup-moon-ink: #eceef2;
+  --startup-label: #8d93a0;
   --detail-card-border: var(--color-line);
   --detail-divider: var(--color-line);
   --detail-meta: var(--color-muted);
