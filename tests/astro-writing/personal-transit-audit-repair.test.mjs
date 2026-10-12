@@ -139,7 +139,7 @@ test('a new exact owner request permits continuation without changing previous r
     previousBatchId:state.id,previousRevision:state.revision,previousStateSha256:sha256(state),nextBatchId:f.plan.id};
   write(f.planPath,{...f.plan,previousBatchDirectory:prior,previousBatchContinuation:continuation});
   assert.equal(f.prepare().status,0);f.authorize();assert.doesNotThrow(()=>verifyPreparedDispatch(f.output,f.authPath));
-  assert.deepEqual(loadState(prior),state);
+  assert.equal(sha256(loadState(prior)),sha256(state));
   saveState(prior,{...state,revision:state.revision+1});
   assert.throws(()=>verifyPreparedDispatch(f.output,f.authPath),/EXACT_BATCH_CONTINUATION_PERMISSION_REQUIRED/);
 });
