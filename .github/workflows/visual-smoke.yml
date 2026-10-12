@@ -423,6 +423,8 @@ jobs:
         run: >-
           npx playwright test -c playwright.config.ts --workers=1
           --shard=${{ matrix.shard }}/3
+          tests/visual/astro-101-learn.spec.ts
+          tests/visual/fallback-cache-self-heal.spec.ts
           tests/visual/calendar-release.spec.ts
           tests/visual/calendar-collective-release.spec.ts
           tests/visual/calendar-pressure-release.spec.ts
