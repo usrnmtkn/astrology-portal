@@ -96,6 +96,8 @@ try {
         assert(captured.includes("meaning and mechanism evidence; not a prose template"));
         assert(captured.includes("TRANSIT AND INGRESS EDITORIAL AUTHORITY"));
         assert(captured.includes("Passing vocabulary checks alone does not establish voice"));
+        assert(captured.includes("Develop emotional stakes and explain how a situation arose only when supported meaning"));
+        assert(captured.includes("different factual and structural requirements"));
       }
       assert.doesNotMatch(captured, /Write in this order: placement or event named plainly/);
       assert.doesNotMatch(captured, /This guide sits above the voice spec/);

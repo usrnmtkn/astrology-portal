@@ -1,12 +1,13 @@
 # Personal Transit owner batch authoring
 
-Status: local preparation prototype. Owner direction, October 10, 2026,
+Status: local batch preparation and shared Studio writer context. Owner direction, October 10, 2026,
 `thread:01a11216-18b5-7f83-af91-fa040ad41096`.
 
 The autonomous publish-untouched transit writer is closed. Personal Transit
 authoring now targets owner-reviewed batches of four contacts, each with You
-and Friend fields. This local prototype does not change any production route,
-writer, content row, approval flag, canonical state, or deployed UI.
+and Friend fields. Local preparation does not change content rows, approval
+flags or deployed behavior. Studio consumes the same writer-context core;
+code and private source changes require their own release to become live.
 
 Shared governance: `skills/tldr-astro-writer/SKILL.md`. Surface workflow:
 `skills/tldr-astro-personal-transit/SKILL.md`. Article argument gates, scene
@@ -54,7 +55,7 @@ No new real meanings are installed by this repair; synthetic test fixtures are
 not positive writing evidence. Target row prose remains excluded.
 
 `src/astro-writing/personalTransitReaderRules.mjs` is the single effective rule
-bundle for this local path. Its exact serialized JSON reaches the Gemini system
+bundle for the shared Studio and batch path. Its exact serialized JSON reaches the Gemini system
 instruction; validation consumes that same frozen object. The October 11 owner
 instruction makes steady, steadier, steadiness and settled hard bans for new
 Personal Transit copy, alongside pleasure, bond, whether, alignment and the em
@@ -80,6 +81,20 @@ owner-approved passages, independently of serving approval. Preferred sources
 are selected per contact and perspective by the shared Studio core, including
 recorded exclusions and authorized cross-perspective use. A weaker example is
 never added to fill an unused preferred slot. Historical batches remain unchanged.
+
+The optional `preferredContentKeys` array assigns a complete passage to exact
+aspect-to-natal contacts. Eligible contact assignments take precedence over
+general `preferred` benchmarks. Current status, exact hashes, target exclusion,
+feedback exclusions and perspective authority still apply before selection.
+An empty or absent array creates no contact preference. This is editorial
+selection metadata, not approval or an inferred emotional classification.
+Keep private source bodies and assignments in the protected provision.
+
+October 12 reference reconciliation: emotional stakes, causal explanation and
+advice are conditional on supported meaning and surface needs. Brief positive
+observations need no invented problem. Current lexical bans and factual contracts
+remain unchanged. Prompt preparation and mocked-provider tests make no paid
+calls and cannot establish improved voice. Owner evaluation remains necessary.
 
 ## Prepare and inspect locally
 
@@ -261,5 +276,6 @@ states. They cover empty preparation, complete inputs, edit persistence, exact
 approval, rejection/regeneration intent, approval invalidation and denied access.
 They make zero provider calls and cannot establish prose quality or production
 readiness. The earlier eight-call test was rejected by the owner. It is preserved
-as failure evidence, not validation of this repair. This repaired path has not
-been tested with a new live model run or deployed.
+as failure evidence, not validation of this repair. Record actual-provider runs
+and deployment verification separately for each release. Contract tests alone
+do not establish either result or improved writing quality.
