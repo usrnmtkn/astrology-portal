@@ -34,10 +34,29 @@ assert.equal(complete.evidence.sourceSha256, 'a'.repeat(64));
 assert.equal(complete.evidence.wordCount, longText.trim().split(/\s+/u).length);
 assert.throws(() => sharedGenerationOwnerExamples({ entries: entries.slice(0, 2) }, input), /BELOW_FLOOR/);
 
+const ingressInput = { ...input, eventType: 'sky-article-template-slots', contentKey: 'sky/article-template/mercury/virgo',
+  facts: { articleFormat: 'ingress-essay-v2', planet: 'mercury', sign: 'virgo' } };
+const ingressEntries = [
+  entry('ingress-direct', 'You notice the Mercury in Virgo fixture.'),
+  entry('ingress-collective', 'Mercury in Virgo describes this collective fixture.'),
+  entry('ingress-direct-2', 'Your second Mercury in Virgo fixture has a complete ending.'),
+  entry('unrelated', 'An unrelated Jupiter Neptune Saturn fixture.'),
+  entry('unrelated-2', 'Another Jupiter Neptune Saturn fixture.')
+];
+const ingressSelected = sharedGenerationOwnerExamples({ entries: ingressEntries }, ingressInput);
+assert(ingressSelected.some(row => row.contentKey === 'ingress-direct'), 'Ingress essays admit the owner’s direct reader address.');
+assert(ingressSelected.some(row => row.contentKey === 'ingress-collective'), 'Collective observations remain eligible.');
+assert.deepEqual(sharedGenerationOwnerExamples({ entries: ingressEntries }, { ...ingressInput,
+  facts: { ...ingressInput.facts, requestedSlots: 'Jupiter Neptune Saturn', internalMetadata: 'Jupiter Neptune Saturn' },
+  voiceNotes: 'Jupiter Neptune Saturn' } as typeof ingressInput), ingressSelected,
+  'Unrelated instructions and metadata must not displace topic-matched complete ingress passages.');
+assert.equal(ingressSelected.find(row => row.contentKey === 'ingress-direct')!.body, ingressEntries[0].text);
+
 // Verify every shared-writer family against the actual packaged owner index,
 // without printing passages or making a provider call.
 const index = JSON.parse(readFileSync('packages/astro-knowledge/voice/tldr-astro/satori-writer/voice-index.json', 'utf8'));
-for (const [surface, eventType] of [['sky','placement'],['sky','lunation'],['sky','season'],['you','daily'],['you','transit-aspect'],['natal','placement'],['natal','aspect'],['synastry','aspect'],['composite','placement'],['friends','bond-effect']] as const) {
+assert.throws(() => sharedGenerationOwnerExamples(index, { ...input, surface: 'you', eventType: 'transit-aspect' }), /PERSONAL_TRANSIT_WRITER_CONTEXT_REQUIRED/);
+for (const [surface, eventType] of [['sky','placement'],['sky','lunation'],['sky','season'],['you','daily'],['natal','placement'],['natal','aspect'],['synastry','aspect'],['composite','placement'],['friends','bond-effect']] as const) {
   const result = sharedGenerationOwnerExamples(index, { ...input, surface, eventType });
   assert.ok(result.length >= 3, `${surface}/${eventType} must have complete eligible evidence.`);
   for (const row of result) {

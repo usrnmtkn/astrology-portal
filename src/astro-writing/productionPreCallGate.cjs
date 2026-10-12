@@ -140,6 +140,15 @@ function catalogPrompt(packet) {
     : knowledgeResolver.packetToPrompt(packet);
 }
 
+function templateWriterRequiresMeaning(input) {
+  // These Studio writers supply identity facts, not an interpretation. Their
+  // validated catalog packet is therefore required even outside the legacy Sky
+  // migration canary. This does not enable other generation routes or serving.
+  if (input?.mode !== "article" || input?.sourceSnapshot?.contentType !== "sky-article-template-slots") return false;
+  return (input.surface === "you" && ["transit-aspect", "transit-house"].includes(input.eventType))
+    || (input.surface === "sky" && input.facts?.articleFormat === "ingress-essay-v2");
+}
+
 function reportEvidenceContract(input) {
   const payload = input?.reportPayload;
   if (!payload || payload.schemaVersion !== "report-generation-v3") {
@@ -245,7 +254,8 @@ function prepareProductionPreCallGateUnchecked(input, env = process.env) {
     canonicalIds = catalog.mapped.canonicalIds;
     evidenceSurface = catalog.mapped.evidenceSurface;
     const bondDraft = input?.surface === "friends" && input?.eventType === "bond-effect";
-    governedPrompt = canary.selected || bondDraft ? catalogPrompt(catalog.packet) : "";
+    governedPrompt = canary.selected || bondDraft || templateWriterRequiresMeaning(input)
+      ? catalogPrompt(catalog.packet) : "";
   }
 
   const phraseEvidence = phraseIsolation(canonicalIds, evidenceSurface);

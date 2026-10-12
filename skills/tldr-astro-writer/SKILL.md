@@ -1,138 +1,105 @@
 ---
 name: tldr-astro-writer
-description: Canonical TLDR Astro argument-gated drafting and deterministic validation pipeline.
+description: Canonical TLDR Astro writing governance. Surface-specific skills define the drafting workflow.
 ---
 
 # TLDR Astro writer
 
-Use this skill for every astrology-writing task in this repository.
+Use this skill as the shared governance layer for all reader-facing astrology writing.
 
-## Global owner-vocabulary rule
+This skill controls:
 
-This rule applies to every reader-facing astrology draft, rewrite, revision,
-example, and chat response on every surface. Semantic sources determine what
-the astrology means. Owner-authored writing determines the vocabulary,
-sentence movement, examples, and tone.
+- source authority
+- owner voice authority
+- correction precedence
+- factual boundaries
+- evidence provenance
+- deterministic reader-copy rules
+- approval and publication boundaries
 
-Before writing, retrieve the closest owner-authored passages for the exact
-topic and register and use the owner corpus as the positive language source,
-not merely as inspiration or a final style check. Do not draft directly from
-semantic components, compact operations, doctrine labels, or internal planning
-language.
+It does NOT define one universal drafting pipeline.
 
-Before showing prose to the owner:
+Each surface must use its own approved writing workflow.
 
-- flag content words that are absent from or unusually rare in the owner
-  corpus, except necessary astrology terms and ordinary function words;
-- replace unsupported wording with plainer corpus-supported language, or flag
-  the unresolved choice for owner review instead of guessing;
-- apply the durable correction ledger so a rejected word, construction, or
-  substitution is not repeated in a later draft; and
-- run the surface register, phrase-bank, do-not-use, and owner-correction
-  checks.
+## Authority
 
-An invented synonym is not a correction. When the owner rejects a word or
-construction, record the correction with its context and use the owner’s
-documented replacement or the plainest supported wording. Do not deliver prose
-that is known to fail this rule.
+Astrology sources determine what the writing may mean.
 
-### Chat-output fail-closed gate
+Owner-authored writing determines how TLDR Astro speaks.
 
-Reader-facing astrology prose written in chat is not exempt from the governed
-pipeline. Before drafting, create an evidence receipt containing:
+Current owner corrections override conflicting language in historical approved or published passages.
 
-1. the rendered surface and its register;
-2. the semantic sources used for meaning;
-3. at least three exact owner-authored passages chosen for the same surface or
-   the closest valid register, with their source paths;
-4. the owner-correction pairs relevant to the likely failure modes; and
-5. the active do-not-use list.
+Internal semantic terminology, doctrine labels, aspect mechanics, planner fields, structural-spine labels, and evaluator language are never reader-copy evidence.
 
-Show the selected owner passages to the owner before or immediately alongside
-the draft. A hidden claim that the corpus was checked is not evidence. If the
-receipt cannot be built, return `failed-retrieval` and do not draft.
+## Owner voice
 
-Vocabulary compliance is necessary but never sufficient. A draft fails when
-it uses corpus words inside generic assistant scaffolding, flattens the owner's
-sentence movement, or paraphrases semantic components directly into prose.
-Before delivery, compare the draft's opening, turns, sentence lengths, and
-ending movement with the selected owner passages. If the comparison cannot
-name the specific owner evidence shaping those choices, do not show the draft.
+Retrieve the strongest eligible owner-authored evidence for the target surface and writing job.
 
-When the owner says a draft does not sound like her, mark that complete draft
-as rejected evidence. Do not synonym-swap or improvise another version. Return
-to retrieval, show a corrected evidence receipt, and rebuild from the owner's
-actual language and movement.
+Quality outranks quota.
 
-Before drafting or editing, read these files completely:
+Never add a weaker example merely to satisfy a minimum evidence count.
 
-1. `../../docs/writing/ASTROLOGY_CONTRACT.md`
-2. `../../docs/writing/VOICE_CONTRACT.md`
-3. `../../docs/writing/LITERAL_LANGUAGE_RULES.md`
-4. `../../docs/writing/BANNED_PATTERNS.md`
-5. `../../docs/writing/REVIEW_RUBRIC.md`
-6. `../../docs/writing/OWNER_CORRECTIONS.md`
-7. `../../docs/writing/SHARED_EVIDENCE_STANDARD.md`
-8. `../../docs/writing/ARGUMENT_DEVELOPMENT_STANDARD.md`
+Cross-surface evidence may be used for voice only when its information budget and prose function are appropriate. Its facts, scenarios, astrology, biography, perspective, and timing never transfer.
 
-Use `../../src/astro-writing/runWritingPipeline.mjs` for generated prose. Its order is binding:
+Preserve evidence selection for audit. Routine generation does not require the owner to review the evidence packet before every draft.
 
-1. build the astrology meaning plan;
-2. build the ten-line argument core plus eight required Sky Placement spine-quality intentions (and four slow-mover additions when applicable), then stop for exact owner approval;
-3. require the target content family's recorded structural spine;
-4. build the shared five-role packet: exact planet-sign matrix meaning; at least three exact
-   owner-authored register passages plus register gold when that family's policy
-   requires it (horoscopes use their selected complete forecasts and essays,
-   without the unrelated Saturn-in-Capricorn placement gold); same-planet-sign
-   scene evidence in house-core, approved-serving, then matrix order; the current approved
-   article as argument-and-close evidence only; five to ten thematically relevant owner-authored
-   AVAILABLE LINES from the voice-bank and governed phrasebank index; and six to ten relevant
-   owner before/after pairs;
-   load matrix evidence from `../../data/writing/matrix-evidence-index/`, keep meaning, scene,
-   and argument-candidate lanes separate, filter to the exact planet-sign and relevant event,
-   and deduplicate repeated copy by `copy_sha` under governance precedence;
-5. draft from the approved argument, the spine, and governed astrology;
-6. run deterministic validation;
-7. return the prose to the owner for judgment.
+## Corrections
 
-For developed natal placements, Chiron interpretations, and other long-form
-recurring-pattern passages, apply the argument-development standard before
-drafting. Its movement is a reasoning audit, not a reader-copy template. Treat
-the supplied Chiron example as owner-authored, exact-owner-approved positive
-REGISTER evidence for prose behavior. Its governed manifest is
-`../../data/writing/owner-supplied-structural-exemplars.json`. It remains
-non-serving and is not phrase evidence; do not copy its wording, paragraph
-count, hinge, or ending.
+The durable owner-correction ledger is authoritative.
 
-Spine slots are semantic checks, not reader-copy templates. Their labels must not become
-sentences that announce `the job of`, `this is a period for`, or `the collective lesson is`.
-The prose must carry the content without narrating its own structure. Deterministic validation
-counts the negation-pivot family per page and per set: at most one per page and three across a
-twelve-item set.
+Do not synonym-swap a rejected word or construction.
 
-Structural presence is not completion. Apply the unified eight-element Sky Placement article
-spine in `../../docs/writing/ASTROLOGY_CONTRACT.md`; slow movers add era frame, recurrence,
-conditional older analogs, and collective lesson between strategy and close. Every element is
-required; any failed element returns
-`spine-quality-incomplete`; do not mark or present that draft as pipeline-ready. Never rewrite
-an element automatically, and never exempt an inherited close because it was approved under an
-older standard.
+Current explicit bans and contextual corrections override historical examples.
 
-No model prose gate is permitted. Prose judgment is an owner gate, permanently. A model may not
-approve, block, revise, stage, promote, or serve prose. Read `../../docs/writing/WRITING_PIPELINE_V3.md`
-for the binding v3 architecture.
+Corpus frequency may flag unusual wording for review but must never define the allowed vocabulary by itself.
 
-Owner ruling, 2026-08-13, verbatim: "if the article does not go through both the writing-pipeline
-and the satori voice, fail the article and rewrite." An empty or below-floor positive evidence
-pool, or an unmapped family label, must return `failed-retrieval` before any writer call. Preserve
-the result only as a diagnostic artifact; never edit it into a candidate or use it as a baseline.
+## Reader-copy boundary
 
-Approved same-planet-sign house cores are the primary scene bank for a placement article,
-followed by approved serving rows and then matrix scene rows. If approved same-placement scene
-evidence exists and none reaches the packet, return `failed-retrieval` before any writer call.
-Scene evidence demonstrates observable objects, actions, costs, and follow-up work; it is never
-relabeled as register evidence and never licenses a house claim in houseless copy.
+Do not draft directly from:
 
-Never infer owner approval. Generated or refined prose remains `needs_review`, `ownerApproved: false`, `promotionAuthorized: false`, and `canonical: false` until the owner explicitly approves the exact wording.
+- aspect mechanics
+- semantic operations
+- doctrine labels
+- planner language
+- structural-spine labels
+- evaluator terminology
 
-Never make a billed model call without explicit authorization for that call or batch.
+The writer receives only the reader-relevant meaning licensed for that surface.
+
+## Approval
+
+Generated prose is always:
+
+```yaml
+needs_review: true
+ownerApproved: false
+promotionAuthorized: false
+canonical: false
+```
+
+Only explicit owner approval of exact wording changes that state.
+
+No model may approve, publish, promote, or rewrite prose automatically.
+
+## Failure
+
+When the owner rejects a passage as not sounding like her, reject the complete passage.
+
+Do not repair it with synonym substitution.
+
+Use the rejection as evidence for future retrieval and drafting.
+
+## Surface workflows
+
+Load the surface-specific workflow before drafting:
+
+- [Personal Transit](../tldr-astro-personal-transit/SKILL.md)
+- [Sky Placement](../tldr-astro-sky-placement/SKILL.md)
+- Calendar
+- Weekly
+- Seasonal
+- Natal
+- You/Friend reports
+- relationship writing
+
+Surface-specific workflow rules override generic process instructions but cannot override factual authority, owner corrections, or approval boundaries.

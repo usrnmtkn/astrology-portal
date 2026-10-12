@@ -1,0 +1,17 @@
+* { box-sizing: border-box; }
+body { margin: var(--space-0); color: var(--ink); background: var(--bg); font-family: var(--font-body); font-size: var(--text-body); font-weight: var(--weight-regular); line-height: var(--leading-body); letter-spacing: var(--tracking-body); }
+main { padding: var(--space-6); }
+h1, h2 { font-family: var(--font-display); font-size: var(--text-title); font-weight: var(--weight-regular); line-height: var(--leading-title); margin: var(--space-4) var(--space-0); }
+h3 { font-family: var(--font-body); font-size: var(--text-body); font-weight: var(--weight-medium); line-height: var(--leading-body); }
+section, article { background: var(--surface); border: var(--border-width-thin) solid var(--line-strong); border-radius: var(--radius-sm); padding: var(--space-5); margin-block: var(--space-5); }
+.passages { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-5); }
+.passage { min-width: 0; }
+p, label, textarea { font-family: var(--font-body); font-size: var(--text-body); font-weight: var(--weight-regular); line-height: var(--leading-body); letter-spacing: var(--tracking-body); }
+textarea { display: block; width: 100%; color: var(--ink); background: var(--surface); border: var(--border-width-thin) solid var(--line-strong); border-radius: var(--radius-sm); padding: var(--space-4); }
+button { font-family: var(--font-ui); font-size: var(--text-label-size); color: var(--ink); background: var(--surface-2); border: var(--border-width-thin) solid var(--line-strong); border-radius: var(--radius-sm); padding: var(--space-3) var(--space-4); margin: var(--space-2) var(--space-2) var(--space-2) var(--space-0); cursor: pointer; }
+button:disabled { color: var(--muted); cursor: default; }
+pre { white-space: pre-wrap; overflow-wrap: anywhere; font-family: var(--font-mono); font-size: var(--text-meta-size); }
+details { margin-block: var(--space-4); } summary { cursor: pointer; }
+.error { color: var(--danger); }
+.original { white-space: pre-wrap; }
+@media (max-width: 760px) { .passages { grid-template-columns: minmax(0, 1fr); } main { padding: var(--space-3); } }

@@ -1,10 +1,13 @@
 import { advisoryModelViolation, effectiveRulePrompt, governValidationResult } from "../../src/astro-writing/effectiveRuleGovernance.mjs";
 import { sharedGenerationOwnerExamples } from "./shared-generation-owner-examples.js";
+import { assertPersonalTransitWriterContext, type PersonalTransitWriterContext } from "./personal-transit-writer-context.js";
+import { TRANSIT_INGRESS_EDITORIAL_AUTHORITY } from "./transit-ingress-editorial-authority.js";
 import { GeneratedRowWriteConflict, confirmedGeneratedRowWrite } from "./generated-row-writes.js";
 import { isSkyIngressEssay, SKY_INGRESS_ESSAY_INSTRUCTIONS } from "../../apps/web/src/content/skyIngressEssay.mjs";
 import { studioArticleWritingMemory } from './studio-article-memory.js';
 import { transitReadingOwnerVoice, transitReadingOwnerVoicePrompt, transitReadingVoiceContext } from "./transit-reading-owner-voice.js";
 import fs from "node:fs";
+import { createHash } from "node:crypto";
 import path from "node:path";
 import { contentGenerationProvider } from "./provider-config.js";
 import { generatedReportWritingContract } from "./transit-reading-writing-contract.js";
@@ -77,6 +80,7 @@ export type GenerateSkyArticleTemplateSlotsInput = {
   eventType?: string;
   knowledgeIds?: string[];
   licensedVariables?: readonly string[];
+  personalTransitContext?: PersonalTransitWriterContext;
   writingMemory?: { prompt: string; receipt: NonNullable<GeneratedSkyArticleTemplateSlots["memoryReceipt"]> } | null;
 };
 
@@ -89,6 +93,7 @@ export type GeneratedSkyArticleTemplateSlots = {
   requestedSlots: string[];
   generation_metadata?: ReturnType<typeof writeGenerationMetadata>;
   memoryReceipt?: NonNullable<Awaited<ReturnType<typeof studioArticleWritingMemory>>>["receipt"];
+  writingReceipt?: PersonalTransitWriterContext["receipt"];
 };
 
 export class RejectedSkyArticleDraftError extends Error {
@@ -5710,8 +5715,11 @@ function skyArticleTemplateSlotPrompt(
   approvedExamples: ApprovedExample[]
 ) {
   const personalTransit = input.surface === "you" || (input.surface === "friends" && input.eventType === "bond-effect");
+  const scopedEditorial = (input.surface === "you" && ["transit-aspect", "transit-house"].includes(input.eventType ?? ""))
+    || ((input.surface ?? "sky") === "sky" && isSkyIngressEssay(input.facts.articleFormat));
   return [
-    readTextFile("packages/astro-knowledge/voice/tldr-astro/style-guide.md"),
+    scopedEditorial ? TRANSIT_INGRESS_EDITORIAL_AUTHORITY
+      : readTextFile("packages/astro-knowledge/voice/tldr-astro/style-guide.md"),
     RHETORICAL_WRITER_POLICY,
     "",
     "TASK",
@@ -5738,11 +5746,13 @@ function skyArticleTemplateSlotPrompt(
     "Use only ASTROLOGY FACTS, GOVERNED KNOWLEDGE EVIDENCE, and the immutable template context.",
     "The result is an owner-review draft. It is not approved and cannot serve by itself.",
     "",
-    "BEHAVIOR-FIRST RULE",
-    "Name the behavior before naming the pattern. Do not use a metaphor, idiom, abstract label, or polished summary when you can describe what the person actually does, notices, repeats, avoids, spends, says, changes, or leaves unfinished.",
-    "Write like a person, not a report. Prefer ordinary words such as another thing to fix over formal words such as requirement.",
-    "",
-    metaphorSpecificityRules(),
+    ...(!scopedEditorial ? [
+      "BEHAVIOR-FIRST RULE",
+      "Name the behavior before naming the pattern. Do not use a metaphor, idiom, abstract label, or polished summary when you can describe what the person actually does, notices, repeats, avoids, spends, says, changes, or leaves unfinished.",
+      "Write like a person, not a report. Prefer ordinary words such as another thing to fix over formal words such as requirement.",
+      "",
+      metaphorSpecificityRules()
+    ] : []),
     "",
     bannedPhraseRules(),
     "",
@@ -5807,10 +5817,23 @@ export async function generateSkyArticleTemplateSlots(
   const generationInput = skyArticleSlotGenerationInput(input);
   const productionGate = prepareProductionPreCallGate(generationInput);
   const evidenceShadow = buildProductionEvidenceShadow(generationInput);
-  const approvedExamples = await loadApprovedExamples(generationInput);
-  const publicPrompt = skyArticleTemplateSlotPrompt(input, approvedExamples);
+  const transitContext = input.surface === "you" && input.eventType === "transit-aspect"
+    ? assertPersonalTransitWriterContext(input.personalTransitContext, input.templateKey, names) : null;
+  const approvedExamples = transitContext ? [] : await loadApprovedExamples(generationInput);
+  // Transit meaning and passages are private. Retain hashes in receipts, never
+  // their bodies in public prompt shadows. Raw mechanics stay in the gate.
+  const publicPrompt = transitContext ? "Personal Transit uses verified private meaning and voice inputs." : [
+    skyArticleTemplateSlotPrompt(input, approvedExamples),
+    ...(productionGate.governedPromptEnabled
+      ? [`GOVERNED KNOWLEDGE EVIDENCE\n${productionGate.governedPrompt}`] : [])
+  ].join("\n\n");
   // Private corrections must not enter prompt-shadow artifacts or row snapshots.
-  const prompt = [publicPrompt, memory?.prompt].filter(Boolean).join("\n\n");
+  const prompt = [transitContext?.prompt ?? publicPrompt, memory?.prompt].filter(Boolean).join("\n\n");
+  const writingReceipt = transitContext ? { ...transitContext.receipt,
+    contextSha256: transitContext.receipt.promptSha256,
+    promptSha256: createHash("sha256").update(prompt).digest("hex") } : undefined;
+  const sourceIds = transitContext ? [...new Set(transitContext.receipt.sources.map(source => source.id))]
+    : approvedExamples.map(example => example.contentKey);
   const schema = skyArticleTemplateSlotSchema(input.requestedSlots);
   const provider = contentGenerationProvider({
     requestedProvider: input.provider,
@@ -5830,9 +5853,7 @@ export async function generateSkyArticleTemplateSlots(
       request: {
         model,
         ...(reasoningEffort ? { reasoning: { effort: reasoningEffort } } : {}),
-        input: productionGate.governedPromptEnabled
-          ? `${prompt}\n\nGOVERNED KNOWLEDGE EVIDENCE\n${productionGate.governedPrompt}`
-          : prompt,
+        input: prompt,
         text: {
           format: {
             type: "json_schema",
@@ -5859,21 +5880,19 @@ export async function generateSkyArticleTemplateSlots(
       model,
       generatedAt: new Date().toISOString(),
       requestedSlots: names,
-    ...(memory ? { memoryReceipt: memory.receipt } : {}),
+      ...(writingReceipt ? { writingReceipt } : {}),
+      ...(memory ? { memoryReceipt: memory.receipt } : {}),
       generation_metadata: writeGenerationMetadata({
         role: "WRITER",
         model,
         reasoningEffort,
-        sourceIds: approvedExamples.map((example) => example.contentKey)
+        sourceIds
       })
     });
   }
 
   const apiKey = requireEnv("ANTHROPIC_API_KEY");
   const model = process.env.ANTHROPIC_MODEL ?? defaultClaudeModel;
-  const governedPrompt = productionGate.governedPromptEnabled
-    ? `${prompt}\n\nGOVERNED KNOWLEDGE EVIDENCE\n${productionGate.governedPrompt}`
-    : prompt;
   assertProductionRoleGate(productionGate, "WRITER", generationInput);
   const response = await fetch("https://api.anthropic.com/v1/messages", {
     method: "POST",
@@ -5885,7 +5904,7 @@ export async function generateSkyArticleTemplateSlots(
     body: JSON.stringify({
       model,
       max_tokens: 6000,
-      messages: [{ role: "user", content: [{ type: "text", text: governedPrompt }] }],
+      messages: [{ role: "user", content: [{ type: "text", text: prompt }] }],
       tools: [{
         name: "tldr_astro_sky_article_template_slots",
         description: "Return only the requested unfinished Sky article template fields.",
@@ -5910,11 +5929,12 @@ export async function generateSkyArticleTemplateSlots(
     model,
     generatedAt: new Date().toISOString(),
     requestedSlots: names,
+    ...(writingReceipt ? { writingReceipt } : {}),
     ...(memory ? { memoryReceipt: memory.receipt } : {}),
     generation_metadata: writeGenerationMetadata({
       role: "WRITER",
       model,
-      sourceIds: approvedExamples.map((example) => example.contentKey)
+      sourceIds
     })
   });
 }

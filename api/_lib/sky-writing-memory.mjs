@@ -19,6 +19,7 @@ export function buildSkyWritingMemory(identity, {
   readSource = name => fs.readFileSync(path.join(root, name), 'utf8'),
   revision = process.env.VERCEL_GIT_COMMIT_SHA ?? null,
   studioCorrections = [],
+  includeEffectiveRules = true,
 } = {}) {
   if (!['placement', 'aspect', 'personal-transit'].includes(identity?.kind)) throw new Error('Unsupported Sky memory target');
   const configText = readSource('config/agent-memory-sources-v1.json');
@@ -90,7 +91,7 @@ export function buildSkyWritingMemory(identity, {
     || a.reference.path.localeCompare(b.reference.path) || a.reference.line - b.reference.line);
   const selected = ranked.slice(0, 8);
   excluded.push(...ranked.slice(8).map(item => ({ ...item.reference, reason: 'lower_relevance' })));
-  const rules = effectiveRules.renderEffectiveRulesForPrompt({ surface: ruleSurface, family: targetFamily });
+  const rules = includeEffectiveRules ? effectiveRules.renderEffectiveRulesForPrompt({ surface: ruleSurface, family: targetFamily }) : '';
   const prompt = [
     'TLDR ASTRO MEMORY — OWNER CORRECTIONS',
     identity.kind === 'personal-transit'
@@ -102,8 +103,9 @@ export function buildSkyWritingMemory(identity, {
       rejected: item.row.bad, replacement: item.row.corrected ?? null,
       ownerReason: item.row.owner_reason ?? item.row.why ?? null,
     })),
-    'The current effective rules below qualify earlier editorial instructions and corrections. Editorial findings remain advisory; generated wording requires owner review.',
-    rules,
+    ...(includeEffectiveRules ? [
+      'The current effective rules below qualify earlier editorial instructions and corrections. Editorial findings remain advisory; generated wording requires owner review.', rules,
+    ] : ['The dedicated Personal Transit reader-copy rule bundle governs this request. These historical corrections do not create exceptions to its current hard bans.']),
   ].join('\n\n');
   const receipt = {
     schema: identity.kind === 'personal-transit' ? 'tldr-personal-transit-writing-memory/v1' : 'tldr-sky-writing-memory/v1', revision, family: targetFamily,
@@ -114,5 +116,8 @@ export function buildSkyWritingMemory(identity, {
         ...(item.timestamp ? ['recorded_correction_date'] : [])] })),
     excluded, promptSha256: sha256(prompt), ownerApproved: false,
   };
-  return { prompt, receipt };
+  const excludedVoiceTextHashes = eligible.filter(item => item.row.positive_evidence_revoked === true
+    || /^\[rejected(?:\s|;|\])/iu.test(String(item.row.corrected ?? '').trim()))
+    .map(item => sha256(item.row.bad));
+  return { prompt, receipt, excludedVoiceTextHashes };
 }
