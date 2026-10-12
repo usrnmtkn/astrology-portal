@@ -28,7 +28,7 @@ phase, void, season-marker and weekly Moon rows. Those rows are removed from the
 larger deferred files; the full loader includes the same partition for personal
 routes. Calendar's placement loader omits personalized house prose. The shared
 loader coalesces imports, retries failures, and preserves live overrides when a
-local import finishes later. Immutable lunation import checks run during manifest
+local import finishes later. Immutable startup and lunation import checks run during manifest
 generation; runtime review and publication checks remain active.
 
 The browser gate rejects natal/transit/house content downloads on Calendar, and

@@ -733,6 +733,166 @@ const initialReaderRows = {
     ...placementInterimRows.templates
   ], true)
 };
+// Check the exact immutable startup projection during generation and --check.
+const latestProjectedRows = rows => [...new Map(rows.map(row => [row.contentKey, row])).values()];
+const approvedInitialAuthoredCards = latestProjectedRows([...skyAuthoredCards.authoredCards, ...initialReaderRows.authoredCards]);
+const approvedInitialHookRows = latestProjectedRows([...skyCoreRows.hookRows, ...initialReaderRows.hookRows]);
+const approvedInitialVocabularyRows = latestProjectedRows([...skyCoreRows.vocabularyRows, ...initialReaderRows.vocabularyRows]);
+const skyArticleV1 = {
+  authoredCards: approvedInitialAuthoredCards.filter((row) => row.contentKey.startsWith("sky-article/")),
+  hookRows: approvedInitialHookRows.filter((row) => /^fallback-hook\/sky-placement\/[^/]+$/u.test(row.contentKey)),
+  vocabularyRows: approvedInitialVocabularyRows.filter((row) => row.contentKey.startsWith("fallback-vocab/sky-"))
+};
+const skyAspectPhrasebookV1 = {
+  hookRows: approvedInitialHookRows.filter((row) => [
+    "fallback-hook/sky-aspect-pair/",
+    "fallback-hook/sky-aspect-exact/",
+    "fallback-hook/sky-placement-sign/",
+    "fallback-hook/sky-aspect-sign/"
+  ].some((prefix) => row.contentKey.startsWith(prefix)))
+};
+const approvedInitialRulerRows = approvedInitialHookRows.filter((row) => (
+  row.contentKey.startsWith("fallback-hook/lunation-ruler-house/")
+));
+if (
+  approvedInitialRulerRows.length !== 1
+  || approvedInitialRulerRows[0]?.contentKey !== "fallback-hook/lunation-ruler-house/11"
+  || approvedInitialRulerRows[0]?.review_status !== "approved"
+  || !approvedInitialRulerRows[0]?.body_you?.trim()
+) {
+  throw new Error("Approved initial projection must contain only the complete house-11 lunation ruler row.");
+}
+
+function assertSkyArticleV1Import(
+  registry
+) {
+  const articles = registry.authoredCards;
+  const hookRows = registry.hookRows;
+  const vocabularyRows = registry.vocabularyRows;
+  const articleKeys = new Set(articles.map((row) => row.contentKey));
+  const vocabularyKeys = new Set(vocabularyRows.map((row) => row.contentKey));
+
+  if (articles.length !== articleKeys.size) {
+    throw new Error("Sky article registry contains duplicate article keys.");
+  }
+  if (
+    vocabularyRows.length !== 25
+    || vocabularyKeys.size !== 25
+    || vocabularyRows.some((row) => !row.contentKey.startsWith("fallback-vocab/sky-"))
+  ) {
+    throw new Error("Sky article registry must contain exactly 25 surface-scoped vocabulary rows.");
+  }
+  if (
+    hookRows.length !== 14
+    || hookRows.some((row) => row.review_status !== "approved")
+    || vocabularyRows.some((row) => row.review_status !== "approved")
+  ) {
+    throw new Error("Sky V3 frames and surface-scoped vocabulary must be owner-approved.");
+  }
+  const literalSkyRowDate = /\b(?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:t(?:ember)?)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?|\d{4})\b/u;
+  for (const row of hookRows) {
+    if (typeof row.body_you !== "string" || literalSkyRowDate.test(row.body_you)) {
+      throw new Error(`Sky placement V3 row contains a literal date: ${row.contentKey}`);
+    }
+  }
+  if (vocabularyRows.some((row) => (
+    row.contentKey.startsWith("fallback-vocab/sign-style/")
+    || row.contentKey.startsWith("fallback-vocab/planet-function/")
+  ))) {
+    throw new Error("Sky article imports may not modify shared sign-style or planet-function banks.");
+  }
+  for (const article of articles) {
+    const validFrom = typeof article.valid_from === "string" ? article.valid_from : "";
+    const validTo = typeof article.valid_to === "string" ? article.valid_to : "";
+    if (
+      !/^sky-article\/[a-z-]+\/[a-z-]+\/\d{4}$/u.test(article.contentKey)
+      || !/^\d{4}-\d{2}-\d{2}$/u.test(validFrom)
+      || !/^\d{4}-\d{2}-\d{2}$/u.test(validTo)
+      || validFrom > validTo
+    ) {
+      throw new Error(`Invalid sky article registry row: ${article.contentKey}`);
+    }
+  }
+  const saturnArchive = articles.find((row) => row.contentKey === "sky-article/saturn/pisces/2023");
+  const saturnAries = articles.find((row) => row.contentKey === "sky-article/saturn/aries/2026");
+  if (
+    !saturnArchive
+    || saturnArchive.archive_only !== true
+    || !Array.isArray(saturnArchive.key_dates)
+    || saturnArchive.key_dates.length !== 9
+  ) {
+    throw new Error("Saturn in Pisces must import as the nine-date archive calibration article.");
+  }
+  if (
+    !saturnAries
+    || saturnAries.review_status !== "approved"
+    || saturnAries.article_variant !== "retrograde"
+    || saturnAries.key_dates_mode !== "engine"
+  ) {
+    throw new Error("Saturn in Aries must be an approved, engine-dated retrograde article.");
+  }
+}
+
+assertSkyArticleV1Import(skyArticleV1);
+
+function assertSkyAspectPhrasebookV1Import(phrasebook) {
+  const rows = phrasebook.hookRows;
+  const expectedFamilies = new Map([
+    ["fallback-hook/sky-aspect-pair/", 30],
+    ["fallback-hook/sky-aspect-exact/", 4],
+    ["fallback-hook/sky-aspect-sign/", 78]
+  ]);
+
+  if (
+    rows.length !== 112
+    || rows.some((row) => !["reviewed", "approved"].includes(String(row.review_status ?? "")))
+  ) {
+    throw new Error("Initial approved projection must contain exactly 112 eager Sky aspect phrasebook rows.");
+  }
+
+  for (const [prefix, expected] of expectedFamilies) {
+    const count = rows.filter((row) => row.contentKey.startsWith(prefix)).length;
+
+    if (count !== expected) {
+      throw new Error(`Sky aspect phrasebook ${prefix} coverage mismatch: ${count}/${expected}.`);
+    }
+  }
+}
+
+assertSkyAspectPhrasebookV1Import(skyAspectPhrasebookV1);
+
+
+// Validate the immutable timing-card projection at generation/check time.
+// Live reader eligibility and publication identity remain runtime checks.
+const timingEventReaderCopyV2 = {
+  version: "timing-event-reader-copy-v2",
+  authoredCards: approvedInitialAuthoredCards.filter((row) => (
+    Array.isArray(row.source_keys)
+    && row.source_keys.includes("owner/timing-event-reader-copy-v2-approved")
+  ))
+};
+
+function assertTimingEventReaderCopyV2Import(source) {
+  const cards = source.authoredCards;
+  const keys = new Set(cards.map((card) => card.contentKey));
+
+  if (
+    source.version !== "timing-event-reader-copy-v2"
+    || cards.length !== 4
+    || keys.size !== 4
+    || cards.some((card) => card.review_status !== "approved")
+    || cards.some((card) => card.content_role !== "full_copy")
+    || cards.some((card) => !card.owner_authored)
+    || cards.some((card) => typeof card.headline !== "string" || !card.headline.trim())
+    || cards.some((card) => typeof card.body !== "string" || !card.body.includes("\n\n"))
+    || cards.some((card) => !Array.isArray(card.source_keys) || !card.source_keys.includes("owner/timing-event-reader-copy-v2-approved"))
+  ) {
+    throw new Error("Timing-event reader copy V2 must contain four unique, owner-approved exact cards.");
+  }
+}
+
+assertTimingEventReaderCopyV2Import(timingEventReaderCopyV2);
+
 const lunationBookReaderRows = {
   schema: "tldrastro-approved-lunation-book-reader/v1",
   packageVersion: PACKAGE_VERSION,
