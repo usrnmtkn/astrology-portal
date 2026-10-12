@@ -113,7 +113,7 @@ for(const [width,theme] of [[390,'light'],[1440,'dark']] as const){
    const contextSaved=(await call({method:'rows'})).find((r:any)=>r.id===contextRow.id);
    expect(contextSaved.sections).toEqual(contextRow.sections);expect(contextSaved.source_snapshot).toEqual(contextRow.source_snapshot);
    expect((await call({method:'writer-state'})).calls).toBe(0);
-   for(const sign of ['taurus','libra','sagittarius']){
+   for(const sign of ['aries','taurus','libra','sagittarius']){
     await page.goto(`/#horoscopes?edition=${contextRow.id}&period=weekly&sign=${sign}`);
     const article=page.getByRole('article',{name:`${sign[0].toUpperCase()+sign.slice(1)} horoscope`,exact:true});
     const exact=contextRow.sections.horoscopeEdition.passages.find((p:any)=>p.sign===sign).body;

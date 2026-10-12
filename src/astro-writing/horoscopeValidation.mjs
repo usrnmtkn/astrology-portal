@@ -1,4 +1,4 @@
-import {resolveHoroscopeClaimSubjects,horoscopePlacementClaims} from './horoscopeClaimContext.mjs';
+import {resolveHoroscopeClaimSubjects,horoscopePlacementClaims,horoscopeHouseIngressTargets} from './horoscopeClaimContext.mjs';
 import {horoscopeAspectFindings,horoscopeAspectHouseSubjects,horoscopePersonalSignClaims} from './horoscopeAspectClaims.mjs';
 import {horoscopePunctuationFindings,horoscopeVocabularyFindings} from './horoscopeEditorialConstraints.mjs';
 import {seasonalDateFindings} from './horoscopeSeasonalDates.mjs';
@@ -8,7 +8,7 @@ import {HOROSCOPE_SIGNS} from '../../apps/web/src/content/horoscopeEditions.mjs'
 import {horoscopeEventsInWindow,horoscopeEventPlanet,horoscopeHouse} from './horoscopeDevelopments.mjs';
 import {horoscopePhasePattern,normalizeHoroscopePhase,horoscopeLunationPhase as lunationPhase} from './horoscopeLunationClaims.mjs';
 
-export const horoscopeValidationVersion='horoscope-facts/v11';
+export const horoscopeValidationVersion='horoscope-facts/v12';
 const bodies='Sun|Moon|Mercury|Venus|Mars|Jupiter|Saturn|Uranus|Neptune|Pluto';
 const signs=HOROSCOPE_SIGNS.join('|');
 const ordinals=['first','second','third','fourth','fifth','sixth','seventh','eighth','ninth','tenth','eleventh','twelfth'];
@@ -68,13 +68,15 @@ export function validateHoroscopeReading(passage,brief,{ownerCorrections=[]}={})
       const body=subject[2].toLowerCase(),phase=normalizeHoroscopePhase(subject[1]);
       const nextSubject=subjects.find(s=>s.index>subject.index)?.index??sentence.length;
       const subjectClause=sentence.slice(subject.index,nextSubject);
+      const houseIngress=horoscopeHouseIngressTargets(subjectClause).has(match.index-subject.index);
       const placementClaims=horoscopePlacementClaims(subjectClause,passage.sign);
       const placedBeforeHouse=placementClaims.filter(c=>c.end<=match.index-subject.index).at(-1);
       const placementClaim=placedBeforeHouse??placementClaims.find(c=>!c.ingress);
-      const statedSign=subject[0].match(new RegExp(`^(${signs})\\b`,'iu'))?.[1]?.toLowerCase()??placementClaim?.sign;
+      const statedSign=houseIngress?undefined:subject[0].match(new RegExp(`^(${signs})\\b`,'iu'))?.[1]?.toLowerCase()??placementClaim?.sign;
       let placements=phase ? events.filter(e=>e.type==='lunation'&&lunationPhase(e)===phase)
         : brief.positions.filter(p=>p.planet.toLowerCase()===body);
-      if(statedSign&&!phase){
+      if(houseIngress)placements=events.filter(e=>e.type==='ingress'&&horoscopeEventPlanet(e)===body);
+      else if(statedSign&&!phase){
         const ingresses=events.filter(e=>e.type==='ingress'&&horoscopeEventPlanet(e)===body);
         placements=placementClaim?.ingress?ingresses:[...placements,...ingresses];
       }

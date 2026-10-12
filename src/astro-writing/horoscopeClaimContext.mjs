@@ -26,3 +26,11 @@ export function horoscopePlacementClaims(clause,rising) {
   sign:m.groups.sign.toLowerCase()==='your sign'?rising:m.groups.sign.toLowerCase(),personal:m.groups.sign.toLowerCase()==='your sign',
   ingress:!['in','through'].includes(m.groups.relation.toLowerCase())}));
 }
+
+// A destination may name only its whole-sign house. Bind the ingress to that
+// exact house token; it must not change checks of earlier houses in the clause.
+export function horoscopeHouseIngressTargets(clause) {
+ const ordinal='\\d{1,2}(?:st|nd|rd|th)|first|second|third|fourth|fifth|sixth|seventh|eighth|ninth|tenth|eleventh|twelfth';
+ const pattern=new RegExp(`\\b${ingress}\\s+(?:your|the)\\s+(?<house>${ordinal})\\s+(?:whole[ -]sign\\s+)?house\\b`,'giu');
+ return new Set([...clause.matchAll(pattern)].map(m=>m.index+m[0].lastIndexOf(m.groups.house)));
+}
