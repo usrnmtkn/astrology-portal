@@ -2,7 +2,7 @@ import type {IncomingMessage,ServerResponse} from 'node:http';
 import {createHash,randomUUID} from 'node:crypto';
 import {waitUntil} from '@vercel/functions';
 import {horoscopeEditorPayload} from '../_lib/horoscope-editor-payload.js';
-import {horoscopePendingReadings} from '../../src/astro-writing/horoscopeRecovery.mjs';
+import {horoscopePendingReadings,canRecoverHoroscopeReview} from '../../src/astro-writing/horoscopeRecovery.mjs';
 import {getContentAdminPrincipal,requireContentAdmin} from '../_lib/admin-auth.js';
 import {loadLocalWebEnv} from '../_lib/local-env.js';
 import {AdminHttpError,adminFetchJson,adminStorageRows,readAdminJsonBody,sendAdminJson,sendAdminMethodNotAllowed,adminErrorStatus} from '../_lib/admin-http.js';
@@ -58,7 +58,7 @@ export async function runHoroscopeWriting(input:Record<string,any>,actor:string,
   const invocationDeadline=deadline;
   const reply=(status:number,payload:any)=>({status,payload});
   try {
-    if(!['prepare','generate','continue','poll','release','reject','diagnose','inspect','start-batch','pause-batch','resume-batch','evidence','validate-publication'].includes(input.action)||typeof input.id!=='string'||!input.id
+    if(!['prepare','generate','continue','poll','recover-review','release','reject','diagnose','inspect','start-batch','pause-batch','resume-batch','evidence','validate-publication'].includes(input.action)||typeof input.id!=='string'||!input.id
       ||typeof input.expectedUpdatedAt!=='string'||Object.keys(input).some(k=>!['action','id','expectedUpdatedAt','sign','approvedPlanHash','acknowledgeUnknownOutcome','writerChoice'].includes(k)))throw new AdminHttpError(400,'Choose a saved edition and a writing action.');
     if(input.writerChoice!==undefined&&(input.action!=='prepare'||!horoscopeWriterOptions(process.env).some((writer:any)=>writer.id===input.writerChoice)))throw new AdminHttpError(400,'Choose a supported writing model while preparing the plan.');
     const {url,headers}=studioStorage();
@@ -89,6 +89,16 @@ export async function runHoroscopeWriting(input:Record<string,any>,actor:string,
     if(batchId&&input.action==='generate'&&(!batch.signs.includes(input.sign)||batch.attempted.includes(input.sign)||input.approvedPlanHash!==batch.planHash))throw new AdminHttpError(409,'This reading is outside the remaining batch approval.');
     if(!batchId&&batch?.status==='running'&&['generate','continue','reject','release'].includes(input.action))throw new AdminHttpError(409,'Pause the saved batch before changing its readings.');
     if(input.action==='evidence')return reply(200,{ok:true,receipt:row.source_snapshot?.horoscopeGeneration?.readings?.[input.sign]?.ownerEvidence??row.source_snapshot?.horoscopeGeneration?.candidateHolds?.[input.sign]?.receipt?.ownerEvidence??null});
+    if(input.action==='recover-review'){
+      const held=row.source_snapshot?.horoscopeGeneration?.candidateHolds?.[input.sign];
+      if(operation||batch?.status==='running')throw new AdminHttpError(409,'Pause generation and finish its current request before retrieving a held prose review.');
+      if(!canRecoverHoroscopeReview(held)||!isHoroscopeReview(held.operation)||held.operation.sign!==input.sign)throw new AdminHttpError(409,'This reading has no completed prose review to retrieve. Its saved draft is kept.');
+      const passage=row.sections.horoscopeEdition.passages.find((p:any)=>p.sign===input.sign);
+      if(!passage||passage.headline.trim()||passage.body.trim())throw new AdminHttpError(409,'This reading has newer saved wording. Its previous prose review cannot replace it.');
+      if(!process.env.OPENAI_API_KEY)throw new AdminHttpError(503,'The prose reviewer is not connected. Its saved draft is kept.');
+      const result=await horoscopeRhetoricalOperation({action:input.action,row,persist,apiKey:process.env.OPENAI_API_KEY,recoverSign:input.sign});
+      return reply(result.status,result.payload);
+    }
     if(['pause-batch','resume-batch'].includes(input.action)){
       if(!batch||row.sections.horoscopeEdition.window.period!=='weekly')throw new AdminHttpError(409,'No saved Weekly batch is available.');
       if(input.action==='resume-batch'&&batch.status!=='paused')throw new AdminHttpError(409,'Review a fresh plan to start another batch.');

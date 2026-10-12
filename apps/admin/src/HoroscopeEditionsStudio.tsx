@@ -13,7 +13,7 @@ import {HoroscopeLocation} from '../../../src/shared/features/horoscopes/Horosco
 import {browserTimeZone} from '../../web/src/services/timezones';
 import type {LocationInput} from '../../../src/shared/types';
 import {horoscopePunctuationFindings,horoscopeVocabularyFindings} from '../../../src/astro-writing/horoscopeEditorialConstraints.mjs';
-import {horoscopePendingReadings} from '../../../src/astro-writing/horoscopeRecovery.mjs';
+import {horoscopePendingReadings,canRecoverHoroscopeReview} from '../../../src/astro-writing/horoscopeRecovery.mjs';
 import {HOROSCOPE_WRITERS} from '../../../src/astro-writing/horoscopeWriterCatalog.mjs';
 const HoroscopeGenerationDetails=lazy(()=>import('./HoroscopeWritingStudio').then(module=>({default:module.HoroscopeGenerationDetails})));
 const HoroscopePublicationReview=lazy(()=>import('./HoroscopePublicationReview'));
@@ -365,6 +365,15 @@ export default function HoroscopeEditionsStudio({secret,requestedEditionId}:{sec
       retain(data.rows[0]);setPlanApproved(false);setMessage(action==='pause-batch'?'Batch paused. A request already sent can still finish.':'The saved batch will continue through the remaining signs. You can leave this page.');
     }catch(reason){await recoverActionConflict(reason);}finally{setBusy(false);}
   }
+  async function recoverProseReview(heldSign:string){
+    if(!saved||dirty||busy)return;
+    const controller=beginOperation();setBusy(true);setError('');setMessage('Retrieving the saved prose review. No new AI request is being made.');
+    try{
+      const data=await request(secret,'/api/admin/horoscope-writing',{action:'recover-review',id:saved.id,expectedUpdatedAt:saved.updated_at,sign:heldSign},'POST',controller.signal);
+      if(data.rows?.[0]?.id!==saved.id)throw new Error('The saved prose review could not be confirmed.');
+      await showRecovered(data.rows[0],controller);
+    }catch(reason){recoveryUnavailable(reason,controller);}finally{endOperation(controller);}
+  }
   async function generate(){
     if(saved?.sections.horoscopeEdition.window.period==='weekly'&&(planApproved||!saved.source_snapshot?.horoscopeGeneration?.active)){
       if(saved.source_snapshot?.horoscopeGeneration?.batch?.status==='paused')return batchAction('resume-batch');
@@ -530,6 +539,7 @@ export default function HoroscopeEditionsStudio({secret,requestedEditionId}:{sec
     {candidateHolds.map(([heldSign,held])=><section key={heldSign} aria-label={`${horoscopeSignLabel(heldSign)} prose review`}>
       <h3>{horoscopeSignLabel(heldSign)} {held.code==='rhetorical_pattern'?'needs a prose edit':'prose check did not finish'}</h3><p>{held.message}</p>
       {(held.review?.rhetoric?.findings??[]).map((finding:any,index:number)=><div key={index}><strong>{finding.label}</strong><blockquote>{finding.quote}</blockquote><p>{finding.reason} {finding.readerConsequence}</p></div>)}
+      {canRecoverHoroscopeReview(held)&&<StudioButton disabled={locked||Boolean(active)} onClick={()=>void recoverProseReview(heldSign)}>Check saved {horoscopeSignLabel(heldSign)} prose review</StudioButton>}
       <StudioButton disabled={locked} onClick={()=>editHeldCandidate(heldSign,held)}>Edit saved {horoscopeSignLabel(heldSign)} draft</StudioButton>
       <StudioButton disabled={locked} onClick={()=>void reject(heldSign)}>Reject {horoscopeSignLabel(heldSign)} draft</StudioButton>
     </section>)}

@@ -1,7 +1,7 @@
 import {randomUUID} from 'node:crypto';
 import responses from '../../src/astro-writing/openAIResponses.cjs';
 import provider from '../../src/astro-writing/offlineProviderConfig.cjs';
-import {supportedHoroscopeReview,horoscopeReviewPolicy,HOROSCOPE_REVIEW_SCHEMA,HOROSCOPE_REVIEW_INSTRUCTIONS,horoscopeReviewInput,horoscopeReviewHash,readHoroscopeReview} from '../../src/astro-writing/horoscopeRhetoricalReview.mjs';
+import {supportedHoroscopeReview,horoscopeReviewPolicy,HOROSCOPE_REVIEW_SCHEMA,HOROSCOPE_REVIEW_INSTRUCTIONS,horoscopeReviewInput,horoscopeReviewHash,readHoroscopeReview,horoscopeReviewValidationCode} from '../../src/astro-writing/horoscopeRhetoricalReview.mjs';
 import {HOROSCOPE_STARTUP_DEADLINE_MS} from '../../src/astro-writing/horoscopeRecovery.mjs';
 import {horoscopeEditionBody} from '../../apps/web/src/content/horoscopeEditions.mjs';
 import {AdminHttpError} from './admin-http.js';
@@ -25,13 +25,19 @@ export async function queueHoroscopeReview({row,persist,operation,candidate,rece
 
 /** One saved review request per candidate. No rewriting, automatic retries, or
  * dispatch from poll. A held candidate does not occupy the batch's active slot. */
-export async function horoscopeRhetoricalOperation({action,row:initialRow,persist,apiKey}:any){
-  let row=initialRow,operation=row.source_snapshot.horoscopeGeneration.active;
+export async function horoscopeRhetoricalOperation({action,row:initialRow,persist,apiKey,recoverSign}:any){
+  let row=initialRow,operation=recoverSign?row.source_snapshot.horoscopeGeneration.candidateHolds[recoverSign].operation:row.source_snapshot.horoscopeGeneration.active;
   if(horoscopeReviewHash(operation.candidate)!==operation.candidateHash)throw new AdminHttpError(409,'The saved prose check no longer matches its draft. Reopen the edition before continuing.');
+  if(recoverSign&&horoscopeReviewHash(row.source_snapshot.horoscopeGeneration.candidateHolds[recoverSign].candidate)!==operation.candidateHash)throw new AdminHttpError(409,'The saved draft changed. Its previous prose check cannot be applied.');
   const pending=()=>({status:202,payload:{ok:true,rows:[row],pending:true}});
   const save=async()=>{row=await persist({source_snapshot:{...row.source_snapshot,horoscopeGeneration:{...row.source_snapshot.horoscopeGeneration,active:operation}}});};
   const hold=async(code:string,message:string,review:any=null)=>{
     const generation=row.source_snapshot.horoscopeGeneration;
+    const previous=recoverSign&&generation.candidateHolds[recoverSign];
+    if(previous?.code===code&&code==='rhetorical_review_unavailable'
+      &&previous.review?.diagnostic?.outputHash===review?.diagnostic?.outputHash
+      &&previous.review?.diagnostic?.validationCode===review?.diagnostic?.validationCode)
+      return {status:200,payload:{ok:true,rows:[row],pending:false,held:true}};
     const failure={code,message,operation,candidate:operation.candidate,receipt:operation.receipt,review,failedAt:new Date().toISOString()};
     row=await persist({source_snapshot:{...row.source_snapshot,horoscopeGeneration:{...generation,active:null,lastError:failure,
       candidateHolds:{...generation.candidateHolds,[operation.sign]:failure},failures:[...(generation.failures??[]),failure]}}});
@@ -39,19 +45,30 @@ export async function horoscopeRhetoricalOperation({action,row:initialRow,persis
   };
   const complete=async(payload:any)=>{
     let verdict;
-    try{verdict=readHoroscopeReview(payload,operation.candidate);}catch{
-      return hold('rhetorical_review_unavailable','The prose check did not return a complete, usable review. The original draft is kept. Edit or reject this reading; the other readings can continue.',{diagnostic:horoscopeProviderDiagnostic(payload)});
+    try{verdict=readHoroscopeReview(payload,operation.candidate);}catch(error){
+      const message=payload?.status==='completed'
+        ?'The prose check could not be read. Your draft is saved. Check the saved prose review, or open the draft to edit it.'
+        :'The prose check did not finish. Your draft is saved. Open it to edit or reject this reading.';
+      return hold('rhetorical_review_unavailable',message,{diagnostic:{...horoscopeProviderDiagnostic(payload),validationCode:horoscopeReviewValidationCode(error)}});
     }
     const review={version:operation.workflow,...verdict,candidateHash:operation.candidateHash,evidenceHash:operation.evidenceHash,
       requestHash:operation.requestHash,responseId:operation.responseId,config:operation.config,usage:payload.usage??null,completedAt:new Date().toISOString(),ownerApproved:false};
     if(verdict.rhetoricalBlocked)return hold('rhetorical_pattern','The prose check found manufactured rhetorical polish. Review the quoted findings, then edit or reject this reading. The other readings can continue.',review);
     const edition={...row.sections.horoscopeEdition,passages:row.sections.horoscopeEdition.passages.map((p:any)=>p.sign===operation.sign?{...p,...operation.candidate}:p)};
     const generation=row.source_snapshot.horoscopeGeneration;
+    const candidateHolds={...generation.candidateHolds};delete candidateHolds[operation.sign];
     const patch={status:'DRAFT',sections:{...row.sections,horoscopeEdition:edition},body:horoscopeEditionBody(edition),source_snapshot:{...row.source_snapshot,
-      horoscopeGeneration:{...generation,active:null,lastError:null,readings:{...generation.readings,[operation.sign]:{...operation.receipt,rhetoricalReview:review}}}}};
+      horoscopeGeneration:{...generation,active:null,lastError:recoverSign&&generation.lastError?.operation?.id!==operation.id?generation.lastError:null,...(recoverSign?{candidateHolds}:{}),readings:{...generation.readings,[operation.sign]:{...operation.receipt,rhetoricalReview:review}}}}};
     assertHoroscopeRow({...row,...patch});row=await persist(patch);
     return {status:200,payload:{ok:true,rows:[row],pending:false}};
   };
+  if(recoverSign){
+    const response=await responses.storedWritingResponse({apiKey,responseId:operation.responseId});
+    if(!response.ok)throw new AdminHttpError(503,'The saved prose review could not be retrieved. Your draft is kept; no new request was made.');
+    const payload=await response.json();
+    if(payload.id!==operation.responseId||payload.status!=='completed')throw new AdminHttpError(503,'The saved prose review is not complete. Your draft is kept; no new request was made.');
+    return complete(payload);
+  }
   if(action==='release')return hold('rhetorical_review_interrupted','The prose check was interrupted. Its original draft is kept for editing or rejection; it will not be generated again automatically.');
   if(action==='continue'){
     if(operation.state!=='ready'||operation.responseId||operation.requestHash)throw new AdminHttpError(409,'This prose check has already started. Check saved progress to retrieve it.');

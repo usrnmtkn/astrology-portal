@@ -2,6 +2,15 @@
 // fenced by the row version before it can dispatch or save a response.
 export const HOROSCOPE_STARTUP_DEADLINE_MS = 310000;
 
+// Retrieval of a completed, stored response cannot create another paid request.
+// Semantic failures and requests without a confirmed result remain held.
+export function canRecoverHoroscopeReview(held) {
+  return held?.code === 'rhetorical_review_unavailable'
+    && held.review?.diagnostic?.status === 'completed'
+    && held.operation?.phase === 'review'
+    && /^resp_[A-Za-z0-9_-]+$/u.test(held.operation?.responseId ?? '');
+}
+
 export function horoscopeStartupRecovery(operation, now = Date.now()) {
   if (!operation || operation.workflow || operation.responseId) return null;
   const started = Date.parse(operation.startedAt);

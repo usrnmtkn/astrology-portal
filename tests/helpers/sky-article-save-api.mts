@@ -260,6 +260,10 @@ if (process.send) process.on('message', async ({ id, method, body, url, headers 
     const res:any={statusCode:200,setHeader(){},end(raw:string){this.payload=JSON.parse(raw);}};
     await handler(req,res);process.send!({id,result:{status:res.statusCode,payload:res.payload}});return;
   }
+  if(method==='completed-review-hold'){
+    const {seedCompletedReviewHold}=await import('./horoscope-review-recovery-fixture.mts');
+    process.send!({id,result:await seedCompletedReviewHold(store,writerFixture)});return;
+  }
   if (method === 'writer-state') {
     for(const key of ['pendingPolls','terminalNext','unknownNext','nextResult','nextReviewResult','startResult','rejectSeasonalVoice'] as const)if(body?.[key]!==undefined)(writerFixture as any)[key]=body[key];
     process.send!({id,result:{calls:writerFixture.calls,reviewCalls:writerFixture.reviewCalls,polls:writerFixture.polls,responseIds:[...writerFixture.requests.keys()]}});return;
