@@ -1,4 +1,5 @@
 import {isDeepStrictEqual} from 'node:util';
+import { csvChanges, csvDraftPatch, csvRecordForRow, type CsvRecord } from '../../apps/admin/src/studioCsv.js';
 import {persistWeeklyHoroscope} from '../_lib/horoscope-storage-confirmation.js';
 import {horoscopeEditorPayload} from '../_lib/horoscope-editor-payload.js';
 import {decodeWeeklyHistoryRow,encodeWeeklyHistory} from '../_lib/horoscope-history-storage.js';
@@ -107,8 +108,10 @@ type GeneratedContentWriteBody = {
   evergreenAt?: string | null;
   evergreenBy?: string | null;
   expectedUpdatedAt?: string;
+  csvRecord?: CsvRecord;
   ownerAction?:
     | "approve-and-schedule"
+    | "import-csv-draft"
     | "approve-package-revision"
     | "approve-sky-article-edition"
     | "save-sky-article-edition-revision"
@@ -1213,11 +1216,19 @@ async function readJsonBody(req: IncomingMessage) {
 }
 
 const generatedContentOwnerActions = new Set([
+  "import-csv-draft",
   "approve-and-schedule", "approve-package-revision", "approve-sky-article-edition",
   "save-sky-article-edition-revision", "publish-sky-article-edition-revision"
 ]);
 
 function validateWriteBody(body: Record<string, unknown>) {
+  if (body.ownerAction === 'import-csv-draft') {
+    if (Object.keys(body).some(key => !['id', 'expectedUpdatedAt', 'ownerAction', 'csvRecord'].includes(key))
+      || !isRecord(body.csvRecord) || Object.values(body.csvRecord).some(value => typeof value !== 'string')
+      || JSON.stringify(body.csvRecord).length > 2_000_000) {
+      throw new GeneratedContentRequestError('CSV imports accept only an exported row and its saved identity.');
+    }
+  } else if (body.csvRecord !== undefined) throw new GeneratedContentRequestError('CSV text requires the import-csv-draft action.');
   if (String(body.contentKey ?? "").startsWith("studio-lunation/")) throw new GeneratedContentRequestError("Manage dated drafts in Calendar Write-ups → New & Full Moons & Eclipses.");
   if (String(body.contentKey ?? "").startsWith("studio-writing-profile/")) throw new GeneratedContentRequestError("Manage writing profiles in their Studio writing workspace.");
   if (String(body.contentKey ?? "").startsWith(libs().STUDIO_VARIABLE_PREFIX)) throw new GeneratedContentRequestError("Manage this definition in Variables.");
@@ -2391,6 +2402,27 @@ async function updateGeneratedContent(req: IncomingMessage) {
   }
   if (body.expectedUpdatedAt !== existing.updated_at) {
     throw new GeneratedContentRequestError("This content changed after the editor was opened. Reload the row before saving so a newer edit is not overwritten.", 409);
+  }
+  if (body.ownerAction === 'import-csv-draft') {
+    const imported = body.csvRecord!;
+    let copyPatch: Record<string, any>;
+    try {
+      // Recompute fields and differences from the stored document, never client metadata.
+      csvChanges(existing, imported);
+      copyPatch = csvDraftPatch(existing, imported);
+    } catch (error) { throw new GeneratedContentRequestError((error as Error).message, 409); }
+    const snapshot = existing.source_snapshot ?? {};
+    const editorialImport = isRecord(snapshot.editorialImport) ? snapshot.editorialImport : {};
+    const previousImports = Array.isArray(editorialImport.csvHistory) ? editorialImport.csvHistory : [];
+    copyPatch.sourceSnapshot = { ...snapshot, editorialImport: { ...editorialImport, csvHistory: [...previousImports, {
+      schema: 'content-studio-csv-import/v1', importedAt: new Date().toISOString(),
+      previousStatus: existing.status, original: csvRecordForRow(existing), imported,
+      sourceSha256: createHash('sha256').update(JSON.stringify(imported)).digest('hex')
+    }] } };
+    delete body.ownerAction;
+    delete body.csvRecord;
+    Object.assign(body, copyPatch);
+    validateWriteBody(body);
   }
   if (existing.content_key.startsWith('horoscope/') && (existing.source_snapshot?.horoscopeGeneration?.active||existing.source_snapshot?.horoscopeGeneration?.batch?.status==='running')) {
     throw new GeneratedContentRequestError('A horoscope reading is running. Resume generation before editing or publishing this edition.', 409);

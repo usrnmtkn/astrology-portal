@@ -95,6 +95,93 @@ between lookup and write. The real API handler handles requests. Fixtures use
 reserved `.invalid` origins, reassert test credentials after local-env loading,
 and reject unexpected storage origins. Do not point these fixtures at production.
 
+## CSV editing verification
+
+`npm run test:studio-csv` runs parser and actual-handler regressions, and is part
+of the full API gate. It covers complete Unicode/multiline text, formula-safe
+round trips, immutable identities, duplicate rows/columns, structured article
+fields, package proposals, clearing optional text, default draft saves, original
+text and hash receipts, reader-history privacy, authorization and storage races.
+It also covers yes/no/blank and legacy publication intent, separate versioned
+publication, exact reader retrieval, package receipts, and refusal to publish a
+template while retaining the saved draft.
+
+`tests/visual/studio-csv.spec.ts` exercises export across all pages, selected-row
+export, unchanged import, mixed draft/publication preview, clear-field preview,
+save/publish/reload and stale-file rejection at desktop/mobile widths in both
+themes. Its batch-conflict
+case checks the live-content notice, confirmed partial saves and refusal to retry
+uncertain writes. Its empty/error case checks disabled empty export, no partial
+download after a failed document read, invalid-file rejection, and recovery. All
+browser writes use the real handlers against an isolated fixture store.
+Additional browser cases cover a separate package revision, a publication gate
+refusal, a newer edit between save and publication, and a lost response after a
+confirmed storage commit. Counts include only confirmed publications and the
+batch stops without replaying writes or touching later rows.
+
+CSV actions use `PATCH /api/admin/generated-content` with the exported identity,
+version and text cells. The handler re-derives the editable fields from storage,
+retains import receipts under `source_snapshot.editorialImport.csvHistory`, and
+then applies the normal draft save path. The CSV's `publish` cell is retained as
+intent only; it cannot change that API action into publication. After the owner
+chooses **Save & publish**, the browser submits the saved row's exact ID/version
+to the existing package approval action or ordinary publication update. It
+accepts no calculated metadata. Generic editor/publication contracts continue
+to apply, including pending package-publication receipt recovery.
+
+Local acceptance on October 12, 2026 uses the
+`feat/content-studio-csv` implementation based on
+`3c9a441f8ea9fd3904a419bf6e337898ac688b3b`, matching refreshed `origin/main`.
+The CSV source fingerprint is
+`47df2428edbf1a136c5ad548c20c104398cd923830af9cacc65ed0c60736492c`:
+SHA-256 of sorted modified/new code and test paths, each followed by a NUL,
+its complete bytes and another NUL; documentation is excluded.
+
+| Acceptance criterion | Local result and evidence |
+| --- | --- |
+| Discover CSV actions; export selected/all filtered pages | Passed: ten Chromium scenarios, including 31 rows across pages and single-row selection. |
+| Preview before writing; preserve full text and explicit clearing | Passed: eleven parser/actual-handler tests and browser save/reload checks. |
+| Explicit publication intent and reader delivery | Passed: defaults and legacy files stay drafts; mixed yes/no batches, unchanged draft publication, versioned package proposals and exact public reader responses. |
+| Reject stale writes and stop partial batches | Passed: API storage races, browser save conflict, publication refusal, save-to-publish race and lost response after commit; confirmed saves/publications remain distinguishable and later rows untouched. |
+| Empty, failed-read and invalid-file recovery | Passed: browser error scenario; no partial download or content writes. |
+| Desktop/mobile and light/dark layouts | Passed: four rendered variants, correct comparison columns, body typography, preserved line breaks and no horizontal overflow. |
+| Local build and design constraints | Passed: admin/web builds, admin typecheck, CSS/token audits and admin bundle budget. |
+| Reader-copy and privacy boundaries | Passed: canonical and isolated saved-row audits, reader-copy regression and protected-policy scans. |
+| Required complete API gate | Passed: `npm run test:content-studio-api`, using native ARM Node and the existing protected local report evidence; no assertions waived. |
+
+These checks use isolated synthetic storage, not owner-content mutations.
+Native Excel/Numbers editing remains unverified. Exact commit, CI, preview and
+production verification results belong to the release PR.
+
+### CSV release bundle measurement
+
+Independent `npm ci` builds of main `e4911325f` and CSV head `51d76b477`
+with the same visual-smoke Supabase placeholders measure aggregate JavaScript
+at 3,564,721 and 3,571,236 gzip bytes (+6,515). The separate CSV chunk is 5,682
+bytes. Aggregate CSS grows from 117,833 to 117,922 (+89), and the shared deferred
+Studio/Memory stylesheet grows from 29,572 to 29,661 (+89). App boot measures
+466,384 versus 466,378 and reader boot 520,724 versus 520,718 bytes.
+
+The release allocates 5,250 bytes above the prior aggregate JavaScript ceiling
+(using existing headroom), plus 100 bytes to each affected CSS ceiling. Hosted
+CI's 3,571,283 JavaScript measurement leaves 467 bytes below the new limit.
+The CSV chunk has its own 6,000-byte limit and must remain a dynamic entry
+outside reader startup. Existing startup, individual chunk, source payload and
+runtime-performance limits remain enforced. No dependency or reader prose was
+added; these measurements account for the requested feature's implementation.
+
+The release layout correction places CSV actions beside the existing reader-status
+guide, preserving complete first-row visibility at desktop widths. All ten CSV
+scenarios plus the four existing workspace-rhythm scenarios pass from a fresh
+build, with screenshots inspected in both themes at 390 and 1440 pixels. Admin
+typecheck, CSS audit, web/admin builds and both bundle gates pass. The updated
+CSV source fingerprint (same eight paths defined above) is
+`443dc283a8fe2aafc109f78ba4669f76acf2bd09caf4179eda420afd72f0de99`.
+The final browser-fixture build measures 3,571,291 aggregate JavaScript bytes,
+117,934 aggregate CSS bytes and 29,673 shared Studio/Memory CSS bytes, all gzip,
+within the same allocated limits. Exact final API/CI and deployment evidence
+is recorded on the release PR.
+
 ## API response contracts
 
 - Malformed/unsupported input: 400, no saved edit.
