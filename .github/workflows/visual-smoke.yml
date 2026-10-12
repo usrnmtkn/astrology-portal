@@ -127,7 +127,7 @@ jobs:
       - name: Verify startup performance contracts
         run: npm run test:performance-contracts
       - name: Verify visible loading and recovery on slow or failed downloads
-        run: npx playwright test -c playwright.config.ts --workers=1 tests/visual/app-loading-feedback.spec.ts
+        run: npx playwright test -c playwright.config.ts --workers=1 tests/visual/app-loading-feedback.spec.ts tests/visual/startup-animation.spec.ts tests/visual/startup-animation-preview.spec.ts
       - name: Verify minimum skeleton loading lifecycle
         run: npm run test:minimum-loading
       - name: Run visual regression and smoke screens
