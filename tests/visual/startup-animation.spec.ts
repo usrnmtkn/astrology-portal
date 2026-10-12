@@ -233,6 +233,10 @@ test("a stalled player never blocks startup and cannot recreate the splash after
 
 test("a slow start keeps recovery available and a failed app stops the animation", async ({ page }) => {
   await page.clock.install();
+  let documentLoads = 0;
+  page.on("request", request => {
+    if (request.isNavigationRequest() && request.frame() === page.mainFrame()) documentLoads++;
+  });
   let release!: () => void;
   const held = new Promise<void>(resolve => { release = resolve; });
   await page.route(appAsset, async route => {
@@ -242,6 +246,13 @@ test("a slow start keeps recovery available and a failed app stops the animation
   await page.goto("/#sky", { waitUntil: "domcontentloaded" });
   try {
     await expect(page.locator(".startup-artwork__animation svg")).toBeVisible();
+    // Exercise cleanup after the guarded reload has already been used. A new
+    // document would discard the running player before this test can inspect it.
+    // The unavailable-entry test separately verifies the one-reload recovery.
+    await page.evaluate(() => history.replaceState({
+      ...history.state,
+      __tldrastroReaderPageRecovery: { route: `${location.pathname}${location.hash}`, at: Date.now() }
+    }, "", location.href));
     await page.clock.fastForward(12000);
     await expect(page.getByText("Still loading. You can wait or try reloading the page.")).toBeVisible();
     await expect(page.getByRole("button", { name: "Reload page" })).toBeVisible();
@@ -249,6 +260,7 @@ test("a slow start keeps recovery available and a failed app stops the animation
   await expect(page.getByRole("alert")).toContainText("The page could not load");
   await expect(page.locator(".startup-artwork__poster")).toBeVisible();
   await expect(page.locator(".startup-artwork__animation svg")).toHaveCount(0);
+  expect(documentLoads).toBe(1);
   expect(await page.evaluate(() => (window as any).lottie.getRegisteredAnimations().length)).toBe(0);
 });
 
