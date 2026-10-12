@@ -16,6 +16,7 @@ import {horoscopePunctuationFindings,horoscopeVocabularyFindings} from '../../..
 import {horoscopePendingReadings,canRecoverHoroscopeReview} from '../../../src/astro-writing/horoscopeRecovery.mjs';
 import {HOROSCOPE_WRITERS} from '../../../src/astro-writing/horoscopeWriterCatalog.mjs';
 const HoroscopeGenerationDetails=lazy(()=>import('./HoroscopeWritingStudio').then(module=>({default:module.HoroscopeGenerationDetails})));
+const HoroscopeSaveRecovery=lazy(()=>import('./HoroscopeSaveRecovery'));
 const HoroscopePublicationReview=lazy(()=>import('./HoroscopePublicationReview'));
 const WritingProfiles=lazy(()=>import('./HoroscopeWritingStudio'));
 const endpoint = '/api/admin/generated-content';
@@ -67,6 +68,7 @@ export default function HoroscopeEditionsStudio({secret,requestedEditionId}:{sec
   const [period,setPeriod]=useState<HoroscopePeriod>('weekly'),[date,setDate]=useState(()=>new Intl.DateTimeFormat('en-CA',{timeZone:browserTimeZone()}).format(new Date())),[zone,setZone]=useState(browserTimeZone);
   const [draft,setDraft]=useState<HoroscopeEdition|null>(null),[saved,setSaved]=useState<any>(null),[packet,setPacket]=useState<any>(null),[profile,setProfile]=useState<any>(null);
   const [outlines,setOutlines]=useState<Record<string,string>>({}),[sign,setSign]=useState('aries'),[approved,setApproved]=useState(false);
+  const [saveConflict,setSaveConflict]=useState<any>(null);
   const [editorialImport,setEditorialImport]=useState<Record<string,unknown>|null>(null);
   const [place,setPlace]=useState<LocationInput>(()=>({label:'Device time zone',latitude:0,longitude:0,timeZone:browserTimeZone()}));
   const [plan,setPlan]=useState<any>(null),[planApproved,setPlanApproved]=useState(false),[configured,setConfigured]=useState(true),[progress,setProgress]=useState('');
@@ -94,7 +96,7 @@ export default function HoroscopeEditionsStudio({secret,requestedEditionId}:{sec
   const [checking,setChecking]=useState(false);
   const [needsSync,setNeedsSync]=useState(false);
   const mounted=useRef(true);
-  function retain(row:any,refreshContext=false){validateHoroscopeEdition(row.sections?.horoscopeEdition);lastSync.current=Date.now();setNeedsSync(false);setSaved(row);setDraft(row.sections.horoscopeEdition);setRows(current=>[row,...current.filter(r=>r.id!==row.id)]);setApproved(false);if(refreshContext){setOutlines(row.source_snapshot?.horoscopeOutlines??{});setProfile(row.source_snapshot?.studioWritingProfile??null);setEditorialImport(row.source_snapshot?.editorialImport??null);setPlan(null);setPlanApproved(false);}}
+  function retain(row:any,refreshContext=false){setSaveConflict(null);validateHoroscopeEdition(row.sections?.horoscopeEdition);lastSync.current=Date.now();setNeedsSync(false);setSaved(row);setDraft(row.sections.horoscopeEdition);setRows(current=>[row,...current.filter(r=>r.id!==row.id)]);setApproved(false);if(refreshContext){setOutlines(row.source_snapshot?.horoscopeOutlines??{});setProfile(row.source_snapshot?.studioWritingProfile??null);setEditorialImport(row.source_snapshot?.editorialImport??null);setPlan(null);setPlanApproved(false);}}
   useEffect(()=>{setPlan(null);setPlanApproved(false);},[draft?.window.startsAt,draft?.window.endsAt,draft?.window.timeZone,outlines]);
   const dirty=Boolean(draft && (!saved || horoscopeCanonicalJson(draft)!==horoscopeCanonicalJson(saved.sections.horoscopeEdition) || horoscopeCanonicalJson(outlines)!==horoscopeCanonicalJson(saved.source_snapshot?.horoscopeOutlines ?? {}) || horoscopeCanonicalJson(profile)!==horoscopeCanonicalJson(saved.source_snapshot?.studioWritingProfile ?? null) || horoscopeCanonicalJson(editorialImport)!==horoscopeCanonicalJson(saved.source_snapshot?.editorialImport ?? null)));
   const credentialIdentity=ownerCredentialIdentity(secret);
@@ -220,8 +222,28 @@ export default function HoroscopeEditionsStudio({secret,requestedEditionId}:{sec
       if(next==='generate'&&row.source_snapshot?.horoscopeGeneration?.batch?.status!=='running'&&!row.source_snapshot?.horoscopeGeneration?.active)await loadPlan(row);
     }catch(reason){setError((reason as Error).message);}finally{setBusy(false);}
   }
+  async function useReconciledDraft(row:any,state:any){
+    const {horoscopeEditableState}=await import('./HoroscopeSaveRecovery');
+    setSaved(row);setDraft(state.draft);setOutlines(state.outlines);setProfile(state.profile);setEditorialImport(state.editorialImport);
+    setPacket(row.facts?.horoscopeBrief);setSaveConflict(null);setApproved(false);setPublication(null);setPlan(null);setPlanApproved(false);setError('');
+    setRows(current=>[row,...current.filter(r=>r.id!==row.id)]);
+    setMessage(horoscopeCanonicalJson(state)===horoscopeCanonicalJson(horoscopeEditableState(row))?'Your draft is saved. Loaded the confirmed saved version.':'Loaded the latest saved version and kept your selected edits. Review and save the draft to continue.');
+  }
+  async function reconcileSaveFailure(reason:any){
+    if(!saved||!recoverable(reason))return false;
+    try{
+      const latest=await readSaved(saved.id);
+      if(latest.updated_at===saved.updated_at)return false;
+      const {reconcileHoroscopeEdits}=await import('./HoroscopeSaveRecovery');
+      const result=reconcileHoroscopeEdits(saved,latest,{draft,outlines,profile,editorialImport});
+      if(!result)return false;
+      if(!result.conflicts.length)await useReconciledDraft(latest,result.keepLocal);
+      else {setSaveConflict({row:latest,...result});setError('The saved reading also changed. Compare both versions below before choosing which changes to keep. Your edits are preserved.');}
+      return true;
+    }catch{return false;}
+  }
   async function save(publish=false) {
-    if(!draft)return;setBusy(true);setError('');setMessage('');
+    if(!draft||saveConflict)return;setBusy(true);setError('');setMessage('');
     try {
       const edition=validateHoroscopeEdition(draft,publish);
       if(publish&&(!approved||dirty||!publicationReady))throw new Error('Check the saved edition and approve its exact wording before publishing.');
@@ -240,7 +262,7 @@ export default function HoroscopeEditionsStudio({secret,requestedEditionId}:{sec
       announceContentUpdate({contentKey:row.content_key,published:publish,updatedAt:row.updated_at});
       setMessage(publish ? 'Published the complete edition.' : 'Saved edition draft.');
       return row;
-    }catch(reason){setError((reason as Error).message);}finally{setBusy(false);}
+    }catch(reason){if(publish||!await reconcileSaveFailure(reason))setError((reason as Error).message);}finally{setBusy(false);}
   }
   async function importDraft(file:File|undefined) {
     if(!file || !draft)return;setError('');
@@ -501,11 +523,12 @@ export default function HoroscopeEditionsStudio({secret,requestedEditionId}:{sec
     setMessage('Edit this saved response, then save the draft. Your changes still need your final approval before publication. No AI request is started.');
   }
   const retrySign=!active&&!generation?.heldRequests?.[failedSign]&&!generation?.candidateHolds?.[failedSign]&&draft?.passages.some(p=>p.sign===failedSign&&!p.headline.trim()&&!p.body.trim())?failedSign:null;
-  const locked=busy||Boolean(active)||serverRunning||needsSync;
+  const locked=busy||Boolean(saveConflict)||Boolean(active)||serverRunning||needsSync;
   const stepIndex=steps.indexOf(step),signIndex=readingSigns.indexOf(sign),planEntry=plan?.readings.find((entry:any)=>entry.sign===sign);
   const isPublished=saved?.status==='LIVE'&&!dirty;
   const rejectAllButton=saved?.status==='DRAFT'&&(empty<total||candidateHolds.length>0)?<StudioButton className="admin-danger-button" disabled={locked} onClick={()=>void reject('all')}>Reject all drafts</StudioButton>:null;
   async function moveTo(next:Step) {
+    if(saveConflict)return;
     if(next==='setup'&&(!busy||running.current||checking)){
       pauseGeneration();setStep('setup');setMessage(dirty?'Your unsaved edits are kept in this session. Return to Review to continue editing.':'Your edition is saved. Open it under Continue a saved edition to pick up where you left off.');return;
     }
@@ -528,6 +551,8 @@ export default function HoroscopeEditionsStudio({secret,requestedEditionId}:{sec
     </header>
     {step!=='setup'&&draft&&<div className="admin-horoscope-summary"><span>{horoscopeSignLabel(draft.window.period)} · {horoscopeWindowLabel(draft.window)}</span><span>{draft.window.timeZone.replaceAll('_',' ')} · {complete}/{total} readings ready{dirty?' · Unsaved changes':''}</span></div>}
     {visibleError&&(typeof visibleError==='string'?<p role="alert">{visibleError}{needsSignIn&&<> <a href={studioSignInHref('/admin/content#horoscopes'+(saved?.id?'?edition='+encodeURIComponent(saved.id):''))}>Sign in to Content Studio</a></>}</p>:step==='generate'&&<details className="admin-workspace-details"><AdminDisclosureSummary>Previous attempt</AdminDisclosureSummary><p>{visibleError.previous}</p></details>)}{message&&<p role="status">{message}</p>}
+    {saveConflict&&<Suspense fallback={<p role="status">Loading saved changes…</p>}><HoroscopeSaveRecovery conflict={saveConflict} busy={busy}
+      onChoose={state=>void useReconciledDraft(saveConflict.row,state)} onDownload={()=>download('horoscope-unsaved-draft.json',{schema:'horoscope-draft/v1',edition:draft})}/></Suspense>}
     {punctuationHold&&step==='generate'&&<StudioButton className="admin-primary-button" disabled={locked} onClick={editPunctuation}>Edit punctuation</StudioButton>}
     {candidateHolds.length>0&&<Suspense fallback={<p>Loading prose reviews…</p>}><HoroscopeGenerationDetails view="reviews" holds={candidateHolds} locked={locked} active={Boolean(active)} canRecover={canRecoverHoroscopeReview} onRecover={checkProgress} onEdit={editHeldCandidate} onReject={reject}/></Suspense>}
     {step==='setup'?<>

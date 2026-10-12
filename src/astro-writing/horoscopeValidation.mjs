@@ -8,7 +8,7 @@ import {HOROSCOPE_SIGNS} from '../../apps/web/src/content/horoscopeEditions.mjs'
 import {horoscopeEventsInWindow,horoscopeEventPlanet,horoscopeHouse} from './horoscopeDevelopments.mjs';
 import {horoscopePhasePattern,normalizeHoroscopePhase,horoscopeLunationPhase as lunationPhase} from './horoscopeLunationClaims.mjs';
 
-export const horoscopeValidationVersion='horoscope-facts/v12';
+export const horoscopeValidationVersion='horoscope-facts/v13';
 const bodies='Sun|Moon|Mercury|Venus|Mars|Jupiter|Saturn|Uranus|Neptune|Pluto';
 const signs=HOROSCOPE_SIGNS.join('|');
 const ordinals=['first','second','third','fourth','fifth','sixth','seventh','eighth','ninth','tenth','eleventh','twelfth'];

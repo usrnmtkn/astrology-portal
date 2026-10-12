@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import {store,invokeHoroscopeWriting} from '../tests/helpers/sky-article-save-api.mts';
 import {readerRouteResponse} from '../tests/helpers/content-reader-route.mjs';
-import {createSeasonalPublicationFixture,seasonalClaimBodies,createMonthlyAspectPublicationFixture,monthlyAspectBody,createWeeklyAspectPublicationFixture,weeklyAspectBodies,weeklyAspectParserCases,createWeeklyContextPublicationFixture,weeklyContextBodies} from '../tests/helpers/horoscope-publication-fixture.mts';
+import {createSeasonalPublicationFixture,seasonalClaimBodies,createMonthlyAspectPublicationFixture,monthlyAspectBody,monthlyManualBody,createWeeklyAspectPublicationFixture,weeklyAspectBodies,weeklyAspectParserCases,createWeeklyContextPublicationFixture,weeklyContextBodies} from '../tests/helpers/horoscope-publication-fixture.mts';
 import {horoscopeAspectFindings,horoscopeAspectPattern,horoscopeAspectClaim,supportsHoroscopeAspect} from '../src/astro-writing/horoscopeAspectClaims.mjs';
 import {horoscopeEventsInWindow,horoscopeHouse} from '../src/astro-writing/horoscopeDevelopments.mjs';
 import {validateHoroscopeReading} from '../src/astro-writing/horoscopeValidation.mjs';
@@ -254,3 +254,63 @@ assert(issues('aries','Venus in Scorpio in your 7th house backs into your 8th ho
 assert.deepEqual(issues('libra','Venus enters your first house. You can review the fixture.',contextBrief),[]);
 assert(issues('aries','Venus enters your 13th house. You can review the fixture.',contextBrief).length);
 console.log('PASS house-only ingresses: destinations require the same planet’s calculated ingress; wrong houses, missing events and earlier mismatches remain blocked.');
+
+// A pasted external rewrite is an ordinary version-checked draft save, without
+// a paid generation/review prerequisite. Preserve its exact bytes to the reader.
+{
+ const manual=structuredClone(monthlyRow);
+ manual.source_snapshot.horoscopeGeneration.candidateHolds={overview:{candidate:{headline:'Held overview',body:'You can read the held fixture.'},operation:{id:'held-review-fixture'}}};
+ store.rows.set(manual.id,manual);
+ const edition=structuredClone(manual.sections.horoscopeEdition);
+ edition.passages[0].body=monthlyManualBody;
+ const edited=await store.invoke('PATCH',{id:manual.id,expectedUpdatedAt:manual.updated_at,status:'DRAFT',sections:{horoscopeEdition:edition},body:horoscopeEditionBody(edition)});
+ assert.equal(edited.status,200,JSON.stringify(edited.payload));
+ const saved=edited.payload.rows[0];
+ assert.equal(saved.sections.horoscopeEdition.passages[0].body,monthlyManualBody);
+ assert.deepEqual(saved.source_snapshot.horoscopeGeneration.candidateHolds,{});
+ assert.equal(saved.source_snapshot.horoscopeGeneration.candidateResolutions.at(-1).resolution,'owner_edited');
+ const check=await invokeHoroscopeWriting({action:'validate-publication',id:saved.id,expectedUpdatedAt:saved.updated_at});
+ assert.equal(check.status,200,JSON.stringify(check.payload));
+ assert.deepEqual(check.payload.publication.issues,[]);
+ assert.equal(check.payload.publication.ready,true);
+ const stale=await store.invoke('PATCH',{id:saved.id,expectedUpdatedAt:manual.updated_at,body:'Stale overwrite'});
+ assert.equal(stale.status,409);assert.equal(store.rows.get(saved.id).body,saved.body);
+ const published=await store.invoke('PATCH',{id:saved.id,expectedUpdatedAt:saved.updated_at,status:'LIVE'});
+ assert.equal(published.status,200,JSON.stringify(published.payload));
+ const read=await readerRouteResponse('/api/content-reader',{method:'POST',body:JSON.stringify({ids:[saved.id]})});
+ assert.equal((await read.json()).rows[0].body,saved.body);
+ for(const bad of [
+  monthlyManualBody.replace('Venus retrograde squares Mars','Venus direct squares Mars'),
+  monthlyManualBody.replace('Venus retrograde squares Pluto','Venus retrograde trines Pluto'),
+  monthlyManualBody.replace('Mercury turning retrograde on October 24','Mercury turning retrograde on October 26'),
+  monthlyManualBody.replace('Taurus Full Moon on October 26','Taurus Full Moon on October 24'),
+  monthlyManualBody.replace('Mercury turning retrograde','Mercury turning direct'),
+  monthlyManualBody.replace('Mercury turning retrograde','Venus turning retrograde'),
+ ])assert(issues('overview',bad,monthlyBrief).length,`Invalid manual claim accepted: ${bad}`);
+ console.log('PASS external monthly rewrite: exact save, held-review resolution, preflight, publication and reader copy; stale edits and incorrect claims refused.');
+}
+
+// Local recovery never writes. Only overlapping changes need a choice, and
+// changes to facts, publication state or an active operation cannot be rebased.
+{
+ const {reconcileHoroscopeEdits,horoscopeEditableState}=await import('../apps/admin/src/horoscopeEditReconciliation');
+ const base=structuredClone(monthlyRow),local=structuredClone(horoscopeEditableState(base));
+ local.draft.passages[0].body=monthlyManualBody;
+ const latest=structuredClone(base);latest.updated_at='2026-10-12T18:00:00.123456+00:00';latest.reviewer_notes='Other metadata';
+ let result=reconcileHoroscopeEdits(base,latest,local)!;
+ assert.equal(result.conflicts.length,0);assert.equal(result.keepLocal.draft.passages[0].body,monthlyManualBody);
+ latest.sections.horoscopeEdition.passages[0].body='Your competing saved fixture.';
+ local.draft.passages[0].headline='Your local headline';
+ result=reconcileHoroscopeEdits(base,latest,local)!;
+ assert.equal(result.conflicts.length,1);
+ assert.equal(result.keepLocal.draft.passages[0].body,monthlyManualBody);
+ assert.equal(result.useSaved.draft.passages[0].body,'Your competing saved fixture.');
+ assert.equal(result.useSaved.draft.passages[0].headline,'Your local headline');
+ for(const changed of [
+  {...latest,id:'another-row'}, {...latest,status:'LIVE'}, {...latest,facts:{}},
+  {...latest,source_snapshot:{horoscopeGeneration:{active:{id:'pending'}}}},
+  {...latest,source_snapshot:{horoscopeGeneration:{batch:{status:'running'}}}}
+ ])assert.equal(reconcileHoroscopeEdits(base,changed,local),null);
+ assert.equal(base.sections.horoscopeEdition.passages[0].body,monthlyAspectBody);
+ console.log('PASS save recovery: local three-way comparison preserves text and nonoverlapping edits; facts, row identity, publication and active-generation changes cannot be rebased.');
+}
