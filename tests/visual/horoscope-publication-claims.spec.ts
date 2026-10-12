@@ -2,7 +2,7 @@ import {test,expect} from '@playwright/test';
 import {fork} from 'node:child_process';
 import path from 'node:path';
 import {routeStudioInventoryApi} from '../helpers/studio-inventory-route';
-import {createSeasonalPublicationFixture,seasonalClaimBodies,createMonthlyAspectPublicationFixture,monthlyAspectBody,createWeeklyAspectPublicationFixture,weeklyAspectBodies,weeklyRulerBodies} from '../helpers/horoscope-publication-fixture.mts';
+import {createSeasonalPublicationFixture,seasonalClaimBodies,createMonthlyAspectPublicationFixture,monthlyAspectBody,createWeeklyAspectPublicationFixture,weeklyAspectBodies,weeklyRulerBodies,createWeeklyContextPublicationFixture} from '../helpers/horoscope-publication-fixture.mts';
 import {horoscopeEditionBody} from '../../apps/web/src/content/horoscopeEditions.mjs';
 
 for(const [width,theme] of [[390,'light'],[1440,'dark']] as const){
@@ -102,6 +102,23 @@ for(const [width,theme] of [[390,'light'],[1440,'dark']] as const){
    const publishedRuler=(await call({method:'rows'})).find((r:any)=>r.id===ruler.id);
    expect(publishedRuler.sections).toEqual(rulers.payload.rows[0].sections);
    expect((await call({method:'writer-state'})).calls).toBe(0);
+   const contextual=await createWeeklyContextPublicationFixture(call);expect(contextual.status).toBe(200);const contextRow=contextual.payload.rows[0];
+   await page.clock.setFixedTime(new Date('2026-10-20T16:00:00Z'));
+   await page.goto(`/admin/content#horoscopes?edition=${contextRow.id}`);
+   await studio.getByRole('button',{name:'4 · Publish',exact:true}).click();
+   await expect(checks).toHaveCount(0);await expect(approval).toBeEnabled();
+   for(const p of contextRow.sections.horoscopeEdition.passages)await expect(studio.getByRole('region',{name:`${p.sign[0].toUpperCase()+p.sign.slice(1)} reading preview`})).toContainText(p.body);
+   await approval.check();await studio.getByRole('button',{name:'Publish edition',exact:true}).click();
+   await expect(studio.getByRole('status')).toContainText('Published the complete edition.');
+   const contextSaved=(await call({method:'rows'})).find((r:any)=>r.id===contextRow.id);
+   expect(contextSaved.sections).toEqual(contextRow.sections);expect(contextSaved.source_snapshot).toEqual(contextRow.source_snapshot);
+   expect((await call({method:'writer-state'})).calls).toBe(0);
+   for(const sign of ['taurus','libra','sagittarius']){
+    await page.goto(`/#horoscopes?edition=${contextRow.id}&period=weekly&sign=${sign}`);
+    const article=page.getByRole('article',{name:`${sign[0].toUpperCase()+sign.slice(1)} horoscope`,exact:true});
+    const exact=contextRow.sections.horoscopeEdition.passages.find((p:any)=>p.sign===sign).body;
+    await expect(article).toContainText(exact);await page.reload();await expect(article).toContainText(exact);
+   }
   }finally{child.kill();}
  });
 }

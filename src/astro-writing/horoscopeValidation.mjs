@@ -1,3 +1,4 @@
+import {resolveHoroscopeClaimSubjects,horoscopePlacementClaims} from './horoscopeClaimContext.mjs';
 import {horoscopeAspectFindings,horoscopeAspectHouseSubjects,horoscopePersonalSignClaims} from './horoscopeAspectClaims.mjs';
 import {horoscopePunctuationFindings,horoscopeVocabularyFindings} from './horoscopeEditorialConstraints.mjs';
 import {seasonalDateFindings} from './horoscopeSeasonalDates.mjs';
@@ -7,7 +8,7 @@ import {HOROSCOPE_SIGNS} from '../../apps/web/src/content/horoscopeEditions.mjs'
 import {horoscopeEventsInWindow,horoscopeEventPlanet,horoscopeHouse} from './horoscopeDevelopments.mjs';
 import {horoscopePhasePattern,normalizeHoroscopePhase,horoscopeLunationPhase as lunationPhase} from './horoscopeLunationClaims.mjs';
 
-export const horoscopeValidationVersion='horoscope-facts/v10';
+export const horoscopeValidationVersion='horoscope-facts/v11';
 const bodies='Sun|Moon|Mercury|Venus|Mars|Jupiter|Saturn|Uranus|Neptune|Pluto';
 const signs=HOROSCOPE_SIGNS.join('|');
 const ordinals=['first','second','third','fourth','fifth','sixth','seventh','eighth','ninth','tenth','eleventh','twelfth'];
@@ -18,7 +19,7 @@ export function validateHoroscopeReading(passage,brief,{ownerCorrections=[]}={})
   if(!anchor)throw new Error('Calculated horoscope anchor is missing.');
   const events=horoscopeEventsInWindow(brief);
   const lint=governValidationResult(validateCopy({headline:passage.headline,body:passage.body},{validationProfile:'horoscope',family:'horoscope',surface:'horoscopes',register:'second_person',requiredFields:['headline','body'],ownerCorrections}),{surface:'horoscopes',family:'horoscope'});
-  const violations=[...lint.violations,...horoscopePunctuationFindings(passage),...horoscopeVocabularyFindings(passage,brief.window.period)], text=`${passage.headline}\n${passage.body}`;
+  const violations=[...lint.violations,...horoscopePunctuationFindings(passage),...horoscopeVocabularyFindings(passage,brief.window.period)], text=resolveHoroscopeClaimSubjects(`${passage.headline}\n${passage.body}`);
   const fail=detail=>violations.push({category:'horoscope_fact_boundary',detail,governanceTier:'blocking'});
   if(!/\b(?:you|your)\b/iu.test(passage.body))fail('Address the reader in the second person.');
   if(/\b(?:born with|your natal|since childhood|you always|you have always)\b/iu.test(text))fail('A temporary forecast cannot establish natal biography.');
@@ -43,13 +44,18 @@ export function validateHoroscopeReading(passage,brief,{ownerCorrections=[]}={})
         ||events.some(e=>e.type==='ingress'&&horoscopeEventPlanet(e)===body.toLowerCase()&&e.sign?.toLowerCase()===sign.toLowerCase());
     if(!supported)fail(`The ${phase?phase+' ':''}${body} placement must match the calculated brief.`);
   }
-  for(const match of text.matchAll(/\b(Sun|Moon|Mercury|Venus|Mars|Jupiter|Saturn|Uranus|Neptune|Pluto)\s+(?:enters?|entering)\s+(Aries|Taurus|Gemini|Cancer|Leo|Virgo|Libra|Scorpio|Sagittarius|Capricorn|Aquarius|Pisces)\b/giu)) {
-    if(!events.some(e=>e.planet?.toLowerCase()===match[1].toLowerCase()&&e.sign?.toLowerCase()===match[2].toLowerCase()&&e.type==='ingress'))fail(`The ${match[1]} ingress must be present in the calculated events.`);
-  }
   for(const paragraph of text.split(/\n\s*\n/u)) {
    const checkedHouses=new Set();
    for(const sentence of paragraph.split(/(?<=[.!?])\s+|\n/u)) {
     const subjects=[...sentence.matchAll(new RegExp(`\\b(?:(?:${signs})\\s+)?(?:(${horoscopePhasePattern})\\s+)?(${bodies})\\b`,'giu'))];
+    for(let i=0;i<subjects.length;i++){
+      const subject=subjects[i],clause=sentence.slice(subject.index,subjects[i+1]?.index??sentence.length);
+      for(const claim of horoscopePlacementClaims(clause,passage.sign)){
+        const hasIngress=events.some(e=>e.type==='ingress'&&horoscopeEventPlanet(e)===subject[2].toLowerCase()&&e.sign?.toLowerCase()===claim.sign);
+        if(claim.ingress&&!hasIngress)fail(`The ${subject[2]} ingress must be present in the calculated events.`);
+        else if(claim.personal&&!hasIngress&&!brief.positions.some(p=>p.planet.toLowerCase()===subject[2].toLowerCase()&&p.sign.toLowerCase()===claim.sign))fail(`The ${subject[2]} placement in your sign must match the calculated brief for ${passage.sign}.`);
+      }
+    }
     const pairedHouses=horoscopeAspectHouseSubjects(sentence);
     for(const match of sentence.matchAll(/\b(\d{1,2}(?:st|nd|rd|th)|first|second|third|fourth|fifth|sixth|seventh|eighth|ninth|tenth|eleventh|twelfth)\s+(?:whole[ -]sign\s+)?house\b/giu)) {
       if(passage.sign==='overview'){fail('A shared overview cannot assign a personal house to every reader.');continue;}
@@ -62,10 +68,16 @@ export function validateHoroscopeReading(passage,brief,{ownerCorrections=[]}={})
       const body=subject[2].toLowerCase(),phase=normalizeHoroscopePhase(subject[1]);
       const nextSubject=subjects.find(s=>s.index>subject.index)?.index??sentence.length;
       const subjectClause=sentence.slice(subject.index,nextSubject);
-      const statedSign=(subject[0].match(new RegExp(`^(${signs})\\b`,'iu'))?.[1]??subjectClause.match(new RegExp(`\\b(?:in|through|enters?|entering)\\s+(${signs})\\b`,'iu'))?.[1])?.toLowerCase();
+      const placementClaims=horoscopePlacementClaims(subjectClause,passage.sign);
+      const placedBeforeHouse=placementClaims.filter(c=>c.end<=match.index-subject.index).at(-1);
+      const placementClaim=placedBeforeHouse??placementClaims.find(c=>!c.ingress);
+      const statedSign=subject[0].match(new RegExp(`^(${signs})\\b`,'iu'))?.[1]?.toLowerCase()??placementClaim?.sign;
       let placements=phase ? events.filter(e=>e.type==='lunation'&&lunationPhase(e)===phase)
         : brief.positions.filter(p=>p.planet.toLowerCase()===body);
-      if(statedSign&&!phase)placements=[...placements,...events.filter(e=>e.type==='ingress'&&horoscopeEventPlanet(e)===body)];
+      if(statedSign&&!phase){
+        const ingresses=events.filter(e=>e.type==='ingress'&&horoscopeEventPlanet(e)===body);
+        placements=placementClaim?.ingress?ingresses:[...placements,...ingresses];
+      }
       if(statedSign)placements=placements.filter(p=>p.sign?.toLowerCase()===statedSign);
       if(!placements.some(p=>p.sign&&horoscopeHouse(p.sign,passage.sign)===n))fail(`The ${subject[0]} house must match its own calculated placement for ${passage.sign}.`);
       else checkedHouses.add(n);

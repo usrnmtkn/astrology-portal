@@ -59,3 +59,27 @@ export async function createWeeklyAspectPublicationFixture(call:(message:any)=>P
  const readings=Object.fromEntries(edition.passages.map(p=>[p.sign,{bodyHash:createHash('sha256').update(horoscopeCanonicalJson({headline:p.headline,body:p.body})).digest('hex'),lint:{version:'horoscope-facts/v7',violations:weeklyAspectBodies[p.sign]?[{category:'horoscope_fact_boundary',detail:'Name both planets with each aspect so it can be checked against the calculated events.'}]:[]}}]));
  return call({method:'POST',body:{contentKey:horoscopeEditionKey(edition.window),surface:'sky',mode:'article',eventType:'horoscope-edition',provider:'manual-admin',status:'DRAFT',lane:'serving',headline:'Synthetic weekly publication',body:horoscopeEditionBody(edition),sections:{horoscopeEdition:edition},facts:{horoscopeBrief:{brief:packet.payload.brief,signature:packet.payload.signature}},sourceSnapshot:{horoscopeGeneration:{readings}}}});
 }
+
+// Synthetic claims reproduce motion/placement asides, a shared grammatical
+// subject, and the two different placements of one planet within a week.
+export const weeklyContextBodies:Record<string,string>={
+ aries:'On Tuesday Venus, retrograde in your 8th house of shared money, squares Pluto in your 11th house of groups. On Friday the Sun enters Scorpio in your 8th house, and that same night it meets Venus, which is still retrograde. On Sunday Venus, retrograde, enters Libra in your 7th house.',
+ taurus:'Venus, retrograde in your 7th house of partners, squares Pluto in your 10th house. The Sun meets retrograde Venus there. On Sunday Venus, your ruling planet, moves retrograde into Libra and your 6th house.',
+ gemini:'Venus, retrograde in your 6th house of routines, squares Pluto in your 9th house. On Sunday Venus, still retrograde, moves back into Libra in your 5th house.',
+ cancer:'Venus, retrograde in your 5th house of creativity, squares Pluto in your 8th house. On Friday the Sun enters Scorpio in your 5th house too and meets retrograde Venus that night. On Sunday Venus, still retrograde, enters Libra in your 4th house.',
+ leo:'Venus squares Pluto in your 7th house. The Sun meets retrograde Venus. On Sunday Venus, still retrograde, moves back into Libra in your 3rd house.',
+ virgo:'Venus, retrograde in your 3rd house of conversations, squares Pluto in your 6th house. The Sun meets Venus, retrograde, in the same house. Venus, still retrograde, enters Libra and your 2nd house.',
+ libra:'Venus, retrograde in Scorpio in your 2nd house of income, squares Pluto in your 5th house. The Sun enters Scorpio in your 2nd house, and it meets retrograde Venus later that night. Venus, your ruling planet, moves back into your sign while still retrograde, in your 1st house.',
+ scorpio:'Venus, retrograde in your sign, squares Pluto in your 4th house. The Sun enters your sign, and by that night it meets Venus, still retrograde, in your 1st house. Venus, retrograde, backs into Libra in your 12th house.',
+ sagittarius:'Venus is retrograde in your 12th house, and on Tuesday it squares Pluto in your 3rd house. The Sun enters Scorpio in your 12th house, and by that night it meets retrograde Venus there. Retrograde Venus enters Libra and your 11th house.',
+ capricorn:'Venus, retrograde in your 11th house of groups, squares Pluto in your 2nd house. The Sun enters Scorpio in your 11th house too, and it meets retrograde Venus that night. Venus, still retrograde, enters Libra in your 10th house.',
+ aquarius:'Venus, retrograde in your 10th house of career, squares Pluto in your sign, in your 1st house. The Sun enters Scorpio in your 10th house, and that night it meets retrograde Venus there. Venus, still retrograde, enters Libra in your 9th house.',
+ pisces:'Venus, retrograde in your 9th house of study, squares Pluto in your 12th house. The Sun enters Scorpio in your 9th house and meets retrograde Venus that night. Venus, still retrograde, enters Libra in your 8th house.'
+};
+export async function createWeeklyContextPublicationFixture(call:(message:any)=>Promise<any>){
+ const packet=await call({method:'GET',url:'/api/admin/generated-content?horoscopeBrief=true&period=weekly&date=2026-10-19&timeZone=America/New_York'});
+ if(packet.status!==200)throw new Error('Fixture facts unavailable');
+ const edition=emptyHoroscopeEdition(packet.payload.brief.window);
+ for(const p of edition.passages){p.headline=`${p.sign} context fixture`;p.body=`You can review your complete context fixture. ${weeklyContextBodies[p.sign]} Your complete context fixture ends here.`;}
+ return call({method:'POST',body:{contentKey:horoscopeEditionKey(edition.window),surface:'sky',mode:'article',eventType:'horoscope-edition',provider:'manual-admin',status:'DRAFT',lane:'serving',headline:'Synthetic weekly context publication',body:horoscopeEditionBody(edition),sections:{horoscopeEdition:edition},facts:{horoscopeBrief:{brief:packet.payload.brief,signature:packet.payload.signature}},sourceSnapshot:{}}});
+}
