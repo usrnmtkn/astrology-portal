@@ -6,8 +6,10 @@ const cacheKey = "tldrastro:fallbackArchitectureV3:dashboardBundle";
 const versionKey = "tldrastro:fallbackArchitectureV3:dashboardBundleVersion";
 const staleJupiterHook = "Someone just took the stage without asking if they were invited.";
 const currentJupiterArticle = "With Jupiter moving through Leo, confidence, visibility, recognition, and the desire to make something larger all increase";
+const currentJupiterEnding = "Building the whole plan around being seen is where expansion starts needing an audience to keep itself alive.";
 
-test("an old Jupiter/Lilith package cache self-heals to the bundled package", async ({ page }) => {
+for (const width of [390, 1440]) test(`an old Jupiter/Lilith package cache self-heals and survives reload at ${width}`, async ({ page }) => {
+  await page.setViewportSize({ width, height: 1000 });
   // Exercise a content-store outage with working calculated facts. A static
   // preview otherwise answers /api/sky with HTML and leaks ledger reads to DNS.
   await page.route("**/api/sky?**", async route => {
@@ -51,6 +53,8 @@ test("an old Jupiter/Lilith package cache self-heals to the bundled package", as
       longitude: -74.006,
       timeZone: "America/New_York"
     }));
+    if (window.sessionStorage.getItem('qa:obsolete-cache-seeded')) return;
+    window.sessionStorage.setItem('qa:obsolete-cache-seeded', 'true');
     window.localStorage.setItem(versionKey, "1722268800000");
     window.localStorage.setItem(cacheKey, JSON.stringify({
       schema: "fallback-architecture-v3-dashboard-cache-v2",
@@ -86,6 +90,7 @@ test("an old Jupiter/Lilith package cache self-heals to the bundled package", as
   const article = page.locator(".sky-detail-article").first();
   await expect(article).toBeVisible({ timeout: 15_000 });
   await expect(article).toContainText(currentJupiterArticle);
+  await expect(article).toContainText(currentJupiterEnding);
   await expect(article).not.toContainText(staleJupiterHook);
 
   await expect.poll(async () => page.evaluate(
@@ -95,4 +100,11 @@ test("an old Jupiter/Lilith package cache self-heals to the bundled package", as
     }),
     { cacheKey, versionKey }
   )).toEqual({ bundle: null, version: null });
+  await page.reload({ waitUntil: "domcontentloaded" });
+  await expect(article).toBeVisible({ timeout: 15_000 });
+  await expect(article).toContainText(currentJupiterArticle);
+  await expect(article).toContainText(currentJupiterEnding);
+  await expect(article).not.toContainText(staleJupiterHook);
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  await page.screenshot({ path: `test-results/offline-reader-recovered-${width}.png` });
 });

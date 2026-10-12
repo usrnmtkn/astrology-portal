@@ -27,6 +27,9 @@ await build({
         fallbackV3DignityLine,
         fallbackV3PlacementSentence,
         isDeferredFallbackArchitectureV3BundleLoaded,
+        isCalendarFallbackArchitectureV3BundleLoaded,
+        loadCalendarFallbackArchitectureV3Bundle,
+        loadSkyPlacementFallbackArchitectureV3Bundle,
         isEmptyHouseFallbackArchitectureV3BundleLoaded,
         isRelationshipFallbackArchitectureV3BundleLoaded,
         installFallbackArchitectureV3Bundle,
@@ -122,7 +125,37 @@ assert.throws(
   "Empty-house V14 copy must remain unavailable until its dedicated bundle loads."
 );
 
+// Calendar needs complete collective Moon/season copy, not the natal and
+// personal-transit corpus. Compare every phase/sign and weekly variant with
+// the fully installed runtime, including deliberately unavailable passages.
+assert.equal(runtime.isCalendarFallbackArchitectureV3BundleLoaded(), false);
+assert.equal(await runtime.loadCalendarFallbackArchitectureV3Bundle(), true);
+await runtime.loadSkyPlacementFallbackArchitectureV3Bundle(false);
+assert.equal(runtime.isCalendarFallbackArchitectureV3BundleLoaded(), true);
+assert.equal(runtime.isDeferredFallbackArchitectureV3BundleLoaded(), false);
+assert.equal(runtime.fallbackV3PlacementSentence("moon", "scorpio", "they"), "");
+const signs = ["aries", "taurus", "gemini", "cancer", "leo", "virgo", "libra", "scorpio", "sagittarius", "capricorn", "aquarius", "pisces"];
+const calendarCases = signs.flatMap(sign => [
+  ...["new-moon", "waxing-crescent", "first-quarter", "waxing-gibbous", "full-moon", "disseminating", "last-quarter", "balsamic"].map(phase => ["renderCalendarPhase", { phase, sign }]),
+  ...[1, 2, 3, 4].map(variant => ["renderWeeklyMoon", { sign, variant }]),
+  ...signs.map(nextSign => ["renderVoidOfCourse", { sign, nextSign }]),
+  ...["sun", "moon", "mercury", "venus", "mars", "jupiter", "saturn", "uranus", "neptune", "pluto", "chiron", "north-node", "south-node"].map(planet => ["renderSkyPlacement", { ...skyPlacementFacts, planet, sign, surface: "calendar" }]),
+  ...["mercury", "venus", "mars", "jupiter", "saturn", "uranus", "neptune", "pluto", "chiron"].map(planet => ["renderTransitRetro", { planet, sign, format: "card", window: "fixture window" }]),
+  ...["new-moon", "full-moon"].map(kind => ["renderLunationMacro", { kind, sign, dateLine: "fixture date" }])
+]);
+function calendarResults() {
+  return calendarCases.map(([method, facts]) => {
+    try { return runtime.transitSynastryFallbackRendererV3[method](facts); }
+    catch (error) { assert.match(error.message, /SOURCE_GAP/); return { sourceGap: error.message }; }
+  });
+}
+const calendarBefore = calendarResults();
+assert.ok(calendarBefore.filter(result => result.body).length > 300, "Exercise complete rendered prose, not only source gaps");
+
 assert.equal(await runtime.loadDeferredFallbackArchitectureV3Bundle(), true);
+assert.deepEqual(calendarResults(), calendarBefore, "Calendar-only and full packages must preserve every field and complete passage");
+console.log(`Calendar partition parity passed: ${calendarCases.length} complete-field comparisons.`);
+assert.equal(await runtime.loadCalendarFallbackArchitectureV3Bundle(), false);
 assert.equal(runtime.isDeferredFallbackArchitectureV3BundleLoaded(), true);
 assert.equal(runtime.isEmptyHouseFallbackArchitectureV3BundleLoaded(), false);
 assert.throws(
@@ -180,11 +213,6 @@ assert.deepEqual(
     templateKey: skyBefore.templateKey
   },
   "Installing transit content must not change the approved Sky fallback result."
-);
-assert.throws(
-  () => runtime.transitSynastryFallbackRendererV3.renderSkyPlacement(skyPlacementFacts),
-  /SOURCE_GAP/u,
-  "Loading the personal-transit bundle must not bypass the dedicated Sky Placement package boundary."
 );
 assert.deepEqual(skySeasonAfter, skySeasonBefore, "Deferred rows must not change Sky season copy.");
 assert.deepEqual(skyLunationAfter, skyLunationBefore, "Deferred rows must not change Sky lunation copy.");

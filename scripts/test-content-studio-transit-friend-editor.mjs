@@ -9,7 +9,8 @@ const dashboard = fs.readFileSync(path.join(root, "apps/admin/src/GeneratedConte
 const api = fs.readFileSync(path.join(root, "api/admin/generated-content.ts"), "utf8");
 const transitSources = fs.readFileSync(path.join(root, "apps/admin/src/transitNatalSources.ts"), "utf8");
 
-assert.match(dashboard, /studioInventoryRequestPath\(\s*passes\[passIndex\],\s*studioInventoryPageSize\(cursor\),\s*cursor/u);
+assert.match(dashboard, /readStudioInventoryPasses\(\s*studioInventoryPasses\(query\)/u);
+assert.match(dashboard, /studioInventoryRequestPath\(pass,\s*studioInventoryPageSize\(cursor\),\s*cursor\),\s*secret,\s*requestSignal/u);
 assert.match(dashboard, /const generatedContentPageRetryDelaysMs = \[350, 1_000\];/u);
 assert.match(dashboard, /const isAuthoredTransitAspectDraft = isPackageDraft[\s\S]{0,180}authored\/transit-aspect\//u);
 assert.match(dashboard, /function writesPersonalTransitExactCopy\(draft: AdminDraft\)/u);

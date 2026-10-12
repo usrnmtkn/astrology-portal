@@ -9,9 +9,11 @@ import { isGeneratedContentReaderBoundaryAllowed, isReaderServableGeneratedConte
 export { isGeneratedContentReaderBoundaryAllowed, isReaderServableGeneratedContentRow } from "../content/generatedContentEligibility";
 import { getSupabaseClient } from "./auth";
 
+let loadedLastKnownGoodRows: GeneratedContentRow[] = [];
 export async function loadContentStudioLastKnownGoodRows(): Promise<GeneratedContentRow[]> {
   const { loadOfflineContentRows } = await import("./offlineContentSnapshot");
-  return loadOfflineContentRows();
+  loadedLastKnownGoodRows = await loadOfflineContentRows();
+  return loadedLastKnownGoodRows;
 }
 
 import {
@@ -1174,6 +1176,9 @@ async function readCachedFallbackArchitectureV3Partition({
 
 export function readCachedFallbackArchitectureV3Bundle(scope: DashboardScope = "all"): CachedFallbackArchitectureV3Overlay | null {
   if (typeof window === "undefined") return null;
+  // Scoped Sky visits no longer consume the unscoped overlay, but must still
+  // evict obsolete schemas so a later full-inventory visit cannot revive them.
+  if (scope !== "all") readCachedFallbackArchitectureV3Bundle("all");
 
   try {
     const version = Number(window.localStorage.getItem(dashboardCacheKey(fallbackArchitectureV3BundleVersionKey, scope)) ?? "0");
@@ -1353,6 +1358,11 @@ async function readFallbackArchitectureV3DashboardBundle(
 ): Promise<FallbackArchitectureV3Bundle | null> {
   const supabase = await getSupabaseClient();
   const cached = readCachedFallbackArchitectureV3Bundle(scope);
+  const recoverUnavailableOverlay = (error: unknown) => {
+    if (scope === "sky-list" && !(publicationLedgerReady() && loadedLastKnownGoodRows.length)) throw new Error("Current Sky content did not load.");
+    console.warn(error);
+    return cached?.bundle ?? loadContentStudioLastKnownGoodCoreBundle(scope);
+  };
 
   if (!supabase) return cached?.bundle ?? await loadContentStudioLastKnownGoodCoreBundle(scope);
 
@@ -1365,21 +1375,13 @@ async function readFallbackArchitectureV3DashboardBundle(
     // This fallback cannot detect every demotion, so it is used only when the revision
     // RPC is unavailable.
     const { data: versionRows, error: versionError } = await loadReaderRows({ provider: fallbackArchitectureV3Provider, latestVersion: true });
-    if (versionError) {
-      if (scope === "sky-list") throw new Error("Current Sky content revision did not load.");
-      console.warn("Fallback architecture V3 live overlay version failed to load; nightly/cached/local copy remains active.", versionError);
-      return cached?.bundle ?? await loadContentStudioLastKnownGoodCoreBundle(scope);
-    }
+    if (versionError) return recoverUnavailableOverlay(versionError);
     dashboardVersion = fallbackArchitectureV3DashboardVersionFromRows(versionRows ?? []);
   }
   if (cached && dashboardVersion && cached.version === dashboardVersion) return cached.bundle;
 
   const { data, error } = await loadReaderRows({ provider: fallbackArchitectureV3Provider, ...(scope !== "all" ? { scope } : {}) });
-  if (error) {
-    if (scope === "sky-list") throw new Error("Current Sky content did not load.");
-    console.warn("Fallback architecture V3 live overlay failed to load; nightly/cached/local copy remains active.", error);
-    return cached?.bundle ?? await loadContentStudioLastKnownGoodCoreBundle(scope);
-  }
+  if (error) return recoverUnavailableOverlay(error);
   const rows = data ?? [];
 
   let currentCoreManifest: FallbackArchitectureV3PackageManifest;
@@ -1440,6 +1442,13 @@ async function loadPublishedSkyBundle(selection?: string): Promise<FallbackArchi
     const value = JSON.parse(window.localStorage.getItem(skyPublicationCacheKey) ?? "[]");
     if (Array.isArray(value)) cached = value;
   } catch { /* Keep the canonical publication guard even when storage is unavailable. */ }
+  // The outage preparation has already installed the offline snapshot's ledger
+  // and rows. Reuse those rows without another download; every row still has to
+  // match the newest known publication, including cached retirements/revisions.
+  // Add only the current selection, not the entire offline inventory. A verified
+  // current snapshot row replaces an older browser row with the same ID.
+  cached = [...new Map([...cached.filter(row => row && typeof row === "object"),
+    ...loadedLastKnownGoodRows.filter(eligible)].map(row => [row.id, row])).values()];
   const publications = contentPublicationRecords().filter(publication => publication.state === "live"
     && isPublishedReaderKey(publication.content_key) && publication.row_id);
   const complete = (rows: GeneratedContentRow[]) => {
@@ -1662,7 +1671,7 @@ export async function loadLiveGeneratedContentForSurfaces(
   const { data, error } = await loadReaderRows({ surfaces, ...(vocabularyOnly ? { vocabularyOnly: true } : {}),
     ...(targetDate && !requestedSurfaces.includes("sky") ? { targetDate } : {}) }, requestSignal);
   if (error) {
-    console.warn("Live generated content failed to load; using the nightly reader-safe snapshot.", error);
+    console.warn("Content surface read failed.", error);
     return loadLastKnownGoodGeneratedContentForSurfaces(requestedSurfaces, targetDate, previewMode);
   }
   const rows = data ?? [];
@@ -1670,14 +1679,28 @@ export async function loadLiveGeneratedContentForSurfaces(
   return generatedContentMapFromRows(sortGeneratedRowsNewestFirst(rows), previewMode);
 }
 
+const pendingTargetedContent = new Map<string, Promise<Map<string, LiveGeneratedContent>>>();
 export async function loadLiveGeneratedContentForKeys(contentKeys: string[], options: { requireFresh?: boolean } = {}) {
   await refreshContentPublications();
-  const keys = Array.from(new Set(contentKeys.map((key) => key.trim()).filter(Boolean)));
+  const keys = [...new Set(contentKeys.map((key) => key.trim()).filter(Boolean))].sort();
 
   if (keys.length === 0) {
     return new Map<string, LiveGeneratedContent>();
   }
 
+  // Several mounted readers can request the same keys during publication
+  // hydration. Share only in-flight work for the same revision/freshness policy;
+  // settled requests and later revisions always revalidate.
+  const identity = JSON.stringify([contentPublicationGeneration, options.requireFresh === true, keys]);
+  let pending = pendingTargetedContent.get(identity);
+  if (!pending) {
+    pending = readLiveGeneratedContentForKeys(keys, options).finally(() => pendingTargetedContent.delete(identity));
+    pendingTargetedContent.set(identity, pending);
+  }
+  return pending;
+}
+
+async function readLiveGeneratedContentForKeys(keys: string[], options: { requireFresh?: boolean }) {
   const supabase = await getSupabaseClient();
 
   if (!supabase) {
@@ -1696,7 +1719,7 @@ export async function loadLiveGeneratedContentForKeys(contentKeys: string[], opt
     if (error) {
       // A refresh must distinguish confirmed removals from an offline snapshot.
       if (options.requireFresh) throw error;
-      console.warn("Targeted generated content failed to load; using the nightly reader-safe snapshot.", error);
+      console.warn("Targeted content read failed.", error);
       return loadLastKnownGoodGeneratedContentForKeys(keys);
     }
 

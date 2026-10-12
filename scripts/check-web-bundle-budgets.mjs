@@ -103,6 +103,7 @@ const deferredRelationshipFallbackItem = [...deferredRelationshipFallbackItems]
   .sort((first, second) => second.gzipBytes - first.gzipBytes)[0];
 const deferredManifestItem = javaScriptFiles.find((item) => item.file.includes("fallback-content-manifest-"));
 const deferredCoreItem = javaScriptFiles.find((item) => item.file.includes("fallback-content-deferred-core-"));
+const deferredCalendarItem = javaScriptFiles.find((item) => item.file.includes("fallback-content-calendar-"));
 const deferredSkyPlacementItem = javaScriptFiles.find((item) => item.file.includes("fallback-content-sky-placement-"));
 const deferredLunationBookItem = javaScriptFiles.find((item) => item.file.includes("fallback-content-lunation-book-"));
 const deferredPhoneAuthItem = javaScriptFiles.find((item) => item.file.includes("phone-auth-"));
@@ -138,6 +139,7 @@ const measurements = {
   skyPlacementFallbackChunkGzipBytes: deferredSkyPlacementItem?.gzipBytes ?? 0,
   lunationBookFallbackChunkGzipBytes: deferredLunationBookItem?.gzipBytes ?? 0,
   transitFallbackChunkGzipBytes: deferredTransitFallbackItem?.gzipBytes ?? 0,
+  calendarFallbackChunkGzipBytes: deferredCalendarItem?.gzipBytes ?? 0,
   relationshipFallbackChunkGzipBytes: deferredRelationshipFallbackItem?.gzipBytes ?? 0,
   signupChunkGzipBytes: deferredSignupItem?.gzipBytes ?? 0,
   totalCssGzipBytes: sum(cssFiles, "gzipBytes"),
@@ -152,6 +154,9 @@ const failures = Object.entries(budgets).flatMap(([metric, limit]) => {
 });
 
 const formattingChunks = javaScriptFiles.filter(item => /\/(?:studio-rich-text|writing-markdown|FormattedWritingContent)-/u.test(item.file));
+if (!deferredCalendarItem || bootFiles.has(deferredCalendarItem.file)) {
+  failures.push("Calendar copy must remain in its own on-demand chunk outside reader startup.");
+}
 if (!csvItem || !csvEntry.isDynamicEntry) failures.push("CSV editing must remain a separate dynamic entry.");
 else if (bootFiles.has(csvItem.file)) failures.push("CSV editing must remain deferred from reader startup.");
 for (const [name, item] of [['Horoscope reader', horoscopeReaderItem], ['Horoscope editor', horoscopeEditorItem]]) {

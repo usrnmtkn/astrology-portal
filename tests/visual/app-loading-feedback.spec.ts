@@ -182,11 +182,11 @@ for (const leaveCalendar of [false, true]) test(`Calendar pending event ${leaveC
 for (const view of ["weekly", "week"]) test(`Calendar ${view} waits for authored Moon content before choosing copy`, async ({ page }) => {
   test.setTimeout(60_000);
   const key = "authored/calendar-weekly-moon/scorpio";
-  const source = JSON.parse(readFileSync("apps/web/src/content/fallbackArchitectureV3/bundled-transit-core-authored-cards-v3.json", "utf8"))
+  const source = JSON.parse(readFileSync("apps/web/src/content/fallbackArchitectureV3/bundled-calendar-rows-v3.json", "utf8"))
     .authoredCards.find((row: { contentKey: string }) => row.contentKey === key);
   let release!: () => void;
   const held = new Promise<void>(resolve => { release = resolve; });
-  await page.route(/\/assets\/fallbackArchitectureV3DeferredBundle-.*\.js$/, async route => {
+  await page.route(/\/assets\/fallbackArchitectureV3CalendarBundle-.*\.js$/, async route => {
     await held;
     await route.continue().catch(() => {});
   });
@@ -289,7 +289,7 @@ test("Calendar failed reading asset stays local and explicit retry reloads the r
   let fail = true;
   let navigations = 0;
   page.on("request", request => { if (request.isNavigationRequest() && request.frame() === page.mainFrame()) navigations++; });
-  await page.route(/\/assets\/fallbackArchitectureV3DeferredBundle-.*\.js$/, route => fail ? route.abort("failed") : route.continue());
+  await page.route(/\/assets\/fallbackArchitectureV3CalendarBundle-.*\.js$/, route => fail ? route.abort("failed") : route.continue());
   await page.goto("/#calendar?view=day&date=2026-08-18");
   await expect(page.getByRole("region", { name: "Selected week", exact: true })).toBeVisible();
   await expect(page.locator(".calendar-sky-card").getByRole("alert")).toContainText("reading could not load");
