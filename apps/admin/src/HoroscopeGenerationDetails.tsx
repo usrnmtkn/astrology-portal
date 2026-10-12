@@ -1,6 +1,6 @@
 import {type ReactNode} from 'react';
 import {AdminDisclosureSummary} from './AdminNativeControls';
-import {StudioTextarea} from './StudioControls';
+import {StudioButton,StudioTextarea} from './StudioControls';
 import {horoscopeSignLabel,horoscopeRejectionPassage} from '../../web/src/content/horoscopeEditions.mjs';
 
 function Disclosure({title,children}:{title:ReactNode;children:ReactNode}) {
@@ -63,7 +63,18 @@ function HoroscopeRejectionHistory({rejections,period}:{rejections:any[];period:
   return <Disclosure title="Rejected drafts"><p>{period==='weekly'?'Latest complete rejections are negative evidence for this edition and sign only.':'Rejections are saved for reference only.'}</p>{[...rejections].reverse().map((entry:any)=><details key={entry.id}><AdminDisclosureSummary>{entry.scope==='all'?'All drafts':horoscopeSignLabel(entry.scope)} · {new Date(entry.rejectedAt).toLocaleString()}</AdminDisclosureSummary>{entry.passages.map((saved:any)=>horoscopeRejectionPassage(entry,saved.sign)??saved).map((p:any)=><EvidenceText key={p.sign} caption={horoscopeSignLabel(p.sign)} label={`Rejected ${horoscopeSignLabel(p.sign)} reading`} rows={6} value={`${p.headline}\n\n${p.body}`}/>)}</details>)}</Disclosure>;
 }
 
-export default function HoroscopeGenerationDetails({view,...props}:{view:"evidence"|"seasonal"|"rejections";[key:string]:any}) {
+function HoroscopeReviewHolds({holds,locked,active,canRecover,onRecover,onEdit,onReject}:{holds:[string,any][];locked:boolean;active:boolean;canRecover:(held:any)=>boolean;onRecover:(sign:string)=>void;onEdit:(sign:string,held:any)=>void;onReject:(sign:string)=>void}) {
+  return <>{holds.map(([sign,held])=><section key={sign} aria-label={`${horoscopeSignLabel(sign)} prose review`}>
+    <h3>{horoscopeSignLabel(sign)} {held.code==='rhetorical_pattern'?'needs a prose edit':'prose check did not finish'}</h3><p>{held.message}</p>
+    {(held.review?.rhetoric?.findings??[]).map((finding:any,index:number)=><div key={index}><strong>{finding.label}</strong><blockquote>{finding.quote}</blockquote><p>{finding.reason} {finding.readerConsequence}</p></div>)}
+    {canRecover(held)&&<StudioButton disabled={locked||active} onClick={()=>onRecover(sign)}>Check saved {horoscopeSignLabel(sign)} prose review</StudioButton>}
+    <StudioButton disabled={locked} onClick={()=>onEdit(sign,held)}>Edit saved {horoscopeSignLabel(sign)} draft</StudioButton>
+    <StudioButton disabled={locked} onClick={()=>onReject(sign)}>Reject {horoscopeSignLabel(sign)} draft</StudioButton>
+  </section>)}</>;
+}
+
+export default function HoroscopeGenerationDetails({view,...props}:{view:"evidence"|"seasonal"|"rejections"|"reviews";[key:string]:any}) {
+  if(view==='reviews')return <HoroscopeReviewHolds holds={props.holds} locked={props.locked} active={props.active} canRecover={props.canRecover} onRecover={props.onRecover} onEdit={props.onEdit} onReject={props.onReject}/>;
   if(view==='seasonal')return <SeasonalGenerationDetails {...props}/>;
   if(view==='rejections')return <HoroscopeRejectionHistory rejections={props.rejections} period={props.period}/>;
   return <HoroscopeEvidenceDetails receipt={props.receipt} saved={props.saved}/>;
