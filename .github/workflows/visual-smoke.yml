@@ -1,13 +1,8 @@
 name: Visual smoke
 
 on:
-  # Browser QA is only a gate when it runs before a merge. Documentation and reader content are
-  # excluded so the cost stays with changes that can alter a rendered surface, and the scope job
-  # narrows further to the affected surfaces.
+  # Always report the aggregate gate; the scope job skips documentation-only work.
   pull_request:
-    paths-ignore:
-      - "docs/**"
-      - "**/*.md"
   push:
     branches:
       - main
@@ -454,6 +449,22 @@ jobs:
           name: reader-surface-suite-results-${{ matrix.shard }}
           path: test-results/
           if-no-files-found: ignore
+
+  browser-release-gate:
+    needs: [scope, friends-loading-performance, visual-smoke, client-facing-flows, studio-admin-flows, sky-placement-studio, sky-placement-reader, sky-summary, studio-preview-suites, horoscope-reader, reader-surface-suites]
+    if: ${{ always() }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+      - run: node scripts/test-browser-release-gate.mjs
+      - name: Require every applicable browser job to pass
+        env:
+          BROWSER_JOB_RESULTS: ${{ toJSON(needs) }}
+        run: node scripts/check-browser-release-gate.mjs
 
 env:
   PRIVATE_REPORT_DOCUMENTS: ${{ secrets.PRIVATE_REPORT_DOCUMENTS }}
