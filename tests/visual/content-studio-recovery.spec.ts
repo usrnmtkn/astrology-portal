@@ -89,17 +89,24 @@ for (const { malformed, width, theme } of [
 for (const initialPage of ["review-queue", "articles"]) {
   test(`invalid inventory pages retry automatically before completing from ${initialPage}`, async ({ page }) => {
     await mockStudio(page);
-    let attempts = 0;
+    const attempts: Record<string, number> = {};
+    const failingPass = initialPage === "review-queue" ? "0" : "section";
+    const expectedAttempts = initialPage === "review-queue" ? { "0": 3, "1": 1, "2": 1 } : { section: 3 };
     await page.route("**/api/admin/generated-content**", async route => {
       const url = new URL(route.request().url());
-      if (url.searchParams.get("scope") === "all" && !url.searchParams.has("cursor") && ++attempts <= 2) {
-        await route.fulfill({ json: attempts === 1 ? null : { rows: null } });
-      } else await route.fallback();
+      if (url.searchParams.get("scope") === "all" && !url.searchParams.has("cursor")) {
+        const pass = url.searchParams.get("partition") ?? "section";
+        attempts[pass] = (attempts[pass] ?? 0) + 1;
+        if (pass === failingPass && attempts[pass] <= 2) {
+          await route.fulfill({ json: attempts[pass] === 1 ? null : { rows: null } });
+          return;
+        }
+      }
+      await route.fallback();
     });
     await page.goto(`${studioPath}#${initialPage}`);
-    await expect.poll(() => attempts, recoveryReadiness).toBe(3);
     await expect(page.getByRole("region", { name: "Admin status" })).toContainText("Connected", recoveryReadiness);
-    expect(attempts).toBe(3);
+    expect(attempts).toEqual(expectedAttempts);
     await openStudioPage(page, "Sky Write-ups");
     await expect(page.getByLabel("Sky write-up rows").locator("tbody tr").first()).toBeVisible();
   });
@@ -107,17 +114,30 @@ for (const initialPage of ["review-queue", "articles"]) {
   test(`persistent invalid inventory stops retrying and can recover manually from ${initialPage}`, async ({ page }) => {
     await mockStudio(page);
     let invalid = true;
-    let attempts = 0;
+    const attempts: Record<string, number> = {};
+    const expectedPasses = initialPage === "review-queue" ? ["0", "1", "2"] : ["section"];
     await page.route("**/api/admin/generated-content**", async route => {
-      if (invalid && new URL(route.request().url()).searchParams.get("scope") === "all") {
-        attempts += 1;
+      const url = new URL(route.request().url());
+      if (invalid && url.searchParams.get("scope") === "all") {
+        const pass = url.searchParams.get("partition") ?? "section";
+        attempts[pass] = (attempts[pass] ?? 0) + 1;
         await route.fulfill({ json: null });
       } else await route.fallback();
     });
     await page.goto(`${studioPath}#${initialPage}`);
     await expect(page.getByRole("heading", { name: "The dashboard could not load saved CMS rows" })).toBeVisible(recoveryReadiness);
     await expect(page.getByText(/Expected a JSON object\. The response was empty or invalid/).first()).toBeVisible();
-    expect(attempts).toBe(3);
+    expect(Object.keys(attempts).sort()).toEqual(expectedPasses);
+    // Exhausting one pass cancels its siblings; a sibling may be aborted before
+    // its third read. Every pass must respect the same three-attempt ceiling.
+    expect(Math.max(...Object.values(attempts))).toBe(3);
+    for (const count of Object.values(attempts)) {
+      expect(count).toBeGreaterThanOrEqual(1);
+      expect(count).toBeLessThanOrEqual(3);
+    }
+    const stoppedAttempts = { ...attempts };
+    await page.waitForTimeout(1_500); // Outlast retry backoff to prove automatic reads stopped.
+    expect(attempts).toEqual(stoppedAttempts);
     invalid = false;
     await page.getByRole("button", { name: "Retry", exact: true }).click();
     await expect(page.getByRole("region", { name: "Admin status" })).toContainText("Connected", recoveryReadiness);
