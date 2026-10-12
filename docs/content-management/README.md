@@ -163,6 +163,47 @@ scripts/
 
 ## Content Studio access
 
+### Offline CSV editing
+
+Shared content tables expose **Export CSV** and **Import CSV**. Select rows or
+filter the list, choose a content type, and download its CSV. Export reads full
+saved documents across all matching pages. Edit the text columns in Excel or
+Numbers and save as comma-separated UTF-8 CSV. Keep the format, content ID,
+content key, saved version and content type columns unchanged.
+
+The **publish** column exports as **no**, including for live rows. Set it to
+**yes** to mark a row for publication. **no**, an empty cell or an older CSV
+without this column keeps edited rows as drafts. Other values are rejected.
+
+Import first compares the file with current saved versions and shows complete
+before/after fields and identifies each row marked **Will publish**. An empty
+edited cell clears that field; removing a row from the file does not delete
+content. Resolve all preview errors before saving. **Save drafts** saves only
+text changes. When rows are marked yes, **Save & publish** explicitly approves
+those rows: it saves their edits, then submits the resulting saved versions to
+Studio's existing publication actions and checks. Unmarked edits stay drafts.
+An unchanged row marked yes can be published without rewriting its text.
+Unchanged rows marked no are skipped. Import preview itself performs no writes.
+Save uses the normal editor's draft/revision behavior, including demoting a
+directly edited LIVE row or creating a separate proposal where that content
+family supports it. The original text is retained in import history.
+
+The first version updates existing saved text. Unsaved package sources must be
+saved in Studio first. Archived rows, writing profiles, variables, dated lunar
+workspaces, compiled Sky article editions and multi-reading horoscope editions
+remain in their dedicated editors. Ordinary article sections and named package
+text fields are supported; calculated facts and structural metadata are excluded.
+Exports identify excluded documents. Each file is limited to 5,000 rows and
+10 MB; individual imported rows are limited to 2 MB.
+
+If a save or publication fails, Studio stops before later rows and identifies
+confirmed saves and publications separately. A successfully saved draft remains
+available when publication fails. Check the current publication status and
+export current rows before retrying an uncertain response. Imports never retry
+writes automatically. A CSV mark alone cannot publish; the explicit button and
+normal publication checks are required. Sources requiring separate release or
+writing checks still use their dedicated workflows.
+
 New Moon and Full Moon generation reads the matching complete saved lunar
 passage and the Sun sign's Season write-ups as writing references. Latest saved
 revisions take precedence over their original source; missing/invalid lunar

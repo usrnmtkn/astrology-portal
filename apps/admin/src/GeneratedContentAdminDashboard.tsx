@@ -15,6 +15,7 @@ import { MetricCard } from "./studio-ds/patterns";
 import { Grid, Stack, Text } from "./studio-ds/primitives";
 import { containedDisclosure, metricGrid, surfaceSection } from "./studio-ds/recipes";
 import { StudioTabs, StudioButton, StudioIconButton, StudioInput, StudioTextarea } from "./StudioControls";
+import type { CsvContentRow, CsvRecord } from './studioCsv';
 import { ArticleBlockStyleFields } from "./ArticleBlockStyleFields";
 import { AdminDisclosureSummary, AdminSelect } from "./AdminNativeControls";
 import { getStudioPalette, getStudioTheme, saveStudioPalette, saveStudioTheme, studioShellAttributes } from "./studioTheme";
@@ -257,6 +258,7 @@ const SkyPlacementWritingLinks = lazy(() => import("./SkyPlacementCompanions").t
 const SkyPlacementReusableSources = lazy(() => import("./SkyPlacementCompanions").then(module => ({ default: module.SkyPlacementReusableSources })));
 const SkyPlacementUnwiredNotice = lazy(() => import("./SkyPlacementCompanions").then(module => ({ default: module.SkyPlacementUnwiredNotice })));
 const CompositeReviewCard = lazy(() => import("./CompositeReviewCard"));
+const StudioCsvTools = lazy(() => import('./StudioCsvTools'));
 const TransitNatalReaderPreview = lazy(() => import("./TransitNatalReaderPreview"));
 const TransitNatalPreviewOptions = lazy(() => import("./TransitNatalReaderPreview").then(module => ({ default: module.TransitNatalPreviewOptions })));
 const TransitNatalExactSourceAction = lazy(() => import("./TransitNatalReaderPreview").then(module => ({ default: module.TransitNatalExactSourceAction })));
@@ -3007,14 +3009,15 @@ function draftFromRow(row: AdminGeneratedContentRow): AdminDraft {
     || row.content_key.startsWith("vocab/")
     || row.content_key.startsWith("fallback-vocab/")
     || packageRecord.content_role === "vocabulary";
-  const canonicalHeadline = typeof editablePackageRecord.headline === "string" ? editablePackageRecord.headline : normalizeText(row.headline);
+  // Opening saved prose must not trim bytes retained by an offline CSV edit.
+  const canonicalHeadline = typeof editablePackageRecord.headline === "string" ? editablePackageRecord.headline : row.headline ?? "";
   const importedSummary = row.provider === "manual" && /^(REVIEWED|CONFIRMED|DRAFT) · /.test(row.summary ?? "") ? row.summary : null;
-  const canonicalSummary = importedSummary ? "" : typeof editablePackageRecord.summary === "string" ? editablePackageRecord.summary : normalizeText(row.summary);
+  const canonicalSummary = importedSummary ? "" : typeof editablePackageRecord.summary === "string" ? editablePackageRecord.summary : row.summary ?? "";
   const canonicalBody = typeof editablePackageRecord.body === "string"
     ? editablePackageRecord.body
     : typeof editablePackageRecord.body_you === "string"
       ? editablePackageRecord.body_you
-      : normalizeText(row.body);
+      : row.body ?? "";
   return {
     id: row.id.startsWith("package:") ? null : row.id,
     updatedAt: row.updated_at,
@@ -3300,6 +3303,7 @@ export function GeneratedContentAdminDashboard() {
     compatibilityAspectFormRef.current?.querySelector("select")?.focus();
   }, [Boolean(compatibilityAspectSelection)]);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(() => new Set());
+  const [csvBusy, setCsvBusy] = useState(false);
   const [bulkStatus, setBulkStatus] = useState<GeneratedContentStatus>("REVIEWED");
   const [selectedRowId, setSelectedRowId] = useState<string | null>(null);
   const [editorSourceRow, setEditorSourceRow] = useState<AdminGeneratedContentRow | null>(null);
@@ -4464,15 +4468,16 @@ export function GeneratedContentAdminDashboard() {
   useEffect(() => {
     const warnBeforeUnload = (event: BeforeUnloadEvent) => {
       const draftChanged = draft && JSON.stringify(draft) !== editorBaselineRef.current && JSON.stringify(draft) !== editorSavedInputRef.current;
-      if (!draftChanged && !hasPendingArticleChanges() && natalUnsavedSourcesRef.current.size === 0) return;
+      if (!csvBusy && !draftChanged && !hasPendingArticleChanges() && natalUnsavedSourcesRef.current.size === 0) return;
       event.preventDefault();
       event.returnValue = "";
     };
     window.addEventListener("beforeunload", warnBeforeUnload);
     return () => window.removeEventListener("beforeunload", warnBeforeUnload);
-  }, [draft, skyArticleEditor, skyArticleEditionForm]);
+  }, [draft, skyArticleEditor, skyArticleEditionForm, csvBusy]);
 
   function closeEditor() {
+    if (csvBusy) { setMessage('Finish the CSV operation before leaving this section.'); return false; }
     if (houseTransitEditor && houseTransitCloseGuard.current && !houseTransitCloseGuard.current()) return false;
     const hasOpenEditor = Boolean(
       selectedRow
@@ -5870,6 +5875,7 @@ export function GeneratedContentAdminDashboard() {
   }
 
   async function openRow(row: AdminGeneratedContentRow, compositionContext: CompositionEditorContext | null = null, fieldPath?: string, placementSelection?: SkyPlacementSelection, preservingParentDraft = false): Promise<boolean> {
+    if (csvBusy) { setMessage('Finish the CSV operation before opening an editor.'); return false; }
     if (row.content_key.startsWith("horoscope/")) {
       return navigateAdminPage("horoscopes", new URLSearchParams({ edition: row.id }));
     }
@@ -9695,6 +9701,59 @@ export function GeneratedContentAdminDashboard() {
     );
   }
 
+  async function loadCsvRow(id: string) {
+    try {
+      const payload = await adminJsonRequest<{ rows: AdminGeneratedContentRow[] }>(
+        `/api/admin/generated-content-inventory?id=${encodeURIComponent(id)}&status=all&visibility=all&limit=1`, secret);
+      const row = payload.rows?.find(candidate => candidate.id === id);
+      if (!row || row.inventory_only) throw new Error('The complete saved row could not be loaded.');
+      return row;
+    } catch (error) {
+      throw new Error(error instanceof AdminRequestError && error.status === 401
+        ? 'Studio access was denied. Sign in again before importing or exporting.'
+        : 'Could not load the complete saved row. Retry the export or import when Studio is available.');
+    }
+  }
+
+  async function saveCsvRow(record: CsvRecord) {
+    try {
+      const payload = await adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[] }>(
+        '/api/admin/generated-content', secret, { method: 'PATCH', body: JSON.stringify({
+          id: record.content_id, expectedUpdatedAt: record.saved_version.slice(2),
+          ownerAction: 'import-csv-draft', csvRecord: record
+        }) });
+      const saved = payload.ok ? payload.rows?.[0] : null;
+      if (!saved || saved.status !== 'DRAFT') throw new Error('The API did not confirm a saved draft. Reload before retrying.');
+      setRows(current => mergeContentInventory(current, [saved]));
+      announceContentUpdate({ contentKey: saved.content_key, published: false, updatedAt: saved.updated_at ?? new Date().toISOString() });
+      return saved;
+    } catch (error) { throw new Error(dashboardErrorMessage(error)); }
+  }
+
+  async function publishCsvRow(document: CsvContentRow) {
+    const row = document as AdminGeneratedContentRow;
+    if (pendingPublication) throw new Error('Check the previous publication before publishing another row.');
+    if (row.block_type === 'sky_placement') throw new Error('This source requires its dedicated package review and release.');
+    try {
+      const isPackage = rowIsFallbackArchitectureV3(row);
+      const result = isPackage && objectRecord(objectRecord(row.sections)?.packageDraft)
+        ? await submitSavedPublication(row, 'approve-package-revision')
+        : await adminJsonRequest<StudioPublicationResult>('/api/admin/generated-content', secret, {
+          method: 'PATCH', body: JSON.stringify({ id: row.id, expectedUpdatedAt: row.updated_at,
+            ...(isPackage ? { reviewStatus: 'approved' } : { status: 'LIVE', lane: 'serving', reviewState: null }) })
+        });
+      const saved = result.ok ? result.rows?.[0] : null;
+      if (!saved || saved.content_key !== row.content_key || saved.status !== 'LIVE' || saved.lane !== 'serving'
+        || saved.review_state || objectRecord(objectRecord(saved.sections)?.packageDraft)
+        || (result.publicationReceipt && !['live', 'dated'].includes(result.publicationReceipt.currentPublicationState ?? ''))) {
+        throw new Error('Publication was not confirmed. Check the row’s current status before trying again.');
+      }
+      setRows(current => mergeContentInventory(current.filter(item => item.id !== row.id), [saved]));
+      announceContentUpdate({ contentKey: saved.content_key, published: true, updatedAt: saved.updated_at ?? new Date().toISOString() });
+      return saved;
+    } catch (error) { throw new Error(dashboardErrorMessage(error)); }
+  }
+
   function renderContentTable(
     tableRows: AdminGeneratedContentRow[],
     showArticleDestination = false,
@@ -9722,6 +9781,10 @@ export function GeneratedContentAdminDashboard() {
     ].join(":");
 
     return (
+      <>
+      <Suspense fallback={null}><StudioCsvTools rows={tableRows} selectedIds={selectedIds}
+        disabled={csvBusy || isLoading || loadState === 'loading' || Boolean(draft) || Boolean(pendingPublication)} loadRow={loadCsvRow}
+        saveRow={saveCsvRow} publishRow={publishCsvRow} onBusy={setCsvBusy} onResult={setMessage} /></Suspense>
       <AdminPaginatedCollection items={tableRows} label="Content rows" pageSize={contentTablePageSize} resetKey={resetKey} onVisibleItems={loadVisibleRowDocuments}>
         {(visibleTableRows) => <AdminContentTable
           showDestination={showArticleDestination}
@@ -9764,6 +9827,7 @@ export function GeneratedContentAdminDashboard() {
           })}
         />}
       </AdminPaginatedCollection>
+      </>
     );
   }
 

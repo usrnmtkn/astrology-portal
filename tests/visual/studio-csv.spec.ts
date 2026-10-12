@@ -1,0 +1,289 @@
+import { test, expect } from '@playwright/test';
+import { readFile } from 'node:fs/promises';
+import { studioApiStore } from '../helpers/studio-api-store';
+import { routeStudioInventoryApi } from '../helpers/studio-inventory-route';
+import { readStudioCsv, writeStudioCsv } from '../../apps/admin/src/studioCsv';
+import { fixtures as calendarFixtures } from '../helpers/calendar-review-api.mjs';
+
+const fixtures = Array.from({ length: 31 }, (_, index) => ({
+  id: `10000000-0000-4000-8000-${String(index + 1).padStart(12, '0')}`, content_key: `content/manual/csv-${index + 1}`,
+  headline: `CSV example ${String(index + 1).padStart(2, '0')}`, summary: 'Synthetic summary.',
+  body: `Synthetic opening ${index + 1}, with "quotes".\n\nSynthetic final paragraph ${index + 1} — café.\n`,
+  surface: 'sky', mode: 'in_depth', status: 'DRAFT', event_type: 'essay', block_type: 'essay', target_date: null,
+  lane: 'reference', review_state: 'needs-review', sections: {}, facts: {}, source_snapshot: {}, provider: 'manual-admin',
+  updated_at: '2026-10-01T12:00:00.123456Z', created_at: '2026-10-01T12:00:00Z',
+}));
+test.use({ actionTimeout: 15_000 });
+
+for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
+  test(`CSV export, offline edit, preview, save and reload at ${width} ${theme}`, async ({ page, context }) => {
+    test.setTimeout(120_000);
+    const store = await studioApiStore(fixtures);
+    const errors: string[] = [];
+    page.on('pageerror', error => errors.push(error.message));
+    try {
+      await context.route('**/*', route => {
+        const request = route.request();
+        if (new URL(request.url()).pathname.startsWith('/api/') || !['GET', 'HEAD'].includes(request.method())) return route.abort();
+        return route.continue();
+      });
+      await context.addInitScript(theme => {
+        localStorage.setItem('tldrastro:contentAdminSecret', 'calendar-api-fixture');
+        localStorage.setItem('tldrastro:studio-theme', theme);
+      }, theme);
+      await routeStudioInventoryApi(page, { call: store.call, actualDocumentRoute: true, answer: async (route, url) => {
+        if (url.pathname !== '/api/admin/content-live-status') return false;
+        await route.fulfill({ json: { ok: true, statuses: await store.call({ method: 'statuses', body: route.request().postDataJSON() }) } }); return true;
+      } });
+      await page.setViewportSize({ width, height: 1000 });
+      await page.goto('/admin/content#exact-content');
+      const exportButton = page.getByRole('button', { name: 'Export CSV', exact: true });
+      await expect(exportButton).toBeEnabled();
+      await exportButton.click();
+      const panel = page.getByRole('region', { name: 'CSV offline editing' });
+      await expect(panel).toContainText('31 rows matching these filters');
+      const download = page.waitForEvent('download');
+      await panel.getByRole('button', { name: 'Download CSV', exact: true }).click();
+      const downloaded = await download;
+      const text = await readFile((await downloaded.path())!, 'utf8');
+      const records = readStudioCsv(text);
+      expect(records).toHaveLength(31);
+      expect(records.every(record => record.publish === 'no')).toBe(true);
+      for (const row of fixtures) expect(records.find(record => record.content_id === row.id)?.body).toBe(row.body);
+      await panel.getByText('Choose rows for this export', { exact: true }).click();
+      const selection = panel.getByRole('checkbox', { name: `Export ${fixtures[0].headline}`, exact: true });
+      await selection.check();
+      await expect(panel).toContainText('1 selected row');
+      const selectedDownload = page.waitForEvent('download');
+      await panel.getByRole('button', { name: 'Download CSV', exact: true }).click();
+      expect(readStudioCsv(await readFile((await (await selectedDownload).path())!, 'utf8')).map(record => record.content_id)).toEqual([fixtures[0].id]);
+      await selection.uncheck();
+      await panel.getByText('Choose rows for this export', { exact: true }).click();
+      const file = page.getByLabel('Import Content Studio CSV', { exact: true });
+      await file.setInputFiles({ name: 'unchanged.csv', mimeType: 'text/csv', buffer: Buffer.from(text) });
+      await expect(panel).toContainText('0 changed · 31 unchanged · 0 conflicts');
+      await expect(panel.getByRole('button', { name: 'Save 0 drafts', exact: true })).toBeDisabled();
+      const edited = records.find(record => record.content_id === fixtures[0].id)!;
+      edited.body = 'Synthetic offline opening, "quoted".\n\nSynthetic offline final paragraph — café.\n';
+      edited.summary = '';
+      edited.publish = 'yes';
+      const draftEdit = { ...records.find(record => record.content_id === fixtures[2].id)!, body: 'Synthetic draft-only revision.' };
+      const publishUnchanged = { ...records.find(record => record.content_id === fixtures[3].id)!, publish: 'yes' };
+      await file.setInputFiles({ name: 'offline.csv', mimeType: 'text/csv', buffer: Buffer.from(writeStudioCsv([edited, records.find(record => record.content_id === fixtures[1].id)!, draftEdit, publishUnchanged])) });
+      await expect(panel).toContainText('2 changed · 2 unchanged · 0 conflicts');
+      await expect(panel).toContainText('2 to publish');
+      await expect(panel.locator('[data-csv-preview] summary').first()).toContainText('Will publish');
+      await expect(panel).toContainText('Save draft');
+      expect((await store.call({ method: 'rows' }))[0].body).toBe(fixtures[0].body);
+      await panel.locator('[data-csv-preview] summary').first().click();
+      await expect(panel).toContainText('clears this field');
+      await expect(panel).toContainText('Synthetic offline final paragraph');
+      const diff = panel.locator('[data-csv-preview]').first().locator('.studio-csv-diff').last();
+      expect(await diff.evaluate(element => getComputedStyle(element).display)).toBe('grid');
+      expect(await diff.locator('p').last().evaluate(element => getComputedStyle(element).whiteSpace)).toBe('pre-wrap');
+      const positions = await diff.locator(':scope > div').evaluateAll(elements => elements.map(element => element.getBoundingClientRect().x));
+      expect(positions[0] === positions[1]).toBe(width === 390);
+      const typography = (element: Element) => {
+        const style = getComputedStyle(element);
+        return [style.fontFamily, style.fontSize, style.fontWeight, style.lineHeight, style.letterSpacing];
+      };
+      expect(await diff.locator('p').last().evaluate(typography)).toEqual(await panel.locator(':scope > p').first().evaluate(typography));
+      await expect(file).toBeHidden();
+      await panel.screenshot({ path: `test-results/studio-csv-${width}-${theme}.png` });
+      expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
+      await panel.getByRole('button', { name: 'Save & publish', exact: true }).click();
+      await expect(panel).toContainText('2 edits saved; 2 rows published.');
+      const saved = (await store.call({ method: 'rows' })).find((row: any) => row.id === fixtures[0].id);
+      expect(saved.body).toBe(edited.body); expect(saved.summary).toBe(''); expect(saved.status).toBe('LIVE');
+      expect((await store.call({ method: 'rows' })).find((row: any) => row.id === fixtures[2].id).status).toBe('DRAFT');
+      const reader = await store.call({ method: 'POST', url: '/api/content-reader', body: { keys: fixtures.slice(0, 4).map(row => row.content_key) } });
+      expect(reader.payload.rows.map((row: any) => row.id).sort()).toEqual([fixtures[0].id, fixtures[3].id]);
+      expect(reader.payload.rows.find((row: any) => row.id === fixtures[0].id).body).toBe(edited.body);
+      // Removed rows were not deleted or updated.
+      expect((await store.call({ method: 'rows' })).filter((row: any) => row.updated_at === fixtures[0].updated_at)).toHaveLength(28);
+      await file.setInputFiles({ name: 'stale.csv', mimeType: 'text/csv', buffer: Buffer.from(writeStudioCsv([edited])) });
+      await expect(panel).toContainText('1 conflicts or errors');
+      await panel.locator('[data-csv-preview] summary').first().click();
+      await expect(panel).toContainText('Changed in Studio since export');
+      await expect(panel.getByRole('button', { name: /^Save \d+ drafts?$/ })).toBeDisabled();
+      await page.reload();
+      await expect(exportButton).toBeEnabled();
+      await page.getByText(fixtures[0].headline, { exact: true }).first().click();
+      const editor = page.getByRole('dialog', { name: 'Generated content editor' });
+      await expect(editor.getByLabel('Full passage / body', { exact: true })).toHaveValue(edited.body);
+      expect(errors).toEqual([]);
+    } finally { store.close(); }
+  });
+}
+
+test('CSV stops on a mid-batch conflict and reports confirmed saves', async ({ page, context }) => {
+  test.setTimeout(90_000);
+  const store = await studioApiStore(fixtures.slice(0, 3).map((row, index) => ({ ...row, status: index === 0 ? 'LIVE' : row.status })));
+  const writes: unknown[] = [];
+  try {
+    await context.route('**/*', route => {
+      const request = route.request();
+      if (new URL(request.url()).pathname.startsWith('/api/') || !['GET', 'HEAD'].includes(request.method())) return route.abort();
+      return route.continue();
+    });
+    await context.addInitScript(() => localStorage.setItem('tldrastro:contentAdminSecret', 'calendar-api-fixture'));
+    await routeStudioInventoryApi(page, { call: store.call, actualDocumentRoute: true, onWrite: write => writes.push(write) });
+    await page.goto('/admin/content#exact-content');
+    await page.getByRole('button', { name: 'Export CSV', exact: true }).click();
+    const panel = page.getByRole('region', { name: 'CSV offline editing' });
+    const download = page.waitForEvent('download');
+    await panel.getByRole('button', { name: 'Download CSV', exact: true }).click();
+    const records = readStudioCsv(await readFile((await (await download).path())!, 'utf8')).sort((a, b) => a.content_id.localeCompare(b.content_id));
+    records.forEach((record, index) => { record.body = `Synthetic offline revision ${index + 1}.`; });
+    await page.getByLabel('Import Content Studio CSV', { exact: true }).setInputFiles({ name: 'batch.csv', mimeType: 'text/csv', buffer: Buffer.from(writeStudioCsv(records)) });
+    await expect(panel).toContainText('3 changed · 0 unchanged · 0 conflicts');
+    await expect(panel).toContainText('saving moves the live row to draft until you publish it again');
+    const concurrent = await store.call({ method: 'PATCH', body: { id: fixtures[1].id, expectedUpdatedAt: fixtures[1].updated_at, body: 'Synthetic newer Studio edit.' } });
+    expect(concurrent.status).toBe(200);
+    await panel.getByRole('button', { name: 'Save 3 drafts', exact: true }).click();
+    await expect(panel).toContainText('1 draft confirmed saved. Stopped at');
+    const saved = await store.call({ method: 'rows' });
+    expect(saved.find((row: any) => row.id === fixtures[0].id).body).toBe(records[0].body);
+    expect(saved.find((row: any) => row.id === fixtures[0].id).status).toBe('DRAFT');
+    expect(saved.find((row: any) => row.id === fixtures[1].id).body).toBe('Synthetic newer Studio edit.');
+    expect(saved.find((row: any) => row.id === fixtures[2].id).body).toBe(fixtures[2].body);
+    expect(writes).toHaveLength(2);
+    await expect(panel.getByRole('button', { name: /^Save \d+ drafts?$/ })).toBeDisabled();
+  } finally { store.close(); }
+});
+
+test('CSV empty state and failed reads recover without partial exports or writes', async ({ page, context }) => {
+  const store = await studioApiStore(fixtures.slice(0, 2));
+  let showRows = false, failDocuments = false;
+  let downloads = 0;
+  const writes: unknown[] = [];
+  page.on('download', () => downloads++);
+  try {
+    await context.route('**/*', route => {
+      const request = route.request();
+      if (new URL(request.url()).pathname.startsWith('/api/') || !['GET', 'HEAD'].includes(request.method())) return route.abort();
+      return route.continue();
+    });
+    await context.addInitScript(() => localStorage.setItem('tldrastro:contentAdminSecret', 'calendar-api-fixture'));
+    await routeStudioInventoryApi(page, {
+      listRows: rows => showRows ? rows : [], actualDocumentRoute: true, onWrite: write => writes.push(write),
+      call: request => failDocuments && request.method === 'GET' && request.url?.includes('?id=')
+        ? Promise.resolve({ status: 503, payload: { ok: false, error: 'Synthetic document load failure.' } })
+        : store.call(request)
+    });
+    await page.goto('/admin/content#exact-content');
+    await page.getByRole('button', { name: 'Export CSV', exact: true }).click();
+    const panel = page.getByRole('region', { name: 'CSV offline editing' });
+    await expect(panel).toContainText('0 rows matching these filters');
+    await expect(panel.getByRole('button', { name: 'Download CSV', exact: true })).toBeDisabled();
+    showRows = true;
+    await page.reload();
+    await page.getByRole('button', { name: 'Export CSV', exact: true }).click();
+    failDocuments = true;
+    await panel.getByRole('button', { name: 'Download CSV', exact: true }).click();
+    await expect(panel).toContainText('Could not load the complete saved row.');
+    expect(downloads).toBe(0);
+    await page.getByLabel('Import Content Studio CSV', { exact: true }).setInputFiles({ name: 'invalid.csv', mimeType: 'text/csv', buffer: Buffer.from('title,body\nInvalid,synthetic') });
+    await expect(panel).toContainText('Use a CSV exported by Content Studio');
+    expect(writes).toHaveLength(0);
+    failDocuments = false;
+    const download = page.waitForEvent('download');
+    await panel.getByRole('button', { name: 'Download CSV', exact: true }).click();
+    expect(readStudioCsv(await readFile((await (await download).path())!, 'utf8'))).toHaveLength(2);
+  } finally { store.close(); }
+});
+
+for (const failure of ['validation', 'race', 'lost-response']) {
+  test(`CSV publishing stops after ${failure} and distinguishes saved drafts from confirmed publications`, async ({ page, context }) => {
+    const rows = fixtures.slice(0, 3).map((row, index) => ({ ...row,
+      content_key: failure === 'validation' && index === 1 ? 'sky/article-template/csv-blocked' : row.content_key
+    }));
+    const store = await studioApiStore(rows);
+    const writes: unknown[] = [];
+    try {
+      await context.route('**/*', route => {
+        const request = route.request();
+        if (new URL(request.url()).pathname.startsWith('/api/') || !['GET', 'HEAD'].includes(request.method())) return route.abort();
+        return route.continue();
+      });
+      await context.addInitScript(() => localStorage.setItem('tldrastro:contentAdminSecret', 'calendar-api-fixture'));
+      await routeStudioInventoryApi(page, { actualDocumentRoute: true, onWrite: write => writes.push(write), call: async request => {
+        const result = await store.call(request);
+        const body = request.body as any;
+        if (request.method === 'PATCH' && body?.id === rows[1].id) {
+          if (failure === 'race' && body.csvRecord) {
+            const draft = result.payload.rows[0];
+            const concurrent = await store.call({ method: 'PATCH', body: { id: draft.id, expectedUpdatedAt: draft.updated_at, body: 'Synthetic concurrent revision.' } });
+            expect(concurrent.status).toBe(200);
+          }
+          if (failure === 'lost-response' && body.status === 'LIVE') {
+            expect(result.status).toBe(200);
+            return { status: 504, payload: { ok: false, error: 'Synthetic response loss after commit.' } };
+          }
+        }
+        return result;
+      } });
+      await page.goto('/admin/content#exact-content');
+      await page.getByRole('button', { name: 'Export CSV', exact: true }).click();
+      const panel = page.getByRole('region', { name: 'CSV offline editing' });
+      const download = page.waitForEvent('download');
+      await panel.getByRole('button', { name: 'Download CSV', exact: true }).click();
+      const records = readStudioCsv(await readFile((await (await download).path())!, 'utf8')).sort((a, b) => a.content_id.localeCompare(b.content_id));
+      records.forEach((record, index) => { record.publish = 'yes'; record.body = `Synthetic imported revision ${index + 1}.`; });
+      await page.getByLabel('Import Content Studio CSV', { exact: true }).setInputFiles({ name: 'publish.csv', mimeType: 'text/csv', buffer: Buffer.from(writeStudioCsv(records)) });
+      await expect(panel).toContainText('3 to publish');
+      expect(writes).toHaveLength(0);
+      await panel.getByRole('button', { name: 'Save & publish', exact: true }).click();
+      await expect(panel).toContainText(`2 edits saved; 1 row published. Stopped at ${rows[1].content_key}`);
+      await expect(panel).toContainText('publication was not confirmed');
+      const saved = await store.call({ method: 'rows' });
+      expect(saved.find((row: any) => row.id === rows[0].id).status).toBe('LIVE');
+      expect(saved.find((row: any) => row.id === rows[1].id).status).toBe(failure === 'lost-response' ? 'LIVE' : 'DRAFT');
+      expect(saved.find((row: any) => row.id === rows[1].id).body).toBe(failure === 'race' ? 'Synthetic concurrent revision.' : records[1].body);
+      expect(saved.find((row: any) => row.id === rows[2].id).body).toBe(rows[2].body);
+      expect(writes).toHaveLength(4);
+      await expect(panel.getByRole('button', { name: /^(Save & publish|Save \d+ drafts?)$/ })).toBeDisabled();
+    } finally { store.close(); }
+  });
+}
+
+test('CSV publishes a separately saved package revision and reloads the exact live passage', async ({ page, context }) => {
+  const source = { ...structuredClone(calendarFixtures[0]), id: fixtures[0].id };
+  const store = await studioApiStore([source], { uuidIds: true });
+  try {
+    const initial = await store.call({ method: 'PATCH', body: { id: source.id, expectedUpdatedAt: source.updated_at, ownerAction: 'approve-package-revision' } });
+    expect(initial.status).toBe(200);
+    const live = initial.payload.rows[0];
+    await context.route('**/*', route => {
+      const request = route.request();
+      if (new URL(request.url()).pathname.startsWith('/api/') || !['GET', 'HEAD'].includes(request.method())) return route.abort();
+      return route.continue();
+    });
+    await context.addInitScript(() => localStorage.setItem('tldrastro:contentAdminSecret', 'calendar-api-fixture'));
+    const writes: any[] = [];
+    await routeStudioInventoryApi(page, { call: store.call, actualDocumentRoute: true, onWrite: write => writes.push(write) });
+    await page.goto('/admin/content#exact-content');
+    await page.getByRole('button', { name: 'Export CSV', exact: true }).click();
+    const panel = page.getByRole('region', { name: 'CSV offline editing' });
+    const download = page.waitForEvent('download');
+    await panel.getByRole('button', { name: 'Download CSV', exact: true }).click();
+    const records = readStudioCsv(await readFile((await (await download).path())!, 'utf8'));
+    records[0].publish = 'yes'; records[0].Body += '\n\nSynthetic offline publication ending.';
+    await page.getByLabel('Import Content Studio CSV', { exact: true }).setInputFiles({ name: 'package.csv', mimeType: 'text/csv', buffer: Buffer.from(writeStudioCsv(records)) });
+    await expect(panel).toContainText('1 to publish');
+    await panel.getByRole('button', { name: 'Save & publish', exact: true }).click();
+    await expect(panel).toContainText('1 edit saved; 1 row published.');
+    expect(writes).toHaveLength(2);
+    const proposal = writes[0].result.payload.rows[0];
+    expect(proposal.id).not.toBe(live.id);
+    expect(writes[1].body).toEqual({ id: proposal.id, expectedUpdatedAt: proposal.updated_at, ownerAction: 'approve-package-revision' });
+    const reader = await store.call({ method: 'POST', url: '/api/content-reader', body: { keys: [live.content_key] } });
+    expect(reader.payload.rows[0].body).toBe(records[0].Body);
+    await page.reload();
+    await page.getByRole('button', { name: 'Export CSV', exact: true }).click();
+    const exported = page.waitForEvent('download');
+    await panel.getByRole('button', { name: 'Download CSV', exact: true }).click();
+    const reopened = readStudioCsv(await readFile((await (await exported).path())!, 'utf8'));
+    expect(reopened[0].Body).toBe(records[0].Body); expect(reopened[0].publish).toBe('no');
+  } finally { store.close(); }
+});

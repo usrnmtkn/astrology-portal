@@ -31,6 +31,13 @@ body:has(.admin-dashboard) { margin: 0; }
 #root .admin-dashboard :focus-visible { outline: var(--border-width-medium) solid var(--workspace-primary); outline-offset: var(--space-1); }
 
 /* Issue workflow labels share their treatment with the explanatory key. */
+/* Offline CSV previews retain complete passages and the shared body typography. */
+#root .admin-dashboard :is(.studio-csv-tools,.studio-csv-panel,.studio-csv-change) { display: grid; gap: var(--workspace-block-gap); }
+#root .admin-dashboard input.studio-csv-file { display: none; }
+#root .admin-dashboard .studio-csv-selection { display: grid; gap: var(--workspace-field-gap); }
+#root .admin-dashboard .studio-csv-diff { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: var(--workspace-block-gap); }
+#root .admin-dashboard .studio-csv-text { white-space: pre-wrap; overflow-wrap: anywhere; }
+
 #root .admin-dashboard .admin-unresolved-guide { display: grid; gap: var(--workspace-panel-inset); padding: var(--workspace-card-padding); border-radius: var(--workspace-radius); background: var(--workspace-surface); }
 #root .admin-dashboard .admin-unresolved-guide > div { display: grid; gap: var(--workspace-field-gap); }
 #root .admin-dashboard .admin-unresolved-guide dl { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--workspace-panel-inset); }
@@ -715,6 +722,7 @@ body:has(.admin-dashboard) { margin: 0; }
 #root .admin-dashboard .admin-horoscope-actions .admin-danger-button:not(:disabled) { background: var(--studio-error-container); color: var(--studio-on-error-container); border-color: var(--workspace-danger); }
 #root .admin-dashboard .admin-horoscope-wizard progress { width: 100%; accent-color: var(--workspace-primary); }
 @media (max-width: 720px) {
+  #root .admin-dashboard .studio-csv-diff { grid-template-columns: minmax(0,1fr); }
   #root .admin-dashboard .admin-horoscope-steps { grid-template-columns: repeat(2,minmax(0,1fr)); }
   #root .admin-dashboard .admin-horoscope-signs { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); }
   #root .admin-dashboard .admin-horoscope-signs button { padding-inline: var(--workspace-control-inset); }
