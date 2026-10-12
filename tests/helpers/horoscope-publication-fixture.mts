@@ -63,7 +63,7 @@ export async function createWeeklyAspectPublicationFixture(call:(message:any)=>P
 // Synthetic claims reproduce motion/placement asides, a shared grammatical
 // subject, and the two different placements of one planet within a week.
 export const weeklyContextBodies:Record<string,string>={
- aries:'On Tuesday Venus, retrograde in your 8th house of shared money, squares Pluto in your 11th house of groups. On Friday the Sun enters Scorpio in your 8th house, and that same night it meets Venus, which is still retrograde. On Sunday Venus, retrograde, enters Libra in your 7th house.',
+ aries:'On Tuesday Venus, retrograde in your 8th house of shared money, squares Pluto in your 11th house of groups. On Friday the Sun enters Scorpio in your 8th house, and that same night it meets Venus, which is still retrograde. On Sunday Venus backs into your 7th house of partners.',
  taurus:'Venus, retrograde in your 7th house of partners, squares Pluto in your 10th house. The Sun meets retrograde Venus there. On Sunday Venus, your ruling planet, moves retrograde into Libra and your 6th house.',
  gemini:'Venus, retrograde in your 6th house of routines, squares Pluto in your 9th house. On Sunday Venus, still retrograde, moves back into Libra in your 5th house.',
  cancer:'Venus, retrograde in your 5th house of creativity, squares Pluto in your 8th house. On Friday the Sun enters Scorpio in your 5th house too and meets retrograde Venus that night. On Sunday Venus, still retrograde, enters Libra in your 4th house.',

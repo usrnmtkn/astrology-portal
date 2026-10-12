@@ -657,3 +657,10 @@ preflight, unchanged publication, reader retrieval, and negative aspect, motion,
 ambiguous-subject, ingress and house cases. The corresponding phone/desktop browser
 journey checks approval, publication and complete reader text after reload. No paid
 generation or production content mutation is part of these regressions.
+
+Validator v12 also recognizes a house-only ingress destination, such as “Venus
+backs into your 7th house.” That exact destination token is checked against the
+same planet’s calculated ingress events, even when a preceding clause states its
+original sign. Reference positions cannot establish an ingress, and earlier
+house claims retain their own checks. Wrong destinations and missing ingress
+events remain blocking; the owner’s wording remains unchanged.

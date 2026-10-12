@@ -209,6 +209,7 @@ console.log('PASS context publication: all twelve motion asides, shared subjects
 // Each new form must retain factual checks; it cannot merely hide warnings.
 for(const [sign,bad] of [
  ['aries',weeklyContextBodies.aries.replace('squares Pluto','trines Pluto')],
+ ['aries',weeklyContextBodies.aries.replace('backs into your 7th house','backs into your 8th house')],
  ['aries','Venus, retrograde in your sign, squares Pluto. You can review the fixture.'],
  ['aries',weeklyContextBodies.aries.replace('retrograde in your 8th','direct in your 8th')],
  ['aries',weeklyContextBodies.aries.replace('which is still retrograde','which is still direct')],
@@ -236,3 +237,20 @@ for(const [sign,bad] of [
 assert.deepEqual(issues('taurus','You can review Venus in your 7th house as it moves back into Libra in your 6th house.',contextBrief),[]);
 assert(issues('taurus','You can review Venus in your 6th house as it moves back into Libra in your 7th house.',contextBrief).length);
 console.log('PASS context refusals: incorrect aspects, suffix motions, destinations and houses; ambiguous/missing subjects; exact unchanged draft on refusal.');
+
+// A house-only destination is still an ingress claim, not a reference placement.
+for(const [sign,n] of Object.entries({aries:7,taurus:6,gemini:5,cancer:4,leo:3,virgo:2,libra:1,scorpio:12,sagittarius:11,capricorn:10,aquarius:9,pisces:8})){
+ const ordinal=n===1?'1st':n===2?'2nd':n===3?'3rd':`${n}th`;
+ assert.deepEqual(issues(sign,`Venus backs into your ${ordinal} house. You can review the fixture.`,contextBrief),[],sign);
+}
+for(const phrasing of ['enters your 7th house','moves back into your seventh house','moves retrograde into your 7th whole-sign house','backs into your 7th house','returns to your seventh house']){
+ assert.deepEqual(issues('aries',`Venus ${phrasing}. You can review the fixture.`,contextBrief),[],phrasing);
+ assert(issues('aries',`Venus ${phrasing.replace(/7th|seventh/u,'8th')}. You can review the fixture.`,contextBrief).length,phrasing);
+ assert(issues('aries',`Mars ${phrasing}. You can review the fixture.`,contextBrief).length,phrasing);
+ assert(issues('aries',`Venus ${phrasing}. You can review the fixture.`,{...contextBrief,events:contextBrief.events.filter((e:any)=>e.type!=='ingress')}).length,phrasing);
+}
+assert.deepEqual(issues('aries','Venus in Scorpio in your 8th house backs into your 7th house. You can review the fixture.',contextBrief),[]);
+assert(issues('aries','Venus in Scorpio in your 7th house backs into your 8th house. You can review the fixture.',contextBrief).length);
+assert.deepEqual(issues('libra','Venus enters your first house. You can review the fixture.',contextBrief),[]);
+assert(issues('aries','Venus enters your 13th house. You can review the fixture.',contextBrief).length);
+console.log('PASS house-only ingresses: destinations require the same planet’s calculated ingress; wrong houses, missing events and earlier mismatches remain blocked.');
