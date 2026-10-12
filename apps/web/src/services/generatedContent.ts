@@ -1671,7 +1671,7 @@ export async function loadLiveGeneratedContentForSurfaces(
   const { data, error } = await loadReaderRows({ surfaces, ...(vocabularyOnly ? { vocabularyOnly: true } : {}),
     ...(targetDate && !requestedSurfaces.includes("sky") ? { targetDate } : {}) }, requestSignal);
   if (error) {
-    console.warn("Live generated content failed to load; using the nightly reader-safe snapshot.", error);
+    console.warn("Content surface read failed.", error);
     return loadLastKnownGoodGeneratedContentForSurfaces(requestedSurfaces, targetDate, previewMode);
   }
   const rows = data ?? [];
@@ -1719,7 +1719,7 @@ async function readLiveGeneratedContentForKeys(keys: string[], options: { requir
     if (error) {
       // A refresh must distinguish confirmed removals from an offline snapshot.
       if (options.requireFresh) throw error;
-      console.warn("Targeted generated content failed to load; using the nightly reader-safe snapshot.", error);
+      console.warn("Targeted content read failed.", error);
       return loadLastKnownGoodGeneratedContentForKeys(keys);
     }
 
