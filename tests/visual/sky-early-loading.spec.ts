@@ -51,8 +51,8 @@ for (const warm of [false, true]) for (const changeSelection of [false, true]) {
       await expect.poll(() => requests.some(url => url.pathname === '/api/sky')).toBe(true);
       if (warm) await expect.poll(() => requests.some(url => url.pathname === '/api/content-publications')).toBe(true);
       else expect(requests.some(url => url.pathname === '/api/content-publications')).toBe(false);
-      expect(requests.some(url => /(?:newsreader|geist-mono)-latin.*\.woff2$/.test(url.pathname))).toBe(false);
-      expect(requests.some(url => /sky-v4-canonical-content-studio-stage.*\.json$/.test(url.pathname))).toBe(false);
+      await expect.poll(() => requests.some(url => /newsreader-latin.*\.woff2$/.test(url.pathname))).toBe(true);
+      await expect.poll(() => requests.some(url => /sky-v4-canonical-content-studio-stage.*\.json$/.test(url.pathname))).toBe(true);
       expect(requests.some(url => url.pathname.endsWith('/content_publications'))).toBe(false);
       expect(await page.locator('.app-shell').count()).toBe(0);
       expect(requests.find(url => url.pathname === '/api/sky')?.searchParams.get('at')).toBe('2026-09-21T16:00:00.000Z');

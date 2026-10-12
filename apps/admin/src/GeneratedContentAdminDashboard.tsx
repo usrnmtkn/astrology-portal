@@ -2947,6 +2947,12 @@ async function loadAllGeneratedContentRows(
   signal?: AbortSignal
 ) {
   let lastEmitAt = 0;
+  const inventoryRows = (rows: AdminGeneratedContentRow[]) => {
+    const unique = dedupeGeneratedContentRows(rows);
+    // Each UUID range has its own cursor. Restore the server's global order
+    // before consumers select the newest row for a content key.
+    return query.catalog ? unique.sort((a, b) => (b.updated_at ?? "").localeCompare(a.updated_at ?? "") || b.id.localeCompare(a.id)) : unique;
+  };
   const allRows = await readStudioInventoryPasses(
     studioInventoryPasses(query),
     (pass, cursor, requestSignal) => loadGeneratedContentPage(
@@ -2956,12 +2962,12 @@ async function loadAllGeneratedContentRows(
       const now = Date.now();
       if (complete || lastEmitAt === 0 || now - lastEmitAt >= 600) {
         lastEmitAt = now;
-        onPage?.(dedupeGeneratedContentRows(rows), complete);
+        onPage?.(inventoryRows(rows), complete);
       }
     },
     signal
   );
-  return dedupeGeneratedContentRows(allRows);
+  return inventoryRows(allRows);
 }
 
 function dedupeGeneratedContentRows(rows: AdminGeneratedContentRow[]) {

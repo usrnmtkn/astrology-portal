@@ -96,7 +96,7 @@ export type AskTldrRetrievalPlan = {
   decisionMode: "decision_support_not_outcome" | "interpretive_answer";
 };
 
-export type AskTldrRankedEvidence = AskTldrEvidenceCandidate & {
+export type AskTldrRankedEvidence<T extends AskTldrEvidenceCandidate = AskTldrEvidenceCandidate> = T & {
   score: number;
   role: "primary" | "supporting";
   reasons: string[];
@@ -302,12 +302,12 @@ function scoreCandidate(
   return { score, reasons };
 }
 
-export function rankAskTldrEvidence(input: {
+export function rankAskTldrEvidence<T extends AskTldrEvidenceCandidate>(input: {
   model: AskTldrAnswerModelConfig;
   plan: AskTldrRetrievalPlan;
-  candidates: AskTldrEvidenceCandidate[];
+  candidates: T[];
   now?: Date;
-}): AskTldrRankedEvidence[] {
+}): AskTldrRankedEvidence<T>[] {
   const now = input.now ?? new Date();
   const ranked = input.candidates.flatMap((candidate) => {
     if (!candidate.id || !candidate.provenance?.calculator || !candidate.provenance?.sourceId) {
@@ -321,7 +321,7 @@ export function rankAskTldrEvidence(input: {
     || left.id.localeCompare(right.id)
   ));
 
-  const selected: Array<Omit<AskTldrRankedEvidence, "role">> = [];
+  const selected: Array<T & { score: number; reasons: string[] }> = [];
   const factorKeys = new Set<string>();
   for (const candidate of ranked) {
     const factorKey = candidate.factorKey?.trim() || candidate.id;
@@ -336,10 +336,10 @@ export function rankAskTldrEvidence(input: {
   }));
 }
 
-export function buildAskTldrAnswerPacket(input: {
+export function buildAskTldrAnswerPacket<T extends AskTldrEvidenceCandidate>(input: {
   model: AskTldrAnswerModelConfig;
   plan: AskTldrRetrievalPlan;
-  candidates: AskTldrEvidenceCandidate[];
+  candidates: T[];
   now?: Date;
 }) {
   const evidence = rankAskTldrEvidence(input);

@@ -30,17 +30,17 @@ export function askTldrCandidateMatchesQuestionFocus(candidate: AskTldrEvidenceC
   return true;
 }
 
-export function filterAskTldrCandidatesForQuestion(input: {
+export function filterAskTldrCandidatesForQuestion<T extends AskTldrEvidenceCandidate>(input: {
   plan: AskTldrRetrievalPlan;
-  candidates: AskTldrEvidenceCandidate[];
+  candidates: T[];
 }) {
   return input.candidates.filter((candidate) => askTldrCandidateMatchesQuestionFocus(candidate, input.plan));
 }
 
-export function buildQuestionFocusedAskTldrAnswerPacket(input: {
+export function buildQuestionFocusedAskTldrAnswerPacket<T extends AskTldrEvidenceCandidate>(input: {
   model: AskTldrAnswerModelConfig;
   plan: AskTldrRetrievalPlan;
-  candidates: AskTldrEvidenceCandidate[];
+  candidates: T[];
   now?: Date;
 }) {
   const candidates = filterAskTldrCandidatesForQuestion({ plan: input.plan, candidates: input.candidates });

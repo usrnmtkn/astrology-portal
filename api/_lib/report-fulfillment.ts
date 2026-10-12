@@ -503,6 +503,7 @@ export async function processReportFulfillmentJob(input: {
     issues: unknown[];
     warnings?: unknown[];
     mechanicalRemovals?: unknown[];
+    mechanicalCoherenceRepairs?: unknown[];
   }> = [];
   let validatorAttempts = report.attempt_counts?.validator ?? 0;
   let judgeAttempts = report.attempt_counts?.judge ?? 0;
@@ -515,7 +516,7 @@ export async function processReportFulfillmentJob(input: {
   const initialPersistedRows = promptMode === "active"
     ? await input.store.unitRows(report.id)
     : [];
-  const persistedDrafts = new Map(initialPersistedRows.flatMap((row) => {
+  const persistedDrafts = new Map<string, ReportDraft>(initialPersistedRows.flatMap((row) => {
     if (row.source_snapshot?.fulfillmentPassed !== true && !isAssemblyInvalidatedPassingSnapshot(row.source_snapshot)) return [];
     const unitId = row.content_key.replace(`report:${report.id}:`, "");
     const renderMetadata = row.source_snapshot?.renderMetadata as { timing?: unknown } | undefined;

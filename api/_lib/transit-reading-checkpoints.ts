@@ -47,7 +47,7 @@ export function withTransitReadingCheckpoints<T>(
     step: 0, called: false, deadline: Math.min(input.deadline ?? Infinity, Date.now() + TRANSIT_READING_INVOCATION_BUDGET_MS) }, run);
 }
 
-export function transitReadingModelRequestHash(input: ReportModelCallInput<unknown>) {
+export function transitReadingModelRequestHash<T>(input: ReportModelCallInput<T>) {
   const policy = transitReadingReleasePolicy();
   return createHash("sha256").update(JSON.stringify({
     version: 1, provider: input.provider, model: input.model,

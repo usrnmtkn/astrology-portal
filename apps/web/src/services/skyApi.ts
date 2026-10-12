@@ -73,6 +73,11 @@ export function startInitialSkyLoad(): InitialSkyLoad | null {
   const now = new Date();
   const date = skyDateTimeFromInput(day, location, true, now);
   const result = getSkyFromApi(location, date).catch(() => null);
+  // The complete authored package is needed for every Sky selection. Fetch its
+  // shared assets during App's download instead of waiting for React to mount.
+  // The mounted source gate still owns validation, publication selection and retry.
+  void import("../content/skyPlacementSourceAssets").then(({ loadSkyPlacementSourceAssets }) =>
+    loadSkyPlacementSourceAssets()).catch(() => {});
   // Returning readers can validate their complete cache without a large download.
   // A first visit keeps the normal post-App read so ledger bytes do not delay App.
   void import("./contentPublications").then(({ refreshContentPublications, contentPublicationsResolved }) => {

@@ -1,8 +1,6 @@
-export type AstrologyProseRole = "MEANING_PLANNER" | "WRITER" | "REVIEWER" | "RHETORICAL_REVIEWER" | "REVISER" | "CARD_WRITER_V3" | "CARD_REVISER_V3" | "CARD_REVIEWER_V3" | "SEASONAL_MECHANISM" | "SEASONAL_PLANNER" | "SEASONAL_PLAN_REVIEWER" | "SEASONAL_VOICE_REVIEWER" | "SEASONAL_MEANING_REVIEWER";
+export type AstrologyProseRole = "COLD_REVIEWER" | "MEANING_PLANNER" | "WRITER" | "REVIEWER" | "RHETORICAL_REVIEWER" | "REVISER" | "CARD_WRITER_V3" | "CARD_REVISER_V3" | "CARD_REVIEWER_V3" | "SEASONAL_MECHANISM" | "SEASONAL_PLANNER" | "SEASONAL_PLAN_REVIEWER" | "SEASONAL_VOICE_REVIEWER" | "SEASONAL_MEANING_REVIEWER";
 
 export function instructionsForRole(role: AstrologyProseRole, taskInstructions?: string, context?: {surface?: string; family?: string}): string;
-export function governedInstructionsForRole(role: AstrologyProseRole, options?: {taskInstructions?:string;governedInstructions?:string;surface?:string;family?:string}): string;
-
 export function governedInstructionsForRole(role: AstrologyProseRole, options?: {taskInstructions?:string;governedInstructions?:string;surface?:string;family?:string}): string;
 
 export function callOpenAIResponses<T = {status?: string; id?: unknown; [key: string]: unknown}>(options: {
@@ -23,3 +21,6 @@ export function callOpenAIResponses<T = {status?: string; id?: unknown; [key: st
 
 export const startStoredWritingResponse: typeof callOpenAIResponses;
 export function storedWritingResponse(options: {apiKey: string; responseId: string; cancel?: boolean; fetchImpl?: typeof fetch}): Promise<Response>;
+
+export function startStoredNativeWritingResponse(options: { provider: string; apiKey: string; role: AstrologyProseRole; request: Record<string, unknown>; governedInstructions: string; surface?: string; family?: string; signal?: AbortSignal; fetchImpl?: typeof fetch }): Promise<Response>;
+export function storedNativeWritingResponse(options: { provider: string; apiKey: string; responseId: string; cancel?: boolean; signal?: AbortSignal; fetchImpl?: typeof fetch }): Promise<Response>;

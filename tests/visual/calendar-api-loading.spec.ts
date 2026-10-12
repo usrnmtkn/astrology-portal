@@ -158,3 +158,35 @@ for (const scenario of [
   expect(requests.some(url => url.pathname.startsWith('/wasm/'))).toBe(scenario.offline);
   expect(errors).toEqual([]);
 });
+
+for (const width of [390, 1440]) test(`Calendar reveals downstream actions with the complete reading at ${width}px`, async ({ page }) => {
+  test.setTimeout(90_000);
+  await page.setViewportSize({ width, height: 1000 });
+  await page.clock.setFixedTime(new Date('2026-10-02T16:00:00Z'));
+  await bundledPublications(page);
+  await page.addInitScript(() => localStorage.setItem('tldrastro:selectedLocation', JSON.stringify({
+    label: 'Synthetic New York', latitude: 40.7128, longitude: -74.006, timeZone: 'America/New_York'
+  })));
+  await page.route(/\/api\/(calendar|sky)\?/, async route => {
+    const url = new URL(route.request().url());
+    const response = { statusCode: 200, body: '', setHeader() {}, end(body: string) { this.body = body; } };
+    await (url.pathname === '/api/calendar' ? calendarHandler : skyHandler)(
+      { method: 'GET', url: url.href } as IncomingMessage, response as unknown as ServerResponse);
+    await route.fulfill({ status: response.statusCode, contentType: 'application/json', body: response.body });
+  });
+  let release!: () => void;
+  const gate = new Promise<void>(resolve => { release = resolve; });
+  await page.route(/\/assets\/fallback-content-calendar-[^/]+\.js$/, async route => { await gate; await route.continue(); });
+  try {
+    await page.goto('/?date=2026-10-02#calendar?view=day&date=2026-10-02', { waitUntil: 'domcontentloaded' });
+    const day = page.getByLabel('Selected lunar day', { exact: true });
+    await expect(day.locator('.calendar-sky-card__body')).toHaveAttribute('aria-busy', 'true');
+    await expect(day.locator('.calendar-checkin-card, .calendar-day-events, .calendar-season-transits')).toHaveCount(0);
+    release();
+    await expect(day.locator('.calendar-sky-card__body')).toHaveAttribute('aria-busy', 'false', { timeout: 60_000 });
+    await expect(day.getByRole('button', { name: /Check in/ })).toBeVisible();
+    await expect(day.getByRole('button', { name: 'Mercury squares Mars', exact: true })).toBeVisible();
+    await day.getByRole('button', { name: /Check in/ }).click();
+    await expect(page.getByRole('dialog')).toBeVisible();
+  } finally { release(); }
+});

@@ -247,9 +247,11 @@ export function CalendarDayPanel({
         </section>
         ) : null}
 
-        {showCheckIn ? <CheckInCard entry={checkInEntry} onCheckIn={onCheckIn} /> : null}
+        {/* The reading's cold height is unknown. Reveal the following controls
+            with it so loading prose cannot push a visible action down the page. */}
+        {showCheckIn && (!showSky || !loading) ? <CheckInCard entry={checkInEntry} onCheckIn={onCheckIn} /> : null}
 
-        {loading || seasonFirst.length > 0 ? (
+        {(!showSky || !loading) && (loading || seasonFirst.length > 0) ? (
         <section className="calendar-day-events" aria-busy={loading} aria-label={loading ? undefined : `${seasonFirst.length} events`}>
           <span className="calendar-section-label">{loading ? <span aria-hidden="true"><SkeletonBar short /></span> : <>{seasonFirst.length} {seasonFirst.length === 1 ? "event" : "events"}</>}</span>
           <div className="calendar-day-events__grid">
@@ -289,7 +291,7 @@ export function CalendarDayPanel({
         </section>
         ) : null}
 
-        {loading || seasonTransits.length > 0 ? (
+        {(!showSky || !loading) && (loading || seasonTransits.length > 0) ? (
           <section className="calendar-season-transits" aria-busy={loading} aria-label="Season-long transits">
             <span className="calendar-section-label">
               Season-long transits

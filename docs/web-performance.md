@@ -38,6 +38,55 @@ Content Studio loads at most three independent inventory prefixes concurrently;
 pages within each prefix remain sequential and results retain query order.
 Cancellation or a failed prefix aborts siblings and keeps the inventory incomplete.
 
+Full catalog views, including Review Queue, use three disjoint UUID ranges rather
+than content-family guesses. Each range follows the existing timestamp/ID cursor
+with an 80-row first page and 400-row continuations. Progress stays incomplete
+until every range finishes, and the merged list restores global timestamp/ID
+order. Unknown and future content families remain included. The actual handler
+is checked against PostgreSQL UUID ordering, timestamp ties and boundary IDs.
+
+Direct Sky visits start the canonical source assets while App downloads. The existing shared loader still validates the complete source
+and publication state before revealing the reading. The same exact date/location
+calculation is reused only while the initial selection remains valid. Reader
+fonts start once the base stylesheet arrives. Calendar reserves its event-dot
+row and reveals downstream actions with the completed day reading so late prose
+does not move an already visible action.
+
+## Release checks
+
+`npm run typecheck:server` uses the root TypeScript configuration for API entry
+points and their shared imports. CI and Vercel prebuild run it after building the
+knowledge package. TypeScript rewrites explicit relative `.ts` extensions during
+emit; the deployed Node module smoke check remains a separate runtime gate.
+
+Before changing deployment environment variables, check the **complete resolved
+target environment**, including shared variables and branch-specific overrides:
+
+```bash
+npm run qa:deployment-env -- --json-file /private/complete-environment.json
+# Alternatively use --env-file for a complete dotenv provisioning file.
+```
+
+The check counts UTF-8 keys, values and separators, warns at 60 KiB and exits
+nonzero above 64 KiB. It prints only variable names and byte counts. Empty,
+masked and malformed input fails; keep provisioning files outside the repo.
+Saved write-only Secrets must be supplied from their protected provisioning
+source, not replaced by empty strings or omitted. A partial export cannot prove
+the total fits. Run this blocking preflight **before** an environment update or
+deployment creation. The additional prebuild check is warning-only because its
+process environment includes platform variables and runs after creation; it
+cannot prevent Vercel rejecting an oversized deployment before the build starts.
+Growing documents belong in protected storage rather than environment variables.
+See [Vercel's combined environment limit](https://vercel.com/docs/environment-variables#environment-variable-size).
+
+The horoscope reader's three browser shards use measured durations from
+`config/browser-test-durations.json`. `npm run test:browser-balance` lists every
+current test and asks Playwright to verify each generated selection, requiring
+complete, nonduplicated coverage. New tests receive a conservative estimate.
+Refresh timings from a successful hosted run when the workload changes. The Sky
+Studio browser job retains its focused API checks; the full unfiltered API suite
+runs in its independently required workflow instead of twice on the critical path.
+
 The Lunar Calendar stylesheet follows its lazy route instead of blocking the
 initial Sky render. Route-owned CSS must be imported by the route module so its
 styles arrive before the feature is revealed from `Suspense`.

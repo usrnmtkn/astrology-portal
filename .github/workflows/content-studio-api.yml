@@ -39,6 +39,8 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
+      - name: Verify server types and deployment safeguards
+        run: npm run build:knowledge && npm run typecheck:server && npm run test:deployment-env && node scripts/test-browser-balance.mjs
       - name: Verify Studio and shared module boundaries
         run: npm run qa:admin-boundary
       - name: Verify CRUD, publication, storage and actual reader contracts

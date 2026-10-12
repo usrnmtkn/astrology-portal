@@ -80,7 +80,7 @@ function decodeCursor(value: string) {
 }
 
 // A list row keeps the small facts the Studio classifies and groups by, and leaves the copy behind.
-function inventoryRow(row: Record<string, unknown>) {
+function inventoryRow(row: Record<string, unknown>): Record<string, unknown> {
   const stored = row.studio_facts;
   const facts = stored && typeof stored === "object" && !Array.isArray(stored)
     ? stored as StudioListingFacts
@@ -110,6 +110,10 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
     const mode = requestUrl.searchParams.get("mode");
     const view = requestUrl.searchParams.get("view") ?? (id || contentKey || contentKeys.length ? "detail" : "inventory");
     const inventoryView = view === "inventory" && !id && !contentKey && contentKeys.length === 0;
+    const partition = requestUrl.searchParams.get("partition");
+    if (partition !== null && (!/^[0-2]$/u.test(partition) || !inventoryView || scope !== "all" || contentKeyPrefix || mode)) {
+      throw new AdminHttpError(400, "partition is only supported for full inventory lists.");
+    }
     const allowedStatus = new Set(["DRAFT", "REVIEWED", "LIVE", "ARCHIVED", "ERROR"]);
     const allowedSurface = new Set(["sky", "you", "natal", "synastry", "composite", "relationship", "modifier", "year_ahead", "education"]);
     if (contentKeyPrefix && !/^[a-zA-Z0-9][a-zA-Z0-9_./|-]*$/u.test(contentKeyPrefix)) {
@@ -152,6 +156,12 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
     if (!id && contentKey) params.set("content_key", `eq.${contentKey}`);
     else if (!id && contentKeys.length) params.set("content_key", `in.(${contentKeys.join(",")})`);
     else if (!id && contentKeyPrefix) params.set("and", postgrestContentKeyPrefixAnd(contentKeyPrefix));
+    if (partition !== null) {
+      const bounds = [null, "55555555-5555-5555-5555-555555555555", "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa", null];
+      const index = Number(partition);
+      const filters = [bounds[index] && `id.gte.${bounds[index]}`, bounds[index + 1] && `id.lt.${bounds[index + 1]}`].filter(Boolean);
+      params.set("and", `(${filters.join(",")})`);
+    }
 
     const url = supabaseUrl();
     const key = serviceRoleKey();
@@ -170,7 +180,7 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
     if (!response.ok) {
       throw new AdminHttpError(502, "Content storage could not return the inventory list.");
     }
-    const rows = adminStorageRows<Record<string, unknown>>(response.payload).map((row) => {
+    const rows: Array<Record<string, unknown>> = adminStorageRows<Record<string, unknown>>(response.payload).map((row) => {
       if (inventoryView) return inventoryRow(row);
       const { studio_facts: _listingFacts, ...document } = row;
       return { ...document, inventory_only: false };

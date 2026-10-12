@@ -54,7 +54,7 @@ function workerForSkyCalculations() {
 
     pendingCalculations.delete(response.id);
     clearTimeout(pending.timeout);
-    if (response.ok) pending.resolve(response.value);
+    if (response.ok === true) pending.resolve(response.value);
     else pending.reject(new Error(response.error));
   });
 
