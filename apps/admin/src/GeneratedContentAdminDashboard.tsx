@@ -2969,13 +2969,12 @@ async function loadAllGeneratedContentRows(
 }
 
 function dedupeGeneratedContentRows(rows: AdminGeneratedContentRow[]) {
-  const seen = new Set<string>();
-  return dropSupersededPackageStarters(rows.filter(row => {
+  const byId = new Map<string, AdminGeneratedContentRow>();
+  for (const row of rows) {
     const key = row.id || row.content_key;
-    if (seen.has(key)) return false;
-    seen.add(key);
-    return true;
-  }));
+    if (!byId.has(key)) byId.set(key, row);
+  }
+  return dropSupersededPackageStarters([...byId.values()]);
 }
 
 function assertRowsPayload<T>(payload: { rows?: T[] }, endpoint: string): T[] {

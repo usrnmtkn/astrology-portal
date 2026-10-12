@@ -74,7 +74,8 @@ Saved write-only Secrets must be supplied from their protected provisioning
 source, not replaced by empty strings or omitted. A partial export cannot prove
 the total fits. Run this blocking preflight **before** an environment update or
 deployment creation. The additional prebuild check is warning-only because its
-process environment includes platform variables and runs after creation; it
+process environment includes platform variables (excluding the duplicate encrypted
+transport envelope) and runs after creation; it
 cannot prevent Vercel rejecting an oversized deployment before the build starts.
 Growing documents belong in protected storage rather than environment variables.
 See [Vercel's combined environment limit](https://vercel.com/docs/environment-variables#environment-variable-size).
