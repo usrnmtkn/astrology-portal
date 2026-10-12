@@ -35,10 +35,13 @@ export function main(args) {
   // Build environments include platform/shell variables, so this is a
   // conservative warning only. The complete provisioning file is the blocking
   // preflight, before Vercel can reject deployment creation at its own limit.
-  const environment = format === '--build' ? process.env
+  // Vercel's encrypted transport envelope contains another copy of the project
+  // environment; it is not a configured variable and must not be counted twice.
+  const environment = format === '--build' ? Object.fromEntries(Object.entries(process.env)
+    .filter(([key]) => key !== 'VERCEL_ENCRYPTED_ENV_CONTENT'))
     : format === '--env-file' ? parseEnv(readFileSync(file, 'utf8')) : JSON.parse(readFileSync(file, 'utf8'));
   const report = measureDeploymentEnvironment(environment);
-  console.log(JSON.stringify({ ...report, source: format === '--build' ? 'build environment (includes platform variables)' : 'complete provisioning environment' }));
+  console.log(JSON.stringify({ ...report, source: format === '--build' ? 'build environment (excludes encrypted transport; includes other platform variables)' : 'complete provisioning environment' }));
   if (report.status !== 'ok') console.warn('Environment size is close to the deployment limit. Check the complete target environment before adding variables; move growing documents out of environment storage.');
   return format !== '--build' && report.status === 'over-limit' ? 1 : 0;
 }

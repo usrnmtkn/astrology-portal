@@ -231,8 +231,9 @@ export function studioInventoryRequestPath(query: StudioInventoryQuery, pageSize
     limit: String(pageSize),
     view: "inventory"
   });
-  if (query.mode) params.set("mode", query.mode);
-  if (query.partition !== undefined) params.set("partition", String(query.partition));
+  for (const key of ["mode", "partition"] as const) {
+    if (query[key] != null) params.set(key, String(query[key]));
+  }
   for (const prefix of query.prefixes) params.append("contentKeyPrefix", prefix);
   if (cursor) params.set("cursor", cursor);
   return `/api/admin/generated-content-inventory?${params}`;

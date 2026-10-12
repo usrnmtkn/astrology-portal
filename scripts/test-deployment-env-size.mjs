@@ -33,5 +33,16 @@ try {
   const result = spawnSync(process.execPath, ['scripts/check-deployment-env-size.mjs', '--env-file', file], { encoding: 'utf8' });
   assert.equal(result.status, 0);
   assert.equal(JSON.parse(result.stdout).bytes, measureDeploymentEnvironment({ PRIVATE_DOCUMENT: 'multiline\nvalue', UNICODE: 'é😀' }).bytes);
+  const build = spawnSync(process.execPath, ['scripts/check-deployment-env-size.mjs', '--build'], {
+    encoding: 'utf8', env: { A: 'é😀', VERCEL_ENCRYPTED_ENV_CONTENT: secret.repeat(3000) }
+  });
+  assert.equal(build.status, 0);
+  const withoutEnvelope = spawnSync(process.execPath, ['scripts/check-deployment-env-size.mjs', '--build'], {
+    encoding: 'utf8', env: { A: 'é😀' }
+  });
+  assert.equal(withoutEnvelope.status, 0);
+  assert.equal(JSON.parse(build.stdout).bytes, JSON.parse(withoutEnvelope.stdout).bytes,
+    'Do not double-count the platform transport envelope (runner variables may be injected)');
+  assert(!`${build.stdout}${build.stderr}`.includes(secret));
 } finally { rmSync(directory, { recursive: true }); }
 console.log('PASS: blocking preflight CLI, dotenv parsing, malformed input and secret-safe diagnostics.');
