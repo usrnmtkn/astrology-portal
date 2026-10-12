@@ -2932,7 +2932,7 @@ test.describe("client-facing user flow case studies", () => {
     await page.route("**/rest/v1/**", route => route.fulfill({ json: [] }));
     let releaseContent!: () => void;
     const gate = new Promise<void>(resolve => { releaseContent = resolve; });
-    await page.route("**/assets/fallback-content-deferred-core-*.js", async route => {
+    await page.route("**/assets/fallback-content-calendar-*.js", async route => {
       await gate;
       await route.continue();
     });

@@ -229,7 +229,9 @@ assert.doesNotMatch(adminSurfaceMap, /finally the general fallback frame/u);
 const runtimeSource = fs.readFileSync(new URL("../apps/web/src/content/fallbackArchitectureV3Runtime.ts", import.meta.url), "utf8");
 assert.match(runtimeSource, /bundled-sky-core-rows-v3\.json/u);
 assert.match(runtimeSource, /approved-serving-projection-v1\.json/u);
-assert.match(runtimeSource, /function assertSkyAspectPhrasebookV1Import\(/u);
+const manifestSource = fs.readFileSync(new URL("./generate-fallback-package-manifest.mjs", import.meta.url), "utf8");
+assert.match(manifestSource, /function assertSkyAspectPhrasebookV1Import\(/u);
+assert.match(manifestSource, /assertSkyAspectPhrasebookV1Import\(skyAspectPhrasebookV1\)/u);
 assert.doesNotMatch(runtimeSource, /source-rows\/sky-aspect-phrasebook-v1\.json/u);
 
 const materializerSource = fs.readFileSync(new URL("./materialize-fallback-architecture-v3-dashboard-rows.mjs", import.meta.url), "utf8");

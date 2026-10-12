@@ -102,7 +102,7 @@ test('Calendar recovers when its content bundle finishes after the deadline', as
   await bundledPublications(page);
   let release = () => {};
   const held = new Promise<void>(resolve => { release = resolve; });
-  await page.route('**/assets/fallback-content-deferred-core-*.js', async route => {
+  await page.route('**/assets/fallback-content-calendar-*.js', async route => {
     await held;
     await route.continue();
   });

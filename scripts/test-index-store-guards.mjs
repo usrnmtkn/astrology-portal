@@ -121,6 +121,21 @@ expectGuard(
   const ok = check.status === 0 && committed.length > 0;
   console.log(`  ${ok ? "clean " : "DIRTY "}  committed index matches inputs after restore`);
   if (!ok) failures += 1;
+  // Every collection in a serving partition must remain discoverable, with a
+  // locator that retrieves the exact complete row rather than another array.
+  const index = JSON.parse(committed);
+  const sources = index.objects.flatMap(object => object.sources).filter(source => source.store === "serving");
+  const indexed = new Set(sources.map(source => `${source.path}|${source.locator.collection}|${source.locator.index}|${source.nativeKey}`));
+  const relative = "apps/web/src/content/fallbackArchitectureV3";
+  for (const name of fs.readdirSync(path.join(root, relative)).filter(name => /^bundled-.*\.json$/u.test(name))) {
+    const document = JSON.parse(fs.readFileSync(path.join(root, relative, name), "utf8"));
+    for (const collection of ["authoredCards", "hookRows", "vocabularyRows", "templates"]) {
+      for (const [position, row] of (document[collection] ?? []).entries()) {
+        assert.ok(indexed.has(`${relative}/${name}|${collection}|${position}|${row.contentKey}`),
+          `${name}/${collection}/${row.contentKey}: complete serving row is absent from the source index`);
+      }
+    }
+  }
 }
 
 assert.equal(failures, 0, `${failures} index store guard(s) did not fire.`);

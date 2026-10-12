@@ -27,5 +27,13 @@ files.each do |file|
   workflow = YAML.safe_load(File.read(file), permitted_classes: [Date, Time], aliases: true)
   raise "#{file}: expected workflow mapping" unless workflow.is_a?(Hash)
   validate(workflow, file)
+  if file.end_with?('/visual-smoke.yml')
+    jobs = workflow.fetch('jobs')
+    gate = jobs.fetch('browser-release-gate')
+    raise 'Browser gate must depend on every job, including matrices' unless gate.fetch('needs').sort == (jobs.keys - ['browser-release-gate']).sort
+    raise 'Browser gate must run after failures and cancellations' unless gate.fetch('if') == '${{ always() }}'
+    triggers = workflow['on'] || workflow[true] # YAML 1.1 parses on as true.
+    raise 'Required browser gate must report on every pull request' unless triggers.key?('pull_request') && triggers['pull_request'].nil?
+  end
 end
 puts "PASS #{files.length} workflow YAML documents and condition integrity"

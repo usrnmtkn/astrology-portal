@@ -257,6 +257,9 @@ export default defineConfig(({ mode }) => {
             if (id.includes("fallbackArchitectureV3/bundled-deferred-core-rows-v3.json")) {
               return "fallback-content-deferred-core";
             }
+            if (id.includes("fallbackArchitectureV3/bundled-calendar-rows-v3.json")) {
+              return "fallback-content-calendar";
+            }
             if (id.includes("fallbackArchitectureV3/bundled-shared-placement-rows-v3.json")) {
               return "fallback-content-shared-placement";
             }

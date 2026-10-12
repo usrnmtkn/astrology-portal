@@ -52,8 +52,8 @@ import {
   fallbackV3PlanetTopic,
   fallbackV3VocabularyBody,
   KNOWLEDGE_MATRIX_V9_VERSION,
-  isDeferredFallbackArchitectureV3BundleLoaded,
-  loadDeferredFallbackArchitectureV3Bundle,
+  isCalendarFallbackArchitectureV3BundleLoaded,
+  loadCalendarFallbackArchitectureV3Bundle,
   loadSkyPlacementFallbackArchitectureV3Bundle,
   isSkyPlacementFallbackArchitectureV3BundleLoaded,
   loadKnowledgeMatrixV9Runtime,
@@ -2079,7 +2079,7 @@ export function LunarCalendar({
   const [hasCalendarFacts, setHasCalendarFacts] = useState(false);
   const [calendarDetailState, setCalendarDetailState] = useState<"loading" | "ready" | "error">("loading");
   const [moonContentState, setMoonContentState] = useState<"loading" | "ready" | "error">(() =>
-    isDeferredFallbackArchitectureV3BundleLoaded() && isSkyPlacementFallbackArchitectureV3BundleLoaded() ? "ready" : "loading");
+    isCalendarFallbackArchitectureV3BundleLoaded() && isSkyPlacementFallbackArchitectureV3BundleLoaded(false) ? "ready" : "loading");
   const [moonContentRetry, setMoonContentRetry] = useState(0);
   const moonContentAssetFailed = useRef(false);
   const readingMeasurement = useRef<ReturnType<typeof startReaderMeasurement> | null>(null);
@@ -2131,7 +2131,7 @@ export function LunarCalendar({
     setMoonContentState("loading");
     moonContentAssetFailed.current = false;
     void withRequestDeadline(() => Promise.all([
-      loadDeferredFallbackArchitectureV3Bundle(), loadSkyPlacementFallbackArchitectureV3Bundle()
+      loadCalendarFallbackArchitectureV3Bundle(), loadSkyPlacementFallbackArchitectureV3Bundle(false)
     ]).then(() => {
       // Dynamic imports cannot be cancelled by the request deadline. A slow
       // download may still complete after Retry appears; accept that success

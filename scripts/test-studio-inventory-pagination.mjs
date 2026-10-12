@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { Readable } from "node:stream";
-import { readStudioInventoryPages, studioInventoryPageSize, STUDIO_INVENTORY_PAGE_SIZE, STUDIO_INVENTORY_MAX_PAGES } from "../apps/admin/src/studioInventoryPagination.ts";
+import { readStudioInventoryPages, readStudioInventoryPasses, studioInventoryPageSize, STUDIO_INVENTORY_PAGE_SIZE, STUDIO_INVENTORY_MAX_PAGES } from "../apps/admin/src/studioInventoryPagination.ts";
 import { studioInventoryQuery, studioInventoryRequestPath } from "../apps/admin/src/studioSectionInventory.ts";
 
 // Exercise the actual inventory handler and the client pager together. The
@@ -88,4 +88,53 @@ let requests = 0;
 await readStudioInventoryPages(async () => { requests++; return { rows: [], nextCursor: null }; },
   (rows, complete) => { assert.deepEqual(rows, []); assert.equal(complete, true); });
 assert.equal(requests, 1);
+
+// Independently paginated prefixes overlap on the wire, without reordering
+// duplicate precedence or marking a partial catalog complete.
+const pending = new Map();
+const started = [];
+const emissions = [];
+const passes = readStudioInventoryPasses(["a", "b", "c", "d"], (pass, cursor) => {
+  const key = `${pass}:${cursor ?? "first"}`;
+  started.push(key);
+  return new Promise(resolve => pending.set(key, resolve));
+}, (rows, complete) => emissions.push({ rows, complete }));
+const tick = () => new Promise(resolve => setImmediate(resolve));
+assert.deepEqual(started, ["a:first", "b:first", "c:first"]);
+pending.get("b:first")({ rows: ["b1"], nextCursor: "second" });
+await tick();
+assert.deepEqual(started, ["a:first", "b:first", "c:first", "b:second"]);
+pending.get("c:first")({ rows: ["c1"], nextCursor: null });
+await tick();
+assert.equal(started.at(-1), "d:first");
+pending.get("d:first")({ rows: ["d1"], nextCursor: null });
+pending.get("b:second")({ rows: ["b2"], nextCursor: null });
+await tick();
+assert.ok(emissions.every(event => !event.complete));
+pending.get("a:first")({ rows: ["a1"], nextCursor: null });
+assert.deepEqual(await passes, ["a1", "b1", "b2", "c1", "d1"]);
+assert.deepEqual(emissions.at(-1), { rows: ["a1", "b1", "b2", "c1", "d1"], complete: true });
+assert.equal(emissions.filter(event => event.complete).length, 1);
+
+for (const failure of ["navigation", "server"]) {
+  const parent = new AbortController();
+  const pending = [];
+  const signals = [];
+  let emitted = 0;
+  const result = readStudioInventoryPasses([1, 2, 3, 4], (_pass, _cursor, signal) => {
+    signals.push(signal);
+    return new Promise((resolve, reject) => pending.push({ resolve, reject }));
+  }, () => emitted++, parent.signal);
+  const rejection = assert.rejects(result, failure === "server" ? /unavailable/ : { name: "AbortError" });
+  if (failure === "navigation") {
+    parent.abort();
+    pending[0].resolve({ rows: ["late"], nextCursor: null });
+  } else pending[0].reject(new Error("unavailable"));
+  await rejection;
+  assert.ok(signals.every(signal => signal.aborted), "Stop all sibling requests on navigation or failure");
+  pending.slice(1).forEach(({ resolve }) => resolve({ rows: ["late"], nextCursor: "more" }));
+  await tick();
+  assert.equal(signals.length, 3, "Never start the queued prefix or a late continuation");
+  assert.equal(emitted, 0, "Never emit late rows after cancellation/failure");
+}
 console.log("PASS Studio actual-handler pagination beyond 10,000 rows, compact projection, invalid/repeated cursors, page-limit failure, cancellation and empty inventories");

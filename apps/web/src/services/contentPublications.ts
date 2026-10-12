@@ -37,8 +37,11 @@ export async function refreshContentPublications(force = false, readRelay?: () =
       const records = [];
       let cursor: string | null = null;
       for (;;) {
+        // A 503 must reach the verified offline recovery path promptly. The
+        // client's default 1s/2s/4s retries compound across source-plane reads.
+        // Keep the deadline for hung connections and let an explicit refresh retry.
         let query = client.from("content_publications").select("content_key,state,revision,row_id,row_updated_at,updated_at")
-          .order("content_key").limit(1000);
+          .order("content_key").limit(1000).retry(false);
         if (lower) query = query.gte("content_key", lower);
         if (upper) query = query.lt("content_key", upper);
         if (cursor) query = query.gt("content_key", cursor);

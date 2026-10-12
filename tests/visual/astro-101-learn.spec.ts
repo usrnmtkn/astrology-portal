@@ -1,4 +1,25 @@
 import { expect, test } from "@playwright/test";
+import { readFileSync } from 'node:fs';
+import { educationReaderResponse } from '../helpers/astro101-reader-fixture';
+import { readerResponse } from '../helpers/reader-response';
+
+const educationPackage = JSON.parse(readFileSync('data/astro-101/astro-101-rows.json', 'utf8'));
+
+// Exercise the real reader projection with isolated storage. Fixture publication
+// does not change the source package's review status or publish any owner copy.
+const lessons = educationPackage.rows.map((row, index) => ({ ...row,
+  id: `aaaaaaaa-aaaa-aaaa-aaaa-${String(index + 1).padStart(12, '0')}`,
+  surface: 'education', status: 'LIVE', lane: 'serving', review_state: null, updated_at: '2026-09-19T12:00:00Z'
+}));
+test.beforeEach(async ({ page }) => {
+  await page.route('**/rest/v1/**', route => route.fulfill({ json: [] }));
+  await page.route('**/api/content-reader', async route => {
+    const query = route.request().postDataJSON();
+    if (query.prefix !== 'education/astro-101/') return route.fulfill({ json: readerResponse([]) });
+    const response = await educationReaderResponse(query, lessons);
+    await route.fulfill({ status: response.status, contentType: 'application/json', body: await response.text() });
+  });
+});
 
 test("Learn hub is reachable from the overflow menu", async ({ page }) => {
   await page.goto("/");
@@ -29,7 +50,7 @@ test("Learn hub uses the canvas index card decks", async ({ page }) => {
   await expect(learnPage.getByRole("heading", { name: "The twelve houses", level: 2 })).toBeVisible();
   await expect(learnPage.getByRole("heading", { name: "References", level: 2 })).toBeVisible();
 
-  const aries = learnPage.getByRole("button", { name: /Aries/ });
+  const aries = learnPage.getByRole("region", { name: "The twelve zodiac signs" }).getByRole("button", { name: /Aries/ });
   await expect(aries).toBeVisible();
   await expect(aries).toContainText("Cardinal");
   await expect(aries).toContainText("Fire");

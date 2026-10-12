@@ -182,7 +182,9 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"] as const)
       await guidance.getByRole("button", { name: "Read more", exact: true }).click();
       await expect(guidance.locator("p")).toHaveText(paragraphs);
       await expect.poll(() => page.evaluate(() => JSON.parse(localStorage.getItem("tldrastro:fallbackArchitectureV3:dashboardBundle:sky") ?? "null")?.schema)).toBe("fallback-architecture-v3-dashboard-overlay-cache-v9");
-      expect(await page.evaluate(() => JSON.parse(localStorage.getItem("tldrastro:fallbackArchitectureV3:dashboardBundle") ?? "null")?.schema)).toBe("fallback-architecture-v3-dashboard-overlay-cache-v8");
+      // A scoped visit must discard the obsolete unscoped cache as well, so
+      // another reader cannot revive it after this publication is hydrated.
+      expect(await page.evaluate(() => localStorage.getItem("tldrastro:fallbackArchitectureV3:dashboardBundle"))).toBeNull();
       await expect(page.locator("html")).toHaveAttribute("data-theme", theme);
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
       await page.screenshot({ path: `test-results/lunation-reader-${width}-${theme}.png`, fullPage: true });
