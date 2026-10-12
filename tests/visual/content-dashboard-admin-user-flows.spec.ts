@@ -1221,22 +1221,28 @@ test.describe("content dashboard admin user flow case studies", () => {
   });
 
   test("initial CMS load retries a transient generated-content page failure", async ({ page }) => {
-    // The list is read once, fails, and is read again. Requests naming rows are the separate
-    // document loads the surfaces on screen make, so they are not counted as list pages.
-    let generatedContentReads = 0;
+    // The full catalog loads three partitions. Only the first partition request fails;
+    // its retry must not restart either successful partition or count document reads.
+    const partitionReads: string[] = [];
     await seedAdminApi(page, {
       generatedContentFailuresBeforeSuccess: 1,
       onGeneratedContentRead: (url) => {
         const namesRows = url.searchParams.get("id") || url.searchParams.get("contentKey")
           || url.searchParams.getAll("contentKeys").length;
-        if (!namesRows) generatedContentReads += 1;
+        if (!namesRows && url.pathname.endsWith("/generated-content-inventory")) {
+          partitionReads.push(url.searchParams.get("partition") ?? "missing");
+        }
       }
     });
 
     await expectAdminRouteLoads(page, "/admin/content#review-queue");
     await expect(page.getByRole("region", { name: "Admin status" })).toContainText(`Connected · ${generatedContentRows.length.toLocaleString("en-US")} rows`);
     await expect(page.getByRole("region", { name: "Admin status" })).not.toContainText("Rows not loaded");
-    expect(generatedContentReads).toBe(2);
+    expect([...new Set(partitionReads)].sort()).toEqual(["0", "1", "2"]);
+    expect(partitionReads).toHaveLength(4);
+    for (const partition of ["0", "1", "2"]) {
+      expect(partitionReads.filter(value => value === partition)).toHaveLength(partition === partitionReads[0] ? 2 : 1);
+    }
   });
 
   test("production-scale Compatibility renders its first scoped page before the full editorial inventory", async ({ page }) => {
@@ -6213,7 +6219,9 @@ test("surface maps select source families and manage repeated edits across theme
     facts: { fallbackArchitectureV3: true }, source_snapshot: { sourcePackage: "tldrastro-fallback-architecture-v3" },
     sections: { packageRecord: { contentKey: key, content_role: "fallback_hook", review_status: "approved", body_you: "QA introduction used by the source manager.", body_they: "QA friend introduction." } }
   };
-  const alternate = { ...row, id: "qa-map-uranus-alternate", mode: "in_depth", headline: "Uranus alternate saved row" };
+  // The API orders by updated_at, then ID descending. Give the intended initial
+  // source a newer timestamp instead of relying on the fixture's array order.
+  const alternate = { ...row, id: "qa-map-uranus-alternate", mode: "in_depth", headline: "Uranus alternate saved row", updated_at: "2026-07-15T12:00:00.000Z" };
   await seedAdminApi(page, { generatedRows: [row, alternate], onGeneratedContentWrite: (write) => writes.push(write) });
   await expectAdminRouteLoads(page, "/admin/content#composition-map");
   await page.getByLabel("Search surfaces and systems").fill("natal placement detail");
