@@ -2790,6 +2790,66 @@ test.describe("content dashboard admin user flow case studies", () => {
       sections: { packageRecord: record }, facts: { fallbackArchitectureV3: true }, provider: "tldrastro-fallback-architecture-v3", updated_at: now };
   }
 
+  for (const [width, theme] of [[1440, "dark"], [1440, "light"], [390, "dark"], [390, "light"]] as const) test(`Personal Transit meaning reaches the real handler ${width} ${theme}`, async ({ page }) => {
+    const noErrors = await expectNoBrowserErrors(page);
+    const writes: unknown[] = [];
+    const api = await studioApiStore([], { personalTransitWriting: true });
+    let providerCalls = 0;
+    try {
+      await page.setViewportSize({ width, height: 1000 });
+      await seedAdminApi(page, { onGeneratedContentWrite: write => writes.push(write) });
+      await page.addInitScript(value => localStorage.setItem("tldrastro:studio-theme", value), theme);
+      await page.route("**/api/content-reader", route => route.fulfill({ json: readerResponse([]) }));
+      await page.route("**/api/admin/transit-natal-preview", route => route.fulfill({ json: transitPreviewResponse(normalizeTransitNatalPreviewInput(route.request().postDataJSON())) }));
+      await page.route("**/api/admin/personal-transit-writing", async route => {
+        const result = await api.call({ method: "POST", body: route.request().postDataJSON() });
+        providerCalls = result.providerCalls;
+        await route.fulfill({ status: result.status, json: result.body });
+      });
+      await expectAdminRouteLoads(page, "/admin/content#sky-writeups?view=transits-to-natal&transit=neptune&aspect=trine&natal=jupiter");
+      await page.getByRole("region", { name: "Effective transit to natal reader preview" }).getByRole("button", { name: "Edit this copy", exact: true }).click();
+      const editor = page.getByRole("dialog", { name: "Generated content editor" });
+      const you = editor.getByLabel("Reader phrase · You", { exact: true });
+      const friend = editor.getByLabel("Reader phrase · They", { exact: true });
+      const originalYou = await you.inputValue(), originalFriend = await friend.inputValue();
+      await editor.getByRole("button", { name: "Generate You + Friend draft", exact: true }).click();
+      await expect(editor.getByRole("alert")).toContainText("Review the saved transit meanings in the requested calibration before generating");
+      expect(providerCalls).toBe(0);
+      await expect(you).toHaveValue(originalYou); await expect(friend).toHaveValue(originalFriend);
+      await editor.getByRole("button", { name: "Show transit meaning", exact: true }).click();
+      await expect(editor.getByLabel("Transit meaning", { exact: true })).toHaveValue("Synthetic complete contact meaning.");
+      await expect(editor.getByLabel("Transit meaning", { exact: true })).toHaveAttribute("readonly", "");
+      await expect(editor.getByText("Meaning awaiting review.", { exact: false })).toBeVisible();
+      const meaningLabel = editor.locator("label").filter({ has: page.getByLabel("Transit meaning", { exact: true }) });
+      const meaningStyle = await meaningLabel.locator(":scope > span:first-child").evaluate(node => {
+        const style = getComputedStyle(node);
+        return [style.fontFamily, style.fontSize, style.fontWeight, style.lineHeight, style.letterSpacing,
+          style.marginTop, style.marginBottom, style.textTransform];
+      });
+      expect(meaningStyle).toEqual(await editor.getByText("Optional direction", { exact: true }).evaluate(node => {
+        const style = getComputedStyle(node);
+        return [style.fontFamily, style.fontSize, style.fontWeight, style.lineHeight, style.letterSpacing,
+          style.marginTop, style.marginBottom, style.textTransform];
+      }));
+      expect(await meaningLabel.locator("..").locator(":scope > label > span:first-child").allTextContents())
+        .toEqual(["Transit meaning", "Optional direction"]);
+      await meaningLabel.evaluate(node => node.scrollIntoView({ block: "center" }));
+      await mkdir(adminScreenshotDir, { recursive: true });
+      await meaningLabel.screenshot({ path: path.join(adminScreenshotDir, `transit-meaning-field-${width}-${theme}.png`) });
+      await api.call({ method: "POST", fixture: "review-meaning" });
+      await editor.getByRole("button", { name: "Show transit meaning", exact: true }).click();
+      await expect(editor.getByText("Reviewed meaning.", { exact: false })).toBeVisible();
+      await editor.getByRole("button", { name: "Generate You + Friend draft", exact: true }).click();
+      await expect(editor.getByLabel("AI You suggestion")).toHaveValue("You read the complete synthetic result until {{untilDate}}.");
+      await expect(friend).toHaveValue("They read the complete synthetic result until {{untilDate}}.");
+      expect(providerCalls).toBe(1); expect(writes).toHaveLength(0);
+      await expectNoHorizontalOverflow(page, "Personal Transit meaning");
+      await mkdir(adminScreenshotDir, { recursive: true });
+      await editor.screenshot({ path: path.join(adminScreenshotDir, `transit-meaning-${width}-${theme}.png`) });
+      await noErrors();
+    } finally { api.close(); }
+  });
+
   for (const [width, theme] of [[1440, "light"], [390, "dark"]] as const) test(`Personal Transit clears AI suggestions and recovers preview without losing manual writing ${width} ${theme}`, async ({ page }) => {
     test.setTimeout(90_000);
     const noErrors = await expectNoBrowserErrors(page);

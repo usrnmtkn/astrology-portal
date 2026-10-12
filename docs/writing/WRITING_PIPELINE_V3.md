@@ -1,5 +1,22 @@
 # TLDR Astro writing pipeline v3
 
+## Scope after the October 11 governance correction
+
+This document retains the article workflow selected by
+`skills/tldr-astro-sky-placement/SKILL.md`. It is not a universal process for all
+reader surfaces. `skills/tldr-astro-writer/SKILL.md` is the shared governance
+layer; its current authority, correction and approval rules take precedence.
+Historical evidence counts below describe the article implementation, not a
+license to add weaker passages to a packet. Cross-surface voice evidence cannot
+transfer facts or scenarios. No automatic model revision or prose judgment is
+permitted. Any older conflicting implementation requires repair before use.
+
+Personal Transit uses `skills/tldr-astro-personal-transit/SKILL.md` and
+`docs/writing/PERSONAL_TRANSIT_OWNER_BATCH.md`. It does not inherit the argument
+gate, article spine, scene requirements, warmth harvest, example counts or model
+routing below. This documentation correction does not change other deployed
+surface writers.
+
 The shared five-role retrieval and verification contract is recorded in
 `docs/writing/SHARED_EVIDENCE_STANDARD.md`. A draft is ineligible unless its packet contains
 meaning, register, scene, and argument evidence; contains phrase evidence whenever its subject

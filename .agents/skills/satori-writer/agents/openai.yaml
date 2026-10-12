@@ -1,4 +1,4 @@
 interface:
   display_name: "Satori Writer"
-  short_description: "Write TLDR Astro copy from governed owner evidence"
-  default_prompt: "Use $satori-writer to revise this TLDR Astro draft using ranked owner evidence and the authorship gate."
+  short_description: "Compile owner evidence for Sky Placement articles"
+  default_prompt: "Use $satori-writer to compile eligible owner evidence for this Sky Placement article under its surface workflow and shared writing governance."

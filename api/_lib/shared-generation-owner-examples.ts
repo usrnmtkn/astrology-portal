@@ -23,9 +23,16 @@ function sourceFamilies(input: Target) {
 /** Use the governed owner index, never serving approval as a proxy for authorship.
  * These registered passages are adjacent voice references, not target facts. */
 export function sharedGenerationOwnerExamples(index: { entries: VoiceEntry[] }, input: Target) {
+  if (input.surface === "you" && input.eventType === "transit-aspect") {
+    throw new Error("PERSONAL_TRANSIT_WRITER_CONTEXT_REQUIRED: use the dedicated meaning and voice inputs; no article fallback is allowed.");
+  }
   const families = sourceFamilies(input);
-  const register = input.surface === "sky" ? "collective" : "second_person";
-  const needles = words(input);
+  const ingressEssay = input.surface === "sky" && input.facts.articleFormat === "ingress-essay-v2";
+  const register = ingressEssay ? "current_sky_direct_address" : input.surface === "sky" ? "collective" : "second_person";
+  // Field descriptions, template plumbing and revision directions are not the
+  // article's topic. Dated ingress prose can address its reader, unlike the
+  // legacy collective Sky card register. Other surfaces keep their own routing.
+  const needles = ingressEssay ? words([input.facts.planet, input.facts.sign]) : words(input);
   const candidates = index.entries.filter(entry =>
     entry.authorityClass === "owner_authored_final" && entry.ownerAuthored === true
     && entry.ownerApproved === true && entry.useAsPositiveVoiceEvidence === true
@@ -37,7 +44,7 @@ export function sharedGenerationOwnerExamples(index: { entries: VoiceEntry[] }, 
   ).map(entry => {
     const sourceRegister = /\b(?:you|your|yours|yourself|yourselves)\b/iu.test(entry.text) ? "second_person" : "collective";
     return { entry, sourceRegister, score: [...words({ key: entry.sourceId, text: entry.text })].filter(word => needles.has(word)).length };
-  }).filter(candidate => candidate.sourceRegister === register)
+  }).filter(candidate => ingressEssay || candidate.sourceRegister === register)
     .sort((a, b) => b.score - a.score || a.entry.sourceId.localeCompare(b.entry.sourceId));
   const seen = new Set<string>();
   const unique = candidates.filter(({ entry }) => {
@@ -60,4 +67,3 @@ export function sharedGenerationOwnerExamples(index: { entries: VoiceEntry[] }, 
     };
   });
 }
-

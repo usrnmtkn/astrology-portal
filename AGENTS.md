@@ -256,57 +256,34 @@ count. Materializers, imports, CMS synchronization, resolver selection, and UI
 rendering must preserve the protected body byte-for-byte. Any mismatch is a
 blocking error, not permission to fall back to a shorter row.
 
-### Global owner-vocabulary rule
+### Shared writing governance
 
-This rule applies to every reader-facing astrology draft, rewrite, revision,
-example, and chat response on every surface. Semantic sources determine what
-the astrology means. Owner-authored writing determines the vocabulary,
-sentence movement, examples, and tone.
+For reader-facing astrology work, load `skills/tldr-astro-writer/SKILL.md`, then
+load the approved workflow for the actual rendered surface. The shared skill
+controls authority, corrections, evidence provenance, factual boundaries and
+approval; it does not impose a universal drafting pipeline.
 
-Before writing, retrieve the closest owner-authored passages for the exact
-topic and register and use the owner corpus as the positive language source,
-not merely as inspiration or a final style check. Do not draft directly from
-semantic components, compact operations, doctrine labels, or internal planning
-language.
+Personal Transit uses `skills/tldr-astro-personal-transit/SKILL.md` and its
+four-contact owner-reviewed batch. Sky Placement articles use
+`skills/tldr-astro-sky-placement/SKILL.md`. Do not transfer an article's argument
+gate, structural spine, warmth harvest, evidence count or model routing to
+Personal Transit or another surface.
 
-Before showing prose to the owner:
+Astrology sources license meaning. Eligible complete owner passages establish
+voice. Select evidence by quality, relevance, prose function and information
+budget. Cross-surface voice evidence never transfers its facts, scenarios,
+biography, perspective or timing, or licenses matching its amount of detail.
+Never add a weaker passage to meet a quota. Preserve selection and exact hashes
+for audit; routine drafting does not require owner review of every evidence packet.
 
-- flag content words that are absent from or unusually rare in the owner
-  corpus, except necessary astrology terms and ordinary function words;
-- replace unsupported wording with plainer corpus-supported language, or flag
-  the unresolved choice for owner review instead of guessing;
-- apply the durable correction ledger so a rejected word, construction, or
-  substitution is not repeated in a later draft; and
-- run the surface register, phrase-bank, do-not-use, and owner-correction
-  checks.
+The durable owner-correction ledger and current explicit corrections override
+historical examples. Corpus frequency may flag wording for review; it is not a
+vocabulary whitelist. Reject the whole passage when the owner rejects its voice.
+Do not synonym-swap rejected wording or feed internal semantic and evaluator
+language to a prose writer as positive reader-copy evidence.
 
-An invented synonym is not a correction. When the owner rejects a word or
-construction, record the correction with its context and use the owner’s
-documented replacement or the plainest supported wording. Do not deliver prose
-that is known to fail this rule.
-
-### Chat-output fail-closed gate
-
-Before any reader-facing astrology draft appears in chat, show an evidence
-receipt: the rendered surface and register, the meaning sources, at least three
-exact owner-authored passages with source paths, the relevant owner corrections,
-and the active do-not-use list. A hidden retrieval claim is insufficient. If
-the receipt cannot be built, fail closed and do not draft.
-
-Passing a corpus-vocabulary scan is not proof of voice. Generic assistant
-scaffolding made from owner words still fails. Compare the draft's opening,
-turns, sentence movement, and ending with the selected owner passages. If the
-owner says the result does not sound like her, record the complete draft as
-rejected evidence and return to retrieval before attempting another version.
-
-For any request to write, rewrite, refine, compare, or approve TLDR Astro
-reader copy, load the canonical repository skill at
-`skills/tldr-astro-writer/SKILL.md` before drafting. Do not write from general
-repository context alone. The skill routes every task through the versioned
-meaning-plan, owner-context, draft, separate-review, surgical-revision, and
-deterministic-validation pipeline. The existing owner evidence compiler
-at `.agents/skills/satori-writer/SKILL.md` remains the governed retrieval
-implementation used by that pipeline.
+No model may approve, publish, promote or rewrite prose automatically. Passing
+deterministic checks does not establish voice quality or owner approval.
 
 A writer result remains `needs_review` unless the owner explicitly approves
 the complete exact wording. A judge score, positive direction, or preferred
