@@ -3499,7 +3499,7 @@ function CalendarWeekStrip({
                 <AstroGlyph text={`☉→${signGlyphs[seasonStart.toSign ?? seasonStart.sign ?? ""] ?? ""}`} />
               </span>
             )}
-            {stripDots.length > 0 && (
+              {/* Reserve the event marker row while full week facts hydrate. */}
               <span className="lunar-week-day__events" aria-hidden="true">
                 <span className="lunar-calendar-event-dots">
                   {stripDots.map((event) => (
@@ -3507,7 +3507,6 @@ function CalendarWeekStrip({
                   ))}
                 </span>
               </span>
-            )}
             {!isSelected && (
               <span className="lunar-calendar-day-tooltip" role="tooltip">
                 <span className="lunar-calendar-day-tooltip__phase">{dayPhase}</span>

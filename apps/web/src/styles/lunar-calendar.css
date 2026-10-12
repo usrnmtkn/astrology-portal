@@ -1283,6 +1283,7 @@ a.tx-card.has-article:hover .tx-more {
   gap: var(--lunar-space-3);
   width: 100%;
   min-width: 0;
+  min-height: var(--calendar-dot-size);
   overflow: hidden;
 }
 

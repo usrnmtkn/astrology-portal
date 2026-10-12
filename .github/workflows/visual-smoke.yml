@@ -222,7 +222,9 @@ jobs:
           cache: npm
       - run: npm ci
       - name: Verify Studio publication lifecycle and actual reader hydration
-        run: npm run test:content-studio-api && npm run test:sky-evergreen-sections
+        # The required Content Studio API workflow runs the full unfiltered
+        # contract on this exact head. Keep the Sky-specific checks here.
+        run: npm run build:knowledge && npm run test:sky-evergreen-sections
       - run: npx playwright install --with-deps chromium
       - name: Verify placement composition editing
         run: |
@@ -387,7 +389,7 @@ jobs:
       - run: npm run build:knowledge
       - run: npx playwright install --with-deps chromium
       - name: Run Horoscope editor and reader journeys
-        run: npx playwright test -c playwright.horoscope-reader.config.ts --fully-parallel --workers=1 --shard=${{ matrix.shard }}/3
+        run: node scripts/balanced-browser-tests.mjs --config playwright.horoscope-reader.config.ts ${{ matrix.shard }}/3
       - name: Upload Horoscope artifacts
         if: always()
         uses: actions/upload-artifact@v6

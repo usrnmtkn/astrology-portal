@@ -1,5 +1,4 @@
 import { isEligibleTransitReturn } from "./fallbackArchitectureV3/resolver/transitReturns.mjs";
-// @ts-expect-error Shared ESM; the resolver folder is excluded from app tsc.
 import { transitAspectSituationKey } from "./fallbackArchitectureV3/resolver/transitAspectSourcePriority.mjs";
 
 import { MERCURY_RETURN_CONTACT_KEY } from "./fallbackArchitectureV3/resolver/mercuryReturnReader.mjs";

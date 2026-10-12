@@ -157,14 +157,24 @@ type ExistingGeneratedContentRow = {
   headline?: string | null;
   summary?: string | null;
   body?: string | null;
-  sections?: Record<string, unknown> | null;
+  sections?: Record<string, unknown> & {
+    horoscopeEdition?: { passages?: Array<{ sign: string; headline: string; body: string }>; window?: { period?: string } };
+    seasonFallback?: { seasonStart?: string; seasonEnd?: string };
+  } | null;
   facts?: Record<string, unknown> | null;
   lane?: string | null;
   review_state?: string | null;
   block_type?: string | null;
   provider?: string | null;
   prompt_version?: string | null;
-  source_snapshot?: Record<string, unknown> | null;
+  source_snapshot?: Record<string, unknown> & {
+    horoscopeGeneration?: {
+      active?: unknown; batch?: { status?: string };
+      candidateHolds?: Record<string, { candidate: { headline: string; body: string }; operation: { id: string } }>;
+      candidateResolutions?: unknown[];
+      lastError?: { code?: string; operation?: { phase?: string; sign?: string } };
+    };
+  } | null;
   judge_score?: number | null;
   judge_verdict?: string | null;
   judge_gate?: string | null;
@@ -308,7 +318,7 @@ async function prepareStudioVariables(body: GeneratedContentWriteBody) {
   }
 }
 
-function v3PackageRecord(row: Pick<ExistingGeneratedContentRow, "sections">) {
+function v3PackageRecord(row: { sections?: unknown }) {
   const sections = isRecord(row.sections) ? row.sections : {};
   return isRecord(sections.packageRecord) ? sections.packageRecord : {};
 }
@@ -3179,7 +3189,7 @@ async function updateGeneratedContent(req: IncomingMessage) {
         approvedAt: new Date().toISOString(), source: "content-studio-explicit-action",
         activeStart: visit?.seasonStart, activeEnd: visit?.seasonEnd,
         copySha256: createHash("sha256").update(JSON.stringify([row.headline, row.summary, row.body])).digest("hex") } };
-    if (!libs().approvedSkySeasonFallback({ ...row, source_snapshot: patch.source_snapshot })) {
+    if (!libs().approvedSkySeasonFallback({ ...row, source_snapshot: isRecord(patch.source_snapshot) ? patch.source_snapshot : {} })) {
       throw new GeneratedContentRequestError("A dated fallback needs a valid visit and matching approval before publication.", 409);
     }
   }

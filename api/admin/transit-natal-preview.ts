@@ -41,8 +41,8 @@ export function normalizeTransitNatalPreviewInput(value: unknown) {
     ...(input.variant !== undefined ? { variant: input.variant as number } : {}),
     ...(input.isRetrograde !== undefined ? { isRetrograde: input.isRetrograde as boolean } : {}),
     ...(input.window !== undefined ? { window: input.window as string } : {}),
-    ...(transitNatalHouses.includes(String(input.transitHouse)) ? { transitHouse: String(input.transitHouse) as typeof transitNatalHouses[number] } : {}),
-    ...(transitNatalHouses.includes(String(input.natalHouse)) ? { natalHouse: String(input.natalHouse) as typeof transitNatalHouses[number] } : {}) };
+    ...(transitNatalHouses.some(house => house === String(input.transitHouse)) ? { transitHouse: String(input.transitHouse) as typeof transitNatalHouses[number] } : {}),
+    ...(transitNatalHouses.some(house => house === String(input.natalHouse)) ? { natalHouse: String(input.natalHouse) as typeof transitNatalHouses[number] } : {}) };
 
 }
 

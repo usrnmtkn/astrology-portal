@@ -1,5 +1,5 @@
 import supplied from "./skySummaryImportedCopy.json";
-import clauses from "../../web/src/content/skyDailySummaryClauses.json";
+import clauses from "../../web/src/content/skyDailySummaryClauses.json" with { type: "json" };
 
 // Keep the supplied sentences intact in the import; the composer owns terminal punctuation.
 export function importedSkySummary(key: string): string | undefined {

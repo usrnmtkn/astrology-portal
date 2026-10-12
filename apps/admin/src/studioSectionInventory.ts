@@ -109,6 +109,7 @@ export type StudioInventoryQuery = {
   mode: string | null;
   catalog: boolean;
   supplementalScope?: StudioInventoryScope;
+  partition?: number;
 };
 
 export type StudioInventoryRoute = {
@@ -231,6 +232,7 @@ export function studioInventoryRequestPath(query: StudioInventoryQuery, pageSize
     view: "inventory"
   });
   if (query.mode) params.set("mode", query.mode);
+  if (query.partition !== undefined) params.set("partition", String(query.partition));
   for (const prefix of query.prefixes) params.append("contentKeyPrefix", prefix);
   if (cursor) params.set("cursor", cursor);
   return `/api/admin/generated-content-inventory?${params}`;
@@ -238,6 +240,9 @@ export function studioInventoryRequestPath(query: StudioInventoryQuery, pageSize
 
 /** Prefix passes retain virtual starters; the final metadata pass finds older/custom keys. */
 export function studioInventoryPasses(query: StudioInventoryQuery): StudioInventoryQuery[] {
+  // The full catalog spans every key family. Disjoint UUID ranges cover all
+  // saved rows (including future families) without guessing content prefixes.
+  if (query.catalog) return [0, 1, 2].map(partition => ({ ...query, partition }));
   const passes = query.prefixes.length
     ? query.prefixes.map(prefix => ({ ...query, prefixes: [prefix] }))
     : [{ ...query, prefixes: [] }];

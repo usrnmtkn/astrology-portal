@@ -4,6 +4,9 @@ import { spawnSync } from "node:child_process";
 
 const checks = [
   ["node", ["scripts/assert-vercel-production-source.mjs"]],
+  ["node", ["scripts/check-deployment-env-size.mjs", "--build"]],
+  ["npm", ["run", "build:knowledge"]],
+  ["npm", ["run", "typecheck:server"]],
   ["node", ["scripts/test-content-studio-component-consistency.mjs"]],
   ["node", ["scripts/test-content-studio-timeout-recovery.mjs"]],
   ["node", ["scripts/test-article-writer-deployment-assets.mjs"]],

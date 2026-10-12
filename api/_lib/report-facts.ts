@@ -66,7 +66,7 @@ type ReportFactsIdentityInput = Pick<
 export type ReportFactsAstroClient = {
   preflight(): Promise<void>;
   serviceVersion(): Promise<string>;
-  reportWindow(input: Omit<ComposeReportFactsInput, "userId" | "subjectId" | "regenerate">): Promise<JsonObject>;
+  reportWindow(input: Omit<ComposeReportFactsInput, "userId" | "subjectId" | "regenerate" | "reportDomain"> & { reportDomain?: ReportDomain }): Promise<JsonObject>;
 };
 
 export function normalizeReportFactDates(value: JsonObject, timeZone = "UTC"): JsonObject {
