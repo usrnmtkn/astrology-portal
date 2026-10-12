@@ -153,6 +153,23 @@ These checks use isolated synthetic storage, not owner-content mutations.
 Native Excel/Numbers editing remains unverified. Exact commit, CI, preview and
 production verification results belong to the release PR.
 
+### CSV release bundle measurement
+
+Independent `npm ci` builds of main `e4911325f` and CSV head `51d76b477`
+with the same visual-smoke Supabase placeholders measure aggregate JavaScript
+at 3,564,721 and 3,571,236 gzip bytes (+6,515). The separate CSV chunk is 5,682
+bytes. Aggregate CSS grows from 117,833 to 117,922 (+89), and the shared deferred
+Studio/Memory stylesheet grows from 29,572 to 29,661 (+89). App boot measures
+466,384 versus 466,378 and reader boot 520,724 versus 520,718 bytes.
+
+The release allocates 5,250 bytes above the prior aggregate JavaScript ceiling
+(using existing headroom), plus 100 bytes to each affected CSS ceiling. Hosted
+CI's 3,571,283 JavaScript measurement leaves 467 bytes below the new limit.
+The CSV chunk has its own 6,000-byte limit and must remain a dynamic entry
+outside reader startup. Existing startup, individual chunk, source payload and
+runtime-performance limits remain enforced. No dependency or reader prose was
+added; these measurements account for the requested feature's implementation.
+
 ## API response contracts
 
 - Malformed/unsupported input: 400, no saved edit.

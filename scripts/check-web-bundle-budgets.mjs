@@ -112,6 +112,8 @@ const deferredSkyDetailItem = javaScriptFiles.find((item) => item.file.includes(
 const deferredReportRouteItem = javaScriptFiles.find((item) => item.file.includes("ReportRoute-"));
 const horoscopeReaderItem = javaScriptFiles.find((item) => item.file.includes("HoroscopeReader-"));
 const horoscopeEditorItem = javaScriptFiles.find((item) => item.file.includes("HoroscopeEditionsStudio-"));
+const csvEntry = Object.values(manifest).find(item => item.name === "StudioCsvTools");
+const csvItem = csvEntry && filesByName.get(csvEntry.file);
 const largestJavaScript = [...javaScriptFiles].sort((first, second) => second.gzipBytes - first.gzipBytes)[0];
 const memoryGraphItems = javaScriptFiles.filter(item => /\/(?:MemoryGraphDashboard|memory-graph-renderer)-/u.test(item.file));
 // Follow the route's declared stylesheet dependency: Memory uses the canonical
@@ -132,6 +134,7 @@ const measurements = {
   reportRouteChunkGzipBytes: deferredReportRouteItem?.gzipBytes ?? 0,
   horoscopeReaderChunkGzipBytes: horoscopeReaderItem?.gzipBytes ?? 0,
   horoscopeEditorChunkGzipBytes: horoscopeEditorItem?.gzipBytes ?? 0,
+  studioCsvChunkGzipBytes: csvItem?.gzipBytes ?? 0,
   skyPlacementFallbackChunkGzipBytes: deferredSkyPlacementItem?.gzipBytes ?? 0,
   lunationBookFallbackChunkGzipBytes: deferredLunationBookItem?.gzipBytes ?? 0,
   transitFallbackChunkGzipBytes: deferredTransitFallbackItem?.gzipBytes ?? 0,
@@ -149,6 +152,8 @@ const failures = Object.entries(budgets).flatMap(([metric, limit]) => {
 });
 
 const formattingChunks = javaScriptFiles.filter(item => /\/(?:studio-rich-text|writing-markdown|FormattedWritingContent)-/u.test(item.file));
+if (!csvItem || !csvEntry.isDynamicEntry) failures.push("CSV editing must remain a separate dynamic entry.");
+else if (bootFiles.has(csvItem.file)) failures.push("CSV editing must remain deferred from reader startup.");
 for (const [name, item] of [['Horoscope reader', horoscopeReaderItem], ['Horoscope editor', horoscopeEditorItem]]) {
   if (!item) failures.push(`${name} deferred chunk is missing.`);
   else if (bootFiles.has(item.file)) failures.push(`${name} must remain deferred from reader startup.`);
@@ -217,6 +222,7 @@ console.log(`App code chunk: ${formatBytes(measurements.appChunkGzipBytes)} gzip
 console.log(`Deferred Friends workspace: ${formatBytes(measurements.friendsWorkspaceChunkGzipBytes)} gzip`);
 console.log(`Deferred Sky detail article: ${formatBytes(measurements.skyDetailChunkGzipBytes)} gzip`);
 console.log(`Deferred purchased-report route: ${formatBytes(measurements.reportRouteChunkGzipBytes)} gzip`);
+console.log(`Deferred CSV editing: ${formatBytes(measurements.studioCsvChunkGzipBytes)} gzip`);
 console.log(`On-demand Sky Placement fallback: ${formatBytes(measurements.skyPlacementFallbackChunkGzipBytes)} gzip`);
 console.log(`On-demand lunation book: ${formatBytes(measurements.lunationBookFallbackChunkGzipBytes)} gzip`);
 console.log(`On-demand transit fallback: ${formatBytes(measurements.transitFallbackChunkGzipBytes)} gzip`);
