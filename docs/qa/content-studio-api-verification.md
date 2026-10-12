@@ -170,6 +170,18 @@ outside reader startup. Existing startup, individual chunk, source payload and
 runtime-performance limits remain enforced. No dependency or reader prose was
 added; these measurements account for the requested feature's implementation.
 
+The release layout correction places CSV actions beside the existing reader-status
+guide, preserving complete first-row visibility at desktop widths. All ten CSV
+scenarios plus the four existing workspace-rhythm scenarios pass from a fresh
+build, with screenshots inspected in both themes at 390 and 1440 pixels. Admin
+typecheck, CSS audit, web/admin builds and both bundle gates pass. The updated
+CSV source fingerprint (same eight paths defined above) is
+`443dc283a8fe2aafc109f78ba4669f76acf2bd09caf4179eda420afd72f0de99`.
+The final browser-fixture build measures 3,571,291 aggregate JavaScript bytes,
+117,934 aggregate CSS bytes and 29,673 shared Studio/Memory CSS bytes, all gzip,
+within the same allocated limits. Exact final API/CI and deployment evidence
+is recorded on the release PR.
+
 ## API response contracts
 
 - Malformed/unsupported input: 400, no saved edit.

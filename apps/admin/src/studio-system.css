@@ -33,6 +33,7 @@ body:has(.admin-dashboard) { margin: 0; }
 /* Issue workflow labels share their treatment with the explanatory key. */
 /* Offline CSV previews retain complete passages and the shared body typography. */
 #root .admin-dashboard :is(.studio-csv-tools,.studio-csv-panel,.studio-csv-change) { display: grid; gap: var(--workspace-block-gap); }
+#root .admin-dashboard .studio-csv-tools:has(.studio-csv-panel) { flex-basis: 100%; }
 #root .admin-dashboard input.studio-csv-file { display: none; }
 #root .admin-dashboard .studio-csv-selection { display: grid; gap: var(--workspace-field-gap); }
 #root .admin-dashboard .studio-csv-diff { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: var(--workspace-block-gap); }

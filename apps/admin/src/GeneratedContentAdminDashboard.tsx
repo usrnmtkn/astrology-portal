@@ -7489,10 +7489,6 @@ export function GeneratedContentAdminDashboard() {
                       </div>}
                     </section>
                   )}
-                  <details className="admin-library-guide admin-status-guide" role="region" aria-label="Content status definitions">
-                    <AdminDisclosureSummary>What readers can see</AdminDisclosureSummary>
-                    <p><strong>Live</strong> means readers can currently receive this copy. <strong>Not live</strong> means readers cannot currently receive this copy.</p>
-                  </details>
                   {renderBulkBar()}
                   <section className="admin-workbench admin-review-workspace">
                     {renderEditor()}
@@ -9782,9 +9778,15 @@ export function GeneratedContentAdminDashboard() {
 
     return (
       <>
-      <Suspense fallback={null}><StudioCsvTools rows={tableRows} selectedIds={selectedIds}
-        disabled={csvBusy || isLoading || loadState === 'loading' || Boolean(draft) || Boolean(pendingPublication)} loadRow={loadCsvRow}
-        saveRow={saveCsvRow} publishRow={publishCsvRow} onBusy={setCsvBusy} onResult={setMessage} /></Suspense>
+      <div className="admin-toolbar-actions">
+        {activePage === 'content' && <details className="admin-library-guide admin-status-guide" role="region" aria-label="Content status definitions">
+          <AdminDisclosureSummary>What readers can see</AdminDisclosureSummary>
+          <p><strong>Live</strong> means readers can currently receive this copy. <strong>Not live</strong> means readers cannot currently receive this copy.</p>
+        </details>}
+        <Suspense fallback={null}><StudioCsvTools rows={tableRows} selectedIds={selectedIds}
+          disabled={csvBusy || isLoading || loadState === 'loading' || Boolean(draft) || Boolean(pendingPublication)} loadRow={loadCsvRow}
+          saveRow={saveCsvRow} publishRow={publishCsvRow} onBusy={setCsvBusy} onResult={setMessage} /></Suspense>
+      </div>
       <AdminPaginatedCollection items={tableRows} label="Content rows" pageSize={contentTablePageSize} resetKey={resetKey} onVisibleItems={loadVisibleRowDocuments}>
         {(visibleTableRows) => <AdminContentTable
           showDestination={showArticleDestination}
