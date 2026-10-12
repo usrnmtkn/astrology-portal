@@ -635,3 +635,25 @@ fresh guidance, invalid and concurrent requests, repeated rejection and request
 counts with isolated storage and provider fixtures. The lunar browser regression
 covers the controls, unsaved edits, cancellation, history/reload and regeneration
 in both themes and widths. These checks do not judge generated prose quality.
+
+### Weekly publishing claim context — October 11
+
+Validator v11 recognizes comma-set motion and placement phrases between a
+planet and its aspect verb, including a trailing motion qualifier. A same-sentence
+coordinated aspect may inherit one unambiguous planetary subject from its preceding
+placement/motion clause. It never carries that subject across sentences or resolves
+a clause with multiple possible planets. Unresolved planetary aspect references
+remain blocking. The resolved text exists only inside validation; saved prose and
+historical receipts are never rewritten.
+
+Named destinations in moves/back/retrograde-into constructions, including
+"your sign," are checked against the body's calculated ingress events. Numbered
+houses before and after a sign change bind to their own placement, so a later
+ingress cannot replace an earlier reference placement or license a wrong house.
+This remains bounded claim recognition, not general natural-language understanding.
+
+The actual-handler publication regression covers twelve synthetic weekly readings,
+preflight, unchanged publication, reader retrieval, and negative aspect, motion,
+ambiguous-subject, ingress and house cases. The corresponding phone/desktop browser
+journey checks approval, publication and complete reader text after reload. No paid
+generation or production content mutation is part of these regressions.

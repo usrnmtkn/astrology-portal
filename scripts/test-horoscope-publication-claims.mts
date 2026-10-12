@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import {store,invokeHoroscopeWriting} from '../tests/helpers/sky-article-save-api.mts';
 import {readerRouteResponse} from '../tests/helpers/content-reader-route.mjs';
-import {createSeasonalPublicationFixture,seasonalClaimBodies,createMonthlyAspectPublicationFixture,monthlyAspectBody,createWeeklyAspectPublicationFixture,weeklyAspectBodies,weeklyAspectParserCases} from '../tests/helpers/horoscope-publication-fixture.mts';
+import {createSeasonalPublicationFixture,seasonalClaimBodies,createMonthlyAspectPublicationFixture,monthlyAspectBody,createWeeklyAspectPublicationFixture,weeklyAspectBodies,weeklyAspectParserCases,createWeeklyContextPublicationFixture,weeklyContextBodies} from '../tests/helpers/horoscope-publication-fixture.mts';
 import {horoscopeAspectFindings,horoscopeAspectPattern,horoscopeAspectClaim,supportsHoroscopeAspect} from '../src/astro-writing/horoscopeAspectClaims.mjs';
 import {horoscopeEventsInWindow,horoscopeHouse} from '../src/astro-writing/horoscopeDevelopments.mjs';
 import {validateHoroscopeReading} from '../src/astro-writing/horoscopeValidation.mjs';
@@ -191,3 +191,48 @@ store.rows.set(rulerRow.id,rulerRow);
 const clear=await invokeHoroscopeWriting(checkInput);
 assert.equal(clear.status,200);assert.equal(clear.payload.publication.ready,true);assert.deepEqual(clear.payload.publication.issues,[]);
 console.log('PASS publication preflight: all affected signs, owner authentication, current version, no mutation, and manual/imported fact enforcement.');
+
+const context=await createWeeklyContextPublicationFixture(m=>store.invoke(m.method,m.body,m.url));
+assert.equal(context.status,200,JSON.stringify(context.payload));
+const contextRow=context.payload.rows[0],contextBrief=contextRow.facts.horoscopeBrief.brief;
+const contextCheck=await invokeHoroscopeWriting({action:'validate-publication',id:contextRow.id,expectedUpdatedAt:contextRow.updated_at});
+assert.equal(contextCheck.status,200);assert.equal(contextCheck.payload.publication.ready,true,JSON.stringify(contextCheck.payload.publication.issues));
+for(const p of contextRow.sections.horoscopeEdition.passages)assert.deepEqual(issues(p.sign,p.body,contextBrief),[],p.sign);
+const contextLive=await store.invoke('PATCH',{id:contextRow.id,expectedUpdatedAt:contextRow.updated_at,status:'LIVE'});
+assert.equal(contextLive.status,200,JSON.stringify(contextLive.payload));
+assert.deepEqual(contextLive.payload.rows[0].sections,contextRow.sections);
+assert.deepEqual(contextLive.payload.rows[0].source_snapshot,contextRow.source_snapshot);
+const contextRead=await readerRouteResponse('/api/content-reader',{method:'POST',body:JSON.stringify({ids:[contextRow.id]})});
+assert.equal(contextRead.status,200);assert.equal((await contextRead.json()).rows[0].body,contextRow.body);
+console.log('PASS context publication: all twelve motion asides, shared subjects and ingress destinations publish unchanged.');
+
+// Each new form must retain factual checks; it cannot merely hide warnings.
+for(const [sign,bad] of [
+ ['aries',weeklyContextBodies.aries.replace('squares Pluto','trines Pluto')],
+ ['aries','Venus, retrograde in your sign, squares Pluto. You can review the fixture.'],
+ ['aries',weeklyContextBodies.aries.replace('retrograde in your 8th','direct in your 8th')],
+ ['aries',weeklyContextBodies.aries.replace('which is still retrograde','which is still direct')],
+ ['aries',weeklyContextBodies.aries.replace('it meets Venus','it meets Mars')],
+ ['taurus',weeklyContextBodies.taurus.replace('your 6th house','your 7th house')],
+ ['taurus',weeklyContextBodies.taurus.replace('into Libra','into Cancer')],
+ ['libra',weeklyContextBodies.libra.replace('your 1st house','your 2nd house')],
+ ['scorpio',weeklyContextBodies.scorpio.replace('your 12th house','your 1st house')],
+ ['scorpio',weeklyContextBodies.scorpio.replace('backs into Libra','backs into Scorpio')],
+ ['sagittarius',weeklyContextBodies.sagittarius.replace('it squares Pluto','it squares Mars')],
+ ['aries','The Sun enters Scorpio while Mercury stations retrograde, and it meets Venus. You can review the fixture.'],
+ ['aries','The Sun enters Scorpio. It meets Venus. You can review the fixture.'],
+ ['aries','The Sun enters Scorpio and Mercury enters Scorpio and meets Venus. You can review the fixture.'],
+ ['aries','Venus, your ruling planet and Jupiter, squares Pluto. You can review the fixture.'],
+ ['taurus','Venus moves back into Scorpio in your 7th house. You can review the fixture.'],
+ ['taurus','Venus moves back into Scorpio. You can review the fixture.']
+]){
+ assert(issues(sign,bad,contextBrief).length,`False context claim accepted: ${bad}`);
+ const invalid=structuredClone(contextRow);invalid.sections.horoscopeEdition.passages.find((p:any)=>p.sign===sign).body=bad;invalid.body=horoscopeEditionBody(invalid.sections.horoscopeEdition);store.rows.set(invalid.id,invalid);
+ const preflight=await invokeHoroscopeWriting({action:'validate-publication',id:invalid.id,expectedUpdatedAt:invalid.updated_at});
+ assert.equal(preflight.status,200);assert.equal(preflight.payload.publication.ready,false,bad);
+ const denied=await store.invoke('PATCH',{id:invalid.id,expectedUpdatedAt:invalid.updated_at,status:'LIVE'});
+ assert.equal(denied.status,422);assert.deepEqual(store.rows.get(invalid.id),invalid,'A refusal must preserve every saved byte');
+}
+assert.deepEqual(issues('taurus','You can review Venus in your 7th house as it moves back into Libra in your 6th house.',contextBrief),[]);
+assert(issues('taurus','You can review Venus in your 6th house as it moves back into Libra in your 7th house.',contextBrief).length);
+console.log('PASS context refusals: incorrect aspects, suffix motions, destinations and houses; ambiguous/missing subjects; exact unchanged draft on refusal.');

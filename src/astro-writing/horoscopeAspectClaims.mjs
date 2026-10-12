@@ -1,3 +1,4 @@
+import {resolveHoroscopeClaimSubjects} from './horoscopeClaimContext.mjs';
 import {horoscopeEventsInWindow,horoscopeRelationSnapshots,horoscopeSampledAspects} from './horoscopeDevelopments.mjs';
 const bodies='Sun|Moon|Mercury|Venus|Mars|Jupiter|Saturn|Uranus|Neptune|Pluto';
 const explicitTerms='square[sd]?|trine[sd]?|sextile[sd]?|opposes?|opposition|conjunct(?:ion)?';
@@ -9,9 +10,9 @@ const ordinals='1st|2nd|3rd|[4-9]th|1[0-2]th|first|second|third|fourth|fifth|six
 const glossStop=`${bodies}|${terms}|${signs}|retrograde|direct|now|is|in|through|from|to|on|at|with|between|exact|forms?|makes?|January|February|March|April|May|June|July|August|September|October|November|December|Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday`;
 const glossWord=`(?!(?:${glossStop})\\b)[\\p{L}]+(?:[-’'][\\p{L}]+)*`;
 const house=`(?:\\s+in\\s+(?:your|the)\\s+(?:${ordinals})\\s+house(?:\\s+of(?:\\s+${glossWord}){1,8})?)?`;
-const motionAside='(?:,\\s*(?:now\\s+)?(?:retrograde|direct)\\s*,)?';
 const rulerAside='(?:,\\s*your\\s+(?:ruling\\s+planet|(?:traditional\\s+)?ruler)\\s*,)?';
 const placement=`(?:\\s+(?:in|through)\\s+(?:${signs}|your sign))?`;
+const motionAside=`(?:,\\s*(?:which\\s+is\\s+)?(?:(?:now|still)\\s+)?(?:retrograde|direct)${placement}${house}\\s*(?:,|(?=[.!?]|$)))?`;
 const planet=`\\b(?:(?:retrograde|direct)\\s+)?(?:${bodies})${rulerAside}${placement}${house}${motionAside}`;
 // "Meet" is an aspect verb only with a planetary subject. Ordinary prose
 // about meeting friends or deadlines must not require a calculated aspect.
@@ -25,7 +26,7 @@ export function horoscopeAspectClaim(text) {
   const word=text.match(new RegExp(`\\b(${terms})\\b`,'iu'))?.[1].toLowerCase();
   const aspect=word?.startsWith('oppo')?'opposition':/^(?:conjunct|meet)/u.test(word??'')?'conjunction':word?.replace(/[sd]$/u,'');
   const qualified=[...text.matchAll(new RegExp(`\\b(retrograde|direct)\\s+(${bodies})\\b`,'giu'))].map(m=>[m[2].toLowerCase(),m[1].toLowerCase()]);
-  qualified.push(...[...text.matchAll(new RegExp(`\\b(${bodies})${rulerAside}${placement}${house},\\s*(?:now\\s+)?(retrograde|direct)\\s*,`,'giu'))].map(m=>[m[1].toLowerCase(),m[2].toLowerCase()]));
+  qualified.push(...[...text.matchAll(new RegExp(`\\b(${bodies})${rulerAside}${placement}${house},\\s*(?:which\\s+is\\s+)?(?:(?:now|still)\\s+)?(retrograde|direct)${placement}${house}\\s*(?:,|(?=[.!?]|$))`,'giu'))].map(m=>[m[1].toLowerCase(),m[2].toLowerCase()]));
   const motions=Object.fromEntries(qualified);
   if(qualified.some(([body,motion])=>motions[body]!==motion))return null;
   return planets.length===2&&new Set(planets).size===2&&aspect?{planets,aspect,motions}:null;
@@ -61,7 +62,7 @@ export function horoscopeAspectFindings(text,brief) {
   const events=horoscopeEventsInWindow(brief);
   const sampled=horoscopeSampledAspects(brief);
   const findings=[];
-  const checked=text.split(/(?<=[.!?])[ \t]+|\n/u).map(sentence=>sentence.replace(/\bT[ -]square\b/giu,match=>{
+  const checked=resolveHoroscopeClaimSubjects(text).split(/(?<=[.!?])[ \t]+|\n/u).map(sentence=>sentence.replace(/\bT[ -]square\b/giu,match=>{
     const supported=horoscopeRelationSnapshots(brief).some(s=>supportsHoroscopeConfiguration(s,sentence));
     if(!supported)findings.push('Name all three planets in the T-square; they must belong to one supplied simultaneous configuration.');
     if(/\bexact\b/iu.test(sentence))findings.push('A sampled configuration within the declared orb is not an exact three-planet event.');
@@ -76,6 +77,7 @@ export function horoscopeAspectFindings(text,brief) {
     // An interpretive reference may use a previously checked pair in this
     // paragraph. It cannot introduce another planet, date, motion or exactness.
     let rest=sentence;
+    if(new RegExp(`\\b(?:${bodies})\\b`,'iu').test(sentence)&&/\b(?:it|and)\s+meets?\b/iu.test(sentence))findings.push('Name both planets when the aspect subject is ambiguous.');
     if(previous&&!new RegExp(`\\b(?:${bodies}|${signs}|January|February|March|April|May|June|July|August|September|October|November|December|exact|retrograde|direct|again|returns?|recurs?|tomorrow|yesterday)\\b|\\d`,'iu').test(sentence)){
       rest=rest.replace(/\b(?:this|that)\s+(square|trine|sextile|opposition|conjunction)\b/giu,(match,aspect)=>aspect.toLowerCase()===previous.aspect?' '.repeat(match.length):match);
     }
