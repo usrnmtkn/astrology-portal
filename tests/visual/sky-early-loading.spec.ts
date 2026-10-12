@@ -47,6 +47,7 @@ for (const warm of [false, true]) for (const changeSelection of [false, true]) {
     try {
       await page.goto('/#sky', { waitUntil: 'commit' });
       await expect.poll(() => requests.some(url => /\/assets\/App-[^/]+\.js$/.test(url.pathname))).toBe(true);
+      await expect.poll(() => requests.some(url => /\/assets\/fallback-content-sky-placement-(?!manifest-)[^/]+\.js$/.test(url.pathname))).toBe(true);
       releaseReact();
       await expect.poll(() => requests.some(url => url.pathname === '/api/sky')).toBe(true);
       if (warm) await expect.poll(() => requests.some(url => url.pathname === '/api/content-publications')).toBe(true);
@@ -77,6 +78,7 @@ for (const warm of [false, true]) for (const changeSelection of [false, true]) {
       await expect(page.getByRole('button', { name: 'Read more about Sun in Aries', exact: true })).toBeVisible();
     }
     expect(requests.some(url => /fallback-content-sky-horoscopes-/.test(url.pathname))).toBe(false);
+    expect(requests.filter(url => /\/assets\/fallback-content-sky-placement-(?!manifest-)[^/]+\.js$/.test(url.pathname))).toHaveLength(1);
     expect(requests.some(url => url.pathname.startsWith('/wasm/'))).toBe(false);
     expect(errors).toEqual([]);
     expect(await page.evaluate(() => document.fonts.check('400 16px Newsreader') && document.fonts.check('500 16px "Geist Mono"'))).toBe(true);

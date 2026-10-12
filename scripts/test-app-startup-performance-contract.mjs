@@ -16,11 +16,15 @@ const bundle = {
     facadeModuleId: "/repo/apps/web/src/App.tsx", dynamicImports: ["assets/article.js"]
   }),
   "assets/react.js": chunk("assets/react.js", ["assets/app.js"]),
-  "assets/article.js": chunk("assets/article.js", [])
+  "assets/article.js": chunk("assets/article.js", []),
+  "assets/placements.js": chunk("assets/placements.js", ["assets/react.js"], {
+    modules: { "/repo/apps/web/src/content/fallbackArchitectureV3/bundled-sky-placement-rows-v3.json": {} },
+    dynamicImports: ["assets/article.js"]
+  })
 };
 const [hint] = preloadPlugin.transformIndexHtml.handler("", { bundle });
 for (const [pathname, hash, expected] of [
-  ["/", "#sky", 2], ["/", "#/sky/", 2], ["/", "#sky/placement/sun/virgo", 0],
+  ["/", "#sky", 3], ["/", "#/sky/", 3], ["/", "#sky/placement/sun/virgo", 0],
   ["/admin/content", "#sky", 0], ["/", "#calendar", 0], ["/", "#you", 0]
 ]) {
   const links = [];
@@ -32,6 +36,8 @@ for (const [pathname, hash, expected] of [
   assert(links.every(link => link.rel === "modulepreload" && !link.href.includes("article")));
 }
 assert.throws(() => preloadPlugin.transformIndexHtml.handler("", { bundle: {} }), /locate/);
+const { "assets/placements.js": _placements, ...withoutPlacements } = bundle;
+assert.throws(() => preloadPlugin.transformIndexHtml.handler("", { bundle: withoutPlacements }), /placement rows/);
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const appSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/App.tsx"), "utf8");
