@@ -2,50 +2,41 @@
 
 Any reader-facing astrology copy written in chat must use the owner’s writing rules, phrase bank, corpus, voice, tone, and prior editorial decisions. Semantic components determine meaning; the owner’s writing determines how that meaning is expressed.
 
-## Global owner-vocabulary rule
+## Shared writing governance
 
-This rule applies to every reader-facing astrology draft, rewrite, revision,
-example, and chat response on every surface. Semantic sources determine what
-the astrology means. Owner-authored writing determines the vocabulary,
-sentence movement, examples, and tone.
+For reader-facing astrology work, load `skills/tldr-astro-writer/SKILL.md`, then
+load the approved workflow for the actual rendered surface. The shared skill
+controls authority, corrections, evidence provenance, factual boundaries and
+approval; it does not impose a universal drafting pipeline.
 
-Before writing, retrieve the closest owner-authored passages for the exact
-topic and register and use the owner corpus as the positive language source,
-not merely as inspiration or a final style check. Do not draft directly from
-semantic components, compact operations, doctrine labels, or internal planning
-language.
+Personal Transit uses `skills/tldr-astro-personal-transit/SKILL.md` and its
+four-contact owner-reviewed batch. Sky Placement articles use
+`skills/tldr-astro-sky-placement/SKILL.md`. Do not transfer an article's argument
+gate, structural spine, warmth harvest, evidence count or model routing to
+Personal Transit or another surface.
 
-Before showing prose to the owner:
+Astrology sources license meaning. Eligible complete owner passages establish
+voice. Select evidence by quality, relevance, prose function and information
+budget. Cross-surface voice evidence never transfers its facts, scenarios,
+biography, perspective or timing, or licenses matching its amount of detail.
+Never add a weaker passage to meet a quota. Preserve selection and exact hashes
+for audit; routine drafting does not require owner review of every evidence packet.
 
-- flag content words that are absent from or unusually rare in the owner
-  corpus, except necessary astrology terms and ordinary function words;
-- replace unsupported wording with plainer corpus-supported language, or flag
-  the unresolved choice for owner review instead of guessing;
-- apply the durable correction ledger so a rejected word, construction, or
-  substitution is not repeated in a later draft; and
-- run the surface register, phrase-bank, do-not-use, and owner-correction
-  checks.
+The durable owner-correction ledger and current explicit corrections override
+historical examples. Corpus frequency may flag wording for review; it is not a
+vocabulary whitelist. Reject the whole passage when the owner rejects its voice.
+Do not synonym-swap rejected wording or feed internal semantic and evaluator
+language to a prose writer as positive reader-copy evidence.
 
-An invented synonym is not a correction. When the owner rejects a word or
-construction, record the correction with its context and use the owner’s
-documented replacement or the plainest supported wording. Do not deliver prose
-that is known to fail this rule.
+No model may approve, publish, promote or rewrite prose automatically. Passing
+deterministic checks does not establish voice quality or owner approval.
 
-### Chat-output fail-closed gate
+## Source and correction preflight (owner directive, 2026-08-17)
 
-Before any reader-facing astrology draft appears in chat, show an evidence
-receipt: the rendered surface and register, the meaning sources, at least three
-exact owner-authored passages with source paths, the relevant owner corrections,
-and the active do-not-use list. A hidden retrieval claim is insufficient. If
-the receipt cannot be built, fail closed and do not draft.
-
-Passing a corpus-vocabulary scan is not proof of voice. Generic assistant
-scaffolding made from owner words still fails. Compare the draft's opening,
-turns, sentence movement, and ending with the selected owner passages. If the
-owner says the result does not sound like her, record the complete draft as
-rejected evidence and return to retrieval before attempting another version.
-
-## MANDATORY PRE-FLIGHT before any reader copy (owner directive, 2026-08-17)
+Apply these source-authority protections through the target surface workflow.
+The October 11 shared governance above supersedes universal process requirements;
+Personal Transit uses its frozen canonical rules and private semantics rather
+than sending the following internal standards to the writer.
 
 Do not draft, rewrite, judge, or dispatch an agent to produce reader-facing
 prose until these files have been read **in this session**. Reading them is not
@@ -273,9 +264,12 @@ rejects the approved shape above is wrong and must be fixed.
 
 A moving planet contacting one person's natal point. Temporary, theirs.
 
-- Second person. A specific everyday scene is correct here.
-- The friend or other person is visible in the scene where one is involved.
-- Temporary event, never a permanent trait.
+- You addresses the reader; Friend uses they/them/their for the selected person.
+- Develop the supplied `readerMeaning` for the exact contact. Do not invent a
+  scene, another person's behavior or personal history to make it vivid.
+- Temporary experience, never a permanent trait.
+- Use `skills/tldr-astro-personal-transit/SKILL.md`. The frozen Personal Transit
+  rule bundle governs this surface where older generic instructions conflict.
 
 ### 3. Natal aspect (You) — standing pattern
 
@@ -302,8 +296,10 @@ A pattern in the birth chart. Person first, "you tend to".
   direct action may close a forecast when the governed situation supports
   it; that is a description of what can move, not generic coaching.
   Contractions are fine.
-- Voice exemplars must themselves pass every rule above. An exemplar that
-  violates a rule is a counter-example and must be removed from the packet.
+- Preserve eligible owner voice passages exactly. Current corrections and bans
+  govern new writing even when historical evidence uses conflicting language.
+  A historical occurrence grants no exception and does not authorize rewriting
+  the source. Apply the surface's evidence eligibility and owner decisions.
 
 ## Approval provenance
 

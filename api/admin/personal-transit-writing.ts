@@ -9,6 +9,7 @@ import {
   sendAdminMethodNotAllowed
 } from "../_lib/admin-http.js";
 import { loadLocalWebEnv } from "../_lib/local-env.js";
+import { inspectPersonalTransitMeaning } from "../_lib/personal-transit-writer-context.js";
 import {
   generatePersonalTransitAudienceDrafts,
   nextMissingPersonalTransitWriteup,
@@ -36,6 +37,7 @@ type RequestBody = {
   youText?: string;
   friendText?: string;
   instruction?: string;
+  readerMeaning?: string;
   audience?: PersonalTransitAudience;
   provider?: "openai" | "claude" | "anthropic";
 };
@@ -62,6 +64,12 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
     const youText = typeof body.youText === "string" ? body.youText : "";
     const friendText = typeof body.friendText === "string" ? body.friendText : "";
     const preview = parsePersonalTransitPreview(body);
+    if (action === "meaning") {
+      const contact = parsePersonalTransitContact(body);
+      if (contact.family !== "aspect") throw new AdminHttpError(400, "Meaning records apply to exact transit aspects and returns.");
+      return sendAdminJson(res, 200, { ok: true, action, saved: false, published: false, approved: false,
+        meaning: inspectPersonalTransitMeaning({ transiting: contact.transiting!, natal: contact.natal!, aspect: contact.aspect! }) });
+    }
     if (action === "recheck") {
       return sendAdminJson(res, 200, {
         ok: true,
@@ -80,6 +88,8 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
     if (action !== "generate") throw new AdminHttpError(400, "Choose Generate You + Friend draft, Run writing checks, or Next missing write-up.");
 
     const instruction = typeof body.instruction === "string" ? body.instruction.trim() : "";
+    const readerMeaning = typeof body.readerMeaning === "string" ? body.readerMeaning.trim() : "";
+    if (readerMeaning.length > 6000) throw new AdminHttpError(413, "Keep the transit meaning under 6,000 characters.");
     const audience = body.audience === "you" || body.audience === "friend" ? body.audience : "both";
     if (instruction.length > 6000) throw new AdminHttpError(413, "The writing request is too long. Keep it under 6,000 characters.");
     if (youText.length > 60_000 || friendText.length > 60_000) {
@@ -94,6 +104,7 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
       youText,
       friendText,
       instruction,
+      readerMeaning,
       audience,
       preview,
       provider: body.provider === "anthropic" ? "claude" : body.provider

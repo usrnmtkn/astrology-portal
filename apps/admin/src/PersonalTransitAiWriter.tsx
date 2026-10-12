@@ -48,6 +48,8 @@ export default function PersonalTransitAiWriter({
   planet = "", house = "", sign = "", contentKey, youText, friendText, disabled, onUseYou, onUseFriend, onOpenNext, defaultOpen = false
 }: Props) {
   const [instruction, setInstruction] = useState("");
+  const [meaning, setMeaning] = useState<{ text: string; status: string; derivationMode: string } | null>(null);
+  const needsTransitMeaning = /^authored\/transit-(?:aspect|return)\//u.test(contentKey);
   const [audience, setAudience] = useState<Audience>("both");
   const [youDraft, setYouDraft] = useState("");
   const [friendDraft, setFriendDraft] = useState("");
@@ -62,6 +64,7 @@ export default function PersonalTransitAiWriter({
 
   useEffect(() => {
     setInstruction("");
+    setMeaning(null);
     setYouDraft("");
     setFriendDraft("");
     setChecks([]);
@@ -74,7 +77,7 @@ export default function PersonalTransitAiWriter({
     return () => { requestVersion.current++; };
   }, [contentKey, sign, transitHouse, natalHouse]);
 
-  const request = async (action: "generate" | "next-missing" | "recheck") => {
+  const request = async (action: "generate" | "next-missing" | "recheck" | "meaning") => {
     if (busy || disabled) return;
     const version = ++requestVersion.current;
     const isCurrent = () => version === requestVersion.current;
@@ -114,6 +117,10 @@ export default function PersonalTransitAiWriter({
       }
       if (payload.saved || payload.published || payload.approved) {
         throw new Error("The writer tried to save or publish. Existing writing was left unchanged.");
+      }
+      if (action === "meaning") {
+        setMeaning(payload.meaning);
+        return;
       }
       if (action === "next-missing") {
         if (!payload.next) {
@@ -160,6 +167,14 @@ export default function PersonalTransitAiWriter({
   return <details className="admin-workspace-details" {...(defaultOpen ? { open: true } : {})}>
     <AdminDisclosureSummary>AI writing</AdminDisclosureSummary>
     <p>This generator writes the selected destination only: {destinationLabel({ contentKey, transiting, natal, aspect, transitHouse, natalHouse, planet, house, sign })}. Generate copies into this destination's You and Friend fields. Save keeps a draft on this key. Approve &amp; publish stays with you.</p>
+    {needsTransitMeaning && <StudioButton type="button" disabled={disabled || busy} onClick={() => { void request("meaning"); }}>Show transit meaning</StudioButton>}
+    {needsTransitMeaning && meaning && <label className="admin-review-copy-editor">
+      <span>Transit meaning</span>
+      <StudioTextarea formatting={false} value={meaning.text} readOnly
+        aria-label="Transit meaning"
+        rows={4} className="admin-ai-writing-instruction" />
+      <small className="admin-field-hint">{meaning.status === "owner-accepted" ? "Reviewed meaning." : "Meaning awaiting review."} {meaning.derivationMode === "exact-contact" ? "Uses an exact-contact source." : "Derived from separate planet and aspect sources."} Editing reader copy does not change this record.</small>
+    </label>}
     <label className="admin-review-copy-editor">
       <span>Optional direction</span>
       <StudioTextarea formatting={false}

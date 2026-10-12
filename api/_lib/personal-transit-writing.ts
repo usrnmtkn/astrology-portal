@@ -2,6 +2,10 @@ import { createHash } from "node:crypto";
 import { isDynamicTransitNatalExactKey, transitAspectSituationKey } from "../../apps/web/src/content/transitNatalIdentity.js";
 import { isEligibleTransitReturn } from "../../apps/web/src/content/fallbackArchitectureV3/resolver/transitReturns.mjs";
 import { generateSkyArticleTemplateSlots } from "./content-generation.js";
+import { buildPersonalTransitWriterContext, personalTransitDestinationChecks } from "./personal-transit-writer-context.js";
+import { validatePassage } from "../../src/astro-writing/personalTransitPassageValidation.mjs";
+import transitContracts from "../../src/astro-writing/transitNatalContract.cjs";
+import { readerRuleFindings } from "../../src/astro-writing/personalTransitReaderRules.mjs";
 import { servingPackageRecords } from "./serving-package-records.js";
 import { AdminHttpError, adminFetchJson, adminStorageRows } from "./admin-http.js";
 import { studioStorage } from "./sky-studio-sources.js";
@@ -161,6 +165,15 @@ export function personalTransitReviewChecks(input: {
   const isBond = input.family === "bond-effect";
   for (const [audience, text] of [["you", input.you], ["friend", input.friend]] as const) {
     if (!text?.trim()) continue;
+    if (input.family === "aspect") {
+      const review = readerRuleFindings(text);
+      checks.push(...review.findings.map((finding: { code: string; detail: string }) => ({
+        code: finding.code, audience, detail: finding.detail
+      })));
+      checks.push(...review.signals.map((signal: { id: string; instruction: string }) => ({
+        code: signal.id, audience, detail: signal.instruction
+      })));
+    }
     if (text.includes("—")) checks.push({ code: "em-dash", audience, detail: "Uses an em dash." });
     if (/\bwhether\b/iu.test(text)) checks.push({ code: "banned-whether", audience, detail: "Uses the banned word whether." });
     if (editorialNote.test(text)) checks.push({ code: "editorial-note", audience, detail: "Looks like an editorial note rather than reader copy." });
@@ -197,14 +210,23 @@ export function reviewPersonalTransitCopy(input: {
   const preview = input.preview ?? {};
   return {
     contentKey: input.contact.contentKey,
-    checks: personalTransitReviewChecks({
+    checks: [...personalTransitReviewChecks({
       you: input.you,
       friend: input.friend,
       siblings: siblingFields(input.contact),
       allowHouses: allowsHouses(input.contact) || Boolean(preview.transitHouse || preview.natalHouse),
       allowSigns: allowsSigns(input.contact) || Boolean(preview.sign),
       family: input.contact.family
-    })
+    }), ...(input.contact.family === 'aspect' ? (['you','friend'] as const).flatMap(audience => {
+      const text = input[audience];
+      if (!text?.trim()) return [];
+      const {transiting,natal,aspect} = input.contact;
+      const key = `authored/transit-aspect/${transiting}/${natal}/${aspect}`;
+      const contract = transitContracts.transitNatalPlaceholderContract({...(servingPackageRecords.get(input.contact.contentKey) ?? {}),contentKey:key},audience,key);
+      return validatePassage(text,{contentKey:key,facts:{transiting,natal,aspect},placementFacts:{
+        sign:input.contact.sign ?? preview.sign,transitHouse:input.contact.transitHouse ?? preview.transitHouse,natalHouse:input.contact.natalHouse ?? preview.natalHouse
+      }},{field:contract.field,perspective:audience,contract}).findings.map(finding => ({...finding,audience}));
+    }) : [])]
   };
 }
 
@@ -294,6 +316,7 @@ export async function generatePersonalTransitAudienceDrafts(input: {
   youText: string;
   friendText: string;
   instruction: string;
+  readerMeaning?: string;
   audience: PersonalTransitAudience;
   preview?: PersonalTransitPreview;
   provider?: GenerationProvider;
@@ -327,6 +350,18 @@ export async function generatePersonalTransitAudienceDrafts(input: {
   const slots = requested.map((audience) => audience === "you"
     ? { name: "youDraft", description: youSlot(input.contact, preview) }
     : { name: "friendDraft", description: friendSlot(input.contact, preview) });
+  const personalTransitContext = input.contact.family === "aspect" ? buildPersonalTransitWriterContext({
+    contentKey: input.contact.contentKey,
+    transiting: input.contact.transiting!, natal: input.contact.natal!, aspect: input.contact.aspect!,
+    requested: requested as Array<"you" | "friend">,
+    readerMeaning: input.readerMeaning, instruction: input.instruction,
+    excludedVoiceTextHashes: memory.excludedVoiceTextHashes,
+    record: { ...(servingPackageRecords.get(input.contact.contentKey) ?? {}), contentKey: input.contact.contentKey,
+      body_you: saved.you, body_they: saved.friend },
+    youText: editorYou, friendText: editorFriend,
+    facts: Object.fromEntries(Object.entries({ sign: input.contact.sign ?? preview.sign,
+      transitHouse: preview.transitHouse, natalHouse: preview.natalHouse }).filter(([, value]) => value))
+  }) : undefined;
   const generation = await generateSkyArticleTemplateSlots({
     templateKey: input.contact.contentKey,
     templateBody: [
@@ -355,6 +390,7 @@ export async function generatePersonalTransitAudienceDrafts(input: {
       contentKey: input.contact.contentKey
     },
     requestedSlots: slots,
+    personalTransitContext,
     licensedVariables: [...licensedVariablesFor(input.contact)],
     provider: input.provider,
     surface: input.contact.family === "bond-effect" ? "friends" : "you",
@@ -375,15 +411,16 @@ export async function generatePersonalTransitAudienceDrafts(input: {
     preservedAudiences: (["you", "friend"] as const).filter((audience) => !requested.includes(audience)),
     youDraft: youDraft || null,
     friendDraft: friendDraft || null,
-    checks: personalTransitReviewChecks({
+    checks: [...personalTransitReviewChecks({
       you: youDraft || undefined,
       friend: friendDraft || undefined,
       siblings,
       allowHouses: allowsHouses(input.contact) || Boolean(preview.transitHouse || preview.natalHouse),
       allowSigns: allowsSigns(input.contact) || Boolean(preview.sign),
       family: input.contact.family
-    }),
+    }), ...(personalTransitContext ? personalTransitDestinationChecks(personalTransitContext, generation.slotValues) : [])],
     memoryReceipt: generation.memoryReceipt ?? memory.receipt,
+    ...(generation.writingReceipt ? { writingReceipt: generation.writingReceipt } : {}),
     generation: {
       provider: generation.provider,
       model: generation.model,
@@ -505,7 +542,7 @@ async function personalTransitWritingMemory(contact: PersonalTransitContact) {
         natalHouse: contact.natalHouse ? houseOrdinal(contact.natalHouse) : undefined
       }).filter(([, value]) => value))
     },
-    { studioCorrections: feedback?.corrections ?? [] }
+    { studioCorrections: feedback?.corrections ?? [], includeEffectiveRules: contact.family !== "aspect" }
   );
   if (feedback) {
     (memory.receipt as { studioFeedback?: unknown }).studioFeedback = {
@@ -532,7 +569,7 @@ function friendSlot(contact: PersonalTransitContact, preview: PersonalTransitPre
   if (contact.family === "bond-effect") {
     return `Write the Friend/they passage for the same Between you two card. The reader is still you; {{holder1}} is the other person. This can reverse who is doing what, as owner-approved bond-effect pairs do. It is not a pronoun swap of the You passage. ${bondTransitNamingRule} ${placementScope(contact, preview)}`;
   }
-  return `Write the Friend passage for the same destination using singular they/them/their. This is guidance for the person reading about their friend, not a pronoun swap of the You passage. ${friendTransitNamingRule} ${placementScope(contact, preview)} {{untilDate}} is allowed.`;
+  return `Write the Friend passage for the same destination using singular they/them/their. Describe the selected person's temporary experience independently. Do not involve the reader or announce observers. ${friendTransitNamingRule} ${placementScope(contact, preview)} {{untilDate}} is allowed.`;
 }
 
 function personalTransitVoiceNotes(input: {

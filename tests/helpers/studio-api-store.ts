@@ -4,11 +4,11 @@ import { tmpdir } from 'node:os';
 import path from 'node:path';
 
 /** Runs the actual Studio API handler with a private, isolated in-memory PostgREST store. */
-export async function studioApiStore(rows: unknown[], options: { writing?: boolean; realRecheck?: boolean; lunationWriting?: boolean; uuidIds?: boolean } = {}) {
+export async function studioApiStore(rows: unknown[], options: { writing?: boolean; realRecheck?: boolean; lunationWriting?: boolean; personalTransitWriting?: boolean; uuidIds?: boolean } = {}) {
   const directory = mkdtempSync(path.join(tmpdir(), 'studio-formatting-'));
   const fixturePath = path.join(directory, 'rows.json');
   writeFileSync(fixturePath, JSON.stringify(rows));
-  const child = fork(path.resolve(options.lunationWriting ? 'tests/helpers/lunation-writing-api.mts' : options.writing ? 'tests/helpers/sky-review-workflow-api.mjs' : 'tests/helpers/calendar-review-api.mjs'), ['--ipc'], {
+  const child = fork(path.resolve(options.personalTransitWriting ? 'tests/helpers/personal-transit-writing-api.mts' : options.lunationWriting ? 'tests/helpers/lunation-writing-api.mts' : options.writing ? 'tests/helpers/sky-review-workflow-api.mjs' : 'tests/helpers/calendar-review-api.mjs'), ['--ipc'], {
     env: { ...process.env, CALENDAR_REVIEW_FIXTURE: fixturePath, STUDIO_REAL_RECHECK: String(Boolean(options.realRecheck)), STUDIO_UUID_IDS: String(Boolean(options.uuidIds)) }, execArgv: ['--import', 'tsx'], stdio: ['ignore', 'pipe', 'pipe', 'ipc']
   });
   let sequence = 0;
@@ -24,7 +24,7 @@ export async function studioApiStore(rows: unknown[], options: { writing?: boole
     child.on('exit', code => { const error = new Error(`API fixture exited ${code}: ${stderr}`); reject(error); pending.forEach(task => task.reject(error)); });
   });
   return {
-    call: (message: { method: string; body?: unknown; url?: string }) => new Promise<any>((resolve, reject) => {
+    call: (message: { method: string; body?: unknown; url?: string; fixture?: string }) => new Promise<any>((resolve, reject) => {
       const id = ++sequence; pending.set(id, { resolve, reject }); child.send({ ...message, id });
     }),
     close: () => { child.kill(); rmSync(directory, { recursive: true, force: true }); }
