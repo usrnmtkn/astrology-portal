@@ -1,7 +1,9 @@
 #!/usr/bin/env node
 import assert from 'node:assert/strict';
 import { execFileSync, spawnSync } from 'node:child_process';
-import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 import { pathToFileURL } from 'node:url';
 
 export function balanceTests(tests, count, timings) {
@@ -33,6 +35,22 @@ function identities(report) {
   return names;
 }
 
+export function withShardLists(bins, run) {
+  // Playwright clears outputDir before resolving --test-list. Keep selections
+  // outside its artifacts directory and isolate simultaneous invocations.
+  const directory = mkdtempSync(join(tmpdir(), 'tldr-browser-shards-'));
+  try {
+    const files = bins.map((bin, index) => {
+      const file = join(directory, `shard-${index + 1}.txt`);
+      writeFileSync(file, bin.tests.map(name => name.replace('tests/visual/', '')).join('\n') + '\n');
+      return file;
+    });
+    return run(files);
+  } finally {
+    rmSync(directory, { recursive: true, force: true });
+  }
+}
+
 export function main(args) {
   const [configFlag, config, shard, mode] = args;
   assert.equal(configFlag, '--config');
@@ -48,23 +66,23 @@ export function main(args) {
   const tests = identities(report);
   const timings = JSON.parse(readFileSync('config/browser-test-durations.json', 'utf8'));
   const bins = balanceTests(tests, count, timings);
-  mkdirSync('test-results', { recursive: true });
-  for (const [i, bin] of bins.entries()) writeFileSync(`test-results/browser-shard-${i + 1}.txt`, bin.tests.map(name => name.replace('tests/visual/', '')).join('\n') + '\n');
-  // Ask Playwright to resolve every generated list before running any tests.
-  // A stale/ambiguous selector cannot silently drop or duplicate coverage.
-  const selected = bins.flatMap((bin, i) => {
-    const resolved = JSON.parse(execFileSync(process.execPath, [cli, ...base, '--test-list', `test-results/browser-shard-${i + 1}.txt`, '--list', '--reporter=json'], { encoding: 'utf8', maxBuffer: 10 * 1024 * 1024 }));
-    assert.equal(resolved.errors.length, 0);
-    const actual = identities(resolved);
-    assert.deepEqual([...actual].sort(), [...bin.tests].sort());
-    return actual;
+  return withShardLists(bins, files => {
+    // Ask Playwright to resolve every generated list before running any tests.
+    // A stale/ambiguous selector cannot silently drop or duplicate coverage.
+    const selected = bins.flatMap((bin, i) => {
+      const resolved = JSON.parse(execFileSync(process.execPath, [cli, ...base, '--test-list', files[i], '--list', '--reporter=json'], { encoding: 'utf8', maxBuffer: 10 * 1024 * 1024 }));
+      assert.equal(resolved.errors.length, 0);
+      const actual = identities(resolved);
+      assert.deepEqual([...actual].sort(), [...bin.tests].sort());
+      return actual;
   });
   assert.deepEqual([...selected].sort(), [...tests].sort());
   console.log(JSON.stringify({ tests: tests.length, shard: index, bins: bins.map(b => ({ tests: b.tests.length, estimatedSeconds: b.seconds })), unmeasured: tests.filter(t => timings.durations[t] === undefined).length }));
   if (mode === '--plan') return 0;
-  const result = spawnSync(process.execPath, [cli, ...base, '--test-list', `test-results/browser-shard-${index}.txt`], { stdio: 'inherit' });
+  const result = spawnSync(process.execPath, [cli, ...base, '--test-list', files[index - 1]], { stdio: 'inherit' });
   if (result.error) throw result.error;
   return result.status ?? 1;
+  });
 }
 
 if (import.meta.url === pathToFileURL(process.argv[1] ?? '').href) process.exitCode = main(process.argv.slice(2));
