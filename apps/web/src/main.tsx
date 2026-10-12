@@ -1,4 +1,5 @@
 import React from "react";
+import { startStartupAnimation } from "./startupAnimation";
 import { createRoot } from "react-dom/client";
 import { loadYouPage } from "./features/you/youExperienceLoader";
 import { PageLoading, PageLoadBoundary } from "./components/PageLoading";
@@ -297,4 +298,5 @@ function setupBlankRestoreRecovery() {
   }
 }
 
+startStartupAnimation();
 void startApp().catch(() => window.dispatchEvent(new Event("tldrastro:startup-error")));
