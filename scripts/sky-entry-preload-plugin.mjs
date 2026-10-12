@@ -1,5 +1,6 @@
-/** Discover the existing App graph in the document, before the entry module
- * waits for React. Only root Sky list visits need these download hints. */
+/** Discover the existing App graph and required Sky placement rows in the
+ * document, before the entry module waits for React. Only root Sky list visits
+ * need these download hints; modulepreload does not execute the content module. */
 export function skyEntryPreloadPlugin() {
   return {
     name: "tldr-sky-entry-preload",
@@ -20,6 +21,10 @@ export function skyEntryPreloadPlugin() {
           for (const dependency of chunk.imports) visit(dependency);
         };
         visit(app.fileName);
+        const placements = Object.values(bundle).find(chunk => chunk.type === "chunk"
+          && Object.keys(chunk.modules ?? {}).some(id => id.endsWith("/fallbackArchitectureV3/bundled-sky-placement-rows-v3.json")));
+        if (!placements) throw new Error("Sky preload could not locate the built placement rows.");
+        visit(placements.fileName);
         return [{ tag: "script", injectTo: "head", children:
           `(()=>{if(location.pathname!=="/"||!/^#\\/?sky\\/?$/.test(location.hash))return;for(const file of ${JSON.stringify([...files])}){const href="/"+file;if([...document.querySelectorAll('link[rel="modulepreload"]')].some(link=>link.getAttribute("href")===href))continue;const link=document.createElement("link");link.rel="modulepreload";link.crossOrigin="";link.href=href;document.head.appendChild(link);}})();`
         }];

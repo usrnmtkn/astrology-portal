@@ -45,8 +45,11 @@ until every range finishes, and the merged list restores global timestamp/ID
 order. Unknown and future content families remain included. The actual handler
 is checked against PostgreSQL UUID ordering, timestamp ties and boundary IDs.
 
-Direct Sky visits start the canonical source assets while App downloads. The existing shared loader still validates the complete source
-and publication state before revealing the reading. The same exact date/location
+Direct Sky visits preload App and the required placement-row chunk from the
+document, then start the canonical source assets while App downloads. These
+download hints do not execute the modules or follow deferred article imports.
+The existing shared loader still validates the complete source and publication
+state before revealing the reading. The same exact date/location
 calculation is reused only while the initial selection remains valid. Reader
 fonts start once the base stylesheet arrives. Calendar reserves its event-dot
 row and reveals downstream actions with the completed day reading so late prose
