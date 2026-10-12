@@ -119,6 +119,10 @@ for(const [width,theme] of [[390,'light'],[1440,'dark']] as const){
     const exact=contextRow.sections.horoscopeEdition.passages.find((p:any)=>p.sign===sign).body;
     await expect(article).toContainText(exact);await page.reload();await expect(article).toContainText(exact);
    }
-  }finally{child.kill();}
+  }finally{
+   // Reader refreshes may still be using the fixture after the final visible
+   // assertion. Drain their handlers before terminating its IPC transport.
+   try{await page.unrouteAll({behavior:'wait'});}finally{child.kill();}
+  }
  });
 }
