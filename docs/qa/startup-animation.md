@@ -130,3 +130,25 @@ Lottie loop, pause/resume, playback after reload, and the moon's CSS motion.
 Both preview checks passed on the same base revision, alongside the two production
 reduced-motion checks and the CSS audit. The visible in-app preview was confirmed
 to advance symbol opacities after selecting Play while reduced motion remained on.
+
+## Release verification — October 12, 2026
+
+The reviewed loader files were transferred byte-for-byte to a fresh clone of the
+clean repository on `codex/continuous-celestial-loader`, based on `9261ab98e`.
+The old worktree's retired-history push guard was left intact. Commit `d9b879ec`
+passed all 36 checks across the complete loading-feedback and startup animation
+specs after a fresh production build, plus CSS/token audit, workflow syntax,
+startup performance contracts, source/staged privacy and built-asset privacy.
+The existing visual-smoke workflow now includes both startup animation specs.
+
+Matched builds of unchanged main and the loader, each with independent `npm ci`
+dependencies and identical fixture environment settings, established the feature's
+bundle cost. The pinned optional Lottie light player is 46,584 gzip bytes; the
+conservative manifest budget includes it in startup because it is a script URL
+asset, though the app never awaits it and skips it for initial reduced motion.
+The complete JavaScript increase is 51,109 gzip bytes and aggregate CSS increases
+788 bytes. The measured allocation and narrow hash variance allowance are recorded
+in `scripts/web-bundle-budgets.json`. Main passed its prior ceilings; the loader
+passes the updated feature allocation. This adds animation cost and makes no
+performance-improvement claim. Required hosted checks and deployment verification
+are separate from these local results.
