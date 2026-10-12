@@ -10,7 +10,7 @@ import { build } from 'esbuild';
 const file = join(mkdtempSync(join(tmpdir(), 'sky-dashboard-scope-')), 'reader.mjs');
 await build({ stdin: { resolveDir: process.cwd(), contents: `
   export { loadFallbackArchitectureV3DashboardBundle, readCachedFallbackArchitectureV3Bundle,
-    clearCachedFallbackArchitectureV3Bundle, loadLiveGeneratedContentForKeys, loadLiveGeneratedContentForSurfaces, loadFallbackArchitectureV3SkyPlacementDashboardBundle } from './apps/web/src/services/generatedContent.ts';
+    clearCachedFallbackArchitectureV3Bundle, loadContentStudioLastKnownGoodRows, loadLiveGeneratedContentForKeys, loadLiveGeneratedContentForSurfaces, loadFallbackArchitectureV3SkyPlacementDashboardBundle } from './apps/web/src/services/generatedContent.ts';
   export { installContentPublications } from './apps/web/src/content/contentPublicationState.ts';
   export { installFallbackArchitectureV3Bundle, installSkyCoreFallbackArchitectureV3Bundle,
     transitV3AuthoredCardForContentKey } from './apps/web/src/content/fallbackArchitectureV3Runtime.ts';
@@ -141,6 +141,21 @@ try {
     assert.equal(releases.length, count);
   };
   try {
+    const beforeTargeted = queries.length;
+    const firstTargeted = qa.loadLiveGeneratedContentForKeys([skyKey, personalKey]);
+    const sameTargeted = qa.loadLiveGeneratedContentForKeys([personalKey, skyKey, skyKey]);
+    await untilHeld(1);
+    releases[0]();
+    const [firstRows, sameRows] = await Promise.all([firstTargeted, sameTargeted]);
+    assert.equal(firstRows, sameRows, 'Equivalent simultaneous key requests share one result');
+    assert.equal(queries.length, beforeTargeted + 1, 'Simultaneous readers must not duplicate the same API request');
+    releases.length = 0;
+    const relaxed = qa.loadLiveGeneratedContentForKeys([skyKey]);
+    const fresh = qa.loadLiveGeneratedContentForKeys([skyKey], { requireFresh: true });
+    await untilHeld(2);
+    releases.forEach(release => release());
+    await Promise.all([relaxed, fresh]);
+    releases.length = 0;
     const older = qa.loadFallbackArchitectureV3DashboardBundle('sky');
     await untilHeld(1);
     qa.clearCachedFallbackArchitectureV3Bundle('sky');
@@ -223,6 +238,27 @@ try {
   rows.splice(rows.indexOf(libra), 1);
   await assert.rejects(qa.loadFallbackArchitectureV3SkyPlacementDashboardBundle('sun/virgo,sun/libra'), /Current Sky publications/,
     'One valid row must not disguise a partial response missing another required publication');
+  // A cold client has no per-row browser cache. The verified offline snapshot
+  // must satisfy its exact ledger while the live reader continues returning 503.
+  globalThis.fetch = async input => String(input) === '/content-studio-last-known-good.json'
+    ? Response.json({ schema: 'content-studio-last-known-good-v2', rowCount: 2, rows: [virgin, libra],
+        publications: [publication(virgin, 4), publication(libra, 4), { content_key: '__content-publication-ledger/v1', state: 'live', revision: 1,
+          row_id: null, row_updated_at: null, updated_at: virgin.updated_at }] })
+    : new Response('offline', { status: 503 });
+  assert.equal((await qa.loadContentStudioLastKnownGoodRows()).length, 2, "Verified recovery snapshot must load");
+  const recovered = await qa.loadFallbackArchitectureV3SkyPlacementDashboardBundle('sun/virgo');
+  assert.equal(recovered.rowsFile.hookRows[0].publicationRowId, virgin.id, 'Cold recovery uses the exact already-loaded offline row');
+  assert.deepEqual(JSON.parse(storage.get('tldrastro:sky-publication-rows:v2')!).map((row: any) => row.content_key), [virgin.content_key],
+    'A selected placement must not copy the entire offline inventory into browser storage');
+  storage.set('tldrastro:sky-publication-rows:v2', JSON.stringify([{ ...virgin, updated_at: '2026-01-01T00:00:00Z' }]));
+  assert(await qa.loadFallbackArchitectureV3SkyPlacementDashboardBundle('sun/virgo'),
+    'An older browser row with the same ID cannot overwrite the verified current offline row');
+  qa.installContentPublications([{ ...publication(virgin, 5), row_updated_at: '2026-10-01T00:00:00Z' }]);
+  await assert.rejects(qa.loadFallbackArchitectureV3SkyPlacementDashboardBundle('sun/virgo'), /Current Sky publications/,
+    'An older offline snapshot cannot satisfy a newer publication');
+  qa.installContentPublications([publication(virgin, 6, 'retired')]);
+  assert.equal(await qa.loadFallbackArchitectureV3SkyPlacementDashboardBundle('sun/virgo'), null,
+    'Offline recovery cannot resurrect a retired passage');
   console.log('PASS: Sky inventory filtering, isolated revision caches, shared invalidation and cross-page overlay preservation.');
 } finally {
   globalThis.fetch = originalFetch;

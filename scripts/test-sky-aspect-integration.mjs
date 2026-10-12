@@ -1,8 +1,13 @@
 import assert from "node:assert/strict";
 import fs from "node:fs";
+import { skyWritingIssues } from "../apps/web/src/content/contentReviewReadiness.ts";
 import { createRequire } from "node:module";
 
 const require = createRequire(import.meta.url);
+const { RHETORICAL_LABELS } = require('../src/astro-writing/rhetoricalPatterns.cjs');
+// Complete injected verdicts keep this test offline and preserve the production
+// judge's requirement for a separate contextual rhetoric review.
+const rhetoric = { checks: RHETORICAL_LABELS.map(label => ({ label, outcome: 'pass', reason: 'Synthetic provider contract fixture.' })), findings: [] };
 const generator = require("../packages/astro-knowledge/scripts/generate-sky-aspect-cards.js");
 const { lintCard } = require("../packages/astro-knowledge/scripts/lint-sky-voice.js");
 const { buildJudgePrompt } = require("../packages/astro-knowledge/scripts/judge-sky-voice.js");
@@ -115,7 +120,7 @@ const warmthHarvest = generator.aspectWarmthHarvest(normalizedWarmthTarget);
 assert.equal(warmthHarvest.status, "ready");
 const warmthJudgePrompt = buildJudgePrompt(cleanExample, {
   tier: "luminary",
-  foundationLines: warmthHarvest.ownerFoundationLines
+  foundationLines: [{ sourceArticleId: "sky-sun-opposition-pluto", originalLine: cleanExample }]
 });
 assert.match(warmthJudgePrompt, /turn toward the reader must trace to the supplied owner foundation lines/);
 assert.match(warmthJudgePrompt, /SUPPLIED OWNER FOUNDATION LINES/);
@@ -200,12 +205,14 @@ const landedChironSource = await generator.generateCard({
   signB: "taurus"
 }, {
   generateFn: async () => {
-    throw new Error("A Chiron pair without an approved human moment must not reach the model.");
+    return cleanExample; // Provider fixture only; no generation or publication.
   }
 });
 
-assert.equal(landedChironSource.status, "skipped");
-assert.equal(landedChironSource.reason, "aspect-warmth-editorial-required");
+assert.equal(landedChironSource.status, "clean");
+assert.equal(landedChironSource.warmthHarvest.generationAllowed, true);
+assert.equal(landedChironSource.harvest_mode, "matched");
+assert.ok(landedChironSource.warmthHarvest.ownerFoundationLines.length > 0, "The approved Chiron evidence must reach generation.");
 
 let calls = 0;
 const retried = await generator.generateCard({
@@ -233,7 +240,7 @@ assert.equal(retried.attempts, 2);
 assert.equal(retried.lint.score, 3);
 assert.equal(retried.lint.fails, 0);
 assert.equal(retried.warmthHarvest.status, "ready");
-assert.equal(retried.harvest_mode, "matched");
+assert.equal(retried.harvest_mode, warmthHarvest.harvest_mode);
 assert.deepEqual(retried.lintRetryAvoidTerms, [[
   "degree/orb mechanics",
   "paragraph-count"
@@ -278,6 +285,7 @@ const judged = await generator.generateCard({
     return cleanExample;
   },
   judgeFn: async () => JSON.stringify({
+    rhetoric,
     score: 3,
     verdict: "in-voice",
     weakest: "none",
@@ -294,7 +302,7 @@ assert.equal(judged.judge.approvalSource, "llm-advisory");
 const cronSource = fs.readFileSync(new URL("../api/cron/generate-sky-aspects.ts", import.meta.url), "utf8");
 assert.match(cronSource, /status: "DRAFT"/u, "New sky-aspect cards must remain drafts until dashboard approval.");
 assert.match(cronSource, /sky-owner-approval-required/u);
-assert.match(cronSource, /approvedReviewPairKeys/u);
+assert.match(cronSource, /approvedReviewPairs\.has\(staged\.pairKey\)/u);
 assert.match(cronSource, /allowReviewSources: options\.allowReviewSources === true/u);
 assert.match(cronSource, /owner-authored-review-pending/u, "The cron must not overwrite an owner-authored review draft.");
 assert.match(cronSource, /aspectWarmthHarvest: result\.warmthHarvest \?\? null/u);
@@ -302,9 +310,16 @@ assert.match(cronSource, /warmthSource: result\.warmthSource \?\? null/u);
 assert.match(cronSource, /evidenceClass: result\.evidenceClass \?\? null/u);
 
 const adminSource = fs.readFileSync(new URL("../api/admin/generated-content.ts", import.meta.url), "utf8");
-assert.match(adminSource, /judgeScore !== 3/u);
-assert.match(adminSource, /judge\?\.recommendation === "approve"/u);
-assert.match(adminSource, /judge\.approvalSource === "llm-advisory"/u);
+assert.match(adminSource, /libs\(\)\.skyWritingIssues/u, "Publication must use the shared writing readiness gate.");
+const reviewedRow = { content_key: 'sky.aspect.fixture', block_type: 'sky_aspect', body: cleanExample,
+  judge_score: 3, judge_gate: 'human-review', source_snapshot: {
+    skyAspectVoiceLint: { score: 3, fails: 0 }, skyAspectJudge: { recommendation: 'approve', approvalSource: 'llm-advisory' }
+  } };
+assert.deepEqual(skyWritingIssues(reviewedRow), []);
+assert.ok(skyWritingIssues({ ...reviewedRow, judge_score: 2 }).length);
+assert.ok(skyWritingIssues({ ...reviewedRow, judge_gate: 'auto-publish' }).length);
+assert.ok(skyWritingIssues({ ...reviewedRow, source_snapshot: { ...reviewedRow.source_snapshot, studioWritingCheck: null } }).length,
+  'Editing invalidates old checks even when the historical score is 3.');
 
 let repairJudgeCalls = 0;
 let repairReason = "";
@@ -325,11 +340,13 @@ const repairedToThree = await generator.generateCard({
   judgeFn: async () => {
     repairJudgeCalls += 1;
     return JSON.stringify(repairJudgeCalls === 1 ? {
+      rhetoric,
       score: 2,
       verdict: "borderline",
       weakest: "The ending.",
       why: "The ending adds a second aphorism."
     } : {
+      rhetoric,
       score: 3,
       verdict: "in-voice",
       weakest: "none",
@@ -364,6 +381,7 @@ const repairedStillTwo = await generator.generateCard({
   generateFn: async () => cleanExample,
   repairFn: async () => repairedExample,
   judgeFn: async () => JSON.stringify({
+    rhetoric,
     score: 2,
     verdict: "borderline",
     weakest: "The ending.",

@@ -32,17 +32,17 @@ const appSource = read("apps/web/src/App.tsx");
 
 assert.match(
   generatedContentSource,
-  /export async function loadLiveGeneratedContentForKeys[\s\S]*?\.in\("content_key", batch\)/u,
+  /export async function loadLiveGeneratedContentForKeys[\s\S]*?loadReaderRows\(\{ keys: batch \}, requestSignal\)/u,
   "Targeted hydration must query only the requested exact content keys."
 );
 assert.match(
   appSource,
-  /const personalTransitAspectContentKeys = skyPlacementPersonalizationTransits\.flatMap[\s\S]*?cmsSurfaceKeys\.transitAspect[\s\S]*?const currentSkyContentKeys = \[[\s\S]*?\.\.\.personalTransitAspectContentKeys[\s\S]*?loadLiveGeneratedContentForKeys\(currentSkyContentKeys\)[\s\S]*?setSkyGeneratedContent\(mergeGeneratedContentMaps\(content, normalizedSkySnapshotContent\)\)/u,
-  "The Sky page must hydrate current collective keys and personalized natal-aspect CMS keys, then merge live copy into the visible fallback cards."
+  /const currentSkyContentKeys = \[[\s\S]*?cmsSurfaceKeys\.retrogradeSummary[\s\S]*?cmsSurfaceKeys\.skyDebility[\s\S]*?loadLiveGeneratedContentForKeys\(currentSkyContentKeys\)[\s\S]*?setSkyGeneratedContent\(mergeGeneratedContentMaps\(content, normalizedSkySnapshotContent\)\)/u,
+  "The Sky page must hydrate its current reader keys and merge them into the visible content. Personal transits resolve through their governed source loader."
 );
 assert.match(
   appSource,
-  /if \(mode === "calendar"\)[\s\S]*?calendarContentRequest\.contentKeys\.filter[\s\S]*?loadLiveGeneratedContentForKeys\(missingKeys\)/u,
+  /if \(mode === "calendar"\)[\s\S]*?calendarContentRequest\.contentKeys\.filter[\s\S]*?loadLiveGeneratedContentForKeys\(missingKeys, \{ requireFresh: cached\.content\.size > 0 \}\)/u,
   "Calendar must use its own exact-key request instead of scanning the Sky surface."
 );
 assert.doesNotMatch(

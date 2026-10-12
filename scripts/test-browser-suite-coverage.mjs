@@ -25,19 +25,8 @@ const runByHand = new Map([
   ]
 ]);
 
-// A spec may be left out of a workflow only with a reason and the finding it is waiting on. This is
-// not an excuse list: each entry names a question only the owner can answer, and the check prints
-// them on every run so they stay visible instead of disappearing into an allowlist.
-const pendingSpecs = new Map([
-  [
-    'astro-101-learn.spec.ts',
-    'The Learn hub and article header drifted: the kicker reads "Learn" rather than the section and house, some articles have no lede, and a second card matches Aries. Whether the redesign is intended is an owner decision.'
-  ],
-  [
-    'fallback-cache-self-heal.spec.ts',
-    'With the database answering 503, the reading stays on "Loading reading..." instead of self-healing to the bundled package. This needs the reader loading path, not a test change.'
-  ]
-]);
+// All discovered specs must run in a workflow.
+const pendingSpecs = new Map();
 
 // The trigger block runs from the `on:` line to the next top-level key.
 export function workflowTriggers(text) {

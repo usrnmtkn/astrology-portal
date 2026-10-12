@@ -25,6 +25,7 @@ function harness(reply?: (request: any, data: any[]) => Promise<any>) {
     const request: any = { filters: [] };
     const query: any = {
       select: () => query, order: () => query, limit: (limit: number) => { request.limit = limit; return query; },
+      retry: (enabled: boolean) => { assert.equal(enabled, false, 'Unavailable ledgers must reach offline recovery without stacked transport retries'); return query; },
       gte: (_: string, value: string) => { request.filters.push(['gte', value]); return query; },
       lt: (_: string, value: string) => { request.filters.push(['lt', value]); return query; },
       gt: (_: string, value: string) => { request.filters.push(['gt', value]); return query; },

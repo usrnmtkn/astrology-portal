@@ -100,6 +100,8 @@ for (const offlineRange of [false, true]) test(`Calendar loads complete facts wi
   expect(requests.some(url => url.pathname.startsWith('/wasm/'))).toBe(offlineRange);
   expect(overlays.length).toBeGreaterThan(0);
   expect(overlays.every(body => body.scope === 'sky')).toBe(true);
+  expect(requests.some(url => /fallback-content-calendar-/.test(url.pathname))).toBe(true);
+  expect(requests.filter(url => /fallback-content-(?:deferred-core|transit|shared-placement|sky-placement-houses)-/.test(url.pathname))).toEqual([]);
   expect(errors).toEqual([]);
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
   await page.screenshot({path: `test-results/calendar-api-${offlineRange ? 'recovery' : 'healthy'}.png`, fullPage: true});

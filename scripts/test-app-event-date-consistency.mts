@@ -123,7 +123,7 @@ try {
     timeZone: "America/New_York", timing: { engagementStart: "2026-09-12T01:00:00Z", engagementEnd: "2026-09-15T01:00:00Z", timeZone: "America/New_York",
       passIndex: 1, exactPasses: [{ exactAt: "2026-09-13T01:00:00Z" }] } };
   assert.equal(app.transitItemTimingDisplay(transit, "2026-09-12T12:00:00Z").rangeLabel, "Sep 11 - 14");
-  assert.equal(app.personalTransitPackageWindow(transit, "2026-09-12T12:00:00Z"), "Until September 14");
+  assert.equal(app.personalTransitPackageWindow(transit, "2026-09-12T12:00:00Z"), "Until September 14, 2026");
   const aspect = { from: "Sun", to: "Mars", type: "sextile", exactAt: "2027-01-01T01:00:00Z", timing: { timeZone: "America/New_York", exactPasses: [{ exactAt: "2027-01-01T01:00:00Z" }], passIndex: 1 } };
   assert.equal(app.skyPlacementAspectExactDate(aspect, "2026-12-30T12:00:00Z"), "December 31");
   assert.equal(app.skyPlacementEgressDateLabel({ transitEnd: "2027-01-01T01:00:00Z", transitTimeZone: "America/New_York" }, "2026-12-30T12:00:00Z"), "December 31");

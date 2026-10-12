@@ -21,7 +21,7 @@ import { AdminDisclosureSummary, AdminSelect } from "./AdminNativeControls";
 import { getStudioPalette, getStudioTheme, saveStudioPalette, saveStudioTheme, studioShellAttributes } from "./studioTheme";
 import { AdminContentTable, AdminDataTable, AdminFilterBar } from "./AdminBrowseComponents";
 import { PageLoading } from "../../../src/shared/components/PageLoading";
-import { readStudioInventoryPages, studioInventoryPageSize } from "./studioInventoryPagination";
+import { readStudioInventoryPasses, studioInventoryPageSize } from "./studioInventoryPagination";
 import { reviewWorkBucket, skyWritingIssues } from "../../web/src/content/contentReviewReadiness";
 import { transitNatalContactFromFields, transitNatalContactReady, transitNatalContactContentKey, transitNatalExactContentKey, transitNatalExactSourceDraft, transitNatalSharedFallbackKey, transitNatalStarterCopy } from "./transitNatalSources";
 import { aspectTechnicalVerb, friendsTransitCardDestinations, friendsTransitCompositionQuery, matchesBondEffectContactSearch, transitNatalSearchSelection, matchesTransitNatalContactSearch } from "./bondEffectPageAssembly";
@@ -2946,34 +2946,21 @@ async function loadAllGeneratedContentRows(
   onPage?: (rows: AdminGeneratedContentRow[], complete: boolean) => void,
   signal?: AbortSignal
 ) {
-  const allRows: AdminGeneratedContentRow[] = [];
-  const passes = studioInventoryPasses(query);
   let lastEmitAt = 0;
-
-  for (let passIndex = 0; passIndex < passes.length; passIndex += 1) {
-    await readStudioInventoryPages<AdminGeneratedContentRow>(
-      (cursor) => loadGeneratedContentPage(
-        studioInventoryRequestPath(
-          passes[passIndex],
-          studioInventoryPageSize(cursor),
-          cursor
-        ),
-        secret,
-        signal
-      ),
-      (pageRows, prefixComplete) => {
-        allRows.push(...pageRows);
-        const complete = prefixComplete && passIndex === passes.length - 1;
-        const now = Date.now();
-        if (complete || lastEmitAt === 0 || now - lastEmitAt >= 600) {
-          lastEmitAt = now;
-          onPage?.(dedupeGeneratedContentRows(allRows), complete);
-        }
-      },
-      signal
-    );
-  }
-
+  const allRows = await readStudioInventoryPasses(
+    studioInventoryPasses(query),
+    (pass, cursor, requestSignal) => loadGeneratedContentPage(
+      studioInventoryRequestPath(pass, studioInventoryPageSize(cursor), cursor), secret, requestSignal
+    ),
+    (rows, complete) => {
+      const now = Date.now();
+      if (complete || lastEmitAt === 0 || now - lastEmitAt >= 600) {
+        lastEmitAt = now;
+        onPage?.(dedupeGeneratedContentRows(rows), complete);
+      }
+    },
+    signal
+  );
   return dedupeGeneratedContentRows(allRows);
 }
 
@@ -4161,11 +4148,10 @@ export function GeneratedContentAdminDashboard() {
 
   useEffect(() => {
     if (!skyArticleEditor || !secret.trim()) return;
-    const changes = skyArticleEditionFieldChanges(skyArticleEditor.baseEdition, skyArticleEditor.fields);
-    if (changes.length === 0 && skyArticleEditor.saveState === "saved") {
-      setSkyArticleEditor((current) => current ? { ...current, saveState: "saved", error: null } : current);
-      return;
-    }
+    // Differences from the publication baseline may already be saved for review.
+    // Only field edits mark this editor unsaved; opening a saved draft or
+    // receiving its new row ID must not schedule another write.
+    if (skyArticleEditor.saveState === "saved") return;
 
     const editorSession = editorSessionRef.current;
     const sequence = ++skyArticleAutosaveSequenceRef.current;

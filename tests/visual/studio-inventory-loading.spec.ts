@@ -1,5 +1,30 @@
 import { expect, test } from '@playwright/test';
 
+test('Studio starts independent aspect prefixes together and waits for all of them', async ({ page }) => {
+  await page.addInitScript(() => localStorage.setItem('tldrastro:contentAdminSecret', 'inventory-loading-fixture'));
+  const started: string[] = [];
+  let release!: () => void;
+  const gate = new Promise<void>(resolve => { release = resolve; });
+  await page.route('**/api/**', async route => {
+    const url = new URL(route.request().url());
+    if (url.pathname === '/api/admin/generated-content-inventory' && url.searchParams.get('view') === 'inventory') {
+      const prefix = url.searchParams.get('contentKeyPrefix')!;
+      started.push(prefix);
+      if (prefix === 'sky-card/') await gate;
+      await route.fulfill({ json: { ok: true, rows: [], nextCursor: null } });
+    } else await route.fulfill({ json: { ok: true, rows: [], statuses: [], nextCursor: null } });
+  });
+  try {
+    await page.goto('/admin/content#exact-content?category=Calendar+Aspects');
+    await expect.poll(() => started.length).toBe(3);
+    expect(new Set(started)).toEqual(new Set(['sky-card/', 'fallback-hook/sky-aspect-sign/', 'sky.aspect.']));
+    await expect(page.getByRole('region', { name: 'Admin status' })).not.toContainText('Connected');
+    release();
+    await expect(page.getByRole('region', { name: 'Admin status' })).toContainText('Connected');
+    expect(started).toHaveLength(3);
+  } finally { release(); }
+});
+
 test('Studio progressively displays and completes a 16,000-row catalog in 41 requests', async ({ page }) => {
   test.setTimeout(60_000);
   await page.addInitScript(() => localStorage.setItem('tldrastro:contentAdminSecret', 'inventory-loading-fixture'));

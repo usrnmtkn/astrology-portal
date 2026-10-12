@@ -10,6 +10,7 @@
   "skyPlacementFallbackChunkGzipBytes": 150000,
   "lunationBookFallbackChunkGzipBytes": 215000,
   "transitFallbackChunkGzipBytes": 390000,
+  "calendarFallbackChunkGzipBytes": 10000,
   "relationshipFallbackChunkGzipBytes": 230000,
   "signupChunkGzipBytes": 4325,
   "totalCssGzipBytes": 118000,

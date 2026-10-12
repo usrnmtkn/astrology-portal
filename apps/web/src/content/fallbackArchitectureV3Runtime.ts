@@ -244,159 +244,6 @@ const approvedInitialVocabularyRows = latestByContentKey([
   ...(bundledSkyCoreRowsV3.vocabularyRows as VocabRow[]),
   ...(bundledInitialReaderRowsV3.vocabularyRows as VocabRow[])
 ]);
-const skyArticleV1 = {
-  authoredCards: approvedInitialAuthoredCards.filter((row) => row.contentKey.startsWith("sky-article/")),
-  hookRows: approvedInitialHookRows.filter((row) => /^fallback-hook\/sky-placement\/[^/]+$/u.test(row.contentKey)),
-  vocabularyRows: approvedInitialVocabularyRows.filter((row) => row.contentKey.startsWith("fallback-vocab/sky-"))
-};
-const skyAspectPhrasebookV1 = {
-  hookRows: approvedInitialHookRows.filter((row) => [
-    "fallback-hook/sky-aspect-pair/",
-    "fallback-hook/sky-aspect-exact/",
-    "fallback-hook/sky-placement-sign/",
-    "fallback-hook/sky-aspect-sign/"
-  ].some((prefix) => row.contentKey.startsWith(prefix)))
-};
-const timingEventReaderCopyV2 = {
-  version: "timing-event-reader-copy-v2",
-  authoredCards: approvedInitialAuthoredCards.filter((row) => (
-    Array.isArray(row.source_keys)
-    && row.source_keys.includes("owner/timing-event-reader-copy-v2-approved")
-  ))
-};
-const approvedInitialRulerRows = approvedInitialHookRows.filter((row) => (
-  row.contentKey.startsWith("fallback-hook/lunation-ruler-house/")
-));
-if (
-  approvedInitialRulerRows.length !== 1
-  || approvedInitialRulerRows[0]?.contentKey !== "fallback-hook/lunation-ruler-house/11"
-  || approvedInitialRulerRows[0]?.review_status !== "approved"
-  || !approvedInitialRulerRows[0]?.body_you?.trim()
-) {
-  throw new Error("Approved initial projection must contain only the complete house-11 lunation ruler row.");
-}
-
-function assertSkyArticleV1Import(
-  registry: typeof skyArticleV1
-) {
-  const articles = registry.authoredCards;
-  const hookRows = registry.hookRows;
-  const vocabularyRows = registry.vocabularyRows;
-  const articleKeys = new Set(articles.map((row) => row.contentKey));
-  const vocabularyKeys = new Set(vocabularyRows.map((row) => row.contentKey));
-
-  if (articles.length !== articleKeys.size) {
-    throw new Error("Sky article registry contains duplicate article keys.");
-  }
-  if (
-    vocabularyRows.length !== 25
-    || vocabularyKeys.size !== 25
-    || vocabularyRows.some((row) => !row.contentKey.startsWith("fallback-vocab/sky-"))
-  ) {
-    throw new Error("Sky article registry must contain exactly 25 surface-scoped vocabulary rows.");
-  }
-  if (
-    hookRows.length !== 14
-    || hookRows.some((row) => row.review_status !== "approved")
-    || vocabularyRows.some((row) => row.review_status !== "approved")
-  ) {
-    throw new Error("Sky V3 frames and surface-scoped vocabulary must be owner-approved.");
-  }
-  const literalSkyRowDate = /\b(?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:t(?:ember)?)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?|\d{4})\b/u;
-  for (const row of hookRows) {
-    if (typeof row.body_you !== "string" || literalSkyRowDate.test(row.body_you)) {
-      throw new Error(`Sky placement V3 row contains a literal date: ${row.contentKey}`);
-    }
-  }
-  if (vocabularyRows.some((row) => (
-    row.contentKey.startsWith("fallback-vocab/sign-style/")
-    || row.contentKey.startsWith("fallback-vocab/planet-function/")
-  ))) {
-    throw new Error("Sky article imports may not modify shared sign-style or planet-function banks.");
-  }
-  for (const article of articles) {
-    const validFrom = typeof article.valid_from === "string" ? article.valid_from : "";
-    const validTo = typeof article.valid_to === "string" ? article.valid_to : "";
-    if (
-      !/^sky-article\/[a-z-]+\/[a-z-]+\/\d{4}$/u.test(article.contentKey)
-      || !/^\d{4}-\d{2}-\d{2}$/u.test(validFrom)
-      || !/^\d{4}-\d{2}-\d{2}$/u.test(validTo)
-      || validFrom > validTo
-    ) {
-      throw new Error(`Invalid sky article registry row: ${article.contentKey}`);
-    }
-  }
-  const saturnArchive = articles.find((row) => row.contentKey === "sky-article/saturn/pisces/2023");
-  const saturnAries = articles.find((row) => row.contentKey === "sky-article/saturn/aries/2026");
-  if (
-    !saturnArchive
-    || saturnArchive.archive_only !== true
-    || !Array.isArray(saturnArchive.key_dates)
-    || saturnArchive.key_dates.length !== 9
-  ) {
-    throw new Error("Saturn in Pisces must import as the nine-date archive calibration article.");
-  }
-  if (
-    !saturnAries
-    || saturnAries.review_status !== "approved"
-    || saturnAries.article_variant !== "retrograde"
-    || saturnAries.key_dates_mode !== "engine"
-  ) {
-    throw new Error("Saturn in Aries must be an approved, engine-dated retrograde article.");
-  }
-}
-
-assertSkyArticleV1Import(skyArticleV1);
-
-function assertSkyAspectPhrasebookV1Import(phrasebook: typeof skyAspectPhrasebookV1) {
-  const rows = phrasebook.hookRows;
-  const expectedFamilies = new Map([
-    ["fallback-hook/sky-aspect-pair/", 30],
-    ["fallback-hook/sky-aspect-exact/", 4],
-    ["fallback-hook/sky-aspect-sign/", 78]
-  ]);
-
-  if (
-    rows.length !== 112
-    || rows.some((row) => !["reviewed", "approved"].includes(String(row.review_status ?? "")))
-  ) {
-    throw new Error("Initial approved projection must contain exactly 112 eager Sky aspect phrasebook rows.");
-  }
-
-  for (const [prefix, expected] of expectedFamilies) {
-    const count = rows.filter((row) => row.contentKey.startsWith(prefix)).length;
-
-    if (count !== expected) {
-      throw new Error(`Sky aspect phrasebook ${prefix} coverage mismatch: ${count}/${expected}.`);
-    }
-  }
-}
-
-assertSkyAspectPhrasebookV1Import(skyAspectPhrasebookV1);
-
-function assertTimingEventReaderCopyV2Import(
-  source: typeof timingEventReaderCopyV2
-) {
-  const cards = source.authoredCards;
-  const keys = new Set(cards.map((card) => card.contentKey));
-
-  if (
-    source.version !== "timing-event-reader-copy-v2"
-    || cards.length !== 4
-    || keys.size !== 4
-    || cards.some((card) => card.review_status !== "approved")
-    || cards.some((card) => card.content_role !== "full_copy")
-    || cards.some((card) => !card.owner_authored)
-    || cards.some((card) => typeof card.headline !== "string" || !card.headline.trim())
-    || cards.some((card) => typeof card.body !== "string" || !card.body.includes("\n\n"))
-    || cards.some((card) => !Array.isArray(card.source_keys) || !card.source_keys.includes("owner/timing-event-reader-copy-v2-approved"))
-  ) {
-    throw new Error("Timing-event reader copy V2 must contain four unique, owner-approved exact cards.");
-  }
-}
-
-assertTimingEventReaderCopyV2Import(timingEventReaderCopyV2);
-
 const snapshotBundle: FallbackArchitectureV3Bundle = {
   transitLib: {
     authoredCards: approvedInitialAuthoredCards
@@ -531,6 +378,7 @@ export function loadFallbackArchitectureV3BundledSkyPlacementManifest() {
 
 const initialReaderBundle = readerEligibleBundle(snapshotBundle);
 let localDeferredReaderBundle: FallbackArchitectureV3Bundle | null = null;
+let localCalendarReaderBundle: FallbackArchitectureV3Bundle | null = null;
 let localEmptyHouseReaderBundle: FallbackArchitectureV3Bundle | null = null;
 let localRelationshipReaderBundle: FallbackArchitectureV3Bundle | null = null;
 let localLunationBookReaderBundle: FallbackArchitectureV3Bundle | null = null;
@@ -543,10 +391,6 @@ let dashboardSkyCoreReaderBundle: FallbackArchitectureV3Bundle | null = null;
 let dashboardPersonalTransitReaderBundle: FallbackArchitectureV3Bundle | null = null;
 let dashboardCompatibilityReaderBundle: FallbackArchitectureV3Bundle | null = null;
 let dashboardSkyPlacementReaderBundle: FallbackArchitectureV3Bundle | null = null;
-let deferredFallbackBundlePromise: Promise<boolean> | null = null;
-let emptyHouseFallbackBundlePromise: Promise<boolean> | null = null;
-let relationshipFallbackBundlePromise: Promise<boolean> | null = null;
-let lunationBookFallbackBundlePromise: Promise<boolean> | null = null;
 let skyPlacementFallbackBundlePromise: Promise<boolean> | null = null;
 export let fallbackRendererV3 = createAppFallbackRenderer(initialReaderBundle);
 export let transitSynastryFallbackRendererV3 = createAppTransitRenderer(initialReaderBundle);
@@ -597,23 +441,23 @@ function mergeReaderBundles(
 }
 
 function recomposeReaderBundle() {
-  // Offline rows carry publication identities. Keep them underneath every live
-  // overlay; mergeReaderBundles excludes rows superseded by the current ledger.
-  const localCoreWithOffline = mergeReaderBundles(initialReaderBundle, lastKnownGoodReaderBundle);
-  const localCoreWithDeferred = mergeReaderBundles(localCoreWithOffline, localDeferredReaderBundle);
-  const localCoreWithEmptyHouses = mergeReaderBundles(localCoreWithDeferred, localEmptyHouseReaderBundle);
-  const localCoreWithRelationships = mergeReaderBundles(localCoreWithEmptyHouses, localRelationshipReaderBundle);
-  const localCoreWithLunationBook = mergeReaderBundles(localCoreWithRelationships, localLunationBookReaderBundle);
-  // The dashboard response is an override layer, not a complete replacement
-  // for the checked-in reader package. Replacing the local bundle here made
-  // approved deferred rows disappear whenever the CMS snapshot did not yet
-  // contain the same key (including exact natal sign + house passages).
-  const dashboardCore = mergeReaderBundles(localCoreWithLunationBook, dashboardCoreReaderBundle);
-  const skyCore = mergeReaderBundles(dashboardCore, dashboardSkyCoreReaderBundle);
-  const personalTransits = mergeReaderBundles(skyCore, dashboardPersonalTransitReaderBundle);
-  const core = mergeReaderBundles(personalTransits, dashboardCompatibilityReaderBundle);
-  const withLocalSky = mergeReaderBundles(mergeReaderBundles(core, localSkyPlacementReaderBundle), localSkyPlacementHouseReaderBundle);
-  activateReaderBundle(mergeReaderBundles(withLocalSky, dashboardSkyPlacementReaderBundle));
+  // Preserve overlay precedence: verified offline rows stay below local content,
+  // and current dashboard rows override it. A Calendar-only load is replaced
+  // by the complete deferred bundle; a partial CMS response cannot erase it.
+  activateReaderBundle([
+    lastKnownGoodReaderBundle,
+    localDeferredReaderBundle ?? localCalendarReaderBundle,
+    localEmptyHouseReaderBundle,
+    localRelationshipReaderBundle,
+    localLunationBookReaderBundle,
+    dashboardCoreReaderBundle,
+    dashboardSkyCoreReaderBundle,
+    dashboardPersonalTransitReaderBundle,
+    dashboardCompatibilityReaderBundle,
+    localSkyPlacementReaderBundle,
+    localSkyPlacementHouseReaderBundle,
+    dashboardSkyPlacementReaderBundle
+  ].reduce<FallbackArchitectureV3Bundle>(mergeReaderBundles, initialReaderBundle));
 }
 
 subscribeToContentPublications(recomposeReaderBundle);
@@ -855,97 +699,74 @@ export function installSkyPlacementFallbackArchitectureV3Bundle(
   return manifest;
 }
 
+// All local domains share retry/coalescing behavior. A partial CMS overlay does
+// not establish local readiness, and a late import cannot replace a full load.
+function localBundleLoader(
+  read: () => Promise<FallbackArchitectureV3Bundle>,
+  isLoaded: () => boolean,
+  install: (bundle: FallbackArchitectureV3Bundle) => void
+) {
+  let pending: Promise<boolean> | null = null;
+  return async () => {
+    if (isLoaded()) return false;
+    pending ??= read().then(bundle => {
+      if (isLoaded()) return false;
+      install(readerEligibleBundle(bundle));
+      recomposeReaderBundle();
+      return true;
+    }).catch(error => { pending = null; throw error; });
+    return pending;
+  };
+}
+
 export function isDeferredFallbackArchitectureV3BundleLoaded() {
   return Boolean(localDeferredReaderBundle);
 }
 
-export async function loadDeferredFallbackArchitectureV3Bundle() {
-  if (localDeferredReaderBundle) {
-    return false;
-  }
-
-  deferredFallbackBundlePromise ??= import("./fallbackArchitectureV3DeferredBundle")
-    .then(({ deferredFallbackArchitectureV3Bundle }) => {
-      if (localDeferredReaderBundle) {
-        return false;
-      }
-
-      localDeferredReaderBundle = readerEligibleBundle(deferredFallbackArchitectureV3Bundle);
-      recomposeReaderBundle();
-      return true;
-    })
-    .catch((error) => {
-      deferredFallbackBundlePromise = null;
-      throw error;
-    });
-
-  return deferredFallbackBundlePromise;
+export function isCalendarFallbackArchitectureV3BundleLoaded() {
+  return Boolean(localCalendarReaderBundle || localDeferredReaderBundle);
 }
+
+export const loadCalendarFallbackArchitectureV3Bundle = localBundleLoader(
+  () => import("./fallbackArchitectureV3CalendarBundle").then(module => module.calendarFallbackArchitectureV3Bundle),
+  isCalendarFallbackArchitectureV3BundleLoaded,
+  bundle => { localCalendarReaderBundle = bundle; }
+);
+
+export const loadDeferredFallbackArchitectureV3Bundle = localBundleLoader(
+  () => import("./fallbackArchitectureV3DeferredBundle").then(module => module.deferredFallbackArchitectureV3Bundle),
+  isDeferredFallbackArchitectureV3BundleLoaded,
+  bundle => { localDeferredReaderBundle = bundle; }
+);
 
 export function isEmptyHouseFallbackArchitectureV3BundleLoaded() {
   return Boolean(localEmptyHouseReaderBundle);
 }
 
-export async function loadEmptyHouseFallbackArchitectureV3Bundle() {
-  if (localEmptyHouseReaderBundle) {
-    return false;
-  }
-
-  emptyHouseFallbackBundlePromise ??= import("./fallbackArchitectureV3EmptyHouseBundle")
-    .then(({ emptyHouseFallbackArchitectureV3Bundle }) => {
-      if (localEmptyHouseReaderBundle) {
-        return false;
-      }
-
-      localEmptyHouseReaderBundle = readerEligibleBundle(emptyHouseFallbackArchitectureV3Bundle);
-      recomposeReaderBundle();
-      return true;
-    })
-    .catch((error) => {
-      emptyHouseFallbackBundlePromise = null;
-      throw error;
-    });
-
-  return emptyHouseFallbackBundlePromise;
-}
+export const loadEmptyHouseFallbackArchitectureV3Bundle = localBundleLoader(
+  () => import("./fallbackArchitectureV3EmptyHouseBundle").then(module => module.emptyHouseFallbackArchitectureV3Bundle),
+  isEmptyHouseFallbackArchitectureV3BundleLoaded,
+  bundle => { localEmptyHouseReaderBundle = bundle; }
+);
 
 export function isRelationshipFallbackArchitectureV3BundleLoaded() {
   return Boolean(localRelationshipReaderBundle);
 }
 
-export async function loadRelationshipFallbackArchitectureV3Bundle() {
-  // The CMS core can be partial. Only this domain's local load establishes
-  // readiness; recomposeReaderBundle still applies eligible CMS overrides.
-  if (localRelationshipReaderBundle) {
-    return false;
-  }
+export const loadRelationshipFallbackArchitectureV3Bundle = localBundleLoader(
+  () => import("./fallbackArchitectureV3RelationshipBundle").then(module => module.relationshipFallbackArchitectureV3Bundle),
+  isRelationshipFallbackArchitectureV3BundleLoaded,
+  bundle => { localRelationshipReaderBundle = bundle; }
+);
 
-  relationshipFallbackBundlePromise ??= import("./fallbackArchitectureV3RelationshipBundle")
-    .then(({ relationshipFallbackArchitectureV3Bundle }) => {
-      if (localRelationshipReaderBundle) {
-        return false;
-      }
-
-      localRelationshipReaderBundle = readerEligibleBundle(relationshipFallbackArchitectureV3Bundle);
-      recomposeReaderBundle();
-      return true;
-    })
-    .catch((error) => {
-      relationshipFallbackBundlePromise = null;
-      throw error;
-    });
-
-  return relationshipFallbackBundlePromise;
-}
-
-export function isSkyPlacementFallbackArchitectureV3BundleLoaded() {
+export function isSkyPlacementFallbackArchitectureV3BundleLoaded(includeHouses = true) {
   // CMS overlays may contain only the selected list rows. They cannot prove
   // that the full local article/Calendar partition is ready.
-  return Boolean(loadedSkyV4ReaderRoute && localSkyPlacementReaderBundle && localSkyPlacementHouseReaderBundle);
+  return Boolean(loadedSkyV4ReaderRoute && localSkyPlacementReaderBundle && (!includeHouses || localSkyPlacementHouseReaderBundle));
 }
 
 export async function loadSkyPlacementFallbackArchitectureV3Bundle(includeHouses = true) {
-  if (loadedSkyV4ReaderRoute && localSkyPlacementReaderBundle && (!includeHouses || localSkyPlacementHouseReaderBundle)) return false;
+  if (isSkyPlacementFallbackArchitectureV3BundleLoaded(includeHouses)) return false;
   const placement = loadSkyPlacementListBundle();
   if (!includeHouses) return placement;
   skyPlacementHouseBundlePromise ??= import("./fallbackArchitectureV3SkyPlacementHouseBundle")
@@ -993,20 +814,8 @@ export function isLunationBookFallbackArchitectureV3BundleLoaded() {
   return Boolean(localLunationBookReaderBundle);
 }
 
-export async function loadLunationBookFallbackArchitectureV3Bundle() {
-  if (localLunationBookReaderBundle) return false;
-
-  lunationBookFallbackBundlePromise ??= import("./fallbackArchitectureV3LunationBookBundle")
-    .then(({ lunationBookFallbackArchitectureV3Bundle }) => {
-      if (localLunationBookReaderBundle) return false;
-      localLunationBookReaderBundle = readerEligibleBundle(lunationBookFallbackArchitectureV3Bundle);
-      recomposeReaderBundle();
-      return true;
-    })
-    .catch((error) => {
-      lunationBookFallbackBundlePromise = null;
-      throw error;
-    });
-
-  return lunationBookFallbackBundlePromise;
-}
+export const loadLunationBookFallbackArchitectureV3Bundle = localBundleLoader(
+  () => import("./fallbackArchitectureV3LunationBookBundle").then(module => module.lunationBookFallbackArchitectureV3Bundle),
+  isLunationBookFallbackArchitectureV3BundleLoaded,
+  bundle => { localLunationBookReaderBundle = bundle; }
+);
