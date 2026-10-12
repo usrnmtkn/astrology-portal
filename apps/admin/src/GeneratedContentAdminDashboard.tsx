@@ -4161,11 +4161,10 @@ export function GeneratedContentAdminDashboard() {
 
   useEffect(() => {
     if (!skyArticleEditor || !secret.trim()) return;
-    const changes = skyArticleEditionFieldChanges(skyArticleEditor.baseEdition, skyArticleEditor.fields);
-    if (changes.length === 0 && skyArticleEditor.saveState === "saved") {
-      setSkyArticleEditor((current) => current ? { ...current, saveState: "saved", error: null } : current);
-      return;
-    }
+    // Differences from the publication baseline may already be saved for review.
+    // Only field edits mark this editor unsaved; opening a saved draft or
+    // receiving its new row ID must not schedule another write.
+    if (skyArticleEditor.saveState === "saved") return;
 
     const editorSession = editorSessionRef.current;
     const sequence = ++skyArticleAutosaveSequenceRef.current;

@@ -2,8 +2,8 @@ import { test, expect } from '@playwright/test';
 import { fork } from 'node:child_process';
 import path from 'node:path';
 import { routeStudioInventoryApi } from '../helpers/studio-inventory-route';
-for (const width of [390,1440]) for (const colorScheme of ['light','dark'] as const) {
-  test(`Article edit to memory ${width} ${colorScheme}`,async({page})=>{
+for (const width of [390,1440]) for (const colorScheme of ['light','dark'] as const) for (const initialPublished of [false,true]) {
+  test(`Article edit to memory ${width} ${colorScheme} ${initialPublished?'published revision':'draft edition'}`,async({page})=>{
     test.setTimeout(45000);
     const child=fork(path.resolve('tests/helpers/studio-article-memory-api.mjs'),[],{execArgv:['--import','tsx'],stdio:['ignore','pipe','pipe','ipc']});
     let sequence=0,stderr='';const waiting=new Map<number,any>();
@@ -14,10 +14,16 @@ for (const width of [390,1440]) for (const colorScheme of ['light','dark'] as co
     });
     const call=(payload:any)=>new Promise<any>((resolve,reject)=>{const id=++sequence;waiting.set(id,{resolve,reject});child.send({...payload,id});});
     try{
-      await ready;await page.setViewportSize({width,height:1000});await page.emulateMedia({colorScheme});
+      await ready;
+      if(initialPublished){
+        const initial=(await call({method:'rows'}))[0];
+        const publication=await call({method:'PATCH',url:'/api/admin/generated-content',body:{id:initial.id,expectedUpdatedAt:initial.updated_at,ownerAction:'approve-sky-article-edition'}});
+        expect(publication.status).toBe(200);
+      }
+      await page.setViewportSize({width,height:1000});await page.emulateMedia({colorScheme});
       await page.addInitScript(()=>localStorage.setItem('tldrastro:contentAdminSecret','calendar-api-fixture'));
-      const errors:string[]=[];page.on('pageerror',e=>errors.push(e.message));
-      await routeStudioInventoryApi(page, { call, answer: async (route, url) => {
+      const errors:string[]=[],writes:any[]=[];page.on('pageerror',e=>errors.push(e.message));
+      await routeStudioInventoryApi(page, { call, onWrite: write=>writes.push(write), answer: async (route, url) => {
         if (!['/api/admin/studio-memory-feedback', '/api/admin/content-live-status'].includes(url.pathname)) return false;
         const request = route.request();
         const result = await call({ method: request.method(), url: url.pathname + url.search, body: request.postData() ? request.postDataJSON() : null });
@@ -33,6 +39,21 @@ for (const width of [390,1440]) for (const colorScheme of ['light','dark'] as co
       await expect(memory).toContainText('No captured corrections');
       await editor.getByLabel('Sky article TL;DR',{exact:true}).fill('Synthetic revised summary. Complete final sentence.');
       await expect(editor.locator('.admin-sky-article-editor header')).toContainText('Saved');
+      const savedRevision=(await call({method:'rows'})).find((row:any)=>row.status==='DRAFT'&&row.sections?.skyArticleRevisionBase);
+      expect(savedRevision).toBeTruthy();
+      const writesBeforeReopen=writes.length;
+      await editor.getByRole('button',{name:'Close',exact:true}).click();
+      await page.reload();
+      await page.locator('.admin-content-row').filter({hasText:savedRevision.content_key}).getByRole('button',{name:'Edit',exact:true}).click();
+      await expect(editor.getByLabel('Sky article TL;DR',{exact:true})).toHaveValue('Synthetic revised summary. Complete final sentence.');
+      await expect(editor.getByRole('button',{name:'Review 1 change',exact:true})).toBeVisible();
+      // Observe beyond the autosave debounce: saved differences from the live
+      // edition are review work, not a new edit or permission to write again.
+      await page.waitForTimeout(2000);
+      expect(writes).toHaveLength(writesBeforeReopen);
+      expect(writes.filter(write=>write.body.ownerAction==='save-sky-article-edition-revision')).toHaveLength(1);
+      expect((await call({method:'rows'})).find((row:any)=>row.id===savedRevision.id)).toEqual(savedRevision);
+      await memory.locator('summary').first().click();
       await expect(memory).toContainText('Pending your decision');
       await memory.getByText('Compare original and replacement',{exact:true}).click();
       await expect(memory).toContainText('Synthetic summary.');
@@ -45,19 +66,23 @@ for (const width of [390,1440]) for (const colorScheme of ['light','dark'] as co
       await editor.getByRole('button',{name:'Review 1 change',exact:true}).click();
       await editor.getByRole('button',{name:'Publish changes',exact:true}).click();
       await expect(page.getByText('The reviewed revision is published.',{exact:true})).toBeVisible();
-      expect((await call({method:'rows'})).find((row:any)=>row.content_key==='sky-article/saturn/aries/2026')?.status).toBe('LIVE');
+      const publishedRows=await call({method:'rows'});
+      expect(publishedRows.find((row:any)=>row.content_key==='sky-article/saturn/aries/2026')?.status).toBe('LIVE');
+      const publishedRevisions=publishedRows.filter((row:any)=>row.event_type==='sky-article-edition-revision');
+      expect(publishedRevisions).toHaveLength(initialPublished?1:0);
+      for(const revision of publishedRevisions) expect(revision.status).toBe('ARCHIVED');
       if (await memory.getAttribute('open') === null) await memory.locator('summary').first().click();
       await memory.getByRole('button',{name:'Use for future drafts',exact:true}).click();
       await expect(memory).toContainText('Used for future drafts');
       await expect(editor.locator('.admin-sky-article-editor header')).toContainText('Saved');
       await expect(editor).toContainText('Published copy is unchanged.');
-      expect((await call({method:'rows'})).filter((row:any)=>row.event_type==='sky-article-edition-revision')).toHaveLength(0);
+      expect(await call({method:'rows'})).toEqual(publishedRows);
       await scopes.selectOption('family');
       await expect(memory.getByRole('button',{name:'Save memory decision'})).toBeDisabled();
       await memory.getByLabel('Reason').fill('Synthetic explicit long-form guidance.');
       await memory.getByRole('button',{name:'Save memory decision'}).click();
       await expect(memory.getByRole('button',{name:'Save memory decision'})).toBeEnabled();
-      await page.screenshot({path:`test-results/article-memory-${width}-${colorScheme}.png`});
+      await page.screenshot({path:`test-results/article-memory-${width}-${colorScheme}-${initialPublished?'published-revision':'draft-edition'}.png`});
       await memory.getByRole('button',{name:'Exclude from future drafts'}).click();
       await expect(memory).toContainText('Excluded from future drafts');
       expect(errors).toEqual([]);
