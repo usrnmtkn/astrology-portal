@@ -21,7 +21,10 @@ for (const width of [390,1440]) for (const colorScheme of ['light','dark'] as co
         expect(publication.status).toBe(200);
       }
       await page.setViewportSize({width,height:1000});await page.emulateMedia({colorScheme});
-      await page.addInitScript(()=>localStorage.setItem('tldrastro:contentAdminSecret','calendar-api-fixture'));
+      await page.addInitScript(theme=>{
+        localStorage.setItem('tldrastro:contentAdminSecret','calendar-api-fixture');
+        localStorage.setItem('tldrastro:studio-theme',theme);
+      },colorScheme);
       const errors:string[]=[],writes:any[]=[];page.on('pageerror',e=>errors.push(e.message));
       await routeStudioInventoryApi(page, { call, onWrite: write=>writes.push(write), answer: async (route, url) => {
         if (!['/api/admin/studio-memory-feedback', '/api/admin/content-live-status'].includes(url.pathname)) return false;
@@ -31,7 +34,7 @@ for (const width of [390,1440]) for (const colorScheme of ['light','dark'] as co
         return true;
       } });
       await page.goto('/admin/content#exact-content');
-      await page.evaluate(value=>document.documentElement.dataset.theme=value,colorScheme);
+      await expect(page.locator('[data-studio-theme]').first()).toHaveAttribute('data-studio-theme',colorScheme);
       await page.locator('.admin-content-row').getByRole('button',{name:'Edit',exact:true}).click();
       const editor=page.locator('.admin-editor-panel');
       const memory=editor.getByLabel('Studio memory corrections');
@@ -44,6 +47,7 @@ for (const width of [390,1440]) for (const colorScheme of ['light','dark'] as co
       const writesBeforeReopen=writes.length;
       await editor.getByRole('button',{name:'Close',exact:true}).click();
       await page.reload();
+      await expect(page.locator('[data-studio-theme]').first()).toHaveAttribute('data-studio-theme',colorScheme);
       await page.locator('.admin-content-row').filter({hasText:savedRevision.content_key}).getByRole('button',{name:'Edit',exact:true}).click();
       await expect(editor.getByLabel('Sky article TL;DR',{exact:true})).toHaveValue('Synthetic revised summary. Complete final sentence.');
       await expect(editor.getByRole('button',{name:'Review 1 change',exact:true})).toBeVisible();
