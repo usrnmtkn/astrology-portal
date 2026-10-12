@@ -13,7 +13,7 @@ import {HoroscopeLocation} from '../../../src/shared/features/horoscopes/Horosco
 import {browserTimeZone} from '../../web/src/services/timezones';
 import type {LocationInput} from '../../../src/shared/types';
 import {horoscopePunctuationFindings,horoscopeVocabularyFindings} from '../../../src/astro-writing/horoscopeEditorialConstraints.mjs';
-import {horoscopePendingReadings} from '../../../src/astro-writing/horoscopeRecovery.mjs';
+import {horoscopePendingReadings,canRecoverHoroscopeReview} from '../../../src/astro-writing/horoscopeRecovery.mjs';
 import {HOROSCOPE_WRITERS} from '../../../src/astro-writing/horoscopeWriterCatalog.mjs';
 const HoroscopeGenerationDetails=lazy(()=>import('./HoroscopeWritingStudio').then(module=>({default:module.HoroscopeGenerationDetails})));
 const HoroscopePublicationReview=lazy(()=>import('./HoroscopePublicationReview'));
@@ -302,8 +302,9 @@ export default function HoroscopeEditionsStudio({secret,requestedEditionId}:{sec
       :`${count}/${edition.passages.length} readings are saved. Review the current writing plan to continue the remaining readings.`);
     return loadPlan(row,controller);
   }
-  async function recoverGeneration(row:any,controller:AbortController,pollExisting=false) {
+  async function recoverGeneration(row:any,controller:AbortController,pollExisting:boolean|string=false) {
     const previousFailure=row.source_snapshot?.horoscopeGeneration?.lastError?.failedAt;
+    const heldSign=typeof pollExisting==='string'?pollExisting:null;
     // Always reconcile from storage. Recovery retrieves an existing response only;
     // it never releases a reservation or starts another paid generation request.
     for(let attempt=0;attempt<3;attempt++){
@@ -311,14 +312,15 @@ export default function HoroscopeEditionsStudio({secret,requestedEditionId}:{sec
       if(!isCurrent(controller))return;
       const active=row.source_snapshot?.horoscopeGeneration?.active;
       let failure:any;
-      if(pollExisting&&row.source_snapshot?.horoscopeGeneration?.batch?.status!=='running'&&(active||row.source_snapshot?.horoscopeGeneration?.lastError?.code==='invalid_synthesis')){
+      if(pollExisting&&row.source_snapshot?.horoscopeGeneration?.batch?.status!=='running'&&(heldSign||active||row.source_snapshot?.horoscopeGeneration?.lastError?.code==='invalid_synthesis')){
         try{
-          const data=await request(secret,'/api/admin/horoscope-writing',{action:'poll',id:row.id,expectedUpdatedAt:row.updated_at},'POST',controller.signal);
+          const data=await request(secret,'/api/admin/horoscope-writing',{action:heldSign?'recover-review':'poll',id:row.id,expectedUpdatedAt:row.updated_at,...(heldSign?{sign:heldSign}:{})},'POST',controller.signal);
           if(data.rows?.[0]?.id!==row.id)throw new Error('The saved result could not be confirmed.');
           row=data.rows[0];
         }catch(reason){
           if(!isCurrent(controller))return;
           if((reason as any).status===409)continue;
+          if(heldSign)throw reason;
           if(!recoverable(reason)&&!(reason as any).rows?.some((saved:any)=>saved.id===row.id))throw reason;
           failure=reason;
           row=await readSaved(row.id,controller.signal);
@@ -352,11 +354,11 @@ export default function HoroscopeEditionsStudio({secret,requestedEditionId}:{sec
     catch(error){recoveryUnavailable(error,controller);}
     finally{endOperation(controller);}
   }
-  async function checkProgress(){
+  async function checkProgress(heldSign?:string){
     if(!saved||dirty||checking||(busy||operation.current)&&!running.current)return;
     stop.current=true;const controller=beginOperation();running.current=false;lastSync.current=Date.now();
     setBusy(true);setChecking(true);setProgress('');setError('');setMessage('Checking saved progress…');
-    try{await recoverGeneration(saved,controller,true);}catch(reason){recoveryUnavailable(reason,controller);}finally{endOperation(controller);}
+    try{await recoverGeneration(saved,controller,heldSign||true);}catch(reason){recoveryUnavailable(reason,controller);}finally{endOperation(controller);}
   }
   async function batchAction(action:string){
     if(!saved)return;setBusy(true);setError('');
@@ -527,12 +529,7 @@ export default function HoroscopeEditionsStudio({secret,requestedEditionId}:{sec
     {step!=='setup'&&draft&&<div className="admin-horoscope-summary"><span>{horoscopeSignLabel(draft.window.period)} · {horoscopeWindowLabel(draft.window)}</span><span>{draft.window.timeZone.replaceAll('_',' ')} · {complete}/{total} readings ready{dirty?' · Unsaved changes':''}</span></div>}
     {visibleError&&(typeof visibleError==='string'?<p role="alert">{visibleError}{needsSignIn&&<> <a href={studioSignInHref('/admin/content#horoscopes'+(saved?.id?'?edition='+encodeURIComponent(saved.id):''))}>Sign in to Content Studio</a></>}</p>:step==='generate'&&<details className="admin-workspace-details"><AdminDisclosureSummary>Previous attempt</AdminDisclosureSummary><p>{visibleError.previous}</p></details>)}{message&&<p role="status">{message}</p>}
     {punctuationHold&&step==='generate'&&<StudioButton className="admin-primary-button" disabled={locked} onClick={editPunctuation}>Edit punctuation</StudioButton>}
-    {candidateHolds.map(([heldSign,held])=><section key={heldSign} aria-label={`${horoscopeSignLabel(heldSign)} prose review`}>
-      <h3>{horoscopeSignLabel(heldSign)} {held.code==='rhetorical_pattern'?'needs a prose edit':'prose check did not finish'}</h3><p>{held.message}</p>
-      {(held.review?.rhetoric?.findings??[]).map((finding:any,index:number)=><div key={index}><strong>{finding.label}</strong><blockquote>{finding.quote}</blockquote><p>{finding.reason} {finding.readerConsequence}</p></div>)}
-      <StudioButton disabled={locked} onClick={()=>editHeldCandidate(heldSign,held)}>Edit saved {horoscopeSignLabel(heldSign)} draft</StudioButton>
-      <StudioButton disabled={locked} onClick={()=>void reject(heldSign)}>Reject {horoscopeSignLabel(heldSign)} draft</StudioButton>
-    </section>)}
+    {candidateHolds.length>0&&<Suspense fallback={<p>Loading prose reviews…</p>}><HoroscopeGenerationDetails view="reviews" holds={candidateHolds} locked={locked} active={Boolean(active)} canRecover={canRecoverHoroscopeReview} onRecover={checkProgress} onEdit={editHeldCandidate} onReject={reject}/></Suspense>}
     {step==='setup'?<>
       <div className="admin-horoscope-periods" role="group" aria-label="Edition period">{HOROSCOPE_PERIODS.map(p=><StudioButton key={p} aria-pressed={period===p} disabled={busy} onClick={()=>setPeriod(p)}>{horoscopeSignLabel(p)}</StudioButton>)}</div>
       <label className="admin-review-copy-editor"><span>{period==='daily'?'Date':period==='weekly'?'Choose a date in the week':period==='monthly'?'Choose a date in the calendar month':'Choose a date in the zodiac season'}</span><StudioInput aria-label="Reference date" type="date" value={date} disabled={busy} onChange={e=>setDate(e.target.value)}/></label>
