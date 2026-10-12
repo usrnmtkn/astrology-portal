@@ -20,11 +20,12 @@ for(const width of [390,1440])for(const theme of ['light','dark']){
    let published:any;
    // Deliberately unordered; recently opening/saving an older week must not
    // move it ahead of a newer edition in the table.
-   for(const date of ['2026-10-12','2026-09-14','2026-10-26','2026-09-21','2026-11-02','2026-09-28','2026-10-19','2026-10-05']){
-    const packet=await call({method:'GET',url:`/api/admin/generated-content?horoscopeBrief=true&period=weekly&date=${date}&timeZone=America/New_York`});
+   const fixtures=[...['2026-10-12','2026-09-14','2026-10-26','2026-09-21','2026-11-02','2026-09-28','2026-10-19','2026-10-05'].map(date=>({date,period:'weekly'})),{date:'2026-09-30',period:'daily'},{date:'2026-10-01',period:'monthly'}];
+   for(const {date,period} of fixtures){
+    const packet=await call({method:'GET',url:`/api/admin/generated-content?horoscopeBrief=true&period=${period}&date=${date}&timeZone=America/New_York`});
     expect(packet.status).toBe(200);const {brief,signature}=packet.payload,edition=emptyHoroscopeEdition(brief.window);
     for(const passage of edition.passages){passage.headline=`Saved ${passage.sign}`;passage.body=`You can read the ${passage.sign} fixture opening.\n\nYour complete ${passage.sign} fixture ends here.`;}
-    const result=await call({method:'POST',body:{contentKey:horoscopeEditionKey(edition.window),surface:'sky',mode:'article',eventType:'horoscope-edition',provider:'manual-admin',status:'DRAFT',lane:'serving',headline:'Weekly table fixture',body:horoscopeEditionBody(edition),sections:{horoscopeEdition:edition},facts:{horoscopeBrief:{brief,signature}},sourceSnapshot:{}}});
+    const result=await call({method:'POST',body:{contentKey:horoscopeEditionKey(edition.window),surface:'sky',mode:'article',eventType:'horoscope-edition',provider:'manual-admin',status:'DRAFT',lane:'serving',headline:`${period} table fixture`,body:horoscopeEditionBody(edition),sections:{horoscopeEdition:edition},facts:{horoscopeBrief:{brief,signature}},sourceSnapshot:{}}});
     expect(result.status).toBe(200);
     if(date==='2026-10-05'){
      const row=result.payload.rows[0],live=await call({method:'PATCH',body:{id:row.id,expectedUpdatedAt:row.updated_at,status:'LIVE'}});
@@ -52,7 +53,7 @@ for(const width of [390,1440])for(const theme of ['light','dark']){
    await studio.getByText(/^Continue a saved edition/).click();
    const region=studio.getByRole('region',{name:'Saved horoscope editions',exact:true}),table=region.getByRole('table');
    await expect(table.getByRole('columnheader')).toHaveText(['Dates','Type','Status','Action']);
-   await expect(table.locator('tbody tr')).toHaveCount(8);
+   await expect(table.locator('tbody tr')).toHaveCount(10);
    await expect(table.locator('tbody tr').first()).toContainText('November 2, 2026');
    await expect(table.locator('tbody tr').last()).toContainText('September 14, 2026');
    await expect(table.getByRole('row').filter({hasText:'October 5, 2026'})).toContainText('Published');
@@ -68,10 +69,48 @@ for(const width of [390,1440])for(const theme of ['light','dark']){
    expect(Math.abs(headerTop-regionTop)).toBeLessThan(3);
    await region.evaluate(el=>{el.scrollTop=0;});
    await page.screenshot({path:`test-results/horoscope-edition-table-${width}-${theme}.png`,fullPage:true});
+   const filters=studio.getByRole('group',{name:'Find saved editions'});
+   await filters.getByLabel('Sort editions').selectOption('oldest');
+   await expect(table.locator('tbody tr').first()).toContainText('September 14, 2026');
+   await filters.getByLabel('Horoscope type').selectOption('daily');
+   await expect(table.locator('tbody tr')).toHaveCount(1);
+   await expect(table.locator('tbody tr')).toContainText('September 30, 2026');
+   await filters.getByLabel('Horoscope type').selectOption('monthly');
+   await expect(table.locator('tbody tr')).toHaveCount(1);
+   await expect(table.locator('tbody tr')).toContainText('October 1, 2026');
+   await filters.getByLabel('Horoscope type').selectOption('weekly');
+   await filters.getByLabel('Search editions').fill('  OCTOBER, 2026  ');
+   await expect(table.locator('tbody tr')).toHaveCount(5);
+   await expect(studio.getByText('5 of 10 editions',{exact:true})).toBeVisible();
+   await filters.getByLabel('Publication status').selectOption('draft');
+   await expect(table.locator('tbody tr')).toHaveCount(4);
+   await expect(table).not.toContainText('Published');
+   await filters.getByLabel('Search editions').fill('2026-10-12');
+   await expect(table.locator('tbody tr')).toHaveCount(1);
+   await expect(table.locator('tbody tr')).toContainText('October 12, 2026');
+   await filters.getByLabel('Search editions').fill('2026-10-18');
+   await expect(table.locator('tbody tr')).toHaveCount(1);
+   await expect(table.locator('tbody tr')).toContainText('October 12, 2026');
+   await filters.getByLabel('Horoscope type').selectOption('seasonal');
+   await expect(studio.getByText('No editions match these filters. Change the filters or reset the view.',{exact:true})).toBeVisible();
+   await expect(studio.getByText('0 of 10 editions',{exact:true})).toBeVisible();
+   await studio.getByRole('button',{name:'Reset view',exact:true}).click();
+   await expect(table.locator('tbody tr')).toHaveCount(10);
+   await expect(table.locator('tbody tr').first()).toContainText('November 2, 2026');
+   await expect(filters.getByLabel('Search editions')).toHaveValue('');
+   await filters.getByLabel('Horoscope type').selectOption('weekly');
+   await filters.getByLabel('Publication status').selectOption('published');
+   await expect(table.locator('tbody tr')).toHaveCount(1);
    await table.getByRole('button',{name:/October 5, 2026.*Review \/ Edit/}).click();
    await expect(studio.getByRole('heading',{name:'Review each reading',exact:true})).toBeVisible();
    await expect(studio.getByLabel('Complete reading',{exact:true})).toHaveValue(published.sections.horoscopeEdition.passages[0].body);
    expect((await call({method:'rows'})).find((row:any)=>row.id===published.id)).toEqual(published);
+   await studio.getByRole('button',{name:'1 · Dates',exact:true}).click();
+   await studio.getByText(/^Continue a saved edition/).click();
+   await expect(filters.getByLabel('Horoscope type')).toHaveValue('weekly');
+   await expect(filters.getByLabel('Publication status')).toHaveValue('published');
+   await expect(table.locator('tbody tr')).toHaveCount(1);
+   await table.getByRole('button',{name:/October 5, 2026.*Review \/ Edit/}).click();
    const edited=published.sections.horoscopeEdition.passages[0].body+' Exact saved revision.';
    await studio.getByLabel('Complete reading',{exact:true}).fill(edited);
    await studio.getByRole('button',{name:'Save edition draft',exact:true}).click();
@@ -91,11 +130,13 @@ for(const width of [390,1440])for(const theme of ['light','dark']){
    expect((await call({method:'writer-state'})).calls).toBe(0);
    await page.reload();await studio.getByText(/^Continue a saved edition/).click();
    await expect(table.locator('tbody tr').first()).toContainText('November 2, 2026');
+   await filters.getByLabel('Sort editions').selectOption('updated');
+   await expect(table.locator('tbody tr').first()).toContainText('October 5, 2026');
    listMode='error';await studio.getByRole('button',{name:'Refresh editions',exact:true}).click();
    await expect(studio.getByRole('alert')).toContainText('Synthetic edition list unavailable.');
    listMode='loading';await studio.getByRole('button',{name:'Refresh editions',exact:true}).click();
    await expect(studio.getByText('Loading horoscope editions…',{exact:true})).toBeVisible();
-   listMode='normal';releaseList();await expect(table.locator('tbody tr')).toHaveCount(8);
+   listMode='normal';releaseList();await expect(table.locator('tbody tr')).toHaveCount(10);
    listMode='empty';await studio.getByRole('button',{name:'Refresh editions',exact:true}).click();
    await expect(studio.getByText('No saved editions yet. Start with the dates above.',{exact:true})).toBeVisible();
    await expect(table).toHaveCount(0);
