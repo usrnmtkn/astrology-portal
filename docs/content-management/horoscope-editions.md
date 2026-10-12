@@ -453,3 +453,35 @@ and plan approvals reflect one, twelve or thirteen units. No new database schema
 background generation schedule or automatic prose approval is introduced.
 
 Acceptance evidence is tracked in [monthly and seasonal QA](../qa/horoscope-monthly-overview.md).
+
+### Manual rewrite save and publication recovery (October 12, 2026)
+
+Externally written readings use the same editable headline/body fields and
+version-checked draft save as in-Studio edits. Replacing a held candidate clears
+that passage's hold and retains its original generation history; it does not
+require another paid draft or prose check. Publication still requires current
+calculated-fact checks and the owner's separate approval of the saved wording.
+
+Validator v13 recognizes an adjacent motion label after a planet (for example,
+`Venus retrograde squares Mars`) and checks that label against the aspect event.
+Calendar-date binding also recognizes `turn`, `turns`, and `turning` retrograde
+or direct as stations. Each explicit date stays with its own event clause when
+a station and lunation share a sentence. These parsing changes do not modify
+saved prose or admit incorrect dates, planets, aspects, or motion.
+
+On an uncertain or stale draft save, Studio reads the current row without
+replaying the write. Nonoverlapping headline/body and editorial-context edits
+are reconciled locally. If both versions changed the same field, the editor
+shows both complete values and asks which to keep; untouched local edits remain.
+The owner then saves explicitly against the newly loaded version. Another race
+can still refuse that save. A confirmed committed save with a lost response is
+recognized by exact editable-state equality. Changed facts, row identity,
+publication state, or an active generation prevent automatic reconciliation.
+
+Regression evidence is in `scripts/test-horoscope-publication-claims.mts` and
+`tests/visual/horoscope-manual-edit.spec.ts`. Synthetic fixtures cover manual
+replacement of a held draft, exact reader delivery, stale versions, lost save
+responses, both conflict choices, and another race after choosing. Browser
+coverage uses desktop/mobile and both themes, without paid provider requests
+or mutations to owner content. Production readiness is verified separately
+against the deployed revision.

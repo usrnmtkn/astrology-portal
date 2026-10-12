@@ -10,10 +10,11 @@ const ordinals='1st|2nd|3rd|[4-9]th|1[0-2]th|first|second|third|fourth|fifth|six
 const glossStop=`${bodies}|${terms}|${signs}|retrograde|direct|now|is|in|through|from|to|on|at|with|between|exact|forms?|makes?|January|February|March|April|May|June|July|August|September|October|November|December|Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday`;
 const glossWord=`(?!(?:${glossStop})\\b)[\\p{L}]+(?:[-’'][\\p{L}]+)*`;
 const house=`(?:\\s+in\\s+(?:your|the)\\s+(?:${ordinals})\\s+house(?:\\s+of(?:\\s+${glossWord}){1,8})?)?`;
+const motionLabel='(?:\\s+(?:retrograde|direct))?';
 const rulerAside='(?:,\\s*your\\s+(?:ruling\\s+planet|(?:traditional\\s+)?ruler)\\s*,)?';
 const placement=`(?:\\s+(?:in|through)\\s+(?:${signs}|your sign))?`;
 const motionAside=`(?:,\\s*(?:which\\s+is\\s+)?(?:(?:now|still)\\s+)?(?:retrograde|direct)${placement}${house}\\s*(?:,|(?=[.!?]|$)))?`;
-const planet=`\\b(?:(?:retrograde|direct)\\s+)?(?:${bodies})${rulerAside}${placement}${house}${motionAside}`;
+const planet=`\\b(?:(?:retrograde|direct)\\s+)?(?:${bodies})${motionLabel}${rulerAside}${placement}${house}${motionAside}`;
 // "Meet" is an aspect verb only with a planetary subject. Ordinary prose
 // about meeting friends or deadlines must not require a calculated aspect.
 const aspectMention=new RegExp(`\\b(?:${explicitTerms})\\b|${planet}\\s+meets?\\b`,'iu');
@@ -26,6 +27,7 @@ export function horoscopeAspectClaim(text) {
   const word=text.match(new RegExp(`\\b(${terms})\\b`,'iu'))?.[1].toLowerCase();
   const aspect=word?.startsWith('oppo')?'opposition':/^(?:conjunct|meet)/u.test(word??'')?'conjunction':word?.replace(/[sd]$/u,'');
   const qualified=[...text.matchAll(new RegExp(`\\b(retrograde|direct)\\s+(${bodies})\\b`,'giu'))].map(m=>[m[2].toLowerCase(),m[1].toLowerCase()]);
+  qualified.push(...[...text.matchAll(new RegExp(`\\b(${bodies})\\s+(retrograde|direct)\\b`,'giu'))].map(m=>[m[1].toLowerCase(),m[2].toLowerCase()]));
   qualified.push(...[...text.matchAll(new RegExp(`\\b(${bodies})${rulerAside}${placement}${house},\\s*(?:which\\s+is\\s+)?(?:(?:now|still)\\s+)?(retrograde|direct)${placement}${house}\\s*(?:,|(?=[.!?]|$))`,'giu'))].map(m=>[m[1].toLowerCase(),m[2].toLowerCase()]));
   const motions=Object.fromEntries(qualified);
   if(qualified.some(([body,motion])=>motions[body]!==motion))return null;

@@ -5,7 +5,7 @@ import {horoscopePhasePattern,normalizeHoroscopePhase,horoscopeLunationPhase} fr
 const months='January|February|March|April|May|June|July|August|September|October|November|December';
 const signs='Aries|Taurus|Gemini|Cancer|Leo|Virgo|Libra|Scorpio|Sagittarius|Capricorn|Aquarius|Pisces';
 const bodies='Sun|Moon|Mercury|Venus|Mars|Jupiter|Saturn|Uranus|Neptune|Pluto';
-const eventPattern=`\\bT[ -]square\\b|${horoscopeAspectPattern}|(?:(?:${signs})\\s+)?(?:${horoscopePhasePattern})\\s+Moon(?:\\s+in\\s+(?:${signs}))?|(?:${bodies})\\s+(?:enters?|entering|station(?:s|ing)?\\s+(?:retrograde|direct))(?:\\s+(?:in\\s+)?(?:${signs}))?`;
+const eventPattern=`\\bT[ -]square\\b|${horoscopeAspectPattern}|(?:(?:${signs})\\s+)?(?:${horoscopePhasePattern})\\s+Moon(?:\\s+in\\s+(?:${signs}))?|(?:${bodies})\\s+(?:enters?|entering|(?:station(?:s|ing)?|turn(?:s|ing)?)\\s+(?:retrograde|direct))(?:\\s+(?:in\\s+)?(?:${signs}))?`;
 
 /** Keep a date with its event clause before comparing distance within that clause. */
 export function seasonalDateFindings(text,brief) {
@@ -28,7 +28,7 @@ export function seasonalDateFindings(text,brief) {
     boundaries.push(sentence.length);
     for(const date of sentence.matchAll(new RegExp(`\\b(${months})\\s+(\\d{1,2})(?:st|nd|rd|th)?(?:,?\\s+(\\d{4}))?\\b`,'giu'))) {
       const supported=events.filter(e=>e.month===date[1].toLowerCase()&&e.day===Number(date[2])&&(!date[3]||e.year===Number(date[3])));
-      if(!supported.length){findings.push('A seasonal calendar date must match a supplied event in the edition’s time zone.');continue;}
+      if(!supported.length){findings.push('A calendar date must match a supplied event in the edition’s time zone.');continue;}
       const distance=mention=>Math.max(0,mention.index-(date.index+date[0].length),date.index-(mention.index+mention[0].length));
       const end=boundaries.findIndex(bound=>bound>date.index);
       const nearest=mentions.filter(m=>m.index>=boundaries[end-1]&&m.index<boundaries[end]).sort((a,b)=>distance(a)-distance(b))[0];
@@ -42,12 +42,12 @@ export function seasonalDateFindings(text,brief) {
       const phase=normalizeHoroscopePhase(nearest[0].match(new RegExp(`(${horoscopePhasePattern})\\s+Moon`,'iu'))?.[1]);
       const planet=phase?'moon':nearest[0].match(new RegExp(bodies,'iu'))?.[0]?.toLowerCase();
       const sign=nearest[0].match(new RegExp(signs,'iu'))?.[0]?.toLowerCase();
-      const ingress=/enter/iu.test(nearest[0]),station=/station/iu.test(nearest[0]);
+      const ingress=/enter/iu.test(nearest[0]),station=/\b(?:station(?:s|ing)?|turn(?:s|ing)?)\s+(?:retrograde|direct)\b/iu.test(nearest[0]);
       const direction=nearest[0].match(/retrograde|direct/iu)?.[0]?.toLowerCase();
       if(!supported.some(e=>horoscopeEventPlanet(e)===planet&&(!sign||e.sign?.toLowerCase()===sign)
         &&(!phase||e.type==='lunation'&&horoscopeLunationPhase(e)===phase)
         &&(!ingress||e.type==='ingress')&&(!station||e.type==='station'&&(!direction||e.direction===direction)))) {
-        findings.push('The seasonal date must belong to the named calculated event, not another event in the brief.');
+        findings.push('The calendar date must belong to the named calculated event, not another event in the brief.');
       }
     }
   }

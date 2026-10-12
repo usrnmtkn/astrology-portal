@@ -83,3 +83,6 @@ export async function createWeeklyContextPublicationFixture(call:(message:any)=>
  for(const p of edition.passages){p.headline=`${p.sign} context fixture`;p.body=`You can review your complete context fixture. ${weeklyContextBodies[p.sign]} Your complete context fixture ends here.`;}
  return call({method:'POST',body:{contentKey:horoscopeEditionKey(edition.window),surface:'sky',mode:'article',eventType:'horoscope-edition',provider:'manual-admin',status:'DRAFT',lane:'serving',headline:'Synthetic weekly context publication',body:horoscopeEditionBody(edition),sections:{horoscopeEdition:edition},facts:{horoscopeBrief:{brief:packet.payload.brief,signature:packet.payload.signature}},sourceSnapshot:{}}});
 }
+
+// External-editor regression uses synthetic prose with the owner's claim shapes.
+export const monthlyManualBody='You can read the external monthly fixture opening. The Sun provides the monthly reference.\n\nVenus retrograde squares Mars on October 10. Venus retrograde squares Pluto on October 20.\n\nMercury turning retrograde on October 24 gives you a date to review, while the Taurus Full Moon on October 26 gives you another date to review. Your external monthly fixture ends here.';

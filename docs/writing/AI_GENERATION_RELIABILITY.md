@@ -664,3 +664,15 @@ same planet’s calculated ingress events, even when a preceding clause states i
 original sign. Reference positions cannot establish an ingress, and earlier
 house claims retain their own checks. Wrong destinations and missing ingress
 events remain blocking; the owner’s wording remains unchanged.
+
+### Monthly external rewrite publication — October 12
+
+Validator v13 accepts adjacent post-planet motion labels in aspect claims and
+checks their calculated motion. Station date clauses now recognize turning
+retrograde/direct, preventing a neighboring lunation from inheriting the station's
+date. Both valid and deliberately incorrect synthetic claims run through the
+actual draft/preflight/publication handlers. The owner's saved text and old
+receipts remain unchanged; old parser findings do not substitute for current
+validation. See the manual rewrite recovery contract in
+`docs/content-management/horoscope-editions.md` for local save reconciliation
+and the separate owner publication action.
