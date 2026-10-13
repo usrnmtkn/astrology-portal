@@ -126,12 +126,12 @@ jobs:
         run: node scripts/test-web-initial-content-parity.mjs
       - name: Verify startup performance contracts
         run: npm run test:performance-contracts
-      - name: Verify visible loading and recovery on slow or failed downloads
-        run: npx playwright test -c playwright.config.ts --workers=1 tests/visual/app-loading-feedback.spec.ts tests/visual/startup-animation.spec.ts tests/visual/startup-animation-preview.spec.ts
       - name: Verify minimum skeleton loading lifecycle
         run: npm run test:minimum-loading
-      - name: Run visual regression and smoke screens
-        run: npx playwright test -c playwright.config.ts tests/visual/visual-regression-baseline.spec.ts tests/visual/visual-smoke.spec.ts tests/visual/loading-illustration.spec.ts tests/visual/lazy-reveal.spec.ts
+      - name: Run loading recovery, visual regression and smoke screens
+        # One fresh build/preview for the same complete selection also preserves
+        # loading traces that a second Playwright invocation used to clear.
+        run: npx playwright test -c playwright.config.ts --workers=1 tests/visual/app-loading-feedback.spec.ts tests/visual/startup-animation.spec.ts tests/visual/startup-animation-preview.spec.ts tests/visual/visual-regression-baseline.spec.ts tests/visual/visual-smoke.spec.ts tests/visual/loading-illustration.spec.ts tests/visual/lazy-reveal.spec.ts
       - name: Upload visual smoke artifacts
         if: always()
         uses: actions/upload-artifact@v6
@@ -267,7 +267,7 @@ jobs:
         if: matrix.shard == 1
         run: node scripts/test-calendar-moon-ingress-reader.mjs && node --import tsx scripts/test-calendar-surface-events.mjs && node --import tsx scripts/test-calendar-api-timezone-anchor.mjs
       - name: Verify placement reader refresh stability
-        run: npx playwright test -c playwright.config.ts --workers=1 --shard=${{ matrix.shard }}/2 tests/visual/sky-placement-retrograde.spec.ts tests/visual/sky-composable-reader.spec.ts tests/visual/sky-placement-stability.spec.ts tests/visual/sky-placement-publication-hydration.spec.ts tests/visual/sky-ingress-reader.spec.ts tests/visual/sky-placement-hydration-boundary.spec.ts tests/visual/sky-moon-publication-reader.spec.ts tests/visual/article-navigation-stability.spec.ts tests/visual/sky-you-transit-parity.spec.ts tests/visual/calendar-day-summary.spec.ts tests/visual/calendar-content-retention.spec.ts tests/visual/calendar-reading-stability.spec.ts tests/visual/calendar-api-loading.spec.ts tests/visual/calendar-current-season.spec.ts tests/visual/sky-placement-dates.spec.ts tests/visual/placement-visit-dates.spec.ts tests/visual/sky-placement-key-dates.spec.ts
+        run: node scripts/balanced-browser-tests.mjs --config playwright.sky-placement-reader.config.ts ${{ matrix.shard }}/2
       - name: Upload Sky placement reader artifacts
         if: always()
         uses: actions/upload-artifact@v6
@@ -302,7 +302,7 @@ jobs:
         run: npm run test:sky-daily-summary && node scripts/test-sky-placement-aspect-matrix.mjs && node --import tsx scripts/test-calendar-template-preview.mts
       - name: Verify daily Sky summary reader
         if: matrix.phase == 'reader'
-        run: npx playwright test -c playwright.config.ts --workers=1 tests/visual/sky-early-loading.spec.ts tests/visual/sky-loading-layout.spec.ts tests/visual/sky-summary-cold-hydration.spec.ts tests/visual/sky-daily-summary.spec.ts tests/visual/sky-live-clock.spec.ts tests/visual/sky-summary-paragraphs.spec.ts tests/visual/sky-placement-aspects.spec.ts tests/visual/sky-refresh-performance.spec.ts tests/visual/sky-summary-supplied-copy.spec.ts tests/visual/sun-season-variants.spec.ts tests/visual/calendar-summary-studio.spec.ts
+        run: npx playwright test -c playwright.config.ts --workers=1 tests/visual/sky-early-loading.spec.ts tests/visual/sky-source-recovery.spec.ts tests/visual/sky-loading-layout.spec.ts tests/visual/sky-summary-cold-hydration.spec.ts tests/visual/sky-daily-summary.spec.ts tests/visual/sky-live-clock.spec.ts tests/visual/sky-summary-paragraphs.spec.ts tests/visual/sky-placement-aspects.spec.ts tests/visual/sky-refresh-performance.spec.ts tests/visual/sky-summary-supplied-copy.spec.ts tests/visual/sun-season-variants.spec.ts tests/visual/calendar-summary-studio.spec.ts
       - name: Verify daily Sky summary Studio
         if: matrix.phase == 'studio'
         run: |
@@ -458,7 +458,9 @@ jobs:
 
   browser-release-gate:
     needs: [scope, friends-loading-performance, visual-smoke, client-facing-flows, studio-admin-flows, sky-placement-studio, sky-placement-reader, sky-summary, studio-preview-suites, horoscope-reader, reader-surface-suites]
-    if: ${{ always() }}
+    # Still inspect failed dependencies, but let a superseded workflow cancel.
+    # An always() gate can remain queued and block the next revision's run.
+    if: ${{ !cancelled() }}
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:

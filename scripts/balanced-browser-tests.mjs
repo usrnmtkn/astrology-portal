@@ -54,7 +54,11 @@ export function withShardLists(bins, run) {
 export function main(args) {
   const [configFlag, config, shard, mode] = args;
   assert.equal(configFlag, '--config');
-  assert.equal(config, 'playwright.horoscope-reader.config.ts');
+  const durationFiles = {
+    'playwright.horoscope-reader.config.ts': 'config/browser-test-durations.json',
+    'playwright.sky-placement-reader.config.ts': 'config/sky-reader-test-durations.json'
+  };
+  assert(Object.hasOwn(durationFiles, config), 'Unknown balanced browser suite');
   assert(/^\d+\/\d+$/u.test(shard));
   assert(mode === undefined || mode === '--plan');
   const [index, count] = shard.split('/').map(Number);
@@ -64,7 +68,7 @@ export function main(args) {
   const report = JSON.parse(execFileSync(process.execPath, [cli, ...base, '--list', '--reporter=json'], { encoding: 'utf8', maxBuffer: 10 * 1024 * 1024 }));
   assert.equal(report.errors.length, 0, 'Test discovery failed');
   const tests = identities(report);
-  const timings = JSON.parse(readFileSync('config/browser-test-durations.json', 'utf8'));
+  const timings = JSON.parse(readFileSync(durationFiles[config], 'utf8'));
   const bins = balanceTests(tests, count, timings);
   return withShardLists(bins, files => {
     // Ask Playwright to resolve every generated list before running any tests.

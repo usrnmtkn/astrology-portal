@@ -31,7 +31,7 @@ files.each do |file|
     jobs = workflow.fetch('jobs')
     gate = jobs.fetch('browser-release-gate')
     raise 'Browser gate must depend on every job, including matrices' unless gate.fetch('needs').sort == (jobs.keys - ['browser-release-gate']).sort
-    raise 'Browser gate must run after failures and cancellations' unless gate.fetch('if') == '${{ always() }}'
+    raise 'Browser gate must inspect failures without blocking workflow cancellation' unless gate.fetch('if') == '${{ !cancelled() }}'
     triggers = workflow['on'] || workflow[true] # YAML 1.1 parses on as true.
     raise 'Required browser gate must report on every pull request' unless triggers.key?('pull_request') && triggers['pull_request'].nil?
   end
