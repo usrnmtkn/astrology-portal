@@ -36,6 +36,7 @@ globalThis.fetch = async (input, init) => {
   assert.equal(url.searchParams.get('review_state'), 'is.null');
   return Response.json(stored);
 };
+const storageFixtureFetch = globalThis.fetch;
 async function request(query: unknown = {}, method = 'POST') {
   const req: any = Readable.from([JSON.stringify(query)]); req.method = method; req.headers = {};
   const headers: Record<string, unknown> = {};
@@ -104,6 +105,41 @@ assert.equal(projected.sections.packageRecord.ingress.sources.openingHook.text, 
 assert.equal(skyEvergreenSectionText(projected.sections.packageRecord.fallback.sections[0]), '\n' + text);
 assert(!JSON.stringify(projected).includes(privateText));
 assert(!readerRowIsEligible({ ...packageRow, source_snapshot: { review_status: 'needs_review' } }));
+const houseCores = Array.from({ length: 12 }, (_, index) => {
+  const house = index + 1;
+  const contentKey = `house-horoscope-core/sun/libra/house-${house}`;
+  const body = `Approved house ${house} opening.\n\nComplete house ${house} final sentence.`;
+  return { ...packageRow, id: `bbbbbbbb-bbbb-bbbb-bbbb-${String(house).padStart(12, '0')}`,
+    content_key: contentKey, body,
+    source_snapshot: { content_role: 'house_horoscope_core', review_status: 'approved' },
+    sections: { ...packageRow.sections, packageRecord: { contentKey,
+      content_role: 'house_horoscope_core', review_status: 'approved',
+      grammar_frame: 'second_person_block', body_you: body, body_they: body,
+      studio_source_baseline: { body: privateText } } } };
+});
+globalThis.fetch = storageFixtureFetch;
+try {
+  stored = houseCores;
+  ledger = [ledger[0], ...houseCores.map(core => ({ content_key: core.content_key,
+    state: 'live', revision: 2, row_id: core.id, row_updated_at: version, updated_at: version }))];
+  const houses = await request({ keys: houseCores.map(core => core.content_key) });
+  assert.equal(houses.value.rows.length, 12, 'Published house cores must reach the public reader');
+  for (const source of houseCores) {
+    const served = houses.value.rows.find((core: any) => core.content_key === source.content_key);
+    assert.equal(served.sections.packageRecord.body_you, source.body);
+    assert.equal(served.sections.packageRecord.body_they, source.body);
+  }
+  assert(!houses.body.includes(privateText), 'House publication must preserve the private-source boundary');
+  for (const mutation of [{ status: 'DRAFT' }, { lane: 'reference' }, { review_state: 'needs-review' },
+    { source_snapshot: { content_role: 'house_horoscope_core', review_status: 'needs_review' } }]) {
+    stored = houseCores.map(core => ({ ...core, ...mutation }));
+    assert.deepEqual((await request({ keys: houseCores.map(core => core.content_key) })).value.rows, []);
+  }
+  for (const changed of [{ content_key: 'house-horoscope-core/sun/libra/house-13' },
+    { sections: { packageRecord: { ...houseCores[0].sections.packageRecord, grammar_frame: 'source_note' } } }]) {
+    assert(!readerRowIsEligible({ ...houseCores[0], ...changed }));
+  }
+} finally { globalThis.fetch = original; }
 for (const fields of [{review_status:'needs_review'}, {body_they_review_status:'needs_review'}, {content_role:'source_material'}]) {
   assert(!readerRowIsEligible({ ...packageRow, sections: { ...packageRow.sections, packageRecord: { ...packageRow.sections.packageRecord, ...fields } } }), 'An approved mirror must not override an unapproved source or audience passage');
 }
