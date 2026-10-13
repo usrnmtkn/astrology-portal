@@ -98,6 +98,14 @@ calls and cannot establish improved voice. Owner evaluation remains necessary.
 
 ## Prepare and inspect locally
 
+October 13 language correction: the shared rule bundle and Studio prompt require
+the reader's possible experience to be understandable without translating
+emotional abstractions. Meaning preparation must name the supported feeling or
+behavior and connect any guidance to it. Lexical signals remain advisory and
+never approve prose. Owner revision suggestions remain separate from factual
+authority, original provider outputs and exact-text approval. Preserve their
+complete text privately and keep requested rewrites unapproved and unpublished.
+
 From an isolated checkout with its own dependencies and knowledge build:
 
 ```sh

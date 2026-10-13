@@ -27,6 +27,15 @@ normally takes one to three sentences to express what is interesting or useful
 in ordinary human language. It is meaning for the writer, not final prose, an
 aspect definition, keywords, or an outline.
 
+The October 13 owner correction requires understandable everyday language in
+both meaning preparation and prose. Name the supported feeling or behavior and
+explain the connection to any guidance. Emotional labels are insufficient when
+the reader must infer what happened or what the sentence means. Preserve the
+contact's insight and emotional range without inventing a scene to create detail.
+Check the whole thought instead of substituting synonyms or imposing a vocabulary
+whitelist. Owner-supplied revision suggestions stay verbatim in private history;
+using them for direction does not approve the resulting meaning or passage.
+
 Before preparing meaning, compare the complete approved personal passages for
 the same ordered contact, including its soft/hard aspect family. Check newer
 exact approvals in the protected catalog as well as repository publications.
