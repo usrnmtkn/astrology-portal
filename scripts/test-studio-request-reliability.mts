@@ -43,7 +43,7 @@ try {
     assert.equal(isStudioReadRequest('/api/admin/generated-content', 'POST'), false);
     assert.equal(studioRequestTimeoutMs('/api/admin/generated-content-inventory?cursor=80'), 45_000);
     assert.equal(studioRequestTimeoutMs('/api/admin/content-live-status', 'POST'), 45_000);
-    assert.equal(studioRequestTimeoutMs('/api/admin/sky-article-facts', 'GET'), 10_000);
+    assert.equal(studioRequestTimeoutMs('/api/admin/sky-article-facts', 'GET'), 45_000);
   });
 
   for (const [path, method, deadline] of [
@@ -58,7 +58,7 @@ try {
       options!.signal!.addEventListener('abort', () => reject(new DOMException('aborted', 'AbortError')));
     })) as typeof fetch;
     const pending = requestStudioJson(path, 'fixture', { method });
-    const rejected = assert.rejects(pending, isStudioReadRequest(path, method) ? /editor text is unchanged/ : /save has not been confirmed/);
+    const rejected = assert.rejects(pending, isStudioReadRequest(path, method) ? /no changes were submitted/ : /save has not been confirmed/);
     expire();
     await rejected;
     globalThis.setTimeout = originalTimeout;

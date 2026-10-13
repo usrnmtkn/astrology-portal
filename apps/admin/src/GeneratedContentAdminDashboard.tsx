@@ -5,7 +5,7 @@ import { calendarAspectRetrogradeOptions } from "../../web/src/content/calendarA
 import { isSkyIngressEssay, SKY_INGRESS_ESSAY_FORMAT, type SkyArticleFormat } from "../../web/src/content/skyIngressEssay.mjs";
 import { hasVerifiedSameSignHistory, type RetrogradeHistory } from "../../web/src/services/retrogradeHistory";
 import { useStudioCustomVariables } from "./studioCustomVariableClient";
-import { isStudioReadRequest, studioRequestTimeoutMs } from "./studioRequestPolicy";
+import { isStudioReadRequest, studioReadTimeoutMessage, studioRequestTimeoutMs } from "./studioRequestPolicy";
 import { compatibilityAspectPoints, compatibilityAspectTypes, compatibilityAspectKey, compatibilityAspectFromSearch, compatibilityAspectSearchText, compatibilityAspectSourceDraft, type CompatibilityAspectSelection } from "./compatibilityAspectSources";
 import { clearStudioEditorReturn, rememberStudioEditorReturn, studioEditorReturnContext } from "./studioEditorReturn";
 import type { HouseTransitEditorSource } from "./HouseTransitWriteupEditor";
@@ -2873,7 +2873,7 @@ async function adminJsonRequest<T>(path: string, secret: string, options: Reques
     });
   } catch (error) {
     if (timedOut) {
-      const details = readOnly ? "Loading content timed out. Try again; no changes were submitted." : "The request timed out. Reload before retrying so you do not overwrite a late response.";
+      const details = readOnly ? studioReadTimeoutMessage : "The request timed out. Reload before retrying so you do not overwrite a late response.";
       throw new AdminRequestError(details, {
         status: 408,
         path,
