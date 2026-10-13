@@ -176,7 +176,39 @@ test("four symbols brighten clockwise with a restrained elastic bounce", async (
   await expect(page.getByLabel("Daily sky summary")).toBeVisible({ timeout: 25000 });
 });
 
-test("reduced motion skips the player and changing the preference stops at the poster frame", async ({ page }) => {
+test("reduced motion signals progress before the entry bundle without moving the icons", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  let release!: () => void;
+  const held = new Promise<void>(resolve => { release = resolve; });
+  await page.route(/\/assets\/index-.*\.js$/, async route => { await held; await route.continue().catch(() => {}); });
+  let playerRequests = 0;
+  page.on("request", request => { if (playerAsset.test(new URL(request.url()).pathname)) playerRequests++; });
+  await page.goto("/#sky", { waitUntil: "commit" });
+  try {
+    const poster = page.locator(".startup-artwork__poster");
+    await expect(poster).toBeVisible();
+    const first = poster.locator("g").first();
+    const before = await first.evaluate(node => ({ opacity: getComputedStyle(node).opacity, box: node.getBoundingClientRect().toJSON() }));
+    await expect.poll(() => first.evaluate(node => getComputedStyle(node).opacity)).not.toBe(before.opacity);
+    expect(await first.evaluate(node => node.getBoundingClientRect().toJSON())).toEqual(before.box);
+    const sequence = await poster.evaluate(node => {
+      const icons = [...node.querySelectorAll("g")];
+      const animations = icons.flatMap(icon => icon.getAnimations());
+      animations.forEach(animation => animation.pause());
+      const names = ["sun", "moon", "earth", "star"];
+      return [0, 700, 1400, 2100].map(time => {
+        animations.forEach(animation => { animation.currentTime = time; });
+        const opacities = icons.map(icon => Number(getComputedStyle(icon).opacity));
+        return names[opacities.indexOf(Math.max(...opacities))];
+      });
+    });
+    expect(sequence).toEqual(["sun", "moon", "star", "earth"]);
+    expect(playerRequests).toBe(0);
+  } finally { release(); }
+  await expect(page.getByLabel("Daily sky summary")).toBeVisible({ timeout: 25000 });
+});
+
+test("reduced motion skips the player and changing the preference returns to the fading poster", async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
   let requests = 0;
   page.on("request", request => { if (playerAsset.test(new URL(request.url()).pathname)) requests++; });
@@ -193,6 +225,8 @@ test("reduced motion skips the player and changing the preference stops at the p
       const animation = (window as any).lottie.getRegisteredAnimations()[0];
       return { paused: animation.isPaused, frame: animation.currentFrame };
     })).toEqual({ paused: true, frame: 0 });
+    await expect(page.locator(".startup-artwork__poster")).toBeVisible();
+    await expect(page.locator(".startup-artwork__animation")).toBeHidden();
     const frame = await page.locator(".startup-artwork__animation svg").innerHTML();
     await page.waitForTimeout(250);
     expect(await page.locator(".startup-artwork__animation svg").innerHTML()).toBe(frame);
