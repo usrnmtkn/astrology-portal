@@ -44,3 +44,15 @@ try {
   rmSync(directory, { recursive: true, force: true });
 }
 console.log('PASS: actual Playwright execution preserves shard selection through artifact cleanup.');
+
+// Resolve all production shard lists, including every newly discovered test,
+// through Playwright itself. Neither timing data nor a config move may lose
+// coverage or accidentally match a test twice.
+for (const [config, shard] of [
+  ['playwright.horoscope-reader.config.ts', '1/3'],
+  ['playwright.sky-placement-reader.config.ts', '1/2']
+]) {
+  const result = spawnSync(process.execPath, ['scripts/balanced-browser-tests.mjs', '--config', config, shard, '--plan'], { encoding: 'utf8' });
+  assert.equal(result.status, 0, result.stdout + result.stderr);
+  console.log(result.stdout.trim());
+}
