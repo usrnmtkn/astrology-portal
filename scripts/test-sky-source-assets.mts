@@ -10,13 +10,29 @@ const output = await build({
 });
 const { loadSkyPlacementSourceAssets } = await import(`data:text/javascript;base64,${Buffer.from(output.outputFiles[0].text).toString('base64')}`);
 const originalFetch = globalThis.fetch;
+// One transient source failure must recover without a second reader invocation.
+// The eight successful files must not be fetched again while it recovers.
+const attempts = new Map<string, number>();
+try {
+  globalThis.fetch = async input => {
+    const url = String(input);
+    const count = (attempts.get(url) ?? 0) + 1;
+    attempts.set(url, count);
+    if (url.includes('canonical-content') && count === 1) return new Response('', { status: 503 });
+    return Response.json({ asset: url });
+  };
+  const { loadSkyPlacementSourceAssets: load } = await import(`data:text/javascript;base64,${Buffer.from(output.outputFiles[0].text).toString('base64')}#transient`);
+  const result = await load();
+  assert.equal(result.length, 9);
+  assert.deepEqual([...attempts.values()].sort(), [1, 1, 1, 1, 1, 1, 1, 1, 2]);
+} finally { globalThis.fetch = originalFetch; }
 let fail = true;
 const requests: string[] = [];
 try {
   globalThis.fetch = async (input, options) => {
     requests.push(String(input));
     assert(options?.signal, 'Every prefetched asset must remain bounded and abortable');
-    return fail ? new Response('', { status: 503 }) : Response.json({ asset: String(input) });
+    return fail ? new Response('', { status: 404 }) : Response.json({ asset: String(input) });
   };
   const failed = loadSkyPlacementSourceAssets();
   assert.equal(loadSkyPlacementSourceAssets(), failed, 'Entry and mounted reader must share in-flight requests');
@@ -34,6 +50,23 @@ try {
 } finally { globalThis.fetch = originalFetch; }
 console.log('PASS: all nine exact source assets, coalescing, bounded requests, failure recovery and completed-preload reuse.');
 
+// Retain successful immutable files after another file fails permanently.
+try {
+  const counts = new Map<string, number>();
+  let unavailable = true;
+  globalThis.fetch = async input => {
+    const url = String(input);
+    counts.set(url, (counts.get(url) ?? 0) + 1);
+    return unavailable && url.includes('canonical-content')
+      ? new Response('', { status: 404 }) : Response.json({ asset: url });
+  };
+  const { loadSkyPlacementSourceAssets: load } = await import(`data:text/javascript;base64,${Buffer.from(output.outputFiles[0].text).toString('base64')}#partial-success`);
+  await assert.rejects(load(), /returned 404/);
+  unavailable = false;
+  assert.equal((await load()).length, 9);
+  assert.deepEqual([...counts.values()].sort(), [1, 1, 1, 1, 1, 1, 1, 1, 2]);
+} finally { globalThis.fetch = originalFetch; }
+
 // Scale only production deadlines. Real streamed chunks cross the old total
 // deadline, including a split UTF-8 character, while continuing to progress.
 const realTimeout = globalThis.setTimeout;
@@ -49,11 +82,21 @@ let delivered = 0;
 const signals: AbortSignal[] = [];
 try {
   globalThis.setTimeout = ((callback, delay, ...args) => realTimeout(callback,
-    delay === 8_000 ? 80 : delay === 30_000 ? 500 : delay, ...args)) as typeof setTimeout;
-  for (const mode of ['progress', 'headers', 'stalled', 'trickle', 'invalid'] as const) {
+    delay === 8_000 ? 80 : delay === 30_000 ? 500 : delay === 250 ? 5 : delay, ...args)) as typeof setTimeout;
+  for (const mode of ['progress', 'headers', 'stalled', 'trickle', 'invalid', 'header-recovery', 'body-recovery', 'network-recovery'] as const) {
     cancelled = 0; delivered = 0; signals.length = 0;
-    globalThis.fetch = async (_input, options) => {
+    const counts = new Map<string, number>();
+    globalThis.fetch = async (input, options) => {
       signals.push(options!.signal!);
+      const url = String(input);
+      const count = (counts.get(url) ?? 0) + 1;
+      counts.set(url, count);
+      if (mode.endsWith('-recovery')) {
+        if (count > 1) return Response.json(complete);
+        if (mode === 'header-recovery') return new Promise<Response>(() => {});
+        if (mode === 'network-recovery') throw new TypeError('Failed to fetch');
+        return new Response(new ReadableStream({ cancel() { cancelled++; } }));
+      }
       if (mode === 'headers') return new Promise<Response>(() => {});
       if (mode === 'invalid') return new Response('{"incomplete":');
       let index = 0, stopped = false;
@@ -71,7 +114,13 @@ try {
       }));
     };
     const { loadSkyPlacementSourceAssets: load } = await import(`${sourceModule}#${mode}`);
-    if (mode === 'progress') {
+    if (mode.endsWith('-recovery')) {
+      assert.deepEqual(await load(), Array.from({ length: 9 }, () => complete));
+      assert.equal(signals.length, 18, 'Exactly one automatic retry per failed file');
+      if (mode === 'body-recovery') assert.equal(cancelled, 9);
+      if (mode === 'header-recovery') assert(signals.filter((_, i) => i < 9).every(signal => signal.aborted));
+      continue;
+    } else if (mode === 'progress') {
       assert.deepEqual(await load(), Array.from({ length: 9 }, () => complete));
       assert.equal(delivered, chunks.length * 9, 'Preserve every byte across streamed UTF-8 boundaries');
     } else if (mode === 'invalid') {
@@ -80,10 +129,10 @@ try {
       await assert.rejects(load(), { name: 'TimeoutError' });
       await pause(100);
       if (mode === 'headers') assert(signals.every(signal => signal.aborted));
-      else assert.equal(cancelled, 9, 'Cancel every stalled or over-budget source stream');
+      else assert.equal(cancelled, mode === 'stalled' ? 18 : 9, 'Cancel every stalled or over-budget source stream');
       if (mode === 'trickle') assert(delivered >= 9 * 4, 'Exercise the total bound despite continuing progress');
     }
-    assert.equal(signals.length, 9);
+    assert.equal(signals.length, mode === 'headers' || mode === 'stalled' ? 18 : 9);
   }
 } finally { globalThis.fetch = originalFetch; globalThis.setTimeout = realTimeout; }
 console.log('PASS: complete progressive UTF-8 downloads, header/body stalls, total duration bound, cancellation and malformed-source refusal.');

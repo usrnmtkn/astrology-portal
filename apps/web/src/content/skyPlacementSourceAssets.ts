@@ -10,6 +10,20 @@ import lunarChunk1Url from "./fallbackArchitectureV3/authored-inputs/sky-v4-plac
 import lunarChunk2Url from "./fallbackArchitectureV3/authored-inputs/sky-v4-placement-lunar-context-v1-chunk-2.json?url";
 
 let pending: Promise<unknown[]> | null = null;
+// Content-hashed build assets are immutable. Preserve each completed download
+// when another source fails, and share in-flight work across reader retries.
+const sources = new Map<string, Promise<unknown>>();
+
+class SourceResponseError extends Error {
+  constructor(readonly status: number) {
+    super(`SKY_V4_SOURCE_GAP: reader package returned ${status}.`);
+  }
+}
+
+function isTransient(error: unknown) {
+  return error instanceof TypeError || (error instanceof Error && error.name === "TimeoutError")
+    || (error instanceof SourceResponseError && (error.status === 408 || error.status === 429 || error.status >= 500));
+}
 
 export function loadSkyPlacementSourceAssets() {
   pending ??= loadSources().catch((error) => { pending = null; throw error; });
@@ -23,9 +37,14 @@ async function loadSources() {
   // deferred boundary without teaching production to accept a thin fallback.
   async function loadJson(imported: unknown) {
     if (typeof imported === "string") {
-      return withRequestDeadline(async signal => {
+      let source = sources.get(imported);
+      if (source) return source;
+      const attempt = async (signal: AbortSignal) => {
         const response = await withRequestDeadline(requestSignal => fetch(imported, { signal: requestSignal }), { signal });
-        if (!response.ok) throw new Error(`SKY_V4_SOURCE_GAP: reader package returned ${response.status}.`);
+        if (!response.ok) {
+          void response.body?.cancel().catch(() => {});
+          throw new SourceResponseError(response.status);
+        }
         const reader = response.body?.getReader();
         if (!reader) return response.json() as Promise<unknown>;
         // Large complete source files can take longer than one API request on
@@ -42,7 +61,22 @@ async function loadSources() {
         } finally {
           void reader.cancel().catch(() => {});
         }
-      }, { timeoutMs: 30_000 });
+      };
+      source = withRequestDeadline(async signal => {
+        try {
+          return await attempt(signal);
+        } catch (error) {
+          // A single stalled connection must not strand a cold reader at Retry.
+          // Both attempts share the original total budget; invalid JSON and
+          // permanent HTTP failures still fail closed without another request.
+          if (signal.aborted || !isTransient(error)) throw error;
+          await new Promise(resolve => setTimeout(resolve, 250));
+          signal.throwIfAborted();
+          return attempt(signal);
+        }
+      }, { timeoutMs: 30_000 }).catch(error => { sources.delete(imported); throw error; });
+      sources.set(imported, source);
+      return source;
     }
     return (imported as { default?: unknown })?.default ?? imported;
   }
