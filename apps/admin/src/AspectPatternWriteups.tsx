@@ -5,7 +5,7 @@ import { Grid, Stack, Text } from "./studio-ds/primitives";
 import { metricGrid } from "./studio-ds/recipes";
 import { AlertTriangle, BookOpenText, Check, Columns2, RefreshCw, Save, Search, X } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { adminCredentialHeaders } from "./adminSecret";
+import { requestStudioJson } from "./generatedContentClient";
 
 type AspectPatternWriteupKind = "natal" | "activation";
 type AuthoredStatus = "draft" | "reviewed" | "approved" | "deprecated";
@@ -219,9 +219,8 @@ export function AspectPatternWriteups({ initialKind = "natal", secret = "" }: { 
     setIsLoading(true);
     setError("");
     try {
-      const result = await fetch(`/api/admin/aspect-pattern-writeups?kind=${nextKind}`, { method: "GET", headers: adminCredentialHeaders(secret) });
-      const json = await result.json() as AspectPatternWriteupResponse;
-      if (!result.ok || json.ok === false) throw new Error(json.error || `Aspect-pattern write-ups failed with ${result.status}.`);
+      const json = await requestStudioJson(`/api/admin/aspect-pattern-writeups?kind=${nextKind}`, secret) as AspectPatternWriteupResponse;
+      if (!Array.isArray(json.rows)) throw new Error("The write-up list could not be confirmed. Try loading it again.");
       setResponse(json);
       const firstRow = json.rows?.find((row) => row.key === selectedKey) ?? json.rows?.[0] ?? null;
       setSelectedKey((current) => json.rows?.some((row) => row.key === current) ? current : firstRow?.key ?? "");
@@ -256,10 +255,11 @@ export function AspectPatternWriteups({ initialKind = "natal", secret = "" }: { 
 
   useEffect(() => {
     if (!draft) return;
+    const controller = new AbortController();
     const timeout = window.setTimeout(() => {
-      void previewDraft(draft);
+      void previewDraft(draft, controller.signal);
     }, 250);
-    return () => window.clearTimeout(timeout);
+    return () => { window.clearTimeout(timeout); controller.abort(); };
   }, [draft]);
 
   function selectKind(nextKind: AspectPatternWriteupKind) {
@@ -288,14 +288,11 @@ export function AspectPatternWriteups({ initialKind = "natal", secret = "" }: { 
     if (!draft || !selectedRow) return;
     setIsLoading(true);
     setError("");
+    setMessage("");
     try {
       const record = { ...draft, status: nextStatus ?? draft.status };
-      const result = await fetch("/api/admin/aspect-pattern-writeups", {
+      const json = await requestStudioJson("/api/admin/aspect-pattern-writeups", secret, {
         method: selectedRow.generatedContentId ? "PATCH" : "POST",
-        headers: {
-          "content-type": "application/json",
-          ...adminCredentialHeaders(secret)
-        },
         body: JSON.stringify({
           kind,
           generatedContentId: selectedRow.generatedContentId,
@@ -303,10 +300,15 @@ export function AspectPatternWriteups({ initialKind = "natal", secret = "" }: { 
           record,
           reviewer: "admin"
         })
-      });
-      const json = await result.json() as { ok?: boolean; error?: string; dashboard?: AspectPatternWriteupResponse };
-      if (!result.ok || json.ok === false) throw new Error(json.error || `Save failed with ${result.status}.`);
-      if (json.dashboard) setResponse(json.dashboard);
+      }) as { dashboard?: AspectPatternWriteupResponse };
+      const confirmed = json.dashboard?.rows?.find(row => row.key === selectedRow.key);
+      const submittedContent = { ...record.content, sections: record.content.sections.map(section => ({ ...section, conditions: section.conditions ?? [] })) };
+      if (!confirmed?.generatedContentId || !confirmed.lastUpdated
+        || confirmed.lastUpdated === selectedRow.lastUpdated || confirmed.status !== record.status
+        || JSON.stringify(confirmed.record.content) !== JSON.stringify(submittedContent)) {
+        throw new Error("Storage did not confirm your exact write-up. Your edits are still here. Reload before retrying.");
+      }
+      setResponse(json.dashboard!);
       setDraft((current) => current?.id === record.id ? record : current);
       setMessage(`${record.id} saved as ${titlePart(record.status)}.`);
     } catch (caught) {
@@ -316,18 +318,17 @@ export function AspectPatternWriteups({ initialKind = "natal", secret = "" }: { 
     }
   }
 
-  async function previewDraft(record: AuthoredAspectPatternRecord) {
+  async function previewDraft(record: AuthoredAspectPatternRecord, signal: AbortSignal) {
     try {
-      const result = await fetch("/api/admin/aspect-pattern-writeups", {
+      const json = await requestStudioJson("/api/admin/aspect-pattern-writeups", secret, {
         method: "POST",
-        headers: { "content-type": "application/json", ...adminCredentialHeaders(secret) },
+        readOnly: true,
+        signal,
         body: JSON.stringify({ kind, action: "preview", record })
-      });
-      const json = await result.json() as { ok?: boolean; error?: string; previews?: AspectPatternPreview[] };
-      if (!result.ok || json.ok === false) throw new Error(json.error || `Preview failed with ${result.status}.`);
-      setDraftPreviews(json.previews ?? []);
+      }) as { previews?: AspectPatternPreview[] };
+      if (!signal.aborted) setDraftPreviews(json.previews ?? []);
     } catch (caught) {
-      setError(caught instanceof Error ? caught.message : "Could not refresh aspect-pattern preview.");
+      if (!signal.aborted) setError(caught instanceof Error ? caught.message : "Could not refresh aspect-pattern preview.");
     }
   }
 

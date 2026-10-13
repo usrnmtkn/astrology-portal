@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { adminCredentialHeaders } from "./adminSecret";
+import { requestStudioJson } from "./generatedContentClient";
 
 export type CustomVariableOverride = { scope: "planet" | "sign" | "placement"; planet: string; sign: string; value: string };
 export type CustomVariable = { id: string; updatedAt: string; name: string; label: string; description: string; value: string; tags: string[]; overrides: CustomVariableOverride[] };
@@ -7,10 +7,7 @@ export type CustomVariableInput = Omit<CustomVariable, "id" | "updatedAt">;
 const endpoint = "/api/admin/generated-content?variables=true";
 
 export async function customVariableRequest(secret: string, method = "GET", body?: unknown, signal?: AbortSignal) {
-  const response = await fetch(endpoint, { method, headers: { ...adminCredentialHeaders(secret), "content-type": "application/json" }, cache: "no-store", signal: signal ?? AbortSignal.timeout(15000), ...(body ? { body: JSON.stringify(body) } : {}) });
-  let data;
-  try { data = await response.json(); } catch { throw new Error("Variables returned an unreadable response. Reload before trying again."); }
-  if (!response.ok || data?.ok !== true) throw new Error(data?.error ?? "Variables could not be saved. Your edits are still here.");
+  const data = await requestStudioJson(endpoint, secret, { method, signal, ...(body ? { body: JSON.stringify(body) } : {}) }) as { variables: CustomVariable[]; variable: CustomVariable; deletedId: string };
   if (method === "GET" && !Array.isArray(data.variables) || ["POST", "PATCH"].includes(method) && (!data.variable?.id || !data.variable?.updatedAt) || method === "DELETE" && !data.deletedId) throw new Error("The operation could not be confirmed. Reload the library before trying again.");
   return data;
 }

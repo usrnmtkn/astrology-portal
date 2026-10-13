@@ -6846,6 +6846,10 @@ test('Aspect Patterns authenticates reads and previews and preserves newer draft
   const originalFetch = globalThis.fetch;
   let row: Record<string, any> | null = null;
   let saves = 0;
+  let omitPatternReceipt = false;
+  let delayedPreviewStarted = false;
+  let releasePreview!: () => void;
+  const delayedPreview = new Promise<void>(resolve => { releasePreview = resolve; });
   const id = 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa';
   globalThis.fetch = async (input, init = {}) => {
     const url = new URL(String(input));
@@ -6869,6 +6873,17 @@ test('Aspect Patterns authenticates reads and previews and preserves newer draft
       });
       const res = { statusCode: 0, headers: {} as Record<string, string>, body: '', setHeader(key: string, value: string) { this.headers[key] = value; }, end(value: string) { this.body = value; } };
       await handler(req as any, res as any);
+      if (request.method() === 'POST' && request.postDataJSON()?.action === 'preview'
+        && request.postDataJSON()?.record.content.overview === 'QA obsolete preview.') {
+        delayedPreviewStarted = true;
+        await delayedPreview;
+        await route.fulfill({status:503,json:{ok:false,error:'QA obsolete preview failed.'}}).catch(()=>{});
+        return;
+      }
+      if (omitPatternReceipt && request.method() === 'PATCH') {
+        await route.fulfill({json:{ok:true}});
+        return;
+      }
       await route.fulfill({ status: res.statusCode, headers: res.headers, body: res.body });
     });
     await page.goto('/admin/content#content/aspect-patterns');
@@ -6876,7 +6891,13 @@ test('Aspect Patterns authenticates reads and previews and preserves newer draft
     await expect(editor).toBeVisible();
     const overview = editor.getByRole('textbox', { name: 'Overview', exact: true });
     const copy = 'QA complete first paragraph.\n\nQA final sentence. ';
+    await overview.fill('QA obsolete preview.');
+    await expect.poll(() => delayedPreviewStarted).toBe(true);
     await overview.fill(copy);
+    await expect(page.getByRole('complementary',{name:'Aspect pattern preview'})).toContainText('QA final sentence.');
+    releasePreview();
+    await page.waitForTimeout(200); // Let the obsolete failure arrive after the newer preview.
+    await expect(page.getByRole('alert')).toHaveCount(0);
     await editor.getByRole('button', { name: 'Save draft', exact: true }).click();
     await expect.poll(() => saves).toBe(1);
     await expect(editor.getByRole('button', { name: 'Save draft', exact: true })).toBeEnabled();
@@ -6895,7 +6916,15 @@ test('Aspect Patterns authenticates reads and previews and preserves newer draft
     await expect(overview).toHaveValue('QA stale browser edit.');
     await page.getByRole('button', { name: 'Refresh', exact: true }).click();
     await expect(overview).toHaveValue('QA newer draft from another editor.');
+    omitPatternReceipt = true;
+    await overview.fill('QA writing retained after an incomplete acknowledgement.');
+    await editor.getByRole('button', { name: 'Save draft', exact: true }).click();
+    await expect.poll(() => saves).toBe(3);
+    await expect(page.getByRole('alert')).toContainText('did not confirm');
+    await expect(overview).toHaveValue('QA writing retained after an incomplete acknowledgement.');
+    await expect(page.getByText(/saved as Draft\./)).toHaveCount(0);
   } finally {
+    releasePreview();
     await page.unroute('**/api/admin/aspect-pattern-writeups**').catch(() => {});
     globalThis.fetch = originalFetch;
     for (const [key, value] of Object.entries(previous)) { if (value === undefined) delete process.env[key]; else process.env[key] = value; }
