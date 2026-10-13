@@ -44,9 +44,9 @@ export function startStartupAnimation() {
     script = document.createElement("script");
     script.src = playerUrl;
     script.async = true;
-    // Default script priority avoids waiting behind the application chunks
-    // whose pending download this loader is meant to animate.
-    script.setAttribute("fetchpriority", "auto");
+    // This visible loading feedback must download while app chunks are pending.
+    // Async scripts default to low priority, so "auto" can still defer it.
+    script.setAttribute("fetchpriority", "high");
     script.setAttribute("data-startup-decoration", "");
     script.onerror = dispose;
     script.onload = () => {

@@ -2,7 +2,7 @@
 
 The document displays a centered celestial poster immediately. Once the entry
 bundle runs, `startupAnimation.ts` loads the light SVG Lottie player as an optional,
-asynchronous asset at normal script priority. It does not await the player, an
+asynchronous asset with an explicit high fetch priority. It does not await the player, an
 animation loop, or a minimum display time. React replacing the document shell is the readiness signal. Normal
 route navigation and in-page loading keep the existing progress indicators.
 
@@ -161,8 +161,8 @@ are separate from these local results.
 The local comparison can explicitly play the full bounce with `?motion=play`,
 while production follows the system motion preference. Reduced motion now keeps
 the four icons signaling progress through a gentle clockwise brightness cycle,
-without moving, scaling, or rotating them. The normal-motion player uses default
-script priority instead of an explicit low-priority hint, and readiness
+without moving, scaling, or rotating them. The normal-motion player requests high
+fetch priority so it can load while application chunks are pending, and readiness
 handles both the event and an already-loaded player. App readiness still never
 waits for the animation.
 
