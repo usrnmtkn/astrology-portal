@@ -44,7 +44,9 @@ export function startStartupAnimation() {
     script = document.createElement("script");
     script.src = playerUrl;
     script.async = true;
-    script.setAttribute("fetchpriority", "low");
+    // Default script priority avoids waiting behind the application chunks
+    // whose pending download this loader is meant to animate.
+    script.setAttribute("fetchpriority", "auto");
     script.setAttribute("data-startup-decoration", "");
     script.onerror = dispose;
     script.onload = () => {
@@ -55,12 +57,14 @@ export function startStartupAnimation() {
         animation = player.loadAnimation({ container, renderer: "svg", loop: true, autoplay: false, animationData });
         animation.addEventListener("data_failed", dispose);
         animation.addEventListener("error", dispose);
-        animation.addEventListener("DOMLoaded", () => {
-          if (disposed) return;
+        const onReady = () => {
+          if (disposed || ready) return;
           ready = true;
           artwork.setAttribute("data-animation-ready", "");
           syncPlayback();
-        });
+        };
+        animation.addEventListener("DOMLoaded", onReady);
+        if (animation.isLoaded) onReady();
       } catch { dispose(); }
     };
     document.head.append(script);
