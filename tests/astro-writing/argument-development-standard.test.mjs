@@ -131,7 +131,11 @@ assert.match(draftInput, /ARGUMENT DEVELOPMENT IS A REASONING AUDIT, NOT A PROSE
 assert.match(draftInput, /Do not invent biography/u);
 
 const skill = read("skills/tldr-astro-writer/SKILL.md");
-assert.ok(skill.includes("docs/writing/ARGUMENT_DEVELOPMENT_STANDARD.md"));
+assert.match(skill, /does NOT define one universal drafting pipeline/u);
+assert.ok(skill.includes("../tldr-astro-sky-placement/SKILL.md"));
+assert.ok(skill.includes("../tldr-astro-personal-transit/SKILL.md"));
+const articleSkill = read("skills/tldr-astro-sky-placement/SKILL.md");
+assert.ok(articleSkill.includes("docs/writing/ARGUMENT_DEVELOPMENT_STANDARD.md"));
 const evidenceStandard = read("docs/writing/SHARED_EVIDENCE_STANDARD.md");
 assert.ok(evidenceStandard.includes(manifestPath));
 assert.match(evidenceStandard, /REGISTER evidence only/u);
