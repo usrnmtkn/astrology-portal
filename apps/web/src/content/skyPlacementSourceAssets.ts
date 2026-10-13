@@ -24,10 +24,25 @@ async function loadSources() {
   async function loadJson(imported: unknown) {
     if (typeof imported === "string") {
       return withRequestDeadline(async signal => {
-        const response = await fetch(imported, { signal });
+        const response = await withRequestDeadline(requestSignal => fetch(imported, { signal: requestSignal }), { signal });
         if (!response.ok) throw new Error(`SKY_V4_SOURCE_GAP: reader package returned ${response.status}.`);
-        return response.json() as Promise<unknown>;
-      });
+        const reader = response.body?.getReader();
+        if (!reader) return response.json() as Promise<unknown>;
+        // Large complete source files can take longer than one API request on
+        // a slow connection. Bound inactivity between chunks, and the complete
+        // download separately; never accept partial JSON or a thinner passage.
+        const decoder = new TextDecoder();
+        let json = "";
+        try {
+          while (true) {
+            const { done, value } = await withRequestDeadline(() => reader.read(), { signal });
+            if (done) return JSON.parse(json + decoder.decode()) as unknown;
+            json += decoder.decode(value, { stream: true });
+          }
+        } finally {
+          void reader.cancel().catch(() => {});
+        }
+      }, { timeoutMs: 30_000 });
     }
     return (imported as { default?: unknown })?.default ?? imported;
   }

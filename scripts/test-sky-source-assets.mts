@@ -33,3 +33,57 @@ try {
   assert.equal(requests.length, 18);
 } finally { globalThis.fetch = originalFetch; }
 console.log('PASS: all nine exact source assets, coalescing, bounded requests, failure recovery and completed-preload reuse.');
+
+// Scale only production deadlines. Real streamed chunks cross the old total
+// deadline, including a split UTF-8 character, while continuing to progress.
+const realTimeout = globalThis.setTimeout;
+const pause = (ms: number) => new Promise(resolve => realTimeout(resolve, ms));
+const sourceModule = `data:text/javascript;base64,${Buffer.from(output.outputFiles[0].text).toString('base64')}`;
+const complete = { body: 'Opening 🌓 café 끝. The complete final sentence remains.' };
+const bytes = new TextEncoder().encode(JSON.stringify(complete));
+const emoji = bytes.findIndex(value => value === 0xf0);
+const ends = [0, emoji + 1, emoji + 2, emoji + 3, emoji + 4, bytes.length - 5, bytes.length];
+const chunks = ends.slice(1).map((end, i) => bytes.slice(ends[i], end));
+let cancelled = 0;
+let delivered = 0;
+const signals: AbortSignal[] = [];
+try {
+  globalThis.setTimeout = ((callback, delay, ...args) => realTimeout(callback,
+    delay === 8_000 ? 80 : delay === 30_000 ? 500 : delay, ...args)) as typeof setTimeout;
+  for (const mode of ['progress', 'headers', 'stalled', 'trickle', 'invalid'] as const) {
+    cancelled = 0; delivered = 0; signals.length = 0;
+    globalThis.fetch = async (_input, options) => {
+      signals.push(options!.signal!);
+      if (mode === 'headers') return new Promise<Response>(() => {});
+      if (mode === 'invalid') return new Response('{"incomplete":');
+      let index = 0, stopped = false;
+      return new Response(new ReadableStream({
+        async pull(controller) {
+          if (mode === 'stalled') return;
+          await pause(50);
+          if (stopped) return;
+          if (mode === 'trickle' || index < chunks.length) {
+            delivered++;
+            controller.enqueue(mode === 'trickle' ? new Uint8Array([32]) : chunks[index++]);
+          } else controller.close();
+        },
+        cancel() { stopped = true; cancelled++; }
+      }));
+    };
+    const { loadSkyPlacementSourceAssets: load } = await import(`${sourceModule}#${mode}`);
+    if (mode === 'progress') {
+      assert.deepEqual(await load(), Array.from({ length: 9 }, () => complete));
+      assert.equal(delivered, chunks.length * 9, 'Preserve every byte across streamed UTF-8 boundaries');
+    } else if (mode === 'invalid') {
+      await assert.rejects(load(), SyntaxError, 'Partial JSON must never become an eligible source');
+    } else {
+      await assert.rejects(load(), { name: 'TimeoutError' });
+      await pause(100);
+      if (mode === 'headers') assert(signals.every(signal => signal.aborted));
+      else assert.equal(cancelled, 9, 'Cancel every stalled or over-budget source stream');
+      if (mode === 'trickle') assert(delivered >= 9 * 4, 'Exercise the total bound despite continuing progress');
+    }
+    assert.equal(signals.length, 9);
+  }
+} finally { globalThis.fetch = originalFetch; globalThis.setTimeout = realTimeout; }
+console.log('PASS: complete progressive UTF-8 downloads, header/body stalls, total duration bound, cancellation and malformed-source refusal.');

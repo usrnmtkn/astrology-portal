@@ -49,7 +49,10 @@ Direct Sky visits preload App and the required placement-row chunk from the
 document, then start the canonical source assets while App downloads. These
 download hints do not execute the modules or follow deferred article imports.
 The existing shared loader still validates the complete source and publication
-state before revealing the reading. The same exact date/location
+state before revealing the reading. Source downloads retain an eight-second
+header/inactivity deadline and a thirty-second total cap, so an active slow
+transfer can finish without accepting partial JSON or leaving a stalled request
+running. The same exact date/location
 calculation is reused only while the initial selection remains valid. Reader
 fonts start once the base stylesheet arrives. Calendar reserves its event-dot
 row and reveals downstream actions with the completed day reading so late prose
