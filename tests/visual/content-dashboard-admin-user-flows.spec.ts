@@ -2902,7 +2902,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     await editor.getByRole("button", { name: /^Save(?: draft)?$/, exact: true }).click();
     await expect.poll(() => writes.length).toBe(1);
     await expect(editor).toContainText(/Draft saved|All changes saved/);
-    await expect(preview.getByRole("alert")).toContainText("could not finish loading", { timeout: 15_000 });
+    await expect(preview.getByRole("alert")).toContainText("Loading content timed out. Try again; no changes were submitted.", { timeout: 55_000 });
     await expect(preview).not.toContainText("a save has not been confirmed");
     await expect(you).toHaveValue(manualYou);
     await expect(friend).toHaveValue(manualFriend);

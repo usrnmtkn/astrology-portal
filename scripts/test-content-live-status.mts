@@ -70,7 +70,8 @@ let dbRows: any[] = [{ id: "qa-virgo", content_key: key, status: "DRAFT", lane: 
 let publications: any[] = [];
 let storageReads = 0;
 const originalFetch = globalThis.fetch;
-globalThis.fetch = async (input) => {
+globalThis.fetch = async (input, options) => {
+  assert.equal(options?.method ?? 'GET', 'GET', 'Live-status POST must never mutate storage.');
   const url = new URL(String(input));
   assert.equal(url.origin, "https://studio-live-status.invalid");
   storageReads++;
