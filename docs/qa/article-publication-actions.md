@@ -56,3 +56,16 @@ Focused compiler, authenticated ingress Studio/publication, reader-copy boundary
 and CSS/token checks passed. The reader regression checks opening/final prose,
 absence of Overview, authored heading order, reload and typography across phone
 and desktop in both themes. No saved owner text or publication state was changed.
+
+## Release size measurement
+
+After integrating loader main `8d0d4b777`, independently installed matched builds
+compare that main with article head `4eb3ff875` using identical visual-smoke
+Supabase settings. Web aggregate gzip is 3,624,460 → 3,624,647 bytes (+187);
+Sky detail is 6,101 → 6,149 (+48). Standalone Studio entry raw/gzip/aggregate is
+793,833/231,561/795,201 → 794,706/231,832/795,451 (+873/+271/+250).
+
+The release budgets account for these small additions to the existing controls
+and deferred reader renderer. Startup, CSS, other chunks, dependencies and
+publication checks keep their existing limits. No prose or publication-state
+change is included; this is an interface cost, not a performance claim.
