@@ -99,7 +99,7 @@ import { calendarPhaseLabelForDay } from "./calendarPhaseLabel";
 import { lunarDayGeneratedContentKeys } from "./lunarDayResolver";
 import type { LunarDay, LunarDayArcPoint } from "./lunarDayTypes";
 import { sunIngressSeasonSign, sunIngressSeasonWindow } from "./seasonWindow";
-import { calendarMonthlyOverviewContentKeys, resolveCalendarMonthlyOverview } from "./monthlyOverview";
+import { calendarMonthlyOverviewContentKeys } from "./monthlyOverview";
 import { AstroGlyph } from "./AstroGlyph";
 import {
   CalendarCheckIn,
@@ -2808,10 +2808,6 @@ export function LunarCalendar({
   const assembledPassages = useCalendarPassages(calendar, (viewMode === "month" ? calendar?.days ?? [] : selectedWeekDays).map(day => day.dateKey), selectedDateKey || currentDateKey, location, generatedContent, moonContentRetry);
   const weeklyDayParagraphs = calendarWeeklyDayParagraphs(assembledPassages.weekly?.body, selectedWeekDays, zone);
   const selectedAssembledPassage = selectedDay ? assembledPassages.daily.get(selectedDay.dateKey) : undefined;
-  const monthlyOverview = useMemo(() => {
-    if (viewMode !== "month" || !calendar) return null;
-    return resolveCalendarMonthlyOverview(calendar, generatedContent);
-  }, [calendar, generatedContent, viewMode, contentVersion]);
   const dayPanelProps = selectedDay ? {
     checkInEntry: checkInData.value,
     contentState: assembledPassages.error ? "error" as const : assembledPassages.loading ? "loading" as const : dayReadingState,
@@ -3049,12 +3045,6 @@ export function LunarCalendar({
 
       {viewMode === "month" && (
         <div className="lunar-calendar-layout">
-          {calendar && (
-            <section className="lunar-month-overview lunar-month-overview--monthly" aria-labelledby="lunar-month-overview-heading">
-              <h2 className="sr-only" id="lunar-month-overview-heading">Monthly overview</h2>
-              <PublishedMonthlyOverview month={calendar.month} timeZone={calendar.timeZone} fallback={(assembledPassages.monthly || monthlyOverview)?.paragraphs.map((paragraph, index) => <CalendarPassageProse key={index} text={paragraph} />)}/>
-            </section>
-          )}
           <div className="lunar-calendar-month-primary">
             <section className="lunar-calendar-grid-panel" aria-label={`${formatMonthLabel(visibleMonth)} lunar grid`}>
             <div className="lunar-calendar-weekdays" aria-hidden="true">
@@ -3259,6 +3249,7 @@ export function LunarCalendar({
               )}
             </div>
             </section>
+            <PublishedMonthlyOverview month={calendar.month} timeZone={calendar.timeZone}/>
             {seasonPill}
           </div>
           <section className="lunar-month-agenda" aria-label="Major events this month">

@@ -2,6 +2,21 @@ import assert from "node:assert/strict";
 import { calendarMonthlyEditorialPattern } from "../apps/admin/src/skyForecastTemplates.ts";
 import { CALENDAR_MONTHLY_OVERVIEW_KEY, resolveCalendarMonthlyOverview } from "../apps/web/src/features/calendar/monthlyOverview.ts";
 
+import { monthlyHoroscopeTldr } from '../apps/web/src/content/monthlyHoroscopeTldr.mjs';
+
+const authoredTldr = "The entire first paragraph stays, including **inline emphasis**.\n\nThe complete second paragraph stays too.";
+for (const label of ['**TLDR**', '## TLDR', 'TLDR', '__TLDR__']) {
+  for (const heading of ['**The month ahead**', '## The month ahead', 'The month ahead', 'The month ahead:']) {
+    assert.equal(monthlyHoroscopeTldr(`${label}\n\n${authoredTldr}\n\n${heading}\n\nThe full forecast belongs in Horoscopes.`), authoredTldr);
+  }
+}
+assert.equal(monthlyHoroscopeTldr(`**TLDR**\n${authoredTldr}\n\n**The month ahead**\nForecast.`), authoredTldr);
+assert.equal(monthlyHoroscopeTldr(`**TLDR**\n\n${authoredTldr}`), authoredTldr);
+assert.equal(monthlyHoroscopeTldr('Full article without an authored TLDR.'), null);
+assert.equal(monthlyHoroscopeTldr('The article says TLDR in a sentence.'), null);
+assert.equal(monthlyHoroscopeTldr('**TLDR**\n\n**The month ahead**\nForecast.'), null);
+assert.equal(monthlyHoroscopeTldr(null), null);
+
 const timeZone = "America/New_York";
 const days = Array.from({ length: 30 }, (_, index) => ({
   date: `2026-09-${String(index + 1).padStart(2, "0")}T12:00:00.000Z`,

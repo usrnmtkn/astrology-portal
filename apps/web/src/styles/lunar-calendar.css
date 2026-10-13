@@ -2872,6 +2872,20 @@ a.tx-card.has-article:hover .tx-more {
   letter-spacing: var(--tracking-body);
 }
 
+.lunar-month-overview--monthly {
+  min-width: 0;
+  padding: var(--space-6);
+  border: var(--border-width-thin) solid var(--card-border);
+  border-radius: var(--lunar-card-radius);
+  background: var(--card-bg);
+  box-shadow: var(--shadow-card);
+  overflow-wrap: anywhere;
+}
+
+.lunar-month-overview--monthly .learn-jump__link {
+  justify-self: start;
+}
+
 .lunar-calendar-month-primary {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
