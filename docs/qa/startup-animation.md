@@ -2,8 +2,8 @@
 
 The document displays a centered celestial poster immediately. Once the entry
 bundle runs, `startupAnimation.ts` loads the light SVG Lottie player as an optional,
-low-priority asset. It does not await the player, an animation loop, or a minimum
-display time. React replacing the document shell is the readiness signal. Normal
+asynchronous asset with an explicit high fetch priority. It does not await the player, an
+animation loop, or a minimum display time. React replacing the document shell is the readiness signal. Normal
 route navigation and in-page loading keep the existing progress indicators.
 
 The four symbols follow the owner's October 12 reference: a Sun with a center
@@ -64,7 +64,8 @@ The preview initially follows the browser's reduced-motion preference. Its
 Play/Pause animation button explicitly overrides that preference for this local
 comparison only, for both the four symbols and the moon. The choice persists in
 the preview URL (`?motion=play` or `?motion=pause`) across reloads. The production
-loader continues to honor reduced motion. This addresses the owner's report of
+loader uses a clockwise brightness cycle without translation or deformation
+under reduced motion. This addresses the owner's report of
 a static preview: the in-app browser reported reduced motion enabled.
 
 ## Compact moon alternative
@@ -86,9 +87,11 @@ To select it for the app, set `data-loader="moon"` on `#app-startup` in
 The moon uses inline SVG/CSS and skips the Lottie player entirely. Both variants
 use the same accessible loading text, recovery controls, and React handoff.
 
-Reduced-motion visits show the poster without downloading the player. Changing
-the preference while loading stops playback at frame zero. Hidden documents pause
-playback. App mount or startup failure destroys the animation and its listeners;
+Reduced-motion visits use a CSS brightness cycle on the inline poster without
+downloading the player. It starts before the application entry bundle arrives.
+Changing the preference while loading stops Lottie at frame zero and shows this
+non-spatial signal; switching back resumes the approved bounce. Hidden documents
+pause Lottie playback. App mount or startup failure destroys the animation and its listeners;
 player failure leaves the accessible loading text, poster, and existing recovery
 controls working. The existing 12-second slow-start message and guarded recovery
 for unavailable application chunks remain in place.
@@ -152,3 +155,39 @@ in `scripts/web-bundle-budgets.json`. Main passed its prior ceilings; the loader
 passes the updated feature allocation. This adds animation cost and makes no
 performance-improvement claim. Required hosted checks and deployment verification
 are separate from these local results.
+
+## Live playback follow-up
+
+The local comparison can explicitly play the full bounce with `?motion=play`,
+while production follows the system motion preference. Reduced motion now keeps
+the four icons signaling progress through a gentle clockwise brightness cycle,
+without moving, scaling, or rotating them. The normal-motion player requests high
+fetch priority so it can load while application chunks are pending, and readiness
+handles both the event and an already-loaded player. App readiness still never
+waits for the animation.
+
+Local verification: all 15 startup-animation browser checks passed on a fresh
+production build, including real SVG frame changes, the reduced-motion signal
+before the entry bundle, unchanged icon bounds, clockwise order, motion preference
+changes, and normal/error handoffs. CSS/token audits and startup performance
+contracts passed. The local comparison now embeds its player so playback does
+not depend on another asset request.
+
+Matched fresh builds in the isolated release checkout, using its own `npm ci`
+dependencies and identical visual-smoke environment, measure aggregate CSS at
+118,727 gzip bytes on unchanged main `a60a4177` and 118,967 on `2dae5ec39`
+(+240). The aggregate CSS allowance increases by 200 bytes to 119,000, leaving
+33 bytes of measured headroom. Startup and individual chunk budgets remain
+unchanged. The final feature build must pass that allowance.
+
+Final JavaScript measurements against main `e933bddd`: unchanged main is
+3,624,396 gzip bytes, and the final loader browser build is 3,624,452 (+56).
+A direct local build measured 3,624,301, while hosted auth-access run
+`38340447852` measured 3,624,484 on `8c3348d56`. The aggregate JavaScript
+allowance increases by 200 bytes to 3,624,650, leaving 166 bytes above the
+observed hosted maximum. This accounts for the readiness fix and observed build
+variance; it does not change startup, runtime-performance or individual chunk
+limits. All 15 Chromium checks and four targeted WebKit checks pass on this
+implementation. WebKit uses the same assertions with optional screenshot capture
+omitted because capture stalls while the App request is held. Physical Safari
+verification and deployment remain separate from these engine-level checks.

@@ -105,6 +105,13 @@
   --loading-pulse-opacity: 0.45;
   --loading-line-short-width: 72%;
   --startup-artwork-size: calc(var(--size-5) * 2);
+  /* Reduced-motion loading feedback: one clockwise brightness cycle. */
+  --startup-signal-duration: 2.8s;
+  --startup-signal-ease: ease-in-out;
+  --startup-signal-delay: 0s;
+  --startup-signal-moon-delay: -2.1s;
+  --startup-signal-star-delay: -1.4s;
+  --startup-signal-earth-delay: -0.7s;
   --startup-screen-height: 100svh;
   /* Monochrome symbols; retain the earlier teal palette for local comparison. */
   --startup-ink: #1c1f26;

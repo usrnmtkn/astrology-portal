@@ -6,6 +6,9 @@ import { fileURLToPath } from "node:url";
 const dist = new URL("../apps/web/dist/", import.meta.url);
 const player = readdirSync(new URL("assets/", dist)).find(name => /^lottie_light\.min-.*\.js$/u.test(name));
 if (!player) throw new Error("Build @tldr/web before creating the startup preview.");
+// Keep the playground's player in the document: an old open preview must not
+// depend on a second asset request before the approved motion can start.
+const playerSource = readFileSync(new URL(`assets/${player}`, dist), "utf8").replace(/<\/script/giu, "<\\/script");
 const data = readFileSync(new URL("../apps/web/src/assets/startup-celestial.json", import.meta.url), "utf8").replaceAll("<", "\\u003c");
 const html = readFileSync(new URL("index.html", dist), "utf8")
   .replace(/<script\b[^>]*>[\s\S]*?<\/script>/gu, "")
@@ -37,7 +40,7 @@ const html = readFileSync(new URL("index.html", dist), "utf8")
         var(--startup-moon-start-delay) infinite alternate;
     }
   </style></head>`)
-  .replace("</body>", `
+  .replace("</body>", () => `
   <aside class="preview-controls" aria-label="Animation appearance">
     <div role="group" aria-label="Loader">
       <button type="button" data-loader-choice="moon">Moon</button>
@@ -55,6 +58,7 @@ const html = readFileSync(new URL("index.html", dist), "utf8")
     </div>
     <button type="button" data-toggle-playback>Play animation</button>
   </aside>
+  <script data-preview-player>${playerSource}</script>
   <script>
     const root = document.documentElement;
     const startup = document.getElementById('app-startup');
@@ -65,7 +69,6 @@ const html = readFileSync(new URL("index.html", dist), "utf8")
     const isPlaying = () => motionOverride ? motionOverride === 'play' : !motion.matches;
     let animation;
     let animationReady = false;
-    let playerScript;
     const sync = () => {
       const playing = isPlaying();
       if (motionOverride) root.dataset.previewMotion = motionOverride;
@@ -78,21 +81,19 @@ const html = readFileSync(new URL("index.html", dist), "utf8")
       else animation.play();
     };
     function loadCelestial() {
-      if (playerScript) return;
-      playerScript = document.createElement('script');
-      playerScript.src = '/assets/${player}';
-      playerScript.onload = () => {
-        animation = lottie.loadAnimation({
-          container: document.querySelector('.startup-artwork__animation'),
-          renderer: 'svg', loop: true, autoplay: false, animationData: ${data}
-        });
-        animation.addEventListener('DOMLoaded', () => {
-          animationReady = true;
-          document.querySelector('.startup-artwork').setAttribute('data-animation-ready', '');
-          sync();
-        });
+      if (animation) return;
+      animation = lottie.loadAnimation({
+        container: document.querySelector('.startup-artwork__animation'),
+        renderer: 'svg', loop: true, autoplay: false, animationData: ${data}
+      });
+      const onAnimationReady = () => {
+        if (animationReady) return;
+        animationReady = true;
+        document.querySelector('.startup-artwork').setAttribute('data-animation-ready', '');
+        sync();
       };
-      document.head.append(playerScript);
+      animation.addEventListener('DOMLoaded', onAnimationReady);
+      if (animation.isLoaded) onAnimationReady();
     }
     function select(key, value) {
       root.dataset[key] = value;
