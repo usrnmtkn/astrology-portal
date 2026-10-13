@@ -194,7 +194,7 @@ function replaceTemplateTokens(source: string, values: Record<string, string>) {
 function markdownSections(markdown: string): SkyArticleSection[] {
   const lines = normalizeNewlines(markdown).split("\n");
   const sections: SkyArticleSection[] = [];
-  let heading = "Overview";
+  let heading = "";
   let body: string[] = [];
 
   const flush = () => {

@@ -26,7 +26,14 @@ for (const width of [390,1440]) for (const colorScheme of ['light','dark'] as co
         localStorage.setItem('tldrastro:studio-theme',theme);
       },colorScheme);
       const errors:string[]=[],writes:any[]=[];page.on('pageerror',e=>errors.push(e.message));
-      await routeStudioInventoryApi(page, { call, onWrite: write=>writes.push(write), answer: async (route, url) => {
+      let refusePublication = width === 390 && colorScheme === 'light' && initialPublished;
+      await routeStudioInventoryApi(page, { call: async message => {
+        if (refusePublication && message.method === 'PATCH' && (message.body as any)?.ownerAction === 'publish-sky-article-edition-revision') {
+          refusePublication = false;
+          return {status:409,payload:{ok:false,error:'Synthetic publication refused; saved draft retained.'}};
+        }
+        return call(message);
+      }, onWrite: write=>writes.push(write), answer: async (route, url) => {
         if (!['/api/admin/studio-memory-feedback', '/api/admin/content-live-status'].includes(url.pathname)) return false;
         const request = route.request();
         const result = await call({ method: request.method(), url: url.pathname + url.search, body: request.postData() ? request.postDataJSON() : null });
@@ -50,7 +57,7 @@ for (const width of [390,1440]) for (const colorScheme of ['light','dark'] as co
       await expect(page.locator('[data-studio-theme]').first()).toHaveAttribute('data-studio-theme',colorScheme);
       await page.locator('.admin-content-row').filter({hasText:savedRevision.content_key}).getByRole('button',{name:'Edit',exact:true}).click();
       await expect(editor.getByLabel('Sky article TL;DR',{exact:true})).toHaveValue('Synthetic revised summary. Complete final sentence.');
-      await expect(editor.getByRole('button',{name:'Review 1 change',exact:true})).toBeVisible();
+      await expect(editor.getByRole('button',{name:'Review & publish',exact:true})).toBeVisible();
       // Observe beyond the autosave debounce: saved differences from the live
       // edition are review work, not a new edit or permission to write again.
       await page.waitForTimeout(2000);
@@ -67,9 +74,23 @@ for (const width of [390,1440]) for (const colorScheme of ['light','dark'] as co
       await expect(scopes.locator('option')).toHaveText(['This passage only','Long-form Sky articles']);
       await memory.getByRole('button',{name:'Use for future drafts',exact:true}).click();
       await expect(memory.getByRole('alert')).toContainText('Review the exact saved passage');
-      await editor.getByRole('button',{name:'Review 1 change',exact:true}).click();
+      const actions = editor.getByLabel('Article publication actions');
+      await expect(actions).toContainText('Draft saved · Changes not published');
+      const bounds = await actions.boundingBox();
+      expect(bounds).toBeTruthy();
+      expect(bounds!.y + bounds!.height).toBeLessThanOrEqual(1000);
+      await editor.screenshot({path:`test-results/article-crud-draft-${width}-${colorScheme}.png`});
+      await actions.getByRole('button',{name:'Review & publish',exact:true}).click();
+      await expect(editor.getByRole('region',{name:'Review Sky article changes'})).toBeFocused();
       await editor.getByRole('button',{name:'Publish changes',exact:true}).click();
+      if (width === 390 && colorScheme === 'light' && initialPublished) {
+        await expect(editor.getByRole('alert').filter({hasText:'Synthetic publication refused'})).toBeVisible();
+        await expect(actions).toContainText('Draft saved · Changes not published');
+        expect((await call({method:'rows'})).find((row:any)=>row.id===savedRevision.id)).toEqual(savedRevision);
+        await editor.getByRole('button',{name:'Publish changes',exact:true}).click();
+      }
       await expect(page.getByText('The reviewed revision is published.',{exact:true})).toBeVisible();
+      await expect(actions.getByRole('link',{name:'Read published article'})).toHaveAttribute('href','/#articles/sky-article%2Fsaturn%2Faries%2F2026');
       const publishedRows=await call({method:'rows'});
       expect(publishedRows.find((row:any)=>row.content_key==='sky-article/saturn/aries/2026')?.status).toBe('LIVE');
       const publishedRevisions=publishedRows.filter((row:any)=>row.event_type==='sky-article-edition-revision');
