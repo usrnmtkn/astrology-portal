@@ -46,7 +46,7 @@ export function startStartupAnimation() {
     script.async = true;
     // This visible loading feedback must download while app chunks are pending.
     // Async scripts default to low priority, so "auto" can still defer it.
-    script.setAttribute("fetchpriority", "high");
+    script.fetchPriority = "high";
     script.setAttribute("data-startup-decoration", "");
     script.onerror = dispose;
     script.onload = () => {
