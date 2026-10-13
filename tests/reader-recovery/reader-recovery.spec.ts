@@ -28,7 +28,10 @@ test.beforeAll(async () => {
 async function prepare(page: Page, options: { circleFailure?: boolean; slowContent?: boolean; session?: "missing" | "rejected" | "unavailable" } = {}) {
   const readerProfile = profile;
   await page.emulateMedia({ reducedMotion: "reduce" });
-  const state = { circleFailure: options.circleFailure ?? false, circleRequests: 0, contentRequests: 0, session: options.session };
+  const state = { circleFailure: options.circleFailure ?? false, circleRequests: 0, contentRequests: 0, contentResponses: 0, session: options.session };
+  let releaseContent!: () => void;
+  const stalledContent = new Promise<void>(resolve => { releaseContent = resolve; });
+  page.once("close", releaseContent);
   await page.addInitScript(({ location, user, profile, cacheRecords, session }) => {
     localStorage.setItem("tldrastro:theme", "light");
     localStorage.setItem("tldrastro:selectedLocation", JSON.stringify(location));
@@ -41,8 +44,8 @@ async function prepare(page: Page, options: { circleFailure?: boolean; slowConte
   await page.route("**/api/**", route => route.request().method() === "GET" ? route.continue() : route.fulfill({ status: 503, json: {} }));
   await page.route('**/api/content-reader', async route => {
     state.contentRequests++;
-    if (options.slowContent) await new Promise(resolve => setTimeout(resolve, 30_000));
-    await route.fulfill({ json: readerResponse([]) }).catch(() => {});
+    if (options.slowContent) await stalledContent;
+    await route.fulfill({ json: readerResponse([]) }).then(() => { state.contentResponses++; }).catch(() => {});
   });
   await page.route("https://tldrastro-api-27165565299.us-central1.run.app/**", route => route.fulfill({ status: 503, json: {} }));
   await page.route(/^https:\/\/[^/]+\.supabase\.(?:test|co)\//, async route => {
@@ -178,9 +181,15 @@ test("Calendar honors the shared date and finishes skeletons on a stalled conten
   } } }));
   await page.goto(`/?date=${date}#calendar?view=day`);
   await expect(page.getByLabel("Selected lunar day")).toContainText(/Fri.*November 27/, { timeout: 30_000 });
+  await expect.poll(() => state.contentRequests).toBeGreaterThan(0);
+  // Installing the offline publication snapshot may revalidate the targeted
+  // content after its first eight-second deadline. The complete reading must
+  // recover within both read deadlines and the snapshot's bounded fetch, while
+  // every stalled reader response remains withheld until page teardown.
+  await expect(page.locator(".calendar-sky-card__body")).toHaveAttribute("aria-busy", "false", { timeout: 25_000 });
+  expect(state.contentResponses).toBe(0);
   const card = page.locator(".calendar-stoic-card").filter({ hasText: event.title });
   await expect(card).toBeVisible();
-  await expect.poll(() => state.contentRequests).toBeGreaterThan(0);
   await card.click();
   const reading = page.getByRole("dialog").filter({ hasText: event.title });
   await expect(reading).toBeVisible();
