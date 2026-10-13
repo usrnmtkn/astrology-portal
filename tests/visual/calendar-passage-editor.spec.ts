@@ -276,10 +276,10 @@ for (const [width,theme] of [[1440,'light'],[390,'dark'],[390,'light'],[1440,'da
             // remains saved but cannot replace the explicitly authored TLDR card.
             await expect(reader.locator('.lunar-calendar-grid-panel')).toBeVisible({timeout:60000});
             await expect(reader.getByText('Loading the monthly overview…',{exact:true})).toHaveCount(0);
-            await expect(reader.getByText('Synthetic monthly opening.',{exact:true})).toHaveCount(0);
-            await expect(reader.getByText('Synthetic monthly complete ending.',{exact:true})).toHaveCount(0);
+            await expect(reader.getByText(`Synthetic ${view} opening.`,{exact:true})).toHaveCount(0);
+            await expect(reader.getByText(`Synthetic ${view} complete ending.`,{exact:true})).toHaveCount(0);
             await editor.getByRole('button',{name:'Reload saved status',exact:true}).click();
-            await expect(field).toHaveValue('Synthetic monthly opening.\n\nSynthetic monthly complete ending.');
+            await expect(field).toHaveValue(`Synthetic ${view} opening.\n\nSynthetic ${view} complete ending.`);
           }
         }
       }

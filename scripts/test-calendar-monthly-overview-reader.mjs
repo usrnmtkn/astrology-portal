@@ -78,4 +78,4 @@ assert.match(text, /eclipse/);
 assert.equal(/Cancer/.test(text), false);
 assert.equal(overview.paragraphs.some(paragraph => paragraph.includes("{{")), false, "Unresolved tokens must not reach the Calendar month page.");
 
-console.log("PASS: Calendar month page renders published monthly overview with per-passage calculated context and hides empty templates.");
+console.log("PASS: Monthly TLDR selection preserves complete authored sections; legacy Studio compositions retain calculated context.");

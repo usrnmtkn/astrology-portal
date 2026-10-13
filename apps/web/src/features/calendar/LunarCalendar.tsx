@@ -99,7 +99,6 @@ import { calendarPhaseLabelForDay } from "./calendarPhaseLabel";
 import { lunarDayGeneratedContentKeys } from "./lunarDayResolver";
 import type { LunarDay, LunarDayArcPoint } from "./lunarDayTypes";
 import { sunIngressSeasonSign, sunIngressSeasonWindow } from "./seasonWindow";
-import { calendarMonthlyOverviewContentKeys } from "./monthlyOverview";
 import { AstroGlyph } from "./AstroGlyph";
 import {
   CalendarCheckIn,
@@ -2491,8 +2490,7 @@ export function LunarCalendar({
             return [`authored/sky-lunation-macro/${phase}/${slugContentPart(event.sign)}`];
           })
         ];
-      }),
-      ...(viewMode === "month" ? calendarMonthlyOverviewContentKeys(calendar) : [])
+      })
     ].filter((contentKey) => (
       // Signed-off Studio exact revisions can supersede their bundled baseline.
       // Keep requesting these keys even when local approved prose is available.
