@@ -172,3 +172,10 @@ before the entry bundle, unchanged icon bounds, clockwise order, motion preferen
 changes, and normal/error handoffs. CSS/token audits and startup performance
 contracts passed. The local comparison now embeds its player so playback does
 not depend on another asset request.
+
+Matched fresh builds in the isolated release checkout, using its own `npm ci`
+dependencies and identical visual-smoke environment, measure aggregate CSS at
+118,727 gzip bytes on unchanged main `a60a4177` and 118,967 on `2dae5ec39`
+(+240). The aggregate CSS allowance increases by 200 bytes to 119,000, leaving
+33 bytes of measured headroom. Every JavaScript, startup and individual chunk
+budget remains unchanged. The final feature build must pass that allowance.
