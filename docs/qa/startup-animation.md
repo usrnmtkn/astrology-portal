@@ -177,5 +177,17 @@ Matched fresh builds in the isolated release checkout, using its own `npm ci`
 dependencies and identical visual-smoke environment, measure aggregate CSS at
 118,727 gzip bytes on unchanged main `a60a4177` and 118,967 on `2dae5ec39`
 (+240). The aggregate CSS allowance increases by 200 bytes to 119,000, leaving
-33 bytes of measured headroom. Every JavaScript, startup and individual chunk
-budget remains unchanged. The final feature build must pass that allowance.
+33 bytes of measured headroom. Startup and individual chunk budgets remain
+unchanged. The final feature build must pass that allowance.
+
+Final JavaScript measurements against main `e933bddd`: unchanged main is
+3,624,396 gzip bytes, and the final loader browser build is 3,624,452 (+56).
+A direct local build measured 3,624,301, while hosted auth-access run
+`38340447852` measured 3,624,484 on `8c3348d56`. The aggregate JavaScript
+allowance increases by 200 bytes to 3,624,650, leaving 166 bytes above the
+observed hosted maximum. This accounts for the readiness fix and observed build
+variance; it does not change startup, runtime-performance or individual chunk
+limits. All 15 Chromium checks and four targeted WebKit checks pass on this
+implementation. WebKit uses the same assertions with optional screenshot capture
+omitted because capture stalls while the App request is held. Physical Safari
+verification and deployment remain separate from these engine-level checks.
