@@ -171,6 +171,43 @@ try {
   assert(preferredContext.receipt.sources.every(source => source.id === preferred.id));
   assert(preferredContext.prompt.includes(correction.text));
   assert.deepEqual(preferredContext.receipt.correctionIds, [correction.id]);
+  const scoped = { ...preferred, id: 'synthetic-contact-preferred', contentKey: 'owner-voice/scoped',
+    preferred: false, preferredContentKeys: [target] };
+  const scopedSources = { ...parsedSources, passages: [...parsedSources.passages, scoped] };
+  const scopedContext = buildPersonalTransitWriterContext({ ...options, requested: ['you', 'friend'] }, scopedSources);
+  assert.deepEqual(scopedContext.receipt.sources.map(p => p.id), [scoped.id, scoped.id],
+    'An eligible contact assignment replaces general benchmarks without filling a quota');
+  assert.equal(scopedContext.receipt.ruleBundleSha256, preferredContext.receipt.ruleBundleSha256);
+  assert.equal(scopedContext.receipt.meaningRecordSha256, preferredContext.receipt.meaningRecordSha256);
+  assert.notEqual(scopedContext.receipt.promptSha256, preferredContext.receipt.promptSha256);
+  const otherScope = { ...scoped, preferredContentKeys: ['authored/transit-aspect/mercury/venus/trine'] };
+  assert.deepEqual(buildPersonalTransitWriterContext(options, { ...scopedSources,
+    passages: [...parsedSources.passages, otherScope] }).receipt.sources.map(p => p.id), [preferred.id],
+    'Contact preference does not become a global preference');
+  for (const patch of [{status: 'rejected'}, {status: 'retired'}, {excludedContentKeys: [target]}]) {
+    assert.deepEqual(buildPersonalTransitWriterContext(options, { ...scopedSources,
+      passages: [...parsedSources.passages, {...scoped,...patch}] }).receipt.sources.map(p => p.id), [preferred.id],
+      'A contact preference cannot bypass eligibility or exclusions');
+  }
+  const youOnly = { ...scoped, perspectiveUse: undefined };
+  assert.deepEqual(buildPersonalTransitWriterContext({ ...options, requested: ['friend'] }, { ...scopedSources,
+    passages: [...parsedSources.passages, youOnly] }).receipt.sources.map(p => p.id), [preferred.id],
+    'A contact preference cannot authorize a new audience');
+  const callsBeforeInvalidPreference = calls;
+  for (const preferredContentKeys of ['all', [target, target], ['authored/transit-house/saturn/7'], [null]]) {
+    const invalid = { ...scopedSources, passages: [...parsedSources.passages, {...scoped,preferredContentKeys}] };
+    assert.throws(() => buildPersonalTransitWriterContext(options, invalid as any), /preferences failed verification/);
+    process.env.PRIVATE_PERSONAL_TRANSIT_SOURCES = encodeTransitSources(invalid as any);
+    assert.equal((await invoke(base)).status, 409, 'Malformed scopes fail before provider dispatch');
+  }
+  assert.equal(calls, callsBeforeInvalidPreference);
+  process.env.PRIVATE_PERSONAL_TRANSIT_SOURCES = encodeTransitSources(scopedSources);
+  const scopedResponse = await invoke(base);
+  assert.equal(scopedResponse.status, 200);
+  assert(scopedResponse.writingReceipt.sources.every((p: any) => p.id === scoped.id));
+  assert(prompt.includes('A brief observation about affection, enjoyment or curiosity can be complete.'));
+  assert(prompt.includes(READER_RULES_JSON), 'Conditional development does not soften the frozen output rules');
+  process.env.PRIVATE_PERSONAL_TRANSIT_SOURCES = encodeTransitSources(parsedSources);
   rows = [];
   const preferredResponse = await invoke(base);
   assert.equal(preferredResponse.status, 200);

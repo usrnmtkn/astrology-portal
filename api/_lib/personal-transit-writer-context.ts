@@ -7,7 +7,7 @@ type VoicePassage = {
   source: string; sourceSha256: string; ownerApproved: boolean; ownerAuthored?: boolean;
   role: "positive-voice-evidence"; status: "current" | "retired" | "rejected";
   roleSource: string; roleTextSha256: string;
-  preferred?: boolean; excludedContentKeys?: string[];
+  preferred?: boolean; preferredContentKeys?: string[]; excludedContentKeys?: string[];
   perspectiveUse?: { audiences: Audience[]; source: string };
 };
 type EditorialFeedback = { source: string; sha256: string;

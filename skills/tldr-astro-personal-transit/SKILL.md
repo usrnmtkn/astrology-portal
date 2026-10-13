@@ -57,6 +57,12 @@ merely to make the paragraph more vivid. Let length follow the meaning available
 Name a recognizable choice, behavior or tension in plain language. Do not pad
 the passage with a metaphor or a generic instruction.
 
+Emotional development is conditional. A supported observation about affection,
+enjoyment or curiosity can be complete without a problem, psychological history
+or practical instruction. Current contact-specific voice preferences outrank
+general benchmarks after eligibility and rejection checks. Select complete
+passages without importing their events or matching an emotional quota.
+
 Use the same frozen rule bundle in the writer and deterministic validator.
 Checks report violations without rewriting. They cannot certify voice quality
 or semantic correctness. Preserve generated originals and owner revisions;
@@ -77,5 +83,6 @@ Routine drafting does not add a universal meaning-approval stage. This is an inp
 not another model stage. Existing exact-request authorization controls any
 later billed dispatch; preparing inputs grants no authorization.
 
-The implementation is a local prototype, not the deployed writer. A successful
+Studio and local batch preparation share the writer-context implementation.
+Changes in a local checkout do not update the deployed writer. A successful
 contract test proves transport and validation behavior, not successful prose.

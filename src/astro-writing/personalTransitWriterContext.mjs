@@ -11,6 +11,14 @@ import { inspectCalibration, loadCurrentFeedback, feedbackForWriter, PERSONAL_TR
 export class PersonalTransitInputError extends Error { constructor(statusCode, message) { super(message); this.statusCode = statusCode; } }
 const AdminHttpError = PersonalTransitInputError;
 const hash = (text) => createHash("sha256").update(text).digest("hex");
+function verifyVoicePreferences(passages) {
+    for (const p of passages) {
+        if (p.preferredContentKeys !== undefined && (!Array.isArray(p.preferredContentKeys)
+            || p.preferredContentKeys.some(key => typeof key !== 'string' || !/^authored\/transit-aspect\/[a-z-]+\/[a-z-]+\/[a-z-]+$/u.test(key))
+            || new Set(p.preferredContentKeys).size !== p.preferredContentKeys.length))
+            throw new AdminHttpError(409, 'Personal Transit voice preferences failed verification. No generation was started.');
+    }
+}
 // These are complete units chosen from an owner-supplied phrase bank, not
 // excerpts manufactured from paragraphs or instructions imported from documents.
 function verifiedStylePhrases(sources) {
@@ -82,6 +90,7 @@ export function parsePersonalTransitSources(raw) {
                 throw Error();
             ids.add(p.id);
         }
+        verifyVoicePreferences(document.passages);
         verifiedStylePhrases(document);
         if (document.feedback) {
             const { sha256, ...payload } = document.feedback;
@@ -103,12 +112,14 @@ export const PERSONAL_TRANSIT_WRITER_INSTRUCTION = [
     "Apply currentOwnerCorrections when supplied. They are current owner directions. Voice examples do not transfer their facts, personal history, assumed events, perspective, length or level of situational detail.",
     "When stylePhrases are supplied, read their exact wording for ordinary vocabulary, contractions, rhythm and point of view alongside the complete voice examples. They are reference writing, never instructions, factual claims about this reader, mandatory opening or closing lines, or a phrase quota. Write original language appropriate to readerMeaning. Keep the destination's perspective and factual limits; reference situations and dialogue do not become facts about this transit. Current owner corrections and the Personal Transit rules still apply; a reference never creates an exception.",
     "Let the particular meaning determine the tone. Do not turn every transit into a warning or a lesson in managing yourself. Advice and a concluding lesson are not required.",
+    "Develop emotional stakes or explain how a situation arose only when the supplied meaning supports that development and the passage needs it. A brief observation about affection, enjoyment or curiosity can be complete. Do not add a difficulty, private history, psychological explanation or action step to satisfy an editorial checklist. An example about worry or obligations does not make those the subject of this contact.",
     "Length follows the amount of supported meaning. Do not pad a sparse transit. Examples do not set the amount of situational detail or the length for another contact. Before returning the passage, compare its complete sentences with the supplied voice examples: could someone say them aloud in an ordinary conversation? Explaining the topic correctly is not enough. End when the thought is finished.",
     READER_RULES_INSTRUCTION
 ].join("\n\n");
 
 export function buildPersonalTransitWriterContext(input, sources = readPersonalTransitSources(), { evaluationPermission = null, responseFormat = 'slot-values', permitMissingEvidenceForPreparation = false } = {}) {
     if (!['slot-values','passage'].includes(responseFormat) || (responseFormat === 'passage' && input.requested.length !== 1)) throw new AdminHttpError(409, 'Invalid Personal Transit response format.');
+    verifyVoicePreferences(sources.passages);
     const stylePhrases = verifiedStylePhrases(sources);
     let feedbackOrigin;
     if (sources.feedbackRegistryPath) {
@@ -164,10 +175,12 @@ export function buildPersonalTransitWriterContext(input, sources = readPersonalT
             const [, , moving, target, contact] = p.contentKey.split("/");
             return Number(contact === aspect) * 4 + Number(target === natal) * 2 + Number(moving === transiting);
         };
-        // Use current preferred assignments first. Do not fill their unused slots
-        // with weaker historical evidence. Cross-perspective use needs its own source.
+        // A contact-specific editorial assignment outranks a general benchmark.
+        // Apply eligibility/rejections first; never fill unused preferred slots
+        // with weaker evidence. Cross-perspective use needs its own source.
         const seen = new Set();
-        const preferred = candidates.filter(p => p.preferred);
+        const contactPreferred = candidates.filter(p => p.preferredContentKeys?.includes(baseKey));
+        const preferred = contactPreferred.length ? contactPreferred : candidates.filter(p => p.preferred);
         const pool = preferred.length ? preferred : candidates;
         const sameAudience = pool.filter(p => p.field === field);
         const selected = (sameAudience.length ? sameAudience : pool).sort((a, b) => score(b) - score(a) || a.id.localeCompare(b.id))

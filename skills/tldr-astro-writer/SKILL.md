@@ -41,6 +41,22 @@ Never add a weaker example merely to satisfy a minimum evidence count.
 
 Cross-surface evidence may be used for voice only when its information budget and prose function are appropriate. Its facts, scenarios, astrology, biography, perspective, and timing never transfer.
 
+Select examples for the emotional range of the supported meaning as well as
+surface and prose function. An obligation or misunderstanding benchmark must
+not make unrelated contacts about managing reactions. Emotional stakes,
+psychological explanation and practical advice are conditional editorial
+questions, not required paragraph components. A brief observation about
+affection, enjoyment or curiosity can be complete. No new model judge,
+automatic rewrite or voice pass follows from this editorial reference.
+
+The October 12 reference reconciliation retains current explicit output bans,
+surface-specific perspective, placeholders, lengths and required dated openings.
+Preserve historical owner prose verbatim; its presence creates no automatic
+exception for new copy. Labels such as gold or approved-direction do not prove
+exact wording approval. Resolve approval through the owning source record.
+Authority: the owner's request to proceed with the reviewed reference revisions
+in [the October 12 writing task](thread:01a12e21-0d00-7112-abcf-6434a30f23b1).
+
 Preserve evidence selection for audit. Routine generation does not require the owner to review the evidence packet before every draft.
 
 ## Corrections
