@@ -18,7 +18,7 @@ const events = [
   { id: "scorpio", type: "ingress", title: "Sun enters Scorpio", startsAt: "2026-10-23T12:00:00.000Z", dateKey: "2026-10-23", glyph: "☉", primary: true, planet: "Sun", toSign: "Scorpio" }
 ];
 
-test("Calendar month view renders a published monthly overview", async ({ page }) => {
+test("Calendar month does not substitute a legacy composition for a horoscope TLDR", async ({ page }) => {
   test.setTimeout(120_000);
   await page.setViewportSize({ width: 1440, height: 1100 });
   await page.addInitScript((nextLocation) => {
@@ -59,11 +59,8 @@ test("Calendar month view renders a published monthly overview", async ({ page }
     }]) });
   });
   await page.goto("/?date=2026-09-15#calendar?view=month&date=2026-09-15");
-  const overview = page.getByRole("region", { name: "Monthly overview", exact: true });
-  await expect(overview).toBeVisible({ timeout: 60_000 });
-  await expect(overview).toContainText("Virgo");
-  await expect(overview).not.toContainText("{{");
-  const heading = overview.getByRole("heading", { name: "Monthly overview", exact: true });
-  await expect(heading).toHaveCount(1);
-  await expect(heading).toHaveClass(/sr-only/);
+  await expect(page.locator('.lunar-calendar-grid-panel')).toBeVisible({timeout:60000});
+  await expect(page.getByText('Loading the monthly overview…',{exact:true})).toHaveCount(0);
+  await expect(page.locator('.lunar-month-overview--monthly')).toHaveCount(0);
+  await expect(page.getByText(/From .* to .*, the Sun moves through Virgo/)).toHaveCount(0);
 });

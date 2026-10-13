@@ -29,7 +29,7 @@ for(const [width,theme] of [[390,'light'],[390,'dark'],[1440,'light'],[1440,'dar
     if(method==='reader'&&route.request().postDataJSON().horoscope&&readerMode==='error'){await route.fulfill({status:503,json:{error:'Fixture unavailable'}});return true;}
     if(method==='reader'&&hold){await new Promise<void>(r=>release=r);hold=false;}
     const result=await call({method,body:route.request().postDataJSON()});
-    await route.fulfill({status:result.status,json:result.payload});return true;
+    await route.fulfill({status:result.status,json:readerMode==='empty'&&method==='reader'?{...result.payload,rows:[]}:result.payload});return true;
    }});
    await page.goto('/admin/content#ai-writing');
    const profiles=page.getByRole('region',{name:'Horoscope writing profiles',exact:true});
@@ -184,19 +184,41 @@ for(const [width,theme] of [[390,'light'],[390,'dark'],[1440,'light'],[1440,'dar
    await expect(page.getByText('Loading your horoscope…',{exact:true})).toBeVisible();release();
    await expect(overview).toContainText('Your complete monthly fixture ends here.');
    await page.goto('/?date=2026-10-10#calendar?view=month&date=2026-10-10');
-   const calendarOverview=page.getByRole('region',{name:'Monthly overview',exact:true});
-   await expect(calendarOverview.locator('strong')).toHaveText(['TLDR','The month ahead']);
-   await expect(calendarOverview).toContainText('You can read the complete monthly summary fixture.');
-   await expect(calendarOverview).toContainText('Your summary ends here.');
-   await expect(calendarOverview).toContainText('You can read the exact monthly fixture opening.');
-   await expect(calendarOverview).toContainText('Your complete monthly fixture ends here.');
-   await expect(calendarOverview.getByRole('heading',{name:'Monthly overview',exact:true})).toHaveClass(/sr-only/);
+   const calendarOverview=page.getByRole('region',{name:'October 2026 Overview',exact:true});
+   await expect(calendarOverview.locator('strong')).toHaveText(['TLDR']);
+   await expect(calendarOverview.locator('p')).toHaveText(['TLDR',...summary.split('\n\n')]);
+   await expect(page.getByText('You can read the exact monthly fixture opening.',{exact:true})).toHaveCount(0);
+   await expect(page.getByText('Your complete monthly fixture ends here.',{exact:true})).toHaveCount(0);
+   const grid=page.locator('.lunar-calendar-grid-panel');
+   expect(await grid.evaluate((el)=>el.nextElementSibling?.classList.contains('lunar-month-overview--monthly'))).toBe(true);
+   const gridBox=await grid.boundingBox(),cardBox=await calendarOverview.boundingBox();
+   expect(cardBox!.y).toBeGreaterThanOrEqual(gridBox!.y+gridBox!.height);
+   expect(await calendarOverview.locator('p').nth(1).evaluate(el=>{const s=getComputedStyle(el);return[s.fontFamily,s.fontSize,s.lineHeight,s.letterSpacing];})).toEqual(bodyStyle);
+   const cardHeadingStyle=await calendarOverview.locator('h2').evaluate(el=>{const s=getComputedStyle(el);return[s.fontFamily,s.fontSize,s.fontWeight,s.lineHeight,s.letterSpacing,s.margin,s.textTransform,s.textAlign];});
+   // Use the existing Calendar card title role at both widths and themes.
+   const analogousHeading=page.locator('.calendar-sky-card__title').filter({hasNotText:'October 2026 Overview'}).first();
+   if(await analogousHeading.count())expect(await analogousHeading.evaluate(el=>{const s=getComputedStyle(el);return[s.fontFamily,s.fontSize,s.fontWeight,s.lineHeight,s.letterSpacing,s.margin,s.textTransform,s.textAlign];})).toEqual(cardHeadingStyle);
+   await expect(calendarOverview.getByRole('heading')).toHaveText(['October 2026 Overview']);
+   const readMore=calendarOverview.getByRole('link',{name:'Read more: October 2026 Overview',exact:true});
+   await expect(readMore).toHaveAttribute('href',`/#horoscopes?period=monthly&edition=${saved.id}`);
+   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
    await calendarOverview.scrollIntoViewIfNeeded();
    await page.screenshot({path:`test-results/calendar-monthly-${width}-${theme}.png`,fullPage:true});
-   await page.reload();await expect(calendarOverview).toContainText('Your complete monthly fixture ends here.');
-   readerMode='error';await page.reload();await expect(calendarOverview).toContainText('The monthly overview couldn’t load.');
-   readerMode='normal';await calendarOverview.getByRole('button',{name:'Try again',exact:true}).click();
-   await expect(calendarOverview).toContainText('Your complete monthly fixture ends here.');
+   await readMore.click();
+   await expect(overview).toContainText('You can read the exact monthly fixture opening.');
+   await expect(overview).toContainText('Your complete monthly fixture ends here.');
+   await page.reload();await expect(overview).toContainText('Your complete monthly fixture ends here.');
+   await page.goBack();await expect(calendarOverview.locator('p')).toHaveText(['TLDR',...summary.split('\n\n')]);
+   await page.goForward();await expect(overview).toContainText('Your complete monthly fixture ends here.');
+   await page.goBack();await page.reload();await expect(calendarOverview.locator('p')).toHaveText(['TLDR',...summary.split('\n\n')]);
+   readerMode='error';await page.reload();await expect(page.getByText('The monthly overview couldn’t load.',{exact:false})).toBeVisible();
+   await expect(calendarOverview).toHaveCount(0);await expect(grid).toBeVisible();
+   readerMode='normal';await page.getByRole('button',{name:'Try again',exact:true}).click();
+   await expect(calendarOverview.locator('p')).toHaveText(['TLDR',...summary.split('\n\n')]);
+   readerMode='empty';await page.reload();
+   await expect(grid).toBeVisible();await expect(page.getByText('Loading the monthly overview…',{exact:true})).toHaveCount(0);
+   await expect(calendarOverview).toHaveCount(0);await expect(page.getByRole('link',{name:/^Read more: October/})).toHaveCount(0);
+   readerMode='normal';
    expect((await call({method:'writer-state'})).calls).toBe(4);
    // Current navigation follows the reader's civil month, while a saved edition
    // keeps its own month after the calendar rolls forward.
@@ -208,6 +230,16 @@ for(const [width,theme] of [[390,'light'],[390,'dark'],[1440,'light'],[1440,'dar
    await expect(page.getByRole('button',{name:'November Horoscopes',exact:true})).toHaveAttribute('aria-pressed','true');
    await expect(page.getByRole('heading',{name:'No monthly reading yet'})).toBeVisible();
    expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+   // A historical calendar month must link to its own edition even when the
+   // reader's current month and preferred time zone differ.
+   await page.goto('/?date=2026-10-10#calendar?view=month&date=2026-10-10');
+   await expect(readMore).toHaveAttribute('href',`/#horoscopes?period=monthly&edition=${saved.id}`);
+   await page.evaluate(()=>localStorage.setItem('tldrastro:horoscopeLocation',JSON.stringify({label:'Tokyo',latitude:35.68,longitude:139.76,timeZone:'Asia/Tokyo'})));
+   await readMore.click();
+   await expect(overview).toContainText('You can read the exact monthly fixture opening.');
+   await expect(overview).toContainText('Your complete monthly fixture ends here.');
+   await expect(overview).toContainText('America/New_York');
+   await page.reload();await expect(overview).toContainText('Your complete monthly fixture ends here.');
    await page.goto(href!);
    await expect(overview).toContainText('Your complete monthly fixture ends here.');
    await expect(page.getByRole('button',{name:'October Horoscopes',exact:true})).toHaveAttribute('aria-pressed','true');

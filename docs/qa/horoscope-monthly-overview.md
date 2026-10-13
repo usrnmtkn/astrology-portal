@@ -126,3 +126,22 @@ approved retry. It verifies the original failure timestamp in the edition's time
 zone, unchanged request count while checking, and the
 complete later draft through publication and reader reload. Fixture success does
 not establish a live completion rate or the quality of fresh generated prose.
+
+## Monthly reader placement correction (2026-10-12)
+
+The earlier Calendar full-body/fallback acceptance above is superseded by the
+owner's request: full Monthly readings belong in Horoscopes, with the complete
+authored TLDR in a card below the Calendar grid and a Read more link to that
+edition. Published prose and Studio instructions are unchanged.
+
+The updated Monthly browser matrix checks the exact two-paragraph TLDR, absence
+of forecast prose on Calendar, card-after-grid placement, full reading opening
+and ending after navigation/reload/back/forward, historical-month links across a
+month boundary and a different reader time zone, empty/error/retry states, and
+shared title/body typography at 390/1440 widths in light/dark. The section selector
+accepts explicit plain/bold/Markdown TLDR labels and never infers an excerpt when
+one is missing. Legacy Calendar publication tests retain save/reopen assertions
+and verify those older compositions no longer appear in place of a horoscope.
+
+Local and hosted results and the production revision are recorded in the release
+PR. No production generation, content write, or publication is part of these tests.

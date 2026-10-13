@@ -1,15 +1,16 @@
-import {useEffect,useState,type ReactNode} from 'react';
+import {useEffect,useState} from 'react';
 import {loadReaderRows} from '../../services/readerContentClient';
 import {subscribeToContentUpdates,subscribeToContentRevalidation} from '../../services/contentUpdateSignal';
-import {horoscopeEditionAt} from '../../content/horoscopeEditions.mjs';
+import {horoscopeEditionAt,horoscopeEditionKey} from '../../content/horoscopeEditions.mjs';
+import {monthlyHoroscopeTldr} from '../../content/monthlyHoroscopeTldr.mjs';
 import {zonedDateTimeToUtc} from '../../services/timezones';
 import {CalendarPassageProse} from './CalendarPassageProse';
 
-/** Calendar and Horoscopes read the same approved monthly edition; no second writer. */
-export function PublishedMonthlyOverview({month,timeZone,fallback}:{month:string;timeZone:string;fallback:ReactNode}) {
+/** Calendar previews only the authored TLDR; Horoscopes owns the full edition. */
+export function PublishedMonthlyOverview({month,timeZone}:{month:string;timeZone:string}) {
   const key=`${month}/${timeZone}`;
   const [version,setVersion]=useState(0);
-  const [state,setState]=useState<{key:string;body?:string;error?:boolean}>({key:''});
+  const [state,setState]=useState<{key:string;reading?:{headline:string;tldr:string|null;href:string};error?:boolean}>({key:''});
   const retry=()=>setVersion(v=>v+1);
   useEffect(()=>subscribeToContentUpdates(notice=>{if(notice.contentKey.startsWith('horoscope/monthly/'))retry();}),[]);
   useEffect(()=>subscribeToContentRevalidation(retry),[]);
@@ -21,11 +22,25 @@ export function PublishedMonthlyOverview({month,timeZone,fallback}:{month:string
       .then(result=>{
         if(result.error)throw new Error('unavailable');
         const edition=horoscopeEditionAt(result.data??[],'monthly',at,timeZone);
-        if(!controller.signal.aborted)setState({key,body:edition?.passages.find(p=>p.sign==='overview')?.body});
+        const passage=edition?.passages.find(p=>p.sign==='overview');
+        const row=edition?result.data?.find(row=>row.content_key===horoscopeEditionKey(edition.window)):undefined;
+        if(!controller.signal.aborted)setState({key,reading:passage&&row?{
+          headline:passage.headline,
+          tldr:monthlyHoroscopeTldr(passage.body),
+          href:`/#horoscopes?period=monthly&edition=${encodeURIComponent(row.id)}`
+        }:undefined});
       }).catch(()=>{if(!controller.signal.aborted)setState({key,error:true});});
     return()=>controller.abort();
-  },[key,version]);
+  },[key,month,timeZone,version]);
   if(state.key!==key)return <p role="status">Loading the monthly overview…</p>;
   if(state.error)return <p role="status">The monthly overview couldn’t load. <button type="button" className="learn-jump__link" onClick={retry}>Try again</button></p>;
-  return state.body?<CalendarPassageProse text={state.body}/>:<>{fallback}</>;
+  if(!state.reading)return null;
+  return <section className="lunar-month-overview lunar-month-overview--monthly" aria-labelledby="lunar-month-overview-heading">
+    <h2 className="calendar-sky-card__title" id="lunar-month-overview-heading">{state.reading.headline}</h2>
+    {state.reading.tldr&&<>
+      <p><strong>TLDR</strong></p>
+      <CalendarPassageProse text={state.reading.tldr}/>
+    </>}
+    <a className="learn-jump__link" href={state.reading.href} aria-label={`Read more: ${state.reading.headline}`}>Read more</a>
+  </section>;
 }
