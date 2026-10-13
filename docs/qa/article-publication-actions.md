@@ -35,10 +35,10 @@ All content writes in these tests use isolated synthetic storage.
 | Complete API gate | Local article/CRUD/publication and lunar/horoscope checks passed; the complete local command stopped at missing protected report evidence. Temporary link removed after access was denied. The required hosted workflow uses its existing configured secret and must pass on the exact release head before merge |
 | Live Libra publication and release | Pending release verification; saved article wording and publication state are unchanged by this code change |
 
-Run `npx playwright test -c playwright.article-crud.config.ts` for the focused
-standalone Studio suite. The config builds the current checkout and starts a
-fresh preview without reusing an existing server. The general Playwright config
-can run `studio-article-memory.spec.ts` through the web entry.
+Run `npx playwright test tests/visual/studio-article-memory.spec.ts` through the
+existing registered web-entry config. It builds the current checkout and starts
+a fresh preview without reusing an existing server. The standalone Studio
+acceptance used a temporary local config; no extra unregistered config is shipped.
 
 ## Sky write-up heading correction
 
