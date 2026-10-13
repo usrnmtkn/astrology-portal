@@ -14644,7 +14644,7 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
       )}
 
       <PageLoadBoundary resetKey={`${mode}:${skyDetailRoutePath ?? ""}`}>
-      <Suspense fallback={<PageLoading visual="moon" message={mode === "calendar" ? "Loading calendar…" : mode === "friends" ? "Loading Friends…" : mode === "profile" ? "Loading your profile…" : "Loading page…"} />}>
+      <Suspense fallback={<PageLoading message={mode === "calendar" ? "Loading calendar…" : mode === "friends" ? "Loading Friends…" : mode === "profile" ? "Loading your profile…" : "Loading page…"} />}>
       {selectedSkyDetail && (!/^sky\/(?:placement|retrograde)\//u.test(skyDetailRoutePath ?? "")
         || skyPlacementFallbackStatus === "ready" && skyDetailResolvedIdentity === skyPlacementResolvedIdentity)
         && (!selectedDetailNeedsPersonalTransitSources || personalTransitSourceStatus === "ready") ? (

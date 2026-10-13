@@ -56,7 +56,7 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
       await page.screenshot({ path: info.outputPath("initial-moon.png") });
     } finally { release(); }
     await expect(page.getByRole("region", { name: "Lunar calendar", exact: true })).toBeVisible();
-    await expect(page.locator(".app-loading--moon")).toHaveCount(0);
+    await expect(page.locator(".app-loading .loading-moon")).toHaveCount(0);
   });
 }
 
@@ -67,13 +67,13 @@ test("initial page moon respects reduced motion and still hands off", async ({ p
   await page.route(/\/assets\/CalendarRoute-.*\.js$/, async route => { await held; await route.continue().catch(() => {}); });
   await page.goto("/#calendar", { waitUntil: "domcontentloaded" });
   try {
-    const moon = page.locator(".app-loading--moon .loading-moon");
+    const moon = page.locator(".app-loading .loading-moon");
     await expect(moon).toBeVisible();
     await expect(moon.locator(".loading-moon__shadow")).toHaveCSS("animation-name", "none");
     await expect(moon.locator(".loading-moon__shadow")).toHaveCSS("transform", "matrix(1, 0, 0, 1, 8, 0)");
   } finally { release(); }
   await expect(page.getByRole("region", { name: "Lunar calendar", exact: true })).toBeVisible();
-  await expect(page.locator(".app-loading--moon")).toHaveCount(0);
+  await expect(page.locator(".app-loading .loading-moon")).toHaveCount(0);
 });
 
 for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {

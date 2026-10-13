@@ -17,7 +17,7 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
     await page.evaluate(() => document.fonts.ready);
     const bars = page.locator(".card-skeleton-bar");
     expect(await bars.count()).toBeGreaterThan(20);
-    await expect(page.locator(".loading-spinner, canvas")).toHaveCount(0);
+    await expect(page.locator(".loading-moon, canvas")).toHaveCount(0);
     for (const card of await page.locator(".card-skeleton").all()) {
       await expect(card).toHaveAttribute("aria-hidden", "true");
       await expect(card).toHaveCSS("animation-name", "none");

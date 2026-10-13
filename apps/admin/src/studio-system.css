@@ -349,8 +349,9 @@ body:has(.admin-dashboard) { margin: 0; }
 #root .admin-dashboard .admin-editor-panel :is(.studio-surface,.admin-hook-detail-section,.admin-workspace-details,.admin-editor-guidance,.admin-guided-content-review) :is(.admin-sky-writing-context,.admin-sky-writing-editor:not(.studio-surface),.admin-review-copy-editor) { min-width: 0; padding: 0; border: 0; border-radius: 0; background: transparent; }
 #root .admin-dashboard .admin-editor-panel .studio-surface :is(.studio-surface,.admin-daily-glance-reader-card) { padding: var(--workspace-card-padding) 0 0; border-top: var(--border-width-thin) solid var(--workspace-line); border-radius: 0; background: transparent; }
 #root .admin-dashboard .admin-editor-panel .admin-sky-writing-editor :is(p,code,.studio-variable-value,.admin-natal-source-key) { min-width: 0; overflow-wrap: anywhere; }
-#root .admin-dashboard .admin-editor-save-state { margin-inline-end: auto; }
-#root .admin-dashboard .admin-editor-save-state::before { content: '•'; margin-inline-end: var(--space-2); color: var(--workspace-positive); }
+#root .admin-dashboard .admin-editor-save-state { margin-inline-end: auto; display: inline-flex; align-items: center; gap: var(--space-2); }
+#root .admin-dashboard .loading-moon { color: var(--workspace-ink); }
+#root .admin-dashboard .admin-editor-save-state:not(.is-saving)::before { content: '•'; color: var(--workspace-positive); }
 #root .admin-dashboard .admin-savebar-next-step { width: 100%; }
 #root .admin-dashboard .admin-editor-details > summary { padding: 0; display: flex; gap: var(--workspace-control-inset); }
 #root .admin-dashboard .admin-editor-details-summary { margin-inline-start: auto; }

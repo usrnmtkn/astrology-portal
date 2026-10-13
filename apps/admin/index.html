@@ -12,7 +12,14 @@
   <body>
     <div id="root">
       <main id="app-startup" class="app-loading app-loading--centered" role="status" aria-live="polite" aria-busy="true">
-        <span class="loading-spinner" aria-hidden="true"></span>
+        <svg class="loading-moon" viewBox="0 0 48 48" aria-hidden="true">
+          <defs><mask id="studio-startup-moon-disc">
+            <circle cx="24" cy="24" r="15" fill="white" />
+            <circle class="loading-moon__shadow" cx="24" cy="24" r="15.5" fill="black" />
+          </mask></defs>
+          <circle cx="24" cy="24" r="15" fill="currentColor" mask="url(#studio-startup-moon-disc)" />
+          <circle class="loading-moon__outline" cx="24" cy="24" r="15" fill="none" stroke="currentColor" />
+        </svg>
         <span data-startup-message>Loading Content Studio…</span>
         <button type="button" class="app-loading__action" hidden>Reload page</button>
         <noscript>Enable JavaScript to use TLDR Astro.</noscript>

@@ -3,8 +3,7 @@
 The document displays a centered celestial poster immediately. Once the entry
 bundle runs, `startupAnimation.ts` loads the light SVG Lottie player as an optional,
 asynchronous asset with an explicit high fetch priority. It does not await the player, an
-animation loop, or a minimum display time. React replacing the document shell is the readiness signal. Normal
-route navigation and in-page loading keep the existing progress indicators.
+animation loop, or a minimum display time. React replacing the document shell is the readiness signal. Route navigation and in-page waits use the shared moon-phase indicator.
 
 The four symbols follow the owner's October 12 reference: a Sun with a center
 dot and an outlined crescent above the Earth cross and a six-point star. These
@@ -68,26 +67,36 @@ loader uses a clockwise brightness cycle without translation or deformation
 under reduced motion. This addresses the owner's report of
 a static preview: the in-app browser reported reduced motion enabled.
 
-## Compact moon alternative
+## Moon-phase indicators
 
-The reader's initial React fallback and outer route fallback now use this moon
-in place of their centered ring (`PageLoading visual="moon"`). The HTML startup
-shell retains the four-icon animation. Compact indicators and other in-page
-waits keep their existing appearance and readiness boundaries.
+All shared loading rings now use `LoadingIndicator`'s moon phase, including
+initial React and route fallbacks, compact in-page waits and report preparation.
+The standalone Content Studio document also paints a moon before hydration,
+and its save bar uses the compact moon while a save request is pending.
+The reader HTML startup shell retains the four-icon animation.
 
 The React moon uses a unique SVG mask so its shadow reveals the actual page
-background in either theme. It shares the existing moon timing and geometry,
-with no image download, animation dependency, timer or minimum display delay.
-The parent keeps the existing status label and accessibility semantics.
+background in either theme. Full indicators are 48 × 48 pixels; compact ones
+keep their 16 × 16 layout footprint and existing inline caption styles. The
+compact viewBox fits the same disc geometry to that smaller box. Centered
+captions use the shared 14-pixel size and 22-pixel gap. Existing status labels,
+readiness boundaries and immediate content handoff remain in their parents.
+The CSS animation shares the existing moon timing and theme tokens, with no
+image download, animation dependency, timer or minimum display delay. Reduced
+motion shows a static phase; hidden and failed loading regions stop animating.
 
-Verification: 20 Chromium startup checks passed; after the transparent-mask
-refinement, all five page-moon checks passed in fresh Chromium and WebKit builds.
-They cover 390/1440 px, light/dark, changing phase with fixed bounds, label spacing,
-reduced motion and immediate Calendar handoff. WebKit retains the behavior
-assertions while omitting optional screenshot capture. CSS/token audits, startup
-performance contracts, typecheck and public-asset privacy passed. Aggregate CSS
-is 119,027 gzip bytes (+60 over the preceding verified loader build); its ceiling
-is 119,100. JavaScript is 3,624,536 bytes and fits the unchanged 3,624,650 ceiling.
+The Studio save label now renders its existing canonical “Draft saved” text
+directly. This prevents the legacy status normalizer from replacing React’s text
+node before the compact moon is inserted on a later save. The browser regression
+checks two consecutive saves, the pending moon and publication handoff.
+
+Local verification covers 39 Chromium loading/skeleton/startup checks and 13
+WebKit page, Friends and compact-moon checks. The final Studio build passes the
+initial document and repeated-save regressions, and the final web build passes
+all nine page/compact checks again. CSS/token and startup-performance audits,
+web/admin bundle budgets and built-asset privacy checks pass. The shared deferred
+Studio/Memory stylesheet measures 29,932 gzip bytes; its ceiling increases by
+25 bytes to 29,950. Aggregate CSS/JavaScript and startup limits are unchanged.
 
 `startup-moon.svg` is a 48 × 48 icon with a centered radius-15 disc, a radius-15.5
 background-colored shadow clipped to the disc, and a 1.25-pixel outline. The
