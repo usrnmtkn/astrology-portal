@@ -1,5 +1,6 @@
 import { Component, type ErrorInfo, type ReactNode } from "react";
 import { LoadingIndicator } from "./LoadingIndicator";
+import { MoonPhaseIndicator } from "./MoonPhaseIndicator";
 import "../../../apps/web/src/styles/loading.css";
 
 const readerRecoveryHistoryKey = "__tldrastroReaderPageRecovery";
@@ -65,15 +66,17 @@ export function reloadReaderRouteOnce() {
 export function PageLoading({
   message = "Loading page…",
   compact = false,
+  visual = "ring",
   announce = true
 }: {
   message?: string;
   compact?: boolean;
+  visual?: "ring" | "moon";
   /** When false, the visible loader stays inside a parent busy region and must not expose a second accessible name. */
   announce?: boolean;
 }) {
-  return <div className={`app-loading app-loading--centered${compact ? " app-loading--compact" : ""}`} role={announce ? "status" : undefined} aria-label={announce ? message : undefined} aria-live={announce ? "polite" : undefined} aria-busy={announce ? true : undefined} aria-hidden={announce ? undefined : true}>
-    <LoadingIndicator compact={compact} />
+  return <div className={`app-loading app-loading--centered${compact ? " app-loading--compact" : ""}${visual === "moon" ? " app-loading--moon" : ""}`} role={announce ? "status" : undefined} aria-label={announce ? message : undefined} aria-live={announce ? "polite" : undefined} aria-busy={announce ? true : undefined} aria-hidden={announce ? undefined : true}>
+    {visual === "moon" ? <MoonPhaseIndicator /> : <LoadingIndicator compact={compact} />}
     <span>{message}</span>
   </div>;
 }

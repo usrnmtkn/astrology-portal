@@ -68,9 +68,39 @@
   height: var(--size-2);
 }
 
+.app-loading--moon {
+  gap: var(--startup-label-gap);
+  font-size: var(--startup-label-size);
+  color: var(--startup-label);
+}
+
+.loading-moon {
+  display: block;
+  width: var(--startup-moon-size);
+  height: var(--startup-moon-size);
+  color: var(--startup-moon-ink);
+}
+
+.loading-moon__outline {
+  stroke-width: var(--startup-moon-stroke-width);
+}
+
+.loading-moon__shadow {
+  transform: translateX(var(--startup-moon-shadow-static));
+  animation: startup-moon-phase var(--startup-moon-duration) var(--startup-moon-ease)
+    var(--startup-moon-start-delay) infinite alternate;
+}
+
+@keyframes startup-moon-phase {
+  from { transform: translateX(var(--startup-moon-shadow-from)); }
+  to { transform: translateX(var(--startup-moon-shadow-to)); }
+}
+
 /* Hidden readers may keep fetching content, but their decoration need not run. */
 [aria-hidden="true"] .loading-spinner,
-[hidden] .loading-spinner {
+[hidden] .loading-spinner,
+[aria-hidden="true"] .app-loading .loading-moon__shadow,
+[hidden] .loading-moon__shadow {
   animation: none;
 }
 
@@ -112,4 +142,5 @@
 @media (prefers-reduced-motion: reduce) {
   .app-loading__lines span { animation: none; }
   .loading-spinner { animation: none; }
+  .loading-moon__shadow { animation: none; }
 }

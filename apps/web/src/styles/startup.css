@@ -113,11 +113,6 @@ body:has(#app-startup.app-startup) {
   fill: var(--surface);
 }
 
-@keyframes startup-moon-phase {
-  from { transform: translateX(var(--startup-moon-shadow-from)); }
-  to { transform: translateX(var(--startup-moon-shadow-to)); }
-}
-
 @media (prefers-reduced-motion: reduce) {
   /* Keep loading feedback alive without moving or deforming any symbol.
      The local preview's explicit Play choice can still demonstrate the bounce. */

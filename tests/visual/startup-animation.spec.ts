@@ -27,6 +27,56 @@ test.beforeEach(async ({ page }) => {
 });
 
 for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
+  test(`initial page wait uses the moon phase at ${width} ${theme}`, async ({ page }, info) => {
+    await page.setViewportSize({ width, height: 900 });
+    await page.emulateMedia({ reducedMotion: "no-preference" });
+    await page.addInitScript(value => localStorage.setItem("tldrastro:theme", value), theme);
+    let release!: () => void;
+    const held = new Promise<void>(resolve => { release = resolve; });
+    await page.route(/\/assets\/CalendarRoute-.*\.js$/, async route => { await held; await route.continue().catch(() => {}); });
+    await page.goto("/#calendar", { waitUntil: "domcontentloaded" });
+    try {
+      const loading = page.getByRole("status", { name: "Loading calendar…", exact: true });
+      const moon = loading.locator(".loading-moon");
+      const shadow = moon.locator(".loading-moon__shadow");
+      await expect(moon).toBeVisible();
+      await expect(loading.locator(".loading-spinner")).toHaveCount(0);
+      await expect(moon).toHaveCSS("width", "48px");
+      await expect(moon).toHaveCSS("height", "48px");
+      await expect(moon).toHaveCSS("color", theme === "dark" ? "rgb(236, 238, 242)" : "rgb(28, 31, 38)");
+      await expect(shadow).toHaveCSS("animation-duration", "2.6s");
+      await expect(shadow).toHaveCSS("animation-timing-function", "cubic-bezier(0.6, 0, 0.4, 1)");
+      const bounds = await moon.boundingBox();
+      const before = await shadow.evaluate(node => getComputedStyle(node).transform);
+      await expect.poll(() => shadow.evaluate(node => getComputedStyle(node).transform)).not.toBe(before);
+      expect(await moon.boundingBox()).toEqual(bounds);
+      const label = loading.locator("span");
+      await expect(label).toHaveCSS("font-size", "14px");
+      expect((await label.boundingBox())!.y - bounds!.y - bounds!.height).toBe(22);
+      await page.screenshot({ path: info.outputPath("initial-moon.png") });
+    } finally { release(); }
+    await expect(page.getByRole("region", { name: "Lunar calendar", exact: true })).toBeVisible();
+    await expect(page.locator(".app-loading--moon")).toHaveCount(0);
+  });
+}
+
+test("initial page moon respects reduced motion and still hands off", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  let release!: () => void;
+  const held = new Promise<void>(resolve => { release = resolve; });
+  await page.route(/\/assets\/CalendarRoute-.*\.js$/, async route => { await held; await route.continue().catch(() => {}); });
+  await page.goto("/#calendar", { waitUntil: "domcontentloaded" });
+  try {
+    const moon = page.locator(".app-loading--moon .loading-moon");
+    await expect(moon).toBeVisible();
+    await expect(moon.locator(".loading-moon__shadow")).toHaveCSS("animation-name", "none");
+    await expect(moon.locator(".loading-moon__shadow")).toHaveCSS("transform", "matrix(1, 0, 0, 1, 8, 0)");
+  } finally { release(); }
+  await expect(page.getByRole("region", { name: "Lunar calendar", exact: true })).toBeVisible();
+  await expect(page.locator(".app-loading--moon")).toHaveCount(0);
+});
+
+for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
   test(`startup Lottie animates and hands off at ${width} ${theme}`, async ({ page }) => {
     await page.setViewportSize({ width, height: 900 });
     await page.emulateMedia({ reducedMotion: "no-preference" });

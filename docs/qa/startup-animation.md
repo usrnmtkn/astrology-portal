@@ -70,6 +70,25 @@ a static preview: the in-app browser reported reduced motion enabled.
 
 ## Compact moon alternative
 
+The reader's initial React fallback and outer route fallback now use this moon
+in place of their centered ring (`PageLoading visual="moon"`). The HTML startup
+shell retains the four-icon animation. Compact indicators and other in-page
+waits keep their existing appearance and readiness boundaries.
+
+The React moon uses a unique SVG mask so its shadow reveals the actual page
+background in either theme. It shares the existing moon timing and geometry,
+with no image download, animation dependency, timer or minimum display delay.
+The parent keeps the existing status label and accessibility semantics.
+
+Verification: 20 Chromium startup checks passed; after the transparent-mask
+refinement, all five page-moon checks passed in fresh Chromium and WebKit builds.
+They cover 390/1440 px, light/dark, changing phase with fixed bounds, label spacing,
+reduced motion and immediate Calendar handoff. WebKit retains the behavior
+assertions while omitting optional screenshot capture. CSS/token audits, startup
+performance contracts, typecheck and public-asset privacy passed. Aggregate CSS
+is 119,027 gzip bytes (+60 over the preceding verified loader build); its ceiling
+is 119,100. JavaScript is 3,624,536 bytes and fits the unchanged 3,624,650 ceiling.
+
 `startup-moon.svg` is a 48 × 48 icon with a centered radius-15 disc, a radius-15.5
 background-colored shadow clipped to the disc, and a 1.25-pixel outline. The
 shadow translates from −31 to +31 pixels over 2.6 seconds, alternates back, and
