@@ -5,6 +5,7 @@ import { gunzipSync } from "node:zlib";
 import semantics from "./transitNatalSemantics.cjs";
 import contracts from "./transitNatalContract.cjs";
 import { personalTransitMeaningProjection } from "./personalTransitMeaningProjection.mjs";
+import { assertApprovedPersonalWritings } from './personalTransitApprovedWriting.mjs';
 import { READER_RULES_INSTRUCTION, READER_RULES_SHA256 } from "./personalTransitReaderRules.mjs";
 import { validatePassage } from "./personalTransitPassageValidation.mjs";
 import { inspectCalibration, loadCurrentFeedback, feedbackForWriter, PERSONAL_TRANSIT_FACTUAL_BOUNDARIES } from "./personalTransitInputControls.mjs";
@@ -91,6 +92,7 @@ export function parsePersonalTransitSources(raw) {
             ids.add(p.id);
         }
         verifyVoicePreferences(document.passages);
+        assertApprovedPersonalWritings(document.approvedPersonalWritings);
         verifiedStylePhrases(document);
         if (document.feedback) {
             const { sha256, ...payload } = document.feedback;
@@ -140,7 +142,8 @@ export function buildPersonalTransitWriterContext(input, sources = readPersonalT
     const meaning = stored[0];
     if (!meaning)
         throw new AdminHttpError(409, "No saved transit meaning is connected for this contact. Prepare and review its meaning record before generating. No generation was started.");
-    const calibrationReview = inspectCalibration(sources.calibration, sources.meanings, evaluationPermission);
+    const meaningOptions = { approvedPersonalWritings: sources.approvedPersonalWritings };
+    const calibrationReview = inspectCalibration(sources.calibration, sources.meanings, evaluationPermission, meaningOptions);
     const calibration = sources.calibration && !sources.calibration.contentKeys.includes(baseKey)
         ? {required:false,status:'outside-requested-calibration',pending:[]}
         : calibrationReview;
@@ -156,7 +159,7 @@ export function buildPersonalTransitWriterContext(input, sources = readPersonalT
     // A scoped review request controls its calibration; routine draft preparation
     // does not manufacture an additional owner-approval stage.
     try {
-        projection = personalTransitMeaningProjection(baseKey, packet, meaning, { allowProposed: true });
+        projection = personalTransitMeaningProjection(baseKey, packet, meaning, { ...meaningOptions, allowProposed: true });
     }
     catch {
         throw new AdminHttpError(409, "This transit's meaning is rejected, stale, or unverifiable. Update its meaning before generating. No generation was started.");
@@ -234,15 +237,14 @@ export function buildPersonalTransitWriterContext(input, sources = readPersonalT
             feedbackSha256: sources.feedback?.sha256 ?? null, correctionIds: corrections.map(c => c.id), calibration,
             promptSha256: hash(prompt), sources: receiptSources, stylePhraseSources } };
 }
-export function inspectPersonalTransitMeaning({ transiting, natal, aspect }) {
+export function inspectPersonalTransitMeaning({ transiting, natal, aspect }, sources = readPersonalTransitSources()) {
     const contentKey = `authored/transit-aspect/${transiting}/${natal}/${aspect}`;
-    const sources = readPersonalTransitSources();
     const records = sources.meanings.filter(record => record.contentKey === contentKey);
     if (records.length !== 1)
         throw new AdminHttpError(409, "No unique saved transit meaning is connected for this contact.");
     try {
         const packet = semantics.resolveTransitNatalSemantics({ transiting, natal, aspect });
-        personalTransitMeaningProjection(contentKey, packet, records[0], { allowProposed: true });
+        personalTransitMeaningProjection(contentKey, packet, records[0], { approvedPersonalWritings:sources.approvedPersonalWritings, allowProposed: true });
         return { text: records[0].text, status: records[0].status, revision: records[0].revision,
             derivationMode: records[0].derivation.mode,
             sourceReceipt: { version: sources.version, sha256: hash(JSON.stringify(sources)),

@@ -30,12 +30,13 @@ export function prepareBatch({ id, records, examples, readerMeanings, provenance
   if (!Array.isArray(readerMeanings) || readerMeanings.length !== records.length) throw Error('READER_MEANING_REQUIRED_FOR_EACH_CONTACT');
   if (new Set(readerMeanings.map(m => m.contentKey)).size !== readerMeanings.length ||
       readerMeanings.some(m => !records.some(r => r.contentKey === m.contentKey))) throw Error('READER_MEANING_TARGET_SET_MISMATCH');
-  const calibrationReview = inspectCalibration(calibration, calibrationMeanings, evaluationPermission);
+  const meaningOptions = {approvedPersonalWritings:sources?.approvedPersonalWritings};
+  const calibrationReview = inspectCalibration(calibration, calibrationMeanings, evaluationPermission, meaningOptions);
   const contacts = records.map(record => {
     const facts = identity(record.contentKey);
     const semanticPacket = semantics.resolveTransitNatalSemantics(facts);
     semantics.assertTransitNatalSemantics(semanticPacket, facts);
-    const projection = personalTransitMeaningProjection(record.contentKey, semanticPacket, readerMeanings.find(m => m.contentKey === record.contentKey), {allowProposed:true});
+    const projection = personalTransitMeaningProjection(record.contentKey, semanticPacket, readerMeanings.find(m => m.contentKey === record.contentKey), {...meaningOptions,allowProposed:true});
     const currentFeedback = feedback ? feedbackForContact(feedback,record.contentKey,readerMeanings.find(m=>m.contentKey===record.contentKey),[]) : null;
     const title = `${display(facts.transiting)} ${verb(facts.aspect)} ${display(facts.natal)}`;
     const passages = ['you','friend'].map(perspective => {
@@ -49,6 +50,7 @@ export function prepareBatch({ id, records, examples, readerMeanings, provenance
       const context = buildPersonalTransitWriterContext({contentKey:record.contentKey,...facts,requested:[perspective],
         instruction:'',record,youText:'',friendText:'',facts:{}},
         {schema:'personal-transit-writing-sources/v1',version:sources?.version ?? 'owner-batch-v2',passages,meanings:readerMeanings,
+          ...meaningOptions,
           ...(sources?.stylePhrases !== undefined ? {stylePhrases:sources.stylePhrases} : {}),
           ...(feedback ? {feedback:feedbackForWriter(feedback)} : sources?.feedback ? {feedback:sources.feedback} : {})},
         {responseFormat,permitMissingEvidenceForPreparation:true});

@@ -28,7 +28,7 @@ export function readerMeaningBasis(packet) {
   return { ...basis, sha256: hash(basis) };
 }
 
-export function inspectCalibration(calibration, meanings, evaluationPermission = null) {
+export function inspectCalibration(calibration, meanings, evaluationPermission = null, meaningOptions = {}) {
   if (!calibration) return { required: false, status: 'not-required', pending: [] };
   if (calibration.required !== true || !calibration.id || !calibration.source || !Array.isArray(calibration.contentKeys)
       || !calibration.contentKeys.length || new Set(calibration.contentKeys).size !== calibration.contentKeys.length) throw Error('CALIBRATION_SCOPE_INVALID');
@@ -41,7 +41,7 @@ export function inspectCalibration(calibration, meanings, evaluationPermission =
     const [transiting,natal,aspect] = contentKey.replace(/^authored\/transit-aspect\//u,'').split('/');
     const packet = semantics.resolveTransitNatalSemantics({transiting,natal,aspect});
     const basis = readerMeaningBasis(packet);
-    assertPersonalTransitMeaningRecord(meaning, packet);
+    assertPersonalTransitMeaningRecord(meaning, packet, meaningOptions);
     if (meaning.review.basisSha256 !== undefined && meaning.review.basisSha256 !== basis.sha256) throw Error('CALIBRATION_SOURCE_DRIFT');
     return {contentKey,status:meaning.status,textSha256:meaning.sha256,basisSha256:basis.sha256,review:meaning.review};
   });
@@ -55,7 +55,7 @@ export function inspectCalibration(calibration, meanings, evaluationPermission =
       const meaning = meanings.find(m => m.contentKey === key), receipt = p.records.find(r => r.contentKey === key);
       if (!meaning || !receipt || receipt.textSha256 !== meaning.sha256 || receipt.recordSha256 !== meaning.recordSha256) throw Error('EVALUATION_MEANING_CHANGED');
       const [transiting,natal,aspect] = key.slice('authored/transit-aspect/'.length).split('/');
-      assertPersonalTransitMeaningRecord(meaning, semantics.resolveTransitNatalSemantics({transiting,natal,aspect}), {allowProposed:true});
+      assertPersonalTransitMeaningRecord(meaning, semantics.resolveTransitNatalSemantics({transiting,natal,aspect}), {...meaningOptions,allowProposed:true});
     }
     permission = {sha256:hash(p),source:p.source,ownerApproved:false};
   }
