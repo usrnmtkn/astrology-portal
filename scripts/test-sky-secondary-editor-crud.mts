@@ -102,7 +102,7 @@ try {
       assert.doesNotMatch((error as Error).message, /save has not been confirmed|Reload/u);
       return true;
     });
-    mock.timers.tick(10_000);
+    mock.timers.tick(45_000);
     await pending;
   }
   for (const method of ["POST", "PATCH", "DELETE"]) {
