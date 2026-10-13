@@ -1,6 +1,7 @@
 import { createHash } from 'node:crypto';
 import knowledge from '../../packages/astro-knowledge/scripts/knowledge-resolver.js';
 import semantics from './transitNatalSemantics.cjs';
+import { retrieveApprovedPersonalWriting, assertApprovedWritingComparison } from './personalTransitApprovedWriting.mjs';
 
 export const meaningHash = value => createHash('sha256').update(typeof value === 'string' ? value : JSON.stringify(value)).digest('hex');
 const identity = contentKey => {
@@ -11,7 +12,7 @@ const identity = contentKey => {
 
 /** Retrieve meaning evidence, never voice. A source's existence or prose
  * approval does not grant factual authority. Policy/notes are not meanings. */
-export function retrievePersonalTransitMeaningSources(contentKey, packet) {
+export function retrievePersonalTransitMeaningSources(contentKey, packet, options = {}) {
   const facts = identity(contentKey);
   semantics.assertTransitNatalSemantics(packet, facts);
   const canonicalId = contentKey.slice('authored/'.length);
@@ -29,8 +30,9 @@ export function retrievePersonalTransitMeaningSources(contentKey, packet) {
       field: `ASPECT_MECHANISMS.${facts.aspect}`, text: packet.aspect.mechanism,
       evidenceSha256: packet.aspect.sha256, authorityClass: 'owner-directed-semantic-mechanics' }
   ];
-  const body = { version: 'personal-transit-meaning-retrieval-v1', contentKey,
+  const body = { version: 'personal-transit-meaning-retrieval-v2', contentKey,
     mode: exact.length ? 'exact-contact' : 'component-derived', semanticPacketSha256: packet.packetSha256,
+    approvedPersonalWriting: retrieveApprovedPersonalWriting(contentKey, options),
     sources, excluded: resolved.records.filter(record => !exact.includes(record)).map(record => ({
       path: record.path, field: record.field, evidenceSha256: record.evidenceSha256,
       reason: record.authorityClass !== 'factual-evidence' ? 'not-factual-authority' : 'not-interpretation-text'
@@ -45,23 +47,24 @@ function recordPayload(record) {
 
 /** Preparation creates an unapproved reusable record. It never composes text,
  * calls a model, grants source authority, or marks an interpretation accepted. */
-export function preparePersonalTransitMeaningRecord({ contentKey, revision, claims, source, history = [] }, packet) {
-  const retrieval = retrievePersonalTransitMeaningSources(contentKey, packet);
+export function preparePersonalTransitMeaningRecord({ contentKey, revision, claims, source, history = [], approvedWritingComparison }, packet, options = {}) {
+  const retrieval = retrievePersonalTransitMeaningSources(contentKey, packet, options);
+  assertApprovedWritingComparison(approvedWritingComparison, retrieval.approvedPersonalWriting);
   const text = claims.map(claim => claim.text).join(' ');
   const payload = { schema: 'personal-transit-reader-meaning/v1', id: `meaning:${contentKey}`, revision,
     contentKey, text, sha256: meaningHash(text), semanticPacketSha256: packet.packetSha256,
     source, authorship: 'assistant-proposed-editorial-meaning', history,
-    derivation: { mode: retrieval.mode, retrievalSha256: retrieval.retrievalSha256, claims } };
+    derivation: { mode: retrieval.mode, retrievalSha256: retrieval.retrievalSha256, claims, approvedWritingComparison } };
   const record = { ...payload, recordSha256: meaningHash(payload), status: 'proposed-owner-review', review: null };
-  assertPersonalTransitMeaningRecord(record, packet, { allowProposed: true });
+  assertPersonalTransitMeaningRecord(record, packet, { ...options, allowProposed: true });
   return record;
 }
 
 /** Verifies provenance and owner review, not the truth or quality of a sentence.
  * Recompute retrieval so a caller cannot claim that an exact source is absent. */
-export function assertPersonalTransitMeaningRecord(record, packet, { allowProposed = false } = {}) {
+export function assertPersonalTransitMeaningRecord(record, packet, { allowProposed = false, ...options } = {}) {
   if (!record || record.schema !== 'personal-transit-reader-meaning/v1') throw Error('PERSISTED_READER_MEANING_RECORD_REQUIRED');
-  const retrieval = retrievePersonalTransitMeaningSources(record.contentKey, packet);
+  const retrieval = retrievePersonalTransitMeaningSources(record.contentKey, packet, options);
   if (record.id !== `meaning:${record.contentKey}` || !Number.isInteger(record.revision) || record.revision < 1
     || typeof record.text !== 'string' || !record.text.trim() || record.text.length > 6000
     || record.sha256 !== meaningHash(record.text) || record.semanticPacketSha256 !== packet.packetSha256
@@ -71,7 +74,8 @@ export function assertPersonalTransitMeaningRecord(record, packet, { allowPropos
     throw Error('READER_MEANING_RECORD_DRIFT');
   }
   const claims = record.derivation.claims;
-  const available = new Map(retrieval.sources.map(source => [source.id, source]));
+  assertApprovedWritingComparison(record.derivation.approvedWritingComparison, retrieval.approvedPersonalWriting);
+  const available = new Map([...retrieval.sources, ...retrieval.approvedPersonalWriting.sources].map(source => [source.id, source]));
   if (!Array.isArray(claims) || !claims.length || claims.map(claim => claim.text).join(' ') !== record.text
     || claims.some(claim => typeof claim.text !== 'string' || !claim.text.trim()
       || typeof claim.rationale !== 'string' || !claim.rationale.trim()

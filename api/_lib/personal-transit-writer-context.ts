@@ -22,6 +22,7 @@ type StylePhrase = {
 export type PersonalTransitSources = {
   schema: "personal-transit-writing-sources/v1"; version: string;
   passages: VoicePassage[]; meanings: Array<Record<string, unknown>>;
+  approvedPersonalWritings?: Array<Record<string, unknown>>;
   stylePhrases?: StylePhrase[];
   feedback?: EditorialFeedback;
   feedbackRegistryPath?: string;
@@ -50,7 +51,14 @@ function asAdmin<T>(action: () => T): T {
   }
 }
 export const readPersonalTransitSources = (): PersonalTransitSources => asAdmin(() => core.readPersonalTransitSources());
+export const readPersonalTransitSourcesForRequest = async (): Promise<PersonalTransitSources> => {
+  try { return await (await import('../../src/astro-writing/personalTransitBlobSources.mjs')).readPersonalTransitSourcesForRequest(); }
+  catch (error) { return asAdmin(() => { throw error; }); }
+};
 export const buildPersonalTransitWriterContext = (input: Parameters<typeof core.buildPersonalTransitWriterContext>[0], sources?: PersonalTransitSources, options = {}): PersonalTransitWriterContext => asAdmin(() => core.buildPersonalTransitWriterContext(input, sources, options));
-export const inspectPersonalTransitMeaning = (input: {transiting: string; natal: string; aspect: string}) => asAdmin(() => core.inspectPersonalTransitMeaning(input));
+export const inspectPersonalTransitMeaning = async (input: {transiting: string; natal: string; aspect: string}) => {
+  const sources = await readPersonalTransitSourcesForRequest();
+  return asAdmin(() => core.inspectPersonalTransitMeaning(input, sources));
+};
 export const personalTransitDestinationChecks = (context: PersonalTransitWriterContext, values: Record<string, string>) => core.personalTransitDestinationChecks(context, values);
 export const assertPersonalTransitWriterContext = (context: PersonalTransitWriterContext | undefined, key: string, slots: string[]): PersonalTransitWriterContext => asAdmin(() => core.assertPersonalTransitWriterContext(context, key, slots));

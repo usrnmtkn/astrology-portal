@@ -27,6 +27,16 @@ normally takes one to three sentences to express what is interesting or useful
 in ordinary human language. It is meaning for the writer, not final prose, an
 aspect definition, keywords, or an outline.
 
+Before preparing meaning, compare the complete approved personal passages for
+the same ordered contact, including its soft/hard aspect family. Check newer
+exact approvals in the protected catalog as well as repository publications.
+Record how the proposed focus relates to each passage and cite current owner
+corrections when they qualify older writing. Preserve full text and exact
+approval hashes privately. Collective, natal and reversed contacts are separate
+sources. This comparison does not turn serving prose into voice evidence, require
+every possible theme in one paragraph, or approve the new meaning. Missing or
+stale comparisons stop preparation. Only the prepared meaning reaches the writer.
+
 Do not add biography, prior history, an exact incident, another person's
 response, an invented life domain, or a guaranteed outcome. Keep mechanics and
 their source hashes in private provenance. Missing or rejected meaning has no
