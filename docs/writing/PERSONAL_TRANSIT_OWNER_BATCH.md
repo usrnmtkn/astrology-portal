@@ -190,6 +190,16 @@ meanings CLI remains supported through that same module. The canonical meaning
 contract requires saved source-backed records, including claim-source links,
 exact-contact source precedence, revision/history, and text/record hashes.
 
+Meaning retrieval also checks complete approved personal writing for the ordered
+contact and its explicit aspect family. Protected `approvedPersonalWritings`
+records carry full text, catalog and exact approval hashes; repository passages
+retain their indexed source and field-level approval receipts. Every saved meaning
+must bind an `approvedWritingComparison` to the current retrieved packet and
+explain its relationship to each passage. Current corrections can qualify older
+approved material without changing it. Comparison records and full source prose
+stay private and never become automatic voice examples or factual approval.
+Old meaning records require explicit re-preparation; there is no silent migration.
+
 ## Exact authorization and bounded dispatch
 
 Preparation saves a manifest binding the eight request bytes, model/settings,
@@ -279,3 +289,20 @@ readiness. The earlier eight-call test was rejected by the owner. It is preserve
 as failure evidence, not validation of this repair. Record actual-provider runs
 and deployment verification separately for each release. Contract tests alone
 do not establish either result or improved writing quality.
+
+## Protected deployment source snapshots
+
+The Studio handler also accepts a `blob:` JSON reference in the server-only
+`PRIVATE_PERSONAL_TRANSIT_SOURCES` setting. The reference uses schema
+`personal-transit-private-blob/v1`, a private Vercel Blob `storeId`, a
+`personal-transit/<sha256>.json` pathname and the complete document SHA-256.
+Upload the exact prepared source document to a private store connected to the
+project before installing the reference. Never put its body in Git, public
+assets or function bundles. Existing gzip provisions and local preparation
+remain supported.
+
+Only authenticated Studio requests load the snapshot. The server bounds the
+download size and duration, validates its hash and schema, and caches only the
+verified immutable snapshot. A missing, changed or unavailable source fails
+before generation. A new snapshot requires a new hash-pinned reference and
+deployment. This storage change grants no review or publication approval.

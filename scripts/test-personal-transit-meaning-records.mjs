@@ -5,6 +5,7 @@ import { join } from 'node:path';
 import semantics from '../src/astro-writing/transitNatalSemantics.cjs';
 import { meaningHash, preparePersonalTransitMeaningRecord, retrievePersonalTransitMeaningSources, assertPersonalTransitMeaningRecord } from '../src/astro-writing/personalTransitMeaningRecords.mjs';
 import { personalTransitMeaningProjection } from '../src/astro-writing/personalTransitMeaningProjection.mjs';
+import { syntheticWritingComparison } from './fixtures/personal-transit-writing.mjs';
 import { prepareMeaningReview } from './prepare-personal-transit-meanings.mjs';
 
 const key = 'authored/transit-aspect/mercury/venus/trine';
@@ -16,7 +17,7 @@ assert(!retrieval.sources.some(source => source.path.includes('phrasebank') || [
 assert(retrieval.excluded.some(source => source.reason === 'not-factual-authority'));
 const chironPacket = semantics.resolveTransitNatalSemantics({ transiting: 'moon', natal: 'chiron', aspect: 'trine' });
 assert.equal(retrievePersonalTransitMeaningSources('authored/transit-aspect/moon/chiron/trine', chironPacket).mode, 'component-derived');
-const record = preparePersonalTransitMeaningRecord({ contentKey: key, revision: 2, source: 'synthetic-preparation',
+const record = preparePersonalTransitMeaningRecord({ contentKey: key, revision: 2, source: 'synthetic-preparation', approvedWritingComparison:syntheticWritingComparison(retrieval),
   claims: [{ text: 'Synthetic prepared meaning.', rationale: 'Synthetic source mapping, not a real interpretation.', sourceIds: retrieval.sources.map(source => source.id) }],
   history: [{ text: 'Previous synthetic input.', sha256: meaningHash('Previous synthetic input.'), source: 'synthetic-before', reason: 'Synthetic correction.' }] }, packet);
 assert.throws(() => personalTransitMeaningProjection(key, packet, record), /REVIEW_REQUIRED/);
@@ -30,7 +31,7 @@ for (const changed of [{ ...accepted, text: 'tampered' }, { ...accepted, revisio
   { ...accepted, derivation: { ...record.derivation, mode: 'component-derived' } }]) assert.throws(() => assertPersonalTransitMeaningRecord(changed, packet), /DRIFT/);
 assert.throws(() => assertPersonalTransitMeaningRecord({ ...accepted, status: 'rejected' }, packet), /REJECTED/);
 assert.throws(() => assertPersonalTransitMeaningRecord({ ...accepted, review: { ...accepted.review, recordSha256: 'old' } }, packet), /REVIEW_REQUIRED/);
-assert.throws(() => preparePersonalTransitMeaningRecord({ contentKey: key, revision: 2, source: 'synthetic',
+assert.throws(() => preparePersonalTransitMeaningRecord({ contentKey: key, revision: 2, source: 'synthetic', approvedWritingComparison:syntheticWritingComparison(retrieval),
   claims: [{ text: 'Synthetic bypass.', rationale: 'Attempt to ignore available exact-contact source.',
     sourceIds: retrieval.sources.filter(source => source.role !== 'exact-contact').map(source => source.id) }] }, packet), /SOURCE_PRECEDENCE/);
 
@@ -51,7 +52,7 @@ try {
     return { contentKey: key, field: perspective, requestFile, requestSha256: meaningHash(JSON.stringify(body)) };
   });
   write('manifest.json', { model: { model: 'synthetic-frozen-model' }, requests });
-  const input = { source: 'synthetic-preparation', records: [{ contentKey: key, revision: 2, correction: 'Synthetic correction.', claims: [{ text: record.text, rationale: 'Synthetic mapping.', sourceRoles: ['exact-contact'] }] }] };
+  const input = { source: 'synthetic-preparation', approvedWritingComparison:syntheticWritingComparison(retrieval), records: [{ contentKey: key, revision: 2, approvedWritingComparison:syntheticWritingComparison(retrievePersonalTransitMeaningSources(key,packet)), correction: 'Synthetic correction.', claims: [{ text: record.text, rationale: 'Synthetic mapping.', sourceRoles: ['exact-contact'] }] }] };
   const output = join(directory, 'review');
   assert.equal(prepareMeaningReview(input, baseline, output).providerCalls, 0);
   const manifest = JSON.parse(readFileSync(join(output, 'manifest.json')));
@@ -70,7 +71,7 @@ try {
   assert.throws(() => prepareMeaningReview(input, baseline, output), /ALREADY_EXISTS/);
   const firstKey = 'authored/transit-aspect/venus/moon/square';
   const expanded = { ...input, comparisonContentKeys: [key], records: [...input.records,
-    { contentKey: firstKey, revision: 1, correction: 'Synthetic first proposal.',
+    { contentKey: firstKey, revision: 1, approvedWritingComparison:syntheticWritingComparison(retrievePersonalTransitMeaningSources(firstKey,semantics.resolveTransitNatalSemantics({transiting:'venus',natal:'moon',aspect:'square'}))), correction: 'Synthetic first proposal.',
       claims: [{ text: 'Synthetic new contact meaning.', rationale: 'Synthetic exact source.', sourceRoles: ['exact-contact'] }] }] };
   const expandedOutput = join(directory, 'expanded');
   assert.deepEqual(prepareMeaningReview(expanded, baseline, expandedOutput), { records: 2, requests: 2, providerCalls: 0, review: join(expandedOutput, 'review.html') });

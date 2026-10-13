@@ -38,7 +38,7 @@ for (const endpoint of [
 const horoscopeFiles=new Set(fs.globSync(deployment.functions['api/admin/horoscope-writing.ts'].includeFiles));
 const transitFiles = new Set(fs.globSync(deployment.functions['api/admin/personal-transit-writing.ts'].includeFiles));
 for (const source of ['api/_lib/personal-transit-writer-context.ts', 'src/astro-writing/personalTransitReaderRules.mjs',
-  'src/astro-writing/personalTransitWriterContext.mjs', 'src/astro-writing/personalTransitPassageValidation.mjs', 'src/astro-writing/personalTransitInputControls.mjs',
+  'src/astro-writing/personalTransitWriterContext.mjs', 'src/astro-writing/personalTransitApprovedWriting.mjs', 'src/astro-writing/personalTransitBlobSources.mjs', 'src/astro-writing/personalTransitPassageValidation.mjs', 'src/astro-writing/personalTransitInputControls.mjs',
   'src/astro-writing/personalTransitMeaningProjection.mjs', 'src/astro-writing/personalTransitMeaningRecords.mjs', 'src/astro-writing/transitNatalSemantics.cjs', 'src/astro-writing/transitNatalContract.cjs']) {
   assert(transitFiles.has(source), `Missing Personal Transit input module: ${source}`);
 }

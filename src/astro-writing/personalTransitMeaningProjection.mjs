@@ -6,7 +6,7 @@ const hash = text => createHash('sha256').update(text).digest('hex');
 
 // A transport boundary for supplied meaning and its review provenance. This does
 // not generate meaning, choose a scenario, or fall back to astrology mechanics.
-export function personalTransitMeaningProjection(contentKey, packet, meaning, { allowProposed = false } = {}) {
+export function personalTransitMeaningProjection(contentKey, packet, meaning, { allowProposed = false, ...options } = {}) {
   const key = contentKey.replace(/^authored\/transit-aspect\//u, '');
   if (`${packet.identity.transiting}/${packet.identity.natal}/${packet.identity.aspect}` !== key) throw Error('SEMANTIC_IDENTITY_MISMATCH');
   if (!meaning) throw Error('READER_MEANING_REQUIRED');
@@ -20,7 +20,7 @@ export function personalTransitMeaningProjection(contentKey, packet, meaning, { 
       (meaning.review?.textSha256 !== meaning.sha256 || typeof meaning.review?.source !== 'string' || !meaning.review.source.trim())) {
     throw Error('EXACT_READER_MEANING_REVIEW_REQUIRED');
   }
-  const retrieval = assertPersonalTransitMeaningRecord(meaning, packet, { allowProposed });
+  const retrieval = assertPersonalTransitMeaningRecord(meaning, packet, { ...options, allowProposed });
   return {
     readerMeaning: meaning.text,
     privateReceipt: {
@@ -31,6 +31,7 @@ export function personalTransitMeaningProjection(contentKey, packet, meaning, { 
       derivationMode: retrieval.mode,
       sourceBasis: readerMeaningBasis(packet),
       meaningSources: retrieval,
+      approvedWritingComparison: meaning.derivation.approvedWritingComparison,
       sourceBasisAcknowledged: true,
       retrievalSha256: retrieval.retrievalSha256,
       sourcePacketSha256: packet.packetSha256,

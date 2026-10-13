@@ -68,7 +68,7 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
       const contact = parsePersonalTransitContact(body);
       if (contact.family !== "aspect") throw new AdminHttpError(400, "Meaning records apply to exact transit aspects and returns.");
       return sendAdminJson(res, 200, { ok: true, action, saved: false, published: false, approved: false,
-        meaning: inspectPersonalTransitMeaning({ transiting: contact.transiting!, natal: contact.natal!, aspect: contact.aspect! }) });
+        meaning: await inspectPersonalTransitMeaning({ transiting: contact.transiting!, natal: contact.natal!, aspect: contact.aspect! }) });
     }
     if (action === "recheck") {
       return sendAdminJson(res, 200, {

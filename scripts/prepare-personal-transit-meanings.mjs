@@ -15,10 +15,11 @@ export function prepareMeaningReview(input, baselineDirectory, outputDirectory) 
   const baseline = read(join(baselineDirectory, 'manifest.json'));
   const oldMeanings = read(join(baselineDirectory, 'reader-meanings.json')).records;
   const records = [], receipts = [];
+  const meaningOptions = {approvedPersonalWritings:input.approvedPersonalWritings};
   for (const proposal of input.records) {
     const [, , transiting, natal, aspect] = proposal.contentKey.split('/');
     const packet = semantics.resolveTransitNatalSemantics({ transiting, natal, aspect });
-    const retrieval = retrievePersonalTransitMeaningSources(proposal.contentKey, packet);
+    const retrieval = retrievePersonalTransitMeaningSources(proposal.contentKey, packet, meaningOptions);
     const claims = proposal.claims.map(claim => {
       if (!Array.isArray(claim.sourceRoles) || claim.sourceRoles.some(role => !retrieval.sources.some(source => source.role === role))) throw Error('UNKNOWN_MEANING_SOURCE_ROLE');
       return { text: claim.text, rationale: claim.rationale,
@@ -27,8 +28,9 @@ export function prepareMeaningReview(input, baselineDirectory, outputDirectory) 
     const prior = oldMeanings.find(record => record.contentKey === proposal.contentKey);
     if (!prior && proposal.revision !== 1) throw Error('BASELINE_MEANING_MISSING');
     const record = preparePersonalTransitMeaningRecord({ contentKey: proposal.contentKey, revision: proposal.revision,
+      approvedWritingComparison:proposal.approvedWritingComparison,
       claims, source: input.source, history: prior ? [{ ...prior, previousStatus: prior.status,
-        status: 'superseded', reason: proposal.correction }] : [] }, packet);
+        status: 'superseded', reason: proposal.correction }] : [] }, packet, meaningOptions);
     records.push(record); receipts.push(retrieval);
   }
   const comparisonKeys = input.comparisonContentKeys ?? records.map(record => record.contentKey);

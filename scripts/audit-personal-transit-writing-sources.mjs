@@ -12,10 +12,11 @@ if (!Array.isArray(catalog) || new Set(catalog.map(row => row.contentKey)).size 
 const records = catalog.map(row => {
   const [,,transiting,natal,aspect] = row.contentKey.split('/');
   const packet = semantics.resolveTransitNatalSemantics({ transiting, natal, aspect });
-  const retrieval = retrievePersonalTransitMeaningSources(row.contentKey, packet);
+  const meaningOptions = {approvedPersonalWritings:sources.approvedPersonalWritings};
+  const retrieval = retrievePersonalTransitMeaningSources(row.contentKey, packet, meaningOptions);
   const meanings = sources.meanings.filter(meaning => meaning.contentKey === row.contentKey);
   if (meanings.length > 1) throw Error('CONFLICTING_MEANING_RECORDS');
-  if (meanings[0]) assertPersonalTransitMeaningRecord(meanings[0], packet, { allowProposed: true });
+  if (meanings[0]) assertPersonalTransitMeaningRecord(meanings[0], packet, { ...meaningOptions, allowProposed: true });
   return { contentKey: row.contentKey,
     existingReaderText: ['body_you','body_they'].map(field => {
       if (typeof row[field] !== 'string' || !row[field].trim()) throw Error('COMPLETE_CATALOG_PASSAGE_REQUIRED');

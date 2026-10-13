@@ -7,6 +7,8 @@ import { syntheticTransitSources, syntheticMeaningRecord, syntheticStylePhrase, 
 import { buildPersonalTransitWriterContext, readPersonalTransitSources, assertPersonalTransitWriterContext } from "../api/_lib/personal-transit-writer-context.js";
 import { READER_RULES_JSON, READER_RULES_SHA256 } from "../src/astro-writing/personalTransitReaderRules.mjs";
 import semantics from "../src/astro-writing/transitNatalSemantics.cjs";
+import { retrieveApprovedPersonalWriting } from '../src/astro-writing/personalTransitApprovedWriting.mjs';
+import { MockAgent, getGlobalDispatcher, setGlobalDispatcher } from 'undici';
 
 const meaning = "Synthetic supplied meaning with an exact final sentence.";
 const env = { NODE_ENV: "test", CONTENT_GENERATION_SECRET: "synthetic-transit-secret",
@@ -19,6 +21,14 @@ Object.assign(process.env, env);
 const target = "authored/transit-aspect/neptune/jupiter/trine";
 const base = { contentKey: target, youText: "", friendText: "", audience: "both" };
 let calls = 0, writes = 0, prompt = "", names: string[] = [], rows: any[] = [];
+let blobBody = '', blobReads = 0;
+const syntheticOidc = `e30.${Buffer.from(JSON.stringify({exp:Math.floor(Date.now()/1000)+3600})).toString('base64url')}.synthetic`;
+const originalDispatcher = getGlobalDispatcher(), blobAgent = new MockAgent();
+blobAgent.disableNetConnect();
+blobAgent.get('https://synthetic.private.blob.vercel-storage.com')
+  .intercept({path:/^\/personal-transit\/[a-f0-9]{64}\.json$/u,method:'GET',headers:{authorization:`Bearer ${syntheticOidc}`}})
+  .reply(200,()=>{blobReads++;return blobBody;},{headers:{'content-type':'application/json'}}).persist();
+setGlobalDispatcher(blobAgent);
 const originalFetch = globalThis.fetch;
 async function invoke(body: any, authorized = true) {
   const req = Object.assign(Readable.from([JSON.stringify(body)]), { method: "POST",
@@ -58,6 +68,9 @@ try {
     assert(!prompt.includes("The current effective rules below qualify earlier editorial instructions"));
     const context = JSON.parse(prompt.slice(prompt.indexOf('{"transit":')).split("\n\n")[0]);
     assert.equal(context.readerMeaning, meaning);
+    for (const reference of retrieveApprovedPersonalWriting(target).sources) {
+      assert(!prompt.includes(reference.text), 'Approved comparison prose remains private, not an automatic voice or instruction input');
+    }
     assert.equal(context.destinations.length, 2);
     for (const destination of context.destinations) {
       assert.equal(destination.stylePhrases.length, 1);
@@ -79,7 +92,36 @@ try {
     assert.deepEqual(result.writingReceipt.stylePhraseSources.map((p: any) => p.audience), ['you', 'friend']);
     assert(result.writingReceipt.stylePhraseSources.every((p: any) => p.textSha256 === syntheticStylePhrase().sha256));
   }
+  const oldOidc = process.env.VERCEL_OIDC_TOKEN;
+  process.env.VERCEL_OIDC_TOKEN = syntheticOidc;
+  blobBody = JSON.stringify(syntheticTransitSources({meaningText:meaning}));
+  const blobHash = digest(blobBody);
+  process.env.PRIVATE_PERSONAL_TRANSIT_SOURCES = 'blob:' + JSON.stringify({schema:'personal-transit-private-blob/v1',
+    storeId:'store_synthetic',pathname:`personal-transit/${blobHash}.json`,sha256:blobHash});
+  assert.equal((await invoke({...base,action:'meaning'},false)).status,401);
+  assert.equal(blobReads,0,'Anonymous requests cannot load private snapshots');
+  const privateMeaning = await invoke({...base,action:'meaning'});
+  assert.equal(privateMeaning.status,200);assert.equal(privateMeaning.meaning.text,meaning);
+  assert.equal((await invoke({...base,provider:'openai'})).status,200);
+  assert.equal(blobReads,1,'Meaning inspection and generation use the same verified private snapshot');
+  process.env.PRIVATE_PERSONAL_TRANSIT_SOURCES = 'blob:' + JSON.stringify({schema:'personal-transit-private-blob/v1',
+    storeId:'store_synthetic',pathname:`personal-transit/${digest('wrong')}.json`,sha256:digest('wrong')});
+  const beforeBrokenBlob = calls;
+  assert.equal((await invoke({...base,provider:'openai'})).status,409);
+  assert.equal(calls,beforeBrokenBlob,'Changed private source stops before provider transport');
+  assert.equal(writes,0);
+  if(oldOidc===undefined) delete process.env.VERCEL_OIDC_TOKEN;else process.env.VERCEL_OIDC_TOKEN=oldOidc;
+  process.env.PRIVATE_PERSONAL_TRANSIT_SOURCES = env.PRIVATE_PERSONAL_TRANSIT_SOURCES;
   const beforeFailures = calls;
+  const unchecked = syntheticTransitSources();
+  const uncheckedMeaning = unchecked.meanings.find(m => m.contentKey === target)!;
+  delete (uncheckedMeaning.derivation as any).approvedWritingComparison;
+  const {recordSha256: ignoredHash, status: ignoredStatus, review: ignoredReview, ...unsignedMeaning} = uncheckedMeaning;
+  uncheckedMeaning.recordSha256 = digest(JSON.stringify(unsignedMeaning));
+  uncheckedMeaning.review!.recordSha256 = uncheckedMeaning.recordSha256;
+  process.env.PRIVATE_PERSONAL_TRANSIT_SOURCES = encodeTransitSources(unchecked);
+  assert.equal((await invoke(base)).status, 409, 'Missing approved-writing comparison stops the actual handler before transport');
+  process.env.PRIVATE_PERSONAL_TRANSIT_SOURCES = env.PRIVATE_PERSONAL_TRANSIT_SOURCES;
   assert.equal((await invoke({ ...base, readerMeaning: "Unrecorded invented meaning." })).status, 409);
   const missing = syntheticTransitSources(); missing.meanings = [];
   process.env.PRIVATE_PERSONAL_TRANSIT_SOURCES = encodeTransitSources(missing);
@@ -259,5 +301,5 @@ try {
     for (const [name,value] of Object.entries(runtime)) { if(value === undefined) delete process.env[name]; else process.env[name]=value; }
     rmSync(registryDirectory,{recursive:true,force:true});
   }
-} finally { globalThis.fetch = originalFetch; }
+} finally { globalThis.fetch = originalFetch; setGlobalDispatcher(originalDispatcher); await blobAgent.close(); }
 console.log(`PASS Personal Transit actual-handler delivery: ${calls} mocked calls, private whole passages, separate meaning, same rules, exact audiences, source failures before spend, no writes.`);
