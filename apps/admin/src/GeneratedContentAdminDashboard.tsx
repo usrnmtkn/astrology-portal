@@ -5,7 +5,7 @@ import { calendarAspectRetrogradeOptions } from "../../web/src/content/calendarA
 import { isSkyIngressEssay, SKY_INGRESS_ESSAY_FORMAT, type SkyArticleFormat } from "../../web/src/content/skyIngressEssay.mjs";
 import { hasVerifiedSameSignHistory, type RetrogradeHistory } from "../../web/src/services/retrogradeHistory";
 import { useStudioCustomVariables } from "./studioCustomVariableClient";
-import { studioRequestTimeoutMs } from "./studioRequestPolicy";
+import { isStudioReadRequest, studioReadTimeoutMessage, studioRequestTimeoutMs } from "./studioRequestPolicy";
 import { compatibilityAspectPoints, compatibilityAspectTypes, compatibilityAspectKey, compatibilityAspectFromSearch, compatibilityAspectSearchText, compatibilityAspectSourceDraft, type CompatibilityAspectSelection } from "./compatibilityAspectSources";
 import { clearStudioEditorReturn, rememberStudioEditorReturn, studioEditorReturnContext } from "./studioEditorReturn";
 import type { HouseTransitEditorSource } from "./HouseTransitWriteupEditor";
@@ -2836,7 +2836,8 @@ function dashboardErrorMessage(error: unknown) {
 }
 
 async function adminJsonRequest<T>(path: string, secret: string, options: RequestInit = {}) {
-  const method = options.method ?? "GET";
+  const method = (options.method ?? "GET").toUpperCase();
+  const readOnly = isStudioReadRequest(path, method);
   if (path.startsWith("/api/admin/generated-content") && ["PATCH", "DELETE"].includes(method)) {
     const body = method === "PATCH" && typeof options.body === "string" ? JSON.parse(options.body) : null;
     const version = body?.expectedUpdatedAt ?? new URL(path, window.location.origin).searchParams.get("expectedUpdatedAt");
@@ -2866,11 +2867,14 @@ async function adminJsonRequest<T>(path: string, secret: string, options: Reques
         ...options.headers
       }
     });
-    payload = await response.json().catch(() => null);
+    payload = await response.json().catch((error) => {
+      if (timedOut) throw error;
+      return null;
+    });
   } catch (error) {
     if (timedOut) {
-      const details = method === "GET" ? "Loading content timed out. Try again; no changes were submitted." : "The request timed out. Reload before retrying so you do not overwrite a late response.";
-      throw new AdminRequestError(method === "GET" ? details : `${path} timed out. Your edit was not reported as saved.`, {
+      const details = readOnly ? studioReadTimeoutMessage : "The request timed out. Reload before retrying so you do not overwrite a late response.";
+      throw new AdminRequestError(details, {
         status: 408,
         path,
         method,
@@ -2910,27 +2914,26 @@ async function adminJsonRequest<T>(path: string, secret: string, options: Reques
 
 const generatedContentPageRetryDelaysMs = [350, 1_000];
 
-async function loadSupplementalRows<T>(path: string, secret: string, signal: AbortSignal, legacyField?: string): Promise<T[]> {
-  const payload = await adminJsonRequest<Record<string, unknown>>(path, secret, { signal });
-  const rows = payload.rows ?? (legacyField ? payload[legacyField] : undefined);
-  if (payload.ok !== true || !Array.isArray(rows) || rows.some(row => !row || typeof row !== "object" || Array.isArray(row))) {
-    throw new AdminRequestError("Invalid response schema.", { status: 502, path, method: "GET", details: "Expected a confirmed list of saved records." });
-  }
-  return rows as T[];
+function loadSupplementalRows<T>(path: string, secret: string, signal: AbortSignal, legacyField?: string): Promise<T[]> {
+  return retryStudioRead(async () => {
+    const payload = await adminJsonRequest<Record<string, unknown>>(path, secret, { signal });
+    const rows = payload.rows ?? (legacyField ? payload[legacyField] : undefined);
+    if (payload.ok !== true || !Array.isArray(rows) || rows.some(row => !row || typeof row !== "object" || Array.isArray(row))) {
+      throw new AdminRequestError("Invalid response schema.", { status: 502, path, method: "GET", details: "Expected a confirmed list of saved records." });
+    }
+    return rows as T[];
+  }, signal);
 }
 
 function isRetryableAdminReadError(error: unknown) {
-  if (!(error instanceof AdminRequestError)) return true;
-  return error.status === 200 || error.status === 408 || error.status === 429 || error.status >= 500;
+  return !(error instanceof AdminRequestError) || [200, 408, 429].includes(error.status) || error.status >= 500;
 }
 
-async function loadGeneratedContentPage(path: string, secret: string, signal?: AbortSignal) {
+async function retryStudioRead<T>(read: () => Promise<T>, signal?: AbortSignal): Promise<T> {
   for (let attempt = 0; ; attempt += 1) {
-    if (signal?.aborted) throw signal.reason ?? new Error("Content inventory load was cancelled.");
+    if (signal?.aborted) throw signal.reason ?? new Error("Content load was cancelled.");
     try {
-      const payload = await adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[]; nextCursor?: string | null }>(path, secret, { signal });
-      assertRowsPayload(payload, path);
-      return payload;
+      return await read();
     } catch (error) {
       if (signal?.aborted) throw signal.reason ?? error;
       const retryDelay = generatedContentPageRetryDelaysMs[attempt];
@@ -2938,6 +2941,14 @@ async function loadGeneratedContentPage(path: string, secret: string, signal?: A
       await new Promise((resolve) => window.setTimeout(resolve, retryDelay));
     }
   }
+}
+
+function loadGeneratedContentPage(path: string, secret: string, signal?: AbortSignal) {
+  return retryStudioRead(async () => {
+    const payload = await adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[]; nextCursor?: string | null }>(path, secret, { signal });
+    assertRowsPayload(payload, path);
+    return payload;
+  }, signal);
 }
 
 async function loadAllGeneratedContentRows(

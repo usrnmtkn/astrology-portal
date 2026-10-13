@@ -98,11 +98,11 @@ try {
   });
   for (const options of [{}, { method: "POST", readOnly: true }]) {
     const pending = assert.rejects(requestStudioJson("/api/admin/transit-natal-preview", "secondary-editor-test", options), error => {
-      assert.match((error as Error).message, /could not finish loading.*editor text is unchanged/u);
+      assert.match((error as Error).message, /Loading content timed out.*no changes were submitted/u);
       assert.doesNotMatch((error as Error).message, /save has not been confirmed|Reload/u);
       return true;
     });
-    mock.timers.tick(10_000);
+    mock.timers.tick(45_000);
     await pending;
   }
   for (const method of ["POST", "PATCH", "DELETE"]) {

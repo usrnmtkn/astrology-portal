@@ -1,6 +1,6 @@
 import { adminCredentialHeaders } from "./adminSecret";
 import { readStudioInventoryPages } from "./studioInventoryPagination";
-import { studioRequestTimeoutMs } from "./studioRequestPolicy";
+import { isStudioReadRequest, studioReadTimeoutMessage, studioRequestTimeoutMs } from "./studioRequestPolicy";
 
 export type GeneratedContentEditorRow = {
   id: string;
@@ -23,7 +23,7 @@ class StudioRequestError extends Error {
 type StudioRequestOptions = RequestInit & { readOnly?: boolean };
 
 async function request(path: string, secret: string, options: StudioRequestOptions = {}) {
-  const { readOnly = /^(GET|HEAD)$/iu.test(options.method ?? "GET"), ...fetchOptions } = options;
+  const { readOnly = isStudioReadRequest(path, options.method), ...fetchOptions } = options;
   const method = (options.method ?? "GET").toUpperCase();
   const isWrite = !readOnly && ["POST", "PATCH", "DELETE"].includes(method);
   const controller = new AbortController();
@@ -47,7 +47,7 @@ async function request(path: string, secret: string, options: StudioRequestOptio
     if (error instanceof StudioRequestError) throw error;
     if (controller.signal.aborted) throw new StudioRequestError(isWrite
       ? "Content Studio request was interrupted. Reload before retrying; a save has not been confirmed."
-      : "This content could not finish loading. Try again; your editor text is unchanged.", isWrite);
+      : studioReadTimeoutMessage, isWrite);
     throw new StudioRequestError(error instanceof SyntaxError
       ? "Content Studio did not receive JSON from its API. Reload to verify the saved state before retrying."
       : error instanceof Error ? error.message : "Content Studio could not connect. Reload before retrying.", isWrite);
