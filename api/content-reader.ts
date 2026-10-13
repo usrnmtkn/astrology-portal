@@ -73,7 +73,10 @@ export function readerRowIsEligible(row: GeneratedContentRow) {
     const declaredRoles = [value.content_role, row.source_snapshot?.content_role, row.facts?.content_role];
     if (declaredRoles.some(role => ['source_material', 'fallback_source'].includes(String(role ?? '').replaceAll('-', '_')))) return false;
     const { role, reviewStatus } = generatedRowPackageRole(row);
-    if (!['full_copy', 'authored_card', 'fallback_hook', 'vocabulary', 'template'].includes(role)) return false;
+    const houseCore = role === 'house_horoscope_core'
+      && /^house-horoscope-core\/[a-z-]+\/[a-z-]+\/house-(?:[1-9]|1[0-2])$/u.test(row.content_key)
+      && value.grammar_frame === 'second_person_block';
+    if (!houseCore && !['full_copy', 'authored_card', 'fallback_hook', 'vocabulary', 'template'].includes(role)) return false;
     if (!isGovernedReaderEligible({ ...record, contentKey: row.content_key, content_role: role, review_status: reviewStatus })) return false;
     if ((record as Record<string, unknown>).render_policy === 'sky-placement-continuous-v2'
       || row.content_key.startsWith('fallback-hook/sky-sign-copy/')) {
