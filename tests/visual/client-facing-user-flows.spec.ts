@@ -3063,6 +3063,8 @@ test.describe("client-facing user flow case studies", () => {
       const strip = page.getByRole("region", { name: "Selected week", exact: true });
       await expect(strip).toBeVisible();
       await expect(page.getByLabel("Upcoming lunar milestones")).toHaveCount(0);
+      // The complete reading reveals the downstream rows that make this page scrollable.
+      await expect(page.locator("button.calendar-checkin-card")).toBeVisible();
       const initialTop = (await strip.boundingBox())!.y;
       await strip.hover();
       await page.mouse.wheel(0, 600);
