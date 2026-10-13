@@ -69,3 +69,7 @@ The release budgets account for these small additions to the existing controls
 and deferred reader renderer. Startup, CSS, other chunks, dependencies and
 publication checks keep their existing limits. No prose or publication-state
 change is included; this is an interface cost, not a performance claim.
+
+Exact-head hosted auth CI at `7332b761d` measured 3,624,878 aggregate web gzip
+bytes, 231 above the matched local build. The 3,625,000-byte aggregate ceiling
+leaves 122 bytes over that hosted measurement; all other limits stay unchanged.
