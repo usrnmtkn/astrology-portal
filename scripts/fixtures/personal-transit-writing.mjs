@@ -15,10 +15,16 @@ export function syntheticMeaningRecord(contentKey, text = 'Synthetic complete co
   const packet = semantics.resolveTransitNatalSemantics({ transiting, natal, aspect });
   const retrieval = retrievePersonalTransitMeaningSources(contentKey, packet);
   const record = preparePersonalTransitMeaningRecord({ contentKey, revision: 1, source: 'synthetic-fixture-only',
+    approvedWritingComparison: syntheticWritingComparison(retrieval),
     claims: [{ text, sourceIds: retrieval.sources.map(source => source.id), rationale: 'Synthetic transport fixture, not an interpretation.' }] }, packet);
   if (reviewed) { record.status = 'owner-accepted'; record.review = { textSha256: record.sha256,
     recordSha256: record.recordSha256, source: 'synthetic-owner-review-fixture-only' }; }
   return record;
+}
+export function syntheticWritingComparison(retrieval) {
+  return { sourcePacketSha256: retrieval.approvedPersonalWriting.sha256,
+    entries: retrieval.approvedPersonalWriting.sources.map(s => ({sourceId:s.id,
+      relationship:'different-supported-focus', rationale:'Synthetic protocol fixture only; no editorial assessment or approval.'})) };
 }
 export function syntheticTransitSources({ meaningText = 'Synthetic complete contact meaning.', reviewed = true } = {}) {
   return { schema: 'personal-transit-writing-sources/v1', version: 'synthetic-only', stylePhrases: [syntheticStylePhrase()], meanings:

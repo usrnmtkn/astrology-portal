@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { requestStudioJson, saveGeneratedContentDraft } from '../apps/admin/src/generatedContentClient.ts';
+import { isStudioReadRequest, studioRequestTimeoutMs } from '../apps/admin/src/studioRequestPolicy.ts';
 
 const originalFetch = globalThis.fetch;
 const originalTimeout = globalThis.setTimeout;
@@ -36,15 +37,28 @@ try {
   globalThis.setTimeout = originalTimeout;
   globalThis.clearTimeout = originalClear;
 
-  for (const [method, deadline] of [['GET', 10_000], ['PATCH', 45_000]] as const) await test(`${method} stops waiting at its deadline`, async () => {
+  await test('only the known batch-read POST is classified as read-only', () => {
+    assert.equal(isStudioReadRequest('/api/admin/content-live-status', 'post'), true);
+    assert.equal(isStudioReadRequest('/api/admin/content-publication', 'POST'), false);
+    assert.equal(isStudioReadRequest('/api/admin/generated-content', 'POST'), false);
+    assert.equal(studioRequestTimeoutMs('/api/admin/generated-content-inventory?cursor=80'), 45_000);
+    assert.equal(studioRequestTimeoutMs('/api/admin/content-live-status', 'POST'), 45_000);
+    assert.equal(studioRequestTimeoutMs('/api/admin/sky-article-facts', 'GET'), 45_000);
+  });
+
+  for (const [path, method, deadline] of [
+    ['/api/admin/generated-content', 'GET', 45_000],
+    ['/api/admin/generated-content', 'PATCH', 45_000],
+    ['/api/admin/content-live-status', 'POST', 45_000]
+  ] as const) await test(`${path} ${method} stops waiting at its deadline`, async () => {
     let expire!: () => void;
     globalThis.setTimeout = ((fn: () => void, ms: number) => { assert.equal(ms, deadline); expire = fn; return 1; }) as any;
     globalThis.clearTimeout = (() => {}) as any;
     globalThis.fetch = (async (_path, options) => new Promise<Response>((_resolve, reject) => {
       options!.signal!.addEventListener('abort', () => reject(new DOMException('aborted', 'AbortError')));
     })) as typeof fetch;
-    const pending = requestStudioJson('/api/admin/generated-content', 'fixture', { method });
-    const rejected = assert.rejects(pending, method === 'GET' ? /editor text is unchanged/ : /save has not been confirmed/);
+    const pending = requestStudioJson(path, 'fixture', { method });
+    const rejected = assert.rejects(pending, isStudioReadRequest(path, method) ? /no changes were submitted/ : /save has not been confirmed/);
     expire();
     await rejected;
     globalThis.setTimeout = originalTimeout;

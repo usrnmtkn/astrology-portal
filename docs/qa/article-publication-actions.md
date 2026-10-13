@@ -73,3 +73,8 @@ change is included; this is an interface cost, not a performance claim.
 Exact-head hosted auth CI at `7332b761d` measured 3,624,878 aggregate web gzip
 bytes, 231 above the matched local build. The 3,625,000-byte aggregate ceiling
 leaves 122 bytes over that hosted measurement; all other limits stay unchanged.
+
+Integration with released main `dbfbf0eed` preserves the Monthly CSS allowance
+and adds the existing measured article JavaScript allocation to its aggregate
+ceiling (3,625,150 total). The initial CMS-loading regression now holds its
+synthetic response until loading assertions finish, removing its one-second race.

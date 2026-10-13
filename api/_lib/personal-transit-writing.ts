@@ -2,7 +2,7 @@ import { createHash } from "node:crypto";
 import { isDynamicTransitNatalExactKey, transitAspectSituationKey } from "../../apps/web/src/content/transitNatalIdentity.js";
 import { isEligibleTransitReturn } from "../../apps/web/src/content/fallbackArchitectureV3/resolver/transitReturns.mjs";
 import { generateSkyArticleTemplateSlots } from "./content-generation.js";
-import { buildPersonalTransitWriterContext, personalTransitDestinationChecks } from "./personal-transit-writer-context.js";
+import { buildPersonalTransitWriterContext, personalTransitDestinationChecks, readPersonalTransitSourcesForRequest } from "./personal-transit-writer-context.js";
 import { validatePassage } from "../../src/astro-writing/personalTransitPassageValidation.mjs";
 import transitContracts from "../../src/astro-writing/transitNatalContract.cjs";
 import { readerRuleFindings } from "../../src/astro-writing/personalTransitReaderRules.mjs";
@@ -361,7 +361,7 @@ export async function generatePersonalTransitAudienceDrafts(input: {
     youText: editorYou, friendText: editorFriend,
     facts: Object.fromEntries(Object.entries({ sign: input.contact.sign ?? preview.sign,
       transitHouse: preview.transitHouse, natalHouse: preview.natalHouse }).filter(([, value]) => value))
-  }) : undefined;
+  }, await readPersonalTransitSourcesForRequest()) : undefined;
   const generation = await generateSkyArticleTemplateSlots({
     templateKey: input.contact.contentKey,
     templateBody: [

@@ -267,9 +267,20 @@ for (const [width,theme] of [[1440,'light'],[390,'dark'],[390,'light'],[1440,'da
           await expect(editor.getByRole('link',{name:'Open published Calendar'})).toHaveAttribute('href',`/?date=${date}#calendar?view=${view}&date=${date}`);
           await reader.goto('about:blank');
           await reader.goto(`/?date=${date}#calendar?view=${view}&date=${date}`);
-          const overview = reader.getByRole('region',{name:view==='weekly'?'Weekly overview':'Monthly overview',exact:true});
-          await expect(overview).toContainText(`Synthetic ${view} opening.`,{timeout:60000});
-          await expect(overview).toContainText(`Synthetic ${view} complete ending.`);
+          if(view==='weekly') {
+            const overview = reader.getByRole('region',{name:'Weekly overview',exact:true});
+            await expect(overview).toContainText(`Synthetic ${view} opening.`,{timeout:60000});
+            await expect(overview).toContainText(`Synthetic ${view} complete ending.`);
+          } else {
+            // Monthly horoscopes live in Horoscopes. An older Calendar passage
+            // remains saved but cannot replace the explicitly authored TLDR card.
+            await expect(reader.locator('.lunar-calendar-grid-panel')).toBeVisible({timeout:60000});
+            await expect(reader.getByText('Loading the monthly overview…',{exact:true})).toHaveCount(0);
+            await expect(reader.getByText(`Synthetic ${view} opening.`,{exact:true})).toHaveCount(0);
+            await expect(reader.getByText(`Synthetic ${view} complete ending.`,{exact:true})).toHaveCount(0);
+            await editor.getByRole('button',{name:'Reload saved status',exact:true}).click();
+            await expect(field).toHaveValue(`Synthetic ${view} opening.\n\nSynthetic ${view} complete ending.`);
+          }
         }
       }
       expect(errors).toEqual([]);

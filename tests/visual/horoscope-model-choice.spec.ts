@@ -115,7 +115,15 @@ test('Pause persists after reload and resume reuses the saved batch approval',as
   await page.reload();await f.open();
   await expect(studio.getByText('The batch is paused. Resume to continue its saved approval.',{exact:true})).toBeVisible();
   await f.call({method:'writer-state',body:{pendingPolls:0}});
+  const resumed=page.waitForResponse(response=>response.url().includes('/api/admin/horoscope-writing')&&response.request().postDataJSON()?.action==='resume-batch');
   await studio.getByRole('button',{name:'Resume generation',exact:true}).click();
+  if((await resumed).status()===409){
+   // A dispatched poll can finish after Pause and advance the saved version.
+   // Recovery reads that version; continuing still requires an explicit click.
+   await expect(studio.getByRole('button',{name:'Resume generation',exact:true})).toBeEnabled();
+   expect((await f.latest()).source_snapshot.horoscopeGeneration.batch.id).toBe(batchId);
+   await studio.getByRole('button',{name:'Resume generation',exact:true}).click();
+  }
   await expect.poll(async()=>(await f.latest()).source_snapshot.horoscopeGeneration.batch.status,{timeout:45000}).toBe('complete');
   expect((await f.latest()).source_snapshot.horoscopeGeneration.batch.id).toBe(batchId);
   expect(await f.call({method:'writer-state'})).toMatchObject({calls:2,reviewCalls:2});

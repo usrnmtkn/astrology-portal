@@ -442,9 +442,14 @@ The reader's **This month** tab hides personal-sign controls and renders the
 whole approved overview. **This season** renders the whole introduction above
 the selected sign. Explicit edition links retain their archive and time-zone
 behavior. Calendar's Month view loads the same published monthly edition for its
-selected month and time zone; it never makes another writer call or paraphrases
-the body. If there is no matching published monthly edition, the existing Calendar
-monthly composition remains the fallback. A load failure has a retry action.
+selected month and time zone. Below the month grid, a card displays only that
+edition's explicitly authored TLDR, preserving every paragraph and linking by
+edition ID to the complete reading in Horoscopes. No summary is invented from
+an opening paragraph. A legacy edition without a labelled TLDR has a title and
+Read more link only; an absent edition has no card. Older Calendar compositions
+remain saved but do not substitute for a Monthly horoscope. A load failure has
+a retry action. Calendar presentation never changes the published body or starts
+a writer call.
 
 All units use the existing version-checked reservation, polling, rejection history
 and publication path. The final reading transition saves once before opening

@@ -50,7 +50,7 @@ export function prepareBatchFiles(options) {
     write(join(directory,`${i+1}-${p.perspective}.input.json`),p.input);
   }
   for (const role of ['writer','validator']) write(join(directory,`${role}-effective-rule-bundle.json`),READER_RULES_JSON);
-  const sourcePaths=['src/astro-writing/ownerTransitBatch.mjs','src/astro-writing/personalTransitMeaningRecords.mjs','src/astro-writing/personalTransitMeaningProjection.mjs',
+  const sourcePaths=['src/astro-writing/ownerTransitBatch.mjs','src/astro-writing/personalTransitApprovedWriting.mjs','src/astro-writing/personalTransitMeaningRecords.mjs','src/astro-writing/personalTransitMeaningProjection.mjs',
     'src/astro-writing/personalTransitInputControls.mjs','src/astro-writing/personalTransitWriterContext.mjs','src/astro-writing/personalTransitPassageValidation.mjs',
     'src/astro-writing/personalTransitPreparation.mjs','src/astro-writing/personalTransitDispatch.mjs','src/astro-writing/personalTransitReaderRules.mjs',
     'src/astro-writing/transitNatalContract.cjs','src/astro-writing/transitNatalSemantics.cjs','apps/web/src/content/editorialCopyBoundary.mjs',
