@@ -12517,7 +12517,7 @@ export function GeneratedContentAdminDashboard() {
             {isLoading ? "Publishing…" : skyArticleEditor.saveState === "error" ? "Draft save failed · Changes not published"
               : skyArticleEditor.saveState !== "saved" ? "Saving draft · Changes not published"
                 : skyArticleChanges.length > 0 ? "Draft saved · Changes not published"
-                  : currentDraft.status === "LIVE" ? "Published copy is unchanged." : "Draft saved · Not live"}
+                  : currentDraft.status === "LIVE" ? "Published copy is unchanged." : "Draft saved · Awaiting publication"}
           </span>
           {skyArticleEditor.saveState === "error" && <StudioButton disabled={isLoading} onClick={() => updateSkyArticleFields({})}>Retry save</StudioButton>}
           {skyArticleChanges.length > 0 ? <StudioButton className="admin-primary-button" type="button" disabled={isLoading} onClick={() => {
