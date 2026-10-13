@@ -1,11 +1,11 @@
 import { withRequestDeadline } from "../services/requestDeadline";
 import skyV4CanonicalCorpusUrl from "./fallbackArchitectureV3/authored-inputs/sky-v4-canonical-content-studio-stage-v1.json?url";
-import correctionManifestUrl from "./fallbackArchitectureV3/authored-inputs/sky-v4-continuous-corpus-correction-v1.json?url";
+import correctionManifest from "./fallbackArchitectureV3/authored-inputs/sky-v4-continuous-corpus-correction-v1.json";
 import correctionChunk1Url from "./fallbackArchitectureV3/authored-inputs/sky-v4-continuous-corpus-correction-v1-chunk-1.json?url";
 import correctionChunk2Url from "./fallbackArchitectureV3/authored-inputs/sky-v4-continuous-corpus-correction-v1-chunk-2.json?url";
 import correctionChunk3Url from "./fallbackArchitectureV3/authored-inputs/sky-v4-continuous-corpus-correction-v1-chunk-3.json?url";
 import correctionChunk4Url from "./fallbackArchitectureV3/authored-inputs/sky-v4-continuous-corpus-correction-v1-chunk-4.json?url";
-import lunarManifestUrl from "./fallbackArchitectureV3/authored-inputs/sky-v4-placement-lunar-context-v1.json?url";
+import lunarManifest from "./fallbackArchitectureV3/authored-inputs/sky-v4-placement-lunar-context-v1.json";
 import lunarChunk1Url from "./fallbackArchitectureV3/authored-inputs/sky-v4-placement-lunar-context-v1-chunk-1.json?url";
 import lunarChunk2Url from "./fallbackArchitectureV3/authored-inputs/sky-v4-placement-lunar-context-v1-chunk-2.json?url";
 
@@ -14,15 +14,9 @@ let pending: Promise<unknown[]> | null = null;
 // when another source fails, and share in-flight work across reader retries.
 const sources = new Map<string, Promise<unknown>>();
 
-class SourceResponseError extends Error {
-  constructor(readonly status: number) {
-    super(`SKY_V4_SOURCE_GAP: reader package returned ${status}.`);
-  }
-}
-
 function isTransient(error: unknown) {
-  return error instanceof TypeError || (error instanceof Error && error.name === "TimeoutError")
-    || (error instanceof SourceResponseError && (error.status === 408 || error.status === 429 || error.status >= 500));
+  return error instanceof Error && (error instanceof TypeError || error.name === "TimeoutError"
+    || typeof error.cause === "number" && (error.cause === 408 || error.cause === 429 || error.cause >= 500));
 }
 
 export function loadSkyPlacementSourceAssets() {
@@ -43,7 +37,7 @@ async function loadSources() {
         const response = await withRequestDeadline(requestSignal => fetch(imported, { signal: requestSignal }), { signal });
         if (!response.ok) {
           void response.body?.cancel().catch(() => {});
-          throw new SourceResponseError(response.status);
+          throw new Error(`SKY_V4_SOURCE_GAP: reader package returned ${response.status}.`, { cause: response.status });
         }
         const reader = response.body?.getReader();
         if (!reader) return response.json() as Promise<unknown>;
@@ -82,9 +76,11 @@ async function loadSources() {
   }
   return Promise.all([
     loadJson(skyV4CanonicalCorpusUrl),
-    loadJson(correctionManifestUrl),
+    // These small manifests were already embedded by Vite as base64 URLs.
+    // Embed their identical parsed values instead of encoding and fetching them.
+    loadJson(correctionManifest),
     ...[correctionChunk1Url, correctionChunk2Url, correctionChunk3Url, correctionChunk4Url].map(loadJson),
-    loadJson(lunarManifestUrl),
+    loadJson(lunarManifest),
     loadJson(lunarChunk1Url),
     loadJson(lunarChunk2Url)
   ]);

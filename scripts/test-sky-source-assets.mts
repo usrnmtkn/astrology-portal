@@ -1,5 +1,11 @@
 import assert from 'node:assert/strict';
 import { build } from 'esbuild';
+import { readFileSync } from 'node:fs';
+
+const manifest = (name: string) => JSON.parse(readFileSync(`apps/web/src/content/fallbackArchitectureV3/authored-inputs/${name}.json`, 'utf8'));
+const correctionManifest = manifest('sky-v4-continuous-corpus-correction-v1');
+const lunarManifest = manifest('sky-v4-placement-lunar-context-v1');
+const completeSources = (value: unknown) => [value, correctionManifest, value, value, value, value, lunarManifest, value, value];
 
 const output = await build({
   entryPoints: ['apps/web/src/content/skyPlacementSourceAssets.ts'], bundle: true, write: false, format: 'esm', platform: 'node',
@@ -11,7 +17,8 @@ const output = await build({
 const { loadSkyPlacementSourceAssets } = await import(`data:text/javascript;base64,${Buffer.from(output.outputFiles[0].text).toString('base64')}`);
 const originalFetch = globalThis.fetch;
 // One transient source failure must recover without a second reader invocation.
-// The eight successful files must not be fetched again while it recovers.
+// The six successful downloads must not repeat; the two embedded manifests
+// must retain their exact parsed source values.
 const attempts = new Map<string, number>();
 try {
   globalThis.fetch = async input => {
@@ -24,7 +31,9 @@ try {
   const { loadSkyPlacementSourceAssets: load } = await import(`data:text/javascript;base64,${Buffer.from(output.outputFiles[0].text).toString('base64')}#transient`);
   const result = await load();
   assert.equal(result.length, 9);
-  assert.deepEqual([...attempts.values()].sort(), [1, 1, 1, 1, 1, 1, 1, 1, 2]);
+  assert.deepEqual(result[1], correctionManifest);
+  assert.deepEqual(result[6], lunarManifest);
+  assert.deepEqual([...attempts.values()].sort(), [1, 1, 1, 1, 1, 1, 2]);
 } finally { globalThis.fetch = originalFetch; }
 let fail = true;
 const requests: string[] = [];
@@ -37,16 +46,16 @@ try {
   const failed = loadSkyPlacementSourceAssets();
   assert.equal(loadSkyPlacementSourceAssets(), failed, 'Entry and mounted reader must share in-flight requests');
   await assert.rejects(failed, /SOURCE_GAP/);
-  assert.equal(requests.length, 9);
+  assert.equal(requests.length, 7);
   fail = false;
   const retry = loadSkyPlacementSourceAssets();
   assert.notEqual(retry, failed, 'A failed speculative load must not poison the reader retry');
   const assets = await retry;
   assert.equal(assets.length, 9);
-  assert.equal(new Set(requests).size, 9);
-  assert.equal(requests.length, 18);
+  assert.equal(new Set(requests).size, 7);
+  assert.equal(requests.length, 14);
   assert.equal(await loadSkyPlacementSourceAssets(), assets, 'A completed preload is reused without another transfer');
-  assert.equal(requests.length, 18);
+  assert.equal(requests.length, 14);
 } finally { globalThis.fetch = originalFetch; }
 console.log('PASS: all nine exact source assets, coalescing, bounded requests, failure recovery and completed-preload reuse.');
 
@@ -64,7 +73,7 @@ try {
   await assert.rejects(load(), /returned 404/);
   unavailable = false;
   assert.equal((await load()).length, 9);
-  assert.deepEqual([...counts.values()].sort(), [1, 1, 1, 1, 1, 1, 1, 1, 2]);
+  assert.deepEqual([...counts.values()].sort(), [1, 1, 1, 1, 1, 1, 2]);
 } finally { globalThis.fetch = originalFetch; }
 
 // Scale only production deadlines. Real streamed chunks cross the old total
@@ -115,24 +124,24 @@ try {
     };
     const { loadSkyPlacementSourceAssets: load } = await import(`${sourceModule}#${mode}`);
     if (mode.endsWith('-recovery')) {
-      assert.deepEqual(await load(), Array.from({ length: 9 }, () => complete));
-      assert.equal(signals.length, 18, 'Exactly one automatic retry per failed file');
-      if (mode === 'body-recovery') assert.equal(cancelled, 9);
-      if (mode === 'header-recovery') assert(signals.filter((_, i) => i < 9).every(signal => signal.aborted));
+      assert.deepEqual(await load(), completeSources(complete));
+      assert.equal(signals.length, 14, 'Exactly one automatic retry per failed file');
+      if (mode === 'body-recovery') assert.equal(cancelled, 7);
+      if (mode === 'header-recovery') assert(signals.filter((_, i) => i < 7).every(signal => signal.aborted));
       continue;
     } else if (mode === 'progress') {
-      assert.deepEqual(await load(), Array.from({ length: 9 }, () => complete));
-      assert.equal(delivered, chunks.length * 9, 'Preserve every byte across streamed UTF-8 boundaries');
+      assert.deepEqual(await load(), completeSources(complete));
+      assert.equal(delivered, chunks.length * 7, 'Preserve every byte across streamed UTF-8 boundaries');
     } else if (mode === 'invalid') {
       await assert.rejects(load(), SyntaxError, 'Partial JSON must never become an eligible source');
     } else {
       await assert.rejects(load(), { name: 'TimeoutError' });
       await pause(100);
       if (mode === 'headers') assert(signals.every(signal => signal.aborted));
-      else assert.equal(cancelled, mode === 'stalled' ? 18 : 9, 'Cancel every stalled or over-budget source stream');
-      if (mode === 'trickle') assert(delivered >= 9 * 4, 'Exercise the total bound despite continuing progress');
+      else assert.equal(cancelled, mode === 'stalled' ? 14 : 7, 'Cancel every stalled or over-budget source stream');
+      if (mode === 'trickle') assert(delivered >= 7 * 4, 'Exercise the total bound despite continuing progress');
     }
-    assert.equal(signals.length, mode === 'headers' || mode === 'stalled' ? 18 : 9);
+    assert.equal(signals.length, mode === 'headers' || mode === 'stalled' ? 14 : 7);
   }
 } finally { globalThis.fetch = originalFetch; globalThis.setTimeout = realTimeout; }
 console.log('PASS: complete progressive UTF-8 downloads, header/body stalls, total duration bound, cancellation and malformed-source refusal.');
