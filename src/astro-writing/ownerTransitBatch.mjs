@@ -1,5 +1,5 @@
 import { validatePassage, identity } from './personalTransitPassageValidation.mjs';
-// Local owner-reviewed authoring prototype. No provider, credential or publication client.
+// Local owner-reviewed authoring prototype. No provider calls, credentials or publication client.
 import { createHash } from 'node:crypto';
 import { mkdirSync, readFileSync, writeFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
@@ -9,9 +9,10 @@ import { PERSONAL_TRANSIT_READER_RULES, READER_RULES_SHA256 } from './personalTr
 import { personalTransitMeaningProjection } from './personalTransitMeaningProjection.mjs';
 import { feedbackForContact, feedbackForWriter, inspectCalibration } from './personalTransitInputControls.mjs';
 import { buildPersonalTransitWriterContext } from './personalTransitWriterContext.mjs';
+import { GEMINI_INTERACTIONS_URL } from './geminiInteractions.cjs';
 
 export const sha256 = value => createHash('sha256').update(typeof value === 'string' || Buffer.isBuffer(value) ? value : JSON.stringify(value)).digest('hex');
-export const MODEL = Object.freeze({ provider: 'Google', model: 'gemini-3.8-flash', endpoint: 'https://generativelanguage.googleapis.com/v1beta/interactions', generation_config: { thinking_level: 'medium', max_output_tokens: 8192, thinking_summaries: 'none' }, store: false });
+export const MODEL = Object.freeze({ provider: 'Google', model: 'gemini-3.8-flash', endpoint: GEMINI_INTERACTIONS_URL, generation_config: { thinking_level: 'medium', max_output_tokens: 8192, thinking_summaries: 'none' }, store: false });
 export { PERSONAL_TRANSIT_WRITER_INSTRUCTION as WRITER_INSTRUCTION } from './personalTransitWriterContext.mjs';
 export { identity } from './personalTransitPassageValidation.mjs';
 const verb = a => ({ conjunction: 'conjunct', opposition: 'opposite' }[a] ?? a);
