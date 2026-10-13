@@ -1,7 +1,7 @@
 import { defineConfig } from '@playwright/test';
 export default defineConfig({
   testDir: './tests/visual',
-  testMatch: ['content-dashboard-admin-user-flows.spec.ts', 'content-studio-needs-attention.spec.ts'],
+  testMatch: ['content-dashboard-admin-user-flows.spec.ts', 'content-studio-needs-attention.spec.ts', 'studio-startup.spec.ts'],
   timeout: 60000,
   workers: 2,
   fullyParallel: true,

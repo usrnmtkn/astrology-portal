@@ -90,6 +90,18 @@ directly. This prevents the legacy status normalizer from replacing React’s te
 node before the compact moon is inserted on a later save. The browser regression
 checks two consecutive saves, the pending moon and publication handoff.
 
+The standalone pre-hydration regression lives in `studio-startup.spec.ts`,
+selected by the standalone Studio configuration. The shared admin-flow suite
+also runs through the website entry, whose document retains the four icons;
+`startup-animation.spec.ts` covers that separate startup contract.
+
+CI-configured standalone builds use the visual-smoke Supabase placeholders.
+On main `dbfbf0eed`, the entry measures 793,693 raw / 231,530 gzip bytes; the moon
+implementation measures 793,982 / 231,634, with 795,211 aggregate gzip bytes.
+Centering the SVG coordinate system and sharing its paint styles removes
+173 raw entry bytes from the initial moon implementation. Entry, largest-chunk
+and aggregate Studio limits remain unchanged and pass with these settings.
+
 Local verification covers 39 Chromium loading/skeleton/startup checks and 13
 WebKit page, Friends and compact-moon checks. The final Studio build passes the
 initial document and repeated-save regressions, and the final web build passes

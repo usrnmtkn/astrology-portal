@@ -63,6 +63,7 @@
   width: var(--startup-moon-size);
   height: var(--startup-moon-size);
   color: var(--startup-moon-ink);
+  fill: currentColor;
 }
 
 .loading-moon--compact {
@@ -70,7 +71,9 @@
   height: var(--size-2);
 }
 
-.loading-moon__outline {
+.loading-moon > circle:last-child {
+  fill: none;
+  stroke: currentColor;
   stroke-width: var(--startup-moon-stroke-width);
 }
 
