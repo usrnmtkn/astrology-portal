@@ -522,6 +522,7 @@ async function seedAdminApi(
     expectedSecret?: string;
     generatedRows?: Record<string, unknown>[];
     generatedContentDelayMs?: number;
+    generatedContentReady?: Promise<void>;
     generatedContentFailuresBeforeSuccess?: number;
     generatedContentWriteReturnsEmpty?: boolean;
     loseFirstPublicationResponse?: boolean;
@@ -816,6 +817,7 @@ async function seedAdminApi(
         });
         return;
       }
+      await options.generatedContentReady;
       if (options.generatedContentDelayMs) {
         await new Promise((resolve) => setTimeout(resolve, options.generatedContentDelayMs));
       }
@@ -951,6 +953,7 @@ async function seedAdminApi(
         return;
       }
 
+      await options.generatedContentReady;
       if (options.generatedContentDelayMs) {
         await new Promise((resolve) => setTimeout(resolve, options.generatedContentDelayMs));
       }
@@ -1203,15 +1206,21 @@ test.describe("content dashboard admin user flow case studies", () => {
   });
 
   test("initial CMS load does not present zero counts as a ready dashboard", async ({ page }) => {
-    await seedAdminApi(page, { generatedContentDelayMs: 1_000 });
+    let releaseContent!: () => void;
+    const generatedContentReady = new Promise<void>((resolve) => { releaseContent = resolve; });
+    await seedAdminApi(page, { generatedContentReady });
     await page.goto("/admin/content");
 
     const loading = page.getByRole("region", { name: "Loading saved content" });
-    await expect(loading).toContainText("Loading saved content…");
-    await expect(loading).not.toContainText("Content Studio ready");
-    await expect(page.getByRole("region", { name: "Admin status" })).toContainText("Loading… 0 rows");
-    await expect(loading).toBeVisible();
-    await expect(page.getByRole("navigation", { name: "Review queue views" })).toBeHidden();
+    try {
+      await expect(loading).toContainText("Loading saved content…");
+      await expect(loading).not.toContainText("Content Studio ready");
+      await expect(page.getByRole("region", { name: "Admin status" })).toContainText("Loading… 0 rows");
+      await expect(loading).toBeVisible();
+      await expect(page.getByRole("navigation", { name: "Review queue views" })).toBeHidden();
+    } finally {
+      releaseContent();
+    }
 
     await expect(page.getByRole("region", { name: "Admin status" })).toContainText(`Connected · ${generatedContentRows.length.toLocaleString("en-US")} rows`, {
       timeout: routeReadyTimeoutMs
