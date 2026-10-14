@@ -281,7 +281,7 @@ import {
   cmsSurfaceKeys,
   resolveCmsSurfaceOverride
 } from "./content/cmsSurfaceOverrides";
-import { isSkyAspectRetired, resolveSkyAspectContentStudioExact, resolveSkyAspectGeneratedContent, skyAspectGeneratedContentKeys } from "./services/skyAspectContent";
+import { isSkyAspectRetired, resolveSkyAspectContentStudioExact, resolveSkyAspectGeneratedContent, resolveSkyAspectOwnerAuthoredSigned, skyAspectGeneratedContentKeys } from "./services/skyAspectContent";
 import { eligibleSkyDetailContent, loadSkyDetailContent, skyDetailRequiredAspectKeys } from "./services/skyDetailContent";
 import {
   resolveApprovedExactSkyAspectCopy,
@@ -4391,8 +4391,8 @@ function approvedExactSkyAspectWritingSection(
 ): NormalizedSkyAspectSection | null {
   const firstSign = aspect.fromSign ?? skyAspectPosition(aspect.from, positions)?.sign;
   const secondSign = aspect.toSign ?? skyAspectPosition(aspect.to, positions)?.sign;
-  const studio = generatedContent && firstSign && secondSign
-    ? resolveSkyAspectContentStudioExact({
+  const options = generatedContent && firstSign && secondSign
+    ? {
         generatedContent,
         first: aspect.from,
         second: aspect.to,
@@ -4401,15 +4401,17 @@ function approvedExactSkyAspectWritingSection(
         secondSign,
         firstMotion: skyAspectPosition(aspect.from, positions)?.motion,
         secondMotion: skyAspectPosition(aspect.to, positions)?.motion
-      })
+      }
     : null;
+  const signedStudio = options ? resolveSkyAspectOwnerAuthoredSigned(options) : null;
+  const studio = signedStudio ?? (options ? resolveSkyAspectContentStudioExact(options) : null);
 
   if (studio) {
     return {
       slot: "meaning",
       required: true,
       layer: "authored",
-      tier: "content-studio-exact-sky-aspect-v1",
+      tier: signedStudio ? "content-studio-signed-sky-aspect-v1" : "content-studio-exact-sky-aspect-v1",
       sourceKeys: [studio.content.contentKey],
       heading: studio.content.headline || skyAspectDisplayTitle(aspect),
       body: studio.body

@@ -37,7 +37,7 @@ assert.match(
 );
 assert.match(
   appSource,
-  /const currentSkyContentKeys = \[[\s\S]*?cmsSurfaceKeys\.retrogradeSummary[\s\S]*?cmsSurfaceKeys\.skyDebility[\s\S]*?loadLiveGeneratedContentForKeys\(currentSkyContentKeys\)[\s\S]*?setSkyGeneratedContent\(mergeGeneratedContentMaps\(content, normalizedSkySnapshotContent\)\)/u,
+  /const currentSkyContentKeys = \[[\s\S]*?cmsSurfaceKeys\.retrogradeSummary[\s\S]*?cmsSurfaceKeys\.skyDebility[\s\S]*?loadLiveGeneratedContentForKeys\(currentSkyContentKeys\)[\s\S]*?setSkyGeneratedContent\(previous => mergeGeneratedContentMaps\(content, eligibleSkyDetailContent\(previous\), normalizedSkySnapshotContent\)\)/u,
   "The Sky page must hydrate its current reader keys and merge them into the visible content. Personal transits resolve through their governed source loader."
 );
 assert.match(

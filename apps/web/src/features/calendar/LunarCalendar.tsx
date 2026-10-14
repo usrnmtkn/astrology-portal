@@ -70,7 +70,7 @@ import { cmsSurfaceKeys, resolveCmsSurfaceOverride } from "../../content/cmsSurf
 import { slugContentPart } from "../../services/generatedContentKeys";
 import { isContentRetired, publicationAllowsContent } from "../../content/contentPublicationState";
 import { resolveCalendarAspectPublication } from "./calendarAspectPublication";
-import { calendarAspectPublicationKeys, isSkyAspectRetired, resolveSkyAspectContentStudioExact, resolveSkyAspectGeneratedContent } from "../../services/skyAspectContent";
+import { calendarAspectPublicationKeys, isSkyAspectRetired, resolveSkyAspectContentStudioExact, resolveSkyAspectGeneratedContent, resolveSkyAspectOwnerAuthoredSigned } from "../../services/skyAspectContent";
 import {
   resolveApprovedExactSkyAspectCopy,
   resolveComposedSkyCalendarCard,
@@ -1361,7 +1361,7 @@ export function normalizeCalendarEventSurface(
           tier: "content-studio-exact-sky-aspect-v1"
         }
       : null;
-    const signedStudioResolved = resolveSkyAspectGeneratedContent({
+    const signedStudioResolved = resolveSkyAspectOwnerAuthoredSigned({
       generatedContent: generatedContent ?? (content ? new Map([[content.contentKey, content]]) : new Map()),
       first,
       second,

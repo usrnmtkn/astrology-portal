@@ -82,3 +82,21 @@ that older request and start one fresh read; ordinary simultaneous loaders still
 coalesce. Ledger installation's own `*` signal does not queue another forced
 read, preventing a refresh loop. This matters for newly published edition keys,
 which cannot be discovered through a request for an older known key.
+
+## Signed owner aspect selection
+
+The dated Sun–Neptune reader exposed another consumer mismatch: a published
+five-value owner passage passed the factual boundary but Sky assigned it the
+generated tier, below an older generic exact passage. Calendar already placed
+that owner source in the authored exact slot. Both readers now use the same
+signed-owner eligibility helper, retaining the existing composed priority,
+generated fallback, publication retirement and source-owned Rx variants.
+No saved writing or publication state is changed by this selection fix.
+
+Four browser variants require the actual dated Neptune route to show the complete
+synthetic signed opening and ending over competing generic exact copy, after
+reload and after a new publication revision; retirement removes the passage.
+Selector coverage also checks direct, retrograde, unknown motion, reversed
+planet order, invalid facts/review, ordinary generated precedence, composed
+priority and unpublished Rx refusal. Published acceptance uses read-only source
+hash comparisons; owner passages are never copied into test fixtures.
