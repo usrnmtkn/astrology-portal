@@ -37,3 +37,48 @@ edition rows: it left Sky loading instead of showing the error and Retry.
 Retaining a ready status now also requires that every published list edition
 is present. The failed-return path reports the existing retry state and recovers
 the exact published summary after Retry.
+
+## Recurrence and shared response ordering
+
+The dated ingress reader integration introduced a separate exact-edition load
+for the detail route. Its original browser regression entered the detail route
+directly, so it did not verify the same publication on the cold Sky list. The
+list's placement-source gate neither fetched these edition rows nor included
+their revisions in its identity. Subsequent ancillary loads replaced the shared
+map. Fixing editor publication alone could not repair those consumer omissions.
+The regression now starts at the list and requires the exact same published
+TL;DR before opening the complete reader.
+
+A deeper actual-handler regression reproduced a second, shared failure: an old
+successful response can arrive after a newer publication has been installed by
+another request. Monotonic ledger merging correctly retained the newer revision,
+but `loadReaderRows` still returned the old row. Map-based loaders filter such
+rows later; direct consumers such as Articles & Guides did not share that final
+filter. The shared transport now rechecks every accumulated row against the
+current ledger before returning the complete inventory. This also covers earlier
+pages superseded while later pages load, and keeps unrelated current rows.
+The public reader handler and client already use `no-store`; this is a response
+ordering/consumer-admission defect, not evidence of CDN cache staleness.
+
+The desktop dark regression also publishes a new synthetic exact edition via a
+second same-origin tab's normal storage notice. The already-open full reader,
+return to Sky list, and reload must show the new complete summary and body.
+A draft notice preserves the current published copy. Fixtures never write
+production content or change owner writing. Other-device readers use existing
+focus/visibility/online revalidation and a five-minute foreground interval;
+same-origin Studio notices refresh immediately. No cross-device push channel is
+claimed.
+
+The same browser case separately writes the newer publication cache from the
+second tab without a Studio notice, less than 30 seconds after reload. Its
+storage listener installs the new ledger before broadcasting `*`; the card and
+full reader must immediately follow that revision. Retirement then removes
+its complete synthetic body and TL;DR from the already-open reader and list.
+
+The parallel-ledger regression also reproduced a missed publication notice:
+`refreshContentPublications(true)` joined an existing read whose captured
+revision preceded the Studio edit. Explicit edit/resume refreshes now wait for
+that older request and start one fresh read; ordinary simultaneous loaders still
+coalesce. Ledger installation's own `*` signal does not queue another forced
+read, preventing a refresh loop. This matters for newly published edition keys,
+which cannot be discovered through a request for an older known key.

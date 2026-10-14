@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { Readable } from 'node:stream';
 import handler from '../api/content-reader.ts';
 import { loadReaderRows } from '../apps/web/src/services/readerContentClient.ts';
-import { publicationLedgerKey } from '../apps/web/src/content/contentPublicationState.ts';
+import { installContentPublications, publicationLedgerKey } from '../apps/web/src/content/contentPublicationState.ts';
 
 process.env.SUPABASE_URL = 'https://reader-recovery.invalid';
 process.env.SUPABASE_SERVICE_ROLE_KEY = 'synthetic-reader-recovery-key';
@@ -14,6 +14,7 @@ const makeRow = (i: number) => ({ id: `00000000-0000-4000-8000-${String(i).padSt
   lane: 'serving', review_state: null, target_date: null, body,
   source_snapshot: { contentType: 'manual', internalNotes: 'PRIVATE_RECOVERY_CANARY' }, sections: {} });
 let rows = [makeRow(1)];
+let publicationRevision = 1;
 let retired = false, storageFailures = 0, networkFailures = 0, publicStatus = 0, malformed = false;
 let failPublicPage = 0, retireOnFailure = false;
 let bodyFailures = 0, malformedJson = false, failBodyPublicPage = 0;
@@ -67,7 +68,7 @@ globalThis.fetch = async (input, init) => {
   return Response.json([
     { content_key: publicationLedgerKey, state: 'live', revision: 1, row_id: null, row_updated_at: null, updated_at: stamp },
     ...rows.filter(row => keys.includes(`"${row.content_key}"`)).map(row => ({ content_key: row.content_key,
-      state: retired ? 'retired' : 'live', revision: retired ? 2 : 1, row_id: row.id, row_updated_at: stamp, updated_at: stamp }))
+      state: retired ? 'retired' : 'live', revision: publicationRevision + Number(retired), row_id: row.id, row_updated_at: stamp, updated_at: stamp }))
   ]);
 };
 
@@ -141,13 +142,13 @@ try {
   result = await loadReaderRows({ keys: [rows[0].content_key] });
   assert.equal(result.error, null);
   assert.deepEqual(result.data, [], 'A retry must respect a retirement that happened during the failed request.');
-  retireOnFailure = false; retired = false;
+  retireOnFailure = false; retired = false; publicationRevision += 2;
 
   queries = []; bodyFailures = 1; retireOnFailure = true;
   result = await loadReaderRows({ keys: [rows[0].content_key] });
   assert.equal(result.error, null); assert.deepEqual(result.data, []);
   assert.equal(queries.length, 2, 'Body retries re-read publication state after a retirement.');
-  retireOnFailure = false; retired = false;
+  retireOnFailure = false; retired = false; publicationRevision += 2;
 
   rows = Array.from({ length: 251 }, (_, i) => makeRow(i + 1));
   queries = []; failPublicPage = 2;
@@ -164,5 +165,35 @@ try {
   assert.equal(new Set(result.data?.map(row => row.id)).size, 251);
   assert.equal(queries.length, 3); assert.deepEqual(queries[1], queries[2]);
   assert.equal(result.data?.at(-1)?.body, body);
-  console.log('PASS reader recovery: actual-handler 503, exact copy/privacy, interrupted headers/body, bounded attempts, cancellation, malformed JSON refusal, retirement and pagination.');
+  // A successful response can still be obsolete when another in-flight read
+  // has already installed a newer publication. Exercise the real handler's
+  // old response arriving after that publication, rather than a failed fetch.
+  const handlerFetch = globalThis.fetch;
+  globalThis.fetch = async (input, init) => {
+    const response = await handlerFetch(input, init);
+    if (String(input) === '/api/content-reader') installContentPublications([{
+      content_key: rows[0].content_key, state: 'live', revision: 99,
+      row_id: rows[0].id, row_updated_at: '2026-10-04T00:00:00Z', updated_at: '2026-10-04T00:00:00Z'
+    }]);
+    return response;
+  };
+  result = await loadReaderRows({ keys: [rows[0].content_key] });
+  assert.equal(result.error, null);
+  assert(!result.data?.some(row => row.content_key === rows[0].content_key),
+    'A delayed successful response cannot return copy superseded by a newer publication.');
+  assert.equal(result.data?.length, 250, 'Unrelated current publications remain available.');
+  globalThis.fetch = async (input, init) => {
+    const response = await handlerFetch(input, init);
+    if (String(input) === '/api/content-reader') installContentPublications([{
+      content_key: rows[1].content_key, state: 'retired', revision: 100,
+      row_id: rows[1].id, row_updated_at: stamp, updated_at: '2026-10-05T00:00:00Z'
+    }]);
+    return response;
+  };
+  result = await loadReaderRows({ surfaces: ['sky'] });
+  assert.equal(result.error, null);
+  assert(!result.data?.some(row => row.content_key === rows[1].content_key),
+    'A retirement received while inventory pages are loading must remove the earlier-page row.');
+  assert.equal(result.data?.length, 249);
+  console.log('PASS reader recovery: actual-handler 503, exact copy/privacy, interrupted headers/body, bounded attempts, cancellation, malformed JSON refusal, retirement, pagination and late superseded responses.');
 } finally { globalThis.fetch = originalFetch; }

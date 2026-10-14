@@ -52,7 +52,7 @@ import { YouRoute } from "./routes/YouRoute";
 import { loadYouPage, readYouPage } from "./features/you/youExperienceLoader";
 import type { YouPageProps } from "./features/you/YouPage";
 import { isStandaloneLearnPath } from "./content/learnRoutePath";
-import { refreshContentPublications } from "./services/contentPublications";
+import { refreshContentPublications, refreshContentPublicationsAfterUpdate } from "./services/contentPublications";
 import { preparePersonalReportTiming } from "./services/personalReportTiming";
 import {
   ArrowDownRight,
@@ -276,7 +276,7 @@ import {
   clearSharedGeneratedContentCache,
   loadSharedGeneratedContent
 } from "./services/sharedGeneratedContentCache";
-import { subscribeToContentUpdates, subscribeToContentRevalidation } from "./services/contentUpdateSignal";
+import { subscribeToContentUpdates, subscribeToContentRevalidation, type ContentUpdateNotice } from "./services/contentUpdateSignal";
 import {
   cmsSurfaceKeys,
   resolveCmsSurfaceOverride
@@ -12310,8 +12310,10 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
   }, []);
 
   useEffect(() => {
-    const refreshContent = () => {
-      void refreshContentPublications(true);
+    const refreshContent = (notice?: ContentUpdateNotice) => {
+      // Ledger installation emits "*" itself. Only an external edit/resume
+      // needs a read after any older request; do not recursively queue reads.
+      void (notice?.contentKey === "*" ? refreshContentPublications(true) : refreshContentPublicationsAfterUpdate());
       clearSharedGeneratedContentCache();
       clearPlanetTopicVocabularyCache();
       clearNatalCardTaglineCache();

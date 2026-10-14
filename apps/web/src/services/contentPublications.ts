@@ -9,6 +9,11 @@ let resolvedFromNetwork = false;
 export function contentPublicationsAvailableOnline() { return resolvedFromNetwork; }
 /** A failed first lookup is not evidence that no published override exists. */
 export function contentPublicationsResolved() { return resolved || publicationLedgerReady(); }
+/** A Studio notice must not be satisfied by a read started before the edit. */
+export async function refreshContentPublicationsAfterUpdate(): Promise<void> {
+  if (pending) await pending;
+  await refreshContentPublications(true);
+}
 /** Fetch every page before installing; partial or failed reads cannot erase retirements. */
 export async function refreshContentPublications(force = false, readRelay?: () => Promise<readonly unknown[]>): Promise<void> {
   if (pending) return pending;

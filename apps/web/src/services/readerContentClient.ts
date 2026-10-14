@@ -1,6 +1,6 @@
 import type { GeneratedContentRow } from './generatedContent';
 import { READER_ROW_SCHEMA } from '../content/readerRowSchema.mjs';
-import { installContentPublications, validContentPublication } from '../content/contentPublicationState';
+import { installContentPublications, publicationAllowsContent, validContentPublication } from '../content/contentPublicationState';
 
 type ReaderQuery = { provider?: string; keys?: string[]; ids?: string[]; prefix?: string; surfaces?: string[]; targetDate?: string; scope?: "sky" | "sky-list" | "sky-article"; vocabularyOnly?: boolean; latestVersion?: boolean; horoscope?: {period:string;at:string;timeZone?:string} };
 
@@ -42,7 +42,10 @@ export async function loadReaderRows(query: ReaderQuery, signal?: AbortSignal) {
         installContentPublications(value.publications);
       }
       rows.push(...value.rows);
-      if (!value.nextCursor) return { data: rows, error: null };
+      // Another request may have installed a newer publication while this
+      // response (or an earlier inventory page) was in flight.
+      if (!value.nextCursor) return { data: query.latestVersion ? rows : rows.filter(row =>
+        publicationAllowsContent(row.content_key, row.id, row.updated_at, row.target_date)), error: null };
       if (afterId && value.nextCursor <= afterId) throw new Error('Published content pagination did not advance.');
       afterId = value.nextCursor;
     }
