@@ -2438,6 +2438,8 @@ test.describe("content dashboard admin user flow case studies", () => {
   });
 
   test("Live status follows exact Virgo macro copy through two edits and publication", async ({ page }) => {
+    // This case verifies the System policy while changing the OS preference.
+    await page.addInitScript(() => localStorage.setItem("tldrastro:pageAnimations", "system"));
     const assertNoBrowserErrors = await expectNoBrowserErrors(page);
     const contentKey = "authored/sky-lunation-macro/new-moon/virgo";
     const record = servingPackageRecords.get(contentKey)!;

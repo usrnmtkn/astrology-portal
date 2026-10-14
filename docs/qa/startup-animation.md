@@ -231,3 +231,26 @@ limits. All 15 Chromium checks and four targeted WebKit checks pass on this
 implementation. WebKit uses the same assertions with optional screenshot capture
 omitted because capture stalls while the App request is held. Physical Safari
 verification and deployment remain separate from these engine-level checks.
+
+
+## Saved motion preference (October 14 correction)
+
+The saved Page animations choice now governs loader motion as well as page
+transitions. The independent document bootstrap reads the existing preference
+before the app bundle arrives and resolves it onto `data-reduce-motion`.
+The settings hook's `data-page-motion` changes and system media-query changes
+keep that effective value current. Moon CSS and the optional Lottie player use
+that same value, including standalone Studio and compact waits.
+
+- **On:** animate even when the OS requests reduced motion.
+- **System:** follow the OS; reduce motion uses a static moon and gently fading
+  four-icon poster without bounce.
+- **Off:** use that same reduced loader treatment regardless of the OS.
+
+The existing default remains On when no valid preference is saved or storage
+is unavailable. Loading readiness and error handoff never wait for animation.
+The browser regressions cover the actual Settings selection and reload,
+conflicting saved/system choices, compact moons in both themes, startup before
+hydration, and system changes while a loader is visible. Explicit System is
+seeded in OS-reduction tests so they test the selected policy rather than an
+unrelated default. No new animation asset or duration is introduced.

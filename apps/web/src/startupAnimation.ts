@@ -11,7 +11,7 @@ export function startStartupAnimation() {
   const container = artwork?.querySelector<HTMLElement>(".startup-artwork__animation");
   if (!startup || !artwork || !container) return;
 
-  const motion = window.matchMedia("(prefers-reduced-motion: reduce)");
+  const reducedMotion = () => document.documentElement.hasAttribute("data-reduce-motion");
   let animation: AnimationItem | undefined;
   let script: HTMLScriptElement | undefined;
   let disposed = false;
@@ -19,7 +19,7 @@ export function startStartupAnimation() {
 
   const syncPlayback = () => {
     if (!animation || !ready) return;
-    if (motion.matches) animation.goToAndStop(0, true);
+    if (reducedMotion()) animation.goToAndStop(0, true);
     else if (document.hidden) animation.pause();
     else animation.play();
   };
@@ -27,7 +27,7 @@ export function startStartupAnimation() {
   const dispose = () => {
     disposed = true;
     observer.disconnect();
-    motion.removeEventListener("change", onMotionChange);
+    motionObserver.disconnect();
     document.removeEventListener("visibilitychange", syncPlayback);
     if (script) {
       script.onload = null;
@@ -40,7 +40,7 @@ export function startStartupAnimation() {
   };
 
   const loadPlayer = () => {
-    if (script || disposed || motion.matches) return;
+    if (script || disposed || reducedMotion()) return;
     script = document.createElement("script");
     script.src = playerUrl;
     script.async = true;
@@ -76,7 +76,8 @@ export function startStartupAnimation() {
   });
   observer.observe(document.getElementById("root")!, { childList: true });
   observer.observe(startup, { attributes: true, attributeFilter: ["aria-busy"] });
-  motion.addEventListener("change", onMotionChange);
+  const motionObserver = new MutationObserver(onMotionChange);
+  motionObserver.observe(document.documentElement, { attributes: true, attributeFilter: ["data-reduce-motion"] });
   document.addEventListener("visibilitychange", syncPlayback);
   loadPlayer();
 }

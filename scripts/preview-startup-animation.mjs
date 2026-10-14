@@ -71,6 +71,7 @@ const html = readFileSync(new URL("index.html", dist), "utf8")
     let animationReady = false;
     const sync = () => {
       const playing = isPlaying();
+      root.toggleAttribute("data-reduce-motion", motion.matches);
       if (motionOverride) root.dataset.previewMotion = motionOverride;
       else delete root.dataset.previewMotion;
       playbackButton.textContent = playing ? 'Pause animation' : 'Play animation';
