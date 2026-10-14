@@ -13,3 +13,8 @@ export function isSkyListDashboardRow(row: { content_key: string }) {
   return /^(?:sky-(?:context|nodes|lilith|lunation|v4)\/|sky-placement\/(?:seasonal-context|lunar-context)\/|fallback-vocab\/|fallback-template\/sky)/u.test(row.content_key)
     || row.content_key.startsWith('fallback-hook/sky-') && !row.content_key.startsWith('fallback-hook/sky-aspect-');
 }
+
+export const skyArticleDashboardScopeFilter = `${skyListDashboardScopeFilter},content_key.like.authored/station/%,content_key.like.authored/week-opener/%,content_key.like.fallback-template/%,content_key.like.fallback-hook/sky-%,content_key.like.fallback-hook/lunation-%,content_key.like.fallback-hook/transit-%,content_key.like.fallback-hook/dignity-line%,content_key.like.fallback-hook/empty-house%`;
+export function isSkyArticleDashboardRow(row: { content_key: string }) {
+  return isSkyListDashboardRow(row) || shared.test(row.content_key);
+}

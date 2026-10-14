@@ -8,7 +8,7 @@ import {
   isDateInputValue, transitDateFromUrl, getInitialTransitDate, skyDateTimeFromInput, getInitialLocation
 } from "./services/skySelection";
 import type { InitialSkyLoad } from "./services/skyApi";
-import { skyPlacementSelection } from "./services/skyPlacementSourceScope";
+import { skyPlacementArticleSelection, skyPlacementSelection } from "./services/skyPlacementSourceScope";
 import { FormattedParagraph, FormattedProse, FormattedText } from "./components/FormattedProse";
 import { weeklyHoroscopeTagItems } from "./utils/weeklyFocusTags";
 import {
@@ -11026,7 +11026,9 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
   const [fallbackDashboardOverlayVersion, setFallbackDashboardOverlayVersion] = useState(0);
   const fallbackDashboardOverlayPresentRef = useRef(false);
   const [skyDetailRoutePath, setSkyDetailRoutePath] = useState<string | null>(skyDetailRoutePathFromUrl);
-  const placementSelection = skyDetailRoutePath ? "" : sky ? skyPlacementSelection(sky.positions) : "pending";
+  const placementSelection = skyDetailRoutePath
+    ? skyPlacementArticleSelection(skyDetailRoutePath, sky?.positions ?? [])
+    : sky ? skyPlacementSelection(sky.positions) : "pending";
   const [resolvedPlacementSelection, setResolvedPlacementSelection] = useState<string | null>(null);
   const [skyPlacementLoadStatus, setSkyPlacementFallbackStatus] = useState<SkyPlacementContentStatus>("idle");
   const [skyPlacementResolvedIdentity, setSkyPlacementResolvedIdentity] = useState<string | null>(null);
@@ -12147,7 +12149,6 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
         const ingressKeys = routePosition && placementSign ? skyIngressEssayPublicationKeys(contentPublicationRecords(), {
           planet: normalizeContentIdPart(routePosition.planet), sign: normalizeContentIdPart(placementSign)
         }) : [];
-        const baseContent = await loadSkyDetailContent(placementSky, availableDetailContent, ingressKeys, loadLiveGeneratedContentForKeys);
         const timelinePosition = placementSky.positions.find((candidate) => (
           routePlanet && skyRoutePartMatches(candidate.planet, routePlanet)
         )) ?? routePosition;
@@ -12158,16 +12159,8 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
             : null
         );
         const inSignKeys = skyPlacementInSignAspectContentKeys(timelineEvents);
-        if (!inSignKeys.length) {
-          renderPlacement(baseContent);
-          return;
-        }
-        try {
-          renderPlacement(mergeGeneratedContentMaps(baseContent, await loadLiveGeneratedContentForKeys(inSignKeys)));
-        } catch (error) {
-          console.warn("Sky Placement in-sign aspect copy failed to load; facts-only cards remain visible.", error);
-          renderPlacement(baseContent);
-        }
+        renderPlacement(await loadSkyDetailContent(placementSky, availableDetailContent,
+          ingressKeys, loadLiveGeneratedContentForKeys, inSignKeys));
       }).catch(error => {
         if (cancelled) return;
         console.warn("Requested placement calculation failed.", error);

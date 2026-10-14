@@ -138,7 +138,7 @@ assert.match(placementBundleSource, /bundled-sky-placement-rows-v3\.json/u);
 assert.match(readSource("apps/web/src/content/fallbackArchitectureV3SkyPlacementHouseBundle.ts"), /bundled-sky-placement-house-rows-v3\.json/u);
 assert.match(appSource, /prepareSkyPlacementSources\(placementSelection \|\| undefined\)/u);
 const preparationSource = readSource("apps/web/src/services/skyPlacementHydration.ts");
-assert.match(preparationSource, /loadSkyPlacementFallbackArchitectureV3Bundle\(!selection\)/u);
+assert.match(preparationSource, /loadSkyPlacementFallbackArchitectureV3Bundle\(!selection \|\| selection\.startsWith\('article:'\)\)/u);
 assert.match(generatedContentSource, /tldrastro-fallback-architecture-v3-sky-placement/u);
 assert.match(materializerSource, /serving-awaiting-owner-approval/u);
 assert.match(importerSource, /distribution_state: "staged"/u);

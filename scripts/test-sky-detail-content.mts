@@ -77,6 +77,13 @@ try {
   ] } as unknown as SkySnapshot;
   const relatedOnly = await loadSkyDetailContent(placementLike, content, [], async () => { throw new Error("offline fixture"); });
   assert.equal(relatedOnly.get(key), content.get(key), "A placement article still renders when an unrelated live aspect row is missing.");
+  let placementCalls = 0;
+  await loadSkyDetailContent(placementLike, new Map(), ['qa/ingress'], async keys => {
+    placementCalls++;
+    assert.deepEqual(keys.sort(), ['qa/ingress', 'qa/timeline']);
+    return new Map();
+  }, ['qa/timeline']);
+  assert.equal(placementCalls, 1, 'A placement joins its article and timeline writing in one targeted read, without unrelated current-sky aspects.');
   installContentPublications([{content_key:key,state:"retired",revision:999999,row_id:null,row_updated_at:null,updated_at:"2026-09-08T15:00:00Z"}]);
   const retired = await loadSkyDetailContent(facts, content, [], async () => { throw new Error("offline fixture"); });
   assert.equal(retired.has(key), false, "A missing response must not restore a retired row.");

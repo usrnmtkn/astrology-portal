@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
-import { isSkyDashboardRow, skyDashboardScopeFilter, isSkyListDashboardRow, skyListDashboardScopeFilter } from '../apps/web/src/services/skyDashboardScope';
-import { skyPlacementSourceInSelection } from '../apps/web/src/services/skyPlacementSourceScope';
+import { isSkyArticleDashboardRow, skyArticleDashboardScopeFilter, isSkyDashboardRow, skyDashboardScopeFilter, isSkyListDashboardRow, skyListDashboardScopeFilter } from '../apps/web/src/services/skyDashboardScope';
+import { skyPlacementArticleSelection, skyPlacementSourceInSelection } from '../apps/web/src/services/skyPlacementSourceScope';
 import { mkdtempSync, readFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
@@ -47,6 +47,19 @@ assert(!skyPlacementSourceInSelection('sky-placement/article/nodes/pisces-virgo'
 assert(!skyPlacementSourceInSelection('sky-placement/article/sun/libra', 'sun/virgo'));
 assert(!skyPlacementSourceInSelection('house-horoscope-core/sun/1', 'sun/virgo'));
 assert(skyPlacementSourceInSelection('sky-placement/article/sun/libra'), 'Opening an article retains the full source inventory');
+const articleSelection = skyPlacementArticleSelection('sky/placement/sun/virgo', []);
+assert.equal(articleSelection, 'article:sun/virgo');
+assert(skyPlacementSourceInSelection('sky-placement/article/sun/virgo', articleSelection));
+assert(!skyPlacementSourceInSelection('sky-placement/article/sun/libra', articleSelection));
+assert(skyPlacementSourceInSelection('house-horoscope-core/sun/virgo/house-1', articleSelection));
+assert(!skyPlacementSourceInSelection('house-horoscope-core/sun/libra/house-1', articleSelection));
+assert(!skyPlacementSourceInSelection('house-horoscope-core/moon/virgo/house-1', articleSelection));
+assert(skyPlacementSourceInSelection('fallback-hook/sky-aspect-pair/sun/moon/soft', articleSelection));
+assert.equal(skyPlacementArticleSelection('sky/retrograde/venus', [{planet:'Venus',sign:'Scorpio'}] as any), 'article:venus/scorpio');
+assert(skyPlacementSourceInSelection('sky-placement/article/nodes/aquarius-leo', 'article:north-node/aquarius,south-node/leo'));
+assert(skyPlacementSourceInSelection('sky-placement/article/nodes/aquarius-leo', 'article:nodes/aquarius-leo'));
+assert(!skyPlacementSourceInSelection('sky-placement/article/nodes/pisces-virgo', 'article:north-node/aquarius,south-node/leo'));
+assert.equal(skyPlacementArticleSelection('sky/aspect/sun/square/moon', []), '');
 assert(isSkyListDashboardRow({content_key: 'fallback-vocab/planet/sun'}));
 assert(!isSkyListDashboardRow({content_key: 'fallback-hook/sky-aspect-pair/sun/moon/soft'}));
 class Query {
@@ -57,8 +70,8 @@ class Query {
   eq(key: string, value: string) { this.filters.push(row => row[key] === value); return this; }
   in(key: string, values: string[]) { this.filters.push(row => values.includes(row[key])); return this; }
   or(filter: string) {
-    assert([skyDashboardScopeFilter, skyListDashboardScopeFilter].includes(filter));
-    this.filters.push(filter === skyDashboardScopeFilter ? isSkyDashboardRow : isSkyListDashboardRow);
+    assert([skyDashboardScopeFilter, skyListDashboardScopeFilter, skyArticleDashboardScopeFilter].includes(filter));
+    this.filters.push(filter === skyDashboardScopeFilter ? isSkyDashboardRow : filter === skyArticleDashboardScopeFilter ? isSkyArticleDashboardRow : isSkyListDashboardRow);
     return this;
   }
   gt(key: string, value: string) { this.filters.push(row => row[key] > value); return this; }
@@ -72,7 +85,7 @@ globalThis.fetch = async (input, init) => {
   const body = JSON.parse(String(init?.body));
   let query = (globalThis as any).fixtureClient.from();
   if (body.provider) query.eq('provider', body.provider);
-  if (body.scope) query.or(body.scope === 'sky' ? skyDashboardScopeFilter : skyListDashboardScopeFilter);
+  if (body.scope) query.or(body.scope === 'sky' ? skyDashboardScopeFilter : body.scope === 'sky-article' ? skyArticleDashboardScopeFilter : skyListDashboardScopeFilter);
   if (body.keys) query.in('content_key', body.keys);
   if (body.ids) query.in('id', body.ids);
   if (body.surfaces) query.in('surface', body.surfaces);
@@ -104,6 +117,8 @@ try {
   assert.equal(queries.length, 2, 'Each unchanged revision should reuse only its own partition');
   await qa.loadFallbackArchitectureV3DashboardBundle('sky-list');
   assert.deepEqual(queries.at(-1), [], 'The list must not reuse the broader article inventory');
+  await qa.loadFallbackArchitectureV3DashboardBundle('sky-article');
+  assert.deepEqual(queries.at(-1).map((row:any)=>row.content_key), [stationKey], 'Article dependencies retain shared station writing without Calendar or personal-transit inventory.');
   qa.installFallbackArchitectureV3Bundle(all);
   const changed = structuredClone(sky);
   changed.transitLib.authoredCards.find((row: any) => row.contentKey === skyKey).body = 'Fixture updated Sky passage.';
@@ -118,6 +133,7 @@ try {
   assert.equal(qa.readCachedFallbackArchitectureV3Bundle(), null);
   assert.equal(qa.readCachedFallbackArchitectureV3Bundle('sky'), null);
   assert.equal(qa.readCachedFallbackArchitectureV3Bundle('sky-list'), null);
+  assert.equal(qa.readCachedFallbackArchitectureV3Bundle('sky-article'), null);
   let releaseLedger!: () => void;
   (globalThis as any).publicationWait = new Promise<void>(resolve => { releaseLedger = resolve; });
   const beforeLedger = queries.length;

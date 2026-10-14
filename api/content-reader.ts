@@ -2,7 +2,7 @@ import { articleLibraryPrefixes } from "../src/shared/articleLibrary.js";
 import { createHash } from "node:crypto";
 import { SKY_SEASON_FALLBACK_PREFIX } from "../apps/web/src/content/skySeasonFallback.js";
 import { calendarPassageIdentity } from '../src/calendar-writing/passageContract.js';
-import { skyDashboardScopeFilter, skyListDashboardScopeFilter } from "../apps/web/src/services/skyDashboardScope.js";
+import { skyArticleDashboardScopeFilter, skyDashboardScopeFilter, skyListDashboardScopeFilter } from "../apps/web/src/services/skyDashboardScope.js";
 import type { IncomingMessage, ServerResponse } from 'node:http';
 import { loadLocalWebEnv } from './_lib/local-env.js';
 import { readAdminJsonBody, AdminHttpError } from './_lib/admin-http.js';
@@ -20,7 +20,7 @@ const pageSize = 250;
 const select = 'id,content_key,surface,mode,status,lane,review_state,event_type,target_date,facts,source_snapshot,headline,summary,body,sections,block_type,flags,provider,model,updated_at,judge_score,judge_gate';
 const providers = new Set(['tldrastro-fallback-architecture-v3', 'tldrastro-fallback-architecture-v3-sky-placement']);
 const surfaces = new Set(['sky', 'you', 'natal', 'synastry', 'composite', 'relationship', 'modifier', 'year_ahead', 'education']);
-type Query = { provider?: string; keys?: string[]; ids?: string[]; prefix?: string; surfaces?: string[]; targetDate?: string; afterId?: string; scope?: "sky" | "sky-list"; vocabularyOnly?: boolean; latestVersion?: boolean; horoscope?: {period:string; at:string; timeZone?:string} };
+type Query = { provider?: string; keys?: string[]; ids?: string[]; prefix?: string; surfaces?: string[]; targetDate?: string; afterId?: string; scope?: "sky" | "sky-list" | "sky-article"; vocabularyOnly?: boolean; latestVersion?: boolean; horoscope?: {period:string; at:string; timeZone?:string} };
 const uuid = /^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/iu;
 const key = /^[a-zA-Z0-9_./:| -]{1,500}$/u;
 class QueryError extends Error {}
@@ -42,7 +42,7 @@ async function readQuery(req: IncomingMessage): Promise<Query> {
     if (!Array.isArray(items) || !items.length || items.length > (name === 'surfaces' ? 10 : 200)
       || items.some(item => typeof item !== 'string' || (name === 'ids' ? !uuid.test(item) : name === 'surfaces' ? !surfaces.has(item) : !key.test(item) && !calendarPassageIdentity(item)))) throw new QueryError(`Invalid ${name}.`);
   }
-  if (value.scope !== undefined && !['sky', 'sky-list'].includes(String(value.scope))) throw new QueryError('Invalid scope.');
+  if (value.scope !== undefined && !['sky', 'sky-list', 'sky-article'].includes(String(value.scope))) throw new QueryError('Invalid scope.');
   if (value.vocabularyOnly !== undefined && value.vocabularyOnly !== true) throw new QueryError('Invalid vocabulary scope.');
   if (value.provider !== undefined && !providers.has(String(value.provider))) throw new QueryError('Invalid provider.');
   if (value.prefix !== undefined && !['authored/compat-pair/', 'education/astro-101/', ...articleLibraryPrefixes].includes(String(value.prefix))) throw new QueryError('Invalid prefix.');
@@ -121,7 +121,7 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
     if (query.surfaces) params.set('surface', `in.(${query.surfaces.join(',')})`);
     if (query.afterId) params.append('id', `gt.${query.afterId}`);
     if (query.targetDate) params.set('or', `(target_date.is.null,target_date.eq.${query.targetDate})`);
-    if (query.scope) params.append('or', `(${query.scope === 'sky' ? skyDashboardScopeFilter : skyListDashboardScopeFilter})`);
+    if (query.scope) params.append('or', `(${query.scope === 'sky' ? skyDashboardScopeFilter : query.scope === 'sky-article' ? skyArticleDashboardScopeFilter : skyListDashboardScopeFilter})`);
     if (query.vocabularyOnly) params.append('or', '(content_key.like.fallback-vocab/%,content_key.like.cc/planet/%,content_key.like.cc/sign/%)');
     if (query.latestVersion) { params.set('select', 'updated_at'); params.set('order', 'updated_at.desc'); params.set('limit', '1'); }
     const raw = await get('generated_interpretations', params);

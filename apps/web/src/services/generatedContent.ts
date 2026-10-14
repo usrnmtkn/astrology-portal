@@ -1,4 +1,4 @@
-import { isSkyDashboardRow, isSkyListDashboardRow } from "./skyDashboardScope";
+import { isSkyArticleDashboardRow, isSkyDashboardRow, isSkyListDashboardRow } from "./skyDashboardScope";
 import { loadReaderRows } from "./readerContentClient";
 import { packageAuthoredCardFromRow, packageHookRowFromRow, packageVocabRowFromRow, packageTemplateRowFromRow, packageFallbackArchitectureV3CoreRows } from "./fallbackArchitectureV3CorePackaging";
 // @ts-ignore Exact owner-requested source versions, shared with package materialization.
@@ -1051,7 +1051,7 @@ function sortGeneratedRowsNewestFirst(rows: GeneratedContentRow[]) {
   });
 }
 
-type DashboardScope = "all" | "sky" | "sky-list";
+type DashboardScope = "all" | "sky" | "sky-list" | "sky-article";
 const pendingDashboardBundles = new Map<DashboardScope, {
   generation: number;
   promise: Promise<FallbackArchitectureV3Bundle | null>;
@@ -1066,7 +1066,7 @@ export function clearCachedFallbackArchitectureV3Bundle(scope?: DashboardScope) 
   }
 
   try {
-    for (const partition of scope ? [scope] : ["all", "sky", "sky-list"] as const) {
+    for (const partition of scope ? [scope] : ["all", "sky", "sky-list", "sky-article"] as const) {
       window.localStorage.removeItem(dashboardCacheKey(fallbackArchitectureV3BundleVersionKey, partition));
       window.localStorage.removeItem(dashboardCacheKey(fallbackArchitectureV3BundleCacheKey, partition));
     }
@@ -1306,7 +1306,7 @@ async function loadContentStudioLastKnownGoodCoreBundle(scope: DashboardScope = 
   try {
     const manifest = await loadFallbackArchitectureV3BundledCoreManifest();
     const rows = await loadContentStudioLastKnownGoodRows();
-    return packageFallbackArchitectureV3CoreRows(scope === "all" ? rows : rows.filter(scope === "sky" ? isSkyDashboardRow : isSkyListDashboardRow), manifest);
+    return packageFallbackArchitectureV3CoreRows(scope === "all" ? rows : rows.filter(scope === "sky" ? isSkyDashboardRow : scope === "sky-article" ? isSkyArticleDashboardRow : isSkyListDashboardRow), manifest);
   } catch {
     return null;
   }
