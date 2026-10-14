@@ -21,7 +21,7 @@ import type { ArticlePillData } from "./components/ArticlePills";
 import { articleHistoryChangeEvent, pushArticleUrl, returnToArticleParent } from "./services/articleNavigation";
 import { CardReadMore } from "./components/CardReadMore";
 import { NavigationPill } from "./components/NavigationPill";
-import { isContentRetired, contentPublication, contentPublicationRecords } from "./content/contentPublicationState";
+import { isContentRetired, contentPublication, contentPublicationRecords, contentPublicationGeneration } from "./content/contentPublicationState";
 import { personalTransitPublicationIdentity } from "./services/personalTransitPublication";
 import { installPersonalTransitFallbackArchitectureV3Bundle } from "./content/fallbackArchitectureV3Runtime";
 import { prepareSkyPlacementSources, skyPlacementPublicationIdentity } from "./services/skyPlacementHydration";
@@ -11062,6 +11062,7 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
   const selectedSkyDetailRefreshKeyRef = useRef("");
   const selectedSkyDetailRefreshContentRef = useRef<GeneratedContentMap | null>(null);
   const selectedSkyDetailContentRef = useRef<GeneratedContentMap>(new Map());
+  const skyArticlePreparationRef = useRef<{ key: string; request: Promise<{ placementSky: SkySnapshot; content: GeneratedContentMap }> } | null>(null);
   const selectedSkyDetailRefreshSkyKeyRef = useRef("");
   const fallbackDashboardHydrationRequestedRef = useRef(false);
   const friendDetailOverlayVersionRef = useRef(0);
@@ -11356,6 +11357,7 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
     selectedCalendarTransitEventRef.current = null;
     // Reopening a card must load its complete placement facts again.
     selectedSkyDetailRefreshKeyRef.current = "";
+    skyArticlePreparationRef.current = null;
     // Friends invalidation compares this article's revision with later overlays.
     friendDetailOverlayVersionRef.current = fallbackDashboardOverlayVersion;
     const [, detailType] = decodeSkyRouteParts(detail.routePath ?? "");
@@ -12106,7 +12108,7 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
       profileNatalSky?.ascendant ?? userProfile?.rising ?? "",
       JSON.stringify(skyPlacementPersonalizationTransits)
     ].join(":");
-    const refreshKey = `${skyDetailRoutePath}:${fallbackArchitectureV3Version}:${contentRegistryVersion}:${personalizationKey}`;
+    const refreshKey = `${skyDetailRoutePath}:${contentRefreshVersion}:${fallbackArchitectureV3Version}:${contentRegistryVersion}:${personalizationKey}`;
     const skyArticleIdentityKey = `${skyDate}:${sky.location.latitude}:${sky.location.longitude}:${sky.location.timeZone}`;
 
     if (
@@ -12134,6 +12136,36 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
     const placementSnapshotRequest = canLoadPlacementArticle && routePlanet && placementSign
       ? requestSkyPlacementArticleSnapshot(sky.location, routePlanet, placementSign, skyDate)
       : null;
+    const preparationKey = `${skyDetailRoutePath}:${skyArticleIdentityKey}:${sky.generatedAt}:${contentRefreshVersion}:${skyDetailRetry}:${contentPublicationGeneration}`;
+    // Source hydration can rerun this effect. Keep one preparation for the
+    // selected article and publication revision while both reads finish.
+    if (placementSnapshotRequest && skyArticlePreparationRef.current?.key !== preparationKey) {
+      void loadContentRegistry("sky");
+      const request = Promise.all([placementSnapshotRequest, refreshContentPublications()])
+        .then(async ([placementSky]) => {
+          const ingressKeys = routePosition && placementSign ? skyIngressEssayPublicationKeys(contentPublicationRecords(), {
+            planet: normalizeContentIdPart(routePosition.planet), sign: normalizeContentIdPart(placementSign)
+          }) : [];
+          const timelinePosition = placementSky.positions.find((candidate) => (
+            routePlanet && skyRoutePartMatches(candidate.planet, routePlanet)
+          )) ?? routePosition;
+          const timelineEvents = filterPlacementTimelineEvents(
+            placementSky.placementAspectFacts?.inSign ?? [],
+            timelinePosition
+              ? skyPlacementArticleTimelineWindow(timelinePosition, placementSky.generatedAt, "current")
+              : null
+          );
+          const inSignKeys = skyPlacementInSignAspectContentKeys(timelineEvents);
+          const content = await loadSkyDetailContent(placementSky, availableDetailContent,
+            ingressKeys, loadLiveGeneratedContentForKeys, inSignKeys);
+          return { placementSky, content };
+        });
+      skyArticlePreparationRef.current = { key: preparationKey, request };
+      void request.catch(() => {
+        if (skyArticlePreparationRef.current?.request === request) skyArticlePreparationRef.current = null;
+      });
+    }
+    const articlePreparation = placementSnapshotRequest ? skyArticlePreparationRef.current?.request : null;
     // Start the article astronomy immediately. Overlay rows still have to
     // resolve before a first paint that would otherwise show bundled copy
     // and then replace it. In-sign Studio keys join that same commit so the
@@ -12142,7 +12174,7 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
       && (skyPlacementFallbackStatus !== "ready" || personalTransitSourcesNeeded && personalTransitSourceStatus !== "ready")) return;
     // Every placement timeline includes exact aspects, even when the author
     // has not used an aspect token in the article.
-    if (canLoadPlacementArticle && placementSnapshotRequest) {
+    if (canLoadPlacementArticle && articlePreparation) {
       let cancelled = false;
       if (selectedSkyDetail?.routePath !== skyDetailRoutePath) {
         commitResolvedSkyDetail(null);
@@ -12150,7 +12182,7 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
       // Exact timeline copy comes from the lazy Sky registry as well as Studio.
       // Resolve both before exposing the article so registry hydration cannot
       // add key dates to an already visible passage.
-      void Promise.all([placementSnapshotRequest, loadContentRegistry("sky")]).then(async ([placementSky]) => {
+      void Promise.all([articlePreparation, loadContentRegistry("sky")]).then(async ([{ placementSky, content }]) => {
         const renderPlacement = async (detailContent: GeneratedContentMap) => {
           if (cancelled || skyDetailRoutePath !== skyDetailRoutePathFromUrl()) return;
           const detail = skyDetailFromRoutePath(baseRoute, placementSky, detailContent, openSkyDetail);
@@ -12168,21 +12200,12 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
           commitResolvedSkyDetail(personalizedSkyPlacementDetail(detail, profileNatalSky?.ascendant ?? userProfile?.rising,
             skyPlacementPersonalizationTransits, skyDate));
         };
-        const ingressKeys = routePosition && placementSign ? skyIngressEssayPublicationKeys(contentPublicationRecords(), {
+        const currentIngressKeys = routePosition && placementSign ? skyIngressEssayPublicationKeys(contentPublicationRecords(), {
           planet: normalizeContentIdPart(routePosition.planet), sign: normalizeContentIdPart(placementSign)
         }) : [];
-        const timelinePosition = placementSky.positions.find((candidate) => (
-          routePlanet && skyRoutePartMatches(candidate.planet, routePlanet)
-        )) ?? routePosition;
-        const timelineEvents = filterPlacementTimelineEvents(
-          placementSky.placementAspectFacts?.inSign ?? [],
-          timelinePosition
-            ? skyPlacementArticleTimelineWindow(timelinePosition, placementSky.generatedAt, "current")
-            : null
-        );
-        const inSignKeys = skyPlacementInSignAspectContentKeys(timelineEvents);
-        await renderPlacement(await loadSkyDetailContent(placementSky, availableDetailContent,
-          ingressKeys, loadLiveGeneratedContentForKeys, inSignKeys));
+        await renderPlacement(await loadSkyDetailContent(placementSky,
+          eligibleSkyDetailContent(mergeGeneratedContentMaps(availableDetailContent, content)),
+          currentIngressKeys, loadLiveGeneratedContentForKeys, []));
       }).catch(error => {
         if (cancelled) return;
         console.warn("Requested placement calculation failed.", error);
@@ -12272,7 +12295,7 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
       renderDetail(detailSky, content, true);
     }).catch(error => { if (!cancelled) { console.warn("Sky detail interpretation failed to load.", error); setSkyDetailReadError(skyDetailRoutePath); } });
     return () => { cancelled = true; };
-  }, [contentRegistryVersion, fallbackArchitectureV3Version, profileNatalSky?.ascendant, sky, skyDate, skyDetailRoutePath, skyGeneratedContent, skyPlacementFallbackStatus, skyPlacementPersonalizationTransits, userProfile?.rising, skyDetailRetry, personalTransitSourcesNeeded, personalTransitSourceStatus]);
+  }, [contentRegistryVersion, contentRefreshVersion, fallbackArchitectureV3Version, profileNatalSky?.ascendant, sky, skyDate, skyDetailRoutePath, skyGeneratedContent, skyPlacementFallbackStatus, skyPlacementPersonalizationTransits, userProfile?.rising, skyDetailRetry, personalTransitSourcesNeeded, personalTransitSourceStatus]);
 
   useEffect(() => {
     if (!selectedSkyDetail?.routePath?.startsWith("friends?")
