@@ -21,6 +21,8 @@ Object.assign(process.env, env);
 const target = "authored/transit-aspect/neptune/jupiter/trine";
 const base = { contentKey: target, youText: "", friendText: "", audience: "both" };
 let calls = 0, writes = 0, prompt = "", names: string[] = [], rows: any[] = [];
+let storageStatus = 200;
+const storageReads: string[] = [];
 let blobBody = '', blobReads = 0;
 const syntheticOidc = `e30.${Buffer.from(JSON.stringify({exp:Math.floor(Date.now()/1000)+3600})).toString('base64url')}.synthetic`;
 const originalDispatcher = getGlobalDispatcher(), blobAgent = new MockAgent();
@@ -40,7 +42,8 @@ try {
   globalThis.fetch = async (url, init = {}) => {
     if (String(url).startsWith(env.SUPABASE_URL)) {
       if (init.method && init.method !== "GET") { writes++; throw Error("Storage mutations are forbidden in generation"); }
-      return Response.json(rows);
+      storageReads.push(new URL(String(url)).searchParams.get('content_key') ?? '');
+      return Response.json(rows, { status: storageStatus });
     }
     const request = JSON.parse(String(init.body));
     if (String(url) === "https://api.openai.com/v1/responses") {
@@ -160,6 +163,39 @@ try {
   const review = await invoke({ ...base, action: "recheck", youText: "You feel steadier and settled." });
   assert.equal(review.status, 200); assert(review.checks.some((x: any) => x.code === "BANNED_VOCABULARY" && x.detail === "steadier"));
   assert.equal(calls, recheckCalls); assert.equal(writes, 0);
+
+  const rowsBeforeSlotChecks = rows;
+  const savedOnlyKey = 'authored/transit-aspect/venus/moon/square';
+  const datedYou = 'You can pause before answering through {{untilDate}}.';
+  const datedFriend = 'Through {{untilDate}}, they may ask what a request involves before deciding.';
+  rows = [{ content_key: savedOnlyKey, body: datedYou,
+    sections: { packageDraft: { body_you: datedYou, body_they: datedFriend } } }];
+  const savedBeforeRecheck = JSON.stringify(rows);
+  const savedReview = await invoke({ contentKey: savedOnlyKey, action: 'recheck', youText: datedYou, friendText: datedFriend });
+  assert.equal(savedReview.status, 200);
+  assert.deepEqual(savedReview.checks, [], 'A saved Studio destination licenses its existing timing slot for both audiences');
+  assert.equal(storageReads.at(-1), `eq.${savedOnlyKey}`, 'Recheck reads only the exact saved destination');
+  assert.equal(savedReview.saved, false); assert.equal(savedReview.approved, false); assert.equal(savedReview.published, false);
+  const missingDate = await invoke({ contentKey: savedOnlyKey, action: 'recheck', youText: 'You can pause before answering.' });
+  assert(missingDate.checks.some((finding: any) => finding.detail === 'Missing required {{untilDate}}.'));
+  const unlicensedName = await invoke({ contentKey: savedOnlyKey, action: 'recheck', friendText: `${datedFriend} {{Name}}` });
+  assert(unlicensedName.checks.some((finding: any) => finding.detail === 'Unlicensed {{Name}}.'));
+  rows = [];
+  const unsavedSlot = await invoke({ contentKey: savedOnlyKey, action: 'recheck', youText: datedYou });
+  assert(unsavedSlot.checks.some((finding: any) => finding.detail === 'Unlicensed {{untilDate}}.'), 'Editor text cannot grant itself a new slot');
+  const packagedReview = await invoke({ contentKey: 'authored/transit-aspect/neptune/chiron/trine', action: 'recheck', youText: datedYou, friendText: datedFriend });
+  assert.deepEqual(packagedReview.checks, [], 'Packaged destinations still license their existing timing slot');
+  storageStatus = 503;
+  const unavailableReview = await invoke({ contentKey: savedOnlyKey, action: 'recheck', youText: datedYou });
+  assert.equal(unavailableReview.status, 502, 'A failed destination read must not report successful checks');
+  storageStatus = 200;
+  rows = JSON.parse(savedBeforeRecheck);
+  const beforeAnonymousReview = storageReads.length;
+  assert.equal((await invoke({ contentKey: savedOnlyKey, action: 'recheck', youText: datedYou }, false)).status, 401);
+  assert.equal(storageReads.length, beforeAnonymousReview);
+  assert.equal(JSON.stringify(rows), savedBeforeRecheck);
+  assert.equal(calls, recheckCalls, 'Rechecks never call a provider'); assert.equal(writes, 0);
+  rows = rowsBeforeSlotChecks;
 
   const sources = readPersonalTransitSources();
   const packet = semantics.resolveTransitNatalSemantics({ transiting: "neptune", natal: "jupiter", aspect: "trine" });

@@ -12,6 +12,8 @@ import { loadLocalWebEnv } from "../_lib/local-env.js";
 import { inspectPersonalTransitMeaning } from "../_lib/personal-transit-writer-context.js";
 import {
   generatePersonalTransitAudienceDrafts,
+  combinedAudienceFields,
+  loadStudioTransitRows,
   nextMissingPersonalTransitWriteup,
   parsePersonalTransitContact,
   parsePersonalTransitPreview,
@@ -71,6 +73,10 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
         meaning: await inspectPersonalTransitMeaning({ transiting: contact.transiting!, natal: contact.natal!, aspect: contact.aspect! }) });
     }
     if (action === "recheck") {
+      const contact = parsePersonalTransitContact(body);
+      const destinationFields = contact.family === "aspect"
+        ? combinedAudienceFields(contact.contentKey, (await loadStudioTransitRows([contact.contentKey]))[0])
+        : undefined;
       return sendAdminJson(res, 200, {
         ok: true,
         action: "recheck",
@@ -78,7 +84,8 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
         published: false,
         approved: false,
         ...reviewPersonalTransitCopy({
-          contact: parsePersonalTransitContact(body),
+          contact,
+          destinationFields,
           you: youText,
           friend: friendText,
           preview

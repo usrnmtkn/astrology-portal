@@ -2865,6 +2865,55 @@ test.describe("content dashboard admin user flow case studies", () => {
     } finally { api.close(); }
   });
 
+  for (const [width, theme] of [[1440, "light"], [1440, "dark"], [390, "light"], [390, "dark"]] as const) test(`Personal Transit recheck uses saved destination slots ${width} ${theme}`, async ({ page }) => {
+    page.on("dialog", dialog => { dialog.accept().catch(() => undefined); });
+    const contentKey = "authored/transit-aspect/venus/moon/square";
+    const youText = "You can pause before answering through {{untilDate}}.";
+    const friendText = "Through {{untilDate}}, they may ask what a request involves before deciding.";
+    const record = { contentKey, content_role: "full_copy", grammar_frame: "complete_sentence", surface: "transit-aspect", reader_only: true,
+      render_policy: "personal-transit-exact-v1", review_status: "needs_review", body: youText, body_you: youText, body_they: friendText };
+    const rows = [{ id: "qa-transit-saved-slots", content_key: contentKey, surface: "you", mode: "in_depth", status: "DRAFT", lane: "reference",
+      block_type: "fallback_hook", event_type: "fallback-hook", headline: "Venus square your Moon", summary: "", body: youText,
+      sections: { packageRecord: record, packageDraft: record }, facts: { fallbackArchitectureV3: true }, provider: "tldrastro-fallback-architecture-v3", updated_at: now }];
+    const api = await studioApiStore(rows, { personalTransitWriting: true });
+    const writes: unknown[] = [], replies: any[] = [];
+    try {
+      await page.setViewportSize({ width, height: 1000 });
+      await seedAdminApi(page, { generatedRows: rows, onGeneratedContentWrite: write => writes.push(write) });
+      await page.addInitScript(value => localStorage.setItem("tldrastro:studio-theme", value), theme);
+      await page.route("**/api/content-reader", route => route.fulfill({ json: readerResponse([]) }));
+      await page.route("**/api/admin/personal-transit-writing", async route => {
+        const body = route.request().postDataJSON();
+        expect(body.action).toBe("recheck");
+        const result = await api.call({ method: "POST", body });
+        replies.push(result);
+        await route.fulfill({ status: result.status, json: result.body });
+      });
+      await expectAdminRouteLoads(page, "/admin/content#sky-writeups?view=transits-to-natal&transit=venus&aspect=square&natal=moon");
+      const source = page.getByRole("region", { name: "This transit write-up" });
+      await transitWriteupButton(source, "Venus square your Moon").click();
+      const editor = page.getByRole("dialog", { name: "Generated content editor" });
+      const you = editor.getByLabel("Reader phrase · You", { exact: true });
+      const friend = editor.getByLabel("Reader phrase · They", { exact: true });
+      await expect(you).toHaveValue(youText); await expect(friend).toHaveValue(friendText);
+      await editor.getByRole("button", { name: "Run writing checks", exact: true }).click();
+      await expect(editor.getByText("Writing checks passed on the current editor text. Approval and publication stay separate.")).toBeVisible();
+      await you.fill("You can pause before answering.");
+      await editor.getByRole("button", { name: "Run writing checks", exact: true }).click();
+      await expect(editor.getByText("you: Missing required {{untilDate}}.", { exact: true })).toBeVisible();
+      expect(replies).toHaveLength(2);
+      for (const result of replies) {
+        expect(result.providerCalls).toBe(0);
+        expect(result.body).toMatchObject({ saved: false, approved: false, published: false });
+      }
+      await closeGeneratedEditor(page);
+      await page.reload();
+      await transitWriteupButton(source, "Venus square your Moon").click();
+      await expect(you).toHaveValue(youText); await expect(friend).toHaveValue(friendText);
+      expect(writes).toHaveLength(0);
+    } finally { api.close(); }
+  });
+
   for (const [width, theme] of [[1440, "light"], [390, "dark"]] as const) test(`Personal Transit clears AI suggestions and recovers preview without losing manual writing ${width} ${theme}`, async ({ page }) => {
     test.setTimeout(90_000);
     const noErrors = await expectNoBrowserErrors(page);
