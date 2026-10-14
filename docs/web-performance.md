@@ -235,8 +235,9 @@ presentation grid; only those deterministic week events use a bounded cache.
 The follow-up discovers App's static imports from the HTML on direct Sky list
 visits and starts exact Sky facts before App finishes downloading. Returning
 readers also validate their existing ledger through a public relay; first visits
-keep publication reads after App. Canonical source assets and local reader fonts
-start once App is available.
+start their complete parallel publication reads while App downloads. Canonical
+source assets start with Sky preloading; local reader fonts start as soon as
+their stylesheet is available.
 The relay rereads the complete anonymous ledger on every request and validates
 the existing cached snapshot with an exact tag; unchanged reloads transfer no
 ledger body. A failed relay retains the direct reader path. A separate
