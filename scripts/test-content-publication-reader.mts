@@ -116,3 +116,17 @@ assert.equal(ingressFacts().tldr, undefined, 'A missing current ingress publicat
 ingressContent.set(ingressKey, { id: record.row_id, updatedAt: record.row_updated_at, status: 'LIVE', body: 'QA current ingress TLDR' });
 assert.equal(ingressFacts().tldr, 'QA current ingress TLDR');
 console.log('PASS ingress-summary retirement, unavailable publication, and current publication identity');
+
+const { skyPlacementPublicationIdentity } = await import('../apps/web/src/services/skyPlacementPublicationGuard.ts');
+for (const content_key of ['sky-article/sun/libra/2026/2026-09-22', 'sky-season-fallback/libra-2026/moon/sagittarius/2026-10-13']) {
+  installContentPublications([{ ...record, content_key, revision: 50 }]);
+  const initialIdentity = skyPlacementPublicationIdentity();
+  installContentPublications([{ ...record, content_key, revision: 51, row_updated_at: '2026-10-14T12:00:00Z' }]);
+  const revisedIdentity = skyPlacementPublicationIdentity();
+  assert.notEqual(revisedIdentity, initialIdentity, 'A published article revision invalidates stale placement cards');
+  installContentPublications([{ ...record, content_key: 'article/guide/synthetic', revision: 100 }]);
+  assert.equal(skyPlacementPublicationIdentity(), revisedIdentity, 'An unrelated guide does not reload Sky copy');
+  installContentPublications([{ ...retired, content_key, revision: 52 }]);
+  assert.notEqual(skyPlacementPublicationIdentity(), revisedIdentity, 'Retirement invalidates the previous published article');
+}
+console.log('PASS dated and seasonal Sky article publication identity, refresh, retirement, and guide isolation');

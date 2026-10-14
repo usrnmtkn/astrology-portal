@@ -37,17 +37,35 @@ for (const [width, theme] of [[390, 'light'], [390, 'dark'], [1440, 'light'], [1
   await page.route('**/rest/v1/**', route => route.fulfill({ json: [] }));
   await page.route('**/api/content-publications', route => route.fulfill({ json: { schema: 'tldr-publications/v1', publications } }));
   let exactEditionRequests = 0;
+  let editionUnavailable = width === 390 && theme === 'light';
   await page.route('**/api/content-reader', route => {
    const query = route.request().postDataJSON();
    // Never hand the article to unrelated aspect/package requests. Its key
    // must be discovered from the publication ledger and explicitly fetched.
    const requested = query.keys?.includes(row.content_key) === true;
    if (requested) exactEditionRequests++;
+   if (requested && editionUnavailable) return route.fulfill({ status: 503, json: { error: 'Synthetic published edition unavailable.' } });
    return route.fulfill({ json: readerResponse(requested ? [row] : [], publications) });
   });
   await page.route('**/api/calendar?**', route => route.fulfill({ json: { ok: true, calendar: { days: [] } } }));
   const errors: string[] = []; page.on('pageerror', error => errors.push(error.message));
-  await page.goto('/?date=2026-10-09#sky/placement/sun/libra');
+  await page.goto('/?date=2026-10-09#sky');
+  const sunCard = page.getByRole('list', { name: 'Daily planetary placements' })
+   .getByRole('button', { name: 'Read more about Sun in Libra', exact: true });
+  if (editionUnavailable) {
+   await expect(page.getByText('The placement readings could not load. Please try again.', { exact: true })).toBeVisible({ timeout: 60_000 });
+   await expect(sunCard).not.toContainText('Synthetic explicit ingress summary.');
+   editionUnavailable = false;
+   await page.getByRole('button', { name: 'Retry', exact: true }).click();
+  }
+  await expect(sunCard).toContainText('Synthetic explicit ingress summary.', { timeout: 60_000 });
+  if (width === 1440 && theme === 'light') {
+   await page.getByRole('button', { name: 'Calendar', exact: true }).click();
+   await expect(page.getByRole('article', { name: 'Selected lunar day', exact: true })).toBeVisible({ timeout: 60_000 });
+   await page.getByRole('button', { name: 'Sky', exact: true }).click();
+   await expect(sunCard).toContainText('Synthetic explicit ingress summary.', { timeout: 60_000 });
+  }
+  await sunCard.click();
   const article = page.locator('.sky-detail-article').first();
   const assertComplete = async () => {
    await expect(article).toContainText('Synthetic complete ingress opening.', { timeout: 60_000 });

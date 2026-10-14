@@ -13,6 +13,7 @@ type OverlayBundle = {
 } | null;
 
 const isSkySource = (key: string) => /^sky-(?:placement|context|lunation|nodes|lilith|v4)\//u.test(key)
+  || /^sky-(?:article|season-fallback)\//u.test(key)
   || /^fallback-hook\/sky-/u.test(key) || key.startsWith("house-horoscope-core/");
 
 /** Astronomy ticks and unrelated editorial saves do not change prose identity. */

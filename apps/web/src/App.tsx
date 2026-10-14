@@ -11032,10 +11032,14 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
   const [resolvedPlacementSelection, setResolvedPlacementSelection] = useState<string | null>(null);
   const [skyPlacementLoadStatus, setSkyPlacementFallbackStatus] = useState<SkyPlacementContentStatus>("idle");
   const [skyPlacementResolvedIdentity, setSkyPlacementResolvedIdentity] = useState<string | null>(null);
+  const skyListEditionMissing = sky && !skyDetailRoutePath && (mode === "guest" || mode === "member")
+    && sky.positions.some(position => skyIngressEssayPublicationKeys(contentPublicationRecords(), {
+      planet: normalizeContentIdPart(position.planet), sign: normalizeContentIdPart(position.sign)
+    }).some(key => !skyGeneratedContent.has(key)));
   // A ledger change invalidates prose during render, before asynchronous effects
   // can install the new source set. A clock tick does not change this identity.
   const skyPlacementFallbackStatus: SkyPlacementContentStatus = skyPlacementLoadStatus === "ready"
-    && (skyPlacementResolvedIdentity !== skyPlacementPublicationIdentity() || resolvedPlacementSelection !== placementSelection) ? "loading" : skyPlacementLoadStatus;
+    && (skyListEditionMissing || skyPlacementResolvedIdentity !== skyPlacementPublicationIdentity() || resolvedPlacementSelection !== placementSelection) ? "loading" : skyPlacementLoadStatus;
   const [personalTransitLoadStatus, setPersonalTransitLoadStatus] = useState<SkyPlacementContentStatus>("idle");
   const [personalTransitResolvedIdentity, setPersonalTransitResolvedIdentity] = useState<string | null>(null);
   const [personalTransitRetry, setPersonalTransitRetry] = useState(0);
@@ -11901,13 +11905,20 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
     // its arrival bumps the registry revision and recomputes the article on its own, while
     // waiting for it would let a publication land mid-load and fail the identity check.
     if (skyDetailRoutePath) void loadContentRegistry("sky");
-    void prepareSkyPlacementSources(placementSelection || undefined).then(({ coreBundle, placementBundle, identity }) => {
+    void prepareSkyPlacementSources(placementSelection || undefined).then(async ({ coreBundle, placementBundle, identity }) => {
+      const editionKeys = !skyDetailRoutePath ? (sky?.positions ?? []).flatMap(position =>
+        skyIngressEssayPublicationKeys(contentPublicationRecords(), {
+          planet: normalizeContentIdPart(position.planet), sign: normalizeContentIdPart(position.sign)
+        })) : [];
+      const publishedEditions = editionKeys.length ? await loadLiveGeneratedContentForKeys(editionKeys) : new Map();
       if (cancelled) return;
       if (identity !== skyPlacementPublicationIdentity()) throw new Error("Sky sources changed during loading. Please retry.");
+      if (editionKeys.some(key => !publishedEditions.has(key))) throw new Error("The current article publication could not load.");
       // Commit both overlays in the same task; never announce the bundled
       // passage as ready and replace it later with the Studio passage.
       installSkyCoreFallbackArchitectureV3Bundle(coreBundle);
       installSkyPlacementFallbackArchitectureV3Bundle(placementBundle);
+      setSkyGeneratedContent(previous => mergeGeneratedContentMaps(publishedEditions, eligibleSkyDetailContent(previous)));
       setFallbackArchitectureV3Version((version) => version + 1);
       setFallbackDashboardOverlayVersion((version) => version + 1);
       setSkyPlacementResolvedIdentity(identity);
@@ -12454,7 +12465,7 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
     loadLiveGeneratedContentForKeys(currentSkyContentKeys)
       .then((content) => {
         if (!cancelled) {
-          setSkyGeneratedContent(mergeGeneratedContentMaps(content, normalizedSkySnapshotContent));
+          setSkyGeneratedContent(previous => mergeGeneratedContentMaps(content, eligibleSkyDetailContent(previous), normalizedSkySnapshotContent));
         }
       })
       .catch((error) => {
