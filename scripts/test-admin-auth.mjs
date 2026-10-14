@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import fs from "node:fs";
 import { getContentAdminPrincipal, isContentAdminAuthorized } from "../api/_lib/admin-auth.ts";
 import { adminCredentialHeaders, normalizeAdminSecret } from "../apps/admin/src/adminSecret.ts";
+import { requestStudioJson } from "../apps/admin/src/generatedContentClient.ts";
 import { validStudioReturnPath, studioSignInHref, rememberStudioReturnPath, returnToStudioAfterSignIn } from "../apps/web/src/services/studioAuthReturn.ts";
 
 const studioPath = "/admin/content#sky-writeups?planet=saturn&sign=aries&motion=retrograde";
@@ -133,13 +134,32 @@ try {
 
   const adminSources = [
     "apps/admin/src/GeneratedContentAdminDashboard.tsx",
-    "apps/admin/src/AspectPatternWriteups.tsx",
+    "apps/admin/src/generatedContentClient.ts",
     "apps/admin/src/ReportFulfillmentAdminPanel.tsx"
   ];
   for (const sourcePath of adminSources) {
     const source = fs.readFileSync(new URL(`../${sourcePath}`, import.meta.url), "utf8");
     assert.match(source, /adminCredentialHeaders/u, `${sourcePath} must use the shared owner-session/emergency-secret header helper.`);
   }
+
+  const aspectSource = fs.readFileSync(new URL("../apps/admin/src/AspectPatternWriteups.tsx", import.meta.url), "utf8");
+  assert.match(aspectSource, /import\s*\{\s*requestStudioJson\s*\}\s*from\s*"\.\/generatedContentClient"/u);
+  assert.doesNotMatch(aspectSource, /\bfetch\s*\(/u, "Aspect Pattern requests must retain the shared authenticated request client.");
+  const originalFetch = globalThis.fetch;
+  try {
+    for (const [credential, headers] of [
+      ["header.payload.signature", { authorization: "Bearer header.payload.signature", "x-content-admin-session": "header.payload.signature" }],
+      ["production-admin-secret", { authorization: "Bearer production-admin-secret", "x-content-generation-secret": "production-admin-secret" }]
+    ]) for (const method of ["GET", "POST"]) {
+      globalThis.fetch = async (url, options) => {
+        assert.equal(url, "/api/admin/aspect-pattern-writeups");
+        assert.equal(options.method, method);
+        assert.deepEqual(options.headers, { "content-type": "application/json", ...headers });
+        return Response.json({ ok: true });
+      };
+      await requestStudioJson("/api/admin/aspect-pattern-writeups", credential, { method });
+    }
+  } finally { globalThis.fetch = originalFetch; }
 
   const endpointSources = fs.readdirSync(new URL("../api/admin", import.meta.url))
     .filter((name) => name.endsWith(".ts"))
