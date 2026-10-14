@@ -13,16 +13,6 @@ function canonicalStatusLabel(element: Element) {
     element.textContent = "Published but unwired";
     return;
   }
-  if (text === `Draft saved · ${legacyNotServingLabel}` && element.matches(".admin-editor-save-state")) {
-    element.textContent = "Draft saved";
-    return;
-  }
-
-  const title = element.getAttribute("title");
-  if (title === `Keep this revision ${legacyNotServingLabel}.`) {
-    element.setAttribute("title", "Keep this revision as a Draft.");
-  }
-
   if (element.matches(".admin-status-guide p") && text.includes(legacyNotServingLabel)) {
     element.textContent = "Live means readers can currently receive this copy. Draft, Ready, Inactive, Archived, Retired, Error, and Unavailable describe content that is not currently serving.";
     return;
@@ -43,7 +33,7 @@ function canonicalStatusLabel(element: Element) {
 function normalizeTree(root: ParentNode) {
   if (root instanceof Element) canonicalStatusLabel(root);
   root.querySelectorAll?.(
-    ".admin-status, .admin-editor-save-state, .admin-wiring-notice .admin-eyebrow, .admin-status-guide p, .admin-field-hint, [title]"
+    ".admin-status, .admin-wiring-notice .admin-eyebrow, .admin-status-guide p, .admin-field-hint"
   ).forEach(canonicalStatusLabel);
 }
 
@@ -67,10 +57,6 @@ export function installStudioStatusCompatibility() {
           if (parent) canonicalStatusLabel(parent);
           continue;
         }
-        if (record.type === "attributes" && record.target instanceof Element) {
-          canonicalStatusLabel(record.target);
-          continue;
-        }
         for (const node of record.addedNodes) {
           if (node instanceof Element) normalizeTree(node);
           else if (node.parentElement) canonicalStatusLabel(node.parentElement);
@@ -80,9 +66,7 @@ export function installStudioStatusCompatibility() {
     observer.observe(document.body, {
       subtree: true,
       childList: true,
-      characterData: true,
-      attributes: true,
-      attributeFilter: ["title"]
+      characterData: true
     });
   };
 

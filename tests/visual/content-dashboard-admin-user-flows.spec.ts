@@ -2470,6 +2470,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     for (const body of ["QA first revised macro.", "QA second revised macro."]) {
       await editor.getByLabel("Full lunar passage", { exact: true }).fill(body);
       await expect(editor.getByLabel("Reader status", { exact: true })).toHaveText("Draft");
+      await expect(editor.getByRole("button", { name: "Save draft", exact: true })).toHaveAttribute("title", "Keep this revision as a Draft.");
       let release!: () => void;
       const held = new Promise<void>(resolve => { release = resolve; });
       await page.route("**/api/admin/generated-content", async route => {

@@ -12598,7 +12598,7 @@ export function GeneratedContentAdminDashboard() {
               type="button"
               onClick={() => void saveDraft(isCmsSurfaceDraft || isManualCalendarEventDraft || isStandaloneArticleDraft ? "DRAFT" : undefined)}
               disabled={isLoading || unchangedSkySource || (!isNewDraft && !draftHasUnsavedChanges)}
-              title="Keep this revision Not live."
+              title="Keep this revision as a Draft."
             >
               <Save size={16} aria-hidden="true" />
               Save draft
