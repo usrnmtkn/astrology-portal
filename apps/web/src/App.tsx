@@ -12207,7 +12207,7 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
           currentIngressKeys, loadLiveGeneratedContentForKeys, []));
       }).catch(error => {
         if (cancelled) return;
-        console.warn("Sky detail load failed.", error);
+        console.warn("Sky detail failed.", error);
         setSkyDetailReadError(skyDetailRoutePath);
         setSelectedSkyDetail(current => current ? { ...current, placementFactsPending: false } : current);
       });
@@ -12292,7 +12292,7 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
           : routeType === "aspect" ? skyDetailRequiredAspectKeys(detailSky, routePlanet, routeSign, routeOther) : [],
         loadLiveGeneratedContentForKeys);
       renderDetail(detailSky, content, true);
-    }).catch(error => { if (!cancelled) { console.warn("Sky detail load failed.", error); setSkyDetailReadError(skyDetailRoutePath); } });
+    }).catch(error => { if (!cancelled) { console.warn("Sky detail failed.", error); setSkyDetailReadError(skyDetailRoutePath); } });
     return () => { cancelled = true; };
   }, [contentRegistryVersion, contentRefreshVersion, fallbackArchitectureV3Version, profileNatalSky?.ascendant, sky, skyDate, skyDetailRoutePath, skyGeneratedContent, skyPlacementFallbackStatus, skyPlacementPersonalizationTransits, userProfile?.rising, skyDetailRetry, personalTransitSourcesNeeded, personalTransitSourceStatus, mode, skyRefreshKey, location.latitude, location.longitude, location.timeZone, contentPublicationGeneration]);
 
