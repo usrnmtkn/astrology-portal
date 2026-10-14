@@ -114,6 +114,8 @@ export type SkyCalculationOptions = {
   /** Natal charts need positions and aspects, not searches for daily events. */
   includeDailyEvents?: boolean;
   includeTransitWindows?: boolean;
+  /** Placement articles need expensive windows only for their selected point. */
+  transitWindowPlanets?: readonly string[];
 };
 
 export type LunarCalendarEventType = "lunation" | "ingress" | "aspect" | "station";
@@ -3630,7 +3632,8 @@ export async function getSkyPlacementSnapshot(
   requestedPlanet: string,
   requestedSign: string,
   referenceDate: Date,
-  includeAspectLists = false
+  includeAspectLists = false,
+  timingScope: "all" | "placement" = "all"
 ): Promise<SkySnapshot> {
   if (Number.isNaN(referenceDate.getTime())) throw new Error("Sky Placement referenceDate must be valid.");
   const swe = await getSwissEph();
@@ -3642,7 +3645,8 @@ export async function getSkyPlacementSnapshot(
     : placementPlanet(swe, requested === "true-node" ? "north-node" : requested);
   const sign = placementSign(requestedSign);
   const sample = findNextPlacementSample(swe, planet, planetId, sign, referenceDate, longitudeOffset);
-  const snapshot = await getAstrodienstSky(location, sample, { includeTransitWindows: true });
+  const snapshot = await getAstrodienstSky(location, sample, { includeTransitWindows: true,
+    ...(timingScope === "placement" ? { transitWindowPlanets: [planet === "South Node" ? "North Node" : planet] } : {}) });
   if (!includeAspectLists) return snapshot;
   const window = signResidencyWindowFor(swe, planet, planetId, sample, sign, longitudeOffset);
   if (!window.transitStart || !window.transitEnd) throw new Error("Missing placement aspect boundaries.");
@@ -3798,16 +3802,18 @@ export async function getAstrodienstSky(
     const latitude = Number(result[1].toFixed(4));
     const { sign, signGlyph, degree } = signForLongitude(longitude);
     const motion = result[3] < -0.0001 ? "retrograde" : "direct";
-    const transitWindow = options.includeTransitWindows
+    const includePositionWindows = options.includeTransitWindows
+      && (!options.transitWindowPlanets || options.transitWindowPlanets.includes(planet));
+    const transitWindow = includePositionWindows
       ? signResidencyWindowFor(swe, planet, planetIds[index], date, sign)
       : {};
-    const residencyStations = options.includeTransitWindows && transitWindow.residencyPasses
+    const residencyStations = includePositionWindows && transitWindow.residencyPasses
       ? residencyStationsFor(swe, planet, planetIds[index], transitWindow.residencyPasses)
       : undefined;
-    const structuralTransitFacts = options.includeTransitWindows
+    const structuralTransitFacts = includePositionWindows
       ? skyPlacementStructuralTransitFacts(swe, planet, planetIds[index], sign, transitWindow, date)
       : {};
-    const retrogradeWindow = options.includeTransitWindows
+    const retrogradeWindow = includePositionWindows
       ? retrogradeCycleFactsFor(swe, planet, planetIds[index], date, motion)
       : {};
 
