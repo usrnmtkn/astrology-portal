@@ -3,6 +3,7 @@ import { unlink, readFile } from 'node:fs/promises';
 import { Readable } from 'node:stream';
 import { pathToFileURL, fileURLToPath } from 'node:url';
 import { createApiStore } from './calendar-review-api.mjs';
+import assert from 'node:assert/strict';
 export const original = 'Fixture complete opening. Fixture complete final sentence.';
 export const baseline = { id: 'sky-fixture', content_key: 'sky.aspect.chiron.sextile.nodes.taurus.aquarius', status: 'DRAFT', lane: 'serving', review_state: 'sky-voice-needs-review', block_type: 'sky_aspect', body: original, summary: '', headline: 'Chiron sextile North Node', surface: 'sky', mode: 'feed', target_date: null, provider: 'owner-resource-review', source_snapshot: { sourceType: 'owner-resource-review' }, updated_at: '2026-09-10T12:00:00Z' };
 export const source = { ...baseline, id: 'source-fixture', content_key: 'source/sky-aspect-pair/sun-chiron', block_type: 'fallback_hook', status: 'REVIEWED', lane: 'reference', review_state: null, headline: 'Sun-Chiron', body: 'Fixture source original.', source_snapshot: { sourceType: 'owner-resource-review', pairKey: 'sun-chiron', content_role: 'fallback_source' } };
@@ -32,10 +33,13 @@ export async function createWorkflowStore(initial = [baseline, source, importedC
     const { default: writingHandler } = await import(pathToFileURL(outfile).href);
     await unlink(outfile);
     const envOrigin = 'https://calendar-api.invalid';
+    const storageFetch = globalThis.fetch;
     globalThis.fetch = async (input, options = {}) => {
         const url = new URL(String(input));
         if (url.origin !== envOrigin)
             throw new Error('Test rejects all non-isolated origins');
+        if (url.pathname === '/rest/v1/content_publications' || url.pathname.startsWith('/rest/v1/rpc/'))
+            return storageFetch(input, options);
         const matches = row => [...url.searchParams].every(([field, value]) => {
             if (['select', 'order', 'limit', 'offset', 'on_conflict'].includes(field))
                 return true;
@@ -63,6 +67,7 @@ export async function createWorkflowStore(initial = [baseline, source, importedC
             return Response.json([created]);
         }
         if (method === 'PATCH') {
+            if (patch.status === 'LIVE') assert.equal(new Headers(options.headers).get('x-content-publication-action'), 'publish', 'Validated Live writes must signal publication to storage');
             const result = found.map(row => ({ ...row, ...patch }));
             result.forEach(row => store.rows.set(row.id, row));
             return Response.json(result);

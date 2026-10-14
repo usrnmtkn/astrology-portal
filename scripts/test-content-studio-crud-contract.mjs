@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import { Readable } from 'node:stream';
 import { test } from 'node:test';
+import { createFixturePublicationLedger } from '../tests/helpers/fixture-publication-ledger.mjs';
 
 // No real credentials or storage calls, even when the handler loads local env.
 const env = { NODE_ENV: 'test', CONTENT_GENERATION_SECRET: 'crud-contract-fixture', SUPABASE_URL: 'https://crud-contract.invalid', SUPABASE_SERVICE_ROLE_KEY: 'fixture' };
@@ -8,9 +9,10 @@ Object.assign(process.env, env);
 const { default: handler } = await import(process.env.CRUD_CONTRACT_HANDLER ?? '../api/admin/generated-content.ts');
 Object.assign(process.env, env);
 const baseline = { id: 'qa-row', content_key: 'cms/qa/crud-contract', surface: 'sky', mode: 'feed', target_date: null, event_type: 'cms-surface-override', status: 'DRAFT', lane: 'serving', review_state: null, headline: 'QA heading', summary: '', body: 'QA original', sections: [], facts: {}, source_snapshot: { contentSystem: 'cms-surface-override', allowedSlots: [] }, provider: 'manual-admin', updated_at: '2026-09-10T12:00:00Z' };
-let rows, writes, afterLookup, beforeInsert, sequence;
+let rows, writes, afterLookup, beforeInsert, sequence, publications;
 function reset(initial = [baseline]) {
   rows = new Map(initial.map(row => [row.id, structuredClone(row)]));
+  publications = createFixturePublicationLedger(initial);
   writes = []; afterLookup = null; beforeInsert = null; sequence = 0;
 }
 const identity = row => JSON.stringify([row.content_key, row.target_date ?? null, row.mode]);
@@ -28,6 +30,7 @@ globalThis.fetch = async (input, init = {}) => {
   const url = new URL(String(input));
   assert.equal(url.origin, env.SUPABASE_URL);
   if (url.pathname === '/rest/v1/rpc/content_studio_publication_receipt') return Response.json(null);
+  if (url.pathname === '/rest/v1/content_publications') return Response.json(publications.records().filter(row => matches(row,url.searchParams)));
   assert.equal(url.pathname, '/rest/v1/generated_interpretations');
   const method = init.method ?? 'GET';
   const found = [...rows.values()].filter(row => matches(row, url.searchParams));
@@ -38,13 +41,13 @@ globalThis.fetch = async (input, init = {}) => {
   }
   writes.push({ method, filters: url.searchParams, prefer: init.headers?.prefer });
   if (method === 'DELETE') {
-    for (const row of found) rows.delete(row.id);
+    for (const row of found) { publications.observe(row,null,init.headers); rows.delete(row.id); }
     return Response.json(found);
   }
   const body = JSON.parse(init.body);
   if (method === 'PATCH') {
     const result = found.map(row => ({ ...row, ...body }));
-    for (const row of result) rows.set(row.id, row);
+    for (let i=0; i<result.length; i++) { publications.observe(found[i],result[i],init.headers); rows.set(result[i].id,result[i]); }
     return Response.json(result);
   }
   if (method === 'POST') {
@@ -57,6 +60,7 @@ globalThis.fetch = async (input, init = {}) => {
         if (!init.headers.prefer?.includes('merge-duplicates')) return Response.json({ message: 'duplicate key' }, { status: 409 });
       }
       const row = { lane: 'serving', review_state: null, target_date: null, updated_at: `2026-09-10T13:00:0${++sequence}Z`, ...existing, ...incoming, id: existing?.id ?? `qa-created-${sequence}` };
+      publications.observe(existing,row,init.headers);
       rows.set(row.id, row); saved.push(row);
     }
     return Response.json(saved);

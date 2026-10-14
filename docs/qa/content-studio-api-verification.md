@@ -16,6 +16,10 @@ reader, content package and dependency changes.
    all PRs and every branch push, including branches without a PR. Runs are
    independent: a later push does not cancel an earlier revision's API QA.
    It does not require production credentials.
+   The Calendar aspect lifecycle acceptance uses actual publication migrations
+   and handlers, including Studio status and cold/warm reader transport. It
+   must fail when the storage publication signal is withheld; LIVE metadata
+   or a fixture-generated publication record is not publication evidence.
 5. Include the tested SHA, command, outcome, and material limitations in the PR.
    Do not remove a failed assertion or widen an approval rule to make CI pass.
 

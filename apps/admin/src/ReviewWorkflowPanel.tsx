@@ -27,7 +27,7 @@ export default function ReviewWorkflowPanel({ row, unsaved, busy, onCheck, onGen
     const sky = ["sky_aspect", "sky_placement"].includes(row.block_type ?? "");
     const issues = skyWritingIssues(row);
     const findings = row.source_snapshot?.skyAspectVoiceLint?.findings;
-    const advisories = Array.isArray(findings) ? findings.filter((finding: any) => finding.severity === "note" && typeof finding.reason === "string") : [];
+    const advisories = Array.isArray(findings) ? findings.filter((finding: any) => ["note", "warn"].includes(finding.severity) && typeof finding.reason === "string") : [];
     const history = row.source_snapshot?.studioRevisionHistory;
     const aspects = /^sky\.aspect\.([^.]+)\.([^.]+)\.([^.]+)\./.exec(row.content_key);
     const placement = /^sky\.placement\.base\.([^.]+)\.([^.]+)$/.exec(row.content_key);

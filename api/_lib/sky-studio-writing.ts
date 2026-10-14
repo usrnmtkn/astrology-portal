@@ -13,7 +13,8 @@ export async function runStudioSkyWriting(key: string, action: "generate" | "rec
     const mode = identity.kind === "aspect" ? "collective-aspect-card" : "collective-placement-card";
     // Owner review controls structure (August 25 ruling). Preserve saved aspect
     // paragraphs; generated drafts retain their existing template validation.
-    const lint = lintModule.lintCard(body, { mode, paragraphCountAdvisory: action === "recheck" && identity.kind === "aspect" });
+    const savedAspectReview = action === "recheck" && identity.kind === "aspect";
+    const lint = lintModule.lintCard(body, { mode, paragraphCountAdvisory: savedAspectReview, warningsAdvisory: savedAspectReview });
     if (action === "recheck")
         return { text: body, lint, judge: null };
     // Read live corrections before any paid work. Failure is explicit, never an empty-success fallback.
