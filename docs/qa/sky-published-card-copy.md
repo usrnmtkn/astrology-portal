@@ -12,8 +12,9 @@ Older saved editions contain Summary and authored transit/date/closing headings.
 Those are saved source headings, not an invented Overview label, and are kept.
 The audited Sun, Moon, Mercury and Venus placement readers had no Overview.
 
-The Sky list still used fallback placement copy even when the full article
-resolved the current dated edition. Cold lists now resolve the ledger's exact
+All 10 currently active dated-article cards still used fallback placement
+copy instead of their saved published TL;DR, even when the full article resolved
+the current dated edition. Cold lists now resolve the ledger's exact
 published edition keys alongside the existing source load, commit the admitted
 rows before marking cards ready, and preserve those rows when ancillary Sky
 copy resolves. Dated and seasonal publication revisions participate in source
