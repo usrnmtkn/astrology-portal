@@ -52,7 +52,7 @@ import { YouRoute } from "./routes/YouRoute";
 import { loadYouPage, readYouPage } from "./features/you/youExperienceLoader";
 import type { YouPageProps } from "./features/you/YouPage";
 import { isStandaloneLearnPath } from "./content/learnRoutePath";
-import { refreshContentPublications } from "./services/contentPublications";
+import { refreshContentPublications, refreshContentPublicationsAfterUpdate } from "./services/contentPublications";
 import { preparePersonalReportTiming } from "./services/personalReportTiming";
 import {
   ArrowDownRight,
@@ -276,12 +276,12 @@ import {
   clearSharedGeneratedContentCache,
   loadSharedGeneratedContent
 } from "./services/sharedGeneratedContentCache";
-import { subscribeToContentUpdates, subscribeToContentRevalidation } from "./services/contentUpdateSignal";
+import { subscribeToContentUpdates, subscribeToContentRevalidation, type ContentUpdateNotice } from "./services/contentUpdateSignal";
 import {
   cmsSurfaceKeys,
   resolveCmsSurfaceOverride
 } from "./content/cmsSurfaceOverrides";
-import { isSkyAspectRetired, resolveSkyAspectContentStudioExact, resolveSkyAspectGeneratedContent, skyAspectGeneratedContentKeys } from "./services/skyAspectContent";
+import { isSkyAspectRetired, resolveSkyAspectContentStudioExact, resolveSkyAspectGeneratedContent, resolveSkyAspectOwnerAuthoredSigned, skyAspectGeneratedContentKeys } from "./services/skyAspectContent";
 import { eligibleSkyDetailContent, loadSkyDetailContent, skyDetailRequiredAspectKeys } from "./services/skyDetailContent";
 import {
   resolveApprovedExactSkyAspectCopy,
@@ -4391,8 +4391,8 @@ function approvedExactSkyAspectWritingSection(
 ): NormalizedSkyAspectSection | null {
   const firstSign = aspect.fromSign ?? skyAspectPosition(aspect.from, positions)?.sign;
   const secondSign = aspect.toSign ?? skyAspectPosition(aspect.to, positions)?.sign;
-  const studio = generatedContent && firstSign && secondSign
-    ? resolveSkyAspectContentStudioExact({
+  const options = generatedContent && firstSign && secondSign
+    ? {
         generatedContent,
         first: aspect.from,
         second: aspect.to,
@@ -4401,15 +4401,17 @@ function approvedExactSkyAspectWritingSection(
         secondSign,
         firstMotion: skyAspectPosition(aspect.from, positions)?.motion,
         secondMotion: skyAspectPosition(aspect.to, positions)?.motion
-      })
+      }
     : null;
+  const signedStudio = options ? resolveSkyAspectOwnerAuthoredSigned(options) : null;
+  const studio = signedStudio ?? (options ? resolveSkyAspectContentStudioExact(options) : null);
 
   if (studio) {
     return {
       slot: "meaning",
       required: true,
       layer: "authored",
-      tier: "content-studio-exact-sky-aspect-v1",
+      tier: signedStudio ? "content-studio-signed-sky-aspect-v1" : "content-studio-exact-sky-aspect-v1",
       sourceKeys: [studio.content.contentKey],
       heading: studio.content.headline || skyAspectDisplayTitle(aspect),
       body: studio.body
@@ -11032,10 +11034,14 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
   const [resolvedPlacementSelection, setResolvedPlacementSelection] = useState<string | null>(null);
   const [skyPlacementLoadStatus, setSkyPlacementFallbackStatus] = useState<SkyPlacementContentStatus>("idle");
   const [skyPlacementResolvedIdentity, setSkyPlacementResolvedIdentity] = useState<string | null>(null);
+  const skyListEditionMissing = sky && !skyDetailRoutePath && (mode === "guest" || mode === "member")
+    && sky.positions.some(position => skyIngressEssayPublicationKeys(contentPublicationRecords(), {
+      planet: normalizeContentIdPart(position.planet), sign: normalizeContentIdPart(position.sign)
+    }).some(key => !skyGeneratedContent.has(key)));
   // A ledger change invalidates prose during render, before asynchronous effects
   // can install the new source set. A clock tick does not change this identity.
   const skyPlacementFallbackStatus: SkyPlacementContentStatus = skyPlacementLoadStatus === "ready"
-    && (skyPlacementResolvedIdentity !== skyPlacementPublicationIdentity() || resolvedPlacementSelection !== placementSelection) ? "loading" : skyPlacementLoadStatus;
+    && (skyListEditionMissing || skyPlacementResolvedIdentity !== skyPlacementPublicationIdentity() || resolvedPlacementSelection !== placementSelection) ? "loading" : skyPlacementLoadStatus;
   const [personalTransitLoadStatus, setPersonalTransitLoadStatus] = useState<SkyPlacementContentStatus>("idle");
   const [personalTransitResolvedIdentity, setPersonalTransitResolvedIdentity] = useState<string | null>(null);
   const [personalTransitRetry, setPersonalTransitRetry] = useState(0);
@@ -11901,13 +11907,20 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
     // its arrival bumps the registry revision and recomputes the article on its own, while
     // waiting for it would let a publication land mid-load and fail the identity check.
     if (skyDetailRoutePath) void loadContentRegistry("sky");
-    void prepareSkyPlacementSources(placementSelection || undefined).then(({ coreBundle, placementBundle, identity }) => {
+    void prepareSkyPlacementSources(placementSelection || undefined).then(async ({ coreBundle, placementBundle, identity }) => {
+      const editionKeys = !skyDetailRoutePath ? (sky?.positions ?? []).flatMap(position =>
+        skyIngressEssayPublicationKeys(contentPublicationRecords(), {
+          planet: normalizeContentIdPart(position.planet), sign: normalizeContentIdPart(position.sign)
+        })) : [];
+      const publishedEditions = eligibleSkyDetailContent(editionKeys.length ? await loadLiveGeneratedContentForKeys(editionKeys) : new Map());
       if (cancelled) return;
       if (identity !== skyPlacementPublicationIdentity()) throw new Error("Sky sources changed during loading. Please retry.");
+      if (editionKeys.some(key => !publishedEditions.has(key))) throw new Error("The current article publication could not load.");
       // Commit both overlays in the same task; never announce the bundled
       // passage as ready and replace it later with the Studio passage.
       installSkyCoreFallbackArchitectureV3Bundle(coreBundle);
       installSkyPlacementFallbackArchitectureV3Bundle(placementBundle);
+      setSkyGeneratedContent(previous => mergeGeneratedContentMaps(publishedEditions, eligibleSkyDetailContent(previous)));
       setFallbackArchitectureV3Version((version) => version + 1);
       setFallbackDashboardOverlayVersion((version) => version + 1);
       setSkyPlacementResolvedIdentity(identity);
@@ -11917,7 +11930,7 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
       if (cancelled) return;
       console.warn("Sky placement sources failed to load.", error);
       setSkyPlacementFallbackStatus(previous => previous === "ready"
-        && skyPlacementResolvedIdentity === skyPlacementPublicationIdentity() && resolvedPlacementSelection === placementSelection ? previous : "error");
+        && !skyListEditionMissing && skyPlacementResolvedIdentity === skyPlacementPublicationIdentity() && resolvedPlacementSelection === placementSelection ? previous : "error");
     });
 
     return () => {
@@ -12299,8 +12312,10 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
   }, []);
 
   useEffect(() => {
-    const refreshContent = () => {
-      void refreshContentPublications(true);
+    const refreshContent = (notice?: ContentUpdateNotice) => {
+      // Ledger installation emits "*" itself. Only an external edit/resume
+      // needs a read after any older request; do not recursively queue reads.
+      void (notice?.contentKey === "*" ? refreshContentPublications(true) : refreshContentPublicationsAfterUpdate());
       clearSharedGeneratedContentCache();
       clearPlanetTopicVocabularyCache();
       clearNatalCardTaglineCache();
@@ -12454,7 +12469,7 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
     loadLiveGeneratedContentForKeys(currentSkyContentKeys)
       .then((content) => {
         if (!cancelled) {
-          setSkyGeneratedContent(mergeGeneratedContentMaps(content, normalizedSkySnapshotContent));
+          setSkyGeneratedContent(previous => mergeGeneratedContentMaps(content, eligibleSkyDetailContent(previous), normalizedSkySnapshotContent));
         }
       })
       .catch((error) => {

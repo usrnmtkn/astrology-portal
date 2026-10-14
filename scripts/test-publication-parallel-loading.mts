@@ -73,6 +73,29 @@ for (const failure of ['network', 'invalid', 'cursor']) {
 }
 console.log('PASS: concurrent disjoint publication ranges, boundary/future keys, large-range pagination, coalescing, all-or-nothing failure and non-advancing cursor.');
 {
+  let release!: () => void;
+  const held = new Promise<void>(resolve => { release = resolve; });
+  const changed = records.find(record => record.content_key === 'zz/future')!;
+  const h = harness(async (_request, data) => {
+    const snapshot = structuredClone(data);
+    await held;
+    return { data: snapshot };
+  });
+  const pending = h.refreshContentPublications();
+  await Promise.resolve(); await Promise.resolve();
+  changed.revision = 2;
+  const publicationNotice = h.refreshContentPublicationsAfterUpdate();
+  const duplicateNotice = h.refreshContentPublicationsAfterUpdate();
+  release();
+  await Promise.all([pending, publicationNotice, duplicateNotice]);
+  assert.equal(h.installed.at(-1).find((record: any) => record.content_key === changed.content_key).revision, 2,
+    'A publication notice during an older ledger read must fetch the post-publication state.');
+  assert.equal(h.installed.length, 2, 'Concurrent notices share one follow-up read.');
+  assert.equal(h.requests.length, 12, 'Do not recursively reload the complete ledger.');
+  changed.revision = 1;
+  console.log('PASS publication notice during an older ledger read, fresh revision and coalesced follow-up without a refresh loop.');
+}
+{
   const h = harness();
   let release!: (rows: unknown[]) => void;
   const relay = new Promise<unknown[]>(resolve => { release = resolve; });

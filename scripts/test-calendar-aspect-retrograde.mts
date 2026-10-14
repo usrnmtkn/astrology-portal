@@ -9,7 +9,7 @@ import { calendarAspectRetrogradeBody, calendarAspectRetrogradeOptions } from '.
 import { withCalendarAspectRetrograde } from '../apps/web/src/services/calendarAspectRetrogradeContent.ts';
 const store = await createApiStore([calendarRxFixture()]);
 const bundle = join(tmpdir(), `calendar-rx-reader-${process.pid}.mjs`);
-await build({ stdin: { contents: `export { refreshContentPublications } from './apps/web/src/services/contentPublications.ts'; export { loadLiveGeneratedContentForKeys } from './apps/web/src/services/generatedContent.ts'; export { normalizeCalendarEventSurface, liveCalendarEventContent } from './apps/web/src/features/calendar/LunarCalendar.tsx';`, resolveDir: process.cwd(), loader: 'ts' }, bundle: true, outfile: bundle, platform: 'node', format: 'esm', define: { 'import.meta.env': JSON.stringify({ VITE_SUPABASE_URL: 'https://calendar-api.invalid', VITE_SUPABASE_ANON_KEY: 'calendar-api-fixture-key' }) }, loader: { '.css': 'empty' }, logLevel: 'silent' });
+await build({ stdin: { contents: `export { resolveSkyAspectOwnerAuthoredSigned, resolveSkyAspectGeneratedContent } from './apps/web/src/services/skyAspectContent.ts'; export { selectSkyAspectCopyByPrecedence } from './apps/web/src/services/skyAspectRouting.ts'; export { installContentPublications } from './apps/web/src/content/contentPublicationState.ts'; export { refreshContentPublications } from './apps/web/src/services/contentPublications.ts'; export { loadLiveGeneratedContentForKeys } from './apps/web/src/services/generatedContent.ts'; export { normalizeCalendarEventSurface, liveCalendarEventContent } from './apps/web/src/features/calendar/LunarCalendar.tsx';`, resolveDir: process.cwd(), loader: 'ts' }, bundle: true, outfile: bundle, platform: 'node', format: 'esm', define: { 'import.meta.env': JSON.stringify({ VITE_SUPABASE_URL: 'https://calendar-api.invalid', VITE_SUPABASE_ANON_KEY: 'calendar-api-fixture-key' }) }, loader: { '.css': 'empty' }, logLevel: 'silent' });
 const reader = await import(pathToFileURL(bundle).href);
 try {
   const original = calendarRxFixture();
@@ -92,3 +92,44 @@ for (const reverse of [false, true]) {
   assert.equal(rendered.sections[0]?.body, 'North Node (trine): north-node retrograde passage.\n\nSouth Node (sextile): south-node retrograde passage.');
 }
 console.log('PASS: Calendar Rx copy saves, reopens, publishes, hydrates and renders without replacing the default.');
+
+// Signed owner passages belong to the authored exact slot; ordinary generated
+// rows retain their existing lower precedence and each row owns its Rx variants.
+const signedKey = 'sky.aspect.sun.opposition.neptune.libra.aries';
+const signedBody = 'Synthetic signed opening.\n\nSynthetic complete signed ending.';
+const signed = { id: 'signed-owner-fixture', contentKey: signedKey, status: 'LIVE', body: signedBody,
+  judgeGate: 'human-review', judgeScore: null, sections: { RetrogradeBodyB: 'Synthetic owned Neptune Rx ending.' },
+  sourceSnapshot: { contentType: 'owner-authored-sky-aspect', pairSource: 'content-studio/manual', pairKey: 'sun-neptune',
+    cardFacts: { a: 'sun', b: 'neptune', aspect: 'opposition', signA: 'libra', signB: 'aries' },
+    skyAspectVoiceLint: { score: 3, fails: 0 },
+    studioWritingCheck: { reviewPolicy: 'owner-final-v1', contentKey: signedKey, bodyHash: 'f'.repeat(64) } } };
+const generic = { body: 'Synthetic generic exact.', sourceKeys: ['sky.aspect.sun.opposition.neptune'] };
+for (const reverse of [false, true]) for (const motion of ['direct', 'retrograde', undefined]) {
+  const options = { generatedContent: new Map([[signedKey, signed]]), first: reverse ? 'Neptune' : 'Sun',
+    second: reverse ? 'Sun' : 'Neptune', aspect: 'opposition', firstSign: reverse ? 'aries' : 'libra',
+    secondSign: reverse ? 'libra' : 'aries', firstMotion: reverse ? motion : 'direct', secondMotion: reverse ? 'direct' : motion };
+  const owned = reader.resolveSkyAspectOwnerAuthoredSigned(options);
+  assert.equal(owned?.body, motion === 'retrograde' ? signed.sections.RetrogradeBodyB : signedBody);
+  assert.equal(reader.selectSkyAspectCopyByPrecedence({ exact: owned ?? generic, generated: generic }).body, owned.body);
+  const composed = { body: 'Synthetic composed passage.' };
+  assert.equal(reader.selectSkyAspectCopyByPrecedence({ composed, exact: owned, generated: generic }), composed);
+  const ordinary = { ...signed, judgeScore: 3, sourceSnapshot: { ...signed.sourceSnapshot, contentType: 'generated-sky-aspect' } };
+  const generatedOptions = { ...options, generatedContent: new Map([[signedKey, ordinary]]) };
+  assert.ok(reader.resolveSkyAspectGeneratedContent(generatedOptions), 'Ordinary generated rows remain eligible at their existing tier.');
+  assert.equal(reader.resolveSkyAspectOwnerAuthoredSigned(generatedOptions), null);
+  assert.equal(reader.selectSkyAspectCopyByPrecedence({ exact: generic, generated: reader.resolveSkyAspectGeneratedContent(generatedOptions) }), generic);
+  const withoutRx = { ...signed, sections: { packageDraft: { RetrogradeBodyB: 'Synthetic unpublished Rx.' } } };
+  assert.equal(reader.resolveSkyAspectOwnerAuthoredSigned({ ...options, generatedContent: new Map([[signedKey, withoutRx]]) })?.body, signedBody);
+}
+const signedOptions = { generatedContent: new Map([[signedKey, signed]]), first: 'Sun', second: 'Neptune', aspect: 'opposition', firstSign: 'libra', secondSign: 'aries' };
+for (const invalid of [{ ...signed, status: 'DRAFT' }, { ...signed, judgeGate: 'automated' },
+  { ...signed, sourceSnapshot: { ...signed.sourceSnapshot, cardFacts: { ...signed.sourceSnapshot.cardFacts, signB: 'taurus' } } },
+  { ...signed, sourceSnapshot: { ...signed.sourceSnapshot, skyAspectVoiceLint: { score: 2, fails: 1 } } }]) {
+  assert.equal(reader.resolveSkyAspectOwnerAuthoredSigned({ ...signedOptions, generatedContent: new Map([[signedKey, invalid]]) }), null);
+}
+const revised = { ...signed, body: 'Synthetic newest signed opening. Synthetic newest signed ending.' };
+assert.equal(reader.resolveSkyAspectOwnerAuthoredSigned({ ...signedOptions, generatedContent: new Map([[signedKey, revised]]) })?.body, revised.body);
+reader.installContentPublications([{ content_key: signedKey, state: 'retired', revision: 999,
+  row_id: signed.id, row_updated_at: null, updated_at: '2026-10-14T00:00:00Z' }]);
+assert.equal(reader.resolveSkyAspectOwnerAuthoredSigned(signedOptions), null, 'A cached signed row cannot defeat retirement.');
+console.log('PASS: Signed owner selection preserves generated precedence, composed priority, complete copy, factual boundary, revision and owned Rx/retirement.');

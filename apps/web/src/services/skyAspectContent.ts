@@ -399,3 +399,11 @@ export function resolveSkyAspectGeneratedContent(options: ResolveSkyAspectConten
     pairSource: expected.pairSource
   };
 }
+
+// Manual signed passages use the same publication and factual boundary as
+// generated cards, but occupy the authored exact slot in both public readers.
+export function resolveSkyAspectOwnerAuthoredSigned(options: ResolveSkyAspectContentOptions) {
+  const resolved = resolveSkyAspectGeneratedContent(options);
+  return resolved?.content.sourceSnapshot?.contentType === "owner-authored-sky-aspect"
+    && !isContentRetired(resolved.content.contentKey) ? resolved : null;
+}

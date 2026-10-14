@@ -3,6 +3,75 @@ import { expect, test } from '@playwright/test';
 import { skyPlacementSourceRecords } from '../../api/_lib/sky-placement-sources';
 import { canonicalPublicationLedger, publicationLedgerTag } from '../../apps/web/src/services/publicationLedgerTransport';
 
+for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
+ test(`owner-authored signed aspect replaces generic exact copy ${width} ${theme}`, async ({ page }) => {
+  test.setTimeout(120_000);
+  await page.setViewportSize({ width, height: 1000 });
+  await page.clock.setFixedTime(new Date('2026-09-26T01:36:23Z'));
+  const key = 'sky.aspect.sun.opposition.neptune.libra.aries';
+  const genericKey = 'sky.aspect.sun.opposition.neptune';
+  let revision = 1, retired = false;
+  const stamp = () => `2026-09-26T01:00:00.${String(revision).padStart(6, '0')}Z`;
+  const row = () => ({ id: 'bbbbbbbb-bbbb-4bbb-abbb-bbbbbbbbbbbb', content_key: key,
+   surface: 'sky', mode: 'feed', status: 'LIVE', lane: 'serving', review_state: null, target_date: null,
+   event_type: 'collective-aspect-card', block_type: 'sky_aspect', judge_score: null, judge_gate: 'human-review',
+   updated_at: stamp(), headline: 'Sun Opposition Neptune', summary: null,
+   body: `Synthetic owned sign-specific opening ${revision}.\n\nSynthetic complete owned ending ${revision}.`, sections: {},
+   source_snapshot: { contentType: 'owner-authored-sky-aspect', contentSystem: 'authored', review_status: 'approved',
+    pairSource: 'content-studio/manual', pairKey: 'sun-neptune',
+    cardFacts: { a: 'sun', b: 'neptune', aspect: 'opposition', signA: 'libra', signB: 'aries' },
+    skyAspectVoiceLint: { score: 3, fails: 0 },
+    studioWritingCheck: { reviewPolicy: 'owner-final-v1', contentKey: key, bodyHash: 'f'.repeat(64) }
+   } });
+  const generic = { ...row(), id: 'aaaaaaaa-aaaa-4aaa-aaaa-aaaaaaaaaaaa', content_key: genericKey,
+   event_type: 'sky-aspect-owner-approved-exact', updated_at: '2026-09-01T00:00:00Z',
+   body: 'Synthetic older generic exact opening. Synthetic older generic exact ending.',
+   source_snapshot: { contentStudioExactAspect: true, review_status: 'approved',
+    exactSkyAspectIdentity: { a: 'sun', b: 'neptune', aspect: 'opposition' } } };
+  const publications = () => [{ content_key: '__content-publication-ledger/v1', state: 'live', revision: 1,
+   row_id: null, row_updated_at: null, updated_at: '2026-09-01T00:00:00Z' },
+   { content_key: genericKey, state: 'live', revision: 1, row_id: generic.id,
+    row_updated_at: generic.updated_at, updated_at: generic.updated_at },
+   { content_key: key, state: retired ? 'retired' : 'live', revision, row_id: row().id,
+    row_updated_at: stamp(), updated_at: stamp() }];
+  await page.addInitScript(theme => {
+   localStorage.setItem('tldrastro:theme', theme);
+   localStorage.setItem('tldrastro:selectedLocation', JSON.stringify({ label: 'New York', latitude: 40.7, longitude: -74, timeZone: 'America/New_York' }));
+  }, theme);
+  await page.route('**/content-studio-last-known-good.json', route => route.fulfill({ json: {
+   schema: 'content-studio-last-known-good-v2', rows: [], publications: [], rowCount: 0 } }));
+  await page.route('**/rest/v1/**', route => route.fulfill({ json: publications() }));
+  await page.route('**/api/content-publications', route => route.fulfill({ json: { schema: 'tldr-publications/v1', publications: publications() } }));
+  let signedRequests = 0;
+  await page.route('**/api/content-reader', route => {
+   const query = route.request().postDataJSON();
+   if (query.keys?.includes(key)) signedRequests++;
+   const rows = [generic, ...(!retired ? [row()] : [])].filter(r => query.keys?.includes(r.content_key));
+   return route.fulfill({ json: readerResponse(rows, publications()) });
+  });
+  const errors: string[] = []; page.on('pageerror', error => errors.push(error.message));
+  await page.goto('/#sky/aspect/sun/opposition/neptune/at/2026-09-26T01%3A36%3A23.000Z');
+  const article = page.locator('.sky-detail-article').first();
+  const assertOwned = async () => {
+   await expect(article).toContainText(`Synthetic owned sign-specific opening ${revision}.`, { timeout: 60_000 });
+   await expect(article).toContainText(`Synthetic complete owned ending ${revision}.`);
+   await expect(article).not.toContainText('Synthetic older generic exact opening.');
+   await expect(article.getByRole('heading', { name: 'Sun Opposition Neptune Rx', exact: true })).toBeVisible();
+   await expect(article.getByRole('heading', { name: 'Overview', exact: true })).toHaveCount(0);
+  };
+  await assertOwned();
+  expect(signedRequests).toBeGreaterThan(0);
+  await page.reload(); await assertOwned();
+  const notify = () => page.evaluate(({key,stamp,published}) => window.dispatchEvent(new CustomEvent('tldrastro:content-update', {
+   detail: { contentKey: key, published, updatedAt: stamp }
+  })), { key, stamp: stamp(), published: !retired });
+  revision++; await notify(); await assertOwned();
+  retired = true; revision++; await notify();
+  await expect(page.locator('body')).not.toContainText('Synthetic complete owned ending', { timeout: 60_000 });
+  expect(errors).toEqual([]);
+ });
+}
+
 for (const width of [390, 1440]) test(`placement publication stays authoritative at ${width}px`, async ({ page }) => {
   test.setTimeout(180_000);
   await page.setViewportSize({ width, height: 1000 });
