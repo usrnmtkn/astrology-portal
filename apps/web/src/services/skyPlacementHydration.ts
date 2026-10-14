@@ -12,7 +12,7 @@ export { missingSkyPlacementPublications, skyPlacementPublicationIdentity };
 async function prepareSources(selection?: string) {
   let timer: ReturnType<typeof setTimeout> | undefined;
   const prepare = async () => {
-    const bundled = loadSkyPlacementFallbackArchitectureV3Bundle(!selection);
+    const bundled = loadSkyPlacementFallbackArchitectureV3Bundle(!selection || selection.startsWith('article:'));
     void bundled.catch(() => { /* Joined below, including its failure. */ });
     await refreshContentPublications();
     // Live readers already resolve current rows below. The full offline snapshot
@@ -22,7 +22,7 @@ async function prepareSources(selection?: string) {
     for (let attempt = 0; attempt < 2; attempt++) {
       const identity = skyPlacementPublicationIdentity();
       const [coreBundle, placementBundle] = await Promise.all([
-        loadFallbackArchitectureV3DashboardBundle(selection ? "sky-list" : "sky"),
+        loadFallbackArchitectureV3DashboardBundle(selection?.startsWith('article:') ? "sky-article" : selection ? "sky-list" : "sky"),
         loadFallbackArchitectureV3SkyPlacementDashboardBundle(selection),
         bundled
       ]);

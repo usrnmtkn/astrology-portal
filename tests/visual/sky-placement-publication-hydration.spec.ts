@@ -43,8 +43,11 @@ for (const width of [390, 1440]) test(`placement publication stays authoritative
   }, { ledger, key });
   await page.route('**/content-studio-last-known-good.json', route => route.fulfill({ json: { schema: 'content-studio-last-known-good-v2', rows: [], publications: [], rowCount: 0 } }));
   const relayStatuses: number[] = [];
+  const unrelatedId = 'dddddddd-dddd-dddd-dddd-dddddddddddd';
+  const readDelayMs = Number(process.env.SKY_ARTICLE_READ_DELAY_MS ?? 2500);
+  const contentQueries: Array<{ids?: string[];scope?: string}> = [];
   await page.route('**/api/content-publications', async route => {
-    const publications = canonicalPublicationLedger([ledger, { content_key: key, state: retired ? 'retired' : 'live', revision,
+    const publications = canonicalPublicationLedger([ledger, {content_key:'sky-placement/article/jupiter/capricorn',state:'live',revision:1,row_id:unrelatedId,row_updated_at:timestamp(),updated_at:timestamp()}, { content_key: key, state: retired ? 'retired' : 'live', revision,
       row_id: row().id, row_updated_at: timestamp(), updated_at: timestamp() }]);
     const etag = await publicationLedgerTag(publications);
     const unchanged = route.request().headers()['if-none-match'] === etag;
@@ -62,7 +65,10 @@ for (const width of [390, 1440]) test(`placement publication stays authoritative
     return route.fulfill({ json: [] });
   });
   await page.route('**/api/content-reader', async route => {
-    await new Promise(resolve => setTimeout(resolve, 2500));
+    const query = route.request().postDataJSON();
+    contentQueries.push(query);
+    expect(query.ids ?? []).not.toContain(unrelatedId);
+    await new Promise(resolve => setTimeout(resolve, readDelayMs));
     return route.fulfill({ json: readerResponse(retired ? [] : [row()], [
       { content_key: key, state: retired ? 'retired' : 'live', revision, row_id: row().id, row_updated_at: timestamp(), updated_at: timestamp() }
     ]) });
@@ -94,8 +100,13 @@ for (const width of [390, 1440]) test(`placement publication stays authoritative
   await page.reload();
   await expect(page.getByLabel('Daily sky summary', { exact: true })).toBeVisible({ timeout: 60_000 });
   expect(relayStatuses).toEqual([200, 304]);
+  const openingStarted = Date.now();
   await page.getByRole('button', { name: 'Read more about Sun in Virgo', exact: true }).click();
+  await expect(article).toContainText(`Fixture published opening ${revision}.`, { timeout: 60_000 });
+  console.log(JSON.stringify({width,articleOpeningMs:Date.now()-openingStarted,readDelayMs}));
   await assertCopy();
+  expect(contentQueries.some(query=>query.scope==='sky-article')).toBe(true);
+  expect(contentQueries.some(query=>query.scope==='sky')).toBe(false);
   await page.reload();
   await assertCopy();
   await page.getByRole('button', { name: 'Close detail', exact: true }).click();

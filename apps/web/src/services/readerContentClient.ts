@@ -2,7 +2,7 @@ import type { GeneratedContentRow } from './generatedContent';
 import { READER_ROW_SCHEMA } from '../content/readerRowSchema.mjs';
 import { installContentPublications, validContentPublication } from '../content/contentPublicationState';
 
-type ReaderQuery = { provider?: string; keys?: string[]; ids?: string[]; prefix?: string; surfaces?: string[]; targetDate?: string; scope?: "sky" | "sky-list"; vocabularyOnly?: boolean; latestVersion?: boolean; horoscope?: {period:string;at:string;timeZone?:string} };
+type ReaderQuery = { provider?: string; keys?: string[]; ids?: string[]; prefix?: string; surfaces?: string[]; targetDate?: string; scope?: "sky" | "sky-list" | "sky-article"; vocabularyOnly?: boolean; latestVersion?: boolean; horoscope?: {period:string;at:string;timeZone?:string} };
 
 async function readPage(body: string, signal: AbortSignal) {
   for (let attempt = 0; ; attempt++) {

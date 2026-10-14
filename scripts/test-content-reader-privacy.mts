@@ -68,6 +68,7 @@ try {
   stored = [row];
   calls = [];
   assert.equal((await request({ scope: 'sky-list', vocabularyOnly: true })).statusCode, 200);
+  assert.equal((await request({ scope: 'sky-article', vocabularyOnly: true })).statusCode, 200);
   const scopes = calls[0].searchParams.getAll('or');
   assert(scopes.some(value => value.includes('sky-context')));
   assert(scopes.some(value => value.includes('cc/planet/')));

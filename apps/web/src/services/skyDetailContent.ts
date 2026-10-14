@@ -41,9 +41,10 @@ export async function loadSkyDetailContent(
   snapshot: SkySnapshot,
   existing: Map<string, LiveGeneratedContent>,
   extraKeys: string[],
-  load: (keys: string[]) => Promise<Map<string, LiveGeneratedContent>>
+  load: (keys: string[]) => Promise<Map<string, LiveGeneratedContent>>,
+  relatedKeys?: string[]
 ) {
-  const keys = Array.from(new Set([...skySnapshotAspectContentKeys(snapshot), ...(snapshot.moonEvent ? lunationReaderContentKeys({startsAt:snapshot.moonEvent.occursAt,sign:snapshot.moonEvent.sign,title:snapshot.moonEvent.name}) : []), ...extraKeys]));
+  const keys = Array.from(new Set([...(relatedKeys ?? [...skySnapshotAspectContentKeys(snapshot), ...(snapshot.moonEvent ? lunationReaderContentKeys({startsAt:snapshot.moonEvent.occursAt,sign:snapshot.moonEvent.sign,title:snapshot.moonEvent.name}) : [])]), ...extraKeys]));
   const retained = eligibleSkyDetailContent(existing);
   const missing = keys.filter(key => !retained.has(key));
   const complete = (content: Map<string, LiveGeneratedContent>) => {
