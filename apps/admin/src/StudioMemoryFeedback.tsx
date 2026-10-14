@@ -1,7 +1,7 @@
 import { StudioButton, StudioTextarea } from "./StudioControls";
 import { AdminSelect, AdminDisclosureSummary } from "./AdminNativeControls";
 import { useEffect, useState } from 'react';
-import { adminCredentialHeaders } from './adminSecret';
+import { requestStudioJson } from './generatedContentClient';
 
 type Feedback = { id: string; content_key: string; family?: string; before_text: string; after_text: string;
   status: 'pending' | 'active' | 'retired'; scope: 'passage' | 'family' | 'sky'; reason: string;
@@ -23,9 +23,8 @@ function Decision({ row, disabled, decide, credential }: { row: Feedback; disabl
   const [historyError, setHistoryError] = useState('');
   async function loadHistory() {
     try {
-      const response = await fetch(`/api/admin/studio-memory-feedback?historyId=${encodeURIComponent(row.id)}`, { headers: adminCredentialHeaders(credential), cache: 'no-store' });
-      const payload = await response.json();
-      if (!response.ok || !payload.ok || !Array.isArray(payload.decisions)) throw new Error(payload.error || 'Could not load memory decisions.');
+      const payload = await requestStudioJson(`/api/admin/studio-memory-feedback?historyId=${encodeURIComponent(row.id)}`, credential);
+      if (!Array.isArray(payload.decisions)) throw new Error('Could not confirm memory decisions.');
       setHistory(payload.decisions); setHistoryError('');
     } catch (error) { setHistoryError(error instanceof Error ? error.message : 'Could not load memory decisions.'); }
   }
@@ -70,14 +69,14 @@ export default function StudioMemoryFeedback({ contentKey, credential, revision,
   const [checkedAt, setCheckedAt] = useState('');
   useEffect(() => {
     const controller = new AbortController();
-    setBusy(true); setError(''); setRows([]);
-    fetch(`/api/admin/studio-memory-feedback?${new URLSearchParams({ contentKey, offset: String(offset) })}`, {
-      headers: adminCredentialHeaders(credential), signal: controller.signal, cache: 'no-store',
-    }).then(async response => {
-      const payload = await response.json();
-      if (!response.ok || !payload.ok) throw new Error(payload.error || 'Could not load Studio memory.');
+    setBusy(true);
+    requestStudioJson(`/api/admin/studio-memory-feedback?${new URLSearchParams({ contentKey, offset: String(offset) })}`, credential, {
+      signal: controller.signal,
+    }).then(payload => {
+      if (!Array.isArray(payload.rows)) throw new Error('Could not confirm Studio memory.');
       if (controller.signal.aborted) return;
-      setEnabled(payload.enabled); setRows(payload.rows); setHasMore(payload.hasMore); setCheckedAt(payload.fetchedAt ?? '');
+      setError('');
+      setEnabled(payload.enabled === true); setRows(payload.rows as Feedback[]); setHasMore(payload.hasMore === true); setCheckedAt(typeof payload.fetchedAt === 'string' ? payload.fetchedAt : '');
     }).catch(error => { if (!controller.signal.aborted) setError(error.message); })
       .finally(() => { if (!controller.signal.aborted) setBusy(false); });
     return () => controller.abort();
@@ -85,11 +84,12 @@ export default function StudioMemoryFeedback({ contentKey, credential, revision,
   async function decide(row: Feedback, status: 'active' | 'retired', scope: string, reason: string) {
     setBusy(true); setError('');
     try {
-      const response = await fetch('/api/admin/studio-memory-feedback', { method: 'POST',
-        headers: { ...adminCredentialHeaders(credential), 'content-type': 'application/json' },
+      const payload = await requestStudioJson('/api/admin/studio-memory-feedback', credential, { method: 'POST',
         body: JSON.stringify({ id: row.id, version: row.version, status, scope, reason }) });
-      const payload = await response.json();
-      if (!response.ok || !payload.ok) throw new Error(payload.error || 'Memory decision was not saved.');
+      const saved = Array.isArray(payload.rows) && payload.rows.length === 1 ? payload.rows[0] as Feedback : null;
+      if (!saved || saved.id !== row.id || saved.version !== row.version + 1 || saved.status !== status || saved.scope !== scope || saved.reason !== reason) {
+        throw new Error('The memory decision was not confirmed. Refresh memory before retrying; your edits are still here.');
+      }
       setRefresh(value => value + 1);
     } catch (error) { setError(error instanceof Error ? error.message : 'Memory decision failed.'); }
     finally { setBusy(false); }

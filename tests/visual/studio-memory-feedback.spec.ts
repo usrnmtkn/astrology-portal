@@ -8,6 +8,7 @@ for (const width of [390,1440]) for (const colorScheme of ['light','dark'] as co
     test.setTimeout(90000);
     const child=fork(path.resolve('tests/helpers/studio-memory-workflow-api.mjs'),[],{execArgv:['--import','tsx'],stdio:['ignore','pipe','pipe','ipc']});
     let sequence=0,stderr=''; const waiting=new Map<number,any>();
+    let stallMemory = true;
     child.stderr?.on('data',chunk=>stderr+=chunk);
     const ready=new Promise<void>((resolve,reject)=>{
       child.on('message',(message:any)=>{if(message.ready)return resolve();const task=waiting.get(message.id);if(task){waiting.delete(message.id);message.error?task.reject(Error(message.error)):task.resolve(message.result);}});
@@ -17,9 +18,14 @@ for (const width of [390,1440]) for (const colorScheme of ['light','dark'] as co
     try {
       await ready;await page.setViewportSize({width,height:1000});await page.emulateMedia({colorScheme});
       await page.addInitScript(()=>localStorage.setItem('tldrastro:contentAdminSecret','calendar-api-fixture'));
+      await page.addInitScript(()=>{
+        const schedule=window.setTimeout.bind(window);
+        window.setTimeout=((handler:TimerHandler,delay?:number,...args:unknown[])=>schedule(handler,delay===45000?1000:delay,...args)) as typeof window.setTimeout;
+      });
       const errors:string[]=[]; page.on('pageerror',error=>errors.push(error.message));
       await routeStudioInventoryApi(page, {call, answer: async (route,url)=>{
         const request=route.request();
+        if (url.pathname==='/api/admin/studio-memory-feedback' && request.method()==='GET' && stallMemory) return true;
         if (['/api/admin/studio-memory-feedback','/api/admin/memory-graph','/api/admin/sky-draft-writing'].includes(url.pathname)
         ) {
           const result=await call({method:request.method(),url:url.pathname+url.search,body:request.postData()?request.postDataJSON():null});
@@ -38,6 +44,9 @@ for (const width of [390,1440]) for (const colorScheme of ['light','dark'] as co
       await editor.getByRole('button',{name:'Save',exact:true}).click();
       const memory=editor.getByLabel('Studio memory corrections');
       await memory.locator('summary').first().click();
+      await expect(memory.getByRole('alert')).toContainText('Loading content timed out. Try again; no changes were submitted.');
+      stallMemory=false;
+      await memory.getByRole('button',{name:'Refresh memory',exact:true}).click();
       await expect(memory).toContainText('Pending your decision');
       await memory.getByText('Compare original and replacement',{exact:true}).click();
       await expect(memory).toContainText('Fixture complete opening.');
