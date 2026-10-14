@@ -32,7 +32,9 @@ for(const width of [390,1440]){
       expect(saved.body).toBe(horoscopeEditionBody(saved.sections.horoscopeEdition));
       expect(saved.status).toBe('DRAFT');
       expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1)).toBe(true);
-    }finally{store.close();}
+    }finally{
+      try{await page.unrouteAll({behavior:'wait'});}finally{store.close();}
+    }
   });
 
   test(`Content Library opens and saves the selected dated lunar draft ${width}`,async({page})=>{
@@ -69,6 +71,8 @@ for(const width of [390,1440]){
       expect(rows.find((r:any)=>r.id===unrelated.payload.rows[0].id)).toEqual(unrelated.payload.rows[0]);
       expect((await writer.call({method:'provider'})).calls).toBe(0);
       expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1)).toBe(true);
-    }finally{inventory.close();writer.close();}
+    }finally{
+      try{await page.unrouteAll({behavior:'wait'});}finally{inventory.close();writer.close();}
+    }
   });
 }

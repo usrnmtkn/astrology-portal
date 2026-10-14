@@ -206,6 +206,7 @@ export function reviewPersonalTransitCopy(input: {
   you?: string;
   friend?: string;
   preview?: PersonalTransitPreview;
+  destinationFields?: { you: string; friend: string };
 }) {
   const preview = input.preview ?? {};
   return {
@@ -222,7 +223,10 @@ export function reviewPersonalTransitCopy(input: {
       if (!text?.trim()) return [];
       const {transiting,natal,aspect} = input.contact;
       const key = `authored/transit-aspect/${transiting}/${natal}/${aspect}`;
-      const contract = transitContracts.transitNatalPlaceholderContract({...(servingPackageRecords.get(input.contact.contentKey) ?? {}),contentKey:key},audience,key);
+      const contract = transitContracts.transitNatalPlaceholderContract({
+        ...(servingPackageRecords.get(input.contact.contentKey) ?? {}), contentKey: key,
+        ...(input.destinationFields ? { body_you: input.destinationFields.you, body_they: input.destinationFields.friend } : {})
+      }, audience, key);
       return validatePassage(text,{contentKey:key,facts:{transiting,natal,aspect},placementFacts:{
         sign:input.contact.sign ?? preview.sign,transitHouse:input.contact.transitHouse ?? preview.transitHouse,natalHouse:input.contact.natalHouse ?? preview.natalHouse
       }},{field:contract.field,perspective:audience,contract}).findings.map(finding => ({...finding,audience}));
