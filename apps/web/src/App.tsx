@@ -12136,11 +12136,12 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
     const placementSnapshotRequest = canLoadPlacementArticle && routePlanet && placementSign
       ? requestSkyPlacementArticleSnapshot(sky.location, routePlanet, placementSign, skyDate)
       : null;
-    const preparationKey = `${skyDetailRoutePath}:${skyArticleIdentityKey}:${contentRefreshVersion}:${skyDetailRetry}:${contentPublicationGeneration}`;
+    const preparationKey = `${skyDetailRoutePath}:${skyArticleIdentityKey}:${sky.generatedAt}:${contentRefreshVersion}:${skyDetailRetry}:${contentPublicationGeneration}`;
     // Source hydration can rerun this effect. Keep one preparation for the
     // selected article and publication revision while both reads finish.
     if (placementSnapshotRequest && skyArticlePreparationRef.current?.key !== preparationKey) {
-      const request = Promise.all([placementSnapshotRequest, refreshContentPublications(), loadContentRegistry("sky")])
+      void loadContentRegistry("sky");
+      const request = Promise.all([placementSnapshotRequest, refreshContentPublications()])
         .then(async ([placementSky]) => {
           const ingressKeys = routePosition && placementSign ? skyIngressEssayPublicationKeys(contentPublicationRecords(), {
             planet: normalizeContentIdPart(routePosition.planet), sign: normalizeContentIdPart(placementSign)
@@ -12181,7 +12182,7 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
       // Exact timeline copy comes from the lazy Sky registry as well as Studio.
       // Resolve both before exposing the article so registry hydration cannot
       // add key dates to an already visible passage.
-      void articlePreparation.then(async ({ placementSky, content }) => {
+      void Promise.all([articlePreparation, loadContentRegistry("sky")]).then(async ([{ placementSky, content }]) => {
         const renderPlacement = async (detailContent: GeneratedContentMap) => {
           if (cancelled || skyDetailRoutePath !== skyDetailRoutePathFromUrl()) return;
           const detail = skyDetailFromRoutePath(baseRoute, placementSky, detailContent, openSkyDetail);
