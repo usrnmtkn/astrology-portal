@@ -5146,6 +5146,7 @@ export function GeneratedContentAdminDashboard() {
   }
 
   async function approveSkyArticleEdition(row: AdminGeneratedContentRow) {
+    setEditorSaveError("");
     setIsLoading(true);
     try {
       const payload = await adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[] }>("/api/admin/generated-content", secret, {
@@ -5160,7 +5161,9 @@ export function GeneratedContentAdminDashboard() {
       announceContentUpdate({ contentKey: saved.content_key, published: saved.status === "LIVE", updatedAt: saved.updated_at ?? new Date().toISOString() });
       setMessage(`${saved.content_key} is approved and reader-eligible for its calculated validity window.`);
     } catch (error) {
-      setMessage(error instanceof Error ? error.message : "Could not approve the Sky article edition.");
+      const message = dashboardErrorMessage(error);
+      setEditorSaveError(message);
+      setMessage(message);
     } finally {
       setIsLoading(false);
     }
@@ -5229,6 +5232,7 @@ export function GeneratedContentAdminDashboard() {
       setMessage("There are no article changes to publish.");
       return;
     }
+    setEditorSaveError("");
     setIsLoading(true);
     try {
       const ownerAction = revisionRow.event_type === "sky-article-edition-revision"
@@ -5246,7 +5250,9 @@ export function GeneratedContentAdminDashboard() {
       announceContentUpdate({ contentKey: saved.content_key, published: true, updatedAt: saved.updated_at ?? new Date().toISOString() });
       setMessage(publicationStateMessage(payload));
     } catch (error) {
-      setMessage(error instanceof Error ? error.message : "Could not publish the article changes.");
+      const message = dashboardErrorMessage(error);
+      setEditorSaveError(message);
+      setMessage(message);
     } finally {
       setIsLoading(false);
     }
@@ -10408,7 +10414,8 @@ export function GeneratedContentAdminDashboard() {
     const isCompleteEffortDraft = currentDraft.contentKey.startsWith(SKY_DEBILITY_INTERPRETATION_PREFIX);
     const summaryBuiltin = [...skyDailySummaryFields, ...skyDebilityFields].find(field => field.key === currentDraft.contentKey);
     const matchesBuiltinSummary = Boolean(summaryBuiltin?.body && currentDraft.body.trim() === summaryBuiltin.body.trim());
-    const editorStatusRow = { status: currentDraft.status, id: currentDraft.id ?? (matchesBuiltinSummary ? `builtin:${currentDraft.contentKey}` : selectedRow?.id.startsWith("package:") ? selectedRow.id : null), updated_at: currentDraft.updatedAt };
+    const savedArticleStatusRow = skyArticleEditor ? rows.find(row => row.id === skyArticleEditor.rowId) : null;
+    const editorStatusRow = savedArticleStatusRow ?? { status: currentDraft.status, id: currentDraft.id ?? (matchesBuiltinSummary ? `builtin:${currentDraft.contentKey}` : selectedRow?.id.startsWith("package:") ? selectedRow.id : null), updated_at: currentDraft.updatedAt };
     const isCmsSurfaceDraft = currentDraft.sourceSnapshot?.contentSystem === "cms-surface-override" || currentDraft.contentKey.startsWith("cms/");
     const cmsAllowedSlots = Array.isArray(currentDraft.sourceSnapshot?.allowedSlots)
       ? currentDraft.sourceSnapshot.allowedSlots.filter((slot): slot is string => typeof slot === "string")
@@ -11016,7 +11023,7 @@ export function GeneratedContentAdminDashboard() {
           </StudioButton>
           <div className="admin-editor-meta">
             <div className="admin-editor-context-line">
-              <ContentLiveStatusBadge label="Reader status" row={editorStatusRow} unsaved={!isAstro101Draft && draftHasUnsavedChanges && !(!currentDraft.id && matchesBuiltinSummary)} />
+              <ContentLiveStatusBadge label="Reader status" row={editorStatusRow} unsaved={skyArticleEditor ? skyArticleEditor.saveState !== "saved" : !isAstro101Draft && draftHasUnsavedChanges && !(!currentDraft.id && matchesBuiltinSummary)} />
               <span className={aspectContext ? "admin-aspect-context-pill" : undefined} title={aspectContext?.detail}>{editorUseLabel}</span>
               {isAstro101Draft && <span>{selectedRow && astro101IsLiveOnLearn(selectedRow) ? "Visible in app" : "Hidden from app"}</span>}
               {editorReaderDestination && editorReaderDestination !== editorUseLabel && <span className="admin-editor-reader-destination">{editorReaderDestination}</span>}
@@ -11788,27 +11795,8 @@ export function GeneratedContentAdminDashboard() {
                     <p className="admin-copy-preview">{skyArticleEditor.fields.body}</p>
                   </section>
 
-                  <div className="admin-toolbar-actions admin-sky-article-actions">
-                    <span>{skyArticleChanges.length} changed field{skyArticleChanges.length === 1 ? "" : "s"}</span>
-                    {skyArticleChanges.length > 0 ? (
-                      <StudioButton
-                        type="button"
-                        onClick={() => setSkyArticleEditor((current) => current ? { ...current, reviewOpen: !current.reviewOpen } : current)}
-                      >
-                        Review {skyArticleChanges.length} change{skyArticleChanges.length === 1 ? "" : "s"}
-                      </StudioButton>
-                    ) : selectedRow && currentDraft.status !== "LIVE" ? (
-                      <StudioButton type="button" onClick={() => void approveSkyArticleEdition(selectedRow)} disabled={isLoading}>
-                        <Check size={16} aria-hidden="true" />
-                        Approve &amp; publish complete edition
-                      </StudioButton>
-                    ) : (
-                      <span>Published copy is unchanged.</span>
-                    )}
-                  </div>
-
                   {skyArticleEditor.reviewOpen && (
-                    <section className="admin-sky-article-review" aria-label="Review Sky article changes">
+                    <section className="admin-sky-article-review" aria-label="Review Sky article changes" tabIndex={-1}>
                       <header>
                         <p className="admin-eyebrow">Before publishing</p>
                         <h3>Review only what changed</h3>
@@ -12535,6 +12523,26 @@ export function GeneratedContentAdminDashboard() {
               houses={skyHousePassages} aspects={filteredSkyAspectPassages} query={skyRelatedAspectQuery} onQuery={setSkyRelatedAspectQuery}
               title={row => rowTitle(row as AdminGeneratedContentRow)} onEdit={row => openRelatedSkyRow(selectedRow.id, row as AdminGeneratedContentRow)} />
           </Suspense></section>}
+        {compiledSkyArticleEdition && skyArticleEditor && <div className="admin-toolbar-actions admin-editor-savebar studio-surface" aria-label="Article publication actions" aria-busy={isLoading}>
+          <span className={`admin-editor-save-state ${skyArticleEditor.saveState === "saved" ? "is-saved" : "is-unsaved"}`} role="status">
+            {isLoading ? "Publishing…" : skyArticleEditor.saveState === "error" ? "Draft save failed · Changes not published"
+              : skyArticleEditor.saveState !== "saved" ? "Saving draft · Changes not published"
+                : skyArticleChanges.length > 0 ? "Draft saved · Changes not published"
+                  : currentDraft.status === "LIVE" ? "Published copy is unchanged." : "Draft saved · Awaiting publication"}
+          </span>
+          {skyArticleEditor.saveState === "error" && <StudioButton disabled={isLoading} onClick={() => updateSkyArticleFields({})}>Retry save</StudioButton>}
+          {skyArticleChanges.length > 0 ? <StudioButton className="admin-primary-button" type="button" disabled={isLoading} onClick={() => {
+            setSkyEditorSection("article");
+            setSkyArticleEditor(current => current ? { ...current, reviewOpen: true } : current);
+            window.requestAnimationFrame(() => {
+              const review = editorRef.current?.querySelector<HTMLElement>(".admin-sky-article-review");
+              review?.scrollIntoView({ block: "start" });
+              review?.focus({ preventScroll: true });
+            });
+          }}>Review &amp; publish</StudioButton> : selectedRow && currentDraft.status !== "LIVE" ? <StudioButton className="admin-primary-button" type="button" disabled={isLoading || skyArticleEditor.saveState !== "saved"} onClick={() => void approveSkyArticleEdition(selectedRow)}>Approve &amp; publish complete edition</StudioButton>
+            : <a className="admin-source-action" href={articleReaderHref(currentDraft.contentKey)} target="_blank" rel="noreferrer">Read published article</a>}
+          <StudioButton type="button" disabled={isLoading || skyArticleEditor.saveState !== "saved"} onClick={closeEditor}>Done</StudioButton>
+        </div>}
         {editorSaveError && <div className="admin-inline-warning" role="alert">{editorSaveError}</div>}
         {pendingPublication && publicationStatusButton(isLoading)}
         {!compiledSkyArticleEdition && <div className={`admin-toolbar-actions admin-editor-savebar studio-surface${isLoading ? " is-saving" : ""}`} aria-busy={isLoading}>

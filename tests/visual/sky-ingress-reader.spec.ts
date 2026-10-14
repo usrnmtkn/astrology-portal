@@ -3,14 +3,14 @@ import { compileSkyArticleEdition } from '../../apps/web/src/content/skyArticleT
 import { skyIngressEssayFields } from '../../apps/web/src/content/skyIngressEssay.mjs';
 import { readerResponse } from '../helpers/reader-response';
 
-for (const [width, theme] of [[390, 'light'], [1440, 'dark']] as const) {
+for (const [width, theme] of [[390, 'light'], [390, 'dark'], [1440, 'light'], [1440, 'dark']] as const) {
  test(`approved ingress edition preserves the complete reader article after reload ${width} ${theme}`, async ({ page }) => {
   test.setTimeout(120_000);
   await page.setViewportSize({ width, height: 1000 });
   await page.clock.setFixedTime(new Date('2026-10-09T12:00:00Z'));
   const slots = Object.fromEntries(skyIngressEssayFields.map(({ name }) => [name, `Synthetic ${name}.`]));
   Object.assign(slots, { articleTitle: 'Libra Season 2026', when: 'Synthetic calculated date field.',
-   overviewHeading: 'Synthetic overview', overviewBody: 'Synthetic complete ingress opening.\n\nSynthetic overview final sentence.',
+   overviewHeading: 'Overview', overviewBody: 'Synthetic complete ingress opening.\n\nSynthetic overview final sentence.',
    majorTransitSections: '## Synthetic transit\n\nSynthetic transit opening.\n\nSynthetic transit final sentence.',
    priorOccurrenceSection: '', otherDatesSection: '', closingHeading: 'Synthetic close',
    closingBody: 'Synthetic close opening.\n\nSynthetic complete ingress final sentence.' });
@@ -54,6 +54,18 @@ for (const [width, theme] of [[390, 'light'], [1440, 'dark']] as const) {
    await expect(article).toContainText('Synthetic complete ingress final sentence.');
    await expect(article).toContainText('Synthetic transit final sentence.');
    await expect(article.getByRole('heading', { name: 'Libra Season 2026', exact: true })).toBeVisible();
+   await expect(article.getByRole('heading', { name: 'Overview', exact: true })).toHaveCount(0);
+   await expect(article.getByRole('heading', { name: 'Synthetic transit', exact: true })).toHaveCount(1);
+   await expect(article.getByRole('heading', { name: 'Synthetic close', exact: true })).toHaveCount(1);
+   const headings = await article.locator('h1, h2, h3, h4, h5, h6').allTextContents();
+   expect(headings.indexOf('Libra Season 2026')).toBeLessThan(headings.indexOf('Synthetic transit'));
+   expect(headings.indexOf('Synthetic transit')).toBeLessThan(headings.indexOf('Synthetic close'));
+   const headingStyles = await article.locator('.sky-detail-section h2').evaluateAll(nodes => nodes.map(node => {
+    const style = getComputedStyle(node);
+    return Object.fromEntries(['fontFamily', 'fontSize', 'fontWeight', 'lineHeight', 'letterSpacing', 'marginTop', 'marginBottom', 'textTransform', 'textAlign'].map(key => [key, style[key as keyof CSSStyleDeclaration]]));
+   }));
+   expect(headingStyles.length).toBeGreaterThanOrEqual(3);
+   for (const style of headingStyles) expect(style).toEqual(headingStyles[0]);
    await expect(article).not.toContainText('priorOccurrenceSection');
   };
   await assertComplete();

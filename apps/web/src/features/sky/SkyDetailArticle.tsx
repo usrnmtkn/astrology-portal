@@ -434,7 +434,9 @@ export function SkyDetailArticle({
     (section) => !isTimingOnlyArticleSection(section) && !isSuppressedSkyDetailSectionHeading(section.heading)
   ).map((section) => ({
     ...section,
-    heading: cleanGeneratedSectionHeading(section.heading)
+    heading: /^sky\/(?:placement|archive)\//u.test(detail.routePath ?? "") && /^overview:?$/iu.test(section.heading.trim())
+      ? ""
+      : cleanGeneratedSectionHeading(section.heading)
   })).map((section) => ({
     ...section,
     heading: isLegacySkyArticleScaffoldHeading(section.heading) ? "" : section.heading,

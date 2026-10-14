@@ -88,6 +88,8 @@ const compiled = await compileSkyArticleEdition({
   }]
 });
 
+assert.equal(compiled.articleSections[0].heading, "", "Unheaded opening prose must not acquire an invented Overview heading.");
+assert.match(compiled.articleSections[0].body, /Owner opener/u, "Removing a default heading preserves the complete opener.");
 assert.equal(compiled.contentKey, "sky-article/pluto/aquarius/2024");
 assert.equal(compiled.headline, "Pluto Enters Aquarius");
 assert.equal(compiled.tldr, "Explicit owner TL;DR for Pluto in Aquarius.");
