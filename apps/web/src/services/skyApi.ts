@@ -1,3 +1,4 @@
+import { isInitialSkyReaderHash } from "./initialSkyRoute.mjs";
 import { getInitialLocation, getInitialTransitDate, skyDateTimeFromInput } from "./skySelection";
 import { liveSkyReference } from "./skyClock";
 import { withTimeZone } from "./timezones";
@@ -66,7 +67,7 @@ export type InitialSkyLoad = {
  * started speculatively; failures belong to the mounted selection's fallback. */
 export function startInitialSkyLoad(): InitialSkyLoad | null {
   const url = new URL(window.location.href);
-  if (url.pathname !== "/" || !/^#\/?sky\/?$/u.test(url.hash)
+  if (url.pathname !== "/" || !isInitialSkyReaderHash(url.hash)
     || url.searchParams.get("auth") === "login" || rememberStudioReturnPath()) return null;
   const day = getInitialTransitDate();
   const location = withTimeZone(getInitialLocation().location);

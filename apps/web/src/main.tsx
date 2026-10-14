@@ -1,4 +1,5 @@
 import React from "react";
+import { isInitialSkyReaderHash } from "./services/initialSkyRoute.mjs";
 import { startStartupAnimation } from "./startupAnimation";
 import { createRoot } from "react-dom/client";
 import { loadYouPage } from "./features/you/youExperienceLoader";
@@ -119,7 +120,7 @@ async function startApp() {
     const { completeAuthCallback } = await import("./services/authCallback");
     await completeAuthCallback();
   }
-  const initialSkyLoadPromise = /^#\/?sky\/?$/u.test(window.location.hash)
+  const initialSkyLoadPromise = isInitialSkyReaderHash(window.location.hash)
     ? import("./services/skyApi").then(({ startInitialSkyLoad }) => startInitialSkyLoad()).catch(() => null)
     : Promise.resolve(null);
   if (callbackUrl.pathname === "/" && callbackUrl.searchParams.get("auth") !== "login"
