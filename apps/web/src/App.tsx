@@ -11910,7 +11910,7 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
         skyIngressEssayPublicationKeys(contentPublicationRecords(), {
           planet: normalizeContentIdPart(position.planet), sign: normalizeContentIdPart(position.sign)
         })) : [];
-      const publishedEditions = editionKeys.length ? await loadLiveGeneratedContentForKeys(editionKeys) : new Map();
+      const publishedEditions = eligibleSkyDetailContent(editionKeys.length ? await loadLiveGeneratedContentForKeys(editionKeys) : new Map());
       if (cancelled) return;
       if (identity !== skyPlacementPublicationIdentity()) throw new Error("Sky sources changed during loading. Please retry.");
       if (editionKeys.some(key => !publishedEditions.has(key))) throw new Error("The current article publication could not load.");
