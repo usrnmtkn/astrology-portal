@@ -5283,7 +5283,14 @@ export function GeneratedContentAdminDashboard() {
       setMessage("That Compatibility card already exists. Open its saved row.");
       return null;
     }
-    const status = nextStatus ?? activeDraft.status;
+    const savedSkyCopy = editorSourceRow?.id === activeDraft.id ? editorSourceRow : rows.find((row) => row.id === activeDraft.id);
+    // The API clears approval when Sky reader fields change. Submit that draft
+    // transition explicitly so the returned saved row matches the editor request.
+    const editsSkyCopy = savedSkyCopy && ["sky_aspect", "sky_placement"].includes(savedSkyCopy.block_type ?? "") && (
+      (["headline", "summary", "body"] as const).some((field) => activeDraft[field] !== savedSkyCopy[field])
+      || JSON.stringify(activeDraft.sections ?? {}) !== JSON.stringify(savedSkyCopy.sections)
+    );
+    const status = editsSkyCopy ? "DRAFT" : nextStatus ?? activeDraft.status;
     if (status === "LIVE" && activeDraft.sourceSnapshot?.governanceState === "needs-owner-decision") {
       setMessage("This source draft still needs an explicit owner decision. Save it as Draft or Reviewed; the general editor cannot make it reader-serving.");
       return null;

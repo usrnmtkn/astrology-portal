@@ -58,3 +58,4 @@ export const skyV4OwnerApprovedReaderCopyKeys = new Set(skyV4ReaderCopyOwnerAppr
 export const skyV4ServingReleasedReaderCopyKeys = skyV4ReaderCopyServingRelease.serving_enabled === true
   ? skyV4OwnerApprovedReaderCopyKeys
   : new Set<string>();
+export { publicationTimestamp, validContentPublication } from '../../apps/web/src/content/contentPublicationState.js';

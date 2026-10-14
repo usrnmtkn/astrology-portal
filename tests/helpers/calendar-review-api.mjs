@@ -1,6 +1,7 @@
 // Real API handler with a strict, isolated PostgREST store. Never contacts a service.
 import { publicationRpcFixture } from "./studio-publication-rpc.mjs";
 import { randomUUID } from "node:crypto";
+import assert from 'node:assert/strict';
 import { fileURLToPath } from "node:url";
 import { Readable } from "node:stream";
 import { readerRouteResponse, fixturePublications } from './content-reader-route.mjs';
@@ -103,6 +104,7 @@ export async function createApiStore(initial = fixtures, storeOptions = {}) {
       return Response.json(found.slice(offset, offset + Number(url.searchParams.get('limit') ?? found.length)));
     }
     const patch = JSON.parse(String(options.body));
+    if (patch.status === 'LIVE') assert.equal(new Headers(options.headers).get('x-content-publication-action'), 'publish', 'Validated Live writes must signal publication to storage');
     if (method === "POST") {
       const created = { ...patch, id: storeOptions.uuidIds ? randomUUID() : `revision-${++sequence}`, updated_at: nextVersion(), created_at: new Date().toISOString() };
       rows.set(created.id, created);

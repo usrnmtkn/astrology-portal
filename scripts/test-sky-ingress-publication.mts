@@ -40,6 +40,9 @@ try {
   globalThis.fetch = async (input, init = {}) => {
     const url = new URL(String(input));
     assert.equal(url.origin, env.SUPABASE_URL, "No real network or paid generation");
+    if (url.pathname === "/rest/v1/content_publications" && (!init.method || init.method === "GET")) {
+      return Response.json((await db.query("select * from content_publications where content_key=$1", [url.searchParams.get('content_key')?.slice(3)])).rows);
+    }
     assert.equal(url.pathname, "/rest/v1/generated_interpretations");
     if (!init.method || init.method === "GET") return Response.json((await db.query("select * from generated_interpretations where id=$1", [currentId])).rows);
     assert.equal(init.method, "PATCH");

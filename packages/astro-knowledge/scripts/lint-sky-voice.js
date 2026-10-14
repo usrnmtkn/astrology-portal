@@ -87,7 +87,7 @@ function closerSentenceCount(sentences) {
   return Math.max(count, 1);
 }
 
-function lintCard(text, { mode = "collective-aspect-card", paragraphCountAdvisory = false } = {}) {
+function lintCard(text, { mode = "collective-aspect-card", paragraphCountAdvisory = false, warningsAdvisory = false } = {}) {
   const findings = [];
   const sentences = (text.match(/[^.!?]+[.!?]+/g) || []).map((s) => s.trim());
   const placementCloserCount = mode === PLACEMENT_MODE ? closerSentenceCount(sentences) : 0;
@@ -282,7 +282,7 @@ function lintCard(text, { mode = "collective-aspect-card", paragraphCountAdvisor
   // score is driven by rule violations only; structural notes are advisory
   // (the owner's fallout closers are intentionally list-shaped and long).
   let score = 3;
-  if (warns >= 1) score = 2;
+  if (warns >= 1 && !warningsAdvisory) score = 2;
   if (fails >= 1) score = 1;
   return { score, fails, warns, registerDraw, findings, notes, sentences: sentences.length };
 }

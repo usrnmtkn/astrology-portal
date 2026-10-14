@@ -1,4 +1,5 @@
 import { publicationRpcFixture } from "../tests/helpers/studio-publication-rpc.mjs";
+import { createFixturePublicationLedger } from "../tests/helpers/fixture-publication-ledger.mjs";
 import assert from "node:assert/strict";
 import { Readable } from "node:stream";
 
@@ -69,12 +70,23 @@ function existingRow(overrides = {}) {
 
 async function invoke(body, row) {
   const patches = [];
-  globalThis.fetch = async (_url, options = {}) => {
-    if (!options.method) return new Response(JSON.stringify([row]), { status: 200 });
+  const ledger = createFixturePublicationLedger([row]);
+  let saved = row;
+  globalThis.fetch = async (input, options = {}) => {
+    const url = new URL(String(input));
+    if (url.pathname === '/rest/v1/content_publications') {
+      const key = url.searchParams.get('content_key')?.replace(/^eq\./u, '');
+      return Response.json(ledger.records().filter(record => !key || record.content_key === key));
+    }
+    if (!options.method) return new Response(JSON.stringify([saved]), { status: 200 });
     if (options.method === "PATCH") {
       const patch = JSON.parse(options.body);
+      if (patch.status === 'LIVE') assert.equal(new Headers(options.headers).get('x-content-publication-action'), 'publish');
       patches.push(patch);
-      return new Response(JSON.stringify([{ ...row, ...patch }]), { status: 200 });
+      const next = { ...saved, ...patch };
+      ledger.observe(saved, next, options.headers);
+      saved = next;
+      return new Response(JSON.stringify([saved]), { status: 200 });
     }
     throw new Error(`Unexpected fetch method ${options.method}`);
   };

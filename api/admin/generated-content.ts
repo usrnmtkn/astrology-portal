@@ -2112,7 +2112,7 @@ async function readPublicationReceipt() {
 }
 
 async function currentPublication(contentKey: string) {
-  const response = await adminStorageFetch(`${supabaseUrl()}/rest/v1/content_publications?${new URLSearchParams({ select: "content_key,state,revision,row_id,row_updated_at", content_key: `eq.${contentKey}`, limit: "1" })}`, { headers: adminHeaders() });
+  const response = await adminStorageFetch(`${supabaseUrl()}/rest/v1/content_publications?${new URLSearchParams({ select: "content_key,state,revision,row_id,row_updated_at,updated_at", content_key: `eq.${contentKey}`, limit: "1" })}`, { headers: adminHeaders() });
   if (!response.ok || !Array.isArray(response.payload)) throw new GeneratedContentRequestError("The current publication state could not be checked. Reload before publishing.", 503, undefined, "PUBLICATION_UNCONFIRMED");
   return response.payload.find((item: any) => item.content_key === contentKey) ?? null;
 }
@@ -3218,8 +3218,9 @@ async function updateGeneratedContent(req: IncomingMessage) {
     method: "PATCH",
     headers: {
       ...adminHeaders(),
-      ...(patch.status === "LIVE" && (body.status === "LIVE" || body.ownerAction === "approve-sky-article-edition")
-        ? { "x-content-publication-action": "publish" } : {}),
+      // All publication actions have already passed the owner/reader gates.
+      // Signal the validated result, not an expanding list of action names.
+      ...(patch.status === "LIVE" ? { "x-content-publication-action": "publish" } : {}),
       prefer: "return=representation"
     },
     body: JSON.stringify(existing.sections?.horoscopeEdition?.window?.period==='weekly'&&patch.source_snapshot
@@ -3236,6 +3237,16 @@ async function updateGeneratedContent(req: IncomingMessage) {
       throw new GeneratedContentRequestError("This content changed before the update completed. Reload the row before saving so a newer edit is not overwritten.", 409);
     }
     throw new GeneratedContentRequestError("Content row was not found.", 404);
+  }
+
+  if (patch.status === "LIVE") {
+    for (const row of updatedRows.filter((row) => row.target_date == null)) {
+      const publication = await currentPublication(row.content_key);
+      if (!libs().validContentPublication(publication) || publication.state !== "live" || publication.row_id !== row.id
+        || libs().publicationTimestamp(publication.row_updated_at) !== libs().publicationTimestamp(row.updated_at)) {
+        throw new GeneratedContentRequestError("Approval was saved, but publication of this version was not confirmed. Reopen the row to check its current status before trying again.", 503, undefined, "PUBLICATION_UNCONFIRMED");
+      }
+    }
   }
 
   return updatedRows;
