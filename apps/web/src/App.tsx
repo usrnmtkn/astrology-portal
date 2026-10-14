@@ -10821,23 +10821,21 @@ async function getAstrodienstSky(
   return calculateSky(...args);
 }
 
-function skyPlacementArticleReferenceDate(location: LocationInput, date: string) {
-  return skyDateTimeFromInput(date, withTimeZone(location), true);
-}
-
 async function requestSkyPlacementArticleSnapshot(
   location: LocationInput,
   planet: string,
   sign: string,
   date: string,
-  referenceDate = skyPlacementArticleReferenceDate(location, date)
+  referenceDate?: Date
 ) {
+  const selectedLocation = withTimeZone(location);
+  const reference = referenceDate ?? skyDateTimeFromInput(date, selectedLocation, true);
   const { getSkyPlacementSnapshotOffMainThread } = await import("./services/skyCalculationClient");
   return getSkyPlacementSnapshotOffMainThread(
-    withTimeZone(location),
+    selectedLocation,
     planet,
     sign,
-    referenceDate,
+    reference,
     true,
     "placement"
   );
@@ -10848,7 +10846,7 @@ async function prepareSkyPlacementArticleContent(
 ) {
   void loadContentRegistry("sky");
   const [placementSky] = await Promise.all([snapshotRequest, refreshContentPublications()]);
-  const position = skyNodeDisplayPositions(placementSky.positions).find(candidate => skyRoutePartMatches(candidate.planet, planet));
+  const position = placementSky.positions.find(candidate => skyRoutePartMatches(candidate.planet, planet));
   const ingressKeys = position ? skyIngressEssayPublicationKeys(contentPublicationRecords(), {
     planet: normalizeContentIdPart(position.planet), sign: normalizeContentIdPart(sign)
   }) : [];
@@ -10920,6 +10918,7 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
   const skyDateRef = useRef(skyDate);
   const followsCurrentTransitDateRef = useRef(skyDate === currentLocalDate);
   const [mode, setMode] = useState<PortalMode>(() => studioReturnPath ? "profile" : getInitialPortalMode());
+  const isTodayMode = mode === "guest" || mode === "member";
   const [youPagePainted, setYouPagePainted] = useState(false);
   const youDetailsReady = youPagePainted || Boolean(placementRouteIdFromUrl());
   const markYouPagePainted = useCallback(() => setYouPagePainted(true), []);
@@ -11009,7 +11008,7 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
   const lastSocialProfileSaveRef = useRef("");
   const initialSkyCacheKey = skySnapshotCacheKey(
     withTimeZone(initialLocationState.location),
-    (mode === "guest" || mode === "member" || mode === "calendar") && liveSkyReference(getInitialTransitDate(), withTimeZone(initialLocationState.location).timeZone)
+    (isTodayMode || mode === "calendar") && liveSkyReference(getInitialTransitDate(), withTimeZone(initialLocationState.location).timeZone)
       ? `live-${skyDateTimeFromInput(getInitialTransitDate(), initialLocationState.location, true).toISOString()}`
       : getInitialTransitDate()
   );
@@ -11052,7 +11051,7 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
   const [resolvedPlacementSelection, setResolvedPlacementSelection] = useState<string | null>(null);
   const [skyPlacementLoadStatus, setSkyPlacementFallbackStatus] = useState<SkyPlacementContentStatus>("idle");
   const [skyPlacementResolvedIdentity, setSkyPlacementResolvedIdentity] = useState<string | null>(null);
-  const skyListEditionMissing = sky && !skyDetailRoutePath && (mode === "guest" || mode === "member")
+  const skyListEditionMissing = sky && !skyDetailRoutePath && isTodayMode
     && sky.positions.some(position => skyIngressEssayPublicationKeys(contentPublicationRecords(), {
       planet: normalizeContentIdPart(position.planet), sign: normalizeContentIdPart(position.sign)
     }).some(key => !skyGeneratedContent.has(key)));
@@ -11663,7 +11662,7 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
   function navigateToPortalMode(nextMode: PortalMode, animate = true) {
     // Capturing an animated loading screen delays the saved profile itself.
     // Keep transitions for completed pages; leave unfinished Sky immediately.
-    const leavingSkyPlaceholder = !selectedSkyDetail && (mode === "guest" || mode === "member")
+    const leavingSkyPlaceholder = !selectedSkyDetail && isTodayMode
       && (skyStatus === "loading" || skyStatus === "cached" || skyTimingStatus === "loading" || skyPlacementFallbackStatus !== "ready");
     transitionPage(() => {
       setSelectedSkyDetail(null);
@@ -12113,15 +12112,14 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
     const availableDetailContent = eligibleSkyDetailContent(mergeGeneratedContentMaps(skyGeneratedContent, selectedSkyDetailContentRef.current));
     const [baseRoute, encodedExactAt] = skyDetailRoutePath.split(/\/(?:at|on)\//u);
     const routeParts = decodeSkyRouteParts(baseRoute);
-    const [routeSurface, routeType, routePlanet, routeSign, routeOther] = routeParts;
+    const [, routeType, routePlanet, routeSign, routeOther] = routeParts;
     const articleLocation = sky?.location ?? withTimeZone(location);
     const initial = sky ? null : initialSkyLoadRef.current?.matches(skyDate, articleLocation);
     const skyArticleIdentityKey = `${skyDate}:${articleLocation.latitude}:${articleLocation.longitude}:${articleLocation.timeZone}`;
     const preparationKey = `${skyDetailRoutePath}:${skyArticleIdentityKey}:${sky?.generatedAt ?? initial?.date.toISOString()}:${contentRefreshVersion}:${skyDetailRetry}:${contentPublicationGeneration}`;
-    if (!sky && (!initial || (mode !== "guest" && mode !== "member")
-      || initialSkyRefreshKey.current !== skyRefreshKey || routeType !== "placement" || routeParts.length !== 4 || encodedExactAt
-      || !skyPlacementPlanetOrder.some(point => skyRoutePartMatches(point, routePlanet))
-      || !zodiacSigns.some(value => skyRoutePartMatches(value, routeSign)))) return;
+    if (!sky && (!initial || !isTodayMode
+      || initialSkyRefreshKey.current !== skyRefreshKey || routeParts.length !== 4 || encodedExactAt
+      || !skyPlacementPlanetOrder.some(point => skyRoutePartMatches(point, routePlanet)))) return;
 
     const personalizationKey = [
       profileNatalSky?.ascendant ?? userProfile?.rising ?? "",
@@ -12146,21 +12144,21 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
     const routePosition = sky && routePlanet && skyNodeDisplayPositions(sky.positions).find(position => skyRoutePartMatches(position.planet, routePlanet));
     const placementSign = routeType === "retrograde" ? (routePosition ? routePosition.sign : undefined) : routeSign;
     const canLoadPlacementArticle = Boolean(
-      !calendarEvent && routeSurface === "sky" && ["placement", "retrograde"].includes(routeType) && placementSign
+      !calendarEvent && ["placement", "retrograde"].includes(routeType) && placementSign
       && routePlanet && (routePosition || initial) && zodiacSigns.some(sign => skyRoutePartMatches(sign, placementSign))
     );
     // Reuse initial direct-route preparation at the captured instant after the
     // full Sky response arrives. Source and publication changes still invalidate it.
-    if (canLoadPlacementArticle && routePlanet && placementSign && skyArticlePreparationRef.current?.key !== preparationKey) {
+    if (canLoadPlacementArticle && skyArticlePreparationRef.current?.key !== preparationKey) {
       const request = prepareSkyPlacementArticleContent(
-        requestSkyPlacementArticleSnapshot(articleLocation, routePlanet, placementSign, skyDate, initial?.date),
-        routePlanet, placementSign, availableDetailContent);
+        requestSkyPlacementArticleSnapshot(articleLocation, routePlanet, placementSign!, skyDate, initial?.date),
+        routePlanet, placementSign!, availableDetailContent);
       skyArticlePreparationRef.current = { key: preparationKey, request };
       void request.catch(() => {
         if (skyArticlePreparationRef.current?.request === request) skyArticlePreparationRef.current = null;
       });
     }
-    const articlePreparation = canLoadPlacementArticle ? skyArticlePreparationRef.current?.request : null;
+    const articlePreparation = skyArticlePreparationRef.current?.request;
     if (!sky) return;
     const commitResolvedSkyDetail = (detail: SkyDetail | null) => {
       setSkyDetailResolvedIdentity(skyPlacementPublicationIdentity());
@@ -12171,7 +12169,7 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
     // resolve before a first paint that would otherwise show bundled copy
     // and then replace it. In-sign Studio keys join that same commit so the
     // article body is not painted twice.
-    if (routeSurface === "sky" && ["placement", "retrograde"].includes(routeType)
+    if (["placement", "retrograde"].includes(routeType)
       && (skyPlacementFallbackStatus !== "ready" || personalTransitSourcesNeeded && personalTransitSourceStatus !== "ready")) return;
     // Every placement timeline includes exact aspects, even when the author
     // has not used an aspect token in the article.
@@ -12209,7 +12207,7 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
           currentIngressKeys, loadLiveGeneratedContentForKeys, []));
       }).catch(error => {
         if (cancelled) return;
-        console.warn("Requested placement calculation failed.", error);
+        console.warn("Sky detail load failed.", error);
         setSkyDetailReadError(skyDetailRoutePath);
         setSelectedSkyDetail(current => current ? { ...current, placementFactsPending: false } : current);
       });
@@ -12294,7 +12292,7 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
           : routeType === "aspect" ? skyDetailRequiredAspectKeys(detailSky, routePlanet, routeSign, routeOther) : [],
         loadLiveGeneratedContentForKeys);
       renderDetail(detailSky, content, true);
-    }).catch(error => { if (!cancelled) { console.warn("Sky detail interpretation failed to load.", error); setSkyDetailReadError(skyDetailRoutePath); } });
+    }).catch(error => { if (!cancelled) { console.warn("Sky detail load failed.", error); setSkyDetailReadError(skyDetailRoutePath); } });
     return () => { cancelled = true; };
   }, [contentRegistryVersion, contentRefreshVersion, fallbackArchitectureV3Version, profileNatalSky?.ascendant, sky, skyDate, skyDetailRoutePath, skyGeneratedContent, skyPlacementFallbackStatus, skyPlacementPersonalizationTransits, userProfile?.rising, skyDetailRetry, personalTransitSourcesNeeded, personalTransitSourceStatus, mode, skyRefreshKey, location.latitude, location.longitude, location.timeZone, contentPublicationGeneration]);
 
@@ -12395,7 +12393,7 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
 
   useEffect(() => {
     let cancelled = false;
-    const shouldLoadSkyGenerated = mode === "guest" || mode === "member" || mode === "calendar";
+    const shouldLoadSkyGenerated = isTodayMode || mode === "calendar";
 
     if (mode !== "calendar") {
       setCalendarContentStatus("idle");
@@ -12860,13 +12858,13 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
     }
 
     const skyLocation = withTimeZone(location);
-    const initialRequest = initialSkyRefreshKey.current === skyRefreshKey && (mode === "guest" || mode === "member")
+    const initialRequest = initialSkyRefreshKey.current === skyRefreshKey && isTodayMode
       ? (initialSkyLoadRef.current?.matches(skyDate, skyLocation) ?? null) : null;
     // A changed selection, refresh or expired bootstrap permanently abandons it.
     // Keeping the promise for the matching mount also supports StrictMode replay.
     if (!initialRequest) initialSkyLoadRef.current = null;
-    const selectedDateTime = initialRequest?.date ?? skyDateTimeFromInput(skyDate, skyLocation, (mode === "guest" || mode === "member" || mode === "calendar"));
-    const live = (mode === "guest" || mode === "member" || mode === "calendar") && Boolean(liveSkyReference(skyDate, skyLocation.timeZone));
+    const selectedDateTime = initialRequest?.date ?? skyDateTimeFromInput(skyDate, skyLocation, (isTodayMode || mode === "calendar"));
+    const live = (isTodayMode || mode === "calendar") && Boolean(liveSkyReference(skyDate, skyLocation.timeZone));
     const selectionKey = skySnapshotCacheKey(skyLocation, `${skyDate}:${live ? "live" : "daily"}`);
     const refreshing = skyCalculationSelectionRef.current === selectionKey && Boolean(sky);
     skyCalculationSelectionRef.current = selectionKey;
@@ -14179,7 +14177,6 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
     }
   }
 
-  const isTodayMode = mode === "guest" || mode === "member";
   const isSkyLoading = isTodayMode && skyStatus === "loading";
   const isPersonalTransitDateMode = mode === "profile" || mode === "friends";
   const isTransitDateMode = isTodayMode || isPersonalTransitDateMode;
@@ -14310,7 +14307,7 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
             </button>
 
             <nav className="site-nav" aria-label="Primary navigation">
-              <button className={mode === "guest" || mode === "member" ? "active" : ""} onClick={() => navigateToPortalMode(userProfile ? "member" : "guest")}>
+              <button className={isTodayMode ? "active" : ""} onClick={() => navigateToPortalMode(userProfile ? "member" : "guest")}>
                 <SkyNavIcon size={18} />
                 <span>Sky</span>
               </button>
@@ -14522,7 +14519,7 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
           {menuOpen && (
             <div className="site-menu" id="site-overflow-menu" ref={menuRef} role="menu" aria-label="Site menu">
               <button
-                className={mode === "guest" || mode === "member" ? "active" : ""}
+                className={isTodayMode ? "active" : ""}
                 type="button"
                 role="menuitem"
                 onClick={() => {

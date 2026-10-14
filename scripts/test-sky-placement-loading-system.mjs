@@ -152,7 +152,7 @@ assert.match(
 );
 assert.match(
   app,
-  /function requestSkyPlacementArticleSnapshot[\s\S]*skyPlacementArticleReferenceDate\(location, date\)/u,
+  /function requestSkyPlacementArticleSnapshot[\s\S]*referenceDate \?\? skyDateTimeFromInput\(date, selectedLocation, true\)/u,
   "Placement article astronomy must use the selected day, not a live generatedAt timestamp."
 );
 assert.match(
