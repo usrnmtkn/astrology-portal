@@ -19,21 +19,32 @@ jobs:
     # The full contract plus native PostgreSQL checks takes about 15 minutes.
     # Allow runner variance without cancelling the final verification steps.
     timeout-minutes: 20
-    services:
-      postgres:
-        # Docker's official mirror avoids Docker Hub pull limits on shared runners.
-        image: public.ecr.aws/docker/library/postgres:17.6
-        env:
-          POSTGRES_PASSWORD: local-test-only
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd "pg_isready -U postgres"
-          --health-interval 5s
-          --health-timeout 5s
-          --health-retries 12
     steps:
       - uses: actions/checkout@v6
+      # Both public registries can throttle shared runners. Starting the same
+      # official PostgreSQL image here lets us fall back before running tests.
+      - name: Start PostgreSQL with registry fallback
+        shell: bash
+        run: |
+          image=public.ecr.aws/docker/library/postgres:17.6
+          if ! docker pull "$image"; then
+            image=postgres:17.6
+            docker pull "$image"
+          fi
+          docker run --detach --name studio-postgres \
+            --env POSTGRES_PASSWORD=local-test-only \
+            --publish 127.0.0.1:5432:5432 \
+            --health-cmd "pg_isready -U postgres" \
+            --health-interval 5s --health-timeout 5s --health-retries 12 \
+            "$image"
+          for attempt in {1..75}; do
+            status=$(docker inspect --format '{{.State.Health.Status}}' studio-postgres)
+            if [ "$status" = healthy ]; then exit 0; fi
+            if [ "$status" = unhealthy ]; then break; fi
+            sleep 1
+          done
+          docker logs studio-postgres
+          exit 1
       - uses: actions/setup-node@v6
         with:
           node-version: 22
@@ -55,6 +66,9 @@ jobs:
           PGPASSWORD: local-test-only
       - name: Verify Studio variable directory contracts
         run: npm run test:studio-variables
+      - name: Remove isolated PostgreSQL container
+        if: always()
+        run: docker rm --force studio-postgres >/dev/null 2>&1 || true
 
 env:
   PRIVATE_REPORT_DOCUMENTS: ${{ secrets.PRIVATE_REPORT_DOCUMENTS }}

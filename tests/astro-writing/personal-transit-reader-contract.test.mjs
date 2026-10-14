@@ -60,6 +60,20 @@ test('literal/contextual distinctions stay with owner; no regex can certify qual
   assert.equal(readerRuleFindings('Synthetic fixture with no signals.').semanticApproval,false);
   assert.deepEqual(readerRuleFindings(text).contextualRules,RULES.contextual);
 });
+test('vague feeling descriptions request contextual review without banning ordinary words or rewriting',()=>{
+  for(const phrase of ['a tender feeling','a sensitive feeling','patience with their feelings','what kind of care']) {
+    const original=`They describe ${phrase} through {{untilDate}}.`;
+    const result=validatePassage(original,contact,contact.passages[1]);
+    assert.equal(result.passed,true);
+    assert(result.ownerReview.some(item=>item.includes('clear, everyday language')));
+    assert.equal(result.voiceAssessment,'owner-review-pending');
+    assert.equal(original,`They describe ${phrase} through {{untilDate}}.`);
+  }
+  const literal=readerRuleFindings('Tender vegetables and sensitive equipment.');
+  assert.deepEqual(literal.findings,[]);
+  assert(!literal.signals.some(item=>item.id==='EVERYDAY_EXPERIENCE'));
+  assert.equal(literal.semanticApproval,false);
+});
 test('full private aspect and Chiron doctrine remain available locally and absent from transport',()=>{
   for(const c of batch.contacts)for(const p of c.passages){
     const serialized=JSON.stringify(p.request);

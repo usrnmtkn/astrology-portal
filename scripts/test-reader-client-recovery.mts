@@ -16,6 +16,8 @@ const makeRow = (i: number) => ({ id: `00000000-0000-4000-8000-${String(i).padSt
 let rows = [makeRow(1)];
 let retired = false, storageFailures = 0, networkFailures = 0, publicStatus = 0, malformed = false;
 let failPublicPage = 0, retireOnFailure = false;
+let bodyFailures = 0, malformedJson = false, failBodyPublicPage = 0;
+let stallBody = false;
 let queries: any[] = [];
 
 globalThis.fetch = async (input, init) => {
@@ -33,6 +35,20 @@ globalThis.fetch = async (input, init) => {
       result = new Response(payload, { status: this.statusCode, headers: { 'content-type': 'application/json' } });
     } };
     await handler(req as any, res);
+    if (stallBody) return new Response(new ReadableStream({ start(controller) {
+      const abort = () => controller.error(init?.signal?.reason);
+      if (init?.signal?.aborted) abort();
+      else init?.signal?.addEventListener('abort', abort, { once: true });
+    } }));
+    if (queries.length === failBodyPublicPage) bodyFailures = 1;
+    if (bodyFailures-- > 0) {
+      if (retireOnFailure) retired = true;
+      return new Response(new ReadableStream({ start(controller) {
+        controller.enqueue(new TextEncoder().encode('{"rows":['));
+        controller.error(new TypeError('Synthetic connection interrupted after response headers'));
+      } }), { status: 200 });
+    }
+    if (malformedJson) return new Response('{"rows":[');
     return result;
   }
   const url = new URL(String(input));
@@ -68,6 +84,25 @@ try {
   assert.equal((await loadReaderRows({ keys: [rows[0].content_key] })).error, null);
   assert.equal(queries.length, 2);
 
+  queries = []; bodyFailures = 1;
+  result = await loadReaderRows({ keys: [rows[0].content_key] });
+  assert.equal(result.error, null, 'A connection interrupted during the response body recovers.');
+  assert.equal(result.data?.[0].body, body);
+  assert.equal(queries.length, 2);
+  assert.deepEqual(queries[0], queries[1]);
+
+  queries = []; bodyFailures = Infinity;
+  result = await loadReaderRows({ keys: [rows[0].content_key] });
+  assert(result.error); assert.equal(result.data, null);
+  assert.equal(queries.length, 3, 'Body interruptions share the existing three-attempt limit.');
+  bodyFailures = 0;
+
+  queries = []; malformedJson = true;
+  result = await loadReaderRows({ keys: [rows[0].content_key] });
+  assert(result.error instanceof SyntaxError); assert.equal(result.data, null);
+  assert.equal(queries.length, 1, 'A complete but malformed JSON response is not a transport retry.');
+  malformedJson = false;
+
   queries = []; storageFailures = Infinity;
   result = await loadReaderRows({ keys: [rows[0].content_key] });
   assert(result.error); assert.equal(result.data, null);
@@ -94,10 +129,24 @@ try {
   clearTimeout(timer);
   assert(result.error); assert.equal(result.data, null); assert.equal(queries.length, 1);
 
+  queries = []; storageFailures = 0; stallBody = true;
+  const bodyController = new AbortController();
+  const bodyTimer = setTimeout(() => bodyController.abort(new DOMException('Synthetic caller deadline', 'TimeoutError')), 30);
+  result = await loadReaderRows({ keys: [rows[0].content_key] }, bodyController.signal);
+  clearTimeout(bodyTimer); stallBody = false;
+  assert.equal(result.error, bodyController.signal.reason); assert.equal(result.data, null);
+  assert.equal(queries.length, 1, 'The caller deadline still stops body reads without another attempt.');
+
   queries = []; storageFailures = 1; retireOnFailure = true;
   result = await loadReaderRows({ keys: [rows[0].content_key] });
   assert.equal(result.error, null);
   assert.deepEqual(result.data, [], 'A retry must respect a retirement that happened during the failed request.');
+  retireOnFailure = false; retired = false;
+
+  queries = []; bodyFailures = 1; retireOnFailure = true;
+  result = await loadReaderRows({ keys: [rows[0].content_key] });
+  assert.equal(result.error, null); assert.deepEqual(result.data, []);
+  assert.equal(queries.length, 2, 'Body retries re-read publication state after a retirement.');
   retireOnFailure = false; retired = false;
 
   rows = Array.from({ length: 251 }, (_, i) => makeRow(i + 1));
@@ -109,5 +158,11 @@ try {
   assert(!queries[0].afterId); assert.equal(queries[1].afterId, rows[249].id);
   assert.deepEqual(queries[1], queries[2], 'Retry the failed page without duplicating the completed page.');
   assert.equal(result.data?.[0].body, body); assert.equal(result.data?.at(-1)?.body, body);
-  console.log('PASS reader recovery: actual-handler 503, exact copy/privacy, network failure, bounded attempts, cancellation, non-retryable responses, retirement and pagination.');
+  queries = []; failPublicPage = 0; failBodyPublicPage = 2;
+  result = await loadReaderRows({ surfaces: ['sky'] });
+  assert.equal(result.error, null); assert.equal(result.data?.length, 251);
+  assert.equal(new Set(result.data?.map(row => row.id)).size, 251);
+  assert.equal(queries.length, 3); assert.deepEqual(queries[1], queries[2]);
+  assert.equal(result.data?.at(-1)?.body, body);
+  console.log('PASS reader recovery: actual-handler 503, exact copy/privacy, interrupted headers/body, bounded attempts, cancellation, malformed JSON refusal, retirement and pagination.');
 } finally { globalThis.fetch = originalFetch; }

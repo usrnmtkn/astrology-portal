@@ -10,7 +10,12 @@ async function readPage(body: string, signal: AbortSignal) {
     try {
       const response = await fetch('/api/content-reader', { method: 'POST', headers: { 'Content-Type': 'application/json' },
         body, signal, cache: 'no-store' });
-      if (![502, 503, 504].includes(response.status) || attempt === 2) return response;
+      // A successful header does not establish that the whole page arrived.
+      // Keep body transport failures inside the same attempt/deadline budget.
+      if (response.ok) return await response.json();
+      if (![502, 503, 504].includes(response.status) || attempt === 2) {
+        throw new Error(`Published content request failed (${response.status}).`);
+      }
       await response.body?.cancel();
     } catch (error) {
       if (signal.aborted || attempt === 2 || !(error instanceof TypeError)) throw error;
@@ -29,10 +34,8 @@ export async function loadReaderRows(query: ReaderQuery, signal?: AbortSignal) {
     for (let page = 0; page < 200; page += 1) {
       // A full published library spans many pages. Each page, including its
       // retries, gets one window; a caller deadline still bounds the whole read.
-      const response = await readPage(JSON.stringify({ ...query, ...(afterId ? { afterId } : {}) }),
-        signal ?? AbortSignal.timeout(20_000));
-      if (!response.ok) throw new Error(`Published content request failed (${response.status}).`);
-      const value = await response.json() as { schema?: string; rows?: GeneratedContentRow[]; publications?: unknown[]; nextCursor?: string | null };
+      const value = await readPage(JSON.stringify({ ...query, ...(afterId ? { afterId } : {}) }),
+        signal ?? AbortSignal.timeout(20_000)) as { schema?: string; rows?: GeneratedContentRow[]; publications?: unknown[]; nextCursor?: string | null };
       if (value.schema !== READER_ROW_SCHEMA || !Array.isArray(value.rows) || !(value.nextCursor === null || typeof value.nextCursor === 'string')) throw new Error('Invalid published content response.');
       if (!query.latestVersion) {
         if (!Array.isArray(value.publications) || !value.publications.every(validContentPublication)) throw new Error('Invalid publication state.');
