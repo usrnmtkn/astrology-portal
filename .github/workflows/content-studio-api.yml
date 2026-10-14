@@ -16,9 +16,9 @@ jobs:
   content-studio-api:
     # Validate the actual main revision too. A merge message is not test evidence.
     runs-on: ubuntu-latest
-    # The full contract plus native PostgreSQL checks takes about 15 minutes.
-    # Allow runner variance without cancelling the final verification steps.
-    timeout-minutes: 20
+    # Observed full-suite plus PostgreSQL runs take 17–20 minutes.
+    # Keep every check while allowing runner variance beyond the former deadline.
+    timeout-minutes: 25
     steps:
       - uses: actions/checkout@v6
       # Both public registries can throttle shared runners. Starting the same

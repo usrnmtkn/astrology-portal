@@ -117,7 +117,7 @@ assert.match(
 );
 assert.match(
   app,
-  /const placementSnapshotRequest = canLoadPlacementArticle[\s\S]*skyPlacementFallbackStatus !== "ready"\) return/u,
+  /if \(canLoadPlacementArticle[\s\S]*skyPlacementFallbackStatus !== "ready" \|\| personalTransitSourcesNeeded/u,
   "A Sky placement article must start its astronomy before published copy finishes resolving."
 );
 assert.doesNotMatch(
@@ -132,7 +132,12 @@ assert.doesNotMatch(
 );
 assert.match(
   app,
-  /skyPlacementInSignAspectContentKeys[\s\S]*renderPlacement\(mergeGeneratedContentMaps\(baseContent, await loadLiveGeneratedContentForKeys\(inSignKeys\)\)\)/,
+  /loadSkyDetailContent[\s\S]*skyPlacementInSignAspectContentKeys\(events\)/,
+  "Preparation must resolve the selected in-sign Studio writing."
+);
+assert.match(
+  app,
+  /Promise\.all\(\[articlePreparation, loadContentRegistry\("sky"\)\]\)[\s\S]*renderPlacement\(await loadSkyDetailContent/,
   "In-sign Studio keys must join the first placement article commit."
 );
 assert.match(
