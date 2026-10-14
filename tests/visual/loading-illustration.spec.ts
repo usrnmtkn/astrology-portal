@@ -4,6 +4,7 @@ import { expect, test, type Page } from '@playwright/test';
 async function prepare(page: Page, theme: string, visual?: 'artwork') {
   await page.addInitScript(({ theme, visual }) => {
     localStorage.setItem('tldrastro:theme', theme);
+    if (!localStorage.getItem('tldrastro:pageAnimations')) localStorage.setItem('tldrastro:pageAnimations', 'system');
     if (visual) localStorage.setItem('tldrastro:loadingVisual', visual);
     const location = { label: 'New York', latitude: 40.7, longitude: -74, timeZone: 'America/New_York' };
     localStorage.setItem('tldrastro:selectedLocation', JSON.stringify(location));
@@ -146,11 +147,12 @@ test('opening a Sky Placement article from a revealed reading does not replay th
   await expect(page.getByText('Loading reading…', { exact: true })).toHaveCount(0);
 });
 
-for (const theme of ['light', 'dark']) for (const reducedMotion of ['no-preference', 'reduce'] as const) {
-  test(`compact report moon keeps inline sizing in ${theme} with ${reducedMotion}`, async ({ page }, info) => {
+for (const theme of ['light', 'dark']) for (const reducedMotion of ['no-preference', 'reduce'] as const) for (const choice of ['system', 'on', 'off'] as const) {
+  test(`compact report moon keeps inline sizing in ${theme} with ${reducedMotion} and ${choice}`, async ({ page }, info) => {
     await page.setViewportSize({ width: 390, height: 844 });
     await page.emulateMedia({ reducedMotion });
     await prepare(page, theme);
+    await page.addInitScript(value => localStorage.setItem('tldrastro:pageAnimations', value), choice);
     const user = { id: '00000000-0000-4000-8000-000000000001', aud: 'authenticated', role: 'authenticated', app_metadata: { provider: 'email' }, user_metadata: {}, email: 'loader@example.test' };
     const storageKey = `sb-${new URL(process.env.VITE_SUPABASE_URL ?? 'https://visual-smoke.supabase.test').hostname.split('.')[0]}-auth-token`;
     await page.addInitScript(({ user, storageKey }) => {
@@ -172,7 +174,7 @@ for (const theme of ['light', 'dark']) for (const reducedMotion of ['no-preferen
       await expect(moon).toHaveCSS('color', theme === 'dark' ? 'rgb(236, 238, 242)' : 'rgb(28, 31, 38)');
       const shadow = moon.locator('.loading-moon__shadow');
       const bounds = await loading.boundingBox();
-      if (reducedMotion === 'reduce') {
+      if (choice === 'off' || (choice === 'system' && reducedMotion === 'reduce')) {
         await expect(shadow).toHaveCSS('animation-name', 'none');
         await expect(shadow).toHaveCSS('transform', 'matrix(1, 0, 0, 1, 8, 0)');
       } else {
@@ -186,5 +188,31 @@ for (const theme of ['light', 'dark']) for (const reducedMotion of ['no-preferen
     } finally { blocked.release(); }
     await expect(page.getByRole('status', { name: 'Loading your reports…', exact: true })).toHaveCount(0);
     await expect(page.getByRole('heading', { name: 'Reports', exact: true })).toBeVisible();
+  });
+}
+
+for (const choice of ['On', 'Off', 'System'] as const) {
+  test(`Settings ${choice} persists through reload and controls the next route moon`, async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: choice === 'Off' ? 'no-preference' : 'reduce' });
+    await prepare(page, 'light');
+    await page.goto('/#settings');
+    const controls = page.getByRole('group', { name: 'Page animations', exact: true });
+    await controls.getByRole('button', { name: choice, exact: true }).click();
+    await expect(controls.getByRole('button', { name: choice, exact: true })).toHaveAttribute('aria-pressed', 'true');
+    await expect.poll(() => page.evaluate(() => localStorage.getItem('tldrastro:pageAnimations'))).toBe(choice.toLowerCase());
+    await page.reload();
+    await expect(controls.getByRole('button', { name: choice, exact: true })).toHaveAttribute('aria-pressed', 'true');
+    const blocked = hold();
+    await page.route(/\/assets\/CalendarRoute-.*\.js$/, async route => { await blocked.promise; await route.continue().catch(() => {}); });
+    try {
+      await page.getByRole('button', { name: 'Calendar', exact: true }).first().click();
+      const shadow = page.getByRole('status', { name: 'Loading calendar…', exact: true }).locator('.loading-moon__shadow');
+      await expect(shadow).toHaveCSS('animation-name', choice === 'On' ? 'startup-moon-phase' : 'none');
+      if (choice === 'On') {
+        const before = await shadow.evaluate(node => getComputedStyle(node).transform);
+        await expect.poll(() => shadow.evaluate(node => getComputedStyle(node).transform)).not.toBe(before);
+      }
+    } finally { blocked.release(); }
+    await expect(page.getByRole('region', { name: 'Lunar calendar', exact: true })).toBeVisible();
   });
 }

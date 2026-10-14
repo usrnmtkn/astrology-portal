@@ -8,6 +8,23 @@ try {
   document.documentElement.dataset.theme = localStorage.getItem("tldrastro:theme") === "dark" ? "dark" : "light";
 } catch { /* The loading screen also works when storage is unavailable. */ }
 
+// Resolve the saved app choice before any bundle arrives. Keep one effective
+// loader preference for CSS, Lottie, the mounted reader and standalone Studio.
+const motionRoot = document.documentElement;
+const systemMotion = matchMedia("(prefers-reduced-motion: reduce)");
+try {
+  const saved = localStorage.getItem("tldrastro:pageAnimations");
+  motionRoot.dataset.pageMotion = saved === "off" || saved === "system" ? saved : "on";
+} catch { motionRoot.dataset.pageMotion = "on"; }
+const syncLoaderMotion = () => {
+  const choice = motionRoot.dataset.pageMotion;
+  motionRoot.toggleAttribute("data-reduce-motion", choice === "off" || (choice === "system" && systemMotion.matches));
+};
+syncLoaderMotion();
+systemMotion.addEventListener("change", syncLoaderMotion);
+// The settings hook updates pageMotion even when storage is unavailable.
+new MutationObserver(syncLoaderMotion).observe(motionRoot, { attributes: true, attributeFilter: ["data-page-motion"] });
+
 const readerPathname = (pathname) => pathname.replace(/\/+$/u, "") || "/";
 const readerRecoveryRoute = () => {
   const path = readerPathname(location.pathname);

@@ -126,7 +126,7 @@
   to { opacity: var(--loading-pulse-opacity); }
 }
 
-@media (prefers-reduced-motion: reduce) {
+:root[data-reduce-motion] {
   .app-loading__lines span,
   .loading-moon__shadow { animation: none; }
 }

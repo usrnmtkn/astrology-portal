@@ -22,6 +22,7 @@ async function useMoonDocument(page: Page) {
 }
 
 test.beforeEach(async ({ page }) => {
+  await page.addInitScript(() => { if (!localStorage.getItem("tldrastro:pageAnimations")) localStorage.setItem("tldrastro:pageAnimations", "system"); });
   await page.route("**/rest/v1/**", route => route.fulfill({ json: [] }));
   await page.route("**/api/content-reader", route => route.fulfill({ json: readerResponse([]) }));
 });
@@ -405,3 +406,43 @@ test("moon reduced motion stays static and error recovery uses the card backgrou
     await expect(page.getByRole("button", { name: "Reload page" })).toBeVisible();
   } finally { release(); }
 });
+
+for (const choice of ["on", "off"] as const) {
+  test(`saved ${choice} controls startup and route loaders against the system preference`, async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: choice === "on" ? "reduce" : "no-preference" });
+    // One init script owns the preference so this also runs before the entry bundle.
+    await page.addInitScript(value => localStorage.setItem("tldrastro:pageAnimations", value), choice);
+    const release = await holdApp(page);
+    let releaseCalendar!: () => void;
+    const calendarHeld = new Promise<void>(resolve => { releaseCalendar = resolve; });
+    await page.route(/\/assets\/CalendarRoute-.*\.js$/, async route => { await calendarHeld; await route.continue().catch(() => {}); });
+    await page.goto("/#calendar", { waitUntil: "domcontentloaded" });
+    try {
+      const artwork = page.locator(".startup-artwork");
+      if (choice === "on") {
+        const svg = artwork.locator(".startup-artwork__animation svg");
+        await expect(svg).toBeVisible();
+        const frame = await svg.innerHTML();
+        await expect.poll(() => svg.innerHTML()).not.toBe(frame);
+      } else {
+        const poster = artwork.locator(".startup-artwork__poster");
+        await expect(poster).toBeVisible();
+        const icon = poster.locator("g").first();
+        await expect(icon).toHaveCSS("animation-name", "startup-signal");
+        const bounds = await icon.boundingBox();
+        const opacity = await icon.evaluate(node => getComputedStyle(node).opacity);
+        await expect.poll(() => icon.evaluate(node => getComputedStyle(node).opacity)).not.toBe(opacity);
+        expect(await icon.boundingBox()).toEqual(bounds);
+        await expect(page.locator("script[data-startup-decoration]")).toHaveCount(0);
+      }
+      release();
+      const shadow = page.locator(".app-loading .loading-moon__shadow");
+      await expect(shadow).toHaveCount(1);
+      await expect(shadow).toHaveCSS("animation-name", choice === "on" ? "startup-moon-phase" : "none");
+      const before = await shadow.evaluate(node => getComputedStyle(node).transform);
+      if (choice === "on") await expect.poll(() => shadow.evaluate(node => getComputedStyle(node).transform)).not.toBe(before);
+      else await expect(shadow).toHaveCSS("transform", "matrix(1, 0, 0, 1, 8, 0)");
+    } finally { release(); releaseCalendar(); }
+    await expect(page.getByRole("region", { name: "Lunar calendar", exact: true })).toBeVisible();
+  });
+}

@@ -113,18 +113,18 @@ body:has(#app-startup.app-startup) {
   fill: var(--surface);
 }
 
-@media (prefers-reduced-motion: reduce) {
+:root[data-reduce-motion] {
   /* Keep loading feedback alive without moving or deforming any symbol.
      The local preview's explicit Play choice can still demonstrate the bounce. */
-  :root:not([data-preview-motion="play"]) .startup-artwork__poster {
+  &:not([data-preview-motion="play"]) .startup-artwork__poster {
     visibility: visible;
   }
 
-  :root:not([data-preview-motion="play"]) .startup-artwork__animation {
+  &:not([data-preview-motion="play"]) .startup-artwork__animation {
     visibility: hidden;
   }
 
-  :root:not([data-preview-motion="play"]) .app-startup[aria-busy="true"] .startup-artwork__poster > g {
+  &:not([data-preview-motion="play"]) .app-startup[aria-busy="true"] .startup-artwork__poster > g {
     animation: startup-signal var(--startup-signal-duration) var(--startup-signal-ease) var(--startup-signal-delay) infinite;
   }
 
@@ -132,7 +132,7 @@ body:has(#app-startup.app-startup) {
   .startup-artwork__poster > g:nth-child(3) { --startup-signal-delay: var(--startup-signal-earth-delay); }
   .startup-artwork__poster > g:nth-child(4) { --startup-signal-delay: var(--startup-signal-star-delay); }
 
-  :root[data-preview-motion="pause"] .startup-artwork__poster > g { animation-play-state: paused; }
+  &[data-preview-motion="pause"] .startup-artwork__poster > g { animation-play-state: paused; }
 
   .app-startup[data-loader="moon"][aria-busy="true"] .startup-moon__shadow {
     animation: none;
