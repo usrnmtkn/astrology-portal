@@ -2470,8 +2470,32 @@ test.describe("content dashboard admin user flow case studies", () => {
     for (const body of ["QA first revised macro.", "QA second revised macro."]) {
       await editor.getByLabel("Full lunar passage", { exact: true }).fill(body);
       await expect(editor.getByLabel("Reader status", { exact: true })).toHaveText("Draft");
-      await editor.getByRole("button", { name: "Save draft", exact: true }).click();
-      await expect(editor.getByRole("button", { name: "Save draft", exact: true })).toBeDisabled();
+      await expect(editor.getByRole("button", { name: "Save draft", exact: true })).toHaveAttribute("title", "Keep this revision as a Draft.");
+      let release!: () => void;
+      const held = new Promise<void>(resolve => { release = resolve; });
+      await page.route("**/api/admin/generated-content", async route => {
+        if (route.request().method() === "PATCH") await held;
+        await route.fallback();
+      });
+      try {
+        await page.emulateMedia({ reducedMotion: "no-preference" });
+        await editor.getByRole("button", { name: "Save draft", exact: true }).click();
+        await expect(editor.getByRole("button", { name: "Save draft", exact: true })).toBeDisabled();
+        const state = editor.locator(".admin-editor-save-state.is-saving");
+        const moon = state.locator(".loading-moon--compact");
+        await expect(moon).toBeVisible();
+        await expect(moon).toHaveCSS("width", "16px");
+        expect(await state.evaluate(el => getComputedStyle(el, "::before").content)).toBe("none");
+        const shadow = moon.locator(".loading-moon__shadow");
+        const before = await shadow.evaluate(el => getComputedStyle(el).transform);
+        await expect.poll(() => shadow.evaluate(el => getComputedStyle(el).transform)).not.toBe(before);
+        await page.emulateMedia({ reducedMotion: "reduce" });
+        await expect(shadow).toHaveCSS("animation-name", "none");
+      } catch (error) {
+        await assertNoBrowserErrors();
+        throw error;
+      } finally { release(); }
+      await expect(editor.locator(".admin-editor-save-state .loading-moon")).toHaveCount(0);
       await expect(editor.getByLabel("Full lunar passage", { exact: true })).toHaveValue(body);
     }
     expect(writes.filter((write) => !write.payload.ownerAction)).toHaveLength(2);

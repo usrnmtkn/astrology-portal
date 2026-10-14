@@ -51,31 +51,48 @@
   width: auto;
 }
 
-.loading-spinner {
-  box-sizing: border-box;
-  display: block;
-  flex-shrink: 0;
-  width: var(--size-4);
-  height: var(--size-4);
-  border: var(--border-width-medium) solid var(--line-strong);
-  border-top-color: var(--ink);
-  border-radius: var(--radius-pill);
-  animation: loading-spinner-spin var(--loading-pulse-duration) linear infinite;
+.app-loading--centered:not(.app-loading--compact) {
+  gap: var(--startup-label-gap);
+  font-size: var(--startup-label-size);
+  color: var(--startup-label);
 }
 
-.loading-spinner--compact {
+.loading-moon {
+  display: block;
+  flex-shrink: 0;
+  width: var(--startup-moon-size);
+  height: var(--startup-moon-size);
+  color: var(--startup-moon-ink);
+  fill: currentColor;
+}
+
+.loading-moon--compact {
   width: var(--size-2);
   height: var(--size-2);
 }
 
-/* Hidden readers may keep fetching content, but their decoration need not run. */
-[aria-hidden="true"] .loading-spinner,
-[hidden] .loading-spinner {
-  animation: none;
+.loading-moon > :last-child {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: var(--startup-moon-stroke-width);
 }
 
-@keyframes loading-spinner-spin {
-  to { transform: rotate(1turn); }
+.loading-moon__shadow {
+  transform: translateX(var(--startup-moon-shadow-static));
+  animation: startup-moon-phase var(--startup-moon-duration) var(--startup-moon-ease)
+    var(--startup-moon-start-delay) infinite alternate;
+}
+
+@keyframes startup-moon-phase {
+  from { transform: translateX(var(--startup-moon-shadow-from)); }
+  to { transform: translateX(var(--startup-moon-shadow-to)); }
+}
+
+/* Hidden readers may keep fetching content, but their decoration need not run. */
+[aria-hidden="true"]:not(svg) .loading-moon__shadow,
+.app-loading[role="alert"] .loading-moon__shadow,
+[hidden] .loading-moon__shadow {
+  animation: none;
 }
 
 .app-loading__lines span {
@@ -110,6 +127,6 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .app-loading__lines span { animation: none; }
-  .loading-spinner { animation: none; }
+  .app-loading__lines span,
+  .loading-moon__shadow { animation: none; }
 }

@@ -21,6 +21,7 @@ import { AdminDisclosureSummary, AdminSelect } from "./AdminNativeControls";
 import { getStudioPalette, getStudioTheme, saveStudioPalette, saveStudioTheme, studioShellAttributes } from "./studioTheme";
 import { AdminContentTable, AdminDataTable, AdminFilterBar } from "./AdminBrowseComponents";
 import { PageLoading } from "../../../src/shared/components/PageLoading";
+import { LoadingIndicator } from "../../../src/shared/components/LoadingIndicator";
 import { readStudioInventoryPasses, studioInventoryPageSize } from "./studioInventoryPagination";
 import { reviewWorkBucket, skyWritingIssues } from "../../web/src/content/contentReviewReadiness";
 import { transitNatalContactFromFields, transitNatalContactReady, transitNatalContactContentKey, transitNatalExactContentKey, transitNatalExactSourceDraft, transitNatalSharedFallbackKey, transitNatalStarterCopy } from "./transitNatalSources";
@@ -12547,12 +12548,13 @@ export function GeneratedContentAdminDashboard() {
         {pendingPublication && publicationStatusButton(isLoading)}
         {!compiledSkyArticleEdition && <div className={`admin-toolbar-actions admin-editor-savebar studio-surface${isLoading ? " is-saving" : ""}`} aria-busy={isLoading}>
           <span className={`admin-editor-save-state ${isLoading ? "is-saving" : draftHasUnsavedChanges || isNewDraft && !unchangedSkySource || packageWillPublishOnSave ? "is-unsaved" : "is-saved"}`} aria-live="polite">
+            {isLoading && <LoadingIndicator compact />}
             {isLoading
               ? "Saving…"
               : packageHasProposal && !isPersonalTransitSituationDraft
                 ? draftHasUnsavedChanges
                   ? "Unsaved revision"
-                  : "Draft saved · Not live"
+                  : "Draft saved"
                   : packageWillPublishOnSave
                   ? natalAspectMissingCopy || transitNatalMissingCopy ? "Write the passage before publishing" : "Ready to publish"
                   : unchangedSkySource
@@ -12596,7 +12598,7 @@ export function GeneratedContentAdminDashboard() {
               type="button"
               onClick={() => void saveDraft(isCmsSurfaceDraft || isManualCalendarEventDraft || isStandaloneArticleDraft ? "DRAFT" : undefined)}
               disabled={isLoading || unchangedSkySource || (!isNewDraft && !draftHasUnsavedChanges)}
-              title="Keep this revision Not live."
+              title="Keep this revision as a Draft."
             >
               <Save size={16} aria-hidden="true" />
               Save draft

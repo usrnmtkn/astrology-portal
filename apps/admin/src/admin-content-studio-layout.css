@@ -1009,17 +1009,7 @@
 }
 
 .admin-dashboard .admin-editor-panel > .admin-editor-savebar > .admin-editor-save-state.is-saving::before {
-  animation: admin-savebar-spin 0.9s linear infinite;
-  border: var(--border-width-medium) solid var(--admin-ui-border-strong);
-  border-radius: var(--admin-radius-pill);
-  border-top-color: var(--admin-ui-accent);
-  content: "";
-  height: var(--admin-space-2xl);
-  width: var(--admin-space-2xl);
-}
-
-@keyframes admin-savebar-spin {
-  to { transform: rotate(360deg); }
+  display: none;
 }
 
 /* ---------- Variables rail ---------- */

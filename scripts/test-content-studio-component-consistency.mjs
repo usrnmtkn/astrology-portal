@@ -35,10 +35,11 @@ assert.match(controls, /text\.includes\("Not live"\)[\s\S]*"Inactive"/u, "Legacy
 assert.match(controls, /ariaLabel\?\.startsWith\("Close"\) && !\/\[A-Za-z\]\/u\.test\(text\)/u, "Labeled close controls with visible words must not shrink to the icon-button treatment.");
 
 assert.match(compatibility, /\.admin-status/u, "Legacy status compatibility must cover old status pills.");
-assert.match(compatibility, /\.admin-editor-save-state/u, "Legacy editor footer state must be normalized before it can surface to an editor.");
+assert.doesNotMatch(compatibility, /\.admin-editor-save-state/u, "React owns the save-state text and moon; the legacy observer must not replace its children.");
 assert.match(compatibility, /status-draft/u, "Legacy draft pills must resolve to Draft, not a second publication vocabulary.");
 assert.match(compatibility, /Published but unwired/u, "Published-but-unwired notices must use their actual condition.");
-assert.match(compatibility, /Draft saved/u, "Saved draft feedback must not append a second publication status.");
+assert.match(dashboard, /: "Draft saved"/u, "Saved draft feedback must render its canonical label directly.");
+assert.match(dashboard, /title="Keep this revision as a Draft\."/u, "The save tooltip must render its existing canonical wording directly.");
 assert.match(compatibility, /admin-status-guide/u, "The legacy status guide must be rewritten to the canonical vocabulary.");
 assert.doesNotMatch(compatibility, /Not live/u, "The compatibility adapter must construct the transport phrase without adding another raw legacy occurrence.");
 
@@ -126,7 +127,7 @@ assert.deepEqual(
 );
 assert.equal((status.match(/Not live/gu) ?? []).length, 2, "ContentLiveStatus may contain Not live only in its transport type/validator, never presentation.");
 assert.equal((aspectPatterns.match(/Not live/gu) ?? []).length, 1, "Aspect Patterns has one legacy label and StudioButton must normalize it to Inactive.");
-assert.equal((dashboard.match(/Not live/gu) ?? []).length, 10, "The legacy dashboard occurrence count is pinned; migrate existing call sites instead of adding more.");
+assert.equal((dashboard.match(/Not live/gu) ?? []).length, 8, "The legacy dashboard occurrence count is pinned; migrate existing call sites instead of adding more.");
 assert.equal((controls.match(/Not live/gu) ?? []).length, 2, "StudioControls may mention Not live only in the shared normalization expression.");
 
 assert.match(css, /\.studio-icon-button/u);

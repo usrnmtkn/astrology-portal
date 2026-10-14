@@ -26,13 +26,16 @@ function hold() {
   return { promise, release };
 }
 
-async function expectCssSpinner(spinner: ReturnType<Page['locator']>) {
+async function expectMoonPhase(spinner: ReturnType<Page['locator']>) {
   await expect(spinner).toBeVisible();
-  await expect(spinner).toHaveCSS('animation-name', 'loading-spinner-spin');
-  await expect(spinner).toHaveCSS('width', '32px');
-  await expect(spinner).toHaveCSS('height', '32px');
-  const before = await spinner.evaluate(el => getComputedStyle(el).transform);
-  await expect.poll(() => spinner.evaluate(el => getComputedStyle(el).transform)).not.toBe(before);
+  await expect(spinner).toHaveCSS('width', '48px');
+  await expect(spinner).toHaveCSS('height', '48px');
+  const shadow = spinner.locator('.loading-moon__shadow');
+  await expect(shadow).toHaveCSS('animation-name', 'startup-moon-phase');
+  const bounds = await spinner.boundingBox();
+  const before = await shadow.evaluate(el => getComputedStyle(el).transform);
+  await expect.poll(() => shadow.evaluate(el => getComputedStyle(el).transform)).not.toBe(before);
+  expect(await spinner.boundingBox()).toEqual(bounds);
 }
 
 for (const screen of ['sky', 'friends']) for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
@@ -60,17 +63,17 @@ for (const screen of ['sky', 'friends']) for (const width of [390, 1440]) for (c
         await expect(loader.getByRole('status').filter({ hasText: 'Loading the sky…' })).toHaveCount(1);
         await expect(loader.locator('.placement-table-wrap')).toHaveAttribute('aria-busy', 'true');
         await expect(loader.locator('.planet-placement-row--sky.card-skeleton')).toHaveCount(14);
-        await expect(loader.locator('.loading-spinner')).toHaveCount(0);
+        await expect(loader.locator('.loading-moon')).toHaveCount(0);
         await expect(loader.locator('.card-skeleton-bar').first()).toHaveCSS('animation-name', 'none');
       } else {
         await expect(loader).toHaveAttribute('role', 'status');
         await expect(loader).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
         await expect(loader).toHaveCSS('border-width', '0px');
-        await expectCssSpinner(loader.locator('.loading-spinner'));
+        await expectMoonPhase(loader.locator('.loading-moon'));
       }
       await expect(loader.locator('canvas, img')).toHaveCount(0);
-      const hiddenSpinners = page.locator('.sky-reading-layout__content[aria-hidden="true"] .loading-spinner');
-      for (const hidden of await hiddenSpinners.all()) await expect(hidden).toHaveCSS('animation-name', 'none');
+      const hiddenShadows = page.locator('.sky-reading-layout__content[aria-hidden="true"] .loading-moon__shadow');
+      for (const hidden of await hiddenShadows.all()) await expect(hidden).toHaveCSS('animation-name', 'none');
       const loaderBounds = await loader.boundingBox();
       const navigationBounds = await page.locator('.topbar').boundingBox();
       expect(loaderBounds!.y, 'The loading content must clear the fixed navigation').toBeGreaterThanOrEqual(navigationBounds!.y + navigationBounds!.height);
@@ -142,3 +145,46 @@ test('opening a Sky Placement article from a revealed reading does not replay th
   await expect(page.locator('.sky-reading-layout__loading')).toHaveCount(0);
   await expect(page.getByText('Loading reading…', { exact: true })).toHaveCount(0);
 });
+
+for (const theme of ['light', 'dark']) for (const reducedMotion of ['no-preference', 'reduce'] as const) {
+  test(`compact report moon keeps inline sizing in ${theme} with ${reducedMotion}`, async ({ page }, info) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.emulateMedia({ reducedMotion });
+    await prepare(page, theme);
+    const user = { id: '00000000-0000-4000-8000-000000000001', aud: 'authenticated', role: 'authenticated', app_metadata: { provider: 'email' }, user_metadata: {}, email: 'loader@example.test' };
+    const storageKey = `sb-${new URL(process.env.VITE_SUPABASE_URL ?? 'https://visual-smoke.supabase.test').hostname.split('.')[0]}-auth-token`;
+    await page.addInitScript(({ user, storageKey }) => {
+      localStorage.setItem(storageKey, JSON.stringify({ access_token: 'fixture-token', refresh_token: 'fixture-refresh', expires_at: Math.floor(Date.now() / 1000) + 3600, token_type: 'bearer', user }));
+    }, { user, storageKey });
+    await page.route('**/auth/v1/**', route => route.fulfill({ json: user }));
+    const blocked = hold();
+    await page.route('**/rest/v1/user_generated_interpretations*', async route => {
+      await blocked.promise;
+      await route.fulfill({ json: [] });
+    });
+    try {
+      await page.goto('/reports/', { waitUntil: 'domcontentloaded' });
+      const loading = page.getByRole('status', { name: 'Loading your reports…', exact: true });
+      const moon = loading.locator('.loading-moon--compact');
+      await expect(moon).toBeVisible();
+      await expect(moon).toHaveCSS('width', '16px');
+      await expect(moon).toHaveCSS('height', '16px');
+      await expect(moon).toHaveCSS('color', theme === 'dark' ? 'rgb(236, 238, 242)' : 'rgb(28, 31, 38)');
+      const shadow = moon.locator('.loading-moon__shadow');
+      const bounds = await loading.boundingBox();
+      if (reducedMotion === 'reduce') {
+        await expect(shadow).toHaveCSS('animation-name', 'none');
+        await expect(shadow).toHaveCSS('transform', 'matrix(1, 0, 0, 1, 8, 0)');
+      } else {
+        await expect(shadow).toHaveCSS('animation-name', 'startup-moon-phase');
+        const before = await shadow.evaluate(el => getComputedStyle(el).transform);
+        await expect.poll(() => shadow.evaluate(el => getComputedStyle(el).transform)).not.toBe(before);
+      }
+      expect(await loading.boundingBox()).toEqual(bounds);
+      await expect(loading.locator('span')).toHaveCSS('font-size', '16px');
+      await page.screenshot({ path: info.outputPath('compact-moon.png') });
+    } finally { blocked.release(); }
+    await expect(page.getByRole('status', { name: 'Loading your reports…', exact: true })).toHaveCount(0);
+    await expect(page.getByRole('heading', { name: 'Reports', exact: true })).toBeVisible();
+  });
+}
