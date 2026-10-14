@@ -1,5 +1,6 @@
+import { isInitialSkyReaderHash } from "../apps/web/src/services/initialSkyRoute.mjs";
 import assert from 'node:assert/strict';
-import { matchingInitialSkyLoad, type InitialSkyLoad } from '../apps/web/src/services/skyApi';
+import { matchingInitialSkyLoad, startInitialSkyLoad, type InitialSkyLoad } from '../apps/web/src/services/skyApi';
 import { skyDateTimeFromInput, isDateInputValue, transitDateFromUrl } from '../apps/web/src/services/skySelection';
 
 const ny = { label: 'Synthetic New York', latitude: 40.7, longitude: -74, timeZone: 'America/New_York' };
@@ -40,3 +41,17 @@ assert.equal(matchingInitialSkyLoad(initial, day, { ...ny, timeZone: 'UTC' }), n
 assert.equal(matchingInitialSkyLoad({ ...initial, live: false }, day, ny), null);
 assert.equal(matchingInitialSkyLoad({ ...initial, startedAt: performance.now() - 10_001 }, day, ny), null);
 console.log('PASS: exact initial instant, selected-zone noon and DST, changed date/location/clock mode, StrictMode reuse and expired bootstrap rejection.');
+
+for (const hash of ['#sky', '#/sky/', '#sky/placement/sun/libra', '#sky/placement/north-node/aquarius', '#sky/placement/venus', '#sky/retrograde/venus', '#/sky/retrograde/neptune/']) assert.equal(isInitialSkyReaderHash(hash), true, hash);
+for (const hash of ['#you', '#calendar', '#sky/archive/sun/libra/2026', '#sky/aspect/sun/trine/pluto', '#sky/placement/', '#sky/placement/sun/libra/extra', '#sky/retrograde/', '#sky/retrograde/venus/extra', '#sky?date=2026-10-14', '#sky/placement/sun/libra?access_token=secret']) assert.equal(isInitialSkyReaderHash(hash), false, hash);
+
+try {
+  for (const route of ['/admin/content#sky/placement/sun/libra', '/?auth=login#sky/placement/sun/libra', '/?returnTo=%2Fadmin%2Fcontent#sky/retrograde/venus']) {
+    const url = new URL(route, 'https://example.invalid');
+    Object.defineProperty(globalThis, 'window', { configurable: true, value: { location: url } });
+    assert.equal(startInitialSkyLoad(), null, `Protected route must not preload: ${route}`);
+  }
+} finally {
+  if (originalWindow) Object.defineProperty(globalThis, 'window', originalWindow);
+  else Reflect.deleteProperty(globalThis, 'window');
+}

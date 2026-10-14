@@ -1,5 +1,7 @@
+import { isInitialSkyReaderHash } from "../apps/web/src/services/initialSkyRoute.mjs";
+
 /** Discover the existing App graph and required Sky placement rows in the
- * document, before the entry module waits for React. Only root Sky list visits
+ * document, before the entry module waits for React. Root Sky list and current detail visits
  * need these download hints; modulepreload does not execute the content module. */
 export function skyEntryPreloadPlugin() {
   return {
@@ -26,7 +28,7 @@ export function skyEntryPreloadPlugin() {
         if (!placements) throw new Error("Sky preload could not locate the built placement rows.");
         visit(placements.fileName);
         return [{ tag: "script", injectTo: "head", children:
-          `(()=>{if(location.pathname!=="/"||!/^#\\/?sky\\/?$/.test(location.hash))return;for(const file of ${JSON.stringify([...files])}){const href="/"+file;if([...document.querySelectorAll('link[rel="modulepreload"]')].some(link=>link.getAttribute("href")===href))continue;const link=document.createElement("link");link.rel="modulepreload";link.crossOrigin="";link.href=href;document.head.appendChild(link);}})();`
+          `(()=>{if(location.pathname!=="/"||!(${isInitialSkyReaderHash.toString()})(location.hash))return;for(const file of ${JSON.stringify([...files])}){const href="/"+file;if([...document.querySelectorAll('link[rel="modulepreload"]')].some(link=>link.getAttribute("href")===href))continue;const link=document.createElement("link");link.rel="modulepreload";link.crossOrigin="";link.href=href;document.head.appendChild(link);}})();`
         }];
       }
     }

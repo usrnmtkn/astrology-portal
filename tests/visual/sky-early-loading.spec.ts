@@ -5,8 +5,8 @@ import type { IncomingMessage, ServerResponse } from 'node:http';
 import { publicationLedgerTag } from '../../apps/web/src/services/publicationLedgerTransport';
 
 test.use({ timezoneId: 'America/New_York', viewport: { width: 390, height: 844 } });
-for (const warm of [false, true]) for (const changeSelection of [false, true]) {
-  test(`${warm ? 'Cached' : 'Cold'} Sky starts before App and ${changeSelection ? 'rejects a changed selection' : 'reuses the exact initial response'}`, async ({ page }) => {
+for (const initialRoute of ["#sky", "#sky/placement/sun/virgo", "#sky/retrograde/neptune"]) for (const warm of [false, true]) for (const changeSelection of [false, true]) {
+  test(`${warm ? 'Cached' : 'Cold'} Sky ${initialRoute} starts before App and ${changeSelection ? 'rejects a changed selection' : 'reuses the exact initial response'}`, async ({ page }) => {
     test.setTimeout(90_000);
     await bundledPublications(page);
     const cached = [{ content_key: '__content-publication-ledger/v1', state: 'live' as const, revision: 1,
@@ -45,7 +45,7 @@ for (const warm of [false, true]) for (const changeSelection of [false, true]) {
     });
     await page.route('**/api/calendar?**', route => route.fulfill({ json: { ok: true, calendar: { days: [] } } }));
     try {
-      await page.goto('/#sky', { waitUntil: 'commit' });
+      await page.goto(`/${initialRoute}`, { waitUntil: 'commit' });
       await expect.poll(() => requests.some(url => /\/assets\/App-[^/]+\.js$/.test(url.pathname))).toBe(true);
       await expect.poll(() => requests.some(url => /\/assets\/fallback-content-sky-placement-(?!manifest-)[^/]+\.js$/.test(url.pathname))).toBe(true);
       releaseReact();
@@ -69,6 +69,13 @@ for (const warm of [false, true]) for (const changeSelection of [false, true]) {
       await expect.poll(() => requests.some(url => /sky-v4-canonical-content-studio-stage.*\.json$/.test(url.pathname))).toBe(true);
       await expect(page.locator('.app-shell')).toBeVisible();
     } finally { releasePlacement(); }
+    if (initialRoute !== '#sky' && !changeSelection) {
+      await expect(page.locator('.sky-detail-article .article-body-inner').first()).toBeVisible({ timeout: 60_000 });
+      await expect(page.locator('#sky-detail-title')).toContainText(initialRoute.includes('neptune') ? 'Neptune' : 'Sun');
+      expect(requests.filter(url => url.pathname === '/api/sky')).toHaveLength(1);
+      expect(errors).toEqual([]);
+      return;
+    }
     await expect(page.getByLabel('Daily sky summary', { exact: true })).toBeVisible({ timeout: 60_000 });
     await expect(page.locator('.planet-placement-row--sky')).toHaveCount(14);
     const skyRequests = requests.filter(url => url.pathname === '/api/sky');
