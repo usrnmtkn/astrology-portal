@@ -9,7 +9,7 @@ export function skyPlacementArticleSelection(route: string, positions: PlanetPos
   const [, kind, planet, routeSign] = route.split('/');
   if (!['placement', 'retrograde'].includes(kind)) return '';
   const position = positions.find(p => slug(p.planet) === planet);
-  const sign = kind === 'retrograde' ? position && slug(position.sign) : routeSign;
+  const sign = kind === 'retrograde' || !routeSign ? position && slug(position.sign) : routeSign;
   if (!planet || !sign) return 'pending';
   const pairs = planet === 'north-node' || planet === 'south-node'
     ? skyPlacementSelection(positions.filter(p => ['north-node', 'south-node'].includes(slug(p.planet))))

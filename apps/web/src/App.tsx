@@ -11367,9 +11367,8 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
       }
     }
     transitionPage(() => {
-      // Keep the opened write-up on screen. Residency Key dates and in-sign
-      // Gifts/Lessons still upgrade in place once the placement snapshot
-      // finishes; blanking here replayed the full-page loader on every click.
+      // Placement cards do not contain the complete article timeline. The
+      // targeted read commits the complete passage and dates together.
       if (awaitPlacementTiming && skyPlacementFallbackStatus === "ready" && skyPlacementResolvedIdentity) {
         setSkyDetailResolvedIdentity(skyPlacementResolvedIdentity);
       }
@@ -11379,7 +11378,7 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
         skyPlacementPersonalizationTransits,
         skyDate
       );
-      setSelectedSkyDetail(openedDetail ? { ...openedDetail, placementFactsPending: Boolean(awaitPlacementTiming) } : null);
+      setSelectedSkyDetail(awaitPlacementTiming ? null : openedDetail);
 
       if (detail.routePath) {
         setSkyDetailRoutePath(detail.routePath);
@@ -12135,14 +12134,24 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
       if (selectedSkyDetail?.routePath !== skyDetailRoutePath) {
         commitResolvedSkyDetail(null);
       }
-      void placementSnapshotRequest.then(async placementSky => {
-        const renderPlacement = (detailContent: GeneratedContentMap) => {
+      // Exact timeline copy comes from the lazy Sky registry as well as Studio.
+      // Resolve both before exposing the article so registry hydration cannot
+      // add key dates to an already visible passage.
+      void Promise.all([placementSnapshotRequest, loadContentRegistry("sky")]).then(async ([placementSky]) => {
+        const renderPlacement = async (detailContent: GeneratedContentMap) => {
+          if (cancelled || skyDetailRoutePath !== skyDetailRoutePathFromUrl()) return;
+          const detail = skyDetailFromRoutePath(baseRoute, placementSky, detailContent, openSkyDetail);
+          if (detail?.placementResidencyContext) {
+            const { skyPlacementResidencyAspectSections } = await import("./services/skyPlacementResidencyAspects");
+            const { sections } = await skyPlacementResidencyAspectSections(detail.placementResidencyContext);
+            detail.sections = [...sections, ...(detail.sections ?? [])];
+            detail.placementResidencyContext = undefined;
+          }
           if (cancelled || skyDetailRoutePath !== skyDetailRoutePathFromUrl()) return;
           selectedSkyDetailContentRef.current = detailContent;
           selectedSkyDetailRefreshKeyRef.current = refreshKey;
           selectedSkyDetailRefreshContentRef.current = skyGeneratedContent;
           selectedSkyDetailRefreshSkyKeyRef.current = skyArticleIdentityKey;
-          const detail = skyDetailFromRoutePath(baseRoute, placementSky, detailContent, openSkyDetail);
           commitResolvedSkyDetail(personalizedSkyPlacementDetail(detail, profileNatalSky?.ascendant ?? userProfile?.rising,
             skyPlacementPersonalizationTransits, skyDate));
         };
@@ -12159,7 +12168,7 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
             : null
         );
         const inSignKeys = skyPlacementInSignAspectContentKeys(timelineEvents);
-        renderPlacement(await loadSkyDetailContent(placementSky, availableDetailContent,
+        await renderPlacement(await loadSkyDetailContent(placementSky, availableDetailContent,
           ingressKeys, loadLiveGeneratedContentForKeys, inSignKeys));
       }).catch(error => {
         if (cancelled) return;

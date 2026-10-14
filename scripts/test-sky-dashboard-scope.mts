@@ -48,6 +48,8 @@ assert(!skyPlacementSourceInSelection('sky-placement/article/sun/libra', 'sun/vi
 assert(!skyPlacementSourceInSelection('house-horoscope-core/sun/1', 'sun/virgo'));
 assert(skyPlacementSourceInSelection('sky-placement/article/sun/libra'), 'Opening an article retains the full source inventory');
 const articleSelection = skyPlacementArticleSelection('sky/placement/sun/virgo', []);
+assert.equal(skyPlacementArticleSelection('sky/placement/sun', [{planet:'Sun',sign:'Virgo'}] as any), 'article:sun/virgo');
+assert.equal(skyPlacementArticleSelection('sky/placement/jupiter', [{planet:'Jupiter',sign:'Leo'}] as any), 'article:jupiter/leo');
 assert.equal(articleSelection, 'article:sun/virgo');
 assert(skyPlacementSourceInSelection('sky-placement/article/sun/virgo', articleSelection));
 assert(!skyPlacementSourceInSelection('sky-placement/article/sun/libra', articleSelection));
