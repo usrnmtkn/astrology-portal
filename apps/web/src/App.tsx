@@ -10837,7 +10837,8 @@ async function requestSkyPlacementArticleSnapshot(
     planet,
     sign,
     skyPlacementArticleReferenceDate(location, date),
-    true
+    true,
+    "placement"
   );
 }
 

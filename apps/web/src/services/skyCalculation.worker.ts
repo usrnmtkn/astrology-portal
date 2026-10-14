@@ -28,7 +28,7 @@ type SkyCalculationRequest =
   | { id: number; kind: "matching-new-moon"; args: Parameters<typeof getMatchingNewMoonForFullMoon> }
   | { id: number; kind: "natal-transit-timing"; args: Parameters<typeof natalTransitTimingFor> }
   | { id: number; kind: "natal-daily-peaks"; args: Parameters<typeof natalDailyTransitPeaksFor> }
-  | { id: number; kind: "placement-sky"; includeAspectLists?: boolean; location: LocationInput; planet: string; sign: string; date: string }
+  | { id: number; kind: "placement-sky"; includeAspectLists?: boolean; timingScope?: "all" | "placement"; location: LocationInput; planet: string; sign: string; date: string }
   | { id: number; kind: "placement-transit-facts"; planet: string; sign: string; date: string; timeZone: string }
   | { id: number; kind: "retrograde-history"; planet: string; sign: string; date: string }
   | { id: number; kind: "preload" };
@@ -51,7 +51,7 @@ async function calculate(request: SkyCalculationRequest) {
     case "placement-transit-facts":
       return getSkyPlacementTransitFacts({ planet: request.planet, sign: request.sign, referenceDate: new Date(request.date), timeZone: request.timeZone });
     case "placement-sky":
-      return getSkyPlacementSnapshot(request.location, request.planet, request.sign, new Date(request.date), request.includeAspectLists);
+      return getSkyPlacementSnapshot(request.location, request.planet, request.sign, new Date(request.date), request.includeAspectLists, request.timingScope);
     case "lunar-calendar-range":
       return getLunarCalendarRangeEvents(...request.args);
     case "lunar-calendar-month":

@@ -123,14 +123,15 @@ export function getLunarCalendarRangeEventsOffMainThread(
 const placementSnapshotCache = new Map<string, Promise<SkySnapshot>>();
 
 export function getSkyPlacementSnapshotOffMainThread(
-  location: LocationInput, planet: string, sign: string, referenceDate: Date, includeAspectLists = false
+  location: LocationInput, planet: string, sign: string, referenceDate: Date, includeAspectLists = false,
+  timingScope: "all" | "placement" = "all"
 ): Promise<SkySnapshot> {
-  const key = JSON.stringify([location, planet, sign, referenceDate.toISOString(), includeAspectLists]);
+  const key = JSON.stringify([location, planet, sign, referenceDate.toISOString(), includeAspectLists, timingScope]);
   const cached = placementSnapshotCache.get(key);
   if (cached) return cached;
   const pending = typeof Worker === "undefined"
-    ? loadEphemerisForNonBrowserRuntime().then(({ getSkyPlacementSnapshot }) => getSkyPlacementSnapshot(location, planet, sign, referenceDate, includeAspectLists))
-    : requestCalculation<SkySnapshot>({ kind: "placement-sky", location, planet, sign, includeAspectLists, date: referenceDate.toISOString() });
+    ? loadEphemerisForNonBrowserRuntime().then(({ getSkyPlacementSnapshot }) => getSkyPlacementSnapshot(location, planet, sign, referenceDate, includeAspectLists, timingScope))
+    : requestCalculation<SkySnapshot>({ kind: "placement-sky", location, planet, sign, includeAspectLists, timingScope, date: referenceDate.toISOString() });
   placementSnapshotCache.set(key, pending);
   if (placementSnapshotCache.size > 24) placementSnapshotCache.delete(placementSnapshotCache.keys().next().value!);
   void pending.catch(() => { if (placementSnapshotCache.get(key) === pending) placementSnapshotCache.delete(key); });
