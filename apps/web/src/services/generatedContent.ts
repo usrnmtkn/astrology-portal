@@ -1466,7 +1466,9 @@ async function loadPublishedSkyBundle(selection?: string): Promise<FallbackArchi
   const rows = cached.filter(eligible);
   const ids = publications.filter(publication => !rows.some(row => row.id === publication.row_id)).map(publication => publication.row_id!);
   for (let offset = 0; offset < ids.length; offset += 200) {
-    const { data, error } = await loadReaderRows({ ids: ids.slice(offset, offset + 200) });
+    const batchIds = ids.slice(offset, offset + 200);
+    const batchKeys = publications.filter(publication => batchIds.includes(publication.row_id!)).map(publication => publication.content_key);
+    const { data, error } = await loadReaderRows({ ids: batchIds, keys: batchKeys });
     if (error || !Array.isArray(data)) {
       return fallback();
     }

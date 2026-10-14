@@ -61,7 +61,9 @@ globalThis.fetch = async (input, init) => {
   }
   if (url.pathname.endsWith('/generated_interpretations')) {
     const after = url.searchParams.get('id')?.slice(3);
-    return Response.json(rows.filter(row => !after || row.id > after).slice(0, 250));
+    const requestedKeys = url.searchParams.get('content_key');
+    return Response.json(rows.filter(row => (!after || row.id > after)
+      && (!requestedKeys || requestedKeys.includes(`"${row.content_key}"`))).slice(0, 250));
   }
   assert.equal(url.pathname, '/rest/v1/content_publications');
   const keys = url.searchParams.get('content_key')!;
@@ -177,7 +179,7 @@ try {
     }]);
     return response;
   };
-  result = await loadReaderRows({ keys: [rows[0].content_key] });
+  result = await loadReaderRows({ surfaces: ['sky'] });
   assert.equal(result.error, null);
   assert(!result.data?.some(row => row.content_key === rows[0].content_key),
     'A delayed successful response cannot return copy superseded by a newer publication.');

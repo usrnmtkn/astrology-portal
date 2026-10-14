@@ -124,11 +124,20 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
     if (query.scope) params.append('or', `(${query.scope === 'sky' ? skyDashboardScopeFilter : query.scope === 'sky-article' ? skyArticleDashboardScopeFilter : skyListDashboardScopeFilter})`);
     if (query.vocabularyOnly) params.append('or', '(content_key.like.fallback-vocab/%,content_key.like.cc/planet/%,content_key.like.cc/sign/%)');
     if (query.latestVersion) { params.set('select', 'updated_at'); params.set('order', 'updated_at.desc'); params.set('limit', '1'); }
-    const raw = await get('generated_interpretations', params);
+    const readPublications = (contentKeys: string[]) => get('content_publications', new URLSearchParams({
+      select: 'content_key,state,revision,row_id,row_updated_at,updated_at',
+      content_key: `in.(${[...new Set([publicationLedgerKey, ...contentKeys])].map(item => `"${item.replaceAll('\\', '\\\\').replaceAll('"', '\\"')}"`).join(',')})`,
+      limit: String(pageSize + 1)
+    }));
+    // Exact keys already identify every publication this page may serve.
+    // Join both live reads before admission, without a cached serving decision.
+    const [raw, targetedLedger] = await Promise.all([
+      get('generated_interpretations', params),
+      query.keys && !query.latestVersion ? readPublications(query.keys) : Promise.resolve(null)
+    ]);
     if (query.latestVersion) { res.end(JSON.stringify({ schema: READER_ROW_SCHEMA, rows: raw.map(row => ({ updated_at: (row as { updated_at: string }).updated_at })), nextCursor: null })); return; }
     const rows = raw as GeneratedContentRow[];
-    const keys = [...new Set([publicationLedgerKey, ...rows.map(row => row.content_key)])];
-    const ledger = await get('content_publications', new URLSearchParams({ select: 'content_key,state,revision,row_id,row_updated_at,updated_at', content_key: `in.(${keys.map(item => `"${item.replaceAll('\\', '\\\\').replaceAll('"', '\\"')}"`).join(',')})`, limit: String(pageSize + 1) }));
+    const ledger = targetedLedger ?? await readPublications(rows.map(row => row.content_key));
     if (!ledger.every(validContentPublication)) throw new Error('Invalid publication state.');
     const publications = new Map((ledger as ContentPublication[]).map(item => [item.content_key, item]));
     // A missing ledger is a configuration error, never permission to serve old writing.

@@ -52,6 +52,41 @@ try {
   assert.equal(result.body.includes('PRIVATE_SERVICE_KEY'), false);
   assert.equal(result.headers['Cache-Control'], 'no-store');
   assert.deepEqual(row, initial, 'Projection must not mutate the original, history or draft');
+  for (const identity of [{ keys: [row.content_key] }, { keys: [row.content_key], ids: [id] }]) {
+    let releaseRows!: () => void;
+    let ledgerStarted!: () => void;
+    const rowsReady = new Promise<void>(resolve => { releaseRows = resolve; });
+    const ledgerReady = new Promise<void>(resolve => { ledgerStarted = resolve; });
+    globalThis.fetch = async (input, init) => {
+      const url = new URL(String(input));
+      if (url.pathname.endsWith('/generated_interpretations')) await rowsReady;
+      else {
+        assert.equal(url.searchParams.get('content_key'), `in.("${publicationLedgerKey}","${row.content_key}")`);
+        ledgerStarted();
+      }
+      return storageFixtureFetch(input, init);
+    };
+    const reading = request(identity);
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    try {
+      await Promise.race([ledgerReady, new Promise((_, reject) => {
+        timer = setTimeout(() => reject(new Error('Publication read waited for content rows')), 1000);
+      })]);
+    } finally { clearTimeout(timer); releaseRows(); }
+    const concurrent = await reading;
+    assert.equal(concurrent.statusCode, 200);
+    assert.equal(concurrent.value.rows[0].body, text);
+    globalThis.fetch = storageFixtureFetch;
+    ledger[1].state = 'retired';
+    assert.deepEqual((await request(identity)).value.rows, [], 'Concurrent reads must reject retired copy');
+    ledger[1].state = 'live';
+    ledger[1].row_updated_at = '2026-09-21T18:00:00.123457+00:00';
+    assert.deepEqual((await request(identity)).value.rows, [], 'Concurrent reads must reject stale microsecond versions');
+    ledger[1].row_updated_at = version;
+    const saved = ledger; ledger = [];
+    assert.equal((await request(identity)).statusCode, 503, 'Missing publication plane must fail closed');
+    ledger = saved;
+  }
   const calendarWriting = Object.fromEntries(['weeklyOverview', 'weeklyIntegration', 'monthlyOverview', 'monthlyIntegration',
     'seasonOverview', 'lunarOverview', 'transitOverview', 'seasonOpening', 'planetaryHighlights', 'newMoonOverview',
     'fullMoonOverview', 'lunationConnection'].map(field => [field, `${field}: ${text}`]));
