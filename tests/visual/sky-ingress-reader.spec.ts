@@ -62,7 +62,12 @@ for (const [width, theme] of [[390, 'light'], [390, 'dark'], [1440, 'light'], [1
   if (width === 1440 && theme === 'light') {
    await page.getByRole('button', { name: 'Calendar', exact: true }).click();
    await expect(page.getByRole('article', { name: 'Selected lunar day', exact: true })).toBeVisible({ timeout: 60_000 });
+   editionUnavailable = true;
    await page.getByRole('button', { name: 'Sky', exact: true }).click();
+   await expect(page.getByText('The placement readings could not load. Please try again.', { exact: true })).toBeVisible({ timeout: 60_000 });
+   await expect(sunCard).not.toContainText('Synthetic explicit ingress summary.');
+   editionUnavailable = false;
+   await page.getByRole('button', { name: 'Retry', exact: true }).click();
    await expect(sunCard).toContainText('Synthetic explicit ingress summary.', { timeout: 60_000 });
   }
   await sunCard.click();

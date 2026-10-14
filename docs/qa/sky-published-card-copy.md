@@ -28,5 +28,12 @@ source admission, date selection, review and owner-publication gates remain.
 
 Regressions cover cold list → explicit saved summary → complete article →
 reload in phone/desktop and both themes; a missing exact publication followed
-by Retry; Calendar → Sky return; current revision/retirement invalidation and
+by Retry; Calendar → Sky return with unavailable-publication recovery;
+current revision/retirement invalidation and
 unrelated-guide isolation. Existing editor publication regressions are retained.
+
+The return-visit regression reproduced a retained ready status with missing
+edition rows: it left Sky loading instead of showing the error and Retry.
+Retaining a ready status now also requires that every published list edition
+is present. The failed-return path reports the existing retry state and recovers
+the exact published summary after Retry.

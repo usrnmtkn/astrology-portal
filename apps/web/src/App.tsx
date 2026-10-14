@@ -11928,7 +11928,7 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
       if (cancelled) return;
       console.warn("Sky placement sources failed to load.", error);
       setSkyPlacementFallbackStatus(previous => previous === "ready"
-        && skyPlacementResolvedIdentity === skyPlacementPublicationIdentity() && resolvedPlacementSelection === placementSelection ? previous : "error");
+        && !skyListEditionMissing && skyPlacementResolvedIdentity === skyPlacementPublicationIdentity() && resolvedPlacementSelection === placementSelection ? previous : "error");
     });
 
     return () => {
