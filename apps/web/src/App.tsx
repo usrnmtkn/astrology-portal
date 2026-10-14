@@ -12108,7 +12108,7 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
       profileNatalSky?.ascendant ?? userProfile?.rising ?? "",
       JSON.stringify(skyPlacementPersonalizationTransits)
     ].join(":");
-    const refreshKey = `${skyDetailRoutePath}:${fallbackArchitectureV3Version}:${contentRegistryVersion}:${personalizationKey}`;
+    const refreshKey = `${skyDetailRoutePath}:${contentRefreshVersion}:${fallbackArchitectureV3Version}:${contentRegistryVersion}:${personalizationKey}`;
     const skyArticleIdentityKey = `${skyDate}:${sky.location.latitude}:${sky.location.longitude}:${sky.location.timeZone}`;
 
     if (
