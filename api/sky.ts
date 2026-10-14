@@ -2,6 +2,7 @@ import type { IncomingMessage, ServerResponse } from "node:http";
 import { getAstrodienstSky, getLunarCalendarDayEvents } from "../apps/web/src/services/ephemeris.js";
 import { ASTROLOGY_CALCULATION_CONTRACT, factsFromSkySnapshot } from "../apps/web/src/services/astrologyFacts.js";
 import type { LocationInput } from "../apps/web/src/types.js";
+import { parseCalculationDate } from "./_lib/calculation-date.js";
 
 /** Same engine as Calendar and the browser worker; no alternative fact model. */
 export default async function handler(req: IncomingMessage, res: ServerResponse) {
@@ -18,17 +19,19 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
   let complete: boolean;
   try {
     const params = new URL(req.url ?? "/api/sky", "http://localhost").searchParams;
-    date = new Date(params.get("at") ?? "");
-    const latitude = Number(params.get("lat") ?? NaN);
-    const longitude = Number(params.get("lon") ?? NaN);
+    date = parseCalculationDate(params.get("at"));
+    const latitude = Number(params.get("lat")?.trim() || NaN);
+    const longitude = Number(params.get("lon")?.trim() || NaN);
     const timeZone = params.get("timeZone") ?? "UTC";
+    const detail = params.get("detail");
     if (params.get("version") !== ASTROLOGY_CALCULATION_CONTRACT.calculationVersion
       || !Number.isFinite(date.getTime()) || date.getUTCFullYear() < 1800 || date.getUTCFullYear() > 2399
       || !Number.isFinite(latitude) || Math.abs(latitude) > 90
-      || !Number.isFinite(longitude) || Math.abs(longitude) > 180) throw new Error("Invalid Sky inputs.");
+      || !Number.isFinite(longitude) || Math.abs(longitude) > 180
+      || detail !== null && detail !== "core" && detail !== "full") throw new Error("Invalid Sky inputs.");
     new Intl.DateTimeFormat("en", { timeZone }).format(date);
     location = { label: "Selected location", latitude, longitude, timeZone };
-    complete = params.get("detail") !== "core";
+    complete = detail !== "core";
   } catch {
     res.statusCode = 400;
     res.end(JSON.stringify({ error: "Invalid Sky inputs or calculation version." }));

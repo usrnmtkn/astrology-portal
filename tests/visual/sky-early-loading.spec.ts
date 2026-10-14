@@ -54,7 +54,8 @@ for (const warm of [false, true]) for (const changeSelection of [false, true]) {
       else expect(requests.some(url => url.pathname === '/api/content-publications')).toBe(false);
       await expect.poll(() => requests.some(url => /newsreader-latin.*\.woff2$/.test(url.pathname))).toBe(true);
       await expect.poll(() => requests.some(url => /sky-v4-canonical-content-studio-stage.*\.json$/.test(url.pathname))).toBe(true);
-      expect(requests.some(url => url.pathname.endsWith('/content_publications'))).toBe(false);
+      if (warm) expect(requests.some(url => url.pathname.endsWith('/content_publications'))).toBe(false);
+      else await expect.poll(() => requests.some(url => url.pathname.endsWith('/content_publications'))).toBe(true);
       expect(await page.locator('.app-shell').count()).toBe(0);
       expect(requests.find(url => url.pathname === '/api/sky')?.searchParams.get('at')).toBe('2026-09-21T16:00:00.000Z');
       if (changeSelection) {
@@ -88,3 +89,23 @@ for (const warm of [false, true]) for (const changeSelection of [false, true]) {
     await expect.poll(() => requests.some(url => /fallback-content-sky-horoscopes-/.test(url.pathname))).toBe(true);
   });
 }
+
+test('Cold Calendar starts its complete publication read while App is still downloading', async ({ page }) => {
+  await bundledPublications(page);
+  let releaseApp!: () => void;
+  const appGate = new Promise<void>(resolve => { releaseApp = resolve; });
+  let ledgerReads = 0;
+  await page.route(/\/assets\/App-[^/]+\.js$/, async route => { await appGate; await route.continue(); });
+  await page.route('**/rest/v1/content_publications?**', async route => {
+    ledgerReads++;
+    await route.fulfill({ json: [] });
+  });
+  try {
+    await page.goto('/#calendar', { waitUntil: 'commit' });
+    await expect.poll(() => ledgerReads).toBe(4);
+    expect(await page.locator('.app-shell').count()).toBe(0);
+  } finally {
+    releaseApp();
+    await page.unrouteAll({ behavior: 'wait' });
+  }
+});

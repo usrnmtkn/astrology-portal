@@ -122,6 +122,15 @@ async function startApp() {
   const initialSkyLoadPromise = /^#\/?sky\/?$/u.test(window.location.hash)
     ? import("./services/skyApi").then(({ startInitialSkyLoad }) => startInitialSkyLoad()).catch(() => null)
     : Promise.resolve(null);
+  if (callbackUrl.pathname === "/" && callbackUrl.searchParams.get("auth") !== "login"
+    && /^#\/?(?:sky|calendar)(?:[/?]|$)/u.test(callbackUrl.hash)) {
+    // Resolve publication state alongside App. Cold readers otherwise wait for
+    // App, the SDK and every ledger page before their first content read begins.
+    void import("./services/contentPublications").then(({ refreshContentPublications, contentPublicationsResolved }) =>
+      refreshContentPublications(false, contentPublicationsResolved()
+        ? () => import("./services/publicationLedgerTransport").then(({ loadPublicationLedgerFromApi }) => loadPublicationLedgerFromApi())
+        : undefined)).catch(() => {});
+  }
   // A direct You link needs the profile page immediately. Fetch it alongside
   // App instead of adding a second module/CSS waterfall after React mounts.
   if (/^#\/?you(?:[/?]|$)/u.test(window.location.hash)) {

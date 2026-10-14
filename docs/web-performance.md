@@ -58,6 +58,12 @@ fonts start once the base stylesheet arrives. Calendar reserves its event-dot
 row and reveals downstream actions with the completed day reading so late prose
 does not move an already visible action.
 
+Direct Sky and Calendar visits also start the complete publication ledger while
+App downloads. Cold visits use the existing paginated public reads; returning
+readers validate their complete cached ledger through the ETag relay. Both share
+the mounted reader's pending request and retain its completeness and publication
+checks. Authentication and Studio entry points do not start these reader reads.
+
 ## Release checks
 
 `npm run typecheck:server` uses the root TypeScript configuration for API entry
