@@ -58,6 +58,12 @@ fonts start once the base stylesheet arrives. Calendar reserves its event-dot
 row and reveals downstream actions with the completed day reading so late prose
 does not move an already visible action.
 
+Direct Sky and Calendar visits also start the complete publication ledger while
+App downloads. Cold visits use the existing paginated public reads; returning
+readers validate their complete cached ledger through the ETag relay. Both share
+the mounted reader's pending request and retain its completeness and publication
+checks. Authentication and Studio entry points do not start these reader reads.
+
 ## Release checks
 
 `npm run typecheck:server` uses the root TypeScript configuration for API entry
@@ -229,8 +235,9 @@ presentation grid; only those deterministic week events use a bounded cache.
 The follow-up discovers App's static imports from the HTML on direct Sky list
 visits and starts exact Sky facts before App finishes downloading. Returning
 readers also validate their existing ledger through a public relay; first visits
-keep publication reads after App. Canonical source assets and local reader fonts
-start once App is available.
+start their complete parallel publication reads while App downloads. Canonical
+source assets start with Sky preloading; local reader fonts start as soon as
+their stylesheet is available.
 The relay rereads the complete anonymous ledger on every request and validates
 the existing cached snapshot with an exact tag; unchanged reloads transfer no
 ledger body. A failed relay retains the direct reader path. A separate

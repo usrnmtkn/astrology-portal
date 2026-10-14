@@ -40,6 +40,10 @@ try {
     { lat: '' }, { lat: ' ' }, { lat: '91' }, { lat: '-91' }, { lon: '' }, { lon: '181' }, { lon: '-181' },
     { timeZone: 'invalid/zone' }, { mode: 'other' }, { detail: 'other' },
     { mode: 'range', start: 'invalid', end: '2026-11-02' },
+    ...['2026-02-30', '2026-02-30T12:00:00Z', '2025-02-29T01:00:00-05:00', '2026-11-01T24:00:00Z'].flatMap(value => [
+      { mode: 'range', start: value, end: '2026-11-02T12:00:00Z' },
+      { mode: 'range', start: value.slice(0, 7) + '-01T00:00:00Z', end: value }
+    ]),
     { mode: 'range', start: '2026-11-02', end: '2026-11-01' },
     { mode: 'range', start: '2026-01-01', end: '2026-03-01' },
     { mode: 'range', start: '2026-11-01', end: '2026-11-02', lat: '91' }
@@ -64,6 +68,15 @@ try {
   }
   const range = await invoke({ mode: 'range', start: '2026-11-01T00:00:00Z', end: '2026-11-02T00:00:00Z' });
   assert.equal(range.statusCode, 200);
+  for (const [start, end, expectedStart, expectedEnd] of [
+    ['2024-02-29', '2024-03-01', '2024-02-29T00:00:00.000Z', '2024-03-01T00:00:00.000Z'],
+    ['2026-11-01T01:30:00-04:00', '2026-11-01T01:30:00-05:00', '2026-11-01T05:30:00.000Z', '2026-11-01T06:30:00.000Z']
+  ]) {
+    const response = await invoke({ mode: 'range', start, end });
+    assert.equal(response.statusCode, 200);
+    assert.equal(response.payload.start, expectedStart);
+    assert.equal(response.payload.end, expectedEnd);
+  }
   const beforeMethod = calls.length;
   const method = await invoke({}, 'POST');
   assert.equal(method.statusCode, 405);

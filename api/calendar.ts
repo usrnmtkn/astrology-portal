@@ -7,6 +7,7 @@ import {
 } from "../apps/web/src/services/ephemeris.js";
 import { zonedDateTimeToUtc } from "../apps/web/src/services/timezones.js";
 import type { LocationInput } from "../apps/web/src/types.js";
+import { parseCalculationDate } from "./_lib/calculation-date.js";
 
 type CalendarViewMode = "week" | "month";
 
@@ -83,8 +84,8 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
     const requestUrl = new URL(req.url ?? "/api/calendar", "http://localhost");
     if (requestUrl.searchParams.get("mode") === "range") {
       const location = parseLocation(requestUrl);
-      const start = new Date(requestUrl.searchParams.get("start") ?? "");
-      const end = new Date(requestUrl.searchParams.get("end") ?? "");
+      const start = parseCalculationDate(requestUrl.searchParams.get("start"));
+      const end = parseCalculationDate(requestUrl.searchParams.get("end"));
       const duration = end.getTime() - start.getTime();
       if (!Number.isFinite(duration) || duration <= 0 || duration > 40 * 86_400_000) {
         throw new Error("Calendar event range must span between zero and 40 days.");

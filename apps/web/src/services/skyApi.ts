@@ -78,13 +78,6 @@ export function startInitialSkyLoad(): InitialSkyLoad | null {
   // The mounted source gate still owns validation, publication selection and retry.
   void import("../content/skyPlacementSourceAssets").then(({ loadSkyPlacementSourceAssets }) =>
     loadSkyPlacementSourceAssets()).catch(() => {});
-  // Returning readers can validate their complete cache without a large download.
-  // A first visit keeps the normal post-App read so ledger bytes do not delay App.
-  void import("./contentPublications").then(({ refreshContentPublications, contentPublicationsResolved }) => {
-    if (contentPublicationsResolved()) return refreshContentPublications(false,
-      () => import("./publicationLedgerTransport").then(({ loadPublicationLedgerFromApi }) => loadPublicationLedgerFromApi()));
-  }).catch(() => {});
-
   let calculation: Promise<SkySnapshot> | undefined;
   const initial: InitialSkyLoad = {
     day, location, date, live: Boolean(liveSkyReference(day, location.timeZone, now)), startedAt: performance.now(), result,
