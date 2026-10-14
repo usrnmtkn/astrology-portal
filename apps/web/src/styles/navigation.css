@@ -13,6 +13,8 @@
 }
 
 .app-shell.mode-learn {
+  /* Contain loading-card margins while the lesson module and content arrive. */
+  display: flow-root;
   overflow-x: clip;
   padding: 0;
   background: var(--learn-page-bg);
