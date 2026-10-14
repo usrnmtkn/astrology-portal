@@ -114,7 +114,7 @@ for (const width of [390, 1440]) test(`placement publication stays authoritative
   const relayStatuses: number[] = [];
   const unrelatedId = 'dddddddd-dddd-dddd-dddd-dddddddddddd';
   const readDelayMs = Number(process.env.SKY_ARTICLE_READ_DELAY_MS ?? 2500);
-  const contentQueries: Array<{ids?: string[];scope?: string}> = [];
+  const contentQueries: Array<{ids?: string[];scope?: string;keys?: string[];startedAt:number;finishedAt?:number}> = [];
   await page.route('**/api/content-publications', async route => {
     const publications = canonicalPublicationLedger([ledger, {content_key:'sky-placement/article/jupiter/capricorn',state:'live',revision:1,row_id:unrelatedId,row_updated_at:timestamp(),updated_at:timestamp()}, { content_key: key, state: retired ? 'retired' : 'live', revision,
       row_id: row().id, row_updated_at: timestamp(), updated_at: timestamp() }]);
@@ -135,9 +135,11 @@ for (const width of [390, 1440]) test(`placement publication stays authoritative
   });
   await page.route('**/api/content-reader', async route => {
     const query = route.request().postDataJSON();
-    contentQueries.push(query);
+    const measured = { ...query, startedAt: Date.now(), finishedAt: undefined as number | undefined };
+    contentQueries.push(measured);
     expect(query.ids ?? []).not.toContain(unrelatedId);
     await new Promise(resolve => setTimeout(resolve, readDelayMs));
+    measured.finishedAt = Date.now();
     return route.fulfill({ json: readerResponse(retired ? [] : [row()], [
       { content_key: key, state: retired ? 'retired' : 'live', revision, row_id: row().id, row_updated_at: timestamp(), updated_at: timestamp() }
     ]) });
@@ -170,9 +172,16 @@ for (const width of [390, 1440]) test(`placement publication stays authoritative
   await expect(page.getByLabel('Daily sky summary', { exact: true })).toBeVisible({ timeout: 60_000 });
   expect(relayStatuses).toEqual([200, 304]);
   const openingStarted = Date.now();
+  const openingQueryOffset = contentQueries.length;
   await page.getByRole('button', { name: 'Read more about Sun in Virgo', exact: true }).click();
   await expect(article).toContainText(`Fixture published opening ${revision}.`, { timeout: 60_000 });
   console.log(JSON.stringify({width,articleOpeningMs:Date.now()-openingStarted,readDelayMs}));
+  const openingQueries = contentQueries.slice(openingQueryOffset);
+  const sharedRead = openingQueries.find(query => query.scope === 'sky-article');
+  const writingRead = openingQueries.find(query => query.keys?.length);
+  expect(sharedRead?.finishedAt).toBeDefined();
+  expect(writingRead?.startedAt).toBeDefined();
+  expect(writingRead!.startedAt, 'Complete article writing starts while shared placement sources are still loading').toBeLessThan(sharedRead!.finishedAt!);
   await assertCopy();
   expect(contentQueries.some(query=>query.scope==='sky-article')).toBe(true);
   expect(contentQueries.some(query=>query.scope==='sky')).toBe(false);
