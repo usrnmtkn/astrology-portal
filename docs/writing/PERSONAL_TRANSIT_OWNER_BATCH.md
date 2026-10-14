@@ -98,6 +98,29 @@ calls and cannot establish improved voice. Owner evaluation remains necessary.
 
 ## Prepare and inspect locally
 
+October 13 language correction: the shared rule bundle and Studio prompt require
+the reader's possible experience to be understandable without translating
+emotional abstractions. Meaning preparation must name the supported feeling or
+behavior and connect any guidance to it. Lexical signals remain advisory and
+never approve prose. Owner revision suggestions remain separate from factual
+authority, original provider outputs and exact-text approval. Preserve their
+complete text privately and keep requested rewrites unapproved and unpublished.
+
+The later October 13 clarification specifies a plain, direct life-coach voice:
+one recognizable situation, an actual action or decision, and its supported
+practical consequence. Give clear advice only when it follows. Use simple words
+and short, natural paragraphs, with no therapy language, abstract metaphor,
+poetic phrasing, fake depth, keyword stacking or invented scene. End when the
+point is clear. This replaces the ambiguous coaching-script prohibition without
+requiring advice, a problem or an extra model stage. Exact owner instructions
+remain private correction inputs; current drafts retain their review status.
+
+The owner may designate complete revised passages as owner-authored examples
+while keeping them unapproved and unpublished. Record the exact designation,
+voice-role assignment, original revision history and text hashes privately.
+Set voice eligibility independently of reader approval. Preferred examples still
+pass the same target exclusion, perspective and current-rejection checks.
+
 From an isolated checkout with its own dependencies and knowledge build:
 
 ```sh

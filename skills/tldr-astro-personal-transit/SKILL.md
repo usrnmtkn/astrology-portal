@@ -27,6 +27,32 @@ normally takes one to three sentences to express what is interesting or useful
 in ordinary human language. It is meaning for the writer, not final prose, an
 aspect definition, keywords, or an outline.
 
+The October 13 owner correction requires understandable everyday language in
+both meaning preparation and prose. Name the supported feeling or behavior and
+explain the connection to any guidance. Emotional labels are insufficient when
+the reader must infer what happened or what the sentence means. Preserve the
+contact's insight and emotional range without inventing a scene to create detail.
+Check the whole thought instead of substituting synonyms or imposing a vocabulary
+whitelist. Owner-supplied revision suggestions stay verbatim in private history;
+using them for direction does not approve the resulting meaning or passage.
+
+The owner's subsequent October 13 clarification sets a plain, direct life-coach
+voice. Develop one recognizable situation through what the person is doing or
+deciding and the supported practical consequence. Use simple words and short,
+natural paragraphs. Advice belongs only where it follows from that situation.
+Avoid therapy language, abstract metaphors, poetic phrasing, manufactured depth,
+keyword stacking and invented scenarios. Stop once the point is clear. This
+qualifies the older blanket avoidance of coaching-script prose: direct coaching
+is the requested voice, while canned advice and forced lessons remain unsuitable.
+Keep the complete owner instruction in private correction history and carry it
+to both Studio and batch inputs. It does not approve any existing draft.
+
+An explicit owner-authored designation can assign a complete draft as positive
+voice evidence while its reader-copy approval remains false. Preserve that
+designation, the original revision history and exact text hash in the protected
+source record. Selecting it for voice never approves or publishes the draft.
+Use the existing contact, perspective and rejection filters for these examples.
+
 Before preparing meaning, compare the complete approved personal passages for
 the same ordered contact, including its soft/hard aspect family. Check newer
 exact approvals in the protected catalog as well as repository publications.
