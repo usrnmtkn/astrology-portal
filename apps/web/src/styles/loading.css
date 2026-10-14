@@ -71,7 +71,7 @@
   height: var(--size-2);
 }
 
-.loading-moon > circle:last-child {
+.loading-moon > :last-child {
   fill: none;
   stroke: currentColor;
   stroke-width: var(--startup-moon-stroke-width);
@@ -127,6 +127,6 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .app-loading__lines span { animation: none; }
+  .app-loading__lines span,
   .loading-moon__shadow { animation: none; }
 }
