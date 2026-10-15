@@ -116,3 +116,61 @@ test('Cold Calendar starts its complete publication read while App is still down
     await page.unrouteAll({ behavior: 'wait' });
   }
 });
+
+for (const width of [390, 1440]) test(`Direct article preparation overlaps full Sky without an incomplete paint ${width}`, async ({ page }) => {
+  test.setTimeout(90_000);
+  await page.setViewportSize({ width, height: 1000 });
+  await page.clock.setFixedTime(new Date('2026-09-10T04:20:00Z'));
+  await bundledPublications(page);
+  await page.addInitScript(() => {
+    localStorage.setItem('tldrastro:selectedLocation', JSON.stringify({ label: 'Synthetic New York', latitude: 40.7, longitude: -74, timeZone: 'America/New_York' }));
+    const observed = (window as any).__directPreparation = { requests: [] as any[], paints: [] as string[] };
+    const WorkerClass = window.Worker;
+    window.Worker = class extends WorkerClass {
+      postMessage(message: any, ...args: any[]) {
+        if (message.kind === 'placement-sky') observed.requests.push(message);
+        super.postMessage(message, ...args);
+      }
+    };
+    new MutationObserver(() => {
+      const body = document.querySelector('.sky-detail-article .article-body-inner')?.textContent;
+      if (body?.trim() && observed.paints.at(-1) !== body) observed.paints.push(body);
+    }).observe(document, { subtree: true, childList: true, characterData: true });
+  });
+  let releaseSky!: () => void;
+  const skyGate = new Promise<void>(resolve => { releaseSky = resolve; });
+  const requests: URL[] = [];
+  const writingReads: any[] = [];
+  const errors: string[] = [];
+  page.on('pageerror', error => errors.push(error.message));
+  page.on('request', request => {
+    const url = new URL(request.url()); requests.push(url);
+    if (url.pathname === '/api/content-reader' && request.postDataJSON()?.keys?.some((key: string) => key.startsWith('sky.aspect.sun.'))) writingReads.push(request.postDataJSON());
+  });
+  await page.route('**/api/sky?**', async route => {
+    await skyGate;
+    const response = { statusCode: 200, setHeader() {}, end(body: string) {
+      void route.fulfill({ status: this.statusCode, contentType: 'application/json', body });
+    } };
+    await skyHandler({ method: 'GET', url: route.request().url() } as IncomingMessage, response as unknown as ServerResponse);
+  });
+  await page.route('**/api/calendar?**', route => route.fulfill({ json: { ok: true, calendar: { days: [] } } }));
+  try {
+    await page.goto('/#sky/placement/sun/virgo', { waitUntil: 'domcontentloaded' });
+    await expect.poll(() => writingReads.length, { timeout: 60_000, message: 'Selected Sun in-sign aspect writing must start before the full Sky response' }).toBeGreaterThan(0);
+    expect(await page.locator('.sky-detail-article .article-body-inner').count()).toBe(0);
+    await page.clock.setFixedTime(new Date('2026-09-10T04:20:02Z'));
+  } finally { releaseSky(); }
+  const body = page.locator('.sky-detail-article .article-body-inner').first();
+  await expect(body).toContainText('The Sun in Virgo makes the systems', { timeout: 60_000 });
+  await expect(body).toContainText('Today’s New Moon');
+  await expect(body).toContainText('The system that works is the one that makes your life easier to live.');
+  await expect(page.locator('.sky-detail-id .article-duration').first()).toHaveText('August 22 to September 22, 2026');
+  const observed = await page.evaluate(() => (window as any).__directPreparation);
+  expect(observed.requests).toHaveLength(1);
+  expect(observed.requests[0].date).toBe('2026-09-10T04:20:00.000Z');
+  expect(observed.requests[0].timingScope).toBe('placement');
+  expect(observed.paints).toEqual([await body.textContent()]);
+  expect(requests.filter(url => url.pathname === '/api/sky')).toHaveLength(1);
+  expect(errors).toEqual([]);
+});

@@ -124,7 +124,11 @@ for (const [width, theme] of [[390, 'light'], [390, 'dark'], [1440, 'light'], [1
    await expect(page.getByRole('heading', {name: 'Templates', exact: true})).toBeVisible();
    expect(await typography()).toEqual(headingStyle);
    expect(errors).toEqual([]);
-  } finally { child.kill(); }
+  } finally {
+   // Finish fixture-backed route handlers before stopping their IPC server.
+   try { await page.unrouteAll({ behavior: 'wait' }); }
+   finally { child.kill(); }
+  }
  });
 }
 
