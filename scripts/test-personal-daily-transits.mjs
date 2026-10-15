@@ -94,6 +94,19 @@ try {
     assert.equal(report.qualifyingTransits[0].calculation.exactOnSelectedDay, true);
     assert(Math.abs(Date.parse(report.qualifyingTransits[0].calculation.contactReferenceAt) - Date.parse(eventAt)) < 2000);
   }
+  // Approved Lilith soft writing needs real calculated candidates to reach the
+  // renderer. Derive fixed natal targets from independent Swiss Moon positions.
+  for (const [eventAt, reference, angle, aspect] of [
+    ["2026-03-09T03:30:00Z", "2026-03-08T16:00:00Z", 120, "trine"],
+    ["2026-11-02T04:30:00Z", "2026-11-01T17:00:00Z", 60, "sextile"]
+  ]) {
+    const natalLongitude = ((longitude("Moon", eventAt) - angle) % 360 + 360) % 360;
+    const peaks = await ephemeris.natalDailyTransitPeaksFor(["Moon"], [{ planet: "Lilith", longitude: natalLongitude }], reference, "America/New_York");
+    const found = peaks.find(item => item.id === `moon-${aspect}-lilith`);
+    assert.ok(found?.exactToday.length, `Lilith ${aspect} must be calculated for approved-source selection`);
+    assert(Math.abs(Date.parse(found.exactToday[0]) - Date.parse(eventAt)) < 2000);
+    assert.equal(peaks.some(item => item.id === 'moon-square-lilith'), false);
+  }
   // At midnight a contact belongs exclusively to the next civil date.
   const midnight = "2026-10-10T04:00:00Z";
   const target = longitude("Moon", midnight);

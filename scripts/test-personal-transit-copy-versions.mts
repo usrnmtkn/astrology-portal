@@ -5,6 +5,7 @@ import { csvRecordForRow, csvDraftPatch, csvChanges, csvCreateTransitBody, newTr
 import { personalTransitCopyVersion, retainPersonalTransitAlternate } from '../apps/web/src/content/fallbackArchitectureV3/resolver/personalTransitCopyVersions.mjs';
 import { renderTransitNatalPreviewState, normalizeTransitNatalPreviewInput } from '../api/admin/transit-natal-preview.js';
 import { fixturePublications } from '../tests/helpers/content-reader-route.mjs';
+import { isDynamicTransitNatalExactKey } from '../apps/web/src/content/transitNatalIdentity.js';
 import { projectReaderRow } from '../apps/web/src/content/readerRowProjection.mjs';
 import { createTransitSynastryRenderer } from '../apps/web/src/content/fallbackArchitectureV3/dist/tldr-content.js';
 
@@ -111,7 +112,10 @@ test('a missing group key is created as a draft and only explicit approval publi
 });
 
 
-test('Lilith soft contacts require an exact approved saved passage; square remains unavailable', () => {
+test('Lilith soft contacts require an exact approved saved passage; square remains unavailable', async () => {
+  assert.equal(isDynamicTransitNatalExactKey('authored/transit-aspect/venus/lilith/trine'), true);
+  assert.equal(isDynamicTransitNatalExactKey('authored/transit-aspect/venus/lilith/sextile'), true);
+  assert.equal(isDynamicTransitNatalExactKey('authored/transit-aspect/venus/lilith/square'), false);
   const contentKey = 'authored/transit-aspect/venus/lilith/soft';
   const source = { contentKey, content_role: 'full_copy', review_status: 'approved',
     body_you: 'Through {{untilDate}}, Venus {{aspectWord}} your Lilith. Approved soft passage.',
@@ -124,4 +128,19 @@ test('Lilith soft contacts require an exact approved saved passage; square remai
     assert.match(create(approved).renderTransitAspect({ transiting: 'venus', natal: 'lilith', aspect, voice, window: 'Until October 20, 2026' }).body, /Approved/);
   }
   assert.throws(() => create(approved).renderTransitAspect({ transiting: 'venus', natal: 'lilith', aspect: 'square' }), /SOURCE_GAP/);
+  const draft = { ...original, content_key: contentKey, status: 'DRAFT',
+    body: source.body_you, sections: { packageRecord: { ...original.sections.packageRecord, ...source, review_status: 'needs_review' } } };
+  const store = await createApiStore([draft]);
+  try {
+    const result = await store.invoke('PATCH', { id: draft.id, expectedUpdatedAt: draft.updated_at, reviewStatus: 'approved' });
+    assert.equal(result.status, 200, JSON.stringify(result));
+    const saved = result.payload.rows[0];
+    for (const aspect of ['trine', 'sextile']) for (const voice of ['you', 'Example Friend']) {
+      const input = normalizeTransitNatalPreviewInput({ planet: 'venus', natalPoint: 'lilith', aspect, voice });
+      const preview = renderTransitNatalPreviewState(input, [saved], fixturePublications([saved]));
+      assert.match(preview.body, voice === 'you' ? /Approved soft passage/ : /Approved Friend soft passage/);
+      assert.equal(preview.paragraphs[0].sources[0].contentKey, contentKey);
+      assert.equal(preview.paragraphs[0].sources[0].publication.origin, 'published');
+    }
+  } finally { await store.close(); }
 });

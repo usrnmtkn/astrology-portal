@@ -50,6 +50,11 @@ soft-family source for that ordered contact. Missing or legacy-only soft copy
 still produces a source gap. This scoped owner change does not enable squares,
 change planetary calculations or create copy for missing contacts.
 
+Studio identities and selectors admit those soft contacts. The daily peak search
+calculates their candidates using the existing ephemeris geometry and timing;
+reader approval still decides whether a passage may serve. Direct Swiss-date
+regressions cover both trine and sextile candidates while excluding squares.
+
 ## Verification
 
 `scripts/test-personal-transit-copy-versions.mts` exercises the actual draft,

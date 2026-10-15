@@ -14,7 +14,7 @@ function isTransitAspectContactKey(parts: string[]) {
   return transitBodies.has(transiting)
     && natalPoints.has(natal)
     && aspects.has(aspect)
-    && (natal !== "lilith" || aspect === "conjunction" || aspect === "opposition")
+    && (natal !== "lilith" || aspect !== "square")
     && !isEligibleTransitReturn(transiting, natal, aspect);
 }
 

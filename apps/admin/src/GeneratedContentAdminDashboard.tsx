@@ -11119,7 +11119,7 @@ export function GeneratedContentAdminDashboard() {
                   <span>Aspect</span>
                   <AdminSelect aria-label="Write-up aspect" value={transitNatalAspect} onChange={(event) => updateTransitNatalSelection({ aspect: event.target.value as TransitNatalAspect | "" })}>
                     <option value="">Choose aspect</option>
-                    {(transitNatalPoint === "lilith" ? ["conjunction", "opposition"] : transitNatalAspects).map((aspect) => <option value={aspect} key={aspect}>{titleFromKey(aspect)}</option>)}
+                    {transitNatalAspects.filter(aspect => transitNatalPoint !== "lilith" || aspect !== "square").map((aspect) => <option value={aspect} key={aspect}>{titleFromKey(aspect)}</option>)}
                   </AdminSelect>
                 </label>
                 <label>
