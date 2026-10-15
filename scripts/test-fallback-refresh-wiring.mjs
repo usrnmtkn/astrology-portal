@@ -885,7 +885,7 @@ assert.match(
 );
 assert.match(
   generatedContentSource,
-  /await loadReaderRows\(\{ provider: fallbackArchitectureV3Provider, \.\.\.\(scope !== "all"/u,
+  /await \(coldArticleRows \?\? loadReaderRows\(\{ provider: fallbackArchitectureV3Provider, \.\.\.\(scope !== "all"/u,
   "Dashboard overlays must load through the governed reader transport."
 );
 const readerClientSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/services/readerContentClient.ts"), "utf8");
@@ -894,7 +894,7 @@ assert.match(readerClientSource, /afterId = value\.nextCursor/u);
 
 assert.match(
   generatedContentSource,
-  /\.rpc\("content_runtime_revision", \{ p_provider: fallbackArchitectureV3Provider \}\)[\s\S]*?currentCoreManifest = await loadFallbackArchitectureV3BundledCoreManifest\(\)[\s\S]*?packageFallbackArchitectureV3CoreRows\(rows, currentCoreManifest\)[\s\S]*?if \(!bundle\) \{[\s\S]*?clearCachedFallbackArchitectureV3Bundle\(scope\);[\s\S]*?return null;/u,
+  /\.rpc\("content_runtime_revision", \{ p_provider: fallbackArchitectureV3Provider \}\)[\s\S]*?currentCoreManifest = await \(coldArticleManifest \?\? loadFallbackArchitectureV3BundledCoreManifest\(\)\)[\s\S]*?packageFallbackArchitectureV3CoreRows\(rows, currentCoreManifest\)[\s\S]*?if \(!bundle\) \{[\s\S]*?clearCachedFallbackArchitectureV3Bundle\(scope\);[\s\S]*?return null;/u,
   "Core dashboard overlays must use runtime revision, bundled key topology, and fail closed when the overlay cannot be packaged."
 );
 

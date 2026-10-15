@@ -1366,6 +1366,14 @@ async function readFallbackArchitectureV3DashboardBundle(
 
   if (!supabase) return cached?.bundle ?? await loadContentStudioLastKnownGoodCoreBundle(scope);
 
+  // A cold article has no cached bundle for the revision check to reuse.
+  // Fetch its rows and immutable manifest while that check runs, then retain
+  // the same publication, revision and package admission below.
+  const coldArticleRows = !cached && scope === "sky-article"
+    ? loadReaderRows({ provider: fallbackArchitectureV3Provider, scope }) : undefined;
+  const coldArticleManifest = coldArticleRows ? loadFallbackArchitectureV3BundledCoreManifest() : undefined;
+  void coldArticleManifest?.catch(() => { /* Joined by the existing recovery below. */ });
+
   const { data: runtimeRevision, error: runtimeRevisionError } = await supabase
     .rpc("content_runtime_revision", { p_provider: fallbackArchitectureV3Provider });
   let dashboardVersion = typeof runtimeRevision === "string" ? Date.parse(runtimeRevision) : 0;
@@ -1380,13 +1388,13 @@ async function readFallbackArchitectureV3DashboardBundle(
   }
   if (cached && dashboardVersion && cached.version === dashboardVersion) return cached.bundle;
 
-  const { data, error } = await loadReaderRows({ provider: fallbackArchitectureV3Provider, ...(scope !== "all" ? { scope } : {}) });
+  const { data, error } = await (coldArticleRows ?? loadReaderRows({ provider: fallbackArchitectureV3Provider, ...(scope !== "all" ? { scope } : {}) }));
   if (error) return recoverUnavailableOverlay(error);
   const rows = data ?? [];
 
   let currentCoreManifest: FallbackArchitectureV3PackageManifest;
   try {
-    currentCoreManifest = await loadFallbackArchitectureV3BundledCoreManifest();
+    currentCoreManifest = await (coldArticleManifest ?? loadFallbackArchitectureV3BundledCoreManifest());
   } catch (error) {
     console.warn("Fallback architecture V3 current key manifest failed to load; cached/local copy remains active.", error);
     return cached?.bundle ?? null;
@@ -1396,7 +1404,12 @@ async function readFallbackArchitectureV3DashboardBundle(
     if (canCache()) clearCachedFallbackArchitectureV3Bundle(scope);
     return null;
   }
-  if (canCache()) cacheFallbackArchitectureV3Bundle(dashboardVersion || fallbackArchitectureV3DashboardVersionFromRows(rows), bundle, scope);
+  // Early rows may precede an edit observed by the concurrent revision RPC.
+  // Never stamp that older snapshot with the later revision: a subsequent
+  // revision-first visit must refresh it before establishing a cache hit.
+  const cacheVersion = coldArticleRows ? fallbackArchitectureV3DashboardVersionFromRows(rows)
+    : dashboardVersion || fallbackArchitectureV3DashboardVersionFromRows(rows);
+  if (canCache()) cacheFallbackArchitectureV3Bundle(cacheVersion, bundle, scope);
   return bundle;
 
 }

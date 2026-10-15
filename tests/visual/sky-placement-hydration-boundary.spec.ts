@@ -1,6 +1,7 @@
 import { readerResponse } from '../helpers/reader-response';
 import { expect, test, type Page } from '@playwright/test';
 import { skyPlacementSourceRecords } from '../../api/_lib/sky-placement-sources';
+import { readFileSync } from 'node:fs';
 
 const key = 'sky-placement/article/sun/virgo';
 const id = 'aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee';
@@ -29,11 +30,23 @@ async function observe(page: Page, theme: string) {
   }, theme);
 }
 
-async function installSources(page: Page) {
+async function installSources(page: Page, includeCore = false) {
   let revision = 1;
   let retired = false;
   let unavailable = false;
   const timestamp = () => `2026-09-13T12:0${revision}:00.123456Z`;
+  const core = includeCore ? structuredClone(JSON.parse(readFileSync('apps/web/public/content-studio-last-known-good.json', 'utf8'))
+    .rows.find((row:any) => row.content_key === 'authored/station/mercury/rx')) : null;
+  if (core) {
+    core.updated_at = timestamp();
+    core.body = core.sections.packageRecord.body = 'Synthetic complete shared station passage.';
+    core.headline = core.sections.packageRecord.headline = 'Synthetic shared station';
+  }
+  const publications = () => [{ content_key: key, state: retired ? 'retired' : 'live', revision,
+    row_id: id, row_updated_at: timestamp(), updated_at: timestamp() }, ...(core ? [{
+      content_key: core.content_key, state: 'live', revision: 1, row_id: core.id,
+      row_updated_at: core.updated_at, updated_at: core.updated_at
+    }] : [])];
   const row = () => ({
     id, content_key: key, surface: 'sky', mode: 'in_depth', status: 'LIVE', lane: 'serving', review_state: null,
     target_date: null, provider: 'tldrastro-fallback-architecture-v3', updated_at: timestamp(),
@@ -54,8 +67,7 @@ async function installSources(page: Page) {
     const url = new URL(route.request().url());
     if (url.pathname.endsWith('/content_publications')) {
       await new Promise(resolve => setTimeout(resolve, 250));
-      return route.fulfill({ json: [{ content_key: key, state: retired ? 'retired' : 'live', revision,
-        row_id: id, row_updated_at: timestamp(), updated_at: timestamp() }] });
+      return route.fulfill({ json: publications() });
     }
     if (url.pathname.endsWith('/content_runtime_revision')) return route.fulfill({ json: timestamp() });
     return route.fulfill({ json: [] });
@@ -65,9 +77,8 @@ async function installSources(page: Page) {
     await new Promise(resolve => setTimeout(resolve, 1800));
     if (unavailable) return route.fulfill({ status: 503, json: { message: 'Fixture source unavailable' } });
     const matches = (!query.keys && !query.ids) || query.keys?.includes(key) || query.ids?.includes(id);
-    return route.fulfill({ json: readerResponse(matches && !retired ? [row()] : [], [
-      { content_key: key, state: retired ? 'retired' : 'live', revision, row_id: id, row_updated_at: timestamp(), updated_at: timestamp() }
-    ]) });
+    return route.fulfill({ json: readerResponse([...(matches && !retired ? [row()] : []),
+      ...(core && (query.scope === 'sky-article' || query.keys?.includes(core.content_key)) ? [core] : [])], publications()) });
   });
   await page.route('**/api/calendar?**', route => route.fulfill({ json: { ok: true, calendar: { days: [] } } }));
   const notify = () => page.evaluate(key => window.dispatchEvent(new CustomEvent('tldrastro:content-update', {
@@ -80,6 +91,73 @@ async function installSources(page: Page) {
     recover: () => { unavailable = false; }
   };
 }
+
+for (const width of [390, 1440]) test(`cold article sources overlap revision without an early passage ${width}`, async ({ page }) => {
+  test.setTimeout(90_000);
+  await page.setViewportSize({ width, height: 1000 });
+  await page.clock.setFixedTime(new Date('2026-09-13T15:00:00Z'));
+  await observe(page, 'light');
+  await installSources(page, true);
+  let releaseRevision!: () => void;
+  const revisionGate = new Promise<void>(resolve => { releaseRevision = resolve; });
+  let revisionHeld = false, articleRowsStarted = false, manifestStarted = false, articleReads = 0;
+  page.on('request', request => {
+    if (new URL(request.url()).pathname === '/api/content-reader') {
+      if (request.postDataJSON()?.scope === 'sky-article') { articleRowsStarted = true; articleReads++; }
+    }
+    manifestStarted ||= /\/assets\/fallback-content-manifest-[^/]+\.js$/u.test(new URL(request.url()).pathname);
+  });
+  await page.route('**/rest/v1/rpc/content_runtime_revision', async route => {
+    revisionHeld = true;
+    await revisionGate;
+    // A provider revision newer than this scope's row version exercises the
+    // conservative first warm revalidation, not only the immediate cache hit.
+    await route.fulfill({ json: '2026-09-14T12:01:00.123456Z' });
+  });
+  const errors: string[] = []; page.on('pageerror', error => errors.push(error.message));
+  try {
+    await page.goto('/?date=2026-09-13#sky/placement/sun/virgo');
+    await expect.poll(() => revisionHeld).toBe(true);
+    await expect.poll(() => articleRowsStarted).toBe(true);
+    await expect.poll(() => manifestStarted).toBe(true);
+    expect(await page.locator('.sky-detail-article .article-body-inner').count()).toBe(0);
+    releaseRevision();
+    const article = page.locator('.sky-detail-article .article-body-inner').first();
+    await expect(article).toContainText(firstCopy, { timeout: 60_000 });
+    const coreCache = () => page.evaluate(() => {
+      const cache = JSON.parse(localStorage.getItem('tldrastro:fallbackArchitectureV3:dashboardBundle:sky-article') ?? 'null');
+      return { version: cache?.dashboardVersion ?? null,
+        admitted: cache?.bundle?.transitLib?.authoredCards?.some((row:any) => row.contentKey === 'authored/station/mercury/rx') ?? false };
+    });
+    await expect.poll(coreCache).toEqual({ version: Date.parse('2026-09-13T12:01:00.123456Z'), admitted: true });
+    await page.waitForTimeout(500);
+    const states = await page.evaluate(() => (window as any).__readingStates);
+    expect([...new Set(states.map((state:any) => state.article).filter(Boolean))]).toHaveLength(1);
+    const reopenEvidence: Array<{ attempt:number; elapsedMs:number; articleReads:number }> = [];
+    for (const attempt of [1, 2]) {
+      await page.getByRole('button', { name: 'Close detail', exact: true }).click();
+      await expect(article).toHaveCount(0);
+      await page.evaluate(() => { (window as any).__readingStates = []; });
+      const started = Date.now(), beforeReads = articleReads;
+      await page.getByRole('button', { name: 'Read more about Sun in Virgo', exact: true }).click();
+      await expect(article).toContainText(firstCopy, { timeout: 60_000 });
+      const elapsedMs = Date.now() - started;
+      await page.waitForTimeout(2200);
+      await expect.poll(coreCache).toEqual({ version: Date.parse('2026-09-14T12:01:00.123456Z'), admitted: true });
+      reopenEvidence.push({ attempt, elapsedMs, articleReads: articleReads - beforeReads });
+      expect(articleReads - beforeReads).toBe(attempt === 1 ? 1 : 0);
+      const reopenedStates = await page.evaluate(() => (window as any).__readingStates);
+      expect([...new Set(reopenedStates.map((state:any) => state.article).filter(Boolean))]).toHaveLength(1);
+    }
+    console.log(JSON.stringify({ fixtureOnlyReopens: width, evidence: reopenEvidence }));
+    await page.reload();
+    await expect(article).toContainText(firstCopy, { timeout: 60_000 });
+    expect(errors).toEqual([]);
+  } finally {
+    releaseRevision();
+    await page.unrouteAll({ behavior: 'wait' });
+  }
+});
 
 for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
   test(`placement publishes one resolved passage on cold load, refresh and navigation ${width} ${theme}`, async ({ page }) => {
