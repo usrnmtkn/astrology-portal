@@ -1,8 +1,8 @@
 import assert from 'node:assert/strict';
 import './test-studio-markdown-parser.mjs';
-import React from 'react';
+import React, { Suspense } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
-import { FormattedProse } from '../apps/web/src/components/FormattedProse';
+import { FormattedProse, FormattedText, FormattedParagraph } from '../apps/web/src/components/FormattedProse';
 import FormattedWritingContent, { PreparedProse as PreparedFormattedProse } from '../apps/web/src/components/FormattedWritingContent';
 import { writingDocument, preserveWritingVariables } from '../apps/web/src/content/formattedText';
 import { fullDetailReaderFacingCopy } from '../apps/web/src/content/readerSafety';
@@ -11,6 +11,14 @@ for (const text of ['Plain paragraph.', '**Bold**', '*italic*', 'under_score', '
  assert.equal(hasFormatting(text), /(?:[*_\\]|^\s*(?:[-+]|\d+\.)\s)/mu.test(text));
 }
 const render = (text: string) => renderToStaticMarkup(React.createElement(FormattedWritingContent, { text }));
+for (const child of [
+ React.createElement(FormattedProse, { text: '**Complete** passage.' }),
+ React.createElement(FormattedText, { text: '**Complete** inline.' }),
+ React.createElement(FormattedParagraph, { parts: [{ text: '- **Complete** list.' }], renderPart: () => null })
+]) {
+ const initial = renderToStaticMarkup(React.createElement(Suspense, { fallback: React.createElement('span', null, 'Loading fixture') }, child));
+ assert.equal(initial, '<span>Loading fixture</span>', 'The owning boundary must retain loading until formatted copy is ready.');
+}
 assert.equal(renderToStaticMarkup(React.createElement(FormattedProse, { text: 'Original text.\nFinal line.' })), '<p>Original text.\nFinal line.</p>');
 assert.equal(renderToStaticMarkup(React.createElement(PreparedFormattedProse, { text: 'Original text.\nFinal line.' })), '<p>Original text.\nFinal line.</p>');
 assert.equal(renderToStaticMarkup(React.createElement(PreparedFormattedProse, { text: 'First.\n\nFinal.', className:'fixture-copy' })), '<p class="fixture-copy">First.\n\nFinal.</p>');

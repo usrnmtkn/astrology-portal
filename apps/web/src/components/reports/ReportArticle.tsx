@@ -1,4 +1,4 @@
-import { FormattedProse } from "../FormattedProse";
+import { PreparedProse as FormattedProse } from "../FormattedWritingContent";
 import { ChevronLeft, X } from "lucide-react";
 import { useMemo, useState } from "react";
 import {
