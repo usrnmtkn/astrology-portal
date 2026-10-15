@@ -311,6 +311,10 @@ async function getSwissEph() {
       await swe.initSwissEph();
       return swe;
     })();
+    const pending = swissEphPromise;
+    void pending.catch(() => {
+      if (swissEphPromise === pending) swissEphPromise = null;
+    });
   }
 
   return swissEphPromise;

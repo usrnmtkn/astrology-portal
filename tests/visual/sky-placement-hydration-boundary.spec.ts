@@ -2,6 +2,7 @@ import { readerResponse } from '../helpers/reader-response';
 import { expect, test, type Page } from '@playwright/test';
 import { skyPlacementSourceRecords } from '../../api/_lib/sky-placement-sources';
 import { readFileSync } from 'node:fs';
+import skyHandler from '../../api/sky';
 
 const key = 'sky-placement/article/sun/virgo';
 const id = 'aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee';
@@ -221,4 +222,99 @@ test('known live placement failure shows retry rather than another authored vers
   await expect(page.locator('.sky-detail-article .article-body-inner').first()).toContainText(firstCopy, { timeout: 60_000 });
   const states = await page.evaluate(() => (window as any).__readingStates);
   expect(states.filter((s: any) => s.article).every((s: any) => s.article.includes(firstCopy))).toBe(true);
+});
+
+
+for (const width of [390, 1440]) test(`WASM initialization failure recovers through article Retry ${width}`, async ({ page, context }) => {
+  test.setTimeout(120_000);
+  await page.setViewportSize({ width, height: 1000 });
+  await page.clock.setFixedTime(new Date('2026-09-13T15:00:00Z'));
+  await observe(page, 'light');
+  await installSources(page);
+  let failAsset = true, failedFetches = 0, restoredFetches = 0;
+  let stage = 'failed';
+  const errors: Array<{ stage: string; kind: string; message: string; url?: string }> = [];
+  page.on('pageerror', error => errors.push({ stage, kind: 'pageerror', message: error.message }));
+  page.on('console', message => {
+    if (message.type() === 'error') errors.push({ stage, kind: 'console', message: message.text(), url: message.location().url });
+  });
+  await page.addInitScript(() => {
+    const NativeWorker = window.Worker;
+    const evidence = (window as any).__swissRetry = { workers: 0, responses: [] as boolean[], fatal: [] as string[] };
+    window.Worker = class extends NativeWorker {
+      constructor(url: string | URL, options?: WorkerOptions) {
+        super(url, options);
+        evidence.workers++;
+        this.addEventListener('message', event => evidence.responses.push(event.data.ok));
+        this.addEventListener('error', event => evidence.fatal.push(event.message));
+      }
+    };
+  });
+  await context.route(/\/wasm\/.*\.wasm(?:\?.*)?$/u, async route => {
+    if (failAsset) {
+      failedFetches++;
+      return route.fulfill({ status: 503, headers: { 'Cache-Control': 'no-store' }, body: 'Synthetic transient WASM transport failure' });
+    }
+    restoredFetches++;
+    return route.continue();
+  });
+  // Keep the full-Sky path healthy with the actual local handler, so the visible
+  // Retry belongs to article preparation rather than a different API failure.
+  await page.route('**/api/sky?**', async route => {
+    let body = '', status = 200;
+    await skyHandler({ method: 'GET', url: route.request().url() } as any, {
+      statusCode: 200, setHeader() {}, end(value: string) { body = value; status = this.statusCode; }
+    } as any);
+    await route.fulfill({ status, contentType: 'application/json', body });
+  });
+  await page.goto('/?date=2026-09-13#sky/placement/sun/virgo');
+  await expect(page.getByText('The placement reading could not load. Please try again.', { exact: true })).toBeVisible({ timeout: 60_000 });
+  expect(failedFetches).toBeGreaterThanOrEqual(2);
+  const article = page.locator('.sky-detail-article .article-body-inner').first();
+  await expect(article).toHaveCount(0);
+  const failed = await page.evaluate(() => (window as any).__swissRetry);
+  expect(failed.workers).toBe(1);
+  expect(failed.responses).toContain(false);
+  expect(failed.fatal).toEqual([]);
+  expect(errors.some(error => error.stage === 'failed' && /wasm|WebAssembly|Aborted/iu.test(error.message))).toBe(true);
+  const expectedAssetError = (error: typeof errors[number]) => error.kind === 'console' && (
+    /^wasm streaming compile failed: TypeError: .*HTTP status code is not ok$/u.test(error.message)
+    || error.message === 'falling back to ArrayBuffer instantiation'
+    || error.message === 'failed to asynchronously prepare wasm: both async and sync fetching of the wasm failed'
+    || error.message === 'Aborted(both async and sync fetching of the wasm failed)'
+    || /^Failed to load resource: the server responded with a status of 503\b/u.test(error.message)
+      && /\/wasm\/.*\.wasm$/u.test(error.url ?? '')
+  );
+  expect(errors.filter(error => error.stage === 'failed' && !expectedAssetError(error))).toEqual([]);
+
+  failAsset = false;
+  stage = 'retry';
+  await page.getByRole('button', { name: 'Retry', exact: true }).click();
+  await expect(article).toContainText(firstCopy, { timeout: 60_000 });
+  expect(restoredFetches).toBeGreaterThan(0);
+  const recovered = await page.evaluate(() => (window as any).__swissRetry);
+  expect(recovered.workers).toBe(1);
+  expect(recovered.responses).toContain(true);
+  expect(recovered.fatal).toEqual([]);
+  const completeBody = await article.textContent();
+  const title = await page.locator('#sky-detail-title').textContent();
+  const presentation = () => page.locator('.sky-detail-article').evaluate(root => ({
+    dates: [...root.querySelectorAll('.article-duration')].map(element => element.textContent),
+    headings: [...root.querySelectorAll('h1,h2,h3')].map(element => element.textContent),
+    bodyTags: [...root.querySelectorAll('.article-body-inner p,.article-body-inner em,.article-body-inner strong,.article-body-inner li')]
+      .map(element => [element.tagName, element.textContent])
+  }));
+  const completePresentation = await presentation();
+  expect(completePresentation.dates.length).toBeGreaterThan(0);
+  expect(completePresentation.dates.every(date => date?.trim())).toBe(true);
+
+  const states = await page.evaluate(() => (window as any).__readingStates);
+  expect([...new Set(states.map((state: any) => state.article).filter(Boolean))]).toHaveLength(1);
+  stage = 'reload';
+  await page.reload();
+  await expect(article).toContainText(firstCopy, { timeout: 60_000 });
+  expect(await article.textContent()).toBe(completeBody);
+  expect(await page.locator('#sky-detail-title').textContent()).toBe(title);
+  expect(await presentation()).toEqual(completePresentation);
+  expect(errors.filter(error => error.stage !== 'failed')).toEqual([]);
 });
