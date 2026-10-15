@@ -2,6 +2,7 @@ import { expect, test } from '@playwright/test';
 import { bundledPublications } from '../helpers/bundled-publications';
 import skyHandler from '../../api/sky';
 import type { IncomingMessage, ServerResponse } from 'node:http';
+import { readerResponse } from '../helpers/reader-response';
 import { publicationLedgerTag } from '../../apps/web/src/services/publicationLedgerTransport';
 
 test.use({ timezoneId: 'America/New_York', viewport: { width: 390, height: 844 } });
@@ -178,5 +179,66 @@ for (const width of [390, 1440]) test(`Direct article preparation overlaps full 
   expect(observed.requests[0].timingScope).toBe('placement');
   expect(observed.paints).toEqual([await body.textContent()]);
   expect(requests.filter(url => url.pathname === '/api/sky')).toHaveLength(1);
+  expect(errors).toEqual([]);
+});
+
+for (const width of [390, 1440]) test(`Initial publication installation shares one complete vocabulary read ${width}`, async ({ page }) => {
+  test.setTimeout(90_000);
+  await page.setViewportSize({ width, height: 1000 });
+  await page.clock.setFixedTime(new Date('2026-09-10T04:20:00Z'));
+  await bundledPublications(page);
+  const stamp = '2026-09-10T04:00:00.000Z';
+  const vocabulary = { id: '00000000-0000-4000-8000-000000000001', content_key: 'fallback-vocab/planet-topic/sun',
+    updated_at: stamp, surface: 'modifier', mode: 'article', status: 'LIVE', lane: 'serving', review_state: null,
+    target_date: null, body: 'Synthetic complete Sun vocabulary.', sections: { topic: { sky: 'Synthetic approved solar topic.' } },
+    source_snapshot: { contentType: 'manual' } };
+  const ledger = [
+    { content_key: '__content-publication-ledger/v1', state: 'live', revision: 1, row_id: null, row_updated_at: null, updated_at: stamp },
+    { content_key: vocabulary.content_key, state: 'live', revision: 1, row_id: vocabulary.id, row_updated_at: stamp, updated_at: stamp }
+  ];
+  let release!: () => void;
+  const gate = new Promise<void>(resolve => { release = resolve; });
+  let ledgerReads = 0, vocabularyReads = 0;
+  await page.route('**/rest/v1/content_publications?**', async route => {
+    ledgerReads++; await gate;
+    const predicates = new URL(route.request().url()).searchParams.getAll('content_key');
+    await route.fulfill({ json: ledger.filter(row => predicates.every(predicate =>
+      predicate.startsWith('gte.') ? row.content_key >= predicate.slice(4)
+        : predicate.startsWith('lt.') ? row.content_key < predicate.slice(3)
+          : predicate.startsWith('gt.') ? row.content_key > predicate.slice(3) : true)) });
+  });
+  await page.route('**/api/content-publications', route => route.fulfill({ json: { schema: 'tldr-publications/v1', publications: ledger } }));
+  await page.route('**/api/content-reader', route => {
+    const query = route.request().postDataJSON();
+    if (query.vocabularyOnly) { vocabularyReads++; return route.fulfill({ json: readerResponse([vocabulary], ledger) }); }
+    return route.fulfill({ json: readerResponse([], ledger) });
+  });
+  await page.route('**/api/sky?**', async route => {
+    const response = { statusCode: 200, setHeader() {}, end(body: string) {
+      void route.fulfill({ status: this.statusCode, contentType: 'application/json', body });
+    } };
+    await skyHandler({ method: 'GET', url: route.request().url() } as IncomingMessage, response as unknown as ServerResponse);
+  });
+  const errors: string[] = [];
+  page.on('pageerror', error => errors.push(error.message));
+  try {
+    await page.goto('/#sky/placement/sun/virgo', { waitUntil: 'domcontentloaded' });
+    await expect(page.locator('.app-shell')).toBeVisible();
+    await expect.poll(() => ledgerReads).toBeGreaterThanOrEqual(6);
+    expect(vocabularyReads).toBe(0);
+  } finally { release(); }
+  const body = page.locator('.sky-detail-article .article-body-inner').first();
+  await expect(body).toContainText('The system that works is the one that makes your life easier to live.', { timeout: 60_000 });
+  const first = await body.textContent();
+  await page.evaluate(() => new Promise<void>(resolve => {
+    let frames = 0; const tick = () => ++frames === 30 ? resolve() : requestAnimationFrame(tick); requestAnimationFrame(tick);
+  }));
+  expect(vocabularyReads).toBe(1);
+  await page.reload();
+  await expect(body).toHaveText(first!, { timeout: 60_000 });
+  await page.evaluate(() => new Promise<void>(resolve => {
+    let frames = 0; const tick = () => ++frames === 30 ? resolve() : requestAnimationFrame(tick); requestAnimationFrame(tick);
+  }));
+  expect(vocabularyReads).toBe(2);
   expect(errors).toEqual([]);
 });
