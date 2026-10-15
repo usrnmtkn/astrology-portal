@@ -3,11 +3,20 @@ import './test-studio-markdown-parser.mjs';
 import React from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { FormattedProse } from '../apps/web/src/components/FormattedProse';
-import FormattedWritingContent from '../apps/web/src/components/FormattedWritingContent';
+import FormattedWritingContent, { PreparedProse as PreparedFormattedProse } from '../apps/web/src/components/FormattedWritingContent';
 import { writingDocument, preserveWritingVariables } from '../apps/web/src/content/formattedText';
 import { fullDetailReaderFacingCopy } from '../apps/web/src/content/readerSafety';
+import { hasWritingFormatting as hasFormatting } from '../apps/web/src/content/formattedText';
+for (const text of ['Plain paragraph.', '**Bold**', '*italic*', 'under_score', '\\literal', '- First', '+ First', '* First', '3. Third', 'Text\n  4. Fourth', '3.14 is a number', '-not a list', '', 'Line one\nLine two']) {
+ assert.equal(hasFormatting(text), /(?:[*_\\]|^\s*(?:[-+]|\d+\.)\s)/mu.test(text));
+}
 const render = (text: string) => renderToStaticMarkup(React.createElement(FormattedWritingContent, { text }));
 assert.equal(renderToStaticMarkup(React.createElement(FormattedProse, { text: 'Original text.\nFinal line.' })), '<p>Original text.\nFinal line.</p>');
+assert.equal(renderToStaticMarkup(React.createElement(PreparedFormattedProse, { text: 'Original text.\nFinal line.' })), '<p>Original text.\nFinal line.</p>');
+assert.equal(renderToStaticMarkup(React.createElement(PreparedFormattedProse, { text: 'First.\n\nFinal.', className:'fixture-copy' })), '<p class="fixture-copy">First.\n\nFinal.</p>');
+assert.equal(render('First.\n\nFinal.'), '<p>First.</p><p>Final.</p>');
+assert.equal(renderToStaticMarkup(React.createElement(PreparedFormattedProse, { text:React.createElement('em',null,'Complete child.') })), '<p><em>Complete child.</em></p>');
+assert.equal(renderToStaticMarkup(React.createElement(PreparedFormattedProse, { text: '**Opening** paragraph.\n\n- First complete item\n- Final complete item' })), '<p><strong>Opening</strong> paragraph.</p><ul class="formatted-prose-list"><li><p>First complete item</p></li><li><p>Final complete item</p></li></ul>');
 assert.equal(render('**Bold** and *italic*.'), '<p><strong>Bold</strong> and <em>italic</em>.</p>');
 assert.match(render('***Both***'), /<(strong|em)>.*<(strong|em)>Both/);
 assert.equal(render('- First\n- Second'), '<ul class="formatted-prose-list"><li><p>First</p></li><li><p>Second</p></li></ul>');

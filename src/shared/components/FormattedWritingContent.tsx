@@ -1,5 +1,5 @@
 import React, { Fragment, type ReactNode } from 'react';
-import { writingDocument, writingInline, type WritingNode } from '../../../apps/web/src/content/formattedText';
+import { writingDocument, writingInline, hasWritingFormatting as hasFormatting, type WritingNode } from '../../../apps/web/src/content/formattedText';
 
 type InlineEmbeds = { delimiter: string; nodes: ReactNode[] };
 
@@ -31,4 +31,11 @@ function Inline({ text }: { text: string }) {
 
 export default function FormattedWritingContent({ text, inline = false, className, listClassName, inlineEmbeds }: { text: string; inline?: boolean; className?: string; listClassName?: string; inlineEmbeds?: InlineEmbeds }) {
   return inline ? <Inline text={text} /> : <Prose text={text} className={className} listClassName={listClassName} inlineEmbeds={inlineEmbeds} />;
+}
+
+/** For lazy article modules whose first paint must already have final formatting. */
+export function PreparedProse({ text, className, listClassName }: { text: ReactNode; className?: string; listClassName?: string }) {
+  return typeof text === 'string' && hasFormatting(text)
+    ? <Prose text={text} className={className} listClassName={listClassName} />
+    : <p className={className}>{text}</p>;
 }

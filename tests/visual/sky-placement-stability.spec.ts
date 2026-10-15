@@ -1,5 +1,76 @@
 import { expect, test } from '@playwright/test';
 import { bundledPublications } from '../helpers/bundled-publications';
+import { skyPlacementSourceRecords } from '../../api/_lib/sky-placement-sources';
+import { readerResponse } from '../helpers/reader-response';
+
+for (const width of [390, 1440]) test(`Venus formatting is complete on first paint and reload ${width}`, async ({ page }) => {
+ test.setTimeout(120_000);
+ await page.setViewportSize({ width, height: 1000 });
+ await page.clock.setFixedTime(new Date('2026-10-14T16:00:00Z'));
+ await bundledPublications(page);
+ const key = 'sky-placement/article/venus/scorpio';
+ const base = skyPlacementSourceRecords.get(key)!;
+ const copy = '**Synthetic complete opening.**\n\nSecond complete paragraph.\n\n- First complete item\n- Final complete item';
+ const row = { id:'aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee', content_key:key, surface:'sky', mode:'in_depth', status:'LIVE', lane:'serving', review_state:null,
+  target_date:null, provider:'tldrastro-fallback-architecture-v3', updated_at:'2026-10-14T12:00:00.123456Z', headline:base.headline, summary:'', body:copy,
+  sections:{packageRecord:{...base, studio_version_status:'approved-serving-revision', placementArticle:copy, placementArticleDirect:copy, placementArticleRetrograde:copy}},
+  facts:{fallbackArchitectureV3:true}, source_snapshot:{sourcePackage:base.source_package,content_role:base.content_role},block_type:'fallback_hook',event_type:'fallback-hook' };
+ const publication = {content_key:key,state:'live',revision:1,row_id:row.id,row_updated_at:row.updated_at,updated_at:row.updated_at};
+ await page.route('**/api/content-reader', route => {
+  const query=route.request().postDataJSON();
+  return route.fulfill({json:readerResponse(query.keys?.includes(key)||query.ids?.includes(row.id)?[row]:[],[publication])});
+ });
+ await page.route('**/rest/v1/**',route=>route.fulfill({json:[publication]}));
+ await page.addInitScript(() => {
+  localStorage.setItem('tldrastro:selectedLocation', JSON.stringify({ label:'New York', latitude:40.7, longitude:-74, timeZone:'America/New_York' }));
+  (window as any).__formattedArticleFrames = [];
+  const observe = () => {
+   const body = document.querySelector('.sky-detail-article .article-body-inner');
+   if (body && body.getClientRects().length) {
+    const state = { text:body.textContent, paragraphs:body.querySelectorAll('p').length, lists:body.querySelectorAll('ul,ol').length, emphasis:body.querySelectorAll('strong,em').length };
+    const frames = (window as any).__formattedArticleFrames;
+    if (JSON.stringify(frames.at(-1)) !== JSON.stringify(state)) frames.push(state);
+   }
+   requestAnimationFrame(observe);
+  };
+  requestAnimationFrame(observe);
+ });
+ const errors: string[] = []; page.on('pageerror', error => errors.push(error.message));
+ let release!: () => void;
+ let requested!: () => void;
+ const formattingRequested = new Promise<void>(resolve => { requested = resolve; });
+ const formattingReleased = new Promise<void>(resolve => { release = resolve; });
+ await page.route('**/assets/FormattedWritingContent-*.js', async route => {
+  requested();
+  await formattingReleased;
+  await route.continue();
+ });
+ try {
+ await page.goto('/?date=2026-10-14#sky/placement/venus/scorpio', {waitUntil:'domcontentloaded'});
+ await formattingRequested;
+ await expect(page.locator('.sky-detail-article .article-body-inner')).toHaveCount(0);
+ release();
+ const body = page.locator('.sky-detail-article .article-body-inner').first();
+ await expect(body).toBeVisible({ timeout:60_000 });
+ await expect(body).toContainText('Synthetic complete opening.');
+ await expect(body).toContainText('Final complete item');
+ await expect(body.locator('ul,ol').first()).toBeVisible();
+ await page.waitForTimeout(1000); // Observe delayed parser completion and subsequent source hydration.
+ const frames = await page.evaluate(() => (window as any).__formattedArticleFrames);
+ expect(frames.length).toBe(1);
+ expect(frames[0].lists).toBeGreaterThan(0);
+ expect(frames[0].paragraphs).toBeGreaterThan(1);
+ expect(frames[0].text).not.toMatch(/\*\*|^\s*[-*+]\s/mu);
+ await page.reload();
+ await expect(body).toBeVisible({ timeout:60_000 });
+ await page.waitForTimeout(1000);
+ expect(await page.evaluate(() => (window as any).__formattedArticleFrames)).toEqual(frames);
+ expect(errors).toEqual([]);
+ } finally {
+  release();
+  await page.unrouteAll({behavior:'wait'});
+ }
+});
 
 for (const theme of ['light', 'dark']) for (const width of [390, 1440]) test(`Sun placement stays stable ${theme} ${width}`, async ({ page }) => {
  test.setTimeout(120_000);
