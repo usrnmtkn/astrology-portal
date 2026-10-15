@@ -1,5 +1,6 @@
 import { isContentRetired, publicationAllowsContent, subscribeToContentPublications } from "../content/contentPublicationState";
 import { loadLiveGeneratedContentForSurfaces } from "./generatedContent";
+import { refreshContentPublications } from "./contentPublications";
 import { fallbackV3PlanetTopic, fallbackV3SignStyle } from "../content/fallbackArchitectureV3Runtime";
 import { firstReaderFacingCopy } from "../content/readerSafety";
 
@@ -364,6 +365,7 @@ function hydratePlanetTopicVocabularyRows(rows: PlanetTopicVocabularyRow[]) {
 }
 
 export async function loadPlanetTopicVocabulary() {
+  await refreshContentPublications();
   if (loadingVocabulary) return loadingVocabulary;
   const epoch = cacheEpoch;
   loadingVocabulary = (async () => {
