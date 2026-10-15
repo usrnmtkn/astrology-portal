@@ -119,8 +119,76 @@ try {
   assert.equal(queries.length, 2, 'Each unchanged revision should reuse only its own partition');
   await qa.loadFallbackArchitectureV3DashboardBundle('sky-list');
   assert.deepEqual(queries.at(-1), [], 'The list must not reuse the broader article inventory');
-  await qa.loadFallbackArchitectureV3DashboardBundle('sky-article');
+  const client = (globalThis as any).fixtureClient;
+  const normalRpc = client.rpc;
+  const oldStation = { body: rows[2].body, updated_at: rows[2].updated_at };
+  const newerRevision = '2099-01-01T00:00:00Z';
+  let releaseRevision!: () => void;
+  client.rpc = () => new Promise(resolve => { releaseRevision = () => resolve({ data: newerRevision }); });
+  const articleQueries = queries.length;
+  let articleSettled = false;
+  const coldArticle = qa.loadFallbackArchitectureV3DashboardBundle('sky-article');
+  void coldArticle.then(() => { articleSettled = true; });
+  for (let tick = 0; queries.length === articleQueries && tick < 100; tick++) await new Promise(resolve => setTimeout(resolve, 0));
+  assert.equal(queries.length, articleQueries + 1, 'Cold article rows must start before the revision RPC finishes');
+  assert.equal(articleSettled, false, 'Prefetched rows must not bypass the revision admission gate');
+  rows[2].body = 'Synthetic newer station writing.';
+  rows[2].updated_at = newerRevision;
+  releaseRevision();
+  const coldArticleBundle = await coldArticle;
+  assert(coldArticleBundle);
+  assert.equal(coldArticleBundle.transitLib.authoredCards[0].body, oldStation.body);
+  assert.equal(qa.readCachedFallbackArchitectureV3Bundle('sky-article')?.version, Date.parse(oldStation.updated_at),
+    'An old early row snapshot must not be cached under the newer RPC revision');
+  const warmArticle = qa.loadFallbackArchitectureV3DashboardBundle('sky-article');
+  for (let tick = 0; tick < 5; tick++) await new Promise(resolve => setTimeout(resolve, 0));
+  assert.equal(queries.length, articleQueries + 1, 'A warm article must retain revision-first cache validation');
+  releaseRevision();
+  const freshArticleBundle = await warmArticle;
+  assert.equal(queries.length, articleQueries + 2, 'A newer revision must refetch the early snapshot');
+  assert.equal(freshArticleBundle?.transitLib.authoredCards[0].body, rows[2].body);
+  client.rpc = async () => ({ data: newerRevision });
+  assert.deepEqual(await qa.loadFallbackArchitectureV3DashboardBundle('sky-article'), freshArticleBundle);
+  assert.equal(queries.length, articleQueries + 2, 'A matching verified revision must reuse cached rows');
+  Object.assign(rows[2], oldStation);
+  client.rpc = normalRpc;
   assert.deepEqual(queries.at(-1).map((row:any)=>row.content_key), [stationKey], 'Article dependencies retain shared station writing without Calendar or personal-transit inventory.');
+  qa.clearCachedFallbackArchitectureV3Bundle('sky-article');
+  client.rpc = () => new Promise(resolve => { releaseRevision = () => resolve({ data: newerRevision }); });
+  const beforeRetirement = queries.length;
+  const retiringArticle = qa.loadFallbackArchitectureV3DashboardBundle('sky-article');
+  for (let tick = 0; queries.length === beforeRetirement && tick < 100; tick++) await new Promise(resolve => setTimeout(resolve, 0));
+  const stationPublication = { content_key: stationKey, state: 'retired', revision: 10,
+    row_id: rows[2].id, row_updated_at: rows[2].updated_at, updated_at: rows[2].updated_at };
+  qa.installContentPublications([stationPublication]);
+  releaseRevision();
+  assert(!(await retiringArticle)?.transitLib.authoredCards.some((row:any) => row.contentKey === stationKey),
+    'A retirement observed while the revision is held must exclude the early row');
+  assert.equal(qa.readCachedFallbackArchitectureV3Bundle('sky-article'), null,
+    'A publication change must prevent speculative cache installation');
+  qa.installContentPublications([{ ...stationPublication, state: 'live', revision: 11 }]);
+  qa.clearCachedFallbackArchitectureV3Bundle('sky-article');
+  client.rpc = async () => ({ data: null, error: new Error('Synthetic revision RPC failure') });
+  const beforeRevisionFallback = queries.length;
+  assert(await qa.loadFallbackArchitectureV3DashboardBundle('sky-article'));
+  assert.equal(queries.length, beforeRevisionFallback + 2,
+    'An unavailable RPC must retain the version-query fallback as well as the cold row read');
+  client.rpc = normalRpc;
+  qa.clearCachedFallbackArchitectureV3Bundle('sky-article');
+  const normalReaderFetch = globalThis.fetch;
+  globalThis.fetch = async (input, init) => {
+    if (String(input) === '/api/content-reader' && JSON.parse(String(init?.body)).scope === 'sky-article') {
+      return new Response('Synthetic cold row failure', { status: 500 });
+    }
+    return normalReaderFetch(input, init);
+  };
+  try {
+    await qa.loadFallbackArchitectureV3DashboardBundle('sky-article');
+    assert.equal(qa.readCachedFallbackArchitectureV3Bundle('sky-article'), null,
+      'A failed speculative read must not cache a partial overlay');
+  } finally { globalThis.fetch = normalReaderFetch; }
+  assert(await qa.loadFallbackArchitectureV3DashboardBundle('sky-article'),
+    'A failed speculative request must remain retryable');
   qa.installFallbackArchitectureV3Bundle(all);
   const changed = structuredClone(sky);
   changed.transitLib.authoredCards.find((row: any) => row.contentKey === skyKey).body = 'Fixture updated Sky passage.';
@@ -205,10 +273,15 @@ try {
   const pages: number[] = [];
   const pagedRows = Array.from({ length: 251 }, (_, i) => ({ ...listSource, id: `aaaaaaaa-aaaa-aaaa-aaaa-${String(i).padStart(12, '0')}` }));
   let secondPageFailure: 'none' | 'once' | 'persistent' = 'none';
+  let changePublicationOnSecondPage = false;
   class PagedQuery extends Query {
     async returns() {
       const data = pagedRows.filter(row => this.filters.every(filter => filter(row))).slice(0, 250);
       pages.push(data.length);
+      if (changePublicationOnSecondPage && data[0]?.id === pagedRows[250].id) {
+        qa.installContentPublications([{ content_key: 'qa/paged-article-change', state: 'live', revision: 1,
+          row_id: null, row_updated_at: null, updated_at: '2026-10-15T00:00:00Z' }]);
+      }
       const fail = data[0]?.id === pagedRows[250].id
         && (secondPageFailure === 'persistent' || secondPageFailure === 'once' && pages.length === 2);
       return fail ? { data: null, error: new Error('Fixture page failure') } : { data };
@@ -228,6 +301,17 @@ try {
     await assert.rejects(qa.loadFallbackArchitectureV3DashboardBundle('sky-list'), /Current Sky content/);
     assert.deepEqual(pages, [250, 1, 1, 1], 'A persistent later-page failure exhausts its bounded retry');
     assert.equal(qa.readCachedFallbackArchitectureV3Bundle('sky-list'), null, 'A failed later page must not cache a partial overlay');
+    qa.clearCachedFallbackArchitectureV3Bundle();
+    secondPageFailure = 'none'; changePublicationOnSecondPage = true; pages.length = 0;
+    const pagedArticleSource = snapshot.rows.find((row:any) => row.content_key === 'authored/station/venus/rx');
+    assert(pagedArticleSource);
+    for (const row of pagedRows) Object.assign(row, structuredClone(pagedArticleSource), { id: row.id });
+    const pagedArticle = await qa.loadFallbackArchitectureV3DashboardBundle('sky-article');
+    assert.deepEqual(pages, [250, 1], 'Cold article reads retain complete keyset pagination');
+    assert(pagedArticle?.transitLib.authoredCards.some((row:any) => row.contentKey === pagedArticleSource.content_key
+      && row.body === pagedArticleSource.body), 'The paginated fixture must actually admit its complete article row');
+    assert.equal(qa.readCachedFallbackArchitectureV3Bundle('sky-article'), null,
+      'A publication change between pages must prevent speculative cache installation');
   } finally { (globalThis as any).fixtureClient = originalClient; }
   const virgin = snapshot.rows.find((row: any) => row.content_key === 'sky-placement/article/sun/virgo');
   const libra = snapshot.rows.find((row: any) => row.content_key === 'sky-placement/article/sun/libra');
