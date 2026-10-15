@@ -84,10 +84,13 @@ server factory. CSV creation and retained-copy fields remain in lazy modules.
 | Browser app startup | 517799 | 518081 | 282 | 518200 | 119 |
 | Browser reader startup | 572941 | 573223 | 282 | 573350 | 127 |
 | Browser all JavaScript | 3625402 | 3627024 | 1622 | 3627700 | 676 |
+| Deferred CSV module | 5682 | 6741 | 1059 | 7000 | 259 |
 | Standalone Admin entry | 231587 | 231689 | 102 | 231900 | 211 |
 | Standalone Admin all JavaScript | 795598 | 796949 | 1351 | 797150 | 201 |
 
 Web startup caps increase by 300 bytes each and aggregate JavaScript by 2000.
+The deferred CSV module cap increases by 1000 bytes: its 1059-byte growth fits
+alongside 318 bytes of existing headroom.
 Standalone Admin aggregate JavaScript increases by 1500 bytes. Its entry/largest
 raw limit remains 795000: baseline 794448, candidate 794994, six bytes remaining.
 All other chunk, memory graph, dependency, source-payload and runtime performance
