@@ -132,7 +132,7 @@ test("Calendar forecast source errors do not open an empty replacement", async (
   await page.goto("/admin/content#sky-writeups?view=weekly-sky");
   await openReferences(page);
   await page.getByRole("button", { name: "Open weekly template" }).click();
-  await expect(page.getByText("Template source unavailable", { exact: false })).toBeVisible();
+  await expect(page.getByText("Template source unavailable", { exact: true })).toBeVisible();
   await expect(page.getByLabel("Template pattern", { exact: true })).toHaveCount(0);
 });
 

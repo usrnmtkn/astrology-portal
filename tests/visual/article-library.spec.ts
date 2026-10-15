@@ -87,7 +87,7 @@ for (const width of [390, 1440]) test(`scoped reader marker discovers omitted re
   revision = 2;
   expect(await emitter.evaluate(async key => (window as any).qa.loadReaderRows({ keys: [key] }), otherKey)).toMatchObject({ error: null });
   await expect(page.getByRole('heading', { name: 'Article unavailable', exact: true })).toBeVisible();
-  expect(metadataReads - before).toBeGreaterThanOrEqual(6);
+  await expect.poll(() => metadataReads - before).toBeGreaterThanOrEqual(6);
   await expect(page.locator('body')).not.toContainText('Synthetic complete retained ending.');
   await page.reload();
   await expect(page.getByRole('heading', { name: 'Article unavailable', exact: true })).toBeVisible();
