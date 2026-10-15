@@ -11,6 +11,12 @@ const requiredPaths = [
   '.github/workflows/calendar-aspect-content-studio.yml'
 ];
 function verify(workflow) {
+  const validation = workflow.match(/^  calendar-aspect-content-studio:\n([\s\S]*?)(?=^  [a-z][a-z-]+:)/mu)?.[1];
+  assert.ok(validation, 'Read-only validation job must exist');
+  const install = validation.indexOf('run: npm ci\n');
+  const authority = validation.indexOf('node scripts/test-sky-studio-authority-contract.mjs');
+  assert.ok(install >= 0 && authority > install, 'Install locked dependencies before the TypeScript-importing authority test');
+  assert.match(validation, /uses: actions\/setup-node@v6\s+with:\s+node-version: 22\s+cache: npm/u);
   for (const event of ['push', 'pull_request']) {
     const section = workflow.match(new RegExp(`^  ${event}:\\n([\\s\\S]*?)(?=^  [a-z_]+:|^permissions:)`, 'mu'))?.[1];
     assert.ok(section, `${event} validation trigger required`);
@@ -37,4 +43,10 @@ verify(source);
 const unsafe = source.replace("if: github.event_name == 'workflow_dispatch' && inputs.sync_published_exact_aspects", "if: github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && inputs.sync_published_exact_aspects)");
 assert.notEqual(unsafe, source);
 assert.throws(() => verify(unsafe), { name: 'AssertionError' });
-console.log('Calendar workflow: push/PR validate; both writes require explicit manual true; automatic-write mutation rejected.');
+const installStep = '      - name: Install dependencies\n        run: npm ci\n';
+assert.ok(source.includes(installStep));
+const missingInstall = source.replace(installStep, '');
+assert.throws(() => verify(missingInstall), { name: 'AssertionError' });
+const lateInstall = missingInstall.replace('  seed-content-studio:\n', installStep + '\n  seed-content-studio:\n');
+assert.throws(() => verify(lateInstall), { name: 'AssertionError' });
+console.log('Calendar workflow: push/PR validate; both writes require explicit manual true; automatic-write and missing/late-install mutations rejected.');
