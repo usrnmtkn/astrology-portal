@@ -11821,16 +11821,6 @@ export function GeneratedContentAdminDashboard() {
                           </div>
                         </article>
                       ))}
-                      <StudioButton
-                        className="admin-primary-button"
-                        type="button"
-                        onClick={() => void publishSkyArticleChanges()}
-                        disabled={isLoading || skyArticleEditor.saveState !== "saved" || skyArticleChanges.length === 0}
-                        title={skyArticleEditor.saveState !== "saved" ? "Wait for autosave to finish before publishing." : "Publish the complete validated article revision."}
-                      >
-                        <Check size={16} aria-hidden="true" />
-                        Publish changes
-                      </StudioButton>
                     </section>
                   )}
                 </div>
@@ -12545,7 +12535,11 @@ export function GeneratedContentAdminDashboard() {
                   : currentDraft.status === "LIVE" ? "Published copy is unchanged." : "Draft saved · Awaiting publication"}
           </span>
           {skyArticleEditor.saveState === "error" && <StudioButton disabled={isLoading} onClick={() => updateSkyArticleFields({})}>Retry save</StudioButton>}
-          {skyArticleChanges.length > 0 ? <StudioButton className="admin-primary-button" type="button" disabled={isLoading} onClick={() => {
+          {skyArticleChanges.length > 0 && skyArticleEditor.reviewOpen ? <StudioButton className="admin-primary-button" type="button"
+            disabled={isLoading || skyArticleEditor.saveState !== "saved"}
+            onClick={() => void publishSkyArticleChanges()}
+            title={skyArticleEditor.saveState !== "saved" ? "Wait for autosave to finish before publishing." : "Publish the complete validated article revision."}
+          >Publish changes</StudioButton> : skyArticleChanges.length > 0 ? <StudioButton className="admin-primary-button" type="button" disabled={isLoading} onClick={() => {
             setSkyEditorSection("article");
             setSkyArticleEditor(current => current ? { ...current, reviewOpen: true } : current);
             window.requestAnimationFrame(() => {
