@@ -122,6 +122,7 @@ for (const [width, theme] of [[390, 'light'], [390, 'dark'], [1440, 'light'], [1
    await editor.getByRole('button', {name: /Close/}).first().click();
    await page.goto(entry + '#templates');
    await expect(page.getByRole('heading', {name: 'Templates', exact: true})).toBeVisible();
+   await expect(page.getByRole('region', {name: 'Admin status', exact: true})).toContainText('Connected ·');
    expect(await typography()).toEqual(headingStyle);
    expect(errors).toEqual([]);
   } finally {

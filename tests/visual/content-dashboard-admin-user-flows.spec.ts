@@ -7426,11 +7426,12 @@ for (const width of [1440, 390]) {
 }
 
 
-test('Studio tables keep titles and edit controls readable in narrow desktop panes', async ({ page }) => {
-  await page.setViewportSize({ width: 900, height: 1000 });
-  await seedAdminApi(page);
-  for (const theme of ['dark', 'light']) {
-    for (const route of ['exact-content', 'articles', 'compatibility']) {
+for (const theme of ['dark', 'light']) {
+  for (const route of ['exact-content', 'articles', 'compatibility']) {
+    test(`Studio tables keep titles and edit controls readable in narrow desktop panes ${theme} ${route}`, async ({ page }) => {
+      test.setTimeout(60_000);
+      await page.setViewportSize({ width: 900, height: 1000 });
+      await seedAdminApi(page);
       await expectAdminRouteLoads(page, `/admin/content#${route}`);
       if (await page.locator('.admin-dashboard').getAttribute('data-studio-theme') !== theme) {
         await page.getByRole('button', {name: `Switch to ${theme} theme`}).click();
@@ -7442,9 +7443,9 @@ test('Studio tables keep titles and edit controls readable in narrow desktop pan
       expect(overflow, `${theme} ${route} table cells fit their content`).toEqual([]);
       await expect(table.locator('.admin-content-row-title').first()).toHaveCSS('overflow', 'visible');
       await page.screenshot({path: `outputs/studio-style/tablet-${route}-${theme}.png`, fullPage: true});
-    }
+    });
   }
-});
+}
 
 
 for (const theme of ['dark', 'light']) {
