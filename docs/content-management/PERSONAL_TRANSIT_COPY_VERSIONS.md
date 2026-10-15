@@ -57,6 +57,11 @@ Studio identities and selectors admit those soft contacts. The daily peak search
 calculates their candidates using the existing ephemeris geometry and timing;
 reader approval still decides whether a passage may serve. Direct Swiss-date
 regressions cover both trine and sextile candidates while excluding squares.
+The app orb filter also admits applying and recently separating soft contacts,
+without relying on the exact-day bypass. A full calculated ranking regression
+keeps the four-card cap intact: New York’s additional Moon–Lilith contact
+correctly puts Lilith–Pluto fifth. The complete reader/reload journey uses
+Honolulu, where that same verified event ranks fourth on the selected day.
 
 ## Verification
 
@@ -71,19 +76,19 @@ receipt suite. Fixture success is not evidence that production content changed.
 ## Bundle allocation
 
 Final independent `npm ci --ignore-scripts` builds compare combined main
-`3e340e267` with runtime source `15fa8ad85`, using Node 22.20.0, npm 10.9.3,
+`3e340e267` with the repaired Lilith app filter, using Node 22.20.0, npm 10.9.3,
 identical lockfiles and the Visual smoke workflow's synthetic Supabase settings.
 The browser configuration also enables natal patterns through the actual browser
 server factory. CSV creation and retained-copy fields remain in lazy modules.
 
 | Configuration and gzip bytes | Main | Candidate | Added | Limit | Remaining |
 | --- | ---: | ---: | ---: | ---: | ---: |
-| Default CI app startup | 517795 | 518086 | 291 | 518200 | 114 |
-| Default CI reader startup | 572937 | 573228 | 291 | 573350 | 122 |
-| Default CI all JavaScript | 3625420 | 3626946 | 1526 | 3627700 | 754 |
-| Browser app startup | 517799 | 518081 | 282 | 518200 | 119 |
-| Browser reader startup | 572941 | 573223 | 282 | 573350 | 127 |
-| Browser all JavaScript | 3625402 | 3627024 | 1622 | 3627700 | 676 |
+| Default CI app startup | 517795 | 518090 | 295 | 518200 | 110 |
+| Default CI reader startup | 572937 | 573232 | 295 | 573350 | 118 |
+| Default CI all JavaScript | 3625420 | 3626897 | 1477 | 3627700 | 803 |
+| Browser app startup | 517799 | 518084 | 285 | 518200 | 116 |
+| Browser reader startup | 572941 | 573226 | 285 | 573350 | 124 |
+| Browser all JavaScript | 3625402 | 3626877 | 1475 | 3627700 | 823 |
 | Deferred CSV module | 5682 | 6741 | 1059 | 7000 | 259 |
 | Standalone Admin entry | 231587 | 231689 | 102 | 231900 | 211 |
 | Standalone Admin all JavaScript | 795598 | 796949 | 1351 | 797150 | 201 |

@@ -4,6 +4,7 @@ import { getAstrodienstSky, natalDailyTransitPeaksFor } from "../../apps/web/src
 import { natalSkySnapshotCacheKey, skySnapshotCacheKey, VERIFIED_SKY_CACHE_SCHEMA } from "../../apps/web/src/services/verifiedSkyCache";
 
 const location = { label: "New York, NY", latitude: 40.7128, longitude: -74.006, timeZone: "America/New_York" };
+const readerLocation = { label: "Honolulu, HI", latitude: 21.3069, longitude: -157.8583, timeZone: "Pacific/Honolulu" };
 const user = { id: "reader-qa", email: "reader@example.test", app_metadata: { provider: "email" }, user_metadata: {} };
 const profile = { ...user, name: "Reader QA", provider: "email", sun: "Capricorn", moon: "Pisces", rising: "Aries", currentLocation: location.label, currentLocationData: location,
   charts: [{ id: "reader-chart", name: "Reader QA", type: "Birth chart", birthDate: "1990-01-02", birthTime: "12:00 PM", birthCity: location.label, birthLocation: location }] };
@@ -12,21 +13,22 @@ let cacheRecords: unknown[];
 test.beforeAll(async () => {
   const natal = await getAstrodienstSky(location, birth);
   const sky = await getAstrodienstSky(location, new Date("2026-11-27T12:00:00Z"));
-  // The exact pass is December 7 in New York (December 8 UTC). The old
-  // December 8 noon fixture was already outside the selected-day 1° window.
+  // At Honolulu noon this verified event is fourth in the daily ranking.
+  // New York has an earlier exact Moon-Lilith contact and correctly ranks it fifth.
   const pluto = natal.positions.find(position => position.planet === "Pluto")!;
-  const peaks = await natalDailyTransitPeaksFor(["Lilith"], [{ planet: "Pluto", longitude: pluto.longitude }], "2027-12-07T17:00:00Z", location.timeZone);
+  const peaks = await natalDailyTransitPeaksFor(["Lilith"], [{ planet: "Pluto", longitude: pluto.longitude }], "2027-12-07T22:00:00Z", readerLocation.timeZone);
   expect(peaks.find(peak => peak.id === "lilith-square-pluto")?.exactToday).toHaveLength(1);
-  const squareSky = await getAstrodienstSky(location, new Date("2027-12-07T12:00:00Z"));
+  const squareSky = await getAstrodienstSky(readerLocation, new Date("2027-12-07T22:00:00Z"));
   cacheRecords = [
     { schema: VERIFIED_SKY_CACHE_SCHEMA, cacheKey: natalSkySnapshotCacheKey(location, birth), snapshot: natal },
     { schema: VERIFIED_SKY_CACHE_SCHEMA, cacheKey: skySnapshotCacheKey(location, "2026-11-27"), snapshot: sky },
-    { schema: VERIFIED_SKY_CACHE_SCHEMA, cacheKey: skySnapshotCacheKey(location, "2027-12-07"), snapshot: squareSky }
+    { schema: VERIFIED_SKY_CACHE_SCHEMA, cacheKey: skySnapshotCacheKey(readerLocation, "2027-12-07"), snapshot: squareSky }
   ];
 });
 
-async function prepare(page: Page, options: { circleFailure?: boolean; slowContent?: boolean; session?: "missing" | "rejected" | "unavailable" } = {}) {
-  const readerProfile = profile;
+async function prepare(page: Page, options: { circleFailure?: boolean; slowContent?: boolean; session?: "missing" | "rejected" | "unavailable"; currentLocation?: typeof location } = {}) {
+  const currentLocation = options.currentLocation ?? location;
+  const readerProfile = { ...profile, currentLocation: currentLocation.label, currentLocationData: currentLocation };
   await page.emulateMedia({ reducedMotion: "reduce" });
   const state = { circleFailure: options.circleFailure ?? false, circleRequests: 0, contentRequests: 0, contentResponses: 0, session: options.session };
   let releaseContent!: () => void;
@@ -40,7 +42,7 @@ async function prepare(page: Page, options: { circleFailure?: boolean; slowConte
       localStorage.setItem(key, JSON.stringify({ access_token: "fixture.reader.session", refresh_token: "fixture-refresh", expires_at: Math.floor(Date.now()/1000)+3600, token_type: "bearer", user }));
     }
     for (const record of cacheRecords as any[]) localStorage.setItem(record.cacheKey, JSON.stringify({ ...record, verifiedAt: new Date().toISOString() }));
-  }, { location, user, profile: readerProfile, cacheRecords, session: options.session });
+  }, { location: currentLocation, user, profile: readerProfile, cacheRecords, session: options.session });
   await page.route("**/api/**", route => route.request().method() === "GET" ? route.continue() : route.fulfill({ status: 503, json: {} }));
   await page.route('**/api/content-reader', async route => {
     state.contentRequests++;
@@ -222,7 +224,7 @@ for (const mode of ["create", "login", "incomplete-birth-time"] as const) test(`
 });
 
 test("Lilith Pluto writing survives the reader adapter and opens its complete interpretation", async ({ page }) => {
-  await prepare(page);
+  await prepare(page, { currentLocation: readerLocation });
   await page.goto("/?date=2027-12-07#you");
   // A verified exact contact belongs in the selected local day.
   const entry = page.getByRole("button").filter({ has: page.getByText("Lilith challenging power", { exact: true }) });

@@ -7,7 +7,7 @@ import { renderToStaticMarkup } from "react-dom/server";
 const server = await createServer({ root: `${process.cwd()}/apps/web`, server: { middlewareMode: true, hmr: false },
   optimizeDeps: { noDiscovery: true }, appType: "custom", logLevel: "silent",
   plugins: [{ name: "daily-contact-test-exports", enforce: "pre", transform(code, id) {
-    if (id.endsWith("/src/App.tsx")) return `${code}\nexport { buildNatalTransitItems, groupPersonalTransitContacts };`;
+    if (id.endsWith("/src/App.tsx")) return `${code}\nexport { buildNatalTransitItems, groupPersonalTransitContacts, natalTransitTargets, personalTransitLongitude };`;
     if (id.endsWith("/src/features/you/YouPage.tsx")) return `${code}\nexport { YouTransitArticlePage };`;
   } }]
 });
@@ -106,6 +106,44 @@ try {
     assert.ok(found?.exactToday.length, `Lilith ${aspect} must be calculated for approved-source selection`);
     assert(Math.abs(Date.parse(found.exactToday[0]) - Date.parse(eventAt)) < 2000);
     assert.equal(peaks.some(item => item.id === 'moon-square-lilith'), false);
+  }
+  // Non-exact approved soft contacts must pass the same app orb gate as exacts.
+  for (const [eventAt, reference, aspect, angle, direction] of [
+    ["2026-03-09T00:30:00Z", "2026-03-08T23:30:00Z", "trine", 120, "applying"],
+    ["2026-11-01T23:30:00Z", "2026-11-02T00:30:00Z", "sextile", 60, "separating"]
+  ]) {
+    const natalLongitude = ((longitude("Moon", eventAt) - angle) % 360 + 360) % 360;
+    const peaks = await ephemeris.natalDailyTransitPeaksFor(["Moon"], [{ planet: "Lilith", longitude: natalLongitude }], reference, "UTC");
+    const found = peaks.find(item => item.id === `moon-${aspect}-lilith`);
+    assert.equal(found.exactToday.length, 0);
+    assert.equal(found.direction, direction);
+    assert(found.orbDegrees < 1);
+    assert.notEqual(daily.personalDailyPriority(found), null);
+    const sky = await ephemeris.getAstrodienstSky({ label: "Synthetic", latitude: 0, longitude: 0, timeZone: "UTC" }, new Date(reference));
+    const target = { planet: "Lilith", longitude: natalLongitude, sign: "Aries", degree: 0, glyph: "" };
+    assert(app.buildNatalTransitItems(sky.positions.filter(p => p.planet === "Moon"), [target], 0, "UTC", peaks).some(item => item.id === found.id),
+      `The app must retain ${direction} Lilith ${aspect} contacts without an exact-today bypass`);
+    const squareTarget = { ...target, longitude: ((longitude("Moon", reference) - 90) % 360 + 360) % 360 };
+    assert.equal(app.buildNatalTransitItems(sky.positions.filter(p => p.planet === "Moon"), [squareTarget], 0, "UTC").length, 0);
+  }
+  // Full calculated rankings explain the recovery fixture's selected-day change.
+  const birthLocation = { label: "New York, NY", latitude: 40.7128, longitude: -74.006, timeZone: "America/New_York" };
+  const natalSky = await ephemeris.getAstrodienstSky(birthLocation, new Date("1990-01-02T17:00:00Z"));
+  const targets = app.natalTransitTargets(natalSky, true);
+  for (const [location, reference, expected] of [
+    [birthLocation, "2027-12-07T17:00:00Z", ["moon-square-jupiter", "moon-square-uranus", "moon-sextile-venus", "moon-trine-lilith", "lilith-square-pluto"]],
+    [{ label: "Honolulu, HI", latitude: 21.3069, longitude: -157.8583, timeZone: "Pacific/Honolulu" }, "2027-12-07T22:00:00Z", ["moon-square-jupiter", "moon-square-uranus", "moon-sextile-venus", "lilith-square-pluto"]]
+  ]) {
+    const sky = await ephemeris.getAstrodienstSky(location, new Date(reference));
+    const peaks = await ephemeris.natalDailyTransitPeaksFor(sky.positions.map(p => p.planet), targets.map(p => ({ planet: p.planet, longitude: app.personalTransitLongitude(p) })), reference, location.timeZone);
+    const contacts = app.buildNatalTransitItems(sky.positions, targets, 0, location.timeZone, peaks)
+      .filter(item => daily.personalDailyPriority(item.dailyPeak) !== null).sort(daily.comparePersonalDailyTransits);
+    const grouped = app.groupPersonalTransitContacts(contacts);
+    assert.deepEqual(grouped.slice(0, expected.length).map(group => group[0].id), expected);
+    const selected = grouped.slice(0, 4).flat().map(item => item.id);
+    assert.equal(selected.includes("lilith-square-pluto"), location.timeZone === "Pacific/Honolulu");
+    assert.equal(selected.includes("moon-trine-lilith"), location.timeZone === "America/New_York");
+    assert.equal(grouped.slice(0, 4).length, 4);
   }
   // At midnight a contact belongs exclusively to the next civil date.
   const midnight = "2026-10-10T04:00:00Z";
