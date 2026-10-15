@@ -36,6 +36,22 @@ assert.equal(facts.slotValues.sign, "Aquarius");
 assert.match(facts.slotValues.entryDate, /November 19, 2024/u);
 assert.match(facts.slotValues.stayLength, /years/u);
 
+for (const planet of ["Mercury", "Venus", "Mars", "Jupiter", "Saturn", "Uranus", "Neptune", "Pluto", "Chiron"]) {
+  for (const motion of ["direct", "retrograde"]) {
+    const calculated = skyArticleEditionFactsFromSnapshot({ ...snapshot, positions: [{
+      ...snapshot.positions[0], planet, motion
+    }] }, planet, "ingress-essay-v2");
+    assert.equal(calculated.slotValues.articleTitle, `${planet}${motion === "retrograde" ? " Rx" : ""} in Aquarius 2024`);
+  }
+}
+for (const planet of ["Sun", "Moon", "Lilith", "North Node", "South Node"]) {
+  const calculated = skyArticleEditionFactsFromSnapshot({ ...snapshot, positions: [{
+    ...snapshot.positions[0], planet, motion: planet === "Sun" || planet === "Moon" ? "direct" : "retrograde"
+  }] }, planet, "ingress-essay-v2");
+  assert.doesNotMatch(calculated.slotValues.articleTitle, /\bRx\b/u, "Background motion does not add an Rx title.");
+  if (planet === "Sun") assert.equal(calculated.slotValues.articleTitle, "Aquarius Season 2024");
+}
+
 assert.throws(
   () => skyArticleEditionFactsFromSnapshot({ ...snapshot, positions: [] }, "pluto"),
   /not present/u
