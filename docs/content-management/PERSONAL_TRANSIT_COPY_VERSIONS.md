@@ -67,3 +67,28 @@ new group-key creation and Lilith admission. It is part of `test:content-studio-
 reopened editor and preserved audiences at mobile and desktop sizes in both themes.
 Source and shipped renderer receipt parity remain covered by the existing transit
 receipt suite. Fixture success is not evidence that production content changed.
+
+## Bundle allocation
+
+Independent npm-ci builds compare main `518b75279` with the integrated candidate,
+using the Visual smoke workflow's identical synthetic Supabase configuration.
+
+| Configuration and gzip bytes | Main | Candidate | Added | Limit | Remaining |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| Default CI app startup | 517800 | 518081 | 281 | 518200 | 119 |
+| Default CI reader startup | 572942 | 573223 | 281 | 573350 | 127 |
+| Default CI all JavaScript | 3625381 | 3627176 | 1795 | 3627700 | 524 |
+| Browser app startup | 517796 | 518097 | 301 | 518200 | 103 |
+| Browser reader startup | 572938 | 573239 | 301 | 573350 | 111 |
+| Browser all JavaScript | 3625501 | 3627258 | 1757 | 3627700 | 442 |
+
+Both startup limits increase by 300 bytes. The browser configuration's 301-byte
+delta fits because the baseline already had 104 app-startup bytes and 112 reader-
+startup bytes of headroom. The aggregate limit increases by 2000 bytes. No delta
+is rounded, and the same limits cover both configurations.
+
+The allocation covers checked writing versions, retained source integrity and the
+native CSV create/publication path. There are no new dependencies or bundled owner
+passages. CSS remains 119040 bytes; all other chunk, dependency, source-payload and
+runtime performance limits remain unchanged. Final release integration still
+requires its exact-head builds and checks.

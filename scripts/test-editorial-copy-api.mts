@@ -24,6 +24,9 @@ try{
   {sections:{byMode:{feed:{summary:'CONFIRMED · internal-batch'},in_depth:{summary:'REVIEWED · internal-batch'}}}},
   {sections:{articleHoroscopes:{introduction:'Drafting notes: do not publish.'}}},
   {sections:{packageDraft:{body_you:'Paragraph. (Engine note: skip ruler.)'}}},
+  {sections:{packageRecord:{body_you_alternate:'Drafting notes: revise this later.'}}},
+  {sections:{packageRecord:{body_they_alternate:'Paragraph. (Engine note: skip ruler.)'}}},
+  {sections:{packageRecord:{alternate_headline:'REVIEWED · internal-batch'}}},
   {sections:{packageRecord:{body_they:'{{risingBlocks: generate twelve sections}}'}}}
  ]){
   const result=await invoke(generated,'PATCH',{id,expectedUpdatedAt,...payload});
