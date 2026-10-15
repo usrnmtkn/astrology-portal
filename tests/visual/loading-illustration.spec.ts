@@ -147,9 +147,9 @@ test('opening a Sky Placement article from a revealed reading does not replay th
   await expect(page.getByText('Loading reading…', { exact: true })).toHaveCount(0);
 });
 
-for (const theme of ['light', 'dark']) for (const reducedMotion of ['no-preference', 'reduce'] as const) for (const choice of ['system', 'on', 'off'] as const) {
-  test(`compact report moon keeps inline sizing in ${theme} with ${reducedMotion} and ${choice}`, async ({ page }, info) => {
-    await page.setViewportSize({ width: 390, height: 844 });
+for (const width of [390, 1440]) for (const theme of ['light', 'dark']) for (const reducedMotion of ['no-preference', 'reduce'] as const) for (const choice of ['system', 'on', 'off'] as const) {
+  test(`compact report moon keeps inline sizing at ${width} in ${theme} with ${reducedMotion} and ${choice}`, async ({ page }, info) => {
+    await page.setViewportSize({ width, height: 844 });
     await page.emulateMedia({ reducedMotion });
     await prepare(page, theme);
     await page.addInitScript(value => localStorage.setItem('tldrastro:pageAnimations', value), choice);
@@ -174,6 +174,9 @@ for (const theme of ['light', 'dark']) for (const reducedMotion of ['no-preferen
       await expect(moon).toHaveCSS('color', theme === 'dark' ? 'rgb(236, 238, 242)' : 'rgb(28, 31, 38)');
       const shadow = moon.locator('.loading-moon__shadow');
       const bounds = await loading.boundingBox();
+      expect(bounds!.x).toBeGreaterThanOrEqual(0);
+      expect(bounds!.x + bounds!.width).toBeLessThanOrEqual(width);
+      expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
       if (choice === 'off' || (choice === 'system' && reducedMotion === 'reduce')) {
         await expect(shadow).toHaveCSS('animation-name', 'none');
         await expect(shadow).toHaveCSS('transform', 'matrix(1, 0, 0, 1, 8, 0)');
