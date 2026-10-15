@@ -1,3 +1,8 @@
+/** Half-open key ranges cover all present and future families. Keep individual
+ * keyset pagination: a growing range must never truncate the complete ledger. */
+export const publicationLedgerBoundaries = [null, "authored/compat-pair/s", "authored/transit-aspect/s",
+  "authored/transit-house-sign/s", "fallback-hook/n", "sky-placement", null] as const;
+
 import { isRetiredCompositionKey } from "./fallbackArchitectureV3/resolver/retiredCompositions.mjs";
 import { announceContentUpdate } from "../services/contentUpdateSignal.js";
 /** Shared lifecycle identity. A retirement survives deletion of its editable row. */

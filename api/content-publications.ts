@@ -1,4 +1,5 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
+import { publicationLedgerBoundaries } from "../apps/web/src/content/contentPublicationState.js";
 import { canonicalPublicationLedger, publicationLedgerTag, publicationLedgerTagMatches } from "../apps/web/src/services/publicationLedgerTransport.js";
 
 /** Aggregate the existing anonymous reads close to the database. Every request
@@ -23,7 +24,7 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
     if (!base || !anonymous) throw new Error("Public reader configuration unavailable.");
     const headers: Record<string, string> = { apikey: key };
     if (!key.startsWith("sb_publishable_")) headers.authorization = `Bearer ${key}`;
-    const boundaries = [null, "authored/compat-pair/s", "authored/transit-house-sign/m", "fallback-hook/n", null];
+    const boundaries = publicationLedgerBoundaries;
     const signal = AbortSignal.timeout(7000);
     const pages = await Promise.all(boundaries.slice(0, -1).map(async (lower, index) => {
       const upper = boundaries[index + 1], records = [];

@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import handler from '../api/content-publications';
 import { canonicalPublicationLedger, loadPublicationLedgerFromApi } from '../apps/web/src/services/publicationLedgerTransport';
 
-const keys = ['!', '__content-publication-ledger/v1', 'authored/compat-pair/s', 'authored/transit-house-sign/m', 'fallback-hook/n', 'zz/future',
+const keys = ['!', '__content-publication-ledger/v1', 'authored/compat-pair/s', 'authored/transit-aspect/s', 'authored/transit-house-sign/s', 'fallback-hook/n', 'sky-placement', 'zz/future',
   ...Array.from({ length: 2010 }, (_, i) => `authored/compat-pair/a-${String(i).padStart(4, '0')}`)].sort();
 const originalRows = keys.map((content_key, i) => ({ content_key, state: i % 17 === 0 ? 'retired' : 'live', revision: 1,
   row_id: content_key, row_updated_at: '2026-09-21T16:00:00.123456Z', updated_at: '2026-09-21T16:00:00.123456Z' }));
@@ -50,17 +50,17 @@ try {
   held = new Promise<void>(resolve => { release = resolve; });
   const pending = invoke();
   await Promise.resolve();
-  assert.equal(requests.length, 4, 'All disjoint ranges start concurrently');
+  assert.equal(requests.length, 6, 'All disjoint ranges start concurrently');
   release(); held = null;
   const first = await pending;
-  assert.equal(first.status, 200); assert.equal(requests.length, 6);
+  assert.equal(first.status, 200); assert.equal(requests.length, 8);
   assert.equal(first.headers['cache-control'], 'private, no-store');
   assert.deepEqual(JSON.parse(first.body!).publications, canonicalPublicationLedger(rows));
   const tag = first.headers.etag;
   requests = [];
   const unchanged = await invoke(tag);
   assert.equal(unchanged.status, 304); assert.equal(unchanged.body, undefined);
-  assert.equal(requests.length, 6, '304 still requires a complete fresh database read');
+  assert.equal(requests.length, 8, '304 still requires a complete fresh database read');
   assert.equal((await invoke(`W/${tag}`)).status, 304, 'GET uses weak ETag comparison after HTTP compression');
   compressed = true;
   const clientRows = await loadPublicationLedgerFromApi([]);
@@ -73,6 +73,19 @@ try {
   assert.equal(current.find(row => row.content_key === rows[2].content_key)?.state, 'retired');
   rows.push({ ...originalRows[0], content_key: 'zz/new-family' });
   assert.equal((await invoke(changed.headers.etag)).status, 200, 'Future key families invalidate the whole-set tag');
+  {
+    const savedRows = rows;
+    rows = ['authored/compat-pair/a-', 'authored/transit-aspect/a-',
+      'authored/transit-house-sign/a-', 'authored/transit-house-sign/t-',
+      'fallback-hook/p-', 'sky-placement/article/'].flatMap(prefix =>
+        Array.from({ length: 700 }, (_, i) => ({ ...originalRows[0], content_key: `${prefix}${String(i).padStart(4, '0')}` })));
+    requests = [];
+    const balanced = await invoke();
+    assert.equal(balanced.status, 200);
+    assert.equal(requests.length, 6, 'Balanced families return every publication in one concurrent wave');
+    assert.deepEqual(JSON.parse(balanced.body!).publications, canonicalPublicationLedger(rows));
+    rows = savedRows;
+  }
   for (failure of ['network', 'invalid', 'cursor']) {
     const bad = await invoke(tag);
     assert.equal(bad.status, 503, `${failure}: never return a partial ledger`);
