@@ -1,5 +1,5 @@
 import { AdminSelect, AdminDisclosureSummary } from "./AdminNativeControls";
-import { StudioButton, StudioInput } from "./StudioControls";
+import { StudioButton, StudioInput, StudioTextarea } from "./StudioControls";
 import { Fragment, lazy, Suspense, useEffect, useState } from "react";
 import { renderTransitNatalPreview, transitNatalExactContentKey, type TransitNatalSelection, type TransitNatalReadingContext, type TransitPassageSource } from "./transitNatalSources";
 import { subscribeToContentUpdates } from "../../web/src/services/contentUpdateSignal";
@@ -12,6 +12,15 @@ import { containedDisclosure } from "./studio-ds/recipes";
 import { transitNatalExactActionLabel, transitNatalLiveServingSource, transitSourceEditScope, transitExactPassageState, type TransitExactPassageState } from "./transitNatalEditorScope";
 
 const PersonalTransitAiWriter = lazy(() => import("./PersonalTransitAiWriter"));
+
+export function RetainedCopy({ you, friend }: { you: string; friend: string }) {
+  return <>{[[you, "You"], [friend, "Friend"]].filter(([text]) => text).map(([text, audience]) =>
+    <label className="admin-review-copy-editor studio-surface" key={audience}>
+      <span>Retained alternate · {audience}</span>
+      <StudioTextarea aria-label={`Retained alternate · ${audience}`} value={text} readOnly />
+      <small className="admin-field-hint">Preserved from the published version. The primary wording is edited above.</small>
+    </label>)}</>;
+}
 
 type Preview = ReturnType<typeof renderTransitNatalPreview>;
 
@@ -123,9 +132,9 @@ export default function TransitNatalReaderPreview({ selection, voice, secret, on
   const [revision, setRevision] = useState(0);
   const [state, setState] = useState<{ preview: Preview | null; error: string | null; loading: boolean }>({ preview: null, error: null, loading: true });
   useEffect(() => subscribeToContentUpdates(() => setRevision((value) => value + 1)), []);
-  const { planet, sign, aspect, natalPoint, pass, variant, isRetrograde, window: timing } = selection;
+  const { planet, sign, aspect, natalPoint, pass, variant, copyVersion, isRetrograde, window: timing } = selection;
   const exactKey = transitNatalExactContentKey(selection);
-  const identity = JSON.stringify({ planet, sign, aspect, natalPoint, pass, variant, isRetrograde, window: timing, voice });
+  const identity = JSON.stringify({ planet, sign, aspect, natalPoint, pass, variant, copyVersion, isRetrograde, window: timing, voice });
   const [loadedIdentity, setLoadedIdentity] = useState("");
   useEffect(() => {
     let cancelled = false;
@@ -212,6 +221,9 @@ export function TransitNatalPreviewOptions({ context, onChange }: {
           <AdminDisclosureSummary>Reading preview options</AdminDisclosureSummary>
           <p className="admin-field-hint">These are example inputs. Match the calculated reading when comparing its exact passage.</p>
           <div className="admin-natal-placement-selectors admin-filter-form">
+            <label><span>Writing version</span><AdminSelect aria-label="Transit writing version" value={context.copyVersion ?? "primary"} onChange={event => onChange({ copyVersion: event.target.value as "primary" | "alternate" })}>
+              <option value="primary">Primary</option><option value="alternate">Retained alternate</option>
+            </AdminSelect></label>
             <label><span>Copy variant</span><AdminSelect aria-label="Transit copy variant" value={context.variant ?? ""} onChange={event => onChange({ variant: event.target.value ? Number(event.target.value) : undefined })}>
               <option value="">Default</option>{[1, 2, 3, 4].map(value => <option key={value} value={value}>{value}</option>)}
             </AdminSelect></label>

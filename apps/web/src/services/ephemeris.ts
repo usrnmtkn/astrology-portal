@@ -2434,7 +2434,7 @@ export async function natalDailyTransitPeaksFor(
       if (!Number.isFinite(target.longitude)) continue;
       const natalLongitude = normalizeDegrees(target.longitude + (planet === "South Node" ? 180 : 0));
       for (const aspect of transitAspectDefinitions) {
-        if (/lilith/i.test(target.planet) && ![0, 180].includes(aspect.exact)) continue;
+        if (/lilith/i.test(target.planet) && ![0, 60, 120, 180].includes(aspect.exact)) continue;
         const residualsAt = (date: Date) => {
           const directed = shortestAngleDistance(longitudeAt(date) - natalLongitude);
           return aspect.exact === 0 || aspect.exact === 180

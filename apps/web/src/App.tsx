@@ -5903,10 +5903,9 @@ function transitAspectOrb(definition: (typeof transitAspectDefinitions)[number],
   const configuredOrb = transitToNatalOrbLimit(transitPosition.planet);
   const baseOrb = configuredOrb > 0 ? Math.min(definition.orb, configuredOrb) : definition.orb;
 
-  // Walker canon (owner 2026-07-27): natal Black Moon Lilith takes conjunctions and
-  // oppositions only, within a 3-degree orb. Other contacts never fire.
+  // Owner-approved natal Lilith soft contacts share the existing 3-degree limit.
   if (/lilith/i.test(natalPosition.planet)) {
-    if (!["conjunction", "opposition"].includes(definition.type)) return -1;
+    if (!["conjunction", "opposition", "trine", "sextile"].includes(definition.type)) return -1;
     return Math.min(baseOrb, 3);
   }
 

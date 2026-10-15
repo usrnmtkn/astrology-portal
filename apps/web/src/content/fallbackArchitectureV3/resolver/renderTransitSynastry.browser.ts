@@ -35,6 +35,7 @@ import { isGovernedReaderEligible, synastryReaderTier, transitReaderTier, type S
 import { normalizeLunationSign } from "./lunationNormalization.mjs";
 import { sharedLunationEclipseSectionKey } from "./lunationEclipseSectionKeys.mjs";
 import { sha256Text } from "./contentIntegrity.mjs";
+import { personalTransitCopyVersion } from "./personalTransitCopyVersions.mjs";
 
 export interface AuthoredCard {
   contentKey: string;
@@ -51,6 +52,10 @@ export interface AuthoredCard {
   body?: string;
   body_you?: string;
   body_they?: string;
+  body_you_alternate?: string;
+  body_they_alternate?: string;
+  alternate_headline?: string;
+  alternate_copy_sha256?: string;
   preview_note?: string;
   core_theme?: string;
   sign_jurisdiction?: string;
@@ -96,7 +101,7 @@ export interface TransitLibFile { authoredCards: AuthoredCard[] }
 export interface TransitRendererOpts { allowUnreviewed?: boolean; blockedContentKeys?: readonly string[] }
 
 export interface TransitHouseFacts { planet: string; house: number; sign?: string | null; window?: string | null; voice?: string; variant?: number | null; events?: { natal: string; natalHouse?: number | null; aspect: string; window?: string | null }[]; isRetrograde?: boolean }
-export interface TransitAspectFacts { transiting: string; natal: string; aspect: string; variant?: string | number | null; pass?: 1 | 2 | 3 | number | null; sign?: string | null; transitHouse?: string | number | null; natalHouse?: string | number | null; isRetrograde?: boolean; window?: string | null; voice?: string }
+export interface TransitAspectFacts { copyVersion?: "primary" | "alternate"; transiting: string; natal: string; aspect: string; variant?: string | number | null; pass?: 1 | 2 | 3 | number | null; sign?: string | null; transitHouse?: string | number | null; natalHouse?: string | number | null; isRetrograde?: boolean; window?: string | null; voice?: string }
 export interface TransitRetroFacts { planet: string; sign?: string | null; window?: string | null; format?: "card" | "article" }
 export interface TransitLabelFacts { transiting: string; natal: string; aspect: string; window?: string | null }
 export interface DailyGlanceFacts {
@@ -985,15 +990,19 @@ export function createTransitSynastryRenderer(
     return { headline: fill((v === "you" ? T.headline : (T.headline_they ?? T.headline)) ?? "", ctx), body, parts: [body], templateKey: T.contentKey };
   }
 
-  function renderTransitAspect({ transiting, natal, aspect, variant, pass, sign, transitHouse, natalHouse, isRetrograde, window: win, voice = "you" }: TransitAspectFacts): TransitRenderResult {
+  function renderTransitAspect({ transiting, natal, aspect, copyVersion = "primary", variant, pass, sign, transitHouse, natalHouse, isRetrograde, window: win, voice = "you" }: TransitAspectFacts): TransitRenderResult {
     // voice: "you" (reader) or a friend's display name. Friend views use the same approved
     // authored unit, adapted deterministically to third person when no authored friend body exists.
     const v = voice === "you" ? "you" : "they";
     const otherPoss = v === "they" ? "their" : null;
     const g = GROUP[aspect] ?? aspect; // accepts group names directly
-  // Owner rulings 2026-07-27/28: Lilith renders on conjunction/opposition only (Walker canon);
-  // node cards are conjunction-focused. Other contacts raise SOURCE_GAP and the surface hides.
-  if (natal === "lilith" && aspect !== "conjunction" && aspect !== "opposition") throw new SourceGapError(`SOURCE_GAP: lilith renders conjunction/opposition only (got ${aspect})`);
+  // Lilith conjunction/opposition remains the baseline. The owner's v21 approval
+  // also permits soft contacts when their saved source has explicit owner approval.
+  if (natal === "lilith" && aspect !== "conjunction" && aspect !== "opposition") {
+    const approvedSoft = ["trine", "sextile", "soft"].includes(aspect)
+      && [aspect, "soft"].some(kind => { const source = card(`authored/transit-aspect/${transiting}/lilith/${kind}`); return source && transitReaderTier(source) === "exact-owner-approved"; });
+    if (!approvedSoft) throw new SourceGapError(`SOURCE_GAP: lilith needs an exact owner-approved soft passage (got ${aspect})`);
+  }
   // Node cards are conjunction-focused (owner 2026-07-28): authored rows exist only for
   // conjunctions; other node aspects fall through to the legacy fallback (sky pipeline uses them).
 
@@ -1029,7 +1038,8 @@ export function createTransitSynastryRenderer(
     if (FAST.has(transiting) && FAST.has(natal)) push(natal, transiting); // mirror rule (Batch 4)
     tryKeys.push(`authored/transit-aspect/any/${natal}/${g}`, `authored/transit-aspect/any/${natal}/conjunction`);
     for (const k of prioritizeExactTransitSources(tryKeys, transiting, natal, aspect)) {
-    const c = card(k);
+    const sourceCard = card(k);
+    const c = sourceCard ? personalTransitCopyVersion(sourceCard, copyVersion, v) as AuthoredCard : null;
     if (c) {
       // v2 aspect library (owner-approved 2026-07-27/28): authored bodies carry
       // {{aspectWord}} and {{untilDate}} slots so the closer names the exact aspect and window.
@@ -1069,7 +1079,7 @@ export function createTransitSynastryRenderer(
         : `${title(transiting)} ${{ conjunction: "conjunct", opposition: "opposite" }[aspect] ?? aspect} their ${title(natal)}`;
       const passHook = pass ? hookVoice(`fallback-hook/transit-pass/${pass}`, v) : null;
       if (passHook) { contributions.push({ text: passHook, keys: [`fallback-hook/transit-pass/${pass}`], start: aBody.length }); aBody = `${aBody}\n\n${passHook}`; }
-      return { ...passageSources(aBody, contributions, (key: string) => passageSource(card(key) ?? hooks.get(key), v), v === "you" && c.headline ? [passageSource(c, v, "headline")] : []), headline: authoredHeadline, body: aBody, parts: aBody.split("\n\n"), templateKey: "authored/transit-aspect", contentKey: c.contentKey, provenanceTier: transitReaderTier(c) ?? undefined };
+      return { ...passageSources(aBody, contributions, (key: string) => passageSource(card(key) ?? hooks.get(key), v, copyVersion === "alternate" && key === c.contentKey ? (v === "you" ? "body_you_alternate" : "body_they_alternate") : undefined), v === "you" && c.headline ? [passageSource(c, v, copyVersion === "alternate" ? "alternate_headline" : "headline")] : []), headline: authoredHeadline, body: aBody, parts: aBody.split("\n\n"), templateKey: "authored/transit-aspect", contentKey: c.contentKey, provenanceTier: transitReaderTier(c) ?? undefined };
     }
   }
     // fallback template

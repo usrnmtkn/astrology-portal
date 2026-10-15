@@ -30,6 +30,7 @@ export function normalizeTransitNatalPreviewInput(value: unknown) {
     || input.voice !== undefined && (typeof input.voice !== "string" || input.voice.length > 60)) {
     throw new AdminHttpError(400, "Choose a valid transit and natal point.");
   }
+  if (input.copyVersion !== undefined && !["primary", "alternate"].includes(input.copyVersion)) throw new AdminHttpError(400, "Invalid writing version.");
   for (const field of ["pass", "variant"]) {
     if (input[field] !== undefined && (!Number.isInteger(input[field]) || input[field] < 1 || input[field] > 100)) throw new AdminHttpError(400, `Invalid ${field}.`);
   }
@@ -39,6 +40,7 @@ export function normalizeTransitNatalPreviewInput(value: unknown) {
     ...(input.draftStarter === true ? { draftStarter: true } : {}),
     ...(input.pass !== undefined ? { pass: input.pass as number } : {}),
     ...(input.variant !== undefined ? { variant: input.variant as number } : {}),
+    ...(input.copyVersion !== undefined ? { copyVersion: input.copyVersion as "primary" | "alternate" } : {}),
     ...(input.isRetrograde !== undefined ? { isRetrograde: input.isRetrograde as boolean } : {}),
     ...(input.window !== undefined ? { window: input.window as string } : {}),
     ...(transitNatalHouses.some(house => house === String(input.transitHouse)) ? { transitHouse: String(input.transitHouse) as typeof transitNatalHouses[number] } : {}),

@@ -14,7 +14,7 @@ function isTransitAspectContactKey(parts: string[]) {
   return transitBodies.has(transiting)
     && natalPoints.has(natal)
     && aspects.has(aspect)
-    && (natal !== "lilith" || aspect === "conjunction" || aspect === "opposition")
+    && (natal !== "lilith" || aspect !== "square")
     && !isEligibleTransitReturn(transiting, natal, aspect);
 }
 
@@ -32,6 +32,14 @@ export function isDynamicTransitNatalExactKey(contentKey: string) {
   if (parts.length !== 8) return false;
   return isTransitAspectContactKey(parts.slice(0, 5))
     && transitAspectSituationKey(parts[2], parts[3], parts[4], parts[5], parts[6], parts[7]) === contentKey;
+}
+
+export function isDynamicTransitNatalLibraryKey(contentKey: string) {
+  const parts = contentKey.split("/");
+  return isDynamicTransitNatalExactKey(contentKey) || parts.length === 5
+    && parts[0] === "authored" && parts[1] === "transit-aspect"
+    && transitBodies.has(parts[2]) && natalPoints.has(parts[3])
+    && ["hard", "soft"].includes(parts[4]);
 }
 
 export { transitAspectSituationKey };

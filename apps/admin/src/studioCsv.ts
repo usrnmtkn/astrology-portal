@@ -1,4 +1,5 @@
 /** Shared CSV contract. No browser, storage, or provider dependencies. */
+import { isDynamicTransitNatalLibraryKey } from "../../web/src/content/transitNatalIdentity.js";
 export type CsvContentRow = {
   id: string; content_key: string; updated_at?: string | null; event_type?: string | null;
   block_type?: string | null; status: string; headline?: string | null; summary?: string | null;
@@ -10,6 +11,15 @@ export const csvFormat = 'content-studio-csv/v1';
 export const csvIdentityColumns = ['format', 'content_id', 'content_key', 'saved_version', 'content_type'];
 export const csvMaxBytes = 10 * 1024 * 1024;
 export const csvMaxRows = 5000;
+export function csvRetainsTransitAlternate(record: CsvRecord): boolean {
+  const authored = (record.primary_owner_authored ?? '').trim().toLowerCase();
+  if (!['', 'yes', 'no'].includes(authored)) throw new Error('The primary_owner_authored column accepts yes or no.');
+  if (authored === 'yes' && !/^thread:[a-f0-9-]{36}$/u.test(record.owner_source_uri ?? '')) throw new Error('Owner authorship requires its exact source thread.');
+  const value = (record.keep_current_as_alternate ?? '').trim().toLowerCase();
+  if (!['', 'yes', 'no'].includes(value)) throw new Error('The keep_current_as_alternate column accepts yes or no.');
+  if (value === 'yes' && !record.content_key.startsWith('authored/transit-aspect/')) throw new Error('Only personal transit aspect rows support an alternate.');
+  return value === 'yes';
+}
 export function csvWantsPublication(record: CsvRecord): boolean {
   const value = (record.publish ?? '').trim().toLowerCase();
   if (!['', 'yes', 'no'].includes(value)) throw new Error('The publish column accepts yes or no. Leave it blank to save a draft.');
@@ -44,10 +54,11 @@ export function csvTextFields(row: CsvContentRow): Field[] {
     const declared = Array.isArray(base.studio_editable_fields) ? base.studio_editable_fields.map((field: any) => field?.path).filter((path: unknown): path is string => typeof path === 'string' && safePath(path)) : [];
     // Explicit Studio definitions take precedence over generated reader mirrors.
     const paths = declared.length ? declared : copyFields.filter(key => typeof record[key] === 'string');
+    if (row.content_key.startsWith('authored/transit-aspect/')) for (const field of ['body_you', 'body_they']) if (!paths.includes(field)) paths.push(field);
     if (record.render_policy === 'sky-placement-continuous-v2' && !declared.length) {
       for (const field of ['body', 'body_you']) { const index = paths.indexOf(field); if (index >= 0) paths.splice(index, 1); }
     }
-    return [...new Set(paths)].filter(path => typeof at(record, path) === 'string').map(path => ({ column: path === 'headline' ? 'title' : path, path, value: at(record, path) as string, package: true }));
+    return [...new Set(paths)].filter(path => typeof at(record, path) === 'string' || row.content_key.startsWith('authored/transit-aspect/') && ['body_you', 'body_they'].includes(path)).map(path => ({ column: path === 'headline' ? 'title' : path, path, value: (typeof at(record, path) === 'string' ? at(record, path) : sections[path] ?? (path === 'body_you' ? row.body : '') ?? '') as string, package: true }));
   }
   const fields: Field[] = ['headline', 'summary', 'body'].map(path => ({ column: path === 'headline' ? 'title' : path, path, value: String(at(row, path) ?? ''), package: false }));
   const addSection = (path: string, column: string) => {
@@ -74,6 +85,7 @@ export function csvRecordForRow(row: CsvContentRow): CsvRecord {
   return Object.fromEntries([
     ['format', csvFormat], ['content_id', row.id], ['content_key', row.content_key],
     ['saved_version', `v:${row.updated_at}`], ['content_type', csvContentType(row)], ['publish', 'no'],
+    ...(row.content_key.startsWith('authored/transit-aspect/') ? [['keep_current_as_alternate', 'no'], ['primary_owner_authored', 'no'], ['owner_source_uri', '']] : []),
     ...fields.map(field => [field.column, field.value]),
   ]);
 }
@@ -120,6 +132,7 @@ export function readStudioCsv(input: string): CsvRecord[] {
     const record = Object.fromEntries(columns.map((column, i) => [column, values[i]]));
     if (record.format !== csvFormat || !record.content_id || !record.content_key || !record.saved_version.startsWith('v:')) throw new Error(`CSV row ${index + 2} has invalid identity fields.`);
     csvWantsPublication(record);
+    csvRetainsTransitAlternate(record);
     return record;
   });
   if (new Set(records.map(record => record.content_id)).size !== records.length) throw new Error('Each content ID may appear only once. Remove duplicate rows.');
@@ -128,6 +141,7 @@ export function readStudioCsv(input: string): CsvRecord[] {
 }
 export function csvChanges(row: CsvContentRow, imported: CsvRecord) {
   csvWantsPublication(imported);
+  csvRetainsTransitAlternate(imported);
   if (JSON.stringify(imported).length > 2_000_000) throw new Error('This row exceeds the 2 MB import limit. Edit it in Studio.');
   const current = csvRecordForRow(row);
   for (const column of csvIdentityColumns) {
@@ -143,7 +157,7 @@ export function csvChanges(row: CsvContentRow, imported: CsvRecord) {
 export function csvDraftPatch(row: CsvContentRow, imported: CsvRecord) {
   const changes = csvChanges(row, imported);
   if (!changes.length) throw new Error('This CSV row has no text changes.');
-  const patch: Record<string, any> = { status: 'DRAFT' };
+  const patch: Record<string, any> = { status: 'DRAFT', ...(csvRetainsTransitAlternate(imported) ? { preserveCurrentTransitAsAlternate: true } : {}) };
   const sections = structuredClone(row.sections ?? {}) as Record<string, any>;
   if (changes.some(field => field.package)) {
     const proposal = { ...structuredClone(object(sections.packageRecord)), ...structuredClone(object(sections.packageDraft)) };
@@ -157,4 +171,28 @@ export function csvDraftPatch(row: CsvContentRow, imported: CsvRecord) {
   if (sections && typeof sections === 'object' && !Array.isArray(sections)) sections.contentStudioReview = null;
   if (sections && typeof sections === 'object') patch.sections = sections;
   return patch;
+}
+
+/** New rows have a narrow, explicit identity and are always saved as drafts first. */
+export function newTransitCsvRow(record: CsvRecord): CsvContentRow {
+  if (record.content_id !== `new:${record.content_key}` || record.saved_version !== 'v:new'
+    || record.content_type !== 'transit-to-natal-aspect' || !isDynamicTransitNatalLibraryKey(record.content_key)) throw new Error('Invalid new personal transit row.');
+  if (csvRetainsTransitAlternate(record)) throw new Error('A new row has no current wording to retain.');
+  return { id: record.content_id, content_key: record.content_key, updated_at: 'new', status: 'DRAFT',
+    event_type: 'transit-to-natal-aspect', headline: '', body: '',
+    sections: { packageRecord: { contentKey: record.content_key, content_role: 'full_copy',
+      reader_only: true, render_policy: 'personal-transit-exact-v1', review_status: 'needs_review',
+      headline: '', body: '', body_you: '', body_they: '' } } };
+}
+
+export function csvCreateTransitBody(record: CsvRecord) {
+  const row = newTransitCsvRow(record);
+  const patch = csvDraftPatch(row, record);
+  const source = patch.sections.packageDraft;
+  if ((record.primary_owner_authored ?? '').trim().toLowerCase() === 'yes') { source.owner_authored = true; source.body_you_authorship = 'owner_authored'; source.body_they_authorship = 'owner_authored'; }
+  return { contentKey: row.content_key, surface: 'you', mode: 'feed', eventType: row.event_type,
+    blockType: 'fallback_hook', status: 'DRAFT', provider: 'tldrastro-fallback-architecture-v3',
+    headline: source.headline, body: source.body_you, sections: { packageRecord: source },
+    facts: { fallbackArchitectureV3: true }, sourceSnapshot: { sourcePackage: 'tldrastro-fallback-architecture-v3',
+      editorialImport: { schema: 'content-studio-csv-create/v1', imported: record } } };
 }

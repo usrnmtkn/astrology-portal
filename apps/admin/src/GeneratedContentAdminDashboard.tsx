@@ -261,6 +261,7 @@ const SkyPlacementUnwiredNotice = lazy(() => import("./SkyPlacementCompanions").
 const CompositeReviewCard = lazy(() => import("./CompositeReviewCard"));
 const StudioCsvTools = lazy(() => import('./StudioCsvTools'));
 const TransitNatalReaderPreview = lazy(() => import("./TransitNatalReaderPreview"));
+const RetainedCopy = lazy(() => import("./TransitNatalReaderPreview").then(module => ({ default: module.RetainedCopy })));
 const TransitNatalPreviewOptions = lazy(() => import("./TransitNatalReaderPreview").then(module => ({ default: module.TransitNatalPreviewOptions })));
 const TransitNatalExactSourceAction = lazy(() => import("./TransitNatalReaderPreview").then(module => ({ default: module.TransitNatalExactSourceAction })));
 const PersonalTransitAiWriter = lazy(() => import("./PersonalTransitAiWriter"));
@@ -4405,6 +4406,7 @@ export function GeneratedContentAdminDashboard() {
     setTransitReadingContext(page === "skyWriteups" && view === "transits-to-natal" ? {
       ...(params.get("pass") ? { pass: Number(params.get("pass")) } : {}),
       ...(params.get("variant") ? { variant: Number(params.get("variant")) } : {}),
+      ...(params.get("copyVersion") === "alternate" ? { copyVersion: "alternate" as const } : {}),
       ...(params.has("retrograde") ? { isRetrograde: params.get("retrograde") === "true" } : {}),
       ...(params.get("window") ? { window: params.get("window")! } : {})
     } : {});
@@ -8606,6 +8608,7 @@ export function GeneratedContentAdminDashboard() {
     if (friendsTransitAudience) params.set("audience", "friends");
     if (transitReadingContext.pass !== undefined) params.set("pass", String(transitReadingContext.pass));
     if (transitReadingContext.variant !== undefined) params.set("variant", String(transitReadingContext.variant));
+    if (transitReadingContext.copyVersion) params.set("copyVersion", transitReadingContext.copyVersion);
     if (transitReadingContext.isRetrograde !== undefined) params.set("retrograde", String(transitReadingContext.isRetrograde));
     if (transitReadingContext.window) params.set("window", transitReadingContext.window);
     setAdminHash(adminHashForPage("skyWriteups", params), "replace");
@@ -8768,7 +8771,7 @@ export function GeneratedContentAdminDashboard() {
     const context = { ...transitReadingContext, ...next };
     setTransitReadingContext(context);
     const params = new URLSearchParams(window.location.hash.split("?")[1] ?? "");
-    for (const [field, param] of [["pass", "pass"], ["variant", "variant"], ["isRetrograde", "retrograde"], ["window", "window"]] as const) {
+    for (const [field, param] of [["pass", "pass"], ["variant", "variant"], ["copyVersion", "copyVersion"], ["isRetrograde", "retrograde"], ["window", "window"]] as const) {
       if (context[field] === undefined) params.delete(param); else params.set(param, String(context[field]));
     }
     setAdminHash(adminHashForPage("skyWriteups", params), "replace");
@@ -9724,10 +9727,10 @@ export function GeneratedContentAdminDashboard() {
     }
   }
 
-  async function saveCsvRow(record: CsvRecord) {
+  async function saveCsvRow(record: CsvRecord, createBody?: Record<string, unknown>) {
     try {
       const payload = await adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[] }>(
-        '/api/admin/generated-content', secret, { method: 'PATCH', body: JSON.stringify({
+        '/api/admin/generated-content', secret, { method: createBody ? 'POST' : 'PATCH', body: JSON.stringify(createBody ?? {
           id: record.content_id, expectedUpdatedAt: record.saved_version.slice(2),
           ownerAction: 'import-csv-draft', csvRecord: record
         }) });
@@ -11117,7 +11120,7 @@ export function GeneratedContentAdminDashboard() {
                   <span>Aspect</span>
                   <AdminSelect aria-label="Write-up aspect" value={transitNatalAspect} onChange={(event) => updateTransitNatalSelection({ aspect: event.target.value as TransitNatalAspect | "" })}>
                     <option value="">Choose aspect</option>
-                    {(transitNatalPoint === "lilith" ? ["conjunction", "opposition"] : transitNatalAspects).map((aspect) => <option value={aspect} key={aspect}>{titleFromKey(aspect)}</option>)}
+                    {transitNatalAspects.filter(aspect => transitNatalPoint !== "lilith" || aspect !== "square").map((aspect) => <option value={aspect} key={aspect}>{titleFromKey(aspect)}</option>)}
                   </AdminSelect>
                 </label>
                 <label>
@@ -11965,6 +11968,9 @@ export function GeneratedContentAdminDashboard() {
               {!fallbackEditorGuidance && isAuthoredTransitAspectDraft && <small className="admin-field-hint">This is the editable Friends version of the standalone Transit to Natal write-up. Write it as its own complete passage rather than mechanically changing pronouns in the You copy.</small>}
             </label>
           )}
+          {isAuthoredTransitAspectDraft && <Suspense fallback={null}><RetainedCopy
+            you={packageFieldString(currentDraft, "body_you_alternate")}
+            friend={packageFieldString(currentDraft, "body_they_alternate")} /></Suspense>}
           {isBondEffectDraft && (
             <Suspense fallback={<PageLoading compact message="Opening the Friends page…" />}>
               <BondEffectPagePreview
