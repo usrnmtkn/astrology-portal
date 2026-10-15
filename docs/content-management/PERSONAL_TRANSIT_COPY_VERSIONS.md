@@ -70,25 +70,27 @@ receipt suite. Fixture success is not evidence that production content changed.
 
 ## Bundle allocation
 
-Independent npm-ci builds compare main `518b75279` with the integrated candidate,
-using the Visual smoke workflow's identical synthetic Supabase configuration.
+Final independent `npm ci --ignore-scripts` builds compare combined main
+`3e340e267` with runtime source `15fa8ad85`, using Node 22.20.0, npm 10.9.3,
+identical lockfiles and the Visual smoke workflow's synthetic Supabase settings.
+The browser configuration also enables natal patterns through the actual browser
+server factory. CSV creation and retained-copy fields remain in lazy modules.
 
 | Configuration and gzip bytes | Main | Candidate | Added | Limit | Remaining |
 | --- | ---: | ---: | ---: | ---: | ---: |
-| Default CI app startup | 517800 | 518081 | 281 | 518200 | 119 |
-| Default CI reader startup | 572942 | 573223 | 281 | 573350 | 127 |
-| Default CI all JavaScript | 3625381 | 3627176 | 1795 | 3627700 | 524 |
-| Browser app startup | 517796 | 518097 | 301 | 518200 | 103 |
-| Browser reader startup | 572938 | 573239 | 301 | 573350 | 111 |
-| Browser all JavaScript | 3625501 | 3627258 | 1757 | 3627700 | 442 |
+| Default CI app startup | 517795 | 518086 | 291 | 518200 | 114 |
+| Default CI reader startup | 572937 | 573228 | 291 | 573350 | 122 |
+| Default CI all JavaScript | 3625420 | 3626946 | 1526 | 3627700 | 754 |
+| Browser app startup | 517799 | 518081 | 282 | 518200 | 119 |
+| Browser reader startup | 572941 | 573223 | 282 | 573350 | 127 |
+| Browser all JavaScript | 3625402 | 3627024 | 1622 | 3627700 | 676 |
+| Standalone Admin entry | 231587 | 231689 | 102 | 231900 | 211 |
+| Standalone Admin all JavaScript | 795598 | 796949 | 1351 | 797150 | 201 |
 
-Both startup limits increase by 300 bytes. The browser configuration's 301-byte
-delta fits because the baseline already had 104 app-startup bytes and 112 reader-
-startup bytes of headroom. The aggregate limit increases by 2000 bytes. No delta
-is rounded, and the same limits cover both configurations.
-
-The allocation covers checked writing versions, retained source integrity and the
-native CSV create/publication path. There are no new dependencies or bundled owner
-passages. CSS remains 119040 bytes; all other chunk, dependency, source-payload and
-runtime performance limits remain unchanged. Final release integration still
-requires its exact-head builds and checks.
+Web startup caps increase by 300 bytes each and aggregate JavaScript by 2000.
+Standalone Admin aggregate JavaScript increases by 1500 bytes. Its entry/largest
+raw limit remains 795000: baseline 794448, candidate 794994, six bytes remaining.
+All other chunk, memory graph, dependency, source-payload and runtime performance
+limits stay unchanged. CSS remains 119040 bytes in both web configurations.
+There are no new dependencies or bundled owner passages. Final exact-head gates
+and production verification remain required.
