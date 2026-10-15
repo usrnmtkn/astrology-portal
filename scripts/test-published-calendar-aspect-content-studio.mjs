@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 import assert from "node:assert/strict";
+import { assertSkyStudioAuthority } from "./lib/assert-sky-studio-authority.mjs";
 import fs from "node:fs";
 
 const dashboard = fs.readFileSync("apps/admin/src/GeneratedContentAdminDashboard.tsx", "utf8");
@@ -10,14 +11,13 @@ const seed = fs.readFileSync("scripts/seed-published-calendar-aspect-content-stu
 const mercuryMars = JSON.parse(fs.readFileSync("packages/astro-knowledge/data/transits/mercury-sextile-mars.json", "utf8"));
 const sunMercury = JSON.parse(fs.readFileSync("packages/astro-knowledge/data/transits/sun-conjunction-mercury.json", "utf8"));
 
+assertSkyStudioAuthority(app, calendar);
 assert.match(dashboard, /contentKey\.startsWith\("sky\.aspect\."\)/u, "Published exact aspect rows must appear under Calendar Aspects.");
 assert.match(skyContent, /resolveSkyAspectContentStudioExact/u, "The reader needs a governed exact-aspect Content Studio resolver.");
 assert.match(skyContent, /source\.contentStudioExactAspect !== true/u, "Exact Studio rows must fail closed without their provenance marker.");
 assert.match(skyContent, /canonicalContentStudioExactSkyPoint/u, "Exact Studio identity must preserve node poles instead of collapsing them to a generic nodes key.");
 assert.match(skyContent, /point === "south-node"\) return "south-node"/u, "South Node must remain a first-class exact Content Studio identity.");
 assert.match(skyContent, /Published exact-aspect Content Studio rows have always put the node first/u, "Existing North Node Content Studio keys must remain stable while South Node is added.");
-assert.match(app, /if \(studio\) \{[\s\S]*tier: "content-studio-exact-sky-aspect-v1"/u, "Sky detail must prefer a signed-off Studio exact version over the canonical exact baseline.");
-assert.match(calendar, /exact: signedStudio \?\? studioExact \?\? exact/u, "Calendar cards must prefer signed-off sign-specific Studio copy, then Studio exact copy, then the canonical baseline.");
 assert.match(seed, /studio_content_type: "aspect"/u, "Published exact rows must use versioned aspect editing.");
 assert.match(seed, /studio_editable_fields:[\s\S]*Summary[\s\S]*Body/u, "Summary and Body must remain editable fields for every exact aspect baseline.");
 assert.match(seed, /nodeAxisPole/u, "Published node aspect rows must carry explicit pole metadata in Content Studio.");
