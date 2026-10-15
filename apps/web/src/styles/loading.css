@@ -5,6 +5,7 @@
   gap: var(--space-5);
   width: 100%;
   max-width: var(--page-content-width);
+  overflow-wrap: anywhere;
   min-height: var(--ds-layout-deferred-placeholder-height-variant-2);
   margin: var(--space-6) auto;
   padding: var(--space-6);
@@ -20,11 +21,6 @@
   border: var(--border-width-thin) solid var(--line);
   border-radius: var(--radius-card);
   background: var(--surface);
-}
-
-.app-loading__lines {
-  display: grid;
-  gap: var(--space-4);
 }
 
 .app-loading--centered {
@@ -95,18 +91,6 @@
   animation: none;
 }
 
-.app-loading__lines span {
-  display: block;
-  height: var(--space-3);
-  border-radius: var(--radius-pill);
-  background: var(--surface-2);
-  animation: app-loading-pulse var(--loading-pulse-duration) ease-in-out infinite alternate;
-}
-
-.app-loading__lines span:last-child {
-  width: var(--loading-line-short-width);
-}
-
 .app-loading__action {
   justify-self: start;
   border: var(--border-width-thin) solid var(--line-strong);
@@ -122,11 +106,6 @@
   display: none;
 }
 
-@keyframes app-loading-pulse {
-  to { opacity: var(--loading-pulse-opacity); }
-}
-
 :root[data-reduce-motion] {
-  .app-loading__lines span,
   .loading-moon__shadow { animation: none; }
 }

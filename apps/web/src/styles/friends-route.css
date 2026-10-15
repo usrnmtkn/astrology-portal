@@ -1283,6 +1283,7 @@
 
 .friends-unified-empty {
   display: grid;
+  overflow-wrap: anywhere;
   align-content: center;
   justify-items: center;
   gap: calc(var(--space-2) - var(--space-1) / 4);
