@@ -216,3 +216,49 @@ for (const choice of ['On', 'Off', 'System'] as const) {
     await expect(page.getByRole('region', { name: 'Lunar calendar', exact: true })).toBeVisible();
   });
 }
+
+for (const width of [390, 1024, 1440, 1768]) for (const theme of ['light', 'dark']) {
+  test(`You loading and error cards stay inside the viewport at ${width} ${theme}`, async ({ page }) => {
+    test.setTimeout(90_000);
+    await page.setViewportSize({ width, height: 1000 });
+    await prepare(page, theme);
+    const blocked = hold();
+    await page.route('**/rest/v1/content_publications*', route => route.fulfill({ json: [{
+      content_key: 'authored/transit-fixture', state: 'live', revision: 1, row_id: 'fixture-transit',
+      row_updated_at: null, updated_at: '2026-10-15T00:00:00Z'
+    }] }));
+    await page.route('**/api/content-reader', async route => {
+      await blocked.promise;
+      await route.fulfill({ status: 503, json: { error: 'Fixture unavailable' } });
+    });
+    const assertContained = async () => {
+      const bounds = await page.locator('.you-chart-page main.chart-layout__content').evaluate(column => {
+        const parent = column.getBoundingClientRect();
+        return {
+          viewport: document.documentElement.clientWidth,
+          scroll: document.documentElement.scrollWidth,
+          left: parent.left,
+          right: parent.right,
+          children: [...column.children].map(child => {
+            const rect = child.getBoundingClientRect();
+            return { left: rect.left, right: rect.right };
+          })
+        };
+      });
+      expect(bounds.scroll).toBeLessThanOrEqual(bounds.viewport);
+      expect(bounds.left).toBeGreaterThanOrEqual(0);
+      expect(bounds.right).toBeLessThanOrEqual(bounds.viewport);
+      for (const child of bounds.children) {
+        expect(child.left).toBeGreaterThanOrEqual(bounds.left - 1);
+        expect(child.right).toBeLessThanOrEqual(bounds.right + 1);
+      }
+    };
+    try {
+      await page.goto('/#you', { waitUntil: 'domcontentloaded' });
+      await expect(page.getByRole('status', { name: 'Loading transit readings…', exact: true })).toBeVisible();
+      await assertContained();
+    } finally { blocked.release(); }
+    await expect(page.getByRole('alert').filter({ hasText: 'The transit readings could not load.' })).toBeVisible();
+    await assertContained();
+  });
+}
