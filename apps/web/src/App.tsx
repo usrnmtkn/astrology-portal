@@ -12161,7 +12161,8 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
     const articlePreparation = skyArticlePreparationRef.current?.request;
     // Guest articles already have their complete placement facts. Member
     // personalization retains the existing full-Sky readiness boundary.
-    if (!sky && (mode !== "guest" || userProfile)) return;
+    if (!sky && (mode !== "guest" || userProfile || !authAccountChecked
+      || remoteAccountId || authAccountError || hasStoredSupabaseSession())) return;
     const commitResolvedSkyDetail = (detail: SkyDetail | null) => {
       setSkyDetailResolvedIdentity(skyPlacementPublicationIdentity());
       setSelectedSkyDetail(detail);
@@ -12299,7 +12300,7 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
       renderDetail(detailSky, content, true);
     }).catch(error => { if (!cancelled) { console.warn("Sky detail failed.", error); setSkyDetailReadError(skyDetailRoutePath); } });
     return () => { cancelled = true; };
-  }, [contentRegistryVersion, contentRefreshVersion, fallbackArchitectureV3Version, profileNatalSky?.ascendant, sky, skyDate, skyDetailRoutePath, skyGeneratedContent, skyPlacementFallbackStatus, skyPlacementPersonalizationTransits, userProfile?.rising, skyDetailRetry, personalTransitSourcesNeeded, personalTransitSourceStatus, mode, skyRefreshKey, location.latitude, location.longitude, location.timeZone, contentPublicationGeneration]);
+  }, [contentRegistryVersion, contentRefreshVersion, fallbackArchitectureV3Version, profileNatalSky?.ascendant, sky, skyDate, skyDetailRoutePath, skyGeneratedContent, skyPlacementFallbackStatus, skyPlacementPersonalizationTransits, userProfile?.rising, userProfile?.id, authAccountChecked, remoteAccountId, authAccountError, skyDetailRetry, personalTransitSourcesNeeded, personalTransitSourceStatus, mode, skyRefreshKey, location.latitude, location.longitude, location.timeZone, contentPublicationGeneration]);
 
   useEffect(() => {
     if (!selectedSkyDetail?.routePath?.startsWith("friends?")

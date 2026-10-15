@@ -141,6 +141,12 @@ for (const width of [390, 1440]) test(`Direct article preparation overlaps full 
   const skyGate = new Promise<void>(resolve => { releaseSky = resolve; });
   const requests: URL[] = [];
   const writingReads: any[] = [];
+  let releaseWriting!: () => void;
+  const writingGate = new Promise<void>(resolve => { releaseWriting = resolve; });
+  await page.route('**/api/content-reader', async route => {
+    if (route.request().postDataJSON()?.keys?.some((key: string) => key.startsWith('sky.aspect.sun.'))) await writingGate;
+    await route.fallback();
+  });
   const errors: string[] = [];
   page.on('pageerror', error => errors.push(error.message));
   page.on('request', request => {
@@ -160,7 +166,7 @@ for (const width of [390, 1440]) test(`Direct article preparation overlaps full 
     await expect.poll(() => writingReads.length, { timeout: 60_000, message: 'Selected Sun in-sign aspect writing must start before the full Sky response' }).toBeGreaterThan(0);
     expect(await page.locator('.sky-detail-article .article-body-inner').count()).toBe(0);
     await page.clock.setFixedTime(new Date('2026-09-10T04:20:02Z'));
-  } finally { releaseSky(); }
+  } finally { releaseWriting(); releaseSky(); }
   const body = page.locator('.sky-detail-article .article-body-inner').first();
   await expect(body).toContainText('The Sun in Virgo makes the systems', { timeout: 60_000 });
   await expect(body).toContainText('Today’s New Moon');
