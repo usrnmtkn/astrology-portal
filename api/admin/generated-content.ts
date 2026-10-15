@@ -707,6 +707,8 @@ function validateFallbackArchitectureV3Copy(row: ExistingGeneratedContentRow, pa
       ? packagePlaceholders(record.body_you)
       : new Set<string>();
     for (const slot of packagePlaceholders(value)) {
+      if (libs().isConnectionSourceKey(row.content_key) && /(?:^|\.)(?:body|body_you|body_they)$/u.test(field)
+        && libs().connectionSourceSlots(row.content_key).includes(slot.slice(2, -2))) continue;
       if (skyVariableField || ingressVariableField || calendarTemplate && calendarPassageVariables.includes(slot.replace(/[{}#\/\s]/gu, ""))) continue;
       if (Array.isArray(variableOwner._studioVariables) && variableOwner._studioVariables.some((item: any) => slot.replace(/[{}\s]/gu, "") === item.name)) continue;
       if (libs().supportsZodiacSeasonVariables(proposedRecord) && libs().zodiacSeasonVariableNames(slot).length) continue;
@@ -1319,6 +1321,12 @@ function normalizeArticleHoroscopes<T extends Record<string, any>>(row: T, previ
 function assertReaderEligiblePublication(row: Record<string, any>) {
   assertHoroscopeRow(row);
   if (row.status !== "LIVE") return;
+  if (row.content_key?.startsWith(libs().CONNECTION_ACTIVATION_PREFIX) || row.content_key?.startsWith(libs().CONNECTION_BRIDGE_PREFIX)) {
+    const record = isRecord(row.sections?.packageRecord) ? row.sections.packageRecord : {};
+    const fields = row.content_key.startsWith(libs().CONNECTION_ACTIVATION_PREFIX) ? [record.body_you, record.body_they].filter((value, index) => index === 0 || value) : [record.body];
+    const errors = fields.flatMap(value => libs().connectionSourceErrors(row.content_key, typeof value === "string" ? value : ""));
+    if (errors.length) throw new GeneratedContentRequestError(errors.join(" "), 409);
+  }
   if (String(row.content_key ?? "").startsWith("education/astro-101/") || row.surface === "education") {
     const filled = libs().fillAstro101EphemerisSlots(row);
     row.headline = filled.headline;

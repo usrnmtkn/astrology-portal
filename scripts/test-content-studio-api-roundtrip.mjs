@@ -597,6 +597,36 @@ for (const endpointOwner of ['reader', 'friend']) {
   assert.equal(resolved.effect, bondNamed[endpointOwner === 'reader' ? 'body_you' : 'body_they'].replace('{{holder1}}', 'River'));
 }
 row = structuredClone(packageRegressionBaseline);
+// Connection activation and bridge sources have independent draft/publication
+// contracts. These handler fixtures never write production content.
+const connectionContract = await import('../apps/web/src/content/connectionTransit.ts');
+for (const [key, contentType, initial, revised] of [
+  ['authored/connection-activation/ascendant/square/saturn', 'connection-activation',
+    { body_you: '', body_they: '' }, { body_you: 'You speak directly with {{holder1}}.', body_they: '' }],
+  [connectionContract.connectionBridgeTemplates[0].contentKey, 'connection-transit-bridge',
+    { body: connectionContract.connectionBridgeTemplates[0].body }, { body: '{{transitPlanet}} is {{transitAspectWord}} your {{endpointPoint}}. This contact also involves {{holder1}}.' }]
+]) {
+  const original = {contentKey:key,content_role:contentType==='connection-activation'?'full_copy':'template',grammar_frame:'complete_sentence',review_status:'needs_review',...initial};
+  row = {...structuredClone(packageRegressionBaseline),id:'qa-'+contentType,content_key:key,event_type:contentType,surface:'friends',status:'DRAFT',lane:'reference',review_state:'needs-review',body:initial.body??'',
+    sections:{packageRecord:original,packageOriginalRecord:structuredClone(original)},facts:{fallbackArchitectureV3:true,review_status:'needs_review'},
+    source_snapshot:{sourcePackage:'tldrastro-fallback-architecture-v3',contentType,review_status:'needs_review',content_role:original.content_role}};
+  if(contentType==='connection-activation') {
+    const empty=await invokeApi('PATCH','/api/admin/generated-content',{id:row.id,ownerAction:'approve-package-revision'});
+    assert.notEqual(empty.status,200,'An empty activation must remain unpublished');
+    assert.equal(row.status,'DRAFT');
+  }
+  const field=contentType==='connection-activation'?'body_you':'body';
+  const invalid=await invokeApi('PATCH','/api/admin/generated-content',{id:row.id,sections:{...row.sections,packageDraft:{...original,[field]:'Hello {{unknownConnectionVariable}}.'}},reviewStatus:'needs_review'});
+  assert.equal(invalid.status,400);
+  const savedConnection=await invokeApi('PATCH','/api/admin/generated-content',{id:row.id,sections:{...row.sections,packageDraft:{...original,...revised}},reviewStatus:'needs_review'});
+  assert.equal(savedConnection.status,200,JSON.stringify(savedConnection.payload));
+  assert.equal(row.status,'DRAFT');
+  const publishedConnection=await invokeApi('PATCH','/api/admin/generated-content',{id:row.id,ownerAction:'approve-package-revision'});
+  assert.equal(publishedConnection.status,200,JSON.stringify(publishedConnection.payload));
+  assert.equal(row.sections.packageRecord[field],revised[field]);
+  assert.equal(row.source_snapshot.contentType,contentType);
+}
+row = structuredClone(packageRegressionBaseline);
 const placeholderTransitContentKey = "authored/transit-aspect/venus/moon/hard";
 const placeholderOriginalBody = "The affection comes out as management. Venus {{aspectWord}} your Moon until {{untilDate}} stays high on feeling.";
 const placeholderRevisedBody = "A partner may feel smothered instead of loved. Venus {{aspectWord}} your Moon until {{untilDate}} runs high on feeling and low on discussion.";
