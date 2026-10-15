@@ -1636,20 +1636,15 @@ export async function loadLiveGeneratedContent(
 
 
 async function loadLastKnownGoodGeneratedContentForSurfaces(
-  requestedSurfaces: string[],
+  effectiveSurfaces: string[],
   targetDate?: string,
   previewMode: GeneratedContentPreviewMode = readGeneratedContentPreviewMode()
 ) {
-  const includeSharedTransitFloor = requestedSurfaces.includes("sky");
-  const surfaces = new Set([
-    ...requestedSurfaces,
-    "modifier",
-    ...(includeSharedTransitFloor ? ["you"] : [])
-  ]);
+  const surfaces = new Set(effectiveSurfaces);
   const rows = (await loadContentStudioLastKnownGoodRows()) as GeneratedContentRow[];
   const filtered = rows.filter((row) => {
     if (!surfaces.has(row.surface)) return false;
-    if (!targetDate || requestedSurfaces.includes("sky")) return true;
+    if (!targetDate || surfaces.has("sky")) return true;
     return row.target_date === null || row.target_date === targetDate;
   });
   return generatedContentMapFromRows(sortGeneratedRowsNewestFirst(filtered), previewMode);
@@ -1669,30 +1664,26 @@ export async function loadLiveGeneratedContentForSurfaces(
   vocabularyOnly = false
 ) {
   await refreshContentPublications();
-  const requested = [...requestedSurfaces];
   const surfaces = [...new Set([
-    ...requested, "modifier", ...(requested.includes("sky") ? ["you"] : [])
-  ])].sort();
+    ...requestedSurfaces, "modifier", ...(requestedSurfaces.includes("sky") ? ["you"] : [])
+  ])];
   const identity = JSON.stringify([
-    contentPublicationGeneration, surfaces, requested.includes("sky") ? null : targetDate || null,
+    contentPublicationGeneration, [...surfaces].sort(), surfaces.includes("sky") ? null : targetDate || null,
     previewMode, vocabularyOnly
   ]);
   let pending = pendingSurfaceContent.get(identity);
   if (!pending) {
     // Notice invalidation and ledger confirmation may overlap. Share only
     // active reads after their publication generation has been resolved.
-    const entry = readLiveGeneratedContentForSurfaces(requested, targetDate, previewMode, vocabularyOnly)
-      .finally(() => {
-        if (pendingSurfaceContent.get(identity) === entry) pendingSurfaceContent.delete(identity);
-      });
-    pendingSurfaceContent.set(identity, entry);
-    pending = entry;
+    pending = readLiveGeneratedContentForSurfaces(surfaces, targetDate, previewMode, vocabularyOnly)
+      .finally(() => pendingSurfaceContent.delete(identity));
+    pendingSurfaceContent.set(identity, pending);
   }
   return pending;
 }
 
 async function readLiveGeneratedContentForSurfaces(
-  requestedSurfaces: string[],
+  surfaces: string[],
   targetDate: string | undefined,
   previewMode: GeneratedContentPreviewMode,
   vocabularyOnly: boolean
@@ -1700,23 +1691,17 @@ async function readLiveGeneratedContentForSurfaces(
   const supabase = await getSupabaseClient();
 
   if (!supabase) {
-    return loadLastKnownGoodGeneratedContentForSurfaces(requestedSurfaces, targetDate, previewMode);
+    return loadLastKnownGoodGeneratedContentForSurfaces(surfaces, targetDate, previewMode);
   }
   // The publication ledger has its own deadline. Give the content request its
   // full budget instead of expiring it while it is still waiting for that ledger.
   const requestSignal = AbortSignal.timeout(8000);
 
-  const includeSharedTransitFloor = requestedSurfaces.includes("sky");
-  const surfaces = Array.from(new Set([
-    ...requestedSurfaces,
-    "modifier",
-    ...(includeSharedTransitFloor ? ["you"] : [])
-  ]));
   const { data, error } = await loadReaderRows({ surfaces, ...(vocabularyOnly ? { vocabularyOnly: true } : {}),
-    ...(targetDate && !requestedSurfaces.includes("sky") ? { targetDate } : {}) }, requestSignal);
+    ...(targetDate && !surfaces.includes("sky") ? { targetDate } : {}) }, requestSignal);
   if (error) {
     console.warn("Content surface read failed.", error);
-    return loadLastKnownGoodGeneratedContentForSurfaces(requestedSurfaces, targetDate, previewMode);
+    return loadLastKnownGoodGeneratedContentForSurfaces(surfaces, targetDate, previewMode);
   }
   const rows = data ?? [];
 

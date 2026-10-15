@@ -1,5 +1,5 @@
 import React from "react";
-import { eligiblePlacementHintHref, eligiblePlacementHintContinuation, isInitialSkyReaderHash } from "./services/initialSkyRoute.mjs";
+import { isInitialSkyReaderHash } from "./services/initialSkyRoute.mjs";
 import { startStartupAnimation } from "./startupAnimation";
 import { createRoot } from "react-dom/client";
 import { loadYouPage } from "./features/you/youExperienceLoader";
@@ -121,19 +121,8 @@ async function startApp() {
     await completeAuthCallback();
   }
   const initialSkyLoadPromise = isInitialSkyReaderHash(window.location.hash)
-    ? import("./services/skyApi").then(({ startInitialSkyLoad }) => startInitialSkyLoad()).catch(() => null)
+    ? import("./services/skyApi").then(({ startInitialSkyPlacementLoad }) => startInitialSkyPlacementLoad(callbackUrl.href)).catch(() => null)
     : Promise.resolve(null);
-  if (typeof Worker === "function" && eligiblePlacementHintHref(callbackUrl.href)) {
-    void initialSkyLoadPromise.then(initial => {
-      if (!eligiblePlacementHintContinuation(callbackUrl.href, window.location.href, typeof Worker === "function", Boolean(initial))) return;
-      return import("./services/skyCalculationClient").then(({ preloadSwissEphemerisOffMainThread }) => {
-        if (!eligiblePlacementHintContinuation(callbackUrl.href, window.location.href, typeof Worker === "function", Boolean(initial))) return;
-        return preloadSwissEphemerisOffMainThread();
-      });
-    }).catch(() => {
-      // The mounted calculation owns initialization errors and explicit retry.
-    });
-  }
   if (callbackUrl.pathname === "/" && callbackUrl.searchParams.get("auth") !== "login"
     && /^#\/?(?:sky|calendar)(?:[/?]|$)/u.test(callbackUrl.hash)) {
     // Resolve publication state alongside App. Cold readers otherwise wait for
