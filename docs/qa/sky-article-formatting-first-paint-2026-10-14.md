@@ -54,3 +54,23 @@ After automatic main deployment, verify the READY main SHA and alias, repeat
 Venus direct/reload/click first/final metadata checks, and verify the retained
 Sun speed gain and exact complete content. Live acceptance remains open until
 those checks pass. No production content writes are authorized by this QA.
+
+## Standalone Admin matched-build follow-up
+
+Hosted `sky-summary (studio)` job 116187842067 passed all 68 browser
+cases (25 + 29 + 14), then rejected aggregate Admin gzip size at 795,561
+bytes against the 795,550-byte cap. An unchanged rerun was not used.
+
+Independent own-npm-ci builds of main `ee81545` and candidate `da03435`
+used Node 22.23.3 and the workflow's exact visual-smoke Supabase URL and
+anonymous-key placeholders. Both optional publishable-key and natal-aspect
+flags were unset, and neither checkout had environment files. The official
+checker measured main at 795,481 aggregate gzip bytes and candidate at
+795,561 (+80), both across 83 JavaScript assets. The candidate exactly
+reproduces CI; main has 69 bytes of headroom.
+
+Allocate 100 aggregate Admin gzip bytes to the stable-formatting feature,
+setting the cap to 795,650 and leaving 89 measured bytes. All other Admin
+limits and lazy/deferred/payload checks remain unchanged. No runtime source
+change accompanies this measured allocation. Fresh exact-head hosted CI,
+including the full Studio browser phase and both API runs, remains required.
