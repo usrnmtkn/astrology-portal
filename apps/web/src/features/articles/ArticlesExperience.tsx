@@ -31,6 +31,7 @@ export default function ArticlesExperience() {
   const [state, setState] = useState<"loading" | "ready" | "error">("loading");
   const [revision, setRevision] = useState(0);
   const [key, setKey] = useState(() => articleKeyFromHash(window.location.hash));
+  const [resolvedKey, setResolvedKey] = useState(key);
   const [query, setQuery] = useState("");
   const [kind, setKind] = useState<ArticleLibraryKind | "all">("all");
   useEffect(() => {
@@ -48,25 +49,29 @@ export default function ArticlesExperience() {
     const controller = new AbortController();
     const deadline = AbortSignal.any([controller.signal, AbortSignal.timeout(30_000)]);
     setState("loading");
-    // Fail as a unit: a failed category is not an empty library.
-    void Promise.all(articleLibraryPrefixes.map(prefix => loadReaderRows({ prefix }, deadline))).then(results => {
+    // Direct readings need their exact publication, not the complete library.
+    // The library still fails as a unit when any category is unavailable.
+    const requests = key ? [loadReaderRows({ keys: [key] }, deadline)]
+      : articleLibraryPrefixes.map(prefix => loadReaderRows({ prefix }, deadline));
+    void Promise.all(requests).then(results => {
       if (controller.signal.aborted) return;
+      setResolvedKey(key);
       if (results.some(result => result.error)) { setRows([]); setState("error"); return; }
       const unique = new Map(results.flatMap(result => result.data ?? []).filter(readable).map(row => [row.content_key, row]));
       setRows([...unique.values()].sort((a, b) => (b.target_date ?? b.updated_at).localeCompare(a.target_date ?? a.updated_at)));
       setState("ready");
     }).catch(() => {
-      if (!controller.signal.aborted) { setRows([]); setState("error"); }
+      if (!controller.signal.aborted) { setResolvedKey(key); setRows([]); setState("error"); }
     });
     return () => controller.abort();
-  }, [revision]);
+  }, [revision, key]);
   const selected = rows.find(row => row.content_key === key);
   const filtered = useMemo(() => rows.filter(row => (kind === "all" || articleLibraryKind(row) === kind)
     && [row.headline, row.summary].some(text => text?.toLowerCase().includes(query.trim().toLowerCase()))), [rows, kind, query]);
 
   return <section className="learn-page articles-page" aria-label="Articles & Guides">
     {key && <a className="sky-detail-back floating-back-button" href="#articles" aria-label="Back to Articles & Guides"><ChevronLeft size={18} aria-hidden="true" />Back</a>}
-    {state === "loading" ? <PageLoading message="Loading articles and guides…" /> : state === "error" ? <div className="learn-sheet articles-library-state">
+    {state === "loading" || resolvedKey !== key ? <PageLoading message="Loading articles and guides…" /> : state === "error" ? <div className="learn-sheet articles-library-state">
       <h1 className="article-title">Articles &amp; Guides</h1><p role="alert">Articles and guides could not load.</p>
       <button className="learn-jump__link" onClick={() => setRevision(value => value + 1)}>Try again</button>
     </div> : key ? selected ? <article className="learn-sheet learn-sheet--article">
