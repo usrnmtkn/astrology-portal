@@ -50,3 +50,17 @@ production acceptance belong in the release evidence; fixture timings do not
 establish production speed.
 
 Writing and DNS are outside this change. Production acceptance is read-only.
+
+## Integrated build measurements
+
+Independent own-npm-ci builds on Node 22.23.3 compare released main
+`bf5f3181c3aecf85ed37e673473e3b26076bea5f` with candidate
+`0b9190c18250ca7311f23694818afbfc53976b74`, using identical synthetic
+visual-smoke settings. With natal patterns enabled, aggregate JavaScript grows
+from 3,625,293 to 3,625,504 gzip bytes (+211); disabled, from 3,625,251
+to 3,625,489 (+238). App and reader startup decrease by 15/17 bytes;
+aggregate CSS stays at 119,040. The unchanged official checker reports only
+the aggregate ceiling exceeded, by 104/89 bytes. A bounded 300-byte aggregate
+allocation leaves 196 bytes over the observed maximum. Startup, CSS, individual
+chunk, dependency, source-payload and runtime performance limits are unchanged.
+These are build costs, not live speed measurements.
