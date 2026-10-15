@@ -1,5 +1,5 @@
 import { AdminSelect, AdminDisclosureSummary } from "./AdminNativeControls";
-import { StudioButton, StudioInput } from "./StudioControls";
+import { StudioButton, StudioInput, StudioTextarea } from "./StudioControls";
 import { Fragment, lazy, Suspense, useEffect, useState } from "react";
 import { renderTransitNatalPreview, transitNatalExactContentKey, type TransitNatalSelection, type TransitNatalReadingContext, type TransitPassageSource } from "./transitNatalSources";
 import { subscribeToContentUpdates } from "../../web/src/services/contentUpdateSignal";
@@ -12,6 +12,15 @@ import { containedDisclosure } from "./studio-ds/recipes";
 import { transitNatalExactActionLabel, transitNatalLiveServingSource, transitSourceEditScope, transitExactPassageState, type TransitExactPassageState } from "./transitNatalEditorScope";
 
 const PersonalTransitAiWriter = lazy(() => import("./PersonalTransitAiWriter"));
+
+export function RetainedCopy({ you, friend }: { you: string; friend: string }) {
+  return <>{[[you, "You"], [friend, "Friend"]].filter(([text]) => text).map(([text, audience]) =>
+    <label className="admin-review-copy-editor studio-surface" key={audience}>
+      <span>Retained alternate · {audience}</span>
+      <StudioTextarea aria-label={`Retained alternate · ${audience}`} value={text} readOnly />
+      <small className="admin-field-hint">Preserved from the published version. The primary wording is edited above.</small>
+    </label>)}</>;
+}
 
 type Preview = ReturnType<typeof renderTransitNatalPreview>;
 

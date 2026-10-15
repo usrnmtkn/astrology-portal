@@ -1,13 +1,13 @@
 import { useRef, useState } from 'react';
 import { StudioButton, StudioInput } from './StudioControls';
 import { AdminSelect } from './AdminNativeControls';
-import { csvChanges, csvContentType, csvMaxBytes, csvMaxRows, csvRecordForRow, csvUnavailableReason, csvWantsPublication, newTransitCsvRow, readStudioCsv, writeStudioCsv, type CsvContentRow, type CsvRecord } from './studioCsv';
+import { csvChanges, csvContentType, csvCreateTransitBody, csvMaxBytes, csvMaxRows, csvRecordForRow, csvUnavailableReason, csvWantsPublication, newTransitCsvRow, readStudioCsv, writeStudioCsv, type CsvContentRow, type CsvRecord } from './studioCsv';
 
 type Preview = { record: CsvRecord; changes: ReturnType<typeof csvChanges>; row?: CsvContentRow; publish?: boolean; error?: string; saved?: boolean; published?: boolean };
 type Props = {
   rows: CsvContentRow[]; selectedIds: Set<string>; disabled: boolean;
   loadRow: (id: string) => Promise<CsvContentRow>;
-  saveRow: (record: CsvRecord) => Promise<CsvContentRow>;
+  saveRow: (record: CsvRecord, createBody?: Record<string, unknown>) => Promise<CsvContentRow>;
   publishRow: (row: CsvContentRow) => Promise<CsvContentRow>;
   onBusy: (busy: boolean) => void;
   onResult: (message: string) => void;
@@ -108,7 +108,7 @@ export default function StudioCsvTools({ rows, selectedIds, disabled, loadRow, s
             )) throw new Error('The saved text could not be confirmed exactly.');
           };
           if (item.changes.length) {
-            row = await saveRow(item.record);
+            row = await saveRow(item.record, item.record.content_id.startsWith('new:') ? csvCreateTransitBody(item.record) : undefined);
             if (row.status !== 'DRAFT') throw new Error('The API did not confirm a saved draft.');
             confirmText(row);
             count++; draftSaved = true;

@@ -15,7 +15,7 @@ import { MetricCard } from "./studio-ds/patterns";
 import { Grid, Stack, Text } from "./studio-ds/primitives";
 import { containedDisclosure, metricGrid, surfaceSection } from "./studio-ds/recipes";
 import { StudioTabs, StudioButton, StudioIconButton, StudioInput, StudioTextarea } from "./StudioControls";
-import { csvCreateTransitBody, type CsvContentRow, type CsvRecord } from './studioCsv';
+import type { CsvContentRow, CsvRecord } from './studioCsv';
 import { ArticleBlockStyleFields } from "./ArticleBlockStyleFields";
 import { AdminDisclosureSummary, AdminSelect } from "./AdminNativeControls";
 import { getStudioPalette, getStudioTheme, saveStudioPalette, saveStudioTheme, studioShellAttributes } from "./studioTheme";
@@ -261,6 +261,7 @@ const SkyPlacementUnwiredNotice = lazy(() => import("./SkyPlacementCompanions").
 const CompositeReviewCard = lazy(() => import("./CompositeReviewCard"));
 const StudioCsvTools = lazy(() => import('./StudioCsvTools'));
 const TransitNatalReaderPreview = lazy(() => import("./TransitNatalReaderPreview"));
+const RetainedCopy = lazy(() => import("./TransitNatalReaderPreview").then(module => ({ default: module.RetainedCopy })));
 const TransitNatalPreviewOptions = lazy(() => import("./TransitNatalReaderPreview").then(module => ({ default: module.TransitNatalPreviewOptions })));
 const TransitNatalExactSourceAction = lazy(() => import("./TransitNatalReaderPreview").then(module => ({ default: module.TransitNatalExactSourceAction })));
 const PersonalTransitAiWriter = lazy(() => import("./PersonalTransitAiWriter"));
@@ -9726,10 +9727,10 @@ export function GeneratedContentAdminDashboard() {
     }
   }
 
-  async function saveCsvRow(record: CsvRecord) {
+  async function saveCsvRow(record: CsvRecord, createBody?: Record<string, unknown>) {
     try {
       const payload = await adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[] }>(
-        '/api/admin/generated-content', secret, { method: record.content_id.startsWith('new:') ? 'POST' : 'PATCH', body: JSON.stringify(record.content_id.startsWith('new:') ? csvCreateTransitBody(record) : {
+        '/api/admin/generated-content', secret, { method: createBody ? 'POST' : 'PATCH', body: JSON.stringify(createBody ?? {
           id: record.content_id, expectedUpdatedAt: record.saved_version.slice(2),
           ownerAction: 'import-csv-draft', csvRecord: record
         }) });
@@ -11967,14 +11968,9 @@ export function GeneratedContentAdminDashboard() {
               {!fallbackEditorGuidance && isAuthoredTransitAspectDraft && <small className="admin-field-hint">This is the editable Friends version of the standalone Transit to Natal write-up. Write it as its own complete passage rather than mechanically changing pronouns in the You copy.</small>}
             </label>
           )}
-          {isAuthoredTransitAspectDraft && ([
-            ["body_you_alternate", "Retained alternate · You"],
-            ["body_they_alternate", "Retained alternate · Friend"]
-          ] as const).filter(([field]) => packageFieldString(currentDraft, field)).map(([field, label]) => <label className="admin-review-copy-editor studio-surface" key={field}>
-            <span>{label}</span>
-            <StudioTextarea aria-label={label} value={packageFieldString(currentDraft, field)} readOnly />
-            <small className="admin-field-hint">Preserved from the published version. The primary wording is edited above.</small>
-          </label>)}
+          {isAuthoredTransitAspectDraft && <Suspense fallback={null}><RetainedCopy
+            you={packageFieldString(currentDraft, "body_you_alternate")}
+            friend={packageFieldString(currentDraft, "body_they_alternate")} /></Suspense>}
           {isBondEffectDraft && (
             <Suspense fallback={<PageLoading compact message="Opening the Friends page…" />}>
               <BondEffectPagePreview
