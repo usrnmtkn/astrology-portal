@@ -3,8 +3,7 @@
   display: grid;
   align-content: start;
   gap: var(--space-5);
-  width: min(100%, var(--page-content-width));
-  min-width: 0;
+  width: var(--page-content-width);
   max-width: 100%;
   min-height: var(--ds-layout-deferred-placeholder-height-variant-2);
   margin: var(--space-6) auto;
