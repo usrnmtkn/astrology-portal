@@ -76,19 +76,19 @@ receipt suite. Fixture success is not evidence that production content changed.
 ## Bundle allocation
 
 Final independent `npm ci --ignore-scripts` builds compare combined main
-`3e340e267` with the repaired Lilith app filter, using Node 22.20.0, npm 10.9.3,
+`f6d4f433f` with integrated runtime `610cbae7b`, using Node 22.20.0, npm 10.9.3,
 identical lockfiles and the Visual smoke workflow's synthetic Supabase settings.
 The browser configuration also enables natal patterns through the actual browser
 server factory. CSV creation and retained-copy fields remain in lazy modules.
 
 | Configuration and gzip bytes | Main | Candidate | Added | Limit | Remaining |
 | --- | ---: | ---: | ---: | ---: | ---: |
-| Default CI app startup | 517795 | 518090 | 295 | 518200 | 110 |
-| Default CI reader startup | 572937 | 573232 | 295 | 573350 | 118 |
-| Default CI all JavaScript | 3625420 | 3626897 | 1477 | 3627700 | 803 |
-| Browser app startup | 517799 | 518084 | 285 | 518200 | 116 |
-| Browser reader startup | 572941 | 573226 | 285 | 573350 | 124 |
-| Browser all JavaScript | 3625402 | 3626877 | 1475 | 3627700 | 823 |
+| Default CI app startup | 517834 | 518141 | 307 | 518200 | 59 |
+| Default CI reader startup | 572976 | 573283 | 307 | 573350 | 67 |
+| Default CI all JavaScript | 3625426 | 3627047 | 1621 | 3627700 | 653 |
+| Browser app startup | 517856 | 518154 | 298 | 518200 | 46 |
+| Browser reader startup | 572998 | 573296 | 298 | 573350 | 54 |
+| Browser all JavaScript | 3625480 | 3627052 | 1572 | 3627700 | 648 |
 | Deferred CSV module | 5682 | 6741 | 1059 | 7000 | 259 |
 | Standalone Admin entry | 231587 | 231689 | 102 | 231900 | 211 |
 | Standalone Admin all JavaScript | 795598 | 796949 | 1351 | 797150 | 201 |
