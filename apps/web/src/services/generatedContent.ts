@@ -1661,6 +1661,7 @@ async function loadLastKnownGoodGeneratedContentForKeys(contentKeys: string[]) {
   return generatedContentMapFromRows(sortGeneratedRowsNewestFirst(rows.filter((row) => keySet.has(row.content_key))));
 }
 
+const pendingSurfaceContent = new Map<string, Promise<Map<string, LiveGeneratedContent>>>();
 export async function loadLiveGeneratedContentForSurfaces(
   requestedSurfaces: string[],
   targetDate?: string,
@@ -1668,6 +1669,34 @@ export async function loadLiveGeneratedContentForSurfaces(
   vocabularyOnly = false
 ) {
   await refreshContentPublications();
+  const requested = [...requestedSurfaces];
+  const surfaces = [...new Set([
+    ...requested, "modifier", ...(requested.includes("sky") ? ["you"] : [])
+  ])].sort();
+  const identity = JSON.stringify([
+    contentPublicationGeneration, surfaces, requested.includes("sky") ? null : targetDate || null,
+    previewMode, vocabularyOnly
+  ]);
+  let pending = pendingSurfaceContent.get(identity);
+  if (!pending) {
+    // Notice invalidation and ledger confirmation may overlap. Share only
+    // active reads after their publication generation has been resolved.
+    const entry = readLiveGeneratedContentForSurfaces(requested, targetDate, previewMode, vocabularyOnly)
+      .finally(() => {
+        if (pendingSurfaceContent.get(identity) === entry) pendingSurfaceContent.delete(identity);
+      });
+    pendingSurfaceContent.set(identity, entry);
+    pending = entry;
+  }
+  return pending;
+}
+
+async function readLiveGeneratedContentForSurfaces(
+  requestedSurfaces: string[],
+  targetDate: string | undefined,
+  previewMode: GeneratedContentPreviewMode,
+  vocabularyOnly: boolean
+) {
   const supabase = await getSupabaseClient();
 
   if (!supabase) {
