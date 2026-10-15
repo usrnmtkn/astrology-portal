@@ -20,6 +20,7 @@ body:has(#app-startup.app-startup) {
 /* Fill the first viewport; React replaces this shell as soon as it can render. */
 .app-startup[role="status"] {
   width: 100%;
+  max-width: 100%;
   min-height: var(--startup-screen-height);
   margin: 0;
 }
