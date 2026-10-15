@@ -10801,15 +10801,26 @@ const AccountView = lazy(() =>
   }))
 );
 
-const loadSkyDetailArticle = () => import("./features/sky/SkyDetailArticle");
+type SkyDetailArticleModule = typeof import("./features/sky/SkyDetailArticle");
+let loadedSkyDetailArticle: SkyDetailArticleModule["SkyDetailArticle"] | undefined;
+const loadSkyDetailArticle = () => import("./features/sky/SkyDetailArticle").then(module => {
+  if (module) loadedSkyDetailArticle = module.SkyDetailArticle;
+  return module;
+});
 const preloadSkyDetailArticle = () => {
   void loadSkyDetailArticle();
 };
-const SkyDetailArticle = lazy(() =>
+const LazySkyDetailArticle = lazy(() =>
   loadSkyDetailArticle().then((module) => ({
     default: module.SkyDetailArticle
   }))
 );
+
+function SkyDetailArticle(props: Parameters<SkyDetailArticleModule["SkyDetailArticle"]>[0]) {
+  // Keep the chosen component stable after this reader mounts.
+  const [Article] = useState(() => loadedSkyDetailArticle ?? LazySkyDetailArticle);
+  return <Article {...props} />;
+}
 
 
 async function getAstrodienstSky(
