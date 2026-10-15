@@ -12356,7 +12356,10 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
       void (notice?.contentKey === "*" ? refreshContentPublications(true) : refreshContentPublicationsAfterUpdate());
       refreshInstalledContent();
     };
-    const stopPublications = subscribeToContentPublications(refreshInstalledContent);
+    const stopPublications = subscribeToContentPublications((source) => {
+      if (source !== "complete-live") void refreshContentPublicationsAfterUpdate();
+      refreshInstalledContent();
+    });
     const unsubscribe = subscribeToContentUpdates(refreshContent);
     const stopRevalidation = subscribeToContentRevalidation(refreshContent);
     return () => { stopPublications(); unsubscribe(); stopRevalidation(); };

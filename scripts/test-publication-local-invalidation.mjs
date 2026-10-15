@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
 import vm from 'node:vm';
+import { webcrypto } from 'node:crypto';
 import { build } from 'esbuild';
 
 const root = process.cwd();
@@ -25,7 +26,9 @@ const summaryEffect = effect('apps/web/src/features/sky/PublishedSkySummary.tsx'
 const entry = `
 import { installContentPublications, publicationAllowsContent, contentPublicationRecords,
   subscribeToContentPublications } from './apps/web/src/content/contentPublicationState';
-import { refreshContentPublications, refreshContentPublicationsAfterUpdate } from './apps/web/src/services/contentPublications';
+import { contentPublicationsResolved, refreshContentPublications, refreshContentPublicationsAfterUpdate } from './apps/web/src/services/contentPublications';
+import { loadReaderRows } from './apps/web/src/services/readerContentClient';
+import { canonicalPublicationLedger, publicationLedgerTag, loadPublicationLedgerFromApi } from './apps/web/src/services/publicationLedgerTransport';
 import { announceContentUpdate, subscribeToContentUpdates, subscribeToContentRevalidation } from './apps/web/src/services/contentUpdateSignal';
 import { loadOfflineContentRows } from './apps/web/src/services/offlineContentSnapshot';
 import { eligibleSkyDetailContent } from './apps/web/src/services/skyDetailContent';
@@ -40,7 +43,9 @@ const setContentRefreshVersion = update => { counts.app = update(counts.app); };
 const setRevision = update => { counts.articles = update(counts.articles); };
 const setRefresh = update => { counts.summary = update(counts.summary); };
 const keys = [globalThis.__fixture.contentKey];
-const stops = [(() => { ${appEffect} })(), (() => { ${articlesEffect} })(), (() => { ${summaryEffect} })()];
+const installSources = [];
+const stopSource = subscribeToContentPublications(source => installSources.push(source));
+const stops = [(() => { ${appEffect} })(), (() => { ${articlesEffect} })(), (() => { ${summaryEffect} })(), stopSource];
 function seedCalendar(row) {
   calendarContentCacheRef.current.set('fixture', { content: new Map([[row.contentKey, row]]), requestedKeys: new Set([row.contentKey]) });
 }
@@ -52,7 +57,9 @@ function calendar() {
 }
 function cleanup() { for (const stop of stops) stop(); }
 export { installContentPublications, publicationAllowsContent, contentPublicationRecords,
-  refreshContentPublications, announceContentUpdate, loadOfflineContentRows, eligibleSkyDetailContent, seedCalendar, calendar, cleanup };
+  contentPublicationsResolved, refreshContentPublications, loadReaderRows, canonicalPublicationLedger,
+  publicationLedgerTag, loadPublicationLedgerFromApi, installSources,
+  announceContentUpdate, loadOfflineContentRows, eligibleSkyDetailContent, seedCalendar, calendar, cleanup };
 `;
 const bundle = await build({ stdin: { contents: entry, resolveDir: root, loader: 'ts' }, bundle: true,
   platform: 'browser', format: 'iife', globalName: 'fixtureAPI', write: false, logLevel: 'silent',
@@ -79,13 +86,13 @@ function target() {
     removeEventListener(type, listener) { listeners.get(type)?.delete(listener); },
     dispatchEvent(event) { for (const listener of [...(listeners.get(event.type) ?? [])]) listener(event); } };
 }
-function group(initial, snapshot = initial, { storageUnavailable = false } = {}) {
-  let stored = initial, unavailable = false, held, release;
+function group(initial, snapshot = initial, { storageUnavailable = false, tabCount = 3 } = {}) {
+  let stored = initial, unavailable = false, held, release, scoped, failedLower;
   let clock = Date.parse('2026-10-15T01:00:00Z');
   const data = new Map([[cacheKey, JSON.stringify(initial)]]), queue = [], channels = new Set(), tabs = [];
-  for (let index = 0; index < 3; index++) {
+  for (let index = 0; index < tabCount; index++) {
     const counts = { metadataReads: 0, app: 0, articles: 0, summary: 0, sharedClears: 0, vocabularyClears: 0,
-      taglineClears: 0, storageWrites: 0, broadcastPosts: 0, snapshotFetches: 0 };
+      taglineClears: 0, storageWrites: 0, broadcastPosts: 0, snapshotFetches: 0, readerRequests: 0, relayReads: 0 };
     const window = target(), document = Object.assign(target(), { visibilityState: 'visible' });
     const localStorage = { getItem(key) { if (storageUnavailable) throw Error('Storage unavailable'); return data.get(key) ?? null; },
       setItem(key, value) {
@@ -101,7 +108,7 @@ function group(initial, snapshot = initial, { storageUnavailable = false } = {})
         gte(key, value) { lower = value; return query; }, lt(key, value) { upper = value; return query; }, gt(key, value) { after = value; return query; },
         async abortSignal() {
           counts.metadataReads++;
-          const captured = stored, failure = unavailable, pending = held;
+          const captured = stored, failure = unavailable || failedLower !== undefined && lower === failedLower, pending = held;
           if (pending) await pending;
           return failure ? { data: null, error: Error('Synthetic 503') }
             : { data: captured.filter(r => (!lower || r.content_key >= lower) && (!upper || r.content_key < upper) && (!after || r.content_key > after)), error: null };
@@ -123,8 +130,21 @@ function group(initial, snapshot = initial, { storageUnavailable = false } = {})
     Object.assign(window, { localStorage, navigator: { onLine: true }, setInterval: () => 1, clearInterval() {} });
     const context = vm.createContext({ window, document, localStorage, navigator: window.navigator,
       CustomEvent: FixtureEvent, BroadcastChannel: Channel, Date: ClockDate, setTimeout, clearTimeout, AbortSignal,
-      console: { log() {}, warn() {} }, URL, TextEncoder, TextDecoder, structuredClone, __fixture: { counts, client, contentKey },
-      fetch: async url => {
+      console: { log() {}, warn() {} }, URL, TextEncoder, TextDecoder, crypto: webcrypto, structuredClone, __fixture: { counts, client, contentKey },
+      fetch: async (url, options) => {
+        if (String(url) === '/api/content-reader') {
+          counts.readerRequests++; assert.ok(scoped);
+          return { ok: true, json: async () => scoped };
+        }
+        if (String(url) === '/api/content-publications') {
+          counts.relayReads++;
+          if (unavailable) return { status: 503, ok: false };
+          const records = context.fixtureAPI.canonicalPublicationLedger(stored);
+          const tag = await context.fixtureAPI.publicationLedgerTag(records);
+          const unchanged = options?.headers?.['if-none-match'] === tag;
+          return { status: unchanged ? 304 : 200, ok: !unchanged, headers: { get: () => tag },
+            json: async () => ({ schema: 'tldr-publications/v1', publications: records }) };
+        }
         assert.equal(String(url), '/content-studio-last-known-good.json', 'Fixture must never contact a real endpoint.');
         counts.snapshotFetches++;
         return { ok: true, json: async () => ({ schema: 'content-studio-last-known-good-v2', rowCount: 1,
@@ -153,9 +173,78 @@ function group(initial, snapshot = initial, { storageUnavailable = false } = {})
     }
   };
   return { tabs, settle, totals, assertText, setLedger(value) { stored = value; }, setUnavailable(value) { unavailable = value; },
+    setScoped(value) { scoped = value; }, failRange(lower) { failedLower = lower; },
     storageImport(value) { for (const tab of tabs) queue.push(() => tab.window.dispatchEvent(new FixtureEvent('storage', { key: cacheKey, newValue: JSON.stringify(value) }))); },
     holdReads() { held = new Promise(resolve => { release = resolve; }); }, releaseReads() { held = undefined; release(); } };
 }
+
+const otherKey = 'cms/notification/other';
+const retiredA = { ...record(contentKey, 2, 'retired'), row_id: id(1), row_updated_at: stamp(1) };
+const liveB = { ...record(otherKey, 2), row_id: id(99) };
+for (const ordering of ['warm-resolved', 'after-held-read-completes', 'during-held-old-read', 'unchanged-marker', 'no-marker']) {
+  const scoped = group(ledger(1));
+  await Promise.all(scoped.tabs.map(tab => tab.api.refreshContentPublications(true))); await scoped.settle();
+  assert.ok(scoped.tabs.every(tab => tab.api.contentPublicationsResolved())); scoped.assertText(1, true);
+  for (const tab of scoped.tabs) tab.api.seedCalendar(row(1));
+  let oldRead;
+  if (ordering.includes('held')) {
+    scoped.holdReads(); oldRead = Promise.all(scoped.tabs.map(tab => tab.api.refreshContentPublications(true)));
+    await new Promise(resolve => setImmediate(resolve));
+  }
+  const nextMarker = record(marker, ordering === 'unchanged-marker' || ordering === 'no-marker' ? 1 : 2);
+  scoped.setLedger([nextMarker, retiredA, liveB]);
+  if (ordering === 'after-held-read-completes') { scoped.releaseReads(); await oldRead; await scoped.settle(); }
+  scoped.setScoped({ schema: 'content-reader-row-v1', rows: [{ id: id(99), content_key: otherKey, updated_at: stamp(2), target_date: null, body: 'Complete synthetic B.' }],
+    publications: ordering === 'no-marker' ? [liveB] : [nextMarker, liveB], nextCursor: null });
+  const response = await scoped.tabs[0].api.loadReaderRows({ keys: [otherKey] });
+  assert.equal(response.error, null); assert.equal(response.data.length, 1);
+  if (ordering === 'during-held-old-read') { scoped.releaseReads(); await oldRead; }
+  await scoped.settle();
+  // Normal callers inside the current TTL must not be the reason a missing
+  // retirement is discovered: the partial install owns the fresh complete read.
+  const beforeNormalRead = scoped.totals().metadataReads;
+  await Promise.all(scoped.tabs.map(tab => tab.api.refreshContentPublications())); await scoped.settle();
+  assert.equal(scoped.totals().metadataReads, beforeNormalRead);
+  for (const tab of scoped.tabs) {
+    assert.equal(tab.api.publicationAllowsContent(contentKey, id(1), stamp(1)), false, `${ordering}: omitted retirement must be discovered`);
+    assert.equal(tab.api.eligibleSkyDetailContent(new Map([[contentKey, row(1)]])).size, 0);
+    assert.equal(tab.api.calendar().body, '');
+  }
+  assert.equal(scoped.totals().broadcastPosts, 0);
+}
+
+const cold = group([], [], { tabCount: 1 }); cold.setLedger(ledger(1));
+await cold.tabs[0].api.refreshContentPublications(true); await cold.settle(); cold.assertText(1, true);
+assert.equal(cold.totals().metadataReads, 6, 'A complete first cold read must not repeat itself.');
+assert.deepEqual(Array.from(cold.tabs[0].api.installSources), ['complete-live']);
+
+const relay = group([], [], { tabCount: 1 }); relay.setLedger(ledger(1));
+await relay.tabs[0].api.refreshContentPublications(true, () => relay.tabs[0].api.loadPublicationLedgerFromApi()); await relay.settle();
+relay.assertText(1, true);
+assert.equal(relay.totals().relayReads, 1); assert.equal(relay.totals().metadataReads, 0);
+assert.deepEqual(Array.from(relay.tabs[0].api.installSources), ['complete-live']);
+await relay.tabs[0].api.refreshContentPublications(true, () => relay.tabs[0].api.loadPublicationLedgerFromApi()); await relay.settle();
+assert.equal(relay.totals().relayReads, 2, 'Verified 304 remains a complete read without recursive follow-up.');
+assert.equal(relay.totals().metadataReads, 0);
+
+const failed = group([], [], { tabCount: 1 }); failed.setLedger(ledger(1)); failed.failRange('fallback-hook/n');
+await failed.tabs[0].api.refreshContentPublications(true); await failed.settle();
+assert.equal(failed.tabs[0].api.contentPublicationsResolved(), false);
+assert.equal(failed.tabs[0].api.installSources.length, 0, 'A failed range must not install partial pages as complete.');
+assert.equal(failed.tabs[0].api.contentPublicationRecords().length, 0);
+
+const coalesced = group(ledger(1), ledger(1), { tabCount: 1 });
+await coalesced.tabs[0].api.refreshContentPublications(true); await coalesced.settle();
+coalesced.holdReads(); const heldRead = coalesced.tabs[0].api.refreshContentPublications(true);
+await new Promise(resolve => setImmediate(resolve));
+const extraC = record('cms/notification/c', 2), extraD = record('cms/notification/d', 2);
+coalesced.setLedger([record(marker, 2), retiredA, liveB, extraC, extraD]);
+coalesced.tabs[0].api.installContentPublications([record(marker, 2), liveB]);
+coalesced.storageImport([extraC]); coalesced.storageImport([extraD]); await coalesced.settle();
+coalesced.releaseReads(); await heldRead; await coalesced.settle();
+assert.equal(coalesced.totals().metadataReads, 18, 'Initial6 + held6 + one coalesced fresh6, not one follow-up per partial event.');
+assert.equal(coalesced.tabs[0].api.publicationAllowsContent(contentKey, id(1), stamp(1)), false);
+assert.equal(coalesced.totals().broadcastPosts, 0);
 
 const stable = group(ledger(1));
 for (let n = 0; n < 5; n++) stable.tabs[0].api.installContentPublications(ledger(1));
@@ -167,7 +256,7 @@ for (const tab of advancing.tabs) tab.api.seedCalendar(row(1));
 advancing.setLedger(ledger(2)); advancing.tabs[0].api.installContentPublications(ledger(2)); await advancing.settle();
 advancing.assertText(2, true);
 for (const consumer of ['app', 'articles', 'summary']) assert.equal(advancing.totals()[consumer], 3, `${consumer}: one invalidation per changed tab`);
-assert.equal(advancing.totals().metadataReads, 0, 'Already-installed metadata must not force a ledger reread.');
+assert.equal(advancing.totals().metadataReads, 18, 'Unknown installs require one legitimate complete read per tab.');
 assert.equal(advancing.totals().broadcastPosts, 0, 'Ledger imports must not announce another external edit.');
 for (const tab of advancing.tabs) {
   assert.equal(tab.api.calendar().body, '', 'Superseded Calendar text must be filtered.');
@@ -194,13 +283,13 @@ for (const tab of divergent.tabs) {
   assert.ok(records.some(row => row.content_key === first.content_key && row.revision === 7));
   assert.ok(records.some(row => row.content_key === second.content_key && row.state === 'retired'));
 }
-assert.equal(divergent.totals().metadataReads, 0);
+assert.ok(divergent.tabs.every(tab => tab.counts.metadataReads <= 12), 'Concurrent unknown imports must coalesce with bounded follow-up.');
 assert.equal(divergent.totals().broadcastPosts, 0);
 
 const recovery = group(ledger(1), ledger(2)); recovery.setUnavailable(true);
 await Promise.all(recovery.tabs.map(tab => tab.api.refreshContentPublications(true)));
 await Promise.all(recovery.tabs.map(tab => tab.api.loadOfflineContentRows())); await recovery.settle(); recovery.assertText(2, true);
-assert.equal(recovery.totals().metadataReads, 18, 'One failed six-range read per tab; snapshot import must not repeat it.');
+assert.equal(recovery.totals().metadataReads, 36, 'Failed full read plus necessary verification of a newer unknown snapshot, without rebroadcast fanout.');
 recovery.setUnavailable(false); recovery.setLedger(ledger(3, 'retired'));
 await Promise.all(recovery.tabs.map(tab => tab.api.refreshContentPublications(true))); await recovery.settle(); recovery.assertText(3, false);
 const recovered = recovery.totals();
@@ -225,4 +314,4 @@ assert.equal(ordered.tabs[0].counts.metadataReads, 12, 'External edits arriving 
 for (const tab of ordered.tabs) tab.api.cleanup();
 const stopped = ordered.totals(); ordered.storageImport(ledger(3, 'retired')); await ordered.settle(); ordered.assertText(3, false);
 for (const consumer of ['app', 'articles', 'summary']) assert.equal(ordered.totals()[consumer], stopped[consumer], 'Unmounted consumers must unsubscribe.');
-console.log('Publication local invalidation PASS: all three actual effects, Calendar eligibility, storage-only, divergent/out-of-order, Broadcast-only, 503 recovery, external-edit ordering and cleanup.');
+console.log('Publication local invalidation PASS: omitted retirements through actual scoped reader responses, complete direct/relay cold reads, coalesced partial follow-up, all three effects, Calendar, storage/BC, 503 recovery and cleanup.');
