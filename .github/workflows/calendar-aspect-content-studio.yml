@@ -17,6 +17,34 @@ on:
       - "tests/visual/content-dashboard-admin-user-flows.spec.ts"
       - "packages/astro-knowledge/data/transits/**"
       - ".github/workflows/calendar-aspect-content-studio.yml"
+      - "apps/web/src/App.tsx"
+      - "apps/web/src/features/calendar/LunarCalendar.tsx"
+      - "scripts/lib/assert-sky-studio-authority.mjs"
+      - "scripts/test-sky-studio-authority-contract.mjs"
+      - "scripts/test-calendar-aspect-workflow-contract.mjs"
+      - "scripts/test-sky-placement-exact-aspect-authority.mjs"
+      - "scripts/test-sky-calendar-collective-release-20260907.mjs"
+  pull_request:
+    paths:
+      - "apps/web/src/content/fallbackArchitectureV3/authored-inputs/calendar-aspect-consequence-first-drafts-v1.json"
+      - "apps/web/src/content/fallbackArchitectureV3/resolver/calendarAspectContentStudio.mjs"
+      - "apps/web/src/services/skyAspectContent.ts"
+      - "api/admin/sky-v4-preview.ts"
+      - "apps/admin/src/GeneratedContentAdminDashboard.tsx"
+      - "scripts/stage-calendar-aspect-content-studio-drafts.mjs"
+      - "scripts/test-calendar-aspect-content-studio-drafts.mjs"
+      - "scripts/seed-published-calendar-aspect-content-studio.mjs"
+      - "scripts/test-published-calendar-aspect-content-studio.mjs"
+      - "tests/visual/content-dashboard-admin-user-flows.spec.ts"
+      - "packages/astro-knowledge/data/transits/**"
+      - ".github/workflows/calendar-aspect-content-studio.yml"
+      - "apps/web/src/App.tsx"
+      - "apps/web/src/features/calendar/LunarCalendar.tsx"
+      - "scripts/lib/assert-sky-studio-authority.mjs"
+      - "scripts/test-sky-studio-authority-contract.mjs"
+      - "scripts/test-calendar-aspect-workflow-contract.mjs"
+      - "scripts/test-sky-placement-exact-aspect-authority.mjs"
+      - "scripts/test-sky-calendar-collective-release-20260907.mjs"
   workflow_dispatch:
     inputs:
       seed_content_studio:
@@ -43,6 +71,15 @@ jobs:
       - uses: actions/setup-node@v6
         with:
           node-version: 22
+          cache: npm
+      - name: Install dependencies
+        run: npm ci
+      - name: Verify authority and manual-only publication contracts
+        run: |
+          node scripts/test-sky-studio-authority-contract.mjs
+          node scripts/test-calendar-aspect-workflow-contract.mjs
+          node scripts/test-sky-placement-exact-aspect-authority.mjs
+          node scripts/test-sky-calendar-collective-release-20260907.mjs
       - name: Verify consequence-first draft package
         run: node scripts/test-calendar-aspect-content-studio-drafts.mjs
       - name: Materialize safe Content Studio rows
@@ -80,7 +117,7 @@ jobs:
           node scripts/stage-calendar-aspect-content-studio-drafts.mjs --apply --verify-remote --out=/tmp/calendar-aspect-content-studio-drafts.json
 
   sync-published-exact-aspects:
-    if: github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && inputs.sync_published_exact_aspects)
+    if: github.event_name == 'workflow_dispatch' && inputs.sync_published_exact_aspects
     needs: calendar-aspect-content-studio
     runs-on: ubuntu-latest
     timeout-minutes: 10

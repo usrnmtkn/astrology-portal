@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 import assert from "node:assert/strict";
+import { assertSkyStudioAuthority } from "./lib/assert-sky-studio-authority.mjs";
 import crypto from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
@@ -104,10 +105,10 @@ const skyContent = fs.readFileSync(path.join(repoRoot, "apps/web/src/services/sk
 const seedSource = fs.readFileSync(path.join(repoRoot, "scripts/seed-published-calendar-aspect-content-studio.mjs"), "utf8");
 const surfaceContract = fs.readFileSync(path.join(repoRoot, "docs/content-management/SKY-ASPECT-SURFACE-CONTRACT.md"), "utf8");
 
-assert.match(lunar, /exact: studioExact \?\? exact/u, "Calendar must prefer a signed-off Studio exact version over its canonical exact baseline.");
-assert.match(app, /if \(studio\) \{[\s\S]*tier: "content-studio-exact-sky-aspect-v1"/u, "Sky detail must prefer a signed-off Studio exact version at the exact tier.");
+assertSkyStudioAuthority(app, lunar);
 assert.doesNotMatch(app, /!loadedExactRegistry\.approvedExactSkyAspectCopy/u, "Studio exact authority must not be limited to canonical source gaps.");
-assert.match(skyContent, /South Node \(\$\{southAspect\}\): \$\{south\.body\}/u, "Studio exact North Node rendering must preserve the paired South Node interpretation.");
+assert.match(skyContent, /const southContent = withCalendarAspectRetrograde\(south\.content, \{[\s\S]*?first: "south-node", second: expected\.b,/u, "South Node keeps its pole and selected motion overlay before rendering.");
+assert.match(skyContent, /South Node \(\$\{southAspect\}\): \$\{southContent === south\.content \? south\.body : southContent\.body\}/u, "Studio exact North Node rendering must preserve the paired South Node interpretation.");
 assert.match(skyContent, /sky\.aspect\.south-node\.\$\{southAspect\}/u, "Calendar hydration must request the editable South Node counterpart for node-axis events.");
 assert.match(seedSource, /studio_editable_fields:[\s\S]*Summary[\s\S]*Body/u, "All exact aspect baselines must keep Summary and Body editable in Content Studio.");
 assert.match(seedSource, /EXACT-SKY-ASPECT-CONTENT-STUDIO-2026-09-07-COLLECTIVE/u, "Content Studio exact package version was not advanced with this release.");
