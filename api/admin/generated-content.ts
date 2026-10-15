@@ -716,6 +716,11 @@ function validateFallbackArchitectureV3Copy(row: ExistingGeneratedContentRow, pa
         && field.endsWith("body_they")
         && slot === "{{Name}}";
       if (isAllowedFriendName) continue;
+      // Bond openings receive holder1 in both reader directions, even when an
+      // older passage happened not to mention the other person's name.
+      if (/^fallback-hook\/bond-effect-(?:conjunction|sextile|square|trine|opposition|soft|hard)\/[a-z-]+(?:\/variant-\d+)?$/u.test(row.content_key)
+        && /(?:^|\.)(?:body|body_you|body_they)$/u.test(field)
+        && slot === "{{holder1}}") continue;
       // A new synastry document has no original wording to inherit slots from.
       // License only holders actually supplied by that reader direction.
       if (row.content_key.startsWith("fallback-hook/synastry-pair/") && /(?:^|\.)(?:body|body_you|body_they)$/u.test(field)) {
