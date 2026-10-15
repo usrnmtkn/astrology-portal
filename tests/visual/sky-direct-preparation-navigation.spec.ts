@@ -48,3 +48,49 @@ test('Leaving a prepared direct article before full Sky resolves cannot reopen i
   await expect(page.locator('.sky-detail-article')).toHaveCount(0);
   expect(await page.evaluate(() => (window as any).__abandonedArticlePaints)).toEqual([]);
 });
+
+for (const width of [390, 1440]) test(`Complete direct placement does not wait for unrelated full Sky ${width}`, async ({ page }) => {
+  test.setTimeout(90_000);
+  await page.setViewportSize({ width, height: 1000 });
+  await page.clock.setFixedTime(new Date('2026-09-10T04:20:00Z'));
+  await bundledPublications(page);
+  await page.addInitScript(() => {
+    localStorage.setItem('tldrastro:selectedLocation', JSON.stringify({ label:'Synthetic New York', latitude:40.7, longitude:-74, timeZone:'America/New_York' }));
+    (window as any).__fullSkyFallbacks = 0;
+    const OriginalWorker = window.Worker;
+    window.Worker = class extends OriginalWorker {
+      postMessage(message: any, ...args: any[]) {
+        if (message.kind === 'sky') (window as any).__fullSkyFallbacks++;
+        return super.postMessage(message, ...args as [Transferable[]]);
+      }
+    };
+  });
+  await page.route('**/api/content-reader', route => route.fulfill({json:readerResponse([])}));
+  let release!: () => void;
+  const gate = new Promise<void>(resolve => { release=resolve; });
+  let skyReturned = false;
+  await page.route('**/api/sky?**', async route => {
+    await gate;
+    const response = { statusCode:200, setHeader() {}, end(body:string) {
+      skyReturned = true;
+      void route.fulfill({status:this.statusCode,contentType:'application/json',body});
+    } };
+    await skyHandler({method:'GET',url:route.request().url()} as IncomingMessage,response as unknown as ServerResponse);
+  });
+  const errors:string[]=[];page.on('pageerror',error=>errors.push(error.message));
+  try {
+    await page.goto('/#sky/placement/sun/virgo',{waitUntil:'domcontentloaded'});
+    const body=page.locator('.sky-detail-article .article-body-inner').first();
+    await expect(body).toContainText('The Sun in Virgo makes the systems',{timeout:60_000});
+    await expect(body).toContainText('The system that works is the one that makes your life easier to live.');
+    await expect(body).toContainText('Today’s New Moon');
+    await expect(page.locator('.sky-detail-id .article-duration').first()).toHaveText('August 22 to September 22, 2026');
+    expect(skyReturned).toBe(false);
+    expect(await page.evaluate(()=>(window as any).__fullSkyFallbacks)).toBe(0);
+    const complete=await body.textContent();
+    release();
+    await expect.poll(()=>skyReturned).toBe(true);
+    await expect(body).toHaveText(complete!);
+    expect(errors).toEqual([]);
+  } finally {release();await page.unrouteAll({behavior:'wait'});}
+});

@@ -12159,7 +12159,9 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
       });
     }
     const articlePreparation = skyArticlePreparationRef.current?.request;
-    if (!sky) return;
+    // Guest articles already have their complete placement facts. Member
+    // personalization retains the existing full-Sky readiness boundary.
+    if (!sky && (mode !== "guest" || userProfile)) return;
     const commitResolvedSkyDetail = (detail: SkyDetail | null) => {
       setSkyDetailResolvedIdentity(skyPlacementPublicationIdentity());
       setSelectedSkyDetail(detail);
@@ -12182,6 +12184,7 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
       // Resolve both before exposing the article so registry hydration cannot
       // add key dates to an already visible passage.
       void Promise.all([articlePreparation, loadContentRegistry("sky")]).then(async ([{ placementSky, content }]) => {
+        if (!skyFactValidation(placementSky).ok) throw new Error("Invalid placement calculation.");
         const renderPlacement = async (detailContent: GeneratedContentMap) => {
           if (cancelled || skyDetailRoutePath !== skyDetailRoutePathFromUrl()) return;
           const detail = skyDetailFromRoutePath(baseRoute, placementSky, detailContent, openSkyDetail);
@@ -12199,8 +12202,9 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
           commitResolvedSkyDetail(personalizedSkyPlacementDetail(detail, profileNatalSky?.ascendant ?? userProfile?.rising,
             skyPlacementPersonalizationTransits, skyDate));
         };
-        const currentIngressKeys = routePosition && placementSign ? skyIngressEssayPublicationKeys(contentPublicationRecords(), {
-          planet: normalizeContentIdPart(routePosition.planet), sign: normalizeContentIdPart(placementSign)
+        const articlePosition = placementSky.positions.find(position => skyRoutePartMatches(position.planet, routePlanet));
+        const currentIngressKeys = articlePosition && placementSign ? skyIngressEssayPublicationKeys(contentPublicationRecords(), {
+          planet: normalizeContentIdPart(articlePosition.planet), sign: normalizeContentIdPart(placementSign)
         }) : [];
         await renderPlacement(await loadSkyDetailContent(placementSky,
           eligibleSkyDetailContent(mergeGeneratedContentMaps(availableDetailContent, content)),
@@ -12213,6 +12217,7 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
       });
       return () => { cancelled = true; };
     }
+    if (!sky) return;
     if (!calendarEvent && routeType === 'lunation' && routePlanet && routeSign) {
       let cancelled=false;
       const date=new Date(`${routePlanet}T00:00:00Z`);
