@@ -8825,7 +8825,21 @@ for (const [width, theme] of [[1440, "light"], [1440, "dark"], [390, "light"], [
       await page.reload();
       await expect(you).toHaveValue(updated);
       await expect(friend).toHaveValue(updatedFriend);
+      // The isolated real-handler fixture initializes transactional SQL on its
+      // first publication. Check its receipt before timing the UI update.
+      const publicationResponse = page.waitForResponse(response => {
+        const request = response.request();
+        return new URL(response.url()).pathname === "/api/admin/generated-content"
+          && request.method() === "PATCH"
+          && request.postDataJSON()?.ownerAction === "approve-package-revision";
+      });
       await card.getByRole("button", { name: "Save & publish", exact: true }).click();
+      const response = await publicationResponse;
+      expect(response.status()).toBe(200);
+      const publication = await response.json();
+      expect(publication.ok).toBe(true);
+      expect(Boolean(publication.publicationReceipt)).toBe(true);
+      expect(publication.rows?.some((row: { content_key: string }) => row.content_key === key)).toBe(true);
       await expect(card).toContainText("Published. The reader preview will refresh.");
       await expect(preview).toContainText(updated);
       await preview.getByRole("button", { name: "Friend", exact: true }).click();
