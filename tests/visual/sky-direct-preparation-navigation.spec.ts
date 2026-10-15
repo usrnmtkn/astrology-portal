@@ -132,7 +132,7 @@ for (const restoring of [false, true]) test(`${restoring ? 'Restoring account' :
   await page.route('**/rest/v1/user_profiles*',async route=>{
     profileRequested=true;
     await profileGate;
-    await route.fulfill({json:{data:{profile}}});
+    await route.fulfill({json:{data:{version:1,profile}}});
   });
   let writingFinished=false;
   await page.route('**/api/content-reader',async route=>{
