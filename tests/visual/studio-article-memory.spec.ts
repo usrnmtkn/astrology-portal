@@ -82,12 +82,18 @@ for (const width of [390,1440]) for (const colorScheme of ['light','dark'] as co
       await editor.screenshot({path:`test-results/article-crud-draft-${width}-${colorScheme}.png`});
       await actions.getByRole('button',{name:'Review & publish',exact:true}).click();
       await expect(editor.getByRole('region',{name:'Review Sky article changes'})).toBeFocused();
-      await editor.getByRole('button',{name:'Publish changes',exact:true}).click();
+      const publish = actions.getByRole('button',{name:'Publish changes',exact:true});
+      await expect(publish).toBeVisible();
+      await expect(actions.getByRole('button',{name:'Review & publish',exact:true})).toHaveCount(0);
+      const publishBounds = await publish.boundingBox();
+      expect(publishBounds!.y).toBeGreaterThanOrEqual(0);
+      expect(publishBounds!.y + publishBounds!.height).toBeLessThanOrEqual(1000);
+      await actions.getByRole('button',{name:'Publish changes',exact:true}).click();
       if (width === 390 && colorScheme === 'light' && initialPublished) {
         await expect(editor.getByRole('alert').filter({hasText:'Synthetic publication refused'})).toBeVisible();
         await expect(actions).toContainText('Draft saved · Changes not published');
         expect((await call({method:'rows'})).find((row:any)=>row.id===savedRevision.id)).toEqual(savedRevision);
-        await editor.getByRole('button',{name:'Publish changes',exact:true}).click();
+        await actions.getByRole('button',{name:'Publish changes',exact:true}).click();
       }
       await expect(page.getByText('The reviewed revision is published.',{exact:true})).toBeVisible();
       await expect(actions.getByRole('link',{name:'Read published article'})).toHaveAttribute('href','/#articles/sky-article%2Fsaturn%2Faries%2F2026');
