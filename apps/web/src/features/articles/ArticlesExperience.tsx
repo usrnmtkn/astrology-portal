@@ -4,6 +4,7 @@ import { FormattedProse, FormattedText } from "../../components/FormattedProse";
 import { PageLoading } from "../../components/PageLoading";
 import { loadReaderRows } from "../../services/readerContentClient";
 import { subscribeToContentUpdates, subscribeToContentRevalidation } from "../../services/contentUpdateSignal";
+import { subscribeToContentPublications } from "../../content/contentPublicationState";
 import type { GeneratedContentRow } from "../../services/generatedContent";
 import { articleKeyFromHash, articleLibraryKind, articleLibraryPrefixes, articleReaderHref, type ArticleLibraryKind } from "../../../../../src/shared/articleLibrary";
 
@@ -42,8 +43,9 @@ export default function ArticlesExperience() {
   }, []);
   useEffect(() => {
     const refresh = () => setRevision(value => value + 1);
+    const stopPublications = subscribeToContentPublications(refresh);
     const stopUpdates = subscribeToContentUpdates(refresh), stopRevalidation = subscribeToContentRevalidation(refresh);
-    return () => { stopUpdates(); stopRevalidation(); };
+    return () => { stopPublications(); stopUpdates(); stopRevalidation(); };
   }, []);
   useEffect(() => {
     const controller = new AbortController();

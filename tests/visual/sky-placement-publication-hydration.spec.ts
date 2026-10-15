@@ -2,9 +2,10 @@ import { readerResponse } from '../helpers/reader-response';
 import { expect, test } from '@playwright/test';
 import { skyPlacementSourceRecords } from '../../api/_lib/sky-placement-sources';
 import { canonicalPublicationLedger, publicationLedgerTag } from '../../apps/web/src/services/publicationLedgerTransport';
+import { publicationStorageEmitter } from '../helpers/publication-storage-emitter';
 
-for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
- test(`owner-authored signed aspect replaces generic exact copy ${width} ${theme}`, async ({ page }) => {
+for (const width of [390, 1440]) for (const theme of ['light', 'dark']) for (const delivery of ['external edit', 'storage ledger']) {
+ test(`owner-authored signed aspect replaces generic exact copy ${width} ${theme} ${delivery}`, async ({ page, context }) => {
   test.setTimeout(120_000);
   await page.setViewportSize({ width, height: 1000 });
   await page.clock.setFixedTime(new Date('2026-09-26T01:36:23Z'));
@@ -62,7 +63,8 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
   await assertOwned();
   expect(signedRequests).toBeGreaterThan(0);
   await page.reload(); await assertOwned();
-  const notify = () => page.evaluate(({key,stamp,published}) => window.dispatchEvent(new CustomEvent('tldrastro:content-update', {
+  const emitStorage = delivery === 'storage ledger' ? await publicationStorageEmitter(context) : null;
+  const notify = () => emitStorage ? emitStorage(publications()) : page.evaluate(({key,stamp,published}) => window.dispatchEvent(new CustomEvent('tldrastro:content-update', {
    detail: { contentKey: key, published, updatedAt: stamp }
   })), { key, stamp: stamp(), published: !retired });
   revision++; await notify(); await assertOwned();

@@ -24,7 +24,7 @@ export async function refreshContentPublications(force = false, readRelay?: () =
     if (readRelay) {
       try {
         const rows = await readRelay();
-        installContentPublications(rows);
+        installContentPublications(rows, "complete-live");
         resolved = resolvedFromNetwork = true;
         checkedAt = Date.now();
         return;
@@ -59,7 +59,7 @@ export async function refreshContentPublications(force = false, readRelay?: () =
         cursor = nextCursor;
       }
     }));
-    installContentPublications(pages.flat());
+    installContentPublications(pages.flat(), "complete-live");
     resolved = true;
     resolvedFromNetwork = true;
     checkedAt = Date.now();

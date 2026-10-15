@@ -21,7 +21,7 @@ import type { ArticlePillData } from "./components/ArticlePills";
 import { articleHistoryChangeEvent, pushArticleUrl, returnToArticleParent } from "./services/articleNavigation";
 import { CardReadMore } from "./components/CardReadMore";
 import { NavigationPill } from "./components/NavigationPill";
-import { isContentRetired, contentPublication, contentPublicationRecords, contentPublicationGeneration } from "./content/contentPublicationState";
+import { isContentRetired, contentPublication, contentPublicationRecords, contentPublicationGeneration, subscribeToContentPublications } from "./content/contentPublicationState";
 import { personalTransitPublicationIdentity } from "./services/personalTransitPublication";
 import { installPersonalTransitFallbackArchitectureV3Bundle } from "./content/fallbackArchitectureV3Runtime";
 import { prepareSkyPlacementSources, skyPlacementPublicationIdentity } from "./services/skyPlacementHydration";
@@ -12339,10 +12339,7 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
   }, []);
 
   useEffect(() => {
-    const refreshContent = (notice?: ContentUpdateNotice) => {
-      // Ledger installation emits "*" itself. Only an external edit/resume
-      // needs a read after any older request; do not recursively queue reads.
-      void (notice?.contentKey === "*" ? refreshContentPublications(true) : refreshContentPublicationsAfterUpdate());
+    const refreshInstalledContent = () => {
       clearSharedGeneratedContentCache();
       clearPlanetTopicVocabularyCache();
       clearNatalCardTaglineCache();
@@ -12355,9 +12352,17 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
       compatibilityDashboardHydrationVersionRef.current = null;
       setContentRefreshVersion((version) => version + 1);
     };
+    const refreshContent = (notice?: ContentUpdateNotice) => {
+      void (notice?.contentKey === "*" ? refreshContentPublications(true) : refreshContentPublicationsAfterUpdate());
+      refreshInstalledContent();
+    };
+    const stopPublications = subscribeToContentPublications((source) => {
+      if (source !== "complete-live") void refreshContentPublicationsAfterUpdate();
+      refreshInstalledContent();
+    });
     const unsubscribe = subscribeToContentUpdates(refreshContent);
     const stopRevalidation = subscribeToContentRevalidation(refreshContent);
-    return () => { unsubscribe(); stopRevalidation(); };
+    return () => { stopPublications(); unsubscribe(); stopRevalidation(); };
   }, []);
 
   useEffect(() => {

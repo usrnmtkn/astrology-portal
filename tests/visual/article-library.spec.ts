@@ -1,10 +1,99 @@
 import { test, expect, type Locator } from '@playwright/test';
+import { build } from 'esbuild';
 import { studioApiStore } from '../helpers/studio-api-store';
 import { routeStudioInventoryApi } from '../helpers/studio-inventory-route';
 import { bundledPublications } from '../helpers/bundled-publications';
 import { syntheticLibrarySkyArticle } from '../helpers/article-library-fixture';
+import { publicationStorageEmitter } from '../helpers/publication-storage-emitter';
+import { readerResponse } from '../helpers/reader-response';
 
 const body = 'Synthetic complete opening.\n\n## Saved section\n\nSynthetic complete final paragraph.';
+
+for (const width of [390, 1440]) test(`open guide follows storage-only publication and retirement ${width}`, async ({ page, context }) => {
+  test.setTimeout(90_000);
+  await page.setViewportSize({ width, height: 1000 });
+  const key = 'article/guide/synthetic-storage';
+  let revision = 1, retired = false;
+  const stamp = () => `2026-10-15T00:00:0${revision}.000Z`;
+  const row = () => ({ id: 'bbbbbbbb-bbbb-4bbb-abbb-bbbbbbbbbbbb', content_key: key,
+    surface: 'guide', mode: 'article', status: 'LIVE', lane: 'serving', review_state: null,
+    headline: 'Synthetic storage guide', body: `Synthetic complete opening ${revision}.\n\nSynthetic complete ending ${revision}.`,
+    updated_at: stamp(), sections: {}, source_snapshot: { contentType: 'guide' } });
+  const publications = () => [{ content_key: '__content-publication-ledger/v1', state: 'live', revision: 1,
+    row_id: null, row_updated_at: null, updated_at: '2026-10-15T00:00:00Z' },
+    { content_key: key, state: retired ? 'retired' : 'live', revision, row_id: row().id, row_updated_at: stamp(), updated_at: stamp() }];
+  await bundledPublications(page);
+  await page.route('**/rest/v1/content_publications*', route => route.fulfill({ json: publications() }));
+  await page.route('**/api/content-publications', route => route.fulfill({ json: { schema: 'tldr-publications/v1', publications: publications() } }));
+  await page.route('**/api/content-reader', route => route.fulfill({ json: readerResponse(retired ? [] : [row()], publications()) }));
+  const errors: string[] = []; page.on('pageerror', error => errors.push(error.message));
+  await page.goto(`/#articles/${encodeURIComponent(key)}`);
+  const article = page.locator('.learn-article-body');
+  await expect(article).toContainText('Synthetic complete opening 1.');
+  await expect(article).toContainText('Synthetic complete ending 1.');
+  const emitStorage = await publicationStorageEmitter(context);
+  revision++; await emitStorage(publications());
+  await expect(article).toContainText('Synthetic complete opening 2.');
+  await expect(article).toContainText('Synthetic complete ending 2.');
+  await expect(article).not.toContainText('Synthetic complete ending 1.');
+  revision++; retired = true; await emitStorage(publications());
+  await expect(page.getByRole('heading', { name: 'Article unavailable', exact: true })).toBeVisible();
+  await expect(page.locator('body')).not.toContainText('Synthetic complete ending');
+  await page.reload();
+  await expect(page.getByRole('heading', { name: 'Article unavailable', exact: true })).toBeVisible();
+  expect(errors).toEqual([]);
+});
+for (const width of [390, 1440]) test(`scoped reader marker discovers omitted retirement in an open guide ${width}`, async ({ page, context }) => {
+  test.setTimeout(90_000);
+  await page.setViewportSize({ width, height: 1000 });
+  const key = 'article/guide/synthetic-omitted-retirement';
+  const otherKey = 'article/guide/synthetic-scoped-update';
+  const id = 'bbbbbbbb-bbbb-4bbb-abbb-bbbbbbbbbbbb';
+  let revision = 1, metadataReads = 0;
+  const publication = (content_key: string, retired = false) => ({ content_key, state: retired ? 'retired' : 'live', revision,
+    row_id: content_key.startsWith('__') ? null : id, row_updated_at: content_key.startsWith('__') ? null : '2026-10-15T00:00:01.000Z',
+    updated_at: `2026-10-15T00:00:0${revision}.000Z` });
+  const publications = () => [publication('__content-publication-ledger/v1'), publication(key, revision > 1), publication(otherKey)];
+  const row = { id, content_key: key, surface: 'guide', mode: 'article', status: 'LIVE', lane: 'serving', review_state: null,
+    headline: 'Synthetic omitted retirement guide', body: 'Synthetic complete retained opening.\n\nSynthetic complete retained ending.',
+    updated_at: '2026-10-15T00:00:01.000Z', sections: {}, source_snapshot: { contentType: 'guide' } };
+  await bundledPublications(page);
+  await page.route('**/rest/v1/content_publications*', route => {
+    metadataReads++;
+    const url = new URL(route.request().url());
+    const bounds = url.searchParams.getAll('content_key');
+    return route.fulfill({ json: publications().filter(record => bounds.every(bound => {
+      if (bound.startsWith('gte.')) return record.content_key >= bound.slice(4);
+      if (bound.startsWith('lt.')) return record.content_key < bound.slice(3);
+      if (bound.startsWith('gt.')) return record.content_key > bound.slice(3);
+      return true;
+    })) });
+  });
+  await page.route('**/api/content-reader', route => route.fulfill({ json: readerResponse(revision === 1 ? [row] : [], publications()) }));
+  const errors: string[] = []; page.on('pageerror', error => errors.push(error.message));
+  await page.goto(`/#articles/${encodeURIComponent(key)}`);
+  await expect(page.locator('.learn-article-body')).toContainText('Synthetic complete retained ending.');
+  await expect.poll(() => metadataReads).toBeGreaterThanOrEqual(6);
+  await page.evaluate(async () => { for (let n = 0; n < 30; n++) await new Promise(requestAnimationFrame); });
+  const before = metadataReads;
+  const bundled = await build({ stdin: { contents: `export {loadReaderRows} from './apps/web/src/services/readerContentClient.ts';`, resolveDir: process.cwd() },
+    bundle: true, format: 'esm', write: false, define: { 'import.meta.env': '{}' }, logLevel: 'silent' });
+  const emitter = await context.newPage();
+  await emitter.route('**/__scoped-retirement', route => route.fulfill({ contentType: 'text/html', body: '<script type="module">import * as qa from "/__scoped-retirement.js";window.qa=qa;</script>' }));
+  await emitter.route('**/__scoped-retirement.js', route => route.fulfill({ contentType: 'text/javascript', body: bundled.outputFiles[0].text }));
+  await emitter.route('**/api/content-reader', route => route.fulfill({ json: readerResponse([], [publication('__content-publication-ledger/v1'), publication(otherKey)]) }));
+  await emitter.goto('/__scoped-retirement');
+  await emitter.waitForFunction(() => Boolean((window as any).qa));
+  revision = 2;
+  expect(await emitter.evaluate(async key => (window as any).qa.loadReaderRows({ keys: [key] }), otherKey)).toMatchObject({ error: null });
+  await expect(page.getByRole('heading', { name: 'Article unavailable', exact: true })).toBeVisible();
+  expect(metadataReads - before).toBeGreaterThanOrEqual(6);
+  await expect(page.locator('body')).not.toContainText('Synthetic complete retained ending.');
+  await page.reload();
+  await expect(page.getByRole('heading', { name: 'Article unavailable', exact: true })).toBeVisible();
+  expect(errors).toEqual([]);
+  await emitter.close();
+});
 async function headingStyle(heading: Locator) {
   const values = await heading.evaluate(element => {
     const probe = document.createElement('h2');

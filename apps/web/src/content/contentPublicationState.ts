@@ -4,7 +4,6 @@ export const publicationLedgerBoundaries = [null, "authored/compat-pair/s", "aut
   "authored/transit-house-sign/s", "fallback-hook/n", "sky-placement", null] as const;
 
 import { isRetiredCompositionKey } from "./fallbackArchitectureV3/resolver/retiredCompositions.mjs";
-import { announceContentUpdate } from "../services/contentUpdateSignal.js";
 /** Shared lifecycle identity. A retirement survives deletion of its editable row. */
 export type ContentPublication = {
   content_key: string;
@@ -18,7 +17,8 @@ export const publicationLedgerKey = "__content-publication-ledger/v1";
 export function publicationLedgerReady() { return publications.has(publicationLedgerKey); }
 export const publicationCacheKey = "tldrastro:content-publications:v1";
 const publications = new Map<string, ContentPublication>();
-const listeners = new Set<() => void>();
+export type ContentPublicationInstallSource = "partial" | "complete-live";
+const listeners = new Set<(source: ContentPublicationInstallSource) => void>();
 export let contentPublicationGeneration = 0;
 
 export function validContentPublication(value: unknown): value is ContentPublication {
@@ -58,19 +58,18 @@ if (typeof window !== "undefined") {
   });
 }
 
-export function installContentPublications(incoming: readonly unknown[]) {
+export function installContentPublications(incoming: readonly unknown[], source: ContentPublicationInstallSource = "partial") {
   if (!mergeContentPublications(publications, incoming)) return;
   contentPublicationGeneration += 1;
   if (typeof window !== "undefined") {
     try { window.localStorage.setItem(publicationCacheKey, JSON.stringify([...publications.values()])); }
     catch { /* Memory still retains the retirement for this session. */ }
   }
-  for (const listener of listeners) listener();
-  announceContentUpdate({ contentKey: "*", published: false, updatedAt: new Date().toISOString() });
+  for (const listener of listeners) listener(source);
 }
 export function contentPublication(contentKey: string) { return publications.get(contentKey); }
 export function isContentRetired(contentKey: string) { return isRetiredCompositionKey(contentKey) || publications.get(contentKey)?.state === "retired"; }
-export function subscribeToContentPublications(listener: () => void) {
+export function subscribeToContentPublications(listener: (source: ContentPublicationInstallSource) => void) {
   listeners.add(listener);
   return () => { listeners.delete(listener); };
 }
