@@ -630,7 +630,8 @@ function validateFallbackArchitectureV3Copy(row: ExistingGeneratedContentRow, pa
     if (structuralChanges.length) {
       throw new GeneratedContentRequestError(`Package proposals cannot change read-only fields: ${structuralChanges.join(", ")}.`);
     }
-    for (const [field, value] of packageStringFields(packageDraft).filter(([field]) => isEditablePackageCopyPath(field, record))) {
+    // Editorial notes stay editable metadata, outside reader-prose validation.
+    for (const [field, value] of packageStringFields(packageDraft).filter(([field]) => field !== "editorial_notes" && isEditablePackageCopyPath(field, record))) {
       editableFields.push([`packageDraft.${field}`, value, packageValueAt(record, field)]);
     }
     for (const field of ["contentKey", "content_role", "grammar_frame", "render_policy"]) {

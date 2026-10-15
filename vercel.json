@@ -79,6 +79,9 @@
     }
   ],
   "functions": {
+    "api/content-reader.ts": {
+      "includeFiles": "api/_lib/local-env.ts"
+    },
     "api/content-publications.ts": {
       "includeFiles": "apps/web/src/services/publicationLedgerTransport.ts",
       "maxDuration": 15

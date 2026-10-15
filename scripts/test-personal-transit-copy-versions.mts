@@ -20,6 +20,7 @@ const original = {
   source_snapshot: { sourcePackage: 'tldrastro-fallback-architecture-v3', review_status: 'approved' },
   sections: { packageRecord: { contentKey: key, content_role: 'full_copy', review_status: 'approved',
     reader_only: true, render_policy: 'personal-transit-exact-v1', headline: 'Original title',
+    editorial_notes: 'Private engine note — {{notAReaderVariable}}.',
     body_you: 'Through {{untilDate}}, Mercury {{aspectWord}} your Venus. Original You passage.',
     body_they: 'Through {{untilDate}}, Mercury {{aspectWord}} their Venus. Original Friend passage.' } }
 };
@@ -45,6 +46,10 @@ test('the real import, reload, approval and public projection preserve both audi
     assert.equal(result.status, 200, JSON.stringify(result));
     const draft = result.payload.rows[0];
     assert.equal(draft.status, 'DRAFT');
+    assert.equal(draft.sections.packageDraft.editorial_notes, original.sections.packageRecord.editorial_notes);
+    const reopened = await store.invoke('GET', undefined, `/api/admin/generated-content?id=${draft.id}`);
+    assert.equal(reopened.status, 200);
+    assert.equal(reopened.payload.rows[0].sections.packageDraft.editorial_notes, original.sections.packageRecord.editorial_notes);
     assert.equal(draft.sections.packageRecord.body_you_alternate, original.sections.packageRecord.body_you);
     assert.equal(draft.sections.packageRecord.body_they_alternate, original.sections.packageRecord.body_they);
     assert.equal(draft.sections.packageRecord.alternate_source_version, original.updated_at);
@@ -54,8 +59,11 @@ test('the real import, reload, approval and public projection preserve both audi
     assert.equal(publish.status, 200, JSON.stringify(publish));
     const saved = publish.payload.rows[0];
     assert.equal(saved.status, 'LIVE');
+    assert.equal(saved.sections.packageRecord.editorial_notes, original.sections.packageRecord.editorial_notes);
     const projected = projectReaderRow(saved);
     const record = projected.sections.packageRecord;
+    assert.equal(record.editorial_notes, undefined);
+    assert.equal(JSON.stringify(projected).includes(original.sections.packageRecord.editorial_notes), false);
     assert.equal(record.body_you, imported.body_you);
     assert.equal(record.owner_authored, true);
     assert.equal(record.body_you_authorship, 'owner_authored');
@@ -68,6 +76,12 @@ test('the real import, reload, approval and public projection preserve both audi
     assert.equal(record.body_you_alternate, original.sections.packageRecord.body_you);
     assert.equal(record.body_they_alternate, original.sections.packageRecord.body_they);
     assert.equal(JSON.stringify(projected).includes('csvHistory'), false);
+    const publicResult = await store.invoke('POST', { keys: [key] }, '/api/content-reader');
+    assert.equal(publicResult.status, 200, JSON.stringify(publicResult));
+    assert.equal(publicResult.payload.rows.length, 1);
+    assert.equal(publicResult.payload.rows[0].sections.packageRecord.body_you, imported.body_you);
+    assert.equal(JSON.stringify(publicResult.payload).includes('editorial_notes'), false);
+    assert.equal(JSON.stringify(publicResult.payload).includes(original.sections.packageRecord.editorial_notes), false);
     const preview = renderTransitNatalPreviewState(normalizeTransitNatalPreviewInput({ planet: 'mercury', natalPoint: 'venus', aspect: 'trine', copyVersion: 'alternate', window: 'Until October 20, 2026' }), [saved], fixturePublications([saved]));
     assert.match(preview.body, /Original You passage/);
     assert.equal(preview.paragraphs[0].sources[0].field, 'body_you_alternate');
@@ -184,5 +198,45 @@ test('Lilith soft contacts require an exact approved saved passage; square remai
       assert.equal(preview.paragraphs[0].sources[0].contentKey, contentKey);
       assert.equal(preview.paragraphs[0].sources[0].publication.origin, 'published');
     }
+  } finally { await store.close(); }
+});
+
+for (const field of ['body_you', 'body_they']) for (const [copy, problem] of [
+  ['The engine starts.', 'banned word "engine"'], ['Reader copy—still checked.', 'em dash']
+]) test(`private notes do not exempt reader ${field} from ${problem}`, async () => {
+  const store = await createApiStore([original]);
+  try {
+    const imported = { ...csvRecordForRow(original), [field]: copy };
+    const rejected = await store.invoke('PATCH', { id: original.id, expectedUpdatedAt: original.updated_at,
+      ownerAction: 'import-csv-draft', csvRecord: imported });
+    assert.equal(rejected.status, 400, JSON.stringify(rejected));
+    assert.ok(rejected.payload.error.startsWith(`packageDraft.${field} contains `), rejected.payload.error);
+    assert.ok(rejected.payload.error.includes(problem), rejected.payload.error);
+    const unchanged = await store.invoke('GET', undefined, `/api/admin/generated-content?id=${original.id}`);
+    assert.equal(unchanged.status, 200);
+    assert.equal(unchanged.payload.rows[0].updated_at, original.updated_at);
+    assert.equal(unchanged.payload.rows[0].sections.packageDraft, undefined);
+  } finally { await store.close(); }
+});
+
+test('editorial notes remain editable, persist through reopen, and stay private', async () => {
+  const store = await createApiStore([original]);
+  const note = 'Updated internal engine note — {{notAReaderVariable}}.';
+  try {
+    const result = await store.invoke('PATCH', { id: original.id, expectedUpdatedAt: original.updated_at,
+      reviewStatus: 'needs_review', sections: { ...original.sections,
+        packageDraft: { ...original.sections.packageRecord, editorial_notes: note } } });
+    assert.equal(result.status, 200, JSON.stringify(result));
+    const reopened = await store.invoke('GET', undefined, `/api/admin/generated-content?id=${original.id}`);
+    const draft = reopened.payload.rows[0];
+    assert.equal(draft.sections.packageDraft.editorial_notes, note);
+    const published = await store.invoke('PATCH', { id: draft.id, expectedUpdatedAt: draft.updated_at,
+      ownerAction: 'approve-package-revision' });
+    assert.equal(published.status, 200, JSON.stringify(published));
+    const saved = published.payload.rows[0];
+    assert.equal(saved.sections.packageRecord.editorial_notes, note);
+    assert.equal(saved.sections.packageRecord.body_you, original.sections.packageRecord.body_you);
+    assert.equal(saved.sections.packageRecord.body_they, original.sections.packageRecord.body_they);
+    assert.equal(JSON.stringify(projectReaderRow(saved)).includes(note), false);
   } finally { await store.close(); }
 });

@@ -8,6 +8,7 @@ import { fixturePublications } from '../helpers/content-reader-route.mjs';
 const key = 'authored/transit-aspect/mercury/venus/trine';
 const record = { contentKey: key, content_role: 'full_copy', review_status: 'approved',
   reader_only: true, render_policy: 'personal-transit-exact-v1', headline: 'Transit version fixture',
+  editorial_notes: 'Private engine note — {{notAReaderVariable}}.',
   body_you: 'Through {{untilDate}}, Mercury {{aspectWord}} your Venus. Original You passage.',
   body_they: 'Through {{untilDate}}, Mercury {{aspectWord}} their Venus. Original Friend passage.' };
 const fixture = { id: '10000000-0000-4000-8000-000000000051', content_key: key,
@@ -85,6 +86,7 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
       await page.reload();
       const rows = await store.call({ method: 'rows' });
       const saved = rows.find((row: any) => row.content_key === key);
+      expect(saved.sections.packageRecord.editorial_notes).toBe(record.editorial_notes);
       expect(saved.sections.packageRecord.body_you).toBe(imported.body_you);
       expect(saved.sections.packageRecord.body_they).toBe(imported.body_they);
       expect(saved.sections.packageRecord.body_you_alternate).toBe(record.body_you);
