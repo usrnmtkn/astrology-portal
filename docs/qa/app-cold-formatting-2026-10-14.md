@@ -22,8 +22,9 @@ category responses are withheld.
 Shared formatted writing now suspends to the existing owning surface's loading
 boundary. Plain writing retains its exact prior rendering. The safe parser stays
 lazy; the prepared Sky renderer, parser rules, source selection and saved text
-are unchanged. No new heading, style, source row, publication or calculation is
-introduced.
+are unchanged. The already-deferred report document imports the prepared safe
+renderer so synchronous static rendering also retains complete formatted copy.
+No new heading, style, source row, publication or calculation is introduced.
 
 Direct article URLs read their exact key through the existing public reader
 client. Library views retain all-category completeness and fail as a unit.
