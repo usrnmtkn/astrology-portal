@@ -1818,10 +1818,11 @@ var payload = (row) => JSON.stringify({
   you: row.body_you_alternate ?? "",
   friend: row.body_they_alternate ?? ""
 });
-function personalTransitCopyVersion(row, version = "primary") {
+var hasPassage = (text2) => typeof text2 === "string" && Boolean(text2.trim());
+function personalTransitCopyVersion(row, version = "primary", voice = "you") {
   if (version === "primary") return row;
   if (version !== "alternate") throw new Error("Unknown personal transit writing version.");
-  if (![row.body_you_alternate, row.body_they_alternate].every((text2) => typeof text2 === "string" && text2.trim()) || row.alternate_copy_sha256 !== sha256Text(payload(row))) throw new Error("No verified alternate is available for this write-up.");
+  if (!hasPassage(voice === "you" ? row.body_you_alternate : row.body_they_alternate) || row.alternate_copy_sha256 !== sha256Text(payload(row))) throw new Error("No verified alternate is available for this write-up.");
   return {
     ...row,
     headline: row.alternate_headline ?? "",
@@ -2452,7 +2453,7 @@ function createTransitSynastryRenderer(transitLib, templatesFile, rowsFile, opts
     tryKeys.push(`authored/transit-aspect/any/${natal}/${g}`, `authored/transit-aspect/any/${natal}/conjunction`);
     for (const k of prioritizeExactTransitSources(tryKeys, transiting, natal, aspect)) {
       const sourceCard = card(k);
-      const c = sourceCard ? personalTransitCopyVersion(sourceCard, copyVersion) : null;
+      const c = sourceCard ? personalTransitCopyVersion(sourceCard, copyVersion, v) : null;
       if (c) {
         const AW = { conjunction: "conjunct", square: "square", opposition: "opposite", trine: "trine", sextile: "sextile" };
         const untilDate = win ? String(win).replace(/^until\s+/i, "") : null;

@@ -18,11 +18,18 @@ const fixture = { id: '10000000-0000-4000-8000-000000000051', content_key: key,
   facts: { fallbackArchitectureV3: true, readerServing: true },
   source_snapshot: { sourcePackage: 'tldrastro-fallback-architecture-v3', review_status: 'approved' },
   sections: { packageRecord: record } };
+const partialFixtures = (['you', 'they'] as const).map((voice, index) => {
+  const contentKey = voice === 'you' ? 'authored/transit-aspect/venus/moon/hard' : 'authored/transit-aspect/mars/chiron/square';
+  const passage = `Through {{untilDate}}, a saved ${voice} passage ends here.`;
+  return { ...fixture, id: `10000000-0000-4000-8000-00000000005${index + 2}`, content_key: contentKey,
+    body: voice === 'you' ? passage : '', sections: {
+      packageRecord: { contentKey, content_role: 'full_copy', review_status: 'approved', headline: `Legacy ${voice} source`, [`body_${voice}`]: passage } } };
+});
 
 for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
   test(`transit primary and retained alternate persist at ${width}px ${theme}`, async ({ page, context }) => {
     test.setTimeout(120_000);
-    const store = await studioApiStore([fixture]);
+    const store = await studioApiStore([fixture, ...partialFixtures]);
     try {
       await context.route('**/*', route => {
         const request = route.request();
@@ -63,13 +70,17 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
         body: 'Through {{untilDate}}, Venus {{aspectWord}} your Lilith. New primary You passage.',
         body_you: 'Through {{untilDate}}, Venus {{aspectWord}} your Lilith. New primary You passage.',
         body_they: 'Through {{untilDate}}, Venus {{aspectWord}} their Lilith. New primary Friend passage.' };
+      const partialImports = partialFixtures.map(row => ({ ...csvRecordForRow(row), keep_current_as_alternate: 'yes', publish: 'yes',
+        primary_owner_authored: 'yes', owner_source_uri: 'thread:01a13201-e1a0-75c0-ab9b-f1b8aa29d3ed',
+        body_you: 'Through {{untilDate}}, a complete primary You passage ends here.',
+        body_they: 'Through {{untilDate}}, a complete primary Friend passage ends here.' }));
       await page.getByRole('button', { name: 'Import CSV', exact: true }).click();
       await page.getByLabel('Import Content Studio CSV', { exact: true }).setInputFiles({
-        name: 'approved-transit.csv', mimeType: 'text/csv', buffer: Buffer.from(writeStudioCsv([imported, newRecord])) });
+        name: 'approved-transit.csv', mimeType: 'text/csv', buffer: Buffer.from(writeStudioCsv([imported, newRecord, ...partialImports])) });
       const panel = page.getByRole('region', { name: 'CSV offline editing' });
       await expect(panel).toContainText('0 conflicts or errors');
       await panel.getByRole('button', { name: 'Save & publish', exact: true }).click();
-      await expect(panel).toContainText('2 rows published');
+      await expect(panel).toContainText('4 rows published');
       await panel.getByRole('button', { name: 'Close CSV', exact: true }).click();
       await page.reload();
       const rows = await store.call({ method: 'rows' });
@@ -93,6 +104,18 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
       await page.getByLabel('Retained alternate · You', { exact: true }).scrollIntoViewIfNeeded();
       await page.screenshot({ path: `test-results/v21-transit-${width}-${theme}.png`, fullPage: false });
       await page.getByRole('dialog', { name: 'Generated content editor' }).getByRole('button', { name: 'Close', exact: true }).click();
+      for (const [index, voice] of (['you', 'they'] as const).entries()) {
+        const partial = rows.find((row: any) => row.content_key === partialFixtures[index].content_key);
+        expect(partial.sections.packageRecord[`body_${voice}_alternate`]).toBe(partialFixtures[index].sections.packageRecord[`body_${voice}`]);
+        expect(partial.sections.packageRecord[`body_${voice === 'you' ? 'they' : 'you'}_alternate`]).toBeUndefined();
+        await page.getByRole('row').filter({ hasText: partialFixtures[index].content_key }).getByRole('button', { name: 'Edit', exact: true }).click();
+        const available = voice === 'you' ? 'You' : 'Friend';
+        const absent = voice === 'you' ? 'Friend' : 'You';
+        await expect(page.getByLabel(`Retained alternate · ${available}`, { exact: true })).toHaveValue(`Through {{untilDate}}, a saved ${voice} passage ends here.`);
+        await expect(page.getByLabel(`Retained alternate · ${available}`, { exact: true })).not.toBeEditable();
+        await expect(page.getByLabel(`Retained alternate · ${absent}`, { exact: true })).toHaveCount(0);
+        await page.getByRole('dialog', { name: 'Generated content editor' }).getByRole('button', { name: 'Close', exact: true }).click();
+      }
       await page.goto('/admin/content#sky-writeups?view=transits-to-natal&transit=venus&aspect=trine&natal=lilith&window=Until%20October%2020%2C%202026');
       const preview = page.getByRole('region', { name: 'Effective transit to natal reader preview' });
       await expect(preview).toContainText('New primary You passage.');

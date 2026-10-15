@@ -11967,10 +11967,10 @@ export function GeneratedContentAdminDashboard() {
               {!fallbackEditorGuidance && isAuthoredTransitAspectDraft && <small className="admin-field-hint">This is the editable Friends version of the standalone Transit to Natal write-up. Write it as its own complete passage rather than mechanically changing pronouns in the You copy.</small>}
             </label>
           )}
-          {isAuthoredTransitAspectDraft && packageFieldString(currentDraft, "body_you_alternate") && ([
+          {isAuthoredTransitAspectDraft && ([
             ["body_you_alternate", "Retained alternate · You"],
             ["body_they_alternate", "Retained alternate · Friend"]
-          ] as const).map(([field, label]) => <label className="admin-review-copy-editor studio-surface" key={field}>
+          ] as const).filter(([field]) => packageFieldString(currentDraft, field)).map(([field, label]) => <label className="admin-review-copy-editor studio-surface" key={field}>
             <span>{label}</span>
             <StudioTextarea aria-label={label} value={packageFieldString(currentDraft, field)} readOnly />
             <small className="admin-field-hint">Preserved from the published version. The primary wording is edited above.</small>

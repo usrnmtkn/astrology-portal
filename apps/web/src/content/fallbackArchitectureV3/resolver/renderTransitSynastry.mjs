@@ -703,7 +703,7 @@ function renderTransitAspectReference({ transiting, natal, aspect, copyVersion =
   tryKeys.push(`authored/transit-aspect/any/${natal}/${g}`, `authored/transit-aspect/any/${natal}/conjunction`);
   for (const k of prioritizeExactTransitSources(tryKeys, transiting, natal, aspect)) {
     const sourceCard = card(k);
-    const c = sourceCard ? personalTransitCopyVersion(sourceCard, copyVersion) : null;
+    const c = sourceCard ? personalTransitCopyVersion(sourceCard, copyVersion, v) : null;
     if (c) {
       // v2 aspect library (owner-approved 2026-07-27/28): authored bodies carry
       // {{aspectWord}} and {{untilDate}} slots so the closer names the exact aspect and window.

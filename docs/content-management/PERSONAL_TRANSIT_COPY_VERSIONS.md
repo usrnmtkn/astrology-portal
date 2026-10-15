@@ -16,6 +16,9 @@ headline and saved version before changing the primary. The alternate has its ow
 content hash and is not overwritten by subsequent primary edits. An unfinished
 draft cannot become the retained alternate. Legacy audience mirrors are included
 when their package record lacks one audience field.
+If only one audience was saved, only that passage is retained. Selecting an
+absent audience's alternate reports that no verified alternate is available;
+the reader never manufactures it from the other audience or primary passage.
 
 `primary_owner_authored=yes` requires an exact `owner_source_uri` thread reference.
 For existing records, the publication action assigns that designation only when

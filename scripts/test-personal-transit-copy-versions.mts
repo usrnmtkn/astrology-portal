@@ -111,6 +111,48 @@ test('a missing group key is created as a draft and only explicit approval publi
   assert.throws(() => newTransitCsvRow({ ...identity, content_key: 'authored/transit-aspect/mars/not-a-point/hard' }), /Invalid new/);
 });
 
+for (const savedVoice of ['you', 'they']) test(`a legacy ${savedVoice}-only record retains only its actual saved audience`, async () => {
+  const contentKey = savedVoice === 'you' ? 'authored/transit-aspect/venus/moon/hard' : 'authored/transit-aspect/mars/chiron/square';
+  const [transiting, natal, group] = contentKey.split('/').slice(2);
+  const savedField = `body_${savedVoice}`;
+  const oldPassage = `Through {{untilDate}}, ${transiting} {{aspectWord}} ${savedVoice === 'you' ? 'your' : 'their'} ${natal}. Saved ${savedVoice} passage.`;
+  const legacy = { ...original, content_key: contentKey, body: savedVoice === 'you' ? oldPassage : '',
+    sections: { body_you: savedVoice === 'you' ? oldPassage : null, body_they: savedVoice === 'they' ? oldPassage : null,
+      packageRecord: { contentKey, content_role: 'full_copy', review_status: 'approved', headline: 'Legacy source', [savedField]: oldPassage } } };
+  const store = await createApiStore([legacy]);
+  try {
+    const imported = { ...csvRecordForRow(legacy), keep_current_as_alternate: 'yes', publish: 'yes',
+      primary_owner_authored: 'yes', owner_source_uri: 'thread:01a13201-e1a0-75c0-ab9b-f1b8aa29d3ed',
+      body_you: `Through {{untilDate}}, ${transiting} {{aspectWord}} your ${natal}. New primary You passage.`,
+      body_they: `Through {{untilDate}}, ${transiting} {{aspectWord}} their ${natal}. New primary Friend passage.` };
+    const draft = await store.invoke('PATCH', { id: legacy.id, expectedUpdatedAt: legacy.updated_at,
+      ownerAction: 'import-csv-draft', csvRecord: imported });
+    assert.equal(draft.status, 200, JSON.stringify(draft));
+    const savedDraft = draft.payload.rows[0];
+    const published = await store.invoke('PATCH', { id: savedDraft.id, expectedUpdatedAt: savedDraft.updated_at,
+      ownerAction: 'approve-package-revision' });
+    assert.equal(published.status, 200, JSON.stringify(published));
+    const saved = published.payload.rows[0];
+    assert.equal(saved.status, 'LIVE');
+    const record = projectReaderRow(saved).sections.packageRecord;
+    assert.equal(record[`${savedField}_alternate`], oldPassage);
+    assert.equal(record[`body_${savedVoice === 'you' ? 'they' : 'you'}_alternate`], undefined);
+    assert.equal(record.body_you, imported.body_you);
+    assert.equal(record.body_they, imported.body_they);
+    const renderer = createTransitSynastryRenderer({ authoredCards: [record] }, { templates: [] }, { hookRows: [], vocabularyRows: [] });
+    for (const voice of ['you', 'they']) {
+      const facts = { transiting, natal, aspect: group === 'hard' ? 'square' : group, voice: voice === 'you' ? 'you' : 'Example Friend', window: 'Until October 20, 2026' };
+      assert.match(renderer.renderTransitAspect(facts).body, voice === 'you' ? /New primary You passage/ : /New primary Friend passage/);
+      if (voice === savedVoice) {
+        assert.match(renderer.renderTransitAspect({ ...facts, copyVersion: 'alternate' }).body, new RegExp(`Saved ${savedVoice} passage`));
+        const preview = renderTransitNatalPreviewState(normalizeTransitNatalPreviewInput({ planet: transiting, natalPoint: natal,
+          aspect: facts.aspect, voice: facts.voice, copyVersion: 'alternate', window: facts.window }), [saved], fixturePublications([saved]));
+        assert.match(preview.body, new RegExp(`Saved ${savedVoice} passage`));
+      } else assert.throws(() => renderer.renderTransitAspect({ ...facts, copyVersion: 'alternate' }), /No verified alternate/);
+    }
+  } finally { await store.close(); }
+});
+
 
 test('Lilith soft contacts require an exact approved saved passage; square remains unavailable', async () => {
   assert.equal(isDynamicTransitNatalExactKey('authored/transit-aspect/venus/lilith/trine'), true);
