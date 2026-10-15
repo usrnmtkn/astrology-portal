@@ -1,4 +1,4 @@
-import { FormattedProse } from "../../components/FormattedProse";
+import { PreparedProse as FormattedProse } from "../../components/FormattedWritingContent";
 import { RetrogradeHistoryDisclosure, type RetrogradeHistoryContext } from "../../components/RetrogradeHistory";
 import { ArticlePills, type ArticlePillData } from "../../components/ArticlePills";
 import { SkyMechanics, TransitFacts } from "../../components/ArticleFacts";
