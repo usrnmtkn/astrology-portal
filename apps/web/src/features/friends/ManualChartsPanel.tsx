@@ -1,6 +1,7 @@
 import { transitArticleDescription } from "../../services/transitArticleDescription";
 import { connectionActivationKey, connectionAspectWord, connectionPointTitle, CONNECTION_BRIDGE_PREFIX } from "../../content/connectionTransit";
 import { useConnectionTransitSources, publishedConnectionCopy, connectionBridgeCopy } from "./connectionTransitSources";
+import { connectionTransitReading } from "./connectionTransitReading";
 import { PageLoading, PageLoadError } from "../../components/PageLoading";
 import { FriendDetail } from "./FriendDetail";
 import { X } from "lucide-react";
@@ -41,6 +42,7 @@ import type { InterChartAspectLine } from "../../components/charts/Wheels";
 import {
   fallbackV3ApprovalLevelForContentKey,
   normalizeAspect as normalizeFallbackV3Aspect,
+  transitV3AuthoredCardForContentKey,
   SourceGapError as FallbackV3SourceGapError,
   transitSynastryFallbackRendererV3
 } from "../../content/fallbackArchitectureV3Runtime";
@@ -323,6 +325,7 @@ export function ManualChartsPanel({
     normalizeCompositePlacementSurface,
     normalizeContentIdPart,
     normalizePersonalTransitSurface,
+    stableTransitCopyVariant,
     normalizeTransitHouseSurface,
     normalizedSurfacePreview,
     ordinalHouse,
@@ -2151,10 +2154,18 @@ export function ManualChartsPanel({
     }
 
     if (!currentSky) return;
-    const personal = normalizePersonalTransitSurface(card.activation, currentSky.generatedAt,
-      card.endpointOwner === "reader" ? "you" : selectedChart.displayName);
+    const voice = card.endpointOwner === "reader" ? "you" : selectedChart.displayName;
+    const reading = connectionTransitReading({
+      transiting: normalizeContentIdPart(card.activation.transitPlanet), natal: normalizeContentIdPart(card.activation.natalPoint),
+      aspect: normalizeFallbackV3Aspect(card.activation.aspect) ?? "", voice,
+      sign: card.activation.transitSign ? normalizeContentIdPart(card.activation.transitSign) : undefined,
+      transitHouse: card.activation.transitHouse, natalHouse: card.activation.natalHouse,
+      pass: card.activation.timing?.exactPasses.length && card.activation.timing.exactPasses.length > 1 ? card.activation.timing.passIndex : undefined,
+      variant: stableTransitCopyVariant(voice, card.activation.id),
+      window: personalTransitPackageWindow(card.activation, currentSky.generatedAt)
+    }, transitV3AuthoredCardForContentKey);
     const transitSections = acceptedOwnerApprovedTransitSections(
-      personal.sections.filter(section => section.slot === "meaning"), fallbackV3ApprovalLevelForContentKey);
+      reading ? [{ body: reading.body, sourceKeys: [reading.contentKey] }] : [], fallbackV3ApprovalLevelForContentKey);
     if (!transitSections.length) return;
     const activatedConnectionSections = card.activatedContacts.flatMap(contact => {
       const yourPoint = normalizeContentIdPart(contact.yourPoint.name);

@@ -202,7 +202,7 @@ assert.match(briefSource, /houseTransits\.filter\(\(transit\) => \(\s*transit\.d
 
 assert.match(
   manualChartsPanelSource,
-  /acceptedOwnerApprovedTransitSections\(\s*personal\.sections\.filter/u,
+  /acceptedOwnerApprovedTransitSections\(\s*reading \? \[/u,
   "connection detail must gate the existing personal transit unit instead of borrowing a bond opening"
 );
 assert.match(

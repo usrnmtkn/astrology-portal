@@ -37,8 +37,6 @@ export function publishedConnectionCopy(rows: GeneratedContentRow[], key: string
 }
 
 export function connectionBridgeCopy(rows: GeneratedContentRow[], key: string, variables: Record<string, string>) {
-  // A saved publication owns its key, including retirement and failed retrieval.
-  if (contentPublication(key)) return publishedConnectionCopy(rows, key, variables);
-  const template = connectionBridgeTemplates.find(t => t.contentKey === key);
-  return template ? fillConnectionSource(key, template.body, variables) : null;
+  // Catalog wording is an editable draft starter, never an implicit publication.
+  return publishedConnectionCopy(rows, key, variables);
 }

@@ -6,9 +6,12 @@ Between You Two list openings, their publication identities or other consumers.
 
 The detail has three independent sources:
 
-1. The complete existing personal transit meaning, selected through
-   `normalizePersonalTransitSurface` for the activated endpoint. Its existing
-   You/Friend perspective, source approval and calculated timing rules apply.
+1. One complete existing authored personal transit-aspect unit for the activated
+   endpoint. `connectionTransitReading` selects the same contact's situation,
+   exact aspect or matching hard/soft family, preserving exact-before-family
+   pass/variant priority. It never selects returns, reversed or generic contacts,
+   other aspect families or composed fallback templates. Existing source approval
+   and calculated timing rules apply; the friend view requires authored friend copy.
 2. A directional `authored/connection-activation/{yourPoint}/{aspect}/{theirPoint}`
    passage. Only this exact key's published `body_you` serves. The reader is you;
    `{{holder1}}` is the friend. `body_they` remains an editorial field, never an
@@ -16,11 +19,11 @@ The detail has three independent sources:
    empty, draft, retired or invalid copy hides that activation.
 3. A calculated bridge from
    `fallback-template/connection-transit.bridge/{reader|friend}-endpoint`.
-   The small structural defaults and licensed variables are declared in
+   The small structural draft starters and licensed variables are declared in
    `apps/web/src/content/connectionTransit.ts`. Studio saves an independent
-   versioned override through the normal package revision workflow. A retired
-   or unavailable published override cannot resurrect a default. A bridge appears
-   only with its published activation.
+   versioned source through the normal package revision workflow. Starters never
+   serve before their own approval and publication. A retired or unavailable
+   bridge stays hidden. A bridge also requires its published activation.
 
 Studio exposes these under Connection Transits. The transit editor links to the
 existing Personal Transits library. Connection Activations starts empty, with

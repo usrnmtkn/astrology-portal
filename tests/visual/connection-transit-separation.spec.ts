@@ -3,6 +3,7 @@ import { readerResponse } from '../helpers/reader-response';
 import { fork } from 'node:child_process';
 import path from 'node:path';
 import { routeStudioInventoryApi } from '../helpers/studio-inventory-route';
+import { connectionBridgeTemplates } from '../../apps/web/src/content/connectionTransit';
 const fixtureUserId = 'qa-connection-source-user';
 const fixtureFriendName = 'Nikki';
 async function seed(page: Page, theme: string) {
@@ -119,7 +120,7 @@ async function seed(page: Page, theme: string) {
     incompleteChart: false, theme
   });
 }
-for (const activationLive of [false, true]) test(`connection detail separates transit and ${activationLive ? 'published' : 'unpublished'} activation`, async ({ page }, testInfo) => {
+for (const [activationLive, bridgeLive] of [[false,false],[true,false],[true,true]]) test(`connection detail separates transit, activation ${activationLive ? 'published' : 'draft'}, bridge ${bridgeLive ? 'published' : 'draft'}`, async ({ page }, testInfo) => {
   test.setTimeout(90_000);
   await page.clock.setFixedTime(new Date('2026-10-15T16:00:00Z'));
   await seed(page,testInfo.project.name.endsWith('dark')?'dark':'light');
@@ -128,12 +129,18 @@ for (const activationLive of [false, true]) test(`connection detail separates tr
   await page.route('**/api/content-publications', route => route.fulfill({json:{schema:'tldr-publications/v1',publications:[]}}));
   await page.route('**/api/content-reader', route => {
     const keys = route.request().postDataJSON()?.keys ?? [];
-    const rows = keys.filter((key:string) => key.startsWith('authored/connection-activation/')).map((key:string) => ({
+    const rows: any[] = keys.filter((key:string) => key.startsWith('authored/connection-activation/')).map((key:string) => ({
       id:key,content_key:key,status:activationLive?'LIVE':'DRAFT',lane:'serving',review_state:null,updated_at:'2026-10-15T12:00:00Z',
       surface:'friends',mode:'in_depth',provider:'tldrastro-fallback-architecture-v3',body:'You talk to {{holder1}}. This is the final activation sentence.',
       source_snapshot:{contentType:'connection-activation',content_role:'full_copy',review_status:'approved'},
       sections:{packageRecord:{contentKey:key,content_role:'full_copy',review_status:'approved',body_you:'You talk to {{holder1}}. This is the final activation sentence.',body_they:'Never substitute this perspective.'}}
     }));
+    rows.push(...connectionBridgeTemplates.filter(template=>keys.includes(template.contentKey)).map(template=>({
+      id:template.contentKey,content_key:template.contentKey,status:bridgeLive?'LIVE':'DRAFT',lane:'serving',review_state:null,updated_at:'2026-10-15T12:00:00Z',
+      surface:'friends',mode:'in_depth',provider:'tldrastro-fallback-architecture-v3',body:template.body,
+      source_snapshot:{contentType:'connection-transit-bridge',content_role:'template',review_status:'approved'},
+      sections:{packageRecord:{contentKey:template.contentKey,content_role:'template',review_status:'approved',body:template.body}}
+    })));
     const publications=rows.map((row:any)=>({content_key:row.content_key,state:'live',revision:10,row_id:row.id,row_updated_at:row.updated_at,updated_at:row.updated_at}));
     return route.fulfill({json:readerResponse(rows,publications)});
   });
@@ -148,12 +155,13 @@ for (const activationLive of [false, true]) test(`connection detail separates tr
   await expect(page.locator('main')).not.toContainText('{{untilDate}}');
   if(activationLive){
     await expect(page.getByText('You talk to Nikki. This is the final activation sentence.',{exact:true}).first()).toBeVisible();
-    await expect(page.getByText(/connecting this transit to the pattern below/).first()).toBeVisible();
+    if(bridgeLive) await expect(page.getByText(/connecting this transit to the pattern below/).first()).toBeVisible();
+    else await expect(page.getByText(/connecting this transit to the pattern below/)).toHaveCount(0);
   } else {
     await expect(page.getByText('What this activates',{exact:true})).toHaveCount(0);
     await expect(page.getByText(/connecting this transit to the pattern below/)).toHaveCount(0);
   }
-  await page.screenshot({path:`test-results/connection-transit-${activationLive?'published':'draft'}-${testInfo.project.name}.png`,fullPage:true,animations:'disabled'});
+  await page.screenshot({path:`test-results/connection-transit-${activationLive?'published':'draft'}-bridge-${bridgeLive?'published':'draft'}-${testInfo.project.name}.png`,fullPage:true,animations:'disabled'});
   const detailUrl=page.url();
   await page.reload();
   await expect(page.getByRole('heading',{level:1})).toBeVisible({timeout:60000});
