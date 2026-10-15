@@ -1,5 +1,5 @@
 import { getSupabaseClient } from "./auth";
-import { installContentPublications, validContentPublication, publicationLedgerReady } from "../content/contentPublicationState";
+import { installContentPublications, validContentPublication, publicationLedgerReady, publicationLedgerBoundaries } from "../content/contentPublicationState";
 
 let pending: Promise<void> | null = null;
 let checkedAt = 0;
@@ -36,7 +36,7 @@ export async function refreshContentPublications(force = false, readRelay?: () =
     // Half-open key ranges cover the entire ledger, including future key families.
     // These boundaries balance today's inventory; each range still paginates as
     // it grows. Keyset pagination avoids offset gaps during concurrent edits.
-    const boundaries = [null, "authored/compat-pair/s", "authored/transit-house-sign/m", "fallback-hook/n", null];
+    const boundaries = publicationLedgerBoundaries;
     const pages = await Promise.all(boundaries.slice(0, -1).map(async (lower, index) => {
       const upper = boundaries[index + 1];
       const records = [];

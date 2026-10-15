@@ -109,7 +109,7 @@ test('Cold Calendar starts its complete publication read while App is still down
   });
   try {
     await page.goto('/#calendar', { waitUntil: 'commit' });
-    await expect.poll(() => ledgerReads).toBe(4);
+    await expect.poll(() => ledgerReads).toBe(6);
     expect(await page.locator('.app-shell').count()).toBe(0);
   } finally {
     releaseApp();

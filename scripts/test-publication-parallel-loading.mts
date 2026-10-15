@@ -1,13 +1,14 @@
 import assert from 'node:assert/strict';
 import vm from 'node:vm';
 import { build } from 'esbuild';
-import { validContentPublication } from '../apps/web/src/content/contentPublicationState';
+import { validContentPublication, publicationLedgerBoundaries } from '../apps/web/src/content/contentPublicationState';
 
 const built = await build({ entryPoints: ['apps/web/src/services/contentPublications.ts'], bundle: true,
   platform: 'node', format: 'cjs', write: false, plugins: [{ name: 'ledger-fixture', setup(builder) {
     builder.onResolve({ filter: /\/auth$|contentPublicationState$/ }, args => ({ path: args.path, namespace: 'fixture' }));
     builder.onLoad({ filter: /.*/, namespace: 'fixture' }, () => ({ contents: `
       export const getSupabaseClient = async () => fixture.client;
+      export const publicationLedgerBoundaries = ${JSON.stringify(publicationLedgerBoundaries)};
       export const installContentPublications = rows => fixture.installed.push(rows);
       export const validContentPublication = value => fixture.valid(value);
       export const publicationLedgerReady = () => false;
@@ -16,9 +17,9 @@ const built = await build({ entryPoints: ['apps/web/src/services/contentPublicat
   } }] });
 const row = (content_key: string) => ({ content_key, state: 'live', revision: 1,
   row_id: content_key, row_updated_at: '2026-09-21T16:00:00Z', updated_at: '2026-09-21T16:00:00Z' });
-const records = ['!', '__content-publication-ledger/v1', 'authored/compat-pair/s', 'authored/transit-house-sign/m', 'fallback-hook/n', 'zz/future',
+const records = ['!', '__content-publication-ledger/v1', 'authored/compat-pair/s', 'authored/transit-aspect/s', 'authored/transit-house-sign/s', 'fallback-hook/n', 'sky-placement', 'zz/future',
   ...Array.from({ length: 2010 }, (_, i) => `authored/compat-pair/a-${String(i).padStart(4, '0')}`)].sort().map(row);
-function harness(reply?: (request: any, data: any[]) => Promise<any>) {
+function harness(reply?: (request: any, data: any[]) => Promise<any>, inventory = records) {
   const requests: any[] = [], installed: any[] = [];
   const client = { from(table: string) {
     assert.equal(table, 'content_publications');
@@ -31,7 +32,7 @@ function harness(reply?: (request: any, data: any[]) => Promise<any>) {
       gt: (_: string, value: string) => { request.filters.push(['gt', value]); return query; },
       abortSignal: async (signal: AbortSignal) => {
         assert(signal instanceof AbortSignal); requests.push(request);
-        const data = records.filter(row => request.filters.every(([op, value]: string[]) =>
+        const data = inventory.filter(row => request.filters.every(([op, value]: string[]) =>
           op === 'gte' ? row.content_key >= value : op === 'lt' ? row.content_key < value : row.content_key > value)).slice(0, request.limit);
         return reply ? reply(request, data) : { data, error: null };
       }
@@ -49,11 +50,11 @@ function harness(reply?: (request: any, data: any[]) => Promise<any>) {
   const h = harness(async (_request, data) => { await held; return { data }; });
   const pending = h.refreshContentPublications(true);
   await Promise.resolve(); await Promise.resolve();
-  assert.equal(h.requests.length, 4, 'Four ranges must start without waiting for the first response');
+  assert.equal(h.requests.length, 6, 'Six ranges must start without waiting for the first response');
   assert.equal(h.installed.length, 0, 'Partial ranges never install');
   const same = h.refreshContentPublications(true);
   release(); await Promise.all([pending, same]);
-  assert.equal(h.requests.length, 6, 'Large ranges keep paging; simultaneous callers coalesce');
+  assert.equal(h.requests.length, 8, 'Large ranges keep paging; simultaneous callers coalesce');
   assert.equal(h.installed.length, 1);
   assert.deepEqual(Array.from(h.installed[0], (r: any) => r.content_key).sort(), records.map(r => r.content_key));
   assert(h.contentPublicationsAvailableOnline());
@@ -91,7 +92,7 @@ console.log('PASS: concurrent disjoint publication ranges, boundary/future keys,
   assert.equal(h.installed.at(-1).find((record: any) => record.content_key === changed.content_key).revision, 2,
     'A publication notice during an older ledger read must fetch the post-publication state.');
   assert.equal(h.installed.length, 2, 'Concurrent notices share one follow-up read.');
-  assert.equal(h.requests.length, 12, 'Do not recursively reload the complete ledger.');
+  assert.equal(h.requests.length, 16, 'Do not recursively reload the complete ledger.');
   changed.revision = 1;
   console.log('PASS publication notice during an older ledger read, fresh revision and coalesced follow-up without a refresh loop.');
 }
@@ -112,6 +113,24 @@ console.log('PASS: concurrent disjoint publication ranges, boundary/future keys,
   const h = harness();
   await h.refreshContentPublications(true, async () => { throw new Error('Relay unavailable'); });
   assert.equal(h.installed.length, 1, 'An unavailable relay falls back to the complete direct read');
-  assert.equal(h.requests.length, 6);
+  assert.equal(h.requests.length, 8);
   assert(h.contentPublicationsAvailableOnline());
+}
+
+{
+  const inventory = ['authored/compat-pair/a-', 'authored/transit-aspect/a-',
+    'authored/transit-house-sign/a-', 'authored/transit-house-sign/t-',
+    'fallback-hook/p-', 'sky-placement/article/'].flatMap(prefix =>
+      Array.from({ length: 700 }, (_, i) => row(`${prefix}${String(i).padStart(4, '0')}`))).sort((a,b) => a.content_key.localeCompare(b.content_key));
+  let release!: () => void;
+  const held = new Promise<void>(resolve => { release = resolve; });
+  const h = harness(async (_request, data) => { await held; return { data }; }, inventory);
+  const pending = h.refreshContentPublications(true);
+  await Promise.resolve(); await Promise.resolve();
+  const firstWave = h.requests.length;
+  release(); await pending;
+  assert.equal(h.requests.length, firstWave, 'Balanced current families must finish in one concurrent wave, without a second network round trip');
+  assert.equal(h.installed.length, 1);
+  assert.deepEqual(Array.from(h.installed[0], (r: any) => r.content_key).sort(), inventory.map(r => r.content_key).sort());
+  console.log('PASS balanced ledger completes in one concurrent wave with every publication intact.');
 }
