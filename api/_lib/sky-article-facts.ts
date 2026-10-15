@@ -1,6 +1,7 @@
 const defaultTimeZone = "America/New_York";
 import { isSkyIngressEssay, skyIngressEssayFields, type SkyArticleFormat } from "../../apps/web/src/content/skyIngressEssay.mjs";
 import { planetSignDignity } from "../../apps/web/src/services/planetSignDignity.mjs";
+import { isDisplayRetrograde } from "../../apps/web/src/services/astrologyDisplay.js";
 
 type SkyArticleFactsSnapshot = {
   generatedAt: string;
@@ -9,6 +10,7 @@ type SkyArticleFactsSnapshot = {
   positions: Array<{
     planet: string;
     sign: string;
+    motion?: "direct" | "retrograde";
     transitStart?: string | null;
     transitEnd?: string | null;
     longitude?: number;
@@ -95,7 +97,7 @@ export function skyArticleEditionFactsFromSnapshot(snapshot: SkyArticleFactsSnap
       entryYear: validFrom.slice(0, 4),
       ...(isSkyIngressEssay(format) ? {
         articleTitle: planet === "sun" ? `${titleCase(normalizeToken(position.sign))} Season ${validFrom.slice(0, 4)}`
-          : `${titleCase(planet)} in ${titleCase(normalizeToken(position.sign))} ${validFrom.slice(0, 4)}`,
+          : `${titleCase(planet)}${isDisplayRetrograde({ planet: position.planet, motion: position.motion ?? "direct" }) ? " Rx" : ""} in ${titleCase(normalizeToken(position.sign))} ${validFrom.slice(0, 4)}`,
         when: `${dateLabel(start, timeZone)} at ${ingressTimeLabel(start)} to ${dateLabel(end, timeZone)} at ${ingressTimeLabel(end)}`
       } : {})
     }

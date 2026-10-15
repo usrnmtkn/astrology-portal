@@ -181,6 +181,7 @@ try {
   rejectWriterCopy = false;
   const venusResult = await invoke(factsHandler, "GET", "/api/admin/sky-article-facts?planet=venus&date=2026-10-10&format=ingress-essay-v2");
   assert.equal(venusResult.status, 200);
+  assert.equal(venusResult.facts.slotValues.articleTitle, "Venus Rx in Scorpio 2026", "The authenticated facts handler must retain calculated retrograde motion in the article title.");
   assert.equal(venusResult.facts.retrogradeHistory.sameSign.retrograde.instant.slice(0, 10), "2018-10-05");
   assert.equal(venusResult.facts.retrogradeHistory.nextSameSign.retrograde.instant.slice(0, 10), "2034-09-30");
   assert.equal(venusResult.facts.retrogradeHistory.previousCrossing.instant.slice(0, 10), "2018-10-16");
