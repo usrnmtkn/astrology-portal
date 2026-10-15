@@ -165,6 +165,9 @@ scripts/
 
 ### Offline CSV editing
 
+Personal Transit primary/alternate retention and new-source imports are documented in
+[Personal Transit copy versions](PERSONAL_TRANSIT_COPY_VERSIONS.md).
+
 Shared content tables expose **Export CSV** and **Import CSV**. Select rows or
 filter the list, choose a content type, and download its CSV. Export reads full
 saved documents across all matching pages. Edit the text columns in Excel or

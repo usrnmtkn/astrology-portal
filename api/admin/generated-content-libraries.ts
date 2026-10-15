@@ -1,3 +1,4 @@
+export { retainPersonalTransitAlternate } from "../../apps/web/src/content/fallbackArchitectureV3/resolver/personalTransitCopyVersions.mjs";
 export { approvedSkySeasonFallback, SKY_SEASON_FALLBACK_PREFIX } from "../../apps/web/src/content/skySeasonFallback.js";
 export { calendarAspectRetrogradeOptions, calendarAspectRetrogradeFields } from '../../apps/web/src/content/calendarAspectRetrograde.js';
 export { calendarTimingTemplates } from '../../apps/web/src/features/calendar/calendarTimingTemplates.js';

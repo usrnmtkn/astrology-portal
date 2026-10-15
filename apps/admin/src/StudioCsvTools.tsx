@@ -1,7 +1,7 @@
 import { useRef, useState } from 'react';
 import { StudioButton, StudioInput } from './StudioControls';
 import { AdminSelect } from './AdminNativeControls';
-import { csvChanges, csvContentType, csvMaxBytes, csvMaxRows, csvRecordForRow, csvUnavailableReason, csvWantsPublication, readStudioCsv, writeStudioCsv, type CsvContentRow, type CsvRecord } from './studioCsv';
+import { csvChanges, csvContentType, csvMaxBytes, csvMaxRows, csvRecordForRow, csvUnavailableReason, csvWantsPublication, newTransitCsvRow, readStudioCsv, writeStudioCsv, type CsvContentRow, type CsvRecord } from './studioCsv';
 
 type Preview = { record: CsvRecord; changes: ReturnType<typeof csvChanges>; row?: CsvContentRow; publish?: boolean; error?: string; saved?: boolean; published?: boolean };
 type Props = {
@@ -78,7 +78,9 @@ export default function StudioCsvTools({ rows, selectedIds, disabled, loadRow, s
         setMessage(`Checking saved versions: ${offset} of ${records.length}…`);
         result.push(...await Promise.all(records.slice(offset, offset + 4).map(async record => {
           try {
-            const row = await loadRow(record.content_id);
+            const isNew = record.content_id.startsWith('new:');
+            if (isNew && rows.some(row => row.content_key === record.content_key)) throw new Error('This key already exists. Export its saved version instead.');
+            const row = isNew ? newTransitCsvRow(record) : await loadRow(record.content_id);
             const changes = csvChanges(row, record);
             return { record, changes, row, publish: csvWantsPublication(record) };
           }
@@ -102,7 +104,7 @@ export default function StudioCsvTools({ rows, selectedIds, disabled, loadRow, s
           const confirmText = (result: CsvContentRow) => {
             const actual = csvRecordForRow(result);
             if (result.content_key !== item.record.content_key || Object.keys(actual).some(column =>
-              !['format', 'content_id', 'saved_version', 'content_type', 'publish'].includes(column) && actual[column] !== item.record[column]
+              !['format', 'content_id', 'saved_version', 'content_type', 'publish', 'keep_current_as_alternate', 'primary_owner_authored', 'owner_source_uri'].includes(column) && actual[column] !== item.record[column]
             )) throw new Error('The saved text could not be confirmed exactly.');
           };
           if (item.changes.length) {

@@ -25,6 +25,7 @@ const lunarBlock = value => {
 };
 const packageRecord = {
   ...strings(`contentKey content_role review_status body body_you body_they headline summary
+    body_you_alternate body_they_alternate alternate_headline alternate_copy_sha256
     Body Headline Summary BodyA BodyB SignA SignB AspectType CalendarSourceKind ExactIngressCopy
     RetrogradeBodyA RetrogradeBodyB RetrogradeBodyBoth
     Copy Template OverlayBody NewMoonArticle FullMoonArticle EventArticle FallbackArticle ModifierArticle NodeAxisArticle Article LilithArticle

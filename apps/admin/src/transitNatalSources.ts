@@ -74,6 +74,7 @@ export type TransitNatalAspect = typeof transitNatalAspects[number];
 export type TransitNatalPoint = typeof transitNatalPoints[number];
 
 export type TransitNatalReadingContext = {
+  copyVersion?: "primary" | "alternate";
   pass?: number;
   variant?: number;
   isRetrograde?: boolean;
@@ -135,6 +136,7 @@ export function renderTransitNatalPreview(selection: TransitNatalReadingContext 
       voice,
       pass: selection.pass,
       variant: selection.variant,
+      copyVersion: selection.copyVersion,
       isRetrograde: selection.isRetrograde,
       window: selection.window,
       transitHouse: selection.transitHouse || undefined,

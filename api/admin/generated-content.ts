@@ -79,6 +79,7 @@ type ReviewStatus = "DRAFT" | "REVIEWED" | "LIVE" | "ARCHIVED" | "ERROR";
 type GeneratedContentSurface = "sky" | "you" | "natal" | "synastry" | "composite" | "relationship" | "modifier" | "year_ahead" | "education";
 
 type GeneratedContentWriteBody = {
+  preserveCurrentTransitAsAlternate?: boolean;
   id?: string;
   contentKey?: string;
   surface?: GeneratedContentSurface;
@@ -773,6 +774,10 @@ function applyFallbackArchitectureV3ReviewPatch(row: ExistingGeneratedContentRow
     ...(isRecord(body.sourceSnapshot) ? body.sourceSnapshot : {})
   };
   const record = { ...v3PackageRecord(row) };
+  if (body.preserveCurrentTransitAsAlternate) {
+    if (row.status !== "LIVE" && !record.alternate_copy_sha256) throw new GeneratedContentRequestError("Only the current live wording can be retained as an alternate.", 409);
+    Object.assign(record, libs().retainPersonalTransitAlternate({ ...record, body_you: record.body_you ?? storedSections.body_you ?? row.body, body_they: record.body_they ?? storedSections.body_they }, row.updated_at));
+  }
   const incomingRecord = isRecord(sections.packageRecord) ? sections.packageRecord : {};
   const packageOriginalRecord = isRecord(storedSections.packageOriginalRecord)
     ? { ...storedSections.packageOriginalRecord }
@@ -976,7 +981,18 @@ function applyFallbackArchitectureV3ReviewPatch(row: ExistingGeneratedContentRow
     record.editorial_notes = body.editorialNotes;
   }
 
-  if (!hasPackageDraft && body.reviewStatus === "approved") validateAndApproveNatalAspectCopy(record, row.content_key);
+  if (!hasPackageDraft && body.reviewStatus === "approved") {
+    const imported = isRecord(sourceSnapshot.editorialImport) && Array.isArray(sourceSnapshot.editorialImport.csvHistory)
+      ? sourceSnapshot.editorialImport.csvHistory.at(-1)?.imported : null;
+    if (row.content_key.startsWith("authored/transit-aspect/") && String(imported?.primary_owner_authored ?? "").trim().toLowerCase() === "yes"
+      && imported.body_you === record.body_you && imported.body_they === record.body_they
+      && /^thread:[a-f0-9-]{36}$/u.test(imported.owner_source_uri ?? "")) {
+      record.owner_authored = true;
+      record.body_you_authorship = "owner_authored";
+      record.body_they_authorship = "owner_authored";
+    }
+    validateAndApproveNatalAspectCopy(record, row.content_key);
+  }
   validateFallbackArchitectureV3Copy(row, { ...patch, sections });
   if (hasPackageDraft) {
     const proposal = { ...(sections.packageDraft as Record<string, unknown>) };
@@ -2407,6 +2423,7 @@ async function updateGeneratedContent(req: IncomingMessage) {
   if (body.status && !allowedStatuses.has(body.status)) {
     throw new GeneratedContentRequestError("status must be DRAFT, REVIEWED, LIVE, ARCHIVED, or ERROR.");
   }
+  if (body.preserveCurrentTransitAsAlternate !== undefined && typeof body.preserveCurrentTransitAsAlternate !== "boolean") throw new GeneratedContentRequestError("Invalid alternate retention request.");
   if (body.sourceLifecycleAction && !["archive", "restore"].includes(body.sourceLifecycleAction)) {
     throw new GeneratedContentRequestError("sourceLifecycleAction must be archive or restore.");
   }

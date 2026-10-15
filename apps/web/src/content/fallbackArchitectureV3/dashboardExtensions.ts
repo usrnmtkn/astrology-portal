@@ -1,7 +1,7 @@
 import { isZodiacSeasonSourceKey } from "./resolver/zodiacSeasonVariables.mjs";
 import skyReaderRelease from "./authored-inputs/sky-v4-reader-copy-280-serving-release-v1.json" with { type: "json" };
 import skyReaderApproval from "./authored-inputs/sky-v4-reader-copy-280-owner-approval-v1.json" with { type: "json" };
-import { isDynamicTransitNatalExactKey } from "../transitNatalIdentity.js";
+import { isDynamicTransitNatalExactKey, isDynamicTransitNatalLibraryKey } from "../transitNatalIdentity.js";
 export { isDynamicTransitNatalExactKey } from "../transitNatalIdentity.js";
 
 const canonicalKeys = new Set<string>(skyReaderRelease.serving_enabled ? skyReaderApproval.approved_keys : []);
@@ -85,7 +85,7 @@ export function isDynamicNatalAspectExactRecord(record: FallbackDashboardExtensi
 }
 
 export function isDynamicTransitNatalExactRecord(record: FallbackDashboardExtensionRecord) {
-  return isDynamicTransitNatalExactKey(record.contentKey)
+  return isDynamicTransitNatalLibraryKey(record.contentKey)
     && record.content_role === "full_copy"
     && record.reader_only === true
     && record.render_policy === "personal-transit-exact-v1";

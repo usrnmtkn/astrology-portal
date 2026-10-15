@@ -15,7 +15,7 @@ import { MetricCard } from "./studio-ds/patterns";
 import { Grid, Stack, Text } from "./studio-ds/primitives";
 import { containedDisclosure, metricGrid, surfaceSection } from "./studio-ds/recipes";
 import { StudioTabs, StudioButton, StudioIconButton, StudioInput, StudioTextarea } from "./StudioControls";
-import type { CsvContentRow, CsvRecord } from './studioCsv';
+import { csvCreateTransitBody, type CsvContentRow, type CsvRecord } from './studioCsv';
 import { ArticleBlockStyleFields } from "./ArticleBlockStyleFields";
 import { AdminDisclosureSummary, AdminSelect } from "./AdminNativeControls";
 import { getStudioPalette, getStudioTheme, saveStudioPalette, saveStudioTheme, studioShellAttributes } from "./studioTheme";
@@ -4405,6 +4405,7 @@ export function GeneratedContentAdminDashboard() {
     setTransitReadingContext(page === "skyWriteups" && view === "transits-to-natal" ? {
       ...(params.get("pass") ? { pass: Number(params.get("pass")) } : {}),
       ...(params.get("variant") ? { variant: Number(params.get("variant")) } : {}),
+      ...(params.get("copyVersion") === "alternate" ? { copyVersion: "alternate" as const } : {}),
       ...(params.has("retrograde") ? { isRetrograde: params.get("retrograde") === "true" } : {}),
       ...(params.get("window") ? { window: params.get("window")! } : {})
     } : {});
@@ -8606,6 +8607,7 @@ export function GeneratedContentAdminDashboard() {
     if (friendsTransitAudience) params.set("audience", "friends");
     if (transitReadingContext.pass !== undefined) params.set("pass", String(transitReadingContext.pass));
     if (transitReadingContext.variant !== undefined) params.set("variant", String(transitReadingContext.variant));
+    if (transitReadingContext.copyVersion) params.set("copyVersion", transitReadingContext.copyVersion);
     if (transitReadingContext.isRetrograde !== undefined) params.set("retrograde", String(transitReadingContext.isRetrograde));
     if (transitReadingContext.window) params.set("window", transitReadingContext.window);
     setAdminHash(adminHashForPage("skyWriteups", params), "replace");
@@ -8768,7 +8770,7 @@ export function GeneratedContentAdminDashboard() {
     const context = { ...transitReadingContext, ...next };
     setTransitReadingContext(context);
     const params = new URLSearchParams(window.location.hash.split("?")[1] ?? "");
-    for (const [field, param] of [["pass", "pass"], ["variant", "variant"], ["isRetrograde", "retrograde"], ["window", "window"]] as const) {
+    for (const [field, param] of [["pass", "pass"], ["variant", "variant"], ["copyVersion", "copyVersion"], ["isRetrograde", "retrograde"], ["window", "window"]] as const) {
       if (context[field] === undefined) params.delete(param); else params.set(param, String(context[field]));
     }
     setAdminHash(adminHashForPage("skyWriteups", params), "replace");
@@ -9727,7 +9729,7 @@ export function GeneratedContentAdminDashboard() {
   async function saveCsvRow(record: CsvRecord) {
     try {
       const payload = await adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[] }>(
-        '/api/admin/generated-content', secret, { method: 'PATCH', body: JSON.stringify({
+        '/api/admin/generated-content', secret, { method: record.content_id.startsWith('new:') ? 'POST' : 'PATCH', body: JSON.stringify(record.content_id.startsWith('new:') ? csvCreateTransitBody(record) : {
           id: record.content_id, expectedUpdatedAt: record.saved_version.slice(2),
           ownerAction: 'import-csv-draft', csvRecord: record
         }) });
@@ -11965,6 +11967,14 @@ export function GeneratedContentAdminDashboard() {
               {!fallbackEditorGuidance && isAuthoredTransitAspectDraft && <small className="admin-field-hint">This is the editable Friends version of the standalone Transit to Natal write-up. Write it as its own complete passage rather than mechanically changing pronouns in the You copy.</small>}
             </label>
           )}
+          {isAuthoredTransitAspectDraft && packageFieldString(currentDraft, "body_you_alternate") && ([
+            ["body_you_alternate", "Retained alternate · You"],
+            ["body_they_alternate", "Retained alternate · Friend"]
+          ] as const).map(([field, label]) => <label className="admin-review-copy-editor studio-surface" key={field}>
+            <span>{label}</span>
+            <StudioTextarea aria-label={label} value={packageFieldString(currentDraft, field)} readOnly />
+            <small className="admin-field-hint">Preserved from the published version. The primary wording is edited above.</small>
+          </label>)}
           {isBondEffectDraft && (
             <Suspense fallback={<PageLoading compact message="Opening the Friends page…" />}>
               <BondEffectPagePreview

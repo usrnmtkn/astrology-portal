@@ -34,4 +34,12 @@ export function isDynamicTransitNatalExactKey(contentKey: string) {
     && transitAspectSituationKey(parts[2], parts[3], parts[4], parts[5], parts[6], parts[7]) === contentKey;
 }
 
+export function isDynamicTransitNatalLibraryKey(contentKey: string) {
+  const parts = contentKey.split("/");
+  return isDynamicTransitNatalExactKey(contentKey) || parts.length === 5
+    && parts[0] === "authored" && parts[1] === "transit-aspect"
+    && transitBodies.has(parts[2]) && natalPoints.has(parts[3])
+    && ["hard", "soft"].includes(parts[4]);
+}
+
 export { transitAspectSituationKey };

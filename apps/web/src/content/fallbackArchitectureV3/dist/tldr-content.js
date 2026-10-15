@@ -1811,6 +1811,26 @@ function sharedLunationEclipseSectionKey(kind, sectionId, house = null) {
   return phase ? `authored/lunation-eclipse-section/shared/${phase}/${resolvedSectionId}` : null;
 }
 
+// apps/web/src/content/fallbackArchitectureV3/resolver/personalTransitCopyVersions.mjs
+var payload = (row) => JSON.stringify({
+  contentKey: row.contentKey,
+  headline: row.alternate_headline ?? "",
+  you: row.body_you_alternate ?? "",
+  friend: row.body_they_alternate ?? ""
+});
+function personalTransitCopyVersion(row, version = "primary") {
+  if (version === "primary") return row;
+  if (version !== "alternate") throw new Error("Unknown personal transit writing version.");
+  if (![row.body_you_alternate, row.body_they_alternate].every((text2) => typeof text2 === "string" && text2.trim()) || row.alternate_copy_sha256 !== sha256Text(payload(row))) throw new Error("No verified alternate is available for this write-up.");
+  return {
+    ...row,
+    headline: row.alternate_headline ?? "",
+    body: row.body_you_alternate,
+    body_you: row.body_you_alternate,
+    body_they: row.body_they_alternate
+  };
+}
+
 // apps/web/src/content/fallbackArchitectureV3/resolver/renderTransitSynastry.browser.ts
 var TRUE_LILITH_KEY_DATES_INTRO = "True Black Moon Lilith stations about once a month, so it crosses the same degrees several times before it finally moves on.";
 function skyPlacementKeyDates({
@@ -2391,11 +2411,17 @@ function createTransitSynastryRenderer(transitLib, templatesFile, rowsFile, opts
     const body = fill2(v === "you" ? T.body_you ?? T.body : T.body_they ?? T.body, ctx);
     return { headline: fill2((v === "you" ? T.headline : T.headline_they ?? T.headline) ?? "", ctx), body, parts: [body], templateKey: T.contentKey };
   }
-  function renderTransitAspect({ transiting, natal, aspect, variant, pass, sign, transitHouse, natalHouse, isRetrograde, window: win, voice = "you" }) {
+  function renderTransitAspect({ transiting, natal, aspect, copyVersion = "primary", variant, pass, sign, transitHouse, natalHouse, isRetrograde, window: win, voice = "you" }) {
     const v = voice === "you" ? "you" : "they";
     const otherPoss = v === "they" ? "their" : null;
     const g = GROUP[aspect] ?? aspect;
-    if (natal === "lilith" && aspect !== "conjunction" && aspect !== "opposition") throw new SourceGapError(`SOURCE_GAP: lilith renders conjunction/opposition only (got ${aspect})`);
+    if (natal === "lilith" && aspect !== "conjunction" && aspect !== "opposition") {
+      const approvedSoft = ["trine", "sextile", "soft"].includes(aspect) && [aspect, "soft"].some((kind) => {
+        const source = card(`authored/transit-aspect/${transiting}/lilith/${kind}`);
+        return source && transitReaderTier2(source) === "exact-owner-approved";
+      });
+      if (!approvedSoft) throw new SourceGapError(`SOURCE_GAP: lilith needs an exact owner-approved soft passage (got ${aspect})`);
+    }
     const isHeavy = HEAVY.has(transiting) || HEAVY.has(natal);
     const SHARE = {
       conjunction: isHeavy ? ["hard", "soft"] : ["soft", "hard"],
@@ -2425,7 +2451,8 @@ function createTransitSynastryRenderer(transitLib, templatesFile, rowsFile, opts
     if (FAST.has(transiting) && FAST.has(natal)) push(natal, transiting);
     tryKeys.push(`authored/transit-aspect/any/${natal}/${g}`, `authored/transit-aspect/any/${natal}/conjunction`);
     for (const k of prioritizeExactTransitSources(tryKeys, transiting, natal, aspect)) {
-      const c = card(k);
+      const sourceCard = card(k);
+      const c = sourceCard ? personalTransitCopyVersion(sourceCard, copyVersion) : null;
       if (c) {
         const AW = { conjunction: "conjunct", square: "square", opposition: "opposite", trine: "trine", sextile: "sextile" };
         const untilDate = win ? String(win).replace(/^until\s+/i, "") : null;
@@ -2466,7 +2493,7 @@ ${fogNote}`;
 
 ${passHook2}`;
         }
-        return { ...passageSources(aBody, contributions2, (key) => passageSource(card(key) ?? hooks.get(key), v), v === "you" && c.headline ? [passageSource(c, v, "headline")] : []), headline: authoredHeadline, body: aBody, parts: aBody.split("\n\n"), templateKey: "authored/transit-aspect", contentKey: c.contentKey, provenanceTier: transitReaderTier2(c) ?? void 0 };
+        return { ...passageSources(aBody, contributions2, (key) => passageSource(card(key) ?? hooks.get(key), v, copyVersion === "alternate" && key === c.contentKey ? v === "you" ? "body_you_alternate" : "body_they_alternate" : void 0), v === "you" && c.headline ? [passageSource(c, v, copyVersion === "alternate" ? "alternate_headline" : "headline")] : []), headline: authoredHeadline, body: aBody, parts: aBody.split("\n\n"), templateKey: "authored/transit-aspect", contentKey: c.contentKey, provenanceTier: transitReaderTier2(c) ?? void 0 };
       }
     }
     const T = tpl("fallback-template/transit.aspect");
@@ -6565,7 +6592,7 @@ function skyV4FieldValue(source, path) {
 }
 
 // apps/web/src/content/fallbackArchitectureV3/resolver/index.browser.ts
-var PACKAGE_VERSION = "v3-2026-10-09-studio-variable-context";
+var PACKAGE_VERSION = "v3-2026-10-14-personal-transit-copy-versions";
 function stablePackageValue(value) {
   if (Array.isArray(value)) {
     return value.map(stablePackageValue);

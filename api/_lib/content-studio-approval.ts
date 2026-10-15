@@ -9,7 +9,7 @@ export function approveNatalAspectStudioCopy(record: Record<string, unknown>, co
     && !contentKey.startsWith("authored/transit-aspect/")
     && !contentKey.startsWith("authored/transit-return/")
   ) return;
-  const payload = { contentKey, headline: record.headline ?? null, summary: record.summary ?? null, body: record.body ?? null, body_you: record.body_you ?? null, body_they: record.body_they ?? null };
+  const payload = { contentKey, headline: record.headline ?? null, summary: record.summary ?? null, body: record.body ?? null, body_you: record.body_you ?? null, body_they: record.body_they ?? null, ...(record.alternate_copy_sha256 ? { alternate_copy_sha256: record.alternate_copy_sha256 } : {}) };
   record.approval = {
     approvalLevel: "exact_owner_approved",
     recordPath: `/api/admin/generated-content?contentKey=${encodeURIComponent(contentKey)}`,
@@ -17,4 +17,11 @@ export function approveNatalAspectStudioCopy(record: Record<string, unknown>, co
     approvedAt: new Date().toISOString(),
     action: "content-studio-publish"
   };
+  if (contentKey.startsWith("authored/transit-aspect/")) for (const field of ["body_you", "body_they"]) {
+    if (typeof record[field] !== "string") continue;
+    record[`${field}_sha256`] = createHash("sha256").update(record[field] as string).digest("hex");
+    record[`${field}_word_count`] = (record[field] as string).trim().split(/\s+/u).filter(Boolean).length;
+    record[`${field}_review_status`] = "approved";
+    record[`${field}_approval`] = { ...(record.approval as Record<string, unknown>), payloadSha256: record[`${field}_sha256`] };
+  }
 }
