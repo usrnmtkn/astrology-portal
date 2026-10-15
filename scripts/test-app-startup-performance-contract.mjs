@@ -869,13 +869,23 @@ assert.match(
 );
 assert.match(
   appSource,
-  /const loadSkyDetailArticle = \(\) =>\s*import\("\.\/features\/sky\/SkyDetailArticle"\);[\s\S]*const SkyDetailArticle = lazy\(/u,
-  "Sky detail article presentation must load only when a reader opens an article."
+  /const loadSkyDetailArticle = \(\) =>\s*import\("\.\/features\/sky\/SkyDetailArticle"\)\.then\(module => \{\s*if \(module\) loadedSkyDetailArticle = module\.SkyDetailArticle;\s*return module;\s*\}\);[\s\S]*const LazySkyDetailArticle = lazy\(/u,
+  "Sky detail presentation must retain guarded dynamic loading and its lazy fallback."
 );
 assert.doesNotMatch(
   appSource,
-  /function SkyDetailArticle/u,
-  "Sky detail article presentation must not remain embedded in the startup App module."
+  /import\s+(?!type\b)[^;]+from\s+["']\.\/features\/sky\/SkyDetailArticle["']/u,
+  "Sky detail presentation must not become an eager runtime import."
+);
+assert.doesNotMatch(
+  appSource,
+  /className=["'][^"']*\b(?:sky-detail-article|article-related-aspects)\b/u,
+  "Sky detail article markup must remain in its deferred presentation module."
+);
+assert.match(
+  appSource,
+  /function SkyDetailArticle\([\s\S]*?const \[Article\] = useState\(\(\) => loadedSkyDetailArticle \?\? LazySkyDetailArticle\);\s*return <Article \{\.\.\.props\} \/>;/u,
+  "A mounted Sky reader must keep its resolved-or-lazy component selection stable."
 );
 assert.match(
   skyDetailArticleSource,
