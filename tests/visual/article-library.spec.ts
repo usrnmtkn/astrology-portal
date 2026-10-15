@@ -3,8 +3,45 @@ import { studioApiStore } from '../helpers/studio-api-store';
 import { routeStudioInventoryApi } from '../helpers/studio-inventory-route';
 import { bundledPublications } from '../helpers/bundled-publications';
 import { syntheticLibrarySkyArticle } from '../helpers/article-library-fixture';
+import { publicationStorageEmitter } from '../helpers/publication-storage-emitter';
+import { readerResponse } from '../helpers/reader-response';
 
 const body = 'Synthetic complete opening.\n\n## Saved section\n\nSynthetic complete final paragraph.';
+
+for (const width of [390, 1440]) test(`open guide follows storage-only publication and retirement ${width}`, async ({ page, context }) => {
+  test.setTimeout(90_000);
+  await page.setViewportSize({ width, height: 1000 });
+  const key = 'article/guide/synthetic-storage';
+  let revision = 1, retired = false;
+  const stamp = () => `2026-10-15T00:00:0${revision}.000Z`;
+  const row = () => ({ id: 'bbbbbbbb-bbbb-4bbb-abbb-bbbbbbbbbbbb', content_key: key,
+    surface: 'guide', mode: 'article', status: 'LIVE', lane: 'serving', review_state: null,
+    headline: 'Synthetic storage guide', body: `Synthetic complete opening ${revision}.\n\nSynthetic complete ending ${revision}.`,
+    updated_at: stamp(), sections: {}, source_snapshot: { contentType: 'guide' } });
+  const publications = () => [{ content_key: '__content-publication-ledger/v1', state: 'live', revision: 1,
+    row_id: null, row_updated_at: null, updated_at: '2026-10-15T00:00:00Z' },
+    { content_key: key, state: retired ? 'retired' : 'live', revision, row_id: row().id, row_updated_at: stamp(), updated_at: stamp() }];
+  await bundledPublications(page);
+  await page.route('**/rest/v1/content_publications*', route => route.fulfill({ json: publications() }));
+  await page.route('**/api/content-publications', route => route.fulfill({ json: { schema: 'tldr-publications/v1', publications: publications() } }));
+  await page.route('**/api/content-reader', route => route.fulfill({ json: readerResponse(retired ? [] : [row()], publications()) }));
+  const errors: string[] = []; page.on('pageerror', error => errors.push(error.message));
+  await page.goto(`/#articles/${encodeURIComponent(key)}`);
+  const article = page.locator('.learn-article-body');
+  await expect(article).toContainText('Synthetic complete opening 1.');
+  await expect(article).toContainText('Synthetic complete ending 1.');
+  const emitStorage = await publicationStorageEmitter(context);
+  revision++; await emitStorage(publications());
+  await expect(article).toContainText('Synthetic complete opening 2.');
+  await expect(article).toContainText('Synthetic complete ending 2.');
+  await expect(article).not.toContainText('Synthetic complete ending 1.');
+  revision++; retired = true; await emitStorage(publications());
+  await expect(page.getByRole('heading', { name: 'Article unavailable', exact: true })).toBeVisible();
+  await expect(page.locator('body')).not.toContainText('Synthetic complete ending');
+  await page.reload();
+  await expect(page.getByRole('heading', { name: 'Article unavailable', exact: true })).toBeVisible();
+  expect(errors).toEqual([]);
+});
 async function headingStyle(heading: Locator) {
   const values = await heading.evaluate(element => {
     const probe = document.createElement('h2');

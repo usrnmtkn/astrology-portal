@@ -7,6 +7,7 @@ import { skySummaryEventFacts } from "../../content/skySummaryEvents";
 import { contentPublicationsResolved, refreshContentPublications } from "../../services/contentPublications";
 import { loadLiveGeneratedContentForKeys, type LiveGeneratedContent } from "../../services/generatedContent";
 import { subscribeToContentUpdates, subscribeToContentRevalidation } from "../../services/contentUpdateSignal";
+import { subscribeToContentPublications } from "../../content/contentPublicationState";
 import type { LunarCalendarEvent } from "../../services/ephemeris";
 import { useSkySummarySettled } from "./SkyReadingLayout";
 
@@ -34,11 +35,12 @@ export function PublishedSkySummary({ facts, events, factsReady, factsError, onR
 
   useEffect(() => {
     const update = () => setRefresh(value => value + 1);
+    const stopPublications = subscribeToContentPublications(update);
     const stopUpdates = subscribeToContentUpdates(notice => {
       if (notice.contentKey === "*" || keys.includes(notice.contentKey)) update();
     });
     const stopRevalidation = subscribeToContentRevalidation(update);
-    return () => { stopUpdates(); stopRevalidation(); };
+    return () => { stopPublications(); stopUpdates(); stopRevalidation(); };
   }, [sourceKey]);
 
   useEffect(() => {

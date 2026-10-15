@@ -4,7 +4,6 @@ export const publicationLedgerBoundaries = [null, "authored/compat-pair/s", "aut
   "authored/transit-house-sign/s", "fallback-hook/n", "sky-placement", null] as const;
 
 import { isRetiredCompositionKey } from "./fallbackArchitectureV3/resolver/retiredCompositions.mjs";
-import { announceContentUpdate } from "../services/contentUpdateSignal.js";
 /** Shared lifecycle identity. A retirement survives deletion of its editable row. */
 export type ContentPublication = {
   content_key: string;
@@ -66,7 +65,6 @@ export function installContentPublications(incoming: readonly unknown[]) {
     catch { /* Memory still retains the retirement for this session. */ }
   }
   for (const listener of listeners) listener();
-  announceContentUpdate({ contentKey: "*", published: false, updatedAt: new Date().toISOString() });
 }
 export function contentPublication(contentKey: string) { return publications.get(contentKey); }
 export function isContentRetired(contentKey: string) { return isRetiredCompositionKey(contentKey) || publications.get(contentKey)?.state === "retired"; }
