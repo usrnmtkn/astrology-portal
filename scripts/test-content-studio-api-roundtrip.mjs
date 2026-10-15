@@ -551,6 +551,52 @@ runtime.installFallbackArchitectureV3Bundle(null);
 row = chironBaseline;
 
 const packageRegressionBaseline = structuredClone(row);
+// Both directions of a bond opening have a calculated holder1 name, including
+// versions whose original wording did not use that declared runtime variable.
+const bondNameKey = 'fallback-hook/bond-effect-soft/uranus/variant-3';
+const bondOriginal = {
+  contentKey: bondNameKey, content_role: 'fallback_hook',
+  body_you: 'The two of you try something different.',
+  body_they: 'The two of you enjoy a change.', review_status: 'approved'
+};
+row = {
+  ...structuredClone(packageRegressionBaseline), id: 'qa-bond-new-name-slot',
+  content_key: bondNameKey, event_type: 'fallback-hook', surface: 'relationship',
+  body: bondOriginal.body_you,
+  sections: { packageRecord: bondOriginal, packageOriginalRecord: structuredClone(bondOriginal) },
+  facts: { fallbackArchitectureV3: true, content_role: 'fallback_hook', review_status: 'approved' },
+  source_snapshot: { sourcePackage: 'tldrastro-fallback-architecture-v3', content_role: 'fallback_hook', review_status: 'approved' }
+};
+const bondNamed = { ...bondOriginal,
+  body_you: 'You enjoy trying something different with {{holder1}}.',
+  body_they: '{{holder1}} enjoys trying something different with you.' };
+for (const invalid of ['{{holder2}}', '{{unknownName}}']) {
+  const rejected = await invokeApi('PATCH', '/api/admin/generated-content', {
+    id: row.id, sections: { ...row.sections, packageDraft: { ...bondNamed, body_you: `You talk to ${invalid}.` } },
+    reviewStatus: 'needs_review'
+  });
+  assert.equal(rejected.status, 400, 'Bond openings must refuse variables the runtime does not supply.');
+}
+const savedNamedBond = await invokeApi('PATCH', '/api/admin/generated-content', {
+  id: row.id, sections: { ...row.sections, packageDraft: bondNamed }, reviewStatus: 'needs_review'
+});
+assert.equal(savedNamedBond.status, 200, JSON.stringify(savedNamedBond.payload));
+assert.equal(savedNamedBond.payload.rows[0].sections.packageDraft.body_you, bondNamed.body_you);
+assert.equal(savedNamedBond.payload.rows[0].sections.packageDraft.body_they, bondNamed.body_they);
+const publishedNamedBond = await invokeApi('PATCH', '/api/admin/generated-content', {
+  id: row.id, expectedUpdatedAt: row.updated_at, ownerAction: 'approve-package-revision'
+});
+assert.equal(publishedNamedBond.status, 200, JSON.stringify(publishedNamedBond.payload));
+assert.equal(publishedNamedBond.payload.rows[0].status, 'LIVE');
+assert.equal(publishedNamedBond.payload.rows[0].sections.packageRecord.body_you, bondNamed.body_you);
+assert.equal(publishedNamedBond.payload.rows[0].sections.packageRecord.body_they, bondNamed.body_they);
+const { resolveBondEffect } = await import('../apps/web/src/content/fallbackArchitectureV3/resolver/relationshipTemplate.mjs');
+for (const endpointOwner of ['reader', 'friend']) {
+  const resolved = resolveBondEffect(new Map([[bondNameKey, publishedNamedBond.payload.rows[0].sections.packageRecord]]),
+    { transiting: 'uranus', aspect: 'sextile', family: 'soft', variant: 3, endpointOwner, otherName: 'River' }, Error);
+  assert.equal(resolved.effect, bondNamed[endpointOwner === 'reader' ? 'body_you' : 'body_they'].replace('{{holder1}}', 'River'));
+}
+row = structuredClone(packageRegressionBaseline);
 const placeholderTransitContentKey = "authored/transit-aspect/venus/moon/hard";
 const placeholderOriginalBody = "The affection comes out as management. Venus {{aspectWord}} your Moon until {{untilDate}} stays high on feeling.";
 const placeholderRevisedBody = "A partner may feel smothered instead of loved. Venus {{aspectWord}} your Moon until {{untilDate}} runs high on feeling and low on discussion.";
