@@ -186,6 +186,21 @@ function localApiRoutePlugin() {
   };
 }
 
+// The document's startup sheet already contains loading.css. Keep shared
+// components self-styled for standalone Studio, without a duplicate reader sheet.
+function readerStartupLoadingStylesPlugin() {
+  return {
+    name: "reader-startup-loading-styles",
+    apply: "build" as const,
+    enforce: "pre" as const,
+    transform(source: string, id: string) {
+      if (!/\/src\/shared\/components\/(?:PageLoading|LoadingIndicator)\.tsx(?:\?|$)/u.test(id)) return null;
+      const code = source.replace(/^import\s+["'][^"']*\/styles\/loading\.css["'];?\r?\n/mu, "");
+      return code === source ? null : { code, map: null };
+    }
+  };
+}
+
 export default defineConfig(({ mode }) => {
   const localEnv = loadEnv(mode, dirname(fileURLToPath(import.meta.url)), "");
 
@@ -197,6 +212,7 @@ export default defineConfig(({ mode }) => {
     plugins: [
       memoryGraphReferencePlugin(),
       appStartupHtmlPlugin(),
+      readerStartupLoadingStylesPlugin(),
       skyEntryPreloadPlugin(),
       previewCompressionPlugin(),
       suppressUnrelatedMonorepoHotUpdatesPlugin(),
@@ -237,6 +253,17 @@ export default defineConfig(({ mode }) => {
       rollupOptions: {
         output: {
           manualChunks(id) {
+            // Eligibility helpers are already read at startup. Share their small
+            // transport instead of adding a preload and gzip header per identity.
+            if (/\/content\/(?:bondEffectIdentity|transitWritingIdentity|generatedContentEligibility)\.ts$/u.test(id)
+              || id.endsWith("/content/fallbackArchitectureV3/resolver/readerEligibility.browser.ts")) return "reader-eligibility";
+            // These shared readers already belong to boot. Keep them outside
+            // Studio's deferred editor group so an editor import cannot pull it into boot.
+            if (/\/shared\/components\/(?:LoadingIndicator|PageLoading|FormattedProse)\.tsx$/u.test(id)
+              || /\/content\/fallbackArchitectureV3\/resolver\/(?:readerContentBoundary|readerEligibility|zodiacSeasonVariables|transitReturns|transitAspectSourcePriority|mercuryReturnReader)\.mjs$/u.test(id)
+              || /\/(?:content\/transitNatalIdentity|services\/transitReturns)\.ts$/u.test(id)) return "reader-eligibility";
+            // Studio's reader-copy editors share one lazy workspace.
+            if (/apps\/admin\/src\/(?:FriendsTransitSectionFinder|NatalPlacementSourceFinder|NatalPlacementReaderPreview|TemplateReaderDrilldown|TemplateVariableReviewPanels|TemplateVariablesRail|AspectPatternDiagnostics|AspectPatternWriteups|ReportFulfillmentAdminPanel|UnresolvedContentReview|HoroscopePublicationReview|StudioEditorReviewPanels|ReviewWorkflowPanel|DailyFallbackWorkspaceGuide|DailyGlanceStudio|PackagedHookCatalogResults|SkyV4StudioReviewPanel)\.tsx$/u.test(id)) return "studio-editor-tools";
             // These reader helpers already load at startup. Share their chunk;
             // astronomy and protected passage data retain their separate lazy chunks.
             if (id.endsWith("/src/astrologyConfig.ts") || id.endsWith("/content/skyMotionLabels.ts")

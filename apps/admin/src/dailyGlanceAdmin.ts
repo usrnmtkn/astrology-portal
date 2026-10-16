@@ -6,6 +6,9 @@ export type DailyGlanceAdminRow = {
   body: string | null;
   sections: unknown;
   updated_at?: string | null;
+  status?: string;
+  lane?: string | null;
+  review_state?: string | null;
 };
 
 export type DailyGlancePair = {

@@ -1,3 +1,4 @@
+import { calendarPlanetaryDraft } from "../apps/admin/src/calendarPlanetaryDraft.ts";
 import assert from 'node:assert/strict';
 import { execFileSync } from 'node:child_process';
 import { build } from 'esbuild';
@@ -6,7 +7,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { createApiStore } from '../tests/helpers/calendar-review-api.mjs';
-import { calendarPlanetaryDraft, calendarPlanetaryIdentity, calendarPlanetaryIdentityKeys } from '../apps/admin/src/calendarPlanetarySources.ts';
+import { calendarPlanetaryIdentity, calendarPlanetaryIdentityKeys } from '../apps/admin/src/calendarPlanetarySources.ts';
 import { studioInventoryQuery, studioInventoryRequestPath } from '../apps/admin/src/studioSectionInventory.ts';
 
 const blockTypes=(path:string)=>new Set([...readFileSync(path,'utf8').match(/block_type in \(([\s\S]*?)\)/u)![1].matchAll(/'([^']+)'/gu)].map(match=>match[1]));

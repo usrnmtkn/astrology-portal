@@ -7,7 +7,8 @@ import { Save, X } from "lucide-react";
 import {
   dailyGlancePackageField,
   dailyGlancePairSearchText,
-  type DailyGlancePair
+  type DailyGlancePair,
+  type DailyGlanceAdminRow
 } from "./dailyGlanceAdmin";
 import {
   dailyGlanceFriendPreviewParts,
@@ -169,7 +170,10 @@ type DailyGlancePairEditorProps = {
   context: DailyGlanceContext | null;
   isSaving: boolean;
   onClose: () => void;
-  onSave: (pair: DailyGlancePair, edits: DailyGlancePairEdits) => Promise<void>;
+  onSave: (pair: DailyGlancePair, edits: DailyGlancePairEdits) => Promise<DailyGlancePair>;
+  onPublish: (pair: DailyGlancePair, edits: DailyGlancePairEdits) => Promise<DailyGlancePair>;
+  publicationPending: boolean;
+  onCheckPublication: () => Promise<{row: DailyGlanceAdminRow; live: boolean} | undefined>;
   pair: DailyGlancePair;
 };
 
@@ -188,22 +192,107 @@ function renderFriendPreviewParts(parts: DailyGlanceFriendPreviewPart[]) {
     ));
 }
 
-export function DailyGlancePairEditor({ context, isSaving, onClose, onSave, pair }: DailyGlancePairEditorProps) {
-  const matchingContext = context?.selector === pair.selector ? context : null;
-  const initial = useMemo<DailyGlancePairEdits>(() => ({
+function pairEdits(pair: DailyGlancePair): DailyGlancePairEdits {
+  return {
     headlineYou: dailyGlancePackageField(pair.headlineRow, "body_you"),
     headlineThey: dailyGlancePackageField(pair.headlineRow, "body_they"),
     passageYou: dailyGlancePackageField(pair.passageRow, "body_you"),
     passageThey: dailyGlancePackageField(pair.passageRow, "body_they")
-  }), [pair]);
+  };
+}
+
+// Loaded with the paired editor, keeping its publication orchestration out of Studio startup.
+export async function saveDailyGlancePair(
+  pair: DailyGlancePair, edits: DailyGlancePairEdits, publish: boolean,
+  save: (row: DailyGlanceAdminRow, you: string, they: string) => Promise<DailyGlanceAdminRow>,
+  approve: (row: DailyGlanceAdminRow) => Promise<DailyGlanceAdminRow | undefined>
+): Promise<DailyGlancePair> {
+  const savedPair = { ...pair };
+  const completed: string[] = [];
+  let phase = "Headline";
+  try {
+    for (const [field, label, you, they] of [
+      ["headlineRow", "Headline", edits.headlineYou, edits.headlineThey],
+      ["passageRow", "Passage", edits.passageYou, edits.passageThey]
+    ] as const) {
+      phase = label;
+      let row = savedPair[field];
+      if (publish || you !== dailyGlancePackageField(row, "body_you") || they !== dailyGlancePackageField(row, "body_they")) {
+        row = await save(row, you, they);
+        savedPair[field] = row;
+      }
+      if (publish) {
+        const result = await approve(row);
+        if (!result || result.status !== "LIVE" || result.lane !== "serving" || result.review_state
+          || dailyGlancePackageField(result, "body_you") !== you || dailyGlancePackageField(result, "body_they") !== they) {
+          throw new Error("Publication of the complete saved source was not confirmed.");
+        }
+        savedPair[field] = result;
+      }
+      completed.push(label);
+    }
+    return savedPair;
+  } catch (error) {
+    const message = `${completed.length ? `${completed.join(" and ")} ${publish ? "published" : "saved"}. ` : ""}${phase}: ${error instanceof Error ? error.message : String(error)}`;
+    throw Object.assign(new Error(message), { savedPair });
+  }
+}
+
+export function DailyGlancePairEditor({ context, isSaving, onClose, onSave, onPublish, pair, publicationPending, onCheckPublication }: DailyGlancePairEditorProps) {
+  const matchingContext = context?.selector === pair.selector ? context : null;
+  // Keep the opened versions for CAS checks. Background inventory refreshes
+  // must not silently rebase local writing onto somebody else's newer edit.
+  const [baselinePair, setBaselinePair] = useState(pair);
+  const initial = useMemo(() => pairEdits(baselinePair), [baselinePair]);
   const [edits, setEdits] = useState(initial);
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [previewName, setPreviewName] = useState(() => matchingContext?.chart.name ?? "Alex");
   const [previewPronouns, setPreviewPronouns] = useState<DailyGlanceFriendPreviewPronouns>("they");
 
-  useEffect(() => setEdits(initial), [initial]);
+  useEffect(() => {
+    if (pair.selector === baselinePair.selector) return;
+    setBaselinePair(pair); setEdits(pairEdits(pair)); setError(null);
+  }, [pair, baselinePair.selector]);
   useEffect(() => setPreviewName(matchingContext?.chart.name ?? "Alex"), [matchingContext?.chart.name, pair.selector]);
 
   const dirty = JSON.stringify(edits) !== JSON.stringify(initial);
+  const busy = isSaving || submitting;
+  const blocked = busy || publicationPending;
+  const complete = Object.values(edits).every(value => value.trim());
+  const submit = async (publish: boolean) => {
+    if (blocked) return;
+    setSubmitting(true); setError(null);
+    try {
+      const saved = await (publish ? onPublish : onSave)(baselinePair, edits);
+      setBaselinePair(saved); setEdits(pairEdits(saved));
+    } catch (failure) {
+      const saved = (failure as {savedPair?: DailyGlancePair})?.savedPair;
+      // A confirmed first source stays acknowledged if the second fails.
+      if (saved?.selector === baselinePair.selector) setBaselinePair(saved);
+      setError(failure instanceof Error ? failure.message : "Could not save this write-up. Your writing is retained.");
+    } finally { setSubmitting(false); }
+  };
+  const checkPublication = async () => {
+    setSubmitting(true); setError(null);
+    try {
+      const result = await onCheckPublication();
+      if (!result?.row) {
+        setError("Publication is still awaiting confirmation. Your writing is retained; check its status again before publishing.");
+        return;
+      }
+      const field = result.row.content_key === baselinePair.headlineRow.content_key ? "headlineRow"
+        : result.row.content_key === baselinePair.passageRow.content_key ? "passageRow" : null;
+      if (!field) throw new Error("Reopen this write-up to check its publication identity.");
+      const you = field === "headlineRow" ? edits.headlineYou : edits.passageYou;
+      const they = field === "headlineRow" ? edits.headlineThey : edits.passageThey;
+      if (dailyGlancePackageField(result.row, "body_you") !== you || dailyGlancePackageField(result.row, "body_they") !== they) {
+        throw new Error("The saved source changed. Reopen it before publishing; your local writing is retained here.");
+      }
+      setBaselinePair(current => ({ ...current, [field]: result.row }));
+    } catch (failure) { setError(failure instanceof Error ? failure.message : "Could not check publication."); }
+    finally { setSubmitting(false); }
+  };
   const friendPreviewSlots = useMemo(
     () => dailyGlanceFriendPreviewSlots(previewName, previewPronouns),
     [previewName, previewPronouns]
@@ -230,8 +319,8 @@ export function DailyGlancePairEditor({ context, isSaving, onClose, onSave, pair
 
   return (
     <>
-      <StudioButton type="button" className="admin-editor-backdrop" aria-label="Close Daily At-a-Glance editor" onClick={close} disabled={isSaving} />
-      <aside className="admin-editor-panel admin-review-detail admin-daily-glance-pair-editor" role="dialog" aria-modal="true" aria-label="Daily At-a-Glance paired editor" aria-busy={isSaving}>
+      <StudioButton type="button" className="admin-editor-backdrop" aria-label="Close Daily At-a-Glance editor" onClick={close} disabled={busy} />
+      <aside className="admin-editor-panel admin-review-detail admin-daily-glance-pair-editor" role="dialog" aria-modal="true" aria-label="Daily At-a-Glance paired editor" aria-busy={busy}>
         <div className="admin-editor-toolbar">
           <div>
             <p className="admin-eyebrow">Daily At-a-Glance</p>
@@ -239,7 +328,7 @@ export function DailyGlancePairEditor({ context, isSaving, onClose, onSave, pair
             <p>Headline and passage remain separate source keys, but are reviewed and saved here as one reader write-up.</p>
           </div>
           <div className="admin-editor-toolbar-actions">
-            <StudioButton type="button" onClick={close} disabled={isSaving}><X size={16} aria-hidden="true" />Close</StudioButton>
+            <StudioButton type="button" onClick={close} disabled={busy}><X size={16} aria-hidden="true" />Close</StudioButton>
           </div>
         </div>
 
@@ -254,8 +343,8 @@ export function DailyGlancePairEditor({ context, isSaving, onClose, onSave, pair
 
           <section className={`${surfaceSection} admin-daily-glance-audience`} aria-label="You version">
             <div><p className="admin-eyebrow">You</p><h3>Signed-in reader</h3></div>
-            <label className="admin-review-copy-editor"><span>Headline · You</span><StudioTextarea value={edits.headlineYou} onChange={(event) => setEdits((value) => ({ ...value, headlineYou: event.target.value }))} /></label>
-            <label className="admin-review-copy-editor"><span>Passage · You</span><StudioTextarea value={edits.passageYou} onChange={(event) => setEdits((value) => ({ ...value, passageYou: event.target.value }))} /></label>
+            <label className="admin-review-copy-editor"><span>Headline · You</span><StudioTextarea disabled={blocked} value={edits.headlineYou} onChange={(event) => setEdits((value) => ({ ...value, headlineYou: event.target.value }))} /></label>
+            <label className="admin-review-copy-editor"><span>Passage · You</span><StudioTextarea disabled={blocked} value={edits.passageYou} onChange={(event) => setEdits((value) => ({ ...value, passageYou: event.target.value }))} /></label>
             <div className="admin-daily-glance-reader-card" aria-label="You reader preview">
               <h4>{edits.headlineYou}</h4><p className="admin-copy-preview">{edits.passageYou}</p>
               {matchingContext && <><p>{matchingContext.detailLine}</p></>}
@@ -267,8 +356,8 @@ export function DailyGlancePairEditor({ context, isSaving, onClose, onSave, pair
             <p className="admin-daily-glance-name-contract">
               Daily uses <code>{"{{personPreferredName}}"}</code> for <strong>Name</strong> so the app can use the selected person's preferred name and fall back to their display name. <code>{"{{Name}}"}</code> is not part of this renderer's variable contract.
             </p>
-            <label className="admin-review-copy-editor"><span>Headline · Friend</span><StudioTextarea value={edits.headlineThey} onChange={(event) => setEdits((value) => ({ ...value, headlineThey: event.target.value }))} /></label>
-            <label className="admin-review-copy-editor"><span>Passage · Friend</span><StudioTextarea value={edits.passageThey} onChange={(event) => setEdits((value) => ({ ...value, passageThey: event.target.value }))} /></label>
+            <label className="admin-review-copy-editor"><span>Headline · Friend</span><StudioTextarea disabled={blocked} value={edits.headlineThey} onChange={(event) => setEdits((value) => ({ ...value, headlineThey: event.target.value }))} /></label>
+            <label className="admin-review-copy-editor"><span>Passage · Friend</span><StudioTextarea disabled={blocked} value={edits.passageThey} onChange={(event) => setEdits((value) => ({ ...value, passageThey: event.target.value }))} /></label>
             <div className="admin-daily-glance-preview-controls" aria-label="Friend preview values">
               <label>
                 <span>Preview name</span>
@@ -319,8 +408,11 @@ export function DailyGlancePairEditor({ context, isSaving, onClose, onSave, pair
         </section>
 
         <div className="admin-toolbar-actions admin-editor-savebar studio-surface">
-          <span className={`admin-editor-save-state ${dirty ? "is-unsaved" : "is-saved"}`} aria-live="polite">{isSaving ? "Saving both sources…" : dirty ? "Unsaved changes" : "All changes saved"}</span>
-          <StudioButton className="admin-primary-button" type="button" onClick={() => void onSave(pair, edits)} disabled={!dirty || isSaving}><Save size={16} aria-hidden="true" />Save headline and passage</StudioButton>
+          <span className={`admin-editor-save-state ${dirty ? "is-unsaved" : "is-saved"}`} aria-live="polite">{busy ? "Saving headline and passage…" : dirty ? "Unsaved changes" : "No unsaved changes"}</span>
+          {error && <p role="alert" className="admin-field-hint">{error}</p>}
+          {publicationPending && <StudioButton type="button" disabled={busy} onClick={() => void checkPublication()}>Check publication status</StudioButton>}
+          <StudioButton className="admin-publish-button" type="button" onClick={() => void submit(true)} disabled={blocked || !complete}>Save &amp; publish</StudioButton>
+          <StudioButton type="button" onClick={() => void submit(false)} disabled={!dirty || blocked}><Save size={16} aria-hidden="true" />Save draft</StudioButton>
         </div>
       </aside>
     </>

@@ -1,3 +1,4 @@
+import {transitNatalExactSourceDraft} from "../../apps/admin/src/transitNatalSources";
 import {test, expect} from '@playwright/test';
 import {servingPackageRecords} from '../../api/_lib/content-live-status';
 import {studioApiStore} from '../helpers/studio-api-store';
@@ -62,11 +63,15 @@ for(const width of [390,1440])test(`Owner creates a missing exact Friends openin
 for (const width of [390,1440]) for (const theme of ['light','dark']) test(`Owner publishes unchanged saved package drafts ${width} ${theme}`, async ({page}) => {
   test.setTimeout(120000);
   const rows = keys.map((key,index) => {
-    const record = structuredClone(servingPackageRecords.get(key) ?? servingPackageRecords.get(key.split('/').slice(0,5).join('/'))!);
+    const source = key.split('/').length === 8
+      ? transitNatalExactSourceDraft({planet:'neptune',natalPoint:'chiron',aspect:'conjunction',sign:'aquarius',transitHouse:'12',natalHouse:'11'}).sections.packageRecord
+      : servingPackageRecords.get(key)!;
+    const record = structuredClone(source);
     expect(record).toBeTruthy();
     record.contentKey = key;
     record.review_status = 'needs_review';
     for (const field of ['body','body_you','body_they']) if (typeof record[field] === 'string') record[field] = `Synthetic ${index} ${field} opening.\n\nComplete owner final sentence.`;
+    if (key.startsWith('authored/transit-') && typeof record.body === 'string' && typeof record.body_you === 'string') record.body = record.body_you;
     return {id:`owner-draft-${index}`,content_key:key,headline:`Owner fixture ${index}`,body:record.body ?? record.body_you,summary:'',
       surface:'sky',mode:'feed',status:'DRAFT',lane:'reference',review_state:'needs-review',target_date:null,
       provider:'tldrastro-fallback-architecture-v3',block_type:'fallback_hook',event_type:'fallback-hook',
@@ -86,7 +91,7 @@ for (const width of [390,1440]) for (const theme of ['light','dark']) test(`Owne
       await page.goto('/admin/content#exact-content'+(row===rows[0]?'?from=unresolved&q='+encodeURIComponent(row.content_key):''));
       const editor=page.getByRole('dialog',{name:'Generated content editor'});
       if(row===rows[0]) await expect(editor).toBeVisible();
-      else await page.getByRole('row').filter({hasText:row.content_key}).getByRole('button',{name:'Edit',exact:true}).click();
+      else await page.getByRole('row').filter({has:page.getByText(row.content_key,{exact:true})}).getByRole('button',{name:'Edit',exact:true}).click();
       const action=editor.locator('.admin-editor-savebar').getByRole('button',{name:/^(Save & publish|Approve & publish)$/});
       await expect(action).toBeEnabled();
       const box=await action.boundingBox();expect(box!.y).toBeGreaterThanOrEqual(0);expect(box!.y+box!.height).toBeLessThanOrEqual(1000);

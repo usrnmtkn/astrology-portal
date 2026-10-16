@@ -25,7 +25,7 @@ import { PageLoading } from "../../../src/shared/components/PageLoading";
 import { LoadingIndicator } from "../../../src/shared/components/LoadingIndicator";
 import { readStudioInventoryPasses, studioInventoryPageSize } from "./studioInventoryPagination";
 import { reviewWorkBucket, skyWritingIssues } from "../../web/src/content/contentReviewReadiness";
-import { transitNatalContactFromFields, transitNatalContactReady, transitNatalContactContentKey, transitNatalExactContentKey, transitNatalExactSourceDraft, transitNatalSharedFallbackKey, transitNatalStarterCopy } from "./transitNatalSources";
+import { transitNatalContactFromFields, transitNatalContactReady, transitNatalContactContentKey, transitNatalExactContentKey, transitNatalSharedFallbackKey } from "./transitNatalSources";
 import { aspectTechnicalVerb, friendsTransitCardDestinations, friendsTransitCompositionQuery, matchesBondEffectContactSearch, transitNatalSearchSelection, matchesTransitNatalContactSearch } from "./bondEffectPageAssembly";
 import { isDynamicTransitNatalExactKey } from "../../web/src/content/transitNatalIdentity";
 import { isTransitNatalFamilyKey, isTransitNatalSituationKey, packagedTransitOpenMode, transitNatalLiveServingSource } from "./transitNatalEditorScope";
@@ -162,7 +162,6 @@ import type { FallbackHookEditorGuidanceBuilder } from "./DailyFallbackWorkspace
 import type { DailyGlanceContext, DailyGlancePairEdits } from "./DailyGlanceStudio";
 import {
   dailyGlanceContextSearchParams,
-  dailyGlancePackageField,
   dailyGlancePairs,
   dailyGlanceSelector,
   type DailyGlancePair
@@ -202,7 +201,7 @@ import {
   calendarAspectSignedTitle,
   type CalendarAspectSelection
 } from "./calendarAspectSources";
-import { calendarPlanetaryDraft, calendarPlanetaryIdentity, calendarPlanetaryIdentityKeys, type CalendarPlanetarySelection } from "./calendarPlanetarySources";
+import { calendarPlanetaryIdentity, calendarPlanetaryIdentityKeys, type CalendarPlanetarySelection } from "./calendarPlanetarySources";
 import {
   contentDestinations,
   contentMotion,
@@ -2970,7 +2969,9 @@ function draftFromRow(row: AdminGeneratedContentRow): AdminDraft {
   const canonicalHeadline = typeof editablePackageRecord.headline === "string" ? editablePackageRecord.headline : row.headline ?? "";
   const importedSummary = row.provider === "manual" && /^(REVIEWED|CONFIRMED|DRAFT) · /.test(row.summary ?? "") ? row.summary : null;
   const canonicalSummary = importedSummary ? "" : typeof editablePackageRecord.summary === "string" ? editablePackageRecord.summary : row.summary ?? "";
-  const canonicalBody = typeof editablePackageRecord.body === "string"
+  const canonicalBody = isDynamicTransitNatalExactKey(row.content_key) && typeof editablePackageRecord.body_you === "string"
+    ? editablePackageRecord.body_you
+    : typeof editablePackageRecord.body === "string"
     ? editablePackageRecord.body
     : typeof editablePackageRecord.body_you === "string"
       ? editablePackageRecord.body_you
@@ -5517,44 +5518,24 @@ export function GeneratedContentAdminDashboard() {
     window.requestAnimationFrame(() => editorReturnFocusRef.current?.focus());
   }
 
-  async function saveDailyGlancePairEdits(pair: DailyGlancePair, edits: DailyGlancePairEdits) {
-    const headlineChanged = edits.headlineYou !== dailyGlancePackageField(pair.headlineRow, "body_you")
-      || edits.headlineThey !== dailyGlancePackageField(pair.headlineRow, "body_they");
-    const passageChanged = edits.passageYou !== dailyGlancePackageField(pair.passageRow, "body_you")
-      || edits.passageThey !== dailyGlancePackageField(pair.passageRow, "body_they");
-    if (!headlineChanged && !passageChanged) {
-      setMessage("The Daily At-a-Glance headline and passage already match the saved sources.");
-      return;
-    }
-
-    let headlineSaved = !headlineChanged;
-    let passageSaved = !passageChanged;
-    if (headlineChanged) {
-      const headlineDraft = setPackageSectionField(
-        setPackageSectionField(draftFromRow(pair.headlineRow as AdminGeneratedContentRow), "body_you", edits.headlineYou),
-        "body_they",
-        edits.headlineThey
-      );
-      headlineSaved = Boolean(await saveDraft(undefined, headlineDraft));
-    }
-    if (headlineSaved && passageChanged) {
-      const passageDraft = setPackageSectionField(
-        setPackageSectionField(draftFromRow(pair.passageRow as AdminGeneratedContentRow), "body_you", edits.passageYou),
-        "body_they",
-        edits.passageThey
-      );
-      passageSaved = Boolean(await saveDraft(undefined, passageDraft));
-    }
-
-    setSelectedRowId(null);
-    setDraft(null);
-    setDailyGlancePairSelector(pair.selector);
-    if (headlineSaved && passageSaved) {
-      setMessage("Daily At-a-Glance headline and passage saved together as review proposals.");
-    } else if (headlineSaved) {
-      setMessage("The headline saved, but the passage did not. Review the connection before retrying the passage.");
-    } else {
-      setMessage("The Daily At-a-Glance write-up was not saved.");
+  async function saveDailyGlancePairEdits(pair: DailyGlancePair, edits: DailyGlancePairEdits, publish = false): Promise<DailyGlancePair> {
+    if (pendingPublication) throw new Error(pendingPublicationMessage);
+    try {
+      const { saveDailyGlancePair } = await import("./DailyGlanceStudio");
+      const savedPair = await saveDailyGlancePair(pair, edits, publish, async (row, you, they) => {
+        const revised = setPackageSectionField(setPackageSectionField(draftFromRow(row as AdminGeneratedContentRow), "body_you", you), "body_they", they);
+        const saved = await saveDraft("DRAFT", revised, undefined, false, false, true);
+        if (!saved) throw new Error("The saved source was not returned. Your writing is still here.");
+        return saved;
+      }, row => approvePackageRevision(row as AdminGeneratedContentRow, false, true));
+      setSelectedRowId(null);
+      setDraft(null);
+      setDailyGlancePairSelector(pair.selector);
+      setMessage(publish ? "Daily At-a-Glance headline and passage published for You and Friends." : "Headline and passage saved as drafts. Publish when ready for readers.");
+      return savedPair;
+    } catch (error) {
+      setMessage(dashboardErrorMessage(error));
+      throw error;
     }
   }
 
@@ -5599,7 +5580,7 @@ export function GeneratedContentAdminDashboard() {
     if (saved && !personalCopy) await approvePackageRevision(saved);
   }
 
-  async function approvePackageRevision(row: AdminGeneratedContentRow, updateEditor = true) {
+  async function approvePackageRevision(row: AdminGeneratedContentRow, updateEditor = true, propagateError = false) {
     setEditorSaveError("");
     setIsLoading(true);
     try {
@@ -5626,6 +5607,7 @@ export function GeneratedContentAdminDashboard() {
     } catch (error) {
       setEditorSaveError(dashboardErrorMessage(error));
       setMessage(dashboardErrorMessage(error));
+      if (propagateError) throw error;
     } finally {
       setIsLoading(false);
     }
@@ -6211,10 +6193,13 @@ export function GeneratedContentAdminDashboard() {
 
   async function openSelectedCalendarPlanetaryWriteup() {
     setIsCreateMenuOpen(false);
-    const kind = calendarWriteupWorkspaceView === "planetary-stations" ? "station" : "ingress";
-    const nextDraft = calendarPlanetaryDraft(kind, calendarPlanetarySelection);
-    if (!nextDraft) { setMessage("Choose a planet and sign to open its write-up."); return; }
-    await openExactCalendarWriteup(nextDraft, calendarPlanetaryIdentityKeys(kind, calendarPlanetarySelection));
+    try {
+      const kind = calendarWriteupWorkspaceView === "planetary-stations" ? "station" : "ingress";
+      const { calendarPlanetaryDraft } = await import("./calendarPlanetaryDraft");
+      const nextDraft = calendarPlanetaryDraft(kind, calendarPlanetarySelection);
+      if (!nextDraft) { setMessage("Choose a planet and sign to open its write-up."); return; }
+      await openExactCalendarWriteup(nextDraft, calendarPlanetaryIdentityKeys(kind, calendarPlanetarySelection));
+    } catch (error) { setMessage(dashboardErrorMessage(error)); }
   }
 
   async function openExactCalendarWriteup(nextDraft: AdminDraft, keys: string[]) {
@@ -8727,6 +8712,7 @@ export function GeneratedContentAdminDashboard() {
       }
       const parentKey = transitNatalContactContentKey(selection);
       const sharedKey = transitNatalSharedFallbackKey(selection);
+      const { transitNatalStarterCopy, transitNatalExactSourceDraft } = await import("./transitNatalExactDraft");
       let starter = { body_you: "", body_they: "" };
       const starterKeys = [parentKey, sharedKey].filter((candidate, index, list): candidate is string => Boolean(candidate) && candidate !== key && list.indexOf(candidate) === index);
       for (const starterKey of starterKeys) {
@@ -10119,6 +10105,9 @@ export function GeneratedContentAdminDashboard() {
             pair={selectedDailyGlancePair}
             onClose={closeDailyGlancePairEditor}
             onSave={saveDailyGlancePairEdits}
+            onPublish={(pair, edits) => saveDailyGlancePairEdits(pair, edits, true)}
+            publicationPending={Boolean(pendingPublication)}
+            onCheckPublication={checkPendingPublication}
           />
         </Suspense>
       );
