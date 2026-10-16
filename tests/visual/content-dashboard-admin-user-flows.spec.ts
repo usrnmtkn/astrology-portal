@@ -1,3 +1,5 @@
+import { moonRoutingPreviewApi } from '../helpers/moon-routing-preview-api';
+import { moonRoutingRows } from '../helpers/moon-routing-fixtures';
 import { studioApiStore } from "../helpers/studio-api-store";
 import { readerResponse } from '../helpers/reader-response';
 import { emptyHousePreviewApi } from "../helpers/empty-house-preview-api";
@@ -18,6 +20,29 @@ import {
   routeReadyTimeoutMs,
   watchBrowserErrors
 } from "./qaRuntimeGuards";
+
+async function openSharedTransitSource(preview: import("@playwright/test").Locator, key: string) {
+  const control = preview.locator(`[data-transit-source-key="${key}"]`).first();
+  const disclosure = control.locator("summary");
+  if (await control.evaluate(element => element instanceof HTMLDetailsElement && !element.open)) await disclosure.click();
+  await control.getByRole("button", { name: "Edit shared source", exact: true }).click();
+  await expect(control.getByRole("alert")).toContainText("not a separate passage for this aspect");
+  await control.getByRole("button", { name: "Continue to shared source", exact: true }).click();
+}
+
+async function closeGeneratedEditor(page: import("@playwright/test").Page, waitForOpen = false) {
+  const editor = page.getByRole("dialog", { name: "Generated content editor" });
+  if (waitForOpen) await expect(editor).toBeVisible();
+  else if (!(await editor.isVisible())) return;
+  const close = editor.getByRole("button", { name: "Close", exact: true });
+  await expect(close).toBeEnabled();
+  const acceptDialog = async (dialog: import("@playwright/test").Dialog) => {
+    try { await dialog.accept(); } catch { /* already handled by another listener */ }
+  };
+  page.once("dialog", acceptDialog);
+  await close.click();
+  await expect(editor).toHaveCount(0);
+}
 
 function transitPreviewResponse(input: ReturnType<typeof normalizeTransitNatalPreviewInput>) {
   return input.draftStarter
@@ -2620,29 +2645,6 @@ test.describe("content dashboard admin user flow case studies", () => {
     });
     await assertNoBrowserErrors();
   });
-
-  async function openSharedTransitSource(preview: import("@playwright/test").Locator, key: string) {
-    const control = preview.locator(`[data-transit-source-key="${key}"]`).first();
-    const disclosure = control.locator("summary");
-    if (await control.evaluate(element => element instanceof HTMLDetailsElement && !element.open)) await disclosure.click();
-    await control.getByRole("button", { name: "Edit shared source", exact: true }).click();
-    await expect(control.getByRole("alert")).toContainText("not a separate passage for this aspect");
-    await control.getByRole("button", { name: "Continue to shared source", exact: true }).click();
-  }
-
-  async function closeGeneratedEditor(page: import("@playwright/test").Page, waitForOpen = false) {
-    const editor = page.getByRole("dialog", { name: "Generated content editor" });
-    if (waitForOpen) await expect(editor).toBeVisible();
-    else if (!(await editor.isVisible())) return;
-    const close = editor.getByRole("button", { name: "Close", exact: true });
-    await expect(close).toBeEnabled();
-    const acceptDialog = async (dialog: import("@playwright/test").Dialog) => {
-      try { await dialog.accept(); } catch { /* already handled by another listener */ }
-    };
-    page.once("dialog", acceptDialog);
-    await close.click();
-    await expect(editor).toHaveCount(0);
-  }
 
   function transitWriteupButton(finder: import("@playwright/test").Locator, title: string) {
     // The three-part row says "Edit live" when a published source is serving the card.
@@ -8918,3 +8920,63 @@ for (const [width, theme] of [[1440, "light"], [390, "dark"]] as const) {
     await noErrors();
   });
 }
+
+for (const [width, theme] of [[390, 'light'], [1440, 'dark']] as const) test(`Moon legacy routing selects aliases and retained copies ${width} ${theme}`, async ({ page }) => {
+  const writes: unknown[] = [];
+  await seedAdminApi(page, { generatedRows: moonRoutingRows, onGeneratedContentWrite: write => writes.push(write) });
+  const api = moonRoutingPreviewApi();
+  const results: any[] = [];
+  const latest = () => results.filter(result => result.rendered).at(-1);
+  try {
+    await page.route('**/api/admin/transit-natal-preview', async route => {
+      const body = route.request().postDataJSON();
+      const result = await api.invoke(body, route.request().headers());
+      expect(result.status).toBe(200);
+      results.push({ body, ...result.payload });
+      await route.fulfill({ status: result.status, json: result.payload });
+    });
+    await page.route('**/api/content-reader', route => route.fulfill({ json: readerResponse([]) }));
+    await page.setViewportSize({ width, height: 1000 });
+    await page.addInitScript(value => localStorage.setItem('tldrastro:studio-theme', value), theme);
+    for (const audience of ['you', 'friends']) {
+      await expectAdminRouteLoads(page, `/admin/content#sky-writeups?view=transits-to-natal&transit=moon&aspect=trine&natal=mercury&variant=1&window=until+October+27&audience=${audience}`);
+      await expect(page.locator('main.admin-dashboard')).toHaveAttribute('data-studio-theme', theme);
+      await closeGeneratedEditor(page);
+      const preview = page.getByRole('region', { name: 'Effective transit to natal reader preview' });
+      await expect(preview).toContainText(audience === 'you' ? 'Primary You source' : 'Primary Friend source');
+      await page.getByText('Reading preview options', { exact: true }).click();
+      const variant = page.getByLabel('Transit copy variant');
+      const count = latest().rendered.variantCount;
+      expect(count).toBeGreaterThan(4);
+      await expect(variant.locator('option')).toHaveCount(count + 1);
+      for (const choice of [1, count]) {
+        await variant.selectOption(String(choice));
+        for (const version of ['primary', 'alternate']) {
+          await page.getByLabel('Transit writing version').selectOption(version);
+          await expect.poll(() => latest()?.body.variant === choice && (latest()?.body.copyVersion ?? 'primary') === version).toBe(true);
+          const rendered = latest().rendered;
+          await expect(preview.locator('.admin-natal-source-card-copy > p')).toHaveText(rendered.paragraphs.map((p: any) => p.text));
+          expect(rendered.paragraphs[0].sources[0].publication.origin).toBe('published');
+          expect(rendered.paragraphs[0].sources[0].contentKey).toMatch(/authored\/transit-aspect\/moon\/(?:m|mercury)\/.*variant-/);
+          if (choice === 1) {
+            const sourceKey = rendered.paragraphs[0].sources[0].contentKey;
+            expect(sourceKey).toContain('/moon/m/');
+            if (version === 'primary') {
+              await openSharedTransitSource(preview, sourceKey);
+              const editor = page.getByRole('dialog', { name: 'Generated content editor' });
+              await expect(editor.getByLabel('Content key', { exact: true })).toHaveValue(sourceKey);
+              await editor.getByRole('button', { name: 'Close', exact: true }).click();
+            }
+          }
+        }
+      }
+      await page.reload();
+      await expect(page.locator('main.admin-dashboard')).toHaveAttribute('data-studio-theme', theme);
+      await closeGeneratedEditor(page);
+      await expect(preview).toContainText(audience === 'you' ? 'Retained You final sentence' : 'Retained Friend final sentence');
+      await expectNoHorizontalOverflow(page, `Moon routing ${audience}`);
+      await preview.screenshot({ path: `test-results/moon-routing-${audience}-${width}.png` });
+    }
+    expect(writes).toEqual([]);
+  } finally { api.close(); }
+});

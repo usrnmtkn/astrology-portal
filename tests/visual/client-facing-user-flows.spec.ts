@@ -1,3 +1,4 @@
+import { moonRoutingRecords } from '../helpers/moon-routing-fixtures';
 import { readerResponse } from '../helpers/reader-response';
 import { expect, test, type Locator, type Page } from "@playwright/test";
 import { bundledPublications } from "../helpers/bundled-publications";
@@ -50,6 +51,7 @@ type SeedOptions = {
   profileBirthTime?: string;
   preloadProfileNatalSky?: boolean;
   friends?: boolean;
+  friendMatchesProfile?: boolean;
   theme?: "light" | "dark";
   now?: string;
   aspectPatterns?: Record<string, unknown>;
@@ -327,12 +329,12 @@ async function seedClientState(page: Page, options: SeedOptions = {}) {
           firstName: "Nikki",
           lastName: null,
           relationshipType: "friend",
-          birthDate: "1988-04-03",
-          birthTime: "9:15 AM",
+          birthDate: options.friendMatchesProfile ? options.profileBirthDate ?? "1990-01-01" : "1988-04-03",
+          birthTime: options.friendMatchesProfile ? options.profileBirthTime ?? "12:00 PM" : "9:15 AM",
           birthTimeUnknown: false,
           birthPlace: fixtureLocation.label,
           birthLocation: fixtureLocation,
-          natalChart: fixtureSky(0),
+          natalChart: options.friendMatchesProfile && preloadedNatalCache ? preloadedNatalCache.snapshot : fixtureSky(0),
           notes: null,
           createdAt: now,
           updatedAt: now
@@ -5849,7 +5851,7 @@ for (const [width, theme] of [[390, 'light'], [1440, 'dark']] as const) {
     await page.setViewportSize({ width, height: 1000 });
     const catalog = JSON.parse(readFileSync('apps/web/src/content/fallbackArchitectureV3/source-rows/transit-synastry-rows-v1.json', 'utf8')).authoredCards;
     const keys = ['authored/transit-aspect/moon/sun/hard', 'authored/transit-aspect/moon/jupiter/soft'];
-    const records = keys.map(key => catalog.find((row: any) => row.contentKey === key));
+    const records = catalog.filter((row: any) => keys.some(key => row.contentKey === key || row.contentKey.startsWith(`${key}/`)) || /^authored\/transit-aspect\/moon\/(?:s|j)\//.test(row.contentKey));
     // Synthetic profile selected using the ephemeris: both contacts are active.
     await seedCrossSurfacePublications(page, records, { profile: true, profileBirthDate: '1962-08-02',
       preloadProfileNatalSky: true, theme, now: '2026-10-26T16:00:00.000Z' });
@@ -5859,12 +5861,12 @@ for (const [width, theme] of [[390, 'light'], [1440, 'dark']] as const) {
     const section = page.getByRole('region', { name: 'Where it lands for you' });
     for (const [index, title] of ['Moon square your Sun', 'Moon sextile your Jupiter'].entries()) {
       const article = section.locator('.sky-detail-personalized-aspect').filter({ has: page.getByRole('heading', { name: title, exact: true }) });
-      const source = records[index].body_you ?? records[index].body;
+      const candidates = records.filter((row: any) => new RegExp(`^authored/transit-aspect/moon/${index ? '(?:jupiter|j)' : '(?:sun|s)'}/`).test(row.contentKey));
       const escape = (text: string) => text.replace(/[.*+?^${}()|[\]\\]/gu, "\\$&");
-      const expected = source.trim().replaceAll('{{aspectWord}}', index ? 'sextile' : 'square')
-        .split('{{untilDate}}').map(escape).join('[^{}\\n]+');
+      const expected = candidates.map((row: any) => (row.body_you ?? row.body).trim().replaceAll('{{aspectWord}}', index ? 'sextile' : 'square')
+        .split('{{untilDate}}').map(escape).join('[^{}\\n]+')).join('|');
       await expect.poll(async () => (await article.locator('p').allTextContents()).join('\n\n'))
-        .toMatch(new RegExp(`^${expected}$`, 'u'));
+        .toMatch(new RegExp(`^(?:${expected})$`, 'u'));
       await expect(article).not.toContainText('{{');
     }
     await section.screenshot({ path: `test-results/reported-moon-writing-${width}-${theme}.png` });
@@ -6077,3 +6079,39 @@ for (const theme of ["light", "dark"] as const) {
     });
   }
 }
+
+for (const [width, theme] of [[390, 'light'], [1440, 'dark']] as const) test(`Moon legacy routing reaches normal reader ${width} ${theme}`, async ({ page }) => {
+  await page.setViewportSize({ width, height: 1000 });
+  await seedCrossSurfacePublications(page, moonRoutingRecords, { profile: true, profileBirthDate: '1962-08-02',
+    preloadProfileNatalSky: true, friends: true, friendMatchesProfile: true, theme, now: '2026-10-26T16:00:00.000Z' });
+  await page.route('**/api/content-reader', route => route.request().postDataJSON().scope
+    ? route.fulfill({ json: readerResponse([]) }) : route.fallback());
+  const errors = watchBrowserErrors(page);
+  await expectClientRouteLoads(page, '/#sky/placement/moon/taurus');
+  const section = page.getByRole('region', { name: 'Where it lands for you' });
+  const article = section.locator('.sky-detail-personalized-aspect').filter({ hasText: 'Primary You source' }).first();
+  await expect(article).toBeVisible();
+  const body = (await article.locator('p').allTextContents()).join('\n\n');
+  expect(moonRoutingRecords.some(row => row.body_you === body)).toBe(true);
+  await page.reload();
+  await expect.poll(async () => (await article.locator('p').allTextContents()).join('\n\n')).toBe(body);
+  await expectClientRouteLoads(page, '/#you');
+  const card = page.locator('button.updates-aspect-row').filter({ hasText: 'Primary You source' }).first();
+  await expect(card).toBeVisible();
+  await card.click();
+  const detail = page.locator('.you-transit-article');
+  await expect(detail).toContainText('Primary You final sentence');
+  await expectNoHorizontalOverflow(page, 'Moon normal reader');
+  await detail.screenshot({ path: `test-results/moon-routing-reader-${width}.png` });
+  await page.evaluate(() => { window.location.hash = 'friends?tab=charts&chart=friend-nikki&view=transits'; });
+  const friendCard = page.locator('button.friend-transit-row').filter({ hasText: 'Primary Friend source' }).first();
+  await expect(friendCard).toBeVisible();
+  await friendCard.click();
+  const friendDetail = page.locator('.app-shell.mode-detail');
+  await expect(friendDetail).toContainText('Primary Friend final sentence');
+  await expect(friendDetail).not.toContainText('Primary You source');
+  await page.reload();
+  await expect(friendDetail).toContainText('Primary Friend final sentence');
+  await expectNoHorizontalOverflow(page, 'Moon Friend reader');
+  errors();
+});

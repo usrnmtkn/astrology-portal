@@ -1433,6 +1433,27 @@ function normalizeAspect(input) {
   return map[k] ?? null;
 }
 
+// apps/web/src/content/fallbackArchitectureV3/resolver/moonTransitVariants.mjs
+var natalAliases = { a: "ascendant", c: "chiron", j: "jupiter", m: "mercury", s: "sun" };
+var aspectGroups = { square: "hard", opposition: "hard", trine: "soft", sextile: "soft" };
+function moonTransitVariantKeys(keys, transiting, natal, aspect) {
+  if (transiting !== "moon") return [];
+  const groups = [aspect, aspectGroups[aspect], "any"];
+  return [...new Set(keys)].filter((key) => {
+    const match = /^authored\/transit-aspect\/moon\/([^/]+)\/([^/]+)\/variant-(?:[A-E]|[1-9]\d*)$/u.exec(key);
+    return match && (natalAliases[match[1]] ?? match[1]) === natal && groups.includes(match[2]);
+  }).sort();
+}
+function selectMoonTransitVariant(keys, transiting, natal, aspect, variant, seed) {
+  const choices = moonTransitVariantKeys(keys, transiting, natal, aspect);
+  if (typeof seed === "string" && seed.length) {
+    let hash = 2166136261;
+    for (const character of seed) hash = Math.imul(hash ^ character.charCodeAt(0), 16777619) >>> 0;
+    variant = hash % (choices.length + 1);
+  }
+  return Number.isInteger(variant) ? choices[variant - 1] ?? null : null;
+}
+
 // apps/web/src/content/fallbackArchitectureV3/resolver/mercuryReturnReader.mjs
 var MERCURY_RETURN_CONTACT_KEY = "authored/transit-aspect/mercury/mercury/conjunction";
 function mercuryReturnCopy(row, field2, window, SourceGapError2) {
@@ -2412,7 +2433,7 @@ function createTransitSynastryRenderer(transitLib, templatesFile, rowsFile, opts
     const body = fill2(v === "you" ? T.body_you ?? T.body : T.body_they ?? T.body, ctx);
     return { headline: fill2((v === "you" ? T.headline : T.headline_they ?? T.headline) ?? "", ctx), body, parts: [body], templateKey: T.contentKey };
   }
-  function renderTransitAspect({ transiting, natal, aspect, copyVersion = "primary", variant, pass, sign, transitHouse, natalHouse, isRetrograde, window: win, voice = "you" }) {
+  function renderTransitAspect({ transiting, natal, aspect, copyVersion = "primary", variant, variantSeed, pass, sign, transitHouse, natalHouse, isRetrograde, window: win, voice = "you" }) {
     const v = voice === "you" ? "you" : "they";
     const otherPoss = v === "they" ? "their" : null;
     const g = GROUP[aspect] ?? aspect;
@@ -2431,6 +2452,7 @@ function createTransitSynastryRenderer(transitLib, templatesFile, rowsFile, opts
     };
     const groupsToTry = [g, ...SHARE[g] ?? []];
     const tryKeys = [];
+    const moonVariant = transiting === "moon" ? selectMoonTransitVariant([...cards.keys(), ...blockedKeys], transiting, natal, aspect, variant, variantSeed) : null;
     const push = (a, b) => {
       const situation = transitAspectSituationKey(a, b, aspect, sign, transitHouse, natalHouse);
       if (situation) tryKeys.push(situation);
@@ -2438,6 +2460,7 @@ function createTransitSynastryRenderer(transitLib, templatesFile, rowsFile, opts
         tryKeys.push(`authored/transit-aspect/${a}/${b}/${aspect}/pass-${pass}`);
         if (g !== aspect) tryKeys.push(`authored/transit-aspect/${a}/${b}/${g}/pass-${pass}`);
       }
+      if (a === transiting && b === natal && moonVariant) tryKeys.push(moonVariant);
       if (variant) {
         tryKeys.push(`authored/transit-aspect/${a}/${b}/${aspect}/variant-${variant}`);
         if (g !== aspect) tryKeys.push(`authored/transit-aspect/${a}/${b}/${g}/variant-${variant}`);
@@ -6593,7 +6616,7 @@ function skyV4FieldValue(source, path) {
 }
 
 // apps/web/src/content/fallbackArchitectureV3/resolver/index.browser.ts
-var PACKAGE_VERSION = "v3-2026-10-14-personal-transit-copy-versions";
+var PACKAGE_VERSION = "v3-2026-10-15-moon-transit-routing";
 function stablePackageValue(value) {
   if (Array.isArray(value)) {
     return value.map(stablePackageValue);

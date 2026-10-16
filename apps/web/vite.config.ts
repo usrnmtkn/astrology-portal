@@ -237,9 +237,9 @@ export default defineConfig(({ mode }) => {
       rollupOptions: {
         output: {
           manualChunks(id) {
-            // These pure display helpers already load at startup. Share their
-            // chunk to avoid a separate request and compression overhead.
-            if (id.endsWith("/src/astrologyConfig.ts") || id.endsWith("/services/astrologyDisplay.ts")) return "astrology-display";
+            // These pure astrology helpers already load at startup. Share their
+            // chunk; the calculation engine retains its separate chunk below.
+            if (id.endsWith("/src/astrologyConfig.ts") || /\/services\/(?:astrologyDisplay|astrologyFacts|natalAspectFacts)\.ts$/u.test(id)) return "astrology-display";
             // Shared civil-date/location helpers are used together by Sky and
             // its articles; one chunk avoids repeated tiny preload dependencies.
             if (/\/services\/(?:timezones|skySelection|skyClock)\.ts$/u.test(id)) return "sky-time";

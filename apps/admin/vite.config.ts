@@ -138,7 +138,7 @@ export default defineConfig(({ command, mode }) => {
               return "admin-deferred-editor-tools";
             }
             // Review panels and owner publication share one deferred workspace chunk.
-            if (/apps\/admin\/src\/(?:AspectPatternDiagnostics|AspectPatternWriteups|ReportFulfillmentAdminPanel|UnresolvedContentReview|HoroscopePublicationReview|StudioEditorReviewPanels|ReviewWorkflowPanel)\.tsx$/u.test(id)) {
+            if (/apps\/admin\/src\/(?:AspectPatternDiagnostics|AspectPatternWriteups|ReportFulfillmentAdminPanel|UnresolvedContentReview|HoroscopePublicationReview|StudioEditorReviewPanels|ReviewWorkflowPanel)\.tsx$/u.test(id) || id.endsWith("/apps/admin/src/ownerPublication.ts")) {
               return "admin-deferred-review-tools";
             }
             if (/apps\/admin\/src\/(?:DailyFallbackWorkspaceGuide|DailyGlanceStudio|dailyGlanceFriendPreview|PackagedHookCatalogResults|SkyV4StudioReviewPanel)\.(?:ts|tsx)$/u.test(id)) {

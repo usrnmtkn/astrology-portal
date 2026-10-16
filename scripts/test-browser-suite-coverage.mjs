@@ -12,6 +12,10 @@ const testDir = 'tests/visual';
 // A suite may be run by hand only with a reason. Anything else must be in a workflow.
 const runByHand = new Map([
   [
+    'playwright.moon-routing.config.ts',
+    'Focused fresh-preview acceptance subset; both complete selected specs run in Visual smoke on every applicable PR.'
+  ],
+  [
     'playwright.natal-introductions.config.ts',
     'Focused local acceptance run with a fresh preview; both selected specs already run in browser QA.'
   ],

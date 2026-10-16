@@ -1,3 +1,4 @@
+import { selectMoonTransitVariant } from "./moonTransitVariants.mjs";
 import { MERCURY_RETURN_CONTACT_KEY, mercuryReturnCopy } from "./mercuryReturnReader.mjs";
 import { resolveBondEffect } from "./relationshipTemplate.mjs";
 import { prioritizeExactTransitSources, transitAspectSituationKey } from "./transitAspectSourcePriority.mjs";
@@ -653,7 +654,7 @@ function renderTransitHouseReference({ planet, house, sign, window: win, voice =
   return { headline: fill(v === "you" ? T.headline : (T.headline_they ?? T.headline), ctx), body, parts: [body], templateKey: T.contentKey };
 }
 
-function renderTransitAspectReference({ transiting, natal, aspect, copyVersion = "primary", variant, pass, sign, transitHouse, natalHouse, isRetrograde, window: win, voice = "you" }) {
+function renderTransitAspectReference({ transiting, natal, aspect, copyVersion = "primary", variant, variantSeed, pass, sign, transitHouse, natalHouse, isRetrograde, window: win, voice = "you" }) {
   // voice: "you" (reader) or a friend's display name. The authored library is reader-voice,
   // so friend view renders fallback-only in authored friend-voice rows (never pronoun swaps).
   const v = voice === "you" ? "you" : "they";
@@ -681,6 +682,7 @@ function renderTransitAspectReference({ transiting, natal, aspect, copyVersion =
   };
   const groupsToTry = [g, ...(SHARE[g] ?? [])];
   const tryKeys = [];
+  const moonVariant = selectMoonTransitVariant(cards.keys(), transiting, natal, aspect, variant, variantSeed);
   const push = (a, b) => {
     const situation = transitAspectSituationKey(a, b, aspect, sign, transitHouse, natalHouse);
     if (situation) tryKeys.push(situation);
@@ -688,6 +690,7 @@ function renderTransitAspectReference({ transiting, natal, aspect, copyVersion =
       tryKeys.push(`authored/transit-aspect/${a}/${b}/${aspect}/pass-${pass}`);
       if (g !== aspect) tryKeys.push(`authored/transit-aspect/${a}/${b}/${g}/pass-${pass}`);
     }
+    if (a === transiting && b === natal && moonVariant) tryKeys.push(moonVariant);
     if (variant) {
       tryKeys.push(`authored/transit-aspect/${a}/${b}/${aspect}/variant-${variant}`);
       if (g !== aspect) tryKeys.push(`authored/transit-aspect/${a}/${b}/${g}/variant-${variant}`);

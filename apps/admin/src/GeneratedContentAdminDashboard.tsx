@@ -3279,6 +3279,7 @@ export function GeneratedContentAdminDashboard() {
   const [transitNatalPoint, setTransitNatalPoint] = useState<TransitNatalPoint | "">("");
   const [transitNatalNatalHouse, setTransitNatalNatalHouse] = useState<TransitNatalHouse | "">("");
   const [transitNatalLiveServing, setTransitNatalLiveServing] = useState<{ contentKey: string; field: string } | null>(null);
+  const [transitNatalVariantCount, setTransitNatalVariantCount] = useState(0);
   const [transitNatalQuery, setTransitNatalQuery] = useState("");
   const [houseTransitPlanet, setHouseTransitPlanet] = useState<TransitNatalPlanet | "">("");
   const [houseTransitSign, setHouseTransitSign] = useState<TransitNatalSign | "">("");
@@ -9043,10 +9044,10 @@ export function GeneratedContentAdminDashboard() {
           })}
         /></Suspense>}
 
-        <Suspense fallback={null}><TransitNatalPreviewOptions context={transitReadingContext} onChange={updateTransitReadingContext} /></Suspense>
+        <Suspense fallback={null}><TransitNatalPreviewOptions variantCount={transitNatalVariantCount} context={transitReadingContext} onChange={updateTransitReadingContext} /></Suspense>
 
         {!contactReady && <p className="admin-natal-placement-prompt">Choose transiting planet, aspect, and natal planet or chart point to open this transit's You and Friend write-up.</p>}
-        {selection && contact && <Suspense fallback={<PageLoading message="Loading reader preview…" />}><TransitNatalReaderPreview secret={secret} selection={selection} voice={friendsTransitAudience ? "{{Name}}" : "you"} onOpenExact={() => void openExactTransitNatalSource(exactSelection ?? contact)} onOpenSource={(key, label, field) => void openContentKeyRow(key, label, key.startsWith("fallback-template/"), field)} onServingPreview={setTransitNatalLiveServing} /></Suspense>}
+        {selection && contact && <Suspense fallback={<PageLoading message="Loading reader preview…" />}><TransitNatalReaderPreview secret={secret} selection={selection} voice={friendsTransitAudience ? "{{Name}}" : "you"} onOpenExact={() => void openExactTransitNatalSource(exactSelection ?? contact)} onOpenSource={(key, label, field) => void openContentKeyRow(key, label, key.startsWith("fallback-template/"), field)} onServingPreview={setTransitNatalLiveServing} onVariantCount={setTransitNatalVariantCount} /></Suspense>}
         {contactReady && <p className="admin-field-hint">{exactKey && exactKey.split("/").length === 8
           ? "The reader preview uses eligible published writing, not saved drafts. After you save and publish this six-part situation, matching readings can use it. Shared source edits still affect every reading that uses them."
           : "The reader preview uses eligible published writing, not saved drafts. Aspect-specific passages keep separate contacts independent. Shared source edits affect every reading that uses them. Signs and houses stay in the preview until you fill all six finder fields, which switches the save destination to the six-part situation."}</p>}

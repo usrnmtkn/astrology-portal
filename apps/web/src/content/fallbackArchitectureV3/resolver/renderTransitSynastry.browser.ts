@@ -1,3 +1,4 @@
+import { selectMoonTransitVariant } from "./moonTransitVariants.mjs";
 import { MERCURY_RETURN_CONTACT_KEY, mercuryReturnCopy } from "./mercuryReturnReader.mjs";
 import { resolveBondEffect } from "./relationshipTemplate.mjs";
 import { prioritizeExactTransitSources, transitAspectSituationKey } from "./transitAspectSourcePriority.mjs";
@@ -101,7 +102,7 @@ export interface TransitLibFile { authoredCards: AuthoredCard[] }
 export interface TransitRendererOpts { allowUnreviewed?: boolean; blockedContentKeys?: readonly string[] }
 
 export interface TransitHouseFacts { planet: string; house: number; sign?: string | null; window?: string | null; voice?: string; variant?: number | null; events?: { natal: string; natalHouse?: number | null; aspect: string; window?: string | null }[]; isRetrograde?: boolean }
-export interface TransitAspectFacts { copyVersion?: "primary" | "alternate"; transiting: string; natal: string; aspect: string; variant?: string | number | null; pass?: 1 | 2 | 3 | number | null; sign?: string | null; transitHouse?: string | number | null; natalHouse?: string | number | null; isRetrograde?: boolean; window?: string | null; voice?: string }
+export interface TransitAspectFacts { variantSeed?: string; copyVersion?: "primary" | "alternate"; transiting: string; natal: string; aspect: string; variant?: string | number | null; pass?: 1 | 2 | 3 | number | null; sign?: string | null; transitHouse?: string | number | null; natalHouse?: string | number | null; isRetrograde?: boolean; window?: string | null; voice?: string }
 export interface TransitRetroFacts { planet: string; sign?: string | null; window?: string | null; format?: "card" | "article" }
 export interface TransitLabelFacts { transiting: string; natal: string; aspect: string; window?: string | null }
 export interface DailyGlanceFacts {
@@ -990,7 +991,7 @@ export function createTransitSynastryRenderer(
     return { headline: fill((v === "you" ? T.headline : (T.headline_they ?? T.headline)) ?? "", ctx), body, parts: [body], templateKey: T.contentKey };
   }
 
-  function renderTransitAspect({ transiting, natal, aspect, copyVersion = "primary", variant, pass, sign, transitHouse, natalHouse, isRetrograde, window: win, voice = "you" }: TransitAspectFacts): TransitRenderResult {
+  function renderTransitAspect({ transiting, natal, aspect, copyVersion = "primary", variant, variantSeed, pass, sign, transitHouse, natalHouse, isRetrograde, window: win, voice = "you" }: TransitAspectFacts): TransitRenderResult {
     // voice: "you" (reader) or a friend's display name. Friend views use the same approved
     // authored unit, adapted deterministically to third person when no authored friend body exists.
     const v = voice === "you" ? "you" : "they";
@@ -1017,6 +1018,8 @@ export function createTransitSynastryRenderer(
     };
     const groupsToTry = [g, ...(SHARE[g] ?? [])];
     const tryKeys: string[] = [];
+    const moonVariant = transiting === "moon"
+      ? selectMoonTransitVariant([...cards.keys(), ...blockedKeys], transiting, natal, aspect, variant, variantSeed) : null;
     const push = (a: string, b: string) => {
       const situation = transitAspectSituationKey(a, b, aspect, sign, transitHouse, natalHouse);
       if (situation) tryKeys.push(situation);
@@ -1024,6 +1027,7 @@ export function createTransitSynastryRenderer(
         tryKeys.push(`authored/transit-aspect/${a}/${b}/${aspect}/pass-${pass}`);
         if (g !== aspect) tryKeys.push(`authored/transit-aspect/${a}/${b}/${g}/pass-${pass}`);
       }
+      if (a === transiting && b === natal && moonVariant) tryKeys.push(moonVariant);
       if (variant) {
         tryKeys.push(`authored/transit-aspect/${a}/${b}/${aspect}/variant-${variant}`);
         if (g !== aspect) tryKeys.push(`authored/transit-aspect/${a}/${b}/${g}/variant-${variant}`);
