@@ -28,7 +28,7 @@ for(const period of ['daily','weekly','monthly','seasonal']) {
   for(const passage of edition.passages) {passage.headline='Synthetic author reading';passage.body='You can keep the wording you chose — complete and uncompressed. This synthetic paragraph is the author’s final version. Another sentence develops the same observation. There is time to consider the answer carefully. The final sentence remains present.';}
   const created=await store.invoke('POST',{contentKey:horoscopeEditionKey(edition.window),surface:'sky',mode:'article',eventType:'horoscope-edition',provider:'manual-admin',status:'DRAFT',lane:'serving',headline:'Synthetic owner edition',summary:'',body:horoscopeEditionBody(edition),sections:{horoscopeEdition:edition},facts:{horoscopeBrief:{brief:prepared.payload.brief,signature:prepared.payload.signature}}});
   assert.equal(created.status,200,period+JSON.stringify(created.payload));const saved=created.payload.rows[0];
-  const published=await store.invoke('PATCH',{id:saved.id,expectedUpdatedAt:saved.updated_at,ownerAction:'publish-owner-content'});
+  const published=await store.invoke('PATCH',{id:saved.id,expectedUpdatedAt:saved.updated_at,ownerAction:'publish-owner-content'},'/api/admin/generated-content?horoscopeEditor=true');
   assert.equal(published.status,200,period+JSON.stringify(published.payload));
   assert.deepEqual(published.payload.rows[0].sections.horoscopeEdition,edition,period+' preserves all signs and complete exact author copy');
   assert(hasExactStudioOwnerApproval(published.payload.rows[0]),period);

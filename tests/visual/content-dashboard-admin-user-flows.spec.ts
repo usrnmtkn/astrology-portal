@@ -4489,11 +4489,11 @@ test.describe("content dashboard admin user flow case studies", () => {
     await textarea.fill("{{Name}} receives the QA natal aspect passage.");
 
     await editor.getByRole("button", { name: "Save & publish" }).click();
-    await expect.poll(() => writes.length).toBe(1);
-    expect(writes[0]?.payload).toMatchObject({ reviewStatus: "approved" });
+    await expect.poll(() => writes.length).toBe(2);
+    expect(writes[1]?.payload).toMatchObject({ ownerAction: "approve-package-revision" });
     await expect(editor.getByLabel("Approval status")).toHaveText("Approved");
     await expect(editor.getByLabel("Reader status", { exact: true })).toHaveText("Live");
-    await expect(page.getByRole("status").filter({ hasText: "fallback-hook/natal-aspect-lived/lilith/square/ascendant saved as Live" })).toBeVisible();
+    await expect(page.getByRole("status").filter({ hasText: "The reviewed revision is published." })).toBeVisible();
     await editor.getByText("Structured fields", { exact: true }).click();
     const editorBodyBox = await editor.locator(":scope > .admin-post-editor").boundingBox();
     const savebarBox = await editor.locator(":scope > .admin-editor-savebar").boundingBox();
@@ -4557,11 +4557,11 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expect(publishButton).toBeEnabled();
     await publishButton.click();
 
-    await expect.poll(() => writes.length).toBe(1);
+    await expect.poll(() => writes.length).toBe(2);
     expect(writes[0]?.method).toBe("PATCH");
-    expect(writes[0]?.payload).toMatchObject({ id: stuckDraft.id, reviewStatus: "approved" });
+    expect(writes[1]?.payload).toMatchObject({ id: stuckDraft.id, ownerAction: "approve-package-revision" });
     await expect(editor.getByLabel("Reader status", { exact: true })).toHaveText("Live");
-    await expect(page.getByRole("status").filter({ hasText: `${contentKey} saved as Live` })).toBeVisible();
+    await expect(page.getByRole("status").filter({ hasText: "The reviewed revision is published." })).toBeVisible();
     await assertNoBrowserErrors();
   });
 
@@ -4648,7 +4648,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expect(editor.getByLabel("Approval status")).toHaveText("Approved");
     await expect(editor.getByLabel("Reader status", { exact: true })).toHaveText("Live");
     await expect(editor.getByLabel("Reader phrase · You")).toHaveValue("Approved revised You copy.");
-    await expect(editor.getByRole("button", { name: "Save & publish" })).toHaveCount(0);
+    await expect(editor.getByRole("button", { name: "Save & publish" })).toBeEnabled();
     await assertNoBrowserErrors();
   });
 

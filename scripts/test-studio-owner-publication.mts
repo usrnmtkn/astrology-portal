@@ -17,6 +17,8 @@ try {
   const initial=structuredClone(row);
   const result=await publish();assert.equal(result.status,200,JSON.stringify(result.payload));row=result.payload.rows[0];
   const recovered=await publishSavedOwnerContent(initial,async()=>{throw Object.assign(new Error('Lost reply after commit'),{status:503});},async()=>{const read=await store.invoke('GET',undefined,ownerPublicationStatusPath(initial));return read.payload;});
+  const confirmedRetry=await publishSavedOwnerContent(initial,async()=>{throw Object.assign(new Error('Version changed after lost reply'),{status:409});},async()=>{const read=await store.invoke('GET',undefined,ownerPublicationStatusPath(initial));return read.payload;});
+  assert.equal(confirmedRetry.rows[0].updated_at,row.updated_at,'A retry confirms only the exact prior successful publication.');
   assert.equal(recovered.rows[0].updated_at,row.updated_at);assert.equal(store.rows.get(row.id)?.updated_at,row.updated_at,'Recovery performs no second write.');
   assert.equal(row.status,'LIVE');assert.equal(row.body,body);assert.equal(row.review_state,null);assert.equal(row.lane,'serving');
   assert(hasExactStudioOwnerApproval(row));assert.equal(row.source_snapshot.skyAspectVoiceLint,undefined,'Owner approval must not fabricate a model/lint pass.');

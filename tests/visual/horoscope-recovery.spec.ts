@@ -112,8 +112,8 @@ for(const [width,theme] of [[390,'dark'],[1440,'light']] as const){
    await expect(studio.getByRole('note')).toContainText('Remove “whether” from the body');
    const saved=await f.latest();expect(saved.sections.horoscopeEdition.passages.slice(0,11)).toEqual(f.original.passages.slice(0,11));
    await studio.getByRole('button',{name:'4 · Publish',exact:true}).click();
-   await expect(studio.getByRole('region',{name:'Publication checks'})).toContainText('Pisces: Remove “whether” from the body');
-   await expect(studio.getByRole('button',{name:'Edit Pisces reading',exact:true})).toBeVisible();
+   await expect(studio.getByRole('region',{name:'Publication checks'})).toHaveCount(0);
+   await expect(studio.getByRole('checkbox',{name:/I have reviewed/})).toBeEnabled();
    await expect(studio.getByRole('button',{name:'Publish edition',exact:true})).toBeDisabled();
    await studio.getByRole('button',{name:'Back to readings',exact:true}).click();
    const corrected=original.replace('whether','if');await studio.getByLabel('Complete reading').fill(corrected);

@@ -7210,6 +7210,20 @@ export function GeneratedContentAdminDashboard() {
     </aside>
   );
 
+  function renderNotification() {
+    return message && (
+          <div
+            className={draft || loadState === "error" || loadState === "accessDenied" ? "admin-page-notice" : `admin-save-toast ${message.includes("Partial load:") || loadState === "idle" ? "is-warning" : ""}`}
+            role={loadState === "error" || loadState === "accessDenied" ? "alert" : "status"}
+          >
+            <span>{message}</span>
+            <StudioButton type="button" onClick={() => setMessage("")} aria-label="Dismiss notification">
+              <X size={16} aria-hidden="true" />
+            </StudioButton>
+          </div>
+        );
+  }
+
   return (
     <ContentLiveStatusProvider value={loadLiveStatus}>
     <main className="admin-dashboard" {...studioShellAttributes(studioTheme, studioPalette)}>
@@ -7221,17 +7235,7 @@ export function GeneratedContentAdminDashboard() {
             <StudioButton type="button" disabled={loadState === "loading"} onClick={() => void loadDashboardData()}>Retry failed loads</StudioButton>
           </div>
         )}
-        {message && (
-          <div
-            className={loadState === "error" || loadState === "accessDenied" ? "admin-page-notice" : `admin-save-toast ${message.includes("Partial load:") || loadState === "idle" ? "is-warning" : ""}`}
-            role={loadState === "error" || loadState === "accessDenied" ? "alert" : "status"}
-          >
-            <span>{message}</span>
-            <StudioButton type="button" onClick={() => setMessage("")} aria-label="Dismiss notification">
-              <X size={16} aria-hidden="true" />
-            </StudioButton>
-          </div>
-        )}
+        {!draft && renderNotification()}
         <AdminPageHeader
           breadcrumbs={currentPageBreadcrumbs.map((item, index) => ({
             key: `${item.label}-${index}`,
@@ -12579,6 +12583,7 @@ export function GeneratedContentAdminDashboard() {
             : <a className="admin-source-action" href={articleReaderHref(currentDraft.contentKey)} target="_blank" rel="noreferrer">Read published article</a>}
           <StudioButton type="button" disabled={isLoading || skyArticleEditor.saveState !== "saved"} onClick={closeEditor}>Done</StudioButton>
         </div>}
+        {renderNotification()}
         {editorSaveError && <div className="admin-inline-warning" role="alert">{editorSaveError}</div>}
         {pendingPublication && publicationStatusButton(isLoading)}
         {!compiledSkyArticleEdition && <div className={`admin-toolbar-actions admin-editor-savebar studio-surface${isLoading ? " is-saving" : ""}`} aria-busy={isLoading}>
@@ -12635,7 +12640,7 @@ export function GeneratedContentAdminDashboard() {
               title="Keep this revision as a Draft."
             >
               <Save size={16} aria-hidden="true" />
-              {isGuidedHeldReview ? "Save held draft" : isPersonalTransitExactDraft || isNewDraft && isPackageDraft ? "Save" : "Save draft"}
+              {isGuidedHeldReview ? "Save held draft" : isPersonalTransitExactDraft ? "Save" : "Save draft"}
             </StudioButton>
           )}
           {isGovernedSkyDraft && currentDraft.blockType === "sky_aspect" && <StudioButton className="admin-publish-button" type="button"

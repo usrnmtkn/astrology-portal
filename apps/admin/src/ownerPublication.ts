@@ -11,7 +11,7 @@ export async function publishSavedOwnerContent<T extends Row>(row:T, write:()=>P
   }
   catch(error) {
     const status=Number((error as {status?:number})?.status);
-    if([400,401,403,404,409,422].includes(status))throw error;
+    if([400,401,403,404,422].includes(status))throw error;
     try {
       const result=await read();
       const latest=result.rows?.find(saved=>saved.id===row.id);

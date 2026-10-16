@@ -44,10 +44,12 @@ The matrix describes editor flows, not an assertion that every possible astronom
 ## Fixes
 
 - Eligible package drafts expose a direct owner publish action even when the saved text has not changed and its review status is still pending. The action stages exact copy and uses the existing version-checked package publication handler. Personal-transit specializations keep their established approval actions.
+- Editor notifications sit in the editor flow instead of floating over its publication controls.
 - The inline natal source editor can publish an unchanged saved Draft rather than requiring an artificial edit.
 - Sky aspect authors can save and publish their wording explicitly. The server derives canonical card identity and records an exact content hash. Editorial lint/model judgments remain visible evidence for the existing check-based workflow, not permission to override the owner's explicit wording decision.
 - CSV publication uses the same explicit owner action for non-package reader rows; importing author wording does not fall back to an automatic model gate.
 - Horoscope publication uses the same explicit owner action. Current reader facts and signed window integrity remain checked; author punctuation and vocabulary are not automatic-publication vetoes. Paid generation and its semantic admission are unchanged.
+- Weekly editor response projection retains the publication receipt, so a committed publication can be confirmed. Manual horoscope saves preserve author punctuation in both browser and API.
 - Approval receipts are server-created, bound to all saved reader fields, and cannot be supplied by a client to approve changed wording. Reader projection exposes only the required receipt fields.
 - Existing Sky drafts and live passages use one conditional save-and-publish write for the explicit owner action. A failed publication preserves the previous live row and the editor keeps unsaved local words.
 - An uncertain owner publication reply is recovered by reading the saved-version approval and current publication ledger. It does not replay a publish request or label retired writing live.

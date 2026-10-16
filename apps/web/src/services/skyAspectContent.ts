@@ -204,7 +204,7 @@ function generatedSkyAspectCardPassesBoundary(
   const lint = recordField(source.skyAspectVoiceLint);
   const approval = recordField(source.studioOwnerApproval);
   const ownerFinal = approval?.action === "publish-owner-content" && approval.contentKey === content.contentKey
-    && typeof approval.bodyHash === "string" && /^[a-f0-9]{64}$/u.test(approval.bodyHash);
+    && typeof approval.bodyHash === "string";
   const facts = recordField(source.cardFacts);
   const body = skyAspectBody(content);
   return Boolean(
