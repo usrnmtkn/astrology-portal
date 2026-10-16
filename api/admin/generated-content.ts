@@ -951,6 +951,10 @@ function applyFallbackArchitectureV3ReviewPatch(row: ExistingGeneratedContentRow
   patch.headline = hasPackageDraft ? row.headline ?? "" : patch.headline;
   patch.summary = hasPackageDraft ? row.summary ?? "" : patch.summary;
   patch.body = hasPackageDraft ? row.body ?? readerBody : readerBody;
+  if (!hasPackageDraft && readerBody !== row.body && libs().isRegisteredLunarJournalKey(row.content_key)) {
+    sections.lunarJournal = { ...(isRecord(sections.lunarJournal) ? sections.lunarJournal : {}),
+      blocks: readerBody.split(/\n\n/u).map(text => ({ type: "para", text })) };
+  }
   sections.body_you = record.body_you ?? null;
   sections.body_they = record.body_they ?? null;
   const skyV4Validation = validateSkyV4TransitPovCopy(
