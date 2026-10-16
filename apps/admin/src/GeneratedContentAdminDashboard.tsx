@@ -3121,6 +3121,7 @@ const fallbackHookVisibleSearchText = memoByObject(fallbackHookVisibleSearchText
 const aspectContextForRow = memoByObject(aspectContextForRowUncached);
 
 const ownerPublishHint = "Publish your exact wording.";
+const pendingPublicationMessage = "Check the pending publication before publishing again.";
 
 export function GeneratedContentAdminDashboard() {
   const [studioTheme, setStudioTheme] = useState(getStudioTheme);
@@ -5180,7 +5181,7 @@ export function GeneratedContentAdminDashboard() {
   }
 
   async function submitSavedPublication(row: AdminGeneratedContentRow, ownerAction: PendingStudioPublication["ownerAction"]) {
-    if (pendingPublication) throw new Error("Check the previous publication before starting another one.");
+    if (pendingPublication) throw new Error(pendingPublicationMessage);
     if (!row.updated_at) throw new Error("Reload this row to get its saved version before publishing. Your writing is still here.");
     const operation: PendingStudioPublication = { id: row.id, expectedUpdatedAt: row.updated_at, ownerAction };
     setPendingPublication(operation);
@@ -5624,7 +5625,7 @@ export function GeneratedContentAdminDashboard() {
   }
 
   async function publishPackageDraft(activeDraft: AdminDraft) {
-    if (pendingPublication) { setEditorSaveError("Check the pending publication before publishing again."); return; }
+    if (pendingPublication) { setEditorSaveError(pendingPublicationMessage); return; }
     const personalCopy = writesPersonalTransitExactCopy(activeDraft) || (!activeDraft.id && activeDraft.contentKey.startsWith("authored/transit-aspect/"));
     if (personalCopy && draftHasPackageProposal(activeDraft)) activeDraft = { ...activeDraft,
       sections: { ...activeDraft.sections, packageRecord: draftEditablePackageRecord(activeDraft), packageDraft: undefined } };
@@ -9779,7 +9780,7 @@ export function GeneratedContentAdminDashboard() {
 
   async function publishCsvRow(document: CsvContentRow) {
     const row = document as AdminGeneratedContentRow;
-    if (pendingPublication) throw new Error('Check the previous publication before publishing another row.');
+    if (pendingPublication) throw new Error(pendingPublicationMessage);
     if (row.block_type === 'sky_placement') throw new Error('This source requires its dedicated package review and release.');
     try {
       const isPackage = rowIsFallbackArchitectureV3(row);
