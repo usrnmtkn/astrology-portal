@@ -4,7 +4,7 @@ Owner request, October 15, 2026: “do the full content studio audit and fix pub
 
 ## Acceptance contract
 
-An authenticated owner's explicit publish action approves the exact saved reader wording. It does not require a model's prose verdict, an unrelated review-status dropdown, or an artificial edit to an unchanged saved draft. Generated drafts and automated publication retain their existing editorial policies. Publishing never rewrites or compresses the author's content.
+An authenticated owner's explicit publish action approves the exact submitted reader wording at the opened saved version. It does not require a model's prose verdict, an unrelated review-status dropdown, or an artificial edit to an unchanged saved draft. Generated drafts and automated publication retain their existing editorial policies. Publishing never rewrites or compresses the author's content.
 
 Technical publication requirements remain: owner authentication, the opened source version, a valid reader identity/destination, complete required fields/audiences, signed calculated windows, valid variables, current dependencies, exact publication state, and separation of reference material from finished copy. A source-only editor must lead to its owning reader editor or composition workflow; saving reference material is not a successful reader publication.
 
@@ -48,10 +48,13 @@ The matrix describes editor flows, not an assertion that every possible astronom
 - Sky aspect authors can save and publish their wording explicitly. The server derives canonical card identity and records an exact content hash. Editorial lint/model judgments remain visible evidence for the existing check-based workflow, not permission to override the owner's explicit wording decision.
 - Horoscope publication uses the same explicit owner action. Current reader facts and signed window integrity remain checked; author punctuation and vocabulary are not automatic-publication vetoes. Paid generation and its semantic admission are unchanged.
 - Approval receipts are server-created, bound to all saved reader fields, and cannot be supplied by a client to approve changed wording. Reader projection exposes only the required receipt fields.
+- Existing Sky drafts and live passages use one conditional save-and-publish write for the explicit owner action. A failed publication preserves the previous live row and the editor keeps unsaved local words.
 - An uncertain owner publication reply is recovered by reading the saved-version approval and current publication ledger. It does not replay a publish request or label retired writing live.
 
 ## Verification record
 
-At authoring time: the new owner API/reader regression passed; all four horoscope-period owner API cases passed; the first eight desktop/mobile owner browser cases passed before the recovery extension. CSS audit and server/admin types passed. The broad 82-case rendered editor matrix, final bundle checks, and exact-head release gates must finish before release. Update this record with final evidence rather than treating this draft record as a completion claim.
+The real-handler owner publication regression and all four horoscope-period owner publication cases pass, including exact reader selection, version conflicts, unchanged author wording, failed-live-write preservation, lost replies and retirement. The rendered regression matrix covers 84 editor cases; additional Calendar creation, memory-feedback and dashboard cases exercise the shared controls. The full unfiltered API and browser release gates are required on the final PR head. Their exact revision, outcomes and deployed revision are recorded in the release PR.
+
+Server/admin types, CSS/token contracts, the admin module boundary and built-asset privacy checks are part of the release validation. The existing admin bundle limit remains unchanged. Tests use synthetic content and never publish an owner's production record.
 
 The local report-correction test and the late part of the unfiltered API suite require protected report-reference documents that are unavailable in this isolated checkout. They are verified in the repository's established hosted test environment; no unrelated private reference store is copied into this checkout.

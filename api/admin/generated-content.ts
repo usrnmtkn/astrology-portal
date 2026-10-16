@@ -115,6 +115,7 @@ type GeneratedContentWriteBody = {
   ownerAction?:
     | "approve-and-schedule"
     | "publish-owner-content"
+    | "save-and-publish-owner-content"
     | "import-csv-draft"
     | "approve-package-revision"
     | "approve-sky-article-edition"
@@ -1095,6 +1096,8 @@ function isLegacyLiveWritingCandidate(row: {
 
 function assertCanPublishGeneratedContent(row: Parameters<typeof isLegacyLiveWritingCandidate>[0] & {
   body?: string | null;
+  headline?: string | null;
+  summary?: string | null;
   blockType?: string | null;
   block_type?: string | null;
   judgeScore?: number | null;
@@ -1251,7 +1254,7 @@ async function readJsonBody(req: IncomingMessage) {
 }
 
 const generatedContentOwnerActions = new Set([
-  "import-csv-draft", "publish-owner-content",
+  "import-csv-draft", "publish-owner-content", "save-and-publish-owner-content",
   "approve-and-schedule", "approve-package-revision", "approve-sky-article-edition",
   "save-sky-article-edition-revision", "publish-sky-article-edition-revision"
 ]);
@@ -2498,17 +2501,20 @@ async function updateGeneratedContent(req: IncomingMessage) {
     updated_at: nextGeneratedContentVersion(existing.updated_at)
   };
 
-  if (body.ownerAction === "publish-owner-content") {
-    if (!body.expectedUpdatedAt || Object.keys(body).some(key => !["id", "expectedUpdatedAt", "ownerAction"].includes(key))) {
+  const ownerPublication = body.ownerAction === "publish-owner-content" || body.ownerAction === "save-and-publish-owner-content";
+  if (ownerPublication) {
+    const fields = body.ownerAction === "save-and-publish-owner-content" ? ["headline", "summary", "body", "sections"] : [];
+    if (!body.expectedUpdatedAt || Object.keys(body).some(key => !["id", "expectedUpdatedAt", "ownerAction", ...fields].includes(key))) {
       throw new GeneratedContentRequestError("Publish the saved version with its current timestamp; save edits first.", 409);
     }
     if (isPackageRow || existing.block_type === "sky_placement" || existing.event_type === "sky-article-edition") {
       throw new GeneratedContentRequestError("Use this editor's package or complete-edition publication action.", 409);
     }
-    if (!existing.body?.trim()) throw new GeneratedContentRequestError("Add the reader copy before publishing.");
-    patch.source_snapshot = { ...existing.source_snapshot, review_status: "approved", studioOwnerApproval: studioOwnerApproval(existing, patch.updated_at as string) };
+    const approved = { ...existing, ...Object.fromEntries(fields.filter(field => body[field] !== undefined).map(field => [field, body[field]])) };
+    if (!approved.body?.trim()) throw new GeneratedContentRequestError("Add the reader copy before publishing.");
+    patch.source_snapshot = { ...existing.source_snapshot, review_status: "approved", studioOwnerApproval: studioOwnerApproval(approved, patch.updated_at as string) };
     if (existing.block_type === "sky_aspect") {
-      if (!libs().skyAspectReaderCopyPassesBoundary(existing.body)) throw new GeneratedContentRequestError("The Sky card contains timing mechanics or internal notes that belong outside reader copy.", 409);
+      if (!libs().skyAspectReaderCopyPassesBoundary(approved.body)) throw new GeneratedContentRequestError("The Sky card contains timing mechanics or internal notes that belong outside reader copy.", 409);
       const identity = studioSkyIdentity(existing.content_key);
       if (identity.kind !== "aspect") throw new GeneratedContentRequestError("The saved Sky aspect identity is invalid.");
       patch.source_snapshot = { ...(patch.source_snapshot as Record<string, unknown>),
@@ -2970,6 +2976,7 @@ async function updateGeneratedContent(req: IncomingMessage) {
       });
       assertCanPublishGeneratedContent({
         ...existing,
+        headline: body.headline ?? existing.headline, summary: body.summary ?? existing.summary, body: body.body ?? existing.body,
         contentKey: body.contentKey ?? existing?.content_key,
         provider: body.provider ?? existing?.provider,
         promptVersion: body.promptVersion ?? existing?.prompt_version,
@@ -3165,17 +3172,15 @@ async function updateGeneratedContent(req: IncomingMessage) {
     patch.source_snapshot = snapshot;
   }
   if (editsSkyCopy) {
-    patch.status = "DRAFT";
-    patch.review_state = "sky-voice-needs-review";
+    if (!ownerPublication) { patch.status = "DRAFT"; patch.review_state = "sky-voice-needs-review"; patch.published_at = null; }
     patch.judge_score = null;
     patch.judge_verdict = null;
-    patch.judge_gate = null;
-    patch.judge_why = "Saved writing changed. Run writing checks on this version before approving it.";
+    if (!ownerPublication) patch.judge_gate = null;
+    patch.judge_why = ownerPublication ? "Exact wording approved by the author." : "Saved writing changed. Run writing checks on this version before approving it.";
     const prefix = existing.block_type === "sky_placement" ? "skyPlacement" : "skyAspect";
     patch.source_snapshot = { ...(patch.source_snapshot as Record<string, unknown> ?? {}), studioWritingCheck: null,
       studioWritingError: null, [`${prefix}VoiceLint`]: null, [`${prefix}Judge`]: null,
       ...(existing.block_type === "sky_placement" ? { skyPlacementTopperVoiceLint: null, skyPlacementTopperJudge: null } : {}) };
-    patch.published_at = null;
   }
 
   if (Object.keys(patch).length === 1 && !(isPackageRow && packageFields.some(field => (body as Record<string, unknown>)[field] !== undefined))) {
@@ -3409,7 +3414,7 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
           requireCallerVersion(version);
           const row = await fetchExistingRowById(id);
           const found = Boolean(row && hasExactStudioOwnerApproval(row)
-            && row.source_snapshot?.studioOwnerApproval?.savedVersion === version);
+            && (isRecord(row.source_snapshot?.studioOwnerApproval) && row.source_snapshot.studioOwnerApproval.savedVersion === version));
           const publication = found ? await currentPublication(row!.content_key) : null;
           sendJson(res, 200, { ok: true, found, rows: found ? [row] : [],
             ...(found ? { publicationReceipt: { currentStatus: row!.status,

@@ -132,7 +132,6 @@ export default defineConfig(({ command, mode }) => {
         output: {
           onlyExplicitManualChunks: true,
           manualChunks(id) {
-            if (/apps\/admin\/src\/(?:ownerPublication\.ts|HoroscopePublicationReview\.tsx)$/u.test(id)) return "HoroscopePublicationReview";
             // Shared controls are rendered immediately. Keeping them in this
             // lazy group pulls the whole editor group into the startup graph.
             if (/apps\/admin\/src\/(?:FriendsTransitSectionFinder|NatalPlacementSourceFinder|NatalPlacementReaderPreview|TemplateReaderDrilldown|TemplateVariableReviewPanels|TemplateVariablesRail)\.tsx$|apps\/admin\/src\/(?:compositionMap|templateVariableSources)\.ts$/u.test(id)) {

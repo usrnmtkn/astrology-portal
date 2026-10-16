@@ -4875,21 +4875,23 @@ export function GeneratedContentAdminDashboard() {
     } finally { setIsLoading(false); }
   }
 
-  async function approveAndScheduleSkyRow(row: AdminGeneratedContentRow, ownerFinal = false) {
+  async function approveAndScheduleSkyRow(row: AdminGeneratedContentRow, ownerFinal = false, copy?: AdminDraft) {
     setEditorSaveError("");
     setIsLoading(true);
     try {
       const write = () => adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[] }>("/api/admin/generated-content", secret, {
         method: "PATCH",
-        body: JSON.stringify({ id: row.id, ...(row.updated_at ? { expectedUpdatedAt: row.updated_at } : {}), ownerAction: ownerFinal ? "publish-owner-content" : "approve-and-schedule" })
+        body: JSON.stringify({ id: row.id, ...(row.updated_at ? { expectedUpdatedAt: row.updated_at } : {}), ownerAction: copy ? "save-and-publish-owner-content" : ownerFinal ? "publish-owner-content" : "approve-and-schedule",
+          ...(copy ? { headline: copy.headline, summary: copy.summary, body: copy.body, sections: copy.sections } : {}) })
       });
-      const ownerTransport = ownerFinal ? await import("./ownerPublication") : null;
+      const ownerTransport = ownerFinal ? await import("./HoroscopePublicationReview") : null;
       const payload = ownerTransport ? await ownerTransport.publishSavedOwnerContent(row, write,
         () => adminJsonRequest<{ok:boolean;rows:AdminGeneratedContentRow[]}>(ownerTransport.ownerPublicationStatusPath(row), secret)) : await write();
       const saved = payload.rows?.[0];
       if (!payload.ok || !saved || saved.id !== row.id || saved.content_key !== row.content_key
-        || saved.status !== (row.block_type === "sky_placement" && !ownerFinal ? "REVIEWED" : "LIVE")) {
-        throw new Error("Approval was not confirmed. Try again.");
+        || saved.status !== (row.block_type === "sky_placement" && !ownerFinal ? "REVIEWED" : "LIVE")
+        || copy && (["headline", "summary", "body"] as const).some(field => saved[field] !== copy[field])) {
+        throw new Error("Publication was not confirmed.");
       }
       setRows((current) => current.map((candidate) => candidate.id === saved.id ? saved : candidate));
       if (selectedRowId === saved.id || draft?.contentKey === saved.content_key) {
@@ -5613,9 +5615,10 @@ export function GeneratedContentAdminDashboard() {
   }
 
   async function publishOwnerDraft(activeDraft: AdminDraft) {
-    if (pendingPublication) { setEditorSaveError("Check the pending publication before publishing again."); return; }
-    const saved = await saveDraft("DRAFT", activeDraft);
-    if (saved) await approveAndScheduleSkyRow(saved, true);
+    if (pendingPublication) return;
+    const saved = activeDraft.id ? { id: activeDraft.id, content_key: activeDraft.contentKey,
+      updated_at: activeDraft.updatedAt, block_type: activeDraft.blockType } as AdminGeneratedContentRow : await saveDraft("DRAFT", activeDraft);
+    if (saved) await approveAndScheduleSkyRow(saved, true, activeDraft.id ? activeDraft : undefined);
   }
 
   async function publishPackageDraft(activeDraft: AdminDraft) {
@@ -11103,7 +11106,7 @@ export function GeneratedContentAdminDashboard() {
                 <li><strong>Read:</strong> the Headline and the complete Body from beginning to end.</li>
                 <li><strong>Check:</strong> astrological accuracy, your preferred voice, repeated ideas, and any unfinished placeholders.</li>
                 <li><strong>If you edit:</strong> save the draft, then reread the saved copy.</li>
-                <li><strong>When it is correct:</strong> {packageOwnerCanPublish ? "Save & publish approves and publishes this wording." : <>Record owner copy review below. This source still requires its owning release workflow.</>}</li>
+                <li><strong>When it is correct:</strong> {packageOwnerCanPublish ? "Save & publish." : "Record owner copy review below."}</li>
               </ol>
               <div className="admin-guided-review-decision" role="status">
                 <strong>{guidedReviewDecision ? "Owner copy review recorded" : draftHasUnsavedChanges ? "Save before completing review" : "Ready for your decision"}</strong>
@@ -12102,7 +12105,7 @@ export function GeneratedContentAdminDashboard() {
               {currentDraft.contentKey.startsWith("cms/sky-daily-summary/sun/") && <div role="group" aria-label="Insert Sun passage variable">
                 {cmsAllowedSlots.map(slot => <StudioButton key={slot} type="button" disabled={isLoading} onMouseDown={event => event.preventDefault()} onClick={() => insertDraftToken(`{${slot}}`)}>Insert {slot === "sunPlacement" ? "Sun placement" : "ruler name"}</StudioButton>)}
               </div>}
-              <p>Save & publish makes your wording live in one step. Save draft keeps an unfinished revision for later.</p>
+              <p>Save & publish approves your wording.</p>
               <p><strong>Reader status:</strong> <ContentLiveStatusBadge row={editorStatusRow} unsaved={!isAstro101Draft && draftHasUnsavedChanges && !(!currentDraft.id && matchesBuiltinSummary)} /></p>
               {cmsTemplateValidation.errors.length > 0 ? (
                 <div role="alert" aria-label="CMS template errors">
@@ -12442,15 +12445,15 @@ export function GeneratedContentAdminDashboard() {
                       {isPackageDraft
                         ? packageHasProposal
                           ? packageRoleCanServeExactCopy
-                            ? "Save & publish makes your exact edits live in one step. Choose Save draft to keep a revision Not live."
+                            ? "Save & publish approves your wording."
                             : "This saved revision is source material and cannot become exact reader copy."
                           : packageWillPublishOnSave
                           ? "This copy is approved. Save to publish it to readers."
                           : currentDraft.status === "LIVE"
                             ? "This approved copy is live for readers."
-                            : "Approval controls reader availability. Set review status to approved, then Save to publish."
+                            : "Save & publish approves your wording."
                         : isGovernedSkyDraft
-                          ? `Save your edits, run writing checks, then ${currentDraft.blockType === "sky_placement" ? "Approve for package" : "Approve & schedule"}. These actions update the status.`
+                          ? currentDraft.blockType === "sky_aspect" ? "Save & publish approves your wording." : "Save, check, then Approve for package."
                           : "This is the editorial workflow stage. The Status badge checks the copy readers can receive."}
                     </small>
                   </label>
@@ -12621,7 +12624,7 @@ export function GeneratedContentAdminDashboard() {
                   ? "Save & publish"
                   : "Save"}
           </StudioButton>
-          {(directReaderDraft || isPackageDraft && packageOwnerCanPublish || unchangedSkySource) && (
+          {(directReaderDraft || packageOwnerCanPublish || unchangedSkySource) && (
             <StudioButton
               className="admin-secondary-button"
               type="button"
@@ -12634,11 +12637,11 @@ export function GeneratedContentAdminDashboard() {
             </StudioButton>
           )}
           {isGovernedSkyDraft && currentDraft.blockType === "sky_aspect" && <StudioButton className="admin-publish-button" type="button"
-            disabled={isLoading || !currentDraft.body.trim()} onClick={() => void publishOwnerDraft(currentDraft)}>
+            disabled={isLoading || Boolean(pendingPublication) || !currentDraft.body.trim()} onClick={() => void publishOwnerDraft(currentDraft)}>
             Save &amp; publish
           </StudioButton>}
           {isPackageDraft && packageHasProposal && !packageOwnerCanPublish && !packageIsSkyV4Governed && (
-            <p className="admin-savebar-next-step">This row is source material; save it for review rather than publishing it as exact reader copy.</p>
+            <p className="admin-savebar-next-step">Source material needs its owning reader editor before publication.</p>
           )}
           {isPackageDraft && !isNewDraft && !skyFallbackEditor && draftHasUnsavedChanges && (
             <StudioButton type="button" className="admin-secondary-button" onClick={revertPackageDraft} disabled={isLoading}>
@@ -12673,20 +12676,16 @@ export function GeneratedContentAdminDashboard() {
           )}
           {!isPackageDraft && !isCmsSurfaceDraft && !isNewDraft && (
             <>
-              {isGovernedSkyDraft && selectedRow && !["LIVE", "ARCHIVED"].includes(selectedRow.status) && <StudioButton className="admin-review-button" type="button" onClick={() => void runSkyDraftWriting(selectedRow.content_key, "recheck", selectedRow)} disabled={isLoading || draftHasUnsavedChanges || !selectedRow.body?.trim()} title={draftHasUnsavedChanges ? "Save changes before running writing checks." : "Check this saved version without changing your writing."}>
-                <Check size={16} aria-hidden="true" />
-                Run writing checks
-              </StudioButton>}
               {!isAstro101Draft && !isGovernedSkyDraft && <StudioButton className="admin-review-button" type="button" onClick={() => void saveDraft("REVIEWED")} disabled={isLoading || !publishReady || reviewComplete}>
                 <Check size={16} aria-hidden="true" />
                 {reviewComplete ? "Reviewed" : "Mark reviewed"}
               </StudioButton>}
-              {isGovernedSkyDraft && selectedRow ? (
-                <StudioButton className="admin-publish-button" type="button" onClick={() => void approveAndScheduleSkyRow(selectedRow)} disabled={isLoading || skyDraftHasUnsavedCopy || skyWritingIssues(selectedRow).length > 0} title={skyDraftHasUnsavedCopy ? "Save and revalidate copy edits before approval." : currentDraft.blockType === "sky_placement" ? "Approve this copy for governed package import. This does not publish it." : "Approve this reusable card for calculated matching Sky configurations."}>
+              {isGovernedSkyDraft && currentDraft.blockType === "sky_placement" && selectedRow ? (
+                <StudioButton className="admin-publish-button" type="button" onClick={() => void approveAndScheduleSkyRow(selectedRow)} disabled={isLoading || skyDraftHasUnsavedCopy || skyWritingIssues(selectedRow).length > 0} title={skyDraftHasUnsavedCopy ? "Save and revalidate copy edits before approval." : "Approve this copy for governed package import. This does not publish it."}>
                   <Check size={16} aria-hidden="true" />
-                  {currentDraft.blockType === "sky_placement" ? "Approve for package" : "Approve & schedule"}
+                  Approve for package
                 </StudioButton>
-              ) : isSkyArticleTemplate ? (
+              ) : isGovernedSkyDraft ? null : isSkyArticleTemplate ? (
                 <StudioButton type="button" className="admin-primary-button" onClick={() => {
                   const builder = editorRef.current?.querySelector<HTMLElement>(".admin-sky-edition-builder");
                   builder?.scrollIntoView({ block: "start" });

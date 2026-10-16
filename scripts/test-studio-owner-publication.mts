@@ -1,14 +1,16 @@
 import {publishSavedOwnerContent, ownerPublicationStatusPath} from '../apps/admin/src/ownerPublication.js';
 import assert from 'node:assert/strict';
+import {contentLiveStatuses} from '../api/_lib/content-live-status.js';
 import { createApiStore } from '../tests/helpers/calendar-review-api.mjs';
 import { baseline, source } from '../tests/helpers/sky-review-workflow-api.mjs';
 import { hasExactStudioOwnerApproval } from '../api/_lib/studio-owner-publication.js';
 import { resolveSkyAspectGeneratedContent } from '../apps/web/src/services/skyAspectContent.js';
 
 const body = 'You always remember the request you left unanswered.\n\nA synthetic complete ending keeps the owner’s exact wording.';
-const store = await createApiStore([{...baseline,body,sections:{},summary:''},source]);
+const ownerId = "a0000000-0000-4000-8000-000000000001";
+const store = await createApiStore([{...baseline,id:ownerId,body,sections:{},summary:''},source]);
 try {
-  let row=store.rows.get(baseline.id)!;
+  let row=store.rows.get(ownerId)!;
   const publish=()=>store.invoke('PATCH',{id:row.id,expectedUpdatedAt:row.updated_at,ownerAction:'publish-owner-content'});
   const legacy=await store.invoke('PATCH',{id:row.id,expectedUpdatedAt:row.updated_at,status:'LIVE',lane:'serving',reviewState:null});
   assert.equal(legacy.status,409,'Automated-check path keeps its existing rules.');
@@ -24,7 +26,9 @@ try {
   const rendered=resolveSkyAspectGeneratedContent({first:'chiron',second:'nodes',aspect:'sextile',firstSign:'taurus',secondSign:'aquarius',generatedContent:new Map([[row.content_key,content]])} as any);
   assert(rendered, 'The actual Sky reader must select the approved owner copy.');
   assert.equal(rendered.body,body);
-  store.rows.set(row.id,{...row,body:body+' Tampered outside publication.'});
+  const drifted={...row,body:body+' Tampered outside publication.'};
+  assert.equal(contentLiveStatuses([drifted])[0].live,false,'Status must not report a mismatched owner approval live.');
+  store.rows.set(row.id,drifted);
   const tampered=await store.invoke('POST',{keys:[row.content_key]},'/api/content-reader');assert.equal(tampered.status,200);assert.equal(tampered.payload.rows.length,0,'Reader rejects a receipt for different bytes.');store.rows.set(row.id,row);
   const denied=await store.invoke('PATCH',{id:row.id,expectedUpdatedAt:row.updated_at,ownerAction:'publish-owner-content'},'/api/admin/generated-content','not-owner');assert.equal(denied.status,401);assert.equal(store.rows.get(row.id)?.body,body);
   const stale=await store.invoke('PATCH',{id:row.id,expectedUpdatedAt:initial.updated_at,ownerAction:'publish-owner-content'});assert.equal(stale.status,409);assert.equal(store.rows.get(row.id)?.body,body);
@@ -33,6 +37,18 @@ try {
   const edited=await store.invoke('PATCH',{id:row.id,expectedUpdatedAt:row.updated_at,status:'DRAFT',body:body+' Owner addition.'});assert.equal(edited.status,200);row=edited.payload.rows[0];assert(!hasExactStudioOwnerApproval(row));
   await assert.rejects(()=>publishSavedOwnerContent(initial,async()=>{throw Object.assign(new Error('Unconfirmed publication'),{status:503});},async()=>({ok:true,rows:[store.rows.get(row.id)]})),/Unconfirmed publication/);
   const again=await publish();assert.equal(again.status,200,JSON.stringify(again.payload));row=again.payload.rows[0];assert(hasExactStudioOwnerApproval(row));
+  const liveBefore=structuredClone(row);
+  const rejectedLive=await store.invoke('PATCH',{id:row.id,expectedUpdatedAt:row.updated_at,ownerAction:'save-and-publish-owner-content',body:'An orb of 2 degrees belongs outside this card.'});
+  assert.equal(rejectedLive.status,409);assert.deepEqual(store.rows.get(row.id),liveBefore,'A failed live publication keeps the previous live wording unchanged.');
+  const nextBody='The author chooses another complete paragraph. The final author sentence is preserved.';
+  const combined=await store.invoke('PATCH',{id:row.id,expectedUpdatedAt:row.updated_at,ownerAction:'save-and-publish-owner-content',body:nextBody,headline:row.headline,summary:row.summary,sections:row.sections});
+  assert.equal(combined.status,200,JSON.stringify(combined.payload));row=combined.payload.rows[0];assert.equal(row.status,'LIVE');assert.equal(row.body,nextBody);assert(hasExactStudioOwnerApproval(row));assert.equal(row.source_snapshot.studioWritingCheck,null);
+  const publishedVersion=row.source_snapshot.studioOwnerApproval.savedVersion;
+  const retired=await store.invoke('POST',{action:'retire',id:row.id,contentKey:row.content_key,expectedUpdatedAt:row.updated_at},'/api/admin/content-publication');
+  assert.equal(retired.status,200,JSON.stringify(retired.payload));
+  const retiredRead=await store.invoke('GET',undefined,ownerPublicationStatusPath({...row,updated_at:publishedVersion}));
+  assert.equal(retiredRead.payload.publicationReceipt.currentPublicationState,'retired');
+  await assert.rejects(()=>publishSavedOwnerContent({...row,updated_at:publishedVersion},async()=>{throw new Error('Retired publication');},async()=>retiredRead.payload),/Retired publication/);
   for(const unsafe of ['Timing has an orb of 2 degrees.','Read the review queue for provenance.']) {
     const saved=await store.invoke('PATCH',{id:row.id,expectedUpdatedAt:row.updated_at,status:'DRAFT',body:unsafe});assert.equal(saved.status,200);row=saved.payload.rows[0];
     assert.equal((await publish()).status,409);assert.equal(store.rows.get(row.id)?.status,'DRAFT');

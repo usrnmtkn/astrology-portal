@@ -13,14 +13,13 @@ type Row = ReviewableContent & {
     updated_at?: string | null;
     headline?: string | null;
 };
-export default function ReviewWorkflowPanel({ row, unsaved, busy, onCheck, onGenerate, credential = '', checkInSaveBar = false }: {
+export default function ReviewWorkflowPanel({ row, unsaved, busy, onCheck, onGenerate, credential = '' }: {
     row: Row;
     unsaved: boolean;
     busy: boolean;
     onCheck: () => void;
     onGenerate: () => void;
     credential?: string;
-    checkInSaveBar?: boolean;
 }) {
     const [verification, setVerification] = useState(0);
     const source = isContentStudioReferenceSource(row.content_key, row.source_snapshot ?? {});
@@ -53,21 +52,21 @@ export default function ReviewWorkflowPanel({ row, unsaved, busy, onCheck, onGen
                 : "Review this ingredient in the source library. Changes require its owning composition or package workflow before they affect reader copy."}</p>
     </details> : <>
       {sky && <div className="admin-review-status-checks">
-        <p>Writing checks: {unsaved ? "Save changes before checking" : issues.length ? "Needs attention" : row.status === "LIVE" ? "Passed" : "Passed; awaiting your approval"}</p>
+        <p>Writing checks: {unsaved ? "Save changes before checking" : issues.length ? "Needs attention" : row.status === "LIVE" ? row.source_snapshot?.studioOwnerApproval ? "Owner approved" : "Passed" : "Ready for review"}</p>
         {!unsaved && issues.length > 0 && <ul>{issues.map(issue => <li key={issue}>{issue}</li>)}</ul>}
         {!unsaved && row.source_snapshot?.studioWritingCheck && advisories.length > 0 && <ul>{advisories.map((finding: any) => <li key={finding.term}>{finding.reason}</li>)}</ul>}
         {row.source_snapshot?.studioWritingError && <p role="alert">{String(row.source_snapshot.studioWritingError)}</p>}
-        {row.status !== "LIVE" && row.status !== "ARCHIVED" && (!checkInSaveBar || !row.body?.trim()) && <StudioButton type="button" disabled={busy || unsaved} onClick={row.body?.trim() ? onCheck : onGenerate}>
+        {row.status !== "LIVE" && row.status !== "ARCHIVED" && <StudioButton type="button" disabled={busy || unsaved} onClick={row.body?.trim() ? onCheck : onGenerate}>
           {busy ? "Working…" : row.body?.trim() ? "Run writing checks" : "Generate draft"}
         </StudioButton>}
-        <p>Writing checks inspect your saved text without rewriting it. Your approval remains a separate action.</p>
+        <p>Checks offer guidance. Publish approves your wording.</p>
         <Suspense fallback={null}>
           <StudioMemoryFeedback key={row.content_key} contentKey={row.content_key} credential={credential} revision={row.updated_at} unsaved={unsaved} />
         </Suspense>
       </div>}
       {(sky || row.status === "LIVE") && <details className={`${containedDisclosure} admin-workspace-details admin-review-status-help`}>
         <AdminDisclosureSummary>About this status</AdminDisclosureSummary>
-        {row.status === "LIVE" && <p>Live means eligible to appear. The reader’s chart, event timing, and approved sources determine what is shown.</p>}
+        {row.status === "LIVE" && <p>Published copy appears when its chart and event conditions match.</p>}
       </details>}
     </>}
     {row.source_snapshot?.importSummary && <details className={`${containedDisclosure} admin-workspace-details`}><AdminDisclosureSummary>Original import notes</AdminDisclosureSummary><p>{String(row.source_snapshot.importSummary)}</p></details>}

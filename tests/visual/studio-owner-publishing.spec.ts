@@ -67,7 +67,7 @@ for(const width of [390,1440]) for(const theme of ['light','dark']) test(`Owner 
     await page.addInitScript(theme=>{localStorage.setItem('tldrastro:contentAdminSecret','calendar-api-fixture');localStorage.setItem('tldrastro:studio-theme',theme);},theme);
     await routeStudioInventoryApi(page,{call:async message=>{
       const result=await store.call(message);
-      if(loseReply&&(message.body as any)?.ownerAction==='publish-owner-content'&&result.status===200){loseReply=false;return {status:503,payload:{ok:false,error:'Synthetic lost reply after committed publication.'}};}
+      if(loseReply&&(message.body as any)?.ownerAction==='save-and-publish-owner-content'&&result.status===200){loseReply=false;return {status:503,payload:{ok:false,error:'Synthetic lost reply after committed publication.'}};}
       return result;
     },onWrite:write=>writes.push(write),answer:async(route,url)=>{
       if(url.pathname!='/api/admin/content-live-status')return false;
@@ -85,7 +85,7 @@ for(const width of [390,1440]) for(const theme of ['light','dark']) test(`Owner 
     await expect.poll(async()=>(await store.call({method:'rows'})).find((r:any)=>r.id===baseline.id)?.status).toBe('LIVE');
     const saved=(await store.call({method:'rows'})).find((r:any)=>r.id===baseline.id);
     expect(saved.body).toBe(revised);expect(saved.source_snapshot.studioOwnerApproval.action).toBe('publish-owner-content');
-    expect(writes.filter(w=>w.body.ownerAction==='publish-owner-content')).toHaveLength(1);
+    expect(writes.filter(w=>w.body.ownerAction==='save-and-publish-owner-content')).toHaveLength(1);
     await expect(editor.getByRole('textbox',{name:'Full passage / body',exact:true})).toHaveValue(revised);
     await expect(editor.getByLabel('Reader status',{exact:true})).toHaveText('Live');
   } finally {store.close();}

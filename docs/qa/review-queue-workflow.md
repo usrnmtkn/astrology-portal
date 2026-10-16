@@ -18,8 +18,10 @@ replace the owner decision (see `docs/writing/WRITING_PIPELINE_V3.md`).
 - **Source library**: background material, never exact reader copy. Saving a
   pair-source edit makes it pending again. Mark reviewed activates the exact
   saved revision for future Sky aspect generation. Existing cards are not rewritten.
-- **Publish / Approve & schedule**: an explicit owner action, after saved-text
-  checks. Placement approval remains **Approve for package**, because governed
+- **Save & publish**: the owner approves exact Sky aspect wording at the opened
+  saved version. Writing checks offer guidance; they do not veto this explicit
+  author action. Invalid reader data and version conflicts still block publication.
+  See [the Studio-wide audit](content-studio-owner-publishing-audit.md). Placement approval remains **Approve for package**, because governed
   package distribution is a separate operation. It is never labeled Live by
   this action. Use its existing serving-article editor for active reader copy.
 - **Verify publication status / Open reader view**: verify eligibility and the
@@ -53,7 +55,7 @@ possible and keep the saved body. The editor reloads the saved version for retry
 Checks store the content key and SHA-256 of the exact body, deterministic
 findings, and `reviewPolicy: owner-final-v1`. Publication verifies the body hash;
 edits invalidate prior check eligibility. No synthetic judge score is created.
-The reader validates exact pair/sign identity, check provenance, publication
+The reader validates exact pair/sign identity, exact owner approval or check provenance, publication
 state and its ordinary safety boundary. Legacy publication records retain their
 existing checks; opening and rechecking a draft moves it into this owner workflow.
 

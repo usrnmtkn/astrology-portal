@@ -11,6 +11,7 @@ import { contentStudioExactRow } from "../../apps/web/src/services/skyAspectCont
 import { createPackageManifest } from "../../apps/web/src/content/fallbackArchitectureV3/dist/tldr-content.js";
 import { createRequire } from "node:module";
 import { createHash } from "node:crypto";
+import { hasExactStudioOwnerApproval } from "./studio-owner-publication.js";
 import { isFallbackDashboardRecordAllowed } from "../../apps/web/src/content/fallbackArchitectureV3/dashboardExtensions.js";
 import { selectLatestLiveServingDashboardRows } from "../../apps/web/src/services/fallbackArchitectureV3DashboardOverlay.js";
 import { contentWiringStatus } from "../../apps/admin/src/contentWiringStatus.js";
@@ -116,7 +117,8 @@ function packageEligible(row: LiveStatusRow) {
 function rawCopy(row: LiveStatusRow) { return { headline: row.headline, summary: row.summary, body: row.body }; }
 export function contentLiveStatuses(rows: LiveStatusRow[], candidates: LiveStatusRow[] = rows, allowsPublication: (row: LiveStatusRow) => boolean = () => true, isPublishedSkyRow: (row: LiveStatusRow) => boolean = () => false): ContentLiveStatus[] {
   const partitionCandidates = candidates;
-  candidates = candidates.filter((row) => !isRetiredCompositionKey(row.content_key) && allowsPublication(row));
+  candidates = candidates.filter((row) => !isRetiredCompositionKey(row.content_key) && allowsPublication(row)
+    && (!row.source_snapshot?.studioOwnerApproval || hasExactStudioOwnerApproval(row)));
   const overlays = new Map(selectLatestLiveServingDashboardRows(candidates, new Set([...currentKeys, ...candidates.filter(packageEligible).map((row) => row.content_key)]), packageEligible, () => false).map((row) => [row.content_key, row]));
   for (const row of skyOverlays(partitionCandidates).filter(allowsPublication)) overlays.set(row.content_key, row);
   // An explicit publication is an independent reviewed source, not an old bulk mirror.
@@ -135,6 +137,7 @@ export function contentLiveStatuses(rows: LiveStatusRow[], candidates: LiveStatu
     if (row.provider && approved.has(reviewStatus) && isReaderServableGeneratedContentRow(row) && isGovernedReaderEligible({ ...source, contentKey: row.content_key, review_status: reviewStatus })) overlays.set(row.content_key, row);
   }
   return rows.map((row) => {
+    if (row.source_snapshot?.studioOwnerApproval && !hasExactStudioOwnerApproval(row)) return { id: row.id, live: false, label: "Not live", source: null, detail: "The saved wording differs from its owner approval.", updatedAt: row.updated_at ?? null } as ContentLiveStatus;
     if (isRetiredCompositionKey(row.content_key)) return { id: row.id, live: false, label: "Not live", source: null, detail: "Superseded composition. Use the canonical Personal Transit source.", updatedAt: row.updated_at ?? null } as ContentLiveStatus;
     const phrase = calendarTransitionPhraseRecordForKey(row.content_key);
     const ingress = phrase || calendarMoonIngressPackageRecordForKey(row.content_key);

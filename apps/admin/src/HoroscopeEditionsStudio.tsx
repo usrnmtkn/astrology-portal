@@ -255,7 +255,7 @@ export default function HoroscopeEditionsStudio({secret,requestedEditionId}:{sec
         sourceSnapshot:{horoscopeOutlines:outlines,studioWritingProfile:profile,editorialImport}
       };
       const write=()=>request(secret,endpoint,body,saved ? 'PATCH':'POST');
-      const ownerTransport=publish?await import("./ownerPublication"):null;
+      const ownerTransport=publish?await import("./HoroscopePublicationReview"):null;
       const data=ownerTransport?await ownerTransport.publishSavedOwnerContent(saved,write,()=>request(secret,ownerTransport.ownerPublicationStatusPath(saved))):await write();
       const row=data.rows?.[0];
       if(!row?.id || !row.updated_at || !isHoroscopeEditionKey(row.content_key,edition.window) || JSON.stringify(validateHoroscopeEdition(row.sections?.horoscopeEdition))!==JSON.stringify(edition)

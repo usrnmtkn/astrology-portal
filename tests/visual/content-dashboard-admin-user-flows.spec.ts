@@ -871,7 +871,7 @@ async function seedAdminApi(
         if (process.env.STATUS_DEBUG) console.log("WRITEDEBUG", JSON.stringify({ method, payload }));
         await options.onGeneratedContentWrite?.({ method, payload });
         const existingRow = apiGeneratedContentRows.find((row) => row.id === payload.id) ?? generatedContentRows[0];
-        if (payload.ownerAction === "approve-package-revision" || options.useGeneratedContentHandler) {
+        if (["approve-package-revision", "publish-owner-content", "save-and-publish-owner-content"].includes(String(payload.ownerAction)) || options.useGeneratedContentHandler) {
           // Use the real handler and transactional SQL for the response/receipt;
           // a fabricated LIVE row cannot prove successful publication.
           const store = await studioApiStore(apiGeneratedContentRows);
@@ -6579,9 +6579,10 @@ for (const theme of ["light", "dark"]) for (const width of [1440, 390]) {
     await seedAdminApi(page, { generatedRows: [row], onGeneratedContentWrite: write => writes.push(write) });
     let outcome = "blocked";
     await page.route("**/api/admin/generated-content**", async route => {
-      if (route.request().method() !== "PATCH" || route.request().postDataJSON().ownerAction !== "approve-and-schedule") return route.fallback();
-      if (outcome === "blocked") return route.fulfill({ status: 500, json: { error: "Collective sky cards must use first-person plural (we/our/us). A passing editorial judge review is still required." } });
-      return route.fulfill({ json: { ok: true, rows: [{ ...row, status: outcome === "approved" ? "LIVE" : "REVIEWED" }] } });
+      if (route.request().method() !== "PATCH" || route.request().postDataJSON().ownerAction !== "save-and-publish-owner-content") return route.fallback();
+      if (outcome === "blocked") return route.fulfill({ status: 500, json: { error: "Publication is temporarily unavailable. Your draft is retained." } });
+      if (outcome === "approved") return route.fallback();
+      return route.fulfill({ json: { ok: true, rows: [{ ...row, status: "REVIEWED" }] } });
     });
     await expectAdminRouteLoads(page, "/admin/content#review-queue");
     await page.evaluate(value => document.documentElement.setAttribute("data-theme", value), theme);
@@ -6589,16 +6590,16 @@ for (const theme of ["light", "dark"]) for (const width of [1440, 390]) {
     const editor = page.getByRole("dialog", { name: "Generated content editor" });
     await expect(editor.getByRole("button", { name: "Mark reviewed", exact: true })).toHaveCount(0);
     expect(writes).toHaveLength(0);
-    const approve = editor.getByRole("button", { name: "Approve & schedule", exact: true });
+    const approve = editor.getByRole("button", { name: "Save & publish", exact: true });
     await approve.click();
-    await expect(editor.getByRole("alert")).toContainText("first-person plural");
+    await expect(editor.getByRole("alert")).toContainText("temporarily unavailable");
     await editor.getByRole("alert").scrollIntoViewIfNeeded();
     await expect(editor.getByRole("alert")).toBeVisible();
     await page.screenshot({ path: `test-results/sky-approval-error-${theme}-${width}.png` });
     await expectNoHorizontalOverflow(page, "Sky approval error");
     outcome = "unconfirmed";
     await approve.click();
-    await expect(editor.getByRole("alert")).toContainText("Approval was not confirmed");
+    await expect(editor.getByRole("alert")).toContainText("Publication was not confirmed");
     outcome = "approved";
     await approve.click();
     await expect(editor.getByRole("alert")).toHaveCount(0);
