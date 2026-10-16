@@ -4,10 +4,21 @@ import {
   isDynamicLunationMacroRecord,
   isDynamicSkyPlacementArticleRecord,
   isDynamicSynastryExactRecord,
+  isDynamicBondEffectExactRecord,
   isFallbackDashboardRecordAllowed
 } from "../apps/web/src/content/fallbackArchitectureV3/dashboardExtensions.ts";
 import { packagePublicationAdmissionIssue, isRegisteredLunarJournalKey } from "../api/_lib/content-studio-package-admission.ts";
 import lunarJournalIndex from '../apps/web/src/features/calendar/data/lunar-journal.index.json' with {type:'json'};
+import {bondEffectExactSourceDraft} from '../apps/admin/src/bondEffectExactDraft.ts';
+
+for(const planet of ['sun','moon','mercury','venus','mars','jupiter','saturn','uranus','neptune','pluto','chiron','lilith','north-node','south-node'])for(const aspect of ['conjunction','opposition','square','trine','sextile']){
+  const key=`fallback-hook/bond-effect-${aspect}/${planet}`;
+  const draft=bondEffectExactSourceDraft(key)!;
+  assert(draft);assert.equal(draft.status,'DRAFT');
+  assert(isDynamicBondEffectExactRecord(draft.sections!.packageRecord as any));
+  assert.equal(packagePublicationAdmissionIssue({status:'LIVE',provider:'tldrastro-fallback-architecture-v3',content_key:key,sections:draft.sections}),null);
+}
+for(const key of ['fallback-hook/bond-effect-sextile/unknown','fallback-hook/bond-effect-hard/lilith','fallback-hook/bond-effect-sextile/lilith/extra'])assert.equal(bondEffectExactSourceDraft(key),null);
 
 for(const entry of lunarJournalIndex){
   assert(isRegisteredLunarJournalKey(entry.contentKey));

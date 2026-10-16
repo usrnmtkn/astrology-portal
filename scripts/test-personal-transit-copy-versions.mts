@@ -8,6 +8,34 @@ import { fixturePublications } from '../tests/helpers/content-reader-route.mjs';
 import { isDynamicTransitNatalExactKey } from '../apps/web/src/content/transitNatalIdentity.js';
 import { projectReaderRow } from '../apps/web/src/content/readerRowProjection.mjs';
 import { createTransitSynastryRenderer } from '../apps/web/src/content/fallbackArchitectureV3/dist/tldr-content.js';
+import {bondEffectExactSourceDraft} from '../apps/admin/src/bondEffectExactDraft.ts';
+import {resolveBondEffect} from '../apps/web/src/content/fallbackArchitectureV3/resolver/relationshipTemplate.mjs';
+
+test('a missing exact Friends opening saves, publishes both directions and replaces its shared fallback',async()=>{
+  const key='fallback-hook/bond-effect-sextile/lilith';
+  const draft=bondEffectExactSourceDraft(key)!;
+  const store=await createApiStore([]);
+  try{
+    const record=draft.sections!.packageRecord as any;
+    const {id,...input}=draft;
+    const you='Complete You paragraph with {{holder1}}.\n\nExact final sentence.',they='Complete Friend paragraph with {{holder1}}.\n\nExact final sentence.';
+    const created=await store.invoke('POST',{...input,eventType:'fallback-hook',body:you,sections:{packageRecord:record,packageDraft:{...record,body_you:you,body_they:they}},reviewStatus:'needs_review'});
+    assert.equal(created.status,200,JSON.stringify(created));
+    const saved=created.payload.rows[0];
+    assert.equal((await store.invoke('PATCH',{id:saved.id,expectedUpdatedAt:saved.updated_at,status:'LIVE',lane:'serving',reviewState:null})).status,400,'An incomplete installed pair cannot publish.');
+    const published=await store.invoke('PATCH',{id:saved.id,expectedUpdatedAt:saved.updated_at,ownerAction:'approve-package-revision'});
+    assert.equal(published.status,200,JSON.stringify(published));
+    const result=await store.invoke('POST',{keys:[key]},'/api/content-reader');
+    assert.equal(result.payload.rows.length,1);
+    const live=result.payload.rows[0].sections.packageRecord;
+    const hooks=new Map([[key,live],['fallback-hook/bond-effect-soft/lilith',{body_you:'Shared fallback.',body_they:'Shared fallback.'}]]);
+    for(const endpointOwner of ['reader','friend']){
+      const resolved=resolveBondEffect(hooks,{transiting:'lilith',aspect:'sextile',family:'soft',endpointOwner,otherName:'Example Friend'},Error);
+      assert.equal(resolved.contentKey,key);
+      assert.equal(resolved.effect,(endpointOwner==='reader'?you:they).replace('{{holder1}}','Example Friend'));
+    }
+  }finally{await store.close();}
+});
 
 const key = 'authored/transit-aspect/mercury/venus/trine';
 const original = {

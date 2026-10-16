@@ -12,6 +12,50 @@ const keys = [
   'authored/transit-return/chiron',
   'fallback-hook/bond-effect-soft/moon'
 ];
+
+for(const width of [390,1440])test(`Owner creates a missing exact Friends opening ${width}`,async({page})=>{
+  const store=await studioApiStore([]);
+  const key='fallback-hook/bond-effect-sextile/lilith';
+  try{
+    await page.setViewportSize({width,height:1000});
+    await page.addInitScript(()=>localStorage.setItem('tldrastro:contentAdminSecret','calendar-api-fixture'));
+    await routeStudioInventoryApi(page,{call:store.call,answer:async(route,url)=>{
+      if(url.pathname!='/api/admin/content-live-status')return false;
+      await route.fulfill({json:{ok:true,statuses:await store.call({method:'statuses',body:route.request().postDataJSON()})}});return true;
+    }});
+    await page.goto('/admin/content#fallback-hooks?section=friends&audience=friends&workspace=between-you-two');
+    const map=page.getByRole('region',{name:'Between you two composition map'});
+    await map.getByLabel('Preview transiting planet',{exact:true}).selectOption('lilith');
+    await map.getByLabel('Transit aspect',{exact:true}).selectOption('sextile');
+    await map.getByRole('button',{name:'Open opening editor',exact:true}).click();
+    const editor=page.getByRole('dialog',{name:'Generated content editor'});
+    const publish=editor.locator('.admin-editor-savebar').getByRole('button',{name:'Save & publish',exact:true});
+    await expect(publish).toBeDisabled();
+    const you='Complete You opening with {{holder1}}.\n\nExact final sentence.',they='Complete Friend opening with {{holder1}}.\n\nExact final sentence.';
+    await editor.locator('[data-sky-field="body_you"]').fill(you);
+    await expect(publish).toBeDisabled();
+    await editor.locator('[data-sky-field="body_they"]').fill(they);
+    await expect(publish).toBeEnabled();
+    const box=await publish.boundingBox();expect(box!.y+box!.height).toBeLessThanOrEqual(1000);
+    await publish.click();
+    await expect.poll(async()=>(await store.call({method:'rows'})).find((row:any)=>row.content_key===key)?.status).toBe('LIVE');
+    const read=await store.call({method:'POST',url:'/api/content-reader',body:{keys:[key]}});
+    expect(read.payload.rows[0].sections.packageRecord).toMatchObject({body_you:you,body_they:they});
+    await page.reload();
+    await expect(map).toContainText('Complete Friend opening with Name.');
+    await map.getByLabel('Preview friend point',{exact:true}).selectOption('imum-coeli');
+    await map.getByLabel('Preview synastry aspect',{exact:true}).selectOption('sextile');
+    await map.getByRole('button',{name:'Open You activation',exact:true}).click();
+    await expect(publish).toBeDisabled();
+    await editor.locator('[data-sky-field="body_you"]').fill('Complete owner You activation.');
+    await editor.locator('[data-sky-field="body_they"]').fill('Complete owner Friend activation.');
+    await publish.click();
+    const activationKey='fallback-hook/synastry-pair/sun/imum-coeli/sextile';
+    await expect.poll(async()=>(await store.call({method:'rows'})).find((row:any)=>row.content_key===activationKey)?.status).toBe('LIVE');
+    await page.reload();
+    await expect(map).toContainText('Complete owner Friend activation.');
+  }finally{store.close();}
+});
 for (const width of [390,1440]) for (const theme of ['light','dark']) test(`Owner publishes unchanged saved package drafts ${width} ${theme}`, async ({page}) => {
   test.setTimeout(120000);
   const rows = keys.map((key,index) => {
