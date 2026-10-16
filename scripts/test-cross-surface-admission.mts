@@ -18,7 +18,7 @@ for(const planet of ['sun','moon','mercury','venus','mars','jupiter','saturn','u
   assert(isDynamicBondEffectExactRecord(draft.sections!.packageRecord as any));
   assert.equal(packagePublicationAdmissionIssue({status:'LIVE',provider:'tldrastro-fallback-architecture-v3',content_key:key,sections:draft.sections}),null);
 }
-for(const key of ['fallback-hook/bond-effect-sextile/unknown','fallback-hook/bond-effect-hard/lilith','fallback-hook/bond-effect-sextile/lilith/extra'])assert.equal(bondEffectExactSourceDraft(key),null);
+for(const key of ['fallback-hook/bond-effect-sextile/unknown','fallback-hook/bond-effect-sextile/ascendant','fallback-hook/bond-effect-quincunx/sun','fallback-hook/bond-effect-hard/lilith','fallback-hook/bond-effect-sextile/lilith/extra'])assert.equal(bondEffectExactSourceDraft(key),null);
 
 for(const entry of lunarJournalIndex){
   assert(isRegisteredLunarJournalKey(entry.contentKey));

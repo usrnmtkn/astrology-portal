@@ -1,3 +1,4 @@
+import {transitWritingBodies} from "../transitWritingIdentity.js";
 import { isDynamicBondEffectExactRecord } from '../bondEffectIdentity.js';
 export { isDynamicBondEffectExactRecord } from '../bondEffectIdentity.js';
 import { isZodiacSeasonSourceKey } from "./resolver/zodiacSeasonVariables.mjs";
@@ -28,11 +29,7 @@ const retrogradeCapableNatalBodies = new Set([
   "south-node"
 ]);
 
-const natalBodies = new Set([
-  "sun",
-  "moon",
-  ...retrogradeCapableNatalBodies
-]);
+const natalBodies = new Set<string>(transitWritingBodies);
 
 const zodiacSigns = new Set([
   "aries",

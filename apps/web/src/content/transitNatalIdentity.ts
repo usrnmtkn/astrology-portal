@@ -1,12 +1,13 @@
+import {transitWritingBodies, transitWritingAspects} from "./transitWritingIdentity.js";
 import { isEligibleTransitReturn } from "./fallbackArchitectureV3/resolver/transitReturns.mjs";
 import { transitAspectSituationKey } from "./fallbackArchitectureV3/resolver/transitAspectSourcePriority.mjs";
 
 import { MERCURY_RETURN_CONTACT_KEY } from "./fallbackArchitectureV3/resolver/mercuryReturnReader.mjs";
 export { MERCURY_RETURN_CONTACT_KEY };
 
-const transitBodies = new Set(["sun", "moon", "mercury", "venus", "mars", "jupiter", "saturn", "uranus", "neptune", "pluto", "chiron", "north-node", "south-node", "lilith"]);
+const transitBodies = new Set<string>(transitWritingBodies);
 const natalPoints = new Set([...transitBodies, "ascendant", "descendant", "midheaven", "imum-coeli"]);
-const aspects = new Set(["conjunction", "opposition", "square", "trine", "sextile"]);
+const aspects = new Set<string>(transitWritingAspects);
 
 function isTransitAspectContactKey(parts: string[]) {
   if (parts.length !== 5 || parts[0] !== "authored" || parts[1] !== "transit-aspect") return false;

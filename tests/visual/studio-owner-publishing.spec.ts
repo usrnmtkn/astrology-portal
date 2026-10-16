@@ -43,14 +43,16 @@ for(const width of [390,1440])test(`Owner creates a missing exact Friends openin
     expect(read.payload.rows[0].sections.packageRecord).toMatchObject({body_you:you,body_they:they});
     await page.reload();
     await expect(map).toContainText('Complete Friend opening with Name.');
+    await map.getByLabel('Preview natal point',{exact:true}).selectOption('sun');
     await map.getByLabel('Preview friend point',{exact:true}).selectOption('imum-coeli');
     await map.getByLabel('Preview synastry aspect',{exact:true}).selectOption('sextile');
     await map.getByRole('button',{name:'Open You activation',exact:true}).click();
-    await expect(publish).toBeDisabled();
+    await expect(editor.getByLabel('Content key',{exact:true})).toHaveValue('fallback-hook/synastry-pair/sun/imum-coeli/soft');
+    await expect(publish).toBeEnabled();
     await editor.locator('[data-sky-field="body_you"]').fill('Complete owner You activation.');
     await editor.locator('[data-sky-field="body_they"]').fill('Complete owner Friend activation.');
     await publish.click();
-    const activationKey='fallback-hook/synastry-pair/sun/imum-coeli/sextile';
+    const activationKey='fallback-hook/synastry-pair/sun/imum-coeli/soft';
     await expect.poll(async()=>(await store.call({method:'rows'})).find((row:any)=>row.content_key===activationKey)?.status).toBe('LIVE');
     await page.reload();
     await expect(map).toContainText('Complete owner Friend activation.');

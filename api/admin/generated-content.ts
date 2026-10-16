@@ -83,6 +83,7 @@ type GeneratedContentSurface = "sky" | "you" | "natal" | "synastry" | "composite
 
 type GeneratedContentWriteBody = {
   preserveCurrentTransitAsAlternate?: boolean;
+  ownerAuthoredWording?: boolean;
   id?: string;
   contentKey?: string;
   surface?: GeneratedContentSurface;
@@ -601,7 +602,7 @@ function validateSkyV4TransitPovCopy(record: Record<string, unknown>, packageDra
   return { passed: hardFailures.length === 0, hardFailures };
 }
 
-function validateFallbackArchitectureV3Copy(row: ExistingGeneratedContentRow, patch: Record<string, unknown>) {
+function validateFallbackArchitectureV3Copy(row: ExistingGeneratedContentRow, patch: Record<string, unknown>, ownerAuthoredWording = false) {
   const record = v3PackageRecord(row);
   const bannedWords = contentRoleContract().styleRules?.bannedWords ?? [];
   const canonicalPackageBody = stringFrom(record.body) || stringFrom(record.body_you) || undefined;
@@ -697,7 +698,9 @@ function validateFallbackArchitectureV3Copy(row: ExistingGeneratedContentRow, pa
       const issues = articleField ? libs().skyPlacementArticleVariableIssues(variableCopy, variableOwner) : libs().skyPlacementVariableIssues(checkedValue);
       if (issues.length) throw new GeneratedContentRequestError(`${field}: ${issues.join(" ")}`);
     }
-    if (value.includes("—")) {
+    // Style is advisory for explicit owner writing. Identity, variables, and
+    // factual context below still validate the exact submitted reader copy.
+    if (!ownerAuthoredWording && value.includes("—")) {
       throw new GeneratedContentRequestError(`${field} contains an em dash. Use a comma, colon, or separate sentence instead.`);
     }
 
@@ -707,7 +710,7 @@ function validateFallbackArchitectureV3Copy(row: ExistingGeneratedContentRow, pa
       const escaped = word.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
       return new RegExp(`(^|[^a-z])${escaped}([^a-z]|$)`, "i").test(lower);
     });
-    if (banned) {
+    if (banned && !ownerAuthoredWording) {
       throw new GeneratedContentRequestError(`${field} contains banned word "${banned}".`);
     }
 
@@ -876,8 +879,11 @@ function applyFallbackArchitectureV3ReviewPatch(row: ExistingGeneratedContentRow
     && incomingRecord.body_you !== v3PackageRecord(row).body_you;
   const incomingBodyTheyChanged = typeof incomingRecord.body_they === "string"
     && incomingRecord.body_they !== v3PackageRecord(row).body_they;
+  // An unchanged legacy mirror is not an edit to the current reader copy.
   const sectionBodyYouChanged = typeof sections.body_you === "string"
-    && sections.body_you !== v3PackageRecord(row).body_you;
+    && sections.body_you !== storedSections.body_you;
+  const sectionBodyTheyChanged = typeof sections.body_they === "string"
+    && sections.body_they !== storedSections.body_they;
   if (topLevelBodyChanged && !incomingBodyYouChanged && !sectionBodyYouChanged) {
     if (record.render_policy === "sky-placement-continuous-v2") {
       throw new Error("Continuous Sky write-ups must be edited in Opening, Tension, Development, and Close so the reader structure stays intact.");
@@ -891,10 +897,10 @@ function applyFallbackArchitectureV3ReviewPatch(row: ExistingGeneratedContentRow
       record.body = patch.body;
     }
   }
-  if (!hasPackageDraft && typeof sections.body_you === "string" && !incomingBodyYouChanged) {
+  if (!hasPackageDraft && sectionBodyYouChanged && !incomingBodyYouChanged) {
     record.body_you = sections.body_you;
   }
-  if (!hasPackageDraft && typeof sections.body_they === "string" && !incomingBodyTheyChanged) {
+  if (!hasPackageDraft && sectionBodyTheyChanged && !incomingBodyTheyChanged) {
     record.body_they = sections.body_they;
   }
   if (storedTransitProposal && !body.revertToPackageOriginal) {
@@ -1023,7 +1029,7 @@ function applyFallbackArchitectureV3ReviewPatch(row: ExistingGeneratedContentRow
     }
     validateAndApproveNatalAspectCopy(record, row.content_key);
   }
-  validateFallbackArchitectureV3Copy(row, { ...patch, sections });
+  validateFallbackArchitectureV3Copy(row, { ...patch, sections }, body.ownerAuthoredWording === true);
   if (hasPackageDraft) {
     const proposal = { ...(sections.packageDraft as Record<string, unknown>) };
     // Approval belongs to the server-owned record. Keep mirrored proposal
@@ -1313,7 +1319,7 @@ function validateWriteBody(body: Record<string, unknown>) {
   for (const field of ["lane", "reviewState", "targetDate", "blockType", "evergreenAt", "evergreenBy"]) {
     if (body[field] !== undefined && body[field] !== null && typeof body[field] !== "string") throw new GeneratedContentRequestError(`${field} must be a string or null.`);
   }
-  for (const field of ["evergreen", "revertToPackageOriginal"]) {
+  for (const field of ["evergreen", "revertToPackageOriginal", "ownerAuthoredWording"]) {
     if (body[field] !== undefined && typeof body[field] !== "boolean") throw new GeneratedContentRequestError(`${field} must be a boolean.`);
   }
   for (const field of ["id", "contentKey", "surface", "mode", "eventType"]) {
@@ -2417,7 +2423,7 @@ async function recoverPublishedSkyRevision(existing: ExistingGeneratedContentRow
   const proposal = isRecord(sections.packageDraft) ? sections.packageDraft : null;
   if (existing.status !== "ARCHIVED" || existing.review_state !== "published-revision"
     || !["sky-v4-reader-copy-draft", "shared-sign-prose-draft", "calendar-passage-draft"].includes(existing.event_type ?? "") || body.ownerAction || body.sourceLifecycleAction || !proposal) return existing;
-  validateFallbackArchitectureV3Copy(existing, { sections: body.sections });
+  validateFallbackArchitectureV3Copy(existing, { sections: body.sections }, body.ownerAuthoredWording === true);
   const targetId = stringFrom(existing.source_snapshot?.targetRowId);
   const target = targetId ? await fetchExistingRowById(targetId) : null;
   if (!target || target.status !== "LIVE" || target.content_key !== existing.content_key
@@ -2495,6 +2501,8 @@ async function updateGeneratedContent(req: IncomingMessage) {
     }] } };
     delete body.ownerAction;
     delete body.csvRecord;
+    // Import is an explicit owner draft edit, never an automatic publication.
+    body.ownerAuthoredWording = true;
     Object.assign(body, copyPatch);
     validateWriteBody(body);
   }
@@ -2630,7 +2638,7 @@ async function updateGeneratedContent(req: IncomingMessage) {
     }
     validateFallbackArchitectureV3Copy(target, {
       sections: { ...targetSections, packageDraft: publicationDraft }
-    });
+    }, true);
     await assertVersionedStudioVariablePublication(packageDraft);
     const promotedRecord = structuredClone(targetRecord);
     if (Array.isArray(packageDraft._studioVariables)) promotedRecord._studioVariables = structuredClone(packageDraft._studioVariables);
@@ -2680,6 +2688,7 @@ async function updateGeneratedContent(req: IncomingMessage) {
     const promotionPatch: Record<string, unknown> = { updated_at: now };
     applyFallbackArchitectureV3ReviewPatch(target, {
       id: target.id,
+      ownerAuthoredWording: true,
       headline: stringFrom(promotedRecord.headline) || target.headline || "",
       summary: stringFrom(promotedRecord.summary) || target.summary || "",
       body: stringFrom(promotedRecord.body_you ?? promotedRecord.body ?? promotedRecord.text) || target.body || "",

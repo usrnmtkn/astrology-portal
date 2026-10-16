@@ -169,7 +169,8 @@ for (const key of expectedDynamicEntries) {
 const expectedDeferredGroups = [
   "admin-deferred-editor-tools",
   "admin-deferred-fallback-tools",
-  "admin-deferred-review-tools"
+  "admin-deferred-review-tools",
+  "admin-source-drafts"
 ];
 const entryImports = new Set(entry.imports ?? []);
 const entryDynamicImports = new Set(entry.dynamicImports ?? []);

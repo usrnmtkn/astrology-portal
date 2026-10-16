@@ -1,3 +1,4 @@
+import type {AdminHookCatalogDomain} from "./adminHookCatalogData";
 import { skyPlacementBrowseIdentity } from "./skyPlacementBrowse";
 import { articleLibraryKind, articleReaderHref, standaloneArticleKind, type ArticleLibraryKind } from "../../../src/shared/articleLibrary";
 import { isStudioCompatibilityRow, isStudioCompositeRow } from "./studioContentScope";
@@ -2267,16 +2268,6 @@ function skyArticleAspectPassage(row: AdminGeneratedContentRow, planet: string):
 }
 
 type AdminHookCatalogLoadState = "idle" | "loading" | "loaded" | "error";
-type AdminHookCatalogDomain = "sky" | "you" | "friends" | "modifier";
-type AdminHookCatalogIndexPayload = {
-  schemaVersion: 1;
-  packageVersion: string;
-  rows: Array<{ key: string; surface: AdminHookCatalogDomain; label?: string }>;
-};
-type AdminHookCatalogBodyPayload = {
-  schemaVersion: 1;
-  rows: Array<{ key: string; body: string }>;
-};
 type AdminSourceDraft = {
   id: string;
   canonicalId: string;
@@ -2291,50 +2282,13 @@ type AdminSourceDraft = {
   sourcePath: string;
   provenance: Record<string, unknown> | null;
 };
-const adminHookCatalogRoot = `${import.meta.env.BASE_URL}generated`;
-
-async function adminHookCatalogJson<T>(fileName: string): Promise<T> {
-  const response = await fetch(`${adminHookCatalogRoot}/${fileName}`, { cache: "no-cache" });
-  if (!response.ok) {
-    throw new Error(`Hook catalog package ${fileName} failed with HTTP ${response.status}.`);
-  }
-  return response.json() as Promise<T>;
-}
-
 async function loadAdminHookCatalogIndex(): Promise<{ definitions: FallbackHookDefinition[]; packageVersion: string }> {
-  const payload = await adminHookCatalogJson<AdminHookCatalogIndexPayload>("admin-hook-catalog-index-v1.json");
-  if (payload.schemaVersion !== 1 || !Array.isArray(payload.rows)) {
-    throw new Error("Hook catalog index failed validation.");
-  }
-
-  if (typeof payload.packageVersion !== "string" || !payload.packageVersion) {
-    throw new Error("Hook catalog index is missing its package version.");
-  }
-
-  const definitions = payload.rows.map(({ key, surface, label: packagedLabel }) => {
-    const label = packagedLabel ?? fallbackHookDisplayTitle(key) ?? titleFromKey(key);
-    const persistedSurface: GeneratedContentSurface = surface === "friends" ? "relationship" : surface;
-    return {
-      key,
-      label,
-      // "friends" is the catalog section; persisted content uses the
-      // relationship surface so saved edits remain compatible with the API.
-      surface: persistedSurface,
-      mode: "feed",
-      copy: { headline: label, summary: "", body: "" }
-    };
-  });
-  return { definitions, packageVersion: payload.packageVersion };
+  const catalog = await import("./adminHookCatalogData");
+  return catalog.loadAdminHookCatalogIndex(key => fallbackHookDisplayTitle(key) ?? titleFromKey(key));
 }
 
 async function loadAdminHookCatalogBodies(surface: AdminHookCatalogDomain): Promise<Map<string, string>> {
-  const domain = surface === "modifier" ? "modifier" : surface;
-  const payload = await adminHookCatalogJson<AdminHookCatalogBodyPayload>(`admin-hook-catalog-${domain}-v1.json`);
-  if (payload.schemaVersion !== 1 || !Array.isArray(payload.rows)) {
-    throw new Error(`Hook catalog ${domain} package failed validation.`);
-  }
-
-  return new Map(payload.rows.map(({ key, body }) => [key, body]));
+  return (await import("./adminHookCatalogData")).loadAdminHookCatalogBodies(surface);
 }
 
 async function loadAdminSourceDraftCatalog(secret: string): Promise<AdminSourceDraft[]> {
@@ -5334,6 +5288,7 @@ export function GeneratedContentAdminDashboard() {
     try {
       const body = isPackageDraft
         ? {
+            ownerAuthoredWording: true,
             id: draftForSave.id ?? undefined,
             ...(!draftForSave.id ? {
               contentKey: draftForSave.contentKey,
