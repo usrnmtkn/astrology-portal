@@ -52,7 +52,7 @@ import { YouRoute } from "./routes/YouRoute";
 import { loadYouPage, readYouPage } from "./features/you/youExperienceLoader";
 import type { YouPageProps } from "./features/you/YouPage";
 import { isStandaloneLearnPath } from "./content/learnRoutePath";
-import { refreshContentPublications, refreshContentPublicationsAfterUpdate } from "./services/contentPublications";
+import { contentPublicationsResolved, refreshContentPublications, refreshContentPublicationsAfterUpdate } from "./services/contentPublications";
 import { preparePersonalReportTiming } from "./services/personalReportTiming";
 import {
   ArrowDownRight,
@@ -10856,10 +10856,24 @@ async function requestSkyPlacementArticleSnapshot(
 
 type SkyArticlePreparation = {
   key: string;
+  refreshVersion: number;
+  generation: number;
+  initialPublication: boolean;
   snapshot: Promise<SkySnapshot>;
   early?: ColdSkyAspectRead;
   request: Promise<{ placementSky: SkySnapshot; content: GeneratedContentMap }>;
 };
+
+function admitInitialSkyArticlePublication(preparation: SkyArticlePreparation | null, source: string) {
+  if (!preparation?.initialPublication) return;
+  preparation.initialPublication = false;
+  // The first complete ledger admits this already-pending preparation. Later
+  // publication changes still replace it before any current writing is shown.
+  if (source === "complete-live" && preparation.generation + 1 === contentPublicationGeneration) {
+    preparation.generation = contentPublicationGeneration;
+    preparation.refreshVersion += 1;
+  }
+}
 
 async function prepareSkyPlacementArticleContent(
   snapshotRequest: Promise<SkySnapshot>, planet: string, sign: string, availableContent: GeneratedContentMap,
@@ -12154,7 +12168,7 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
     const articleLocation = sky?.location ?? withTimeZone(location);
     const initial = sky ? null : initialSkyLoadRef.current?.matches(skyDate, articleLocation);
     const skyArticleIdentityKey = `${skyDate}:${articleLocation.latitude}:${articleLocation.longitude}:${articleLocation.timeZone}`;
-    const preparationKey = `${skyDetailRoutePath}:${skyArticleIdentityKey}:${sky?.generatedAt ?? initial?.date.toISOString()}:${contentRefreshVersion}:${skyDetailRetry}:${contentPublicationGeneration}`;
+    const preparationKey = `${skyDetailRoutePath}:${skyArticleIdentityKey}:${sky?.generatedAt ?? initial?.date.toISOString()}:${skyDetailRetry}`;
     if (!sky && (!initial || !isTodayMode
       || initialSkyRefreshKey.current !== skyRefreshKey || routeParts.length !== 4 || encodedExactAt
       || !skyPlacementPlanetOrder.some(point => skyRoutePartMatches(point, routePlanet)))) return;
@@ -12187,12 +12201,19 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
     );
     // Reuse initial direct-route preparation at the captured instant after the
     // full Sky response arrives. Source and publication changes still invalidate it.
-    if (canLoadPlacementArticle && skyArticlePreparationRef.current?.key !== preparationKey) {
+    if (canLoadPlacementArticle && (skyArticlePreparationRef.current?.key !== preparationKey
+      || skyArticlePreparationRef.current.refreshVersion !== contentRefreshVersion
+      || skyArticlePreparationRef.current.generation !== contentPublicationGeneration)) {
       skyArticlePreparationRef.current?.early?.discard();
       const snapshot = requestSkyPlacementArticleSnapshot(articleLocation, routePlanet, placementSign!, skyDate, initial?.date);
       const preparation: SkyArticlePreparation = { key: preparationKey, snapshot,
+        refreshVersion: contentRefreshVersion, generation: contentPublicationGeneration,
+        initialPublication: !contentPublicationsResolved(),
         request: prepareSkyPlacementArticleContent(snapshot, routePlanet, placementSign!, availableDetailContent, () => preparation.early) };
       skyArticlePreparationRef.current = preparation;
+      // An unchanged or unavailable first ledger emits no publication event.
+      // Its completion must still close the one-use admission window.
+      void refreshContentPublications().then(() => { preparation.initialPublication = false; });
       void preparation.request.catch(() => {
         preparation.early?.discard();
         if (skyArticlePreparationRef.current === preparation) skyArticlePreparationRef.current = null;
@@ -12413,6 +12434,7 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
       refreshInstalledContent();
     };
     const stopPublications = subscribeToContentPublications((source) => {
+      admitInitialSkyArticlePublication(skyArticlePreparationRef.current, source);
       if (source !== "complete-live") void refreshContentPublicationsAfterUpdate();
       refreshInstalledContent();
     });

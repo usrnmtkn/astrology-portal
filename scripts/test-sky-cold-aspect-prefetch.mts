@@ -52,6 +52,31 @@ assert.equal(ast.parseDiagnostics.length, 0);
 const prepare = ast.statements.find(node => ts.isFunctionDeclaration(node) && node.name?.text === 'prepareSkyPlacementArticleContent');
 assert(prepare);
 const transpile = (source: string) => ts.transpileModule(source, { compilerOptions: { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.ESNext } }).outputText;
+const admit = ast.statements.find(node => ts.isFunctionDeclaration(node) && node.name?.text === 'admitInitialSkyArticlePublication');
+assert(admit);
+for (const scenario of ['initial', 'partial-first', 'later-revision', 'generation-gap', 'cached-ledger', 'explicit-refresh-batched'] as const) {
+  const preparation = { initialPublication: scenario !== 'cached-ledger', generation: 0, refreshVersion: 0,
+    snapshot: Promise.resolve('same-facts'), request: Promise.resolve('same-writing'), early: {} };
+  const originals = { ...preparation };
+  const context = vm.createContext({ preparation, contentPublicationGeneration: scenario === 'generation-gap' ? 2 : 1 });
+  vm.runInContext(transpile(admit.getText(ast)), context);
+  if (scenario === 'partial-first') vm.runInContext('admitInitialSkyArticlePublication(preparation, "partial")', context);
+  vm.runInContext('admitInitialSkyArticlePublication(preparation, "complete-live")', context);
+  const admitted = ['initial', 'later-revision', 'explicit-refresh-batched'].includes(scenario);
+  assert.equal(preparation.generation, admitted ? 1 : 0, scenario);
+  assert.equal(preparation.refreshVersion, admitted ? 1 : 0, scenario);
+  assert.equal(preparation.initialPublication, false);
+  assert.equal(preparation.snapshot, originals.snapshot);
+  assert.equal(preparation.request, originals.request);
+  assert.equal(preparation.early, originals.early);
+  if (scenario === 'later-revision') {
+    context.contentPublicationGeneration = 2;
+    vm.runInContext('admitInitialSkyArticlePublication(preparation, "complete-live")', context);
+    assert.notEqual(preparation.generation, context.contentPublicationGeneration, 'Later revisions must invalidate preparation.');
+  }
+  if (scenario === 'explicit-refresh-batched') assert.notEqual(preparation.refreshVersion, 2,
+    'An explicit refresh batched with initial publication must still invalidate preparation.');
+}
 let coldPredicate = '';
 function visit(node: ts.Node) {
   if (ts.isVariableDeclaration(node) && ts.isIdentifier(node.name) && node.name.text === 'coldGuest') {
@@ -74,6 +99,37 @@ const deferred = () => {
   return { promise, resolve };
 };
 const drain = async () => { for (let tick = 0; tick < 24; tick++) await Promise.resolve(); };
+let creation: ts.IfStatement | undefined;
+function findCreation(node: ts.Node) {
+  if (ts.isIfStatement(node) && node.expression.getText(ast).includes('skyArticlePreparationRef.current?.key !== preparationKey')) {
+    assert.equal(creation, undefined); creation = node;
+  }
+  ts.forEachChild(node, findCreation);
+}
+findCreation(ast); assert(creation);
+for (const notification of [false, true]) {
+  const ledger = deferred(), calculation = deferred();
+  const context = vm.createContext({
+    canLoadPlacementArticle: true, skyArticlePreparationRef: { current: null as any }, preparationKey: 'synthetic-route',
+    contentRefreshVersion: 0, contentPublicationGeneration: 0, articleLocation: {}, routePlanet: 'Sun', placementSign: 'Virgo',
+    skyDate: '2026-09-13', initial: null, availableDetailContent: new Map(),
+    contentPublicationsResolved: () => false, refreshContentPublications: () => ledger.promise,
+    requestSkyPlacementArticleSnapshot: () => calculation.promise, prepareSkyPlacementArticleContent: () => calculation.promise
+  });
+  vm.runInContext(transpile(admit.getText(ast) + '\n' + creation.getText(ast)), context);
+  const preparation = context.skyArticlePreparationRef.current;
+  assert.equal(preparation.initialPublication, true);
+  if (notification) {
+    context.contentPublicationGeneration = 1;
+    vm.runInContext('admitInitialSkyArticlePublication(skyArticlePreparationRef.current, "complete-live")', context);
+  }
+  ledger.resolve(); await drain();
+  assert.equal(preparation.initialPublication, false, 'First lookup completion closes eligibility even without a notification or calculated facts.');
+  assert.equal(preparation.generation, notification ? 1 : 0);
+  context.contentPublicationGeneration += 1;
+  vm.runInContext('admitInitialSkyArticlePublication(skyArticlePreparationRef.current, "complete-live")', context);
+  assert.notEqual(preparation.generation, context.contentPublicationGeneration, 'A later changed ledger cannot become initial admission.');
+}
 const dated = 'synthetic/dated-ingress';
 const oldNavigator = Object.getOwnPropertyDescriptor(globalThis, 'navigator');
 for (const scenario of ['overlap', 'late-auth', 'retirement', 'revision', 'transport-failure', 'all-unused', 'already-calculated', 'offline', 'warm', 'slow-ingress', 'cancel-before-start', 'load-throw'] as const) {
