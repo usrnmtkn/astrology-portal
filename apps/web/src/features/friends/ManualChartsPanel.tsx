@@ -325,7 +325,6 @@ export function ManualChartsPanel({
     normalizeCompositePlacementSurface,
     normalizeContentIdPart,
     normalizePersonalTransitSurface,
-    stableTransitCopyVariant,
     normalizeTransitHouseSurface,
     normalizedSurfacePreview,
     ordinalHouse,

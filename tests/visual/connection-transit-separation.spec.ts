@@ -147,7 +147,11 @@ for (const [activationLive, bridgeLive] of [[false,false],[true,false],[true,tru
   await page.goto('/#friends?tab=charts&chart=friend-nikki&view=transits');
   const group=page.getByRole('region',{name:'Between you two',exact:true});
   await expect(group).toBeVisible({timeout:60000});
-  const button=group.getByRole('button').first();
+  // Return cards remain in the unchanged bond list but cannot borrow return
+  // readings for A. Exercise an authored transit-aspect contact explicitly.
+  await group.getByRole('button',{name:"Open full entry for Pluto conjunct Nikki's Pluto",exact:true}).click();
+  await expect(page.getByRole('heading',{level:1})).toHaveCount(0);
+  const button=group.getByRole('button',{name:'Open full entry for Saturn trine your Mars',exact:true});
   const opening=await button.locator('.updates-aspect-row__description').first().innerText();
   await button.click();
   await expect(page.getByRole('heading',{level:1})).toBeVisible();
