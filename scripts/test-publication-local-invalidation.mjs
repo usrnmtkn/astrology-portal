@@ -19,12 +19,13 @@ const appSource = fs.readFileSync('apps/web/src/App.tsx', 'utf8');
 const appStart = appSource.includes('const refreshInstalledContent = () => {')
   ? 'const refreshInstalledContent = () => {' : 'const refreshContent = (notice?: ContentUpdateNotice) => {';
 const appEffect = effect('apps/web/src/App.tsx', appStart, '  }, []);');
+const appAdmission = effect('apps/web/src/App.tsx', 'function admitInitialSkyArticlePublication(', '\nasync function prepareSkyPlacementArticleContent(');
 const articlesEffect = effect('apps/web/src/features/articles/ArticlesExperience.tsx',
   'const refresh = () => setRevision(value => value + 1);', '  }, []);');
 const summaryEffect = effect('apps/web/src/features/sky/PublishedSkySummary.tsx',
   'const update = () => setRefresh(value => value + 1);', '  }, [sourceKey]);');
 const entry = `
-import { installContentPublications, publicationAllowsContent, contentPublicationRecords,
+import { installContentPublications, publicationAllowsContent, contentPublicationRecords, contentPublicationGeneration,
   subscribeToContentPublications } from './apps/web/src/content/contentPublicationState';
 import { contentPublicationsResolved, refreshContentPublications, refreshContentPublicationsAfterUpdate } from './apps/web/src/services/contentPublications';
 import { loadReaderRows } from './apps/web/src/services/readerContentClient';
@@ -39,6 +40,15 @@ const clearNatalCardTaglineCache = () => counts.taglineClears++;
 const calendarContentCacheRef = { current: new Map() };
 const fallbackDashboardHydrationRequestedRef = { current: true };
 const compatibilityDashboardHydrationVersionRef = { current: 17 };
+const skyArticlePreparationRef = { current: null };
+${appAdmission}
+function seedSkyPreparation() {
+  skyArticlePreparationRef.current = { initialPublication: !contentPublicationsResolved(), generation: contentPublicationGeneration, refreshVersion: counts.app };
+}
+function skyPreparation() {
+  const value = skyArticlePreparationRef.current;
+  return { ...value, currentGeneration: contentPublicationGeneration, currentRefreshVersion: counts.app };
+}
 const setContentRefreshVersion = update => { counts.app = update(counts.app); };
 const setRevision = update => { counts.articles = update(counts.articles); };
 const setRefresh = update => { counts.summary = update(counts.summary); };
@@ -59,7 +69,7 @@ function cleanup() { for (const stop of stops) stop(); }
 export { installContentPublications, publicationAllowsContent, contentPublicationRecords,
   contentPublicationsResolved, refreshContentPublications, loadReaderRows, canonicalPublicationLedger,
   publicationLedgerTag, loadPublicationLedgerFromApi, installSources,
-  announceContentUpdate, loadOfflineContentRows, eligibleSkyDetailContent, seedCalendar, calendar, cleanup };
+  announceContentUpdate, loadOfflineContentRows, eligibleSkyDetailContent, seedCalendar, calendar, seedSkyPreparation, skyPreparation, cleanup };
 `;
 const bundle = await build({ stdin: { contents: entry, resolveDir: root, loader: 'ts' }, bundle: true,
   platform: 'browser', format: 'iife', globalName: 'fixtureAPI', write: false, logLevel: 'silent',
@@ -214,9 +224,30 @@ for (const ordering of ['warm-resolved', 'after-held-read-completes', 'during-he
 }
 
 const cold = group([], [], { tabCount: 1 }); cold.setLedger(ledger(1));
+cold.tabs[0].api.seedSkyPreparation();
 await cold.tabs[0].api.refreshContentPublications(true); await cold.settle(); cold.assertText(1, true);
 assert.equal(cold.totals().metadataReads, 6, 'A complete first cold read must not repeat itself.');
 assert.deepEqual(Array.from(cold.tabs[0].api.installSources), ['complete-live']);
+const admitted = cold.tabs[0].api.skyPreparation();
+assert.equal(admitted.initialPublication, false);
+assert.equal(admitted.generation, admitted.currentGeneration);
+assert.equal(admitted.refreshVersion, admitted.currentRefreshVersion);
+cold.setLedger(ledger(2, 'retired'));
+await cold.tabs[0].api.refreshContentPublications(true); await cold.settle(); cold.assertText(2, false);
+const revised = cold.tabs[0].api.skyPreparation();
+assert.notEqual(revised.generation, revised.currentGeneration, 'A later retirement must invalidate the admitted Sky preparation.');
+assert.notEqual(revised.refreshVersion, revised.currentRefreshVersion);
+
+const batchedInitial = group([], [], { tabCount: 1 }); batchedInitial.setLedger(ledger(1));
+batchedInitial.tabs[0].api.seedSkyPreparation(); batchedInitial.holdReads();
+const initialRead = batchedInitial.tabs[0].api.refreshContentPublications(true);
+await new Promise(resolve => setImmediate(resolve));
+batchedInitial.tabs[0].api.announceContentUpdate({ contentKey, published: true, updatedAt: stamp(1) });
+batchedInitial.releaseReads(); await initialRead; await batchedInitial.settle();
+const refreshed = batchedInitial.tabs[0].api.skyPreparation();
+assert.equal(refreshed.generation, refreshed.currentGeneration);
+assert.equal(refreshed.refreshVersion, 1);
+assert.equal(refreshed.currentRefreshVersion, 2, 'Explicit refresh plus initial admission remain two invalidations.');
 
 const relay = group([], [], { tabCount: 1 }); relay.setLedger(ledger(1));
 await relay.tabs[0].api.refreshContentPublications(true, () => relay.tabs[0].api.loadPublicationLedgerFromApi()); await relay.settle();
