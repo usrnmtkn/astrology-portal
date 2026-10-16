@@ -109,8 +109,11 @@ for (const width of [390, 1440]) test(`cold guest selected and aspect transport 
   await page.route('**/rest/v1/content_publications*', async route => {
     held = true; await ledger; await route.fallback();
   });
-  const requests: any[] = [], errors: string[] = [];
+  const requests: any[] = [], errors: string[] = [], aborted: number[] = [];
   page.on('request', request => { if (new URL(request.url()).pathname === '/api/content-reader') requests.push(request.postDataJSON()); });
+  page.on('requestfailed', request => {
+    if (new URL(request.url()).pathname === '/api/content-reader') aborted.push(request.postDataJSON()?.keys?.length ?? 0);
+  });
   page.on('pageerror', error => errors.push(error.message));
   try {
     await page.goto('/?date=2026-09-13#sky/placement/sun/virgo');
@@ -125,6 +128,7 @@ for (const width of [390, 1440]) test(`cold guest selected and aspect transport 
     release();
     const article = page.locator('.sky-detail-article .article-body-inner').first();
     await expect(article).toContainText(firstCopy, { timeout: 60_000 });
+    expect(aborted, 'The first complete ledger must preserve the in-flight candidate read').toEqual([]);
     expect(requests.filter(query => query.ids?.includes(id))).toHaveLength(0);
     const selected = await page.evaluate(() => JSON.parse(localStorage.getItem('tldrastro:sky-publication-rows:v2') ?? '[]'));
     expect(selected.filter((row: any) => row.id === id)).toHaveLength(1);
