@@ -1078,7 +1078,11 @@ export const SkyWheel = memo(function SkyWheel({
                   }
                 } : undefined}
                 onPointerEnter={() => setActiveTooltipPlanet(position.planet)}
-                onPointerLeave={() => setActiveTooltipPlanet((current) => (current === position.planet ? null : current))}
+                onPointerLeave={(event) => {
+                  if (document.activeElement !== event.currentTarget) {
+                    setActiveTooltipPlanet((current) => (current === position.planet ? null : current));
+                  }
+                }}
               >
                 {inspectorState === "selected" ? (
                   <circle

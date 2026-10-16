@@ -618,42 +618,22 @@ body:has(.app-shell.mode-calendar),
   overflow: hidden;
 }
 
-.lunar-calendar-day-tooltip,
-.lunar-calendar-event-pill::after {
-  position: absolute;
-  z-index: var(--z-lunar-tooltip);
+.lunar-calendar-day-tooltip {
+  display: grid;
+  gap: var(--lunar-space-4);
   width: max-content;
+  min-width: 150px;
   max-width: min(220px, calc(100vw - 32px));
   padding: calc(var(--space-2) - var(--space-1) / 4) calc(var(--space-2) + var(--space-1) / 4);
   border: var(--border-width-thin) solid var(--line);
   border-radius: var(--radius-sm);
   background: var(--ink);
   color: var(--bg);
-  box-shadow: var(--tooltip-shadow);
   font-family: var(--font-body);
   font-size: var(--lunar-type-eyebrow);
   font-weight: var(--weight-semibold);
   letter-spacing: var(--tracking-normal);
   line-height: var(--leading-meta);
-  pointer-events: none;
-  text-align: left;
-  white-space: normal;
-  opacity: 1;
-  transform: translate(-50%, 4px);
-  visibility: hidden;
-  transition: transform 120ms ease, visibility 120ms ease;
-}
-
-.lunar-calendar-event-pill::after {
-  content: attr(aria-label);
-}
-
-.lunar-calendar-day-tooltip {
-  display: none;
-  gap: var(--lunar-space-4);
-  left: 50%;
-  bottom: calc(100% + 8px);
-  min-width: 150px;
 }
 
 .lunar-calendar-day-tooltip__phase {
@@ -681,95 +661,6 @@ body:has(.app-shell.mode-calendar),
   margin-top: calc(var(--space-1) / 2);
   padding-top: calc(var(--space-1) + var(--space-1) / 4);
   border-top: var(--border-width-thin) solid color-mix(in srgb, var(--bg) 18%, transparent);
-}
-
-.lunar-calendar-event-pill::after {
-  left: 50%;
-  bottom: calc(100% + 6px);
-}
-
-.lunar-calendar-day.is-tooltip-below > .lunar-calendar-day-tooltip {
-  top: calc(100% + 8px);
-  bottom: auto;
-  transform: translate(-50%, -4px);
-}
-
-.lunar-week-day.is-tooltip-below > .lunar-calendar-day-tooltip {
-  top: calc(100% + 8px);
-  bottom: auto;
-  transform: translate(-50%, -4px);
-}
-
-.lunar-calendar-day.is-tooltip-below .lunar-calendar-event-pill::after {
-  top: calc(100% + 6px);
-  bottom: auto;
-  transform: translate(-50%, -4px);
-}
-
-.lunar-calendar-day:hover > .lunar-calendar-day-tooltip,
-.lunar-calendar-day:focus > .lunar-calendar-day-tooltip,
-.lunar-calendar-day:focus-visible > .lunar-calendar-day-tooltip,
-.lunar-week-day:hover > .lunar-calendar-day-tooltip,
-.lunar-week-day:focus > .lunar-calendar-day-tooltip,
-.lunar-week-day:focus-visible > .lunar-calendar-day-tooltip,
-.lunar-calendar-event-pill:hover::after,
-.lunar-calendar-event-pill:focus::after,
-.lunar-calendar-event-pill:focus-visible::after {
-  display: grid;
-  transform: translate(-50%, 0);
-  visibility: visible;
-}
-
-.lunar-calendar-day.is-tooltip-left > .lunar-calendar-day-tooltip,
-.lunar-week-day.is-tooltip-left > .lunar-calendar-day-tooltip,
-.lunar-calendar-day.is-tooltip-left .lunar-calendar-event-pill::after {
-  right: 0;
-  left: auto;
-  transform: translate(0, 4px);
-}
-
-.lunar-calendar-day.is-tooltip-left.is-tooltip-below > .lunar-calendar-day-tooltip,
-.lunar-week-day.is-tooltip-left.is-tooltip-below > .lunar-calendar-day-tooltip,
-.lunar-calendar-day.is-tooltip-left.is-tooltip-below .lunar-calendar-event-pill::after {
-  transform: translate(0, -4px);
-}
-
-.lunar-calendar-day.is-tooltip-left:hover > .lunar-calendar-day-tooltip,
-.lunar-calendar-day.is-tooltip-left:focus > .lunar-calendar-day-tooltip,
-.lunar-calendar-day.is-tooltip-left:focus-visible > .lunar-calendar-day-tooltip,
-.lunar-week-day.is-tooltip-left:hover > .lunar-calendar-day-tooltip,
-.lunar-week-day.is-tooltip-left:focus > .lunar-calendar-day-tooltip,
-.lunar-week-day.is-tooltip-left:focus-visible > .lunar-calendar-day-tooltip,
-.lunar-calendar-day.is-tooltip-left .lunar-calendar-event-pill:hover::after,
-.lunar-calendar-day.is-tooltip-left .lunar-calendar-event-pill:focus::after,
-.lunar-calendar-day.is-tooltip-left .lunar-calendar-event-pill:focus-visible::after {
-  transform: translate(0, 0);
-}
-
-.lunar-calendar-day.is-tooltip-right > .lunar-calendar-day-tooltip,
-.lunar-week-day.is-tooltip-right > .lunar-calendar-day-tooltip,
-.lunar-calendar-day.is-tooltip-right .lunar-calendar-event-pill::after {
-  right: auto;
-  left: 0;
-  transform: translate(0, 4px);
-}
-
-.lunar-calendar-day.is-tooltip-right.is-tooltip-below > .lunar-calendar-day-tooltip,
-.lunar-week-day.is-tooltip-right.is-tooltip-below > .lunar-calendar-day-tooltip,
-.lunar-calendar-day.is-tooltip-right.is-tooltip-below .lunar-calendar-event-pill::after {
-  transform: translate(0, -4px);
-}
-
-.lunar-calendar-day.is-tooltip-right:hover > .lunar-calendar-day-tooltip,
-.lunar-calendar-day.is-tooltip-right:focus > .lunar-calendar-day-tooltip,
-.lunar-calendar-day.is-tooltip-right:focus-visible > .lunar-calendar-day-tooltip,
-.lunar-week-day.is-tooltip-right:hover > .lunar-calendar-day-tooltip,
-.lunar-week-day.is-tooltip-right:focus > .lunar-calendar-day-tooltip,
-.lunar-week-day.is-tooltip-right:focus-visible > .lunar-calendar-day-tooltip,
-.lunar-calendar-day.is-tooltip-right .lunar-calendar-event-pill:hover::after,
-.lunar-calendar-day.is-tooltip-right .lunar-calendar-event-pill:focus::after,
-.lunar-calendar-day.is-tooltip-right .lunar-calendar-event-pill:focus-visible::after {
-  transform: translate(0, 0);
 }
 
 .lunar-calendar-event-pill.event-aspect,
@@ -2470,8 +2361,7 @@ a.tx-card.has-article:hover .tx-more {
   }
 
   .calendar-month-chip__text,
-  .calendar-month-mood,
-  .lunar-calendar-day-tooltip {
+  .calendar-month-mood {
     display: none;
   }
 }

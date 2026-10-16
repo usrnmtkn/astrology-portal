@@ -357,6 +357,9 @@ jobs:
         env:
           STUDIO_PRODUCTION_ENTRY: ${{ matrix.suite == 'horoscope-writing' && '1' || '0' }}
         run: npx playwright test -c playwright.${{ matrix.suite }}.config.ts
+      - name: Verify standalone Studio notification containment
+        if: matrix.suite == 'studio-style'
+        run: npx playwright test -c playwright.tooltip-toast-studio.config.ts --workers=1
       - name: Upload ${{ matrix.suite }} artifacts
         if: always()
         uses: actions/upload-artifact@v6
@@ -450,6 +453,7 @@ jobs:
           tests/visual/header-navigation-overflow.spec.ts
           tests/visual/reader-viewport-containment.spec.ts
           tests/visual/empty-error-viewport.spec.ts
+          tests/visual/tooltip-toast-viewport.spec.ts
       - name: Verify modals, menus, and populated city dropdowns
         env:
           VITE_MAPBOX_ACCESS_TOKEN: viewport-synthetic-token
