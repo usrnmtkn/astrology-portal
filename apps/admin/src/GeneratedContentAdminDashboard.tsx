@@ -12644,7 +12644,7 @@ export function GeneratedContentAdminDashboard() {
               {isGuidedHeldReview ? "Save held draft" : isNewDraft && isPersonalTransitExactDraft ? "Save" : "Save draft"}
             </StudioButton>
           )}
-          {isGovernedSkyDraft && currentDraft.blockType === "sky_aspect" && <StudioButton className="admin-publish-button" type="button"
+          {!isPackageDraft && isGovernedSkyDraft && currentDraft.blockType === "sky_aspect" && <StudioButton className="admin-publish-button" type="button"
             disabled={isLoading || Boolean(pendingPublication) || !currentDraft.body.trim()} onClick={() => void publishOwnerDraft(currentDraft)}>
             Save &amp; publish
           </StudioButton>}

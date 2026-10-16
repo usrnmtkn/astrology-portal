@@ -43,6 +43,7 @@ The matrix describes editor flows, not an assertion that every possible astronom
 
 ## Fixes
 
+- Calendar retrograde rows that also carry Sky metadata use one package publication action; the native Sky action is limited to non-package rows. The complete Rx flow and owner matrix pass 14 rendered rechecks.
 - Eligible package drafts expose a direct owner publish action even when the saved text has not changed and its review status is still pending. The action stages exact copy and uses the existing version-checked package publication handler. Personal-transit specializations keep their established approval actions.
 - Editor notifications sit in the editor flow instead of floating over its publication controls.
 - The inline natal source editor can publish an unchanged saved Draft rather than requiring an artificial edit.
