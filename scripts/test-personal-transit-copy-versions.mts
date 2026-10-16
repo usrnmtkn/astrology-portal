@@ -57,7 +57,7 @@ for (const contentKey of [key,`${key}/aquarius/12/11`,'authored/transit-return/c
   const seed={...original,content_key:contentKey,sections:{...original.sections,
     body_you:original.body,body_they:original.sections.packageRecord.body_they,
     packageRecord:{...original.sections.packageRecord,contentKey,
-      ...(contentKey.includes('/transit-return/')?{body:original.body}:{})}}};
+      body:original.body}}};
   const store=await createApiStore([seed]);
   try {
     let row=seed;
@@ -72,6 +72,7 @@ for (const contentKey of [key,`${key}/aquarius/12/11`,'authored/transit-return/c
       assert.equal(row.body,you);
       for(const field of ['body_you','body_they'])assert.equal(row.sections[field],row.sections.packageRecord[field]);
       assert.equal(row.sections.packageRecord.body_you,you);
+      if (typeof row.sections.packageRecord.body === 'string') assert.equal(row.sections.packageRecord.body,you);
       assert.equal(row.sections.packageRecord.body_they,they);
       const reader=await store.invoke('POST',{keys:[contentKey]},'/api/content-reader');
       assert.equal(reader.payload.rows[0].sections.packageRecord.body_you,you);
@@ -85,7 +86,7 @@ for (const contentKey of [key,`${key}/aquarius/12/11`,'authored/transit-return/c
     const seed={...original,content_key:contentKey,sections:{...original.sections,
       body_you:'Obsolete You mirror.',body_they:'Obsolete Friend mirror.',
       packageRecord:{...original.sections.packageRecord,contentKey,
-        ...(contentKey.includes('/transit-return/')?{body:original.body}:{})}}};
+        body:original.body}}};
     const store=await createApiStore([seed]);
     try {
       const you=edit.endsWith('you')?'New complete You paragraph. Exact final sentence.':seed.sections.packageRecord.body_you;

@@ -10,7 +10,7 @@ Technical publication requirements remain: owner authentication, the opened sour
 
 ## Distinct editor paths and evidence
 
-The matrix describes editor flows, not an assertion that every possible astronomical key or existing production record has been tested. All write tests use isolated storage and synthetic content. The release requires the complete unfiltered API gate and browser release gate on its exact head, plus deployed-asset verification.
+The matrix lists automated fixture coverage for distinct editor flows; it does not assert that every astronomical key or production record has been tested. Automated writes use isolated storage and synthetic content. Native production acceptance uses only owner-authorized temporary content and exact restoration, and is recorded separately against the deployed merge SHA. The release requires the complete unfiltered API and browser gates on its exact head.
 
 | Editor/path | Lifecycle and reader evidence |
 | --- | --- |
@@ -22,6 +22,7 @@ The matrix describes editor flows, not an assertion that every possible astronom
 | Natal placement introductions, signs, houses and exact overrides | `studio-owner-publishing`, natal finder cases in `content-dashboard-admin-user-flows`; unchanged saved Draft is publishable |
 | Natal aspects | `studio-owner-publishing`, `test-natal-aspect-content-studio-serving`; exact owner metadata and complete reader copy |
 | Personal Transit shared/exact/six-part/return; You and Friend | `studio-owner-publishing`, `personal-transit-copy-versions`, actual-handler roundtrip and shipped resolver |
+| Daily At-a-Glance paired headline/passage; You/Friend | `content-dashboard-admin-user-flows`, `test-admin-daily-glance-studio`; separate draft/publication, complete reader copy, partial failure, stale versions and lost receipt recovery |
 | Combined House Transit; You/Friends, shared/retrograde/legacy | `house-transit-combined-editor`; save/reopen, publish unchanged draft, failed second source, conflicts, lost replies, full copy |
 | Synastry and compatibility exact/directional passages | `studio-owner-publishing`, `compatibility-aspect-create`, actual-handler roundtrip and both reader directions |
 | Composite and relationship-type variants | `studio-composite-review`, `content-dashboard-admin-user-flows`, actual generic handler |
@@ -31,7 +32,9 @@ The matrix describes editor flows, not an assertion that every possible astronom
 | Reusable New/Full Moon sign macros, including new keys | `studio-owner-publishing`, `calendar-review-queue-api`; actual publish and Calendar reader hydration |
 | Calendar aspect base/retrograde/directional content | `calendar-review-queue-api`, `calendar-aspect-create`, `calendar-aspect-retrograde`, actual SQL publication lifecycle |
 | Calendar planetary transitions and Moon sources | `calendar-planetary-studio`, `calendar-moon-editor`, actual ingress source/reader tests |
-| Calendar complete passages: day/week/month; shared/date | `calendar-passage-editor`, `test-calendar-passage-editor`; draft isolation, source changes, publication and reader selection |
+| Calendar complete day/week passages; shared/date | `calendar-passage-editor`, `test-calendar-passage-editor`; draft isolation, source changes, publication and reader selection |
+| Calendar Monthly handoff | Canonical Monthly Horoscope edition owns the complete overview; old passage publication is refused |
+| Registered lunar journal entries | `test-calendar-planetary-studio`, `test-cross-surface-admission`; exact body, rendered journal blocks and unsupported-key refusal |
 | Calendar overview/transition templates | `calendar-summary-studio`, `calendar-template-preview`, `calendar-season-transitions`; source editor and calculated composition |
 | Sky summary, supplied copy, Moon/day, forecasts and debility | `sky-summary-studio`, `sky-forecast-studio`, `test-sky-daily-summary`, `test-admin-daily-glance-studio`; source save/publication and real composition |
 | Template/vocabulary/phrase/composition source editors | `studio-variables`, `studio-variable-crud`, `studio-owner-publishing`, actual template/variable validation and package CRUD |
@@ -43,6 +46,14 @@ The matrix describes editor flows, not an assertion that every possible astronom
 
 ## Fixes
 
+- The paired Daily At-a-Glance editor has distinct Save draft and Save & publish controls for both sources and audiences. Opened versions remain fixed for concurrency checks; partial failures and lost receipts retain local writing. The Friend fields accept the canonical Daily runtime variables advertised in the guide, without licensing unknown tokens or unbound You variables.
+- Standalone Articles and Guides use consistent reader identity/status. Guide/article custom variables publish as a validated frozen snapshot and private variable metadata stays out of reader responses.
+- Reusable Composite sources and registered journal entries have narrow reader admission; private samples and unknown identities remain blocked.
+- Primary, audience and legacy body mirrors stay synchronized across successive Personal Transit edits. Reopening an exact source uses its current You copy. Six-part previews preserve both house facts.
+- Supported missing Friends openings/activations can be created without overwriting reverse-order sources. The activation preview reads its published record after reload.
+- Aspect Pattern save receipts compare JSONB objects structurally while preserving array order and exact text.
+- Dated article fact handlers emit valid Node imports and ship their Swiss assets. The Calendar storage constraint adds only its missing calendar_event block type.
+- Reader startup helpers stay outside deferred editor groups; the reader startup sheet supplies loading styles without duplicating component imports, and standalone components retain their styling. Existing JavaScript, stylesheet and deferred-module limits remain unchanged.
 - Calendar retrograde rows that also carry Sky metadata use one package publication action; the native Sky action is limited to non-package rows. The complete Rx flow and owner matrix pass 14 rendered rechecks.
 - Eligible package drafts expose a direct owner publish action even when the saved text has not changed and its review status is still pending. The action stages exact copy and uses the existing version-checked package publication handler. Personal-transit specializations keep their established approval actions.
 - Editor notifications sit in the editor flow instead of floating over its publication controls.
@@ -57,10 +68,12 @@ The matrix describes editor flows, not an assertion that every possible astronom
 
 ## Verification record
 
-The real-handler owner publication regression and all four horoscope-period owner publication cases pass, including exact reader selection, version conflicts, unchanged author wording, failed-live-write preservation, lost replies and retirement. The rendered regression matrix covers 84 editor cases; additional Calendar creation, memory-feedback and dashboard cases exercise the shared controls. The full unfiltered API and browser release gates are required on the final PR head. Their exact revision, outcomes and deployed revision are recorded in the release PR.
+Record the exact tested PR SHA, all gate outcomes and material limitations in the release PR. Earlier fixture passes are not evidence for a newer untested revision. The unfiltered API workflow, affected fresh-build browser journeys, server/admin types, CSS/token contracts, bundle/module boundaries and built-asset privacy checks remain required.
 
-Final local rendered verification passed 40 owner/Weekly/source cases (including all four complete twelve-sign editor-to-reader journeys), 13 shared Studio cases, five guided/template/publication-claims cases, four Personal Transit context cases and two author-punctuation cases. These complement the initial 70-case pass and broader fixture matrix; the exact-head hosted release remains mandatory.
+Owner-publication regressions cover exact reader selection, version conflicts, author wording, failed-live-write preservation, lost replies and retirement. Package tests also cover unchanged drafts and Return/six-part Save draft followed by explicit publication. Article revision tests verify the actual Review & publish → Publish changes controls and complete published copy in desktop/mobile themes.
 
-Server/admin types, CSS/token contracts, the admin module boundary and built-asset privacy checks are part of the release validation. The existing admin bundle limit remains unchanged. Tests use synthetic content and never publish an owner's production record.
+Native acceptance must verify discovery, save, publication, complete reader output, reopen and cleanup for every distinct reader editor. Do not count fixture success or a visible button as native publication. Do not overwrite owner pending drafts, invoke paid generation, activate synthetic writing guidance, or grant/release reports to create QA evidence. Source-only instructions/references remain distinct from finished reader content.
 
-The local report-correction test and the late part of the unfiltered API suite require protected report-reference documents that are unavailable in this isolated checkout. They are verified in the repository's established hosted test environment; no unrelated private reference store is copied into this checkout.
+Retiring a temporary override can suppress its bundled source. Cleanup must verify original reader availability and restore the exact previous source when necessary, without reactivating content the owner had already retired. Verify temporary feedback, future editions, private QA units and subscription events are inactive as well.
+
+The local report-correction test and the late part of the unfiltered API suite require protected report-reference documents unavailable in this isolated checkout. The established hosted test environment verifies them; no unrelated private reference store is copied into this checkout.

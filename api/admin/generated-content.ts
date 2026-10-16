@@ -724,6 +724,12 @@ function validateFallbackArchitectureV3Copy(row: ExistingGeneratedContentRow, pa
       }
       if (issues.length) throw new GeneratedContentRequestError(issues.join(' '));
     }
+    const dailyFriendField = /^fallback-hook\/daily-(?:headline|body)\//u.test(row.content_key) && field.endsWith("body_they");
+    if (dailyFriendField) for (const match of value.matchAll(/\{\{\s*([\w.-]+)\s*\}\}/gu)) {
+      if (libs().DAILY_GLANCE_PERSON_SLOT_KEYS.has(match[1]) && match[0] !== `{{${match[1]}}}`) {
+        throw new GeneratedContentRequestError(`${field}: use Daily variables exactly as listed in the Friend variable guide.`, 400);
+      }
+    }
     const originalSlots = packagePlaceholders(original);
     const inheritedFriendSlots = (
       row.content_key.startsWith("authored/transit-aspect/")
@@ -756,6 +762,10 @@ function validateFallbackArchitectureV3Copy(row: ExistingGeneratedContentRow, pa
         const allowed = ["holder1", "holder2", "holder1Poss", "holder2Poss", "holder1PossCap", "holder2PossCap",
           `${holder}Subject`, `${holder}Object`, `${holder}PronounPoss`];
         if (allowed.includes(slot.slice(2, -2))) continue;
+      }
+      if (dailyFriendField) {
+        if (libs().DAILY_GLANCE_PERSON_SLOT_KEYS.has(slot.slice(2, -2))) continue;
+        throw new GeneratedContentRequestError(`${field} contains unsupported Daily Friend variable ${slot}. Use the Friend variable guide.`, 400);
       }
       if (isLicensedPersonalTransitPlaceholder(row.content_key, slot)) continue;
       if (!originalSlots.has(slot) && !inheritedFriendSlots.has(slot)) {
@@ -934,6 +944,11 @@ function applyFallbackArchitectureV3ReviewPatch(row: ExistingGeneratedContentRow
     sections.body_you = record.body_you;
     sections.body_they = record.body_they;
   }
+
+  // Exact transit editors use You as the canonical reader passage. Retain a
+  // body alias only when the source already has one, and keep it byte-identical.
+  if (!hasPackageDraft && isPersonalTransitExactContentKey(row.content_key)
+    && typeof record.body_you === "string" && typeof record.body === "string") record.body = record.body_you;
 
   const calendarDraftBody = isCalendarAspectStage
     ? stringFrom(packageValueAt(hasPackageDraft ? sections.packageDraft : null, "Body") ?? record.Body ?? record.CurrentServingBody)

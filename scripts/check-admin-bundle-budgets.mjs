@@ -166,9 +166,9 @@ const expectedDynamicEntries = [
 for (const key of expectedDynamicEntries) {
   if (!manifest[key]?.isDynamicEntry) failures.push(`Expected lazy Admin entry is missing: ${key}`);
 }
+// Editor, fallback, and publication panels share the review workspace chunk.
+// Both it and source factories must still be absent from startup imports.
 const expectedDeferredGroups = [
-  "admin-deferred-editor-tools",
-  "admin-deferred-fallback-tools",
   "admin-deferred-review-tools",
   "admin-source-drafts"
 ];

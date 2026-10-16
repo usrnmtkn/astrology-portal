@@ -132,20 +132,23 @@ export default defineConfig(({ command, mode }) => {
         output: {
           onlyExplicitManualChunks: true,
           manualChunks(id) {
-            if (/apps\/admin\/src\/(?:compatibilityAspectDraft|missingFriendsSource|bondEffectExactDraft|transitNatalPackagedSource|adminHookCatalogData)\.ts$/u.test(id)) {
+            // Draft factories load together when a source editor is opened.
+            if (/apps\/admin\/src\/(?:transitNatalExactDraft|calendarPlanetaryDraft|compatibilityAspectDraft|missingFriendsSource|bondEffectExactDraft|transitNatalPackagedSource|adminHookCatalogData)\.ts$/u.test(id)) {
               return "admin-source-drafts";
             }
-            // Shared controls are rendered immediately. Keeping them in this
-            // lazy group pulls the whole editor group into the startup graph.
+            // Shared controls render immediately and remain outside this lazy group.
+            // Editor and publication panels share a deferred workspace.
             if (/apps\/admin\/src\/(?:FriendsTransitSectionFinder|NatalPlacementSourceFinder|NatalPlacementReaderPreview|TemplateReaderDrilldown|TemplateVariableReviewPanels|TemplateVariablesRail)\.tsx$|apps\/admin\/src\/(?:compositionMap|templateVariableSources)\.ts$/u.test(id)) {
-              return "admin-deferred-editor-tools";
+              return "admin-deferred-review-tools";
             }
             // Review panels and owner publication share one deferred workspace chunk.
             if (/apps\/admin\/src\/(?:AspectPatternDiagnostics|AspectPatternWriteups|ReportFulfillmentAdminPanel|UnresolvedContentReview|HoroscopePublicationReview|StudioEditorReviewPanels|ReviewWorkflowPanel)\.tsx$/u.test(id) || /\/apps\/admin\/src\/(?:ownerPublication|aspectPatternSaveReceipt)\.ts$/u.test(id)) {
               return "admin-deferred-review-tools";
             }
+            // Fallback editors share the owner-publication workspace; combining
+            // their deferred code avoids repeating its controls and copy in gzip.
             if (/apps\/admin\/src\/(?:DailyFallbackWorkspaceGuide|DailyGlanceStudio|dailyGlanceFriendPreview|PackagedHookCatalogResults|SkyV4StudioReviewPanel)\.(?:ts|tsx)$/u.test(id)) {
-              return "admin-deferred-fallback-tools";
+              return "admin-deferred-review-tools";
             }
           }
         }
