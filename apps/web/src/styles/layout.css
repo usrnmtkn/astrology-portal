@@ -180,6 +180,7 @@ body.modal-open {
   position: absolute;
   inset: 0;
   display: grid;
+  grid-template: minmax(0, 1fr) / minmax(0, 1fr);
   place-items: center;
   padding: var(--modal-content-padding);
   box-sizing: border-box;
@@ -201,16 +202,6 @@ body.modal-open {
 
 .modal-panel:focus {
   outline: none;
-}
-
-.chart-modal-backdrop {
-  position: fixed;
-  inset: 0;
-  z-index: var(--z-modal);
-  display: grid;
-  place-items: center;
-  padding: var(--space-6);
-  background: var(--modal-backdrop-bg);
 }
 
 .chart-modal {

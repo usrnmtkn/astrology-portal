@@ -386,6 +386,15 @@ html[data-scrolled] :is(.theme-dark, [data-theme="dark"]) .brand-dot {
   transform: translate(-50%, -50%) rotate(-45deg);
 }
 
+.site-menu,
+.mobile-sky-controls,
+.date-picker,
+.hero-city-picker {
+  max-height: var(--header-popover-max-height);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
 .site-menu {
   position: absolute;
   top: 84px;

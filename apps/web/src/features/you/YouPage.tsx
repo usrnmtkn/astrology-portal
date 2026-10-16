@@ -1,3 +1,4 @@
+import { ViewportMenu } from "../../components/ViewportMenu";
 import { FormattedProse } from "../../components/FormattedProse";
 import { ArticlePills, type ArticlePillData } from "../../components/ArticlePills";
 import { TransitFacts } from "../../components/ArticleFacts";
@@ -341,7 +342,7 @@ function YouProfileSummary({
           <MoreVertical size={22} aria-hidden="true" />
         </button>
         {menuOpen ? (
-          <span className="manual-chart-overflow-menu you-profile-overflow-menu" role="menu" aria-label="Profile options">
+          <ViewportMenu className="manual-chart-overflow-menu you-profile-overflow-menu" aria-label="Profile options">
             <button
               type="button"
               role="menuitem"
@@ -353,7 +354,7 @@ function YouProfileSummary({
               <Pencil size={17} aria-hidden="true" />
               <span>Edit details</span>
             </button>
-          </span>
+          </ViewportMenu>
         ) : null}
       </div>
     </div>

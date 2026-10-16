@@ -1,3 +1,4 @@
+import { ViewportMenu } from "../ViewportMenu";
 import { getVerifiedAuthUser } from "../../services/auth";
 import { FormattedProse } from "../FormattedProse";
 import { Archive, ChevronLeft, FileText, Link2Off, MoreHorizontal, RotateCcw, Share2, Trash2 } from "lucide-react";
@@ -225,7 +226,7 @@ function ReportLibraryRow({
           <MoreHorizontal size={18} aria-hidden="true" />
         </button>
         {menuOpen ? (
-          <div className="report-library-row__menu" role="menu" aria-label={`Options for ${item.title}`}>
+          <ViewportMenu className="report-library-row__menu" aria-label={`Options for ${item.title}`}>
             {item.status === "ready" ? (
               <button
                 className="report-library-row__menu-item"
@@ -278,7 +279,7 @@ function ReportLibraryRow({
               <Trash2 size={17} aria-hidden="true" />
               <span>Delete</span>
             </button>
-          </div>
+          </ViewportMenu>
         ) : null}
       </div>
     </article>

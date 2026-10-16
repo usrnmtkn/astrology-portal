@@ -1,3 +1,4 @@
+import { ViewportMenu } from "../../components/ViewportMenu";
 import { withFriendsLoadingTimeout } from "./socialFriendsLoading";
 import { PageLoading } from "../../components/PageLoading";
 import { Check, ChevronRight, Copy, Link2, MoreHorizontal, Search, X } from "lucide-react";
@@ -867,7 +868,7 @@ export function SocialFriendsPanel({
           <MoreHorizontal size={18} aria-hidden="true" />
         </button>
         {menuOpen && (
-          <span className="friends-person-menu" role="menu" aria-label={`${friend.displayName} actions`}>
+          <ViewportMenu className="friends-person-menu" aria-label={`${friend.displayName} actions`}>
             <button
               type="button"
               role="menuitem"
@@ -900,7 +901,7 @@ export function SocialFriendsPanel({
             >
               Block @{friend.handle}
             </button>
-          </span>
+          </ViewportMenu>
         )}
       </span>
     );
@@ -923,7 +924,7 @@ export function SocialFriendsPanel({
           <MoreHorizontal size={18} aria-hidden="true" />
         </button>
         {menuOpen && (
-          <span className="friends-person-menu" role="menu" aria-label={`${person.displayName} actions`}>
+          <ViewportMenu className="friends-person-menu" aria-label={`${person.displayName} actions`}>
             <button
               className="friends-danger-action"
               type="button"
@@ -935,7 +936,7 @@ export function SocialFriendsPanel({
             >
               Block @{person.handle}
             </button>
-          </span>
+          </ViewportMenu>
         )}
       </span>
     );

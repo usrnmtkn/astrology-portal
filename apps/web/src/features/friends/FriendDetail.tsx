@@ -1,3 +1,4 @@
+import { ViewportMenu } from "../../components/ViewportMenu";
 import { Check, ChevronDown, MoreVertical } from "lucide-react";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { ProfileAvatar } from "../../components/ProfileAvatar";
@@ -178,10 +179,9 @@ export function FriendDetail({
                 </button>
 
                 {moreOpen ? (
-                  <div
+                  <ViewportMenu
                     className="friend-view-more-menu"
                     id="friend-view-more-menu"
-                    role="menu"
                     aria-label="More chart profile sections"
                   >
                     {overflowTabs.map((tab) => {
@@ -206,7 +206,7 @@ export function FriendDetail({
                         </button>
                       );
                     })}
-                  </div>
+                  </ViewportMenu>
                 ) : null}
               </div>
             ) : null}

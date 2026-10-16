@@ -555,9 +555,6 @@
   box-shadow: var(--card-shadow);
 }
 
-.manual-chart-row--menu-open {
-  z-index: calc(var(--z-popover) + 1);
-}
 
 .manual-chart-row:first-child {
   border-radius: var(--card-radius);
@@ -778,13 +775,6 @@
   border-radius: var(--overlay-radius);
   background: var(--overlay-bg);
   box-shadow: var(--overlay-shadow);
-}
-
-.manual-chart-overflow-menu--portal {
-  position: fixed;
-  top: auto;
-  right: auto;
-  z-index: var(--z-modal);
 }
 
 .manual-chart-overflow-menu button {
@@ -1141,28 +1131,6 @@
   font-size: var(--text-body);
   font-weight: var(--weight-regular);
   line-height: var(--leading-body);
-}
-
-.friend-chart-modal-backdrop {
-  position: fixed;
-  inset: 0;
-  z-index: var(--z-modal);
-  display: grid;
-  place-items: center;
-  padding: var(--space-6);
-  background: var(--modal-backdrop-bg);
-}
-
-.friend-chart-modal {
-  position: relative;
-  width: min(var(--container-dialog-wide), 100%);
-  max-height: min(780px, calc(100svh - 80px));
-  overflow: auto;
-  border-radius: var(--radius);
-  background: var(--app-card);
-  color: var(--app-text);
-  box-shadow: var(--modal-shadow);
-  padding: var(--modal-panel-padding);
 }
 
 .friend-chart-modal-root .modal-overlay {

@@ -1,6 +1,6 @@
 import { Clock, MoreVertical, Pencil, Trash2 } from "lucide-react";
-import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
-import { createPortal } from "react-dom";
+import type { ReactNode } from "react";
+import { ViewportMenu } from "../../components/ViewportMenu";
 import type { ManualChart } from "../../services/manualCharts";
 import { ChartPatternPill } from "./ChartPatternPill";
 import { PageLoading } from "../../components/PageLoading";
@@ -23,11 +23,6 @@ export type FriendChartsListProps = {
   embedded?: boolean;
 };
 
-type MenuPosition = {
-  top: number;
-  right: number;
-};
-
 export function FriendChartsList({
   birthdayChiclet,
   charts,
@@ -44,63 +39,7 @@ export function FriendChartsList({
   onToggleChartMenu,
   embedded = false
 }: FriendChartsListProps) {
-  const triggerRefs = useRef(new Map<string, HTMLButtonElement>());
-  const [menuPosition, setMenuPosition] = useState<MenuPosition | null>(null);
-  const activeMenuItem = useMemo(
-    () => charts.find(({ chart }) => chart.id === openChartMenuId) ?? null,
-    [charts, openChartMenuId]
-  );
-  const setMenuTriggerRef = useCallback(
-    (chartId: string) => (node: HTMLButtonElement | null) => {
-      if (node) {
-        triggerRefs.current.set(chartId, node);
-      } else {
-        triggerRefs.current.delete(chartId);
-      }
-    },
-    []
-  );
-
-  useEffect(() => {
-    if (!openChartMenuId) {
-      setMenuPosition(null);
-      return undefined;
-    }
-
-    const chartId = openChartMenuId;
-
-    function updateMenuPosition() {
-      const trigger = triggerRefs.current.get(chartId);
-      if (!trigger) {
-        setMenuPosition(null);
-        return;
-      }
-
-      const rect = trigger.getBoundingClientRect();
-      const gutter = 16;
-      const menuWidth = 260;
-      const menuHeight = 126;
-      const viewportWidth = window.innerWidth;
-      const viewportHeight = window.innerHeight;
-      const right = Math.max(gutter, Math.min(viewportWidth - rect.right, viewportWidth - menuWidth - gutter));
-      const belowTop = rect.bottom + 8;
-      const top = belowTop + menuHeight > viewportHeight - gutter ? Math.max(gutter, rect.top - menuHeight - 8) : belowTop;
-
-      setMenuPosition({ top, right });
-    }
-
-    updateMenuPosition();
-    window.addEventListener("resize", updateMenuPosition);
-    window.addEventListener("scroll", updateMenuPosition, true);
-
-    return () => {
-      window.removeEventListener("resize", updateMenuPosition);
-      window.removeEventListener("scroll", updateMenuPosition, true);
-    };
-  }, [openChartMenuId]);
-
   return (
-    <>
       <section
         className={embedded
           ? "friends-unified-charts"
@@ -140,7 +79,7 @@ export function FriendChartsList({
             <div className="list you-list-card manual-chart-cards" aria-label="Chart list">
               {charts.map(({ chart, initials, sun, moon, rising, needsBirthTime, active, patternSummary }) => (
                 <div
-                  className={`manual-chart-row chart-row${openChartMenuId === chart.id ? " manual-chart-row--menu-open" : ""}`}
+                  className="manual-chart-row chart-row"
                   key={chart.id}
                 >
                   <button
@@ -175,7 +114,6 @@ export function FriendChartsList({
                   )}
                   <span className="manual-chart-actions">
                     <button
-                      ref={setMenuTriggerRef(chart.id)}
                       className="manual-chart-menu-trigger"
                       type="button"
                       aria-label={`More actions for ${chart.displayName}`}
@@ -184,6 +122,16 @@ export function FriendChartsList({
                     >
                       <MoreVertical size={20} aria-hidden="true" />
                     </button>
+                    {openChartMenuId === chart.id && (
+                      <ViewportMenu className="manual-chart-overflow-menu" aria-label={`${chart.displayName} actions`}>
+                        <button type="button" role="menuitem" onClick={() => onEditChart(chart)}>
+                          <Pencil size={17} aria-hidden="true" /><span>Edit</span>
+                        </button>
+                        <button type="button" role="menuitem" className="manual-chart-delete" onClick={() => onDeleteChart(chart)}>
+                          <Trash2 size={17} aria-hidden="true" /><span>Delete</span>
+                        </button>
+                      </ViewportMenu>
+                    )}
                   </span>
                 </div>
               ))}
@@ -191,26 +139,5 @@ export function FriendChartsList({
           )}
         </section>
       </section>
-      {activeMenuItem && menuPosition && typeof document !== "undefined"
-        ? createPortal(
-            <span
-              className="manual-chart-overflow-menu manual-chart-overflow-menu--portal"
-              role="menu"
-              aria-label={`${activeMenuItem.chart.displayName} actions`}
-              style={{ top: menuPosition.top, right: menuPosition.right }}
-            >
-              <button type="button" role="menuitem" onClick={() => onEditChart(activeMenuItem.chart)}>
-                <Pencil size={17} aria-hidden="true" />
-                <span>Edit</span>
-              </button>
-              <button type="button" role="menuitem" className="manual-chart-delete" onClick={() => onDeleteChart(activeMenuItem.chart)}>
-                <Trash2 size={17} aria-hidden="true" />
-                <span>Delete</span>
-              </button>
-            </span>,
-            document.body
-          )
-        : null}
-    </>
   );
 }
