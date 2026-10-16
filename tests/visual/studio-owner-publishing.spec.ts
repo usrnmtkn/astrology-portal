@@ -10,6 +10,7 @@ const keys = [
   'fallback-hook/synastry-pair/sun/sun/conjunction',
   'authored/transit-aspect/neptune/chiron/conjunction',
   'authored/transit-return/chiron',
+  'authored/transit-aspect/neptune/chiron/conjunction/aquarius/12/11',
   'fallback-hook/bond-effect-soft/moon'
 ];
 
@@ -61,8 +62,9 @@ for(const width of [390,1440])test(`Owner creates a missing exact Friends openin
 for (const width of [390,1440]) for (const theme of ['light','dark']) test(`Owner publishes unchanged saved package drafts ${width} ${theme}`, async ({page}) => {
   test.setTimeout(120000);
   const rows = keys.map((key,index) => {
-    const record = structuredClone(servingPackageRecords.get(key)!);
+    const record = structuredClone(servingPackageRecords.get(key) ?? servingPackageRecords.get(key.split('/').slice(0,5).join('/'))!);
     expect(record).toBeTruthy();
+    record.contentKey = key;
     record.review_status = 'needs_review';
     for (const field of ['body','body_you','body_they']) if (typeof record[field] === 'string') record[field] = `Synthetic ${index} ${field} opening.\n\nComplete owner final sentence.`;
     return {id:`owner-draft-${index}`,content_key:key,headline:`Owner fixture ${index}`,body:record.body ?? record.body_you,summary:'',
@@ -96,6 +98,19 @@ for (const width of [390,1440]) for (const theme of ['light','dark']) test(`Owne
       const read=await store.call({method:'POST',url:'/api/content-reader',body:{keys:[row.content_key],surfaces:['sky','natal','relationship']}});
       expect(read.status).toBe(200);
       expect(JSON.stringify(read.payload)).toContain(row.content_key);
+      if(row.content_key.startsWith('authored/transit-return/') || row.content_key.split('/').length===8) {
+        const copy='The engine starts—this is the owner wording.\n\nComplete owner draft final sentence.';
+        await editor.locator('[data-sky-field="body_you"]').fill(copy);
+        await editor.locator('.admin-editor-savebar').getByRole('button',{name:'Save draft',exact:true}).click();
+        await expect.poll(async()=>(await store.call({method:'rows'})).find((r:any)=>r.id===row.id)?.status).toBe('DRAFT');
+        const before=await store.call({method:'POST',url:'/api/content-reader',body:{keys:[row.content_key]}});
+        expect(before.payload.rows.every((r:any)=>r.sections.packageRecord.body_you!==copy)).toBe(true);
+        await expect(editor.locator('[data-sky-field="body_you"]')).toHaveValue(copy);
+        await action.click();
+        await expect.poll(async()=>(await store.call({method:'rows'})).find((r:any)=>r.id===row.id)?.status).toBe('LIVE');
+        const after=await store.call({method:'POST',url:'/api/content-reader',body:{keys:[row.content_key]}});
+        expect(after.payload.rows[0].sections.packageRecord.body_you).toBe(copy);
+      }
       await editor.getByRole('button',{name:'Close',exact:true}).click();
       await page.reload();
       expect((await store.call({method:'rows'})).find((r:any)=>r.id===row.id)?.status).toBe('LIVE');
