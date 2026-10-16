@@ -237,22 +237,27 @@ export default defineConfig(({ mode }) => {
       rollupOptions: {
         output: {
           manualChunks(id) {
-            // These pure astrology helpers already load at startup. Share their
-            // chunk; the calculation engine retains its separate chunk below.
+            // These reader helpers already load at startup. Share their chunk;
+            // astronomy and protected passage data retain their separate lazy chunks.
             if (id.endsWith("/src/astrologyConfig.ts") || id.endsWith("/content/skyMotionLabels.ts")
-              || /\/services\/(?:astrologyDisplay|astrologyFacts|natalAspectFacts|verifiedSkyCache)\.ts$/u.test(id)) return "astrology-display";
+              || id.endsWith("/content/protectedOwnerSkyPlacementPassages.ts")
+              || /\/services\/(?:astrologyDisplay|astrologyFacts|natalAspectFacts|verifiedSkyCache|skyPlacementSourceScope|generatedContentKeys)\.ts$/u.test(id)) return "astrology-display";
             // Shared civil-date/location helpers are used together by Sky and
             // its articles; one chunk avoids repeated tiny preload dependencies.
             if (/\/services\/(?:timezones|skySelection|skyClock)\.ts$/u.test(id)) return "sky-time";
             // Reader publication state, transport and update notices share one
             // startup boundary; avoid three separate imports and gzip headers.
             if (id.endsWith("/content/contentPublicationState.ts")
-              || /\/services\/(?:contentPublications|contentUpdateSignal)\.ts$/u.test(id)) return "content-publications";
-            // Keep the shared Studio return path with its authentication callers.
+              || /\/services\/(?:contentPublications|contentUpdateSignal|readerContentClient)\.ts$/u.test(id)) return "content-publications";
+            // Keep the shared reader/Studio return paths with their authentication callers.
             // A separate shared chunk adds a preload import to every auth consumer.
-            if (id.endsWith("/services/auth.ts") || id.endsWith("/services/studioAuthReturn.ts")) {
+            if (/\/services\/(?:auth|studioAuthReturn|readerAuthReturn)\.ts$/u.test(id)) {
               return "auth";
             }
+            // Both pure relationship helpers are already part of reader startup.
+            // Share their transport without pulling in the deferred Friends UI.
+            if (id.endsWith("/services/relationshipContext.ts")
+              || id.endsWith("/content/compositeRelationshipCopy.ts")) return "relationship-context";
             if (id.includes("vite/preload-helper")) {
               return "vendor";
             }

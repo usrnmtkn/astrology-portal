@@ -19,6 +19,22 @@ export function balanceTests(tests, count, timings) {
   return bins;
 }
 
+/** File grouping preserves serial suites and beforeAll/afterAll lifetimes.
+ * Unknown test identities still contribute their full fallback estimate. */
+export function balanceTestFiles(tests, count, timings) {
+  assert.equal(new Set(tests).size, tests.length, 'Duplicate test identities');
+  const files = new Map();
+  for (const name of tests) {
+    const file = name.match(/tests\/visual\/[^›]+\.spec\.ts/u)?.[0];
+    assert(file, 'Missing test file identity');
+    files.set(file, [...(files.get(file) ?? []), name]);
+  }
+  const durations = Object.fromEntries([...files].map(([file, names]) => [file,
+    names.reduce((sum, name) => sum + (timings.durations[name] ?? timings.fallbackSeconds), 0)]));
+  return balanceTests([...files.keys()], count, { durations, fallbackSeconds: timings.fallbackSeconds })
+    .map(bin => ({ seconds: bin.seconds, tests: bin.tests.flatMap(file => files.get(file)) }));
+}
+
 function identities(report) {
   const names = [];
   function visit(suite, parents = []) {
@@ -56,7 +72,8 @@ export function main(args) {
   assert.equal(configFlag, '--config');
   const durationFiles = {
     'playwright.horoscope-reader.config.ts': 'config/browser-test-durations.json',
-    'playwright.sky-placement-reader.config.ts': 'config/sky-reader-test-durations.json'
+    'playwright.sky-placement-reader.config.ts': 'config/sky-reader-test-durations.json',
+    'playwright.reader-surfaces.config.ts': 'config/reader-surface-test-durations.json'
   };
   assert(Object.hasOwn(durationFiles, config), 'Unknown balanced browser suite');
   assert(/^\d+\/\d+$/u.test(shard));
@@ -64,12 +81,13 @@ export function main(args) {
   const [index, count] = shard.split('/').map(Number);
   assert(index >= 1 && index <= count);
   const cli = 'node_modules/@playwright/test/cli.js';
-  const base = ['test', '-c', config, '--fully-parallel', '--workers=1'];
+  const byFile = config === 'playwright.reader-surfaces.config.ts';
+  const base = ['test', '-c', config, ...(byFile ? [] : ['--fully-parallel']), '--workers=1'];
   const report = JSON.parse(execFileSync(process.execPath, [cli, ...base, '--list', '--reporter=json'], { encoding: 'utf8', maxBuffer: 10 * 1024 * 1024 }));
   assert.equal(report.errors.length, 0, 'Test discovery failed');
   const tests = identities(report);
   const timings = JSON.parse(readFileSync(durationFiles[config], 'utf8'));
-  const bins = balanceTests(tests, count, timings);
+  const bins = (byFile ? balanceTestFiles : balanceTests)(tests, count, timings);
   return withShardLists(bins, files => {
     // Ask Playwright to resolve every generated list before running any tests.
     // A stale/ambiguous selector cannot silently drop or duplicate coverage.

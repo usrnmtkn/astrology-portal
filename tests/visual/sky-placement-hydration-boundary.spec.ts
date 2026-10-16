@@ -43,7 +43,8 @@ async function installSources(page: Page, includeCore = false) {
     core.body = core.sections.packageRecord.body = 'Synthetic complete shared station passage.';
     core.headline = core.sections.packageRecord.headline = 'Synthetic shared station';
   }
-  const publications = () => [{ content_key: key, state: retired ? 'retired' : 'live', revision,
+  const publications = () => [{ content_key: '__content-publication-ledger/v1', state: 'live', revision: 1,
+    row_id: null, row_updated_at: null, updated_at: timestamp() }, { content_key: key, state: retired ? 'retired' : 'live', revision,
     row_id: id, row_updated_at: timestamp(), updated_at: timestamp() }, ...(core ? [{
       content_key: core.content_key, state: 'live', revision: 1, row_id: core.id,
       row_updated_at: core.updated_at, updated_at: core.updated_at
@@ -77,9 +78,12 @@ async function installSources(page: Page, includeCore = false) {
     const query = route.request().postDataJSON();
     await new Promise(resolve => setTimeout(resolve, 1800));
     if (unavailable) return route.fulfill({ status: 503, json: { message: 'Fixture source unavailable' } });
-    const matches = (!query.keys && !query.ids) || query.keys?.includes(key) || query.ids?.includes(id);
-    return route.fulfill({ json: readerResponse([...(matches && !retired ? [row()] : []),
-      ...(core && (query.scope === 'sky-article' || query.keys?.includes(core.content_key)) ? [core] : [])], publications()) });
+    const matches = !query.scope && ((!query.keys && !query.ids) || query.keys?.includes(key) || query.ids?.includes(id));
+    const responseRows = [...(matches && !retired ? [row()] : []),
+      ...(core && (query.scope === 'sky-article' || query.keys?.includes(core.content_key)) ? [core] : [])];
+    const responseKeys = new Set(query.keys ?? responseRows.map(row => row.content_key));
+    return route.fulfill({ json: readerResponse(responseRows, publications().filter(publication =>
+      publication.content_key === '__content-publication-ledger/v1' || responseKeys.has(publication.content_key))) });
   });
   await page.route('**/api/calendar?**', route => route.fulfill({ json: { ok: true, calendar: { days: [] } } }));
   const notify = () => page.evaluate(key => window.dispatchEvent(new CustomEvent('tldrastro:content-update', {
@@ -92,6 +96,41 @@ async function installSources(page: Page, includeCore = false) {
     recover: () => { unavailable = false; }
   };
 }
+
+for (const width of [390, 1440]) test(`cold guest selected and aspect transport overlaps the complete ledger ${width}`, async ({ page }) => {
+  test.setTimeout(90_000);
+  await page.setViewportSize({ width, height: 1000 });
+  await page.clock.setFixedTime(new Date('2026-09-13T15:00:00Z'));
+  await observe(page, 'light');
+  await installSources(page, true);
+  let release!: () => void;
+  const ledger = new Promise<void>(resolve => { release = resolve; });
+  let held = false;
+  await page.route('**/rest/v1/content_publications*', async route => {
+    held = true; await ledger; await route.fallback();
+  });
+  const requests: any[] = [], errors: string[] = [];
+  page.on('request', request => { if (new URL(request.url()).pathname === '/api/content-reader') requests.push(request.postDataJSON()); });
+  page.on('pageerror', error => errors.push(error.message));
+  try {
+    await page.goto('/?date=2026-09-13#sky/placement/sun/virgo');
+    await expect.poll(() => held).toBe(true);
+    await expect.poll(() => requests.some(query => query.keys?.includes(key) && !query.ids)).toBe(true);
+    await expect.poll(() => requests.some(query => query.keys?.some((key: string) => key.startsWith('sky.aspect.')))).toBe(true);
+    expect(await page.locator('.sky-detail-article .article-body-inner').count()).toBe(0);
+    expect(await page.evaluate(() => localStorage.getItem('tldrastro:sky-publication-rows:v2'))).toBeNull();
+    const candidates = requests.filter(query => query.keys?.some((key: string) => key.startsWith('sky.aspect.')));
+    expect(candidates).toHaveLength(1);
+    expect(candidates[0].keys.length).toBeLessThanOrEqual(50);
+    release();
+    const article = page.locator('.sky-detail-article .article-body-inner').first();
+    await expect(article).toContainText(firstCopy, { timeout: 60_000 });
+    expect(requests.filter(query => query.ids?.includes(id))).toHaveLength(0);
+    const selected = await page.evaluate(() => JSON.parse(localStorage.getItem('tldrastro:sky-publication-rows:v2') ?? '[]'));
+    expect(selected.filter((row: any) => row.id === id)).toHaveLength(1);
+    expect(errors).toEqual([]);
+  } finally { release(); await page.unrouteAll({ behavior: 'wait' }); }
+});
 
 for (const width of [390, 1440]) test(`cold article sources overlap revision without an early passage ${width}`, async ({ page }) => {
   test.setTimeout(90_000);
