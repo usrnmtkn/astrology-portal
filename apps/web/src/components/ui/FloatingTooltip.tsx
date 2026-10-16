@@ -50,7 +50,14 @@ export function FloatingTooltipPortal({ anchor, className, content, id, open }: 
       tooltip.style.visibility = "visible";
     };
     update();
-    const observer = new ResizeObserver(() => update());
+    let resizeFrame: number | null = null;
+    const observer = new ResizeObserver(() => {
+      if (resizeFrame !== null) return;
+      resizeFrame = requestAnimationFrame(() => {
+        resizeFrame = null;
+        update();
+      });
+    });
     observer.observe(tooltip);
     observer.observe(anchor);
     const targets: EventTarget[] = viewport ? [window, viewport] : [window];
@@ -60,6 +67,7 @@ export function FloatingTooltipPortal({ anchor, className, content, id, open }: 
     }
     return () => {
       observer.disconnect();
+      if (resizeFrame !== null) cancelAnimationFrame(resizeFrame);
       for (const target of targets) {
         target.removeEventListener("resize", update);
         target.removeEventListener("scroll", update, true);
