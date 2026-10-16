@@ -37,6 +37,40 @@ try {
     assert.equal(retired.status, 200, JSON.stringify(retired));
     assert.deepEqual((await read()).payload.rows, [], 'Retirement applies to the collection and direct URLs');
   }
+  const variableEndpoint = '/api/admin/generated-content?variables=true';
+  const definition = { name: 'articleOpening', label: 'PRIVATE_VARIABLE_LABEL', description: 'PRIVATE_VARIABLE_DESCRIPTION', tags: [], value: 'Complete frozen author phrase.', overrides: [] };
+  const variableResult = await store.invoke('POST', { variable: definition }, variableEndpoint);
+  assert.equal(variableResult.status, 200, JSON.stringify(variableResult));
+  let variable = variableResult.payload.variable;
+  for (const kind of ['manual', 'guide']) {
+    const contentKey = `article/${kind}/variable-fixture`;
+    const raw = 'Opening.\n\n{{articleOpening}}\n\nComplete ending.';
+    const created = await store.invoke('POST', {contentKey, surface:'sky', mode:'article', eventType:'sky_article', status:'DRAFT', lane:'serving', headline:'Variable article', body:raw});
+    assert.equal(created.status,200,JSON.stringify(created));
+    let row = created.payload.rows[0];
+    assert.equal(row.body,raw);
+    assert.equal(row.sections.standaloneArticle._studioVariables[0].value,definition.value);
+    const publish = () => store.invoke('PATCH',{id:row.id,expectedUpdatedAt:row.updated_at,ownerAction:'publish-owner-content'});
+    let published = await publish();
+    assert.equal(published.status,200,JSON.stringify(published));
+    row=published.payload.rows[0];
+    const read = () => store.invoke('POST',{keys:[contentKey]},'/api/content-reader');
+    let reader=await read();
+    assert.equal(reader.payload.rows[0].body,raw.replace('{{articleOpening}}',definition.value));
+    assert(!JSON.stringify(reader.payload).includes('PRIVATE_VARIABLE'));
+    assert(!JSON.stringify(reader.payload).includes('_studioVariables'));
+    const changed=await store.invoke('PATCH',{id:variable.id,expectedUpdatedAt:variable.updatedAt,variable:{...definition,value:'Changed library phrase.'}},variableEndpoint);
+    assert.equal(changed.status,200,JSON.stringify(changed));variable=changed.payload.variable;
+    assert.equal((await read()).payload.rows[0].body,raw.replace('{{articleOpening}}',definition.value),'Live copy uses frozen approved values');
+    assert.equal((await publish()).status,409,'Publication rejects changed dependencies until the draft is saved again');
+    const refreshed=await store.invoke('PATCH',{id:row.id,expectedUpdatedAt:row.updated_at,body:raw,ownerAction:'save-and-publish-owner-content'});
+    assert.equal(refreshed.status,200,JSON.stringify(refreshed)); row=refreshed.payload.rows[0];
+    assert.equal(row.sections.standaloneArticle._studioVariables[0].value,'Changed library phrase.');
+    const restored=await store.invoke('PATCH',{id:variable.id,expectedUpdatedAt:variable.updatedAt,variable:definition},variableEndpoint);
+    assert.equal(restored.status,200);variable=restored.payload.variable;
+  }
+  const unknown=await store.invoke('POST',{contentKey:'article/manual/unknown-variable',surface:'sky',mode:'article',eventType:'sky_article',status:'LIVE',lane:'serving',headline:'Unknown variable',body:'{{missingArticleVariable}}'});
+  assert.equal(unknown.status,400,JSON.stringify(unknown));
   assert.equal(articleLibraryKind({ content_key: 'education/astro-101/chapter/qa' }), null);
   assert.equal(articleLibraryKind({ content_key: 'horoscope/weekly/qa' }), null);
   assert.equal(articleLibraryKind({ content_key: 'sky/article-template/venus/scorpio' }), 'sky');
