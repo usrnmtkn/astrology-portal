@@ -5308,7 +5308,7 @@ export function GeneratedContentAdminDashboard() {
             facts: draftForSave.facts ?? {},
             reviewerNotes: draftForSave.reviewerNotes,
             sourceSnapshot: draftSourceSnapshot(draftForSave),
-            reviewStatus: isGuidedHeldReview ? "needs_review" : packageReviewStatusForDraft(draftForSave),
+            reviewStatus: nextStatus === "DRAFT" || isGuidedHeldReview ? "needs_review" : packageReviewStatusForDraft(draftForSave),
             sourceLifecycleAction,
             editorialNotes: packageEditorialNotesForDraft(draftForSave)
           }
@@ -12613,7 +12613,7 @@ export function GeneratedContentAdminDashboard() {
             <StudioButton
               className="admin-secondary-button"
               type="button"
-              onClick={() => void saveDraft(directReaderDraft ? "DRAFT" : undefined)}
+              onClick={() => void saveDraft("DRAFT")}
               disabled={isLoading || unchangedSkySource || (!isNewDraft && !draftHasUnsavedChanges)}
               title="Keep this revision as a Draft."
             >

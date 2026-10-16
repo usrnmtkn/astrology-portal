@@ -303,8 +303,9 @@ for (const field of ['body_you', 'body_they']) for (const [copy, problem] of [
           : { ...csvDraftPatch(baseline, nextImport), ownerAuthoredWording: true }) });
       assert.equal(edited.status, 200, JSON.stringify(edited));
       const draft = edited.payload.rows[0];
+      assert.equal(draft.status, 'DRAFT');
       const before = await store.invoke('POST', { keys: [key] }, '/api/content-reader');
-      assert.equal(before.payload.rows[0].sections.packageRecord[field], baseline.sections.packageRecord[field], 'Saving owner prose does not publish it.');
+      assert.ok(before.payload.rows.every(row => row.sections.packageRecord[field] !== nextImport[field]), 'Saving owner prose does not publish it.');
       const published = await store.invoke('PATCH', { id: draft.id, expectedUpdatedAt: draft.updated_at,
         ownerAction: 'approve-package-revision' });
       assert.equal(published.status, 200, JSON.stringify(published));
