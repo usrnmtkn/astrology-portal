@@ -21,13 +21,14 @@ const originalFetch = globalThis.fetch;
 try {
   const r = await import(pathToFileURL(outFile));
   const catalog = JSON.parse(fs.readFileSync('apps/web/src/content/fallbackArchitectureV3/source-rows/transit-synastry-rows-v1.json')).authoredCards;
-  const keys = ['authored/transit-aspect/moon/sun/hard', 'authored/transit-aspect/moon/jupiter/soft'];
+  const keys = catalog.filter(row => /^authored\/transit-aspect\/moon\/(?:sun|s|jupiter|j)\//u.test(row.contentKey))
+    .map(row => row.contentKey);
   const stamp = '2026-09-30T12:00:00.123456Z';
   let revision = 1, fail = false, omit = false, requests = 0;
   let rows = keys.map((key, i) => {
     const record = catalog.find(row => row.contentKey === key);
     assert.ok(record, key);
-    return { id: `00000000-0000-4000-8000-00000000000${i}`, content_key: key,
+    return { id: `00000000-0000-4000-8000-${String(i).padStart(12, '0')}`, content_key: key,
       surface: 'you', mode: 'in_depth', status: 'LIVE', lane: 'serving', review_state: null,
       provider: 'tldrastro-fallback-architecture-v3', updated_at: stamp, body: record.body_you,
       facts: { content_role: 'full_copy', review_status: 'approved' },
