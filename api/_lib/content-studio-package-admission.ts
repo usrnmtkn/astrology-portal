@@ -23,7 +23,9 @@ export function packagePublicationAdmissionIssue(row: Record<string, any>): stri
   const key = String(row.content_key ?? "");
   if (record.contentKey && record.contentKey !== key) return "The source and publication have different content keys. Reopen the correct source before publishing.";
   if (key.startsWith("calendar-passage/")) {
-    if (!calendarPassageIdentity(key)) return "Invalid Calendar passage identity.";
+    const identity = calendarPassageIdentity(key);
+    if (!identity) return "Invalid Calendar passage identity.";
+    if (identity.period === 'monthly') return "Publish Monthly editions in Horoscopes. Calendar Month uses that edition's authored TLDR; legacy Calendar monthly passages are retained as drafts only.";
     return calendarPassageErrors(String(row.body ?? "")).join(" ") || null;
   }
   // Calendar's governed exact records have their own targeted reader and
