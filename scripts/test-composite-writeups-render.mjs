@@ -56,10 +56,9 @@ try {
     const reopened = await store.invoke("GET", undefined, `/api/admin/generated-content?id=${fixture.id}`);
     assert.deepEqual(reopened.payload.rows[0].sections.byRelationshipType, { ...variants, privateEditorNotes: "Do not expose." });
     assert.equal((await store.invoke("PATCH", { id: fixture.id, body: "Stale fixture edit.", expectedUpdatedAt: fixture.updated_at })).status, 409);
-    // Existing publication machinery is verified elsewhere; this isolated seed
-    // now models an already-published owner revision for the public read path.
     const saved = store.rows.get(fixture.id);
-    store.rows.set(fixture.id, { ...saved, status: "LIVE", lane: "serving", review_state: null });
+    const publication = await store.invoke("PATCH", { id: fixture.id, expectedUpdatedAt: saved.updated_at, status: "LIVE", lane: "serving", reviewState: null });
+    assert.equal(publication.status, 200, JSON.stringify(publication.payload));
     const reader = await store.invoke("POST", { keys: [key] }, "/api/content-reader");
     assert.equal(reader.status, 200);
     assert.equal(reader.payload.rows.length, 1);

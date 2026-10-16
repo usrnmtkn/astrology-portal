@@ -256,8 +256,15 @@ let contentRoleContractCache: {
   };
 } | null = null;
 
-function isSampleOnlyRow(surface?: GeneratedContentSurface, contentKey?: string) {
-  return Boolean(surface && personalizedSampleSurfaces.has(surface)) || Boolean(contentKey?.startsWith("sample-"));
+const compositeSourceBody = "(?:sun|moon|mercury|venus|mars|jupiter|saturn|uranus|neptune|pluto|chiron|north_node|south_node|ascendant|descendant|midheaven|imum_coeli)";
+const compositeSourceKey = new RegExp(`^composite\\.(?:${compositeSourceBody}|house\\.${compositeSourceBody}\\.house_(?:[1-9]|1[0-2])|aspect\\.${compositeSourceBody}\\.(?:conjunction|sextile|square|trine|opposition)\\.${compositeSourceBody})$`, "u");
+const compositeSignSourceKey = new RegExp(`^composite-${compositeSourceBody.replaceAll("_", "-")}-in-(?:aries|taurus|gemini|cancer|leo|virgo|libra|scorpio|sagittarius|capricorn|aquarius|pisces)$`, "u");
+
+function isSampleOnlyRow(surface?: GeneratedContentSurface, contentKey?: string, metadata?: { facts?: unknown; sourceSnapshot?: unknown }) {
+  if (contentKey?.startsWith("sample-") || isRecord(metadata?.facts) && metadata.facts.sampleOnly || isRecord(metadata?.sourceSnapshot) && metadata.sourceSnapshot.sampleOnly) return true;
+  // These are reusable reader-bank identities, not generated personal reports.
+  const reusableComposite = surface === "composite" && Boolean(contentKey && (compositeSourceKey.test(contentKey) || compositeSignSourceKey.test(contentKey)));
+  return Boolean(surface && personalizedSampleSurfaces.has(surface)) && !reusableComposite;
 }
 
 function normalizedGeneratedContentBlockType(blockType: unknown, surface?: GeneratedContentSurface, mode?: GeneratedContentWriteBody["mode"]) {
@@ -1804,7 +1811,7 @@ async function createGeneratedContentFromBody(body: GeneratedContentWriteBody) {
   const isCmsRow = isCmsGeneratedContentWriteBody(body);
   const packageState = fallbackArchitectureV3CreateState(body);
   if (!packageState && body.status === "LIVE") {
-    if (isSampleOnlyRow(body.surface, body.contentKey)) {
+    if (isSampleOnlyRow(body.surface, body.contentKey, body)) {
       throw new GeneratedContentRequestError("Personalized content test rows cannot be published globally. Generate real user or bond scoped content instead.");
     }
     const requestedLane = typeof body.lane === "string" && body.lane.trim() ? body.lane.trim() : "serving";
@@ -1847,7 +1854,7 @@ async function createGeneratedContentFromBody(body: GeneratedContentWriteBody) {
     summary: body.summary ?? "",
     body: body.body ?? "",
     sections: packageState?.sections ?? body.sections ?? [],
-    reviewer_notes: body.reviewerNotes ?? (isSampleOnlyRow(body.surface, body.contentKey) ? sampleOnlyReviewerNote : ""),
+    reviewer_notes: body.reviewerNotes ?? (isSampleOnlyRow(body.surface, body.contentKey, body) ? sampleOnlyReviewerNote : ""),
     ...(packageState?.readerServing ? { reviewed_at: now, published_at: now } : {})
   };
 
@@ -1898,7 +1905,7 @@ function generatedContentRowFromWriteBody(body: GeneratedContentWriteBody) {
     throw new GeneratedContentRequestError(`status for ${body.contentKey} must be DRAFT, REVIEWED, LIVE, ARCHIVED, or ERROR.`);
   }
 
-  if (body.status === "LIVE" && isSampleOnlyRow(body.surface, body.contentKey)) {
+  if (body.status === "LIVE" && isSampleOnlyRow(body.surface, body.contentKey, body)) {
     throw new GeneratedContentRequestError("Personalized content test rows cannot be published globally. Generate real user or bond scoped content instead.");
   }
 
@@ -1949,7 +1956,7 @@ function generatedContentRowFromWriteBody(body: GeneratedContentWriteBody) {
     summary: body.summary ?? "",
     body: body.body ?? "",
     sections: body.sections ?? [],
-    reviewer_notes: body.reviewerNotes ?? (isSampleOnlyRow(body.surface, body.contentKey) ? sampleOnlyReviewerNote : ""),
+    reviewer_notes: body.reviewerNotes ?? (isSampleOnlyRow(body.surface, body.contentKey, body) ? sampleOnlyReviewerNote : ""),
     updated_at: new Date().toISOString()
   });
 }
@@ -2950,7 +2957,7 @@ async function updateGeneratedContent(req: IncomingMessage) {
   }
 
   if (body.status) {
-    if (body.status === "LIVE" && isSampleOnlyRow(effectiveSurface, effectiveContentKey)) {
+    if (body.status === "LIVE" && isSampleOnlyRow(effectiveSurface, effectiveContentKey, { facts: body.facts ?? existing?.facts, sourceSnapshot: body.sourceSnapshot ?? existing?.source_snapshot })) {
       throw new GeneratedContentRequestError("Personalized content test rows cannot be published globally. Generate real user or bond scoped content instead.");
     }
 
