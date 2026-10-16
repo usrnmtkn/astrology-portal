@@ -1,6 +1,7 @@
 # Moon routing in You and Friends
 
-Status: source preparation, not deployed or accepted.
+Status: focused local checks passed; full release gates, deployment and native
+production acceptance remain pending.
 
 The owner requested all 60 Moon records, including the 15 natal aliases, to be
 selectable live, then explicitly required verification in the actual You and
@@ -72,6 +73,25 @@ is inferred from an unknown time and no astrology calculation is replaced.
   missing-history refusal. Tie live acceptance to the exact READY deployment.
 
 No actual-reader acceptance or deployment is claimed by this document.
+
+## Focused local verification, October 16
+
+The candidate was rebased onto main
+`c3f31ce2e08f239f26e344d79a83af013e7ba09b` in the coordinated local slot.
+The Moon routing suite passed all 60 identities and 15 aliases, renderer parity,
+240 audience/version cases per renderer, and unchanged saved fields. The App
+adapter suite also passed both audiences' complete source selection, same-date
+stability, calculated MC/IC admission, unknown-time exclusion, axis grouping,
+and the existing Swiss daily-contact/ranking contracts.
+
+A fresh production build passed normal reader browser flows at 390/light and
+1440/dark. The You and Friends lists contained approved non-Moon competitors;
+the tests opened actual calculated Moon cards, matched the entire synthetic
+source passage and dated source identity, then reloaded/reopened successfully.
+Both cases passed without reducing the existing ranking limits. The build's
+bundle budgets passed. These are isolated local browser results, not live
+production acceptance. The original fixture-construction failure and sandbox
+listener failure are retained in the task record; neither was a product error.
 
 ## Qualified production diagnostic, October 16
 

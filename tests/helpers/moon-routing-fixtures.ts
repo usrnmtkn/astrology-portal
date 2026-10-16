@@ -30,7 +30,8 @@ export const moonReaderCompetingRecords = transitLibrary.authoredCards
   .filter((row: { contentKey: string }) => /^authored\/transit-(?:aspect|return)\//.test(row.contentKey)
     && !row.contentKey.startsWith('authored/transit-aspect/moon/'))
   .map((row: { contentKey: string }) => ({
-    ...moonRecord(row.contentKey, row.contentKey, true),
+    contentKey: row.contentKey, content_role: 'full_copy', review_status: 'approved',
+    reader_only: true, render_policy: 'personal-transit-exact-v1', approval: moonRoutingRecords[0].approval,
     headline: 'Synthetic competing transit',
     body_you: `Competing You source ${row.contentKey}.`,
     body_they: `Competing Friend source ${row.contentKey}.`
