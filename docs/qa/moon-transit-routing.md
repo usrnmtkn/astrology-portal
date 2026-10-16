@@ -53,3 +53,9 @@ Fresh browser coverage is in `playwright.moon-routing.config.ts`: normal Sky,
 You and Friend navigation, full paragraphs, reload stability, Studio variant
 choices beyond four, retained versions and opening the original alias source.
 These tests use synthetic text and make no content writes.
+
+On the integrated `b375ebe` base, grouping four existing pure astrology helpers
+reduces startup JavaScript from 40 files to 38. Measured app/reader gzip totals
+are 517,967/573,051 bytes, below the unchanged 518,200/573,350-byte limits.
+The separate calculation-engine chunk remains byte-identical. This is packaging
+only: no new startup dependency, arithmetic, prose or budget change.
