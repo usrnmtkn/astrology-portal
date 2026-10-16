@@ -3,6 +3,7 @@ import {AdminHttpError} from './admin-http.js';
 import {calculateLunationArticleFacts,lunationArticleEvents} from './lunation-article-facts.js';
 import {datedLunationContentKey} from '../../apps/web/src/content/lunationArticleIdentity.js';
 import {validateLunationArticle} from '../../src/astro-writing/lunationArticleValidation.mjs';
+import {hasExactStudioOwnerApproval} from './studio-owner-publication.js';
 
 /** Recheck the final reader copy against calculated facts, never client lint or facts. */
 export async function lunationPublicationPatch(row:Record<string,any>) {
@@ -14,7 +15,13 @@ export async function lunationPublicationPatch(row:Record<string,any>) {
   if(!event)throw new AdminHttpError(422,'This lunar article does not match a calculated event. Open the correct Moon or eclipse before publishing.');
   const facts=await calculateLunationArticleFacts(month,'UTC',event.id);
   const copy={headline:String(row.headline??''),summary:String(row.summary??''),body:String(row.body??'')};
-  const lint=validateLunationArticle({...copy,body:[copy.summary,copy.body].filter(Boolean).join('\n\n')},facts);
+  const strictLint=validateLunationArticle({...copy,body:[copy.summary,copy.body].filter(Boolean).join('\n\n')},facts);
+  const ownerFinal=hasExactStudioOwnerApproval(row);
+  const violations=ownerFinal ? strictLint.violations.filter((finding:any)=>['lunation_fact_boundary','required_fields'].includes(finding.category)) : strictLint.violations;
+  const lint={...strictLint,passed:violations.length===0,violations,
+    publicationProfile:ownerFinal?'owner-final-facts':'automatic',
+    advisories:ownerFinal?strictLint.violations.filter((finding:any)=>!violations.includes(finding)):[],
+    governance:{...strictLint.governance,blockingViolationCount:violations.length}};
   if(!lint.passed)throw new AdminHttpError(422,`Correct these article errors before publishing: ${lint.violations.map((finding:any)=>finding.detail).join(' ')}`);
   return {
     facts:{...row.facts,lunationArticle:facts},
