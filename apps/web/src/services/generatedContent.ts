@@ -1636,20 +1636,14 @@ export async function loadLiveGeneratedContent(
 
 
 async function loadLastKnownGoodGeneratedContentForSurfaces(
-  requestedSurfaces: string[],
+  effectiveSurfaces: string[],
   targetDate?: string,
   previewMode: GeneratedContentPreviewMode = readGeneratedContentPreviewMode()
 ) {
-  const includeSharedTransitFloor = requestedSurfaces.includes("sky");
-  const surfaces = new Set([
-    ...requestedSurfaces,
-    "modifier",
-    ...(includeSharedTransitFloor ? ["you"] : [])
-  ]);
   const rows = (await loadContentStudioLastKnownGoodRows()) as GeneratedContentRow[];
   const filtered = rows.filter((row) => {
-    if (!surfaces.has(row.surface)) return false;
-    if (!targetDate || requestedSurfaces.includes("sky")) return true;
+    if (!effectiveSurfaces.includes(row.surface)) return false;
+    if (!targetDate) return true;
     return row.target_date === null || row.target_date === targetDate;
   });
   return generatedContentMapFromRows(sortGeneratedRowsNewestFirst(filtered), previewMode);
@@ -1661,6 +1655,17 @@ async function loadLastKnownGoodGeneratedContentForKeys(contentKeys: string[]) {
   return generatedContentMapFromRows(sortGeneratedRowsNewestFirst(rows.filter((row) => keySet.has(row.content_key))));
 }
 
+const pendingReaderContent = new Map<string, Promise<Map<string, LiveGeneratedContent>>>();
+function sharePendingReaderContent(identity: unknown[], read: () => Promise<Map<string, LiveGeneratedContent>>) {
+  const key = JSON.stringify(identity);
+  let pending = pendingReaderContent.get(key);
+  if (!pending) {
+    pending = read().finally(() => pendingReaderContent.delete(key));
+    pendingReaderContent.set(key, pending);
+  }
+  return pending;
+}
+
 export async function loadLiveGeneratedContentForSurfaces(
   requestedSurfaces: string[],
   targetDate?: string,
@@ -1668,33 +1673,45 @@ export async function loadLiveGeneratedContentForSurfaces(
   vocabularyOnly = false
 ) {
   await refreshContentPublications();
+  const surfaces = [...new Set([
+    ...requestedSurfaces, "modifier", ...(requestedSurfaces.includes("sky") ? ["you"] : [])
+  ])];
+  // Sky requests span publication dates; normalize that policy once for the
+  // sharing identity, request and last-known-good fallback.
+  if (surfaces.includes("sky")) targetDate = undefined;
+  // Share only active equivalent reads after resolving publication generation.
+  return sharePendingReaderContent([
+    "surfaces", contentPublicationGeneration, [...surfaces].sort(), targetDate || null,
+    previewMode, vocabularyOnly
+  ], () => readLiveGeneratedContentForSurfaces(surfaces, targetDate, previewMode, vocabularyOnly));
+}
+
+async function readLiveGeneratedContentForSurfaces(
+  surfaces: string[],
+  targetDate: string | undefined,
+  previewMode: GeneratedContentPreviewMode,
+  vocabularyOnly: boolean
+) {
   const supabase = await getSupabaseClient();
 
   if (!supabase) {
-    return loadLastKnownGoodGeneratedContentForSurfaces(requestedSurfaces, targetDate, previewMode);
+    return loadLastKnownGoodGeneratedContentForSurfaces(surfaces, targetDate, previewMode);
   }
   // The publication ledger has its own deadline. Give the content request its
   // full budget instead of expiring it while it is still waiting for that ledger.
   const requestSignal = AbortSignal.timeout(8000);
 
-  const includeSharedTransitFloor = requestedSurfaces.includes("sky");
-  const surfaces = Array.from(new Set([
-    ...requestedSurfaces,
-    "modifier",
-    ...(includeSharedTransitFloor ? ["you"] : [])
-  ]));
   const { data, error } = await loadReaderRows({ surfaces, ...(vocabularyOnly ? { vocabularyOnly: true } : {}),
-    ...(targetDate && !requestedSurfaces.includes("sky") ? { targetDate } : {}) }, requestSignal);
+    ...(targetDate ? { targetDate } : {}) }, requestSignal);
   if (error) {
     console.warn("Content surface read failed.", error);
-    return loadLastKnownGoodGeneratedContentForSurfaces(requestedSurfaces, targetDate, previewMode);
+    return loadLastKnownGoodGeneratedContentForSurfaces(surfaces, targetDate, previewMode);
   }
   const rows = data ?? [];
 
   return generatedContentMapFromRows(sortGeneratedRowsNewestFirst(rows), previewMode);
 }
 
-const pendingTargetedContent = new Map<string, Promise<Map<string, LiveGeneratedContent>>>();
 export async function loadLiveGeneratedContentForKeys(contentKeys: string[], options: { requireFresh?: boolean } = {}) {
   await refreshContentPublications();
   const keys = [...new Set(contentKeys.map((key) => key.trim()).filter(Boolean))].sort();
@@ -1706,13 +1723,8 @@ export async function loadLiveGeneratedContentForKeys(contentKeys: string[], opt
   // Several mounted readers can request the same keys during publication
   // hydration. Share only in-flight work for the same revision/freshness policy;
   // settled requests and later revisions always revalidate.
-  const identity = JSON.stringify([contentPublicationGeneration, options.requireFresh === true, keys]);
-  let pending = pendingTargetedContent.get(identity);
-  if (!pending) {
-    pending = readLiveGeneratedContentForKeys(keys, options).finally(() => pendingTargetedContent.delete(identity));
-    pendingTargetedContent.set(identity, pending);
-  }
-  return pending;
+  return sharePendingReaderContent(["keys", contentPublicationGeneration, options.requireFresh === true, keys],
+    () => readLiveGeneratedContentForKeys(keys, options));
 }
 
 async function readLiveGeneratedContentForKeys(keys: string[], options: { requireFresh?: boolean }) {

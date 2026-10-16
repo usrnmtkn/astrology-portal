@@ -25,6 +25,17 @@ for (const initialRoute of ["#sky", "#sky/placement/sun/virgo", "#sky/retrograde
     await page.addInitScript(() => localStorage.setItem('tldrastro:selectedLocation', JSON.stringify({
       label: 'Synthetic New York', latitude: 40.7128, longitude: -74.006, timeZone: 'America/New_York'
     })));
+    await page.addInitScript(() => {
+      const kinds = (window as any).__initialSkyWorkerKinds = [] as string[];
+      const NativeWorker = window.Worker;
+      window.Worker = class extends NativeWorker {
+        postMessage(message: any, ...args: any[]) {
+          kinds.push(message.kind);
+          super.postMessage(message, ...args);
+        }
+      };
+    });
+    const initialPlacement = initialRoute.startsWith('#sky/placement/');
     let releaseApp!: () => void;
     const appGate = new Promise<void>(resolve => { releaseApp = resolve; });
     let releaseReact!: () => void;
@@ -35,6 +46,8 @@ for (const initialRoute of ["#sky", "#sky/placement/sun/virgo", "#sky/retrograde
     await page.route(/\/assets\/App-[^/]+\.js$/, async route => { await appGate; await route.continue(); });
     await page.route(/\/assets\/react-[^/]+\.js$/, async route => { await reactGate; await route.continue(); });
     const requests: URL[] = [];
+    const wasmPaths = () => requests.filter(url => url.pathname.startsWith('/wasm/')).map(url => url.pathname).sort();
+    let initializationPaths: string[] = [];
     const errors: string[] = [];
     page.on('request', request => requests.push(new URL(request.url())));
     page.on('pageerror', error => errors.push(error.message));
@@ -58,7 +71,20 @@ for (const initialRoute of ["#sky", "#sky/placement/sun/virgo", "#sky/retrograde
       if (warm) expect(requests.some(url => url.pathname.endsWith('/content_publications'))).toBe(false);
       else await expect.poll(() => requests.some(url => url.pathname.endsWith('/content_publications'))).toBe(true);
       expect(await page.locator('.app-shell').count()).toBe(0);
+      expect(requests.filter(url => url.pathname === '/api/sky')).toHaveLength(1);
       expect(requests.find(url => url.pathname === '/api/sky')?.searchParams.get('at')).toBe('2026-09-21T16:00:00.000Z');
+      if (initialPlacement) {
+        await expect.poll(() => page.evaluate(() => (window as any).__initialSkyWorkerKinds)).toEqual(['preload']);
+        await expect.poll(wasmPaths).toEqual([
+          expect.stringMatching(/^\/wasm\/[a-f0-9]{16}\/swisseph\.data$/u),
+          expect.stringMatching(/^\/wasm\/[a-f0-9]{16}\/swisseph\.wasm$/u)
+        ]);
+        initializationPaths = wasmPaths();
+        expect(new Set(initializationPaths.map(path => path.slice(0, path.lastIndexOf('/')))).size).toBe(1);
+      } else {
+        expect(await page.evaluate(() => (window as any).__initialSkyWorkerKinds)).toEqual([]);
+        expect(requests.some(url => url.pathname.startsWith('/wasm/'))).toBe(false);
+      }
       if (changeSelection) {
         await page.evaluate(() => {
           history.replaceState({}, '', '/?date=2026-03-27#sky');
@@ -88,7 +114,8 @@ for (const initialRoute of ["#sky", "#sky/placement/sun/virgo", "#sky/retrograde
     }
     expect(requests.some(url => /fallback-content-sky-horoscopes-/.test(url.pathname))).toBe(false);
     expect(requests.filter(url => /\/assets\/fallback-content-sky-placement-(?!manifest-)[^/]+\.js$/.test(url.pathname))).toHaveLength(1);
-    expect(requests.some(url => url.pathname.startsWith('/wasm/'))).toBe(false);
+    expect(await page.evaluate(() => (window as any).__initialSkyWorkerKinds)).toEqual(initialPlacement ? ['preload'] : []);
+    expect(wasmPaths()).toEqual(initializationPaths);
     expect(errors).toEqual([]);
     expect(await page.evaluate(() => document.fonts.check('400 16px Newsreader') && document.fonts.check('500 16px "Geist Mono"'))).toBe(true);
     expect(requests.some(url => /newsreader-latin.*\.woff2$/.test(url.pathname) && url.host === new URL(page.url()).host)).toBe(true);

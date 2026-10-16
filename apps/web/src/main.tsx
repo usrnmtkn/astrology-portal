@@ -121,7 +121,7 @@ async function startApp() {
     await completeAuthCallback();
   }
   const initialSkyLoadPromise = isInitialSkyReaderHash(window.location.hash)
-    ? import("./services/skyApi").then(({ startInitialSkyLoad }) => startInitialSkyLoad()).catch(() => null)
+    ? import("./services/skyApi").then(({ startInitialSkyPlacementLoad }) => startInitialSkyPlacementLoad(callbackUrl.href)).catch(() => null)
     : Promise.resolve(null);
   if (callbackUrl.pathname === "/" && callbackUrl.searchParams.get("auth") !== "login"
     && /^#\/?(?:sky|calendar)(?:[/?]|$)/u.test(callbackUrl.hash)) {

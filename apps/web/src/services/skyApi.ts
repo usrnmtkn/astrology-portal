@@ -100,3 +100,53 @@ export function matchingInitialSkyLoad(initial: InitialSkyLoad | null, day: stri
     || performance.now() - initial.startedAt > 10_000) return null;
   return initial;
 }
+
+const points = new Set([
+  "sun", "moon", "mercury", "venus", "mars", "jupiter", "saturn", "uranus",
+  "neptune", "pluto", "chiron", "lilith", "north-node", "south-node"
+]);
+const signs = new Set([
+  "aries", "taurus", "gemini", "cancer", "leo", "virgo", "libra", "scorpio",
+  "sagittarius", "capricorn", "aquarius", "pisces"
+]);
+
+function eligiblePlacementHintHref(href: string) {
+  let url;
+  try {
+    url = new URL(href);
+  } catch {
+    return false;
+  }
+  if (url.pathname !== "/"
+    || ["auth", "code", "access_token", "error", "error_code"].some(key => url.searchParams.has(key))) {
+    return false;
+  }
+  const match = /^#\/?sky\/placement\/([a-z-]+)\/([a-z-]+)\/?$/u.exec(url.hash);
+  return Boolean(match && points.has(match[1]) && signs.has(match[2]));
+}
+
+function eligiblePlacementHintContinuation(originalHref: string, currentHref: string, workerSupported: boolean, initialCaptured: boolean) {
+  if (!workerSupported || !initialCaptured
+    || !eligiblePlacementHintHref(originalHref) || !eligiblePlacementHintHref(currentHref)) {
+    return false;
+  }
+  return new URL(originalHref).origin === new URL(currentHref).origin;
+}
+
+/** Optional initialization overlaps App without changing the captured metadata object. */
+export function startInitialSkyPlacementLoad(originalHref: string): InitialSkyLoad | null {
+  const initial = startInitialSkyLoad();
+  if (initial) {
+    void Promise.resolve().then(() => preloadInitialSkyPlacement(originalHref, initial)).catch(() => {
+      // The mounted calculation owns import/initialization errors and explicit retry.
+    });
+  }
+  return initial;
+}
+
+async function preloadInitialSkyPlacement(originalHref: string, initial: InitialSkyLoad) {
+  if (!eligiblePlacementHintContinuation(originalHref, window.location.href, typeof Worker === "function", Boolean(initial))) return;
+  const { preloadSwissEphemerisOffMainThread } = await import("./skyCalculationClient");
+  if (!eligiblePlacementHintContinuation(originalHref, window.location.href, typeof Worker === "function", Boolean(initial))) return;
+  return preloadSwissEphemerisOffMainThread();
+}

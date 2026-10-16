@@ -22,8 +22,10 @@ assert.match(dashboard, /draftHasPackageProposal\(draftForSave\) && !draftHasPac
 assert.match(api, /isPersonalTransitSituationContentKey\(existing\.content_key\)/u);
 assert.match(api, /isLicensedPersonalTransitPlaceholder/u);
 assert.match(api, /applyPersonalTransitPackageDraft/u);
-assert.match(dashboard, /const transitNatalHasExactOwnerApproval = objectRecord\(draftPackageRecord\(currentDraft\)\.approval\)\?\.approvalLevel === "exact_owner_approved"/u);
-assert.match(dashboard, /const transitNatalCanApprovePublish = isPersonalTransitExactDraft[\s\S]{0,520}!transitNatalHasExactOwnerApproval/u);
+assert.match(dashboard, /const packageOwnerCanPublish = isPackageDraft\s*&& !isReferenceDraft && packageRoleCanServeExactCopy/u);
+assert.match(dashboard, /const transitNatalMissingCopy = isPersonalTransitExactDraft[\s\S]{0,360}!\["body_you", "body_they"\]\.every/u);
+assert.match(dashboard, /if \(packageOwnerCanPublish\) \{\s*await publishPackageDraft\(currentDraft\);/u);
+assert.match(dashboard, /packageOwnerCanPublish && packageCopyMissing/u);
 assert.match(dashboard, /Approve & publish/u);
 assert.match(dashboard, /const showPackageBodyThey = isPackageDraft[\s\S]{0,260}isAuthoredTransitAspectDraft/u);
 assert.match(dashboard, /Friends uses this complete third-person passage/u);
