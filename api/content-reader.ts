@@ -130,16 +130,31 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
       content_key: `in.(${[...new Set([publicationLedgerKey, ...contentKeys])].map(item => `"${item.replaceAll('\\', '\\\\').replaceAll('"', '\\"')}"`).join(',')})`,
       limit: String(pageSize + 1)
     }));
-    // Exact keys already identify every publication this page may serve.
-    // Join both live reads before admission, without a cached serving decision.
-    const [raw, targetedLedger] = await Promise.all([
+    // The cold core scope is defined entirely by key prefixes. Its bounded
+    // publication read can overlap rows just like an exact-key request. If the
+    // range reaches its limit, use the original exact page-key read instead.
+    const coreScope = !query.keys && !query.latestVersion && query.scope === 'sky-article'
+      && query.provider === 'tldrastro-fallback-architecture-v3';
+    const [raw, prefetchedLedger] = await Promise.all([
       get('generated_interpretations', params),
-      query.keys && !query.latestVersion ? readPublications(query.keys) : Promise.resolve(null)
+      query.keys && !query.latestVersion ? readPublications(query.keys)
+        : coreScope ? get('content_publications', new URLSearchParams({
+          select: 'content_key,state,revision,row_id,row_updated_at,updated_at',
+          or: `(content_key.eq.${publicationLedgerKey},${skyArticleDashboardScopeFilter})`,
+          limit: String(pageSize + 1)
+        }))
+          : Promise.resolve(null)
     ]);
     if (query.latestVersion) { res.end(JSON.stringify({ schema: READER_ROW_SCHEMA, rows: raw.map(row => ({ updated_at: (row as { updated_at: string }).updated_at })), nextCursor: null })); return; }
     const rows = raw as GeneratedContentRow[];
-    const ledger = targetedLedger ?? await readPublications(rows.map(row => row.content_key));
+    if (coreScope && prefetchedLedger && !prefetchedLedger.every(validContentPublication)) throw new Error('Invalid publication state.');
+    let ledger = (coreScope && prefetchedLedger && prefetchedLedger.length >= pageSize + 1 ? null : prefetchedLedger)
+      ?? await readPublications(rows.map(row => row.content_key));
     if (!ledger.every(validContentPublication)) throw new Error('Invalid publication state.');
+    if (coreScope && prefetchedLedger) {
+      const keys = new Set([publicationLedgerKey, ...rows.map(row => row.content_key)]);
+      ledger = (ledger as ContentPublication[]).filter(publication => keys.has(publication.content_key));
+    }
     const publications = new Map((ledger as ContentPublication[]).map(item => [item.content_key, item]));
     // A missing ledger is a configuration error, never permission to serve old writing.
     if (!publications.has(publicationLedgerKey)) throw new Error('Publication state is unavailable.');

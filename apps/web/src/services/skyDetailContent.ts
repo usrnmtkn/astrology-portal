@@ -8,26 +8,37 @@ import { contentStudioExactSkyAspectKeys, skyAspectGeneratedContentKeys } from "
 
 /** Candidates are transport only: actual calculated events still choose copy.
  * An oversized candidate set disables preparation rather than truncating it. */
-export function coldSkyPlacementAspectKeys(planet: string, existing: Map<string, LiveGeneratedContent>) {
+export function coldSkyPlacementAspectKeys(planet: string, existing: Map<string, LiveGeneratedContent>, beforeLedger = false) {
   const retained = eligibleSkyDetailContent(existing);
   const keys = [...new Set(SKY_PLACEMENT_ASPECT_TARGETS.flatMap(other => transitAspectDefinitions.flatMap(aspect =>
     contentStudioExactSkyAspectKeys(planet, aspect.type, other))))].filter(key => {
       const publication = contentPublication(key);
-      return publication?.state === "live" && publication.row_id && !retained.has(key);
+      return (beforeLedger || publication?.state === "live" && publication.row_id) && !retained.has(key);
     });
   return keys.length <= 50 ? keys : [];
 }
 
-export type ColdSkyAspectRead = { keys: string[]; rows: Promise<Map<string, LiveGeneratedContent>> };
+export type ColdSkyAspectRead = { keys: string[]; rows: Promise<Map<string, LiveGeneratedContent>>; ingress: Promise<Map<string, LiveGeneratedContent>>; discard: () => void };
 export function prefetchSkyPlacementAspectContent(planet: string, existing: Map<string, LiveGeneratedContent>,
-  publications: Promise<void>, snapshot: Promise<SkySnapshot>, load: (keys: string[]) => Promise<Map<string, LiveGeneratedContent>>) {
-  let calculated = false;
+  publications: Promise<void>, snapshot: Promise<SkySnapshot>,
+  load: (keys: string[], publications: Promise<void>) => { rows: Promise<Map<string, LiveGeneratedContent>>; discard: () => void },
+  loadIngress?: () => Promise<Map<string, LiveGeneratedContent>>) {
+  let calculated = false, discarded = false;
   void snapshot.then(() => { calculated = true; }, () => { calculated = true; });
-  const read: ColdSkyAspectRead = { keys: [], rows: publications.then(() => {
-    if (calculated || !contentPublicationsAvailableOnline()) return new Map<string, LiveGeneratedContent>();
-    read.keys = coldSkyPlacementAspectKeys(planet, existing);
-    return read.keys.length ? load(read.keys) : new Map<string, LiveGeneratedContent>();
-  }).catch(() => new Map<string, LiveGeneratedContent>()) };
+  let staged: ReturnType<typeof load> | undefined;
+  const read: ColdSkyAspectRead = { keys: [],
+    ingress: publications.then(() => !discarded && !calculated && contentPublicationsAvailableOnline() && loadIngress
+      ? loadIngress() : new Map<string, LiveGeneratedContent>()).catch(() => new Map<string, LiveGeneratedContent>()),
+    get rows() {
+    return staged?.rows ?? Promise.resolve(new Map<string, LiveGeneratedContent>());
+  }, discard: () => { discarded = true; staged?.discard(); } };
+  // Give an already fulfilled calculation a chance to use its normal exact
+  // request. Otherwise stage canonical candidates, never invented facts.
+  void Promise.resolve().then(() => {
+    if (discarded || calculated || typeof navigator !== "undefined" && navigator.onLine === false) return;
+    read.keys = coldSkyPlacementAspectKeys(planet, existing, !contentPublicationsAvailableOnline());
+    if (read.keys.length) staged = load(read.keys, publications);
+  }).catch(() => { read.keys = []; staged?.discard(); });
   return read;
 }
 

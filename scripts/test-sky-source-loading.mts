@@ -10,7 +10,8 @@ const built = await build({ entryPoints: ['apps/web/src/services/skyPlacementHyd
       export const loadContentStudioLastKnownGoodRows = () => fixture.offline();
       export const loadFallbackArchitectureV3DashboardBundle = (scope, early) => fixture.core(scope, early);
       export const prefetchColdSkyArticleRows = publications => fixture.prefetch(publications);
-      export const loadFallbackArchitectureV3SkyPlacementDashboardBundle = () => fixture.placement();
+      export const prefetchColdSkyPlacementRows = (selection, publications) => fixture.selected(selection, publications);
+      export const loadFallbackArchitectureV3SkyPlacementDashboardBundle = (selection, early) => fixture.placement(selection, early);
       export const refreshContentPublications = () => fixture.refresh();
       export const contentPublicationsResolved = () => fixture.resolved;
       export const contentPublicationsAvailableOnline = () => fixture.online;
@@ -25,19 +26,20 @@ function harness(overrides = {}) {
     bundle: async () => { calls.push('bundle'); }, refresh: async () => { calls.push('refresh'); },
     offline: async () => { calls.push('offline'); },
     prefetch: () => { calls.push('prefetch'); return undefined; },
+    selected: () => { calls.push('selected'); return undefined; },
     core: async (scope: string) => { assert.equal(scope, "sky"); calls.push('core'); return 'core'; },
     placement: async () => { calls.push('placement'); return 'placement'; }, ...overrides
   };
   const context: any = { module: { exports: {} }, fixture, setTimeout, clearTimeout };
   vm.runInNewContext(built.outputFiles[0].text, context);
-  return { calls, fixture, prepare: context.module.exports.prepareSkyPlacementSources };
+  return { calls, fixture, prepare: context.module.exports.prepareSkyPlacementSources, attach: context.module.exports.prefetchColdSkyPlacementSources };
 }
 {
   const h = harness();
   const first = h.prepare();
   assert.equal(h.prepare(), first, 'Simultaneous callers share one request, including ledger-triggered rerenders');
   assert.equal((await first).identity, 'current');
-  assert.deepEqual(h.calls, ['bundle', 'refresh', 'core', 'placement']);
+  assert.deepEqual(h.calls, ['refresh', 'bundle', 'core', 'placement']);
   await h.prepare();
   assert.equal(h.calls.filter(x => x === 'core').length, 2, 'Settled sources are revalidated on the next request');
 }
@@ -45,7 +47,7 @@ function harness(overrides = {}) {
   const h = harness({ online: false, resolved: false });
   h.fixture.offline = async () => { h.calls.push('offline'); h.fixture.resolved = true; h.fixture.identity = 'offline'; };
   assert.equal((await h.prepare()).identity, 'offline');
-  assert.deepEqual(h.calls, ['bundle', 'refresh', 'offline', 'core', 'placement']);
+  assert.deepEqual(h.calls, ['refresh', 'bundle', 'offline', 'core', 'placement']);
 }
 {
   const h = harness(); let calls = 0;
@@ -104,3 +106,31 @@ function harness(overrides = {}) {
   assert(h.calls.indexOf('discard') < h.calls.indexOf('offline'), 'A failed live ledger discards transport before offline recovery.');
 }
 console.log('PASS: live Sky avoids the offline download, coalesces requests, recovers coherent offline identities, and fails closed on missing or changing publications.');
+
+{
+  let release!: () => void;
+  const publications = new Promise<void>(resolve => { release = resolve; });
+  const h = harness({ refresh: () => publications });
+  const handle = { discard: () => h.calls.push('selected-discard') };
+  h.fixture.selected = (selection: string, gate: Promise<void>) => {
+    assert.equal(selection, 'article:sun/libra'); assert.equal(gate, publications);
+    h.calls.push('selected'); return handle;
+  };
+  h.fixture.core = async () => { h.calls.push('core'); return 'core'; };
+  h.fixture.placement = async (selection: string, early: unknown) => {
+    assert.equal(selection, 'article:sun/libra'); assert.equal(early, handle);
+    h.calls.push('placement'); return 'placement';
+  };
+  const first = h.prepare('article:sun/libra');
+  assert.equal(h.calls.includes('selected'), false, 'Unresolved auth cannot start selected speculation.');
+  h.attach('article:sun/libra');
+  assert.equal(h.prepare('article:sun/libra'), first, 'Late guest confirmation must attach to the same preparation.');
+  h.attach('article:sun/libra');
+  assert.equal(h.calls.filter(x => x === 'selected').length, 1, 'A rerender cannot duplicate selected transport.');
+  release(); await first;
+  assert.equal(h.calls.filter(x => x === 'core').length, 1);
+  assert.equal(h.calls.filter(x => x === 'placement').length, 1);
+  assert.equal(h.calls.at(-1), 'selected-discard');
+  h.attach('article:sun/libra');
+  assert.equal(h.calls.at(-1), 'selected-discard', 'Auth completion cannot restart a settled warm/member source load.');
+}

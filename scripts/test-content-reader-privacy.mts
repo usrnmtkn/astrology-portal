@@ -189,6 +189,89 @@ assert.equal(custom.sections.packageRecord.lunarJournal.blocks[1].items[0].text,
 assert(!JSON.stringify(custom).includes(privateText));
 
 
+// The cold core range contains key predicates only. It may overlap the row
+// request, but a full 251-entry range must never stand in for a complete ledger.
+{
+  const core = { ...structuredClone(packageRow), content_key: 'fallback-hook/sky-synthetic-core' };
+  core.sections.packageRecord.contentKey = core.content_key;
+  assert(readerRowIsEligible(core));
+  const marker = { content_key: publicationLedgerKey, state: 'live', revision: 1, row_id: null, row_updated_at: null, updated_at: version };
+  const current = { ...marker, content_key: core.content_key, row_id: core.id, row_updated_at: version };
+  const identity = { provider: 'tldrastro-fallback-architecture-v3', scope: 'sky-article' };
+  try {
+    for (const scenario of ['44', '250', '251', 'retired', 'microsecond', 'unpublished', 'missing-marker', 'invalid-extra', 'invalid-overflow', 'pagination'] as const) {
+      const count = ['250', '251'].includes(scenario) ? Number(scenario) : scenario === 'invalid-overflow' ? 251 : 44;
+      const scoped: any[] = [marker, { ...current }, ...Array.from({ length: count - 2 }, (_, index) => ({
+        ...marker, content_key: `fallback-vocab/synthetic/${index}`, row_id: id, row_updated_at: version
+      }))];
+      if (scenario === 'retired') scoped[1].state = 'retired';
+      if (scenario === 'microsecond') scoped[1].row_updated_at = '2026-09-21T18:00:00.123457+00:00';
+      if (scenario === 'unpublished') scoped.splice(1, 1);
+      if (scenario === 'missing-marker') scoped.shift();
+      if (scenario === 'invalid-extra' || scenario === 'invalid-overflow') scoped.at(-1).revision = 'invalid';
+      let scopeReads = 0, exactReads = 0, release!: () => void, started!: () => void;
+      const rowsReady = new Promise<void>(resolve => { release = resolve; });
+      const publicationsStarted = new Promise<void>(resolve => { started = resolve; });
+      const page = scenario === 'pagination' ? Array.from({ length: 250 }, (_, index) => ({ ...core,
+        id: `cccccccc-cccc-cccc-cccc-${String(index).padStart(12, '0')}` })) : [core];
+      globalThis.fetch = async input => {
+        const url = new URL(String(input));
+        assert.equal(url.origin, 'https://reader-privacy.invalid');
+        if (url.pathname.endsWith('/generated_interpretations')) {
+          assert.equal(url.searchParams.get('provider'), `eq.${identity.provider}`);
+          if (scenario === 'pagination') assert.equal(url.searchParams.get('id'), `gt.${id}`);
+          await rowsReady; return Response.json(page);
+        }
+        assert.equal(url.pathname, '/rest/v1/content_publications');
+        if (url.searchParams.has('or')) {
+          scopeReads++;
+          const filter = url.searchParams.get('or')!;
+          assert(filter.startsWith(`(content_key.eq.${publicationLedgerKey},`));
+          assert(filter.includes('content_key.like.authored/station/%'));
+          assert(!filter.includes('surface.') && !filter.includes('provider.'));
+          assert.equal(url.searchParams.get('limit'), '251');
+          started(); return Response.json(scoped);
+        }
+        exactReads++;
+        assert.equal(url.searchParams.get('content_key'), `in.("${publicationLedgerKey}","${core.content_key}")`);
+        return Response.json([marker, current]);
+      };
+      const reading = request({ ...identity, ...(scenario === 'pagination' ? { afterId: id } : {}) });
+      let timer: ReturnType<typeof setTimeout> | undefined;
+      try {
+        await Promise.race([publicationsStarted, new Promise((_, reject) => {
+          timer = setTimeout(() => reject(Error('Core publications waited for rows')), 1000);
+        })]);
+      } finally { clearTimeout(timer); release(); }
+      const response = await reading;
+      assert.equal(scopeReads, 1);
+      assert.equal(exactReads, scenario === '251' ? 1 : 0, 'Only a valid full bounded range falls back to exact page keys.');
+      if (['missing-marker', 'invalid-extra', 'invalid-overflow'].includes(scenario)) {
+        assert.equal(response.statusCode, 503, 'Invalid scoped state must fail closed even outside the returned row keys.');
+        continue;
+      }
+      assert.equal(response.statusCode, 200);
+      assert(response.value.publications.every((publication: any) => [publicationLedgerKey, core.content_key].includes(publication.content_key)),
+        'Unrelated scoped publication state cannot enter the public envelope.');
+      if (['retired', 'microsecond', 'unpublished', 'pagination'].includes(scenario)) assert.deepEqual(response.value.rows, []);
+      else assert.equal(response.value.rows[0].body, text);
+      if (scenario === 'pagination') assert.equal(response.value.nextCursor, page.at(-1)!.id, 'Filtered pages still advance the exact row cursor.');
+      assert(!response.body.includes(privateText));
+    }
+    for (const identity of [{ scope: 'sky-article' }, { provider: 'tldrastro-fallback-architecture-v3', scope: 'sky-list' },
+      { provider: 'tldrastro-fallback-architecture-v3', scope: 'sky-article', keys: [core.content_key] },
+      { provider: 'tldrastro-fallback-architecture-v3', scope: 'sky-article', latestVersion: true }]) {
+      globalThis.fetch = async input => {
+        const url = new URL(String(input));
+        if (url.pathname.endsWith('/generated_interpretations')) return Response.json([core]);
+        assert(!url.searchParams.has('or'), 'Other reader queries keep their existing publication path.');
+        return Response.json([marker, current]);
+      };
+      assert.equal((await request(identity)).statusCode, 200);
+    }
+  } finally { globalThis.fetch = original; }
+}
+
 // Exercise the complete checked-in offline inventory without printing its copy.
 const snapshot = JSON.parse(fs.readFileSync('apps/web/public/content-studio-last-known-good.json', 'utf8'));
 let admitted = 0;

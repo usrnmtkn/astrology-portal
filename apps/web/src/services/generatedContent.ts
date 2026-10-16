@@ -3,7 +3,7 @@ import { loadReaderRows, ReaderAdmissionError } from "./readerContentClient";
 import { packageAuthoredCardFromRow, packageHookRowFromRow, packageVocabRowFromRow, packageTemplateRowFromRow, packageFallbackArchitectureV3CoreRows } from "./fallbackArchitectureV3CorePackaging";
 // @ts-ignore Exact owner-requested source versions, shared with package materialization.
 import { correctedReaderSummary } from "../content/fallbackArchitectureV3/readerSummaryReferenceCorrections.mjs";
-import { publicationLedgerReady, publicationAllowsContent, contentPublication, contentPublicationRecords, contentPublicationGeneration, type ContentPublication } from "../content/contentPublicationState";
+import { publicationLedgerKey, publicationLedgerReady, publicationAllowsContent, contentPublication, contentPublicationRecords, contentPublicationGeneration, type ContentPublication } from "../content/contentPublicationState";
 import { contentPublicationsAvailableOnline, refreshContentPublications } from "./contentPublications";
 import { isGeneratedContentReaderBoundaryAllowed, isReaderServableGeneratedContentRow, isEmergencyFloorContentKey, generatedRowPackageRole } from "../content/generatedContentEligibility";
 export { isGeneratedContentReaderBoundaryAllowed, isReaderServableGeneratedContentRow } from "../content/generatedContentEligibility";
@@ -1371,6 +1371,67 @@ export function prefetchColdSkyArticleRows(publications: Promise<void>): ColdSky
   return entry;
 }
 
+/** A bounded key read may travel before the ledger, but neither its rows nor
+ * its publications escape until the complete online ledger admits them. */
+function prefetchColdSkyKeys(keys: Promise<string[]>, publications: Promise<void>, limit: number) {
+  const controller = new AbortController();
+  const signal = AbortSignal.any([controller.signal, AbortSignal.timeout(20_000)]);
+  const ready = publications.then(() => contentPublicationsAvailableOnline(), () => false);
+  let consumed = false;
+  const request = keys.then(async candidates => {
+    const selected = [...new Set(candidates)];
+    if (!selected.length || selected.length > limit || signal.aborted || !await getSupabaseClient()) {
+      return { data: null, error: null };
+    }
+    return loadReaderRows({ keys: selected }, signal, {
+      ready,
+      validate: (rows, buffered) => contentPublicationsAvailableOnline()
+        && buffered.every(publication => (publication.content_key === publicationLedgerKey || selected.includes(publication.content_key))
+          && (contentPublication(publication.content_key)?.revision ?? 0) >= publication.revision)
+        && rows.every(row => selected.includes(row.content_key)
+          && publicationAllowsContent(row.content_key, row.id, row.updated_at, row.target_date))
+    });
+  }).catch(error => ({ data: null, error }));
+  return {
+    consume: () => { if (consumed) return; consumed = true; return { request, cancel: () => controller.abort() }; },
+    discard: () => { if (!consumed) { consumed = true; controller.abort(); } }
+  };
+}
+
+export function prefetchColdSkyContentForKeys(keys: string[], publications: Promise<void>) {
+  // This wrapper is the sole owner; cancellation remains available after the
+  // caller starts awaiting its private, ledger-admitted content map.
+  const owned = prefetchColdSkyKeys(Promise.resolve(keys), publications, 50).consume()!;
+  return {
+    rows: owned.request.then(result => generatedContentMapFromRows(sortGeneratedRowsNewestFirst(result.data ?? [])))
+      .catch(() => new Map<string, LiveGeneratedContent>()),
+    discard: owned.cancel
+  };
+}
+
+export function prefetchColdSkyPlacementRows(selection: string, publications: Promise<void>) {
+  if (!selection.startsWith("article:") || contentPublicationsAvailableOnline()
+    || readCachedFallbackArchitectureV3Bundle("sky-article")) return;
+  try {
+    if (window.localStorage.getItem(skyPublicationCacheKey)) return;
+  } catch { /* Unavailable storage does not authorize any cached row. */ }
+  // Only transport candidates: the normal selected publication-ID completion
+  // below still owns exact selection, new keys, retirement and missing rows.
+  const keys = Promise.all([loadFallbackArchitectureV3BundledSkyPlacementManifest(), import("./skyPlacementSourceScope")])
+    .then(([manifest, { skyPlacementSourceInSelection }]) => {
+      const known = manifest.keys.map(key => key.slice(key.indexOf(":") + 1))
+        .filter(key => skyPlacementSourceInSelection(key, selection));
+      const articles = selection.slice("article:".length).split(",").flatMap(pair => {
+        const [planet, sign] = pair.split("/");
+        return [`sky-placement/article/${pair}`, `sky-placement/retrograde/${planet}`,
+          ...(["north-node", "south-node"].includes(planet) ? [`sky-nodes/${pair}`] : []),
+          ...(["lilith", "black-moon-lilith"].includes(planet) ? [`sky-lilith/article/${sign}`] : [])];
+      });
+      return [...known, ...articles];
+    });
+  return prefetchColdSkyKeys(keys, publications, 200);
+}
+
 export async function loadFallbackArchitectureV3DashboardBundle(scope: DashboardScope = "all", earlyRead?: ColdSkyArticleRead): Promise<FallbackArchitectureV3Bundle | null> {
   await refreshContentPublications();
   const pending = pendingDashboardBundles.get(scope);
@@ -1488,7 +1549,7 @@ if (typeof window !== "undefined") {
   try { window.localStorage.removeItem("tldrastro:sky-publication-rows:v1"); } catch { /* Storage may be unavailable. */ }
 }
 
-async function loadPublishedSkyBundle(selection?: string): Promise<FallbackArchitectureV3Bundle | null> {
+async function loadPublishedSkyBundle(selection?: string, staged?: ReturnType<typeof loadReaderRows>): Promise<FallbackArchitectureV3Bundle | null> {
   const manifest = await loadFallbackArchitectureV3BundledSkyPlacementManifest();
   const keys = new Set(manifest.keys.map((key) => key.slice(key.indexOf(":") + 1)));
   const { skyPlacementSourceInSelection } = await import("./skyPlacementSourceScope");
@@ -1529,7 +1590,10 @@ async function loadPublishedSkyBundle(selection?: string): Promise<FallbackArchi
   const fallback = () => complete(cached);
   const client = await getSupabaseClient();
   if (!client || typeof navigator !== "undefined" && navigator.onLine === false) return fallback();
-  const rows = cached.filter(eligible);
+  const retainedRows = cached.filter(eligible);
+  const completeCache = publications.every(publication => retainedRows.some(row => row.id === publication.row_id));
+  const incoming = !completeCache && staged ? await staged : undefined;
+  const rows = [...new Map([...retainedRows, ...(incoming?.data ?? []).filter(eligible)].map(row => [row.id, row])).values()];
   const ids = publications.filter(publication => !rows.some(row => row.id === publication.row_id)).map(publication => publication.row_id!);
   for (let offset = 0; offset < ids.length; offset += 200) {
     const batchIds = ids.slice(offset, offset + 200);
@@ -1549,11 +1613,15 @@ async function loadPublishedSkyBundle(selection?: string): Promise<FallbackArchi
   return bundle;
 }
 
-export async function loadFallbackArchitectureV3SkyPlacementDashboardBundle(selection?: string): Promise<FallbackArchitectureV3Bundle | null> {
-  await refreshContentPublications();
+export async function loadFallbackArchitectureV3SkyPlacementDashboardBundle(selection?: string, earlyRead?: ReturnType<typeof prefetchColdSkyPlacementRows>): Promise<FallbackArchitectureV3Bundle | null> {
+  // Claim synchronously, before an async boundary lets a joining caller discard
+  // transport now owned by this loader. Only this owner can cancel its request.
+  const staged = earlyRead?.consume();
+  await refreshContentPublications().catch(error => { staged?.cancel(); throw error; });
   if (publicationLedgerReady() || contentPublicationRecords().some((publication) => isSkyPlacementPublishedReaderKey(publication.content_key))) {
-    return loadPublishedSkyBundle(selection);
+    return loadPublishedSkyBundle(selection, staged?.request).finally(() => staged?.cancel());
   }
+  staged?.cancel();
   const supabase = await getSupabaseClient();
   const cached = await readCachedFallbackArchitectureV3SkyPlacementBundle();
 

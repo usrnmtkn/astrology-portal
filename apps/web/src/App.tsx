@@ -24,7 +24,7 @@ import { NavigationPill } from "./components/NavigationPill";
 import { isContentRetired, contentPublication, contentPublicationRecords, contentPublicationGeneration, subscribeToContentPublications } from "./content/contentPublicationState";
 import { personalTransitPublicationIdentity } from "./services/personalTransitPublication";
 import { installPersonalTransitFallbackArchitectureV3Bundle } from "./content/fallbackArchitectureV3Runtime";
-import { prepareSkyPlacementSources, skyPlacementPublicationIdentity } from "./services/skyPlacementHydration";
+import { prefetchColdSkyPlacementSources, prepareSkyPlacementSources, skyPlacementPublicationIdentity } from "./services/skyPlacementHydration";
 import {
   skyPlacementInSignAspectContentKeys,
   skyPlacementInSignAspectSections
@@ -265,6 +265,7 @@ import {
   loadFallbackArchitectureV3CompatibilityDashboardBundle,
   loadFallbackArchitectureV3DashboardBundle,
   loadLiveGeneratedContentForKeys,
+  prefetchColdSkyContentForKeys,
   loadLiveGeneratedContentForSurfaces,
   readCachedFallbackArchitectureV3Bundle,
   readGeneratedContentPreviewMode,
@@ -10877,12 +10878,17 @@ async function prepareSkyPlacementArticleContent(
   const required = new Set([...ingressKeys, ...aspectKeys]);
   const early = readEarly();
   let prepared = availableContent;
-  if (early && aspectKeys.some(key => early.keys.includes(key))) {
-    // Missing dated/ingress keys must not wait behind unused candidates.
-    const [incoming, remaining] = await Promise.all([early.rows,
-      loadSkyDetailContent(placementSky, availableContent, ingressKeys, loadLiveGeneratedContentForKeys,
-        aspectKeys.filter(key => !early.keys.includes(key)))]);
-    prepared = new Map([...remaining, ...[...eligibleSkyDetailContent(incoming)].filter(([key]) => required.has(key))]);
+  if (early) {
+    const relevant = aspectKeys.some(key => early.keys.includes(key));
+    if (!relevant) early.discard();
+    // The ingress and actual missing-aspect reads are independent. Neither
+    // may queue behind an optional candidate batch or a slower edition read.
+    const [ingress, incoming, remaining] = await Promise.all([early.ingress,
+      relevant ? early.rows : Promise.resolve(new Map<string, LiveGeneratedContent>()),
+      loadSkyDetailContent(placementSky, availableContent, [], loadLiveGeneratedContentForKeys,
+        aspectKeys.filter(key => !relevant || !early.keys.includes(key)))]);
+    prepared = new Map([...remaining,
+      ...[...eligibleSkyDetailContent(new Map([...ingress, ...incoming]))].filter(([key]) => required.has(key))]);
   }
   const content = await loadSkyDetailContent(placementSky, prepared, ingressKeys,
     loadLiveGeneratedContentForKeys, aspectKeys);
@@ -12182,11 +12188,13 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
     // Reuse initial direct-route preparation at the captured instant after the
     // full Sky response arrives. Source and publication changes still invalidate it.
     if (canLoadPlacementArticle && skyArticlePreparationRef.current?.key !== preparationKey) {
+      skyArticlePreparationRef.current?.early?.discard();
       const snapshot = requestSkyPlacementArticleSnapshot(articleLocation, routePlanet, placementSign!, skyDate, initial?.date);
       const preparation: SkyArticlePreparation = { key: preparationKey, snapshot,
         request: prepareSkyPlacementArticleContent(snapshot, routePlanet, placementSign!, availableDetailContent, () => preparation.early) };
       skyArticlePreparationRef.current = preparation;
       void preparation.request.catch(() => {
+        preparation.early?.discard();
         if (skyArticlePreparationRef.current === preparation) skyArticlePreparationRef.current = null;
       });
     }
@@ -12194,8 +12202,16 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
       && !authAccountError && !hasStoredSupabaseSession() && !readCachedFallbackArchitectureV3Bundle("sky-article");
     const preparation = skyArticlePreparationRef.current;
     if (coldGuest && canLoadPlacementArticle && preparation?.key === preparationKey && !preparation.early) {
+      prefetchColdSkyPlacementSources(placementSelection || undefined);
       preparation.early = prefetchSkyPlacementAspectContent(routePlanet, availableDetailContent, refreshContentPublications(),
-        preparation.snapshot, keys => loadLiveGeneratedContentForKeys(keys, { requireFresh: true }));
+        preparation.snapshot, prefetchColdSkyContentForKeys, () => {
+          // The ledger and selected route identify edition candidates before
+          // astronomy completes; actual facts and edition dates still choose copy.
+          const keys = skyIngressEssayPublicationKeys(contentPublicationRecords(), {
+            planet: normalizeContentIdPart(routePlanet), sign: normalizeContentIdPart(placementSign!)
+          });
+          return keys.length ? loadLiveGeneratedContentForKeys(keys, { requireFresh: true }) : Promise.resolve(new Map());
+        });
     }
     const articlePreparation = skyArticlePreparationRef.current?.request;
     // Guest articles already have their complete placement facts. Member

@@ -10,7 +10,7 @@ import { build } from 'esbuild';
 const file = join(mkdtempSync(join(tmpdir(), 'sky-dashboard-scope-')), 'reader.mjs');
 await build({ stdin: { resolveDir: process.cwd(), contents: `
   export { loadFallbackArchitectureV3DashboardBundle, readCachedFallbackArchitectureV3Bundle,
-    clearCachedFallbackArchitectureV3Bundle, loadContentStudioLastKnownGoodRows, loadLiveGeneratedContentForKeys, loadLiveGeneratedContentForSurfaces, loadFallbackArchitectureV3SkyPlacementDashboardBundle, prefetchColdSkyArticleRows } from './apps/web/src/services/generatedContent.ts';
+    clearCachedFallbackArchitectureV3Bundle, loadContentStudioLastKnownGoodRows, loadLiveGeneratedContentForKeys, loadLiveGeneratedContentForSurfaces, loadFallbackArchitectureV3SkyPlacementDashboardBundle, prefetchColdSkyArticleRows, prefetchColdSkyContentForKeys, prefetchColdSkyPlacementRows } from './apps/web/src/services/generatedContent.ts';
   export { installContentPublications, contentPublication } from './apps/web/src/content/contentPublicationState.ts';
   export { installFallbackArchitectureV3Bundle, installSkyCoreFallbackArchitectureV3Bundle,
     transitV3AuthoredCardForContentKey } from './apps/web/src/content/fallbackArchitectureV3Runtime.ts';
@@ -43,6 +43,7 @@ assert.deepEqual(snapshot.rows.filter((row: any) => row.provider === 'tldrastro-
   && dependencyKeys.has(row.content_key) && !isSkyDashboardRow(row)).map((row: any) => row.content_key), [],
   'Every shared dependency in the shipped Sky package must retain its live override');
 const queries: any[] = [];
+const readerRequests: any[] = [];
 assert(skyPlacementSourceInSelection('sky-placement/article/nodes/aquarius-leo', 'north-node/aquarius,south-node/leo'));
 assert(!skyPlacementSourceInSelection('sky-placement/article/nodes/pisces-virgo', 'north-node/aquarius,south-node/leo'));
 assert(!skyPlacementSourceInSelection('sky-placement/article/sun/libra', 'sun/virgo'));
@@ -86,6 +87,7 @@ const originalFetch = globalThis.fetch;
 globalThis.fetch = async (input, init) => {
   assert.equal(String(input), '/api/content-reader');
   const body = JSON.parse(String(init?.body));
+  readerRequests.push(body);
   let query = (globalThis as any).fixtureClient.from();
   if (body.provider) query.eq('provider', body.provider);
   if (body.scope) query.or(body.scope === 'sky' ? skyDashboardScopeFilter : body.scope === 'sky-article' ? skyArticleDashboardScopeFilter : skyListDashboardScopeFilter);
@@ -444,6 +446,104 @@ try {
   assert.equal(await qa.loadFallbackArchitectureV3SkyPlacementDashboardBundle('sun/virgo'),null,'Retired rows must disappear from cache-backed reads');
   qa.installContentPublications([publication(virgin), publication(libra)]);
   storage.delete('tldrastro:sky-publication-rows:v2');
+  {
+    const cacheKey = 'tldrastro:sky-publication-rows:v2';
+    const originalSections = structuredClone(libra.sections);
+    libra.sections = { ...libra.sections, packageRecord: { ...libra.sections.packageRecord, body_you: 'Synthetic complete approved passage with its original final sentence.' } };
+    const marker = { content_key: '__content-publication-ledger/v1', state: 'live', revision: 1,
+      row_id: null, row_updated_at: null, updated_at: libra.updated_at };
+    qa.installContentPublications([marker]);
+    const untilRead = async (count: number) => {
+      for (let tick = 0; readerRequests.length < count && tick < 100; tick++) await new Promise(resolve => setTimeout(resolve, 0));
+      assert.equal(readerRequests.length, count);
+    };
+    for (const change of ['unchanged', 'new-key', 'revision', 'retirement', 'newer-buffered', 'failed-ledger'] as const) {
+      qa.clearCachedFallbackArchitectureV3Bundle(); storage.delete(cacheKey);
+      const currentRevision = (qa.contentPublication(libra.content_key)?.revision ?? 0) + 1;
+      qa.installContentPublications([publication(libra, currentRevision)]);
+      const baseline = structuredClone(libra);
+      let release!: () => void;
+      const ready = new Promise<void>(resolve => { release = resolve; });
+      Object.assign(globalThis, { publicationWait: ready, fixturePublicationsOnline: false,
+        fixtureReaderPublications: [marker, publication(libra, change === 'newer-buffered' ? currentRevision + 1 : currentRevision)] });
+      const before = readerRequests.length;
+      const staged = qa.prefetchColdSkyPlacementRows('article:sun/libra', ready);
+      assert(staged); await untilRead(before + 1);
+      const query = readerRequests.at(-1);
+      assert(query.keys.includes(libra.content_key), 'Canonical article body must be in known candidates.');
+      assert(query.keys.includes('sky-placement/retrograde/sun'), 'Retrograde transport uses the existing planet-wide key.');
+      assert(!query.ids && query.keys.length <= 200);
+      assert.equal(storage.has(cacheKey), false, 'Staging cannot expose rows in the selected cache before the ledger.');
+      const extra = { ...structuredClone(libra), id: 'aaaaaaaa-aaaa-aaaa-aaaa-999999999999',
+        content_key: 'sky-placement/article/sun/libra/synthetic-new-variant' };
+      if (change === 'new-key') { rows.push(extra); qa.installContentPublications([publication(extra, currentRevision)]); }
+      if (change === 'revision') {
+        libra.updated_at = '2099-10-16T18:00:00.000001Z';
+        qa.installContentPublications([publication(libra, currentRevision + 1)]);
+      }
+      if (change === 'retirement') qa.installContentPublications([publication(libra, currentRevision + 1, 'retired')]);
+      (globalThis as any).fixturePublicationsOnline = change !== 'failed-ledger';
+      (globalThis as any).fixtureReaderPublications = [marker];
+      release();
+      const loaded = await qa.loadFallbackArchitectureV3SkyPlacementDashboardBundle('article:sun/libra', staged);
+      const missingReads = readerRequests.slice(before + 1);
+      if (change === 'unchanged') assert.equal(missingReads.length, 0, 'The actual API ledger marker must not reject valid staged rows.');
+      if (['new-key', 'revision', 'newer-buffered', 'failed-ledger'].includes(change)) {
+        assert.equal(missingReads.length, 1, 'Incomplete or rejected candidates require exactly one normal missing-ID read.');
+        assert(missingReads[0].ids.length > 0);
+      }
+      if (change === 'retirement') assert.equal(loaded, null, 'A staged passage cannot resurrect a retired article.');
+      if (change === 'new-key') {
+        assert(missingReads[0].keys.includes(extra.content_key), 'A future unlisted key still loads by its exact current ID.');
+        rows.splice(rows.indexOf(extra), 1);
+        qa.installContentPublications([publication(extra, currentRevision + 1, 'retired')]);
+      }
+      if (change === 'newer-buffered') assert.equal(qa.contentPublication(libra.content_key).revision, currentRevision,
+        'Discarded speculative state cannot install a newer revision.');
+      Object.assign(libra, baseline);
+      qa.installContentPublications([publication(libra, currentRevision + 2)]);
+    }
+    for (const cancelled of [false, true]) {
+      let release!: () => void;
+      const ready = new Promise<void>(resolve => { release = resolve; });
+      Object.assign(globalThis, { fixturePublicationsOnline: false, fixtureReaderPublications: [marker, publication(libra, qa.contentPublication(libra.content_key).revision)] });
+      const before = readerRequests.length;
+      const staged = qa.prefetchColdSkyContentForKeys([libra.content_key], ready);
+      const content = staged.rows;
+      await untilRead(before + 1);
+      let admitted = false;
+      void content.then(() => { admitted = true; });
+      await Promise.resolve(); assert.equal(admitted, false, 'Claimed candidate content remains private while admission is held.');
+      if (cancelled) staged.discard();
+      (globalThis as any).fixturePublicationsOnline = true; release();
+      const result = await content;
+      assert.equal(result.has(libra.content_key), !cancelled, 'An owned claimed request must respect subsequent route cancellation.');
+    }
+    const beforeOversize = readerRequests.length;
+    const oversize = qa.prefetchColdSkyContentForKeys(Array.from({ length: 51 }, (_, i) => `synthetic/aspect/${i}`), Promise.resolve());
+    assert.equal((await oversize.rows).size, 0);
+    assert.equal(readerRequests.length, beforeOversize, 'The whole over-50 candidate batch is skipped without truncation or transport.');
+    // A cache populated while transport is in flight must not wait for it or
+    // duplicate its current row. Only its owning loader may cancel that claim.
+    storage.set(cacheKey, JSON.stringify([libra]));
+    (globalThis as any).fixturePublicationsOnline = false;
+    assert.equal(qa.prefetchColdSkyPlacementRows('article:sun/libra', Promise.resolve()), undefined,
+      'An existing selected cache preserves the normal warm path.');
+    let claimed = false, cancelled = false;
+    const complete = qa.loadFallbackArchitectureV3SkyPlacementDashboardBundle('article:sun/libra', {
+      consume: () => { claimed = true; return { request: new Promise(() => {}), cancel: () => { cancelled = true; } }; },
+      discard: () => { throw Error('A claimed handle cannot be discarded by a joiner'); }
+    });
+    assert.equal(claimed, true, 'The owner claims selected transport before its first await.');
+    const cached = await complete;
+    assert.equal(cancelled, true, 'Complete cached rows cancel the owned optional request without waiting.');
+    assert(cached, 'The synthetic complete approved cached passage must remain packaged.');
+    assert.equal(cached.rowsFile.hookRows.length, 1);
+    assert.equal(JSON.parse(storage.get(cacheKey)!).filter((row: any) => row.id === libra.id).length, 1);
+    storage.delete(cacheKey); qa.clearCachedFallbackArchitectureV3Bundle();
+    libra.sections = originalSections;
+    for (const key of ['publicationWait', 'fixturePublicationsOnline', 'fixtureReaderPublications']) Reflect.deleteProperty(globalThis, key);
+  }
   rows.splice(rows.indexOf(libra), 1);
   await assert.rejects(qa.loadFallbackArchitectureV3SkyPlacementDashboardBundle('sun/virgo,sun/libra'), /Current Sky publications/,
     'One valid row must not disguise a partial response missing another required publication');

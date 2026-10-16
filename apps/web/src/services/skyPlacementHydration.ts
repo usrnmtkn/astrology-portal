@@ -1,5 +1,5 @@
 import { loadSkyPlacementFallbackArchitectureV3Bundle } from "../content/fallbackArchitectureV3Runtime";
-import { loadContentStudioLastKnownGoodRows, loadFallbackArchitectureV3DashboardBundle, loadFallbackArchitectureV3SkyPlacementDashboardBundle, prefetchColdSkyArticleRows } from "./generatedContent";
+import { loadContentStudioLastKnownGoodRows, loadFallbackArchitectureV3DashboardBundle, loadFallbackArchitectureV3SkyPlacementDashboardBundle, prefetchColdSkyArticleRows, prefetchColdSkyPlacementRows } from "./generatedContent";
 import { contentPublicationsAvailableOnline, contentPublicationsResolved, refreshContentPublications } from "./contentPublications";
 import { missingSkyPlacementPublications, skyPlacementPublicationIdentity } from "./skyPlacementPublicationGuard";
 
@@ -9,13 +9,18 @@ export { missingSkyPlacementPublications, skyPlacementPublicationIdentity };
  * A fulfilled bundled import alone cannot prove that the owner has no override.
  * Uses existing source caches, never another independently selected prose cache.
  */
-async function prepareSources(selection?: string) {
+type SourcePreparation = {
+  publications: Promise<void>;
+  selected?: ReturnType<typeof prefetchColdSkyPlacementRows>;
+  request?: ReturnType<typeof prepareSources>;
+};
+async function prepareSources(selection: string | undefined, entry: SourcePreparation) {
   let timer: ReturnType<typeof setTimeout> | undefined;
   let earlyRead: ReturnType<typeof prefetchColdSkyArticleRows>;
   const prepare = async () => {
     const bundled = loadSkyPlacementFallbackArchitectureV3Bundle(!selection || selection.startsWith('article:'));
     void bundled.catch(() => { /* Joined below, including its failure. */ });
-    const publications = refreshContentPublications();
+    const publications = entry.publications;
     if (selection?.startsWith("article:")) earlyRead = prefetchColdSkyArticleRows(publications);
     await publications;
     // Live readers already resolve current rows below. The full offline snapshot
@@ -23,6 +28,8 @@ async function prepareSources(selection?: string) {
     if (!contentPublicationsAvailableOnline()) {
       earlyRead?.discard();
       earlyRead = undefined;
+      entry.selected?.discard();
+      entry.selected = undefined;
       await loadContentStudioLastKnownGoodRows();
     }
     if (!contentPublicationsResolved()) throw new Error("Sky publication state is unavailable.");
@@ -30,7 +37,7 @@ async function prepareSources(selection?: string) {
       const identity = skyPlacementPublicationIdentity();
       const [coreBundle, placementBundle] = await Promise.all([
         loadFallbackArchitectureV3DashboardBundle(selection?.startsWith('article:') ? "sky-article" : selection ? "sky-list" : "sky", attempt === 0 ? earlyRead : undefined),
-        loadFallbackArchitectureV3SkyPlacementDashboardBundle(selection),
+        loadFallbackArchitectureV3SkyPlacementDashboardBundle(selection, attempt === 0 ? entry.selected : undefined),
         bundled
       ]);
       // A failed live row request can install the offline ledger. Resolve both
@@ -49,18 +56,28 @@ async function prepareSources(selection?: string) {
   } finally {
     clearTimeout(timer);
     earlyRead?.discard();
+    entry.selected?.discard();
   }
 }
 
-const pending = new Map<string, ReturnType<typeof prepareSources>>();
-/** The initial ledger install reruns subscribers; share its in-flight source
- * reads instead of downloading and packaging the same inventory twice. */
+const pending = new Map<string, SourcePreparation>();
+/** Late guest confirmation attaches to the same source preparation. It cannot
+ * restart the ledger, astronomy, or a claimed selected-row transport. */
 export function prepareSkyPlacementSources(selection?: string) {
   const key = selection ?? "all";
-  let request = pending.get(key);
-  if (!request) {
-    request = prepareSources(selection).finally(() => pending.delete(key));
-    pending.set(key, request);
+  let entry = pending.get(key);
+  if (!entry) {
+    entry = { publications: refreshContentPublications() };
+    pending.set(key, entry);
   }
-  return request;
+  return entry.request ??= prepareSources(selection, entry).finally(() => pending.delete(key));
+}
+
+/** Auth confirmation may add transport only while the original source request
+ * is pending. It must not restart a settled member or warm source load. */
+export function prefetchColdSkyPlacementSources(selection?: string) {
+  const entry = selection ? pending.get(selection) : undefined;
+  if (entry && selection && !entry.selected) {
+    entry.selected = prefetchColdSkyPlacementRows(selection, entry.publications);
+  }
 }
