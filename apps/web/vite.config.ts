@@ -241,7 +241,7 @@ export default defineConfig(({ mode }) => {
             // astronomy and protected passage data retain their separate lazy chunks.
             if (id.endsWith("/src/astrologyConfig.ts") || id.endsWith("/content/skyMotionLabels.ts")
               || id.endsWith("/content/protectedOwnerSkyPlacementPassages.ts")
-              || /\/services\/(?:astrologyDisplay|astrologyFacts|natalAspectFacts|verifiedSkyCache|skyPlacementSourceScope)\.ts$/u.test(id)) return "astrology-display";
+              || /\/services\/(?:astrologyDisplay|astrologyFacts|natalAspectFacts|verifiedSkyCache|skyPlacementSourceScope|generatedContentKeys)\.ts$/u.test(id)) return "astrology-display";
             // Shared civil-date/location helpers are used together by Sky and
             // its articles; one chunk avoids repeated tiny preload dependencies.
             if (/\/services\/(?:timezones|skySelection|skyClock)\.ts$/u.test(id)) return "sky-time";
@@ -254,6 +254,10 @@ export default defineConfig(({ mode }) => {
             if (/\/services\/(?:auth|studioAuthReturn|readerAuthReturn)\.ts$/u.test(id)) {
               return "auth";
             }
+            // Both pure relationship helpers are already part of reader startup.
+            // Share their transport without pulling in the deferred Friends UI.
+            if (id.endsWith("/services/relationshipContext.ts")
+              || id.endsWith("/content/compositeRelationshipCopy.ts")) return "relationship-context";
             if (id.includes("vite/preload-helper")) {
               return "vendor";
             }
