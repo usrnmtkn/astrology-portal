@@ -93,6 +93,27 @@ function writeBody(key = baseline.content_key) {
   return { contentKey: key, surface: 'sky', mode: 'feed', eventType: 'cms-surface-override', status: 'DRAFT', body: 'QA updated' };
 }
 
+await test('reusable composite sources publish while private samples and unknown identities stay blocked', async () => {
+  for (const key of ['composite.aspect.jupiter.conjunction.chiron', 'composite.house.venus.house_12', 'composite.mercury', 'composite-mars-in-aries']) {
+    const source = { ...baseline, content_key: key, surface: 'composite', event_type: 'composite-aspect', source_snapshot: {}, facts: {}, sections: {} };
+    reset([source]);
+    assert.equal((await invoke('PATCH', { id: source.id, status: 'LIVE', lane: 'serving', reviewState: null })).status, 200, key);
+    reset([]);
+    assert.equal((await invoke('POST', { ...writeBody(key), surface: 'composite', eventType: 'composite-aspect', status: 'LIVE', lane: 'serving', reviewState: null })).status, 200, key);
+    reset([]);
+    assert.equal((await invoke('POST', { rows: [{ ...writeBody(key), surface: 'composite', eventType: 'composite-aspect', status: 'LIVE', lane: 'serving', reviewState: null }] })).status, 200, key);
+  }
+  for (const fields of [{ content_key: 'sample-composite-qa' }, { content_key: 'composite.private-profile' }, { content_key: 'composite.house.venus.house_13' }, { facts: { sampleOnly: true } }, { source_snapshot: { sampleOnly: true } }]) {
+    const source = { ...baseline, content_key: 'composite.aspect.jupiter.conjunction.chiron', surface: 'composite', event_type: 'composite-aspect', source_snapshot: {}, facts: {}, sections: {}, ...fields };
+    reset([source]);
+    assert.notEqual((await invoke('PATCH', { id: source.id, status: 'LIVE', lane: 'serving', reviewState: null })).status, 200);
+    assert.deepEqual(writes, []);
+    reset([source]);
+    assert.notEqual((await invoke('PATCH', { id: source.id, ownerAction: 'publish-owner-content' })).status, 200);
+    assert.deepEqual(writes, []);
+  }
+});
+
 await test('malformed, missing, primitive, array and invalid typed bodies fail without writes', async () => {
   for (const [body, options] of [[undefined, {}], ['{', { raw: true }], [null, {}], [[], {}], [true, {}], [42, {}], [[], { parsed: true }], ['{', { parsed: true }], [{ contentKey: 7 }, {}], [{ rows: [null] }, {}], [{ rows: [] }, {}], [{ status: '' }, {}]]) {
     reset(); const result = await invoke('POST', body, options);
