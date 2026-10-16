@@ -363,8 +363,10 @@ button.planet-placement-row {
 
 .floating-tooltip {
   --floating-tooltip-center-offset: -50%;
+  --z-tooltip: calc(var(--z-modal) + 1);
 
   position: fixed;
+  width: max-content;
   z-index: var(--z-tooltip);
   box-sizing: border-box;
   max-width: min(340px, calc(100vw - 24px));

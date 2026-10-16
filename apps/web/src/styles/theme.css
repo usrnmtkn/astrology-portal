@@ -1035,8 +1035,6 @@
   --overlay-radius: var(--card-radius);
   --overlay-shadow: var(--shadow-overlay);
   --modal-shadow: var(--overlay-shadow);
-  /* Floating notices leave the fixed header and safe areas clear. */
-  --notification-max-height: max(0px, calc(100dvh - var(--top-control-top) - var(--top-control-height) - var(--space-8) - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px)));
   --tooltip-bg: #1a1a1a;
   --tooltip-fg: #f2f2f1;
   --tooltip-muted: rgba(242, 242, 241, 0.78);
@@ -1205,7 +1203,7 @@
   --z-popover: 100;
   --z-picker: 40;
   --z-modal: 5000;
-  --z-tooltip: calc(var(--z-modal) + 1);
+  --z-tooltip: 80;
 
   /* 4. COMPATIBILITY ALIASES */
   --text: var(--ink);

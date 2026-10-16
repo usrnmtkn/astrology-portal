@@ -176,6 +176,11 @@ for (const viewport of [{width:360,height:640},{width:390,height:844},{width:844
       await page.evaluate(()=>window.scrollBy(0,160));
       await contained(page,surface);
     }
+    if (anchor) {
+      await anchor.evaluate(el => (el as HTMLElement).blur());
+      await expect(surface).toBeHidden();
+      await page.evaluate(() => new Promise<void>(resolve => requestAnimationFrame(() => requestAnimationFrame(() => resolve()))));
+    }
     if (name === 'Studio toast') {
       await surface.getByRole('button',{name:'Dismiss notification'}).click();await expect(surface).toBeHidden();
     } else if (name === 'Report ready toast') {

@@ -1491,7 +1491,7 @@
   align-items: center;
   gap: var(--space-4);
   max-width: calc(100vw - 36px);
-  max-height: var(--notification-max-height);
+  max-height: max(0px, calc(var(--header-popover-max-height) - env(safe-area-inset-bottom, 0px)));
   overflow: auto;
   min-height: 46px;
   padding: 0 var(--space-4);
