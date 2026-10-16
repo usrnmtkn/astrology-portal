@@ -11,7 +11,7 @@ export function horoscopeEditorRow(row:any){
   if(row?.inventory_only)return row;
   if(row?.sections?.horoscopeEdition?.window?.period!=='weekly')return row;
   const snapshot=row.source_snapshot??{},generation=snapshot.horoscopeGeneration;
-  return {...row,source_snapshot:{...pick(snapshot,['horoscopeOutlines','studioWritingProfile','editorialImport','horoscopeWriterChoice']),
+  return {...row,source_snapshot:{...pick(snapshot,['horoscopeOutlines','studioWritingProfile','editorialImport','horoscopeWriterChoice','studioOwnerApproval']),
     ...(generation?{horoscopeGeneration:{active:operation(generation.active),batch:generation.batch,
       lastError:failure(generation.lastError),candidateHolds:map(generation.candidateHolds,failure),
       heldRequests:map(generation.heldRequests,operation),readings:map(generation.readings,receipt),

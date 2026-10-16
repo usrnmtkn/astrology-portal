@@ -70,7 +70,7 @@ export async function runHoroscopeWriting(input:Record<string,any>,actor:string,
     if(!row.content_key?.startsWith('horoscope/')||(row.status!=='DRAFT'&&input.action!=='evidence'))throw new AdminHttpError(409,'Open an editable horoscope draft.');
     assertHoroscopeRow(row);
     if(input.action==='validate-publication') {
-      const issues=horoscopePublicationIssues(row);
+      const issues=horoscopePublicationIssues(row, true);
       return reply(200,{ok:true,publication:{id:row.id,updatedAt:row.updated_at,ready:issues.length===0,issues}});
     }
     const persist=async(patch:Record<string,unknown>)=>{

@@ -54,7 +54,7 @@ for (const width of [390,1440]) for (const colorScheme of ['light','dark'] as co
       await memory.getByRole('button',{name:'Use for future drafts',exact:true}).click();
       await expect(memory.getByRole('alert')).toContainText('Review the exact saved passage');
       await editor.getByRole('button',{name:'Run writing checks',exact:true}).click();
-      await editor.getByRole('button',{name:'Approve & schedule',exact:true}).click();
+      await editor.getByRole('button',{name:'Save & publish',exact:true}).click();
       await memory.getByRole('button',{name:'Use for future drafts',exact:true}).click();
       await expect(memory).toContainText('Used for future drafts');
       await memory.getByLabel('Apply this correction to').selectOption('family');

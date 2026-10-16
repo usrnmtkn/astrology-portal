@@ -14,6 +14,8 @@ export function skyWritingIssues(row: ReviewableContent): string[] {
     if (!placement && row.block_type !== "sky_aspect")
         return [];
     const snapshot = row.source_snapshot ?? {};
+    if (row.status === "LIVE" && snapshot.studioOwnerApproval?.action === "publish-owner-content"
+      && snapshot.studioOwnerApproval.contentKey === row.content_key) return [];
     const lint = placement ? snapshot.skyPlacementVoiceLint ?? snapshot.skyPlacementTopperVoiceLint : snapshot.skyAspectVoiceLint;
     const judge = placement ? snapshot.skyPlacementJudge ?? snapshot.skyPlacementTopperJudge : snapshot.skyAspectJudge;
     const issues: string[] = [];

@@ -111,7 +111,8 @@ for(const [sign,immediate] of [['aries',false],['taurus',true]] as const){
  assert(writerFixture.requests.get(row.source_snapshot.horoscopeGeneration.lastError.operation.responseId).input.includes(HOROSCOPE_PUNCTUATION_RULE));
  const candidate={...row.sections.horoscopeEdition,passages:row.sections.horoscopeEdition.passages.map((p:any)=>p.sign===sign?{...p,...row.source_snapshot.horoscopeGeneration.lastError.candidate}:p)};
  const save=(ed:any,version=row.updated_at)=>store.invoke('PATCH',{id:row.id,expectedUpdatedAt:version,sections:{horoscopeEdition:ed},body:horoscopeEditionBody(ed)});
- assert.equal((await save(candidate)).status,422);assert.equal((await save(candidate,'2000-01-01T00:00:00Z')).status,409);
+ assert.equal((await save(candidate,'2000-01-01T00:00:00Z')).status,409);
+ const ownerSaved=await save(candidate);assert.equal(ownerSaved.status,200,'The author may save exact punctuation without an automatic editorial veto.');row=ownerSaved.payload.rows[0];
  candidate.passages.find((p:any)=>p.sign===sign).body='You can read this fixture and correct its punctuation.';
  result=await save(candidate);assert.equal(result.status,200,JSON.stringify(result.payload));row=result.payload.rows[0];assert.equal(writerFixture.calls,before+1);
  assert.equal(row.source_snapshot.horoscopeGeneration.lastError,null);

@@ -871,7 +871,7 @@ async function seedAdminApi(
         if (process.env.STATUS_DEBUG) console.log("WRITEDEBUG", JSON.stringify({ method, payload }));
         await options.onGeneratedContentWrite?.({ method, payload });
         const existingRow = apiGeneratedContentRows.find((row) => row.id === payload.id) ?? generatedContentRows[0];
-        if (payload.ownerAction === "approve-package-revision" || options.useGeneratedContentHandler) {
+        if (["approve-package-revision", "publish-owner-content", "save-and-publish-owner-content"].includes(String(payload.ownerAction)) || options.useGeneratedContentHandler) {
           // Use the real handler and transactional SQL for the response/receipt;
           // a fabricated LIVE row cannot prove successful publication.
           const store = await studioApiStore(apiGeneratedContentRows);
@@ -3177,7 +3177,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     await transitWriteupButton(exactEditor, "Lilith trine your North Node").click();
     await expect(editor.getByRole("heading", { level: 2 })).toHaveText("Write Lilith trine your North Node");
     await expect(editor.getByLabel("Reader phrase · You", { exact: true })).toHaveValue(/Say the true thing while it comes out clean/);
-    await expect(editor.getByText(/You and Friend below start from the shared fallback currently in the preview/)).toBeVisible();
+    await expect(editor.getByLabel("Selected transit context").getByText(/You and Friend below start from the shared fallback currently in the preview/)).toBeVisible();
     await expect(editor.getByRole("button", { name: "Revert to package original", exact: true })).toHaveCount(0);
     await expectNoHorizontalOverflow(page, "Lilith exact draft");
     await editor.screenshot({ path: path.join(adminScreenshotDir, `lilith-new-draft-${width}-${theme}.png`) });
@@ -4255,7 +4255,7 @@ test.describe("content dashboard admin user flow case studies", () => {
       schema: "content-studio-editorial-review/v1",
       decision: "approved-exact-copy"
     });
-    await expect(guidedEditor.getByText("Owner copy review recorded")).toBeVisible();
+    await expect(guidedEditor.getByText("Owner copy review recorded", { exact: true })).toBeVisible();
     await guidedEditor.getByRole("button", { name: "Back to Unresolved Content" }).click();
     await expectAdminHeader(page, "Unresolved Content", "Admin / Publish / Unresolved content");
     await page.getByLabel("Search unresolved content").fill(guidedLunationContentKey);
@@ -4489,11 +4489,11 @@ test.describe("content dashboard admin user flow case studies", () => {
     await textarea.fill("{{Name}} receives the QA natal aspect passage.");
 
     await editor.getByRole("button", { name: "Save & publish" }).click();
-    await expect.poll(() => writes.length).toBe(1);
-    expect(writes[0]?.payload).toMatchObject({ reviewStatus: "approved" });
+    await expect.poll(() => writes.length).toBe(2);
+    expect(writes[1]?.payload).toMatchObject({ ownerAction: "approve-package-revision" });
     await expect(editor.getByLabel("Approval status")).toHaveText("Approved");
     await expect(editor.getByLabel("Reader status", { exact: true })).toHaveText("Live");
-    await expect(page.getByRole("status").filter({ hasText: "fallback-hook/natal-aspect-lived/lilith/square/ascendant saved as Live" })).toBeVisible();
+    await expect(page.getByRole("status").filter({ hasText: "The reviewed revision is published." })).toBeVisible();
     await editor.getByText("Structured fields", { exact: true }).click();
     const editorBodyBox = await editor.locator(":scope > .admin-post-editor").boundingBox();
     const savebarBox = await editor.locator(":scope > .admin-editor-savebar").boundingBox();
@@ -4557,11 +4557,11 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expect(publishButton).toBeEnabled();
     await publishButton.click();
 
-    await expect.poll(() => writes.length).toBe(1);
+    await expect.poll(() => writes.length).toBe(2);
     expect(writes[0]?.method).toBe("PATCH");
-    expect(writes[0]?.payload).toMatchObject({ id: stuckDraft.id, reviewStatus: "approved" });
+    expect(writes[1]?.payload).toMatchObject({ id: stuckDraft.id, ownerAction: "approve-package-revision" });
     await expect(editor.getByLabel("Reader status", { exact: true })).toHaveText("Live");
-    await expect(page.getByRole("status").filter({ hasText: `${contentKey} saved as Live` })).toBeVisible();
+    await expect(page.getByRole("status").filter({ hasText: "The reviewed revision is published." })).toBeVisible();
     await assertNoBrowserErrors();
   });
 
@@ -4648,7 +4648,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expect(editor.getByLabel("Approval status")).toHaveText("Approved");
     await expect(editor.getByLabel("Reader status", { exact: true })).toHaveText("Live");
     await expect(editor.getByLabel("Reader phrase · You")).toHaveValue("Approved revised You copy.");
-    await expect(editor.getByRole("button", { name: "Save & publish" })).toHaveCount(0);
+    await expect(editor.getByRole("button", { name: "Save & publish" })).toBeEnabled();
     await assertNoBrowserErrors();
   });
 
@@ -6408,7 +6408,7 @@ test("Chiron transit recovers stale save versions and keeps conflicting edits vi
       await route.fulfill({ json: { ok: true, rows: [latest] } });
     } else await route.fallback();
   });
-  await editor.getByRole("button", { name: "Save & publish", exact: true }).click();
+  await editor.getByRole("button", { name: /^(Save & publish|Approve & publish)$/, exact: true }).click();
   await expect(editor.locator(".admin-editor-savebar")).toContainText("All changes saved");
   expect(writes).toHaveLength(2);
   expect(writes[1].payload.ownerAction).toBe("approve-package-revision");
@@ -6416,7 +6416,7 @@ test("Chiron transit recovers stale save versions and keeps conflicting edits vi
   expect((writes[0].payload.sections as any).packageDraft.body_they).toBe(copy.body_they);
   await page.setViewportSize({ width: 390, height: 844 });
   await editor.getByLabel("You view copy", { exact: true }).fill(copy.body_you + "\n");
-  await editor.getByRole("button", { name: "Save & publish", exact: true }).click();
+  await editor.getByRole("button", { name: /^(Save & publish|Approve & publish)$/, exact: true }).click();
   await expect(editor.locator(".admin-editor-savebar")).toContainText("All changes saved");
   expect(writes).toHaveLength(4);
   expect(writes[3].payload.ownerAction).toBe("approve-package-revision");
@@ -6579,9 +6579,10 @@ for (const theme of ["light", "dark"]) for (const width of [1440, 390]) {
     await seedAdminApi(page, { generatedRows: [row], onGeneratedContentWrite: write => writes.push(write) });
     let outcome = "blocked";
     await page.route("**/api/admin/generated-content**", async route => {
-      if (route.request().method() !== "PATCH" || route.request().postDataJSON().ownerAction !== "approve-and-schedule") return route.fallback();
-      if (outcome === "blocked") return route.fulfill({ status: 500, json: { error: "Collective sky cards must use first-person plural (we/our/us). A passing editorial judge review is still required." } });
-      return route.fulfill({ json: { ok: true, rows: [{ ...row, status: outcome === "approved" ? "LIVE" : "REVIEWED" }] } });
+      if (route.request().method() !== "PATCH" || route.request().postDataJSON().ownerAction !== "save-and-publish-owner-content") return route.fallback();
+      if (outcome === "blocked") return route.fulfill({ status: 500, json: { error: "Publication is temporarily unavailable. Your draft is retained." } });
+      if (outcome === "approved") return route.fallback();
+      return route.fulfill({ json: { ok: true, rows: [{ ...row, status: "REVIEWED" }] } });
     });
     await expectAdminRouteLoads(page, "/admin/content#review-queue");
     await page.evaluate(value => document.documentElement.setAttribute("data-theme", value), theme);
@@ -6589,16 +6590,16 @@ for (const theme of ["light", "dark"]) for (const width of [1440, 390]) {
     const editor = page.getByRole("dialog", { name: "Generated content editor" });
     await expect(editor.getByRole("button", { name: "Mark reviewed", exact: true })).toHaveCount(0);
     expect(writes).toHaveLength(0);
-    const approve = editor.getByRole("button", { name: "Approve & schedule", exact: true });
+    const approve = editor.getByRole("button", { name: "Save & publish", exact: true });
     await approve.click();
-    await expect(editor.getByRole("alert")).toContainText("first-person plural");
+    await expect(editor.getByRole("alert")).toContainText("temporarily unavailable");
     await editor.getByRole("alert").scrollIntoViewIfNeeded();
     await expect(editor.getByRole("alert")).toBeVisible();
     await page.screenshot({ path: `test-results/sky-approval-error-${theme}-${width}.png` });
     await expectNoHorizontalOverflow(page, "Sky approval error");
     outcome = "unconfirmed";
     await approve.click();
-    await expect(editor.getByRole("alert")).toContainText("Approval was not confirmed");
+    await expect(editor.getByRole("alert")).toContainText("Publication was not confirmed");
     outcome = "approved";
     await approve.click();
     await expect(editor.getByRole("alert")).toHaveCount(0);
@@ -8807,7 +8808,7 @@ for (const [width, theme] of [[1440, "light"], [1440, "dark"], [390, "light"], [
         await expect(editor.getByLabel("Content key", { exact: true })).toHaveValue(key);
         await expect(editor.locator('[data-sky-field="body_you"]')).toHaveValue(String(original.body_you));
         await expect(editor.locator('[data-sky-field="body_they"]')).toHaveValue(String(original.body_they));
-        await editor.getByRole("button", { name: "Save", exact: true }).click();
+        await editor.getByRole("button", { name: "Save draft", exact: true }).click();
         await expect.poll(() => writes.some(write => write.payload.contentKey === key)).toBe(true);
         await expect(editor.getByText("All changes saved", { exact: true })).toBeVisible();
         await editor.getByRole("button", { name: "Close", exact: true }).click();

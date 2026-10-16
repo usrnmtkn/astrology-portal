@@ -47,8 +47,8 @@ for (const [width, theme] of [[390, 'light'], [1440, 'dark']] as const) {
    await sourceWriting.fill('Fixture full shared Virgo prose.');
    await editor.getByRole('button', {name: 'Save & return', exact: true}).click();
    await expect(writing).toHaveValue('Fixture {{signTitle}}. {{zodiacSeason}}{{zodiacSeasonPolarAxis}}');
-    await page.getByRole('button', {name: 'Dismiss notification', exact: true}).click();
     await rail.getByRole('button', {name: 'Close variables', exact: true}).click();
+    await page.getByRole('button', {name: 'Dismiss notification', exact: true}).click();
    await editor.getByRole('button', {name: 'Save draft', exact: true}).click();
    await expect.poll(async () => (await call({method: 'rows'})).find((row: any) => row.content_key === 'fallback-template/natal.angle-in-sign')?.sections.packageDraft?.body).toBe('Fixture {{signTitle}}. {{zodiacSeason}}{{zodiacSeasonPolarAxis}}');
    expect(errors).toEqual([]);

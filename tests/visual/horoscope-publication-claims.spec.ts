@@ -33,7 +33,7 @@ for(const [width,theme] of [[390,'light'],[1440,'dark']] as const){
    await studio.getByLabel('I have reviewed and approve the exact wording of every saved reading in this edition.').check();
    await studio.getByRole('button',{name:'Publish edition',exact:true}).click();
    await expect(studio.getByRole('status')).toContainText('Published the complete edition.');
-   const saved=(await call({method:'rows'})).find((r:any)=>r.id===row.id);expect(saved.sections).toEqual(row.sections);expect(saved.source_snapshot).toEqual(row.source_snapshot);
+   const saved=(await call({method:'rows'})).find((r:any)=>r.id===row.id);expect(saved.sections).toEqual(row.sections);expect(saved.source_snapshot).toEqual({...row.source_snapshot,review_status:"approved",studioOwnerApproval:expect.objectContaining({action:"publish-owner-content",contentKey:row.content_key,savedVersion:row.updated_at})});
    expect((await call({method:'writer-state'})).calls).toBe(0);
    await page.goto(`/#horoscopes?edition=${row.id}&period=seasonal&sign=cancer`);
    const reading=page.getByRole('article',{name:'Cancer horoscope'});await expect(reading).toContainText(seasonalClaimBodies.cancer);
@@ -48,7 +48,7 @@ for(const [width,theme] of [[390,'light'],[1440,'dark']] as const){
    await studio.getByRole('button',{name:'Publish edition',exact:true}).click();
    await expect(studio.getByRole('status')).toContainText('Published the complete edition.');
    const savedMonth=(await call({method:'rows'})).find((r:any)=>r.id===month.id);
-   expect(savedMonth.sections).toEqual(month.sections);expect(savedMonth.source_snapshot).toEqual(month.source_snapshot);
+   expect(savedMonth.sections).toEqual(month.sections);expect(savedMonth.source_snapshot).toEqual({...month.source_snapshot,review_status:"approved",studioOwnerApproval:expect.objectContaining({action:"publish-owner-content",contentKey:month.content_key,savedVersion:month.updated_at})});
    expect((await call({method:'writer-state'})).calls).toBe(0);
    await page.goto(`/#horoscopes?edition=${month.id}&period=monthly`);
    const overview=page.getByRole('article',{name:'Monthly overview',exact:true});await expect(overview).toContainText(monthlyAspectBody);
@@ -64,7 +64,7 @@ for(const [width,theme] of [[390,'light'],[1440,'dark']] as const){
    await studio.getByRole('button',{name:'Publish edition',exact:true}).click();
    await expect(studio.getByRole('status')).toContainText('Published the complete edition.');
    const savedWeek=(await call({method:'rows'})).find((r:any)=>r.id===week.id);
-   expect(savedWeek.sections).toEqual(week.sections);expect(savedWeek.source_snapshot).toEqual(week.source_snapshot);
+   expect(savedWeek.sections).toEqual(week.sections);expect(savedWeek.source_snapshot).toEqual({...week.source_snapshot,review_status:"approved",studioOwnerApproval:expect.objectContaining({action:"publish-owner-content",contentKey:week.content_key,savedVersion:week.updated_at})});
    expect((await call({method:'writer-state'})).calls).toBe(0);
    for(const [sign,body] of Object.entries(weeklyAspectBodies)){
     await page.goto(`/#horoscopes?edition=${week.id}&period=weekly&sign=${sign}`);
@@ -111,7 +111,7 @@ for(const [width,theme] of [[390,'light'],[1440,'dark']] as const){
    await approval.check();await studio.getByRole('button',{name:'Publish edition',exact:true}).click();
    await expect(studio.getByRole('status')).toContainText('Published the complete edition.');
    const contextSaved=(await call({method:'rows'})).find((r:any)=>r.id===contextRow.id);
-   expect(contextSaved.sections).toEqual(contextRow.sections);expect(contextSaved.source_snapshot).toEqual(contextRow.source_snapshot);
+   expect(contextSaved.sections).toEqual(contextRow.sections);expect(contextSaved.source_snapshot).toEqual({...contextRow.source_snapshot,review_status:"approved",studioOwnerApproval:expect.objectContaining({action:"publish-owner-content",contentKey:contextRow.content_key,savedVersion:contextRow.updated_at})});
    expect((await call({method:'writer-state'})).calls).toBe(0);
    for(const sign of ['aries','taurus','libra','sagittarius']){
     await page.goto(`/#horoscopes?edition=${contextRow.id}&period=weekly&sign=${sign}`);

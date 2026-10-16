@@ -465,7 +465,7 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
    const copy = editor.getByRole("textbox", { name: "Fallback field Seasonal context copy", exact: true });
    await expect(copy).toHaveValue(source.Copy);
    await expect(copy).toBeFocused(); await expect(copy).toBeInViewport();
-   await expect(editor.getByRole("button", { name: "Save & publish", exact: true })).toBeDisabled();
+   await expect(editor.getByRole("button", { name: "Save & publish", exact: true })).toBeEnabled();
    const revision = `Complete ${hemisphere} fixture opening.\n\nComplete ${hemisphere} fixture ending.`;
    await copy.fill(revision);
    await editor.getByRole("button", { name: "Save & publish", exact: true }).click();

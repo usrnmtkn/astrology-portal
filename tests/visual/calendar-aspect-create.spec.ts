@@ -16,7 +16,7 @@ const headingStyle = (element: Element) => {
 };
 
 for (const width of [390, 1440]) for (const theme of ['light', 'dark']) for (const paragraphs of [2, 3]) {
-  test(`Calendar exact saved revision checks before publication ${paragraphs} paragraphs ${theme} ${width}`, async ({ page }) => {
+  test(`Calendar exact saved revision optional checks and owner publication ${paragraphs} paragraphs ${theme} ${width}`, async ({ page }) => {
     test.setTimeout(90000);
     const savedKey = 'sky.aspect.moon.trine.uranus.aquarius.gemini';
     const revised = paragraphs === 2 ? 'Synthetic opening for a document you usually review.\n\nComplete synthetic final sentence.'
@@ -46,13 +46,13 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) for (con
       await page.getByRole('button', { name: 'Open write-up', exact: true }).click();
       const editor = page.locator('.admin-editor-panel');
       const footer = editor.locator('.admin-editor-savebar');
-      const check = footer.getByRole('button', { name: 'Run writing checks', exact: true });
-      const approve = footer.getByRole('button', { name: 'Approve & schedule', exact: true });
+      const check = editor.getByRole('button', { name: 'Run writing checks', exact: true });
+      const approve = footer.getByRole('button', { name: 'Save & publish', exact: true });
       const body = editor.getByRole('textbox', { name: 'Full passage / body', exact: true });
       const readiness = editor.getByRole('region', { name: 'Review and publication readiness', exact: true });
       await expect(readiness).not.toContainText('the card template is exactly two paragraphs');
       await expect(check).toBeEnabled();
-      await expect(approve).toBeDisabled();
+      await expect(approve).toBeEnabled();
       await expect(editor.getByLabel('Status', { exact: true })).toBeDisabled();
       await expect(editor.getByRole('button', { name: 'Mark reviewed', exact: true })).toHaveCount(0);
       await body.fill(revised);
@@ -61,11 +61,11 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) for (con
       await footer.getByRole('button', { name: 'Save', exact: true }).click();
       await expect(editor).toContainText('All changes saved');
       await expect(check).toBeEnabled();
-      await expect(approve).toBeDisabled();
+      await expect(approve).toBeEnabled();
       await editor.locator('summary').filter({ hasText: /^Details/ }).click();
       await editor.getByText('Edit metadata', { exact: true }).click();
       await expect(editor.getByLabel('Status', { exact: true })).toBeDisabled();
-      await expect(editor).toContainText('Save your edits, run writing checks, then Approve & schedule.');
+      await expect(editor).toContainText('Publish your exact wording.');
       await check.click();
       await expect(approve).toBeEnabled();
       await expect(body).toHaveValue(revised);
@@ -80,6 +80,7 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) for (con
       expect(saved.body).toBe(revised);
       expect(saved.summary).toBe('Separate synthetic summary.');
       expect(saved.source_snapshot.skyAspectVoiceLint).toMatchObject({ score: 3, fails: 0 });
+      expect(saved.source_snapshot.studioOwnerApproval.action).toBe('publish-owner-content');
       await expect(body).toHaveValue(revised);
     } finally {
       await page.context().route('**/api/**', route => route.abort());
@@ -180,10 +181,10 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
       await action.getByRole('button', { name: 'Open write-up', exact: true }).click();
       await expect(body).toHaveValue(passage);
       expect(writes).toBe(1);
-      await expect(editor.getByRole('button', { name: 'Approve & schedule', exact: true })).toBeDisabled();
+      await expect(editor.getByRole('button', { name: 'Save & publish', exact: true })).toBeEnabled();
       await editor.getByRole('button', { name: 'Run writing checks', exact: true }).click();
-      await expect(editor.getByRole('button', { name: 'Approve & schedule', exact: true })).toBeEnabled();
-      await editor.getByRole('button', { name: 'Approve & schedule', exact: true }).click();
+      await expect(editor.getByRole('button', { name: 'Save & publish', exact: true })).toBeEnabled();
+      await editor.getByRole('button', { name: 'Save & publish', exact: true }).click();
       await expect.poll(async () => (await store.call({ method: 'rows' })).find((row: any) => row.content_key === key)?.status).toBe('LIVE');
       const live = (await store.call({ method: 'rows' })).find((row: any) => row.content_key === key);
       expect(live.source_snapshot.review_status).toBe('approved');

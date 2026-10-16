@@ -1,3 +1,4 @@
+import {hasExactStudioOwnerApproval} from './studio-owner-publication.js';
 import {createHash,createHmac, timingSafeEqual} from 'node:crypto';
 import {AdminHttpError} from './admin-http.js';
 import {zonedDateTimeToUtc} from '../../apps/web/src/services/timezones.js';
@@ -55,7 +56,7 @@ export async function prepareHoroscopeBrief(url: URL) {
   return {ok:true,brief,signature:signature(brief)};
 }
 /** Read-only preflight and the final write use the same current-copy checks. */
-export function horoscopePublicationIssues(row:Record<string,any>) {
+export function horoscopePublicationIssues(row:Record<string,any>, ownerFinal = hasExactStudioOwnerApproval(row)) {
   const edition=validateHoroscopeEdition(row.sections?.horoscopeEdition);
   const generation=row.source_snapshot?.horoscopeGeneration;
   const issues:{sign:string|null;category:string;detail:string}[]=[];
@@ -64,14 +65,14 @@ export function horoscopePublicationIssues(row:Record<string,any>) {
     if(!passage.headline.trim()||!passage.body.trim()) {
       issues.push({sign:passage.sign,category:'incomplete_reading',detail:'Save a headline and complete reading before publishing.'});continue;
     }
-    if(generation?.candidateHolds?.[passage.sign])issues.push({sign:passage.sign,category:'prose_review',detail:'Edit or reject the saved candidate held for prose review.'});
+    if(!ownerFinal&&generation?.candidateHolds?.[passage.sign])issues.push({sign:passage.sign,category:'prose_review',detail:'Edit or reject the saved candidate held for prose review.'});
     const lint=validateHoroscopeReading(passage,row.facts.horoscopeBrief.brief);
     const receipt=generation?.readings?.[passage.sign];
     const bodyHash=createHash('sha256').update(horoscopeCanonicalJson({headline:passage.headline,body:passage.body})).digest('hex');
     // Recompute current facts without mutating historical receipts. Other
     // recorded checks still apply only to the exact text they reviewed.
     const recorded=receipt?.bodyHash===bodyHash?receipt?.lint?.violations??[]:[];
-    for(const issue of [...lint.violations,...recorded.filter((issue:any)=>issue.category!=='horoscope_fact_boundary'||receipt?.lint?.version===horoscopeValidationVersion)]) {
+    for(const issue of [...lint.violations,...recorded.filter((issue:any)=>issue.category!=='horoscope_fact_boundary'||receipt?.lint?.version===horoscopeValidationVersion)].filter((issue:any)=>!ownerFinal||issue.category==='horoscope_fact_boundary')) {
       if(!issues.some(existing=>existing.sign===passage.sign&&existing.detail===issue.detail))issues.push({sign:passage.sign,category:issue.category,detail:issue.detail});
     }
   }
@@ -80,18 +81,19 @@ export function horoscopePublicationIssues(row:Record<string,any>) {
 export function assertHoroscopeRow(row: Record<string,any>, {enforcePunctuation=false,previous=null}:{enforcePunctuation?:boolean;previous?:Record<string,any>|null}={}) {
   if (!String(row.content_key ?? '').startsWith(HOROSCOPE_EDITION_PREFIX)) return;
   try {
+    const ownerFinal = hasExactStudioOwnerApproval(row);
     const edition = validateHoroscopeEdition(row.sections?.horoscopeEdition,row.status === 'LIVE');
     for(const passage of edition.passages){
       const held=row.source_snapshot?.horoscopeGeneration?.candidateHolds?.[passage.sign];
-      if(held&&(row.status==='LIVE'||passage.headline===held.candidate.headline&&passage.body===held.candidate.body))throw new Error(`${passage.sign}: This generated reading is held for prose review. Edit or reject its saved candidate before continuing.`);
+      if(!ownerFinal&&held&&(row.status==='LIVE'||passage.headline===held.candidate.headline&&passage.body===held.candidate.body))throw new Error(`${passage.sign}: This generated reading is held for prose review. Edit or reject its saved candidate before continuing.`);
     }
     // Keep paid drafts editable and let the remaining signs finish. Publication
     // always checks current text, including imports with no generation receipt.
-    if(row.status==='LIVE')for(const passage of edition.passages){
+    if(row.status==='LIVE'&&!ownerFinal)for(const passage of edition.passages){
       const issue=horoscopeVocabularyFindings(passage,edition.window.period)[0];
       if(issue)throw new Error(`${passage.sign}: ${issue.detail} Edit this reading before publishing.`);
     }
-    if(enforcePunctuation || row.status==='LIVE')for(const passage of edition.passages) {
+    if(!ownerFinal&&(enforcePunctuation || row.status==='LIVE'))for(const passage of edition.passages) {
       const old=previous?.sections?.horoscopeEdition?.passages?.find((p:any)=>p.sign===passage.sign);
       if(row.status!=='LIVE'&&old?.headline===passage.headline&&old?.body===passage.body)continue;
       const issue=horoscopePunctuationFindings(passage)[0];
