@@ -14,6 +14,8 @@ The short version:
 
 ## Read these before changing content
 
+- [Connection transit detail](./connection-transits.md): separate personal transit,
+  exact activation and editable bridge sources, without borrowing bond openings.
 - [Reader-facing content contract](../../CONTENT-CONTRACT.md): the governing
   rules for complete fields, author-final copy, and refusal behavior.
 - [Content architecture](./ARCHITECTURE.md): ownership, runtime flow, surface

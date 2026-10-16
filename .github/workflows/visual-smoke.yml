@@ -204,6 +204,28 @@ jobs:
           path: test-results/
           if-no-files-found: ignore
 
+  connection-transit-sources:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build -w @tldr/astro-knowledge
+      - run: npx playwright install --with-deps chromium
+      - name: Verify independent connection sources and Studio draft editing
+        run: npx playwright test -c playwright.connection-transit.config.ts
+      - name: Upload connection transit artifacts
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: connection-transit-results
+          path: test-results/
+          if-no-files-found: ignore
+
   sky-placement-studio:
     needs: scope
     if: needs.scope.outputs.sky == 'true'

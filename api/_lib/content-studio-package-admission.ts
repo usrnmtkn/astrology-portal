@@ -4,6 +4,7 @@ import { isCalendarMoonIngressContentKey } from "./calendar-moon-ingress-sources
 import coreManifest from "../../apps/web/src/content/fallbackArchitectureV3/bundled-core-manifest-v3.json" with { type: "json" };
 import skyManifest from "../../apps/web/src/content/fallbackArchitectureV3/bundled-sky-placement-manifest-v3.json" with { type: "json" };
 import { isFallbackDashboardRecordAllowed } from "../../apps/web/src/content/fallbackArchitectureV3/dashboardExtensions.js";
+import { isConnectionSourceKey, connectionSourceErrors, CONNECTION_ACTIVATION_PREFIX } from "../../apps/web/src/content/connectionTransit.js";
 
 const keys = (manifest: { keys: string[] }) => new Set(manifest.keys.map(key => key.slice(key.indexOf(":") + 1)));
 const coreKeys = keys(coreManifest);
@@ -22,6 +23,10 @@ export function packagePublicationAdmissionIssue(row: Record<string, any>): stri
   if (!isPackage) return null;
   const key = String(row.content_key ?? "");
   if (record.contentKey && record.contentKey !== key) return "The source and publication have different content keys. Reopen the correct source before publishing.";
+  if (isConnectionSourceKey(key)) {
+    const body = key.startsWith(CONNECTION_ACTIVATION_PREFIX) ? record.body_you : record.body;
+    return connectionSourceErrors(key, typeof body === "string" ? body : "").join(" ") || null;
+  }
   if (key.startsWith("calendar-passage/")) {
     if (!calendarPassageIdentity(key)) return "Invalid Calendar passage identity.";
     return calendarPassageErrors(String(row.body ?? "")).join(" ") || null;
