@@ -1251,6 +1251,8 @@
 }
 
 .friends-person-menu button {
+  min-width: 0;
+  overflow-wrap: anywhere;
   min-height: 36px;
   padding: 0 calc(var(--space-2) + var(--space-1) / 2);
   border: 0;
