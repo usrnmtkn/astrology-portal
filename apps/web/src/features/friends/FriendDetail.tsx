@@ -1,4 +1,4 @@
-import { useViewportMenu } from "../../hooks/useViewportMenu";
+import { ViewportMenu } from "../../components/ViewportMenu";
 import { Check, ChevronDown, MoreVertical } from "lucide-react";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { ProfileAvatar } from "../../components/ProfileAvatar";
@@ -65,7 +65,6 @@ export function FriendDetail({
 }: FriendDetailProps) {
   const [moreOpen, setMoreOpen] = useState(false);
   const moreRef = useRef<HTMLDivElement>(null);
-  const viewportMenuRef = useViewportMenu();
   const primaryTabs = tabs.filter(({ value }) => (
     value === "compatibility" || value === "transits" || value === "natal"
   ));
@@ -180,11 +179,9 @@ export function FriendDetail({
                 </button>
 
                 {moreOpen ? (
-                  <div
-                    ref={viewportMenuRef}
+                  <ViewportMenu
                     className="friend-view-more-menu"
                     id="friend-view-more-menu"
-                    role="menu"
                     aria-label="More chart profile sections"
                   >
                     {overflowTabs.map((tab) => {
@@ -209,7 +206,7 @@ export function FriendDetail({
                         </button>
                       );
                     })}
-                  </div>
+                  </ViewportMenu>
                 ) : null}
               </div>
             ) : null}

@@ -555,9 +555,6 @@
   box-shadow: var(--card-shadow);
 }
 
-.manual-chart-row--menu-open {
-  z-index: calc(var(--z-popover) + 1);
-}
 
 .manual-chart-row:first-child {
   border-radius: var(--card-radius);
@@ -778,13 +775,6 @@
   border-radius: var(--overlay-radius);
   background: var(--overlay-bg);
   box-shadow: var(--overlay-shadow);
-}
-
-.manual-chart-overflow-menu--portal {
-  position: fixed;
-  top: auto;
-  right: auto;
-  z-index: var(--z-modal);
 }
 
 .manual-chart-overflow-menu button {

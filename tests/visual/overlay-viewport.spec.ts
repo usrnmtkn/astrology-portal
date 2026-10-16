@@ -35,7 +35,7 @@ async function prepare(page: Page, theme: string, member: boolean, chart = false
     const table = new URL(route.request().url()).pathname.split('/').pop();
     if (table === 'list_social_friends') return route.fulfill({ json: [{
       friendship_id: 'fixture-friendship', user_id: '33333333-3333-4333-8333-333333333333',
-      handle: 'fixture-friend', display_name: 'Circle Friend', natal_chart: null,
+      handle: 'fixture_handle_123456789', display_name: 'Circle Friend', natal_chart: null,
       accepted_at: '2026-10-15T00:00:00Z', viewer_shares_chart: true, friend_shares_chart: true
     }] });
     return route.fulfill({ json: reports && table === 'user_generated_interpretations' ? [{
