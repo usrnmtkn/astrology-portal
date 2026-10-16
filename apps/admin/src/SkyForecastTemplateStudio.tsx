@@ -15,6 +15,12 @@ export default function SkyForecastTemplateStudio({ period, rows, busy, onOpen, 
 } & CalendarTemplatePreviewProps) {
   const template = skyForecastTemplates[period];
   const saved = rows.find(row => row.content_key === template.contentKey);
+  if (period === "monthly-sky") return <section className="admin-daily-glance-studio" aria-label={template.title}>
+    <h3>Publish the monthly reading</h3>
+    <p>Write and publish Monthly editions in Horoscopes. Readers receive the complete edition there; Calendar Month shows its authored TLDR and a link to the full reading.</p>
+    <a className="admin-source-action" href="#horoscopes">Open Horoscopes to write and publish Monthly</a>
+    <p className="admin-field-hint">Previously saved Calendar monthly passages are retained in Content Library. They do not control the monthly reader.</p>
+  </section>;
   return <section className="admin-daily-glance-studio" aria-label={template.title}>
     <Suspense fallback={<PageLoading message="Loading assembled passage editor…" />}><CalendarPassageEditor key={period} period={period} loadRows={loadRows} secret={secret} onEditSource={onEditSource} /></Suspense>
     <details><summary>Reference templates and source previews</summary>
