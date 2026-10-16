@@ -6953,18 +6953,19 @@ test('Aspect Patterns authenticates reads and previews and preserves newer draft
   let releasePreview!: () => void;
   const delayedPreview = new Promise<void>(resolve => { releasePreview = resolve; });
   const id = 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa';
+  const jsonb = (value:any):any => Array.isArray(value) ? value.map(jsonb) : value && typeof value==='object' ? Object.fromEntries(Object.entries(value).sort(([a],[b])=>a.localeCompare(b)).map(([key,item])=>[key,jsonb(item)])) : value;
   globalThis.fetch = async (input, init = {}) => {
     const url = new URL(String(input));
     expect(url.origin).toBe(env.SUPABASE_URL);
     if (init.method === 'POST') {
       if (row) return Response.json({ code: '23505' }, { status: 409 });
-      row = { ...JSON.parse(String(init.body)), id }; saves++; return Response.json([row]);
+      row = { ...JSON.parse(String(init.body)), id }; saves++; return Response.json([jsonb(row)]);
     }
     if (init.method === 'PATCH') {
       if (!row || url.searchParams.get('updated_at') !== `eq.${row.updated_at}`) return Response.json([]);
-      row = { ...row, ...JSON.parse(String(init.body)) }; saves++; return Response.json([row]);
+      row = { ...row, ...JSON.parse(String(init.body)) }; saves++; return Response.json([jsonb(row)]);
     }
-    return Response.json(row ? [row] : []);
+    return Response.json(row ? [jsonb(row)] : []);
   };
   try {
     await seedAdminApi(page, { expectedSecret: 'qa-secret' });
@@ -7008,12 +7009,19 @@ test('Aspect Patterns authenticates reads and previews and preserves newer draft
     await expect.poll(() => saves).toBe(2);
     await expect(editor.getByRole('button', { name: 'Save draft', exact: true })).toBeEnabled();
     expect(row!.source_snapshot.record.content.overview).toBe(`${copy}Second edit.`);
+    await expect(page.getByRole('alert')).toHaveCount(0);
+    await editor.getByRole('button',{name:'Publish approved',exact:true}).click();
+    await expect.poll(()=>saves).toBe(3);
+    await expect(editor.getByRole('button',{name:'Publish approved',exact:true})).toBeEnabled();
+    await expect(page.getByRole('alert')).toHaveCount(0);
+    expect(row!.status).toBe('LIVE');
+    expect(row!.source_snapshot.record.content.overview).toBe(`${copy}Second edit.`);
     row!.updated_at = '2099-01-01T00:00:00.123456Z';
     row!.source_snapshot.record.content.overview = 'QA newer draft from another editor.';
     await overview.fill('QA stale browser edit.');
     await editor.getByRole('button', { name: 'Save draft', exact: true }).click();
     await expect(page.getByRole('alert')).toContainText('changed after it was opened');
-    expect(saves).toBe(2);
+    expect(saves).toBe(3);
     expect(row!.source_snapshot.record.content.overview).toBe('QA newer draft from another editor.');
     await expect(overview).toHaveValue('QA stale browser edit.');
     await page.getByRole('button', { name: 'Refresh', exact: true }).click();
@@ -7021,7 +7029,7 @@ test('Aspect Patterns authenticates reads and previews and preserves newer draft
     omitPatternReceipt = true;
     await overview.fill('QA writing retained after an incomplete acknowledgement.');
     await editor.getByRole('button', { name: 'Save draft', exact: true }).click();
-    await expect.poll(() => saves).toBe(3);
+    await expect.poll(() => saves).toBe(4);
     await expect(page.getByRole('alert')).toContainText('did not confirm');
     await expect(overview).toHaveValue('QA writing retained after an incomplete acknowledgement.');
     await expect(page.getByText(/saved as Draft\./)).toHaveCount(0);

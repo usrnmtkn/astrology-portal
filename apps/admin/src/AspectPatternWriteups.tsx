@@ -6,6 +6,7 @@ import { metricGrid } from "./studio-ds/recipes";
 import { AlertTriangle, BookOpenText, Check, Columns2, RefreshCw, Save, Search, X } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { requestStudioJson } from "./generatedContentClient";
+import { sameAspectPatternContent } from "./aspectPatternSaveReceipt";
 
 type AspectPatternWriteupKind = "natal" | "activation";
 type AuthoredStatus = "draft" | "reviewed" | "approved" | "deprecated";
@@ -302,10 +303,11 @@ export function AspectPatternWriteups({ initialKind = "natal", secret = "" }: { 
         })
       }) as { dashboard?: AspectPatternWriteupResponse };
       const confirmed = json.dashboard?.rows?.find(row => row.key === selectedRow.key);
-      const submittedContent = { ...record.content, sections: record.content.sections.map(section => ({ ...section, conditions: section.conditions ?? [] })) };
+      const submittedContent = { eyebrow: record.content.eyebrow ?? "", headline: record.content.headline, overview: record.content.overview,
+        sections: record.content.sections.map(section => ({ id: section.id, template: section.template, required: section.required, conditions: section.conditions ?? [] })) };
       if (!confirmed?.generatedContentId || !confirmed.lastUpdated
         || confirmed.lastUpdated === selectedRow.lastUpdated || confirmed.status !== record.status
-        || JSON.stringify(confirmed.record.content) !== JSON.stringify(submittedContent)) {
+        || !sameAspectPatternContent(confirmed.record.content, submittedContent)) {
         throw new Error("Storage did not confirm your exact write-up. Your edits are still here. Reload before retrying.");
       }
       setResponse(json.dashboard!);
