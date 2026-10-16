@@ -1503,6 +1503,7 @@ function setPackageSectionField(draft: AdminDraft, key: string, value: string): 
     body: key === "body_you" ? value : draft.body,
     sections: {
       ...sections,
+      ...(copySection === "packageRecord" && ["body_you", "body_they"].includes(key) ? { [key]: value } : {}),
       [copySection]: {
         ...proposal,
         [key]: value

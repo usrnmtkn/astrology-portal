@@ -25,6 +25,33 @@ const original = {
     body_they: 'Through {{untilDate}}, Mercury {{aspectWord}} their Venus. Original Friend passage.' } }
 };
 
+for (const contentKey of [key,`${key}/aquarius/12/11`,'authored/transit-return/chiron']) test(`successive reader edits replace stale audience mirrors: ${contentKey}`, async () => {
+  const seed={...original,content_key:contentKey,sections:{...original.sections,
+    body_you:original.body,body_they:original.sections.packageRecord.body_they,
+    packageRecord:{...original.sections.packageRecord,contentKey,
+      ...(contentKey.includes('/transit-return/')?{body:original.body}:{})}}};
+  const store=await createApiStore([seed]);
+  try {
+    let row=seed;
+    for(const revision of ['First','Second']){
+      const you=`${revision} complete You paragraph.\n\nExact final sentence.`,they=`${revision} complete Friend paragraph.\n\nExact final sentence.`;
+      const published=await store.invoke('PATCH',{id:row.id,expectedUpdatedAt:row.updated_at,reviewStatus:'approved',body:you,
+        sections:{...row.sections,packageRecord:{...row.sections.packageRecord,body_you:you,body_they:they,
+          ...(contentKey.includes('/transit-return/')?{body:you}:{})}}});
+      assert.equal(published.status,200,JSON.stringify(published));
+      row=published.payload.rows[0];
+      assert.equal(row.status,'LIVE');
+      assert.equal(row.body,you);
+      for(const field of ['body_you','body_they'])assert.equal(row.sections[field],row.sections.packageRecord[field]);
+      assert.equal(row.sections.packageRecord.body_you,you);
+      assert.equal(row.sections.packageRecord.body_they,they);
+      const reader=await store.invoke('POST',{keys:[contentKey]},'/api/content-reader');
+      assert.equal(reader.payload.rows[0].sections.packageRecord.body_you,you);
+      assert.equal(reader.payload.rows[0].sections.packageRecord.body_they,they);
+    }
+  } finally {await store.close();}
+});
+
 test('normal CSV edits do not retain an alternate; explicit retention validates its scope', () => {
   const record = csvRecordForRow(original);
   assert.equal(record.keep_current_as_alternate, 'no');
