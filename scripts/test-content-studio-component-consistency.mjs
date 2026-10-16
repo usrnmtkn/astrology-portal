@@ -127,7 +127,7 @@ assert.deepEqual(
 );
 assert.equal((status.match(/Not live/gu) ?? []).length, 2, "ContentLiveStatus may contain Not live only in its transport type/validator, never presentation.");
 assert.equal((aspectPatterns.match(/Not live/gu) ?? []).length, 1, "Aspect Patterns has one legacy label and StudioButton must normalize it to Inactive.");
-assert.equal((dashboard.match(/Not live/gu) ?? []).length, 8, "The legacy dashboard occurrence count is pinned; migrate existing call sites instead of adding more.");
+assert.equal((dashboard.match(/Not live/gu) ?? []).length, 7, "The legacy dashboard occurrence count is pinned; migrate existing call sites instead of adding more.");
 assert.equal((controls.match(/Not live/gu) ?? []).length, 2, "StudioControls may mention Not live only in the shared normalization expression.");
 
 assert.match(css, /\.studio-icon-button/u);

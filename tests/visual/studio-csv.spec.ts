@@ -216,7 +216,7 @@ for (const failure of ['validation', 'race', 'lost-response']) {
             const concurrent = await store.call({ method: 'PATCH', body: { id: draft.id, expectedUpdatedAt: draft.updated_at, body: 'Synthetic concurrent revision.' } });
             expect(concurrent.status).toBe(200);
           }
-          if (failure === 'lost-response' && body.status === 'LIVE') {
+          if (failure === 'lost-response' && body.ownerAction === 'publish-owner-content') {
             expect(result.status).toBe(200);
             return { status: 504, payload: { ok: false, error: 'Synthetic response loss after commit.' } };
           }
@@ -286,4 +286,34 @@ test('CSV publishes a separately saved package revision and reloads the exact li
     const reopened = readStudioCsv(await readFile((await (await exported).path())!, 'utf8'));
     expect(reopened[0].Body).toBe(records[0].Body); expect(reopened[0].publish).toBe('no');
   } finally { store.close(); }
+});
+
+
+test('CSV author publication accepts exact Sky wording without a model verdict',async({page,context})=>{
+  const {baseline}=await import('../helpers/sky-review-workflow-api.mjs');
+  const row={...baseline,id:'a0000000-0000-4000-8000-000000000099',summary:'',sections:{},body:'You always remember the message you left unanswered.\n\nThe complete author ending remains.'};
+  const store=await studioApiStore([row]);
+  try {
+    await context.route('**/*',route=>{
+      const request=route.request();
+      return new URL(request.url()).pathname.startsWith('/api/')||!['GET','HEAD'].includes(request.method())?route.abort():route.continue();
+    });
+    await context.addInitScript(()=>localStorage.setItem('tldrastro:contentAdminSecret','calendar-api-fixture'));
+    await routeStudioInventoryApi(page,{actualDocumentRoute:true,call:store.call});
+    await page.goto('/admin/content#exact-content');
+    await page.getByRole('button',{name:'Export CSV',exact:true}).click();
+    const panel=page.getByRole('region',{name:'CSV offline editing'});
+    const download=page.waitForEvent('download');
+    await panel.getByRole('button',{name:'Download CSV',exact:true}).click();
+    const records=readStudioCsv(await readFile((await(await download).path())!,'utf8'));
+    records[0].publish='yes';
+    await page.getByLabel('Import Content Studio CSV',{exact:true}).setInputFiles({name:'owner.csv',mimeType:'text/csv',buffer:Buffer.from(writeStudioCsv(records))});
+    await panel.getByRole('button',{name:'Save & publish',exact:true}).click();
+    await expect(panel).toContainText('0 edits saved; 1 row published.');
+    const saved=(await store.call({method:'rows'}))[0];
+    expect(saved.status).toBe('LIVE');expect(saved.body).toBe(row.body);
+    expect(saved.source_snapshot.studioOwnerApproval.action).toBe('publish-owner-content');
+    const reader=await store.call({method:'POST',url:'/api/content-reader',body:{keys:[row.content_key]}});
+    expect(reader.payload.rows[0].body).toBe(row.body);
+  } finally {store.close();}
 });

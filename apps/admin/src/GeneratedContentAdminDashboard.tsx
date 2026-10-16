@@ -3120,6 +3120,8 @@ const skyWriteupSearchText = memoByObject(skyWriteupSearchTextUncached);
 const fallbackHookVisibleSearchText = memoByObject(fallbackHookVisibleSearchTextUncached);
 const aspectContextForRow = memoByObject(aspectContextForRowUncached);
 
+const ownerPublishHint = "Publish your exact wording.";
+
 export function GeneratedContentAdminDashboard() {
   const [studioTheme, setStudioTheme] = useState(getStudioTheme);
   const [studioPalette, setStudioPalette] = useState(getStudioPalette);
@@ -9781,7 +9783,7 @@ export function GeneratedContentAdminDashboard() {
         ? await submitSavedPublication(row, 'approve-package-revision')
         : await adminJsonRequest<StudioPublicationResult>('/api/admin/generated-content', secret, {
           method: 'PATCH', body: JSON.stringify({ id: row.id, expectedUpdatedAt: row.updated_at,
-            ...(isPackage ? { reviewStatus: 'approved' } : { status: 'LIVE', lane: 'serving', reviewState: null }) })
+            ...(isPackage ? { reviewStatus: 'approved' } : { ownerAction: 'publish-owner-content' }) })
         });
       const saved = result.ok ? result.rows?.[0] : null;
       if (!saved || saved.content_key !== row.content_key || saved.status !== 'LIVE' || saved.lane !== 'serving'
@@ -12105,7 +12107,7 @@ export function GeneratedContentAdminDashboard() {
               {currentDraft.contentKey.startsWith("cms/sky-daily-summary/sun/") && <div role="group" aria-label="Insert Sun passage variable">
                 {cmsAllowedSlots.map(slot => <StudioButton key={slot} type="button" disabled={isLoading} onMouseDown={event => event.preventDefault()} onClick={() => insertDraftToken(`{${slot}}`)}>Insert {slot === "sunPlacement" ? "Sun placement" : "ruler name"}</StudioButton>)}
               </div>}
-              <p>Save & publish approves your wording.</p>
+              <p>{ownerPublishHint}</p>
               <p><strong>Reader status:</strong> <ContentLiveStatusBadge row={editorStatusRow} unsaved={!isAstro101Draft && draftHasUnsavedChanges && !(!currentDraft.id && matchesBuiltinSummary)} /></p>
               {cmsTemplateValidation.errors.length > 0 ? (
                 <div role="alert" aria-label="CMS template errors">
@@ -12445,15 +12447,15 @@ export function GeneratedContentAdminDashboard() {
                       {isPackageDraft
                         ? packageHasProposal
                           ? packageRoleCanServeExactCopy
-                            ? "Save & publish approves your wording."
+                            ? ownerPublishHint
                             : "This saved revision is source material and cannot become exact reader copy."
                           : packageWillPublishOnSave
                           ? "This copy is approved. Save to publish it to readers."
                           : currentDraft.status === "LIVE"
                             ? "This approved copy is live for readers."
-                            : "Save & publish approves your wording."
+                            : ownerPublishHint
                         : isGovernedSkyDraft
-                          ? currentDraft.blockType === "sky_aspect" ? "Save & publish approves your wording." : "Save, check, then Approve for package."
+                          ? currentDraft.blockType === "sky_aspect" ? ownerPublishHint : "Save, check, then Approve for package."
                           : "This is the editorial workflow stage. The Status badge checks the copy readers can receive."}
                     </small>
                   </label>

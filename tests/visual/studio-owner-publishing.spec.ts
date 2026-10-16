@@ -36,8 +36,9 @@ for (const width of [390,1440]) for (const theme of ['light','dark']) test(`Owne
     }});
     for(const row of rows) {
       await page.goto('/admin/content#exact-content'+(row===rows[0]?'?from=unresolved&q='+encodeURIComponent(row.content_key):''));
-      await page.getByRole('row').filter({hasText:row.content_key}).getByRole('button',{name:'Edit',exact:true}).click();
       const editor=page.getByRole('dialog',{name:'Generated content editor'});
+      if(row===rows[0]) await expect(editor).toBeVisible();
+      else await page.getByRole('row').filter({hasText:row.content_key}).getByRole('button',{name:'Edit',exact:true}).click();
       const action=editor.locator('.admin-editor-savebar').getByRole('button',{name:/^(Save & publish|Approve & publish)$/});
       await expect(action).toBeEnabled();
       const box=await action.boundingBox();expect(box!.y).toBeGreaterThanOrEqual(0);expect(box!.y+box!.height).toBeLessThanOrEqual(1000);

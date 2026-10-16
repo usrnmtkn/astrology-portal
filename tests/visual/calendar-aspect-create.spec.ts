@@ -65,7 +65,7 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) for (con
       await editor.locator('summary').filter({ hasText: /^Details/ }).click();
       await editor.getByText('Edit metadata', { exact: true }).click();
       await expect(editor.getByLabel('Status', { exact: true })).toBeDisabled();
-      await expect(editor).toContainText('Save & publish approves your wording.');
+      await expect(editor).toContainText('Publish your exact wording.');
       await check.click();
       await expect(approve).toBeEnabled();
       await expect(body).toHaveValue(revised);
