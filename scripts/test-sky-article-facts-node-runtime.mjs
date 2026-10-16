@@ -17,6 +17,8 @@ try {
   const facts=skyArticleEditionFactsFromSnapshot({generatedAt:'2031-02-15T12:00:00Z',location:{timeZone:'UTC'},positions:[{planet:'Mercury',sign:'Aquarius',motion:'direct',transitStart:'2031-02-01T12:00:00Z',transitEnd:'2031-03-01T12:00:00Z'}]},'mercury','ingress-essay-v2');
   assert.equal(facts.planet,'mercury');assert.equal(facts.sign,'aquarius');
   const config=JSON.parse(readFileSync('vercel.json','utf8'));
-  assert(globSync(config.functions['api/admin/sky-article-facts.ts'].includeFiles).some(path=>path.endsWith('.wasm')),'Calculated article facts need the deployed Swiss runtime assets.');
+  for(const endpoint of ['api/admin/sky-article-facts.ts','api/admin/sky-article-template-slots.ts']){
+    assert(globSync(config.functions[endpoint].includeFiles).some(path=>path.endsWith('.wasm')),`${endpoint} needs the deployed Swiss runtime assets.`);
+  }
   console.log('Sky article facts plain Node deployment import and Swiss asset contract passed.');
 } finally {rmSync(emitted,{recursive:true,force:true});}

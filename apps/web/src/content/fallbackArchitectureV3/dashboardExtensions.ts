@@ -128,6 +128,11 @@ export function isDynamicLunationMacroRecord(record: FallbackDashboardExtensionR
     && (phase === "new-moon" || phase === "full-moon") && zodiacSigns.has(sign) && extra === undefined;
 }
 
+export function isDynamicBondEffectExactRecord(record: FallbackDashboardExtensionRecord) {
+  const match = /^fallback-hook\/bond-effect-(conjunction|opposition|square|trine|sextile)\/([^/]+)$/u.exec(record.contentKey);
+  return Boolean(match && natalBodies.has(match[2]) && record.content_role === "fallback_hook");
+}
+
 export function isFallbackDashboardRecordAllowed(
   record: FallbackDashboardExtensionRecord,
   currentPackageKeys: ReadonlySet<string>
@@ -141,5 +146,6 @@ export function isFallbackDashboardRecordAllowed(
     || isDynamicSynastryExactRecord(record)
     || isDynamicSkyPlacementArticleRecord(record)
     || isDynamicLunationMacroRecord(record)
+    || isDynamicBondEffectExactRecord(record)
     || (isCanonicalSkyReaderRecord(record) && record.studio_version_status === "approved-serving-revision");
 }

@@ -6059,6 +6059,37 @@ export function GeneratedContentAdminDashboard() {
         return;
       }
       if (!row) {
+        if (contentKey.startsWith("fallback-hook/synastry-pair/")) {
+          const [first,second,aspect,extra] = contentKey.slice("fallback-hook/synastry-pair/".length).split("/");
+          const selection = {first,second,aspect};
+          if (!extra && compatibilityAspectKey(selection) === contentKey) {
+            const reverseKey = compatibilityAspectKey({first:second,second:first,aspect})!;
+            const reverse = reverseKey === contentKey ? null : await readStudioContentDocument(reverseKey,secret);
+            if (requestId !== sourceOpenRequestRef.current || window.location.hash !== originatingHash) return;
+            if (reverse?.rows.some(candidate=>candidate.content_key!==reverseKey)) throw new Error("The reverse-order source could not be verified. Reload before creating this activation.");
+            const savedReverse = reverse?.rows.find(candidate=>candidate.content_key===reverseKey);
+            if (savedReverse) { await openRow(savedReverse as AdminGeneratedContentRow,null,fieldPath === "body_you" ? "body_they" : "body_you"); return; }
+            if (!confirmSkyEditorNavigation()) return;
+            setSelectedRowId(null); setEditorSourceRow(null); setCompositionEditorContext(null);
+            rememberSavedDraft(compatibilityAspectSourceDraft(selection));
+            setMessage("Write both directions of this activation. Save keeps a draft; Save & publish makes the complete pair available.");
+            scrollEditorToTop(fieldPath);
+            return;
+          }
+        }
+        if (contentKey.startsWith("fallback-hook/bond-effect-")) {
+          const {bondEffectExactSourceDraft} = await import("./bondEffectExactDraft");
+          const next = bondEffectExactSourceDraft(contentKey);
+          if (requestId !== sourceOpenRequestRef.current || window.location.hash !== originatingHash) return;
+          if (next) {
+            if (!confirmSkyEditorNavigation()) return;
+            setSelectedRowId(null); setEditorSourceRow(null); setCompositionEditorContext(null);
+            rememberSavedDraft(next);
+            setMessage("Write both directions of this opening. Save keeps a draft; Save & publish makes it available for this exact contact.");
+            scrollEditorToTop(fieldPath);
+            return;
+          }
+        }
         const current = transitNatalSelectionRef.current;
         const contact = transitNatalContactFromFields(current.planet, current.aspect, current.natalPoint);
         const assumedFamily = contact ? transitNatalSharedFallbackKey(contact) : null;
@@ -10919,7 +10950,8 @@ export function GeneratedContentAdminDashboard() {
       && Boolean(astro101SlugFromFacts(currentDraft.facts) || astro101Slugify(currentDraft.headline));
     const publishReady = (isAstro101Draft ? astro101PublishReady : Boolean(currentDraft.body.trim())) && (!isNewDraft || isCmsSurfaceDraft);
     const directReaderDraft = isCmsSurfaceDraft || isManualCalendarEventDraft || isStandaloneArticleDraft;
-    const packageCopyMissing = compatibilityAspectMissingCopy || natalAspectMissingCopy || transitNatalMissingCopy;
+    const packageCopyMissing = compatibilityAspectMissingCopy || natalAspectMissingCopy || transitNatalMissingCopy
+      || (isBondEffectDraft && !["body_you", "body_they"].every(field => packageFieldString(currentDraft, field).trim()));
     const reviewComplete = currentDraft.status === "REVIEWED" && !draftHasUnsavedChanges;
     const compatibilityNewDraftReady = !isNewDraft || !isCompatibilityWorkspaceDraft || Boolean(
       currentDraft.headline.trim()

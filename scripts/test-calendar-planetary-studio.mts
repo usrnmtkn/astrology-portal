@@ -84,7 +84,7 @@ try {
   }
   const journalKey='authored/lunar-journal/season/aries/20250320t090100z';
   const original='Synthetic original season paragraph.';
-  const journalCreate=await store.invoke('POST',{contentKey:journalKey,surface:'sky',mode:'in_depth',status:'DRAFT',lane:'reference',blockType:'fallback_hook',
+  const journalCreate=await store.invoke('POST',{contentKey:journalKey,surface:'sky',mode:'in_depth',eventType:'fallback-hook',status:'DRAFT',lane:'reference',blockType:'fallback_hook',
     headline:'Synthetic season',body:original,provider:'tldrastro-fallback-architecture-v3',facts:{fallbackArchitectureV3:true},
     sourceSnapshot:{sourcePackage:'tldrastro-fallback-architecture-v3',review_status:'needs_review'},
     sections:{packageRecord:{contentKey:journalKey,content_role:'full_copy',body:original,review_status:'needs_review',blocks:[{type:'para',text:original}]}}});

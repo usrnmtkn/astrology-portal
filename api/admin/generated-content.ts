@@ -1370,6 +1370,11 @@ function assertReaderEligiblePublication(row: Record<string, any>) {
   validateAspectRetrogradeCopy(row.content_key, isRecord(aspectSections.packageRecord) ? aspectSections.packageRecord : aspectSections);
   if ((row.lane ?? "serving") !== "serving") throw new GeneratedContentRequestError("Published content must use the serving lane.", 409);
   if (row.review_state) throw new GeneratedContentRequestError("Published content cannot retain a review hold.", 409);
+  const bondRecord=isRecord(aspectSections.packageRecord)?aspectSections.packageRecord:{};
+  if (String(row.content_key??"").startsWith("fallback-hook/bond-effect-")
+    && !["body_you","body_they"].every(field=>typeof bondRecord[field]==="string" && bondRecord[field].trim())) {
+    throw new GeneratedContentRequestError("Write both directions of the Between you two opening before publishing. You can save an unfinished draft.",400);
+  }
   const admissionIssue = libs().packagePublicationAdmissionIssue(row);
   if (admissionIssue) throw new GeneratedContentRequestError(admissionIssue, 409);
   const educationIssue = libs().astro101PublicationIssue(row);

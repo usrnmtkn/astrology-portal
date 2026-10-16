@@ -105,7 +105,7 @@
     },
     "api/admin/sky-article-template-slots.ts": {
       "maxDuration": 300,
-      "includeFiles": "{api/_lib,artifacts,config,src/astro-writing,packages/astro-knowledge/{generated,scripts,data,config,reference,voice,sources/authored/owner-author-book},apps/web/{public/content,src/content},tldr-astro-phrasebank,data/writing}/**/*.{*js,json,jsonl,md,ts}"
+      "includeFiles": "{node_modules/swisseph-wasm/wasm/*,{api/_lib,artifacts,config,src/*-writing,packages/*/{generated,scripts,data,config,reference,voice,sources/authored/owner*},apps/web/{public,src}/content,tldr-astro-phrasebank,data/writing}/**/*.{*js,json*,md,ts}}"
     },
     "api/admin/personal-transit-writing.ts": {
       "includeFiles": "{api/_lib,artifacts,config,src/astro-writing,packages/astro-knowledge/{generated,scripts,data,config,reference,voice,sources/authored/owner-author-book},apps/web/{public/content,src/content},tldr-astro-phrasebank,data/writing}/**/*.{*js,json,jsonl,md,ts}"
