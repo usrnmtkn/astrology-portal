@@ -239,10 +239,15 @@ export default defineConfig(({ mode }) => {
           manualChunks(id) {
             // These pure astrology helpers already load at startup. Share their
             // chunk; the calculation engine retains its separate chunk below.
-            if (id.endsWith("/src/astrologyConfig.ts") || /\/services\/(?:astrologyDisplay|astrologyFacts|natalAspectFacts)\.ts$/u.test(id)) return "astrology-display";
+            if (id.endsWith("/src/astrologyConfig.ts") || id.endsWith("/content/skyMotionLabels.ts")
+              || /\/services\/(?:astrologyDisplay|astrologyFacts|natalAspectFacts|verifiedSkyCache)\.ts$/u.test(id)) return "astrology-display";
             // Shared civil-date/location helpers are used together by Sky and
             // its articles; one chunk avoids repeated tiny preload dependencies.
             if (/\/services\/(?:timezones|skySelection|skyClock)\.ts$/u.test(id)) return "sky-time";
+            // Reader publication state, transport and update notices share one
+            // startup boundary; avoid three separate imports and gzip headers.
+            if (id.endsWith("/content/contentPublicationState.ts")
+              || /\/services\/(?:contentPublications|contentUpdateSignal)\.ts$/u.test(id)) return "content-publications";
             // Keep the shared Studio return path with its authentication callers.
             // A separate shared chunk adds a preload import to every auth consumer.
             if (id.endsWith("/services/auth.ts") || id.endsWith("/services/studioAuthReturn.ts")) {

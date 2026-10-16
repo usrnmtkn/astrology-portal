@@ -4,6 +4,10 @@ import skyHandler from '../../api/sky';
 import type { IncomingMessage, ServerResponse } from 'node:http';
 import { readerResponse } from '../helpers/reader-response';
 import { publicationLedgerTag } from '../../apps/web/src/services/publicationLedgerTransport';
+import { readFileSync } from 'node:fs';
+
+const publishedAspect = JSON.parse(readFileSync('apps/web/public/content-studio-last-known-good.json', 'utf8'))
+  .rows.find((row: { content_key: string }) => row.content_key === 'sky.aspect.sun.sextile.mars');
 
 test.use({ timezoneId: 'America/New_York', viewport: { width: 390, height: 844 } });
 for (const initialRoute of ["#sky", "#sky/placement/sun/virgo", "#sky/retrograde/neptune"]) for (const warm of [false, true]) for (const changeSelection of [false, true]) {
@@ -35,7 +39,6 @@ for (const initialRoute of ["#sky", "#sky/placement/sun/virgo", "#sky/retrograde
         }
       };
     });
-    const initialPlacement = initialRoute.startsWith('#sky/placement/');
     let releaseApp!: () => void;
     const appGate = new Promise<void>(resolve => { releaseApp = resolve; });
     let releaseReact!: () => void;
@@ -47,7 +50,6 @@ for (const initialRoute of ["#sky", "#sky/placement/sun/virgo", "#sky/retrograde
     await page.route(/\/assets\/react-[^/]+\.js$/, async route => { await reactGate; await route.continue(); });
     const requests: URL[] = [];
     const wasmPaths = () => requests.filter(url => url.pathname.startsWith('/wasm/')).map(url => url.pathname).sort();
-    let initializationPaths: string[] = [];
     const errors: string[] = [];
     page.on('request', request => requests.push(new URL(request.url())));
     page.on('pageerror', error => errors.push(error.message));
@@ -73,18 +75,8 @@ for (const initialRoute of ["#sky", "#sky/placement/sun/virgo", "#sky/retrograde
       expect(await page.locator('.app-shell').count()).toBe(0);
       expect(requests.filter(url => url.pathname === '/api/sky')).toHaveLength(1);
       expect(requests.find(url => url.pathname === '/api/sky')?.searchParams.get('at')).toBe('2026-09-21T16:00:00.000Z');
-      if (initialPlacement) {
-        await expect.poll(() => page.evaluate(() => (window as any).__initialSkyWorkerKinds)).toEqual(['preload']);
-        await expect.poll(wasmPaths).toEqual([
-          expect.stringMatching(/^\/wasm\/[a-f0-9]{16}\/swisseph\.data$/u),
-          expect.stringMatching(/^\/wasm\/[a-f0-9]{16}\/swisseph\.wasm$/u)
-        ]);
-        initializationPaths = wasmPaths();
-        expect(new Set(initializationPaths.map(path => path.slice(0, path.lastIndexOf('/')))).size).toBe(1);
-      } else {
-        expect(await page.evaluate(() => (window as any).__initialSkyWorkerKinds)).toEqual([]);
-        expect(requests.some(url => url.pathname.startsWith('/wasm/'))).toBe(false);
-      }
+      expect(await page.evaluate(() => (window as any).__initialSkyWorkerKinds)).toEqual([]);
+      expect(wasmPaths()).toEqual([]);
       if (changeSelection) {
         await page.evaluate(() => {
           history.replaceState({}, '', '/?date=2026-03-27#sky');
@@ -99,6 +91,16 @@ for (const initialRoute of ["#sky", "#sky/placement/sun/virgo", "#sky/retrograde
     if (initialRoute !== '#sky' && !changeSelection) {
       await expect(page.locator('.sky-detail-article .article-body-inner').first()).toBeVisible({ timeout: 60_000 });
       await expect(page.locator('#sky-detail-title')).toContainText(initialRoute.includes('neptune') ? 'Neptune' : 'Sun');
+      const kinds = await page.evaluate(() => (window as any).__initialSkyWorkerKinds as string[]);
+      expect(kinds).not.toContain('preload');
+      if (initialRoute.includes('/placement/')) {
+        expect(kinds.filter(kind => kind === 'placement-sky')).toHaveLength(1);
+        expect(wasmPaths()).toEqual([
+          expect.stringMatching(/^\/wasm\/[a-f0-9]{16}\/swisseph\.data$/u),
+          expect.stringMatching(/^\/wasm\/[a-f0-9]{16}\/swisseph\.wasm$/u)
+        ]);
+        expect(new Set(wasmPaths().map(path => path.slice(0, path.lastIndexOf('/')))).size).toBe(1);
+      }
       expect(requests.filter(url => url.pathname === '/api/sky')).toHaveLength(1);
       expect(errors).toEqual([]);
       return;
@@ -114,8 +116,8 @@ for (const initialRoute of ["#sky", "#sky/placement/sun/virgo", "#sky/retrograde
     }
     expect(requests.some(url => /fallback-content-sky-horoscopes-/.test(url.pathname))).toBe(false);
     expect(requests.filter(url => /\/assets\/fallback-content-sky-placement-(?!manifest-)[^/]+\.js$/.test(url.pathname))).toHaveLength(1);
-    expect(await page.evaluate(() => (window as any).__initialSkyWorkerKinds)).toEqual(initialPlacement ? ['preload'] : []);
-    expect(wasmPaths()).toEqual(initializationPaths);
+    expect(await page.evaluate(() => (window as any).__initialSkyWorkerKinds)).toEqual([]);
+    expect(wasmPaths()).toEqual([]);
     expect(errors).toEqual([]);
     expect(await page.evaluate(() => document.fonts.check('400 16px Newsreader') && document.fonts.check('500 16px "Geist Mono"'))).toBe(true);
     expect(requests.some(url => /newsreader-latin.*\.woff2$/.test(url.pathname) && url.host === new URL(page.url()).host)).toBe(true);
@@ -124,6 +126,72 @@ for (const initialRoute of ["#sky", "#sky/placement/sun/virgo", "#sky/retrograde
     await expect.poll(() => requests.some(url => /fallback-content-sky-horoscopes-/.test(url.pathname))).toBe(true);
   });
 }
+
+for (const width of [390, 1440]) test(`Cold article stages core transport behind its complete publication gate ${width}`, async ({ page }) => {
+  test.setTimeout(90_000);
+  await page.setViewportSize({ width, height: 1000 });
+  await page.clock.setFixedTime(new Date('2026-09-10T04:20:00Z'));
+  await bundledPublications(page);
+  expect(publishedAspect).toBeTruthy();
+  const ledger = [{ content_key: publishedAspect.content_key, state: 'live', revision: 1,
+    row_id: publishedAspect.id, row_updated_at: publishedAspect.updated_at, updated_at: publishedAspect.updated_at }];
+  let release!: () => void, releaseCalculation!: () => void;
+  const ledgerGate = new Promise<void>(resolve => { release = resolve; });
+  const calculationGate = new Promise<void>(resolve => { releaseCalculation = resolve; });
+  let ledgerReads = 0, coreReads = 0, coreResponses = 0, aspectReads = 0;
+  await page.route('**/wasm/**', async route => { await calculationGate; await route.continue(); });
+  await page.route('**/rest/v1/content_publications?**', async route => {
+    ledgerReads++;
+    await ledgerGate;
+    const predicates = new URL(route.request().url()).searchParams.getAll('content_key');
+    await route.fulfill({ json: ledger.filter(row => predicates.every(predicate =>
+      predicate.startsWith('gte.') ? row.content_key >= predicate.slice(4)
+        : predicate.startsWith('lt.') ? row.content_key < predicate.slice(3)
+          : predicate.startsWith('gt.') ? row.content_key > predicate.slice(3) : true)) });
+  });
+  await page.route('**/api/content-reader', async route => {
+    const query = route.request().postDataJSON();
+    if (query.provider === 'tldrastro-fallback-architecture-v3' && query.scope === 'sky-article') coreReads++;
+    if (query.keys?.includes(publishedAspect.content_key)) {
+      aspectReads++;
+      return route.fulfill({ json: readerResponse([publishedAspect], ledger) });
+    }
+    await route.fulfill({ json: readerResponse([], query.scope === 'sky-article' ? [] : ledger) });
+  });
+  page.on('response', response => {
+    if (new URL(response.url()).pathname !== '/api/content-reader') return;
+    const query = response.request().postDataJSON();
+    if (query.provider === 'tldrastro-fallback-architecture-v3' && query.scope === 'sky-article') coreResponses++;
+  });
+  await page.route('**/api/sky?**', async route => {
+    await calculationGate;
+    const response = { statusCode: 200, setHeader() {}, end(body: string) {
+      void route.fulfill({ status: this.statusCode, contentType: 'application/json', body });
+    } };
+    await skyHandler({ method: 'GET', url: route.request().url() } as IncomingMessage, response as unknown as ServerResponse);
+  });
+  const errors: string[] = [];
+  page.on('pageerror', error => errors.push(error.message));
+  const body = page.locator('.sky-detail-article .article-body-inner').first();
+  try {
+    await page.goto('/#sky/placement/sun/virgo', { waitUntil: 'domcontentloaded' });
+    await expect.poll(() => ledgerReads).toBe(6);
+    await expect.poll(() => coreResponses).toBe(1);
+    expect(coreReads).toBe(1);
+    await expect(body).toHaveCount(0);
+    release();
+    await expect.poll(() => aspectReads).toBe(1);
+    await expect(body).toHaveCount(0);
+  } finally { release(); releaseCalculation(); }
+  await expect(body).toContainText('The system that works is the one that makes your life easier to live.', { timeout: 60_000 });
+  const first = await body.textContent();
+  await page.evaluate(() => new Promise<void>(resolve => {
+    let frames = 0; const tick = () => ++frames === 30 ? resolve() : requestAnimationFrame(tick); requestAnimationFrame(tick);
+  }));
+  expect(await body.textContent()).toBe(first);
+  expect(coreReads).toBe(1);
+  expect(errors).toEqual([]);
+});
 
 test('Cold Calendar starts its complete publication read while App is still downloading', async ({ page }) => {
   await bundledPublications(page);

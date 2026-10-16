@@ -266,6 +266,7 @@ import {
   loadFallbackArchitectureV3DashboardBundle,
   loadLiveGeneratedContentForKeys,
   loadLiveGeneratedContentForSurfaces,
+  readCachedFallbackArchitectureV3Bundle,
   readGeneratedContentPreviewMode,
   renderGeneratedContentTemplate,
   type GeneratedContentPreviewMode,
@@ -282,7 +283,7 @@ import {
   resolveCmsSurfaceOverride
 } from "./content/cmsSurfaceOverrides";
 import { isSkyAspectRetired, resolveSkyAspectContentStudioExact, resolveSkyAspectGeneratedContent, resolveSkyAspectOwnerAuthoredSigned, skyAspectGeneratedContentKeys } from "./services/skyAspectContent";
-import { eligibleSkyDetailContent, loadSkyDetailContent, skyDetailRequiredAspectKeys } from "./services/skyDetailContent";
+import { eligibleSkyDetailContent, loadSkyDetailContent, prefetchSkyPlacementAspectContent, skyDetailRequiredAspectKeys, type ColdSkyAspectRead } from "./services/skyDetailContent";
 import {
   resolveApprovedExactSkyAspectCopy,
   selectSkyAspectCopyByPrecedence
@@ -10852,19 +10853,39 @@ async function requestSkyPlacementArticleSnapshot(
   );
 }
 
+type SkyArticlePreparation = {
+  key: string;
+  snapshot: Promise<SkySnapshot>;
+  early?: ColdSkyAspectRead;
+  request: Promise<{ placementSky: SkySnapshot; content: GeneratedContentMap }>;
+};
+
 async function prepareSkyPlacementArticleContent(
-  snapshotRequest: Promise<SkySnapshot>, planet: string, sign: string, availableContent: GeneratedContentMap
+  snapshotRequest: Promise<SkySnapshot>, planet: string, sign: string, availableContent: GeneratedContentMap,
+  readEarly: () => ColdSkyAspectRead | undefined
 ) {
   void loadContentRegistry("sky");
-  const [placementSky] = await Promise.all([snapshotRequest, refreshContentPublications()]);
+  const publications = refreshContentPublications();
+  const [placementSky] = await Promise.all([snapshotRequest, publications]);
   const position = placementSky.positions.find(candidate => skyRoutePartMatches(candidate.planet, planet));
   const ingressKeys = position ? skyIngressEssayPublicationKeys(contentPublicationRecords(), {
     planet: normalizeContentIdPart(position.planet), sign: normalizeContentIdPart(sign)
   }) : [];
   const events = filterPlacementTimelineEvents(placementSky.placementAspectFacts?.inSign ?? [],
     position ? skyPlacementArticleTimelineWindow(position, placementSky.generatedAt, "current") : null);
-  const content = await loadSkyDetailContent(placementSky, availableContent, ingressKeys,
-    loadLiveGeneratedContentForKeys, skyPlacementInSignAspectContentKeys(events));
+  const aspectKeys = skyPlacementInSignAspectContentKeys(events);
+  const required = new Set([...ingressKeys, ...aspectKeys]);
+  const early = readEarly();
+  let prepared = availableContent;
+  if (early && aspectKeys.some(key => early.keys.includes(key))) {
+    // Missing dated/ingress keys must not wait behind unused candidates.
+    const [incoming, remaining] = await Promise.all([early.rows,
+      loadSkyDetailContent(placementSky, availableContent, ingressKeys, loadLiveGeneratedContentForKeys,
+        aspectKeys.filter(key => !early.keys.includes(key)))]);
+    prepared = new Map([...remaining, ...[...eligibleSkyDetailContent(incoming)].filter(([key]) => required.has(key))]);
+  }
+  const content = await loadSkyDetailContent(placementSky, prepared, ingressKeys,
+    loadLiveGeneratedContentForKeys, aspectKeys);
   return { placementSky, content };
 }
 
@@ -11090,7 +11111,7 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
   const selectedSkyDetailRefreshKeyRef = useRef("");
   const selectedSkyDetailRefreshContentRef = useRef<GeneratedContentMap | null>(null);
   const selectedSkyDetailContentRef = useRef<GeneratedContentMap>(new Map());
-  const skyArticlePreparationRef = useRef<{ key: string; request: Promise<{ placementSky: SkySnapshot; content: GeneratedContentMap }> } | null>(null);
+  const skyArticlePreparationRef = useRef<SkyArticlePreparation | null>(null);
   const selectedSkyDetailRefreshSkyKeyRef = useRef("");
   const fallbackDashboardHydrationRequestedRef = useRef(false);
   const friendDetailOverlayVersionRef = useRef(0);
@@ -12161,13 +12182,20 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
     // Reuse initial direct-route preparation at the captured instant after the
     // full Sky response arrives. Source and publication changes still invalidate it.
     if (canLoadPlacementArticle && skyArticlePreparationRef.current?.key !== preparationKey) {
-      const request = prepareSkyPlacementArticleContent(
-        requestSkyPlacementArticleSnapshot(articleLocation, routePlanet, placementSign!, skyDate, initial?.date),
-        routePlanet, placementSign!, availableDetailContent);
-      skyArticlePreparationRef.current = { key: preparationKey, request };
-      void request.catch(() => {
-        if (skyArticlePreparationRef.current?.request === request) skyArticlePreparationRef.current = null;
+      const snapshot = requestSkyPlacementArticleSnapshot(articleLocation, routePlanet, placementSign!, skyDate, initial?.date);
+      const preparation: SkyArticlePreparation = { key: preparationKey, snapshot,
+        request: prepareSkyPlacementArticleContent(snapshot, routePlanet, placementSign!, availableDetailContent, () => preparation.early) };
+      skyArticlePreparationRef.current = preparation;
+      void preparation.request.catch(() => {
+        if (skyArticlePreparationRef.current === preparation) skyArticlePreparationRef.current = null;
       });
+    }
+    const coldGuest = !sky && mode === "guest" && !userProfile && authAccountChecked && !remoteAccountId
+      && !authAccountError && !hasStoredSupabaseSession() && !readCachedFallbackArchitectureV3Bundle("sky-article");
+    const preparation = skyArticlePreparationRef.current;
+    if (coldGuest && canLoadPlacementArticle && preparation?.key === preparationKey && !preparation.early) {
+      preparation.early = prefetchSkyPlacementAspectContent(routePlanet, availableDetailContent, refreshContentPublications(),
+        preparation.snapshot, keys => loadLiveGeneratedContentForKeys(keys, { requireFresh: true }));
     }
     const articlePreparation = skyArticlePreparationRef.current?.request;
     // Guest articles already have their complete placement facts. Member

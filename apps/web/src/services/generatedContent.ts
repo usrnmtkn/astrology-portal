@@ -1,10 +1,10 @@
 import { isSkyArticleDashboardRow, isSkyDashboardRow, isSkyListDashboardRow } from "./skyDashboardScope";
-import { loadReaderRows } from "./readerContentClient";
+import { loadReaderRows, ReaderAdmissionError } from "./readerContentClient";
 import { packageAuthoredCardFromRow, packageHookRowFromRow, packageVocabRowFromRow, packageTemplateRowFromRow, packageFallbackArchitectureV3CoreRows } from "./fallbackArchitectureV3CorePackaging";
 // @ts-ignore Exact owner-requested source versions, shared with package materialization.
 import { correctedReaderSummary } from "../content/fallbackArchitectureV3/readerSummaryReferenceCorrections.mjs";
-import { publicationLedgerReady, publicationAllowsContent, contentPublication, contentPublicationRecords, contentPublicationGeneration } from "../content/contentPublicationState";
-import { refreshContentPublications } from "./contentPublications";
+import { publicationLedgerReady, publicationAllowsContent, contentPublication, contentPublicationRecords, contentPublicationGeneration, type ContentPublication } from "../content/contentPublicationState";
+import { contentPublicationsAvailableOnline, refreshContentPublications } from "./contentPublications";
 import { isGeneratedContentReaderBoundaryAllowed, isReaderServableGeneratedContentRow, isEmergencyFloorContentKey, generatedRowPackageRole } from "../content/generatedContentEligibility";
 export { isGeneratedContentReaderBoundaryAllowed, isReaderServableGeneratedContentRow } from "../content/generatedContentEligibility";
 import { getSupabaseClient } from "./auth";
@@ -1333,10 +1333,56 @@ async function loadContentStudioLastKnownGoodCompatibilityBundle() {
   return packageFallbackArchitectureV3CompatibilityRows(await loadContentStudioLastKnownGoodRows());
 }
 
-export async function loadFallbackArchitectureV3DashboardBundle(scope: DashboardScope = "all"): Promise<FallbackArchitectureV3Bundle | null> {
+type ColdSkyArticleRead = {
+  consume: () => ReturnType<typeof loadReaderRows> | undefined;
+  discard: () => void;
+};
+let pendingColdSkyArticleRead: ColdSkyArticleRead | undefined;
+
+/** Start only the first cold article's known query; admission still waits for
+ * a complete live ledger. The opaque handle cannot expose unadmitted rows. */
+export function prefetchColdSkyArticleRows(publications: Promise<void>): ColdSkyArticleRead | undefined {
+  if (contentPublicationsAvailableOnline() || readCachedFallbackArchitectureV3Bundle("sky-article")) return;
+  if (pendingColdSkyArticleRead) return pendingColdSkyArticleRead;
+  const controller = new AbortController();
+  const signal = AbortSignal.any([controller.signal, AbortSignal.timeout(20_000)]);
+  const admission = {
+    ready: publications.then(() => contentPublicationsAvailableOnline()
+      && !readCachedFallbackArchitectureV3Bundle("sky-article"), () => false),
+    validate: (rows: readonly GeneratedContentRow[], buffered: readonly ContentPublication[]) => contentPublicationsAvailableOnline()
+      && buffered.every(publication => (contentPublication(publication.content_key)?.revision ?? 0) >= publication.revision)
+      && rows.every(row =>
+      publicationAllowsContent(row.content_key, row.id, row.updated_at, row.target_date))
+      && contentPublicationRecords().every(publication => publication.state !== "live" || !publication.row_id
+        || !isSkyArticleDashboardRow(publication) || isSkyPlacementFallbackPartitionKey(publication.content_key)
+        || rows.some(row => row.content_key === publication.content_key && row.id === publication.row_id
+          && publicationAllowsContent(row.content_key, row.id, row.updated_at, row.target_date)))
+  };
+  let consumed = false;
+  const request = getSupabaseClient().then(client => client
+    ? loadReaderRows({ provider: fallbackArchitectureV3Provider, scope: "sky-article" }, signal, admission)
+    : { data: null, error: new Error("Reader storage is unavailable.") }, error => ({ data: null, error }))
+    .finally(() => { if (pendingColdSkyArticleRead === entry) pendingColdSkyArticleRead = undefined; });
+  const entry: ColdSkyArticleRead = {
+    consume: () => { if (consumed) return; consumed = true; return request; },
+    discard: () => { if (!consumed) { consumed = true; controller.abort(); } }
+  };
+  pendingColdSkyArticleRead = entry;
+  return entry;
+}
+
+export async function loadFallbackArchitectureV3DashboardBundle(scope: DashboardScope = "all", earlyRead?: ColdSkyArticleRead): Promise<FallbackArchitectureV3Bundle | null> {
   await refreshContentPublications();
   const pending = pendingDashboardBundles.get(scope);
-  if (pending?.generation === contentPublicationGeneration) return pending.promise;
+  if (pending?.generation === contentPublicationGeneration) {
+    earlyRead?.discard();
+    return pending.promise;
+  }
+  // Claim before the first asynchronous source read, so another caller joining
+  // this dashboard request cannot discard its shared transport.
+  const earlyRows = scope === "sky-article" && !readCachedFallbackArchitectureV3Bundle(scope)
+    ? earlyRead?.consume() : undefined;
+  earlyRead?.discard();
   // React remounts and content refreshes can overlap. Share only active work for
   // the same source partition and publication generation; failures remain retryable.
   const entry = {
@@ -1345,7 +1391,7 @@ export async function loadFallbackArchitectureV3DashboardBundle(scope: Dashboard
   };
   entry.promise = readFallbackArchitectureV3DashboardBundle(scope, () => (
     pendingDashboardBundles.get(scope) === entry && entry.generation === contentPublicationGeneration
-  )).finally(() => {
+  ), earlyRows).finally(() => {
     if (pendingDashboardBundles.get(scope) === entry) pendingDashboardBundles.delete(scope);
   });
   pendingDashboardBundles.set(scope, entry);
@@ -1354,7 +1400,8 @@ export async function loadFallbackArchitectureV3DashboardBundle(scope: Dashboard
 
 async function readFallbackArchitectureV3DashboardBundle(
   scope: DashboardScope,
-  canCache: () => boolean
+  canCache: () => boolean,
+  earlyRows?: ReturnType<typeof loadReaderRows>
 ): Promise<FallbackArchitectureV3Bundle | null> {
   const supabase = await getSupabaseClient();
   const cached = readCachedFallbackArchitectureV3Bundle(scope);
@@ -1370,7 +1417,7 @@ async function readFallbackArchitectureV3DashboardBundle(
   // Fetch its rows and immutable manifest while that check runs, then retain
   // the same publication, revision and package admission below.
   const coldArticleRows = !cached && scope === "sky-article"
-    ? loadReaderRows({ provider: fallbackArchitectureV3Provider, scope }) : undefined;
+    ? earlyRows ?? loadReaderRows({ provider: fallbackArchitectureV3Provider, scope }) : undefined;
   const coldArticleManifest = coldArticleRows ? loadFallbackArchitectureV3BundledCoreManifest() : undefined;
   void coldArticleManifest?.catch(() => { /* Joined by the existing recovery below. */ });
 
@@ -1388,7 +1435,13 @@ async function readFallbackArchitectureV3DashboardBundle(
   }
   if (cached && dashboardVersion && cached.version === dashboardVersion) return cached.bundle;
 
-  const { data, error } = await (coldArticleRows ?? loadReaderRows({ provider: fallbackArchitectureV3Provider, ...(scope !== "all" ? { scope } : {}) }));
+  let result = await (coldArticleRows ?? loadReaderRows({ provider: fallbackArchitectureV3Provider, ...(scope !== "all" ? { scope } : {}) }));
+  // An initial live ledger can reveal edits or new keys absent from the early
+  // snapshot. Discard it and use the unchanged post-ledger request once.
+  if (earlyRows && result.error instanceof ReaderAdmissionError) {
+    result = await loadReaderRows({ provider: fallbackArchitectureV3Provider, scope: "sky-article" });
+  }
+  const { data, error } = result;
   if (error) return recoverUnavailableOverlay(error);
   const rows = data ?? [];
 

@@ -8,7 +8,8 @@ const built = await build({ entryPoints: ['apps/web/src/services/skyPlacementHyd
     builder.onLoad({ filter: /.*/, namespace: 'source-fixture' }, () => ({ contents: `
       export const loadSkyPlacementFallbackArchitectureV3Bundle = () => fixture.bundle();
       export const loadContentStudioLastKnownGoodRows = () => fixture.offline();
-      export const loadFallbackArchitectureV3DashboardBundle = scope => fixture.core(scope);
+      export const loadFallbackArchitectureV3DashboardBundle = (scope, early) => fixture.core(scope, early);
+      export const prefetchColdSkyArticleRows = publications => fixture.prefetch(publications);
       export const loadFallbackArchitectureV3SkyPlacementDashboardBundle = () => fixture.placement();
       export const refreshContentPublications = () => fixture.refresh();
       export const contentPublicationsResolved = () => fixture.resolved;
@@ -23,6 +24,7 @@ function harness(overrides = {}) {
     identity: 'current', online: true, resolved: true, missing: [],
     bundle: async () => { calls.push('bundle'); }, refresh: async () => { calls.push('refresh'); },
     offline: async () => { calls.push('offline'); },
+    prefetch: () => { calls.push('prefetch'); return undefined; },
     core: async (scope: string) => { assert.equal(scope, "sky"); calls.push('core'); return 'core'; },
     placement: async () => { calls.push('placement'); return 'placement'; }, ...overrides
   };
@@ -69,5 +71,36 @@ function harness(overrides = {}) {
   const h = harness({ online: false, resolved: false });
   await assert.rejects(h.prepare(), /publication state is unavailable/);
   assert.equal(h.calls.includes('core'), false, 'Unknown publication state must not reveal bundled copy');
+}
+{
+  let release!: () => void;
+  const publications = new Promise<void>(resolve => { release = resolve; });
+  const h = harness({ refresh: () => publications });
+  const handle = { discard: () => h.calls.push('discard') };
+  h.fixture.prefetch = (gate: Promise<void>) => { assert.equal(gate, publications); h.calls.push('prefetch'); return handle; };
+  let attempts = 0;
+  h.fixture.core = async (scope: string, early: unknown) => {
+    assert.equal(scope, 'sky-article');
+    assert.equal(early, attempts++ === 0 ? handle : undefined, 'An identity retry cannot reuse early rows.');
+    h.fixture.identity = 'newer';
+    return 'core';
+  };
+  const first = h.prepare('article:sun/libra');
+  assert.equal(h.prepare('article:sun/libra'), first);
+  assert.deepEqual(h.calls, ['bundle', 'prefetch']);
+  release();
+  assert.equal((await first).identity, 'newer');
+  assert.equal(attempts, 2);
+  assert.equal(h.calls.at(-1), 'discard');
+}
+{
+  const h = harness({ online: false, resolved: false });
+  h.fixture.prefetch = () => ({ discard: () => h.calls.push('discard') });
+  h.fixture.offline = async () => { h.calls.push('offline'); h.fixture.resolved = true; };
+  h.fixture.core = async (scope: string, early: unknown) => {
+    assert.equal(scope, 'sky-article'); assert.equal(early, undefined); h.calls.push('core');
+  };
+  await h.prepare('article:sun/libra');
+  assert(h.calls.indexOf('discard') < h.calls.indexOf('offline'), 'A failed live ledger discards transport before offline recovery.');
 }
 console.log('PASS: live Sky avoids the offline download, coalesces requests, recovers coherent offline identities, and fails closed on missing or changing publications.');

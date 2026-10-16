@@ -10,8 +10,8 @@ import { build } from 'esbuild';
 const file = join(mkdtempSync(join(tmpdir(), 'sky-dashboard-scope-')), 'reader.mjs');
 await build({ stdin: { resolveDir: process.cwd(), contents: `
   export { loadFallbackArchitectureV3DashboardBundle, readCachedFallbackArchitectureV3Bundle,
-    clearCachedFallbackArchitectureV3Bundle, loadContentStudioLastKnownGoodRows, loadLiveGeneratedContentForKeys, loadLiveGeneratedContentForSurfaces, loadFallbackArchitectureV3SkyPlacementDashboardBundle } from './apps/web/src/services/generatedContent.ts';
-  export { installContentPublications } from './apps/web/src/content/contentPublicationState.ts';
+    clearCachedFallbackArchitectureV3Bundle, loadContentStudioLastKnownGoodRows, loadLiveGeneratedContentForKeys, loadLiveGeneratedContentForSurfaces, loadFallbackArchitectureV3SkyPlacementDashboardBundle, prefetchColdSkyArticleRows } from './apps/web/src/services/generatedContent.ts';
+  export { installContentPublications, contentPublication } from './apps/web/src/content/contentPublicationState.ts';
   export { installFallbackArchitectureV3Bundle, installSkyCoreFallbackArchitectureV3Bundle,
     transitV3AuthoredCardForContentKey } from './apps/web/src/content/fallbackArchitectureV3Runtime.ts';
 ` }, bundle: true, platform: 'node', format: 'esm', outfile: file,
@@ -19,8 +19,9 @@ await build({ stdin: { resolveDir: process.cwd(), contents: `
     builder.onResolve({ filter: /^\.\/auth$|^\.\/contentPublications$/ }, args =>
       args.importer.endsWith('/services/generatedContent.ts') ? { path: args.path, namespace: 'fixture' } : undefined);
     builder.onLoad({ filter: /.*/, namespace: 'fixture' }, () => ({ contents: `
-      export const getSupabaseClient = async () => globalThis.fixtureClient;
+      export const getSupabaseClient = async () => { await globalThis.fixtureClientWait; return globalThis.fixtureClient; };
       export const refreshContentPublications = () => globalThis.publicationWait ?? Promise.resolve();
+      export const contentPublicationsAvailableOnline = () => globalThis.fixturePublicationsOnline ?? true;
     ` }));
   } }] });
 const snapshot = JSON.parse(readFileSync('apps/web/public/content-studio-last-known-good.json', 'utf8'));
@@ -94,7 +95,10 @@ globalThis.fetch = async (input, init) => {
   if (body.afterId) query.gt('id', body.afterId);
   const { data, error } = await query.returns();
   if (error) return new Response('synthetic storage failure', { status: 503 });
-  return Response.json({ schema: 'content-reader-row-v1', rows: data, publications: [], nextCursor: data.length === 250 ? data.at(-1).id : null });
+  const response = Response.json({ schema: 'content-reader-row-v1', rows: data,
+    publications: (globalThis as any).fixtureReaderPublications ?? [], nextCursor: data.length === 250 ? data.at(-1).id : null });
+  await (globalThis as any).fixtureReaderResponseWait;
+  return response;
 };
 Object.assign(globalThis, {
   window: Object.assign(new EventTarget(), { location: { hostname: 'reader.example' }, localStorage: { getItem: (key: string) => storage.get(key) ?? null,
@@ -204,6 +208,109 @@ try {
   assert.equal(qa.readCachedFallbackArchitectureV3Bundle('sky'), null);
   assert.equal(qa.readCachedFallbackArchitectureV3Bundle('sky-list'), null);
   assert.equal(qa.readCachedFallbackArchitectureV3Bundle('sky-article'), null);
+  {
+    let release!: () => void, releaseClient!: () => void;
+    const gate = new Promise<void>(resolve => { release = resolve; });
+    Object.assign(globalThis, { publicationWait: gate, fixturePublicationsOnline: false });
+    const before = queries.length;
+    const early = qa.prefetchColdSkyArticleRows(gate);
+    assert(early);
+    assert.equal(qa.prefetchColdSkyArticleRows(gate), early, 'Concurrent cold selections share one transport.');
+    for (let tick = 0; queries.length === before && tick < 100; tick++) await new Promise(resolve => setTimeout(resolve, 0));
+    assert.equal(queries.length, before + 1, 'The cold core request starts before the complete ledger resolves.');
+    assert.equal(qa.readCachedFallbackArchitectureV3Bundle('sky-article'), null);
+    (globalThis as any).fixtureClientWait = new Promise<void>(resolve => { releaseClient = resolve; });
+    (globalThis as any).fixturePublicationsOnline = true;
+    release();
+    const first = qa.loadFallbackArchitectureV3DashboardBundle('sky-article', early);
+    const duplicate = qa.loadFallbackArchitectureV3DashboardBundle('sky-article', early);
+    await new Promise(resolve => setTimeout(resolve, 0));
+    releaseClient();
+    const [firstBundle, duplicateBundle] = await Promise.all([first, duplicate]);
+    assert(firstBundle);
+    assert.equal(firstBundle, duplicateBundle, 'A joiner must not discard the owning request while its client is delayed.');
+    assert.equal(queries.length, before + 1, 'Admitting the staged page must not fetch it twice.');
+    assert.equal(firstBundle.transitLib.authoredCards[0].body, oldStation.body);
+    assert.equal(qa.readCachedFallbackArchitectureV3Bundle('sky-article')?.version, Date.parse(oldStation.updated_at));
+    (globalThis as any).fixturePublicationsOnline = false;
+    assert.equal(qa.prefetchColdSkyArticleRows(Promise.resolve()), undefined, 'A cached article keeps revision-first loading.');
+    qa.clearCachedFallbackArchitectureV3Bundle();
+    (globalThis as any).fixturePublicationsOnline = true;
+    assert.equal(qa.prefetchColdSkyArticleRows(Promise.resolve()), undefined, 'Resolved online readers keep the existing demand-driven path.');
+    Reflect.deleteProperty(globalThis, 'fixtureClientWait');
+    for (const change of ['new-key', 'revision'] as const) {
+      qa.clearCachedFallbackArchitectureV3Bundle();
+      (globalThis as any).fixturePublicationsOnline = false;
+      let releaseChanged!: () => void;
+      const changedGate = new Promise<void>(resolve => { releaseChanged = resolve; });
+      (globalThis as any).publicationWait = changedGate;
+      const beforeChange = queries.length;
+      const staged = qa.prefetchColdSkyArticleRows(changedGate);
+      assert(staged);
+      for (let tick = 0; queries.length === beforeChange && tick < 100; tick++) await new Promise(resolve => setTimeout(resolve, 0));
+      assert.equal(queries.length, beforeChange + 1);
+      const source = change === 'new-key'
+        ? structuredClone(snapshot.rows.find((row: any) => row.content_key === 'authored/station/mars/rx')) : rows[2];
+      assert(source);
+      if (change === 'new-key') rows.push(source);
+      else Object.assign(source, { body: 'Synthetic newly published complete station passage.', updated_at: newerRevision });
+      qa.installContentPublications([{ content_key: source.content_key, state: 'live', revision: 50,
+        row_id: source.id, row_updated_at: source.updated_at, updated_at: source.updated_at }]);
+      (globalThis as any).fixturePublicationsOnline = true;
+      releaseChanged();
+      const current = await qa.loadFallbackArchitectureV3DashboardBundle('sky-article', staged);
+      assert.equal(queries.length, beforeChange + 2, 'A new key or revision in the initial ledger requires one normal fresh read.');
+      assert(current?.transitLib.authoredCards.some((row: any) => row.contentKey === source.content_key && row.body === source.body));
+      if (change === 'new-key') rows.pop();
+      else Object.assign(source, oldStation);
+      qa.installContentPublications([{ content_key: source.content_key, state: change === 'new-key' ? 'retired' : 'live', revision: 51,
+        row_id: source.id, row_updated_at: source.updated_at, updated_at: source.updated_at }]);
+    }
+    for (const change of ['offline-after-ready', 'newer-buffered-publication', 'other-provider'] as const) {
+      qa.clearCachedFallbackArchitectureV3Bundle();
+      let releaseReady!: () => void, releaseResponse!: () => void;
+      const ready = new Promise<void>(resolve => { releaseReady = resolve; });
+      const responseWait = new Promise<void>(resolve => { releaseResponse = resolve; });
+      const currentPublication = structuredClone(qa.contentPublication(stationKey));
+      const otherProviderRow = structuredClone(snapshot.rows.find((row: any) => row.content_key === 'authored/station/mars/rx'));
+      Object.assign(globalThis, { publicationWait: ready, fixturePublicationsOnline: false,
+        fixtureReaderResponseWait: responseWait, fixtureReaderPublications: change === 'newer-buffered-publication'
+          ? [{ ...currentPublication, state: 'retired', revision: currentPublication.revision + 1 }] : [] });
+      if (change === 'other-provider') {
+        otherProviderRow.provider = 'synthetic-other-provider';
+        rows.push(otherProviderRow);
+        qa.installContentPublications([{ content_key: otherProviderRow.content_key, state: 'live', revision: 52,
+          row_id: otherProviderRow.id, row_updated_at: otherProviderRow.updated_at, updated_at: otherProviderRow.updated_at }]);
+      }
+      const beforeChange = queries.length;
+      const staged = qa.prefetchColdSkyArticleRows(ready);
+      assert(staged);
+      for (let tick = 0; queries.length === beforeChange && tick < 100; tick++) await new Promise(resolve => setTimeout(resolve, 0));
+      assert.equal(queries.length, beforeChange + 1);
+      (globalThis as any).fixturePublicationsOnline = true;
+      releaseReady();
+      // The readiness promise can succeed before the response body finishes.
+      // Final admission must recheck live state and buffered publication data.
+      for (let tick = 0; tick < 12; tick++) await Promise.resolve();
+      if (change === 'offline-after-ready') (globalThis as any).fixturePublicationsOnline = false;
+      (globalThis as any).fixtureReaderPublications = [];
+      releaseResponse();
+      const current = await qa.loadFallbackArchitectureV3DashboardBundle('sky-article', staged);
+      assert.equal(queries.length, beforeChange + 2, `${change} must discard early rows and issue exactly one normal read.`);
+      assert(current?.transitLib.authoredCards.some((row: any) => row.contentKey === stationKey && row.body === oldStation.body));
+      assert.deepEqual(qa.contentPublication(stationKey), currentPublication,
+        'Discarded transport must not install a newer retirement into the complete ledger.');
+      if (change === 'other-provider') {
+        assert(!current?.transitLib.authoredCards.some((row: any) => row.contentKey === otherProviderRow.content_key));
+        rows.pop();
+        qa.installContentPublications([{ content_key: otherProviderRow.content_key, state: 'retired', revision: 53,
+          row_id: otherProviderRow.id, row_updated_at: otherProviderRow.updated_at, updated_at: otherProviderRow.updated_at }]);
+      }
+      for (const key of ['fixtureReaderPublications', 'fixtureReaderResponseWait']) Reflect.deleteProperty(globalThis, key);
+    }
+    qa.clearCachedFallbackArchitectureV3Bundle();
+    for (const key of ['publicationWait', 'fixturePublicationsOnline', 'fixtureClientWait']) Reflect.deleteProperty(globalThis, key);
+  }
   let releaseLedger!: () => void;
   (globalThis as any).publicationWait = new Promise<void>(resolve => { releaseLedger = resolve; });
   const beforeLedger = queries.length;

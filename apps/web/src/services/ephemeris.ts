@@ -15,7 +15,7 @@ import { debugInfoForZonedDateTime } from "./timezones.js";
 import { assertCanonicalSkyPoints } from "./canonicalSkyAspectProfile.js";
 import { memoizeSwissCalculation } from "./swissCalculationCache.js";
 import { traditionalSignRulers } from "../content/skySunSeason.js";
-import { transitAspectDefinitions } from "../astrologyConfig.js";
+import { SKY_PLACEMENT_ASPECT_TARGETS, transitAspectDefinitions } from "../astrologyConfig.js";
 import { PERSONAL_DAILY_ORB, personalDayBounds, personalTransitId, type PersonalDailyPeak } from "./personalDailyTransits.js";
 import { calculateRetrogradeHistory, retrogradeHistoryPlanets, type RetrogradeHistory } from "./retrogradeHistory.js";
 
@@ -3497,10 +3497,7 @@ function findSkyPlacementResidencyAspects(
   const planetId = planet === "South Node" ? swe.SE_TRUE_NODE : skyPointPlanetId(swe, planet);
   if (planetId === null) throw new Error(`Unsupported aspect subject: ${planet}`);
 
-  const otherPlanets = [
-    "Sun", "Mercury", "Venus", "Mars", "Jupiter", "Saturn",
-    "Uranus", "Neptune", "Pluto", "Lilith"
-  ].filter((candidate) => candidate !== planet);
+  const otherPlanets = SKY_PLACEMENT_ASPECT_TARGETS.filter((candidate) => candidate !== planet);
   const glyphByPlanet = new Map<string, string>(planets.map(([name, glyph]) => [name, glyph]));
   const events: LunarCalendarEvent[] = [];
 
