@@ -12612,7 +12612,9 @@ export function GeneratedContentAdminDashboard() {
             className={packageOwnerCanPublish ? "admin-publish-button" : "admin-primary-button"}
             type="button"
             onClick={() => void (async () => {
-              if (packageOwnerCanPublish) {
+              if (currentDraft.contentKey.startsWith("cms/lunation-article/")) {
+                await publishOwnerDraft(currentDraft);
+              } else if (packageOwnerCanPublish) {
                 await publishPackageDraft(currentDraft);
               } else {
                 await saveDraft(isSkyArticleTemplate ? "DRAFT" : directReaderDraft ? "LIVE" : isAstro101Draft && currentDraft.status !== "LIVE" ? "DRAFT" : undefined);

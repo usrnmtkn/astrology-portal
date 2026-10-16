@@ -273,7 +273,7 @@ export default function DatedLunationWritingStudio({secret,dirtyRef,onOpenConten
           <AdminDisclosureSummary>Write or paste a draft instead</AdminDisclosureSummary><Stack gap="md">{editor}
             <StudioButton className={proseChanged?'admin-primary-button':undefined} disabled={busy||!proseChanged||notesChanged||!headline.trim()} onClick={()=>void run(()=>act('save',{headline,body}))}>Save draft</StudioButton>
           </Stack></details>)}
-        {!writing.active&&!rejecting&&writing.lint?.violations?.length>0&&<div role="alert"><Text>Correct these errors before publishing:</Text><ul>{writing.lint.violations.map((v:any,i:number)=><li key={i}>{v.detail}</li>)}</ul></div>}
+        {!writing.active&&!rejecting&&writing.lint?.violations?.length>0&&<div role="alert"><Text>Review these findings. You can publish your own wording; calculated fact errors must be corrected.</Text><ul>{writing.lint.violations.map((v:any,i:number)=><li key={i}>{v.detail}</li>)}</ul></div>}
       {!writing.active&&!rejecting&&rejections.length>0&&<details className="admin-workspace-details">
         <AdminDisclosureSummary>Rejected drafts ({rejections.length})</AdminDisclosureSummary>
         <Text>Previous versions are kept here with your reasons for rejection.</Text>
