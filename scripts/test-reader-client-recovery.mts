@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { Readable } from 'node:stream';
 import handler from '../api/content-reader.ts';
 import { loadReaderRows } from '../apps/web/src/services/readerContentClient.ts';
-import { installContentPublications, publicationLedgerKey } from '../apps/web/src/content/contentPublicationState.ts';
+import { contentPublication, installContentPublications, publicationLedgerKey } from '../apps/web/src/content/contentPublicationState.ts';
 
 process.env.SUPABASE_URL = 'https://reader-recovery.invalid';
 process.env.SUPABASE_SERVICE_ROLE_KEY = 'synthetic-reader-recovery-key';
@@ -197,5 +197,66 @@ try {
   assert(!result.data?.some(row => row.content_key === rows[1].content_key),
     'A retirement received while inventory pages are loading must remove the earlier-page row.');
   assert.equal(result.data?.length, 249);
+  // The actual handler may finish an early Sky read while the complete client
+  // ledger is still loading. Neither a partial ledger nor rows may escape it.
+  failBodyPublicPage = 0;
+  for (const outcome of ['live', 'unavailable', 'rejected', 'aborted'] as const) {
+    rows = [makeRow(800 + ['live', 'unavailable', 'rejected', 'aborted'].indexOf(outcome))];
+    queries = [];
+    let arrive!: () => void, release!: (value: boolean) => void, reject!: (error: Error) => void;
+    const arrived = new Promise<void>(resolve => { arrive = resolve; });
+    const admission = new Promise<boolean>((resolve, fail) => { release = resolve; reject = fail; });
+    globalThis.fetch = async (input, init) => {
+      const response = await handlerFetch(input, init);
+      if (String(input) === '/api/content-reader') arrive();
+      return response;
+    };
+    const controller = new AbortController();
+    let settled = false;
+    const pending = loadReaderRows({ keys: [rows[0].content_key] }, controller.signal, { ready: admission });
+    void pending.then(() => { settled = true; });
+    await arrived;
+    await new Promise(resolve => setTimeout(resolve, 0));
+    assert.equal(settled, false);
+    assert.equal(contentPublication(rows[0].content_key), undefined, 'An early response cannot install its partial ledger.');
+    if (outcome === 'aborted') controller.abort(new Error('Synthetic cancelled preparation'));
+    else if (outcome === 'rejected') reject(new Error('Synthetic incomplete ledger'));
+    else release(outcome === 'live');
+    const value = await pending;
+    if (outcome === 'live') {
+      assert.equal(value.error, null);
+      assert.equal(value.data?.[0].body, body);
+    } else {
+      assert(value.error);
+      assert.equal(value.data, null);
+      assert.equal(contentPublication(rows[0].content_key), undefined);
+    }
+    release(false);
+  }
+  rows = Array.from({ length: 251 }, (_, index) => makeRow(1000 + index));
+  queries = [];
+  let arrive!: () => void, release!: (value: boolean) => void;
+  const arrived = new Promise<void>(resolve => { arrive = resolve; });
+  const admission = new Promise<boolean>(resolve => { release = resolve; });
+  globalThis.fetch = async (input, init) => {
+    const response = await handlerFetch(input, init);
+    if (String(input) === '/api/content-reader') arrive();
+    return response;
+  };
+  const prepared = loadReaderRows({ surfaces: ['sky'] }, undefined, { ready: admission });
+  await arrived;
+  await new Promise(resolve => setTimeout(resolve, 0));
+  assert.equal(queries.length, 2, 'The whole paginated inventory can finish transport before admission.');
+  assert.equal(contentPublication(rows[0].content_key), undefined);
+  assert.equal(contentPublication(rows.at(-1)!.content_key), undefined, 'Later pages cannot install partial state either.');
+  installContentPublications([{ content_key: rows[0].content_key, state: 'retired', revision: 200,
+    row_id: rows[0].id, row_updated_at: stamp, updated_at: stamp }], 'complete-live');
+  release(true);
+  const admitted = await prepared;
+  assert.equal(admitted.error, null);
+  assert.equal(admitted.data?.length, 250);
+  assert(!admitted.data?.some(row => row.id === rows[0].id), 'A retirement observed at admission excludes buffered copy.');
+  assert.equal(admitted.data?.at(-1)?.body, body, 'Admission retains the complete later page.');
+  assert.equal(queries.length, 2);
   console.log('PASS reader recovery: actual-handler 503, exact copy/privacy, interrupted headers/body, bounded attempts, cancellation, malformed JSON refusal, retirement, pagination and late superseded responses.');
 } finally { globalThis.fetch = originalFetch; }

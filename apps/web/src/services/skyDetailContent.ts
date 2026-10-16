@@ -1,8 +1,35 @@
 import {lunationReaderContentKeys} from '../content/lunationReaderSource';
 import { contentPublication, publicationAllowsContent } from "../content/contentPublicationState";
+import { SKY_PLACEMENT_ASPECT_TARGETS, transitAspectDefinitions } from "../astrologyConfig";
+import { contentPublicationsAvailableOnline } from "./contentPublications";
 import type { SkySnapshot } from "../types";
 import type { LiveGeneratedContent } from "./generatedContent";
-import { skyAspectGeneratedContentKeys } from "./skyAspectContent";
+import { contentStudioExactSkyAspectKeys, skyAspectGeneratedContentKeys } from "./skyAspectContent";
+
+/** Candidates are transport only: actual calculated events still choose copy.
+ * An oversized candidate set disables preparation rather than truncating it. */
+export function coldSkyPlacementAspectKeys(planet: string, existing: Map<string, LiveGeneratedContent>) {
+  const retained = eligibleSkyDetailContent(existing);
+  const keys = [...new Set(SKY_PLACEMENT_ASPECT_TARGETS.flatMap(other => transitAspectDefinitions.flatMap(aspect =>
+    contentStudioExactSkyAspectKeys(planet, aspect.type, other))))].filter(key => {
+      const publication = contentPublication(key);
+      return publication?.state === "live" && publication.row_id && !retained.has(key);
+    });
+  return keys.length <= 50 ? keys : [];
+}
+
+export type ColdSkyAspectRead = { keys: string[]; rows: Promise<Map<string, LiveGeneratedContent>> };
+export function prefetchSkyPlacementAspectContent(planet: string, existing: Map<string, LiveGeneratedContent>,
+  publications: Promise<void>, snapshot: Promise<SkySnapshot>, load: (keys: string[]) => Promise<Map<string, LiveGeneratedContent>>) {
+  let calculated = false;
+  void snapshot.then(() => { calculated = true; }, () => { calculated = true; });
+  const read: ColdSkyAspectRead = { keys: [], rows: publications.then(() => {
+    if (calculated || !contentPublicationsAvailableOnline()) return new Map<string, LiveGeneratedContent>();
+    read.keys = coldSkyPlacementAspectKeys(planet, existing);
+    return read.keys.length ? load(read.keys) : new Map<string, LiveGeneratedContent>();
+  }).catch(() => new Map<string, LiveGeneratedContent>()) };
+  return read;
+}
 
 function routePartMatches(value: string, routePart: string) {
   return value.trim().toLowerCase().replace(/\s+/g, "-") === routePart.trim().toLowerCase().replace(/\s+/g, "-");

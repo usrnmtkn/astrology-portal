@@ -243,6 +243,13 @@ export default defineConfig(({ mode }) => {
             // Shared civil-date/location helpers are used together by Sky and
             // its articles; one chunk avoids repeated tiny preload dependencies.
             if (/\/services\/(?:timezones|skySelection|skyClock)\.ts$/u.test(id)) return "sky-time";
+            // These validation helpers are already in every reader's eager
+            // graph. Keep their shared contract in one compressed module.
+            if (/\/services\/(?:astrologyFacts|verifiedSkyCache)\.ts$/u.test(id)) return "sky-verification";
+            // Reader publication state, transport and update notices share one
+            // startup boundary; avoid three separate imports and gzip headers.
+            if (id.endsWith("/content/contentPublicationState.ts")
+              || /\/services\/(?:contentPublications|contentUpdateSignal)\.ts$/u.test(id)) return "content-publications";
             // Keep the shared Studio return path with its authentication callers.
             // A separate shared chunk adds a preload import to every auth consumer.
             if (id.endsWith("/services/auth.ts") || id.endsWith("/services/studioAuthReturn.ts")) {

@@ -17,6 +17,12 @@ export const SKY_BODY_ORDER = [
 
 export type SkyBodyName = (typeof SKY_BODY_ORDER)[number];
 
+/** Existing residency-aspect target inventory, shared with reader preparation. */
+export const SKY_PLACEMENT_ASPECT_TARGETS = [
+  "Sun", "Mercury", "Venus", "Mars", "Jupiter", "Saturn",
+  "Uranus", "Neptune", "Pluto", "Lilith"
+] as const;
+
 export type TransitToNatalOrbCutoff = {
   default?: number;
   applying?: number;

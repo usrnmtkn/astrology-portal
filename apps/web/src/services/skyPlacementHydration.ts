@@ -1,5 +1,5 @@
 import { loadSkyPlacementFallbackArchitectureV3Bundle } from "../content/fallbackArchitectureV3Runtime";
-import { loadContentStudioLastKnownGoodRows, loadFallbackArchitectureV3DashboardBundle, loadFallbackArchitectureV3SkyPlacementDashboardBundle } from "./generatedContent";
+import { loadContentStudioLastKnownGoodRows, loadFallbackArchitectureV3DashboardBundle, loadFallbackArchitectureV3SkyPlacementDashboardBundle, prefetchColdSkyArticleRows } from "./generatedContent";
 import { contentPublicationsAvailableOnline, contentPublicationsResolved, refreshContentPublications } from "./contentPublications";
 import { missingSkyPlacementPublications, skyPlacementPublicationIdentity } from "./skyPlacementPublicationGuard";
 
@@ -11,18 +11,25 @@ export { missingSkyPlacementPublications, skyPlacementPublicationIdentity };
  */
 async function prepareSources(selection?: string) {
   let timer: ReturnType<typeof setTimeout> | undefined;
+  let earlyRead: ReturnType<typeof prefetchColdSkyArticleRows>;
   const prepare = async () => {
     const bundled = loadSkyPlacementFallbackArchitectureV3Bundle(!selection || selection.startsWith('article:'));
     void bundled.catch(() => { /* Joined below, including its failure. */ });
-    await refreshContentPublications();
+    const publications = refreshContentPublications();
+    if (selection?.startsWith("article:")) earlyRead = prefetchColdSkyArticleRows(publications);
+    await publications;
     // Live readers already resolve current rows below. The full offline snapshot
     // is a recovery source, not a prerequisite download for every Sky visit.
-    if (!contentPublicationsAvailableOnline()) await loadContentStudioLastKnownGoodRows();
+    if (!contentPublicationsAvailableOnline()) {
+      earlyRead?.discard();
+      earlyRead = undefined;
+      await loadContentStudioLastKnownGoodRows();
+    }
     if (!contentPublicationsResolved()) throw new Error("Sky publication state is unavailable.");
     for (let attempt = 0; attempt < 2; attempt++) {
       const identity = skyPlacementPublicationIdentity();
       const [coreBundle, placementBundle] = await Promise.all([
-        loadFallbackArchitectureV3DashboardBundle(selection?.startsWith('article:') ? "sky-article" : selection ? "sky-list" : "sky"),
+        loadFallbackArchitectureV3DashboardBundle(selection?.startsWith('article:') ? "sky-article" : selection ? "sky-list" : "sky", attempt === 0 ? earlyRead : undefined),
         loadFallbackArchitectureV3SkyPlacementDashboardBundle(selection),
         bundled
       ]);
@@ -41,6 +48,7 @@ async function prepareSources(selection?: string) {
     })]);
   } finally {
     clearTimeout(timer);
+    earlyRead?.discard();
   }
 }
 
