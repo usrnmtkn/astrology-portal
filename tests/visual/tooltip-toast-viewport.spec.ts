@@ -99,7 +99,7 @@ for (const viewport of [{width:360,height:640},{width:390,height:844},{width:844
   test(`${name} stays inside ${viewport.width}x${viewport.height} ${theme}`, async ({page}) => {
     test.setTimeout(45000);
     await page.setViewportSize(viewport);
-    await prepare(page,theme,true,name === 'Dignity tooltip',name.startsWith('Report'));
+    await prepare(page,theme,true,false,name.startsWith('Report'));
     if (name === 'Report ready toast') await page.route('**/rest/v1/user_generated_interpretations?**', route => route.fulfill({json:[{
       id:'22222222-2222-4222-8222-222222222222',subject_type:'you_day_reading',status:'DRAFT',body:'Synthetic reading.',
       headline:longTitle,target_date:'2026-10-15',created_at:'2026-10-15T12:00:00Z',updated_at:'2026-10-15T12:00:00Z'
@@ -121,7 +121,7 @@ for (const viewport of [{width:360,height:640},{width:390,height:844},{width:844
       },theme);
       await page.route('**/api/admin/**',route=>route.fulfill({json:{ok:true,rows:[],statuses:[],nextCursor:null}}));
     }
-    const path = name === 'Dignity tooltip' ? '/#friends?tab=charts' : name === 'Studio toast' ? '/admin/content#content/aspect-patterns' : name.startsWith('Calendar') ? `/#calendar?view=${name.includes('month')?'month':'week'}`
+    const path = name === 'Dignity tooltip' ? '/?date=2026-10-16#sky/placement/sun/libra' : name === 'Studio toast' ? '/admin/content#content/aspect-patterns' : name.startsWith('Calendar') ? `/#calendar?view=${name.includes('month')?'month':'week'}`
       : name.startsWith('Friend') ? '/#friends?tab=circle' : name === 'Report notice toast' ? '/reports/'
       : name === 'Report ready toast' ? '/#account' : '/#sky';
     await page.goto(path,{waitUntil:'domcontentloaded'});
@@ -137,8 +137,6 @@ for (const viewport of [{width:360,height:640},{width:390,height:844},{width:844
       anchor=page.locator('.planet-marker:visible').first();
       await anchor.focus();surface=page.locator('.floating-tooltip--planet');
     } else if (name === 'Dignity tooltip') {
-      await page.getByRole('button',{name:'Open Fixture Friend',exact:true}).click();
-      await page.getByRole('tab',{name:'Natal',exact:true}).click();
       anchor=page.locator('.spl-dig[tabindex="0"]:visible').first();
       await anchor.focus();surface=page.locator('.floating-tooltip');
     } else if (name.startsWith('Calendar')) {
