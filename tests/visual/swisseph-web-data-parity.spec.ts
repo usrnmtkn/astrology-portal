@@ -8,10 +8,6 @@ import { createServer as createViteServer, type ViteDevServer } from "vite";
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
 const webRoot = path.join(repoRoot, "apps/web");
-const manifest = JSON.parse(
-  fs.readFileSync(path.join(repoRoot, "apps/web/dist/.vite/manifest.json"), "utf8")
-) as Record<string, { file: string }>;
-const ephemerisChunk = manifest["src/services/ephemeris.ts"]?.file;
 const baseUrl = process.env.PLAYWRIGHT_BASE_URL ?? "http://127.0.0.1:4173";
 const location = {
   label: "New York, NY",
@@ -115,6 +111,10 @@ test("Vite development mode serves working Swiss Ephemeris data", async ({ page 
 
 test("trimmed browser Swiss Ephemeris data matches the full package across dates", async ({ page }) => {
   test.setTimeout(45_000);
+  const manifest = JSON.parse(
+    fs.readFileSync(path.join(repoRoot, "apps/web/dist/.vite/manifest.json"), "utf8")
+  ) as Record<string, { file: string }>;
+  const ephemerisChunk = manifest["src/services/ephemeris.ts"]?.file;
   expect(ephemerisChunk, "The production manifest must expose the deferred ephemeris chunk.").toBeTruthy();
 
   const fullSwiss = new SwissEph();
