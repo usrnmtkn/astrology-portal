@@ -1,3 +1,4 @@
+import {hasExactStudioOwnerApproval} from './_lib/studio-owner-publication.js';
 import { articleLibraryPrefixes } from "../src/shared/articleLibrary.js";
 import { createHash } from "node:crypto";
 import { SKY_SEASON_FALLBACK_PREFIX } from "../apps/web/src/content/skySeasonFallback.js";
@@ -142,7 +143,7 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
     const publications = new Map((ledger as ContentPublication[]).map(item => [item.content_key, item]));
     // A missing ledger is a configuration error, never permission to serve old writing.
     if (!publications.has(publicationLedgerKey)) throw new Error('Publication state is unavailable.');
-    const admitted = rows.filter(row => readerRowIsEligible(row)
+    const admitted = rows.filter(row => (!row.source_snapshot?.studioOwnerApproval || hasExactStudioOwnerApproval(row)) && readerRowIsEligible(row)
       && publicationAllowsContent(row.content_key, row.id, row.updated_at, row.target_date, publications));
     res.end(JSON.stringify({ schema: READER_ROW_SCHEMA, rows: admitted.map(projectReaderRow).filter(Boolean), publications: ledger,
       nextCursor: rows.length === pageSize ? rows.at(-1)!.id : null }));

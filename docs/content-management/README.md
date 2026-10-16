@@ -483,3 +483,7 @@ Before handing off:
 - [ ] The distribution bundle and content book were rebuilt when required.
 - [ ] Focused regressions, content contracts, typecheck, and build passed.
 - [ ] Dashboard sync status is explicit.
+
+## Explicit owner publication
+
+The October 15, 2026 owner publishing request makes an authenticated owner's explicit publication action the final decision on exact saved reader wording. Automated editorial verdicts do not replace that decision. Generated/automatic publication keeps its existing editorial policy. Source identity, signed calculated windows, complete required fields, source/reader separation, variables, concurrency and actual publication state remain enforced. See [the Studio publishing audit](../qa/content-studio-owner-publishing-audit.md) for editor coverage and release evidence.

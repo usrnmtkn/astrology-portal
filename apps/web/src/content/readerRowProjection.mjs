@@ -75,6 +75,7 @@ const metadata = {
   cardFacts: strings('a b aspect signA signB'),
   skyAspectVoiceLint: numbers('score fails'),
   studioWritingCheck: strings('reviewPolicy contentKey bodyHash'),
+  studioOwnerApproval: strings('action contentKey bodyHash copyHash'),
   studioPairSourceRevision: strings('bodyHash id'),
   calendarAspectPublication: strings('schema action contentKey sourceBaselineSha256 copySha256 approvedAt'),
   ownerApproval: { ...booleans('approved'), ...strings('action contentKey templateKey templateHash fixedProseHash compiledHash activeStart activeEnd') }

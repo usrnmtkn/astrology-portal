@@ -60,3 +60,5 @@ export const skyV4ServingReleasedReaderCopyKeys = skyV4ReaderCopyServingRelease.
   ? skyV4OwnerApprovedReaderCopyKeys
   : new Set<string>();
 export { publicationTimestamp, validContentPublication } from '../../apps/web/src/content/contentPublicationState.js';
+
+export {skyAspectReaderCopyPassesBoundary} from "../../apps/web/src/services/skyAspectContent.js";

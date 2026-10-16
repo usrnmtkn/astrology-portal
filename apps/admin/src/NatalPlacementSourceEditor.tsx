@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { effectivePackageRecord } from "./skyFallbackWorkspace";
 
 export type NatalSourceEdits = Record<string, string>;
-export type NatalEditableRow = { id?: string | null; content_key: string; body: string | null; sections: unknown; updated_at?: string | null };
+export type NatalEditableRow = { id?: string | null; content_key: string; body: string | null; sections: unknown; updated_at?: string | null; status?: string };
 
 export function natalSourceFields(row: NatalEditableRow): NatalSourceEdits {
   const record = effectivePackageRecord(row.sections);
@@ -57,7 +57,7 @@ export default function NatalPlacementSourceEditor({ row, label, disabled, onDir
         </label>
       ))}
       <div className="admin-natal-source-actions">
-        <StudioButton type="button" disabled={disabled || saving || (!dirty && !(row.sections as { packageDraft?: unknown })?.packageDraft)} onClick={() => void save(true)}>Save &amp; publish</StudioButton>
+        <StudioButton type="button" disabled={disabled || saving || (!dirty && row.status !== "DRAFT" && !(row.sections as { packageDraft?: unknown })?.packageDraft)} onClick={() => void save(true)}>Save &amp; publish</StudioButton>
         <StudioButton type="button" disabled={disabled || saving || !dirty} onClick={() => void save(false)}>Save draft</StudioButton>
         {dirty && <StudioButton type="button" disabled={saving} onClick={() => { setEdits(null); setFeedback(""); }}>Cancel edits</StudioButton>}
       </div>

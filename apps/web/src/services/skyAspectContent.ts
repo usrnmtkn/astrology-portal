@@ -189,36 +189,38 @@ function normalizedContentStudioExactSkyAspectFacts({
   };
 }
 
+export function skyAspectReaderCopyPassesBoundary(body: string) {
+  const containsMechanics = /\b(?:orb|degrees?)\b|°/i.test(body);
+  const containsDate = /\b(?:jan(?:uary)?|feb(?:ruary)?|mar(?:ch)?|apr(?:il)?|jun(?:e)?|jul(?:y)?|aug(?:ust)?|sep(?:tember)?|oct(?:ober)?|nov(?:ember)?|dec(?:ember)?)\s+\d{1,2}(?:st|nd|rd|th)?\b|\b20\d{2}\b|\b\d{4}-\d{2}-\d{2}\b/i.test(body);
+  const containsInternalMetadata = /\b(?:provenance|linter|lint score|editorial status|draft status|review queue)\b/i.test(body);
+  return Boolean(body && isReaderFacingCopy(body) && !containsMechanics && !containsDate && !containsInternalMetadata);
+}
+
 function generatedSkyAspectCardPassesBoundary(
   content: LiveGeneratedContent,
   expected: ExpectedSkyAspectFacts
 ) {
   const source = content.sourceSnapshot ?? {};
   const lint = recordField(source.skyAspectVoiceLint);
+  const approval = recordField(source.studioOwnerApproval);
+  const ownerFinal = approval?.action === "publish-owner-content" && approval.contentKey === content.contentKey
+    && typeof approval.bodyHash === "string" && /^[a-f0-9]{64}$/u.test(approval.bodyHash);
   const facts = recordField(source.cardFacts);
   const body = skyAspectBody(content);
-  const containsMechanics = /\b(?:orb|degrees?)\b|°/i.test(body);
-  const containsDate = /\b(?:jan(?:uary)?|feb(?:ruary)?|mar(?:ch)?|apr(?:il)?|jun(?:e)?|jul(?:y)?|aug(?:ust)?|sep(?:tember)?|oct(?:ober)?|nov(?:ember)?|dec(?:ember)?)\s+\d{1,2}(?:st|nd|rd|th)?\b|\b20\d{2}\b|\b\d{4}-\d{2}-\d{2}\b/i.test(body);
-  const containsInternalMetadata = /\b(?:provenance|linter|lint score|editorial status|draft status|review queue)\b/i.test(body);
-
   return Boolean(
-    body
-    && isReaderFacingCopy(body)
-    && !containsMechanics
-    && !containsDate
-    && !containsInternalMetadata
-    && lint?.score === 3
+    skyAspectReaderCopyPassesBoundary(body)
+    && (ownerFinal || (lint?.score === 3
     && lint?.fails === 0
     && (content.judgeScore === 3 || (recordField(source.studioWritingCheck)?.reviewPolicy === "owner-final-v1"
-      && recordField(source.studioWritingCheck)?.contentKey === content.contentKey))
+      && recordField(source.studioWritingCheck)?.contentKey === content.contentKey))))
     && content.status === "LIVE"
     && content.judgeGate === "human-review"
     && (source.pairSource === expected.pairSource
       || (source.pairSource === `content-studio/source/sky-aspect-pair/${expected.pairKey}`
         && typeof recordField(source.studioPairSourceRevision)?.bodyHash === "string"
         && typeof recordField(source.studioPairSourceRevision)?.id === "string") || (
-      recordField(source.studioWritingCheck)?.contentKey === content.contentKey
-      && typeof recordField(source.studioWritingCheck)?.bodyHash === "string"
+      (ownerFinal || (recordField(source.studioWritingCheck)?.contentKey === content.contentKey
+      && typeof recordField(source.studioWritingCheck)?.bodyHash === "string"))
       && (source.pairSource === "content-studio/manual" || (typeof source.pairSource === "string" && source.pairSource.startsWith("content-studio/source/sky-aspect-pair/")))
     ))
     && source.pairKey === expected.pairKey

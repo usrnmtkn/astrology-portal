@@ -249,12 +249,14 @@ export default function HoroscopeEditionsStudio({secret,requestedEditionId}:{sec
       if(publish&&(!approved||dirty||!publicationReady))throw new Error('Check the saved edition and approve its exact wording before publishing.');
       const changed=edition.passages.filter(p=>publish||!saved?.sections?.horoscopeEdition?.passages?.some((old:any)=>old.sign===p.sign&&old.headline===p.headline&&old.body===p.body));
       for(const p of changed){const issue=horoscopePunctuationFindings(p)[0];if(issue)throw new Error(`${horoscopeSignLabel(p.sign)}: ${issue.detail}`);}
-      const body=publish ? {id:saved.id,status:'LIVE',lane:'serving',reviewState:null,expectedUpdatedAt:saved.updated_at} : {
+      const body=publish ? {id:saved.id,ownerAction:'publish-owner-content',expectedUpdatedAt:saved.updated_at} : {
         ...(saved ? {id:saved.id,expectedUpdatedAt:saved.updated_at}:{contentKey:horoscopeEditionKey(edition.window),surface:'sky',mode:'article',eventType:'horoscope-edition',provider:'manual-admin',model:'manual',targetDate:null}),
         status:'DRAFT',lane:'serving',reviewState:null,headline:`${horoscopeSignLabel(edition.window.period)} horoscopes`,body:horoscopeEditionBody(edition),summary:'',sections:{horoscopeEdition:edition},facts:{horoscopeBrief:packet},
         sourceSnapshot:{horoscopeOutlines:outlines,studioWritingProfile:profile,editorialImport}
       };
-      const data=await request(secret,endpoint,body,saved ? 'PATCH':'POST');
+      const write=()=>request(secret,endpoint,body,saved ? 'PATCH':'POST');
+      const ownerTransport=publish?await import("./ownerPublication"):null;
+      const data=ownerTransport?await ownerTransport.publishSavedOwnerContent(saved,write,()=>request(secret,ownerTransport.ownerPublicationStatusPath(saved))):await write();
       const row=data.rows?.[0];
       if(!row?.id || !row.updated_at || !isHoroscopeEditionKey(row.content_key,edition.window) || JSON.stringify(validateHoroscopeEdition(row.sections?.horoscopeEdition))!==JSON.stringify(edition)
         || row.status!==(publish ? 'LIVE':'DRAFT')) throw new Error('The exact save could not be confirmed. Your edits are preserved; reload the saved edition before retrying.');

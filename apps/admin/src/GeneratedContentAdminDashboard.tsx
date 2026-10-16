@@ -4875,21 +4875,24 @@ export function GeneratedContentAdminDashboard() {
     } finally { setIsLoading(false); }
   }
 
-  async function approveAndScheduleSkyRow(row: AdminGeneratedContentRow) {
+  async function approveAndScheduleSkyRow(row: AdminGeneratedContentRow, ownerFinal = false) {
     setEditorSaveError("");
     setIsLoading(true);
     try {
-      const payload = await adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[] }>("/api/admin/generated-content", secret, {
+      const write = () => adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[] }>("/api/admin/generated-content", secret, {
         method: "PATCH",
-        body: JSON.stringify({ id: row.id, ...(row.updated_at ? { expectedUpdatedAt: row.updated_at } : {}), ownerAction: "approve-and-schedule" })
+        body: JSON.stringify({ id: row.id, ...(row.updated_at ? { expectedUpdatedAt: row.updated_at } : {}), ownerAction: ownerFinal ? "publish-owner-content" : "approve-and-schedule" })
       });
+      const ownerTransport = ownerFinal ? await import("./ownerPublication") : null;
+      const payload = ownerTransport ? await ownerTransport.publishSavedOwnerContent(row, write,
+        () => adminJsonRequest<{ok:boolean;rows:AdminGeneratedContentRow[]}>(ownerTransport.ownerPublicationStatusPath(row), secret)) : await write();
       const saved = payload.rows?.[0];
       if (!payload.ok || !saved || saved.id !== row.id || saved.content_key !== row.content_key
-        || saved.status !== (row.block_type === "sky_placement" ? "REVIEWED" : "LIVE")) {
+        || saved.status !== (row.block_type === "sky_placement" && !ownerFinal ? "REVIEWED" : "LIVE")) {
         throw new Error("Approval was not confirmed. Try again.");
       }
       setRows((current) => current.map((candidate) => candidate.id === saved.id ? saved : candidate));
-      if (selectedRowId === saved.id) {
+      if (selectedRowId === saved.id || draft?.contentKey === saved.content_key) {
         setEditorSourceRow(saved);
         const savedDraft = draftFromRow(saved);
         rememberSavedDraft(savedDraft);
@@ -4901,7 +4904,7 @@ export function GeneratedContentAdminDashboard() {
           ? { ...occurrence, row: saved, reviewStatus: "approved_scheduled" }
           : occurrence)
       } : current);
-      setMessage(`${row.content_key} approved. ${row.block_type === "sky_placement" ? "Package release required." : "Eligible for matching Sky configurations."}`);
+      setMessage(ownerFinal ? `${saved.headline || saved.content_key} published.` : `${row.content_key} approved. ${row.block_type === "sky_placement" ? "Package release required." : "Eligible for matching Sky configurations."}`);
     } catch (error) {
       const feedback = dashboardErrorMessage(error);
       setEditorSaveError(feedback);
@@ -5607,6 +5610,29 @@ export function GeneratedContentAdminDashboard() {
       setMessage(action === "retire" ? `${draft.contentKey} retired everywhere. Devices apply the retirement when they reconnect.` : `${draft.contentKey} published again.`);
     } catch (error) { setEditorSaveError(dashboardErrorMessage(error)); setMessage(dashboardErrorMessage(error)); }
     finally { setIsLoading(false); }
+  }
+
+  async function publishOwnerDraft(activeDraft: AdminDraft) {
+    if (pendingPublication) { setEditorSaveError("Check the pending publication before publishing again."); return; }
+    const saved = await saveDraft("DRAFT", activeDraft);
+    if (saved) await approveAndScheduleSkyRow(saved, true);
+  }
+
+  async function publishPackageDraft(activeDraft: AdminDraft) {
+    if (pendingPublication) { setEditorSaveError("Check the pending publication before publishing again."); return; }
+    const personalCopy = writesPersonalTransitExactCopy(activeDraft) || (!activeDraft.id && activeDraft.contentKey.startsWith("authored/transit-aspect/"));
+    if (personalCopy && draftHasPackageProposal(activeDraft)) activeDraft = { ...activeDraft,
+      sections: { ...activeDraft.sections, packageRecord: draftEditablePackageRecord(activeDraft), packageDraft: undefined } };
+    const proposal = personalCopy
+      ? draftWithPackageReviewStatus(activeDraft, "approved")
+      : draftHasPackageProposal(activeDraft) ? activeDraft : {
+        ...activeDraft,
+        sections: { ...activeDraft.sections, packageDraft: structuredClone(draftPackageRecord(activeDraft)) }
+      };
+    const existing = editorSourceRow?.id === activeDraft.id ? editorSourceRow : rows.find(row => row.id === activeDraft.id);
+    const unchanged = [editorBaselineRef.current, editorSavedInputRef.current].includes(JSON.stringify(activeDraft));
+    const saved = existing && unchanged && !personalCopy && draftHasPackageProposal(activeDraft) ? existing : await saveDraft(undefined, proposal);
+    if (saved && !personalCopy) await approvePackageRevision(saved);
   }
 
   async function approvePackageRevision(row: AdminGeneratedContentRow, updateEditor = true) {
@@ -10230,14 +10256,9 @@ export function GeneratedContentAdminDashboard() {
         ? !["body", "body_you"].some((field) => packageFieldString(currentDraft, field).trim())
         : !["body_you", "body_they"].every((field) => packageFieldString(currentDraft, field).trim())
     );
-    const transitNatalHasExactOwnerApproval = objectRecord(draftPackageRecord(currentDraft).approval)?.approvalLevel === "exact_owner_approved";
-    const transitNatalCanApprovePublish = isPersonalTransitExactDraft
-      && (!packageHasProposal || isPersonalTransitSituationDraft)
-      && !packageCanApproveRevision
-      && !isGuidedHeldReview
-      && !packageIsSkyV4Governed
-      && packageRoleCanServeExactCopy
-      && (!fallbackArchitectureV3ReaderEligibleReviews.has(packageReviewStatus) || !transitNatalHasExactOwnerApproval);
+    const packageOwnerCanPublish = isPackageDraft
+      && !isReferenceDraft && packageRoleCanServeExactCopy
+      && (!packageIsSkyV4Governed || packageHasProposal || currentDraft.status !== "LIVE");
     const seasonSourceRows = ZODIAC_SEASON_SOURCE_STARTERS.map((record: Record<string, any>) => rows.find(row => row.content_key === record.contentKey) ?? {
       id: `package:${record.contentKey}`, content_key: record.contentKey, headline: record.headline, body: "", summary: "", surface: "sky", status: "DRAFT", inventory_only: true, block_type: "fallback_hook", sections: { packageRecord: record }
     } as AdminGeneratedContentRow);
@@ -10884,6 +10905,8 @@ export function GeneratedContentAdminDashboard() {
       && Boolean(currentDraft.headline.trim())
       && Boolean(astro101SlugFromFacts(currentDraft.facts) || astro101Slugify(currentDraft.headline));
     const publishReady = (isAstro101Draft ? astro101PublishReady : Boolean(currentDraft.body.trim())) && (!isNewDraft || isCmsSurfaceDraft);
+    const directReaderDraft = isCmsSurfaceDraft || isManualCalendarEventDraft || isStandaloneArticleDraft;
+    const packageCopyMissing = compatibilityAspectMissingCopy || natalAspectMissingCopy || transitNatalMissingCopy;
     const reviewComplete = currentDraft.status === "REVIEWED" && !draftHasUnsavedChanges;
     const compatibilityNewDraftReady = !isNewDraft || !isCompatibilityWorkspaceDraft || Boolean(
       currentDraft.headline.trim()
@@ -11079,8 +11102,8 @@ export function GeneratedContentAdminDashboard() {
               <ol>
                 <li><strong>Read:</strong> the Headline and the complete Body from beginning to end.</li>
                 <li><strong>Check:</strong> astrological accuracy, your preferred voice, repeated ideas, and any unfinished placeholders.</li>
-                <li><strong>If you edit:</strong> click Save held draft, then reread the saved copy.</li>
-                <li><strong>When it is correct:</strong> record owner copy review below. The row stays at <code>needs_review</code> and cannot serve.</li>
+                <li><strong>If you edit:</strong> save the draft, then reread the saved copy.</li>
+                <li><strong>When it is correct:</strong> {packageOwnerCanPublish ? "Save & publish approves and publishes this wording." : <>Record owner copy review below. This source still requires its owning release workflow.</>}</li>
               </ol>
               <div className="admin-guided-review-decision" role="status">
                 <strong>{guidedReviewDecision ? "Owner copy review recorded" : draftHasUnsavedChanges ? "Save before completing review" : "Ready for your decision"}</strong>
@@ -12573,25 +12596,24 @@ export function GeneratedContentAdminDashboard() {
                       : isContentRetired(currentDraft.contentKey) ? "Retired everywhere" : "All changes saved"}
           </span>
           <StudioButton
-            className={packageCanApproveRevision ? "admin-publish-button" : "admin-primary-button"}
+            className={packageOwnerCanPublish ? "admin-publish-button" : "admin-primary-button"}
             type="button"
             onClick={() => void (async () => {
-              if (packageCanApproveRevision) {
-                const saved = draftHasUnsavedChanges || !selectedRow ? await saveDraft() : selectedRow;
-                if (saved) await approvePackageRevision(saved);
+              if (packageOwnerCanPublish) {
+                await publishPackageDraft(currentDraft);
               } else {
-                await saveDraft(isSkyArticleTemplate ? "DRAFT" : isCmsSurfaceDraft || isManualCalendarEventDraft || isStandaloneArticleDraft ? "LIVE" : isAstro101Draft && currentDraft.status !== "LIVE" ? "DRAFT" : undefined);
+                await saveDraft(isSkyArticleTemplate ? "DRAFT" : directReaderDraft ? "LIVE" : isAstro101Draft && currentDraft.status !== "LIVE" ? "DRAFT" : undefined);
               }
             })()}
-            disabled={isLoading || unchangedSkySource || (isStandaloneArticleDraft && (!currentDraft.headline.trim() || !currentDraft.body.trim())) || Boolean(compiledSkyArticleEdition) || !compatibilityNewDraftReady || (isManualCalendarEventDraft && !currentDraft.body.trim()) || (isCmsSurfaceDraft && (!cmsCanSignOff || !publishReady)) || ((packageCanApproveRevision || packageWillPublishOnSave) && compatibilityAspectMissingCopy) || (packageWillPublishOnSave && (natalAspectMissingCopy || transitNatalMissingCopy)) || (!isNewDraft && !draftHasUnsavedChanges && !packageWillPublishOnSave && !packageCanApproveRevision && !((isCmsSurfaceDraft || isManualCalendarEventDraft || isStandaloneArticleDraft) && currentDraft.status !== "LIVE"))}
-            title={compatibilityAspectMissingCopy && (packageCanApproveRevision || packageWillPublishOnSave) ? "Write both You and Friend / They passages before publishing." : packageWillPublishOnSave && (natalAspectMissingCopy || transitNatalMissingCopy) ? "Write the passage before publishing." : !compatibilityNewDraftReady ? "Complete the Compatibility identity and copy." : undefined}
+            disabled={isLoading || (unchangedSkySource && !packageOwnerCanPublish) || (isStandaloneArticleDraft && (!currentDraft.headline.trim() || !currentDraft.body.trim())) || Boolean(compiledSkyArticleEdition) || !compatibilityNewDraftReady || (isManualCalendarEventDraft && !currentDraft.body.trim()) || (isCmsSurfaceDraft && (!cmsCanSignOff || !publishReady)) || (packageOwnerCanPublish && packageCopyMissing) || (!isNewDraft && !draftHasUnsavedChanges && !packageWillPublishOnSave && !packageOwnerCanPublish && !((directReaderDraft) && currentDraft.status !== "LIVE"))}
+            title={packageOwnerCanPublish && packageCopyMissing ? "Complete the required reader passages before publishing." : !compatibilityNewDraftReady ? "Complete the Compatibility identity and copy." : undefined}
           >
             <Save size={16} aria-hidden="true" />
-            {isSkyArticleTemplate ? "Save template" : isAstro101Draft
+            {packageOwnerCanPublish && isPersonalTransitExactDraft ? "Approve & publish" : isSkyArticleTemplate ? "Save template" : isAstro101Draft
               ? currentDraft.status === "LIVE" ? "Save changes" : "Save draft"
-              : isGuidedHeldReview
+              : isGuidedHeldReview && !packageOwnerCanPublish
               ? "Save held draft"
-              : isCmsSurfaceDraft || isManualCalendarEventDraft || isStandaloneArticleDraft || packageCanApproveRevision || unchangedSkySource
+              : directReaderDraft || packageOwnerCanPublish || unchangedSkySource
                 ? "Save & publish"
                 : packageHasProposal
                 ? "Save draft"
@@ -12599,38 +12621,23 @@ export function GeneratedContentAdminDashboard() {
                   ? "Save & publish"
                   : "Save"}
           </StudioButton>
-          {(isCmsSurfaceDraft || isManualCalendarEventDraft || isStandaloneArticleDraft || isPackageDraft && packageCanApproveRevision || unchangedSkySource) && (
+          {(directReaderDraft || isPackageDraft && packageOwnerCanPublish || unchangedSkySource) && (
             <StudioButton
               className="admin-secondary-button"
               type="button"
-              onClick={() => void saveDraft(isCmsSurfaceDraft || isManualCalendarEventDraft || isStandaloneArticleDraft ? "DRAFT" : undefined)}
+              onClick={() => void saveDraft(directReaderDraft ? "DRAFT" : undefined)}
               disabled={isLoading || unchangedSkySource || (!isNewDraft && !draftHasUnsavedChanges)}
               title="Keep this revision as a Draft."
             >
               <Save size={16} aria-hidden="true" />
-              Save draft
+              {isGuidedHeldReview ? "Save held draft" : isPersonalTransitExactDraft || isNewDraft && isPackageDraft ? "Save" : "Save draft"}
             </StudioButton>
           )}
-          {transitNatalCanApprovePublish && (
-            <StudioButton
-              className="admin-publish-button"
-              type="button"
-              onClick={() => void saveDraft(undefined, draftWithPackageReviewStatus(currentDraft, "approved"))}
-              disabled={isLoading || unchangedSkySource || transitNatalMissingCopy}
-              title={transitNatalMissingCopy
-                ? currentDraft.contentKey.startsWith("authored/transit-return/")
-                  ? "Write the return passage before publishing."
-                  : "Write both You and Friend passages before publishing."
-                : "Approve this exact contact and make it live on You and Friends."}
-            >
-              <Check size={16} aria-hidden="true" />
-              Approve & publish
-            </StudioButton>
-          )}
-          {transitNatalCanApprovePublish && (
-            <p className="admin-savebar-next-step">Save keeps a draft. Approve &amp; publish makes this exact contact live.</p>
-          )}
-          {isPackageDraft && packageHasProposal && !packageCanApproveRevision && !packageIsSkyV4Governed && (
+          {isGovernedSkyDraft && currentDraft.blockType === "sky_aspect" && <StudioButton className="admin-publish-button" type="button"
+            disabled={isLoading || !currentDraft.body.trim()} onClick={() => void publishOwnerDraft(currentDraft)}>
+            Save &amp; publish
+          </StudioButton>}
+          {isPackageDraft && packageHasProposal && !packageOwnerCanPublish && !packageIsSkyV4Governed && (
             <p className="admin-savebar-next-step">This row is source material; save it for review rather than publishing it as exact reader copy.</p>
           )}
           {isPackageDraft && !isNewDraft && !skyFallbackEditor && draftHasUnsavedChanges && (

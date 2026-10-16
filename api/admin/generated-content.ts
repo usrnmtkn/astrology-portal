@@ -1,3 +1,5 @@
+import {studioSkyIdentity} from '../_lib/sky-studio-identity.js';
+import {studioOwnerApproval, hasExactStudioOwnerApproval} from '../_lib/studio-owner-publication.js';
 import {isDeepStrictEqual} from 'node:util';
 import { csvChanges, csvDraftPatch, csvRecordForRow, type CsvRecord } from '../../apps/admin/src/studioCsv.js';
 import {persistWeeklyHoroscope} from '../_lib/horoscope-storage-confirmation.js';
@@ -112,6 +114,7 @@ type GeneratedContentWriteBody = {
   csvRecord?: CsvRecord;
   ownerAction?:
     | "approve-and-schedule"
+    | "publish-owner-content"
     | "import-csv-draft"
     | "approve-package-revision"
     | "approve-sky-article-edition"
@@ -1130,7 +1133,7 @@ function assertCanPublishGeneratedContent(row: Parameters<typeof isLegacyLiveWri
       throw new Error("Compiled Sky article edition content key does not match its immutable compilation record.");
     }
   }
-  if (skyBlockType === "sky_aspect" || skyBlockType === "sky_placement") {
+  if ((skyBlockType === "sky_aspect" || skyBlockType === "sky_placement") && !hasExactStudioOwnerApproval({ ...row, source_snapshot: row.sourceSnapshot ?? row.source_snapshot })) {
     const sourceSnapshot = (row.sourceSnapshot ?? row.source_snapshot) as Record<string, unknown> | null | undefined;
     const judgeScore = row.judgeScore ?? row.judge_score;
     const judgeGate = row.judgeGate ?? row.judge_gate;
@@ -1248,7 +1251,7 @@ async function readJsonBody(req: IncomingMessage) {
 }
 
 const generatedContentOwnerActions = new Set([
-  "import-csv-draft",
+  "import-csv-draft", "publish-owner-content",
   "approve-and-schedule", "approve-package-revision", "approve-sky-article-edition",
   "save-sky-article-edition-revision", "publish-sky-article-edition-revision"
 ]);
@@ -1271,6 +1274,10 @@ function validateWriteBody(body: Record<string, unknown>) {
     for (const record of [body.sections, body.sections.packageRecord, body.sections.packageDraft]) {
       if (isRecord(record)) validateAspectRetrogradeCopy(typeof body.contentKey === "string" ? body.contentKey : null, record);
     }
+  }
+  if (isRecord(body.sourceSnapshot)) {
+    const { studioOwnerApproval: _untrustedApproval, ...snapshot } = body.sourceSnapshot;
+    body.sourceSnapshot = snapshot;
   }
   for (const field of ["id", "contentKey", "surface", "mode", "eventType", "status", "headline", "summary", "body", "reviewStatus", "sourceLifecycleAction", "editorialNotes", "promptVersion", "provider", "model", "reviewerNotes", "expectedUpdatedAt", "ownerAction"]) {
     if (body[field] !== undefined && typeof body[field] !== "string") throw new GeneratedContentRequestError(`${field} must be a string.`);
@@ -1311,7 +1318,7 @@ function validateAspectRetrogradeCopy(contentKey: string | null, record: Record<
 }
 
 function normalizeArticleHoroscopes<T extends Record<string, any>>(row: T, previous:Record<string,any>|null=null): T {
-  assertHoroscopeRow(row,{enforcePunctuation:true,previous});
+  assertHoroscopeRow(row,{previous});
   try { return libs().separateArticleHoroscopeRow(row); }
   catch (error) { throw new GeneratedContentRequestError((error as Error).message, 422); }
 }
@@ -1319,6 +1326,7 @@ function normalizeArticleHoroscopes<T extends Record<string, any>>(row: T, previ
 function assertReaderEligiblePublication(row: Record<string, any>) {
   assertHoroscopeRow(row);
   if (row.status !== "LIVE") return;
+  if (row.source_snapshot?.studioOwnerApproval && !hasExactStudioOwnerApproval(row)) throw new GeneratedContentRequestError("This wording changed after owner approval. Publish the current saved version again.", 409);
   if (String(row.content_key ?? "").startsWith("education/astro-101/") || row.surface === "education") {
     const filled = libs().fillAstro101EphemerisSlots(row);
     row.headline = filled.headline;
@@ -2490,6 +2498,28 @@ async function updateGeneratedContent(req: IncomingMessage) {
     updated_at: nextGeneratedContentVersion(existing.updated_at)
   };
 
+  if (body.ownerAction === "publish-owner-content") {
+    if (!body.expectedUpdatedAt || Object.keys(body).some(key => !["id", "expectedUpdatedAt", "ownerAction"].includes(key))) {
+      throw new GeneratedContentRequestError("Publish the saved version with its current timestamp; save edits first.", 409);
+    }
+    if (isPackageRow || existing.block_type === "sky_placement" || existing.event_type === "sky-article-edition") {
+      throw new GeneratedContentRequestError("Use this editor's package or complete-edition publication action.", 409);
+    }
+    if (!existing.body?.trim()) throw new GeneratedContentRequestError("Add the reader copy before publishing.");
+    patch.source_snapshot = { ...existing.source_snapshot, review_status: "approved", studioOwnerApproval: studioOwnerApproval(existing, patch.updated_at as string) };
+    if (existing.block_type === "sky_aspect") {
+      if (!libs().skyAspectReaderCopyPassesBoundary(existing.body)) throw new GeneratedContentRequestError("The Sky card contains timing mechanics or internal notes that belong outside reader copy.", 409);
+      const identity = studioSkyIdentity(existing.content_key);
+      if (identity.kind !== "aspect") throw new GeneratedContentRequestError("The saved Sky aspect identity is invalid.");
+      patch.source_snapshot = { ...(patch.source_snapshot as Record<string, unknown>),
+        cardFacts: identity.args, pairKey: `${identity.args.a}-${identity.args.b}`, pairSource: "content-studio/manual" };
+      patch.judge_gate = "human-review";
+    }
+    patch.lane = "serving";
+    body.status = "LIVE";
+    body.lane = "serving";
+  }
+
   if (body.ownerAction === "approve-package-revision") {
     if (!existing || !isPackageRow) {
       throw new Error("Approve & publish revision is available only for fallback package rows.");
@@ -2943,7 +2973,7 @@ async function updateGeneratedContent(req: IncomingMessage) {
         contentKey: body.contentKey ?? existing?.content_key,
         provider: body.provider ?? existing?.provider,
         promptVersion: body.promptVersion ?? existing?.prompt_version,
-        sourceSnapshot: body.sourceSnapshot ?? existing?.source_snapshot,
+        sourceSnapshot: patch.source_snapshot ?? body.sourceSnapshot ?? existing?.source_snapshot,
         blockType: body.blockType ?? existing?.block_type,
         eventType: body.eventType ?? existing?.event_type,
         sections: body.sections ?? existing?.sections,
@@ -3375,6 +3405,17 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
         const action = requestUrl.searchParams.get("publicationAction")!;
         const id = requestUrl.searchParams.get("id");
         const version = requestUrl.searchParams.get("expectedUpdatedAt");
+        if (action === "publish-owner-content" && id) {
+          requireCallerVersion(version);
+          const row = await fetchExistingRowById(id);
+          const found = Boolean(row && hasExactStudioOwnerApproval(row)
+            && row.source_snapshot?.studioOwnerApproval?.savedVersion === version);
+          const publication = found ? await currentPublication(row!.content_key) : null;
+          sendJson(res, 200, { ok: true, found, rows: found ? [row] : [],
+            ...(found ? { publicationReceipt: { currentStatus: row!.status,
+              currentPublicationState: publication?.state ?? "unpublished" } } : {}) });
+          return;
+        }
         if (!atomicPublicationActions.has(action) || !id) throw new GeneratedContentRequestError("Select the saved publication to check.");
         requireCallerVersion(version);
         const context: PublicationContext = { actor: (await getContentAdminPrincipal(req))!, dependencies: new Map() };
