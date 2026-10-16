@@ -131,7 +131,7 @@ for(const [width,theme] of [[390,'dark'],[1440,'light']] as const){
    await page.screenshot({path:`test-results/weekly-wording-${width}-${theme}.png`,fullPage:true});
   }finally{f.child.kill();}
  });
- test(`Correct prohibited punctuation without another AI request ${width} ${theme}`,async({page})=>{
+ test(`Author punctuation saves without another AI request ${width} ${theme}`,async({page})=>{
   await page.setViewportSize({width,height:1000});await page.addInitScript(theme=>localStorage.setItem('tldrastro:studio-theme',theme),theme);
   const f=await fixture(page);try{
    const original='You can read this fixture\u2014and correct its punctuation.';
@@ -142,7 +142,8 @@ for(const [width,theme] of [[390,'dark'],[1440,'light']] as const){
    await studio.getByRole('button',{name:'Edit punctuation',exact:true}).click();
    await expect(studio.getByLabel('Complete reading')).toHaveValue(original);
    await studio.getByRole('button',{name:'Save edition draft',exact:true}).click();
-   await expect(studio.getByRole('alert')).toContainText('Remove the em dash');
+   await expect(studio.getByRole('status')).toHaveText('Saved edition draft.');
+   expect((await f.latest()).sections.horoscopeEdition.passages.at(-1).body).toBe(original);
    await expect(studio.getByLabel('Complete reading')).toHaveValue(original);
    const corrected='You can read this fixture and correct its punctuation.';
    await studio.getByLabel('Complete reading').fill(corrected);

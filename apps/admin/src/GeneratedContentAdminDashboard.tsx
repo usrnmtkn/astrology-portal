@@ -7214,7 +7214,7 @@ export function GeneratedContentAdminDashboard() {
   function renderNotification() {
     return message && (
           <div
-            className={draft || loadState === "error" || loadState === "accessDenied" ? "admin-page-notice" : `admin-save-toast ${message.includes("Partial load:") || loadState === "idle" ? "is-warning" : ""}`}
+            className={draft || loadState === "error" || loadState === "accessDenied" ? "admin-page-notice studio-surface" : `admin-save-toast ${message.includes("Partial load:") || loadState === "idle" ? "is-warning" : ""}`}
             role={loadState === "error" || loadState === "accessDenied" ? "alert" : "status"}
           >
             <span>{message}</span>
@@ -12641,7 +12641,7 @@ export function GeneratedContentAdminDashboard() {
               title="Keep this revision as a Draft."
             >
               <Save size={16} aria-hidden="true" />
-              {isGuidedHeldReview ? "Save held draft" : isPersonalTransitExactDraft ? "Save" : "Save draft"}
+              {isGuidedHeldReview ? "Save held draft" : isNewDraft && isPersonalTransitExactDraft ? "Save" : "Save draft"}
             </StudioButton>
           )}
           {isGovernedSkyDraft && currentDraft.blockType === "sky_aspect" && <StudioButton className="admin-publish-button" type="button"

@@ -58,6 +58,8 @@ The matrix describes editor flows, not an assertion that every possible astronom
 
 The real-handler owner publication regression and all four horoscope-period owner publication cases pass, including exact reader selection, version conflicts, unchanged author wording, failed-live-write preservation, lost replies and retirement. The rendered regression matrix covers 84 editor cases; additional Calendar creation, memory-feedback and dashboard cases exercise the shared controls. The full unfiltered API and browser release gates are required on the final PR head. Their exact revision, outcomes and deployed revision are recorded in the release PR.
 
+Final local rendered verification passed 40 owner/Weekly/source cases (including all four complete twelve-sign editor-to-reader journeys), 13 shared Studio cases, five guided/template/publication-claims cases, four Personal Transit context cases and two author-punctuation cases. These complement the initial 70-case pass and broader fixture matrix; the exact-head hosted release remains mandatory.
+
 Server/admin types, CSS/token contracts, the admin module boundary and built-asset privacy checks are part of the release validation. The existing admin bundle limit remains unchanged. Tests use synthetic content and never publish an owner's production record.
 
 The local report-correction test and the late part of the unfiltered API suite require protected report-reference documents that are unavailable in this isolated checkout. They are verified in the repository's established hosted test environment; no unrelated private reference store is copied into this checkout.
