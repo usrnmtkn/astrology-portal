@@ -4557,7 +4557,30 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expect(editor.getByText("Ready to publish", { exact: true })).toBeVisible();
     const publishButton = editor.getByRole("button", { name: "Save & publish" });
     await expect(publishButton).toBeEnabled();
+    // Request capture happens before the isolated fixture initializes SQL and
+    // commits publication. Start timing the UI update after the actual receipt.
+    const approvalResponse = page.waitForResponse(response => {
+      const request = response.request();
+      if (new URL(response.url()).pathname !== "/api/admin/generated-content" || request.method() !== "PATCH") return false;
+      const payload = request.postDataJSON();
+      return payload?.id === stuckDraft.id && payload?.ownerAction === "approve-package-revision";
+    });
     await publishButton.click();
+
+    const response = await approvalResponse;
+    expect(await response.finished()).toBeNull();
+    expect(response.status()).toBe(200);
+    const publication = await response.json();
+    expect(publication.ok).toBe(true);
+    expect(publication.publicationReceipt).toMatchObject({
+      targetId: stuckDraft.id, currentStatus: "LIVE", currentPublicationState: "live"
+    });
+    const saved = publication.rows.find((row: { id: string }) => row.id === stuckDraft.id);
+    expect(saved).toMatchObject({
+      content_key: contentKey, status: "LIVE", lane: "serving", body: stuckDraft.body,
+      sections: { packageRecord: { body_you: "Exact You copy.", body_they: "{{Name}} receives exact They copy." } }
+    });
+    expect(publication.publicationReceipt.currentVersion).toBe(saved.updated_at);
 
     await expect.poll(() => writes.length).toBe(2);
     expect(writes[0]?.method).toBe("PATCH");
