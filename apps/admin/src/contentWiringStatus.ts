@@ -1,4 +1,5 @@
 import { calendarPlanetaryIdentity } from "./calendarPlanetarySources.js";
+import { standaloneArticleKind } from "../../../src/shared/articleLibrary.js";
 
 export type ContentWiringRow = {
   block_type?: string | null;
@@ -161,7 +162,7 @@ export function contentWiringStatus(row: ContentWiringRow): ContentWiringStatus 
     };
   }
 
-  if (isKnownRenderedKey(contentKey)) {
+  if (isKnownRenderedKey(contentKey) || row.mode === "article" && standaloneArticleKind(row.content_key)) {
     return {
       detail: "A live resolver requests this content-key family and renders it on a reader surface when its publishing gates pass.",
       label: "Used by app",
