@@ -23,12 +23,12 @@ const vocabularyKey = 'fallback-vocab/reader-surface-fixture';
 const markerKey = '__content-publication-ledger/v1';
 const stamp = revision => `2026-10-15T00:00:0${revision}.000Z`;
 const id = (revision, index) => `00000000-0000-4000-8000-${String(revision * 10 + index).padStart(12, '0')}`;
-let revision = 1, retired = false, holdNext = null, failures = 0;
+let revision = 1, retired = false, holdNext = null, failures = 0, rowTargetDate = null;
 const publications = () => [{ content_key: markerKey, state: 'live', revision: 1, row_id: null, row_updated_at: null, updated_at: stamp(1) },
   ...[mainKey, vocabularyKey].map((content_key, index) => ({ content_key, state: index === 0 && retired ? 'retired' : 'live', revision,
     row_id: id(revision, index), row_updated_at: stamp(revision), updated_at: stamp(revision) }))];
 const row = (content_key, index) => ({ id: id(revision, index), content_key, updated_at: stamp(revision), surface: index === 0 ? 'you' : 'modifier',
-  mode: 'article', status: 'LIVE', lane: 'serving', review_state: null, target_date: null,
+  mode: 'article', status: 'LIVE', lane: 'serving', review_state: null, target_date: index === 0 ? rowTargetDate : null,
   headline: null, summary: null, body: `Synthetic complete approved opening revision ${revision}. Synthetic final sentence revision ${revision}.`,
   sections: {}, source_snapshot: { contentType: 'manual' } });
 const rows = () => [row(mainKey, 0), row(vocabularyKey, 1)];
@@ -62,7 +62,7 @@ try {
     const query = JSON.parse(String(init.body));
     requests.push({ query, signal: init.signal });
     if (failures-- > 0) return new Response('Synthetic unavailable', { status: 503 });
-    const snapshotRows = rows().filter(item => query.surfaces.includes(item.surface)
+    const snapshotRows = rows().filter(item => (query.surfaces ? query.surfaces.includes(item.surface) : query.keys.includes(item.content_key))
       && !(retired && item.content_key === mainKey) && (!query.vocabularyOnly || item.content_key.startsWith('fallback-vocab/')));
     const keys = new Set(snapshotRows.map(item => item.content_key));
     const snapshot = { schema: READER_ROW_SCHEMA, rows: snapshotRows,
@@ -71,7 +71,7 @@ try {
     if (gate) await gate.promise;
     return Response.json(snapshot);
   };
-  const built = await build({ stdin: { contents: `export {loadLiveGeneratedContentForSurfaces} from './apps/web/src/services/generatedContent.ts';
+  const built = await build({ stdin: { contents: `export {loadLiveGeneratedContentForSurfaces, loadLiveGeneratedContentForKeys} from './apps/web/src/services/generatedContent.ts';
     export {installContentPublications} from './apps/web/src/content/contentPublicationState.ts';`, resolveDir: root, loader: 'ts' },
     bundle: true, platform: 'node', format: 'esm', write: false, logLevel: 'silent',
     plugins: [{ name: 'isolated-surface-reader', setup(builder) {
@@ -95,10 +95,25 @@ try {
   ledgerGate.resolve(); await waitForRequests(1);
   assert.deepEqual(requested, ['you', 'natal'], 'Canonical identity must not mutate a caller array');
   assert.deepEqual(requests[0].query.surfaces, ['you', 'natal', 'modifier'], 'Wire order remains unchanged');
+  assert.equal(requests[0].query.targetDate, '2026-10-15', 'Non-Sky requests retain their live wire date');
   firstGate.resolve(); const [one, shared] = await Promise.all([first, duplicate]);
   assert.equal(body(one), 'Synthetic complete approved opening revision 1. Synthetic final sentence revision 1.');
   assert.equal(body(shared), body(one)); assert.equal(requests.length, 1);
   await load(); assert.equal(requests.length, 2, 'Settled responses must never remain in the pending cache');
+
+  const beforeFamilies = requests.length;
+  holdNext = deferred(); const surfaceGate = holdNext;
+  const surfaceRead = load(); await waitForRequests(beforeFamilies + 1);
+  holdNext = deferred(); const keyGate = holdNext;
+  const keyRead = api.loadLiveGeneratedContentForKeys([mainKey, vocabularyKey]);
+  await waitForRequests(beforeFamilies + 2);
+  const sameSurface = load(), sameKeys = api.loadLiveGeneratedContentForKeys([vocabularyKey, mainKey]);
+  const freshKeys = await api.loadLiveGeneratedContentForKeys([mainKey, vocabularyKey], { requireFresh: true });
+  assert.equal(requests.length, beforeFamilies + 3, 'Surface, targeted and explicitly fresh reads remain independent');
+  surfaceGate.resolve(); keyGate.resolve();
+  const familyResults = await Promise.all([surfaceRead, keyRead, sameSurface, sameKeys]);
+  for (const value of [...familyResults, freshKeys]) assert.equal(body(value), body(one));
+  assert.equal(requests.length, beforeFamilies + 3, 'Each query family shares only its own active reads');
 
   const beforeDimensions = requests.length;
   await Promise.all([load(['natal', 'you'], '2026-10-16'), load(['natal', 'you'], '2026-10-15', 'emergency-floor'),
@@ -146,6 +161,18 @@ try {
   const retried = await load();
   assert.equal(requests.length, beforeFailure + 4, 'A later explicit same-generation call must get a new transport');
   assert.equal(body(retried), 'Synthetic complete approved opening revision 4. Synthetic final sentence revision 4.');
+  // Use a fresh actual module instance so dated offline fixtures cannot alter
+  // the preceding undated publication-version/retirement controls.
+  const datedApi = await import(pathToFileURL(modulePath).href + '?dated-offline');
+  state.client = null; rowTargetDate = '2026-10-16';
+  datedApi.installContentPublications(publications());
+  const loadDated = (surfaces, date) => datedApi.loadLiveGeneratedContentForSurfaces(surfaces, date);
+  assert.equal(body(await loadDated(['sky'], '2026-10-15')), body(retried), 'Sky offline recovery ignores the request date');
+  assert.equal(body(await loadDated(['you'], '2026-10-15')), undefined, 'Other surfaces exclude mismatched dated offline rows');
+  assert.equal(body(await loadDated(['you'], '2026-10-16')), body(retried), 'Other surfaces retain matching dated offline rows');
+  assert.ok((await loadDated(['you'], '2026-10-15')).has(vocabularyKey), 'Undated shared vocabulary remains eligible');
+  assert.equal(body(await loadDated(['you'])), body(retried), 'An undated request retains dated offline rows');
+  assert.equal(offlineReads, 2, 'Dated controls use a separate actual offline cache');
   assert.deepEqual(unexpected, []);
   console.log('PASS actual surface loader: post-ledger active sharing, separate query identities, settled eviction, generation isolation, retirement, no-client/offline recovery and explicit retry.');
 } finally {

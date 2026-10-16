@@ -137,11 +137,7 @@ function eligiblePlacementHintContinuation(originalHref: string, currentHref: st
 export function startInitialSkyPlacementLoad(originalHref: string): InitialSkyLoad | null {
   const initial = startInitialSkyLoad();
   if (initial) {
-    void Promise.resolve().then(() => {
-      if (typeof Worker === "function" && eligiblePlacementHintHref(originalHref)) {
-        return preloadInitialSkyPlacement(originalHref, initial);
-      }
-    }).catch(() => {
+    void Promise.resolve().then(() => preloadInitialSkyPlacement(originalHref, initial)).catch(() => {
       // The mounted calculation owns import/initialization errors and explicit retry.
     });
   }
