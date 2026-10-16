@@ -1,6 +1,6 @@
 {
   "schema": "tldrastro-approved-serving-projection/v1",
-  "packageVersion": "v3-2026-10-15-moon-transit-routing",
+  "packageVersion": "v3-2026-10-16-moon-selected-variants",
   "policy": {
     "eligibleReviewStatuses": [
       "approved",
@@ -24,7 +24,7 @@
   },
   "lineage": {
     "file": "approved-serving-lineage-v1.json",
-    "sha256": "dd94e9d60f8fc48c149e4587d12e25aabba47a3bd9f28ea80121c2a3b049e3cf",
+    "sha256": "942aa1d386a8d99a318291f68ee706e1d22875176be19e527eac7eda10a4e1c3",
     "count": 9826,
     "emissionCount": 9902,
     "exactSourceMatchCount": 7663

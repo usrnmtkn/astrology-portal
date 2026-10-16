@@ -9,7 +9,7 @@ including 15 shorthand natal identities, without changing published copy.
   reachable with a canonical natal point and a supported numeric variant.
 - Stable reader seeds reach every eligible variant, including `any` families
   and distinct canonical/alias siblings. Unvaried sources remain in rotation.
-- Situation and exact-contact priority, pass priority, editorial eligibility,
+- Situation and pass priority, exact-contact default priority, editorial eligibility,
   retirement, primary/alternate identity and missing-audience refusal remain.
 - Node, browser source and shipped resolver select the same complete passage.
 - Studio preview and You/Friend readers render the selected source, preserve it
@@ -31,7 +31,10 @@ identities reserve their slot even when their saved row is unavailable; selectin
 that slot reports unavailability instead of shifting to another passage. Selection does
 not depend on passage length, audience or availability of an alternate. Changing
 writing version therefore never selects another source to fill missing history.
-Exact-contact and situation precedence still apply ahead of shared families.
+Specific situations and repeat passes still precede a selected Moon variant.
+The chosen variant then precedes its unvaried exact contact, so an exact base
+cannot silently replace the numeric choice. The unvaried default slot retains
+exact-contact precedence. Other planets retain their previous source order.
 
 Ordinary reader rotation hashes the existing reader/contact seed across that
 list plus the unvaried choice. Other planets retain their previous rotation.
@@ -53,6 +56,12 @@ Fresh browser coverage is in `playwright.moon-routing.config.ts`: normal Sky,
 You and Friend navigation, full paragraphs, reload stability, Studio variant
 choices beyond four, retained versions and opening the original alias source.
 These tests use synthetic text and make no content writes.
+
+The live inventory exposed exact published Moon contacts absent from the static
+package. Synthetic fixtures now include all five exact aspects for every tested
+natal point, alongside all 60 variants. Numeric and automatic variant selection,
+both audiences, both versions, retirement and missing-history refusal are
+checked with those exact bases present. No published source is renamed or edited.
 
 On the integrated `b375ebe` base, grouping four existing pure astrology helpers
 reduces startup JavaScript from 40 files to 38. Measured app/reader gzip totals

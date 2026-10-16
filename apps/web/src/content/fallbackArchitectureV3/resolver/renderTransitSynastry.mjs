@@ -704,7 +704,7 @@ function renderTransitAspectReference({ transiting, natal, aspect, copyVersion =
   push(transiting, natal);
   if (FAST.has(transiting) && FAST.has(natal)) push(natal, transiting); // mirror rule (Batch 4)
   tryKeys.push(`authored/transit-aspect/any/${natal}/${g}`, `authored/transit-aspect/any/${natal}/conjunction`);
-  for (const k of prioritizeExactTransitSources(tryKeys, transiting, natal, aspect)) {
+  for (const k of prioritizeExactTransitSources(tryKeys, transiting, natal, aspect, moonVariant)) {
     const sourceCard = card(k);
     const c = sourceCard ? personalTransitCopyVersion(sourceCard, copyVersion, v) : null;
     if (c) {

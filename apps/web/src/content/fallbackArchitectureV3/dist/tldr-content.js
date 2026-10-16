@@ -1548,10 +1548,12 @@ function transitAspectSituationKey(transiting, natal, aspect, sign, transitHouse
   }
   return `authored/transit-aspect/${transiting}/${natal}/${aspect}/${signToken}/${fromHouse}/${natalHouseToken}`;
 }
-function prioritizeExactTransitSources(keys, transiting, natal, aspect) {
+function prioritizeExactTransitSources(keys, transiting, natal, aspect, selectedMoonVariant = null) {
   const exact = `authored/transit-aspect/${transiting}/${natal}/${aspect}`;
   const isExact = (key) => key === exact || key.startsWith(`${exact}/`);
-  return [...keys.filter(isExact), ...keys.filter((key) => !isExact(key))];
+  const selected = transiting === "moon" ? keys.indexOf(selectedMoonVariant) : -1;
+  const rest = keys.slice(selected + 1);
+  return [...keys.slice(0, selected + 1), ...rest.filter(isExact), ...rest.filter((key) => !isExact(key))];
 }
 
 // apps/web/src/content/fallbackArchitectureV3/resolver/passageSources.mjs
@@ -2474,7 +2476,7 @@ function createTransitSynastryRenderer(transitLib, templatesFile, rowsFile, opts
     push(transiting, natal);
     if (FAST.has(transiting) && FAST.has(natal)) push(natal, transiting);
     tryKeys.push(`authored/transit-aspect/any/${natal}/${g}`, `authored/transit-aspect/any/${natal}/conjunction`);
-    for (const k of prioritizeExactTransitSources(tryKeys, transiting, natal, aspect)) {
+    for (const k of prioritizeExactTransitSources(tryKeys, transiting, natal, aspect, moonVariant)) {
       const sourceCard = card(k);
       const c = sourceCard ? personalTransitCopyVersion(sourceCard, copyVersion, v) : null;
       if (c) {
@@ -6616,7 +6618,7 @@ function skyV4FieldValue(source, path) {
 }
 
 // apps/web/src/content/fallbackArchitectureV3/resolver/index.browser.ts
-var PACKAGE_VERSION = "v3-2026-10-15-moon-transit-routing";
+var PACKAGE_VERSION = "v3-2026-10-16-moon-selected-variants";
 function stablePackageValue(value) {
   if (Array.isArray(value)) {
     return value.map(stablePackageValue);

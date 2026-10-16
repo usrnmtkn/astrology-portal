@@ -43,7 +43,20 @@ export function verifyTransitExactIsolation(factory) {
         cases++;
       }
       const variantKey = `${exactKey}/variant-3`;
-      assert.equal(renderer([...cards, row(variantKey, "Exact variant.")]).renderTransitAspect({ transiting, natal, aspect, variant: 3, pass: 2 }).contentKey, variantKey);
+      const withVariant = renderer([...cards, row(variantKey, "Exact variant.")]);
+      if (transiting === "moon") {
+        // Moon choices address the sorted sources, not the suffix on one key.
+        // any precedes conjunction; sextile precedes soft; other exact aspects
+        // follow their hard/soft family in this deliberately small fixture.
+        const variant = ["conjunction", "sextile"].includes(aspect) ? 2 : 3;
+        const facts = { transiting, natal, aspect, variant };
+        assert.equal(withVariant.renderTransitAspect(facts).contentKey, variantKey);
+        const family = ["opposition", "square"].includes(aspect) ? "hard" : "soft";
+        const passKey = aspect === "conjunction" ? variantKey : `${base}/${family}/pass-2`;
+        assert.equal(withVariant.renderTransitAspect({ ...facts, pass: 2 }).contentKey, passKey);
+      } else {
+        assert.equal(withVariant.renderTransitAspect({ transiting, natal, aspect, variant: 3, pass: 2 }).contentKey, variantKey);
+      }
       assert.throws(() => renderer(cards, [exactKey]).renderTransitAspect({ transiting, natal, aspect, variant: 3, pass: 2 }), /SOURCE_GAP/);
     }
     assert.deepEqual(cards, before, "Previewing and editing test copies must not mutate source inputs");

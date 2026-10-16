@@ -1,5 +1,7 @@
 import assert from 'node:assert/strict';
 import { moonRoutingPreviewApi } from '../tests/helpers/moon-routing-preview-api.ts';
+import { moonRoutingExactRecords } from '../tests/helpers/moon-routing-fixtures.ts';
+import { prioritizeExactTransitSources } from '../apps/web/src/content/fallbackArchitectureV3/resolver/transitAspectSourcePriority.mjs';
 import fs from 'node:fs';
 import { renderTransitAspect as nodeRender } from '../apps/web/src/content/fallbackArchitectureV3/resolver/renderTransitSynastry.mjs';
 import { createTransitSynastryRenderer as browserFactory } from '../apps/web/src/content/fallbackArchitectureV3/resolver/renderTransitSynastry.browser.ts';
@@ -20,6 +22,17 @@ const keys = lib.authoredCards.map((row: any) => row.contentKey);
 const renderers = [nodeRender, browserFactory(lib, templates, sourceRows).renderTransitAspect,
   shippedFactory(lib, templates, sourceRows).renderTransitAspect];
 const aspects = ['conjunction', 'square', 'opposition', 'trine', 'sextile'];
+for (const aspect of aspects) {
+  const exact = `authored/transit-aspect/moon/chiron/${aspect}`;
+  const selected = 'authored/transit-aspect/moon/c/any/variant-C';
+  const context = [`${exact}/aries/1/2`, `${exact}/pass-2`];
+  const candidates = [...context, selected, exact];
+  assert.deepEqual(prioritizeExactTransitSources(candidates, 'moon', 'chiron', aspect, selected), candidates);
+  assert.deepEqual(prioritizeExactTransitSources([selected, exact], 'moon', 'chiron', aspect), [exact, selected]);
+  assert.deepEqual(prioritizeExactTransitSources([selected, exact], 'moon', 'chiron', aspect, 'absent'), [exact, selected]);
+  const other = [selected, exact].map(key => key.replace('/moon/', '/sun/'));
+  assert.deepEqual(prioritizeExactTransitSources(other, 'sun', 'chiron', aspect, other[0]), [other[1], other[0]]);
+}
 const routes = new Map<string, any>();
 for (const natal of new Set(identities.map(row => row.natal))) for (const aspect of aspects) {
   const choices = moonTransitVariantKeys(keys, 'moon', natal, aspect);
@@ -45,9 +58,9 @@ const fixtures = identities.map(({ contentKey }) => {
     body_you: `Primary You opening ${contentKey}.\n\nPrimary You final sentence.`,
     body_they: `Primary Friend opening ${contentKey}.\n\nPrimary Friend final sentence.` };
 });
-const snapshot = JSON.stringify(fixtures);
+const snapshot = JSON.stringify([fixtures, moonRoutingExactRecords]);
 for (const factory of [browserFactory, shippedFactory]) {
-  const render = factory({ authoredCards: fixtures }, { templates: [] }, { hookRows: [], vocabularyRows: [] }).renderTransitAspect;
+  const render = factory({ authoredCards: [...fixtures, ...moonRoutingExactRecords] }, { templates: [] }, { hookRows: [], vocabularyRows: [] }).renderTransitAspect;
   for (const { contentKey, natal } of identities) {
     const aspect = routes.get(contentKey).aspect;
     const choices = moonTransitVariantKeys(fixtures.map(row => row.contentKey), 'moon', natal, aspect);
@@ -77,17 +90,25 @@ for (const factory of [browserFactory, shippedFactory]) {
   const pass = record(`${exact.contentKey}/pass-2`);
   const situation = record(`${exact.contentKey}/aries/1/2`);
   const render = factory({ authoredCards: [variantRow, exact, pass, situation] }, { templates: [] }, { hookRows: [], vocabularyRows: [] }).renderTransitAspect;
-  assert.equal(render(baseFacts).contentKey, exact.contentKey, 'Exact contact precedes a shared letter variant.');
+  assert.equal(render(baseFacts).contentKey, key, 'A selected Moon variant must not be replaced by its exact unvaried base.');
+  assert.equal(render({ ...baseFacts, variant: undefined }).contentKey, exact.contentKey, 'The default slot retains exact contact precedence.');
+  const defaultSeed = Array.from({ length: 100 }, (_, index) => `default-slot:${index}`).find(seed =>
+    selectMoonTransitVariant([key], 'moon', 'mercury', 'trine', undefined, seed) === null);
+  assert.ok(defaultSeed);
+  assert.equal(render({ ...baseFacts, variant: undefined, variantSeed: defaultSeed }).contentKey, exact.contentKey);
   assert.equal(render({ ...baseFacts, pass: 2 }).contentKey, pass.contentKey, 'Exact pass precedes a variant.');
   assert.equal(render({ ...baseFacts, pass: 2, sign: 'aries', transitHouse: 1, natalHouse: 2 }).contentKey, situation.contentKey);
+  const familyPass = record('authored/transit-aspect/moon/mercury/soft/pass-2');
+  const familyRender = factory({ authoredCards: [variantRow, exact, familyPass] }, { templates: [] }, { hookRows: [], vocabularyRows: [] }).renderTransitAspect;
+  assert.equal(familyRender({ ...baseFacts, pass: 2 }).contentKey, familyPass.contentKey, 'A requested repeat pass remains ahead of its variant.');
   const emptyHistory = { ...variantRow, body_they_alternate: undefined };
   Object.assign(emptyHistory, retainPersonalTransitAlternate({ ...variantRow, alternate_copy_sha256: undefined, body_they: undefined }, 'synthetic-missing-friend'));
-  const missingRender = factory({ authoredCards: [emptyHistory] }, { templates: [] }, { hookRows: [], vocabularyRows: [] }).renderTransitAspect;
+  const missingRender = factory({ authoredCards: [emptyHistory, exact] }, { templates: [] }, { hookRows: [], vocabularyRows: [] }).renderTransitAspect;
   assert.throws(() => missingRender({ ...baseFacts, voice: 'Example Friend', copyVersion: 'alternate' }), /No verified alternate/);
-  const blocked = factory({ authoredCards: [variantRow] }, { templates: [] }, { hookRows: [], vocabularyRows: [] }, { blockedContentKeys: [key] }).renderTransitAspect;
+  const blocked = factory({ authoredCards: [variantRow, exact] }, { templates: [] }, { hookRows: [], vocabularyRows: [] }, { blockedContentKeys: [key] }).renderTransitAspect;
   assert.throws(() => blocked(baseFacts), /Publication unavailable/);
   const otherVariant = record('authored/transit-aspect/moon/m/soft/variant-B');
-  const removed = factory({ authoredCards: [otherVariant] }, { templates: [] }, { hookRows: [], vocabularyRows: [] }, { blockedContentKeys: [key] }).renderTransitAspect;
+  const removed = factory({ authoredCards: [otherVariant, exact] }, { templates: [] }, { hookRows: [], vocabularyRows: [] }, { blockedContentKeys: [key] }).renderTransitAspect;
   assert.throws(() => removed(baseFacts), /Publication unavailable/, 'Removing retired data must not shift its numeric choice to a different source.');
   assert.equal(removed({ ...baseFacts, variant: 2 }).contentKey, otherVariant.contentKey);
 
@@ -99,7 +120,7 @@ for (const row of identities.filter(row => row.contentKey.split('/')[3] !== row.
   assert.ok(scope.prefixes.some(prefix => row.contentKey.startsWith(prefix)), `Preview must load live alias ${row.contentKey}`);
 }
 assert.ok(!transitNatalPreviewScope(normalizeTransitNatalPreviewInput({ planet: 'sun', natalPoint: 'mercury', aspect: 'trine' })).prefixes.includes('authored/transit-aspect/sun/m/'));
-assert.equal(JSON.stringify(fixtures), snapshot, 'Rendering cannot mutate saved passages or alternate metadata.');
+assert.equal(JSON.stringify([fixtures, moonRoutingExactRecords]), snapshot, 'Rendering cannot mutate saved passages or alternate metadata.');
 assert.deepEqual(moonTransitVariantKeys(keys, 'sun', 'mercury', 'trine'), []);
 const api = moonRoutingPreviewApi();
 try {
