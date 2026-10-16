@@ -190,6 +190,7 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
       await expect(editor.getByLabel('Article body', { exact: true })).toHaveValue(body);
       await editor.getByRole('button', { name: 'Save & publish', exact: true }).click();
       await expect.poll(async () => (await store.call({ method: 'rows' })).find((row: any) => row.id === saved.id)?.status).toBe('LIVE');
+      await expect(editor.getByLabel('Reader status', { exact: true })).toHaveText('Live');
       await page.goto('/#articles');
       const library = page.getByRole('region', { name: 'Articles & Guides', exact: true });
       await expect(library.getByRole('heading', { name: 'Articles & Guides', level: 1 })).toBeVisible();

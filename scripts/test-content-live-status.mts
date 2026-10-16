@@ -47,7 +47,14 @@ assert.equal(contentLiveStatuses([{ ...exactNatal, headline: "QA later title" }]
 
 const parked = { id: "parked", content_key: "sky.planetary.moon.house_10", status: "LIVE", lane: "serving", body: "QA parked copy." };
 assert.equal(contentLiveStatuses([parked])[0].live, false);
-assert.equal(contentLiveStatuses([{ ...parked, content_key: "article/manual/unknown", mode: "article" }])[0].live, false);
+assert.equal(contentLiveStatuses([{ ...parked, content_key: "article/unregistered/unknown", mode: "article" }])[0].live, false);
+for (const kind of ["manual", "guide"]) {
+  const article = { id: `qa-${kind}`, content_key: `article/${kind}/owner-test`, mode: "article", status: "LIVE", lane: "serving", review_state: null, headline: "Temporary test article", body: "Complete temporary test body." };
+  assert.equal(contentLiveStatuses([article])[0].live, true, "Standalone library articles have an implemented reader destination.");
+  assert.equal(contentLiveStatuses([article], [article], () => false)[0].live, false, "Destination recognition cannot bypass the publication ledger.");
+  assert.equal(contentLiveStatuses([{ ...article, review_state: "EDITORIAL_REVIEW_REQUIRED" }])[0].live, false);
+  assert.equal(contentLiveStatuses([{ ...article, status: "ARCHIVED" }])[0].live, false);
+}
 const key = "authored/sky-lunation-macro/new-moon/virgo";
 const out = join(tmpdir(), `studio-live-materialization-${process.pid}.json`);
 execFileSync(process.execPath, ["scripts/materialize-fallback-architecture-v3-dashboard-rows.mjs", `--content-key=${key}`, `--out=${out}`], { stdio: "pipe" });
