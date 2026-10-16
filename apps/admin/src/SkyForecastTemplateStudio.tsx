@@ -15,14 +15,13 @@ export default function SkyForecastTemplateStudio({ period, rows, busy, onOpen, 
 } & CalendarTemplatePreviewProps) {
   const template = skyForecastTemplates[period];
   const saved = rows.find(row => row.content_key === template.contentKey);
-  if (period === "monthly-sky") return <section className="admin-daily-glance-studio" aria-label={template.title}>
-    <h3>Publish the monthly reading</h3>
-    <p>Publish your Monthly edition in Horoscopes. Calendar Month uses its TLDR and links to the complete reading.</p>
-    <a className="admin-source-action" href="#horoscopes">Open Monthly horoscopes</a>
-    <p className="admin-field-hint">Earlier Calendar monthly passages remain in Content Library.</p>
-  </section>;
   return <section className="admin-daily-glance-studio" aria-label={template.title}>
-    <Suspense fallback={<PageLoading message="Loading assembled passage editor…" />}><CalendarPassageEditor key={period} period={period} loadRows={loadRows} secret={secret} onEditSource={onEditSource} /></Suspense>
+    {period === "monthly-sky" ? <>
+      <h3>Publish the monthly reading</h3>
+      <p>Publish your Monthly edition in Horoscopes. Calendar Month uses its TLDR and links to the complete reading.</p>
+      <a className="admin-source-action" href="#horoscopes">Open Monthly horoscopes</a>
+      <p className="admin-field-hint">Earlier Calendar monthly passages remain in Content Library.</p>
+    </> : <Suspense fallback={<PageLoading message="Loading assembled passage editor…" />}><CalendarPassageEditor key={period} period={period} loadRows={loadRows} secret={secret} onEditSource={onEditSource} /></Suspense>}
     <details><summary>Reference templates and source previews</summary>
     <header className="admin-section-heading-row">
       <div>

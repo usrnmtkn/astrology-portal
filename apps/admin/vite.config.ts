@@ -132,8 +132,8 @@ export default defineConfig(({ command, mode }) => {
         output: {
           onlyExplicitManualChunks: true,
           manualChunks(id) {
-            if (/apps\/admin\/src\/(?:compatibilityAspectDraft|missingFriendsSource|bondEffectExactDraft)\.ts$/u.test(id)) {
-              return "admin-friends-source-drafts";
+            if (/apps\/admin\/src\/(?:compatibilityAspectDraft|missingFriendsSource|bondEffectExactDraft|transitNatalPackagedSource|adminHookCatalogData)\.ts$/u.test(id)) {
+              return "admin-source-drafts";
             }
             // Shared controls are rendered immediately. Keeping them in this
             // lazy group pulls the whole editor group into the startup graph.
@@ -155,6 +155,7 @@ export default defineConfig(({ command, mode }) => {
         ecma: 2020,
         compress: {
           passes: 5,
+          // Retaining shared functions compresses better across the Studio chunks.
           reduce_funcs: false
         },
         format: {

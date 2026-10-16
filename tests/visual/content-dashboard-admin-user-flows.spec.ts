@@ -3115,9 +3115,13 @@ test.describe("content dashboard admin user flow case studies", () => {
       return { id: `qa-${content_key}`, content_key, headline: content_key, body: String(record.body_you ?? record.body), summary: "", surface: "you", mode: "feed", status: "LIVE", lane: "serving", block_type: "fallback_hook", sections: { packageRecord: record }, facts: { fallbackArchitectureV3: true }, provider: "tldrastro-fallback-architecture-v3", updated_at: now };
     })] });
     await page.route('**/api/content-reader', (route) => route.fulfill({ json: readerResponse([]) }));
+    const previewInputs: Array<Record<string, unknown>> = [];
     await page.route("**/api/admin/transit-natal-preview", async (route) => {
-      try { await route.fulfill({ json: transitPreviewResponse(normalizeTransitNatalPreviewInput(route.request().postDataJSON())) }); }
-      catch (error) { await route.fulfill({ json: { error: String(error) } }); }
+      try {
+        const input = route.request().postDataJSON();
+        previewInputs.push(input);
+        await route.fulfill({ json: transitPreviewResponse(normalizeTransitNatalPreviewInput(input)) });
+      } catch (error) { await route.fulfill({ json: { error: String(error) } }); }
     });
     await page.addInitScript((theme) => localStorage.setItem("tldrastro:theme", theme), theme);
     await expectAdminRouteLoads(page, "/admin/content#sky-writeups?view=transits-to-natal");
@@ -3144,7 +3148,8 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expect(preview.getByRole("button", { name: /Edit selected source/ })).toContainText(key);
     const body = await preview.locator(".admin-natal-source-card-copy > p").allTextContents();
     await page.getByLabel("Transit house", { exact: true }).selectOption("10");
-    expect(await preview.locator(".admin-natal-source-card-copy > p").allTextContents()).toEqual(body);
+    await expect.poll(() => previewInputs.at(-1)?.transitHouse).toBe("10");
+    await expect.poll(() => preview.locator(".admin-natal-source-card-copy > p").allTextContents()).toEqual(body);
     const headingStyles = await preview.getByRole("heading", { level: 3 }).evaluate((heading) => {
       const style = getComputedStyle(heading);
       const reference = getComputedStyle(document.querySelector(".admin-natal-placement-finder-heading h3")!);
