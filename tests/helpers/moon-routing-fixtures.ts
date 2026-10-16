@@ -5,6 +5,7 @@ import { retainPersonalTransitAlternate } from '../../apps/web/src/content/fallb
 export const moonRoutingIdentities = JSON.parse(readFileSync('tests/fixtures/moon-transit-legacy-identities.json', 'utf8')) as { contentKey: string; natal: string }[];
 function moonRecord(contentKey: string, label: string, unvaried = false) {
   const row = { contentKey, content_role: 'full_copy', surface: 'transit-aspect', review_status: 'approved',
+    reader_only: true, render_policy: 'personal-transit-exact-v1',
     approval: { approvalLevel: 'exact_owner_approved', recordPath: 'qa://moon-routing', payloadSha256: 'a'.repeat(64), approvedAt: '2026-10-15T22:00:00.000Z' },
     headline: 'Moon transit', body_you: unvaried ? `Unvaried retained You ${label}.` : `Retained You source ${label}.\n\nRetained You final sentence ${label}.`,
     body_they: unvaried ? `Unvaried retained Friend ${label}.` : `Retained Friend source ${label}.\n\nRetained Friend final sentence ${label}.` };
