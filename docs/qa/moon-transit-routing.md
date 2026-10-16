@@ -59,3 +59,8 @@ reduces startup JavaScript from 40 files to 38. Measured app/reader gzip totals
 are 517,967/573,051 bytes, below the unchanged 518,200/573,350-byte limits.
 The separate calculation-engine chunk remains byte-identical. This is packaging
 only: no new startup dependency, arithmetic, prose or budget change.
+
+The admin build keeps the existing owner-publication helper in its already
+deferred review-workspace chunk. This removes one chunk and keeps both entry
+and aggregate JavaScript below their unchanged limits in the synthetic CI
+environment. Publication logic and load timing remain unchanged.
