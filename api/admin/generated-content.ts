@@ -874,6 +874,8 @@ function applyFallbackArchitectureV3ReviewPatch(row: ExistingGeneratedContentRow
     || stringFrom(facts.content_role);
   const incomingBodyYouChanged = typeof incomingRecord.body_you === "string"
     && incomingRecord.body_you !== v3PackageRecord(row).body_you;
+  const incomingBodyTheyChanged = typeof incomingRecord.body_they === "string"
+    && incomingRecord.body_they !== v3PackageRecord(row).body_they;
   const sectionBodyYouChanged = typeof sections.body_you === "string"
     && sections.body_you !== v3PackageRecord(row).body_you;
   if (topLevelBodyChanged && !incomingBodyYouChanged && !sectionBodyYouChanged) {
@@ -889,10 +891,10 @@ function applyFallbackArchitectureV3ReviewPatch(row: ExistingGeneratedContentRow
       record.body = patch.body;
     }
   }
-  if (!hasPackageDraft && typeof sections.body_you === "string") {
+  if (!hasPackageDraft && typeof sections.body_you === "string" && !incomingBodyYouChanged) {
     record.body_you = sections.body_you;
   }
-  if (!hasPackageDraft && typeof sections.body_they === "string") {
+  if (!hasPackageDraft && typeof sections.body_they === "string" && !incomingBodyTheyChanged) {
     record.body_they = sections.body_they;
   }
   if (storedTransitProposal && !body.revertToPackageOriginal) {
