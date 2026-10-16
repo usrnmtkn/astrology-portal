@@ -4514,6 +4514,7 @@ test.describe("content dashboard admin user flow case studies", () => {
       ...generatedContentRows[0],
       id: "qa-approved-natal-aspect-stuck-draft",
       content_key: contentKey,
+      target_date: null,
       surface: "you",
       mode: "in_depth",
       status: "DRAFT",
@@ -4577,7 +4578,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     });
     const saved = publication.rows.find((row: { id: string }) => row.id === stuckDraft.id);
     expect(saved).toMatchObject({
-      content_key: contentKey, status: "LIVE", lane: "serving", body: stuckDraft.body,
+      content_key: contentKey, target_date: null, status: "LIVE", lane: "serving", body: stuckDraft.body,
       sections: { packageRecord: { body_you: "Exact You copy.", body_they: "{{Name}} receives exact They copy." } }
     });
     expect(publication.publicationReceipt.currentVersion).toBe(saved.updated_at);
