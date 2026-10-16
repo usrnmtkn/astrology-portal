@@ -424,6 +424,7 @@
   display: grid;
   gap: calc(var(--space-4) + var(--space-1) / 2);
   width: min(860px, calc(100vw - clamp(36px, 8vw, 136px)));
+  max-width: 100%;
   margin: var(--friends-page-margin);
   padding: var(--friends-page-padding);
   border: var(--border-width-thin) solid var(--card-border);

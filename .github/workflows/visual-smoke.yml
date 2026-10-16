@@ -449,6 +449,7 @@ jobs:
           tests/visual/body-paragraph-type.spec.ts
           tests/visual/header-navigation-overflow.spec.ts
           tests/visual/reader-viewport-containment.spec.ts
+          tests/visual/empty-error-viewport.spec.ts
       - name: Upload reader surface artifacts
         if: always()
         uses: actions/upload-artifact@v6

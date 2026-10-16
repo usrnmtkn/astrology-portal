@@ -269,6 +269,7 @@ button.settings-signout-row {
 
 .settings-blocked-error {
   align-items: center;
+  overflow-wrap: anywhere;
 }
 
 .settings-blocked-message {
