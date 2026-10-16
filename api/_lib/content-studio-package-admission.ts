@@ -4,10 +4,13 @@ import { isCalendarMoonIngressContentKey } from "./calendar-moon-ingress-sources
 import coreManifest from "../../apps/web/src/content/fallbackArchitectureV3/bundled-core-manifest-v3.json" with { type: "json" };
 import skyManifest from "../../apps/web/src/content/fallbackArchitectureV3/bundled-sky-placement-manifest-v3.json" with { type: "json" };
 import { isFallbackDashboardRecordAllowed } from "../../apps/web/src/content/fallbackArchitectureV3/dashboardExtensions.js";
+import lunarJournalIndex from "../../apps/web/src/features/calendar/data/lunar-journal.index.json" with { type: "json" };
 
 const keys = (manifest: { keys: string[] }) => new Set(manifest.keys.map(key => key.slice(key.indexOf(":") + 1)));
 const coreKeys = keys(coreManifest);
 const skyKeys = keys(skyManifest);
+const lunarJournalKeys = new Set(lunarJournalIndex.map(entry => entry.contentKey));
+export const isRegisteredLunarJournalKey = (key: string) => lunarJournalKeys.has(key);
 const object = (value: unknown): Record<string, any> => value && typeof value === "object" && !Array.isArray(value) ? value : {};
 
 /** Publication must use the same key admission as the actual package loaders. */
@@ -38,6 +41,7 @@ export function packagePublicationAdmissionIssue(row: Record<string, any>): stri
   if (key.startsWith("authored/compat-pair/")) return null;
   // Calendar leftover season transitions have a dedicated leftover reader, not the fallback package loader.
   if (key.startsWith("authored/calendar-season-transition/")) return null;
+  if (isRegisteredLunarJournalKey(key)) return null;
   // Moon ingresses and transition phrases use dedicated Calendar readers. Admit only registered sources.
   if (isCalendarMoonIngressContentKey(key) || calendarTransitionPhraseRecordForKey(key)) return null;
   // Education articles have a dedicated /learn reader, not the fallback package loader.

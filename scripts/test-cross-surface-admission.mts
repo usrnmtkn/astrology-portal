@@ -6,7 +6,17 @@ import {
   isDynamicSynastryExactRecord,
   isFallbackDashboardRecordAllowed
 } from "../apps/web/src/content/fallbackArchitectureV3/dashboardExtensions.ts";
-import { packagePublicationAdmissionIssue } from "../api/_lib/content-studio-package-admission.ts";
+import { packagePublicationAdmissionIssue, isRegisteredLunarJournalKey } from "../api/_lib/content-studio-package-admission.ts";
+import lunarJournalIndex from '../apps/web/src/features/calendar/data/lunar-journal.index.json' with {type:'json'};
+
+for(const entry of lunarJournalIndex){
+  assert(isRegisteredLunarJournalKey(entry.contentKey));
+  assert.equal(packagePublicationAdmissionIssue({status:'LIVE',provider:'tldrastro-fallback-architecture-v3',content_key:entry.contentKey,sections:{packageRecord:{contentKey:entry.contentKey,content_role:'full_copy'}}}),null);
+}
+for(const key of ['authored/lunar-journal/season/aries','authored/lunar-journal/season/unknown/20250320t090100z','authored/lunar-journal/season/aries/20990320t090100z']){
+  assert.equal(isRegisteredLunarJournalKey(key),false);
+  assert.match(packagePublicationAdmissionIssue({status:'LIVE',provider:'tldrastro-fallback-architecture-v3',content_key:key,sections:{packageRecord:{contentKey:key,content_role:'full_copy'}}})!,/supported reader route/);
+}
 
 const record = (contentKey: string) => ({ contentKey, content_role: "full_copy" });
 for (const key of [

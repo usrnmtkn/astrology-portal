@@ -41,6 +41,7 @@ async function emit(relative) {
 try {
   fs.writeFileSync(path.join(output, "package.json"), '{"type":"module"}');
   await emit("api/admin/content-live-status.ts");
+  await emit("api/admin/sky-article-facts.ts");
   await emit("apps/web/src/content/skyDailySummaryCatalog.ts");
   await emit("api/admin/content-publication.ts");
   await emit("api/admin/natal-placement-preview.ts");
@@ -67,6 +68,9 @@ try {
     await handler({ headers: {}, method: "POST" }, response);
     assert.equal(response.statusCode, 401);
     assert.equal(JSON.parse(response.body).error, "Unauthorized.");
+    const { default: articleFactsHandler } = await import("./api/admin/sky-article-facts.js");
+    await articleFactsHandler({ headers: {}, method: "GET" }, response);
+    assert.equal(response.statusCode, 401);
     const { default: publicationHandler } = await import("./api/admin/content-publication.js");
     await publicationHandler({ headers: {}, method: "POST" }, response);
     assert.equal(response.statusCode, 401);

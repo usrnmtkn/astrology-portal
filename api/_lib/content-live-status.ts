@@ -1,5 +1,6 @@
 import { calendarTransitionPhraseRecordForKey } from "./calendar-transition-phrase-sources.js";
 import { calendarMoonIngressPackageRecordForKey } from "./calendar-moon-ingress-sources.js";
+import { isRegisteredLunarJournalKey } from "./content-studio-package-admission.js";
 import { isZodiacSeasonSourceKey } from "../../apps/web/src/content/fallbackArchitectureV3/resolver/zodiacSeasonVariables.mjs";
 import { isRetiredCompositionKey } from "../../apps/web/src/content/fallbackArchitectureV3/resolver/retiredCompositions.mjs";
 import { skyPlacementSourceRecords } from "./sky-placement-sources.js";
@@ -139,6 +140,17 @@ export function contentLiveStatuses(rows: LiveStatusRow[], candidates: LiveStatu
   return rows.map((row) => {
     if (row.source_snapshot?.studioOwnerApproval && !hasExactStudioOwnerApproval(row)) return { id: row.id, live: false, label: "Not live", source: null, detail: "The saved wording differs from its owner approval.", updatedAt: row.updated_at ?? null } as ContentLiveStatus;
     if (isRetiredCompositionKey(row.content_key)) return { id: row.id, live: false, label: "Not live", source: null, detail: "Superseded composition. Use the canonical Personal Transit source.", updatedAt: row.updated_at ?? null } as ContentLiveStatus;
+    if (isRegisteredLunarJournalKey(row.content_key)) {
+      const current = [...candidates].sort((a,b)=>(b.updated_at??"").localeCompare(a.updated_at??""))
+        .find(candidate=>candidate.content_key===row.content_key && allowsPublication(candidate)
+          && candidate.status==="LIVE" && candidate.lane==="serving" && !candidate.review_state
+          && candidate.body?.trim() && isReaderServableGeneratedContentRow(candidate) && isGeneratedContentReaderBoundaryAllowed(candidate));
+      const requested = row.sections?.packageDraft?.body ?? row.body;
+      const live = Boolean(current && row.status!=="ARCHIVED" && requested===current.body);
+      return {id:row.id,live,label:live?"Live":"Not live",source:live?"studio":null,
+        detail:live?"Readers can receive this complete Calendar journal passage.":"This Calendar journal revision is not published.",
+        updatedAt:row.updated_at??null,servingRowId:live?current?.id??null:null} as ContentLiveStatus;
+    }
     const phrase = calendarTransitionPhraseRecordForKey(row.content_key);
     const ingress = phrase || calendarMoonIngressPackageRecordForKey(row.content_key);
     if (ingress) {
