@@ -1,4 +1,6 @@
-import { moonRoutingRecords } from '../helpers/moon-routing-fixtures';
+import { moonRoutingRecords, moonReaderCompetingRecords } from '../helpers/moon-routing-fixtures';
+import { personalTransitCopySeed, personalTransitId } from '../../apps/web/src/services/personalDailyTransits';
+import { selectMoonTransitVariant } from '../../apps/web/src/content/fallbackArchitectureV3/resolver/moonTransitVariants.mjs';
 import { readerResponse } from '../helpers/reader-response';
 import { expect, test, type Locator, type Page } from "@playwright/test";
 import { bundledPublications } from "../helpers/bundled-publications";
@@ -6082,7 +6084,7 @@ for (const theme of ["light", "dark"] as const) {
 
 for (const [width, theme] of [[390, 'light'], [1440, 'dark']] as const) test(`Moon legacy routing reaches normal reader ${width} ${theme}`, async ({ page }) => {
   await page.setViewportSize({ width, height: 1000 });
-  await seedCrossSurfacePublications(page, moonRoutingRecords, { profile: true, profileBirthDate: '1962-08-02',
+  await seedCrossSurfacePublications(page, [...moonRoutingRecords, ...moonReaderCompetingRecords], { profile: true, profileBirthDate: '1962-08-02',
     preloadProfileNatalSky: true, friends: true, friendMatchesProfile: true, theme, now: '2026-10-26T16:00:00.000Z' });
   await page.route('**/api/content-reader', route => route.request().postDataJSON().scope
     ? route.fulfill({ json: readerResponse([]) }) : route.fallback());
@@ -6096,11 +6098,33 @@ for (const [width, theme] of [[390, 'light'], [1440, 'dark']] as const) test(`Mo
   await page.reload();
   await expect.poll(async () => (await article.locator('p').allTextContents()).join('\n\n')).toBe(body);
   await expectClientRouteLoads(page, '/#you');
+  // Select the reading date through the ordinary control. No Studio inputs or
+  // arbitrary variant seed can stand in for the actual reader adapter.
+  await page.locator('.sky-header-date-button').click();
+  await page.getByRole('gridcell', { name: 'Monday, October 26, 2026' }).click();
   const card = page.locator('button.updates-aspect-row').filter({ hasText: 'Primary You source' }).first();
   await expect(card).toBeVisible();
   await card.click();
   const detail = page.locator('.you-transit-article');
   await expect(detail).toContainText('Primary You final sentence');
+  const youBody = (await detail.locator('.sky-detail-section > p').allTextContents()).join('\n\n');
+  const youSource = moonRoutingRecords.find(row => row.body_you === youBody);
+  expect(youSource).toBeTruthy();
+  const youTitle = await detail.locator('h1').innerText();
+  const youContact = /^Moon (conjunction|square|opposition|trine|sextile) your (.+)$/.exec(youTitle);
+  expect(youContact).toBeTruthy();
+  const assertActualDateSource = (source: typeof youSource, aspect: string, natalLabel: string, voice: string) => {
+    const natal = natalLabel.toLowerCase().replace(/\s+/g, '-');
+    const id = personalTransitId('Moon', aspect, natal);
+    const expected = selectMoonTransitVariant(moonRoutingRecords.map(row => row.contentKey), 'moon', natal, aspect,
+      undefined, personalTransitCopySeed('Moon', id, voice, '2026-10-26', 'America/New_York'));
+    expect(source?.contentKey).toBe(expected);
+  };
+  assertActualDateSource(youSource, youContact![1], youContact![2], 'you');
+  await page.reload();
+  await expect(card).toBeVisible();
+  await card.click();
+  await expect.poll(async () => (await detail.locator('.sky-detail-section > p').allTextContents()).join('\n\n')).toBe(youBody);
   await expectNoHorizontalOverflow(page, 'Moon normal reader');
   await detail.screenshot({ path: `test-results/moon-routing-reader-${width}.png` });
   await page.evaluate(() => { window.location.hash = 'friends?tab=charts&chart=friend-nikki&view=transits'; });
@@ -6110,8 +6134,16 @@ for (const [width, theme] of [[390, 'light'], [1440, 'dark']] as const) test(`Mo
   const friendDetail = page.locator('.app-shell.mode-detail');
   await expect(friendDetail).toContainText('Primary Friend final sentence');
   await expect(friendDetail).not.toContainText('Primary You source');
+  const friendBody = (await friendDetail.locator('.sky-detail-section > p').allTextContents()).join('\n\n');
+  const friendSource = moonRoutingRecords.find(row => row.body_they === friendBody);
+  expect(friendSource).toBeTruthy();
+  const friendTitle = await friendDetail.locator('h1').innerText();
+  const friendContact = /^Moon (conjunct|square|opposite|trine|sextile) (.+)$/.exec(friendTitle);
+  expect(friendContact).toBeTruthy();
+  const friendAspect = ({ conjunct: 'conjunction', opposite: 'opposition' } as Record<string, string>)[friendContact![1]] ?? friendContact![1];
+  assertActualDateSource(friendSource, friendAspect, friendContact![2], 'Nikki');
   await page.reload();
-  await expect(friendDetail).toContainText('Primary Friend final sentence');
+  await expect.poll(async () => (await friendDetail.locator('.sky-detail-section > p').allTextContents()).join('\n\n')).toBe(friendBody);
   await expectNoHorizontalOverflow(page, 'Moon Friend reader');
   errors();
 });
