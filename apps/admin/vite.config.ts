@@ -132,13 +132,16 @@ export default defineConfig(({ command, mode }) => {
         output: {
           onlyExplicitManualChunks: true,
           manualChunks(id) {
+            if (/apps\/admin\/src\/(?:compatibilityAspectDraft|missingFriendsSource|bondEffectExactDraft)\.ts$/u.test(id)) {
+              return "admin-friends-source-drafts";
+            }
             // Shared controls are rendered immediately. Keeping them in this
             // lazy group pulls the whole editor group into the startup graph.
             if (/apps\/admin\/src\/(?:FriendsTransitSectionFinder|NatalPlacementSourceFinder|NatalPlacementReaderPreview|TemplateReaderDrilldown|TemplateVariableReviewPanels|TemplateVariablesRail)\.tsx$|apps\/admin\/src\/(?:compositionMap|templateVariableSources)\.ts$/u.test(id)) {
               return "admin-deferred-editor-tools";
             }
             // Review panels and owner publication share one deferred workspace chunk.
-            if (/apps\/admin\/src\/(?:AspectPatternDiagnostics|AspectPatternWriteups|ReportFulfillmentAdminPanel|UnresolvedContentReview|HoroscopePublicationReview|StudioEditorReviewPanels|ReviewWorkflowPanel)\.tsx$/u.test(id) || id.endsWith("/apps/admin/src/ownerPublication.ts")) {
+            if (/apps\/admin\/src\/(?:AspectPatternDiagnostics|AspectPatternWriteups|ReportFulfillmentAdminPanel|UnresolvedContentReview|HoroscopePublicationReview|StudioEditorReviewPanels|ReviewWorkflowPanel)\.tsx$/u.test(id) || /\/apps\/admin\/src\/(?:ownerPublication|aspectPatternSaveReceipt)\.ts$/u.test(id)) {
               return "admin-deferred-review-tools";
             }
             if (/apps\/admin\/src\/(?:DailyFallbackWorkspaceGuide|DailyGlanceStudio|dailyGlanceFriendPreview|PackagedHookCatalogResults|SkyV4StudioReviewPanel)\.(?:ts|tsx)$/u.test(id)) {
@@ -151,7 +154,8 @@ export default defineConfig(({ command, mode }) => {
       terserOptions: {
         ecma: 2020,
         compress: {
-          passes: 5
+          passes: 5,
+          reduce_funcs: false
         },
         format: {
           comments: false,

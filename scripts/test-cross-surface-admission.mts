@@ -100,3 +100,18 @@ for (const contentKey of ['authored/sky-lunation-macro/new-moon/unknown', 'autho
 }
 assert.equal(isFallbackDashboardRecordAllowed({ contentKey: 'authored/sky-lunation-macro/new-moon/aquarius', content_role: 'source_material' }, new Set()), false);
 console.log("PASS: bounded House Transit, exact synastry and all 24 lunation identities, invalid key/role refusal and publication key protection.");
+
+const {missingFriendsSource}=await import('../apps/admin/src/missingFriendsSource.ts');
+const forward='fallback-hook/synastry-pair/sun/imum-coeli/sextile';
+const reverse='fallback-hook/synastry-pair/imum-coeli/sun/sextile';
+const pending={id:'synthetic-reverse',content_key:reverse,status:'LIVE',sections:{packageDraft:{body_you:'Owner pending reverse copy.'}}} as any;
+const unchanged=JSON.stringify(pending);
+const opened=await missingFriendsSource(forward,async key=>{assert.equal(key,reverse);return {rows:[pending]};});
+assert(opened && 'row' in opened);assert.equal(opened.row,pending);assert.equal(JSON.stringify(pending),unchanged);
+const created=await missingFriendsSource(forward,async()=>({rows:[]}));
+assert(created && 'draft' in created);assert.equal(created.draft.contentKey,forward);assert.equal(created.draft.status,'DRAFT');
+await assert.rejects(()=>missingFriendsSource(forward,async()=>({rows:[{...pending,content_key:'unrelated'}]})),/could not be verified/);
+for(const key of ['fallback-hook/bond-effect-sextile/unknown','fallback-hook/synastry-pair/sun/unknown/sextile']){
+ assert.equal(await missingFriendsSource(key,async()=>{throw new Error('Invalid identities must not request another source.');}),null);
+}
+console.log('PASS: missing Friends activation creation preserves saved reverse-order owner drafts and rejects mismatched source responses.');
