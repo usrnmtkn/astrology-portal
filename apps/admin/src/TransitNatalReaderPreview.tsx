@@ -22,7 +22,7 @@ export function RetainedCopy({ you, friend }: { you: string; friend: string }) {
     </label>)}</>;
 }
 
-type Preview = ReturnType<typeof renderTransitNatalPreview>;
+type Preview = ReturnType<typeof renderTransitNatalPreview> & { variantCount?: number };
 
 export function TransitNatalExactSourceAction({
   contentKey, title, secret, disabled, onOpen, transiting, natal, aspect, sign = "", transitHouse = "", natalHouse = "", onUseYou, onUseFriend, onOpenNext
@@ -121,12 +121,13 @@ function TransitSourceEditAction({ source, exactKey, headline, onOpenSource }: {
   </details>;
 }
 
-export default function TransitNatalReaderPreview({ selection, voice, secret, onOpenSource, onOpenExact, onServingPreview }: {
+export default function TransitNatalReaderPreview({ selection, voice, secret, onOpenSource, onOpenExact, onServingPreview, onVariantCount }: {
   selection: TransitNatalSelection;
   voice: string;
   secret: string;
   onOpenSource: (contentKey: string, label: string, field?: string) => void;
   onOpenExact?: () => void;
+  onVariantCount?: (count: number) => void;
   onServingPreview?: (source: { contentKey: string; field: string } | null) => void;
 }) {
   const [revision, setRevision] = useState(0);
@@ -141,6 +142,7 @@ export default function TransitNatalReaderPreview({ selection, voice, secret, on
     const controller = new AbortController();
     setState({ preview: null, error: null, loading: true });
     onServingPreview?.(null);
+    onVariantCount?.(0);
     void (async () => {
       const result = await requestStudioJson("/api/admin/transit-natal-preview", secret, {
         method: "POST", readOnly: true, signal: controller.signal, body: identity
@@ -153,6 +155,7 @@ export default function TransitNatalReaderPreview({ selection, voice, secret, on
           || part.sources.some(source => typeof source.contentKey !== "string" || typeof source.field !== "string"))) {
         throw new Error("The reading's source links could not be verified. Reload the preview.");
       }
+      onVariantCount?.(Number.isInteger(preview.variantCount) ? preview.variantCount! : 0);
       setLoadedIdentity(identity);
       setState({ preview, error: null, loading: false });
       onServingPreview?.(transitNatalLiveServingSource(preview, voice === "{{Name}}" ? "body_they" : "body_you"));
@@ -163,7 +166,7 @@ export default function TransitNatalReaderPreview({ selection, voice, secret, on
       }
     });
     return () => { cancelled = true; controller.abort(); };
-  }, [identity, secret, revision]);
+  }, [identity, secret, revision, onServingPreview, onVariantCount]);
 
   const groups: { texts: string[]; sources: Preview["paragraphs"][number]["sources"] }[] = [];
   for (const paragraph of state.preview?.paragraphs ?? []) {
@@ -212,8 +215,9 @@ export default function TransitNatalReaderPreview({ selection, voice, secret, on
   );
 }
 
-export function TransitNatalPreviewOptions({ context, onChange }: {
+export function TransitNatalPreviewOptions({ context, onChange, variantCount = 0 }: {
   context: TransitNatalReadingContext;
+  variantCount?: number;
   onChange: (next: Partial<TransitNatalReadingContext>) => void;
 }) {
   return (
@@ -225,7 +229,7 @@ export function TransitNatalPreviewOptions({ context, onChange }: {
               <option value="primary">Primary</option><option value="alternate">Retained alternate</option>
             </AdminSelect></label>
             <label><span>Copy variant</span><AdminSelect aria-label="Transit copy variant" value={context.variant ?? ""} onChange={event => onChange({ variant: event.target.value ? Number(event.target.value) : undefined })}>
-              <option value="">Default</option>{[1, 2, 3, 4].map(value => <option key={value} value={value}>{value}</option>)}
+              <option value="">Default</option>{Array.from({ length: Math.min(100, Math.max(4, variantCount, context.variant ?? 0)) }, (_, index) => index + 1).map(value => <option key={value} value={value}>{value}</option>)}
             </AdminSelect></label>
             <label><span>Repeat pass</span><StudioInput aria-label="Transit repeat pass" type="number" min="1" max="100" value={context.pass ?? ""} onChange={event => onChange({ pass: event.target.value ? Number(event.target.value) : undefined })} /></label>
             <label><span>Motion</span><AdminSelect aria-label="Transit preview motion" value={context.isRetrograde === undefined ? "" : String(context.isRetrograde)} onChange={event => onChange({ isRetrograde: event.target.value === "" ? undefined : event.target.value === "true" })}>

@@ -660,7 +660,8 @@ function renderContact(
     aspect: contact.aspect,
     sign: contact.sign,
     isRetrograde: contact.isRetrograde,
-    variant: stableVariant(variantSeed)
+    variant: stableVariant(variantSeed),
+    variantSeed: contact.transiting === "moon" ? variantSeed : undefined
   });
   return { headline: rendered.headline, body: rendered.body, source };
 }

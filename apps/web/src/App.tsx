@@ -7938,6 +7938,7 @@ function personalTransitPackageSection(
       transitHouse: transit.transitHouse,
       natalHouse: transit.natalHouse,
       variant: stableTransitCopyVariant(voice, transit.id),
+      variantSeed: transit.transitPlanet === "Moon" ? `${voice}:${transit.id}` : undefined,
       window: windowLabel,
       voice
     });

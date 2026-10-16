@@ -1,0 +1,242 @@
+[
+  {
+    "contentKey": "authored/transit-aspect/moon/a/soft/variant-D",
+    "natal": "ascendant"
+  },
+  {
+    "contentKey": "authored/transit-aspect/moon/a/soft/variant-E",
+    "natal": "ascendant"
+  },
+  {
+    "contentKey": "authored/transit-aspect/moon/ascendant/any/variant-B",
+    "natal": "ascendant"
+  },
+  {
+    "contentKey": "authored/transit-aspect/moon/ascendant/any/variant-C",
+    "natal": "ascendant"
+  },
+  {
+    "contentKey": "authored/transit-aspect/moon/ascendant/soft/variant-D",
+    "natal": "ascendant"
+  },
+  {
+    "contentKey": "authored/transit-aspect/moon/ascendant/soft/variant-E",
+    "natal": "ascendant"
+  },
+  {
+    "contentKey": "authored/transit-aspect/moon/c/any/variant-C",
+    "natal": "chiron"
+  },
+  {
+    "contentKey": "authored/transit-aspect/moon/c/conjunction/variant-A",
+    "natal": "chiron"
+  },
+  {
+    "contentKey": "authored/transit-aspect/moon/c/hard/variant-A",
+    "natal": "chiron"
+  },
+  {
+    "contentKey": "authored/transit-aspect/moon/c/soft/variant-B",
+    "natal": "chiron"
+  },
+  {
+    "contentKey": "authored/transit-aspect/moon/j/soft/variant-D",
+    "natal": "jupiter"
+  },
+  {
+    "contentKey": "authored/transit-aspect/moon/j/soft/variant-E",
+    "natal": "jupiter"
+  },
+  {
+    "contentKey": "authored/transit-aspect/moon/jupiter/hard/variant-B",
+    "natal": "jupiter"
+  },
+  {
+    "contentKey": "authored/transit-aspect/moon/jupiter/hard/variant-C",
+    "natal": "jupiter"
+  },
+  {
+    "contentKey": "authored/transit-aspect/moon/jupiter/soft/variant-B",
+    "natal": "jupiter"
+  },
+  {
+    "contentKey": "authored/transit-aspect/moon/jupiter/soft/variant-C",
+    "natal": "jupiter"
+  },
+  {
+    "contentKey": "authored/transit-aspect/moon/jupiter/soft/variant-D",
+    "natal": "jupiter"
+  },
+  {
+    "contentKey": "authored/transit-aspect/moon/jupiter/soft/variant-E",
+    "natal": "jupiter"
+  },
+  {
+    "contentKey": "authored/transit-aspect/moon/m/soft/variant-A",
+    "natal": "mercury"
+  },
+  {
+    "contentKey": "authored/transit-aspect/moon/m/soft/variant-B",
+    "natal": "mercury"
+  },
+  {
+    "contentKey": "authored/transit-aspect/moon/m/soft/variant-C",
+    "natal": "mercury"
+  },
+  {
+    "contentKey": "authored/transit-aspect/moon/m/soft/variant-D",
+    "natal": "mercury"
+  },
+  {
+    "contentKey": "authored/transit-aspect/moon/mars/hard/variant-B",
+    "natal": "mars"
+  },
+  {
+    "contentKey": "authored/transit-aspect/moon/mars/hard/variant-C",
+    "natal": "mars"
+  },
+  {
+    "contentKey": "authored/transit-aspect/moon/mars/hard/variant-D",
+    "natal": "mars"
+  },
+  {
+    "contentKey": "authored/transit-aspect/moon/mars/soft/variant-B",
+    "natal": "mars"
+  },
+  {
+    "contentKey": "authored/transit-aspect/moon/mars/soft/variant-C",
+    "natal": "mars"
+  },
+  {
+    "contentKey": "authored/transit-aspect/moon/mercury/hard/variant-B",
+    "natal": "mercury"
+  },
+  {
+    "contentKey": "authored/transit-aspect/moon/mercury/hard/variant-C",
+    "natal": "mercury"
+  },
+  {
+    "contentKey": "authored/transit-aspect/moon/mercury/hard/variant-D",
+    "natal": "mercury"
+  },
+  {
+    "contentKey": "authored/transit-aspect/moon/mercury/soft/variant-B",
+    "natal": "mercury"
+  },
+  {
+    "contentKey": "authored/transit-aspect/moon/mercury/soft/variant-C",
+    "natal": "mercury"
+  },
+  {
+    "contentKey": "authored/transit-aspect/moon/mercury/soft/variant-D",
+    "natal": "mercury"
+  },
+  {
+    "contentKey": "authored/transit-aspect/moon/midheaven/any/variant-B",
+    "natal": "midheaven"
+  },
+  {
+    "contentKey": "authored/transit-aspect/moon/midheaven/any/variant-C",
+    "natal": "midheaven"
+  },
+  {
+    "contentKey": "authored/transit-aspect/moon/moon/hard/variant-B",
+    "natal": "moon"
+  },
+  {
+    "contentKey": "authored/transit-aspect/moon/moon/hard/variant-C",
+    "natal": "moon"
+  },
+  {
+    "contentKey": "authored/transit-aspect/moon/moon/soft/variant-A",
+    "natal": "moon"
+  },
+  {
+    "contentKey": "authored/transit-aspect/moon/moon/soft/variant-B",
+    "natal": "moon"
+  },
+  {
+    "contentKey": "authored/transit-aspect/moon/neptune/any/variant-B",
+    "natal": "neptune"
+  },
+  {
+    "contentKey": "authored/transit-aspect/moon/neptune/any/variant-C",
+    "natal": "neptune"
+  },
+  {
+    "contentKey": "authored/transit-aspect/moon/pluto/any/variant-B",
+    "natal": "pluto"
+  },
+  {
+    "contentKey": "authored/transit-aspect/moon/pluto/any/variant-C",
+    "natal": "pluto"
+  },
+  {
+    "contentKey": "authored/transit-aspect/moon/s/soft/variant-B",
+    "natal": "sun"
+  },
+  {
+    "contentKey": "authored/transit-aspect/moon/s/soft/variant-C",
+    "natal": "sun"
+  },
+  {
+    "contentKey": "authored/transit-aspect/moon/s/soft/variant-D",
+    "natal": "sun"
+  },
+  {
+    "contentKey": "authored/transit-aspect/moon/saturn/hard/variant-B",
+    "natal": "saturn"
+  },
+  {
+    "contentKey": "authored/transit-aspect/moon/saturn/hard/variant-C",
+    "natal": "saturn"
+  },
+  {
+    "contentKey": "authored/transit-aspect/moon/saturn/hard/variant-D",
+    "natal": "saturn"
+  },
+  {
+    "contentKey": "authored/transit-aspect/moon/sun/hard/variant-B",
+    "natal": "sun"
+  },
+  {
+    "contentKey": "authored/transit-aspect/moon/sun/hard/variant-C",
+    "natal": "sun"
+  },
+  {
+    "contentKey": "authored/transit-aspect/moon/sun/soft/variant-B",
+    "natal": "sun"
+  },
+  {
+    "contentKey": "authored/transit-aspect/moon/sun/soft/variant-C",
+    "natal": "sun"
+  },
+  {
+    "contentKey": "authored/transit-aspect/moon/sun/soft/variant-D",
+    "natal": "sun"
+  },
+  {
+    "contentKey": "authored/transit-aspect/moon/uranus/any/variant-B",
+    "natal": "uranus"
+  },
+  {
+    "contentKey": "authored/transit-aspect/moon/uranus/any/variant-C",
+    "natal": "uranus"
+  },
+  {
+    "contentKey": "authored/transit-aspect/moon/venus/hard/variant-B",
+    "natal": "venus"
+  },
+  {
+    "contentKey": "authored/transit-aspect/moon/venus/hard/variant-C",
+    "natal": "venus"
+  },
+  {
+    "contentKey": "authored/transit-aspect/moon/venus/hard/variant-D",
+    "natal": "venus"
+  },
+  {
+    "contentKey": "authored/transit-aspect/moon/venus/soft/variant-B",
+    "natal": "venus"
+  }
+]

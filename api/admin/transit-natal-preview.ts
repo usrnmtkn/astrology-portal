@@ -1,3 +1,4 @@
+import { moonTransitNatalAliases, moonTransitVariantKeys } from "../../apps/web/src/content/fallbackArchitectureV3/resolver/moonTransitVariants.mjs";
 import type { IncomingMessage, ServerResponse } from "node:http";
 import { createRequire } from "node:module";
 import { requireContentAdmin } from "../_lib/admin-auth.js";
@@ -71,7 +72,7 @@ export function renderTransitNatalPreviewState(input: ReturnType<typeof normaliz
       ? { origin: "published", packageVersion: PACKAGE_VERSION, revision: publication?.revision, rowId: row.publicationRowId, rowUpdatedAt: row.publicationRowUpdatedAt }
       : { origin: "package", packageVersion: PACKAGE_VERSION };
   }
-  return preview;
+  return { ...preview, variantCount: moonTransitVariantKeys([...cards.map(row => row.contentKey), ...blockedContentKeys], input.planet, input.natalPoint, input.aspect).length };
 }
 
 /** All potential sources for this contact, including overrides absent from the bundle.
@@ -83,7 +84,9 @@ export function transitNatalPreviewScope({ planet, natalPoint, aspect }: ReturnT
       `fallback-hook/natal-core/${natalPoint}`, `fallback-hook/transit-house-event-natal/${natalPoint}`,
       ...["planet-topic", "planet-core", "angle-area"].flatMap(family => [planet, natalPoint].map(point => `fallback-vocab/${family}/${point}`)),
       `fallback-vocab/aspect-adj/${aspect}`, `fallback-vocab/aspect-verb/${aspect}`],
-    prefixes: [`authored/transit-aspect/${planet}/${natalPoint}/`, `authored/transit-aspect/${natalPoint}/${planet}/`,
+    prefixes: [
+      ...moonTransitNatalAliases(planet, natalPoint).map(alias => `authored/transit-aspect/${planet}/${alias}/`),
+      `authored/transit-aspect/${planet}/${natalPoint}/`, `authored/transit-aspect/${natalPoint}/${planet}/`,
       `authored/transit-aspect/any/${natalPoint}/`, `authored/transit-aspect-insert/${planet}/${natalPoint}/`,
       "fallback-hook/fog-note/", "fallback-hook/transit-pass/",
       `fallback-hook/transit-aspect-type/${aspect}`, `fallback-hook/transit-effect-soft/${planet}`,
