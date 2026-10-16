@@ -3260,7 +3260,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     const editor = page.getByRole("dialog", { name: "Generated content editor" });
     const finder = page.getByRole("region", { name: "Personal Transits source finder" });
     await closeGeneratedEditor(page, true);
-    const facts = { planet: "neptune", sign: "aries", aspect: "opposition", natalPoint: "sun", voice: "{{Name}}", variant: 1, pass: 2, isRetrograde: true, window: "until October 4" };
+    const facts = { planet: "neptune", sign: "aries", aspect: "opposition", natalPoint: "sun", transitHouse: "8", natalHouse: "4", voice: "{{Name}}", variant: 1, pass: 2, isRetrograde: true, window: "until October 4" };
     const expected = renderTransitNatalPreviewState(normalizeTransitNatalPreviewInput(facts));
     await expect(preview.locator(".admin-natal-source-card-copy > p")).toHaveText(expected.paragraphs.map(p => p.text));
     const fog = expected.paragraphs.flatMap(p => p.sources).find(source => source.contentKey.includes("fog-note"))!;
