@@ -154,6 +154,7 @@ html[data-scrolled] .sky-header-date-button {
   right: calc((var(--top-icon-button-size) * 2) + (var(--top-control-gap) * 2));
   z-index: var(--z-picker);
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   gap: var(--space-4);
   width: min(480px, calc(100vw - 64px));
   border: var(--border-width-thin) solid var(--nav-border);

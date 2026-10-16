@@ -389,6 +389,7 @@ button.settings-signout-row {
 .account-phone-modal form,
 .account-phone-modal > div {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   gap: var(--space-4);
 }
 
@@ -414,6 +415,7 @@ button.settings-signout-row {
 
 .account-phone-modal label {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   gap: var(--space-2);
   color: var(--muted);
   font-family: var(--font-ui);
@@ -425,6 +427,7 @@ button.settings-signout-row {
 
 .account-phone-modal label > input,
 .account-phone-modal .phone-auth-number-control > input {
+  min-width: 0;
   min-height: var(--input-height);
   border: var(--border-width-thin) solid var(--input-border);
   border-radius: var(--input-radius);
