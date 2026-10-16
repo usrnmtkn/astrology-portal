@@ -235,7 +235,7 @@ for (const [width,theme] of [[1440,'light'],[390,'dark'],[390,'light'],[1440,'da
         for (const [tab,view] of [['Weekly Sky','weekly'],['Monthly Sky','month']]) {
           await page.getByRole('tablist',{name:'Calendar Write-ups workspaces'}).getByRole('tab',{name:tab,exact:true}).click();
           if (view==='month') {
-            await expect(page.getByRole('link',{name:'Open Horoscopes to write and publish Monthly',exact:true})).toHaveAttribute('href','#horoscopes');
+            await expect(page.getByRole('link',{name:'Open Monthly horoscopes',exact:true})).toHaveAttribute('href','#horoscopes');
             await expect(page.getByRole('region',{name:'Assembled Calendar passage',exact:true})).toHaveCount(0);
             continue;
           }

@@ -6,7 +6,7 @@ import { isSkyIngressEssay, SKY_INGRESS_ESSAY_FORMAT, type SkyArticleFormat } fr
 import { hasVerifiedSameSignHistory, type RetrogradeHistory } from "../../web/src/services/retrogradeHistory";
 import { useStudioCustomVariables } from "./studioCustomVariableClient";
 import { isStudioReadRequest, studioReadTimeoutMessage, studioRequestTimeoutMs } from "./studioRequestPolicy";
-import { compatibilityAspectPoints, compatibilityAspectTypes, compatibilityAspectKey, compatibilityAspectFromSearch, compatibilityAspectSearchText, compatibilityAspectSourceDraft, type CompatibilityAspectSelection } from "./compatibilityAspectSources";
+import { compatibilityAspectPoints, compatibilityAspectTypes, compatibilityAspectKey, compatibilityAspectFromSearch, compatibilityAspectSearchText, type CompatibilityAspectSelection } from "./compatibilityAspectSources";
 import { clearStudioEditorReturn, rememberStudioEditorReturn, studioEditorReturnContext } from "./studioEditorReturn";
 import type { HouseTransitEditorSource } from "./HouseTransitWriteupEditor";
 import { ZODIAC_SEASON_SOURCE_STARTERS, isZodiacSeasonSourceKey } from "../../web/src/content/fallbackArchitectureV3/resolver/zodiacSeasonVariables.mjs";
@@ -6058,33 +6058,17 @@ export function GeneratedContentAdminDashboard() {
         return;
       }
       if (!row) {
-        if (contentKey.startsWith("fallback-hook/synastry-pair/")) {
-          const [first,second,aspect,extra] = contentKey.slice("fallback-hook/synastry-pair/".length).split("/");
-          const selection = {first,second,aspect};
-          if (!extra && compatibilityAspectKey(selection) === contentKey) {
-            const reverseKey = compatibilityAspectKey({first:second,second:first,aspect})!;
-            const reverse = reverseKey === contentKey ? null : await readStudioContentDocument(reverseKey,secret);
-            if (requestId !== sourceOpenRequestRef.current || window.location.hash !== originatingHash) return;
-            if (reverse?.rows.some(candidate=>candidate.content_key!==reverseKey)) throw new Error("The reverse-order source could not be verified. Reload before creating this activation.");
-            const savedReverse = reverse?.rows.find(candidate=>candidate.content_key===reverseKey);
-            if (savedReverse) { await openRow(savedReverse as AdminGeneratedContentRow,null,fieldPath === "body_you" ? "body_they" : "body_you"); return; }
-            if (!confirmSkyEditorNavigation()) return;
-            setSelectedRowId(null); setEditorSourceRow(null); setCompositionEditorContext(null);
-            rememberSavedDraft(compatibilityAspectSourceDraft(selection));
-            setMessage("Write both directions of this activation. Save keeps a draft; Save & publish makes the complete pair available.");
-            scrollEditorToTop(fieldPath);
-            return;
-          }
-        }
-        if (contentKey.startsWith("fallback-hook/bond-effect-")) {
-          const {bondEffectExactSourceDraft} = await import("./bondEffectExactDraft");
-          const next = bondEffectExactSourceDraft(contentKey);
+        if (/^fallback-hook\/(?:synastry-pair\/|bond-effect-)/u.test(contentKey)) {
+          const {missingFriendsSource} = await import("./missingFriendsSource");
+          const missing = await missingFriendsSource(contentKey, key => readStudioContentDocument(key, secret));
           if (requestId !== sourceOpenRequestRef.current || window.location.hash !== originatingHash) return;
-          if (next) {
+          if (missing && "row" in missing) { await openRow(missing.row as AdminGeneratedContentRow, null, fieldPath === "body_you" ? "body_they" : "body_you"); return; }
+          if (missing) {
             if (!confirmSkyEditorNavigation()) return;
             setSelectedRowId(null); setEditorSourceRow(null); setCompositionEditorContext(null);
-            rememberSavedDraft(next);
-            setMessage("Write both directions of this opening. Save keeps a draft; Save & publish makes it available for this exact contact.");
+            setEditorSaveError("");
+            rememberSavedDraft(missing.draft);
+            setMessage("Write both versions, then Save & publish.");
             scrollEditorToTop(fieldPath);
             return;
           }
@@ -6798,6 +6782,8 @@ export function GeneratedContentAdminDashboard() {
         if (!await openRow(existing)) return;
         setMessage("Opened the saved aspect content. Its two fields follow the planet order shown in the editor.");
       } else {
+        const {compatibilityAspectSourceDraft} = await import("./compatibilityAspectDraft");
+        if (requestId !== compatibilityAspectRequestRef.current || originatingHash !== window.location.hash) return;
         setSelectedRowId(null);
         setEditorSourceRow(null);
         setCompositionEditorContext(null);

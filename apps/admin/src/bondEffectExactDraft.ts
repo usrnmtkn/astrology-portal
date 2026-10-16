@@ -1,5 +1,5 @@
 import type {AdminDraft} from './GeneratedContentAdminDashboard';
-import {isDynamicBondEffectExactRecord} from '../../web/src/content/fallbackArchitectureV3/dashboardExtensions.js';
+import {isDynamicBondEffectExactRecord} from '../../web/src/content/bondEffectIdentity.js';
 
 export function bondEffectExactSourceDraft(contentKey:string):AdminDraft|null {
   const record={contentKey,content_role:'fallback_hook',grammar_frame:'complete_sentence',body_you:'',body_they:'',review_status:'needs_review'};
