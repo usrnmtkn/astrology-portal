@@ -3,6 +3,17 @@ import { readerResponse } from '../helpers/reader-response';
 
 test.describe.configure({ mode: 'parallel' });
 
+const pageErrors = new WeakMap<Page, string[]>();
+test.beforeEach(async ({ page }) => {
+  const errors: string[] = [];
+  pageErrors.set(page, errors);
+  // HTTP 503 fixtures exercise handled error states; page exceptions are never expected.
+  page.on('pageerror', error => errors.push(error.message));
+});
+test.afterEach(async ({ page }) => {
+  expect(pageErrors.get(page) ?? [], 'no unexpected runtime errors during viewport changes').toEqual([]);
+});
+
 async function prepare(page: Page, theme: string, member: boolean, chart = false, reports = false) {
   const user = { id: '11111111-1111-4111-8111-111111111111', aud: 'authenticated', role: 'authenticated',
     email: 'viewport@example.test', phone: '+12025550101', app_metadata: { provider: 'email' }, user_metadata: { name: 'Test Reader' } };
