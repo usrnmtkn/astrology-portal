@@ -1,3 +1,4 @@
+import { FloatingTooltipPortal } from "../../components/ui/FloatingTooltip";
 import { withCalendarAspectRetrograde } from "../../services/calendarAspectRetrogradeContent";
 import {PublishedMonthlyOverview} from './PublishedMonthlyOverview';
 import { calendarWeeklyDayParagraphs } from './calendarWeeklyPresentation';
@@ -2061,6 +2062,7 @@ export function LunarCalendar({
     [location.timeZone]
   );
   const initialDateKey = initialRouteState?.date ?? todayKey(location.timeZone || "UTC");
+  const [tooltipAnchor, setTooltipAnchor] = useState<HTMLElement | null>(null);
   const [visibleMonth, setVisibleMonth] = useState(() => monthAnchorFromDateKey(
     initialDateKey,
     location.timeZone || "UTC"
@@ -3060,12 +3062,6 @@ export function LunarCalendar({
                 const isSelected = selectedDateKey === day.dateKey;
                 const isToday = day.dateKey === currentDateKey;
                 const dayPhase = calendarPhaseLabelForDay(day, calendar.days);
-                const columnIndex = index % 7;
-                const rowIndex = Math.floor(index / 7);
-                const tooltipClass = [
-                  columnIndex >= 5 ? "is-tooltip-left" : columnIndex <= 1 ? "is-tooltip-right" : "",
-                  rowIndex === 0 ? "is-tooltip-below" : "is-tooltip-above"
-                ].filter(Boolean).join(" ");
                 const previousDay = index > 0 ? calendar.days[index - 1] : null;
                 const tooltipEvents = calendarDayTooltipEvents(day, previousDay);
                 const tooltipLines = calendarDayTooltipLines(day, tooltipEvents, zone, calendar.days);
@@ -3086,10 +3082,14 @@ export function LunarCalendar({
 
                 return (
                   <button
-                    className={`lunar-calendar-day ${tooltipClass} ${day.inMonth ? "" : "is-outside"} ${isSelected ? "is-selected" : ""} ${isToday ? "is-today" : ""} ${seasonStart ? "is-season-start" : ""}`}
+                    className={`lunar-calendar-day ${day.inMonth ? "" : "is-outside"} ${isSelected ? "is-selected" : ""} ${isToday ? "is-today" : ""} ${seasonStart ? "is-season-start" : ""}`}
                     key={day.dateKey}
                     type="button"
                     onClick={() => handleSelectDate(day.dateKey)}
+                    onPointerEnter={(event) => setTooltipAnchor(event.currentTarget)}
+                    onPointerLeave={(event) => { if (document.activeElement !== event.currentTarget) setTooltipAnchor(null); }}
+                    onFocus={(event) => setTooltipAnchor(event.currentTarget)}
+                    onBlur={() => setTooltipAnchor(null)}
                     onKeyDown={(event) => handleDayKeyDown(event, day.dateKey)}
                     data-calendar-date={day.dateKey}
                     aria-pressed={isSelected}
@@ -3145,8 +3145,8 @@ export function LunarCalendar({
                         <span className="lunar-calendar-event-more" aria-hidden="true">+{display.overflow}</span>
                       )}
                     </span>
-                    {!isSelected && (
-                      <span className="lunar-calendar-day-tooltip" role="tooltip">
+                    {!isSelected && tooltipAnchor?.isConnected && tooltipAnchor.dataset.calendarDate === day.dateKey && (
+                      <FloatingTooltipPortal anchor={tooltipAnchor} className="lunar-calendar-day-tooltip" open content={(<>
                         <span className="lunar-calendar-day-tooltip__phase">{dayPhase}</span>
                         <span className="lunar-calendar-day-tooltip__sign">Moon in {day.moonSign}</span>
                         {tooltipEvents.length > 0 && (
@@ -3159,7 +3159,7 @@ export function LunarCalendar({
                         {voidTooltipLabel && (
                           <span className="lunar-calendar-day-tooltip__void">Void of course · {voidTooltipLabel}</span>
                         )}
-                      </span>
+                     </>)} />
                     )}
                   </button>
                 );
@@ -3446,16 +3446,13 @@ function CalendarWeekStrip({
   onSelect: (dateKey: string) => void;
   onKeyDown: (event: KeyboardEvent<HTMLButtonElement>, dateKey: string) => void;
 }) {
+  const [tooltipAnchor, setTooltipAnchor] = useState<HTMLElement | null>(null);
   return (
     <section className="lunar-week-strip" aria-label="Selected week">
       {days.map((day, index) => {
         const isSelected = selectedDateKey === day.dateKey;
         const isToday = day.dateKey === currentDateKey;
         const dayPhase = calendarPhaseLabelForDay(day, calendarDays);
-        const tooltipClass = [
-          index >= 5 ? "is-tooltip-left" : index <= 1 ? "is-tooltip-right" : "",
-          "is-tooltip-below"
-        ].filter(Boolean).join(" ");
         const previousDay = index > 0 ? days[index - 1] : null;
         const tooltipEvents = calendarDayTooltipEvents(day, previousDay);
         const tooltipLines = calendarDayTooltipLines(day, tooltipEvents, zone, calendarDays);
@@ -3467,10 +3464,14 @@ function CalendarWeekStrip({
 
         return (
           <button
-            className={`lunar-week-day ${tooltipClass} ${isSelected ? "is-selected" : ""} ${isToday ? "is-today" : ""} ${seasonStart ? "is-season-start" : ""}`}
+            className={`lunar-week-day ${isSelected ? "is-selected" : ""} ${isToday ? "is-today" : ""} ${seasonStart ? "is-season-start" : ""}`}
             key={day.dateKey}
             type="button"
             onClick={() => onSelect(day.dateKey)}
+            onPointerEnter={(event) => setTooltipAnchor(event.currentTarget)}
+            onPointerLeave={(event) => { if (document.activeElement !== event.currentTarget) setTooltipAnchor(null); }}
+            onFocus={(event) => setTooltipAnchor(event.currentTarget)}
+            onBlur={() => setTooltipAnchor(null)}
             onKeyDown={(event) => onKeyDown(event, day.dateKey)}
             data-calendar-date={day.dateKey}
             aria-label={dayLabel}
@@ -3496,8 +3497,8 @@ function CalendarWeekStrip({
                   ))}
                 </span>
               </span>
-            {!isSelected && (
-              <span className="lunar-calendar-day-tooltip" role="tooltip">
+            {!isSelected && tooltipAnchor?.isConnected && tooltipAnchor.dataset.calendarDate === day.dateKey && (
+              <FloatingTooltipPortal anchor={tooltipAnchor} className="lunar-calendar-day-tooltip" open content={(<>
                 <span className="lunar-calendar-day-tooltip__phase">{dayPhase}</span>
                 <span className="lunar-calendar-day-tooltip__sign">Moon in {day.moonSign}</span>
                 {tooltipEvents.length > 0 && (
@@ -3510,7 +3511,7 @@ function CalendarWeekStrip({
                 {voidTooltipLabel && (
                   <span className="lunar-calendar-day-tooltip__void">Void of course · {voidTooltipLabel}</span>
                 )}
-              </span>
+              </>)} />
             )}
           </button>
         );

@@ -1,11 +1,5 @@
-import { useCallback, useEffect, useId, useLayoutEffect, useRef, useState, type ReactNode } from "react";
+import { useId, useLayoutEffect, useRef, useState, type ReactNode } from "react";
 import { createPortal } from "react-dom";
-
-type TooltipPosition = {
-  left: number;
-  top: number;
-  placement: "top" | "bottom";
-};
 
 type FloatingTooltipProps = {
   ariaLabel?: string;
@@ -27,91 +21,58 @@ const TOOLTIP_GAP = 10;
 
 export function FloatingTooltipPortal({ anchor, className, content, id, open }: FloatingTooltipPortalProps) {
   const fallbackId = useId();
-  const tooltipId = id ?? fallbackId;
   const tooltipRef = useRef<HTMLDivElement>(null);
-  const [mounted, setMounted] = useState(false);
-  const [position, setPosition] = useState<TooltipPosition | null>(null);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  const updatePosition = useCallback(() => {
-    const tooltip = tooltipRef.current;
-
-    if (!anchor || !tooltip) {
-      return;
-    }
-
-    const triggerRect = anchor.getBoundingClientRect();
-    const tooltipRect = tooltip.getBoundingClientRect();
-    let placement: TooltipPosition["placement"] = "top";
-    const topPlacement = triggerRect.top - tooltipRect.height - TOOLTIP_GAP;
-    const bottomPlacement = triggerRect.bottom + TOOLTIP_GAP;
-    let top = topPlacement;
-
-    if (topPlacement < VIEWPORT_GUTTER) {
-      placement = "bottom";
-      top = bottomPlacement;
-    }
-
-    if (top + tooltipRect.height > window.innerHeight - VIEWPORT_GUTTER && topPlacement >= VIEWPORT_GUTTER) {
-      placement = "top";
-      top = topPlacement;
-    }
-
-    top = Math.min(Math.max(top, VIEWPORT_GUTTER), Math.max(VIEWPORT_GUTTER, window.innerHeight - tooltipRect.height - VIEWPORT_GUTTER));
-
-    const minLeft = tooltipRect.width / 2 + VIEWPORT_GUTTER;
-    const maxLeft = window.innerWidth - tooltipRect.width / 2 - VIEWPORT_GUTTER;
-    const preferredLeft = triggerRect.left + triggerRect.width / 2;
-    const left = Math.min(Math.max(preferredLeft, minLeft), Math.max(minLeft, maxLeft));
-
-    setPosition({ left, top, placement });
-  }, [anchor]);
 
   useLayoutEffect(() => {
-    if (open) {
-      updatePosition();
-    } else {
-      setPosition(null);
-    }
-  }, [content, open, updatePosition]);
-
-  useEffect(() => {
-    if (!open) {
-      return undefined;
-    }
-
-    updatePosition();
-    window.addEventListener("resize", updatePosition);
-    window.addEventListener("scroll", updatePosition, true);
-
-    return () => {
-      window.removeEventListener("resize", updatePosition);
-      window.removeEventListener("scroll", updatePosition, true);
+    const tooltip = tooltipRef.current;
+    if (!open || !anchor || !tooltip) return;
+    const viewport = window.visualViewport;
+    const update = (event?: Event) => {
+      if (event?.type === "scroll" && event.target === tooltip) return;
+      if (!anchor.isConnected) { tooltip.style.visibility = "hidden"; return; }
+      const leftEdge = (viewport?.offsetLeft ?? 0) + VIEWPORT_GUTTER;
+      const topEdge = (viewport?.offsetTop ?? 0) + VIEWPORT_GUTTER;
+      const right = (viewport?.offsetLeft ?? 0) + (viewport?.width ?? innerWidth) - VIEWPORT_GUTTER;
+      const bottom = (viewport?.offsetTop ?? 0) + (viewport?.height ?? innerHeight) - VIEWPORT_GUTTER;
+      const width = Math.max(0, right - leftEdge);
+      tooltip.style.maxWidth = "";
+      tooltip.style.minWidth = "";
+      tooltip.style.minWidth = `${Math.min(parseFloat(getComputedStyle(tooltip).minWidth) || 0, width)}px`;
+      tooltip.style.maxHeight = `${Math.max(0, bottom - topEdge)}px`;
+      if (tooltip.getBoundingClientRect().width > width) tooltip.style.maxWidth = `${width}px`;
+      const box = tooltip.getBoundingClientRect();
+      const trigger = anchor.getBoundingClientRect();
+      const above = trigger.top - box.height - TOOLTIP_GAP;
+      const preferredTop = above >= topEdge ? above : trigger.bottom + TOOLTIP_GAP;
+      tooltip.style.top = `${Math.max(topEdge, Math.min(preferredTop, bottom - box.height))}px`;
+      tooltip.style.left = `${Math.max(leftEdge + box.width / 2, Math.min(trigger.left + trigger.width / 2, right - box.width / 2))}px`;
+      tooltip.style.pointerEvents = document.activeElement === anchor ? "auto" : "none";
+      tooltip.style.visibility = "visible";
     };
-  }, [open, updatePosition]);
+    update();
+    const observer = new ResizeObserver(() => update());
+    observer.observe(tooltip);
+    observer.observe(anchor);
+    const targets: EventTarget[] = viewport ? [window, viewport] : [window];
+    for (const target of targets) {
+      target.addEventListener("resize", update);
+      target.addEventListener("scroll", update, { capture: true, passive: true });
+    }
+    return () => {
+      observer.disconnect();
+      for (const target of targets) {
+        target.removeEventListener("resize", update);
+        target.removeEventListener("scroll", update, true);
+      }
+    };
+  }, [anchor, content, open]);
 
-  if (!mounted || !open || !anchor) {
-    return null;
-  }
-
+  if (!open || !anchor) return null;
   return createPortal(
-    <div
-      ref={tooltipRef}
-      id={tooltipId}
-      role="tooltip"
-      className={["floating-tooltip", className, `floating-tooltip--${position?.placement ?? "top"}`].filter(Boolean).join(" ")}
-      style={{
-        left: position?.left ?? 0,
-        top: position?.top ?? 0,
-        visibility: position ? "visible" : "hidden"
-      }}
-    >
-      {content}
-    </div>,
-    document.body
+    <div ref={tooltipRef} id={id ?? fallbackId} role="tooltip"
+      className={["floating-tooltip", className].filter(Boolean).join(" ")}
+      style={{ visibility: "hidden" }}>{content}</div>,
+    anchor.closest(".app-shell, .report-route-root") ?? document.body
   );
 }
 
@@ -131,7 +92,7 @@ export function FloatingTooltip({ ariaLabel, children, className, content }: Flo
         onBlur={() => setOpen(false)}
         onFocus={() => setOpen(true)}
         onPointerEnter={() => setOpen(true)}
-        onPointerLeave={() => setOpen(false)}
+        onPointerLeave={() => { if (document.activeElement !== triggerRef.current) setOpen(false); }}
       >
         {children}
       </span>

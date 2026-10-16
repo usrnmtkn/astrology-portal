@@ -187,6 +187,9 @@
 }
 
 .report-library-share-toast {
+  max-height: var(--notification-max-height);
+  overflow: auto;
+  overflow-wrap: anywhere;
   position: fixed;
   z-index: calc(var(--z-popover) + 1);
   right: var(--page-gutter);

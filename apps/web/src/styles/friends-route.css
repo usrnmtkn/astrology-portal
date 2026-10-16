@@ -1487,9 +1487,12 @@
   left: max(18px, env(safe-area-inset-left));
   bottom: max(18px, env(safe-area-inset-bottom));
   display: inline-flex;
+  flex-wrap: wrap;
   align-items: center;
   gap: var(--space-4);
   max-width: calc(100vw - 36px);
+  max-height: var(--notification-max-height);
+  overflow: auto;
   min-height: 46px;
   padding: 0 var(--space-4);
   border-radius: var(--friend-directory-toast-radius);
@@ -1499,7 +1502,13 @@
   font-size: var(--friend-directory-status-size);
 }
 
+.friends-toast > span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
 .friends-toast button {
+  flex-shrink: 0;
   padding: var(--space-1) 0;
   border: 0;
   background: transparent;
