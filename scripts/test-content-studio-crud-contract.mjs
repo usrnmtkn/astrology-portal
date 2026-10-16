@@ -94,7 +94,7 @@ function writeBody(key = baseline.content_key) {
 }
 
 await test('reusable composite sources publish while private samples and unknown identities stay blocked', async () => {
-  for (const key of ['composite.aspect.jupiter.conjunction.chiron', 'composite.house.venus.house_12', 'composite.mercury', 'composite-mars-in-aries']) {
+  for (const key of ['composite.aspect.jupiter.conjunction.chiron', 'composite.house.venus.house_12', 'composite.mercury', 'composite-mars-in-aries', 'composite-mars-house-4', 'composite-north-node-house12']) {
     const source = { ...baseline, content_key: key, surface: 'composite', event_type: 'composite-aspect', source_snapshot: {}, facts: {}, sections: {} };
     reset([source]);
     assert.equal((await invoke('PATCH', { id: source.id, status: 'LIVE', lane: 'serving', reviewState: null })).status, 200, key);
@@ -103,7 +103,7 @@ await test('reusable composite sources publish while private samples and unknown
     reset([]);
     assert.equal((await invoke('POST', { rows: [{ ...writeBody(key), surface: 'composite', eventType: 'composite-aspect', status: 'LIVE', lane: 'serving', reviewState: null }] })).status, 200, key);
   }
-  for (const fields of [{ content_key: 'sample-composite-qa' }, { content_key: 'composite.private-profile' }, { content_key: 'composite.house.venus.house_13' }, { facts: { sampleOnly: true } }, { source_snapshot: { sampleOnly: true } }]) {
+  for (const fields of [{ content_key: 'sample-composite-qa' }, { content_key: 'composite.private-profile' }, { content_key: 'composite.house.venus.house_13' }, { content_key: 'composite-mars-house-13' }, { content_key: 'composite-mars-house0' }, { facts: { sampleOnly: true } }, { source_snapshot: { sampleOnly: true } }]) {
     const source = { ...baseline, content_key: 'composite.aspect.jupiter.conjunction.chiron', surface: 'composite', event_type: 'composite-aspect', source_snapshot: {}, facts: {}, sections: {}, ...fields };
     reset([source]);
     assert.notEqual((await invoke('PATCH', { id: source.id, status: 'LIVE', lane: 'serving', reviewState: null })).status, 200);
