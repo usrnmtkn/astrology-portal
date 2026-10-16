@@ -1,6 +1,6 @@
 {
   "schema": "tldrastro-approved-lunation-book-cards/v1",
-  "packageVersion": "v3-2026-10-15-moon-transit-routing",
+  "packageVersion": "v3-2026-10-16-moon-selected-variants",
   "source": {
     "schema": "lunation-book-cards/v1",
     "count": 288

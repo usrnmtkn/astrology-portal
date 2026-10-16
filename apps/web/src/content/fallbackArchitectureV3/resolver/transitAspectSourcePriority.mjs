@@ -25,11 +25,15 @@ export function transitAspectSituationKey(transiting, natal, aspect, sign, trans
 }
 
 /** Keep the selected contact's exact pass/variant/base ahead of shared variants.
+ * A selected Moon variant preserves its leading situation/pass candidates, then
+ * precedes the unvaried exact base. The default slot retains exact precedence.
  * Eligibility and publication checks still run on each candidate in the caller.
  * Non-exact candidates retain their existing fallback order, including mirrors.
  */
-export function prioritizeExactTransitSources(keys, transiting, natal, aspect) {
+export function prioritizeExactTransitSources(keys, transiting, natal, aspect, selectedMoonVariant = null) {
   const exact = `authored/transit-aspect/${transiting}/${natal}/${aspect}`;
   const isExact = key => key === exact || key.startsWith(`${exact}/`);
-  return [...keys.filter(isExact), ...keys.filter(key => !isExact(key))];
+  const selected = transiting === "moon" ? keys.indexOf(selectedMoonVariant) : -1;
+  const rest = keys.slice(selected + 1);
+  return [...keys.slice(0, selected + 1), ...rest.filter(isExact), ...rest.filter(key => !isExact(key))];
 }
