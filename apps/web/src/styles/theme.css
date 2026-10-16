@@ -1066,7 +1066,6 @@
   --nav-scrolled-shadow: var(--nav-rest-shadow);
   --nav-blur: 22px;
   --nav-saturate: 1.5;
-  --modal-backdrop-bg: rgba(0, 0, 0, 0.28);
   --modal-backdrop-strong-bg: rgba(15, 15, 15, 0.45);
   --modal-overlay-bg: rgba(20, 20, 20, 0.18);
   --modal-overlay-dark-bg: rgba(0, 0, 0, 0.48);
@@ -1194,7 +1193,6 @@
   --modal-bg: var(--surface);
   --modal-border: var(--line);
   --modal-radius: var(--radius);
-  --modal-padding: var(--sp-4);
   --modal-width: var(--container-dialog);
   --chart-size: clamp(560px, 42vw, 700px);
   --relationship-picker-width: var(--container-picker);
@@ -1248,6 +1246,8 @@
   --tablet-nav-reserved-width: 112px;
   --mobile-nav-reserved-width: 88px;
   --mobile-menu-width: 260px;
+  /* Header popovers leave room for the controls, safe area, and bottom gutter. */
+  --header-popover-max-height: max(0px, calc(100dvh - var(--top-control-top) - var(--top-control-height) - var(--space-8) - env(safe-area-inset-top, 0px)));
   --mobile-settings-control-reserved-width: 84px;
   --tablet-chart-max: 680px;
   --tablet-chart-edge: 48px;

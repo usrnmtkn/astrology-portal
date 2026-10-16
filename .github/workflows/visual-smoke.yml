@@ -450,6 +450,12 @@ jobs:
           tests/visual/header-navigation-overflow.spec.ts
           tests/visual/reader-viewport-containment.spec.ts
           tests/visual/empty-error-viewport.spec.ts
+      - name: Verify modals, menus, and populated city dropdowns
+        env:
+          VITE_MAPBOX_ACCESS_TOKEN: viewport-synthetic-token
+        run: >-
+          npx playwright test -c playwright.config.ts --workers=1
+          --shard=${{ matrix.shard }}/3 tests/visual/overlay-viewport.spec.ts
       - name: Upload reader surface artifacts
         if: always()
         uses: actions/upload-artifact@v6

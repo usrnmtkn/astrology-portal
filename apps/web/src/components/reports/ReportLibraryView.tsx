@@ -1,3 +1,4 @@
+import { useViewportMenu } from "../../hooks/useViewportMenu";
 import { getVerifiedAuthUser } from "../../services/auth";
 import { FormattedProse } from "../FormattedProse";
 import { Archive, ChevronLeft, FileText, Link2Off, MoreHorizontal, RotateCcw, Share2, Trash2 } from "lucide-react";
@@ -175,6 +176,7 @@ function ReportLibraryRow({
   const status = statusLabel(item);
   const [menuOpen, setMenuOpen] = useState(false);
   const actionRef = useRef<HTMLDivElement>(null);
+  const viewportMenuRef = useViewportMenu();
 
   useEffect(() => {
     if (!menuOpen) return undefined;
@@ -225,7 +227,7 @@ function ReportLibraryRow({
           <MoreHorizontal size={18} aria-hidden="true" />
         </button>
         {menuOpen ? (
-          <div className="report-library-row__menu" role="menu" aria-label={`Options for ${item.title}`}>
+          <div ref={viewportMenuRef} className="report-library-row__menu" role="menu" aria-label={`Options for ${item.title}`}>
             {item.status === "ready" ? (
               <button
                 className="report-library-row__menu-item"
