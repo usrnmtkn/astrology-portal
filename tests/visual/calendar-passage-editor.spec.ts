@@ -234,6 +234,11 @@ for (const [width,theme] of [[1440,'light'],[390,'dark'],[390,'light'],[1440,'da
       {
         for (const [tab,view] of [['Weekly Sky','weekly'],['Monthly Sky','month']]) {
           await page.getByRole('tablist',{name:'Calendar Write-ups workspaces'}).getByRole('tab',{name:tab,exact:true}).click();
+          if (view==='month') {
+            await expect(page.getByRole('link',{name:'Open Horoscopes to write and publish Monthly',exact:true})).toHaveAttribute('href','#horoscopes');
+            await expect(page.getByRole('region',{name:'Assembled Calendar passage',exact:true})).toHaveCount(0);
+            continue;
+          }
           await editor.getByLabel('Passage date',{exact:true}).fill(date);
           await editor.getByLabel('Passage time zone',{exact:true}).fill(location.timeZone);
           await editor.getByRole('button',{name:'Load passage',exact:true}).click();
@@ -267,20 +272,9 @@ for (const [width,theme] of [[1440,'light'],[390,'dark'],[390,'light'],[1440,'da
           await expect(editor.getByRole('link',{name:'Open published Calendar'})).toHaveAttribute('href',`/?date=${date}#calendar?view=${view}&date=${date}`);
           await reader.goto('about:blank');
           await reader.goto(`/?date=${date}#calendar?view=${view}&date=${date}`);
-          if(view==='weekly') {
-            const overview = reader.getByRole('region',{name:'Weekly overview',exact:true});
-            await expect(overview).toContainText(`Synthetic ${view} opening.`,{timeout:60000});
-            await expect(overview).toContainText(`Synthetic ${view} complete ending.`);
-          } else {
-            // Monthly horoscopes live in Horoscopes. An older Calendar passage
-            // remains saved but cannot replace the explicitly authored TLDR card.
-            await expect(reader.locator('.lunar-calendar-grid-panel')).toBeVisible({timeout:60000});
-            await expect(reader.getByText('Loading the monthly overview…',{exact:true})).toHaveCount(0);
-            await expect(reader.getByText(`Synthetic ${view} opening.`,{exact:true})).toHaveCount(0);
-            await expect(reader.getByText(`Synthetic ${view} complete ending.`,{exact:true})).toHaveCount(0);
-            await editor.getByRole('button',{name:'Reload saved status',exact:true}).click();
-            await expect(field).toHaveValue(`Synthetic ${view} opening.\n\nSynthetic ${view} complete ending.`);
-          }
+          const overview = reader.getByRole('region',{name:'Weekly overview',exact:true});
+          await expect(overview).toContainText(`Synthetic ${view} opening.`,{timeout:60000});
+          await expect(overview).toContainText(`Synthetic ${view} complete ending.`);
         }
       }
       expect(errors).toEqual([]);
