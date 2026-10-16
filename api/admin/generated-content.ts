@@ -1,4 +1,5 @@
 import {studioSkyIdentity} from '../_lib/sky-studio-identity.js';
+import {standaloneArticleKind} from '../../src/shared/articleLibrary.js';
 import {studioOwnerApproval, hasExactStudioOwnerApproval} from '../_lib/studio-owner-publication.js';
 import {isDeepStrictEqual} from 'node:util';
 import { csvChanges, csvDraftPatch, csvRecordForRow, type CsvRecord } from '../../apps/admin/src/studioCsv.js';
@@ -322,7 +323,14 @@ function studioVariableStorage(params: URLSearchParams, options: { method?: stri
   });
 }
 
-async function prepareStudioVariables(body: GeneratedContentWriteBody) {
+async function prepareStudioVariables(body: GeneratedContentWriteBody, existing?: ExistingGeneratedContentRow) {
+  if (standaloneArticleKind(body.contentKey ?? existing?.content_key ?? '') && ['body', 'headline', 'summary'].some(field => Object.hasOwn(body, field))) {
+    const record = await snapshotStudioVariables({
+      ...v3PackageRecord(existing ?? {}),
+      ...Object.fromEntries(['body', 'headline', 'summary'].filter(field => Object.hasOwn(body, field)).map(field => [field, (body as any)[field]]))
+    }, studioVariableStorage);
+    body.sections = { ...(existing?.sections ?? {}), ...(isRecord(body.sections) ? body.sections : {}), standaloneArticle: { _studioVariables: record._studioVariables ?? [] } };
+  }
   const sections = isRecord(body.sections) ? body.sections : null;
   if (!sections) return;
   for (const field of [isRecord(sections.packageDraft) ? "packageDraft" : "packageRecord"]) {
@@ -330,8 +338,10 @@ async function prepareStudioVariables(body: GeneratedContentWriteBody) {
   }
 }
 
-function v3PackageRecord(row: { sections?: unknown }) {
+function v3PackageRecord(row: { sections?: unknown; content_key?: string; headline?: unknown; summary?: unknown; body?: unknown }) {
   const sections = isRecord(row.sections) ? row.sections : {};
+  if (standaloneArticleKind(row.content_key ?? '')) return { headline: row.headline, summary: row.summary, body: row.body,
+    _studioVariables: isRecord(sections.standaloneArticle) ? sections.standaloneArticle._studioVariables : [], _standaloneArticle: true };
   return isRecord(sections.packageRecord) ? sections.packageRecord : {};
 }
 
@@ -2481,7 +2491,7 @@ async function updateGeneratedContent(req: IncomingMessage) {
   if (existing.content_key.startsWith("studio-lunation/")) throw new GeneratedContentRequestError("Manage dated drafts in Calendar Write-ups → New & Full Moons & Eclipses.");
   if (existing.content_key.startsWith(libs().STUDIO_VARIABLE_PREFIX)) throw new GeneratedContentRequestError("Manage this definition in Variables.");
   if (existing.content_key.startsWith("studio-writing-profile/")) throw new GeneratedContentRequestError("Manage writing profiles in their Studio writing workspace.");
-  await prepareStudioVariables(body);
+  await prepareStudioVariables(body, existing);
   existing = await recoverPublishedSkyRevision(existing, body);
   const isPackageRow = isFallbackArchitectureV3Row(existing);
   if (body.status === "LIVE" && libs().isContentStudioReferenceSource(existing.content_key, existing.source_snapshot ?? {})) {

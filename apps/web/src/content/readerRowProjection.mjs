@@ -1,6 +1,7 @@
 // The public transport contract. New authoring fields are private by default.
 // This module only projects already-authorized rows; admission happens on the
 // server before projection. Never trim or reconstruct an approved passage here.
+import { resolveStudioVariableRecord } from './studioCustomVariables.mjs';
 const strings = names => Object.fromEntries(names.split(/\s+/u).filter(Boolean).map(name => [name, 'string']));
 const numbers = names => Object.fromEntries(names.split(/\s+/u).filter(Boolean).map(name => [name, 'number']));
 const booleans = names => Object.fromEntries(names.split(/\s+/u).filter(Boolean).map(name => [name, 'boolean']));
@@ -158,6 +159,10 @@ export function projectReaderRow(row) {
       if (selected !== undefined) sources[name] = selected;
     }
     publicRecord.ingress.sources = sources;
+  }
+  if (/^article\/(?:manual|guide)\/[^/]+$/u.test(row.content_key) && row.sections?.standaloneArticle?._studioVariables?.length) {
+    const resolved = resolveStudioVariableRecord({ headline: result.headline, summary: result.summary, body: result.body, _studioVariables: row.sections.standaloneArticle._studioVariables });
+    for (const field of ['headline', 'summary', 'body']) if (typeof resolved[field] === 'string') result[field] = resolved[field];
   }
   return result;
 }

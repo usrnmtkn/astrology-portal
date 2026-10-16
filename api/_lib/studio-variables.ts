@@ -87,13 +87,14 @@ export async function snapshotStudioVariables(record: any, storage: Storage) {
 
 export async function assertStudioVariablePublication(record: any, storage: Storage) {
   const saved = Array.isArray(record._studioVariables) ? record._studioVariables : [];
-  if (!saved.length) return [];
+  if (!saved.length && !record._standaloneArticle) return [];
   const current = await listStudioVariables(storage, saved.map((item: any) => item.name));
   for (const binding of saved) {
     const definition = current.find(item => item.id === binding.id && item.name === binding.name);
     if (!definition || JSON.stringify([definition.name, definition.value, definition.overrides]) !== JSON.stringify([binding.name, binding.value, binding.overrides])) throw new StudioVariableError(`{{${binding.name}}} changed or was deleted. Save and review this draft again before publishing.`, 409);
     if (!binding.value?.trim() || binding.overrides.some((item: any) => !item.value?.trim())) throw new StudioVariableError(`Complete the shared value and every override for {{${binding.name}}} before publishing.`);
   }
-  resolveStudioVariableRecord(record);
+  const resolved = resolveStudioVariableRecord(record);
+  if (record._standaloneArticle && studioRecordVariableNames(resolved).length) throw new StudioVariableError('Complete every variable used in this article before publishing. Open Variables, then save and review the draft again.');
   return current.map(item => ({ id: item.id as string, updatedAt: item.updatedAt as string }));
 }
