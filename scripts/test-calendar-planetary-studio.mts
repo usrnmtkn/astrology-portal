@@ -12,7 +12,7 @@ import { studioInventoryQuery, studioInventoryRequestPath } from '../apps/admin/
 
 const blockTypes=(path:string)=>new Set([...readFileSync(path,'utf8').match(/block_type in \(([\s\S]*?)\)/u)![1].matchAll(/'([^']+)'/gu)].map(match=>match[1]));
 const priorTypes=blockTypes('apps/web/supabase/migrations/20260904141612_allow_fallback_article_block_type.sql');
-const eventTypes=blockTypes('apps/web/supabase/migrations/20261016174500_allow_calendar_event_block_type.sql');
+const eventTypes=blockTypes('apps/web/supabase/migrations/20261016174132_allow_calendar_event_block_type.sql');
 for(const value of priorTypes)assert(eventTypes.has(value),`Calendar migration must retain ${value}`);
 assert.equal(eventTypes.size,priorTypes.size+1);
 for(const kind of ['ingress','station'] as const)assert(eventTypes.has(calendarPlanetaryDraft(kind,{planet:'mercury',sign:'capricorn',direction:'retrograde'})!.blockType),'Native Calendar drafts must use a deployed database block type.');
