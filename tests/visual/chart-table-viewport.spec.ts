@@ -156,7 +156,19 @@ for (const viewport of [{width:320,height:568},{width:390,height:844},{width:844
      if(family==='You natal') await page.getByRole('tab',{name:'Natal Chart',exact:true}).click();
     } else {
      await page.getByRole('button',{name:`Open ${friendName}`,exact:true}).click();
-     if(friendNatal) await page.getByRole('tab',{name:'Natal',exact:true}).click();
+     await page.evaluate(()=>document.fonts.ready);
+     const signatures=page.locator('.friend-hero-card .manual-chart-signatures > span');
+     await expect(signatures).toHaveCount(3);
+     await expect(signatures.nth(0)).toHaveText(/^☉ (?!.*pending).+$/i);
+     await expect(signatures.nth(1)).toHaveText(/^☽ (?!.*pending).+$/i);
+     if(friendNatal) {
+      const natalTab=page.getByRole('tab',{name:'Natal',exact:true});
+      await natalTab.scrollIntoViewIfNeeded();
+      await expect(natalTab).toBeInViewport();
+      await natalTab.click();
+      await expect(natalTab).toHaveAttribute('aria-selected','true');
+      await expect(page.locator('.friend-tab-pane[aria-label="Natal"]')).toBeVisible();
+     }
      if(!friendNatal) {
       await page.getByRole('button',{name:/More, \d+ sections/}).click();
       await page.getByRole('menuitemradio',{name:new RegExp('^'+family)}).click();
@@ -181,7 +193,10 @@ for (const viewport of [{width:320,height:568},{width:390,height:844},{width:844
      await chartFits(page,page.locator('.sky-wheel:visible').first());
     }
     if(family==='Friend natal') {
-     await page.getByRole('button',{name:/Ascendant in/}).click();
+     const ascendant=page.getByRole('button',{name:/Ascendant in/});
+     await ascendant.scrollIntoViewIfNeeded();
+     await expect(ascendant).toBeInViewport();
+     await ascendant.locator('.placement-table-row__title').click();
      const detail=page.getByRole('region',{name:/Ascendant in/});
      await expect(detail).toBeVisible();
      expect((await detail.innerText()).length).toBeGreaterThan(80);
