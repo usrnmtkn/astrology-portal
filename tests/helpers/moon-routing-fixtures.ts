@@ -22,6 +22,20 @@ export const moonRoutingRecords = [
   ...moonRoutingIdentities.map(({ contentKey }, index) => moonRecord(contentKey, String(index + 1))),
   ...moonRoutingExactRecords
 ];
+// Normal Friends selection must compete with approved non-Moon contacts.
+// A Moon-only publication fixture can otherwise make a low-ranked contact
+// visible merely by withholding every competing source's approval.
+const transitLibrary = JSON.parse(readFileSync('apps/web/src/content/fallbackArchitectureV3/source-rows/transit-synastry-rows-v1.json', 'utf8'));
+export const moonReaderCompetingRecords = transitLibrary.authoredCards
+  .filter((row: { contentKey: string }) => /^authored\/transit-(?:aspect|return)\//.test(row.contentKey)
+    && !row.contentKey.startsWith('authored/transit-aspect/moon/'))
+  .map((row: { contentKey: string }) => ({
+    contentKey: row.contentKey, content_role: 'full_copy', review_status: 'approved',
+    reader_only: true, render_policy: 'personal-transit-exact-v1', approval: moonRoutingRecords[0].approval,
+    headline: 'Synthetic competing transit',
+    body_you: `Competing You source ${row.contentKey}.`,
+    body_they: `Competing Friend source ${row.contentKey}.`
+  }));
 export const moonRoutingRows = moonRoutingRecords.map((record, index) => ({
   id: `aaaaaaaa-aaaa-aaaa-aaaa-${String(index + 1).padStart(12, '0')}`, content_key: record.contentKey,
   surface: 'you', mode: 'in_depth', status: 'LIVE', lane: 'serving', review_state: null,

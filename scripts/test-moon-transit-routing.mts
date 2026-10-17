@@ -9,6 +9,7 @@ import { createTransitSynastryRenderer as shippedFactory } from '../apps/web/src
 import { moonTransitVariantKeys, selectMoonTransitVariant } from '../apps/web/src/content/fallbackArchitectureV3/resolver/moonTransitVariants.mjs';
 import { retainPersonalTransitAlternate } from '../apps/web/src/content/fallbackArchitectureV3/resolver/personalTransitCopyVersions.mjs';
 import { normalizeTransitNatalPreviewInput, transitNatalPreviewScope } from '../api/admin/transit-natal-preview.ts';
+import { personalTransitCopySeed, personalTransitId, shiftPersonalDateKey } from '../apps/web/src/services/personalDailyTransits.ts';
 
 const read = (path: string) => JSON.parse(fs.readFileSync(path, 'utf8'));
 const root = 'apps/web/src/content/fallbackArchitectureV3/';
@@ -22,6 +23,37 @@ const keys = lib.authoredCards.map((row: any) => row.contentKey);
 const renderers = [nodeRender, browserFactory(lib, templates, sourceRows).renderTransitAspect,
   shippedFactory(lib, templates, sourceRows).renderTransitAspect];
 const aspects = ['conjunction', 'square', 'opposition', 'trine', 'sextile'];
+
+// Exercise the actual reader adapter inputs, not arbitrary qa seeds that the
+// normal You reader could never supply. This is source reachability coverage;
+// calculated contact/ranking and native reader journeys are separate checks.
+const legacyYouChoices = new Set<string>();
+for (const natal of new Set(identities.map(row => row.natal))) for (const aspect of aspects) {
+  const id = personalTransitId('Moon', aspect, natal);
+  const selected = selectMoonTransitVariant(keys, 'moon', natal, aspect, undefined, `you:${id}`);
+  if (selected) legacyYouChoices.add(selected);
+}
+assert.ok(identities.some(row => !legacyYouChoices.has(row.contentKey)), 'The old permanent-contact seed must reproduce unreachable You sources.');
+for (const voice of ['you', 'Fixture Friend']) {
+  const reachable = new Set<string>();
+  for (let offset = 0; offset < 366; offset++) {
+    const date = shiftPersonalDateKey('2026-01-01', offset);
+    for (const natal of new Set(identities.map(row => row.natal))) for (const aspect of aspects) {
+      const id = personalTransitId('Moon', aspect, natal);
+      const seed = personalTransitCopySeed('Moon', id, voice, date, 'America/New_York');
+      const selected = selectMoonTransitVariant(keys, 'moon', natal, aspect, undefined, seed);
+      if (selected) reachable.add(selected);
+      assert.equal(seed, personalTransitCopySeed('Moon', id, voice, date, 'America/New_York'), 'Reopening a reading cannot rotate its source.');
+    }
+  }
+  assert.deepEqual(identities.filter(row => !reachable.has(row.contentKey)), [], `${voice}: every canonical and alias source must be reachable through dated reader inputs.`);
+}
+const seedFor = (reference: string, zone = 'America/New_York') => personalTransitCopySeed('Moon', 'moon-trine-mercury', 'you', reference, zone);
+assert.equal(seedFor('2026-10-16'), seedFor('2026-10-17T02:00:00Z'));
+assert.equal(seedFor('2026-11-01T05:30:00Z'), seedFor('2026-11-01T06:30:00Z'), 'Repeated DST hour is one reading date.');
+assert.equal(seedFor('2026-10-16', 'Pacific/Honolulu'), seedFor('2026-10-17T02:00:00Z', 'Pacific/Honolulu'));
+assert.notEqual(seedFor('2026-10-16'), seedFor('2026-10-17'));
+assert.equal(personalTransitCopySeed('Saturn', 'saturn-trine-mercury', 'you', '2026-10-16'), undefined, 'Other planets retain their selection policy.');
 for (const aspect of aspects) {
   const exact = `authored/transit-aspect/moon/chiron/${aspect}`;
   const selected = 'authored/transit-aspect/moon/c/any/variant-C';

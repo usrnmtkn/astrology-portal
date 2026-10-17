@@ -1,4 +1,4 @@
-import { comparePersonalDailyTransits, personalDailyPriority, personalDailyPeakLabel, precisePersonalOrb, type PersonalDailyPeak } from "./services/personalDailyTransits";
+import { comparePersonalDailyTransits, personalDailyPriority, personalDailyPeakLabel, precisePersonalOrb, personalTransitCopySeed, type PersonalDailyPeak } from "./services/personalDailyTransits";
 import { usePersonalDailyPeaks, usePersonalTransitSeries } from "./services/usePersonalDailyTransits";
 import { compositeReaderRelationshipCopy } from "./content/compositeRelationshipCopy";
 import { CalendarDaySkeleton } from "./features/calendar/CalendarDaySkeleton";
@@ -7531,7 +7531,19 @@ function natalTransitTargets(natalSky: SkySnapshot, birthTimeKnown = false) {
       planet: "Descendant",
       glyph: pointGlyph("Descendant"),
       longitude: natalSky.ascendantLongitude + 180
-    })
+    }),
+    ...(Number.isFinite(natalSky.midheavenLongitude) ? [
+      positionFromLongitude({
+        planet: "Midheaven",
+        glyph: pointGlyph("Midheaven"),
+        longitude: natalSky.midheavenLongitude!
+      }),
+      positionFromLongitude({
+        planet: "Imum Coeli",
+        glyph: pointGlyph("Imum Coeli"),
+        longitude: natalSky.midheavenLongitude! + 180
+      })
+    ] : [])
   ];
 }
 
@@ -7940,7 +7952,7 @@ function personalTransitPackageSection(
       transitHouse: transit.transitHouse,
       natalHouse: transit.natalHouse,
       variant: stableTransitCopyVariant(voice, transit.id),
-      variantSeed: transit.transitPlanet === "Moon" ? `${voice}:${transit.id}` : undefined,
+      variantSeed: personalTransitCopySeed(transit.transitPlanet, transit.id, voice, generatedAt, transit.timeZone),
       window: windowLabel,
       voice
     });

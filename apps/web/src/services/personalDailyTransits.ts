@@ -22,6 +22,15 @@ export function personalDateKey(date: Date | string, timeZone: string) {
   return new Intl.DateTimeFormat("en-CA", { timeZone, year: "numeric", month: "2-digit", day: "2-digit" }).format(new Date(date));
 }
 
+/** Moon source variants belong to a reading date, not a page load. You passes
+ * a civil date; Friends passes the calculated sky instant in the viewing zone.
+ * Keep the historical writing version independent of this source selection. */
+export function personalTransitCopySeed(planet: string, id: string, voice: string, reference: string, timeZone = "UTC") {
+  if (planet !== "Moon") return undefined;
+  const date = /^\d{4}-\d{2}-\d{2}$/.test(reference) ? reference : personalDateKey(reference, timeZone);
+  return `${voice}:${id}:${date}`;
+}
+
 export function shiftPersonalDateKey(dateKey: string, days: number) {
   const date = new Date(`${dateKey}T12:00:00Z`);
   date.setUTCDate(date.getUTCDate() + days);

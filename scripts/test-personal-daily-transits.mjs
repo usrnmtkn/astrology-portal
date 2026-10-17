@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
 import { createServer } from "vite";
 import SwissEph from "swisseph-wasm";
 import React from "react";
@@ -130,6 +131,64 @@ try {
   const birthLocation = { label: "New York, NY", latitude: 40.7128, longitude: -74.006, timeZone: "America/New_York" };
   const natalSky = await ephemeris.getAstrodienstSky(birthLocation, new Date("1990-01-02T17:00:00Z"));
   const targets = app.natalTransitTargets(natalSky, true);
+  const mc = targets.find(point => point.planet === "Midheaven");
+  const ic = targets.find(point => point.planet === "Imum Coeli");
+  assert(mc && ic, "Both readers must receive calculated MC/IC targets, not only Studio's natal-point selector.");
+  assert(Math.abs(app.personalTransitLongitude(mc) - natalSky.midheavenLongitude) < 1e-9);
+  assert(Math.abs(app.personalTransitLongitude(ic) - (natalSky.midheavenLongitude + 180) % 360) < 1e-9);
+  const angleNames = ["Ascendant", "Descendant", "Midheaven", "Imum Coeli"];
+  assert.equal(app.natalTransitTargets(natalSky, false).filter(point => angleNames.includes(point.planet)).length, 0,
+    "Unknown birth time must never manufacture usable angle contacts.");
+  assert.equal(app.natalTransitTargets({ ...natalSky, midheavenLongitude: undefined }, true)
+    .some(point => ["Midheaven", "Imum Coeli"].includes(point.planet)), false);
+  const syntheticMoonAtMc = { ...natalSky.positions.find(point => point.planet === "Moon"),
+    longitude: natalSky.midheavenLongitude, speed: 13 };
+  const angleContacts = app.buildNatalTransitItems([syntheticMoonAtMc], [mc, ic], 0, "UTC");
+  assert(angleContacts.some(contact => contact.id === "moon-conjunction-midheaven"));
+  assert(angleContacts.some(contact => contact.id === "moon-opposition-imum-coeli"));
+  assert.equal(app.groupPersonalTransitContacts(angleContacts).length, 1, "MC/IC stays one ranked axis slot.");
+  // The report browser fixture keeps both the changed MC/IC ranking and a
+  // genuinely selected full-day contact outside the noon orb. Independently
+  // check the latter with direct Swiss longitudes, not just the app's labels.
+  const reportNatal = await ephemeris.getAstrodienstSky(birthLocation, new Date("1990-01-01T17:00:00Z"));
+  const reportTargets = app.natalTransitTargets(reportNatal, true);
+  for (const [date, expectedIds, expectedOutside] of [
+    ["2026-09-13", ["lilith-conjunction-midheaven", "lilith-conjunction-sun", "mercury-square-jupiter", "moon-opposition-ascendant"], []],
+    ["2026-09-12", ["mars-square-ascendant", "moon-sextile-mars", "lilith-opposition-chiron", "moon-square-sun"], ["moon-square-sun"]]
+  ]) {
+    const reference = `${date}T16:00:00Z`;
+    const sky = await ephemeris.getAstrodienstSky(birthLocation, new Date(reference));
+    const peaks = await ephemeris.natalDailyTransitPeaksFor(sky.positions.map(p => p.planet), reportTargets.map(p => ({ planet: p.planet, longitude: app.personalTransitLongitude(p) })), reference, birthLocation.timeZone);
+    const contacts = app.buildNatalTransitItems(sky.positions, reportTargets, 0, birthLocation.timeZone, peaks)
+      .filter(item => daily.personalDailyPriority(item.dailyPeak) !== null).sort(daily.comparePersonalDailyTransits);
+    const selected = app.groupPersonalTransitContacts(contacts).slice(0, 4).map(group => group[0]);
+    assert.deepEqual(selected.map(item => item.id), expectedIds);
+    const report = await preparePersonalReportTiming(selected, new Date(reference), birthLocation.timeZone, ephemeris.natalTransitTimingFor);
+    const outside = report.qualifyingTransits.filter(item => Date.parse(item.calculation.currentStart) > Date.parse(reference) || Date.parse(item.calculation.currentEnd) < Date.parse(reference));
+    assert.deepEqual(outside.map(item => item.id), expectedOutside);
+    for (const item of outside) {
+      const natalSun = longitude("Sun", "1990-01-01T17:00:00Z");
+      const squareOrb = at => Math.abs(Math.abs(((longitude("Moon", at) - natalSun + 540) % 360) - 180) - 90);
+      assert(squareOrb(reference) > 2, "Direct Swiss confirms the selected event is outside the noon Moon gate");
+      assert(squareOrb(item.calculation.contactReferenceAt) < 0.001, "Direct Swiss confirms the precise square at the reported event time");
+      assert.equal(daily.personalDateKey(item.calculation.contactReferenceAt, birthLocation.timeZone), date);
+      assert.equal(item.calculation.exactOnSelectedDay, true);
+    }
+    if (date === "2026-09-13") {
+      const unselected = contacts.find(item => item.id === "moon-square-mercury");
+      assert(unselected?.dailyPeak.exactToday.length, "MC/IC admission must not erase the full-day Moon/Mercury candidate");
+      assert(!selected.includes(unselected), "The candidate is outside this date's legitimate ranked four");
+      assert(!report.qualifyingTransits.some(item => item.id === unselected.id), "Submitted evidence follows the selected four, not the full candidate inventory");
+      const fullDay = await preparePersonalReportTiming([unselected], new Date(reference), birthLocation.timeZone, ephemeris.natalTransitTimingFor);
+      const fact = fullDay.qualifyingTransits[0];
+      assert.equal(fact.calculation.exactOnSelectedDay, true);
+      assert.notEqual(fact.calculation.contactReferenceAt, fact.calculation.referenceAt);
+      const natalMercury = longitude("Mercury", "1990-01-01T17:00:00Z");
+      const squareOrb = at => Math.abs(Math.abs(((longitude("Moon", at) - natalMercury + 540) % 360) - 180) - 90);
+      assert(squareOrb(reference) > 2);
+      assert(squareOrb(fact.calculation.contactReferenceAt) < 0.001);
+    }
+  }
   for (const [location, reference, expected] of [
     [birthLocation, "2027-12-07T17:00:00Z", ["moon-square-jupiter", "moon-square-uranus", "moon-sextile-venus", "moon-trine-lilith", "lilith-square-pluto"]],
     [{ label: "Honolulu, HI", latitude: 21.3069, longitude: -157.8583, timeZone: "Pacific/Honolulu" }, "2027-12-07T22:00:00Z", ["moon-square-jupiter", "moon-square-uranus", "moon-sextile-venus", "lilith-square-pluto"]]
@@ -158,5 +217,63 @@ try {
     const peaks = await ephemeris.natalDailyTransitPeaksFor(["Saturn"], [{ planet: "Sun", longitude: 1.5 }], reference, "UTC");
     assert.equal(peaks.find(item => item.id === "saturn-conjunction-sun")?.exactToday[0]?.slice(0, 10), expected);
   }
+  // Go through the actual App adapter, not a helper-only selection test. Each
+  // synthetic natal target is derived from Swiss Moon longitude for that date.
+  // These are isolated routing fixtures, not owner charts or ranked-live proof.
+  const identities = JSON.parse(readFileSync("tests/fixtures/moon-transit-legacy-identities.json", "utf8"));
+  const runtime = await server.ssrLoadModule("/src/content/fallbackArchitectureV3Runtime.ts");
+  const { acceptedOwnerApprovedTransitSections } = await server.ssrLoadModule("/src/features/friends/transitDetailApproval.ts");
+  const fixtureRows = identities.map(({ contentKey }) => ({
+    contentKey, content_role: "full_copy", review_status: "approved", reader_only: true,
+    render_policy: "personal-transit-exact-v1", headline: "Synthetic Moon reading",
+    approval: { approvalLevel: "exact_owner_approved", recordPath: "qa://moon-reader-adapter",
+      payloadSha256: "a".repeat(64), approvedAt: "2026-10-15T22:00:00.000Z" },
+    body_you: `Complete synthetic You passage ${contentKey}.\n\nYou final sentence.`,
+    body_they: `Complete synthetic Friend passage ${contentKey}.\n\nFriend final sentence.`
+  }));
+  const originals = JSON.stringify(fixtureRows);
+  runtime.installPersonalTransitFallbackArchitectureV3Bundle({ transitLib: { authoredCards: fixtureRows },
+    templatesFile: { templates: [] }, rowsFile: { hookRows: [], vocabularyRows: [] } });
+  const normalize = app.friendsViewModelDependencies.normalizePersonalTransitSurface;
+  const pointNames = { ascendant: "Ascendant", chiron: "Chiron", jupiter: "Jupiter", mercury: "Mercury", sun: "Sun",
+    moon: "Moon", venus: "Venus", mars: "Mars", saturn: "Saturn", uranus: "Uranus", neptune: "Neptune", pluto: "Pluto",
+    midheaven: "Midheaven" };
+  const reached = new Map([["you", new Set()], ["Fixture Friend", new Set()]]);
+  const syntheticPosition = (planet, value) => ({ planet, longitude: value,
+    sign: ["Aries", "Taurus", "Gemini", "Cancer", "Leo", "Virgo", "Libra", "Scorpio", "Sagittarius", "Capricorn", "Aquarius", "Pisces"][Math.floor(value / 30)],
+    degree: value % 30 });
+  for (let offset = 0; offset < 366 && [...reached.values()].some(keys => keys.size < identities.length); offset++) {
+    const date = daily.shiftPersonalDateKey("2026-01-01", offset);
+    const instant = `${date}T17:00:00Z`;
+    const moonLongitude = longitude("Moon", instant);
+    for (const natal of new Set(identities.map(row => row.natal))) {
+      assert(pointNames[natal], `Missing canonical fixture point ${natal}`);
+      for (const [aspect, angle] of [["conjunction", 0], ["sextile", 60], ["square", 90], ["trine", 120], ["opposition", 180]]) {
+        const targetLongitude = (moonLongitude - angle + 360) % 360;
+        const contacts = app.buildNatalTransitItems(
+          [{ ...syntheticPosition("Moon", moonLongitude), speed: 13 }],
+          [syntheticPosition(pointNames[natal], targetLongitude)], 0, "America/New_York");
+        const contact = contacts.find(item => item.aspect === aspect);
+        assert(contact, `Calculated fixture contact missing: ${natal}/${aspect}`);
+        for (const [voice, keys] of reached) {
+          const reference = voice === "you" ? date : instant;
+          const reading = normalize({ ...contact, reportWindowLabel: "Until October 31, 2026" }, reference, voice);
+          const section = reading.sections.find(item => fixtureRows.some(row => item.sourceKeys.includes(row.contentKey)));
+          if (!section) continue; // The ordinary unvaried source is also eligible.
+          if (voice !== "you") assert(acceptedOwnerApprovedTransitSections(reading.sections,
+            runtime.fallbackV3ApprovalLevelForContentKey).includes(section), "The actual Friends approval filter must retain the selected source.");
+          const source = fixtureRows.find(row => section.sourceKeys.includes(row.contentKey));
+          assert.equal(section.body, voice === "you" ? source.body_you : source.body_they);
+          assert.deepEqual(normalize({ ...contact, reportWindowLabel: "Until October 31, 2026" }, reference, voice), reading,
+            "Opening the same contact again must preserve its complete source.");
+          keys.add(source.contentKey);
+        }
+      }
+    }
+  }
+  for (const [voice, keys] of reached) assert.deepEqual(identities.filter(row => !keys.has(row.contentKey)), [],
+    `${voice}: all 60 sources, including aliases, must pass through the real App adapter.`);
+  assert.equal(JSON.stringify(fixtureRows), originals, "Reader resolution cannot rewrite any passage.");
+  runtime.installPersonalTransitFallbackArchitectureV3Bundle(null);
   console.log("Personal daily transits passed: peak/applying/recent ranking, axis grouping, precise orbs, direct Swiss full-day contacts, DST, midnight, year/zone boundaries, retrograde passes and report handoff.");
 } finally { await server.close(); }
