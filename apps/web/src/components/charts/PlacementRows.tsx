@@ -2,7 +2,7 @@ import { FormattedText } from "../FormattedProse";
 import { planetSignDignity, type EssentialDignity } from "../../services/planetSignDignity.mjs";
 import { CardReadMore } from "../CardReadMore";
 import { LoadingStatus, SkeletonBar } from "../CardSkeleton";
-import type { PlanetPosition, SkySnapshot } from "../../types";
+import type { PlanetPosition } from "../../types";
 import { SKY_BODY_ORDER, normalizeSkyBodyName } from "../../astrologyConfig";
 import { isDisplayRetrograde } from "../../services/astrologyDisplay";
 import { FloatingTooltip } from "../ui/FloatingTooltip";
@@ -30,18 +30,7 @@ import {
   zodiacSignIconFiles
 } from "./chartAssets";
 
-export type SocialPlacementRow = {
-  id: string;
-  glyph: string;
-  label: string;
-  sign: string;
-  degree: number;
-  house: number | null;
-  retrograde: boolean;
-  description?: string;
-  detailAvailable?: boolean;
-};
-
+export { socialPlacementRows, type SocialPlacementRow } from "./socialPlacementRows";
 
 type DignityTone = "good" | "weak" | "neutral";
 
@@ -69,25 +58,6 @@ export type PlacementHouseInsight = {
 };
 
 export const placementPlanetOrder = [...SKY_BODY_ORDER];
-const socialPlacementOrder = [
-  "Sun",
-  "Moon",
-  "Ascendant",
-  "Mercury",
-  "Venus",
-  "Mars",
-  "Jupiter",
-  "Saturn",
-  "Uranus",
-  "Neptune",
-  "Pluto",
-  "Chiron",
-  "Lilith",
-  "North Node",
-  "South Node",
-  "Midheaven"
-];
-
 type PlacementDescriptionContext = "self" | "person" | "chart" | "composite";
 type PlacementMicrocopyLayer = "authored" | "fallback";
 
@@ -145,35 +115,6 @@ function normalizePlacementMicrocopySection(
 }
 
 
-function normalizedAngle(value: number) {
-  return ((value % 360) + 360) % 360;
-}
-
-function wholeSignHouseForSign(sign: string, ascendant: string) {
-  const zodiacSigns = [
-    "Aries",
-    "Taurus",
-    "Gemini",
-    "Cancer",
-    "Leo",
-    "Virgo",
-    "Libra",
-    "Scorpio",
-    "Sagittarius",
-    "Capricorn",
-    "Aquarius",
-    "Pisces"
-  ];
-  const signIndex = zodiacSigns.indexOf(sign);
-  const ascendantIndex = zodiacSigns.indexOf(ascendant);
-
-  if (signIndex < 0 || ascendantIndex < 0) {
-    return null;
-  }
-
-  return ((signIndex - ascendantIndex + 12) % 12) + 1;
-}
-
 export function ordinalHouse(house: number) {
   const rem100 = house % 100;
 
@@ -188,56 +129,6 @@ export function ordinalHouse(house: number) {
   };
 
   return `${house}${suffixes[house % 10] ?? "th"}`;
-}
-
-export function socialPlacementRows(sky: SkySnapshot | null): SocialPlacementRow[] {
-  if (!sky) {
-    return [];
-  }
-
-  const positionMap = new Map(sky.positions.map((position) => [normalizeSkyBodyName(position.planet), position]));
-
-  return socialPlacementOrder.flatMap((point) => {
-    if (point === "Ascendant") {
-      return [{
-        id: "Ascendant",
-        glyph: pointGlyph("Ascendant"),
-        label: "Ascendant",
-        sign: sky.ascendant,
-        degree: normalizedAngle(sky.ascendantLongitude ?? 0) % 30,
-        house: null,
-        retrograde: false
-      }];
-    }
-
-    if (point === "Midheaven" && typeof sky.midheavenLongitude === "number") {
-      return [{
-        id: "Midheaven",
-        glyph: "MC",
-        label: "Midheaven",
-        sign: sky.midheaven,
-        degree: normalizedAngle(sky.midheavenLongitude) % 30,
-        house: sky.ascendant ? wholeSignHouseForSign(sky.midheaven, sky.ascendant) ?? null : null,
-        retrograde: false
-      }];
-    }
-
-    const position = positionMap.get(point);
-
-    if (!position) {
-      return [];
-    }
-
-    return [{
-      id: normalizeSkyBodyName(position.planet),
-      glyph: position.glyph || pointGlyph(point),
-      label: normalizeSkyBodyName(position.planet),
-      sign: position.sign,
-      degree: position.degree,
-      house: position.house || null,
-      retrograde: isDisplayRetrograde(position)
-    }];
-  });
 }
 
 export function socialPlacementDegree(degree: number) {

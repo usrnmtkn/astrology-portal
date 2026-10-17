@@ -55,6 +55,7 @@
 }
 .retrograde-station-copy p { line-height: inherit; }
 .retrograde-cycles { display: grid; gap: var(--lunar-space-28); min-width: 0; }
+.retrograde-cycles__section { min-width: 0; }
 .retrograde-cycles summary { cursor: pointer; list-style: none; }
 .retrograde-cycles summary::-webkit-details-marker { display: none; }
 .retrograde-cycles__section > summary {

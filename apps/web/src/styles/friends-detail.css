@@ -316,6 +316,7 @@
 
 .friend-chart-legend-item > span {
   display: block;
+  overflow-wrap: anywhere;
   max-width: none;
   overflow: visible;
   color: var(--ink);
@@ -417,6 +418,7 @@
 
 .synastry-placement-column-header h3 {
   margin: 0;
+  overflow-wrap: anywhere;
 }
 
 .synastry-placement-column-header {

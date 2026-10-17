@@ -6,6 +6,7 @@ import {
   natalSnapshotWithBirthTimeReliability
 } from "../apps/web/src/services/birthTimeReliability.ts";
 import { buildFriendTransitsBrief } from "../apps/web/src/features/friends/friendTransitsBrief.ts";
+import { socialPlacementRows } from "../apps/web/src/components/charts/socialPlacementRows.ts";
 import type { SkySnapshot } from "../apps/web/src/types.ts";
 
 const snapshot = {
@@ -51,6 +52,35 @@ assert.equal(known.ascendantLongitude, 12);
 assert.equal(known.midheavenLongitude, 282);
 assert.equal(known.houseCusps?.length, 1);
 assert.equal(known.aspects.length, 3);
+
+const angleRows = (chart: SkySnapshot) => socialPlacementRows(chart)
+  .filter((row) => row.label === "Ascendant" || row.label === "Midheaven");
+const planetRows = (chart: SkySnapshot) => socialPlacementRows(chart)
+  .filter((row) => row.label !== "Ascendant" && row.label !== "Midheaven");
+assert.equal(angleRows(known).length, 2, "Reliable calculated angles remain available");
+assert.deepEqual(angleRows(unknown), [], "Unknown time never eagerly constructs angle interpretations");
+assert.deepEqual(angleRows({ ...snapshot, birthTimeKnown: false }), [], "Explicit uncertainty wins over stale cached angles");
+for (const birthTimeKnown of [true, undefined]) {
+  const atZero = { ...snapshot, birthTimeKnown, ascendantLongitude: 0, midheavenLongitude: 0 };
+  assert.deepEqual(angleRows(atZero).map((row) => row.degree), [0, 0], "Zero degrees is valid, including legacy reliable snapshots");
+}
+for (const key of ["ascendant", "midheaven"] as const) {
+  for (const sign of ["", "Pending", "constructor", undefined, null]) {
+    const invalid = { ...known, [key]: sign as unknown as string };
+    assert.equal(angleRows(invalid).some((row) => row.label === (key === "ascendant" ? "Ascendant" : "Midheaven")), false);
+    assert.deepEqual(planetRows(invalid), planetRows(known), "Unavailable angles do not remove legitimate planet placements");
+  }
+}
+for (const key of ["ascendantLongitude", "midheavenLongitude"] as const) {
+  for (const longitude of [undefined, NaN, Infinity, -Infinity]) {
+    const invalid = { ...known, [key]: longitude };
+    assert.equal(angleRows(invalid).some((row) => row.label === (key === "ascendantLongitude" ? "Ascendant" : "Midheaven")), false);
+    assert.deepEqual(planetRows(invalid), planetRows(known));
+  }
+}
+assert.deepEqual(planetRows({ ...snapshot, birthTimeKnown: false }), planetRows(snapshot));
+assert.deepEqual(socialPlacementRows(null), []);
+
 
 const personalTransit = {
   id: "saturn-square-sun",
