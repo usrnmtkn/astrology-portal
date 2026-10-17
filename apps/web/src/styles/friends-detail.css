@@ -316,6 +316,7 @@
 
 .friend-chart-legend-item > span {
   display: block;
+  overflow-wrap: anywhere;
   max-width: none;
   overflow: visible;
   color: var(--ink);

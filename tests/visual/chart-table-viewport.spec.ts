@@ -16,11 +16,11 @@ test.afterEach(async ({ page }) => {
   expect(pageErrors.get(page) ?? [], 'no unexpected runtime errors during viewport changes').toEqual([]);
 });
 
-async function prepare(page: Page, theme: string, friendName: string) {
+async function prepare(page: Page, theme: string, friendName: string, unknown = false) {
   const user = { id: '11111111-1111-4111-8111-111111111111', aud: 'authenticated', role: 'authenticated',
     email: 'viewport@example.test', phone: '+12025550101', app_metadata: { provider: 'email' }, user_metadata: { name: 'Test Reader' } };
   const authHost = new URL(process.env.VITE_SUPABASE_URL ?? 'https://visual-smoke.supabase.test').hostname.split('.')[0];
-  await page.addInitScript(({ theme, user, authHost, friendName }) => {
+  await page.addInitScript(({ theme, user, authHost, friendName, unknown }) => {
     localStorage.setItem('tldrastro:theme', theme);
     const location = { label: 'Synthetic New York', latitude: 40.7, longitude: -74, timeZone: 'America/New_York' };
     localStorage.setItem('tldrastro:selectedLocation', JSON.stringify(location));
@@ -33,12 +33,12 @@ async function prepare(page: Page, theme: string, friendName: string) {
     localStorage.setItem(`tldrastro:manualCharts:${user.id}`, JSON.stringify([{
       id: 'overlay-friend', ownerUserId: user.id, chartType: 'person', displayName: friendName,
       firstName: friendName.split(' ')[0], lastName: friendName.split(' ')[1] ?? null, relationshipType: 'friend', birthDate: '1988-04-03',
-      birthTime: '9:15 AM', birthTimeUnknown: false, birthPlace: location.label, birthLocation: location,
+      birthTime: unknown ? null : '9:15 AM', birthTimeUnknown: unknown, birthPlace: location.label, birthLocation: location,
       natalChart: null, notes: null, syncStatus: 'synced', lastSyncedAt: '2026-10-15T00:00:00Z', createdAt: '2026-10-15T00:00:00Z', updatedAt: '2026-10-15T00:00:00Z'
     }]));
     const session = JSON.stringify({ user, access_token: 'synthetic-token', refresh_token: 'synthetic-refresh', token_type: 'bearer', expires_at: 4102444800 });
     for (const host of new Set([authHost, 'hdmdufozrgrajkfhydit'])) localStorage.setItem(`sb-${host}-auth-token`, session);
-  }, { theme, user, authHost, friendName });
+  }, { theme, user, authHost, friendName, unknown });
   await page.route('**/auth/v1/**', route => route.fulfill({ json: user }));
   await page.route('**/rest/v1/**', route => route.fulfill({ json: [] }));
   await page.route('**/api/**', route => route.fulfill({ status: 503, json: { error: 'Synthetic unavailable service' } }));
@@ -76,12 +76,14 @@ async function fits(page: Page, locator: Locator) {
 
 for (const viewport of [{width:320,height:568},{width:390,height:844},{width:844,height:390},{width:1440,height:900}]) {
  for (const theme of ['light','dark']) {
-  for (const family of ['Sky','You natal','You transit','Friend natal','Synastry','Composite','Studio coverage','Studio browse','Calendar comparison']) {
+  for (const family of ['Sky','You natal','You transit','Friend natal','Friend unknown-time natal','Synastry','Composite','Studio coverage','Studio browse','Calendar comparison']) {
    test(`${family} charts and tables contained ${viewport.width}x${viewport.height} ${theme}`,async({page})=>{
     test.setTimeout(60000);
     await page.setViewportSize(viewport);
     const friendName=family==='Synastry'?'FixtureName'.repeat(7):'Fixture Friend';
-    await prepare(page,theme,friendName);
+    const friendNatal = family === 'Friend natal' || family === 'Friend unknown-time natal';
+    const unknown = family === 'Friend unknown-time natal';
+    await prepare(page,theme,friendName,unknown);
     if(family==='Calendar comparison') {
      await page.goto('/?date=2026-10-03#calendar?view=day&date=2026-10-03');
      await page.locator('.calendar-day-events .calendar-stoic-card').filter({hasText:'Venus stations retrograde'}).click({timeout:30000});
@@ -154,14 +156,20 @@ for (const viewport of [{width:320,height:568},{width:390,height:844},{width:844
      if(family==='You natal') await page.getByRole('tab',{name:'Natal Chart',exact:true}).click();
     } else {
      await page.getByRole('button',{name:`Open ${friendName}`,exact:true}).click();
-     if(family==='Friend natal') await page.getByRole('tab',{name:'Natal',exact:true}).click();
-     if(family!=='Friend natal') {
+     if(friendNatal) await page.getByRole('tab',{name:'Natal',exact:true}).click();
+     if(!friendNatal) {
       await page.getByRole('button',{name:/More, \d+ sections/}).click();
       await page.getByRole('menuitemradio',{name:new RegExp('^'+family)}).click();
      }
     }
     await chartFits(page,page.locator('.sky-wheel:visible').first());
-    if(family==='You natal'||family==='Friend natal') {
+    if(friendNatal) {
+     const bigThree = page.locator('.friend-big-three-list');
+     await expect(bigThree).toContainText('Sun');
+     await expect(bigThree).toContainText('Moon');
+     await expect(bigThree.locator('.placement-table-row__title').filter({hasText:/^Ascendant/})).toHaveCount(unknown ? 0 : 1);
+    }
+    if(family==='You natal'||friendNatal) {
      await page.getByRole('tab',{name:'Table',exact:true}).click();
      const table=page.locator('.natal-chart-data-table');
      await fits(page,table);
@@ -171,6 +179,13 @@ for (const viewport of [{width:320,height:568},{width:390,height:844},{width:844
      }
      await page.getByRole('tab',{name:'Circle',exact:true}).click();
      await chartFits(page,page.locator('.sky-wheel:visible').first());
+    }
+    if(family==='Friend natal') {
+     await page.getByRole('button',{name:/Ascendant in/}).click();
+     const detail=page.getByRole('region',{name:/Ascendant in/});
+     await expect(detail).toBeVisible();
+     expect((await detail.innerText()).length).toBeGreaterThan(80);
+     await fits(page,detail);
     }
     if(family==='Synastry'||family==='Composite') {
      const placements=page.locator(family==='Synastry'?'.synastry-placement-columns:visible':'.friend-placement-table:visible');

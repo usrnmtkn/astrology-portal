@@ -791,6 +791,7 @@
   --chart-fullscreen-wheel-size: var(--ds-charts-chart-fullscreen-wheel-size);
   --chart-fullscreen-rail-width: var(--ds-charts-chart-fullscreen-rail-width);
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   grid-template-rows: auto minmax(0, 1fr) auto;
   gap: calc(var(--space-3) + var(--space-1) / 2);
   height: 100%;
@@ -871,6 +872,8 @@
 
 .chart-fullscreen-footer {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  min-width: 0;
   align-content: start;
   justify-items: center;
   gap: var(--space-3);
