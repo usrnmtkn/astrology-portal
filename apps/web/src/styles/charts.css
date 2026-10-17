@@ -812,6 +812,7 @@
 
 .chart-fullscreen-title {
   margin: 0;
+  overflow-wrap: anywhere;
   color: var(--muted);
   font-family: var(--font-body);
   font-size: var(--type-meta-size);
@@ -823,6 +824,7 @@
 
 .chart-fullscreen-close {
   display: grid;
+  flex-shrink: 0;
   place-items: center;
   width: 44px;
   height: 44px;
@@ -1065,8 +1067,6 @@
   font-weight: var(--weight-semibold);
   letter-spacing: 0;
   text-transform: uppercase;
-  white-space: nowrap;
-  overflow-wrap: normal;
 }
 
 .natal-chart-data-table td + td,
@@ -1080,6 +1080,7 @@
 
 .natal-chart-data-table td:nth-child(1),
 .natal-chart-data-table td:nth-child(3) {
+  padding-inline: var(--space-1);
   color: var(--ink);
   font-variant-numeric: tabular-nums;
   text-align: center;
