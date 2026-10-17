@@ -16,11 +16,11 @@ test.afterEach(async ({ page }) => {
   expect(pageErrors.get(page) ?? [], 'no unexpected runtime errors during viewport changes').toEqual([]);
 });
 
-async function prepare(page: Page, theme: string) {
+async function prepare(page: Page, theme: string, friendName: string) {
   const user = { id: '11111111-1111-4111-8111-111111111111', aud: 'authenticated', role: 'authenticated',
     email: 'viewport@example.test', phone: '+12025550101', app_metadata: { provider: 'email' }, user_metadata: { name: 'Test Reader' } };
   const authHost = new URL(process.env.VITE_SUPABASE_URL ?? 'https://visual-smoke.supabase.test').hostname.split('.')[0];
-  await page.addInitScript(({ theme, user, authHost }) => {
+  await page.addInitScript(({ theme, user, authHost, friendName }) => {
     localStorage.setItem('tldrastro:theme', theme);
     const location = { label: 'Synthetic New York', latitude: 40.7, longitude: -74, timeZone: 'America/New_York' };
     localStorage.setItem('tldrastro:selectedLocation', JSON.stringify(location));
@@ -31,14 +31,14 @@ async function prepare(page: Page, theme: string) {
         birthTime: '12:00 PM', birthCity: location.label, birthLocation: location }]
     }));
     localStorage.setItem(`tldrastro:manualCharts:${user.id}`, JSON.stringify([{
-      id: 'overlay-friend', ownerUserId: user.id, chartType: 'person', displayName: 'Fixture Friend',
-      firstName: 'Fixture', lastName: 'Friend', relationshipType: 'friend', birthDate: '1988-04-03',
+      id: 'overlay-friend', ownerUserId: user.id, chartType: 'person', displayName: friendName,
+      firstName: friendName.split(' ')[0], lastName: friendName.split(' ')[1] ?? null, relationshipType: 'friend', birthDate: '1988-04-03',
       birthTime: '9:15 AM', birthTimeUnknown: false, birthPlace: location.label, birthLocation: location,
       natalChart: null, notes: null, syncStatus: 'synced', lastSyncedAt: '2026-10-15T00:00:00Z', createdAt: '2026-10-15T00:00:00Z', updatedAt: '2026-10-15T00:00:00Z'
     }]));
     const session = JSON.stringify({ user, access_token: 'synthetic-token', refresh_token: 'synthetic-refresh', token_type: 'bearer', expires_at: 4102444800 });
     for (const host of new Set([authHost, 'hdmdufozrgrajkfhydit'])) localStorage.setItem(`sb-${host}-auth-token`, session);
-  }, { theme, user, authHost });
+  }, { theme, user, authHost, friendName });
   await page.route('**/auth/v1/**', route => route.fulfill({ json: user }));
   await page.route('**/rest/v1/**', route => route.fulfill({ json: [] }));
   await page.route('**/api/**', route => route.fulfill({ status: 503, json: { error: 'Synthetic unavailable service' } }));
@@ -60,6 +60,7 @@ async function chartFits(page: Page, locator: Locator) {
 
 async function fits(page: Page, locator: Locator) {
   await expect(locator).toBeVisible();
+  await page.evaluate(()=>document.fonts.ready);
   await locator.scrollIntoViewIfNeeded();
   await expect(async () => {
     const geometry = await locator.evaluate(el => {
@@ -79,7 +80,8 @@ for (const viewport of [{width:320,height:568},{width:390,height:844},{width:844
    test(`${family} charts and tables contained ${viewport.width}x${viewport.height} ${theme}`,async({page})=>{
     test.setTimeout(60000);
     await page.setViewportSize(viewport);
-    await prepare(page,theme);
+    const friendName=family==='Synastry'?'FixtureName'.repeat(7):'Fixture Friend';
+    await prepare(page,theme,friendName);
     if(family==='Calendar comparison') {
      await page.goto('/?date=2026-10-03#calendar?view=day&date=2026-10-03');
      await page.locator('.calendar-day-events .calendar-stoic-card').filter({hasText:'Venus stations retrograde'}).click({timeout:30000});
@@ -146,7 +148,7 @@ for (const viewport of [{width:320,height:568},{width:390,height:844},{width:844
      await expect(page.locator('.chart-layout__visual')).toHaveAttribute('data-chart-calculation-status','ready',{timeout:30000});
      if(family==='You natal') await page.getByRole('tab',{name:'Natal Chart',exact:true}).click();
     } else {
-     await page.getByRole('button',{name:'Open Fixture Friend'}).click();
+     await page.getByRole('button',{name:`Open ${friendName}`,exact:true}).click();
      if(family==='Friend natal') await page.getByRole('tab',{name:'Natal',exact:true}).click();
      if(family!=='Friend natal') {
       await page.getByRole('button',{name:/More, \d+ sections/}).click();
