@@ -81,9 +81,11 @@ export function lintDailyGlanceFriendVoice(bodyThey: string): DailyGlanceFriendV
 
 export function fillDailyGlancePersonSlots(
   bodyThey: string,
-  slots: Partial<DailyGlancePersonSlots>
+  slots: Partial<DailyGlancePersonSlots>,
+  { ownerApprovedWording = false }: { ownerApprovedWording?: boolean } = {}
 ): string {
-  const findings = lintDailyGlanceFriendVoice(bodyThey);
+  const findings = lintDailyGlanceFriendVoice(bodyThey).filter(finding => !(ownerApprovedWording
+    && (finding.id === 'DG-THEY-NO-SECOND-PERSON' || finding.id === 'DG-THEY-NO-DIRECT-IMPERATIVE')));
   if (findings.length > 0) {
     throw new Error(findings.map((finding) => `${finding.id}: ${finding.match}`).join(" | "));
   }

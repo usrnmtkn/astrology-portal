@@ -1649,8 +1649,8 @@ function lintDailyGlanceFriendVoice(bodyThey) {
   }
   return findings;
 }
-function fillDailyGlancePersonSlots(bodyThey, slots) {
-  const findings = lintDailyGlanceFriendVoice(bodyThey);
+function fillDailyGlancePersonSlots(bodyThey, slots, { ownerApprovedWording = false } = {}) {
+  const findings = lintDailyGlanceFriendVoice(bodyThey).filter((finding) => !(ownerApprovedWording && (finding.id === "DG-THEY-NO-SECOND-PERSON" || finding.id === "DG-THEY-NO-DIRECT-IMPERATIVE")));
   if (findings.length > 0) {
     throw new Error(findings.map((finding) => `${finding.id}: ${finding.match}`).join(" | "));
   }
@@ -4031,17 +4031,13 @@ ${passHook}`;
     voice = "you",
     personSlots = {}
   }) {
+    const ownerWording = (row) => row?.studio_owner_wording === true && row.review_status === "approved";
     const renderFriendRow = (row, contentKey) => {
       const raw = row?.body_they;
       if (!raw) return null;
-      const findings = lintDailyGlanceFriendVoice(raw);
-      if (findings.length > 0) {
-        throw new SourceGapError(
-          `SOURCE_GAP: ${contentKey} friend voice failed ${findings.map((finding) => finding.id).join(",")}`
-        );
-      }
+      const ownerApprovedWording = ownerWording(row);
       try {
-        return fillDailyGlancePersonSlots(raw, personSlots);
+        return fillDailyGlancePersonSlots(raw, personSlots, { ownerApprovedWording });
       } catch (error) {
         if (error instanceof SourceGapError && "publicationBlocked" in error) throw error;
         throw new SourceGapError(
@@ -4063,7 +4059,7 @@ ${passHook}`;
       const body = hooks.get(bodyKey)?.body_you;
       if (!headline || !body) return null;
       const selected = selectDailyGlanceVariantSet({
-        variantSet: rowsFile.dailyGlanceVariants?.keys[contentKey],
+        variantSet: ownerWording(hooks.get(headlineKey)) || ownerWording(hooks.get(bodyKey)) ? void 0 : rowsFile.dailyGlanceVariants?.keys[contentKey],
         primary: { headline, body },
         dateKey,
         contentKey,
@@ -6618,7 +6614,7 @@ function skyV4FieldValue(source, path) {
 }
 
 // apps/web/src/content/fallbackArchitectureV3/resolver/index.browser.ts
-var PACKAGE_VERSION = "v3-2026-10-16-moon-selected-variants";
+var PACKAGE_VERSION = "v3-2026-10-17-studio-owner-daily";
 function stablePackageValue(value) {
   if (Array.isArray(value)) {
     return value.map(stablePackageValue);

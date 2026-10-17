@@ -1,6 +1,6 @@
 import {studioSkyIdentity} from '../_lib/sky-studio-identity.js';
 import {standaloneArticleKind} from '../../src/shared/articleLibrary.js';
-import {studioOwnerApproval, hasExactStudioOwnerApproval} from '../_lib/studio-owner-publication.js';
+import {studioOwnerApproval, hasExactStudioOwnerApproval, stampDailyOwnerApproval} from '../_lib/studio-owner-publication.js';
 import {isDeepStrictEqual} from 'node:util';
 import { csvChanges, csvDraftPatch, csvRecordForRow, type CsvRecord } from '../../apps/admin/src/studioCsv.js';
 import {persistWeeklyHoroscope} from '../_lib/horoscope-storage-confirmation.js';
@@ -401,6 +401,17 @@ function normalizeNatalAspectTheyNameVariable(contentKey: string | undefined, va
   return value.replace(/\{\{Name\}\}|\{Name\}/gu, "{{Name}}");
 }
 
+function isExplicitDailyOwnerPublish(body: GeneratedContentWriteBody) {
+  return body.ownerAuthoredWording === true
+    && (body.status === 'LIVE' || body.status === undefined && body.reviewStatus === 'approved');
+}
+
+function isDailyManualDraftSave(body: GeneratedContentWriteBody, contentKey: string | undefined) {
+  return /^fallback-hook\/daily-(?:headline|body)\//u.test(contentKey ?? '')
+    && body.ownerAuthoredWording === true && !isExplicitDailyOwnerPublish(body)
+    && body.status !== 'ARCHIVED' && body.status !== 'ERROR';
+}
+
 function fallbackArchitectureV3CreateState(body: GeneratedContentWriteBody) {
   const sections = isRecord(body.sections) ? { ...body.sections } : {};
   const facts = isRecord(body.facts) ? { ...body.facts } : {};
@@ -414,7 +425,7 @@ function fallbackArchitectureV3CreateState(body: GeneratedContentWriteBody) {
   if (!isPackageRow) return null;
 
   const hasPackageDraft = isRecord(sections.packageDraft);
-  const reviewStatus = (hasPackageDraft
+  const reviewStatus = (hasPackageDraft || isDailyManualDraftSave(body, body.contentKey)
     ? "needs_review"
     : stringFrom(body.reviewStatus)
       || stringFrom(sourceSnapshot.review_status)
@@ -825,7 +836,7 @@ function applyFallbackArchitectureV3ReviewPatch(row: ExistingGeneratedContentRow
     ? "deprecated"
     : body.sourceLifecycleAction === "restore"
       ? "needs_review"
-      : hasPackageDraft
+      : hasPackageDraft || isDailyManualDraftSave(body, row.content_key)
         ? "needs_review"
         : packageReviewStatus(row, body.reviewStatus || stringFrom(sourceSnapshot.review_status));
   const stageKind = governedStageKind(record, sourceSnapshot, facts);
@@ -1903,6 +1914,7 @@ async function createGeneratedContentFromBody(body: GeneratedContentWriteBody) {
   };
 
   Object.assign(row, normalizeArticleHoroscopes(row));
+  stampDailyOwnerApproval(row, isExplicitDailyOwnerPublish(body), now);
   assertReaderEligiblePublication(row);
   await assertZodiacSeasonPublication(row);
   Object.assign(row, await validatedLunationPublication(row));
@@ -1977,7 +1989,7 @@ function generatedContentRowFromWriteBody(body: GeneratedContentWriteBody) {
 
   const blockType = normalizedGeneratedContentBlockType(body.blockType, body.surface, body.mode);
   const isCmsRow = isCmsGeneratedContentWriteBody(body);
-  return normalizeArticleHoroscopes({
+  const row = normalizeArticleHoroscopes({
     content_key: body.contentKey.trim(),
     surface: body.surface,
     mode: body.mode,
@@ -2003,6 +2015,8 @@ function generatedContentRowFromWriteBody(body: GeneratedContentWriteBody) {
     reviewer_notes: body.reviewerNotes ?? (isSampleOnlyRow(body.surface, body.contentKey, body) ? sampleOnlyReviewerNote : ""),
     updated_at: new Date().toISOString()
   });
+  stampDailyOwnerApproval(row, isExplicitDailyOwnerPublish(body), String(row.updated_at));
+  return row;
 }
 
 async function fetchExistingRowsByContentKey(contentKeys: string[]) {
@@ -2790,6 +2804,10 @@ async function updateGeneratedContent(req: IncomingMessage) {
     promotionPatch.sections = finalSections;
     promotionPatch.reviewed_at = now;
     promotionPatch.published_at = now;
+    // Match JSON/PostgREST: omitted fields retain the stored columns.
+    for (const key of Object.keys(promotionPatch)) if (promotionPatch[key] === undefined) delete promotionPatch[key];
+    const ownerRow = { ...target, ...promotionPatch };
+    if (stampDailyOwnerApproval(ownerRow, true, now)) promotionPatch.source_snapshot = ownerRow.source_snapshot;
     assertReaderEligiblePublication({ ...target, ...promotionPatch });
     return publishRevisionAtomically(body, existing, target, promotionPatch);
   }
@@ -3307,6 +3325,11 @@ async function updateGeneratedContent(req: IncomingMessage) {
   }
 
   Object.assign(patch, await validatedLunationPublication({ ...existing, ...patch }));
+  for (const key of Object.keys(patch)) if (patch[key] === undefined) delete patch[key];
+  const ownerRow = { ...existing, ...patch };
+  if (stampDailyOwnerApproval(ownerRow, isExplicitDailyOwnerPublish(body), String(patch.updated_at))) {
+    patch.source_snapshot = ownerRow.source_snapshot;
+  }
   assertReaderEligiblePublication({ ...existing, ...patch });
   await assertZodiacSeasonPublication({ ...existing, ...patch });
   if (patch.status === "LIVE") await assertStudioVariablePublication(v3PackageRecord({ ...existing, ...patch }), studioVariableStorage);

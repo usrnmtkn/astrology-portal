@@ -18,3 +18,12 @@ export function hasExactStudioOwnerApproval(row: Record<string, any>) {
     && approval.copyHash === copyHash(row)
     && approval.bodyHash === createHash('sha256').update(row.body ?? '').digest('hex');
 }
+
+/** Called only after the authenticated owner's final publication state is built. */
+export function stampDailyOwnerApproval(row: Record<string, any>, ownerPublication: boolean, approvedAt: string) {
+  if (!ownerPublication || !/^fallback-hook\/daily-(?:headline|body)\//u.test(row.content_key ?? '')
+    || row.status !== 'LIVE' || row.lane !== 'serving' || row.review_state
+    || row.sections?.packageRecord?.review_status !== 'approved') return false;
+  row.source_snapshot = { ...row.source_snapshot, studioOwnerApproval: studioOwnerApproval(row, approvedAt) };
+  return true;
+}

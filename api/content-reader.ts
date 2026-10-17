@@ -160,7 +160,9 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
     if (!publications.has(publicationLedgerKey)) throw new Error('Publication state is unavailable.');
     const admitted = rows.filter(row => (!row.source_snapshot?.studioOwnerApproval || hasExactStudioOwnerApproval(row)) && readerRowIsEligible(row)
       && publicationAllowsContent(row.content_key, row.id, row.updated_at, row.target_date, publications));
-    res.end(JSON.stringify({ schema: READER_ROW_SCHEMA, rows: admitted.map(projectReaderRow).filter(Boolean), publications: ledger,
+    res.end(JSON.stringify({ schema: READER_ROW_SCHEMA, rows: admitted.map(row => projectReaderRow(row, {
+      ownerApprovalVerified: /^fallback-hook\/daily-(?:headline|body)\//u.test(row.content_key) && hasExactStudioOwnerApproval(row)
+    })).filter(Boolean), publications: ledger,
       nextCursor: rows.length === pageSize ? rows.at(-1)!.id : null }));
   } catch (error) {
     const invalidBody = error instanceof AdminHttpError && [400, 413].includes(error.statusCode);

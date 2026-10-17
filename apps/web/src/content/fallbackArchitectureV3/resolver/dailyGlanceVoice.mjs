@@ -50,8 +50,9 @@ export function lintDailyGlanceFriendVoice(bodyThey) {
   return findings;
 }
 
-export function fillDailyGlancePersonSlots(bodyThey, slots) {
-  const findings = lintDailyGlanceFriendVoice(bodyThey);
+export function fillDailyGlancePersonSlots(bodyThey, slots, { ownerApprovedWording = false } = {}) {
+  const findings = lintDailyGlanceFriendVoice(bodyThey).filter(finding => !(ownerApprovedWording
+    && (finding.id === 'DG-THEY-NO-SECOND-PERSON' || finding.id === 'DG-THEY-NO-DIRECT-IMPERATIVE')));
   if (findings.length > 0) {
     throw new Error(findings.map((finding) => `${finding.id}: ${finding.match}`).join(" | "));
   }

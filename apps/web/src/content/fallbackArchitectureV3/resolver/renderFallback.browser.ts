@@ -49,6 +49,8 @@ export interface HookRow {
   body_they_approved_via?: string;
   body_they_approval?: ApprovalReference;
   review_status: string;
+  /** Derived by the reader API after verifying the complete owner-approved copy. */
+  studio_owner_wording?: boolean;
   approved_via?: string;
   approval?: ApprovalReference;
   render_policy?: string;

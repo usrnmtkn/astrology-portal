@@ -29,7 +29,6 @@ import {
 } from "./renderFallback.browser";
 import {
   fillDailyGlancePersonSlots,
-  lintDailyGlanceFriendVoice,
   type DailyGlancePersonSlots
 } from "./dailyGlanceVoice.browser";
 import { isGovernedReaderEligible, synastryReaderTier, transitReaderTier, type SynastryReaderTier, type TransitReaderTier } from "./readerEligibility.browser.ts";
@@ -2953,19 +2952,14 @@ export function createTransitSynastryRenderer(
     voice = "you",
     personSlots = {}
   }: DailyGlanceFacts): TransitRenderResult {
+    const ownerWording = (row: HookRow | undefined) => row?.studio_owner_wording === true && row.review_status === 'approved';
     const renderFriendRow = (row: HookRow | undefined, contentKey: string) => {
       const raw = row?.body_they;
       if (!raw) return null;
 
-      const findings = lintDailyGlanceFriendVoice(raw);
-      if (findings.length > 0) {
-        throw new SourceGapError(
-          `SOURCE_GAP: ${contentKey} friend voice failed ${findings.map((finding) => finding.id).join(",")}`
-        );
-      }
-
+      const ownerApprovedWording = ownerWording(row);
       try {
-        return fillDailyGlancePersonSlots(raw, personSlots);
+        return fillDailyGlancePersonSlots(raw, personSlots, { ownerApprovedWording });
       } catch (error) {
       if (error instanceof SourceGapError && "publicationBlocked" in error) throw error;
         throw new SourceGapError(
@@ -2995,7 +2989,8 @@ export function createTransitSynastryRenderer(
       const body = hooks.get(bodyKey)?.body_you;
       if (!headline || !body) return null;
       const selected = selectDailyGlanceVariantSet({
-        variantSet: rowsFile.dailyGlanceVariants?.keys[contentKey],
+        variantSet: ownerWording(hooks.get(headlineKey)) || ownerWording(hooks.get(bodyKey))
+          ? undefined : rowsFile.dailyGlanceVariants?.keys[contentKey],
         primary: { headline, body },
         dateKey,
         contentKey,

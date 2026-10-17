@@ -41,7 +41,7 @@ const packageRecord = {
     title tagline preview_note core_theme sign_jurisdiction lived_experience rulership_twist history_echo closing_charge
     reader_content_type content_type`),
   ...numbers('word_count body_you_word_count body_they_word_count variant'),
-  ...booleans('owner_approved owner_authored reader_only serving_enabled'),
+  ...booleans('owner_approved owner_authored reader_only serving_enabled studio_owner_wording'),
   blocks: [lunarBlock], lunarJournal: { blocks: [lunarBlock] },
   approval, body_you_approval: approval, body_they_approval: approval,
   content_boundary: booleans('mixedOwnerApproved'),
@@ -133,7 +133,7 @@ function project(value, contract) {
 }
 
 export { READER_ROW_SCHEMA } from './readerRowSchema.mjs';
-export function projectReaderRow(row) {
+export function projectReaderRow(row, options = {}) {
   const result = project(row, rowContract);
   if (!result || !result.id || !result.content_key || !result.updated_at) return null;
   // Legacy generic article sections also use an array, or a single body string.
@@ -145,6 +145,14 @@ export function projectReaderRow(row) {
   }
   const rawRecord = row.sections?.packageRecord;
   const publicRecord = result.sections?.packageRecord;
+  if (publicRecord) {
+    // A stored/client flag is never approval proof. Only the server verifies
+    // the exact complete copy before requesting this derived transport field.
+    delete publicRecord.studio_owner_wording;
+    if (options?.ownerApprovalVerified === true && row.status === 'LIVE' && row.lane === 'serving'
+      && !row.review_state && publicRecord.review_status === 'approved'
+      && /^fallback-hook\/daily-(?:headline|body)\//u.test(row.content_key)) publicRecord.studio_owner_wording = true;
+  }
   if (rawRecord?.ingress?.sources && publicRecord?.ingress) {
     const referenced = new Set();
     const visit = value => {
