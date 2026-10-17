@@ -275,11 +275,13 @@ for (const [width,theme] of [[1440,'light'],[390,'dark'],[390,'light'],[1440,'da
           const overview = reader.getByRole('region',{name:'Weekly overview',exact:true});
           await expect(overview).toContainText(`Synthetic ${view} opening.`,{timeout:60000});
           await expect(overview).toContainText(`Synthetic ${view} complete ending.`);
+          expect(await editor.evaluate(node=>node.scrollWidth<=node.clientWidth)).toBe(true);
         }
       }
       expect(errors).toEqual([]);
-      expect(await editor.evaluate(node=>node.scrollWidth<=node.clientWidth)).toBe(true);
-      await editor.scrollIntoViewIfNeeded();
+      const monthlyHandoff=page.getByRole('region',{name:'Monthly overview template',exact:true});
+      expect(await monthlyHandoff.evaluate(node=>node.scrollWidth<=node.clientWidth)).toBe(true);
+      await monthlyHandoff.scrollIntoViewIfNeeded();
       await page.evaluate(()=>window.scrollTo(0,0));
       await page.screenshot({fullPage:true,path:`test-results/calendar-passage-editor-${width}-${theme}.png`});
     } finally {store.close();}
