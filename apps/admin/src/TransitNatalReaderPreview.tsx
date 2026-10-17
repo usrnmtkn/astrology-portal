@@ -133,9 +133,10 @@ export default function TransitNatalReaderPreview({ selection, voice, secret, on
   const [revision, setRevision] = useState(0);
   const [state, setState] = useState<{ preview: Preview | null; error: string | null; loading: boolean }>({ preview: null, error: null, loading: true });
   useEffect(() => subscribeToContentUpdates(() => setRevision((value) => value + 1)), []);
-  const { planet, sign, aspect, natalPoint, pass, variant, copyVersion, isRetrograde, window: timing } = selection;
+  const { planet, sign, aspect, natalPoint, transitHouse, natalHouse, pass, variant, copyVersion, isRetrograde, window: timing } = selection;
   const exactKey = transitNatalExactContentKey(selection);
-  const identity = JSON.stringify({ planet, sign, aspect, natalPoint, pass, variant, copyVersion, isRetrograde, window: timing, voice });
+  const identity = JSON.stringify({ planet, sign, aspect, natalPoint, transitHouse: transitHouse || undefined, natalHouse: natalHouse || undefined,
+    pass, variant, copyVersion, isRetrograde, window: timing, voice });
   const [loadedIdentity, setLoadedIdentity] = useState("");
   useEffect(() => {
     let cancelled = false;

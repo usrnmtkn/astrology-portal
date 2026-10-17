@@ -25,13 +25,24 @@ for(const period of ['daily','weekly','monthly','seasonal']) {
   const prepared=await store.invoke('GET',undefined,`/api/admin/generated-content?horoscopeBrief=true&period=${period}&date=2026-11-05&timeZone=America%2FNew_York`);
   assert.equal(prepared.status,200,JSON.stringify(prepared.payload));
   const edition=emptyHoroscopeEdition(prepared.payload.brief.window);
-  for(const passage of edition.passages) {passage.headline='Synthetic author reading';passage.body='You can keep the wording you chose — complete and uncompressed. This synthetic paragraph is the author’s final version. Another sentence develops the same observation. There is time to consider the answer carefully. The final sentence remains present.';}
+  for(const passage of edition.passages) {passage.headline='Synthetic author reading';passage.body='The author keeps this wording — complete and uncompressed. This synthetic paragraph is the author’s final version. Another sentence develops the same observation. There is time to consider the answer carefully. The final sentence remains present.';}
   const created=await store.invoke('POST',{contentKey:horoscopeEditionKey(edition.window),surface:'sky',mode:'article',eventType:'horoscope-edition',provider:'manual-admin',status:'DRAFT',lane:'serving',headline:'Synthetic owner edition',summary:'',body:horoscopeEditionBody(edition),sections:{horoscopeEdition:edition},facts:{horoscopeBrief:{brief:prepared.payload.brief,signature:prepared.payload.signature}}});
   assert.equal(created.status,200,period+JSON.stringify(created.payload));const saved=created.payload.rows[0];
+  const preflight=await invokeHoroscopeWriting({action:'validate-publication',id:saved.id,expectedUpdatedAt:saved.updated_at});
+  assert.equal(preflight.status,200,period+JSON.stringify(preflight.payload));
+  assert.equal(preflight.payload.publication.ready,true,period+' owner preflight must not treat prose register as an astronomical fact');
+  const automatic=await store.invoke('PATCH',{id:saved.id,expectedUpdatedAt:saved.updated_at,status:'LIVE',lane:'serving',reviewState:null});
+  assert.equal(automatic.status,422,period+' automatic publication retains editorial checks');
   const published=await store.invoke('PATCH',{id:saved.id,expectedUpdatedAt:saved.updated_at,ownerAction:'publish-owner-content'},'/api/admin/generated-content?horoscopeEditor=true');
   assert.equal(published.status,200,period+JSON.stringify(published.payload));
   assert.deepEqual(published.payload.rows[0].sections.horoscopeEdition,edition,period+' preserves all signs and complete exact author copy');
   assert(hasExactStudioOwnerApproval(published.payload.rows[0]),period);
+  const live=published.payload.rows[0],invalid=structuredClone(edition);
+  invalid.passages[0].body+=' The exact clock time is 25:99.';
+  const draft=await store.invoke('PATCH',{id:live.id,expectedUpdatedAt:live.updated_at,status:'DRAFT',body:horoscopeEditionBody(invalid),sections:{horoscopeEdition:invalid}});
+  assert.equal(draft.status,200,period+JSON.stringify(draft.payload));
+  const rejected=await store.invoke('PATCH',{id:live.id,expectedUpdatedAt:draft.payload.rows[0].updated_at,ownerAction:'publish-owner-content'});
+  assert.equal(rejected.status,422,period+' explicit approval cannot bypass calculated timing boundaries');
 }
 console.log('PASS daily/weekly/monthly/seasonal horoscope owner publication: saved author punctuation, technical preflight, explicit exact approval, unchanged complete copy and signed window integrity. No paid calls.');
 await store.close();

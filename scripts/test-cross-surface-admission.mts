@@ -4,9 +4,30 @@ import {
   isDynamicLunationMacroRecord,
   isDynamicSkyPlacementArticleRecord,
   isDynamicSynastryExactRecord,
+  isDynamicBondEffectExactRecord,
   isFallbackDashboardRecordAllowed
 } from "../apps/web/src/content/fallbackArchitectureV3/dashboardExtensions.ts";
-import { packagePublicationAdmissionIssue } from "../api/_lib/content-studio-package-admission.ts";
+import { packagePublicationAdmissionIssue, isRegisteredLunarJournalKey } from "../api/_lib/content-studio-package-admission.ts";
+import lunarJournalIndex from '../apps/web/src/features/calendar/data/lunar-journal.index.json' with {type:'json'};
+import {bondEffectExactSourceDraft} from '../apps/admin/src/bondEffectExactDraft.ts';
+
+for(const planet of ['sun','moon','mercury','venus','mars','jupiter','saturn','uranus','neptune','pluto','chiron','lilith','north-node','south-node'])for(const aspect of ['conjunction','opposition','square','trine','sextile']){
+  const key=`fallback-hook/bond-effect-${aspect}/${planet}`;
+  const draft=bondEffectExactSourceDraft(key)!;
+  assert(draft);assert.equal(draft.status,'DRAFT');
+  assert(isDynamicBondEffectExactRecord(draft.sections!.packageRecord as any));
+  assert.equal(packagePublicationAdmissionIssue({status:'LIVE',provider:'tldrastro-fallback-architecture-v3',content_key:key,sections:draft.sections}),null);
+}
+for(const key of ['fallback-hook/bond-effect-sextile/unknown','fallback-hook/bond-effect-sextile/ascendant','fallback-hook/bond-effect-quincunx/sun','fallback-hook/bond-effect-hard/lilith','fallback-hook/bond-effect-sextile/lilith/extra'])assert.equal(bondEffectExactSourceDraft(key),null);
+
+for(const entry of lunarJournalIndex){
+  assert(isRegisteredLunarJournalKey(entry.contentKey));
+  assert.equal(packagePublicationAdmissionIssue({status:'LIVE',provider:'tldrastro-fallback-architecture-v3',content_key:entry.contentKey,sections:{packageRecord:{contentKey:entry.contentKey,content_role:'full_copy'}}}),null);
+}
+for(const key of ['authored/lunar-journal/season/aries','authored/lunar-journal/season/unknown/20250320t090100z','authored/lunar-journal/season/aries/20990320t090100z']){
+  assert.equal(isRegisteredLunarJournalKey(key),false);
+  assert.match(packagePublicationAdmissionIssue({status:'LIVE',provider:'tldrastro-fallback-architecture-v3',content_key:key,sections:{packageRecord:{contentKey:key,content_role:'full_copy'}}})!,/supported reader route/);
+}
 
 const record = (contentKey: string) => ({ contentKey, content_role: "full_copy" });
 for (const key of [
@@ -79,3 +100,18 @@ for (const contentKey of ['authored/sky-lunation-macro/new-moon/unknown', 'autho
 }
 assert.equal(isFallbackDashboardRecordAllowed({ contentKey: 'authored/sky-lunation-macro/new-moon/aquarius', content_role: 'source_material' }, new Set()), false);
 console.log("PASS: bounded House Transit, exact synastry and all 24 lunation identities, invalid key/role refusal and publication key protection.");
+
+const {missingFriendsSource}=await import('../apps/admin/src/missingFriendsSource.ts');
+const forward='fallback-hook/synastry-pair/sun/imum-coeli/sextile';
+const reverse='fallback-hook/synastry-pair/imum-coeli/sun/sextile';
+const pending={id:'synthetic-reverse',content_key:reverse,status:'LIVE',sections:{packageDraft:{body_you:'Owner pending reverse copy.'}}} as any;
+const unchanged=JSON.stringify(pending);
+const opened=await missingFriendsSource(forward,async key=>{assert.equal(key,reverse);return {rows:[pending]};});
+assert(opened && 'row' in opened);assert.equal(opened.row,pending);assert.equal(JSON.stringify(pending),unchanged);
+const created=await missingFriendsSource(forward,async()=>({rows:[]}));
+assert(created && 'draft' in created);assert.equal(created.draft.contentKey,forward);assert.equal(created.draft.status,'DRAFT');
+await assert.rejects(()=>missingFriendsSource(forward,async()=>({rows:[{...pending,content_key:'unrelated'}]})),/could not be verified/);
+for(const key of ['fallback-hook/bond-effect-sextile/unknown','fallback-hook/synastry-pair/sun/unknown/sextile']){
+ assert.equal(await missingFriendsSource(key,async()=>{throw new Error('Invalid identities must not request another source.');}),null);
+}
+console.log('PASS: missing Friends activation creation preserves saved reverse-order owner drafts and rejects mismatched source responses.');

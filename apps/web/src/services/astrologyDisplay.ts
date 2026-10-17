@@ -1,4 +1,4 @@
-import { normalizeSkyBodyName } from "../astrologyConfig";
+import { normalizeSkyBodyName } from "../astrologyConfig.js";
 import type { PlanetPosition } from "../types";
 
 const backgroundRetrogradeBodies = new Set(["Lilith", "North Node", "South Node"]);

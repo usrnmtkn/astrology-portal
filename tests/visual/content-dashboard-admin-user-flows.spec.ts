@@ -3066,9 +3066,13 @@ test.describe("content dashboard admin user flow case studies", () => {
       return { id: `qa-${content_key}`, content_key, headline: content_key, body: String(record.body_you ?? record.body), summary: "", surface: "you", mode: "feed", status: "LIVE", lane: "serving", block_type: "fallback_hook", sections: { packageRecord: record }, facts: { fallbackArchitectureV3: true }, provider: "tldrastro-fallback-architecture-v3", updated_at: now };
     })] });
     await page.route('**/api/content-reader', (route) => route.fulfill({ json: readerResponse([]) }));
+    const previewInputs: Array<Record<string, unknown>> = [];
     await page.route("**/api/admin/transit-natal-preview", async (route) => {
-      try { await route.fulfill({ json: transitPreviewResponse(normalizeTransitNatalPreviewInput(route.request().postDataJSON())) }); }
-      catch (error) { await route.fulfill({ json: { error: String(error) } }); }
+      try {
+        const input = route.request().postDataJSON();
+        previewInputs.push(input);
+        await route.fulfill({ json: transitPreviewResponse(normalizeTransitNatalPreviewInput(input)) });
+      } catch (error) { await route.fulfill({ json: { error: String(error) } }); }
     });
     await page.addInitScript((theme) => localStorage.setItem("tldrastro:theme", theme), theme);
     await expectAdminRouteLoads(page, "/admin/content#sky-writeups?view=transits-to-natal");
@@ -3095,7 +3099,8 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expect(preview.getByRole("button", { name: /Edit selected source/ })).toContainText(key);
     const body = await preview.locator(".admin-natal-source-card-copy > p").allTextContents();
     await page.getByLabel("Transit house", { exact: true }).selectOption("10");
-    expect(await preview.locator(".admin-natal-source-card-copy > p").allTextContents()).toEqual(body);
+    await expect.poll(() => previewInputs.at(-1)?.transitHouse).toBe("10");
+    await expect.poll(() => preview.locator(".admin-natal-source-card-copy > p").allTextContents()).toEqual(body);
     const headingStyles = await preview.getByRole("heading", { level: 3 }).evaluate((heading) => {
       const style = getComputedStyle(heading);
       const reference = getComputedStyle(document.querySelector(".admin-natal-placement-finder-heading h3")!);
@@ -3260,7 +3265,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     const editor = page.getByRole("dialog", { name: "Generated content editor" });
     const finder = page.getByRole("region", { name: "Personal Transits source finder" });
     await closeGeneratedEditor(page, true);
-    const facts = { planet: "neptune", sign: "aries", aspect: "opposition", natalPoint: "sun", voice: "{{Name}}", variant: 1, pass: 2, isRetrograde: true, window: "until October 4" };
+    const facts = { planet: "neptune", sign: "aries", aspect: "opposition", natalPoint: "sun", transitHouse: "8", natalHouse: "4", voice: "{{Name}}", variant: 1, pass: 2, isRetrograde: true, window: "until October 4" };
     const expected = renderTransitNatalPreviewState(normalizeTransitNatalPreviewInput(facts));
     await expect(preview.locator(".admin-natal-source-card-copy > p")).toHaveText(expected.paragraphs.map(p => p.text));
     const fog = expected.paragraphs.flatMap(p => p.sources).find(source => source.contentKey.includes("fog-note"))!;
@@ -4981,8 +4986,11 @@ test.describe("content dashboard admin user flow case studies", () => {
     await assertNoBrowserErrors();
   });
 
-  test("Daily At-a-Glance pairs headline and passage with calculated Moon context", async ({ page }) => {
+  for (const [width, theme] of [[1440, "light"], [390, "dark"]] as const) for (const scenario of ["publish", "partial refusal", "lost receipt", "stale passage"] as const) test(`Daily At-a-Glance pairs headline and passage with calculated Moon context: ${scenario} ${width} ${theme}`, async ({ page }) => {
+    test.setTimeout(90_000);
     const assertNoBrowserErrors = await expectNoBrowserErrors(page);
+    await page.setViewportSize({ width, height: 1000 });
+    await page.addInitScript(value => localStorage.setItem("tldrastro:studio-theme", value), theme);
     const dailyRow = (id: string, contentKey: string, bodyYou: string, bodyThey: string) => ({
       id,
       content_key: contentKey,
@@ -5025,7 +5033,6 @@ test.describe("content dashboard admin user flow case studies", () => {
     const writes: Array<{ method: string; payload: Record<string, unknown> }> = [];
     await seedAdminApi(page, {
       generatedRows,
-      onGeneratedContentWrite: (write) => writes.push(write),
       reviewRows: [{
         id: "calculated:daily-glance:alisa:2026-09-01",
         source: "calculated",
@@ -5056,6 +5063,28 @@ test.describe("content dashboard admin user flow case studies", () => {
       }]
     });
 
+    const api = await studioApiStore(generatedRows);
+    let interrupt = scenario !== "publish";
+    await page.route("**/api/admin/generated-content**", async route => {
+      if (new URL(route.request().url()).pathname !== "/api/admin/generated-content") return route.fallback();
+      const method = route.request().method();
+      const body = method === "GET" ? undefined : route.request().postDataJSON();
+      if (body) writes.push({ method, payload: body });
+      if (interrupt && scenario === "partial refusal" && body?.id === "qa-daily-passage" && body?.ownerAction === "approve-package-revision") {
+        interrupt = false;
+        await route.fulfill({ status: 409, json: { ok: false, error: "Synthetic passage publication refused; retained writing must be retryable." } });
+        return;
+      }
+      const url = new URL(route.request().url());
+      const result = await api.call({ method, body, url: url.pathname + url.search });
+      if (interrupt && scenario === "lost receipt" && body?.ownerAction === "approve-package-revision" && result.status === 200) {
+        interrupt = false;
+        await route.fulfill({ json: { ok: true, rows: [] } });
+        return;
+      }
+      await route.fulfill({ status: result.status, json: result.payload });
+    });
+    try {
     await expectAdminRouteLoads(page, "/admin/content#fallback-hooks?section=daily&q=daily");
     const studio = page.getByRole("region", { name: "Daily At-a-Glance editor" });
     await expect(studio.getByRole("heading", { name: "Edit the complete write-up" })).toBeVisible();
@@ -5096,12 +5125,63 @@ test.describe("content dashboard admin user flow case studies", () => {
     await editor.getByLabel("Friend preview pronouns").selectOption("she");
     await expect(friendPreview).toContainText("Alisa P may take the useful opening for herself.");
     await expect(friendPreview).toContainText("The calendar gives her time before she commits.");
-    await editor.getByLabel("Headline · You").fill("Take the useful opening now.");
-    await editor.getByLabel("Passage · You").fill("Check the calendar before committing.");
-    await editor.getByRole("button", { name: "Save headline and passage" }).click();
+    const youHeadline = "The engine starts—take the useful opening.";
+    const youPassageText = "Check the calendar before committing.\n\nThe engine keeps its own pace—retain the final sentence.";
+    const friendHeadline = "{{personPreferredName}} can start the engine—the opening is useful.";
+    const friendPassage = "The calendar gives {{personObject}} time.\n\n{{personPreferredName}} can keep the engine running—final sentence.";
+    await editor.getByLabel("Headline · You").fill(youHeadline);
+    await editor.getByLabel("Passage · You").fill(youPassageText);
+    await editor.getByLabel("Headline · Friend").fill(friendHeadline);
+    await editor.getByLabel("Passage · Friend").fill(friendPassage);
+    const publish = editor.getByRole("button", { name: "Save & publish", exact: true });
+    await expect(publish).toBeVisible();
+    await expectNoHorizontalOverflow(page, `Daily paired editor ${width} ${theme}`);
+    if (scenario === "stale passage") {
+      const newer = await api.call({ method: "PATCH", body: { id: "qa-daily-passage", expectedUpdatedAt: now, summary: "A concurrent owner correction must survive." } });
+      expect(newer.status).toBe(200);
+      await editor.getByRole("button", { name: "Save draft", exact: true }).click();
+      await expect(editor.getByRole("alert")).toContainText("Headline saved. Passage:");
+      await expect(editor.getByLabel("Passage · You")).toHaveValue(youPassageText);
+      await expect(editor.getByLabel("Passage · Friend")).toHaveValue(friendPassage);
+      const current = (await api.call({ method: "rows" })).find((row: any) => row.id === "qa-daily-passage");
+      expect(current.summary).toBe("A concurrent owner correction must survive.");
+      expect(current.body).toBe(generatedRows[1].body);
+      await assertNoBrowserErrors();
+      return;
+    }
+    await editor.getByRole("button", { name: "Save draft", exact: true }).click();
     await expect.poll(() => writes.length).toBe(2);
-    await expect(editor).toContainText("All changes saved");
+    await expect(editor).toContainText("No unsaved changes");
+    expect((await api.call({ method: "rows" })).every((row: any) => row.status === "DRAFT")).toBe(true);
+    await publish.click();
+    if (scenario === "partial refusal") {
+      await expect(editor.getByRole("alert")).toContainText("Headline published. Passage:");
+      await expect(editor.getByLabel("Passage · You")).toHaveValue(youPassageText);
+      await expect(editor.getByLabel("Passage · Friend")).toHaveValue(friendPassage);
+      await expect(publish).toBeEnabled();
+      await publish.click();
+    } else if (scenario === "lost receipt") {
+      const check = editor.getByRole("button", { name: "Check publication status", exact: true });
+      await expect(check).toBeVisible();
+      await expect(publish).toBeDisabled();
+      await check.click();
+      await expect(publish).toBeEnabled();
+      await expect(editor.getByLabel("Passage · You")).toHaveValue(youPassageText);
+      await publish.click();
+    }
+    await expect(page.getByText("Daily At-a-Glance headline and passage published for You and Friends.", { exact: true })).toBeVisible();
+    const reader = await api.call({ method: "POST", url: "/api/content-reader", body: { keys: generatedRows.map(row => row.content_key) } });
+    expect(reader.status).toBe(200);
+    const completeReader = JSON.stringify(reader.payload);
+    for (const text of [youHeadline, youPassageText, friendHeadline, friendPassage]) expect(completeReader).toContain(JSON.stringify(text).slice(1, -1));
+    await editor.getByRole("button", { name: "Close", exact: true }).click();
+    await studio.getByRole("button", { name: "Edit this headline and passage" }).click();
+    await expect(editor.getByLabel("Headline · You")).toHaveValue(youHeadline);
+    await expect(editor.getByLabel("Passage · You")).toHaveValue(youPassageText);
+    await expect(editor.getByLabel("Headline · Friend")).toHaveValue(friendHeadline);
+    await expect(editor.getByLabel("Passage · Friend")).toHaveValue(friendPassage);
     await assertNoBrowserErrors();
+    } finally { api.close(); }
   });
 
   test("composition map opens canonical templates and saved hook sources for editing", async ({ page }) => {
@@ -6904,18 +6984,19 @@ test('Aspect Patterns authenticates reads and previews and preserves newer draft
   let releasePreview!: () => void;
   const delayedPreview = new Promise<void>(resolve => { releasePreview = resolve; });
   const id = 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa';
+  const jsonb = (value:any):any => Array.isArray(value) ? value.map(jsonb) : value && typeof value==='object' ? Object.fromEntries(Object.entries(value).sort(([a],[b])=>a.localeCompare(b)).map(([key,item])=>[key,jsonb(item)])) : value;
   globalThis.fetch = async (input, init = {}) => {
     const url = new URL(String(input));
     expect(url.origin).toBe(env.SUPABASE_URL);
     if (init.method === 'POST') {
       if (row) return Response.json({ code: '23505' }, { status: 409 });
-      row = { ...JSON.parse(String(init.body)), id }; saves++; return Response.json([row]);
+      row = { ...JSON.parse(String(init.body)), id }; saves++; return Response.json([jsonb(row)]);
     }
     if (init.method === 'PATCH') {
       if (!row || url.searchParams.get('updated_at') !== `eq.${row.updated_at}`) return Response.json([]);
-      row = { ...row, ...JSON.parse(String(init.body)) }; saves++; return Response.json([row]);
+      row = { ...row, ...JSON.parse(String(init.body)) }; saves++; return Response.json([jsonb(row)]);
     }
-    return Response.json(row ? [row] : []);
+    return Response.json(row ? [jsonb(row)] : []);
   };
   try {
     await seedAdminApi(page, { expectedSecret: 'qa-secret' });
@@ -6959,12 +7040,19 @@ test('Aspect Patterns authenticates reads and previews and preserves newer draft
     await expect.poll(() => saves).toBe(2);
     await expect(editor.getByRole('button', { name: 'Save draft', exact: true })).toBeEnabled();
     expect(row!.source_snapshot.record.content.overview).toBe(`${copy}Second edit.`);
+    await expect(page.getByRole('alert')).toHaveCount(0);
+    await editor.getByRole('button',{name:'Publish approved',exact:true}).click();
+    await expect.poll(()=>saves).toBe(3);
+    await expect(editor.getByRole('button',{name:'Publish approved',exact:true})).toBeEnabled();
+    await expect(page.getByRole('alert')).toHaveCount(0);
+    expect(row!.status).toBe('LIVE');
+    expect(row!.source_snapshot.record.content.overview).toBe(`${copy}Second edit.`);
     row!.updated_at = '2099-01-01T00:00:00.123456Z';
     row!.source_snapshot.record.content.overview = 'QA newer draft from another editor.';
     await overview.fill('QA stale browser edit.');
     await editor.getByRole('button', { name: 'Save draft', exact: true }).click();
     await expect(page.getByRole('alert')).toContainText('changed after it was opened');
-    expect(saves).toBe(2);
+    expect(saves).toBe(3);
     expect(row!.source_snapshot.record.content.overview).toBe('QA newer draft from another editor.');
     await expect(overview).toHaveValue('QA stale browser edit.');
     await page.getByRole('button', { name: 'Refresh', exact: true }).click();
@@ -6972,7 +7060,7 @@ test('Aspect Patterns authenticates reads and previews and preserves newer draft
     omitPatternReceipt = true;
     await overview.fill('QA writing retained after an incomplete acknowledgement.');
     await editor.getByRole('button', { name: 'Save draft', exact: true }).click();
-    await expect.poll(() => saves).toBe(3);
+    await expect.poll(() => saves).toBe(4);
     await expect(page.getByRole('alert')).toContainText('did not confirm');
     await expect(overview).toHaveValue('QA writing retained after an incomplete acknowledgement.');
     await expect(page.getByText(/saved as Draft\./)).toHaveCount(0);

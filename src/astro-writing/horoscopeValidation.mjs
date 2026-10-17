@@ -8,7 +8,7 @@ import {HOROSCOPE_SIGNS} from '../../apps/web/src/content/horoscopeEditions.mjs'
 import {horoscopeEventsInWindow,horoscopeEventPlanet,horoscopeHouse} from './horoscopeDevelopments.mjs';
 import {horoscopePhasePattern,normalizeHoroscopePhase,horoscopeLunationPhase as lunationPhase} from './horoscopeLunationClaims.mjs';
 
-export const horoscopeValidationVersion='horoscope-facts/v13';
+export const horoscopeValidationVersion='horoscope-facts/v14';
 const bodies='Sun|Moon|Mercury|Venus|Mars|Jupiter|Saturn|Uranus|Neptune|Pluto';
 const signs=HOROSCOPE_SIGNS.join('|');
 const ordinals=['first','second','third','fourth','fifth','sixth','seventh','eighth','ninth','tenth','eleventh','twelfth'];
@@ -21,7 +21,7 @@ export function validateHoroscopeReading(passage,brief,{ownerCorrections=[]}={})
   const lint=governValidationResult(validateCopy({headline:passage.headline,body:passage.body},{validationProfile:'horoscope',family:'horoscope',surface:'horoscopes',register:'second_person',requiredFields:['headline','body'],ownerCorrections}),{surface:'horoscopes',family:'horoscope'});
   const violations=[...lint.violations,...horoscopePunctuationFindings(passage),...horoscopeVocabularyFindings(passage,brief.window.period)], text=resolveHoroscopeClaimSubjects(`${passage.headline}\n${passage.body}`);
   const fail=detail=>violations.push({category:'horoscope_fact_boundary',detail,governanceTier:'blocking'});
-  if(!/\b(?:you|your)\b/iu.test(passage.body))fail('Address the reader in the second person.');
+  if(!/\b(?:you|your)\b/iu.test(passage.body))violations.push({category:'register_consistency',detail:'Address the reader in the second person.',governanceTier:'blocking'});
   if(/\b(?:born with|your natal|since childhood|you always|you have always)\b/iu.test(text))fail('A temporary forecast cannot establish natal biography.');
   horoscopeAspectFindings(text,brief).forEach(fail);
   for(const body of horoscopePersonalSignClaims(text)) {

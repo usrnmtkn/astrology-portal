@@ -178,6 +178,23 @@ try{
     const result=await generalStore.invoke('POST',bulk?{rows:[direct]}:direct);
     assert.equal(result.status,422,JSON.stringify(result));
   }
+  // Explicit owner publication preserves vocabulary in every reader field.
+  for(const field of ['headline','summary','body']){
+    const current=generalStore.rows.get(invalidReader.id);
+    const copy={headline:'Synthetic owner title',summary:'',body:correctedBody,[field]:'Synthetic WHETHER owner wording. Complete final sentence.'};
+    const published=await generalStore.invoke('PATCH',{id:current.id,expectedUpdatedAt:current.updated_at,ownerAction:'save-and-publish-owner-content',...copy,sections:current.sections});
+    assert.equal(published.status,200,JSON.stringify(published));
+    assert.equal(published.payload.rows[0][field],copy[field]);
+    const lint=published.payload.rows[0].source_snapshot.lunationPublicationCheck.lint;
+    assert.equal(lint.publicationProfile,'owner-final-facts');
+    assert.equal(lint.passed,true);
+    assert(lint.advisories.some((finding:any)=>finding.category==='lunation_required_vocabulary'));
+  }
+  for(const copy of [wrongCopy,{headline:'',body:correctedBody}]){
+    const current=generalStore.rows.get(invalidReader.id);
+    const refused=await generalStore.invoke('PATCH',{id:current.id,expectedUpdatedAt:current.updated_at,ownerAction:'save-and-publish-owner-content',...copy,summary:'',sections:current.sections});
+    assert.equal(refused.status,422,JSON.stringify(refused));
+  }
   const example=datedRows[0];
   for(const [method,input] of [
     ['POST',{contentKey:'studio-lunation/forged',mode:'article',status:'LIVE',headline:'Forged',body:'Synthetic'}],

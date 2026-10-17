@@ -50,6 +50,18 @@ const store = await createApiStore([], { uuidIds: true });
 const body = 'Synthetic opening.\n\nComplete synthetic ending. {{moonSign}}.';
 const record = calendarPassageRecord(key, body);
 try {
+  for (const monthlyKey of [calendarPassageKey('monthly'), calendarPassageKey('monthly', '2031-03-01', 'America/New_York')]) {
+    const monthlyRecord = calendarPassageRecord(monthlyKey, 'Complete legacy monthly test passage.');
+    const created = await store.invoke('POST', { contentKey: monthlyKey, surface:'sky', mode:'feed', status:'DRAFT', lane:'reference',
+      eventType:'calendar-passage', blockType:'fallback_hook', provider:'tldrastro-fallback-architecture-v3',
+      body:monthlyRecord.body, sections:{packageRecord:monthlyRecord,packageDraft:monthlyRecord}, facts:{fallbackArchitectureV3:true}, sourceSnapshot:{sourcePackage:'tldrastro-fallback-architecture-v3'} });
+    assert.equal(created.status,200,JSON.stringify(created));
+    const monthly = created.payload.rows[0];
+    const rejected = await store.invoke('PATCH',{id:monthly.id,expectedUpdatedAt:monthly.updated_at,ownerAction:'approve-package-revision'});
+    assert.equal(rejected.status,409,JSON.stringify(rejected));
+    assert.match(rejected.payload.error,/Publish Monthly editions in Horoscopes/);
+    assert.equal(store.rows.get(monthly.id).status,'DRAFT');
+  }
   const sourceKey = 'authored/sky-lunation-macro/full-moon/aries';
   const sourceResult = await store.invoke('GET', undefined, '/api/admin/generated-content?' + new URLSearchParams({contentKeys:sourceKey,status:'LIVE',limit:'200'}));
   assert.equal(sourceResult.status, 200, JSON.stringify(sourceResult));

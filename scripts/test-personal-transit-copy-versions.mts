@@ -8,6 +8,34 @@ import { fixturePublications } from '../tests/helpers/content-reader-route.mjs';
 import { isDynamicTransitNatalExactKey } from '../apps/web/src/content/transitNatalIdentity.js';
 import { projectReaderRow } from '../apps/web/src/content/readerRowProjection.mjs';
 import { createTransitSynastryRenderer } from '../apps/web/src/content/fallbackArchitectureV3/dist/tldr-content.js';
+import {bondEffectExactSourceDraft} from '../apps/admin/src/bondEffectExactDraft.ts';
+import {resolveBondEffect} from '../apps/web/src/content/fallbackArchitectureV3/resolver/relationshipTemplate.mjs';
+
+test('a missing exact Friends opening saves, publishes both directions and replaces its shared fallback',async()=>{
+  const key='fallback-hook/bond-effect-sextile/lilith';
+  const draft=bondEffectExactSourceDraft(key)!;
+  const store=await createApiStore([]);
+  try{
+    const record=draft.sections!.packageRecord as any;
+    const {id,...input}=draft;
+    const you='Complete You paragraph with {{holder1}}.\n\nExact final sentence.',they='Complete Friend paragraph with {{holder1}}.\n\nExact final sentence.';
+    const created=await store.invoke('POST',{...input,eventType:'fallback-hook',body:you,sections:{packageRecord:record,packageDraft:{...record,body_you:you,body_they:they}},reviewStatus:'needs_review'});
+    assert.equal(created.status,200,JSON.stringify(created));
+    const saved=created.payload.rows[0];
+    assert.equal((await store.invoke('PATCH',{id:saved.id,expectedUpdatedAt:saved.updated_at,status:'LIVE',lane:'serving',reviewState:null})).status,400,'An incomplete installed pair cannot publish.');
+    const published=await store.invoke('PATCH',{id:saved.id,expectedUpdatedAt:saved.updated_at,ownerAction:'approve-package-revision'});
+    assert.equal(published.status,200,JSON.stringify(published));
+    const result=await store.invoke('POST',{keys:[key]},'/api/content-reader');
+    assert.equal(result.payload.rows.length,1);
+    const live=result.payload.rows[0].sections.packageRecord;
+    const hooks=new Map([[key,live],['fallback-hook/bond-effect-soft/lilith',{body_you:'Shared fallback.',body_they:'Shared fallback.'}]]);
+    for(const endpointOwner of ['reader','friend']){
+      const resolved=resolveBondEffect(hooks,{transiting:'lilith',aspect:'sextile',family:'soft',endpointOwner,otherName:'Example Friend'},Error);
+      assert.equal(resolved.contentKey,key);
+      assert.equal(resolved.effect,(endpointOwner==='reader'?you:they).replace('{{holder1}}','Example Friend'));
+    }
+  }finally{await store.close();}
+});
 
 const key = 'authored/transit-aspect/mercury/venus/trine';
 const original = {
@@ -24,6 +52,61 @@ const original = {
     body_you: 'Through {{untilDate}}, Mercury {{aspectWord}} your Venus. Original You passage.',
     body_they: 'Through {{untilDate}}, Mercury {{aspectWord}} their Venus. Original Friend passage.' } }
 };
+
+for (const contentKey of [key,`${key}/aquarius/12/11`,'authored/transit-return/chiron']) test(`successive reader edits replace stale audience mirrors: ${contentKey}`, async () => {
+  const seed={...original,content_key:contentKey,sections:{...original.sections,
+    body_you:original.body,body_they:original.sections.packageRecord.body_they,
+    packageRecord:{...original.sections.packageRecord,contentKey,
+      body:original.body}}};
+  const store=await createApiStore([seed]);
+  try {
+    let row=seed;
+    for(const revision of ['First','Second']){
+      const you=`${revision} complete You paragraph.\n\nExact final sentence.`,they=`${revision} complete Friend paragraph.\n\nExact final sentence.`;
+      const published=await store.invoke('PATCH',{id:row.id,expectedUpdatedAt:row.updated_at,reviewStatus:'approved',body:you,
+        sections:{...row.sections,packageRecord:{...row.sections.packageRecord,body_you:you,body_they:they,
+          ...(contentKey.includes('/transit-return/')?{body:you}:{})}}});
+      assert.equal(published.status,200,JSON.stringify(published));
+      row=published.payload.rows[0];
+      assert.equal(row.status,'LIVE');
+      assert.equal(row.body,you);
+      for(const field of ['body_you','body_they'])assert.equal(row.sections[field],row.sections.packageRecord[field]);
+      assert.equal(row.sections.packageRecord.body_you,you);
+      if (typeof row.sections.packageRecord.body === 'string') assert.equal(row.sections.packageRecord.body,you);
+      assert.equal(row.sections.packageRecord.body_they,they);
+      const reader=await store.invoke('POST',{keys:[contentKey]},'/api/content-reader');
+      assert.equal(reader.payload.rows[0].sections.packageRecord.body_you,you);
+      assert.equal(reader.payload.rows[0].sections.packageRecord.body_they,they);
+    }
+  } finally {await store.close();}
+});
+
+for (const contentKey of [key,`${key}/aquarius/12/11`,'authored/transit-return/chiron']) test(`unchanged audiences survive legacy stale mirrors: ${contentKey}`, async () => {
+  for (const edit of ['metadata','you','they','legacy-you','legacy-they']) {
+    const seed={...original,content_key:contentKey,sections:{...original.sections,
+      body_you:'Obsolete You mirror.',body_they:'Obsolete Friend mirror.',
+      packageRecord:{...original.sections.packageRecord,contentKey,
+        body:original.body}}};
+    const store=await createApiStore([seed]);
+    try {
+      const you=edit.endsWith('you')?'New complete You paragraph. Exact final sentence.':seed.sections.packageRecord.body_you;
+      const they=edit.endsWith('they')?'New complete Friend paragraph. Exact final sentence.':seed.sections.packageRecord.body_they;
+      const sections=edit==='metadata'?undefined:edit.startsWith('legacy-')
+        ? {...seed.sections,[`body_${edit.slice('legacy-'.length)}`]:edit.endsWith('you')?you:they}
+        : {...seed.sections,packageRecord:{...seed.sections.packageRecord,body_you:you,body_they:they}};
+      const saved=await store.invoke('PATCH',{id:seed.id,expectedUpdatedAt:seed.updated_at,reviewStatus:'approved',
+        headline:'Synthetic saved metadata',...(edit==='metadata'?{}:{body:you,sections})});
+      assert.equal(saved.status,200,JSON.stringify(saved));
+      const row=saved.payload.rows[0];
+      assert.equal(row.sections.packageRecord.body_you,you,`${edit}: preserve current You copy`);
+      assert.equal(row.sections.packageRecord.body_they,they,`${edit}: preserve current Friend copy`);
+      assert.equal(row.sections.body_you,you);assert.equal(row.sections.body_they,they);
+      const reader=await store.invoke('POST',{keys:[contentKey]},'/api/content-reader');
+      assert.equal(reader.payload.rows[0].sections.packageRecord.body_you,you);
+      assert.equal(reader.payload.rows[0].sections.packageRecord.body_they,they);
+    } finally {await store.close();}
+  }
+});
 
 test('normal CSV edits do not retain an alternate; explicit retention validates its scope', () => {
   const record = csvRecordForRow(original);
@@ -203,19 +286,54 @@ test('Lilith soft contacts require an exact approved saved passage; square remai
 
 for (const field of ['body_you', 'body_they']) for (const [copy, problem] of [
   ['The engine starts.', 'banned word "engine"'], ['Reader copy—still checked.', 'em dash']
-]) test(`private notes do not exempt reader ${field} from ${problem}`, async () => {
+]) test(`owner ${field} preserves wording while automatic edits retain ${problem} checks`, async () => {
   const store = await createApiStore([original]);
   try {
     const imported = { ...csvRecordForRow(original), [field]: copy };
-    const rejected = await store.invoke('PATCH', { id: original.id, expectedUpdatedAt: original.updated_at,
-      ownerAction: 'import-csv-draft', csvRecord: imported });
+    const patch = csvDraftPatch(original, imported);
+    const rejected = await store.invoke('PATCH', { id: original.id, expectedUpdatedAt: original.updated_at, ...patch });
     assert.equal(rejected.status, 400, JSON.stringify(rejected));
-    assert.ok(rejected.payload.error.startsWith(`packageDraft.${field} contains `), rejected.payload.error);
     assert.ok(rejected.payload.error.includes(problem), rejected.payload.error);
     const unchanged = await store.invoke('GET', undefined, `/api/admin/generated-content?id=${original.id}`);
-    assert.equal(unchanged.status, 200);
     assert.equal(unchanged.payload.rows[0].updated_at, original.updated_at);
-    assert.equal(unchanged.payload.rows[0].sections.packageDraft, undefined);
+    for (const route of ['editor', 'csv']) {
+      const baseline = (await store.invoke('GET', undefined, `/api/admin/generated-content?id=${original.id}`)).payload.rows[0];
+      const nextImport = { ...csvRecordForRow(baseline), [field]: `${copy} ${route}.` };
+      const edited = await store.invoke('PATCH', { id: baseline.id, expectedUpdatedAt: baseline.updated_at,
+        ...(route === 'csv' ? { ownerAction: 'import-csv-draft', csvRecord: nextImport }
+          : { ...csvDraftPatch(baseline, nextImport), ownerAuthoredWording: true }) });
+      assert.equal(edited.status, 200, JSON.stringify(edited));
+      const draft = edited.payload.rows[0];
+      assert.equal(draft.status, 'DRAFT');
+      const before = await store.invoke('POST', { keys: [key] }, '/api/content-reader');
+      assert.ok(before.payload.rows.every(row => row.sections.packageRecord[field] !== nextImport[field]), 'Saving owner prose does not publish it.');
+      const published = await store.invoke('PATCH', { id: draft.id, expectedUpdatedAt: draft.updated_at,
+        ownerAction: 'approve-package-revision' });
+      assert.equal(published.status, 200, JSON.stringify(published));
+      const reader = await store.invoke('POST', { keys: [key] }, '/api/content-reader');
+      assert.equal(reader.payload.rows[0].sections.packageRecord[field], nextImport[field]);
+      const reopened = await store.invoke('GET', undefined, `/api/admin/generated-content?id=${original.id}`);
+      assert.equal(reopened.payload.rows[0].sections.packageRecord[field], nextImport[field]);
+    }
+  } finally { await store.close(); }
+});
+
+test('owner wording intent cannot bypass unresolved variables or stale versions', async () => {
+  const store = await createApiStore([original]);
+  try {
+    for (const [copy, version, expected] of [
+      ['Owner engine—copy with {{unknownOwnerVariable}}.', original.updated_at, 400],
+      ['Owner engine—copy.', '2026-10-13T12:00:00.000Z', 409]
+    ] as const) {
+      const patch = csvDraftPatch(original, { ...csvRecordForRow(original), body_you: copy });
+      const rejected = await store.invoke('PATCH', { id: original.id, expectedUpdatedAt: version,
+        ...patch, ownerAuthoredWording: true });
+      assert.equal(rejected.status, expected, JSON.stringify(rejected));
+      if (expected === 400) assert.match(rejected.payload.error, /unresolved placeholder/u);
+    }
+    const unchanged = await store.invoke('GET', undefined, `/api/admin/generated-content?id=${original.id}`);
+    assert.equal(unchanged.payload.rows[0].updated_at, original.updated_at);
+    assert.equal(unchanged.payload.rows[0].sections.packageRecord.body_you, original.sections.packageRecord.body_you);
   } finally { await store.close(); }
 });
 
