@@ -417,6 +417,7 @@
 
 .synastry-placement-column-header h3 {
   margin: 0;
+  overflow-wrap: anywhere;
 }
 
 .synastry-placement-column-header {

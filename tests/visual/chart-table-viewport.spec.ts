@@ -89,12 +89,17 @@ for (const viewport of [{width:320,height:568},{width:390,height:844},{width:844
      await panel.locator('.retrograde-cycles__compare summary').click({timeout:30000});
      const scroller=panel.getByRole('region',{name:'Cycle comparison'});
      await expect(scroller).toBeVisible();
+     await page.evaluate(()=>document.fonts.ready);
      await scroller.scrollIntoViewIfNeeded();
      const bounds=await scroller.boundingBox();
      expect(bounds!.x).toBeGreaterThanOrEqual(-1);
      expect(bounds!.x+bounds!.width).toBeLessThanOrEqual(viewport.width+1);
      await scroller.evaluate(el=>{el.scrollLeft=el.scrollWidth});
-     await expect(scroller.getByRole('columnheader',{name:/Next/})).toBeVisible();
+     const lastColumn=scroller.getByRole('columnheader',{name:/Next/});
+     await expect(lastColumn).toBeVisible();
+     const lastBounds=await lastColumn.boundingBox();
+     expect(lastBounds!.x).toBeGreaterThanOrEqual(bounds!.x-1);
+     expect(lastBounds!.x+lastBounds!.width).toBeLessThanOrEqual(bounds!.x+bounds!.width+1);
      const panelWidth=await panel.evaluate(el=>({scroll:el.scrollWidth,client:el.clientWidth}));
      expect(panelWidth.scroll,JSON.stringify(panelWidth)).toBeLessThanOrEqual(panelWidth.client+1);
      await panel.getByRole('button',{name:'Close',exact:true}).click();
@@ -168,7 +173,20 @@ for (const viewport of [{width:320,height:568},{width:390,height:844},{width:844
      await chartFits(page,page.locator('.sky-wheel:visible').first());
     }
     if(family==='Synastry'||family==='Composite') {
-     for(const column of await page.locator('.friend-placement-table:visible,.synastry-placement-columns:visible').all()) await fits(page,column);
+     const placements=page.locator(family==='Synastry'?'.synastry-placement-columns:visible':'.friend-placement-table:visible');
+     await expect(placements).toHaveCount(1);
+     await fits(page,placements);
+     if(family==='Synastry') {
+      const headings=placements.locator('.synastry-placement-column-header h3');
+      await expect(headings).toHaveCount(2);
+      await expect(headings.first()).toHaveText(friendName);
+      await expect(headings.last()).toHaveText('You');
+      const typography=(el:Element)=>{
+       const s=getComputedStyle(el);
+       return [s.fontFamily,s.fontSize,s.fontWeight,s.lineHeight,s.letterSpacing,s.margin,s.textTransform,s.textAlign];
+      };
+      expect(await headings.first().evaluate(typography)).toEqual(await headings.last().evaluate(typography));
+     }
      await page.getByRole('button',{name:'Full-screen chart',exact:true}).click();
      await fits(page,page.locator('.chart-fullscreen-panel'));
      await chartFits(page,page.locator('.chart-fullscreen-panel .sky-wheel'));
@@ -176,6 +194,11 @@ for (const viewport of [{width:320,height:568},{width:390,height:844},{width:844
      const wheel=await page.locator('.chart-fullscreen-panel .sky-wheel').boundingBox();
      expect(wheel!.y).toBeGreaterThanOrEqual(panel!.y-1);
      expect(wheel!.y+wheel!.height).toBeLessThanOrEqual(panel!.y+panel!.height+1);
+     const close=page.getByRole('button',{name:'Close full-screen chart',exact:true});
+     const closeBounds=await close.boundingBox();
+     expect(closeBounds!.width,'full-screen close control keeps its circular target').toBeCloseTo(closeBounds!.height,0);
+     await close.click();
+     await expect(page.locator('.chart-fullscreen-panel')).toBeHidden();
     }
    });
   }
