@@ -109,3 +109,37 @@ control or a Studio preview is not a substitute. The owned diagnostic tab was
 closed at 19:44:07 UTC. Canonical deployment brackets before and after matched
 `dpl_2Xq28ZZBH7jayRKpdCAqLWqddFWF`. The observed console had no errors and 24
 warnings, including two missing Uranus-return sources. No content was written.
+
+## Report regression qualification
+
+Hosted `report-library-browser` and `report-reader-browser` on `96d74a2` both
+failed the same four width/theme cases, including their retries. The original
+September 13 synthetic profile expected a selected event outside the noon orb.
+Exact baseline `c3f31ce2e08f239f26e344d79a83af013e7ba09b` and candidate SSR
+calculations with identical inputs established the difference: admitting the
+calculated Lilith/MC/IC axis puts it first, moving Moon square Mercury from
+fourth to fifth. The latter remains in the full-day calculated candidate
+inventory. It is absent from the visible four and submitted report evidence,
+which both retain their existing four-event selection contract.
+
+The regression retains September 13's complete report/source/date assertions
+and asserts its legitimate new ranking. A second fixed date, September 12,
+selects Moon square Sun in the first four on both baseline and candidate. Its
+verified event is at 19:40:53 UTC while the selected reference is 16:00 UTC,
+just outside the continuous Moon contact that begins at 16:03:29 UTC. Direct
+Swiss longitude checks independently confirm the square at the event and the
+Moon's greater-than-two-degree separation from exactness at noon. This case
+retains the positive outside-noon assertion and complete passage handoff.
+
+The adapter regression also verifies the unselected September 13 Moon/Mercury
+candidate's full-day calculation and event timing. This does not claim that an
+unselected candidate enters submitted report evidence. No report scope,
+production ranking policy, source copy or published alternate is changed by
+the test repair. These source changes require their own exact-head release
+gates; the prior sixteen local successes apply only to `96d74a2`.
+
+Focused repair verification passed all eight fresh-build browser cases (both
+fixed dates, both widths and both themes), plus the final actual-App/direct-Swiss
+regression including the unselected candidate. This is local fixture evidence;
+full current-head gates, immutable preview and authenticated live acceptance
+remain separate requirements.

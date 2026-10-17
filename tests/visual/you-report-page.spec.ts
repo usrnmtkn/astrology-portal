@@ -26,8 +26,8 @@ const session = {
   expires_at: Date.parse("2026-09-14T16:00:00Z") / 1000, token_type: "bearer", user
 };
 
-async function prepare(page: Page, theme: string, signedIn = true) {
-  await page.clock.setFixedTime(new Date("2026-09-13T16:00:00Z"));
+async function prepare(page: Page, theme: string, signedIn = true, referenceAt = "2026-09-13T16:00:00Z") {
+  await page.clock.setFixedTime(new Date(referenceAt));
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.addInitScript(({ user, profile, location, storageKey, theme, signedIn }) => {
     localStorage.setItem("tldrastro:userProfile", JSON.stringify(profile));
@@ -193,10 +193,17 @@ for (const viewport of [{ name: "desktop", width: 1440, height: 1000 }, { name: 
       await expect(reports.getByText("Sign in to create or read your reports.")).toBeHidden();
     });
 
-    test(`daily report request includes complete transit detail sources on ${viewport.name} ${theme}`, async ({ page }) => {
+    // MC/IC admission legitimately changes September 13's ranked four. Keep
+    // that case and independently retain a full-day event outside noon on the
+    // preceding date. Direct Swiss expectations live in the daily adapter test.
+    for (const fixture of [
+      { date: "2026-09-13", ids: ["lilith-conjunction-midheaven", "lilith-conjunction-sun", "mercury-square-jupiter", "moon-opposition-ascendant"], outsideNoon: [] },
+      { date: "2026-09-12", ids: ["mars-square-ascendant", "moon-sextile-mars", "lilith-opposition-chiron", "moon-square-sun"], outsideNoon: ["moon-square-sun"] }
+    ]) {
+    test(`daily report request includes complete transit detail sources ${fixture.date} on ${viewport.name} ${theme}`, async ({ page }) => {
       test.setTimeout(60_000);
       await page.setViewportSize(viewport);
-      await prepare(page, theme);
+      await prepare(page, theme, true, `${fixture.date}T16:00:00Z`);
       await page.route("**/rest/v1/user_generated_interpretations**", route => route.fulfill({ json: [] }));
       // Capture the real app request without creating a report or calling a model.
       await page.route("**/api/you-report-request", route => route.fulfill({ status: 503, json: { error: "Synthetic request captured; generation disabled." } }));
@@ -213,8 +220,9 @@ for (const viewport of [{ name: "desktop", width: 1440, height: 1000 }, { name: 
       const readings = brief.approvedReaderText.transitReadings as { transitId: string; heading: string; body: string; sourceUnits: string[] }[];
       expect(readings.length).toBeGreaterThan(0);
       expect(readings.length).toBeLessThanOrEqual(4);
+      expect(readings.map(reading => reading.transitId)).toEqual(fixture.ids);
       expect(brief.approvedReaderText.sourceGaps).toBeUndefined();
-      let contactsOutsideNoon = 0;
+      const contactsOutsideNoon: string[] = [];
       for (const reading of readings) {
         const fact = brief.technicalEvidence.qualifyingTransits.find((transit: { id: string }) => transit.id === reading.transitId);
         expect(fact).toBeTruthy();
@@ -228,7 +236,7 @@ for (const viewport of [{ name: "desktop", width: 1440, height: 1000 }, { name: 
         // then compare every source word outside date substitutions.
         expect(fact.calculation.status).toBe("calculated");
         const referenceAt = Date.parse(fact.calculation.referenceAt);
-        expect(referenceAt).toBe(Date.parse("2026-09-13T16:00:00Z"));
+        expect(referenceAt).toBe(Date.parse(`${fixture.date}T16:00:00Z`));
         const contactAt = Date.parse(fact.calculation.contactReferenceAt);
         const currentStart = Date.parse(fact.calculation.currentStart);
         const currentEnd = Date.parse(fact.calculation.currentEnd);
@@ -246,7 +254,7 @@ for (const viewport of [{ name: "desktop", width: 1440, height: 1000 }, { name: 
         }
         if (currentStart > referenceAt || currentEnd < referenceAt) {
           expect(fact.calculation.exactOnSelectedDay).toBe(true);
-          contactsOutsideNoon += 1;
+          contactsOutsideNoon.push(fact.id);
         }
         expect(fact.window).toBe(`Until ${new Intl.DateTimeFormat("en-US", {
           month: "long", day: "numeric", year: "numeric", timeZone: fact.calculation.timeZone
@@ -256,11 +264,13 @@ for (const viewport of [{ name: "desktop", width: 1440, height: 1000 }, { name: 
         expect(normalizeDates(rendered)).toContain(normalizeDates(reading.body));
         await article.getByRole("button", { name: /Back/ }).click();
       }
-      expect(contactsOutsideNoon).toBeGreaterThan(0);
+      expect(contactsOutsideNoon).toEqual(fixture.outsideNoon);
+      if (fixture.outsideNoon.length) expect(contactsOutsideNoon.length).toBeGreaterThan(0);
       expect(errors).toEqual([]);
       expect(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth + 1)).toBe(false);
-      await page.screenshot({ path: test.info().outputPath(`daily-source-handoff-${viewport.name}-${theme}.png`) });
+      await page.screenshot({ path: test.info().outputPath(`daily-source-handoff-${fixture.date}-${viewport.name}-${theme}.png`) });
     });
+    }
 
     test(`You macro view expands its complete passage on ${viewport.name} ${theme}`, async ({ page }) => {
       test.setTimeout(60_000);

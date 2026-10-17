@@ -147,6 +147,48 @@ try {
   assert(angleContacts.some(contact => contact.id === "moon-conjunction-midheaven"));
   assert(angleContacts.some(contact => contact.id === "moon-opposition-imum-coeli"));
   assert.equal(app.groupPersonalTransitContacts(angleContacts).length, 1, "MC/IC stays one ranked axis slot.");
+  // The report browser fixture keeps both the changed MC/IC ranking and a
+  // genuinely selected full-day contact outside the noon orb. Independently
+  // check the latter with direct Swiss longitudes, not just the app's labels.
+  const reportNatal = await ephemeris.getAstrodienstSky(birthLocation, new Date("1990-01-01T17:00:00Z"));
+  const reportTargets = app.natalTransitTargets(reportNatal, true);
+  for (const [date, expectedIds, expectedOutside] of [
+    ["2026-09-13", ["lilith-conjunction-midheaven", "lilith-conjunction-sun", "mercury-square-jupiter", "moon-opposition-ascendant"], []],
+    ["2026-09-12", ["mars-square-ascendant", "moon-sextile-mars", "lilith-opposition-chiron", "moon-square-sun"], ["moon-square-sun"]]
+  ]) {
+    const reference = `${date}T16:00:00Z`;
+    const sky = await ephemeris.getAstrodienstSky(birthLocation, new Date(reference));
+    const peaks = await ephemeris.natalDailyTransitPeaksFor(sky.positions.map(p => p.planet), reportTargets.map(p => ({ planet: p.planet, longitude: app.personalTransitLongitude(p) })), reference, birthLocation.timeZone);
+    const contacts = app.buildNatalTransitItems(sky.positions, reportTargets, 0, birthLocation.timeZone, peaks)
+      .filter(item => daily.personalDailyPriority(item.dailyPeak) !== null).sort(daily.comparePersonalDailyTransits);
+    const selected = app.groupPersonalTransitContacts(contacts).slice(0, 4).map(group => group[0]);
+    assert.deepEqual(selected.map(item => item.id), expectedIds);
+    const report = await preparePersonalReportTiming(selected, new Date(reference), birthLocation.timeZone, ephemeris.natalTransitTimingFor);
+    const outside = report.qualifyingTransits.filter(item => Date.parse(item.calculation.currentStart) > Date.parse(reference) || Date.parse(item.calculation.currentEnd) < Date.parse(reference));
+    assert.deepEqual(outside.map(item => item.id), expectedOutside);
+    for (const item of outside) {
+      const natalSun = longitude("Sun", "1990-01-01T17:00:00Z");
+      const squareOrb = at => Math.abs(Math.abs(((longitude("Moon", at) - natalSun + 540) % 360) - 180) - 90);
+      assert(squareOrb(reference) > 2, "Direct Swiss confirms the selected event is outside the noon Moon gate");
+      assert(squareOrb(item.calculation.contactReferenceAt) < 0.001, "Direct Swiss confirms the precise square at the reported event time");
+      assert.equal(daily.personalDateKey(item.calculation.contactReferenceAt, birthLocation.timeZone), date);
+      assert.equal(item.calculation.exactOnSelectedDay, true);
+    }
+    if (date === "2026-09-13") {
+      const unselected = contacts.find(item => item.id === "moon-square-mercury");
+      assert(unselected?.dailyPeak.exactToday.length, "MC/IC admission must not erase the full-day Moon/Mercury candidate");
+      assert(!selected.includes(unselected), "The candidate is outside this date's legitimate ranked four");
+      assert(!report.qualifyingTransits.some(item => item.id === unselected.id), "Submitted evidence follows the selected four, not the full candidate inventory");
+      const fullDay = await preparePersonalReportTiming([unselected], new Date(reference), birthLocation.timeZone, ephemeris.natalTransitTimingFor);
+      const fact = fullDay.qualifyingTransits[0];
+      assert.equal(fact.calculation.exactOnSelectedDay, true);
+      assert.notEqual(fact.calculation.contactReferenceAt, fact.calculation.referenceAt);
+      const natalMercury = longitude("Mercury", "1990-01-01T17:00:00Z");
+      const squareOrb = at => Math.abs(Math.abs(((longitude("Moon", at) - natalMercury + 540) % 360) - 180) - 90);
+      assert(squareOrb(reference) > 2);
+      assert(squareOrb(fact.calculation.contactReferenceAt) < 0.001);
+    }
+  }
   for (const [location, reference, expected] of [
     [birthLocation, "2027-12-07T17:00:00Z", ["moon-square-jupiter", "moon-square-uranus", "moon-sextile-venus", "moon-trine-lilith", "lilith-square-pluto"]],
     [{ label: "Honolulu, HI", latitude: 21.3069, longitude: -157.8583, timeZone: "Pacific/Honolulu" }, "2027-12-07T22:00:00Z", ["moon-square-jupiter", "moon-square-uranus", "moon-sextile-venus", "lilith-square-pluto"]]
