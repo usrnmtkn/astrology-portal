@@ -360,6 +360,9 @@ jobs:
       - name: Verify standalone Studio notification containment
         if: matrix.suite == 'studio-style'
         run: npx playwright test -c playwright.tooltip-toast-studio.config.ts --workers=1
+      - name: Verify standalone Studio table containment
+        if: matrix.suite == 'studio-style'
+        run: npx playwright test -c playwright.chart-table-studio.config.ts --workers=1
       - name: Upload ${{ matrix.suite }} artifacts
         if: always()
         uses: actions/upload-artifact@v6

@@ -1065,8 +1065,6 @@
   font-weight: var(--weight-semibold);
   letter-spacing: 0;
   text-transform: uppercase;
-  white-space: nowrap;
-  overflow-wrap: normal;
 }
 
 .natal-chart-data-table td + td,
