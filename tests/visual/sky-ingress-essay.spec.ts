@@ -8,6 +8,7 @@ import { skyIngressEssayFields } from '../../apps/web/src/content/skyIngressEssa
 
 for (const [width, theme] of [[390, 'light'], [1440, 'dark']] as const) {
  test(`Ingress essay draft saves, reopens and compiles without a horoscope companion at ${width} ${theme}`, async ({ page }) => {
+  await page.clock.install();
   const temporary = mkdtempSync(path.join(tmpdir(), 'ingress-browser-'));
   const fixture = path.join(temporary, 'rows.json');
   writeFileSync(fixture, JSON.stringify([{ id: 'aaaaaaaa-aaaa-4aaa-aaaa-aaaaaaaaaaaa', content_key: 'sky/article-template/sun/libra',
@@ -79,16 +80,27 @@ for (const [width, theme] of [[390, 'light'], [1440, 'dark']] as const) {
    await page.getByRole('row').filter({ hasText: 'sky/article-template/sun/libra' }).getByRole('button', { name: 'Edit', exact: true }).click();
    const editor = page.getByRole('dialog');
    await expect(editor.getByLabel('Sky article format')).toHaveValue('ingress-essay-v2');
-   await editor.getByRole('button', { name: 'Load calculated facts', exact: true }).click();
+   const loadFacts = editor.getByRole('button', { name: 'Load calculated facts', exact: true });
+   await expect(loadFacts).toBeEnabled();
+   await page.clock.pauseAt(await page.evaluate(() => Date.now() + 100));
+   await loadFacts.click();
+   const loadedNotice = editor.getByRole('status').filter({hasText: /^Loaded the calculated/});
+   await expect(loadedNotice).toBeVisible();
    await expect(editor.getByLabel('Template field when', { exact: true })).toHaveValue(/8:05 PM ET/);
    await expect(editor.getByText(skyIngressEssayFields.find(field => field.name === 'overviewBody')!.description, { exact: true })).toBeVisible();
    await editor.getByLabel('Sky article writing direction').fill(writingDirection);
+   await page.clock.runFor(1_000);
    await expect(editor.getByText('Draft saved automatically', { exact: true })).toBeVisible();
    // Observe beyond the 900ms autosave debounce. A returned workspace ID must
    // not schedule another write or make a saved draft dirty before reload.
-   await page.waitForTimeout(1200);
+   await page.clock.runFor(1_200);
    expect(workspaceWrites).toBe(1);
    await expect(editor.getByText('Draft saved automatically', { exact: true })).toBeVisible();
+   await expect(loadedNotice).toBeVisible();
+   await page.clock.runFor(2_000);
+   await expect(loadedNotice).toHaveCount(0);
+   expect(workspaceWrites).toBe(1);
+   await page.clock.resume();
    await page.reload();
    await page.getByRole('row').filter({ hasText: 'sky/article-template/sun/libra' }).getByRole('button', { name: 'Edit', exact: true }).click();
    await editor.getByRole('button', { name: 'Load calculated facts', exact: true }).click();

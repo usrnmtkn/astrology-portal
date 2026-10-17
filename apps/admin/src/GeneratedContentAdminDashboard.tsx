@@ -3848,11 +3848,12 @@ export function GeneratedContentAdminDashboard() {
   }
 
   useEffect(() => {
-    if (!message || loadState === "loading") return;
-    const isErrorMessage = loadState === "error" || loadState === "accessDenied";
+    // Actionable warnings and errors remain until dismissal or a new load/action.
+    if (!message || loadState === "loading" || loadState === "error" || loadState === "accessDenied"
+      || loadState === "idle" || message.includes("Partial load:")) return;
     const timeout = window.setTimeout(() => {
       setMessage((current) => current === message ? "" : current);
-    }, isErrorMessage ? 14_000 : 7_000);
+    }, 7_000);
     return () => window.clearTimeout(timeout);
   }, [loadState, message]);
 

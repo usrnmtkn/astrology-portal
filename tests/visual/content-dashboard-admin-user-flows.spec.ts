@@ -1353,6 +1353,7 @@ test.describe("content dashboard admin user flow case studies", () => {
   });
 
   test("admin access validates pasted env assignments before saving them", async ({ page }) => {
+    await page.clock.install();
     await seedAdminApi(page, {
       initialSecret: "stale-secret",
       expectedSecret: "qa-secret"
@@ -1362,6 +1363,8 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expect(page.getByRole("heading", { name: "Review Queue" })).toBeVisible({
       timeout: routeReadyTimeoutMs
     });
+    await expect(page.getByRole("alert")).toContainText("Admin access was denied");
+    await page.clock.fastForward(15_000);
     await expect(page.getByRole("alert")).toContainText("Admin access was denied");
     await expect(page.getByRole("region", { name: "Admin status" })).toContainText("Access denied");
     await expect(page.getByRole("region", { name: "Admin access required" })).toBeVisible();
@@ -1386,6 +1389,42 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expect(page.getByRole("region", { name: "Admin access required" })).toBeHidden();
     await expect.poll(() => page.evaluate(() => localStorage.getItem("tldrastro:contentAdminSecret"))).toBe("qa-secret");
     await expect(page.getByRole("status")).toHaveCount(0);
+  });
+
+  test("denied access notice survives a delayed document load", async ({ page }) => {
+    await page.clock.install();
+    await seedAdminApi(page, { initialSecret: "stale-secret", expectedSecret: "qa-secret" });
+    let releaseResource!: () => void;
+    const resourceReady = new Promise<void>(resolve => { releaseResource = resolve; });
+    await page.route("**/__studio-load-hold.svg", async route => {
+      await resourceReady;
+      await route.fulfill({ contentType: "image/svg+xml", body: '<svg xmlns="http://www.w3.org/2000/svg" width="1" height="1"/>' });
+    });
+    await page.route("**/admin/content", async route => {
+      const response = await route.fetch();
+      const html = await response.text();
+      await route.fulfill({ response, body: html.replace("</body>", '<img src="/__studio-load-hold.svg" alt="" hidden loading="eager"></body>') });
+    });
+    const blockedResource = page.waitForRequest("**/__studio-load-hold.svg");
+    const navigation = page.goto("/admin/content");
+    try {
+      await blockedResource;
+      await expect(page.getByRole("region", { name: "Admin status" })).toContainText("Access denied");
+      await expect(page.getByRole("alert")).toContainText("Admin access was denied");
+      expect(await page.evaluate(() => document.readyState)).not.toBe("complete");
+      await page.clock.fastForward(15_000);
+      releaseResource();
+      await navigation;
+      const error = page.getByRole("alert");
+      await expect(error).toContainText("Admin access was denied");
+      await expect(page.getByRole("button", { name: "Create", exact: true })).toBeDisabled();
+      await error.getByRole("button", { name: "Dismiss notification", exact: true }).click();
+      await expect(error).toHaveCount(0);
+      await expect(page.getByRole("region", { name: "Admin status" })).toContainText("Access denied");
+    } finally {
+      releaseResource();
+      await navigation.catch(() => {});
+    }
   });
 
   test("admin shell navigates every primary dashboard surface", async ({ page }) => {
@@ -2214,6 +2253,7 @@ test.describe("content dashboard admin user flow case studies", () => {
   }
 
   test("content editor saves row changes through the admin API", async ({ page }) => {
+    await page.clock.install();
     const assertNoBrowserErrors = await expectNoBrowserErrors(page);
     let generatedContentWrite: { method: string; payload: Record<string, unknown> } | null = null;
     await seedAdminApi(page, {
@@ -2279,7 +2319,10 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expect(savebar).toContainText("Unsaved changes");
     await expect(editor.getByLabel("TL;DR / summary").locator("xpath=ancestor::label[1]").locator(".admin-field-metrics")).toContainText("7 words");
     await expect(editor.getByLabel("Article body").locator("xpath=ancestor::label[1]").locator(".admin-field-metrics")).toContainText("7 words");
-    await editor.getByRole("button", { name: "Save" }).click();
+    const save = editor.getByRole("button", { name: "Save" });
+    await expect(save).toBeEnabled();
+    await page.clock.pauseAt(await page.evaluate(() => Date.now() + 100));
+    await save.click();
 
     await expect.poll(() => generatedContentWrite).toMatchObject({
       method: "PATCH",
@@ -2296,7 +2339,13 @@ test.describe("content dashboard admin user flow case studies", () => {
         }
       }
     });
-    await expect(page.getByRole("status").filter({ hasText: "sky.placement.sun.cancer saved as Live" })).toBeVisible();
+    const savedNotice = page.getByRole("status").filter({ hasText: "sky.placement.sun.cancer saved as Live" });
+    await expect(savedNotice).toBeVisible();
+    await page.clock.runFor(4_500);
+    await expect(savedNotice).toBeVisible();
+    await page.clock.runFor(3_000);
+    await expect(savedNotice).toHaveCount(0);
+    await page.clock.resume();
     await assertNoBrowserErrors();
   });
 
@@ -7946,6 +7995,7 @@ for (const theme of ['dark', 'light']) for (const width of [1440, 390]) {
 
 for (const theme of ['dark', 'light']) for (const width of [1440, 390]) {
   test(`themed API error recovery ${theme} ${width}`, async ({page}) => {
+    await page.clock.install();
     await seedAdminApi(page);
     await page.setViewportSize({width, height:1000});
     await page.addInitScript(value => localStorage.setItem('tldrastro:studio-theme',value),theme);
@@ -7956,6 +8006,8 @@ for (const theme of ['dark', 'light']) for (const width of [1440, 390]) {
     });
     await page.goto('/admin/content#review-queue');
     const error = page.locator('.admin-page-notice[role="alert"]');
+    await expect(error).toBeVisible();
+    await page.clock.fastForward(15_000);
     await expect(error).toBeVisible();
     await expect(error).toHaveCSS('background-color',theme === 'dark' ? 'rgb(147, 0, 10)' : 'rgb(255, 218, 214)');
     await expect(error).toHaveCSS('color',theme === 'dark' ? 'rgb(255, 218, 214)' : 'rgb(65, 0, 2)');
