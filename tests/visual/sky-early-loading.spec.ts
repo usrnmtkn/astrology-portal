@@ -1,6 +1,7 @@
 import { expect, test } from '@playwright/test';
 import { bundledPublications } from '../helpers/bundled-publications';
 import skyHandler from '../../api/sky';
+import { getLunarCalendarMonth } from '../../apps/web/src/services/ephemeris';
 import type { IncomingMessage, ServerResponse } from 'node:http';
 import { readerResponse } from '../helpers/reader-response';
 import { publicationLedgerTag } from '../../apps/web/src/services/publicationLedgerTransport';
@@ -337,3 +338,75 @@ for (const width of [390, 1440]) test(`Initial publication installation shares o
   expect(vocabularyReads).toBe(2);
   expect(errors).toEqual([]);
 });
+
+// Use native computed events and actual API handlers. Only transport delivery is
+// held; a quarter must not enter the New/Full exact-time calculation path.
+let computedLunationMonth: ReturnType<typeof getLunarCalendarMonth> | undefined;
+for (const phase of ['First Quarter Moon', 'Last Quarter Moon', 'New Moon', 'Full Moon']) {
+  test(`Sky summary skips quarter-only core work and retains primary work: ${phase}`, async ({ page }) => {
+    test.setTimeout(90_000);
+    const location = { label: 'Synthetic New York', latitude: 40.7128, longitude: -74.006, timeZone: 'America/New_York' };
+    computedLunationMonth ??= getLunarCalendarMonth(location, new Date('2026-10-18T16:00:00Z'));
+    const calendar = await computedLunationMonth;
+    const phaseEvent = calendar.days.flatMap(day => day.events).find(event => event.type === 'lunation'
+      && event.dateKey.startsWith('2026-10-') && event.title.startsWith(phase));
+    expect(phaseEvent).toBeTruthy();
+    const primary = phase === 'New Moon' || phase === 'Full Moon';
+    expect(phaseEvent!.primary).toBe(primary);
+    await bundledPublications(page);
+    await page.route('**/api/content-publications', route => route.fulfill({ json: {
+      schema: 'tldr-publications/v1', publications: [{ content_key: '__content-publication-ledger/v1',
+        state: 'live', revision: 1, row_id: null, row_updated_at: null, updated_at: '2026-10-01T00:00:00Z' }]
+    } }));
+    await page.route('**/api/calendar?**', route => route.fulfill({ json: { ok: true, calendar } }));
+    await page.clock.setFixedTime(new Date(`${phaseEvent!.dateKey}T16:00:00Z`));
+    await page.addInitScript(location => localStorage.setItem('tldrastro:selectedLocation', JSON.stringify(location)), location);
+    const core: import('@playwright/test').Request[] = [];
+    let fullSky: any, fullFinished = false, releaseCore!: () => void;
+    const coreGate = new Promise<void>(resolve => { releaseCore = resolve; });
+    const errors: string[] = []; page.on('pageerror', error => errors.push(error.message));
+    await page.route('**/api/sky?**', async route => {
+      const url = new URL(route.request().url());
+      const isCore = url.searchParams.get('detail') === 'core';
+      if (isCore) { core.push(route.request()); await coreGate; }
+      let status = 200, body = '';
+      await skyHandler({ method: 'GET', url: route.request().url() } as IncomingMessage,
+        { setHeader() {}, set statusCode(value: number) { status = value; }, get statusCode() { return status; },
+          end(value: string) { body = value; } } as unknown as ServerResponse);
+      expect(status).toBe(200);
+      if (!isCore) fullSky = JSON.parse(body).sky;
+      await route.fulfill({ status, contentType: 'application/json', body });
+      if (!isCore) fullFinished = true;
+    });
+    try {
+      await page.goto('/#sky');
+      await expect.poll(() => fullFinished).toBe(true);
+      const actual = fullSky.dailyEvents.find((event: any) => event.id === phaseEvent!.id);
+      expect(actual).toBeTruthy(); expect(actual.primary).toBe(primary);
+      const summary = page.getByLabel('Daily sky summary', { exact: true });
+      if (primary) {
+        await expect.poll(() => core.length).toBe(1);
+        expect(new URL(core[0].url()).searchParams.get('at')).toBe(phaseEvent!.startsAt);
+        await expect(summary).toHaveAttribute('aria-busy', 'true');
+        await expect(summary).not.toContainText(`${phase} in ${phaseEvent!.sign}`);
+        releaseCore();
+        const response = await core[0].response();
+        expect(response?.status()).toBe(200); expect(await response!.finished()).toBeNull();
+        await expect(summary).toHaveAttribute('aria-busy', 'false');
+        await expect(summary.getByRole('link', { name: new RegExp(`^${phase} in `) })).toBeVisible();
+        expect(core).toHaveLength(1);
+      } else {
+        await expect(summary).toHaveAttribute('aria-busy', 'false');
+        const moon = fullSky.positions.find((position: any) => position.planet === 'Moon');
+        await expect(summary.getByRole('link', { name: `Read about Moon in ${moon.sign}`, exact: true })).toBeVisible();
+        await expect(page.locator('.sky-reading-layout')).toHaveAttribute('aria-busy', 'false');
+        await page.evaluate(() => new Promise<void>(resolve => {
+          let frames = 0; const next = () => ++frames === 30 ? resolve() : requestAnimationFrame(next);
+          requestAnimationFrame(next);
+        }));
+        expect(core, 'A computed quarter cannot block the summary behind a held exact-time request.').toHaveLength(0);
+      }
+      expect(errors).toEqual([]);
+    } finally { releaseCore(); await page.unrouteAll({ behavior: 'wait' }); }
+  });
+}

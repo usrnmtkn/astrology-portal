@@ -16318,7 +16318,7 @@ function SkyCards({
   const moon = sky.positions.find((position) => position.planet === "Moon");
   // Use the event-time ephemeris event supplied by the snapshot. Do not infer
   // a future event sign from the Moon's mean motion for this narrative.
-  const todayLunation = events.filter(event => event.type === "lunation" && event.sign).sort((a, b) => (a.eclipseType === "solar" ? 0 : a.eclipseType === "lunar" ? 1 : a.title.includes("New") ? 2 : 3) - (b.eclipseType === "solar" ? 0 : b.eclipseType === "lunar" ? 1 : b.title.includes("New") ? 2 : 3))[0];
+  const todayLunation = events.filter(event => event.type === "lunation" && event.primary !== false && event.sign).sort((a, b) => (a.eclipseType === "solar" ? 0 : a.eclipseType === "lunar" ? 1 : a.title.includes("New") ? 2 : 3) - (b.eclipseType === "solar" ? 0 : b.eclipseType === "lunar" ? 1 : b.title.includes("New") ? 2 : 3))[0];
   const event = todayLunation ? { name: todayLunation.title.includes("Full") ? "Full Moon" : "New Moon", sign: todayLunation.sign!, occursAt: todayLunation.startsAt, eclipseType: todayLunation.eclipseType } : sky.moonEvent;
   const selectedDate = new Date(sky.generatedAt);
   const eventDate = event ? new Date(event.occursAt) : null;
