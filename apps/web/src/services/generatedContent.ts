@@ -1127,15 +1127,15 @@ function prefetchColdSkyKeys(keys: Promise<string[]>, publications: Promise<void
   const controller = new AbortController();
   const signal = AbortSignal.any([controller.signal, AbortSignal.timeout(20_000)]);
   const ready = publications.then(() => contentPublicationsAvailableOnline(), () => false);
-  let consumed = false;
+  let consumed = false, admissionEnabled = true;
   const request = keys.then(async candidates => {
     const selected = [...new Set(candidates)];
-    if (!selected.length || selected.length > limit || signal.aborted || !await getSupabaseClient()) {
+    if (!selected.length || selected.length > limit || signal.aborted || !await getSupabaseClient() || !admissionEnabled || signal.aborted) {
       return { data: null, error: null };
     }
     return loadReaderRows({ keys: selected }, signal, {
       ready,
-      validate: (rows, buffered) => contentPublicationsAvailableOnline()
+      validate: (rows, buffered) => admissionEnabled && contentPublicationsAvailableOnline()
         && buffered.every(publication => (publication.content_key === publicationLedgerKey || selected.includes(publication.content_key))
           && (contentPublication(publication.content_key)?.revision ?? 0) >= publication.revision)
         && rows.every(row => selected.includes(row.content_key)
@@ -1143,7 +1143,9 @@ function prefetchColdSkyKeys(keys: Promise<string[]>, publications: Promise<void
     });
   }).catch(error => ({ data: null, error }));
   return {
-    consume: () => { if (consumed) return; consumed = true; return { request, cancel: () => controller.abort() }; },
+    consume: () => { if (consumed) return; consumed = true; return {
+      request, cancel: () => controller.abort(), detach: () => { admissionEnabled = false; }
+    }; },
     discard: () => { if (!consumed) { consumed = true; controller.abort(); } }
   };
 }
@@ -1155,7 +1157,8 @@ export function prefetchColdSkyContentForKeys(keys: string[], publications: Prom
   return {
     rows: owned.request.then(result => generatedContentMapFromRows(sortGeneratedRowsNewestFirst(result.data ?? [])))
       .catch(() => new Map<string, LiveGeneratedContent>()),
-    discard: owned.cancel
+    discard: owned.cancel,
+    detach: owned.detach
   };
 }
 

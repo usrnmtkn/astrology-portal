@@ -13,14 +13,20 @@ const stamp = '2026-10-09T00:00:00.123456Z';
 const cases = [
   ...[390, 1440].flatMap(width => [true, false].map(hasEdition => ({ width, hasEdition, account: 'guest', flow: 'stable' }))),
   ...['profile', 'restoring'].map(account => ({ width: 390, hasEdition: true, account, flow: 'stable' })),
-  ...['navigate', 'retire', 'offline', 'revalidate', 'location', 'member-reload', 'member-spa', 'revision', 'date', 'edition-error', 'registry-held', 'registry-error', 'aspect-control', 'aspect-error', 'aspect-revision'].map(flow => ({ width: 390, hasEdition: true, account: 'guest', flow }))
+  ...['navigate', 'retire', 'offline', 'revalidate', 'location', 'member-reload', 'member-spa', 'revision', 'date', 'edition-error', 'registry-held', 'registry-error', 'aspect-control', 'aspect-error', 'aspect-revision', 'advancing-live', 'advancing-historical'].map(flow => ({ width: 390, hasEdition: true, account: 'guest', flow }))
 ];
 for (const { width, hasEdition, account, flow } of cases) {
   test(`compiled guest required sources ${width}, edition ${hasEdition}, ${account}, ${flow}`, async ({ page }) => {
     test.setTimeout(90_000);
     page.setDefaultTimeout(15_000);
     await page.setViewportSize({ width, height: 1000 });
-    await page.clock.setFixedTime(new Date('2026-10-12T16:00:00Z'));
+    const advancing = flow.startsWith('advancing-');
+    if (advancing) {
+      // Keep the synthetic 2026 edition in season while time runs normally.
+      // A frozen Date would hide distinct click/preparation calculation keys.
+      await page.clock.install({ time: new Date('2026-10-13T16:00:00Z') });
+      await page.clock.resume();
+    } else await page.clock.setFixedTime(new Date('2026-10-12T16:00:00Z'));
     await page.addInitScript(() => localStorage.setItem('tldrastro:selectedLocation', JSON.stringify({
       label: 'Synthetic New York', latitude: 40.7128, longitude: -74.006, timeZone: 'America/New_York'
     })));
@@ -31,6 +37,8 @@ for (const { width, hasEdition, account, flow } of cases) {
       const NativeWorker = window.Worker;
       const completed: Array<{ kind: string; ok: boolean }> = [];
       (window as any).__qaSkyWorkerCompleted = completed;
+      const placementCalls: Array<{ id: number; referenceDate: string; finished?: boolean; ok?: boolean; generatedAt?: string; location?: unknown }> = [];
+      (window as any).__qaSkyPlacementCalls = placementCalls;
       window.Worker = class extends NativeWorker {
         private kinds = new Map<number, string>();
         constructor(url: string | URL, options?: WorkerOptions) {
@@ -38,10 +46,18 @@ for (const { width, hasEdition, account, flow } of cases) {
           this.addEventListener('message', event => {
             const kind = this.kinds.get(event.data?.id);
             if (kind) completed.push({ kind, ok: event.data.ok === true });
+            const placement = placementCalls.find(call => call.id === event.data?.id);
+            if (placement) {
+              placement.finished = true;
+              placement.ok = event.data.ok === true;
+              placement.generatedAt = event.data.value?.generatedAt;
+              placement.location = event.data.value?.location;
+            }
           });
         }
         postMessage(message: any, options?: any) {
           if (message && typeof message.id === 'number') this.kinds.set(message.id, message.kind);
+          if (message?.kind === 'placement-sky') placementCalls.push({ id: message.id, referenceDate: message.date });
           super.postMessage(message, options);
         }
       };
@@ -88,6 +104,15 @@ for (const { width, hasEdition, account, flow } of cases) {
         sections: { packageRecord: record }, source_snapshot: { content_role: record.content_role, review_status: 'approved' },
         event_type: 'fallback-hook', block_type: 'fallback_hook' };
     });
+    const heldBroadFlow = flow === 'aspect-control' || flow === 'aspect-error';
+    let releaseCalculation!: () => void, releaseBroad!: () => void;
+    const calculationGate = new Promise<void>(resolve => { releaseCalculation = resolve; });
+    const broadGate = new Promise<void>(resolve => { releaseBroad = resolve; });
+    const broadRequests: Request[] = [];
+    if (heldBroadFlow) await page.route('**/wasm/**', async route => {
+      await calculationGate;
+      await route.continue();
+    });
     const aspectKey = 'sky.aspect.sun.trine.pluto';
     let failAspect = flow === 'aspect-error', aspectRequests = 0, holdAspect = false, aspectHeld = false;
     let releaseAspect!: () => void; const aspectGate = new Promise<void>(resolve => { releaseAspect = resolve; });
@@ -128,7 +153,9 @@ for (const { width, hasEdition, account, flow } of cases) {
       const isEdition = query.keys?.includes(edition.content_key) || query.ids?.includes(edition.id);
       if (isEdition) editionRequests.push(route.request());
       const isAspect = query.keys?.includes(aspectKey) || query.ids?.includes('cccccccc-cccc-4ccc-accc-cccccccccccc');
-      if (isAspect) { aspectRequests++; if (holdAspect) { aspectHeld = true; await aspectGate; } if (failAspect) return route.fulfill({ status: 503, json: { error: 'Synthetic current required aspect unavailable.' } }); }
+      const isBroad = heldBroadFlow && query.keys?.length === 45 && isAspect;
+      if (isBroad) { broadRequests.push(route.request()); releaseCalculation(); await broadGate; }
+      if (isAspect && !isBroad) { aspectRequests++; if (holdAspect) { aspectHeld = true; await aspectGate; } if (failAspect) return route.fulfill({ status: 503, json: { error: 'Synthetic current required aspect unavailable.' } }); }
       if (isEdition && holdEdition) { editionHeld = true; await editionGate; }
       if (isEdition && failEdition) return route.fulfill({ status: 503, json: { error: 'Synthetic required edition unavailable.' } });
       const admitted = rows.filter(row => (row !== edition || !editionRetired)
@@ -176,7 +203,7 @@ for (const { width, hasEdition, account, flow } of cases) {
       };
       requestAnimationFrame(() => requestAnimationFrame(sample));
     }));
-    let holdNewSky = false, newSkyHeld = false, releaseNewSky!: () => void;
+    let holdNewSky = heldBroadFlow, newSkyHeld = false, releaseNewSky!: () => void;
     const newSkyGate = new Promise<void>(resolve => { releaseNewSky = resolve; });
     let lastSky: any, newSkyUrl = ''; 
     await page.route('**/api/sky?**', async route => {
@@ -188,8 +215,12 @@ for (const { width, hasEdition, account, flow } of cases) {
       await skyHandler({ method: 'GET', url: route.request().url() } as any, res as any);
     });
     await page.route('**/api/calendar?**', route => route.fulfill({ json: { ok: true, calendar: { days: [] } } }));
+    const advancingFullSky = advancing ? page.waitForResponse(response => {
+      const url = new URL(response.url());
+      return url.pathname === '/api/sky' && url.searchParams.get('detail') === 'full' && response.status() === 200;
+    }) : null;
     try {
-      await page.goto('/?date=2026-10-12#sky/placement/sun/libra');
+      await page.goto(flow === 'advancing-live' ? '/#sky/placement/sun/libra' : '/?date=2026-10-12#sky/placement/sun/libra');
       await expect.poll(() => selectedStarted).toBe(true);
       const article = page.locator('.sky-detail-article');
       if (flow === 'registry-error') {
@@ -202,6 +233,7 @@ for (const { width, hasEdition, account, flow } of cases) {
         await expect.poll(() => selectedStarted).toBe(true);
         await expect.poll(() => abandoned.every(request => request.failure() !== null)).toBe(true);
       }
+      if (heldBroadFlow) await expect.poll(() => broadRequests.length).toBe(1);
       if (flow === 'aspect-error') {
         await expect.poll(() => aspectRequests).toBeGreaterThan(0);
         await expect(page.getByText('The placement reading could not load. Please try again.', { exact: true })).toBeVisible();
@@ -234,6 +266,19 @@ for (const { width, hasEdition, account, flow } of cases) {
         }
         await expect(article.locator('#sky-personalized-placement')).toHaveCount(0);
         await expect(article.locator('#sky-rising-horoscopes')).toHaveCount(0);
+        if (heldBroadFlow) {
+          // Actual required content and Retry finish while the broad read is held.
+          const complete = await article.evaluate(node => node.outerHTML);
+          releaseBroad();
+          for (const request of broadRequests) {
+            const response = await request.response();
+            expect(response?.status()).toBe(200);
+            expect(await response!.finished()).toBeNull();
+            expect(request.failure()).toBeNull();
+          }
+          expect([...new Set(await articleFrames())]).toEqual([complete]);
+          releaseNewSky();
+        }
         const before = await article.evaluate(node => node.outerHTML);
         if (flow === 'navigate') {
           await page.evaluate(() => { window.location.hash = 'sky'; });
@@ -411,7 +456,90 @@ for (const { width, hasEdition, account, flow } of cases) {
         await expect(article).toContainText('Synthetic complete dated ending.', { timeout: 60_000 });
         expect([...new Set(await articleFrames())]).toEqual([recovered]);
       }
+      if (advancing) {
+        const fullSky = await advancingFullSky!;
+        expect(await fullSky.finished()).toBeNull();
+        await expect.poll(() => lastSky?.generatedAt).toBe(new URL(fullSky.url()).searchParams.get('at'));
+        await expect.poll(() => page.evaluate(() => (window as any).__qaSkyPlacementCalls.every((call: any) => call.finished))).toBe(true);
+        const body = article.locator('.article-body-inner').first();
+        const completeBody = await body.innerHTML();
+        const assertSuccessfulPlacement = (call: any) => {
+          expect(call.ok).toBe(true);
+          expect(call.generatedAt).toBe(call.referenceDate);
+          expect(call.location).toEqual({ label: 'Synthetic New York', latitude: 40.7128, longitude: -74.006, timeZone: 'America/New_York' });
+        };
+        for (const call of await page.evaluate(() => (window as any).__qaSkyPlacementCalls)) assertSuccessfulPlacement(call);
+        let previousInstant = lastSky.generatedAt;
+        for (const attempt of [1, 2]) {
+          await expect(page.locator('html')).not.toHaveAttribute('data-page-transition', 'active');
+          await page.getByRole('button', { name: 'Close detail', exact: true }).click();
+          await expect(body).toHaveCount(0);
+          await expect(page.locator('html')).not.toHaveAttribute('data-page-transition', 'active');
+          await expect(page.getByLabel('Daily sky summary', { exact: true })).toBeVisible();
+          await expect(page.locator('.planet-placement-row--sky')).toHaveCount(14);
+          const before = await page.evaluate(() => (window as any).__qaSkyPlacementCalls.length);
+          const openedAt = await page.evaluate(() => Date.now());
+          await page.getByRole('button', { name: 'Read more about Sun in Libra', exact: true }).click();
+          await expect(body).toContainText('Synthetic complete dated ending.', { timeout: 60_000 });
+          await expect.poll(() => page.evaluate(() => (window as any).__qaSkyPlacementCalls.every((call: any) => call.finished))).toBe(true);
+          expect(await body.innerHTML(), `Complete writing on reopen ${attempt}`).toBe(completeBody);
+          const calls = await page.evaluate(before => (window as any).__qaSkyPlacementCalls.slice(before), before);
+          expect(await page.evaluate(() => Date.now())).toBeGreaterThan(openedAt);
+          if (flow === 'advancing-live') {
+            expect(calls, 'A current reopen performs one fresh placement calculation.').toHaveLength(1);
+            assertSuccessfulPlacement(calls[0]);
+            expect(Date.parse(calls[0].referenceDate)).toBeGreaterThanOrEqual(openedAt);
+            expect(Date.parse(calls[0].referenceDate)).toBeGreaterThan(Date.parse(previousInstant));
+            previousInstant = calls[0].referenceDate;
+          } else {
+            expect(calls, 'An unchanged historical instant reuses the existing exact-input cache.').toHaveLength(0);
+          }
+        }
+        if (flow === 'advancing-live') {
+          // Authored strings intentionally cannot supply HTML/Markdown links.
+          // Exercise delegation through an actual related-aspect anchor.
+          await expect(page.locator('html')).not.toHaveAttribute('data-page-transition', 'active');
+          const related = article.getByRole('link', { name: 'Read more about Sun Trine Pluto', exact: true });
+          const destination = (await related.getAttribute('href'))!;
+          const expectedAspectCopy = await related.locator('..').locator('p:not(.article-related-aspects__date)').allTextContents();
+          expect(expectedAspectCopy.length).toBeGreaterThan(0);
+          await related.click();
+          await expect(page).toHaveURL(url => url.hash === destination);
+          await expect(article.locator('#sky-detail-title')).toHaveText(/Sun.*Trine.*Pluto/i);
+          for (const paragraph of expectedAspectCopy) await expect(body).toContainText(paragraph);
+          await page.getByRole('button', { name: 'Close detail', exact: true }).click();
+          await expect(page).toHaveURL(url => url.hash === '#sky/placement/sun/libra');
+          await expect(body).toContainText('Synthetic complete dated ending.');
+          expect(await body.innerHTML()).toBe(completeBody);
+
+          await expect(page.locator('html')).not.toHaveAttribute('data-page-transition', 'active');
+          await page.getByRole('button', { name: 'Close detail', exact: true }).click();
+          await expect(page.getByLabel('Daily sky summary', { exact: true })).toBeVisible();
+          await expect(page.locator('html')).not.toHaveAttribute('data-page-transition', 'active');
+          const before = await page.evaluate(() => (window as any).__qaSkyPlacementCalls.length);
+          const openedAt = await page.evaluate(() => Date.now());
+          await page.getByRole('button', { name: 'Read more about Venus Rx in Scorpio', exact: true }).click();
+          await expect(page).toHaveURL(url => url.hash === '#sky/placement/venus/scorpio');
+          await expect(article.locator('#sky-detail-title')).toHaveText(/Venus.*Scorpio/i);
+          await expect(body.locator('p').last()).toBeVisible();
+          await expect.poll(() => page.evaluate(() => (window as any).__qaSkyPlacementCalls.every((call: any) => call.finished))).toBe(true);
+          const calls = await page.evaluate(before => (window as any).__qaSkyPlacementCalls.slice(before), before);
+          expect(calls, 'The retrograde placement card performs one fresh placement calculation.').toHaveLength(1);
+          assertSuccessfulPlacement(calls[0]);
+          expect(Date.parse(calls[0].referenceDate)).toBeGreaterThanOrEqual(openedAt);
+          const retrogradeBody = await body.innerHTML();
+          const retrogradeDates = await article.locator('.article-duration').allTextContents();
+          expect(retrogradeDates).toHaveLength(2);
+          expect(retrogradeDates[0].trim()).toBeTruthy();
+          expect(retrogradeDates[1]).toContain('Full residency in Scorpio:');
+          await page.reload();
+          await expect(article.locator('#sky-detail-title')).toHaveText(/Venus.*Scorpio/i);
+          await expect(body).toHaveJSProperty('innerHTML', retrogradeBody);
+          await expect(article.locator('.article-duration')).toHaveText(retrogradeDates);
+          for (const call of await page.evaluate(() => (window as any).__qaSkyPlacementCalls)) assertSuccessfulPlacement(call);
+        }
+      }
       expect(errors).toEqual([]);
-    } finally { release(); releaseAccount(); releaseLedger(); releaseNewSky(); releaseRegistry(); releaseEdition(); releaseAspect(); await page.context().setOffline(false); await page.unrouteAll({ behavior: 'wait' }); }
+    } finally { releaseCalculation(); releaseBroad(); release(); releaseAccount(); releaseLedger(); releaseNewSky(); releaseRegistry(); releaseEdition(); releaseAspect(); await page.context().setOffline(false); await page.unrouteAll({ behavior: 'wait' }); }
   });
 }
