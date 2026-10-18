@@ -597,6 +597,8 @@ const runtimeSource = fs.readFileSync(
 const generatedContentSource = fs.readFileSync(
   path.join(repoRoot, "apps/web/src/services/generatedContent.ts"),
   "utf8"
+) + fs.readFileSync(
+  path.join(repoRoot, "apps/web/src/services/fallbackArchitectureV3MirrorValidation.ts"), "utf8"
 );
 const fallbackManifestGeneratorSource = fs.readFileSync(
   path.join(repoRoot, "scripts/generate-fallback-package-manifest.mjs"),

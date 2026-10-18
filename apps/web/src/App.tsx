@@ -52,7 +52,7 @@ import { YouRoute } from "./routes/YouRoute";
 import { loadYouPage, readYouPage } from "./features/you/youExperienceLoader";
 import type { YouPageProps } from "./features/you/YouPage";
 import { isStandaloneLearnPath } from "./content/learnRoutePath";
-import { contentPublicationsResolved, refreshContentPublications, refreshContentPublicationsAfterUpdate } from "./services/contentPublications";
+import { subscribeToContentPublicationAvailability, contentPublicationsAvailableOnline, contentPublicationsResolved, refreshContentPublications, refreshContentPublicationsAfterUpdate } from "./services/contentPublications";
 import { preparePersonalReportTiming } from "./services/personalReportTiming";
 import {
   ArrowDownRight,
@@ -10916,7 +10916,7 @@ async function prepareSkyPlacementArticleContent(
     prepared = new Map([...remaining,
       ...[...eligibleSkyDetailContent(new Map([...ingress, ...incoming]))].filter(([key]) => required.has(key))]);
   }
-  const content = await loadSkyDetailContent(placementSky, prepared, ingressKeys,
+  const content = await loadSkyDetailContent(placementSky, prepared, [...required],
     loadLiveGeneratedContentForKeys, aspectKeys);
   return { placementSky, content };
 }
@@ -11112,6 +11112,15 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
   const placementSelection = skyDetailRoutePath
     ? skyPlacementArticleSelection(skyDetailRoutePath, sky?.positions ?? [])
     : sky ? skyPlacementSelection(sky.positions) : "pending";
+  function isSettledGuestReader() {
+    return mode === "guest" && !userProfile && !profileNatalSky?.ascendant && authAccountChecked
+      && !remoteAccountId && !authAccountError && !hasStoredSupabaseSession();
+  }
+  const settledGuestPlacement = contentPublicationsAvailableOnline() && isSettledGuestReader()
+    && /^sky\/placement\/[^/]+\/[^/]+$/u.test(skyDetailRoutePath ?? "");
+  // The existing readiness owner is scoped to its consumer. A member/list/date
+  // transition invalidates a completed guest subset synchronously during render.
+  const placementRequirementSelection = `${placementSelection}:${settledGuestPlacement ? "compiled-guest" : "full"}:${skyDate}:${location.latitude}:${location.longitude}:${location.timeZone}:${skyDetailRoutePath ?? "list"}`;
   const [resolvedPlacementSelection, setResolvedPlacementSelection] = useState<string | null>(null);
   const [skyPlacementLoadStatus, setSkyPlacementFallbackStatus] = useState<SkyPlacementContentStatus>("idle");
   const [skyPlacementResolvedIdentity, setSkyPlacementResolvedIdentity] = useState<string | null>(null);
@@ -11122,7 +11131,7 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
   // A ledger change invalidates prose during render, before asynchronous effects
   // can install the new source set. A clock tick does not change this identity.
   const skyPlacementFallbackStatus: SkyPlacementContentStatus = skyPlacementLoadStatus === "ready"
-    && (skyListEditionMissing || skyPlacementResolvedIdentity !== skyPlacementPublicationIdentity() || resolvedPlacementSelection !== placementSelection) ? "loading" : skyPlacementLoadStatus;
+    && (skyListEditionMissing || skyPlacementResolvedIdentity !== skyPlacementPublicationIdentity() || resolvedPlacementSelection !== placementRequirementSelection) ? "loading" : skyPlacementLoadStatus;
   const [personalTransitLoadStatus, setPersonalTransitLoadStatus] = useState<SkyPlacementContentStatus>("idle");
   const [personalTransitResolvedIdentity, setPersonalTransitResolvedIdentity] = useState<string | null>(null);
   const [personalTransitRetry, setPersonalTransitRetry] = useState(0);
@@ -11929,6 +11938,10 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
     return () => { cancelled = true; };
   }, [personalTransitSourcesNeeded, personalTransitIdentity, contentRefreshVersion, personalTransitRetry]);
 
+  const requestedArticleLocation = withTimeZone(location);
+  const requestedArticleInstant = sky?.generatedAt
+    ?? initialSkyLoadRef.current?.matches(skyDate, requestedArticleLocation)?.date.toISOString();
+  const requestedArticlePreparationKey = `${skyDetailRoutePath}:${skyDate}:${requestedArticleLocation.latitude}:${requestedArticleLocation.longitude}:${requestedArticleLocation.timeZone}:${requestedArticleInstant}:${skyDetailRetry}`;
   const placementContentNeeded = shouldLoadSkyPlacementContent({ mode, hasSky: Boolean(sky), detailRoutePath: skyDetailRoutePath });
   useEffect(() => {
     if (skyDetailRoutePath) {
@@ -11966,60 +11979,7 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
       });
     return () => { cancelled = true; fallbackDashboardHydrationRequestedRef.current = false; };
   }, [contentRefreshVersion, friendNatalContentRequested, friendRelationshipContentRequests, mode, placementContentNeeded]);
-  useEffect(() => {
-    let cancelled = false;
-    const shouldLoadPlacementContent = placementContentNeeded;
 
-    if (shouldLoadPlacementContent && placementSelection === "pending") {
-      void loadSkyPlacementFallbackArchitectureV3Bundle(false).catch(() => { /* The source gate retries and reports errors. */ });
-    }
-    if (!shouldLoadPlacementContent || placementSelection === "pending") {
-      // Keep a resolved Sky reading. Resetting to idle made every return visit
-      // replay the illustrated loader even when sources were already ready.
-      return () => {
-        cancelled = true;
-      };
-    }
-
-    // Keep a fully resolved, unchanged revision visible during revalidation.
-    // On first load (or after a publication changes), the view stays in its
-    // existing loading skeleton until *all* source planes have resolved.
-    setSkyPlacementFallbackStatus(previous => previous === "ready" ? previous : "loading");
-    // The Sky registry carries the approved exact aspect copy the article's Gifts and Lessons
-    // cards render, so it loads here rather than at startup. It stays outside the source gate:
-    // its arrival bumps the registry revision and recomputes the article on its own, while
-    // waiting for it would let a publication land mid-load and fail the identity check.
-    if (skyDetailRoutePath) void loadContentRegistry("sky");
-    void prepareSkyPlacementSources(placementSelection || undefined).then(async ({ coreBundle, placementBundle, identity }) => {
-      const editionKeys = !skyDetailRoutePath ? (sky?.positions ?? []).flatMap(position =>
-        skyIngressEssayPublicationKeys(contentPublicationRecords(), {
-          planet: normalizeContentIdPart(position.planet), sign: normalizeContentIdPart(position.sign)
-        })) : [];
-      const publishedEditions = eligibleSkyDetailContent(editionKeys.length ? await loadLiveGeneratedContentForKeys(editionKeys) : new Map());
-      if (cancelled) return;
-      if (identity !== skyPlacementPublicationIdentity()) throw new Error("Sky sources changed during loading. Please retry.");
-      if (editionKeys.some(key => !publishedEditions.has(key))) throw new Error("The current article publication could not load.");
-      // Commit both overlays in the same task; never announce the bundled
-      // passage as ready and replace it later with the Studio passage.
-      installSkyCoreFallbackArchitectureV3Bundle(coreBundle);
-      installSkyPlacementFallbackArchitectureV3Bundle(placementBundle);
-      setSkyGeneratedContent(previous => mergeGeneratedContentMaps(publishedEditions, eligibleSkyDetailContent(previous)));
-      setFallbackArchitectureV3Version((version) => version + 1);
-      setFallbackDashboardOverlayVersion((version) => version + 1);
-      setSkyPlacementResolvedIdentity(identity);
-      setResolvedPlacementSelection(placementSelection);
-      setSkyPlacementFallbackStatus("ready");
-    }).catch(error => {
-      if (cancelled) return;
-      console.warn("Sky placement sources failed to load.", error);
-      setSkyPlacementFallbackStatus(previous => previous === "ready"
-        && !skyListEditionMissing && skyPlacementResolvedIdentity === skyPlacementPublicationIdentity() && resolvedPlacementSelection === placementSelection ? previous : "error");
-    });
-
-    return () => {
-      cancelled = true;
-    };
-  }, [contentRefreshVersion, placementContentNeeded, placementSelection, skyPlacementFallbackRetryKey]);
 
   useEffect(() => {
     let pendingHashChangeUrl: string | null = null;
@@ -12231,8 +12191,7 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
         if (skyArticlePreparationRef.current === preparation) skyArticlePreparationRef.current = null;
       });
     }
-    const coldGuest = !sky && mode === "guest" && !userProfile && authAccountChecked && !remoteAccountId
-      && !authAccountError && !hasStoredSupabaseSession() && !readCachedFallbackArchitectureV3Bundle("sky-article");
+    const coldGuest = !sky && isSettledGuestReader() && !readCachedFallbackArchitectureV3Bundle("sky-article");
     const preparation = skyArticlePreparationRef.current;
     if (coldGuest && canLoadPlacementArticle && preparation?.key === preparationKey && !preparation.early) {
       prefetchColdSkyPlacementSources(placementSelection || undefined);
@@ -12249,8 +12208,7 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
     const articlePreparation = skyArticlePreparationRef.current?.request;
     // Guest articles already have their complete placement facts. Member
     // personalization retains the existing full-Sky readiness boundary.
-    if (!sky && (mode !== "guest" || userProfile || !authAccountChecked
-      || remoteAccountId || authAccountError || hasStoredSupabaseSession())) return;
+    if (!sky && !isSettledGuestReader()) return;
     const commitResolvedSkyDetail = (detail: SkyDetail | null) => {
       setSkyDetailResolvedIdentity(skyPlacementPublicationIdentity());
       setSelectedSkyDetail(detail);
@@ -12388,7 +12346,77 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
       renderDetail(detailSky, content, true);
     }).catch(error => { if (!cancelled) { console.warn("Sky detail failed.", error); setSkyDetailReadError(skyDetailRoutePath); } });
     return () => { cancelled = true; };
-  }, [contentRegistryVersion, contentRefreshVersion, fallbackArchitectureV3Version, profileNatalSky?.ascendant, sky, skyDate, skyDetailRoutePath, skyGeneratedContent, skyPlacementFallbackStatus, skyPlacementPersonalizationTransits, userProfile?.rising, userProfile?.id, authAccountChecked, remoteAccountId, authAccountError, skyDetailRetry, personalTransitSourcesNeeded, personalTransitSourceStatus, mode, skyRefreshKey, location.latitude, location.longitude, location.timeZone, contentPublicationGeneration]);
+  }, [contentRegistryVersion, contentRefreshVersion, fallbackArchitectureV3Version, profileNatalSky?.ascendant, sky, skyDate, skyDetailRoutePath, skyGeneratedContent, skyPlacementFallbackStatus, skyPlacementPersonalizationTransits, userProfile?.rising, userProfile?.id, authAccountChecked, remoteAccountId, authAccountError, skyDetailRetry, skyPlacementFallbackRetryKey, personalTransitSourcesNeeded, personalTransitSourceStatus, mode, skyRefreshKey, location.latitude, location.longitude, location.timeZone, contentPublicationGeneration]);
+
+  // Prepare the independent article request in the preceding effect before
+  // the single source-readiness owner joins it. No duplicate preparation path.
+  useEffect(() => {
+    let cancelled = false;
+    const shouldLoadPlacementContent = placementContentNeeded;
+
+    if (shouldLoadPlacementContent && placementSelection === "pending") {
+      void loadSkyPlacementFallbackArchitectureV3Bundle(false).catch(() => { /* The source gate retries and reports errors. */ });
+    }
+    if (!shouldLoadPlacementContent || placementSelection === "pending") {
+      // Keep a resolved Sky reading. Resetting to idle made every return visit
+      // replay the illustrated loader even when sources were already ready.
+      return () => {
+        cancelled = true;
+      };
+    }
+
+    // Keep a fully resolved, unchanged revision visible during revalidation.
+    // On first load (or after a publication changes), the view stays in its
+    // existing loading skeleton until *all* source planes have resolved.
+    setSkyPlacementFallbackStatus(previous => previous === "ready" ? previous : "loading");
+    // The Sky registry carries the approved exact aspect copy the article's Gifts and Lessons
+    // cards render, so it loads here rather than at startup. It stays outside the source gate:
+    // its arrival bumps the registry revision and recomputes the article on its own, while
+    // waiting for it would let a publication land mid-load and fail the identity check.
+    if (skyDetailRoutePath) void loadContentRegistry("sky");
+    const preparation = skyArticlePreparationRef.current;
+    const compiledGuest = settledGuestPlacement && preparation?.key === requestedArticlePreparationKey
+      ? preparation.request.then(({ placementSky, content }) => {
+        if (!contentPublicationsAvailableOnline() || !isSettledGuestReader() || preparation.generation !== contentPublicationGeneration) return null;
+        const [, , planet, sign] = decodeSkyRouteParts(skyDetailRoutePath!);
+        return skyIngressEssayReaderSection(eligibleSkyDetailContent(content).values(), {
+          activeInstant: placementSky.generatedAt, planet: normalizeContentIdPart(planet), sign: normalizeContentIdPart(sign)
+        }, contentPublication) ? skyPlacementPublicationIdentity() : null;
+      }) : undefined;
+    const sourceRequest = prepareSkyPlacementSources(placementSelection || undefined, compiledGuest ? { compiledGuest } : undefined);
+    if (preparation?.early) prefetchColdSkyPlacementSources(placementSelection || undefined);
+    void sourceRequest.then(async ({ coreBundle, placementBundle, identity, scope }) => {
+      const editionKeys = !skyDetailRoutePath ? (sky?.positions ?? []).flatMap(position =>
+        skyIngressEssayPublicationKeys(contentPublicationRecords(), {
+          planet: normalizeContentIdPart(position.planet), sign: normalizeContentIdPart(position.sign)
+        })) : [];
+      const publishedEditions = eligibleSkyDetailContent(editionKeys.length ? await loadLiveGeneratedContentForKeys(editionKeys) : new Map());
+      if (cancelled) return;
+      if (scope === "compiled-guest" && (!contentPublicationsAvailableOnline() || !isSettledGuestReader())) throw new Error("Sky publication state is unavailable.");
+      if (identity !== skyPlacementPublicationIdentity()) throw new Error("Sky sources changed during loading. Please retry.");
+      if (editionKeys.some(key => !publishedEditions.has(key))) throw new Error("The current article publication could not load.");
+      // Commit both overlays in the same task; never announce the bundled
+      // passage as ready and replace it later with the Studio passage.
+      installSkyCoreFallbackArchitectureV3Bundle(coreBundle);
+      if (scope === "full") installSkyPlacementFallbackArchitectureV3Bundle(placementBundle);
+      setSkyGeneratedContent(previous => mergeGeneratedContentMaps(publishedEditions, eligibleSkyDetailContent(previous)));
+      setFallbackArchitectureV3Version((version) => version + 1);
+      setFallbackDashboardOverlayVersion((version) => version + 1);
+      setSkyPlacementResolvedIdentity(identity);
+      setResolvedPlacementSelection(placementRequirementSelection);
+      setSkyPlacementFallbackStatus("ready");
+
+    }).catch(error => {
+      if (cancelled) return;
+      console.warn("Sky placement sources failed to load.", error);
+      setSkyPlacementFallbackStatus(previous => previous === "ready"
+        && !skyListEditionMissing && skyPlacementResolvedIdentity === skyPlacementPublicationIdentity() && resolvedPlacementSelection === placementRequirementSelection ? previous : "error");
+    });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [contentRefreshVersion, placementContentNeeded, placementSelection, placementRequirementSelection, requestedArticlePreparationKey, sky?.location.latitude ?? requestedArticleLocation.latitude, sky?.location.longitude ?? requestedArticleLocation.longitude, sky?.location.timeZone ?? requestedArticleLocation.timeZone, skyPlacementFallbackRetryKey, skyDetailRetry]);
 
   useEffect(() => {
     if (!selectedSkyDetail?.routePath?.startsWith("friends?")
@@ -12450,9 +12478,12 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
       if (source !== "complete-live") void refreshContentPublicationsAfterUpdate();
       refreshInstalledContent();
     });
+    const stopAvailability = subscribeToContentPublicationAvailability(() => {
+      setFallbackArchitectureV3Version(version => version + 1);
+    });
     const unsubscribe = subscribeToContentUpdates(refreshContent);
     const stopRevalidation = subscribeToContentRevalidation(refreshContent);
-    return () => { stopPublications(); unsubscribe(); stopRevalidation(); };
+    return () => { stopPublications(); stopAvailability(); unsubscribe(); stopRevalidation(); };
   }, []);
 
   useEffect(() => {

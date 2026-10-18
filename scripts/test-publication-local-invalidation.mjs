@@ -27,7 +27,7 @@ const summaryEffect = effect('apps/web/src/features/sky/PublishedSkySummary.tsx'
 const entry = `
 import { installContentPublications, publicationAllowsContent, contentPublicationRecords, contentPublicationGeneration,
   subscribeToContentPublications } from './apps/web/src/content/contentPublicationState';
-import { contentPublicationsResolved, refreshContentPublications, refreshContentPublicationsAfterUpdate } from './apps/web/src/services/contentPublications';
+import { subscribeToContentPublicationAvailability, contentPublicationsResolved, refreshContentPublications, refreshContentPublicationsAfterUpdate } from './apps/web/src/services/contentPublications';
 import { loadReaderRows } from './apps/web/src/services/readerContentClient';
 import { canonicalPublicationLedger, publicationLedgerTag, loadPublicationLedgerFromApi } from './apps/web/src/services/publicationLedgerTransport';
 import { announceContentUpdate, subscribeToContentUpdates, subscribeToContentRevalidation } from './apps/web/src/services/contentUpdateSignal';
@@ -50,6 +50,7 @@ function skyPreparation() {
   return { ...value, currentGeneration: contentPublicationGeneration, currentRefreshVersion: counts.app };
 }
 const setContentRefreshVersion = update => { counts.app = update(counts.app); };
+const setFallbackArchitectureV3Version = update => { counts.fallbackVersion = update(counts.fallbackVersion); };
 const setRevision = update => { counts.articles = update(counts.articles); };
 const setRefresh = update => { counts.summary = update(counts.summary); };
 const keys = [globalThis.__fixture.contentKey];
@@ -101,7 +102,7 @@ function group(initial, snapshot = initial, { storageUnavailable = false, tabCou
   let clock = Date.parse('2026-10-15T01:00:00Z');
   const data = new Map([[cacheKey, JSON.stringify(initial)]]), queue = [], channels = new Set(), tabs = [];
   for (let index = 0; index < tabCount; index++) {
-    const counts = { metadataReads: 0, app: 0, articles: 0, summary: 0, sharedClears: 0, vocabularyClears: 0,
+    const counts = { fallbackVersion: 0, metadataReads: 0, app: 0, articles: 0, summary: 0, sharedClears: 0, vocabularyClears: 0,
       taglineClears: 0, storageWrites: 0, broadcastPosts: 0, snapshotFetches: 0, readerRequests: 0, relayReads: 0 };
     const window = target(), document = Object.assign(target(), { visibilityState: 'visible' });
     const localStorage = { getItem(key) { if (storageUnavailable) throw Error('Storage unavailable'); return data.get(key) ?? null; },
@@ -346,3 +347,18 @@ for (const tab of ordered.tabs) tab.api.cleanup();
 const stopped = ordered.totals(); ordered.storageImport(ledger(3, 'retired')); await ordered.settle(); ordered.assertText(3, false);
 for (const consumer of ['app', 'articles', 'summary']) assert.equal(ordered.totals()[consumer], stopped[consumer], 'Unmounted consumers must unsubscribe.');
 console.log('Publication local invalidation PASS: omitted retirements through actual scoped reader responses, complete direct/relay cold reads, coalesced partial follow-up, all three effects, Calendar, storage/BC, 503 recovery and cleanup.');
+
+const availability = group(ledger(1), ledger(1), { tabCount: 1 });
+await availability.tabs[0].api.refreshContentPublications(true); await availability.settle();
+assert.equal(availability.tabs[0].counts.fallbackVersion, 1, 'Actual App owner observes first settled online availability.');
+availability.holdReads(); const unchangedAvailability = availability.tabs[0].api.refreshContentPublications(true);
+await new Promise(resolve => setImmediate(resolve));
+assert.equal(availability.tabs[0].counts.fallbackVersion, 1, 'Pending warm refresh cannot revoke current online readiness.');
+availability.releaseReads(); await unchangedAvailability; await availability.settle();
+assert.equal(availability.tabs[0].counts.fallbackVersion, 1, 'Unchanged successful refresh does not notify availability again.');
+availability.setUnavailable(true); await availability.tabs[0].api.refreshContentPublications(true); await availability.settle();
+assert.equal(availability.tabs[0].counts.fallbackVersion, 2, 'Failed settlement invalidates the actual App owner even with unchanged ledger rows.');
+availability.tabs[0].api.cleanup(); availability.setUnavailable(false);
+await availability.tabs[0].api.refreshContentPublications(true); await availability.settle();
+assert.equal(availability.tabs[0].counts.fallbackVersion, 2, 'Unmounted App owner unsubscribes from availability.');
+console.log('PASS actual App availability subscription: settled success, warm pending/unchanged, same-ledger failure and cleanup.');

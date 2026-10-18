@@ -5,79 +5,106 @@ import { missingSkyPlacementPublications, skyPlacementPublicationIdentity } from
 
 export { missingSkyPlacementPublications, skyPlacementPublicationIdentity };
 
-/** Prepare first, commit in the caller only when all source planes are complete.
- * A fulfilled bundled import alone cannot prove that the owner has no override.
- * Uses existing source caches, never another independently selected prose cache.
- */
+type SourceResult = {
+  coreBundle: Awaited<ReturnType<typeof loadFallbackArchitectureV3DashboardBundle>>;
+  placementBundle: Awaited<ReturnType<typeof loadFallbackArchitectureV3SkyPlacementDashboardBundle>>;
+  identity: string;
+  scope: "full" | "compiled-guest";
+};
 type SourcePreparation = {
   publications: Promise<void>;
   selected?: ReturnType<typeof prefetchColdSkyPlacementRows>;
-  request?: ReturnType<typeof prepareSources>;
+  early?: ReturnType<typeof prefetchColdSkyArticleRows>;
+  bundled: ReturnType<typeof loadSkyPlacementFallbackArchitectureV3Bundle>;
+  setup: Promise<void>;
+  full?: Promise<SourceResult>;
+  epoch: string | null;
+  superseded?: boolean;
+  waiters: number;
 };
-async function prepareSources(selection: string | undefined, entry: SourcePreparation) {
-  let timer: ReturnType<typeof setTimeout> | undefined;
-  let earlyRead: ReturnType<typeof prefetchColdSkyArticleRows>;
-  const prepare = async () => {
-    const bundled = loadSkyPlacementFallbackArchitectureV3Bundle(!selection || selection.startsWith('article:'));
-    void bundled.catch(() => { /* Joined below, including its failure. */ });
-    const publications = entry.publications;
-    if (selection?.startsWith("article:")) earlyRead = prefetchColdSkyArticleRows(publications);
-    await publications;
-    // Live readers already resolve current rows below. The full offline snapshot
-    // is a recovery source, not a prerequisite download for every Sky visit.
-    if (!contentPublicationsAvailableOnline()) {
-      earlyRead?.discard();
-      earlyRead = undefined;
-      entry.selected?.discard();
-      entry.selected = undefined;
-      await loadContentStudioLastKnownGoodRows();
-    }
-    if (!contentPublicationsResolved()) throw new Error("Sky publication state is unavailable.");
-    for (let attempt = 0; attempt < 2; attempt++) {
-      const identity = skyPlacementPublicationIdentity();
-      const [coreBundle, placementBundle] = await Promise.all([
-        loadFallbackArchitectureV3DashboardBundle(selection?.startsWith('article:') ? "sky-article" : selection ? "sky-list" : "sky", attempt === 0 ? earlyRead : undefined),
-        loadFallbackArchitectureV3SkyPlacementDashboardBundle(selection, attempt === 0 ? entry.selected : undefined),
-        bundled
-      ]);
-      // A failed live row request can install the offline ledger. Resolve both
-      // planes against that identity before committing either to the reader.
-      if (identity !== skyPlacementPublicationIdentity()) continue;
-      const missing = missingSkyPlacementPublications([coreBundle, placementBundle]);
-      if (missing.length) throw new Error(`Current Sky publications did not load: ${missing.join(", ")}`);
-      return { coreBundle, placementBundle, identity };
-    }
-    throw new Error("Sky publications changed during loading.");
-  };
-  try {
-    return await Promise.race([prepare(), new Promise<never>((_, reject) => {
-      timer = setTimeout(() => reject(new Error("Sky placement content timed out. Please retry.")), 20_000);
-    })]);
-  } finally {
-    clearTimeout(timer);
-    earlyRead?.discard();
-    entry.selected?.discard();
-  }
-}
-
 const pending = new Map<string, SourcePreparation>();
-/** Late guest confirmation attaches to the same source preparation. It cannot
- * restart the ledger, astronomy, or a claimed selected-row transport. */
-export function prepareSkyPlacementSources(selection?: string) {
-  const key = selection ?? "all";
-  let entry = pending.get(key);
-  if (!entry) {
-    entry = { publications: refreshContentPublications() };
-    pending.set(key, entry);
+
+async function completeSources(selection: string | undefined, entry: SourcePreparation, compiledGuest?: Promise<string | null>): Promise<SourceResult> {
+  await entry.setup;
+  for (let attempt = 0; attempt < 2; attempt++) {
+    if (entry.superseded) throw new Error("Sky publications changed during loading.");
+    const identity = skyPlacementPublicationIdentity();
+    // The actual loader owners share pending reads by selection/generation.
+    const core = loadFallbackArchitectureV3DashboardBundle(selection?.startsWith("article:") ? "sky-article" : selection ? "sky-list" : "sky", attempt === 0 ? entry.early : undefined);
+    const selected = loadFallbackArchitectureV3SkyPlacementDashboardBundle(selection, attempt === 0 ? entry.selected : undefined);
+    void selected.catch(() => { /* A guest may not require it; full callers do. */ });
+    // Undefined means the selected plane was deliberately not required; null
+    // remains a completed full-plane result with no dashboard overlay.
+    const requiredSelected = compiledGuest
+      ? compiledGuest.then(admitted => admitted === identity && contentPublicationsAvailableOnline() ? undefined : selected)
+      : selected;
+    const [coreBundle, completedSelected] = await Promise.all([core, requiredSelected, entry.bundled]);
+    const subset = completedSelected === undefined && contentPublicationsAvailableOnline();
+    const placementBundle = subset ? null : completedSelected === undefined ? await selected : completedSelected;
+    if (entry.superseded) throw new Error("Sky publications changed during loading.");
+    if (identity !== skyPlacementPublicationIdentity()) continue;
+    const missing = missingSkyPlacementPublications(subset ? [coreBundle] : [coreBundle, placementBundle]);
+    if (missing.length) throw new Error(`Current Sky publications did not load: ${missing.join(", ")}`);
+    return { coreBundle, placementBundle, identity, scope: subset ? "compiled-guest" : "full" };
   }
-  return entry.request ??= prepareSources(selection, entry).finally(() => pending.delete(key));
+  throw new Error("Sky publications changed during loading.");
+}
+function requiredCompletion(key: string, selection: string | undefined, entry: SourcePreparation, compiledGuest?: Promise<string | null>) {
+  entry.waiters++;
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  // Only a real full consumer creates this pending completion. A later full
+  // consumer joins it even after core settled while selected rows remain held.
+  if (!compiledGuest && !entry.full) {
+    const full = completeSources(selection, entry).finally(() => {
+      if (entry.full === full) entry.full = undefined;
+    });
+    entry.full = full;
+  }
+  const completion = compiledGuest ? completeSources(selection, entry, compiledGuest) : entry.full!;
+  return Promise.race([completion, new Promise<never>((_, reject) => {
+    timer = setTimeout(() => reject(new Error("Sky placement content timed out. Please retry.")), 20_000);
+  })]).finally(() => {
+    clearTimeout(timer);
+    if (--entry.waiters === 0) {
+      entry.superseded = true;
+      entry.early?.discard(); entry.selected?.discard();
+      if (pending.get(key) === entry) pending.delete(key);
+    }
+  });
 }
 
-/** Auth confirmation may add transport only while the original source request
- * is pending. It must not restart a settled member or warm source load. */
+/** One readiness owner, distinct required completions. Transport sharing and
+ * retry lifetime belong to the existing generation-scoped loader owners. */
+export function prepareSkyPlacementSources(selection?: string, options?: { compiledGuest: Promise<string | null> }) {
+  const key = selection ?? "all", identity = skyPlacementPublicationIdentity();
+  let entry = pending.get(key);
+  if (entry?.epoch && entry.epoch !== identity) {
+    entry.superseded = true; entry = undefined;
+  }
+  if (!entry) {
+    const publications = refreshContentPublications();
+    const bundled = loadSkyPlacementFallbackArchitectureV3Bundle(!selection || selection.startsWith("article:"));
+    void bundled.catch(() => { /* Required completions join this rejection. */ });
+    entry = { publications, bundled, epoch: null, waiters: 0, setup: Promise.resolve() };
+    const current = entry;
+    current.early = selection?.startsWith("article:") ? prefetchColdSkyArticleRows(publications) : undefined;
+    current.setup = publications.then(async () => {
+      if (current.superseded) return;
+      if (!contentPublicationsAvailableOnline()) {
+        current.early?.discard(); current.early = undefined;
+        current.selected?.discard(); current.selected = undefined;
+        await loadContentStudioLastKnownGoodRows();
+        if (current.superseded) return;
+      }
+      if (!contentPublicationsResolved()) throw new Error("Sky publication state is unavailable.");
+      current.epoch = skyPlacementPublicationIdentity();
+    });
+    pending.set(key, current);
+
+  }
+  return requiredCompletion(key, selection, entry, options?.compiledGuest);
+}
 export function prefetchColdSkyPlacementSources(selection?: string) {
   const entry = selection ? pending.get(selection) : undefined;
-  if (entry && selection && !entry.selected) {
-    entry.selected = prefetchColdSkyPlacementRows(selection, entry.publications);
-  }
+  if (entry && selection && !entry.selected) entry.selected = prefetchColdSkyPlacementRows(selection, entry.publications);
 }

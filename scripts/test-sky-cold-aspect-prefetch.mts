@@ -77,19 +77,44 @@ for (const scenario of ['initial', 'partial-first', 'later-revision', 'generatio
   if (scenario === 'explicit-refresh-batched') assert.notEqual(preparation.refreshVersion, 2,
     'An explicit refresh batched with initial publication must still invalidate preparation.');
 }
-let coldPredicate = '';
+let coldPredicate = '', guestPredicate = '';
+
 function visit(node: ts.Node) {
+  if (ts.isFunctionDeclaration(node) && node.name?.text === 'isSettledGuestReader') {
+    assert.equal(guestPredicate, ''); guestPredicate = node.getText(ast);
+  }
   if (ts.isVariableDeclaration(node) && ts.isIdentifier(node.name) && node.name.text === 'coldGuest') {
     assert.equal(coldPredicate, ''); coldPredicate = node.initializer!.getText(ast);
   }
   ts.forEachChild(node, visit);
 }
-visit(ast); assert(coldPredicate);
+visit(ast); assert(coldPredicate); assert(guestPredicate);
+let sourceDependencies: ts.ArrayLiteralExpression | undefined;
+function findSourceDependencies(node: ts.Node) {
+  if (ts.isCallExpression(node) && node.expression.getText(ast) === 'useEffect'
+    && node.arguments[0]?.getText(ast).includes('const sourceRequest = prepareSkyPlacementSources')) {
+    assert.equal(sourceDependencies, undefined); sourceDependencies = node.arguments[1] as ts.ArrayLiteralExpression;
+  }
+  ts.forEachChild(node, findSourceDependencies);
+}
+findSourceDependencies(ast); assert(sourceDependencies);
+const geometryDependencies = sourceDependencies.elements.filter(node => node.getText(ast).includes('sky?.location.'));
+assert.equal(geometryDependencies.length, 3);
+const selectedLocation = { latitude: 40.7128, longitude: -74.006, timeZone: 'America/New_York' };
+const geometry = (sky: unknown) => geometryDependencies.map(node => vm.runInNewContext(node.getText(ast), { sky, location: selectedLocation, requestedArticleLocation: selectedLocation }));
+const initialGeometry = geometry(null);
+assert.deepEqual(geometry({ location: selectedLocation }), initialGeometry,
+  'Arrival of the matching full Sky must not restart the same source preparation after its core read settled.');
+for (const change of [{ latitude: 0 }, { longitude: 0 }, { timeZone: 'America/Los_Angeles' }]) {
+  assert.notDeepEqual(geometry({ location: { ...selectedLocation, ...change } }), initialGeometry,
+    'Actual same-instant geometry changes must still invalidate preparation.');
+}
+
 for (const override of [{}, { sky: {} }, { mode: 'you' }, { userProfile: {} }, { authAccountChecked: false },
-  { remoteAccountId: 'synthetic' }, { authAccountError: 'synthetic' }, { stored: true }, { cached: {} }]) {
-  const state = { sky: null, mode: 'guest', userProfile: null, authAccountChecked: true, remoteAccountId: null,
+  { remoteAccountId: 'synthetic' }, { authAccountError: 'synthetic' }, { stored: true }, { cached: {} }, { profileNatalSky: { ascendant: 'Aries' } }]) {
+  const state = { sky: null, mode: 'guest', userProfile: null, profileNatalSky: null, authAccountChecked: true, remoteAccountId: null,
     authAccountError: null, stored: false, cached: null, ...override };
-  const accepted = vm.runInNewContext(transpile('Boolean(' + coldPredicate + ')'), { ...state,
+  const accepted = vm.runInNewContext(transpile(guestPredicate + '\nBoolean(' + coldPredicate + ')'), { ...state,
     hasStoredSupabaseSession: () => state.stored, readCachedFallbackArchitectureV3Bundle: () => state.cached });
   assert.equal(accepted, Object.keys(override).length === 0, 'Only an established uncached initial guest starts optional transport.');
 }
@@ -132,12 +157,13 @@ for (const notification of [false, true]) {
 }
 const dated = 'synthetic/dated-ingress';
 const oldNavigator = Object.getOwnPropertyDescriptor(globalThis, 'navigator');
-for (const scenario of ['overlap', 'late-auth', 'retirement', 'revision', 'transport-failure', 'all-unused', 'already-calculated', 'offline', 'warm', 'slow-ingress', 'cancel-before-start', 'load-throw'] as const) {
+for (const scenario of ['overlap', 'late-auth', 'retirement', 'revision', 'transport-failure', 'all-unused', 'already-calculated', 'offline', 'warm', 'slow-ingress', 'cancel-before-start', 'load-throw', 'required-current-failure'] as const) {
   publish([selected, unused, ...nodeKeys, dated]);
   (globalThis as any).fixtureOnline = false;
   Object.defineProperty(globalThis, 'navigator', { configurable: true, value: { onLine: scenario !== 'offline' } });
   const publications = deferred(), facts = deferred(), transport = deferred(), ingressTransport = deferred();
   const requests: Array<{ kind: string; keys: string[] }> = [];
+  let missingCurrent = scenario === 'required-current-failure';
   const context = vm.createContext({ Map, Set, Promise,
     loadContentRegistry: async () => {}, refreshContentPublications: () => publications.promise,
     eligibleSkyDetailContent: qa.eligibleSkyDetailContent, loadSkyDetailContent: qa.loadSkyDetailContent,
@@ -147,7 +173,7 @@ for (const scenario of ['overlap', 'late-auth', 'retirement', 'revision', 'trans
     skyPlacementInSignAspectContentKeys: () => scenario === 'all-unused' ? [] : [selected, 'synthetic/noncandidate-aspect'],
     loadLiveGeneratedContentForKeys: async (keys: string[]) => {
       requests.push({ kind: 'normal', keys });
-      return qa.eligibleSkyDetailContent(new Map(keys.map(key => [key, { ...row(key), updatedAt: qa.contentPublication(key)?.row_updated_at ?? stamp }])));
+      return qa.eligibleSkyDetailContent(new Map(keys.filter(key => !missingCurrent || key !== selected).map(key => [key, { ...row(key), updatedAt: qa.contentPublication(key)?.row_updated_at ?? stamp }])));
     }
   });
   vm.runInContext(transpile(prepare.getText(ast)), context);
@@ -155,13 +181,13 @@ for (const scenario of ['overlap', 'late-auth', 'retirement', 'revision', 'trans
   let early: any, cancelled = false;
   const pending = context.prepareSkyPlacementArticleContent(facts.promise, 'sun', 'libra', new Map(), () => early);
   let settled = false;
-  void pending.then(() => { settled = true; });
+  void pending.then(() => { settled = true; }, () => { settled = true; });
   const attachEarly = () => { early = qa.prefetchSkyPlacementAspectContent('sun', new Map(), publications.promise, facts.promise,
     (keys: string[], ready: Promise<void>) => {
       if (scenario === 'load-throw') throw Error('Synthetic synchronous transport setup failure');
       requests.push({ kind: 'candidates', keys });
       return { get rows() { return Promise.all([transport.promise, ready]).then(() => {
-        if (cancelled || scenario === 'transport-failure' || !(globalThis as any).fixtureOnline) return new Map();
+        if (cancelled || scenario === 'transport-failure' || missingCurrent || !(globalThis as any).fixtureOnline) return new Map();
         return qa.eligibleSkyDetailContent(new Map(keys.map(key => [key, row(key)])));
       }); }, discard: () => { cancelled = true; } };
     }, async () => {
@@ -191,6 +217,14 @@ for (const scenario of ['overlap', 'late-auth', 'retirement', 'revision', 'trans
     'A held ingress request cannot serialize actual missing aspect transport.');
   if (scenario === 'all-unused') assert.equal(settled, true, 'An unrelated candidate batch must not delay the actual article.');
   transport.resolve(); ingressTransport.resolve();
+  if (scenario === 'required-current-failure') {
+    await assert.rejects(pending, /current article publication could not load/);
+    missingCurrent = false;
+    const recovered = await context.prepareSkyPlacementArticleContent(Promise.resolve(snapshot), 'sun', 'libra', new Map(), () => undefined);
+    assert.equal(recovered.content.get(selected)?.updatedAt, qa.contentPublication(selected)?.row_updated_at);
+    assert.equal(recovered.content.get(selected)?.body, row(selected).body);
+    continue;
+  }
   const result = await pending;
   assert(!result.content.has(unused), 'Unrelated candidates must never enter the selected article map.');
   assert(result.content.has(dated), 'Required ingress must come from staged or normal exact-key completion.');

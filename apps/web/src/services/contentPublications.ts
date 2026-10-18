@@ -7,6 +7,13 @@ let resolved = false;
 let resolvedFromNetwork = false;
 /** Only a complete successful live read can make the offline snapshot optional. */
 export function contentPublicationsAvailableOnline() { return resolvedFromNetwork; }
+let availabilityListeners: Set<() => void> | undefined;
+/** Transport failure can change availability without changing ledger rows. */
+export function subscribeToContentPublicationAvailability(listener: () => void) {
+  const listeners = availabilityListeners ??= new Set<() => void>();
+  listeners.add(listener);
+  return () => { listeners.delete(listener); };
+}
 /** A failed first lookup is not evidence that no published override exists. */
 export function contentPublicationsResolved() { return resolved || publicationLedgerReady(); }
 /** A Studio notice must not be satisfied by a read started before the edit. */
@@ -18,14 +25,15 @@ export async function refreshContentPublicationsAfterUpdate(): Promise<void> {
 export async function refreshContentPublications(force = false, readRelay?: () => Promise<readonly unknown[]>): Promise<void> {
   if (pending) return pending;
   if (!force && Date.now() - checkedAt < 30_000) return;
-  resolvedFromNetwork = false;
+  const wasOnline = resolvedFromNetwork;
+  let completedOnline = false;
   pending = (async () => {
     if (typeof navigator !== "undefined" && navigator.onLine === false) return;
     if (readRelay) {
       try {
         const rows = await readRelay();
         installContentPublications(rows, "complete-live");
-        resolved = resolvedFromNetwork = true;
+        resolved = completedOnline = true;
         checkedAt = Date.now();
         return;
       } catch { /* Older/offline deployments retain the existing direct read. */ }
@@ -61,8 +69,12 @@ export async function refreshContentPublications(force = false, readRelay?: () =
     }));
     installContentPublications(pages.flat(), "complete-live");
     resolved = true;
-    resolvedFromNetwork = true;
+    completedOnline = true;
     checkedAt = Date.now();
-  })().catch(() => undefined).finally(() => { pending = null; });
+  })().catch(() => undefined).finally(() => {
+    pending = null;
+    resolvedFromNetwork = completedOnline;
+    if (wasOnline !== resolvedFromNetwork) availabilityListeners?.forEach(listener => listener());
+  });
   return pending;
 }
