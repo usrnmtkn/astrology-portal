@@ -293,18 +293,9 @@ export function DailyGlancePairEditor({ context, isSaving, onClose, onSave, onPu
     } catch (failure) { setError(failure instanceof Error ? failure.message : "Could not check publication."); }
     finally { setSubmitting(false); }
   };
-  const friendPreviewSlots = useMemo(
-    () => dailyGlanceFriendPreviewSlots(previewName, previewPronouns),
-    [previewName, previewPronouns]
-  );
-  const friendHeadlineParts = useMemo(
-    () => dailyGlanceFriendPreviewParts(edits.headlineThey, friendPreviewSlots),
-    [edits.headlineThey, friendPreviewSlots]
-  );
-  const friendPassageParts = useMemo(
-    () => dailyGlanceFriendPreviewParts(edits.passageThey, friendPreviewSlots),
-    [edits.passageThey, friendPreviewSlots]
-  );
+  const friendPreviewSlots = dailyGlanceFriendPreviewSlots(previewName, previewPronouns);
+  const friendHeadlineParts = dailyGlanceFriendPreviewParts(edits.headlineThey, friendPreviewSlots);
+  const friendPassageParts = dailyGlanceFriendPreviewParts(edits.passageThey, friendPreviewSlots);
   const friendVariableGuide = useMemo(() => {
     const variables = new Map<string, Extract<DailyGlanceFriendPreviewPart, { kind: "variable" }>>();
     [...friendHeadlineParts, ...friendPassageParts].forEach((part) => {
@@ -316,6 +307,10 @@ export function DailyGlancePairEditor({ context, isSaving, onClose, onSave, onPu
     if (dirty && !window.confirm("Discard the unsaved Daily At-a-Glance changes?")) return;
     onClose();
   };
+
+  const copyField = (field: keyof DailyGlancePairEdits, label: string) => (
+    <label className="admin-review-copy-editor"><span>{label}</span><StudioTextarea disabled={blocked} value={edits[field]} onChange={(event) => setEdits(value => ({ ...value, [field]: event.target.value }))} /></label>
+  );
 
   return (
     <>
@@ -343,8 +338,8 @@ export function DailyGlancePairEditor({ context, isSaving, onClose, onSave, onPu
 
           <section className={`${surfaceSection} admin-daily-glance-audience`} aria-label="You version">
             <div><p className="admin-eyebrow">You</p><h3>Signed-in reader</h3></div>
-            <label className="admin-review-copy-editor"><span>Headline · You</span><StudioTextarea disabled={blocked} value={edits.headlineYou} onChange={(event) => setEdits((value) => ({ ...value, headlineYou: event.target.value }))} /></label>
-            <label className="admin-review-copy-editor"><span>Passage · You</span><StudioTextarea disabled={blocked} value={edits.passageYou} onChange={(event) => setEdits((value) => ({ ...value, passageYou: event.target.value }))} /></label>
+            {copyField("headlineYou", "Headline · You")}
+            {copyField("passageYou", "Passage · You")}
             <div className="admin-daily-glance-reader-card" aria-label="You reader preview">
               <h4>{edits.headlineYou}</h4><p className="admin-copy-preview">{edits.passageYou}</p>
               {matchingContext && <><p>{matchingContext.detailLine}</p></>}
@@ -356,8 +351,8 @@ export function DailyGlancePairEditor({ context, isSaving, onClose, onSave, onPu
             <p className="admin-daily-glance-name-contract">
               Daily uses <code>{"{{personPreferredName}}"}</code> for <strong>Name</strong> so the app can use the selected person's preferred name and fall back to their display name. <code>{"{{Name}}"}</code> is not part of this renderer's variable contract.
             </p>
-            <label className="admin-review-copy-editor"><span>Headline · Friend</span><StudioTextarea disabled={blocked} value={edits.headlineThey} onChange={(event) => setEdits((value) => ({ ...value, headlineThey: event.target.value }))} /></label>
-            <label className="admin-review-copy-editor"><span>Passage · Friend</span><StudioTextarea disabled={blocked} value={edits.passageThey} onChange={(event) => setEdits((value) => ({ ...value, passageThey: event.target.value }))} /></label>
+            {copyField("headlineThey", "Headline · Friend")}
+            {copyField("passageThey", "Passage · Friend")}
             <div className="admin-daily-glance-preview-controls" aria-label="Friend preview values">
               <label>
                 <span>Preview name</span>
