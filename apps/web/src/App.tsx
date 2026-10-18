@@ -10903,13 +10903,22 @@ async function prepareSkyPlacementArticleContent(
   const aspectKeys = skyPlacementInSignAspectContentKeys(events);
   const required = new Set([...ingressKeys, ...aspectKeys]);
   const early = readEarly();
+  const handoff = early?.handoff();
   let prepared = availableContent;
-  if (early) {
-    const completed = new Map([...eligibleSkyDetailContent(early.takeCompletedRows())].filter(([key]) => required.has(key)));
-    // Once actual facts are known, an unfinished candidate batch is optional.
-    // Exact required aspects and the current edition still join the same commit.
-    const [ingress, remaining] = await Promise.all([early.ingress,
-      loadSkyDetailContent(placementSky, new Map([...availableContent, ...completed]), [], loadLiveGeneratedContentForKeys, aspectKeys)]);
+  if (handoff) {
+    const selected = (rows: GeneratedContentMap) => new Map([...eligibleSkyDetailContent(rows)].filter(([key]) => required.has(key)));
+    const completed = selected(handoff.completed);
+    const normal = loadSkyDetailContent(placementSky, new Map([...availableContent, ...completed]), [], loadLiveGeneratedContentForKeys, aspectKeys);
+    // Exact loading starts immediately. Only a complete current subset from
+    // the existing private read may beat it; partial/failing optional data waits
+    // for normal loading without extending its failure or deadline behavior.
+    const remainingRequest = Promise.race([normal,
+      handoff.rows.then(rows => {
+        const candidate = eligibleSkyDetailContent(new Map([...availableContent, ...completed, ...selected(rows)]));
+        return aspectKeys.every(key => contentPublication(key)?.state !== "live" || candidate.has(key)) ? candidate : normal;
+      }).catch(() => normal)
+    ]).finally(handoff.finish);
+    const [ingress, remaining] = await Promise.all([early!.ingress, remainingRequest]);
     prepared = new Map([...remaining,
       ...[...eligibleSkyDetailContent(ingress)].filter(([key]) => required.has(key))]);
   }

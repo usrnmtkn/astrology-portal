@@ -162,13 +162,16 @@ for (const mode of ['completed', 'discarded', 'before-stage']) {
   const pendingFacts = deferred();
   const read = qa.prefetchSkyPlacementAspectContent('sun', new Map(), Promise.resolve(), pendingFacts.promise,
     () => { loads++; return { rows: Promise.resolve(source), detach: () => { detached++; }, discard() {} }; });
-  if (mode === 'before-stage') assert.equal(read.takeCompletedRows().size, 0);
+  if (mode === 'before-stage') { const initial = read.handoff()!; assert.equal(initial.completed.size, 0); initial.finish(); }
   await drain();
   if (mode === 'discarded') read.discard();
-  const taken = read.takeCompletedRows();
-  assert.equal(taken.size, mode === 'completed' ? 1 : 0);
-  if (mode === 'completed') { taken.clear(); assert.equal(source.size, 1); assert.equal(detached, 1); }
-  assert.equal(read.takeCompletedRows().size, 0);
+  const taken = read.handoff();
+  assert.equal(taken?.completed.size ?? 0, mode === 'completed' ? 1 : 0);
+  if (mode === 'completed') {
+    taken!.completed.clear(); assert.equal(source.size, 1); assert.equal(detached, 0);
+    assert.equal((await taken!.rows).size, 1); taken!.finish(); assert.equal(detached, 1);
+  }
+  assert.equal(read.handoff(), undefined);
   assert.equal(loads, mode === 'before-stage' ? 0 : 1);
 }
 const dated = 'synthetic/dated-ingress';
@@ -184,6 +187,7 @@ for (const scenario of ['overlap', 'late-auth', 'retirement', 'revision', 'trans
   const context = vm.createContext({ Map, Set, Promise,
     loadContentRegistry: async () => {}, refreshContentPublications: () => publications.promise,
     eligibleSkyDetailContent: qa.eligibleSkyDetailContent, loadSkyDetailContent: qa.loadSkyDetailContent,
+    contentPublication: qa.contentPublication,
     skyRoutePartMatches: (a: string, b: string) => a.toLowerCase() === b.toLowerCase(),
     skyIngressEssayPublicationKeys: () => [dated], contentPublicationRecords: () => [], normalizeContentIdPart: (x: string) => x,
     filterPlacementTimelineEvents: (events: any[]) => events, skyPlacementArticleTimelineWindow: () => null,
@@ -259,6 +263,81 @@ for (const scenario of ['overlap', 'late-auth', 'retirement', 'revision', 'trans
   if (scenario === 'warm' || scenario === 'offline') assert.equal(requests.some(x => x.kind !== 'normal'), false,
     'Warm/member-equivalent and offline paths retain normal demand-driven loading.');
   assert.equal(result.content.get(dated)?.body, row(dated).body);
+}
+// Actual App preparation and actual prefetch owner on both sides of the
+// calculation/transport boundary. Promise gates isolate ownership, not timing.
+for (const scenario of ['completed-before-facts', 'complete-after-facts', 'partial', 'stale', 'newer-row',
+  'retired', 'broad-failure', 'normal-first', 'normal-retry', 'discard-after-handoff'] as const) {
+  publish([selected, unused]);
+  (globalThis as any).fixtureOnline = false;
+  const publications = deferred(), facts = deferred(), broad = deferred(), exact = deferred();
+  let detached = false, cancelled = false, normalRequests = 0, stagedKeys = 0, settled = false;
+  let early: any;
+  const currentRows = () => qa.eligibleSkyDetailContent(new Map([selected, unused].map(key => [key, { ...row(key), updatedAt: qa.contentPublication(key)?.row_updated_at ?? stamp }])));
+  const context = vm.createContext({ Map, Set, Promise,
+    loadContentRegistry: async () => {}, refreshContentPublications: () => publications.promise,
+    eligibleSkyDetailContent: qa.eligibleSkyDetailContent, loadSkyDetailContent: qa.loadSkyDetailContent,
+    contentPublication: qa.contentPublication,
+    skyRoutePartMatches: (a: string, b: string) => a.toLowerCase() === b.toLowerCase(),
+    skyIngressEssayPublicationKeys: () => [], contentPublicationRecords: () => [], normalizeContentIdPart: (value: string) => value,
+    filterPlacementTimelineEvents: (events: any[]) => events, skyPlacementArticleTimelineWindow: () => null,
+    skyPlacementInSignAspectContentKeys: () => [selected, unused],
+    loadLiveGeneratedContentForKeys: async () => {
+      normalRequests++;
+      if (scenario === 'normal-retry' && normalRequests === 1) throw new Error('Synthetic first exact read failure');
+      return exact.promise;
+    }
+  });
+  vm.runInContext(transpile(prepare.getText(ast)), context);
+  const snapshot = { positions: [{ planet: 'Sun' }], generatedAt: stamp, placementAspectFacts: { inSign: [] } };
+  const pending = context.prepareSkyPlacementArticleContent(facts.promise, 'sun', 'libra', new Map(), () => early);
+  void pending.then(() => { settled = true; });
+  early = qa.prefetchSkyPlacementAspectContent('sun', new Map(), publications.promise, facts.promise,
+    (keys: string[]) => {
+      stagedKeys = keys.length;
+      const rows = Promise.all([broad.promise, publications.promise]).then(([incoming]) => detached ? new Map() : incoming);
+      return { rows, discard: () => { cancelled = true; }, detach: () => { detached = true; } };
+    });
+  await drain(); assert.equal(stagedKeys, 45, 'Actual pre-ledger Sun candidate set has all 45 keys.');
+  (globalThis as any).fixtureOnline = true; publications.resolve(); await drain();
+  if (scenario === 'completed-before-facts') { broad.resolve(currentRows()); await drain(); }
+  facts.resolve(snapshot); await drain();
+  if (scenario === 'completed-before-facts') {
+    assert.equal(normalRequests, 0, 'Already complete candidates preserve exact-read reuse.');
+    assert.equal(settled, true);
+  } else {
+    assert(normalRequests > 0, 'Normal exact loading starts immediately while optional transport is held.');
+    assert.equal(settled, false);
+    if (scenario === 'stale') qa.installContentPublications([{ ...qa.contentPublication(selected), revision: ++revision,
+      row_updated_at: '2026-10-16T07:00:00.000002Z' }]);
+    if (scenario === 'retired') publish([unused], 'retired');
+    if (scenario === 'discard-after-handoff') { early.discard(); assert.equal(detached, true); assert.equal(cancelled, false); }
+    if (scenario === 'normal-first' || scenario === 'normal-retry') {
+      exact.resolve(currentRows()); await drain(); assert.equal(settled, true); assert.equal(detached, true);
+      if (scenario === 'normal-retry') assert.equal(normalRequests, 2, 'Normal first-pass failure retains the final required-key retry.');
+    }
+    if (scenario === 'broad-failure') broad.resolve(Promise.reject(new Error('Synthetic optional failure')));
+    else {
+      const incoming = new Map([[selected, row(selected)], [unused, row(unused)]]);
+      if (scenario === 'partial') incoming.delete(unused);
+      if (scenario === 'newer-row') incoming.set(selected, { ...row(selected), updatedAt: '2026-10-16T07:00:00.999999Z' });
+      broad.resolve(incoming);
+    }
+    await drain();
+    if (scenario === 'complete-after-facts') {
+      assert.equal(settled, true, `${scenario}: complete CURRENT required subset releases the article before the held normal read.`);
+      assert.equal(detached, true); assert.equal(cancelled, false);
+    } else if (!['normal-first', 'normal-retry'].includes(scenario)) {
+      assert.equal(settled, false, `${scenario}: the normal or final required-key read remains pending.`);
+      if (scenario === 'retired') assert.equal(normalRequests, 2, 'The current subset may win, but the existing final missing-key read remains intact.');
+    }
+    exact.resolve(currentRows()); await drain();
+  }
+  const result = await pending;
+  assert.equal(result.content.get(selected)?.body, row(selected).body);
+  if (scenario === 'retired') assert.equal(result.content.has(unused), false, 'Retired optional writing cannot reappear.');
+  assert.equal(cancelled, false, 'Neither winner aborts the independently owned normal transport.');
+  assert.equal(detached, true, 'Every completion closes optional admission.');
 }
 if (oldNavigator) Object.defineProperty(globalThis, 'navigator', oldNavigator);
 else Reflect.deleteProperty(globalThis, 'navigator');
