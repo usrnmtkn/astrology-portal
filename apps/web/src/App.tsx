@@ -10905,16 +10905,13 @@ async function prepareSkyPlacementArticleContent(
   const early = readEarly();
   let prepared = availableContent;
   if (early) {
-    const relevant = aspectKeys.some(key => early.keys.includes(key));
-    if (!relevant) early.discard();
-    // The ingress and actual missing-aspect reads are independent. Neither
-    // may queue behind an optional candidate batch or a slower edition read.
-    const [ingress, incoming, remaining] = await Promise.all([early.ingress,
-      relevant ? early.rows : Promise.resolve(new Map<string, LiveGeneratedContent>()),
-      loadSkyDetailContent(placementSky, availableContent, [], loadLiveGeneratedContentForKeys,
-        aspectKeys.filter(key => !relevant || !early.keys.includes(key)))]);
+    const completed = new Map([...eligibleSkyDetailContent(early.takeCompletedRows())].filter(([key]) => required.has(key)));
+    // Once actual facts are known, an unfinished candidate batch is optional.
+    // Exact required aspects and the current edition still join the same commit.
+    const [ingress, remaining] = await Promise.all([early.ingress,
+      loadSkyDetailContent(placementSky, new Map([...availableContent, ...completed]), [], loadLiveGeneratedContentForKeys, aspectKeys)]);
     prepared = new Map([...remaining,
-      ...[...eligibleSkyDetailContent(new Map([...ingress, ...incoming]))].filter(([key]) => required.has(key))]);
+      ...[...eligibleSkyDetailContent(ingress)].filter(([key]) => required.has(key))]);
   }
   const content = await loadSkyDetailContent(placementSky, prepared, [...required],
     loadLiveGeneratedContentForKeys, aspectKeys);
@@ -11453,17 +11450,6 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
     const [, detailType] = decodeSkyRouteParts(detail.routePath ?? "");
     const awaitPlacementTiming = detail.routePath?.startsWith("sky/")
       && (detailType === "placement" || detailType === "retrograde");
-    if (awaitPlacementTiming && sky && detail.routePath) {
-      const [baseRoute] = detail.routePath.split(/\/(?:at|on)\//u);
-      const [, detailKind, planetPart, signPart] = decodeSkyRouteParts(baseRoute);
-      const routePosition = planetPart
-        ? skyNodeDisplayPositions(sky.positions).find((position) => skyRoutePartMatches(position.planet, planetPart))
-        : undefined;
-      const placementSign = detailKind === "retrograde" ? routePosition?.sign : signPart;
-      if (planetPart && placementSign) {
-        void requestSkyPlacementArticleSnapshot(sky.location, planetPart, placementSign, skyDate);
-      }
-    }
     transitionPage(() => {
       // Placement cards do not contain the complete article timeline. The
       // targeted read commits the complete passage and dates together.
@@ -11676,17 +11662,6 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
     event.preventDefault();
     const routePath = link.hash.slice(1);
     selectedCalendarTransitEventRef.current = null;
-    if (sky) {
-      const [baseRoute] = routePath.split(/\/(?:at|on)\//u);
-      const [, detailKind, planetPart, signPart] = decodeSkyRouteParts(baseRoute);
-      const routePosition = planetPart
-        ? skyNodeDisplayPositions(sky.positions).find((position) => skyRoutePartMatches(position.planet, planetPart))
-        : undefined;
-      const placementSign = detailKind === "retrograde" ? routePosition?.sign : signPart;
-      if ((detailKind === "placement" || detailKind === "retrograde") && planetPart && placementSign) {
-        void requestSkyPlacementArticleSnapshot(sky.location, planetPart, placementSign, skyDate);
-      }
-    }
     transitionPage(() => {
       updateSkyDetailRouteUrl(routePath);
       setSelectedSkyDetail(null);
@@ -16343,7 +16318,7 @@ function SkyCards({
   const moon = sky.positions.find((position) => position.planet === "Moon");
   // Use the event-time ephemeris event supplied by the snapshot. Do not infer
   // a future event sign from the Moon's mean motion for this narrative.
-  const todayLunation = events.filter(event => event.type === "lunation" && event.sign).sort((a, b) => (a.eclipseType === "solar" ? 0 : a.eclipseType === "lunar" ? 1 : a.title.includes("New") ? 2 : 3) - (b.eclipseType === "solar" ? 0 : b.eclipseType === "lunar" ? 1 : b.title.includes("New") ? 2 : 3))[0];
+  const todayLunation = events.filter(event => event.type === "lunation" && event.primary !== false && event.sign).sort((a, b) => (a.eclipseType === "solar" ? 0 : a.eclipseType === "lunar" ? 1 : a.title.includes("New") ? 2 : 3) - (b.eclipseType === "solar" ? 0 : b.eclipseType === "lunar" ? 1 : b.title.includes("New") ? 2 : 3))[0];
   const event = todayLunation ? { name: todayLunation.title.includes("Full") ? "Full Moon" : "New Moon", sign: todayLunation.sign!, occursAt: todayLunation.startsAt, eclipseType: todayLunation.eclipseType } : sky.moonEvent;
   const selectedDate = new Date(sky.generatedAt);
   const eventDate = event ? new Date(event.occursAt) : null;
