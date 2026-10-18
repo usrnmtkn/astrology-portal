@@ -2285,6 +2285,53 @@ function scanResidualPasses(
   return passes.sort((first, second) => first.getTime() - second.getTime());
 }
 
+/** Nearest historical root on the same grid/refinement as the complete scan.
+ * Replay the tail cluster in chronological order to retain its six-hour dedupe.
+ * All storage belongs to this call; other scan consumers retain the full path. */
+function scanLastResidualPass(
+  residualsAt: AspectResidualsAt,
+  start: Date,
+  end: Date,
+  stepDays: number,
+  branchFilter: number | null = null
+): Date | null {
+  if (branchFilter === null) return scanResidualPasses(residualsAt, start, end, stepDays, branchFilter).at(-1) ?? null;
+  const stepMs = Math.max(60 * 60_000, stepDays * 86_400_000);
+  const maxGridPoints = Math.ceil((end.getTime() - start.getTime()) / stepMs) + 2;
+  const times = [start.getTime()];
+  let previousDate = start;
+  // Preserve floating-point accumulation, including the original final clamp.
+  for (let time = Math.min(start.getTime() + stepMs, end.getTime()); previousDate < end; time = Math.min(time + stepMs, end.getTime())) {
+    times.push(time);
+    if (times.length > maxGridPoints) throw new Error("Aspect grid exceeded its derived bound.");
+    previousDate = new Date(time);
+  }
+  const cluster: Date[] = [];
+  const sixHours = 6 * 60 * 60_000;
+  let currentDate = new Date(times.at(-1)!);
+  let current = residualsAt(currentDate);
+  for (let index = times.length - 2; index >= 0; index--) {
+    previousDate = new Date(times[index]);
+    const previous = residualsAt(previousDate);
+    const prior = previous[branchFilter], residual = current[branchFilter];
+    // Keep the original negated comparison, including its NaN behavior.
+    if (Number.isFinite(prior) && !(Math.abs(residual - prior) > 180) && (prior === 0 || residual === 0 || prior * residual < 0)) {
+      const exact = refineResidualPass(residualsAt, branchFilter, previousDate, currentDate);
+      if (cluster.length && cluster.at(-1)!.getTime() - exact.getTime() >= sixHours) break;
+      cluster.push(exact);
+    }
+    currentDate = previousDate;
+    current = previous;
+    // Every unvisited root is at or before this bracket's upper boundary.
+    if (cluster.length && currentDate.getTime() <= cluster.at(-1)!.getTime() - sixHours) break;
+  }
+  const passes: Date[] = [];
+  for (const exact of cluster.sort((first, second) => first.getTime() - second.getTime())) {
+    if (!passes.some(pass => Math.abs(pass.getTime() - exact.getTime()) < sixHours)) passes.push(exact);
+  }
+  return passes.at(-1) ?? null;
+}
+
 function findResidualBoundary(
   residualsAt: AspectResidualsAt,
   presentationDegrees: number,
@@ -2520,6 +2567,22 @@ function scanExactAspectPasses(
   );
 }
 
+function findLastExactAspectPass(
+  swe: SwissEphInstance,
+  firstPlanetId: number,
+  secondPlanetId: number,
+  targetDegrees: number,
+  start: Date,
+  end: Date,
+  stepDays: number,
+  branchFilter: number
+) {
+  return scanLastResidualPass(
+    date => directedAspectResidualsAt(swe, firstPlanetId, secondPlanetId, date, targetDegrees),
+    start, end, stepDays, branchFilter
+  );
+}
+
 function directedAspectBranchAt(
   swe: SwissEphInstance,
   firstPlanetId: number,
@@ -2688,7 +2751,7 @@ function skyAspectTimingFor(
     const cycleStepDays = Math.max(5, Math.min(30, estimatedDurationDays / 20));
     const searchDays = 220 * 365.2425;
     try {
-      const previous = scanExactAspectPasses(swe, firstPlanetId, secondPlanetId, targetDegrees, addDays(engagementStart, -searchDays), addDays(engagementStart, -1), cycleStepDays, engagementBranch).at(-1) ?? null;
+      const previous = findLastExactAspectPass(swe, firstPlanetId, secondPlanetId, targetDegrees, addDays(engagementStart, -searchDays), addDays(engagementStart, -1), cycleStepDays, engagementBranch);
       const next = scanExactAspectPasses(swe, firstPlanetId, secondPlanetId, targetDegrees, addDays(engagementEnd, 1), addDays(engagementEnd, searchDays), cycleStepDays, engagementBranch)[0] ?? null;
       const currentYear = engagementPasses[passIndex].getFullYear();
       cycleLocation = {

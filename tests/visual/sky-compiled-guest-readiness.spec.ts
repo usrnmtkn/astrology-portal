@@ -13,7 +13,7 @@ const stamp = '2026-10-09T00:00:00.123456Z';
 const cases = [
   ...[390, 1440].flatMap(width => [true, false].map(hasEdition => ({ width, hasEdition, account: 'guest', flow: 'stable' }))),
   ...['profile', 'restoring'].map(account => ({ width: 390, hasEdition: true, account, flow: 'stable' })),
-  ...['navigate', 'retire', 'offline', 'revalidate', 'location', 'member-reload', 'member-spa', 'revision', 'date', 'edition-error', 'registry-held', 'registry-error', 'aspect-control', 'aspect-error', 'aspect-revision', 'advancing-live', 'advancing-historical'].map(flow => ({ width: 390, hasEdition: true, account: 'guest', flow }))
+  ...['navigate', 'retire', 'offline', 'revalidate', 'location', 'member-reload', 'member-spa', 'revision', 'date', 'edition-error', 'registry-held', 'registry-error', 'aspect-control', 'aspect-error', 'aspect-revision', 'aspect-handoff', 'aspect-handoff-partial', 'aspect-handoff-stale', 'advancing-live', 'advancing-historical'].map(flow => ({ width: 390, hasEdition: true, account: 'guest', flow }))
 ];
 for (const { width, hasEdition, account, flow } of cases) {
   test(`compiled guest required sources ${width}, edition ${hasEdition}, ${account}, ${flow}`, async ({ page }) => {
@@ -104,7 +104,8 @@ for (const { width, hasEdition, account, flow } of cases) {
         sections: { packageRecord: record }, source_snapshot: { content_role: record.content_role, review_status: 'approved' },
         event_type: 'fallback-hook', block_type: 'fallback_hook' };
     });
-    const heldBroadFlow = flow === 'aspect-control' || flow === 'aspect-error';
+    const handoffFlow = flow.startsWith('aspect-handoff');
+    const heldBroadFlow = flow === 'aspect-control' || flow === 'aspect-error' || handoffFlow;
     let releaseCalculation!: () => void, releaseBroad!: () => void;
     const calculationGate = new Promise<void>(resolve => { releaseCalculation = resolve; });
     const broadGate = new Promise<void>(resolve => { releaseBroad = resolve; });
@@ -114,9 +115,10 @@ for (const { width, hasEdition, account, flow } of cases) {
       await route.continue();
     });
     const aspectKey = 'sky.aspect.sun.trine.pluto';
+    const exactAspectRequests: Request[] = []; let exactAspectFinished = 0;
     let failAspect = flow === 'aspect-error', aspectRequests = 0, holdAspect = false, aspectHeld = false;
     let releaseAspect!: () => void; const aspectGate = new Promise<void>(resolve => { releaseAspect = resolve; });
-    if (flow === 'aspect-control' || flow === 'aspect-error' || flow === 'aspect-revision') rows.push({
+    if (flow === 'aspect-control' || flow === 'aspect-error' || flow === 'aspect-revision' || handoffFlow) rows.push({
       id: 'cccccccc-cccc-4ccc-accc-cccccccccccc', content_key: aspectKey, surface: 'sky', mode: 'feed', status: 'LIVE', lane: 'serving',
       review_state: null, target_date: null, event_type: 'sky-aspect-owner-approved-exact', block_type: 'sky_aspect', provider: 'manual-admin',
       updated_at: stamp, headline: 'Synthetic Sun Trine Pluto', summary: null,
@@ -155,11 +157,14 @@ for (const { width, hasEdition, account, flow } of cases) {
       const isAspect = query.keys?.includes(aspectKey) || query.ids?.includes('cccccccc-cccc-4ccc-accc-cccccccccccc');
       const isBroad = heldBroadFlow && query.keys?.length === 45 && isAspect;
       if (isBroad) { broadRequests.push(route.request()); releaseCalculation(); await broadGate; }
-      if (isAspect && !isBroad) { aspectRequests++; if (holdAspect) { aspectHeld = true; await aspectGate; } if (failAspect) return route.fulfill({ status: 503, json: { error: 'Synthetic current required aspect unavailable.' } }); }
+      if (isAspect && !isBroad) { aspectRequests++; exactAspectRequests.push(route.request()); if (holdAspect || handoffFlow) { aspectHeld = true; await aspectGate; } if (failAspect) return route.fulfill({ status: 503, json: { error: 'Synthetic current required aspect unavailable.' } }); }
       if (isEdition && holdEdition) { editionHeld = true; await editionGate; }
       if (isEdition && failEdition) return route.fulfill({ status: 503, json: { error: 'Synthetic required edition unavailable.' } });
-      const admitted = rows.filter(row => (row !== edition || !editionRetired)
+      let admitted = rows.filter(row => (row !== edition || !editionRetired)
         && (query.keys?.includes(row.content_key) || query.ids?.includes(row.id)));
+      if (isBroad && flow === 'aspect-handoff-partial') admitted = admitted.filter(row => row.content_key !== aspectKey);
+      if (isBroad && flow === 'aspect-handoff-stale') admitted = admitted.map(row => row.content_key === aspectKey
+        ? { ...row, updated_at: '2026-10-08T00:00:00.123456Z' } : row);
       const keys = new Set(query.keys ?? admitted.map(row => row.content_key));
       await route.fulfill({ json: readerResponse(admitted, publications.filter(p =>
         p.content_key === '__content-publication-ledger/v1' || keys.has(p.content_key))) }).catch(error => {
@@ -168,6 +173,7 @@ for (const { width, hasEdition, account, flow } of cases) {
         });
       if (isSelected) selectedFinished = true;
       if (isEdition) editionFinished++;
+      if (isAspect && !isBroad) exactAspectFinished++;
     });
     const editionResponseComplete = async () => {
       await expect.poll(() => editionRequests.length).toBeGreaterThan(0);
@@ -234,6 +240,36 @@ for (const { width, hasEdition, account, flow } of cases) {
         await expect.poll(() => abandoned.every(request => request.failure() !== null)).toBe(true);
       }
       if (heldBroadFlow) await expect.poll(() => broadRequests.length).toBe(1);
+      if (handoffFlow) {
+        await expect.poll(() => aspectHeld).toBe(true);
+        await expect.poll(() => page.evaluate(() => (window as any).__qaSkyWorkerCompleted.some((job: any) => job.kind === 'placement-sky' && job.ok))).toBe(true);
+        expect([...new Set(await articleFrames())]).toEqual(['']);
+        expect(broadRequests[0].postDataJSON().keys).toHaveLength(45);
+        releaseBroad();
+        for (const request of broadRequests) {
+          const response = await request.response(); expect(response?.status()).toBe(200);
+          expect(await response!.finished()).toBeNull(); expect(request.failure()).toBeNull();
+        }
+        if (flow === 'aspect-handoff') {
+          // The actual complete staged subset releases the article while the
+          // independently owned exact request remains held, without cancellation.
+          await expect(article).toContainText('Synthetic complete dated ending.');
+          await expect(article).toContainText('Synthetic required aspect exact ending.');
+        } else {
+          await page.evaluate(() => new Promise<void>(resolve => {
+            let frames = 0; const frame = () => ++frames === 30 ? resolve() : requestAnimationFrame(frame); requestAnimationFrame(frame);
+          }));
+          expect([...new Set(await articleFrames())]).toEqual(['']);
+        }
+        expect(exactAspectFinished).toBe(0);
+        expect(exactAspectRequests.length).toBeGreaterThan(0);
+        for (const request of exactAspectRequests) expect(request.failure()).toBeNull();
+        releaseAspect();
+        for (const request of exactAspectRequests) {
+          const response = await request.response(); expect(response?.status()).toBe(200);
+          expect(await response!.finished()).toBeNull(); expect(request.failure()).toBeNull();
+        }
+      }
       if (flow === 'aspect-error') {
         await expect.poll(() => aspectRequests).toBeGreaterThan(0);
         await expect(page.getByText('The placement reading could not load. Please try again.', { exact: true })).toBeVisible();
@@ -259,7 +295,7 @@ for (const { width, hasEdition, account, flow } of cases) {
         await expect(article).toContainText('Synthetic complete dated opening.', { timeout: 60_000 });
         await expect(article).toContainText('Synthetic complete dated ending.');
         expect(selectedFinished).toBe(false);
-        if (flow === 'aspect-control' || flow === 'aspect-error' || flow === 'aspect-revision') {
+        if (flow === 'aspect-control' || flow === 'aspect-error' || flow === 'aspect-revision' || handoffFlow) {
           expect(aspectRequests).toBeGreaterThan(0);
           await expect(article).toContainText('Synthetic required aspect exact opening.');
           await expect(article).toContainText('Synthetic required aspect exact ending.');

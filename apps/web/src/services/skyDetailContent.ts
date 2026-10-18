@@ -18,36 +18,37 @@ export function coldSkyPlacementAspectKeys(planet: string, existing: Map<string,
   return keys.length <= 50 ? keys : [];
 }
 
-export type ColdSkyAspectRead = { ingress: Promise<Map<string, LiveGeneratedContent>>; takeCompletedRows: () => Map<string, LiveGeneratedContent>; discard: () => void };
+export type ColdSkyAspectRead = { ingress: Promise<Map<string, LiveGeneratedContent>>; handoff: () => {
+  completed: Map<string, LiveGeneratedContent>; rows: Promise<Map<string, LiveGeneratedContent>>; finish: () => void
+} | undefined; discard: () => void };
 export function prefetchSkyPlacementAspectContent(planet: string, existing: Map<string, LiveGeneratedContent>,
   publications: Promise<void>, snapshot: Promise<SkySnapshot>,
   load: (keys: string[], publications: Promise<void>) => { rows: Promise<Map<string, LiveGeneratedContent>>; discard: () => void; detach: () => void },
   loadIngress?: () => Promise<Map<string, LiveGeneratedContent>>) {
-  let calculated = false, discarded = false, detached = false;
+  let calculated = false, discarded = false, transferred = false;
   void snapshot.then(() => { calculated = true; }, () => { calculated = true; });
   let staged: ReturnType<typeof load> | undefined;
   let completedRows: Map<string, LiveGeneratedContent> | undefined;
   const read: ColdSkyAspectRead = {
     ingress: publications.then(() => !discarded && !calculated && contentPublicationsAvailableOnline() && loadIngress
       ? loadIngress() : new Map<string, LiveGeneratedContent>()).catch(() => new Map<string, LiveGeneratedContent>()),
-    takeCompletedRows: () => {
-    // Hand off only already-admitted rows. Pending transport stays bounded and
-    // private; later article cleanup must not abort or install its late result.
-    if (detached || discarded) return new Map<string, LiveGeneratedContent>();
-    const completed = completedRows;
+    handoff: () => {
+    if (transferred || discarded) return;
+    transferred = true;
+    const completed = new Map(completedRows);
     completedRows = undefined;
-    detached = true;
-    staged?.detach();
-    return new Map(completed);
-  }, discard: () => { discarded = true; if (!detached) staged?.discard(); } };
+    // The article owns this private, bounded read until either contender wins.
+    // Finishing withdraws admission without aborting another required read.
+    return { completed, rows: staged?.rows ?? Promise.resolve(new Map()), finish: () => staged?.detach() };
+  }, discard: () => { discarded = true; if (transferred) staged?.detach(); else staged?.discard(); } };
   // Give an already fulfilled calculation a chance to use its normal exact
   // request. Otherwise stage canonical candidates, never invented facts.
   void Promise.resolve().then(() => {
-    if (discarded || detached || calculated || typeof navigator !== "undefined" && navigator.onLine === false) return;
+    if (discarded || transferred || calculated || typeof navigator !== "undefined" && navigator.onLine === false) return;
     const keys = coldSkyPlacementAspectKeys(planet, existing, !contentPublicationsAvailableOnline());
     if (keys.length) {
       staged = load(keys, publications);
-      void staged.rows.then(rows => { if (!detached && !discarded) completedRows = rows; }, () => {});
+      void staged.rows.then(rows => { if (!transferred && !discarded) completedRows = rows; }, () => {});
     }
   }).catch(() => { staged?.discard(); });
   return read;
