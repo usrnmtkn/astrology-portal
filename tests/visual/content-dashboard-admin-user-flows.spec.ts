@@ -2145,8 +2145,80 @@ test.describe("content dashboard admin user flow case studies", () => {
 
     await expectAdminHeader(page, "Fallback Articles & Passages", "Admin / Composition / Fallback articles & passages");
     await expect(page.getByLabel("Reader copy")).not.toHaveValue("");
+    const catalogBody = JSON.parse(readFileSync(path.resolve("apps/web/public/generated/admin-hook-catalog-sky-v1.json"), "utf8"));
+    const expectedBody = catalogBody.rows.find((row: { key: string; body: string }) => row.key === "fallback-hook/angle-intro/ascendant")?.body;
+    expect(typeof expectedBody).toBe("string");
+    await expect(page.getByLabel("Reader copy")).toHaveValue(expectedBody);
     expect(indexRequests).toBe(2);
     expect(skyBodyRequests).toBe(2);
+  });
+
+  test("surface catalog paginates every source and keeps filtered keyboard authoring reachable", async ({ page }) => {
+    await seedAdminApi(page);
+    await expectAdminRouteLoads(page, "/admin/content#surface-map");
+    await page.getByText(/Supporting fallback-hook catalog/).click();
+    const catalog = page.getByRole("region", { name: "Hook catalog", exact: true });
+    const pagination = page.getByRole("navigation", { name: "Hook catalog pagination" });
+    const cards = catalog.locator("article.admin-fallback-row");
+    await expect(cards).toHaveCount(24);
+    const seen = new Set<string>();
+    let expectedTotal = 0;
+    while (true) {
+      const status = await pagination.getByRole("status").innerText();
+      expectedTotal = Number(status.match(/of (\d+)/)?.[1]);
+      for (const key of await cards.locator("code").allTextContents()) {
+        expect(seen.has(key)).toBe(false);
+        seen.add(key);
+      }
+      const next = pagination.getByRole("button", { name: "Next", exact: true });
+      if (await next.isDisabled()) break;
+      await next.click();
+      await expect(pagination.getByRole("status")).not.toHaveText(status);
+    }
+    expect(seen.size).toBe(expectedTotal);
+    expect(expectedTotal).toBeGreaterThan(3000);
+    await pagination.getByRole("button", { name: "First", exact: true }).click();
+    await expect(pagination.getByRole("status")).toContainText("Showing 1–24");
+    await pagination.getByRole("button", { name: "Last", exact: true }).click();
+    await page.getByRole("textbox", { name: "Search reader surfaces" }).fill("angle-intro/ascendant");
+    await expect(cards).toHaveCount(1);
+    await expect(pagination).toHaveCount(0);
+    await cards.first().focus();
+    await cards.first().press("Enter");
+    await expectAdminHeader(page, "Fallback Articles & Passages", "Admin / Composition / Fallback articles & passages");
+    await expect(page.getByLabel("Reader copy")).not.toHaveValue("");
+    const catalogBody = JSON.parse(readFileSync(path.resolve("apps/web/public/generated/admin-hook-catalog-sky-v1.json"), "utf8"));
+    const expectedBody = catalogBody.rows.find((row: { key: string; body: string }) => row.key === "fallback-hook/angle-intro/ascendant")?.body;
+    expect(typeof expectedBody).toBe("string");
+    await expect(page.getByLabel("Reader copy")).toHaveValue(expectedBody);
+  });
+
+  test("surface catalog controls stay usable across viewport and theme variants", async ({ page }) => {
+    await seedAdminApi(page);
+    for (const width of [1440, 390]) {
+      for (const theme of ["light", "dark"] as const) {
+        await page.setViewportSize({ width, height: 1000 });
+        await expectAdminRouteLoads(page, "/admin/content#surface-map");
+        if (await page.locator("main.admin-dashboard").getAttribute("data-studio-theme") !== theme) {
+          await page.getByRole("button", { name: `Switch to ${theme} theme` }).click();
+        }
+        await expect(page.locator("main.admin-dashboard")).toHaveAttribute("data-studio-theme", theme);
+        await page.getByText(/Supporting fallback-hook catalog/).click();
+        const pagination = page.getByRole("navigation", { name: "Hook catalog pagination" });
+        await expect(pagination.getByRole("status")).toContainText("Showing 1–24");
+        await pagination.getByRole("button", { name: "Last", exact: true }).click();
+        await expect(pagination.getByRole("button", { name: "Next", exact: true })).toBeDisabled();
+        await page.getByRole("textbox", { name: "Search reader surfaces" }).fill("angle-intro/ascendant");
+        const card = page.getByRole("region", { name: "Hook catalog", exact: true }).locator("article.admin-fallback-row");
+        await expect(card).toHaveCount(1);
+        await card.focus();
+        await card.press("Enter");
+        await expectAdminHeader(page, "Fallback Articles & Passages", "Admin / Composition / Fallback articles & passages");
+        const catalogBody = JSON.parse(readFileSync(path.resolve("apps/web/public/generated/admin-hook-catalog-sky-v1.json"), "utf8"));
+        await expect(page.getByLabel("Reader copy")).toHaveValue(catalogBody.rows.find((row: { key: string; body: string }) => row.key === "fallback-hook/angle-intro/ascendant").body);
+        await closeGeneratedEditor(page, true);
+      }
+    }
   });
 
   test("create menu routes writing actions to the right editors", async ({ page }) => {

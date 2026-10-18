@@ -8081,16 +8081,18 @@ export function GeneratedContentAdminDashboard() {
               <section className="admin-fallback-row-list" aria-label="Hook catalog">
                 {hookCatalogLoadState === "loading" && <PageLoading message="Loading hook catalog…" />}
                 {hookCatalogLoadState === "error" && <div className="admin-empty-state" role="alert"><p>{hookCatalogError ?? "Could not load the hook catalog."}</p><StudioButton type="button" onClick={() => void refreshHookCatalog()}><RefreshCw size={15} aria-hidden="true" />Retry catalog</StudioButton></div>}
-                {filteredHookCatalog.map((item) => {
-                  const saved = savedHookKeys.has(item.key) || savedHookKeys.has(canonicalFallbackContentKey(item.key));
-                  const itemKey = canonicalFallbackContentKey(item.key);
-                  return (
-                    <article key={`${item.type}-${item.key}`} className="admin-fallback-row" role="button" tabIndex={0} onClick={() => void openHookDraft(item)} onKeyDown={(event) => onCatalogKeyDown(event, item)}>
-                      <div className="admin-fallback-row-main"><p className="admin-eyebrow">{item.section} / {item.type}</p><h3>{item.label}</h3><code>{itemKey}</code></div>
-                      <div className="admin-fallback-row-actions"><span className={`ui-pill admin-status ${saved ? "status-live" : "status-draft"}`}>{saved ? "Saved row" : "Needs row"}</span><StudioButton type="button" onClick={(event) => { event.stopPropagation(); void openHookDraft(item); }}><Plus size={15} aria-hidden="true" />Author</StudioButton></div>
-                    </article>
-                  );
-                })}
+                <AdminPaginatedCollection items={filteredHookCatalog} label="Hook catalog" pageSize={24} resetKey={`surface-hook-catalog:${fallbackSectionFilter}:${surfaceAreaFilter}:${surfaceStatusFilter}:${query}`}>
+                  {(visibleItems) => visibleItems.map((item) => {
+                    const saved = savedHookKeys.has(item.key) || savedHookKeys.has(canonicalFallbackContentKey(item.key));
+                    const itemKey = canonicalFallbackContentKey(item.key);
+                    return (
+                      <article key={`${item.type}-${item.key}`} className="admin-fallback-row" role="button" tabIndex={0} onClick={() => void openHookDraft(item)} onKeyDown={(event) => onCatalogKeyDown(event, item)}>
+                        <div className="admin-fallback-row-main"><p className="admin-eyebrow">{item.section} / {item.type}</p><h3>{item.label}</h3><code>{itemKey}</code></div>
+                        <div className="admin-fallback-row-actions"><span className={`ui-pill admin-status ${saved ? "status-live" : "status-draft"}`}>{saved ? "Saved row" : "Needs row"}</span><StudioButton type="button" onClick={(event) => { event.stopPropagation(); void openHookDraft(item); }}><Plus size={15} aria-hidden="true" />Author</StudioButton></div>
+                      </article>
+                    );
+                  })}
+                </AdminPaginatedCollection>
               </section>
             </details>
           </section>
