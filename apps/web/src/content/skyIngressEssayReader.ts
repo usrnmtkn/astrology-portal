@@ -1,7 +1,7 @@
 import { approvedSkySeasonFallback, skySeasonFallbackIdentity } from "./skySeasonFallback.js";
 import { assertCompiledSkyArticleEdition, selectActiveSkyArticleEdition, skyArticleEditionRecord, type SkyArticleEditionCandidate } from "./skyArticleTemplateCompiler.js";
 import { isSkyIngressEssay } from "./skyIngressEssay.mjs";
-import type { ContentPublication } from "./contentPublicationState.js";
+import { publicationTimestamp, type ContentPublication } from "./contentPublicationState.js";
 
 /** Discover dated editions from the current ledger, then fetch their exact
  * rows. Fallback-package caches do not contain compiled Studio editions. */
@@ -20,13 +20,15 @@ export function skyIngressEssayPublicationKeys(
 /** Receives the reader-admitted inventory, never Studio drafts. Keep selection
  * and exact stored prose identical on initial hydration and later refreshes. */
 export function skyIngressEssayReaderSection(
-  candidates: Iterable<SkyArticleEditionCandidate & { status?: string; headline?: string | null; summary?: string | null; body?: string; lane?: string | null; reviewState?: string | null }>,
-  context: { activeInstant: string; planet: string; sign: string }
+  candidates: Iterable<SkyArticleEditionCandidate & { status?: string; headline?: string | null; summary?: string | null; body?: string; lane?: string | null; reviewState?: string | null; updatedAt?: string }>,
+  context: { activeInstant: string; planet: string; sign: string },
+  publicationFor?: (key: string) => ContentPublication | undefined
 ) {
   const rows = [...candidates];
   const selected = selectActiveSkyArticleEdition(rows.filter(row => row.status === "LIVE"
     && isSkyIngressEssay(skyArticleEditionRecord((row.sections as { skyArticleEdition?: unknown } | undefined)?.skyArticleEdition)?.format)), context);
   if (!selected || !isSkyIngressEssay(selected.edition.format)) {
+    if (publicationFor) return null;
     const active = Date.parse(context.activeInstant);
     const fallback = rows.flatMap(row => {
       const visit = approvedSkySeasonFallback({ content_key: row.contentKey, status: row.status,
@@ -44,6 +46,16 @@ export function skyIngressEssayReaderSection(
     };
   }
   const edition = assertCompiledSkyArticleEdition(selected.edition);
+  if (publicationFor) {
+    // Loading requirements need the selected candidate's exact version; the
+    // generic dated-row allowance is intentionally broader than this proof.
+    const row = selected.content as (typeof rows)[number];
+    const publication = publicationFor(edition.contentKey);
+    if (publication?.state !== "live" || !publication.row_id?.trim() || !publication.row_updated_at
+      || row.id !== publication.row_id || !row.updatedAt
+      || !Number.isFinite(Date.parse(row.updatedAt)) || !Number.isFinite(Date.parse(publication.row_updated_at))
+      || publicationTimestamp(row.updatedAt) !== publicationTimestamp(publication.row_updated_at)) return null;
+  }
   return {
     slot: "meaning" as const, required: true, layer: "authored" as const,
     tier: "fallback-architecture-v3-authored" as const,

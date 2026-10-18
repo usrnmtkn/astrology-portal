@@ -1,11 +1,12 @@
+import type { FallbackArchitectureV3MirrorMetadata } from "./fallbackArchitectureV3MirrorValidation";
 import { isSkyArticleDashboardRow, isSkyDashboardRow, isSkyListDashboardRow } from "./skyDashboardScope";
 import { loadReaderRows, ReaderAdmissionError } from "./readerContentClient";
-import { packageAuthoredCardFromRow, packageHookRowFromRow, packageVocabRowFromRow, packageTemplateRowFromRow, packageFallbackArchitectureV3CoreRows } from "./fallbackArchitectureV3CorePackaging";
+import { isRecord, isApprovedFallbackArchitectureV3Row, isSkyPlacementFallbackPartitionKey, packageAuthoredCardFromRow, packageHookRowFromRow, packageVocabRowFromRow, packageTemplateRowFromRow, packageFallbackArchitectureV3CoreRows } from "./fallbackArchitectureV3CorePackaging";
 // @ts-ignore Exact owner-requested source versions, shared with package materialization.
 import { correctedReaderSummary } from "../content/fallbackArchitectureV3/readerSummaryReferenceCorrections.mjs";
 import { publicationLedgerKey, publicationLedgerReady, publicationAllowsContent, contentPublication, contentPublicationRecords, contentPublicationGeneration, type ContentPublication } from "../content/contentPublicationState";
 import { contentPublicationsAvailableOnline, refreshContentPublications } from "./contentPublications";
-import { isGeneratedContentReaderBoundaryAllowed, isReaderServableGeneratedContentRow, isEmergencyFloorContentKey, generatedRowPackageRole } from "../content/generatedContentEligibility";
+import { isGeneratedContentReaderBoundaryAllowed, isReaderServableGeneratedContentRow, isEmergencyFloorContentKey } from "../content/generatedContentEligibility";
 export { isGeneratedContentReaderBoundaryAllowed, isReaderServableGeneratedContentRow } from "../content/generatedContentEligibility";
 import { getSupabaseClient } from "./auth";
 
@@ -23,9 +24,6 @@ import {
   type TemplateSlotValues
 } from "./templateInterpolation";
 import { generatedContentAliases } from "./generatedContentKeys";
-import { fallbackArchitectureV3DashboardPackageDestination } from "./fallbackArchitectureV3DashboardPackaging";
-import { selectLatestLiveServingDashboardRows } from "./fallbackArchitectureV3DashboardOverlay";
-import { isCanonicalSkyReaderRecord, isFallbackDashboardRecordAllowed } from "../content/fallbackArchitectureV3/dashboardExtensions";
 import { isReaderFacingCopy } from "../content/readerSafety";
 import {
   hasExactSkyArticleOwnerApproval,
@@ -41,7 +39,6 @@ import {
 } from "../content/servedFieldsContract";
 import {
   fallbackArchitectureV3BundledManifestSummary,
-  fallbackArchitectureV3ManifestForBundle,
   loadFallbackArchitectureV3BundledCoreManifest,
   loadFallbackArchitectureV3BundledSkyPlacementManifest,
   transitV3AuthoredCardForContentKey,
@@ -124,7 +121,6 @@ export type GeneratedContentRow = {
 
 const fallbackArchitectureV3Provider = "tldrastro-fallback-architecture-v3";
 const fallbackArchitectureV3SkyPlacementProvider = "tldrastro-fallback-architecture-v3-sky-placement";
-const fallbackArchitectureV3ApprovedReviews = new Set(["approved", "approved_reuse", "reviewed"]);
 const fallbackArchitectureV3BundleCacheKey = "tldrastro:fallbackArchitectureV3:dashboardBundle";
 const fallbackArchitectureV3BundleVersionKey = "tldrastro:fallbackArchitectureV3:dashboardBundleVersion";
 // Admission changes can make an old overlay incomplete even when the database
@@ -134,12 +130,6 @@ const fallbackArchitectureV3SkyPlacementBundleCacheKey = "tldrastro:fallbackArch
 const fallbackArchitectureV3SkyPlacementBundleVersionKey = "tldrastro:fallbackArchitectureV3:skyPlacementDashboardBundleVersion";
 const fallbackArchitectureV3SkyPlacementBundleCacheSchema = "fallback-architecture-v3-sky-placement-dashboard-cache-v3";
 
-function isSkyPlacementFallbackPartitionKey(contentKey: string) {
-  return contentKey.startsWith("fallback-hook/sky-sign-copy/")
-    || contentKey.startsWith("fallback-hook/sky-placement-")
-    || contentKey.startsWith("house-horoscope-core/")
-    || contentKey.startsWith("fallback-hook/sky-planet-education/");
-}
 
 /** Live canonical article/Rx rows are overlay sources even when the ledger
  * marker is absent. The older dashboard partition path cannot fail them closed. */
@@ -149,22 +139,6 @@ function isSkyPlacementPublishedReaderKey(contentKey: string) {
     || contentKey.startsWith("sky-placement/retrograde/");
 }
 
-function isSkyPlacementDashboardDistributionEligible(row: GeneratedContentRow) {
-  const record = packageRecord(row);
-  const isContinuous = record.render_policy === "sky-placement-continuous-v2"
-    || row.content_key.startsWith("fallback-hook/sky-sign-copy/");
-
-  if (!isContinuous) return true;
-
-  const sourceSnapshot = rowSourceSnapshot(row);
-  const facts = rowFacts(row);
-  return stringFrom(
-    sourceSnapshot.distributionState,
-    sourceSnapshot.distribution_state,
-    facts.distributionState,
-    facts.distribution_state
-  ) === "serving";
-}
 
 export function fallbackArchitectureV3AuthoredContentForKey(contentKey: string): LiveGeneratedContent | null {
   const card = transitV3AuthoredCardForContentKey(contentKey);
@@ -211,12 +185,7 @@ export function fallbackArchitectureV3AuthoredContentForKey(contentKey: string):
   };
 }
 
-type FallbackArchitectureV3MirrorMetadata = {
-  packageVersion: string;
-  contentHash: string;
-  keyManifestHash: string;
-  keyCount: number;
-};
+
 
 type CachedFallbackArchitectureV3Bundle = {
   version: number;
@@ -269,9 +238,6 @@ export function compareFallbackArchitectureV3PackageVersions(first: string, seco
   return 0;
 }
 
-function isRecord(value: unknown): value is Record<string, unknown> {
-  return Boolean(value && typeof value === "object" && !Array.isArray(value));
-}
 
 function isLocalGeneratedContentPreviewHost() {
   if (typeof window === "undefined") {
@@ -854,184 +820,16 @@ function stringField(record: Record<string, unknown>, key: string) {
   return typeof value === "string" ? value.trim() : "";
 }
 
-function rowSourceSnapshot(row: Pick<GeneratedContentRow, "source_snapshot">) {
-  return isRecord(row.source_snapshot) ? row.source_snapshot : {};
-}
 
-function rowFacts(row: Pick<GeneratedContentRow, "facts">) {
-  return isRecord(row.facts) ? row.facts : {};
-}
 
-function rowSections(row: Pick<GeneratedContentRow, "sections">) {
-  return isRecord(row.sections) ? row.sections : {};
-}
 
-function packageRecord(row: Pick<GeneratedContentRow, "sections">) {
-  const sections = rowSections(row);
-  return isRecord(sections.packageRecord) ? sections.packageRecord : {};
-}
 
-function stringFrom(...values: unknown[]) {
-  for (const value of values) {
-    if (typeof value === "string" && value.trim()) {
-      return value.trim();
-    }
-  }
 
-  return "";
-}
 
-function stringArrayFrom(value: unknown) {
-  return Array.isArray(value) ? value.filter((item): item is string => typeof item === "string" && item.trim().length > 0) : [];
-}
 
-function fallbackSystemBucket(row: GeneratedContentRow) {
-  const sourceSnapshot = rowSourceSnapshot(row);
-  const facts = rowFacts(row);
-  const contentType = stringFrom(
-    sourceSnapshot.contentType,
-    sourceSnapshot.content_type,
-    facts.contentType,
-    facts.content_type
-  );
-  const { role } = generatedRowPackageRole(row);
 
-  return { contentType, role };
-}
 
-function isApprovedFallbackArchitectureV3Row(
-  row: GeneratedContentRow,
-  provider = fallbackArchitectureV3Provider
-) {
-  const { role, reviewStatus } = generatedRowPackageRole(row);
 
-  return Boolean(
-    row.provider === provider
-      && (
-        fallbackArchitectureV3ApprovedReviews.has(reviewStatus)
-        || (role === "template" && !reviewStatus)
-      )
-  );
-}
-
-function fallbackArchitectureV3RowMirrorMetadata(
-  row: GeneratedContentRow,
-  partition: "core" | "sky-placement"
-): FallbackArchitectureV3MirrorMetadata | null {
-  const sourceSnapshot = rowSourceSnapshot(row);
-  const facts = rowFacts(row);
-  const record = packageRecord(row);
-  const packageVersion = stringFrom(
-    sourceSnapshot.packageVersion,
-    sourceSnapshot.package_version,
-    facts.packageVersion,
-    facts.package_version,
-    record.packageVersion,
-    record.package_version
-  );
-  const contentHash = stringFrom(
-    sourceSnapshot.packagePartitionContentHash,
-    sourceSnapshot.package_partition_content_hash,
-    facts.packagePartitionContentHash,
-    facts.package_partition_content_hash,
-    record.packagePartitionContentHash,
-    record.package_partition_content_hash,
-    sourceSnapshot.packageContentHash,
-    sourceSnapshot.package_content_hash,
-    facts.packageContentHash,
-    facts.package_content_hash,
-    record.packageContentHash,
-    record.package_content_hash
-  );
-  const keyManifestHash = stringFrom(
-    sourceSnapshot.packagePartitionKeyManifestHash,
-    sourceSnapshot.package_partition_key_manifest_hash,
-    facts.packagePartitionKeyManifestHash,
-    facts.package_partition_key_manifest_hash,
-    record.packagePartitionKeyManifestHash,
-    record.package_partition_key_manifest_hash,
-    sourceSnapshot.packageKeyManifestHash,
-    sourceSnapshot.package_key_manifest_hash,
-    facts.packageKeyManifestHash,
-    facts.package_key_manifest_hash,
-    record.packageKeyManifestHash,
-    record.package_key_manifest_hash
-  );
-  const rowPartition = stringFrom(
-    sourceSnapshot.packagePartition,
-    sourceSnapshot.package_partition,
-    facts.packagePartition,
-    facts.package_partition,
-    record.packagePartition,
-    record.package_partition
-  );
-  const rawKeyCount = sourceSnapshot.packagePartitionKeyCount
-    ?? sourceSnapshot.package_partition_key_count
-    ?? facts.packagePartitionKeyCount
-    ?? facts.package_partition_key_count
-    ?? record.packagePartitionKeyCount
-    ?? record.package_partition_key_count
-    ?? sourceSnapshot.packageKeyCount
-    ?? sourceSnapshot.package_key_count
-    ?? facts.packageKeyCount
-    ?? facts.package_key_count
-    ?? record.packageKeyCount
-    ?? record.package_key_count;
-  const keyCount = Number(rawKeyCount);
-
-  if (
-    !packageVersion
-    || (rowPartition && rowPartition !== partition)
-    || !contentHash
-    || !keyManifestHash
-    || !Number.isInteger(keyCount)
-    || keyCount <= 0
-  ) {
-    return null;
-  }
-
-  return { packageVersion, contentHash, keyManifestHash, keyCount };
-}
-
-function equalFallbackArchitectureV3MirrorMetadata(
-  first: FallbackArchitectureV3MirrorMetadata,
-  second: FallbackArchitectureV3MirrorMetadata
-) {
-  return first.packageVersion === second.packageVersion
-    && first.contentHash === second.contentHash
-    && first.keyManifestHash === second.keyManifestHash
-    && first.keyCount === second.keyCount;
-}
-
-async function fallbackArchitectureV3BundleManifestIfValid(
-  bundle: FallbackArchitectureV3Bundle,
-  metadata: FallbackArchitectureV3MirrorMetadata,
-  loadBundledPartitionManifest: () => Promise<FallbackArchitectureV3PackageManifest>,
-  { allowEditorialContentOverrides = false }: { allowEditorialContentOverrides?: boolean } = {}
-): Promise<FallbackArchitectureV3PackageManifest | null> {
-  if (metadata.packageVersion !== fallbackArchitectureV3BundledManifestSummary.packageVersion) return null;
-
-  const manifest = fallbackArchitectureV3ManifestForBundle(bundle, metadata.packageVersion);
-  const bundledManifest = await loadBundledPartitionManifest();
-
-  if (
-    manifest.keyManifestHash !== bundledManifest.keyManifestHash
-    || manifest.keyCount !== bundledManifest.keyCount
-    || manifest.keyManifestHash !== metadata.keyManifestHash
-    || manifest.keyCount !== metadata.keyCount
-    || (
-      !allowEditorialContentOverrides
-      && (
-        manifest.contentHash !== bundledManifest.contentHash
-        || manifest.contentHash !== metadata.contentHash
-      )
-    )
-  ) {
-    return null;
-  }
-
-  return manifest;
-}
 
 function fallbackArchitectureV3DashboardVersionFromRows(rows: Pick<GeneratedContentRow, "updated_at">[]) {
   return rows.reduce((version, row) => {
@@ -1052,7 +850,7 @@ function sortGeneratedRowsNewestFirst(rows: GeneratedContentRow[]) {
 }
 
 type DashboardScope = "all" | "sky" | "sky-list" | "sky-article";
-const pendingDashboardBundles = new Map<DashboardScope, {
+const pendingDashboardBundles = new Map<string, {
   generation: number;
   promise: Promise<FallbackArchitectureV3Bundle | null>;
 }>();
@@ -1060,7 +858,7 @@ const dashboardCacheKey = (key: string, scope: DashboardScope) => scope === "all
 
 export function clearCachedFallbackArchitectureV3Bundle(scope?: DashboardScope) {
   if (scope) pendingDashboardBundles.delete(scope);
-  else pendingDashboardBundles.clear();
+  else for (const key of pendingDashboardBundles.keys()) if (!key.startsWith("placement:")) pendingDashboardBundles.delete(key);
   if (typeof window === "undefined") {
     return;
   }
@@ -1086,28 +884,14 @@ function clearCachedFallbackArchitectureV3SkyPlacementBundle() {
   }
 }
 
-async function readCachedFallbackArchitectureV3Partition({
-  cacheKey,
-  cacheSchema,
-  clear,
-  loadManifest,
-  partition,
-  versionKey
-}: {
-  cacheKey: string;
-  cacheSchema: string;
-  clear: () => void;
-  loadManifest: () => Promise<FallbackArchitectureV3PackageManifest>;
-  partition: "core" | "skyPlacement";
-  versionKey: string;
-}): Promise<CachedFallbackArchitectureV3Bundle | null> {
+async function readCachedFallbackArchitectureV3SkyPlacementBundle(): Promise<CachedFallbackArchitectureV3Bundle | null> {
   if (typeof window === "undefined") {
     return null;
   }
 
   try {
-    const version = Number(window.localStorage.getItem(versionKey) ?? "0");
-    const rawBundle = window.localStorage.getItem(cacheKey);
+    const version = Number(window.localStorage.getItem(fallbackArchitectureV3SkyPlacementBundleVersionKey) ?? "0");
+    const rawBundle = window.localStorage.getItem(fallbackArchitectureV3SkyPlacementBundleCacheKey);
 
     if (!version || !rawBundle) {
       return null;
@@ -1127,11 +911,11 @@ async function readCachedFallbackArchitectureV3Partition({
       bundle?: unknown;
     };
     const bundle = envelope?.bundle as FallbackArchitectureV3Bundle | undefined;
-    const bundledPartition = fallbackArchitectureV3BundledManifestSummary.partitions?.[partition];
+    const bundledPartition = fallbackArchitectureV3BundledManifestSummary.partitions?.["skyPlacement"];
 
     if (
       !bundledPartition
-      || envelope?.schema !== cacheSchema
+      || envelope?.schema !== fallbackArchitectureV3SkyPlacementBundleCacheSchema
       || envelope?.runtimeCapability !== fallbackArchitectureV3BundledManifestSummary.runtimeCapability
       || envelope?.bundledPackageVersion !== fallbackArchitectureV3BundledManifestSummary.packageVersion
       || envelope?.bundledContentHash !== bundledPartition.contentHash
@@ -1141,7 +925,7 @@ async function readCachedFallbackArchitectureV3Partition({
       || !bundle?.rowsFile
       || !bundle?.templatesFile
     ) {
-      clear();
+      clearCachedFallbackArchitectureV3SkyPlacementBundle();
       return null;
     }
 
@@ -1151,15 +935,16 @@ async function readCachedFallbackArchitectureV3Partition({
       keyManifestHash: String(envelope.mirrorKeyManifestHash ?? ""),
       keyCount: Number(envelope.mirrorKeyCount)
     };
+    const { fallbackArchitectureV3BundleManifestIfValid } = await import("./fallbackArchitectureV3MirrorValidation");
     const mirror = await fallbackArchitectureV3BundleManifestIfValid(
       bundle,
       mirrorMetadata,
-      loadManifest,
+      loadFallbackArchitectureV3BundledSkyPlacementManifest,
       { allowEditorialContentOverrides: true }
     );
 
     if (!mirror) {
-      clear();
+      clearCachedFallbackArchitectureV3SkyPlacementBundle();
       return null;
     }
 
@@ -1169,7 +954,7 @@ async function readCachedFallbackArchitectureV3Partition({
       mirror
     };
   } catch {
-    clear();
+    clearCachedFallbackArchitectureV3SkyPlacementBundle();
     return null;
   }
 }
@@ -1214,44 +999,22 @@ export function readCachedFallbackArchitectureV3Bundle(scope: DashboardScope = "
   }
 }
 
-function readCachedFallbackArchitectureV3SkyPlacementBundle() {
-  return readCachedFallbackArchitectureV3Partition({
-    cacheKey: fallbackArchitectureV3SkyPlacementBundleCacheKey,
-    cacheSchema: fallbackArchitectureV3SkyPlacementBundleCacheSchema,
-    clear: clearCachedFallbackArchitectureV3SkyPlacementBundle,
-    loadManifest: loadFallbackArchitectureV3BundledSkyPlacementManifest,
-    partition: "skyPlacement",
-    versionKey: fallbackArchitectureV3SkyPlacementBundleVersionKey
-  });
-}
-
-function cacheFallbackArchitectureV3Partition(
+function cacheFallbackArchitectureV3SkyPlacementBundle(
   version: number,
   bundle: FallbackArchitectureV3Bundle,
-  mirror: FallbackArchitectureV3PackageManifest,
-  {
-    cacheKey,
-    cacheSchema,
-    partition,
-    versionKey
-  }: {
-    cacheKey: string;
-    cacheSchema: string;
-    partition: "core" | "skyPlacement";
-    versionKey: string;
-  }
+  mirror: FallbackArchitectureV3PackageManifest
 ) {
   if (typeof window === "undefined" || !version) {
     return;
   }
 
   try {
-    const bundledPartition = fallbackArchitectureV3BundledManifestSummary.partitions?.[partition];
+    const bundledPartition = fallbackArchitectureV3BundledManifestSummary.partitions?.["skyPlacement"];
     if (!bundledPartition) return;
 
-    window.localStorage.setItem(versionKey, String(version));
-    window.localStorage.setItem(cacheKey, JSON.stringify({
-      schema: cacheSchema,
+    window.localStorage.setItem(fallbackArchitectureV3SkyPlacementBundleVersionKey, String(version));
+    window.localStorage.setItem(fallbackArchitectureV3SkyPlacementBundleCacheKey, JSON.stringify({
+      schema: fallbackArchitectureV3SkyPlacementBundleCacheSchema,
       runtimeCapability: fallbackArchitectureV3BundledManifestSummary.runtimeCapability,
       bundledPackageVersion: fallbackArchitectureV3BundledManifestSummary.packageVersion,
       bundledContentHash: bundledPartition.contentHash,
@@ -1287,19 +1050,6 @@ function cacheFallbackArchitectureV3Bundle(
   } catch {
     // The checked-in package remains available when browser storage is full or blocked.
   }
-}
-
-function cacheFallbackArchitectureV3SkyPlacementBundle(
-  version: number,
-  bundle: FallbackArchitectureV3Bundle,
-  mirror: FallbackArchitectureV3PackageManifest
-) {
-  cacheFallbackArchitectureV3Partition(version, bundle, mirror, {
-    cacheKey: fallbackArchitectureV3SkyPlacementBundleCacheKey,
-    cacheSchema: fallbackArchitectureV3SkyPlacementBundleCacheSchema,
-    partition: "skyPlacement",
-    versionKey: fallbackArchitectureV3SkyPlacementBundleVersionKey
-  });
 }
 
 async function loadContentStudioLastKnownGoodCoreBundle(scope: DashboardScope = "all") {
@@ -1410,6 +1160,7 @@ export function prefetchColdSkyContentForKeys(keys: string[], publications: Prom
 }
 
 export function prefetchColdSkyPlacementRows(selection: string, publications: Promise<void>) {
+  if (pendingDashboardBundles.get(`placement:${selection}`)?.generation === contentPublicationGeneration) return;
   if (!selection.startsWith("article:") || contentPublicationsAvailableOnline()
     || readCachedFallbackArchitectureV3Bundle("sky-article")) return;
   try {
@@ -1434,28 +1185,21 @@ export function prefetchColdSkyPlacementRows(selection: string, publications: Pr
 
 export async function loadFallbackArchitectureV3DashboardBundle(scope: DashboardScope = "all", earlyRead?: ColdSkyArticleRead): Promise<FallbackArchitectureV3Bundle | null> {
   await refreshContentPublications();
-  const pending = pendingDashboardBundles.get(scope);
-  if (pending?.generation === contentPublicationGeneration) {
+  return shareDashboardBundle(scope, canCache => {
+    const earlyRows = scope === "sky-article" && !readCachedFallbackArchitectureV3Bundle(scope) ? earlyRead?.consume() : undefined;
     earlyRead?.discard();
-    return pending.promise;
-  }
-  // Claim before the first asynchronous source read, so another caller joining
-  // this dashboard request cannot discard its shared transport.
-  const earlyRows = scope === "sky-article" && !readCachedFallbackArchitectureV3Bundle(scope)
-    ? earlyRead?.consume() : undefined;
-  earlyRead?.discard();
-  // React remounts and content refreshes can overlap. Share only active work for
-  // the same source partition and publication generation; failures remain retryable.
-  const entry = {
-    generation: contentPublicationGeneration,
-    promise: Promise.resolve(null) as Promise<FallbackArchitectureV3Bundle | null>
-  };
-  entry.promise = readFallbackArchitectureV3DashboardBundle(scope, () => (
-    pendingDashboardBundles.get(scope) === entry && entry.generation === contentPublicationGeneration
-  ), earlyRows).finally(() => {
-    if (pendingDashboardBundles.get(scope) === entry) pendingDashboardBundles.delete(scope);
+    return readFallbackArchitectureV3DashboardBundle(scope, canCache, earlyRows);
+  }, () => earlyRead?.discard());
+}
+
+function shareDashboardBundle(key: string, read: (canCache: () => boolean) => Promise<FallbackArchitectureV3Bundle | null>, joining: () => void) {
+  const active = pendingDashboardBundles.get(key);
+  if (active?.generation === contentPublicationGeneration) { joining(); return active.promise; }
+  const entry = { generation: contentPublicationGeneration, promise: Promise.resolve(null) as Promise<FallbackArchitectureV3Bundle | null> };
+  entry.promise = read(() => pendingDashboardBundles.get(key) === entry && entry.generation === contentPublicationGeneration).finally(() => {
+    if (pendingDashboardBundles.get(key) === entry) pendingDashboardBundles.delete(key);
   });
-  pendingDashboardBundles.set(scope, entry);
+  pendingDashboardBundles.set(key, entry);
   return entry.promise;
 }
 
@@ -1549,7 +1293,7 @@ if (typeof window !== "undefined") {
   try { window.localStorage.removeItem("tldrastro:sky-publication-rows:v1"); } catch { /* Storage may be unavailable. */ }
 }
 
-async function loadPublishedSkyBundle(selection?: string, staged?: ReturnType<typeof loadReaderRows>): Promise<FallbackArchitectureV3Bundle | null> {
+async function loadPublishedSkyBundle(selection?: string, staged?: ReturnType<typeof loadReaderRows>, canCache = () => true): Promise<FallbackArchitectureV3Bundle | null> {
   const manifest = await loadFallbackArchitectureV3BundledSkyPlacementManifest();
   const keys = new Set(manifest.keys.map((key) => key.slice(key.indexOf(":") + 1)));
   const { skyPlacementSourceInSelection } = await import("./skyPlacementSourceScope");
@@ -1609,17 +1353,22 @@ async function loadPublishedSkyBundle(selection?: string, staged?: ReturnType<ty
   // Retain other visited selections, but drop retired and superseded rows.
   const retained = cached.filter(row => publicationAllowsContent(row.content_key, row.id, row.updated_at)
     && !current.some(incoming => incoming.content_key === row.content_key));
-  try { window.localStorage.setItem(skyPublicationCacheKey, JSON.stringify([...retained, ...current])); } catch { /* Memory remains guarded. */ }
+  try { if (canCache()) window.localStorage.setItem(skyPublicationCacheKey, JSON.stringify([...retained, ...current])); } catch { /* Memory remains guarded. */ }
   return bundle;
 }
 
 export async function loadFallbackArchitectureV3SkyPlacementDashboardBundle(selection?: string, earlyRead?: ReturnType<typeof prefetchColdSkyPlacementRows>): Promise<FallbackArchitectureV3Bundle | null> {
-  // Claim synchronously, before an async boundary lets a joining caller discard
-  // transport now owned by this loader. Only this owner can cancel its request.
+  // Claim before joining. A later caller cannot cancel the active owner's read.
   const staged = earlyRead?.consume();
   await refreshContentPublications().catch(error => { staged?.cancel(); throw error; });
+  return shareDashboardBundle(`placement:${selection ?? "all"}`,
+    canCache => readSkyPlacementBundle(selection, staged, canCache).finally(() => staged?.cancel()),
+    () => staged?.cancel());
+}
+
+async function readSkyPlacementBundle(selection: string | undefined, staged: ReturnType<NonNullable<ReturnType<typeof prefetchColdSkyPlacementRows>>["consume"]>, canCache: () => boolean): Promise<FallbackArchitectureV3Bundle | null> {
   if (publicationLedgerReady() || contentPublicationRecords().some((publication) => isSkyPlacementPublishedReaderKey(publication.content_key))) {
-    return loadPublishedSkyBundle(selection, staged?.request).finally(() => staged?.cancel());
+    return loadPublishedSkyBundle(selection, staged?.request, canCache);
   }
   staged?.cancel();
   const supabase = await getSupabaseClient();
@@ -1636,7 +1385,7 @@ export async function loadFallbackArchitectureV3SkyPlacementDashboardBundle(sele
 
   const dashboardVersion = fallbackArchitectureV3DashboardVersionFromRows(versionRows ?? []);
   if (!dashboardVersion) {
-    clearCachedFallbackArchitectureV3SkyPlacementBundle();
+    if (canCache()) clearCachedFallbackArchitectureV3SkyPlacementBundle();
     return null;
   }
   if (cached?.version === dashboardVersion) return cached.bundle;
@@ -1648,58 +1397,20 @@ export async function loadFallbackArchitectureV3SkyPlacementDashboardBundle(sele
   }
   const rows = data ?? [];
 
-  const approvedRows = rows.filter((row) => (
-    isApprovedFallbackArchitectureV3Row(row, fallbackArchitectureV3SkyPlacementProvider)
-    && isSkyPlacementFallbackPartitionKey(row.content_key)
-    && isSkyPlacementDashboardDistributionEligible(row)
-  ));
-  const metadataByRow = approvedRows.map((row) => fallbackArchitectureV3RowMirrorMetadata(row, "sky-placement"));
-  const metadata = metadataByRow.find((value): value is FallbackArchitectureV3MirrorMetadata => Boolean(value));
-
-  if (
-    !metadata
-    || metadataByRow.some((value) => !value || !equalFallbackArchitectureV3MirrorMetadata(value, metadata))
-  ) {
-    clearCachedFallbackArchitectureV3SkyPlacementBundle();
+  let packageLegacySkyPlacementMirror: typeof import("./legacySkyPlacementMirror")["packageLegacySkyPlacementMirror"];
+  try {
+    ({ packageLegacySkyPlacementMirror } = await import("./legacySkyPlacementMirror"));
+  } catch (error) {
+    console.warn("Sky Placement dashboard partition failed to load; cached/local content remains active.", error);
+    return cached?.bundle ?? null;
+  }
+  const packaged = await packageLegacySkyPlacementMirror(rows);
+  if (!packaged) {
+    if (canCache()) clearCachedFallbackArchitectureV3SkyPlacementBundle();
     return null;
   }
-
-  const seen = new Set<string>();
-  const hookRows: HookRow[] = [];
-
-  for (const row of approvedRows) {
-    if (seen.has(row.content_key)) {
-      clearCachedFallbackArchitectureV3SkyPlacementBundle();
-      return null;
-    }
-    seen.add(row.content_key);
-
-    const { contentType, role } = fallbackSystemBucket(row);
-    if (contentType === "source-material" || !["fallback_hook", "house_horoscope_core"].includes(role)) continue;
-    const hook = packageHookRowFromRow(row);
-    if (hook) hookRows.push(hook);
-  }
-
-  const candidateBundle: FallbackArchitectureV3Bundle = {
-    transitLib: { authoredCards: [] },
-    templatesFile: { templates: [] },
-    rowsFile: { hookRows, vocabularyRows: [] }
-  };
-  const mirror = await fallbackArchitectureV3BundleManifestIfValid(
-    candidateBundle,
-    metadata,
-    loadFallbackArchitectureV3BundledSkyPlacementManifest,
-    { allowEditorialContentOverrides: true }
-  );
-
-  if (!mirror) {
-    clearCachedFallbackArchitectureV3SkyPlacementBundle();
-    return null;
-  }
-
-  const bundle = { ...candidateBundle, packageManifest: mirror };
-  cacheFallbackArchitectureV3SkyPlacementBundle(dashboardVersion, bundle, mirror);
-  return bundle;
+  if (canCache()) cacheFallbackArchitectureV3SkyPlacementBundle(dashboardVersion, packaged.bundle, packaged.mirror);
+  return packaged.bundle;
 }
 
 export function generatedContentDrilldown(content?: LiveGeneratedContent | null): GeneratedContentDrilldown | null {

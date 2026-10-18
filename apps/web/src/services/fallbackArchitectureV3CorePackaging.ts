@@ -7,12 +7,12 @@ import { selectLatestLiveServingDashboardRows } from "./fallbackArchitectureV3Da
 import { fallbackArchitectureV3DashboardPackageDestination } from "./fallbackArchitectureV3DashboardPackaging.js";
 const fallbackArchitectureV3Provider = "tldrastro-fallback-architecture-v3";
 const fallbackArchitectureV3ApprovedReviews = new Set(["approved", "approved_reuse", "reviewed"]);
-function isRecord(value: unknown): value is Record<string, unknown> { return Boolean(value && typeof value === "object" && !Array.isArray(value)); }
-function rowSourceSnapshot(row: Pick<GeneratedContentRow, "source_snapshot">) {
+export function isRecord(value: unknown): value is Record<string, unknown> { return Boolean(value && typeof value === "object" && !Array.isArray(value)); }
+export function rowSourceSnapshot(row: Pick<GeneratedContentRow, "source_snapshot">) {
   return isRecord(row.source_snapshot) ? row.source_snapshot : {};
 }
 
-function rowFacts(row: Pick<GeneratedContentRow, "facts">) {
+export function rowFacts(row: Pick<GeneratedContentRow, "facts">) {
   return isRecord(row.facts) ? row.facts : {};
 }
 
@@ -20,12 +20,12 @@ function rowSections(row: Pick<GeneratedContentRow, "sections">) {
   return isRecord(row.sections) ? row.sections : {};
 }
 
-function packageRecord(row: Pick<GeneratedContentRow, "sections">) {
+export function packageRecord(row: Pick<GeneratedContentRow, "sections">) {
   const sections = rowSections(row);
   return isRecord(sections.packageRecord) ? sections.packageRecord : {};
 }
 
-function stringFrom(...values: unknown[]) {
+export function stringFrom(...values: unknown[]) {
   for (const value of values) {
     if (typeof value === "string" && value.trim()) {
       return value.trim();
@@ -39,7 +39,7 @@ function stringArrayFrom(value: unknown) {
   return Array.isArray(value) ? value.filter((item): item is string => typeof item === "string" && item.trim().length > 0) : [];
 }
 
-function fallbackSystemBucket(row: GeneratedContentRow) {
+export function fallbackSystemBucket(row: GeneratedContentRow) {
   const sourceSnapshot = rowSourceSnapshot(row);
   const facts = rowFacts(row);
   const contentType = stringFrom(
@@ -53,7 +53,7 @@ function fallbackSystemBucket(row: GeneratedContentRow) {
   return { contentType, role };
 }
 
-function isApprovedFallbackArchitectureV3Row(
+export function isApprovedFallbackArchitectureV3Row(
   row: GeneratedContentRow,
   provider = fallbackArchitectureV3Provider
 ) {
@@ -68,7 +68,7 @@ function isApprovedFallbackArchitectureV3Row(
   );
 }
 
-function isSkyPlacementFallbackPartitionKey(contentKey: string) {
+export function isSkyPlacementFallbackPartitionKey(contentKey: string) {
   return contentKey.startsWith("fallback-hook/sky-sign-copy/")
     || contentKey.startsWith("fallback-hook/sky-placement-")
     || contentKey.startsWith("house-horoscope-core/")

@@ -118,7 +118,7 @@ assert.equal(ingressFacts().tldr, 'QA current ingress TLDR');
 console.log('PASS ingress-summary retirement, unavailable publication, and current publication identity');
 
 const { skyPlacementPublicationIdentity } = await import('../apps/web/src/services/skyPlacementPublicationGuard.ts');
-for (const content_key of ['sky-article/sun/libra/2026/2026-09-22', 'sky-season-fallback/libra-2026/moon/sagittarius/2026-10-13']) {
+for (const content_key of ['sky-article/sun/libra/2026/2026-09-22', 'sky-season-fallback/libra-2026/moon/sagittarius/2026-10-13', 'sky.aspect.sun.trine.pluto', 'sky.aspect.sun.trine.pluto.libra.aquarius']) {
   installContentPublications([{ ...record, content_key, revision: 50 }]);
   const initialIdentity = skyPlacementPublicationIdentity();
   installContentPublications([{ ...record, content_key, revision: 51, row_updated_at: '2026-10-14T12:00:00Z' }]);
@@ -130,3 +130,12 @@ for (const content_key of ['sky-article/sun/libra/2026/2026-09-22', 'sky-season-
   assert.notEqual(skyPlacementPublicationIdentity(), revisedIdentity, 'Retirement invalidates the previous published article');
 }
 console.log('PASS dated and seasonal Sky article publication identity, refresh, retirement, and guide isolation');
+
+{
+  const content_key = 'sky.aspect.sun.trine.pluto';
+  installContentPublications([{ ...record, content_key, revision: 60, row_updated_at: '2026-10-14T12:00:00.123456Z' }]);
+  const before = skyPlacementPublicationIdentity();
+  installContentPublications([{ ...record, content_key, revision: 61, row_updated_at: '2026-10-14T12:00:00.123457Z' }]);
+  assert.notEqual(skyPlacementPublicationIdentity(), before, 'One-microsecond current aspect changes invalidate the existing placement owner.');
+}
+console.log('PASS exact Sky aspect publication identity, microseconds, retirement and unrelated-guide isolation.');

@@ -16,6 +16,7 @@ const publicRow=projectReaderRow(row);assert(!JSON.stringify(publicRow).includes
 const client=(r:any)=>({...r,contentKey:r.content_key,sourceSnapshot:r.source_snapshot,reviewState:r.review_state});
 const at=(r:any[],instant:string)=>skyIngressEssayReaderSection(r.map(client),{planet:'moon',sign:'aquarius',activeInstant:instant});
 assert.equal(at([publicRow],start)?.body,row.body);assert.equal(at([publicRow],start)?.tldr,row.summary);
+assert.equal(skyIngressEssayReaderSection([client(publicRow)], {planet:'moon',sign:'aquarius',activeInstant:start}, () => { throw new Error('Strict compiled admission must not inspect season fallback publication.'); }), null);
 assert.equal(at([publicRow],'2026-09-23T00:05:13.998Z'),null);assert.equal(at([publicRow],end),null);
 for(const patch of [{status:'DRAFT'},{lane:'reference'},{review_state:'held'},{source_snapshot:{}},{body:'Changed after approval.'}]) assert.equal(readerRowIsEligible({...row,...patch}),false);
 const malformed=structuredClone(row);malformed.sections.seasonFallback.seasonEnd='invalid';assert.equal(readerRowIsEligible(malformed),false);

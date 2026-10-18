@@ -134,3 +134,38 @@ console.log('PASS: concurrent disjoint publication ranges, boundary/future keys,
   assert.deepEqual(Array.from(h.installed[0], (r: any) => r.content_key).sort(), inventory.map(r => r.content_key).sort());
   console.log('PASS balanced ledger completes in one concurrent wave with every publication intact.');
 }
+
+{
+  let unavailable = false;
+  let warmGate: Promise<void> | undefined;
+  const h = harness(async (_request, data) => { await warmGate; return unavailable ? { error: { message: 'Synthetic offline' } } : { data }; });
+  const availability: boolean[] = [], secondary: boolean[] = [], order: string[] = [];
+  const stop = h.subscribeToContentPublicationAvailability(() => { availability.push(h.contentPublicationsAvailableOnline()); order.push('first'); });
+  const stopSecondary = h.subscribeToContentPublicationAvailability(() => { secondary.push(h.contentPublicationsAvailableOnline()); order.push('second'); });
+  await h.refreshContentPublications(true);
+  assert.deepEqual(availability, [true]);
+  let releaseWarm!: () => void;
+  warmGate = new Promise<void>(resolve => { releaseWarm = resolve; });
+  const warm = h.refreshContentPublications(true);
+  await Promise.resolve(); await Promise.resolve();
+  assert.equal(h.contentPublicationsAvailableOnline(), true, 'Pending unchanged revalidation keeps last settled online availability.');
+  assert.deepEqual(availability, [true]);
+  releaseWarm(); await warm; warmGate = undefined;
+  assert.deepEqual(availability, [true], 'Successful unchanged revalidation does not emit a false offline transition.');
+  const savedLedger = h.installed.at(-1);
+  unavailable = true;
+  await h.refreshContentPublications(true);
+  assert.deepEqual(availability, [true, false], 'Same-ledger transport failure must revoke guest readiness even without a publication change.');
+  assert.deepEqual(secondary, [true, false]);
+  assert.deepEqual(order, ['first', 'second', 'first', 'second'], 'Independent listeners retain registration order.');
+  stopSecondary();
+  assert.equal(h.installed.at(-1), savedLedger, 'Offline transition preserves the complete prior ledger.');
+  unavailable = false;
+  await h.refreshContentPublications(true);
+  assert.deepEqual(availability, [true, false, true]);
+  assert.deepEqual(secondary, [true, false], 'Removing one listener leaves the other active.');
+  assert.deepEqual(order, ['first', 'second', 'first', 'second', 'first']);
+  stop(); unavailable = true;
+  await h.refreshContentPublications(true);
+  assert.deepEqual(availability, [true, false, true], 'Availability subscriptions clean up with the owning reader.');
+}
