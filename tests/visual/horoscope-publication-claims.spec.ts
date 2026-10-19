@@ -81,7 +81,10 @@ for(const [width,theme] of [[390,'light'],[1440,'dark']] as const){
    await studio.getByRole('button',{name:'4 · Publish',exact:true}).click();
    const checks=studio.getByRole('region',{name:'Publication checks'}),approval=studio.getByLabel('I have reviewed and approve the exact wording of every saved reading in this edition.');
    await expect(checks).toContainText('Aries:');await expect(checks).toContainText('Leo:');
-   await expect(approval).toBeDisabled();await expect(studio.getByText('Ready to publish the complete edition.',{exact:true})).toHaveCount(0);
+   await expect(approval).toBeDisabled();
+   const override=studio.getByLabel('I have reviewed these automated checks and want to override them for this saved edition.');
+   await override.check();await expect(approval).toBeEnabled();await approval.check();await override.uncheck();await expect(approval).not.toBeChecked();await expect(approval).toBeDisabled();
+   await expect(studio.getByText('Ready to publish the complete edition.',{exact:true})).toHaveCount(0);
    await expect(studio.locator('footer')).toHaveCSS('position','static');
    await checks.scrollIntoViewIfNeeded();await expect(checks).toBeVisible();
    await checks.getByRole('button',{name:'Edit Aries reading',exact:true}).click({trial:true});
@@ -102,16 +105,18 @@ for(const [width,theme] of [[390,'light'],[1440,'dark']] as const){
    const publishedRuler=(await call({method:'rows'})).find((r:any)=>r.id===ruler.id);
    expect(publishedRuler.sections).toEqual(rulers.payload.rows[0].sections);
    expect((await call({method:'writer-state'})).calls).toBe(0);
-   const contextual=await createWeeklyContextPublicationFixture(call);expect(contextual.status).toBe(200);const contextRow=contextual.payload.rows[0];
+   const contextual=await createWeeklyContextPublicationFixture(call);expect(contextual.status).toBe(200);let contextRow=contextual.payload.rows[0];
+   const overrideSections=structuredClone(contextRow.sections);overrideSections.horoscopeEdition.passages[0].body+=' Mercury squares something.';
+   const overrideSaved=await call({method:'PATCH',body:{id:contextRow.id,expectedUpdatedAt:contextRow.updated_at,status:'DRAFT',sections:overrideSections,body:horoscopeEditionBody(overrideSections.horoscopeEdition)}});expect(overrideSaved.status).toBe(200);contextRow=overrideSaved.payload.rows[0];
    await page.clock.setFixedTime(new Date('2026-10-20T16:00:00Z'));
    await page.goto(`/admin/content#horoscopes?edition=${contextRow.id}`);
    await studio.getByRole('button',{name:'4 · Publish',exact:true}).click();
-   await expect(checks).toHaveCount(0);await expect(approval).toBeEnabled();
+   await expect(checks).toBeVisible();await expect(approval).toBeDisabled();await override.check();await expect(approval).toBeEnabled();
    for(const p of contextRow.sections.horoscopeEdition.passages)await expect(studio.getByRole('region',{name:`${p.sign[0].toUpperCase()+p.sign.slice(1)} reading preview`})).toContainText(p.body);
    await approval.check();await studio.getByRole('button',{name:'Publish edition',exact:true}).click();
    await expect(studio.getByRole('status')).toContainText('Published the complete edition.');
    const contextSaved=(await call({method:'rows'})).find((r:any)=>r.id===contextRow.id);
-   expect(contextSaved.sections).toEqual(contextRow.sections);expect(contextSaved.source_snapshot).toEqual({...contextRow.source_snapshot,review_status:"approved",studioOwnerApproval:expect.objectContaining({action:"publish-owner-content",contentKey:contextRow.content_key,savedVersion:contextRow.updated_at})});
+   expect(contextSaved.sections).toEqual(contextRow.sections);expect(contextSaved.source_snapshot.studioOwnerApproval.horoscopeValidationOverride.approved).toBe(true);expect(contextSaved.source_snapshot).toEqual({...contextRow.source_snapshot,review_status:"approved",studioOwnerApproval:expect.objectContaining({action:"publish-owner-content",contentKey:contextRow.content_key,savedVersion:contextRow.updated_at})});
    expect((await call({method:'writer-state'})).calls).toBe(0);
    for(const sign of ['aries','taurus','libra','sagittarius']){
     await page.goto(`/#horoscopes?edition=${contextRow.id}&period=weekly&sign=${sign}`);

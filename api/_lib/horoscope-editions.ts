@@ -78,6 +78,10 @@ export function horoscopePublicationIssues(row:Record<string,any>, ownerFinal = 
   }
   return issues;
 }
+/** An owner decision applies only to the exact approved copy, never to structural checks. */
+export function hasHoroscopeValidationOverride(row:Record<string,any>) {
+  return hasExactStudioOwnerApproval(row) && row.source_snapshot?.studioOwnerApproval?.horoscopeValidationOverride?.approved === true;
+}
 export function assertHoroscopeRow(row: Record<string,any>, {enforcePunctuation=false,previous=null}:{enforcePunctuation?:boolean;previous?:Record<string,any>|null}={}) {
   if (!String(row.content_key ?? '').startsWith(HOROSCOPE_EDITION_PREFIX)) return;
   try {
@@ -107,7 +111,7 @@ export function assertHoroscopeRow(row: Record<string,any>, {enforcePunctuation=
       || !isHoroscopeEditionKey(row.content_key,edition.window) || row.surface !== 'sky' || row.mode !== 'article'
       || row.body !== horoscopeEditionBody(edition)) throw new Error('The edition must preserve its calculated dates, identity and complete passages.');
     if(row.status==='LIVE') {
-      const issue=horoscopePublicationIssues(row)[0];
+      const issue=horoscopePublicationIssues(row).find(issue=>!hasHoroscopeValidationOverride(row)||issue.category!=='horoscope_fact_boundary');
       if(issue)throw new Error(`${issue.sign?issue.sign+': ':''}${issue.detail} Edit this reading before publishing.`);
     }
   } catch (error) {throw new AdminHttpError(422,(error as Error).message);}

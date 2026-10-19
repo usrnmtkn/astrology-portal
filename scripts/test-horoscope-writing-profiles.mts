@@ -81,7 +81,7 @@ const promptEnding = 'EXACT END OF CONTEXT.';
 const longProfile = {...updated.payload.profile.profile};
 for (const field of HOROSCOPE_PROFILE_FIELDS) {
   longProfile[field] = longProfile[field].padEnd(HOROSCOPE_PROFILE_FIELD_LIMIT - promptEnding.length, '界') + promptEnding;
-  assert.equal(longProfile[field].length, 32000);
+  assert.equal(longProfile[field].length, HOROSCOPE_PROFILE_FIELD_LIMIT);
 }
 assert(Buffer.byteLength(JSON.stringify(longProfile)) > 100000, 'All fields must fit beyond the old API body limit');
 const longSaved = await invoke('POST', {profile: longProfile, expectedUpdatedAt: updated.payload.profile.updatedAt});
@@ -92,6 +92,6 @@ assert(seen.includes(horoscopeEditorialPrompt(longProfile)), 'The complete expan
 for (const field of HOROSCOPE_PROFILE_FIELDS) {
   assert.equal((await invoke('POST', {profile: {...longProfile, [field]: longProfile[field] + '!'}, expectedUpdatedAt: longSaved.payload.profile.updatedAt})).status, 400);
 }
-assert.equal((await invoke('POST', {profile: {...longProfile, prompt: 'x'.repeat(1000000)}, expectedUpdatedAt: longSaved.payload.profile.updatedAt})).status, 413);
+assert.equal((await invoke('POST', {profile: {...longProfile, prompt: 'x'.repeat(HOROSCOPE_PROFILE_FIELDS.length * HOROSCOPE_PROFILE_FIELD_LIMIT * 6 + 4096)}, expectedUpdatedAt: longSaved.payload.profile.updatedAt})).status, 413);
 assert.deepEqual((await invoke('GET')).payload.profiles.find((v: any) => v.profile.period === 'weekly'), longSaved.payload.profile);
 console.log('PASS writing profiles: authenticated actual-handler CRUD, exact text, CAS races, period isolation, publication exclusion and real writer input/receipt with no billed calls');

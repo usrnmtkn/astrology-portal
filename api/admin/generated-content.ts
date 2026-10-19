@@ -10,7 +10,7 @@ import { studioScopeStorageFilter } from "../../apps/admin/src/studioContentScop
 import { calendarPassageIdentity, calendarPassageErrors, calendarPassageVariables } from '../../src/calendar-writing/passageContract.js';
 import { handleStudioVariables, StudioVariableError, snapshotStudioVariables, assertStudioVariablePublication } from "../_lib/studio-variables.js";
 import { handleStudioWritingProfiles } from "../_lib/studio-writing-profiles.js";
-import { prepareHoroscopeBrief, assertHoroscopeRow } from "../_lib/horoscope-editions.js";
+import { prepareHoroscopeBrief, assertHoroscopeRow, horoscopePublicationIssues } from "../_lib/horoscope-editions.js";
 import { AdminHttpError, readPlatformRequestBody } from "../_lib/admin-http.js";
 import { mergeGeneratedInterpretationSections } from "../_lib/generated-interpretation-sections.js";
 import { approveNatalAspectStudioCopy } from "../_lib/content-studio-approval.js";
@@ -113,6 +113,7 @@ type GeneratedContentWriteBody = {
   evergreenAt?: string | null;
   evergreenBy?: string | null;
   expectedUpdatedAt?: string;
+  horoscopeValidationOverride?: boolean;
   csvRecord?: CsvRecord;
   ownerAction?:
     | "approve-and-schedule"
@@ -2571,15 +2572,25 @@ async function updateGeneratedContent(req: IncomingMessage) {
   const ownerPublication = body.ownerAction === "publish-owner-content" || body.ownerAction === "save-and-publish-owner-content";
   if (ownerPublication) {
     const fields = body.ownerAction === "save-and-publish-owner-content" ? ["headline", "summary", "body", "sections"] : [];
-    if (!body.expectedUpdatedAt || Object.keys(body).some(key => !["id", "expectedUpdatedAt", "ownerAction", ...fields].includes(key))) {
+    if (!body.expectedUpdatedAt || Object.keys(body).some(key => !["id", "expectedUpdatedAt", "ownerAction", "horoscopeValidationOverride", ...fields].includes(key))) {
       throw new GeneratedContentRequestError("Publish the saved version with its current timestamp; save edits first.", 409);
     }
     if (isPackageRow || existing.block_type === "sky_placement" || existing.event_type === "sky-article-edition") {
       throw new GeneratedContentRequestError("Use this editor's package or complete-edition publication action.", 409);
     }
     const approved = { ...existing, ...Object.fromEntries(fields.filter(field => body[field] !== undefined).map(field => [field, body[field]])) };
+    if (body.horoscopeValidationOverride !== undefined && (typeof body.horoscopeValidationOverride !== 'boolean' || !existing.content_key.startsWith('horoscope/'))) {
+      throw new GeneratedContentRequestError('The horoscope validation override requires a saved horoscope edition.', 400);
+    }
     if (!approved.body?.trim()) throw new GeneratedContentRequestError("Add the reader copy before publishing.");
     patch.source_snapshot = { ...existing.source_snapshot, review_status: "approved", studioOwnerApproval: studioOwnerApproval(approved, patch.updated_at as string) };
+    if (body.horoscopeValidationOverride === true) {
+      const issues = horoscopePublicationIssues(approved, true);
+      (patch.source_snapshot as any).studioOwnerApproval.horoscopeValidationOverride = {
+        approved: true, savedVersion: existing.updated_at, approvedAt: patch.updated_at,
+        issues: issues.filter(issue => issue.category === 'horoscope_fact_boundary')
+      };
+    }
     if (existing.block_type === "sky_aspect") {
       if (!libs().skyAspectReaderCopyPassesBoundary(approved.body)) throw new GeneratedContentRequestError("The Sky card contains timing mechanics or internal notes that belong outside reader copy.", 409);
       const identity = studioSkyIdentity(existing.content_key);

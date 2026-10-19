@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import {store,invokeHoroscopeWriting} from '../tests/helpers/sky-article-save-api.mts';
 import {createMonthlyAspectPublicationFixture} from '../tests/helpers/horoscope-publication-fixture.mts';
 import {horoscopeEditionBody, emptyHoroscopeEdition, horoscopeEditionKey} from '../apps/web/src/content/horoscopeEditions.mjs';
+import {readerRouteResponse} from '../tests/helpers/content-reader-route.mjs';
 import {hasExactStudioOwnerApproval} from '../api/_lib/studio-owner-publication.js';
 
 const created=await createMonthlyAspectPublicationFixture(m=>store.invoke(m.method,m.body,m.url));
@@ -45,4 +46,30 @@ for(const period of ['daily','weekly','monthly','seasonal']) {
   assert.equal(rejected.status,422,period+' explicit approval cannot bypass calculated timing boundaries');
 }
 console.log('PASS daily/weekly/monthly/seasonal horoscope owner publication: saved author punctuation, technical preflight, explicit exact approval, unchanged complete copy and signed window integrity. No paid calls.');
+// Explicit owner override preserves a parser warning and exact reader copy.
+let blocked=store.rows.get(created.payload.rows[0].id);
+const blockedEdition=structuredClone(blocked.sections.horoscopeEdition);
+blockedEdition.passages[0].body='Synthetic override opening. Mercury squares something in this sentence. Synthetic override final sentence.';
+const blockedSave=await store.invoke('PATCH',{id:blocked.id,expectedUpdatedAt:blocked.updated_at,status:'DRAFT',body:horoscopeEditionBody(blockedEdition),sections:{horoscopeEdition:blockedEdition}});
+assert.equal(blockedSave.status,200,JSON.stringify(blockedSave.payload));blocked=blockedSave.payload.rows[0];
+const held=await invokeHoroscopeWriting({action:'validate-publication',id:blocked.id,expectedUpdatedAt:blocked.updated_at});
+assert.equal(held.payload.publication.ready,false);assert.equal(held.payload.publication.canOverride,true);
+const ordinary=await store.invoke('PATCH',{id:blocked.id,expectedUpdatedAt:blocked.updated_at,ownerAction:'publish-owner-content'});
+assert.equal(ordinary.status,422);
+const staleOverride=await store.invoke('PATCH',{id:blocked.id,expectedUpdatedAt:row.updated_at,ownerAction:'publish-owner-content',horoscopeValidationOverride:true});
+assert.equal(staleOverride.status,409);
+const overridden=await store.invoke('PATCH',{id:blocked.id,expectedUpdatedAt:blocked.updated_at,ownerAction:'publish-owner-content',horoscopeValidationOverride:true});
+assert.equal(overridden.status,200,JSON.stringify(overridden.payload));
+const finalRow=overridden.payload.rows[0];
+assert.deepEqual(finalRow.sections.horoscopeEdition,blockedEdition);
+assert.equal(finalRow.source_snapshot.studioOwnerApproval.horoscopeValidationOverride.savedVersion,blocked.updated_at);
+assert.deepEqual(finalRow.source_snapshot.studioOwnerApproval.horoscopeValidationOverride.issues,held.payload.publication.issues);
+assert.equal(hasExactStudioOwnerApproval(finalRow),true);
+const read=await readerRouteResponse('/api/content-reader',{method:'POST',body:JSON.stringify({ids:[finalRow.id]})});
+assert.equal((await read.json()).rows[0].body,finalRow.body);
+const tampered=structuredClone(finalRow);tampered.sections.horoscopeEdition.passages[0].body+=' Changed.';
+assert.equal(hasExactStudioOwnerApproval(tampered),false);
+const wrongWindowOverride=await store.invoke('PATCH',{id:finalRow.id,expectedUpdatedAt:finalRow.updated_at,status:'DRAFT',body:horoscopeEditionBody(invalid),sections:{horoscopeEdition:invalid}});
+assert.equal(wrongWindowOverride.status,422);
+console.log('PASS explicit override: ordinary publication blocked, version conflict refused, warnings audited, exact complete reader copy, and modified copy loses approval.');
 await store.close();
