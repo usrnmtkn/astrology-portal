@@ -33,6 +33,21 @@ export function buildHoroscopeDraftInput({plan,context,task,target,engineFacts,a
   const completePassages=[...primary,...supporting];
   const factsText=`CALCULATED FACTS\n${JSON.stringify(calculatedFacts)}\n\nPERIOD DEVELOPMENTS — EACH FACT WITH ITS OWN MEANING AND LIFE AREA\n${JSON.stringify(developments)}`;
   const variables=buildHoroscopePromptVariables({writingProfile,context,primaryPassages:primary,supportingPassages:supporting,factsText});
+  // The owner replaced the accumulated weekly guide with a single saved v2
+  // profile. Historical retrieval remains auditable, but is not writing input.
+  if(writingProfile.profile.period==='weekly'&&/^WEEKLY PROMPT V2\r?\n/u.test(writingProfile.profile.prompt)) {
+    return [
+      'SURFACE\nhoroscopes','CONTENT FAMILY\nhoroscope','REGISTER\nsecond_person',
+      `TASK\n${task}`,
+      `READING HEADLINE\n${horoscopeDraftSchema(engineFacts?.risingSign).properties.headline.enum[0]}`,
+      `CONTENT STUDIO WRITING INSTRUCTIONS\n${variables.prompt}`,
+      `RENDER TARGET\n${JSON.stringify(target)}`,
+      ...(!variables.uses('governedFacts')?[factsText]:[]),
+      `OWNER-APPROVED WRITING PLAN\n${JSON.stringify(argumentOutline)}`,
+      'Use only the supplied calculated facts for this edition. Historical examples teach voice, never current events, houses, dates or personal biography. Use whole-sign houses for the requested rising sign. Keep weekdays in the edition time zone. A reference position does not establish a duration or ingress. Do not invent missing events, outcomes or natal history.',
+      'Return only headline and body in the required schema, preserving natural paragraph breaks. Follow the saved weekly Voice and Structure. This is one sign, with no access to other signs in the edition; do not claim to compare unseen readings. No model verdict approves or publishes this draft.'
+    ].join('\n\n');
+  }
   return [
     'SURFACE\nhoroscopes','CONTENT FAMILY\nhoroscope','REGISTER\nsecond_person',
     `TASK\n${task}`,

@@ -9,6 +9,15 @@ export const HOROSCOPE_EVIDENCE_RECEIPT='horoscope-owner-evidence/v1';
  * comparisons retain their designation; a profile does not confer authorship. */
 export function horoscopeEvidenceReceipt(context,writingProfile) {
   const profile=studioWritingProfileReceipt(writingProfile,{allowStarter:true});
+  if(writingProfile.profile.period==='weekly'&&/^WEEKLY PROMPT V2\r?\n/u.test(writingProfile.profile.prompt)) {
+    const text=writingProfile.profile.sourceGuidance;
+    return {version:HOROSCOPE_EVIDENCE_RECEIPT,route:'canonical-horoscope-writer',period:profile.period,
+      profile,selection:{mode:'owner-selected-weekly-v2'},
+      passages:[{id:`weekly-v2-sources-${hash(text)}`,sourcePath:`studio-writing-profile/${profile.id}/sourceGuidance`,
+        text,sha256:hash(text),wordCount:text.trim().split(/\s+/u).length,role:'saved owner-designated complete weekly source collection'}],
+      distinctPassageCount:1,corrections:[],savedCorrections:'',rejectedExamples:[],comparisonBlock:text,
+      limitations:'The current saved weekly v2 profile designates this complete source collection. Legacy retrieval passages and rejected drafts are excluded from this writing call. Historical astrology is not current fact; designation as evidence never approves a new reading.'};
+  }
   const saved=horoscopeProfileEvidence(writingProfile.profile.sourceGuidance);
   const primary=new Set((context.primaryRegisterPassages??[]).map(p=>p.id));
   const selected=(context.sameFamilyExamples??[]).map(p=>{
