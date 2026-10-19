@@ -78,3 +78,26 @@ for(const period of ['daily','weekly','monthly','seasonal'] as const){
  }
 }
 console.log('PASS horoscope run variables: actual-handler save and generation across all periods, complete exact evidence once, scoped comparisons/corrections, audience-safe facts, strict expansion and unchanged saved profiles. Injected provider only.');
+
+// Opt-in weekly v2 uses the owner's single profile rather than accumulated
+// retrieval prose. Keep the fixture synthetic; private profiles stay outside Git.
+const profiles=await store.invoke('GET',undefined,'/api/admin/generated-content?writingProfiles=true');
+const oldWeekly=profiles.payload.profiles.find((p:any)=>p.profile.period==='weekly');
+const v2Profile={...defaultHoroscopeProfile('weekly'),voiceGuidance:'Synthetic current weekly voice. Descriptive repetition excludes grammar and astrology names.',structure:'Write one connected reading in 200–320 words and two or three paragraphs.',sourceGuidance:'Complete synthetic approved weekly example. You can read the full example ending.',prompt:'WEEKLY PROMPT V2\nWrite {{period}}.\n{{voiceGuidance}}\n{{structure}}\n{{sourceGuidance}}\n{{governedFacts}}'};
+const v2Saved=await store.invoke('POST',{profile:v2Profile,expectedUpdatedAt:oldWeekly.updatedAt},'/api/admin/generated-content?writingProfiles=true');
+assert.equal(v2Saved.status,200,JSON.stringify(v2Saved.payload));
+const v2Packet=await prepareHoroscopeBrief(new URL('http://localhost/?period=weekly&date=2026-11-09&timeZone=America/New_York'));
+const v2Edition=emptyHoroscopeEdition(v2Packet.brief.window);
+let v2=await store.invoke('POST',{contentKey:horoscopeEditionKey(v2Edition.window),surface:'sky',mode:'article',eventType:'horoscope-edition',provider:'manual-admin',status:'DRAFT',lane:'serving',headline:'Synthetic weekly v2',body:horoscopeEditionBody(v2Edition),sections:{horoscopeEdition:v2Edition},facts:{horoscopeBrief:v2Packet},sourceSnapshot:{studioWritingProfile:v2Saved.payload.profile}});
+assert.equal(v2.status,200,JSON.stringify(v2.payload));let v2Row=v2.payload.rows[0];
+v2=await invokeHoroscopeWriting({action:'prepare',id:v2Row.id,expectedUpdatedAt:v2Row.updated_at});assert.equal(v2.status,200,JSON.stringify(v2.payload));v2Row=v2.payload.rows[0];
+v2=await invokeHoroscopeWriting({action:'generate',sign:'aries',id:v2Row.id,expectedUpdatedAt:v2Row.updated_at,approvedPlanHash:v2.payload.plan.planHash});assert.equal(v2.status,202,JSON.stringify(v2.payload));v2Row=v2.payload.rows[0];
+const v2Request=writerFixture.requests.get(v2Row.source_snapshot.horoscopeGeneration.active.responseId);
+assert(v2Request.input.includes(v2Profile.sourceGuidance));
+assert(v2Request.input.includes('200–320 words'));
+for(const forbidden of ['COMPLETE OWNER HOROSCOPES — PRIMARY PROSE EXAMPLES','SUPPORTING OWNER PASSAGES','REGISTER REFERENCE','REJECTED READINGS','SHARED FIVE-ROLE EVIDENCE','130–170','{{previousReadings}}'])assert(!v2Request.input.includes(forbidden),forbidden);
+assert(v2Request.input.includes('PERIOD DEVELOPMENTS'));
+assert(v2Request.input.includes('OWNER-APPROVED WRITING PLAN'));
+assert.deepEqual(v2Row.source_snapshot.studioWritingProfile.profile,v2Profile);
+assert.equal(v2Row.status,'DRAFT');
+console.log('PASS weekly v2 actual request: exact saved instructions and complete approved example, calculated meaning and approved plan; no legacy voice/rejected prose or unsupported set-comparison placeholder.');
