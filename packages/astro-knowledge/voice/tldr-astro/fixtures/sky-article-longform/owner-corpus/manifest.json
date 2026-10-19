@@ -274,9 +274,18 @@
         "sourceSlug": "full-moon-in-taurus",
         "sourceUrl": "https://private-author-source.invalid/blogs/astrology/full-moon-in-taurus",
         "format": "lunation-full-moon",
-        "wordCount": 3791,
-        "sha256": "843e6a5a2dde919e3a9cd91787c5a92a9054cc29834002b0075c347e46a03728",
-        "sourceBodyHtmlSha256": "d1097cd412081232bba557f7e7ff672ad7d8b024100b15855f2250416ecd6d5e"
+        "wordCount": 3809,
+        "sha256": "1f6b6476e50f3c6081001351add3bb057bb315f7263a3ccdecabfb33174ea869",
+        "sourceBodyHtmlSha256": "d1097cd412081232bba557f7e7ff672ad7d8b024100b15855f2250416ecd6d5e",
+        "voiceReferenceRevision": {
+          "date": "2026-10-18",
+          "sourceUri": "thread:01a151ea-ae5d-7671-8b1e-b33c8718e3d7",
+          "scope": "Sky lunation voice reference only; no reader publication or factual authority",
+          "approval": "Owner selected Save this as a voice reference, then requested merge and push live.",
+          "previousSourceSha256": "843e6a5a2dde919e3a9cd91787c5a92a9054cc29834002b0075c347e46a03728",
+          "suppliedSourceSha256": "dcc306a8519d19d00602f3728d74068030980fd397f576a2958eb8a1b970c1c7",
+          "formattingOnly": "Removed pasted heading markers and backslash layout artifacts; preserved supplied words, punctuation and emphasis. Unprovided opening paragraphs and sign horoscopes retained unchanged."
+        }
       },
       {
         "file": "reference-surfaces/gemini-new-moon-2025.md",
