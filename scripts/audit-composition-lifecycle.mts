@@ -65,6 +65,7 @@ try {
   };
   const output = process.argv.find(value => value.startsWith("--out="))?.slice(6)
     || `docs/qa/composition-lifecycle-audit-${report.date}.json`;
+  fs.mkdirSync(path.dirname(output), { recursive: true });
   fs.writeFileSync(output, JSON.stringify(report, null, 2) + "\n");
   console.log(`Composition lifecycle audit passed: ${surfaces.length} surface maps, ${retired.length} reference-only retired rows, ${shippedFiles.length} clean shipped indexes/partitions, ${capabilities.length} resolver capabilities inventoried.`);
 } finally { fs.rmSync(temp, { force: true }); }

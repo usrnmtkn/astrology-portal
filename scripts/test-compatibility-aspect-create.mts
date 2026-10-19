@@ -1,7 +1,8 @@
+import { compatibilityAspectSourceDraft } from '../apps/admin/src/compatibilityAspectDraft.ts';
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { createApiStore } from "../tests/helpers/calendar-review-api.mjs";
-import { compatibilityAspectFromSearch, compatibilityAspectSourceDraft, compatibilityAspectSearchText, compatibilityAspectPoints, compatibilityAspectTypes } from "../apps/admin/src/compatibilityAspectSources.ts";
+import { compatibilityAspectFromSearch, compatibilityAspectSearchText, compatibilityAspectPoints, compatibilityAspectTypes } from "../apps/admin/src/compatibilityAspectSources.ts";
 import { isDynamicSynastryExactRecord } from "../apps/web/src/content/fallbackArchitectureV3/dashboardExtensions.ts";
 import { createTransitSynastryRenderer } from "../apps/web/src/content/fallbackArchitectureV3/dist/tldr-content.js";
 

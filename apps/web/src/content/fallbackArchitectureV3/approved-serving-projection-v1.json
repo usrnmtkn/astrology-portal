@@ -1,6 +1,6 @@
 {
   "schema": "tldrastro-approved-serving-projection/v1",
-  "packageVersion": "v3-2026-10-16-moon-selected-variants",
+  "packageVersion": "v3-2026-10-17-studio-owner-daily",
   "policy": {
     "eligibleReviewStatuses": [
       "approved",
@@ -24,7 +24,7 @@
   },
   "lineage": {
     "file": "approved-serving-lineage-v1.json",
-    "sha256": "942aa1d386a8d99a318291f68ee706e1d22875176be19e527eac7eda10a4e1c3",
+    "sha256": "7fb5ee0c4d684cb05833742a557a2935fa341f0b0a40388ba1d5fcb4fb4f6bbc",
     "count": 9826,
     "emissionCount": 9902,
     "exactSourceMatchCount": 7663

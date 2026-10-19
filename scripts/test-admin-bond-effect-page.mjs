@@ -72,6 +72,9 @@ try {
     }),
     "Mercury in Libra in your 5th house is trine your natal Ascendant in Gemini."
   );
+  const publishedActivation = { contentKey: "fallback-hook/synastry-pair/sun/imum-coeli/soft", body_you: "Complete published You activation.", body_they: "Complete published Friend activation." };
+  assert.deepEqual(assembly.synastryBodiesFromPayload({ rows: [{ content_key: publishedActivation.contentKey, sections: { packageRecord: publishedActivation } }], packageSource: null }), publishedActivation, "Reopened inventory documents must retain both published activation passages.");
+  assert.equal(assembly.synastryBodiesFromPayload({ rows: [{ sections: { packageRecord: publishedActivation, packageDraft: { ...publishedActivation, body_they: "Retained draft Friend activation." } } }] }).body_they, "Retained draft Friend activation.", "A saved proposal remains the editor preview until publication.");
   const reverse = assembly.synastryBodiesFromPayload({
     ok: true,
     rows: [],

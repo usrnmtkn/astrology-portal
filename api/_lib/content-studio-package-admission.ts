@@ -4,10 +4,13 @@ import { isCalendarMoonIngressContentKey } from "./calendar-moon-ingress-sources
 import coreManifest from "../../apps/web/src/content/fallbackArchitectureV3/bundled-core-manifest-v3.json" with { type: "json" };
 import skyManifest from "../../apps/web/src/content/fallbackArchitectureV3/bundled-sky-placement-manifest-v3.json" with { type: "json" };
 import { isFallbackDashboardRecordAllowed } from "../../apps/web/src/content/fallbackArchitectureV3/dashboardExtensions.js";
+import lunarJournalIndex from "../../apps/web/src/features/calendar/data/lunar-journal.index.json" with { type: "json" };
 
 const keys = (manifest: { keys: string[] }) => new Set(manifest.keys.map(key => key.slice(key.indexOf(":") + 1)));
 const coreKeys = keys(coreManifest);
 const skyKeys = keys(skyManifest);
+const lunarJournalKeys = new Set(lunarJournalIndex.map(entry => entry.contentKey));
+export const isRegisteredLunarJournalKey = (key: string) => lunarJournalKeys.has(key);
 const object = (value: unknown): Record<string, any> => value && typeof value === "object" && !Array.isArray(value) ? value : {};
 
 /** Publication must use the same key admission as the actual package loaders. */
@@ -23,7 +26,9 @@ export function packagePublicationAdmissionIssue(row: Record<string, any>): stri
   const key = String(row.content_key ?? "");
   if (record.contentKey && record.contentKey !== key) return "The source and publication have different content keys. Reopen the correct source before publishing.";
   if (key.startsWith("calendar-passage/")) {
-    if (!calendarPassageIdentity(key)) return "Invalid Calendar passage identity.";
+    const identity = calendarPassageIdentity(key);
+    if (!identity) return "Invalid Calendar passage identity.";
+    if (identity.period === 'monthly') return "Publish Monthly editions in Horoscopes. Calendar Month uses that edition's authored TLDR; legacy Calendar monthly passages are retained as drafts only.";
     return calendarPassageErrors(String(row.body ?? "")).join(" ") || null;
   }
   // Calendar's governed exact records have their own targeted reader and
@@ -36,6 +41,7 @@ export function packagePublicationAdmissionIssue(row: Record<string, any>): stri
   if (key.startsWith("authored/compat-pair/")) return null;
   // Calendar leftover season transitions have a dedicated leftover reader, not the fallback package loader.
   if (key.startsWith("authored/calendar-season-transition/")) return null;
+  if (isRegisteredLunarJournalKey(key)) return null;
   // Moon ingresses and transition phrases use dedicated Calendar readers. Admit only registered sources.
   if (isCalendarMoonIngressContentKey(key) || calendarTransitionPhraseRecordForKey(key)) return null;
   // Education articles have a dedicated /learn reader, not the fallback package loader.

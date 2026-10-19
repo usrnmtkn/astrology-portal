@@ -1,3 +1,4 @@
+import type {AdminHookCatalogDomain} from "./adminHookCatalogData";
 import { skyPlacementBrowseIdentity } from "./skyPlacementBrowse";
 import { articleLibraryKind, articleReaderHref, standaloneArticleKind, type ArticleLibraryKind } from "../../../src/shared/articleLibrary";
 import { isStudioCompatibilityRow, isStudioCompositeRow } from "./studioContentScope";
@@ -6,7 +7,7 @@ import { isSkyIngressEssay, SKY_INGRESS_ESSAY_FORMAT, type SkyArticleFormat } fr
 import { hasVerifiedSameSignHistory, type RetrogradeHistory } from "../../web/src/services/retrogradeHistory";
 import { useStudioCustomVariables } from "./studioCustomVariableClient";
 import { isStudioReadRequest, studioReadTimeoutMessage, studioRequestTimeoutMs } from "./studioRequestPolicy";
-import { compatibilityAspectPoints, compatibilityAspectTypes, compatibilityAspectKey, compatibilityAspectFromSearch, compatibilityAspectSearchText, compatibilityAspectSourceDraft, type CompatibilityAspectSelection } from "./compatibilityAspectSources";
+import { compatibilityAspectPoints, compatibilityAspectTypes, compatibilityAspectKey, compatibilityAspectFromSearch, compatibilityAspectSearchText, type CompatibilityAspectSelection } from "./compatibilityAspectSources";
 import { clearStudioEditorReturn, rememberStudioEditorReturn, studioEditorReturnContext } from "./studioEditorReturn";
 import type { HouseTransitEditorSource } from "./HouseTransitWriteupEditor";
 import { ZODIAC_SEASON_SOURCE_STARTERS, isZodiacSeasonSourceKey } from "../../web/src/content/fallbackArchitectureV3/resolver/zodiacSeasonVariables.mjs";
@@ -24,7 +25,7 @@ import { PageLoading } from "../../../src/shared/components/PageLoading";
 import { LoadingIndicator } from "../../../src/shared/components/LoadingIndicator";
 import { readStudioInventoryPasses, studioInventoryPageSize } from "./studioInventoryPagination";
 import { reviewWorkBucket, skyWritingIssues } from "../../web/src/content/contentReviewReadiness";
-import { transitNatalContactFromFields, transitNatalContactReady, transitNatalContactContentKey, transitNatalExactContentKey, transitNatalExactSourceDraft, transitNatalSharedFallbackKey, transitNatalStarterCopy } from "./transitNatalSources";
+import { transitNatalContactFromFields, transitNatalContactReady, transitNatalContactContentKey, transitNatalExactContentKey, transitNatalSharedFallbackKey } from "./transitNatalSources";
 import { aspectTechnicalVerb, friendsTransitCardDestinations, friendsTransitCompositionQuery, matchesBondEffectContactSearch, transitNatalSearchSelection, matchesTransitNatalContactSearch } from "./bondEffectPageAssembly";
 import { isDynamicTransitNatalExactKey } from "../../web/src/content/transitNatalIdentity";
 import { isTransitNatalFamilyKey, isTransitNatalSituationKey, packagedTransitOpenMode, transitNatalLiveServingSource } from "./transitNatalEditorScope";
@@ -161,7 +162,6 @@ import type { FallbackHookEditorGuidanceBuilder } from "./DailyFallbackWorkspace
 import type { DailyGlanceContext, DailyGlancePairEdits } from "./DailyGlanceStudio";
 import {
   dailyGlanceContextSearchParams,
-  dailyGlancePackageField,
   dailyGlancePairs,
   dailyGlanceSelector,
   type DailyGlancePair
@@ -201,7 +201,7 @@ import {
   calendarAspectSignedTitle,
   type CalendarAspectSelection
 } from "./calendarAspectSources";
-import { calendarPlanetaryDraft, calendarPlanetaryIdentity, calendarPlanetaryIdentityKeys, type CalendarPlanetarySelection } from "./calendarPlanetarySources";
+import { calendarPlanetaryIdentity, calendarPlanetaryIdentityKeys, type CalendarPlanetarySelection } from "./calendarPlanetarySources";
 import {
   contentDestinations,
   contentMotion,
@@ -1503,6 +1503,7 @@ function setPackageSectionField(draft: AdminDraft, key: string, value: string): 
     body: key === "body_you" ? value : draft.body,
     sections: {
       ...sections,
+      ...(copySection === "packageRecord" && ["body_you", "body_they"].includes(key) ? { [key]: value } : {}),
       [copySection]: {
         ...proposal,
         [key]: value
@@ -2266,16 +2267,6 @@ function skyArticleAspectPassage(row: AdminGeneratedContentRow, planet: string):
 }
 
 type AdminHookCatalogLoadState = "idle" | "loading" | "loaded" | "error";
-type AdminHookCatalogDomain = "sky" | "you" | "friends" | "modifier";
-type AdminHookCatalogIndexPayload = {
-  schemaVersion: 1;
-  packageVersion: string;
-  rows: Array<{ key: string; surface: AdminHookCatalogDomain; label?: string }>;
-};
-type AdminHookCatalogBodyPayload = {
-  schemaVersion: 1;
-  rows: Array<{ key: string; body: string }>;
-};
 type AdminSourceDraft = {
   id: string;
   canonicalId: string;
@@ -2290,50 +2281,13 @@ type AdminSourceDraft = {
   sourcePath: string;
   provenance: Record<string, unknown> | null;
 };
-const adminHookCatalogRoot = `${import.meta.env.BASE_URL}generated`;
-
-async function adminHookCatalogJson<T>(fileName: string): Promise<T> {
-  const response = await fetch(`${adminHookCatalogRoot}/${fileName}`, { cache: "no-cache" });
-  if (!response.ok) {
-    throw new Error(`Hook catalog package ${fileName} failed with HTTP ${response.status}.`);
-  }
-  return response.json() as Promise<T>;
-}
-
 async function loadAdminHookCatalogIndex(): Promise<{ definitions: FallbackHookDefinition[]; packageVersion: string }> {
-  const payload = await adminHookCatalogJson<AdminHookCatalogIndexPayload>("admin-hook-catalog-index-v1.json");
-  if (payload.schemaVersion !== 1 || !Array.isArray(payload.rows)) {
-    throw new Error("Hook catalog index failed validation.");
-  }
-
-  if (typeof payload.packageVersion !== "string" || !payload.packageVersion) {
-    throw new Error("Hook catalog index is missing its package version.");
-  }
-
-  const definitions = payload.rows.map(({ key, surface, label: packagedLabel }) => {
-    const label = packagedLabel ?? fallbackHookDisplayTitle(key) ?? titleFromKey(key);
-    const persistedSurface: GeneratedContentSurface = surface === "friends" ? "relationship" : surface;
-    return {
-      key,
-      label,
-      // "friends" is the catalog section; persisted content uses the
-      // relationship surface so saved edits remain compatible with the API.
-      surface: persistedSurface,
-      mode: "feed",
-      copy: { headline: label, summary: "", body: "" }
-    };
-  });
-  return { definitions, packageVersion: payload.packageVersion };
+  const catalog = await import("./adminHookCatalogData");
+  return catalog.loadAdminHookCatalogIndex(key => fallbackHookDisplayTitle(key) ?? titleFromKey(key));
 }
 
 async function loadAdminHookCatalogBodies(surface: AdminHookCatalogDomain): Promise<Map<string, string>> {
-  const domain = surface === "modifier" ? "modifier" : surface;
-  const payload = await adminHookCatalogJson<AdminHookCatalogBodyPayload>(`admin-hook-catalog-${domain}-v1.json`);
-  if (payload.schemaVersion !== 1 || !Array.isArray(payload.rows)) {
-    throw new Error(`Hook catalog ${domain} package failed validation.`);
-  }
-
-  return new Map(payload.rows.map(({ key, body }) => [key, body]));
+  return (await import("./adminHookCatalogData")).loadAdminHookCatalogBodies(surface);
 }
 
 async function loadAdminSourceDraftCatalog(secret: string): Promise<AdminSourceDraft[]> {
@@ -3015,7 +2969,9 @@ function draftFromRow(row: AdminGeneratedContentRow): AdminDraft {
   const canonicalHeadline = typeof editablePackageRecord.headline === "string" ? editablePackageRecord.headline : row.headline ?? "";
   const importedSummary = row.provider === "manual" && /^(REVIEWED|CONFIRMED|DRAFT) · /.test(row.summary ?? "") ? row.summary : null;
   const canonicalSummary = importedSummary ? "" : typeof editablePackageRecord.summary === "string" ? editablePackageRecord.summary : row.summary ?? "";
-  const canonicalBody = typeof editablePackageRecord.body === "string"
+  const canonicalBody = isDynamicTransitNatalExactKey(row.content_key) && typeof editablePackageRecord.body_you === "string"
+    ? editablePackageRecord.body_you
+    : typeof editablePackageRecord.body === "string"
     ? editablePackageRecord.body
     : typeof editablePackageRecord.body_you === "string"
       ? editablePackageRecord.body_you
@@ -5334,6 +5290,7 @@ export function GeneratedContentAdminDashboard() {
     try {
       const body = isPackageDraft
         ? {
+            ownerAuthoredWording: true,
             id: draftForSave.id ?? undefined,
             ...(!draftForSave.id ? {
               contentKey: draftForSave.contentKey,
@@ -5353,7 +5310,7 @@ export function GeneratedContentAdminDashboard() {
             facts: draftForSave.facts ?? {},
             reviewerNotes: draftForSave.reviewerNotes,
             sourceSnapshot: draftSourceSnapshot(draftForSave),
-            reviewStatus: isGuidedHeldReview ? "needs_review" : packageReviewStatusForDraft(draftForSave),
+            reviewStatus: nextStatus === "DRAFT" || isGuidedHeldReview ? "needs_review" : packageReviewStatusForDraft(draftForSave),
             sourceLifecycleAction,
             editorialNotes: packageEditorialNotesForDraft(draftForSave)
           }
@@ -5561,44 +5518,24 @@ export function GeneratedContentAdminDashboard() {
     window.requestAnimationFrame(() => editorReturnFocusRef.current?.focus());
   }
 
-  async function saveDailyGlancePairEdits(pair: DailyGlancePair, edits: DailyGlancePairEdits) {
-    const headlineChanged = edits.headlineYou !== dailyGlancePackageField(pair.headlineRow, "body_you")
-      || edits.headlineThey !== dailyGlancePackageField(pair.headlineRow, "body_they");
-    const passageChanged = edits.passageYou !== dailyGlancePackageField(pair.passageRow, "body_you")
-      || edits.passageThey !== dailyGlancePackageField(pair.passageRow, "body_they");
-    if (!headlineChanged && !passageChanged) {
-      setMessage("The Daily At-a-Glance headline and passage already match the saved sources.");
-      return;
-    }
-
-    let headlineSaved = !headlineChanged;
-    let passageSaved = !passageChanged;
-    if (headlineChanged) {
-      const headlineDraft = setPackageSectionField(
-        setPackageSectionField(draftFromRow(pair.headlineRow as AdminGeneratedContentRow), "body_you", edits.headlineYou),
-        "body_they",
-        edits.headlineThey
-      );
-      headlineSaved = Boolean(await saveDraft(undefined, headlineDraft));
-    }
-    if (headlineSaved && passageChanged) {
-      const passageDraft = setPackageSectionField(
-        setPackageSectionField(draftFromRow(pair.passageRow as AdminGeneratedContentRow), "body_you", edits.passageYou),
-        "body_they",
-        edits.passageThey
-      );
-      passageSaved = Boolean(await saveDraft(undefined, passageDraft));
-    }
-
-    setSelectedRowId(null);
-    setDraft(null);
-    setDailyGlancePairSelector(pair.selector);
-    if (headlineSaved && passageSaved) {
-      setMessage("Daily At-a-Glance headline and passage saved together as review proposals.");
-    } else if (headlineSaved) {
-      setMessage("The headline saved, but the passage did not. Review the connection before retrying the passage.");
-    } else {
-      setMessage("The Daily At-a-Glance write-up was not saved.");
+  async function saveDailyGlancePairEdits(pair: DailyGlancePair, edits: DailyGlancePairEdits, publish = false): Promise<DailyGlancePair> {
+    if (pendingPublication) throw new Error(pendingPublicationMessage);
+    try {
+      const { saveDailyGlancePair } = await import("./DailyGlanceStudio");
+      const savedPair = await saveDailyGlancePair(pair, edits, publish, async (row, you, they) => {
+        const revised = setPackageSectionField(setPackageSectionField(draftFromRow(row as AdminGeneratedContentRow), "body_you", you), "body_they", they);
+        const saved = await saveDraft("DRAFT", revised, undefined, false, false, true);
+        if (!saved) throw new Error("The saved source was not returned. Your writing is still here.");
+        return saved;
+      }, row => approvePackageRevision(row as AdminGeneratedContentRow, false, true));
+      setSelectedRowId(null);
+      setDraft(null);
+      setDailyGlancePairSelector(pair.selector);
+      setMessage(publish ? "Daily At-a-Glance headline and passage published for You and Friends." : "Headline and passage saved as drafts. Publish when ready for readers.");
+      return savedPair;
+    } catch (error) {
+      setMessage(dashboardErrorMessage(error));
+      throw error;
     }
   }
 
@@ -5643,7 +5580,7 @@ export function GeneratedContentAdminDashboard() {
     if (saved && !personalCopy) await approvePackageRevision(saved);
   }
 
-  async function approvePackageRevision(row: AdminGeneratedContentRow, updateEditor = true) {
+  async function approvePackageRevision(row: AdminGeneratedContentRow, updateEditor = true, propagateError = false) {
     setEditorSaveError("");
     setIsLoading(true);
     try {
@@ -5670,6 +5607,7 @@ export function GeneratedContentAdminDashboard() {
     } catch (error) {
       setEditorSaveError(dashboardErrorMessage(error));
       setMessage(dashboardErrorMessage(error));
+      if (propagateError) throw error;
     } finally {
       setIsLoading(false);
     }
@@ -6058,6 +5996,21 @@ export function GeneratedContentAdminDashboard() {
         return;
       }
       if (!row) {
+        if (/^fallback-hook\/(?:synastry-pair\/|bond-effect-)/u.test(contentKey)) {
+          const {missingFriendsSource} = await import("./missingFriendsSource");
+          const missing = await missingFriendsSource(contentKey, key => readStudioContentDocument(key, secret));
+          if (requestId !== sourceOpenRequestRef.current || window.location.hash !== originatingHash) return;
+          if (missing && "row" in missing) { await openRow(missing.row as AdminGeneratedContentRow, null, fieldPath === "body_you" ? "body_they" : "body_you"); return; }
+          if (missing) {
+            if (!confirmSkyEditorNavigation()) return;
+            setSelectedRowId(null); setEditorSourceRow(null); setCompositionEditorContext(null);
+            setEditorSaveError("");
+            rememberSavedDraft(missing.draft);
+            setMessage("Write both versions, then Save & publish.");
+            scrollEditorToTop(fieldPath);
+            return;
+          }
+        }
         const current = transitNatalSelectionRef.current;
         const contact = transitNatalContactFromFields(current.planet, current.aspect, current.natalPoint);
         const assumedFamily = contact ? transitNatalSharedFallbackKey(contact) : null;
@@ -6240,10 +6193,13 @@ export function GeneratedContentAdminDashboard() {
 
   async function openSelectedCalendarPlanetaryWriteup() {
     setIsCreateMenuOpen(false);
-    const kind = calendarWriteupWorkspaceView === "planetary-stations" ? "station" : "ingress";
-    const nextDraft = calendarPlanetaryDraft(kind, calendarPlanetarySelection);
-    if (!nextDraft) { setMessage("Choose a planet and sign to open its write-up."); return; }
-    await openExactCalendarWriteup(nextDraft, calendarPlanetaryIdentityKeys(kind, calendarPlanetarySelection));
+    try {
+      const kind = calendarWriteupWorkspaceView === "planetary-stations" ? "station" : "ingress";
+      const { calendarPlanetaryDraft } = await import("./calendarPlanetaryDraft");
+      const nextDraft = calendarPlanetaryDraft(kind, calendarPlanetarySelection);
+      if (!nextDraft) { setMessage("Choose a planet and sign to open its write-up."); return; }
+      await openExactCalendarWriteup(nextDraft, calendarPlanetaryIdentityKeys(kind, calendarPlanetarySelection));
+    } catch (error) { setMessage(dashboardErrorMessage(error)); }
   }
 
   async function openExactCalendarWriteup(nextDraft: AdminDraft, keys: string[]) {
@@ -6767,6 +6723,8 @@ export function GeneratedContentAdminDashboard() {
         if (!await openRow(existing)) return;
         setMessage("Opened the saved aspect content. Its two fields follow the planet order shown in the editor.");
       } else {
+        const {compatibilityAspectSourceDraft} = await import("./compatibilityAspectDraft");
+        if (requestId !== compatibilityAspectRequestRef.current || originatingHash !== window.location.hash) return;
         setSelectedRowId(null);
         setEditorSourceRow(null);
         setCompositionEditorContext(null);
@@ -8123,16 +8081,18 @@ export function GeneratedContentAdminDashboard() {
               <section className="admin-fallback-row-list" aria-label="Hook catalog">
                 {hookCatalogLoadState === "loading" && <PageLoading message="Loading hook catalog…" />}
                 {hookCatalogLoadState === "error" && <div className="admin-empty-state" role="alert"><p>{hookCatalogError ?? "Could not load the hook catalog."}</p><StudioButton type="button" onClick={() => void refreshHookCatalog()}><RefreshCw size={15} aria-hidden="true" />Retry catalog</StudioButton></div>}
-                {filteredHookCatalog.map((item) => {
-                  const saved = savedHookKeys.has(item.key) || savedHookKeys.has(canonicalFallbackContentKey(item.key));
-                  const itemKey = canonicalFallbackContentKey(item.key);
-                  return (
-                    <article key={`${item.type}-${item.key}`} className="admin-fallback-row" role="button" tabIndex={0} onClick={() => void openHookDraft(item)} onKeyDown={(event) => onCatalogKeyDown(event, item)}>
-                      <div className="admin-fallback-row-main"><p className="admin-eyebrow">{item.section} / {item.type}</p><h3>{item.label}</h3><code>{itemKey}</code></div>
-                      <div className="admin-fallback-row-actions"><span className={`ui-pill admin-status ${saved ? "status-live" : "status-draft"}`}>{saved ? "Saved row" : "Needs row"}</span><StudioButton type="button" onClick={(event) => { event.stopPropagation(); void openHookDraft(item); }}><Plus size={15} aria-hidden="true" />Author</StudioButton></div>
-                    </article>
-                  );
-                })}
+                <AdminPaginatedCollection items={filteredHookCatalog} label="Hook catalog" pageSize={24} resetKey={`surface-hook-catalog:${fallbackSectionFilter}:${surfaceAreaFilter}:${surfaceStatusFilter}:${query}`}>
+                  {(visibleItems) => visibleItems.map((item) => {
+                    const saved = savedHookKeys.has(item.key) || savedHookKeys.has(canonicalFallbackContentKey(item.key));
+                    const itemKey = canonicalFallbackContentKey(item.key);
+                    return (
+                      <article key={`${item.type}-${item.key}`} className="admin-fallback-row" role="button" tabIndex={0} onClick={() => void openHookDraft(item)} onKeyDown={(event) => onCatalogKeyDown(event, item)}>
+                        <div className="admin-fallback-row-main"><p className="admin-eyebrow">{item.section} / {item.type}</p><h3>{item.label}</h3><code>{itemKey}</code></div>
+                        <div className="admin-fallback-row-actions"><span className={`ui-pill admin-status ${saved ? "status-live" : "status-draft"}`}>{saved ? "Saved row" : "Needs row"}</span><StudioButton type="button" onClick={(event) => { event.stopPropagation(); void openHookDraft(item); }}><Plus size={15} aria-hidden="true" />Author</StudioButton></div>
+                      </article>
+                    );
+                  })}
+                </AdminPaginatedCollection>
               </section>
             </details>
           </section>
@@ -8754,6 +8714,7 @@ export function GeneratedContentAdminDashboard() {
       }
       const parentKey = transitNatalContactContentKey(selection);
       const sharedKey = transitNatalSharedFallbackKey(selection);
+      const { transitNatalStarterCopy, transitNatalExactSourceDraft } = await import("./transitNatalExactDraft");
       let starter = { body_you: "", body_they: "" };
       const starterKeys = [parentKey, sharedKey].filter((candidate, index, list): candidate is string => Boolean(candidate) && candidate !== key && list.indexOf(candidate) === index);
       for (const starterKey of starterKeys) {
@@ -10146,6 +10107,9 @@ export function GeneratedContentAdminDashboard() {
             pair={selectedDailyGlancePair}
             onClose={closeDailyGlancePairEditor}
             onSave={saveDailyGlancePairEdits}
+            onPublish={(pair, edits) => saveDailyGlancePairEdits(pair, edits, true)}
+            publicationPending={Boolean(pendingPublication)}
+            onCheckPublication={checkPendingPublication}
           />
         </Suspense>
       );
@@ -10918,7 +10882,8 @@ export function GeneratedContentAdminDashboard() {
       && Boolean(astro101SlugFromFacts(currentDraft.facts) || astro101Slugify(currentDraft.headline));
     const publishReady = (isAstro101Draft ? astro101PublishReady : Boolean(currentDraft.body.trim())) && (!isNewDraft || isCmsSurfaceDraft);
     const directReaderDraft = isCmsSurfaceDraft || isManualCalendarEventDraft || isStandaloneArticleDraft;
-    const packageCopyMissing = compatibilityAspectMissingCopy || natalAspectMissingCopy || transitNatalMissingCopy;
+    const packageCopyMissing = compatibilityAspectMissingCopy || natalAspectMissingCopy || transitNatalMissingCopy
+      || (isBondEffectDraft && !["body_you", "body_they"].every(field => packageFieldString(currentDraft, field).trim()));
     const reviewComplete = currentDraft.status === "REVIEWED" && !draftHasUnsavedChanges;
     const compatibilityNewDraftReady = !isNewDraft || !isCompatibilityWorkspaceDraft || Boolean(
       currentDraft.headline.trim()
@@ -12612,7 +12577,9 @@ export function GeneratedContentAdminDashboard() {
             className={packageOwnerCanPublish ? "admin-publish-button" : "admin-primary-button"}
             type="button"
             onClick={() => void (async () => {
-              if (packageOwnerCanPublish) {
+              if (currentDraft.contentKey.startsWith("cms/lunation-article/")) {
+                await publishOwnerDraft(currentDraft);
+              } else if (packageOwnerCanPublish) {
                 await publishPackageDraft(currentDraft);
               } else {
                 await saveDraft(isSkyArticleTemplate ? "DRAFT" : directReaderDraft ? "LIVE" : isAstro101Draft && currentDraft.status !== "LIVE" ? "DRAFT" : undefined);
@@ -12638,7 +12605,7 @@ export function GeneratedContentAdminDashboard() {
             <StudioButton
               className="admin-secondary-button"
               type="button"
-              onClick={() => void saveDraft(directReaderDraft ? "DRAFT" : undefined)}
+              onClick={() => void saveDraft("DRAFT")}
               disabled={isLoading || unchangedSkySource || (!isNewDraft && !draftHasUnsavedChanges)}
               title="Keep this revision as a Draft."
             >

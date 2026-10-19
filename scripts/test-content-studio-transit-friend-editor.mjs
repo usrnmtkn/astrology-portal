@@ -8,6 +8,7 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const dashboard = fs.readFileSync(path.join(root, "apps/admin/src/GeneratedContentAdminDashboard.tsx"), "utf8");
 const api = fs.readFileSync(path.join(root, "api/admin/generated-content.ts"), "utf8");
 const transitSources = fs.readFileSync(path.join(root, "apps/admin/src/transitNatalSources.ts"), "utf8");
+const transitDrafts = fs.readFileSync(path.join(root, "apps/admin/src/transitNatalExactDraft.ts"), "utf8");
 
 assert.match(dashboard, /readStudioInventoryPasses\(\s*studioInventoryPasses\(query\)/u);
 assert.match(dashboard, /studioInventoryRequestPath\(pass,\s*studioInventoryPageSize\(cursor\),\s*cursor\),\s*secret,\s*requestSignal/u);
@@ -31,7 +32,8 @@ assert.match(dashboard, /const showPackageBodyThey = isPackageDraft[\s\S]{0,260}
 assert.match(dashboard, /Friends uses this complete third-person passage/u);
 assert.match(dashboard, /transit-aspect-they-name-hint/u);
 assert.match(api, /authored\/transit-aspect\/[\s\S]{0,220}slot === "\{\{Name\}\}"/u);
-assert.match(transitSources, /never labeled as that source/u);
+assert.match(transitSources, /export\s*\{[^}]*transitNatalExactSourceDraft[^}]*\}\s*from\s*["']\.\/transitNatalExactDraft\.js["']/u);
+assert.match(transitDrafts, /never labeled as that source/u);
 assert.match(transitSources, /label: "Natal chart points"/u);
 assert.match(transitSources, /transitNatalContactReady/u);
 assert.match(dashboard, /Choose transiting planet, aspect, and natal planet or chart point to open this transit's You and Friend write-up./u);
@@ -45,7 +47,7 @@ assert.match(dashboard, /resolvedLiveSource/u);
 assert.match(dashboard, /onServingPreview=\{setTransitNatalLiveServing\}/u);
 assert.match(dashboard, /Saving it does not change the three-part or six-part write-up below/u);
 assert.match(api, /This personal-transit write-up key cannot be changed/u);
-assert.match(transitSources, /contentKey\.split\("\/"\)\.length === 8/u);
+assert.match(transitDrafts, /contentKey\.split\("\/"\)\.length === 8/u);
 const exactAction = fs.readFileSync(path.join(root, "apps/admin/src/TransitNatalReaderPreview.tsx"), "utf8");
 assert.match(dashboard, /isBondEffectDraft/u);
 assert.match(dashboard, /fallback-hook\/bond-effect-/u);

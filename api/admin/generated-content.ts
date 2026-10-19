@@ -1,5 +1,6 @@
 import {studioSkyIdentity} from '../_lib/sky-studio-identity.js';
-import {studioOwnerApproval, hasExactStudioOwnerApproval} from '../_lib/studio-owner-publication.js';
+import {standaloneArticleKind} from '../../src/shared/articleLibrary.js';
+import {studioOwnerApproval, hasExactStudioOwnerApproval, stampDailyOwnerApproval} from '../_lib/studio-owner-publication.js';
 import {isDeepStrictEqual} from 'node:util';
 import { csvChanges, csvDraftPatch, csvRecordForRow, type CsvRecord } from '../../apps/admin/src/studioCsv.js';
 import {persistWeeklyHoroscope} from '../_lib/horoscope-storage-confirmation.js';
@@ -82,6 +83,7 @@ type GeneratedContentSurface = "sky" | "you" | "natal" | "synastry" | "composite
 
 type GeneratedContentWriteBody = {
   preserveCurrentTransitAsAlternate?: boolean;
+  ownerAuthoredWording?: boolean;
   id?: string;
   contentKey?: string;
   surface?: GeneratedContentSurface;
@@ -256,8 +258,17 @@ let contentRoleContractCache: {
   };
 } | null = null;
 
-function isSampleOnlyRow(surface?: GeneratedContentSurface, contentKey?: string) {
-  return Boolean(surface && personalizedSampleSurfaces.has(surface)) || Boolean(contentKey?.startsWith("sample-"));
+const compositeSourceBody = "(?:sun|moon|mercury|venus|mars|jupiter|saturn|uranus|neptune|pluto|chiron|north_node|south_node|ascendant|descendant|midheaven|imum_coeli)";
+const compositeSourceKey = new RegExp(`^composite\\.(?:${compositeSourceBody}|house\\.${compositeSourceBody}\\.house_(?:[1-9]|1[0-2])|aspect\\.${compositeSourceBody}\\.(?:conjunction|sextile|square|trine|opposition)\\.${compositeSourceBody})$`, "u");
+const compositeSignSourceKey = new RegExp(`^composite-${compositeSourceBody.replaceAll("_", "-")}-in-(?:aries|taurus|gemini|cancer|leo|virgo|libra|scorpio|sagittarius|capricorn|aquarius|pisces)$`, "u");
+
+const compositeHouseAliasKey = new RegExp(`^composite-${compositeSourceBody.replaceAll("_", "-")}-house-?(?:[1-9]|1[0-2])$`, "u");
+
+function isSampleOnlyRow(surface?: GeneratedContentSurface, contentKey?: string, metadata?: { facts?: unknown; sourceSnapshot?: unknown }) {
+  if (contentKey?.startsWith("sample-") || isRecord(metadata?.facts) && metadata.facts.sampleOnly || isRecord(metadata?.sourceSnapshot) && metadata.sourceSnapshot.sampleOnly) return true;
+  // These are reusable reader-bank identities, not generated personal reports.
+  const reusableComposite = surface === "composite" && Boolean(contentKey && (compositeSourceKey.test(contentKey) || compositeSignSourceKey.test(contentKey) || compositeHouseAliasKey.test(contentKey)));
+  return Boolean(surface && personalizedSampleSurfaces.has(surface)) && !reusableComposite;
 }
 
 function normalizedGeneratedContentBlockType(blockType: unknown, surface?: GeneratedContentSurface, mode?: GeneratedContentWriteBody["mode"]) {
@@ -315,7 +326,14 @@ function studioVariableStorage(params: URLSearchParams, options: { method?: stri
   });
 }
 
-async function prepareStudioVariables(body: GeneratedContentWriteBody) {
+async function prepareStudioVariables(body: GeneratedContentWriteBody, existing?: ExistingGeneratedContentRow) {
+  if (standaloneArticleKind(body.contentKey ?? existing?.content_key ?? '') && ['body', 'headline', 'summary'].some(field => Object.hasOwn(body, field))) {
+    const record = await snapshotStudioVariables({
+      ...v3PackageRecord(existing ?? {}),
+      ...Object.fromEntries(['body', 'headline', 'summary'].filter(field => Object.hasOwn(body, field)).map(field => [field, (body as any)[field]]))
+    }, studioVariableStorage);
+    body.sections = { ...(existing?.sections ?? {}), ...(isRecord(body.sections) ? body.sections : {}), standaloneArticle: { _studioVariables: record._studioVariables ?? [] } };
+  }
   const sections = isRecord(body.sections) ? body.sections : null;
   if (!sections) return;
   for (const field of [isRecord(sections.packageDraft) ? "packageDraft" : "packageRecord"]) {
@@ -323,8 +341,10 @@ async function prepareStudioVariables(body: GeneratedContentWriteBody) {
   }
 }
 
-function v3PackageRecord(row: { sections?: unknown }) {
+function v3PackageRecord(row: { sections?: unknown; content_key?: string; headline?: unknown; summary?: unknown; body?: unknown }) {
   const sections = isRecord(row.sections) ? row.sections : {};
+  if (standaloneArticleKind(row.content_key ?? '')) return { headline: row.headline, summary: row.summary, body: row.body,
+    _studioVariables: isRecord(sections.standaloneArticle) ? sections.standaloneArticle._studioVariables : [], _standaloneArticle: true };
   return isRecord(sections.packageRecord) ? sections.packageRecord : {};
 }
 
@@ -381,6 +401,17 @@ function normalizeNatalAspectTheyNameVariable(contentKey: string | undefined, va
   return value.replace(/\{\{Name\}\}|\{Name\}/gu, "{{Name}}");
 }
 
+function isExplicitDailyOwnerPublish(body: GeneratedContentWriteBody) {
+  return body.ownerAuthoredWording === true
+    && (body.status === 'LIVE' || body.status === undefined && body.reviewStatus === 'approved');
+}
+
+function isDailyManualDraftSave(body: GeneratedContentWriteBody, contentKey: string | undefined) {
+  return /^fallback-hook\/daily-(?:headline|body)\//u.test(contentKey ?? '')
+    && body.ownerAuthoredWording === true && !isExplicitDailyOwnerPublish(body)
+    && body.status !== 'ARCHIVED' && body.status !== 'ERROR';
+}
+
 function fallbackArchitectureV3CreateState(body: GeneratedContentWriteBody) {
   const sections = isRecord(body.sections) ? { ...body.sections } : {};
   const facts = isRecord(body.facts) ? { ...body.facts } : {};
@@ -394,7 +425,7 @@ function fallbackArchitectureV3CreateState(body: GeneratedContentWriteBody) {
   if (!isPackageRow) return null;
 
   const hasPackageDraft = isRecord(sections.packageDraft);
-  const reviewStatus = (hasPackageDraft
+  const reviewStatus = (hasPackageDraft || isDailyManualDraftSave(body, body.contentKey)
     ? "needs_review"
     : stringFrom(body.reviewStatus)
       || stringFrom(sourceSnapshot.review_status)
@@ -582,7 +613,7 @@ function validateSkyV4TransitPovCopy(record: Record<string, unknown>, packageDra
   return { passed: hardFailures.length === 0, hardFailures };
 }
 
-function validateFallbackArchitectureV3Copy(row: ExistingGeneratedContentRow, patch: Record<string, unknown>) {
+function validateFallbackArchitectureV3Copy(row: ExistingGeneratedContentRow, patch: Record<string, unknown>, ownerAuthoredWording = false) {
   const record = v3PackageRecord(row);
   const bannedWords = contentRoleContract().styleRules?.bannedWords ?? [];
   const canonicalPackageBody = stringFrom(record.body) || stringFrom(record.body_you) || undefined;
@@ -678,7 +709,9 @@ function validateFallbackArchitectureV3Copy(row: ExistingGeneratedContentRow, pa
       const issues = articleField ? libs().skyPlacementArticleVariableIssues(variableCopy, variableOwner) : libs().skyPlacementVariableIssues(checkedValue);
       if (issues.length) throw new GeneratedContentRequestError(`${field}: ${issues.join(" ")}`);
     }
-    if (value.includes("—")) {
+    // Style is advisory for explicit owner writing. Identity, variables, and
+    // factual context below still validate the exact submitted reader copy.
+    if (!ownerAuthoredWording && value.includes("—")) {
       throw new GeneratedContentRequestError(`${field} contains an em dash. Use a comma, colon, or separate sentence instead.`);
     }
 
@@ -688,7 +721,7 @@ function validateFallbackArchitectureV3Copy(row: ExistingGeneratedContentRow, pa
       const escaped = word.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
       return new RegExp(`(^|[^a-z])${escaped}([^a-z]|$)`, "i").test(lower);
     });
-    if (banned) {
+    if (banned && !ownerAuthoredWording) {
       throw new GeneratedContentRequestError(`${field} contains banned word "${banned}".`);
     }
 
@@ -701,6 +734,12 @@ function validateFallbackArchitectureV3Copy(row: ExistingGeneratedContentRow, pa
         if (!timing || [...value.matchAll(/\{\{\s*([^{}]*?)\s*\}\}/gu)].some(match => !allowed.includes(match[1]))) issues.push("Use only the calculated variables listed in this timing template.");
       }
       if (issues.length) throw new GeneratedContentRequestError(issues.join(' '));
+    }
+    const dailyFriendField = /^fallback-hook\/daily-(?:headline|body)\//u.test(row.content_key) && field.endsWith("body_they");
+    if (dailyFriendField) for (const match of value.matchAll(/\{\{\s*([\w.-]+)\s*\}\}/gu)) {
+      if (libs().DAILY_GLANCE_PERSON_SLOT_KEYS.has(match[1]) && match[0] !== `{{${match[1]}}}`) {
+        throw new GeneratedContentRequestError(`${field}: use Daily variables exactly as listed in the Friend variable guide.`, 400);
+      }
     }
     const originalSlots = packagePlaceholders(original);
     const inheritedFriendSlots = (
@@ -734,6 +773,10 @@ function validateFallbackArchitectureV3Copy(row: ExistingGeneratedContentRow, pa
         const allowed = ["holder1", "holder2", "holder1Poss", "holder2Poss", "holder1PossCap", "holder2PossCap",
           `${holder}Subject`, `${holder}Object`, `${holder}PronounPoss`];
         if (allowed.includes(slot.slice(2, -2))) continue;
+      }
+      if (dailyFriendField) {
+        if (libs().DAILY_GLANCE_PERSON_SLOT_KEYS.has(slot.slice(2, -2))) continue;
+        throw new GeneratedContentRequestError(`${field} contains unsupported Daily Friend variable ${slot}. Use the Friend variable guide.`, 400);
       }
       if (isLicensedPersonalTransitPlaceholder(row.content_key, slot)) continue;
       if (!originalSlots.has(slot) && !inheritedFriendSlots.has(slot)) {
@@ -793,7 +836,7 @@ function applyFallbackArchitectureV3ReviewPatch(row: ExistingGeneratedContentRow
     ? "deprecated"
     : body.sourceLifecycleAction === "restore"
       ? "needs_review"
-      : hasPackageDraft
+      : hasPackageDraft || isDailyManualDraftSave(body, row.content_key)
         ? "needs_review"
         : packageReviewStatus(row, body.reviewStatus || stringFrom(sourceSnapshot.review_status));
   const stageKind = governedStageKind(record, sourceSnapshot, facts);
@@ -855,8 +898,13 @@ function applyFallbackArchitectureV3ReviewPatch(row: ExistingGeneratedContentRow
     || stringFrom(facts.content_role);
   const incomingBodyYouChanged = typeof incomingRecord.body_you === "string"
     && incomingRecord.body_you !== v3PackageRecord(row).body_you;
+  const incomingBodyTheyChanged = typeof incomingRecord.body_they === "string"
+    && incomingRecord.body_they !== v3PackageRecord(row).body_they;
+  // An unchanged legacy mirror is not an edit to the current reader copy.
   const sectionBodyYouChanged = typeof sections.body_you === "string"
-    && sections.body_you !== v3PackageRecord(row).body_you;
+    && sections.body_you !== storedSections.body_you;
+  const sectionBodyTheyChanged = typeof sections.body_they === "string"
+    && sections.body_they !== storedSections.body_they;
   if (topLevelBodyChanged && !incomingBodyYouChanged && !sectionBodyYouChanged) {
     if (record.render_policy === "sky-placement-continuous-v2") {
       throw new Error("Continuous Sky write-ups must be edited in Opening, Tension, Development, and Close so the reader structure stays intact.");
@@ -870,10 +918,10 @@ function applyFallbackArchitectureV3ReviewPatch(row: ExistingGeneratedContentRow
       record.body = patch.body;
     }
   }
-  if (!hasPackageDraft && typeof sections.body_you === "string") {
+  if (!hasPackageDraft && sectionBodyYouChanged && !incomingBodyYouChanged) {
     record.body_you = sections.body_you;
   }
-  if (!hasPackageDraft && typeof sections.body_they === "string") {
+  if (!hasPackageDraft && sectionBodyTheyChanged && !incomingBodyTheyChanged) {
     record.body_they = sections.body_they;
   }
   if (storedTransitProposal && !body.revertToPackageOriginal) {
@@ -908,6 +956,11 @@ function applyFallbackArchitectureV3ReviewPatch(row: ExistingGeneratedContentRow
     sections.body_they = record.body_they;
   }
 
+  // Exact transit editors use You as the canonical reader passage. Retain a
+  // body alias only when the source already has one, and keep it byte-identical.
+  if (!hasPackageDraft && isPersonalTransitExactContentKey(row.content_key)
+    && typeof record.body_you === "string" && typeof record.body === "string") record.body = record.body_you;
+
   const calendarDraftBody = isCalendarAspectStage
     ? stringFrom(packageValueAt(hasPackageDraft ? sections.packageDraft : null, "Body") ?? record.Body ?? record.CurrentServingBody)
     : "";
@@ -930,6 +983,10 @@ function applyFallbackArchitectureV3ReviewPatch(row: ExistingGeneratedContentRow
   patch.headline = hasPackageDraft ? row.headline ?? "" : patch.headline;
   patch.summary = hasPackageDraft ? row.summary ?? "" : patch.summary;
   patch.body = hasPackageDraft ? row.body ?? readerBody : readerBody;
+  if (!hasPackageDraft && readerBody !== row.body && libs().isRegisteredLunarJournalKey(row.content_key)) {
+    sections.lunarJournal = { ...(isRecord(sections.lunarJournal) ? sections.lunarJournal : {}),
+      blocks: readerBody.split(/\n\n/u).map(text => ({ type: "para", text })) };
+  }
   sections.body_you = record.body_you ?? null;
   sections.body_they = record.body_they ?? null;
   const skyV4Validation = validateSkyV4TransitPovCopy(
@@ -998,7 +1055,7 @@ function applyFallbackArchitectureV3ReviewPatch(row: ExistingGeneratedContentRow
     }
     validateAndApproveNatalAspectCopy(record, row.content_key);
   }
-  validateFallbackArchitectureV3Copy(row, { ...patch, sections });
+  validateFallbackArchitectureV3Copy(row, { ...patch, sections }, body.ownerAuthoredWording === true);
   if (hasPackageDraft) {
     const proposal = { ...(sections.packageDraft as Record<string, unknown>) };
     // Approval belongs to the server-owned record. Keep mirrored proposal
@@ -1288,7 +1345,7 @@ function validateWriteBody(body: Record<string, unknown>) {
   for (const field of ["lane", "reviewState", "targetDate", "blockType", "evergreenAt", "evergreenBy"]) {
     if (body[field] !== undefined && body[field] !== null && typeof body[field] !== "string") throw new GeneratedContentRequestError(`${field} must be a string or null.`);
   }
-  for (const field of ["evergreen", "revertToPackageOriginal"]) {
+  for (const field of ["evergreen", "revertToPackageOriginal", "ownerAuthoredWording"]) {
     if (body[field] !== undefined && typeof body[field] !== "boolean") throw new GeneratedContentRequestError(`${field} must be a boolean.`);
   }
   for (const field of ["id", "contentKey", "surface", "mode", "eventType"]) {
@@ -1345,6 +1402,11 @@ function assertReaderEligiblePublication(row: Record<string, any>) {
   validateAspectRetrogradeCopy(row.content_key, isRecord(aspectSections.packageRecord) ? aspectSections.packageRecord : aspectSections);
   if ((row.lane ?? "serving") !== "serving") throw new GeneratedContentRequestError("Published content must use the serving lane.", 409);
   if (row.review_state) throw new GeneratedContentRequestError("Published content cannot retain a review hold.", 409);
+  const bondRecord=isRecord(aspectSections.packageRecord)?aspectSections.packageRecord:{};
+  if (String(row.content_key??"").startsWith("fallback-hook/bond-effect-")
+    && !["body_you","body_they"].every(field=>typeof bondRecord[field]==="string" && bondRecord[field].trim())) {
+    throw new GeneratedContentRequestError("Write both directions of the Between you two opening before publishing. You can save an unfinished draft.",400);
+  }
   const admissionIssue = libs().packagePublicationAdmissionIssue(row);
   if (admissionIssue) throw new GeneratedContentRequestError(admissionIssue, 409);
   const educationIssue = libs().astro101PublicationIssue(row);
@@ -1804,7 +1866,7 @@ async function createGeneratedContentFromBody(body: GeneratedContentWriteBody) {
   const isCmsRow = isCmsGeneratedContentWriteBody(body);
   const packageState = fallbackArchitectureV3CreateState(body);
   if (!packageState && body.status === "LIVE") {
-    if (isSampleOnlyRow(body.surface, body.contentKey)) {
+    if (isSampleOnlyRow(body.surface, body.contentKey, body)) {
       throw new GeneratedContentRequestError("Personalized content test rows cannot be published globally. Generate real user or bond scoped content instead.");
     }
     const requestedLane = typeof body.lane === "string" && body.lane.trim() ? body.lane.trim() : "serving";
@@ -1847,11 +1909,12 @@ async function createGeneratedContentFromBody(body: GeneratedContentWriteBody) {
     summary: body.summary ?? "",
     body: body.body ?? "",
     sections: packageState?.sections ?? body.sections ?? [],
-    reviewer_notes: body.reviewerNotes ?? (isSampleOnlyRow(body.surface, body.contentKey) ? sampleOnlyReviewerNote : ""),
+    reviewer_notes: body.reviewerNotes ?? (isSampleOnlyRow(body.surface, body.contentKey, body) ? sampleOnlyReviewerNote : ""),
     ...(packageState?.readerServing ? { reviewed_at: now, published_at: now } : {})
   };
 
   Object.assign(row, normalizeArticleHoroscopes(row));
+  stampDailyOwnerApproval(row, isExplicitDailyOwnerPublish(body), now);
   assertReaderEligiblePublication(row);
   await assertZodiacSeasonPublication(row);
   Object.assign(row, await validatedLunationPublication(row));
@@ -1898,7 +1961,7 @@ function generatedContentRowFromWriteBody(body: GeneratedContentWriteBody) {
     throw new GeneratedContentRequestError(`status for ${body.contentKey} must be DRAFT, REVIEWED, LIVE, ARCHIVED, or ERROR.`);
   }
 
-  if (body.status === "LIVE" && isSampleOnlyRow(body.surface, body.contentKey)) {
+  if (body.status === "LIVE" && isSampleOnlyRow(body.surface, body.contentKey, body)) {
     throw new GeneratedContentRequestError("Personalized content test rows cannot be published globally. Generate real user or bond scoped content instead.");
   }
 
@@ -1926,7 +1989,7 @@ function generatedContentRowFromWriteBody(body: GeneratedContentWriteBody) {
 
   const blockType = normalizedGeneratedContentBlockType(body.blockType, body.surface, body.mode);
   const isCmsRow = isCmsGeneratedContentWriteBody(body);
-  return normalizeArticleHoroscopes({
+  const row = normalizeArticleHoroscopes({
     content_key: body.contentKey.trim(),
     surface: body.surface,
     mode: body.mode,
@@ -1949,9 +2012,11 @@ function generatedContentRowFromWriteBody(body: GeneratedContentWriteBody) {
     summary: body.summary ?? "",
     body: body.body ?? "",
     sections: body.sections ?? [],
-    reviewer_notes: body.reviewerNotes ?? (isSampleOnlyRow(body.surface, body.contentKey) ? sampleOnlyReviewerNote : ""),
+    reviewer_notes: body.reviewerNotes ?? (isSampleOnlyRow(body.surface, body.contentKey, body) ? sampleOnlyReviewerNote : ""),
     updated_at: new Date().toISOString()
   });
+  stampDailyOwnerApproval(row, isExplicitDailyOwnerPublish(body), String(row.updated_at));
+  return row;
 }
 
 async function fetchExistingRowsByContentKey(contentKeys: string[]) {
@@ -2387,7 +2452,7 @@ async function recoverPublishedSkyRevision(existing: ExistingGeneratedContentRow
   const proposal = isRecord(sections.packageDraft) ? sections.packageDraft : null;
   if (existing.status !== "ARCHIVED" || existing.review_state !== "published-revision"
     || !["sky-v4-reader-copy-draft", "shared-sign-prose-draft", "calendar-passage-draft"].includes(existing.event_type ?? "") || body.ownerAction || body.sourceLifecycleAction || !proposal) return existing;
-  validateFallbackArchitectureV3Copy(existing, { sections: body.sections });
+  validateFallbackArchitectureV3Copy(existing, { sections: body.sections }, body.ownerAuthoredWording === true);
   const targetId = stringFrom(existing.source_snapshot?.targetRowId);
   const target = targetId ? await fetchExistingRowById(targetId) : null;
   if (!target || target.status !== "LIVE" || target.content_key !== existing.content_key
@@ -2465,6 +2530,8 @@ async function updateGeneratedContent(req: IncomingMessage) {
     }] } };
     delete body.ownerAction;
     delete body.csvRecord;
+    // Import is an explicit owner draft edit, never an automatic publication.
+    body.ownerAuthoredWording = true;
     Object.assign(body, copyPatch);
     validateWriteBody(body);
   }
@@ -2474,7 +2541,7 @@ async function updateGeneratedContent(req: IncomingMessage) {
   if (existing.content_key.startsWith("studio-lunation/")) throw new GeneratedContentRequestError("Manage dated drafts in Calendar Write-ups → New & Full Moons & Eclipses.");
   if (existing.content_key.startsWith(libs().STUDIO_VARIABLE_PREFIX)) throw new GeneratedContentRequestError("Manage this definition in Variables.");
   if (existing.content_key.startsWith("studio-writing-profile/")) throw new GeneratedContentRequestError("Manage writing profiles in their Studio writing workspace.");
-  await prepareStudioVariables(body);
+  await prepareStudioVariables(body, existing);
   existing = await recoverPublishedSkyRevision(existing, body);
   const isPackageRow = isFallbackArchitectureV3Row(existing);
   if (body.status === "LIVE" && libs().isContentStudioReferenceSource(existing.content_key, existing.source_snapshot ?? {})) {
@@ -2600,7 +2667,7 @@ async function updateGeneratedContent(req: IncomingMessage) {
     }
     validateFallbackArchitectureV3Copy(target, {
       sections: { ...targetSections, packageDraft: publicationDraft }
-    });
+    }, true);
     await assertVersionedStudioVariablePublication(packageDraft);
     const promotedRecord = structuredClone(targetRecord);
     if (Array.isArray(packageDraft._studioVariables)) promotedRecord._studioVariables = structuredClone(packageDraft._studioVariables);
@@ -2650,6 +2717,7 @@ async function updateGeneratedContent(req: IncomingMessage) {
     const promotionPatch: Record<string, unknown> = { updated_at: now };
     applyFallbackArchitectureV3ReviewPatch(target, {
       id: target.id,
+      ownerAuthoredWording: true,
       headline: stringFrom(promotedRecord.headline) || target.headline || "",
       summary: stringFrom(promotedRecord.summary) || target.summary || "",
       body: stringFrom(promotedRecord.body_you ?? promotedRecord.body ?? promotedRecord.text) || target.body || "",
@@ -2736,6 +2804,10 @@ async function updateGeneratedContent(req: IncomingMessage) {
     promotionPatch.sections = finalSections;
     promotionPatch.reviewed_at = now;
     promotionPatch.published_at = now;
+    // Match JSON/PostgREST: omitted fields retain the stored columns.
+    for (const key of Object.keys(promotionPatch)) if (promotionPatch[key] === undefined) delete promotionPatch[key];
+    const ownerRow = { ...target, ...promotionPatch };
+    if (stampDailyOwnerApproval(ownerRow, true, now)) promotionPatch.source_snapshot = ownerRow.source_snapshot;
     assertReaderEligiblePublication({ ...target, ...promotionPatch });
     return publishRevisionAtomically(body, existing, target, promotionPatch);
   }
@@ -2950,7 +3022,7 @@ async function updateGeneratedContent(req: IncomingMessage) {
   }
 
   if (body.status) {
-    if (body.status === "LIVE" && isSampleOnlyRow(effectiveSurface, effectiveContentKey)) {
+    if (body.status === "LIVE" && isSampleOnlyRow(effectiveSurface, effectiveContentKey, { facts: body.facts ?? existing?.facts, sourceSnapshot: body.sourceSnapshot ?? existing?.source_snapshot })) {
       throw new GeneratedContentRequestError("Personalized content test rows cannot be published globally. Generate real user or bond scoped content instead.");
     }
 
@@ -3253,6 +3325,11 @@ async function updateGeneratedContent(req: IncomingMessage) {
   }
 
   Object.assign(patch, await validatedLunationPublication({ ...existing, ...patch }));
+  for (const key of Object.keys(patch)) if (patch[key] === undefined) delete patch[key];
+  const ownerRow = { ...existing, ...patch };
+  if (stampDailyOwnerApproval(ownerRow, isExplicitDailyOwnerPublish(body), String(patch.updated_at))) {
+    patch.source_snapshot = ownerRow.source_snapshot;
+  }
   assertReaderEligiblePublication({ ...existing, ...patch });
   await assertZodiacSeasonPublication({ ...existing, ...patch });
   if (patch.status === "LIVE") await assertStudioVariablePublication(v3PackageRecord({ ...existing, ...patch }), studioVariableStorage);

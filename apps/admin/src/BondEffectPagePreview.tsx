@@ -255,7 +255,7 @@ export default function BondEffectPagePreview({
     audience,
     friendName
   });
-  const loadedSynastry = synastry.load;
+  const loadedSynastry = synastry.key === lookupKey ? synastry.load : undefined;
   const synastryYou = loadedSynastry
     ? fillNamedSlots(loadedSynastry.bodyYou, synastryHolderSlots(loadedSynastry.forward, friendName)).trim()
     : "";
@@ -265,7 +265,7 @@ export default function BondEffectPagePreview({
   const synastryBody = audience === "you" ? synastryYou : synastryThey;
   const loadingSynastry = synastry.key !== lookupKey || (loadedSynastry === undefined && !synastry.error);
   const synastryField = audience === "you" ? "body_you" : "body_they";
-  const synastryKey = loadedSynastry?.contentKey || lookup[0]?.contentKey;
+  const synastryKey = !loadingSynastry && !synastry.error ? loadedSynastry?.contentKey || lookup[0]?.contentKey : undefined;
   const openOpening = () => onOpenSource(openingKey, "Between you two opening", openingField);
   const openActivation = (field = synastryField) => {
     if (!synastryKey) return;
@@ -379,6 +379,9 @@ export default function BondEffectPagePreview({
         <StudioButton type="button" disabled={!synastryKey} onClick={() => openActivation("body_you")}>Open You activation</StudioButton>
         <StudioButton type="button" disabled={!synastryKey} onClick={() => openActivation("body_they")}>Open Friend activation</StudioButton>
       </div>
+      {loadingSynastry
+        ? <PageLoading compact message="Opening the synastry source…" />
+        : synastry.error && <div role="alert"><p>{synastry.error}</p><StudioButton type="button" onClick={() => setRevision((value) => value + 1)}>Retry activation source</StudioButton></div>}
       <StudioTabs label="Friends composition views" value={view} onValueChange={setView} tabs={views.map((item) => ({ value: item.id, label: item.label }))}>
         {openingError && <p role="alert">{openingError}</p>}
         <div className="admin-composition-variable-legend" aria-label="Composition color key">
@@ -452,11 +455,7 @@ export default function BondEffectPagePreview({
                     <Fact title="This heading is composed from the natal point, aspect, friend name, and their planet">{activationTitle}</Fact>
                   </p>
                 </div>
-                {loadingSynastry
-                  ? <PageLoading compact message="Opening the synastry source…" />
-                  : synastry.error
-                    ? <p role="alert">{synastry.error}</p>
-                    : (
+                {!loadingSynastry && !synastry.error && (
                       <>
                         <div className="admin-composition-preview-field field-body">
                           <Text size="meta" tone="secondary">You</Text>

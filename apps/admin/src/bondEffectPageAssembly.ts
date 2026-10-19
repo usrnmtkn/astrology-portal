@@ -264,11 +264,11 @@ export function bondCalculatedFactLine(input: {
 
 export function synastryBodiesFromPayload(payload: unknown) {
   if (!isRecord(payload)) return null;
-  const packaged = isRecord(payload.packageSource) ? payload.packageSource : null;
   const row = Array.isArray(payload.rows) && isRecord(payload.rows[0]) ? payload.rows[0] : null;
   const sections = row && isRecord(row.sections) ? row.sections : null;
   const draft = sections && isRecord(sections.packageDraft) ? sections.packageDraft : null;
-  const source = packaged ?? draft;
+  const source = draft ?? (sections && isRecord(sections.packageRecord) ? sections.packageRecord : null)
+    ?? (isRecord(payload.packageSource) ? payload.packageSource : null);
   if (!source) return null;
   const you = typeof source.body_you === "string" ? source.body_you : "";
   const they = typeof source.body_they === "string" ? source.body_they : "";

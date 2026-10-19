@@ -1,3 +1,4 @@
+export { DAILY_GLANCE_PERSON_SLOT_KEYS } from "../../apps/web/src/content/fallbackArchitectureV3/resolver/dailyGlanceVoice.mjs";
 export { retainPersonalTransitAlternate } from "../../apps/web/src/content/fallbackArchitectureV3/resolver/personalTransitCopyVersions.mjs";
 export { approvedSkySeasonFallback, SKY_SEASON_FALLBACK_PREFIX } from "../../apps/web/src/content/skySeasonFallback.js";
 export { calendarAspectRetrogradeOptions, calendarAspectRetrogradeFields } from '../../apps/web/src/content/calendarAspectRetrograde.js';
@@ -13,7 +14,7 @@ export {
 export { separateArticleHoroscopeRow } from "../../apps/web/src/content/skyArticleHoroscopes.mjs";
 export { assertCleanReaderCopy } from "../../apps/web/src/content/editorialCopyBoundary.mjs";
 export { skyWritingIssues } from "../../apps/web/src/content/contentReviewReadiness.js";
-export { packagePublicationAdmissionIssue } from "../_lib/content-studio-package-admission.js";
+export { packagePublicationAdmissionIssue, isRegisteredLunarJournalKey } from "../_lib/content-studio-package-admission.js";
 export { astro101PublicationIssue } from "../../apps/web/src/content/astro101.ts";
 export { fillAstro101EphemerisSlots } from "../../apps/web/src/content/astro101Ephemeris.ts";
 export { isRetiredCompositionKey } from "../../apps/web/src/content/fallbackArchitectureV3/resolver/retiredCompositions.mjs";

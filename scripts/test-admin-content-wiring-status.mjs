@@ -55,13 +55,19 @@ assert.equal(connected.reason, "connected");
 assert.equal(connected.label, "Used by app");
 
 const needsDestination = contentWiringStatus({
-  content_key: "article/manual/unplaced",
+  content_key: "article/unregistered/unplaced",
   status: "LIVE",
   lane: "serving",
   mode: "article"
 });
 assert.equal(needsDestination.reason, "unfinished");
 assert.equal(needsDestination.label, "Needs destination");
+
+for (const kind of ["manual", "guide"]) {
+  assert.equal(contentWiringStatus({ content_key: `article/${kind}/new-owner-copy`, mode: "article", status: "LIVE", lane: "serving" }).state, "connected");
+  assert.equal(contentWiringStatus({ content_key: `article/${kind}/new-owner-copy`, mode: "feed", status: "LIVE", lane: "serving" }).state, "unknown");
+  assert.equal(contentWiringStatus({ content_key: `article/${kind}/new-owner-copy/nested`, mode: "article", status: "LIVE", lane: "serving" }).state, "not-connected");
+}
 
 const unknown = contentWiringStatus({
   content_key: "fallback-hook/unknown-family/example",

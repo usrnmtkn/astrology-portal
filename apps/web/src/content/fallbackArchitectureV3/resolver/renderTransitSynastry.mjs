@@ -15,10 +15,7 @@ import fs from "node:fs";
 import path from "node:path";
 import url from "node:url";
 import { SourceGapError, vocabularyBodyForVoice } from "./renderFallback.mjs";
-import {
-  fillDailyGlancePersonSlots,
-  lintDailyGlanceFriendVoice
-} from "./dailyGlanceVoice.mjs";
+import { fillDailyGlancePersonSlots } from "./dailyGlanceVoice.mjs";
 import { isGovernedReaderEligible, synastryReaderTier, transitReaderTier } from "./readerEligibility.mjs";
 import { normalizeLunationSign } from "./lunationNormalization.mjs";
 import { sharedLunationEclipseSectionKey } from "./lunationEclipseSectionKeys.mjs";
@@ -2575,19 +2572,14 @@ function renderDailyGlanceReference({
   voice = "you",
   personSlots = {}
 }) {
+  const ownerWording = row => row?.studio_owner_wording === true && row.review_status === 'approved';
   const renderFriendRow = (row, contentKey) => {
     const raw = row?.body_they;
     if (!raw) return null;
 
-    const findings = lintDailyGlanceFriendVoice(raw);
-    if (findings.length > 0) {
-      throw new SourceGapError(
-        `SOURCE_GAP: ${contentKey} friend voice failed ${findings.map((finding) => finding.id).join(",")}`
-      );
-    }
-
+    const ownerApprovedWording = ownerWording(row);
     try {
-      return fillDailyGlancePersonSlots(raw, personSlots);
+      return fillDailyGlancePersonSlots(raw, personSlots, { ownerApprovedWording });
     } catch (error) {
     if (error instanceof SourceGapError && error.publicationBlocked) throw error;
       throw new SourceGapError(
@@ -2609,7 +2601,8 @@ function renderDailyGlanceReference({
     const body = hooks.get(bodyKey)?.body_you;
     if (!headline || !body) return null;
     const selected = selectDailyGlanceVariantSet({
-      variantSet: dailyGlanceVariants.keys[contentKey],
+      variantSet: ownerWording(hooks.get(headlineKey)) || ownerWording(hooks.get(bodyKey))
+        ? undefined : dailyGlanceVariants.keys[contentKey],
       primary: { headline, body },
       dateKey,
       contentKey,

@@ -1,6 +1,7 @@
 // The public transport contract. New authoring fields are private by default.
 // This module only projects already-authorized rows; admission happens on the
 // server before projection. Never trim or reconstruct an approved passage here.
+import { resolveStudioVariableRecord } from './studioCustomVariables.mjs';
 const strings = names => Object.fromEntries(names.split(/\s+/u).filter(Boolean).map(name => [name, 'string']));
 const numbers = names => Object.fromEntries(names.split(/\s+/u).filter(Boolean).map(name => [name, 'number']));
 const booleans = names => Object.fromEntries(names.split(/\s+/u).filter(Boolean).map(name => [name, 'boolean']));
@@ -40,7 +41,7 @@ const packageRecord = {
     title tagline preview_note core_theme sign_jurisdiction lived_experience rulership_twist history_echo closing_charge
     reader_content_type content_type`),
   ...numbers('word_count body_you_word_count body_they_word_count variant'),
-  ...booleans('owner_approved owner_authored reader_only serving_enabled'),
+  ...booleans('owner_approved owner_authored reader_only serving_enabled studio_owner_wording'),
   blocks: [lunarBlock], lunarJournal: { blocks: [lunarBlock] },
   approval, body_you_approval: approval, body_they_approval: approval,
   content_boundary: booleans('mixedOwnerApproved'),
@@ -132,7 +133,7 @@ function project(value, contract) {
 }
 
 export { READER_ROW_SCHEMA } from './readerRowSchema.mjs';
-export function projectReaderRow(row) {
+export function projectReaderRow(row, options = {}) {
   const result = project(row, rowContract);
   if (!result || !result.id || !result.content_key || !result.updated_at) return null;
   // Legacy generic article sections also use an array, or a single body string.
@@ -144,6 +145,14 @@ export function projectReaderRow(row) {
   }
   const rawRecord = row.sections?.packageRecord;
   const publicRecord = result.sections?.packageRecord;
+  if (publicRecord) {
+    // A stored/client flag is never approval proof. Only the server verifies
+    // the exact complete copy before requesting this derived transport field.
+    delete publicRecord.studio_owner_wording;
+    if (options?.ownerApprovalVerified === true && row.status === 'LIVE' && row.lane === 'serving'
+      && !row.review_state && publicRecord.review_status === 'approved'
+      && /^fallback-hook\/daily-(?:headline|body)\//u.test(row.content_key)) publicRecord.studio_owner_wording = true;
+  }
   if (rawRecord?.ingress?.sources && publicRecord?.ingress) {
     const referenced = new Set();
     const visit = value => {
@@ -158,6 +167,10 @@ export function projectReaderRow(row) {
       if (selected !== undefined) sources[name] = selected;
     }
     publicRecord.ingress.sources = sources;
+  }
+  if (/^article\/(?:manual|guide)\/[^/]+$/u.test(row.content_key) && row.sections?.standaloneArticle?._studioVariables?.length) {
+    const resolved = resolveStudioVariableRecord({ headline: result.headline, summary: result.summary, body: result.body, _studioVariables: row.sections.standaloneArticle._studioVariables });
+    for (const field of ['headline', 'summary', 'body']) if (typeof resolved[field] === 'string') result[field] = resolved[field];
   }
   return result;
 }
